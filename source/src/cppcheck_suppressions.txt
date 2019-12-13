@@ -23,6 +23,8 @@
 unnecessaryForwardDeclaration
 // This triggers for braced initializers in classes
 constStatement
+// This is a style warning, and Rosetta style isn't much for std algorithms with iterators and lambdas.
+useStlAlgorithm
 
 //////////////////////
 // SPECIFIC EXCLUSIONS

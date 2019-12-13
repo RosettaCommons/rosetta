@@ -277,7 +277,6 @@
 [apps/benchmark/performance/performance_benchmark.cc:158]: (style) The scope of the variable 't' can be reduced.
 [apps/benchmark/performance/performance_benchmark.cc:158]: (style) Variable 't' is assigned a value that is never used.
 [apps/benchmark/scientific/ddg_benchmark.cc:104] -> [apps/benchmark/scientific/ddg_benchmark.cc:116]: (style) Local variable 'sum' shadows outer function
-[apps/benchmark/scientific/ddg_benchmark.cc:108]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [apps/benchmark/scientific/ddg_benchmark.cc:211]: (style) The scope of the variable 'tmp' can be reduced.
 [apps/benchmark/scientific/ddg_benchmark.cc:221]: (warning) sscanf() without field width limits can crash with huge input data.
 [apps/benchmark/scientific/ddg_benchmark.cc:233]: (warning) sscanf() without field width limits can crash with huge input data.
@@ -301,7 +300,6 @@
 [apps/public/ddg/cartesian_ddg.cc:247]: (style) Condition 'flexbb' is always true
 [apps/public/ddg/ensemble_generator_score12_sidechain_ver2.cc:337]: (style) Variable 'tags_done' is assigned a value that is never used.
 [apps/public/ddg/minimize_with_cst.cc:183] -> [apps/public/ddg/minimize_with_cst.cc:275]: (style) Local variable 'opts' shadows outer variable
-[apps/public/design/sequence_recovery.cc:124]: (style) Consider using std::copy algorithm instead of a raw loop.
 [apps/public/design/supercharge.cc:1132] -> [apps/public/design/supercharge.cc:1252]: (style) Local variable 'diff_total' shadows outer variable
 [apps/public/design/supercharge.cc:1133] -> [apps/public/design/supercharge.cc:1253]: (style) Local variable 'diff_fa_atr' shadows outer variable
 [apps/public/design/supercharge.cc:1134] -> [apps/public/design/supercharge.cc:1254]: (style) Local variable 'diff_fa_rep' shadows outer variable
@@ -374,10 +372,7 @@
 [apps/public/pepspec/pepspec.cc:235]: (performance) Variable 'low_score_' is assigned in constructor body. Consider performing initialization in initialization list.
 [apps/public/pepspec/pepspec.cc:236]: (performance) Variable 'temp_' is assigned in constructor body. Consider performing initialization in initialization list.
 [apps/public/pH_protocol.cc:372]: (style) Unused variable: PKA_LIST
-[apps/public/pocket/pocket_relax.cc:236]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [apps/public/pocket/pocket_suggest_target_residues_by_ddg.cc:182]: (performance) Searching before insertion is not necessary.
-[apps/public/rna/erraser/erraser2.cc:259]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[apps/public/rna/erraser/erraser2.cc:268]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [apps/public/rna/erraser/erraser2.cc:468] -> [apps/public/rna/erraser/erraser2.cc:476]: (style) The expression 'nproc > 1' is always false.
 [apps/public/rna/erraser/erraser2.cc:468] -> [apps/public/rna/erraser/erraser2.cc:482]: (style) The expression 'nproc == 1' is always true.
 [apps/public/rna/rna_denovo.cc:239]: (style) Variable 'lores_silent_file_' is assigned a value that is never used.
@@ -386,7 +381,6 @@
 [apps/public/rna/rna_denovo.cc:503] -> [apps/public/rna/rna_denovo.cc:237]: (style) Local variable 'lores_silent_file_' shadows outer variable
 [apps/public/rna/rna_denovo.cc:507] -> [apps/public/rna/rna_denovo.cc:241]: (style) Local variable 'tag_is_done_' shadows outer variable
 [apps/public/rna/rna_design.cc:276]: (style) Variable 'start_pose' is assigned a value that is never used.
-[apps/public/rna/thread/rna_thread.cc:199]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [apps/public/rna/util/rna_database.cc:606]: (style) Variable 'exclude_res_list' is assigned a value that is never used.
 [apps/public/rna/util/rna_predict_chem_map.cc:228] -> [apps/public/rna/util/rna_predict_chem_map.cc:250]: (style) Local variable 'n' shadows outer variable
 [apps/public/rna/util/rna_predict_chem_map.cc:228] -> [apps/public/rna/util/rna_predict_chem_map.cc:258]: (style) Local variable 'n' shadows outer variable
@@ -401,7 +395,6 @@
 [apps/public/scenarios/ca_to_allatom.cc:153]: (performance) Variable 'scorefxn_cst_' is assigned in constructor body. Consider performing initialization in initialization list.
 [apps/public/scenarios/chemically_conjugated_docking/UBQ_E2_thioester.cc:142]: (performance) Variable 'fullatom_scorefunction_' is assigned in constructor body. Consider performing initialization in initialization list.
 [apps/public/scenarios/chemically_conjugated_docking/UBQ_Gp_CYD-CYD.cc:121]: (performance) Variable 'fullatom_scorefunction_' is assigned in constructor body. Consider performing initialization in initialization list.
-[apps/public/sequence_tolerance.cc:317]: (style) Consider using std::transform algorithm instead of a raw loop.
 [apps/public/sewing/ligand_sewing_tools/backside_hbond_finder.cc:155]: (performance) Variable 'scorefxn_' is assigned in constructor body. Consider performing initialization in initialization list.
 [apps/public/sewing/ligand_sewing_tools/backside_hbond_finder.cc:91]: (performance) Function parameter 'a2' should be passed by const reference.
 [apps/public/sewing/ligand_sewing_tools/backside_hbond_finder.cc:92]: (performance) Variable 'resnum' is assigned in constructor body. Consider performing initialization in initialization list.
@@ -416,7 +409,6 @@
 [apps/public/sewing/segment_file_generator.cc:116]: (performance) Function parameter 'error_msg' should be passed by const reference.
 [apps/public/sewing/segment_file_generator.cc:159]: (error) Out of bounds access of motif_string, index 'motif_string.size()' is out of bounds.
 [apps/public/sewing/segment_file_generator.cc:232]: (performance) Function parameter 'copy_set' should be passed by const reference.
-[apps/public/sewing/segment_file_generator.cc:235]: (style) Consider using std::copy algorithm instead of a raw loop.
 [apps/public/sewing/segment_file_generator.cc:241]: (performance) Function parameter 'motif_dssp' should be passed by const reference.
 [apps/public/sewing/segment_file_generator.cc:241]: (performance) Function parameter 'segment_dssp' should be passed by const reference.
 [apps/public/sewing/segment_file_generator.cc:54] -> [apps/public/sewing/segment_file_generator.cc:87]: (style) Local variable 'motif_file' shadows outer variable
@@ -434,50 +426,24 @@
 [apps/public/weight_optimization/torsional_potential_corrections.cc:172]: (performance) Variable 'rotidx_' is assigned in constructor body. Consider performing initialization in initialization list.
 [apps/public/weight_optimization/torsional_potential_corrections.cc:174]: (performance) Variable 'weight_' is assigned in constructor body. Consider performing initialization in initialization list.
 [apps/public/weight_optimization/torsional_potential_corrections.cc:175]: (performance) Variable 'fragscore_' is assigned in constructor body. Consider performing initialization in initialization list.
-[basic/database/sql_utils.cc:536]: (style) Consider using std::count_if algorithm instead of a raw loop.
-[basic/datacache/ConstDataMap.cc:204]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [basic/random/init_random_generator.cc:104]: (style) Condition '!on_windows_platform' is always true
-[basic/resource_manager/ResourceManager.cc:133]: (style) Consider using std::transform algorithm instead of a raw loop.
-[basic/resource_manager/ResourceManager.cc:192]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [core/chemical/AtomTypeSet.cc:222]: (performance) Inefficient usage of string::find() in condition; string::starts_with() would be faster.
 [core/chemical/AtomTypeSet.cc:380]: (performance) Inefficient usage of string::find() in condition; string::starts_with() would be faster.
-[core/chemical/GlobalResidueTypeSet.cc:269]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/chemical/GlobalResidueTypeSet.cc:320]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/chemical/GlobalResidueTypeSet.cc:330]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/chemical/GlobalResidueTypeSet.cc:544]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/chemical/GlobalResidueTypeSet.cc:550]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/chemical/GlobalResidueTypeSet.cc:885]: (style) Unused variable: tag
 [core/chemical/IdealBondLengthSet.cc:139]: (performance) Inefficient usage of string::find() in condition; string::starts_with() would be faster.
 [core/chemical/MMAtomTypeSet.cc:92]: (performance) Inefficient usage of string::find() in condition; string::starts_with() would be faster.
 [core/chemical/orbitals/AssignOrbitals.cc:61]: (style) Variable 'act_atoms' is assigned a value that is never used.
 [core/chemical/orbitals/OrbitalTypeSet.cc:112]: (performance) Inefficient usage of string::find() in condition; string::starts_with() would be faster.
-[core/chemical/Patch.cc:501]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/chemical/Patch.cc:509]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/chemical/Patch.cc:918]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[core/chemical/Patch.cc:940]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[core/chemical/Patch.cc:963]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [core/chemical/residue_support.cc:108]: (style) Variable 'rings' is assigned a value that is never used.
 [core/chemical/residue_support.cc:173]: (performance) Variable 'start_index_' is assigned in constructor body. Consider performing initialization in initialization list.
 [core/chemical/ResidueType.cc:3858]: (style) The scope of the variable 'nothing_changed' can be reduced.
 [core/chemical/ResidueType.cc:3858]: (style) Variable 'nothing_changed' is assigned a value that is never used.
 [core/chemical/ResidueType.cc:3891]: (style) Variable 'nothing_changed' is assigned a value that is never used.
-[core/chemical/ResidueTypeFinder.cc:397]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[core/chemical/ResidueTypeFinder.cc:722]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/chemical/ResidueTypeFinder.cc:839]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/chemical/ResidueTypeFinder.cc:940]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/chemical/ResidueTypeSelector.cc:150]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/chemical/ResidueTypeSetCache.cc:330]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [core/chemical/rna/util.cc:1064]: (style) Expression is always false because 'else if' condition matches previous condition at line 1036.
 [core/chemical/rna/util.cc:1068]: (style) Expression is always false because 'else if' condition matches previous condition at line 1040.
 [core/chemical/rna/util.cc:1072]: (style) Expression is always false because 'else if' condition matches previous condition at line 1044.
 [core/chemical/rna/util.cc:1076]: (style) Expression is always false because 'else if' condition matches previous condition at line 1048.
 [core/chemical/rna/util.cc:627]: (style) Expression is always false because 'else if' condition matches previous condition at line 623.
-[core/conformation/carbohydrates/GlycanTree.cc:200]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/carbohydrates/GlycanTreeSet.cc:114]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/carbohydrates/GlycanTreeSet.cc:125]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/carbohydrates/GlycanTreeSet.cc:148]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/carbohydrates/GlycanTreeSet.cc:198]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/carbohydrates/GlycanTreeSet.cc:207]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/conformation/Conformation.cc:1048] -> [core/conformation/Conformation.cc:1049]: (style) The if condition is the same as the previous if condition
 [core/conformation/Conformation.cc:1049] -> [core/conformation/Conformation.cc:1050]: (style) The if condition is the same as the previous if condition
 [core/conformation/Conformation.cc:164] -> [core/conformation/Conformation.cc:163]: (style) The statement 'if (membrane_info_!=nullptr) membrane_info_=nullptr' is logically equivalent to 'membrane_info_=nullptr'.
@@ -488,34 +454,19 @@
 [core/conformation/Residue.cc:1238]: (style) The scope of the variable 'progress' can be reduced.
 [core/conformation/Residue.cc:1238]: (style) Variable 'progress' is assigned a value that is never used.
 [core/conformation/Residue.cc:847]: (style) Variable 'cterm_residue' is assigned a value that is never used.
-[core/conformation/symmetry/SymmData.cc:1335]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[core/conformation/symmetry/SymmData.cc:1344]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [core/conformation/symmetry/SymmetryInfo.cc:103]: (style) Variable 'fail' is assigned a value that is never used.
 [core/conformation/symmetry/SymmetryInfo.cc:113]: (style) Variable 'fail' is assigned a value that is never used.
 [core/conformation/symmetry/SymmetryInfo.cc:145]: (style) Variable 'fail' is assigned a value that is never used.
 [core/conformation/symmetry/SymmetryInfo.cc:153]: (style) Variable 'fail' is assigned a value that is never used.
-[core/conformation/symmetry/SymmetryInfo.cc:1703]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/symmetry/SymmetryInfo.cc:1720]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/symmetry/SymmetryInfo.cc:1802]: (style) Consider using std::count_if algorithm instead of a raw loop.
 [core/conformation/symmetry/SymmetryInfo.cc:188]: (style) Variable 'fail' is assigned a value that is never used.
 [core/conformation/symmetry/SymmetryInfo.cc:196]: (style) Variable 'fail' is assigned a value that is never used.
 [core/conformation/symmetry/SymmetryInfo.cc:95]: (style) Variable 'fail' is assigned a value that is never used.
 [core/conformation/symmetry/util.cc:226]: (performance) Searching before insertion is not necessary.
 [core/conformation/symmetry/util.cc:804]: (style) Variable 'f_new' is assigned a value that is never used.
-[core/conformation/UltraLightResidue.cc:116]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/UltraLightResidue.cc:120]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/UltraLightResidue.cc:163]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/UltraLightResidue.cc:166]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/UltraLightResidue.cc:56]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/UltraLightResidue.cc:59]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/UltraLightResidue.cc:73]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/UltraLightResidue.cc:76]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/conformation/util.cc:2432]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [core/conformation/util.cc:346] -> [core/conformation/util.cc:356]: (style) The if condition is the same as the previous if condition
 [core/energy_methods/AromaticBackboneRestraintEnergy.cc:205]: (style) Variable 'phi0' is assigned a value that is never used.
 [core/energy_methods/CartesianBondedEnergy.cc:1456]: (style) Unused variable: iter
 [core/energy_methods/CartesianBondedEnergy.cc:4348]: (performance) Searching before insertion is not necessary.
-[core/energy_methods/D2H_SA_Energy.cc:122]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/energy_methods/D2H_SA_Energy.cc:196]: (style) Variable 'pdb_info' is assigned a value that is never used.
 [core/energy_methods/ExactOccludedHbondSolEnergy.cc:920]: (style) Condition '!hydrogens_can_occlude' is always true
 [core/energy_methods/FA_GrpElecEnergy.cc:428]: (style) Variable 'count_pair' is assigned a value that is never used.
@@ -527,14 +478,8 @@
 [core/energy_methods/FiberDiffractionEnergyDens.cc:202]: (style) Variable 'lsum' is assigned a value that is never used.
 [core/energy_methods/FiberDiffractionEnergyDens.cc:218]: (style) Variable 'lsum' is assigned a value that is never used.
 [core/energy_methods/LK_hack.cc:276]: (style) Variable 'cp_weight' is assigned a value that is never used.
-[core/energy_methods/MPSpanAngleEnergy.cc:105]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [core/energy_methods/MPSpanAngleEnergy.cc:88]: (style) Variable 'mp_span_ins' is assigned a value that is never used.
 [core/energy_methods/MPSpanInsertionEnergy.cc:238]: (style) The scope of the variable 'add_tm' can be reduced.
-[core/energy_methods/OccludedHbondSolEnergy.cc:545]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/energy_methods/OccludedHbondSolEnergy.cc:553]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/energy_methods/OccludedHbondSolEnergy_onebody.cc:340]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/energy_methods/OccludedHbondSolEnergy_onebody.cc:398]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/energy_methods/OccludedHbondSolEnergy_onebody.cc:406]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [core/energy_methods/PointWaterEnergy.cc:222]: (style) The scope of the variable 'deriv_protein' can be reduced.
 [core/energy_methods/PointWaterEnergy.cc:223]: (style) The scope of the variable 'deriv_water' can be reduced.
 [core/energy_methods/ProQ_Energy.cc:1255] -> [core/energy_methods/ProQ_Energy.cc:1256]: (style) Same expression on both sides of '-'.
@@ -542,30 +487,15 @@
 [core/energy_methods/ProQ_Energy.cc:571]: (style) Condition 'use_naccess' is always false
 [core/energy_methods/ReferenceEnergy.cc:145]: (style) Same value in both branches of ternary operator.
 [core/energy_methods/ReferenceEnergy.cc:154]: (style) Same value in both branches of ternary operator.
-[core/energy_methods/RNA_FA_ElecEnergy.cc:311]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [core/energy_methods/RNA_FA_ElecEnergy.cc:311]: (style) Variable 'score' is assigned a value that is never used.
-[core/energy_methods/SequenceDependentRefEnergy.cc:101]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/energy_methods/SequenceDependentRefEnergy.cc:121]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/energy_methods/SSElementMotifContactEnergy.cc:91]: (style) Variable 'endSS' is assigned a value that is never used.
-[core/energy_methods/StackElecEnergy.cc:153]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/environment/FoldTreeSketch.cc:251]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[core/environment/FoldTreeSketch.cc:336]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [core/environment/FoldTreeSketch.cc:521]: (style) Variable 'caller_op' is assigned a value that is never used.
-[core/fragment/FrameList.cc:60]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [core/import_pose/atom_tree_diffs/atom_tree_diff.cc:63]: (style) Class 'ScoreLessThanComparator' has a constructor with 1 argument that is not explicit.
 [core/import_pose/import_pose.cc:2111]: (performance) Function parameter 'atomname' should be passed by const reference.
 [core/import_pose/import_pose.cc:2237]: (style) Variable 'rsd_set_coarse' is assigned a value that is never used.
-[core/import_pose/import_pose.cc:295]: (style) Consider using std::count_if algorithm instead of a raw loop.
-[core/import_pose/import_pose.cc:319]: (style) Consider using std::count_if algorithm instead of a raw loop.
 [core/import_pose/import_pose.cc:622]: (style) Variable 'pos2' is assigned a value that is never used.
-[core/import_pose/libraries/BasePairStepLibrary.cc:180]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/import_pose/libraries/RNA_ChunkLibrary.cc:137]: (style) Variable 'non_standard_residue_map' is assigned a value that is never used.
-[core/import_pose/libraries/RNA_JumpLibrary.cc:125]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/import_pose/libraries/RNA_JumpLibrary.cc:130]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [core/import_pose/PDBSilentStruct.cc:211]: (style) Variable 'sfr_op' is assigned a value that is never used.
-[core/import_pose/RNA_DeNovoSetup.cc:1602]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/import_pose/RNA_DeNovoSetup.cc:1618]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/import_pose/RNA_DeNovoSetup.cc:664]: (style) Consider using std::copy algorithm instead of a raw loop.
 [core/import_pose/RNA_DeNovoSetup.cc:731]: (style) The scope of the variable 'c' can be reduced.
 [core/import_pose/RNA_HelixAssembler.cc:294]: (error) Out of bounds access of pose_seq, index 'pose_seq.size()' is out of bounds.
 [core/init/init.cc:1066]: (style) Variable 'path_size' is assigned a value that is never used.
@@ -573,62 +503,23 @@
 [core/init/init.cc:1103] -> [core/init/init.cc:1105]: (style) Variable 'found' is reassigned a value before the old one has been used.
 [core/init/init.cc:1105]: (performance) Inefficient usage of string::find() in condition; string::starts_with() would be faster.
 [core/init/init.cc:1268]: (style) Instance of 'init' object is destroyed immediately.
-[core/io/external/PsiPredInterface.cc:190]: (style) Consider using std::replace_if algorithm instead of a raw loop.
-[core/io/external/PsiPredInterface.cc:312]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/io/external/PsiPredInterface.cc:402]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [core/io/HeaderInformation.cc:761]: (style) Variable 'l_end' is assigned a value that is never used.
 [core/io/HeaderInformation.cc:761]: (style) Variable 'l_len' is assigned a value that is never used.
 [core/io/mmcif/cif_reader.cc:108]: (style) The scope of the variable 'modeltags_present' can be reduced.
 [core/io/mmcif/cif_reader.cc:432]: (performance) Searching before insertion is not necessary.
 [core/io/mmtf/mmtf_reader.cc:542]: (performance) Function parameter 'atom_idx_chains' should be passed by const reference.
-[core/io/mmtf/mmtf_reader.cc:563]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/io/mmtf/mmtf_reader.cc:601]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/io/mmtf/mmtf_writer.cc:269]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/io/mmtf/mmtf_writer.cc:283]: (style) Unused variable: type_check
 [core/io/mmtf/mmtf_writer.cc:378]: (style) Unused variable: model_heterogen_names
 [core/io/mmtf/mmtf_writer.cc:379]: (style) Unused variable: model_residue_type_base_names
 [core/io/mmtf/mmtf_writer.cc:544]: (style) The scope of the variable 'ai' can be reduced.
-[core/io/mmtf/mmtf_writer.cc:546]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/io/pdb/pdb_reader.cc:267]: (performance) Searching before insertion is not necessary.
-[core/io/pose_from_sfr/PoseFromSFRBuilder.cc:1562]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/io/pose_from_sfr/PoseFromSFRBuilder.cc:598]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/io/pose_from_sfr/PoseFromSFRBuilder.cc:623]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/io/pose_to_sfr/PoseToStructFileRepConverter.cc:1330]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/io/pose_to_sfr/PoseToStructFileRepConverter.cc:1335]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/io/silent/ScoreFileSilentStruct.cc:104]: (style) Variable 'energy_names_' is assigned a value that is never used.
 [core/io/silent/ScoreFileSilentStruct.cc:111]: (style) Variable 'energy_names_' is assigned a value that is never used.
-[core/io/silent/SilentFileData.cc:150]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/io/silent/SilentFileData.cc:404]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/io/silent/SilentFileData.cc:516] -> [core/io/silent/SilentFileData.cc:523]: (style) The if condition is the same as the previous if condition
-[core/io/silent/SilentFileData.cc:973]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/io/silent/SilentStruct.cc:1201]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/io/silent/SilentStruct.cc:1202]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/io/silent/SilentStruct.cc:487]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[core/io/silent/SilentStruct.cc:660]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/io/silent/SilentStruct.cc:818]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/io/silent/SilentStructFactory.cc:103]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/io/silent/SilentStructFactory.cc:126]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/io/silent/SilentStructFactory.cc:87]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/io/silent/util.cc:102]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/io/silent/util.cc:103]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/io/silent/util.cc:104]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/io/util.cc:131]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/io/util.cc:254]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/io/util.cc:274]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/io/util.cc:283]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [core/io/util.cc:491]: (performance) Searching before insertion is not necessary.
 [core/io/util.cc:494]: (performance) Searching before insertion is not necessary.
 [core/kinematics/AtomTree.cc:988]: (style) Variable 'atom1' is assigned a value that is never used.
 [core/kinematics/AtomTree.cc:989]: (style) Variable 'atom2' is assigned a value that is never used.
-[core/kinematics/FoldTree.cc:1174]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[core/kinematics/FoldTree.cc:1191]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[core/kinematics/FoldTree.cc:2306]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/kinematics/FoldTree.cc:2323]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[core/kinematics/FoldTree.cc:2341]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[core/kinematics/FoldTree.cc:2356]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[core/kinematics/FoldTree.cc:2370]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[core/kinematics/FoldTree.cc:902]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[core/kinematics/util.cc:619]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/membrane/hull.cc:282]: (error) When i==coords.size(), coords.at(i) is out of bounds.
 [core/optimization/AtomTreeMultifunc.cc:116]: (style) Condition 'dump_silent' is always true
 [core/optimization/AtomTreeMultifunc.cc:127]: (style) Condition 'dump_silent' is always true
@@ -651,17 +542,11 @@
 [core/optimization/symmetry/sym_atom_tree_minimize.cc:573]: (style) Variable 'min_debug.best_norm_analytic' is assigned a value that is never used.
 [core/optimization/symmetry/sym_atom_tree_minimize.cc:574]: (style) Variable 'min_debug.best_norm_numeric' is assigned a value that is never used.
 [core/pack/annealer/MultiCoolAnnealer.cc:457]: (style) Variable 'netstate_to_replace' is assigned a value that is never used.
-[core/pack/guidance_scoreterms/approximate_buried_unsat_penalty/util.cc:439]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/pack/guidance_scoreterms/approximate_buried_unsat_penalty/util.cc:690]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/pack/guidance_scoreterms/approximate_buried_unsat_penalty/util.cc:79]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [core/pack/guidance_scoreterms/voids_penalty_energy/VoidsPenaltyVoxelGrid.cc:186]: (style) Variable 'mirrorsymmconf' is assigned a value that is never used.
 [core/pack/interaction_graph/LinearMemoryInteractionGraph.cc:1043]: (style) Variable 'row_to_wipe' is assigned a value that is never used.
 [core/pack/interaction_graph/LinearMemoryInteractionGraph.cc:1177]: (style) Variable 'row_to_reset' is assigned a value that is never used.
 [core/pack/interaction_graph/LinearMemoryInteractionGraph.cc:445]: (style) Condition '!corresponding_edge_found_in_ig' is always false
 [core/pack/interaction_graph/LinearMemoryInteractionGraph.cc:519]: (style) Condition '!corresponding_edge_found_in_ig' is always false
-[core/pack/interaction_graph/NPDHBSimpleInteractionGraph.cc:242]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/pack/interaction_graph/NPDHBSimpleInteractionGraph.cc:245]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/pack/interaction_graph/ResidueArrayAnnealingEvaluator.cc:438]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [core/pack/interaction_graph/RotamerDots.cc:1130]: (style) Variable 'fraction_uncovered' is assigned a value that is never used.
 [core/pack/interaction_graph/RotamerDots.cc:1131]: (style) Variable 'atom_radius' is assigned a value that is never used.
 [core/pack/interaction_graph/RotamerDots.cc:1133]: (style) Variable 'atom_area_exposed' is assigned a value that is never used.
@@ -671,25 +556,11 @@
 [core/pack/min_pack.cc:1219]: (style) Variable 'packer_neighbor_graph' is assigned a value that is never used.
 [core/pack/pack_rotamers.cc:84]: (style) Variable 'working_task' is assigned a value that is never used.
 [core/pack/pack_rotamers.cc:87]: (style) Variable 'working_task' is assigned a value that is never used.
-[core/pack/palette/PackerPalette.cc:353]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/pack/palette/PackerPalette.cc:442]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/pack/palette/PackerPalette.cc:601]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/pack/palette/PackerPalette.cc:604]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/pack/palette/PackerPalette.cc:830]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/pack/palette/PackerPalette.cc:833]: (style) Consider using std::copy algorithm instead of a raw loop.
 [core/pack/rotamer_set/rna_rotamer_building_functions.cc:269] -> [core/pack/rotamer_set/rna_rotamer_building_functions.cc:273]: (warning) Identical condition 'n_proton_chi==0', second condition is always false
-[core/pack/rotamer_set/RotamerSet_.cc:1665]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[core/pack/rotamer_set/RotamerSet_.cc:1728]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/pack/rotamer_set/RotamerSet_.cc:1734]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/pack/task/operation/ResFilters.cc:111]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/pack/task/operation/ResFilters.cc:152]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/pack/task/operation/ResFilters.cc:193]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/pack/task/operation/ResLvlTaskOperations.cc:242]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/pack/task/operation/TaskOperations.cc:1629] -> [core/pack/task/operation/TaskOperations.cc:1635]: (style) The if condition is the same as the previous if condition
 [core/pack/task/PackerTask_.cc:1087]: (style) Condition 'old_pos!=0' is always true
 [core/pack/task/ResfileReader.cc:668]: (style) Unused variable: basename
 [core/pack/task/ResfileReader.cc:797]: (style) Unused variable: basename
-[core/pack/task/ResidueLevelTask_.cc:965]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [core/pack/task/residue_selector/ClashBasedShellSelector.cc:326]: (performance) Function parameter 'resnums' should be passed by const reference.
 [core/pose/annotated_sequence.cc:181]: (style) The scope of the variable 'is_lower_terminus' can be reduced.
 [core/pose/annotated_sequence.cc:181]: (style) The scope of the variable 'is_upper_terminus' can be reduced.
@@ -699,30 +570,14 @@
 [core/pose/carbohydrates/util.cc:1207]: (style) Variable 'i' is assigned a value that is never used.
 [core/pose/carbohydrates/util.cc:992]: (style) Unused variable: chain_map
 [core/pose/chains_util.cc:476]: (style) Variable 'pdb_info' is assigned a value that is never used.
-[core/pose/chains_util.cc:631]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/pose/full_model_info/FullModelInfo.cc:571]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [core/pose/full_model_info/FullModelParameters.cc:160]: (performance) Searching before insertion is not necessary.
-[core/pose/full_model_info/FullModelParameters.cc:541]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
 [core/pose/full_model_info/FullModelParameters.cc:643]: (style) Condition 'ok' is always true
-[core/pose/full_model_info/FullModelParameterType.cc:88]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/pose/full_model_info/util.cc:523]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/pose/full_model_info/util.cc:572]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/pose/full_model_info/util.cc:587]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/pose/full_model_info/util.cc:98]: (style) Consider using std::copy_if algorithm instead of a raw loop.
 [core/pose/PDBInfo.cc:648]: (style) The scope of the variable 'rr' can be reduced.
-[core/pose/rna/RNA_FilteredBaseBaseInfo.cc:350]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/pose/rna/RNA_FilteredBaseBaseInfo.cc:358]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/pose/rna/RNA_SecStruct.cc:265]: (style) Variable 'spacer_positions_sequence' is assigned a value that is never used.
 [core/pose/rna/RNA_SecStruct.cc:317]: (style) Variable 'stem_count' is assigned a value that is never used.
-[core/pose/rna/RNA_SuiteName.cc:264]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[core/pose/rna/RNA_SuiteName.cc:478]: (style) Consider using std::fill algorithm instead of a raw loop.
-[core/pose/rna/util.cc:1863]: (style) Consider using std::copy algorithm instead of a raw loop.
 [core/pose/rna/util.cc:2419]: (style) Same iterators expression are used for algorithm.
 [core/pose/rna/util.cc:2438]: (style) Same iterators expression are used for algorithm.
 [core/pose/rna/util.cc:270] -> [core/pose/rna/util.cc:953]: (style) Local variable 'is_cutpoint_open' shadows outer function
-[core/pose/rna/util.cc:947]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/pose/selection.cc:272]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/pose/symmetry/util.cc:1627]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/pose/symmetry/util.cc:543]: (style) Variable 'pdb_info_target' is assigned a value that is never used.
 [core/pose/util.cc:811]: (style) Variable 'f_src' is assigned a value that is never used.
 [core/pose/util.cc:811]: (style) Variable 'f_tgt' is assigned a value that is never used.
@@ -732,29 +587,12 @@
 [core/scoring/carbohydrates/CHIEnergyFunction.cc:171]: (style) Variable 'psi_linkages[2]' is assigned a value that is never used.
 [core/scoring/constraints/AmbiguousNMRConstraint.cc:260]: (style) Variable 'total_viol' is assigned a value that is never used.
 [core/scoring/constraints/AmbiguousNMRConstraint.cc:269]: (style) Variable 'total_viol' is assigned a value that is never used.
-[core/scoring/constraints/AmbiguousNMRConstraint.cc:301]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [core/scoring/constraints/AmbiguousNMRDistanceConstraint.cc:772]: (style) Unused variable: type
 [core/scoring/constraints/BackboneStubConstraint.cc:111]: (performance) Searching before insertion is not necessary.
-[core/scoring/constraints/BasePairConstraint.cc:79]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/scoring/constraints/BoundConstraint.cc:89]: (style) Condition 'x<lb_' is always true
 [core/scoring/constraints/ConstraintIO.cc:622]: (error) Uninitialized variable: chain
 [core/scoring/constraints/ConstraintSet.cc:1248] -> [core/scoring/constraints/ConstraintSet.cc:1245]: (style) The statement 'if (sequence_constraints_[ii]!=other.sequence_constraints_[ii]) sequence_constraints_[ii]=other.sequence_constraints_[ii]' is logically equivalent to 'sequence_constraints_[ii]=other.sequence_constraints_[ii]'.
 [core/scoring/constraints/ConstraintSet.cc:242] -> [core/scoring/constraints/ConstraintSet.cc:240]: (style) The statement 'if (sequence_constraints_[ii]!=rhs.sequence_constraints_[ii]) sequence_constraints_[ii]=rhs.sequence_constraints_[ii]' is logically equivalent to 'sequence_constraints_[ii]=rhs.sequence_constraints_[ii]'.
-[core/scoring/constraints/ConstraintSet.cc:781]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/scoring/constraints/ConstraintSet.cc:796]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/scoring/constraints/ConstraintSet.cc:802]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/scoring/constraints/MembraneSpanConstraint.cc:155]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/scoring/constraints/MembraneSpanConstraint.cc:94]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/scoring/constraints/MembraneSpanTermZConstraint.cc:175]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/scoring/constraints/MembraneSpanTermZConstraint.cc:182]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/scoring/constraints/MembraneSpanTermZConstraint.cc:94]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/scoring/constraints/MembraneSpanTermZConstraint.cc:97]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/scoring/constraints/util.cc:163]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[core/scoring/dssp/Dssp.cc:509]: (style) Consider using std::count_if algorithm instead of a raw loop.
-[core/scoring/dssp/Dssp.cc:516]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/scoring/dssp/PairingsList.cc:155]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/scoring/dssp/StrandPairing.cc:267]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/scoring/dssp/StrandPairing.cc:677]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [core/scoring/dssp/StrandPairing.cc:836]: (style) Variable 'bulge' is assigned a value that is never used.
 [core/scoring/electron_density_atomwise/ElectronDensityAtomwise.cc:134]: (style) The scope of the variable 'N' can be reduced.
 [core/scoring/electron_density/ElectronDensity.cc:2209] -> [core/scoring/electron_density/ElectronDensity.cc:2215]: (style) The if condition is the same as the previous if condition
@@ -792,82 +630,29 @@
 [core/scoring/motif/motif_hash_stuff.cc:1162]: (style) Variable 'll' is assigned a value that is never used.
 [core/scoring/motif/motif_hash_stuff.cc:1230]: (style) Argument '-2.0*err' to function exp is always 0
 [core/scoring/motif/motif_hash_stuff.cc:1239]: (performance) Searching before insertion is not necessary.
-[core/scoring/motif/motif_hash_stuff.cc:1249]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/scoring/motif/motif_hash_stuff.cc:1264]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/scoring/motif/motif_hash_stuff.cc:1520]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
-[core/scoring/motif/motif_hash_stuff.cc:1526]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
-[core/scoring/motif/motif_hash_stuff.cc:1814]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/scoring/motif/motif_hash_stuff.cc:1824]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[core/scoring/motif/motif_hash_stuff.cc:1874]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [core/scoring/motif/motif_hash_stuff.cc:328]: (style) Variable 'rt6[6]' is assigned a value that is never used.
 [core/scoring/motif/util.cc:434] -> [core/scoring/motif/util.cc:435]: (style) The if condition is the same as the previous if condition
 [core/scoring/motif/util.cc:442] -> [core/scoring/motif/util.cc:443]: (style) The if condition is the same as the previous if condition
 [core/scoring/motif/xfrags.cc:303]: (style) Variable 'rt6[6]' is assigned a value that is never used.
 [core/scoring/MultipoleElecPotential.cc:1825]: (style) Variable 'multipole_info' is assigned a value that is never used.
-[core/scoring/nmr/NMRDummySpinlabelVoxelGrid.cc:163]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/scoring/nmr/pcs/PCSSingleSet.cc:216]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/scoring/nmr/pre/PRESingleSet.cc:157]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/scoring/nv/NVlookup.cc:82]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/scoring/nv/NVlookup.cc:99]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/scoring/P_AA.cc:106] -> [core/scoring/P_AA.cc:109]: (warning) Identical inner 'if' condition is always true.
 [core/scoring/P_AA.cc:143] -> [core/scoring/P_AA.cc:146]: (warning) Identical inner 'if' condition is always true.
 [core/scoring/packing/PoseBalls.cc:168]: (performance) Searching before insertion is not necessary.
 [core/scoring/packing/PoseBalls.cc:262]: (performance) Searching before insertion is not necessary.
 [core/scoring/packstat/compute_sasa.cc:797]: (performance) Searching before insertion is not necessary.
-[core/scoring/packstat/io.cc:72]: (style) Consider using std::fill algorithm instead of a raw loop.
 [core/scoring/PairEPotential.cc:69] -> [core/scoring/PairEPotential.cc:86]: (warning) Identical inner 'if' condition is always true.
 [core/scoring/Ramachandran.cc:556]: (style) Variable 'phi' is assigned a value that is never used.
 [core/scoring/Ramachandran.cc:557]: (style) Variable 'psi' is assigned a value that is never used.
 [core/scoring/ResidualDipolarCoupling.cc:920]: (style) Variable 'prelen' is assigned a value that is never used.
-[core/scoring/rms_util.cc:1394]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
-[core/scoring/rms_util.cc:1864]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.cc:1579] -> [core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.cc:1578]: (style) The statement 'if (curr_active!=CS_data.atom_name) curr_active=CS_data.atom_name' is logically equivalent to 'curr_active=CS_data.atom_name'.
-[core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.cc:299]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/scoring/rna/RNA_Motif.cc:131]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[core/scoring/rna/RNA_Motif.cc:194]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [core/scoring/sasa.cc:1141]: (style) Variable 'res_hsasa' is assigned a value that is never used.
-[core/scoring/sc/ElectrostaticComplementarityCalculator.cc:281]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/scoring/sc/ElectrostaticComplementarityCalculator.cc:322]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [core/scoring/sc/MolecularSurfaceCalculator.cc:914]: (style) Same expression on both sides of '&&'.
-[core/scoring/ScoreFunction.cc:2079]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/scoring/ScoreFunction.cc:2234]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/scoring/ScoreFunction.cc:2626]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[core/scoring/ScoreFunction.cc:2766]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[core/scoring/ScoreFunction.cc:3404]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/scoring/ScoreFunction.cc:3409]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/scoring/ScoreFunction.cc:3414]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [core/scoring/sc/ShapeComplementarityCalculator.cc:397]: (style) Variable 'rleft' is assigned a value that is never used.
 [core/scoring/SecondaryStructurePotential.cc:1620]: (style) Variable 'ssdist1d(++i)' is assigned a value that is never used.
 [core/scoring/TMscore.cc:204]: (style) Variable 'vt' is assigned a value that is never used.
-[core/select/residue_selector/CloseContactResidueSelector.cc:85]: (style) Consider using std::count_if algorithm instead of a raw loop.
-[core/select/residue_selector/ResiduePropertySelector.cc:196]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/select/residue_selector/SecondaryStructureSelector.cc:283]: (warning) Comparison of a boolean expression with an integer.
-[core/select/residue_selector/SecondaryStructureSelector.cc:298]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[core/select/residue_selector/SecondaryStructureSelector.cc:301]: (style) Consider using std::copy_if algorithm instead of a raw loop.
 [core/select/residue_selector/SSElementSelector.cc:235]: (style) Variable 'nTerm_end' is assigned a value that is never used.
 [core/sequence/ChemicalShiftSequence.cc:102] -> [core/sequence/ChemicalShiftSequence.cc:120]: (style) Variable 'aa_seq' is reassigned a value before the old one has been used.
-[core/sequence/SequenceAlignment.cc:349]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/sequence/SequenceAlignment.cc:489]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/sequence/SequenceFactory.cc:95]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/sequence/sequence_motif.cc:62]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[core/sequence/sequence_motif.cc:76]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/sequence/SequenceProfile.cc:385]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/sequence/SequenceProfile.cc:538]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/sequence/util.cc:145]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/sequence/util.cc:372]: (style) Consider using std::copy algorithm instead of a raw loop.
-[core/simple_metrics/composite_metrics/CompositeEnergyMetric.cc:127]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/simple_metrics/metrics/ResidueSummaryMetric.cc:240]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/simple_metrics/metrics/ResidueSummaryMetric.cc:249]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/simple_metrics/metrics/ResidueSummaryMetric.cc:259]: (style) Consider using std::count_if algorithm instead of a raw loop.
-[core/simple_metrics/metrics/ResidueSummaryMetric.cc:270]: (style) Consider using std::count_if algorithm instead of a raw loop.
-[core/simple_metrics/metrics/ResidueSummaryMetric.cc:282]: (style) Consider using std::count_if algorithm instead of a raw loop.
-[core/simple_metrics/metrics/ResidueSummaryMetric.cc:294]: (style) Consider using std::count_if algorithm instead of a raw loop.
-[core/simple_metrics/metrics/ResidueSummaryMetric.cc:305]: (style) Consider using std::count_if algorithm instead of a raw loop.
-[core/simple_metrics/metrics/ResidueSummaryMetric.cc:316]: (style) Consider using std::count_if algorithm instead of a raw loop.
-[core/simple_metrics/metrics/ResidueSummaryMetric.cc:348]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/simple_metrics/metrics/SasaMetric.cc:111]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/simple_metrics/metrics/TotalEnergyMetric.cc:215]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/simple_metrics/metrics/TotalEnergyMetric.cc:222]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [core/simple_metrics/per_residue_metrics/PerResidueDensityFitMetric.cc:253]: (style) Unused variable: scores
 [numeric/fourier/SHT.cc:328]: (style) Variable 'coeffs_offset' is assigned a value that is never used.
 [numeric/linear_algebra/minimum_bounding_ellipse.cc:63]: (style) Variable 'Q_col2' is assigned a value that is never used.
@@ -877,23 +662,16 @@
 [numeric/model_quality/rms.cc:623]: (style) Variable 'm_v(3,3)' is assigned a value that is never used.
 [numeric/random/random.cc:180]: (portability) Casting between integer* and double* which have an incompatible binary data representation.
 [protocols/abinitio/AbrelaxApplication.cc:1981]: (style) Variable 'orig_cst' is assigned a value that is never used.
-[protocols/abinitio/abscript/RigidChunkCM.cc:815]: (style) Consider using std::copy_if algorithm instead of a raw loop.
 [protocols/abinitio/abscript/StructPerturberCM.cc:96]: (style) Variable 'mm' is assigned a value that is never used.
-[protocols/abinitio/DoubleLayerKinematicAbinitio.cc:84]: (style) Consider using std::copy_if algorithm instead of a raw loop.
 [protocols/abinitio/IterativeBase.cc:1794] -> [protocols/abinitio/IterativeBase.cc:1830]: (style) Local variable 'score_patch' shadows outer variable
 [protocols/abinitio/IterativeBase.cc:2011]: (style) Variable 'loops' is assigned a value that is never used.
 [protocols/abinitio/IterativeBase.cc:475] -> [protocols/abinitio/IterativeBase.cc:530]: (style) Local variable 'scorefxn' shadows outer variable
-[protocols/abinitio/LoopJumpFoldCst.cc:92]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[protocols/abinitio/PairingStatistics.cc:108]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/abinitio/PairingStatistics.cc:134] -> [protocols/abinitio/PairingStatistics.cc:136]: (style) Local variable 'new_pairing' shadows outer variable
-[protocols/abinitio/PairingStatistics.cc:200]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [protocols/abinitio/Template.cc:185] -> [protocols/abinitio/Template.cc:186]: (warning) Either the condition '(tpos=mapping_[pos++])<=0' is redundant or seq.substr() argument nr 1 can have invalid value. The value is -1 but the valid values are '0:'.
 [protocols/abinitio/TemplateJumpSetup.cc:116] -> [protocols/abinitio/TemplateJumpSetup.cc:130]: (style) Local variable 'i' shadows outer variable
-[protocols/abinitio/Templates.cc:273]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/abinitio/Templates.cc:469] -> [protocols/abinitio/Templates.cc:483]: (style) Local variable 'it' shadows outer variable
 [protocols/abinitio/Templates.cc:469] -> [protocols/abinitio/Templates.cc:494]: (style) Local variable 'it' shadows outer variable
 [protocols/analysis/InterfaceAnalyzerMover.cc:1630]: (performance) Prefer prefix ++/-- operators for non-primitive types.
-[protocols/analysis/InterfaceAnalyzerMover.cc:1720]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/antibody/AntibodyInfo.cc:2004] -> [protocols/antibody/AntibodyInfo.cc:2282]: (style) The expression 'h2found == 0' is always true.
 [protocols/antibody/AntibodyInfo.cc:2004] -> [protocols/antibody/AntibodyInfo.cc:2285]: (style) The expression 'h2found == 0' is always true.
 [protocols/antibody/AntibodyInfo.cc:2006]: (style) The scope of the variable 'posl1_s' can be reduced.
@@ -936,19 +714,16 @@
 [protocols/antibody/AntibodyInfo.cc:966]: (style) Condition '!is_H3' is always false
 [protocols/antibody/AntibodyModelerProtocol.cc:336]: (style) Variable 'start_pose_' is assigned a value that is never used.
 [protocols/antibody/CloseOneCDRLoop.cc:130]: (style) Variable 'separation' is assigned a value that is never used.
-[protocols/antibody/clusters/CDRClusterEnumManager.cc:450]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/antibody/clusters/CDRClusterMatcher.cc:136] -> [protocols/antibody/clusters/CDRClusterMatcher.cc:139]: (style) The if condition is the same as the previous if condition
 [protocols/antibody/clusters/CDRClusterMatcher.cc:207] -> [protocols/antibody/clusters/CDRClusterMatcher.cc:209]: (style) The if condition is the same as the previous if condition
 [protocols/antibody/database/AntibodyDatabaseManager.cc:382] -> [protocols/antibody/database/AntibodyDatabaseManager.cc:669]: (style) Local variable 'i' shadows outer variable
 [protocols/antibody/database/AntibodyDatabaseManager.cc:539] -> [protocols/antibody/database/AntibodyDatabaseManager.cc:697]: (style) Local variable 'select_statement' shadows outer variable
-[protocols/antibody/design/AntibodyDesignEnumManager.cc:180]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/antibody/design/AntibodyDesignMover.cc:1134] -> [protocols/antibody/design/AntibodyDesignMover.cc:1145]: (style) The if condition is the same as the previous if condition
 [protocols/antibody/design/AntibodyDesignMover.cc:1598]: (style) Variable 'ab_info' is assigned a value that is never used.
 [protocols/antibody/design/AntibodyDesignMover.cc:875] -> [protocols/antibody/design/AntibodyDesignMover.cc:889]: (style) Local variable 'temp_pose' shadows outer variable
 [protocols/antibody/design/AntibodyDesignMover.cc:875] -> [protocols/antibody/design/AntibodyDesignMover.cc:897]: (style) Local variable 'temp_pose' shadows outer variable
 [protocols/antibody/design/AntibodyDesignMover.cc:996]: (style) Variable 'graft_id' is assigned a value that is never used.
 [protocols/antibody/design/CDRSeqDesignOptions.cc:321]: (style) Same expression on both sides of '||'.
-[protocols/antibody/design/MutateFrameworkForCluster.cc:184]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/antibody/design/util.cc:373]: (error) When i==ab_dock_chains.size(), ab_dock_chains[i] is out of bounds.
 [protocols/antibody_legacy/AntibodyClass.cc:382]: (style) Condition '!is_H3' is always false
 [protocols/antibody_legacy/CDRH3Modeler.cc:1275] -> [protocols/antibody_legacy/CDRH3Modeler.cc:1318]: (style) Local variable 'pack_rottrial' shadows outer variable
@@ -971,46 +746,28 @@
 [protocols/antibody/task_operations/DisableAntibodyRegionOperation.cc:94] -> [protocols/antibody/task_operations/DisableAntibodyRegionOperation.cc:104]: (style) Local variable 'manager' shadows outer variable
 [protocols/antibody/task_operations/DisableCDRsOperation.cc:143] -> [protocols/antibody/task_operations/DisableCDRsOperation.cc:155]: (style) Local variable 'manager' shadows outer variable
 [protocols/antibody/task_operations/DisableCDRsOperation.cc:143]: (style) Variable 'manager' is assigned a value that is never used.
-[protocols/antibody/util.cc:124]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/antibody/util.cc:628]: (style) Condition 'H3_base_only' is always false
-[protocols/backbone_moves/local_backbone_mover/FreePeptide.cc:205]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/calc_taskop_filters/RotamerBoltzmannWeight2.cc:208]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/calc_taskop_filters/RotamerBoltzmannWeight2.cc:220]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/calc_taskop_filters/RotamerBoltzmannWeight.cc:409]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/canonical_sampling/AsyncMPITemperingBase.cc:67] -> [protocols/canonical_sampling/AsyncMPITemperingBase.cc:448]: (style) The expression 'mpi_size_XCHANGE_READY == 2' is always true.
 [protocols/canonical_sampling/AsyncMPITemperingBase.cc:68] -> [protocols/canonical_sampling/AsyncMPITemperingBase.cc:273]: (style) The expression 'mpi_size_SWAP_INVITE == 1' is always true.
 [protocols/canonical_sampling/CanonicalSamplingMover.cc:652]: (style) Condition 'constrain_structure' is always false
-[protocols/canonical_sampling/CanonicalSamplingMover.cc:723]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/canonical_sampling/CanonicalSamplingMover.cc:764]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.cc:279]: (style) Condition 'load_if_missing' is always false
 [protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.cc:742]: (style) Variable 'matching_pool_ptr' is assigned a value that is never used.
 [protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.cc:755]: (warning) Return value of function round() is not used.
 [protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.cc:824]: (warning) Return value of function round() is not used.
 [protocols/carbohydrates/GlycanSampler.cc:367]: (style) Variable 'operate_on_virt_subset' is assigned a value that is never used.
 [protocols/carbohydrates/GlycanSampler.cc:906]: (style) Variable 'energy_pre_move' is assigned a value that is never used.
-[protocols/carbohydrates/GlycanTreeModeler.cc:533]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/cartesian/md.cc:1129]: (style) Condition 'gammat>0.05' is always false
 [protocols/checkpoint/CheckPointer.cc:366]: (style) Variable 'residue_set' is assigned a value that is never used.
 [protocols/checkpoint/CheckPointer.cc:367]: (style) Variable 'residue_set' is assigned a value that is never used.
 [protocols/comparative_modeling/LoopRelaxMover.cc:1040]: (style) Variable 'f_orig' is assigned a value that is never used.
 [protocols/comparative_modeling/LoopRelaxMover.cc:393] -> [protocols/comparative_modeling/LoopRelaxMover.cc:394]: (style) The if condition is the same as the previous if condition
 [protocols/comparative_modeling/LoopRelaxMover.cc:543] -> [protocols/comparative_modeling/LoopRelaxMover.cc:1110]: (style) Local variable 'starttime' shadows outer variable
-[protocols/comparative_modeling/LoopRelaxMover.cc:827]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/comparative_modeling/ThreadingMover.cc:219] -> [protocols/comparative_modeling/ThreadingMover.cc:272]: (style) Local variable 'template_id' shadows outer variable
 [protocols/comparative_modeling/ThreadingMover.cc:226] -> [protocols/comparative_modeling/ThreadingMover.cc:367]: (style) Local variable 'missing' shadows outer variable
 [protocols/comparative_modeling/util.cc:685] -> [protocols/comparative_modeling/util.cc:694]: (style) Local variable 'ai' shadows outer variable
 [protocols/constraint_generator/ConstraintsManager.cc:116]: (style) Variable 'cst_it' is assigned a value that is never used.
-[protocols/constraint_generator/ConstraintsMap.cc:124]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/constraint_generator/DihedralConstraintGenerator.cc:121]: (style) Variable 'current_torsion_angle' is assigned a value that is never used.
-[protocols/constraint_generator/HydrogenBondConstraintGenerator.cc:493]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/constraint_generator/HydrogenBondConstraintGenerator.cc:501]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/constraint_generator/MetalContactsConstraintGenerator.cc:405]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/constraint_generator/MetalContactsConstraintGenerator.cc:450]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/constraint_generator/MetalContactsConstraintGenerator.cc:492]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/constraint_generator/MetalContactsConstraintGenerator.cc:543]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/constraint_generator/MetalContactsConstraintGenerator.cc:588]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/constraint_generator/MetalContactsConstraintGenerator.cc:837]: (style) The scope of the variable 'found' can be reduced.
-[protocols/constraint_generator/MetalContactsConstraintGenerator.cc:875]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [protocols/constraint_generator/RemoveConstraints.cc:67]: (style) Variable 'generators_str' is assigned a value that is never used.
 [protocols/cryst/cryst_rms.cc:319]: (style) Variable 'sumdist' is assigned a value that is never used.
 [protocols/cryst/cryst_rms.cc:329]: (style) Variable 'sumdist' is assigned a value that is never used.
@@ -1021,79 +778,40 @@
 [protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.cc:598] -> [protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.cc:601]: (style) The if condition is the same as the previous if condition
 [protocols/cyclic_peptide/TryDisulfPermutations.cc:298] -> [protocols/cyclic_peptide/TryDisulfPermutations.cc:308]: (style) Local variable 'i' shadows outer variable
 [protocols/ddg/ddG_main.cc:255]: (style) Variable 'wt_averaged_score_components' is assigned a value that is never used.
-[protocols/ddg/ddGMover.cc:215]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/ddg/ddGMover.cc:258]: (style) Consider using std::count_if algorithm instead of a raw loop.
 [protocols/ddg/ddGMover.cc:551] -> [protocols/ddg/ddGMover.cc:325]: (style) Local variable 'min_index' shadows outer function
 [protocols/ddg/ddGMover.cc:551] -> [protocols/ddg/ddGMover.cc:710]: (style) Local variable 'min_index' shadows outer function
 [protocols/ddg/ddGMover.cc:551] -> [protocols/ddg/ddGMover.cc:764]: (style) Local variable 'min_index' shadows outer function
-[protocols/denovo_design/architects/BetaSheetArchitect.cc:310]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/denovo_design/architects/BetaSheetArchitect.cc:321]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/denovo_design/architects/BetaSheetArchitect.cc:341]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/denovo_design/architects/BetaSheetArchitect.cc:485]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/denovo_design/architects/PoseArchitect.cc:87]: (style) Variable 'selector_' is assigned a value that is never used.
-[protocols/denovo_design/architects/StrandArchitect.cc:183]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/denovo_design/architects/StrandArchitect.cc:189]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/denovo_design/architects/StrandArchitect.cc:194]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/denovo_design/architects/StrandArchitect.cc:325]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/denovo_design/architects/StrandArchitect.cc:348]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/denovo_design/components/DivideAndConqueror.cc:173]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/denovo_design/components/FoldGraph.cc:274] -> [protocols/denovo_design/components/FoldGraph.cc:313]: (style) Local variable 'e' shadows outer variable
 [protocols/denovo_design/components/FoldGraph.cc:274] -> [protocols/denovo_design/components/FoldGraph.cc:338]: (style) Local variable 'e' shadows outer variable
 [protocols/denovo_design/components/FoldGraph.cc:274] -> [protocols/denovo_design/components/FoldGraph.cc:341]: (style) Local variable 'e' shadows outer variable
 [protocols/denovo_design/components/FoldGraph.cc:442] -> [protocols/denovo_design/components/FoldGraph.cc:454]: (style) Local variable 'e' shadows outer variable
 [protocols/denovo_design/components/FoldGraph.cc:442] -> [protocols/denovo_design/components/FoldGraph.cc:464]: (style) Local variable 'e' shadows outer variable
-[protocols/denovo_design/components/FoldGraph.cc:561]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/denovo_design/components/FoldGraph.cc:895]: (style) Variable 'solutions_return' is assigned a value that is never used.
 [protocols/denovo_design/components/Picker.cc:104]: (style) Variable 'cached' is assigned a value that is never used.
-[protocols/denovo_design/components/Picker.cc:179]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/denovo_design/components/Segment.cc:438] -> [protocols/denovo_design/components/Segment.cc:441]: (warning) Identical condition 'cutpoint_', second condition is always false
-[protocols/denovo_design/components/SegmentPairing.cc:123]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/denovo_design/components/SheetDB.cc:1151]: (style) Unused variable: orientations_str
 [protocols/denovo_design/components/SheetDB.cc:1286]: (style) Unused variable: retval
 [protocols/denovo_design/components/SheetDB.cc:252] -> [protocols/denovo_design/components/SheetDB.cc:1151]: (style) Local variable 'orientations_str' shadows outer function
-[protocols/denovo_design/components/SheetDB.cc:326]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/denovo_design/components/SheetDB.cc:502]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/denovo_design/components/SheetDB.cc:89]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/denovo_design/components/StructureData.cc:1873]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [protocols/denovo_design/components/StructureData.cc:2250]: (style) Checking if unsigned expression 'movable_group' is less than zero.
-[protocols/denovo_design/components/StructureData.cc:2250]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/denovo_design/components/StructureDataFactory.cc:249] -> [protocols/denovo_design/components/StructureDataFactory.cc:253]: (warning) Identical inner 'if' condition is always true.
-[protocols/denovo_design/components/StructureDataPerturber.cc:346]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/denovo_design/components/StructureDataPerturber.cc:365]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/denovo_design/components/StructureDataWithPose.cc:929]: (style) Throwing a copy of the caught exception instead of rethrowing the original exception.
 [protocols/denovo_design/components/StructureDataWithPose.cc:942]: (style) Throwing a copy of the caught exception instead of rethrowing the original exception.
 [protocols/denovo_design/connection/ConnectionArchitect.cc:381]: (style) Variable 'alt_id' is assigned a value that is never used.
 [protocols/denovo_design/connection/ConnectionArchitect.cc:384]: (style) Variable 'alt_id' is assigned a value that is never used.
-[protocols/denovo_design/connection/ConnectionArchitect.cc:464]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/denovo_design/connection/ConnectionArchitect.cc:554]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/denovo_design/constraints/FileConstraintGenerator.cc:147]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/denovo_design/filters/SSShapeComplementarityFilter.cc:209] -> [protocols/denovo_design/filters/SSShapeComplementarityFilter.cc:222]: (style) Local variable 'r' shadows outer variable
-[protocols/denovo_design/movers/BuildDeNovoBackboneMover.cc:476]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/denovo_design/movers/BuildDeNovoBackboneMover.cc:517]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/denovo_design/movers/RotateSegmentMover.cc:128]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/denovo_design/movers/RotateSegmentMover.cc:204]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/denovo_design/util.cc:447]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [protocols/denovo_design/util.cc:530] -> [protocols/denovo_design/util.cc:538]: (style) Local variable 'i' shadows outer variable
-[protocols/dna/DnaChains.cc:56]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/dna/DnaInterfaceMultiStateDesign.cc:298]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/dna/PDBOutput.cc:225]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/dna/PDBOutput.cc:299]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/dna/util.cc:368]: (style) Condition 'verbosity>=2' is always false
 [protocols/dna/util.cc:379]: (style) Condition 'verbosity>=2' is always false
 [protocols/dna/util.cc:382]: (style) Condition 'verbosity>=2' is always false
-[protocols/dna/util.cc:490]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/dna/util.cc:721]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/docking/DockingEnsemblePrepackProtocol.cc:364] -> [protocols/docking/DockingEnsemblePrepackProtocol.cc:404]: (style) Variable 'starting_pose' is reassigned a value before the old one has been used.
 [protocols/docking/DockingHighResLegacy.cc:318]: (style) Variable 'loop_start' is assigned a value that is never used.
 [protocols/docking/DockingHighResLegacy.cc:319]: (style) Variable 'loop_stop' is assigned a value that is never used.
 [protocols/docking/DockingInitialPerturbation.cc:856]: (style) Variable 'are_touching' is assigned a value that is never used.
-[protocols/docking/DockingInitialPerturbation.cc:866]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/docking/DockTaskFactory.cc:221]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/docking/EllipsoidalRandomizationMover.cc:262]: (style) Variable 'rotated_point_on_ellipsoid' is assigned a value that is never used.
 [protocols/docking/EllipsoidalRandomizationMover.cc:638] -> [protocols/docking/EllipsoidalRandomizationMover.cc:643]: (style) Local variable 'rsd' shadows outer variable
 [protocols/docking/EllipsoidalRandomizationMover.cc:639] -> [protocols/docking/EllipsoidalRandomizationMover.cc:644]: (style) Local variable 'atom_coords' shadows outer variable
 [protocols/docking/membrane/MPFindInterfaceMover.cc:232] -> [protocols/docking/membrane/MPFindInterfaceMover.cc:344]: (style) Local variable 'slide_axis' shadows outer variable
-[protocols/docking/util.cc:281]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [protocols/domain_assembly/AssembleLinkerMover.cc:88] -> [protocols/domain_assembly/AssembleLinkerMover.cc:100]: (style) Local variable 'loops' shadows outer variable
 [protocols/energy_based_clustering/EnergyBasedClusteringProtocol.cc:567]: (style) The scope of the variable 'ir' can be reduced.
 [protocols/energy_based_clustering/EnergyBasedClusteringProtocol.cc:649]: (style) Variable 'buffer' is assigned a value that is never used.
@@ -1101,25 +819,13 @@
 [protocols/environment/CoMTrackerCM.cc:249]: (style) Variable 'pp' is assigned a value that is never used.
 [protocols/environment/CoMTrackerCM.cc:308]: (style) Variable 'stationary_attchmnt_pt' is assigned a value that is never used.
 [protocols/environment/CoMTrackerCM.cc:310]: (style) Variable 'stationary_attchmnt_pt' is assigned a value that is never used.
-[protocols/environment/EnvClaimBroker.cc:309]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/environment/EnvClaimBroker.cc:651]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/enzdes/EnzdesFlexBBProtocol.cc:1541] -> [protocols/enzdes/EnzdesFlexBBProtocol.cc:1571]: (style) Local variable 'looptask' shadows outer variable
 [protocols/enzdes/EnzdesMovers.cc:518] -> [protocols/enzdes/EnzdesMovers.cc:528]: (style) Local variable 'pack_region' shadows outer variable
 [protocols/enzdes/EnzRepackMinimize.cc:125] -> [protocols/enzdes/EnzRepackMinimize.cc:156]: (style) Local variable 'i' shadows outer variable
-[protocols/evaluation/PCA.cc:320]: (style) Consider using std::fill algorithm instead of a raw loop.
-[protocols/evolution/AASynthesisFitnessCostFilter.cc:98]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/evolution/AlignmentAAFinderFilter.cc:157]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/evolution/AlignmentAAFinderFilter.cc:264]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/evolution/AlignmentAAFinderFilter.cc:271]: (style) Condition 'use_stability_in_target_seq_as_cutoff' is always true
-[protocols/evolution/AlignmentGapInserterFilter.cc:167]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/evolution/AlignmentGapInserterFilter.cc:259]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/evolution/EvolutionaryDynamicsMover.cc:239]: (style) Condition 'fixation_probability*fix_p_normalizer>1.0' is always false
 [protocols/evolution/EvolutionaryDynamicsMover.cc:267]: (style) Variable 'pose_sequence' is assigned a value that is never used.
-[protocols/evolution/EvolutionaryDynamicsMover.cc:274]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/features/FeaturesReporter.cc:253]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/features/FeaturesReporter.cc:261]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/features/InterfaceFeatures.cc:491]: (style) Variable 'res_data' is assigned a value that is never used.
-[protocols/features/LoopAnchorFeatures.cc:301]: (style) Consider using std::count_if algorithm instead of a raw loop.
 [protocols/features/ResidueScoresFeatures.cc:432] -> [protocols/features/ResidueScoresFeatures.cc:498]: (style) Local variable 'emap' shadows outer variable
 [protocols/features/SmotifFeatures.cc:242] -> [protocols/features/SmotifFeatures.cc:252]: (style) Local variable 'i' shadows outer variable
 [protocols/features/SmotifFeatures.cc:242] -> [protocols/features/SmotifFeatures.cc:257]: (style) Local variable 'i' shadows outer variable
@@ -1132,7 +838,6 @@
 [protocols/features/strand_assembly/CheckForSandwichFeatures.cc:873]: (style) Variable 'i_resnum_3' is assigned a value that is never used.
 [protocols/features/strand_assembly/CheckForSandwichFeatures.cc:874]: (style) Variable 'j_resnum_3' is assigned a value that is never used.
 [protocols/features/strand_assembly/SandwichFeatures.cc:1295] -> [protocols/features/strand_assembly/SandwichFeatures.cc:1319]: (style) Local variable 'num_of_sheets_that_surround_this_sheet' shadows outer variable
-[protocols/features/strand_assembly/SandwichFeatures.cc:1352]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/features/strand_assembly/StrandBundleFeatures.cc:491] -> [protocols/features/strand_assembly/StrandBundleFeatures.cc:501]: (style) Local variable 'dis_N_O' shadows outer variable
 [protocols/features/strand_assembly/StrandBundleFeatures.cc:493] -> [protocols/features/strand_assembly/StrandBundleFeatures.cc:503]: (style) Local variable 'dis_O_N' shadows outer variable
 [protocols/features/strand_assembly/StrandBundleFeatures.cc:527] -> [protocols/features/strand_assembly/StrandBundleFeatures.cc:540]: (style) Local variable 'dis_O_N' shadows outer variable
@@ -1140,30 +845,21 @@
 [protocols/features/util.cc:134] -> [protocols/features/util.cc:150]: (style) The expression 'rank != 0' is always false.
 [protocols/features/util.cc:134] -> [protocols/features/util.cc:216]: (style) The expression 'rank != 0' is always false.
 [protocols/features/util.cc:274] -> [protocols/features/util.cc:303]: (style) Local variable 'report_name' shadows outer variable
-[protocols/filters/BasicFilters.cc:399]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/fldsgn/filters/SecondaryStructureCountFilter.cc:181]: (style) Variable 'tmp_count' is assigned a value that is never used.
 [protocols/fldsgn/filters/SecondaryStructureCountFilter.cc:183]: (style) Variable 'num_encounter' is assigned a value that is never used.
-[protocols/fldsgn/filters/SheetTopologyFilter.cc:288]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/fldsgn/potentials/sspot/NatbiasHelicesSheetPotential.cc:202] -> [protocols/fldsgn/potentials/sspot/NatbiasHelicesSheetPotential.cc:289]: (style) Local variable 'num' shadows outer variable
 [protocols/fldsgn/topology/BetaAlphaBetaMotif.cc:597]: (warning) Iterators to containers from different expressions 'hx' and 's1' are used together.
 [protocols/fldsgn/topology/BetaAlphaBetaMotif.cc:598]: (warning) Iterators to containers from different expressions 'hx' and 's2' are used together.
 [protocols/fldsgn/topology/BetaAlphaBetaMotif.cc:599]: (warning) Iterators to containers from different expressions 'hx' and 's1' are used together.
 [protocols/fldsgn/topology/BetaAlphaBetaMotif.cc:599]: (warning) Iterators to containers from different expressions 'hx' and 's2' are used together.
-[protocols/fldsgn/topology/HSSTriplet.cc:367]: (style) Consider using std::copy_if algorithm instead of a raw loop.
 [protocols/fldsgn/topology/Sheet.cc:464] -> [protocols/fldsgn/topology/Sheet.cc:478]: (style) Local variable 'neighbor' shadows outer variable
 [protocols/flexpep_docking/FlexPepDockingFlags.cc:478]: (style) Condition 'local_debug' is always true
 [protocols/flexpep_docking/FlexPepDockingProtocol.cc:601]: (style) Variable 'peptide_eigenvectors' is assigned a value that is never used.
-[protocols/flexpep_docking/FlexPepDockingProtocol.cc:611]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/flexpep_docking/FlexPepDockingProtocol.cc:623]: (style) Variable 'binding_site_eigenvectors' is assigned a value that is never used.
 [protocols/flxbb/LayerDesignOperation.cc:1207] -> [protocols/flxbb/LayerDesignOperation.cc:1210]: (style) Local variable 'task_op_type' shadows outer variable
 [protocols/fold_from_loops/filters/RmsdFromResidueSelectorFilter.cc:105]: (style) Variable 'info_str' is assigned a value that is never used.
-[protocols/fold_from_loops/movers/ReleaseConstraintFromResidueMover.cc:95]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/fold_from_loops/utils/Nub.cc:604]: (style) Variable 'unfolded_selection' is assigned a value that is never used.
 [protocols/fold_from_loops/utils/Nub.cc:633]: (style) Condition 'seqmap_[i]==0' is always true
-[protocols/fold_from_loops/utils/utils.cc:110]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/forge/methods/fold_tree_functions.cc:184]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/forge/methods/fold_tree_functions.cc:212]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[protocols/forge/remodel/RemodelAccumulator.cc:200]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/forge/remodel/RemodelData.cc:483]: (style) Condition 'found_idx!=std::string::npos' is always true
 [protocols/forge/remodel/RemodelData.cc:99] -> [protocols/forge/remodel/RemodelData.cc:138]: (style) Local variable 'line' shadows outer variable
 [protocols/forge/remodel/RemodelEnzdesCstModule.cc:68]: (style) Variable 'cst_cache' is assigned a value that is never used.
@@ -1179,21 +875,16 @@
 [protocols/forge/remodel/RemodelLoopMover.cc:3175]: (style) Condition 'cbreak>=cbreak_tolerance' is always true
 [protocols/forge/remodel/RemodelLoopMover.cc:454] -> [protocols/forge/remodel/RemodelLoopMover.cc:478]: (style) Local variable 'PFT' shadows outer variable
 [protocols/forge/remodel/RemodelLoopMover.cc:624]: (style) Condition 'res>segment_length' is always true
-[protocols/forge/remodel/RemodelMover.cc:1441]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
-[protocols/forge/remodel/RemodelMover.cc:1584]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
 [protocols/forge/remodel/RemodelMover.cc:1675]: (style) Variable 'original2modified_interval_endpoints' is assigned a value that is never used.
 [protocols/forge/remodel/RemodelMover.cc:1832]: (style) Variable 'original2modified_interval_endpoints' is assigned a value that is never used.
 [protocols/forge/remodel/RemodelMover.cc:2018]: (style) Variable 'original2modified_interval_endpoints' is assigned a value that is never used.
 [protocols/forge/remodel/RemodelMover.cc:2048] -> [protocols/forge/remodel/RemodelMover.cc:2063]: (style) Local variable 'i' shadows outer variable
 [protocols/forge/remodel/RemodelMover.cc:2048] -> [protocols/forge/remodel/RemodelMover.cc:2077]: (style) Local variable 'i' shadows outer variable
-[protocols/forge/remodel/RemodelMover.cc:441]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/forge/remodel/RemodelMover.cc:521] -> [protocols/forge/remodel/RemodelMover.cc:664]: (style) Local variable 'dssp' shadows outer variable
 [protocols/forge/remodel/RemodelMover.cc:743] -> [protocols/forge/remodel/RemodelMover.cc:984]: (style) Local variable 'i' shadows outer variable
 [protocols/forge/remodel/RemodelMover.cc:743] -> [protocols/forge/remodel/RemodelMover.cc:992]: (style) Local variable 'i' shadows outer variable
 [protocols/forge/remodel/RemodelMover.cc:798] -> [protocols/forge/remodel/RemodelMover.cc:1015]: (style) Local variable 'repeat_number' shadows outer variable
-[protocols/forge/remodel/RemodelWorkingSet.cc:200]: (style) Consider using std::copy_if algorithm instead of a raw loop.
 [protocols/forge/remodel/RemodelWorkingSet.cc:231]: (style) Condition 'i.sstype=="."' is always true
-[protocols/forge/remodel/RemodelWorkingSet.cc:248]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
 [protocols/forge/remodel/RemodelWorkingSet.cc:267]: (style) Condition 'data.blueprint[i].sstype=="."' is always true
 [protocols/forge/remodel/RemodelWorkingSet.cc:436] -> [protocols/forge/remodel/RemodelWorkingSet.cc:456]: (style) Local variable 'i' shadows outer variable
 [protocols/frag_picker/FragmentCandidate.cc:303]: (style) Variable 'mm' is assigned a value that is never used.
@@ -1202,14 +893,12 @@
 [protocols/frag_picker/scores/AmbigCSScore.cc:218]: (style) Variable 'totalCount' is assigned a value that is never used.
 [protocols/frag_picker/scores/AmbigCSScore.cc:232]: (style) Variable 'totalCount' is assigned a value that is never used.
 [protocols/frag_picker/scores/AtomBasedConstraintsScore.cc:105]: (style) Unused variable: it
-[protocols/frag_picker/scores/AtomBasedConstraintsScore.cc:77]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [protocols/frag_picker/scores/CSScore.cc:213]: (style) Variable 'totalCount' is assigned a value that is never used.
 [protocols/frag_picker/scores/CSScore.cc:227]: (style) Variable 'totalCount' is assigned a value that is never used.
 [protocols/frag_picker/scores/GunnCost.cc:138]: (style) Expression 'log(1 + x)' can be replaced by 'log1p(x)' to avoid loss of precision.
 [protocols/frag_picker/scores/GunnCost.cc:139]: (style) Expression 'log(1 + x)' can be replaced by 'log1p(x)' to avoid loss of precision.
 [protocols/frag_picker/scores/GunnCost.cc:140]: (style) Expression 'log(1 + x)' can be replaced by 'log1p(x)' to avoid loss of precision.
 [protocols/frag_picker/scores/PhiPsiRmsd.cc:176]: (style) Variable 'stmp' is assigned a value that is never used.
-[protocols/frags/TorsionFragment.cc:430]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/generalized_kinematic_closure/selector/GeneralizedKICselector.cc:281]: (style) Variable 'fullpose' is assigned a value that is never used.
 [protocols/generalized_kinematic_closure/selector/GeneralizedKICselector.cc:282]: (style) Variable 'looppose' is assigned a value that is never used.
 [protocols/generalized_kinematic_closure/selector/GeneralizedKICselector.cc:311] -> [protocols/generalized_kinematic_closure/selector/GeneralizedKICselector.cc:327]: (style) Condition '!breaknow' is always true
@@ -1217,26 +906,14 @@
 [protocols/generalized_kinematic_closure/selector/GeneralizedKICselector.cc:361]: (style) Variable 'rmsd_current' is assigned a value that is never used.
 [protocols/generalized_kinematic_closure/selector/GeneralizedKICselector.cc:436]: (style) Variable 'dtor_current' is assigned a value that is never used.
 [protocols/grafting/util.cc:193]: (style) Variable 'original_scaffold_tree' is assigned a value that is never used.
-[protocols/hbnet/HBNet.cc:1056]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/hbnet/HBNet.cc:1178]: (style) Variable 'copy' is assigned a value that is never used.
 [protocols/hbnet/HBNet.cc:1195]: (performance) Prefer prefix ++/-- operators for non-primitive types.
-[protocols/hbnet/HBNet.cc:1718]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/hbnet/HBNet.cc:2158]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[protocols/hbnet/HBNet.cc:2163]: (style) Consider using std::copy_if algorithm instead of a raw loop.
 [protocols/hbnet/HBNet.cc:2301] -> [protocols/hbnet/HBNet.cc:2411]: (style) Local variable 'count' shadows outer variable
-[protocols/hbnet/HBNet.cc:2394]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
 [protocols/hbnet/HBNet.cc:2582]: (style) Variable 'current_out_tag' is assigned a value that is never used.
-[protocols/hbnet/HBNet.cc:2854]: (style) Consider using std::count_if algorithm instead of a raw loop.
-[protocols/hbnet/HBNet.cc:2863]: (style) Consider using std::count_if algorithm instead of a raw loop.
 [protocols/hbnet/HBNet.cc:2877] -> [protocols/hbnet/HBNet.cc:2982]: (style) Local variable 'i' shadows outer variable
-[protocols/hbnet/HBNet.cc:4189]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/hbnet/HBNetStapleInterface.cc:769] -> [protocols/hbnet/HBNetStapleInterface.cc:870]: (style) Local variable 'criteria_met' shadows outer variable
 [protocols/hbnet/HBNetStapleInterface.cc:770] -> [protocols/hbnet/HBNetStapleInterface.cc:871]: (style) Local variable 'span_criteria_met' shadows outer variable
 [protocols/hbnet/HBNetStapleInterface.cc:772] -> [protocols/hbnet/HBNetStapleInterface.cc:873]: (style) Local variable 'satisfied_criteria_met' shadows outer variable
-[protocols/hbnet/HBNetStapleInterface.cc:962]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
-[protocols/hbnet/HBNetStapleInterface.cc:983]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/hbnet/HBNet_util.cc:248]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/hbnet/HBNet_util.cc:404]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/helical_bundle/BundleGridSampler.cc:515] -> [protocols/helical_bundle/BundleGridSampler.cc:550]: (style) Local variable 'resname_string' shadows outer variable
 [protocols/helical_bundle/BundleGridSampler.cc:516] -> [protocols/helical_bundle/BundleGridSampler.cc:551]: (style) Local variable 'resname_vect' shadows outer variable
 [protocols/helical_bundle/BundleParametrizationCalculator.cc:282] -> [protocols/helical_bundle/BundleParametrizationCalculator.cc:314]: (warning) Identical condition 'failed', second condition is always false
@@ -1245,12 +922,9 @@
 [protocols/hotspot_hashing/HotspotStubSet.cc:249] -> [protocols/hotspot_hashing/HotspotStubSet.cc:335]: (style) Local variable 'it' shadows outer variable
 [protocols/hotspot_hashing/HotspotStubSet.cc:249] -> [protocols/hotspot_hashing/HotspotStubSet.cc:354]: (style) Local variable 'it' shadows outer variable
 [protocols/hotspot_hashing/HotspotStubSet.cc:335] -> [protocols/hotspot_hashing/HotspotStubSet.cc:340]: (style) Local variable 'it' shadows outer variable
-[protocols/hotspot_hashing/HotspotStubSet.cc:582]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [protocols/hotspot_hashing/HotspotStubSet.cc:707]: (style) Variable 'pose' is assigned a value that is never used.
-[protocols/hotspot_hashing/HotspotStubSet.cc:926]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/hotspot_hashing/HotspotStubSet.cc:952] -> [protocols/hotspot_hashing/HotspotStubSet.cc:953]: (style) Variable 'hs_it' is reassigned a value before the old one has been used.
 [protocols/hybridization/BackboneTorsionSampler.cc:227] -> [protocols/hybridization/BackboneTorsionSampler.cc:297]: (style) Local variable 'i_nest' shadows outer variable
-[protocols/hybridization/ChunkTrialMover.cc:177]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/hybridization/DDomainParse.cc:238]: (style) Variable 'dr' is assigned a value that is never used.
 [protocols/hybridization/DomainAssembly.cc:118] -> [protocols/hybridization/DomainAssembly.cc:131]: (style) Local variable 'ipose' shadows outer variable
 [protocols/hybridization/FoldTreeHybridize.cc:1124]: (style) Variable 'template_chunks_working' is assigned a value that is never used.
@@ -1306,42 +980,20 @@
 [protocols/hydrate/hydrate_functions.cc:166]: (style) Argument '2*sec_resolution*sec_resolution+sec_resolution+1' to function neighbor_sections is always 106
 [protocols/indexed_structure_store/filters/FragmentLookupFilter.cc:159]: (style) Variable 'num_failed_matches' is assigned a value that is never used.
 [protocols/indexed_structure_store/filters/FragmentLookupFilter.cc:166]: (style) Variable 'num_failed_matches' is assigned a value that is never used.
-[protocols/indexed_structure_store/FragmentStore.cc:66]: (style) Consider using std::fill algorithm instead of a raw loop.
 [protocols/indexed_structure_store/FragmentStoreManager.cc:71] -> [protocols/indexed_structure_store/FragmentStoreManager.cc:86]: (style) Local variable 'target_store' shadows outer variable
 [protocols/indexed_structure_store/movers/DirectSegmentLookupMover.cc:234] -> [protocols/indexed_structure_store/movers/DirectSegmentLookupMover.cc:235]: (style) Variable 'config.max_insertion_length' is reassigned a value before the old one has been used.
-[protocols/indexed_structure_store/movers/SegmentSequenceProfileMover.cc:171]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/indexed_structure_store/movers/SegmentSequenceProfileMover.cc:179]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/indexed_structure_store/pose_utility.cc:256]: (performance) Function parameter 'residue_type' should be passed by const reference.
-[protocols/indexed_structure_store/pose_utility.cc:308]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/indexed_structure_store/pose_utility.cc:318]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/indexed_structure_store/search/QueryDatabase.cc:79]: (style) Variable 'chain_end' is assigned a value that is never used.
 [protocols/indexed_structure_store/SSHashedFragmentStore.cc:121]: (performance) Prefer prefix ++/-- operators for non-primitive types.
-[protocols/indexed_structure_store/SSHashedFragmentStore.cc:298]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/indexed_structure_store/SSHashedFragmentStore.cc:346]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/indexed_structure_store/SSHashedFragmentStore.cc:524]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/indexed_structure_store/SSHashedFragmentStore.cc:87]: (performance) Prefer prefix ++/-- operators for non-primitive types.
 [protocols/jd2/archive/ArchiveBase.cc:328]: (error) Uninitialized variable: value
-[protocols/jd2/archive/ArchiveManager.cc:291]: (style) Consider using std::count_if algorithm instead of a raw loop.
 [protocols/jd2/archive/ArchiveManager.cc:364]: (style) Condition 'flag' is always true
-[protocols/jd2/archive/NormalizedEvaluatedArchive.cc:227]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/jd2/FileSystemJobDistributor.cc:271]: (style) Variable 'outputter' is assigned a value that is never used.
-[protocols/jd2/JD2ResourceManagerJobInputter.cc:975]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [protocols/jd2/JobDistributor.cc:623]: (style) The scope of the variable 'allow_job_update' can be reduced.
-[protocols/jd2/JobsContainer.cc:183]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/jd2/JobsContainer.cc:223]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/jd2/mmtfJobOutputter.cc:91]: (style) Variable 'sfr' is assigned a value that is never used.
 [protocols/jd2/SilentFileJobOutputter.cc:90]: (performance) Searching before insertion is not necessary.
-[protocols/jd2/SingleFileBuffer.cc:58]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/jd2/util.cc:324]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/jd3/full_model_inputters/SilentFileFullModelInputter.cc:237]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/jd3/JobGenealogist.cc:402]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/jd3/JobGenealogist.cc:418]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/jd3/pose_inputters/SilentFilePoseInputter.cc:224]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/jd3/pose_outputters/PoseOutputterFactory.cc:139]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [protocols/jumping/JumpSample.cc:470] -> [protocols/jumping/JumpSample.cc:485]: (style) Local variable 'jump_nr' shadows outer variable
 [protocols/jumping/PairingLibrary.cc:608] -> [protocols/jumping/PairingLibrary.cc:623]: (style) Local variable 'jump_nr' shadows outer variable
-[protocols/kinematic_closure/perturbers/PerturberSet.cc:68]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/kinematic_closure/pivot_pickers/FixedOffsetsPivots.cc:42]: (style) Consider using std::copy_if algorithm instead of a raw loop.
 [protocols/legacy_sewing/conformation/Assembly.cc:251]: (style) Unused variable: current_stretch
 [protocols/legacy_sewing/conformation/Assembly.cc:367]: (style) Variable 'reference_is_nter' is assigned a value that is never used.
 [protocols/legacy_sewing/conformation/Assembly.cc:656]: (warning) Possible null pointer dereference: mobile_res
@@ -1366,12 +1018,10 @@
 [protocols/legacy_sewing/sampling/requirements/LegacyRequirementSet.cc:192]: (style) Variable 'violates' is assigned a value that is never used.
 [protocols/legacy_sewing/sampling/SewGraph.cc:622] -> [protocols/legacy_sewing/sampling/SewGraph.cc:649]: (style) Local variable 'it' shadows outer variable
 [protocols/legacy_sewing/sampling/SewGraph.cc:623] -> [protocols/legacy_sewing/sampling/SewGraph.cc:650]: (style) Local variable 'it_end' shadows outer variable
-[protocols/legacy_sewing/sampling/SewGraph.cc:811]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/ligand_docking/GALigandDock/EntropyEstimator.cc:390]: (style) Variable 'pose_min' is assigned a value that is never used.
 [protocols/ligand_docking/GALigandDock/EntropyEstimator.cc:422]: (style) Variable 'pose_min' is assigned a value that is never used.
 [protocols/ligand_docking/GALigandDock/GALigandDock.cc:1372] -> [protocols/ligand_docking/GALigandDock/GALigandDock.cc:1401]: (style) Local variable 'nstruct_ref' shadows outer variable
 [protocols/ligand_docking/GALigandDock/GALigandDock.cc:1660] -> [protocols/ligand_docking/GALigandDock/GALigandDock.cc:1670]: (style) Local variable 'tag_it' shadows outer variable
-[protocols/ligand_docking/GALigandDock/GALigandDock.cc:219]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/ligand_docking/GALigandDock/GALigandDock.cc:367] -> [protocols/ligand_docking/GALigandDock/GALigandDock.cc:374]: (style) Local variable 'i' shadows outer variable
 [protocols/ligand_docking/GALigandDock/GALigandDock.cc:716]: (style) Variable 'lines' is assigned a value that is never used.
 [protocols/ligand_docking/GALigandDock/GAOptimizer.cc:234]: (style) Variable 'move' is assigned a value that is never used.
@@ -1394,8 +1044,6 @@
 [protocols/ligand_docking/HighResEnsemble.cc:279]: (style) Variable 'correlation_before' is assigned a value that is never used.
 [protocols/ligand_docking/HighResEnsemble.cc:545]: (style) Variable 'tied_rank_avg' is assigned a value that is never used.
 [protocols/ligand_docking/HighResEnsemble.cc:546]: (style) Variable 'tied_start' is assigned a value that is never used.
-[protocols/ligand_docking/LigandBaseProtocol.cc:1066]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[protocols/ligand_docking/ligand_scores.cc:291]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/ligand_docking/MinimizeBackbone.cc:248]: (style) Variable 'stop' is assigned a value that is never used.
 [protocols/ligand_docking/ProtLigEnsemble.cc:156] -> [protocols/ligand_docking/ProtLigEnsemble.cc:165]: (style) Local variable 'scorefxn_name' shadows outer variable
 [protocols/ligand_docking/ProtLigEnsemble.cc:347]: (style) The scope of the variable 'mc_result' can be reduced.
@@ -1404,10 +1052,7 @@
 [protocols/ligand_docking/Rotate.cc:143] -> [protocols/ligand_docking/Rotate.cc:160]: (style) Local variable 'chain_ids' shadows outer variable
 [protocols/ligand_docking/Rotate.cc:243]: (style) Variable 'mover' is assigned a value that is never used.
 [protocols/ligand_docking/Rotate.cc:245]: (style) Variable 'mover' is assigned a value that is never used.
-[protocols/ligand_docking/Transform.cc:502]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/ligand_docking/Transform.cc:537]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/ligand_docking/TransformEnsemble.cc:402]: (style) Unused variable: tag
-[protocols/ligand_docking/TransformEnsemble.cc:443]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/ligand_docking/Translate.cc:131] -> [protocols/ligand_docking/Translate.cc:156]: (style) Local variable 'chain_ids' shadows outer variable
 [protocols/loop_build/LoopBuildMover.cc:141] -> [protocols/loop_build/LoopBuildMover.cc:192]: (style) Local variable 'final_score' shadows outer variable
 [protocols/loop_build/LoopMover_SlidingWindow.cc:154]: (style) Variable 'fragset_small_' is assigned a value that is never used.
@@ -1448,10 +1093,7 @@
 [protocols/loophash/LoopHashSampler.cc:190] -> [protocols/loophash/LoopHashSampler.cc:326]: (style) Local variable 'starttime' shadows outer variable
 [protocols/loophash/MPI_LoopHashRefine_Master.cc:288]: (style) Variable 'end_ir' is assigned a value that is never used.
 [protocols/loophash/MPI_LoopHashRefine_Master.cc:368]: (style) Variable 'jt_last' is assigned a value that is never used.
-[protocols/loop_modeler/perturbers/LoopHashPerturber.cc:143]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/loop_modeler/perturbers/LoopHashPerturber.cc:93]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
 [protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.cc:573] -> [protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.cc:588]: (warning) Opposite inner 'if' condition leads to a dead code block.
-[protocols/loops/loop_closure/kinematic_closure/KinematicMover.cc:1114]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.cc:119]: (style) Condition 'counter>limit_' is always true
 [protocols/loops/loop_mover/perturb/LoopMover_CCD.cc:239]: (style) Variable 'start_pose' is assigned a value that is never used.
 [protocols/loops/loop_mover/perturb/LoopMover_KIC.cc:175]: (style) The scope of the variable 'cur_struct' can be reduced.
@@ -1461,15 +1103,8 @@
 [protocols/loops/looprelax_protocols.cc:1139]: (style) The scope of the variable 'n_small_chain_break_fail' can be reduced.
 [protocols/loops/looprelax_protocols.cc:1140]: (style) The scope of the variable 'barcst_flip_flop' can be reduced.
 [protocols/loops/looprelax_protocols.cc:1141]: (style) The scope of the variable 'barcst_small_flip_flop' can be reduced.
-[protocols/loops/Loops.cc:423]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/loops/Loops.cc:440]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/loops/Loops.cc:448]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[protocols/loops/Loops.cc:501]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/loops/loops_main.cc:1437]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/magnesium/MgMinimizer.cc:71]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/magnesium/MgMonteCarlo.cc:175]: (style) Variable 'mg_res' is assigned a value that is never used.
 [protocols/magnesium/MgMonteCarlo.cc:81] -> [protocols/magnesium/MgMonteCarlo.cc:130]: (style) Local variable 'n' shadows outer variable
-[protocols/magnesium/MgOrbitalFrameFinder.cc:170]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/magnesium/MgScanner.cc:114] -> [protocols/magnesium/MgScanner.cc:136]: (style) Local variable 'pose_save' shadows outer variable
 [protocols/magnesium/util.cc:288]: (performance) Prefer prefix ++/-- operators for non-primitive types.
 [protocols/make_rot_lib/MakeRotLibMover.cc:1270] -> [protocols/make_rot_lib/MakeRotLibMover.cc:1271]: (warning) Identical inner 'if' condition is always true.
@@ -1481,27 +1116,16 @@
 [protocols/make_rot_lib/MakeRotLibOptionsData.cc:109] -> [protocols/make_rot_lib/MakeRotLibOptionsData.cc:149]: (style) Local variable 'i' shadows outer variable
 [protocols/make_rot_lib/MakeRotLibOptionsData.cc:46] -> [protocols/make_rot_lib/MakeRotLibOptionsData.cc:110]: (style) Local variable 'line' shadows outer variable
 [protocols/make_rot_lib/MakeRotLibOptionsData.cc:46] -> [protocols/make_rot_lib/MakeRotLibOptionsData.cc:68]: (style) Local variable 'line' shadows outer variable
-[protocols/match/downstream/GeometrySecMatchRPE.cc:411]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/match/downstream/GeometrySecMatchRPE.cc:428]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/match/downstream/GeometrySecMatchRPE.cc:437]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/match/Matcher.cc:1197]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/match/Matcher.cc:1244]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/match/Matcher.cc:1308]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/match/Matcher.cc:2249] -> [protocols/match/Matcher.cc:2256]: (style) Local variable 'n_combos' shadows outer variable
 [protocols/match/Matcher.cc:2797] -> [protocols/match/Matcher.cc:2850]: (style) Local variable 'kk' shadows outer variable
 [protocols/match/MatcherMover.cc:298] -> [protocols/match/MatcherMover.cc:300]: (style) Local variable 'selector_str' shadows outer variable
 [protocols/match/MatcherTask.cc:1267]: (performance) Searching before insertion is not necessary.
-[protocols/match/MatchPositionModifiers.cc:464]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/match/output/PDBWriter.cc:289]: (style) Consider using std::copy_if algorithm instead of a raw loop.
 [protocols/matdes/GetRBDOFValues.cc:194]: (error) Uninitialized variable: sign
 [protocols/matdes/InterfacePackingFilter.cc:140] -> [protocols/matdes/InterfacePackingFilter.cc:239]: (style) Local variable 'ir' shadows outer variable
 [protocols/matdes/InterfacePackingFilter.cc:140] -> [protocols/matdes/InterfacePackingFilter.cc:243]: (style) Local variable 'jr' shadows outer variable
 [protocols/matdes/InterfacePackingFilter.cc:169] -> [protocols/matdes/InterfacePackingFilter.cc:233]: (style) Local variable 'i' shadows outer variable
 [protocols/matdes/MatDesPointMutationCalculator.cc:552]: (style) Redundant condition: !always_eval. 'always_eval || (!always_eval && filter_pass)' is equivalent to 'always_eval || filter_pass'
-[protocols/matdes/MatDesPointMutationCalculator.cc:770]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/matdes/SymUnsatHbondFilter.cc:164]: (style) Variable 'sym_aware_jump_id' is assigned a value that is never used.
-[protocols/membrane/AddMembraneMover.cc:697]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/membrane/AddMembraneMover.cc:700]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/membrane_benchmark/MembraneEnergyLandscapeSampler.cc:195] -> [protocols/membrane_benchmark/MembraneEnergyLandscapeSampler.cc:222]: (style) Local variable 'rotation_delta' shadows outer variable
 [protocols/membrane/OptimizeProteinEmbeddingMover.cc:104]: (style) Variable 'st' is assigned a value that is never used.
 [protocols/membrane/scoring/FaWaterToBilayerEnergy.cc:108]: (performance) Inefficient usage of string::find() in condition; string::starts_with() would be faster.
@@ -1511,18 +1135,13 @@
 [protocols/membrane/util.cc:356] -> [protocols/membrane/util.cc:1517]: (style) Local variable 'com' shadows outer function
 [protocols/membrane/util.cc:356] -> [protocols/membrane/util.cc:1534]: (style) Local variable 'com' shadows outer function
 [protocols/membrane/util.cc:356] -> [protocols/membrane/util.cc:1604]: (style) Local variable 'com' shadows outer function
-[protocols/membrane/util.cc:474]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/minimization_packing/BoltzmannRotamerMover.cc:255]: (style) Variable 'aa_count' is assigned a value that is never used.
 [protocols/minimization_packing/BoltzmannRotamerMover.cc:258]: (style) Variable 'aa_count' is assigned a value that is never used.
-[protocols/minimization_packing/PackRotamersMover.cc:278]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/minimization_packing/RotamerizeMover.cc:149] -> [protocols/minimization_packing/RotamerizeMover.cc:157]: (style) Variable 'flip_rmsd_sum' is reassigned a value before the old one has been used.
 [protocols/minimization_packing/RotamerizeMover.cc:152] -> [protocols/minimization_packing/RotamerizeMover.cc:157]: (style) Variable 'flip_rmsd_sum' is reassigned a value before the old one has been used.
 [protocols/minimization_packing/RotamerizeMover.cc:154] -> [protocols/minimization_packing/RotamerizeMover.cc:157]: (style) Variable 'flip_rmsd_sum' is reassigned a value before the old one has been used.
 [protocols/minimization_packing/RotamerizeMover.cc:176] -> [protocols/minimization_packing/RotamerizeMover.cc:178]: (style) Variable 'flip_rmsd_sum' is reassigned a value before the old one has been used.
 [protocols/minimization_packing/RotamerizeMover.cc:197] -> [protocols/minimization_packing/RotamerizeMover.cc:199]: (style) Variable 'flip_rmsd_sum' is reassigned a value before the old one has been used.
-[protocols/monte_carlo/GenericMonteCarloMover.cc:608]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/monte_carlo/GenericMonteCarloMover.cc:852]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/monte_carlo/GenericSimulatedAnnealer.cc:318]: (style) Consider using std::replace_if algorithm instead of a raw loop.
 [protocols/motif_grafting/movers/MotifGraftMover.cc:1387]: (style) Variable 'tmpDistSqr' is assigned a value that is never used.
 [protocols/motif_grafting/movers/MotifGraftMover.cc:887] -> [protocols/motif_grafting/movers/MotifGraftMover.cc:904]: (style) Local variable 'tmpResi' shadows outer variable
 [protocols/motif_grafting/movers/MotifGraftMover.cc:887] -> [protocols/motif_grafting/movers/MotifGraftMover.cc:962]: (style) Local variable 'tmpResi' shadows outer variable
@@ -1533,23 +1152,14 @@
 [protocols/motifs/LigandMotifSearch.cc:561] -> [protocols/motifs/LigandMotifSearch.cc:804]: (style) Local variable 'trip_atom_1' shadows outer variable
 [protocols/motifs/LigandMotifSearch.cc:562] -> [protocols/motifs/LigandMotifSearch.cc:805]: (style) Local variable 'trip_atom_2' shadows outer variable
 [protocols/motifs/LigandMotifSearch.cc:563] -> [protocols/motifs/LigandMotifSearch.cc:806]: (style) Local variable 'trip_atom_3' shadows outer variable
-[protocols/motifs/LigandMotifSearch.cc:700]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
 [protocols/motifs/LigandMotifSearch.cc:876] -> [protocols/motifs/LigandMotifSearch.cc:878]: (warning) Identical condition 'passed_quick_and_dirty', second condition is always false
-[protocols/motifs/MotifSearch.cc:382]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
-[protocols/moves/PyMOLMover.cc:148]: (style) Consider using std::fill or std::generate algorithm instead of a raw loop.
-[protocols/moves/PyMOLMover.cc:345]: (style) Consider using std::replace_if algorithm instead of a raw loop.
 [protocols/moves/PyMOLMover.cc:486]: (style) Variable 'energy' is assigned a value that is never used.
-[protocols/moves/TrialCounter.cc:48]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/mpi_refinement/MPI_Refine_Master.cc:1201]: (style) Variable 'jt_last' is assigned a value that is never used.
 [protocols/mpi_refinement/Scheduler.cc:446] -> [protocols/mpi_refinement/Scheduler.cc:479]: (style) Local variable 'i' shadows outer variable
 [protocols/mpi_refinement/StructAvrgMover.cc:361]: (error) Out of bounds access of scores, index 'scores.size()' is out of bounds.
-[protocols/multistage_rosetta_scripts/cluster/KMedoids.cc:176]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/multistage_rosetta_scripts/cluster/KMedoidsOnTheFly.cc:74]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/multistage_rosetta_scripts/MRSJobQueen.cc:142]: (warning) Return value of function std::remove_if() is not used.
 [protocols/multistage_rosetta_scripts/MRSJobQueen.cc:142]: (warning) Return value of std::remove_if() ignored. Elements remain in container.
 [protocols/multistage_rosetta_scripts/MRSJobQueen.cc:248] -> [protocols/multistage_rosetta_scripts/MRSJobQueen.cc:254]: (style) Local variable 'input_pose_id' shadows outer variable
-[protocols/multistage_rosetta_scripts/TagManager.cc:115]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/multistage_rosetta_scripts/TagManager.cc:98]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/ncbb/NcbbDockDesignProtocol.cc:267]: (style) Variable 'hbs_seq_positions' is assigned a value that is never used.
 [protocols/ncbb/NcbbDockDesignProtocol.cc:396]: (style) Variable 'pymover' is assigned a value that is never used.
 [protocols/ncbb/oop/OopDockDesignProtocol.cc:463]: (style) Variable 'pymover' is assigned a value that is never used.
@@ -1560,24 +1170,13 @@
 [protocols/ncbb/SecStructFinder.cc:443] -> [protocols/ncbb/SecStructFinder.cc:463]: (style) Local variable 'score' shadows outer variable
 [protocols/ncbb/util.cc:466]: (style) Variable 'score_fxn_' is assigned a value that is never used.
 [protocols/network/cloud.cc:418]: (style) Variable 'res' is assigned a value that is never used.
-[protocols/network/cloud.cc:475]: (style) Consider using std::replace_if algorithm instead of a raw loop.
-[protocols/nmr/pcs/PCSLigandTransformMover.cc:118]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/nmr/pcs/PCSLigandTransformMover.cc:630]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/nmr/pre/PREMover.cc:497]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/noesy_assign/CrossPeakList.cc:160] -> [protocols/noesy_assign/CrossPeakList.cc:170]: (style) Local variable 'filename' shadows outer variable
-[protocols/noesy_assign/CrossPeakList.cc:75]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/noesy_assign/DistanceScoreMover.cc:170] -> [protocols/noesy_assign/DistanceScoreMover.cc:238]: (style) Local variable 'doit' shadows outer variable
-[protocols/noesy_assign/PeakAssignmentResidueMap.cc:267]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[protocols/noesy_assign/PeakAssignmentResidueMap.cc:279]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/noesy_assign/PeakAssignmentResidueMap.cc:390]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/noesy_assign/PeakFileFormat.cc:605]: (style) Variable 'weight' is assigned a value that is never used.
 [protocols/noesy_assign/PeakFileFormat.cc:607]: (style) Variable 'weight' is assigned a value that is never used.
 [protocols/noesy_assign/ResonanceList.cc:121]: (performance) Inefficient usage of string::find() in condition; string::starts_with() would be faster.
-[protocols/noesy_assign/ResonanceList.cc:391]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [protocols/noesy_assign/StructureDependentPeakCalibrator.cc:113] -> [protocols/noesy_assign/StructureDependentPeakCalibrator.cc:128]: (style) Local variable 'pose_ct' shadows outer variable
 [protocols/noesy_assign/StructureDependentPeakCalibrator.cc:128] -> [protocols/noesy_assign/StructureDependentPeakCalibrator.cc:135]: (style) Local variable 'pose_ct' shadows outer variable
-[protocols/nonlocal/util.cc:108]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/nonlocal/util.cc:111]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/normalmode/NormalModeMultiFunc.cc:420]: (style) The scope of the variable 'check_score_components_verbose' can be reduced.
 [protocols/normalmode/NormalModeMultiFunc.cc:425]: (style) Condition '!debug_inaccurateG' is always true
 [protocols/optimize_weights/IterativeOptEDriver.cc:1321] -> [protocols/optimize_weights/IterativeOptEDriver.cc:1331]: (style) Local variable 'ssd' shadows outer variable
@@ -1586,40 +1185,24 @@
 [protocols/optimize_weights/IterativeOptEDriver.cc:2086] -> [protocols/optimize_weights/IterativeOptEDriver.cc:2124]: (style) Local variable 'min_stoptime' shadows outer variable
 [protocols/optimize_weights/IterativeOptEDriver.cc:2093] -> [protocols/optimize_weights/IterativeOptEDriver.cc:2131]: (style) Local variable 'p' shadows outer variable
 [protocols/optimize_weights/IterativeOptEDriver.cc:2506] -> [protocols/optimize_weights/IterativeOptEDriver.cc:2775]: (style) The if condition is the same as the previous if condition
-[protocols/optimize_weights/IterativeOptEDriver.cc:304]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/optimize_weights/IterativeOptEDriver.cc:3111]: (style) Variable 'cross_entropy' is assigned a value that is never used.
-[protocols/optimize_weights/IterativeOptEDriver.cc:3687]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/optimize_weights/IterativeOptEDriver.cc:3692]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/optimize_weights/IterativeOptEDriver.cc:3845]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/optimize_weights/IterativeOptEDriver.cc:3849]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/optimize_weights/NestedEnergyTermOptEData.cc:459] -> [protocols/optimize_weights/NestedEnergyTermOptEData.cc:466]: (style) Local variable 'ss' shadows outer variable
 [protocols/optimize_weights/NestedEnergyTermOptEData.cc:459] -> [protocols/optimize_weights/NestedEnergyTermOptEData.cc:472]: (style) Local variable 'ss' shadows outer variable
-[protocols/optimize_weights/OptEData.cc:3916]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/optimize_weights/OptEData.cc:535] -> [protocols/optimize_weights/OptEData.cc:544]: (style) Local variable 'ss' shadows outer variable
 [protocols/optimize_weights/OptEData.cc:535] -> [protocols/optimize_weights/OptEData.cc:550]: (style) Local variable 'ss' shadows outer variable
 [protocols/pack_daemon/DynamicAggregateFunction.cc:1512] -> [protocols/pack_daemon/DynamicAggregateFunction.cc:1519]: (warning) Identical condition '!input_line', second condition is always false
 [protocols/pack_daemon/DynamicAggregateFunction.cc:1518]: (style) Condition '!colon_found' is always true
-[protocols/pack_daemon/DynamicAggregateFunction.cc:2186]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/pack_daemon/DynamicAggregateFunction.cc:2192]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/pack_daemon/PackDaemon.cc:603] -> [protocols/pack_daemon/PackDaemon.cc:641]: (style) Local variable 'ii' shadows outer variable
-[protocols/pack_daemon/PackDaemon.cc:833]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
-[protocols/peptide_deriver/PeptideDeriverFilter.cc:111]: (style) Consider using std::fill or std::generate algorithm instead of a raw loop.
-[protocols/peptide_deriver/PeptideDeriverFilter.cc:462]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/peptide_deriver/PeptideDeriverMarkdownStreamOutputter.cc:48]: (style) Consider using std::fill or std::generate algorithm instead of a raw loop.
 [protocols/pmut_scan/PointMutScanDriver.cc:327] -> [protocols/pmut_scan/PointMutScanDriver.cc:368]: (style) Local variable 'm' shadows outer variable
 [protocols/pmut_scan/PointMutScanDriver.cc:411] -> [protocols/pmut_scan/PointMutScanDriver.cc:421]: (style) Local variable 'line' shadows outer variable
 [protocols/pmut_scan/PointMutScanDriver.cc:697] -> [protocols/pmut_scan/PointMutScanDriver.cc:705]: (style) Local variable 'ii' shadows outer variable
 [protocols/pockets/Fingerprint.cc:110]: (style) Variable 'residue_name' is assigned a value that is never used.
-[protocols/pockets/Fingerprint.cc:1560]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/pockets/Fingerprint.cc:1573]: (style) Variable 'distant_origin' is assigned a value that is never used.
 [protocols/pockets/Fingerprint.cc:1576]: (style) Variable 'distant_origin' is assigned a value that is never used.
 [protocols/pockets/Fingerprint.cc:2198]: (style) Statements following return, break, continue, goto or throw will never be executed.
 [protocols/pockets/Fingerprint.cc:2245]: (style) Statements following return, break, continue, goto or throw will never be executed.
-[protocols/pockets/Fingerprint.cc:2622]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/pockets/Fingerprint.cc:2625]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/pockets/PocketConstraint.cc:254] -> [protocols/pockets/PocketConstraint.cc:266]: (style) Local variable 'largestPocketVol' shadows outer variable
 [protocols/pockets/PocketGrid.cc:1454]: (style) Condition 'counter2<10' is always true
-[protocols/pockets/PocketGrid.cc:1602]: (style) Consider using std::count_if algorithm instead of a raw loop.
 [protocols/pockets/PocketGrid.cc:2647] -> [protocols/pockets/PocketGrid.cc:2729]: (style) Local variable 'j' shadows outer variable
 [protocols/pockets/PocketGrid.cc:2647] -> [protocols/pockets/PocketGrid.cc:2858]: (style) Local variable 'j' shadows outer variable
 [protocols/pockets/PocketGrid.cc:2647] -> [protocols/pockets/PocketGrid.cc:2877]: (style) Local variable 'j' shadows outer variable
@@ -1627,7 +1210,6 @@
 [protocols/pockets/PocketGrid.cc:2781] -> [protocols/pockets/PocketGrid.cc:2904]: (style) Local variable 'offset' shadows outer variable
 [protocols/pockets/PocketGrid.cc:2827] -> [protocols/pockets/PocketGrid.cc:2857]: (style) Local variable 'i' shadows outer variable
 [protocols/pockets/PocketGrid.cc:3332]: (style) Condition 'counter2<10' is always true
-[protocols/pockets/PocketGrid.cc:4179]: (style) Consider using std::count_if algorithm instead of a raw loop.
 [protocols/pockets/PocketGrid.cc:4902]: (style) Variable 'found_surface' is assigned a value that is never used.
 [protocols/pockets/PocketGrid.cc:5145]: (style) Variable 'found_surface' is assigned a value that is never used.
 [protocols/pose_creation/RepeatPropagationMover.cc:581]: (style) Variable 'loop_phi' is assigned a value that is never used.
@@ -1654,27 +1236,19 @@
 [protocols/pose_length_moves/AnalyzeLoopModeling.cc:93]: (style) Variable 'endLoop' is assigned a value that is never used.
 [protocols/pose_length_moves/FixAllLoopsMover.cc:71]: (style) Variable 'endLoop' is assigned a value that is never used.
 [protocols/pose_length_moves/InsertResMover.cc:140]: (style) Variable 'backupFt' is assigned a value that is never used.
-[protocols/pose_length_moves/NearNativeLoopCloser.cc:236]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/pose_length_moves/NearNativeLoopCloser.cc:263]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/pose_length_moves/NearNativeLoopCloser.cc:272]: (style) Redundant condition: fullatom_original. '!A || (A && B)' is equivalent to '!A || B'
 [protocols/pose_length_moves/NearNativeLoopCloser.cc:530]: (style) Variable 'frag_rot_cmap' is assigned a value that is never used.
 [protocols/pose_length_moves/NearNativeLoopCloser.cc:570]: (style) Variable 'frag_rot_cmap' is assigned a value that is never used.
 [protocols/pose_metric_calculators/ExplicitWaterUnsatisfiedPolarsCalculator.cc:177] -> [protocols/pose_metric_calculators/ExplicitWaterUnsatisfiedPolarsCalculator.cc:186]: (style) Local variable 'i' shadows outer variable
 [protocols/pose_metric_calculators/ExplicitWaterUnsatisfiedPolarsCalculator.cc:254] -> [protocols/pose_metric_calculators/ExplicitWaterUnsatisfiedPolarsCalculator.cc:268]: (style) Local variable 'rsd_set' shadows outer variable
-[protocols/pose_metric_calculators/NeighborhoodByDistanceCalculator.cc:133]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/pose_metric_calculators/RotamerBoltzCalculator.cc:371]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/protein_interface_design/filters/AtomicContactCountFilter.cc:369]: (style) The scope of the variable 'j_is_not_in' can be reduced.
 [protocols/protein_interface_design/filters/AtomicContactCountFilter.cc:383]: (style) Redundant condition: count_SD_NE1_. '!A || (A && B)' is equivalent to '!A || B'
 [protocols/protein_interface_design/filters/AtomicContactCountFilter.cc:390]: (style) Redundant condition: count_SD_NE1_. '!A || (A && B)' is equivalent to '!A || B'
-[protocols/protein_interface_design/filters/FilterScan.cc:328]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/protein_interface_design/filters/RmsdFilter.cc:515]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/protein_interface_design/filters/RmsdSimpleFilter.cc:281]: (style) Variable 'tmpDistSqr' is assigned a value that is never used.
-[protocols/protein_interface_design/movers/BackrubDDMover.cc:198]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/protein_interface_design/movers/InterfaceRecapitulationMover.cc:135] -> [protocols/protein_interface_design/movers/InterfaceRecapitulationMover.cc:141]: (style) Local variable 'rsd' shadows outer variable
 [protocols/protein_interface_design/movers/LoopRemodel.cc:213] -> [protocols/protein_interface_design/movers/LoopRemodel.cc:265]: (style) Local variable 'i' shadows outer variable
 [protocols/protein_interface_design/movers/LoopRemodel.cc:403] -> [protocols/protein_interface_design/movers/LoopRemodel.cc:426]: (style) Local variable 'it' shadows outer variable
 [protocols/protein_interface_design/movers/PlacementAuctionMover.cc:206] -> [protocols/protein_interface_design/movers/PlacementAuctionMover.cc:258]: (style) Local variable 'hs_set' shadows outer variable
-[protocols/protein_interface_design/movers/PlacementAuctionMover.cc:292]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [protocols/protein_interface_design/movers/PlaceOnLoop.cc:204]: (style) Variable 'saved_bb_constraints' is assigned a value that is never used.
 [protocols/protein_interface_design/movers/PlaceSimultaneouslyMover.cc:164] -> [protocols/protein_interface_design/movers/PlaceSimultaneouslyMover.cc:200]: (style) Local variable 'stub_scorefxn' shadows outer variable
 [protocols/protein_interface_design/movers/PlaceSimultaneouslyMover.cc:806] -> [protocols/protein_interface_design/movers/PlaceSimultaneouslyMover.cc:808]: (style) Argument 'drSOP!=nullptr' to function runtime_assert is always 0
@@ -1682,9 +1256,7 @@
 [protocols/protein_interface_design/movers/PlaceStubMover.cc:1183] -> [protocols/protein_interface_design/movers/PlaceStubMover.cc:1185]: (style) Argument 'drSOP!=nullptr' to function runtime_assert is always 0
 [protocols/protein_interface_design/movers/PlaceStubMover.cc:1202] -> [protocols/protein_interface_design/movers/PlaceStubMover.cc:1204]: (style) Argument 'drOP!=nullptr' to function runtime_assert is always 0
 [protocols/protein_interface_design/movers/PlaceStubMover.cc:426] -> [protocols/protein_interface_design/movers/PlaceStubMover.cc:485]: (style) Local variable 'curr_bonus' shadows outer variable
-[protocols/protein_interface_design/movers/PlaceStubMover.cc:686]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/protein_interface_design/movers/PlaceStubMover.cc:846] -> [protocols/protein_interface_design/movers/PlaceStubMover.cc:872]: (style) Local variable 'it' shadows outer variable
-[protocols/protein_interface_design/movers/ProteinInterfaceMultiStateDesignMover.cc:464]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/protein_interface_design/movers/SetAtomTree.cc:79] -> [protocols/protein_interface_design/movers/SetAtomTree.cc:171]: (style) Local variable 'anchor_num' shadows outer variable
 [protocols/protein_interface_design/movers/SetAtomTree.cc:79] -> [protocols/protein_interface_design/movers/SetAtomTree.cc:458]: (style) Local variable 'anchor_num' shadows outer variable
 [protocols/protein_interface_design/movers/SetAtomTree.cc:80] -> [protocols/protein_interface_design/movers/SetAtomTree.cc:173]: (style) Local variable 'connect_from' shadows outer variable
@@ -1692,14 +1264,6 @@
 [protocols/protein_interface_design/movers/SetAtomTree.cc:81] -> [protocols/protein_interface_design/movers/SetAtomTree.cc:172]: (style) Local variable 'connect_to' shadows outer variable
 [protocols/protein_interface_design/movers/SetAtomTree.cc:81] -> [protocols/protein_interface_design/movers/SetAtomTree.cc:452]: (style) Local variable 'connect_to' shadows outer variable
 [protocols/protein_interface_design/movers/SetupHotspotConstraintsLoopsMover.cc:246]: (style) Argument 'worst_allowed_stub_bonus<1E-6' to function runtime_assert is always 1
-[protocols/qsar/scoring_grid/ChargeGrid.cc:120]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/qsar/scoring_grid/GridSet.cc:146]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/qsar/scoring_grid/GridSet.cc:201]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/qsar/scoring_grid/GridSet.cc:218]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/qsar/scoring_grid/GridSet.cc:386]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/qsar/scoring_grid/GridSet.cc:399]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/qsar/scoring_grid/SolvationMetaGrid.cc:237]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/qsar/scoring_grid/SolvationMetaGrid.cc:247]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/rbsegment_relax/IdealizeHelices.cc:180] -> [protocols/rbsegment_relax/IdealizeHelices.cc:272]: (style) Local variable 'ww' shadows outer variable
 [protocols/rbsegment_relax/IdealizeHelices.cc:181] -> [protocols/rbsegment_relax/IdealizeHelices.cc:273]: (style) Local variable 'uu' shadows outer variable
 [protocols/rbsegment_relax/IdealizeHelices.cc:182] -> [protocols/rbsegment_relax/IdealizeHelices.cc:274]: (style) Local variable 'com1' shadows outer variable
@@ -1709,28 +1273,21 @@
 [protocols/rbsegment_relax/IdealizeHelices.cc:225] -> [protocols/rbsegment_relax/IdealizeHelices.cc:307]: (style) Local variable 'ctx' shadows outer variable
 [protocols/rbsegment_relax/IdealizeHelices.cc:225] -> [protocols/rbsegment_relax/IdealizeHelices.cc:307]: (style) Local variable 'rms' shadows outer variable
 [protocols/rbsegment_relax/IdealizeHelices.cc:228] -> [protocols/rbsegment_relax/IdealizeHelices.cc:310]: (style) Local variable 'R' shadows outer variable
-[protocols/rbsegment_relax/RBSegment.cc:308]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/rbsegment_relax/util.cc:319]: (style) Variable 'jumps' is assigned a value that is never used.
 [protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.cc:154] -> [protocols/recces/sampler/rna/MC_RNA_KIC_Sampler.cc:155]: (style) Local variable 'i' shadows outer variable
 [protocols/recces/scratch/ThermalMinimizer.cc:418]: (style) The scope of the variable 'did_move' can be reduced.
 [protocols/recces/scratch/ThermalSamplingMover.cc:193] -> [protocols/recces/scratch/ThermalSamplingMover.cc:262]: (style) Local variable 'sample_near_a_form' shadows outer variable
 [protocols/recces/scratch/ThermalSamplingMover.cc:369]: (style) The scope of the variable 'did_move' can be reduced.
 [protocols/recces/setup_util.cc:120]: (style) Variable 'rsd_set' is assigned a value that is never used.
-[protocols/recces/stdev_util.cc:279]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/recces/util.cc:134]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/relax/cst_util.cc:82]: (style) Variable 'cst_set' is assigned a value that is never used.
 [protocols/relax/FastRelax.cc:1099]: (style) Unused variable: line
-[protocols/relax/FastRelax.cc:1235]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/relax/LocalRelax.cc:220]: (style) The scope of the variable 'dump_idx' can be reduced.
 [protocols/relax/membrane/util.cc:109]: (error) When i==wt_id_mut.size(), wt_id_mut[i] is out of bounds.
 [protocols/relax/membrane/util.cc:131]: (error) When i==wt_id_mut.size(), wt_id_mut[i] is out of bounds.
-[protocols/relax/RelaxScriptManager.cc:230]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [protocols/relax/RepeatProteinRelax.cc:170]: (style) Argument 'base_repeat>1' to function runtime_assert is always 1
 [protocols/relax/RepeatProteinRelax.cc:233]: (style) Argument 'base_repeat>1' to function runtime_assert is always 1
 [protocols/relax/RepeatProteinRelax.cc:82]: (style) Variable 'endLoop' is assigned a value that is never used.
 [protocols/residue_optimization/MetapatchEnumeration.cc:251]: (style) Variable 'starting_name' is assigned a value that is never used.
-[protocols/residue_selectors/HBondSelector.cc:310]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[protocols/residue_selectors/LigandMetalContactSelector.cc:221]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [protocols/rigid/RB_geometry.cc:156] -> [protocols/rigid/RB_geometry.cc:156] -> [protocols/rigid/RB_geometry.cc:161]: (style) Same expression in both branches of ternary operator.
 [protocols/rigid/RB_geometry.cc:156] -> [protocols/rigid/RB_geometry.cc:182]: (style) The expression 'upstream_atoms > 0' is always false.
 [protocols/rigid/RB_geometry.cc:156] -> [protocols/rigid/RB_geometry.cc:186]: (style) The expression 'downstream_atoms > 0' is always false.
@@ -1738,15 +1295,9 @@
 [protocols/rigid/RB_geometry.cc:234] -> [protocols/rigid/RB_geometry.cc:234] -> [protocols/rigid/RB_geometry.cc:270]: (style) Same expression on both sides of '||' because 'upstream_atoms==0' and 'downstream_atoms==0' represent the same value.
 [protocols/rigid/RigidBodyMover.cc:1637]: (style) Variable 'start' is assigned a value that is never used.
 [protocols/rigid/RigidBodyMover.cc:1638]: (style) Variable 'end' is assigned a value that is never used.
-[protocols/rna/denovo/output/RNA_FragmentMonteCarloOutputter.cc:215]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/rna/denovo/output/RNA_FragmentMonteCarloOutputter.cc:217]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/rna/denovo/output/RNA_FragmentMonteCarloOutputter.cc:218]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/rna/denovo/output/RNA_FragmentMonteCarloOutputter.cc:219]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/rna/denovo/RNA_DeNovoPoseInitializer.cc:307]: (style) Variable 'pose_copy' is assigned a value that is never used.
 [protocols/rna/denovo/RNA_DeNovoPoseInitializer.cc:345]: (style) The scope of the variable 'success' can be reduced.
 [protocols/rna/denovo/RNA_DeNovoPoseInitializer.cc:627] -> [protocols/rna/denovo/RNA_DeNovoPoseInitializer.cc:1059]: (style) Local variable 'all_res_lists' shadows outer variable
-[protocols/rna/denovo/RNA_DeNovoPoseInitializer.cc:632]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/rna/denovo/RNA_DeNovoPoseInitializer.cc:837]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/rna/denovo/RNA_DeNovoPoseInitializer.cc:878] -> [protocols/rna/denovo/RNA_DeNovoPoseInitializer.cc:935]: (style) Local variable 'it' shadows outer variable
 [protocols/rna/movers/ErraserMinimizerMover.cc:962]: (style) Variable 'pose_full' is assigned a value that is never used.
 [protocols/rna/movers/RNA_LoopCloser.cc:298] -> [protocols/rna/movers/RNA_LoopCloser.cc:303]: (style) The if condition is the same as the previous if condition
@@ -1755,12 +1306,6 @@
 [protocols/rna/movers/RNAThreadAndMinimizeMover.cc:303] -> [protocols/rna/movers/RNAThreadAndMinimizeMover.cc:369]: (style) Local variable 'ii' shadows outer variable
 [protocols/rna/movers/RNAThreadAndMinimizeMover.cc:303] -> [protocols/rna/movers/RNAThreadAndMinimizeMover.cc:381]: (style) Local variable 'ii' shadows outer variable
 [protocols/rna/movers/RNAThreadAndMinimizeMover.cc:668]: (style) Variable 'clean_target_sequence' is assigned a value that is never used.
-[protocols/rosetta_scripts/MultiplePoseMover.cc:224]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/rosetta_scripts/MultiplePoseMover.cc:274]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/rosetta_scripts/ParsedProtocol.cc:624]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/rosetta_scripts/ParsedProtocol.cc:636]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/rosetta_scripts/RosettaScriptsParser.cc:755]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/rosetta_scripts/RosettaScriptsParser.cc:979]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [protocols/rosetta_scripts/XmlObjects.cc:134]: (style) The scope of the variable 'modified_pose' can be reduced.
 [protocols/rosetta_scripts/XmlObjects.cc:146]: (style) Throwing a copy of the caught exception instead of rethrowing the original exception.
 [protocols/rosetta_scripts/XmlObjects.cc:189]: (style) The scope of the variable 'modified_pose' can be reduced.
@@ -1771,13 +1316,6 @@
 [protocols/rosetta_scripts/XmlObjects.cc:458]: (style) Throwing a copy of the caught exception instead of rethrowing the original exception.
 [protocols/rosetta_scripts/XmlObjects.cc:512]: (style) Throwing a copy of the caught exception instead of rethrowing the original exception.
 [protocols/rosetta_scripts/XmlObjects.cc:566]: (style) Throwing a copy of the caught exception instead of rethrowing the original exception.
-[protocols/rosetta_scripts/XmlObjects.cc:580]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/rosetta_scripts/XmlObjects.cc:590]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/rosetta_scripts/XmlObjects.cc:599]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/rosetta_scripts/XmlObjects.cc:609]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/rosetta_scripts/XmlObjects.cc:619]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/rosetta_scripts/XmlObjects.cc:629]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/scoring/ImplicitFastClashCheck.cc:237]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/scoring/ImplicitFastClashCheck.cc:266]: (style) Variable 'bclash' is assigned a value that is never used.
 [protocols/scoring/methods/pcs2/PcsEnergy.cc:593] -> [protocols/scoring/methods/pcs2/PcsEnergy.cc:603]: (style) The if condition is the same as the previous if condition
 [protocols/scoring/methods/pcs2/PcsEnergy.cc:755] -> [protocols/scoring/methods/pcs2/PcsEnergy.cc:765]: (style) The if condition is the same as the previous if condition
@@ -1793,87 +1331,52 @@
 [protocols/scoring/methods/pcsTs3/PseudocontactShiftInput.cc:169]: (style) Variable 'weight_sum' is assigned a value that is never used.
 [protocols/scoring/methods/pcsTs4/PseudocontactShiftInput.cc:176]: (style) Variable 'weight_sum' is assigned a value that is never used.
 [protocols/scoring/methods/pcsTs4/PseudocontactShiftInput.cc:178]: (style) Variable 'weight_sum' is assigned a value that is never used.
-[protocols/seeded_abinitio/CloseFold.cc:296]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
 [protocols/seeded_abinitio/CloseFold.cc:316]: (style) Condition 'chainbreak_present' is always true
-[protocols/seeded_abinitio/DefineMovableLoops.cc:222]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
 [protocols/seeded_abinitio/GrowPeptides.cc:206]: (style) Variable 'saved_pose' is assigned a value that is never used.
 [protocols/seeded_abinitio/GrowPeptides.cc:280]: (style) Variable 'cutpoints' is assigned a value that is never used.
 [protocols/seeded_abinitio/GrowPeptides.cc:299]: (style) Variable 'cutpoints' is assigned a value that is never used.
 [protocols/seeded_abinitio/SeedFoldTree.cc:359]: (style) Variable 'rb_jump' is assigned a value that is never used.
 [protocols/seeded_abinitio/SegmentHybridizer.cc:301]: (style) Variable 'pose_in' is assigned a value that is never used.
-[protocols/sewing/data_storage/SmartAssembly.cc:1795]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/sewing/data_storage/SmartAssembly.cc:709]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/sewing/data_storage/SmartAssembly.cc:897]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/sewing/data_storage/SmartSegment.cc:428]: (style) Variable 'src_vec' is assigned a value that is never used.
 [protocols/sewing/hashing/Hasher.cc:252]: (style) Variable 'curr_atom' is assigned a value that is never used.
-[protocols/sewing/hashing/LigandBindingResPlacer.cc:331]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/sewing/hashing/LigandBindingResPlacer.cc:58]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/sewing/hashing/LigandBindingResPlacer.cc:63]: (style) Redundant condition: contact->segment_id==0. 'A || (!A && B)' is equivalent to 'A || B'
-[protocols/sewing/hashing/LigandBindingResPlacer.cc:64]: (style) Consider using std::count_if algorithm instead of a raw loop.
-[protocols/sewing/hashing/LigandBindingResPlacer.cc:974]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/sewing/movers/AppendAssemblyMover.cc:389]: (style) Unused variable: pdb_conformers
 [protocols/sewing/movers/AssemblyMover.cc:201]: (style) Variable 'revertable_move' is assigned a value that is never used.
 [protocols/sewing/movers/AssemblyMover.cc:202]: (style) The scope of the variable 'revert' can be reduced.
 [protocols/sewing/movers/AssemblyMover.cc:202]: (style) Variable 'revert' is assigned a value that is never used.
 [protocols/sewing/movers/AssemblyMover.cc:204]: (style) The scope of the variable 'scored_this_cycle' can be reduced.
 [protocols/sewing/movers/AssemblyMover.cc:204]: (style) Variable 'scored_this_cycle' is assigned a value that is never used.
-[protocols/sewing/movers/LigandBindingAssemblyMover.cc:182]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/sewing/movers/LigandBindingAssemblyMover.cc:220]: (style) Unused variable: remaining_contacts_to_make
-[protocols/sewing/movers/LigandBindingAssemblyMover.cc:464]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
-[protocols/sewing/requirements/LigandClashRequirement.cc:87]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/sewing/scoring/LigandScorer.cc:118]: (style) Condition '!(current_ligand_score>0.0)' is always true
 [protocols/sic_dock/loophash_util.cc:210] -> [protocols/sic_dock/loophash_util.cc:215]: (style) Local variable 'i' shadows outer variable
 [protocols/sic_dock/scores/MotifHashRigidScore.cc:181]: (performance) Searching before insertion is not necessary.
 [protocols/sic_dock/scores/MotifHashRigidScore.cc:182]: (performance) Searching before insertion is not necessary.
 [protocols/sic_dock/scores/MotifHashRigidScore.cc:188]: (performance) Searching before insertion is not necessary.
 [protocols/sic_dock/scores/MotifHashRigidScore.cc:189]: (performance) Searching before insertion is not necessary.
-[protocols/sic_dock/scores/MotifHashRigidScore.cc:207]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/sic_dock/scores/MotifHashRigidScore.cc:208]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/sic_dock/scores/TrisBpyScore.cc:57] -> [protocols/sic_dock/scores/TrisBpyScore.cc:145]: (style) Local variable 'N' shadows outer variable
 [protocols/sic_dock/scores/TrisBpyScore.cc:58] -> [protocols/sic_dock/scores/TrisBpyScore.cc:146]: (style) Local variable 'CA' shadows outer variable
 [protocols/sic_dock/scores/TrisBpyScore.cc:59] -> [protocols/sic_dock/scores/TrisBpyScore.cc:147]: (style) Local variable 'C' shadows outer variable
-[protocols/sic_dock/SICFast.cc:313]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/sic_dock/SICFast.cc:314]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/simple_ddg/ddG.cc:446] -> [protocols/simple_ddg/ddG.cc:455]: (style) The if condition is the same as the previous if condition
 [protocols/simple_ddg/SSElementBisectddGFilter.cc:153]: (style) Variable 'endSS' is assigned a value that is never used.
 [protocols/simple_ddg/SSElementBisectddGFilter.cc:219]: (style) Variable 'chain1' is assigned a value that is never used.
 [protocols/simple_ddg/SSElementBisectddGFilter.cc:220]: (style) Variable 'chain2' is assigned a value that is never used.
-[protocols/simple_filters/DomainInterfaceFilter.cc:116]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/simple_filters/InterfaceHydrophobicResidueContactsFilter.cc:188]: (style) Consider using std::any_of, std::all_of, std::none_of, or std::accumulate algorithm instead of a raw loop.
-[protocols/simple_filters/InterfaceSasaFilter.cc:241]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/simple_filters/MPSpanAngleFilter.cc:102]: (style) Variable 'temp_status' is assigned a value that is never used.
 [protocols/simple_filters/MPSpanAngleFilter.cc:134]: (style) Variable 'temp_status' is assigned a value that is never used.
-[protocols/simple_filters/MPSpanAngleFilter.cc:182]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/simple_filters/PoseCommentFilter.cc:102]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/simple_filters/RepeatParameterFilter.cc:218]: (style) Variable 'scalar' is assigned a value that is never used.
 [protocols/simple_filters/ResidueDepthFilter.cc:1077]: (style) Same expression on both sides of '||'.
 [protocols/simple_filters/SequenceDistanceFilter.cc:107]: (error) When i==pose_sequence.size(), pose_sequence[i] is out of bounds.
-[protocols/simple_filters/SimpleMetricFilter.cc:164]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/simple_filters/SimpleMetricFilter.cc:356]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[protocols/simple_filters/SimpleMetricFilter.cc:364]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[protocols/simple_filters/SimpleMetricFilter.cc:372]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[protocols/simple_filters/SimpleMetricFilter.cc:400]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[protocols/simple_filters/SimpleMetricFilter.cc:408]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[protocols/simple_filters/SimpleMetricFilter.cc:416]: (style) Consider using std::find_if algorithm instead of a raw loop.
-[protocols/simple_filters/SimpleMetricFilter.cc:477]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/simple_filters/SSElementLengthFilter.cc:120]: (style) Variable 'endSS' is assigned a value that is never used.
 [protocols/simple_filters/SSElementMotifContactFilter.cc:118]: (style) Variable 'endSS' is assigned a value that is never used.
-[protocols/simple_filters/StemFinderFilter.cc:208]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/simple_filters/TaskAwareScoreTypeFilter.cc:196]: (style) Variable 'tie' is assigned a value that is never used.
 [protocols/simple_filters/TaskAwareScoreTypeFilter.cc:205]: (style) Variable 'sym_aware_jump_id' is assigned a value that is never used.
 [protocols/simple_filters/TaskAwareScoreTypeFilter.cc:264]: (style) Variable 'tie' is assigned a value that is never used.
-[protocols/simple_moves/AddCavitiesMover.cc:102]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[protocols/simple_moves/AddChainMover.cc:83]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/simple_moves/AlignChainMover.cc:74]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/simple_moves/chiral/ChiralMover.cc:152]: (style) Variable 'chiral_neighbor_ids' is assigned a value that is never used.
 [protocols/simple_moves/chiral/ChiralMover.cc:85]: (style) Variable 'variant_types' is assigned a value that is never used.
 [protocols/simple_moves/ConcatenatePosesMover.cc:101]: (style) Unused variable: output_prefix
-[protocols/simple_moves/CopyDofMover.cc:105]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/simple_moves/CoupledMover.cc:260]: (style) Condition 'linked_positions[i]!=resnum_' is always true
 [protocols/simple_moves/GunnCost.cc:198]: (style) Expression 'log(1 + x)' can be replaced by 'log1p(x)' to avoid loss of precision.
 [protocols/simple_moves/GunnCost.cc:199]: (style) Expression 'log(1 + x)' can be replaced by 'log1p(x)' to avoid loss of precision.
 [protocols/simple_moves/GunnCost.cc:200]: (style) Expression 'log(1 + x)' can be replaced by 'log1p(x)' to avoid loss of precision.
-[protocols/simple_moves/sidechain_moves/JumpRotamerSidechainMover.cc:214]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/simple_moves/sidechain_moves/PerturbRotamerSidechainMover.cc:250]: (style) Variable 'norm_prob' is assigned a value that is never used.
 [protocols/simple_moves/sidechain_moves/SidechainMCMover.cc:238]: (style) Condition 'DEBUG' is always false
 [protocols/simple_moves/sidechain_moves/SidechainMCMover.cc:261]: (style) Condition 'DEBUG' is always false
@@ -1891,7 +1394,6 @@
 [protocols/simple_moves/WaterBoxMover.cc:214]: (style) The scope of the variable 'z' can be reduced.
 [protocols/simple_moves/WaterBoxMover.cc:520]: (performance) Searching before insertion is not necessary.
 [protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.cc:353]: (style) The scope of the variable 'is_buried' can be reduced.
-[protocols/splice/AlignEndsMover.cc:204]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/splice/AlignEndsMover.cc:243]: (warning) Return value of function std::rotate() is not used.
 [protocols/splice/SampleRotamersFromPDB.cc:301] -> [protocols/splice/SampleRotamersFromPDB.cc:304]: (style) The if condition is the same as the previous if condition
 [protocols/splice/SampleRotamersFromPDB.cc:304] -> [protocols/splice/SampleRotamersFromPDB.cc:307]: (style) The if condition is the same as the previous if condition
@@ -1944,28 +1446,21 @@
 [protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.cc:235]: (style) Variable 'dummy_pose' is assigned a value that is never used.
 [protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.cc:258] -> [protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetup.cc:259]: (style) The if condition is the same as the previous if condition
 [protocols/stepwise/modeler/protein/StepWiseProteinBackboneSampler.cc:499] -> [protocols/stepwise/modeler/protein/StepWiseProteinBackboneSampler.cc:505]: (style) Local variable 'j' shadows outer variable
-[protocols/stepwise/modeler/protein/StepWiseProteinBackboneSampler.cc:840]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/stepwise/modeler/protein/util.cc:129] -> [protocols/stepwise/modeler/protein/util.cc:153]: (style) Local variable 'bridge_res' shadows outer variable
 [protocols/stepwise/modeler/protein/util.cc:136] -> [protocols/stepwise/modeler/protein/util.cc:152]: (style) Local variable 'n' shadows outer variable
 [protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.cc:224] -> [protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.cc:225]: (style) The if condition is the same as the previous if condition
 [protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.cc:233] -> [protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.cc:234]: (style) The if condition is the same as the previous if condition
-[protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.cc:546]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.cc:169]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.cc:273]: (style) Variable 'o3p_equiv_atom' is assigned a value that is never used.
 [protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.cc:274]: (style) Variable 'c3p_equiv_atom' is assigned a value that is never used.
 [protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.cc:275]: (style) Variable 'c4p_equiv_atom' is assigned a value that is never used.
 [protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.cc:276]: (style) Variable 'c5p_equiv_atom' is assigned a value that is never used.
-[protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.cc:95]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.cc:1235] -> [protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.cc:1236]: (style) The if condition is the same as the previous if condition
 [protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.cc:319] -> [protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.cc:323]: (style) The if condition is the same as the previous if condition
 [protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.cc:506] -> [protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.cc:508]: (style) The if condition is the same as the previous if condition
 [protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.cc:697] -> [protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.cc:747]: (style) Local variable 'n' shadows outer variable
 [protocols/stepwise/modeler/rna/StepWiseRNA_ResidueInfo.cc:119]: (error) When n==full_fasta_sequence.size(), full_fasta_sequence[n] is out of bounds.
-[protocols/stepwise/modeler/rna/StepWiseRNA_ResidueInfo.cc:138]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/stepwise/modeler/rna/StepWiseRNA_ResidueInfo.cc:199]: (style) Consider using std::copy_if algorithm instead of a raw loop.
 [protocols/stepwise/modeler/rna/sugar/VirtualSugarJustInTimeInstantiator.cc:175]: (style) Variable 'pose_save' is assigned a value that is never used.
 [protocols/stepwise/modeler/rna/sugar/VirtualSugarSampler.cc:221] -> [protocols/stepwise/modeler/rna/sugar/VirtualSugarSampler.cc:237]: (style) Local variable 'chain_closable_geometry_checker' shadows outer variable
-[protocols/stepwise/modeler/rna/sugar/VirtualSugarSampler.cc:538]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/stepwise/modeler/rna/sugar/VirtualSugarSampler.cc:783]: (style) The scope of the variable 'current_pose' can be reduced.
 [protocols/stepwise/modeler/rna/util.cc:117]: (style) Condition 'verbose' is always true
 [protocols/stepwise/modeler/rna/util.cc:948] -> [protocols/stepwise/modeler/rna/util.cc:964]: (style) Local variable 'atomno_1' shadows outer variable
@@ -1974,17 +1469,11 @@
 [protocols/stepwise/modeler/rna/util.cc:952] -> [protocols/stepwise/modeler/rna/util.cc:968]: (style) Local variable 'rsd_2' shadows outer variable
 [protocols/stepwise/modeler/StepWiseConnectionSampler.cc:714] -> [protocols/stepwise/modeler/StepWiseConnectionSampler.cc:718]: (style) Local variable 'n' shadows outer variable
 [protocols/stepwise/modeler/StepWiseConnectionSampler.cc:851] -> [protocols/stepwise/modeler/StepWiseConnectionSampler.cc:858]: (style) Local variable 'foo' shadows outer variable
-[protocols/stepwise/modeler/StepWiseMinimizer.cc:168]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/stepwise/modeler/util.cc:196]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/stepwise/modeler/working_parameters/StepWiseBasicWorkingParameters.cc:59]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/stepwise/monte_carlo/mover/StepWiseMove.cc:152]: (style) Variable 'string_is_ok' is assigned a value that is never used.
 [protocols/stepwise/monte_carlo/mover/StepWiseMove.cc:215]: (style) Variable 'string_is_ok' is assigned a value that is never used.
 [protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.cc:1612]: (style) Variable 'dock_domain_map' is assigned a value that is never used.
 [protocols/stepwise/monte_carlo/mover/TransientCutpointHandler.cc:110]: (style) Variable 'sample_res_list' is assigned a value that is never used.
 [protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.cc:161] -> [protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.cc:183]: (style) Local variable 'j' shadows outer variable
-[protocols/stepwise/sampler/protein/ProteinMainChainStepWiseSampler.cc:67]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/stepwise/sampler/StepWiseSamplerComb.cc:82]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/stepwise/setup/util.cc:51]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/switches/GraftSwitchMover.cc:197]: (performance) Prefer prefix ++/-- operators for non-primitive types.
 [protocols/switches/GraftSwitchMover.cc:230] -> [protocols/switches/GraftSwitchMover.cc:278]: (style) Local variable 'i' shadows outer variable
 [protocols/switches/GraftSwitchMover.cc:230] -> [protocols/switches/GraftSwitchMover.cc:283]: (style) Local variable 'i' shadows outer variable
@@ -1993,13 +1482,9 @@
 [protocols/switches/GraftSwitchMover.cc:644]: (performance) Prefer prefix ++/-- operators for non-primitive types.
 [protocols/switches/GraftSwitchMover.cc:661]: (performance) Prefer prefix ++/-- operators for non-primitive types.
 [protocols/switches/GraftSwitchMover.cc:685]: (performance) Prefer prefix ++/-- operators for non-primitive types.
-[protocols/symmetric_docking/SymDockingHiRes.cc:402]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/symmetric_docking/SymDockProtocol.cc:401] -> [protocols/symmetric_docking/SymDockProtocol.cc:404]: (style) The if condition is the same as the previous if condition
 [protocols/symmetry/SetupNCSMover.cc:180] -> [protocols/symmetry/SetupNCSMover.cc:182]: (style) Variable 'ncs' is reassigned a value before the old one has been used.
 [protocols/symmetry/SymDockingInitialPerturbation.cc:257]: (style) Variable 'are_touching' is assigned a value that is never used.
-[protocols/task_operations/DatabaseThread.cc:150]: (style) Consider using std::copy_if algorithm instead of a raw loop.
-[protocols/task_operations/DesignAroundOperation.cc:109]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/task_operations/InteractingRotamerExplosion.cc:78]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/task_operations/ResidueProbDesignOperation.cc:277]: (performance) Searching before insertion is not necessary.
 [protocols/tcr/template_util.cc:150]: (performance) Function parameter 'blast_db' should be passed by const reference.
 [protocols/tcr/template_util.cc:150]: (performance) Function parameter 'query' should be passed by const reference.
@@ -2009,16 +1494,9 @@
 [protocols/tcr/template_util.cc:77]: (style) Expression is always false because 'else if' condition matches previous condition at line 72.
 [protocols/tcr/template_util.cc:80]: (style) Variable 'best_content' is assigned a value that is never used.
 [protocols/toolbox/KCluster.cc:142]: (performance) Inefficient usage of string::find() in condition; string::starts_with() would be faster.
-[protocols/toolbox/match_enzdes_util/EnzConstraintIO.cc:682]: (style) Consider using std::copy algorithm instead of a raw loop.
-[protocols/toolbox/match_enzdes_util/EnzdesCstCache.cc:206]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/toolbox/match_enzdes_util/EnzdesCstCache.cc:248]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[protocols/toolbox/match_enzdes_util/InvrotTarget.cc:174]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/toolbox/match_enzdes_util/InvrotTreeNodeBase.cc:63]: (style) Redundant checking of STL container element existence before removing it.
 [protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.cc:480]: (style) Unused variable: res3
-[protocols/toolbox/match_enzdes_util/util_functions.cc:302]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/toolbox/NetworkAlgorithms.cc:190]: (style) Consider using std::any_of algorithm instead of a raw loop.
 [protocols/toolbox/rigid_body/util.cc:265] -> [protocols/toolbox/rigid_body/util.cc:267]: (style) The if condition is the same as the previous if condition
-[protocols/toolbox/superimpose.cc:470]: (style) Consider using std::fill algorithm instead of a raw loop.
 [protocols/topology_broker/DisulfJumpClaimer.cc:239]: (style) Variable 'local_pos1' is assigned a value that is never used.
 [protocols/topology_broker/DisulfJumpClaimer.cc:240]: (style) Variable 'local_pos2' is assigned a value that is never used.
 [protocols/topology_broker/PseudocontactShiftEnergyController.cc:314]: (style) Condition 'weight<0' is always false
@@ -2037,71 +1515,33 @@
 [protocols/topology_broker/TopologyBroker.cc:651] -> [protocols/topology_broker/TopologyBroker.cc:692]: (style) Local variable 'dof_msg' shadows outer variable
 [protocols/topology_broker/TopologyBroker.cc:667]: (style) Argument '!bUnitializedJump' to function runtime_assert is always 0
 [protocols/topology_broker/TopologyBroker.cc:970]: (style) Variable 'init_pose' is assigned a value that is never used.
-[protocols/topology_broker/TopologyClaimer.cc:59]: (style) Consider using std::copy_if algorithm instead of a raw loop.
 [protocols/topology_broker/util.cc:303]: (style) Variable 'chain_poses' is assigned a value that is never used.
 [protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMover.cc:168] -> [protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMover.cc:181]: (style) Local variable 'i' shadows outer variable
 [protocols/vip/VIP_Mover.cc:285]: (style) Variable 'basePose' is assigned a value that is never used.
 [protocols/vip/VIP_Mover.cc:359] -> [protocols/vip/VIP_Mover.cc:361]: (warning) Identical inner 'if' condition is always true.
 [protocols/vip/VIP_Mover.cc:369] -> [protocols/vip/VIP_Mover.cc:371]: (warning) Identical inner 'if' condition is always true.
 [protocols/vip/VIP_Mover.cc:379] -> [protocols/vip/VIP_Mover.cc:381]: (warning) Identical inner 'if' condition is always true.
-[protocols/wum/MPI_WorkUnitManager.cc:380]: (style) Consider using std::fill algorithm instead of a raw loop.
 [protocols/wum/SilentStructStore.cc:200]: (style) Variable 'comments' is assigned a value that is never used.
-[protocols/wum/SilentStructStore.cc:285]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [protocols/wum/WorkUnitBase.cc:119]: (style) Same expression on both sides of '-'.
 [utility/options/OptionCollection.cc:1644]: (error) syntax error: ':' +=
-[utility/options/ResidueChainVectorOption.cc:112]: (style) Consider using std::copy algorithm instead of a raw loop.
 [utility/string_util.cc:566]: (style) Variable 'start_position' is assigned a value that is never used.
 [utility/sys_util.cc:91] -> [utility/sys_util.cc:129]: (style) Local variable 'timestamp' shadows outer function
 [utility/sys_util.cc:91] -> [utility/sys_util.cc:160]: (style) Local variable 'timestamp' shadows outer function
 [utility/sys_util.cc:91] -> [utility/sys_util.cc:194]: (style) Local variable 'timestamp' shadows outer function
-[utility/tag/Tag.cc:273]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[utility/tag/XMLSchemaGeneration.cc:1462]: (style) Consider using std::copy algorithm instead of a raw loop.
-[utility/tag/XMLSchemaGeneration.cc:1504]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[utility/tag/XMLSchemaGeneration.cc:1523]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[utility/tag/XMLSchemaGeneration.cc:34]: (style) Consider using std::find_if algorithm instead of a raw loop.
 [utility/tag/XMLSchemaValidation.cc:87]: (portability) Returning an integer in a function with pointer return type is not portable.
-[ObjexxFCL/string.functions.cc:850]: (style) Consider using std::copy algorithm instead of a raw loop.
 [basic/database/insert_statement_generator/InsertGenerator.cc:109]: (style) Variable 'row_end_index' is assigned a value that is never used.
-[basic/resource_manager/ResourceLoaderFactory.cc:60]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/chemical/gasteiger/GasteigerAtomTypeData.cc:120]: (style) Consider using std::fill or std::generate algorithm instead of a raw loop.
-[core/chemical/gasteiger/GasteigerAtomTypeData.cc:230]: (style) Consider using std::fill or std::generate algorithm instead of a raw loop.
-[core/fragment/FragSetCollection.cc:112]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/fragment/FragSetCollection.cc:70]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/io/StructFileRep.cc:66]: (style) Consider using std::any_of algorithm instead of a raw loop.
-[core/io/raw_data/ScoreStructJSON.cc:49]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/io/raw_data/ScoreStructJSON.cc:53]: (style) Consider using std::transform algorithm instead of a raw loop.
 [core/scoring/constraints/AmbiguousConstraint.cc:120]: (style) Variable 'cur_score' is assigned a value that is never used.
-[core/scoring/constraints/ConstraintFactory.cc:75]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/scoring/constraints/ConstraintFactory.cc:90]: (style) Consider using std::transform algorithm instead of a raw loop.
-[core/scoring/func/SumFunc.cc:68]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[core/scoring/func/SumFunc.cc:78]: (style) Consider using std::accumulate algorithm instead of a raw loop.
 [core/sequence/SWAligner.cc:107]: (style) Variable 'current_cell' is assigned a value that is never used.
-[numeric/agglomerative_hierarchical_clustering.cc:122]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[numeric/agglomerative_hierarchical_clustering.cc:67]: (style) Consider using std::transform algorithm instead of a raw loop.
-[numeric/interpolation/spline/SimpleInterpolator.cc:76]: (style) Consider using std::copy algorithm instead of a raw loop.
-[numeric/interpolation/spline/SimpleInterpolator.cc:80]: (style) Consider using std::copy algorithm instead of a raw loop.
-[numeric/interpolation/spline/SimpleInterpolator.cc:84]: (style) Consider using std::copy algorithm instead of a raw loop.
 [numeric/kinematic_closure/bridgeObjects.cc:788]: (style) Variable 'fchain3' is assigned a value that is never used.
 [numeric/kinematic_closure/closure.cc:834]: (style) Variable 'fchain3' is assigned a value that is never used.
 [numeric/kinematic_closure/dixon.cc:1003]: (style) Variable 'order[3]' is assigned a value that is never used.
 [numeric/linear_algebra/rgg.cc:363] -> [numeric/linear_algebra/rgg.cc:443]: (style) Variable 'ep' is reassigned a value before the old one has been used.
 [numeric/statistics/functions.cc:90] -> [numeric/statistics/functions.cc:106]: (style) Local variable 'cov' shadows outer function
 [numeric/statistics/functions.cc:90] -> [numeric/statistics/functions.cc:78]: (style) Local variable 'cov' shadows outer function
-[numeric/util.cc:47]: (style) Consider using std::accumulate algorithm instead of a raw loop.
-[protocols/antibody/AntibodyEnumManager.cc:244]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/antibody/AntibodyEnumManager.cc:274]: (style) Consider using std::transform algorithm instead of a raw loop.
 [protocols/cluster/calibur/Clustering.cc:1320] -> [protocols/cluster/calibur/Clustering.cc:1327]: (style) Local variable 'd' shadows outer variable
-[protocols/cluster/calibur/Clustering.cc:1760]: (style) Consider using std::fill algorithm instead of a raw loop.
 [protocols/cluster/calibur/Clustering.cc:469] -> [protocols/cluster/calibur/Clustering.cc:498]: (style) Local variable 'start' shadows outer variable
 [protocols/cluster/calibur/Clustering.cc:471] -> [protocols/cluster/calibur/Clustering.cc:517]: (style) Local variable 'elapsed' shadows outer variable
 [protocols/cluster/calibur/PreloadedPDB.cc:238] -> [protocols/cluster/calibur/PreloadedPDB.cc:249]: (style) Local variable 'pdb' shadows outer variable
-[protocols/cluster/calibur/rmsd.cc:244]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/cluster/calibur/rmsd.cc:246]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/cluster/calibur/rmsd.cc:248]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/cluster/calibur/rmsd.cc:475]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/cluster/calibur/rmsd.cc:479]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/cluster/calibur/rmsd.cc:483]: (style) Consider using std::transform algorithm instead of a raw loop.
-[protocols/comparative_modeling/AlignmentSet.cc:36]: (style) Consider using std::copy algorithm instead of a raw loop.
 [protocols/frags/heap.cc:320]: (style) Variable 'coheap(indx)' is assigned a value that is never used.
 [protocols/frags/heap.cc:374]: (style) Variable 'heap(indx)' is assigned a value that is never used.
 [protocols/frags/heap.cc:93]: (style) Variable 'heap(-2)' is assigned a value that is never used.

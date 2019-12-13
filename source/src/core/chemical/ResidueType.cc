@@ -1967,12 +1967,10 @@ ResidueType::update_polymer_dependent_groups() {
 
 	if ( !is_polymer() ) return;
 
-	bool nothing_changed(true);
-
 	// This logic scales with natoms^3, which isn't ideal, but it's only called once on ResidueType initialization.  Still, it prevents
 	// the necessity of implementing a recursive function, which is what I'm trying to avoid:
 	for ( core::Size attempts(1); attempts<=n_atom; ++attempts ) { //The maximum number of iterations needed should be n_atom, though it will be much lower in most cases.
-		nothing_changed = true;
+		bool nothing_changed = true;
 		for ( core::Size i(1); i<=n_atom; ++i ) {
 			if ( icoor(i).depends_on_polymer_lower() || icoor(i).depends_on_a_true_index( atom_depends_on_lower_polymeric_connection_ ) ) {
 				nothing_changed = false;
@@ -1997,13 +1995,11 @@ ResidueType::update_nonpolymer_dependent_groups() {
 	core::Size const n_atom( ResidueType::natoms() ); // This can be called from the constructor, where we can't do virtual dispatch
 	atom_depends_on_connection_.resize( n_possible_residue_connections(), utility::vector1< bool >( n_atom, false ) );
 
-	bool nothing_changed(true);
-
 	// This logic scales with natoms^3, which isn't ideal, but it's only called once on ResidueType initialization.  Still, it prevents
 	// the necessity of implementing a recursive function, which is what I'm trying to avoid:
 	for ( core::Size j(1), jmax(n_possible_residue_connections()); j<=jmax; ++j ) {
 		for ( core::Size attempts(1); attempts<=n_atom; ++attempts ) { //The maximum number of iterations needed should be n_atom, though it will be much lower in most cases.
-			nothing_changed = true;
+			bool nothing_changed = true;
 			for ( core::Size i(1); i<=n_atom; ++i ) {
 				if ( icoor(i).depends_on_residue_connection(j) || icoor(i).depends_on_a_true_index( atom_depends_on_connection_[j] ) ) {
 					nothing_changed = false;

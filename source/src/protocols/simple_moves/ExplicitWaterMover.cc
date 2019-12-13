@@ -162,15 +162,14 @@ AtomHash::get_neighborcount( core::Vector xyz, core::Real dlim ) {
 // this function carries out 1
 void
 AtomHash::trim_to_heterogeneous_clusters(core::Real dlim) {
-	int x,y,z;
 
 	utility::vector1<bool> marked( nodes_.size(), false );
 	utility::vector1<core::Vector> newpoints;
 
 	for ( auto it1=nodes_.begin(); it1 != nodes_.end(); ++it1 ) {
-		x = (it1->first>>20) & 1023;
-		y = (it1->first>>10) & 1023;
-		z = (it1->first) & 1023;
+		int x = (it1->first>>20) & 1023;
+		int y = (it1->first>>10) & 1023;
+		int z = (it1->first) & 1023;
 
 		core::Real maxDis2 = dlim*dlim;
 		int boundcheck = std::ceil( dlim/bindis_ );
@@ -214,7 +213,6 @@ AtomHash::reset_and_get_clusters(
 	core::Real dcluster
 ) {
 	clusters.clear();
-	int x,y,z;
 	core::Real dredundant2 = dredundant*dredundant;
 	core::Real dcluster2 = dcluster*dcluster;
 
@@ -224,9 +222,9 @@ AtomHash::reset_and_get_clusters(
 		utility::vector1< core::Vector > clust_i;
 		clust_i.push_back( it1->second.xyz );
 
-		x = (it1->first>>20) & 1023;
-		y = (it1->first>>10) & 1023;
-		z = (it1->first) & 1023;
+		int x = (it1->first>>20) & 1023;
+		int y = (it1->first>>10) & 1023;
+		int z = (it1->first) & 1023;
 
 		nodes_.erase(it1);
 
@@ -521,10 +519,8 @@ ExplicitWaterMover::build_backbone_rotamer_clouds(
 				core::Size abase2_idx = res_i.atom_index( wat_gen_k.abase2_ );
 
 				core::kinematics::Stub stub( res_i.xyz(aatm_idx), res_i.xyz(abase1_idx), res_i.xyz(abase2_idx) );
-				if ( waters_i.find( aatm_idx ) == waters_i.end() ) {
-					waters_i[aatm_idx] = utility::vector1< core::Vector >();
-				}
 
+				// std::map will default construct vector if aatm_idx entry not present
 				waters_i[aatm_idx].push_back( stub.spherical(
 					radians( wat_gen_k.coords_[2] ),
 					radians( 180.0 - wat_gen_k.coords_[1] ),
