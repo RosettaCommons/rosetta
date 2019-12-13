@@ -152,6 +152,7 @@ public:
 	iterator end();
 	const_iterator end() const;
 	void set_resid( core::Size const resid ) override;
+	void set_resid( core::pose::ResidueIndexDescriptionCOP r ) override;
 	void invert( bool const inv );
 	void set_reset_filters( utility::vector1<FilterOP> const & reset_filters );
 	void reset_filters();

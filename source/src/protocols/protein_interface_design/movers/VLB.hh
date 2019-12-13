@@ -21,6 +21,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 
 #include <utility/vector1.hh>
 
@@ -29,16 +30,37 @@ namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
+enum class VLBInstructionType {
+	Bridge,
+	ConnectRight,
+	GrowLeft,
+	GrowRight,
+	SegmentInsert,
+	SegmentRebuild,
+	SegmentSwap
+};
+
+struct VLBInstruction {
+	VLBInstructionType type;
+
+	// Not all parameters are used by all types.
+	core::pose::ResidueIndexDescriptionCOP res1;
+	core::pose::ResidueIndexDescriptionCOP res2;
+
+	std::string aa;
+	std::string ss;
+	std::string filename;
+	std::string side;
+
+	bool keep_bb = false;
+};
+
 /// @brief user interface for YAB's Variable Length Build.
 class VLB : public protocols::moves::Mover
 {
 public:
 	VLB(); // default ctor//design_ = true;
-	VLB( VLB const & init ); // copy ctor
-	~VLB() override; // dtor
-	VLB & operator=( VLB const & init );
 
-	VLB( protocols::forge::build::BuildManagerCOP manager, core::scoring::ScoreFunctionCOP scorefxn );
 	void apply( core::pose::Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
@@ -55,9 +77,13 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+private:
+
+	protocols::forge::build::BuildManagerOP make_manager(core::pose::Pose const & pose) const;
 
 private:
-	protocols::forge::build::BuildManagerOP manager_;
+	utility::vector1< VLBInstruction > instruction_list_;
+
 	core::scoring::ScoreFunctionOP scorefxn_;
 };
 

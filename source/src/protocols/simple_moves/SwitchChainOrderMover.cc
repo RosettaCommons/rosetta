@@ -70,8 +70,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	new_residue_numbers.clear();
 	utility::vector1< core::Size > positions_in_new_pose; // positions_in_new_pose[ new_pose_seqpos ] = old_pose_seqpos
 	positions_in_new_pose.clear();
-	for ( char const chaini : chain_order() ) {
-		core::Size const chain( chaini - '0' );
+	for ( core::Size chain: chain_order(pose) ) {
 		TR<<"Now at chain: "<<chain<<std::endl;
 		runtime_assert( chain > 0 && chain <= conf.num_chains() );
 		core::Size const chain_begin( conf.chain_begin( chain ) );
@@ -150,7 +149,7 @@ SwitchChainOrderMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	if ( tag->hasOption("chain_order") && (tag->hasOption("chain_name") || tag->hasOption("chain_num")) )  {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "You can specify a chain_order string or the comma separated chain names or numbers, but not both");
@@ -160,27 +159,17 @@ SwitchChainOrderMover::parse_my_tag(
 		chain_order( tag->getOption< std::string >( "chain_order" ) );
 	} else {
 		if ( tag->hasOption("chain_num") ) {
-			chain_ids_ = utility::string_split(tag->getOption<std::string>("chain_num"),',',core::Size());
+			chain_ids_ = utility::string_split(tag->getOption<std::string>("chain_num"),',');
 		}
 
 		if ( tag->hasOption("chain_name") ) {
-			utility::vector1<std::string> chain_names = utility::string_split(tag->getOption<std::string>("chain_name"),',',std::string());
-			for ( auto & chain_name : chain_names ) {
-				chain_ids_.push_back(core::pose::get_chain_id_from_chain(chain_name,pose));
+			for ( auto & chain_name : utility::string_split(tag->getOption<std::string>("chain_name"),',') ) {
+				chain_ids_.push_back( chain_name );
 			}
 		}
 	}
 
-	if ( tag->getOption<bool>("invert_chains", false) ) {
-		// Invert the chain selection
-		utility::vector1<core::Size> inverted_chain_ids_;
-		for ( core::Size i=1 ; i <= pose.conformation().num_chains() ; i++ ) {
-			if ( std::find(chain_ids_.begin(), chain_ids_.end(), i) == chain_ids_.end() ) {
-				inverted_chain_ids_.push_back(i);
-			}
-		}
-		chain_ids_ = inverted_chain_ids_;
-	}
+	invert_chains_ = tag->getOption<bool>("invert_chains", false);
 
 	std::string const residue_numbers_setter( tag->getOption< std::string >( "residue_numbers_setter", "" ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
@@ -191,22 +180,31 @@ SwitchChainOrderMover::parse_my_tag(
 }
 
 void
-SwitchChainOrderMover::chain_order( std::string const & co ){
-	utility::vector1<core::Size> new_chain_ids;
+SwitchChainOrderMover::chain_order( std::string const & co ) {
+	chain_ids_.clear();
+
 	for ( char const chaini : co ) {
-		core::Size const chain( chaini - '0' );
-		new_chain_ids.push_back( chain );
+		chain_ids_.push_back( std::string(1,chaini) );
 	}
-	chain_ids_ = new_chain_ids;
 }
 
-std::string
-SwitchChainOrderMover::chain_order() const
+utility::vector1< core::Size >
+SwitchChainOrderMover::chain_order( core::pose::Pose const & pose ) const
 {
-	std::string chain_order;
-	for ( core::Size const chain : chain_ids_ ) {
-		chain_order += utility::to_string<core::Size>(chain);
+	utility::vector1< core::Size > chain_order;
+
+	for ( std::string const & chaini: chain_ids_ ) {
+		if ( chaini.size() == 1 && chaini[0] > '0' && chaini[0] <= '9' ) {
+			chain_order.push_back( chaini[0] - '0' );
+		} else {
+			chain_order.push_back( core::pose::get_chain_id_from_chain( chaini, pose ) );
+		}
 	}
+
+	if ( invert_chains_ ) {
+		std::reverse( chain_order.begin(), chain_order.end() );
+	}
+
 	return chain_order;
 }
 

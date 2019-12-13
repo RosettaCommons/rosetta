@@ -27,6 +27,10 @@
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/ResidueSpanSelector.hh>
+#include <core/select/util.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector0.hh>
@@ -50,14 +54,12 @@ AtomicContactFilter::AtomicContactFilter() :
 AtomicContactFilter::AtomicContactFilter( core::Size const res1, core::Size const res2, core::Real const distance, bool const sidechain, bool const backbone, bool const protons ) :
 	parent( "AtomicContact" ),
 	protocols::moves::ResId( res2 ),
-	residue1_( res1 ),
+	side1_( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( res1 ) ),
 	distance_( distance ),
 	sidechain_( sidechain ),
 	backbone_( backbone ),
 	protons_( protons )
-{
-	range1_.push_back( residue1_ );
-}
+{}
 
 /// @return Whether a disulfide bond is possible between any of the targets
 bool AtomicContactFilter::apply(core::pose::Pose const & pose ) const
@@ -73,13 +75,14 @@ AtomicContactFilter::compute( core::pose::Pose const & pose ) const
 {
 	using namespace core::conformation;
 
-	if ( !get_resid() ) {
+	if ( !get_resid(pose) ) {
 		TR.Error << "residue2 has not been defined"<<std::endl;
-		runtime_assert( get_resid() );
+		runtime_assert( get_resid(pose) );
 	}
 	core::Real nearest_distance( 10000 );
-	Residue const res2( pose.residue( get_resid() ) );
-	for ( core::Size residue1 : range1_ ) {
+	Residue const res2( pose.residue( get_resid(pose) ) );
+	debug_assert( side1_ );
+	for ( core::Size residue1 : core::select::get_residues_from_subset( side1_->apply( pose ) ) ) {
 		Residue const res1( pose.residue( residue1 ) );
 
 		auto atom1_begin( res1.atom_begin() ), atom1_end( res1.atom_end() ), atom2_begin( res2.atom_begin() ), atom2_end( res2.atom_end() );
@@ -115,34 +118,29 @@ AtomicContactFilter::report_sm( core::pose::Pose const & pose ) const
 void AtomicContactFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
 	core::Real const dist( compute( pose ) );
-	out<<"Minimal distance between residues "<<residue1_<<" and "<<get_resid()<<" is "<<dist<<std::endl;
+	out<<"Minimal distance between residues is "<<dist<<std::endl; // Unfortunately, no show() on ResidueSelectors
 }
 
 void AtomicContactFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose)
+	core::pose::Pose const & )
 {
 	distance_ = tag->getOption< core::Real >( "distance", 4.0 );
 	if ( tag->hasOption("range1") ) {
-		residue1_ = 0;
 		std::istringstream range_str( tag->getOption< std::string >( "range1" ) );
 		core::Size num1, num2;
 		range_str >> num1 >> num2;
 		if ( !range_str.good() ) TR << "cannot read parameter range1" << std::endl;
-		for ( core::Size i=num1; i<=num2; ++i ) {
-			range1_.push_back( i );
-		}
-	}
-	if ( range1_.size() == 0 ) {
+		side1_ = utility::pointer::make_shared< core::select::residue_selector::ResidueSpanSelector >( num1, num2 );
+	} else {
 		std::string const res1( tag->getOption< std::string >( "residue1" ) );
-		residue1_ = core::pose::parse_resnum( res1, pose );
-		range1_.push_back( residue1_ );
+		side1_ = utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( res1 );
 	}
 	if ( tag->hasOption( "residue2" ) ) {
 		std::string const res2( tag->getOption< std::string >( "residue2" ) );
-		set_resid( core::pose::parse_resnum( res2, pose ) );
+		set_resid( core::pose::parse_resnum( res2 ) );
 		modifiable( false );
 	} else {
 		modifiable( true );
@@ -152,7 +150,7 @@ void AtomicContactFilter::parse_my_tag( utility::tag::TagCOP tag,
 	backbone_  = tag->getOption< bool >( "backbone",  false );
 	protons_   = tag->getOption< bool >( "protons",   false );
 
-	TR<<"AtomicContact filter between residues "<<residue1_<<" and "<<get_resid()<<" with distance cutoff of "<<distance_<<std::endl;
+	TR<<"AtomicContact filter between residues with distance cutoff of "<<distance_<<std::endl; // Unfortunately, no show() on ResidueSelectors
 }
 
 

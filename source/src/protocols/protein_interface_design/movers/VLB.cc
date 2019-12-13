@@ -40,6 +40,7 @@
 #include <core/pose/selection.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 #include <core/types.hh>
 #include <string>
 #include <basic/options/option.hh>
@@ -72,23 +73,17 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.VLB" );
 VLB::VLB() :
 	protocols::moves::Mover( VLB::mover_name() )
 {
-	manager_ = utility::pointer::make_shared< BuildManager >();
 	scorefxn_ = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 } // default ctor//design_ = true;
-
-VLB::VLB( BuildManagerCOP manager, ScoreFunctionCOP scorefxn ) :
-	protocols::moves::Mover( VLB::mover_name() )
-{
-	manager_ = utility::pointer::make_shared< BuildManager >( *manager );
-	scorefxn_ = scorefxn->clone();
-}
 
 void
 VLB::apply( pose::Pose & pose ) {
 
+	protocols::forge::build::BuildManagerOP manager = make_manager( pose );
+
 	// internally handles ntrials, so that fragments can be cached!
-	VarLengthBuild vlb( *manager_ );
-	vlb.scorefunction( scorefxn_ );
+	VarLengthBuild vlb( *manager );
+	vlb.scorefunction( scorefxn_->clone() );
 	core::Size ntrials(1);
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -117,21 +112,6 @@ protocols::moves::MoverOP VLB::fresh_instance() const {
 	return utility::pointer::make_shared< VLB >();
 }
 
-VLB::VLB( VLB const & init ) :
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( init ) {
-	manager_ = utility::pointer::make_shared< BuildManager >( *init.manager_ );
-	scorefxn_ = init.scorefxn_->clone();
-}
-
-VLB & VLB::operator=( VLB const & init ) {
-	manager_ = utility::pointer::make_shared< BuildManager >( *init.manager_ );
-	scorefxn_ = init.scorefxn_->clone();
-	return *this;
-}
-
-
-VLB::~VLB() = default;
 
 void
 VLB::parse_my_tag(
@@ -139,7 +119,7 @@ VLB::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	Movers_map const &,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	using namespace protocols::rosetta_scripts;
@@ -148,64 +128,60 @@ VLB::parse_my_tag(
 	std::string const scorefxn( tag->getOption<std::string>( "scorefxn", "score4L" ) ); // VarLengthBuild uses remodel_cen by default. score4L is the same, but with Rg=2.0
 	scorefxn_ = data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn )->clone();
 
-	BuildInstructionOP instruction;
 	utility::vector0< TagCOP > const & tags( tag->getTags() );
 	for ( auto tag : tags ) {
+		VLBInstruction instr;
+
 		if ( tag->getName() == "Bridge" ) {
 			// connect two contiguous but disjoint sections of a Pose into one continuous section
+			instr.type = VLBInstructionType::Bridge;
+
 			string const res1( tag->getOption< std::string >( "left" ) );
-			Size const left = core::pose::parse_resnum( res1, pose );
+			instr.res1 = core::pose::parse_resnum( res1 );
 			string const res2( tag->getOption< std::string >( "right" ) );
-			Size const right = core::pose::parse_resnum( res2, pose );
+			instr.res2 = core::pose::parse_resnum( res2 );
 
-			string const ss( tag->getOption< std::string >( "ss", "" ) );
-			string const aa( tag->getOption< std::string >( "aa", "" ) );
+			instr.ss = tag->getOption< std::string >( "ss", "" );
+			instr.aa = tag->getOption< std::string >( "aa", "" );
 
-			Interval const ival( left, right);
-			instruction = utility::pointer::make_shared< Bridge >( ival, ss, aa );
-		}
-		if ( tag->getName() == "ConnectRight" ) {
+		} else if ( tag->getName() == "ConnectRight" ) {
 			//instruction to jump-connect one Pose onto the right side of another
-			string const res1( tag->getOption< std::string >( "left" ) );
-			Size const left = core::pose::parse_resnum( res1, pose );
-			string const res2( tag->getOption< std::string >( "right" ) );
-			Size const right = core::pose::parse_resnum( res2, pose );
+			instr.type = VLBInstructionType::ConnectRight;
 
-			string const pose_fname( tag->getOption< std::string >( "pdb", "" ) );
-			runtime_assert( pose_fname != "" );
-			pose::Pose connect_pose;
-			core::import_pose::pose_from_file( connect_pose, pose_fname , core::import_pose::PDB_file);
-			instruction = utility::pointer::make_shared< ConnectRight >( left, right, connect_pose );
-		}
-		if ( tag->getName() == "GrowLeft" ) {
+			string const res1( tag->getOption< std::string >( "left" ) );
+			instr.res1 = core::pose::parse_resnum( res1 );
+			string const res2( tag->getOption< std::string >( "right" ) );
+			instr.res2 = core::pose::parse_resnum( res2 );
+
+			instr.filename = tag->getOption< std::string >( "pdb", "" );
+			runtime_assert( instr.filename != "" );
+
+		} else if ( tag->getName() == "GrowLeft" ) {
 			/// Use this for n-side insertions, but typically not n-terminal
 			///  extensions unless necessary.  It does not automatically cover the
 			///  additional residue on the right endpoint that needs to move during
 			///  n-terminal extensions due to invalid phi torsion.  For that case,
 			///  use the SegmentRebuild class replacing the n-terminal residue with
 			///  desired length+1.
+			instr.type = VLBInstructionType::GrowLeft;
 
 			string const res1( tag->getOption< std::string >( "pos" ) );
-			Size const pos = core::pose::parse_resnum( res1, pose );
+			instr.res1 = core::pose::parse_resnum( res1 );
 
-			string const ss( tag->getOption< std::string >( "ss", "" ) );
-			string const aa( tag->getOption< std::string >( "aa", "" ) );
+			instr.ss = tag->getOption< std::string >( "ss", "" );
+			instr.aa = tag->getOption< std::string >( "aa", "" );
 
-			instruction = utility::pointer::make_shared< GrowLeft >( pos, ss, aa );
-		}
-		if ( tag->getName() == "GrowRight" ) {
+		} else if ( tag->getName() == "GrowRight" ) {
 			/// instruction to create a c-side extension
+			instr.type = VLBInstructionType::GrowRight;
+
 			string const res1( tag->getOption< std::string >( "pos" ) );
-			Size const pos = core::pose::parse_resnum( res1, pose );
+			instr.res1 = core::pose::parse_resnum( res1 );
 
-			string const ss( tag->getOption< std::string >( "ss", "" ) );
-			string const aa( tag->getOption< std::string >( "aa", "" ) );
+			instr.ss = tag->getOption< std::string >( "ss", "" );
+			instr.aa = tag->getOption< std::string >( "aa", "" );
 
-			instruction = utility::pointer::make_shared< GrowRight >( pos, ss, aa );
-		}
-
-
-		if ( tag->getName() == "SegmentInsert" ) {
+		} if ( tag->getName() == "SegmentInsert" ) {
 			/// interval: The interval between which the insert will span.
 			///  To perform a pure insertion without replacing any residues
 			///  within a region, use an interval with a zero as the left endpoint, e.g.
@@ -221,72 +197,123 @@ VLB::parse_my_tag(
 			///  in the modified Pose.  This should be false for pure insertions.
 			/// connection_scheme: Connect insertion on its N-side, C-side,
 			///  or decide randomly between the two (default RANDOM). Random is only random on parsing, not per ntrial.
+			instr.type = VLBInstructionType::SegmentInsert;
 
 			string const res1( tag->getOption< std::string >( "left" ) );
-			Size const left = core::pose::parse_resnum( res1, pose );
+			instr.res1 = core::pose::parse_resnum( res1 );
 			string const res2( tag->getOption< std::string >( "right" ) );
-			Size const right = core::pose::parse_resnum( res2, pose );
-			Interval const ival( left, right );
+			instr.res2 = core::pose::parse_resnum( res2 );
 
-			string const ss( tag->getOption< std::string >( "ss", "L^L" ) );
-			//string const aa( tag->getOption< std::string >( "aa", "" ) );
-			bool const keep_bb_torsions( tag->getOption< bool >( "keep_bb_torsions", "0" ));
-			string const pose_fname( tag->getOption< std::string >( "pdb", "" ) );
+			instr.ss = tag->getOption< std::string >( "ss", "L^L" );
+			//instr.aa = tag->getOption< std::string >( "aa", "" );
+			instr.keep_bb = tag->getOption< bool >( "keep_bb_torsions", "0" );
+			instr.filename = tag->getOption< std::string >( "pdb", "" );
+			runtime_assert( instr.filename != "" );
 
-			runtime_assert( pose_fname != "" );
-			pose::Pose insert_pose;
-			core::import_pose::pose_from_file( insert_pose, pose_fname , core::import_pose::PDB_file);
+			instr.side = tag->getOption< std::string >( "side", "" );
 
-			string const side( tag->getOption< std::string >( "side", "" ) );
-			SegmentInsertConnectionScheme::Enum connect_side;
-			if ( side == "N" ) connect_side = SegmentInsertConnectionScheme::N;
-			else if ( side == "C" ) connect_side = SegmentInsertConnectionScheme::C;
-			else connect_side = SegmentInsertConnectionScheme::RANDOM_SIDE;
-
-			instruction = utility::pointer::make_shared< SegmentInsert >( ival, ss, insert_pose, keep_bb_torsions, connect_side );
-		}
-
-
-		if ( tag->getName() == "SegmentRebuild" ) {
+		} else if ( tag->getName() == "SegmentRebuild" ) {
 			/// @brief instruction to rebuild a segment
+			instr.type = VLBInstructionType::SegmentRebuild;
+
 			string const res1( tag->getOption< std::string >( "left" ) );
-			Size const left = core::pose::parse_resnum( res1, pose );
+			instr.res1 = core::pose::parse_resnum( res1 );
 			string const res2( tag->getOption< std::string >( "right" ) );
-			Size const right = core::pose::parse_resnum( res2, pose );
-			Interval const ival( left, right);
+			instr.res2 = core::pose::parse_resnum( res2 );
 
-			string const ss( tag->getOption< std::string >( "ss", "" ) );
-			string const aa( tag->getOption< std::string >( "aa", "" ) );
+			instr.ss = tag->getOption< std::string >( "ss", "" );
+			instr.aa = tag->getOption< std::string >( "aa", "" );
 
-			instruction = utility::pointer::make_shared< SegmentRebuild >( ival, ss, aa );
-		}
-
-		if ( tag->getName() == "SegmentSwap" ) {
+		} else if ( tag->getName() == "SegmentSwap" ) {
 			/// instruction to swap a segment with an external segment
 			/// interval: swap out this range of residues
 			/// move_map: fixed backbone residues in this movemap will be used for new jumps
 			/// swap_in: swap in this pose
+			instr.type = VLBInstructionType::SegmentSwap;
+
 			string const res1( tag->getOption< std::string >( "left" ) );
-			Size const left = core::pose::parse_resnum( res1, pose );
+			instr.res1 = core::pose::parse_resnum( res1 );
 			string const res2( tag->getOption< std::string >( "right" ) );
-			Size const right = core::pose::parse_resnum( res2, pose );
+			instr.res2 = core::pose::parse_resnum( res2 );
 
-			Interval const ival( left, right);
-
-			string const pose_fname( tag->getOption< std::string >( "pdb", "" ) );
-			runtime_assert( pose_fname != "" );
-			pose::Pose swap_pose;
-			core::import_pose::pose_from_file( swap_pose, pose_fname , core::import_pose::PDB_file);
-
-			core::kinematics::MoveMap movemap; // empty = place jump anywhere
-			SegmentSwap( ival, movemap, swap_pose );
+			instr.filename = tag->getOption< std::string >( "pdb", "" );
+			runtime_assert( instr.filename != "" );
 		}
 
-		manager_->add( instruction );
+		instruction_list_.push_back( instr );
 	}
 
-	runtime_assert( manager_->compatibility_check() );
-	TR<<"defined VLB mover with " << manager_->size() << " instructions." << std::endl;
+	TR<<"defined VLB mover with " << instruction_list_.size() << " instructions." << std::endl;
+}
+
+protocols::forge::build::BuildManagerOP
+VLB::make_manager( core::pose::Pose const & pose ) const {
+	auto manager = utility::pointer::make_shared< BuildManager >();
+	for ( VLBInstruction const & instr: instruction_list_ ) {
+		BuildInstructionOP instruction;
+		switch ( instr.type ) {
+		case VLBInstructionType::Bridge :
+			{
+			Interval const ival( instr.res1->resolve_index(pose), instr.res2->resolve_index(pose) );
+			instruction = utility::pointer::make_shared< Bridge >( ival, instr.ss, instr.aa );
+			break;
+		}
+		case VLBInstructionType::ConnectRight :
+			{
+			pose::Pose connect_pose;
+			core::import_pose::pose_from_file( connect_pose, instr.filename , core::import_pose::PDB_file);
+			instruction = utility::pointer::make_shared< ConnectRight >( instr.res1->resolve_index(pose), instr.res2->resolve_index(pose), connect_pose );
+			break;
+		}
+		case VLBInstructionType::GrowLeft :
+			{
+			instruction = utility::pointer::make_shared< GrowLeft >( instr.res1->resolve_index(pose), instr.ss, instr.aa );
+			break;
+		}
+		case VLBInstructionType::GrowRight :
+			{
+			instruction = utility::pointer::make_shared< GrowRight >( instr.res1->resolve_index(pose), instr.ss, instr.aa );
+			break;
+		}
+		case VLBInstructionType::SegmentInsert :
+			{
+			pose::Pose insert_pose;
+			core::import_pose::pose_from_file( insert_pose, instr.filename, core::import_pose::PDB_file);
+
+			Interval const ival( instr.res1->resolve_index(pose), instr.res2->resolve_index(pose) );
+			SegmentInsertConnectionScheme::Enum connect_side;
+			if ( instr.side == "N" ) connect_side = SegmentInsertConnectionScheme::N;
+			else if ( instr.side == "C" ) connect_side = SegmentInsertConnectionScheme::C;
+			else connect_side = SegmentInsertConnectionScheme::RANDOM_SIDE;
+
+			instruction = utility::pointer::make_shared< SegmentInsert >( ival, instr.ss, insert_pose, instr.keep_bb, connect_side );
+			break;
+		}
+		case VLBInstructionType::SegmentRebuild :
+			{
+			Interval const ival( instr.res1->resolve_index(pose), instr.res2->resolve_index(pose) );
+			instruction = utility::pointer::make_shared< SegmentRebuild >( ival, instr.ss, instr.aa );
+			break;
+		}
+		case VLBInstructionType::SegmentSwap :
+			{
+			Interval const ival( instr.res1->resolve_index(pose), instr.res2->resolve_index(pose) );
+
+			pose::Pose swap_pose;
+			core::import_pose::pose_from_file( swap_pose, instr.filename, core::import_pose::PDB_file);
+			core::kinematics::MoveMap movemap; // empty = place jump anywhere
+			SegmentSwap( ival, movemap, swap_pose );
+			break;
+		}
+		default :
+			utility_exit_with_message("Unknown instruction type in VLB");
+		}
+		manager->add( instruction );
+	}
+
+	runtime_assert( manager->compatibility_check() );
+
+	return manager;
 }
 
 std::string VLB::get_name() const {

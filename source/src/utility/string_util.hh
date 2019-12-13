@@ -80,6 +80,12 @@ from_string (std::string const & s, T )
 	return t;
 }
 
+// @brief Convert a vector of single characters into a vector of length-1 strings.
+// (Right now just characters, to avoid accidental int conversions.)
+utility::vector1< std::string >
+string_vector_from_char_vector( utility::vector1< char > const & char_vect );
+
+
 template <class T>
 inline utility::vector1<T> const
 string_split (std::string const &in,char splitchar,T)

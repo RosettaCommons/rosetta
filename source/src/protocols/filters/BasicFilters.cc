@@ -314,6 +314,15 @@ CompoundFilter::set_resid( core::Size const resid )
 	}
 }
 
+/// @details call the compound statement's constituent filters' set_resid
+void
+CompoundFilter::set_resid( core::pose::ResidueIndexDescriptionCOP r )
+{
+	for ( auto & it : compound_statement_ ) {
+		protocols::moves::modify_ResId_based_object( it.first, r );
+	}
+}
+
 void
 CompoundFilter::parse_my_tag(
 	TagCOP const tag,

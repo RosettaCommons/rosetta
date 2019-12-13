@@ -55,6 +55,10 @@ public:
 	// takes a single chain
 	ChainSelector( char chain );
 
+	// takes a chain ID (two to handle ambiguous constructor issues)
+	ChainSelector( int chainid );
+	ChainSelector( core::Size chainid );
+
 	~ChainSelector() override;
 
 	/// @brief Clone operator.

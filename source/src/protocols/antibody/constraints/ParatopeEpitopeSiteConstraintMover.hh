@@ -18,6 +18,7 @@
 
 #include <core/scoring/constraints/SiteConstraint.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
@@ -111,10 +112,16 @@ public:
 	set_defaults();
 
 
-	utility::vector1<bool>
+	core::select::residue_selector::ResidueSelectorOP
 	get_epitope_residues() const {
 		return epitope_residues_;
 	}
+
+	utility::vector1<bool>
+	get_epitope_residues( core::pose::Pose const & pose ) const;
+
+	utility::vector1<bool>
+	get_paratope_residues( core::pose::Pose const & pose ) const;
 
 	std::string
 	get_name() const override;
@@ -138,8 +145,8 @@ private:
 private:
 
 	AntibodyInfoCOP ab_info_;
-	utility::vector1<bool> paratope_residues_;
-	utility::vector1<bool> epitope_residues_;
+	core::select::residue_selector::ResidueSelectorOP paratope_residues_;
+	core::select::residue_selector::ResidueSelectorOP epitope_residues_;
 	utility::vector1<bool> paratope_cdrs_;
 
 	//std::map< core::Size, vector1<core::scoring::constraints::AmbiguousConstraintOP > > constraint_map_;

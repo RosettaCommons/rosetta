@@ -109,6 +109,7 @@ public:
 	);
 
 	void set_resid( core::Size const resid ) override;
+	void set_resid( core::pose::ResidueIndexDescriptionCOP r ) override;
 
 
 	protocols::moves::MoverOP clone() const override;

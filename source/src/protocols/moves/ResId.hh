@@ -18,9 +18,9 @@
 
 #include <core/types.hh>
 #include <protocols/moves/ResId.fwd.hh>
-
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 #include <utility/pointer/ReferenceCount.fwd.hh>
-
+#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace moves {
@@ -32,18 +32,23 @@ public:
 	ResId() = default;
 	ResId( core::Size const r );
 	virtual void set_resid( core::Size const r );
-	virtual core::Size get_resid() const;
+	virtual void set_resid( core::pose::ResidueIndexDescriptionCOP r );
+	virtual core::Size get_resid( core::pose::Pose const & ) const;
 	/// @brief should another method be able to modify resid_. This is used by modify_ResId_based_object as a test
 	bool modifiable() const;
 	void modifiable( bool const u );
 private:
-	core::Size resid_ = 0;
+	core::pose::ResidueIndexDescriptionCOP resid_;
 	bool modifiable_ = true;
 };
 
 /// @brief Checks whether a referencecount object is a derived from ResId and if so, sets its resid
 void
 modify_ResId_based_object( utility::pointer::ReferenceCountOP const obj, core::Size const resid );
+
+/// @brief Checks whether a referencecount object is a derived from ResId and if so, sets its resid
+void
+modify_ResId_based_object( utility::pointer::ReferenceCountOP const obj, core::pose::ResidueIndexDescriptionCOP r );
 
 } // moves
 } // protocols

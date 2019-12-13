@@ -23,6 +23,7 @@
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/moves/Mover.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 namespace protocols {
 namespace antibody {
@@ -83,7 +84,7 @@ public:
 
 	/// @brief Optionally constrain to a set of antigen chains instead of all of them
 	void
-	constrain_to_antigen_chains(utility::vector1<core::Size> const & antigen_chains);
+	constrain_to_antigen_chains(utility::vector1<std::string> const & antigen_chains);
 
 
 	/// @brief Optionally set the Func that will be used for the constraint.  Default is the Flat_Harmonic at 0, 1, 5
@@ -113,8 +114,8 @@ public:
 
 private:
 
-	void
-	setup_paratope_residues_from_cdrs(core::pose::Pose const & pose);
+	utility::vector1< bool >
+	paratope_residues_from_cdrs(core::pose::Pose const & pose);
 
 	core::scoring::constraints::SiteConstraintOP
 	setup_constraints(core::pose::Pose const & pose, core::Size resnum, std::string chain);
@@ -123,8 +124,8 @@ private:
 
 	AntibodyInfoCOP ab_info_;
 	utility::vector1<bool> cdrs_to_apply_;
-	utility::vector1<bool> paratope_residues_;
-	utility::vector1<core::Size> antigen_chains_;
+	core::select::residue_selector::ResidueSelectorOP paratope_residues_;
+	utility::vector1<std::string> antigen_chains_;
 	core::Real interface_distance_;
 
 	//std::map< core::Size, vector1<core::scoring::constraints::AmbiguousConstraintCOP > > constraint_map_;

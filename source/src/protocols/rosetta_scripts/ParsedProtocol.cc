@@ -290,6 +290,16 @@ ParsedProtocol::set_resid( core::Size const resid ){
 	}
 }
 
+/// @details sets resid for the constituent filters and movers
+void
+ParsedProtocol::set_resid( core::pose::ResidueIndexDescriptionCOP r ){
+	for ( auto & mover : movers_ ) {
+		using namespace protocols::moves;
+		modify_ResId_based_object( mover.first.first, r );
+		modify_ResId_based_object( mover.second, r );
+	}
+}
+
 protocols::moves::MoverOP ParsedProtocol::clone() const
 {
 	return utility::pointer::make_shared< protocols::rosetta_scripts::ParsedProtocol >( *this );

@@ -22,7 +22,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/exit.hh>
@@ -56,12 +56,12 @@ public:
 	void min_rb( bool const min_rb ) { min_rb_.clear(); min_rb_.push_back( min_rb ); min_rb_set_ = true; }
 	utility::vector1< bool > const & min_rb() const { runtime_assert( min_rb_set() ); return min_rb_; }
 	bool min_rb_set() const { return min_rb_set_; }
-	void min_sc( utility::vector1< bool > const & min_sc ) { min_sc_ = min_sc; min_sc_set_ = true; }
-	utility::vector1< bool > const & min_sc() const { runtime_assert( min_sc_set() ); return min_sc_; }
-	bool min_sc_set() const { return min_sc_set_; }
-	void min_bb( utility::vector1< bool > const & min_bb ) { min_bb_ = min_bb; min_bb_set_ = true; }
-	utility::vector1< bool > const & min_bb() const { runtime_assert( min_bb_set() ); return min_bb_; }
-	bool min_bb_set() const { return min_bb_set_; }
+	void min_sc( core::select::residue_selector::ResidueSelectorOP min_sc );
+	utility::vector1< bool > min_sc(core::pose::Pose const & pose) const;
+	bool min_sc_set() const;
+	void min_bb( core::select::residue_selector::ResidueSelectorOP min_bb );
+	utility::vector1< bool > min_bb(core::pose::Pose const & pose) const;
+	bool min_bb_set() const;
 	bool optimize_foldtree() const { return optimize_foldtree_; }
 	void optimize_foldtree( bool const opt ) { optimize_foldtree_ = opt; }
 	/// @brief a dummy apply so that instantiation of this baseclass would be possible.
@@ -104,9 +104,9 @@ protected: // RM: This is against the coding conventions - while member function
 	bool repack_partner1_, repack_partner2_;
 	bool design_partner1_, design_partner2_; // design or only repack?
 	// curr_ variables are reset with every apply, whereas the min_ variables do not
-	utility::vector1< bool > min_sc_, curr_min_sc_, min_rb_;
-	utility::vector1< bool > min_bb_, curr_min_bb_, curr_min_rb_;
-	bool min_rb_set_, min_sc_set_, min_bb_set_;
+	utility::vector1< bool > min_rb_;
+	utility::vector1< bool > curr_min_sc_, curr_min_bb_, curr_min_rb_;
+	bool min_rb_set_;
 	core::Real interface_distance_cutoff_;
 	bool repack_non_ala_; // do we redesign nonalanine positions?
 	bool optimize_foldtree_; // do we want to optimize or keep the input fold tree or optimize it?
@@ -121,6 +121,8 @@ protected: // RM: This is against the coding conventions - while member function
 	bool symmetry_;
 
 private:
+	core::select::residue_selector::ResidueSelectorOP min_sc_, min_bb_;
+
 	core::select::residue_selector::ResidueSelectorCOP target_residues_;
 
 };

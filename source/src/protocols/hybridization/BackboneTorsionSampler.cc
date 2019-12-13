@@ -331,16 +331,15 @@ BackboneTorsionSampler::parse_my_tag(
 	basic::datacache::DataMap & datamap,
 	Filters_map const & ,
 	moves::Movers_map const & /*movers*/,
-	Pose const & pose
+	Pose const &
 ) {
-	core::Size start_res = 1;
-	core::Size stop_res = pose.size();
-
-	if ( tag->hasOption( "start_res" ) ) start_res = tag->getOption< core::Size >( "start_res" );
-	if ( tag->hasOption( "stop_res" ) ) stop_res = tag->getOption< core::Size >( "stop_res" );
-	for ( core::Size ires=start_res; ires<=stop_res; ++ires ) {
-		residue_list_.push_back(ires);
+	if ( tag->hasOption( "start_res" ) ) {
+		TR.Warning << "The 'start_res' option of BackboneTorsionSampler doesn't actually do anything." << std::endl;
 	}
+	if ( tag->hasOption( "stop_res" ) ) {
+		TR.Warning << "The 'stop_res' option of BackboneTorsionSampler doesn't actually do anything." << std::endl;
+	}
+
 	if ( tag->hasOption( "native") ) {
 		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file( *native_, tag->getOption< std::string >( "native" ), core::import_pose::PDB_file);
@@ -401,8 +400,8 @@ void BackboneTorsionSampler::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	AttributeList attlist;
 
 	attlist
-		+ XMLSchemaAttribute( "start_res", xsct_positive_integer, "nominally lower bound for a region to sample, but it looks like it's ignored in the code. effectively defaults to 1")
-		+ XMLSchemaAttribute( "stop_res", xsct_positive_integer, "nominally upper bound for a region to sample, but it looks like it's ignored in the code. effectively defaults to the size of the Pose at parse_my_tag time")
+		+ XMLSchemaAttribute( "start_res", xsct_positive_integer, "nominally lower bound for a region to sample (NOTE: THIS PARAMETER IS IGNORED)")
+		+ XMLSchemaAttribute( "stop_res", xsct_positive_integer, "nominally upper bound for a region to sample (NOTE: THIS PARAMETER IS IGNORED")
 		+ XMLSchemaAttribute( "native", xs_string, "file path to native pose, used to calculate gdtmm")
 		+ XMLSchemaAttribute( "increase_cycles", xsct_real, "multiply cycle count by this")
 		+ XMLSchemaAttribute( "recover_low", xsct_rosetta_bool, "recover the lowest-energy structure seen in the Monte Carlo trajectory at the end?")

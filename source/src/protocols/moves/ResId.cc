@@ -15,6 +15,7 @@
 #include <core/types.hh>
 #include <protocols/moves/ResId.hh>
 #include <utility/pointer/ReferenceCount.fwd.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -24,12 +25,16 @@ namespace protocols {
 namespace moves {
 
 ResId::ResId( core::Size const r ):
-	resid_( r )
+	resid_( core::pose::make_rid_posenum( r ) )
 {}
 
 core::Size
-ResId::get_resid() const{
-	return( resid_ );
+ResId::get_resid(core::pose::Pose const & pose ) const {
+	if ( resid_ == nullptr ) {
+		return 0;
+	} else {
+		return resid_->resolve_index( pose );
+	}
 }
 
 bool
@@ -44,6 +49,11 @@ ResId::modifiable( bool const u ) {
 
 void
 ResId::set_resid( core::Size const r ){
+	resid_ = core::pose::make_rid_posenum( r );
+}
+
+void
+ResId::set_resid( core::pose::ResidueIndexDescriptionCOP r ) {
 	resid_ = r;
 }
 
@@ -61,6 +71,19 @@ modify_ResId_based_object( utility::pointer::ReferenceCountOP const obj, core::S
 	if ( is_this_a_resid ) {
 		if ( resid1->modifiable() ) {
 			resid1->set_resid( resid );
+		}
+	}
+}
+
+void
+modify_ResId_based_object( utility::pointer::ReferenceCountOP const obj, core::pose::ResidueIndexDescriptionCOP r ){
+	using namespace protocols::filters;
+
+	auto * resid1 = dynamic_cast< ResId * >( obj.get() );
+	bool const is_this_a_resid( resid1 );
+	if ( is_this_a_resid ) {
+		if ( resid1->modifiable() ) {
+			resid1->set_resid( r );
 		}
 	}
 }

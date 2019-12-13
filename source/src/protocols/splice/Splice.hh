@@ -19,6 +19,7 @@
 #include <protocols/splice/SpliceSegment.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -87,10 +88,10 @@ public:
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
 	~Splice() override;
 
-	void from_res( core::Size const f ){ from_res_ = f; } //stem residue of segment
-	core::Size from_res() const { return from_res_; }
-	void to_res( core::Size const t ){ to_res_ = t; }//stem residue of segment
-	core::Size to_res() const { return to_res_; }
+	void from_res( core::Size const f ); //stem residue of segment
+	core::Size from_res( core::pose::Pose const & pose ) const;
+	void to_res( core::Size const t ); //stem residue of segment
+	core::Size to_res( core::pose::Pose const & pose ) const;
 	std::string source_pdb() const { return source_pdb_; } //PDB to copy source conformation from
 	void source_pdb( std::string const & s ){ source_pdb_ = s; }
 	void ccd( bool const c ){ ccd_ = c;} //whether or not to apply CCD
@@ -232,7 +233,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
+	void save_values(core::pose::Pose const & pose); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
 	std::string parse_pdb_code(std::string pdb_file_name);
 	void copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::Size const from_res, core::Size const to_res );
@@ -245,7 +246,8 @@ private:
 	utility::vector1< std::string > segment_names_ordered_;
 
 	std::string dofs_pdb_name; //This variable hold the name of the pdb in the torsion db
-	core::Size from_res_, to_res_, saved_from_res_, saved_to_res_;
+	core::pose::ResidueIndexDescriptionCOP from_res_, to_res_;
+	core::Size saved_from_res_, saved_to_res_;
 	std::string source_pdb_;
 	bool ccd_; //dflt true; do ccd?
 	core::Real dihedral_const_; //dflt 1; gideonla

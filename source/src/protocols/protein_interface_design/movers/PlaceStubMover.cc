@@ -51,6 +51,7 @@
 #include <protocols/protein_interface_design/movers/SetAtomTree.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 
 // Utility Headers
 #include <utility/exit.hh>

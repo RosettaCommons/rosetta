@@ -16,6 +16,7 @@
 
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/util.hh>
+#include <protocols/antibody/design/ResnumFromStringsWithRangesSelector.hh>
 
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/SiteConstraint.hh>
@@ -24,6 +25,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/util.hh>
@@ -70,9 +73,9 @@ ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover(AntibodyI
 
 ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover(AntibodyInfoCOP ab_info, vector1<CDRNameEnum> paratope_cdrs, vector1<bool> const & epitope_residues):
 	protocols::moves::Mover(),
-	epitope_residues_(epitope_residues),
 	current_func_(/* NULL */)
 {
+	epitope_residues_ = utility::pointer::make_shared< core::select::residue_selector::ReturnResidueSubsetSelector >( epitope_residues );
 	ab_info_ = ab_info;
 	constrain_to_paratope_cdrs(paratope_cdrs);
 	interface_distance_ = 10.0;
@@ -101,10 +104,28 @@ ParatopeEpitopeSiteConstraintMover::set_defaults(){
 
 	paratope_cdrs_.clear();
 	paratope_cdrs_.resize(6, true);
-	paratope_residues_.clear();
-	epitope_residues_.clear();
+	paratope_residues_ = nullptr;
+	epitope_residues_ = nullptr;
 	current_func_ = nullptr;
 	interface_distance_ = 10.0;
+}
+
+utility::vector1<bool>
+ParatopeEpitopeSiteConstraintMover::get_epitope_residues( core::pose::Pose const & pose ) const {
+	if ( epitope_residues_ == nullptr ) {
+		return protocols::antibody::select_epitope_residues(ab_info_, pose, interface_distance_);
+	} else {
+		return epitope_residues_->apply( pose );
+	}
+}
+
+utility::vector1<bool>
+ParatopeEpitopeSiteConstraintMover::get_paratope_residues( core::pose::Pose const & pose ) const {
+	if ( paratope_residues_ == nullptr ) {
+		return this->paratope_residues_from_cdrs(pose, paratope_cdrs_);
+	} else {
+		return paratope_residues_->apply( pose );
+	}
 }
 
 void
@@ -113,7 +134,7 @@ ParatopeEpitopeSiteConstraintMover::parse_my_tag(
 	basic::datacache::DataMap & ,
 	Filters_map const & ,
 	moves::Movers_map const & ,
-	Pose const & pose
+	Pose const &
 ){
 	//Paratope Constraint options
 	if ( tag->hasOption("paratope_cdrs") ) {
@@ -136,35 +157,27 @@ ParatopeEpitopeSiteConstraintMover::parse_my_tag(
 	//Rosetta Numberings
 	if ( tag->hasOption("paratope_residues") ) {
 		TR << "Using paratope as user set residues." << std::endl;
-		paratope_residues_.clear();
-		paratope_residues_.resize(pose.size(), false);
 		utility::vector1<std::string> residues = utility::string_split_multi_delim(tag->getOption<std::string>("paratope_residues"), ",'`~+*&|;. ");
-		for ( core::Size i = 1; i <= residues.size(); ++i ) {
-			paratope_residues_[ utility::string2Size( residues[ i ])] = true;
-		}
+		paratope_residues_ = utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( utility::join( residues, "," ) );
 
 	}
 	if ( tag->hasOption("epitope_residues") ) {
 		TR << "Using epitope as user set residues." << std::endl;
-		epitope_residues_.clear();
-		epitope_residues_.resize(pose.size(), false);
 		utility::vector1<std::string> residues = utility::string_split_multi_delim(tag->getOption<std::string>("epitope_residues"), ",'`~+*&|;. ");
-		for ( core::Size i = 1; i <= residues.size(); ++i ) {
-			epitope_residues_[ utility::string2Size( residues[ i ])] = true;
-		}
+		epitope_residues_ = utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( utility::join( residues, "," ) );
 
 	}
 	//PDB Numbering
 	if ( tag->hasOption("paratope_residues_pdb") ) {
 		TR << "Using paratope as user set residues." << std::endl;
 
-		paratope_residues_ = design::get_resnums_from_strings_with_ranges(pose, utility::string_split_multi_delim(tag->getOption<std::string>("paratope_residues_pdb"), ",; ") );
+		paratope_residues_ = utility::pointer::make_shared< design::ResnumFromStringsWithRangesSelector >( utility::string_split_multi_delim(tag->getOption<std::string>("paratope_residues_pdb"), ",; ") );
 
 	}
 	if ( tag->hasOption("epitope_residues_pdb") ) {
 		TR << "Using epitope as user set residues." << std::endl;
 
-		epitope_residues_ = design::get_resnums_from_strings_with_ranges(pose, utility::string_split_multi_delim(tag->getOption<std::string>("epitope_residues_pdb"), ",; ") );
+		epitope_residues_ = utility::pointer::make_shared< design::ResnumFromStringsWithRangesSelector >( utility::string_split_multi_delim(tag->getOption<std::string>("epitope_residues_pdb"), ",; ") );
 
 	}
 
@@ -182,13 +195,13 @@ ParatopeEpitopeSiteConstraintMover::set_interface_distance(const core::Real dist
 
 void
 ParatopeEpitopeSiteConstraintMover::constrain_to_epitope_residues(vector1<bool> const &epitope_residues) {
-	epitope_residues_ = epitope_residues;
+	epitope_residues_ = utility::pointer::make_shared< core::select::residue_selector::ReturnResidueSubsetSelector >( epitope_residues );
 }
 
 void
 ParatopeEpitopeSiteConstraintMover::constrain_to_epitope_residues(const vector1<design::PDBNumbering >& epitope_residues, const core::pose::Pose& pose) {
 
-	epitope_residues_ = protocols::antibody::design::get_resnum_from_pdb_numbering(pose, epitope_residues);
+	epitope_residues_ =  utility::pointer::make_shared< core::select::residue_selector::ReturnResidueSubsetSelector >( protocols::antibody::design::get_resnum_from_pdb_numbering(pose, epitope_residues) );
 }
 
 void
@@ -213,7 +226,7 @@ ParatopeEpitopeSiteConstraintMover::constrain_to_paratope_cdrs(const vector1<boo
 
 void
 ParatopeEpitopeSiteConstraintMover::constrain_to_paratope_residues(vector1<bool> const & paratope_residues) {
-	paratope_residues_ = paratope_residues;
+	paratope_residues_ = utility::pointer::make_shared< core::select::residue_selector::ReturnResidueSubsetSelector >( paratope_residues );
 }
 
 vector1<bool>
@@ -255,10 +268,6 @@ ParatopeEpitopeSiteConstraintMover::apply(core::pose::Pose& pose) {
 		paratope_cdrs_[l3] = false;
 	}
 
-	if ( paratope_residues_.size() == 0 ) {
-		paratope_residues_ = this->paratope_residues_from_cdrs(pose, paratope_cdrs_);
-	}
-
 
 	//If no constraint is set.  Use the default.
 	if ( !current_func_ ) {
@@ -266,12 +275,11 @@ ParatopeEpitopeSiteConstraintMover::apply(core::pose::Pose& pose) {
 	}
 
 	//Setup antigen paratope residues if none are set.
-	if ( epitope_residues_.size() == 0 ) {
-		epitope_residues_ = protocols::antibody::select_epitope_residues(ab_info_, pose, interface_distance_);
-	}
+	utility::vector1< bool > paratope_residues = get_paratope_residues( pose );
+	utility::vector1< bool > epitope_residues = get_epitope_residues( pose );
 
-	debug_assert(paratope_residues_.size() == pose.size());
-	debug_assert(epitope_residues_.size() == pose.size());
+	debug_assert(paratope_residues.size() == pose.size());
+	debug_assert(epitope_residues.size() == pose.size());
 
 	TR << "added constraints "<<std::endl;
 	//pose.constraint_set()->show(TR);
@@ -280,18 +288,18 @@ ParatopeEpitopeSiteConstraintMover::apply(core::pose::Pose& pose) {
 	ConstraintCOPs current_csts = pose.constraint_set()->get_all_constraints();
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
-		if ( (paratope_residues_[ i ] == true) && (epitope_residues_[ i ] == true) ) {
+		if ( (paratope_residues[ i ] == true) && (epitope_residues[ i ] == true) ) {
 			utility_exit_with_message("Cannot be both paratope and epitope residue ");
 		}
 
-		if ( paratope_residues_[i] ) {
-			core::scoring::constraints::SiteConstraintOP constraint = setup_constraints(pose, i, epitope_residues_);
+		if ( paratope_residues[i] ) {
+			core::scoring::constraints::SiteConstraintOP constraint = setup_constraints(pose, i, epitope_residues);
 			if ( std::find(current_csts.begin(), current_csts.end(), constraint) == current_csts.end() ) {
 				pose.add_constraint(constraint);
 				//TR << "Adding paratope-> epitope constraint: "<<i <<std::endl;
 			}
-		} else if  ( epitope_residues_[i] ) {
-			core::scoring::constraints::SiteConstraintOP constraint = setup_constraints(pose, i, paratope_residues_);
+		} else if  ( epitope_residues[i] ) {
+			core::scoring::constraints::SiteConstraintOP constraint = setup_constraints(pose, i, paratope_residues);
 			if ( std::find(current_csts.begin(), current_csts.end(), constraint) == current_csts.end() ) {
 				pose.add_constraint(constraint);
 				//TR << "Adding epitope-> paratope constraint: "<<i <<std::endl;
@@ -307,18 +315,20 @@ void
 ParatopeEpitopeSiteConstraintMover::remove(core::pose::Pose & pose){
 
 	using namespace core::scoring::constraints;
+	utility::vector1< bool > paratope_residues = get_paratope_residues( pose );
+	utility::vector1< bool > epitope_residues = get_epitope_residues( pose );
 
 	vector1<ConstraintOP> csts_to_be_removed;
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
-		debug_assert(paratope_residues_[i] != true && epitope_residues_[i] != true);
+		debug_assert(paratope_residues[i] != true && epitope_residues[i] != true);
 
-		if ( paratope_residues_[i] ) {
-			core::scoring::constraints::SiteConstraintOP constraint = setup_constraints(pose, i, epitope_residues_);
+		if ( paratope_residues[i] ) {
+			core::scoring::constraints::SiteConstraintOP constraint = setup_constraints(pose, i, epitope_residues);
 			//constraint_map_[i].push_back(L_constraint);
 			csts_to_be_removed.push_back(constraint);
-		} else if ( epitope_residues_[i] ) {
-			core::scoring::constraints::SiteConstraintOP constraint = setup_constraints(pose, i, paratope_residues_);
+		} else if ( epitope_residues[i] ) {
+			core::scoring::constraints::SiteConstraintOP constraint = setup_constraints(pose, i, paratope_residues);
 			//constraint_map_[i].push_back(H_constraint);
 			csts_to_be_removed.push_back(constraint);
 		}

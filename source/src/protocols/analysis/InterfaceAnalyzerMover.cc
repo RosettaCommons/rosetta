@@ -303,6 +303,22 @@ void
 InterfaceAnalyzerMover::init_on_new_input(const core::pose::Pose & pose){
 	//Reinit structs to make sure they are clear.
 
+	if ( !fixed_chain_strings_.empty() ) {
+		fixed_chains_.clear();
+
+		////parse the fixed chains strings to figure out pose chain nums
+		for ( std::string const & fixed_chain: fixed_chain_strings_ ) {
+			debug_assert( fixed_chain.size() == 1 );
+			char this_chain ( fixed_chain[ 0 ] );
+			for ( core::Size i = 1; i<=pose.size(); ++i ) {
+				if ( pose.pdb_info()->chain( i ) == this_chain ) {
+					fixed_chains_.insert( pose.chain( i ) );
+					break; //once we know something about the chain we can skip - we just need the chain id
+				}
+			}
+		}
+	}
+
 	init_data(pose);
 	init_per_residue_data(pose);
 
@@ -455,6 +471,7 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 	}
 
 	fixed_chains_.clear();
+	fixed_chain_strings_.clear();
 	vector1< std::string > chainsSP = utility::string_split( dock_chains_, '_' );
 	if ( pose.conformation().num_chains() == ( chainsSP[ 1 ].length() + chainsSP[ 2 ].length() ) ) {
 		for ( core::Size i = 1; i <= chainsSP[ 1 ].length(); ++i ) {
@@ -1467,7 +1484,7 @@ InterfaceAnalyzerMover::parse_my_tag(
 	basic::datacache::DataMap & datamap,
 	Filters_map const &,
 	Movers_map const &,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	sf_ = protocols::rosetta_scripts::parse_score_function( tag, datamap )->clone();
@@ -1492,24 +1509,14 @@ InterfaceAnalyzerMover::parse_my_tag(
 	if ( tag->hasOption( "fixedchains" ) ) {
 		set_interface_jump( 0 );
 		std::string chains_string = tag->getOption<std::string>( "fixedchains" );
-		utility::vector1< std::string > fixed_chains_string = utility::string_split( chains_string, ',' );
-		//parse the fixed chains to figure out pose chain nums
-		//std::set< int > fixed_chains_ ; //This is a set of the CHAIN IDs, not residue ids
+		fixed_chain_strings_ = utility::string_split( chains_string, ',' );
 		TR << "Fixed chains are: " ;
-		for ( core::Size j = 1; j <= fixed_chains_string.size(); ++j ) {
-			char this_chain ( fixed_chains_string[ j ][ 0 ] );
-			for ( core::Size i = 1; i<=pose.size(); ++i ) {
-				if ( pose.pdb_info()->chain( i ) == this_chain ) {
-					fixed_chains_.insert( pose.chain( i ) );
-					break; //once we know something about the chain we can skip - we just need the chain id
-				}
-			}
+		for ( auto const & this_chain: fixed_chain_strings_ ) {
 			TR << this_chain << ", ";
 		}
 		TR << "these will be moved together." << std::endl;
 
 		explicit_constructor_ = true;
-		//fixed_chains_(fixed_chains)
 	} else if ( tag->hasOption( "interface" ) ) {
 		set_interface_jump( 0 );
 		explicit_constructor_ = true;

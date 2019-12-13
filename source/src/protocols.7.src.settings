@@ -71,6 +71,7 @@ sources = {
 		"GeneralAntibodyModeler",
         	"MutateFrameworkForCluster",
         	"NativeAntibodySeq",
+		"ResnumFromStringsWithRangesSelector",
 		"util",
 	],
 	"protocols/antibody/grafting":[

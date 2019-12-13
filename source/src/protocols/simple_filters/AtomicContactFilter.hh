@@ -24,6 +24,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/ResId.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -70,8 +71,8 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	core::Size residue1_;/*, residue2_ residue2 is managed by the ResId baseclass*/
-	utility::vector1< core::Size > range1_;
+	core::select::residue_selector::ResidueSelectorOP side1_;
+	// The other side is managed by the ResId base class
 	core::Real distance_;
 	bool sidechain_, backbone_, protons_;
 };

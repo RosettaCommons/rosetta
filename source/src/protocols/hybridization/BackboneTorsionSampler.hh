@@ -120,7 +120,6 @@ private:
 
 	core::Size n_nested_;
 	core::Size perturbed_res_;
-	utility::vector1< core::Size > residue_list_;
 	protocols::minimization_packing::PackRotamersMoverOP pack_full_repack_;
 	core::optimization::AtomTreeMinimizerOP minimizer_;
 	//core::optimization::CartesianMinimizerOP minimizer_;

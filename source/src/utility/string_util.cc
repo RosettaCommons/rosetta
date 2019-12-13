@@ -41,6 +41,16 @@
 
 namespace utility {
 
+utility::vector1< std::string >
+string_vector_from_char_vector( utility::vector1< char > const & char_vect ) {
+	utility::vector1< std::string > retval;
+	retval.reserve( char_vect.size() );
+	for ( char entry: char_vect ) {
+		retval.push_back( to_string< char >( entry ) );
+	}
+	return retval;
+}
+
 /// @brief Given a stringstream in which the next block of text is any string representing "true" or any
 /// string representing "false", parse this as a Boolean, and return an informative error message if we fail.
 /// @author Vikram K. Mulligan

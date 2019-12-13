@@ -61,6 +61,8 @@ ChainSelector::ChainSelector( ChainSelector const &src) :
 
 ChainSelector::ChainSelector( std::string const & chains ) : chain_strings_( utility::string_split( chains, ',' ) ) {}
 ChainSelector::ChainSelector( char chain ) : chain_strings_( 1, std::string( 1, chain ) ) {}
+ChainSelector::ChainSelector( int chainid ) : chain_strings_( 1, std::to_string( chainid ) ) {}
+ChainSelector::ChainSelector( core::Size chainid ) : chain_strings_( 1, std::to_string( chainid ) ) {}
 ChainSelector::~ChainSelector() = default;
 
 /// @brief Clone operator.

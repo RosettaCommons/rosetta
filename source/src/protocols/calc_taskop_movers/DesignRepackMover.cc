@@ -30,6 +30,9 @@
 #include <basic/datacache/DataMap.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/TrueResidueSelector.hh>
+#include <core/select/residue_selector/FalseResidueSelector.hh>
+#include <core/select/residue_selector/ChainSelector.hh>
 #include <core/select/util.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -84,14 +87,14 @@ namespace calc_taskop_movers {
 using namespace protocols::moves;
 
 DesignRepackMover::DesignRepackMover() : protocols::moves::Mover( "DesignRepackMover" ),
-	repack_partner1_( false ), repack_partner2_( false ), design_partner1_( false ), design_partner2_( false ), min_rb_set_( false ), min_sc_set_( false ), min_bb_set_( false ), interface_distance_cutoff_(8.0 ), repack_non_ala_( true ), optimize_foldtree_( true ), automatic_repacking_definition_( true ), use_preset_task_( false ), symmetry_( false )
+	repack_partner1_( false ), repack_partner2_( false ), design_partner1_( false ), design_partner2_( false ), min_rb_set_( false ), interface_distance_cutoff_(8.0 ), repack_non_ala_( true ), optimize_foldtree_( true ), automatic_repacking_definition_( true ), use_preset_task_( false ), symmetry_( false )
 {
 	allowed_aas_.resize( core::chemical::num_canonical_aas, true );
 	prevent_repacking_.clear();
 	restrict_to_repacking_.clear();
 }
 
-DesignRepackMover::DesignRepackMover( std::string const & name ) : protocols::moves::Mover( name ), repack_partner1_( false ), repack_partner2_( false ), design_partner1_( false ), design_partner2_( false ), min_rb_set_( false ), min_sc_set_( false ), min_bb_set_( false ), interface_distance_cutoff_( 8.0 ), repack_non_ala_( true ), optimize_foldtree_( true ), automatic_repacking_definition_( true ), use_preset_task_( false ), symmetry_( false )
+DesignRepackMover::DesignRepackMover( std::string const & name ) : protocols::moves::Mover( name ), repack_partner1_( false ), repack_partner2_( false ), design_partner1_( false ), design_partner2_( false ), min_rb_set_( false ), interface_distance_cutoff_( 8.0 ), repack_non_ala_( true ), optimize_foldtree_( true ), automatic_repacking_definition_( true ), use_preset_task_( false ), symmetry_( false )
 {
 	allowed_aas_.resize( core::chemical::num_canonical_aas, true );
 }
@@ -104,6 +107,34 @@ DesignRepackMover::get_name() const {
 void
 DesignRepackMover::clear_task(){
 	task_ = nullptr;
+}
+
+void
+DesignRepackMover::min_sc( core::select::residue_selector::ResidueSelectorOP min_sc ) { min_sc_ = min_sc; }
+
+utility::vector1< bool >
+DesignRepackMover::min_sc( core::pose::Pose const & pose ) const {
+	runtime_assert( min_sc_ != nullptr );
+	return min_sc_->apply( pose );
+}
+
+bool
+DesignRepackMover::min_sc_set() const {
+	return min_sc_ != nullptr;
+}
+
+void
+DesignRepackMover::min_bb( core::select::residue_selector::ResidueSelectorOP min_bb ) { min_bb_ = min_bb; }
+
+utility::vector1< bool >
+DesignRepackMover::min_bb( core::pose::Pose const & pose ) const {
+	runtime_assert( min_bb_ != nullptr );
+	return min_bb_->apply( pose );
+}
+
+bool
+DesignRepackMover::min_bb_set() const {
+	return min_bb_ != nullptr;
 }
 
 void
@@ -122,12 +153,10 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 	curr_min_sc_.resize( pose.size(), false );
 	curr_min_rb_.resize( pose.num_jump(), true );
 	if ( min_sc_set() ) {
-		runtime_assert( min_sc_.size() == pose.size() );
-		curr_min_sc_ = min_sc_;
+		curr_min_sc_ = min_sc( pose );
 	}
 	if ( min_bb_set() ) {
-		runtime_assert( min_bb_.size() == pose.size() );
-		curr_min_bb_ = min_bb_;
+		curr_min_bb_ = min_bb( pose );
 	}
 	if ( min_rb_set() ) curr_min_rb_ = min_rb_;
 
@@ -325,7 +354,7 @@ utility::tag::XMLSchemaComplexTypeGeneratorOP DesignRepackMover::get_xsd_complex
 }
 
 void
-DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
+DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ){
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 
 	std::string const scorefxn_repack( protocols::rosetta_scripts::get_score_function_name(tag, "scorefxn_repack" ) );
@@ -358,28 +387,42 @@ DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 	}
 
 	if ( tag->hasOption( "minimize_bb" ) ) {
-		utility::vector1< bool > minbb( pose.size(), tag->getOption<bool>( "minimize_bb", true ) );
-		min_bb( minbb );
+		if ( tag->getOption<bool>( "minimize_bb", true ) ) {
+			min_bb( utility::pointer::make_shared< core::select::residue_selector::TrueResidueSelector >() );
+		} else {
+			min_bb( utility::pointer::make_shared< core::select::residue_selector::FalseResidueSelector >() );
+		}
 	}
 
 	if ( tag->hasOption( "minimize_bb_ch1" ) ||  ( tag->hasOption( "minimize_bb_ch2" ) ) ) {
-		utility::vector1< bool > minbb( pose.size(), true );
-		if ( tag->hasOption( "minimize_bb_ch1" ) ) {
-			for ( core::Size res_it=pose.conformation().chain_begin( 1 ); res_it<=pose.conformation().chain_end( 1 ); ++res_it ) {
-				minbb[ res_it ]=tag->getOption<bool>( "minimize_bb_ch1", true );
-			}
+		if ( tag->hasOption( "minimize_bb" ) ) {
+			TR.Warning << "Setting minimize_bb_ch1 or minimize_bb_ch2 for DesignRepackMover causes it to ignore minimize_bb settings." << std::endl;
 		}
-		if ( tag->hasOption( "minimize_bb_ch2" ) ) {
-			for ( core::Size res_it=pose.conformation().chain_begin( 2 ); res_it<=pose.conformation().chain_end( 2 ); ++res_it ) {
-				minbb[ res_it ]=tag->getOption<bool>( "minimize_bb_ch2", true );
-			}
+		core::select::residue_selector::ResidueSelectorOP ch1;
+		core::select::residue_selector::ResidueSelectorOP ch2;
+		if ( tag->getOption<bool>( "minimize_bb_ch1", false ) ) {
+			ch1 = utility::pointer::make_shared< core::select::residue_selector::ChainSelector >(1);
 		}
-		min_bb( minbb );
+		if ( tag->getOption<bool>( "minimize_bb_ch2", false ) ) {
+			ch2 = utility::pointer::make_shared< core::select::residue_selector::ChainSelector >(2);
+		}
+		if ( ch1 != nullptr && ch2 != nullptr ) {
+			min_bb( core::select::residue_selector::OR_combine( ch1, ch2 ) );
+		} else if ( ch1 != nullptr ) {
+			min_bb( ch1 );
+		} else if ( ch2 != nullptr ) {
+			min_bb( ch2 );
+		} else {
+			min_bb( utility::pointer::make_shared< core::select::residue_selector::FalseResidueSelector >() );
+		}
 	}//end specificatino of bb mininization
 
 	if ( tag->hasOption( "minimize_sc" ) ) {
-		utility::vector1< bool > minsc( pose.size(), tag->getOption< bool >( "minimize_sc", true ));
-		min_sc( minsc );
+		if ( tag->getOption<bool>( "minimize_sc", true ) ) {
+			min_sc( utility::pointer::make_shared< core::select::residue_selector::TrueResidueSelector >() );
+		} else {
+			min_sc( utility::pointer::make_shared< core::select::residue_selector::FalseResidueSelector >() );
+		}
 	}
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 8.0 );
 	utility::vector0< TagCOP > const & repack_tags( tag->getTags() );

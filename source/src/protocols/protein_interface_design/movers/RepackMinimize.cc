@@ -60,7 +60,6 @@ RepackMinimize::clone() const {
 RepackMinimize::RepackMinimize() :
 	calc_taskop_movers::DesignRepackMover( RepackMinimize::mover_name() )
 {
-	min_rb_set_ = min_bb_set_ = min_sc_set_ = false;
 	optimize_foldtree_ = true;
 	automatic_repacking_definition_ = true;
 }

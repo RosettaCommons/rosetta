@@ -42,7 +42,7 @@ public:
 	moves::MoverOP fresh_instance() const override;
 
 	void chain_order( std::string const & co );
-	std::string chain_order() const;
+	utility::vector1< core::Size > chain_order( core::pose::Pose const & ) const;
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -66,7 +66,8 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	utility::vector1<core::Size> chain_ids_;
+	utility::vector1< std::string > chain_ids_;
+	bool invert_chains_ = false;
 
 	utility::pointer::shared_ptr< basic::datacache::DataMapObj< utility::vector1< core::Size > > > residue_numbers_; /// dflt NULL; a vector of residue numbers placed on the basic::datacache::DataMap which need to be changed due to the chain order switch
 	core::scoring::ScoreFunctionOP scorefxn_; // dflt NULL; needed to score the pose for the energy graph to behave well

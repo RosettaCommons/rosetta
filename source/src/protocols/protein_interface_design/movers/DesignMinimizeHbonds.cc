@@ -58,7 +58,6 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.DesignMinimi
 DesignMinimizeHbonds::DesignMinimizeHbonds() :
 	calc_taskop_movers::DesignRepackMover( DesignMinimizeHbonds::mover_name() )
 {
-	min_rb_set_ = min_bb_set_ = min_sc_set_ = false;
 	optimize_foldtree_ = true;
 	automatic_repacking_definition_ = true;
 }
