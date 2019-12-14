@@ -18,7 +18,7 @@ import benchmark
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into globals
 config = benchmark.config()
 
-testname    = "fast_relax"
+testname    = "relax_fast"
 debug       = config['debug']
 rosetta_dir = config['rosetta_dir']
 working_dir = config['working_dir']
@@ -29,8 +29,8 @@ extension  = benchmark.calculate_extension()
 
 command_line = '''
 -database {rosetta_dir}/database
--in:file:s {rosetta_dir}/tests/scientific/data/{testname}/{target}.pdb
--in:file:native {rosetta_dir}/tests/scientific/data/{testname}/{target}.pdb
+-in:file:s {rosetta_dir}/tests/scientific/data/relax/{target}.pdb
+-in:file:native {rosetta_dir}/tests/scientific/data/relax/{target}.pdb
 -nstruct {nstruct}
 -parser:protocol {working_dir}/{testname}.xml
 -out:file:scorefile {prefix}/{target}.score

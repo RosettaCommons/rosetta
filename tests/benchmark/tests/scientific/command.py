@@ -111,9 +111,9 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     # will not accidentally break when a new version of upstream package got released in the future
     tests = dict(
         _template_               = '',
-        cartesian_relax          = 'numpy matplotlib',
-        fast_relax               = 'numpy matplotlib',
-        fast_relax_5iter         = 'numpy matplotlib',
+        relax_cartesian          = 'numpy matplotlib',
+        relax_fast               = 'numpy matplotlib',
+        relax_fast_5iter         = 'numpy matplotlib',
 
         dock_glycans           = 'numpy matplotlib',
 

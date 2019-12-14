@@ -18,7 +18,7 @@ import benchmark
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into globals
 config = benchmark.config()
 
-testname    = "cartesian_relax"
+testname    = "relax_cartesian"
 debug       = config['debug']
 rosetta_dir = config['rosetta_dir']
 working_dir = config['working_dir']
@@ -29,8 +29,8 @@ extension  = benchmark.calculate_extension()
 
 command_line = '''
 -database {rosetta_dir}/database
--in:file:s {rosetta_dir}/tests/scientific/data/{testname}/{target}.pdb
--in:file:native {rosetta_dir}/tests/scientific/data/{testname}/{target}.pdb
+-in:file:s {rosetta_dir}/tests/scientific/data/relax/{target}.pdb
+-in:file:native {rosetta_dir}/tests/scientific/data/relax/{target}.pdb
 -nstruct {nstruct}
 -parser:protocol {working_dir}/{testname}.xml
 -out:file:scorefile {prefix}/{target}.score
@@ -60,7 +60,7 @@ for target in targets:
     if not os.path.exists(prefix): os.makedirs(prefix)
 
     hpc_job_ids.append( hpc_driver.submit_hpc_job(
-        name=f'cartesian_relax-{target}',
+        name=f'{testname}-{target}',
         executable = f'{rosetta_dir}/source/bin/rosetta_scripts.{extension}',
         arguments = command_line.format_map(vars()),
         working_dir = prefix,
