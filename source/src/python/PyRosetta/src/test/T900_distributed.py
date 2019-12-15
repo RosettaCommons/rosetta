@@ -16,35 +16,54 @@ if not hasattr(pyrosetta.rosetta, "cereal"):
     print("Unsupported non-serialization build for pyrosetta.distributed.")
     sys.exit(0)
 
+
 def e(cmd):
     print("Executing:\n{0}".format(cmd))
     status, output = subprocess.getstatusoutput(cmd)
     print("Output:\n{0}".format(output))
     if status != 0:
-        print("Encountered error(s) with exit code {0} while running: {1}\nTerminating...".format(status, cmd))
+        print(
+            "Encountered error(s) with exit code {0} while running: {1}\nTerminating...".format(
+                status, cmd
+            )
+        )
         sys.exit(1)
 
 
 test_suites = [
-                "pyrosetta.tests.bindings.core.test_pose",
-                "pyrosetta.tests.distributed.test_concurrency",
-                "pyrosetta.tests.distributed.test_dask",
-                "pyrosetta.tests.distributed.test_gil",
-                "pyrosetta.tests.distributed.test_smoke",
-                "pyrosetta.tests.distributed.test_viewer",
-                "pyrosetta.tests.numeric.test_alignment"
-              ]
+    "pyrosetta.tests.bindings.core.test_pose",
+    "pyrosetta.tests.distributed.test_concurrency",
+    "pyrosetta.tests.distributed.test_dask",
+    "pyrosetta.tests.distributed.test_gil",
+    "pyrosetta.tests.distributed.test_smoke",
+    "pyrosetta.tests.distributed.test_viewer",
+    "pyrosetta.tests.numeric.test_alignment",
+]
 
 with tempfile.TemporaryDirectory(prefix="tmp_pyrosetta_env") as venv_dir:
-    
+
     venv.create(venv_dir, clear=True, system_site_packages=False, with_pip=True)
-    
-    packages = "blosc dask distributed jupyter numpy pandas py3Dmol scipy traitlets"
-    e(
-        "source {0}/bin/activate && {0}/bin/pip install {1}".format(venv_dir, packages)
+
+    packages = " ".join(
+        [
+            "blosc==1.8.1",
+            "cloudpickle==0.7.0",
+            "dask==1.2.2",
+            "dask-jobqueue==0.4.1",
+            "distributed==1.28.1",
+            "jupyter==1.0.0",
+            "numpy==1.17.3",
+            "pandas==0.25.2",
+            "py3Dmol==0.8.0",
+            "scipy==1.3.1",
+            "traitlets==4.3.3",
+        ]
     )
-    
+    e("source {0}/bin/activate && {0}/bin/pip install {1}".format(venv_dir, packages))
+
     for test_suite in test_suites:
         e(
-            "source {0}/bin/activate && {0}/bin/python -m unittest {1}".format(venv_dir, test_suite)
+            "source {0}/bin/activate && {0}/bin/python -m unittest {1}".format(
+                venv_dir, test_suite
+            )
         )
