@@ -8,6 +8,7 @@
 
 
 import functools
+import inspect
 import logging
 import threading
 import random
@@ -29,18 +30,25 @@ def _normflags(flags):
     """Normalize tuple/list/str of flags into str."""
     if not isinstance(flags, str):
         flags = " ".join(flags)
-    return " ".join(" ".join([line.split("#")[0] for line in flags.split("\n")]).split())
-    
+    return " ".join(
+        " ".join([line.split("#")[0] for line in flags.split("\n")]).split()
+    )
+
 
 def with_lock(func):
     """Function decorator that protects access to rosetta internals."""
+
     @functools.wraps(func)
     def fwrap(*args, **kwargs):
         # Use DEBUG - 1 to work around errors with logging level init
         # under nosetests
-        if _logger.isEnabledFor(logging.DEBUG-1):
+        if _logger.isEnabledFor(logging.DEBUG - 1):
             tb = traceback.extract_stack()[-5:-2]
-            _logger.log(logging.DEBUG-1, "entering with_lock:\n%s", "\n".join(traceback.format_list(tb)))
+            _logger.log(
+                logging.DEBUG - 1,
+                "entering with_lock:\n%s",
+                "\n".join(traceback.format_list(tb)),
+            )
         _logger.debug("with_lock call: %s", func)
         with _access_lock:
             try:
@@ -55,16 +63,20 @@ def with_lock(func):
 def maybe_init(**kwargs):
     """Call pyrosetta.init if not already initialized."""
     # if "set_logging_handler" not in kwargs:
-        # kwargs["set_logging_handler"] = "logging"
-    #TODO In multithreaded builds the python-based logging handler appears to fail...
+    #     kwargs["set_logging_handler"] = "logging"
+    # TODO In multithreaded builds the python-based logging handler appears to fail...
     if "extra_options" not in kwargs:
         kwargs["extra_options"] = "-out:levels all:warning"
     if "silent" not in kwargs:
         kwargs["silent"] = True
 
     if not pyrosetta.rosetta.basic.was_init_called():
-        _logger.info("maybe_init performing pyrosetta initialization: %s", kwargs)
-        pyrosetta.init(**kwargs)
+        init_kwargs = {}
+        for arg in inspect.getargspec(pyrosetta.init)[0]:
+            if arg in kwargs:
+                init_kwargs[arg] = kwargs[arg]
+        _logger.info("maybe_init performing pyrosetta initialization: %s", init_kwargs)
+        pyrosetta.init(**init_kwargs)
 
     # Thread init culled from multithreaded job distributer
     # Maybe converge into a "thread_init" function in rosetta core?
@@ -74,7 +86,9 @@ def maybe_init(**kwargs):
         options = pyrosetta.rosetta.basic.options.process()
         rgs = pyrosetta.rosetta.basic.random.RandomGeneratorSettings()
         rgs.initialize_from_options(options)
-        pyrosetta.rosetta.basic.random.init_random_generators(random.randint(0, 0xFFFFFF), rgs.rng_type())
+        pyrosetta.rosetta.basic.random.init_random_generators(
+            random.randint(0, 0xFFFFFF), rgs.rng_type()
+        )
 
 
 def requires_init(func):
