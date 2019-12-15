@@ -7,6 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/FilterBySASA.hh
 /// @brief A class to filter out constellations based on SASA (Solvent
 ///  Accessible Surface Area).
 /// @author Andrea Bazzoli
@@ -22,12 +23,7 @@
 #include <map>
 #include <string>
 
-using core::Real;
-using core::Size;
-using core::pose::Pose;
-
-
-namespace devel {
+namespace protocols {
 namespace constel {
 
 class FilterBySASA {
@@ -40,21 +36,21 @@ private:
 
 	/// @brief A table holding the SASA values of all atoms in the pose to which
 	///  constellations belong.
-	static core::id::AtomID_Map<Real> atom_sasa;
+	static core::id::AtomID_Map<core::Real> atom_sasa;
 
 	/// @brief Maximum allowed SASA value for a constellation atom.
-	static Real MAX_ATOM_SASA;
+	static core::Real MAX_ATOM_SASA;
 
 public:
 
-	static void init( Real const smax, Pose const& ps );
+	static void init( core::Real const smax, core::pose::Pose const& ps );
 
 	/// @brief Tells whether a constellation has a sufficiently low per-atom SASA
-	static bool has_low_per_atom_sasa( Pose const& ps,
-		utility::vector1<Size> const& cnl );
+	static bool has_low_per_atom_sasa( core::pose::Pose const& ps,
+		utility::vector1<core::Size> const& cnl );
 };
 
 } // constel
-} // devel
+} // protocols
 
 #endif

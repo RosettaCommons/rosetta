@@ -7,10 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/FilterBySASA.cc
 /// @brief Definition of class FilterBySASA
 /// @author Andrea Bazzoli
 
-#include <devel/constel/FilterBySASA.hh>
+#include <protocols/constel/FilterBySASA.hh>
 #include <core/scoring/sasa.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -21,8 +22,12 @@
 #include <map>
 
 
-namespace devel {
+namespace protocols {
 namespace constel {
+
+using core::Real;
+using core::Size;
+using core::pose::Pose;
 
 /// @brief A table listing, for each amino acid type, the atoms whose SASA value
 ///  is relevant to filtering.
@@ -139,4 +144,4 @@ bool FilterBySASA::has_low_per_atom_sasa(Pose const& ps,
 }
 
 } // constel
-} // devel
+} // protocols

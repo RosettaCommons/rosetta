@@ -7,23 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @brief Extracts constellations of contiguous atoms from a protein structure.
+/// @brief Extracts constellations from a protein structure.
 /// @author jk
-/// @author Andrea Bazzoli (bazzoli@ku.edu)
+/// @author Andrea Bazzoli (ndrbzz@gmail.com)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                           //
 //                                          constel                                          //
 //                                                                                           //
-// ARGUMENTS:                                                                                //
-//  ---> "-s PDBFIL", where PDBFIL is the path to the PDB file containing the protein        //
-//                    structure.                                                             //
-//  ---> "-ignore_unrecognized_res", to ignore residues of unrecognized amino acid type.     //
-//  ---> "-suppress_zero_occ_pdb_output", to print only atoms with nonzero occupancy.        //
-//  ---> "-ignore_zero_occupancy false", to keep the original coordinates for atoms with     //
-//                                       zero occupancy.                                     //
+// APPLICATION-SPECIFIC OPTIONS:                                                             //
 //                                                                                           //
-//  ---> SEARCH OPTION, which must be one of the following options:                          //
+//  ---> SEARCH OPTION (required), must be one of the following option combinations:         //
 //       1. "-pair_target_resnum X -target_chain Y": extracts all constellations formed by   //
 //                                                   pairs of residues containing target     //
 //                                                   residue X from chain Y.                 //
@@ -40,43 +34,41 @@
 //                                file CNLFIL (see function target_constel() in              //
 //                                SearchOptions.cc.                                          //
 //                                                                                           //
-//  ---> OPTIONAL CONSTRAINTS:                                                               //
-//       1. "-cnl_stripped", depriving constellations of the atoms that are closest to the   //
+//  ---> FILTERING OPTIONS (optional), can be one or more of the following options:         //
+//       1. "-cnl_stripped": deprives constellations of the atoms that are closest to the    //
 //          backbone, to avoid clash between the rescuing compound and what remains of the   //
 //          constellation's residues. Defaults to false. (See function                       //
 //          SingResCnlCrea::strip_atoms().)                                                  //
-//       2. "-max_atom_sasa X", where X is the maximum allowed SASA (Solvent Accessible      //
-//          Surface Area) for an atom in a constellation. (See class FilterBySASA.)          //
-//       3. "-interface", extracting only constellations that are shared by two or more      //
+//       2. "-max_atom_sasa X": X is the maximum allowed SASA (Solvent Accessible Surface    //
+//          Area) for an atom in a constellation. (See class FilterBySASA.)                  //
+//       3. "-chain_interface": extracts only constellations that are shared by two or more  //
 //          chains.                                                                          //
-//       4. "-aromatic", extracting only constellations that contain at least one aromatic   //
+//       4. "-aromatic": extracts only constellations that contain at least one aromatic     //
 //          ring.                                                                            //
-//       5. "-cnl_exclude F", extracting only constellations that do not contain any of the  //
+//       5. "-cnl_exclude F": extracts only constellations that do not contain any of the    //
 //          residues specified in file F. The format of the file is as follows:              //
 //          I1 C1\n                                                                          //
 //          ...                                                                              //
 //          IN CN\n ,                                                                        //
 //          where Ii and Ci are the residue index and the chain ID, respectively, of         //
 //          the ith residue to be excluded from constellations (i=1,...,N).                  //
-//       6. "-prox_ct_max X", where X is the maximum allowed distance, in Angstroms, from a  //
+//       6. "-prox_ct_max X": X is the maximum allowed distance, in Angstroms, from a        //
 //          constellation to the N- and C-termini of the chains it belongs to (see class     //
 //          FilterByProxTerm).                                                               //
-//       7. "-prox_tt_max X", where X is the maximum allowed distance, in Angstroms,         //
-//          between the N- and C-termini of any chain that a constellation belongs to.       //
-//          This constraint gets activated only upon activation of the "-prox_ct_max"        //
-//          constraint (see class FilterByProxTerm).                                         //
-//       8. "-prox_nres X", where X is the number of residues forming the N- and C-termini   //
-//          in the context of the application of the "-prox_ct_max"  and "-prox_tt_max"      //
-//          constraints.                                                                     //
-//                                                                                           //
-//  ---> TARGET COMPOUND, optional, can be one of the following:                             //
-//       1. "-indole_coo", to request constellations that may be rescued by a compound       //
+//       7. "-prox_tt_max X": X is the maximum allowed distance, in Angstroms, between the   //
+//          N- and C-termini of any chain that a constellation belongs to. This constraint   //
+//          gets activated only upon activation of the "-prox_ct_max" constraint (see class  //
+//          FilterByProxTerm).                                                               //
+//       8. "-prox_nres X": X is the number of residues forming the N- and C-termini. This   //
+//          option, too, is meant to be applied only in combination with the "-prox_ct_max"  //
+//          constraint.                                                                      //
+//       9. "-indole_coo": requests constellations that may be rescued by a compound         //
 //          containing an indole group and a carboxylic group (see class FilterByIndoleCOO). //
-//       2. "-tryptamine", to request constellations that may be rescued by tryptamine (see  //
+//      10. "-tryptamine": requests constellations that may be rescued by tryptamine (see    //
 //          class FilterByTryptamine).                                                       //
-//       3. "-amphetamine", to request constellations that may be rescued by amphetamine     //
+//      11. "-amphetamine": requests constellations that may be rescued by amphetamine       //
 //          (see class FilterByAmphetamine).                                                 //
-//       4. "-histamine", to request constellations that may be rescued by histamine (see    //
+//      12. "-histamine": requests constellations that may be rescued by histamine (see      //
 //          class FilterByHistamine).                                                        //
 //                                                                                           //
 // NOTES:                                                                                    //
@@ -84,22 +76,21 @@
 //    specified in the notes to functions out_pair_constel() and out_triple_constel()        //
 //    (defined in Primitives.cc).                                                            //
 //  - The program ignores insertion codes and alternate location identifiers when creating   //
-//    output file names. It is therefore recommended to use input PDB files where such       //
-//    fields are equal to ' '.                                                               //
+//    output file names.                                                                     //
 //                                                                                           //
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-#include <devel/constel/SingResCnlCrea.hh>
-#include <devel/constel/ExcludedFilter.hh>
-#include <devel/constel/PairConstelFilters.hh>
-#include <devel/constel/FilterByProxTerm.hh>
-#include <devel/constel/AromaticFilter.hh>
-#include <devel/constel/InterfaceFilter.hh>
-#include <devel/constel/FilterBySASA.hh>
-#include <devel/constel/MasterFilter.hh>
-#include <devel/constel/SearchOptions.hh>
-#include <devel/constel/Primitives.hh>
-#include <devel/constel/NeighTeller.hh>
+#include <protocols/constel/SingResCnlCrea.hh>
+#include <protocols/constel/ExcludedFilter.hh>
+#include <protocols/constel/PairConstelFilters.hh>
+#include <protocols/constel/FilterByProxTerm.hh>
+#include <protocols/constel/AromaticFilter.hh>
+#include <protocols/constel/InterfaceFilter.hh>
+#include <protocols/constel/FilterBySASA.hh>
+#include <protocols/constel/MasterFilter.hh>
+#include <protocols/constel/SearchOptions.hh>
+#include <protocols/constel/Primitives.hh>
+#include <protocols/constel/NeighTeller.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -111,52 +102,22 @@
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/constel.OptionKeys.gen.hh>
 
 #include <string>
 #include <cfloat>
 
-static basic::Tracer TR( "apps.pilot.constel.main" );
+static basic::Tracer TR( "apps.public.constel.main" );
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                    MAIN                                    //
 ////////////////////////////////////////////////////////////////////////////////
 
-OPT_KEY( Boolean, pair_all_res )
-OPT_KEY( Integer, pair_target_resnum )
-OPT_KEY( String, pair_target_mutations )
-OPT_KEY( Boolean, triple_all_res )
-OPT_KEY( Integer, triple_target_resnum )
-OPT_KEY( String, target_cnl )
-
-OPT_KEY( Boolean, cnl_stripped )
-
-OPT_KEY( String, target_chain )
-
-OPT_KEY( Real, max_atom_sasa )
-
-OPT_KEY( Boolean, interface )
-
-OPT_KEY( Boolean, aromatic )
-
-OPT_KEY( String, cnl_exclude )
-
-OPT_KEY( Real, prox_ct_max )
-OPT_KEY( Real, prox_tt_max )
-OPT_KEY( Integer, prox_nres )
-
-OPT_KEY( Boolean, indole_coo )
-OPT_KEY( Boolean, tryptamine )
-OPT_KEY( Boolean, amphetamine )
-OPT_KEY( Boolean, histamine )
-
-#ifdef ROSETTA_FLOAT
-	#define DFT_MAX_ATOM_SASA FLT_MAX
-#else
-#define DFT_MAX_ATOM_SASA DBL_MAX
-#endif
-
-using namespace devel::constel;
+using namespace protocols::constel;
 using namespace basic::options::OptionKeys;
+using namespace basic::options::OptionKeys::constel;
 using basic::options::option;
 using core::Size;
 
@@ -164,30 +125,32 @@ int main( int argc, char * argv [] )
 {
 	try {
 
-		NEW_OPT( pair_all_res, "Extracts pair-constellations for all residues", false  );
-		NEW_OPT( pair_target_resnum, "Extracts pair-constellations for a target residue", -1 );
-		NEW_OPT( pair_target_mutations, "Extracts pair-constellations for a target mutation pair", "**_**" );
-		NEW_OPT( triple_all_res, "Extracts triple-constellations for all residues", false );
-		NEW_OPT( triple_target_resnum, "Extracts triple-constellations for a target residue", -1 );
-		NEW_OPT( target_cnl, "Extracts a single, target constellation as specified in the accompanying file", "");
-		NEW_OPT( cnl_stripped, "Deprives constellations of the atoms closest to the backbone", false );
-		NEW_OPT( target_chain, "Chain the target residue is in", "A" );
-		NEW_OPT( max_atom_sasa, "Maximum allowed SASA for a constellation atom", DFT_MAX_ATOM_SASA );
-		NEW_OPT( interface, "Filter to keep only constellations shared by multiple chains", false);
-		NEW_OPT( aromatic, "Filter to keep only constellations with at least one aromatic ring", false);
-		NEW_OPT( cnl_exclude, "Filter to exclude constellations with given residues", "");
-		NEW_OPT( prox_ct_max, "Maximum distance for the proximity of a constellation to a chain terminus", 0 );
-		NEW_OPT( prox_tt_max, "Maximum distance for the proximity betweein chain termini" , 10.0 );
-		NEW_OPT( prox_nres, "Number of residues forming a chain terminus in the context of proximity evaluation", 10 );
-		NEW_OPT( indole_coo, "Filter by indole group plus COO group", false );
-		NEW_OPT( tryptamine, "Filter by tryptamine", false );
-		NEW_OPT( amphetamine, "Filter by amphetamine", false );
-		NEW_OPT( histamine, "Filter by histamine", false);
-
 		devel::init(argc, argv);
 
-		TR << "Remember to set the out::file::suppress_zero_occ_pdb_output flag !!!" << std::endl;
-		TR << "You may also want to set -ignore_zero_occupancy false" << std::endl;
+		// ignore TER records on input so that ATOM serial numbers on output have no gaps
+		TR << "setting default value of -no_chainend_ter to true" << std::endl;
+		option[out::file::no_chainend_ter].default_value(true);
+
+		// use zero occupancy to discriminate atoms that are not part of a constellation
+		TR << "setting default value of -suppress_zero_occ_pdb_output to true" << std::endl;
+		option[out::file::suppress_zero_occ_pdb_output].default_value(true);
+
+		// consider atoms whose original occupancy is zero
+		TR << "setting default value of -ignore_zero_occupancy to false" << std::endl;
+		option[run::ignore_zero_occupancy].default_value(false);
+
+		// ignore unrecognized residues by default
+		TR << "setting default value of -ignore_unrecognized_res to true" << std::endl;
+		option[in::ignore_unrecognized_res].default_value(true);
+
+		// ignore waters by default
+		TR << "setting default value of -ignore_waters to true" << std::endl;
+		option[in::ignore_waters].default_value(true);
+
+		// do not load PDB components
+		TR << "setting default value of -load_PDB_components to false" << std::endl;
+		option[in::file::load_PDB_components].default_value(false);
+
 
 		// create native pose from pdb
 		core::pose::Pose pose_init;
@@ -205,7 +168,7 @@ int main( int argc, char * argv [] )
 			MasterFilter::addfilt(has_aromatic);
 		}
 
-		if ( option[interface] ) {
+		if ( option[chain_interface] ) {
 			MasterFilter::addfilt(at_interface);
 		}
 
@@ -218,25 +181,25 @@ int main( int argc, char * argv [] )
 		if ( option[prox_ct_max] ) {
 			FilterByProxTerm::init(pose_init, option[prox_ct_max], option[prox_tt_max],
 				option[prox_nres]);
-			MasterFilter::addfilt(FilterByProxTerm::sat);
+			MasterFilter::addfilt(FilterByProxTerm::is_satisfied);
 		}
 
 		HBondCommon::init();
 
 		if ( option[indole_coo] ) {
-			MasterFilter::addfilt(FilterByIndoleCOO::sat);
+			MasterFilter::addfilt(FilterByIndoleCOO::is_satisfied);
 		}
 
 		if ( option[tryptamine] ) {
-			MasterFilter::addfilt(FilterByTryptamine::sat);
+			MasterFilter::addfilt(FilterByTryptamine::is_satisfied);
 		}
 
 		if ( option[amphetamine] ) {
-			MasterFilter::addfilt(FilterByAmphetamine::sat);
+			MasterFilter::addfilt(FilterByAmphetamine::is_satisfied);
 		}
 
 		if ( option[histamine] ) {
-			MasterFilter::addfilt(FilterByHistamine::sat);
+			MasterFilter::addfilt(FilterByHistamine::is_satisfied);
 		}
 
 		//// perform search requested by command-line option ////

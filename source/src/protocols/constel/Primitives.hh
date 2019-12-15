@@ -7,6 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/Primitives.hh
 /// @brief Declarations of primitive functions and classes used by the constel program.
 /// @author jk
 /// @author Andrea Bazzoli
@@ -21,16 +22,9 @@
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/chemical/AA.hh>
 
-using core::Size;
-using core::pose::Pose;
 
-
-namespace devel {
+namespace protocols {
 namespace constel {
-
-
-/// @brief Returns the residue number of a residue in a pose.
-core::Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps);
 
 
 /// @brief A class to represent the mutation of a residue.
@@ -41,25 +35,23 @@ struct ResMut {
 	char eaa; // end amino acid type
 	char cid; // identifier of the chain that the residue belongs to
 	int pdbn; // pdb number of the residue in the chain
-	Size psn; // number of the residue in its Rosetta pose
+	core::Size psn; // number of the residue in its Rosetta pose
 
-	ResMut(char s, char e, char c, int d, Size r) : saa(s), eaa(e), cid(c), pdbn(d), psn(r) {}
+	ResMut(char s, char e, char c, int d, core::Size r) : saa(s), eaa(e), cid(c), pdbn(d), psn(r) {}
 };
 
 /// @brief Outputs all pair-constellations between a given pair of residues
-void pair_constel_set_idx2(Size const i, Size const j, Pose const& pose_init );
+void pair_constel_set_idx2(core::Size const i, core::Size const j, core::pose::Pose const& pose_init );
 
 /// @brief Outputs to file a constellation obtained from mutating a pair of residues
-void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum,
-	Pose& ps);
+void out_pair_constel(ResMut const& mut1, ResMut const& mut2, core::pose::Pose& ps);
 
 /// @brief Outputs all triple-constellations among a given triple of residues
-void triple_constel_set_idx3(Size const i, Size const j, Size const k,
-	Pose const& pose_init );
+void triple_constel_set_idx3(core::Size const i, core::Size const j, core::Size const k,
+	core::pose::Pose const& pose_init );
 
 /// @brief Outputs to file a constellation obtained from mutating a triple of residues
-void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
-	ResMut const& mut3, int const cslnum, Pose& ps);
+void out_triple_constel(ResMut const& mut1, ResMut const& mut2, ResMut const& mut3, core::pose::Pose& ps);
 
 
 /// @brief A class to hold data structures and functions shared by filters that
@@ -75,8 +67,8 @@ public:
 	static void init();
 
 	/// @brief Tells whether a residue's moiety forms hydrogen bonds.
-	static bool is_rmoi_hbonded(Pose const& ps, utility::vector1<Size> const& cnl,
-		Size const im, bool const is_donor,
+	static bool is_rmoi_hbonded(core::pose::Pose const& ps, utility::vector1<core::Size> const& cnl,
+		core::Size const im, bool const is_donor,
 		utility::vector1<std::string> const& hb_atoms);
 };
 
@@ -106,18 +98,18 @@ public:
 
 	/// @brief Records the presence of given amino acid types in a given constellation.
 	static bool are_aa_pres(core::pose::Pose const& ps,
-		utility::vector1<Size> const& cnl,
+		utility::vector1<core::Size> const& cnl,
 		utility::vector1<core::chemical::AA> const& aa_typs,
-		utility::vector1<Size>& aa_idxs);
+		utility::vector1<core::Size>& aa_idxs);
 
 	/// @brief Records the presence of given atoms in a given residue.
 	static bool are_atoms_pres(core::conformation::Residue const& res,
 		utility::vector1<std::string> const& anams,
-		utility::vector1<Size>& aidxs);
+		utility::vector1<core::Size>& aidxs);
 };
 
 
 } // constel
-} // devel
+} // protocols
 
 #endif

@@ -7,19 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/SingResCnlCrea.hh
 /// @brief Definition of a class to create single-residue constellations
 /// @author jk
-/// @author Andrea Bazzoli (bazzoli@ku.edu)
+/// @author Andrea Bazzoli
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.fwd.hh>
 #include <core/types.hh>
 #include <map>
 #include <string>
 
-namespace devel {
+namespace protocols {
 namespace constel {
-
-using core::pose::Pose;
 
 class SingResCnlCrea {
 
@@ -33,7 +32,7 @@ class SingResCnlCrea {
 
 	/// @brief sets occupancy to 0 for a residue's backbone atoms and hydrogen
 	///  atoms. Sets occupancy to 1 for the residue's remaining atoms.
-	static void zero_occ_bb_h(Pose& ps, core::Size seqpos);
+	static void zero_occ_bb_h(core::pose::Pose& ps, core::Size seqpos);
 
 public:
 
@@ -48,14 +47,14 @@ public:
 		char const starting_aa );
 
 	/// @brief sets occupancy to zero for a residue's non-constellation atoms.
-	static void zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
+	static void zero_occ_for_deleted_atoms(core::pose::Pose & pose, core::Size seqpos,
 		char const target_aa);
 
 	/// @brief sets occupancy to zero for constellation atoms that are not
 	///  to be printed on output.
-	static void strip_atoms(Pose & pose, core::Size seqpos,
+	static void strip_atoms(core::pose::Pose & pose, core::Size seqpos,
 		char const target_aa);
 };
 
 } // namespace constel
-} // namespace devel
+} // namespace protocols

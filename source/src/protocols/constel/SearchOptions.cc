@@ -7,14 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/SearchOptions.cc
 /// @brief Definition of the search functions declared in SearchOption.hh
 /// @author jk
 /// @author Andrea Bazzoli
 
-#include <devel/constel/SingResCnlCrea.hh>
-#include <devel/constel/MasterFilter.hh>
-#include <devel/constel/NeighTeller.hh>
-#include <devel/constel/Primitives.hh>
+#include <protocols/constel/SingResCnlCrea.hh>
+#include <protocols/constel/MasterFilter.hh>
+#include <protocols/constel/NeighTeller.hh>
+#include <protocols/constel/Primitives.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
@@ -25,10 +26,13 @@
 #include <iostream>
 #include <fstream>
 
-namespace devel {
+namespace protocols {
 namespace constel {
 
-static basic::Tracer TR( "src.devel.constel.SearchOptions" );
+using core::pose::Pose;
+using core::Size;
+
+static basic::Tracer TR( "src.protocols.constel.SearchOptions" );
 
 
 /// @brief Searches pair-constellations by target residue.
@@ -47,7 +51,7 @@ void pair_constel_set(int const target_pdb_number, char const target_pdb_chain,
 	Pose& pose_init) {
 
 	// set target_rosetta_resnum to Rosetta internal resid for the residue to be mutated
-	core::Size target_rosetta_resnum = get_pose_resnum(target_pdb_number, target_pdb_chain, pose_init);
+	core::Size target_rosetta_resnum = pose_init.pdb_info()->pdb2pose(target_pdb_chain, target_pdb_number);
 
 	// make a list of residues with vdw atr contacts (to the sidechain only, if possible?)
 	utility::vector1<bool> interacting_residue( pose_init.size(), false );
@@ -118,7 +122,7 @@ void pair_constel_set( std::string const& tgtmuts, Pose& pose_init ) {
 							ResMut muti( aai, aaie, chi, pdbi, i );
 							ResMut mutj( aaj, aaje, chj, pdbj, j );
 
-							out_pair_constel( muti, mutj, -1, pose_mut );
+							out_pair_constel( muti, mutj, pose_mut );
 						}
 					}
 				}
@@ -147,8 +151,7 @@ void triple_constel_set(int const target_pdb_number,
 	using core::Size;
 
 	// set target_rosetta_resnum to Rosetta internal resid for target residue
-	Size target_rosetta_resnum = get_pose_resnum(target_pdb_number,
-		target_pdb_chain, pose_init);
+	Size target_rosetta_resnum = pose_init.pdb_info()->pdb2pose(target_pdb_chain, target_pdb_number);
 
 	// make a list of residues with vdw atr contacts with target
 	vector1<bool> interacting_residue( pose_init.size(), false);
@@ -289,12 +292,12 @@ void target_constel(std::string &tgtcnl_fil, Pose & ps) {
 
 	if ( MasterFilter::is_constel_valid(ps, cnl) ) {
 		if ( N==2 ) {
-			out_pair_constel(resmut[1], resmut[2], -1, ps);
+			out_pair_constel(resmut[1], resmut[2], ps);
 		} else {
-			out_triple_constel(resmut[1], resmut[2], resmut[3], -1, ps);
+			out_triple_constel(resmut[1], resmut[2], resmut[3], ps);
 		}
 	}
 }
 
 } // constel
-} // devel
+} // protocols

@@ -7,16 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/InterfaceFilter.cc
 /// @brief Definition of a filter to extract constellations shared by multiple chains
 /// @author Andrea Bazzoli
 
-#include <devel/constel/InterfaceFilter.hh>
+#include <protocols/constel/InterfaceFilter.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 
-namespace devel {
+namespace protocols {
 namespace constel {
 
+using core::pose::Pose;
+using core::Size;
 
 /// @brief Returns true if a constellation is shared by multiple chains;
 ///  returns false otherwise.
@@ -39,5 +42,5 @@ bool at_interface(Pose const& ps, utility::vector1<Size> const& cnl) {
 }
 
 } // constel
-} // devel
+} // protocols
 

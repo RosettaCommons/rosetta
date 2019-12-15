@@ -7,15 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/ExcludedFilter.hh
 /// @brief Declaration of a filter to exclude a given set of residues
-/// @author Andrea Bazzoli (bazzoli@ku.edu)
+/// @author Andrea Bazzoli
 
 #ifndef INCLUDED_ExcludedFilter_hh
 #define INCLUDED_ExcludedFilter_hh
 
 #include "ResidueMask.hh"
 
-namespace devel {
+namespace protocols {
 namespace constel {
 
 class ExcludedFilter {
@@ -25,11 +26,11 @@ class ExcludedFilter {
 	static ResidueMaskOP excluded;
 
 public:
-	static bool hasnt_excluded(Pose const&, utility::vector1<Size> const& cnl);
-	static void init(Pose& ps, std::string const& ex_fname);
+	static bool hasnt_excluded(core::pose::Pose const&, utility::vector1<core::Size> const& cnl);
+	static void init(core::pose::Pose& ps, std::string const& ex_fname);
 };
 
 } // constel
-} // devel
+} // protocols
 
 #endif

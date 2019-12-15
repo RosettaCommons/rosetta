@@ -7,20 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/ResidueMask.cc
 /// @brief Definition of class ResidueMask
-/// @author Andrea Bazzoli (bazzoli@ku.edu)
+/// @author Andrea Bazzoli
 
 #include "ResidueMask.hh"
 #include "Primitives.hh"
+#include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
 #include <fstream>
 
-static basic::Tracer TR( "devel.constel.ResidueMask");
+static basic::Tracer TR( "protocols.constel.ResidueMask");
 
-namespace devel {
+namespace protocols {
 namespace constel {
 
+
+using utility::vector1;
+using core::pose::Pose;
+using core::Size;
 
 /// @brief: reads a residue mask from file
 ///
@@ -50,7 +56,7 @@ ResidueMask::ResidueMask(Pose& ps, std::string const &fname) :
 		if ( rc == '_' ) {
 			rc = ' ';
 		}
-		mask[get_pose_resnum(ri, rc, ps)] = true;
+		mask[ps.pdb_info()->pdb2pose(rc, ri)] = true;
 	}
 }
 
@@ -81,5 +87,5 @@ bool ResidueMask::operator[] (Size const i) {return mask[i];}
 
 
 } // constel
-} // devel
+} // protocols
 

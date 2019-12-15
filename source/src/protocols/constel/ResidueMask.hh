@@ -7,8 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/ResidueMask.hh
 /// @brief Class implementing a boolean mask over the residues of a pose.
-/// @author Andrea Bazzoli (bazzoli@ku.edu)
+/// @author Andrea Bazzoli
 
 #ifndef INCLUDED_ResidueMask_hh
 #define INCLUDED_ResidueMask_hh
@@ -21,26 +22,22 @@
 #include <string>
 #include <iostream>
 
-using utility::vector1;
-using core::pose::Pose;
-using core::Size;
-
-namespace devel {
+namespace protocols {
 namespace constel {
 
 class ResidueMask : public utility::pointer::ReferenceCount {
 
-	vector1<bool> mask;
+	utility::vector1<bool> mask;
 
 	public:
-	ResidueMask(Pose& ps, std::string const& fname);
-	bool operator[](Size const i);
+	ResidueMask(core::pose::Pose& ps, std::string const& fname);
+	bool operator[](core::Size const i);
 	void print(std::ostream& os) const;
 };
 
 typedef utility::pointer::shared_ptr< ResidueMask > ResidueMaskOP;
 
 } // constel
-} // devel
+} // protocols
 
 #endif

@@ -7,11 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/ChainTerm.cc
 /// @brief implementation of class ChainTerm
 /// @author Andrea Bazzoli
 
-#include <devel/constel/ChainTerm.hh>
+#include <protocols/constel/ChainTerm.hh>
+#include <core/io/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
@@ -19,10 +22,10 @@
 
 using std::setw;
 
-
-namespace devel {
+namespace protocols {
 namespace constel {
 
+using core::Size;
 
 /// @brief Prints this chain's info to tracer 't'.
 ///
@@ -41,28 +44,43 @@ void ChainTerm::print(basic::Tracer& t) const {
 /// @param[out] chains vector to be filled with ChainTerm items for the chains
 ///  in the pose.
 ///
-/// @details chains[i] represents the ith chain in the pose (i=1,...,N, where N
-///  is the number of chains in the pose).
+/// @details chains[i] represents the ith chain in the pose built using only the
+///  protein residues of pose ps (i=1,...,N, where N is the number of such chains)
 ///
 void get_chain_terms(core::pose::Pose const &ps, utility::vector1<ChainTerm> &chains) {
 
-	Size const TOTRES = ps.size();
-
-	Size nps = 1;
-	int npdb = ps.pdb_info()->number(nps);
-	char cid = ps.pdb_info()->chain(nps);
-	for ( Size i=2; i<=TOTRES; ++i ) {
-		char rcid = ps.pdb_info()->chain(i);
-		if ( rcid != cid ) {
-			chains.push_back(ChainTerm(cid, nps, i-1, // add chain
-				npdb, ps.pdb_info()->number(i-1)));
-			cid = rcid;
-			nps = i;
-			npdb = ps.pdb_info()->number(nps);
+	// create vector of protein residues (protein[i] <-- ith protein residue in the pose,
+	// for i=1,...,TOTRES, where TOTRES is the number of protein residues in the pose)
+	utility::vector1<Size> protein;
+	for ( Size i=1; i<=ps.size(); ++i ) {
+		if ( ps.residue(i).is_protein() ) {
+			protein.push_back(i);
 		}
 	}
-	chains.push_back(ChainTerm(cid, nps, TOTRES, // add last chain
-		npdb, ps.pdb_info()->number(TOTRES)));
+	if ( protein.size() < 1 ) {
+		utility_exit_with_message( "get_chain_terms(): pose does not contain any protein residue" );
+		exit(1);
+	}
+
+	// collect chain termini: chains[i] stores the termini of the ith chain in protein_pose
+	// (i=1,...,N, where N is the number of such chains)
+	core::pose::Pose protein_pose;
+	core::io::pose_from_pose(protein_pose, ps, protein);
+	for ( Size i=1; i<=protein_pose.num_chains(); ++i ) {
+
+		Size chain_begin = protein_pose.chain_begin(i);
+		char beg_cid = protein_pose.pdb_info()->chain(chain_begin);
+		int beg_num = protein_pose.pdb_info()->number(chain_begin);
+		char beg_ico = protein_pose.pdb_info()->icode(chain_begin);
+		Size chain_begin_orig = ps.pdb_info()->pdb2pose(beg_cid, beg_num, beg_ico);
+
+		Size chain_end = protein_pose.chain_end(i);
+		int end_num = protein_pose.pdb_info()->number(chain_end);
+		char end_ico = protein_pose.pdb_info()->icode(chain_end);
+		Size chain_end_orig = ps.pdb_info()->pdb2pose(beg_cid, end_num, end_ico);
+
+		chains.push_back(ChainTerm(beg_cid, chain_begin_orig, chain_end_orig, beg_num, end_num));
+	}
 }
 
 
@@ -87,4 +105,4 @@ void print_chains(utility::vector1<ChainTerm> const &chains, basic::Tracer &t) {
 
 
 } // constel
-} // devel
+} // protocols

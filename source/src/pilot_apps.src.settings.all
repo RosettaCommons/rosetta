@@ -115,7 +115,6 @@ sources = {
 	"pilot/bazzoli" : [
 		"bou-min-ubo-nrg-jump",
 		"cnl_env_lost_hbs",
-		"constel",
 		"lig_low_sasa",
 		"lig_polar_sat",
 		"list_cnl_ngbs",

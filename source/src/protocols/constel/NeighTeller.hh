@@ -7,6 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/NeighTeller.hh
 /// @brief A class to determine neighboring relationships between or among residues.
 /// @author Andrea Bazzoli
 
@@ -21,11 +22,8 @@
 #include <utility/vector1.fwd.hh>
 #include <iostream>
 
-namespace devel {
+namespace protocols {
 namespace constel {
-
-using core::pose::Pose;
-using core::conformation::Residue;
 
 class NeighTeller {
 
@@ -42,19 +40,19 @@ class NeighTeller {
 	void print_nmap(core::Size const nres, std::ostream& os) const;
 
 public:
-	NeighTeller(Pose& ref_pose);
+	NeighTeller(core::pose::Pose& ref_pose);
 
 	/// @brief: tells whether a probe residue is a neighbor of a target residue.
-	bool isneigh(Residue const & tgt, Residue const & prb, Pose const& ref_pose);
+	bool isneigh(core::conformation::Residue const & tgt, core::conformation::Residue const & prb, core::pose::Pose const& ref_pose);
 
 	/// @brief: tells whether a set of residues form a tree of neighbors.
-	bool is_neigh_tree(utility::vector1<core::Size> const& set, Pose const& ps);
+	bool is_neigh_tree(utility::vector1<core::Size> const& set, core::pose::Pose const& ps);
 };
 
 /// @brief Creates the list of residues that are neighbors of a given residue.
-void mk_neigh_list(core::Size const tgtnum, utility::vector1<bool>& neighs, Pose& ps);
+void mk_neigh_list(core::Size const tgtnum, utility::vector1<bool>& neighs, core::pose::Pose& ps);
 
 } // constel
-} // devel
+} // protocols
 
 #endif

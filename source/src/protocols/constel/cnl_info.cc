@@ -7,10 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/cnl_info.cc
 /// @brief definition of generic functions returning information on a constellation
 /// @author Andrea Bazzoli
 
-#include <devel/constel/cnl_info.hh>
+#include <protocols/constel/cnl_info.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
@@ -20,8 +21,14 @@
 using core::conformation::Residue;
 
 
-namespace devel {
+namespace protocols {
 namespace constel {
+
+using core::pose::Pose;
+using numeric::xyzVector;
+using utility::vector1;
+using core::Size;
+using core::Real;
 
 ///
 /// @brief returns the center of mass of a constellation
@@ -56,4 +63,4 @@ xyzVector<Real> cnl_com(vector1<Size> const &cnl, Pose const &ps) {
 }
 
 } // constel
-} // devel
+} // protocols

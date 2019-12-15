@@ -7,10 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/SingResCnlCrea.cc
 /// @brief Definition of the class to create single-residue constellations
 /// @author jk
-/// @author Andrea Bazzoli (bazzoli@ku.edu)
-#include <devel/constel/SingResCnlCrea.hh>
+/// @author Andrea Bazzoli
+#include <protocols/constel/SingResCnlCrea.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
@@ -21,11 +22,12 @@
 #include <sstream>
 #include <cstdlib>
 
-static basic::Tracer TR("devel.constel.SingResCnlCrea");
+static basic::Tracer TR("protocols.constel.SingResCnlCrea");
 
-namespace devel {
+namespace protocols {
 namespace constel {
 
+using core::pose::Pose;
 using core::Size;
 
 /// @brief True if constellations must be output to file in stripped form
@@ -307,4 +309,4 @@ void SingResCnlCrea::strip_atoms(Pose & pose, core::Size seqpos,
 }
 
 } // namespace constel
-} // namespace devel
+} // namespace protocols

@@ -7,24 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/NeighTeller.cc
 /// @brief A class to determine neighboring relationships between or among residues.
 /// @author jk
 /// @author Andrea Bazzoli
 
-#include <devel/constel/NeighTeller.hh>
+#include <protocols/constel/NeighTeller.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <iomanip>
 #include <list>
 
-namespace devel {
+namespace protocols {
 namespace constel {
 
+using core::pose::Pose;
+using core::conformation::Residue;
 using core::Real;
 using core::Size;
 
-static basic::Tracer TR( "devel.constel.NeighTeller" );
+static basic::Tracer TR( "protocols.constel.NeighTeller" );
 
 
 /// @brief NeighTeller's constructor
@@ -55,6 +58,10 @@ NeighTeller::NeighTeller(Pose& ref_pose) :
 bool NeighTeller::isneigh(core::conformation::Residue const & tgt,
 	core::conformation::Residue const & prb,
 	Pose const& ref_pose) {
+
+	if ( (!tgt.is_protein()) || (!prb.is_protein()) ) {
+		return false;
+	}
 
 	unweighted_emap.clear();
 
@@ -172,4 +179,4 @@ void mk_neigh_list(core::Size const tgtnum, utility::vector1<bool>& neighs,
 }
 
 } // constel
-} // devel
+} // protocols

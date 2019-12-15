@@ -7,25 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @brief Declaration of a filter to extract constellations shared by multiple chains
+/// @file protocols/constel/ChainTerm.fwd.hh
+/// @brief forward declaration of class ChainTerm
 /// @author Andrea Bazzoli
 
-#ifndef INCLUDED_InterfaceFilter_hh
-#define INCLUDED_InterfaceFilter_hh
+#ifndef INCLUDED_ChainTerm_fwd_hh
+#define INCLUDED_ChainTerm_fwd_hh
 
-#include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
-#include <core/types.hh>
-
-using core::pose::Pose;
-using core::Size;
-
-namespace devel {
+namespace protocols {
 namespace constel {
 
-bool at_interface(Pose const& ps, utility::vector1<Size> const& cnl);
+class ChainTerm;
 
 } // constel
-} // devel
+} // protocols
 
 #endif

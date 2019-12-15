@@ -7,6 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/AromaticFilter.hh
 /// @brief Declaration of a filter to extract constellations containing aromatic rings
 /// @author Andrea Bazzoli
 
@@ -17,15 +18,12 @@
 #include <utility/vector1.fwd.hh>
 #include <core/types.hh>
 
-using core::pose::Pose;
-using core::Size;
-
-namespace devel {
+namespace protocols {
 namespace constel {
 
-bool has_aromatic(Pose const& ps, utility::vector1<Size> const& cnl);
+bool has_aromatic(core::pose::Pose const& ps, utility::vector1<core::Size> const& cnl);
 
 } // constel
-} // devel
+} // protocols
 
 #endif

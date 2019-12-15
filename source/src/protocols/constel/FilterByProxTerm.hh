@@ -7,6 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/FilterByProxTerm.hh
 /// @brief a class to filter out constellations based on proximity constraints
 ///  on the N- and C-termini of their chains.
 /// @author Andrea Bazzoli
@@ -14,18 +15,13 @@
 #ifndef INCLUDED_FilterByProxTerm_hh
 #define INCLUDED_FilterByProxTerm_hh
 
-#include <devel/constel/ChainTerm.fwd.hh>
+#include <protocols/constel/ChainTerm.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.fwd.hh>
 #include <core/types.hh>
 #include <map>
 
-using core::pose::Pose;
-using utility::vector1;
-using core::Size;
-using core::Real;
-
-namespace devel {
+namespace protocols {
 namespace constel {
 
 class FilterByProxTerm {
@@ -36,14 +32,14 @@ private:
 	static utility::vector1<ChainTerm> chains_;
 
 	/// @brief number of chains in the pose
-	static Size nchains_;
+	static core::Size nchains_;
 
 	/// @brief squared value of the maximum distance for a constellation to be
 	///  considered proximal to the termini
-	static Real dct_max_2_;
+	static core::Real max_ct_dist2_;
 
 	/// @brief number of residues forming either terminus in a chain
-	static Size nres_;
+	static core::Size nres_;
 
 	/// @brief chains with termini proximal to one another
 	static std::map<char, bool> proxnc_;
@@ -51,17 +47,17 @@ private:
 public:
 
 	/// @brief filter initialization
-	static void init(Pose const &ps, Real dct, Real dtt, Size nres);
+	static void init(core::pose::Pose const &ps, core::Real max_ct_dist, core::Real max_tt_dist, core::Size nres);
 
 	/// @brief tells whether a constellation satisfies the filter
-	static bool sat(Pose const &ps, vector1<Size> const &cnl);
+	static bool is_satisfied(core::pose::Pose const &ps, utility::vector1<core::Size> const &cnl);
 };
 
 /// @brief tells whether a chain has proximal termini
-bool has_prox_termini(Pose const &ps, ChainTerm const &chain, Size NRES,
-	Real DMAX2);
+bool has_prox_termini(core::pose::Pose const &ps, ChainTerm const &chain, core::Size NRES,
+	core::Real DMAX2);
 
 } // constel
-} // devel
+} // protocols
 
 #endif

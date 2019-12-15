@@ -47,6 +47,7 @@ sources = {
 		"backrub",
 		"calculate_sasa",
 		"combine_silent",
+		"constel",
 		"dump_capped_residue",
 		"extract_pdbs",
 		"fragment_picker",

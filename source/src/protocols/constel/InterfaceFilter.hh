@@ -7,42 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @brief Class to manage the application of filters to constellations.
+/// @file protocols/constel/InterfaceFilter.hh
+/// @brief Declaration of a filter to extract constellations shared by multiple chains
 /// @author Andrea Bazzoli
 
-#ifndef INCLUDED_MasterFilter_hh
-#define INCLUDED_MasterFilter_hh
+#ifndef INCLUDED_InterfaceFilter_hh
+#define INCLUDED_InterfaceFilter_hh
 
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.fwd.hh>
 #include <core/types.hh>
 
-using core::pose::Pose;
-using core::Size;
-
-namespace devel {
+namespace protocols {
 namespace constel {
 
-class MasterFilter {
-
-public:
-	typedef bool (*FiltPtr) (Pose const& ps, utility::vector1<Size> const& cnl);
-
-private:
-	/// @brief Array of filters applied to a constellation.
-	static utility::vector1<FiltPtr> filters;
-
-public:
-
-	/// @brief Adds a filter to the 'filters' array.
-	static void addfilt(FiltPtr f);
-
-	/// @brief Tells whether a constellation is valid.
-	static bool is_constel_valid(Pose const& ps,
-		utility::vector1<Size> const& cnl);
-};
+bool at_interface(core::pose::Pose const& ps, utility::vector1<core::Size> const& cnl);
 
 } // constel
-} // devel
+} // protocols
 
 #endif

@@ -7,14 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/ExcludedFilter.cc
 /// @brief Definition of class ExcludedFilter
-/// @author Andrea Bazzoli (bazzoli@ku.edu)
+/// @author Andrea Bazzoli
 
 #include "ExcludedFilter.hh"
 
-namespace devel {
+namespace protocols {
 namespace constel {
 
+using core::pose::Pose;
+using core::Size;
 
 // allocation of the mask of excluded residues
 ResidueMaskOP ExcludedFilter::excluded;
@@ -52,4 +55,4 @@ bool ExcludedFilter::hasnt_excluded(Pose const&,
 }
 
 } // constel
-} // devel
+} // protocols

@@ -7,24 +7,31 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/FilterByProxTerm.cc
 /// @brief implementation of class FilterByProxTerm.
 /// @author Andrea Bazzoli
 
-#include <devel/constel/FilterByProxTerm.hh>
-#include <devel/constel/ChainTerm.hh>
-#include <devel/constel/cnl_info.hh>
+#include <protocols/constel/FilterByProxTerm.hh>
+#include <protocols/constel/ChainTerm.hh>
+#include <protocols/constel/cnl_info.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <utility/vector1.hh>
 
 
-namespace devel {
+namespace protocols {
 namespace constel {
+
+using core::pose::Pose;
+using numeric::xyzVector;
+using utility::vector1;
+using core::Size;
+using core::Real;
 
 vector1<ChainTerm> FilterByProxTerm::chains_;
 Size FilterByProxTerm::nchains_;
-Real FilterByProxTerm::dct_max_2_;
+Real FilterByProxTerm::max_ct_dist2_;
 Size FilterByProxTerm::nres_;
 std::map<char, bool> FilterByProxTerm::proxnc_;
 
@@ -32,23 +39,23 @@ std::map<char, bool> FilterByProxTerm::proxnc_;
 /// @brief filter initialization.
 ///
 /// @param[in] ps pose containing the constellations to be filtered..
-/// @param[in] dct maximum distance for a constellation to be considered
+/// @param[in] max_ct_dist maximum distance for a constellation to be considered
 ///  proximal to the termini.
-/// @param[in] dtt maximum distance for chain termini to be considered
+/// @param[in] max_tt_dist maximum distance for chain termini to be considered
 ///  proximal to one another..
 /// @param[in] number of residues forming either terminus of a chain.
 ///
-void FilterByProxTerm::init(Pose const &ps, Real dct, Real dtt, Size nres) {
+void FilterByProxTerm::init(Pose const &ps, Real max_ct_dist, Real max_tt_dist, Size nres) {
 
 	nres_ = nres;
-	dct_max_2_ = dct*dct;
+	max_ct_dist2_ = max_ct_dist*max_ct_dist;
 
 	get_chain_terms(ps, chains_);
 	nchains_ = chains_.size();
 
-	Real dtt2 = dtt*dtt;
+	Real max_tt_dist2 = max_tt_dist*max_tt_dist;
 	for ( Size i=1; i<=nchains_; ++i ) {
-		if ( has_prox_termini(ps, chains_[i], nres_, dtt2) ) {
+		if ( has_prox_termini(ps, chains_[i], nres_, max_tt_dist2) ) {
 			proxnc_[chains_[i].get_cid()] = true;
 		}
 	}
@@ -74,7 +81,7 @@ void FilterByProxTerm::init(Pose const &ps, Real dct, Real dtt, Size nres) {
 ///  based on the distance between the center of mass of the constellation
 ///  and the CA atom of the residue.
 ///
-bool FilterByProxTerm::sat(Pose const &ps, vector1<Size> const &cnl) {
+bool FilterByProxTerm::is_satisfied(Pose const &ps, vector1<Size> const &cnl) {
 
 	// identify set of chains spanned by constellation
 	std::map<char, bool> cspan;
@@ -103,7 +110,7 @@ bool FilterByProxTerm::sat(Pose const &ps, vector1<Size> const &cnl) {
 					Size const NSTA = NPS;
 					Size const NEND = (nres_ <= ALL) ? NSTA + nres_ : CPS+1;
 					for ( Size k=NSTA; k<NEND; ++k ) {
-						if ( com.distance_squared(ps.residue(k).xyz("CA")) <= dct_max_2_ ) {
+						if ( com.distance_squared(ps.residue(k).xyz("CA")) <= max_ct_dist2_ ) {
 							return true;
 						}
 					}
@@ -112,7 +119,7 @@ bool FilterByProxTerm::sat(Pose const &ps, vector1<Size> const &cnl) {
 					Size const CSTA = CPS;
 					Size const CEND = (nres_ <= ALL) ? CSTA - nres_ : NPS-1;
 					for ( Size k=CSTA; k>CEND; --k ) {
-						if ( com.distance_squared(ps.residue(k).xyz("CA")) <= dct_max_2_ ) {
+						if ( com.distance_squared(ps.residue(k).xyz("CA")) <= max_ct_dist2_ ) {
 							return true;
 						}
 					}
@@ -148,10 +155,6 @@ bool has_prox_termini(Pose const &ps, ChainTerm const &chain, Size NRES,
 	Size const CSTA = chain.get_cps();
 	Size const CEND = CSTA - NRES;
 
-	if ( !(ps.residue(NSTA).has("CA")) ) { // non-protein chain
-		return false;
-	}
-
 	if ( (CSTA-NSTA) <= (2*NRES - 2) ) { // overlapping terminals
 		return true;
 	}
@@ -171,4 +174,4 @@ bool has_prox_termini(Pose const &ps, ChainTerm const &chain, Size NRES,
 }
 
 } // constel
-} // devel
+} // protocols

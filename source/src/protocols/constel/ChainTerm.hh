@@ -7,6 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/ChainTerm.hh
 /// @brief class identifying the N- and C-terminal residues of a chain
 /// @author Andrea Bazzoli
 
@@ -19,17 +20,15 @@
 #include <core/types.hh>
 
 
-namespace devel {
+namespace protocols {
 namespace constel {
-
-using core::Size;
 
 class ChainTerm {
 
 	char cid_; // chain id
 
-	Size n_ps_; // index of N-terminal residue in pose
-	Size c_ps_; // index of C-terminal residue in pose
+	core::Size n_ps_; // index of N-terminal residue in pose
+	core::Size c_ps_; // index of C-terminal residue in pose
 
 	int n_pdb_; // index of N-terminal residue in PDB file
 	int c_pdb_; // index of C-terminal residue in PDB file
@@ -37,7 +36,7 @@ class ChainTerm {
 public:
 
 	/// @brief constructor
-	ChainTerm(char cid, Size nps, Size cps, int npdb, int cpdb) :
+	ChainTerm(char cid, core::Size nps, core::Size cps, int npdb, int cpdb) :
 		cid_(cid), n_ps_(nps), c_ps_(cps), n_pdb_(npdb), c_pdb_(cpdb) {}
 
 	/// @brief prints this chain's info to tracer t
@@ -47,10 +46,10 @@ public:
 	char get_cid() const {return cid_;}
 
 	/// @brief n_ps_ accessor
-	Size get_nps() const {return n_ps_;}
+	core::Size get_nps() const {return n_ps_;}
 
 	/// @brief c_ps_ accessor
-	Size get_cps() const {return c_ps_;}
+	core::Size get_cps() const {return c_ps_;}
 };
 
 
@@ -62,6 +61,6 @@ void print_chains(utility::vector1<ChainTerm> const &chains, basic::Tracer &t);
 
 
 } // constel
-} // devel
+} // protocols
 
 #endif

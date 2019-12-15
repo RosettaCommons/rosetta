@@ -7,14 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/MasterFilter.cc
 /// @brief Definition of class MasterFilter
 /// @author Andrea Bazzoli
 
-#include <devel/constel/MasterFilter.hh>
+#include <protocols/constel/MasterFilter.hh>
 
 
-namespace devel {
+namespace protocols {
 namespace constel {
+
+using core::pose::Pose;
+using core::Size;
 
 /// @brief Array of filters applied to a constellation.
 utility::vector1<MasterFilter::FiltPtr> MasterFilter::filters;
@@ -55,4 +59,4 @@ bool MasterFilter::is_constel_valid(Pose const& ps,
 }
 
 } // constel
-} // devel
+} // protocols

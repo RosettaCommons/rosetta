@@ -7,6 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/PairConstelFilters.hh
 /// @brief Filters for constellations formed by a pair of residues.
 /// @author Andrea Bazzoli
 
@@ -17,10 +18,7 @@
 #include <utility/vector1.fwd.hh>
 #include <core/types.hh>
 
-using core::pose::Pose;
-using core::Size;
-
-namespace devel {
+namespace protocols {
 namespace constel {
 
 
@@ -30,7 +28,7 @@ namespace constel {
 class FilterByIndoleCOO {
 
 public:
-	static bool sat(Pose const& ps, utility::vector1<Size> const& cnl);
+	static bool is_satisfied(core::pose::Pose const& ps, utility::vector1<core::Size> const& cnl);
 };
 
 
@@ -40,7 +38,7 @@ public:
 class FilterByTryptamine {
 
 public:
-	static bool sat(Pose const& ps, utility::vector1<Size> const& cnl);
+	static bool is_satisfied(core::pose::Pose const& ps, utility::vector1<core::Size> const& cnl);
 };
 
 
@@ -50,7 +48,7 @@ public:
 class FilterByAmphetamine {
 
 public:
-	static bool sat(Pose const& ps, utility::vector1<Size> const& cnl);
+	static bool is_satisfied(core::pose::Pose const& ps, utility::vector1<core::Size> const& cnl);
 };
 
 
@@ -60,11 +58,11 @@ public:
 class FilterByHistamine {
 
 public:
-	static bool sat(Pose const& ps, utility::vector1<Size> const& cnl);
+	static bool is_satisfied(core::pose::Pose const& ps, utility::vector1<core::Size> const& cnl);
 };
 
 
 } // constel
-} // devel
+} // protocols
 
 #endif

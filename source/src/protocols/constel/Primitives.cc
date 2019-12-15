@@ -7,13 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/Primitives.cc
 /// @brief Definition of primitive functions and classes used by the constel program.
 /// @author jk
 /// @author Andrea Bazzoli
 
-#include <devel/constel/Primitives.hh>
-#include <devel/constel/SingResCnlCrea.hh>
-#include <devel/constel/MasterFilter.hh>
+#include <protocols/constel/Primitives.hh>
+#include <protocols/constel/SingResCnlCrea.hh>
+#include <protocols/constel/MasterFilter.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
@@ -35,38 +36,19 @@
 #include <basic/Tracer.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/memory.hh>
 #include <iomanip>
 #include <sstream>
 #include <string>
 
-using core::Real;
+static basic::Tracer TR( "protocols.constel.Primitives" );
 
-
-static basic::Tracer TR( "devel.constel.Primitives" );
-
-namespace devel {
+namespace protocols {
 namespace constel {
 
-
-/// @brief Returns the residue number of a residue in a pose.
-///
-/// @parm[in] pdbnum residue number of the residue in its PDB file.
-/// @parm[in] pdbchn chain identifier of the residue in the PDB file.
-/// @parm[in] ps pose that the residue has been loaded into.
-///
-core::Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps) {
-
-	for ( core::Size j = 1; j <= ps.size(); ++j ) {
-		if ( ( ps.pdb_info()->chain(j) == pdbchn ) && (ps.pdb_info()->number(j) == pdbnum) ) {
-			return j;
-		}
-	}
-
-	// residue not found
-	TR << "ERROR!! Could not find residue" << pdbnum << " and chain " << pdbchn << std::endl;
-	exit(1);
-}
-
+using core::Real;
+using core::Size;
+using core::pose::Pose;
 
 /// @brief Outputs all pair-constellations between a given pair of residues
 ///
@@ -115,11 +97,38 @@ void pair_constel_set_idx2(Size const i, Size const j, Pose const& pose_init) {
 				// print the atoms that would be removed by these mutations to a pdb file
 				ResMut mut1(aai, aa_imut, i_pdb_chain, i_pdb_number, i);
 				ResMut mut2(aaj, aa_jmut, j_pdb_chain, j_pdb_number, j);
-				out_pair_constel(mut1, mut2, -1, secondary_mut_pose);
+				out_pair_constel(mut1, mut2, secondary_mut_pose);
 			}
 		}
 	}
 }
+
+
+/// @brief concatenates into a string all the PDB ATOM records of a constellation
+///
+/// @param[in] ps pose containing the constellation
+/// @param[in] residues_to_print pose indexes of the residues forming the constellation
+///
+std::string create_constel_records_from_sfr(
+	Pose const & ps,
+	utility::vector1< core::Size > const & residues_to_print ) {
+
+	core::io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
+	pose_to_sfr.init_from_pose( ps, residues_to_print );
+
+	utility::vector1< core::io::pdb::Record > records( core::io::pdb::create_records_from_sfr(
+		*pose_to_sfr.sfr(), utility::pointer::make_shared< core::io::StructFileRepOptions >() ) );
+
+	std::string pdb_contents;
+	for ( core::Size i = 1, imax=records.size(); i <= imax; ++i ) {
+		if ( records[ i ]["type"].value == "ATOM  " ) {
+			pdb_contents += core::io::pdb::create_pdb_line_from_record( records[ i ] ) + "\n";
+		}
+	}
+
+	return pdb_contents;
+}
+
 
 
 /// @brief Outputs to file a constellation obtained from mutating a pair of
@@ -127,7 +136,6 @@ void pair_constel_set_idx2(Size const i, Size const j, Pose const& pose_init) {
 ///
 /// @param[in] mut1 representation of the mutation of the first residue.
 /// @param[in] mut2 representation of the mutation of the second residue.
-/// @param[in] cslnum a number to identify the constellation.
 /// @param[in] ps Rosetta pose that both residues belong to. In the pose,
 ///  the occupancy of atoms in either residue is that AFTER the mutation.
 ///
@@ -148,7 +156,7 @@ void pair_constel_set_idx2(Size const i, Size const j, Pose const& pose_init) {
 ///  2. This function may set to zero the occupancy of additional atoms of the
 ///   residues forming the constellation..
 ///
-void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum, Pose& ps) {
+void out_pair_constel(ResMut const& mut1, ResMut const& mut2, Pose& ps) {
 
 	// prepare file name
 	std::ostringstream outPDB_name;
@@ -161,10 +169,10 @@ void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum, 
 	// print header
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(outPDB_name.str(), std::ios::out);
-	outPDB_stream << "HEADER   CONST NUM " << cslnum <<
-		" TARGET MUTATION: " << mut1.cid << ':' << mut1.saa << mut1.pdbn <<
+	outPDB_stream << "HEADER   " <<
+		" 1st MUTATION: " << mut1.cid << ':' << mut1.saa << mut1.pdbn <<
 		mut1.eaa <<
-		"  SECONDARY_MUTATION: " << mut2.cid << ':' << mut2.saa << mut2.pdbn <<
+		" 2nd MUTATION: " << mut2.cid << ':' << mut2.saa << mut2.pdbn <<
 		mut2.eaa << std::endl;
 
 	// check whether atoms must be stripped off the constellation
@@ -174,13 +182,10 @@ void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum, 
 	}
 
 	// print constellation
-	std::string data;
 	utility::vector1< core::Size > residues_to_print;
 	residues_to_print.push_back(mut1.psn);
 	residues_to_print.push_back(mut2.psn);
-	core::io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
-	pose_to_sfr.init_from_pose( ps, residues_to_print );
-	data = core::io::pdb::create_pdb_contents_from_sfr( *pose_to_sfr.sfr() );
+	std::string data = create_constel_records_from_sfr( ps, residues_to_print );
 	outPDB_stream.write( data.c_str(), data.size() );
 	outPDB_stream.close();
 	outPDB_stream.clear();
@@ -255,7 +260,7 @@ void triple_constel_set_idx3(Size const i, Size const j, Size const k,
 					ResMut mut1(aai, aa_imut, i_pdb_chain, i_pdb_number, i);
 					ResMut mut2(aaj, aa_jmut, j_pdb_chain, j_pdb_number, j);
 					ResMut mut3(aak, aa_kmut, k_pdb_chain, k_pdb_number, k);
-					out_triple_constel(mut1, mut2, mut3, -1, tertiary_mut_pose);
+					out_triple_constel(mut1, mut2, mut3, tertiary_mut_pose);
 				}
 			}
 		}
@@ -269,7 +274,6 @@ void triple_constel_set_idx3(Size const i, Size const j, Size const k,
 /// @param[in] mut1 representation of the mutation of the first residue.
 /// @param[in] mut2 representation of the mutation of the second residue.
 /// @param[in] mut3 representation of the mutation of the third residue.
-/// @param[in] cslnum a number to identify the constellation.
 /// @param[in] ps Rosetta pose that all three residues belong to. In the pose,
 ///  the occupancy of atoms in each residue is that AFTER the mutation.
 ///
@@ -293,7 +297,7 @@ void triple_constel_set_idx3(Size const i, Size const j, Size const k,
 ///  - d is the third residue's chain in the input PDB file
 ///
 void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
-	ResMut const& mut3, int const cslnum, Pose& ps) {
+	ResMut const& mut3, Pose& ps) {
 
 	// prepare file name
 	std::ostringstream outPDB_name;
@@ -307,12 +311,12 @@ void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
 	// print header
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(outPDB_name.str(), std::ios::out);
-	outPDB_stream << "HEADER CONST NUM " << cslnum <<
-		" TARGET MUTATION: " << mut1.cid << ':' << mut1.saa << mut1.pdbn <<
+	outPDB_stream << "HEADER   " <<
+		" 1st MUTATION: " << mut1.cid << ':' << mut1.saa << mut1.pdbn <<
 		mut1.eaa <<
-		"  SECONDARY_MUTATION: " << mut2.cid << ':' << mut2.saa << mut2.pdbn <<
+		" 2nd MUTATION: " << mut2.cid << ':' << mut2.saa << mut2.pdbn <<
 		mut2.eaa <<
-		"  TERTIARY_MUTATION: " << mut3.cid << ':' << mut3.saa << mut3.pdbn <<
+		" 3rd MUTATION: " << mut3.cid << ':' << mut3.saa << mut3.pdbn <<
 		mut3.eaa << std::endl;
 
 	// check whether atoms must be stripped off the constellation
@@ -323,14 +327,11 @@ void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
 	}
 
 	// print constellation
-	std::string data;
 	utility::vector1< core::Size > residues_to_print;
 	residues_to_print.push_back(mut1.psn);
 	residues_to_print.push_back(mut2.psn);
 	residues_to_print.push_back(mut3.psn);
-	core::io::pose_to_sfr::PoseToStructFileRepConverter pose_to_sfr;
-	pose_to_sfr.init_from_pose( ps, residues_to_print );
-	data = core::io::pdb::create_pdb_contents_from_sfr( *pose_to_sfr.sfr() );
+	std::string data = create_constel_records_from_sfr( ps, residues_to_print );
 	outPDB_stream.write( data.c_str(), data.size() );
 	outPDB_stream.close();
 	outPDB_stream.clear();
@@ -545,4 +546,4 @@ bool PresenceCommon::are_atoms_pres(core::conformation::Residue const& res,
 }
 
 } // constel
-} // devel
+} // protocols

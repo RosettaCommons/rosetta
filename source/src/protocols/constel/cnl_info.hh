@@ -7,6 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/cnl_info.hh
 /// @brief declaration generic functions returning info on a constellation
 /// @author Andrea Bazzoli
 
@@ -18,20 +19,14 @@
 #include <utility/vector1.fwd.hh>
 #include <core/types.hh>
 
-using core::pose::Pose;
-using numeric::xyzVector;
-using utility::vector1;
-using core::Size;
-using core::Real;
-
-namespace devel {
+namespace protocols {
 namespace constel {
 
 /// @brief returns the center of mass of a constellation
-xyzVector<Real> cnl_com(vector1<Size> const &cnl, Pose const &ps);
+numeric::xyzVector<core::Real> cnl_com(utility::vector1<core::Size> const &cnl, core::pose::Pose const &ps);
 
 } // constel
-} // devel
+} // protocols
 
 #endif
 

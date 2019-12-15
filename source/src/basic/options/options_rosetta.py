@@ -4745,6 +4745,29 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	), # -cm
 
 	##############################################################################
+	Option_Group( 'constel',
+		Option( 'pair_all_res', 'Boolean', desc="extracts all constellations formed by all pairs of residues", default='false' ),
+		Option( 'triple_all_res', 'Boolean', desc="extracts all constellations formed by all triads of residues", default='false' ),
+		Option( 'pair_target_resnum', 'Integer', desc="PDB residue number of target residue for two-residue constellations", default='-1' ),
+		Option( 'triple_target_resnum', 'Integer', desc="PDB residue number of target residue for three-residue constellations", default='-1' ),
+		Option( 'target_chain', 'String', desc="PDB chain ID of target residue", default="A" ),
+		Option( 'pair_target_mutations', 'String', desc="Target mutation pair for two-residue constellations", default="**_**" ),
+		Option( 'target_cnl', 'String', desc="Path to the file describing the target constellation", default="" ),
+		Option( 'cnl_stripped', 'Boolean', desc="Deprives constellations of the atoms closest to the backbone", default='false' ),
+		Option( 'max_atom_sasa', 'Real', desc="Maximum allowed SASA for a constellation atom", default='999999.9' ),
+		Option( 'chain_interface', 'Boolean', desc="Keeps only constellations shared by multiple chains", default='false' ),
+		Option( 'aromatic', 'Boolean', desc="Keeps only constellations with at least one aromatic ring", default='false' ),
+		Option( 'cnl_exclude', 'String', desc="Path to the file listing the residues to be excluded from constellations", default="" ),
+		Option( 'prox_ct_max', 'Real', desc="Maximum distance of a constellation to a chain terminus", default='0' ),
+		Option( 'prox_tt_max', 'Real', desc="Maximum distance between chain termini", default='10.0' ),
+		Option( 'prox_nres', 'Integer', desc="Number of residues forming a chain terminus", default='10' ),
+		Option( 'indole_coo', 'Boolean', desc="Keeps only constellations formed by an indole group plus a COO group", default='false' ),
+		Option( 'tryptamine', 'Boolean', desc="Keeps only constellations that can be matched by tryptamine", default='false' ),
+		Option( 'amphetamine', 'Boolean', desc="Keeps only constellations that can be matched by amphetamine", default='false' ),
+		Option( 'histamine', 'Boolean', desc="Keeps only constellations that can be matched by histamine", default='false' ),
+	),
+
+	##############################################################################
 	# ContactMap options
 	Option_Group( 'contactMap',
 		Option( 'contactMap', 'Boolean',

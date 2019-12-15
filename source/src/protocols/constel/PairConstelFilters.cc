@@ -7,11 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
+/// @file protocols/constel/PairConstelFilters.cc
 /// @brief Definition of filters for constellations formed by a pair of residues.
 /// @author Andrea Bazzoli
 
-#include <devel/constel/PairConstelFilters.hh>
-#include <devel/constel/Primitives.hh>
+#include <protocols/constel/PairConstelFilters.hh>
+#include <protocols/constel/Primitives.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
@@ -20,12 +21,12 @@
 #include <utility/vector1.hh>
 #include <string>
 
-using core::Real;
-
-
-namespace devel {
+namespace protocols {
 namespace constel {
 
+using core::pose::Pose;
+using core::Size;
+using core::Real;
 
 /// @brief tells whether a constellation satisfies the requirements for being
 ///   rescued by compounds containing an indole group and a carboxylic group.
@@ -47,7 +48,7 @@ namespace constel {
 ///  1. For constellations formed by other than 2 residues, the function
 ///   currently returns false.
 ///
-bool FilterByIndoleCOO::sat(Pose const& ps,
+bool FilterByIndoleCOO::is_satisfied(Pose const& ps,
 	utility::vector1<Size> const& cnl) {
 
 	using core::chemical::AA;
@@ -146,7 +147,7 @@ bool FilterByIndoleCOO::sat(Pose const& ps,
 ///  1. For constellations formed by other than 2 residues, the function
 ///  currently returns false.
 ///
-bool FilterByTryptamine::sat(Pose const& ps,
+bool FilterByTryptamine::is_satisfied(Pose const& ps,
 	utility::vector1<Size> const& cnl) {
 
 	using core::chemical::AA;
@@ -230,7 +231,7 @@ bool FilterByTryptamine::sat(Pose const& ps,
 ///  1. For constellations formed by other than 2 residues, the function
 ///  currently returns false.
 ///
-bool FilterByAmphetamine::sat(Pose const& ps,
+bool FilterByAmphetamine::is_satisfied(Pose const& ps,
 	utility::vector1<Size> const& cnl) {
 
 	using core::chemical::AA;
@@ -316,7 +317,7 @@ bool FilterByAmphetamine::sat(Pose const& ps,
 ///  1. For constellations formed by other than 2 residues, the function
 ///  currently returns false.
 ///
-bool FilterByHistamine::sat(Pose const& ps, utility::vector1<Size> const& cnl) {
+bool FilterByHistamine::is_satisfied(Pose const& ps, utility::vector1<Size> const& cnl) {
 
 	using core::chemical::AA;
 	using core::chemical::aa_his;
@@ -359,4 +360,4 @@ bool FilterByHistamine::sat(Pose const& ps, utility::vector1<Size> const& cnl) {
 
 
 } // constel
-} // devel
+} // protocols
