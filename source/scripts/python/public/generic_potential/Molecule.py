@@ -309,7 +309,9 @@ class MoleculeClass:
         # Hydrogens: define improper torsion relation if root has >= 2 hvyatm connections (thus improper can be defined)
         for i,iatm in enumerate(self.ATorder):
             atm = self.atms[iatm]
-             #skip heavyatms
+            #skip root atoms
+            if i <=2: continue
+            #skip heavyatms
             if not atm.is_H: continue
             
             other_hvy_atms_conn_to_root = []

@@ -14,7 +14,7 @@ Author: Hahnbeom Park and Frank DiMaio
 
 import sys
 import math
-import numpy
+import numpy as np
 import numpy.linalg
 import scipy.sparse.csgraph
 import scipy.linalg
@@ -61,12 +61,12 @@ def setup(mol,option): # mol: Molecule type
 
 def setup_nbratom(mol):
     '''Setup residue nbratom & nbrradius field'''
-    com = numpy.sum(mol.xyz,axis=0) / len(mol.atms)
-    dists = numpy.sum(numpy.square(mol.xyz - com[None,:]),axis=-1) # dist_squared
+    com = np.sum(mol.xyz,axis=0) / len(mol.atms)
+    dists = np.sum(np.square(mol.xyz - com[None,:]),axis=-1) # dist_squared
     maxdis = math.sqrt(max(dists)) 
 
     # 1) dont let puckering ring be root
-    dists[numpy.in1d(numpy.arange(len(mol.atms)), mol.atms_puckering)] = 99999.0
+    dists[np.in1d(np.arange(len(mol.atms)), mol.atms_puckering)] = 99999.0
 
     nbonds = [len(atm.bonds) for atm in mol.atms]
     for ring in mol.rings: #correct for cut_bonds
@@ -82,7 +82,7 @@ def setup_nbratom(mol):
         elif nbonds[i] ==2: dists[i] = 999.0
         if atm.is_H: dists[i] = 99999.0
 
-    mol.nbratom = numpy.argmin(dists)
+    mol.nbratom = np.argmin(dists)
     mol.nbrradius = (maxdis+1.5)*2 #safe
 
 def assign_bonds(mol):
@@ -348,13 +348,13 @@ def detect_rings(mol,option):
     mol.atms_aro = []
     mol.atms_puckering = []
     
-    bond_tree = numpy.zeros((len(mol.atms),len(mol.atms)))
+    bond_tree = np.zeros((len(mol.atms),len(mol.atms)))
     for bond in mol.bonds:
         bond_tree[bond.atm1,bond.atm2] = bond_tree[bond.atm2,bond.atm1] = 1
 
     mol.tree = scipy.sparse.csgraph.minimum_spanning_tree(bond_tree)
-    treesymm = numpy.maximum(mol.tree.toarray(), mol.tree.T.toarray())
-    cycle_edges = numpy.transpose(numpy.nonzero(numpy.triu(bond_tree != treesymm)))
+    treesymm = np.maximum(mol.tree.toarray(), mol.tree.T.toarray())
+    cycle_edges = np.transpose(np.nonzero(np.triu(bond_tree != treesymm)))
 
     for i,j in cycle_edges:
         ring_i = get_path(bond_tree,(i,j))
@@ -389,10 +389,10 @@ def classify_ring_type(mol,ring,option):
     #for long ring take into account of input geometry
     if ring.natms > 6: 
         ring_xs = [mol.xyz[i] for i in ring.atms]
-        ring_xs -= numpy.mean(ring_xs, axis = 0) 
-        cov = numpy.cov(ring_xs, rowvar = False)
+        ring_xs -= np.mean(ring_xs, axis = 0) 
+        cov = np.cov(ring_xs, rowvar = False)
         evals,_ = scipy.linalg.eigh(cov)
-        nonplanarity = numpy.min(evals)
+        nonplanarity = np.min(evals)
         if (nonplanarity>1e-2):  # be a bit permissive
             is_aro = False
             #print("nonplanarity? ", nonplanarity)
@@ -466,14 +466,23 @@ def classify_ring_type(mol,ring,option):
             if atm not in mol.atms_puckering:
                 mol.atms_puckering.append(atm)
 
-                
+
+def is_colinear(crd1, crd2, crd3, eps=1.0e-5):
+    v1 = np.array(crd1) - np.array(crd2)
+    v2 = np.array(crd3) - np.array(crd2)
+    v4_0 = np.cross(v1,v2)
+    if np.inner(v4_0,v4_0) < eps:
+        return True
+    return False
+
 # Scipy-version
 def define_icoord(mol):
     '''AtomTree setup using scipy graph construct'''
     nodes,parents = scipy.sparse.csgraph.breadth_first_order(mol.tree, mol.nbratom, directed=False)
-    first_children = numpy.zeros_like(parents)
+    first_children = np.zeros_like(parents)
     mol.ATorder = nodes
-    
+    colinear_child = -9999
+    colinear_parent = -9999
     for i in nodes:
         par_i = parents[i]
         gp_i = -9999 if (par_i==-9999) else parents[par_i]
@@ -496,6 +505,14 @@ def define_icoord(mol):
                 ggp_i = nodes[2]
             else:
                 ggp_i = nodes[1]
+
+        if is_colinear(mol.xyz[par_i], mol.xyz[gp_i], mol.xyz[ggp_i]):
+            if colinear_parent != par_i:
+                colinear_parent = par_i
+                colinear_child = i
+            else:
+                ggp_i = colinear_child
+                colinear_child = i
 
         mol.atms[i].root = par_i
         mol.atms[i].groot = (gp_i,ggp_i)
