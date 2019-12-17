@@ -203,7 +203,7 @@ fit_helix_in_map() {
 	for ( Size repeat = 1; repeat <= repeats; ++repeat ) {
 		Real current_score = start_score;
 		probe_helix_pose = *(start_probe_helix.clone());
-		Pose try_move = *(start_probe_helix.clone());
+		pose::Pose try_move = *(start_probe_helix.clone());
 		for ( Size i = 1; i <= 5000; ++i ) {
 			//try_move.dump_pdb( "try_move_before_"+ ObjexxFCL::string_of( i )+".pdb" );
 			if ( (i % 3) == 0 ) {
