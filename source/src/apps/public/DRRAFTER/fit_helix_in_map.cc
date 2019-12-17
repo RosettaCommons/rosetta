@@ -89,8 +89,6 @@ fit_helix_in_map() {
 	pose::Pose probe_helix_pose;
 	input_probe_helix->fill_pose( probe_helix_pose, *rsd_set );
 
-	std::string density_map = option[ edensity::mapfile ]();
-
 	// get the base pairs in the probe helix
 	utility::vector1< std::pair< core::Size, core::Size >  > probe_bp_list;
 	core::pose::rna::get_base_pairing_list( probe_helix_pose, probe_bp_list );
@@ -190,10 +188,7 @@ fit_helix_in_map() {
 	Real start_distance = (probe_helix_pose.residue( resnum_check ).atom( "C1'" ).xyz() - end_node_in_map_vector ).length();
 	Real start_distance_to_next_node = (probe_helix_pose.residue( resnum_check ).atom( "C1'" ).xyz() - next_node_in_map_vector ).length();
 
-	Real current_score = (*sfxn_dens)( probe_helix_pose );
 	Real start_score = (*sfxn_dens)(probe_helix_pose );
-	pose::Pose try_move;
-	try_move = *(probe_helix_pose.clone());
 	pose::Pose min_scoring;
 	Real min_score = (*sfxn_dens)( probe_helix_pose );
 	min_scoring = *(probe_helix_pose.clone());
@@ -206,9 +201,9 @@ fit_helix_in_map() {
 	//Size repeats = 10;
 	Size repeats = option[ nrepeats ]();
 	for ( Size repeat = 1; repeat <= repeats; ++repeat ) {
-		current_score = start_score;
+		Real current_score = start_score;
 		probe_helix_pose = *(start_probe_helix.clone());
-		try_move = *(start_probe_helix.clone());
+		Pose try_move = *(start_probe_helix.clone());
 		for ( Size i = 1; i <= 5000; ++i ) {
 			//try_move.dump_pdb( "try_move_before_"+ ObjexxFCL::string_of( i )+".pdb" );
 			if ( (i % 3) == 0 ) {
