@@ -40,6 +40,7 @@
 #include <protocols/jd3/deallocation/DeallocationMessage.hh>
 #include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
 #include <protocols/jd3/util.hh>
+#include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 
 //project headers
 #include <core/pose/Pose.hh>
@@ -790,6 +791,21 @@ StandardJobQueen::append_common_tag_subelements(
 ) const
 {}
 
+std::string
+perform_variable_substitution(
+	std::string const & job_def_string
+){
+	if ( ! basic::options::option[ basic::options::OptionKeys::jd3::job_definition_script_vars ].user() ) return job_def_string;
+
+	utility::vector1< std::string > const & script_vars =
+		basic::options::option[ basic::options::OptionKeys::jd3::job_definition_script_vars ]();
+
+	std::stringstream unsubbed_stream( job_def_string );
+	std::stringstream subbed_stream;
+	rosetta_scripts::RosettaScriptsParser::substitute_variables_in_stream( unsubbed_stream, script_vars, subbed_stream );
+	return subbed_stream.str();
+}
+
 void
 StandardJobQueen::determine_preliminary_job_list()
 {
@@ -809,6 +825,7 @@ StandardJobQueen::determine_preliminary_job_list()
 
 	if ( option[ in::file::job_definition_file ].user() ) {
 		std::string job_def_string = utility::file_contents( option[ in::file::job_definition_file ] );
+		job_def_string = perform_variable_substitution( job_def_string );
 		determine_preliminary_job_list_from_xml_file( job_def_string, job_def_schema );
 	} else {
 		determine_preliminary_job_list_from_command_line();

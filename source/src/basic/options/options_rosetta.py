@@ -1337,6 +1337,7 @@ Options = Option_Group( '',
 		Option( 'continue_past_failed_checkpoint_restoration', 'Boolean', desc='Should we keep going even if we could not restore from a checkpoint as requested? Use this if you are ok with possibly of starting over from the beginning, or if you expect to relaunch the job multiple times and want simply to use the same command line each time, including the first time you launch the job and there are no checkpoints yet to restore from.'),
 		Option( 'keep_all_checkpoints', 'Boolean', desc='Allow old checkpoint files to build up on disk. Cannot be combined with -archive_on_disk. Using this flag could use up a lot of disk space unncessarily. If this flag is not present on the command line, then previously created checkpoints will be deleted when the next checkpoints are created. Note that job distributor will delete the previous checkpoint by default after the next checkpoint is written to disk.'),
 		Option( 'keep_checkpoint', 'Integer', desc='Prevent the JobDistributor from deleting a particular checkpoint; perhaps useful if you are trying to debug an infrequent event and you want to restart from a particular checkpoint repeatedly without worrying that the JobDistributor will delete your starting point.'),
+		Option( 'job_definition_script_vars', 'StringVector', desc='Variable substitutions for xml parser, in the form of name=value' ),
 
 	), # -jd3
 

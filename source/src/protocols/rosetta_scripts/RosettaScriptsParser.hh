@@ -461,8 +461,6 @@ public:
 	bool
 	protocol_option_set(utility::options::OptionCollection const & options) const;
 
-private: //Methods
-
 	///@brief Substitute xx==yy using the XML syntax %%xx%%.
 	//// script_vars is a list of strings of "xx==yy".
 	static
@@ -472,6 +470,8 @@ private: //Methods
 		utility::vector1< std::string > const & script_vars,
 		std::stringstream & out
 	);
+
+private: //Methods
 
 	/// @brief Is the current tag one with a slash at the end?
 	/// @details Starting from endpos, crawl backward until we hit a

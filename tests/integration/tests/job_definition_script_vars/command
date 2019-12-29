@@ -1,0 +1,24 @@
+
+cd %(workdir)s
+set -e
+
+# Do the tests actually exist?
+[ -x %(bin)s/multistage_rosetta_scripts.%(binext)s ] || exit 1
+
+date > start-time.ignore
+
+for x in 1 2 3 4; do
+    %(bin)s/multistage_rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s \
+        -testing:INTEGRATION_TEST \
+        -job_definition_file job_def_file.xml \
+        -job_definition_script_vars n2keep=$x \
+        2>&1 | egrep -vf ../../ignore_list > info.log
+    if [[ `ls *_0001.pdb | wc -l` -ne $x ]]; then
+        exit 1
+    fi
+    rm *_0001.pdb
+done
+
+date > finish-time.ignore
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
