@@ -40,10 +40,11 @@ Platform['python'] = sys.executable
 
 
 class Setup(object):
-    __slots__ = 'test working_dir platform config compare debug'.split()  # daemon path_to_previous_test
+    __slots__ = 'test working_dir platform config compare debug'.split()  # version daemon path_to_previous_test
     def __init__(self, **attrs):
         #self.daemon = True
-        for k, v in attrs.items(): setattr(self, k, v)
+        for k, v in attrs.items():
+            if k in self.__slots__: setattr(self, k, v)
 
 
 def setup_from_options(options):

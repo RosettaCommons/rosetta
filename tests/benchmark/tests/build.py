@@ -34,8 +34,8 @@ tests = dict(
 
     #PyRosetta = NT(command='BuildPyRosetta.sh -u --monolith -j{jobs}', incremental=True),
 
-    header    = NT(command='./scons.py unit_test_platform_only ; cd src && python ./../../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),
-    levels    = NT(command='./update_options.sh && ./update_ResidueType_enum_files.sh && python version.py && cd src && python ./../../../tools/python_cc_reader/library_levels.py', incremental=False),
+    header    = NT(command='./scons.py unit_test_platform_only ; cd src && python ./../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),
+    levels    = NT(command='./update_options.sh && ./update_ResidueType_enum_files.sh && python version.py && cd src && python ./../../tools/python_cc_reader/library_levels.py', incremental=False),
 
     cppcheck  = NT(command='cd src && bash ../../tests/benchmark/util/do_cppcheck.sh -j {jobs} -e "{extras}" -w "{working_dir}"', incremental=False),
 
@@ -125,6 +125,10 @@ def run_test_on_fresh_clone(test, rosetta_dir, working_dir, platform, config, hp
     clean_main = 'clean_main'
 
     execute('Cloning main...', 'cd {working_dir} && git clone {rosetta_dir} {clean_main}'.format(**vars()) )
+
+    # switching submodules URL to HTTPS so we can clone without SSH key
+    with open(f'{working_dir}/clean_main/.gitmodules') as f: m = f.read()
+    with open(f'{working_dir}/clean_main/.gitmodules', 'w') as f: f.write( m.replace('git@github.com:', 'https://github.com/') )
 
     res = run_test(test, working_dir + '/' + clean_main, working_dir, platform, config, hpc_driver, verbose, debug)
 

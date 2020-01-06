@@ -35,7 +35,7 @@ def run_subtests_test(rosetta_dir, working_dir, platform, config):
     tests = {}
     for i in range(16):
         name = f's-{i:02}'
-        log = ('x'*63 + '\n') * 16 * 256 * i 
+        log = ('x'*63 + '\n') * 16 * 256 * i
         s = i % 3
         if   s == 0: state = _S_passed_
         elif s == 1: state = _S_failed_
@@ -77,6 +77,20 @@ def run_regression_test(rosetta_dir, working_dir, platform, config):
 
 
 
+def run_release_test(rosetta_dir, working_dir, platform, config):
+    release_root = config['release_root']
+    branch = config['branch']
+    revision = config['revision']
+
+    assert release_root, "config['release_root'] must be set!"
+
+    release_path = f'{release_root}/dummy'
+
+    if not os.path.isdir(release_path): os.makedirs(release_path)
+
+    with open(f'{release_path}/{branch}-{revision}.txt', 'w') as f: f.write('dummy release file\n')
+
+    return {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : f'Config release root set to: {release_root}'}
 
 
 
@@ -135,5 +149,6 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     if   test == 'state':      return run_state_test      (rosetta_dir, working_dir, platform, config)
     elif test == 'regression': return run_regression_test (rosetta_dir, working_dir, platform, config)
     elif test == 'subtests':   return run_subtests_test   (rosetta_dir, working_dir, platform, config)
-    
+    elif test == 'release':    return run_release_test    (rosetta_dir, working_dir, platform, config)
+
     else: raise BenchmarkError(f'Dummy test script does not support run with test={test!r}!')
