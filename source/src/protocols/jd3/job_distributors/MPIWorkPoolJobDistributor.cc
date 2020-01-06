@@ -162,6 +162,9 @@ MPIWorkPoolJobDistributor::go_master()
 
 		int worker_node = utility::receive_integer_from_anyone();
 		int message = utility::receive_integer_from_node( worker_node );
+
+		TR << "recieved message " << message << " from node " << worker_node << std::endl;
+
 		switch ( message ) {
 		case mpi_work_pool_jd_new_job_request :
 			process_job_request_from_node( worker_node );
@@ -1149,9 +1152,6 @@ MPIWorkPoolJobDistributor::process_archival_complete_message( int worker_node )
 	}
 
 	note_job_no_longer_running( job_id );
-
-	potentially_output_some_job_results();
-	potentially_discard_some_job_results();
 }
 
 void
@@ -1656,11 +1656,15 @@ MPIWorkPoolJobDistributor::note_job_no_longer_running( Size job_id )
 			assign_jobs_to_idling_nodes();
 		}
 	}
+
+	potentially_output_some_job_results();
+	potentially_discard_some_job_results();
 }
 
 void
 MPIWorkPoolJobDistributor::potentially_output_some_job_results()
 {
+	TR << "potentially_output_some_job_results" << std::endl;
 
 	// ask the job queen if she wants to output any results
 	std::list< output::OutputSpecificationOP > jobs_to_output =

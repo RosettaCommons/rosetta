@@ -502,19 +502,29 @@ SimulateMPI::send_doubles_to_node(
 bool
 SimulateMPI::incoming_message_queue_is_empty()
 {
+	bool all_processed = true;
 	for ( auto msg : simulation_->messages_for_node( rank_ ) ) {
-		if ( ! msg->processed() ) return false;
+		if ( ! msg->processed() ) {
+			std::cout << "Incoming message unprocessed; ind: " << msg->index() << " src " << msg->src() << " dst " <<
+				msg->dst() << " msg_type " << msg->msg_type() << " " << payload(msg)  << std::endl;
+			all_processed = false;
+		}
 	}
-	return true;
+	return all_processed;
 }
 
 bool
 SimulateMPI::outgoing_message_queue_is_empty()
 {
+	bool all_processed = true;
 	for ( auto msg : simulation_->messages_from_node( rank_ ) ) {
-		if ( ! msg->processed() ) return false;
+		if ( ! msg->processed() ) {
+			std::cout << "Outgoing message unprocessed; ind: " << msg->index() << " src " << msg->src() << " dst " <<
+				msg->dst() << " msg_type " << msg->msg_type() << " " << payload(msg)  << std::endl;
+			all_processed = false;
+		}
 	}
-	return true;
+	return all_processed;
 }
 
 
