@@ -1865,7 +1865,7 @@ read_center_normal_from_tag( core::Vector & center, core::Vector & normal, utili
 	// Read in membrane center & normal
 	if ( tag->hasOption( "center" ) ) {
 		std::string cen = tag->getOption< std::string >( "center" );
-		utility::vector1< std::string > str_cen = utility::string_split_multi_delim( cen, ":,'`~+*&|;." );
+		utility::vector1< std::string > str_cen = utility::string_split_multi_delim( cen, ":,'`~+*&|;" );
 
 		if ( str_cen.size() != 3 ) {
 			utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
@@ -1878,7 +1878,7 @@ read_center_normal_from_tag( core::Vector & center, core::Vector & normal, utili
 
 	if ( tag->hasOption( "normal" ) ) {
 		std::string norm = tag->getOption< std::string >( "normal" );
-		utility::vector1< std::string > str_norm = utility::string_split_multi_delim( norm, ":,'`~+*&|;." );
+		utility::vector1< std::string > str_norm = utility::string_split_multi_delim( norm, ":,'`~+*&|;" );
 
 		if ( str_norm.size() != 3 ) {
 			utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
