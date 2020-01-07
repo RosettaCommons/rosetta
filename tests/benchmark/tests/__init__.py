@@ -12,7 +12,7 @@
 ## @brief  Common constats and types for all test types
 ## @author Sergey Lyskov
 
-import os, time, sys, shutil, codecs, urllib.request, imp, subprocess  # urllib.error, urllib.parse,
+import os, time, sys, shutil, codecs, urllib.request, imp, subprocess, json  # urllib.error, urllib.parse,
 import platform as  platform_module
 import types as types_module
 
@@ -659,7 +659,7 @@ def _get_path_to_conda_root(platform, config):
     url = miniconda_sources[ platform['os'] ]
 
     version = '1'
-    channels = ''  #'conda-forge'
+    channels = ''  # conda-forge
 
     #packages = ['conda-build gcc libgcc', 'libgcc=5.2.0'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
     #packages = ['conda-build gcc'] # libgcc installs is workaround for "Anaconda libstdc++.so.6: version `GLIBCXX_3.4.20' not found", see: https://stackoverflow.com/questions/48453497/anaconda-libstdc-so-6-version-glibcxx-3-4-20-not-found
@@ -676,7 +676,7 @@ def _get_path_to_conda_root(platform, config):
 
     # presense of __PYVENV_LAUNCHER__,PYTHONHOME, PYTHONPATH sometimes confuse Python so we have to unset them
     unset = 'unset __PYVENV_LAUNCHER__ && unset PYTHONHOME && unset PYTHONPATH'
-    activate = unset + ' && source ' + root + '/bin/activate'
+    activate = unset + ' && . ' + root + '/bin/activate'
 
     executable = root + '/bin/conda'
 

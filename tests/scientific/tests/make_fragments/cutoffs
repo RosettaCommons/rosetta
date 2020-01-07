@@ -1,0 +1,12 @@
+cutoffs are defined as a deviation of +0.03 from the medians at different cutoffs
+as they were run originally (by me (danpf@uw.edu), sept 2019).  they should not
+change often, most improvements that have been made on 'make_fragments' in the
+past few years have been changes to databases, rather than core changes to picking.
+
+to compute this median we generate sets of numbers, where each set is all of the
+minimum rmsds at 3 different cutoffs [10, 25, 50].  We then compute the median of
+this dataset, along with the 25th and 75th percentiles (however these are not used
+as part of the cutoff failure check).  When we check for failures, we compare these
+medians with the newly calculated medians, and if they differ by 0.03 from my pre-
+calculated data then we trigger failure.
+

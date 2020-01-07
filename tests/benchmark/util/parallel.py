@@ -82,29 +82,23 @@ class Runner:
 
         p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        # if not output_file:
-        #     f = p.stderr
-        #     for line in f:
-        #         self.log_error(line)
-        #         sys.stdout.flush()
-        #     f.close()
-
         output, errors = p.communicate()
+        output = output.decode('utf-8', errors='backslashreplace')
+        errors = errors.decode('utf-8', errors='backslashreplace')
 
         # p.communicate() give us raw byte streams, which we then throw to files/output as raw byte streams
         # There's only unicode issues if the input and output encoding doesn't match (and there's no way to tell that).
 
         if output_file:
-            with file(output_file, 'w') as f: f.write(output);  f.write(errors)
-            sys.stderr.write( errors )
+            with open(output_file, 'w') as fh:
+                fh.write(output)
+                fh.write(errors)
+            sys.stderr.write(errors)
         else:
-            sys.stdout.write( output )
-            sys.stderr.write( errors )
+            sys.stdout.write(output)
+            sys.stderr.write(errors)
 
-        #exit_code = os.waitpid(p.pid, 0)[1]
-        exit_code = p.returncode
-
-        return exit_code
+        return p.returncode
 
 
     def run_commands_lines(self, name, commands_lines, working_dir, delete_intermediate_files=True):
@@ -153,7 +147,7 @@ class Runner:
             pid = self.mfork()
             if not pid:  # we are the child process
                 result = self.runCommandLine('', '', commands_lines[c], output_file=output_file) # + ' 2>&1 1>>{0} 2>>{0}'.format(output_file) )
-                with file(result_file, 'w') as fh: fh.write( '{}'.format(result) )
+                with open(result_file, 'w') as fh: fh.write( '{}'.format(result) )
                 sys.exit(0)
 
         for p in self.jobs: os.waitpid(p, 0)  # waiting for all child process to termintate...
@@ -182,7 +176,7 @@ class Runner:
             if f.endswith('.json'):
                 file_name = f[:-len('.json')]
 
-                commands_lines = json.load( file(f) )
+                commands_lines = json.load( open(f) )
 
                 results = {}
 
@@ -205,16 +199,16 @@ class Runner:
                     pid = self.mfork()
                     if not pid:  # we are the child process
                         result = self.runCommandLine(f, c, commands_lines[c], output_file=output_file) # + ' 2>&1 1>>{0} 2>>{0}'.format(output_file) )
-                        with file(result_file, 'w') as fh: fh.write( '{}'.format(result) )
+                        with open(result_file, 'w') as fh: fh.write( '{}'.format(result) )
                         sys.exit(0)
 
                 for p in self.jobs: os.waitpid(p, 0)  # waiting for all child process to termintate...
 
-                results = { c: dict(result=json.load(file(results[c]['result_file'])), output=file(results[c]['output_file']).read()) for c in results }
+                results = { c: dict(result=json.load(open(results[c]['result_file'])), output=open(results[c]['output_file']).read()) for c in results }
 
                 for c in results: print( c, results[c]['result'], results[c]['output'] )
 
-                with file( file_name + '.results.json', 'w') as fh: json.dump(results, fh, sort_keys=True, indent=2)
+                with open( file_name + '.results.json', 'w') as fh: json.dump(results, fh, sort_keys=True, indent=2)
 
 
             else:
@@ -224,11 +218,11 @@ class Runner:
                 if len(files) > 1  and  prefix:
                     prefix += '_' + f
 
-                for i, l in enumerate(file(f)):
+                for i, l in enumerate(open(f)):
                     pid = self.mfork()
                     if not pid:  # we are the child process
                         self.runCommandLine(f, i, l)
-                        if prefix: file(prefix + '.%.4d' % i, 'w').write(self.output)
+                        if prefix: open(prefix + '.%.4d' % i, 'w').write(self.output)
                         sys.exit(0)
 
                 for p in self.jobs: os.waitpid(p, 0)  # waiting for all child process to termintate...

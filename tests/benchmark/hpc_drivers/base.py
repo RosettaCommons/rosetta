@@ -131,6 +131,26 @@ class HPC_Driver:
         ''' Cancel all HPC jobs known to this driver, use this as signal handler for script termination '''
         for j in self.jobs: self.cancel_job(j)
 
+    def block_until(self, silent, fn, *args, **kwargs):
+        '''
+        **fn must have the driver as the first argument**
+        example:
+        def fn(driver):
+            jobs = list(driver.jobs)
+            jobs = [job for job in jobs if not driver.complete(job)]
+            if len(jobs) <= 8:
+                return False # stops sleeping
+            return True # continues sleeping
+
+        for x in range(100):
+            hpc_driver.submit_hpc_job(...)
+            hpc_driver.block_until(False, fn)
+        '''
+        while fn(self, *args, **kwargs):
+            sys.stdout.flush()
+            time_module.sleep(60)
+            if not silent:
+                Sleep(1, '"Waiting for HPC job(s) to finish, sleeping {time_left}s\r')
 
     def wait_until_complete(self, jobs=None, callback=None, silent=False):
         ''' Helper function, wait until given jobs list is finished, if no argument is given waits until all jobs known by driver is finished '''
