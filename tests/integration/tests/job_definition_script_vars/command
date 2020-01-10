@@ -7,17 +7,20 @@ set -e
 
 date > start-time.ignore
 
+# For the Valgrind tests, we want the executable to be in the left-hand column, and there to be one log file per executable line
 for x in 1 2 3 4; do
-    %(bin)s/multistage_rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s \
+
+%(bin)s/multistage_rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s \
         -testing:INTEGRATION_TEST \
         -job_definition_file job_def_file.xml \
         -job_definition_script_vars n2keep=$x \
-        2>&1 | egrep -vf ../../ignore_list > info.log
-    if [[ `ls *_0001.pdb | wc -l` -ne $x ]]; then
+        2>&1 | egrep -vf ../../ignore_list >> info.log
+if [[ `ls *_0001.pdb | wc -l` -ne $x ]]; then
         exit 1
-    fi
-    rm *_0001.pdb
-done
+fi
+rm *_0001.pdb
+
+done # End For
 
 date > finish-time.ignore
 
