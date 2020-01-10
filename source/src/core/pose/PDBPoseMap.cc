@@ -71,8 +71,31 @@ PDBPoseMap::operator =( PDBPoseMap const & m )
 {
 	if ( this != &m ) {
 		pdb2pose_ = m.pdb2pose_;
+		pdb2pose_noSegmentIDs_ = m.pdb2pose_noSegmentIDs_;
 	}
 	return *this;
+}
+
+
+Size
+PDBPoseMap::find(
+	char const chain,
+	int const pdb_res,
+	char const ins_code, /*= ' ', */
+	std::string const & segmentID /* = "    " */
+) const
+{
+	ResidueKey const rk( chain, pdb_res, ins_code, segmentID );
+	auto const i = pdb2pose_.find( rk );
+
+	if ( i == pdb2pose_.end() ) { // not found
+		auto const j = pdb2pose_noSegmentIDs_.find( rk );
+		if ( j == pdb2pose_noSegmentIDs_.end() ) { // not found again
+			return 0;
+		}
+		return j->second;
+	}
+	return i->second; // return pose numbering
 }
 
 
@@ -93,8 +116,45 @@ PDBPoseMap::insert(
 )
 {
 	if ( chain != PDBInfo::empty_record() ) {
-		pdb2pose_[ ResidueKey( chain, pdb_res, ins_code, segmentID ) ] = pose_res;
+		ResidueKey const rk( chain, pdb_res, ins_code, segmentID );
+		pdb2pose_[ rk ] = pose_res;
+		pdb2pose_noSegmentIDs_[ rk ] = pose_res;
 	}
+}
+
+
+
+bool
+PDBPoseMap::conditional_erase(
+	char const chain,
+	int const pdb_res,
+	char const ins_code,
+	std::string const & segmentID,
+	Size const pose_res
+) {
+	ResidueKey const rk( chain, pdb_res, ins_code, segmentID );
+	auto i = pdb2pose_.find( rk );
+	if ( i != pdb2pose_.end() && i->second == pose_res ) {
+		pdb2pose_.erase( i );
+		pdb2pose_noSegmentIDs_.erase( rk );
+		return true;
+	}
+
+	return false;
+}
+
+
+void
+PDBPoseMap::erase(
+	char const chain,
+	int const pdb_res,
+	char const ins_code,
+	std::string const & segmentID /*= "    " */
+)
+{
+	ResidueKey const rk( chain, pdb_res, ins_code, segmentID );
+	pdb2pose_.erase( rk );
+	pdb2pose_noSegmentIDs_.erase( rk );
 }
 
 
@@ -142,6 +202,7 @@ template< class Archive >
 void
 core::pose::PDBPoseMap::save( Archive & arc ) const {
 	arc( CEREAL_NVP( pdb2pose_ ) ); // Pdb2Pose
+	arc( CEREAL_NVP( pdb2pose_noSegmentIDs_ ) ); // Pdb2Pose
 }
 
 /// @brief Automatically generated deserialization method
@@ -149,6 +210,7 @@ template< class Archive >
 void
 core::pose::PDBPoseMap::load( Archive & arc ) {
 	arc( pdb2pose_ ); // Pdb2Pose
+	arc( pdb2pose_noSegmentIDs_ ); // Pdb2Pose
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::pose::PDBPoseMap );

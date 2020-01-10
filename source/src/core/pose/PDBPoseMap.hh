@@ -41,10 +41,16 @@
 namespace core {
 namespace pose {
 
+
+
+
 /// @brief PDBPoseMap can be queried with PDB information (chain, sequence position)
 ///  and returns a pose's resid position.  Useful for handing input/output in terms
 ///  of PDB positions.  Can be tucked into the pose for repeated access, or generated
 ///  just-in-time for a single use.  Basically a wrapper class for std::map.
+/// @warning danpf@uw.edu  -- In order to avoid breaking workflows I added a secondary map
+///  that tracks the map<ResidueKey, Size> without the segmentID field being checked. This is
+///  sort of a strange if you use segmentIDs, but if you don't you won't notice any differences.
 class PDBPoseMap : public utility::pointer::ReferenceCount {
 
 
@@ -61,7 +67,6 @@ private: // forward declarations
 private: // typedefs
 
 	typedef utility::pointer::ReferenceCount Super;
-	typedef std::map< ResidueKey, Size > Pdb2Pose;
 
 
 private: // structs
@@ -70,9 +75,9 @@ private: // structs
 	struct ResidueKey {
 		/// @brief default constructor
 		ResidueKey () :
-			chainID( ' ' ),
-			resSeq( 0 ),
-			iCode( ' '),
+			chainID(' '),
+			resSeq(0),
+			iCode(' '),
 			segmentID("    ")
 		{}
 
@@ -88,12 +93,7 @@ private: // structs
 		bool
 		operator <( ResidueKey const & rval ) const
 		{
-			return (
-				( chainID < rval.chainID ? true :
-				( rval.chainID < chainID ? false :
-				( resSeq < rval.resSeq ? true :
-				( rval.resSeq < resSeq ? false :
-				( iCode < rval.iCode ) ) ) ) ) );
+			return std::tie(chainID, resSeq, iCode, segmentID) < std::tie(rval.chainID, rval.resSeq, rval.iCode, rval.segmentID);
 		}
 
 		/// @brief chain id
@@ -109,6 +109,11 @@ private: // structs
 		template< class Archive > void save( Archive & arc ) const;
 		template< class Archive > void load( Archive & arc );
 #endif // SERIALIZATION
+	};
+	struct no_segID_comp {
+		bool operator()(ResidueKey const & a, ResidueKey const & b) const {
+			return std::tie(a.chainID, a.resSeq, a.iCode) < std::tie(b.chainID, b.resSeq, b.iCode);
+		}
 	};
 
 
@@ -151,23 +156,14 @@ public: // methods
 	/// @param[in] pdb_res  pdb residue numbering
 	/// @param[in] ins_code  insertion code
 	/// @return pose numbering for residue, returns 0 if not found
-	inline
+	/// @warning this will default to return the no-segmentID version if we can't find it!
 	Size
 	find(
 		char const chain,
 		int const pdb_res,
 		char const ins_code = ' ',
 		std::string const & segmentID = "    "
-	) const
-	{
-		auto i = pdb2pose_.find( ResidueKey( chain, pdb_res, ins_code, segmentID ) );
-
-		if ( i == pdb2pose_.end() ) { // not found
-			return 0;
-		}
-
-		return i->second; // return pose numbering
-	}
+	) const;
 
 	/// @brief insert pdb -> pose number mapping
 	/// @param[in] chain  chain id
@@ -191,7 +187,6 @@ public: // methods
 	/// @param[in] ins_code insertion code, use ' ' if no insertion code
 	/// @param[in] pose_res the mapped Pose residue
 	/// @return true if key-value pair erase, false otherwise
-	inline
 	bool
 	conditional_erase(
 		char const chain,
@@ -199,31 +194,19 @@ public: // methods
 		char const ins_code,
 		std::string const & segmentID,
 		Size const pose_res
-	) {
-		auto i = pdb2pose_.find( ResidueKey( chain, pdb_res, ins_code, segmentID ) );
-		if ( i != pdb2pose_.end() && i->second == pose_res ) {
-			pdb2pose_.erase( i );
-			return true;
-		}
-
-		return false;
-	}
+	);
 
 	/// @brief forcibly remove mapping for pdb residue key
 	/// @param[in] chain  chain id
 	/// @param[in] pdb_res  pdb residue numbering
 	/// @param[in] ins_code insertion code, use ' ' if no insertion code
-	inline
 	void
 	erase(
 		char const chain,
 		int const pdb_res,
 		char const ins_code,
 		std::string const & segmentID = "    "
-	)
-	{
-		pdb2pose_.erase( ResidueKey( chain, pdb_res, ins_code, segmentID ) );
-	}
+	);
 
 	/// @brief clear the current mapping data
 	inline
@@ -231,6 +214,7 @@ public: // methods
 	clear()
 	{
 		pdb2pose_.clear();
+		pdb2pose_noSegmentIDs_.clear();
 	}
 
 	/// @brief fill with corresponding pdb -> pose residue mapping
@@ -238,13 +222,11 @@ public: // methods
 	void
 	fill( PDBInfo const & info );
 
-private: // methods
-
-
 private: // data
 
 	/// @brief maps ResidueKey -> Pose internal numbering
-	Pdb2Pose pdb2pose_;
+	std::map< ResidueKey, Size > pdb2pose_;
+	std::map< ResidueKey, Size, no_segID_comp> pdb2pose_noSegmentIDs_;
 
 
 #ifdef    SERIALIZATION
