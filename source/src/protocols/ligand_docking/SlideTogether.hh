@@ -43,9 +43,6 @@ public:
 	SlideTogether();
 	SlideTogether(std::string const & chain);
 
-	~SlideTogether() override;
-	SlideTogether(SlideTogether const & that);
-
 	void apply( core::pose::Pose & pose ) override;
 
 	protocols::moves::MoverOP clone() const override;
@@ -72,8 +69,7 @@ public:
 
 
 private:
-	std::string chain_;
-	utility::vector1<core::Size> jumps_; // these guys tag along, such as waters and metals
+	utility::vector1< std::string > chains_; // The chains to move
 };
 
 } //namespace ligand_docking

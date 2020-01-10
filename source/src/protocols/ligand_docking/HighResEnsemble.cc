@@ -142,7 +142,7 @@ HighResEnsemble::parse_my_tag(
 	basic::datacache::DataMap & datamap,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	if ( tag->getName() != "HighResEnsemble" ) {
@@ -181,16 +181,11 @@ HighResEnsemble::parse_my_tag(
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "FinalMinimzer Step requires final_score and final_map tag");
 	}
 
-	bool use_rosetta;
-	use_rosetta=false;
-
 	/// Correlation Weight ///
 	if ( ! basic::options::option[ basic::options::OptionKeys::docking::ligand::ligand_ensemble ].user() ) utility_exit_with_message("'HighResEnsemble' requires the docking:ligand:ligand_ensemble option to run");
 	correlation_weight_ = basic::options::option[ basic::options::OptionKeys::docking::ligand::ligand_ensemble ]();
 
-	if ( tag->hasOption("rosetta") ) {
-		use_rosetta = tag->getOption<bool>("rosetta");
-	}
+	use_rosetta_ranks_ = tag->getOption<bool>("rosetta", false);
 
 	/// Chains for run ///
 	if ( ! tag->hasOption("chains") ) utility_exit_with_message("'HighResEnsemble' requires 'chains' tag");
@@ -199,28 +194,11 @@ HighResEnsemble::parse_my_tag(
 
 	//Get chain ID of ligands/jumps in order
 	for ( std::string ligand : ligands_strs ) {
-		core::Size chain_id = core::pose::get_chain_id_from_chain(ligand, pose);
-		rosetta_chars_.push_back(core::pose::get_chain_from_chain_id(chain_id, pose));
-		// qsar_jumps_.push_back(core::pose::get_jump_id_from_chain_id(chain_id, pose));
-		core::conformation::ResidueCOP current_residue = core::pose::get_chain_residues(pose, chain_id)[1];
-		if ( use_rosetta ) {
-			exp_ranks_.push_back(std::make_pair(chain_id,current_residue->type().get_numeric_property("ROSETTA")));
-		} else {
-			exp_ranks_.push_back(std::make_pair(chain_id,current_residue->type().get_numeric_property("AFFINITY")));
+		if ( ligand.size() != 1 ) {
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "In HighResEnsemble, chain designation '"+ligand+"' needs to be a single character.");
 		}
+		rosetta_chars_.push_back( ligand[0] );
 	}
-
-	// else if(tag->hasOption("file"))
-	// {
-	//  get_ranks_from_file(pose, tag->getOption<std::string>("file"));
-	// }
-
-	//
-	// //Convert exp_ranks_ to ranks
-	std::sort(exp_ranks_.begin(), exp_ranks_.end(), sort_by_second);  //Sorted by assay now
-	vector_to_rank(exp_ranks_);
-	std::sort(exp_ranks_.begin(), exp_ranks_.end());  //Restored to ligand in order, necessary for proper deleting
-	//
 
 }
 
@@ -267,6 +245,22 @@ HighResEnsemble::apply(core::pose::Pose & pose) {
 	rosetta_current_scores_.clear();
 	rosetta_lowest_poses_.clear();
 	rosetta_lowest_scores_.clear();
+
+	// Figure out exp ranks:
+	for ( char chain: rosetta_chars_ ) {
+		core::Size chain_id = core::pose::get_chain_id_from_chain(chain, pose);
+		core::conformation::ResidueCOP current_residue = core::pose::get_chain_residues(pose, chain_id)[1];
+		if ( use_rosetta_ranks_ ) {
+			exp_ranks_.push_back(std::make_pair(chain_id,current_residue->type().get_numeric_property("ROSETTA")));
+		} else {
+			exp_ranks_.push_back(std::make_pair(chain_id,current_residue->type().get_numeric_property("AFFINITY")));
+		}
+	}
+	// //Convert exp_ranks_ to ranks
+	std::sort(exp_ranks_.begin(), exp_ranks_.end(), sort_by_second);  //Sorted by assay now
+	vector_to_rank(exp_ranks_);
+	std::sort(exp_ranks_.begin(), exp_ranks_.end());  //Restored to ligand in order, necessary for proper deleting
+
 
 	// Create HighResDocker poses by deleting all ligands except for one in each pose and passing in the parameters, also scores the poses and place into scores
 	for ( std::pair<core::Size, core::Real> ligand : exp_ranks_ ) {

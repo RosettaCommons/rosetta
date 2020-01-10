@@ -18,6 +18,7 @@
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <core/pose/util.hh>
+#include <core/pose/chains_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -86,7 +87,7 @@ public:
 		translate_info_.distribution= get_distribution("uniform");
 		translate_info_.angstroms = 5.0;
 		translate_info_.cycles = 50;
-		rotate_info_.chain = "X";
+		rotate_info_.set_chain_letter( "X" );
 		rotate_info_.cycles = 200;
 		rotate_info_.degrees = 360;
 		rotate_info_.distribution = get_distribution("uniform");
@@ -149,12 +150,9 @@ public:
 	virtual void apply( core::pose::Pose & pose ){
 		using namespace protocols::ligand_docking;
 		start_from_.apply(pose);
-		translate_info_.chain_id = core::pose::get_chain_id_from_chain("X", pose);
-		translate_info_.jump_id = core::pose::get_jump_id_from_chain_id(translate_info_.chain_id, pose);
+		translate_info_.set_chain_letter( "X" );
 		Translate translate(translate_info_);
 		translate.apply(pose);
-		rotate_info_.chain_id = core::pose::get_chain_id_from_chain(rotate_info_.chain, pose);
-		rotate_info_.jump_id = core::pose::get_jump_id_from_chain_id(rotate_info_.chain_id, pose);
 		Rotate rotate(rotate_info_);
 		rotate.apply(pose);
 		slide_together_.apply(pose);

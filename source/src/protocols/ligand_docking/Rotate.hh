@@ -14,6 +14,8 @@
 #ifndef INCLUDED_protocols_ligand_docking_Rotate_hh
 #define INCLUDED_protocols_ligand_docking_Rotate_hh
 
+#include <protocols/ligand_docking/Rotate.fwd.hh>
+
 // Unit Headers
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
 #include <protocols/ligand_docking/DistributionMap.hh>
@@ -41,15 +43,31 @@ namespace protocols {
 namespace ligand_docking {
 
 struct Rotate_info{ // including default values
-	std::string chain;
-	core::Size chain_id;// looking this up from chain is slow so we store it
-	core::Size jump_id; // looking this up from chain is slow so we store it
-	Distribution distribution;
-	core::Size degrees;
-	core::Size cycles;
-	utility::vector1<core::Size> tag_along_chains; // must be one residue per chain, eg water, metal
-	utility::vector1<core::Size> tag_along_jumps;
-	utility::vector1<core::Size> tag_along_residues;
+	Distribution distribution = Uniform;
+	core::Size degrees = 0;
+	core::Size cycles = 0;
+
+	Rotate_info() = default;
+
+	core::Size chain_id( core::pose::Pose const & pose ) const;
+	char chain_letter( core::pose::Pose const & pose ) const;
+	core::Size jump_id( core::pose::Pose const & pose ) const;
+
+	void set_chain_id( core::Size id );
+	void set_chain_letter( std::string const & str);
+
+	utility::vector1<core::Size> tag_along_chain_ids( core::pose::Pose const & pose ) const;
+	utility::vector1<core::Size> tag_along_jumps( core::pose::Pose const & pose ) const;
+	utility::vector1<core::Size> tag_along_residues( core::pose::Pose const & pose ) const;
+
+	void set_tag_along_chains(  utility::vector1<std::string> const & setting );
+
+private:
+	bool by_string_ = true; // Is the chain represented by a chain letter or a chain ID?
+	std::string chain_string_ = "X";
+	core::Size chain_number_ = 0;
+
+	utility::vector1<std::string> tag_along_chains_;
 };
 
 struct Ligand_info{
@@ -71,8 +89,6 @@ class Rotate: public protocols::moves::Mover
 public:
 	Rotate();
 	Rotate(Rotate_info const & rotate_info); // moves Rotate_info, so by-value
-	~Rotate() override;
-	Rotate(Rotate const & that);
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
@@ -98,6 +114,13 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief Reset the chain which the Rotate mover works on.
+	void
+	set_chain( std::string const & chain );
+
+	/// @brief Reset the chain which the Rotate mover works on.
+	void
+	set_chain_id( core::Size chain_id );
 
 private:
 	void rotate_ligand(

@@ -71,10 +71,10 @@ protocols::moves::MoverOP CompoundTranslate::fresh_instance() const {
 void
 CompoundTranslate::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
 )
 {
 	if ( tag->getName() != "CompoundTranslate" ) {
@@ -104,62 +104,74 @@ CompoundTranslate::parse_my_tag(
 
 	for ( utility::tag::TagCOP subtag : tag->getTags() ) {
 		std::string const & name = subtag->getName();
-		if ( name == "Translate" ) {
-			TranslateOP translate( new Translate() );
-			translate->parse_my_tag( subtag, datamap, filters, movers, pose);
-			translates_.push_back(translate);
-		} else if ( name == "Translates" ) {
-			if ( ! subtag->hasOption("chain") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translates' mover requires chain tag");
-			if ( ! subtag->hasOption("distribution") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translates' mover requires distribution tag");
-			if ( ! subtag->hasOption("angstroms") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translates' mover requires angstroms tag");
-			if ( ! subtag->hasOption("cycles") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translates' mover requires cycles tag");
-
-			std::string const & chain = subtag->getOption<std::string>("chain");
-			utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);
-
-			for ( core::Size const chain_id : chain_ids ) {
-				Translate_info translate_info;
-				translate_info.chain_id= chain_id;
-				translate_info.jump_id = core::pose::get_jump_id_from_chain_id(chain_id, pose);
-				std::string distribution_str= subtag->getOption<std::string>("distribution");
-				translate_info.distribution= get_distribution(distribution_str);
-				translate_info.angstroms = subtag->getOption<core::Real>("angstroms");
-				translate_info.cycles = subtag->getOption<core::Size>("cycles");
-				if ( subtag->hasOption("force") ) {
-					if ( subtag->getOption< bool >("force") ) {
-						translate_info.force= true;
-					}
-				}
-				translates_.push_back(utility::pointer::make_shared< Translate >(translate_info));
-			}
-		} else {
+		if ( name != "Translate" && name != "Translates" ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "CompoundTranslate only takes Translate or Translates child tags");
+		}
+
+		if ( ! subtag->hasOption("chain") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translates' mover requires chain tag");
+		if ( ! subtag->hasOption("distribution") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translates' mover requires distribution tag");
+		if ( ! subtag->hasOption("angstroms") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translates' mover requires angstroms tag");
+		if ( ! subtag->hasOption("cycles") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translates' mover requires cycles tag");
+
+		std::string const & chain = subtag->getOption<std::string>("chain");
+		if ( chain.size() != 1 ) {
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'CompoundTranslate' mover: chain must be a single letter.");
+		}
+
+		Translate_info translate_info;
+		std::string distribution_str= subtag->getOption<std::string>("distribution");
+		translate_info.distribution= get_distribution(distribution_str);
+		translate_info.angstroms = subtag->getOption<core::Real>("angstroms");
+		translate_info.cycles = subtag->getOption<core::Size>("cycles");
+		if ( subtag->hasOption("force") ) {
+			if ( subtag->getOption< bool >("force") ) {
+				translate_info.force= true;
+			}
+		}
+
+		if ( name == "Translate" ) {
+			translate_info.set_chain_letter( chain );
+			translations_.push_back( std::make_pair( "", translate_info ) );
+		} else { // name == "Translates"
+			translations_.push_back( std::make_pair( chain, translate_info ) );
 		}
 	}
 }
 
 void CompoundTranslate::apply(core::pose::Pose & pose) {
+
+	// First, expand list of translation specifications into Translate movers
+	TranslateOPs translates;
+	for ( auto const & entry: translations_ ) {
+		if ( entry.first.empty() ) {
+			translates.push_back( utility::pointer::make_shared< Translate >(entry.second) );
+		} else {
+			utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(entry.first, pose);
+			for ( core::Size const chain_id : chain_ids ) {
+				Translate_info translate_info( entry.second );
+				translate_info.set_chain_id( chain_id );
+				translates.push_back( utility::pointer::make_shared< Translate >(translate_info) );
+			}
+		}
+	}
+
 	if ( randomize_order_ ) {
-		numeric::random::random_permutation(translates_, numeric::random::rg());
+		numeric::random::random_permutation(translates, numeric::random::rg());
 	}
 
 	std::set<core::Size> chains_to_translate;
-
-	// TranslateOPs::iterator begin= translates_.begin(); // Unused variable causes warning.
-	// TranslateOPs::iterator const end= translates_.end(); // Unused variable causes warning.
-
-	for ( TranslateOP translate : translates_ ) {
+	for ( TranslateOP translate : translates ) {
 		core::Size chain_id= translate->get_chain_id(pose);
 		chains_to_translate.insert(chain_id);
 	}
 
 	if ( allow_overlap_ ) {
-		for ( TranslateOP translate : translates_ ) {
+		for ( TranslateOP translate : translates ) {
 			translate->add_excluded_chains(chains_to_translate.begin(), chains_to_translate.end());
 			translate->apply(pose);
 		}
 	} else { // remove each chain from the exclusion list so that placed chains are in the grid
-		for ( TranslateOP translate : translates_ ) {
+		for ( TranslateOP translate : translates ) {
 			translate->add_excluded_chains(chains_to_translate.begin(), chains_to_translate.end());
 			translate->apply(pose);
 			core::Size chain_id= translate->get_chain_id(pose);

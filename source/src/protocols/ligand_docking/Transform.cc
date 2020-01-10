@@ -204,11 +204,11 @@ void Transform::apply(core::pose::Pose & pose)
 	grid_sets_.clear();
 
 	debug_assert(transform_info_.chain.size() == 1);
-	transform_info_.chain_id = core::pose::get_chain_id_from_chain(transform_info_.chain, pose);
-	transform_info_.jump_id = core::pose::get_jump_id_from_chain_id(transform_info_.chain_id, pose);
-	core::Vector const center(protocols::geometry::downstream_centroid_by_jump(pose, transform_info_.jump_id));
+	core::Size chain_id = core::pose::get_chain_id_from_chain(transform_info_.chain, pose);
+	core::Size jump_id = core::pose::get_jump_id_from_chain_id(chain_id, pose);
+	core::Vector const center(protocols::geometry::downstream_centroid_by_jump(pose, jump_id));
 
-	core::Size const begin(pose.conformation().chain_begin(transform_info_.chain_id));
+	core::Size const begin(pose.conformation().chain_begin(chain_id));
 
 	core::conformation::Residue original_residue = pose.residue(begin);
 	//core::chemical::ResidueType const & residue_type = pose.residue_type(begin);
@@ -442,7 +442,7 @@ void Transform::apply(core::pose::Pose & pose)
 	protocols::jd2::add_string_real_pair_to_current_job("Transform_accept_ratio", accept_ratio);
 
 	//Set pose to best scored model - report score of a single grid (the best one) if using multiple poses
-	best_score = convert_to_full_pose(pose, best_ligand);
+	best_score = convert_to_full_pose(pose, best_ligand, chain_id);
 	TR << "Accepted pose with grid score: " << best_score << std::endl;
 	protocols::jd2::add_string_real_pair_to_current_job("Grid_score", best_score);
 }
@@ -652,7 +652,7 @@ core::Real Transform::score_ligand(core::conformation::UltraLightResidue & resid
 }
 
 
-core::Real Transform::convert_to_full_pose(core::pose::Pose & pose, core::conformation::UltraLightResidue & residue)
+core::Real Transform::convert_to_full_pose(core::pose::Pose & pose, core::conformation::UltraLightResidue & residue, core::Size chain_id)
 {
 
 	core::Real best_score = 10000;
@@ -683,9 +683,9 @@ core::Real Transform::convert_to_full_pose(core::pose::Pose & pose, core::confor
 		residue.update_conformation(pose.conformation());
 	} else {
 		core::pose::PDBInfoCOP pdb_info_original(pose.pdb_info());
-		core::conformation::Residue original_residue = pose.residue(pose.conformation().chain_begin(transform_info_.chain_id));
-		core::Size original_residue_begin = pose.conformation().chain_begin(transform_info_.chain_id);
-		core::Size original_residue_end = pose.conformation().chain_end(transform_info_.chain_id);
+		core::conformation::Residue original_residue = pose.residue(pose.conformation().chain_begin(chain_id));
+		core::Size original_residue_begin = pose.conformation().chain_begin(chain_id);
+		core::Size original_residue_end = pose.conformation().chain_end(chain_id);
 
 		//Set pose to be the best pose and then add ligand
 

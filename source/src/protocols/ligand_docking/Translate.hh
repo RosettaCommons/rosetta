@@ -43,13 +43,25 @@ namespace ligand_docking {
 struct Translate_info{ // including default values
 
 public:
-	core::Size chain_id;
-	core::Size jump_id;
-	Distribution distribution;
-	core::Real angstroms;
-	core::Size cycles;
-	bool force;
-	Translate_info(): chain_id(0), jump_id(0), distribution(Uniform), angstroms(0), cycles(0), force(false){};
+
+	Distribution distribution = Uniform;
+	core::Real angstroms = 0;
+	core::Size cycles = 0;
+	bool force = false;
+
+	Translate_info() = default;
+
+	core::Size chain_id( core::pose::Pose const & pose ) const;
+	char chain_letter( core::pose::Pose const & pose ) const;
+	core::Size jump_id( core::pose::Pose const & pose ) const;
+
+	void set_chain_id( core::Size id );
+	void set_chain_letter( std::string const & str);
+
+private:
+	bool by_string_ = true; // Is the chain represented by a chain letter or a chain ID?
+	std::string chain_string_ = "X";
+	core::Size chain_number_ = 0;
 };
 
 class Translate : public protocols::moves::Mover
@@ -57,8 +69,6 @@ class Translate : public protocols::moves::Mover
 public:
 	Translate();
 	Translate(Translate_info translate_info);
-	~Translate() override;
-	Translate(Translate const & that);
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
@@ -122,7 +132,7 @@ private:
 	Translate_info translate_info_;
 	utility::pointer::shared_ptr<core::grid::CartGrid<int> > grid_;
 	utility::vector1<core::Size> chain_ids_to_exclude_; // these are invisible the translation grid, so ligand can land on top.
-	std::vector<core::Size> tag_along_jumps_; // these guys tag along, such as waters and metals
+	utility::vector1<std::string> tag_along_chains_; // these chains tag along, such as waters and metals (will also be excluded)
 
 };
 

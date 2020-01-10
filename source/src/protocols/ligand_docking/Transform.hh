@@ -33,8 +33,6 @@ struct Transform_info{ // including default values
 
 public:
 	std::string chain = "";
-	core::Size chain_id = 0;
-	core::Size jump_id = 0;
 	core::Real move_distance = 0.0;
 	core::Real box_size = 0.0;
 	core::Real angle = 0.0;
@@ -42,8 +40,8 @@ public:
 	core::Size cycles = 0;
 	core::Real temperature = 0.0;
 	core::Size repeats = 1;
+
 	Transform_info() = default;
-	Transform_info(Transform_info const & ) = default;
 };
 
 class Transform: public protocols::moves::Mover
@@ -130,7 +128,7 @@ public:
 	void make_multi_pose_grids(core::Vector center);
 
 	/// @brief copy the ligand into the desired receptor model and update conformation using the best model
-	core::Real convert_to_full_pose(core::pose::Pose & pose, core::conformation::UltraLightResidue & residue);
+	core::Real convert_to_full_pose(core::pose::Pose & pose, core::conformation::UltraLightResidue & residue, core::Size chain_id );
 
 private:
 	/// @brief Estimate how much the ligand will travel during the MC translation

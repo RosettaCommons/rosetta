@@ -35,8 +35,6 @@ struct TransformEnsemble_info{ // including default values
 public:
 	//change first three into vectors (create a vector of chains)
 	utility::vector1<std::string> chains;
-	utility::vector1<core::Size> chain_ids;
-	utility::vector1<core::Size> jump_ids;
 	core::Real move_distance = 0;
 	core::Real box_size = 0;
 	core::Real angle = 0;
@@ -46,6 +44,9 @@ public:
 
 	TransformEnsemble_info() = default;
 	TransformEnsemble_info(TransformEnsemble_info const & ) = default;
+
+	utility::vector1<core::Size> chain_ids( core::pose::Pose const & pose ) const;
+	utility::vector1<core::Size> jump_ids( core::pose::Pose const & pose ) const;
 };
 
 class TransformEnsemble: public protocols::moves::Mover

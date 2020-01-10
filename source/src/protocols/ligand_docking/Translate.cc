@@ -52,35 +52,61 @@ namespace ligand_docking {
 
 static basic::Tracer translate_tracer( "protocols.ligand_docking.ligand_options.translate", basic::t_debug );
 
+void
+Translate_info::set_chain_id( core::Size id ) {
+	by_string_ = false;
+	chain_number_ = id;
+}
 
+void
+Translate_info::set_chain_letter( std::string const & str) {
+	by_string_ = true;
+	chain_string_ = str;
+}
+
+core::Size
+Translate_info::chain_id( core::pose::Pose const & pose ) const {
+	if ( ! by_string_ ) {
+		return chain_number_;
+	}
+	utility::vector1< core::Size > chain_ids( core::pose::get_chain_ids_from_chain(chain_string_, pose) );
+	if ( chain_ids.size() == 0 ) {
+		utility_exit_with_message( "'Translate' mover: chain '"+chain_string_+"' does not exist.");
+	} else if ( chain_ids.size() > 1 ) {
+		utility_exit_with_message( "'Translate' mover: chain letter '"+chain_string_+"' represents more than one chain. Consider the 'Translates' mover (with an 's') instead.");
+	}
+	return chain_ids[1];
+}
+
+char
+Translate_info::chain_letter( core::pose::Pose const & pose ) const {
+	if ( by_string_ ) {
+		if ( chain_string_.size() != 1 ) {
+			utility_exit_with_message("'Translate' mover: chain designation '"+chain_string_+"' is not one character.");
+		}
+		return chain_string_[1];
+	}
+
+	return core::pose::get_chain_from_chain_id( chain_number_, pose );
+}
+
+core::Size
+Translate_info::jump_id( core::pose::Pose const & pose ) const {
+	// This indirection existed in the previous version of the mover - we probably want to short-circuit it.
+	return core::pose::get_jump_id_from_chain_id(chain_id(pose), pose);
+}
 
 
 /// @brief
 Translate::Translate():
-	//utility::pointer::ReferenceCount(),
 	Mover("Translate"),
-	translate_info_(),
-	chain_ids_to_exclude_(),
-	tag_along_jumps_()
+	translate_info_()
 {}
 
 Translate::Translate(Translate_info translate_info):
-	//utility::pointer::ReferenceCount(),
 	Mover("Translate"),
-	translate_info_(translate_info),
-	chain_ids_to_exclude_(),
-	tag_along_jumps_()
+	translate_info_(translate_info)
 {}
-
-Translate::Translate(Translate const & that):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( that ),
-	translate_info_(that.translate_info_),
-	chain_ids_to_exclude_(that.chain_ids_to_exclude_),
-	tag_along_jumps_(that.tag_along_jumps_)
-{}
-
-Translate::~Translate() = default;
 
 protocols::moves::MoverOP Translate::clone() const {
 	return utility::pointer::make_shared< Translate >( *this );
@@ -98,7 +124,7 @@ Translate::parse_my_tag(
 	basic::datacache::DataMap & data_map,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	if ( ! tag->hasOption("chain") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translate' mover requires chain tag");
@@ -111,14 +137,11 @@ Translate::parse_my_tag(
 	grid_set_prototype_ = protocols::qsar::scoring_grid::parse_optional_grid_set_from_tag( tag, data_map );
 
 	std::string chain = tag->getOption<std::string>("chain");
-	utility::vector1< core::Size > chain_ids( core::pose::get_chain_ids_from_chain(chain, pose) );
-	if ( chain_ids.size() == 0 ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translate' mover: chain '"+chain+"' does not exist.");
-	} else if ( chain_ids.size() > 1 ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translate' mover: chain letter '"+chain+"' represents more than one chain. Consider the 'Translates' mover (with an 's') instead.");
+	if ( chain.size() != 1 ) {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translate' mover: chain must be a single letter.");
 	}
-	translate_info_.chain_id = chain_ids[1];
-	translate_info_.jump_id = core::pose::get_jump_id_from_chain_id(translate_info_.chain_id, pose);
+	translate_info_.set_chain_letter( chain );
+
 	std::string distribution_str= tag->getOption<std::string>("distribution");
 	translate_info_.distribution= get_distribution(distribution_str);
 	translate_info_.angstroms = tag->getOption<core::Real>("angstroms");
@@ -134,38 +157,38 @@ Translate::parse_my_tag(
 
 	if ( tag->hasOption("tag_along_chains") ) {
 		std::string const tag_along_chains_str = tag->getOption<std::string>("tag_along_chains");
-		utility::vector1<std::string> tag_along_chain_strs= utility::string_split(tag_along_chains_str, ',');
-		for ( std::string const & tag_along_chain_str : tag_along_chain_strs ) {
-			utility::vector1<core::Size> chain_ids= get_chain_ids_from_chain(tag_along_chain_str, pose);
-			for ( core::Size const chain_id : chain_ids ) {
-				core::Size jump_id= core::pose::get_jump_id_from_chain_id(chain_id, pose);
-				chain_ids_to_exclude_.push_back(chain_id);
-				tag_along_jumps_.push_back(jump_id);
-			}
-		}
+		tag_along_chains_ = utility::string_split(tag_along_chains_str, ',');
 	}
 
 }
 
 void Translate::apply(core::pose::Pose & pose) {
-	core::Size const begin(pose.conformation().chain_begin(translate_info_.chain_id));
+	// Put chain/jump determination at the top, to quickly error out if the pose isn't suitable.
+	core::Size chain_id = translate_info_.chain_id(pose);
+	core::Size jump_id = translate_info_.jump_id(pose);
+	char chain_letter = translate_info_.chain_letter(pose);
 
-	{// add this Translate's chain conditionally (for use with CompoundTranslate)
-		auto found=
-			find(chain_ids_to_exclude_.begin(), chain_ids_to_exclude_.end(), translate_info_.chain_id);
-		if ( found ==  chain_ids_to_exclude_.end() ) {
-			chain_ids_to_exclude_.push_back(translate_info_.chain_id);
+	core::Size const begin(pose.conformation().chain_begin(chain_id));
+
+	utility::vector1<core::Size> chain_ids_to_exclude( chain_ids_to_exclude_ ); // these are invisible the translation grid, so ligand can land on top.
+	// add this Translate's chain conditionally (for use with CompoundTranslate)
+	if ( ! chain_ids_to_exclude.contains( chain_id ) ) {
+		chain_ids_to_exclude.push_back(chain_id);
+	}
+	for ( std::string const & tag_along_chain_str: tag_along_chains_ ) {
+		for ( core::Size const chain_id : get_chain_ids_from_chain(tag_along_chain_str, pose) ) {
+			chain_ids_to_exclude.push_back(chain_id);
 		}
 	}
-	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(pose, translate_info_.jump_id);
+
+	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(pose, jump_id);
 
 	if ( grid_set_prototype_ == nullptr ) {
-		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligands(pose, center, chain_ids_to_exclude_);
-		translate_ligand(grid, translate_info_.jump_id, pose);// move ligand to a random point in binding pocket
+		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligands(pose, center, chain_ids_to_exclude);
+		translate_ligand(grid, jump_id, pose);// move ligand to a random point in binding pocket
 	} else {
 		// How we treat chains here is rather poor, but it should work in the historical one-residue-ligand case.
 		qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
-		char chain_letter( core::pose::get_chain_from_chain_id( translate_info_.chain_id, pose ) );
 		qsar::scoring_grid::GridSetCOP grid_set( grid_manager->get_grids( *grid_set_prototype_, pose, center, chain_letter ) );
 		//TODO refactor qsar map so it works properly
 		/*
@@ -178,7 +201,7 @@ void Translate::apply(core::pose::Pose & pose) {
 		grid_set->set_qsar_map(qsar_map);
 		}
 		*/
-		translate_ligand(grid_set, translate_info_.jump_id,pose,begin);
+		translate_ligand(grid_set, jump_id, pose, begin);
 	}
 }
 
@@ -194,6 +217,14 @@ void Translate::uniform_translate_ligand(
 	core::pose::Pose best_pose;
 	int best_score=100000;
 
+	std::vector<core::Size> tag_along_jumps;
+	for ( std::string const & chain: tag_along_chains_ ) {
+		// A bit indirect, but matches what was used historically.
+		for ( core::Size chain_id: get_chain_ids_from_chain(chain, pose) ) {
+			tag_along_jumps.push_back( core::pose::get_jump_id_from_chain_id(chain_id, pose) );
+		}
+	}
+
 	translate_tracer.Debug << "time to cycle: " << translate_info_.cycles << std::endl;
 	for ( Size cycle = 0; cycle < translate_info_.cycles; ++cycle ) {
 		mover.apply(pose);
@@ -207,7 +238,7 @@ void Translate::uniform_translate_ligand(
 		if ( grid_value <= 0 ) {
 			translate_tracer.Trace << "Accepting ligand position with nbr_atom at " << c << std::endl;
 			mover.freeze();
-			for ( core::Size const tag_along_jump : tag_along_jumps_ ) {
+			for ( core::Size const tag_along_jump : tag_along_jumps ) {
 				translate_tracer.Trace << "moving jump " << tag_along_jump<< " the same amount"<< std::endl;
 				mover.rb_jump(tag_along_jump);
 				mover.apply(pose);
@@ -227,7 +258,7 @@ void Translate::uniform_translate_ligand(
 		translate_tracer.Trace << "Forcing neighbor atom to move (leading to a clash)" << std::endl;
 		pose= best_pose;
 		mover.freeze();
-		for ( core::Size const tag_along_jump : tag_along_jumps_ ) {
+		for ( core::Size const tag_along_jump : tag_along_jumps ) {
 			mover.rb_jump(tag_along_jump);
 			mover.apply(pose);
 		}
@@ -338,8 +369,8 @@ void Translate::translate_ligand(qsar::scoring_grid::GridSetCOP grid_set, core::
 }
 
 core::Size
-Translate::get_chain_id(core::pose::Pose const & ){
-	return translate_info_.chain_id;
+Translate::get_chain_id(core::pose::Pose const & pose ){
+	return translate_info_.chain_id(pose);
 }
 
 void

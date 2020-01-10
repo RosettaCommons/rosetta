@@ -46,11 +46,9 @@ static basic::Tracer slide_together_tracer( "protocols.ligand_docking.ligand_opt
 
 SlideTogether::SlideTogether()= default;
 
-SlideTogether::SlideTogether(std::string const & chain): chain_(chain), jumps_(){}
-
-SlideTogether::SlideTogether(SlideTogether const & /*that*/) = default;
-
-SlideTogether::~SlideTogether() = default;
+SlideTogether::SlideTogether(std::string const & chain):
+	chains_( 1, chain ) // vector of size 1, containing one chain
+{}
 
 protocols::moves::MoverOP SlideTogether::clone() const {
 	return utility::pointer::make_shared< SlideTogether >( *this );
@@ -68,40 +66,31 @@ SlideTogether::parse_my_tag(
 	basic::datacache::DataMap & /*datamap*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	if ( tag->getName() != "SlideTogether" ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible");
 	if ( ! tag->hasOption("chains") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'SlideTogether' mover requires chains tag");
 
 	std::string const chains_str = tag->getOption<std::string>("chains");
-	utility::vector1<std::string> chain_strs= utility::string_split(chains_str, ',');
-	for ( std::string const & chain_str : chain_strs ) {
-		utility::vector1<core::Size> chain_ids= get_chain_ids_from_chain(chain_str, pose);
-		for ( core::Size const chain_id : chain_ids ) {
-			core::Size jump_id= core::pose::get_jump_id_from_chain_id(chain_id, pose);
-			jumps_.push_back(jump_id);
-		}
-	}
+	chains_ = utility::string_split(chains_str, ',');
 }
 
 void
 SlideTogether::apply( core::pose::Pose & pose ){
 	slide_together_tracer<< "Applying slide_together"<< std::endl;
 
-	// If we are not using parse_my_tags...
-	if ( ! chain_.empty() ) {
-		if ( jumps_.size() > 0 ) {
-			utility_exit_with_message("This should be impossible");// jumps are set through parse_my_tags, chain through the 1-arg constructor
-		}
-		utility::vector1<core::Size> chain_ids= get_chain_ids_from_chain(chain_, pose);
+	utility::vector1< core::Size > jumps;
+	for ( std::string const & chain_str : chains_ ) {
+		// This two-step is historical, we probably should be able to short-circuit it.
+		utility::vector1<core::Size> chain_ids= get_chain_ids_from_chain(chain_str, pose);
 		for ( core::Size const chain_id : chain_ids ) {
 			core::Size jump_id= core::pose::get_jump_id_from_chain_id(chain_id, pose);
-			jumps_.push_back(jump_id);
+			jumps.push_back(jump_id);
 		}
 	}
 
-	protocols::docking::FaDockingSlideIntoContact slideTogether(jumps_);
+	protocols::docking::FaDockingSlideIntoContact slideTogether(jumps);
 	slideTogether.apply(pose);
 }
 

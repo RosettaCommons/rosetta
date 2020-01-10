@@ -70,6 +70,27 @@ namespace ligand_docking {
 
 static basic::Tracer transform_tracer("protocols.ligand_docking.TransformEnsemble", basic::t_debug);
 
+utility::vector1<core::Size>
+TransformEnsemble_info::chain_ids( core::pose::Pose const & pose ) const {
+	utility::vector1<core::Size> chain_ids;
+	for ( core::Size i=1; i <= chains.size(); ++i ) {
+		core::Size current_chain_id(core::pose::get_chain_id_from_chain(chains[i], pose));
+		chain_ids.push_back( current_chain_id );
+	}
+	return chain_ids;
+}
+
+utility::vector1<core::Size>
+TransformEnsemble_info::jump_ids( core::pose::Pose const & pose ) const {
+	utility::vector1<core::Size> jump_ids;
+	for ( core::Size current_chain_id: chain_ids( pose ) ) {
+		jump_ids.push_back( core::pose::get_jump_id_from_chain_id(current_chain_id, pose) );
+	}
+	return jump_ids;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
 TransformEnsemble::TransformEnsemble():
 	Mover("TransformEnsemble")
 	// & in declaration values
@@ -116,7 +137,7 @@ void TransformEnsemble::parse_my_tag
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	if ( tag->getName() != "TransformEnsemble" ) {
@@ -139,12 +160,6 @@ void TransformEnsemble::parse_my_tag
 
 	std::string const all_chains_str = tag->getOption<std::string>("chains");
 	transform_info_.chains = utility::string_split(all_chains_str, ',');
-
-	for ( core::Size i=1; i <= transform_info_.chains.size(); ++i ) {
-		core::Size current_chain_id(core::pose::get_chain_id_from_chain(transform_info_.chains[i], pose));
-		transform_info_.chain_ids.push_back(current_chain_id);
-		transform_info_.jump_ids.push_back(core::pose::get_jump_id_from_chain_id(current_chain_id, pose));
-	}
 
 	if ( tag->hasOption("ensemble_proteins") ) {
 
@@ -174,11 +189,13 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 	grid_sets_.clear();
 	utility::vector1<core::conformation::ResidueOP> single_conformers;
 	core::Vector original_center(0,0,0);
+	utility::vector1<core::Size> chain_ids = transform_info_.chain_ids( pose );
+	utility::vector1<core::Size> jump_ids = transform_info_.jump_ids( pose );
 
 	debug_assert( grid_set_prototype_ != nullptr );
 
 	//Grid setup: Use centroid of all chains as center of grid
-	core::Vector const center(protocols::geometry::centroid_by_chains(pose, transform_info_.chain_ids));
+	core::Vector const center(protocols::geometry::centroid_by_chains(pose, chain_ids));
 
 	grid_sets_.push_back(std::make_pair("MAIN", qsar::scoring_grid::GridManager::get_instance()->get_grids( *grid_set_prototype_, pose, center, transform_info_.chains)));
 
@@ -188,8 +205,8 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 
 	core::pack::task::PackerTaskCOP the_task( core::pack::task::TaskFactory::create_packer_task(pose, utility::pointer::make_shared< core::pack::palette::NoDesignPackerPalette >() ) );
 
-	for ( core::Size i=1; i <= transform_info_.chains.size(); ++i ) {
-		core::Size const begin(pose.conformation().chain_begin(transform_info_.chain_ids[i]));
+	for ( core::Size i=1; i <= chain_ids.size(); ++i ) {
+		core::Size const begin(pose.conformation().chain_begin(chain_ids[i]));
 
 		core::conformation::Residue original_residue = pose.residue(begin);
 		original_center = original_center + original_residue.xyz(original_residue.nbr_atom());
@@ -233,8 +250,8 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 		reference_residues_.clear();
 		last_accepted_ligand_residues_.clear();
 		last_accepted_reference_residues_.clear();
-		for ( core::Size i=1; i <= transform_info_.chains.size(); ++i ) {
-			core::Size begin(pose.conformation().chain_begin(transform_info_.chain_ids[i]));
+		for ( core::Size i=1; i <= chain_ids.size(); ++i ) {
+			core::Size begin(pose.conformation().chain_begin(chain_ids[i]));
 			core::conformation::UltraLightResidue ligand_residue( pose.residue(begin).get_self_ptr() );
 			ligand_residues_.push_back(ligand_residue);
 			reference_residues_.push_back(ligand_residue);
@@ -415,9 +432,7 @@ void TransformEnsemble::apply(core::pose::Pose & pose)
 
 
 		std::map< std::string, core::Real > grid_scores;
-		for ( core::Size i=1; i<=transform_info_.jump_ids.size(); ++i ) {
-			core::Size jump = transform_info_.jump_ids[i];
-
+		for ( core::Size jump: jump_ids ) {
 			//Score all ligands using the best pose and report score
 			utility::map_merge( grid_scores, get_ligand_grid_scores( *(grid_sets_[best_pose_count].second), jump, pose, "" ) );
 		}
@@ -505,13 +520,13 @@ core::Real TransformEnsemble::convert_to_full_pose(core::pose::Pose & pose, core
 
 		return best_score;
 	} else {
-		for ( core::Size i=1; i <= transform_info_.chain_ids.size(); ++i ) {
+		for ( core::Size chain_id: transform_info_.chain_ids( pose ) ) {
 
-			core::conformation::Residue original_residue = pose.residue(pose.conformation().chain_begin(transform_info_.chain_ids[i]));
+			core::conformation::Residue original_residue = pose.residue(pose.conformation().chain_begin(chain_id));
 			grid_set_poses_[best_pose_hash].append_residue_by_jump(original_residue, grid_set_poses_[best_pose_hash].size(),"","",true);
 			core::pose::PDBInfoOP pdb_info( grid_set_poses_[best_pose_hash].pdb_info() );
 			pdb_info->obsolete(false);
-			pdb_info->copy(*pose.pdb_info(),pose.conformation().chain_begin(transform_info_.chain_ids[i]),pose.conformation().chain_end(transform_info_.chain_ids[i]),grid_set_poses_[best_pose_hash].size());
+			pdb_info->copy(*pose.pdb_info(),pose.conformation().chain_begin(chain_id),pose.conformation().chain_end(chain_id),grid_set_poses_[best_pose_hash].size());
 		}
 
 		for ( core::Size i=1; i <= best_ligands_.size(); ++i ) {

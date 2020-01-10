@@ -17,7 +17,7 @@
 // Unit Headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/ligand_docking/Rotates.fwd.hh>
-#include <protocols/ligand_docking/Rotate.fwd.hh>
+#include <protocols/ligand_docking/Rotate.hh>
 
 //// Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -65,7 +65,8 @@ public:
 
 
 private:
-	RotateOPs rotates_;
+	Rotate_info rotate_info_template_;
+	utility::vector1< std::string > chains_;
 };
 
 

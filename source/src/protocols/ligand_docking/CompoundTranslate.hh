@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_ligand_docking_CompoundTranslate_hh
 
 // Unit Headers
-#include <protocols/ligand_docking/Translate.fwd.hh>
+#include <protocols/ligand_docking/Translate.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <utility/vector1.hh>
@@ -58,7 +58,9 @@ public:
 
 
 private:
-	TranslateOPs translates_;
+	/// @brief A vector of (chain_letter, settings)
+	/// If chain_letter is not empty, each chain_id for the chain letter will be translated individually.
+	utility::vector1< std::pair< std::string, Translate_info > > translations_;
 	bool randomize_order_;
 	bool allow_overlap_;
 };

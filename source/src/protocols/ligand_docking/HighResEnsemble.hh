@@ -123,6 +123,7 @@ private:
 
 	core::Real correlation_weight_;    //Weight term to adjust score by based on correlation
 
+	bool use_rosetta_ranks_ = false;
 	utility::vector1<std::pair<core::Size, core::Real> > exp_ranks_; // Vector of chain ID/Affinity pairs
 
 	utility::vector1<std::pair<core::Size, core::Real> > rosetta_current_scores_; // Vector of chain ID/Affinity pairs

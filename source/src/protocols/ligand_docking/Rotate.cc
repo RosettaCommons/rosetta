@@ -57,8 +57,90 @@ namespace ligand_docking {
 
 static basic::Tracer TR( "protocols.ligand_docking.ligand_options.rotate" );
 
+//////////////////////////////////////////////////////////////////////////////////////
 
+void
+Rotate_info::set_chain_id( core::Size id ) {
+	by_string_ = false;
+	chain_number_ = id;
+}
 
+void
+Rotate_info::set_chain_letter( std::string const & str) {
+	by_string_ = true;
+	chain_string_ = str;
+}
+
+core::Size
+Rotate_info::chain_id( core::pose::Pose const & pose ) const {
+	if ( ! by_string_ ) {
+		return chain_number_;
+	}
+	utility::vector1< core::Size > chain_ids( core::pose::get_chain_ids_from_chain(chain_string_, pose) );
+	if ( chain_ids.size() == 0 ) {
+		utility_exit_with_message( "'Rotate' mover: chain '"+chain_string_+"' does not exist.");
+	} else if ( chain_ids.size() > 1 ) {
+		utility_exit_with_message( "'Rotate' mover: chain letter '"+chain_string_+"' represents more than one chain. Consider the 'Rotates' mover (with an 's') instead.");
+	}
+	return chain_ids[1];
+}
+
+char
+Rotate_info::chain_letter( core::pose::Pose const & pose ) const {
+	if ( by_string_ ) {
+		if ( chain_string_.size() != 1 ) {
+			utility_exit_with_message("'Translate' mover: chain designation '"+chain_string_+"' is not one character.");
+		}
+		return chain_string_[1];
+	}
+
+	return core::pose::get_chain_from_chain_id( chain_number_, pose );
+}
+
+core::Size
+Rotate_info::jump_id( core::pose::Pose const & pose ) const {
+	// This indirection existed in the previous version of the mover - we probably want to short-circuit it.
+	return core::pose::get_jump_id_from_chain_id(chain_id(pose), pose);
+}
+
+utility::vector1<core::Size>
+Rotate_info::tag_along_chain_ids( core::pose::Pose const & pose ) const {
+	utility::vector1<core::Size> chain_ids;
+	for ( auto const & tag_along_chain_str : tag_along_chains_ ) {
+		utility::vector1<core::Size> chain_ids = get_chain_ids_from_chain(tag_along_chain_str, pose);
+		for ( core::Size const chain_id : chain_ids ) {
+			chain_ids.push_back(chain_id);
+		}
+	}
+	return chain_ids;
+}
+
+utility::vector1<core::Size>
+Rotate_info::tag_along_jumps( core::pose::Pose const & pose ) const {
+	utility::vector1<core::Size> jump_ids;
+	for ( core::Size chain_id: tag_along_chain_ids( pose ) ) {
+		jump_ids.push_back( core::pose::get_jump_id_from_chain_id(chain_id, pose) );
+	}
+	return jump_ids;
+}
+
+utility::vector1<core::Size>
+Rotate_info::tag_along_residues( core::pose::Pose const & pose ) const {
+	utility::vector1<core::Size> residues;
+	for ( core::Size chain_id: tag_along_chain_ids( pose ) ) {
+		core::Size const chain_begin (pose.conformation().chain_begin(chain_id));
+		debug_assert( chain_begin == pose.conformation().chain_end(chain_id) );
+		residues.push_back( chain_begin );
+	}
+	return residues;
+}
+
+void
+Rotate_info::set_tag_along_chains( utility::vector1<std::string> const & setting ) {
+	tag_along_chains_ = setting;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 Ligand_info::Ligand_info():residues(), atr(0), rep(0), jump(){}
 
@@ -87,14 +169,6 @@ Rotate::Rotate(): Mover("Rotate")
 Rotate::Rotate(Rotate_info const & rotate_info): Mover("Rotate"), rotate_info_(rotate_info)
 {}
 
-Rotate::Rotate(Rotate const & that):
-	//utility::pointer::ReferenceCount(),
-	protocols::moves::Mover( that ),
-	rotate_info_(that.rotate_info_)
-{}
-
-Rotate::~Rotate() = default;
-
 protocols::moves::MoverOP Rotate::clone() const {
 	return utility::pointer::make_shared< Rotate >( *this );
 }
@@ -111,7 +185,7 @@ Rotate::parse_my_tag(
 	basic::datacache::DataMap & data_map,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	if ( ! tag->hasOption("chain") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Rotate' mover requires 'chain' tag");
@@ -122,15 +196,8 @@ Rotate::parse_my_tag(
 	// Will return a nullptr if this XML didn't define any ScoringGrids
 	grid_set_prototype_ = protocols::qsar::scoring_grid::parse_optional_grid_set_from_tag( tag, data_map );
 
-	rotate_info_.chain = tag->getOption<std::string>("chain");
-	utility::vector1< core::Size > chain_ids( core::pose::get_chain_ids_from_chain(rotate_info_.chain, pose) );
-	if ( chain_ids.size() == 0 ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Rotate' mover: chain '"+rotate_info_.chain+"' does not exist.");
-	} else if ( chain_ids.size() > 1 ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Rotate' mover: chain letter '"+rotate_info_.chain+"' represents more than one chain. Consider using the 'Rotates' mover (with an 's') instead.");
-	}
-	rotate_info_.chain_id= chain_ids[1];
-	rotate_info_.jump_id= core::pose::get_jump_id_from_chain_id(rotate_info_.chain_id, pose);
+	rotate_info_.set_chain_letter( tag->getOption<std::string>("chain") );
+
 	std::string distribution_str= tag->getOption<std::string>("distribution");
 	rotate_info_.distribution= get_distribution(distribution_str);
 	rotate_info_.degrees = tag->getOption<core::Size>("degrees");
@@ -138,26 +205,19 @@ Rotate::parse_my_tag(
 
 	if ( tag->hasOption("tag_along_chains") ) {
 		std::string const tag_along_chains_str = tag->getOption<std::string>("tag_along_chains");
-		utility::vector1<std::string> tag_along_chain_strs= utility::string_split(tag_along_chains_str, ',');
-		for ( auto const & tag_along_chain_str : tag_along_chain_strs ) {
-			utility::vector1<core::Size> chain_ids= get_chain_ids_from_chain(tag_along_chain_str, pose);
-			for ( core::Size const chain_id : chain_ids ) {
-				rotate_info_.tag_along_chains.push_back(chain_id);
-				rotate_info_.tag_along_jumps.push_back( core::pose::get_jump_id_from_chain_id(chain_id, pose) );
-				core::Size const chain_begin (pose.conformation().chain_begin(chain_id));
-				debug_assert( chain_begin == pose.conformation().chain_end(chain_id));
-				rotate_info_.tag_along_residues.push_back( chain_begin );
-			}
-		}
+		rotate_info_.set_tag_along_chains( utility::string_split(tag_along_chains_str, ',') );
 	}
 }
 
 void Rotate::apply(core::pose::Pose & pose){
-	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(pose, rotate_info_.jump_id);
+	core::Size chain_id = rotate_info_.chain_id( pose );
+	core::Size jump_id = rotate_info_.jump_id( pose );
+
+	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(pose, jump_id);
 
 	if ( grid_set_prototype_ == nullptr ) {
-		utility::vector1<core::Size> all_chain_ids = rotate_info_.tag_along_chains;
-		all_chain_ids.push_back(rotate_info_.chain_id);
+		utility::vector1<core::Size> all_chain_ids = rotate_info_.tag_along_chain_ids( pose );
+		all_chain_ids.push_back(chain_id);
 		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligands(pose, center, all_chain_ids);
 		rotate_ligand(grid, pose);// move ligand to a random point in binding pocket
 	} else {
@@ -181,6 +241,16 @@ void Rotate::apply(core::pose::Pose & pose){
 	}
 }
 
+void
+Rotate::set_chain( std::string const & chain ) {
+	rotate_info_.set_chain_letter( chain );
+}
+
+void
+Rotate::set_chain_id( core::Size chain_id ) {
+	rotate_info_.set_chain_id( chain_id );
+}
+
 /// @brief for n random rotations, randomly pick one from among the best scoring set of diverse poses
 void Rotate::rotate_ligand(
 	utility::pointer::shared_ptr<core::grid::CartGrid<int> >  const & grid,
@@ -188,29 +258,31 @@ void Rotate::rotate_ligand(
 ) {
 	if ( rotate_info_.degrees == 0 ) return;
 
+	core::Size chain_id = rotate_info_.chain_id( pose );
+	core::Size jump_id = rotate_info_.jump_id( pose );
+
 	protocols::rigid::RigidBodyMoverOP mover;
 	if ( rotate_info_.distribution == Uniform ) {
-		mover = utility::pointer::make_shared< protocols::rigid::RigidBodyRandomizeMover >( pose, rotate_info_.jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees);
+		mover = utility::pointer::make_shared< protocols::rigid::RigidBodyRandomizeMover >( pose, jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees);
 	} else if ( rotate_info_.distribution == Gaussian ) {
-		mover = utility::pointer::make_shared< protocols::rigid::RigidBodyPerturbMover > ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/);
+		mover = utility::pointer::make_shared< protocols::rigid::RigidBodyPerturbMover > ( jump_id, rotate_info_.degrees, 0 /*translate*/);
 	}
 
-	core::Size chain_begin = pose.conformation().chain_begin(rotate_info_.chain_id);
+	core::Size chain_begin = pose.conformation().chain_begin(chain_id);
 	utility::vector1< Ligand_info> ligands= create_random_rotations(grid, mover, pose, chain_begin);
 
 	auto const jump_choice=  (core::Size) numeric::random::rg().random_range(1, ligands.size());
 	{
-		pose.set_jump(rotate_info_.jump_id, ligands[jump_choice].jump);
+		pose.set_jump(jump_id, ligands[jump_choice].jump);
 
 		for ( core::conformation::ResidueCOP residue : ligands[jump_choice].residues ) {
 			pose.replace_residue(chain_begin, *residue, false /*orient backbone*/);// assume rotamers are oriented?
 			++chain_begin;
 		}
-		for ( core::Size i=1; i <= rotate_info_.tag_along_residues.size(); ++i ) {
-			// I cannot figure out what this assert is testing for; it seems to be comparing a ResidueOP to a Size.
-			// In any case, it is causing a comparison warning, so I am commenting it out. ~Labonte
-			//debug_assert(rotate_info_.tag_along_residues.size() == ligands[jump_choice].tag_along_residues[i]);
-			core::Size residue_id = rotate_info_.tag_along_residues[i];
+		utility::vector1< core::Size > const & tag_along_residues = rotate_info_.tag_along_residues( pose );
+		for ( core::Size i=1; i <= tag_along_residues.size(); ++i ) {
+			debug_assert( i <= ligands[jump_choice].tag_along_residues.size() );
+			core::Size residue_id = tag_along_residues[i];
 			core::conformation::ResidueCOP residue = ligands[jump_choice].tag_along_residues[i];
 			pose.replace_residue(residue_id, *residue, false /*orient backbone*/);// assume rotamers are oriented?
 		}
@@ -221,11 +293,13 @@ void Rotate::rotate_ligand(core::pose::Pose & pose)
 {
 	if ( rotate_info_.degrees == 0 ) return;
 
+	core::Size jump_id = rotate_info_.jump_id( pose );
+
 	protocols::rigid::RigidBodyMoverOP mover;
 	if ( rotate_info_.distribution == Uniform ) {
-		mover = utility::pointer::make_shared< protocols::rigid::RigidBodyRandomizeMover >( pose, rotate_info_.jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees);
+		mover = utility::pointer::make_shared< protocols::rigid::RigidBodyRandomizeMover >( pose, jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees);
 	} else if ( rotate_info_.distribution == Gaussian ) {
-		mover = utility::pointer::make_shared< protocols::rigid::RigidBodyPerturbMover > ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/);
+		mover = utility::pointer::make_shared< protocols::rigid::RigidBodyPerturbMover > ( jump_id, rotate_info_.degrees, 0 /*translate*/);
 	}
 	//core::Size chain_begin = pose.conformation().chain_begin(rotate_info_.chain_id);
 
@@ -238,11 +312,14 @@ Rotate::create_random_rotations(
 	core::pose::Pose & pose,
 	core::Size begin
 )const{
-	core::Size const end = pose.conformation().chain_end(rotate_info_.chain_id);
+	core::Size chain_id = rotate_info_.chain_id( pose );
+	core::Size jump_id = rotate_info_.jump_id( pose );
+
+	core::Size const end = pose.conformation().chain_end(chain_id);
 	core::Size const heavy_atom_number= core::pose::num_heavy_atoms(begin, end, pose);
 	core::pose::Pose local_pose= pose;
 	local_pose.remove_constraints();
-	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(local_pose, rotate_info_.jump_id);
+	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(local_pose, jump_id);
 
 	utility::vector1< Ligand_info> ligands;  ///TODO make this a set.  The set should check for another pose with a similar RMSD.
 	// "num_chi_angles" code comes from Ian Davis, who knows why. I added the max fxn so that waters can rotate (they have too few chi angles)
@@ -271,19 +348,23 @@ Ligand_info Rotate::create_random_rotation(
 	core::Size const end,
 	core::pose::Pose & local_pose
 ) const{
-	apply_rotate(mover, local_pose, center, rotate_info_.jump_id, rotate_info_.tag_along_jumps);
+	core::Size chain_id = rotate_info_.chain_id( local_pose );
+	core::Size jump_id = rotate_info_.jump_id( local_pose );
+	utility::vector1< core::Size > tag_along_jumps = rotate_info_.tag_along_jumps( local_pose );
+
+	apply_rotate(mover, local_pose, center, jump_id, tag_along_jumps);
 	core::pack::task::PackerTaskCOP packertask( core::pack::task::TaskFactory::create_packer_task( local_pose, utility::pointer::make_shared< core::pack::palette::NoDesignPackerPalette >() ) );
 	rb_grid_rotamer_trials_atr_rep(*grid, local_pose, begin, end, *packertask);
-	core::kinematics::Jump jump= local_pose.jump(rotate_info_.jump_id);
+	core::kinematics::Jump jump= local_pose.jump(jump_id);
 	std::pair<int, int> const scores= get_rb_atr_and_rep_scores(*grid, local_pose, begin, end);
 	Ligand_info ligand_info;
 	ligand_info.jump= jump;
 	ligand_info.atr= scores.first;
 	ligand_info.rep= scores.second;
 
-	ligand_info.residues = core::pose::get_chain_residues(local_pose, rotate_info_.chain_id);
+	ligand_info.residues = core::pose::get_chain_residues(local_pose, chain_id);
 
-	for ( core::Size const chain_id : rotate_info_.tag_along_chains ) {
+	for ( core::Size const chain_id : rotate_info_.tag_along_chain_ids( local_pose ) ) {
 		core::conformation::ResidueCOPs tag_along_residues = core::pose::get_chain_residues(local_pose, chain_id);
 		debug_assert(tag_along_residues.size() == 1);
 		ligand_info.tag_along_residues.push_back(tag_along_residues[1]);

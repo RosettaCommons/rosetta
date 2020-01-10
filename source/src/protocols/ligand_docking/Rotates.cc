@@ -75,7 +75,7 @@ Rotates::parse_my_tag(
 	basic::datacache::DataMap & /*data_map*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	if ( tag->getName() != "Rotates" ) {
@@ -87,12 +87,11 @@ Rotates::parse_my_tag(
 	if ( tag->hasOption("chain") && tag->hasOption("chains") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Rotates' mover cannot have both a 'chain' and a 'chains' tag");
 	if ( ! (tag->hasOption("chain") || tag->hasOption("chains") ) ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Rotates' mover requires either a 'chain' or a 'chains' tag");
 
-	utility::vector1<std::string> chain_strs;
 	if ( tag->hasOption("chain") ) {
-		chain_strs.push_back( tag->getOption<std::string>("chain") );
+		chains_.push_back( tag->getOption<std::string>("chain") );
 	} else if ( tag->hasOption("chains") ) {
 		std::string const chains_str = tag->getOption<std::string>("chains");
-		chain_strs= utility::string_split(chains_str, ',');
+		chains_ = utility::string_split(chains_str, ',');
 	}
 
 	std::string const distribution_str= tag->getOption<std::string>("distribution");
@@ -100,23 +99,22 @@ Rotates::parse_my_tag(
 	auto const degrees = tag->getOption<core::Size>("degrees");
 	auto const cycles = tag->getOption<core::Size>("cycles");
 
-	for ( std::string const & chain : chain_strs ) {
-		utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);
-		for ( core::Size const chain_id : chain_ids ) {
-			Rotate_info rotate_info;
-			rotate_info.chain_id = chain_id;
-			rotate_info.jump_id = core::pose::get_jump_id_from_chain_id(chain_id, pose);
-			rotate_info.distribution= distribution;
-			rotate_info.degrees = degrees;
-			rotate_info.cycles = cycles;
-			rotates_.push_back( utility::pointer::make_shared< Rotate >(rotate_info) );
-		}
-	}
+	// Leave the chain the default - will reset it before actually using.
+	rotate_info_template_.distribution= distribution;
+	rotate_info_template_.degrees = degrees;
+	rotate_info_template_.cycles = cycles;
+
 }
 
-void Rotates::apply(core::pose::Pose & pose){
-	for ( RotateOP rotate : rotates_ ) {
-		rotate->apply(pose);
+void Rotates::apply(core::pose::Pose & pose) {
+	RotateOP rotate_mover( utility::pointer::make_shared< Rotate >(rotate_info_template_) );
+
+	for ( std::string const & chain: chains_ ) {
+		utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);
+		for ( core::Size const chain_id : chain_ids ) {
+			rotate_mover->set_chain_id( chain_id );
+			rotate_mover->apply(pose);
+		}
 	}
 }
 
