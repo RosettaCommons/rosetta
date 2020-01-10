@@ -459,6 +459,142 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
     return {_StateKey_ : state,  _ResultsKey_ : results,  _LogKey_ : output }
 
 
+def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    jobs = config['cpu_count']
+
+    # These are the Rosetta-originated modules which we're likely interested in tracking the most recent submodule master
+    # This doesn't include those repos (e.g. external code repos) where we're pinning things to a particular revision for a long time.
+    submodules_to_check = [
+        'demos',
+        'documentation',
+        'PyRosetta.notebooks',
+        'pyrosetta_scripts',
+        'rosetta_scripts_scripts',
+        'tools',
+        'tests/scientific/data',
+        'database/additional_protocol_data',
+        'source/external/pybind11',
+        'source/src/python/PyRosetta/binder',
+    ]
+
+    retval = {_StateKey_ : _S_script_failed_,  _ResultsKey_ : {},  _LogKey_ : '' }
+
+    if not os.path.exists(f'{rosetta_dir}/.git'):
+        retval[_LogKey_] = "Main is not a git repo -- can't test submodules."
+        return retval
+
+    res, main_sha1 = execute('Getting current main SHA1...', f'cd {rosetta_dir} && git rev-parse HEAD', return_='tuple')
+    if res: retval[_LogKey_] = "Error getting SHA1: " + main_sha1; return retval
+    main_sha1 = main_sha1.strip()
+
+    res, merge_base = execute('Getting master merge-base...', f'cd {rosetta_dir} && git merge-base origin/master HEAD', return_='tuple')
+    if res: retval[_LogKey_] = "Error getting mergebase: " + merge_base; return retval
+    merge_base = merge_base.strip()
+
+    if main_sha1 == merge_base:
+        # We're doing the check of master - make sure we don't regress w/r/t both sides
+        res, parents = execute("Getting current commit's parents...", f'cd {rosetta_dir} && git rev-list --parents -n 1 HEAD', return_='tuple')
+        if res: retval[_LogKey_] = "Error getting parents: " + parents; return retval
+        to_check = parents.split()[1:] # First entry is the current commit.
+    else:
+        to_check = [ merge_base ]
+
+    submodule_states = {}
+    for submodule in submodules_to_check:
+        submodule_status = {_StateKey_ : _S_script_failed_, _LogKey_ : '' }
+        retval[_ResultsKey_][ submodule ] = submodule_status
+        submodule_states[submodule] = "ERROR WHEN RUNNING"
+
+        if not os.path.exists( f'{rosetta_dir}/{submodule}/.git' ):
+            # Git directory in submodule missing means we haven't initialized it, and so we're probably okay with versioning.
+            submodule_states[submodule] = "Submodule not initialized"
+            del retval[_ResultsKey_][submodule]
+            continue
+
+        res, current_sha1 = execute("Getting current submodule commit...", f'cd {rosetta_dir} && git ls-tree HEAD {submodule}', return_='tuple')
+        if res: submodule_status[_LogKey_] = f"Error getting submodule SHA1 for submodule {submodule} in HEAD: " + current_sha1; continue
+        current_sha1 = current_sha1.split()[2] # format `mode commit SHA1 name`
+
+        ################
+        # If we regress against any of the parent commits to_check, we have an issue.
+        # (Test against the common anscestors of current commit and master)
+        regression = False
+        for check_sha1 in to_check:
+            res, prev_sha1 = execute("Getting parent submodule commit ...", f'cd {rosetta_dir} && git ls-tree {check_sha1} {submodule}', return_='tuple')
+            if res: submodule_statu[_LogKey_] = f"Error getting submodule SHA1 for submodule {submodule} in {check_sha1}: " + prev_sha1; break
+            if len(prev_sha1.strip()) == 0: continue # No submodule on this branch
+            prev_sha1 = prev_sha1.split()[2] # format `mode commit SHA1 name`
+
+            res, base = execute("Checking for regression...",f'cd {rosetta_dir}/{submodule} && git merge-base {current_sha1} {prev_sha1}', return_='tuple')
+            if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and {prev_sha1} in submodule {submodule}: " + base; break
+            if base.strip() != prev_sha1: # Current SHA1 does not include the previous one
+                regression = True
+                break
+
+        if len( submodule_status[_LogKey_] ) != 0: continue # Had an error during running.
+
+        if regression:
+            submodule_status[_StateKey_] = _S_script_failed_ # We want the magenta
+            submodule_status[_LogKey_] = f"Submodule {submodule} is being reset to state that *removes* commits which were previously in master"
+            submodule_states[submodule] = "INTRODUCES A SUBMODULE REGRESSION"
+            continue
+
+        #############
+        # Test to see if we're include all of the commits in the submodule which the most recent version of main's master has
+        # (Test against the most recent version of main's master)
+
+        res, master_sha1 = execute("Getting master's submodule commit...", f'cd {rosetta_dir} && git ls-tree origin/master {submodule}', return_='tuple')
+        if res: submodule_status[_LogKey_] = f"Error getting submodule SHA1 for submodule {submodule} in master: " + master_sha1; continue
+        #if len(master_sha1.strip()) == 0: continue # No submodule for master??
+        master_sha1 = master_sha1.split()[2] # format `mode commit SHA1 name`
+
+        res, base = execute("Checking for regression...", f'cd {rosetta_dir}/{submodule} && git merge-base {current_sha1} {master_sha1}', return_='tuple')
+        if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and main's master's version ({master_sha1}) in submodule {submodule}: " + base; continue
+        base = base.strip()
+
+        # We want to trigger if there's a divergence between this and the most recent master
+        # (This is different from before, which was checking for regression regarding the divergence point of main and master.)
+        if base != master_sha1 and base != current_sha1: # We have a submodule which isn't up-to-date with main's master
+            submodule_states[submodule] = "NEEDS MERGE"
+            submodule_status[_StateKey_] = _S_failed_
+            submodule_status[_LogKey_] = f"Submodule {submodule} has commits which diverge with the version in main's master's {submodule}. You need to merge the submodule versions."
+            continue
+
+        #############
+        # Test to see if we're lagging behind the submodule's master
+        # (Test against the submodule's master)
+
+        res, submaster_sha1 = execute("Getting submodule master...", f'cd {rosetta_dir}/{submodule} && git rev-parse origin/master', return_='tuple')
+        if res: retval[_LogKey_] = f"Error getting SHA1 for master branch of submodule {submodule}: " + submaster_sha1; return retval
+        submaster_sha1 = submaster_sha1.strip()
+
+        res, base = execute("Checking for regression...", f'cd {rosetta_dir}/{submodule} && git merge-base {current_sha1} {submaster_sha1}', return_='tuple')
+        if res: submodule_status[_LogKey_] = f"Error getting relationship between {current_sha1} and submodule's master ({submaster_sha1}) in submodule {submodule}: " + base; continue
+        base = base.strip()
+
+        if base != submaster_sha1:
+            submodule_states[submodule] = "is not up-to-date with submodule master"
+            # This is not an error, just an info message
+        else:
+            submodule_states[submodule] = 'okay'
+
+        submodule_status[_StateKey_] = _S_passed_
+        submodule_status[_LogKey_] = ''
+
+    # Done all the submodules, now do the summary.
+    summary = "\n\n"
+    for submodule in submodule_states:
+        summary += f"{submodule} -- " + submodule_states[submodule] + '\n'
+    retval[_LogKey_] = summary
+    #retval[_ResultsKey_] # created in-place
+    retval[_StateKey_] = _S_passed_
+    for state in retval[_ResultsKey_].values():
+        if state[_StateKey_] in [ _S_script_failed_, _S_failed_ ]:
+            retval[_StateKey_] = _S_failed_
+            break
+
+    return retval
+
 
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     if   test == 'serialization':  return run_serialization_test (rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
@@ -466,4 +602,5 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     elif test == 'clang_tidy': return run_clang_tidy_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'beautification': return run_beautification_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'beautify':       return run_beautify_test      (rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'submodule_regression': return run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Build script does not support TestSuite-like run!')
