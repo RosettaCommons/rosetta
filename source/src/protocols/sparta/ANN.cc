@@ -53,9 +53,9 @@ ANN::ANN()
 
 
 // constructor with initial setup of weighting factors' database
-ANN::ANN(const string& dPATH, const string& dNAME_PREFIX)
+ANN::ANN(const string& dPATH, const string& dNAME_PREFIX):
+	ANN()
 {
-	ANN();
 	getSlashChar();
 
 	N1_NODE_I = 96; N1_NODE_H = 20; N1_NODE_O = 3;
@@ -69,9 +69,9 @@ ANN::ANN(const string& dPATH, const string& dNAME_PREFIX)
 
 
 // constructor with initial setup of weighting factors' database and number of node in each layer
-ANN::ANN(int N1_nodeI, int N1_nodeH, int N1_nodeO, const string& dPATH, const string& dNAME_PREFIX)
+ANN::ANN(int N1_nodeI, int N1_nodeH, int N1_nodeO, const string& dPATH, const string& dNAME_PREFIX):
+	ANN()
 {
-	ANN();
 	getSlashChar();
 
 	N1_NODE_I = N1_nodeI;
@@ -88,9 +88,9 @@ ANN::ANN(int N1_nodeI, int N1_nodeH, int N1_nodeO, const string& dPATH, const st
 
 
 // constructor with initial setup of weighting factors' database and number of node in each layer
-ANN::ANN(int N1_nodeI, int N1_nodeH, int N1_nodeO, int N2_nodeI, int N2_nodeH, int N2_nodeO, const string& dPATH, const string& dNAME_PREFIX)
+ANN::ANN(int N1_nodeI, int N1_nodeH, int N1_nodeO, int N2_nodeI, int N2_nodeH, int N2_nodeO, const string& dPATH, const string& dNAME_PREFIX):
+	ANN()
 {
-	ANN();
 	getSlashChar();
 
 	N1_NODE_I = N1_nodeI;

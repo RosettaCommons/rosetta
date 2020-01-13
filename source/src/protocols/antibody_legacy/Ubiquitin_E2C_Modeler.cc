@@ -72,9 +72,6 @@ using namespace ObjexxFCL::format;
 //Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer TR( "protocols.ub_e2c.ubi_e2c_modeler" );
 
 namespace protocols {

@@ -337,16 +337,14 @@
 
 #if defined( MAC ) || defined( __APPLE__ ) || defined( __OSX__ )
 #include <sys/resource.h> // for getrlimit/setrlimit
-#define PROCESS_STACK_SIZE 32 * 1024 * 1024 // 32 MB
+#define PROCESS_STACK_SIZE (32 * 1024 * 1024) // 32 MB
 #else // For linux, for example, we still need a bigger stack for ribosomes.
 #ifndef WIN32
 #include <sys/resource.h> // for getrlimit/setrlimit
-#define PROCESS_STACK_SIZE 32 * 1024 * 1024 // 32 MB
+#define PROCESS_STACK_SIZE (32 * 1024 * 1024) // 32 MB
 #endif
 #endif
 
-using basic::Error;
-using basic::Warning;
 // Windows headers
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 #include <windows.h>

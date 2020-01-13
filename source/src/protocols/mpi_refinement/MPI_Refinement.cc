@@ -379,12 +379,12 @@ MPI_Refinement::add_structure_to_library_add_n_replace( core::io::silent::Silent
 		core::Real the_dist( 0.0 );
 		// slow down?
 		core::io::silent::SilentStructOP ss( pss.clone() );
-		if ( dist_measure.compare("rmsd") == 0 ) {
+		if ( dist_measure == "rmsd" ) {
 			CA_Sscore( ss, *jt, the_dist );
-		} else if ( dist_measure.compare("Sscore") == 0 ) {
+		} else if ( dist_measure == "Sscore" ) {
 			core::Real dumm; // dummy for return-by-reference
 			the_dist = 1.0 - CA_Sscore( ss, *jt, dumm );
-		} else if ( dist_measure.compare("looprmsd") == 0 ) {
+		} else if ( dist_measure == "looprmsd" ) {
 			// Nothing here.
 		}
 
@@ -397,11 +397,11 @@ MPI_Refinement::add_structure_to_library_add_n_replace( core::io::silent::Silent
 
 	// we need to add one more option for this...
 	bool close_to_existing( false );
-	if ( dist_measure.compare("Sscore") == 0 ) {
+	if ( dist_measure == "Sscore" ) {
 		if ( closest_dist < 0.05 ) close_to_existing = true;
 
-	} else if ( dist_measure.compare("rmsd") == 0 ||
-			dist_measure.compare("looprmsd") == 0 ) {
+	} else if ( dist_measure == "rmsd" ||
+			dist_measure == "looprmsd" ) {
 		if ( closest_dist < 0.5 ) close_to_existing = true;
 
 	}
@@ -543,7 +543,7 @@ MPI_Refinement::add_structures_to_library( SilentStructStore &new_structs, std::
 {
 	bool result = false;
 
-	if ( add_algorithm.compare("NSGAII") == 0 ) {
+	if ( add_algorithm == "NSGAII" ) {
 		result = fobj_->update_library_NSGAII( library_central_, new_structs, max_lib_size() );
 
 	} else {

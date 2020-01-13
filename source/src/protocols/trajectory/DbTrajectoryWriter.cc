@@ -52,12 +52,9 @@ using core::Real;
 using core::Size;
 using core::pose::Pose;
 
-using utility::vector1;
 using utility::tools::make_vector;
 using utility::tools::make_vector1;
 using utility::sql_database::sessionOP;
-using cppdb::statement;
-using cppdb::result;
 
 static basic::Tracer TR( "protocols.trajectory.DbTrajectoryWriter" );
 // }}}1

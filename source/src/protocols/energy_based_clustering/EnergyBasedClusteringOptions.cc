@@ -78,9 +78,9 @@ EnergyBasedClusteringOptions::initialize_from_global_options() {
 	relax_rounds_ = static_cast<core::Size>( option[relax_rounds]() );
 
 	std::string const clusterby( option[cluster_by]() );
-	if ( !clusterby.compare("bb_cartesian") ) {
+	if ( clusterby == "bb_cartesian" ) {
 		cluster_by_ = EBC_bb_cartesian;
-	} else if ( !clusterby.compare("bb_dihedral") ) {
+	} else if ( clusterby == "bb_dihedral" ) {
 		cluster_by_ = EBC_bb_dihedral;
 	} else {
 		utility_exit_with_message( "Error in global options: the -cluster:energy_based_clustering:cluster_by option was set to \"" + clusterby + "\", which I can't parse." );

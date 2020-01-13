@@ -60,10 +60,6 @@
 
 static basic::Tracer tr( "protocols.abinitio.foldconstraints", basic::t_info );
 
-using core::scoring::constraints::ConstraintSet;
-using core::scoring::constraints::ConstraintSetOP;
-using core::kinematics::ShortestPathInFoldTree;
-
 /// Why is this not being registered  ? Probably not actually needed
 
 void protocols::abinitio::FoldConstraints::register_options() {

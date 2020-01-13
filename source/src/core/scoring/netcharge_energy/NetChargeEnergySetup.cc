@@ -249,17 +249,17 @@ void NetChargeEnergySetup::parse_a_penalty_definition( utility::vector1 < std::s
 		curline >> oneword;
 		if ( curline.fail() ) continue; //A blank line.
 
-		if ( !oneword.compare( "DESIRED_CHARGE" ) ) {
+		if ( oneword == "DESIRED_CHARGE" ) {
 			runtime_assert_string_msg( !netchargefound, errmsg + "A \"DESIRED_CHARGE\" line can only be present only once in a netcharge energy setup file." );
 			curline >> desired_charge;
 			runtime_assert_string_msg( !curline.fail(), errmsg + "Could not parse DESIRED_CHARGE line." );
 			netchargefound=true;
-		} else if ( !oneword.compare( "PENALTIES_CHARGE_RANGE" ) ) {
+		} else if ( oneword == "PENALTIES_CHARGE_RANGE" ) {
 			runtime_assert_string_msg( !rangefound, errmsg + "A \"PENALTIES_CHARGE_RANGE\" line can only be present only once in a netcharge energy setup file." );
 			curline >> charge_penalties_range_min >> charge_penalties_range_max;
 			runtime_assert_string_msg( !curline.fail(), errmsg + "Could not parse PENALTIES_CHARGE_RANGE line." );
 			rangefound=true;
-		} else if ( !oneword.compare( "PENALTIES" ) ) {
+		} else if ( oneword == "PENALTIES" ) {
 			runtime_assert_string_msg( !penaltiesfound, errmsg + "A \"PENALTIES\" line can only be present only once in a netcharge energy setup file." );
 			bool at_least_one_found(false);
 			core::Real penval;
@@ -274,14 +274,14 @@ void NetChargeEnergySetup::parse_a_penalty_definition( utility::vector1 < std::s
 			} while( !curline.eof() );
 			runtime_assert_string_msg( at_least_one_found, errmsg + "Could not parse PENALTIES line." );
 			penaltiesfound=true;
-		} else if ( !oneword.compare( "BEFORE_FUNCTION" ) ) {
+		} else if ( oneword == "BEFORE_FUNCTION" ) {
 			runtime_assert_string_msg( beforefxn == tf_unknown, errmsg + "A \"BEFORE_FUNCTION\" line can only be present only once in a netcharge energy setup file." );
 			std::string beforefxn_str;
 			curline >> beforefxn_str;
 			runtime_assert_string_msg( !curline.fail(), errmsg + "Could not parse BEFORE_FUNCTION line." );
 			beforefxn = get_tailfunction_from_name( beforefxn_str );
 			runtime_assert_string_msg( beforefxn != tf_unknown, errmsg + "Could not parse BEFORE_FUNCTION line." );
-		} else if ( !oneword.compare( "AFTER_FUNCTION" ) ) {
+		} else if ( oneword == "AFTER_FUNCTION" ) {
 			runtime_assert_string_msg( afterfxn == tf_unknown, errmsg + "An \"AFTER_FUNCTION\" line can only be present only once in a netcharge energy setup file." );
 			std::string afterfxn_str;
 			curline >> afterfxn_str;

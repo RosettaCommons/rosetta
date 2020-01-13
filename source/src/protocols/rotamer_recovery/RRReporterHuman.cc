@@ -48,9 +48,7 @@
 using std::endl;
 using std::ostream;
 using std::string;
-using std::map;
 using basic::Tracer;
-using basic::datacache::CacheableString;
 using core::Size;
 using core::Real;
 using core::conformation::Residue;
@@ -58,7 +56,6 @@ using core::pack::dunbrack::RotVector;
 using core::pack::dunbrack::rotamer_from_chi;
 using core::pose::Pose;
 using core::pose::tag_from_pose;
-using utility::vector1;
 using numeric::statistics::mean;
 using numeric::statistics::std_dev_with_provided_mean;
 

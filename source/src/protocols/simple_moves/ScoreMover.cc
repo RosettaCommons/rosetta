@@ -71,8 +71,6 @@ using namespace core;
 using namespace basic::options;
 using namespace scoring;
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "protocols.simple_moves.ScoreMover" );
 
 

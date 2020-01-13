@@ -54,8 +54,6 @@
 
 
 //tracers
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "apps.pilot.bder.zinc2_homodimer_design" );
 
 using point = numeric::xyzVector<core::Real>;

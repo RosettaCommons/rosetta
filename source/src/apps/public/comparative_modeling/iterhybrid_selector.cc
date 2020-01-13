@@ -173,7 +173,7 @@ distance( core::io::silent::SilentStructCOP ss1,
 	rmsd = std::sqrt( rmsd );
 
 	core::Real dist( rmsd );
-	if ( mode.compare("Sscore") == 0 ) dist = 1.0 - Sscore;
+	if ( mode == "Sscore" ) dist = 1.0 - Sscore;
 
 	return dist;
 }
@@ -306,7 +306,7 @@ read_silent_input_as_library( std::string const & silentfile,
 			ss->energies_from_pose( pose_tmp );
 		}
 
-		if ( dcut_ref > 0.0 && scorename.compare("penaltysum") == 0 ) {
+		if ( dcut_ref > 0.0 && scorename == "penaltysum" ) {
 			protocols::mpi_refinement::add_init_dev_penalty( ss, pose0, "relative",
 				dcut_ref, 10.0 );
 		}

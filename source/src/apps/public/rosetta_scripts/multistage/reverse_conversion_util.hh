@@ -14,6 +14,7 @@
 #include <utility/tag/Tag.hh>
 #include <sstream>
 
+inline
 void add_protocols(
 	utility::tag::Tag const & protocols_tag,
 	std::stringstream & ss
@@ -40,6 +41,7 @@ void add_protocols(
 
 }
 
+inline
 std::string
 reverse_convert(
 	utility::tag::Tag const & multistage_rosetta_scripts_tag

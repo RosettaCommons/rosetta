@@ -4,7 +4,6 @@ namespace numeric {
 namespace linear_algebra {
 
 using namespace fem::major_types;
-using fem::common;
 
 // double epslon( {{{1
 

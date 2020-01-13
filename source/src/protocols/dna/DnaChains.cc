@@ -21,7 +21,6 @@
 #include <utility/vector1.hh>
 
 
-using utility::vector1;
 
 namespace protocols {
 namespace dna {

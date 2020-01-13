@@ -64,33 +64,22 @@ namespace features {
 
 using std::string;
 using std::stringstream;
-using std::endl;
 using basic::database::safely_prepare_statement;
 using core::pose::Pose;
-using utility::graph::Graph;
-using core::scoring::Energies;
-using core::scoring::EnergyGraph;
 using core::scoring::EnergyMap;
-using core::scoring::EnergyEdge;
 using core::scoring::get_score_function;
 using core::scoring::get_score_functionName;
-using core::scoring::hbond_sr_bb;
-using core::scoring::hbond_lr_bb;
 using core::scoring::n_score_types;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreType;
 using core::scoring::ScoreTypeManager;
 using core::scoring::methods::EnergyMethodOptions;
-using core::scoring::hbonds::HBondSet;
-using core::scoring::hbonds::get_hbond_energies;
-using core::scoring::EnergiesCacheableDataType::HBOND_SET;
 using core::Size;
 using core::Real;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
-using cppdb::result;
 
 ScoreFunctionFeatures::ScoreFunctionFeatures() :
 	scfxn_(get_score_function()),

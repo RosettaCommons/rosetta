@@ -447,10 +447,10 @@ ResidueTypeBase::mainchain_potentials_match(
 	ResidueTypeBase const &other
 ) const {
 	return
-		rama_prepro_mainchain_torsion_potential_name_.compare( other.rama_prepro_mainchain_torsion_potential_name_ ) == 0 &&
-		rama_prepro_mainchain_torsion_potential_name_beforeproline_.compare( other.rama_prepro_mainchain_torsion_potential_name_beforeproline_ ) == 0 &&
-		rama_prepro_map_file_name_.compare( other.rama_prepro_map_file_name_ ) == 0 &&
-		rama_prepro_map_file_name_beforeproline_.compare( other.rama_prepro_map_file_name_beforeproline_ ) == 0
+		rama_prepro_mainchain_torsion_potential_name_ == other.rama_prepro_mainchain_torsion_potential_name_ &&
+		rama_prepro_mainchain_torsion_potential_name_beforeproline_ == other.rama_prepro_mainchain_torsion_potential_name_beforeproline_ &&
+		rama_prepro_map_file_name_ == other.rama_prepro_map_file_name_ &&
+		rama_prepro_map_file_name_beforeproline_ == other.rama_prepro_map_file_name_beforeproline_
 		;
 }
 

@@ -81,11 +81,9 @@ using namespace pose_to_sfr;
 using core::Size;
 using core::SSize;
 using utility::pad_left;
-using utility::pad_right;
 using utility::fmt_real;
 
 using basic::Error;
-using basic::Warning;
 
 
 /// @brief Writes  <pose>  to a PDB file, returns false if an error occurs

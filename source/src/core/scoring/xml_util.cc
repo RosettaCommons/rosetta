@@ -45,7 +45,6 @@ namespace scoring {
 
 using namespace std;
 using namespace core;
-using utility::vector1;
 
 /// @details Utility function to find a scorefunction from parser-provided
 /// data.

@@ -75,15 +75,12 @@ using basic::Tracer;
 using core::Size;
 using core::Real;
 using core::scoring::ScoreFunctionOP;
-using core::scoring::ScoreFunction;
 using core::scoring::get_score_function;
 using core::pose::Pose;
 using core::pose::PoseCOP;
 using core::pack::task::PackerTaskOP;
 using core::pack::task::TaskFactory;
 using core::pack::task::TaskFactoryOP;
-using core::pack::task::operation::InitializeFromCommandline;
-using core::pack::task::operation::RestrictToRepacking;
 using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
 using protocols::moves::MoverOP;
@@ -101,7 +98,6 @@ using protocols::rotamer_recovery::RRReporterSQLiteOP;
 using utility::sql_database::sessionOP;
 using utility::tag::TagCOP;
 using utility::vector1;
-using cppdb::statement;
 
 static Tracer TR("protocols.features.RotamerRecoveryFeatures");
 
@@ -201,11 +197,11 @@ RotamerRecoveryFeatures::parse_my_tag(
 	} else {
 		string const & protocol_name(tag->getOption<string>(
 			"protocol", "RRProtocolMinPack"));
-		if ( !protocol_name.compare("RRProtocolMover") ) {
+		if ( protocol_name == "RRProtocolMover" ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,
 				"Please specify 'mover_name' with the 'RRProtocolMover' "
 				"rotamer recovery protocol.");
-		} else if ( !protocol_name.compare("RRProtocolReferenceStructure") ) {
+		} else if ( protocol_name == "RRProtocolReferenceStructure" ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,
 				"Please specify 'reference_name' with 'RRProtocolReferenceStructure' "
 				"rotamer recovery protocol.");

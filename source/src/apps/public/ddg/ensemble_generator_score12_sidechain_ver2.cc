@@ -145,8 +145,6 @@
 //#include "james_util.hh" //for calculation of burial
 #include <basic/Tracer.hh>
 #include <ctime>
-using basic::Warning;
-using basic::Error;
 
 // C++ headers
 #include <fstream>
@@ -347,7 +345,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 		struct stat stFileInfo;
 		int file_stat = stat((basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb").c_str(),
 			&stFileInfo);
-		if ( file_stat != 0 || !output_pdbs || ((silent_file_name.compare("") != 0) && !out_sfd.has_tag("lowest."+curr.str())) ) { //file doesn't exist or file can exist and output_pdbs set to false
+		if ( file_stat != 0 || !output_pdbs || ((silent_file_name != "" ) && !out_sfd.has_tag("lowest."+curr.str())) ) { //file doesn't exist or file can exist and output_pdbs set to false
 
 			std::cout << "nrounds is " << nrounds <<  " and backbone_movement status is " << BACKBONE_MOVEMENT << std::endl;
 			mc->reset_counters();

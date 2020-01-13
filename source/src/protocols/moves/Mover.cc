@@ -45,8 +45,6 @@ namespace moves {
 using namespace core;
 using namespace pose;
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "protocols.moves.Mover" );
 
 Mover::Mover()

@@ -149,20 +149,20 @@ private:
 
 
 private:
-	core::Size nmodes_;
-	bool mix_modes_;
-	bool cartesian_;
-	core::Real pertscale_;
-	bool randomselect_;
-	core::Real selection_kT_;
-	bool centroid_;
-	core::Size nsample_;
-	core::Real moving_distance_;
-	bool refresh_normalmode_;
-	core::Real direction_;
-	core::Real cst_sdev_;
-	bool cartesian_minimize_;
-	bool dump_silent_;
+	core::Size nmodes_ = 5;
+	bool mix_modes_ = false;
+	bool cartesian_ = true;
+	core::Real pertscale_ = 1.0;
+	bool randomselect_ = false;
+	core::Real selection_kT_ = 1e6; // currently just placeholder
+	bool centroid_ = false;
+	core::Size nsample_ = 5;
+	core::Real moving_distance_ = 1.0;
+	bool refresh_normalmode_ = true;
+	core::Real direction_ = 1.0;
+	core::Real cst_sdev_ = 1.0;
+	bool cartesian_minimize_ = false;
+	bool dump_silent_ = false;
 	std::string outsilent_;
 
 	std::string relaxmode_;

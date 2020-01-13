@@ -33,8 +33,6 @@
 #include <utility/vector0.hh>
 
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "protocols.TaskOperations.AlignedThreadOperation" );
 
 namespace protocols {

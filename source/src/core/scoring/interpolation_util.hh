@@ -37,7 +37,7 @@ interpolate_value_and_deriv(
 
 	Size const & NUM_BINS( potential.size() );
 
-	Size r_bin_lo = Size( r/bin_width + 0.5 );
+	Size r_bin_lo = std::lround( r/bin_width );
 	Size r_bin_hi  = r_bin_lo + 1;
 
 	value = 0.0;

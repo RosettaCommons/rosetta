@@ -77,9 +77,6 @@
 using namespace ObjexxFCL::format;
 
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer TR( "protocols.antibody.AntibodyModelerProtocol" );
 using namespace core;
 

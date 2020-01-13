@@ -41,12 +41,9 @@ namespace evaluation {
 
 using std::endl;
 using std::string;
-using std::pair;
 using std::stringstream;
-using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
 using protocols::filters::Filters_map;
-using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 

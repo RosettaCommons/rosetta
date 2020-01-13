@@ -122,7 +122,7 @@ JumpSample::JumpSample( JumpSetup const& def ) :
 		jump_atoms_( 2, ct ) = "";
 		Size const crs ( it->cut_reg_.start_ );
 		Size const cre ( it->cut_reg_.end_ );
-		cuts_( ct ) = crs+int( numeric::random::uniform()*( cre-crs ) + 0.5 );
+		cuts_( ct ) = crs + std::lround( numeric::random::uniform()*( cre-crs ) );
 	}
 	generate_tree_from_jumps_and_cuts();
 	jumps2pairings();

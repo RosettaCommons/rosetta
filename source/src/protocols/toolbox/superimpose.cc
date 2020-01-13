@@ -430,12 +430,10 @@ void fit_centered_coords( Size natoms, FArray1_double const& weights, FArray2_do
 	delete[] weights_gmx;
 }
 
-#define ROTATE(a,i,j,k,l) g=a[i][j];h=a[k][l];a[i][j]=g-s*(h+g*tau); \
-  a[k][l]=h+s*(g-h*tau);
-#define DIM6 6
-#define XX 0
-#define YY 1
-#define ZZ 2
+constexpr int DIM6 = 6;
+constexpr int XX = 0;
+constexpr int YY = 1;
+constexpr int ZZ = 2;
 
 void oprod(const rvec a,const rvec b,rvec c)
 {
@@ -547,12 +545,16 @@ void calc_fit_R(int natoms, Real const* weights, rvec const* xref, rvec const*x,
 	dump_matrix( DIM, R, tr );
 }
 
-#define ROTATE(a,i,j,k,l) g=a[i][j];h=a[k][l];a[i][j]=g-s*(h+g*tau); \
-  a[k][l]=h+s*(g-h*tau);
-#define DIM6 6
-#define XX 0
-#define YY 1
-#define ZZ 2
+//#define ROTATE(a,i,j,k,l) g=a[i][j];h=a[k][l];a[i][j]=g-s*(h+g*tau);
+//  a[k][l]=h+s*(g-h*tau);
+template< class T >
+void
+ROTATE(T & a, int i, int j, int k, int l, core::Real s, core::Real tau) {
+	auto g=a[i][j];
+	auto h=a[k][l];
+	a[i][j]=g-s*(h+g*tau);
+	a[k][l]=h+s*(g-h*tau);
+}
 
 void jacobi(core::Real a[6][6],core::Real d[],core::Real v[6][6],int *nrot)
 {
@@ -611,16 +613,16 @@ void jacobi(core::Real a[6][6],core::Real d[],core::Real v[6][6],int *nrot)
 					d[iq] += h;
 					a[ip][iq]=0.0;
 					for ( j=0; j<ip; j++ ) {
-						ROTATE(a,j,ip,j,iq);
+						ROTATE(a,j,ip,j,iq,s,tau);
 					}
 					for ( j=ip+1; j<iq; j++ ) {
-						ROTATE(a,ip,j,j,iq);
+						ROTATE(a,ip,j,j,iq,s,tau);
 					}
 					for ( j=iq+1; j<n; j++ ) {
-						ROTATE(a,ip,j,iq,j);
+						ROTATE(a,ip,j,iq,j,s,tau);
 					}
 					for ( j=0; j<n; j++ ) {
-						ROTATE(v,j,ip,j,iq);
+						ROTATE(v,j,ip,j,iq,s,tau);
 					}
 					++(*nrot);
 				}

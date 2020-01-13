@@ -376,7 +376,7 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 				try{
 					command->initialize_from_tokens( tokens, which_token, resid );
 					command->residue_action( the_task, resid );
-				} catch ( ResfileReaderException() ){
+				} catch ( ResfileReaderException & exn ){
 					// there was a problem with this command.  If we're doing error recovery skip to next command.
 					while ( which_token <= ntokens && command_map.find( get_token(which_token, tokens ) ) == command_map.end() )
 							which_token++;

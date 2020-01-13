@@ -70,10 +70,8 @@ static basic::Tracer tr("protocols.filters.SSElementLengthFilter");
 namespace protocols {
 namespace simple_filters {
 
-using utility::vector1;
 using core::Size;
 using core::Real;
-using std::set;
 using namespace core;
 // @brief default constructor
 SSElementLengthFilter::SSElementLengthFilter():

@@ -573,10 +573,10 @@ WorkUnit_PartialAbinitio::setup_score( std::string sfxn_name ) const
 {
 	core::scoring::ScoreFunctionOP sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "score0" );
 
-	if ( sfxn_name.compare("score0") == 0 ) {
+	if ( sfxn_name == "score0" ) {
 		// stage1_1
 
-	} else if ( sfxn_name.compare("score1") == 0 ) {
+	} else if ( sfxn_name == "score1" ) {
 		// stage1_2
 		sfxn->set_weight( core::scoring::linear_chainbreak, 0.2 );
 		sfxn->set_weight( core::scoring::coordinate_constraint, 0.2 );
@@ -593,8 +593,8 @@ WorkUnit_PartialAbinitio::setup_score( std::string sfxn_name ) const
 		score1_options.set_strand_strand_weights(1,11);
 		sfxn->set_energy_method_options(score1_options);
 
-	} else if ( sfxn_name.compare("score2") == 0 ||
-			sfxn_name.compare("score5") == 0 ) {
+	} else if ( sfxn_name == "score2" ||
+			sfxn_name == "score5" ) {
 
 		// stage1_3
 		sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "score2" );
@@ -605,13 +605,13 @@ WorkUnit_PartialAbinitio::setup_score( std::string sfxn_name ) const
 		sfxn->set_weight( core::scoring::linear_chainbreak, 0.5 );
 		sfxn->set_weight( core::scoring::atom_pair_constraint, 0.1 );
 
-		if ( sfxn_name.compare("score5") == 0 ) {
+		if ( sfxn_name == "score5" ) {
 			core::scoring::methods::EnergyMethodOptions score5_options(sfxn->energy_method_options());
 			score5_options.set_strand_strand_weights(1,11);
 			sfxn->set_energy_method_options(score5_options);
 		}
 
-	} else if ( sfxn_name.compare("score3") == 0 ) {
+	} else if ( sfxn_name == "score3" ) {
 		// stage1_4
 		sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
 		sfxn->set_weight( core::scoring::linear_chainbreak, 2.0 );

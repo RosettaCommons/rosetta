@@ -66,7 +66,6 @@ using numeric::xyzVector;
 using utility::sql_database::sessionOP;
 using utility::vector1;
 using cppdb::statement;
-using cppdb::result;
 
 static basic::Tracer TR( "protocols.features.LoopAnchorFeatures" );
 

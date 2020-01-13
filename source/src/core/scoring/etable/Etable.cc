@@ -62,8 +62,6 @@
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <core/chemical/AtomType.hh>
 
-using basic::Error;
-using basic::Warning;
 using namespace ObjexxFCL;
 
 static basic::Tracer TR( "core.scoring.etable" );

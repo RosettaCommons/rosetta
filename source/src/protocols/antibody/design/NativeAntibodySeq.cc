@@ -46,7 +46,6 @@ namespace antibody {
 namespace design {
 using namespace core::chemical;
 using namespace basic::datacache;
-using basic::datacache::DataCache_CacheableData;
 
 NativeAntibodySeq::NativeAntibodySeq(const core::pose::Pose &pose,
 	protocols::antibody::AntibodyInfo const & ab_info) :

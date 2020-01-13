@@ -76,7 +76,6 @@ static basic::Tracer TR( "protocols.matdes.MatDesPointMutationCalculator" );
 using namespace core;
 using namespace chemical;
 using utility::vector1;
-using utility::vector0;
 using std::pair;
 
 /// @brief default ctor

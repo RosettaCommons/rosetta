@@ -384,10 +384,10 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 		sequence.append( iter->resname );
 		if ( iter->sstype.size()==1 ) {
 			//Feb 2016.  handling LD types
-			if ( iter->sstype.compare( "1" )  == 0 ) { // 0 means match
+			if ( iter->sstype == "1" ) {
 				ss.append( "H" );
 				LD_types.append( "D" );
-			} else if ( iter->sstype.compare( "2" ) == 0 ) {
+			} else if ( iter->sstype == "2" ) {
 				ss.append( "E" );
 				LD_types.append( "D" );
 			} else {

@@ -48,8 +48,6 @@
 #include <utility/excn/Exceptions.hh>
 
 //tracers
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR("apps.public.scenarios.chemically_conjugated_docking.UBQ_Gp_LYX-Cterm");
 
 int main( int argc, char* argv[] )

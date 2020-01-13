@@ -58,8 +58,6 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "pilot_apps.fix_bb_monomer_ddg" );
 
 
@@ -73,10 +71,10 @@ using ddgs = utility::vector1<core::Real>;
 
 namespace protocols {
 void
-print_ddgs(std::string ddg_out,
-	std::string label,
-	ddgs delta_e_components,
-	ddgs /*mut_avg_components*/,
+print_ddgs(std::string const & ddg_out,
+	std::string const & label,
+	ddgs const & delta_e_components,
+	ddgs const & /*mut_avg_components*/,
 	core::Real total_ddgs
 ){
 	std::ofstream ddg_output(ddg_out.c_str(), std::ios_base::app);
@@ -92,7 +90,7 @@ print_ddgs(std::string ddg_out,
 	//  for(Size i =1; i <=scorefxn_header.size();i++){
 	//    ddg_output << scorefxn_header[i] << " ";
 	//  }
-	if ( label.compare("") != 0 ) {
+	if ( label != "" ) {
 		using namespace ObjexxFCL::format;
 		ddg_output << "ddG: " << label << " " << F(9,3,total_ddgs) << " ";
 		for ( Size m=1; m<=delta_e_components.size(); m++ ) {
@@ -111,7 +109,7 @@ read_in_mutations(utility::vector1<mutations> & res_to_mut, std::string filename
 	if ( inputstream.is_open() ) {
 		int total; std::string total_keyword;
 		inputstream >> total_keyword;
-		debug_assert(total_keyword.compare("total") == 0);
+		debug_assert(total_keyword == "total");
 
 		inputstream >> total; //keep for cross-checking
 		while ( !inputstream.eof() ) {

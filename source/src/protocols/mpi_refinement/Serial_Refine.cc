@@ -244,7 +244,7 @@ Serial_Refine::apply( core::pose::Pose &pose,
 
 		scheduler_.proceed();
 		params = scheduler_.get_params();
-		if ( scheduler_.roundtype().compare("done") == 0 ) break;
+		if ( scheduler_.roundtype() == "done" ) break;
 
 		TR << "Running mover: " << params.movertype << ", ngen ";
 		TR << library_central_.size() << std::endl;
@@ -281,13 +281,13 @@ Serial_Refine::perturb( MethodParams const &params,
 	WorkUnit_SamplerOP new_wu;
 	std::string movername( params.movertype );
 
-	if ( movername.compare("relax") == 0 ) {
+	if ( movername == "relax" ) {
 		new_wu = utility::pointer::make_shared< WorkUnit_Relax >( params.relax_type, params.score_type, params.nperrun, params.cstw );
 
-	} else if ( movername.compare("md") == 0 ) {
+	} else if ( movername == "md" ) {
 		new_wu = utility::pointer::make_shared< WorkUnit_MD >( params.relax_type, params.score_type, params.nperrun, params.cstw );
 
-	} else if ( movername.compare("partialabinitio") == 0 ) {
+	} else if ( movername == "partialabinitio" ) {
 		core::Size res1, res2;
 		bool is_terminus;
 		get_loop_info( start_struct, res1, res2, is_terminus );

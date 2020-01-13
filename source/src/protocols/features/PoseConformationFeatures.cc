@@ -98,7 +98,6 @@ using core::kinematics::RT;
 using numeric::xyzMatrix;
 using numeric::xyzVector;
 using utility::vector1;
-using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;

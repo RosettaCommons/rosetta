@@ -37,8 +37,6 @@ namespace ObjexxFCL {
 } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "core.optimization.LineMinimizer" );
 
 namespace core {

@@ -33,8 +33,6 @@
 
 //#include <basic/prof.hh>
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "protocols.moves.DualMonteCarlo" );
 

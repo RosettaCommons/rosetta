@@ -59,8 +59,6 @@ using namespace scoring;
 using namespace constraints;
 using namespace sequence;
 
-using basic::t_warning;
-using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
 static basic::Tracer TR( "core.scoring.constraints.SequenceProfileConstraint" );

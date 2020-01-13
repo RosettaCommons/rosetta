@@ -41,8 +41,6 @@
 
 #include <utility/pointer/memory.hh>
 
-using basic::Error;
-using basic::Warning;
 namespace core {
 namespace scoring {
 namespace electron_density_atomwise {

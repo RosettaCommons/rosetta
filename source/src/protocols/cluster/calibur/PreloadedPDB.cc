@@ -152,7 +152,7 @@ PreloadedPDB::loadSilentFile( std::string const & filename ) {
 				std::string ext = filename.substr(filename.length()-4, 4);
 
 				// If filename does not end in .pdb, generate a filename
-				if ( strcmp(ext.c_str(), ".pdb") ) {
+				if ( ext != ".pdb" ) {
 					std::stringstream ss;
 					ss << "decoy" << decoyCount;
 					key = ss.str();

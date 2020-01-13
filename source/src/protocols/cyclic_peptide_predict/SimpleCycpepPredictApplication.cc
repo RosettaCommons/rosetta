@@ -256,7 +256,7 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::get_cyclizati
 ) {
 	using namespace protocols::cyclic_peptide_predict;
 	for ( core::Size i(1); i<SCPA_number_of_types; ++i ) {
-		if ( !name.compare( get_cyclization_name_from_type( static_cast<SCPA_cyclization_type>(i) ) ) ) {
+		if ( name == get_cyclization_name_from_type( static_cast<SCPA_cyclization_type>(i) ) ) {
 			return static_cast<SCPA_cyclization_type>(i);
 		}
 	}
@@ -1574,7 +1574,7 @@ SimpleCycpepPredictApplication::run() const {
 		debug_assert( tbmb_positions_.size() == 0 ); //Should be true
 		utility::vector1 < core::Size > cys_positions;
 		for ( core::Size i=1; i<=sequence_length(); ++i ) {
-			if ( !resnames[i].compare("CYS") || !resnames[i].compare("DCYS") ) cys_positions.push_back(i);
+			if ( resnames[i] == "CYS" || resnames[i] == "DCYS" ) cys_positions.push_back(i);
 		}
 		runtime_assert_string_msg( cys_positions.size() == 3, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::run(): The \"-cyclic_peptide:link_all_cys_with_TBMB\" flag was used, but the sequence does not contain exactly three CYS/DCYS residues." );
 		tbmb_positions_.push_back( cys_positions );
@@ -4225,7 +4225,7 @@ SimpleCycpepPredictApplication::re_append_linker_residues(
 	for ( core::Size i=1, imax=linker_positions.size(); i<=imax; ++i ) { //Loop through all linkers
 		//For each one, loop through the sequence and find the next linker of the given type.
 		for ( core::Size j=lastres+1, jmax=pose->total_residue(); j<=jmax; ++j ) {
-			if ( !pose->residue_type(j).name3().compare(linker_name) ) {
+			if ( pose->residue_type(j).name3() == linker_name ) {
 				lastres = j;
 				break;
 			}
@@ -4433,8 +4433,8 @@ SimpleCycpepPredictApplication::set_up_isopeptide_variants(
 /// @brief Given the basename of a residue type, return true if this is a type that can donate the nitrogen to an
 /// isopeptide bond, false otherwise.
 bool SimpleCycpepPredictApplication::is_isopeptide_forming_amide_type( std::string const &basename ) const {
-	return (!basename.compare("LYS") || !basename.compare("ORN") || !basename.compare("DAB") || !basename.compare("DPP") ||
-		!basename.compare("DLYS") || !basename.compare("DORN") || !basename.compare("DDAB") || !basename.compare("DDPP"));
+	return (basename == "LYS" || basename == "ORN" || basename == "DAB" || basename == "DPP" ||
+		basename == "DLYS" || basename == "DORN" || basename == "DDAB" || basename == "DDPP");
 }
 
 /// @brief Given the AA of a residue type, return true if this is a type that can donate the carbonyl to an

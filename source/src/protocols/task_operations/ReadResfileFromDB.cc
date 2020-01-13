@@ -51,11 +51,9 @@ static basic::Tracer TR( "protocols.toolbox.task_operations.ReadResfileFromDB" )
 using namespace core::pack::task::operation;
 using namespace utility::tag;
 
-using basic::database::get_db_session;
 using basic::database::check_statement_sanity;
 using basic::database::safely_prepare_statement;
 using basic::database::safely_read_from_database;
-using core::pose::Pose;
 using core::pack::task::parse_resfile_string;
 using core::pack::task::ResfileReaderException;
 using core::pack::task::PackerTask;

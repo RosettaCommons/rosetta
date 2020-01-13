@@ -106,7 +106,7 @@ bool LocalPosition::operator< ( LocalPosition const& other ) const {
 }
 
 bool LocalPosition::operator==( LocalPosition const& other ) const {
-	if ( label_.compare( other.label_ ) == 0 &&
+	if ( label_ == other.label_ &&
 			position_ == other.position_ ) {
 		return true;
 	} else {

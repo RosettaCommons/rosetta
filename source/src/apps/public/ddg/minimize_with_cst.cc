@@ -300,11 +300,11 @@ optimize_pose(pose::Pose & pose, ScoreFunctionOP scorefxn, std::string const & o
 }
 
 bool
-already_minimized(std::string query,utility::vector1<std::string> check){
+already_minimized(std::string const & query,utility::vector1<std::string> const & check){
 	//TR << "query is " << query << std::endl;
 	for ( unsigned int i=1; i <= check.size(); i++ ) {
 		//TR << "DEBUG: tag" << check[i] << std::endl;
-		if ( check[i].compare(query) == 0 ) {
+		if ( check[i] == query ) {
 			//TR << "query " << query << " totall matches " << check[i] << std::endl;
 			return true;
 		}

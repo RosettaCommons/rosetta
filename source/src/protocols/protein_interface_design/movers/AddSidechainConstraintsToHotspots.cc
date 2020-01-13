@@ -41,7 +41,6 @@ namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
-using core::pose::Pose;
 using namespace protocols::moves;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.AddSidechainConstraintsToHotspots" );

@@ -624,7 +624,7 @@ AddMembraneMover::parse_my_tag(
 
 	// read lipid composition four letter code
 	if ( tag->hasOption( "lipid_composition" ) ) {
-		lipid_composition_ = tag->getOption< bool >( "lipid_composition" );
+		lipid_composition_ = tag->getOption< std::string >( "lipid_composition" );
 	}
 
 	// read temperature for lipid composition geometry measurements

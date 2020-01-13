@@ -4098,7 +4098,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 			core::io::silent::SilentFileData sfd_wt( opts );
 			core::io::silent::SilentFileData sfd_mut( opts );
 
-			if ( file_extension.compare("list") == 0 ) {
+			if ( file_extension == "list" ) {
 
 				/// Read names of wt pdbs; i.e. open up the filename given in the 1st column of the ddG data file
 				/// and read out the strings of pdbs listed there?
@@ -4109,7 +4109,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 					wt_pdblist >> wt_pdb;
 					if ( wt_pdb != "" ) wt_pdb_names.push_back( wt_pdb );
 				}
-			} else if ( file_extension.compare("out") == 0 ) { //add in silent file capabilities
+			} else if ( file_extension == "out" ) { //add in silent file capabilities
 				read_silent=true;
 				sfd_wt.set_filename(wts()); //for now assume binary
 				if ( !sfd_wt.read_file(wts()) ) {
@@ -4126,7 +4126,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 			utility::file::FileName muts(ddg_mut_wt_pairs_[ii].second);
 			file_extension = muts.ext();
 
-			if ( file_extension.compare("list") == 0 ) {
+			if ( file_extension == "list" ) {
 				TR << "collect_ddG_of_mutation_data(): reading file '" << muts() << "' to get list of mutant pdb names." << std::endl;
 				std::ifstream mut_pdblist( muts().c_str() );
 				bool no_tag_yet_assigned( true );
@@ -4140,7 +4140,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 						no_tag_yet_assigned = false;
 					}
 				}
-			} else if ( file_extension.compare("out") == 0 ) {
+			} else if ( file_extension == "out" ) {
 				read_silent=true;
 				sfd_mut.set_filename(muts());
 				if ( !sfd_mut.read_file(muts()) ) {

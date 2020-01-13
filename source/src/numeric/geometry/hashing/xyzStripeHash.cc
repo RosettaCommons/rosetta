@@ -16,7 +16,6 @@ namespace geometry {
 namespace hashing {
 
 using std::cout;
-using std::cerr;
 using std::endl;
 
 std::ostream & operator << ( std::ostream & os, Ball const & ball)

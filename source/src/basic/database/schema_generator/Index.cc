@@ -38,7 +38,6 @@ namespace schema_generator {
 using platform::Size;
 using std::string;
 using std::stringstream;
-using utility::vector1;
 
 Index::Index(
 	Column column,

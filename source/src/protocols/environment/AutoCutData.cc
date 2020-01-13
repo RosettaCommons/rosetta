@@ -44,20 +44,18 @@ std::string AutoCutDataCreator::keyname() const{
 AutoCutData::AutoCutData( std::istream &in ) :
 	Parent()
 {
-	auto e = CREATE_EXCEPTION(utility::excn::BadInput, "AutoCutData tried to read an improperly formatted SilentFile remark." );
-
 	std::string token;
 
 	in >> token;
 	if ( token != "HASH" ) {
-		throw e;
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "AutoCutData tried to read an improperly formatted SilentFile remark." );
 	}
 
 	in >> hash_;
 
 	in >> token;
 	if ( token != "CUTS" ) {
-		throw e;
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "AutoCutData tried to read an improperly formatted SilentFile remark." );
 	}
 
 	while ( in.good() ) {

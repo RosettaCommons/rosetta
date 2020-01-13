@@ -82,7 +82,6 @@ using namespace core;
 using namespace protocols::environment::claims;
 
 using core::environment::LocalPosition;
-using core::environment::SequenceAnnotation;
 using core::environment::SequenceAnnotationOP;
 using core::environment::SequenceAnnotationCOP;
 using core::environment::FoldTreeSketch;

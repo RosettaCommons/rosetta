@@ -43,9 +43,9 @@ using namespace core;
 
 static basic::Tracer TR( "protocols.frag_picker.SidechainContactDistCutoff" );
 
-SidechainContactDistCutoff::SidechainContactDistCutoff() {
-	SidechainContactDistCutoff(1.0);
-}
+SidechainContactDistCutoff::SidechainContactDistCutoff() :
+	SidechainContactDistCutoff(1.0)
+{}
 
 SidechainContactDistCutoff::SidechainContactDistCutoff(core::Real scale_factor) {
 	scale_factor_ = scale_factor;

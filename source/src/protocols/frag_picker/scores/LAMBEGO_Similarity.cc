@@ -38,7 +38,7 @@ static basic::Tracer tr(
 void LAMBEGO_Similarity::do_caching( VallChunkOP chunk ) {
 
 	std::string tmp = chunk->chunk_key();
-	if ( tmp.compare(cached_scores_id_) == 0 ) {
+	if ( tmp == cached_scores_id_ ) {
 		return;
 	}
 	cached_scores_id_ = tmp;
@@ -69,7 +69,7 @@ bool LAMBEGO_Similarity::cached_score(
 
 
 	std::string tmp = f->get_chunk()->chunk_key();
-	if ( tmp.compare(cached_scores_id_) != 0 ) {
+	if ( tmp != cached_scores_id_ ) {
 		do_caching(f->get_chunk());
 	}
 

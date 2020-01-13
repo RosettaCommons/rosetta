@@ -54,7 +54,6 @@ using namespace protocols::multistate_design;
 #include <basic/Tracer.hh>
 using basic::t_info;
 using basic::t_debug;
-using basic::t_trace;
 static basic::Tracer TR( "app.sequence_tolerance" );
 
 #include <ObjexxFCL/format.hh>

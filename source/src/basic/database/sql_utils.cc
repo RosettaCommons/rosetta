@@ -72,7 +72,6 @@ using platform::Size;
 using cppdb::statement;
 using cppdb::cppdb_error;
 using cppdb::result;
-using utility::vector1;
 using namespace utility::sql_database;
 
 namespace basic {
@@ -168,7 +167,7 @@ get_db_session(
 				"Please specify -inout:dbms:mode <db_mode>.");
 		}
 
-		if ( pq_schema.compare("") ) {
+		if ( pq_schema != "" ) {
 			TR.Warning
 				<< "You have specified a postgres schema but using a sqlite3 database. "
 				<< "To use postgres, please specify -inout:dbms:mode postgres"
@@ -191,7 +190,7 @@ get_db_session(
 				"So requesting a readonly connection cannot fullfilled.");
 		}
 
-		if ( pq_schema.compare("") ) {
+		if ( pq_schema != "" ) {
 			TR.Warning
 				<< "You have specified a postgres schema but using a mysql database. "
 				<< "To use postgres, please specify -inout:dbms:mode postgres"

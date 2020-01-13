@@ -45,15 +45,10 @@
 
 using namespace ObjexxFCL;
 
-using basic::Error;
-using basic::Warning;
-
 using namespace core;
 using namespace protocols;
 using namespace protocols::moves;
 using namespace core::scoring;
-
-using utility::vector1;
 
 static basic::Tracer TR( "minimize" );
 

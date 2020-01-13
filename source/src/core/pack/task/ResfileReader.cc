@@ -39,8 +39,6 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 
-using basic::Error;
-using basic::Warning;
 //STL headers
 #include <string>
 //#include <iostream> //need this for debugging

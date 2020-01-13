@@ -58,8 +58,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "protocols.symetric_docking.SymDockingLowRes" );
 

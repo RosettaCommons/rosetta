@@ -39,7 +39,6 @@ namespace rdf {
 using std::endl;
 using std::string;
 using std::stringstream;
-using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
 using protocols::filters::Filters_map;
 using basic::datacache::DataMap;

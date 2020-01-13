@@ -74,8 +74,6 @@
 //      -- rd, 2014
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-using basic::Error;
-using basic::Warning;
 using namespace basic::options;
 
 static basic::Tracer TR( "protocols.simple_moves.ConstrainToIdealMover" );

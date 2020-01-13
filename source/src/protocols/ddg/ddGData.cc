@@ -68,7 +68,7 @@ ddGData::ddGData(std::string filename){
 
 //returns false if file hasn't been opened
 bool ddGData::end(){
-	if ( !inputstream.is_open() && (file_to_read_.compare("") != 0) ) {
+	if ( !inputstream.is_open() && file_to_read_ != "" ) {
 		inputstream.open(file_to_read_.c_str());
 	}
 	return (inputstream.eof());
@@ -93,7 +93,7 @@ utility::vector1<pose::Pose> ddGData::read_mut_data()
 		curr_mut_read = true;
 	}
 	utility::file::FileName mut(curr_mut_filename);
-	if ( mut.ext().compare("list") == 0 ) {
+	if ( mut.ext() == "list" ) {
 		std::ifstream istream;
 		istream.open(curr_mut_filename.c_str());
 		if ( istream.is_open() ) {
@@ -101,14 +101,14 @@ utility::vector1<pose::Pose> ddGData::read_mut_data()
 				pose::Pose newpose;
 				std::string curr_filename;
 				istream >> curr_filename;
-				if ( curr_filename.compare("") != 0 ) {
+				if ( curr_filename != "" ) {
 					std::cout << "opening file: " << curr_filename << std::endl;
 					core::import_pose::pose_from_file(newpose,(*rsd_set),curr_filename,false, core::import_pose::PDB_file);
 					curr_mut.push_back(newpose);
 				}
 			}
 		}
-	} else if ( mut.ext().compare("out") == 0 ) {
+	} else if ( mut.ext() == "out" ) {
 		core::io::silent::SilentFileOptions opts;
 		core::io::silent::SilentFileData sfd( opts );
 		sfd.set_filename(curr_mut_filename);
@@ -132,7 +132,7 @@ utility::vector1<pose::Pose> ddGData::read_wt_data(){
 		curr_wt_read = true;
 	}
 	utility::file::FileName wt(curr_wt_filename);
-	if ( wt.ext().compare("list") == 0 ) {
+	if ( wt.ext() == "list" ) {
 		std::ifstream istream;
 		istream.open(curr_wt_filename.c_str());
 		if ( istream.is_open() ) {
@@ -140,13 +140,13 @@ utility::vector1<pose::Pose> ddGData::read_wt_data(){
 				pose::Pose newpose;
 				std::string curr_filename;
 				istream >> curr_filename;
-				if ( curr_filename.compare("") != 0 ) {
+				if ( curr_filename != "" ) {
 					core::import_pose::pose_from_file(newpose,(*rsd_set),curr_filename,false, core::import_pose::PDB_file);
 					curr_wt.push_back(newpose);
 				}
 			}
 		}
-	} else if ( wt.ext().compare("out") == 0 ) {
+	} else if ( wt.ext() == "out" ) {
 		core::io::silent::SilentFileOptions opts;
 		core::io::silent::SilentFileData sfd( opts );
 		sfd.set_filename(curr_wt_filename);

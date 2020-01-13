@@ -50,8 +50,6 @@
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
-using basic::Error;
-using basic::Warning;
 
 namespace protocols {
 namespace electron_density {

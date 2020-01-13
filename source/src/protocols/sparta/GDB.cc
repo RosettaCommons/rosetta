@@ -95,7 +95,7 @@ void GDB::loadGDB(const string &fileName)
 			text = str.substr(fields[0].length(), str.length());
 			VARS_str = simplifyWhiteSpace(text);
 			VARS_str_parser(VARS_str);
-		} else if ( fields[0].compare("FORMAT") == 0 ) { //read the FORMAT
+		} else if ( fields[0] == "FORMAT" ) { //read the FORMAT
 			FORMAT_str = str.substr(fields[0].length(), str.length());
 			FORMAT_str_parser(FORMAT_str);
 			DATA_START = true;

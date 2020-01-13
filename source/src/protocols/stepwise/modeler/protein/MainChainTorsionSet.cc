@@ -29,7 +29,6 @@
 
 using core::Real;
 using core::Size;
-using core::pose::Pose;
 
 namespace protocols {
 namespace stepwise {

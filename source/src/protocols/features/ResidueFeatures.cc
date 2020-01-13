@@ -65,7 +65,6 @@ using core::pose::Pose;
 using core::conformation::Residue;
 using utility::vector1;
 using utility::sql_database::sessionOP;
-using cppdb::statement;
 using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowDataBaseOP;
 using basic::database::insert_statement_generator::RowData;

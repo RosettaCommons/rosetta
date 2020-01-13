@@ -58,7 +58,6 @@ static basic::Tracer TR( "protocols.features.PdbDataFeatures" );
 using std::string;
 using std::max;
 using std::min;
-using std::numeric_limits;
 using core::Size;
 using core::Real;
 using core::chemical::ResidueType;

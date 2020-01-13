@@ -73,8 +73,6 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::Error;
-using basic::Warning;
 
 namespace protocols {
 namespace rigid {

@@ -35,7 +35,6 @@ static basic::Tracer TR( "core.scoring.disulfides.CentroidMatchingDatabase" );
 
 using namespace core;
 using core::scoring::disulfides::DisulfideMatchingDatabase;
-using core::conformation::Residue;
 using std::string;
 using utility::vector1;
 

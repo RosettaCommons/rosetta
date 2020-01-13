@@ -114,7 +114,7 @@ TiltMover & TiltMover::operator = ( TiltMover const & src ) {
 	}
 
 	// Otherwise, create a new object
-	return *( new TiltMover( *this ) );
+	return *( new TiltMover( *this ) ); // ????
 }
 
 /// @brief Destructor

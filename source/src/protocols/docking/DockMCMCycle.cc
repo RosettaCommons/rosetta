@@ -65,8 +65,6 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "protocols.docking.DockMCMCycle" );
 

@@ -136,7 +136,7 @@ FlipMover & FlipMover::operator = ( FlipMover const & src ) {
 	}
 
 	// Otherwise, create a new object
-	return *( new FlipMover( *this ) );
+	return *( new FlipMover( *this ) ); // ?????????
 }
 
 /// @brief Destructor

@@ -77,67 +77,30 @@
 
 static basic::Tracer TR( "motif_hash_util" );
 
-typedef numeric::xyzVector<core::Real> Vec;
-typedef numeric::xyzMatrix<core::Real> Mat;
 typedef numeric::xyzTransform<core::Real> Xform;
-typedef utility::vector1<core::id::AtomID> AIDs;
-using std::make_pair;
-using core::chemical::AA;
-using numeric::HomogeneousTransform;
-using core::id::AtomID;
 using basic::options::option;
 using namespace basic::options::OptionKeys;
 using core::pose::Pose;
 using core::Real;
-using core::scoring::ScoreFunctionOP;
 using core::Size;
 using numeric::max;
 using numeric::min;
-using numeric::random::gaussian;
-using numeric::random::uniform;
-using numeric::rotation_matrix_degrees;
-using numeric::conversions::radians;
-using numeric::conversions::degrees;
 using namespace ObjexxFCL::format;
 using ObjexxFCL::string_of;
-using std::cerr;
 using std::cout;
 using std::endl;
 using std::string;
-using utility::io::izstream;
-using utility::io::ozstream;
-using utility::file_basename;
 using utility::vector1;
-using std::endl;
-using core::import_pose::pose_from_file;
-using numeric::geometry::hashing::Real3;
-using numeric::geometry::hashing::Real6;
-using core::pose::xyzStripeHashPoseCOP;
 
 using core::scoring::motif::ResPairMotifs;
-using core::scoring::motif::load_motifs;
 using core::scoring::motif::get_nbrs;
-using core::scoring::motif::get_residue_pair_rt6;
 using core::scoring::motif::get_sasa;
-using core::scoring::motif::MotifHash;
 using core::scoring::motif::ResPairMotif;
 using core::scoring::motif::ResPairMotifMetaBinner;
 using core::scoring::motif::ResPairMotifsMap;
 using core::scoring::motif::tag_from_pdb_fname;
-using core::scoring::motif::write_motifs_binary;
 using core::scoring::motif::XformScore;
-using core::scoring::motif::XformScoreMap;
-using core::scoring::motif::SC_SC;
-using core::scoring::motif::SC_BB;
-using core::scoring::motif::SC_PH;
-using core::scoring::motif::SC_PO;
 using core::scoring::motif::BB_BB;
-using core::scoring::motif::BB_PH;
-using core::scoring::motif::BB_PO;
-using core::scoring::motif::PH_PO;
-using core::scoring::motif::RPM_Type_NONE;
-using core::scoring::motif::MOTIF_HASH_CART_SIZE;
-using protocols::sic_dock::KMGT;
 
 
 inline Size sicdock_max_threads(){

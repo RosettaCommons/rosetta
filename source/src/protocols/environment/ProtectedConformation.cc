@@ -50,11 +50,9 @@ namespace environment {
 using namespace core;
 using namespace core::conformation;
 
-using core::environment::DofPassport;
 using core::environment::DofPassportCOP;
 using core::conformation::Conformation;
 using core::conformation::ConformationAP;
-using core::environment::SequenceAnnotation;
 using core::environment::SequenceAnnotationCOP;
 using core::conformation::Residue;
 

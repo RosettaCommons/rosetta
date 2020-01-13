@@ -203,7 +203,7 @@ void initialize_group_list(
 }
 
 bool FragsToAtomDist::check_sequence(std::string const& other_sequence) const {
-	if ( sequence_.compare(other_sequence)==0 ) {
+	if ( sequence_ == other_sequence ) {
 		return true;
 	} else {
 		return false;

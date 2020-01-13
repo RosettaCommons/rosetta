@@ -45,8 +45,6 @@
 namespace protocols {
 namespace minimization_packing {
 
-using basic::Warning;
-using basic::t_warning;
 static basic::Tracer TR( "protocols.minimization_packing.RepackSidechainsMover" );
 
 /// RepackSidechainsMover

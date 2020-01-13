@@ -154,7 +154,7 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 
 	// Read new charge set specified by "score::facts_charge_dir"
 	std::string filename;
-	if ( option[ score::facts_eq_type ]().compare("apprx") == 0 ) { // Call neutral aliphatic charge set
+	if ( option[ score::facts_eq_type ]() == "apprx" ) { // Call neutral aliphatic charge set
 		filename = basic::database::full_name(
 			option[ score::facts_eff_charge_dir ]() + "/"
 			+ rsd.name() + ".params" );
@@ -254,21 +254,21 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 
 		// Free DOF atoms
 		if ( rsd.is_lower_terminus() &&
-				( rsdatomname.compare( "1H  " ) == 0 ||
-				rsdatomname.compare( "2H  " ) == 0 ||
-				rsdatomname.compare( "3H  " ) == 0 )
+				( rsdatomname == "1H  " ||
+				rsdatomname == "2H  " ||
+				rsdatomname == "3H  " )
 				) {
 			is_freedof_[i] = true;
 		} else if ( rsd.is_upper_terminus() &&
-				( rsdatomname.compare( " O  " ) == 0 ||
-				rsdatomname.compare( " OXT" ) == 0 )
+				( rsdatomname == " O  " ||
+				rsdatomname == " OXT" )
 				) {
 			is_freedof_[i] = true;
 		} else if ( rsd.aa() == chemical::aa_ser &&
-				rsdatomname.compare( " HG " ) == 0 ) {
+				rsdatomname == " HG " ) {
 			is_freedof_[i] = true;
 		} else if ( rsd.aa() == chemical::aa_thr &&
-				rsdatomname.compare( " HG1" ) == 0 ) {
+				rsdatomname == " HG1" ) {
 			is_freedof_[i] = true;
 		}
 	}
@@ -448,10 +448,10 @@ void FACTSRsdTypeInfo::initialize_intrascale( chemical::ResidueType const & rsd 
 			// TYR OH-HEX
 			if ( plane_to_self && rsd.aa() == core::chemical::aa_tyr && plane_aa.has_value( "tyr" ) ) {
 				// Add OH-aromatic ring pairs
-				if ( ( atm1 == rsd.atom_index("OH") && rsd.atom_type(atm2).atom_type_name().compare( "aroC" ) == 0 ) ||
-						( atm2 == rsd.atom_index("OH") && rsd.atom_type(atm1).atom_type_name().compare( "aroC" ) == 0 ) ||
-						( atm1 == rsd.atom_index("OH") && rsd.atom_type(atm2).atom_type_name().compare( "Haro" ) == 0 ) ||
-						( atm2 == rsd.atom_index("OH") && rsd.atom_type(atm1).atom_type_name().compare( "Haro" ) == 0 )
+				if ( ( atm1 == rsd.atom_index("OH") && rsd.atom_type(atm2).atom_type_name() == "aroC" ) ||
+						( atm2 == rsd.atom_index("OH") && rsd.atom_type(atm1).atom_type_name() == "aroC" ) ||
+						( atm1 == rsd.atom_index("OH") && rsd.atom_type(atm2).atom_type_name() == "Haro" ) ||
+						( atm2 == rsd.atom_index("OH") && rsd.atom_type(atm1).atom_type_name() == "Haro" )
 						) {
 					/*
 					std::cout << rsd.name() << " " << rsd.atom_name(atm1) << " " << rsd.atom_name(atm2);
@@ -466,7 +466,7 @@ void FACTSRsdTypeInfo::initialize_intrascale( chemical::ResidueType const & rsd 
 			if ( plane_to_self && rsd.aa() == core::chemical::aa_trp && plane_aa.has_value( "trp" ) ) {
 				// Add OH-aromatic ring pairs
 				if ( ( atm1 == rsd.atom_index("NE1") || atm1 == rsd.atom_index("HE1") ) &&
-						( rsd.atom_type(atm2).atom_type_name().compare( "aroC" ) == 0 || rsd.atom_type(atm2).atom_type_name().compare( "Haro" ) == 0 ) ) {
+						( rsd.atom_type(atm2).atom_type_name() == "aroC" || rsd.atom_type(atm2).atom_type_name() == "Haro" ) ) {
 					/*
 					std::cout << rsd.name() << " " << rsd.atom_name(atm1) << " " << rsd.atom_name(atm2);
 					std::cout << " " << intra_solv_scale_[atm1][atm2];

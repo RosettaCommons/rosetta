@@ -61,7 +61,6 @@
 namespace protocols {
 namespace features {
 
-using std::endl;
 using std::string;
 using std::stringstream;
 using core::Size;
@@ -74,7 +73,6 @@ using core::scoring::Energies;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::get_score_function;
-using core::scoring::ScoreTypeManager;
 using core::scoring::ScoreTypes;
 using core::scoring::EnergyGraph;
 using core::scoring::EnergyEdge;
@@ -84,7 +82,6 @@ using core::chemical::aa_vrt;
 using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
-using numeric::xyzVector;
 using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowData;
 using basic::database::insert_statement_generator::RowDataBaseOP;
@@ -92,7 +89,6 @@ using utility::tag::TagCOP;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 using utility::tools::make_vector;
-using cppdb::statement;
 
 ResidueScoresFeatures::ResidueScoresFeatures() :
 	scfxn_(get_score_function())

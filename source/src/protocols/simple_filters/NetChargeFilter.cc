@@ -140,16 +140,16 @@ NetChargeFilter::compute( core::pose::Pose const & pose ) const {
 		out << pose.aa(i);
 		cur_res = out.str();
 
-		if ( arg_res.compare(cur_res) == 0 ) {
+		if ( arg_res == cur_res ) {
 			TR << "AA:  +1  " << cur_res << " " << i << std::endl;
 			net_charge++;
-		} else if ( lys_res.compare(cur_res) == 0 ) {
+		} else if ( lys_res == cur_res ) {
 			TR << "AA:  +1  " << cur_res << " " << i << std::endl;
 			net_charge++;
-		} else if ( asp_res.compare(cur_res) == 0 ) {
+		} else if ( asp_res == cur_res ) {
 			TR << "AA:  -1  " << cur_res << " " << i << std::endl;
 			net_charge--;
-		} else if ( glu_res.compare(cur_res) == 0 ) {
+		} else if ( glu_res == cur_res ) {
 			TR << "AA:  -1  " << cur_res << " " << i << std::endl;
 			net_charge--;
 		}

@@ -65,7 +65,7 @@ public:
 	void output_pssm_filename(std::string new_output_pssm_filename) { output_pssm_filename_ = new_output_pssm_filename; }
 
 	std::string output_pssm_inline() { return output_pssm_inline_; }
-	void output_pssm_inline(core::SSize new_output_pssm_inline) { output_pssm_inline_ = new_output_pssm_inline; }
+	void output_pssm_inline(std::string const & new_output_pssm_inline) { output_pssm_inline_ = new_output_pssm_inline; }
 
 	bool apply_profile() { return apply_profile_; }
 	void apply_profile(bool new_apply_profile) { apply_profile_ = new_apply_profile; }

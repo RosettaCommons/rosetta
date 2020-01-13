@@ -53,11 +53,7 @@ using std::endl;
 using std::stringstream;
 using utility::sql_database::sessionOP;
 using basic::mpi::MessageListenerOP;
-using basic::mpi::MessageListenerFactory;
-using basic::mpi::request_data_from_head_node;
-using basic::mpi::send_data_to_head_node;
 using basic::database::table_exists;
-using utility::mpi_rank;
 using cppdb::statement;
 
 static basic::Tracer TR( "basic.database.schema_generator.Schema" );

@@ -168,7 +168,7 @@ PREMover::operator=(PREMover const & rhs) {
 	if ( this == &rhs ) {
 		return *this;
 	}
-	return *( new PREMover( *this ) );
+	return *( new PREMover( *this ) ); // ????????
 }
 
 /// @brief destructor

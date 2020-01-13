@@ -27,7 +27,6 @@ namespace task_operations {
 using namespace core::pack::task::operation;
 using namespace utility::tag;
 using namespace core::kinematics;
-using core::pose::Pose;
 using core::pack::task::PackerTask;
 
 RestrictToMoveMapChiOperation::RestrictToMoveMapChiOperation():

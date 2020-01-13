@@ -18,10 +18,6 @@
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
-//using basic::T;
-using basic::Error;
-using basic::Warning;
-static  basic::Tracer TR( "protocols.simple_moves.RotLibOut" );
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>
@@ -45,6 +41,8 @@ static  basic::Tracer TR( "protocols.simple_moves.RotLibOut" );
 #include <ctype.h>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+static  basic::Tracer TR( "protocols.simple_moves.RotLibOut" );
 
 namespace protocols {
 namespace splice {

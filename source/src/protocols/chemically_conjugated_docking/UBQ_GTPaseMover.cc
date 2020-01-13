@@ -117,8 +117,6 @@
 #include <core/kinematics/AtomTree.hh>
 
 //tracers
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "protocols.chemically_conjugated_docking.UBQ_GTPaseMover" );
 
 namespace protocols {

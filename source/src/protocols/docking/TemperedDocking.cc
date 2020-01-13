@@ -203,7 +203,7 @@ TemperedDocking::apply( pose::Pose & pose )
 	}
 
 	/// ---------------- do we have to call finalize_setup() again ? -------------------------////
-	if ( previous_sequence_.compare( pose.sequence() ) != 0 ) {
+	if ( previous_sequence_ != pose.sequence() ) {
 		first_apply_with_current_setup_ = true;
 		previous_sequence_ = pose.sequence();
 	}

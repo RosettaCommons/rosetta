@@ -32,7 +32,6 @@ namespace task_operations {
 
 using namespace core::pack::task::operation;
 
-using core::pose::Pose;
 using core::pack::task::PackerTask;
 using core::pack::task::operation::TaskOperationOP;
 using namespace utility::tag;

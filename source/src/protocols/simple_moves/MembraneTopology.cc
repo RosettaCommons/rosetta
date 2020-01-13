@@ -36,7 +36,6 @@ namespace simple_moves {
 
 using namespace std;
 
-using core::pose::Pose;
 
 static basic::Tracer TR( "protocols.simple_moves.MembraneTopology" );
 

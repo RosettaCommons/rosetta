@@ -46,7 +46,6 @@ using core::Real;
 using core::pose::Pose;
 using basic::datacache::DataMap;
 using utility::tag::TagCOP;
-using utility::vector0;
 using basic::Tracer;
 
 namespace protocols {

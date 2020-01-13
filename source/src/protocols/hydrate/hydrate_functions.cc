@@ -127,7 +127,7 @@ read_hyfile(
 	}
 
 	while ( getline( input, line ) ) {
-		if ( line.substr(0,3).compare("ENF") == 0 ) {   // This comparison means it IS "ENF"
+		if ( line.substr(0,3) == "ENF" ) {   // This comparison means it IS "ENF"
 			TR << line << std::endl;
 			std::stringstream ss(line);
 			std::istream_iterator<std::string> begin(ss);
@@ -136,7 +136,7 @@ read_hyfile(
 			Size rsd = atoi(vstrings[1].c_str());
 			enforced_V[rsd] = true;
 		}
-		if ( line.substr(0,3).compare("HYD") == 0 ) {   // This comparison means it IS "HYD"
+		if ( line.substr(0,3) == "HYD" ) {   // This comparison means it IS "HYD"
 			TR << line << std::endl;
 			std::stringstream ss(line);
 			std::istream_iterator<std::string> begin(ss);
@@ -949,7 +949,7 @@ read_body(
 	istr >> resid;
 	core::Size id = atoi(resid.c_str());
 
-	if ( method.compare("MINIBB") == 0 ) {
+	if ( method == "MINIBB" ) {
 		if ( id > total_res || id == 0 ) {
 			TR << "residue out of range" << id << std::endl;
 			exit(0);

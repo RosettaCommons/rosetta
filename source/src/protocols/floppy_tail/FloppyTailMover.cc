@@ -92,8 +92,6 @@
 #include <ctime>
 #endif
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR("protocols.floppy_tail.FloppyTail");
 

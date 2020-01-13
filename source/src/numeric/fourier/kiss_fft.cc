@@ -70,7 +70,7 @@ kiss_fft_cpx* get_tmp_buff( size_t nbuf ) {
 void kf_bfly2(
 	kiss_fft_cpx * Fout,
 	const size_t fstride,
-	const kiss_fft_cfg st,
+	kiss_fft_cfg st,
 	int m ) {
 	kiss_fft_cpx * Fout2;
 	kiss_fft_cpx * tw1 = st->twiddles();
@@ -89,7 +89,7 @@ void kf_bfly2(
 void kf_bfly4(
 	kiss_fft_cpx * Fout,
 	const size_t fstride,
-	const kiss_fft_cfg st,
+	kiss_fft_cfg st,
 	const size_t m ) {
 	kiss_fft_cpx *tw1,*tw2,*tw3;
 	kiss_fft_cpx scratch[6];
@@ -128,7 +128,7 @@ void kf_bfly4(
 void kf_bfly3(
 	kiss_fft_cpx * Fout,
 	const size_t fstride,
-	const kiss_fft_cfg st,
+	kiss_fft_cfg st,
 	size_t m
 ) {
 	size_t k=m;
@@ -163,7 +163,7 @@ void kf_bfly3(
 void kf_bfly5(
 	kiss_fft_cpx * Fout,
 	const size_t fstride,
-	const kiss_fft_cfg st,
+	kiss_fft_cfg st,
 	int m ) {
 	kiss_fft_cpx *Fout0,*Fout1,*Fout2,*Fout3,*Fout4;
 	int u;
@@ -222,7 +222,7 @@ void kf_bfly5(
 void kf_bfly_generic(
 	kiss_fft_cpx * Fout,
 	const size_t fstride,
-	const kiss_fft_cfg st,
+	kiss_fft_cfg st,
 	int m,
 	int p
 ) {
@@ -262,7 +262,7 @@ void kf_work(
 	const size_t fstride,
 	int in_stride,
 	int * factors,
-	const kiss_fft_cfg st
+	kiss_fft_cfg st
 ) {
 	kiss_fft_cpx * Fout_beg=Fout;
 	const int p = *factors++; /* the radix  */

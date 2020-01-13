@@ -45,15 +45,11 @@ namespace features {
 
 using std::string;
 using std::stringstream;
-using std::endl;
-using std::pair;
 using std::set;
 using core::Size;
 using core::Real;
 using core::pose::Pose;
-using core::chemical::BondName;
 using core::chemical::AtomIndices;
-using core::chemical::ResidueType;
 using core::chemical::ResidueTypeCOP;
 using utility::sql_database::sessionOP;
 using utility::vector1;

@@ -678,7 +678,7 @@ JSONFormattedLoopsFileReader::parse_json_residue_info(
 			}
 			insert_code = char( tmp_iCode[0] );
 		}
-	} else if ( res_identity.compare( name_from_residue_identifier( cut_point ) )!= 0 ) {
+	} else if ( res_identity != name_from_residue_identifier( cut_point ) ) {
 		utility_exit_with_message( "The \"" + res_identity + "\" residue must be specified.  Please check your input file '" + filename + "'." );
 	}
 

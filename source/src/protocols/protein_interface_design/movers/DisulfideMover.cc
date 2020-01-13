@@ -75,7 +75,6 @@ using namespace std;
 
 using utility::vector1;
 using utility::vector1_int;
-using core::pose::Pose;
 using core::pose::PoseOP;
 using core::conformation::Residue;
 

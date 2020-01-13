@@ -44,7 +44,6 @@ using core::scoring::disulfides::CentroidDisulfidePotential;
 using namespace numeric::interpolation;
 using core::conformation::Residue;
 using std::string;
-using utility::vector1;
 
 #ifdef SERIALIZATION
 // Utility serialization headers

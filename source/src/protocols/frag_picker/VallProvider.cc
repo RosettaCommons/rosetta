@@ -60,7 +60,7 @@ VallChunkOP VallProvider::find_chunk(std::string pdb_id, char chain_id, core::Si
 
 	for ( core::Size i = 1; i <= chunks_.size(); ++i ) {
 		VallChunkOP c = chunks_[i];
-		if ( c->get_pdb_id().compare(pdb_id) != 0 ) {
+		if ( c->get_pdb_id() != pdb_id ) {
 			continue;
 		}
 		if ( c->get_chain_id() != chain_id ) {
@@ -84,7 +84,7 @@ core::pose::PoseOP VallProvider::cache_pose(VallChunkOP source_chunk) {
 
 	std::string key = source_chunk->chunk_key();
 	TR.Debug << "looking for a pose for " << key << std::endl;
-	if ( key.compare(cached_pose_id_) == 0 ) {
+	if ( key == cached_pose_id_ ) {
 		return cached_pose_;
 	}
 
@@ -112,7 +112,7 @@ core::sequence::SequenceProfileOP VallProvider::cache_profile(VallChunkOP source
 
 	std::string key = source_chunk->chunk_key();
 	TR.Debug << "looking for a profile for " << key << std::endl;
-	if ( key.compare(cached_profile_id_) == 0 ) {
+	if ( key == cached_profile_id_ ) {
 		return cached_profile_;
 	}
 	TR.Debug << "caching a sequence profile for >" << key

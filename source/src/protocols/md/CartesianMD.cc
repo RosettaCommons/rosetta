@@ -308,7 +308,7 @@ CartesianMD::cst_on_pose_simple( core::pose::Pose &pose ) const
 			core::Size iatm;
 			if ( pose.residue(i_res).has(" CA " ) ) {
 				iatm = pose.residue( i_res ).atom_index(" CA ");
-			} else if ( resname.compare("TP3") == 0 && pose.residue(i_res).has(" O  ") ) {
+			} else if ( resname == "TP3" && pose.residue(i_res).has(" O  ") ) {
 				iatm = pose.residue( i_res ).atom_index(" O  ");
 			} else {
 				continue;
@@ -369,8 +369,8 @@ CartesianMD::cst_on_pose_dynamic( core::pose::Pose &pose,
 			std::string resname = pose.residue(resno).name();
 			std::string atmname = pose.residue(resno).atom_name(atmno);
 
-			bool is_protein_ca = ( atmname.compare(" CA ") == 0 );
-			bool is_water = ( resname.compare("TP3") == 0 && atmname.compare(" O  ") == 0 );
+			bool is_protein_ca = ( atmname == " CA " );
+			bool is_water = ( resname == "TP3" && atmname == " O  " );
 			if ( !(is_protein_ca || is_water ) ) continue;
 
 			nrsr_dof++;
@@ -490,7 +490,7 @@ void CartesianMD::apply( core::pose::Pose & pose ) {
 
 		for ( Size i_step = 1; i_step <= mdsch().size(); ++i_step ) {
 			std::string const runtype( mdsch(i_step).type );
-			if ( runtype.compare("sch") == 0 ) {
+			if ( runtype == "sch" ) {
 				TR << "Changing schedule, Nstep/Temp:";
 				TR << mdsch(i_step).nstep << " " << mdsch(i_step).temp0 << std::endl;
 				if ( i_step == 1 ) {
@@ -498,7 +498,7 @@ void CartesianMD::apply( core::pose::Pose & pose ) {
 				} else {
 					do_MD( pose, mdsch(i_step).nstep, mdsch(i_step).temp0, false );
 				}
-			} else if ( runtype.compare("repack") == 0 ) {
+			} else if ( runtype == "repack" ) {
 				//
 			}
 
@@ -506,10 +506,10 @@ void CartesianMD::apply( core::pose::Pose & pose ) {
 	}
 
 	/// Selection for returning structure
-	if ( selectmode().compare("final") == 0 ) {
+	if ( selectmode() == "final" ) {
 		// just return final pose
 		TR << "Returning final structure for MD..." << std::endl;
-	} else if ( selectmode().compare("minobj") == 0 ) {
+	} else if ( selectmode() == "minobj" ) {
 		pose = pose_minobj();
 		TR << "Returning minimum objective function structure at ";
 		TR << time_minobj() << " in MD trajectory..." << std::endl;
@@ -769,7 +769,7 @@ void CartesianMD::report_MD( core::pose::Pose &pose,
 	TR << std::endl;
 
 	if ( cummulative_time() > 0.1 && // Truncate initial 1ps to remove minimization memory
-			selectmode().compare("minobj") == 0 && Eobj < Emin_obj() ) {
+			selectmode() == "minobj" && Eobj < Emin_obj() ) {
 		set_pose_minobj( pose );
 		set_Emin_obj( scorefxn_obj()->score( pose ) );
 		set_time_minobj(  cummulative_time() );
@@ -873,7 +873,7 @@ void CartesianMD::parse_opts(
 
 	std::string const scoreobj_name( tag->getOption< std::string >( "scorefxn_obj","" ) );
 
-	if ( scoreobj_name.compare("") == 0 ) {
+	if ( scoreobj_name == "" ) {
 		set_scorefxn_obj( scorefxn() );
 	} else {
 		set_scorefxn_obj( data.get_ptr< ScoreFunction >( "scorefxns", scoreobj_name ) );
@@ -895,7 +895,7 @@ void CartesianMD::parse_opts(
 
 	// Use parsed schedule file - this will overload nstep, temperature, etc. defined above
 	std::string const schfile( tag->getOption< std::string >( "schfile","" ) );
-	if ( schfile.compare("") != 0 ) {
+	if ( schfile != "" ) {
 		parse_schfile( schfile );
 		set_scheduled( true );
 	}

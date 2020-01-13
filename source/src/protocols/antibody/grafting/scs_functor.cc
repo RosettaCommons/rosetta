@@ -38,7 +38,7 @@ namespace grafting {
 
 using std::string;
 
-using utility::CSI_Reset;  using utility::CSI_Bold;  using utility::CSI_Red;
+using utility::CSI_Reset;  using utility::CSI_Red;
 
 
 static basic::Tracer TR("protocols.antibody.grafting");

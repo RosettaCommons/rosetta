@@ -64,8 +64,6 @@
 #include <utility/vector0.hh>
 
 
-using basic::Error;
-using basic::Warning;
 
 
 using namespace core;
@@ -353,7 +351,7 @@ main( int argc, char * argv [] )
 			while ( fh >> line ) {
 				//check for key-word dG_native:
 
-				if ( line.compare("dG_wildtype:") == 0 ) {
+				if ( line == "dG_wildtype:" ) {
 					fh >> result;
 				}
 				if ( !result.empty() ) {
@@ -363,7 +361,7 @@ main( int argc, char * argv [] )
 					dG_native_calculated=true;
 				}
 
-				if ( line.compare("averaged_score_components:") == 0 ) {
+				if ( line == "averaged_score_components:" ) {
 					while ( fh >> averaged_score_components ) {
 						//convert to double and store in wt_averaged_scores array
 						std::istringstream convert_to_double(averaged_score_components);

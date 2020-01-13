@@ -191,7 +191,7 @@ CrosslinkerMover::get_crosslinker_enum(
 	std::string const &name
 ) {
 	for ( core::Size i(2); i < static_cast<core::Size>(end_of_crosslinker_list); ++i ) {
-		if ( !name.compare( get_crosslinker_name( static_cast<CrossLinker>(i) ) ) ) {
+		if ( name == get_crosslinker_name( static_cast<CrossLinker>(i) ) ) {
 			return static_cast<CrossLinker>(i);
 		}
 	}

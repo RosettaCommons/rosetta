@@ -70,17 +70,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-using std::map;
-using std::string;
 using core::Size;
-using core::Real;
-using utility::vector1;
-using utility::file::FileName;
-using ObjexxFCL::format::A;
-using ObjexxFCL::format::F;
-using ObjexxFCL::format::I;
-using ObjexxFCL::string_of;
-using namespace basic;
 using namespace core::sequence;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

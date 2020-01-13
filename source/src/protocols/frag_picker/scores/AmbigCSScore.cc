@@ -86,7 +86,7 @@ void AmbigCSScore::do_caching(VallChunkOP current_chunk) {
 	//Check to see if the cache needs to be recalculated
 	{
 		std::string & tmp = current_chunk->chunk_key();
-		if ( tmp.compare(cached_scores_id_) == 0 ) {
+		if ( tmp == cached_scores_id_ ) {
 			return;
 		}
 		cached_scores_id_ = tmp;
@@ -205,7 +205,7 @@ bool AmbigCSScore::cached_score(FragmentCandidateOP fragment, FragmentScoreMapOP
 
 	{
 		std::string & tmp = fragment->get_chunk()->chunk_key();
-		if ( tmp.compare(cached_scores_id_) != 0 ) {
+		if ( tmp != cached_scores_id_ ) {
 			do_caching(fragment->get_chunk());
 			cached_scores_id_ = tmp;
 		}

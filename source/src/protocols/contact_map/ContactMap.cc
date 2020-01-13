@@ -56,8 +56,6 @@ namespace contact_map {
 using namespace utility::tag;
 using namespace core;
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "protocols.moves.ContactMap" );
 
 

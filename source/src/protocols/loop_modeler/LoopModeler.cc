@@ -92,10 +92,7 @@ using namespace basic::options;
 
 using core::Real;
 using core::Size;
-using core::chemical::CENTROID;
-using core::chemical::FA_STANDARD;
 using core::pose::Pose;
-using core::import_pose::pose_from_file;
 using core::scoring::ScoreFunctionCOP;
 using core::scoring::ScoreFunctionOP;
 using core::pack::task::TaskFactoryOP;
@@ -106,8 +103,6 @@ using protocols::loop_modeling::utilities::PrepareForCentroid;
 using protocols::loop_modeling::utilities::PrepareForCentroidOP;
 using protocols::loop_modeling::utilities::PrepareForFullatom;
 using protocols::loop_modeling::utilities::PrepareForFullatomOP;
-using protocols::loops::Loop;
-using protocols::loops::Loops;
 using protocols::moves::MonteCarloOP;
 using protocols::moves::MoverOP;
 

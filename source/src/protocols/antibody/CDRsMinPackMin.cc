@@ -46,9 +46,6 @@
 #include <ObjexxFCL/string.functions.hh>
 
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer TR( "protocols.antibody.CDRsMinPackMin" );
 using namespace core;
 

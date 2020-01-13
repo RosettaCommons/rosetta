@@ -39,8 +39,6 @@
 
 
 // Forward declarations
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "protocols.metal_interface.MatchGrafter" );
 
 using Pose = core::pose::Pose;

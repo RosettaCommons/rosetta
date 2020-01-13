@@ -47,14 +47,10 @@ namespace features {
 
 using std::string;
 using std::stringstream;
-using std::endl;
-using std::pair;
-using std::set;
 using core::Size;
 using core::Real;
 using core::pose::Pose;
 using utility::sql_database::sessionOP;
-using core::chemical::AtomType;
 using core::chemical::AtomTypeSet;
 using utility::vector1;
 using basic::Tracer;

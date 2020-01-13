@@ -40,7 +40,6 @@
 
 static basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.NeighborhoodByDistanceCalculator" );
 using basic::Error;
-using basic::Warning;
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

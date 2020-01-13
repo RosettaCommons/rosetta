@@ -72,16 +72,16 @@ WorkUnit_Sampler::get_movemap( core::pose::Pose const &pose,
 	using namespace basic::options::OptionKeys;
 
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-	if ( mode.compare("pack") == 0 ) {
+	if ( mode == "pack" ) {
 		mm->set_jump( true ); mm->set_bb( true ); mm->set_chi( true );
 
-	} else if ( mode.compare("full") == 0 ) {
+	} else if ( mode == "full" ) {
 		mm->set_jump( true ); mm->set_bb( true ); mm->set_chi( true );
 		if ( nonideal ) {
 			mm->set( core::id::PHI, true ); mm->set( core::id::THETA, true ); mm->set( core::id::D, true );
 		}
 
-	} else if ( mode.compare("looponly") == 0 ) {
+	} else if ( mode == "looponly" ) {
 		std::string loopstr( option[ lh::loop_string ]() );
 		std::string segstr( option[ lh::seg_string ]() );
 		TR << "Movemap setting on loop/segs: " << loopstr << " / " << segstr << std::endl;
@@ -253,34 +253,34 @@ WorkUnit_Sampler::get_energy( std::string const & sfxn_name,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( sfxn_name.compare("scorefacts_cart") == 0 ) {
+	if ( sfxn_name == "scorefacts_cart" ) {
 		// hacky way for LJ Hbond...
 		option[ corrections::score::lj_hbond_hdis ].value( 2.4 );
 		option[ corrections::score::lj_hbond_OH_donor_dis ].value( 3.2 );
 	}
 
 	core::scoring::ScoreFunctionOP sfxn =
-		( sfxn_name.compare("cen_cart") == 0 )?
+		( sfxn_name == "cen_cart" )?
 		core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" )
-		: ( sfxn_name.compare("cen_loop") == 0 )?
+		: ( sfxn_name == "cen_loop" )?
 		core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" )
-		: ( sfxn_name.compare("talaris2013_cart") == 0 )?
+		: ( sfxn_name == "talaris2013_cart" )?
 		core::scoring::ScoreFunctionFactory::create_score_function( "talaris2013" )
-		: ( sfxn_name.compare("talaris2013_cart_softrep") == 0 )?
+		: ( sfxn_name == "talaris2013_cart_softrep" )?
 		core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep" )
-		: ( sfxn_name.compare("scorefacts_cart") == 0 )?
+		: ( sfxn_name == "scorefacts_cart" )?
 		core::scoring::ScoreFunctionFactory::create_score_function( "scorefacts_cart" )
 		:
 		core::scoring::ScoreFunctionFactory::create_score_function( "talaris2013" );
 
 	// is this important?
-	if ( sfxn_name.compare("cen_loop") == 0 ) {
+	if ( sfxn_name == "cen_loop" ) {
 		sfxn->set_weight( core::scoring::cbeta_smooth, 3.0 );
 		sfxn->set_weight( core::scoring::cen_env_smooth, 3.0 );
 	}
 
-	if ( sfxn_name.compare( "talaris2013_cart" ) == 0 ||
-			sfxn_name.compare( "talaris2013_cart_softrep" ) == 0 ) {
+	if ( sfxn_name == "talaris2013_cart"  ||
+			sfxn_name == "talaris2013_cart_softrep"  ) {
 		sfxn->set_weight( core::scoring::cart_bonded, 0.5 );
 	}
 	sfxn->set_weight( core::scoring::pro_close, 0.0 );

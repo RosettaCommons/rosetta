@@ -63,8 +63,6 @@
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "core.conformation.SymmetryTransform" );
 
 namespace core {

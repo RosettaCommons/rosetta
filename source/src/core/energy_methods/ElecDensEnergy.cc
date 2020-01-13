@@ -53,8 +53,6 @@
 #include <math.h>
 #endif
 
-using basic::Error;
-using basic::Warning;
 // C++
 
 namespace core {

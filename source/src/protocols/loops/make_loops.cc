@@ -37,7 +37,6 @@ using namespace chemical;
 using utility::vector1;
 
 using basic::t_info;
-using basic::t_debug;
 using basic::t_trace;
 static basic::Tracer TR( "protocols.loops.make_loops", t_info );
 

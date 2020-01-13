@@ -32,8 +32,6 @@ namespace resource_manager {
 namespace locator {
 
 using utility::tag::TagCOP;
-using utility::io::izstream;
-using utility::vector1;
 using std::string;
 using std::endl;
 using std::istream;

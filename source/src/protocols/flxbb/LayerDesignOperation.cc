@@ -67,8 +67,6 @@
 #include <string>
 #include <algorithm>
 
-using basic::Error;
-using basic::Warning;
 
 
 #include <utility/vector0.hh>

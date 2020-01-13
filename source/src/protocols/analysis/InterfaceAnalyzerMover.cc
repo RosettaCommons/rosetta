@@ -94,9 +94,6 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer TR( "protocols.analysis.InterfaceAnalyzerMover" );
 static basic::Tracer TRinterface( "protocols.analysis.InterfaceAnalyzerMover.interface_selection" );
 static basic::Tracer TRhbonds( "protocols.analysis.InterfaceAnalyzerMover.missing_hbonds" );

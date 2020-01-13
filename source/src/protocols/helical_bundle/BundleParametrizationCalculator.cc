@@ -536,7 +536,7 @@ BundleParametrizationCalculator::parameter_enum_from_name(
 	std::string const &name
 ) {
 	for ( core::Size i(1); i < static_cast<core::Size>(BPC_end_of_list); ++i ) {
-		if ( !name.compare( parameter_name_from_enum( static_cast<BPC_Parameters>(i) ) ) ) return static_cast<BPC_Parameters>(i);
+		if ( name == parameter_name_from_enum( static_cast<BPC_Parameters>(i) ) ) return static_cast<BPC_Parameters>(i);
 	}
 	return BPC_unknown_parameter;
 }

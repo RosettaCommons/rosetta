@@ -40,7 +40,7 @@ struct DatabaseMode {
 
 TransactionMode::e
 transaction_mode_from_name(
-	std::string transaction_mode);
+	std::string const & transaction_mode);
 
 std::string
 name_from_transaction_mode(
@@ -48,7 +48,7 @@ name_from_transaction_mode(
 
 DatabaseMode::e
 database_mode_from_name(
-	std::string database_mode);
+	std::string const & database_mode);
 
 std::string
 name_from_database_mode(

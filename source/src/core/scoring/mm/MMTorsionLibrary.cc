@@ -48,8 +48,6 @@ namespace core {
 namespace scoring {
 namespace mm {
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "core.mm.MMTorsionLibrary" );
 
 MMTorsionLibrary::~MMTorsionLibrary() = default;

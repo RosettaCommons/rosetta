@@ -24,7 +24,6 @@
 
 
 using std::string;
-using std::endl;
 using core::Size;
 using core::Real;
 using core::conformation::Residue;

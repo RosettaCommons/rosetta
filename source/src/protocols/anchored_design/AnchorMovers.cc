@@ -105,7 +105,6 @@
 #endif
 
 
-using basic::Error;
 using basic::Warning;
 
 static basic::Tracer T_design( "protocols.AnchoredDesign.AnchoredDesignMover" );

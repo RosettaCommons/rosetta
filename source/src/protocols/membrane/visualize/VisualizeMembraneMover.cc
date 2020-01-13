@@ -106,7 +106,7 @@ VisualizeMembraneMover::operator=( VisualizeMembraneMover const & src ) {
 	}
 
 	// Otherwise, create a new object
-	return *( new VisualizeMembraneMover( *this ) );
+	return *( new VisualizeMembraneMover( *this ) ); // ?????
 
 }
 

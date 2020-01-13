@@ -51,18 +51,14 @@ using namespace std;
 
 using core::Real;
 using core::Size;
-using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
-using protocols::loops::Loop;
-using protocols::loops::Loops;
 using protocols::moves::MoverOP;
 using protocols::moves::MonteCarloOP;
 using protocols::loop_modeling::utilities::LoopMoverGroup;
 using protocols::loop_modeling::utilities::LoopMoverGroupOP;
 using protocols::loop_modeling::utilities::TrajectoryLogger;
 using protocols::loop_modeling::utilities::TrajectoryLoggerOP;
-using utility::tools::make_vector1;
 
 using utility::tag::TagCOP;
 using basic::datacache::DataMap;

@@ -40,7 +40,6 @@ static basic::Tracer tr( "protocols.environment.ClientMover", basic::t_info );
 namespace protocols {
 namespace environment {
 
-using core::environment::DofPassport;
 using core::environment::DofPassportCOP;
 
 core::Real const TOLERANCE = 1e-6;

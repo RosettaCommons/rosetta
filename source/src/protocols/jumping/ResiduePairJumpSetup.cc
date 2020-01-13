@@ -216,7 +216,7 @@ ResiduePairJumpSetup::create_jump_sample() const
 		if ( cre > total_residue ) total_residue = cre;
 		if ( it->jump_.end_ > total_residue ) total_residue = it->jump_.end_;
 		if ( it->jump_.start_ > total_residue ) total_residue = it->jump_.start_;
-		cuts( ct ) = crs+int( numeric::random::uniform()*( cre-crs ) + 0.5 );
+		cuts( ct ) = crs + std::lround( numeric::random::uniform()*( cre-crs ) );
 		jump_atoms(1, ct) = ResiduePairJumps_[ct]->jumpAtoms(1)[1];
 		jump_atoms(2, ct) = ResiduePairJumps_[ct]->jumpAtoms(2)[1];
 	}

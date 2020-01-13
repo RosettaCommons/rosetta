@@ -92,9 +92,6 @@
 #include <string>
 #include <cmath>
 
-using basic::Error;
-using basic::Warning;
-
 using namespace core;
 using namespace core::pose;
 using namespace core::conformation;
@@ -274,7 +271,7 @@ MPDomainAssembly::operator=( MPDomainAssembly const & src )
 	}
 
 	// Otherwise, create a new object
-	return *( new MPDomainAssembly( *this ) );
+	return *( new MPDomainAssembly( *this ) ); // ???????????????
 }
 
 /// @brief Destructor

@@ -39,10 +39,6 @@ static basic::Tracer TR( "protocols.sic_dock.scores.MotifHashRigidScore" );
 
 using core::Size;
 using core::Real;
-using numeric::min;
-using core::id::AtomID;
-using std::cout;
-using std::endl;
 using utility::vector1;
 using basic::options::option;
 using namespace basic::options::OptionKeys;

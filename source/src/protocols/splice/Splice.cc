@@ -1975,7 +1975,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 						splice_segments_.insert( std::pair< std::string, SpliceSegmentOP >( segment_name, data.get_ptr<SpliceSegment>("segments", segment_name)  ));
 						TR << "using segment "<<segment_name<<" from datamap" << std::endl;
 						segment_names_ordered_.push_back(segment_name);
-						if ( segment_name.compare(segment_type_) == 0 ) {
+						if ( segment_name == segment_type_ ) {
 							check_segment=true;
 						}
 						continue;
@@ -1994,7 +1994,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 
 					splice_segment->read_pdb_profile( pdb_profile_match );
 					//TR<<"the segment name is: "<<segment_name<<std::endl;
-					if ( segment_name.compare(segment_type_) == 0 ) { //make sure that the current segment being spliced exists in the pssm segments
+					if ( segment_name == segment_type_ ) { //make sure that the current segment being spliced exists in the pssm segments
 						check_segment=true;
 					}
 					splice_segments_.insert( std::pair< std::string, SpliceSegmentOP >( segment_name, splice_segment ) );
@@ -2795,7 +2795,7 @@ core::sequence::SequenceProfileOP Splice::generate_sequence_profile(core::pose::
 	///that the PSSM score of the falnking segments of the current designed segment agree with the identity of the aa (i.e if
 	/// we are designing L1 then we would expect that segments Frm.light1 and Frm.light2 have concensus aa identities)
 
-	if ( (ccd_) && (protein_family_.compare("antibodies") == 0) ) { //if CCD is true and we doing this on antibodies then we're splicing out a segment, so it's important to ensure that the disulfides are in place. In rare cases where there are highly conserved cysteines in other parts of the protein this might lead to exit, but these cases are < 1/1000
+	if ( (ccd_) && protein_family_ == "antibodies" ) { //if CCD is true and we doing this on antibodies then we're splicing out a segment, so it's important to ensure that the disulfides are in place. In rare cases where there are highly conserved cysteines in other parts of the protein this might lead to exit, but these cases are < 1/1000
 		core::Size aapos = 0;
 		//TR<<"TESTING PSSMs"<<std::endl;
 		for ( core::Size seg = 1; seg <= profile_vector.size(); seg++ ) { //go over all the PSSM sements provided by the user
@@ -2808,7 +2808,7 @@ core::sequence::SequenceProfileOP Splice::generate_sequence_profile(core::pose::
 					ss << pose.residue(aapos).name1();
 					ss >> s;
 					//TR<<"found a dis cys="<<s<<std::endl;
-					if ( s.compare("C") != 0 ) {
+					if ( s != "C" ) {
 						std::string seqpos;
 						std::ostringstream convert;
 						convert << aapos; // insert the textual representation of 'Number' in the characters in the stream
@@ -3006,7 +3006,7 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 					if ( source_pose.residue(i + res_diff).atom_is_hydrogen(atmnum) ) { //Don't want to add constraints to H atoms
 						continue;
 					}
-					if ( pose.residue(i).atom_name(atmnum).compare("CB") == 0 ) { //Already added CB constratins
+					if ( pose.residue(i).atom_name(atmnum) == "CB" ) { //Already added CB constratins
 						TR<<"FOUND CB ATOM IN :"<<pose.residue(i).atom_name(atmnum)<<std::endl;
 						continue;
 					}
@@ -3327,7 +3327,7 @@ void Splice::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		.add_attributes( torsion_db_subsubtag_attlist )
 		.add_optional_name_attribute()
 		.write_complex_type_to_schema( xsd );
-	XMLSchemaAttribute( "torsion_db_file", xs_string, "XRW TO DO" );
+	//XMLSchemaAttribute( "torsion_db_file", xs_string, "XRW TO DO" ); // ??? This currently does nothing. It should be added to someone's AttributeList
 
 	XMLSchemaSimpleSubelementList db_subsubelements;
 	subsubelements.add_already_defined_subelement( "torsion_db", complex_type_name_for_subsubtag/*, 0*/ );

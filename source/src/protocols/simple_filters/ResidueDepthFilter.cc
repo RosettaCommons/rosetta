@@ -186,7 +186,7 @@ ResidueDepthCalculator::get_pose_crd_and_index( core::pose::Pose const &pose,
 				res_id.push_back( ires );
 				// coarse
 				//TR << "protein: icrd/ires/iatm " << protein_crd.size() << " " << ires << " " << iatm << " " << pose.residue(ires).xyz(iatm)[0] << std::endl;
-				if ( pose.residue(ires).atom_name(iatm).compare(" CA ") == 0 ) {
+				if ( pose.residue(ires).atom_name(iatm) == " CA " ) {
 					coarse_index.push_back( icrd );
 				}
 			}
@@ -209,7 +209,7 @@ ResidueDepthCalculator::get_pose_crd_and_index( core::pose::Pose const &pose,
 					protein_crd.push_back( pose.residue(ires).xyz(iatm) );
 					res_id.push_back( ires );
 					//TR << "protein: icrd/ires/iatm " << protein_crd.size() << " " << ires << " " << iatm << " " << pose.residue(ires).xyz(iatm)[0] << std::endl;
-					//if( pose.residue(ires).atom_name(iatm).compare(" CB ") == 0 )
+					//if( pose.residue(ires).atom_name(iatm) == " CB " )
 				}
 				//coarse
 				coarse_index.push_back( pose.residue(ires).nbr_atom() );
@@ -1001,7 +1001,7 @@ ResidueDepthFilter::get_residue_similarity( conformation::Residue const &rsd,
 		//TR << "ipdb,ires: " << ipdb << " " << ires << std::endl;
 
 		core::Real rms( 0.0 );
-		if ( similarity_mode_.compare( "superimpose") == 0 ) {
+		if ( similarity_mode_ == "superimpose" ) {
 
 			// from db
 			utility::vector1< ResidueDepthDataCOP > context_rdd_ref = make_context_ref( ipdb, ires );
@@ -1018,7 +1018,7 @@ ResidueDepthFilter::get_residue_similarity( conformation::Residue const &rsd,
 				TR << i << ": equal num." << context_rdd.size() << ", rms = " << rms << std::endl;
 			}
 
-		} else if ( similarity_mode_.compare( "simple" ) == 0 ) {
+		} else if ( similarity_mode_ == "simple" ) {
 			// TODO
 		}
 
@@ -1070,7 +1070,7 @@ ResidueDepthFilter::get_simscore( core::chemical::AA const aa1,
 	core::chemical::AA const aa2 ) const
 {
 	// this shouldn't happen, but to be safe anyway...
-	if ( aa1 > core::chemical::num_canonical_aas || aa1 > core::chemical::num_canonical_aas ) {
+	if ( aa1 > core::chemical::num_canonical_aas || aa2 > core::chemical::num_canonical_aas ) {
 		return 0.0;
 	} else {
 		return GUIP_matrix_[aa1][aa2];

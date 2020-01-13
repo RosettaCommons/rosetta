@@ -61,9 +61,6 @@ using numeric::min;
 using numeric::max;
 using numeric::constants::d::pi;
 using numeric::conversions::degrees;
-using utility::io::ozstream;
-using ObjexxFCL::format::I;
-using ObjexxFCL::format::F;
 
 using Reals = utility::vector1<core::Real>;
 using Sizes = utility::vector1<core::Size>;

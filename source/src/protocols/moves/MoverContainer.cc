@@ -50,8 +50,6 @@ namespace moves {
 
 
 using namespace core;
-using basic::Error;
-using basic::Warning;
 
 /// @details Invoke clone() on each of the movers that are contained by this MoverContainer
 /// to create deep copies.

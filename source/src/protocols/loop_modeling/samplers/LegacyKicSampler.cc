@@ -33,7 +33,6 @@ namespace loop_modeling {
 namespace samplers {
 
 using core::Size;
-using core::pose::Pose;
 using protocols::loops::loop_closure::kinematic_closure::KinematicMover;
 using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber;
 using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP;

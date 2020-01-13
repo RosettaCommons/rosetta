@@ -45,8 +45,6 @@
 #include <sstream> //ostringstream
 //#include <string>
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR("protocols.chemically_conjugated_docking.Gp_quantification_metrics");
 
 namespace protocols {

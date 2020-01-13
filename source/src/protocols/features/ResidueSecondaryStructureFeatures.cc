@@ -50,7 +50,6 @@ namespace features {
 using std::string;
 using core::scoring::dssp::Dssp;
 using core::Size;
-using core::conformation::Residue;
 using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
 using utility::vector1;

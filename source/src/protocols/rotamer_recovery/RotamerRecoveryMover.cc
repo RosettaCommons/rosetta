@@ -81,12 +81,10 @@ namespace rotamer_recovery {
 
 //using std::ios::app;
 using std::endl;
-using std::max;
 using std::ostream;
 using std::string;
 using core::Real;
 using core::Size;
-using core::pack::pack_rotamers;
 using core::pose::PoseOP;
 using core::pack::task::PackerTaskOP;
 using core::pack::task::TaskFactory;
@@ -94,10 +92,8 @@ using core::pack::task::TaskFactoryOP;
 using core::pack::task::operation::InitializeFromCommandline;
 using core::pack::task::operation::RestrictToRepacking;
 using core::scoring::get_score_function;
-using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
 using basic::Tracer;
-using utility::vector1;
 using protocols::moves::MoverOP;
 using protocols::rotamer_recovery::RRProtocolOP;
 using protocols::rotamer_recovery::RRProtocolMover;

@@ -266,7 +266,6 @@ void VIP_Mover::try_point_mutants(){
 
 
 void VIP_Mover::print_pack_report(){
-	VIP_Report();
 	VIP_Report vip_report;
 
 	vip_report.get_GOE_repack_report( initial_pose, favorable_energies, favorable_residues, favorable_positions, iteration_,  false, energy_to_beat );
@@ -305,7 +304,6 @@ void VIP_Mover::sort_fill_energies(){
 
 
 void VIP_Mover::print_relax_report(){
-	VIP_Report();
 	VIP_Report vip_report;
 
 	vip_report.get_GOE_relaxed_report( initial_pose, favorable_energies, favorable_residues, favorable_positions, iteration_, use_stored_best_energy, energy_to_beat );

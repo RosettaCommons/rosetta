@@ -87,7 +87,7 @@ UniformRotationMover::operator=( UniformRotationMover const & src )
 	}
 
 	// Otherwise, create a new object
-	return *( new UniformRotationMover( *this ) );
+	return *( new UniformRotationMover( *this ) );// ????
 
 }
 

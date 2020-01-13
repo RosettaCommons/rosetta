@@ -45,8 +45,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::Error;
-using basic::Warning;
 
 //static numeric::random::RandomGenerator RG(741701);  // <- Magic number, do not change it!
 

@@ -55,8 +55,6 @@
 #include <numeric/random/random.hh>
 #include <numeric/constants.hh>
 //tracers
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR("apps.pilot.guffysl.generate_starting_zinc_sites");
 
 //This app will not be in MPI--it should be fast and simple enough to run without it. Will change if this proves not to be true.

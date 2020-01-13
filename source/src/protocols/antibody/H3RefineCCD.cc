@@ -58,9 +58,6 @@
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
 
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer TR( "protocols.antibody.H3RefineCCD" );
 
 using namespace core;

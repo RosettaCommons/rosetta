@@ -617,22 +617,22 @@ init_shapovalov_lib_fixes_enable_correction( utility::options::OptionCollection 
 		if ( options[corrections::shapovalov_lib::shap_dun10_enable] ) {
 			if ( ! options[ corrections::shapovalov_lib::shap_dun10_dir ].user() ) {
 				std::string _smoothingRequsted = options[ corrections::shapovalov_lib::shap_dun10_smooth_level ];
-				if ( _smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("lowest_smooth")==0 ) {
+				if ( _smoothingRequsted=="1" || _smoothingRequsted=="lowest_smooth" ) {
 					options[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_0-0-0");
 					options[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("1");
-				} else if ( _smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("lower_smooth")==0 ) {
+				} else if ( _smoothingRequsted=="2" || _smoothingRequsted=="lower_smooth" ) {
 					options[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_2-2-2");
 					options[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("2");
-				} else if ( _smoothingRequsted.compare("3")==0 || _smoothingRequsted.compare("low_smooth")==0 ) {
+				} else if ( _smoothingRequsted=="3" || _smoothingRequsted=="low_smooth" ) {
 					options[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_5-5-5");
 					options[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("3");
-				} else if ( _smoothingRequsted.compare("4")==0 || _smoothingRequsted.compare("average_smooth")==0 ) {
+				} else if ( _smoothingRequsted=="4" || _smoothingRequsted=="average_smooth" ) {
 					options[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_10-10-10");
 					options[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("4");
-				} else if ( _smoothingRequsted.compare("5")==0 || _smoothingRequsted.compare("higher_smooth")==0 ) {
+				} else if ( _smoothingRequsted=="5" || _smoothingRequsted=="higher_smooth" ) {
 					options[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_20-20-20");
 					options[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("5");
-				} else if ( _smoothingRequsted.compare("6")==0 || _smoothingRequsted.compare("highest_smooth")==0 ) {
+				} else if ( _smoothingRequsted=="6" || _smoothingRequsted=="highest_smooth" ) {
 					options[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_25-25-25");
 					options[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("6");
 				} else {
@@ -648,16 +648,16 @@ init_shapovalov_lib_fixes_enable_correction( utility::options::OptionCollection 
 		if ( options[corrections::shapovalov_lib::shap_rama_enable] ) {
 			if ( ! options[ corrections::shapovalov_lib::shap_rama_map ].user() ) {
 				std::string _smoothingRequsted = options[ corrections::shapovalov_lib::shap_rama_smooth_level ];
-				if ( _smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("lowest_smooth")==0 ) {
+				if ( _smoothingRequsted=="1" || _smoothingRequsted=="lowest_smooth" ) {
 					options[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa75/all.ramaProb");
 					options[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("1");
-				} else if ( _smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("lower_smooth")==0 ) {
+				} else if ( _smoothingRequsted=="2" || _smoothingRequsted=="lower_smooth" ) {
 					options[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa50/all.ramaProb");
 					options[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("2");
-				} else if ( _smoothingRequsted.compare("3")==0 || _smoothingRequsted.compare("higher_smooth")==0 ) {
+				} else if ( _smoothingRequsted=="3" || _smoothingRequsted=="higher_smooth" ) {
 					options[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa37.5/all.ramaProb");
 					options[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("3");
-				} else if ( _smoothingRequsted.compare("4")==0 || _smoothingRequsted.compare("highest_smooth")==0 ) {
+				} else if ( _smoothingRequsted=="4" || _smoothingRequsted=="highest_smooth" ) {
 					options[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb");
 					options[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("4");
 				} else {
@@ -673,10 +673,10 @@ init_shapovalov_lib_fixes_enable_correction( utility::options::OptionCollection 
 		if ( options[corrections::shapovalov_lib::shap_p_aa_pp_enable] ) {
 			if ( ! options[ corrections::shapovalov_lib::shap_p_aa_pp ].user() ) {
 				std::string _smoothingRequsted = options[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ];
-				if ( _smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("low_smooth")==0 ) {
+				if ( _smoothingRequsted=="1" || _smoothingRequsted=="low_smooth" ) {
 					options[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop");
 					options[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("1");
-				} else if ( _smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("high_smooth")==0 ) {
+				} else if ( _smoothingRequsted=="2" || _smoothingRequsted=="high_smooth" ) {
 					options[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa50/a20.prop");
 					options[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("2");
 				} else {

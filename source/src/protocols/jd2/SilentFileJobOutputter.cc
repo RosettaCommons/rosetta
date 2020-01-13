@@ -108,7 +108,7 @@ void SilentFileJobOutputter::set_defaults() {
 	using namespace basic::options::OptionKeys;
 	forced_silent_struct_type_ = "any";
 	silent_file_ = option[ out::file::silent ]();
-	if ( silent_file_().compare("") == 0 ) {
+	if ( silent_file_() == "" ) {
 		utility_exit_with_message("Please supply a file name with the -out:file:silent flag. If you specify a path the -out:path:all flag, the -out:file:silent file name will be relative to it.");
 	}
 

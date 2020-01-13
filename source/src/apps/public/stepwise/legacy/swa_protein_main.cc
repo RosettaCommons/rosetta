@@ -125,9 +125,6 @@ static basic::Tracer TR( "swa_protein_main" );
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 
-using basic::Error;
-using basic::Warning;
-
 using namespace core;
 using namespace protocols;
 using namespace basic::options::OptionKeys;

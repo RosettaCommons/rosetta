@@ -50,7 +50,7 @@ public:
 	inline core::Real get_fraction(std::string pool_name) {
 
 		for ( core::Size i=1; i<=pool_names_.size(); ++i ) {
-			if ( pool_names_[i].compare(pool_name) == 0 ) {
+			if ( pool_names_[i] == pool_name ) {
 				return pool_weights_[i];
 			}
 		}
@@ -62,7 +62,7 @@ public:
 	bool is_valid_quota_pool_name(std::string & pool_name) {
 
 		for ( core::Size i=1; i<=pool_names_.size(); ++i ) {
-			if ( pool_names_[i].compare(pool_name) == 0 ) {
+			if ( pool_names_[i] == pool_name ) {
 				return true;
 			}
 		}

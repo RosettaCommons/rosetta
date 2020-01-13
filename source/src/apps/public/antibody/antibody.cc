@@ -173,7 +173,7 @@ int antibody_main()
 	// iterate over vector looking for bz2's and unzip
 	for (auto & file_name : file_names) {
 		// check for bz2 and not already unzipped
-		if ( file::file_extension( file_name ).compare( "bz2" ) == 0 and ! file::file_exists( full_ab_db_path + file::file_basename( file_name ) ) ) {
+		if ( file::file_extension( file_name ) == "bz2" && ! file::file_exists( full_ab_db_path + file::file_basename( file_name ) ) ) {
 				// bzipped files, unzip
 				basic::execute("Unzipping " + file_name ,"cd " + full_ab_db_path + " && bunzip2 -k " + file_name);
 		}

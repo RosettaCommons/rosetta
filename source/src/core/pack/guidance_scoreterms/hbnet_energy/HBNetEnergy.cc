@@ -276,7 +276,7 @@ HBNetEnergy::hbnet_energy_ramping_enum_from_string(
 	std::string const &ramping_string
 ) const {
 	for ( core::Size i(1); i<static_cast<core::Size>( HBNetEnergyRamp_end_of_list ); ++i ) {
-		if ( !ramping_string.compare( hbnet_energy_ramping_string_from_enum( static_cast< HBNetEnergyRamping >(i) ) ) ) {
+		if ( ramping_string == hbnet_energy_ramping_string_from_enum( static_cast< HBNetEnergyRamping >(i) ) ) {
 			return static_cast< HBNetEnergyRamping >(i);
 		}
 	}

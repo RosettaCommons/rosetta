@@ -20,7 +20,6 @@ namespace protocols {
 namespace simple_moves {
 namespace bb_sampler {
 
-using core::pose::Pose;
 using core::Size;
 using core::Real;
 

@@ -71,7 +71,7 @@ AddMembraneSpanTermZConstraint & AddMembraneSpanTermZConstraint::operator = ( Ad
 	}
 
 	// Otherwise, create a new object
-	return *( new AddMembraneSpanTermZConstraint( *this ) );
+	return *( new AddMembraneSpanTermZConstraint( *this ) ); // ?????????
 }
 
 /// @brief Destructor

@@ -63,10 +63,8 @@ static basic::Tracer TR( "protocols.features.ProteinSilentReport" );
 
 using utility::sql_database::sessionOP;
 using utility::vector1;
-using cppdb::statement;
 using core::Size;
 using core::pose::Pose;
-using core::pose::tag_into_pose;
 using core::pose::tag_from_pose;
 
 ProteinSilentReport::ProteinSilentReport() :

@@ -34,7 +34,6 @@
 
 using namespace core;
 using core::Real;
-using ObjexxFCL::format::F;
 using core::chemical::rna::BaseStackWhichSide;
 
 static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.RNA_BaseCentroidChecker" );

@@ -59,9 +59,6 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 using utility::vector1;
-using utility::file::FileName;
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "apps.pilot.yiliu.DC" );
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -191,13 +191,13 @@ void
 BuriedSurfaceAreaFilter::set_atom_mode(
 	std::string const &setting
 ) {
-	if ( !setting.compare( "all_atoms" ) ) {
+	if ( setting == "all_atoms" ) {
 		set_atom_mode( BSAF_all_atoms );
 		return;
-	} else if ( !setting.compare( "hydrophobic_atoms" ) ) {
+	} else if ( setting == "hydrophobic_atoms" ) {
 		set_atom_mode( BSAF_hydrophobic_atoms );
 		return;
-	} else if ( !setting.compare( "polar_atoms" ) ) {
+	} else if ( setting == "polar_atoms" ) {
 		set_atom_mode( BSAF_polar_atoms );
 		return;
 	}

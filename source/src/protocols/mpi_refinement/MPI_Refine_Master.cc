@@ -301,7 +301,7 @@ MPI_Refine_Master::process_round(){
 	TR.Debug << " " << n_rerelaxed;
 	TR.Debug << ", current roundtype: " << roundtype << std::endl;
 
-	if ( roundtype.compare("wait") == 0 ) {
+	if ( roundtype == "wait" ) {
 		if ( n_to_gen > n_rerelaxed ) {
 			return true;  //Wait if schedule is on "wait"
 		} else {
@@ -311,17 +311,17 @@ MPI_Refine_Master::process_round(){
 	}
 
 
-	if ( roundtype.compare("search") == 0 ) {
+	if ( roundtype == "search" ) {
 		//scheduler_.clear();
 		//scheduler_.prepare_search_stage( master_rank() );
 
-	} else if ( roundtype.compare("wait") == 0 ) {
+	} else if ( roundtype == "wait" ) {
 		// nothing...
 
-	} else if ( roundtype.compare("nextstage") == 0 ) {
+	} else if ( roundtype == "nextstage" ) {
 		sch_stage_ ++;
 
-	} else if ( roundtype.compare("enrich") == 0 ) {
+	} else if ( roundtype == "enrich" ) {
 		TR << "New round: " << roundtype << std::endl;
 		// Make sure goap scoring is done!
 		if ( !fobj_->has_score( "goap" ) ) {
@@ -329,8 +329,8 @@ MPI_Refine_Master::process_round(){
 		}
 		scheduler_.prepare_enrich_stage( library_central(), "goap" );
 
-	} else if ( roundtype.compare("average") == 0 ||
-			roundtype.compare("calcdev") == 0 ) {
+	} else if ( roundtype == "average" ||
+			roundtype == "calcdev" ) {
 		TR << "New round: " << roundtype << std::endl;
 
 		if ( scheduler_.methods_picked().size() == 0 ) {
@@ -338,10 +338,10 @@ MPI_Refine_Master::process_round(){
 		}
 
 		pose::Pose avrg_pose;
-		if ( roundtype.compare("average") == 0 ) {
+		if ( roundtype == "average" ) {
 			avrg_pose = get_average_structure( library_central(), scheduler_.methods_picked(),
 				"samplemethod", true, false );
-		} else if ( roundtype.compare("calcdev") == 0 ) {
+		} else if ( roundtype == "calcdev" ) {
 			avrg_pose = get_average_structure( library_central(), scheduler_.methods_picked(),
 				"samplemethod", true, true );
 		}
@@ -371,7 +371,7 @@ MPI_Refine_Master::process_round(){
 
 		return true; // Important: to make it go back! (nothing to do after avrg)
 
-	} else if ( roundtype.compare( "cluster" ) == 0 ) {
+	} else if ( roundtype == "cluster"  ) {
 		core::Size const ncluster = option[ lh::max_emperor_lib_size ]();
 
 		protocols::wum::SilentStructStore clustered;
@@ -394,7 +394,7 @@ MPI_Refine_Master::process_round(){
 
 		return true; // Important: to make it go back!
 
-	} else if ( roundtype.compare("nextgen") == 0 ) {
+	} else if ( roundtype == "nextgen" ) {
 		//TR << "=========================================================" << std::endl;
 		TR << "EmperorLib selection invoked from Master " << mpi_rank() << "!" << std::endl;
 
@@ -415,12 +415,12 @@ MPI_Refine_Master::process_round(){
 		// and also, is this iterating after receving the new ref structure?
 		scheduler_.proceed();
 
-	} else if ( roundtype.compare("stage") == 0 ) {
+	} else if ( roundtype == "stage" ) {
 		scheduler_.clear();
 		/*
 
 		} else // Termination WU: is there better logic somewhere globally?
-		if( roundtype.compare("done") == 0 ){
+		if( roundtype == "done" ){
 		if( !sent_termination_ ){
 		TR << "New round: " << roundtype << std::endl;
 		TR << "send termination signal to emperor." << std::endl;
@@ -621,7 +621,7 @@ MPI_Refine_Master::process_outbound_wus(){
 	MethodParams params = scheduler_.get_params();
 
 	// Termination control 2. (2nd priority): Asking emperor to terminate whole proc.
-	if ( params.roundtype.compare("done") == 0 && !sent_termination_ ) {
+	if ( params.roundtype == "done" && !sent_termination_ ) {
 		TR << "Send termination signal to emperor." << std::endl;
 		WorkUnit_SilentStructStoreOP terminate_wu( new WorkUnit_SilentStructStore() );
 		terminate_wu->set_wu_type( "terminate" );
@@ -645,11 +645,11 @@ MPI_Refine_Master::process_outbound_wus(){
 		// pick a random structure from the library
 		TR.Debug << "Master process_outbound, for " << library_ref().size() << " central structures..." << std::endl;
 
-		if ( params.nrun > 0 && params.roundtype.compare("wait") != 0 ) {
+		if ( params.nrun > 0 && params.roundtype != "wait" ) {
 			TR << "Create WUs for iteration " << scheduler_.iter() << "." << std::endl;
 		}
 
-		while ( params.nrun > 0 && params.roundtype.compare("wait") != 0 ) {
+		while ( params.nrun > 0 && params.roundtype != "wait" ) {
 
 			TR.Debug << "outbound, for roundtype: " << params.name << " and reflib size " << library_ref().size() << std::endl;
 			// iterate over whole ref structures given...
@@ -732,7 +732,7 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 	}
 
 	// 1. LoopHash - TODO: Can we make this simpler, by removing "scanning"?
-	if ( movername.compare("loophash") == 0 ) {
+	if ( movername == "loophash" ) {
 
 		std::string lhtype
 			= (params.relax_type == 1)? "global_loophasher" : "local_loophasher";
@@ -764,7 +764,7 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 		TR << "Added " << count_wus << " " << lhtype << " WUs to queue. ssid=" << ssid << std::endl;
 
 		// Combine - special treat to add extra parent struct
-	} else if ( movername.compare("combine") == 0 ) {
+	} else if ( movername == "combine" ) {
 		if ( library_ref().size() < 2 ) {
 			TR << "Not enough structures. skip " << pname << std::endl;
 			// just returning will make master stop forever;
@@ -821,39 +821,39 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 			std::string wuname( movername );
 			core::Size nmtype( 0 );
 
-			if ( movername.compare("relax") == 0 ) {
+			if ( movername == "relax" ) {
 				TR << "sending name/score: " << params.name << " " << params.score_type << std::endl;
 				new_wu = utility::pointer::make_shared< WorkUnit_Relax >( params.relax_type, params.score_type, params.nperrun, params.cstw );
 
-			} else if ( movername.compare("cartnmcen") == 0 || movername.compare( "torsnmcen" ) == 0 ||
-					movername.compare("cartnm") == 0    || movername.compare( "torsnm" ) == 0 ) { //NM
+			} else if ( movername == "cartnmcen" || movername == "torsnmcen"  ||
+					movername == "cartnm" || movername == "torsnm"  ) { //NM
 
-				if       ( movername.compare("cartnmcen") == 0 ) {
+				if       ( movername == "cartnmcen" ) {
 					wuname = "nmcen"; nmtype = 1;
-				} else if ( movername.compare("torsnmcen") == 0 ) {
+				} else if ( movername == "torsnmcen" ) {
 					wuname = "nmcen"; nmtype = 2;
-				} else if ( movername.compare("cartnm") == 0 ) {
+				} else if ( movername == "cartnm" ) {
 					wuname = "nm"; nmtype = 3;
-				} else if ( movername.compare("torsnm") == 0 ) {
+				} else if ( movername == "torsnm" ) {
 					wuname = "nm"; nmtype = 4;
 				}
 				// params.cstw is pert scale
 				new_wu = utility::pointer::make_shared< WorkUnit_NormalMode >( params.nperrun, nmtype, params.relax_type, params.cstw );
 
-			} else if ( movername.compare("md") == 0 || movername.compare("mdloop") == 0 ) {
+			} else if ( movername == "md" || movername == "mdloop" ) {
 
 				wuname = "md";
 				bool looponly( false );
-				if ( movername.compare( "mdloop" ) == 0 ) looponly = true;
+				if ( movername == "mdloop"  ) looponly = true;
 
 				new_wu = utility::pointer::make_shared< WorkUnit_MD >( params.relax_type, params.score_type, params.nperrun, params.cstw , looponly );
 
-			} else if ( movername.compare("bbgauss") == 0 ) {
+			} else if ( movername == "bbgauss" ) {
 				new_wu = utility::pointer::make_shared< WorkUnit_bbGauss >( params.nperrun, 0.32 );
 
-			} else if ( movername.compare("fraginsertcen") == 0 || movername.compare("fraginsert") == 0
-					|| movername.compare("kiccloser") == 0 || movername.compare("cartcloser") == 0
-					|| movername.compare("partialabinitio") == 0 || movername.compare("partialrefine") == 0 ) {
+			} else if ( movername == "fraginsertcen" || movername == "fraginsert"
+					|| movername == "kiccloser" || movername == "cartcloser"
+					|| movername == "partialabinitio" || movername == "partialrefine" ) {
 				// bring loop info
 				core::Size res1, res2;
 				bool is_terminus;
@@ -862,7 +862,7 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 				// Speical logic for terminus:
 				// randomly select between ramapert & fraginsert
 				std::string movername_loc( movername );
-				if ( ( movername.compare("kiccloser") == 0 || movername.compare("cartcloser") == 0 ) && is_terminus ) {
+				if ( ( movername == "kiccloser" || movername == "cartcloser" ) && is_terminus ) {
 					if ( numeric::random::rg().uniform() < prob_terminus_ramapert_ ) {
 						movername_loc = "ramapert";
 					} else {
@@ -872,25 +872,25 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 				}
 
 				// loop info should be included either in silent or by loopfile
-				if ( movername_loc.compare("fraginsert") == 0 ) {
+				if ( movername_loc == "fraginsert" ) {
 					wuname = "fraginsert";
 					new_wu = utility::pointer::make_shared< WorkUnit_FragInsert >( params.nperrun, params.score_type, res1, res2, true );
-				} else if ( movername_loc.compare("fraginsertcen") == 0 ) {
+				} else if ( movername_loc == "fraginsertcen" ) {
 					wuname = "fraginsert";
 					new_wu = utility::pointer::make_shared< WorkUnit_FragInsert >( 25, params.score_type, res1, res2, false );
-				} else if ( movername_loc.compare("kiccloser") == 0 ) {
+				} else if ( movername_loc == "kiccloser" ) {
 					wuname = "kiccloser";
 					new_wu = utility::pointer::make_shared< WorkUnit_KicCloser >( params.nperrun, params.score_type, res1, res2, true );
-				} else if ( movername_loc.compare("cartcloser") == 0 ) {
+				} else if ( movername_loc == "cartcloser" ) {
 					wuname = "kiccloser";
 					new_wu = utility::pointer::make_shared< WorkUnit_KicCloser >( params.nperrun, params.score_type, res1, res2, false );
-				} else if ( movername_loc.compare("ramapert") == 0 ) {
+				} else if ( movername_loc == "ramapert" ) {
 					wuname = "ramapert";
 					new_wu = utility::pointer::make_shared< WorkUnit_RamaPerturber >( params.nperrun, res1, res2, 4.0 );
-				} else if ( movername_loc.compare("partialabinitio") == 0 ) {
+				} else if ( movername_loc == "partialabinitio" ) {
 					wuname = "partialabinitio";
 					new_wu = utility::pointer::make_shared< WorkUnit_PartialAbinitio >( params.nperrun, true );
-				} else if ( movername_loc.compare("partialrefine") == 0 ) {
+				} else if ( movername_loc == "partialrefine" ) {
 					wuname = "partialabinitio";
 					new_wu = utility::pointer::make_shared< WorkUnit_PartialAbinitio >( params.nperrun, false );
 				}
@@ -1011,9 +1011,9 @@ MPI_Refine_Master::feedback_structures_to_emperor( bool get_feedback,
 	TR << "Send library_central to Emperor: " << resultfeedback->decoys().size() << std::endl;
 
 	core::Size pick_strategy_no( 0 ); // random
-	if ( pick_strategy.compare( "weighted" ) == 0 ) {
+	if ( pick_strategy == "weighted"  ) {
 		pick_strategy_no = 1;
-	} else if ( pick_strategy.compare( "sort" ) == 0 ) {
+	} else if ( pick_strategy == "sort"  ) {
 		pick_strategy_no = 2;
 	} else {
 		TR.Warning << "unknown picking strategy: " << pick_strategy << ", set as random" << std::endl;
@@ -1144,7 +1144,7 @@ MPI_Refine_Master::get_average_structure( SilentStructStore &decoys,
 	for ( core::Size j = 1; j <= scores_touse.size(); ++j ) {
 		std::vector< core::Real > scores_j( scores_touse[j] );
 		std::sort( scores_j.begin(), scores_j.end() );
-		auto icut = (core::Size)(0.5*scores_j.size()+0.50);
+		core::Size icut = std::lround( 0.5*scores_j.size() );
 		scores_cut[j] = scores_j[icut];
 	}
 

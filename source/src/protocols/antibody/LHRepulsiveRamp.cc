@@ -28,9 +28,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/docking/DockMCMCycle.hh>
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer TR( "protocols.antibody.LHRepulsiveRamp" );
 
 using namespace core;

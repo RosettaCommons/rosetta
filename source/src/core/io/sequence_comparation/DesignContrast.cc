@@ -69,8 +69,6 @@ using namespace basic::options::OptionKeys;
 
 using namespace ObjexxFCL::format;
 
-using basic::Error;
-using basic::Warning;
 using core::Size;
 
 using utility::vector1;

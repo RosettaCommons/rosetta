@@ -71,7 +71,7 @@ AddMembraneSpanConstraint & AddMembraneSpanConstraint::operator = ( AddMembraneS
 	}
 
 	// Otherwise, create a new object
-	return *( new AddMembraneSpanConstraint( *this ) );
+	return *( new AddMembraneSpanConstraint( *this ) ); // ?????????
 }
 
 /// @brief Destructor

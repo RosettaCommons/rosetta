@@ -66,8 +66,6 @@ using utility::tag::TagCOP;
 using namespace std;
 using namespace core;
 using core::pose::Pose;
-using cppdb::result;
-using cppdb::statement;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 

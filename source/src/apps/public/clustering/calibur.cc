@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 		// Handle res::types
 		std::string chains = utility::ALPHANUMERICS+" ";
 		SimPDB::chains = strdup(chains.c_str());
-		if ( option[res::chains].user() && strcmp(option[res::chains]().c_str(), "") ) {
+		if ( option[res::chains].user() && option[res::chains]() != "" ) {
 			SimPDB::chains = strdup( option[res::chains]().c_str() );
 		}
 

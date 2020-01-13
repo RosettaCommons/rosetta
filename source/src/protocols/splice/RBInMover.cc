@@ -17,8 +17,6 @@
 #include <basic/datacache/DataMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "protocols.splice.RBInMover" );
 #include <core/pose/extra_pose_info_util.hh>
 #include <utility/tag/Tag.hh>

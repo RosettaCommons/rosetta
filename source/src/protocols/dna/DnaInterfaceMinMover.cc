@@ -44,7 +44,6 @@
 namespace protocols {
 namespace dna {
 
-using utility::vector1;
 using namespace core;
 using namespace kinematics;
 using namespace optimization;
@@ -52,10 +51,7 @@ using namespace basic::options;
 using namespace scoring;
 using namespace moves;
 
-using basic::t_warning;
 using basic::t_info;
-using basic::t_debug;
-using basic::t_trace;
 static basic::Tracer TR( "protocols.dna.DnaInterfaceMinMover", t_info );
 
 

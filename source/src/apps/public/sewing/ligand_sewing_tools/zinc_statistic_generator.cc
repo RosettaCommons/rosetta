@@ -51,8 +51,6 @@
 
 
 //tracers
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR("apps.pilot.guffysl.zinc_statistic_generator");
 
 

@@ -516,7 +516,7 @@ operator <<( std::ostream & os, FullModelParameters const & t )
 	os << "FULL_MODEL_PARAMETERS";
 
 	os << "  FULL_SEQUENCE " << t.full_sequence();
-	if ( t.global_sequence().compare("") ) {
+	if ( t.global_sequence() != "" ) {
 		os << "  GLOBAL_SEQUENCE " << t.global_sequence();
 		os << "  GLOBAL_MAPPING ";
 		for ( Size i = 1; i <= t.global_mapping_.size() - 1; i++ ) {

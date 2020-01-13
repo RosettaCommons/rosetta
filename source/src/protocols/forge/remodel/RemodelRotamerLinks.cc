@@ -44,8 +44,6 @@ using namespace operation;
 using namespace utility::tag;
 
 using basic::t_info;
-using basic::t_debug;
-using basic::t_trace;
 static basic::Tracer TR( "protocols.forge.remodel.RemodelRotamerLinks", t_info );
 
 TaskOperationOP RemodelRotamerLinksCreator::create_task_operation() const

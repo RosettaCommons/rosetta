@@ -73,7 +73,7 @@ ProfileScoreStructL1::ProfileScoreStructL1(core::Size priority, core::Real lowes
 void ProfileScoreStructL1::do_caching(VallChunkOP chunk) {
 
 	std::string & tmp = chunk->chunk_key();
-	if ( tmp.compare(cached_scores_id_) == 0 ) {
+	if ( tmp == cached_scores_id_ ) {
 		return;
 	}
 	cached_scores_id_ = tmp;
@@ -115,7 +115,7 @@ bool ProfileScoreStructL1::cached_score(FragmentCandidateOP f,
 	FragmentScoreMapOP empty_map) {
 
 	std::string & tmp = f->get_chunk()->chunk_key();
-	if ( tmp.compare(cached_scores_id_) != 0 ) {
+	if ( tmp != cached_scores_id_ ) {
 		do_caching(f->get_chunk());
 	}
 
@@ -168,7 +168,7 @@ FragmentScoringMethodOP MakeProfileScoreStructL1::make(core::Size priority,
 bool ProfileScoreStructL1::cached_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {
 
 std::string tmp = f->get_chunk()->chunk_key();
-if (tmp.compare(cached_scores_id_) != 0)
+if (tmp != cached_scores_id_)
 do_caching(f->get_chunk());
 
 core::Real totalScore = 0.0;

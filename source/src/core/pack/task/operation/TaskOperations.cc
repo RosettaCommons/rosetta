@@ -58,11 +58,7 @@ namespace pack {
 namespace task {
 namespace operation {
 
-using basic::t_warning;
-using basic::t_info;
-using basic::t_debug;
-
-static basic::Tracer TR( "core.pack.task.operation.TaskOperations", t_info );
+static basic::Tracer TR( "core.pack.task.operation.TaskOperations", basic::t_info );
 
 using namespace utility::tag;
 

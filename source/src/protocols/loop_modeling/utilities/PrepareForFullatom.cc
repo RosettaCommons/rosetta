@@ -54,17 +54,8 @@
 using namespace std;
 
 using core::Size;
-using core::chemical::DISULFIDE;
-using core::chemical::FA_STANDARD;
-using core::kinematics::MoveMap;
-using core::optimization::AtomTreeMinimizer;
 using core::optimization::AtomTreeMinimizerOP;
-using core::optimization::MinimizerOptions;
-using core::optimization::symmetry::SymAtomTreeMinimizer;
 using core::pose::Pose;
-using core::pose::symmetry::is_symmetric;
-using core::pose::symmetry::make_residue_mask_symmetric;
-using core::pose::symmetry::make_symmetric_movemap;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
 using core::util::switch_to_residue_type_set;

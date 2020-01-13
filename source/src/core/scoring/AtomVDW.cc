@@ -66,7 +66,7 @@ AtomVDW::AtomVDW( std::string const & atom_type_set_name_with_suffix ):vdw_suffi
 	}
 
 	utility::io::izstream stream;
-	if ( vdw_suffix_.compare("NULL")==0 ) {
+	if ( vdw_suffix_ == "NULL" ) {
 		stream.open( atom_set.directory() + "/atom_vdw.txt" );
 	} else {
 		stream.open( atom_set.directory() + "/" + vdw_suffix_ + ".txt" );

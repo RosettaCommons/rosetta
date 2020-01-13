@@ -367,7 +367,7 @@ void setup_orientation_template(TCRseqInfo::tcrsegs const &atcr, TCRseqInfo::tcr
 	if ( ( oria_tmplt.tpdb != "" ) && ( orib_tmplt.tpdb != "" ) ) {
 		setup_template_from_pdbfile(oria_tmplt);
 		setup_template_from_pdbfile(orib_tmplt);
-	} else  if ( ( oria_tmplt.tid != "" ) && ( oria_tmplt.tid != "" ) ) {
+	} else  if ( ( oria_tmplt.tid != "" ) && ( orib_tmplt.tid != "" ) ) {
 		template_pdb_path = tpdb_path + oria_tmplt.tid.substr(0,4) + "_aho.pdb";
 		graft_framework(oria_tmplt, template_pdb_path, aaho_posi);
 		template_pdb_path = tpdb_path + orib_tmplt.tid.substr(0,4) + "_aho.pdb";

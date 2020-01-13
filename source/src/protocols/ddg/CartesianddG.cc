@@ -83,8 +83,6 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-using basic::Error;
-using basic::Warning;
 
 namespace protocols {
 namespace ddg {
@@ -283,7 +281,7 @@ read_in_mutations(
 		int total;
 		std::string total_keyword;
 		inputstream >> total_keyword;
-		debug_assert(total_keyword.compare("total") == 0);
+		debug_assert(total_keyword == "total");
 
 		inputstream >> total; //keep for cross-checking
 		TR << " total read as " << total << std::endl;

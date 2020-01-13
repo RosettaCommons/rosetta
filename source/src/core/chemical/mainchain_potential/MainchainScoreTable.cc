@@ -142,7 +142,7 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 			check_linestream(linestream, filename);
 
 			//The line starts with an '@', which precedes a command indicating setup information.  Figure out what we're setting up and set it up:
-			if ( !linehead.compare("@N_MAINCHAIN_TORSIONS") ) { //The number of mainchain torsions provided in this file.
+			if ( linehead == "@N_MAINCHAIN_TORSIONS" ) { //The number of mainchain torsions provided in this file.
 				runtime_assert_string_msg(!n_mainchain_torsions_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains more than one \"@N_MAINCHAIN_TORSIONS\" line." );
 				runtime_assert_string_msg(!dimensions_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains an \"@N_MAINCHAIN_TORSIONS\" line after a \"@DIMENSIONS\" line." );
 				runtime_assert_string_msg(!offsets_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains an \"@N_MAINCHAIN_TORSIONS\" line after a \"@OFFSETS\" line." );
@@ -153,14 +153,14 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 				scoring_grid_indices.resize(n_mainchain_torsions, 0);
 				scoring_grid_torsion_values.resize(n_mainchain_torsions, 0.0);
 				n_mainchain_torsions_read=true;
-			} else if ( !linehead.compare("@N_MAINCHAIN_TORSIONS_TOTAL") ) { //The actual number of mainchain torsions in the residue type.  Excludes inter-residue torsions (omega).
+			} else if ( linehead == "@N_MAINCHAIN_TORSIONS_TOTAL" ) { //The actual number of mainchain torsions in the residue type.  Excludes inter-residue torsions (omega).
 				runtime_assert_string_msg( n_mainchain_torsions_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains an \"@N_MAINCHAIN_TORSIONS_TOTAL\" line that occurs before any \"@N_MAINCHAIN_TORSIONS\" line. " );
 				runtime_assert_string_msg( !n_mainchain_torsions_total_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains more than one \"@N_MAINCHAIN_TORSIONS_TOTAL\" line." );
 				linestream >> n_mainchain_torsions_total_;
 				check_linestream(linestream, filename, false);
 				n_mainchain_torsions_total_read = true;
 				runtime_assert_string_msg( n_mainchain_torsions_total_ >= n_mainchain_torsions, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file specified that there are more torsions in this file than there are actual mainchain torsions." );
-			} else if ( !linehead.compare("@MAINCHAIN_TORSIONS_PROVIDED") ) { //If only a subset of mainchain torsions are covered by the table, which ones are provided?
+			} else if ( linehead == "@MAINCHAIN_TORSIONS_PROVIDED" ) { //If only a subset of mainchain torsions are covered by the table, which ones are provided?
 				runtime_assert_string_msg( n_mainchain_torsions_total_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains a \"@MAINCHAIN_TORSIONS_PROVIDED\" line that precedes any \"@N_MAINCHAIN_TORSIONS_TOTAL\" line." );
 				runtime_assert_string_msg( !mainchain_torsions_provided_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains more than one \"@MAINCHAIN_TORSIONS_PROVIDED\" line." );
 				mainchain_torsions_covered_.resize( n_mainchain_torsions );
@@ -170,7 +170,7 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 				}
 				mainchain_torsions_provided_read = true;
 				runtime_assert_string_msg( linestream.eof(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): Too many dimensions were specified in a \"@MAINCHAIN_TORSIONS_PROVIDED\" line.  The number should match the @N_MAINCHAIN_TORSIONS line." );
-			} else if ( !linehead.compare("@DIMENSIONS") ) {
+			} else if ( linehead == "@DIMENSIONS" ) {
 				runtime_assert_string_msg(!dimensions_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains more than one \"@DIMENSIONS\" line." );
 				runtime_assert( n_mainchain_torsions == dimensions.size() ); //Should be guaranteed true.
 				for ( core::Size i=1; i<=n_mainchain_torsions; ++i ) {
@@ -180,7 +180,7 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 				initialize_tensors(dimensions);
 				runtime_assert_string_msg( linestream.eof(), "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): Too many dimensions were specified in a \"@DIMENSIONS\" line." );
 				dimensions_read=true;
-			} else if ( !linehead.compare("@OFFSETS") ) {
+			} else if ( linehead == "@OFFSETS" ) {
 				runtime_assert_string_msg( !offsets_read, "Error in core::chemical::mainchain_potential::MainchainScoreTable::parse_rama_map_file_shapovalov(): The \"" +filename + "\" file contains more than one \"@OFFSETS\" line." );
 				runtime_assert( n_mainchain_torsions == offsets.size() ) ;  //Should be guaranteed true.
 				for ( core::Size i=1; i<=n_mainchain_torsions; ++i ) {
@@ -197,7 +197,7 @@ MainchainScoreTable::parse_rama_map_file_shapovalov(
 
 			linestream >> aa_name; //Get amino acid name.
 			check_linestream(linestream, filename);
-			if ( aa_name.compare( res_type_name ) ) continue; //If the aa name doesn't match the res type that we're setting up, go to the next line.
+			if ( aa_name != res_type_name ) continue; //If the aa name doesn't match the res type that we're setting up, go to the next line.
 
 			//Read the mainchain torsion values for this line:
 			for ( core::Size i=1; i<=n_mainchain_torsions; ++i ) {

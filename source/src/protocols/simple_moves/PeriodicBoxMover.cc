@@ -83,8 +83,6 @@
 
 #include <basic/Tracer.hh>
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR("protocols.moves.PeriodicBoxMover");
 
 #include <utility/tag/Tag.hh>

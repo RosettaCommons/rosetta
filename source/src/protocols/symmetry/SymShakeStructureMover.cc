@@ -68,8 +68,6 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/Mover.hh>
 
-using basic::Warning;
-using basic::Error;
 
 // C++ headers
 

@@ -41,8 +41,6 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 
-using basic::Error;
-using basic::Warning;
 
 //STL headers
 #include <algorithm> // for std::min, find_if

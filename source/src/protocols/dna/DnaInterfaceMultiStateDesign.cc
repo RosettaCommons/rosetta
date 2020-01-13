@@ -65,7 +65,6 @@ namespace protocols {
 namespace dna {
 
 using utility::vector1;
-using utility::string_split;
 using namespace core;
 using namespace chemical;
 using namespace basic::options;
@@ -79,10 +78,8 @@ using namespace ObjexxFCL::format;
 using namespace multistate_design;
 using namespace genetic_algorithm;
 
-using basic::t_error;
 using basic::t_info;
 using basic::t_debug;
-using basic::t_trace;
 static basic::Tracer TR( "protocols.dna.DnaInterfaceMultiStateDesign", t_info );
 
 DnaInterfaceMultiStateDesign::DnaInterfaceMultiStateDesign()

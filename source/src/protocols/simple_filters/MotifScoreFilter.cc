@@ -40,7 +40,6 @@
 
 using namespace core;
 using namespace std;
-using utility::vector1;
 
 namespace protocols {
 namespace simple_filters {

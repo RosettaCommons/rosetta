@@ -71,8 +71,6 @@
 #include <protocols/moves/Mover.hh>
 
 #include <utility/vector1.hh>
-using basic::Warning;
-using basic::Error;
 
 // C++ headers
 

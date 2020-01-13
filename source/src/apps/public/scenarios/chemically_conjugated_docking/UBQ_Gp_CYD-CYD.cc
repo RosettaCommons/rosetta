@@ -101,8 +101,6 @@
 #include <core/kinematics/AtomTree.hh>
 
 //tracers
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR("apps.public.scenarios.chemically_conjugated_docking.UBQ_Gp_CYD-CYD");
 
 class UBQ_GTPase_disulfide_Mover : public protocols::moves::Mover {

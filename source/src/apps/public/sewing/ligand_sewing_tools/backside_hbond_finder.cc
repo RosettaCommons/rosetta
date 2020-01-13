@@ -71,9 +71,6 @@
 #include <numeric/xyzVector.hh>
 
 
-using basic::Error;
-using basic::Warning;
-//using basic::T;
 static basic::Tracer TR("apps.pilot.guffysl.backside_hbond_finder");
 
 

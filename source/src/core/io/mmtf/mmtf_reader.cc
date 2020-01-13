@@ -88,9 +88,6 @@ namespace core {
 namespace io {
 namespace mmtf {
 
-using basic::Error;
-using basic::Warning;
-
 // NOTE: this is templated to work with AtomInformation or LinkInformation
 // LinkInformation is similar enough to work, but if you ever want to use
 // sym1 or sym2 it will have to be split from this function

@@ -100,7 +100,6 @@ static basic::Tracer tr( "protocols.abinitio", basic::t_info );
 using namespace core;
 using scoring::constraints::ConstraintSet;
 using scoring::constraints::ConstraintSetOP;
-using kinematics::ShortestPathInFoldTree;
 
 //@detail call this static routine before core::init::init to register the options
 void protocols::abinitio::KinematicAbinitio::register_options() {

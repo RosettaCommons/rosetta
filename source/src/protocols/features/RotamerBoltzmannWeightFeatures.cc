@@ -55,7 +55,6 @@ using std::stringstream;
 using core::Size;
 using core::Real;
 using core::pose::Pose;
-using core::conformation::Residue;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunction;
 using protocols::filters::Filters_map;

@@ -107,7 +107,7 @@ RNA_PartitionEnergy::finalize_total_energy(
 	using namespace core::pose::full_model_info;
 
 	std::string native_sequence = const_full_model_info( pose ).global_sequence();
-	if ( native_sequence.compare("") == 0 ) {
+	if ( native_sequence == "" ) {
 		TR.Warning << "Using partition score but no global sequence provided." << std::endl;
 	}
 	std::string current_sequence = get_current_global_sequence(pose);

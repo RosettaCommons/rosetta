@@ -107,9 +107,6 @@
 #include <ObjexxFCL/format.hh>
 
 
-using basic::Error;
-using basic::Warning;
-
 #define DEG2RAD 0.0174532925199433
 #define RAD2DEG 57.295779513082323
 

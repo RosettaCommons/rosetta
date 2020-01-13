@@ -501,9 +501,9 @@ std::string  GenPharmacophore::extract_rna_rings_from_protein_rna_complex(core::
 					str1.erase( remove( str1.begin(), str1.end(), ' ' ), str1.end() ); //remove any blank space
 
 					if ( curr_rsd.is_purine() ) {
-						if ( str1.compare("N2") != 0 ) {
-							if ( str1.compare("O6") != 0 ) {
-								if ( str1.compare("N6") != 0 ) {
+						if ( str1 != "N2" ) {
+							if ( str1 != "O6" ) {
+								if ( str1 != "N6" ) {
 									outRINGS_sstream
 										<<std::setw(6)<<"ATOM  "
 										<<std::setw(5)<<jc
@@ -518,9 +518,9 @@ std::string  GenPharmacophore::extract_rna_rings_from_protein_rna_complex(core::
 							}
 						}
 					} else if ( !curr_rsd.is_purine() ) {
-						if ( str1.compare("O2") != 0 ) {
-							if ( str1.compare("O4") != 0 ) {
-								if ( str1.compare("N4") != 0 ) {
+						if ( str1 != "O2" ) {
+							if ( str1 != "O4" ) {
+								if ( str1 != "N4" ) {
 									outRINGS_sstream
 										<<std::setw(6)<<"ATOM  "
 										<<std::setw(5)<<jc
@@ -658,11 +658,11 @@ std::string  GenPharmacophore::make_compatible_with_ROCS_custom_ForceField(std::
 	while ( getline(inPDB_sstream,line) ) {
 		std::string str1 = line.substr (17,3);
 		str1.erase( remove( str1.begin(), str1.end(), ' ' ), str1.end() ); //remove any blank space
-		if ( str1.compare("ACP") == 0 ) {
+		if ( str1 == "ACP" ) {
 			line.replace(12,4," Ne ");
-		} else if ( str1.compare("DNR") == 0 ) {
+		} else if ( str1 == "DNR" ) {
 			line.replace(12,4," Be ");
-		} else if ( str1.compare("RNG") == 0 ) {
+		} else if ( str1 == "RNG" ) {
 			line.replace(11,5, ReplaceString(line.substr (11,5), "N", "C"));
 			//line = ReplaceString(line, "N", "C");
 			//std::string ATOMNAME = line.substr (11,5);

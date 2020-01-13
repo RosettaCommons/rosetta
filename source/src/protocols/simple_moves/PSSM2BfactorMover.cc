@@ -19,9 +19,6 @@
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-using basic::Error;
-using basic::Warning;
-static basic::Tracer TR( "protocols.simple_moves.PSSM2BfactorMover" );
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>
@@ -37,6 +34,7 @@ static basic::Tracer TR( "protocols.simple_moves.PSSM2BfactorMover" );
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+static basic::Tracer TR( "protocols.simple_moves.PSSM2BfactorMover" );
 
 namespace protocols {
 namespace simple_moves {

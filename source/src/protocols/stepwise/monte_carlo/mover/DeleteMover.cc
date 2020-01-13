@@ -53,7 +53,6 @@ using namespace core;
 using namespace core::pose::full_model_info;
 using namespace protocols::stepwise::modeler;
 using core::Real;
-using utility::make_tag_with_dashes;
 
 //////////////////////////////////////////////////////////////////////////
 // Removes one residue from a 5' or 3' chain terminus, and appropriately

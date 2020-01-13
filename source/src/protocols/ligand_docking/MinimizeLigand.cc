@@ -31,8 +31,6 @@
 #include <utility/vector1.hh>
 
 
-using basic::Error;
-using basic::Warning;
 
 //STL headers
 

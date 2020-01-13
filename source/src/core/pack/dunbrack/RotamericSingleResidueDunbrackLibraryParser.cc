@@ -701,16 +701,16 @@ RotamericSingleResidueDunbrackLibraryParser::is_canonical_talaris_library(
 
 	std::string const filename_stripped( utility::filename( filename ) );
 	return
-		!filename_stripped.compare( "cys.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "ile.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "lys.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "leu.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "met.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "pro.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "arg.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "ser.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "thr.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "val.bbdep.rotamers.lib.gz" );
+		filename_stripped == "cys.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "ile.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "lys.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "leu.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "met.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "pro.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "arg.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "ser.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "thr.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "val.bbdep.rotamers.lib.gz";
 }
 
 
@@ -724,16 +724,16 @@ RotamericSingleResidueDunbrackLibraryParser::is_canonical_beta_nov16_library(
 
 	std::string const filename_stripped( utility::filename( filename ) );
 	return
-		!filename_stripped.compare( "cys.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "ile.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "lys.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "leu.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "met.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "pro.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "arg.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "ser.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "thr.bbdep.rotamers.lib.gz" ) ||
-		!filename_stripped.compare( "val.bbdep.rotamers.lib.gz" );
+		filename_stripped == "cys.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "ile.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "lys.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "leu.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "met.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "pro.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "arg.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "ser.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "thr.bbdep.rotamers.lib.gz" ||
+		filename_stripped == "val.bbdep.rotamers.lib.gz";
 }
 
 /// @brief Given a filename, return true if this is an old Dunbrack 2002 library for a canonical amino acid, false otherwise.

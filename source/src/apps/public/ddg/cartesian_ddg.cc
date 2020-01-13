@@ -64,8 +64,6 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR("apps.public.cartesian_ddg");
 
 using namespace core;
@@ -187,7 +185,7 @@ read_in_mutations(
 		int total;
 		std::string total_keyword;
 		inputstream >> total_keyword;
-		debug_assert(total_keyword.compare("total") == 0);
+		debug_assert( total_keyword == "total" );
 
 		inputstream >> total; //keep for cross-checking
 		while ( !inputstream.eof() && total>0 ) {

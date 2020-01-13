@@ -374,13 +374,13 @@ bool CCluster::testNeighbor(CCluster & c2){
 		for ( auto j = c2.points_.begin(); j!=c2.points_.end(); ++j ) {
 
 			//Do not allow H-bond atoms to be neighbors with other H-bond atoms
-			if ( filterExemplars_ && (i->atom_type.compare("C") != 0 ) &&(j->atom_type.compare("C") != 0 ) ) {
+			if ( filterExemplars_ && (i->atom_type != "C") && (j->atom_type != "C") ) {
 				continue;
 			}
 
 			if ( sqrt(pow((core::Real)i->x - (core::Real)j->x,2) + pow((core::Real)i->y - (core::Real)j->y,2) + pow((core::Real)i->z - (core::Real)j->z,2) ) <= 5./step ) {
-				if ( ((i->atom_type.compare("C") == 0  || i->atom_type.compare("BBe") == 0 || i->atom_type.compare("BNe") == 0 ) && (j->atom_type.compare("C") == 0  || j->atom_type.compare("BBe") == 0 || j->atom_type.compare("BNe") == 0)) || !filterExemplars_ || (sqrt(pow((core::Real)i->x - (core::Real)j->x,2) + pow((core::Real)i->y - (core::Real)j->y,2) + pow((core::Real)i->z - (core::Real)j->z,2))  <= 3./step ) ) {
-					if ( ((i->atom_type.compare("C") != 0) && (j->atom_type.compare("C") != 0)) && filterExemplars_ ) continue;
+				if ( ((i->atom_type == "C" || i->atom_type == "BBe" || i->atom_type == "BNe" ) && (j->atom_type == "C" || j->atom_type == "BBe" || j->atom_type == "BNe")) || !filterExemplars_ || (sqrt(pow((core::Real)i->x - (core::Real)j->x,2) + pow((core::Real)i->y - (core::Real)j->y,2) + pow((core::Real)i->z - (core::Real)j->z,2))  <= 3./step ) ) {
+					if ( ((i->atom_type != "C") && (j->atom_type != "C")) && filterExemplars_ ) continue;
 
 					minX=std::min(minX, c2.minX);
 					minY=std::min(minY, c2.minY);
@@ -1616,7 +1616,7 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 		//Require at least 5 hydrophobic carbon atoms to dump exemplar to a file
 		int ccount = 0;
 		for ( auto & point : cluster.points_ ) {
-			if ( point.atom_type.compare("C") == 0 ) {
+			if ( point.atom_type == "C" ) {
 				ccount++;
 			}
 		}
@@ -1634,9 +1634,9 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 			else if ( counter2<1000 ) concatenated_pdb_info += "  ";
 			else if ( counter2<10000 ) concatenated_pdb_info += " ";
 			else concatenated_pdb_info += "";
-			if ( point.atom_type.compare("BBe") == 0 ) {
+			if ( point.atom_type == "BBe" ) {
 				tmp << "   Be";
-			} else if ( point.atom_type.compare("BNe") == 0 ) {
+			} else if ( point.atom_type == "BNe" ) {
 				tmp << "   Ne";
 			} else tmp << "   "<<point.atom_type;
 			concatenated_pdb_info += tmp.str()+" ";
@@ -1650,7 +1650,7 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 			else if ( clustNo<1000 ) concatenated_pdb_info += " ";
 			concatenated_pdb_info += tmp.str()+"  ";
 			tmp.str(std::string());
-			if ( point.atom_type.compare("C") == 0 ) {
+			if ( point.atom_type == "C" ) {
 				//Apply the transformation matrix to the coordintes
 				numeric::xyzVector<core::Real> coord(point.x*stepSize_+xcorn_,point.y*stepSize_+ycorn_,point.z*stepSize_+zcorn_);
 				coord = inv_rot_mat * coord;
@@ -1658,9 +1658,9 @@ void PocketGrid::dumpExemplarToFile( std::string const & output_filename ) {
 			} else {
 				numeric::xyzVector<core::Real> coord(point.absX,point.absY,point.absZ);
 				coord = inv_rot_mat * coord;
-				if ( point.atom_type.compare("BBe") == 0 ) {
+				if ( point.atom_type == "BBe" ) {
 					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord.x()<<std::setw(8)<<coord.y()<<std::setw(8)<<coord.z()<<"  1.00  2.03          Be"<<std::endl;
-				} else if ( point.atom_type.compare("BNe") == 0 ) {
+				} else if ( point.atom_type == "BNe" ) {
 					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord.x()<<std::setw(8)<<coord.y()<<std::setw(8)<<coord.z()<<"  1.00  2.03          Ne"<<std::endl;
 				} else {
 					tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<coord.x()<<std::setw(8)<<coord.y()<<std::setw(8)<<coord.z()<<"  1.00  2.03          "<<point.atom_type<<std::endl;
@@ -1692,7 +1692,7 @@ core::Size PocketGrid::GetExemplarNumClusters() const{
 		//Require at least 5 hydrophobic carbon atoms to dump exemplar to a file
 		int ccount = 0;
 		for ( auto & point : cluster.points_ ) {
-			if ( point.atom_type.compare("C") == 0 ) {
+			if ( point.atom_type == "C" ) {
 				ccount++;
 			}
 		}
@@ -1715,7 +1715,7 @@ core::Size PocketGrid::GetExemplarNumAtoms() const{
 		//Require at least 5 hydrophobic carbon atoms to dump exemplar to a file
 		core::Size ccount = 0;
 		for ( auto & point : cluster.points_ ) {
-			if ( point.atom_type.compare("C") == 0 ) {
+			if ( point.atom_type == "C" ) {
 				ccount++;
 			}
 			num_atoms++;
@@ -1738,7 +1738,7 @@ core::Size PocketGrid::GetExemplarNumPolarAtoms() const{
 		//Require at least 5 hydrophobic carbon atoms to dump exemplar to a file
 		core::Size ccount = 0;
 		for ( auto & point : cluster.points_ ) {
-			if ( point.atom_type.compare("C") == 0 ) {
+			if ( point.atom_type == "C" ) {
 				ccount++;
 			}
 		}
@@ -1746,7 +1746,7 @@ core::Size PocketGrid::GetExemplarNumPolarAtoms() const{
 			continue;
 		}
 		for ( auto & point : cluster.points_ ) {
-			if ( point.atom_type.compare("C") != 0 ) {
+			if ( point.atom_type != "C" ) {
 				num_polar++;
 			}
 		}
@@ -3022,7 +3022,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 	std::cout<<std::endl<<"After Donors/Acceptors"<<std::endl;
 	for ( auto & cluster : c_clusters_.clusters_ ) {
 		for ( auto & point : cluster.points_ ) {
-			if ( point.atom_type.compare("C") == 0 ) {
+			if ( point.atom_type == "C" ) {
 				std::cout<<point.atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<std::endl;
 			} else {
 				std::cout<<point.atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.absX<<std::setw(8)<<point.absY<<std::setw(8)<<point.absZ<<std::endl;
@@ -3081,7 +3081,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 	std::cout<<std::endl<<"After shape"<<std::endl;
 	for ( auto & cluster : c_clusters_.clusters_ ) {
 		for ( auto & point : cluster.points_ ) {
-			if ( point.atom_type.compare("C") == 0 ) {
+			if ( point.atom_type == "C" ) {
 				std::cout<<point.atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<std::endl;
 			} else {
 				std::cout<<point.atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.absX<<std::setw(8)<<point.absY<<std::setw(8)<<point.absZ<<std::endl;
@@ -3095,7 +3095,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 	std::cout<<std::endl<<"After clustering"<<std::endl;
 	for ( auto & cluster : c_clusters_.clusters_ ) {
 		for ( auto & point : cluster.points_ ) {
-			if ( point.atom_type.compare("C") == 0 ) {
+			if ( point.atom_type == "C" ) {
 				std::cout<<point.atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<std::endl;
 			} else {
 				std::cout<<point.atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.absX<<std::setw(8)<<point.absY<<std::setw(8)<<point.absZ<<std::endl;
@@ -3138,7 +3138,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 	std::cout<<std::endl<<"End of findExemplars"<<std::endl;
 	for ( auto & cluster : c_clusters_.clusters_ ) {
 		for ( auto & point : cluster.points_ ) {
-			if ( point.atom_type.compare("C") == 0 ) {
+			if ( point.atom_type == "C" ) {
 				std::cout<<point.atom_type<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.x*stepSize_+xcorn_<<std::setw(8)<<point.y*stepSize_+ycorn_<<std::setw(8)<<point.z*stepSize_+zcorn_<<std::endl;
 			} else {
 				std::cout<<point.atom_type<<" "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<point.absX<<std::setw(8)<<point.absY<<std::setw(8)<<point.absZ<<std::endl;
@@ -4187,8 +4187,7 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 
 
 	bool write_comparison_pdb = false;
-	// note: string comparison will return non-zero if the strings are NOT equal
-	if ( comparison_pdbname.compare("") ) {
+	if ( comparison_pdbname != "" ) {
 		write_comparison_pdb = true;
 	}
 
@@ -4341,10 +4340,10 @@ TargetPocketGrid::TargetPocketGrid( std::string const & fname ) {
 	std::string type;
 	while ( ! instream.eof() ) {
 		instream >> x >> y >> z >> type;
-		if ( type.compare("TP_POCKET") == 0 ) {
+		if ( type == "TP_POCKET" ) {
 			grid_[x][y][z] = TP_POCKET;
 		}
-		if ( type.compare("TP_BURIED") == 0 ) {
+		if ( type == "TP_BURIED" ) {
 			grid_[x][y][z] = TP_BURIED;
 		}
 	}
@@ -5828,8 +5827,7 @@ core::Real EggshellGrid::get_eggshell_distance( EggshellGrid const & template_eg
 	TR << "Template CoM is " << template_eggshell.eggshell_CoM_.x() << " "  << template_eggshell.eggshell_CoM_.y() << " "  << template_eggshell.eggshell_CoM_.z() << std::endl;
 
 	bool write_comparison_pdb = false;
-	// note: string comparison will return non-zero if the strings are NOT equal
-	if ( comparison_pdbname.compare("") ) {
+	if ( comparison_pdbname != "" ) {
 		write_comparison_pdb = true;
 	}
 

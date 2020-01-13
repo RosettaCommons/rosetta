@@ -57,8 +57,6 @@
 #include <protocols/rbsegment_relax/RBSegment.hh>
 #include <basic/options/option.hh>
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TRb( "rbsegmove_main" );
 

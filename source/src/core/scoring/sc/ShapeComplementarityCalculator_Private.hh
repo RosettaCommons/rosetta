@@ -41,7 +41,7 @@ enum __ATTEN_ENUM__ {
 #define MAX(a,b) ((a) > (b) ? (a): (b))
 #endif
 
-#define ABS(a) (((a) < 0) ? (-a) : (a))
+#define ABS(a) (((a) < 0) ? -(a) : (a))
 
 #define PI numeric::NumericTraits< core::Real >::pi()
 

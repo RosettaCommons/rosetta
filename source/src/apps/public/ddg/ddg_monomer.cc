@@ -61,8 +61,6 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "apps.public.ddg.ddg_monomer" );
 
 using namespace core;
@@ -74,11 +72,11 @@ using ddgs = utility::vector1<double>;
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief print ddGs
 void
-print_ddgs(std::string ddg_out,
-	std::string label,
-	ddgs delta_e_components,
+print_ddgs(std::string const & ddg_out,
+	std::string const & label,
+	ddgs const & delta_e_components,
 	//mjo commenting out 'mut_avg_components' because it is unused and causes a warning
-	ddgs /*mut_avg_components*/,
+	ddgs const & /*mut_avg_components*/,
 	double total_ddgs,
 	protocols::ddg::ddGMover& mover,
 	bool print_header,
@@ -112,7 +110,7 @@ print_ddgs(std::string ddg_out,
 	}
 
 	// print ddGs
-	if ( label.compare("") != 0 ) {
+	if ( label != "" ) {
 		ddg_output << "ddG: " << label << " " << ObjexxFCL::format::F(9,3,total_ddgs) << " ";
 		for ( Size m=1; m<=delta_e_components.size(); m++ ) {
 			ddg_output << ObjexxFCL::format::F(9,3,delta_e_components[m]) << " ";
@@ -152,7 +150,7 @@ read_in_mutations(
 		// total keyword
 		int total; std::string total_keyword;
 		inputstream >> total_keyword;
-		debug_assert(total_keyword.compare("total") == 0);
+		debug_assert( total_keyword == "total" );
 		inputstream >> total; //keep for cross-checking
 
 		// rest of file

@@ -35,9 +35,6 @@
 #include <utility/vector1.hh>
 
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer TR( "apps.public.analysis.InterfaceAnalyzer" );
 
 //define local options

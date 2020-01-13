@@ -17,9 +17,6 @@
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
-using basic::Error;
-using basic::Warning;
-static basic::Tracer TR( "protocols.simple_moves.RBOutMover" );
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>
@@ -42,6 +39,8 @@ static basic::Tracer TR( "protocols.simple_moves.RBOutMover" );
 #include <protocols/toolbox/superimpose.hh>
 #include <protocols/splice/util.hh>
 #include <algorithm>
+
+static basic::Tracer TR( "protocols.simple_moves.RBOutMover" );
 
 namespace protocols {
 namespace splice {

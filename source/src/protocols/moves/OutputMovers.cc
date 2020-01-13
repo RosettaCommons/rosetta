@@ -43,8 +43,6 @@
 namespace protocols {
 namespace moves {
 
-using basic::Error;
-using basic::Warning;
 //constructor
 PDBDumpMover::PDBDumpMover(std::string const & name_in)
 : Mover(), name_(name_in), num_(0)

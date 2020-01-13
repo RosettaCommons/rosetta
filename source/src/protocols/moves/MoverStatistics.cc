@@ -48,8 +48,6 @@ namespace moves {
 MoverStatistics::~MoverStatistics() = default;
 
 using Real = core::Real;
-using basic::Error;
-using basic::Warning;
 
 void MoverStatistics::print( MonteCarloOP mc, std::string const & type )
 {

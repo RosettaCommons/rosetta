@@ -61,17 +61,13 @@ namespace features {
 
 using std::string;
 using std::endl;
-using std::copy;
 using core::Size;
 using core::Real;
 using core::Vector;
 using core::chemical::AA;
-using core::chemical::FA_STANDARD;
 using core::chemical::num_canonical_aas;
 using core::conformation::Residue;
-using core::pack::dunbrack::RotamerLibrary;
 using core::pack::dunbrack::RotamerLibraryScratchSpace;
-using core::pack::dunbrack::PackedDunbrackRotamer;
 using core::pack::dunbrack::ChiVector;
 using core::pack::dunbrack::subtract_chi_angles;
 using core::pack::dunbrack::ONE;
@@ -85,7 +81,6 @@ using basic::database::safely_write_to_database;
 using utility::sql_database::sessionOP;
 using utility::vector1;
 using cppdb::statement;
-using cppdb::result;
 
 static basic::Tracer TR( "protocols.features.RotamerFeatures" );
 
@@ -331,7 +326,7 @@ RotamerFeatures::report_features(
 		vector1< Real > chi_deviations(0, 4);
 
 		for ( Size chi = 1; chi <= nchi; ++chi ) {
-			if ( library_name.compare("dun02") == 0 ) {
+			if ( library_name == "dun02" ) {
 				chi_deviations.push_back(
 					subtract_chi_angles(
 					chis[chi], scratch.chimean()[chi], residue.aa(), chi));

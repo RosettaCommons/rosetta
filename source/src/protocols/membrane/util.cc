@@ -91,9 +91,6 @@
 
 static basic::Tracer TR( "protocols.membrane.util" );
 
-using basic::Error;
-using basic::Warning;
-
 namespace protocols {
 namespace membrane {
 

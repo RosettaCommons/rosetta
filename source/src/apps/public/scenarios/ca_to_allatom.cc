@@ -74,8 +74,6 @@
 
 
 #include <basic/Tracer.hh>
-using basic::Warning;
-using basic::Error;
 
 // tracer
 static basic::Tracer TZ( "pilot_apps::ca_to_allatom" );

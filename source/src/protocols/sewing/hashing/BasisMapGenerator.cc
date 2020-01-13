@@ -341,11 +341,11 @@ BasisMapGenerator::read_alignments_from_file(std::string alignment_file_name) {
 
 	while ( alignment_file.getline( line ) ) {
 		current_line = utility::string_split( line );
-		if ( current_line[ 1 ].compare( "S1" ) ) { // line stores outer key segment ( segment_id)
+		if ( current_line[ 1 ] != "S1" ) { // line stores outer key segment ( segment_id)
 			//   mod1 = utility::string2int( current_line[ 2 ] );
 			//      seg1 = utility::string2Size( current_line[ 2 ] );
 			current_outer_key = utility::string2Size( current_line[ 2 ] );
-		} else if ( current_line[ 1 ].compare( "S2" ) ) { // line stores inner key segment (model_id, segment_id)
+		} else if ( current_line[ 1 ] != "S2" ) { // line stores inner key segment (model_id, segment_id)
 			//mod1 = utility::string2int( current_line[ 2 ] );
 			//seg1 = utility::string2Size( current_line[ 3 ] );
 			current_inner_key = utility::string2Size( current_line[ 2 ] );

@@ -258,7 +258,7 @@ bool is_referencepose_number(
 			}
 		}
 	}
-	if ( commaposition==0 || commaposition<9 || endbracketposition==0 || endbracketposition <= commaposition+1 ) return false;
+	if ( commaposition<9 || endbracketposition <= commaposition+1 ) return false; // Also catches commaposition==0/ensbracketposition==0 cases
 
 	//TR << "Check 2 passed -- the string has a comma following the opening of the parentheses, and a close parenthesis, with stuff in between." << std::endl; //DELETE ME
 

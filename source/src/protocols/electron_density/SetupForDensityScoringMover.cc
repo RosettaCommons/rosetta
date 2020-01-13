@@ -53,8 +53,6 @@
 #include <utility/options/keys/OptionKeyList.hh>
 
 
-using basic::Error;
-using basic::Warning;
 
 
 namespace protocols {

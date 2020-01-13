@@ -135,9 +135,6 @@ void reverse_convert(){
 	if ( option[ parser::protocol ].user() ) {
 		out_fname = option[ parser::protocol ]();
 		print_to_cout = false;
-	} else if ( option[ out::output ].user() ) {
-		out_fname = option[ out::output ]();
-		print_to_cout = false;
 	}
 
 	if ( ! print_to_cout ) {
@@ -223,9 +220,6 @@ void convert( ){
 	std::string out_fname;
 	if ( option[ in::file::job_definition_file ].user() ) {
 		out_fname = option[ in::file::job_definition_file ]();
-		print_to_cout = false;
-	} else if ( option[ out::output ].user() ) {
-		out_fname = option[ out::output ]();
 		print_to_cout = false;
 	}
 

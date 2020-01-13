@@ -44,8 +44,6 @@
 
 // C++ Headers
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "protocols.simple_moves.hbs.HbsPatcher" );
 

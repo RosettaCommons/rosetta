@@ -605,7 +605,7 @@ void SilentStruct::parse_energies(
 		input >> tag;
 		if ( input.fail() || input.bad() ) break;
 		prev_tag = tag;
-		if ( is_float( tag ) && energy_name.compare("description") /*energy name is not "description"*/ ) {
+		if ( is_float( tag ) && energy_name != "description" /*energy name is not "description"*/ ) {
 			Real score_val = static_cast< Real > ( float_of( tag ) );
 			add_energy( energy_name, score_val );
 		} else if ( energy_name == "description" ) {

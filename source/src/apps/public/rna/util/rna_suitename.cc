@@ -46,7 +46,6 @@
 using namespace core;
 using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL::format;
-using utility::vector1;
 
 ///////////////////////////////////////////////////////////////////////////////
 void

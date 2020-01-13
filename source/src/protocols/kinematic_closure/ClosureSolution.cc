@@ -55,7 +55,6 @@ using namespace std;
 using core::Size;
 using core::Real;
 using core::pose::Pose;
-using numeric::constants::r::pi;
 
 // {{{1
 /// @details This constructor is called by ClosureProblem, which is a friend

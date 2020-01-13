@@ -34,8 +34,6 @@
 #include <utility/vector1.hh>
 #include <utility/numbers.hh>
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "protocols.optimize_weights.OptEData" );
 
 using namespace core;

@@ -193,7 +193,7 @@ NormalModeMultifunc::vars_to_dofs( Multivec const & vars ) const {
 	for ( Size i_var = 1; i_var <= vars.size(); ++i_var ) {
 		//std::cout << "i_var, type: " << i_var << " " << var_type_[i_var] << std::endl;
 		// Normal Mode variables: project eigenvectors
-		if ( var_type_[i_var].compare("NM") == 0 ) {
+		if ( var_type_[i_var] == "NM" ) {
 
 			// Get index / scale for the mode in vars
 			auto it = map_var_to_modeno_.find( i_var );
@@ -246,7 +246,7 @@ NormalModeMultifunc::dofs_to_vars( Multivec const & dofs ) const
 	for ( Size i_var = 1; i_var <= nvar(); ++i_var ) {
 		// 1. Normal Mode vars
 		// Get dot product for each given mode, and add it into vars
-		if ( var_type_[i_var].compare("NM") == 0 ) {
+		if ( var_type_[i_var] == "NM" ) {
 
 			Real dotsum( 0.0 );
 
@@ -282,7 +282,7 @@ NormalModeMultifunc::dEddofs_to_dEdvars( Multivec const & dEddofs ) const
 	for ( Size i_var = 1; i_var <= nvar(); ++i_var ) {
 		// 1. Normal Mode vars
 		// Get dot product for each given mode, and add it into vars
-		if ( var_type_[i_var].compare("NM") == 0 ) {
+		if ( var_type_[i_var] == "NM" ) {
 
 			// Get index/scale for the modes
 			auto it = map_var_to_modeno_.find( i_var );

@@ -33,8 +33,6 @@
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "protocols.scoring.methods.EnsembleEnergy" );
 

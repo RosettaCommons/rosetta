@@ -83,9 +83,7 @@ using utility::tag::TagCOP;
 using cppdb::statement;
 using utility::vector1;
 using basic::Tracer;
-using basic::database::insert_or_ignore;
 using utility::tag::TagPtr;
-using boost::assign::list_of;
 
 static Tracer TR("protocols.features.TaskOperationFeatures");
 

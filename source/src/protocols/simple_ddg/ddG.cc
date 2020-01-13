@@ -104,9 +104,6 @@ namespace simple_ddg {
 using core::conformation::symmetry::SymmetricConformation;
 using core::conformation::symmetry::SymmetryInfoCOP;
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer TR( "protocols.simple_ddg.ddG" );
 
 using namespace core;

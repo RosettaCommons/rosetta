@@ -121,9 +121,6 @@
 #include <queue>
 #include <cstdarg>
 
-using basic::Error;
-using basic::Warning;
-
 using namespace core;
 using namespace protocols;
 using namespace basic::options;

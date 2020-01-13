@@ -47,8 +47,6 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "protocols.minimization_packing.RotamerTrialsMover" );
 

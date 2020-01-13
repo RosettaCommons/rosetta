@@ -28,9 +28,6 @@
 
 // C++ headers
 
-using basic::Error;
-using basic::Warning;
-
 //replaces cout
 static basic::Tracer TR( "apps.public.interface_design.anchored_design.AnchoredDesign" );
 

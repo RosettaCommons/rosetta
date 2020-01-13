@@ -44,8 +44,6 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-using basic::Error;
-using basic::Warning;
 
 namespace protocols {
 namespace ligand_docking {
@@ -176,8 +174,8 @@ void Translate::apply(core::pose::Pose & pose) {
 		chain_ids_to_exclude.push_back(chain_id);
 	}
 	for ( std::string const & tag_along_chain_str: tag_along_chains_ ) {
-		for ( core::Size const chain_id : get_chain_ids_from_chain(tag_along_chain_str, pose) ) {
-			chain_ids_to_exclude.push_back(chain_id);
+		for ( core::Size const ta_chain_id : get_chain_ids_from_chain(tag_along_chain_str, pose) ) {
+			chain_ids_to_exclude.push_back(ta_chain_id);
 		}
 	}
 

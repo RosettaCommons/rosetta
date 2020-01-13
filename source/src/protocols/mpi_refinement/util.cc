@@ -76,8 +76,8 @@ namespace mpi_refinement {
 
 utility::vector1< std::pair< core::Size, core::Size > >
 get_loop_info_full( core::io::silent::SilentStructOP ss,
-	utility::vector1< bool > &is_terminus,
-	std::string mode
+	utility::vector1< bool > & is_terminus,
+	std::string const & mode
 )
 {
 	using namespace basic::options;
@@ -93,17 +93,17 @@ get_loop_info_full( core::io::silent::SilentStructOP ss,
 	utility::vector1< std::pair< core::Size, core::Size > > loopregion;
 
 	// Get info from ss first, than lookup input option
-	if ( mode.compare( "loop" ) == 0 ) {
+	if ( mode == "loop"  ) {
 		str = ss->get_string_value("loopresidues");
-		if ( str.compare("") != 0 ) {
+		if ( str != "" ) {
 			TR.Debug << "Loop string from input silent: " << str << std::endl;
 		} else if ( option[ lh::loop_string ].user() ) {
 			str = option[ lh::loop_string ]();
 			TR.Debug << "Loop string from command: " << str << std::endl;
 		}
-	} else if ( mode.compare( "segment" ) == 0 ) { // read seg
+	} else if ( mode == "segment"  ) { // read seg
 		str = ss->get_string_value("segresidues");
-		if ( str.compare("") != 0 ) {
+		if ( str != "" ) {
 			TR.Debug << "Seg string from input silent: " << str << std::endl;
 		} else if ( option[ lh::seg_string ].user() ) {
 			str = option[ lh::seg_string ]();
@@ -242,7 +242,7 @@ constrain_residue( core::pose::Pose &pose,
 	core::id::AtomID atomID( iatm, resno );
 	core::Vector const &xyz = pose.xyz( atomID );
 
-	if ( cst_type.compare("coordinate") == 0 ) {
+	if ( cst_type == "coordinate" ) {
 		core::scoring::func::FuncOP fx( new BoundFunc( 0.0, 1.0, stdev, "loopanchor" ) );
 		pose.add_constraint( ConstraintCOP( ConstraintOP(
 			new CoordinateConstraint( atomID, atomID, xyz, fx )))
@@ -753,17 +753,17 @@ distance( core::io::silent::SilentStructOP ss1,
 	std::string ssname = ss2->decoy_tag();
 	core::Real dist( 0.0 );
 
-	if ( ssname.compare( ss1->decoy_tag() ) == 0 ) {
+	if ( ssname == ss1->decoy_tag()  ) {
 		dist = 0.0;
 	} else {
-		if ( similarity_measure.compare( "Sscore" ) == 0 ) {
+		if ( similarity_measure == "Sscore"  ) {
 			core::Real dumm; // Dummy variable for return-by-ref rmsd
 			dist = CA_Sscore( ss1, ss2, dumm, superimpose, 2.0 );
 
-		} else if ( similarity_measure.compare( "rmsd" ) == 0 ) {
+		} else if ( similarity_measure == "rmsd"  ) {
 			CA_Sscore( ss1, ss2, dist, superimpose, 2.0 );
 
-		} else if ( similarity_measure.compare( "looprmsd" ) == 0 ) {
+		} else if ( similarity_measure == "looprmsd"  ) {
 			std::string loopstr = option[ lh::loop_string ]();
 			utility::vector1< core::Size > loopres = loopstring_to_loopvector( loopstr );
 			CA_Sscore( ss1, ss2, dist, loopres, superimpose, 2.0 );
@@ -802,9 +802,9 @@ add_init_dev_penalty( core::io::silent::SilentStructOP ss,
 
 		if ( igdtha < iha_cut ) {
 			core::Real dha(iha_cut-igdtha);
-			if ( mode.compare( "absolute" ) == 0 ) {
+			if ( mode == "absolute"  ) {
 				penalty = std::min(1.0, iha_penalty_slope*dha*dha );
-			} else if ( mode.compare( "relative" ) == 0 ) {
+			} else if ( mode == "relative"  ) {
 				core::Real f = (dha/iha_cut - 0.03);
 				if ( f < 0.0 ) {
 					penalty = 0.0;

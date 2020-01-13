@@ -89,8 +89,6 @@
 #include <basic/Tracer.hh>
 
 
-using basic::Error;
-using basic::Warning;
 
 
 namespace protocols {

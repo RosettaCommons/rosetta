@@ -59,9 +59,6 @@
 
 // C++ Headers
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer tr( "protocols.canonical_sampling.SidechainSidechainMetropolisHastingsMover" );
 
 namespace protocols {

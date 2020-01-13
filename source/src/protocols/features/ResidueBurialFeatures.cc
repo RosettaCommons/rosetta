@@ -61,7 +61,6 @@ using core::scoring::EnergyMap;
 using core::scoring::TenANeighborGraph;
 using core::scoring::TwelveANeighborGraph;
 using core::scoring::neigh_vect_raw;
-using core::scoring::methods::EnergyMethodOptions;
 using core::scoring::nv::NVscore;
 using utility::sql_database::sessionOP;
 using utility::vector1;

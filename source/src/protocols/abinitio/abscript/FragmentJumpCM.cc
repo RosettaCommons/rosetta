@@ -92,10 +92,10 @@ FragmentJumpCM::FragmentJumpCM():
 FragmentJumpCM::FragmentJumpCM( std::string const& topol_filename,
 	core::select::residue_selector::ResidueSelectorCOP selector,
 	std::string const & moverkey ) :
+	Parent( nullptr, selector ),
 	moverkey_( moverkey )
 {
 	set_topology( topol_filename );
-	Parent( mover(), selector );
 }
 
 void FragmentJumpCM::parse_my_tag( utility::tag::TagCOP tag,

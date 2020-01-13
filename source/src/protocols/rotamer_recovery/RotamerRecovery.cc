@@ -44,7 +44,6 @@ namespace rotamer_recovery {
 
 using std::string;
 using std::stringstream;
-using std::endl;
 using std::ostream;
 using core::Size;
 using core::Real;
@@ -52,8 +51,6 @@ using core::pack::task::PackerTask;
 using core::pose::Pose;
 using core::scoring::ScoreFunction;
 using basic::Tracer;
-using protocols::moves::Mover;
-using utility::vector1;
 
 static Tracer TR("protocol.rotamer_recovery.RotamerRecovery");
 

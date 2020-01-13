@@ -52,9 +52,6 @@
 #include <utility/tag/Tag.hh>
 
 
-using basic::Error;
-using basic::Warning;
-
 namespace protocols {
 namespace topology_broker {
 

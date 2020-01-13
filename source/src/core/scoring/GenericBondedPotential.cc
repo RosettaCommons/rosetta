@@ -625,19 +625,19 @@ GenericBondedPotential::read_database(
 		if ( fileline.length() < 2 ) continue;
 
 		linestream >> tag;
-		if ( tag.compare("ATOM") == 0  ) {
+		if ( tag == "ATOM" ) {
 			read_mode = rmATOM;
 			continue;
-		} else if ( tag.compare("BOND") == 0 ) {
+		} else if ( tag == "BOND" ) {
 			read_mode = rmBOND;
 			continue;
-		} else if ( tag.compare("ANGLE") == 0 ) {
+		} else if ( tag == "ANGLE" ) {
 			read_mode = rmANGLE;
 			continue;
-		} else if ( tag.compare("TORSION") == 0 ) {
+		} else if ( tag == "TORSION" ) {
 			read_mode = rmTORSION;
 			continue;
-		} else if ( tag.compare("IMPROPER") == 0 ) {
+		} else if ( tag == "IMPROPER" ) {
 			read_mode = rmIMPROPER;
 			continue;
 		} else if ( tag.substr(0,1) == "#" ) {

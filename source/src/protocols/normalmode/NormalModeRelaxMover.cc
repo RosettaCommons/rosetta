@@ -82,34 +82,29 @@ using namespace core;
 
 ///////////////////////////
 
-NormalModeRelaxMover::NormalModeRelaxMover():
-	nmodes_( 5 ),
-	mix_modes_( false ),
-	pertscale_( 1.0 ),
-	randomselect_( false ),
-	selection_kT_( 1e6 ), // currently just placeholder
-	centroid_( false ),
-	nsample_( 5 ),
-	moving_distance_( 1.0 ),
-	refresh_normalmode_( true ),
-	direction_( 1.0 ),
-	cst_sdev_( 1.0 ),
-	cartesian_minimize_( false ),
-	dump_silent_( false )
+NormalModeRelaxMover::NormalModeRelaxMover()
 {
 	set_default();
 }
 
 NormalModeRelaxMover::NormalModeRelaxMover(
 	core::scoring::ScoreFunctionCOP sfxn,
-	bool const cartesian )
+	bool const cartesian ):
+	nsample_( 10 )
 {
-	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-	mm->set_bb( true );
-	mm->set_chi( true );
-	mm->set_jump( true );
+	set_default();
+	cartesian_ = cartesian;
 
-	NormalModeRelaxMover( sfxn, cartesian, mm, "relax", 10.0 );
+	mm_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
+	mm_->set_bb( true );
+	mm_->set_chi( true );
+	mm_->set_jump( true );
+
+	NM_ = NormalMode( "CA", 10.0 );
+	if ( !cartesian_ ) NM_.torsion( true );
+
+	// Scorefunction
+	sfxn_ = sfxn->clone();
 }
 
 // advanced
@@ -120,19 +115,7 @@ NormalModeRelaxMover::NormalModeRelaxMover(
 	std::string const relaxmode,
 	core::Real const distcut
 ):
-	nmodes_( 5 ),
-	mix_modes_( false ),
-	pertscale_( 1.0 ),
-	randomselect_( false ),
-	selection_kT_( 1e6 ),
-	centroid_( false ),
-	nsample_( 10 ),
-	moving_distance_( 1.0 ),
-	refresh_normalmode_( true ),
-	direction_( 1.0 ),
-	cst_sdev_( 1.0 ),
-	cartesian_minimize_( false ),
-	dump_silent_( false )
+	nsample_( 10 )
 {
 	set_default();
 	relaxmode_ = relaxmode;
@@ -144,7 +127,7 @@ NormalModeRelaxMover::NormalModeRelaxMover(
 	if ( mm ) {
 		mm_ = mm->clone();
 	} else {
-		mm = nullptr;
+		mm_ = nullptr;
 	}
 
 	// Scorefunction
@@ -307,7 +290,7 @@ NormalModeRelaxMover::set_random_mode(std::string const select_option,
 	for ( Size i = 1; i <= nmodes_; ++i ) {
 		// Multiply scale by its importance
 		Real scale1 = numeric::random::rg().uniform();
-		if ( select_option.compare("probabilistic") ==  0 ) {
+		if ( select_option == "probabilistic" ) {
 			scale1 *= importance_portion*NM().get_importance( i ) + (1.0 - importance_portion);
 		}
 
@@ -383,7 +366,7 @@ NormalModeRelaxMover::apply_on_pose( pose::Pose &pose, core::kinematics::MoveMap
 	gen_coord_constraint( pose, excrd );
 
 	// Relax setup
-	if ( relaxmode_.compare("relax") == 0 ) {
+	if ( relaxmode_ == "relax" ) {
 		// This cannot run in centroid level
 		runtime_assert( !pose.is_centroid() );
 
@@ -394,7 +377,7 @@ NormalModeRelaxMover::apply_on_pose( pose::Pose &pose, core::kinematics::MoveMap
 		relax_prot.cartesian( cartesian_minimize_ );
 		relax_prot.apply( pose );
 
-	} else if ( relaxmode_.compare("min") == 0 ) {
+	} else if ( relaxmode_ == "min" ) {
 		//optimization::CartesianMinimizer minimizer;
 
 		if ( !cartesian_ ) pose = expose; // start from perturbed
@@ -417,7 +400,7 @@ NormalModeRelaxMover::apply_on_pose( pose::Pose &pose, core::kinematics::MoveMap
 			minimizer.run( pose, *mm, *sfxn_loc, *minoption_ );
 		}
 
-	} else if ( relaxmode_.compare("extrapolate") == 0 ) {
+	} else if ( relaxmode_ == "extrapolate" ) {
 		pose = expose;
 	} else {
 		TR.Warning << "unknown relaxmode " << relaxmode_ << ", doing nothing!" << std::endl;

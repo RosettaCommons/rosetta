@@ -63,8 +63,6 @@ namespace protocols {
 namespace optimize_weights {
 
 using namespace ObjexxFCL::format;
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "protocols.optimize_weights.OptEMultifunc" );
 
 using namespace numeric::expression_parser;

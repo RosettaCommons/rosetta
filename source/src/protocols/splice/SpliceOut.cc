@@ -509,7 +509,7 @@ void SpliceOut::check_pose_pssm_match(core::pose::PoseOP pose, utility::vector1<
 				ss << pose->residue(aapos).name1();
 				ss >> s;
 				//TR<<"found a dis cys="<<s<<std::endl;
-				if ( s.compare("C") != 0 ) {
+				if ( s != "C" ) {
 					std::string seqpos;
 					std::ostringstream convert;
 					convert << aapos; // insert the textual representation of 'Number' in the characters in the stream

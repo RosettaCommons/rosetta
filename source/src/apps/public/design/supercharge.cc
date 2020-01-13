@@ -92,8 +92,6 @@
 
 
 //tracers
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "apps.public.design.supercharge" );
 
 using namespace core;

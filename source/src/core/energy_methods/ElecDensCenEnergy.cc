@@ -45,8 +45,6 @@
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <utility/vector1.hh>
 
-using basic::Error;
-using basic::Warning;
 #ifdef WIN32
 #define _USE_MATH_DEFINES
 #include <math.h>

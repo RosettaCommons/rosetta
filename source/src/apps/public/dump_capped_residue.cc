@@ -92,9 +92,6 @@ using namespace core::pack::task;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::id;
-using basic::Error;
-using basic::Warning;
-using utility::file::FileName;
 
 static basic::Tracer TR("DumpCapped");
 

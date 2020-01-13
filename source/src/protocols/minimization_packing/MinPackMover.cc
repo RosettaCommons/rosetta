@@ -52,8 +52,6 @@ using namespace task;
 using namespace operation;
 using namespace scoring;
 
-using basic::Warning;
-using basic::t_warning;
 static basic::Tracer TR( "protocols.minimization_packing.MinPackMover" );
 
 

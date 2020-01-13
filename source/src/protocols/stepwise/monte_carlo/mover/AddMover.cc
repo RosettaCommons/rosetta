@@ -51,7 +51,6 @@ using namespace core::pose::full_model_info;
 
 
 using core::Real;
-using utility::make_tag_with_dashes;
 using namespace protocols::stepwise::modeler;
 
 //////////////////////////////////////////////////////////////////////////

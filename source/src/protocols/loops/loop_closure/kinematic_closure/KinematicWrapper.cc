@@ -42,8 +42,6 @@
 
 // C++ Headers
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicWrapper" );
 

@@ -172,7 +172,7 @@ get_rosetta_module_options_from_xsd(
 	for ( xmlNode* attribute_node = module_node->children; attribute_node!=nullptr; attribute_node = attribute_node->next ) { //Loop through first-level sub-nodes
 		if ( //Find the first-level options:
 				attribute_node->type != XML_ELEMENT_NODE ||
-				strcmp( reinterpret_cast<const char*>(attribute_node->name), "attribute" )
+				strcmp( reinterpret_cast<const char*>(attribute_node->name), "attribute" ) != 0
 				) {
 			continue;
 		}
@@ -223,12 +223,12 @@ recursively_find_module_in_xsd(
 	xmlNode** module_node
 ) {
 	if ( parent_node->type == XML_ELEMENT_NODE ) {
-		if ( !strcmp(reinterpret_cast<const char*>(parent_node->name),"complexType") && !get_node_option(parent_node, "name").compare( module_name ) ) {
+		if ( !strcmp(reinterpret_cast<const char*>(parent_node->name),"complexType") && get_node_option(parent_node, "name") == module_name ) {
 			*module_node = parent_node;
 			//std::cout << "Found " << module_name << " complexType." << std::endl; //DELETE ME.
 			return true;
 		}
-		if ( !strcmp(reinterpret_cast<const char*>(parent_node->name),"element") && !get_node_option(parent_node, "name").compare( module_name ) ) {
+		if ( !strcmp(reinterpret_cast<const char*>(parent_node->name),"element") && get_node_option(parent_node, "name") == module_name ) {
 			//std::cout << "Found " << module_name << " element." << std::endl; //DELETE ME.
 			for ( xmlNode* sub_node(parent_node->children); sub_node != nullptr; sub_node = sub_node->next ) {
 				if ( !strcmp(reinterpret_cast<const char*>(sub_node->name),"complexType") ) {
@@ -271,7 +271,7 @@ get_choice_min_and_max(
 	}
 
 	//Process choice_max:
-	if ( !choice_max_string.compare("unbounded") ) {
+	if ( choice_max_string == "unbounded" ) {
 		choice_max = 0;
 	} else {
 		std::stringstream ssmax( choice_max_string );
@@ -358,22 +358,22 @@ get_module_names_from_xsd(
 	for ( xmlNode* group_node = rootnode->children; group_node!=nullptr; group_node = group_node->next ) {
 		if ( //Find the list of the module type
 				group_node->type != XML_ELEMENT_NODE ||
-				strcmp( reinterpret_cast<const char*>(group_node->name), "group" ) ||
-				get_node_option(group_node, "name").compare( module_name )
+				strcmp( reinterpret_cast<const char*>(group_node->name), "group" ) != 0 ||
+				get_node_option(group_node, "name") != module_name
 				) {
 			continue;
 		}
 		for ( xmlNode* choice_node = group_node->children; choice_node!=nullptr; choice_node = choice_node->next ) { //Loop through first-level sub-nodes
 			if ( //Find the xs:choice node
 					choice_node->type != XML_ELEMENT_NODE ||
-					strcmp( reinterpret_cast<const char*>(choice_node->name), "choice" )
+					strcmp( reinterpret_cast<const char*>(choice_node->name), "choice" ) != 0
 					) {
 				continue;
 			}
 			for ( xmlNode* module_node = choice_node->children; module_node!=nullptr; module_node = module_node->next ) {
 				if ( //Find the module list
 						module_node->type != XML_ELEMENT_NODE ||
-						strcmp( reinterpret_cast<const char*>(module_node->name), "element")
+						strcmp( reinterpret_cast<const char*>(module_node->name), "element") != 0
 						) {
 					continue;
 				}
@@ -507,7 +507,7 @@ get_tag_name(
 	std::string const extendedname( get_node_option(node, "name") );
 	utility::vector1< std::string > const splitstr( string_split(extendedname, '_' ) );
 	debug_assert( splitstr.size() > 1 );
-	if ( splitstr[ splitstr.size() ].compare( "type" ) ) return splitstr[ splitstr.size() ];
+	if ( splitstr[ splitstr.size() ] != "type" ) return splitstr[ splitstr.size() ];
 	return splitstr[ splitstr.size() - 1 ];
 }
 
@@ -578,16 +578,16 @@ std::string
 get_type_name(
 	std::string const& xsd_type
 ) {
-	if ( !xsd_type.compare( "rosetta_bool" ) ) { return "bool"; }
+	if ( xsd_type == "rosetta_bool" ) { return "bool"; }
 	else if (
-			!xsd_type.compare( "xs:string" ) ||
-			!xsd_type.compare( "task_operation" ) ||
-			!xsd_type.compare( "task_operation_comma_separated_list" ) ||
-			!xsd_type.compare( "pose_cached_task_operation" )
+			xsd_type == "xs:string" ||
+			xsd_type == "task_operation" ||
+			xsd_type == "task_operation_comma_separated_list" ||
+			xsd_type == "pose_cached_task_operation"
 			) { return "string"; }
-	else if ( !xsd_type.compare( "xs:integer" ) ) { return "int"; }
-	else if ( !xsd_type.compare( "xs:decimal" ) ) { return "real"; }
-	else if ( !xsd_type.compare( "non_negative_integer" ) ) { return "int"; }
+	else if ( xsd_type == "xs:integer" ) { return "int"; }
+	else if ( xsd_type == "xs:decimal" ) { return "real"; }
+	else if ( xsd_type == "non_negative_integer" ) { return "int"; }
 	return xsd_type;
 }
 

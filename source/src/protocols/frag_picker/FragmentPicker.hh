@@ -101,7 +101,7 @@ public:
 	}
 
 	FragmentPicker(std::string fragment_score_manager_type) {
-		if ( fragment_score_manager_type.compare("PValuedFragmentScoreManager") == 0 ) {
+		if ( fragment_score_manager_type == "PValuedFragmentScoreManager" ) {
 			scores_.push_back(utility::pointer::shared_ptr<class protocols::frag_picker::scores::FragmentScoreManager>( new scores::PValuedFragmentScoreManager() ));
 		} else {
 			scores_.push_back(utility::pointer::shared_ptr<class protocols::frag_picker::scores::FragmentScoreManager>( new scores::FragmentScoreManager() ));

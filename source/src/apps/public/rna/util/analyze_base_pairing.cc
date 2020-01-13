@@ -84,7 +84,6 @@ using namespace protocols;
 using namespace protocols::stepwise;
 using namespace protocols::moves;
 using namespace basic::options::OptionKeys;
-using utility::vector1;
 
 ///////////////////////////////////////////////////////////////////////////////
 void

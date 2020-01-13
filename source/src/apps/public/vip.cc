@@ -111,7 +111,6 @@ main( int argc, char * argv [] )
 				initial_E = old_energy;
 			}
 
-			protocols::vip::VIP_Mover();
 			protocols::vip::VIP_Mover vip_mover;
 			if ( ( it > 1 ) && use_unrelaxed_mutants && ( stored_unrelaxed_pose.size() > 0 ) ) {
 				vip_mover.set_initial_pose( stored_unrelaxed_pose );

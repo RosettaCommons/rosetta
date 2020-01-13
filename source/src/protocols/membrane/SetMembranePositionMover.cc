@@ -90,7 +90,7 @@ SetMembranePositionMover::operator=( SetMembranePositionMover const & src )
 	}
 
 	// Otherwise, create a new object
-	return *( new SetMembranePositionMover( *this ) );
+	return *( new SetMembranePositionMover( *this ) );// ????????
 
 }
 
@@ -230,7 +230,7 @@ SetMembraneNormalMover::operator=( SetMembraneNormalMover const & src )
 	}
 
 	// Otherwise, create a new object
-	return *( new SetMembraneNormalMover( *this ) );
+	return *( new SetMembraneNormalMover( *this ) ); // ??????
 
 }
 
@@ -354,7 +354,7 @@ SetMembraneCenterMover::operator=( SetMembraneCenterMover const & src )
 	}
 
 	// Otherwise, create a new object
-	return *( new SetMembraneCenterMover( *this ) );
+	return *( new SetMembraneCenterMover( *this ) ); // ????????
 
 }
 

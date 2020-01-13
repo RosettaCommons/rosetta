@@ -411,7 +411,7 @@ Metal_HelperBase::liganding_atom_from_restype(
 	}
 	if ( restype.aa() == core::chemical::aa_his || restype.aa() == core::chemical::aa_dhi || restype.aa() == core::chemical::aa_b3h ) {
 		std::string const & basename( restype.base_name() );
-		if ( !basename.compare( "HIS" ) || !basename.compare( "DHIS" ) || !basename.compare( "B3H" ) ) {
+		if ( basename == "HIS" || basename == "DHIS" || basename == "B3H" ) {
 			return MHLigand_Nd_histidine;
 		} else {
 			return MHLigand_Ne_histidine;
@@ -445,7 +445,7 @@ Metal_HelperBase::metal_type_enum_from_string(
 	std::string const & metal_type_string
 ) const {
 	for ( core::Size i(1); i < static_cast<core::Size>( MH_end_of_list ); ++i ) {
-		if ( !metal_type_string.compare( metal_type_string_from_enum( static_cast< Metal_HelperBase_Metal >(i) ) ) ) {
+		if ( metal_type_string == metal_type_string_from_enum( static_cast< Metal_HelperBase_Metal >(i) ) ) {
 			return static_cast< Metal_HelperBase_Metal >(i);
 		}
 	}

@@ -96,14 +96,14 @@ MultiObjective::set_defaults()
 	for ( core::Size i_obj = 1; i_obj <= fobjnames_.size(); ++i_obj ) {
 		std::string const score_name( fobjnames_[i_obj] );
 
-		if ( score_name.compare("goap") == 0 ) {
+		if ( score_name == "goap" ) {
 			TR << "- " << i_obj << ". Added Goap potential as 'goap'" << std::endl;
 			core::scoring::ScoreFunctionOP sfxn =
 				core::scoring::ScoreFunctionFactory::create_score_function( "empty" );
 			sfxn->set_weight( core::scoring::goap, 0.01 );
 			objsfxnOPs_.push_back( sfxn );
 
-		} else if ( score_name.compare("score") == 0 ) {
+		} else if ( score_name == "score" ) {
 			TR << "- " << i_obj << ". Added input score as 'score'" << std::endl;
 			core::scoring::ScoreFunctionOP sfxn =
 				core::scoring::ScoreFunctionFactory::create_score_function( option[ score::weights ]() );
@@ -111,15 +111,15 @@ MultiObjective::set_defaults()
 			// note that this is just for "evaluation", not for sampling
 			//sfxn->set_weight( core::scoring::cart_bonded, 0.1 );
 			objsfxnOPs_.push_back( sfxn );
-		} else if ( score_name.compare("similarity") == 0 ) {
+		} else if ( score_name == "similarity" ) {
 			TR << "- " << i_obj << ". Added similarity as 'similarity'" << std::endl;
 			// Just to ensure the length, but never been used
 			core::scoring::ScoreFunctionOP sfxn =
 				core::scoring::ScoreFunctionFactory::create_score_function( option[ score::weights ]() );
 			objsfxnOPs_.push_back( sfxn );
 
-		} else if ( score_name.compare("cst_fa") == 0 ||
-				score_name.compare("cst_cen") == 0 ) {
+		} else if ( score_name == "cst_fa" ||
+				score_name == "cst_cen" ) {
 			TR << "- " << i_obj << ". Added " << score_name << " as '" << score_name << "'" << std::endl;
 			core::scoring::ScoreFunctionOP sfxn_cst( new core::scoring::ScoreFunction );
 			sfxn_cst->set_weight( core::scoring::atom_pair_constraint, 1.0 );
@@ -223,21 +223,21 @@ MultiObjective::calculate_structure_diversity(
 		std::string ssname = ss2->decoy_tag();
 
 		// avoid itself
-		if ( ssname.compare( ss1->decoy_tag() ) == 0 ) {
+		if ( ssname == ss1->decoy_tag()  ) {
 			nrel--;
 			dvector[j] = 0.0;
 		} else {
 			core::Real dist( 0.0 );
-			if ( similarity_measure.compare( "Sscore" ) == 0 ) {
+			if ( similarity_measure == "Sscore"  ) {
 				core::Real dumm; // Dummy variable for return-by-ref rmsd
 				dist = CA_Sscore( ss1, ss2, dumm, true, 2.0 );
 				//dist = CA_Sscore( ss1, ss2, dumm, 1.0 );
 
-			} else if ( similarity_measure.compare( "rmsd" ) == 0 ) {
+			} else if ( similarity_measure == "rmsd"  ) {
 				CA_Sscore( ss1, ss2, dist, true, 2.0 );
 				//CA_Sscore( ss1, ss2, dist, 1.0 );
 
-			} else if ( similarity_measure.compare( "looprmsd" ) == 0 ) {
+			} else if ( similarity_measure == "looprmsd"  ) {
 				std::string loopstr = option[ lh::loop_string ]();
 				utility::vector1< core::Size > loopres = loopstring_to_loopvector( loopstr );
 				CA_Sscore( ss1, ss2, dist, loopres, true, 2.0 );
@@ -250,15 +250,15 @@ MultiObjective::calculate_structure_diversity(
 
 	core::Real similarity( 0.0 );
 	// Diversity based on similarity sum
-	if ( similarity_method.compare( "sum" ) == 0 ) {
+	if ( similarity_method == "sum"  ) {
 		for ( core::Size j = 0; j < n; ++j ) {
 			similarity += dvector[j];
 		}
 		similarity *= 100.0/nrel;
 
-	} else if ( similarity_method.compare( "sigsum" ) == 0 ) {
+	} else if ( similarity_method == "sigsum"  ) {
 		for ( core::Size j = 0; j < n; ++j ) {
-			if ( similarity_measure.compare( "Sscore" ) == 0 ) {
+			if ( similarity_measure == "Sscore"  ) {
 				if ( dvector[j] >= simlimit ) {
 					similarity += 1.0;
 				} else if ( dvector[j] > simlimit-simtol ) {
@@ -275,8 +275,8 @@ MultiObjective::calculate_structure_diversity(
 		similarity *= 100.0/nrel;
 
 		// Diversity based on closest one
-	} else if ( similarity_method.compare( "min" ) == 0 ||
-			similarity_method.compare( "frontiermin" ) == 0 ) {
+	} else if ( similarity_method == "min"  ||
+			similarity_method == "frontiermin"  ) {
 		for ( core::Size j = 0; j < n; ++j ) {
 			if ( dvector[j] != 1.0 && dvector[j] > similarity ) similarity = dvector[j]*100.0;
 		}
@@ -336,7 +336,7 @@ MultiObjective::update_library_seeds(protocols::wum::SilentStructStore &structs,
 	protocols::wum::SilentStructStore ref_structs( structs );
 
 	// add iHA penalty if defined
-	if ( iha_cut_ > 0.0 && objname.compare("penaltysum") == 0 ) {
+	if ( iha_cut_ > 0.0 && objname == "penaltysum" ) {
 		TR << "Penalty activated based on structural difference from reference structure." << std::endl;
 		add_init_dev_penalty( new_structs, init_pose(), iha_penalty_mode(), iha_cut(), iha_penalty_slope() );
 		add_init_dev_penalty( ref_structs, init_pose(), iha_penalty_mode(), iha_cut(), iha_penalty_slope() ); //in case when they don't have it yet
@@ -419,7 +419,7 @@ MultiObjective::update_library_seeds(protocols::wum::SilentStructStore &structs,
 
 			core::Real dist = distance( ss1, ss2, measure, false );
 			// Dscore = 1 - Sscore
-			if ( measure.compare("Sscore") == 0 ) dist = 1.0 - dist;
+			if ( measure == "Sscore" ) dist = 1.0 - dist;
 
 			if ( dist < distmin ) {
 				distmin = dist;
@@ -548,7 +548,7 @@ MultiObjective::update_library_seeds(protocols::wum::SilentStructStore &structs,
 	for ( core::Size i = 0; i < structs.size(); ++i ) {
 		SilentStructOP ss = structs.get_struct( i );
 		core::Real dist = distance( ss_emin, ss, measure, false );
-		if ( measure.compare("Sscore") == 0 ) dist = 1.0 - dist;
+		if ( measure == "Sscore" ) dist = 1.0 - dist;
 
 		TR << I(3,i)
 			<< " " << I(3,ss->get_energy( "poolid" ))
@@ -640,7 +640,7 @@ MultiObjective::update_library_NSGAII(protocols::wum::SilentStructStore &structs
 
 	// org:
 	totalpool.all_add_energy( "similarity", 0.0 ); //just initialize
-	if ( similarity_method.compare( "frontiermin" ) != 0 ) {
+	if ( similarity_method != "frontiermin"  ) {
 		calculate_pool_diversity( totalpool, totalpool );
 		//calculate_pool_diversity( totalpool, prvpool );
 	}
@@ -718,7 +718,7 @@ MultiObjective::update_library_NSGAII(protocols::wum::SilentStructStore &structs
 
 		// update diversity on currently added so far if sorted_pool is large enough
 		// experimental
-		if ( similarity_method.compare("frontiermin") == 0 ) {
+		if ( similarity_method == "frontiermin" ) {
 			calculate_pool_diversity( totalpool, sorted_pool );
 		}
 
@@ -876,7 +876,7 @@ MultiObjective::filter_similar( protocols::wum::SilentStructStore &structs,
 			// only Sscore for now
 			bool is_similar( false );
 			core::Real dist = distance( ss1, ss2, measure, false );
-			if ( measure.compare("Sscore") == 0 ) dist = 1.0 - dist;
+			if ( measure == "Sscore" ) dist = 1.0 - dist;
 
 			if ( dist < criteria ) is_similar = true;
 			if ( !is_similar ) continue;
@@ -972,30 +972,30 @@ MultiObjective::add_objective_function_info(
 		core::Real score_i = ss->get_energy( score_name );
 		//TR << "Fobj: " << score_name << std::endl;
 		// Calculate energy if empty yet
-		if ( score_name.compare("score") == 0 ) {
+		if ( score_name == "score" ) {
 			core::pose::Pose pose_tmp;
 			ss->fill_pose( pose_tmp, *rsd_set );
 			objsfxnOPs_[i_obj]->score( pose_tmp );
 			ss->energies_from_pose( pose_tmp );
 
-		} else if ( score_name.compare("similarity") == 0 ) {
+		} else if ( score_name == "similarity" ) {
 			continue;
 
-		} else if ( score_name.compare("cst_cen") == 0 ) {
+		} else if ( score_name == "cst_cen" ) {
 			core::pose::Pose pose_tmp;
 			ss->fill_pose( pose_tmp, *rsd_set_cen );
 			core::scoring::constraints::add_constraints_from_cmdline_to_pose( pose_tmp );
 			score_i = objsfxnOPs_[i_obj]->score( pose_tmp );
 			ss->add_energy( "cst_cen", score_i );
 
-		} else if ( score_name.compare("cst_fa") == 0 ) {
+		} else if ( score_name == "cst_fa" ) {
 			core::pose::Pose pose_tmp;
 			ss->fill_pose( pose_tmp, *rsd_set );
 			core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( pose_tmp );
 			score_i = objsfxnOPs_[i_obj]->score( pose_tmp );
 			ss->add_energy( "cst_fa", score_i );
 
-		} else if ( score_i == 0.0 && score_name.compare("score") != 0 ) {
+		} else if ( score_i == 0.0 && score_name != "score" ) {
 			core::pose::Pose pose_tmp;
 			ss->fill_pose( pose_tmp );
 			score_i = objsfxnOPs_[i_obj]->score( pose_tmp );

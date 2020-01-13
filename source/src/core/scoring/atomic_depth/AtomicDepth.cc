@@ -125,9 +125,9 @@ Real AtomicDepth::calcdepth( conformation::Atom const & atom, chemical::AtomType
 	cp.x*=scalefactor_;
 	cp.y*=scalefactor_;
 	cp.z*=scalefactor_;
-	ox=int(cp.x+0.5);
-	oy=int(cp.y+0.5);
-	oz=int(cp.z+0.5);
+	ox=std::lround(cp.x);
+	oy=std::lround(cp.y);
+	oz=std::lround(cp.z);
 
 	if ( ox >= 0 && oy >= 0 && oz >= 0 && ox < plength_ && oy < pwidth_ && oz < pheight_ ) {
 		depth = vp_[ox][oy][oz].distance/scalefactor_-proberadius_;
@@ -377,9 +377,9 @@ void AtomicDepth::fillatom( conformation::Atom const & atom )
 	cp.x*=scalefactor_;
 	cp.y*=scalefactor_;
 	cp.z*=scalefactor_;
-	cx=int(cp.x+0.5);
-	cy=int(cp.y+0.5);
-	cz=int(cp.z+0.5);
+	cx=std::lround(cp.x);
+	cy=std::lround(cp.y);
+	cz=std::lround(cp.z);
 	int at=atom.type();
 	int i,j,k;
 	int ii,jj,kk;

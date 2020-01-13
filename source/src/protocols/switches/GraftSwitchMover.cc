@@ -72,8 +72,6 @@
 namespace protocols {
 namespace switches {
 
-using basic::Warning;
-using basic::t_warning;
 static basic::Tracer TR( "protocols.switches.GraftSwitchMover" );
 
 // GraftSwitchMoverCreator

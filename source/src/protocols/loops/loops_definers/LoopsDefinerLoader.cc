@@ -38,7 +38,6 @@ using std::endl;
 using core::pose::Pose;
 using utility::tag::TagCOP;
 using basic::datacache::DataMap;
-using utility::vector0;
 using protocols::loops::loops_definers::LoopsDefinerOP;
 using protocols::loops::loops_definers::LoopsDefinerFactory;
 

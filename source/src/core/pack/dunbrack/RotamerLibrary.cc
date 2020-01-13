@@ -68,9 +68,6 @@
 #endif
 #include <sys/stat.h>
 
-using basic::Error;
-using basic::Warning;
-
 /*
 rearrange the dunbrack arrays:
 
@@ -544,17 +541,17 @@ RotamerLibrary::decide_read_from_binary() const {
 		std::string _smoothingRequsted = shap_dun10_smooth_level_;
 		std::string _smoothingAsKeyword = "undefined";
 
-		if ( _smoothingRequsted.compare("1")==0 ) {
+		if ( _smoothingRequsted == "1" ) {
 			_smoothingAsKeyword = "lowest_smooth";
-		} else if ( _smoothingRequsted.compare("2")==0 ) {
+		} else if ( _smoothingRequsted == "2" ) {
 			_smoothingAsKeyword = "lower_smooth";
-		} else if ( _smoothingRequsted.compare("3")==0 ) {
+		} else if ( _smoothingRequsted == "3" ) {
 			_smoothingAsKeyword = "low_smooth";
-		} else if ( _smoothingRequsted.compare("4")==0 ) {
+		} else if ( _smoothingRequsted == "4" ) {
 			_smoothingAsKeyword = "average_smooth";
-		} else if ( _smoothingRequsted.compare("5")==0 ) {
+		} else if ( _smoothingRequsted == "5" ) {
 			_smoothingAsKeyword = "higher_smooth";
-		} else if ( _smoothingRequsted.compare("6")==0 ) {
+		} else if ( _smoothingRequsted == "6" ) {
 			_smoothingAsKeyword = "highest_smooth";
 		} else {
 			_smoothingAsKeyword = "unknown";

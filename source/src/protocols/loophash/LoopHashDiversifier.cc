@@ -65,7 +65,6 @@
 namespace protocols {
 namespace loophash {
 
-using core::pose::Pose;
 using namespace utility;
 using namespace protocols::moves;
 using core::Real;

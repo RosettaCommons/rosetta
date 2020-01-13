@@ -45,9 +45,7 @@ static basic::Tracer TR( "protocols.sic_dock.RigidScore" );
 
 using core::Size;
 using core::Real;
-using numeric::min;
 using core::id::AtomID;
-using std::cout;
 using std::endl;
 
 using Real = core::Real;

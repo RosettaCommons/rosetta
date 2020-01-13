@@ -81,8 +81,6 @@
 #include <core/kinematics/FoldTree.hh>
 
 
-using basic::Error;
-using basic::Warning;
 
 //using namespace ObjexxFCL;
 

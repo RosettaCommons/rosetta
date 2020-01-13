@@ -117,8 +117,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "FlexPepDockingProtocol" );
 using namespace core;
@@ -707,7 +705,7 @@ void FlexPepDockingProtocol::flip_in_pcs( core::pose::Pose & pose )
 	Vector third_pc_axis(peptide_eigenvectors.col_z()[0], peptide_eigenvectors.col_z()[1], peptide_eigenvectors.col_z()[2] );
 
 	if ( pcs_num == 1 ) {
-		auto rand_num = (Size)(numeric::random::uniform() + 0.5);
+		Size rand_num = std::lround( numeric::random::uniform() );
 		float rot_angle = 180.0*(rand_num);
 		TR << "Flipping the peptide " << std::endl;
 		rigid::RigidBodyDeterministicSpinMover spin_mover ( rb_jump_, second_pc_axis, peptide_c_alpha_centroid, rot_angle );
@@ -715,7 +713,7 @@ void FlexPepDockingProtocol::flip_in_pcs( core::pose::Pose & pose )
 	}
 
 	if ( pcs_num == 2 ) {
-		auto rand_num = (Size)(numeric::random::random_range(1,4) + 0.5);
+		Size rand_num = std::lround( numeric::random::random_range(1,4) );
 		float rot_angle = 90.0*(rand_num);
 		TR << "Flipping the peptide " << std::endl;
 		rigid::RigidBodyDeterministicSpinMover spin_mover ( rb_jump_, second_pc_axis, peptide_c_alpha_centroid, rot_angle );

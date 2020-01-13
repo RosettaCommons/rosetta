@@ -194,9 +194,9 @@ P_AA::read_P_AA_pp()
 		std::string _smoothingRequsted = basic::options::option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ];
 		std::string _smoothingAsKeyword = "undefined";
 
-		if ( _smoothingRequsted.compare("1")==0 ) {
+		if ( _smoothingRequsted == "1" ) {
 			_smoothingAsKeyword = "low_smooth";
-		} else if ( _smoothingRequsted.compare("2")==0 ) {
+		} else if ( _smoothingRequsted == "2" ) {
 			_smoothingAsKeyword = "high_smooth";
 		} else {
 			_smoothingAsKeyword = "unknown";

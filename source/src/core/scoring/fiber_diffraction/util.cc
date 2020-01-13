@@ -508,7 +508,7 @@ void bessel_roots(
 		for ( Size e=1; e<=npoints; ++e ) {
 			//Rounding to five digist that it then is in the same format as Rinv
 			core::Real zeroj_tmp = zeroj[e]/structure_cutoff;
-			zeroj_tmp = ((int)(zeroj_tmp * 10000 + .5) / 10000.0);
+			zeroj_tmp = ( std::round(zeroj_tmp * 10000) / 10000.0);
 			if ( zeroj_tmp*zeroj_tmp+(l/c)*(l/c) < res_cutoff_low2 || zeroj_tmp*zeroj_tmp+(l/c)*(l/c) > res_cutoff_high2 ) continue;
 			bessel_roots_lE_[l][sm_points] = zeroj_tmp;
 			sm_points++;

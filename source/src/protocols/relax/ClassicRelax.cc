@@ -78,8 +78,6 @@
 
 //#include <utility/io/mpistream.hh>
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "protocols.relax.ClassicRelax" );
 

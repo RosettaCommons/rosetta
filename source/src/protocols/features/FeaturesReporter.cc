@@ -52,8 +52,6 @@ FeaturesReporter::~FeaturesReporter() = default;
 
 using basic::Tracer;
 using basic::datacache::CacheableString;
-using boost::char_separator;
-using boost::tokenizer;
 using core::Size;
 using core::pose::Pose;
 using cppdb::statement;
@@ -67,7 +65,6 @@ using std::stringstream;
 using utility::tag::TagCOP;
 using basic::database::safely_prepare_statement;
 using basic::database::safely_write_to_database;
-using utility::trim;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 

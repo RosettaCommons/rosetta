@@ -78,48 +78,28 @@ namespace core {
 namespace scoring {
 namespace motif {
 
-using numeric::Xforms;
-
-
 /************************************************* types ************************************************/
 static basic::Tracer TR("core.scoring.motif");
 
-using core::pose::PoseCoordPickMode_BB;
-using core::pose::PoseCoordPickMode_N_C_O;
-
 typedef utility::fixedsizearray1<float,20> float20;
 typedef utility::fixedsizearray1<float,9> float9;
-using std::make_pair;
-using core::chemical::AA;
-using core::id::AtomID;
-using basic::options::option;
-namespace mh = basic::options::OptionKeys::mh;
 using core::pose::Pose;
 using core::Real;
 using core::scoring::ScoreFunctionOP;
 using core::Size;
 using numeric::max;
 using numeric::min;
-using numeric::random::gaussian;
-using numeric::random::uniform;
-using numeric::rotation_matrix_degrees;
-using numeric::conversions::radians;
-using numeric::conversions::degrees;
 using namespace ObjexxFCL::format;
-using ObjexxFCL::string_of;
-using std::cerr;
 using std::cout;
 using std::endl;
 using std::ostream;
 using std::string;
 using utility::io::izstream;
 using utility::io::ozstream;
-using utility::file_basename;
 using utility::vector1;
 using std::endl;
 using numeric::geometry::hashing::Real3;
 using core::pose::xyzStripeHashPoseCOP;
-using core::id::AtomID;
 using core::pose::Pose;
 using core::pose::PoseCOP;
 using core::pose::PoseCAP;
@@ -129,7 +109,6 @@ using core::Size;
 using std::string;
 using utility::vector1;
 using numeric::geometry::hashing::Real3;
-using core::pose::xyzStripeHashPose;
 using core::pose::xyzStripeHashPoseCAP;
 
 

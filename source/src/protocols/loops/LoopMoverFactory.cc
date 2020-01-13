@@ -43,9 +43,7 @@ namespace loops {
 
 using std::endl;
 using std::string;
-using std::pair;
 using std::stringstream;
-using core::pose::Pose;
 
 static basic::Tracer tr( "protocols.loops.LoopMoverFactory" );
 

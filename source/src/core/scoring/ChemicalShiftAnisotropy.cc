@@ -166,7 +166,7 @@ void ChemicalShiftAnisotropy::read_CSA_file( std::string const& filename ) {
 			if ( res1<=1 ) {
 				throw CREATE_EXCEPTION(utility::excn::BadInput,  "residue id needs to be greater than 1" );
 			}
-			if ( sigma1>sigma2 ||  sigma1>sigma2 ||  sigma2>sigma3 ) {
+			if ( sigma1>sigma2 ||  sigma1>sigma3 ||  sigma2>sigma3 ) {
 				throw CREATE_EXCEPTION(utility::excn::BadInput,  "sigma1 < sigma2 < sigma3" );
 			}
 		}

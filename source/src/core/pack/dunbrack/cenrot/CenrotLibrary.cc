@@ -42,8 +42,6 @@
 // Boost Headers
 #include <boost/bind.hpp>
 
-using basic::Error;
-using basic::Warning;
 namespace core {
 namespace pack {
 namespace dunbrack {

@@ -38,10 +38,8 @@
 using std::string;
 using std::stringstream;
 using core::Size;
-using core::pack::pack_rotamers;
 using core::pose::Pose;
 using core::scoring::ScoreFunction;
-using core::scoring::get_score_function;
 using core::pack::task::PackerTask;
 using basic::Tracer;
 using core::kinematics::MoveMap;

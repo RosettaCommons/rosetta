@@ -174,7 +174,7 @@ DFIRE_Potential::eval_dfire_pair_energy(
 	for ( Size ii = 1; ii <= natoms1; ++ii ) {
 		for ( Size jj = 1; jj <= natoms2; ++jj ) {
 			Real const dist = rsd1.xyz(ii).distance( rsd2.xyz(jj) );
-			auto const dist_bin_idx = (Size) (2*dist + 0.5);
+			Size const dist_bin_idx = std::lround( 2*dist );
 			//std::cout << "bin(" << dist << ") = " << dist_bin_idx << std::endl;
 			if ( dist_bin_idx >= 30 ) continue;
 

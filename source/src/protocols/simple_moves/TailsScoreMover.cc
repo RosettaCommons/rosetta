@@ -38,8 +38,6 @@
 
 #include <utility/vector1.hh>
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "protocols.simple_moves.TailsScoreMover" );
 using namespace core;

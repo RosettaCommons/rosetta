@@ -13,8 +13,8 @@
 
 #include <protocols/hybridization/TMalign.hh>
 
-#define getmax(a,b) a>b?a:b
-#define getmin(a,b) a>b?b:a
+#define getmax(a,b) ((a)>(b)?(a):(b))
+#define getmin(a,b) ((a)>(b)?(b):(a))
 
 #include <cmath>
 #include <string>

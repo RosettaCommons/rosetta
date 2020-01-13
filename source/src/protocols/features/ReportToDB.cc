@@ -83,40 +83,25 @@ namespace features {
 /// cleanup script
 
 using basic::Tracer;
-using basic::Error;
-using basic::Warning;
-using basic::datacache::CacheableString;
-using basic::database::safely_prepare_statement;
-using basic::database::safely_write_to_database;
-using basic::database::safely_read_from_database;
 using basic::database::get_db_session;
 using basic::database::set_cache_size;
 using core::Size;
 using core::pack::task::PackerTaskCOP;
 using core::pack::task::TaskFactory;
 using core::pack::task::TaskFactoryOP;
-using core::pose::Pose;
 using core::pose::PoseOP;
-using core::pose::symmetry::is_symmetric;
 using cppdb::cppdb_error;
-using cppdb::statement;
-using cppdb::result;
 using protocols::moves::MoverOP;
 using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using protocols::rosetta_scripts::parse_task_operations;
-using protocols::rosetta_scripts::parse_score_function;
 //using basic::database::parse_database_connection;
 using std::string;
 using std::endl;
 using std::accumulate;
 using std::stringstream;
-using utility::file::FileName;
-using utility::vector0;
 using utility::vector1;
 using utility::tag::TagCOP;
-using utility::sql_database::DatabaseSessionManager;
-using utility::sql_database::session;
 using utility::sql_database::sessionOP;
 
 static Tracer TR("protocols.features.ReportToDB");

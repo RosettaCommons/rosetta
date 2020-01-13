@@ -90,7 +90,7 @@ SpliceSegment::read_many( string const & Protein_family_path , string const & se
 				continue;
 			}
 			// TR<<"segment name:"<<segment_name<<std::endl;
-			if ( (segment_name.compare("") == 0)||(segment_name.compare(".") == 0) ) { //hack to avoid trying to read . or.. when looking into directory
+			if ( (segment_name == "") || (segment_name == ".") ) { //hack to avoid trying to read . or.. when looking into directory
 				continue;
 			}
 			read_profile(target_path+ent->d_name,segment_name);

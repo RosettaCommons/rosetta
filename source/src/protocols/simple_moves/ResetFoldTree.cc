@@ -32,8 +32,6 @@ static basic::Tracer TR( "protocols.simple_moves.ResetFoldTree" );
 namespace protocols {
 namespace simple_moves {
 
-using basic::Error;
-using basic::Warning;
 
 void
 ResetFoldTree::apply( Pose & pose )

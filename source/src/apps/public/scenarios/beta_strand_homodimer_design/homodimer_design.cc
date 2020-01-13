@@ -85,8 +85,6 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "apps.public.beta_strand_homodimer_design.homodimer_design" );
 
 using namespace core;

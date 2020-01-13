@@ -52,8 +52,6 @@
 // STL headers:
 #include <iostream>
 
-using basic::Error;
-using basic::Warning;
 
 namespace protocols {
 namespace helical_bundle {

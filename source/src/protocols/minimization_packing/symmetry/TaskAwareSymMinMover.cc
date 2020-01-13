@@ -44,7 +44,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::Warning;
 static basic::Tracer TR( "protocols.minimization_packing.symmetry.TaskAwareSymMinMover" );
 
 namespace protocols {

@@ -82,7 +82,6 @@ namespace simple_ddg {
 using utility::vector1;
 using core::Size;
 using core::Real;
-using std::set;
 using namespace core;
 
 

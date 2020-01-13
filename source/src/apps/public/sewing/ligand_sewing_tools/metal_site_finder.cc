@@ -37,9 +37,6 @@
 
 #include <string>
 //tracers
-using basic::Error;
-using basic::Warning;
-//using basic::T;
 static basic::Tracer TR("apps.pilot.guffysl.metal_site_finder");
 
 //NOTE: Structures must be cleaned to remove all non-CA ligands before running this protocol.

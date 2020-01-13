@@ -58,8 +58,6 @@
 #include <basic/options/option.hh>
 
 
-using basic::Error;
-using basic::Warning;
 
 using namespace core;
 using namespace scoring;

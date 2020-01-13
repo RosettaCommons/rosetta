@@ -83,10 +83,6 @@
 
 static basic::Tracer TR( "core.io.mmtf.mmtf_writer" );
 
-using basic::Error;
-using basic::Warning;
-using utility::to_string;
-
 namespace core {
 namespace io {
 namespace mmtf {

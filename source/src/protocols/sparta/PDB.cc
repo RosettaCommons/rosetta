@@ -335,7 +335,7 @@ float PDB::getChi1(int conformerID, int resNum)
 float PDB::getChi2(int conformerID, int resNum)
 {
 	string rName = residList[resNum];
-	if ( rName.compare("GLY") == 0 || rName.compare("ALA") == 0 ) {
+	if ( rName == "GLY" || rName == "ALA" ) {
 		return SPARTA_MAXNUM;
 	}
 
@@ -1354,7 +1354,7 @@ void PDB::calc_HN_S2( )
 			PDB_Entry b = it->second;
 
 			int resID2 = b.resNum;
-			if ( resID2 == resID || resID2 == resID-1 || b.atomName[0] == 'H' || (b.atomName[1] == 'H'&&b.atomName[1] != 'N') ) continue; //skip all H
+			if ( resID2 == resID || resID2 == resID-1 || b.atomName[0] == 'H' || (b.atomName[1] == 'H' /*&&b.atomName[1] != 'N'*/) ) continue; //skip all H
 
 			float D_OK = getDist(O_prev,b); // distance between O and heavy atom
 			float D_HK = getDist(H,b); // distance between O and heavy atom
@@ -1489,7 +1489,7 @@ void PDB::collect_HN_S2_and_EF( )
 
 			int resID2 = b.resNum;
 			// if( resID2 == resID || resID2 == resID-1 || b.atomName[0] == 'H' || (b.atomName[1] == 'H'&&b.atomName[1] != 'N')) continue; //skip all H
-			if ( !( resID2 == resID || resID2 == resID-1 || b.atomName[0] == 'H' || (b.atomName[1] == 'H'&&b.atomName[1] != 'N')) ) {
+			if ( !( resID2 == resID || resID2 == resID-1 || b.atomName[0] == 'H' || (b.atomName[1] == 'H'/*&&b.atomName[1] != 'N'*/)) ) {
 				float D_OK = getDist(O_prev,b); // distance between O and heavy atom
 				float D_HK = getDist(H,b); // distance between O and heavy atom
 

@@ -82,7 +82,6 @@ namespace core {
 namespace scoring {
 namespace motif {
 
-using numeric::Xforms;
 using core::id::AtomID;
 using core::pose::Pose;
 using core::pose::PoseCOP;
@@ -93,42 +92,26 @@ using core::Size;
 using std::string;
 using utility::vector1;
 using numeric::geometry::hashing::Real3;
-using core::pose::xyzStripeHashPose;
 using core::pose::xyzStripeHashPoseCAP;
 
 
 /************************************************* types ************************************************/
 static basic::Tracer TR("core.scoring.motif.util");
 
-using core::pose::PoseCoordPickMode_BB;
-using core::pose::PoseCoordPickMode_N_C_O;
-
 typedef utility::fixedsizearray1<float,20> float20;
 typedef utility::fixedsizearray1<float,9> float9;
-using std::make_pair;
-using core::chemical::AA;
 using core::id::AtomID;
-using basic::options::option;
-namespace mh = basic::options::OptionKeys::mh;
 using core::pose::Pose;
 using core::Real;
 using core::scoring::ScoreFunctionOP;
 using core::Size;
-using numeric::max;
-using numeric::min;
-using numeric::random::gaussian;
 using numeric::random::uniform;
-using numeric::rotation_matrix_degrees;
-using numeric::conversions::radians;
-using numeric::conversions::degrees;
 using namespace ObjexxFCL::format;
 using ObjexxFCL::string_of;
-using std::cerr;
 using std::cout;
 using std::endl;
 using std::ostream;
 using std::string;
-using utility::io::izstream;
 using utility::io::ozstream;
 using utility::file_basename;
 using utility::vector1;
@@ -146,8 +129,6 @@ using core::pose::motif::get_backbone_reference_frame_atomids;
 using core::pose::motif::get_sidechain_reference_frame_atomids;
 using core::pose::motif::get_sidechain_reference_frame_atomids_with_downstream;
 using core::pose::motif::get_backbone_reference_frame_atomids_with_downstream;
-
-using core::chemical::aa_gly;
 
 void xform_pose( core::pose::Pose & pose, Xform const & s, Size sres=1, Size eres=0 ) {
 	if ( eres==0 ) eres = pose.size();

@@ -36,8 +36,6 @@
 #include <utility/tag/Tag.hh>
 
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "protocols.TaskOperations.RestrictToTerminiOperation" );
 
 namespace protocols {
@@ -49,9 +47,7 @@ using namespace utility::tag;
 using utility::vector1;
 using core::Size;
 using core::pack::task::operation::TaskOperationOP;
-using core::pose::Pose;
 using core::pack::task::PackerTask;
-using core::pack::task::operation::RestrictToRepackingRLT;
 
 ////////////////// Creator ////////////////
 TaskOperationOP

@@ -133,7 +133,7 @@ MPQuickRelaxMover & MPQuickRelaxMover::operator = ( MPQuickRelaxMover const & sr
 	}
 
 	// Otherwise, create a new object
-	return *( new MPQuickRelaxMover( *this ) );
+	return *( new MPQuickRelaxMover( *this ) ); /// ????????
 }
 
 /// @brief Destructor

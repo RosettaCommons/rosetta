@@ -104,8 +104,6 @@
 #include <protocols/moves/mover_schemas.hh>
 
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "protocols.docking.DockingProtocol" );
 using namespace core;
@@ -622,7 +620,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		ensemble1_ = utility::pointer::make_shared< DockingEnsemble >( p1_start, p1_end, rb_jump, ensemble1_filename_, "dock_ens_conf1", docking_scorefxn_low_, docking_scorefxn_high_ );
 
 		// check sequence
-		if ( ensemble1_->get_conformer(1).sequence().compare(p1_seq) != 0 ) {
+		if ( ensemble1_->get_conformer(1).sequence() != p1_seq ) {
 			utility_exit_with_message( "Sequence for partner1: \n" + p1_seq + "\n does not match first member of ensemble1: \n" + ensemble1_->get_conformer(1).sequence());
 		}
 
@@ -631,7 +629,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		ensemble2_ = utility::pointer::make_shared< DockingEnsemble >( p2_start, p2_end, rb_jump, ensemble2_filename_, "dock_ens_conf2", docking_scorefxn_low_, docking_scorefxn_high_ );
 
 		// check sequence
-		if ( ensemble2_->get_conformer(1).sequence().compare(p2_seq) != 0 ) {
+		if ( ensemble2_->get_conformer(1).sequence() != p2_seq ) {
 			utility_exit_with_message( "Sequence for partner2: \n" + p2_seq + "\n does not match first member of ensemble2: \n" + ensemble2_->get_conformer(1).sequence());
 		}
 
@@ -1046,7 +1044,7 @@ DockingProtocol::apply( pose::Pose & pose )
 		sync_objects_with_flags();
 	}
 
-	if ( previous_sequence_.compare( pose.sequence() ) != 0 ) {
+	if ( previous_sequence_ != pose.sequence() ) {
 		first_apply_with_current_setup_ = true;
 		previous_sequence_ = pose.sequence();
 	}

@@ -70,7 +70,6 @@ namespace protocols {
 namespace features {
 
 using std::string;
-using std::list;
 using std::endl;
 using core::Size;
 using core::import_pose::pose_from_file;

@@ -53,8 +53,6 @@ using namespace scoring;
 using namespace chemical;
 using namespace conformation;
 
-using basic::Warning;
-using basic::t_warning;
 static basic::Tracer TR( "protocols.moves.RotamerizeMover" );
 
 /// RotamerizeMover

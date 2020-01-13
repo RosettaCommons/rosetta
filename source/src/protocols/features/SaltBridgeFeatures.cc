@@ -67,8 +67,6 @@ using core::Length;
 using core::Angle;
 using core::PointPosition;
 using core::kinematics::Stub;
-using core::chemical::aa_asp;
-using core::chemical::aa_glu;
 using core::chemical::aa_lys;
 using core::chemical::aa_his;
 using core::chemical::aa_arg;

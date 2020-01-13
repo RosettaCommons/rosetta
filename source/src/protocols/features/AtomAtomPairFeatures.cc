@@ -63,9 +63,6 @@ namespace features {
 
 using std::map;
 using std::string;
-using std::endl;
-using std::upper_bound;
-using core::chemical::num_canonical_aas;
 using core::chemical::AtomTypeSetCOP;
 using core::chemical::AtomIndices;
 using core::chemical::ChemicalManager;
@@ -74,9 +71,7 @@ using core::Size;
 using core::Real;
 using core::Distance;
 using core::Vector;
-using utility::graph::Graph;
 using core::conformation::Residue;
-using core::scoring::TenANeighborGraph;
 using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
 using protocols::moves::Movers_map;

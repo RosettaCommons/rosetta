@@ -157,7 +157,7 @@ SCS_Helper::parse_OCD_data()
 
     for (auto pairs : fields) {
       std::string key = pairs.first; // get column name
-			if (key.compare("pdb")!=0) { // skip first column
+			if ( key != "pdb" ) { // skip first column
 				OCDs[key] = core::Real(std::stof(fields[key])); // OCDs[12e8] = 0.0;
 			}
     }
@@ -209,7 +209,7 @@ SCS_Helper::parse_outlier_data()
 		// then store that single map to results map
 		std::string current_pdb = fields["pdb"];
 
-		if( current_pdb.compare(last_pdb)!=0 ) {
+		if( current_pdb != last_pdb ) {
 			// we've stored all outliers for all regions for a single pdb
 			// map PDB - CDR - outlier
 			results[last_pdb.substr(3,4)] = outliers;

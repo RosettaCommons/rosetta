@@ -103,7 +103,6 @@ core::Real output_packstat( core::pose::Pose & pose ) {
 	using namespace protocols;
 	using namespace simple_filters;
 
-	PackStatFilter();
 	PackStatFilter psfilter;
 
 	core::Real packing_score = psfilter.compute( pose );

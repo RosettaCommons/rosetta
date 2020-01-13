@@ -83,8 +83,6 @@
 #undef interface
 #endif
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "protocols.docking.DockingInitialPerturbation" );
 static core::Size trans ( 1 ), rot ( 2 );

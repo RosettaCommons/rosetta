@@ -52,8 +52,6 @@ static basic::Tracer TR( "protocols.features.BatchFeatures" );
 
 using std::string;
 using std::stringstream;
-using basic::options::OptionKeys::parser::protocol;
-using basic::options::option;
 using core::Size;
 using utility::vector1;
 using utility::sql_database::sessionOP;

@@ -53,7 +53,6 @@ namespace features {
 
 using utility::vector1;
 using cppdb::statement;
-using cppdb::result;
 using std::string;
 using namespace core::scoring;
 using namespace protocols::analysis; // for total, side1, etc.

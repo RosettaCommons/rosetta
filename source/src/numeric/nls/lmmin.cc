@@ -181,7 +181,7 @@ void lm_qrsolv( int n, double *r, int ldr, const int *ipvt, const double *diag,
 
 #define MIN(a,b) (((a)<=(b)) ? (a) : (b))
 #define MAX(a,b) (((a)>=(b)) ? (a) : (b))
-#define SQR(x)   (x)*(x)
+#define SQR(x)   ((x)*(x))
 
 
 void lm_lmdif( int m, int n, double *x, double *fvec, double ftol,

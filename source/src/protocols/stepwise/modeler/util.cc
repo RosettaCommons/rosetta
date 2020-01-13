@@ -75,7 +75,6 @@ using namespace core::pose;
 using namespace core::pose::full_model_info;
 
 using ObjexxFCL::string_of;
-using utility::operator<<;
 using core::kinematics::FoldTree;
 
 static basic::Tracer TR( "protocols.stepwise.modeler.util" );

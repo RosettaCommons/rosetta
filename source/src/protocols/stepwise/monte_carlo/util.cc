@@ -44,7 +44,6 @@
 
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.util" );
 
-using ObjexxFCL::lead_zero_string_of;
 using namespace core;
 using namespace core::pose;
 using namespace protocols::stepwise::modeler;

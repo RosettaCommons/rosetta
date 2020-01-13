@@ -87,8 +87,6 @@ namespace core {
 namespace io {
 namespace mmcif {
 
-using basic::Error;
-using basic::Warning;
 using utility::to_string;
 
 /// @brief Dump an mmCIF from a pose to a file.

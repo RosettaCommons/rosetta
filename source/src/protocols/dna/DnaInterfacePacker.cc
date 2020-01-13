@@ -108,9 +108,7 @@ using namespace scoring;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
-using basic::t_warning;
 using basic::t_info;
-using basic::t_debug;
 static basic::Tracer TR( "protocols.dna.DnaInterfacePacker" );
 static basic::Tracer TR_spec( "protocols.dna.Specificity" );
 

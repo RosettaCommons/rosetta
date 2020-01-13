@@ -37,8 +37,6 @@
 #include <utility/vector1.hh>
 
 
-using basic::Error;
-using basic::Warning;
 
 namespace protocols {
 namespace ligand_docking {

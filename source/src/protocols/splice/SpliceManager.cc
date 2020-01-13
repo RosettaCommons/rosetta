@@ -485,7 +485,7 @@ void SpliceManager::add_coordinate_constraints(core::pose::Pose & pose, core::po
 					if ( source_pose.residue(i + res_diff).atom_is_hydrogen(atmnum) ) { //Don't want to add constraints to H atoms
 						continue;
 					}
-					if ( pose.residue(i).atom_name(atmnum).compare("CB") == 0 ) { //Already added CB constratins
+					if ( pose.residue(i).atom_name(atmnum) == "CB" ) { //Already added CB constratins
 						TR<<"FOUND CB ATOM IN :"<<pose.residue(i).atom_name(atmnum)<<std::endl;
 						continue;
 					}
@@ -663,7 +663,7 @@ void SpliceManager::parse_segments(utility::vector1<TagCOP> const & sub_tags,Tag
 					splice_segments().insert( std::pair< std::string, SpliceSegmentOP >( segment_name, data.get_ptr<SpliceSegment>("segments", segment_name)  ));
 					TR << "using segment "<<segment_name<<" from datamap" << std::endl;
 					segment_names_ordered().push_back(segment_name);
-					if ( segment_name.compare(segment_type()) == 0 ) {
+					if ( segment_name == segment_type() ) {
 						check_segment=true;
 					}
 					continue;
@@ -682,7 +682,7 @@ void SpliceManager::parse_segments(utility::vector1<TagCOP> const & sub_tags,Tag
 
 				splice_segment->read_pdb_profile( pdb_profile_match );
 				//TR<<"the segment name is: "<<segment_name<<std::endl;
-				if ( segment_name.compare(segment_type()) == 0 ) { //make sure that the current segment being spliced exists in the pssm segments
+				if ( segment_name == segment_type() ) { //make sure that the current segment being spliced exists in the pssm segments
 					check_segment=true;
 				}
 				splice_segments().insert( std::pair< std::string, SpliceSegmentOP >( segment_name, splice_segment ) );

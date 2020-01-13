@@ -29,7 +29,7 @@
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
 
-#define THROW_EXCEPTION(X) {std::cerr << "OVERFLOW ERROR: " <<  X;return;}
+#define THROW_EXCEPTION(X) {std::cerr << "OVERFLOW ERROR: " <<  (X);return;}
 
 namespace core {
 namespace io {
@@ -291,7 +291,7 @@ check_binary_chars(const char *x, BUFFER & buf)
 		read_binary(input[ii], buf);
 	}
 
-	if ( memcmp(&input[0], x, len) ) {
+	if ( memcmp(&input[0], x, len) != 0 ) {
 		THROW_EXCEPTION("Error reading .\n");
 	}
 }

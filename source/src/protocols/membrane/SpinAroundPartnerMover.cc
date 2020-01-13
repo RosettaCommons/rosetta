@@ -117,7 +117,7 @@ SpinAroundPartnerMover::operator = ( SpinAroundPartnerMover const & src ) {
 	}
 
 	// Otherwise, create a new object
-	return *( new SpinAroundPartnerMover( *this ) );
+	return *( new SpinAroundPartnerMover( *this ) ); // ??????
 }
 
 /// @brief Destructor

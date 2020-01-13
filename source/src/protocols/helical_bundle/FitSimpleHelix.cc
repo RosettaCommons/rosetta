@@ -39,8 +39,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-using basic::Error;
-using basic::Warning;
 using namespace core::optimization;
 
 namespace protocols {

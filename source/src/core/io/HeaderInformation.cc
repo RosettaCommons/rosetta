@@ -66,7 +66,6 @@ using ObjexxFCL::rstripped_whitespace;// copy
 using ObjexxFCL::stripped_whitespace; // copy
 
 using core::io::pdb::Record;
-using core::io::pdb::Field;
 using core::io::pdb::RecordCollection;
 
 static basic::Tracer TR( "core.io.pdb.HeaderInformation" );

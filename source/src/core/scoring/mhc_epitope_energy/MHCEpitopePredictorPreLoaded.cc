@@ -40,9 +40,6 @@ namespace core {
 namespace scoring {
 namespace mhc_epitope_energy {
 
-using basic::t_info;
-using basic::t_debug;
-using basic::t_trace;
 static basic::Tracer TR("core.scoring.mhc_epitope_energy.MHCEpitopePredictorPreLoaded");
 
 using namespace utility::sql_database;

@@ -104,22 +104,22 @@ GoapRsdType::setup_connectivity( chemical::ResidueType const &rsd )
 		bool connected_by_twobonds( false );
 		std::string const atmname( rsd.atom_name( iatm ) );
 
-		if ( atmname.compare(" N  ") == 0 ) {
+		if ( atmname == " N  " ) {
 			i2 = 999; // this means to search prvC
 			i3 = rsd.atom_index(" CA ");
 			connected_by_twobonds = true;
 
-		} else if ( atmname.compare(" CA ") == 0 ) {
+		} else if ( atmname == " CA " ) {
 			i2 = rsd.atom_index(" N  ");
 			i3 = rsd.atom_index(" C  ");
 			connected_by_twobonds = true;
 
-		} else if ( atmname.compare(" C  ") == 0 ) {
+		} else if ( atmname == " C  " ) {
 			i2 = rsd.atom_index(" CA ");
 			i3 = rsd.atom_index(" O  ");
 			connected_by_twobonds = true;
 
-		} else if ( atmname.compare(" O  ") == 0 ) {
+		} else if ( atmname == " O  " ) {
 			i2 = rsd.atom_index(" C  ");
 			i3 = rsd.atom_index(" CA ");
 
@@ -281,16 +281,16 @@ GoapEnergy::read_angle_definitions( std::string const & connection_file )
 		std::istringstream linestream( line );
 		linestream >> s1;
 
-		if ( s1.compare( "#ATOM" ) == 0 ) {
+		if ( s1 == "#ATOM" ) {
 			read_type = 1;
 			continue;
-		} else if ( s1.compare( "#BOND" ) == 0 ) {
+		} else if ( s1 == "#BOND" ) {
 			read_type = 2;
 			continue;
-		} else if ( s1.compare( "#ANGLE" ) == 0 ) {
+		} else if ( s1 == "#ANGLE" ) {
 			read_type = 3;
 			continue;
-		} else if ( s1.compare( "#END" ) == 0 ) {
+		} else if ( s1 == "#END" ) {
 			break;
 		}
 
@@ -396,13 +396,13 @@ GoapEnergy::read_potential_values( std::string const & distance_file,
 
 		linestream >> s1;
 
-		if ( s1.compare( "#MAP" ) == 0 ) {
+		if ( s1 == "#MAP" ) {
 			read_type = 1;
 			continue;
-		} else if ( s1.compare( "#DATA" ) == 0 ) {
+		} else if ( s1 == "#DATA" ) {
 			read_type = 2;
 			continue;
-		} else if ( s1.compare( "#END" ) == 0 ) {
+		} else if ( s1 == "#END" ) {
 			break;
 		}
 
@@ -429,7 +429,7 @@ GoapEnergy::read_potential_values( std::string const & distance_file,
 		std::string s1;
 		linestream >> s1;
 
-		if ( s1.compare( "#DATA" ) == 0 ) {
+		if ( s1 == "#DATA" ) {
 			read_type = 1;
 			continue;
 		}

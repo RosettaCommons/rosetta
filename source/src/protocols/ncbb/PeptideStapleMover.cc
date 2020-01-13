@@ -52,8 +52,6 @@
 #include <numeric/constants.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "protocols.simple_moves.PeptideStapleMover" );
 
 // C++ Headers

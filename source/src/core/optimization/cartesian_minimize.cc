@@ -49,8 +49,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
-using basic::Error;
-using basic::Warning;
 using namespace ObjexxFCL::format;
 
 namespace core {

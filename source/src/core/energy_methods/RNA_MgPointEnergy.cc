@@ -40,7 +40,6 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 
-using ObjexxFCL::format::I;
 using namespace core::chemical::rna;
 
 static basic::Tracer tr( "core.scoring.rna.RNA_MgPointEnergy" );

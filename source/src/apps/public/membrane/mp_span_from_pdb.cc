@@ -51,9 +51,6 @@
 #include <string>
 #include <cmath>
 
-using basic::Error;
-using basic::Warning;
-
 using namespace core;
 using namespace core::pose;
 using namespace core::conformation;

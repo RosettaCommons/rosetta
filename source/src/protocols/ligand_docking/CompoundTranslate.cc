@@ -36,8 +36,6 @@
 
 
 //Auto Headers
-using basic::Error;
-using basic::Warning;
 
 namespace protocols {
 namespace ligand_docking {

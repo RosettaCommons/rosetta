@@ -187,11 +187,11 @@ MDBase::parse_schfile( std::string const schfile ) {
 		utility::vector1< std::string > tokens ( utility::split( line ) );
 		// Format: sch nstep temp0
 		MDscheduleData sch;
-		if ( tokens[1].compare("sch") == 0 ) {
+		if ( tokens[1] == "sch" ) {
 			sch.type = "sch";
 			sch.temp0 = atof( tokens[2].c_str() );
 			sch.nstep = atoi( tokens[3].c_str() );
-		} else if ( tokens[1].compare("repack") == 0 ) {
+		} else if ( tokens[1] == "repack" ) {
 			sch.type = "repack";
 		} else {
 			continue;

@@ -32,7 +32,6 @@ static basic::Tracer tr( "protocols.environment.DofUnlock", basic::t_info );
 namespace protocols {
 namespace environment {
 
-using core::environment::DofPassport;
 using core::environment::DofPassportCOP;
 
 DofUnlock::DofUnlock( core::conformation::Conformation& conf,

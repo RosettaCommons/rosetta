@@ -200,10 +200,10 @@ MPI_Refine_Emperor::process_inbound_wus(){
 			TR << "Sending " << nsend << " new structure to master " << structure_wu->last_received_from();
 			TR << ", based on objfunction " << objfunction << std::endl;
 
-			if ( pick_strategy.compare( "sort" ) == 0 && nsend_requested <= library_central().size() ) {
+			if ( pick_strategy == "sort"  && nsend_requested <= library_central().size() ) {
 				send_sortedpick_library_structs( structure_wu->last_received_from(),
 					nsend, objfunction, false );
-			} else if ( pick_strategy.compare( "weighted" ) == 0 && nsend_requested <= library_central().size() ) {
+			} else if ( pick_strategy == "weighted"  && nsend_requested <= library_central().size() ) {
 				send_sortedpick_library_structs( structure_wu->last_received_from(),
 					nsend, objfunction, true );
 			} else {
@@ -319,7 +319,7 @@ MPI_Refine_Emperor::add_structures_to_library( SilentStructStore &new_structs,
 	// number of this function calls
 	n_addcall_++;
 
-	if ( add_algorithm.compare("NSGAII") == 0 ) {
+	if ( add_algorithm == "NSGAII" ) {
 		// Library_central will be updated, removed structs will be returned in new_structs
 		//core::Real const simlimit = option[ OptionKeys::lh::rms_limit ]();
 		result = fobj_->update_library_NSGAII( library_central(), new_structs, max_lib_size(), true );

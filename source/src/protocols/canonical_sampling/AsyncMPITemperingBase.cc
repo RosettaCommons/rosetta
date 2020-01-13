@@ -54,9 +54,6 @@
 // C++ Headers
 #include <cmath>
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer tr( "protocols.canonical_sampling.AsyncMPITemperingBase" );
 
 namespace protocols {

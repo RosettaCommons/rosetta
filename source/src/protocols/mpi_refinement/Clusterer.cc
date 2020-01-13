@@ -59,7 +59,7 @@ Clusterer::apply( protocols::wum::SilentStructStore structs,
 	core::Real const dist_cut ) const
 {
 	protocols::wum::SilentStructStore clustered;
-	if ( method_.compare( "energy_sort" ) == 0 ) {
+	if ( method_ == "energy_sort"  ) {
 		clustered = energy_sort_cluster( structs, ncluster, dist_cut );
 	} else {
 		TR << "Unknown clustering method: " << method_ << "!" << std::endl;
@@ -79,7 +79,7 @@ Clusterer::get_distance( core::io::silent::SilentStructOP ss1,
 
 	bool is_close( false );
 
-	if ( similarity_measure_.compare( "Sscore" ) == 0 ) {
+	if ( similarity_measure_ == "Sscore"  ) {
 		core::Real dumm; // dummy variable for return-by-reference
 		distance = CA_Sscore( ss1, ss2, dumm, true, 2.0 );
 		if ( distance > dist_cut ) {
@@ -88,7 +88,7 @@ Clusterer::get_distance( core::io::silent::SilentStructOP ss1,
 			is_close = false;
 		}
 
-	} else if ( similarity_measure_.compare( "rmsd" ) == 0 ) {
+	} else if ( similarity_measure_ == "rmsd"  ) {
 		CA_Sscore( ss1, ss2, distance, true, 2.0 );
 		if ( distance < dist_cut ) {
 			is_close = true;
@@ -96,7 +96,7 @@ Clusterer::get_distance( core::io::silent::SilentStructOP ss1,
 			is_close = false;
 		}
 
-	} else if ( similarity_measure_.compare( "looprmsd" ) == 0 ) {
+	} else if ( similarity_measure_ == "looprmsd"  ) {
 		std::string loopstr = option[ lh::loop_string ]();
 		utility::vector1< core::Size > loopres = loopstring_to_loopvector( loopstr );
 		CA_Sscore( ss1, ss2, distance, loopres, true, 2.0 );

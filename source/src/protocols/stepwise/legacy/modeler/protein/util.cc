@@ -53,7 +53,6 @@ static basic::Tracer TR( "protocols.stepwise.legacy.modeler.protein.util" );
 using core::Real;
 using core::Size;
 using core::pose::Pose;
-using utility::tools::make_vector1;
 using ObjexxFCL::string_of;
 using namespace protocols::stepwise::modeler;
 using namespace protocols::stepwise::modeler::protein;

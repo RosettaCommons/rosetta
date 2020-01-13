@@ -235,8 +235,12 @@ def run_clang_tidy_test(rosetta_dir, working_dir, platform, config, hpc_driver=N
     CLANG_TIDY_TESTS = ["clang-diagnostic-*",
                         "clang-analyzer-*",
                         "bugprone-*",
+                        "misc-*",
                         "modernize-use-override",
                         "-bugprone-forward-declaration-namespace", # Skip - This makes spurious errors when we include the .fwd.hh but not the .hh"
+                        "-misc-unconventional-assign-operator", # Skip - we use virtual assignment operators too much for this to be useful
+                        "-misc-definitions-in-headers", # Skip - We use a few "include only once" headers (e.g. in the option system) with definitions in them
+                        "-misc-misplaced-widening-cast", # Skip - not all that useful, catches a bunch of enum conversions
                         "-clang-analyzer-security.FloatLoopCounter", # Skip - There's a number of places in Rosetta where we attempt to evenly sample across a range.
                         "-clang-analyzer-cplusplus.NewDelete", # Skip - There's issues on the test server with shared_ptr in the system headers.
                         "-clang-analyzer-cplusplus.NewDeleteLeaks", # Ibid.

@@ -32,9 +32,6 @@
 #include <utility/file/FileName.hh>
 
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer TR("");
 
 //namespaces

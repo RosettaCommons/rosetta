@@ -55,14 +55,11 @@ using std::stringstream;
 using basic::options::OptionKeys::parser::protocol;
 using basic::options::option;
 using core::Size;
-using core::pose::Pose;
 using utility::io::izstream;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
-using basic::database::insert_statement_generator::InsertGenerator;
-using basic::database::insert_statement_generator::RowData;
 using basic::database::insert_statement_generator::RowDataBaseOP;
 
 ProtocolFeatures::ProtocolFeatures()= default;

@@ -40,7 +40,6 @@
 #include <utility/vector1.hh>
 
 
-using basic::Warning;
 static basic::Tracer TR( "protocols.jd2.FileSystemJobDistributor" );
 
 namespace protocols {

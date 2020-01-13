@@ -53,8 +53,6 @@
 
 #include <utility/io/util.hh>
 
-using basic::Error;
-using basic::Warning;
 
 using namespace core;
 using namespace core::pose;

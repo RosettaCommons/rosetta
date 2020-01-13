@@ -217,7 +217,7 @@ NormalMode::prepare_coord( pose::Pose const & pose ){
 			Vector crd = rsd.xyz( iatm );
 
 			// Let's make only for CA for now
-			if ( mode().compare( "CA" ) == 0 && atmname.compare( " CA " ) == 0 ) {
+			if ( mode() == "CA" && atmname == " CA " ) {
 				id::AtomID atmID( iatm, ires );
 				atomID_.push_back( atmID );
 				xyz_.push_back( crd );
@@ -225,13 +225,13 @@ NormalMode::prepare_coord( pose::Pose const & pose ){
 			}
 
 			// Add atomID depending on representation
-			if ( atmname.compare( " CA " ) == 0 ) {
+			if ( atmname == " CA "  ) {
 				xyzCA = crd;
 
-			} else if ( atmname.compare( " N  " ) == 0 ) {
+			} else if ( atmname == " N  "  ) {
 				xyzN = crd;
 
-			} else if ( atmname.compare( " C  " ) == 0 ) {
+			} else if ( atmname == " C  "  ) {
 				xyzC = crd;
 
 			}

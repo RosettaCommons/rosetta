@@ -43,13 +43,11 @@ using namespace utility::tag;
 
 using namespace std;
 using namespace core;
-using core::pose::Pose;
 using core::pack::task::PackerTask;
 using core::pack::task::operation::TaskOperationOP;
 using protocols::loops::Loops;
 using protocols::loops::LoopsCOP;
 using utility::tag::TagCOP;
-using basic::datacache::DataMap;
 
 TaskOperationOP RestrictToLoopsCreator::create_task_operation() const {
 	return utility::pointer::make_shared< RestrictToLoops >();

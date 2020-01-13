@@ -82,7 +82,7 @@ RandomPositionRotationMover::operator=( RandomPositionRotationMover const & src 
 	}
 
 	// Otherwise, create a new object
-	return *( new RandomPositionRotationMover( *this ) );
+	return *( new RandomPositionRotationMover( *this ) );// ???????
 
 }
 
@@ -167,7 +167,7 @@ RandomPositionTranslationMover::operator=( RandomPositionTranslationMover const 
 	}
 
 	// Otherwise, create a new object
-	return *( new RandomPositionTranslationMover( *this ) );
+	return *( new RandomPositionTranslationMover( *this ) ); // ????????
 
 }
 

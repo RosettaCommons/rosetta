@@ -83,7 +83,7 @@ MPMutateRelaxMover & MPMutateRelaxMover::operator = ( MPMutateRelaxMover const &
 	}
 
 	// Otherwise, create a new object
-	return *( new MPMutateRelaxMover( *this ) );
+	return *( new MPMutateRelaxMover( *this ) ); // ??????????????????????
 }
 
 /// @brief Destructor

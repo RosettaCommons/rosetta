@@ -41,7 +41,6 @@
 #include <utility/excn/Exceptions.hh>
 
 using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "apps.public.interface_design.anchored_design.AnchoredPDBCreator" );
 

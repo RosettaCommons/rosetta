@@ -468,7 +468,7 @@ TBMB_Helper::get_linker_index_asymmetric(
 
 	core::Size tbmb_index( pose.residue(res_indices[1]).residue_connection_partner(nconn1) );
 
-	runtime_assert_string_msg( !pose.residue(tbmb_index).name3().compare("TBM"),
+	runtime_assert_string_msg( pose.residue(tbmb_index).name3() == "TBM",
 		errmsg + "The residue connected to the side-chain of the first cysteine is not TBMB." );
 	runtime_assert_string_msg( pose.residue(res_indices[2]).residue_connection_partner(nconn2) == tbmb_index,
 		errmsg + "The residue connected to the side-chain of the first cysteine is not the same as the residue connected to the side-chain of the second cysteine." );
@@ -507,7 +507,7 @@ TBMB_Helper::get_linker_indices_symmetric(
 
 	for ( core::Size i(1); i<=3; ++i ) {
 		runtime_assert_string_msg( linker_indices[i] > 0, errmsg + "One of the cysteine residues is not connected to anything!" );
-		runtime_assert_string_msg( !pose.residue(linker_indices[i]).name3().compare("TBS"),
+		runtime_assert_string_msg( pose.residue(linker_indices[i]).name3() == "TBS",
 			errmsg + "The residue connected to the side-chain of one of the cysteine residues is not a symmetric fragment of TBMB." );
 	}
 }

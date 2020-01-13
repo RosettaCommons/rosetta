@@ -25,10 +25,6 @@
 
 
 ////////////////////////////////////////////////////////
-using basic::Error;
-using basic::Warning;
-
-using namespace core;
 
 int
 main( int argc, char * argv [] )

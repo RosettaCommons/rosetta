@@ -66,7 +66,6 @@ using point = numeric::xyzVector<core::Real>;
 using axis = point;
 
 using namespace core;
-using basic::Warning;
 
 static basic::Tracer TR( "apps.pilot.bder.zinc2_homodimer_setup" );
 

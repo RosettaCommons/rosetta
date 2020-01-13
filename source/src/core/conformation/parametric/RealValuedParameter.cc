@@ -395,7 +395,7 @@ RealValuedParameter::perturbation_type_enum_from_string(
 	std::string const &type_string
 ) {
 	for ( core::Size i(1); static_cast<RealPerturbationType>(i)<RPT_end_of_list; ++i ) {
-		if ( !type_string.compare( perturbation_type_string_from_enum(static_cast<RealPerturbationType>(i)) ) ) return static_cast<RealPerturbationType>(i);
+		if ( type_string ==  perturbation_type_string_from_enum(static_cast<RealPerturbationType>(i)) ) return static_cast<RealPerturbationType>(i);
 	}
 	return RPT_unknown_type;
 }

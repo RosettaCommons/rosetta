@@ -148,7 +148,7 @@ void read_rama_map_file_shapovalov(
 
 		bool found(false);
 		for ( core::Size i=1, imax=namelist.size(); i<=imax; ++i ) {
-			if ( namelist[i].compare(curname) == 0 ) {
+			if ( namelist[i] == curname ) {
 				found=true;
 				break;
 			}

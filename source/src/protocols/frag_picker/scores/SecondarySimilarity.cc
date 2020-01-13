@@ -71,7 +71,7 @@ bool SecondarySimilarity::score(FragmentCandidateOP f, FragmentScoreMapOP empty_
 void SecondarySimilarity::do_caching(VallChunkOP chunk) {
 
 	std::string & tmp = chunk->chunk_key();
-	if ( tmp.compare(cached_scores_id_) == 0 ) {
+	if ( tmp == cached_scores_id_ ) {
 		return;
 	}
 	cached_scores_id_ = tmp;
@@ -112,7 +112,7 @@ bool SecondarySimilarity::cached_score(FragmentCandidateOP f,
 
 	/*
 	std::string & tmp = f->get_chunk()->chunk_key();
-	if (tmp.compare(cached_scores_id_) != 0)
+	if (tmp != cached_scores_id_)
 	do_caching(f->get_chunk());
 	*/
 	core::Real totalScore = cache_[f->get_length()][f->get_first_index_in_query()][f->get_first_index_in_vall()];

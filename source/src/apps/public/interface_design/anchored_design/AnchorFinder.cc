@@ -62,9 +62,6 @@
 
 #include <utility/excn/Exceptions.hh>
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer TR( "apps.public.interface_design.anchored_design.AnchorFinder" );
 
 basic::options::IntegerOptionKey const window_size("window_size");

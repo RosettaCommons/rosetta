@@ -35,8 +35,6 @@
 
 #include <set>
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "protocols.TaskOperations.LinkResidues" );
 
 namespace protocols {

@@ -85,7 +85,6 @@ namespace protocols {
 namespace motifs {
 
 using utility::vector1;
-using utility::string_split;
 using namespace core;
 using namespace chemical;
 using namespace conformation;
@@ -101,9 +100,7 @@ using namespace protocols::dna;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
-using basic::t_warning;
 using basic::t_info;
-using basic::t_debug;
 static basic::Tracer TR( "devel.motifs.MotifDnaPacker" );
 
 

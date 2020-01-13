@@ -42,8 +42,6 @@
 #define foreach BOOST_FOREACH
 
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "protocols.geometry.RB_geometry" );
 

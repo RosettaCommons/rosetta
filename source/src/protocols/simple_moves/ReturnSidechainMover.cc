@@ -40,8 +40,6 @@
 #include <string> //making sure that residue_type.name() comparison works
 
 
-using basic::Error;
-using basic::Warning;
 
 
 static basic::Tracer TR( "protocols.simple_moves.ReturnSidechainMover" );

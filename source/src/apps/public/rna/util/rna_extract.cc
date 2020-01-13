@@ -51,7 +51,6 @@
 
 using namespace core;
 using namespace protocols;
-using utility::vector1;
 
 
 OPT_KEY( Boolean, remove_variant_cutpoint_atoms )

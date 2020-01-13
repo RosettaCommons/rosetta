@@ -46,7 +46,6 @@ namespace protocols {
 namespace features {
 
 using std::string;
-using core::chemical::num_canonical_aas;
 using core::chemical::AtomIndices;
 using core::pose::Pose;
 using core::Size;

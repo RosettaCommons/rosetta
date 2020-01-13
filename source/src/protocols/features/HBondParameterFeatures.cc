@@ -56,9 +56,7 @@ using std::endl;
 using core::Size;
 using core::Real;
 using core::pose::Pose;
-using core::chemical::BondName;
 using core::chemical::AtomIndices;
-using core::chemical::ResidueType;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunction;
 using core::scoring::get_score_function;
@@ -70,8 +68,6 @@ using protocols::moves::Movers_map;
 using utility::sql_database::sessionOP;
 using utility::tag::TagCOP;
 using utility::vector1;
-using cppdb::statement;
-using cppdb::result;
 using basic::Tracer;
 
 static Tracer TR("protocols.features.HBondParameterFeatures");

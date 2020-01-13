@@ -293,7 +293,7 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 			TR.Debug << "Ensemble 1, member " << std::to_string(j) << ": " << c2.sequence() << std::endl;
 
 			// if sequence of conformer i, does not match j, then error!
-			if ( c1.sequence().compare(c2.sequence()) != 0 ) {
+			if ( c1.sequence() != c2.sequence() ) {
 				std::string exit_message = "Ensemble 1 members are unequal!\n";
 				exit_message = exit_message + "Member " + std::to_string(i) + ": " + c1.sequence() + "\n";
 				exit_message = exit_message + "Member " + std::to_string(j) + ": " + c2.sequence() + "\n";
@@ -315,7 +315,7 @@ void DockingEnsemblePrepackProtocol::check_ensemble_member_compatibility() {
 			TR.Debug << "Ensemble 2, member " << std::to_string(j) << ": " << c2.sequence() << std::endl;
 
 			// if sequence of conformer i, does not match j, then error!
-			if ( c1.sequence().compare(c2.sequence()) != 0 ) {
+			if ( c1.sequence() != c2.sequence() ) {
 				std::string exit_message = "Ensemble 2 members are unequal!\n";
 				exit_message = exit_message + "Member " + std::to_string(i) + ": " + c1.sequence() + "\n";
 				exit_message = exit_message + "Member " + std::to_string(j) + ": " + c2.sequence() + "\n";

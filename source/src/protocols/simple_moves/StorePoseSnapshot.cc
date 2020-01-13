@@ -58,8 +58,6 @@ using namespace core::chemical;
 using namespace std;
 using namespace numeric::conversions;
 
-using core::pose::Pose;
-using core::conformation::Residue;
 
 static basic::Tracer TR( "protocols.simple_moves.StorePoseSnapshot" );
 

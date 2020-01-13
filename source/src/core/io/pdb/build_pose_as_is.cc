@@ -111,13 +111,6 @@ namespace pdb {
 using core::Size;
 using core::SSize;
 
-using core::chemical::chr_chains;
-
-using basic::Error;
-using basic::Warning;
-using ObjexxFCL::strip_whitespace;
-using ObjexxFCL::stripped_whitespace;
-using ObjexxFCL::rstripped_whitespace;
 using namespace ObjexxFCL::format;
 
 using std::string;

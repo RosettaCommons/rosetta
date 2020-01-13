@@ -41,6 +41,7 @@ namespace chemically_conjugated_docking {
 /// @brief The purpose of this code is to allow for static extra things
 ///in the system; for its original incarnations, to allow for a RING
 ///domain to occlude its site on E2 and a GAP (+MG +GDP) to occlude ras
+inline
 utility::vector1< core::Size > add_extra_bodies( core::pose::Pose & pose, basic::Tracer & TR ) {
 
 	utility::vector1< core::Size > extra_bodies_chains;
@@ -84,6 +85,7 @@ utility::vector1< core::Size > add_extra_bodies( core::pose::Pose & pose, basic:
 	return extra_bodies_chains;
 }
 
+inline
 void pack_extra_bodies(
 	utility::vector1< core::Size > const & extra_bodies_chains,
 	core::pose::Pose const & pose,

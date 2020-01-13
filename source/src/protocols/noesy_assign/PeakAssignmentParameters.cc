@@ -241,16 +241,16 @@ void PeakAssignmentParameters::set_options_from_cmdline( core::Size cycle_select
 
 	//cycle dependent
 	#define opt_read_out_macro( VAR, OPT )               \
-{ VAR = option[ noesy_weights::defaults::OPT ]()[ cycle_selector_ ]; \
+{ (VAR) = option[ noesy_weights::defaults::OPT ]()[ cycle_selector_ ]; \
 	if ( option [ noesy_weights::OPT ].user() ) {  \
-		VAR = option[ noesy_weights::OPT ](); \
+		(VAR) = option[ noesy_weights::OPT ](); \
 	}\
 }\
 
 	#define opt_read_out_macro2( VAR, OPT, DIROPT )               \
-{ VAR = option[ noesy_weights::defaults::OPT ]()[ cycle_selector_ ]; \
+{ (VAR) = option[ noesy_weights::defaults::OPT ]()[ cycle_selector_ ]; \
 	if ( option [ noesy::DIROPT ].user() ) {  \
-		VAR = option[ noesy::DIROPT ](); \
+		(VAR) = option[ noesy::DIROPT ](); \
 	}\
 }\
 

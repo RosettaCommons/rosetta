@@ -295,9 +295,9 @@ WorkUnit_MD::run()
 
 	//std::string mdoption = get_options();
 	std::string mdoption("");
-	if ( mdoption.compare("cen") == 0 ) {
+	if ( mdoption == "cen" ) {
 		centroid = true;
-	} else if ( mdoption.compare( "looponly" ) == 0 ) {
+	} else if ( mdoption == "looponly"  ) {
 		partial_sampling = true;
 	}
 

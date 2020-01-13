@@ -189,7 +189,7 @@ RNA_FragmentMonteCarloOutputter::output_jump_information( pose::Pose const & pos
 		vector1< Size > outbins;
 		for ( Size n = 1; n <= 6; n++ ) {
 			// round to *closest* bin  by adding 0.5 before conversion to int.
-			auto outbin = static_cast<int>( 0.5 + ( outvals[ n ] - jump_histogram_min_[ n ] ) / jump_histogram_bin_width_[ n ] );
+			int outbin = std::lround( ( outvals[ n ] - jump_histogram_min_[ n ] ) / jump_histogram_bin_width_[ n ] );
 			outbin = std::min( std::max( 0, outbin ), int(jump_histogram_->n_bins( n )) - 1 ); // zero-indexed
 			outbins.push_back( Size( outbin ) );
 		}

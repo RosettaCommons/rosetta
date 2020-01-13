@@ -110,8 +110,6 @@
 #include <numeric/random/random_permutation.hh>
 
 
-using basic::Error;
-using basic::Warning;
 
 using ObjexxFCL::lead_zero_string_of;
 
@@ -383,8 +381,7 @@ HotspotStubSetOP HotspotStubSet::subset( std::string const & residue_name3, core
 	//HotspotStub scorecut_stub( all_stubs.begin()->residue(), scorecut );
 
 	if ( ( scorecut > 0 ) && ( scorecut <=1 ) ) {
-		// add 0.5 to get rounding up
-		auto n_return = static_cast<Size>(all_stubs.size() * scorecut + 0.5);
+		Size n_return = std::lround( all_stubs.size() * scorecut );
 		if ( n_return < 1 ) n_return = 1;
 		TR << "Finding the top " << n_return << " stubs." << std::endl;
 		Size i = 1;
@@ -418,8 +415,7 @@ HotspotStubSetOP HotspotStubSet::subset( core::Real const scorecut ) const {
 	for ( auto const & ss_iter : stub_set_ ) {
 
 		if ( ( scorecut > 0) && ( scorecut <= 1 ) ) {
-			// add 0.5 to get rounding up
-			auto n_return = static_cast<Size>(ss_iter.second.size() * scorecut + 0.5);
+			Size n_return = std::lround( ss_iter.second.size() * scorecut );
 			TR << "Finding the top " << n_return << " stubs." << std::endl;
 			if ( n_return < 1 ) n_return = 1;
 			Size i = 1;

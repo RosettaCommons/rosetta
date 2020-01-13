@@ -1043,7 +1043,7 @@ MultipoleElecPotential::align_multipole_axes(
 		for ( Size atm1 = 1 ; atm1 <= rsd.natoms() ; ++atm1 ) {
 
 			Vector const & dipole( mp1.dipole( atm1 ) );
-			if ( dipole != dipole ) {
+			if ( !dipole.is_finite() ) {
 				TR << "align_multi_axis Problem in dipole! " << rsd.seqpos() << " res " << rsd.name() << " atom " << rsd.atom_name( atm1 ) << std::endl;
 				std::exit(1);
 			}

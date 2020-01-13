@@ -54,7 +54,6 @@ static basic::Tracer TR( "protocols.pose_creation.SliceToMiniProteinMover" );
 namespace protocols {
 namespace pose_creation {
 
-using std::map;
 using namespace core;
 using core::pose::Pose;
 using utility::vector1;

@@ -92,12 +92,10 @@ using numeric::Xforms;
 static basic::Tracer TR("core.scoring.motif");
 
 using core::pose::PoseCoordPickMode_BB;
-using core::pose::PoseCoordPickMode_N_C_O;
 
 typedef utility::fixedsizearray1<float,20> float20;
 typedef utility::fixedsizearray1<float,9> float9;
 using std::make_pair;
-using core::chemical::AA;
 using core::id::AtomID;
 using basic::options::option;
 namespace mh = basic::options::OptionKeys::mh;
@@ -107,9 +105,6 @@ using core::scoring::ScoreFunctionOP;
 using core::Size;
 using numeric::max;
 using numeric::min;
-using numeric::random::gaussian;
-using numeric::random::uniform;
-using numeric::rotation_matrix_degrees;
 using numeric::conversions::radians;
 using numeric::conversions::degrees;
 using namespace ObjexxFCL::format;
@@ -1215,7 +1210,7 @@ string MotifHits::get_resfile(bool restrict, std::set<Size> & resi_in_resfile) c
 		bool thissameseq = thispose1.annotated_sequence()==thispose2.annotated_sequence();
 		if ( thispose1op != pose1op || thispose2op != pose2op ) {
 			cout << "FIXME mismatched MotifHit poses!  " << pose1.size() << " " << pose2.size() << " " << thispose1.size() << " " << thispose2.size() << endl;
-			if ( thispose1op           != thispose1op       ) utility_exit_with_message("fixme");
+			//if ( thispose1op           != thispose1op       ) utility_exit_with_message("fixme");
 			if ( thispose1.size() != pose1.size() ) utility_exit_with_message("fixme");
 		}
 		// ResPairMotif const & sm(hit.motif);

@@ -24,13 +24,13 @@ using std::stringstream;
 
 DatabaseMode::e
 database_mode_from_name(
-	std::string database_mode
+	std::string const & database_mode
 ) {
-	if ( !database_mode.compare("sqlite3") ) {
+	if ( database_mode == "sqlite3" ) {
 		return DatabaseMode::sqlite3;
-	} else if ( !database_mode.compare("mysql") ) {
+	} else if ( database_mode == "mysql" ) {
 		return DatabaseMode::mysql;
-	} else if ( !database_mode.compare("postgres") ) {
+	} else if ( database_mode == "postgres" ) {
 		return DatabaseMode::postgres;
 	} else {
 		utility_exit_with_message(
@@ -41,13 +41,13 @@ database_mode_from_name(
 
 TransactionMode::e
 transaction_mode_from_name(
-	std::string transaction_mode
+	std::string const & transaction_mode
 ){
-	if ( !transaction_mode.compare("none") ) {
+	if ( transaction_mode == "none" ) {
 		return TransactionMode::none;
-	} else if ( !transaction_mode.compare("standard") ) {
+	} else if ( transaction_mode == "standard" ) {
 		return TransactionMode::standard;
-	} else if ( !transaction_mode.compare("chunk") ) {
+	} else if ( transaction_mode == "chunk" ) {
 		return TransactionMode::chunk;
 	} else {
 		utility_exit_with_message(

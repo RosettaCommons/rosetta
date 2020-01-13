@@ -55,7 +55,6 @@ using protocols::minimization_packing::MinMover;
 using protocols::protein_interface_design::filters::RmsdFilter;
 using core::kinematics::MoveMapOP;
 using core::pose::PoseOP;
-using core::pose::Pose;
 using core::Real;
 
 

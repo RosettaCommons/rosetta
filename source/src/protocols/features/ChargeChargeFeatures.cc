@@ -56,7 +56,6 @@ namespace features {
 
 using std::string;
 using std::stringstream;
-using std::endl;
 using core::Size;
 using core::Real;
 using core::Vector;
@@ -64,20 +63,8 @@ using core::Length;
 using core::Angle;
 using core::Distance;
 using core::PointPosition;
-using core::kinematics::Stub;
-using core::chemical::aa_asp;
-using core::chemical::aa_glu;
-using core::chemical::aa_lys;
-using core::chemical::aa_his;
-using core::chemical::aa_arg;
-using core::conformation::Residue;
 using core::pose::Pose;
 using numeric::dihedral_radians;
-using numeric::sphericalVector;
-using numeric::xyz_to_spherical;
-using numeric::constants::r::pi;
-using numeric::constants::r::pi_over_2;
-using numeric::constants::r::pi_over_180;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;

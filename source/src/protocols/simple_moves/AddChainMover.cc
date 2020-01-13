@@ -43,11 +43,6 @@ static basic::Tracer TR( "protocols.simple_moves.AddChainMover" );
 namespace protocols {
 namespace simple_moves {
 
-using basic::Error;
-using basic::Warning;
-
-
-
 
 AddChainMover::AddChainMover()
 : moves::Mover("AddChain"),

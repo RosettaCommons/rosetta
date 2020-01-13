@@ -19,6 +19,19 @@ namespace protocols {
 namespace cluster {
 namespace calibur {
 
+//#define ROTATE(a,x1,y1,x2,y2)   g = a[x1][y1],h = a[x2][y2],
+//   a[x1][y1] = g-s*(h+tau*g),
+//   a[x2][y2] = h+s*(g-tau*h)
+
+template < class T >
+void
+ROTATE(T & a,int x1,int y1,int x2,int y2, core::Real s, core::Real tau) {
+	auto g = a[x1][y1];
+	auto h = a[x2][y2];
+	a[x1][y1] = g-s*(h+tau*g);
+	a[x2][y2] = h+s*(g-tau*h);
+}
+
 /**
 * Computes the eigenvalues and (normalized) eigenvectors of a real symmetric
 * matrix a[3][3] in d[3] and v[3][3] respectively.
@@ -134,9 +147,6 @@ bool jacobi3( core::Real a[3][3], core::Real d[3], core::Real v[3][3] ) {
 					d[i] -= h;
 					d[j] += h;
 					a[i][j] = 0.0;
-					#define ROTATE(a,x1,y1,x2,y2)   g = a[x1][y1],h = a[x2][y2], \
-								a[x1][y1] = g-s*(h+tau*g),   \
-								a[x2][y2] = h+s*(g-tau*h)
 					/**
 					* Since we only do the upper-right elements, we split the
 					* matrix manipulation into three parts.
@@ -149,7 +159,7 @@ bool jacobi3( core::Real a[3][3], core::Real d[3], core::Real v[3][3] ) {
 						//   |   |
 						//  j---|---|---
 						//   |   |
-						ROTATE(a, k, i, k, j);
+						ROTATE(a, k, i, k, j, s, tau);
 					}
 					for ( int k=i+1; k < j; k++ ) {
 						//   i   j       i   j
@@ -158,7 +168,7 @@ bool jacobi3( core::Real a[3][3], core::Real d[3], core::Real v[3][3] ) {
 						//   |   x (same as:)  |   |
 						//  j---|---|---   j---|-x-|---
 						//   |   |       |   |
-						ROTATE(a, i, k, k, j);
+						ROTATE(a, i, k, k, j, s, tau);
 					}
 					for ( int k=j+1; k < 3; k++ ) {
 						//   i   j
@@ -167,14 +177,13 @@ bool jacobi3( core::Real a[3][3], core::Real d[3], core::Real v[3][3] ) {
 						//   |   |
 						//  j---|---|-x-
 						//   |   |
-						ROTATE(a, i, k, j, k);
+						ROTATE(a, i, k, j, k, s, tau);
 					}
 					// Do the entire output matrix v (can we save computation
 					// here by doing this only for the final loop?)
 					for ( int k=0; k < 3; k++ ) {
-						ROTATE(v, k, i, k, j);
+						ROTATE(v, k, i, k, j, s, tau);
 					}
-					#undef ROTATE
 				}
 			}
 		}

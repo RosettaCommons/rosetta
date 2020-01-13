@@ -26,9 +26,6 @@ namespace sic_dock {
 
 using core::Size;
 using core::Real;
-using numeric::min;
-using core::id::AtomID;
-using std::cout;
 using std::endl;
 using Real = core::Real;
 using Size = core::Size;

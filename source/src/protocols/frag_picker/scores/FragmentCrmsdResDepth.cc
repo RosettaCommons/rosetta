@@ -159,7 +159,7 @@ bool FragmentCrmsdResDepth::cached_score(FragmentCandidateOP fragment,
 	FragmentScoreMapOP scores) {
 
 	std::string tmp = fragment->get_chunk()->chunk_key();
-	if ( tmp.compare(cached_scores_id_) != 0 ) {
+	if ( tmp != cached_scores_id_ ) {
 		do_caching(fragment->get_chunk());
 	}
 

@@ -53,9 +53,6 @@
 #undef interface
 #endif
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer TR( "protocols.scoring.InterchainPotential" );
 
 namespace protocols {

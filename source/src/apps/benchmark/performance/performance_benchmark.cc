@@ -108,7 +108,6 @@ XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 
 
 using basic::Error;
-using basic::Warning;
 
 using namespace core;
 

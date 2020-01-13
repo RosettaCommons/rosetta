@@ -117,8 +117,6 @@ using namespace kinematics;
 using core::Size;
 using core::SSize;
 
-using basic::Error;
-using basic::Warning;
 using namespace core::io;
 using namespace core::fragment::rna;
 using namespace ObjexxFCL;

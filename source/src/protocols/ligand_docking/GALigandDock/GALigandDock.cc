@@ -1398,7 +1398,7 @@ GALigandDock::generate_perturbed_structures(
 		load_reference_pool(gene_initial, ref_poses);
 
 		// assign num structures generating from reference
-		core::Size nstruct_ref = (core::Size)(nleft*reference_frac_+0.5);
+		core::Size nstruct_ref = std::lround( nleft*reference_frac_ );
 		core::Size nrefgen = debug_? nstruct_ref : int(reference_oversample_)*nstruct_ref;
 
 		// re-assign numbers based on Nmatches if using pharmacophore

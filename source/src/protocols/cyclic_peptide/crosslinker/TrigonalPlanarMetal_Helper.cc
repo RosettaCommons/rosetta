@@ -159,16 +159,16 @@ TrigonalPlanarMetal_Helper::add_angle_constraints(
 	std::string const parent_j( rtype2.atom_name( rtype2.icoor( rtype1.atom_index("VM1") ).stub_atom1().atomno() ) );
 	cststring << "Angle " << parent_i << " " << res_indices[i] << " VM1 " << res_indices[i] << " " << parent_j << " " << res_indices[j] << circularharmonic_string;
 	if ( his_i ) {
-		std::string const alt_parent_i( (!rtype1.base_name().compare("HIS") || !rtype1.base_name().compare("DHIS") ) ? "NE2" : "ND1" ); //If this is "HIS" (as opposed to "HIS_D"), the parent of the virtual metal is ND1.  So the alternative is NE2.  Else the alternative is ND1.
+		std::string const alt_parent_i( (rtype1.base_name() == "HIS" || rtype1.base_name() == "DHIS" ) ? "NE2" : "ND1" ); //If this is "HIS" (as opposed to "HIS_D"), the parent of the virtual metal is ND1.  So the alternative is NE2.  Else the alternative is ND1.
 		cststring << "Angle " << alt_parent_i << " " << res_indices[i] << " VM1 " << res_indices[i] << " " << parent_j << " " << res_indices[j] << circularharmonic_string;
 	}
 	if ( his_j ) {
-		std::string const alt_parent_j( (!rtype2.base_name().compare("HIS") || !rtype2.base_name().compare("DHIS") ) ? "NE2" : "ND1" ); //If this is "HIS" (as opposed to "HIS_D"), the parent of the virtual metal is ND1.  So the alternative is NE2.  Else the alternative is ND1.
+		std::string const alt_parent_j( (rtype2.base_name() == "HIS" || rtype2.base_name() == "DHIS" ) ? "NE2" : "ND1" ); //If this is "HIS" (as opposed to "HIS_D"), the parent of the virtual metal is ND1.  So the alternative is NE2.  Else the alternative is ND1.
 		cststring << "Angle " << parent_i << " " << res_indices[i] << " VM1 " << res_indices[i] << " " << alt_parent_j << " " << res_indices[j] << circularharmonic_string;
 	}
 	if ( his_i && his_j ) {
-		std::string const alt_parent_i( (!rtype1.base_name().compare("HIS") || !rtype1.base_name().compare("DHIS") ) ? "NE2" : "ND1" ); //If this is "HIS" (as opposed to "HIS_D"), the parent of the virtual metal is ND1.  So the alternative is NE2.  Else the alternative is ND1.
-		std::string const alt_parent_j( (!rtype2.base_name().compare("HIS") || !rtype2.base_name().compare("DHIS") ) ? "NE2" : "ND1" ); //If this is "HIS" (as opposed to "HIS_D"), the parent of the virtual metal is ND1.  So the alternative is NE2.  Else the alternative is ND1.
+		std::string const alt_parent_i( (rtype1.base_name() == "HIS" || rtype1.base_name() == "DHIS" ) ? "NE2" : "ND1" ); //If this is "HIS" (as opposed to "HIS_D"), the parent of the virtual metal is ND1.  So the alternative is NE2.  Else the alternative is ND1.
+		std::string const alt_parent_j( (rtype2.base_name() == "HIS" || rtype2.base_name() == "DHIS" ) ? "NE2" : "ND1" ); //If this is "HIS" (as opposed to "HIS_D"), the parent of the virtual metal is ND1.  So the alternative is NE2.  Else the alternative is ND1.
 		cststring << "Angle " << alt_parent_i << " " << res_indices[i] << " VM1 " << res_indices[i] << " " << alt_parent_j << " " << res_indices[j] << circularharmonic_string;
 	}
 

@@ -60,7 +60,6 @@ using core::pose::Pose;
 using core::Size;
 using core::Real;
 using core::conformation::Residue;
-using core::scoring::orbitals::OrbitalsLookup;
 using numeric::xyzVector;
 using utility::vector1;
 using utility::sql_database::sessionOP;

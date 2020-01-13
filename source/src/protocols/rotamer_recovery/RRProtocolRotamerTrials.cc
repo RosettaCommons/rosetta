@@ -44,7 +44,6 @@ using core::pack::task::PackerTask;
 using core::pack::task::PackerTaskOP;
 using core::pose::Pose;
 using core::scoring::ScoreFunction;
-using core::scoring::get_score_function;
 using basic::Tracer;
 
 namespace protocols {

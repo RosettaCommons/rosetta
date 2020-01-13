@@ -68,8 +68,6 @@ using core::Real;
 using core::pose::Pose;
 using core::pose::get_all_comments;
 using core::pose::add_comment;
-using core::conformation::Residue;
-using core::chemical::num_canonical_aas;
 using basic::database::table_exists;
 using utility::sql_database::sessionOP;
 using utility::vector1;

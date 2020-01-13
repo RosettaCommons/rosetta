@@ -43,8 +43,6 @@
 #include <numeric/numeric.functions.hh>
 #include <ObjexxFCL/format.hh>
 
-using ObjexxFCL::format::I;
-using ObjexxFCL::format::F;
 using namespace core::chemical::rna;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

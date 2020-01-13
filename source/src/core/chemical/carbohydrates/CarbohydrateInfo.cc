@@ -303,7 +303,7 @@ CarbohydrateInfo::copy_data(
 	object_to_copy_to.short_name_ = object_to_copy_from.short_name_;
 	object_to_copy_to.linkage_notation_ = object_to_copy_from.linkage_notation_;
 	object_to_copy_to.anomeric_carbon_ = object_to_copy_from.anomeric_carbon_;
-	object_to_copy_to.anomeric_carbon_name_ = object_to_copy_from.anomeric_carbon_;
+	object_to_copy_to.anomeric_carbon_name_ = object_to_copy_from.anomeric_carbon_name_;
 	object_to_copy_to.anomeric_carbon_index_ = object_to_copy_from.anomeric_carbon_index_;
 	object_to_copy_to.virtual_anomeric_carbon_index_ = object_to_copy_from.virtual_anomeric_carbon_index_;
 	object_to_copy_to.cyclic_oxygen_ = object_to_copy_from.cyclic_oxygen_;

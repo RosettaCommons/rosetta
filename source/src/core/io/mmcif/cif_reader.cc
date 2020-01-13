@@ -78,8 +78,6 @@ using CifFileOP = utility::pointer::shared_ptr<CifFile>;
 
 
 
-using basic::Error;
-using basic::Warning;
 namespace core {
 namespace io {
 namespace mmcif {

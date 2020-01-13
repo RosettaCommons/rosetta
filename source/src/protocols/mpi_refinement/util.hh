@@ -68,7 +68,7 @@ namespace mpi_refinement {
 utility::vector1< std::pair< core::Size, core::Size > >
 get_loop_info_full( core::io::silent::SilentStructOP ss,
 	utility::vector1< bool > &is_terminus,
-	std::string mode = "loop"
+	std::string const & mode = "loop"
 );
 void
 get_loop_info( core::io::silent::SilentStructOP ss,

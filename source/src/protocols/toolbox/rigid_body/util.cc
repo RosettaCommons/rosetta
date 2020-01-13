@@ -33,8 +33,6 @@ using namespace core::pose;
 using numeric::conversions::degrees;
 using numeric::conversions::radians;
 
-using utility::operator <<;
-
 //////////////////////////////////////////////////////////////////
 //
 //  Euler rotation utils developed in 2011-2012 for enumerative

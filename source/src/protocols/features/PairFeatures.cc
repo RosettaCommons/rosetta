@@ -52,7 +52,6 @@ using core::pose::Pose;
 using core::Size;
 using core::Distance;
 using core::Vector;
-using utility::graph::Graph;
 using core::conformation::Residue;
 using core::scoring::TenANeighborGraph;
 using utility::vector1;

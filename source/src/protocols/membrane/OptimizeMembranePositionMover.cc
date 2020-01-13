@@ -92,7 +92,7 @@ OptimizeMembranePositionMover & OptimizeMembranePositionMover::operator = ( Opti
 	}
 
 	// Otherwise, create a new object
-	return *( new OptimizeMembranePositionMover( *this ) );
+	return *( new OptimizeMembranePositionMover( *this ) );// ?????????
 }
 
 /// @brief Destructor

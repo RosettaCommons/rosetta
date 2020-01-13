@@ -49,8 +49,6 @@
 #include <protocols/moves/mover_schemas.hh>
 
 //Auto Headers
-using basic::Error;
-using basic::Warning;
 
 namespace protocols {
 namespace ligand_docking {
@@ -364,8 +362,8 @@ Ligand_info Rotate::create_random_rotation(
 
 	ligand_info.residues = core::pose::get_chain_residues(local_pose, chain_id);
 
-	for ( core::Size const chain_id : rotate_info_.tag_along_chain_ids( local_pose ) ) {
-		core::conformation::ResidueCOPs tag_along_residues = core::pose::get_chain_residues(local_pose, chain_id);
+	for ( core::Size const ta_chain_id : rotate_info_.tag_along_chain_ids( local_pose ) ) {
+		core::conformation::ResidueCOPs tag_along_residues = core::pose::get_chain_residues(local_pose, ta_chain_id);
 		debug_assert(tag_along_residues.size() == 1);
 		ligand_info.tag_along_residues.push_back(tag_along_residues[1]);
 	}

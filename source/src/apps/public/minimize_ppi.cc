@@ -222,7 +222,7 @@ interface_rmsd(
 				if ( is_interface_heavyatom ( ref_pose, mod_pose, ii, i) ) {
 					Size num_atoms2 ( mod_pose.residue(jj).natoms() );
 					for ( core::Size j = 1; j <= num_atoms2; ++j ) {
-						if ( !ref_pose.residue(ii).atom_name(i).compare(mod_pose.residue(jj).atom_name(j)) ) {
+						if ( ref_pose.residue(ii).atom_name(i) == mod_pose.residue(jj).atom_name(j) ) {
 							p1_coords.push_back(ref_pose.residue(ii).xyz(i));
 							p2_coords.push_back(mod_pose.residue(jj).xyz(j));
 						}

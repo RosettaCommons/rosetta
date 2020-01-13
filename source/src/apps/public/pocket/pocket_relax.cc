@@ -80,16 +80,10 @@
 #include <utility/excn/Exceptions.hh>
 
 
-using basic::Error;
-using basic::Warning;
-
-
 using namespace core;
 using namespace protocols;
 using namespace protocols::moves;
 using namespace core::scoring;
-
-using utility::vector1;
 
 static basic::Tracer TR( "pocket_relax" );
 OPT_KEY( String, exemplar_target_pdb_num )

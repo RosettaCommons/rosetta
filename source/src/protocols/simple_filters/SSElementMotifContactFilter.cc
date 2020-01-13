@@ -65,10 +65,8 @@ static basic::Tracer TR("protocols.filters.SSElementMotifContactFilter");
 namespace protocols {
 namespace simple_filters {
 
-using utility::vector1;
 using core::Size;
 using core::Real;
-using std::set;
 using namespace core::scoring::motif;
 // @brief default constructor
 SSElementMotifContactFilter::SSElementMotifContactFilter():

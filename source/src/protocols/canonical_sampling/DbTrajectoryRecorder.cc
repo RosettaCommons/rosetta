@@ -64,12 +64,9 @@ using namespace std;
 using namespace core;
 using core::pose::Pose;
 using protocols::moves::MoverOP;
-using utility::vector1;
 using utility::tools::make_vector;
 using utility::tools::make_vector1;
 using utility::sql_database::sessionOP;
-using cppdb::statement;
-using cppdb::result;
 
 static basic::Tracer tr( "protocols.canonical_sampling.DbTrajectoryRecorder" );
 // }}}1

@@ -1443,7 +1443,7 @@ operator==(
 			(a.anchor_residue_ != b.anchor_residue_) ||
 			(a.recenter_ != b.recenter_) ||
 			(a.root_ != b.root_) ||
-			(a.slide_info_ != a.slide_info_) ||
+			(a.slide_info_ != b.slide_info_) ||
 			!std::equal(
 			a.slide_order_string_.begin(),
 			a.slide_order_string_.end(),

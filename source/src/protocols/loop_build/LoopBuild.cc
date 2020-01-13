@@ -64,8 +64,6 @@
 #include <ctime>
 #endif
 
-using basic::Error;
-using basic::Warning;
 
 namespace protocols {
 namespace loop_build {

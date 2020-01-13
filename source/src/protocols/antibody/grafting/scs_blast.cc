@@ -393,7 +393,7 @@ void SCS_BlastPlus::pad_results(uint N, AntibodySequence const &A, SCS_Results &
 				bool missing_region = false;
 
 				for( auto cdr : {"h1", "h2", "h3", "l1", "l2", "l3"} ) {
-					if ( (i->at(cdr)).compare("none") == 0 ) {
+					if ( (i->at(cdr)) == "none" ) {
 						// line from antibody.info contains missing region (=="none"), skip
 						missing_region = true;
 					}

@@ -148,7 +148,7 @@ Scheduler::proceed(){
 	}
 
 	// End of schedule; terminate if no more iteration left
-	if ( params_[ isch_ ].roundtype.compare( "done" ) == 0 ) {
+	if ( params_[ isch_ ].roundtype == "done"  ) {
 		// Check if using iteration; if then revert
 		iter_++;
 		// also renew rerelax stuffs
@@ -227,10 +227,10 @@ Scheduler::read_cmd( std::string const & cmdfile,
 		} else if ( tokens[1] == "round" ) {
 			roundtype = tokens[2];
 			// Just add on a fresh schedule only containing name
-			if ( roundtype.compare( "enrich" ) == 0 || roundtype.compare( "wait" ) == 0||
-					roundtype.compare( "average") == 0 || roundtype.compare( "calcdev" ) == 0 ||
-					roundtype.compare( "nextstage" ) == 0 || roundtype.compare( "nextgen" ) == 0 ||
-					roundtype.compare( "cluster" ) == 0 ) {
+			if ( roundtype == "enrich" || roundtype == "wait" ||
+					roundtype == "average" || roundtype == "calcdev" ||
+					roundtype == "nextstage"  || roundtype == "nextgen" ||
+					roundtype == "cluster"  ) {
 				add_fresh_param( roundtype );
 
 			} else {
@@ -280,11 +280,11 @@ Scheduler::read_cmd( std::string const & cmdfile,
 		// Token 5
 		// Score type is defined by Size, not by its name
 		// because WUM is communicating with Master via Size type only
-		if ( tokens[5].compare("talaris2013") == 0 ) {
+		if ( tokens[5] == "talaris2013" ) {
 			params.score_type = 0;
-		} else if ( tokens[5].compare("scorefacts") == 0 ) {
+		} else if ( tokens[5] == "scorefacts" ) {
 			params.score_type = 1;
-		} else if ( tokens[5].compare("goap") == 0 ) {
+		} else if ( tokens[5] == "goap" ) {
 			params.score_type = 2;
 		} else {
 			TR << "Unknown score: " << tokens[5] << " at ";
@@ -333,7 +333,7 @@ Scheduler::read_cmd( std::string const & cmdfile,
 	}
 
 	// Final line should be always finished by "done"
-	if ( !params_[ params_.size() ].roundtype.compare("done") ) {
+	if ( params_[ params_.size() ].roundtype == "done" ) {
 		add_fresh_param( "done" );
 	}
 
@@ -352,7 +352,7 @@ Scheduler::read_cmd( std::string const & cmdfile,
 		for ( core::Size isch = 1; isch <= params_.size(); ++isch ) {
 			roundtype = params_[isch].roundtype;
 			TR << " " << params_[isch].name << std::endl;
-			if ( roundtype.compare( "done" ) == 0 ) break;
+			if ( roundtype == "done"  ) break;
 		}
 	}
 	TR << "==================================================================" << std::endl;
@@ -368,17 +368,17 @@ Scheduler::n_to_gen() const
 		MethodParams const &param( params_[isch] );
 		core::Real fkeep( 1.0 - param.fshave1 );
 
-		if ( param.movertype.compare( "cartnm" ) == 0 || param.movertype.compare( "cartnmcen" ) == 0 ||
-				param.movertype.compare( "torsnm" ) == 0 || param.movertype.compare( "torsnmcen" ) == 0 ) {
+		if ( param.movertype == "cartnm" || param.movertype == "cartnmcen" ||
+				param.movertype == "torsnm" || param.movertype == "torsnmcen" ) {
 			//n_to_gen += fkeep * param.nrun * (param.nperrun + 5)*2; // can we make this more pretty??
 			n_to_gen += fkeep * param.nrun * (param.nperrun)*2; // can we make this more pretty??
-		} else if ( param.movertype.compare( "fraginsert" ) == 0 ||
-				param.movertype.compare( "fraginsertcen" ) == 0 ||
-				param.movertype.compare( "kiccloser" ) == 0 ||
-				param.movertype.compare( "cartcloser" ) == 0 ||
-				param.movertype.compare( "partialabinitio" ) == 0 ||
-				param.movertype.compare( "partialrefine" ) == 0
-				//param.movertype.compare( "ramapert" ) == 0
+		} else if ( param.movertype == "fraginsert"  ||
+				param.movertype == "fraginsertcen"  ||
+				param.movertype == "kiccloser"  ||
+				param.movertype == "cartcloser"  ||
+				param.movertype == "partialabinitio"  ||
+				param.movertype == "partialrefine"
+				//param.movertype == "ramapert"
 				) {
 			n_to_gen += fkeep * param.nrun;
 		} else {

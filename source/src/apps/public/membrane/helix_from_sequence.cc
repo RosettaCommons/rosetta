@@ -53,9 +53,6 @@
 #include <cstdlib>
 #include <string>
 
-using basic::Error;
-using basic::Warning;
-
 using namespace basic::options;
 using namespace core;
 using namespace core::pose;

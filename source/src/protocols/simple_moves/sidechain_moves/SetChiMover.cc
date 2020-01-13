@@ -42,7 +42,6 @@ using namespace core::chemical;
 using namespace std;
 
 using core::pose::Pose;
-using core::conformation::Residue;
 
 static basic::Tracer TR( "protocols.simple_moves.sidechain_moves.SetChiMover" );
 

@@ -50,7 +50,6 @@ using basic::database::safely_prepare_statement;
 using basic::database::safely_read_from_database;
 using cppdb::statement;
 using cppdb::result;
-using utility::sql_database::session;
 using utility::sql_database::sessionOP;
 
 static Tracer TR("basic.resource_manager.locator.DatabaseResourceLocator");

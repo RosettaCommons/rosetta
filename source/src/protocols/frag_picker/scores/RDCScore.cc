@@ -64,7 +64,7 @@ RDCScore::RDCScore(
 
 void RDCScore::do_caching(VallChunkOP current_chunk) {
 	std::string ctmp = current_chunk->chunk_key();
-	if ( ctmp.compare("change to 'cached_scores_id_' when ready") != 0 ) {
+	if ( ctmp != "change to 'cached_scores_id_' when ready" ) {
 		return; // CACHING NOT BUILT IN YET
 	}
 }

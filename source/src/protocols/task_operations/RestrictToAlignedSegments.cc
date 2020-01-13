@@ -45,8 +45,6 @@
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR( "protocols.task_operations.RestrictToAlignedSegmentsOperation" );
 
 namespace protocols {

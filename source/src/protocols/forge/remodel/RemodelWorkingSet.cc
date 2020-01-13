@@ -392,7 +392,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 
 	if ( option[OptionKeys::remodel::use_blueprint_sequence]() ) {
 		for ( const auto & i : data.blueprint ) {
-			if ( i.resname.compare("x") == 0  || i.resname.compare("X") == 0 ) {
+			if ( i.resname == "x"  || i.resname == "X" ) {
 				aa.append(build_aa_type);
 				seq_aa.push_back(build_aa_type);
 			} else {

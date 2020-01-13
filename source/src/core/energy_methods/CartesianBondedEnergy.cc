@@ -86,7 +86,7 @@
 #include <core/pose/PDBInfo.hh>
 
 // cutoff for reporting outliers
-#define CUTOFF -1
+constexpr int CUTOFF = -1;
 
 namespace boost {
 namespace tuples {

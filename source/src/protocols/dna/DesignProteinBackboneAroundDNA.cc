@@ -77,10 +77,8 @@ using namespace operation;
 using namespace pose;
 using namespace scoring;
 
-using basic::t_warning;
 using basic::t_info;
 using basic::t_debug;
-using basic::t_trace;
 static basic::Tracer TR( "protocols.dna.DesignProteinBackboneAroundDNA", t_info );
 
 

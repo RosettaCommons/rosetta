@@ -63,7 +63,6 @@ namespace hbonds {
 
 using std::endl;
 using std::map;
-using std::pair;
 using std::string;
 using std::stringstream;
 using cppdb::result;

@@ -141,7 +141,7 @@ void Loops::init(
 		read_loops_options();
 		return;
 	}
-	if ( passed_in_filename.compare( "" ) != 0 ) {
+	if ( passed_in_filename !=  ""  ) {
 		set_loop_file_name_and_reset( passed_in_filename );
 		return;
 	}

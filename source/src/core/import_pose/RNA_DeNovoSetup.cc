@@ -65,8 +65,6 @@
 static basic::Tracer TR( "core.import_pose.RNA_DeNovoSetup" );
 using utility::vector1;
 using utility::tools::make_vector1;
-using ObjexxFCL::format::I;
-using ObjexxFCL::format::A;
 using namespace core;
 using namespace core::chemical::rna;
 

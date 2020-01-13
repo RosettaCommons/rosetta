@@ -91,7 +91,7 @@ std::string Column::print(utility::sql_database::sessionOP db_session) const{
 }
 
 bool Column::operator==(const Column &other) const {
-	return (this->name_.compare(other.name()) == 0);
+	return this->name_ == other.name();
 }
 
 } // schema_generator

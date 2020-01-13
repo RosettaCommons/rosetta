@@ -142,7 +142,7 @@ ReferenceEnergy::residue_energy(
 		emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.262 : -0.67;
 		break;
 	case aa_glu :
-		emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.81 : -0.81;
+		emap[ ref ] += -0.81; // (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.81 : -0.81;
 		break;
 	case aa_phe : emap[ ref ] +=  0.63; break;
 	case aa_gly : emap[ ref ] +=  -0.17; break;
@@ -151,7 +151,7 @@ ReferenceEnergy::residue_energy(
 		break;
 	case aa_ile : emap[ ref ] +=  0.24; break;
 	case aa_lys :
-		emap[ ref ] += (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? -0.65 : -0.65;
+		emap[ ref ] += -0.65; //(rsd.type().has_variant_type( chemical::DEPROTONATED )) ? -0.65 : -0.65;
 		break;
 	case aa_leu : emap[ ref ] +=  -0.10; break;
 	case aa_met : emap[ ref ] +=  -0.34; break;

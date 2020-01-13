@@ -57,7 +57,6 @@
 
 static basic::Tracer TR( "protocols.hybridization.InsertChunkMover" );
 
-using utility::operator <<;
 
 namespace protocols {
 namespace hybridization {

@@ -29,12 +29,8 @@ namespace scores {
 
 using core::Size;
 using core::Real;
-using numeric::min;
-using core::id::AtomID;
-using std::cout;
 using std::endl;
 using utility::vector1;
-using basic::options::option;
 using namespace basic::options::OptionKeys;
 using ObjexxFCL::format::F;
 using ObjexxFCL::format::I;
@@ -112,12 +108,7 @@ void printbpy(std::ostream & out, Xform const & x,int resi=1000){
 
 using core::Size;
 using core::Real;
-using numeric::min;
-using core::id::AtomID;
-using std::cout;
-using std::endl;
 using utility::vector1;
-using basic::options::option;
 using namespace basic::options::OptionKeys;
 using Real = core::Real;
 using Size = core::Size;

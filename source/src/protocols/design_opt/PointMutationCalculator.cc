@@ -63,7 +63,6 @@ static basic::Tracer TR( "protocols.design_opt.PointMutationCalculator" );
 using namespace core;
 using namespace chemical;
 using utility::vector1;
-using utility::vector0;
 using std::pair;
 
 /// @brief default ctor

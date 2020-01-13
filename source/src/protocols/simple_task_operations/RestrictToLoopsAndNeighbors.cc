@@ -43,7 +43,6 @@ using namespace utility::tag;
 
 using core::Size;
 using core::Real;
-using core::pose::Pose;
 using core::pack::task::PackerTask;
 using core::pack::task::operation::TaskOperationOP;
 using utility::tag::TagCOP;

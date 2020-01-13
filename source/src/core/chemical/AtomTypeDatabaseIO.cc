@@ -44,7 +44,6 @@ using core::Real;
 
 using utility::vector1;
 using utility::sql_database::sessionOP;
-using basic::database::write_schema_to_database;
 using basic::database::safely_prepare_statement;
 using basic::database::safely_read_from_database;
 using basic::database::safely_write_to_database;

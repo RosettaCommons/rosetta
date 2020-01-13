@@ -32,9 +32,6 @@ namespace basic {
 namespace mpi {
 
 using std::string;
-using std::endl;
-using utility::send_string_to_node;
-using utility::receive_string_from_node;
 
 
 static basic::Tracer TR( "basic.mpi" );
@@ -55,14 +52,14 @@ request_data_from_head_node(
   //send a message to the head node that tells jd2 to create a message listener
   TR.Debug
     << "Requesting data from head node for tag "
-    << "'" << listener_tag_to_name(listener_tag) << "'" << endl;
+    << "'" << listener_tag_to_name(listener_tag) << "'" << std::endl;
   TR.flush();
   MPI_Send( &listener_tag, 1, MPI_INT, 0/*head node*/, REQUEST_MESSAGE_TAG, MPI_COMM_WORLD );
 
   //send a string to be processed by the listener
   TR.Debug << "Sending " << data << " to head node for tag '" << listener_tag_to_name(listener_tag) << "'" << std::endl;
   TR.flush();
-  send_string_to_node(0/*head node*/, data);
+  utility::send_string_to_node(0/*head node*/, data);
 
   //receive a response from the head node listener
   return utility::receive_string_from_node(0/*head node*/);

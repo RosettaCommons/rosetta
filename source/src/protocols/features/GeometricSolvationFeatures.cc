@@ -55,7 +55,6 @@ using std::string;
 using core::Size;
 using core::Real;
 using core::pose::Pose;
-using core::scoring::geometric_solvation::ExactOccludedHbondSolEnergy;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;

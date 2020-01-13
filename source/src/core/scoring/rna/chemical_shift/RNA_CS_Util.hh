@@ -44,7 +44,7 @@ inline
 core::Size
 dround( core::Real var )
 {
-	return ( core::Size( var + 0.5 ) );
+	return std::lround( var );
 }
 
 

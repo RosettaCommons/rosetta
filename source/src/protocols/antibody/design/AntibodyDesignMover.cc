@@ -107,7 +107,6 @@ using namespace core::pack::task;
 using namespace core::pack::task::operation;
 using namespace core::scoring;
 
-using basic::datacache::DataCache_CacheableData;
 using core::Size;
 using core::pose::Pose;
 using core::pose::PoseOP;

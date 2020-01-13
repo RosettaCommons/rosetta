@@ -33,8 +33,6 @@
 #include <protocols/moves/NullMover.hh>
 
 // C++ headers
-using basic::Error;
-using basic::Warning;
 
 // using namespace core;
 using namespace basic::options;

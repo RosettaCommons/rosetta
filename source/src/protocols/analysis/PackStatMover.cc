@@ -40,9 +40,6 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 //Auto using namespaces end
 
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer TR( "protocols.analysis.packstat" );
 using namespace core;
 

@@ -91,7 +91,7 @@ MPRangeRelaxMover & MPRangeRelaxMover::operator = ( MPRangeRelaxMover const & sr
 	}
 
 	// Otherwise, create a new object
-	return *( new MPRangeRelaxMover( *this ) );
+	return *( new MPRangeRelaxMover( *this ) ); /// ????????????????
 }
 
 /// @brief Destructor

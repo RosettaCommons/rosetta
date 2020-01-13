@@ -95,7 +95,7 @@ VisualizeEmbeddingMover::operator=( VisualizeEmbeddingMover const & src ) {
 	}
 
 	// Otherwise, create a new object
-	return *( new VisualizeEmbeddingMover( *this ) );
+	return *( new VisualizeEmbeddingMover( *this ) ); // ?????
 
 }
 

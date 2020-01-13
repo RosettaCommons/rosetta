@@ -33,7 +33,6 @@ namespace simple_filters {
 using core::Size;
 using core::Real;
 using std::string;
-using utility::vector1;
 
 static basic::Tracer TR( "protocols.simple_filters.AngleToVector" );
 

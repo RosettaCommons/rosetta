@@ -71,8 +71,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 
-using basic::Error;
-using basic::Warning;
 
 static basic::Tracer TR( "protocols.splice.TailSegmentMover" );
 

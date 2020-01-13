@@ -73,9 +73,7 @@ namespace antibody {
 using std::string;
 using std::endl;
 using core::pose::Pose;
-using utility::file::FileName;
 using utility::vector1;
-using utility::sql_database::DatabaseSessionManager;
 using protocols::features::ProteinSilentReport;
 using namespace core;
 using namespace protocols::features;

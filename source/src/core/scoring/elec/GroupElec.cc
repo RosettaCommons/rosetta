@@ -180,7 +180,7 @@ GroupElec::build_groupinfo( std::string const & group_file,
 		std::istringstream linestream( line );
 		linestream >> s1 ;
 
-		if ( s1.compare( "RESI" ) == 0 ) {
+		if ( s1 == "RESI" ) {
 			skip_residue = false;
 			std::string s2("");
 			linestream >> s2;
@@ -194,7 +194,7 @@ GroupElec::build_groupinfo( std::string const & group_file,
 
 			TR.Debug << "Adding group info on residue " << resname << std::endl;
 
-		} else if ( s1.compare( "GROUP" ) == 0 && !skip_residue ) {
+		} else if ( s1 == "GROUP" && !skip_residue ) {
 			TR.Debug << "Group: ";
 
 			core::chemical::ResidueType const & rsdtype = rsdtypeset->name_map( resname );
@@ -296,9 +296,9 @@ GroupElec::eval_respair_group_coulomb(
 	// default "subtract"
 	bool use_subtract( true ), use_shift( false );
 
-	if ( fade_type().compare( "shift" ) == 0 ) {
+	if ( fade_type() == "shift" ) {
 		use_subtract = false; use_shift = true;
-	} else if ( fade_type().compare( "grpsubtract" ) == 0 ) {
+	} else if ( fade_type() == "grpsubtract" ) {
 		use_subtract = true; use_shift = true;
 	}
 
@@ -469,9 +469,9 @@ GroupElec::eval_respair_group_derivatives(
 
 	// default "subtract"
 	bool use_subtract( true ), use_shift( false );
-	if ( fade_type().compare( "shift" ) == 0 ) {
+	if ( fade_type() == "shift" ) {
 		use_subtract = false; use_shift = true;
-	} else if ( fade_type().compare( "grpsubtract" ) == 0 ) {
+	} else if ( fade_type() == "grpsubtract" ) {
 		use_subtract = true; use_shift = true;
 	}
 

@@ -79,7 +79,6 @@ using namespace protocols;
 using namespace basic::options::OptionKeys;
 using namespace basic::options;
 
-using utility::vector1;
 using Matrix = numeric::xyzMatrix<Real>;
 
 // all helper functions moved to protocols/toolbox/sample_around/util.cc

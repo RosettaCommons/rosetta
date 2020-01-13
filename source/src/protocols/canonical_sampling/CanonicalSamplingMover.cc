@@ -790,10 +790,10 @@ CanonicalSamplingMover::apply(Pose & pose){
 				PROF_STOP( basic::MPICANONICALSAMPLING );
 			} else { // output_only_cluster_transition_
 				//check if transition occurs
-				if ( current_cluster_center.compare("") == 0 ) {
+				if ( current_cluster_center == "" ) {
 					//first cluster seen
 					current_cluster_center = cluster_center;
-				} else if ( current_cluster_center.compare( cluster_center ) != 0 ) { //new cluster
+				} else if ( current_cluster_center != cluster_center ) { //new cluster
 					PROF_START( basic::MPICANONICALSAMPLING );
 					rms_to_start = core::scoring::CA_rmsd( init, pose );
 					if ( !boinc_mode_ ) {

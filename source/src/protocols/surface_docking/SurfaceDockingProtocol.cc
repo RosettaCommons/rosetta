@@ -58,8 +58,6 @@
 //C++ Headers
 #include <string>
 
-using basic::Error;
-using basic::Warning;
 
 using namespace protocols::surface_docking;
 using namespace protocols;

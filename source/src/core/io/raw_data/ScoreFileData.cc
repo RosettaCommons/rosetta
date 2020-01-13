@@ -43,8 +43,6 @@
 
 static basic::Tracer TR( "core.io.raw_data.ScoreFileData" );
 
-using basic::Error;
-using basic::Warning;
 namespace core {
 namespace io {
 namespace raw_data {

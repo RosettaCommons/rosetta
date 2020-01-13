@@ -961,7 +961,7 @@ get_resnum_and_segid_from_one_tag( std::string const & tag,
 
 	size_t found_colon = tag.find( ":" );
 
-	if ( found_colon == std::string::npos || found_colon > 4 ) return false;
+	if ( found_colon > 4 /* || found_colon == std::string::npos */ ) return false;
 
 	for ( size_t n = found_colon; n < 4; n++ ) {
 		segid += ' ';

@@ -42,7 +42,7 @@ static basic::Tracer trPartialSecondarySimilarity(
 void PartialSecondarySimilarity::do_caching(VallChunkOP chunk) {
 
 	std::string & tmp = chunk->chunk_key();
-	if ( tmp.compare(cached_scores_id_) == 0 ) {
+	if ( tmp == cached_scores_id_ ) {
 		return;
 	}
 	cached_scores_id_ = tmp;

@@ -44,8 +44,6 @@
 #include <core/pose/Pose.hh>
 
 
-using basic::Error;
-using basic::Warning;
 
 namespace protocols {
 namespace generalized_kinematic_closure {

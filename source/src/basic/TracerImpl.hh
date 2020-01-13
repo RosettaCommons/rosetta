@@ -67,7 +67,7 @@ protected:
 	/// @brief notification that flush function was called and inner buffer should be outputed.
 	/// This is the mechanims by which the std::basic_stringbuf base class communicates with the
 	/// TracerImpl and TracerProxyImpl objects.
-	virtual void t_flush(std::string const &) { assert("basic_otstream::t_flush"); };
+	virtual void t_flush(std::string const &) {};
 
 private:
 	basic_otstream(basic_otstream const & );

@@ -47,9 +47,6 @@
 #include <cereal/types/string.hpp>
 #endif // SERIALIZATION
 
-using basic::Error;
-using basic::Warning;
-
 static basic::Tracer TR( "core.select.util.SelectResiduesByLayer" );
 
 namespace core {

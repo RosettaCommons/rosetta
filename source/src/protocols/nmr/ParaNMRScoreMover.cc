@@ -105,7 +105,7 @@ ParaNMRScoreMover::operator=( ParaNMRScoreMover const & rhs ) {
 	if ( this == &rhs ) {
 		return *this;
 	}
-	return *( new ParaNMRScoreMover( *this ) );
+	return *( new ParaNMRScoreMover( *this ) ); // ????
 }
 
 ParaNMRScoreMover::~ParaNMRScoreMover() {}

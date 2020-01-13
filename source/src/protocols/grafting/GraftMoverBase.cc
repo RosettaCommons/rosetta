@@ -57,12 +57,7 @@ using namespace core::pose;
 using namespace protocols::moves;
 using namespace core::scoring;
 using core::Size;
-using core::id::AtomID;
-using core::id::AtomID_Map;
-using core::pose::initialize_atomid_map;
-using protocols::loops::Loop;
 using core::kinematics::MoveMapOP;
-using core::kinematics::MoveMap;
 using core::pose::Pose;
 using core::pose::PoseOP;
 

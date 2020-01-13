@@ -113,7 +113,7 @@ FACTSPotential::set_default()
 
 	do_apprx_ = false;
 	eq_type_ = option[ score::facts_eq_type ]();
-	if ( eq_type_.compare("apprx") == 0 ) do_apprx_ = true;
+	if ( eq_type_ == "apprx" ) do_apprx_ = true;
 
 	intrascale_by_level_ = option[ score::facts_intrascale_by_level ]();
 
@@ -240,9 +240,9 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 		Residue const & rsd1( pose.residue( res1 ) );
 
 		if ( facts1.enumeration_shell() ) {
-			if ( eq_type_.compare("apprx") == 0 ) {
+			if ( eq_type_ == "apprx" ) {
 				calculate_GBpair_fast( rsd1, rsd1, facts1, facts1 );
-			} else if ( eq_type_.compare("v1trunk") == 0 ) {
+			} else if ( eq_type_ == "v1trunk" ) {
 				calculate_GBpair_v1trunk( rsd1, rsd1, facts1, facts1 );
 			} else {
 				calculate_GBpair_exact( rsd1, rsd1, facts1, facts1 );
@@ -270,9 +270,9 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 			if ( facts1.enumeration_shell() && facts2.enumeration_shell() && res2 <= res1 ) continue;
 
 			nenum ++;
-			if ( eq_type_.compare("apprx") == 0 ) {
+			if ( eq_type_ == "apprx" ) {
 				calculate_GBpair_fast( rsd1, rsd2, facts1, facts2 );
-			} else if ( eq_type_.compare("v1trunk") == 0 ) {
+			} else if ( eq_type_ == "v1trunk" ) {
 				calculate_GBpair_v1trunk( rsd1, rsd2, facts1, facts2 );
 			} else {
 				calculate_GBpair_exact( rsd1, rsd2, facts1, facts2 );
@@ -542,10 +542,10 @@ void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1,
 
 	bool const is_atm1_CO =
 		( rsd1.atom_is_backbone(atm1) &&
-		( rsd1.atom_name(atm1).compare(" C  ") == 0 || rsd1.atom_name(atm1).compare(" O  ") == 0 ));
+		( rsd1.atom_name(atm1) == " C  " || rsd1.atom_name(atm1) == " O  " ));
 	bool const is_atm2_NH =
 		( rsd2.atom_is_backbone(atm2) &&
-		( rsd2.atom_name(atm2).compare(" N  ") == 0 || rsd2.atom_name(atm2).compare(" H  ") == 0 ));
+		( rsd2.atom_name(atm2) == " N  " || rsd2.atom_name(atm2) == " H  " ));
 
 	if ( same_res ) {
 		scale_solv = factstype1->intra_solv_scale(atm1,atm2);
@@ -613,8 +613,8 @@ void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1,
 		}
 
 	} else { // 2-residue separation
-		if ( ( rsd1.atom_name(atm1).compare(" C  ") == 0 || rsd1.atom_name(atm1).compare(" O  ") == 0 ) &&
-				( rsd2.atom_name(atm2).compare(" N  ") == 0 || rsd2.atom_name(atm2).compare(" H  ") == 0 ) ) {
+		if ( ( rsd1.atom_name(atm1) == " C  " || rsd1.atom_name(atm1) == " O  " ) &&
+				( rsd2.atom_name(atm2) == " N  " || rsd2.atom_name(atm2) == " H  " ) ) {
 			self_pair = true;
 			scale_solv = adjbb_solv_scale( 4 );
 			scale_elec = adjbb_elec_scale( 4 );

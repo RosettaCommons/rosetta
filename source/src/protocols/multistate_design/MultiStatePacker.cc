@@ -23,7 +23,6 @@
 
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
-using utility::string_split;
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -31,8 +30,6 @@ using utility::vector1;
 
 #include <basic/Tracer.hh>
 using basic::t_info;
-using basic::t_debug;
-using basic::t_trace;
 static basic::Tracer TR( "protocols.multistate_design.MultiStatePacker", t_info );
 
 #include <ObjexxFCL/format.hh>

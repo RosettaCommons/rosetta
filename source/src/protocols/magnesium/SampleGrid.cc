@@ -215,9 +215,9 @@ SampleGrid::figure_out_box_bounds( pose::Pose const & pose )
 void
 SampleGrid::create_grid()
 {
-	Size xgridsize( ( xmax_ - xmin_ ) / xyz_step_ + 0.5 );
-	Size ygridsize( ( ymax_ - ymin_ ) / xyz_step_ + 0.5 );
-	Size zgridsize( ( zmax_ - zmin_ ) / xyz_step_ + 0.5 );
+	Size xgridsize( std::lround( ( xmax_ - xmin_ ) / xyz_step_ ) );
+	Size ygridsize( std::lround( ( ymax_ - ymin_ ) / xyz_step_ ) );
+	Size zgridsize( std::lround( ( zmax_ - zmin_ ) / xyz_step_ ) );
 	min_distance_grid_.dimension( xgridsize, ygridsize, zgridsize );
 	min_distance_grid_ = 0.0;
 }

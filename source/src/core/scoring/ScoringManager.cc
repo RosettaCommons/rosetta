@@ -1487,7 +1487,7 @@ ScoringManager::get_rama_prepro_mainchain_torsion_potential(
 			// the addition).
 			std::function< MainchainScoreTableOP () > builder( std::bind( &ScoringManager::create_mainchain_scoretable_instance, newtables[i].second ) ); //Note that this is a silly "builder" function that just returns the object passed to it.
 			temptable = utility::thread::safely_check_map_for_key_and_insert_if_absent( builder, SAFELY_PASS_MUTEX( mut ), newtables[i].first, prepro_table ? rama_prepro_mainchain_potentials_beforeproline_ : rama_prepro_mainchain_potentials_ );
-			if ( newtables[i].first.compare( mapname ) == 0 ) {
+			if ( newtables[i].first == mapname ) {
 				mytype_found = true; //Found the type we're trying to load.
 				table_to_return = temptable; //So let's store it so that we can return it.
 			}

@@ -136,7 +136,7 @@ RangeRelaxMover & RangeRelaxMover::operator = ( RangeRelaxMover const & src ) {
 	}
 
 	// Otherwise, create a new object
-	return *( new RangeRelaxMover( *this ) );
+	return *( new RangeRelaxMover( *this ) ); // ???????????????
 }
 
 /// @brief Destructor

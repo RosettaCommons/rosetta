@@ -41,7 +41,6 @@ namespace indexed_structure_store {
 static basic::Tracer TR( "core.indexed_structure_store.StructureStoreManager" );
 
 using namespace basic::options;
-using utility::vector1;
 
 StructureStoreManager::StructureStoreManager() : store_providers()
 {

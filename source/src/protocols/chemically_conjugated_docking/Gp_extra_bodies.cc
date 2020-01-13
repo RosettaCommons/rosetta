@@ -38,8 +38,6 @@
 #include <set>
 
 //tracer
-using basic::Error;
-using basic::Warning;
 static basic::Tracer TR("protocols.chemically_conjugated_docking.Gp_extra_bodies");
 
 namespace protocols {

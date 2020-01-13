@@ -51,11 +51,8 @@ using std::endl;
 using core::Size;
 using core::Real;
 using core::chemical::num_canonical_aas;
-using core::chemical::ResidueType;
-using core::chemical::ResidueTypeSet;
 using core::conformation::Residue;
 using core::conformation::ResidueOP;
-using core::conformation::ResidueFactory;
 using core::pose::Pose;
 using basic::Tracer;
 

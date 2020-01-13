@@ -33,8 +33,6 @@
 namespace core {
 namespace chemical {
 
-using ObjexxFCL::format::F;
-
 std::string
 get_element_color(std::string const & element) {
 	std::string ELE( element );

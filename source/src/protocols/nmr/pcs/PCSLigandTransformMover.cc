@@ -206,7 +206,7 @@ PCSLigandTransformMover::operator=(PCSLigandTransformMover const & rhs) {
 	if ( this == &rhs ) {
 		return *this;
 	}
-	return *( new PCSLigandTransformMover( *this ) );
+	return *( new PCSLigandTransformMover( *this ) ); // ?????
 }
 
 PCSLigandTransformMover::~PCSLigandTransformMover() {}

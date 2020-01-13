@@ -34,14 +34,8 @@
 #include <utility/excn/Exceptions.hh>
 
 
-using basic::Error;
-using basic::Warning;
-
-
 using namespace core;
 using namespace protocols;
-
-using utility::vector1;
 
 
 ///////////////////////////////////////////////////////////////////////////////

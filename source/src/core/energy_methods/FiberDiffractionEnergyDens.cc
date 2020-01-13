@@ -410,9 +410,9 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 				atmi_xyz_[1] =  atm_i.xyz()[1];
 				atmi_xyz_[2] =  atm_i.xyz()[2];
 			}
-			auto gridX =  int( ( atmi_xyz_[0] - minX )/grid_reso + 0.5 );
-			auto gridY =  int( ( atmi_xyz_[1] - minY )/grid_reso + 0.5 );
-			auto gridZ =  int( ( atmi_xyz_[2] - minZ )/grid_reso + 0.5 );
+			int gridX =  std::lround( ( atmi_xyz_[0] - minX )/grid_reso );
+			int gridY =  std::lround( ( atmi_xyz_[1] - minY )/grid_reso );
+			int gridZ =  std::lround( ( atmi_xyz_[2] - minZ )/grid_reso );
 
 
 			for ( core::Size pos = 0; pos < grid_pos_x.size(); ++pos ) {
@@ -447,9 +447,9 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 				core::Real y = sin(phi)*r;
 				core::Real z = zc(k) + minZZ;
 
-				auto xindex = int(( x - minX )/grid_reso + 0.5 );
-				auto yindex = int(( y - minY )/grid_reso + 0.5 );
-				auto zindex = int(( z - minZ )/grid_reso + 0.5 );
+				int xindex = std::lround( ( x - minX )/grid_reso );
+				int yindex = std::lround( ( y - minY )/grid_reso );
+				int zindex = std::lround( ( z - minZ )/grid_reso );
 
 				if ( xindex > grid_points ||
 						yindex > grid_points ||
