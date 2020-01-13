@@ -91,8 +91,13 @@ FreeDOF_Energy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 
 void
-FreeDOF_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const{
-	nonconst_full_model_info( pose ); // does the setup.
+FreeDOF_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
+	// Under the new logic, we actually don't want to assume a valid FMI can be
+	// set up knowing what we know at the moment. Rather, we just want to zero
+	// out this scoreterm entirely.
+	if ( !full_model_info_defined( pose ) ) return;
+
+	//nonconst_full_model_info( pose ); // does the setup.
 }
 
 /// @details Allocate the scratch space object on the stack to
@@ -104,6 +109,8 @@ FreeDOF_Energy::residue_energy(
 	EnergyMap & emap
 ) const
 {
+	if ( !full_model_info_defined( pose ) ) return;
+
 	utility::vector1< Size > const & cutpoint_open_in_full_model = const_full_model_info( pose ).cutpoint_open_in_full_model();
 	utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
 
@@ -159,6 +166,7 @@ FreeDOF_Energy::finalize_total_energy(
 	EnergyMap & totals
 ) const
 {
+	if ( !full_model_info_defined( pose ) ) return;
 
 	/////////////////
 	// free_res
@@ -243,6 +251,8 @@ FreeDOF_Energy::accumulate_stack_energy(
 	utility::vector1< Real > & stack_energy
 ) const
 {
+	if ( !full_model_info_defined( pose ) ) return;
+
 	using namespace core::scoring;
 
 	stack_energy = utility::vector1< Real >( pose.size(), 0.0 );
@@ -280,6 +290,8 @@ FreeDOF_Energy::get_hbond_energy(
 	utility::vector1< Real > & sugar_hbond_energy
 ) const
 {
+	if ( !full_model_info_defined( pose ) ) return;
+
 	using namespace core::scoring::hbonds;
 
 	EnergyMap const & weights( scorefxn.weights() );

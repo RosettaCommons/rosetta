@@ -348,6 +348,7 @@ sources = {
 		"SymmGly_betanov15",
 		"SymmGlyMin",
 		"SymmGlyMin_betanov15",
+		"test_rna_sfxn",
 		"UnfoldedStatePotential",
 		"use_bicubic_interpolation",
 		"VirtualResidues",

@@ -23,6 +23,7 @@
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/loop_graph/LoopGraph.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/loop_graph/evaluator/LoopClosePotentialEvaluator.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
@@ -81,6 +82,7 @@ LoopCloseEnergy::clone() const
 void
 LoopCloseEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
+	if ( !core::pose::full_model_info::full_model_info_defined( pose ) ) return;
 	update_loop_atoms_and_lengths( pose );
 }
 
@@ -88,12 +90,14 @@ LoopCloseEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) c
 void
 LoopCloseEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
+	if ( !core::pose::full_model_info::full_model_info_defined( pose ) ) return;
 	update_loop_atoms_and_lengths( pose );
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void
 LoopCloseEnergy::update_loop_atoms_and_lengths( pose::Pose & pose ) const {
+	if ( !core::pose::full_model_info::full_model_info_defined( pose ) ) return;
 	if ( !loop_graph_ ) loop_graph_ = utility::pointer::make_shared< scoring::loop_graph::LoopGraph >();
 	loop_graph_->set_use_6D_potential( options_.loop_close_use_6D_potential() );
 	loop_graph_->update( pose );
@@ -102,10 +106,11 @@ LoopCloseEnergy::update_loop_atoms_and_lengths( pose::Pose & pose ) const {
 ///////////////////////////////////////////////////////////////////////////////
 void
 LoopCloseEnergy::finalize_total_energy(
-	pose::Pose &,
+	pose::Pose & pose,
 	ScoreFunction const &,
 	EnergyMap & totals
 ) const {
+	if ( !core::pose::full_model_info::full_model_info_defined( pose ) ) return;
 
 	using namespace core::scoring::loop_graph;
 	using namespace core::scoring::constraints;
@@ -120,7 +125,7 @@ LoopCloseEnergy::finalize_total_energy(
 void
 LoopCloseEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
-	pose::Pose const &,
+	pose::Pose const & pose,
 	kinematics::DomainMap const &,
 	ScoreFunction const &,
 	EnergyMap const & weights,
@@ -128,6 +133,7 @@ LoopCloseEnergy::eval_atom_derivative(
 	Vector & F2
 ) const
 {
+	if ( !core::pose::full_model_info::full_model_info_defined( pose ) ) return;
 
 	using namespace conformation;
 	using namespace core::scoring::loop_graph;

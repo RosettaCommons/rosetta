@@ -93,7 +93,8 @@ IntermolEnergy::finalize_total_energy(
 ) const {
 
 	using namespace core::pose::full_model_info;
-	make_sure_full_model_info_is_setup( pose );
+	//make_sure_full_model_info_is_setup( pose );
+	if ( !full_model_info_defined( pose ) ) return;
 	Size const num_chains_frozen = get_num_chains_frozen( pose );
 	totals[ intermol ] = num_chains_frozen * ( penalty_at_1M_ - log_conc_ );
 } // finalize_total_energy
@@ -117,7 +118,7 @@ IntermolEnergy::get_num_chains_frozen( pose::Pose const & pose ) const {
 void
 IntermolEnergy::eval_atom_derivative(
 	id::AtomID const &,
-	pose::Pose const &,
+	pose::Pose const & pose,
 	kinematics::DomainMap const &,
 	ScoreFunction const &,
 	EnergyMap const &,
@@ -125,6 +126,7 @@ IntermolEnergy::eval_atom_derivative(
 	Vector &
 ) const
 {
+	if ( !core::pose::full_model_info::full_model_info_defined( pose ) ) return;
 	// no op.
 } // eval atom derivative
 

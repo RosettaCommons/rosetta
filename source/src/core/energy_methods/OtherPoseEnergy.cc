@@ -68,6 +68,8 @@ OtherPoseEnergy::finalize_total_energy(
 	using namespace pose;
 	using namespace pose::full_model_info;
 
+	if ( !full_model_info_defined( pose ) ) return;
+
 	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 	utility::vector1< PoseOP > const & other_pose_list = full_model_info.other_pose_list();
 	if ( other_pose_list.size() == 0 ) return; // no op.
