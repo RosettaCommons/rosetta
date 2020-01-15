@@ -92,6 +92,9 @@ public :
 	inline void relax_unbound( bool const rlu ) { relax_unbound_ = rlu; }
 	inline bool relax_unbound() const { return relax_unbound_; }
 
+	inline void compute_rmsd( bool const crms ) { compute_rmsd_ = crms; }
+	inline bool compute_rmsd() const { return compute_rmsd_; }
+
 	virtual void scorefxn( core::scoring::ScoreFunctionCOP scorefxn_in );
 
 	std::string
@@ -162,6 +165,7 @@ private :
 
 	// number of waters in final bound and unbound state
 	core::Size bound_HOH_, bound_HOH_V_, unbound_HOH_, unbound_HOH_V_;
+	bool compute_rmsd_;
 	core::Real bound_rmsd_, bound_rmsd_super_;
 
 };

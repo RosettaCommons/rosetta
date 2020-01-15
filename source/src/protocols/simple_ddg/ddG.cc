@@ -131,6 +131,7 @@ ddG::ddG() :
 	bound_HOH_V_(0),
 	unbound_HOH_(0),
 	unbound_HOH_V_(0),
+	compute_rmsd_(false),
 	bound_rmsd_(1e6),
 	bound_rmsd_super_(1e6)
 {
@@ -162,6 +163,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	bound_HOH_V_(0),
 	unbound_HOH_(0),
 	unbound_HOH_V_(0),
+	compute_rmsd_(false),
 	bound_rmsd_(1e6),
 	bound_rmsd_super_(1e6)
 {
@@ -207,6 +209,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	bound_HOH_V_(0),
 	unbound_HOH_(0),
 	unbound_HOH_V_(0),
+	compute_rmsd_(false),
 	bound_rmsd_(1e6),
 	bound_rmsd_super_(1e6)
 {
@@ -252,6 +255,7 @@ void ddG::parse_my_tag(
 	solvate_rbmin_ = tag->getOption<bool>("solvate_rbmin",false);
 	min_water_jump_ = tag->getOption<bool>("min_water_jump",false);
 	translate_by_ = tag->getOption<core::Real>("translate_by", 1000.0);
+	compute_rmsd_ = tag->getOption<bool>("compute_rmsd",false);
 
 	if ( tag->hasOption( "relax_mover" ) ) {
 		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
@@ -367,7 +371,7 @@ void ddG::apply(Pose & pose)
 		average_per_residue_ddg.second /= repeats_;
 	}
 
-	setPoseExtraScore(pose, "ddg",average_ddg);
+	setPoseExtraScore(pose, "ddg", average_ddg);
 
 	if ( solvate_ ) {
 		setPoseExtraScore(pose, "bound_HOH", bound_HOH_);
@@ -376,7 +380,7 @@ void ddG::apply(Pose & pose)
 		setPoseExtraScore(pose, "unbound_HOH_V", unbound_HOH_V_);
 	}
 
-	if ( native_ ) {
+	if ( native_ && compute_rmsd() ) {
 		setPoseExtraScore(pose, "bound_ligand_rmsd_no_super", bound_rmsd_);
 		setPoseExtraScore(pose, "bound_ligand_rmsd_with_super", bound_rmsd_super_);
 	}
@@ -551,7 +555,7 @@ ddG::calculate( pose::Pose const & pose_original )
 
 	// get native for rmsd bound/unbound rmsd calculations
 	core::Size lig_id_ = 0, lig_id_native_ = 0;
-	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
+	if ( ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) &&  compute_rmsd() ) {
 		native_ = core::pose::PoseOP( new core::pose::Pose() );
 		core::import_pose::pose_from_file( *native_, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() , core::import_pose::PDB_file);
 		// calculate lig_id separate for native in case native pose had different numbering
@@ -561,6 +565,7 @@ ddG::calculate( pose::Pose const & pose_original )
 		core::Real input_rmsd( 0 );
 		core::Real input_rmsd_super( 0 );
 		if ( pose.residue(lig_id_).is_ligand() ) {
+			// use different rmsd functions for small molecule ligands vs protein 'ligands'
 			input_rmsd = automorphic_rmsd(native_->residue(lig_id_native_), pose.residue(lig_id_), false /*don't superimpose*/);
 			input_rmsd_super = automorphic_rmsd(native_->residue(lig_id_native_), pose.residue(lig_id_), true /*don't superimpose*/);
 		} else {
@@ -651,7 +656,7 @@ ddG::calculate( pose::Pose const & pose_original )
 		TR << "number of waters in bound state ( HOH / HOH_V ) = " << bound_HOH_ << " / " << bound_HOH_V_ << std::endl;
 	}
 
-	if ( native_ ) {
+	if ( native_ && compute_rmsd() ) {
 
 		if ( pose.residue(lig_id_).is_ligand() ) {
 			bound_rmsd_ = automorphic_rmsd(native_->residue(lig_id_native_), pose.residue(lig_id_), false /*don't superimpose*/);
@@ -1068,6 +1073,11 @@ ddG::define_ddG_schema() {
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"min_water_jump", xsct_rosetta_bool,
 		"Include waters in rigid-body minimization following solvation and packing",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"compute_rmsd", xsct_rosetta_bool,
+		"Compute the rmsd both with and without superimposing -- requires in:file:native to be supplied",
 		"false");
 
 	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
