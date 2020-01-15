@@ -880,6 +880,8 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     ''' Run single test.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
     '''
+    if 'mounts' in config: config['release_root'] = config['mounts']['release_root']
+
 
     if   test =='source': return rosetta_source_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='binary': return rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)

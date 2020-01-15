@@ -42,10 +42,20 @@ this_file_path = os.path.realpath(__file__)
 this_file_dir = os.path.dirname(this_file_path)
 
 #We assume a typical Rosetta install for testing purposes
-root_rosetta_dir = os.path.abspath(os.path.join(this_file_dir,"../../.."))
-root_main_dir =  os.path.realpath(os.path.join(root_rosetta_dir, "main"))
+
+# old, before submodules layout
+# root_rosetta_dir = os.path.abspath(os.path.join(this_file_dir,"../../.."))
+# root_main_dir =  os.path.realpath(os.path.join(root_rosetta_dir, "main"))
+# root_demos_dir = os.path.realpath(os.path.join(root_rosetta_dir, "demos"))
+# root_tools_dir = os.path.realpath(os.path.join(root_rosetta_dir, "tools"))
+
+# new directory layout when demos and tools are submodules to main
+root_rosetta_dir = os.path.abspath(os.path.join(this_file_dir,"../.."))
+root_main_dir =  root_rosetta_dir
 root_demos_dir = os.path.realpath(os.path.join(root_rosetta_dir, "demos"))
 root_tools_dir = os.path.realpath(os.path.join(root_rosetta_dir, "tools"))
+
+# ----------------------------------------------------------------
 
 timeout_factors = {}
 with open("timeout_factors.json") as f:
@@ -474,10 +484,10 @@ EXAMPLES For Running Demos/Tutorials
                 # In case commandline specification is used - normalize to standard install directories.
                 params = generateIntegrationTestGlobalSubstitutionParameters()
                 if params['minidir'] in data:
-                    data = data.replace( params['minidir'], "ROSETTA/main/source")
+                    data = data.replace( params['minidir'], "ROSETTA/source")
                     mod = True
                 if params['database'] in data:
-                    data = data.replace( params['database'], "ROSETTA/main/database")
+                    data = data.replace( params['database'], "ROSETTA/database")
                     mod = True
                 if params['rosetta_tools'] in data:
                     data = data.replace( params['rosetta_tools'], "ROSETTA/tools")

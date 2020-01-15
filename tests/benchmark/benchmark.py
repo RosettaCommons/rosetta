@@ -228,7 +228,7 @@ def run_test(setup):
         working_dir_2        = setup.compare[1]  and  ( setup.working_dir + f'/{setup.compare[1]}' )
         res_2_json_file_path = setup.compare[1]  and  f'{working_dir_2}/.execution.results.json'
 
-        res_1 = json.load( open(working_dir_1 + '/.execution.results.json') )  # ["results"]
+        res_1 = json.load( open(working_dir_1 + '/.execution.results.json') )[_ResultsKey_]
 
         if setup.compare[1] and ( not os.path.isfile(res_2_json_file_path) ):
             setup.compare[1] = None
@@ -239,7 +239,7 @@ def run_test(setup):
         if setup.compare[1] == None: res_2, working_dir_2 = None, None
         else:
             #working_dir_2 = os.path.abspath( config['results_root'] + f'/{Platform["os"]}.{test}.{Options.compare[1]}' )
-            res_2 = json.load( open(res_2_json_file_path) )
+            res_2 = json.load( open(res_2_json_file_path) )[_ResultsKey_]
 
         res = test_suite.compare(test, res_1, working_dir_1, res_2, working_dir_2)
 

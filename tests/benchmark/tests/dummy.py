@@ -78,7 +78,8 @@ def run_regression_test(rosetta_dir, working_dir, platform, config):
 
 
 def run_release_test(rosetta_dir, working_dir, platform, config):
-    release_root = config['release_root']
+    release_root = config['mounts'].get('release_root')
+
     branch = config['branch']
     revision = config['revision']
 
