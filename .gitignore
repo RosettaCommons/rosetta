@@ -16,7 +16,7 @@
 \#*\#
 .\#*
 .Rproj.user
-source/Makefile  
+source/Makefile
 source/xcode/Rosetta.xcodeproj/project.pbxproj
 source/xcode/DerivedData/
 source/ide/RosettaMini.xcodeproj/

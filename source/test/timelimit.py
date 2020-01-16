@@ -27,16 +27,23 @@ def main(argv):
     timeout = float(argv[1])
 
     commline = ' '.join(argv[2:])
+
+    # explicitly creating a new process group and set current process as leader, that way we can later terminate whole group on timeout
+    os.setpgrp()
+
     proc = subprocess.Popen(["bash", "-c", commline])
     start = time.time()
     retcode = None
+
     while time.time() - start <= timeout*60:
         retcode = proc.poll()
         if retcode is not None: break
         time.sleep(5)
     if retcode is None:
         print("*** '%s' exceeded the timeout and will be killed!" % commline)
-        os.kill(proc.pid, signal.SIGKILL)  # signal.SIGTERM
+        sys.stdout.flush()
+        #os.kill(proc.pid, signal.SIGKILL)  # signal.SIGTERM
+        os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
         return 1
     return retcode
 

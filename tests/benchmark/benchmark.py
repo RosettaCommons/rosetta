@@ -228,7 +228,7 @@ def run_test(setup):
         working_dir_2        = setup.compare[1]  and  ( setup.working_dir + f'/{setup.compare[1]}' )
         res_2_json_file_path = setup.compare[1]  and  f'{working_dir_2}/.execution.results.json'
 
-        res_1 = json.load( open(working_dir_1 + '/.execution.results.json') )[_ResultsKey_]
+        with open(working_dir_1 + '/.execution.results.json') as f: res_1 = json.load(f).get(_ResultsKey_)
 
         if setup.compare[1] and ( not os.path.isfile(res_2_json_file_path) ):
             setup.compare[1] = None
@@ -238,8 +238,7 @@ def run_test(setup):
 
         if setup.compare[1] == None: res_2, working_dir_2 = None, None
         else:
-            #working_dir_2 = os.path.abspath( config['results_root'] + f'/{Platform["os"]}.{test}.{Options.compare[1]}' )
-            res_2 = json.load( open(res_2_json_file_path) )[_ResultsKey_]
+            with open(res_2_json_file_path) as f: res_2 = json.load(f).get(_ResultsKey_)
 
         res = test_suite.compare(test, res_1, working_dir_1, res_2, working_dir_2)
 
@@ -325,8 +324,6 @@ def main(args):
     parser.add_argument('--python', default=('{}.{}'.format(*sys.version_info) if Platform['os'] == 'mac' else '3.6'), help="Python interpreter to use")
 
     parser.add_argument("--extras", default='', help="Specify scons extras separated by ',': like --extras=mpi,static" )
-
-    #parser.add_argument("--options", default='', help="""Specify JSON string of for platform options: like --options='{"py":"monolith"}'""" )
 
     parser.add_argument("--debug", action="store_true", dest="debug", default=False, help="Run specified test in debug mode (not with debug build!) this mean different things and depend on the test. Could be: skip the build phase, skip some of the test phases and so on. [off by default]" )
 
