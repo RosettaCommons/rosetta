@@ -16,6 +16,7 @@
 #include <core/simple_metrics/simple_metric_creators.hh>
 #include <core/simple_metrics/per_residue_metrics/PerResidueRMSDMetric.hh>
 #include <core/scoring/rms_util.hh>
+#include <core/pose/symmetry/util.hh>
 
 // Core headers
 #include <core/simple_metrics/RealMetric.hh>
@@ -138,6 +139,16 @@ RMSDMetric::set_residue_selector_reference(core::select::residue_selector::Resid
 }
 
 void
+RMSDMetric::set_residue_selector_super(core::select::residue_selector::ResidueSelectorCOP residue_selector){
+	residue_selector_super_ = residue_selector;
+}
+
+void
+RMSDMetric::set_residue_selector_super_reference(core::select::residue_selector::ResidueSelectorCOP residue_selector){
+	residue_selector_super_ref_ = residue_selector;
+}
+
+void
 RMSDMetric::set_residue_mapping(std::map<core::Size, core::Size> const & rmsd_map ){
 	rmsd_map_ = rmsd_map;
 }
@@ -177,6 +188,14 @@ RMSDMetric::parse_my_tag(
 		set_residue_selector_reference(parse_residue_selector( tag, datamap, "residue_selector_ref" ));
 	}
 
+	if ( tag->hasOption("residue_selector_super") ) {
+		set_residue_selector_super(parse_residue_selector( tag, datamap, "residue_selector_super" ));
+	}
+
+	if ( tag->hasOption("residue_selector_super_ref") ) {
+		set_residue_selector_super_reference(parse_residue_selector( tag, datamap, "residue_selector_super_ref" ));
+	}
+
 	set_run_superimpose(tag->getOption< bool >("super", superimpose_));
 
 	//Comparison pose.
@@ -212,8 +231,13 @@ RMSDMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 		"Calculate the RMSD for these residues for both reference and main pose." );
 
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector_ref",
-		"Selector for the reference pose (input native or passed reference pose. ).  Residues selected must be same number of residues selected for the main selector." );
+		"Optional Selector for the reference pose (input native or passed reference pose. ).  Residues selected must be same number of residues selected for the main selector." );
 
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector_super",
+		"Optional selector for superposition. If not given will use residue_selector");
+
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector_super_ref",
+		"Optional selector for superposition of reference pose. Residues selected must be same number of residues selected for the main selector." );
 
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"robust", xsct_rosetta_bool, "Set whether we are robust to atom mismatches for selected residues."
@@ -249,6 +273,7 @@ core::Real
 RMSDMetric::calculate(const core::pose::Pose & pose) const {
 
 	using namespace utility;
+	using namespace core::pose::symmetry;
 	if ( ! ref_pose_ ) {
 		utility_exit_with_message( "Must pass in a reference pose for RMSDMetric.  See RS XSD or use the set_comparison_pose function");
 	}
@@ -264,8 +289,24 @@ RMSDMetric::calculate(const core::pose::Pose & pose) const {
 	std::map< id::AtomID, id::AtomID > atom_map = core_metric.create_atom_id_map( pose );
 	core::Real rms = 0.0;
 	if ( superimpose_ ) {
-		core::pose::Pose local_pose = pose;
-		scoring::superimpose_pose(local_pose, *ref_pose_, atom_map);
+		core::pose::Pose local_pose;
+		//Patch to align symmetric and non-symmetric poses without re-writing superimpose function.
+		// Warning now added to superimpose function.
+		if ( is_symmetric(pose) && ! is_symmetric(*ref_pose_) ) {
+			extract_asymmetric_unit(pose, local_pose, false);
+		} else {
+			local_pose = pose;
+		}
+
+		if ( residue_selector_super_ ) {
+			core_metric.set_residue_selector(residue_selector_super_);
+			core_metric.set_residue_selector_reference(residue_selector_super_ref_);
+			std::map< id::AtomID, id::AtomID > super_atom_map = core_metric.create_atom_id_map( pose );
+			scoring::superimpose_pose(local_pose, *ref_pose_, super_atom_map);
+
+		} else {
+			scoring::superimpose_pose(local_pose, *ref_pose_, atom_map);
+		}
 		rms =  scoring::rms_at_corresponding_atoms_no_super( local_pose, *ref_pose_, atom_map);
 
 	} else {

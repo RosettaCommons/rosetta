@@ -58,8 +58,21 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
+//#include <unordered_map>
+
 // boost
-#include <boost/unordered_set.hpp>
+//#include <boost/unordered_set.hpp>
+
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/types/unordered_map.hpp>
+#endif // SERIALIZATION
 
 using namespace ObjexxFCL::format;
 
@@ -2491,6 +2504,8 @@ ResidueExclParams::find_by_atmpairno( Size i, Size j ) const
 	return true;
 }
 
+
+
 ////////////////
 // constructor
 GenBondedExclInfo::GenBondedExclInfo(
@@ -2546,3 +2561,80 @@ GenBondedExclInfo::get_residue_pair_data(
 } // scoring
 } // core
 
+
+
+#ifdef    SERIALIZATION
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::ResidueExclParams::ResidueExclParams() {}
+
+/// @brief JAB manually generated serialization method
+template< class Archive >
+void
+core::scoring::ResidueExclParams::save( Archive & arc ) const {
+	arc( CEREAL_NVP( fully_counted_) ); // bool
+	arc( CEREAL_NVP( fully_excluded_1b_ ) ); // bool
+	arc( CEREAL_NVP( rsdtype1_ ) ); // string
+	arc( CEREAL_NVP( rsdtype2_ ) ); // string
+	arc( CEREAL_NVP( atm_excluded_ ) ); // utility::vector1< bool >
+	arc( CEREAL_NVP( bondnos_ ) ); // utility::vector1< bool >
+	arc( CEREAL_NVP( atmpairnos_ ) ); // unordered_map< uint64_t, bool >
+	arc( CEREAL_NVP( rsd_type_ ) ); // core::chemical::ResidueTypeCOP
+}
+
+/// @brief JAB manually generated deserialization method
+template< class Archive >
+void
+core::scoring::ResidueExclParams::load( Archive & arc ) {
+	arc( fully_counted_ ); // bool
+	arc( fully_excluded_1b_ ); // bool
+	arc( rsdtype1_ ); // string
+	arc( rsdtype2_ ); // string
+	arc( atm_excluded_ ); // utility::vector1< bool >
+	arc( bondnos_ ); // utility::vector1< bool >
+	arc( atmpairnos_ ); // unordered_map< uint64_t, bool >
+	arc( rsd_type_ );
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::ResidueExclParams );
+CEREAL_REGISTER_TYPE( core::scoring::ResidueExclParams )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_ResidueExclParams )
+
+
+///////////////////////
+// GenBondedExclInfo //
+///////////////////////
+
+/// @brief Default constructor required by cereal to deserialize this class
+core::scoring::GenBondedExclInfo::GenBondedExclInfo() {}
+
+/// @brief JAB manually generated serialization method
+template< class Archive >
+void
+core::scoring::GenBondedExclInfo::save( Archive & arc ) const {
+	arc( CEREAL_NVP( score_full_) ); // bool
+	arc( CEREAL_NVP( score_hybrid_ ) ); // bool
+	arc( CEREAL_NVP( perres_excls_ ) ); // unordered_map< std::string, ResidueExclParamsOP >
+	arc( CEREAL_NVP( respair_excls_ ) ); // unordered_map< uint64_t, ResidueExclParamsOP >
+
+}
+
+/// @brief JAB manually generated deserialization method
+template< class Archive >
+void
+core::scoring::GenBondedExclInfo::load( Archive & arc ) {
+	arc( score_full_ ); // bool
+	arc( score_hybrid_ ); // bool
+	arc( perres_excls_ ); // unordered_map< std::string, ResidueExclParamsOP >
+	arc( respair_excls_ ); // unordered_map< uint64_t, ResidueExclParamsOP >
+
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::GenBondedExclInfo );
+CEREAL_REGISTER_TYPE( core::scoring::GenBondedExclInfo )
+
+CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_GenBondedExclInfo )
+
+
+#endif // SERIALIZATION

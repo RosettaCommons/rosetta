@@ -125,6 +125,7 @@ private:
 
 ///////////////
 
+///@brief Extract the Asymmetric unit only from the pose.  This is the pose that would have existed before symmetrization.
 class ExtractAsymmetricUnitMover : public protocols::moves::Mover
 {
 public:
@@ -151,15 +152,6 @@ public:
 	void
 	set_keep_virtual_residues( bool const keep_virt );
 
-	/// @brief If true, residues with aa() == aa_unk will be kept in the asymmetric unit. If false,
-	///        residues of aa type aa_unk will be ignored in the conversion and left out of the
-	///        asymmetric unit.
-	/// @param[in] keep_unk Desired value for keep_unknown_aas (default=false)
-	/// @details If there are NCAAs in the pose, this must be set to false, or the NCAAs will be
-	///          ignored.  The keep_unknown_aas defaults to false for historical reasons.
-	void
-	set_keep_unknown_aas( bool const keep_unk );
-
 	std::string
 	get_name() const override;
 
@@ -177,9 +169,6 @@ private:
 	///        they will be removed
 	bool keep_virtual_residues_;
 
-	/// @brief If false, unknown residue types will be ignored
-	///        Must be true if there are NCAAs in the pose, otherwise they will be ignored.
-	bool keep_unknown_aas_;
 };
 
 class ExtractAsymmetricPoseMover : public protocols::moves::Mover

@@ -1237,6 +1237,12 @@ superimpose_pose(
 	bool const realign
 )
 {
+	using namespace core::pose::symmetry;
+
+	if ( is_symmetric(mod_pose) && ! (is_symmetric(ref_pose)) ) {
+		tr.Warning << "core::scoring::superimpose_pose: You must desymmetrize the mod pose for accurate superposition. Otherwise, you will get junk!!!" << std::endl;
+	}
+
 	id::AtomID_Map< id::AtomID > const atom_id_map = convert_from_std_map( atom_map, mod_pose );
 	pose::MiniPose mini_ref_pose( ref_pose );  //minipose is a lightweight pose with just xyz positions (& fold tree)
 	return superimpose_pose(mod_pose, mini_ref_pose, atom_id_map, rms_calc_offset_val, realign );
@@ -1252,7 +1258,9 @@ superimpose_pose(
 )
 {
 	using namespace numeric::model_quality;
+
 	using namespace id;
+
 
 	/// how many atoms in mod_pose?
 	Size natoms(0);

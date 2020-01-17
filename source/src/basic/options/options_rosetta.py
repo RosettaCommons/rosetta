@@ -1615,6 +1615,12 @@ Options = Option_Group( '',
 			desc = 'Weight of total score if using MonteCarloInterface with a particular protocol',
 			default = '0.0'
 			),
+		Option('force_sugar_bb_zero', 'Boolean',
+			desc = "Force the SugarBB weight to be zero from get_score_function.  \
+			When using include_sugars, the sugar_bb weight is automatically added.  \
+			This overrides that for benchmarking purposes",
+			default = 'false'),
+		
 		Option( 'voids_penalty_energy_containing_cones_cutoff', "Integer", desc="A parameter for the voids_penalty score term.  The minimum number of cones projecting from side-chains in which a voxel must lie in order for that voxel to be considerd to be buried.  Defaults to 6 cones.", default='6' ),
 		Option( 'voids_penalty_energy_cone_dotproduct_cutoff', "Real", desc="A parameter for the voids_penalty score term.  The cutoff value for the dot product of a cone vector and a cone base-test point vector below which we declare the test point not to be within the cone.  Effectively, this is the cone width.  Lower values make broader cones.  Default 0.1.  Can range from 1.0 (infinitely thin cone) to -1.0 (full spherical volume), with 0.0 represeting all points on one side of the plane perpendicular to the cone vector.", default='0.1' ),
 		Option( 'voids_penalty_energy_cone_distance_cutoff', "Real", desc="A parameter for the voids_penalty score term.  The cutoff value for the distance from the cone base at which we are considered no longer to be within the cone.  Defaults to 8.0 Angstroms.", default='8.0' ),

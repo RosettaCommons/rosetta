@@ -50,6 +50,7 @@
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/carbohydrates/util.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -65,6 +66,9 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/rosetta_scripts/util.hh>
+
+// C++ includes
+#include <cmath>
 
 static basic::Tracer TR( "protocols.carbohydrates.GlycanTreeModeler" );
 
@@ -108,7 +112,9 @@ GlycanTreeModeler::GlycanTreeModeler( GlycanTreeModeler const & src ):
 	force_virts_for_refine_(src.force_virts_for_refine_),
 	hybrid_protocol_(src.hybrid_protocol_),
 	use_gaussian_sampling_( src.use_gaussian_sampling_),
-	use_shear_( src.use_shear_)
+	use_shear_( src.use_shear_),
+	match_window_one_(src.match_window_one_),
+	glycan_sampler_kt_(src.glycan_sampler_kt_)
 
 {
 	if ( src.scorefxn_ ) scorefxn_ = src.scorefxn_->clone();
@@ -153,6 +159,7 @@ GlycanTreeModeler::parse_my_tag(
 	quench_mode_ = tag->getOption< bool >("quench_mode", quench_mode_);
 	final_min_pack_min_ = tag->getOption< bool >("final_min_pack_min", final_min_pack_min_);
 	glycan_sampler_rounds_ = tag->getOption< core::Size >("glycan_sampler_rounds", glycan_sampler_rounds_);
+	glycan_sampler_kt_ = tag->getOption< core::Real >("kt", glycan_sampler_kt_);
 
 	if ( tag->hasOption("residue_selector") ) {
 		selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, datamap );
@@ -161,6 +168,7 @@ GlycanTreeModeler::parse_my_tag(
 	if ( tag->hasOption("scorefxn") ) {
 		scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, datamap );
 	}
+
 
 	min_rings_ = tag->getOption< core::Real >("min_rings", min_rings_);
 	cartmin_ = tag->getOption< bool >("cartmin", cartmin_);
@@ -171,6 +179,10 @@ GlycanTreeModeler::parse_my_tag(
 	set_hybrid_protocol( tag->getOption< bool >("hybrid_protocol", hybrid_protocol_));
 	set_use_gaussian_sampling( tag->getOption< bool >( "use_gaussian_sampling", use_gaussian_sampling_));
 	use_shear_ = tag->getOption< bool >("shear", use_shear_);
+	match_window_one_ = tag->getOption< bool >("match_window_one", match_window_one_);
+	root_prob_sampling_ = tag->getOption< bool >("root_populations_only", root_prob_sampling_);
+
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -230,7 +242,7 @@ void GlycanTreeModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute::attribute_w_default("glycan_sampler_rounds", xsct_non_negative_integer, "Round Number for the internal the GlycanSampler.  Default is the default of the GlycanSampler.", "25")
 
 		+ XMLSchemaAttribute::attribute_w_default("use_conformer_probs", xsct_rosetta_bool, "Use conformer probabilities instead of doing uniform sampling", "false")
-		+ XMLSchemaAttribute::attribute_w_default("use_gaussian_sampling", xsct_rosetta_bool, "Set whether to build conformer torsions using a gaussian of the angle or through uniform sampling up to 1 SD (default)", "false")
+		+ XMLSchemaAttribute::attribute_w_default("use_gaussian_sampling", xsct_rosetta_bool, "Set whether to build conformer torsions using a gaussian of the angle or through uniform sampling up to 1 SD (default)", "true")
 
 		+ XMLSchemaAttribute::attribute_w_default("force_virts_for_refinement", xsct_rosetta_bool, "Refinement now models layers in the context of the full glycan tree.\n Turn this option on to use non-scored residues (virtuals) at the ends of the tree that are not being modeled.\n  This is how the de-novo protocol works.", "false")
 
@@ -242,8 +254,11 @@ void GlycanTreeModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		+ XMLSchemaAttribute::attribute_w_default("cartmin", xsct_rosetta_bool, "Use Cartesian Minimization instead of Dihedral Minimization during packing steps.", "false")
 
 
-		+ XMLSchemaAttribute::attribute_w_default("hybrid_protocol", xsct_rosetta_bool ,"Set to use an experimental protocol where we build out the glycans, but re-model the full tree during the building process" , "false")
-		+ XMLSchemaAttribute::attribute_w_default("shear", xsct_rosetta_bool, "Use the Shear Mover that is now compatible with glycans at an a probability of 10 percent", "false");
+		+ XMLSchemaAttribute::attribute_w_default("hybrid_protocol", xsct_rosetta_bool ,"Set to use an experimental protocol where we build out the glycans, but re-model the full tree during the building process" , "true")
+		+ XMLSchemaAttribute::attribute_w_default("shear", xsct_rosetta_bool, "Use the Shear Mover that is now compatible with glycans at an a probability of 10 percent", "true")
+		+ XMLSchemaAttribute::attribute_w_default("match_window_one", xsct_rosetta_bool, "Matches the number of rounds per layer with that of using a window of 1.  Used for benchmarking.", "false")
+		+ XMLSchemaAttribute::attribute_w_default("root_populations_only", xsct_rosetta_bool, "Use population-based sampling for only the linkage between the amino acid and glycan residue", "false")
+		+ XMLSchemaAttribute("kt", xsct_real, "Override the GlycanSampler kT (which defaults to 2.0)");
 
 	std::string documentation =
 		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
@@ -350,6 +365,11 @@ GlycanTreeModeler::set_glycan_sampler_rounds( core::Size glycan_sampler_rounds){
 	glycan_sampler_rounds_ = glycan_sampler_rounds;
 }
 
+void
+GlycanTreeModeler::set_protein_linkage_prob_sampling( bool root_probs){
+	root_prob_sampling_ = root_probs;
+}
+
 bool
 GlycanTreeModeler::is_quenched() const {
 	if ( ! quench_mode_ && completed_quenches_ == 1 ) {
@@ -406,6 +426,11 @@ GlycanTreeModeler::set_hybrid_protocol(bool hybrid_protocol){
 void
 GlycanTreeModeler::set_use_shear(bool use_shear){
 	use_shear_ = use_shear;
+}
+
+void
+GlycanTreeModeler::set_glycan_sampler_kt( core::Real kT){
+	glycan_sampler_kt_ = kT;
 }
 
 /// @brief Apply the mover
@@ -489,6 +514,10 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 		glycan_sampler.set_rounds(glycan_sampler_rounds_);
 	}
 
+	if ( glycan_sampler_kt_ != 0 ) {
+		glycan_sampler.set_kt(glycan_sampler_kt_);
+	}
+
 	//Setup Glycan Sampler Options
 	glycan_sampler.set_use_shear(use_shear_);
 	glycan_sampler.set_refine( refine_ );
@@ -496,6 +525,7 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 	glycan_sampler.set_min_rings( min_rings_ );
 	glycan_sampler.set_population_based_conformer_sampling(use_conformer_populations_);
 	glycan_sampler.set_use_gaussian_sampling( use_gaussian_sampling_);
+	glycan_sampler.set_protein_linkage_prob_sampling(root_prob_sampling_);
 
 	ConvertRealToVirtualMover real_to_virt = ConvertRealToVirtualMover();
 	ConvertVirtualToRealMover virt_to_real = ConvertVirtualToRealMover();
@@ -555,13 +585,18 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 
 	core::Real starting_score = scorefxn_->score( pose );
 	TR << "Starting Score: " << starting_score << std::endl;
-
 	ResidueSubset mask = starting_subset; //All the glycan residues we will be modeling
 
 	MonteCarloOP mc = MonteCarloOP( new MonteCarlo(pose, *scorefxn_, 1.0) );
 	mc->set_last_accepted_pose(pose);
-
 	core::Size default_sampler_rounds = glycan_sampler.get_glycan_sampler_rounds();
+
+	//Used for benchmarking
+	core::Size total_default_bm_rounds = get_total_rounds_for_overlap_one_layer_two( pose, starting_subset, default_sampler_rounds);
+	TR << "Total bm rounds: " << total_default_bm_rounds << std::endl;
+
+	core::Real per_residue_sampling_rounds = core::Real(total_default_bm_rounds)/count_selected(starting_subset);
+	TR << "Per-Residue sampling rounds: " << per_residue_sampling_rounds << std::endl;
 
 	completed_quenches_ = 0;
 	while ( ! is_quenched() ) {
@@ -681,7 +716,13 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 
 					core::Size n_in_layer = count_selected( and_selector->apply( pose ) );
 
+					if ( match_window_one_ ) {
+						default_sampler_rounds = std::round(per_residue_sampling_rounds);
+						glycan_sampler.set_rounds(default_sampler_rounds);
+					}
+
 					if ( n_in_layer > 0 ) {
+
 
 						if ( hybrid_protocol_ && ! first_modeling ) {
 							glycan_sampler.set_rounds(default_sampler_rounds/2);
@@ -713,12 +754,9 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 							glycan_sampler.apply( pose );
 						}
 
-
-
 					} else {
 						TR << "No residues in layer, continueing." << std::endl;
 					}
-
 
 					// Set the next layer.
 					current_start = current_start + layer_size_ - window_size_;

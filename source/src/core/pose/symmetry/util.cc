@@ -262,13 +262,10 @@ make_asymmetric_pose(
 /// @param[out] pose_out           Asymmetric subunit will be placed into this object
 /// @param[in]  with_virtual_atoms If true, virtual atoms related to symmetry will be kept with the asymmetric subunit.
 ///                                If false, virtual atoms will be removed (default=true)
-/// @param[in]  with_unknown_aa    If false amino acids with type aa_unk will be ignored.  If true, amino acids with
-///                                type aa_unk will be extracted (default=false)
 void extract_asymmetric_unit(
 	core::pose::Pose const & pose_in,
 	core::pose::Pose & pose_out,
-	bool const with_virtual_atoms,
-	bool const with_unknown_aa
+	bool const with_virtual_atoms
 )
 {
 	using core::conformation::Residue;
@@ -286,15 +283,14 @@ void extract_asymmetric_unit(
 		dynamic_cast<SymmetricConformation const & > ( pose_in.conformation() ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-	bool jump_to_next = false;
 	for ( Size i=1; i<=symm_info->num_total_residues_without_pseudo(); i++ ) {
 		if ( !symm_info->bb_is_independent(i) ) {
 			continue;
 		}
-
 		Residue residue( pose_in.residue( i ) );
-		//Special case carbohydrates
-		if ( residue.is_carbohydrate() ) {
+
+		//Special case carbohydrates - this is almost special-cased for branches, but we need the parent somehow.
+		if ( residue.is_carbohydrate() && (i != 1) && (symm_conf.glycan_tree_set()->get_parent(i) != 0 ) ) {
 			Size const parent_resnum = symm_conf.glycan_tree_set()->get_parent(i);
 			Residue const & parent_res = symm_conf.residue( parent_resnum );
 
@@ -303,6 +299,7 @@ void extract_asymmetric_unit(
 				Size const anchor_atom_num = parent_res.connect_atom(residue);
 
 				Size const child_atom_num = symm_conf.residue_type(i).lower_connect_atom();
+
 
 				// Determine both connections...
 				uint anchor_connection( 0 );
@@ -315,6 +312,7 @@ void extract_asymmetric_unit(
 					}
 				}
 				n_connections = residue.n_possible_residue_connections();
+
 				for ( Size ii = 1; ii <= n_connections; ++ii ) {
 					if ( residue.residue_connect_atom_index( ii ) == child_atom_num ) {
 						connection = ii;
@@ -325,39 +323,25 @@ void extract_asymmetric_unit(
 				if ( ( ! anchor_connection ) || ( ! connection ) ) {
 					utility_exit_with_message( "Can't append by these atoms, "
 						"since they do not correspond to connections on the Residues in question!" );
+
 				}
-
-				pose_out.append_residue_by_bond( residue, false, connection, parent_resnum,
-					anchor_connection);
-
+				pose_out.append_residue_by_bond( residue, false, connection, parent_resnum, anchor_connection);
 			} else {
 				//Connection is normal.
 				pose_out.append_residue_by_bond( residue, false );
 			}
-
-		} else if ( residue.type().is_lower_terminus() ||
-				( ( residue.aa() == aa_unk ) && !with_unknown_aa ) ||
-				residue.aa() == aa_h2o ||
-				residue.aa() == aa_vrt ||
-				jump_to_next
-				) {
-
-			if ( ( ( residue.aa() == aa_unk ) && !with_unknown_aa ) ||
-					residue.aa() == aa_vrt ||
-					residue.aa() == aa_h2o
-					) {
-				jump_to_next = true;
-			} else if ( jump_to_next ) {
-				jump_to_next = false;
-				if ( ! residue.is_lower_terminus() ) {
-					TR.Warning << "Residue following X, Z, or an upper terminus is _not_ a lower terminus type!  Continuing ..." << std::endl;
-				}
-			}
-			pose_out.append_residue_by_jump( residue, 1, "", "", true ); // each time this happens, a new chain should be started
+		} else if ( i>1 && residue.is_polymer_bonded( i-1 ) ) {
+			pose_out.append_residue_by_bond( residue );
 		} else {
-			pose_out.append_residue_by_bond( residue, false );
+			pose_out.append_residue_by_jump( residue, 1);
+		}
 
-			if ( residue.type().is_upper_terminus() ) jump_to_next = true;
+		if ( i>1 ) {
+			conformation::Residue const & prev_rsd( pose_in.residue( i-1 ) );
+			if ( prev_rsd.is_upper_terminus() || residue.is_lower_terminus() || prev_rsd.chain() != residue.chain() ) {
+				debug_assert( pose_out.size() == i );
+				pose_out.conformation().insert_chain_ending( i-1 );
+			}
 		}
 	}
 

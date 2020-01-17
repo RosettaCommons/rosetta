@@ -112,6 +112,11 @@ public:
 		use_conformer_population_stats_ = setting;
 	}
 
+	///@brief Set the LCM to use probabilities for the ASN (or other residue) linkage.
+	/// Default False
+	void
+	set_root_prob_sampling( bool root_prob_sampling );
+
 	///@breif Set everything to default values, including linkage pairs.
 	void
 	set_defaults();
@@ -182,6 +187,7 @@ private:
 	simple_moves::BBDihedralSamplerMoverOP omega_sampler_mover_;
 
 	core::select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
+	bool root_prob_sampling_ = false;
 
 };
 

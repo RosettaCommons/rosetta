@@ -2278,7 +2278,7 @@ ScoreFunction::set_weight( ScoreType const & t, Real const & setting )
 ///////////////////////////////////////////////////////////////////////////////
 /// @details set the weight if zero
 void
-ScoreFunction::set_weight_if_zero(const ScoreType& t, const Real& setting) {
+ScoreFunction::set_weight_if_zero(ScoreType const & t, Real const &  setting) {
 	if ( get_weight(t) == 0 ) {
 		set_weight(t, setting);
 	}

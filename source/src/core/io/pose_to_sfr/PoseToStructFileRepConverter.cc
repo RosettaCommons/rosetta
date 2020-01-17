@@ -257,7 +257,7 @@ PoseToStructFileRepConverter::init_from_pose(
 	// for everything besides energies.
 	core::pose::Pose pose;
 	if ( options_.output_only_asymmetric_unit() && core::pose::symmetry::is_symmetric( input_pose ) ) {
-		core::pose::symmetry::extract_asymmetric_unit(input_pose, pose, false, true);
+		core::pose::symmetry::extract_asymmetric_unit(input_pose, pose, false);
 	} else {
 		pose = input_pose;
 	}

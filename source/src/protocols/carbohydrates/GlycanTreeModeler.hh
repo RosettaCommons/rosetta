@@ -187,6 +187,14 @@ public:
 	void
 	set_use_shear( bool use_shear );
 
+	///@brief Set Conformer Sampling through probabilities at the linkage to the protein only
+	void
+	set_protein_linkage_prob_sampling( bool root_probs);
+
+	///@brief Override the GlycanSampler KT
+	void
+	set_glycan_sampler_kt( core::Real kT);
+
 public:
 
 	///@brief Set the scorefunction used for modeling.
@@ -277,9 +285,12 @@ private: // data
 
 	bool use_conformer_populations_ = false;
 	bool force_virts_for_refine_ = false;
-	bool hybrid_protocol_ = false;
-	bool use_gaussian_sampling_ = false;
-	bool use_shear_ = false;
+	bool hybrid_protocol_ = true;
+	bool use_gaussian_sampling_ = true;
+	bool use_shear_ = true;
+	bool match_window_one_ = false; //benchmarking
+	bool root_prob_sampling_ = false;
+	core::Real glycan_sampler_kt_ = 0; //Only set if option is given.
 };
 
 std::ostream &

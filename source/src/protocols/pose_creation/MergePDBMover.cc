@@ -266,7 +266,7 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 		Size end_steal_label_res = pose.size();
 		TR.Debug << "pose.size() = " << pose.size() << std::endl;
 		if ( input_pose_symmetric ) {
-			pose::symmetry::extract_asymmetric_unit(pose,*output_poseOP,false,false);
+			pose::symmetry::extract_asymmetric_unit(pose,*output_poseOP,false);
 			end_steal_label_res=end_res_chain;
 		} else {
 			output_poseOP->detached_copy(pose);
@@ -274,7 +274,7 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 		core::pose::PoseOP backup_input_pose( utility::pointer::make_shared<core::pose::Pose>() );
 		core::pose::PoseOP backup_xml_pose( utility::pointer::make_shared<core::pose::Pose>() );
 		if ( input_pose_symmetric ) {
-			pose::symmetry::extract_asymmetric_unit(pose,*backup_input_pose,false,false);
+			pose::symmetry::extract_asymmetric_unit(pose,*backup_input_pose);
 		} else {
 			backup_input_pose = pose.clone();
 		}

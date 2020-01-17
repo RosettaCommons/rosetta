@@ -460,7 +460,11 @@ RotamerSet_::build_optimize_H_rotamers(
 	if ( task.residue_task( resid() ).flip_HNQ() && (
 			concrete_residue->aa() == aa_his ||
 			concrete_residue->aa() == aa_asn ||
-			concrete_residue->aa() == aa_gln ) ) {
+			concrete_residue->aa() == aa_gln
+			) && ! ( concrete_residue->has_variant_type( chemical::SC_BRANCH_POINT ) &&
+			! basic::options::option[ basic::options::OptionKeys::packing::sc_branch_rotamers ].value()==true ) )  {
+
+		///JAB - Skip flipping of HNQ if this residue (especially ASN for glycans) is a side-chain branch point and is connected to something else.  This flip will result in very odd and wrong structures without propagating the change downstream.
 
 		/// This is not the Richardson style HNQ flip.  Instead of preserving the bond geometry
 		/// and rotating chi2/chi3 by 180, they swap the coordinates of the heavy atoms.

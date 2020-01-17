@@ -89,9 +89,10 @@ LinkageConformerMover::set_defaults(){
 	use_sugar_bb_data_if_needed_ = true;
 	idealize_torsions_ = false;
 	conformer_found_ = false;
-	use_gaussian_sampling_ = false;
+	use_gaussian_sampling_ = true;
 	sample_protein_linkage_ = true;
 	use_conformer_population_stats_ = true;
+	root_prob_sampling_ = false;
 
 	SugarBBSamplerOP phi_sampler = utility::pointer::make_shared< SugarBBSampler >( core::id::phi_dihedral );
 	phi_sampler_mover_ = utility::pointer::make_shared< BBDihedralSamplerMover >( phi_sampler );
@@ -157,6 +158,7 @@ LinkageConformerMover::parse_my_tag(
 	sample_protein_linkage_ = tag->getOption< bool >("sample_protein_linkage", sample_protein_linkage_);
 	use_conformer_population_stats_ =
 		tag->getOption< bool >( "use_conformer_population_stats", use_conformer_population_stats_ );
+	set_root_prob_sampling( tag->getOption< bool >("root_populations_only", root_prob_sampling_));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,6 +206,11 @@ LinkageConformerMover::conformer_found() const {
 void
 LinkageConformerMover::set_use_gaussian_sampling( bool prob_sampling ){
 	use_gaussian_sampling_ = prob_sampling;
+}
+
+void
+LinkageConformerMover::set_root_prob_sampling( bool root_prob_sampling ){
+	root_prob_sampling_ = root_prob_sampling;
 }
 
 void
@@ -280,7 +287,7 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 		core::Size conformer_num;
 		if ( n_conformers == 1 ) {
 			conformer_num = 1;
-		} else if ( use_conformer_population_stats_ ) {
+		} else if ( use_conformer_population_stats_ || (root_prob_sampling_ && parent_res.is_carbohydrate() ) ) {
 			//TR.Debug << "Sampling on conformer stats" << std::endl;
 			utility::vector1< core::Real > populations;
 			for ( core::uint i =1 ; i <= n_conformers; ++i ) {
@@ -303,9 +310,10 @@ LinkageConformerMover::apply( core::pose::Pose & pose )
 
 	} else if ( use_sugar_bb_data_if_needed_ ) {
 
+		//SugarBB is derived from non protein-glycan linkages and has no meaning for the ASN (or otherwise) torsions
 		TR << "no conformer found.  Using sugar BB sampler if possible." << std::endl;
 		if ( ! parent_res.is_carbohydrate() ) {
-			TR <<" Cannot run sugar BB Sampler on linkage as linkage as a protein-glycan linkage. Skipping" << std::endl;
+			TR <<" Cannot run sugar BB Sampler on linkage as linkage is a protein-glycan linkage. Skipping" << std::endl;
 			set_last_move_status(protocols::moves::MS_FAIL);
 		}
 		phi_sampler_mover_->set_single_resnum( upper_resnum );
@@ -339,7 +347,8 @@ void LinkageConformerMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		+ XMLSchemaAttribute::attribute_w_default("idealize_torsions", xsct_rosetta_bool, "Use the Mean values of each torsion angle making up a conformer instead of sampling using the SD either uniformly or through a gaussian.", "false")
 		+ XMLSchemaAttribute::attribute_w_default("gaussian_sampling", xsct_rosetta_bool, "Use standard deviation and means to sample on the gaussian of each torsion angle that make up a conformer", "false")
 		+ XMLSchemaAttribute::attribute_w_default("sample_protein_linkage", xsct_rosetta_bool, "Also sample linkage between glycan and protein", "true")
-		+ XMLSchemaAttribute::attribute_w_default("use_conformer_population_stats", xsct_rosetta_bool, "Use statistics about conformer populations for sampling", "true");
+		+ XMLSchemaAttribute::attribute_w_default("use_conformer_population_stats", xsct_rosetta_bool, "Use statistics about conformer populations for sampling", "true")
+		+ XMLSchemaAttribute::attribute_w_default("root_populations_only", xsct_rosetta_bool, "Use population-based sampling for only the linkage between the amino acid and glycan residue", "false");
 
 	rosetta_scripts::attributes_for_parse_residue_selector( attlist );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),

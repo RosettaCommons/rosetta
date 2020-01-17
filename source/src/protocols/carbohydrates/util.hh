@@ -52,6 +52,15 @@ run_shear_min_pack(
 	bool use_shear = true
 );
 
+///@brief Used for benchmarking to test even sampling of different kinematic protocols
+///  Get the total number of sampling rounds for the GlycanTreeModeler protocol with previous default settings.
+core::Size
+get_total_rounds_for_overlap_one_layer_two(
+	core::pose::Pose const & pose,
+	utility::vector1< bool > const & residue_subset,
+	core::Size sampler_rounds
+);
+
 } //protocols
 } //carbohydrates
 

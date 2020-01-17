@@ -89,13 +89,26 @@ public:
 	void
 	set_comparison_pose( core::pose::PoseCOP pose);
 
+
 	///@brief Set a residue selector to calculate total energy of a subset of residues.
 	void
 	set_residue_selector( core::select::residue_selector::ResidueSelectorCOP residue_selector );
 
 	///@breif Set a reference residue selector.  Both selectors should return the same number of residues.
+	/// If not set, will use the main residue selector.
 	void
 	set_residue_selector_reference( core::select::residue_selector::ResidueSelectorCOP residue_selector );
+
+
+	///@brief Optional - Set a residue selector specifically for superposition.
+	void
+	set_residue_selector_super( core::select::residue_selector::ResidueSelectorCOP residue_selector );
+
+	///@breif Set a reference residue selector for superposition.  Both selectors should return the same number of residues.
+	/// If not set, but super selector is set, will use that.
+	void
+	set_residue_selector_super_reference( core::select::residue_selector::ResidueSelectorCOP residue_selector );
+
 
 	///@brief Set a map to compute the RMSD on input->reference residue numbers.
 	void
@@ -158,6 +171,10 @@ private:
 
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_ = nullptr;
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_ref_ = nullptr;
+
+	core::select::residue_selector::ResidueSelectorCOP residue_selector_super_ = nullptr;
+	core::select::residue_selector::ResidueSelectorCOP residue_selector_super_ref_ = nullptr;
+
 	std::map< core::Size, core::Size > rmsd_map_;
 
 	core::pose::PoseCOP ref_pose_ = nullptr;

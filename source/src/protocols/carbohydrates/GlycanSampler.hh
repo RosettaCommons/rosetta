@@ -149,6 +149,10 @@ public:
 	void
 	set_inner_bb_cycles( core::Size inner_bb_cycles );
 
+	///@brief Set Conformer Sampling through probabilities at the linkage to the protein only
+	void
+	set_protein_linkage_prob_sampling( bool root_probs);
+
 public:
 	void
 	show( std::ostream & output=std::cout ) const override;
@@ -290,6 +294,7 @@ private:
 	core::Size inner_ncycles_ = 0; //For individual bb movements, multiply this by n glycans.
 	bool match_sampling_of_modeler_ = false; //For benchmarking
 	utility::vector1< bool > final_residue_subset_;
+	bool root_prob_sampling_ = false;
 
 };
 

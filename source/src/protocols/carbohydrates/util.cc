@@ -17,8 +17,14 @@
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 
 #include <core/chemical/ResidueProperty.hh>
+#include <core/conformation/carbohydrates/GlycanTreeSet.hh>
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
 #include <core/select/residue_selector/ResiduePropertySelector.hh>
+#include <core/select/residue_selector/GlycanLayerSelector.hh>
+#include <core/select/residue_selector/GlycanResidueSelector.hh>
+#include <core/select/residue_selector/AndResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
+#include <core/pose/Pose.hh>
 
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
@@ -31,6 +37,8 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/string_util.hh>
+#include <cmath>
 
 static basic::Tracer TR( "protocols.carbohydrates.util" );
 
@@ -38,6 +46,7 @@ namespace protocols {
 namespace carbohydrates {
 
 using namespace core::pack::task;
+using namespace core::select::residue_selector;
 using namespace basic::options;
 using namespace utility::pointer;
 
@@ -105,6 +114,47 @@ run_shear_min_pack(
 	accepted = mc.boltzmann( pose );
 	TR << "pack accepted: " << accepted << std::endl;
 }
+
+///@brief Used for benchmarking to test even sampling of different kinematic protocols
+///  Get the total number of sampling rounds for the GlycanTreeModeler protocol with previous default settings.
+core::Size
+get_total_rounds_for_overlap_one_layer_two(
+	core::pose::Pose const & pose,
+	utility::vector1< bool > const & residue_subset,
+	core::Size sampler_rounds
+){
+
+	//Matches sampling to that of the GlycanTreeSampler with default settings (window_size 2, overlap 1)
+	// Used for benchmarking
+
+	//R*nL0 + R*nLm1 + 2*R*(N-(nL0+nL1))
+	//
+	//R = Number of set rounds
+	//N = Number of total glycans
+	//nL0 = Number of glycan residues in layer 0
+	//nLm1 = Number of glycan residues in last Layer (-1 index)
+
+	//Setup
+	GlycanLayerSelector layer_selector = GlycanLayerSelector();
+	layer_selector.set_layer(0, 0);
+	utility::vector1< bool > const layer_0 = layer_selector.apply(pose);
+
+	core::Size max_end_layer = pose.glycan_tree_set()->get_largest_glycan_tree_layer( residue_subset );
+	layer_selector.set_layer(max_end_layer, max_end_layer);
+	utility::vector1< bool > const layer_m1  = layer_selector.apply(pose);
+
+	//Variables
+	core::Size const R = sampler_rounds;
+	core::Size const N = count_selected(residue_subset);
+	core::Size const nL0  = count_selected( AND_combine( residue_subset, layer_0 ) );
+	core::Size const nLm1 = count_selected( AND_combine( residue_subset, layer_m1) );
+
+	//Calculation
+	core::Size total_rounds = (R * nL0) + (R * nLm1) + (2 * R * (N - (nL0+nLm1) ));
+	return total_rounds;
+
+}
+
 
 } //protocols
 } //carbohydrates

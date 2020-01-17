@@ -106,9 +106,7 @@ ScoreFunctionFactory::create_score_function(
 
 	runtime_assert(validate_talaris(weights_tag, options) );
 	runtime_assert(validate_beta(weights_tag, options));
-
 	load_weights_file( weights_tag, scorefxn );
-
 	for ( utility::vector1< std::string >::const_iterator it = patch_tags.begin(); it != patch_tags.end(); ++it ) {
 		std::string const& patch_tag( *it );
 		if ( patch_tag.size() && patch_tag != "NOPATCH" ) {
@@ -119,7 +117,6 @@ ScoreFunctionFactory::create_score_function(
 
 	// allow user to change weights via options system
 	apply_user_defined_reweighting_( options, scorefxn );
-
 	scorefxn->name( weights_tag );
 	return scorefxn;
 }
@@ -186,7 +183,6 @@ ScoreFunctionFactory::validate_beta(
 	utility::options::OptionCollection const & options
 )
 {
-
 	bool const sf_maybe_beta(weights_tag.find("beta") != std::string::npos);
 	core::Size const weights_length(weights_tag.length());
 
@@ -215,7 +211,6 @@ ScoreFunctionFactory::validate_beta(
 		|| options[corrections::beta_nov16_cart].value() );
 	bool const betajuly15_active(options[corrections::beta_july15].value()
 		|| options[corrections::beta_july15_cart].value() );
-
 	if ( (weights_tag_no_extension == (BETA_GENPOT)) && !genpot_active ) {
 		utility_exit_with_message(BETA_GENPOT + "(.wts) requested, but -corrections::gen_potential not set to true. This leads to a garbage scorefunction.  Exiting.");
 		return false; //can't get here
@@ -279,7 +274,11 @@ ScoreFunctionFactory::list_read_options( utility::options::OptionKeyList & opts 
 		//+ basic::options::OptionKeys::corrections::beta_nov15
 		//+ basic::options::OptionKeys::corrections::beta_nov15_cart
 		+ basic::options::OptionKeys::corrections::beta_july15
-		+ basic::options::OptionKeys::corrections::beta_july15_cart;
+		+ basic::options::OptionKeys::corrections::beta_july15_cart
+		+ basic::options::OptionKeys::corrections::gen_potential
+		+ basic::options::OptionKeys::corrections::beta_nov16
+		+ basic::options::OptionKeys::corrections::beta_nov16_cart;
+
 }
 
 void ScoreFunctionFactory::apply_user_defined_reweighting_(
@@ -466,7 +465,7 @@ get_score_function(
 				TR << "SCOREFUNCTION PATCH: " << patch_tags[ii] << std::endl;
 			}
 		}
-		scorefxn = scoring::ScoreFunctionFactory::create_score_function( weight_set, patch_tags );
+		scorefxn = scoring::ScoreFunctionFactory::create_score_function(options, weight_set, patch_tags );
 	}
 
 	// add in constraint weights if specified by the user.
@@ -486,14 +485,14 @@ get_score_function(
 	}
 
 	// Turn on carbohydrate energy method weights if the user has supplied the -include_sugars flag.
-	if ( options[ in::include_sugars ].value() && scorefxn->get_weight(sugar_bb) == 0.0 ) {
-		if ( TR.Info.visible() ) {
+	if ( options[ in::include_sugars ].value() && ! options[ score::force_sugar_bb_zero].value() ) {
+		if ( TR.Info.visible() && scorefxn->get_weight( sugar_bb ) == 0 ) {
+
 			TR.Info << "The -include_sugars flag was used with no sugar_bb weight set in the weights file.  " <<
 				"Setting sugar_bb weight to 1.0 by default." << std::endl;
 		}
-		scorefxn->set_weight( sugar_bb, 1.0);
+		scorefxn->set_weight_if_zero( sugar_bb, 1.0); //JAB - only set the weight if we have not added or changed it already.
 	}
-
 	return scorefxn;
 }
 
@@ -516,7 +515,8 @@ list_read_options_in_get_score_function( utility::options::OptionKeyList & opts 
 		+ in::auto_setup_metals
 		//+ in::metals_distance_constraint_multiplier
 		//+ in::metals_angle_constraint_multiplier
-		+ in::include_sugars;
+		+ in::include_sugars
+		+ score::force_sugar_bb_zero;
 }
 
 core::scoring::ScoreFunctionOP get_score_function_legacy(

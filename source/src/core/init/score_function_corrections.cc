@@ -1993,7 +1993,7 @@ init_beta_nov16_correction( utility::options::OptionCollection & options, bool s
 			options[ score::weights ].value( "beta_nov16.wts" );
 		}
 	} else {
-		TR.Warning << "Flag -beta_nov16 is set but -weights are also specified.  Not changing input weights file!" << std::endl;
+		TR.Warning << "Flag -beta_nov16 is set but either -weights are also specified or this is being used with the genpot score function.  Not changing input weights file!" << std::endl;
 	}
 
 	// protocol option but it should be default ...

@@ -81,14 +81,11 @@ make_asymmetric_pose(
 /// @param[out] pose_out           Asymmetric subunit will be placed into this object
 /// @param[in]  with_virtual_atoms If true, virtual atoms related to symmetry will be kept with the asymmetric subunit.
 ///                                If false, virtual atoms will be removed (default=true)
-/// @param[in]  with_unknown_aa    If false, amino acids with type aa_unk will be ignored.  If true, amino acids with
-///                                type aa_unk will be extracted (default=false)
 void
 extract_asymmetric_unit(
 	core::pose::Pose const & pose_in,
 	core::pose::Pose & pose_out,
-	bool const with_virtual_atoms = true,
-	bool const with_unknown_aa = false
+	bool const with_virtual_atoms = true
 );
 
 core::pose::Pose

@@ -650,6 +650,7 @@ get_non_NU_TorsionID_from_AtomIDs( Conformation const & conf, utility::vector1< 
 		// this could be the final BB torsion or else a BRANCH torsion.
 
 		// See if it is the final BB torsion.
+
 		vector1< uint > const & mainchain_atoms( parent.mainchain_atoms() );
 		if ( mainchain_atoms[ mainchain_atoms.size() - 1 ] == upstream_bond_atom_parent.atomno() &&
 				mainchain_atoms[ mainchain_atoms.size() ] == upstream_bond_atom.atomno() ) {
@@ -674,7 +675,12 @@ get_non_NU_TorsionID_from_AtomIDs( Conformation const & conf, utility::vector1< 
 		TR.Error << "get_non_NU_TorsionID_from_AtomIDs() could not determine the BB id for the";
 		TR.Error << "TorsionID defined by these atoms:";
 		TR.Error << upstream_bond_atom_parent << "; " << upstream_bond_atom << "; ";
-		TR.Error << downstream_bond_atom << "; " << downstream_bond_atom_child << endl;
+		TR.Error << downstream_bond_atom << "; " << downstream_bond_atom_child << endl <<endl;
+
+		//TR.Error << conf.residue_type( upstream_bond_atom_parent.rsd() ).atom_type( upstream_bond_atom_parent.atomno()) << std::endl;
+		//TR.Error << conf.residue_type( upstream_bond_atom.rsd() ).atom_type( upstream_bond_atom.atomno()) << std::endl;
+		//TR.Error << conf.residue_type( downstream_bond_atom.rsd() ).atom_type( downstream_bond_atom.atomno()) << std::endl;
+		//TR.Error << conf.residue_type( downstream_bond_atom_child.rsd() ).atom_type( downstream_bond_atom_child.atomno()) << std::endl;
 	}
 
 	return TorsionID( resnum, type, torsionnum );

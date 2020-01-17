@@ -41,6 +41,16 @@
 #include <string>
 #include <map>
 
+#ifdef    SERIALIZATION
+// Utility serialization headers
+#include <utility/vector1.srlz.hh>
+#include <utility/serialization/serialization.hh>
+
+// Cereal headers
+#include <cereal/access.hpp>
+#include <cereal/types/polymorphic.hpp>
+#endif // SERIALIZATION
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // This object holds information on the 'full model' during stepwise modeling.
@@ -84,16 +94,6 @@ using namespace core::pose::datacache;
 using namespace basic::datacache;
 
 static basic::Tracer TR( "core.pose.full_model_info.FullModelInfo" );
-
-#ifdef    SERIALIZATION
-// Utility serialization headers
-#include <utility/vector1.srlz.hh>
-#include <utility/serialization/serialization.hh>
-
-// Cereal headers
-#include <cereal/access.hpp>
-#include <cereal/types/polymorphic.hpp>
-#endif // SERIALIZATION
 
 namespace core {
 namespace pose {

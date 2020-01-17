@@ -162,6 +162,7 @@ GlycanSampler::parse_my_tag(
 	randomize_first_ = tag->getOption< bool >("randomize_torsions", randomize_first_);
 	inner_ncycles_ = tag->getOption< bool >("inner_bb_cycles", inner_ncycles_);
 	match_sampling_of_modeler_ = tag->getOption< bool >("match_sampling_of_modeler", match_sampling_of_modeler_);
+	root_prob_sampling_ = tag->getOption< bool >("root_populations_only", root_prob_sampling_);
 
 }
 
@@ -185,8 +186,10 @@ void GlycanSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 		+ XMLSchemaAttribute::attribute_w_default("min_rings", xsct_rosetta_bool, "Minimize Carbohydrate Rings during minimization. ", "false")
 		+ XMLSchemaAttribute::attribute_w_default("shear", xsct_rosetta_bool, "Use the Shear Mover that is now compatible with glycans at an a probability of 10 percent", "false")
 		+ XMLSchemaAttribute::attribute_w_default("randomize_torsions", xsct_rosetta_bool, "If NOT doing refinement, control whether we randomize torsions at the start, which helps to achieve low energy structures.", "true")
-		+ XMLSchemaAttribute::attribute_w_default("match_sampling_of_modeler", xsct_rosetta_bool, "Option that matches the amount of sampling in a default GlycanTreeModeler run.  Used for benchmarking.", "0")
-		+ XMLSchemaAttribute::attribute_w_default("inner_bb_cycles", xsct_non_negative_integer, "Inner cycles for each time we call BB sampling either through small/medium/large moves or through the SugarBB Sampler.  This is multiplied by the number of glycans.  Scales poorly with GlycanModeler.  If 0 (default), we run the protocol normally", "0");
+		+ XMLSchemaAttribute::attribute_w_default("match_sampling_of_modeler", xsct_rosetta_bool, "Option that matches the amount of sampling in a default GlycanTreeModeler run.  Used for benchmarking.", "false")
+		+ XMLSchemaAttribute::attribute_w_default("inner_bb_cycles", xsct_non_negative_integer, "Inner cycles for each time we call BB sampling either through small/medium/large moves or through the SugarBB Sampler.  This is multiplied by the number of glycans.  Scales poorly with GlycanModeler.  If 0 (default), we run the protocol normally", "0")
+		+ XMLSchemaAttribute::attribute_w_default("root_populations_only", xsct_rosetta_bool, "Use population-based sampling for only the linkage between the amino acid and glycan residue", "false");
+
 	//Append for MoveMap, scorefxn, and task_operation tags.
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 	rosetta_scripts::attributes_for_get_score_function_name( attlist );
@@ -324,6 +327,12 @@ GlycanSampler::set_selector(core::select::residue_selector::ResidueSelectorCOP s
 void
 GlycanSampler::set_inner_bb_cycles( core::Size inner_ncycles ){
 	inner_ncycles_ = inner_ncycles;
+}
+
+///@brief Set Conformer Sampling through probabilities at the linkage to the protein only
+void
+GlycanSampler::set_protein_linkage_prob_sampling( bool root_probs) {
+	root_prob_sampling_ = root_probs;
 }
 
 void
@@ -539,6 +548,7 @@ GlycanSampler::setup_movers(
 	//////        //////
 	linkage_mover_ = utility::pointer::make_shared< LinkageConformerMover >( return_subset_dihedral );
 	linkage_mover_->set_use_conformer_population_stats(population_based_conformer_sampling_); //Uniform sampling of conformers.
+	linkage_mover_->set_root_prob_sampling( root_prob_sampling_ );
 	linkage_mover_->set_use_gaussian_sampling(use_gaussian_sampling_);
 
 	weighted_random_mover_->add_mover(linkage_mover_, .20);
@@ -859,37 +869,23 @@ GlycanSampler::apply( core::pose::Pose& pose ){
 	TR << "starting energy: "<< energy << std::endl;
 
 	core::Size total_rounds = 0;
-	if ( forced_total_rounds_ == 0 ) {
-		total_rounds = total_glycan_residues_ * rounds_;
-		TR << "Total Rounds = "<< total_rounds << " ( " << total_glycan_residues_ << " glycans * " << rounds_ << " )"<<std::endl;
-	} else if ( match_sampling_of_modeler_ ) {
+
+	if ( match_sampling_of_modeler_ ) {
 		//Matches sampling to that of the GlycanTreeSampler with default settings (window_size 2, overlap 1)
 		// Used for benchmarking
 
-		//R*nL0 + R*nLm1 + R*(N-(nL0+nL1)*2
+		//R*nL0 + R*nLm1 + 2*R*(N-(nL0+nL1))
 		//
 		//R = Number of set rounds
 		//N = Number of total glycans
 		//nL0 = Number of glycan residues in layer 0
 		//nLm1 = Number of glycan residues in last Layer (-1 index)
 
-		//Setup
-		GlycanLayerSelector layer_selector = GlycanLayerSelector();
-		layer_selector.set_layer(0, 0);
-		utility::vector1< bool > const layer_0 = layer_selector.apply(pose);
-
-		core::Size max_end_layer = pose.glycan_tree_set()->get_largest_glycan_tree_layer( final_residue_subset_ );
-		layer_selector.set_layer(max_end_layer, max_end_layer);
-		utility::vector1< bool > const layer_m1  = layer_selector.apply(pose);
-
-		//Variables
-		core::Size const R = rounds_;
-		core::Size const N = total_glycan_residues_;
-		core::Size const nL0  = count_selected( AND_combine( final_residue_subset_, layer_0 ) );
-		core::Size const nLm1 = count_selected( AND_combine( final_residue_subset_, layer_m1) );
-
 		//Calculation
-		total_rounds = (R * nL0) + (R * nLm1) + (2 * R * (N - (nL0+nLm1) ));
+		total_rounds = get_total_rounds_for_overlap_one_layer_two( pose, final_residue_subset_, rounds_);
+	} else if ( forced_total_rounds_ == 0 ) {
+		total_rounds = total_glycan_residues_ * rounds_;
+		TR << "Total Rounds = "<< total_rounds << " ( " << total_glycan_residues_ << " glycans * " << rounds_ << " )"<<std::endl;
 	} else {
 		total_rounds = forced_total_rounds_;
 		TR << "Custom total rounds: " << total_rounds << std::endl;

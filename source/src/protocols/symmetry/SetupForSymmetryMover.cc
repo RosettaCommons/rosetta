@@ -384,8 +384,10 @@ void SetupForSymmetryMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDe
 
 ExtractAsymmetricUnitMover::ExtractAsymmetricUnitMover()
 : protocols::moves::Mover("ExtractAsymmetricUnitMover"),
-	keep_virtual_residues_( true ),
-	keep_unknown_aas_( false ) { }
+	keep_virtual_residues_( true )
+{
+
+}
 
 ExtractAsymmetricUnitMover::~ExtractAsymmetricUnitMover()= default;
 
@@ -396,7 +398,7 @@ ExtractAsymmetricUnitMover::apply( core::pose::Pose & pose )
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) return;
 
 	core::pose::Pose pose_asu;
-	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu, keep_virtual_residues_, keep_unknown_aas_);
+	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu, keep_virtual_residues_);
 	pose = pose_asu;
 }
 
@@ -408,25 +410,15 @@ void ExtractAsymmetricUnitMover::parse_my_tag(
 	core::pose::Pose const & /*pose*/ )
 {
 	set_keep_virtual_residues( tag->getOption< bool >( "keep_virtual", keep_virtual_residues_ ) );
-	set_keep_unknown_aas( tag->getOption< bool >( "keep_unknown_aas", keep_unknown_aas_ ) );
+	if ( tag->hasOption( "keep_unknown_aas") ) {
+		utility_exit_with_message("This option is no longer supported.  All de-symmetrization will keep non-cannical amino acids.");
+	}
 }
 
 void
 ExtractAsymmetricUnitMover::set_keep_virtual_residues( bool const keep_virt )
 {
 	keep_virtual_residues_ = keep_virt;
-}
-
-/// @brief If true, residues with aa() == aa_unk will be kept in the asymmetric unit. If false,
-///        residues of aa type aa_unk will be ignored in the conversion and left out of the
-///        asymmetric unit.
-/// @param[in] keep_unk Desired value for keep_unknown_aas (default=false)
-/// @details If there are NCAAs in the pose, this must be set to false, or the NCAAs will be
-///          ignored.  The keep_unknown_aas defaults to false for historical reasons.
-void
-ExtractAsymmetricUnitMover::set_keep_unknown_aas( bool const keep_unk )
-{
-	keep_unknown_aas_ = keep_unk;
 }
 
 
@@ -444,7 +436,7 @@ void ExtractAsymmetricUnitMover::provide_xml_schema( utility::tag::XMLSchemaDefi
 	AttributeList attlist;
 	// XRW TO DO: check these attributes
 	attlist + XMLSchemaAttribute( "keep_virtual", xsct_rosetta_bool, "If true, virtual atoms will be left in the pose. If false, the extracted asymmetric unit will not contain virtual atoms." )
-		+ XMLSchemaAttribute( "keep_unknown_aas", xsct_rosetta_bool, "If true, amino acids in the input symmetric pose with aa type aa_unk will be included in the asymmetric unit. If false, amino acids with type aa_unk will be ignored and will not be included in the resulting asymmetric unit." );
+		+ XMLSchemaAttribute( "keep_unknown_aas", xsct_rosetta_bool, "Deprecated option.  All de-symmetrization will keep non-cannonical amino acids." );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "The inverse of SetupForSymmetry: given a symmetric pose, make a nonsymmetric pose that contains only the asymmetric unit.", attlist );
 }

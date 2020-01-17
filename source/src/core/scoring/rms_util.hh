@@ -561,6 +561,9 @@ xyz_gdttm(
 /// @brief  Superimpose mod_pose onto ref_pose using the mapping of atoms from
 /// mod_pose to ref_pose given by atom_map
 /// @details The rms_calc_offset_val is a small constant value used by the numerical machinery to ensure a nonzero determinant.  This defaults to 1.0e-7. Realign determines whether this is subtracted off again (default false).
+///
+/// WARNING: This will give you errors if you try to superimpose a non-symmetric pose onto a symmetric one, even with the correct
+///  atom_map.  It will not fail, but the superposition will be bad and any subsequent RMSD calculation will be wrong.
 Real
 superimpose_pose(
 	pose::Pose & mod_pose,
@@ -573,6 +576,9 @@ superimpose_pose(
 /// @brief  Superimpose mod_pose onto ref_pose using the mapping of atoms from
 /// mod_pose to ref_pose given by atom_map
 /// @details The rms_calc_offset_val is a small constant value used by the numerical machinery to ensure a nonzero determinant.  This defaults to 1.0e-7.  Realign determines whether this is subtracted off again (default false).
+///
+/// WARNING: this will give you errors if you try to superimpose a non-symmetric pose onto a symmetric one, even with the correct
+///  atom_map.  It will not fail, but the superposition will be bad and any subsequent RMSD calculation will be wrong.
 Real
 superimpose_pose(
 	pose::Pose & mod_pose,

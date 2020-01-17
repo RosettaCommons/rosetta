@@ -34,7 +34,14 @@
 
 #include <utility/vector1.hh>
 
-#include <boost/unordered_map.hpp>
+//#include <boost/unordered_map.hpp>
+#include <unordered_map>
+
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/access.fwd.hpp>
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
 
 namespace core {
 namespace scoring {
@@ -389,10 +396,10 @@ private:
 	utility::vector1< GenTorsionParams > tors_pot_;
 
 	// fast lookup: maps a hash to an index in the vectors above
-	boost::unordered_map< uint64_t, Size > bond_lookup_;
-	boost::unordered_map< uint64_t, Size > angle_lookup_;
-	boost::unordered_map< uint64_t, Size > improper_lookup_;
-	boost::unordered_map< uint64_t, Size > tors_lookup_;
+	std::unordered_map< uint64_t, Size > bond_lookup_;
+	std::unordered_map< uint64_t, Size > angle_lookup_;
+	std::unordered_map< uint64_t, Size > improper_lookup_;
+	std::unordered_map< uint64_t, Size > tors_lookup_;
 
 	static const SpringParams null_sp_param;
 	static const GenTorsionParams null_tors_param;
@@ -453,8 +460,18 @@ private:
 	std::string rsdtype1_, rsdtype2_;
 	utility::vector1< bool > atm_excluded_;
 	utility::vector1< bool > bondnos_;
-	boost::unordered_map< uint64_t, bool > atmpairnos_;
+	std::unordered_map< uint64_t, bool > atmpairnos_;
 	core::chemical::ResidueTypeCOP rsd_type_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	ResidueExclParams();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
 
 };
 
@@ -493,13 +510,28 @@ public:
 private:
 	bool score_full_;
 	bool score_hybrid_;
-	boost::unordered_map< std::string, ResidueExclParamsOP > perres_excls_;
-	boost::unordered_map< uint64_t, ResidueExclParamsOP > respair_excls_;
+	std::unordered_map< std::string, ResidueExclParamsOP > perres_excls_;
+	std::unordered_map< uint64_t, ResidueExclParamsOP > respair_excls_;
+
+#ifdef    SERIALIZATION
+protected:
+	friend class cereal::access;
+	GenBondedExclInfo();
+
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
 } // scoring
 } // core
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_ResidueExclParams )
+CEREAL_FORCE_DYNAMIC_INIT( core_scoring_GenBondedExclInfo )
+#endif // SERIALIZATION
 
 #endif // INCLUDED_core_scoring_GenericBondedPotential_hh
 

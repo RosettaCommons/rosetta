@@ -31,6 +31,7 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/string_util.hh>
 
 // C++ headers
 #include <sstream>
@@ -384,7 +385,7 @@ ResidueSubset
 OR_combine( ResidueSubset const & sele1, ResidueSubset const & sele2){
 	debug_assert(sele1.size() == sele2.size());
 
-	ResidueSubset new_subset;
+	ResidueSubset new_subset(sele1.size() );
 	for ( Size i = 1; i <= sele1.size(); ++i ) {
 		new_subset[ i ] = sele1[ i ] || sele2[ i ];
 	}
@@ -410,9 +411,10 @@ AND_combine( ResidueSelectorOP sele1, ResidueSelectorOP sele2 ) {
 
 ResidueSubset
 AND_combine( ResidueSubset const & sele1, ResidueSubset const & sele2){
+
 	debug_assert( sele1.size() == sele2.size() );
 
-	ResidueSubset new_subset;
+	ResidueSubset new_subset(sele1.size());
 	for ( Size i = 1; i <= sele1.size(); ++i ) {
 		new_subset[ i ] = sele1[ i ] && sele2[ i ];
 	}
