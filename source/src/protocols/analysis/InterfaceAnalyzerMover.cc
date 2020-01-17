@@ -1524,12 +1524,24 @@ InterfaceAnalyzerMover::parse_my_tag(
 	} else {
 		set_interface_jump(tag->getOption< core::Size >( "jump", 1 ) );
 	}
+
+	if ( tag->hasOption( "scorefile_reporting_prefix" ) ) {
+		set_scorefile_reporting_prefix( tag->getOption<std::string>( "scorefile_reporting_prefix" ));
+	}
+
 	//      tracer_(false), //output to tracer
 	//      calcs_ready_(false), //calculators are not ready
 	//      use_jobname_(false), //use the pose name
 	//Having set_defaults here overrides several user-set values!
 	//Default ctor exists to do this.  SML July 26 2016
 	//set_defaults();
+}
+
+std::string
+InterfaceAnalyzerMover::scorefile_column_name(std::string const & base_name) const
+{
+	return scorefile_reporting_prefix_ == "" ? base_name :
+		scorefile_reporting_prefix_ + "_" + base_name;
 }
 
 void InterfaceAnalyzerMover::setup_score_data() {
@@ -1618,7 +1630,7 @@ void InterfaceAnalyzerMover::add_score_info_to_pose( core::pose::Pose & pose ){
 
 	typedef std::map< std::string , core::Real >::const_iterator it_type;
 	for ( it_type it = score_data_.begin(); it != score_data_.end(); it++ ) {
-		core::pose::setPoseExtraScore(pose, it->first, it->second);
+		core::pose::setPoseExtraScore(pose, scorefile_column_name(it->first), it->second);
 	}
 }
 
@@ -1841,11 +1853,16 @@ void InterfaceAnalyzerMover::set_interface( std::string const & interface ){
 void InterfaceAnalyzerMover::set_use_tracer( bool const tracer) {tracer_ = tracer;}
 //void InterfaceAnalyzerMover::set_calcs_ready(bool const calcs_ready) {calcs_ready_ = calcs_ready;}
 void InterfaceAnalyzerMover::set_use_jobname( bool const use_jobname) { use_jobname_ = use_jobname; }
+void InterfaceAnalyzerMover::set_scorefile_reporting_prefix( std::string const & prefix ) { scorefile_reporting_prefix_ = prefix; }
 void InterfaceAnalyzerMover::set_pack_separated( bool const pack_separated ) { pack_separated_ = pack_separated; }
 void InterfaceAnalyzerMover::set_scorefunction( core::scoring::ScoreFunctionCOP sf ) { sf_ = sf->clone(); }
 
 std::string InterfaceAnalyzerMover::get_name() const {
 	return mover_name();
+}
+
+std::string InterfaceAnalyzerMover::get_scorefile_reporting_prefix() const {
+	return scorefile_reporting_prefix_;
 }
 
 std::string InterfaceAnalyzerMover::mover_name() {
@@ -1874,6 +1891,7 @@ void InterfaceAnalyzerMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	attlist + XMLSchemaAttribute( "interface", xs_string, "docking-style interface definitions, like HL_AB for chains HL vs AB for the interface. " + exclusive_warning );
 	attlist + XMLSchemaAttribute( "ligandchain", xs_string, "Move ONLY this PDB chain. " + exclusive_warning );
 	attlist + XMLSchemaAttribute( "jump", xsct_non_negative_integer, "Residues upstream/downstream of this Jump are on opposite sides of the interface; this Jump moves in the separation step. " + exclusive_warning );
+	attlist + XMLSchemaAttribute( "scorefile_reporting_prefix", xs_string, "Prefix to add to column names for the values that are put in the Pose for eventual output into a score file. An extra underscore is added between the value specified here and the standard column names if this option is used.");
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 		"Authors: Steven Lewis, Bryan Der, Ben Stranges, Jared Adolf-Bryfogle\n"

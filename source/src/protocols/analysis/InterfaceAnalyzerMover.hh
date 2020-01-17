@@ -344,6 +344,9 @@ public:
 	void
 	set_use_jobname(bool const use_jobname);
 
+	void
+	set_scorefile_reporting_prefix( std::string const & prefix );
+
 	//void set_calcs_ready(bool const calcs_ready); //why is this externally accessible?
 
 	void set_use_resfile(bool const use_resfile); //does not do anything.
@@ -460,6 +463,9 @@ public:
 
 	std::string
 	get_name() const override;
+
+	std::string
+	get_scorefile_reporting_prefix() const;
 
 	static
 	std::string
@@ -596,6 +602,9 @@ private:
 	void
 	setup_for_dock_chains(core::pose::Pose & pose, std::string dock_chains);
 
+	std::string
+	scorefile_column_name(std::string const & base_name) const;
+
 	void
 	setup_score_data();
 
@@ -686,6 +695,10 @@ private:
 	std::string BuriedUnsatisfiedPolars_;
 
 	std::map< std::string, core::Real > score_data_;
+
+	// The prefix to use when reporting scores to the score file
+	// via the PoseExtraScores.
+	std::string scorefile_reporting_prefix_;
 
 	core::Size pack_rounds_ = 1;
 
