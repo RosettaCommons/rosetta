@@ -1043,13 +1043,12 @@ void GeneralizedKICperturber::apply_randomize_backbone_by_rama_prepro (
 
 		//Randomize phi and psi for this residue:
 		utility::vector1< core::Real > rand_torsions;
+		core::conformation::Residue const & thisrsd( loop_pose_copy.residue(loopindex) );
 		runtime_assert_string_msg(
-			loop_pose_copy.residue(loopindex).has_lower_connect() && loop_pose_copy.residue(loopindex).has_upper_connect(),
-			"Unable to apply randomize_backbone_by_rama_prepro perturbation.  The residue must be connected at both its lower and upper connections." );
-		core::chemical::ResidueTypeCOP following_rsd( loop_pose_copy.residue_type_ptr(
-			loop_pose_copy.residue(loopindex).residue_connection_partner( loop_pose_copy.residue(loopindex).upper_connect().index() )
-			)
-		);
+			thisrsd.has_lower_connect() && thisrsd.has_upper_connect() &&
+			thisrsd.connected_residue_at_lower() != 0 && thisrsd.connected_residue_at_upper() != 0,
+			"Unable to apply randomize_backbone_by_rama_prepro perturbation.  The residue must be connected at both its lower and upper connections to other loop residues or to the anchor residue.  Residue " + std::to_string( residues[ir] ) + " does not meet these criteria." );
+		core::chemical::ResidueTypeCOP following_rsd( loop_pose_copy.residue_type_ptr( thisrsd.connected_residue_at_upper() ) );
 		rama.random_mainchain_torsions( loop_pose_copy.conformation(), loop_pose_copy.residue_type_ptr(loopindex), following_rsd, rand_torsions );
 		utility::vector1< core::Size > const &relevant_torsions( rama.get_mainchain_torsions_covered( loop_pose_copy.conformation(), loop_pose_copy.residue_type_ptr(loopindex), following_rsd ) );
 
