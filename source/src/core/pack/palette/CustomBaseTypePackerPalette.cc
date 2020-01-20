@@ -52,18 +52,12 @@ CustomBaseTypePackerPaletteCreator::provide_xml_schema(
 
 /// @brief Default constructor
 CustomBaseTypePackerPalette::CustomBaseTypePackerPalette() :
-	PackerPalette(), //Default constructor -- assumes fa_standard ResidueTypeSet
+	PackerPalette(),
 	additional_residue_types_()
 	//TODO -- initialize all private member vars here.
 {
-	set_up_base_types(); //Set up the default residue types as the base types.
-	set_up_behaviours(); //Set up the default PackerPalette behaviours, too.
+	set_up_behaviours(); //Set up the default PackerPalette behaviours.
 }
-
-/// @brief Copy constructor
-CustomBaseTypePackerPalette::CustomBaseTypePackerPalette(
-	CustomBaseTypePackerPalette const &//src
-) = default;
 
 /// @brief Destructor
 CustomBaseTypePackerPalette::~CustomBaseTypePackerPalette() {}
@@ -110,18 +104,31 @@ CustomBaseTypePackerPalette::provide_xml_schema(
 	xsd_type_definition_w_attributes( xsd, "CustomBaseTypePackerPalette", "Sets up a packer palette that expands the default (canonical) residue type set with user-defined base types or types selected by ResidueProperties.", attlist );
 }
 
-/// @brief Function to allow a different ResidueTypeSet to be set.
-/// @details Each PackerPalette derived class must implement this.  After setting the new ResidueTypeSet, things need to happen.
-void
-CustomBaseTypePackerPalette::set_residue_type_set(
-	core::chemical::ResidueTypeSetCOP new_type_set
-) {
-	parent::set_residue_type_set( new_type_set );
-	set_up_base_types();
-	for ( core::Size i=1, imax=additional_residue_types_.size(); i<=imax; ++i ) {
-		parent::add_base_residue_type( additional_residue_types_[i] );
+/// @brief Generate a list of possible base residue types
+/// @param [in] restypeset The ResidueTypeSet to use as a reference for related types.
+/// @return A list of basename:base residue type pairs
+BaseTypeList
+CustomBaseTypePackerPalette::get_base_residue_types( core::chemical::ResidueTypeSetCOP const & restypeset ) const {
+	BaseTypeList base_types;
+
+	if ( restypeset ) {
+		parent::set_up_default_base_types( *restypeset, base_types );
+
+		for ( core::Size i=1, imax=additional_residue_types_.size(); i<=imax; ++i ) {
+			parent::add_base_residue_type( additional_residue_types_[i], *restypeset, base_types );
+		}
 	}
-	set_up_behaviours();
+
+	return base_types;
+}
+
+/// @brief Test if this CustomBaseTypePackerPalette has the provided type already.
+/// Note that this only tests for explicitly added types. It will not test for default types.
+bool
+CustomBaseTypePackerPalette::has_type (
+	std::string const &type
+) const {
+	return additional_residue_types_.has_value( type );
 }
 
 /// @brief Add a ResidueType (by base type full name -- not 3-letter code) to the set of ResidueTypes
@@ -131,7 +138,6 @@ CustomBaseTypePackerPalette::add_type (
 	std::string const &type
 ) {
 	additional_residue_types_.push_back( type );
-	parent::add_base_residue_type( type );
 }
 
 /// @brief Given a comma-separated list of additional residue types, separate it out and add the
@@ -185,12 +191,6 @@ std::string const &
 CustomBaseTypePackerPalette::name() const {
 	static const std::string myname( "CustomBaseTypePackerPalette" );
 	return myname;
-}
-
-/// @brief Set up the CustomBaseTypePackerPalette with the standard residues.
-void
-CustomBaseTypePackerPalette::set_up_base_types() {
-	parent::set_up_default_base_types();
 }
 
 /// @brief Set up the CustomBaseTypePackerPalette with the default set of position-specific behaviours.

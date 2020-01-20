@@ -52,10 +52,6 @@ public:
 	///
 	CustomBaseTypePackerPalette();
 
-	/// @brief Copy constructor.
-	///
-	CustomBaseTypePackerPalette( CustomBaseTypePackerPalette const &src );
-
 	/// @brief Destructor.
 	///
 	~CustomBaseTypePackerPalette() override;
@@ -79,9 +75,9 @@ public:
 	/// @brief Provide information about the XML options available for this PackerPalette.
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-	/// @brief Function to allow a different ResidueTypeSet to be set.
-	/// @details Each PackerPalette derived class must implement this.  After setting the new ResidueTypeSet, things need to happen.
-	void set_residue_type_set( core::chemical::ResidueTypeSetCOP new_type_set ) override;
+	/// @brief Test if this CustomBaseTypePackerPalette has the provided type already.
+	/// Note that this only tests for explicitly added types. It will not test for default types.
+	bool has_type( std::string const &type ) const;
 
 	/// @brief Add a ResidueType (by base type full name -- not 3-letter code) to the set of ResidueTypes
 	/// being used for design.
@@ -100,11 +96,15 @@ public:
 	/// @brief Get the name of this object ("CustomBaseTypePackerPalette").
 	std::string const & name() const override;
 
-private: //Private setup functions:
+protected:
 
-	/// @brief Set up the CustomBaseTypePackerPalette with the standard residues.
-	///
-	void set_up_base_types();
+	/// @brief Generate a list of possible base residue types
+	/// @param [in] restypeset The ResidueTypeSet to use as a reference for related types.
+	/// @return A list of basename:base residue type pairs
+	BaseTypeList
+	get_base_residue_types( core::chemical::ResidueTypeSetCOP const & restypeset ) const override;
+
+private: //Private setup functions:
 
 	/// @brief Set up the CustomBaseTypePackerPalette with the default set of position-specific behaviours.
 	///

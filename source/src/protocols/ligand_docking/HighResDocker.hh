@@ -91,14 +91,7 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-
-private:
-	core::Size num_cycles_;
-	core::Size repack_every_Nth_;
-	std::vector<std::string> chains_;
-	core::scoring::ScoreFunctionOP score_fxn_;
-	MoveMapBuilderOP movemap_builder_;
-	std::string resfile_;
+protected:
 
 	MinimizeLigandOPs setup_ligands_to_minimize(core::pose::Pose & pose, char chain = 0);
 	void remove_ligand_dihedral_restraints(core::pose::Pose & pose, MinimizeLigandOPs & minimized_ligands) const;
@@ -131,6 +124,15 @@ private:
 		core::pose::Pose & pose,
 		utility::vector1<protocols::moves::MoverOP> & rigid_body_movers
 	);
+
+private:
+	core::Size num_cycles_;
+	core::Size repack_every_Nth_;
+	std::vector<std::string> chains_;
+	core::scoring::ScoreFunctionOP score_fxn_;
+	MoveMapBuilderOP movemap_builder_;
+	std::string resfile_;
+
 };
 
 //void setup_native_residue_favoring(core::pose::Pose & pose, core::pack::task::PackerTaskOP task);

@@ -110,10 +110,6 @@ TaskFactory::create_task_and_apply_taskoperations( pose::Pose const & pose, core
 		packer_palette = core::pack::palette::PackerPaletteFactory::get_instance()->create_packer_palette_from_global_defaults();
 	}
 
-	core::chemical::ResidueTypeSetCOP pose_typeset( pose.residue_type_set_for_pose() );
-	if ( pose.total_residue() > 0 && packer_palette->residue_type_setCOP() != pose_typeset ) {
-		packer_palette->set_residue_type_set( pose_typeset );
-	}
 	PackerTaskOP task( utility::pointer::make_shared< PackerTask_ >( pose, packer_palette, (ig_threads_to_request == 0 ? option[multithreading::interaction_graph_threads]() : ig_threads_to_request ) ) );
 	modify_task( pose, task );
 	if ( TR.Trace.visible() ) {

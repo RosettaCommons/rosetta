@@ -253,13 +253,7 @@ PackerTask_::PackerTask_(
 {
 	check_threads();
 	//Create PackerPalette:
-	{
-		core::pack::palette::PackerPaletteOP new_palette( core::pack::palette::PackerPaletteFactory::get_instance()->create_packer_palette_from_global_defaults() );
-		if ( pose.total_residue() > 0 ) {
-			new_palette->set_residue_type_set( pose.residue_type_set_for_pose() );
-		}
-		packer_palette_ = new_palette; //Nonconst to const.
-	}
+	packer_palette_ = core::pack::palette::PackerPaletteFactory::get_instance()->create_packer_palette_from_global_defaults();
 
 	//create residue-level tasks
 	residue_tasks_.reserve( nres_ );

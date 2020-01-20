@@ -28,7 +28,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
@@ -50,7 +49,6 @@
 
 #ifdef    SERIALIZATION
 //Serialization functions for particular classes:
-#include <core/chemical/ResidueTypeSet.srlz.hh>
 #include <core/chemical/ResidueType.srlz.hh>
 
 // Utility serialization headers
@@ -68,6 +66,21 @@ namespace palette {
 
 static basic::Tracer TR( "core.pack.palette.PackerPalette" );
 
+void
+BaseTypeList::add( std::string const & name, core::chemical::ResidueTypeCOP restype ) {
+	for ( auto const & entry: data_ ) {
+		if ( !entry.first.empty() && entry.first == name ) {
+			utility_exit_with_message(
+				"Error in core::pack::palette::PackerPalette: The type " +
+				name + " has already been added." );
+		}
+	}
+
+	data_.push_back( std::make_pair( name, restype ) );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+
 /// @brief Default constructor
 PackerPalette::PackerPalette() :
 	utility::pointer::ReferenceCount(),
@@ -75,8 +88,6 @@ PackerPalette::PackerPalette() :
 	restore_pre_talaris_behaviour_(false),
 	icoor_05_2009_(false),
 	pH_mode_(false),
-	base_residue_type_names_(),
-	residue_type_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ),
 	variant_type_names_(),
 	special_behaviours_(),
 	terminal_types_( core::chemical::get_terminal_varianttypes() ),
@@ -90,54 +101,6 @@ PackerPalette::PackerPalette() :
 	pH_mode_ = option[pH::pH_mode]();
 	initialize_special_behaviours(); //Sets this to be a map of each behaviour to FALSE.
 	initialize_non_terminal_types();
-}
-
-/// @brief Constructor with ResidueTypeSet specifier.
-/// @details Needed for packing with anything but the default (fa_standard) ResidueTypeSet.
-PackerPalette::PackerPalette(
-	core::chemical::ResidueTypeSetCOP residue_type_set_in
-) :
-	utility::pointer::ReferenceCount(),
-	utility::pointer::enable_shared_from_this< PackerPalette >(),
-	restore_pre_talaris_behaviour_(false),
-	icoor_05_2009_(false),
-	pH_mode_(false),
-	base_residue_type_names_(),
-	residue_type_set_( residue_type_set_in ),
-	variant_type_names_(),
-	special_behaviours_(),
-	terminal_types_( core::chemical::get_terminal_varianttypes() ),
-	non_terminal_types_()
-	//TODO -- initialize all private member vars here.
-{
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	restore_pre_talaris_behaviour_ = option[ mistakes::restore_pre_talaris_2013_behavior ]();
-	icoor_05_2009_ = option[corrections::chemical::icoor_05_2009]();
-	pH_mode_ = option[pH::pH_mode]();
-	initialize_special_behaviours(); //Sets this to be a map of each behaviour to FALSE.
-	initialize_non_terminal_types();
-}
-
-
-/// @brief Copy constructor
-PackerPalette::PackerPalette(
-	PackerPalette const &src
-) :
-	utility::pointer::ReferenceCount(src),
-	utility::pointer::enable_shared_from_this< PackerPalette >(src),
-	restore_pre_talaris_behaviour_(src.restore_pre_talaris_behaviour_),
-	icoor_05_2009_(src.icoor_05_2009_),
-	pH_mode_(src.pH_mode_),
-	base_residue_type_names_( src.base_residue_type_names_ ),
-	residue_type_set_( src.residue_type_set_ ),
-	variant_type_names_( src.variant_type_names_ ),
-	special_behaviours_( src.special_behaviours_ ),
-	terminal_types_( src.terminal_types_ ),
-	non_terminal_types_( src.non_terminal_types_ )
-	//TODO -- copy all private member vars here.
-{
-	debug_assert( special_behaviours_.size() == (static_cast<core::Size>(END_OF_BEHAVIOUR_LIST) - 1) );
 }
 
 /// @brief Destructor
@@ -152,10 +115,12 @@ PackerPalette::~PackerPalette() {}
 /// residue.  Use TaskOperations for that.
 /// @param [in] existing_residue The existing residue, for reference (though this should be largely unneeded).
 /// It's largely only used for variant type matching.
+/// @param [in] restypeset The ResidueTypeSet needed for finding "related" residue types
 /// @param [out] residue_type_list A std::list of ResidueTypeCOPs, which is cleared and populated by this function.
 void
 PackerPalette::initialize_residue_level_task(
 	core::conformation::Residue const & existing_residue,
+	core::chemical::ResidueTypeSetCOP restypeset,
 	std::list< chemical::ResidueTypeCOP > & residue_type_list
 ) const {
 	residue_type_list.clear();
@@ -164,9 +129,11 @@ PackerPalette::initialize_residue_level_task(
 	bool existing_type_processed( false );
 	debug_assert( special_behaviours_.count( FORCE_EXISTING_BASE_TYPE ) );
 	if ( !special_behaviours_.at( FORCE_EXISTING_BASE_TYPE ) ) {
-		for ( core::Size i = 1, imax = base_residue_type_names_.size(); i <= imax; ++i ) {
+		auto const & base_residue_types = get_base_residue_types_cached( restypeset );
+		for ( auto const & entry: base_residue_types ) { // entry = pair< string, ResidueTypeCOP >
+			core::chemical::ResidueTypeCOP const & basetype = entry.second;
 			decide_what_to_do_with_base_type(
-				existing_residue, residue_type_list, base_residue_type_names_[ i ].second, existing_type_processed );
+				existing_residue, restypeset, residue_type_list, basetype, existing_type_processed );
 		}
 		if ( TR.Debug.visible() && residue_type_list.empty() ) {
 			TR.Debug << "Empty list of residues for designing ";
@@ -176,7 +143,7 @@ PackerPalette::initialize_residue_level_task(
 	if ( ! existing_type_processed ) {
 		//If we didn't already do the existing type, do it now.
 		TR.Trace << existing_residue.name3() << existing_residue.seqpos() << "'s type not yet processed." << std::endl;
-		decide_what_to_do_with_existing_type( existing_residue, residue_type_list );
+		decide_what_to_do_with_existing_type( existing_residue, restypeset, residue_type_list );
 	}
 }
 
@@ -197,86 +164,26 @@ PackerPalette::parse_my_tag(
 	}
 }
 
-void
-PackerPalette::set_residue_type_set (
-	core::chemical::ResidueTypeSetCOP new_type_set
-) {
-	residue_type_set_ = new_type_set;
-}
+BaseTypeList const &
+PackerPalette::get_base_residue_types_cached( core::chemical::ResidueTypeSetCOP const & restypeset ) const {
 
-/// @brief Add a base residue type name to the list of base residue type names.
-void
-PackerPalette::add_base_residue_type( std::string const &name ) {
-	for ( core::Size i=1, imax=base_residue_type_names_.size(); i<=imax; ++i ) {
-		runtime_assert_string_msg( base_residue_type_names_[i].first != name,
-			"Error in core::pack::palette::PackerPalette::add_base_residue_type(): The type " +
-			name + " has already been added." );
+	if ( ! base_list_cache_.has( restypeset.get() ) ) {
+		// The mutex in base_list_cache_ won't be held during the get_base_residue_types call,
+		// but if we do somehow get multiple entries for the same, we'll only take the first.
+		base_list_cache_.add_if_missing( restypeset.get(), get_base_residue_types( restypeset ) );
 	}
 
-	core::chemical::ResidueTypeCOP type_to_add( core::chemical::ResidueTypeFinder( *residue_type_set_ ).residue_base_name( name ).get_representative_type() );
-
-	runtime_assert_string_msg( type_to_add != nullptr, "Error in core::pack::palette::PackerPalette::add_base_residue_type(): No base type corresponding to \"" + name + "\" could be found." );
-
-	base_residue_type_names_.push_back( std::make_pair( name, type_to_add ) );
-	if ( TR.Debug.visible() ) TR.Debug << "Adding base type " << name << " to PackerPalette." << std::endl;
-}
-
-/// @brief Clear the list of base residue types.
-void
-PackerPalette::clear_base_residue_type_list() {
-	base_residue_type_names_.clear();
-}
-
-/// @brief   Set up the 'expanded' NCBB default base types
-/// @author Andy Watkins (amw579@stanford.edu)
-void
-PackerPalette::set_up_expanded_base_types() {
-	set_up_default_base_types();
-	// Design aramids
-	// Currently, it turns out, the only aramids added are the ones that should be defaults.
-	// Really, we are doing 12 additions here, one for each backbone.
-	add_base_residue_types_by_properties( utility::tools::make_vector1< chemical::ResidueProperty >( chemical::ARAMID ) );
-	// Ditto BAAs
-	add_base_residue_types_by_properties( utility::tools::make_vector1< chemical::ResidueProperty >( chemical::BETA_AA ) );
-	// Oligoureas
-	add_base_residue_types_by_properties( utility::tools::make_vector1< chemical::ResidueProperty >( chemical::OLIGOUREA ) );
-
-	// A limited number of peptoids -- there isn't quite so clean a set of 'canonical' peptoids.
-	/*
-	* This is actually a living nightmare b/c we don't version these libraries and bad things happen to good people
-	add_base_residue_type( "001" );
-	//add_base_residue_type( "017" );
-	add_base_residue_type( "3101" );
-	//add_base_residue_type( "201" ); AMW: sarcosine is dead, long live sarcosine
-	add_base_residue_type( "202" );
-	add_base_residue_type( "203" );
-	add_base_residue_type( "204" );
-	add_base_residue_type( "205" );
-	add_base_residue_type( "208" );
-	add_base_residue_type( "211" );
-	add_base_residue_type( "303" );
-	add_base_residue_type( "305" );
-	add_base_residue_type( "313" );
-	add_base_residue_type( "314" );
-	//add_base_residue_type( "317" );
-	//add_base_residue_type( "318" );
-	*/
-
-	// AMW: once there are "canonical aramids" versus ridiculous "noncanonical aramids" (and so forth),
-	// you should ensure that we only add the "canonical" ones here.
-
+	return base_list_cache_.get( restypeset.get() );
 }
 
 /// @brief   Set up the default base types:
-/// @details Clears the list of base types first.
 /// @author  Labonte <JWLabonte@jhu.edu>
 void
-PackerPalette::set_up_default_base_types() {
+PackerPalette::set_up_default_base_types(
+	core::chemical::ResidueTypeSet const & restypeset,
+	BaseTypeList & base_types
+) const {
 	using namespace core::chemical;
-
-	clear_base_residue_type_list();
-
-	if ( !residue_type_set_ ) return;
 
 	// Default L-alpha amino acids
 	// Temporarily, we are hard-coding this list. The reason
@@ -287,72 +194,123 @@ PackerPalette::set_up_default_base_types() {
 	// clearly established -- this will also help us find legitimate
 	// changes more easily.
 
-	add_base_residue_type( "ALA" );
-	add_base_residue_type( "CYS" );
-	add_base_residue_type( "ASP" );
-	add_base_residue_type( "GLU" );
-	add_base_residue_type( "PHE" );
-	add_base_residue_type( "GLY" );
-	add_base_residue_type( "HIS" );
-	if ( residue_type_set_->mode() != core::chemical::CENTROID_ROT_t ) add_base_residue_type( "HIS_D" );
-	add_base_residue_type( "ILE" );
-	add_base_residue_type( "LYS" );
-	add_base_residue_type( "LEU" );
-	add_base_residue_type( "MET" );
-	add_base_residue_type( "ASN" );
-	add_base_residue_type( "PRO" );
-	add_base_residue_type( "GLN" );
-	add_base_residue_type( "ARG" );
-	add_base_residue_type( "SER" );
-	add_base_residue_type( "THR" );
-	add_base_residue_type( "VAL" );
-	add_base_residue_type( "TRP" );
-	add_base_residue_type( "TYR" );
-	//add_base_residue_types_by_properties( { CANONICAL_AA } );
+	add_base_residue_type( "ALA", restypeset, base_types );
+	add_base_residue_type( "CYS", restypeset, base_types );
+	add_base_residue_type( "ASP", restypeset, base_types );
+	add_base_residue_type( "GLU", restypeset, base_types );
+	add_base_residue_type( "PHE", restypeset, base_types );
+	add_base_residue_type( "GLY", restypeset, base_types );
+	add_base_residue_type( "HIS", restypeset, base_types );
+	if ( restypeset.mode() != core::chemical::CENTROID_ROT_t ) {
+		add_base_residue_type( "HIS_D", restypeset, base_types );
+	}
+	add_base_residue_type( "ILE", restypeset, base_types );
+	add_base_residue_type( "LYS", restypeset, base_types );
+	add_base_residue_type( "LEU", restypeset, base_types );
+	add_base_residue_type( "MET", restypeset, base_types );
+	add_base_residue_type( "ASN", restypeset, base_types );
+	add_base_residue_type( "PRO", restypeset, base_types );
+	add_base_residue_type( "GLN", restypeset, base_types );
+	add_base_residue_type( "ARG", restypeset, base_types );
+	add_base_residue_type( "SER", restypeset, base_types );
+	add_base_residue_type( "THR", restypeset, base_types );
+	add_base_residue_type( "VAL", restypeset, base_types );
+	add_base_residue_type( "TRP", restypeset, base_types );
+	add_base_residue_type( "TYR", restypeset, base_types );
+	//add_base_residue_types_by_properties( { CANONICAL_AA }, restypeset, base_types );
 
 	// Protonation variants in pH mode.
 	if ( pH_mode() ) {
-		add_base_residue_type( "ASP_P1" );
-		add_base_residue_type( "ASP_P2" );
-		add_base_residue_type( "GLU_P1" );
-		add_base_residue_type( "GLU_P2" );
-		add_base_residue_type( "HIS_P" );
-		add_base_residue_type( "LYS_D" );
-		add_base_residue_type( "TYR_D" );
+		add_base_residue_type( "ASP_P1", restypeset, base_types );
+		add_base_residue_type( "ASP_P2", restypeset, base_types );
+		add_base_residue_type( "GLU_P1", restypeset, base_types );
+		add_base_residue_type( "GLU_P2", restypeset, base_types );
+		add_base_residue_type( "HIS_P", restypeset, base_types );
+		add_base_residue_type( "LYS_D", restypeset, base_types );
+		add_base_residue_type( "TYR_D", restypeset, base_types );
 	}
 
 	// Default nucleic acids (DNA)
-	add_base_residue_types_by_properties( { CANONICAL_NUCLEIC, DNA } );
+	add_base_residue_types_by_properties( { CANONICAL_NUCLEIC, DNA }, restypeset, base_types );
 
 	// Default carbohydrates (all non-modified sugars)
 	if ( basic::options::option[ basic::options::OptionKeys::in::include_sugars ] ) {
-		add_base_residue_types_by_properties( { CARBOHYDRATE } );
+		add_base_residue_types_by_properties( { CARBOHYDRATE }, restypeset, base_types );
 	}
+}
+
+/// @brief   Set up the 'expanded' NCBB default base types
+/// @author Andy Watkins (amw579@stanford.edu)
+void
+PackerPalette::set_up_expanded_base_types(
+	core::chemical::ResidueTypeSet const & restypeset,
+	BaseTypeList & base_types
+) const {
+	using namespace core::chemical;
+
+	set_up_default_base_types(restypeset, base_types);
+	// Design aramids
+	// Currently, it turns out, the only aramids added are the ones that should be defaults.
+	// Really, we are doing 12 additions here, one for each backbone.
+	add_base_residue_types_by_properties( { ARAMID }, restypeset, base_types );
+	// Ditto BAAs
+	add_base_residue_types_by_properties( { BETA_AA }, restypeset, base_types );
+	// Oligoureas
+	add_base_residue_types_by_properties( { OLIGOUREA }, restypeset, base_types );
+
+	// A limited number of peptoids -- there isn't quite so clean a set of 'canonical' peptoids.
+	/*
+	* This is actually a living nightmare b/c we don't version these libraries and bad things happen to good people
+	add_base_residue_type( "001", restypeset, base_types );
+	//add_base_residue_type( "017", restypeset, base_types );
+	add_base_residue_type( "3101", restypeset, base_types );
+	//add_base_residue_type( "201", restypeset, base_types ); AMW: sarcosine is dead, long live sarcosine
+	add_base_residue_type( "202", restypeset, base_types );
+	add_base_residue_type( "203", restypeset, base_types );
+	add_base_residue_type( "204", restypeset, base_types );
+	add_base_residue_type( "205", restypeset, base_types );
+	add_base_residue_type( "208", restypeset, base_types );
+	add_base_residue_type( "211", restypeset, base_types );
+	add_base_residue_type( "303", restypeset, base_types );
+	add_base_residue_type( "305", restypeset, base_types );
+	add_base_residue_type( "313", restypeset, base_types );
+	add_base_residue_type( "314", restypeset, base_types );
+	//add_base_residue_type( "317", restypeset, base_types );
+	//add_base_residue_type( "318", restypeset, base_types );
+	*/
+
+	// AMW: once there are "canonical aramids" versus ridiculous "noncanonical aramids" (and so forth),
+	// you should ensure that we only add the "canonical" ones here.
+}
+
+/// @brief Add a base residue type name to the list of base residue type names.
+void
+PackerPalette::add_base_residue_type(
+	std::string const & name,
+	core::chemical::ResidueTypeSet const & restypeset,
+	BaseTypeList & base_types
+) const {
+
+	core::chemical::ResidueTypeCOP type_to_add( core::chemical::ResidueTypeFinder( restypeset ).residue_base_name( name ).get_representative_type() );
+
+	runtime_assert_string_msg( type_to_add != nullptr, "Error in core::pack::palette::PackerPalette::add_base_residue_type(): No base type corresponding to \"" + name + "\" could be found." );
+
+	base_types.add(name, type_to_add);
+	if ( TR.Debug.visible() ) TR.Debug << "Adding base type " << name << " to PackerPalette." << std::endl;
 }
 
 /// @brief  Add a group of base ResidueTypes and names to the PackerPalette by properties.
 /// @author Labonte <JWLabonte@jhu.edu>
 void
 PackerPalette::add_base_residue_types_by_properties(
-	utility::vector1< core::chemical::ResidueProperty > const & properties )
-{
-	utility::vector1< std::string > base_names;
-	base_names.append( get_base_names_by_properties( { properties } ) );
+	utility::vector1< core::chemical::ResidueProperty > const & properties,
+	core::chemical::ResidueTypeSet const & restypeset,
+	BaseTypeList & base_types
+) const {
+	utility::vector1< std::string > base_names = get_base_names_by_properties( restypeset, properties );
 	for ( auto const & base_name : base_names ) {
-		add_base_residue_type( base_name );
+		add_base_residue_type( base_name, restypeset, base_types );
 	}
-}
-
-
-/// @brief Does the PackerPalette have a base residue type?
-bool
-PackerPalette::has_base_residue_type(
-	std::string const &name
-) {
-	for ( auto const & entry : base_residue_type_names_ ) {
-		if ( entry.first == name ) return true;
-	}
-	return false;
 }
 
 /// @brief Set the defaults for special behaviours.
@@ -431,12 +389,14 @@ PackerPalette::set_only_design_polymer_residues(
 /// @brief   Return a list of base ResidueType names to be added to the PackerPalette by properties.
 /// @author  Labonte <JWLabonte@jhu.edu>
 utility::vector1< std::string >
-PackerPalette::get_base_names_by_properties( utility::vector1< core::chemical::ResidueProperty > const & properties )
-{
+PackerPalette::get_base_names_by_properties(
+	core::chemical::ResidueTypeSet const & restypeset,
+	utility::vector1< core::chemical::ResidueProperty > const & properties
+) const {
 	using namespace core::chemical;
 
 	ResidueTypeCOPs base_types(
-		ResidueTypeFinder( *residue_type_set_ ).properties( properties ).get_possible_base_residue_types( true, true ) );
+		ResidueTypeFinder( restypeset ).properties( properties ).get_possible_base_residue_types( true, true ) );
 	utility::vector1< std::string > base_names;
 	for ( auto const & base_type : base_types ) {
 		base_names.push_back( base_type->name() );
@@ -462,12 +422,12 @@ PackerPalette::get_base_type_raw_ptr(
 core::chemical::ResidueTypeCOP
 PackerPalette::get_residue_type_cop_with_variant_removed(
 	core::chemical::ResidueTypeCOP const & restype,
+	core::chemical::ResidueTypeSet const & restypeset,
 	core::chemical::VariantType const vartype_to_remove
 ) const {
 	if ( !restype->has_variant_type( vartype_to_remove ) ) return restype;
 
-	runtime_assert( residue_type_set_ != nullptr );
-	core::chemical::ResidueTypeFinder finder( *residue_type_set_ );
+	core::chemical::ResidueTypeFinder finder( restypeset );
 	finder.base_type( restype->get_base_type_cop() ).variants( restype->variant_type_enums(), restype->custom_variant_types(), false ).disallow_variants( utility::vector1< core::chemical::VariantType >( { vartype_to_remove } ), false );
 	return finder.get_representative_type();
 }
@@ -489,11 +449,12 @@ PackerPalette::initialize_special_behaviours() {
 void
 PackerPalette::decide_what_to_do_with_existing_type(
 	core::conformation::Residue const & existing_residue,
+	core::chemical::ResidueTypeSetCOP restypeset,
 	std::list< core::chemical::ResidueTypeCOP> & residue_type_list ) const
 {
 	debug_assert( special_behaviours_.size() == (static_cast<core::Size>(END_OF_BEHAVIOUR_LIST) - 1) );
 
-	if ( !residue_type_set_ ) { //If the ResidueTypeSetCOP is nullptr, keep the existing type only.
+	if ( !restypeset ) { //If the ResidueTypeSetCOP is nullptr, keep the existing type only.
 		utility::vector1 < core::chemical::ResidueTypeCOP > types_to_add;
 		types_to_add.push_back( existing_residue.type_ptr() );
 		add_residue_types_to_list( types_to_add, residue_type_list, existing_residue.seqpos() );
@@ -502,7 +463,7 @@ PackerPalette::decide_what_to_do_with_existing_type(
 
 	core::chemical::ResidueTypeCOP existing_type_pointer(
 		( special_behaviours_.at( STRIP_VIRTUAL_SIDE_CHAIN ) && existing_residue.type().has_variant_type( core::chemical::VIRTUAL_SIDE_CHAIN ) ) ?
-		get_residue_type_cop_with_variant_removed( existing_residue.type_ptr(), core::chemical::VIRTUAL_SIDE_CHAIN ) :
+		get_residue_type_cop_with_variant_removed( existing_residue.type_ptr(), *restypeset, core::chemical::VIRTUAL_SIDE_CHAIN ) :
 		existing_residue.type_ptr()
 	);
 
@@ -556,7 +517,7 @@ PackerPalette::decide_what_to_do_with_existing_type(
 	}
 
 	if ( special_behaviours_.at( ALL_DNA_TYPES_ON ) && existing_residue.type().is_DNA() ) {
-		core::chemical::ResidueTypeFinder finder( *residue_type_set_ ); //Inefficient, but hopefully we can deprecate this behaviour soon.
+		core::chemical::ResidueTypeFinder finder( *restypeset ); //Inefficient, but hopefully we can deprecate this behaviour soon.
 		finder.variants( existing_residue.type().variant_type_enums() ).base_property( core::chemical::DNA );
 		if ( special_behaviours_.at( EXCLUDE_ADDUCT_VARIANT_AT_DNA_POSITIONS ) ) {
 			finder.variant_exceptions( utility::tools::make_vector1( core::chemical::ADDUCT_VARIANT ), false );
@@ -620,7 +581,7 @@ PackerPalette::decide_what_to_do_with_existing_type(
 	// Yes, please!  ~ Labonte
 
 	utility::vector1< core::chemical::ResidueTypeCOP > const types_to_add(
-		residue_type_set_->get_all_types_with_variants_by_basetype(
+		restypeset->get_all_types_with_variants_by_basetype(
 		existing_residue.type().is_base_type() ? existing_residue.type_ptr() : existing_residue.type().get_base_type_cop(),
 		variants,
 		special_variants,
@@ -645,6 +606,7 @@ PackerPalette::decide_what_to_do_with_existing_type(
 void
 PackerPalette::decide_what_to_do_with_base_type(
 	core::conformation::Residue const & existing_residue,
+	core::chemical::ResidueTypeSetCOP restypeset,
 	std::list< core::chemical::ResidueTypeCOP> &residue_type_list,
 	core::chemical::ResidueTypeCOP const & candidate_base_type,
 	bool &existing_type_processed
@@ -653,7 +615,7 @@ PackerPalette::decide_what_to_do_with_base_type(
 	debug_assert( special_behaviours_.size() == (static_cast<core::Size>(END_OF_BEHAVIOUR_LIST) - 1) );
 
 	// If the ResidueTypeSetCOP is null, then we can't design:
-	if ( !residue_type_set_ ) {
+	if ( !restypeset ) {
 		return;
 	}
 
@@ -680,7 +642,7 @@ PackerPalette::decide_what_to_do_with_base_type(
 
 	// If this is the existing type, then decide what to do with the existing type.  KEEP THIS FIRST.
 	if ( get_base_type_raw_ptr( candidate_base_type ) == get_base_type_raw_ptr( existing_residue.type_ptr() ) ) {
-		decide_what_to_do_with_existing_type( existing_residue, residue_type_list );
+		decide_what_to_do_with_existing_type( existing_residue, restypeset, residue_type_list );
 		existing_type_processed = true;
 		return;
 	}
@@ -848,7 +810,7 @@ PackerPalette::decide_what_to_do_with_base_type(
 	// Yes, please!  ~ Labonte
 
 	utility::vector1< core::chemical::ResidueTypeCOP > const types_to_add(
-		residue_type_set_->get_all_types_with_variants_by_basetype(
+		restypeset->get_all_types_with_variants_by_basetype(
 		candidate_base_type,
 		variants,
 		special_variants,
@@ -1032,12 +994,11 @@ core::pack::palette::PackerPalette::save( Archive & arc ) const {
 	arc( CEREAL_NVP( restore_pre_talaris_behaviour_ ) ); // _Bool
 	arc( CEREAL_NVP( icoor_05_2009_ ) ); // _Bool
 	arc( CEREAL_NVP( pH_mode_ ) ); // _Bool
-	serialize_base_residue_type_names( arc, base_residue_type_names_); // utility::vector1 < std::pair< std::string, core::chemical::ResidueTypeCOP > >
-	core::chemical::serialize_residue_type_set( arc, residue_type_set_ );
 	arc( CEREAL_NVP( variant_type_names_ ) ); // utility::vector1 < std::string >
 	serialize_behaviours_map( arc, special_behaviours_ ); // std::map < SpecialPackerPaletteBehaviour, bool >
 	serialize_VariantType_vector( arc, terminal_types_ ); // utility::vector1 < core::chemical::VariantType >
 	serialize_VariantType_vector( arc, non_terminal_types_ ); // utility::vector1 < core::chemical::VariantType >
+	// EXEMPT base_list_cache_ // We won't have the same ResidueTypeSet addresses, and we can regenerate them anyway.
 }
 
 /// @brief "Load" function for serialization.
@@ -1047,47 +1008,11 @@ core::pack::palette::PackerPalette::load( Archive & arc ) {
 	arc( restore_pre_talaris_behaviour_ ); // _Bool
 	arc( icoor_05_2009_ ); // _Bool
 	arc( pH_mode_ ); // _Bool
-	deserialize_base_residue_type_names( arc, base_residue_type_names_); // utility::vector1 < std::pair< std::string, core::chemical::ResidueTypeCOP > >
-	core::chemical::deserialize_residue_type_set( arc, residue_type_set_ );
 	arc( variant_type_names_ ); // utility::vector1 < std::string >
 	deserialize_behaviours_map( arc, special_behaviours_ ); // std::map < SpecialPackerPaletteBehaviour, bool >
 	deserialize_VariantType_vector( arc, terminal_types_ ); // utility::vector1 < core::chemical::VariantType >
 	deserialize_VariantType_vector( arc, non_terminal_types_ ); // utility::vector1 < core::chemical::VariantType >
-}
-
-/// @brief Given a utility::vector1 < std::pair< std::string, core::chemical::ResidueTypeCOP > >,
-/// serialize it.
-template < class Archive >
-void
-core::pack::palette::PackerPalette::serialize_base_residue_type_names(
-	Archive &archive,
-	utility::vector1 < std::pair< std::string, core::chemical::ResidueTypeCOP > > const &vect
-) const {
-	archive( vect.size() );
-	for ( core::Size i=1, imax=vect.size(); i<=imax; ++i ) {
-		archive( vect[i].first );
-		core::chemical::serialize_residue_type(archive, vect[i].second );
-	}
-}
-
-/// @brief Given a utility::vector1 < std::pair< std::string, core::chemical::ResidueTypeCOP > >,
-/// deserialize it.
-template < class Archive >
-void
-core::pack::palette::PackerPalette::deserialize_base_residue_type_names(
-	Archive &archive,
-	utility::vector1 < std::pair< std::string, core::chemical::ResidueTypeCOP > > &vect
-) const {
-	core::Size vectsize;
-	archive( vectsize );
-	vect.resize(vectsize);
-	for ( core::Size i=1; i<=vectsize; ++i ) {
-		std::string resname;
-		core::chemical::ResidueTypeCOP restype;
-		archive(resname);
-		core::chemical::deserialize_residue_type(archive, restype );
-		vect[i] = std::pair< std::string, core::chemical::ResidueTypeCOP >( resname, restype );
-	}
+	// EXEMPT base_list_cache_ // We won't have the same ResidueTypeSet addresses, and we can regenerate them anyway.
 }
 
 

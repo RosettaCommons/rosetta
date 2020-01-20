@@ -91,12 +91,12 @@ static basic::Tracer T( "core.pack.task", basic::t_info );
 /// if not provided with an alternative.
 ResidueLevelTask_::ResidueLevelTask_(
 	conformation::Residue const & original_residue,
-	pose::Pose const & /*pose*/,
+	pose::Pose const & pose,
 	core::pack::palette::PackerPaletteCOP packer_palette_in
 ) :
 	ResidueLevelTask(),
 	behaviors_(),
-	original_residue_type_set_( packer_palette_in->residue_type_setCOP() ),
+	original_residue_type_set_( pose.residue_type_set_for_pose( original_residue.type().mode() ) ),
 	original_residue_type_( original_residue.type_ptr() ),
 	designing_( original_residue.is_protein() || original_residue.is_peptoid() ), // default -- design at all protein residues
 	rotamer_operations_(),
@@ -104,7 +104,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 	mode_tokens_(),
 	packer_palette_( packer_palette_in )
 {
-	packer_palette_->initialize_residue_level_task( original_residue, allowed_residue_types_ );
+	packer_palette_->initialize_residue_level_task( original_residue, original_residue_type_set_, allowed_residue_types_ );
 	//TODO FIRST -- MOVE ALL OF THE LOGIC BELOW THAT'S COMMENTED OUT TO THE PACKER PALETTE!
 
 	/*using namespace chemical;

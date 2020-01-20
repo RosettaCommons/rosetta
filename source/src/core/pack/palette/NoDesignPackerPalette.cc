@@ -51,32 +51,13 @@ NoDesignPackerPaletteCreator::provide_xml_schema(
 	NoDesignPackerPalette::provide_xml_schema(xsd);
 }
 
-/// @brief Constructor with ResidueTypeSet.
-NoDesignPackerPalette::NoDesignPackerPalette( core::chemical::ResidueTypeSetCOP restypeset) :
-	PackerPalette(restypeset) //Default constructor -- assumes fa_standard ResidueTypeSet
-	//TODO -- initialize all private member vars here.
-{
-	set_up_base_types(); //Set up the default residue types as the base types.
-	set_up_behaviours(); //Set up the default behaviours.
-}
-
-
 /// @brief Default constructor
 NoDesignPackerPalette::NoDesignPackerPalette() :
-	PackerPalette() //Default constructor -- assumes fa_standard ResidueTypeSet
+	PackerPalette()
 	//TODO -- initialize all private member vars here.
 {
-	set_up_base_types(); //Set up the default residue types as the base types.
 	set_up_behaviours(); //Set up the default behaviours.
 }
-
-/// @brief Copy constructor
-NoDesignPackerPalette::NoDesignPackerPalette(
-	NoDesignPackerPalette const &src
-) :
-	PackerPalette(src)
-	//TODO -- copy all private member vars here.
-{}
 
 /// @brief Destructor
 NoDesignPackerPalette::~NoDesignPackerPalette() {}
@@ -110,18 +91,6 @@ NoDesignPackerPalette::provide_xml_schema(
 	xsd_type_definition_w_attributes( xsd, "NoDesignPackerPalette", "Sets up an empty packer palette, specifying no residues, with no user-configurable options.  This restricts the packer to repacking.  Note that this behaviour can be achieved with the RestrictToRepacking task operation, but doing this with the PackerPalette can be preferable since it means that, under the hood, we're not unnecessarily setting up a list of ResidueTypes only to delete them all.", attlist );
 }
 
-/// @brief Function to allow a different ResidueTypeSet to be set.
-/// @details Each PackerPalette derived class must implement this.
-/// After setting the new ResidueTypeSet, things need to happen.
-void
-NoDesignPackerPalette::set_residue_type_set(
-	core::chemical::ResidueTypeSetCOP new_type_set
-) {
-	parent::set_residue_type_set( new_type_set );
-	set_up_base_types();
-	set_up_behaviours();
-}
-
 /// @brief Get the name of this object ("NoDesignPackerPalette").
 std::string const &
 NoDesignPackerPalette::name() const {
@@ -129,11 +98,10 @@ NoDesignPackerPalette::name() const {
 	return myname;
 }
 
-/// @brief Set up the NoDesignPackerPalette with NO residues.
-void
-NoDesignPackerPalette::set_up_base_types()
-{
-	if ( TR.Debug.visible() ) TR.Debug << "Setting up absolutely NO base types for NoDesignPackerPalette." << std::endl;
+BaseTypeList
+NoDesignPackerPalette::get_base_residue_types( core::chemical::ResidueTypeSetCOP const & ) const {
+	//Absolutely NO base types for NoDesignPackerPalette.
+	return {};
 }
 
 /// @brief Set up the NoDesignPackerPalette with the default set of position-specific behaviours.

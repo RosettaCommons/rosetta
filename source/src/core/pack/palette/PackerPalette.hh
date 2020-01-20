@@ -44,12 +44,16 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <utility/thread/mutable_cache.hh>
 
 // STL Headers
 #include <map>
 #include <list>
 #include <utility/vector1.hh>
 
+#ifdef MULTI_THREADED
+#include <mutex>
+#endif
 
 namespace core {
 namespace pack {
@@ -84,6 +88,28 @@ enum SpecialPackerPaletteBehaviour {
 	END_OF_BEHAVIOUR_LIST = INVALID_BEHAVIOUR //Keep this last.
 };
 
+/// @brief A small utility class which allows you to do a map-like addition of name/ResidueType pairs,
+/// but keeps things in the added order.
+class BaseTypeList : public utility::pointer::ReferenceCount
+{
+private:
+
+	utility::vector1< std::pair< std::string, core::chemical::ResidueTypeCOP > > data_;
+
+public:
+
+	void
+	add( std::string const & name, core::chemical::ResidueTypeCOP restype );
+
+	// Support range-for (over <string,ResidueTypeCOP> pairs
+	// Needs to come after the declaration of data_ to get this to work.
+	auto
+	begin() const -> decltype( data_.begin() ) { return data_.begin(); }
+
+	auto
+	end() const -> decltype( data_.end() ) { return data_.end(); }
+
+};
 
 /// @brief  The PackerPalette class gives instructions to the packer about
 /// the set of ResidueTypes and VariantTypes to use by default, in the
@@ -93,15 +119,7 @@ class PackerPalette : public utility::pointer::ReferenceCount, public utility::p
 
 public:
 	/// @brief Default constructor.
-	/// @details Defaults to the fa_standard ResidueTypeSet.
 	PackerPalette();
-
-	/// @brief Constructor with ResidueTypeSet specifier.
-	/// @details Needed for packing with anything but the default (fa_standard) ResidueTypeSet.
-	PackerPalette( core::chemical::ResidueTypeSetCOP residue_type_set_in );
-
-	/// @brief Copy constructor.
-	PackerPalette( PackerPalette const &src );
 
 	/// @brief Destructor.
 	~PackerPalette() override;
@@ -125,6 +143,7 @@ public:
 	void //NOT virtual.
 	initialize_residue_level_task(
 		core::conformation::Residue const & existing_residue,
+		core::chemical::ResidueTypeSetCOP restypeset,
 		std::list< chemical::ResidueTypeCOP > & residue_type_list
 	) const;
 
@@ -141,32 +160,49 @@ public:
 	/// @details Must be implemented by derived classes.
 	virtual std::string const & name() const = 0;
 
-	/// @brief Function to allow a different ResidueTypeSet to be set.
-	/// @details Each PackerPalette derived class must implement this.  After setting the new ResidueTypeSet, things need to happen.
-	virtual void set_residue_type_set( core::chemical::ResidueTypeSetCOP new_type_set );
-
-	/// @brief Add a base residue type name to the list of base residue type names.
-	void add_base_residue_type( std::string const &name );
-
-	/// @brief Add a group of base ResidueTypes and names to the PackerPalette by properties.
-	void add_base_residue_types_by_properties( utility::vector1< core::chemical::ResidueProperty > const & properties );
-
-	/// @brief Does the PackerPalette have a base residue type?
-	bool has_base_residue_type( std::string const &name );
-
-	/// @brief Clear the base residue type list.
-	void clear_base_residue_type_list();
-
-	/// @brief Set up the default base types:
-	void set_up_default_base_types();
-	void set_up_expanded_base_types();
-
 	/// @brief Set the special behaviours to their default values.
 	void set_up_default_special_behaviours();
 
-	/// @brief Get a const owning pointer to the ResidueTypeSet.
-	inline core::chemical::ResidueTypeSetCOP residue_type_setCOP() const { return residue_type_set_; }
+protected: // Base type generation functions
 
+	/// @brief Get a list of possible base residue types
+	/// Will preferentially grab them from a cached list for the given ResidueTypeSet
+	/// If we don't have a cached version, generate one (and cache it) using get_base_residue_types()
+	BaseTypeList const &
+	get_base_residue_types_cached( core::chemical::ResidueTypeSetCOP const & restypeset ) const;
+
+	/// @brief Generate a list of possible base residue types
+	/// @param [in] restypeset The ResidueTypeSet to use as a reference for related types.
+	/// @return A map of basename:base residue type pairs
+	virtual
+	BaseTypeList
+	get_base_residue_types( core::chemical::ResidueTypeSetCOP const & restypeset ) const = 0;
+
+	/// @brief Set up the default base types for a particular ResidueTypeSet
+	void set_up_default_base_types(
+		core::chemical::ResidueTypeSet const & restypeset,
+		BaseTypeList & base_types
+	) const;
+
+	/// @brief Set up the default base types for a particular ResidueTypeSet
+	void set_up_expanded_base_types(
+		core::chemical::ResidueTypeSet const & restypeset,
+		BaseTypeList & base_types
+	) const;
+
+	/// @brief Add a base residue type name to the list of base residue type names.
+	void add_base_residue_type(
+		std::string const & name,
+		core::chemical::ResidueTypeSet const & restypeset,
+		BaseTypeList & base_types
+	) const;
+
+	/// @brief Add a group of base ResidueTypes and names to the PackerPalette from a particular ResidueTypeSet by properties.
+	void add_base_residue_types_by_properties(
+		utility::vector1< core::chemical::ResidueProperty > const & properties,
+		core::chemical::ResidueTypeSet const & restypeset,
+		BaseTypeList & base_types
+	) const;
 
 protected: //Protected functions:
 
@@ -183,9 +219,10 @@ protected: //Protected functions:
 	/// @details The DefaultPackerPalette has this set to true; everything else should set it to false.
 	void set_only_design_polymer_residues( bool const setting );
 
-	/// @brief Return a list of base ResidueType names to be added to the PackerPalette by properties.
+	/// @brief Return a list of base ResidueType names to be added to the PackerPalette from a particular ResidueTypeSet by properties.
 	utility::vector1< std::string > get_base_names_by_properties(
-		utility::vector1< core::chemical::ResidueProperty > const & properties );
+		core::chemical::ResidueTypeSet const & restypeset,
+		utility::vector1< core::chemical::ResidueProperty > const & properties ) const;
 
 
 private: //Private class methods:
@@ -195,7 +232,11 @@ private: //Private class methods:
 	core::chemical::ResidueType const * get_base_type_raw_ptr( core::chemical::ResidueTypeCOP const & restype ) const;
 
 	/// @brief Get a residue type with a variant removed.
-	core::chemical::ResidueTypeCOP get_residue_type_cop_with_variant_removed( core::chemical::ResidueTypeCOP const & restype, core::chemical::VariantType const vartype_to_remove ) const;
+	core::chemical::ResidueTypeCOP get_residue_type_cop_with_variant_removed(
+		core::chemical::ResidueTypeCOP const & restype,
+		core::chemical::ResidueTypeSet const & restypeset,
+		core::chemical::VariantType const vartype_to_remove
+	) const;
 
 	/// @brief Set the special behaviours to be a map of each behaviour type to FALSE.
 	/// @details All behaviours default to false, and must be explicitly set to true.
@@ -207,6 +248,7 @@ private: //Private class methods:
 	/// etc.
 	void decide_what_to_do_with_existing_type(
 		core::conformation::Residue const & existing_residue,
+		core::chemical::ResidueTypeSetCOP restypeset,
 		std::list< core::chemical::ResidueTypeCOP> & residue_type_list
 	) const;
 
@@ -214,6 +256,7 @@ private: //Private class methods:
 	/// do with the candidate base type.
 	void decide_what_to_do_with_base_type(
 		core::conformation::Residue const & existing_residue,
+		core::chemical::ResidueTypeSetCOP restypeset,
 		std::list< core::chemical::ResidueTypeCOP> & residue_type_list,
 		core::chemical::ResidueTypeCOP const & candidate_base_type,
 		bool &existing_type_processed
@@ -276,14 +319,6 @@ private: //Private member variables:
 	/// @details Still more backwarkwards-compatibility malarkey.
 	bool pH_mode_;
 
-	/// @brief List base residue type names and ResidueTypeCOPs.
-	/// @details Stores the string and a const owning pointer to the type.
-	utility::vector1 < std::pair< std::string, core::chemical::ResidueTypeCOP > > base_residue_type_names_;
-
-	/// @brief A const-access owning pointer to the ResidueTypeSet.
-	/// @author Andy Watkins.
-	core::chemical::ResidueTypeSetCOP residue_type_set_;
-
 	/// @brief List of variant type names.
 	utility::vector1 < std::string > variant_type_names_;
 
@@ -302,6 +337,12 @@ private: //Private member variables:
 	/// @details Generated from terminal_types_ on PackerPalette creation.
 	utility::vector1 < core::chemical::VariantType > non_terminal_types_;
 
+	/// @brief A cached version of the BaseTypeList, to speed up lookup
+	/// Note that caching by ResidueTypeSet pointer should likely be fine,
+	/// as a GlobalRTS should be constant after generation, and the PoseRTS in a pose
+	/// have copy-on-write semantics (so additions should result in a new object.)
+	mutable utility::thread::MutableCache< core::chemical::ResidueTypeSet const *, BaseTypeList > base_list_cache_;
+
 #ifdef SERIALIZATION
 public:
 
@@ -312,22 +353,6 @@ public:
 	/// @brief "Load" function for serialization.
 	///
 	template< class Archive > void load( Archive & arc );
-
-	/// @brief Given a utility::vector1 < std::pair< std::string, core::chemical::ResidueTypeCOP > >,
-	/// serialize it.
-	template < class Archive >
-	void serialize_base_residue_type_names(
-		Archive &archive,
-		utility::vector1 < std::pair< std::string, core::chemical::ResidueTypeCOP > > const &vect
-	) const;
-
-	/// @brief Given a utility::vector1 < std::pair< std::string, core::chemical::ResidueTypeCOP > >,
-	/// deserialize it.
-	template < class Archive >
-	void deserialize_base_residue_type_names(
-		Archive &archive,
-		utility::vector1 < std::pair< std::string, core::chemical::ResidueTypeCOP > > &vect
-	) const;
 
 	/// @brief Given a vector of VariantTypes, serialize it.
 	///

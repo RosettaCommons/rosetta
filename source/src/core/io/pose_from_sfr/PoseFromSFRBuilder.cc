@@ -44,6 +44,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/PoseResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/util.hh>
@@ -135,6 +136,12 @@ void
 PoseFromSFRBuilder::build_pose( StructFileRep const & sfr, pose::Pose & pose )
 {
 	pose.clear();
+	/// Clearing cleared the RTS in the pose.
+	/// If our ResidueTypeSet is a PoseRTS, we should stash a copy in the pose itself.
+	auto pose_rts = utility::pointer::dynamic_pointer_cast< core::chemical::PoseResidueTypeSet const >( residue_type_set_ );
+	if ( pose_rts != nullptr ) {
+		pose.conformation().reset_residue_type_set_for_conf( pose_rts );
+	}
 
 	setup( sfr );
 	pass_1_merge_residues_as_necessary();

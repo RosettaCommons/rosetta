@@ -526,13 +526,13 @@ core::pack::task::PackerTaskOP ProtLigEnsemble::make_packer_task(core::pose::Pos
 	for ( core::Size i(1), imax(pose.total_residue()); i<=imax; ++i ) {
 		core::chemical::ResidueType const & this_res_type( pose.residue_type(i) );
 		if ( this_res_type.is_ligand() ) {
-			if ( !palette->has_base_residue_type( this_res_type.base_name() ) ) palette->add_type( this_res_type.base_name() );
+			if ( !palette->has_type( this_res_type.base_name() ) ) palette->add_type( this_res_type.base_name() );
 
 			//Add all other residue types with the same name3:
 			core::chemical::ResidueTypeSetCOP rsd_type_set( pose.residue_type_set_for_pose( this_res_type.mode() ) );
 			core::chemical::ResidueTypeCOPs allowed_types( core::chemical::ResidueTypeFinder( *rsd_type_set ).name3( this_res_type.name3() ).get_all_possible_residue_types() ); // a vector1
 			for ( core::Size i(1), imax(allowed_types.size()); i<=imax; ++i ) {
-				if ( !palette->has_base_residue_type( allowed_types[i]->base_name() ) ) palette->add_type( allowed_types[i]->base_name() );
+				if ( !palette->has_type( allowed_types[i]->base_name() ) ) palette->add_type( allowed_types[i]->base_name() );
 			}
 		}
 	}

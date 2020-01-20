@@ -55,17 +55,9 @@ class DefaultPackerPalette : public PackerPalette
 	typedef PackerPalette parent;
 
 public:
-	/// @brief Constructor with ResidueTypeSet.
-	///
-	DefaultPackerPalette( core::chemical::ResidueTypeSetCOP restypeset);
-
 	/// @brief Default constructor.
 	///
 	DefaultPackerPalette();
-
-	/// @brief Copy constructor.
-	///
-	DefaultPackerPalette( DefaultPackerPalette const &src );
 
 	/// @brief Destructor.
 	///
@@ -87,19 +79,18 @@ public:
 	/// @brief Provide information about the XML options available for this PackerPalette.
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-	/// @brief Function to allow a different ResidueTypeSet to be set.
-	/// @details Each PackerPalette derived class must implement this.  After setting the new ResidueTypeSet, things need to happen.
-	void
-	set_residue_type_set( core::chemical::ResidueTypeSetCOP new_type_set ) override;
-
 	/// @brief Get the name of this object ("DefaultPackerPalette").
 	std::string const & name() const override;
 
-private: //Private setup functions:
+protected:
 
-	/// @brief Set up the DefaultPackerPalette with the standard residues.
-	///
-	void set_up_base_types();
+	/// @brief Generate a list of possible base residue types
+	/// @param [in] restypeset The ResidueTypeSet to use as a reference for related types.
+	/// @return A list of basename:base residue type pairs
+	BaseTypeList
+	get_base_residue_types( core::chemical::ResidueTypeSetCOP const & restypeset ) const override;
+
+private: //Private setup functions:
 
 	/// @brief Set up the DefaultPackerPalette with the default set of position-specific behaviours.
 	///

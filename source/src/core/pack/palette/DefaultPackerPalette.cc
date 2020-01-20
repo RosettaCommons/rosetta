@@ -52,32 +52,13 @@ DefaultPackerPaletteCreator::provide_xml_schema(
 	DefaultPackerPalette::provide_xml_schema(xsd);
 }
 
-/// @brief Constructor with ResidueTypeSet.
-DefaultPackerPalette::DefaultPackerPalette( core::chemical::ResidueTypeSetCOP restypeset) :
-	PackerPalette(restypeset) //Default constructor -- assumes fa_standard ResidueTypeSet
-	//TODO -- initialize all private member vars here.
-{
-	set_up_base_types(); //Set up the default residue types as the base types.
-	set_up_behaviours(); //Set up the default behaviours.
-}
-
-
 /// @brief Default constructor
 DefaultPackerPalette::DefaultPackerPalette() :
-	PackerPalette() //Default constructor -- assumes fa_standard ResidueTypeSet
+	PackerPalette()
 	//TODO -- initialize all private member vars here.
 {
-	set_up_base_types(); //Set up the default residue types as the base types.
 	set_up_behaviours(); //Set up the default behaviours.
 }
-
-/// @brief Copy constructor
-DefaultPackerPalette::DefaultPackerPalette(
-	DefaultPackerPalette const &src
-) :
-	PackerPalette(src)
-	//TODO -- copy all private member vars here.
-{}
 
 /// @brief Destructor
 DefaultPackerPalette::~DefaultPackerPalette() {}
@@ -111,16 +92,15 @@ DefaultPackerPalette::provide_xml_schema(
 	xsd_type_definition_w_attributes( xsd, "DefaultPackerPalette", "Sets up a default packer palette, with no user-configurable options.  This permits design with canonical residue types only.  (Note that this is the default behaviour in the absence of a PackerPalette, too.)", attlist );
 }
 
-/// @brief Function to allow a different ResidueTypeSet to be set.
-/// @details Each PackerPalette derived class must implement this.
-/// After setting the new ResidueTypeSet, things need to happen.
-void
-DefaultPackerPalette::set_residue_type_set(
-	core::chemical::ResidueTypeSetCOP new_type_set
-) {
-	parent::set_residue_type_set( new_type_set );
-	set_up_base_types();
-	set_up_behaviours();
+BaseTypeList
+DefaultPackerPalette::get_base_residue_types( core::chemical::ResidueTypeSetCOP const & restypeset ) const {
+	BaseTypeList base_types;
+
+	if ( restypeset ) {
+		parent::set_up_default_base_types( *restypeset, base_types );
+	}
+
+	return base_types;
 }
 
 /// @brief Get the name of this object ("DefaultPackerPalette").
@@ -128,14 +108,6 @@ std::string const &
 DefaultPackerPalette::name() const {
 	static const std::string myname( "DefaultPackerPalette" );
 	return myname;
-}
-
-/// @brief Set up the DefaultPackerPalette with the standard residues.
-void
-DefaultPackerPalette::set_up_base_types()
-{
-	if ( TR.Debug.visible() ) TR.Debug << "Setting up default base types (ACDEFGHIKLMNPQRSTVWY/acgt) for DefaultPackerPalette." << std::endl;
-	parent::set_up_default_base_types();
 }
 
 /// @brief Set up the DefaultPackerPalette with the default set of position-specific behaviours.

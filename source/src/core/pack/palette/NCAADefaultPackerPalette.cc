@@ -51,32 +51,13 @@ NCAADefaultPackerPaletteCreator::provide_xml_schema(
 	NCAADefaultPackerPalette::provide_xml_schema(xsd);
 }
 
-/// @brief Constructor with ResidueTypeSet.
-NCAADefaultPackerPalette::NCAADefaultPackerPalette( core::chemical::ResidueTypeSetCOP restypeset) :
-	PackerPalette(restypeset) //NCAADefault constructor -- assumes fa_standard ResidueTypeSet
-	//TODO -- initialize all private member vars here.
-{
-	set_up_expanded_base_types(); //Set up the default residue types as the base types.
-	set_up_behaviours(); //Set up the default behaviours.
-}
-
-
 /// @brief NCAADefault constructor
 NCAADefaultPackerPalette::NCAADefaultPackerPalette() :
-	PackerPalette() //NCAADefault constructor -- assumes fa_standard ResidueTypeSet
+	PackerPalette()
 	//TODO -- initialize all private member vars here.
 {
-	set_up_expanded_base_types(); //Set up the default residue types as the base types.
 	set_up_behaviours(); //Set up the default behaviours.
 }
-
-/// @brief Copy constructor
-NCAADefaultPackerPalette::NCAADefaultPackerPalette(
-	NCAADefaultPackerPalette const &src
-) :
-	PackerPalette(src)
-	//TODO -- copy all private member vars here.
-{}
 
 /// @brief Destructor
 NCAADefaultPackerPalette::~NCAADefaultPackerPalette() {}
@@ -110,16 +91,18 @@ NCAADefaultPackerPalette::provide_xml_schema(
 	xsd_type_definition_w_attributes( xsd, "NCAADefaultPackerPalette", "Sets up a default packer palette, with no user-configurable options.  This permits design with canonical residue types only.  (Note that this is the default behaviour in the absence of a PackerPalette, too.)", attlist );
 }
 
-/// @brief Function to allow a different ResidueTypeSet to be set.
-/// @details Each PackerPalette derived class must implement this.
-/// After setting the new ResidueTypeSet, things need to happen.
-void
-NCAADefaultPackerPalette::set_residue_type_set(
-	core::chemical::ResidueTypeSetCOP new_type_set
-) {
-	parent::set_residue_type_set( new_type_set );
-	set_up_expanded_base_types();
-	set_up_behaviours();
+/// @brief Generate a list of possible base residue types
+/// @param [in] restypeset The ResidueTypeSet to use as a reference for related types.
+/// @return A list of basename:base residue type pairs
+BaseTypeList
+NCAADefaultPackerPalette::get_base_residue_types( core::chemical::ResidueTypeSetCOP const & restypeset ) const {
+	BaseTypeList base_types;
+
+	if ( restypeset ) {
+		parent::set_up_expanded_base_types( *restypeset, base_types );
+	}
+
+	return base_types;
 }
 
 /// @brief Get the name of this object ("NCAADefaultPackerPalette").
@@ -127,14 +110,6 @@ std::string const &
 NCAADefaultPackerPalette::name() const {
 	static const std::string myname( "NCAADefaultPackerPalette" );
 	return myname;
-}
-
-/// @brief Set up the NCAADefaultPackerPalette with the standard residues.
-void
-NCAADefaultPackerPalette::set_up_base_types()
-{
-	if ( TR.Debug.visible() ) TR.Debug << "Setting up default base types (ACDEFGHIKLMNPQRSTVWY/acgt) for NCAADefaultPackerPalette." << std::endl;
-	parent::set_up_default_base_types();
 }
 
 /// @brief Set up the NCAADefaultPackerPalette with the default set of position-specific behaviours.

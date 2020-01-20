@@ -89,9 +89,9 @@ public:
 		core::scoring::ScoreFunctionOP sfxn( core::scoring::get_score_function() );
 		core::pack::task::TaskFactoryOP task( new core::pack::task::TaskFactory );
 		CustomBaseTypePackerPaletteOP pp = utility::pointer::make_shared< CustomBaseTypePackerPalette >();
-		pp->add_base_residue_type( "001" );
-		pp->add_base_residue_type( "601" );
-		pp->add_base_residue_type( "602" );
+		pp->add_type( "001" );
+		pp->add_type( "601" );
+		pp->add_type( "602" );
 		task->set_packer_palette( pp );
 		core::pack::task::operation::ReadResfileOP resfile( new core::pack::task::operation::ReadResfile );
 		resfile->filename( "core/pack/peptoid_design_1.resfile" );
@@ -143,9 +143,9 @@ public:
 		core::pack::task::TaskFactoryOP task( new core::pack::task::TaskFactory );
 		core::pack::task::operation::ReadResfileOP resfile( new core::pack::task::operation::ReadResfile );
 		CustomBaseTypePackerPaletteOP pp = utility::pointer::make_shared< CustomBaseTypePackerPalette >();
-		pp->add_base_residue_type( "001" );
-		pp->add_base_residue_type( "601" );
-		pp->add_base_residue_type( "602" );
+		pp->add_type( "001" );
+		pp->add_type( "601" );
+		pp->add_type( "602" );
 		task->set_packer_palette( pp );
 		resfile->filename( "core/pack/peptoid_design_2.resfile" );
 		resfile->set_residue_selector( index_selector );
