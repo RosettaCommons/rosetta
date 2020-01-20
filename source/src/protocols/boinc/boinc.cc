@@ -247,11 +247,11 @@ bool Boinc::worker_is_finished( const int & total_nstruct ){
 			shmem_->model_low_energy = shmem_->low_energy;
 			if (shmem_->native_pose_exists) {
 				// get native
-				core::pose::PoseOP utility::pointer::make_shared< core::pose::Pose >();
+				core::pose::PoseOP nativeposeOP(new core::pose::Pose());
 				core::io::serialization::BUFFER bn((char*)(&shmem_->native_pose_buf ),protocols::boinc::POSE_BUFSIZE);
 				core::io::serialization::read_binary(*nativeposeOP,bn);
 				if (shmem_->low_energy_pose_exists) {
-					core::pose::PoseOP utility::pointer::make_shared< core::pose::Pose >();
+					core::pose::PoseOP lowenergyposeOP(new core::pose::Pose());
 					core::io::serialization::BUFFER bl((char*)(&shmem_->low_energy_pose_buf ),protocols::boinc::POSE_BUFSIZE);
 					core::io::serialization::read_binary(*lowenergyposeOP,bl);
 					shmem_->model_low_energy_rmsd = core::scoring::native_CA_rmsd( *nativeposeOP, *lowenergyposeOP);

@@ -14,6 +14,7 @@
 #ifndef INCLUDED_core_scoring_func_CircularGeneral1D_Func_HH
 #define INCLUDED_core_scoring_func_CircularGeneral1D_Func_HH
 
+#include <core/scoring/func/CircularGeneral1D_Func.fwd.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>

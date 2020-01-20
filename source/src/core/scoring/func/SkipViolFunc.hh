@@ -22,6 +22,7 @@
 
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

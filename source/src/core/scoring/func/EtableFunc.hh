@@ -14,6 +14,7 @@
 #ifndef INCLUDED_core_scoring_func_EtableFunc_hh
 #define INCLUDED_core_scoring_func_EtableFunc_hh
 
+#include <core/scoring/func/EtableFunc.fwd.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
 

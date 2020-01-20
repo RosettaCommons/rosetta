@@ -2132,66 +2132,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_b.6__protocols__loop_grower__util.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_b.6__protocols__loop_grower__util.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fold_from_loops\LabelPoseFromResidueSelectorMover.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_b.6__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_b.6__protocols__fold_from_loops__LabelPoseFromResidueSelectorMover.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fold_from_loops\SplitAndMixPoseMover.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SplitAndMixPoseMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SplitAndMixPoseMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SplitAndMixPoseMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SplitAndMixPoseMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SplitAndMixPoseMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SplitAndMixPoseMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SplitAndMixPoseMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SplitAndMixPoseMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SplitAndMixPoseMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SplitAndMixPoseMover.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fold_from_loops\ReleaseConstraintFromResidueMover.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_b.6__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_b.6__protocols__fold_from_loops__ReleaseConstraintFromResidueMover.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fold_from_loops\SegmentedAtomPairConstraintGenerator.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_b.6__protocols__fold_from_loops__SegmentedAtomPairConstraintGenerator.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\fold_from_loops\RmsdFromResidueSelectorFilter.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_b.6__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_b.6__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_b.6__protocols__fold_from_loops__RmsdFromResidueSelectorFilter.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\jumping\ResiduePairJumpSetup.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.6__protocols__jumping__ResiduePairJumpSetup.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_b.6__protocols__jumping__ResiduePairJumpSetup.xdc</XMLDocumentationFileName>

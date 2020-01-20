@@ -504,7 +504,7 @@ LKBallDatabase::initialize_residue_type( ResidueType const & rsd_type )
 		utility::vector1< AtomWeights > atom_wts;
 		setup_atom_weights( rsd_type, builders, atom_wts );
 
-		WaterBuilderForRestypeOP restype_builder = std::make_shared< WaterBuilderForRestype >( builders, atom_wts );
+		WaterBuilderForRestypeOP restype_builder = utility::pointer::make_shared< WaterBuilderForRestype >( builders, atom_wts );
 		water_builders_map_[ address ] = restype_builder;
 	}
 }

@@ -14,6 +14,7 @@
 #ifndef INCLUDED_core_scoring_func_CircularPowerFunc_hh
 #define INCLUDED_core_scoring_func_CircularPowerFunc_hh
 
+#include <core/scoring/func/CircularPowerFunc.fwd.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
 

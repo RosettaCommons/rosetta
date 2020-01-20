@@ -19,6 +19,7 @@
 source/Makefile
 source/xcode/Rosetta.xcodeproj/project.pbxproj
 source/xcode/DerivedData/
+source/external/lib/boinc/
 source/ide/RosettaMini.xcodeproj/
 source/ide/RosettaMini.xcodeproj/project.xcworkspace/
 source/ide/RosettaMini.xcodeproj/xcuserdata/

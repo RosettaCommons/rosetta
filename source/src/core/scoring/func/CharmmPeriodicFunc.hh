@@ -18,6 +18,7 @@
 #include <core/scoring/func/Func.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 //#include <numeric/angle.functions.hh>
 

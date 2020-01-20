@@ -45,6 +45,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/file/file_sys_util.hh>
 
 //Auto Headers
 #include <core/kinematics/Jump.hh>
@@ -205,13 +206,10 @@ void DockingEnsemble::calculate_highres_ref_energy( core::pose::Pose & pose, std
 	std::string path( pdb_filenames_[1].substr(0,found) );
 
 	// all of this needs to be done to ensure that the prepacked starting structure is written
-	const char * path_test = path.c_str ();
 	std::string filename;
-	struct stat buf;
-	stat(path_test, &buf);
-	if ( S_ISDIR(buf.st_mode) ) {
+	if ( utility::file::is_directory(path) ) {
 		filename = path + "/" + partner_num + "_starting_conf.pdb.ppk";
-	} else if ( S_ISREG(buf.st_mode) ) {
+	} else {
 		filename = partner_num + "_starting_conf.pdb.ppk";
 	}
 	TR << "filename: " << filename << std::endl;
@@ -228,13 +226,10 @@ void DockingEnsemble::update_pdblist_file( std::string partner_num )
 	std::string path( pdb_filenames_[1].substr(0,found) );
 
 	// all of this needs to be done to ensure that the prepacked starting structure is written
-	const char * path_test = path.c_str ();
 	std::string filename;
-	struct stat buf;
-	stat(path_test, &buf);
-	if ( S_ISDIR(buf.st_mode) ) {
+	if ( utility::file::is_directory(path) ) {
 		filename = path + "/" + partner_num + "_starting_conf.pdb.ppk";
-	} else if ( S_ISREG(buf.st_mode) ) {
+	} else {
 		filename = partner_num + "_starting_conf.pdb.ppk";
 	}
 	data << filename << '\n';

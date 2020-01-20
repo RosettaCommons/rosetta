@@ -125,7 +125,7 @@ exit_handler(
 	utility::io::izstream data( "default.out" );
 	if ( !data ){
 		std::cerr << "BOINC:: Error reading and gzipping output datafile: default.out" << std::endl; std::cerr.flush();
-		boinc_finish( status );
+		boinc_finish( 1 );
 	}
 	std::string tmpline;
 	getline( data, tmpline ); // sequence line
@@ -141,7 +141,7 @@ exit_handler(
 		utility::file::gzip( "default.out", true );
 		boinc_finish( 0 );
 	} else {
-		boinc_finish( status );
+		boinc_finish( 1 );
 	}
 
 #endif // BOINC

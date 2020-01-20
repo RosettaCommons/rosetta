@@ -15,6 +15,7 @@
 #include <numeric/interpolation/spline/CompoundInterpolator.hh>
 #include <numeric/interpolation/spline/SimpleInterpolator.hh>
 #include <utility/tools/make_vector.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 #include <algorithm>
 

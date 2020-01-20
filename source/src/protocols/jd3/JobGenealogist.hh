@@ -425,8 +425,18 @@ private:
 
 	utility::vector1< utility::vector1< JGJobNodeOP > > job_nodes_for_dag_node_;
 
-	std::unordered_set< JGJobNodeOP > all_job_nodes_;
-	std::unordered_set< JGResultNodeOP > all_result_nodes_;
+	struct JGJobNodeOP_hash {
+		std::size_t operator()(const JGJobNodeOP& _node) const {
+			return std::hash<protocols::jd3::JGJobNode*>()(_node.get());
+		}
+	};
+	std::unordered_set< JGJobNodeOP, JGJobNodeOP_hash > all_job_nodes_;
+	struct JGResultNodeOP_hash {
+		std::size_t operator()(const JGResultNodeOP& _node) const {
+			return std::hash < protocols::jd3::JGResultNode* > ()(_node.get());
+		}
+	};
+	std::unordered_set< JGResultNodeOP, JGResultNodeOP_hash > all_result_nodes_;
 
 	compare_job_nodes sorter_;
 #ifdef    SERIALIZATION

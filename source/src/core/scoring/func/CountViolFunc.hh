@@ -25,6 +25,7 @@
 #include <core/types.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 
 // C++ Headers

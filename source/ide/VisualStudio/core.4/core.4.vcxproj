@@ -416,7 +416,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">
     <ClCompile>
-      <AdditionalOptions> /MP %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions> /MP /bigobj %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
@@ -451,18 +451,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__hbonds__HBondGraph_util.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__hbonds__HBondGraph_util.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__hbonds__HBondGraph_util.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\hbonds\MCHBNetInteractionGraph.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__hbonds__MCHBNetInteractionGraph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__hbonds__MCHBNetInteractionGraph.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__hbonds__MCHBNetInteractionGraph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__hbonds__MCHBNetInteractionGraph.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__hbonds__MCHBNetInteractionGraph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__hbonds__MCHBNetInteractionGraph.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__hbonds__MCHBNetInteractionGraph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__hbonds__MCHBNetInteractionGraph.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__hbonds__MCHBNetInteractionGraph.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__hbonds__MCHBNetInteractionGraph.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\rotamer_set\RotamerLinks.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerLinks.obj</ObjectFileName>
@@ -667,18 +655,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__rna_rotamer_building_functions.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamer_set__rna_rotamer_building_functions.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamer_set__rna_rotamer_building_functions.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\rotamer_set\RotamerSetsBase.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSetsBase.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSetsBase.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSetsBase.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSetsBase.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSetsBase.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSetsBase.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSetsBase.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSetsBase.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSetsBase.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamer_set__RotamerSetsBase.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\rotamer_set\WaterPackingInfo.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__WaterPackingInfo.obj</ObjectFileName>
@@ -1207,30 +1183,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__interaction_graph__HPatchEnergy.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__interaction_graph__HPatchEnergy.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__interaction_graph__HPatchEnergy.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\voids_penalty_energy\VoidsPenaltyVoxelGrid.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyVoxelGrid.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\voids_penalty_energy\VoidsPenaltyEnergy.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__voids_penalty_energy__VoidsPenaltyEnergy.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\dunbrack\cenrot\SingleResidueCenrotLibraryCreator.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__dunbrack__cenrot__SingleResidueCenrotLibraryCreator.obj</ObjectFileName>
@@ -1928,18 +1880,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSet_.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSet_.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\rotamer_set\symmetry\SymmetricRotamerSetFactory.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSetFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSetFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSetFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSetFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSetFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSetFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSetFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSetFactory.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSetFactory.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSetFactory.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\core\pack\rotamer_set\symmetry\SymmetricRotamerSets.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSets.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__rotamer_set__symmetry__SymmetricRotamerSets.xdc</XMLDocumentationFileName>
@@ -2251,18 +2191,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__util__SwitchResidueTypeSet.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__util__SwitchResidueTypeSet.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__util__SwitchResidueTypeSet.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\core\pack\task\residue_selector\ClashBasedRepackShellSelector.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)core.4__core__pack__task__residue_selector__ClashBasedRepackShellSelector.xdc</XMLDocumentationFileName>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

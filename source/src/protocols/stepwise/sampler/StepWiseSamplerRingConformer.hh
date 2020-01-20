@@ -25,6 +25,7 @@
 #include <core/id/TorsionID.hh>
 
 #include <core/chemical/rings/RingConformerSet.fwd.hh>
+#include <core/chemical/rings/RingConformer.hh>
 
 namespace core { namespace chemical { namespace rings { struct RingConformer; } } }
 

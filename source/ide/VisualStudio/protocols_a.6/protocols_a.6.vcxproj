@@ -968,18 +968,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_a.6__protocols__helical_bundle__BundleGridSampler.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_a.6__protocols__helical_bundle__BundleGridSampler.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\helical_bundle\PerturbBundleOptions.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_a.6__protocols__helical_bundle__PerturbBundleOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_a.6__protocols__helical_bundle__PerturbBundleOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_a.6__protocols__helical_bundle__PerturbBundleOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_a.6__protocols__helical_bundle__PerturbBundleOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_a.6__protocols__helical_bundle__PerturbBundleOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_a.6__protocols__helical_bundle__PerturbBundleOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_a.6__protocols__helical_bundle__PerturbBundleOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_a.6__protocols__helical_bundle__PerturbBundleOptions.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_a.6__protocols__helical_bundle__PerturbBundleOptions.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_a.6__protocols__helical_bundle__PerturbBundleOptions.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\helical_bundle\BundleGridSamplerHelper.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_a.6__protocols__helical_bundle__BundleGridSamplerHelper.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_a.6__protocols__helical_bundle__BundleGridSamplerHelper.xdc</XMLDocumentationFileName>
@@ -2566,7 +2554,6 @@
     <ClInclude Include="..\..\..\src\protocols\helical_bundle\PerturbBundle.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\helical_bundle\BackboneGridSampler.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\helical_bundle\BackboneGridSamplerHelper.hh" />
-    <ClInclude Include="..\..\..\src\protocols\helical_bundle\PerturbBundleOptions.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\helical_bundle\PerturbBundleHelix.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\helical_bundle\MakeBundle.hh" />
     <ClInclude Include="..\..\..\src\protocols\helical_bundle\FitSimpleHelixMultiFunc.hh" />
@@ -2586,7 +2573,6 @@
     <ClInclude Include="..\..\..\src\protocols\helical_bundle\BundleReporterFilterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\helical_bundle\BundleReporterFilter.hh" />
     <ClInclude Include="..\..\..\src\protocols\helical_bundle\FitSimpleHelix.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\helical_bundle\PerturbBundleOptions.hh" />
     <ClInclude Include="..\..\..\src\protocols\helical_bundle\util.hh" />
     <ClInclude Include="..\..\..\src\protocols\denovo_design\components\IdealAbegoGenerator.hh" />
     <ClInclude Include="..\..\..\src\protocols\denovo_design\components\IdealAbegoGenerator.fwd.hh" />

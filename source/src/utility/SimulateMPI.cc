@@ -15,6 +15,8 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
 
+#include <iostream>
+
 namespace utility {
 
 std::string

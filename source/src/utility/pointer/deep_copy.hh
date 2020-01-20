@@ -60,7 +60,7 @@ public:
 
 	constexpr DeepCopyOP() noexcept: val_(nullptr) {}
 	constexpr DeepCopyOP( std::nullptr_t const & null) noexcept: val_(null) {}
-	DeepCopyOP( DeepCopyOP::pointer_type const & val ): val_(val) {}
+	DeepCopyOP( pointer_type const & val ): val_(val) {}
 	explicit DeepCopyOP( T * val ): val_(val) {}
 
 	/// @brief Copy constructor -- This is what the effort is about.
@@ -90,13 +90,13 @@ public:
 	/// @brief Assignment from OP.
 	/// @details This is what's used to manually set the value within the class.
 	/// We don't need to clone.
-	DeepCopyOP & operator=( DeepCopyOP::pointer_type const & val ) {
+	DeepCopyOP & operator=( pointer_type const & val ) {
 		val_ = val;
 		return *this;
 	}
 
 	/// @brief Move assignement operator for OPs
-	DeepCopyOP & operator=( DeepCopyOP::pointer_type && val ) {
+	DeepCopyOP & operator=( pointer_type && val ) {
 		std::swap(val_,val);
 		return *this;
 	}
@@ -116,7 +116,7 @@ public:
 	operator shared_ptr< typename std::add_const< T >::type >() const { return val_; }
 
 	void swap( DeepCopyOP & r ) noexcept { std::swap(val_, r.val_); }
-	void swap( DeepCopyOP::pointer_type & r ) noexcept { std::swap(val_, r); }
+	void swap( pointer_type & r ) noexcept { std::swap(val_, r); }
 
 	T* get() const noexcept { return val_.get(); }
 
@@ -131,7 +131,7 @@ public:
 		return val_ == r.val_;
 	}
 
-	bool operator ==( DeepCopyOP::pointer_type const & val ) const {
+	bool operator ==( pointer_type const & val ) const {
 		return val_ == val;
 	}
 
@@ -143,7 +143,7 @@ public:
 		return val_ != r.val_;
 	}
 
-	bool operator !=( DeepCopyOP::pointer_type const & val ) const {
+	bool operator !=( pointer_type const & val ) const {
 		return val_ != val;
 	}
 
@@ -152,15 +152,15 @@ public:
 	}
 
 private:
-	DeepCopyOP::pointer_type val_;
+	pointer_type val_;
 
 };
 
 /// @details It looks like dynamic_point_cast<>() can't recognize the implicit conversion ... correct for this.
-template< class OUT, class T >
-utility::pointer::shared_ptr< OUT >
+template< class OUTPUT, class T >
+utility::pointer::shared_ptr< OUTPUT >
 dynamic_pointer_cast( DeepCopyOP< T > const & param ) {
-	return dynamic_pointer_cast< OUT >( param.get_op() );
+	return dynamic_pointer_cast< OUTPUT >( param.get_op() );
 }
 
 } // namespace pointer

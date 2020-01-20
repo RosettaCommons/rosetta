@@ -54,6 +54,7 @@
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/XMLSchemaValidation.hh>
@@ -883,7 +884,7 @@ StandardJobQueen::create_larval_job(
 	core::Size larval_job_index
 )
 {
-	return std::make_shared< LarvalJob >( inner_job, nstruct_index, larval_job_index );
+	return utility::pointer::make_shared< LarvalJob >( inner_job, nstruct_index, larval_job_index );
 }
 
 StandardInnerLarvalJobOP
@@ -893,7 +894,7 @@ StandardJobQueen::create_inner_larval_job(
 	PrelimJobNodeID const preliminary_job_node
 ) const
 {
-	return std::make_shared< StandardInnerLarvalJob >( nstruct, job_node, preliminary_job_node );
+	return utility::pointer::make_shared< StandardInnerLarvalJob >( nstruct, job_node, preliminary_job_node );
 }
 
 InnerLarvalJobOP

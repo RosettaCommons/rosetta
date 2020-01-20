@@ -219,31 +219,31 @@ option_type_from_key(
 )
 {
 	using namespace utility::options;
-	if ( dynamic_cast< StringOptionKey const * > ( &key ) ) {
+	if ( dynamic_cast< utility::options::StringOptionKey const * > ( &key ) ) {
 		return STRING_OPTION;
-	} else if ( dynamic_cast< StringVectorOptionKey const * > ( &key ) ) {
+	} else if ( dynamic_cast< utility::options::StringVectorOptionKey const * > ( &key ) ) {
 		return STRING_VECTOR_OPTION;
-	} else if ( dynamic_cast< PathOptionKey const * > ( &key ) ) {
+	} else if ( dynamic_cast< utility::options::PathOptionKey const * > ( &key ) ) {
 		return PATH_OPTION;
-	} else if ( dynamic_cast< PathVectorOptionKey const * > ( &key ) ) {
+	} else if ( dynamic_cast< utility::options::PathVectorOptionKey const * > ( &key ) ) {
 		return PATH_VECTOR_OPTION;
-	} else if ( dynamic_cast< FileOptionKey const * > ( &key ) ) {
+	} else if ( dynamic_cast< utility::options::FileOptionKey const * > ( &key ) ) {
 		return FILE_OPTION;
-	} else if ( dynamic_cast< FileVectorOptionKey const * > ( &key ) ) {
+	} else if ( dynamic_cast< utility::options::FileVectorOptionKey const * > ( &key ) ) {
 		return FILE_VECTOR_OPTION;
-	} else if ( dynamic_cast< RealOptionKey const * > ( &key ) ) {
+	} else if ( dynamic_cast< utility::options::RealOptionKey const * > ( &key ) ) {
 		return REAL_OPTION;
-	} else if ( dynamic_cast< RealVectorOptionKey const * > ( &key ) ) {
+	} else if ( dynamic_cast< utility::options::RealVectorOptionKey const * > ( &key ) ) {
 		return REAL_VECTOR_OPTION;
-	} else if ( dynamic_cast< IntegerOptionKey const * > ( &key ) ) {
+	} else if ( dynamic_cast< utility::options::IntegerOptionKey const * > ( &key ) ) {
 		return INTEGER_OPTION;
-	} else if ( dynamic_cast< IntegerVectorOptionKey const * > ( &key ) ) {
+	} else if ( dynamic_cast< utility::options::IntegerVectorOptionKey const * > ( &key ) ) {
 		return INTEGER_VECTOR_OPTION;
-	} else if ( dynamic_cast< BooleanOptionKey const * > ( &key ) ) {
+	} else if ( dynamic_cast< utility::options::BooleanOptionKey const * > ( &key ) ) {
 		return BOOLEAN_OPTION;
-	} else if ( dynamic_cast< BooleanVectorOptionKey const * > ( &key ) ) {
+	} else if ( dynamic_cast< utility::options::BooleanVectorOptionKey const * > ( &key ) ) {
 		return BOOLEAN_VECTOR_OPTION;
-	} else if ( dynamic_cast< ResidueChainVectorOptionKey const * > ( &key ) ) {
+	} else if ( dynamic_cast< utility::options::ResidueChainVectorOptionKey const * > ( &key ) ) {
 		return RESIDUE_CHAIN_VECTOR_OPTION;
 	}
 	return UNKNOWN_OPTION;

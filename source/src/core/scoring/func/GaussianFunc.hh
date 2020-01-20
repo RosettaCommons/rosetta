@@ -14,6 +14,7 @@
 #ifndef INCLUDED_core_scoring_func_GaussianFunc_hh
 #define INCLUDED_core_scoring_func_GaussianFunc_hh
 
+#include <core/scoring/func/GaussianFunc.fwd.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
 

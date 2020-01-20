@@ -16,6 +16,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/backtrace.hh>
 #include <utility/crash_report.hh>
+#include <utility/CSI_Sequence.hh>
 
 // Package Headers
 #include <string>

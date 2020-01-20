@@ -14,7 +14,7 @@
 #ifndef INCLUDED_core_scoring_func_SmoothStepFunc_hh
 #define INCLUDED_core_scoring_func_SmoothStepFunc_hh
 
-//#include <core/scoring/func/SmoothStepFunc.fwd.hh>
+#include <core/scoring/func/SmoothStepFunc.fwd.hh>
 
 #include <core/scoring/func/Func.hh>
 

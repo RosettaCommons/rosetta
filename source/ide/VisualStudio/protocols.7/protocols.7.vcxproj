@@ -717,18 +717,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__antibody__design__AntibodySeqDesignTFCreator.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__antibody__design__AntibodySeqDesignTFCreator.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\antibody\design\AntibodyDesignProtocol.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__antibody__design__AntibodyDesignProtocol.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__antibody__design__AntibodyDesignProtocol.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.7__protocols__antibody__design__AntibodyDesignProtocol.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.7__protocols__antibody__design__AntibodyDesignProtocol.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.7__protocols__antibody__design__AntibodyDesignProtocol.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.7__protocols__antibody__design__AntibodyDesignProtocol.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.7__protocols__antibody__design__AntibodyDesignProtocol.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.7__protocols__antibody__design__AntibodyDesignProtocol.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__antibody__design__AntibodyDesignProtocol.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__antibody__design__AntibodyDesignProtocol.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\antibody\design\CDRSeqDesignOptions.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__antibody__design__CDRSeqDesignOptions.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__antibody__design__CDRSeqDesignOptions.xdc</XMLDocumentationFileName>
@@ -1473,30 +1461,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__antibody__metrics.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__antibody__metrics.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\antibody\RefineOneCDRLoop.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoop.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoop.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoop.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoop.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoop.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoop.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoop.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoop.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoop.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoop.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\antibody\ModelCDRH3.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__antibody__ModelCDRH3.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__antibody__ModelCDRH3.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.7__protocols__antibody__ModelCDRH3.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.7__protocols__antibody__ModelCDRH3.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.7__protocols__antibody__ModelCDRH3.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.7__protocols__antibody__ModelCDRH3.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.7__protocols__antibody__ModelCDRH3.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.7__protocols__antibody__ModelCDRH3.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__antibody__ModelCDRH3.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__antibody__ModelCDRH3.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\antibody\H3RefineCCD.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__antibody__H3RefineCCD.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__antibody__H3RefineCCD.xdc</XMLDocumentationFileName>
@@ -1520,18 +1484,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.7__protocols__antibody__CDRsMinPackMin.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__antibody__CDRsMinPackMin.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__antibody__CDRsMinPackMin.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\antibody\RefineOneCDRLoopCentroid.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoopCentroid.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoopCentroid.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoopCentroid.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoopCentroid.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoopCentroid.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoopCentroid.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoopCentroid.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoopCentroid.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoopCentroid.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__antibody__RefineOneCDRLoopCentroid.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\antibody\AntibodyModelerProtocol.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__antibody__AntibodyModelerProtocol.obj</ObjectFileName>
@@ -2180,18 +2132,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.7__protocols__cyclic_peptide_predict__SimpleCycpepPredictApplication_MPI.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__cyclic_peptide_predict__SimpleCycpepPredictApplication_MPI.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__cyclic_peptide_predict__SimpleCycpepPredictApplication_MPI.xdc</XMLDocumentationFileName>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\cyclic_peptide_predict\SimpleCycpepPredictApplication_MPI_JobResultsSummary.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__cyclic_peptide_predict__SimpleCycpepPredictApplication_MPI_JobResultsSummary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__cyclic_peptide_predict__SimpleCycpepPredictApplication_MPI_JobResultsSummary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.7__protocols__cyclic_peptide_predict__SimpleCycpepPredictApplication_MPI_JobResultsSummary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols.7__protocols__cyclic_peptide_predict__SimpleCycpepPredictApplication_MPI_JobResultsSummary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.7__protocols__cyclic_peptide_predict__SimpleCycpepPredictApplication_MPI_JobResultsSummary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols.7__protocols__cyclic_peptide_predict__SimpleCycpepPredictApplication_MPI_JobResultsSummary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.7__protocols__cyclic_peptide_predict__SimpleCycpepPredictApplication_MPI_JobResultsSummary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols.7__protocols__cyclic_peptide_predict__SimpleCycpepPredictApplication_MPI_JobResultsSummary.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__cyclic_peptide_predict__SimpleCycpepPredictApplication_MPI_JobResultsSummary.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols.7__protocols__cyclic_peptide_predict__SimpleCycpepPredictApplication_MPI_JobResultsSummary.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\hbnet\HBNet_util.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols.7__protocols__hbnet__HBNet_util.obj</ObjectFileName>
@@ -3935,7 +3875,6 @@
     <ClInclude Include="..\..\..\src\protocols\antibody\design\MutateFrameworkForClusterCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\design\AntibodyDesignMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\design\CDRGraftDesignOptions.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\antibody\design\AntibodyDesignProtocolCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\design\CDRGraftDesignOptions.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\design\MutateFrameworkForCluster.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\design\GeneralAntibodyModeler.hh" />
@@ -3944,12 +3883,10 @@
     <ClInclude Include="..\..\..\src\protocols\antibody\design\AntibodyDesignEnumManager.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\design\NativeAntibodySeq.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\design\AntibodyDesignMover.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\antibody\design\AntibodyDesignProtocol.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\design\AntibodySeqDesignTFCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\design\AntibodyDesignMoverCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\design\NativeAntibodySeq.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\design\util.hh" />
-    <ClInclude Include="..\..\..\src\protocols\antibody\design\AntibodyDesignProtocol.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\clusters\CDRClusterMatcher.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\clusters\CDRClusterFeaturesCreator.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\clusters\CDRClusterFeatures.hh" />
@@ -4025,7 +3962,6 @@
     <ClInclude Include="..\..\..\src\protocols\antibody\GraftCDRLoopsProtocol.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\AntibodyNumberingConverterMover.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\AntibodyFeatures.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\antibody\RefineOneCDRLoopCentroid.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\AntibodyNumberingParser.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\AntibodyInfo.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\H3PerturbCCD.fwd.hh" />
@@ -4040,7 +3976,6 @@
     <ClInclude Include="..\..\..\src\protocols\antibody\AntibodyNumberingConverterMover.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\AntibodyEnum.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\LHRepulsiveRamp.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\antibody\ModelCDRH3.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\AntibodyCDRGrafter.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\GraftedStemOptimizer.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\util.hh" />
@@ -4048,13 +3983,10 @@
     <ClInclude Include="..\..\..\src\protocols\antibody\AntibodyEnumManager.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\Ab_TemplateInfo.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\AntibodyEnumManager.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\antibody\RefineOneCDRLoop.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\AntibodyNumberingParser.hh" />
-    <ClInclude Include="..\..\..\src\protocols\antibody\RefineOneCDRLoopCentroid.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\H3RefineCCD.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\H3CterInsert.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\H3RefineCCD.hh" />
-    <ClInclude Include="..\..\..\src\protocols\antibody\RefineOneCDRLoop.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\AntibodyCDRGrafter.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\Ab_TemplateInfo.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\CloseOneCDRLoop.fwd.hh" />
@@ -4068,7 +4000,6 @@
     <ClInclude Include="..\..\..\src\protocols\antibody\GraftedStemOptimizer.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\CDRsMinPackMin.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\RefineBetaBarrel.hh" />
-    <ClInclude Include="..\..\..\src\protocols\antibody\ModelCDRH3.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\database\CDRSetOptionsParser.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\database\CDRSetOptions.hh" />
     <ClInclude Include="..\..\..\src\protocols\antibody\database\AntibodyDatabaseManager.hh" />
@@ -4185,8 +4116,6 @@
     <ClInclude Include="..\..\..\src\protocols\cyclic_peptide_predict\SimpleCycpepPredictApplication.hh" />
     <ClInclude Include="..\..\..\src\protocols\cyclic_peptide_predict\util.hh" />
     <ClInclude Include="..\..\..\src\protocols\cyclic_peptide_predict\SimpleCycpepPredictApplication_MPI.fwd.hh" />
-    <ClInclude Include="..\..\..\src\protocols\cyclic_peptide_predict\SimpleCycpepPredictApplication_MPI_JobResultsSummary.hh" />
-    <ClInclude Include="..\..\..\src\protocols\cyclic_peptide_predict\SimpleCycpepPredictApplication_MPI_JobResultsSummary.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\cyclic_peptide_predict\SimpleCycpepPredictApplication_MPI.hh" />
     <ClInclude Include="..\..\..\src\protocols\hbnet\HBNet.fwd.hh" />
     <ClInclude Include="..\..\..\src\protocols\hbnet\HBNetScore.hh" />

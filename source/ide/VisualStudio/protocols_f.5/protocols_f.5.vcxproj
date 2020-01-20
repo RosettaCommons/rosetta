@@ -588,26 +588,6 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_f.5__protocols__RotamerDump__RotamerDumpMover.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_f.5__protocols__RotamerDump__RotamerDumpMover.xdc</XMLDocumentationFileName>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\protocols\make_rot_lib\MakeRotLib.cc">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|x64'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.xdc</XMLDocumentationFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|x64'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|Win32'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.xdc</XMLDocumentationFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.xdc</XMLDocumentationFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.xdc</XMLDocumentationFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='BoincRelease|x64'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLib.xdc</XMLDocumentationFileName>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\protocols\make_rot_lib\MakeRotLibOptionsData.cc">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|Win32'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLibOptionsData.obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='BoincDebug|x64'">$(IntDir)protocols_f.5__protocols__make_rot_lib__MakeRotLibOptionsData.obj</ObjectFileName>

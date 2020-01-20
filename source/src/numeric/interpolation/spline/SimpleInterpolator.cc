@@ -17,6 +17,7 @@
 
 #include <utility>
 #include <utility/tools/make_vector.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
