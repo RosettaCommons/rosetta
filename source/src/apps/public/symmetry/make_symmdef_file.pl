@@ -1128,7 +1128,7 @@ if ($helix_mode == 1) {
 	}
 	my $helix_R = vnorm( vsub( $COM_0, $helix_center ) );
 
-	print STDERR "	 omega = ".($omega * 180.0/PI)." degrees\n";
+	print STDERR "	 omega = ".(2*$omega * 180.0/PI)." degrees\n";
 	print STDERR "	 helical center: ".$helix_center->[0]." , ".$helix_center->[1]." , ".$helix_center->[2]."\n";
 	print STDERR "	 helical axis: ".$helical_axis->[0]." , ".$helical_axis->[1]." , ".$helical_axis->[2]."\n";
 
