@@ -123,7 +123,13 @@ void TryDisulfPermutations::apply (
 	// Exit if there are no disulfide-forming residues:
 	if ( disulf_res.size() == 0 ) {
 		if ( TR.Warning.visible() ) {
-			TR.Warning << "The TryDisulfPermutations mover was applied to a pose that has no disulfide-forming residues.  The input pose is returned." << std::endl;
+			TR.Warning << "The TryDisulfPermutations mover was applied to a pose that has no disulfide-forming residues.  No disulfides are possible.  The input pose is returned." << std::endl;
+			TR.Warning.flush();
+		}
+		return;
+	} else if ( disulf_res.size() == 1 ) {
+		if ( TR.Warning.visible() ) {
+			TR.Warning << "The TryDisulfPermutations mover was applied to a pose that has only one disulfide-forming residue.  No disulfides are possible.  The input pose is returned." << std::endl;
 			TR.Warning.flush();
 		}
 		return;

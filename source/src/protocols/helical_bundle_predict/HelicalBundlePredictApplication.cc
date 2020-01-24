@@ -193,6 +193,7 @@ HelicalBundlePredictApplicationOptions::set_fasta_file_contents(
 	std::string const & contents_in
 ) {
 	fasta_file_contents_ = contents_in;
+	clean_fasta_file_contents();
 }
 
 /// @brief Set the contents of the helix assignment file.
@@ -217,7 +218,42 @@ HelicalBundlePredictApplicationOptions::read_inputs() {
 void
 HelicalBundlePredictApplicationOptions::read_fasta() {
 	runtime_assert_string_msg( !fasta_file_.empty(), "Error in protocols::helical_bundle_predict::HelicalBundlePredictApplication::read_fasta(): An empty FASTA filename was provided." );
-	fasta_file_contents_ = utility::file_contents( fasta_file_ );
+	set_fasta_file_contents( utility::file_contents( fasta_file_ ) );
+}
+
+/// @brief Given a set of characters, find the first instance of any of them in a string
+/// and return the (zero-based) index of that character.
+core::Size
+HelicalBundlePredictApplicationOptions::findchar(
+	std::string const & curstring,
+	utility::vector1< char > const & chars
+) const {
+	debug_assert( chars.size() != 0 );
+	core::Size returnval(0);
+	bool first( true );
+
+	for ( char const curchar : chars ) {
+		core::Size const curpos( curstring.find( &curchar ) );
+		if ( first || curpos < returnval ) {
+			first = false;
+			returnval = curpos;
+		}
+	}
+	return returnval;
+}
+
+/// @brief Given FASTA file contents, remove comment lines.
+void
+HelicalBundlePredictApplicationOptions::clean_fasta_file_contents() {
+	if ( fasta_file_contents_.empty() ) return; //Do nothing if no contents.
+	utility::vector1< std::string > const lines( utility::split_by_newlines( fasta_file_contents_ ) );
+	std::stringstream outstream;
+	for ( std::string const & line : lines ) {
+		std::string linecut( line.substr( 0, findchar( line, { ';', '>' } ) ) );
+		outstream << linecut << "\n";
+	}
+	fasta_file_contents_ = outstream.str();
+	TR << "Trimmed FASTA file contents to:\n" << fasta_file_contents_ << std::endl;
 }
 
 /// @brief Read a helix assignemnt file from disk.
@@ -594,7 +630,7 @@ HelicalBundlePredictApplication::set_up_centroid_move_generator() {
 /// @brief Construct a pose from the contents of a FASTA file.  The conformation is set to linear at this point.
 core::pose::PoseOP
 HelicalBundlePredictApplication::make_pose_from_fasta_contents() const {
-	static std::string const errmsg( "Error in protocols::helical_bundle_predict::HelicalBundlePredictApplication::read_fasta_and_make_pose(): " );
+	static std::string const errmsg( "Error in protocols::helical_bundle_predict::HelicalBundlePredictApplication::make_pose_from_fasta_contents(): " );
 	runtime_assert_string_msg( !options_->fasta_file_contents().empty(), errmsg + "An empty string was provided for the FASTA file contents." );
 
 	core::pose::PoseOP pose( utility::pointer::make_shared< core::pose::Pose >() );

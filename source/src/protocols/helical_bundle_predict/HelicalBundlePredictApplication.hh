@@ -124,6 +124,13 @@ private: //Functions
 	/// @brief Read a FASTA file from disk.
 	void read_fasta();
 
+	/// @brief Given a set of characters, find the first instance of any of them in a string
+	/// and return the (zero-based) index of that character.
+	core::Size findchar( std::string const & curstring, utility::vector1< char > const & chars ) const;
+
+	/// @brief Given FASTA file contents, remove comment lines.
+	void clean_fasta_file_contents();
+
 	/// @brief Read a helix assignemnt file from disk.
 	void read_helix_assignments();
 
