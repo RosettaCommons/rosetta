@@ -109,7 +109,7 @@ MRSJobQueen::MRSJobQueen() :
 	has_been_initialized_( false ),
 	num_input_structs_( 0 ),
 	num_stages_( 0 ),
-	most_recent_pose_id_( 0, 0 )
+	most_recent_pose_id_( 0, nullptr )
 {
 	set_common_block_precedes_job_blocks( false );
 	rosetta_scripts::RosettaScriptsParser::register_factory_prototypes();
@@ -147,7 +147,7 @@ MRSJobQueen::cluster (
 	std::remove_if( results_from_previous_stage.begin(), results_from_previous_stage.end(), is_empty_dummy );
 
 	//populate_vector
-	utility::vector1< cluster::ClusterMetricCOP > points ( results_from_previous_stage.size(), 0 );
+	utility::vector1< cluster::ClusterMetricCOP > points ( results_from_previous_stage.size(), nullptr );
 	for ( core::Size ii=1; ii<= results_from_previous_stage.size(); ++ii ) {
 		ResultElements const & elem = results_from_previous_stage[ ii ];
 		debug_assert( cluster_data_for_results_of_stage_[ stage_being_clustered ][ elem.job_result_id() ] );
@@ -222,7 +222,7 @@ MRSJobQueen::determine_job_list(
 		}
 		LocalJobID const local_job_id( node_managers_[ job_dag_node_index ]->get_next_local_jobid() );
 
-		LarvalJobOP larval_job = 0;
+		LarvalJobOP larval_job = nullptr;
 		if ( job_dag_node_index == 1 ) {
 			larval_job = get_nth_job_for_initial_stage( local_job_id );
 		} else {
@@ -263,7 +263,7 @@ MRSJobQueen::complete_larval_job_maturation(
 	unsigned int const global_job_id = job->job_index();
 	unsigned int const stage = stage_for_global_job_id( jd3::GlobalJobID( global_job_id ) );
 
-	core::pose::PoseOP pose = 0;
+	core::pose::PoseOP pose = nullptr;
 	if ( stage == 1 ) {
 		utility::vector1< standard::PreliminaryLarvalJob > const & all_preliminary_larval_jobs = get_preliminary_larval_jobs();
 		InnerLarvalJobCOP inner_job = all_preliminary_larval_jobs[ input_pose_id ].inner_job;
@@ -562,13 +562,13 @@ MRSJobQueen::get_nth_job_for_noninitial_stage(
 	//0-indexing equivalent: num_jobs_per_input_for_stage_[ stage-1 ] / local_job_id
 	jd3::JobResultID input_job_result;
 	if ( cluster_metric_tag_for_stage_[ stage - 1 ] ) {
-		if ( local_job_id > most_recent_cluster_results_.size() ) return 0;
+		if ( local_job_id > most_recent_cluster_results_.size() ) return nullptr;
 		input_job_result = most_recent_cluster_results_[ prev_job_result_id ];
 	} else {
 		input_job_result = node_managers_[ stage-1 ]->get_nth_job_result_id( prev_job_result_id );
 	}
 
-	if ( !input_job_result.first && !input_job_result.second ) return 0;
+	if ( !input_job_result.first && !input_job_result.second ) return nullptr;
 
 	PrelimJobNodeID const pose_input_source_id(
 		input_pose_id_for_jobid( jd3::GlobalJobID( input_job_result.first ) ) );
@@ -823,7 +823,7 @@ void MRSJobQueen::parse_common_tag( utility::tag::TagCOP common_tag ){
 			for ( utility::tag::TagCOP stage_subtag : protocol_subtags ) {
 				if ( stage_subtag->getName() == "Stage" ) {
 					++current_stage;
-					cluster_metric_tag_for_stage_.push_back( 0 );
+					cluster_metric_tag_for_stage_.push_back( nullptr );
 					num_results_to_keep_after_clustering_for_stage_.push_back( 0 );
 					if ( stage_subtag->getOption< bool > ("merge_results_after_this_stage", false ) ) {
 						stage_to_merge_after = current_stage;

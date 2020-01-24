@@ -350,7 +350,7 @@ void SliceToMiniProteinMover::parse_my_tag(
 	if ( tag->hasOption( "relax_mover" ) ) {
 		relax_mover_ = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover"), movers );
 	} else {
-		relax_mover_=NULL;
+		relax_mover_ = nullptr;
 	}
 
 

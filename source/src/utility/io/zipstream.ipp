@@ -82,13 +82,13 @@ basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::basic_zip_streambuf(
 	m_buffer( buffer_size_, 0 ),
 	m_crc( 0 )
 {
-	m_zip_stream.zalloc = (alloc_func)0;
-	m_zip_stream.zfree = (free_func)0;
+	m_zip_stream.zalloc = nullptr;
+	m_zip_stream.zfree = nullptr;
 
-	m_zip_stream.next_in = NULL;
+	m_zip_stream.next_in = nullptr;
 	m_zip_stream.avail_in = 0;
 	m_zip_stream.avail_out = 0;
-	m_zip_stream.next_out = NULL;
+	m_zip_stream.next_out = nullptr;
 
 	m_err = deflateInit2(
 		&m_zip_stream,
@@ -329,10 +329,10 @@ void basic_zip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::reset_state()
 {
 	m_crc = 0;
 
-	m_zip_stream.next_in = NULL;
+	m_zip_stream.next_in = nullptr;
 	m_zip_stream.avail_in = 0;
 	m_zip_stream.avail_out = 0;
-	m_zip_stream.next_out = NULL;
+	m_zip_stream.next_out = nullptr;
 
 	m_err = deflateReset( &m_zip_stream );
 }
@@ -357,13 +357,13 @@ basic_unzip_streambuf< Elem, Tr, ElemA, ByteT, ByteAT >::basic_unzip_streambuf(
 	m_crc( 0 )
 {
 	// setting zalloc, zfree and opaque
-	m_zip_stream.zalloc = (alloc_func)0;
-	m_zip_stream.zfree = (free_func)0;
+	m_zip_stream.zalloc = nullptr;
+	m_zip_stream.zfree = nullptr;
 
-	m_zip_stream.next_in = NULL;
+	m_zip_stream.next_in = nullptr;
 	m_zip_stream.avail_in = 0;
 	m_zip_stream.avail_out = 0;
-	m_zip_stream.next_out = NULL;
+	m_zip_stream.next_out = nullptr;
 
 	m_err = inflateInit2( &m_zip_stream, -static_cast< int >( window_size_ ) );
 

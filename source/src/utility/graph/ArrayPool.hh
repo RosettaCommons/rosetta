@@ -127,7 +127,7 @@ template < class T >
 class NegSpaceElement
 {
 public:
-	NegSpaceElement() : next_( 0 ), array_( 0 ), allocated_( false )
+	NegSpaceElement() : next_( nullptr ), array_( nullptr ), allocated_( false )
 	{}
 
 	NegSpaceElement( NegSpaceElement * next,  T * array ) :
@@ -346,9 +346,9 @@ public:
 	/// will enlarge the pool if it has grown to its capacity.
 	ArrayPoolElement< T >
 	new_array() {
-		if ( neg_begin_.next() == 0 ) create_new_block();
+		if ( neg_begin_.next() == nullptr ) create_new_block();
 		NegSpaceElement< T > * first = neg_begin_.pop();
-		debug_assert( first != 0 );
+		debug_assert( first != nullptr );
 		debug_assert( first->allocated() == false );
 
 		first->set_allocated( true );
@@ -367,7 +367,7 @@ public:
 		debug_assert( mine( element.neg_ptr_ ) );
 
 		NegSpaceElement< T > * neg_element = element.neg_ptr_;
-		debug_assert( neg_element != 0 );
+		debug_assert( neg_element != nullptr );
 		debug_assert( neg_element->allocated() );
 
 		neg_begin_.insert_after( neg_element );
@@ -390,18 +390,18 @@ private:
 	/// at null, or with having an array that is never examined, and so it is supported.
 	void create_new_block()
 	{
-		debug_assert( neg_begin_.next() == 0 );
+		debug_assert( neg_begin_.next() == nullptr );
 		if ( array_size_ != 0 ) {
 
 			auto * const neg_block = new NegSpaceElement< T >[ block_size_ ];
 
-			if ( neg_block == 0 ) {
+			if ( neg_block == nullptr ) {
 				utility_exit_with_message( neg_space_element_allocation_error_message( block_size_, sizeof( NegSpaceElement< T > )));
 			}
 
 			auto * const t_block = new T[ block_size_ * array_size_ ];
 
-			if ( t_block == 0 ) {
+			if ( t_block == nullptr ) {
 				utility_exit_with_message( block_allocation_error_message( block_size_, array_size_, sizeof( T )));
 			}
 
@@ -419,7 +419,7 @@ private:
 				++neg_iter;
 				last->set_next( neg_iter );
 			}
-			neg_iter->set_next( 0 );
+			neg_iter->set_next( nullptr );
 			neg_begin_.set_next( neg_block );
 
 			++nblocks_;
@@ -430,11 +430,11 @@ private:
 			/// 0-size array support.
 			auto * const neg_block = new NegSpaceElement< T >[ block_size_ ];
 
-			if ( neg_block == 0 ) {
+			if ( neg_block == nullptr ) {
 				utility_exit_with_message( neg_space_element_allocation_error_message( block_size_, sizeof( NegSpaceElement< T > )));
 			}
 
-			T * const t_block = 0;
+			T * const t_block = nullptr;
 			NegSpaceElement< T > * neg_iter  = neg_block;
 
 			for ( platform::Size ii = 1; ii <= block_size_; ++ii ) {
@@ -447,7 +447,7 @@ private:
 				++neg_iter;
 				last->set_next( neg_iter );
 			}
-			neg_iter->set_next( 0 );
+			neg_iter->set_next( nullptr );
 			neg_begin_.set_next( neg_block );
 
 			++nblocks_;
@@ -480,7 +480,7 @@ private:
 
 		nblocks_ = 0;
 		nnegative_ = 0;
-		neg_begin_.set_next( 0 );
+		neg_begin_.set_next( nullptr );
 	}
 
 

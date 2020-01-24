@@ -45,7 +45,7 @@ public:
 	BuriedUnsatHbondFilter();
 	// @brief constructor with options
 	BuriedUnsatHbondFilter(core::Size const upper_threshold,
-		core::select::residue_selector::ResidueSelectorOP residue_selector=NULL,
+		core::select::residue_selector::ResidueSelectorOP residue_selector=nullptr,
 		bool const use_legacy_options=false,
 		bool const generous_hbonds=true,
 		bool const use_vasa=true,
@@ -198,7 +198,7 @@ private:
 	core::Size jump_num_;
 	core::select::residue_selector::ResidueSelectorOP residue_selector_;
 	core::scoring::ScoreFunctionCOP sfxn_;
-	core::pack::task::TaskFactoryOP task_factory_; // dflt NULL; only residues defined as packable by the taskoperations will be tested for burial
+	core::pack::task::TaskFactoryOP task_factory_; // dflt nullptr; only residues defined as packable by the taskoperations will be tested for burial
 };
 
 }

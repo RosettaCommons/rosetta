@@ -108,7 +108,7 @@ MembraneSpanConstraint::show( std::ostream & out ) const {
 ConstraintOP
 MembraneSpanConstraint::remap_resid( core::id::SequenceMapping const & ) const
 {
-	return NULL;
+	return nullptr;
 }
 
 bool

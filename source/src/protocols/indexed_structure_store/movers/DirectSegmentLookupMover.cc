@@ -87,11 +87,11 @@ DirectSegmentLookupMover::apply(core::pose::Pose & pose) {
 core::pose::PoseOP
 DirectSegmentLookupMover::get_additional_output() {
 	if ( !(lookup_result_index_ < lookup_results_.size() - 1) ) {
-		return NULL;
+		return nullptr;
 	}
 
 	if ( !(lookup_result_index_ < max_num_results_) && (max_num_results_ > 0) ) {
-		return NULL;
+		return nullptr;
 	}
 
 	lookup_result_index_ += 1;

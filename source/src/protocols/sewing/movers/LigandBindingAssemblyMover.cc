@@ -90,7 +90,7 @@ void
 LigandBindingAssemblyMover::apply( core::pose::Pose & pose ){
 
 
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 	set_last_move_status(protocols::moves::MS_SUCCESS);
 	data_storage::SmartAssemblyOP assembly = set_up_assembly( pose );
 	LigandBindingAssemblyMover::generate_assembly( assembly, pose);
@@ -105,7 +105,7 @@ LigandBindingAssemblyMover::apply( core::pose::Pose & pose ){
 		return;
 	}
 
-	core::Size endttime = time(NULL);
+	core::Size endttime = time(nullptr);
 
 	TR << "Assembly successfully generated in " << endttime - starttime << " seconds" << std::endl;
 

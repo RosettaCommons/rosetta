@@ -68,7 +68,7 @@ public:
 	/// @brief default constructor
 	MathVector< T>() :
 	size_( 0),
-	data_( NULL)
+	data_( nullptr )
 	{
 	}
 

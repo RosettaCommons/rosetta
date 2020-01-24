@@ -485,8 +485,8 @@ bool MHCEpitopeEnergySetup::operator == ( MHCEpitopeEnergySetup const & other ) 
 	if ( apply_offset_ != other.get_apply_offset() ) return false;
 	if ( relative_additive_ != other.get_relative_additive() ) return false;
 	if ( score_offset_ != other.get_score_offset() ) return false;
-	if ( predictor_ == NULL && other.predictor_ != NULL ) return false;
-	if ( predictor_ != NULL && !(*predictor_ == *other.predictor_) ) return false;
+	if ( predictor_ == nullptr && other.predictor_ != nullptr ) return false;
+	if ( predictor_ != nullptr && !(*predictor_ == *other.predictor_) ) return false;
 	return true;
 }
 

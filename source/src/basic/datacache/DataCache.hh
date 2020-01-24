@@ -93,7 +93,7 @@ public: // constructors
 	/// @param[in] n_types The number of slots for this DataCache.
 	DataCache( std::size_t n_slots ) :
 		Super(),
-		data_( n_slots, 0 )
+		data_( n_slots, nullptr )
 	{}
 
 
@@ -125,7 +125,7 @@ public: // assignment
 				if ( src.data_[i] ) {
 					data_[i] = src.data_[i]->clone();
 				} else {
-					data_[i] = 0;
+					data_[i] = nullptr;
 				}
 			}
 		}
@@ -151,7 +151,7 @@ public: // state
 	void
 	resize( std::size_t n_slots )
 	{
-		data_.resize( n_slots, 0 );
+		data_.resize( n_slots, nullptr );
 	}
 
 
@@ -160,7 +160,7 @@ public: // state
 	void
 	clear()
 	{
-		data_.assign( data_.size(), 0 );
+		data_.assign( data_.size(), nullptr );
 	}
 
 
@@ -169,7 +169,7 @@ public: // state
 	void
 	clear( std::size_t slot )
 	{
-		data_[ slot ] = 0;
+		data_[ slot ] = nullptr;
 	}
 
 
@@ -178,7 +178,7 @@ public: // state
 	bool
 	has( std::size_t slot ) const
 	{
-		return ( data_[ slot ] != 0 );
+		return ( data_[ slot ] != nullptr );
 	}
 
 

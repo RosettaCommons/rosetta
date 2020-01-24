@@ -234,9 +234,9 @@ public: // library operations
 			TR.Debug << "Cataloging " << library.size() << " residues in fragment library..." << std::endl;
 		}
 
-		time_t time_start = time( NULL );
+		time_t time_start = time( nullptr );
 		bool const status = Super::catalog( library, lt );
-		time_t time_end = time( NULL );
+		time_t time_end = time( nullptr );
 
 		if ( TR.Debug.visible() ) {
 			TR.Debug << "... done.  " << scores().size() << " scores filed.  Time elapsed: " << ( time_end - time_start ) << " seconds." << std::endl;

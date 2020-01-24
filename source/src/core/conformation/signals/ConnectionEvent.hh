@@ -68,7 +68,7 @@ struct ConnectionEvent { // do not derive from GeneralEvent
 	/// @brief default constructor
 	inline
 	ConnectionEvent() :
-		conformation( NULL ),
+		conformation( nullptr ),
 		tag( EMPTY )
 	{}
 

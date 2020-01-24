@@ -217,7 +217,7 @@ Real SSElementBisectddGFilter::get_ddg_bisect_score(Size element, protocols::loo
 	}
 	utility::vector1<core::Size> chain1 = get_resnums_for_chain_id(nTerm_pose,1);
 	utility::vector1<core::Size> chain2 = get_resnums_for_chain_id(nTerm_pose,2);
-	if ( relax_mover_!=NULL ) { //dflt NULL; in the unbound state, prior to taking the energy, should we do any relaxation
+	if ( relax_mover_!=nullptr ) { //dflt nullptr; in the unbound state, prior to taking the energy, should we do any relaxation
 		ddg_filter.relax_mover(relax_mover_);
 	}
 	Real ddG =0;
@@ -326,7 +326,7 @@ SSElementBisectddGFilter::parse_my_tag(
 	if ( tag->hasOption( "relax_mover" ) ) {
 		relax_mover_ = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover"), movers );
 	} else {
-		relax_mover_=NULL;
+		relax_mover_ = nullptr;
 	}
 
 }

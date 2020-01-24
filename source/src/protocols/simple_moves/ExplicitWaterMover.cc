@@ -398,9 +398,9 @@ ExplicitWaterMover::setup_pack( core::pose::Pose & pose ) {
 	runtime_assert ( sf_ );
 
 	// process task factory & validate task
-	if ( task_factory_ != 0 ) {
+	if ( task_factory_ != nullptr ) {
 		task_ = task_factory_->create_task_and_apply_taskoperations( pose );
-	} else if ( task_ == 0 ) {
+	} else if ( task_ == nullptr ) {
 		TR << "No packer task defined!  Generating waters on fixed pose only!" << std::endl;
 		core::pack::task::PackerTaskOP task_new = core::pack::task::TaskFactory::create_packer_task( pose );
 		for ( Size i(1); i <= pose.total_residue(); ++i ) {
@@ -833,9 +833,9 @@ ExplicitWaterMover::run_pack(
 
 	annealer.set_min_dwell( dwell_cutoff_ );
 
-	time_t const pwatanneal_start = time(NULL);
+	time_t const pwatanneal_start = time(nullptr);
 	annealer.run();
-	TR << "time spent packing pwat = " << time(NULL) - pwatanneal_start << " seconds -- runtime" << std::endl;
+	TR << "time spent packing pwat = " << time(nullptr) - pwatanneal_start << " seconds -- runtime" << std::endl;
 
 	all_rot = annealer.get_dwell_times();
 }

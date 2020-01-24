@@ -59,7 +59,7 @@ public: // Creation
 	/// @brief Copy constructor
 	inline
 	VariantKey( VariantKey const & var ) :
-		key_p_( var.key_p_ ? var.key_p_->clone() : 0 )
+		key_p_( var.key_p_ ? var.key_p_->clone() : nullptr )
 	{}
 
 

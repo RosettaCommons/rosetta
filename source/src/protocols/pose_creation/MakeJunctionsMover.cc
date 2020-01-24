@@ -435,7 +435,7 @@ MakeJunctionsMover::apply( core::pose::Pose & pose )
 {
 	design_q_ = read_in_designs();
 	core::pose::PoseOP tmpPoseOP=get_additional_output();
-	if ( tmpPoseOP!=NULL ) {
+	if ( tmpPoseOP != nullptr ) {
 		pose=*tmpPoseOP;
 	}
 }

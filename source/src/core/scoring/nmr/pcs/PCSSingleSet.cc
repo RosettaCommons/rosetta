@@ -222,7 +222,7 @@ PCSSingleSet::init_from_pcs_filedata(
 	// If we perform PCS calculation with automatic deduction of protein symmetry,
 	// we resize the middle vector of the spin_coordinates_ array to the number of subunits
 	Size num_subunits(1);
-	conformation::symmetry::SymmetryInfoCOP syminfo_ptr = NULL;
+	conformation::symmetry::SymmetryInfoCOP syminfo_ptr = nullptr;
 	if ( symmetric_pcs_calc_ && is_symmetric( pose ) ) {
 		syminfo_ptr = symmetry_info( pose );
 		num_subunits = syminfo_ptr->subunits();
@@ -570,7 +570,7 @@ PCSSingleSet::update_spin_coordinates(pose::Pose const & pose) {
 	// Here we split behavior. If summetric_pcs_calc_ is true and the pose is indeed symmetric
 	// we deduce the symmetric spins from the pose and fill their coordinates in the middle vector of spin_coordinates_
 	Size num_subunits(1);
-	conformation::symmetry::SymmetryInfoCOP syminfo_ptr = NULL;
+	conformation::symmetry::SymmetryInfoCOP syminfo_ptr = nullptr;
 	if ( symmetric_pcs_calc_ && is_symmetric( pose ) ) {
 		syminfo_ptr = symmetry_info( pose );
 		num_subunits = syminfo_ptr->subunits();
@@ -799,7 +799,7 @@ PCSSingleSet::set_atom_derivatives(pose::Pose & pose) {
 		update_matrix_A(metal_coord_asu);
 
 		// Is pose symmetric?
-		conformation::symmetry::SymmetryInfoCOP syminfo_ptr = NULL;
+		conformation::symmetry::SymmetryInfoCOP syminfo_ptr = nullptr;
 		Size num_subunits(1);
 		if ( is_symmetric( pose ) ) {
 			syminfo_ptr = symmetry_info( pose );
@@ -884,7 +884,7 @@ PCSSingleSet::set_atom_derivatives(pose::Pose & pose) {
 		Real scal(1.0 / scaling_factor_);
 
 		// Is pose symmetric
-		conformation::symmetry::SymmetryInfoCOP syminfo_ptr = NULL;
+		conformation::symmetry::SymmetryInfoCOP syminfo_ptr = nullptr;
 		Size num_subunits(1);
 		if ( is_symmetric( pose ) ) {
 			syminfo_ptr = symmetry_info( pose );

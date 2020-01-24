@@ -66,16 +66,16 @@ static basic::Tracer TR( "core.scoring.constraints.SequenceProfileConstraint" );
 SequenceProfileConstraint::SequenceProfileConstraint()
 : Constraint( res_type_constraint ),
 	seqpos_(0),
-	sequence_profile_(/* NULL */),
-	mapping_(/* NULL */),
+	sequence_profile_(/* nullptr */),
+	mapping_(/* nullptr */),
 	weight_( 1.0 )
 {}
 
 SequenceProfileConstraint::SequenceProfileConstraint(
 	Pose const &,
 	Size seqpos,
-	SequenceProfileCOP profile /* = NULL */,
-	core::id::SequenceMappingCOP mapping /* = NULL */ // current pose numbers onto profile numbers.
+	SequenceProfileCOP profile /* = nullptr */,
+	core::id::SequenceMappingCOP mapping /* = nullptr */ // current pose numbers onto profile numbers.
 ):
 	Constraint( res_type_constraint ),
 	seqpos_( seqpos ),
@@ -86,8 +86,8 @@ SequenceProfileConstraint::SequenceProfileConstraint(
 
 SequenceProfileConstraint::SequenceProfileConstraint(
 	Size seqpos,
-	SequenceProfileCOP sequence_profile /* = NULL */,
-	core::id::SequenceMappingCOP mapping /* = NULL */ // current pose numbers onto profile numbers.
+	SequenceProfileCOP sequence_profile /* = nullptr */,
+	core::id::SequenceMappingCOP mapping /* = nullptr */ // current pose numbers onto profile numbers.
 ):
 	Constraint( res_type_constraint ),
 	seqpos_( seqpos ),
@@ -268,7 +268,7 @@ ConstraintOP
 SequenceProfileConstraint::remapped_clone(
 	pose::Pose const&,
 	pose::Pose const&,
-	id::SequenceMappingCOP map /*=NULL*/ ) const
+	id::SequenceMappingCOP map /*=nullptr*/ ) const
 {
 	if ( ! map ) {
 		return clone();

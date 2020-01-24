@@ -2083,7 +2083,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::operator ==( SingleResidueRotamer
 
 	// Raw pointer okay, we're just using it to check for conversion
 	RotamericSingleResidueDunbrackLibrary< T, N > const * ptr( dynamic_cast< RotamericSingleResidueDunbrackLibrary< T, N > const * > ( &rhs ) );
-	if ( ptr == 0 ) {
+	if ( ptr == nullptr ) {
 		TR << "In comparison operator: right-hand side is not a matching RotamericSingleResidueDunbrackLibrary." << std::endl;
 		return false;
 	}

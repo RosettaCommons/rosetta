@@ -38,13 +38,13 @@ public:
 	RNA_AtrRepChecker( core::pose::Pose const & pose,
 		working_parameters::StepWiseWorkingParametersCOP & working_parameters,
 		bool const loose_rep_cutoff = false,
-		core::scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0 );
+		core::scoring::methods::EnergyMethodOptionsCOP energy_method_options = nullptr );
 
 	RNA_AtrRepChecker( core::pose::Pose const & pose,
 		core::Size const moving_res,
 		core::Size const reference_res,
 		core::Size const gap_size,
-		core::scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0
+		core::scoring::methods::EnergyMethodOptionsCOP energy_method_options = nullptr
 	);
 
 	//destructor
@@ -75,7 +75,7 @@ private:
 	get_base_atr_rep_score( core::pose::Pose const & pose );
 
 	void
-	initialize_scorefxn( core::scoring::methods::EnergyMethodOptionsCOP energy_method_options = 0 );
+	initialize_scorefxn( core::scoring::methods::EnergyMethodOptionsCOP energy_method_options = nullptr );
 
 	void
 	initialize_parameters();

@@ -206,7 +206,7 @@ public:
 
 	explicit Semantic_actions( Value_type& value )
 	:   value_( value )
-		,   current_p_( 0 )
+		,   current_p_( nullptr )
 	{
 	}
 
@@ -293,7 +293,7 @@ private:
 
 	Value_type* add_first( const Value_type& value )
 	{
-		assert( current_p_ == 0 );
+		assert( current_p_ == nullptr );
 
 		value_ = value;
 		current_p_ = &value_;
@@ -303,7 +303,7 @@ private:
 	template< class Array_or_obj >
 	void begin_compound()
 	{
-		if ( current_p_ == 0 ) {
+		if ( current_p_ == nullptr ) {
 			add_first( Array_or_obj() );
 		} else {
 			stack_.push_back( current_p_ );
@@ -325,7 +325,7 @@ private:
 
 	Value_type* add_to_current( const Value_type& value )
 	{
-		if ( current_p_ == 0 ) {
+		if ( current_p_ == nullptr ) {
 			return add_first( value );
 		} else if ( current_p_->type() == array_type ) {
 			current_p_->get_array().push_back( value );

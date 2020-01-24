@@ -315,14 +315,14 @@ protected:
 	{
 		core::pack::interaction_graph::EdgeBase const * edge = find_edge( node1, node2 );
 		if ( edge ) return static_cast< OTFFlexbbEdge const * > ( edge );
-		else return 0;
+		else return nullptr;
 	}
 
 	OTFFlexbbEdge * find_otfflexbb_edge( int node1, int node2 )
 	{
 		core::pack::interaction_graph::EdgeBase * edge = find_edge( node1, node2 );
 		if ( edge ) return static_cast< OTFFlexbbEdge * > ( edge );
-		else return 0;
+		else return nullptr;
 	}
 
 	OTFFlexbbEdge const * cast_otfflexbb_edge( EdgeBase const * edge ) const

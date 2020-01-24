@@ -40,7 +40,7 @@ public:
 	FragmentCM();
 
 	FragmentCM( simple_moves::FragmentMoverOP,
-		core::select::residue_selector::ResidueSelectorCOP = NULL );
+		core::select::residue_selector::ResidueSelectorCOP = nullptr );
 
 	virtual void set_selector( core::select::residue_selector::ResidueSelectorCOP );
 

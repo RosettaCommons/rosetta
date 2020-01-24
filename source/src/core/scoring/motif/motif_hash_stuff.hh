@@ -258,7 +258,7 @@ public:
 	inline void count(Size const & count)                                { count_ = count; }
 	inline void addcount()                                         { if ( count_<255 ) ++count_; }
 	std::string tag() const;
-	bool filter(RPM_FilterStats *stat=NULL) const;
+	bool filter(RPM_FilterStats *stat=nullptr) const;
 
 	/*TODO;*/
 	void dump_pdb(std::ostream & out, numeric::xyzTransform<Real> const & xform=Xform::identity(), std::string tag="1") const;
@@ -571,8 +571,8 @@ private:
 
 void preload_motif_data(MotifHashManager & mman);
 
-void load_motifs(utility::vector1<std::string> const & fnames, ResPairMotifs & motifs, ResPairMotifsStringMap * map=NULL);
-void load_motifs(std::string const & fname, ResPairMotifs & motifs, ResPairMotifsStringMap * map=NULL);
+void load_motifs(utility::vector1<std::string> const & fnames, ResPairMotifs & motifs, ResPairMotifsStringMap * map=nullptr);
+void load_motifs(std::string const & fname, ResPairMotifs & motifs, ResPairMotifsStringMap * map=nullptr);
 
 
 }

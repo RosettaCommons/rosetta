@@ -1248,7 +1248,7 @@ BaseEtableEnergy< Derived >::evaluate_rotamer_background_energies(
 		( pose.energies().data().get( EnergiesCacheableDataType::ETABLE_TRIE_COLLECTION )) ).trie( residue.seqpos() );
 
 	//fpd
-	if ( trie2 == NULL ) return;
+	if ( trie2 == nullptr ) return;
 
 	//prepare_for_residue_pair( set.resid(), residue.seqpos(), pose );
 
@@ -1435,7 +1435,7 @@ BaseEtableEnergy< Derived >::create_rotamer_trie(
 		/// As of 10/21, all count pair data combinations should be covered. This code should not execute.
 		std::cerr << "Unsupported number of residue connections in trie construction." << std::endl;
 		utility_exit();
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -1469,7 +1469,7 @@ BaseEtableEnergy< Derived >::create_rotamer_trie(
 		/// As of 10/21, all count pair data combinations should be covered. This code should not execute.
 		std::cerr << "Unsupported number of residue connections in trie construction." << std::endl;
 		utility_exit();
-		return 0;
+		return nullptr;
 	}
 }
 

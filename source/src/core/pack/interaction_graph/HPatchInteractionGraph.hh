@@ -1124,7 +1124,7 @@ void HPatchNode< V, E, G >::initialize_overlap_with_background(
 	std::vector< utility::vector1< utility::vector1< bool > > > & states_atom_atom_overlap_on_bg_res
 ) {
 
-	std::vector< RotamerDotsCache* > v_dots_for_bg_res( (Size)parent::get_num_states() + 1, static_cast< RotamerDotsCache* >(0) );
+	std::vector< RotamerDotsCache* > v_dots_for_bg_res( (Size)parent::get_num_states() + 1, nullptr );
 
 	// since there's no way to default init the atom-atom overlap vector, we have to make sure we set every index, even 0
 	utility::vector1< utility::vector1< bool > > zero_vector( bg_rotamer_dots.get_num_atoms(), utility::vector1< bool >( bg_rotamer_dots.get_num_atoms(), false ) );

@@ -133,7 +133,7 @@ void SpliceManager::generate_profile_from_seq(std::map< std::string/*1AHW*/, std
 core::sequence::SequenceProfileOP
 SpliceManager::generate_sequence_profile(core::pose::Pose & pose) {
 	if ( !use_sequence_profiles_ ) {
-		return NULL;
+		return nullptr;
 	}
 	using namespace core::sequence;
 	using namespace std;
@@ -162,7 +162,7 @@ SpliceManager::generate_sequence_profile(core::pose::Pose & pose) {
 	for ( std::string const &segment_type: segment_names_ordered_ ) { //<- Start of PDB segment iterator
 		TR<<"segment_type: "<<segment_type<<std::endl;
 		TR<<"Map size: "<<splice_segments_[ segment_type ]->pdb_to_profile_map().size()<<std::endl;
-		if ( splice_segments_[ segment_type ]->pdb_profile(pdb_segments_[segment_type])==0 ) {
+		if ( splice_segments_[ segment_type ]->pdb_profile(pdb_segments_[segment_type]) == nullptr ) {
 			utility_exit_with_message(" could not find the source pdb name: "+ pdb_segments_[segment_type]+ ", in pdb_profile_match file."+segment_type+" or PSSM file is missing\n");
 		}
 		TR<<"reading profile:"<< pdb_segments_[segment_type]<<std::endl;

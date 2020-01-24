@@ -109,7 +109,7 @@ using namespace protocols::simple_moves;
 
 MergePDBMover::MergePDBMover()
 : moves::Mover("MergePDB"),
-	xml_input_pose_( /* NULL */ )
+	xml_input_pose_( /* nullptr */ )
 {
 }
 
@@ -201,7 +201,7 @@ bool MergePDBMover::check_duplicate(Pose &pose){
 	Real min_distance=999;
 	Size min_position=999;
 	for ( Size ii=1; ii<=overlaps_.size(); ++ii ) {
-		if ( overlaps_[ii].output_poseOP != NULL ) {
+		if ( overlaps_[ii].output_poseOP != nullptr ) {
 			core::pose::PoseOP output_poseOP = overlaps_[ii].output_poseOP;
 			if ( pose.total_residue() == output_poseOP->total_residue() ) {
 				Size n_term_res = 1;
@@ -468,7 +468,7 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 		bool duplicate = check_duplicate(*output_poseOP);
 		if ( score0>clash_threshold_ || duplicate ) {
 			//no output
-			overlaps_[kk].output_poseOP = NULL;
+			overlaps_[kk].output_poseOP = nullptr;
 			TR << "ASYMMETRIC clash_check failed OR duplicate structure, tossing structure #: " << kk << std::endl;
 			continue;
 		}
@@ -534,7 +534,7 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 			bool const is_duplicate = check_duplicate(*output_poseOP);
 			if ( score_0>clash_threshold_ || is_duplicate ) {
 				//no output
-				overlaps_[kk].output_poseOP = NULL;
+				overlaps_[kk].output_poseOP = nullptr;
 				TR << "SYMMETRIC clash_check failed OR duplicate structure, tossing structure #: " << kk << std::endl;
 				continue;
 			}
@@ -755,9 +755,9 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 	bool early_complete = false; //true only if output_only_first_ is set to true and one object has been successfully produced
 	for ( Size kk=1; kk<=overlaps_.size(); ++kk ) {
 		if ( early_complete ) {
-			overlaps_[kk].output_poseOP=NULL; //get rid of all other poses
+			overlaps_[kk].output_poseOP=nullptr; //get rid of all other poses
 		}
-		if ( overlaps_[kk].output_poseOP != NULL ) { //if there are no overlaps in input
+		if ( overlaps_[kk].output_poseOP != nullptr ) { //if there are no overlaps in input
 			if ( detect_disulf_before_repack_ ) {
 				overlaps_[kk].output_poseOP->conformation().detect_disulfides();
 			}
@@ -857,7 +857,7 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 			Real score = sfxn_->score(*overlaps_[kk].output_poseOP);
 			TR << "score after pack and min" << score << "baseline_score" << baseline_score << std::endl;
 			if ( score>baseline_score ) {
-				overlaps_[kk].output_poseOP = NULL;
+				overlaps_[kk].output_poseOP = nullptr;
 			}
 			if ( score<baseline_score && output_only_first_ ) {
 				early_complete=true;
@@ -868,7 +868,7 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 
 core::pose::PoseOP MergePDBMover::get_additional_output(){
 	for ( Size ii=1; ii<=overlaps_.size(); ++ii ) {
-		if ( overlaps_[ii].output_yet==false && overlaps_[ii].output_poseOP != NULL ) {
+		if ( overlaps_[ii].output_yet==false && overlaps_[ii].output_poseOP != nullptr ) {
 			set_last_move_status(protocols::moves::MS_SUCCESS);
 			overlaps_[ii].output_yet=true;
 			if ( output_overlap_positions_ ) {

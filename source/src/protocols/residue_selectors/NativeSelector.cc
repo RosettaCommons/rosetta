@@ -57,8 +57,8 @@ namespace residue_selectors {
 static basic::Tracer TR( "protocols.residue_selectors.NativeSelector" );
 
 NativeSelector::NativeSelector():
-	selector_( 0 ),
-	native_( 0 )
+	selector_( nullptr ),
+	native_( nullptr )
 {}
 
 NativeSelector::NativeSelector( NativeSelector const & src ){
@@ -70,7 +70,7 @@ NativeSelector::NativeSelector(
 	core::select::residue_selector::ResidueSelectorCOP inner_selector
 ):
 	selector_( std::move( inner_selector ) ),
-	native_( 0 )
+	native_( nullptr )
 {}
 
 NativeSelector::~NativeSelector() = default;

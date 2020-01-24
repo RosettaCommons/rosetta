@@ -212,7 +212,7 @@ protected:
 
 	bool
 	active_site_grid_set() const {
-		return active_site_grid_ != 0;
+		return active_site_grid_ != nullptr;
 	}
 
 	ActiveSiteGrid const &

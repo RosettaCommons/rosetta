@@ -91,7 +91,7 @@ public:
 		num_upper_edges_( 0 ),
 		num_lower_edges_( 0 ),
 		lazily_deleted_edges_present_( false ),
-		owner_( 0 )
+		owner_( nullptr )
 	{
 		upper_edges_.reserve( 0 );
 	}
@@ -138,7 +138,7 @@ public:
 				return & upper_edges_[ ii ];
 			}
 		}
-		return 0;
+		return nullptr;
 	}
 
 	EdgeClass const * get_edge( platform::Size upper_vertex_id ) const
@@ -300,9 +300,9 @@ public:
 public:
 
 	UEEdge() :
-		owner_( 0 ),
-		lower_vertex_( 0 ),
-		upper_vertex_( 0 ),
+		owner_( nullptr ),
+		lower_vertex_( nullptr ),
+		upper_vertex_( nullptr ),
 		deleted_( true ),
 		upper_vertex_index_( 0 )
 	{}

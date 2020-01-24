@@ -56,7 +56,7 @@ public:
 	/// pose can be passed in optionally to support the ALL tag
 	/// in the pos file
 	void
-	initialize_from_command_line( core::pose::PoseCOP pose = NULL );
+	initialize_from_command_line( core::pose::PoseCOP pose = nullptr );
 
 private:
 	//dimension of this vector is num_geomcst

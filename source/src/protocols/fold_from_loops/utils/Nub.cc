@@ -624,7 +624,7 @@ Nub::fix_fragment( core::fragment::FragSetOP fragset )
 			TR << " new frame created with " << (*it)->nr_frags() << std::endl;
 			for ( core::Size j = 1; j<= (*it)->nr_frags(); ++j ) {
 				FragData old_fragment = (*it)->fragment( j );
-				FragDataOP current_fragment( NULL );
+				FragDataOP current_fragment( nullptr );
 				current_fragment = utility::pointer::make_shared< AnnotatedFragData >( old_fragment.pdbid(), seqmap_[ i ] );
 				current_fragment->copy( (*it)->fragment( j ) );
 				frame->add_fragment( current_fragment );

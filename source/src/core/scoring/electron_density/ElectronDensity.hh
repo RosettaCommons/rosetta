@@ -125,7 +125,7 @@ public:
 	core::Real
 	matchCentroidPose(
 		core::pose::Pose const &pose,
-		core::conformation::symmetry::SymmetryInfoCOP symmInfo = NULL,
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo = nullptr,
 		bool cacheCCs=false
 	);
 
@@ -134,7 +134,7 @@ public:
 	core::Real
 	matchPose(
 		core::pose::Pose const &pose,
-		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL,
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo=nullptr,
 		bool cacheCCs=false
 	);
 
@@ -217,7 +217,7 @@ public:
 		int resid,
 		core::conformation::Residue const &rsd,
 		core::pose::Pose const &pose,
-		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL,
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo=nullptr,
 		bool cacheCCs=false
 	);
 
@@ -227,7 +227,7 @@ public:
 	matchResFast( int resid,
 		core::conformation::Residue const &rsd,
 		core::pose::Pose const &pose,
-		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL,
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo=nullptr,
 		core::Real sc_scale=1.0
 	);
 
@@ -237,7 +237,7 @@ public:
 		Size atomid,
 		core::conformation::Residue const &rsd,
 		core::pose::Pose const &pose,
-		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL,
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo=nullptr,
 		bool ignoreBs=false
 	);
 
@@ -245,7 +245,7 @@ public:
 	void
 	compute_symm_rotations(
 		core::pose::Pose const &pose,
-		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo=nullptr
 	);
 
 	/// @brief access fastdens scoring for a single point

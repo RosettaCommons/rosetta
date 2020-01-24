@@ -73,7 +73,7 @@ PackerPaletteFactory::factory_register( PackerPaletteCreatorOP creator )
 void
 PackerPaletteFactory::add_creator( PackerPaletteCreatorOP creator )
 {
-	runtime_assert( creator != 0 );
+	runtime_assert( creator != nullptr );
 	packer_palette_creator_map_[ creator->keyname() ] = creator;
 }
 
@@ -120,7 +120,7 @@ PackerPaletteFactory::newPackerPalettes( PackerPaletteOPs & ppops, basic::dataca
 		for ( TagCOPs::const_iterator tp( subtags.begin() ), tp_e( subtags.end() ); tp != tp_e; ++tp ) {
 			std::string const type( (*tp)->getName() );
 			PackerPaletteOP new_pp = newPackerPalette( type, datamap, *tp );
-			runtime_assert( new_pp != 0 );
+			runtime_assert( new_pp != nullptr );
 			ppops.push_back( new_pp );
 			TR << "Created and parsed anonymous PackerPalette of type " << type << "." << std::endl;
 		}

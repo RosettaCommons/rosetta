@@ -99,7 +99,7 @@ public: // Creation
 	inline
 	FArray6P() :
 		Super( ProxySentinel() ),
-		source_( 0 )
+		source_( nullptr )
 	{}
 
 
@@ -283,7 +283,7 @@ public: // Creation
 		I4_( 1 ),
 		I5_( 1 ),
 		I6_( s.size() ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		shift_set( 5 );
 		s1_ = s2_ = s3_ = s4_ = s5_ = 1;
@@ -301,7 +301,7 @@ public: // Creation
 		I4_( 1 ),
 		I5_( 1 ),
 		I6_( s.size() ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		shift_set( 5 );
 		s1_ = s2_ = s3_ = s4_ = s5_ = 1;
@@ -319,7 +319,7 @@ public: // Creation
 		I4_( 1 ),
 		I5_( 1 ),
 		I6_( star ), // Unbounded
-		source_( 0 )
+		source_( nullptr )
 	{
 		shift_set( 5 );
 		s1_ = s2_ = s3_ = s4_ = s5_ = 1;
@@ -337,7 +337,7 @@ public: // Creation
 		I4_( 1 ),
 		I5_( 1 ),
 		I6_( star ), // Unbounded
-		source_( 0 )
+		source_( nullptr )
 	{
 		shift_set( 5 );
 		s1_ = s2_ = s3_ = s4_ = s5_ = 1;
@@ -491,7 +491,7 @@ public: // Creation
 		I4_( I4_a ),
 		I5_( I5_a ),
 		I6_( I6_a ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		dimension_proxy();
 		insert_as_observer();
@@ -508,7 +508,7 @@ public: // Creation
 		I4_( I4_a ),
 		I5_( I5_a ),
 		I6_( I6_a ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		dimension_proxy();
 		insert_as_observer();
@@ -525,7 +525,7 @@ public: // Creation
 		I4_( I4_a ),
 		I5_( I5_a ),
 		I6_( I6_a ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		dimension_proxy();
 		insert_as_observer();
@@ -542,7 +542,7 @@ public: // Creation
 		I4_( I4_a ),
 		I5_( I5_a ),
 		I6_( I6_a ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		dimension_proxy();
 		insert_as_observer();
@@ -1404,13 +1404,13 @@ private: // Functions
 	void
 	remove_as_observer()
 	{
-		I1_.remove_observer( *this );
-		I2_.remove_observer( *this );
-		I3_.remove_observer( *this );
-		I4_.remove_observer( *this );
-		I5_.remove_observer( *this );
-		I6_.remove_observer( *this );
-		if ( source_ ) source_->remove_observer( *this );
+	I1_.remove_observer( *this );
+	I2_.remove_observer( *this );
+	I3_.remove_observer( *this );
+	I4_.remove_observer( *this );
+	I5_.remove_observer( *this );
+	I6_.remove_observer( *this );
+	if ( source_ ) source_->remove_observer( *this );
 	}*/
 
 

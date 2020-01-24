@@ -112,7 +112,7 @@ void VectorPoseJobDistributor::go_mpi( protocols::moves::MoverOP mover ) {
 		ntrials = basic::options::option[ basic::options::OptionKeys::jd2::ntrials ];
 	}
 
-	time_t const allstarttime = time(NULL);
+	time_t const allstarttime = time(nullptr);
 	JobInputterOP job_inputter = this->job_inputter();
 	JobOutputterOP job_outputter = this->job_outputter();
 
@@ -146,7 +146,7 @@ void VectorPoseJobDistributor::go_mpi( protocols::moves::MoverOP mover ) {
 
 	while ( job_map_.find( current_nstruct_ ) != job_map_.end() ) {
 
-		time_t job_time = time(NULL);
+		time_t job_time = time(nullptr);
 		Jobs current_jobs = job_map_.find( current_nstruct_ )->second;
 		this_nodes_job_ = current_jobs[ rank+1 ];
 		core::pose::PoseOP this_nodes_pose ( new core::pose::Pose );
@@ -195,7 +195,7 @@ void VectorPoseJobDistributor::go_mpi( protocols::moves::MoverOP mover ) {
 				}
 				//    job_outputter->final_pose( this_nodes_job_, *this_nodes_pose, "");
 				//    job_outputter->flush();
-				TR << "Current job completed in " << (time(NULL) - job_time) << " seconds " << std::endl;
+				TR << "Current job completed in " << (time(nullptr) - job_time) << " seconds " << std::endl;
 				break;
 			}
 
@@ -209,7 +209,7 @@ void VectorPoseJobDistributor::go_mpi( protocols::moves::MoverOP mover ) {
 		++current_nstruct_;
 
 	}
-	TR << "All jobs completed in " << (time(NULL) - allstarttime ) << " seconds " << std::endl;
+	TR << "All jobs completed in " << (time(nullptr) - allstarttime ) << " seconds " << std::endl;
 
 	/// Synchronize mover status before moving on
 #ifdef USEMPI
@@ -225,7 +225,7 @@ void VectorPoseJobDistributor::go_mpi( protocols::moves::MoverOP mover ) {
 void
 VectorPoseJobDistributor::go_serial( protocols::moves::MoverOP mover ) {
 
-	time_t const allstarttime = time(NULL);
+	time_t const allstarttime = time(nullptr);
 
 	// mover is not defined yet - can't instantiate until it's defined as a parsed protocol below
 	current_nstruct_ = 1;
@@ -253,7 +253,7 @@ VectorPoseJobDistributor::go_serial( protocols::moves::MoverOP mover ) {
 
 		while ( retry_counter < ntrials ) {
 
-			time_t job_time = time(NULL);
+			time_t job_time = time(nullptr);
 
 			// Keep a record of the order that poses should be handled for randomization of inputs
 			utility::vector1< core::Size > pose_order;
@@ -296,7 +296,7 @@ VectorPoseJobDistributor::go_serial( protocols::moves::MoverOP mover ) {
 					job_outputter_->final_pose(current_jobs[ i ], *working_poses[ i ], "");
 					job_outputter_->flush();
 				}
-				TR << "Current job completed in " << (time(NULL) - job_time) << " seconds " << std::endl;
+				TR << "Current job completed in " << (time(nullptr) - job_time) << " seconds " << std::endl;
 				break;
 			}
 
@@ -310,7 +310,7 @@ VectorPoseJobDistributor::go_serial( protocols::moves::MoverOP mover ) {
 		++current_nstruct_;
 
 	}
-	TR << "All jobs completed in " << (time(NULL) - allstarttime ) << " seconds " << std::endl;
+	TR << "All jobs completed in " << (time(nullptr) - allstarttime ) << " seconds " << std::endl;
 }
 
 bool VectorPoseJobDistributor::apply_parsed_protocol_mpi( core::pose::PoseOP & pose,
@@ -326,7 +326,7 @@ bool VectorPoseJobDistributor::apply_parsed_protocol_mpi( core::pose::PoseOP & p
 		TR << "=================running mover " << current_mover->get_name() << " - "
 			<< protocol->get_mover_filter_pair( mover_it ).first.second
 			<< "======================" << std::endl;
-		time_t mover_time = time(NULL);
+		time_t mover_time = time(nullptr);
 		// i refers to mover type -> j refers to each pose
 
 		// Check if current mover is a VectorPoseMover
@@ -346,7 +346,7 @@ bool VectorPoseJobDistributor::apply_parsed_protocol_mpi( core::pose::PoseOP & p
 			current_mover->apply( *temp_pose );
 		}
 
-		TR << "mover " << protocol->get_mover_filter_pair( mover_it ).first.second << " finished in " << time(NULL) - mover_time << " seconds" << std::endl;
+		TR << "mover " << protocol->get_mover_filter_pair( mover_it ).first.second << " finished in " << time(nullptr) - mover_time << " seconds" << std::endl;
 		TR << "=================end mover " << "======================" << std::endl;
 		TR << "=================running filter " << current_filter->get_type() << "======================" << std::endl;
 

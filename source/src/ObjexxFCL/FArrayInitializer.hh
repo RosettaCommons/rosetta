@@ -63,7 +63,7 @@ public: // Creation
 	FArrayInitializer() :
 		state_( INACTIVE ),
 		value_( Traits::initial_value() ),
-		function_( static_cast< function_type >( 0 ) )
+		function_( nullptr )
 	{}
 
 
@@ -73,7 +73,7 @@ public: // Creation
 	FArrayInitializer( T const & value_a ) :
 		state_( VALUE ),
 		value_( value_a ),
-		function_( static_cast< function_type >( 0 ) )
+		function_( nullptr )
 	{}
 
 
@@ -83,7 +83,7 @@ public: // Creation
 	FArrayInitializer( function_type const & function_a ) :
 		state_( function_a ? FUNCTION : INACTIVE ),
 		value_( Traits::initial_value() ),
-		function_( function_a ? function_a : static_cast< function_type >( 0 ) )
+		function_( function_a ? function_a : nullptr )
 	{}
 
 
@@ -97,7 +97,7 @@ public: // Assignment
 	{
 		state_ = VALUE;
 		value_ = value_a;
-		function_ = static_cast< function_type >( 0 );
+		function_ = nullptr;
 		return *this;
 	}
 
@@ -109,7 +109,7 @@ public: // Assignment
 	{
 		state_ = ( function_a ? FUNCTION : INACTIVE );
 		value_ = Traits::initial_value();
-		function_ = ( function_a ? function_a : static_cast< function_type >( 0 ) );
+		function_ = ( function_a ? function_a : nullptr );
 		return *this;
 	}
 
@@ -174,7 +174,7 @@ public: // Modifier
 	{
 		state_ = INACTIVE;
 		value_ = Traits::initial_value();
-		function_ = static_cast< function_type >( 0 );
+		function_ = nullptr;
 	}
 
 

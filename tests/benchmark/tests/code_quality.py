@@ -236,6 +236,7 @@ def run_clang_tidy_test(rosetta_dir, working_dir, platform, config, hpc_driver=N
                         "clang-analyzer-*",
                         "bugprone-*",
                         "misc-*",
+                        "modernize-use-nullptr",
                         "modernize-use-override",
                         "-bugprone-forward-declaration-namespace", # Skip - This makes spurious errors when we include the .fwd.hh but not the .hh"
                         "-misc-unconventional-assign-operator", # Skip - we use virtual assignment operators too much for this to be useful

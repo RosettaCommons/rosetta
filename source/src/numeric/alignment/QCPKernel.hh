@@ -199,7 +199,7 @@ class QCPKernel
 			}
 		}
 
-		if ( rot_matrix != NULL ) {
+		if ( rot_matrix != nullptr ) {
 			Real a11, a12, a13, a14, a21, a22, a23, a24,
 				a31, a32, a33, a34, a41, a42, a43, a44;
 
@@ -357,7 +357,7 @@ class QCPKernel
 		Real E0;
 
 		inner_product(A, E0, first_coords, first_coords_center_of_mass, second_coords, second_coords_center_of_mass);
-		return calc_rmsd_Theobald_method(A, E0, first_coords.cols(), NULL);
+		return calc_rmsd_Theobald_method(A, E0, first_coords.cols(), nullptr);
 	}
 
 	/*

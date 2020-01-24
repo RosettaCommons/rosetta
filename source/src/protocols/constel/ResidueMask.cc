@@ -24,7 +24,6 @@ namespace protocols {
 namespace constel {
 
 
-using utility::vector1;
 using core::pose::Pose;
 using core::Size;
 

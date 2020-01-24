@@ -60,7 +60,7 @@ public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	~AbstractArchiveBase() override;
 	AbstractArchiveBase( BaseArchiveManagerAP ptr ) : manager_( ptr ), name_( "archive" ) {};
-	AbstractArchiveBase() : manager_( NULL ), name_( "archive" ) {};
+	AbstractArchiveBase() : manager_( nullptr ), name_( "archive" ) {};
 
 	/// @brief is archive converged ?
 	virtual bool finished() const = 0;
@@ -136,7 +136,7 @@ protected:
 	static std::string const TAG_IN_FILE;//( "tag_in_file" );
 	static std::string const SOURCE_FILE;//( "source_file" );
 public:
-	ArchiveBase( ArchiveManagerAP ptr=NULL );
+	ArchiveBase( ArchiveManagerAP ptr = nullptr );
 	~ArchiveBase() override;
 	static void register_options();
 	bool finished() const override { return true; };

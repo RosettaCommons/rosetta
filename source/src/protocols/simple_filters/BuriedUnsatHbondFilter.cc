@@ -97,9 +97,9 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() :
 	atomic_depth_apo_surface_( 0.0 ),
 	upper_threshold_( 20 ),
 	jump_num_( 1 ),
-	residue_selector_( /* NULL */ ),
-	sfxn_( /* NULL */ ),
-	task_factory_( /* NULL */ )
+	residue_selector_( /* nullptr */ ),
+	sfxn_( /* nullptr */ ),
+	task_factory_( /* nullptr */ )
 {
 	if ( use_vsasa_ ) {
 		burial_cutoff_ = basic::options::option[basic::options::OptionKeys::bunsat_calc2::sasa_burial_cutoff];
@@ -110,7 +110,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() :
 
 // if calling from code, specifying reporter options using setter functions, if desired
 BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold,
-	core::select::residue_selector::ResidueSelectorOP residue_selector /* NULL */,
+	core::select::residue_selector::ResidueSelectorOP residue_selector /* nullptr */,
 	bool const use_legacy_options /* false */,
 	bool const generous_hbonds /* true */,
 	bool const use_vsasa /* true */,
@@ -156,8 +156,8 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold
 	upper_threshold_( upper_threshold ),
 	jump_num_( 1 ),
 	residue_selector_( residue_selector ),
-	sfxn_( /* NULL */ ),
-	task_factory_( /* NULL */ )
+	sfxn_( /* nullptr */ ),
+	task_factory_( /* nullptr */ )
 {
 	if ( use_vsasa ) {
 		burial_cutoff_ = basic::options::option[basic::options::OptionKeys::bunsat_calc2::sasa_burial_cutoff];
@@ -378,10 +378,10 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = SymmConf.Symmetry_Info();
 		total_res = symm_info->num_independent_residues();
 	}
-	std::set< core::Size > region_to_calculate = std::set< core::Size >(); /* NULL */
+	std::set< core::Size > region_to_calculate = std::set< core::Size >(); /* nullptr */
 
 	// if users want to specificy task operations to tell the filter where to look (legacy behavior, now recommended to use residue_selector)
-	if ( task_factory() != NULL ) {
+	if ( task_factory() != nullptr ) {
 		buried_unsat_hbond_filter_tracer << " LOOKING FOR UNSATS ONLY AT RESIDUES DEFINED BY YOUR task_operations: " << std::endl;
 		buried_unsat_hbond_filter_tracer << "   NOTE: it's now recommonded to use residue_selector option instead of this option" << std::endl;
 		utility::vector1< core::Size > const selected_residues( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, true/*packable*/ ) );

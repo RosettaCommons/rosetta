@@ -42,7 +42,7 @@ public:
 
 
 	RNA_TorsionEnergy( RNA_EnergyMethodOptions const & options,
-		RNA_TorsionPotentialOP rna_torsion_potential = 0 );
+		RNA_TorsionPotentialOP rna_torsion_potential = nullptr );
 
 	/// clone
 	methods::EnergyMethodOP

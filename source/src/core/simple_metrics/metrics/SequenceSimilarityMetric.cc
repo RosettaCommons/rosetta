@@ -48,8 +48,8 @@ using namespace core::select::residue_selector;
 
 SequenceSimilarityMetric::SequenceSimilarityMetric():
 	RealMetric(),
-	selector_( 0 ),
-	native_pose_( 0 ),
+	selector_( nullptr ),
+	native_pose_( nullptr ),
 	apply_selector_to_native_( false ),
 	normalize_( true )
 {}
@@ -57,7 +57,7 @@ SequenceSimilarityMetric::SequenceSimilarityMetric():
 SequenceSimilarityMetric::SequenceSimilarityMetric( select::residue_selector::ResidueSelectorCOP selector):
 	RealMetric(),
 	selector_( selector ),
-	native_pose_( 0 ),
+	native_pose_( nullptr ),
 	apply_selector_to_native_( false ),
 	normalize_( true )
 {}
@@ -94,7 +94,7 @@ SequenceSimilarityMetric::calculate( pose::Pose const & pose ) const {
 
 	using namespace basic::options;
 
-	if ( native_pose_ == 0 ) {
+	if ( native_pose_ == nullptr ) {
 		//std::string const filename = option[ OptionKeys::in::file::native ].value();
 		//native_pose_ = import_pose::pose_from_file( filename );
 		utility_exit_with_message( "Can not find native pose. If you are not using rosetta scripts, please call set_native_pose()." );

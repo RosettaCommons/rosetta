@@ -63,7 +63,7 @@ public: // Creation
 	/// @brief Copy constructor
 	inline
 	VariantOption( VariantOption const & var ) :
-		option_p_( var.option_p_ ? var.option_p_->clone() : 0 )
+		option_p_( var.option_p_ ? var.option_p_->clone() : nullptr )
 	{}
 
 
@@ -91,7 +91,7 @@ public: // Assignment
 	operator =( VariantOption const & var )
 	{
 		if ( this != &var ) {
-			delete option_p_; option_p_ = ( var.option_p_ ? var.option_p_->clone() : 0 );
+			delete option_p_; option_p_ = ( var.option_p_ ? var.option_p_->clone() : nullptr );
 		}
 		return *this;
 	}

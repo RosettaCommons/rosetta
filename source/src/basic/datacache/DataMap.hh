@@ -145,7 +145,7 @@ template< class T >
 utility::pointer::shared_ptr< T >
 DataMap::get_ptr( std::string const & type, std::string const & name ) const {
 	using namespace utility::pointer;
-	utility::pointer::shared_ptr< T > ret( 0 );
+	utility::pointer::shared_ptr< T > ret( nullptr );
 
 	if ( !has( type, name ) ) {
 		std::stringstream error_message;
@@ -174,7 +174,7 @@ template< class T >
 utility::pointer::shared_ptr< T const >
 DataMap::get_resource( std::string const & resource_name ) const {
 	using namespace utility::pointer;
-	utility::pointer::shared_ptr< T const > ret( 0 );
+	utility::pointer::shared_ptr< T const > ret( nullptr );
 
 	auto iter = resource_map_.find( resource_name );
 	if ( iter == resource_map_.end() ) {
@@ -185,7 +185,7 @@ DataMap::get_resource( std::string const & resource_name ) const {
 
 	ret = utility::pointer::dynamic_pointer_cast< T const >( iter->second );
 
-	if ( ret==0 ) {
+	if ( ret == nullptr ) {
 		std::stringstream error_message;
 		error_message << "ERROR: dynamic_cast failed for resource with name "<< resource_name <<"; the actual resource has a different type.\n";
 		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );

@@ -57,7 +57,7 @@ protected: // Creation
 	/// @brief Default constructor
 	inline
 	Atom_() :
-		raw_parent_( 0 ),
+		raw_parent_( nullptr ),
 		dof_refold_index_( 0 )
 	{
 		atoms_.reserve( 4 );
@@ -68,7 +68,7 @@ protected: // Creation
 	inline
 	Atom_( Atom_ const & atom ) :
 		Super( atom ),
-		raw_parent_( 0 ),
+		raw_parent_( nullptr ),
 		position_( atom.position_ ),
 		dof_refold_index_( atom.dof_refold_index_ )
 	{
@@ -443,7 +443,7 @@ public: // Properties
 	input_stub_atom1() const override
 	{
 		AtomCOP p = parent();
-		debug_assert( p != 0 );
+		debug_assert( p != nullptr );
 		return p->stub_atom1();
 	}
 
@@ -454,7 +454,7 @@ public: // Properties
 	input_stub_atom2() const override
 	{
 		AtomCOP p = parent();
-		debug_assert( p != 0 );
+		debug_assert( p != nullptr );
 		return p->stub_atom2();
 	}
 

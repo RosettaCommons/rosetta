@@ -17,302 +17,14 @@
 #include <utility/fixedsizearray0.fwd.hh>
 
 // C++ headers
-#include <iterator>
+#include <array>
 #include <utility/assert.hh>
 
 namespace utility {
 
 /// Requirements:
 /// S must be a positive integer
-/// T must be interpretable as 0
-
-template< typename T, platform::Size S >
-class fixedsizearray0iterator {
-public:
-	typedef std::random_access_iterator_tag iterator_category;
-	typedef ptrdiff_t                         difference_type;
-	typedef T                                      value_type;
-	typedef T *                                       pointer;
-	typedef T &                                     reference;
-	typedef ptrdiff_t                                distance;
-
-public:
-	fixedsizearray0iterator( T * array_ptr, T * position ) :
-		array_ptr_( array_ptr ),
-		position_( position )
-	{}
-
-	fixedsizearray0iterator( fixedsizearray0iterator< T, S > const & other ) :
-		array_ptr_( other.array_ptr_ ),
-		position_( other.position_ )
-	{}
-
-	fixedsizearray0iterator< T, S >
-	operator = ( fixedsizearray0iterator< T, S > const & rhs ) {
-		array_ptr_ = rhs.array_ptr_;
-		position_ = rhs.position_;
-		return *this;
-	}
-
-	T & operator * () {
-		debug_assert( valid() );
-		return * position_;
-	}
-
-	fixedsizearray0iterator< T, S >
-	operator ++ () {
-		debug_assert( valid() );
-		position_ += 1;
-		return *this;
-	}
-
-	/// @brief random access iterator jump by d
-	fixedsizearray0iterator< T, S >
-	operator + ( distance d ) {
-		debug_assert( valid() );
-		return fixedsizearray0iterator< T, S >( array_ptr_, position_ + d );
-	}
-
-	/// @brief random access iterator jump by -d
-	fixedsizearray0iterator< T, S >
-	operator - ( distance d ) {
-		debug_assert( valid() );
-		return fixedsizearray0iterator< T, S >( array_ptr_, position_ - d );
-	}
-
-	friend
-	distance
-	operator - ( fixedsizearray0iterator< T, S > const & a,
-		fixedsizearray0iterator< T, S > const & b ) {
-		return a.position_ - b.position_;
-	}
-
-	/// @brief random access increment
-	fixedsizearray0iterator< T, S > const &
-	operator += ( distance d ) {
-		debug_assert( valid() );
-		position_ += d;
-		return this;
-	}
-
-	/// @brief random access decrement
-	fixedsizearray0iterator< T, S > const &
-	operator -= ( distance d ) {
-		debug_assert( valid() );
-		position_ -= d;
-		return this;
-	}
-
-
-	friend
-	inline
-	bool
-	operator <( fixedsizearray0iterator< T, S > const & a,
-		fixedsizearray0iterator< T, S > const & b )
-	{
-		return ( a.position_ < b.position_ );
-	}
-
-	bool
-	operator == ( fixedsizearray0iterator< T, S > const & rhs ) {
-		return position_ == rhs.position_ && array_ptr_ == rhs.array_ptr_;
-	}
-
-	bool
-	operator != ( fixedsizearray0iterator< T, S > const & rhs ) {
-		return position_ != rhs.position_ || array_ptr_ != rhs.array_ptr_;
-	}
-
-	/// @brief < comparison
-	bool
-	operator < ( fixedsizearray0iterator< T, S > const & rhs ) {
-		return position_ < rhs.position_;
-	}
-
-	/// @brief <= comparison
-	bool
-	operator <= ( fixedsizearray0iterator< T, S > const & rhs ) {
-		return position_ <= rhs.position_;
-	}
-
-	/// @brief > comparison
-	bool
-	operator > ( fixedsizearray0iterator< T, S > const & rhs ) {
-		return position_ > rhs.position_;
-	}
-
-	/// @brief >= comparison
-	bool
-	operator >= ( fixedsizearray0iterator< T, S > const & rhs ) {
-		return position_ >= rhs.position_;
-	}
-
-	friend class fixedsizearray0const_iterator< T, S >;
-
-protected:
-
-	bool
-	valid() const {
-		return array_ptr_ + S >  position_ && position_ >= array_ptr_;
-	}
-
-private:
-	T * array_ptr_;
-	T * position_;
-};
-
-template< typename T, platform::Size S >
-class fixedsizearray0const_iterator {
-public:
-	typedef std::random_access_iterator_tag iterator_category;
-	typedef ptrdiff_t                         difference_type;
-	typedef T                                      value_type;
-	typedef T *                                       pointer;
-	typedef T &                                     reference;
-	typedef ptrdiff_t                                distance;
-
-public:
-	fixedsizearray0const_iterator( T const * array_ptr, T const * position ) :
-		array_ptr_( array_ptr ),
-		position_( position )
-	{}
-
-	fixedsizearray0const_iterator( fixedsizearray0const_iterator< T, S > const & other ) :
-		array_ptr_( other.array_ptr_ ),
-		position_( other.position_ )
-	{}
-
-	fixedsizearray0const_iterator( fixedsizearray0iterator< T, S > const & other ) :
-		array_ptr_( other.array_ptr_ ),
-		position_( other.position_ )
-	{}
-
-
-	fixedsizearray0const_iterator< T, S >
-	operator = ( fixedsizearray0const_iterator< T, S > const & rhs ) {
-		array_ptr_ = rhs.array_ptr_;
-		position_ = rhs.position_;
-	}
-
-	T const & operator * () {
-		debug_assert( valid() );
-		return * position_;
-	}
-
-	fixedsizearray0const_iterator< T, S >
-	operator ++ () {
-		debug_assert( valid() );
-		position_ += 1;
-		return *this;
-	}
-
-	/// @brief random access iterator jump by d
-	fixedsizearray0const_iterator< T, S >
-	operator + ( distance d ) {
-		debug_assert( valid() );
-		return fixedsizearray0iterator< T, S >( array_ptr_, position_ + d );
-	}
-
-	/// @brief random access iterator jump by -d
-	fixedsizearray0const_iterator< T, S >
-	operator - ( distance d ) {
-		debug_assert( valid() );
-		return fixedsizearray0iterator< T, S >( array_ptr_, position_ - d );
-	}
-
-	friend
-	distance
-	operator - ( fixedsizearray0const_iterator< T, S > const & a,
-		fixedsizearray0const_iterator< T, S > const & b ) {
-		return a.position_ - b.position_;
-	}
-
-	friend
-	inline
-	bool
-	operator <( fixedsizearray0const_iterator< T, S > const & a,
-		fixedsizearray0const_iterator< T, S > const & b )
-	{
-		return ( a.position_ < b.position_ );
-	}
-
-	//// @brief distance between two iterators
-	distance
-	operator - ( fixedsizearray0const_iterator< T, S > const & other ) const {
-		return position_ - other.position_;
-	}
-
-	/// @brief random access increment
-	fixedsizearray0const_iterator< T, S > const &
-	operator += ( distance d ) {
-		debug_assert( valid() );
-		position_ += d;
-		return this;
-	}
-
-	/// @brief random access decrement
-	fixedsizearray0const_iterator< T, S > const &
-	operator -= ( distance d ) {
-		debug_assert( valid() );
-		position_ -= d;
-		return this;
-	}
-
-	bool
-	operator == ( fixedsizearray0const_iterator< T, S > const & rhs ) {
-		return position_ == rhs.position_ && array_ptr_ == rhs.array_ptr_;
-	}
-
-	bool
-	operator != ( fixedsizearray0const_iterator< T, S > const & rhs ) {
-		return position_ != rhs.position_ || array_ptr_ != rhs.array_ptr_;
-	}
-
-	/// @brief < comparison
-	bool
-	operator < ( fixedsizearray0const_iterator< T, S > const & rhs ) {
-		return position_ < rhs.position_;
-	}
-
-	/// @brief <= comparison
-	bool
-	operator <= ( fixedsizearray0const_iterator< T, S > const & rhs ) {
-		return position_ <= rhs.position_;
-	}
-
-	/// @brief > comparison
-	bool
-	operator > ( fixedsizearray0const_iterator< T, S > const & rhs ) {
-		return position_ > rhs.position_;
-	}
-
-	/// @brief >= comparison
-	bool
-	operator >= ( fixedsizearray0const_iterator< T, S > const & rhs ) {
-		return position_ >= rhs.position_;
-	}
-
-protected:
-
-	bool
-	valid() const {
-		return array_ptr_ + S >  position_ && position_ >= array_ptr_;
-	}
-
-
-private:
-	T const * array_ptr_;
-	T const * position_;
-};
-
-/*template < typename T, platform::Size S >
-typename fixedsizearray0iterator< T, S >::distance
-fixedsizearray0iterator< T, S >::operator - (
-fixedsizearray0const_iterator< T, S > const & other
-) const {
-return position_ - other.position_;
-}*/
-
+/// T must be default constructable.
 
 template < typename T, platform::Size S >
 class fixedsizearray0
@@ -322,8 +34,8 @@ public:
 	typedef platform::SSize SSize;
 
 	typedef T value_type;
-	typedef fixedsizearray0iterator< T, S > iterator;
-	typedef fixedsizearray0const_iterator< T, S > const_iterator;
+	typedef typename std::array<T,S>::iterator iterator;
+	typedef typename std::array<T,S>::const_iterator const_iterator;
 
 	//typedef  typename T &        reference;
 	//typedef  typename T const &  const_reference;
@@ -332,28 +44,32 @@ public:
 	/// Constructors and the assigmnet operator
 
 	fixedsizearray0() {
-		for ( Size ii = 0; ii < S; ++ii ) array_[ ii ] = value_type ( 0 );
+		array_.fill( value_type{} ); // Zero initialize for POD types, call the default constructor for classes.
 	}
 
-	fixedsizearray0( value_type def ) {
-		for ( Size ii = 0; ii < S; ++ii ) array_[ ii ] = def;
+	fixedsizearray0( value_type const & def ) {
+		array_.fill( def );
 	}
 
-	fixedsizearray0( fixedsizearray0< T, S > const & source ) {
-		for ( Size ii = 0; ii < S; ++ii ) array_[ ii ] = source.array_[ ii ];
-	}
-
-	/// @brief Assignment operator
-	fixedsizearray0< T, S > const &
-	operator = ( fixedsizearray0< T, S > const & rhs ) {
-		for ( Size ii = 0; ii < S; ++ii ) array_[ ii ] = rhs.array_[ ii ];
-		return *this;
+	/// @brief initializer list construction
+	fixedsizearray0( std::initializer_list< T > const & source ) {
+		if ( source.size() == 1 ) {
+			// If we just pass one element, fill the array with it.
+			array_.fill( *source.begin() );
+		} else {
+			assert( S == source.size() );
+			Size pos = 0;
+			for ( auto const & val: source ) {
+				array_[pos] = val;
+				++pos;
+			}
+		}
 	}
 
 	/// @brief Full-array assignment.
 	fixedsizearray0< T, S > const &
-	operator = ( value_type val ) {
-		for ( Size ii = 0; ii < S; ++ii ) array_[ ii ] = val;
+	operator = ( value_type const & val ) {
+		array_.fill( val );
 		return *this;
 	}
 
@@ -372,6 +88,11 @@ public:
 		return array_[ index ];
 	}
 
+	bool
+	operator == ( fixedsizearray0< T, S > const & other ) const {
+		return array_ == other.array_;
+	}
+
 
 	Size
 	size() const {
@@ -382,22 +103,22 @@ public:
 	/// Iterators
 	iterator
 	begin() {
-		return fixedsizearray0iterator< T, S >( array_, array_ );
+		return array_.begin();
 	}
 
 	iterator
 	end() {
-		return fixedsizearray0iterator< T, S >( array_, array_ + S );
+		return array_.end();
 	}
 
 	const_iterator
 	begin() const {
-		return fixedsizearray0const_iterator< T, S >( array_, array_ );
+		return array_.cbegin();
 	}
 
 	const_iterator
 	end() const {
-		return fixedsizearray0const_iterator< T, S >( array_, array_ + S);
+		return array_.cend();
 	}
 
 protected:
@@ -410,7 +131,7 @@ protected:
 
 private:
 	/// Data
-	T array_[ S ];
+	std::array< T, S > array_;
 };
 
 

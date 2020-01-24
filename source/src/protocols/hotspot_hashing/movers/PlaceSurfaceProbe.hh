@@ -57,7 +57,7 @@ public:
 		core::Real refinement_distance,
 		core::Real refinement_translation_sampling,
 		core::conformation::ResidueCOP target_residue,
-		core::pack::task::TaskFactoryOP surface_selection = NULL,
+		core::pack::task::TaskFactoryOP surface_selection = nullptr,
 		core::Size search_partition = 1,
 		core::Size total_search_partition = 1);
 

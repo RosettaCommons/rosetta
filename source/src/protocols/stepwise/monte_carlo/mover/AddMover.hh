@@ -39,7 +39,7 @@ namespace mover {
 class AddMover: public protocols::moves::Mover {
 public:
 
-	AddMover( core::scoring::ScoreFunctionCOP scorefxn = 0 );
+	AddMover( core::scoring::ScoreFunctionCOP scorefxn = nullptr );
 
 	//destructor
 	~AddMover() override;

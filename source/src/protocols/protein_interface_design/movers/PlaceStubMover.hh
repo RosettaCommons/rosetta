@@ -134,7 +134,7 @@ private: // member functions
 	bool SelectStubIteratively( protocols::hotspot_hashing::HotspotStubSet::Hs_vec::const_iterator stub_it );
 
 	bool StubMinimize( core::pose::Pose & pose,
-		protocols::hotspot_hashing::HotspotStubCOP = NULL,
+		protocols::hotspot_hashing::HotspotStubCOP = nullptr,
 		core::Size const host_res = 0,
 		bool const hurry = false );
 

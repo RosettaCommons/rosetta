@@ -371,7 +371,7 @@ PackstatReal compute_sasa_generic( utility::vector1< T > & S, PackstatReal probe
 	int olp, aphi, theta, point, masknum;
 
 	Size const Nspheres( S.size() );
-	ObjexxFCL::FArray2D_ubyte atom_sasa_masks( old::nbytes, Nspheres, NULL );
+	ObjexxFCL::FArray2D_ubyte atom_sasa_masks( old::nbytes, Nspheres, nullptr );
 
 	for ( std::size_t i = 1; i <= Nspheres; ++i ) {
 		for ( std::size_t j = 1; j < i; ++j ) {

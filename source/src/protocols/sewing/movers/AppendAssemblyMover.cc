@@ -92,7 +92,7 @@ void
 AppendAssemblyMover::apply( core::pose::Pose& pose){
 
 	//Try to generate an assembly
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 
 	data_storage::SmartAssemblyOP assembly = set_up_assembly( pose );
 	assembly->set_modifiable_terminus(this->get_modifiable_terminus());
@@ -120,7 +120,7 @@ AppendAssemblyMover::apply( core::pose::Pose& pose){
 		return;
 	}
 
-	core::Size endttime = time(NULL);
+	core::Size endttime = time(nullptr);
 	TR << "Assembly successfully generated in " << endttime - starttime << " seconds" << std::endl;
 	AssemblyMover::print_statistics( assembly );
 

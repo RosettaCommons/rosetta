@@ -79,8 +79,8 @@ MembraneInfo::MembraneInfo() :
 	membrane_core_( 0 ),
 	membrane_rsd_num_( 0 ),
 	membrane_jump_( 0 ),
-	spanning_topology_( 0 ),
-	implicit_lipids_( 0 )
+	spanning_topology_( nullptr ),
+	implicit_lipids_( nullptr )
 {}
 
 /// @brief Create MembraneInfo from initialized data

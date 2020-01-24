@@ -189,7 +189,7 @@ struct HBondNetStruct : public utility::pointer::ReferenceCount {
 		unsat_Hpols(0),
 		unsat_accs(0),
 		hbond_vec(0),
-		hbond_set(0),
+		hbond_set(nullptr),
 		lig_state_list(0),
 		net_indices(0),
 		rotamers(0)
@@ -525,7 +525,7 @@ public:
 	}
 
 	inline void set_score_function( core::scoring::ScoreFunctionCOP const & sf ) {
-		runtime_assert( sf != 0 );
+		runtime_assert( sf != nullptr );
 		scorefxn_ = sf->clone();
 	}
 

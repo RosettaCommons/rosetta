@@ -39,7 +39,7 @@ struct DestructionEvent { // do not derive from GeneralEvent
 	/// @brief default constructor
 	inline
 	DestructionEvent() :
-		pose( NULL )
+		pose( nullptr )
 	{}
 
 

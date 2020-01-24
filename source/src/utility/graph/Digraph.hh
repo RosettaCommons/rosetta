@@ -80,7 +80,7 @@ Digraph: create_node, create_edge, delete_edge, count_static_memory, count_dynam
 class DirectedEdgeListElement
 {
 public:
-	DirectedEdgeListElement() : edge_( 0 ), previous_( 0 ), next_( 0 ) {}
+	DirectedEdgeListElement() : edge_( nullptr ), previous_( nullptr ), next_( nullptr ) {}
 	DirectedEdgeListElement( DirectedEdge * edge, DirectedEdgeListElement * previous, DirectedEdgeListElement * next )
 	: edge_( edge ), previous_( previous ), next_( next ) {}
 
@@ -120,11 +120,11 @@ public:
 
 	/// @brief default constructor, owner and element set to null
 	DirectedEdgeListIterator()
-	: owner_( 0 ), element_( 0 ) {}
+	: owner_( nullptr ), element_( nullptr ) {}
 
 	/// @brief owner constructor
 	DirectedEdgeListIterator( DirectedEdgeList const * owner )
-	: owner_( owner ), element_( 0 ) {}
+	: owner_( owner ), element_( nullptr ) {}
 
 	/// @brief owner and element constructor: points at a position in a list
 	DirectedEdgeListIterator( DirectedEdgeList const * owner, DirectedEdgeListElement * element )
@@ -203,11 +203,11 @@ public:
 
 	/// @brief default constructor, owner and element set to null
 	DirectedEdgeListConstIterator()
-	: owner_( 0 ), element_( 0 ) {}
+	: owner_( nullptr ), element_( nullptr ) {}
 
 	/// @brief owner constructor
 	DirectedEdgeListConstIterator( DirectedEdgeList const * owner )
-	: owner_( owner ), element_( 0 ) {}
+	: owner_( owner ), element_( nullptr ) {}
 
 	/// @brief owner and element constructor: points at a position in a list
 	DirectedEdgeListConstIterator( DirectedEdgeList const * owner, DirectedEdgeListElement const * element )
@@ -891,11 +891,11 @@ private:
 
 inline
 bool DirectedEdgeListIterator::valid() const
-{ return ( owner_ != 0 && element_ != 0 && ! owner_->is_end_element( element_ ) );}
+{ return ( owner_ != nullptr && element_ != nullptr && ! owner_->is_end_element( element_ ) );}
 
 inline
 bool DirectedEdgeListConstIterator::valid() const
-{ return ( owner_ != 0 && element_ != 0 && ! owner_->is_end_element( element_ ) ); }
+{ return ( owner_ != nullptr && element_ != nullptr && ! owner_->is_end_element( element_ ) ); }
 
 /// @brief Construct a topological sort for the input directed graph, if it is a DAG,
 /// and return whether or not the input graph is actually a DAG.

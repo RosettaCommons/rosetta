@@ -42,7 +42,7 @@ centroid_dist( core::pose::Pose & pose,
 	bool const sample_another_adenosine = false );
 
 core::Real
-sample_all_rotations_at_jump( core::pose::Pose & pose, core::Size const num_jump, core::scoring::ScoreFunctionOP scorefxn = 0 );
+sample_all_rotations_at_jump( core::pose::Pose & pose, core::Size const num_jump, core::scoring::ScoreFunctionOP scorefxn = nullptr );
 
 core::Real
 do_scoring( core::pose::Pose & pose,

@@ -107,7 +107,7 @@ private:
 
 	void add_frags( std::string const& small_frags,
 		std::string const& large_frags,
-		core::select::residue_selector::ResidueSelectorCOP = NULL,
+		core::select::residue_selector::ResidueSelectorCOP = nullptr,
 		bool initialize = true );
 
 	void parse_subtags( utility::vector0< utility::tag::TagPtr > const&,

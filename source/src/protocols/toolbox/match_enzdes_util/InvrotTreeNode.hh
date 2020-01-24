@@ -57,7 +57,7 @@ public:
 		core::conformation::Residue const & target_residue,
 		EnzConstraintIOCOP enzcst_io,
 		Size invrot_geomcst,
-		core::pose::PoseCOP pose = NULL
+		core::pose::PoseCOP pose = nullptr
 	);
 
 	bool
@@ -65,7 +65,7 @@ public:
 		std::list< core::conformation::ResidueCOP > const & all_invrots,
 		EnzConstraintIOCOP enzcst_io,
 		Size invrot_geomcst,
-		core::pose::PoseCOP pose = NULL
+		core::pose::PoseCOP pose = nullptr
 	);
 
 	/// @brief

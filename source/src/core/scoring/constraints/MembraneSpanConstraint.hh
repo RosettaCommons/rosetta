@@ -82,7 +82,7 @@ public:
 	ConstraintOP remapped_clone(
 		pose::Pose const & src,
 		pose::Pose const & dest,
-		id::SequenceMappingCOP map = NULL
+		id::SequenceMappingCOP map = nullptr
 	) const override;
 
 	// Needed to get the base class overloads

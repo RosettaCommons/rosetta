@@ -97,14 +97,14 @@ protected: // Creation
 	inline
 	FArray() :
 		array_size_( 0 ),
-		array_( 0 ),
+		array_( nullptr ),
 		size_( 0 ),
 		owner_( true ),
 #ifdef OBJEXXFCL_PROXY_CONST_CHECKS
 		const_proxy_( false ),
 #endif // OBJEXXFCL_PROXY_CONST_CHECKS
 		shift_( 0 ),
-		sarray_( 0 )
+		sarray_( nullptr )
 	{
 #ifdef OBJEXXFCL_FARRAY_SIZE_REPORT
 		size_report();
@@ -116,7 +116,7 @@ protected: // Creation
 	inline
 	FArray( FArray const & a ) :
 		array_size_( size_of( a.size_ ) ),
-		array_( array_size_ > 0 ? new T[ array_size_ ] : 0 ),
+		array_( array_size_ > 0 ? new T[ array_size_ ] : nullptr ),
 		size_( array_size_ ),
 		owner_( true ),
 #ifdef OBJEXXFCL_PROXY_CONST_CHECKS
@@ -140,7 +140,7 @@ protected: // Creation
 	explicit
 	FArray( FArray< U > const & a ) :
 		array_size_( size_of( a.size() ) ),
-		array_( array_size_ > 0 ? new T[ array_size_ ] : 0 ),
+		array_( array_size_ > 0 ? new T[ array_size_ ] : nullptr ),
 		size_( array_size_ ),
 		owner_( true ),
 #ifdef OBJEXXFCL_PROXY_CONST_CHECKS
@@ -163,14 +163,14 @@ protected: // Creation
 	explicit
 	FArray( size_type const size_a ) :
 		array_size_( size_of( size_a ) ),
-		array_( array_size_ > 0 ? new T[ array_size_ ] : 0 ),
+		array_( array_size_ > 0 ? new T[ array_size_ ] : nullptr ),
 		size_( array_size_ ),
 		owner_( true ),
 #ifdef OBJEXXFCL_PROXY_CONST_CHECKS
 		const_proxy_( false ),
 #endif // OBJEXXFCL_PROXY_CONST_CHECKS
 		shift_( 0 ),
-		sarray_( 0 )
+		sarray_( nullptr )
 	{
 #ifdef OBJEXXFCL_FARRAY_INIT
 		std::fill_n( array_, size_, Traits::initial_value() );
@@ -185,14 +185,14 @@ protected: // Creation
 	inline
 	FArray( size_type const size_a, InitializerSentinel const & ) :
 		array_size_( size_of( size_a ) ),
-		array_( array_size_ > 0 ? new T[ array_size_ ] : 0 ),
+		array_( array_size_ > 0 ? new T[ array_size_ ] : nullptr ),
 		size_( array_size_ ),
 		owner_( true ),
 #ifdef OBJEXXFCL_PROXY_CONST_CHECKS
 		const_proxy_( false ),
 #endif // OBJEXXFCL_PROXY_CONST_CHECKS
 		shift_( 0 ),
-		sarray_( 0 )
+		sarray_( nullptr )
 	{
 #ifdef OBJEXXFCL_FARRAY_SIZE_REPORT
 		size_report();
@@ -204,14 +204,14 @@ protected: // Creation
 	inline
 	FArray( ProxySentinel const & ) :
 		array_size_( 0 ),
-		array_( 0 ),
+		array_( nullptr ),
 		size_( 0 ),
 		owner_( false ),
 #ifdef OBJEXXFCL_PROXY_CONST_CHECKS
 		const_proxy_( false ),
 #endif // OBJEXXFCL_PROXY_CONST_CHECKS
 		shift_( 0 ),
-		sarray_( 0 )
+		sarray_( nullptr )
 	{}
 
 
@@ -226,7 +226,7 @@ protected: // Creation
 		const_proxy_( true ),
 #endif // OBJEXXFCL_PROXY_CONST_CHECKS
 		shift_( 0 ),
-		sarray_( 0 )
+		sarray_( nullptr )
 	{}
 
 
@@ -241,7 +241,7 @@ protected: // Creation
 		const_proxy_( a.const_proxy_ ),
 #endif // OBJEXXFCL_PROXY_CONST_CHECKS
 		shift_( 0 ),
-		sarray_( 0 )
+		sarray_( nullptr )
 	{}
 
 
@@ -256,7 +256,7 @@ protected: // Creation
 		const_proxy_( true ),
 #endif // OBJEXXFCL_PROXY_CONST_CHECKS
 		shift_( 0 ),
-		sarray_( 0 )
+		sarray_( nullptr )
 	{}
 
 
@@ -271,7 +271,7 @@ protected: // Creation
 		const_proxy_( s.const_proxy_ ),
 #endif // OBJEXXFCL_PROXY_CONST_CHECKS
 		shift_( 0 ),
-		sarray_( 0 )
+		sarray_( nullptr )
 	{}
 
 
@@ -286,7 +286,7 @@ protected: // Creation
 		const_proxy_( true ),
 #endif // OBJEXXFCL_PROXY_CONST_CHECKS
 		shift_( 0 ),
-		sarray_( 0 )
+		sarray_( nullptr )
 	{}
 
 
@@ -301,7 +301,7 @@ protected: // Creation
 		const_proxy_( false ),
 #endif // OBJEXXFCL_PROXY_CONST_CHECKS
 		shift_( 0 ),
-		sarray_( 0 )
+		sarray_( nullptr )
 	{}
 
 
@@ -496,7 +496,7 @@ public: // Predicate
 	bool
 	active() const
 	{
-		return ( array_ != 0 );
+		return ( array_ != nullptr );
 	}
 
 
@@ -636,7 +636,7 @@ public: // Modifier
 	{
 		array_size_ = 0;
 		if ( owner_ ) delete[] array_;
-		array_ = 0;
+		array_ = nullptr;
 		size_ = 0;
 #ifdef OBJEXXFCL_PROXY_CONST_CHECKS
 		const_proxy_ = false;
@@ -869,7 +869,7 @@ protected: // Functions
 		assert( size_a != npos );
 		if ( array_size_ != size_a ) {
 			array_size_ = size_a;
-			delete[] array_; array_ = ( array_size_ > 0 ? new T[ array_size_ ] : 0 );
+			delete[] array_; array_ = ( array_size_ > 0 ? new T[ array_size_ ] : nullptr );
 			size_ = size_a;
 #ifdef OBJEXXFCL_FARRAY_SIZE_REPORT
 			size_report();
@@ -1027,13 +1027,13 @@ protected: // Functions
 	{
 		assert( ! owner_ );
 		array_size_ = 0;
-		array_ = 0;
+		array_ = nullptr;
 		size_ = 0;
 #ifdef OBJEXXFCL_PROXY_CONST_CHECKS
 		const_proxy_ = false;
 #endif // OBJEXXFCL_PROXY_CONST_CHECKS
 		shift_ = 0;
-		sarray_ = 0;
+		sarray_ = nullptr;
 	}
 
 

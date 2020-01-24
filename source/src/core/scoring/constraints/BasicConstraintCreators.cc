@@ -108,7 +108,7 @@ NamedAtomPairConstraintCreator::NamedAtomPairConstraintCreator() = default;
 NamedAtomPairConstraintCreator::~NamedAtomPairConstraintCreator() = default;
 
 ConstraintOP NamedAtomPairConstraintCreator::create_constraint() const {
-	return ConstraintOP( new NamedAtomPairConstraint( id::NamedAtomID(), id::NamedAtomID(), NULL ) );
+	return ConstraintOP( new NamedAtomPairConstraint( id::NamedAtomID(), id::NamedAtomID(), nullptr ) );
 }
 
 std::string NamedAtomPairConstraintCreator::keyname() const

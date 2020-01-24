@@ -302,7 +302,7 @@ VLB::make_manager( core::pose::Pose const & pose ) const {
 			pose::Pose swap_pose;
 			core::import_pose::pose_from_file( swap_pose, instr.filename, core::import_pose::PDB_file);
 			core::kinematics::MoveMap movemap; // empty = place jump anywhere
-			SegmentSwap( ival, movemap, swap_pose );
+			instruction = utility::pointer::make_shared< SegmentSwap >( ival, movemap, swap_pose );
 			break;
 		}
 		default :

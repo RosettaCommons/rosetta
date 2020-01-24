@@ -934,7 +934,7 @@ LK_BallEnergy::get_lkbr_fractional_contribution(
 	WaterCoords const & rsd1_waters,
 	WaterCoords const & rsd2_waters
 ) const {
-	WaterDerivVectors dweighted_water_ddi;
+	WaterDerivVectors dweighted_water_ddi = { {0,0,0} }; // Zero-initialize all the Vectors
 	Real weighted_water_d2_delta(0.0), angleterm_lkbr(0.0), pointterm_lkbr(0.0), d_angleterm_lkbr_dr(0.0);
 	return get_lkbr_fractional_contribution(
 		atom1_base, atom2_base, atom1_n_attached_waters, atom2_n_attached_waters,
@@ -1773,7 +1773,7 @@ LK_BallEnergy::sum_deriv_contributions_for_heavyatom_pair_one_way(
 	Real weighted_d2_water_delta(0), angleterm_lkbr(0), pointterm_lkbr(0), d_angleterm_lkbr_dr(0);
 
 	//utility::vector1< numeric::xyzVector<core::Real> > d_weighted_d2_d_di;
-	WaterDerivVectors d_weighted_d2_d_di;
+	WaterDerivVectors d_weighted_d2_d_di = { {0,0,0} }; // Zero-initialize all the Vectors
 
 	Real const lkbr_fraction( get_lkbr_fractional_contribution(
 		heavyatom1_xyz, atom2_xyz, atom1_n_waters, atom2_n_waters,

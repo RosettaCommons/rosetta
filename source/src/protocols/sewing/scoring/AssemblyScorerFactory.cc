@@ -110,7 +110,7 @@ AssemblyScorerFactory::get_assembly_scorer(
 		}
 		utility_exit_with_message(error_msg.str());
 	}
-	return 0;
+	return nullptr;
 }
 
 std::string

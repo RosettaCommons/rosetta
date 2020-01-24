@@ -127,12 +127,12 @@ public:
 		MoveType const & move_type );
 
 	StepWiseMove( utility::vector1< std::string > const & swa_move_string_vector,
-		core::pose::full_model_info::FullModelParametersCOP full_model_parameters = 0 /* to convert resnum, chain to Rosetta res */ );
+		core::pose::full_model_info::FullModelParametersCOP full_model_parameters = nullptr /* to convert resnum, chain to Rosetta res */ );
 
 	/// @details produces the swa_move_string_vector, a very idiosyncratic format, from the
 	/// type of string output produced by operator<<
 	StepWiseMove(std::string const & swa_move_string,
-		core::pose::full_model_info::FullModelParametersCOP full_model_parameters = 0 /* to convert resnum, chain to Rosetta res */ );
+		core::pose::full_model_info::FullModelParametersCOP full_model_parameters = nullptr /* to convert resnum, chain to Rosetta res */ );
 
 	friend
 	bool

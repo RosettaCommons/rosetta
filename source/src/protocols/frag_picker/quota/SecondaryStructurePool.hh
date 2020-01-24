@@ -100,7 +100,7 @@ public:
 	/// Candidates may or may not get inserted depending on the candidate
 	void insert(core::Size, CandidatesCollectorOP collector) override {
 		SecondaryStructurePoolOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::quota::SecondaryStructurePool > ( collector );
-		if ( c == 0 ) {
+		if ( c == nullptr ) {
 			utility_exit_with_message("Cant' cast candidates' collector to SecondaryStructurePool.");
 		}
 		ScoredCandidatesVector1 & content = c->get_candidates(0);

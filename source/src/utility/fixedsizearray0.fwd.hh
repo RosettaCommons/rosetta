@@ -19,12 +19,6 @@
 
 namespace utility {
 
-template< typename T, platform::Size S >
-class fixedsizearray0iterator;
-
-template< typename T, platform::Size S >
-class fixedsizearray0const_iterator;
-
 template < typename T, platform::Size S >
 class fixedsizearray0;
 

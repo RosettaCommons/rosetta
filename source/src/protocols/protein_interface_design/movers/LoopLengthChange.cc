@@ -68,7 +68,7 @@ LoopLengthChangeCreator::create_mover() const {
 
 LoopLengthChange::LoopLengthChange() :
 	Mover( LoopLengthChangeCreator::mover_name() ),
-	loop_start_( 0 ), loop_end_( 0 ), delta_( 0 ), tail_segment_(false),direction_(false)
+	loop_start_( nullptr ), loop_end_( nullptr ), delta_( 0 ), tail_segment_(false),direction_(false)
 {
 }
 

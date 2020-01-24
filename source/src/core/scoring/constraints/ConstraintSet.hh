@@ -204,14 +204,14 @@ public:
 	/// @brief Copies the data from this ConstraintSet into a new object and
 	/// returns its OP; atoms are mapped to atoms with the same name in dest pose
 	/// ( e.g. for switch from centroid to fullatom ) if a sequence_mapping is
-	/// present it is used to map residue numbers .. NULL = identity mapping to
+	/// present it is used to map residue numbers .. nullptr = identity mapping to
 	/// the new object. This will really clone all constraints since they have to
 	/// change their atom-numbers and residue-numbers
 	virtual ConstraintSetOP
 	remapped_clone(
 		pose::Pose const& src,
 		pose::Pose const& dest,
-		id::SequenceMappingCOP smap = NULL
+		id::SequenceMappingCOP smap = nullptr
 	) const;
 
 	/// @brief  like remapped_clone, but constraints also steal_def from src-pose
@@ -220,7 +220,7 @@ public:
 	virtual ConstraintSetOP steal_def_clone(
 		pose::Pose const& src,
 		pose::Pose const& dest,
-		id::SequenceMappingCOP smap = NULL
+		id::SequenceMappingCOP smap = nullptr
 	) const;
 
 

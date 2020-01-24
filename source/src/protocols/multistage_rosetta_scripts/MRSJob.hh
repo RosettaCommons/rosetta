@@ -47,12 +47,12 @@ struct mover_or_filter{
 	mover_or_filter( moves::MoverOP in_mover ) :
 		is_mover ( true ),
 		mover ( in_mover ),
-		filter ( 0 )
+		filter ( nullptr )
 	{}
 
 	mover_or_filter( filters::FilterOP in_filter ) :
 		is_mover ( false ),
-		mover ( 0 ),
+		mover ( nullptr ),
 		filter ( in_filter )
 	{}
 
@@ -88,8 +88,8 @@ struct mover_or_filter{
 	///@brief DUMMY FOR PYROSETTA
 	mover_or_filter() :
 		is_mover( false ),
-		mover( 0 ),
-		filter( 0 )
+		mover( nullptr ),
+		filter( nullptr )
 	{
 #ifndef PYROSETTA
 		utility_exit_with_message( "Bad Ctor Called" );

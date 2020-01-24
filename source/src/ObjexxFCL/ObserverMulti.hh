@@ -44,7 +44,7 @@ protected: // Creation
 	/// @brief Default Constructor
 	inline
 	ObserverMulti() :
-		observers_p_( 0 )
+		observers_p_( nullptr )
 	{}
 
 
@@ -52,7 +52,7 @@ protected: // Creation
 	inline
 	ObserverMulti( ObserverMulti const & ) :
 		Observer(),
-		observers_p_( 0 )
+		observers_p_( nullptr )
 	{}
 
 

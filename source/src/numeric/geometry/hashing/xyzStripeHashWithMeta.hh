@@ -69,8 +69,8 @@ public:
 		grid_size_(grid_size),
 		grid_size2_(grid_size*grid_size),
 		natom_(0),
-		grid_atoms_(NULL),
-		grid_stripe_(NULL),
+		grid_atoms_(nullptr),
+		grid_stripe_(nullptr),
 		xdim_(1),
 		ydim_(1),
 		zdim_(1)//,
@@ -82,8 +82,8 @@ public:
 	):
 		grid_size_(grid_size),
 		grid_size2_(grid_size*grid_size),
-		grid_atoms_(NULL),
-		grid_stripe_(NULL)//,
+		grid_atoms_(nullptr),
+		grid_stripe_(nullptr)//,
 		//neighbor_end_(*this)
 	{
 		init(atoms,meta);

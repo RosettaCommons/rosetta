@@ -399,7 +399,7 @@ void MSDMover::update_packer_task () {
 
 		// If mover already has task factory modify it -> otherwise create a new one
 		core::pack::task::TaskFactoryOP factory;
-		if ( design_packer->task_factory() == 0 ) {
+		if ( design_packer->task_factory() == nullptr ) {
 			factory = core::pack::task::TaskFactoryOP ( new core::pack::task::TaskFactory );
 		} else {
 			factory =  design_packer->task_factory()->clone();

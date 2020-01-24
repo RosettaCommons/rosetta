@@ -105,7 +105,7 @@ demangle( std::string trace ) {
 
 		// If output_buffer to __cxa_demangle() is null, memory will be allocated and the pointer returned.
 		char* demangledName; // = (char*) malloc(maxName);
-		if ( (demangledName = abi::__cxa_demangle(mangled_trace.c_str(), 0, &maxName,
+		if ( (demangledName = abi::__cxa_demangle(mangled_trace.c_str(), nullptr, &maxName,
 				&demangleStatus)) && demangleStatus == 0 ) {
 			trace = trace.substr(0,begin) + demangledName + trace.substr(end ); // the demangled name is now in our trace string
 		}

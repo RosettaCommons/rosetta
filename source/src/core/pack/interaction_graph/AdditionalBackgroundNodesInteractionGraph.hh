@@ -936,7 +936,7 @@ template < typename V, typename E, typename G >
 AdditionalBackgroundNodesInteractionGraph< V, E, G >::AdditionalBackgroundNodesInteractionGraph( int num_nodes ) :
 	G( num_nodes ),
 	num_bg_nodes_( -1 ),
-	focused_bg_edge_( 0 )
+	focused_bg_edge_( nullptr )
 {}
 
 

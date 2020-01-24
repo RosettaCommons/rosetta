@@ -493,7 +493,7 @@ AddMembraneMover::add_membrane_virtual( core::pose::Pose & pose ) {
 	if ( TR.visible() ) pose.fold_tree().show( TR );
 
 	// Updating Chain Record in PDB Info
-	if ( pose.pdb_info() != 0 ) {
+	if ( pose.pdb_info() != nullptr ) {
 		char curr_chain = pose.pdb_info()->chain( pose.size()-1 );
 		char new_chain = (char)((int) curr_chain + 1);
 		pose.pdb_info()->number( pose.size(), (int) pose.size() );

@@ -29,12 +29,12 @@ namespace multistage_rosetta_scripts {
 
 MRSJobSummary::MRSJobSummary() :
 	jd3::job_summaries::EnergyJobSummary(),
-	cluster_metric_( 0 )
+	cluster_metric_( nullptr )
 {}
 
 MRSJobSummary::MRSJobSummary( core::Real energy ) :
 	jd3::job_summaries::EnergyJobSummary( energy ),
-	cluster_metric_( 0 )
+	cluster_metric_( nullptr )
 {}
 
 MRSJobSummary::MRSJobSummary(

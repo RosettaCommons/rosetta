@@ -89,7 +89,7 @@ void SequenceMetric::parse_my_tag(
 
 		analyze( pose, selector );
 	} else {
-		analyze( pose, 0 );
+		analyze( pose, nullptr );
 	}
 }
 

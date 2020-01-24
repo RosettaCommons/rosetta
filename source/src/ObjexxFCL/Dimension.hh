@@ -56,7 +56,7 @@ public: // Creation
 	/// @brief Default Constructor
 	inline
 	Dimension() :
-		exp_p_( 0 ),
+		exp_p_( nullptr ),
 		initialized_( false ),
 		value_( 0 )
 	{}
@@ -454,7 +454,7 @@ public: // Inspector
 	Expression *
 	exp_clone() const
 	{
-		return ( exp_p_ ? exp_p_->clone() : static_cast< Expression * >( 0 ) );
+		return ( exp_p_ ? exp_p_->clone() : nullptr );
 	}
 
 
@@ -468,7 +468,7 @@ public: // Modifier
 	{
 		if ( exp_p_ ) {
 			remove_as_observer();
-			delete exp_p_; exp_p_ = 0;
+			delete exp_p_; exp_p_ = nullptr;
 			initialized_ = false;
 			value_ = 0;
 		}
@@ -484,7 +484,7 @@ public: // Modifier
 	{
 		if ( exp_p_ ) {
 			remove_as_observer();
-			delete exp_p_; exp_p_ = 0;
+			delete exp_p_; exp_p_ = nullptr;
 			initialized_ = false;
 			value_ = 0;
 		}

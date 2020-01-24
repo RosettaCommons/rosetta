@@ -96,7 +96,7 @@ public: // Creation
 	inline
 	FArray3P() :
 		Super( ProxySentinel() ),
-		source_( 0 )
+		source_( nullptr )
 	{}
 
 
@@ -235,7 +235,7 @@ public: // Creation
 		I1_( 1 ),
 		I2_( 1 ),
 		I3_( s.size() ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		shift_set( 3 );
 		s1_ = s2_ = 1;
@@ -250,7 +250,7 @@ public: // Creation
 		I1_( 1 ),
 		I2_( 1 ),
 		I3_( s.size() ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		shift_set( 3 );
 		s1_ = s2_ = 1;
@@ -265,7 +265,7 @@ public: // Creation
 		I1_( 1 ),
 		I2_( 1 ),
 		I3_( star ), // Unbounded
-		source_( 0 )
+		source_( nullptr )
 	{
 		shift_set( 3 );
 		s1_ = s2_ = 1;
@@ -280,7 +280,7 @@ public: // Creation
 		I1_( 1 ),
 		I2_( 1 ),
 		I3_( star ), // Unbounded
-		source_( 0 )
+		source_( nullptr )
 	{
 		shift_set( 3 );
 		s1_ = s2_ = 1;
@@ -407,7 +407,7 @@ public: // Creation
 		I1_( I1_a ),
 		I2_( I2_a ),
 		I3_( I3_a ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		dimension_proxy();
 		insert_as_observer();
@@ -421,7 +421,7 @@ public: // Creation
 		I1_( I1_a ),
 		I2_( I2_a ),
 		I3_( I3_a ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		dimension_proxy();
 		insert_as_observer();
@@ -435,7 +435,7 @@ public: // Creation
 		I1_( I1_a ),
 		I2_( I2_a ),
 		I3_( I3_a ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		dimension_proxy();
 		insert_as_observer();
@@ -449,7 +449,7 @@ public: // Creation
 		I1_( I1_a ),
 		I2_( I2_a ),
 		I3_( I3_a ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		dimension_proxy();
 		insert_as_observer();
@@ -769,7 +769,7 @@ public: // Modifier
 		I1_.clear_no_notify();
 		I2_.clear_no_notify();
 		I3_.clear_no_notify();
-		source_ = 0;
+		source_ = nullptr;
 		return *this;
 	}
 
@@ -1078,7 +1078,7 @@ public: // Observer Modifier
 			I1_.clear();
 			I2_.clear();
 			I3_.clear();
-			source_ = 0;
+			source_ = nullptr;
 		}
 	}
 
@@ -1149,10 +1149,10 @@ private: // Functions
 	void
 	remove_as_observer()
 	{
-		I1_.remove_observer( *this );
-		I2_.remove_observer( *this );
-		I3_.remove_observer( *this );
-		if ( source_ ) source_->remove_observer( *this );
+	I1_.remove_observer( *this );
+	I2_.remove_observer( *this );
+	I3_.remove_observer( *this );
+	if ( source_ ) source_->remove_observer( *this );
 	}
 	*/
 

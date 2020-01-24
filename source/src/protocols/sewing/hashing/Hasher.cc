@@ -366,7 +366,7 @@ neighbor_vector[ neighbor_vector_index ]->become( segment_vector_[segment_index]
 
 data_storage::SmartSegmentOP
 Hasher::initialize_hashmap( data_storage::BasisPair const & basis_pair ) {
-	core::Size starttime = time( NULL );
+	core::Size starttime = time( nullptr );
 	//This uses the first model and first basis residue in the transform_model function
 	//Get the two models
 
@@ -412,7 +412,7 @@ Hasher::initialize_hashmap( data_storage::BasisPair const & basis_pair ) {
 		//data_storage::SmartSegment::get_n_most_segment( segment_vector_[ basis_pair.second.segment_id() ] , false ); //basis pair might not be in the n_most segment
 		TR.Debug << "Transformed segment." << std::endl;
 	}
-	core::Size endtime = time( NULL );
+	core::Size endtime = time( nullptr );
 	TR << "Initialized hashmap in " << endtime - starttime << " seconds!" << std::endl;
 	return segments_to_score;
 }
@@ -425,7 +425,7 @@ bool
 Hasher::score_basis_pair(
 	data_storage::BasisPair const & basis_pair
 ) {
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 	//this will score the basis_pair
 	//Assemblies assume each segment will occur at most once (if this changes later, comment out this statement!)
 	// if( data_storage::SmartSegment::get_n_most_segment( segment_vector_[ basis_pair.first.segment_id() ], false ) == data_storage::SmartSegment::get_n_most_segment( segment_vector_[ basis_pair.second.segment_id() ], false ) ) {
@@ -493,7 +493,7 @@ Hasher::score_basis_pair(
 		}//End iterator over residues
 		current_segment = current_segment->get_c_terminal_neighbor();
 	}
-	core::Size endtime = time( NULL );
+	core::Size endtime = time( nullptr );
 	TR << "Scored basis pair " << basis_pair.first.segment_id() << " " << basis_pair.first.resnum() << ", " << basis_pair.second.segment_id() << " " << basis_pair.second.resnum() << " in " << endtime - starttime << " seconds!" << std::endl;
 	TR << "Clash score " << clash_score << " and hash score " << hash_score << std::endl;
 	return ( clash_score <= hasher_settings_.max_clash_score && hash_score >= hasher_settings_.min_hash_score );

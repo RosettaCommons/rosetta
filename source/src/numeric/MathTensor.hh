@@ -66,7 +66,7 @@ public:
 		nrows_( rows ),
 		ncols_( cols ),
 		size_( nlayers_ * nrows_ * ncols_ ),
-		data_( size_ != 0 ? new T[ size_ ] : 0 )
+		data_( size_ != 0 ? new T[ size_ ] : nullptr )
 	{
 		std::fill( data_, data_ + size_, value );
 	}

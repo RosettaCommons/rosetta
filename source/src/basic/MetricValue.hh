@@ -66,7 +66,7 @@ private:
 
 template <class desired_T>
 void check_cast( const basic::MetricValueBase * const valptr, const desired_T * const, std::string const & error_msg ) {
-	if ( dynamic_cast<const basic::MetricValue<desired_T> * const>(valptr) == 0 ) {
+	if ( dynamic_cast<const basic::MetricValue<desired_T> * const>(valptr) == nullptr ) {
 		basic::Error() << error_msg << std::endl;
 		utility_exit();
 	}

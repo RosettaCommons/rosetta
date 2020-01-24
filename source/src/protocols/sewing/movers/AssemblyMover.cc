@@ -112,7 +112,7 @@ AssemblyMover::set_up_hashing(){
 void
 AssemblyMover::apply( core::pose::Pose& pose){
 	//Try to generate an assembly
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 
 	data_storage::SmartAssemblyOP assembly = set_up_assembly( pose );
 	if ( max_cycles_ > 0 ) {
@@ -128,7 +128,7 @@ AssemblyMover::apply( core::pose::Pose& pose){
 	//Now convert the assembly to a pose
 	//(not actually sure how this function will look)
 
-	core::Size endttime = time(NULL);
+	core::Size endttime = time(nullptr);
 	TR << "Assembly successfully generated in " << endttime - starttime << " seconds" << std::endl;
 
 	print_statistics( assembly );

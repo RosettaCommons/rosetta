@@ -48,7 +48,7 @@ struct GeneralEvent {
 	/// @brief default constructor
 	inline
 	GeneralEvent() :
-		conformation( NULL )
+		conformation( nullptr )
 	{}
 
 

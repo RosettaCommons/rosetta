@@ -225,7 +225,7 @@ public: // Properties
 		if ( parent_op ) {
 			return parent_op->stub_atom2();
 		}
-		return 0;
+		return nullptr;
 	}
 	/////////////////////////////////////////////////////////////////////////////
 	/// @brief stub_atom3 of a jump atom
@@ -249,7 +249,7 @@ public: // Properties
 		if ( parent_op ) {
 			return parent_op->stub_atom3();
 		}
-		return 0;
+		return nullptr;
 	}
 
 public:

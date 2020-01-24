@@ -78,8 +78,8 @@ public: // Creation
 	inline
 	Fstring() :
 		len_( 0 ),
-		str_( 0 ),
-		c_str_( 0 ),
+		str_( nullptr ),
+		c_str_( nullptr ),
 		sub_( false )
 	{}
 
@@ -102,7 +102,7 @@ public: // Creation
 	Fstring( char const c ) :
 		len_( 1 ),
 		str_( new char[ 1 ] ),
-		c_str_( 0 ),
+		c_str_( nullptr ),
 		sub_( false )
 	{
 		str_[ 0 ] = c;
@@ -115,7 +115,7 @@ public: // Creation
 	Fstring( signed char const c ) :
 		len_( 1 ),
 		str_( new char[ 1 ] ),
-		c_str_( 0 ),
+		c_str_( nullptr ),
 		sub_( false )
 	{
 		str_[ 0 ] = static_cast< char >( c );
@@ -128,7 +128,7 @@ public: // Creation
 	Fstring( unsigned char const c ) :
 		len_( 1 ),
 		str_( new char[ 1 ] ),
-		c_str_( 0 ),
+		c_str_( nullptr ),
 		sub_( false )
 	{
 		str_[ 0 ] = static_cast< char >( c );
@@ -1986,44 +1986,44 @@ operator <<( std::ostream & stream, Fstring const & s );
 // Fstring Member Function Explicit Specializations
 
 
-	/// @brief Fstring is Readable as a char Supporting Stream Input?
-	template<>
-	inline
-	bool
-	Fstring::is_type< char >() const
-	{
-		return ( size() == 1 );
-	}
+/// @brief Fstring is Readable as a char Supporting Stream Input?
+template<>
+inline
+bool
+Fstring::is_type< char >() const
+{
+	return ( size() == 1 );
+}
 
 
-	/// @brief Fstring is Readable as a string Supporting Stream Input?
-	template<>
-	inline
-	bool
-	Fstring::is_type< std::string >() const
-	{
-		return true;
-	}
+/// @brief Fstring is Readable as a string Supporting Stream Input?
+template<>
+inline
+bool
+Fstring::is_type< std::string >() const
+{
+	return true;
+}
 
 
-	/// @brief char of an Fstring
-	template<>
-	inline
-	char
-	Fstring::type_of< char >() const
-	{
-		return ( len_ == 1 ? str_[ 0 ] : char() ); // Check is_type first
-	}
+/// @brief char of an Fstring
+template<>
+inline
+char
+Fstring::type_of< char >() const
+{
+	return ( len_ == 1 ? str_[ 0 ] : char() ); // Check is_type first
+}
 
 
-	/// @brief string of an Fstring
-	template<>
-	inline
-	std::string
-	Fstring::type_of< std::string >() const
-	{
-		return std::string( str_, len_ );
-	}
+/// @brief string of an Fstring
+template<>
+inline
+std::string
+Fstring::type_of< std::string >() const
+{
+	return std::string( str_, len_ );
+}
 
 
 /// @brief Fsubstring: Fixed-Length Fortran-Compatible Substring
@@ -2521,7 +2521,7 @@ left_Fstring_of(
 {
 	std::ostringstream t_stream;
 	t_stream << std::left << std::uppercase
-	 << std::setw( w ) << std::setfill( f ) << std::setprecision( TypeTraits< T >::precision() ) << t;
+		<< std::setw( w ) << std::setfill( f ) << std::setprecision( TypeTraits< T >::precision() ) << t;
 	return t_stream.str();
 }
 
@@ -2538,7 +2538,7 @@ right_Fstring_of(
 {
 	std::ostringstream t_stream;
 	t_stream << std::right << std::uppercase
-	 << std::setw( w ) << std::setfill( f ) << std::setprecision( TypeTraits< T >::precision() ) << t;
+		<< std::setw( w ) << std::setfill( f ) << std::setprecision( TypeTraits< T >::precision() ) << t;
 	return t_stream.str();
 }
 
@@ -2555,7 +2555,7 @@ lead_zero_Fstring_of(
 {
 	std::ostringstream t_stream;
 	t_stream << std::internal << std::uppercase
-	 << std::setw( w ) << std::setfill( '0' ) << std::setprecision( TypeTraits< T >::precision() ) << t;
+		<< std::setw( w ) << std::setfill( '0' ) << std::setprecision( TypeTraits< T >::precision() ) << t;
 	return t_stream.str();
 }
 
@@ -2572,7 +2572,7 @@ general_Fstring_of(
 {
 	std::ostringstream t_stream;
 	t_stream << std::right << std::uppercase << std::showpoint
-	 << std::setw( w ) << std::setprecision( p ) << t;
+		<< std::setw( w ) << std::setprecision( p ) << t;
 	return t_stream.str();
 }
 
@@ -2589,7 +2589,7 @@ fixed_Fstring_of(
 {
 	std::ostringstream t_stream;
 	t_stream << std::right << std::uppercase << std::fixed << std::showpoint
-	 << std::setw( w ) << std::setprecision( p ) << t;
+		<< std::setw( w ) << std::setprecision( p ) << t;
 	return t_stream.str();
 }
 
@@ -2606,7 +2606,7 @@ scientific_Fstring_of(
 {
 	std::ostringstream t_stream;
 	t_stream << std::right << std::uppercase << std::scientific << std::showpoint
-	 << std::setw( w ) << std::setprecision( p ) << t;
+		<< std::setw( w ) << std::setprecision( p ) << t;
 	return t_stream.str();
 }
 

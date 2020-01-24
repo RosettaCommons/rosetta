@@ -51,7 +51,7 @@ class AmbiguousNMRConstraint : public MultiConstraint {
 public:
 
 	/// @brief default Constructor
-	AmbiguousNMRConstraint( func::FuncOP func = NULL );
+	AmbiguousNMRConstraint( func::FuncOP func = nullptr );
 
 	/// @brief Constructor
 	AmbiguousNMRConstraint( ConstraintCOPs const & cst_in, func::FuncOP func );

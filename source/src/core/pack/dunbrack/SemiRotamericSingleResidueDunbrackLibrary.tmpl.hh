@@ -1054,12 +1054,12 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io:
 	out.write( (char*) bbdep_nrchi_probs, n_bbdep_nrchi_samples * sizeof( DunbrackReal ) );
 	out.write( (char*) bbdep_rotsample_sorted_order, n_bbdep_nrchi_samples * sizeof( boost::int32_t ) );
 
-	delete [] bbdep_nrchi_packed_rotnos; bbdep_nrchi_packed_rotnos = 0;
-	delete [] bbdep_nrchi_bin;       bbdep_nrchi_bin = 0;
-	delete [] bbdep_nrchi_means;   bbdep_nrchi_means = 0;
-	delete [] bbdep_nrchi_sdevs;   bbdep_nrchi_sdevs = 0;
-	delete [] bbdep_nrchi_probs;   bbdep_nrchi_probs = 0;
-	delete [] bbdep_rotsample_sorted_order; bbdep_rotsample_sorted_order = 0;
+	delete [] bbdep_nrchi_packed_rotnos; bbdep_nrchi_packed_rotnos = nullptr;
+	delete [] bbdep_nrchi_bin;       bbdep_nrchi_bin = nullptr;
+	delete [] bbdep_nrchi_means;   bbdep_nrchi_means = nullptr;
+	delete [] bbdep_nrchi_sdevs;   bbdep_nrchi_sdevs = nullptr;
+	delete [] bbdep_nrchi_probs;   bbdep_nrchi_probs = nullptr;
+	delete [] bbdep_rotsample_sorted_order; bbdep_rotsample_sorted_order = nullptr;
 
 	{ // Save the bbind rotamer definitions reguardless of bbind_nrchi_sampling_'s status.
 
@@ -1071,7 +1071,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io:
 		DunbrackReal * bbind_nrchi_rights  = new DunbrackReal[ n_bbind_nrchi_samples ];
 		DunbrackReal * bbind_nrchi_probs   = new DunbrackReal[ n_bbind_nrchi_samples ];
 
-		boost::int32_t * bbind_rotsample_sorted_order( 0 );
+		boost::int32_t * bbind_rotsample_sorted_order( nullptr );
 
 		count = 0;
 		for ( Size ii = 1; ii <= grandparent::n_packed_rots(); ++ii ) {
@@ -1221,12 +1221,12 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io
 		}
 	}
 
-	delete [] bbdep_nrchi_packed_rotnos; bbdep_nrchi_packed_rotnos = 0;
-	delete [] bbdep_nrchi_bin;       bbdep_nrchi_bin = 0;
-	delete [] bbdep_nrchi_means;   bbdep_nrchi_means = 0;
-	delete [] bbdep_nrchi_sdevs;   bbdep_nrchi_sdevs = 0;
-	delete [] bbdep_nrchi_probs;   bbdep_nrchi_probs = 0;
-	delete [] bbdep_rotsample_sorted_order; bbdep_rotsample_sorted_order = 0;
+	delete [] bbdep_nrchi_packed_rotnos; bbdep_nrchi_packed_rotnos = nullptr;
+	delete [] bbdep_nrchi_bin;       bbdep_nrchi_bin = nullptr;
+	delete [] bbdep_nrchi_means;   bbdep_nrchi_means = nullptr;
+	delete [] bbdep_nrchi_sdevs;   bbdep_nrchi_sdevs = nullptr;
+	delete [] bbdep_nrchi_probs;   bbdep_nrchi_probs = nullptr;
+	delete [] bbdep_rotsample_sorted_order; bbdep_rotsample_sorted_order = nullptr;
 
 	{ // Save the bbind rotamer definitions reguardless of bbind_nrchi_sampling_'s status.
 
@@ -1275,7 +1275,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::operator ==( rotamers::Single
 
 	// Raw pointer okay, we're just using it to check for conversion
 	SemiRotamericSingleResidueDunbrackLibrary< T, N> const * ptr( dynamic_cast< SemiRotamericSingleResidueDunbrackLibrary< T, N > const * > ( &rhs ) );
-	if ( ptr == 0 ) {
+	if ( ptr == nullptr ) {
 		TR << "In comparison operator: right-hand side is not a matching SemiRotamericSingleResidueDunbrackLibrary." << std::endl;
 		return false;
 	}

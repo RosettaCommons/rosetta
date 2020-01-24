@@ -199,7 +199,7 @@ struct PointPair {
 
 struct Circle {
 	Circle( core::Real _x, core::Real _y, core::Real _r, core::Real _drdz, core::Real _dada, core::id::AtomID _atom_id )
-	: x(_x), y(_y), r(_r), drdz(_drdz), dada(_dada), tcw(NULL), tccw(NULL), atom(_atom_id) {}
+	: x(_x), y(_y), r(_r), drdz(_drdz), dada(_dada), tcw(nullptr), tccw(nullptr), atom(_atom_id) {}
 
 	PointPair
 	overlap(
@@ -242,7 +242,7 @@ struct Event {
 		core::Real _y,
 		EventType _kind,
 		Circle *_circle,
-		Circle *_ccw=NULL
+		Circle *_ccw=nullptr
 	) : x(_x),
 		y(_y),
 		cw_angle(-1),
@@ -250,7 +250,7 @@ struct Event {
 		kind(_kind),
 		circle(_circle),
 		ccw(_ccw),
-		trace_(NULL)
+		trace_(nullptr)
 	{
 		// std::cerr << "Event " << _kind << " " << circle << std::endl;
 		if ( kind == ISECT ) {
@@ -322,7 +322,7 @@ struct trace {
 		core::Real _angle,
 		trace *other_trace
 	) : accum_(_accum), ccw(_ccw), start_(e),
-		circle(_circle), angle(_angle), next_trace_(NULL)
+		circle(_circle), angle(_angle), next_trace_(nullptr)
 	{
 		e->trace_ = this;
 		if ( ccw ) {
@@ -338,8 +338,8 @@ struct trace {
 	inline void next_circle( Circle *newcircle, core::Real end_angle, core::Real begin_angle )
 	{
 		finish_arc(end_angle);
-		if ( ccw ) circle->tccw = NULL;
-		else    circle->tcw  = NULL;
+		if ( ccw ) circle->tccw = nullptr;
+		else    circle->tcw  = nullptr;
 		circle = newcircle;
 		angle = begin_angle;
 		if ( ccw ) circle->tccw = this;
@@ -353,7 +353,7 @@ struct trace {
 	}
 
 	Event *get_first( trace *stop ){
-		if ( stop == this || next_trace_==NULL ) return start_;
+		if ( stop == this || next_trace_==nullptr ) return start_;
 		Event *best = next_trace_->get_first(stop);
 		if ( start_->cmp(best) > 0 ) return start_;
 		else                        return best;
@@ -361,9 +361,9 @@ struct trace {
 
 	void set_first( trace *stop, Event *e ){
 		start_ = e;
-		if ( stop == this || next_trace_==NULL ) return;
+		if ( stop == this || next_trace_==nullptr ) return;
 		next_trace_->set_first( stop, e );
-		next_trace_ = NULL;
+		next_trace_ = nullptr;
 	}
 
 	AccumulatorOP accum_;
@@ -388,7 +388,7 @@ private:
 
 struct Array2D {
 
-	Array2D() : Nx_(0), Ny_(0), array_(0) {} // Needed for uninitialized variable errors
+	Array2D() : Nx_(0), Ny_(0), array_(nullptr) {} // Needed for uninitialized variable errors
 
 	void init( core::Size Nx, core::Size Ny ) {
 		Nx_ = Nx;
@@ -452,7 +452,7 @@ struct Octree2D {
 
 	bool
 	contains( core::Real x, core::Real y, int extend = 1,
-		Circle *exclude1 = NULL, Circle *exclude2 = NULL )
+		Circle *exclude1 = nullptr, Circle *exclude2 = nullptr )
 	{
 		int I2 = get_i(x);
 		int J2 = get_j(y);

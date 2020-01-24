@@ -138,7 +138,7 @@ core::scoring::hbonds::graph::AtomInfoSet *
 NetworkState::get_unsats_for_mres( unsigned int mres ) {
 	auto iter = unsatisfied_sc_atoms_.find( mres );
 	if ( iter == unsatisfied_sc_atoms_.end() ) {
-		return 0;
+		return nullptr;
 	} else {
 		return &( iter->second );
 	}
@@ -149,7 +149,7 @@ core::scoring::hbonds::graph::AtomInfoSet const *
 NetworkState::get_unsats_for_mres( unsigned int mres ) const {
 	auto iter = unsatisfied_sc_atoms_.find( mres );
 	if ( iter == unsatisfied_sc_atoms_.end() ) {
-		return 0;
+		return nullptr;
 	} else {
 		return &( iter->second );
 	}

@@ -49,7 +49,7 @@ ModelFileReader::clone() const {
 SegmentVectorOP
 ModelFileReader::read_model_file(std::string filename){
 
-	core::Size starttime = time(NULL);
+	core::Size starttime = time(nullptr);
 	utility::io::izstream file(filename);
 	if ( !file.good() ) {
 		utility_exit_with_message("Could not find segment file with name: " + filename);
@@ -167,7 +167,7 @@ ModelFileReader::read_model_file(std::string filename){
 		//}
 		segment_list->push_back(current_segment);//add it to the list
 	}
-	core::Size endtime = time(NULL);
+	core::Size endtime = time(nullptr);
 	TR << "Read " << segment_list->size() << " segments in " << endtime - starttime << " seconds" << std::endl;
 	//for(core::Size segcounter = 1; segcounter <= segment_list->size(); segcounter++){
 	// current_segment = segment_list->at(segcounter);

@@ -77,7 +77,7 @@ void determine_atom_level_edge_info_for_all_edges(
 	pose::Pose const & pose,
 	bool skip_edges_with_degree_zero = false,//do not waste time on edges that can not be part of hbond networks
 	Real hbond_energy_threshold_for_satisfaction = -0.25,
-	conformation::symmetry::SymmetryInfoCOP symm_info = 0
+	conformation::symmetry::SymmetryInfoCOP symm_info = nullptr
 );
 
 ///@brief Add information regarding the atoms participating in hbonds (see find_hbonds_in_residue_pair() ). symm_info needs to be != 0 if and only if you want to evaluate symmetry.
@@ -88,7 +88,7 @@ void determine_atom_level_edge_info(
 	utility::graph::Graph const & tenA_neighbor_graph,
 	pose::Pose const & pose,
 	Real hbond_energy_threshold_for_satisfaction = -0.25,
-	conformation::symmetry::SymmetryInfoCOP symm_info = 0
+	conformation::symmetry::SymmetryInfoCOP symm_info = nullptr
 );
 
 ///@brief Calls determine_atom_level_node_info() for all nodes. skip_nodes_with_no_edges is recommended to be set to true but depends on your protocol. The default is false for safety purposes.

@@ -65,7 +65,7 @@ public:
 	NumberRows_( 0),
 	NumberCols_( 0),
 	size_( 0 ),
-	data_( NULL)
+	data_( nullptr )
 	{
 	}
 

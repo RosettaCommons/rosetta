@@ -335,7 +335,7 @@ Real d2 = dx*dx + dy*dy;
 Real d = sqrt(d2);
 
 //return value
-CornerPoints cp2d;
+CornerPoints cp2d = { {0,0,0} };
 //d
 if (d+r1<=r2)
 {

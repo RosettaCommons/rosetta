@@ -102,7 +102,7 @@ public:
 	std::string report() const;
 
 	/// @brief Is is just the default, always-zero, predictor?
-	bool is_default() const { return predictor_ == NULL; }
+	bool is_default() const { return predictor_ == nullptr; }
 
 	/// @brief How long are the peptides to be predicted?
 	core::Size get_peptide_length() const { return predictor_->get_peptide_length(); }

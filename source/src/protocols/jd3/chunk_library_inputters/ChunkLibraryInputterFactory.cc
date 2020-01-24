@@ -50,7 +50,7 @@ ChunkLibraryInputterFactory::ChunkLibraryInputterFactory() :
 void
 ChunkLibraryInputterFactory::factory_register( ChunkLibraryInputterCreatorOP creator )
 {
-	runtime_assert( creator != 0 );
+	runtime_assert( creator != nullptr );
 	std::string const chunk_library_inputter_type( creator->keyname() );
 	if ( chunk_library_inputter_creator_map_.find( chunk_library_inputter_type ) != chunk_library_inputter_creator_map_.end() ) {
 		std::string err_msg = "ChunkLibraryInputterFactory::factory_register already has a chunk_library_inputter creator with name \""

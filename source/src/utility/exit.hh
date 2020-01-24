@@ -200,12 +200,12 @@ exit(
 	utility::exit( file, line, std::string(), status );
 }
 
-typedef void (* UtilityExitCallBack)(void);
+typedef void (* UtilityExitCallBack)();
 
 /// @brief Set call back funtion that will be called on utility::exit.
 ///        Use this function to overload default behavior of sys.exit to more appropriate to your application
-///        Defaut value for callback function is 0, whicth mean no sys exit is called.
-void set_main_exit_callback( UtilityExitCallBack = 0 );
+///        Defaut value for callback function is nullptr, whicth mean no sys exit is called.
+void set_main_exit_callback( UtilityExitCallBack = nullptr );
 
 /// @brief Add additional callback function that will be called *before* standard exit(…) is executed.
 ///        [Note: do not confuse this function with 'set_main_exit_callback' which is replacing the end behavior of exit(…)]

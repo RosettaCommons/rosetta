@@ -856,7 +856,7 @@ NubInitioMover::repack_minimize_disulfides( core::pose::Pose & pose )
 		minmovemap->show( TR.Trace );
 
 		// Run
-		core::util::rebuild_disulfide( pose, nub_->disulfides(), 0, NULL, packer_score, minmovemap, minimizer_score );
+		core::util::rebuild_disulfide( pose, nub_->disulfides(), 0, nullptr, packer_score, minmovemap, minimizer_score );
 		pose.conformation().fix_disulfides( nub_->disulfides() );
 		core::pose::setPoseExtraScore( pose, nub_->design_chain() + "_ni_disulfides_side", disulfides_side_ );
 		TR.Debug << "REPACK DISULFIDES: END" << std::endl;

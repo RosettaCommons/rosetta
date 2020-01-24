@@ -249,7 +249,7 @@ public:
 
 	bool
 	has_restype() const {
-		return restype_.get() != 0;
+		return restype_ != nullptr;
 	}
 
 	core::chemical::ResidueType const &
@@ -280,7 +280,7 @@ public:
 
 	bool
 	has_algorithm() {
-		return algorithm_.get() != 0;
+		return algorithm_ != nullptr;
 	}
 
 	downstream::DownstreamAlgorithm const &

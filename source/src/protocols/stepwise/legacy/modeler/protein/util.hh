@@ -46,7 +46,7 @@ output_pose_list( utility::vector1< core::pose::PoseOP > pose_list,
 void
 output_silent_struct( core::pose::Pose const & pose, core::pose::PoseCOP const & native_pose_op,
 	std::string const & silent_file, std::string const & tag,
-	core::io::silent::SilentFileDataOP sfd_in = 0);
+	core::io::silent::SilentFileDataOP sfd_in = nullptr);
 
 
 void

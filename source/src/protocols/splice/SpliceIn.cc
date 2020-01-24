@@ -244,7 +244,7 @@ void SpliceIn::apply(core::pose::Pose & pose) {
 
 	using namespace protocols::task_operations;
 	DesignAroundOperationOP dao(new DesignAroundOperation);
-	dao->design_shell((splicemanager.task_factory() == NULL ? 0.0 : splicemanager.design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
+	dao->design_shell((splicemanager.task_factory() == nullptr ? 0.0 : splicemanager.design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
 	dao->repack_shell(splicemanager.repack_shell());
 	for ( core::Size i = splicemanager.pose_from_res(); i <= splicemanager.pose_to_res(); ++i ) {
 		if ( !pose.residue(i).has_variant_type(DISULFIDE) ) {

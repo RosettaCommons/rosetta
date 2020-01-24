@@ -45,8 +45,8 @@ public: // Creation
 	inline
 	DimensionExpressionMax( DimensionExpressionMax const & exp ) :
 		Super(),
-		exp1_p_( exp.exp1_p_ ? exp.exp1_p_->clone() : static_cast< DimensionExpression * >( 0 ) ),
-		exp2_p_( exp.exp2_p_ ? exp.exp2_p_->clone() : static_cast< DimensionExpression * >( 0 ) )
+		exp1_p_( exp.exp1_p_ ? exp.exp1_p_->clone() : nullptr ),
+		exp2_p_( exp.exp2_p_ ? exp.exp2_p_->clone() : nullptr )
 	{
 		assert( exp1_p_ );
 		assert( exp2_p_ );

@@ -40,8 +40,8 @@ void BiasEnergy::Histogram<T>::toggle() {
 
 template< typename T>
 BiasEnergy::Histogram<T>::Histogram( core::Real grid_min, core::Real grid_max, core::Size ngrid_cells /* = 100 */ ) :
-	data_( NULL ),
-	recv_buf_( NULL ),
+	data_( nullptr ),
+	recv_buf_( nullptr ),
 	grid_min_( grid_min ),
 	grid_max_( grid_max ),
 	delta_grid_( (grid_max-grid_min)/ngrid_cells )

@@ -229,7 +229,7 @@ public:// construct/destruct
 	StrandPairingSet( SS_Info2 const & ssinfo, DimerPairings const & dimer_pairs );
 
 	/// @brief value constructor
-	StrandPairingSet( String const & spairstring, SS_Info2_COP const ssinfo = NULL );
+	StrandPairingSet( String const & spairstring, SS_Info2_COP const ssinfo = nullptr );
 
 	/// @brief value constructor
 	StrandPairingSet( String const & spairstring, SS_Info2_COP const ssinfo, utility::vector1< String > const & abego );

@@ -202,7 +202,7 @@ public:
 protected:
 	bool
 	bbgrid_set() const {
-		return bb_grid_.get() != 0;
+		return bb_grid_.get() != nullptr;
 	}
 
 	BumpGrid const &
@@ -212,7 +212,7 @@ protected:
 
 	bool
 	occ_space_set() const {
-		return space_ != 0;
+		return space_ != nullptr;
 	}
 
 	OccupiedSpaceHash const &
@@ -222,7 +222,7 @@ protected:
 
 	bool
 	active_site_grid_set() const {
-		return active_site_grid_ != 0;
+		return active_site_grid_ != nullptr;
 	}
 
 	ActiveSiteGrid const &

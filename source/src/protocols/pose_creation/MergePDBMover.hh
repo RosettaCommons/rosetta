@@ -50,7 +50,7 @@ public:
 			start_overlap_pose = start_overlap_pose_i;
 			end_overlap_pose = end_overlap_pose_i;
 			output_yet=false;
-			output_poseOP=NULL;
+			output_poseOP=nullptr;
 		}
 
 		std::string name(){

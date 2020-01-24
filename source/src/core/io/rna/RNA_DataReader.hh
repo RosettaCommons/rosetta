@@ -51,7 +51,7 @@ public:
 	fill_rna_data_info( core::pose::Pose & pose );
 
 	bool
-	has_reactivities(){ return ( rna_data_info_with_conventional_numbering_ != 0 &&
+	has_reactivities(){ return ( rna_data_info_with_conventional_numbering_ != nullptr &&
 		rna_data_info_with_conventional_numbering_->rna_reactivities().size() > 0 ); }
 
 private:
@@ -89,7 +89,7 @@ private:
 
 pose::rna::RNA_DataInfo const &
 get_rna_data_info( core::pose::Pose & pose, std::string const & rna_data_file,
-	core::scoring::ScoreFunctionOP scorefxn = 0 );
+	core::scoring::ScoreFunctionOP scorefxn = nullptr );
 
 
 } //rna

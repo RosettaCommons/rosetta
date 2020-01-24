@@ -113,7 +113,7 @@ public:
 					// remove the pointer to tup.parent's right child
 					// and merge this child into the range covered by this node
 					lower_ = tup.parent->right_->lower_;
-					tup.parent->right_ = 0;
+					tup.parent->right_ = nullptr;
 				}
 			} else {
 				lower_ = new_lower;
@@ -140,7 +140,7 @@ public:
 					// remove the pointer to tup.parent's left child
 					// and merge this child into the range covered by this node
 					upper_ = tup.parent->left_->upper_;
-					tup.parent->left_ = 0;
+					tup.parent->left_ = nullptr;
 				}
 			} else {
 				upper_ = new_upper;

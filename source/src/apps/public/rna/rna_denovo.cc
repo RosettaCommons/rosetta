@@ -302,7 +302,7 @@ public:
 		rna_fragment_monte_carlo_->set_is_rna_and_protein( rna_params_->is_rna_and_protein() ); // need to know this for the high resolution stuff
 		if ( options_->filter_vdw() ) rna_fragment_monte_carlo_->set_vdw_grid( vdw_grid_ );
 		if ( !refine_pose ) rna_fragment_monte_carlo_->set_rna_de_novo_pose_initializer( rna_de_novo_pose_initializer ); // only used for resetting fold-tree & cutpoints on each try.
-		if ( outputter != 0 ) rna_fragment_monte_carlo_->set_outputter( outputter); // accumulate stats in histogram.
+		if ( outputter != nullptr ) rna_fragment_monte_carlo_->set_outputter( outputter); // accumulate stats in histogram.
 
 		mature_job->mover( rna_fragment_monte_carlo_ );
 

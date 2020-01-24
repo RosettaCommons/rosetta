@@ -150,11 +150,11 @@ check_jump_to_next_residue_in_chain( core::pose::Pose const & pose, core::Size c
 void
 switch_focus_to_other_pose( core::pose::Pose & pose,
 	core::Size const & focus_pose_idx,
-	core::scoring::ScoreFunctionCOP scorefxn = 0 );
+	core::scoring::ScoreFunctionCOP scorefxn = nullptr );
 
 bool
 switch_focus_among_poses_randomly( core::pose::Pose & pose,
-	core::scoring::ScoreFunctionCOP scorefxn = 0,
+	core::scoring::ScoreFunctionCOP scorefxn = nullptr,
 	bool force_switch = false );
 
 utility::vector1< core::Size >

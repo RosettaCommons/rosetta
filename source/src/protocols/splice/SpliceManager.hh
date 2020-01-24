@@ -200,7 +200,7 @@ public:
 	core::Size allowed_cuts() const { return allowed_cuts_; }
 	void allowed_cuts( core::Size const s ){ allowed_cuts_ = s; }
 	void add_dihedral_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to );
-	void add_coordinate_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to, core::Size anchor,std::string atom_type="CA",core::pack::task::PackerTaskOP task=NULL);
+	void add_coordinate_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to, core::Size anchor,std::string atom_type="CA",core::pack::task::PackerTaskOP task=nullptr);
 	void parse_segments(utility::vector1<TagCOP> const & sub_tags,TagCOP const tag, basic::datacache::DataMap &data);
 	core::Size anchor_res(){return anchor_res_;}
 	void anchor_res(core::Size const c){anchor_res_=c;}

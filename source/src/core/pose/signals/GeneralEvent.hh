@@ -51,7 +51,7 @@ struct GeneralEvent {
 	/// @brief default constructor
 	inline
 	GeneralEvent() :
-		pose( NULL )
+		pose( nullptr )
 	{}
 
 

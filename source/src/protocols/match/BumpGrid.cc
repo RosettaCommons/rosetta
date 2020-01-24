@@ -369,7 +369,6 @@ Bool3DGrid::Bin3D Bool3DGrid::dimsizes() const {
 
 Bool3DGrid::CornerPoints
 Bool3DGrid::corners( Bin3D const & bin ) const {
-	CornerPoints corns;
 	Vector lower_corner = bb_.lower();
 	lower_corner.x() += bin_width_ * bin[ 1 ];
 	lower_corner.y() += bin_width_ * bin[ 2 ];
@@ -388,14 +387,16 @@ Bool3DGrid::corners( Bin3D const & bin ) const {
 	Real const ylo( lower_corner.y() ), yhi( lower_corner.y() + bin_width_ );
 	Real const zlo( lower_corner.z() ), zhi( lower_corner.z() + bin_width_ );
 
-	corns[ 1 ] = Vector( xlo, ylo, zlo );
-	corns[ 2 ] = Vector( xlo, ylo, zhi );
-	corns[ 3 ] = Vector( xlo, yhi, zlo );
-	corns[ 4 ] = Vector( xlo, yhi, zhi );
-	corns[ 5 ] = Vector( xhi, ylo, zlo );
-	corns[ 6 ] = Vector( xhi, ylo, zhi );
-	corns[ 7 ] = Vector( xhi, yhi, zlo );
-	corns[ 8 ] = Vector( xhi, yhi, zhi );
+	CornerPoints corns = {
+		Vector( xlo, ylo, zlo ),
+		Vector( xlo, ylo, zhi ),
+		Vector( xlo, yhi, zlo ),
+		Vector( xlo, yhi, zhi ),
+		Vector( xhi, ylo, zlo ),
+		Vector( xhi, ylo, zhi ),
+		Vector( xhi, yhi, zlo ),
+		Vector( xhi, yhi, zhi )
+		};
 
 
 	//corns[ 1 ] = lower_corner;
@@ -1341,17 +1342,18 @@ void Bool3DGridKinemageWriter::write_grid_to_kinemage(
 	Bool3DGrid const & grid
 ) const
 {
-	Bool3DGrid::CornerPoints corner_offsets;
 
 	/// Shrink in from the corners by an offset determined by the "shrink factor" and the bin width.
-	corner_offsets[ 1 ] = shrink_factor_ * grid.bin_width() * Vector(  1,  1,  1 );
-	corner_offsets[ 2 ] = shrink_factor_ * grid.bin_width() * Vector(  1,  1, -1 );
-	corner_offsets[ 3 ] = shrink_factor_ * grid.bin_width() * Vector(  1, -1,  1 );
-	corner_offsets[ 4 ] = shrink_factor_ * grid.bin_width() * Vector(  1, -1, -1 );
-	corner_offsets[ 5 ] = shrink_factor_ * grid.bin_width() * Vector( -1,  1,  1 );
-	corner_offsets[ 6 ] = shrink_factor_ * grid.bin_width() * Vector( -1,  1, -1 );
-	corner_offsets[ 7 ] = shrink_factor_ * grid.bin_width() * Vector( -1, -1,  1 );
-	corner_offsets[ 8 ] = shrink_factor_ * grid.bin_width() * Vector( -1, -1, -1 );
+	Bool3DGrid::CornerPoints corner_offsets = {
+		shrink_factor_ * grid.bin_width() * Vector(  1,  1,  1 ),
+		shrink_factor_ * grid.bin_width() * Vector(  1,  1, -1 ),
+		shrink_factor_ * grid.bin_width() * Vector(  1, -1,  1 ),
+		shrink_factor_ * grid.bin_width() * Vector(  1, -1, -1 ),
+		shrink_factor_ * grid.bin_width() * Vector( -1,  1,  1 ),
+		shrink_factor_ * grid.bin_width() * Vector( -1,  1, -1 ),
+		shrink_factor_ * grid.bin_width() * Vector( -1, -1,  1 ),
+		shrink_factor_ * grid.bin_width() * Vector( -1, -1, -1 )
+		};
 
 	Size const A( 1 ), B( 5 ), C( 7 ), D( 3 ), E( 2 ), F( 6 ), G( 8 ), H( 4 );
 

@@ -37,7 +37,7 @@ protected: // Creation
 	/// @brief Default Constructor
 	inline
 	ObserverSingle() :
-		observer_p_( 0 )
+		observer_p_( nullptr )
 	{}
 
 
@@ -45,7 +45,7 @@ protected: // Creation
 	inline
 	ObserverSingle( ObserverSingle const & ) :
 		Observer(),
-		observer_p_( 0 )
+		observer_p_( nullptr )
 	{}
 
 
@@ -91,7 +91,7 @@ public: // Subject Inspector
 	void
 	remove_observer( Observer & observer ) const override
 	{
-		if ( observer_p_ == &observer ) observer_p_ = 0;
+		if ( observer_p_ == &observer ) observer_p_ = nullptr;
 	}
 
 

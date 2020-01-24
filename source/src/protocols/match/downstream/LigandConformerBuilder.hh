@@ -188,7 +188,7 @@ public:
 	void
 	initialize_upstream_residue(
 		core::chemical::ResidueTypeCOP upstream_res,
-		core::scoring::etable::count_pair::CountPairFunctionCOP count_pair = 0
+		core::scoring::etable::count_pair::CountPairFunctionCOP count_pair = nullptr
 	);
 
 	void ignore_h_collisions( bool setting );

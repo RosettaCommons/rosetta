@@ -866,7 +866,7 @@ void RosettaScriptsParser::instantiate_packer_palette(
 	}
 
 	PackerPaletteOP new_pp( PackerPaletteFactory::get_instance()->newPackerPalette( type, data, tag_ptr ) );
-	runtime_assert( new_pp != 0 );
+	runtime_assert( new_pp != nullptr );
 	data.add("packer_palette", user_defined_name, new_pp );
 	TR << "Defined PackerPalette named \"" << user_defined_name << "\" of type " << type << "." << std::endl;
 }

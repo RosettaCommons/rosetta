@@ -41,7 +41,7 @@ public:
 
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
-	RNA_Minimizer( core::import_pose::options::RNA_MinimizerOptionsCOP options = 0 );
+	RNA_Minimizer( core::import_pose::options::RNA_MinimizerOptionsCOP options = nullptr );
 
 	/// @brief Clone this object
 	protocols::moves::MoverOP clone() const override {

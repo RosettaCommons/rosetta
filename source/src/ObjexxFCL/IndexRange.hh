@@ -595,7 +595,7 @@ protected: // Inspector
 	Dimension *
 	l_dim_clone() const
 	{
-		return 0;
+		return nullptr;
 	}
 
 
@@ -605,7 +605,7 @@ protected: // Inspector
 	Dimension *
 	u_dim_clone() const
 	{
-		return 0;
+		return nullptr;
 	}
 
 

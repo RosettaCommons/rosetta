@@ -72,7 +72,7 @@ core::Size filtered_num_vertices( Graph const & graph ) {
 
 class RealFilter{
 public:
-	RealFilter(): graph_(0) {}; // This can't be private, because various (unused) default objects need it.
+	RealFilter(): graph_(nullptr) {}; // This can't be private, because various (unused) default objects need it.
 	RealFilter(ResidueGraph const & graph): graph_( &graph ) {};
 	RealFilter(RealFilter const & other): graph_( other.graph_ ) {};
 	bool operator()(VD const vd) const;

@@ -123,7 +123,7 @@ MembraneSpanTermZConstraint::show( std::ostream & out ) const {
 ConstraintOP
 MembraneSpanTermZConstraint::remap_resid( core::id::SequenceMapping const & ) const
 {
-	return NULL;
+	return nullptr;
 }
 
 bool

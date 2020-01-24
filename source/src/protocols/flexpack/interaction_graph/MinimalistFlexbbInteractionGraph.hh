@@ -391,7 +391,7 @@ MinimalistFlexbbInteractionGraph::find_minimalist_flexbb_edge( int node1, int no
 {
 	core::pack::interaction_graph::EdgeBase const * edge = find_edge( node1, node2 );
 	if ( edge ) return static_cast< MinimalistFlexbbEdge const * > ( edge );
-	else return 0;
+	else return nullptr;
 }
 
 inline
@@ -400,7 +400,7 @@ MinimalistFlexbbInteractionGraph::find_minimalist_flexbb_edge( int node1, int no
 {
 	core::pack::interaction_graph::EdgeBase * edge = find_edge( node1, node2 );
 	if ( edge ) return static_cast< MinimalistFlexbbEdge * > ( edge );
-	else return 0;
+	else return nullptr;
 }
 
 inline

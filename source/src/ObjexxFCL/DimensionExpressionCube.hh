@@ -42,7 +42,7 @@ public: // Creation
 	inline
 	DimensionExpressionCube( DimensionExpressionCube const & exp ) :
 		Super(),
-		exp_p_( exp.exp_p_ ? exp.exp_p_->clone() : static_cast< DimensionExpression * >( 0 ) )
+		exp_p_( exp.exp_p_ ? exp.exp_p_->clone() : nullptr )
 	{
 		assert( exp_p_ );
 	}

@@ -230,7 +230,7 @@ void SpliceOut::apply(core::pose::Pose & pose) {
 	}
 	using namespace protocols::task_operations;
 	DesignAroundOperationOP dao( new DesignAroundOperation );
-	dao->design_shell((splicemanager.task_factory() == NULL ? 0.0 : splicemanager.design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
+	dao->design_shell((splicemanager.task_factory() == nullptr ? 0.0 : splicemanager.design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
 	dao->repack_shell(splicemanager.repack_shell());
 	for ( core::Size i = splicemanager.pose_from_res(); i <= splicemanager.pose_to_res(); ++i ) {
 		if ( !pose.residue(i).has_variant_type(DISULFIDE) ) {
@@ -546,7 +546,7 @@ core::Size SpliceOut::find_non_active_site_cut_site(core::pose::Pose const & pos
 	TR<<"Placing cut away from functional site"<<std::endl;
 	std::string const source_pdb_name(parse_pdb_code(pose.pdb_info()->name()));
 	//use pssm to find conserved trp
-	if ( splicemanager.splice_segments()[ splicemanager.segment_type() ]->pdb_profile( source_pdb_name )==0 ) {
+	if ( splicemanager.splice_segments()[ splicemanager.segment_type() ]->pdb_profile( source_pdb_name )==nullptr ) {
 		utility_exit_with_message(" could not find the source pdb name: "+ source_pdb_name + ", in pdb_profile_match file."+splicemanager.segment_type()+" or PSSM file is missing\n");
 	} else {
 		profile=splicemanager.splice_segments()[ splicemanager.segment_type() ]->pdb_profile( source_pdb_name );
@@ -895,7 +895,7 @@ SpliceOut::mover_name()  {
 
 int
 SpliceOut::SpliceOutFilter(core::pose::Pose * pose)  {
-	if ( splice_filter()==NULL ) {
+	if ( splice_filter()==nullptr ) {
 		return 0;
 	}
 	protocols::protein_interface_design::movers::AddChainBreak acb;

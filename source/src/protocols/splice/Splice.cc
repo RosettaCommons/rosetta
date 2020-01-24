@@ -171,12 +171,12 @@ std::string SpliceCreator::mover_name() {
 
 Splice::Splice() :
 	Mover(Splice::mover_name()), saved_from_res_(0), saved_to_res_(0), source_pdb_(""), ccd_(true), scorefxn_(
-	/* NULL */), rms_cutoff_(999999), res_move_(4), randomize_cut_(false), cut_secondarystruc_(false), task_factory_( /* NULL */),
-	design_task_factory_( /* NULL */), torsion_database_fname_(""), database_entry_(0), database_pdb_entry_(""),
-	template_file_(""), poly_ala_(true), equal_length_(false), template_pose_(/* NULL */), start_pose_( nullptr),source_pose_(nullptr),
-	saved_fold_tree_( /* NULL */), design_(false), dbase_iterate_(false), allow_all_aa_(false), thread_original_sequence_(false),
-	rtmin_(true), first_pass_(true), locked_res_( /* NULL */), locked_res_id_(' '), checkpointing_file_(""),
-	loop_dbase_file_name_(""), loop_pdb_source_(""), mover_tag_(/* NULL */), splice_filter_( nullptr), Pdb4LetName_(""),
+	/* nullptr */), rms_cutoff_(999999), res_move_(4), randomize_cut_(false), cut_secondarystruc_(false), task_factory_( /* nullptr */),
+	design_task_factory_( /* nullptr */), torsion_database_fname_(""), database_entry_(0), database_pdb_entry_(""),
+	template_file_(""), poly_ala_(true), equal_length_(false), template_pose_(/* nullptr */), start_pose_( nullptr),source_pose_(nullptr),
+	saved_fold_tree_( /* nullptr */), design_(false), dbase_iterate_(false), allow_all_aa_(false), thread_original_sequence_(false),
+	rtmin_(true), first_pass_(true), locked_res_( /* nullptr */), locked_res_id_(' '), checkpointing_file_(""),
+	loop_dbase_file_name_(""), loop_pdb_source_(""), mover_tag_(/* nullptr */), splice_filter_( nullptr), Pdb4LetName_(""),
 	use_sequence_profiles_(false), segment_type_("") {
 	profile_weight_away_from_interface_ = 1.0;
 	restrict_to_repacking_chain2_ = true;
@@ -817,7 +817,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			dofs.push_back(residue_dofs);
 		} // for i nearest_to_from..nearest_to_to
 		cut_site = dofs.cut_site() ? dofs.cut_site() + from_res(pose) - 1 : to_res(pose); // isn't this always going to be to_res()? I think so...
-	} else { // fi torsion_database_fname==NULL /// read from dbase
+	} else { // fi torsion_database_fname==nullptr /// read from dbase
 		core::Size const dbase_entry(find_dbase_entry(pose));
 		if ( dbase_entry == 0 ) { // failed to read entry
 			TR << "Should we fail loudly if this happens??" << std::endl;
@@ -839,7 +839,7 @@ void Splice::apply(core::pose::Pose & pose) {
 		//adding current segment to pose comments
 		TR << "The currnet segment is: " << segment_type_ << " and the source pdb is " << Pdb4LetName_ << std::endl;
 		core::pose::add_comment(pose, "segment_" + segment_type_, Pdb4LetName_);//change correct association between current loop and pdb file
-		if ( mover_tag_ != NULL ) {
+		if ( mover_tag_ != nullptr ) {
 			mover_tag_->obj = "segment_" + source_pdb_name;
 		}
 		for ( BBDofs & resdofs: dofs ) {
@@ -1185,7 +1185,7 @@ void Splice::apply(core::pose::Pose & pose) {
 	tso->allow_design_around(true); // 21Sep12: from now on the design shell is determined downstream //false );
 	TR << "Source segment sequence: " << threaded_seq << " starting from " << from_res(pose) << std::endl;
 	TaskFactoryOP tf;
-	if ( design_task_factory() == NULL ) {
+	if ( design_task_factory() == nullptr ) {
 		tf = utility::pointer::make_shared< TaskFactory >();
 	} else {
 		tf = utility::pointer::make_shared< TaskFactory >(*design_task_factory());
@@ -1206,7 +1206,7 @@ void Splice::apply(core::pose::Pose & pose) {
 	}
 
 	DesignAroundOperationOP dao( new DesignAroundOperation );
-	dao->design_shell((design_task_factory() == NULL ? 0.0 : design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
+	dao->design_shell((design_task_factory() == nullptr ? 0.0 : design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
 	dao->repack_shell(repack_shell());
 
 	TR << "Dao design shell: " << dao->design_shell() << ", Dao repack shell: " << repack_shell()
@@ -1563,7 +1563,7 @@ void Splice::apply(core::pose::Pose & pose) {
 			}
 
 			DesignAroundOperationOP dao( new DesignAroundOperation );
-			dao->design_shell((design_task_factory() == NULL ? 0.0 : design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
+			dao->design_shell((design_task_factory() == nullptr ? 0.0 : design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
 			dao->repack_shell(repack_shell());
 			for ( core::Size i = tail_start; i <= tail_end; ++i ) {
 				if ( !pose.residue(i).has_variant_type(DISULFIDE) ) {
@@ -2052,7 +2052,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 			use_sequence_profiles_ = false;
 		}
 
-	} //fi (sub_tags!=NULL)
+	} //fi (sub_tags!=nullptr)
 
 
 	//Function for debuging should be commented out, check that all segments are in the right place
@@ -2312,7 +2312,7 @@ void Splice::read_torsion_database() {
 				bbdof_entry.source_pdb(omega);
 
 			} else {
-				bbdof_entry.push_back(BBDofs(0/*resstd::map<std::string, core::Size> cys_pos;//store all cysteine positions in the AB chainid*/,std::strtod(phi.c_str(),0), std::strtod(psi.c_str(),0), std::strtod(omega.c_str(),0), resn)); /// resid may one day be used. Currently it isn't
+				bbdof_entry.push_back(BBDofs(0/*resstd::map<std::string, core::Size> cys_pos;//store all cysteine positions in the AB chainid*/,std::strtod(phi.c_str(),nullptr), std::strtod(psi.c_str(),nullptr), std::strtod(omega.c_str(),nullptr), resn)); /// resid may one day be used. Currently it isn't
 			}
 		}
 
@@ -2732,7 +2732,7 @@ Splice::read_splice_segments(std::string const & segment_type, std::string const
 
 core::sequence::SequenceProfileOP Splice::generate_sequence_profile(core::pose::Pose & pose) {
 	if ( !use_sequence_profiles_ ) {
-		return NULL;
+		return nullptr;
 	}
 	using namespace core::sequence;
 	using namespace std;
@@ -3211,7 +3211,7 @@ core::Size Splice::find_non_active_site_cut_site(core::pose::Pose const & pose) 
 	TR<<"Placing cut away from functional site"<<std::endl;
 	std::string const source_pdb_name(parse_pdb_code(pose.pdb_info()->name()));
 	//use pssm to find conserved trp
-	if ( splice_segments_[ segment_type_ ]->pdb_profile( source_pdb_name )==0 ) {
+	if ( splice_segments_[ segment_type_ ]->pdb_profile( source_pdb_name )==nullptr ) {
 		utility_exit_with_message(" could not find the source pdb name: "+ source_pdb_name + ", in pdb_profile_match file."+segment_type_+" or PSSM file is missing\n");
 	} else {
 		profile=splice_segments_[ segment_type_ ]->pdb_profile( source_pdb_name );

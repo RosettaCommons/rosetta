@@ -94,7 +94,7 @@ public: // Creation
 	inline
 	FArray1P() :
 		Super( ProxySentinel() ),
-		source_( 0 )
+		source_( nullptr )
 	{}
 
 
@@ -201,7 +201,7 @@ public: // Creation
 	FArray1P( Section const & s ) :
 		Super( s, ProxySentinel() ),
 		I_( s.size() ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		shift_set( 1 );
 		insert_as_observer();
@@ -213,7 +213,7 @@ public: // Creation
 	FArray1P( Section & s ) :
 		Super( s, ProxySentinel() ),
 		I_( s.size() ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		shift_set( 1 );
 		insert_as_observer();
@@ -225,7 +225,7 @@ public: // Creation
 	FArray1P( T const & t ) :
 		Super( t, ProxySentinel() ),
 		I_( star ), // Unbounded
-		source_( 0 )
+		source_( nullptr )
 	{
 		shift_set( 1 );
 		insert_as_observer();
@@ -237,7 +237,7 @@ public: // Creation
 	FArray1P( T & t ) :
 		Super( t, ProxySentinel() ),
 		I_( star ), // Unbounded
-		source_( 0 )
+		source_( nullptr )
 	{
 		shift_set( 1 );
 		insert_as_observer();
@@ -345,7 +345,7 @@ public: // Creation
 	FArray1P( Section const & s, IR const & I_a ) :
 		Super( s, ProxySentinel() ),
 		I_( I_a ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		dimension_proxy();
 		insert_as_observer();
@@ -357,7 +357,7 @@ public: // Creation
 	FArray1P( Section & s, IR const & I_a ) :
 		Super( s, ProxySentinel() ),
 		I_( I_a ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		dimension_proxy();
 		insert_as_observer();
@@ -369,7 +369,7 @@ public: // Creation
 	FArray1P( T const & t, IR const & I_a ) :
 		Super( t, ProxySentinel() ),
 		I_( I_a ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		dimension_proxy();
 		insert_as_observer();
@@ -381,7 +381,7 @@ public: // Creation
 	FArray1P( T & t, IR const & I_a ) :
 		Super( t, ProxySentinel() ),
 		I_( I_a ),
-		source_( 0 )
+		source_( nullptr )
 	{
 		dimension_proxy();
 		insert_as_observer();
@@ -670,7 +670,7 @@ public: // Modifier
 	{
 		Super::clear();
 		I_.clear_no_notify();
-		source_ = 0;
+		source_ = nullptr;
 		return *this;
 	}
 
@@ -927,7 +927,7 @@ public: // Observer Modifier
 		if ( ( source_ ) && ( &subject == source_ ) ) { // Source array is being destructed
 			Base::detach();
 			I_.clear();
-			source_ = 0;
+			source_ = nullptr;
 		}
 	}
 
@@ -987,8 +987,8 @@ private: // Functions
 	void
 	remove_as_observer()
 	{
-		I_.remove_observer( *this );
-		if ( source_ ) source_->remove_observer( *this );
+	I_.remove_observer( *this );
+	if ( source_ ) source_->remove_observer( *this );
 	}
 	*/
 

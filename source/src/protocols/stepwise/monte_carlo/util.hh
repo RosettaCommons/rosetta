@@ -39,7 +39,7 @@ prepare_silent_struct( std::string const & out_tag,
 	core::pose::PoseCOP native_pose,
 	bool const superimpose_over_all_instantiated = false,
 	bool const do_rms_fill_calculation = false,
-	core::pose::PoseOP full_model_pose  = 0 );
+	core::pose::PoseOP full_model_pose  = nullptr );
 
 void
 output_to_silent_file( std::string const & out_tag,

@@ -65,11 +65,11 @@ bool NoFailDataMap::add(
 }
 
 TagManager::TagManager( ) :
-	most_recent_request_( 0 )
+	most_recent_request_( nullptr )
 {}
 
 TagManager::TagManager( core::Size num_input_pose_ids ) :
-	most_recent_request_( 0 )
+	most_recent_request_( nullptr )
 {
 	set_num_input_pose_ids( num_input_pose_ids );
 }

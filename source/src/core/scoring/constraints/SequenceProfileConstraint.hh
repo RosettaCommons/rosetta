@@ -53,14 +53,14 @@ public:
 	SequenceProfileConstraint(
 		Pose const &,
 		core::Size,
-		SequenceProfileCOP profile = NULL,
-		core::id::SequenceMappingCOP mapping = NULL // current pose numbers onto profile numbers.
+		SequenceProfileCOP profile = nullptr,
+		core::id::SequenceMappingCOP mapping = nullptr // current pose numbers onto profile numbers.
 	);
 
 	SequenceProfileConstraint(
 		core::Size,
-		SequenceProfileCOP profile = NULL,
-		core::id::SequenceMappingCOP mapping = NULL // current pose numbers onto profile numbers.
+		SequenceProfileCOP profile = nullptr,
+		core::id::SequenceMappingCOP mapping = nullptr // current pose numbers onto profile numbers.
 	);
 
 	~SequenceProfileConstraint() override;
@@ -92,7 +92,7 @@ public:
 	}
 	//hk end
 
-	void set_sequence_profile( SequenceProfileCOP profile, core::id::SequenceMappingCOP mapping = NULL);
+	void set_sequence_profile( SequenceProfileCOP profile, core::id::SequenceMappingCOP mapping = nullptr);
 	SequenceProfileCOP sequence_profile() const;
 	core::id::SequenceMappingCOP profile_mapping() const;
 

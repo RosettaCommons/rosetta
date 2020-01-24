@@ -138,7 +138,7 @@ public:
 	ConstraintOP remapped_clone(
 		pose::Pose const& /*src*/,
 		pose::Pose const& /*dest*/,
-		id::SequenceMappingCOP map=NULL ) const override;
+		id::SequenceMappingCOP map=nullptr ) const override;
 
 	void set_effective_sequence_separation( core::Size setting ) {
 		report_this_as_effective_sequence_separation_ = setting;
