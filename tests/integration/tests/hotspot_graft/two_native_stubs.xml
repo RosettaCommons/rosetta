@@ -49,12 +49,13 @@
 						<Add mover_name="place_phe" use_constraints="1" coord_cst_std="0.5"/>
 					</DesignMovers>
 				</PlaceStub>
+		        <SetupHotspotConstraints name="hotspotcst" stubfile="all_native_stubs.pdb" cb_force="0.5"/>
+			# The profile mover has to come after all the other movers, as it messes with the Scorefunction definitions
+			<profile name="profile" weight="0.2" file_name="input/1l6x.min.sequence_profile"/>
         </MOVERS>
-        <APPLY_TO_POSE>
-		        <SetupHotspotConstraints stubfile="all_native_stubs.pdb" cb_force="0.5"/>
-						<profile weight="0.2" file_name="input/1l6x.min.sequence_profile"/>
-        </APPLY_TO_POSE>
         <PROTOCOLS>
+				<Add mover_name="hotspotcst"/>
+				<Add mover_name="profile"/>
 		  		<Add mover_name="dock" filter="degree"/>
 				<Add mover_name="place_stub"/>
 				<Add filter_name="ddg"/>

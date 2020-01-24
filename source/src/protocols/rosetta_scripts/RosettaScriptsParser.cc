@@ -771,8 +771,9 @@ RosettaScriptsParser::parse_apply_to_pose_tag(
 		TR.Warning << std::endl;
 		TR.Warning << "The APPLY_TO_POSE section is deprecated. Please edit your XML to remove it." <<  std::endl;
 		TR.Warning << std::endl;
-		TR.Warning << "You should be able to get effectively the same results by" <<  std::endl;
-		TR.Warning << "moving things to the PROTOCOLS section." << std::endl;
+		TR.Warning << "You should be able to get effectively the same results by moving" <<  std::endl;
+		TR.Warning << "the definitions in the APPLY_TO_POSE section to the MOVERS section, adding a name," << std::endl;
+		TR.Warning << "and then calling those movers at the very start of the PROTOCOLS section." << std::endl;
 		TR.Warning << std::endl;
 		TR.Warning << "==================================================================================" << std::endl;
 

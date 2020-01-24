@@ -60,6 +60,7 @@ This protocol first places one hot-spot residue by the place-scaffold approach a
 
   </FILTERS>
   <MOVERS>
+      <SetupHotspotConstraints name="hotspotcst" stubfile="1l6x.all_stubs.pdb" cb_force="0.5"/>
     		<Docking name="dock" fullatom="0" local_refine="0" score_low="stub_docking_low"/>
     		<Docking name="dockfa" task_operations="pr" fullatom="1" local_refine="1" optimize_fold_tree="0" score_high="score12_coord_cst"/>
 		<If name="dock_if_not_pass" filter_name="not_hbond_ddg_sasa" true_mover_name="dockfa"/>
@@ -119,9 +120,9 @@ This protocol first places one hot-spot residue by the place-scaffold approach a
 		<LoopOver name="loopy" mover_name="aggregate" iterations="30" filter_name="hbond_ddg_sasa" drift="0"/> Use GenericMonteCarlo to identify low-ddg structures (slower) ###
   </MOVERS>
   <APPLY_TO_POSE>
-      <SetupHotspotConstraints stubfile="1l6x.all_stubs.pdb" cb_force="0.5"/>
   </APPLY_TO_POSE>
   <PROTOCOLS>
+		<Add mover_name="hotspotcst"/>
 		Add mover_name=dock/> save time ###
 		<Add mover_name="place_gln"/>
 		<Add filter_name="stub_score_filter"/>
