@@ -15,6 +15,7 @@
 #ifdef MULTI_THREADED
 
 #include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
+#include <basic/thread_manager/RosettaThreadManager.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "basic.thread_manager.RosettaThreadAssignmentInfo" );
@@ -28,11 +29,9 @@ RosettaThreadAssignmentInfo::RosettaThreadAssignmentInfo(
 	RosettaThreadRequestOriginatingLevel const originating_level
 ):
 	utility::pointer::ReferenceCount(),
+	requested_thread_count_(0),
 	thread_request_originating_level_( originating_level )
 {}
-
-/// @brief Copy constructor.
-RosettaThreadAssignmentInfo::RosettaThreadAssignmentInfo( RosettaThreadAssignmentInfo const & ) {}
 
 /// @brief Destructor.
 RosettaThreadAssignmentInfo::~RosettaThreadAssignmentInfo(){}
@@ -45,6 +44,7 @@ RosettaThreadAssignmentInfo::set_assigned_child_threads(
 	//Obtain a write lock:
 	utility::thread::WriteLockGuard lock( assigned_child_threads_mutex_ );
 	assigned_child_threads_ = threadlist_in;
+	set_up_rosetta_thread_index_to_assigned_set_index();
 }
 
 /// @brief Set the number of threads requested for the task.
@@ -53,8 +53,6 @@ RosettaThreadAssignmentInfo::set_requested_thread_count(
 	platform::Size const setting
 ) {
 	runtime_assert_string_msg( setting != 0, "Error in RosettaThreadAssignmentInfo::set_requested_thread_count(): The number of requested threads must be greater than zero." );
-	//Obtain a write lock:
-	utility::thread::WriteLockGuard lock( requested_thread_count_mutex_ );
 	requested_thread_count_ = setting;
 }
 
@@ -89,8 +87,6 @@ RosettaThreadAssignmentInfo::get_assigned_total_thread_count() const {
 /// on which the task is actually running, since fewer threads might have been available.
 platform::Size
 RosettaThreadAssignmentInfo::get_requested_thread_count() const {
-	//Obtain a read lock:
-	utility::thread::ReadLockGuard lock( requested_thread_count_mutex_ );
 	return requested_thread_count_;
 }
 
@@ -99,6 +95,29 @@ RosettaThreadRequestOriginatingLevel
 RosettaThreadAssignmentInfo::get_thread_request_originating_level() const {
 	//Since this is set on object creation, there is no need for a lock to read this.
 	return thread_request_originating_level_;
+}
+
+/// @brief Checks the current thread's Rosetta index, and converts it into a one-based index in the vector of threads assigned to this
+/// task.  For example, if threads 4, 7, and 9 are assigned to this task, and thread 7 calls this function, it will return "2",
+/// since thread 7 is the 2nd of 3 threads assigned to this task.
+/// @details Assumes that calling thread is one that is assigned to this task!
+platform::Size
+RosettaThreadAssignmentInfo::get_this_thread_index_in_assigned_set() const {
+	return rosetta_thread_index_to_assigned_set_index_.at( RosettaThreadManager::get_instance()->get_rosetta_thread_index() );
+}
+
+/// @brief Set up the map of Rosetta thread index to one-based thread index for this task.
+/// @details For example, if this task has been assigned Rosetta threads 4, 7, and 9, then thread 4
+/// maps to assigned thread 1, thread 7 maps to assigned thread 2, and thread 9 maps to assigned thread
+/// 3.
+void
+RosettaThreadAssignmentInfo::set_up_rosetta_thread_index_to_assigned_set_index() {
+	RosettaThreadManager * rtm( RosettaThreadManager::get_instance() );
+	originating_thread_ = rtm->get_rosetta_thread_index();
+	rosetta_thread_index_to_assigned_set_index_[originating_thread_] = 1;
+	for ( platform::Size i(1), imax(assigned_child_threads_.size()); i<=imax; ++i ) {
+		rosetta_thread_index_to_assigned_set_index_[assigned_child_threads_[i]] = i+1;
+	}
 }
 
 } //basic

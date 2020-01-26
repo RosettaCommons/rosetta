@@ -30,6 +30,7 @@
 
 // C++ headers
 #include <string>
+#include <cmath>
 
 // Construct tracer.
 static basic::Tracer TR( "basic.thread_manager.RosettaThreadManager" );
@@ -37,13 +38,17 @@ static basic::Tracer TR( "basic.thread_manager.RosettaThreadManager" );
 namespace basic {
 namespace thread_manager {
 
+#define MAX_THREAD_INDEX_WARNINGS 8 //The maximum number of warnings about threads not managed by the RosettaThreadManager that the user will see.
+
 // Private methods ////////////////////////////////////////////////////////////
 
 /// @brief Empty constructor.
 RosettaThreadManager::RosettaThreadManager()
 #ifdef MULTI_THREADED
 :
-	nthreads_( basic::options::option[ basic::options::OptionKeys::multithreading::total_threads ]() )
+	nthreads_( basic::options::option[ basic::options::OptionKeys::multithreading::total_threads ]() ),
+	thread_pool_was_launched_(false),
+	warning_counter_(0)
 #endif
 {
 #ifdef MULTI_THREADED
@@ -94,15 +99,19 @@ RosettaThreadManager::create_thread_pool() {
 	}
 
 	RosettaThreadManagerInitializationTracker::get_instance()->mark_thread_manager_as_initialized();
+	debug_assert( thread_pool_was_launched_ == false );
+	thread_pool_was_launched_ = true;
 }
 
 /// @brief Trigger launch of threads.
 /// @details Does nothing if threads already launched.
 void
 RosettaThreadManager::launch_threads() {
-	std::lock_guard< std::mutex > lock( thread_pool_mutex_ );
-	if ( thread_pool_ == nullptr ) {
-		create_thread_pool();
+	if ( thread_pool_was_launched_ == false ) {
+		std::lock_guard< std::mutex > lock( thread_pool_mutex_ );
+		if ( thread_pool_ == nullptr ) {
+			create_thread_pool();
+		}
 	}
 }
 #endif
@@ -133,19 +142,63 @@ RosettaThreadManager::do_work_vector_in_threads(
 #ifdef MULTI_THREADED
 	platform::Size const nonzero_requested_thread_count( requested_thread_count == 0 ? nthreads_ : requested_thread_count );
 	platform::Size const actual_threads_to_request( std::min( vector_of_work.size(), nonzero_requested_thread_count ) );
-	utility::vector1< utility::thread::ReadWriteMutex > mutexes( vector_of_work.size() );
-	utility::vector1< bool > jobs_completed( vector_of_work.size(), false );
+	utility::vector1< std::mutex > mutexes( vector_of_work.size() );
+	utility::vector1< AtomicBoolContainer > jobs_completed( vector_of_work.size() ); // Initialized to false automatically.
 
 	RosettaThreadFunction fxn(
 		std::bind(
 		&RosettaThreadManager::work_vector_thread_function, this,
-		std::cref( vector_of_work ), std::ref( mutexes ), std::ref( jobs_completed )
+		std::cref( vector_of_work ), std::ref( mutexes ), std::ref( jobs_completed ), std::cref( thread_assignment )
 		)
 	);
 	run_function_in_threads( fxn, actual_threads_to_request, RosettaThreadManagerAdvancedAPIKey(), thread_assignment );
 #else
 	//In non-threaded builds, just iterate through and do all of the work.
 	runtime_assert_string_msg( requested_thread_count == 0 || requested_thread_count == 1, "Error in RosettaThreadManager::do_work_vector_in_threads(): In non-threaded builds, only one thread may be requested.  Compile Rosetta with the \"extras=cxx11thread\" option to enable multi-threading." );
+	for ( platform::Size i(1), imax(vector_of_work.size()); i<=imax; ++i ) {
+		(vector_of_work[i])(); //Do the ith piece of work.
+	}
+#endif
+}
+
+/// @brief VARIANT BASIC API THAT SHOULD BE USED FOR WORK VECTORS OF NEAR-EQUAL SIZED CHUNKS WHERE THE CHUNKS ARE SMALL.  Given a vector of
+/// functions that were bundled with their arguments with std::bind, each of which can be executed in any order and each of which is safe to execute
+/// in parallel with any other, run all of these in threads.
+/// @details The bundled functions should be atomistic pieces of work.  They should be bundled with their arguments with
+/// std::bind, and the arguments should include the place to store output (i.e. they should return void).  These functions
+/// should not handle any mutexes themselves, but should ensure that they are operating only on memory locations that no
+/// other functions in the vector are operating on.
+/// @note Under the hood, this sets up no mutexes, instead giving each thread a staggered subset of the work in the vector.  It calls
+/// run_function_in_threads() to do the work.  The work is done concurrently in 1 <= actual count <= min( requested thread count, total
+/// thread count ) threads.  The function blocks until all threads have finished their work, which means that the individual work units
+/// should be small, that the longest-running work unit should be short compared to the total runtime, and that the number of work units
+/// should be much greater than the number of threads requested.
+/// This function works best for cases in which it is known that most of the work in the vector is of equal size (i.e. load-balancing is
+/// unlikely to be an issue), and where the overhead of locking mutexes for each job is likely to be comparable in size to the cost of a
+/// job (so we want to avoid this overhead).
+void
+RosettaThreadManager::do_work_vector_in_threads_no_locking(
+	utility::vector1< RosettaThreadFunction > const & vector_of_work,
+	platform::Size const requested_thread_count,
+#ifdef MULTI_THREADED
+	RosettaThreadAssignmentInfo & thread_assignment
+#else
+	RosettaThreadAssignmentInfo &
+#endif
+) {
+#ifdef MULTI_THREADED
+	platform::Size const nonzero_requested_thread_count( requested_thread_count == 0 ? nthreads_ : requested_thread_count );
+	platform::Size const actual_threads_to_request( std::min( vector_of_work.size(), nonzero_requested_thread_count ) );
+	RosettaThreadFunction fxn(
+		std::bind(
+		&RosettaThreadManager::work_vector_thread_function_no_locking, this,
+		std::cref( vector_of_work ), std::cref( thread_assignment )
+		)
+	);
+	run_function_in_threads( fxn, actual_threads_to_request, RosettaThreadManagerAdvancedAPIKey(), thread_assignment );
+#else
+	//In non-threaded builds, just iterate through and do all of the work.
+	runtime_assert_string_msg( requested_thread_count == 0 || requested_thread_count == 1, "Error in RosettaThreadManager::do_work_vector_in_threads_no_locking(): In non-threaded builds, only one thread may be requested.  Compile Rosetta with the \"extras=cxx11thread\" option to enable multi-threading." );
 	for ( platform::Size i(1), imax(vector_of_work.size()); i<=imax; ++i ) {
 		(vector_of_work[i])(); //Do the ith piece of work.
 	}
@@ -195,14 +248,12 @@ RosettaThreadManager::do_multistage_work_vector_in_threads(
 	}
 
 	platform::Size const actual_threads_to_request( std::min( max_batch_size, requested_thread_count ) );
-	utility::vector1< utility::pointer::shared_ptr< utility::vector1< utility::thread::ReadWriteMutex > > > mutexes;
-	utility::vector1< utility::vector1< bool > > jobs_completed( multistage_vector_of_work.size() );
-	for ( platform::Size i(1), imax(multistage_vector_of_work.size()); i<=imax; ++i ) {
-		debug_assert( i<=jobs_completed.size());
-		platform::Size const curvect_size( multistage_vector_of_work[i].size() );
-		utility::pointer::shared_ptr< utility::vector1< utility::thread::ReadWriteMutex > > mutvect( utility::pointer::make_shared< utility::vector1< utility::thread::ReadWriteMutex > >( curvect_size ) );
-		mutexes.push_back( mutvect );
-		jobs_completed[i].resize( curvect_size, false );
+	std::deque< std::deque< std::mutex > > mutexes;
+	std::deque< std::deque< AtomicBoolContainer > > jobs_completed;
+	for ( platform::Size i(0), imax(multistage_vector_of_work.size()); i<imax; ++i ) {
+		platform::Size const curvect_size( multistage_vector_of_work[i+1].size() );
+		mutexes.emplace_back( curvect_size );
+		jobs_completed.emplace_back( curvect_size ); //Initialized to false automatically.
 	}
 	debug_assert(mutexes.size() == multistage_vector_of_work.size());
 	debug_assert(jobs_completed.size() == multistage_vector_of_work.size());
@@ -275,7 +326,7 @@ RosettaThreadManager::run_function_in_threads(
 #endif
 ) {
 #ifdef MULTI_THREADED
-	{
+	if ( thread_pool_was_launched_ == false ) {
 		std::lock_guard< std::mutex > lock( thread_pool_mutex_ );
 		if ( thread_pool_ == nullptr ) {
 			create_thread_pool();
@@ -293,17 +344,24 @@ RosettaThreadManager::run_function_in_threads(
 platform::Size
 RosettaThreadManager::get_rosetta_thread_index() const {
 #ifdef MULTI_THREADED
-	{
-		std::lock_guard< std::mutex > lock( thread_pool_mutex_ );
-		if ( thread_pool_ == nullptr ) {
-			return 0;
-		}
+	if ( thread_pool_was_launched_ == false ) {
+		return 0;
 	} //End of lock scope.
 	if ( thread_id_to_rosetta_thread_index_.count( std::this_thread::get_id() ) ) {
 		return thread_id_to_rosetta_thread_index_.at( std::this_thread::get_id() );
 	} else {
 		//Note: the following can't be a Rosetta tracer, since the Rosetta tracer asks for the Rosetta thread index:
-		std::cerr << "Rosetta thread index was requested, but this is neither a thread that Rosetta launched, nor the thread from which Rosetta launched threads!  This can happen if external code (e.g. PyRosetta) has already launched threads." << std::endl;
+		if ( warning_counter_ < MAX_THREAD_INDEX_WARNINGS ) {
+			std::lock_guard<std::mutex> warning_lock( warning_counter_mutex_ ); //Lock the mutex for the scope of the if statement
+			if ( warning_counter_ < MAX_THREAD_INDEX_WARNINGS ) {
+				++warning_counter_;
+				std::cerr << "Rosetta thread index was requested, but this is neither a thread that Rosetta launched, nor the thread from which Rosetta launched threads!  This can happen if external code (e.g. PyRosetta) has already launched threads.";
+				if ( warning_counter_ >= MAX_THREAD_INDEX_WARNINGS ) {
+					std::cerr << "  Silencing further instances of this warning.";
+				}
+				std::cerr << std::endl;
+			}
+		}
 		return 0;
 	}
 #else
@@ -322,25 +380,66 @@ RosettaThreadManager::get_rosetta_thread_index() const {
 void
 RosettaThreadManager::work_vector_thread_function(
 	utility::vector1< RosettaThreadFunction > const & vector_of_work,
-	utility::vector1< utility::thread::ReadWriteMutex > & job_mutexes,
-	utility::vector1< bool > & jobs_completed
+	utility::vector1< std::mutex > & job_mutexes,
+	utility::vector1< AtomicBoolContainer > & jobs_completed,
+	RosettaThreadAssignmentInfo const & thread_assignments
 ) const {
 	platform::Size jobcount(0);
-	for ( platform::Size i(1), imax(vector_of_work.size()); i<=imax; ++i ) {
-		{ //First, check with a read lock to see if this job is done.
-			utility::thread::ReadLockGuard readlock( job_mutexes[i] );
-			if ( jobs_completed[i] ) continue;
+	bool const debug_vis( TR.Debug.visible() );
+
+	// The following is a little efficiency trick: each thread looks through the whole work vector for work to do, but we start
+	// threads at staggered positions throughout the work vector so that they're not likely to be encountering blocks of work that
+	// other threads have done.
+	platform::Size const nthreads( thread_assignments.get_assigned_total_thread_count() );
+	platform::Size const this_thread( thread_assignments.get_this_thread_index_in_assigned_set() );
+	platform::Size const startpos( std::round( (this_thread - 1) * float( vector_of_work.size() ) / float( nthreads ) ) ); //Deliberately casting to float and not double.
+	platform::Size const endpos( startpos == 0 ? vector_of_work.size() : startpos );
+
+	platform::Size i(startpos);
+	do {
+		++i;
+		if ( i > vector_of_work.size() ) i = 1;
+
+		{ //First, check if this job is done.
+			if ( jobs_completed[i].contained_bool_ == true ) continue;
 		}
-		{ //Check again with a write lock, and set the job to completed if it isn't already completed.
-			utility::thread::WriteLockGuard writelock( job_mutexes[i] );
-			if ( jobs_completed[i] ) continue;
-			jobs_completed[i] = true;
+		{ //Check again with a lock, and set the job to completed if it isn't already completed.
+			std::lock_guard< std::mutex > lock( job_mutexes[i] );
+			if ( jobs_completed[i].contained_bool_ == true ) continue;
+			jobs_completed[i].contained_bool_ = true;
 		}
 		//If we reach here, we have a free hand to carry out the job.  (We don't even need a read lock, since the bool is flipped).
 		(vector_of_work[i])(); //Do the ith piece of work.
-		if ( TR.visible() ) ++jobcount;
+		if ( debug_vis ) ++jobcount;
+	} while (i != endpos);
+	if ( debug_vis ) {
+		TR.Debug << "Thread " << get_rosetta_thread_index() << " completed " << jobcount << " of " << vector_of_work.size() << " work units." << std::endl;
 	}
-	TR << "Thread " << get_rosetta_thread_index() << " completed " << jobcount << " of " << vector_of_work.size() << " work units." << std::endl; //Switch to debug output later.
+}
+
+/// @brief The function that is passed by do_work_vector_in_threads_no_locking() to run_function_in_threads() to run in parallel,
+/// to execute a vector of work in a threadsafe manner, without locking each task.
+/// @details This version assigns every Nth piece of work to a given thread.  The assumption is that this will result in even load-balancing
+/// without the overhead of locking.  This is true if the pieces of work are of roughly equal size.
+void
+RosettaThreadManager::work_vector_thread_function_no_locking(
+	utility::vector1< RosettaThreadFunction > const & vector_of_work,
+	RosettaThreadAssignmentInfo const & thread_assignments
+) const {
+	platform::Size jobcount(0);
+	bool const debug_vis( TR.Debug.visible() );
+
+	// The following is used to stagger the jobs done by each thread:
+	platform::Size const nthreads( thread_assignments.get_assigned_total_thread_count() );
+	platform::Size const this_thread( thread_assignments.get_this_thread_index_in_assigned_set() );
+
+	for ( platform::Size i(this_thread), imax( vector_of_work.size() ); i<=imax; i+=nthreads ) { //Do every Nth piece of work.
+		(vector_of_work[i])(); //Do the ith piece of work.
+		if ( debug_vis ) ++jobcount;
+	}
+	if ( debug_vis ) {
+		TR.Debug << "Thread " << get_rosetta_thread_index() << " completed " << jobcount << " of " << vector_of_work.size() << " work units." << std::endl;
+	}
 }
 
 /// @brief The function that is passed by do_multistage_work_vector_in_threads() to run_function_in_threads() to run in parallel,
@@ -348,8 +447,8 @@ RosettaThreadManager::work_vector_thread_function(
 void
 RosettaThreadManager::multistage_work_vector_thread_function(
 	utility::vector1< utility::vector1< RosettaThreadFunction > > const & multistage_vector_of_work,
-	utility::vector1< utility::pointer::shared_ptr< utility::vector1< utility::thread::ReadWriteMutex > > > & multistage_job_mutexes,
-	utility::vector1< utility::vector1< bool > > & multistage_jobs_completed,
+	std::deque< std::deque< std::mutex > > & multistage_job_mutexes,
+	std::deque< std::deque< AtomicBoolContainer > > & multistage_jobs_completed,
 	std::mutex & barrier_mutex,
 	utility::vector1< platform::Size > & barrier_threadcount,
 	std::condition_variable & barrier_cv,
@@ -357,32 +456,48 @@ RosettaThreadManager::multistage_work_vector_thread_function(
 ) const {
 	platform::Size jobcount(0);
 
-	platform::Size nthreads( thread_assignment.get_assigned_total_thread_count() );
+	// The following is a little efficiency trick: each thread looks through the whole work vector for work to do, but we start
+	// threads at staggered positions throughout the work vector so that they're not likely to be encountering blocks of work that
+	// other threads have done.);
+	platform::Size const nthreads( thread_assignment.get_assigned_total_thread_count() );
+	platform::Size const this_thread( thread_assignment.get_this_thread_index_in_assigned_set() );
+
+	bool const debug_vis( TR.Debug.visible() );
 
 	//Loop through the blocks of work that must be done sequentially:
 	for ( platform::Size iblock(1), iblockmax( multistage_vector_of_work.size() ); iblock <= iblockmax; ++iblock ) {
 		utility::vector1< RosettaThreadFunction > const & vector_of_work( multistage_vector_of_work[iblock] );
-		utility::vector1< utility::thread::ReadWriteMutex > & job_mutexes( *(multistage_job_mutexes[iblock]) );
-		utility::vector1< bool > & jobs_completed( multistage_jobs_completed[iblock] );
+		std::deque< std::mutex > & job_mutexes( multistage_job_mutexes[iblock - 1] );
+		std::deque< AtomicBoolContainer > & jobs_completed( multistage_jobs_completed[iblock - 1] );
 
 		debug_assert( vector_of_work.size() == job_mutexes.size() );
 		debug_assert( vector_of_work.size() == jobs_completed.size() );
 
-		for ( platform::Size i(1), imax(vector_of_work.size()); i<=imax; ++i ) {
-			{ //First, check with a read lock to see if this job is done.
-				utility::thread::ReadLockGuard readlock( job_mutexes[i] );
-				if ( jobs_completed[i] ) continue;
+		platform::Size const startpos( std::round( (this_thread - 1) * float( vector_of_work.size() ) / float( nthreads ) ) ); //Deliberately casting to float and not double.
+		platform::Size const endpos( startpos == 0 ? vector_of_work.size() : startpos );
+
+		platform::Size i(startpos);
+		do {
+			++i;
+			if ( i > vector_of_work.size() ) {
+				i = 1;
 			}
-			{ //Check again with a write lock, and set the job to completed if it isn't already completed.
-				utility::thread::WriteLockGuard writelock( job_mutexes[i] );
-				if ( jobs_completed[i] ) continue;
-				jobs_completed[i] = true;
+
+			{ //First, check to see if this job is done.
+				if ( jobs_completed[i-1].contained_bool_ == true ) continue;
+			}
+			{ //Check again with a lock, and set the job to completed if it isn't already completed.
+				std::lock_guard< std::mutex > lock( job_mutexes[i-1] );
+				if ( jobs_completed[i-1].contained_bool_ == true ) continue;
+				jobs_completed[i-1].contained_bool_ = true;
 			}
 			//If we reach here, we have a free hand to carry out the job.  (We don't even need a read lock, since the bool is flipped).
 			(vector_of_work[i])(); //Do the ith piece of work.
-			if ( TR.visible() ) ++jobcount;
+			if ( debug_vis ) ++jobcount;
+		} while ( i != endpos );
+		if ( debug_vis ) {
+			TR.Debug << "In work block " << iblock << " of " << iblockmax << ", thread " << get_rosetta_thread_index() << " completed " << jobcount << " of " << vector_of_work.size() << " work units." << std::endl; //Switch to debug output later.
 		}
-		TR << "In work block " << iblock << " of " << iblockmax << ", thread " << get_rosetta_thread_index() << " completed " << jobcount << " of " << vector_of_work.size() << " work units." << std::endl; //Switch to debug output later.
 		if ( iblock < iblockmax ) {
 			bool triggering_thread(false);
 			{ //Scope for mutex

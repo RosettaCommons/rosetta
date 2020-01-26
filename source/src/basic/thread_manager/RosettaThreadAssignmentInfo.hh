@@ -30,6 +30,8 @@
 
 // C++ headers
 #include <mutex>
+#include <atomic>
+#include <map>
 
 namespace basic {
 namespace thread_manager {
@@ -45,11 +47,14 @@ public:
 	/// @brief Assignment constructor.
 	RosettaThreadAssignmentInfo( RosettaThreadRequestOriginatingLevel const originating_level );
 
-	/// @brief Copy constructor.
-	RosettaThreadAssignmentInfo(RosettaThreadAssignmentInfo const & src);
+	/// @brief Copy constructor -- explicitly deleted.
+	RosettaThreadAssignmentInfo(RosettaThreadAssignmentInfo const & src) = delete;
 
 	/// @brief Destructor.
 	virtual ~RosettaThreadAssignmentInfo();
+
+	/// @brief Assignment operator -- explicitly deleted.
+	RosettaThreadAssignmentInfo & operator = ( RosettaThreadAssignmentInfo const & ) = delete;
 
 public: //Setters and getters
 
@@ -62,6 +67,10 @@ public: //Setters and getters
 	/// @brief Get the list of assigned threads (indices ranging from 1 to nthreads - 1 ).  These don't include the calling thread.
 	/// @details Deliberately passes result by copy rather than returning an instance, for thread-safety.
 	utility::vector1< platform::Size > get_assigned_child_threads() const;
+
+	/// @brief Get the thread from which this task originated, included in the set of threads assigned to the task (but
+	/// not in the assigned_child_threads_ list).
+	inline platform::Size get_originating_thread() const { return originating_thread_; }
 
 	/// @brief Get the number of additional threads that were assigned this task.  The total number of threads available for this
 	/// task are this number plus one, since the requesting thread will also run the task.
@@ -78,6 +87,20 @@ public: //Setters and getters
 	/// @brief Get the level from which the thread request originally came.
 	RosettaThreadRequestOriginatingLevel get_thread_request_originating_level() const;
 
+	/// @brief Checks the current thread's Rosetta index, and converts it into a one-based index in the vector of threads assigned to this
+	/// task.  For example, if threads 4, 7, and 9 are assigned to this task, and thread 7 calls this function, it will return "2",
+	/// since thread 7 is the 2nd of 3 threads assigned to this task.
+	/// @details Assumes that calling thread is one that is assigned to this task!
+	platform::Size get_this_thread_index_in_assigned_set() const;
+
+private: //Setup
+
+	/// @brief Set up the map of Rosetta thread index to one-based thread index for this task.
+	/// @details For example, if this task has been assigned Rosetta threads 4, 7, and 9, then thread 4
+	/// maps to assigned thread 1, thread 7 maps to assigned thread 2, and thread 9 maps to assigned thread
+	/// 3.
+	void set_up_rosetta_thread_index_to_assigned_set_index();
+
 private: //Data
 
 	/// @brief Mutex for accessing the list of threads to which a function has been assigned.
@@ -86,12 +109,20 @@ private: //Data
 	/// @brief List of threads to which a function has been assigned.
 	utility::vector1< platform::Size > assigned_child_threads_;
 
-	/// @brief Mutex for accessing the count of requested threads.
-	mutable utility::thread::ReadWriteMutex requested_thread_count_mutex_;
+	/// @brief The thread from which this task originated, included in the set of threads assigned to the task (but
+	/// not in the assigned_child_threads_ list).
+	platform::Size originating_thread_ = 0;
+
+	/// @brief Map of Rosetta thread index to one-based thread index for this task.
+	/// @details For example, if this task has been assigned Rosetta threads 4, 7, and 9, then thread 4
+	/// maps to assigned thread 1, thread 7 maps to assigned thread 2, and thread 9 maps to assigned thread
+	/// 3.
+	std::map< platform::Size, platform::Size > rosetta_thread_index_to_assigned_set_index_;
 
 	/// @brief Number of threads requested.
-	platform::Size requested_thread_count_ = 0;
+	std::atomic< platform::Size > requested_thread_count_;
 
+	/// @brief Rosetta level from which the therad request originally came.
 	RosettaThreadRequestOriginatingLevel thread_request_originating_level_ = RosettaThreadRequestOriginatingLevel::UNKNOWN;
 
 };
@@ -113,7 +144,7 @@ class RosettaThreadAssignmentInfo : public utility::pointer::ReferenceCount {
 public:
 	RosettaThreadAssignmentInfo() = delete;
 	RosettaThreadAssignmentInfo( RosettaThreadRequestOriginatingLevel const ) {}
-	RosettaThreadAssignmentInfo( RosettaThreadAssignmentInfo const & ) = default;
+	RosettaThreadAssignmentInfo( RosettaThreadAssignmentInfo const & ) = delete;
 	~RosettaThreadAssignmentInfo() override = default;
 };
 

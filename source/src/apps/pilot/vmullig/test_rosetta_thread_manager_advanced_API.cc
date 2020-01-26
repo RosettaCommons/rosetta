@@ -131,7 +131,7 @@ public:
 		AppSettings const & appsettings,
 		utility::vector1< core::Size > const & numbers,
 		utility::vector1< std::mutex > & mutexes,
-		utility::vector1< std::atomic_bool > & completed,
+		utility::vector1< basic::thread_manager::AtomicBoolContainer > & completed,
 		utility::vector1< utility::vector1< core::Size > > & multiples
 	) {
 		core::Size const thread_index( basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() );
@@ -142,10 +142,10 @@ public:
 		//Do something here: compute a times table.
 		TR_level3 << "Preparing to operate on data in level three thread " << thread_index << "." << std::endl;
 		for ( core::Size i(1), imax(numbers.size()); i<=imax; ++i ) { //Loop through all entries in vector.
-			if ( completed[i].load() ) continue;
+			if ( completed[i].contained_bool_.load() ) continue;
 			std::lock_guard< std::mutex > lock( mutexes[i] );
-			if ( completed[i].load() || !multiples[i].empty() ) continue; //This row of the times table has already been calculated.
-			completed[i] = true;
+			if ( completed[i].contained_bool_.load() || !multiples[i].empty() ) continue; //This row of the times table has already been calculated.
+			completed[i].contained_bool_ = true;
 			TR_level3 << "Level three thread " << thread_index << " computing multiples of " << numbers[i] << "." << std::endl;
 			multiples[i].resize( MAX_MULTIPLE );
 			for ( core::Size j(1); j<=MAX_MULTIPLE; ++j ) {
@@ -164,7 +164,7 @@ public:
 		AppSettings const & appsettings,
 		utility::vector1< core::Size > const & numbers,
 		utility::vector1< std::mutex > & mutexes,
-		utility::vector1< std::atomic_bool > & completed,
+		utility::vector1< basic::thread_manager::AtomicBoolContainer > & completed,
 		utility::vector1< utility::vector1< core::Size > > & multiples
 	) {
 		TR_level2 << "Level two thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " reporting in.  " << appsettings.threads_level2_ << " threads were requested at this level.  " << l2_thread_assignment_info.get_assigned_total_thread_count() << " were assigned." << std::endl;
@@ -187,7 +187,7 @@ public:
 		AppSettings const & appsettings,
 		utility::vector1< core::Size > const & numbers,
 		utility::vector1< std::mutex > & mutexes,
-		utility::vector1< std::atomic_bool > & completed,
+		utility::vector1< basic::thread_manager::AtomicBoolContainer > & completed,
 		utility::vector1< utility::vector1< core::Size > > & multiples
 	) {
 		TR_level1 << "Level one thread " << basic::thread_manager::RosettaThreadManager::get_instance()->get_rosetta_thread_index() << " reporting in.  " << appsettings.threads_level1_ << " threads were requested at this level.  " << l1_thread_assignment_info.get_assigned_total_thread_count() << " were assigned." << std::endl;
@@ -209,7 +209,7 @@ public:
 		AppSettings const & appsettings,
 		utility::vector1< core::Size > const & numbers,
 		utility::vector1< std::mutex > & mutexes,
-		utility::vector1< std::atomic_bool > & completed,
+		utility::vector1< basic::thread_manager::AtomicBoolContainer > & completed,
 		utility::vector1< utility::vector1< core::Size > > & multiples
 	) {
 		// Create the thread manager and launch threads:
@@ -254,8 +254,7 @@ main( int argc, char * argv [] )
 		utility::vector1< core::Size > numbers( NUMBER_OF_NUMBERS );
 		for ( core::Size i(1); i<=NUMBER_OF_NUMBERS; ++i ) { numbers[i] = i; }
 		utility::vector1< std::mutex > mutexes( NUMBER_OF_NUMBERS );
-		utility::vector1< std::atomic_bool > completed( NUMBER_OF_NUMBERS );
-		for ( core::Size i(1); i<=NUMBER_OF_NUMBERS; ++i ) completed[i] = false;
+		utility::vector1< basic::thread_manager::AtomicBoolContainer > completed( NUMBER_OF_NUMBERS ); //Auto-initializes to false.
 		utility::vector1< utility::vector1< core::Size > > multiples( NUMBER_OF_NUMBERS );
 
 		AppSettings appsettings (

@@ -117,7 +117,12 @@ RosettaThreadPool::run_function_in_threads(
 		for ( platform::Size const & thread_index : assigned_threads ) {
 			threads_[thread_index]->set_forced_idle(false);
 		}
-	} //End of mutex lock scope
+	} /*End of mutex lock scope*/ else {
+		// If we're requesting one thread, we still have to ensure that the thread assignment info is initialized.
+		debug_assert( assigned_threads.empty() ); //Should be true.
+		thread_assignment.set_assigned_child_threads( assigned_threads );
+		thread_assignment.set_requested_thread_count(1);
+	}
 
 	//Also run the function in this thread (the requesting thread):
 	(*function_to_execute)();

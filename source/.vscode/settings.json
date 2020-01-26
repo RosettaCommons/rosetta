@@ -86,6 +86,13 @@
         "vector": "cpp",
         "*.ipp": "cpp",
         "GenCont.C": "cpp",
-        "GenString.C": "cpp"
+        "GenString.C": "cpp",
+        "*.tcc": "cpp",
+        "cinttypes": "cpp",
+        "codecvt": "cpp",
+        "memory_resource": "cpp",
+        "rope": "cpp",
+        "slist": "cpp",
+        "cfenv": "cpp"
     }
 }
