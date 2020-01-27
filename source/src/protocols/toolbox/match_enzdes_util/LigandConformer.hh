@@ -185,7 +185,7 @@ private:
 	/// ligand in the global coordinate frame
 	/// These indices are in the restype indexing of atoms.
 	utility::fixedsizearray1< Size, 3 >         orientation_atoms_;
-	utility::fixedsizearray1< Vector, 3 >       oats_in_D3_frame_;
+	//utility::fixedsizearray1< Vector, 3 >       oats_in_D3_frame_;
 	HTReal                                      oframe_in_D3frame_;
 
 	/// The coordinates of all the ligand atoms in the global orientation frame.

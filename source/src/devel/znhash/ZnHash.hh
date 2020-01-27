@@ -98,9 +98,9 @@ public:
 	static core::Size natoms() { return 5; }
 
 private:
-	core::Size index_; // for identifying a particular zn
-	core::Size nhis_; // how many histadines are coordinating?
-	utility::fixedsizearray1< Vector, 5 > zn_and_orbitals_;
+	core::Size index_ = 0; // for identifying a particular zn
+	core::Size nhis_ = 0; // how many histadines are coordinating?
+	utility::fixedsizearray1< Vector, 5 > zn_and_orbitals_ = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} };
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

@@ -197,9 +197,9 @@ LigandConformer::initialize_from_residue(
 	selected[ D1 ] = selected[ D2 ] = selected[ D3 ] = true;
 	create_collcheck_ordering( selected, 1 );
 
-	oats_in_D3_frame_[ 1 ] = D3frame.to_local_coordinate( residue.xyz( orientation_atoms_[ 1 ] ));
-	oats_in_D3_frame_[ 2 ] = D3frame.to_local_coordinate( residue.xyz( orientation_atoms_[ 2 ] ));
-	oats_in_D3_frame_[ 3 ] = D3frame.to_local_coordinate( residue.xyz( orientation_atoms_[ 3 ] ));
+	// oats_in_D3_frame_[ 1 ] = D3frame.to_local_coordinate( residue.xyz( orientation_atoms_[ 1 ] ));
+	// oats_in_D3_frame_[ 2 ] = D3frame.to_local_coordinate( residue.xyz( orientation_atoms_[ 2 ] ));
+	// oats_in_D3_frame_[ 3 ] = D3frame.to_local_coordinate( residue.xyz( orientation_atoms_[ 3 ] ));
 
 	//std::cout << "APL DEBUG LigandConformer::initialize_from_residue end " << std::endl;
 
