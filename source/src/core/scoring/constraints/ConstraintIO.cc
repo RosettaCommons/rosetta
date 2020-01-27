@@ -403,8 +403,8 @@ ConstraintSetOP ConstraintIO::read_constraints(
 ) {
 	std::string line;
 	std::streampos original_pos = data.tellg();
-	getline(data,line); // header line
-	std::string section = get_section_name ( line );
+	while ( line.size() == 0 ) getline(data,line); // header line
+	std::string section = get_section_name( line );
 	std::string pre_read;
 	while ( section.size() ) {
 		tr.Info << "read constraints section --" << section << "---" << std::endl;
@@ -433,7 +433,7 @@ ConstraintSetOP ConstraintIO::read_constraints(
 			);
 		}
 		tr.Trace << "pre_read: " << pre_read << std::endl;
-		section = get_section_name ( pre_read );
+		section = get_section_name( pre_read );
 	}
 	// pose.constraint_set( cset );
 	return cset;
@@ -580,7 +580,7 @@ ConstraintIO::read_individual_constraint_new(
 	std::string tag;
 	// get the ConstraintType tag
 	while ( true ) {
-		char c = data.peek(); // get first char of the line but not moving istream pointer
+		char const c = data.peek(); // get first char of the line but not moving istream pointer
 		if ( c == '#' || c == '\n' ) { //ignore # comment line and empty line
 			while ( data.good() && (data.get() != '\n') ) {}
 			continue;
