@@ -45,6 +45,12 @@
 #endif
 
 #ifdef MULTI_THREADED
+//Uncomment the following to make this class fully threadsafe.  This hurts threaded performance,
+//and this class probably doesn't have to be threadsafe.
+//#define VECTOROPTION_T_FULL_THREAD_SAFETY
+#endif
+
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 #include <utility/thread/ReadWriteMutex.hh>
 #endif
 
@@ -104,7 +110,7 @@ protected: // Creation
 	inline
 	VectorOption_T_( VectorOption_T_ const & option ) :
 		Super( option )
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		,
 		mutex_()
 #endif
@@ -119,7 +125,7 @@ protected: // Creation
 		Key const & key_a,
 		std::string const & description_a
 	) :
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		mutex_(),
 #endif
 		key_( key_a ),
@@ -159,7 +165,7 @@ protected: // Assignment
 	{
 		Option::operator=(option);
 		if ( this != &option ) {
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::PairedReadLockWriteLockGuard( option.mutex_ /*Gets read-lock.*/, mutex_ /*Gets write-lock.*/ );
 #endif
 			key_ = option.key_;
@@ -237,7 +243,7 @@ public: // Methods
 	VectorOption_T_ &
 	activate() override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		state_ = USER;
@@ -250,7 +256,7 @@ public: // Methods
 	VectorOption_T_ &
 	deactivate() override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		state_ = INACTIVE;
@@ -263,7 +269,7 @@ public: // Methods
 	VectorOption_T_ &
 	to_default() override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		if ( default_state_ == DEFAULT ) {
@@ -279,7 +285,7 @@ public: // Methods
 	VectorOption_T_ &
 	clear() override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		n_ = 0;
@@ -298,7 +304,7 @@ public: // Methods
 	VectorOption_T_ &
 	legal( Value const & value_a )
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		legal_.insert( value_a );
@@ -310,7 +316,7 @@ public: // Methods
 	VectorOption_T_ &
 	shortd( std::string const & s)
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		short_description_ = s ;
@@ -322,7 +328,7 @@ public: // Methods
 	VectorOption_T_ &
 	lower( Value const & value_a )
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		lower_( value_a );
@@ -335,7 +341,7 @@ public: // Methods
 	VectorOption_T_ &
 	strict_lower( Value const & value_a )
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		lower_( value_a, true );
@@ -348,7 +354,7 @@ public: // Methods
 	VectorOption_T_ &
 	upper( Value const & value_a )
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		upper_( value_a );
@@ -361,7 +367,7 @@ public: // Methods
 	VectorOption_T_ &
 	strict_upper( Value const & value_a )
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		upper_( value_a, true );
@@ -374,7 +380,7 @@ public: // Methods
 	VectorOption_T_ &
 	n( Size const n_a ) override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		n_ = n_a;
@@ -387,7 +393,7 @@ public: // Methods
 	VectorOption_T_ &
 	n_lower( Size const n_a ) override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		n_lower_ = n_a;
@@ -400,7 +406,7 @@ public: // Methods
 	VectorOption_T_ &
 	n_upper( Size const n_a ) override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		n_upper_ = n_a;
@@ -415,7 +421,7 @@ public: // Methods
 	default_value( Value const & value_a )
 	{
 		{ //Scope for possible mutex lock
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 			default_state_ = DEFAULT;
@@ -437,7 +443,7 @@ public: // Methods
 	def( Value const & value_a )
 	{
 		{ //Scope for possible mutex lock
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 			default_state_ = DEFAULT;
@@ -458,7 +464,7 @@ public: // Methods
 	VectorOption_T_ &
 	def()
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		default_state_ = DEFAULT;
@@ -475,7 +481,7 @@ public: // Methods
 	default_value( Values const & value_a )
 	{
 		{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 			default_state_ = DEFAULT;
@@ -496,7 +502,7 @@ public: // Methods
 	def( Values const & value_a )
 	{
 		{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 			default_state_ = DEFAULT;
@@ -516,7 +522,7 @@ public: // Methods
 	VectorOption_T_ &
 	cl_value( std::string const & value_str ) override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		std::string const stripped_value_str( ObjexxFCL::stripped( value_str, "\"'" ) );
@@ -548,7 +554,7 @@ public: // Methods
 	value( Value const & value_a )
 	{
 		{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 			if ( state_ == DEFAULT ) value_.clear(); // Clear out the defaults
@@ -577,7 +583,7 @@ public: // Methods
 	operator ()( Value const & value_a )
 	{
 		{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 			if ( state_ == DEFAULT ) value_.clear(); // Clear out the defaults
@@ -595,7 +601,7 @@ public: // Methods
 	value( Values const & value_a )
 	{
 		{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 			if ( state_ == DEFAULT ) value_.clear(); // Clear out the defaults
@@ -613,7 +619,7 @@ public: // Methods
 	operator ()( Values const & value_a )
 	{
 		{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 			if ( state_ == DEFAULT ) value_.clear(); // Clear out the defaults
@@ -632,7 +638,7 @@ public: // Methods
 	{
 		bool do_default_value;
 		{ //Scope for thread.
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 			do_default_value = ( ( state_ == INACTIVE ) || ( state_ == DEFAULT ) );
@@ -659,7 +665,7 @@ public: // Methods
 	legal_limits_report() const override
 	{
 		bool error( false );
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( ( lower_.active() ) && ( upper_.active() ) ) {
@@ -683,7 +689,7 @@ public: // Methods
 	legal_size_report() const override
 	{
 		bool error( false );
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( ( n_upper_ > 0 ) && ( n_lower_ > n_upper_ ) ) error = true;
@@ -836,7 +842,7 @@ public: // Properties
 	Key const &
 	key() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return key_;
@@ -848,7 +854,7 @@ public: // Properties
 	std::string const &
 	id() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return key_.id();
@@ -860,7 +866,7 @@ public: // Properties
 	std::string const &
 	identifier() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return key_.identifier();
@@ -872,7 +878,7 @@ public: // Properties
 	std::string const &
 	code() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return key_.code();
@@ -884,7 +890,7 @@ public: // Properties
 	std::string const &
 	name() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return key_.id();
@@ -896,7 +902,7 @@ public: // Properties
 	std::string const &
 	description() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return description_;
@@ -907,7 +913,7 @@ public: // Properties
 	std::string const &
 	short_description() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return short_description_;
@@ -915,7 +921,7 @@ public: // Properties
 
 	inline void short_description(std::string const & sd)
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		short_description_ = sd;
@@ -998,7 +1004,7 @@ public:
 	bool
 	has_default() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( default_state_ == DEFAULT );
@@ -1010,7 +1016,7 @@ public:
 	bool
 	default_active() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( default_state_ == DEFAULT );
@@ -1022,7 +1028,7 @@ public:
 	bool
 	default_inactive() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( default_state_ == INACTIVE );
@@ -1034,7 +1040,7 @@ public:
 	bool
 	active() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( state_ != INACTIVE );
@@ -1048,7 +1054,7 @@ public:
 	user() const override
 	{
 		been_accessed();
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( state_ == USER );
@@ -1060,7 +1066,7 @@ public:
 	bool
 	can_hold_another() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		Size const s( size(true) );
@@ -1075,7 +1081,7 @@ public:
 	Size
 	default_size() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( default_state_ == INACTIVE ? 0u : default_value_.size() );
@@ -1087,7 +1093,7 @@ public:
 	Size
 	n_default_value() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( default_state_ == INACTIVE ? 0u : default_value_.size() );
@@ -1100,13 +1106,13 @@ private:
 	inline
 	Size
 	size(
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		bool const already_locked
 #else
 		bool const
 #endif
 	) const {
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_, already_locked );
 #endif
 		return ( state_ == INACTIVE ? 0u : value_.size() );
@@ -1124,7 +1130,7 @@ public:
 	Size
 	n_value() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( state_ == INACTIVE ? 0u : value_.size() );
@@ -1150,13 +1156,13 @@ private:
 	inline
 	std::string
 	legal_string(
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		bool const already_locked
 #else
 		bool const
 #endif
 	) const {
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_, already_locked );
 #endif
 		if ( ( legal_.empty() ) && ( lower_.inactive() ) && ( upper_.inactive() ) ) {
@@ -1239,13 +1245,13 @@ private:
 	inline
 	std::string
 	default_string(
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		bool const already_locked
 #else
 		bool const
 #endif
 	) const {
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard lock( mutex_, already_locked );
 #endif
 		if ( ( default_state_ == DEFAULT ) && ( ! default_value_.empty() ) ) {
@@ -1284,13 +1290,13 @@ private:
 	inline
 	std::string
 	raw_default_string(
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		bool const already_locked
 #else
 		bool const
 #endif
 	) const {
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard lock( mutex_, already_locked );
 #endif
 		if ( ( default_state_ == DEFAULT ) && ( ! default_value_.empty() ) ) {
@@ -1326,7 +1332,7 @@ public:
 	std::string
 	value_string() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( ( state_ != INACTIVE ) && ( ! value_.empty() ) ) {
@@ -1360,7 +1366,7 @@ public:
 	std::string
 	equals_string() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( ( state_ != INACTIVE ) && ( ! value_.empty() ) ) {
@@ -1376,7 +1382,7 @@ public:
 	LegalBound const &
 	lower() const
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return lower_;
@@ -1388,7 +1394,7 @@ public:
 	LegalBound const &
 	upper()
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return upper_;
@@ -1400,7 +1406,7 @@ public:
 	bool
 	fixed_size() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( n_ > 0 );
@@ -1412,7 +1418,7 @@ public:
 	Size
 	n() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return n_;
@@ -1424,7 +1430,7 @@ public:
 	Size
 	n_lower() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return n_lower_;
@@ -1436,7 +1442,7 @@ public:
 	Size
 	n_upper() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return n_upper_;
@@ -1448,7 +1454,7 @@ public:
 	Values const &
 	default_value() const
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( default_state_ == INACTIVE ) default_inactive_error();
@@ -1461,7 +1467,7 @@ public:
 	Value const &
 	default_value( Size const i ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( default_state_ == INACTIVE ) default_inactive_error();
@@ -1475,7 +1481,7 @@ public:
 	value() const
 	{
 		been_accessed();
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ == INACTIVE ) inactive_error();
@@ -1489,7 +1495,7 @@ public:
 	operator ()() const
 	{
 		been_accessed();
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ == INACTIVE ) inactive_error();
@@ -1502,7 +1508,7 @@ public:
 	Values // Have to return by value: Not efficient for many or large Value types
 	value_or( Values const & value_a ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ != INACTIVE ) { // Return active value
@@ -1519,7 +1525,7 @@ public:
 	Values // Have to return by value: Not efficient for many or large Value types
 	user_or( Values const & value_a ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ == USER ) { // Return user-specified value
@@ -1537,7 +1543,7 @@ public:
 	value( Size const i ) const
 	{
 		been_accessed(); //Threadsafe
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		if ( state_ == INACTIVE ) inactive_error();
@@ -1550,7 +1556,7 @@ public:
 	bool
 	has_value( Value const & value ) {
 		been_accessed();
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ == INACTIVE ) inactive_error();
@@ -1563,7 +1569,7 @@ public:
 	operator ()( Size const i ) const
 	{
 		been_accessed();
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ == INACTIVE ) inactive_error();
@@ -1577,7 +1583,7 @@ public:
 	operator []( Size const i ) const
 	{
 		been_accessed();
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ == INACTIVE ) inactive_error();
@@ -1590,7 +1596,7 @@ public:
 	Value // Have to return by value: Not efficient for large Value types
 	value_or( Size const i, Value const & value_a ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ != INACTIVE ) { // Return active value
@@ -1607,7 +1613,7 @@ public:
 	user_or( Size const i, Value const & value_a ) const
 	{
 		been_accessed();
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ == USER ) { // Return user-specified value
@@ -1689,13 +1695,13 @@ private: // Properties -- most are protected; first one is private.
 	inline
 	bool
 	unconstrained(
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		bool const already_locked
 #else
 		bool const
 #endif
 	) const {
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_, already_locked );
 #endif
 		return ( ( legal_.empty() ) && ( lower_.inactive() ) && ( upper_.inactive() ) );
@@ -1714,14 +1720,14 @@ private:
 	inline
 	bool
 	default_is_legal(
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		bool const already_locked
 #else
 		bool const
 #endif
 	) const {
 
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_, already_locked );
 #endif
 		if ( ( default_state_ == INACTIVE ) || ( default_value_.empty() ) ) {
@@ -1749,7 +1755,7 @@ protected:
 	bool
 	value_is_legal() const
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( ( state_ == INACTIVE ) || ( value_.empty() ) ) {
@@ -1770,14 +1776,14 @@ private:
 	bool
 	value_is_legal(
 		Value const & value_a,
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		bool const already_locked
 #else
 		bool const
 #endif
 	) const
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_, already_locked );
 #endif
 		return ( legal_.find( value_a ) != legal_.end() );
@@ -1799,7 +1805,7 @@ protected:
 	bool
 	default_obeys_bounds() const
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( default_state_ == INACTIVE ) {
@@ -1838,7 +1844,7 @@ protected:
 	bool
 	value_obeys_bounds() const
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ == INACTIVE ) {
@@ -1878,14 +1884,14 @@ private:
 	bool
 	value_obeys_bounds(
 		Value const & value_a,
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		bool const already_locked
 #else
 		bool const
 #endif
 	) const
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_, already_locked );
 #endif
 		if ( lower_.active() ) {
@@ -1922,7 +1928,7 @@ protected:
 	bool
 	default_size_ok() const
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( default_state_ == INACTIVE ) {
@@ -1942,7 +1948,7 @@ protected:
 	bool
 	value_size_ok() const
 	{
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ == INACTIVE ) {
@@ -1959,7 +1965,7 @@ protected:
 
 private: // Fields
 
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 	/// @brief Mutex for controlling access.
 	mutable utility::thread::ReadWriteMutex mutex_;
 #endif
@@ -1998,7 +2004,7 @@ private: // Fields
 public:
 	template< class Archive > void save( Archive & arc ) const {
 		cereal::base_class< utility::options::VectorOption >( this );
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		arc(key_);
@@ -2016,7 +2022,7 @@ public:
 
 	template< class Archive > void load( Archive & arc ) {
 		cereal::base_class< utility::options::VectorOption >( this );
-#ifdef MULTI_THREADED
+#ifdef VECTOROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		arc(key_);

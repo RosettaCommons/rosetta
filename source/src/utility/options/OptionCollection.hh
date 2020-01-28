@@ -67,6 +67,10 @@
 // Multithreading headers
 #ifdef MULTI_THREADED
 #include <utility/thread/ReadWriteMutex.hh>
+
+//Uncomment the following to ensure that the options collection is fully threadsafe:
+//#define OPTIONS_COLLECTION_FULL_THREAD_SAFETY
+
 #endif
 
 #ifdef    SERIALIZATION
@@ -141,7 +145,7 @@ public: // Methods
 	add( BooleanOptionKey const & key, std::string const & description )
 	{
 		check_key( key );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( key ) = BOOLEAN_OPTION;
@@ -155,7 +159,7 @@ public: // Methods
 	add( IntegerOptionKey const & key, std::string const & description )
 	{
 		check_key( key );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( key ) = INTEGER_OPTION;
@@ -169,7 +173,7 @@ public: // Methods
 	add( RealOptionKey const & key, std::string const & description )
 	{
 		check_key( key );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( key ) = REAL_OPTION;
@@ -183,7 +187,7 @@ public: // Methods
 	add( StringOptionKey const & key, std::string const & description )
 	{
 		check_key( key );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( key ) = STRING_OPTION;
@@ -197,7 +201,7 @@ public: // Methods
 	add( FileOptionKey const & key, std::string const & description )
 	{
 		check_key( key );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( key ) = FILE_OPTION;
@@ -211,7 +215,7 @@ public: // Methods
 	add( PathOptionKey const & key, std::string const & description )
 	{
 		check_key( key );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( key ) = PATH_OPTION;
@@ -225,7 +229,7 @@ public: // Methods
 	add( BooleanVectorOptionKey const & key, std::string const & description )
 	{
 		check_key( key );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( key ) = BOOLEAN_VECTOR_OPTION;
@@ -239,7 +243,7 @@ public: // Methods
 	add( IntegerVectorOptionKey const & key, std::string const & description )
 	{
 		check_key( key );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( key ) = INTEGER_VECTOR_OPTION;
@@ -253,7 +257,7 @@ public: // Methods
 	add( RealVectorOptionKey const & key, std::string const & description )
 	{
 		check_key( key );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( key ) = REAL_VECTOR_OPTION;
@@ -266,7 +270,7 @@ public: // Methods
 	add( ResidueChainVectorOptionKey const & key, std::string const & description )
 	{
 		check_key( key );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( key ) = RESIDUE_CHAIN_VECTOR_OPTION;
@@ -280,7 +284,7 @@ public: // Methods
 	add( StringVectorOptionKey const & key, std::string const & description )
 	{
 		check_key( key );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( key ) = STRING_VECTOR_OPTION;
@@ -294,7 +298,7 @@ public: // Methods
 	add( FileVectorOptionKey const & key, std::string const & description )
 	{
 		check_key( key );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( key ) = FILE_VECTOR_OPTION;
@@ -308,7 +312,7 @@ public: // Methods
 	add( PathVectorOptionKey const & key, std::string const & description )
 	{
 		check_key( key );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( key ) = PATH_VECTOR_OPTION;
@@ -322,7 +326,7 @@ public: // Methods
 	add( BooleanOption const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = BOOLEAN_OPTION;
@@ -336,7 +340,7 @@ public: // Methods
 	add( IntegerOption const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = INTEGER_OPTION;
@@ -350,7 +354,7 @@ public: // Methods
 	add( RealOption const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = REAL_OPTION;
@@ -364,7 +368,7 @@ public: // Methods
 	add( StringOption const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = STRING_OPTION;
@@ -378,7 +382,7 @@ public: // Methods
 	add( FileOption const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = FILE_OPTION;
@@ -392,7 +396,7 @@ public: // Methods
 	add( PathOption const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = PATH_OPTION;
@@ -407,7 +411,7 @@ public: // Methods
 	add( AnyOption< T > const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = ANY_OPTION;
@@ -421,7 +425,7 @@ public: // Methods
 	add( BooleanVectorOption const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = BOOLEAN_VECTOR_OPTION;
@@ -435,7 +439,7 @@ public: // Methods
 	add( IntegerVectorOption const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = INTEGER_VECTOR_OPTION;
@@ -449,7 +453,7 @@ public: // Methods
 	add( RealVectorOption const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = REAL_VECTOR_OPTION;
@@ -462,7 +466,7 @@ public: // Methods
 	add( ResidueChainVectorOption const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = RESIDUE_CHAIN_VECTOR_OPTION;
@@ -476,7 +480,7 @@ public: // Methods
 	add( StringVectorOption const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = STRING_VECTOR_OPTION;
@@ -490,7 +494,7 @@ public: // Methods
 	add( FileVectorOption const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = FILE_VECTOR_OPTION;
@@ -504,7 +508,7 @@ public: // Methods
 	add( PathVectorOption const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = PATH_VECTOR_OPTION;
@@ -519,7 +523,7 @@ public: // Methods
 	add( AnyVectorOption< T > const & opt )
 	{
 		check_key( opt );
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		all_( opt.key() ) = ANY_VECTOR_OPTION;
@@ -659,7 +663,7 @@ public: // Properties: predicate
 	bool
 	has( BooleanOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return booleans_.has( key );
@@ -671,7 +675,7 @@ public: // Properties: predicate
 	bool
 	has( IntegerOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return integers_.has( key );
@@ -683,7 +687,7 @@ public: // Properties: predicate
 	bool
 	has( RealOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return reals_.has( key );
@@ -695,7 +699,7 @@ public: // Properties: predicate
 	bool
 	has( StringOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return strings_.has( key );
@@ -707,7 +711,7 @@ public: // Properties: predicate
 	bool
 	has( FileOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return files_.has( key );
@@ -719,7 +723,7 @@ public: // Properties: predicate
 	bool
 	has( PathOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return paths_.has( key );
@@ -731,7 +735,7 @@ public: // Properties: predicate
 	bool
 	has( AnyOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return anys_.has( key );
@@ -743,7 +747,7 @@ public: // Properties: predicate
 	bool
 	has( BooleanVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return boolean_vectors_.has( key );
@@ -755,7 +759,7 @@ public: // Properties: predicate
 	bool
 	has( IntegerVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return integer_vectors_.has( key );
@@ -767,7 +771,7 @@ public: // Properties: predicate
 	bool
 	has( RealVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return real_vectors_.has( key );
@@ -778,7 +782,7 @@ public: // Properties: predicate
 	bool
 	has( ResidueChainVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return residue_chain_vectors_.has( key );
@@ -790,7 +794,7 @@ public: // Properties: predicate
 	bool
 	has( StringVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return string_vectors_.has( key );
@@ -802,7 +806,7 @@ public: // Properties: predicate
 	bool
 	has( FileVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return file_vectors_.has( key );
@@ -814,7 +818,7 @@ public: // Properties: predicate
 	bool
 	has( PathVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return path_vectors_.has( key );
@@ -826,7 +830,7 @@ public: // Properties: predicate
 	bool
 	has( AnyVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return any_vectors_.has( key );
@@ -838,7 +842,7 @@ public: // Properties: predicate
 	bool
 	has( OptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return all_.has( key );
@@ -1186,7 +1190,7 @@ public: // Indexers
 	BooleanOption const &
 	operator []( BooleanOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		BooleanOption const & opt( booleans_[ key ] );
@@ -1200,7 +1204,7 @@ public: // Indexers
 	BooleanOption &
 	operator []( BooleanOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		BooleanOption & opt( booleans_[ key ] );
@@ -1214,7 +1218,7 @@ public: // Indexers
 	IntegerOption const &
 	operator []( IntegerOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		IntegerOption const & opt( integers_[ key ] );
@@ -1228,7 +1232,7 @@ public: // Indexers
 	IntegerOption &
 	operator []( IntegerOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		IntegerOption & opt( integers_[ key ] );
@@ -1242,7 +1246,7 @@ public: // Indexers
 	RealOption const &
 	operator []( RealOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		RealOption const & opt( reals_[ key ] );
@@ -1256,7 +1260,7 @@ public: // Indexers
 	RealOption &
 	operator []( RealOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		RealOption & opt( reals_[ key ] );
@@ -1270,7 +1274,7 @@ public: // Indexers
 	StringOption const &
 	operator []( StringOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		StringOption const & opt( strings_[ key ] );
@@ -1284,7 +1288,7 @@ public: // Indexers
 	StringOption &
 	operator []( StringOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		StringOption & opt( strings_[ key ] );
@@ -1298,7 +1302,7 @@ public: // Indexers
 	FileOption const &
 	operator []( FileOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		FileOption const & opt( files_[ key ] );
@@ -1312,7 +1316,7 @@ public: // Indexers
 	FileOption &
 	operator []( FileOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		FileOption & opt( files_[ key ] );
@@ -1326,7 +1330,7 @@ public: // Indexers
 	PathOption const &
 	operator []( PathOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		PathOption const & opt( paths_[ key ] );
@@ -1340,7 +1344,7 @@ public: // Indexers
 	PathOption &
 	operator []( PathOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		PathOption & opt( paths_[ key ] );
@@ -1354,7 +1358,7 @@ public: // Indexers
 	Option const &
 	operator []( AnyOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		Option const & opt( anys_[ key ] );
@@ -1368,7 +1372,7 @@ public: // Indexers
 	Option &
 	operator []( AnyOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		Option & opt( anys_[ key ] );
@@ -1383,7 +1387,7 @@ public: // Indexers
 	OptionType const &
 	operator []( AnyOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		OptionType const & opt(
@@ -1399,7 +1403,7 @@ public: // Indexers
 	OptionType &
 	operator []( AnyOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		OptionType & opt(
@@ -1414,7 +1418,7 @@ public: // Indexers
 	BooleanVectorOption const &
 	operator []( BooleanVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		BooleanVectorOption const & opt( boolean_vectors_[ key ] );
@@ -1428,7 +1432,7 @@ public: // Indexers
 	BooleanVectorOption &
 	operator []( BooleanVectorOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		BooleanVectorOption & opt( boolean_vectors_[ key ] );
@@ -1442,7 +1446,7 @@ public: // Indexers
 	IntegerVectorOption const &
 	operator []( IntegerVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		IntegerVectorOption const & opt( integer_vectors_[ key ] );
@@ -1456,7 +1460,7 @@ public: // Indexers
 	IntegerVectorOption &
 	operator []( IntegerVectorOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		IntegerVectorOption & opt( integer_vectors_[ key ] );
@@ -1470,7 +1474,7 @@ public: // Indexers
 	RealVectorOption const &
 	operator []( RealVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		RealVectorOption const & opt( real_vectors_[ key ] );
@@ -1484,7 +1488,7 @@ public: // Indexers
 	RealVectorOption &
 	operator []( RealVectorOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		RealVectorOption & opt( real_vectors_[ key ] );
@@ -1497,7 +1501,7 @@ public: // Indexers
 	ResidueChainVectorOption const &
 	operator []( ResidueChainVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		ResidueChainVectorOption const & opt( residue_chain_vectors_[ key ] );
@@ -1511,7 +1515,7 @@ public: // Indexers
 	ResidueChainVectorOption &
 	operator []( ResidueChainVectorOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		ResidueChainVectorOption & opt( residue_chain_vectors_[ key ] );
@@ -1525,7 +1529,7 @@ public: // Indexers
 	StringVectorOption const &
 	operator []( StringVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		StringVectorOption const & opt( string_vectors_[ key ] );
@@ -1539,7 +1543,7 @@ public: // Indexers
 	StringVectorOption &
 	operator []( StringVectorOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		StringVectorOption & opt( string_vectors_[ key ] );
@@ -1553,7 +1557,7 @@ public: // Indexers
 	FileVectorOption const &
 	operator []( FileVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		FileVectorOption const & opt( file_vectors_[ key ] );
@@ -1567,7 +1571,7 @@ public: // Indexers
 	FileVectorOption &
 	operator []( FileVectorOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		FileVectorOption & opt( file_vectors_[ key ] );
@@ -1581,7 +1585,7 @@ public: // Indexers
 	PathVectorOption const &
 	operator []( PathVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		PathVectorOption const & opt( path_vectors_[ key ] );
@@ -1595,7 +1599,7 @@ public: // Indexers
 	PathVectorOption &
 	operator []( PathVectorOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		PathVectorOption & opt( path_vectors_[ key ] );
@@ -1609,7 +1613,7 @@ public: // Indexers
 	VectorOption const &
 	operator []( AnyVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		VectorOption const & opt( any_vectors_[ key ] );
@@ -1623,7 +1627,7 @@ public: // Indexers
 	VectorOption &
 	operator []( AnyVectorOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		VectorOption & opt( any_vectors_[ key ] );
@@ -1638,7 +1642,7 @@ public: // Indexers
 	VectorOptionType const &
 	operator []( AnyVectorOptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		VectorOptionType const & opt(
@@ -1654,7 +1658,7 @@ public: // Indexers
 	VectorOptionType &
 	operator []( AnyVectorOptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		VectorOptionType & opt(
@@ -1669,7 +1673,7 @@ public: // Indexers
 	Option const &
 	operator []( OptionKey const & key ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		using utility::down_cast;
@@ -1738,7 +1742,7 @@ public: // Indexers
 	Option &
 	operator []( OptionKey const & key )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		using utility::down_cast;
@@ -1826,7 +1830,7 @@ public: // Indexers
 	BooleanOption const &
 	operator ()( BooleanOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		BooleanOption const & opt(booleans_[ key ]);
@@ -1840,7 +1844,7 @@ public: // Indexers
 	BooleanOption &
 	operator ()( BooleanOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		BooleanOption & opt( booleans_[ key ]);
@@ -1854,7 +1858,7 @@ public: // Indexers
 	IntegerOption const &
 	operator ()( IntegerOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		IntegerOption const & opt( integers_[ key ]);
@@ -1868,7 +1872,7 @@ public: // Indexers
 	IntegerOption &
 	operator ()( IntegerOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		IntegerOption & opt( integers_[ key ]);
@@ -1882,7 +1886,7 @@ public: // Indexers
 	RealOption const &
 	operator ()( RealOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		RealOption const & opt( reals_[ key ]);
@@ -1896,7 +1900,7 @@ public: // Indexers
 	RealOption &
 	operator ()( RealOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		RealOption & opt( reals_[ key ]);
@@ -1910,7 +1914,7 @@ public: // Indexers
 	StringOption const &
 	operator ()( StringOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		StringOption const & opt( strings_[ key ]);
@@ -1924,7 +1928,7 @@ public: // Indexers
 	StringOption &
 	operator ()( StringOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		StringOption & opt( strings_[ key ]);
@@ -1938,7 +1942,7 @@ public: // Indexers
 	FileOption const &
 	operator ()( FileOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		FileOption const & opt( files_[ key ]);
@@ -1952,7 +1956,7 @@ public: // Indexers
 	FileOption &
 	operator ()( FileOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		FileOption & opt( files_[ key ]);
@@ -1966,7 +1970,7 @@ public: // Indexers
 	PathOption const &
 	operator ()( PathOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		PathOption const & opt( paths_[ key ]);
@@ -1980,7 +1984,7 @@ public: // Indexers
 	PathOption &
 	operator ()( PathOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		PathOption & opt( paths_[ key ]);
@@ -1994,7 +1998,7 @@ public: // Indexers
 	Option const &
 	operator ()( AnyOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		Option const & opt( anys_[ key ]);
@@ -2008,7 +2012,7 @@ public: // Indexers
 	Option &
 	operator ()( AnyOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		Option & opt( anys_[ key ]);
@@ -2023,7 +2027,7 @@ public: // Indexers
 	OptionType const &
 	operator ()( AnyOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		OptionType const & opt(
@@ -2039,7 +2043,7 @@ public: // Indexers
 	OptionType &
 	operator ()( AnyOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		OptionType & opt(
@@ -2054,7 +2058,7 @@ public: // Indexers
 	BooleanVectorOption const &
 	operator ()( BooleanVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		BooleanVectorOption const & opt( boolean_vectors_[ key ]);
@@ -2068,7 +2072,7 @@ public: // Indexers
 	BooleanVectorOption &
 	operator ()( BooleanVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		BooleanVectorOption & opt( boolean_vectors_[ key ]);
@@ -2082,7 +2086,7 @@ public: // Indexers
 	IntegerVectorOption const &
 	operator ()( IntegerVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		IntegerVectorOption const & opt( integer_vectors_[ key ]);
@@ -2096,7 +2100,7 @@ public: // Indexers
 	IntegerVectorOption &
 	operator ()( IntegerVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		IntegerVectorOption & opt( integer_vectors_[ key ]);
@@ -2110,7 +2114,7 @@ public: // Indexers
 	RealVectorOption const &
 	operator ()( RealVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		RealVectorOption const & opt( real_vectors_[ key ]);
@@ -2124,7 +2128,7 @@ public: // Indexers
 	RealVectorOption &
 	operator ()( RealVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		RealVectorOption & opt( real_vectors_[ key ]);
@@ -2138,7 +2142,7 @@ public: // Indexers
 	ResidueChainVectorOption const &
 	operator ()( ResidueChainVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		ResidueChainVectorOption const & opt( residue_chain_vectors_[ key ]);
@@ -2152,7 +2156,7 @@ public: // Indexers
 	ResidueChainVectorOption &
 	operator ()( ResidueChainVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		ResidueChainVectorOption & opt( residue_chain_vectors_[ key ]);
@@ -2166,7 +2170,7 @@ public: // Indexers
 	StringVectorOption const &
 	operator ()( StringVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		StringVectorOption const & opt( string_vectors_[ key ]);
@@ -2180,7 +2184,7 @@ public: // Indexers
 	StringVectorOption &
 	operator ()( StringVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		StringVectorOption & opt( string_vectors_[ key ]);
@@ -2194,7 +2198,7 @@ public: // Indexers
 	FileVectorOption const &
 	operator ()( FileVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		FileVectorOption const & opt( file_vectors_[ key ]);
@@ -2208,7 +2212,7 @@ public: // Indexers
 	FileVectorOption &
 	operator ()( FileVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		FileVectorOption & opt( file_vectors_[ key ]);
@@ -2222,7 +2226,7 @@ public: // Indexers
 	PathVectorOption const &
 	operator ()( PathVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		PathVectorOption const & opt( path_vectors_[ key ]);
@@ -2236,7 +2240,7 @@ public: // Indexers
 	PathVectorOption &
 	operator ()( PathVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		PathVectorOption & opt( path_vectors_[ key ]);
@@ -2250,7 +2254,7 @@ public: // Indexers
 	VectorOption const &
 	operator ()( AnyVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		VectorOption const & opt(any_vectors_[ key ] );
@@ -2264,7 +2268,7 @@ public: // Indexers
 	VectorOption &
 	operator ()( AnyVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		VectorOption & opt( any_vectors_[ key ] );
@@ -2279,7 +2283,7 @@ public: // Indexers
 	VectorOptionType const &
 	operator ()( AnyVectorOptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		VectorOptionType const & opt(
@@ -2295,7 +2299,7 @@ public: // Indexers
 	VectorOptionType &
 	operator ()( AnyVectorOptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		VectorOptionType & opt(
@@ -2310,7 +2314,7 @@ public: // Indexers
 	Option const &
 	operator ()( OptionKey const & key, bool check_restricted_access=true ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		using utility::down_cast;
@@ -2379,7 +2383,7 @@ public: // Indexers
 	Option &
 	operator ()( OptionKey const & key, bool check_restricted_access=true )
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		using utility::down_cast;
@@ -2702,7 +2706,7 @@ public: //Methods, some static:
 private: // Fields
 
 
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 	/// @brief Mutex for locking the OptionsCollection for read or write:
 	mutable utility::thread::ReadWriteMutex mutex_;
 #endif

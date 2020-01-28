@@ -100,7 +100,7 @@ OptionCollection::operator=(
 ) {
 	if ( this == &src ) return *this;
 	{
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::PairedReadLockWriteLockGuard( src.mutex_ /*Gets read-lock.*/, mutex_ /*Gets write-lock.*/ );
 #endif
 		booleans_ = src.booleans_;
@@ -221,7 +221,7 @@ OptionCollection::load(
 	// Put the arguments strings in a list
 	ValueStrings arg_strings;
 	{ //Scope for possible mutex lock
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		for ( auto const & arg : args ) {
@@ -247,7 +247,7 @@ OptionCollection::load(
 	// Put the arguments strings in a list
 	ValueStrings arg_strings;
 	{ //Mutex scope
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		for ( int iarg = 1; iarg < argc; ++iarg ) {
@@ -916,7 +916,7 @@ void OptionCollection::show_accessed_options(std::ostream & stream) const {
 
 	stream << "OptionCollection::show_accessed_options flag has been set, listing all accessed options..." << std::endl;
 
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 	utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 
@@ -963,7 +963,7 @@ void show_unused_options_T(T i, T e, std::vector< std::string > &sv) {
 void OptionCollection::show_unused_options(std::ostream & stream) const {
 	using std::string;
 
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 	utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 
@@ -995,7 +995,7 @@ void OptionCollection::show_unused_options(std::ostream & stream) const {
 
 std::string
 OptionCollection::get_argv() const {
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 	utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 	return argv_copy_;
@@ -1726,7 +1726,7 @@ OptionCollection::wrapped(
 template< class Archive >
 void
 utility::options::OptionCollection::save( Archive & arc ) const {
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 	utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 	arc( CEREAL_NVP( booleans_ ) ); // Booleans
@@ -1758,7 +1758,7 @@ utility::options::OptionCollection::save( Archive & arc ) const {
 template< class Archive >
 void
 utility::options::OptionCollection::load( Archive & arc ) {
-#ifdef MULTI_THREADED
+#ifdef OPTIONS_COLLECTION_FULL_THREAD_SAFETY
 	utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 	arc( booleans_ ); // Booleans

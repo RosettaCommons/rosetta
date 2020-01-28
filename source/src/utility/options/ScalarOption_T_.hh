@@ -46,6 +46,12 @@
 #endif // SERIALIZATION
 
 #ifdef MULTI_THREADED
+//Uncomment the following to make this class fully threadsafe.  This hurts threaded performance,
+//and this class probably doesn't have to be threadsafe.
+//#define SCALAROPTION_T_FULL_THREAD_SAFETY
+#endif
+
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 #include <utility/thread/ReadWriteMutex.hh>
 #endif
 
@@ -98,7 +104,7 @@ protected: // Creation
 	inline
 	ScalarOption_T_( ScalarOption_T_ const & option ) :
 		Super( option )
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		,
 		mutex_()
 #endif
@@ -149,7 +155,7 @@ protected: // Assignment
 		Option::operator=(option);
 
 		if ( this != &option ) {
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::PairedReadLockWriteLockGuard( option.mutex_ /*Gets read-lock.*/, mutex_ /*Gets write-lock.*/ );
 #endif
 			key_ = option.key_;
@@ -188,7 +194,7 @@ public: // Conversion
 	operator Value const &() const
 	{
 		been_accessed();
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock(mutex_);
 #endif
 		if ( state_ == INACTIVE ) inactive_error();
@@ -215,7 +221,7 @@ public: // Methods
 
 	activate() override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock(mutex_);
 #endif
 		state_ = USER;
@@ -228,7 +234,7 @@ public: // Methods
 	ScalarOption_T_ &
 	deactivate() override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock(mutex_);
 #endif
 		state_ = INACTIVE;
@@ -241,7 +247,7 @@ public: // Methods
 	ScalarOption_T_ &
 	to_default() override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock(mutex_);
 #endif
 		if ( default_state_ == DEFAULT ) {
@@ -257,7 +263,7 @@ public: // Methods
 	ScalarOption_T_ &
 	clear() override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock(mutex_);
 #endif
 		default_state_ = INACTIVE;
@@ -273,7 +279,7 @@ public: // Methods
 	ScalarOption_T_ &
 	legal( Value const & value_a )
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock(mutex_);
 #endif
 		legal_.insert( value_a );
@@ -285,7 +291,7 @@ public: // Methods
 	ScalarOption_T_ &
 	shortd( std::string const & s)
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock(mutex_);
 #endif
 		short_description_ = s;
@@ -298,7 +304,7 @@ public: // Methods
 	ScalarOption_T_ &
 	lower( Value const & value_a )
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock(mutex_);
 #endif
 		lower_( value_a );
@@ -311,7 +317,7 @@ public: // Methods
 	ScalarOption_T_ &
 	strict_lower( Value const & value_a )
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock(mutex_);
 #endif
 		lower_( value_a, true );
@@ -324,7 +330,7 @@ public: // Methods
 	ScalarOption_T_ &
 	upper( Value const & value_a )
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock(mutex_);
 #endif
 		upper_( value_a );
@@ -337,7 +343,7 @@ public: // Methods
 	ScalarOption_T_ &
 	strict_upper( Value const & value_a )
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock(mutex_);
 #endif
 		upper_( value_a, true );
@@ -351,7 +357,7 @@ public: // Methods
 	ScalarOption_T_ &
 	default_value( Value const & value_a )
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock(mutex_);
 #endif
 		default_state_ = DEFAULT;
@@ -371,7 +377,7 @@ public: // Methods
 	ScalarOption_T_ &
 	def( Value const & value_a )
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock(mutex_);
 #endif
 		default_state_ = DEFAULT;
@@ -393,7 +399,7 @@ public: // Methods
 		Value old_value;
 		bool check_override, check_value_diff;
 		{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::ReadLockGuard readlock(mutex_);
 #endif
 			old_value = value_;
@@ -401,7 +407,7 @@ public: // Methods
 		}
 		value( value_of( ObjexxFCL::stripped( value_str, "\"'" ) ) );
 		{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::ReadLockGuard readlock(mutex_);
 #endif
 			check_value_diff = ( value_ != old_value );
@@ -425,7 +431,7 @@ public: // Methods
 	value( Value const & value_a )
 	{
 		{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::WriteLockGuard writelock(mutex_);
 #endif
 			state_ = USER;
@@ -443,7 +449,7 @@ public: // Methods
 	operator ()( Value const & value_a )
 	{
 		{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::WriteLockGuard writelock(mutex_);
 #endif
 			state_ = USER;
@@ -461,7 +467,7 @@ public: // Methods
 	{
 		bool condition_met;
 		{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 			utility::thread::ReadLockGuard readlock(mutex_);
 #endif
 			condition_met = ( ( state_ == INACTIVE ) || ( state_ == DEFAULT ) );
@@ -488,7 +494,7 @@ public: // Methods
 	legal_limits_report() const override
 	{
 		bool error( false );
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock(mutex_);
 #endif
 		if ( ( lower_.active() ) && ( upper_.active() ) ) {
@@ -645,7 +651,7 @@ public: // Properties
 	Key const &
 	key() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return key_;
@@ -657,7 +663,7 @@ public: // Properties
 	std::string const &
 	id() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return key_.id();
@@ -669,7 +675,7 @@ public: // Properties
 	std::string const &
 	identifier() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return key_.identifier();
@@ -681,7 +687,7 @@ public: // Properties
 	std::string const &
 	code() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return key_.code();
@@ -693,7 +699,7 @@ public: // Properties
 	std::string const &
 	name() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return key_.id();
@@ -705,7 +711,7 @@ public: // Properties
 	std::string const &
 	description() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return description_;
@@ -716,7 +722,7 @@ public: // Properties
 	std::string const &
 	short_description() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return short_description_;
@@ -724,7 +730,7 @@ public: // Properties
 
 	inline void short_description(std::string const & sd)
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		short_description_ = sd;
@@ -732,7 +738,7 @@ public: // Properties
 
 	inline void description(std::string const & sd )
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		description_ = sd;
@@ -783,7 +789,7 @@ public:
 	bool
 	has_default() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( default_state_ == DEFAULT );
@@ -795,7 +801,7 @@ public:
 	bool
 	default_active() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( default_state_ == DEFAULT );
@@ -819,7 +825,7 @@ public:
 	bool
 	default_inactive() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( default_state_ == INACTIVE );
@@ -831,7 +837,7 @@ public:
 	bool
 	active() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( state_ != INACTIVE );
@@ -845,7 +851,7 @@ public:
 	user() const override
 	{
 		been_accessed();
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( state_ == USER );
@@ -866,7 +872,7 @@ public:
 	Size
 	default_size() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( default_state_ == INACTIVE ? 0u : 1u );
@@ -878,7 +884,7 @@ public:
 	Size
 	n_default_value() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( default_state_ == INACTIVE ? 0u : 1u );
@@ -890,7 +896,7 @@ public:
 	Size
 	size() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( state_ == INACTIVE ? 0u : 1u );
@@ -902,7 +908,7 @@ public:
 	Size
 	n_value() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( state_ == INACTIVE ? 0u : 1u );
@@ -929,13 +935,13 @@ public:
 	inline
 	std::string
 	legal_string(
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		bool const already_locked
 #else
 		bool const
 #endif
 	) const {
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_, already_locked );
 #endif
 		if ( ( legal_.empty() ) && ( lower_.inactive() ) && ( upper_.inactive() ) ) {
@@ -1014,7 +1020,7 @@ public:
 	std::string
 	default_string() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( default_state_ == DEFAULT ) {
@@ -1028,7 +1034,7 @@ public:
 	std::string
 	raw_default_string() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( default_state_ == DEFAULT ) {
@@ -1044,7 +1050,7 @@ public:
 	std::string
 	value_string() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ != INACTIVE ) {
@@ -1066,7 +1072,7 @@ public:
 	std::string
 	equals_string() const override
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ != INACTIVE ) {
@@ -1082,7 +1088,7 @@ public:
 	LegalBound const &
 	lower() const
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return lower_;
@@ -1094,7 +1100,7 @@ public:
 	LegalBound const &
 	upper()
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return upper_;
@@ -1106,7 +1112,7 @@ public:
 	Value const &
 	default_value() const
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( default_state_ == INACTIVE ) default_inactive_error();
@@ -1120,7 +1126,7 @@ public:
 	value() const
 	{
 		been_accessed();
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ == INACTIVE ) inactive_error();
@@ -1134,7 +1140,7 @@ public:
 	operator ()() const
 	{
 		been_accessed();
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ == INACTIVE ) inactive_error();
@@ -1147,7 +1153,7 @@ public:
 	Value // Have to return by value: Not efficient for large Value types
 	value_or( Value const & value_a ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ != INACTIVE ) { // Return active value
@@ -1164,7 +1170,7 @@ public:
 	Value // Have to return by value: Not efficient for large Value types
 	user_or( Value const & value_a ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ == USER ) { // Return user-specified value
@@ -1301,7 +1307,7 @@ protected: // Properties
 	bool
 	unconstrained() const
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( ( legal_.empty() ) && ( lower_.inactive() ) && ( upper_.inactive() ) );
@@ -1312,7 +1318,7 @@ protected: // Properties
 	bool
 	default_is_legal() const
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( default_state_ == INACTIVE ) {
@@ -1328,7 +1334,7 @@ protected: // Properties
 	bool
 	value_is_legal() const
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ == INACTIVE ) {
@@ -1344,7 +1350,7 @@ protected: // Properties
 	bool
 	value_is_legal( Value const & value_a ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		return ( legal_.find( value_a ) != legal_.end() );
@@ -1356,7 +1362,7 @@ protected: // Properties
 	bool
 	default_obeys_bounds() const
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( default_state_ == INACTIVE ) {
@@ -1387,7 +1393,7 @@ protected: // Properties
 	bool
 	value_obeys_bounds() const
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( state_ == INACTIVE ) {
@@ -1418,7 +1424,7 @@ protected: // Properties
 	bool
 	value_obeys_bounds( Value const & value_a ) const
 	{
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		if ( lower_.active() ) {
@@ -1442,7 +1448,7 @@ protected: // Properties
 
 private: // Fields
 
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 	mutable utility::thread::ReadWriteMutex mutex_;
 #endif
 
@@ -1478,7 +1484,7 @@ public:
 	template< class Archive > void save( Archive & arc ) const
 	{
 		cereal::base_class< utility::options::ScalarOption >( this );
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::ReadLockGuard readlock( mutex_ );
 #endif
 		arc(key_);
@@ -1495,7 +1501,7 @@ public:
 	template< class Archive > void load( Archive & arc )
 	{
 		cereal::base_class< utility::options::ScalarOption >( this );
-#ifdef MULTI_THREADED
+#ifdef SCALAROPTION_T_FULL_THREAD_SAFETY
 		utility::thread::WriteLockGuard writelock( mutex_ );
 #endif
 		arc(key_);
