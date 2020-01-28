@@ -39,11 +39,11 @@ namespace hashing {
 
 
 struct LigandCoordInfo {
-	numeric::xyzVector< core::Real > local_coords;
+	numeric::xyzVector< core::Real > local_coords = { 0, 0, 0 };
 	std::string coord_res_name;
-	core::Size coord_atom_index;
-	core::Size ligand_atom_index;
-	utility::fixedsizearray1< core::Real, 4 > chis;
+	core::Size coord_atom_index = 0;
+	core::Size ligand_atom_index = 0;
+	utility::fixedsizearray1< core::Real, 4 > chis = {0, 0, 0, 0};
 
 
 	friend
