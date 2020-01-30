@@ -25,7 +25,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility Headers
-
+#include <core/scoring/trie/TrieVsTrieCachedDataContainerBase.fwd.hh>
 #include <core/scoring/trie/RotamerTrie.fwd.hh>
 #include <utility/vector1_bool.hh>
 
@@ -55,7 +55,8 @@ trie_vs_path(
 	CPFXN & count_pair,
 	SFXN & score_function,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
-	utility::vector1< core::PackerEnergy > & temp_vector
+	utility::vector1< core::PackerEnergy > & temp_vector,
+	core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data //Could be nullptr
 )
 {
 	using namespace ObjexxFCL;
@@ -121,7 +122,7 @@ trie_vs_path(
 				if ( s.is_hydrogen() ) {
 					if ( parent_heavy_wi_hydrogen_cutoff( s_heavy_depth, r_heavy_depth_stack[ r_curr_stack_top ]  ) &&
 							count_pair( r.cp_data(), s.cp_data(), weight, path_dist ) ) {
-						e = score_function.hydrogenatom_hydrogenatom_energy( r.atom(), s.atom(), path_dist );
+						e = score_function.hydrogenatom_hydrogenatom_energy( r.atom(), s.atom(), path_dist, cached_data );
 						energy_sum[ r_curr_stack_top ] += weight * e;
 					}
 				} else {
@@ -131,7 +132,7 @@ trie_vs_path(
 
 					if ( parent_heavy_wi_hydrogen_cutoff(s_heavy_depth, r_heavy_depth_stack[ r_curr_stack_top ] ) &&
 							count_pair( r.cp_data(), s.cp_data(), weight, path_dist ) ) {
-						e = score_function.hydrogenatom_heavyatom_energy( r.atom(), s.atom(), path_dist );
+						e = score_function.hydrogenatom_heavyatom_energy( r.atom(), s.atom(), path_dist, cached_data );
 						energy_sum[ r_curr_stack_top ] += e * weight;
 					}
 
@@ -147,7 +148,7 @@ trie_vs_path(
 				if ( s.is_hydrogen() ) {
 					if ( parent_heavy_wi_hydrogen_cutoff( s_heavy_depth, r_heavy_depth_stack[ r_curr_stack_top ] ) &&
 							count_pair( r.cp_data(), s.cp_data(), weight, path_dist ) ) {
-						e = score_function.heavyatom_hydrogenatom_energy( r.atom(), s.atom(), path_dist );
+						e = score_function.heavyatom_hydrogenatom_energy( r.atom(), s.atom(), path_dist, cached_data );
 						energy_sum[ r_curr_stack_top ] += weight * e;
 					}
 				} else {

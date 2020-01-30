@@ -53,7 +53,8 @@ TrieCountPairAll::resolve_trie_vs_trie(
 	RotamerTrie< hbonds::hbtrie::HBAtom, hbonds::hbtrie::HBCPData >  const & ,
 	hbonds::HBondEnergy const & ,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & ,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & )
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const )
 {
 	utility_exit_with_message( "etable::etrie::TrieCountPairAll::resolve_trie_vs_trie reached with HBondEnergy" );
 }
@@ -65,7 +66,8 @@ TrieCountPairAll::resolve_trie_vs_path(
 	RotamerTrie< hbonds::hbtrie::HBAtom, hbonds::hbtrie::HBCPData >  const & ,
 	hbonds::HBondEnergy const & ,
 	utility::vector1< core::PackerEnergy > & ,
-	utility::vector1< core::PackerEnergy > & )
+	utility::vector1< core::PackerEnergy > &,
+	core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const )
 {
 	utility_exit_with_message( "etable::etrie::TrieCountPairAll::resolve_trie_vs_path reached with HBondEnergy" );
 }

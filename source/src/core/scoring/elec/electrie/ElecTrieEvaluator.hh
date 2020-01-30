@@ -19,6 +19,7 @@
 #include <core/scoring/elec/electrie/ElecAtom.hh>
 
 // Project Headers
+#include <core/scoring/trie/TrieVsTrieCachedDataContainerBase.fwd.hh>
 #include <core/types.hh>
 
 // STL Headers
@@ -69,7 +70,8 @@ public:
 	heavyatom_hydrogenatom_energy(
 		ElecAtom const & at1,
 		ElecAtom const & at2,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Real d2;
@@ -84,7 +86,8 @@ public:
 	hydrogenatom_heavyatom_energy(
 		ElecAtom const & at1,
 		ElecAtom const & at2,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Real d2;
@@ -99,7 +102,8 @@ public:
 	hydrogenatom_hydrogenatom_energy(
 		ElecAtom const & at1,
 		ElecAtom const & at2,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Real d2;

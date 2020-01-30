@@ -19,7 +19,7 @@
 #include <core/scoring/etable/EtableEnergy.fwd.hh>
 
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
-
+#include <core/scoring/trie/TrieVsTrieCachedDataContainerBase.fwd.hh>
 
 // Package headers
 #include <core/scoring/etable/BaseEtableEnergy.hh>
@@ -426,7 +426,8 @@ public:
 	Energy heavyatom_hydrogenatom_energy(
 		etrie::EtableAtom const & at1,
 		etrie::EtableAtom const & at2,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Energy atr(0.0), rep(0.0), solv(0.0), d2dummy(0.0);
@@ -448,7 +449,8 @@ public:
 	Energy hydrogenatom_heavyatom_energy(
 		etrie::EtableAtom const & at1,
 		etrie::EtableAtom const & at2,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Energy atr(0.0), rep(0.0), solv(0.0), d2dummy(0.0);
@@ -470,7 +472,8 @@ public:
 	Energy hydrogenatom_hydrogenatom_energy(
 		etrie::EtableAtom const & at1,
 		etrie::EtableAtom const & at2,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Energy atr(0.0), rep(0.0), solv(0.0), d2dummy(0.0);
@@ -689,7 +692,8 @@ public:
 	Energy heavyatom_hydrogenatom_energy(
 		etrie::EtableAtom const & at1,
 		etrie::EtableAtom const & at2,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Energy atr(0.0), rep(0.0), solv(0.0);
@@ -711,7 +715,8 @@ public:
 	Energy hydrogenatom_heavyatom_energy(
 		etrie::EtableAtom const & at1,
 		etrie::EtableAtom const & at2,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Energy atr(0.0), rep(0.0), solv(0.0);
@@ -733,7 +738,8 @@ public:
 	Energy hydrogenatom_hydrogenatom_energy(
 		etrie::EtableAtom const & at1,
 		etrie::EtableAtom const & at2,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Energy atr(0.0), rep(0.0), solv(0.0);

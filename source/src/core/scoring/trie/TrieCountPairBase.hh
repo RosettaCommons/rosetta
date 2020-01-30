@@ -20,6 +20,7 @@
 // Package Headers
 #include <core/scoring/trie/RotamerTrie.fwd.hh>
 #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
+#include <core/scoring/trie/TrieVsTrieCachedDataContainerBase.fwd.hh>
 
 // Project Headers
 #include <core/scoring/etable/etrie/EtableAtom.fwd.hh>
@@ -111,7 +112,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -120,7 +123,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -129,7 +134,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -138,7 +145,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -147,7 +156,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 
 	virtual
@@ -157,7 +168,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -166,7 +179,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -175,7 +190,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -184,7 +201,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -193,7 +212,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -202,7 +223,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -211,7 +234,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -220,7 +245,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -229,7 +256,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -238,7 +267,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -247,7 +278,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -256,7 +289,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -265,7 +300,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -274,7 +311,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -283,7 +322,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -292,7 +333,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -301,7 +344,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -310,7 +355,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -319,7 +366,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -328,7 +377,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 
 	virtual
@@ -338,7 +389,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -347,7 +400,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -356,7 +411,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -365,7 +422,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -374,7 +433,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 
 	virtual
@@ -384,7 +445,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -393,7 +456,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -402,7 +467,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -411,7 +478,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -420,7 +489,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -429,7 +500,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -438,7 +511,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -447,7 +522,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -456,7 +533,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -465,7 +544,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 
 	//////////////////////////////////////// EtableEnergy -- analytic evaluation /////////////////////////////////
@@ -476,7 +557,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -485,7 +568,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -494,7 +579,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -503,7 +590,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -512,7 +601,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -521,7 +612,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -530,7 +623,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -539,7 +634,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -548,7 +645,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -557,7 +656,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -566,7 +667,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -575,7 +678,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -584,7 +689,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -593,7 +700,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -602,7 +711,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -611,7 +722,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -620,7 +733,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -629,7 +744,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -638,7 +755,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -647,7 +766,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -656,7 +777,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -665,7 +788,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -674,7 +799,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -683,7 +810,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -692,7 +821,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -701,7 +832,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -710,7 +843,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -719,7 +854,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -728,7 +865,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -737,7 +876,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -746,7 +887,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -755,7 +898,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -764,7 +909,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -773,7 +920,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -782,7 +931,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -791,7 +942,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -800,7 +953,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -809,7 +964,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -818,7 +975,9 @@ public:
 		RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -827,7 +986,9 @@ public:
 		RotamerTrieBase const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	//////////////////////////// HBONDS /////////////////////////////////
 	virtual
@@ -837,7 +998,9 @@ public:
 		RotamerTrie< hbonds::hbtrie::HBAtom, hbonds::hbtrie::HBCPData >  const & trie2,
 		hbonds::HBondEnergy const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 
 	virtual
@@ -847,7 +1010,9 @@ public:
 		RotamerTrie< hbonds::hbtrie::HBAtom, hbonds::hbtrie::HBCPData >  const & trie2,
 		hbonds::HBondEnergy const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 
 	// called when hbonds and etable tries get confused
@@ -858,7 +1023,9 @@ public:
 		RotamerTrieBase const & trie2,
 		hbonds::HBondEnergy const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -867,7 +1034,9 @@ public:
 		RotamerTrieBase const & trie2,
 		hbonds::HBondEnergy const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	/// Hack Elec Energy
 
@@ -878,7 +1047,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -887,7 +1058,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -896,7 +1069,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -905,7 +1080,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -914,7 +1091,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -923,7 +1102,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -932,7 +1113,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -941,7 +1124,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -950,7 +1135,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -959,7 +1146,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -968,7 +1157,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -977,7 +1168,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -986,7 +1179,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -995,7 +1190,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1004,7 +1201,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1013,7 +1212,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1022,7 +1223,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1031,7 +1234,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1040,7 +1245,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1049,7 +1256,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1058,7 +1267,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1067,7 +1278,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1076,7 +1289,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1085,7 +1300,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1094,7 +1311,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1103,7 +1322,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1112,7 +1333,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1121,7 +1344,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1130,7 +1355,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1139,7 +1366,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1148,7 +1377,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1157,7 +1388,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	// called when hack elec tries get confused with other tries
 	virtual
@@ -1167,7 +1400,9 @@ public:
 		RotamerTrieBase const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1176,7 +1411,9 @@ public:
 		RotamerTrieBase const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1185,7 +1422,9 @@ public:
 		RotamerTrieBase const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1194,7 +1433,9 @@ public:
 		RotamerTrieBase const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1203,7 +1444,9 @@ public:
 		RotamerTrieBase const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1212,7 +1455,9 @@ public:
 		RotamerTrieBase const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1221,7 +1466,9 @@ public:
 		RotamerTrieBase const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1230,7 +1477,9 @@ public:
 		RotamerTrieBase const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 
 	//////////////////////////// LKball //////////////////////////////////////////////
@@ -1241,7 +1490,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1250,7 +1501,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1259,7 +1512,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1268,7 +1523,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1277,7 +1534,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1286,7 +1545,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1295,7 +1556,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1304,7 +1567,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1313,7 +1578,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1322,7 +1589,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1331,7 +1600,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1340,7 +1611,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1349,7 +1622,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1358,7 +1633,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1367,7 +1644,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1376,7 +1655,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1385,7 +1666,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1394,7 +1677,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1403,7 +1688,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1412,7 +1699,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1421,7 +1710,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1430,7 +1721,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1439,7 +1732,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1448,7 +1743,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1457,7 +1754,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1466,7 +1765,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1475,7 +1776,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1484,7 +1787,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1493,7 +1798,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1502,7 +1809,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1511,7 +1820,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1520,7 +1831,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	// called when hack elec tries get confused with other tries
 	virtual
@@ -1530,7 +1843,9 @@ public:
 		RotamerTrieBase const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1539,7 +1854,9 @@ public:
 		RotamerTrieBase const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1548,7 +1865,9 @@ public:
 		RotamerTrieBase const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1557,7 +1876,9 @@ public:
 		RotamerTrieBase const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1566,7 +1887,9 @@ public:
 		RotamerTrieBase const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1575,7 +1898,9 @@ public:
 		RotamerTrieBase const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1584,7 +1909,9 @@ public:
 		RotamerTrieBase const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1593,7 +1920,9 @@ public:
 		RotamerTrieBase const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 
 	//////////////////////////// MMLJEnergyInter /////////////////////////////////////
@@ -1604,7 +1933,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1613,7 +1944,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1622,7 +1955,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1631,7 +1966,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1640,7 +1977,9 @@ public:
 		RotamerTrieBase const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 
 	virtual
@@ -1650,7 +1989,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1659,7 +2000,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1668,7 +2011,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1677,7 +2022,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1686,7 +2033,9 @@ public:
 		RotamerTrieBase const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1695,7 +2044,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1704,7 +2055,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1713,7 +2066,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1722,7 +2077,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1731,7 +2088,9 @@ public:
 		RotamerTrieBase const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1740,7 +2099,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1749,7 +2110,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1758,7 +2121,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1767,7 +2132,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1776,7 +2143,9 @@ public:
 		RotamerTrieBase const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1785,7 +2154,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1794,7 +2165,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1803,7 +2176,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1812,7 +2187,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1821,7 +2198,9 @@ public:
 		RotamerTrieBase const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 
 	virtual
@@ -1831,7 +2210,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1840,7 +2221,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1849,7 +2232,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1858,7 +2243,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1867,7 +2254,9 @@ public:
 		RotamerTrieBase const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 
 	virtual
@@ -1877,7 +2266,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1886,7 +2277,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1895,7 +2288,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1904,7 +2299,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1913,7 +2310,9 @@ public:
 		RotamerTrieBase const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -1922,7 +2321,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1931,7 +2332,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1940,7 +2343,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1949,7 +2354,9 @@ public:
 		RotamerTrie< core::scoring::mm::mmtrie::MMEnergyTableAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1958,7 +2365,9 @@ public:
 		RotamerTrieBase const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	/////////////////////////// VDW_Energy //////////////////////////////
 	virtual
@@ -1968,7 +2377,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1977,7 +2388,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1986,7 +2399,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -1995,7 +2410,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2004,7 +2421,9 @@ public:
 		RotamerTrieBase const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -2013,7 +2432,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2022,7 +2443,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2031,7 +2454,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2040,7 +2465,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2049,7 +2476,9 @@ public:
 		RotamerTrieBase const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -2058,7 +2487,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2067,7 +2498,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2076,7 +2509,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2085,7 +2520,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2094,7 +2531,9 @@ public:
 		RotamerTrieBase const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -2103,7 +2542,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2112,7 +2553,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2121,7 +2564,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2130,7 +2575,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) = 0;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2139,7 +2586,9 @@ public:
 		RotamerTrieBase const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -2148,7 +2597,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2157,7 +2608,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2166,7 +2619,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2175,7 +2630,9 @@ public:
 		RotamerTrieBase const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -2184,7 +2641,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2193,7 +2652,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2202,7 +2663,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2211,7 +2674,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2220,7 +2685,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2229,7 +2696,9 @@ public:
 		RotamerTrieBase const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -2238,7 +2707,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2247,7 +2718,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2256,7 +2729,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2265,7 +2740,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2274,7 +2751,9 @@ public:
 		RotamerTrieBase const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 	virtual
 	void
@@ -2283,7 +2762,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2292,7 +2773,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2301,7 +2784,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2310,7 +2795,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	) = 0;
 
 	virtual
 	void
@@ -2319,7 +2806,9 @@ public:
 		RotamerTrieBase const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector);
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
+	);
 
 
 };

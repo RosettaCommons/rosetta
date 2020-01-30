@@ -18,6 +18,7 @@
 #include <core/scoring/lkball/LK_BallEnergy.fwd.hh>
 #include <core/scoring/lkball/lkbtrie/LKBAtom.hh>
 #include <core/scoring/etable/Etable.fwd.hh>
+#include <core/scoring/trie/TrieVsTrieCachedDataContainerBase.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -58,7 +59,8 @@ public:
 	Energy heavyatom_hydrogenatom_energy(
 		LKBAtom const & /*at1*/,
 		LKBAtom const & /*at2*/,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		return 0.0;
@@ -68,7 +70,8 @@ public:
 	Energy hydrogenatom_heavyatom_energy(
 		LKBAtom const & /*at1*/,
 		LKBAtom const & /*at2*/,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		return 0.0;
@@ -78,7 +81,8 @@ public:
 	Energy hydrogenatom_hydrogenatom_energy(
 		LKBAtom const & /*at1*/,
 		LKBAtom const & /*at2*/,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		return 0.0;

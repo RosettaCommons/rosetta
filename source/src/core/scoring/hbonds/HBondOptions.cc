@@ -701,6 +701,13 @@ HBondOptions::show( std::ostream & out ) const
 		<<( water_hybrid_sf_ ? "true" : "false" ) << std::endl; // hydrate/SPaDES protocol
 }
 
+/// @brief Needed to allow this to be used with DeepCopyOPs.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitue.org).
+HBondOptionsOP
+deep_copy( HBondOptions const & source ) {
+	return utility::pointer::make_shared< HBondOptions >( source );
+}
+
 }
 }
 }

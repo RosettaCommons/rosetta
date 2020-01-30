@@ -319,6 +319,11 @@ public:
 
 };
 
+/// @brief Needed to allow this to be used with DeepCopyOPs.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitue.org).
+HBondOptionsOP
+deep_copy( HBondOptions const & source );
+
 
 } // hbonds
 } // scoring

@@ -48,9 +48,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -61,9 +61,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -74,9 +74,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -86,9 +86,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -99,9 +99,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -112,9 +112,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -124,9 +124,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -136,9 +136,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -149,9 +149,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -161,9 +161,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -173,9 +173,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -185,9 +185,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -197,9 +197,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -209,9 +209,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -221,9 +221,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -233,9 +233,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -246,8 +246,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -258,8 +259,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -270,8 +272,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -281,8 +284,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -293,8 +297,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -305,8 +310,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -317,8 +323,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -328,8 +335,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -340,8 +348,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -352,8 +361,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -364,8 +374,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -375,8 +386,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -386,8 +398,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -397,8 +410,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -408,8 +422,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -419,8 +434,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with Etable Energy" );
 }
 
@@ -432,10 +448,10 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
 
-)
-{
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -446,10 +462,10 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
 
-)
-{
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -460,9 +476,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -472,9 +488,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -485,9 +501,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -498,9 +514,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -511,9 +527,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -523,9 +539,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -536,9 +552,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -548,9 +564,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -560,9 +576,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -572,9 +588,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -584,9 +600,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -596,9 +612,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -608,9 +624,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -620,9 +636,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -633,8 +649,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -645,9 +662,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -658,9 +675,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -670,9 +687,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -683,8 +700,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -695,8 +713,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -707,8 +726,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -718,8 +738,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -730,8 +751,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -742,8 +764,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -754,8 +777,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -765,8 +789,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -776,8 +801,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -787,8 +813,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -798,8 +825,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -809,8 +837,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
 
@@ -821,9 +850,10 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	RotamerTrie< hbonds::hbtrie::HBAtom, hbonds::hbtrie::HBCPData > const & trie2,
 	hbonds::HBondEnergy const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table)
-{
-	trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
+	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+	TrieVsTrieCachedDataContainerBase const * const cached_data
+){
+	trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table, cached_data );
 }
 
 
@@ -833,9 +863,10 @@ HBCountPairFunction::resolve_trie_vs_path(
 	RotamerTrie< hbonds::hbtrie::HBAtom, hbonds::hbtrie::HBCPData > const & trie2,
 	hbonds::HBondEnergy const & sfxn,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
-	utility::vector1< core::PackerEnergy > & temp_vector)
-{
-	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
+	utility::vector1< core::PackerEnergy > & temp_vector,
+	TrieVsTrieCachedDataContainerBase const * const cached_data
+){
+	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 }
 
 
@@ -846,9 +877,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -859,9 +890,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -872,9 +903,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -884,9 +915,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -897,9 +928,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -910,9 +941,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -922,9 +953,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -934,9 +965,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -947,9 +978,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -959,9 +990,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -971,9 +1002,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -983,9 +1014,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -995,9 +1026,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1007,9 +1038,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1019,9 +1050,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1031,9 +1062,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1044,8 +1075,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1056,8 +1088,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1068,8 +1101,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1079,8 +1113,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1091,8 +1126,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1103,8 +1139,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1115,8 +1152,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1126,8 +1164,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1138,8 +1177,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1150,8 +1190,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const &,
 	elec::electrie::ElecTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1162,8 +1203,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & ,
 	elec::electrie::ElecTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
-	utility::vector1< core::PackerEnergy > & )
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1173,8 +1215,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & ,
 	elec::electrie::ElecTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
-	utility::vector1< core::PackerEnergy > & )
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1184,8 +1227,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_1 > const & ,
 	elec::electrie::ElecTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
-	utility::vector1< core::PackerEnergy > & )
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1195,8 +1239,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_2 > const & ,
 	elec::electrie::ElecTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
-	utility::vector1< core::PackerEnergy > & )
-{
+	utility::vector1< core::PackerEnergy > & ,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1206,8 +1251,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairData_1_3 > const & ,
 	elec::electrie::ElecTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
-	utility::vector1< core::PackerEnergy > & )
-{
+	utility::vector1< core::PackerEnergy > & ,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1217,8 +1263,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, etable::etrie::CountPairDataGeneric > const & ,
 	elec::electrie::ElecTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
-	utility::vector1< core::PackerEnergy > & )
-{
+	utility::vector1< core::PackerEnergy > & ,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1229,9 +1276,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1242,9 +1289,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1255,9 +1302,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1267,9 +1314,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1280,9 +1327,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1293,9 +1340,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1305,9 +1352,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1317,9 +1364,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1330,9 +1377,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1342,9 +1389,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1354,9 +1401,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1366,9 +1413,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1378,9 +1425,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1390,9 +1437,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1402,9 +1449,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1414,9 +1461,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &,
-	ObjexxFCL::FArray2D< core::PackerEnergy > &
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1427,8 +1474,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1439,8 +1487,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1451,8 +1500,8 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1462,8 +1511,8 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1474,8 +1523,8 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1486,8 +1535,8 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1498,8 +1547,8 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1509,8 +1558,8 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1521,8 +1570,8 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1533,8 +1582,8 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const &,
 	lkball::lkbtrie::LKBTrieEvaluator const &,
 	utility::vector1< core::PackerEnergy > &,
-	utility::vector1< core::PackerEnergy > &)
-{
+	utility::vector1< core::PackerEnergy > &,
+	TrieVsTrieCachedDataContainerBase const * const){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1545,8 +1594,8 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & ,
 	lkball::lkbtrie::LKBTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
-	utility::vector1< core::PackerEnergy > & )
-{
+	utility::vector1< core::PackerEnergy > & ,
+	TrieVsTrieCachedDataContainerBase const * const){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1556,8 +1605,8 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & ,
 	lkball::lkbtrie::LKBTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
-	utility::vector1< core::PackerEnergy > & )
-{
+	utility::vector1< core::PackerEnergy > & ,
+	TrieVsTrieCachedDataContainerBase const * const){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1567,8 +1616,8 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_1 > const & ,
 	lkball::lkbtrie::LKBTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
-	utility::vector1< core::PackerEnergy > & )
-{
+	utility::vector1< core::PackerEnergy > & ,
+	TrieVsTrieCachedDataContainerBase const * const){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1578,8 +1627,8 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_2 > const & ,
 	lkball::lkbtrie::LKBTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
-	utility::vector1< core::PackerEnergy > & )
-{
+	utility::vector1< core::PackerEnergy > & ,
+	TrieVsTrieCachedDataContainerBase const * const){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1589,8 +1638,8 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairData_1_3 > const & ,
 	lkball::lkbtrie::LKBTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
-	utility::vector1< core::PackerEnergy > & )
-{
+	utility::vector1< core::PackerEnergy > & ,
+	TrieVsTrieCachedDataContainerBase const * const){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1600,8 +1649,8 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, etable::etrie::CountPairDataGeneric > const & ,
 	lkball::lkbtrie::LKBTrieEvaluator const & ,
 	utility::vector1< core::PackerEnergy > & ,
-	utility::vector1< core::PackerEnergy > & )
-{
+	utility::vector1< core::PackerEnergy > & ,
+	TrieVsTrieCachedDataContainerBase const * const){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
 
@@ -1615,9 +1664,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1628,9 +1677,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1641,9 +1690,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1653,9 +1702,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1666,9 +1715,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1679,9 +1728,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1691,9 +1740,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1703,9 +1752,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1716,9 +1765,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1728,9 +1777,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1740,9 +1789,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1752,9 +1801,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1764,9 +1813,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1776,9 +1825,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1788,9 +1837,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1800,9 +1849,9 @@ HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1813,8 +1862,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1825,8 +1875,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1837,8 +1888,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1848,8 +1900,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1860,8 +1913,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1872,8 +1926,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1884,8 +1939,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1895,8 +1951,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1907,8 +1964,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1919,8 +1977,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1931,8 +1990,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1942,8 +2002,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1953,8 +2014,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1964,8 +2026,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1975,8 +2038,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1986,8 +2050,9 @@ HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & /*trie2*/,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+) {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with MMLJEnergyInter" );
 }
 
@@ -1998,9 +2063,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
@@ -2010,9 +2075,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2021,9 +2086,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2032,9 +2097,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2043,9 +2108,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2054,9 +2119,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2065,9 +2130,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2076,9 +2141,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2087,9 +2152,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2098,9 +2163,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2109,9 +2174,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2120,9 +2185,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2131,9 +2196,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2142,9 +2207,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2153,9 +2218,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2164,9 +2229,9 @@ void HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
-)
-{
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_trie reached with VDW_Energy" );
 }
 
@@ -2175,9 +2240,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2186,9 +2251,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2197,9 +2262,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2208,9 +2273,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2219,9 +2284,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2230,9 +2295,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2241,9 +2306,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2252,9 +2317,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2263,9 +2328,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2274,9 +2339,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2285,9 +2350,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2296,9 +2361,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2307,9 +2372,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2318,9 +2383,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2329,9 +2394,9 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
@@ -2340,16 +2405,15 @@ void HBCountPairFunction::resolve_trie_vs_path(
 	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-)
-{
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/ //Can be nullptr
+){
 	utility_exit_with_message( "etable::etrie::HBCountPairFunction::resolve_trie_vs_path reached with VDW_Energy" );
 }
 
 
 void
-HBCountPairFunction::print()
-{
+HBCountPairFunction::print(){
 	std::cout << "HBCountPairFunction" << std::endl;
 }
 

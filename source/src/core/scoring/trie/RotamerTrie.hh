@@ -21,6 +21,7 @@
 #include <core/scoring/trie/RotamerDescriptor.hh>
 #include <core/scoring/trie/RotamerTrieBase.hh>
 #include <core/scoring/trie/TrieCountPairBase.hh>
+#include <core/scoring/trie/TrieVsTrieCachedDataContainerBase.fwd.hh>
 #include <core/scoring/etable/EtableEnergy.fwd.hh>
 #include <core/scoring/etable/etrie/CountPairData_1_1.fwd.hh>
 #include <core/scoring/etable/etrie/CountPairData_1_2.fwd.hh>
@@ -170,10 +171,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
+		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -182,10 +184,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -194,10 +197,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data);
 	}
 
 
@@ -207,10 +211,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -219,10 +224,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
@@ -233,7 +239,8 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase &,
 		etable::TableLookupEvaluator const &,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &,
-		ObjexxFCL::FArray2D< core::PackerEnergy > &
+		ObjexxFCL::FArray2D< core::PackerEnergy > &,
+		TrieVsTrieCachedDataContainerBase const * const //Can be nullptr
 	) const override
 	{
 		utility_exit();
@@ -247,10 +254,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
+		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -259,10 +267,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -271,10 +280,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 
@@ -284,10 +294,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -296,10 +307,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
@@ -310,7 +322,8 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & ,
 		etable::TableLookupEvaluator const & ,
 		utility::vector1< core::PackerEnergy > & ,
-		utility::vector1< core::PackerEnergy > &
+		utility::vector1< core::PackerEnergy > &,
+		TrieVsTrieCachedDataContainerBase const * const
 	) const override
 	{
 		utility_exit_with_message("blah2");
@@ -323,10 +336,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
+		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -335,10 +349,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -347,10 +362,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 
@@ -360,10 +376,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -372,10 +389,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 
@@ -387,7 +405,8 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & ,
 		etable::AnalyticEtableEvaluator const & ,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & ,
-		ObjexxFCL::FArray2D< core::PackerEnergy > &
+		ObjexxFCL::FArray2D< core::PackerEnergy > &,
+		TrieVsTrieCachedDataContainerBase const * const //Can be nullptr
 	) const override
 	{
 		utility_exit();
@@ -400,10 +419,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
+		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -412,10 +432,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -424,10 +445,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 
@@ -437,10 +459,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -449,10 +472,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 
@@ -464,7 +488,8 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & ,
 		etable::AnalyticEtableEvaluator const & ,
 		utility::vector1< core::PackerEnergy > & ,
-		utility::vector1< core::PackerEnergy > &
+		utility::vector1< core::PackerEnergy > &,
+		TrieVsTrieCachedDataContainerBase const * const
 	) const override
 	{
 		utility_exit();
@@ -477,10 +502,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		hbonds::HBondEnergy const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
+		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -489,10 +515,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		hbonds::HBondEnergy const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	/// This function is called when hbond energy function get mixed up with non-hbond tries.
@@ -503,7 +530,8 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & ,
 		hbonds::HBondEnergy const & ,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & ,
-		ObjexxFCL::FArray2D< core::PackerEnergy > &
+		ObjexxFCL::FArray2D< core::PackerEnergy > &,
+		TrieVsTrieCachedDataContainerBase const * const //Can be nullptr
 	) const override
 	{
 		utility_exit_with_message( "Type resolution error in trie vs trie.  Unsupported mixing of HBondEnergy function with non-hbond trie.");
@@ -515,10 +543,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		hbonds::HBondEnergy const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
 	) const override
 	{
-		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
+		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -527,10 +556,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		hbonds::HBondEnergy const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	/// This function is called when hbond energy function get mixed up with non-hbond tries.
@@ -541,7 +571,8 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & ,
 		hbonds::HBondEnergy const & ,
 		utility::vector1< core::PackerEnergy > & ,
-		utility::vector1< core::PackerEnergy > &
+		utility::vector1< core::PackerEnergy > &,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const
 	) const override
 	{
 		utility_exit_with_message("Type resolution error in trie-vs-path.  Unsupported mixing of HBondEnergy function with non-hbond trie.");
@@ -555,10 +586,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
+		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -567,10 +599,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -579,10 +612,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 
@@ -592,10 +626,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -604,10 +639,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 
@@ -619,7 +655,8 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase &,
 		elec::electrie::ElecTrieEvaluator const &,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &,
-		ObjexxFCL::FArray2D< core::PackerEnergy > &
+		ObjexxFCL::FArray2D< core::PackerEnergy > &,
+		TrieVsTrieCachedDataContainerBase const * const //Can be nullptr
 	) const override
 	{
 		utility_exit();
@@ -633,10 +670,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
 	) const override
 	{
-		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
+		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -645,10 +683,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -657,10 +696,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 
@@ -670,10 +710,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -682,10 +723,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 
@@ -697,7 +739,8 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & ,
 		elec::electrie::ElecTrieEvaluator const & ,
 		utility::vector1< core::PackerEnergy > & ,
-		utility::vector1< core::PackerEnergy > &
+		utility::vector1< core::PackerEnergy > &,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const
 	) const override
 	{
 		utility_exit_with_message("blah2");
@@ -712,10 +755,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
+		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -724,10 +768,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -736,10 +781,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 
@@ -749,10 +795,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -761,10 +808,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 
@@ -776,7 +824,8 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase &,
 		lkball::lkbtrie::LKBTrieEvaluator const & ,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &,
-		ObjexxFCL::FArray2D< core::PackerEnergy > &
+		ObjexxFCL::FArray2D< core::PackerEnergy > &,
+		TrieVsTrieCachedDataContainerBase const * const //Can be nullptr
 	) const override
 	{
 		utility_exit();
@@ -790,10 +839,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
 	) const override
 	{
-		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
+		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -802,10 +852,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -814,10 +865,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 
@@ -827,10 +879,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -839,10 +892,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
@@ -853,7 +907,8 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & ,
 		lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 		utility::vector1< core::PackerEnergy > & ,
-		utility::vector1< core::PackerEnergy > &
+		utility::vector1< core::PackerEnergy > &,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const
 	) const override
 	{
 		utility_exit();
@@ -868,10 +923,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
+		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -880,10 +936,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -892,10 +949,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 
@@ -905,10 +963,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
@@ -919,7 +978,8 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase &,
 		methods::MMLJEnergyInter const &,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &,
-		ObjexxFCL::FArray2D< core::PackerEnergy > &
+		ObjexxFCL::FArray2D< core::PackerEnergy > &,
+		TrieVsTrieCachedDataContainerBase const * const //Can be nullptr
 	) const override
 	{
 		utility_exit();
@@ -933,10 +993,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
+		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -945,10 +1006,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -957,10 +1019,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 
@@ -970,10 +1033,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
@@ -984,7 +1048,8 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & ,
 		methods::MMLJEnergyInter const & ,
 		utility::vector1< core::PackerEnergy > & ,
-		utility::vector1< core::PackerEnergy > &
+		utility::vector1< core::PackerEnergy > &,
+		TrieVsTrieCachedDataContainerBase const * const
 	) const override
 	{
 		utility_exit_with_message("blah2");
@@ -997,10 +1062,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
+		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -1009,10 +1075,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 	void
@@ -1021,10 +1088,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data );
 	}
 
 
@@ -1034,10 +1102,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table, cached_data);
 	}
 
 	/// This function is called when the etable energy function get mixed up with non-vdwatom tries.
@@ -1048,7 +1117,8 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase &,
 		vdwaals::VDWTrieEvaluator const &,
 		ObjexxFCL::FArray2D< core::PackerEnergy > &,
-		ObjexxFCL::FArray2D< core::PackerEnergy > &
+		ObjexxFCL::FArray2D< core::PackerEnergy > &,
+		TrieVsTrieCachedDataContainerBase const * const //Can be nullptr
 	) const override
 	{
 		utility_exit_with_message("Type resolution failure in the trie-vs-trie algorithm for the VDW_Energy function");
@@ -1062,10 +1132,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
+		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -1074,10 +1145,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	void
@@ -1086,10 +1158,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 
@@ -1099,10 +1172,11 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const override
 	{
-		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector, cached_data );
 	}
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
@@ -1113,7 +1187,8 @@ public:   /// Type Resolution Functions
 		TrieCountPairBase & ,
 		vdwaals::VDWTrieEvaluator const & ,
 		utility::vector1< core::PackerEnergy > & ,
-		utility::vector1< core::PackerEnergy > &
+		utility::vector1< core::PackerEnergy > &,
+		TrieVsTrieCachedDataContainerBase const * const
 	) const override
 	{
 		utility_exit_with_message("Type resolution failure in the trie-vs-path algorithm for the VDW_Energy function");

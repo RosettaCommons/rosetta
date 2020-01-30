@@ -31,7 +31,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -43,7 +44,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -55,7 +57,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -67,7 +70,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -79,7 +83,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -91,7 +96,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -103,7 +109,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -115,7 +122,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -127,7 +135,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -139,7 +148,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -151,7 +161,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -163,7 +174,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -175,7 +187,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -187,7 +200,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -199,7 +213,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -211,7 +226,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -224,7 +240,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -236,7 +253,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -248,7 +266,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -260,7 +279,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -272,7 +292,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -284,7 +305,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -296,7 +318,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -308,7 +331,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -320,7 +344,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -332,7 +357,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -344,7 +370,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -356,7 +383,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -368,7 +396,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -380,7 +409,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -392,7 +422,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -404,7 +435,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const &, //trie2,
 	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -418,8 +450,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
-
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -431,7 +463,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -443,8 +476,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
-
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -456,8 +489,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
-
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -469,8 +502,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
-
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -482,7 +515,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -494,7 +528,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -507,7 +542,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -519,8 +555,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
-
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -533,8 +569,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
-
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -547,8 +583,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
-
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -561,8 +597,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
-
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -575,8 +611,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
-
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -589,8 +625,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
-
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -602,8 +638,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
-
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -616,8 +652,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
-
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -630,7 +666,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -642,7 +679,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -654,7 +692,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -666,8 +705,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -679,7 +718,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -691,7 +731,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -703,7 +744,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -715,7 +757,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -727,7 +770,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -739,8 +783,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
-
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -752,7 +796,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -764,7 +809,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -776,7 +822,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -788,7 +835,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -800,7 +848,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -812,7 +861,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const &, //trie2,
 	etable::AnalyticEtableEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -826,7 +876,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< hbonds::hbtrie::HBAtom, hbonds::hbtrie::HBCPData >  const & ,
 	hbonds::HBondEnergy const & ,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & ,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & )
+	ObjexxFCL::FArray2D< core::PackerEnergy > & ,
+	TrieVsTrieCachedDataContainerBase const * const)
 {
 	utility_exit_with_message( "etable::etrie::TrieCountPairNone::resolve_trie_vs_trie reached with HBondEnergy" );
 }
@@ -838,7 +889,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< hbonds::hbtrie::HBAtom, hbonds::hbtrie::HBCPData >  const & ,
 	hbonds::HBondEnergy const & ,
 	utility::vector1< core::PackerEnergy > & ,
-	utility::vector1< core::PackerEnergy > & )
+	utility::vector1< core::PackerEnergy > & ,
+	TrieVsTrieCachedDataContainerBase const * const)
 {
 	utility_exit_with_message( "etable::etrie::TrieCountPairNone::resolve_trie_vs_path reached with HBondEnergy" );
 }
@@ -851,7 +903,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -864,7 +917,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -877,7 +931,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -889,7 +944,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -901,7 +957,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -914,7 +971,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -926,7 +984,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -938,7 +997,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -951,7 +1011,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -963,7 +1024,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -975,7 +1037,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -987,7 +1050,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -999,7 +1063,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1011,7 +1076,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1023,7 +1089,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1035,7 +1102,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1048,7 +1116,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1060,7 +1130,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1072,7 +1144,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1083,7 +1157,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1095,7 +1171,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1107,7 +1185,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1119,7 +1199,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1131,7 +1213,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1142,7 +1226,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1154,7 +1240,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1166,7 +1254,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1177,7 +1267,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1188,7 +1280,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1199,7 +1293,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1210,7 +1306,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1222,7 +1320,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
 	elec::electrie::ElecTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1234,7 +1334,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1247,7 +1348,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1260,7 +1362,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1272,7 +1375,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1284,7 +1388,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1297,7 +1402,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1309,7 +1415,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1321,7 +1428,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1334,7 +1442,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1346,7 +1455,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1358,7 +1468,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1370,7 +1481,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1382,7 +1494,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1394,7 +1507,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1406,7 +1520,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1418,7 +1533,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
@@ -1431,7 +1547,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1443,7 +1561,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1455,7 +1575,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1466,7 +1588,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1478,7 +1602,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1490,7 +1616,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1502,7 +1630,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1514,7 +1644,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1525,7 +1657,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1537,7 +1671,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1549,7 +1685,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1560,7 +1698,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1571,7 +1711,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1582,7 +1724,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1593,7 +1737,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1605,7 +1751,9 @@ TrieCountPairNone::resolve_trie_vs_path(
 	trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & /*trie2*/,
 	lkball::lkbtrie::LKBTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
+)
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
@@ -1619,7 +1767,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1631,7 +1780,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1643,7 +1793,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1655,7 +1806,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1667,7 +1819,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1679,7 +1832,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1691,7 +1845,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1703,7 +1858,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1715,7 +1871,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1727,7 +1884,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1739,7 +1897,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1751,7 +1910,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1763,7 +1923,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1775,7 +1936,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1787,7 +1949,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1799,7 +1962,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1812,7 +1976,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1824,7 +1989,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1836,7 +2002,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1848,7 +2015,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1860,7 +2028,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1872,7 +2041,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1884,7 +2054,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1896,7 +2067,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1908,7 +2080,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1920,7 +2093,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1932,7 +2106,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1944,7 +2119,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1956,7 +2132,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1968,7 +2145,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1980,7 +2158,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -1992,7 +2171,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const &, //trie2,
 	methods::MMLJEnergyInter const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2006,7 +2186,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2018,7 +2199,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2030,7 +2212,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2042,7 +2225,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2054,7 +2238,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2066,7 +2251,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2078,7 +2264,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2090,7 +2277,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2102,7 +2290,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2114,7 +2303,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2126,7 +2316,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2138,7 +2329,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2150,7 +2342,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2162,7 +2355,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2174,7 +2368,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2186,7 +2381,8 @@ TrieCountPairNone::resolve_trie_vs_trie(
 	RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &, //pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & //temp_table
+	ObjexxFCL::FArray2D< core::PackerEnergy > & , //temp_table,
+	TrieVsTrieCachedDataContainerBase const * /* cached_data */
 )
 {
 	//trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2199,7 +2395,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2211,7 +2408,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2223,7 +2421,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2235,7 +2434,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2247,7 +2447,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2259,7 +2460,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2271,7 +2473,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2283,7 +2486,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2295,7 +2499,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2307,7 +2512,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2319,7 +2525,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2331,7 +2538,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2343,7 +2551,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2355,7 +2564,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2367,7 +2577,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
@@ -2379,7 +2590,8 @@ TrieCountPairNone::resolve_trie_vs_path(
 	RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const &, //trie2,
 	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/,
+	TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 )
 {
 	//trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );

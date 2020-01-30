@@ -29,6 +29,7 @@
 
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/trie/TrieVsTrieCachedDataContainerBase.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -382,38 +383,42 @@ public:
 	inline
 	Energy heavyatom_hydrogenatom_energy(
 		hbtrie::HBAtom const & at1, // atom 1 is the heavy atom, the acceptor unless it's a placeholder atom
-		hbtrie::HBAtom const & at2, // atom 2 is the hydrogen atom, the donor
-		bool flipped = false
+		hbtrie::HBAtom const & at2, // atom 2 is the hydrogen atom, the donor,
+		bool const flipped,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
 	) const
 	{
 		DistanceSquared d2 = at1.xyz().distance_squared( at2.xyz() );
 		if ( d2 > MAX_R2 || d2 < MIN_R2 || at1.non_hbonding_atom() ) return 0.0;
 
-		return drawn_out_heavyatom_hydrogenatom_energy( at1, at2, flipped );
+		return drawn_out_heavyatom_hydrogenatom_energy( at1, at2, flipped, cached_data );
 	}
 
 	Energy
 	drawn_out_heavyatom_hydrogenatom_energy(
 		hbtrie::HBAtom const & at1, // atom 1 is the heavy atom, the acceptor
 		hbtrie::HBAtom const & at2, // atom 2 is the hydrogen atom, the donor
-		bool flipped
+		bool flipped,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const;
 
 	inline
 	Energy hydrogenatom_heavyatom_energy(
 		hbtrie::HBAtom const & at1,
 		hbtrie::HBAtom const & at2,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const
 	{
-		return heavyatom_hydrogenatom_energy( at2, at1, true );
+		return heavyatom_hydrogenatom_energy( at2, at1, true, cached_data );
 	}
 
 	inline
 	Energy hydrogenatom_hydrogenatom_energy(
 		hbtrie::HBAtom const &,
 		hbtrie::HBAtom const &,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		return 0.0;
@@ -443,6 +448,9 @@ private:
 	HBondDatabaseCOP database_;
 
 	// 2007 based membrane potentials or new membrane framework initialization
+	//
+	// (As far as I can tell, this stuff is threadsafe, since these values are only set in calls
+	// to setup_for_scoring or setup_for_packing, and are only read after that.  --VKM 22 Nov 2019.)
 	mutable Vector normal_;
 	mutable Vector center_;
 	mutable Real thickness_;
@@ -452,16 +460,12 @@ private:
 	// Used in the "const" evaluate_rotamer_pair_energies and evaluate_rotamer_background_energies
 	// methods to keep track of the sfxn weights and the neighbor counts for the two input residues
 	// so that the data may be retrieved from within the trie-vs-trie and trie-vs-path calls.
-	mutable EnergyMap weights_;
-	mutable int rotamer_seq_sep_;
-	mutable int res1_;
-	mutable int res2_;
-	mutable int res1_nb_;
-	mutable int res2_nb_;
-
-	// Keeps track of the number of hbonds formed by each residue in the pose for use in bulge bonus calculations
-	//mutable utility::vector1< core::Size > num_hbonds_;
-	mutable boost::unordered_map< core::Size, core::Size> num_hbonds_;
+	// mutable EnergyMap weights_;
+	// mutable int rotamer_seq_sep_;
+	// mutable int res1_;
+	// mutable int res2_;
+	// mutable int res1_nb_;
+	// mutable int res2_nb_;
 
 	core::Size version() const override;
 

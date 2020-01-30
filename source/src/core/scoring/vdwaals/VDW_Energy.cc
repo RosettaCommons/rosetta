@@ -323,7 +323,7 @@ VDW_Energy::evaluate_rotamer_pair_energies(
 	// figure out which trie countPairFunction needs to be used for this set
 	trie::TrieCountPairBaseOP cp = get_count_pair_function_trie( set1, set2, pose );
 
-	trie1->trie_vs_trie( *trie2, *cp, vdw_eval, temp_table1, temp_table2 );
+	trie1->trie_vs_trie( *trie2, *cp, vdw_eval, temp_table1, temp_table2, nullptr );
 	energy_table += temp_table1;
 }
 

@@ -72,7 +72,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -80,7 +82,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -88,7 +92,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -96,7 +102,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -104,7 +112,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -112,7 +122,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -120,7 +132,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -128,7 +142,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -136,7 +152,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -144,7 +162,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -152,7 +172,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -160,7 +182,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -168,7 +192,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -176,7 +202,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -184,7 +212,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -192,7 +222,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -200,7 +232,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -208,7 +242,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -216,7 +252,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -224,7 +262,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -232,7 +272,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -240,7 +282,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -248,7 +292,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -256,7 +302,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -264,7 +312,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -272,7 +322,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -280,7 +332,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -288,7 +342,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -296,7 +352,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -304,7 +362,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -312,7 +372,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -320,7 +382,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	////////////////////////////////// EtableEnergy -- analytic evaluation ///////////////////////////////////
 	void
@@ -329,7 +393,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -337,7 +403,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -345,7 +413,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -353,7 +423,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -361,7 +433,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -369,7 +443,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -377,14 +453,18 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 	void
 	resolve_trie_vs_trie(
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie1,
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 
 	void
@@ -393,7 +473,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -401,7 +483,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -409,7 +493,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -417,7 +503,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -425,7 +513,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -433,7 +523,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -441,7 +533,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -449,7 +543,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -457,7 +553,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -465,7 +563,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -473,7 +573,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -481,7 +583,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -489,7 +593,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -497,7 +603,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -505,7 +613,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -513,7 +623,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -521,7 +633,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -529,7 +643,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -537,7 +653,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -545,7 +663,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -553,7 +673,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -561,7 +683,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -569,7 +693,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -577,7 +703,9 @@ public:
 		trie::RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 
 	//////////////////// HBONDS ////////////////////////////
@@ -587,7 +715,9 @@ public:
 		trie::RotamerTrie< hbonds::hbtrie::HBAtom, hbonds::hbtrie::HBCPData >  const & trie2,
 		hbonds::HBondEnergy const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 
 	void
@@ -596,7 +726,9 @@ public:
 		trie::RotamerTrie< hbonds::hbtrie::HBAtom, hbonds::hbtrie::HBCPData >  const & trie2,
 		hbonds::HBondEnergy const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	/// Hack Elec Energy
 
@@ -606,7 +738,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -614,7 +748,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -622,7 +758,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -630,7 +768,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -638,7 +778,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -646,7 +788,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -654,7 +798,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -662,7 +808,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -670,7 +818,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -678,7 +828,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -686,14 +838,18 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 	void
 	resolve_trie_vs_trie(
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie1,
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -701,7 +857,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -709,7 +867,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -717,7 +877,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -725,7 +887,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -733,7 +897,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -741,7 +907,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -749,7 +917,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -757,7 +927,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -765,7 +937,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -773,7 +947,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -781,7 +957,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -789,7 +967,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -797,7 +977,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -805,7 +987,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -813,7 +997,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -821,7 +1007,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -829,7 +1017,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_1 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -837,7 +1027,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_2 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -845,7 +1037,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairData_1_3 > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -853,7 +1047,9 @@ public:
 		trie::RotamerTrie< elec::electrie::ElecAtom, CountPairDataGeneric > const & trie2,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	///////////////////////////// lkball /////////////////////////////////////
 	void
@@ -862,7 +1058,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -870,7 +1068,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -878,7 +1078,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -886,7 +1088,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -894,7 +1098,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -902,7 +1108,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -910,7 +1118,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -918,7 +1128,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -926,7 +1138,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -934,7 +1148,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -942,14 +1158,18 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 	void
 	resolve_trie_vs_trie(
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & trie1,
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -957,7 +1177,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -965,7 +1187,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -973,7 +1197,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -981,7 +1207,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -989,7 +1217,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -997,7 +1227,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1005,7 +1237,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1013,7 +1247,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1021,7 +1257,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1029,7 +1267,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1037,7 +1277,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1045,7 +1287,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1053,7 +1297,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1061,7 +1307,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1069,7 +1317,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1077,7 +1327,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1085,7 +1337,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_1 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1093,7 +1347,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_2 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1101,7 +1357,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairData_1_3 > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1109,7 +1367,9 @@ public:
 		trie::RotamerTrie< lkball::lkbtrie::LKBAtom, CountPairDataGeneric > const & trie2,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 
 	/////////////////////////// MMLJEnergyInter //////////////////////////////
@@ -1119,7 +1379,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1127,7 +1389,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1135,7 +1399,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1143,7 +1409,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1151,7 +1419,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1159,7 +1429,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1167,7 +1439,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1175,7 +1449,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1183,7 +1459,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1191,7 +1469,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1199,7 +1479,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1207,7 +1489,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1215,7 +1499,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1223,7 +1509,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1231,7 +1519,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1239,7 +1529,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1247,7 +1539,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1255,7 +1549,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1263,7 +1559,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1271,7 +1569,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1279,7 +1579,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1287,7 +1589,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1295,7 +1599,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1303,7 +1609,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1311,7 +1619,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1319,7 +1629,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1327,7 +1639,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1335,7 +1649,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1343,7 +1659,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_1 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1351,7 +1669,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_2 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1359,7 +1679,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairData_1_3 > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1367,7 +1689,9 @@ public:
 		trie::RotamerTrie< mm::mmtrie::MMEnergyTableAtom, CountPairDataGeneric > const & trie2,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	/////////////////////////// VDW_Energy //////////////////////////////
 	void
@@ -1376,7 +1700,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1384,7 +1710,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1392,7 +1720,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1400,7 +1730,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1408,7 +1740,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1416,7 +1750,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1424,7 +1760,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1432,7 +1770,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1440,7 +1780,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1448,7 +1790,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1456,7 +1800,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1464,7 +1810,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1472,7 +1820,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1480,7 +1830,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1488,7 +1840,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_trie(
@@ -1496,7 +1850,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table) override;
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1504,7 +1860,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1512,7 +1870,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1520,7 +1880,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1528,7 +1890,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1536,7 +1900,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1544,7 +1910,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1552,7 +1920,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1560,7 +1930,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1568,7 +1940,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1576,7 +1950,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1584,7 +1960,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1592,7 +1970,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1600,7 +1980,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1608,7 +1990,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1616,7 +2000,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 	void
 	resolve_trie_vs_path(
@@ -1624,7 +2010,9 @@ public:
 		trie::RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairDataGeneric > const & trie2,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector) override;
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
+	) override;
 
 };
 

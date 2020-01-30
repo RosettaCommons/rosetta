@@ -450,7 +450,7 @@ TableLookupEvaluator::trie_vs_trie(
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 ) const
 {
-	trie1.trie_vs_trie( trie2, cp, *this, pair_energy_table, temp_table );
+	trie1.trie_vs_trie( trie2, cp, *this, pair_energy_table, temp_table, nullptr );
 }
 
 
@@ -464,7 +464,7 @@ TableLookupEvaluator::trie_vs_path(
 	utility::vector1< core::PackerEnergy > & temp_vector
 ) const
 {
-	trie1.trie_vs_path( trie2, cp, *this, pair_energy_vector, temp_vector );
+	trie1.trie_vs_path( trie2, cp, *this, pair_energy_vector, temp_vector, nullptr );
 }
 
 
@@ -549,7 +549,7 @@ AnalyticEtableEvaluator::trie_vs_trie(
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 ) const
 {
-	trie1.trie_vs_trie( trie2, cp, *this, pair_energy_table, temp_table );
+	trie1.trie_vs_trie( trie2, cp, *this, pair_energy_table, temp_table, nullptr );
 }
 
 /// @details first level polymorphic type resolution function
@@ -562,7 +562,7 @@ AnalyticEtableEvaluator::trie_vs_path(
 	utility::vector1< core::PackerEnergy > & temp_vector
 ) const
 {
-	trie1.trie_vs_path( trie2, cp, *this, pair_energy_vector, temp_vector );
+	trie1.trie_vs_path( trie2, cp, *this, pair_energy_vector, temp_vector, nullptr );
 }
 
 void

@@ -1302,7 +1302,7 @@ FA_ElecEnergy::evaluate_rotamer_pair_energies(
 	/// actual trie_vs_trie method.  The type resolution calls allow the trie-vs-trie algorithm
 	/// to be templated with full type knowledge (and therefore be optimized by the compiler for
 	/// each variation on the count pair data used and the count pair funtions invoked.
-	trie1->trie_vs_trie( *trie2, *cp, eleceval, temp_table1, temp_table2 );
+	trie1->trie_vs_trie( *trie2, *cp, eleceval, temp_table1, temp_table2, nullptr /*no cached data*/ );
 
 	/// add in the energies calculated by the tvt alg.
 	energy_table += temp_table1;
@@ -1375,7 +1375,7 @@ FA_ElecEnergy::evaluate_rotamer_background_energies(
 	/// actual trie_vs_trie method.  The type resolution calls allow the trie-vs-trie algorithm
 	/// to be templated with full type knowledge (and therefore be optimized by the compiler for
 	/// each variation on the count pair data used and the count pair funtions invoked.
-	trie1->trie_vs_path( *trie2, *cp, eleceval, temp_vector1, temp_vector2 );
+	trie1->trie_vs_path( *trie2, *cp, eleceval, temp_vector1, temp_vector2, nullptr /*no cached data*/ );
 
 	//std::cout << "FINISHED evaluate_rotamer_background_energies" << std::endl;
 	/// add in the energies calculated by the tvt alg.

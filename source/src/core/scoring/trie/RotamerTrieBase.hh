@@ -18,6 +18,7 @@
 #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 
 #include <core/scoring/trie/RotamerTrie.fwd.hh>
+#include <core/scoring/trie/TrieVsTrieCachedDataContainerBase.fwd.hh>
 #include <core/scoring/trie/TrieCountPairBase.fwd.hh>
 
 /// Package Headers
@@ -141,7 +142,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -151,7 +153,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -161,7 +164,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -171,7 +175,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -181,7 +186,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -194,7 +200,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	/// Four trie-vs-path type resolution functions
@@ -205,7 +212,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -216,7 +224,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -227,7 +236,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -238,7 +248,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -249,7 +260,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	/// This function is called when the etable energy function get mixed up with non-etable tries.
@@ -261,7 +273,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -276,7 +289,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -286,7 +300,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -296,7 +311,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -306,7 +322,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -316,7 +333,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -329,7 +347,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	/// Four trie-vs-path type resolution functions
@@ -340,7 +359,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -351,7 +371,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -362,7 +383,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -373,7 +395,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -383,7 +406,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -396,7 +420,8 @@ public:
 		TrieCountPairBase & cp,
 		etable::AnalyticEtableEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	//// The same methods, again, for the HBondEnergies
@@ -408,7 +433,8 @@ public:
 		TrieCountPairBase & cp,
 		hbonds::HBondEnergy const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -421,7 +447,8 @@ public:
 		TrieCountPairBase & cp,
 		hbonds::HBondEnergy const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -431,7 +458,8 @@ public:
 		TrieCountPairBase & cp,
 		hbonds::HBondEnergy const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -441,7 +469,8 @@ public:
 		TrieCountPairBase & cp,
 		hbonds::HBondEnergy const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	/// This function is called when hbond energy function gets mixed up with non-hbond tries.
@@ -453,7 +482,8 @@ public:
 		TrieCountPairBase & cp,
 		hbonds::HBondEnergy const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -464,7 +494,8 @@ public:
 		TrieCountPairBase & cp,
 		hbonds::HBondEnergy const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	/// The same methods again, for Hack Elec E
@@ -475,7 +506,8 @@ public:
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -485,7 +517,8 @@ public:
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -495,7 +528,8 @@ public:
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -505,7 +539,8 @@ public:
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -515,7 +550,8 @@ public:
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -528,7 +564,8 @@ public:
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	/// Four trie-vs-path type resolution functions
@@ -539,7 +576,8 @@ public:
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -550,7 +588,8 @@ public:
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -561,7 +600,8 @@ public:
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -572,7 +612,8 @@ public:
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -582,7 +623,8 @@ public:
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -595,7 +637,8 @@ public:
 		TrieCountPairBase & cp,
 		elec::electrie::ElecTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -608,7 +651,8 @@ public:
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -618,7 +662,8 @@ public:
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -628,7 +673,8 @@ public:
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -638,7 +684,8 @@ public:
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -648,7 +695,8 @@ public:
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -661,7 +709,8 @@ public:
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	/// Four trie-vs-path type resolution functions
@@ -672,7 +721,8 @@ public:
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -683,7 +733,8 @@ public:
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -694,7 +745,8 @@ public:
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -705,7 +757,8 @@ public:
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -715,7 +768,8 @@ public:
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -728,7 +782,8 @@ public:
 		TrieCountPairBase & cp,
 		lkball::lkbtrie::LKBTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -742,7 +797,8 @@ public:
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -752,7 +808,8 @@ public:
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -762,7 +819,8 @@ public:
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -772,7 +830,8 @@ public:
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	/// This function is called when the mm lj inter energy function get mixed up with other tries.
@@ -784,7 +843,8 @@ public:
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	/// Four trie-vs-path type resolution functions
@@ -795,7 +855,8 @@ public:
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -806,7 +867,8 @@ public:
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -817,7 +879,8 @@ public:
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -828,7 +891,8 @@ public:
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	/// This function is called when the mm lj inter energy function get mixed up with other tries.
@@ -840,7 +904,8 @@ public:
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -854,7 +919,8 @@ public:
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -864,7 +930,8 @@ public:
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -874,7 +941,8 @@ public:
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	virtual
@@ -884,7 +952,8 @@ public:
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	/// This function is called when the mm lj inter energy function get mixed up with other tries.
@@ -896,7 +965,8 @@ public:
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	/// Four trie-vs-path type resolution functions
@@ -907,7 +977,8 @@ public:
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -918,7 +989,8 @@ public:
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -929,7 +1001,8 @@ public:
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 
@@ -940,7 +1013,8 @@ public:
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 	/// This function is called when the mm lj inter energy function get mixed up with other tries.
@@ -952,7 +1026,8 @@ public:
 		TrieCountPairBase & cp,
 		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
-		utility::vector1< core::PackerEnergy > & temp_vector
+		utility::vector1< core::PackerEnergy > & temp_vector,
+		TrieVsTrieCachedDataContainerBase const * const cached_data //Can be nullptr
 	) const = 0;
 
 

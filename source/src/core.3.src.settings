@@ -553,6 +553,7 @@ sources = {
 		"HBAtom",
 		"HBCountPairFunction",
 		"HBCPData",
+		"HBondsTrieVsTrieCachedDataContainer",
 	],
 	"core/scoring/hbonds/graph": [
 		"HBondGraph",
@@ -785,6 +786,7 @@ sources = {
 		"trie_vs_trie",
 		"TrieCollection",
 		"TrieCountPairBase",
+		"TrieVsTrieCachedDataContainerBase",
 	],
 	"core/scoring/vdwaals": [
 		"VDW_Energy",

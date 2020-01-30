@@ -1931,7 +1931,7 @@ LK_BallEnergy::evaluate_rotamer_pair_energies(
 		sfxn.get_weight(lk_ball_bridge), sfxn.get_weight(lk_ball_bridge_uncpl),
 		*this, etable_
 	);
-	trie1->trie_vs_trie( *trie2, *cp, lkbeval, temp_table1, temp_table2 );
+	trie1->trie_vs_trie( *trie2, *cp, lkbeval, temp_table1, temp_table2, nullptr /*No cached data*/ );
 
 	/// add in the energies calculated by the tvt alg.
 	energy_table += temp_table1;
@@ -1998,7 +1998,7 @@ LK_BallEnergy::evaluate_rotamer_background_energies(
 		sfxn.get_weight(lk_ball_bridge), sfxn.get_weight(lk_ball_bridge_uncpl),
 		*this, etable_
 	);
-	trie1->trie_vs_path( *trie2, *cp, lkbeval, temp_vector1, temp_vector2 );
+	trie1->trie_vs_path( *trie2, *cp, lkbeval, temp_vector1, temp_vector2, nullptr /*No cached data*/ );
 
 	/// add in the energies calculated by the tvt alg.
 	for ( Size ii = 1; ii <= set.num_rotamers(); ++ii ) {

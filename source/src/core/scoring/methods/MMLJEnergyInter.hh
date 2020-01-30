@@ -23,7 +23,7 @@
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
-
+#include <core/scoring/trie/TrieVsTrieCachedDataContainerBase.fwd.hh>
 #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 
 // Project headers
@@ -237,7 +237,8 @@ public:
 	Energy heavyatom_hydrogenatom_energy(
 		core::scoring::mm::mmtrie::MMEnergyTableAtom const & at1,
 		core::scoring::mm::mmtrie::MMEnergyTableAtom const & at2,
-		Size & path_dist
+		Size & path_dist,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Real dist_squared( at1.xyz().distance_squared( at2.xyz() ) );
@@ -250,7 +251,8 @@ public:
 	Energy hydrogenatom_heavyatom_energy(
 		core::scoring::mm::mmtrie::MMEnergyTableAtom const & at1,
 		core::scoring::mm::mmtrie::MMEnergyTableAtom const & at2,
-		Size & path_dist
+		Size & path_dist,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Real dist_squared( at1.xyz().distance_squared( at2.xyz() ) );
@@ -263,7 +265,8 @@ public:
 	Energy hydrogenatom_hydrogenatom_energy(
 		core::scoring::mm::mmtrie::MMEnergyTableAtom const & at1,
 		core::scoring::mm::mmtrie::MMEnergyTableAtom const & at2,
-		Size & path_dist
+		Size & path_dist,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Real dist_squared( at1.xyz().distance_squared( at2.xyz() ) );

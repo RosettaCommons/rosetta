@@ -30,6 +30,7 @@
 #include <core/scoring/hbonds/hbtrie/HBCPData.hh>
 #include <core/scoring/hbonds/hbtrie/HBondTrie.fwd.hh>
 #include <core/scoring/hbonds/hbtrie/HBCountPairFunction.hh>
+#include <core/scoring/hbonds/hbtrie/HBondsTrieVsTrieCachedDataContainer.hh>
 
 #include <core/scoring/lkball/LK_BallEnergy.hh>
 #include <core/scoring/MinimizationData.hh>
@@ -445,13 +446,15 @@ HBondEnergy::residue_pair_energy(
 		ssdep.len_h_ = options_->length_dependent_srbb_maxlength();
 		Real ssdep_weight_factor = get_ssdep_weight(rsd1, rsd2, pose, ssdep);
 
+		boost::unordered_map< core::Size, core::Size > num_hbonds; //Not actually used, but required for identify_hbonds_1way function signature.
+
 		identify_hbonds_1way(
 			*database_,
 			rsd1, rsd2, hbond_set.nbrs(rsd1.seqpos()), hbond_set.nbrs(rsd2.seqpos()),
 			false /*calculate_derivative*/,
 			!options_->decompose_bb_hb_into_pair_energies(), exclude_bsc, exclude_scb, false,
 			*options_,
-			emap, num_hbonds_, ssdep_weight_factor, bond_near_wat );
+			emap, num_hbonds, ssdep_weight_factor, bond_near_wat );
 
 		exclude_bsc = exclude_scb = false;
 		if ( rsd2.is_protein() ) exclude_scb = options_->bb_donor_acceptor_check() && hbond_set.don_bbg_in_bb_bb_hbond(rsd2.seqpos());
@@ -463,10 +466,8 @@ HBondEnergy::residue_pair_energy(
 			false /*calculate_derivative*/,
 			!options_->decompose_bb_hb_into_pair_energies(), exclude_bsc, exclude_scb, false,
 			*options_,
-			emap, num_hbonds_, ssdep_weight_factor, bond_near_wat );
+			emap, num_hbonds, ssdep_weight_factor, bond_near_wat );
 	}
-
-	//std::cout << std::endl << num_hbonds_.size() << std::endl;
 }
 
 bool
@@ -1105,23 +1106,24 @@ HBondEnergy::evaluate_rotamer_pair_energies(
 
 	temp_table1 = 0; temp_table2 = 0;
 
+	HBondsTrieVsTrieCachedDataContainer container( weights ); //Note that weights MUST persist until container is destroyed.  It does not own weights, but stores a raw pointer to them!
+
 	// save weight information so that its available during tvt execution
 	// and also the neighbor counts for the two residues.
-	weights_ = weights;
-	res1_ = set1.resid();
-	res2_ = set2.resid();
+	container.set_res1( set1.resid() );
+	container.set_res2( set2.resid() );
 
-	rotamer_seq_sep_ = pose.residue( set2.resid() ).polymeric_oriented_sequence_distance( pose.residue( set1.resid() ) );
+	container.set_rotamer_seq_sep( pose.residue( set2.resid() ).polymeric_oriented_sequence_distance( pose.residue( set1.resid() ) ) );
 
 	if ( true ) { // super_hacky
 		auto const & hbond_set
 			( static_cast< hbonds::HBondSet const & >
 			( pose.energies().data().get( HBOND_SET )));
-		res1_nb_ = hbond_set.nbrs( set1.resid() );
-		res2_nb_ = hbond_set.nbrs( set2.resid() );
+		container.set_res1_nb( hbond_set.nbrs( set1.resid() ) );
+		container.set_res2_nb( hbond_set.nbrs( set2.resid() ) );
 	} else {
-		res1_nb_ = pose.energies().tenA_neighbor_graph().get_node( set1.resid() )->num_neighbors_counting_self();
-		res2_nb_ = pose.energies().tenA_neighbor_graph().get_node( set2.resid() )->num_neighbors_counting_self();
+		container.set_res1_nb( pose.energies().tenA_neighbor_graph().get_node( set1.resid() )->num_neighbors_counting_self() );
+		container.set_res2_nb( pose.energies().tenA_neighbor_graph().get_node( set2.resid() )->num_neighbors_counting_self() );
 	}
 	HBondRotamerTrieCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( hbond_method ) ));
 	HBondRotamerTrieCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( hbond_method ) ));
@@ -1135,7 +1137,7 @@ HBondEnergy::evaluate_rotamer_pair_energies(
 	/// to be templated with full type knowledge and therefore be optimized by the compiler for
 	/// each variation on the count pair data used and the count pair funtions invoked.
 	//std::cout << "BEGIN TVT " << set1.resid() << " and " << set2.resid() << std::endl;
-	trie1->trie_vs_trie( *trie2, *cp, *this, temp_table1, temp_table2 );
+	trie1->trie_vs_trie( *trie2, *cp, *this, temp_table1, temp_table2, &container );
 	//std::cout << "END TVT " << set1.resid() << " and " << set2.resid() << std::endl;
 
 	/// add in the energies calculated by the tvt alg.
@@ -1168,20 +1170,20 @@ HBondEnergy::evaluate_rotamer_background_energies(
 	utility::vector1< core::PackerEnergy > temp_vector2( set.num_rotamers(), 0.0 );
 
 	// save weight information so that its available during tvt execution
-	weights_ = weights;
-	res1_ = set.resid();      //Added by Parin Sripakdeevong (sripakpa@stanford.edu)
-	res2_ = residue.seqpos(); //Added by Parin Sripakdeevong (sripakpa@stanford.edu)
-	rotamer_seq_sep_ = pose.residue( residue.seqpos() ).polymeric_oriented_sequence_distance( pose.residue( set.resid() ) );
+	HBondsTrieVsTrieCachedDataContainer container(weights); //Note that weights MUST persist until container is destroyed.  It does not own weights, but stores a raw pointer to them!
+	container.set_res1( set.resid() );      //Added by Parin Sripakdeevong (sripakpa@stanford.edu)
+	container.set_res2( residue.seqpos() ); //Added by Parin Sripakdeevong (sripakpa@stanford.edu)
+	container.set_rotamer_seq_sep( pose.residue( residue.seqpos() ).polymeric_oriented_sequence_distance( pose.residue( set.resid() ) ) );
 
 	if ( true ) { // super_hacky
 		auto const & hbond_set
 			( static_cast< hbonds::HBondSet const & >
 			( pose.energies().data().get( HBOND_SET )));
-		res1_nb_ = hbond_set.nbrs( set.resid() );
-		res2_nb_ = hbond_set.nbrs( residue.seqpos() );
+		container.set_res1_nb( hbond_set.nbrs( set.resid() ) );
+		container.set_res2_nb( hbond_set.nbrs( residue.seqpos() ) );
 	} else {
-		res1_nb_ = pose.energies().tenA_neighbor_graph().get_node( set.resid() )->num_neighbors_counting_self();
-		res2_nb_ = pose.energies().tenA_neighbor_graph().get_node( residue.seqpos() )->num_neighbors_counting_self();
+		container.set_res1_nb( pose.energies().tenA_neighbor_graph().get_node( set.resid() )->num_neighbors_counting_self() );
+		container.set_res2_nb( pose.energies().tenA_neighbor_graph().get_node( residue.seqpos() )->num_neighbors_counting_self() );
 	}
 
 	HBondRotamerTrieCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set.get_trie( hbond_method ) ) );
@@ -1198,7 +1200,7 @@ HBondEnergy::evaluate_rotamer_background_energies(
 	/// actual trie_vs_trie method.  The type resolution calls allow the trie-vs-trie algorithm
 	/// to be templated with full type knowledge (and therefore be optimized by the compiler for
 	/// each variation on the count pair data used and the count pair funtions invoked.
-	trie1->trie_vs_path( *trie2, *cp, *this, temp_vector1, temp_vector2 );
+	trie1->trie_vs_path( *trie2, *cp, *this, temp_vector1, temp_vector2, &container );
 
 	/// add in the energies calculated by the tvt alg.
 	for ( Size ii = 1; ii <= set.num_rotamers(); ++ii ) {
@@ -1528,12 +1530,20 @@ Energy
 HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 	hbtrie::HBAtom const & at1, // atom 1 is the heavy atom, the acceptor
 	hbtrie::HBAtom const & at2, // atom 2 is the hydrogen atom, the donor
-	bool flipped // is at1 from residue 1?
+	bool flipped, // is at1 from residue 1?
+	core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const cached_data
 ) const
 {
+#ifdef NDEBUG
+	core::scoring::hbonds::hbtrie::HBondsTrieVsTrieCachedDataContainer const * const container( static_cast< core::scoring::hbonds::hbtrie::HBondsTrieVsTrieCachedDataContainer const * >(cached_data) );
+#else
+	core::scoring::hbonds::hbtrie::HBondsTrieVsTrieCachedDataContainer const * const container( dynamic_cast< core::scoring::hbonds::hbtrie::HBondsTrieVsTrieCachedDataContainer const * const >(cached_data) );
+	debug_assert( container != nullptr );
+#endif
+
 	// When acc and don are both polymers and on the same chain:
 	// ss = acc.seqpos - don.seqpos
-	int ss = (flipped ? -rotamer_seq_sep_ : rotamer_seq_sep_);
+	int ss = (flipped ? -1.0*container->rotamer_seq_sep() : container->rotamer_seq_sep());
 	HBEvalTuple hbe_type = hbond_evaluation_type( at2, 0,   // donor atom
 		at1, ss); // acceptor atom
 	Energy hbenergy;
@@ -1551,8 +1561,8 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 
 	Real envweight( 1.0 );
 	if ( options_->use_hb_env_dep() ) {
-		envweight = ( flipped ? get_environment_dependent_weight( hbe_type, res2_nb_, res1_nb_, *options_ ) :
-			get_environment_dependent_weight( hbe_type, res1_nb_, res2_nb_, *options_ ));
+		envweight = ( flipped ? get_environment_dependent_weight( hbe_type, container->res2_nb(), container->res1_nb(), *options_ ) :
+			get_environment_dependent_weight( hbe_type, container->res1_nb(), container->res2_nb(), *options_ ));
 	}
 
 	// hydrate/SPaDES protocol
@@ -1565,8 +1575,8 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 
 		Real membrane_depth_dependent_weight( 1.0 );
 		membrane_depth_dependent_weight = ( flipped ? get_membrane_depth_dependent_weight(normal_, center_, thickness_,
-			steepness_, res2_nb_, res1_nb_, at2.xyz(), at1.xyz()) : get_membrane_depth_dependent_weight(normal_,
-			center_, thickness_, steepness_, res2_nb_, res1_nb_, at2.xyz(), at1.xyz()) );
+			steepness_, container->res2_nb(), container->res1_nb(), at2.xyz(), at1.xyz()) : get_membrane_depth_dependent_weight(normal_,
+			center_, thickness_, steepness_, container->res2_nb(), container->res1_nb(), at2.xyz(), at1.xyz()) );
 
 		envweight = membrane_depth_dependent_weight;
 	}
@@ -1575,17 +1585,17 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 
 	// hydrate/SPaDES protocol
 	if ( ( at1.is_wat() || at2.is_wat() ) && options_->water_hybrid_sf() ) {
-		if ( res1_ == res2_ ) weighted_energy = weights_[ hbond_intra ] * hbenergy * envweight;
-		else  weighted_energy = weights_[ hbond_wat ] * hbenergy * envweight;
+		if ( container->res1() == container->res2() ) weighted_energy = container->weights()[ hbond_intra ] * hbenergy * envweight;
+		else  weighted_energy = container->weights()[ hbond_wat ] * hbenergy * envweight;
 	} else {
-		weighted_energy = hb_eval_type_weight(hbe_type.eval_type(), weights_, res1_==res2_) * hbenergy * envweight;
+		weighted_energy = hb_eval_type_weight(hbe_type.eval_type(), container->weights(), container->res1()==container->res2()) * hbenergy * envweight;
 	}
 
 	// hydrate/SPaDES protocol
 	if ( options_->water_hybrid_sf() ) {
 		if ( ( at1.is_wat() && !at2.is_wat() ) || ( !at1.is_wat() && at2.is_wat() ) ) {
 			static core::scoring::func::FuncOP smoothed_step ( new core::scoring::func::SmoothStepFunc( -0.55,-0.45 ) );
-			weighted_energy += (1.0 - smoothed_step->func( hbenergy )) * weights_[ wat_entropy ];
+			weighted_energy += (1.0 - smoothed_step->func( hbenergy )) * container->weights()[ wat_entropy ];
 		}
 	}
 

@@ -236,7 +236,8 @@ public:
 	Energy heavyatom_hydrogenatom_energy(
 		VDWAtom const & at1,
 		VDWAtom const & at2,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Real d2;
@@ -247,7 +248,8 @@ public:
 	Energy hydrogenatom_heavyatom_energy(
 		VDWAtom const & at1,
 		VDWAtom const & at2,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Real d2;
@@ -258,7 +260,8 @@ public:
 	Energy hydrogenatom_hydrogenatom_energy(
 		VDWAtom const & at1,
 		VDWAtom const & at2,
-		Size & /*path_dist*/
+		Size & /*path_dist*/,
+		core::scoring::trie::TrieVsTrieCachedDataContainerBase const * const /*cached_data*/
 	) const
 	{
 		Real d2;
