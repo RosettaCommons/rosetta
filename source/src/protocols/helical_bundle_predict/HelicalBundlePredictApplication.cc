@@ -126,6 +126,8 @@ HelicalBundlePredictApplicationOptions::register_options() {
 	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::do_final_fullatom_refinement );
 	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::fast_relax_rounds );
 	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::find_disulfides );
+	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::ignore_native_residues_in_rmsd );
+	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::ignore_prediction_residues_in_rmsd );
 
 	//Options only used in MPI mode:
 #ifdef USEMPI //Options that are only needed in the MPI version:
@@ -169,6 +171,14 @@ HelicalBundlePredictApplicationOptions::initialize_from_options() {
 	signed long const fastrelax_rounds_int( basic::options::option[ basic::options::OptionKeys::helical_bundle_predict::fast_relax_rounds ]() );
 	fullatom_fast_relax_rounds_ = ( fastrelax_rounds_int < 1 ? 1 : static_cast<core::Size>(fastrelax_rounds_int) );
 	fullatom_find_disulfides_ = basic::options::option[ basic::options::OptionKeys::helical_bundle_predict::find_disulfides ]();
+
+	if ( basic::options::option[ basic::options::OptionKeys::helical_bundle_predict::ignore_native_residues_in_rmsd ].user() ) {
+		set_rmsd_residues_to_ignore_native( basic::options::option[ basic::options::OptionKeys::helical_bundle_predict::ignore_native_residues_in_rmsd ]() );
+	}
+
+	if ( basic::options::option[ basic::options::OptionKeys::helical_bundle_predict::ignore_prediction_residues_in_rmsd ].user() ) {
+		set_rmsd_residues_to_ignore_prediction( basic::options::option[ basic::options::OptionKeys::helical_bundle_predict::ignore_prediction_residues_in_rmsd ]() );
+	}
 }
 
 /// @brief Set the file containing the sequence.
@@ -204,6 +214,34 @@ HelicalBundlePredictApplicationOptions::set_helix_assignment_file_contents(
 	helix_assignment_file_contents_ = contents_in;
 }
 
+/// @brief Get the residues to ignore in the native pose when setting up the alignment for RMSD.
+/// @details Throws errors if any are zero or negative.
+void
+HelicalBundlePredictApplicationOptions::set_rmsd_residues_to_ignore_native(
+	utility::vector1< signed long > const &input
+) {
+	core::Size const vectsize( input.size() );
+	rmsd_residues_to_ignore_native_.resize( vectsize );
+	for ( core::Size i(1); i<=vectsize; ++i ) {
+		runtime_assert_string_msg( input[i] > 0, "Error in HelicalBundlePredictApplicationOptions::set_rmsd_residues_to_ignore_native(): Residue indices to ignore in the native pose for RMSDs must be strictly positive.  Could not parse " + std::to_string( input[i] ) + "!" );
+		rmsd_residues_to_ignore_native_[i] = static_cast<core::Size>(input[i]);
+	}
+}
+
+/// @brief Get the residues to ignore in the generated poses when setting up the alignment for RMSD.
+/// @details Throws errors if any are zero or negative.
+void
+HelicalBundlePredictApplicationOptions::set_rmsd_residues_to_ignore_prediction(
+	utility::vector1< signed long > const &input
+) {
+	core::Size const vectsize( input.size() );
+	rmsd_residues_to_ignore_prediction_.resize( vectsize );
+	for ( core::Size i(1); i<=vectsize; ++i ) {
+		runtime_assert_string_msg( input[i] > 0, "Error in HelicalBundlePredictApplicationOptions::set_rmsd_residues_to_ignore_prediction(): Residue indices to ignore in the generated poses for RMSDs must be strictly positive.  Could not parse " + std::to_string( input[i] ) + "!" );
+		rmsd_residues_to_ignore_prediction_[i] = static_cast<core::Size>(input[i]);
+	}
+}
+
 /// @brief Given input filenames, read the files.
 /// @details INVOLVES READS FROM DISK!  WARNING!
 void
@@ -233,7 +271,7 @@ HelicalBundlePredictApplicationOptions::findchar(
 	bool first( true );
 
 	for ( char const curchar : chars ) {
-		core::Size const curpos( curstring.find( &curchar ) );
+		core::Size const curpos( curstring.find( curchar ) );
 		if ( first || curpos < returnval ) {
 			first = false;
 			returnval = curpos;
@@ -249,8 +287,10 @@ HelicalBundlePredictApplicationOptions::clean_fasta_file_contents() {
 	utility::vector1< std::string > const lines( utility::split_by_newlines( fasta_file_contents_ ) );
 	std::stringstream outstream;
 	for ( std::string const & line : lines ) {
-		std::string linecut( line.substr( 0, findchar( line, { ';', '>' } ) ) );
-		outstream << linecut << "\n";
+		std::string const linecut( line.substr( 0, findchar( line, { ';', '>' } ) ) );
+		if ( !linecut.empty() ) {
+			outstream << linecut << "\n";
+		}
 	}
 	fasta_file_contents_ = outstream.str();
 	TR << "Trimmed FASTA file contents to:\n" << fasta_file_contents_ << std::endl;
@@ -373,6 +413,9 @@ HelicalBundlePredictApplication::run() {
 	for ( core::Size irepeat(1); irepeat <= nstruct_; ++irepeat ) {
 		pose_ = make_pose_from_fasta_contents();
 
+		check_ignore_residues_reasonable( options_->rmsd_residues_to_ignore_native(), native_pose_ );
+		check_ignore_residues_reasonable( options_->rmsd_residues_to_ignore_prediction(), pose_ );
+
 #ifdef DUMP_HBP_DEBUG_OUTPUT
 		pose_->dump_pdb( "START.pdb" ); //Delete me.
 #endif
@@ -459,29 +502,57 @@ HelicalBundlePredictApplication::align_to_native_pose(
 	core::Size const nres( pose.total_residue() );
 
 	runtime_assert_string_msg( native_pose_ != nullptr && native_pose_->total_atoms() > 0, errmsg + "The native pose is null or empty!" );
-	runtime_assert_string_msg( native_pose_->total_residue() == pose.total_residue(), errmsg + "The number of the residues in the native and in the alignment pose don't match.  (Native has " + std::to_string( native_pose_->total_residue() ) + ", alignment pose has " + std::to_string( pose.total_residue() ) + "." );
+	core::Size const nres_native( native_pose_->total_residue() );
 
 	core::id::AtomID_Map< core::id::AtomID > amap;
 
 	core::pose::initialize_atomid_map(amap, pose, core::id::AtomID::BOGUS_ATOM_ID());
 
-	for ( core::Size ir=1; ir<=nres; ++ir ) {
-		core::chemical::ResidueType const & restype_native( native_pose_->residue_type(ir) );
-		if ( !restype_native.is_polymer() ) continue;
+	//Generate list of residues to use in native.
+	utility::vector1< core::Size > alignment_residues_native;
+	alignment_residues_native.reserve( nres_native );
+	utility::vector1< core::Size > const & ignore_res_native( options_->rmsd_residues_to_ignore_native() );
+	for ( core::Size ir(1); ir<=nres_native; ++ir ) {
+		if ( ignore_res_native.has_value(ir) ) continue;
+		if ( !(native_pose_->residue_type(ir).is_polymer()) ) continue;
+		alignment_residues_native.push_back( ir );
+	}
 
-		core::chemical::ResidueType const & restype_pose( pose.residue_type(ir) );
+	//Generate list of residues to use in generated.
+	utility::vector1< core::Size > alignment_residues_prediction;
+	alignment_residues_prediction.reserve( nres );
+	utility::vector1< core::Size > const & ignore_res_prediction( options_->rmsd_residues_to_ignore_prediction() );
+	for ( core::Size ir(1); ir<=nres; ++ir ) {
+		if ( ignore_res_prediction.has_value(ir) ) continue;
+		if ( !(pose.residue_type(ir).is_polymer()) ) continue;
+		alignment_residues_prediction.push_back( ir );
+	}
 
+	core::Size const n_alignment_residues( alignment_residues_native.size() );
+	runtime_assert_string_msg( n_alignment_residues == alignment_residues_prediction.size(), errmsg + "The number of alignment residues in the native pose (" + std::to_string(n_alignment_residues) + ") does not match the number in the alignment pose (" + std::to_string(alignment_residues_prediction.size()) + ")." );
+	runtime_assert_string_msg( n_alignment_residues >= 3, errmsg + "There were only " + std::to_string(n_alignment_residues) + " alignment residues.  At least 3 are needed." );
+
+	for ( core::Size ir=1; ir<=n_alignment_residues; ++ir ) {
+		core::Size const native_resindex( alignment_residues_native[ir] );
+		core::Size const prediction_resindex( alignment_residues_prediction[ir] );
+
+		core::chemical::ResidueType const & restype_native( native_pose_->residue_type(native_resindex) );
+		debug_assert ( restype_native.is_polymer() ); //Should be guaranteed true at this point.
+
+		core::chemical::ResidueType const & restype_pose( pose.residue_type(prediction_resindex) );
 		core::Size const n_mainchain_atoms_native( restype_native.mainchain_atoms().size() );
-		runtime_assert_string_msg( n_mainchain_atoms_native == restype_pose.mainchain_atoms().size(), errmsg + "The number of mainchain atoms in native pose residue " + restype_native.name3() + std::to_string(ir) + " (" + std::to_string(n_mainchain_atoms_native) + " atoms) does not match the number of mainchain atoms in alignment pose residue " + restype_pose.name3() + std::to_string(ir) + " (" + std::to_string( restype_pose.mainchain_atoms().size() ) + " atoms)." );
+		runtime_assert_string_msg( n_mainchain_atoms_native == restype_pose.mainchain_atoms().size(), errmsg + "The number of mainchain atoms in native pose residue " + restype_native.name3() + std::to_string(native_resindex) + " (" + std::to_string(n_mainchain_atoms_native) + " atoms) does not match the number of mainchain atoms in alignment pose residue " + restype_pose.name3() + std::to_string(prediction_resindex) + " (" + std::to_string( restype_pose.mainchain_atoms().size() ) + " atoms)." );
+
+		TR << "Aligning native residue " << native_resindex << " to alignment pose residue " << prediction_resindex << "." << std::endl;
 
 		for ( core::Size ia(1); ia<=n_mainchain_atoms_native; ++ia ) { //Loop through all mainchain heavyatoms (including atoms coming off mainchain that are not sidechain atoms, like peptide "O").
-			core::Size const native_index( restype_native.mainchain_atoms()[ia] );
-			core::Size const pose_index( restype_pose.mainchain_atoms()[ia] );
+			core::Size const native_atindex( restype_native.mainchain_atoms()[ia] );
+			core::Size const prediction_atindex( restype_pose.mainchain_atoms()[ia] );
 
-			if ( restype_native.atom_is_hydrogen( native_index ) ) continue;
-			runtime_assert( !restype_pose.atom_is_hydrogen(pose_index) );
+			if ( restype_native.atom_is_hydrogen( native_atindex ) ) continue;
+			runtime_assert( !restype_pose.atom_is_hydrogen(prediction_atindex) );
 
-			amap[ core::id::AtomID(pose_index,ir) ] = core::id::AtomID(native_index,ir);
+			amap[ core::id::AtomID(prediction_atindex,prediction_resindex) ] = core::id::AtomID(native_atindex,native_resindex);
 		}
 	}
 
@@ -759,6 +830,26 @@ HelicalBundlePredictApplication::apply_metropolis_criterion(
 	if ( new_energy < old_energy ) return true;
 	core::Real const prob_accept( std::exp( -(new_energy-old_energy)/temperature ) );
 	return ( numeric::random::uniform() < prob_accept );
+}
+
+/// @brief Check that the list of residues to ignore in calculating RMSD is reasonable.
+/// @details Throws if residues are outside the size of the posem or if residues are
+/// provided but there's no pose.
+void
+HelicalBundlePredictApplication::check_ignore_residues_reasonable(
+	utility::vector1< core::Size > const & ignore_residues,
+	core::pose::PoseCOP const & pose
+) const {
+	std::string const errmsg( "Error in HelicalBundlePredictApplication::check_ignore_residues_reasonable(): " );
+	if ( pose == nullptr ) {
+		runtime_assert_string_msg( ignore_residues.empty(), errmsg + "Residues to ignore in RMSD were provided, but no native pose was provided!" );
+		return;
+	}
+	//If we reach here, there's a pose.
+	core::Size const nres( pose->total_residue() );
+	for ( core::Size const i : ignore_residues ) {
+		runtime_assert_string_msg( i <= nres, errmsg + "A residue to ignore was provided that's outside the residue range of the pose!  The pose is " + std::to_string(nres) + " residues long, but residue " + std::to_string(i) + " was listed as a residue to ignore." );
+	}
 }
 
 } //helical_bundle_predict

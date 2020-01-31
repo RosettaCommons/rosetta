@@ -76,6 +76,14 @@ public: //Member functions
 	/// @brief Set the contents of the helix assignment file.
 	void set_helix_assignment_file_contents( std::string const & contents_in );
 
+	/// @brief Get the residues to ignore in the native pose when setting up the alignment for RMSD.
+	/// @details Throws errors if any are zero or negative.
+	void set_rmsd_residues_to_ignore_native( utility::vector1< signed long > const &input );
+
+	/// @brief Get the residues to ignore in the generated poses when setting up the alignment for RMSD.
+	/// @details Throws errors if any are zero or negative.
+	void set_rmsd_residues_to_ignore_prediction( utility::vector1< signed long > const &input );
+
 	/// @brief Get the file containing the sequence.
 	inline std::string const & fasta_file() const { return fasta_file_; }
 
@@ -118,6 +126,12 @@ public: //Member functions
 
 	/// @brief Get the native filename.
 	inline std::string const & native_file() const { return native_file_; }
+
+	/// @brief Get the residues to ignore in the native pose when setting up the alignment for RMSD.
+	inline utility::vector1< core::Size > const & rmsd_residues_to_ignore_native() const { return rmsd_residues_to_ignore_native_; }
+
+	/// @brief Get the residues to ignore in the generated poses when setting up the alignment for RMSD.
+	inline utility::vector1< core::Size > const & rmsd_residues_to_ignore_prediction() const { return rmsd_residues_to_ignore_prediction_; }
 
 private: //Functions
 
@@ -174,6 +188,12 @@ private: //Variables
 
 	/// @brief If we are doing fullatom refinement, should we try disulfide permutations?
 	bool fullatom_find_disulfides_;
+
+	/// @brief Residues to ignore in the native pose when setting up the alignment for RMSD.
+	utility::vector1< core::Size > rmsd_residues_to_ignore_native_;
+
+	/// @brief Residues to ignore in the generated poses when setting up the alignment for RMSD.
+	utility::vector1< core::Size > rmsd_residues_to_ignore_prediction_;
 
 };
 
@@ -322,6 +342,15 @@ private: //Member functions:
 
 	/// @brief Given the old energy, the new energy, and the temperature, apply the Metropolis criterion.
 	bool apply_metropolis_criterion( core::Real const &old_energy, core::Real const &new_energy, core::Real const &temperature ) const;
+
+	/// @brief Check that the list of residues to ignore in calculating RMSD is reasonable.
+	/// @details Throws if residues are outside the size of the posem or if residues are
+	/// provided but there's no pose.
+	void
+	check_ignore_residues_reasonable(
+		utility::vector1< core::Size > const & ignore_residues,
+		core::pose::PoseCOP const & pose
+	) const;
 
 private: //Variables:
 
