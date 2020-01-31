@@ -908,7 +908,7 @@ def cat_outfiles( outfiles, output_file ):
 	
 	fid.close()
 
-def extract_lowscore_decoys( silent_file, NSTRUCT, rosetta_directory, rosetta_extension):
+def extract_lowscore_decoys( silent_file, NSTRUCT, rosetta_directory, rosetta_extension, test=False):
 	
 	MINI_DIR = rosetta_directory 
 	
@@ -991,6 +991,8 @@ def extract_lowscore_decoys( silent_file, NSTRUCT, rosetta_directory, rosetta_ex
 	for tag in tags:
 		tag_str += tag + ' '
 	command = '%s -load_PDB_components -in:file:silent %s -in:file:tags %s' % ( MINI_EXE, outfilename, tag_str )
+	if test:
+	        command += ' -testing:INTEGRATION_TEST '
 	
 #	# Check if this is an RNA run.
 #	with open( silent_file ) as fid:
@@ -1034,6 +1036,8 @@ def extract_lowscore_decoys( silent_file, NSTRUCT, rosetta_directory, rosetta_ex
 	
 	    command = '%s -load_PDB_components -in:file:silent  %s  -in:file:silent_struct_type binary -in:file:fullatom -in:file:tags %s -mute all' % \
 	              ( MINI_EXE, outfilename, tag_str )
+	    if test:
+	            command += ' -testing:INTEGRATION_TEST '
 	    
 	    if (scoretags.count('vdw')): command += ' -out:file:residue_type_set centroid '
 	

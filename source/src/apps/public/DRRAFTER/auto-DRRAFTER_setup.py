@@ -402,7 +402,7 @@ def auto_setup_helices( args ):
 				ext=args.rosetta_extension, out_pref=args.out_pref, name=elt_name )
 			print( "Making full helix %s" %(elt_name) )
 			os.system( command_full_helix )
-			DRRAFTER_util.extract_lowscore_decoys( '{out_pref}_{name}_full.out'.format(out_pref=args.out_pref,name=elt_name), 1, args.rosetta_directory, args.rosetta_extension )
+			DRRAFTER_util.extract_lowscore_decoys( '{out_pref}_{name}_full.out'.format(out_pref=args.out_pref,name=elt_name), 1, args.rosetta_directory, args.rosetta_extension, test=args.test )
 			#os.system( 'extract_lowscore_decoys.py {out_pref}_{name}_full.out 1 > tmp_quiet'.format(out_pref=args.out_pref,name=elt_name) )
 			# remove the files that we don't need, unless in debug mode
 			if not args.debug:
