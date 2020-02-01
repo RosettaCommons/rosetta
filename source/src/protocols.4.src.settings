@@ -171,6 +171,7 @@ sources = {
 	],
 
 	"protocols/relax": [
+		"AcceptToBestMover",
 		"AtomCoordinateCstMover",
 		"CentroidRelax",
 		"ClassicRelax",

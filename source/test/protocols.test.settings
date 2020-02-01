@@ -584,6 +584,7 @@ sources = {
 	],
 
 	"relax" : [
+		"AcceptToBestMover",
 		"AtomCoordinateCstMover",
 		"FastRelax",
 	],

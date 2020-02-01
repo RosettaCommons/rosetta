@@ -54,6 +54,7 @@ public:
 	~DiagnosticData() override;
 	CacheableDataOP clone() const override;
 	virtual std::map < std::string, double > const & data() const;
+	virtual std::map < std::string, double > & data();
 
 	DiagnosticDataOP shared_from_this();
 

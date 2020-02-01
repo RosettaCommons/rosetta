@@ -445,6 +445,7 @@
 #include <protocols/recces/scratch/ThermalSamplingMoverCreator.hh>
 #include <protocols/recces/scratch/ThermalMinimizerCreator.hh>
 
+#include <protocols/relax/AcceptToBestMoverCreator.hh>
 #include <protocols/relax/AtomCoordinateCstMoverCreator.hh>
 #include <protocols/relax/FastRelaxCreator.hh>
 #include <protocols/relax/LocalRelaxCreator.hh>

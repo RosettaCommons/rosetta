@@ -30,6 +30,7 @@
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.hh>
@@ -788,10 +789,19 @@ MRSJobQueen::parse_job_definition_tags(
 	utility::tag::TagCOP common_block_tags,
 	utility::vector1< standard::PreliminaryLarvalJob > const & prelim_larval_jobs
 ){
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	num_input_structs_ = prelim_larval_jobs.size();
 	num_structs_output_for_input_job_tag_.assign( num_input_structs_, 0 );
 	tag_manager_.set_num_input_pose_ids( num_input_structs_ );
 
+	if ( common_block_tags == nullptr ) {
+		if ( ! option[ in::file::job_definition_file ].user() ) {
+			utility_exit_with_message( "Please provide the script via -job_definition_file" );
+		}
+		utility_exit_with_message( "Common block tag were not read for some reason" );
+	}
 	parse_common_tag( common_block_tags );
 
 	outputters_.reserve( prelim_larval_jobs.size() );
@@ -809,6 +819,7 @@ MRSJobQueen::parse_job_definition_tags(
 
 
 void MRSJobQueen::parse_common_tag( utility::tag::TagCOP common_tag ){
+	runtime_assert( common_tag != nullptr );
 	core::pose::Pose dummy_pose;
 
 	std::list< utility::tag::TagCOP > data_tags;
