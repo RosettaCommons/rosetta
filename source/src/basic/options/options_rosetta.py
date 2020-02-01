@@ -1381,6 +1381,7 @@ Options = Option_Group( '',
 		Option( 'seed_ensemble', 'Boolean', default = 'false', desc='Do an ensemble search as in grid_search, but randomly choose the seeds over the inputs.  See seed_ensemble_weights to weight the inputs'),
 		Option( 'seed_ensemble_weights', 'RealVector', desc = "Specifiy weights for seeded ensemble.  Must match number of inputs.  See also: -seed_ensemble_weights_file"),
 		Option( 'seed_ensemble_weights_file', 'File', desc='A file specifying weights to use for each input structure.  Two columns.  basename with extension (or relative path or full path), weight'),
+		Option( 'HOSTNAME_in_jobname', 'Boolean', desc='Pre-prefixes job with $HOSTNAME env var; useful for determining which server a job came from.  When running in k8s pods, makes jobs distinct if they are all _0001'),
 
 	), # jd2
 	Option_Group( 'view',

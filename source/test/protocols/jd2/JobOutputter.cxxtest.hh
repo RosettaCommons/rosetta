@@ -20,6 +20,7 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
+#include <protocols/jd2/PDBJobOutputter.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
 // Package headers
@@ -122,4 +123,37 @@ public:
 		TS_ASSERT( observer2.call_counter_ == 0 );
 		TS_ASSERT( observer3.call_counter_ == 0 );
 	}
+
+	//here we test the -HOSTNAME_in_jobname option
+	void test_HOSTNAME_in_jobname() {
+		//reinitializing the option system is not generally safe.  For a simple boolean
+		//here it is functional.
+
+		//check that it works when requested
+		protocols_init_with_additional_options("-HOSTNAME_in_jobname true");
+		PDBJobOutputter job_outputter;
+		JobOP job( new Job( utility::pointer::make_shared< InnerJob >( "job", 1 ), 1 ) );
+		std::string const result_true(job_outputter.output_name(job));
+		//std::cout << result_true << std::endl;
+
+		std::string const expected_result_false = "job_0001";
+		std::string expected_result_true = expected_result_false;
+		const char* hostname_cstar(std::getenv("HOSTNAME"));
+		if ( hostname_cstar != nullptr ) {
+			expected_result_true = std::string(hostname_cstar) + "_" + expected_result_false;
+		}
+		TS_ASSERT_EQUALS(result_true, expected_result_true);
+
+		//check that it does not work when not requested
+		protocols_init_with_additional_options("-HOSTNAME_in_jobname false");
+		std::string const result_false(job_outputter.output_name(job));
+		//std::cout << result_false << std::endl;
+		TS_ASSERT_EQUALS(result_false, expected_result_false);
+
+		return;
+	}
+
+
+
+
 };

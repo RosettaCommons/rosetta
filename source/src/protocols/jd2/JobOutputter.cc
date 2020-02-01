@@ -38,10 +38,11 @@
 // option key includes
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 #include <algorithm>
-
+#include <cstdlib>
 
 ///C++ headers
 //#include <string> //in the .hh anyway
@@ -121,11 +122,28 @@ std::string JobOutputter::affixed_numbered_name( JobCOP job ){
 	}
 
 	// now construct the full name
-	std::ostringstream oss;
 	std::string prefix( prefix_ );
 	if ( job->status_prefix().size() ) {
 		prefix = job->status_prefix()+"_";
 	}
+
+	//If the user requests it, mangle the job with the $HOSTNAME env var.
+	//This is useful when job distribution is being done outside of Rosetta (for
+	//example in kubernetes pods) and the hostnames are distinct hashes, as a
+	//control for the fact that all the nstructs are 0001.
+	//Note that currently this looks for a particular env var and
+	//mangles thereby, but it would be easy to take a list of env vars and
+	//mangle with all of them.  $HOSTNAME is common on containerized systems.
+	if ( option[basic::options::OptionKeys::jd2::HOSTNAME_in_jobname].value() ) {
+		//getenv returns a char* if found, or a null pointer if the env var is not found
+		//we need to catch the nullptr case before trying to make a string out of it
+		const char* hostname_cstar(std::getenv("HOSTNAME"));
+		if ( hostname_cstar != nullptr ) {
+			prefix = std::string(hostname_cstar) + "_" + prefix;
+		} // do nothing if else; we could append the _ anyway I guess.
+	}
+
+	std::ostringstream oss;
 	oss << prefix << base_name << suffix_;
 	if ( ! no_nstruct_label_ || job->nstruct_index() != 1 ) {
 		oss << '_' << std::setfill('0') << std::setw(nstruct_width) << job->nstruct_index();
