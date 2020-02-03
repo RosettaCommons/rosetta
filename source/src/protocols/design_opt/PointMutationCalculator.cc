@@ -381,7 +381,11 @@ PointMutationCalculator::mutate_and_relax(
 	green_packer->apply( pose );
 	TR << "_" << pose.residue( resi ).name1();
 	//then run input relax mover
-	relax_mover()->apply( pose );
+	if ( relax_mover() ) {
+		relax_mover()->apply( pose );
+	} else {
+		TR.Warning << "No relax mover specified: your Pose's nerves are all jangled" << std::endl;
+	}
 }
 
 //TODO HEY!~ I think we're evalling the filter TWICE here, once for pass, once for value

@@ -475,6 +475,9 @@ GreenPacker::create_reference_packer_task(
 {
 	reference_task_ = reference_task_factory_->create_task_and_apply_taskoperations( pose );
 
+	//If the user has passed no scorefunction, this is likely to be where we will find out
+	runtime_assert_string_msg(full_sfxn_ != nullptr, "GreenPacker has no scorefunction defined and will not choose for you");
+
 	core::pack::pack_scorefxn_pose_handshake( pose, *full_sfxn_ );
 	pose.update_residue_neighbors();
 	ci_sfxn_->setup_for_packing( pose, reference_task_->repacking_residues(), reference_task_->designing_residues() );
@@ -733,7 +736,7 @@ GreenPacker::find_reference_and_current_rotamer_correspondence(
 
 				/// We've arrived in a tricky situation where orig and curr don't match residue-types,
 				/// and orig_prev was never found to have a restype match.  The correspondence from
-				/// this point forward is not guaranteed optimal.  It will definately be suboptimal if
+				/// this point forward is not guaranteed optimal.  It will definitely be suboptimal if
 				/// ever curr_rots[ ii ]->aa() > curr_rots[ ii + 1]->aa().
 				/// Such a situation will only arise if you're appending rotamers to a rotamer set
 				/// in an out-of-order fashion... e.g. after adding rots for all 20 aa's, you add a few
@@ -826,7 +829,7 @@ GreenPacker::compute_energies(
 		basic::thread_manager::RosettaThreadRequestOriginatingLevel::PROTOCOLS_MINIMIZATION_PACKING
 	);
 	utility::vector1< basic::thread_manager::RosettaThreadFunction > work_vector1;
-	reference_rotamer_sets_->append_two_body_energy_computations_to_work_vector(
+	current_rotamer_sets_->append_two_body_energy_computations_to_work_vector(
 		pose,
 		*full_sfxn_,
 		current_inter_group_packer_neighbor_graph_,

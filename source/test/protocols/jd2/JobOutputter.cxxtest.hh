@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/jd2/JD2ResourceManager.cxxtest.hh
-/// @brief test suite for protocols::jd2::JD2ResourceManager and protocols::resource_manager::LazyResourceManager
+/// @brief test suite for protocols::jd2::JobOutputter
 /// @author Brian D. Weitzner brian.weitzner@gmail.com
 
 // Test headers

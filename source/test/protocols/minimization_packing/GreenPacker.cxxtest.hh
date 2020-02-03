@@ -1,0 +1,103 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
+/// @file protocols/minimization_packing/GreenPacker.cxxtest.hh
+/// @brief test for GreenPacker
+/// @author Steven Lewis smlewi@gmail.com
+
+// Test headers
+#include <cxxtest/TestSuite.h>
+#include <test/protocols/init_util.hh>
+#include <test/util/pose_funcs.hh>
+
+// Project headers
+#include <protocols/minimization_packing/GreenPacker.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
+
+// Package headers
+#include <core/pose/Pose.hh>
+
+
+// Utility headers
+#include <utility/vector1.hh>
+
+// Numberic headers
+
+// C++ headers
+
+
+class GreenPackerTests : public CxxTest::TestSuite {
+
+private:
+
+public:
+
+	void setUp() {
+		protocols_init();
+	}
+
+	// @brief simple test, pack a small pose twice.  check sequence.  mostly check no segfault
+	void test_GreenPacker_ultrasimple() {
+
+		core_init();
+		core::pose::Pose pose(create_twores_1ubq_pose());
+		//MQ is sequence of starting ubiquitin
+
+		//vector1< Size > of protein seqpos being designed and group id mask for green packer (0 is designed, 1 is rp only)
+		//above comment copied from PointMutationCalculator; I don't know why this isn't booleans - SML
+		utility::vector1< core::Size > const group_ids({0, 1});
+
+		core::pack::task::TaskFactoryOP task_factory(new core::pack::task::TaskFactory());
+		core::pack::task::operation::RestrictResidueToRepackingOP RRtROP( new core::pack::task::operation::RestrictResidueToRepacking());
+		RRtROP->include_residue( 2 );
+		task_factory->push_back( RRtROP );
+
+		//trimming the design space to make the test MOAR FASTERER, because patience is for the weak
+		core::pack::task::operation::RestrictAbsentCanonicalAASOP RACAAsOP( new core::pack::task::operation::RestrictAbsentCanonicalAAS());
+		RACAAsOP->include_residue( 1 );
+		utility::vector1<bool> const MOAR_FASTERER({1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+		RACAAsOP->keep_aas(MOAR_FASTERER);
+		task_factory->push_back( RACAAsOP );
+
+		protocols::minimization_packing::UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new protocols::minimization_packing::UserDefinedGroupDiscriminator );
+		user_defined_group_discriminator->set_group_ids( group_ids );
+		protocols::minimization_packing::GreenPackerOP green_packer( new protocols::minimization_packing::GreenPacker );
+		green_packer->set_group_discriminator( user_defined_group_discriminator );
+		green_packer->set_scorefunction( *(core::scoring::get_score_function()) );
+		green_packer->set_reference_round_task_factory( task_factory );
+
+		green_packer->set_task_factory( task_factory );
+
+		green_packer->apply( pose );
+
+		TS_ASSERT_EQUALS("AQ", pose.sequence());
+
+		//green packer is meant to be applied repeatedly: let's do it again!
+
+		core::pack::task::TaskFactoryOP task_factory2(new core::pack::task::TaskFactory());
+		task_factory2->push_back( RRtROP );
+
+		core::pack::task::operation::RestrictAbsentCanonicalAASOP RACAAsOP2( new core::pack::task::operation::RestrictAbsentCanonicalAAS());
+		RACAAsOP2->include_residue( 1 );
+		utility::vector1<bool> const MOAR_FASTERER2({0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+		RACAAsOP2->keep_aas(MOAR_FASTERER2);
+		task_factory2->push_back( RACAAsOP2 );
+
+		green_packer->set_task_factory( task_factory2 );
+
+		green_packer->apply( pose );
+
+		TS_ASSERT_EQUALS("DQ", pose.sequence());
+
+	}
+}; //GreenPackerTests

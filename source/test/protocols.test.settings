@@ -148,6 +148,10 @@ sources = {
 		"SimpleCycpepPredictApplication_design_betanov15",
 	],
 
+	"design_opt" : [
+		"GreedyOptMutationMover",
+	],
+
 	"docking" : [
 		"DockingTest",
 		"SetupDockingFoldTree",
@@ -490,6 +494,9 @@ sources = {
 	"membrane/symmetry" : [
 		"SymmetricAddMembraneMover",
 	],
+	"minimization_packing" : [
+		"GreenPacker",
+	],
 	"motif_grafting" : [
 		"MotifGraftMover"
 	],
@@ -593,7 +600,7 @@ sources = {
 		"MPFastRelaxFoldTree",
 		"MPRangeRelaxMover",
 	],
-	
+
 	"recon_design" : [
 		"MSDMoverTest",
 		"FindConsensusSequenceTest",
