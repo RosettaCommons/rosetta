@@ -4,14 +4,14 @@ Frank Teets, teetsf@gmail.com, Brian Kuhlman, April 2019
 
 ## PURPOSE OF THE TEST
 #### What does the benchmark test and why?
-This benchmark tests SEWING's capacity to explore restricted conformational spaces and still create long-range interactions; the restricted space magnifies the effect of poor sampling on score, making this the most sensitive test of SEWING's use cases. This tells us whether SEWING is sampling backbone additions with sufficient granularity to fit structure into confined spaces while still placing them in ways that approximate a globular protein. 
+This benchmark tests SEWING's capacity to explore restricted conformational spaces and still create long-range interactions; the restricted space magnifies the effect of poor sampling on score, making this the most sensitive test of SEWING's use cases. This tells us whether SEWING is sampling backbone additions with sufficient granularity to fit structure into confined spaces while still placing them in ways that approximate a globular protein.
 
 
 ## BENCHMARK DATASET
 #### How many proteins are in the set?
 #### What dataset are you using? Is it published? If yes, please add a citation.
 #### What are the input files? How were the they created?
-There are two proteins in this set, vinculin (pdb 1T01, chain A) and the VBS1 helix of talin. (pdb 1T01, chain B) However, only one (VBS1) is actually used as the starting node for SEWING and consequently scored. the other serves as a SEWING "partner protein"; in normal use, this is something to which the starting node is intended to bind and therefore a region of space into which SEWING should not design structure, as well as serving as a target for encouraging the placement of backbone in regions likely to be conducive to expanding that interface via residue-level design. The requisite PartnerMotifScorer is not included in this test set, however; see PERFORMANCE METRICS below. The only other SEWING-specific input file is the segment file created as described in the paper from the TOP8000 dataset (Williams, C. J., Headd, J. J., Moriarty, N. W., Prisant, M. G., Videau, L. L., Deis, L. N., Verma, V. , Keedy, D. A., Hintze, B. J., Chen, V. B., Jain, S. , Lewis, S. M., Arendall, W. B., Snoeyink, J. , Adams, P. D., Lovell, S. C., Richardson, J. S. and Richardson, D. C. (2018), MolProbity: More and better reference data for improved all‐atom structure validation. Protein Science, 27: 293-315. doi:10.1002/pro.3330)
+There are two proteins in this set, vinculin (pdb 1T01, chain A) and the VBS1 helix of talin. (pdb 1T01, chain B) However, only one (VBS1) is actually used as the starting node for SEWING and consequently scored.  The other serves as a SEWING "partner protein"; in normal use, this is something to which the starting node is intended to bind and therefore a region of space into which SEWING should not design structure, as well as serving as a target for encouraging the placement of backbone in regions likely to be conducive to expanding that interface via residue-level design. The requisite PartnerMotifScorer is not included in this test set, however; see PERFORMANCE METRICS below. The only other SEWING-specific input file is the segment file created as described in the paper from the TOP8000 dataset (Williams, C. J., Headd, J. J., Moriarty, N. W., Prisant, M. G., Videau, L. L., Deis, L. N., Verma, V. , Keedy, D. A., Hintze, B. J., Chen, V. B., Jain, S. , Lewis, S. M., Arendall, W. B., Snoeyink, J. , Adams, P. D., Lovell, S. C., Richardson, J. S. and Richardson, D. C. (2018), MolProbity: More and better reference data for improved all-atom structure validation. Protein Science, 27: 293-315. doi:10.1002/pro.3330)
 
 ## PROTOCOL
 #### State and briefly describe the protocol.
@@ -33,15 +33,15 @@ The PartnerMotifScorer has been excluded from this test as it is less predictive
 
 ## KEY RESULTS
 #### What is the baseline to compare things to - experimental data or a previous Rosetta protocol?
-#### Describe outliers in the dataset. 
-As this is a protocol for design, the baseline is relative to the original SEWING described in (Design of structurally distinct proteins using strategies inspired by evolution. (Jacobs et al,2016)). It is expected that a small proportion of runs will fail to add anything to the starting helix, producing a population of data points close to 0 in both scores. Outside of that population, MotifScore and InterModelMotifScore should correlate as indicated by the cutoffs, indicating that SEWING is both placing helices designably close to each other (which is measured by MotifScore) and that it is also doing so for helices not adjacent in sequence space (as measured by InterModelMotifScore.) 
+#### Describe outliers in the dataset.
+As this is a protocol for design, the baseline is relative to the original SEWING described in (Design of structurally distinct proteins using strategies inspired by evolution. (Jacobs et al.,2016)). It is expected that a small proportion of runs will fail to add anything to the starting helix, producing a population of data points close to 0 in both scores. Outside of that population, MotifScore and InterModelMotifScore should correlate as indicated by the cutoffs, indicating that SEWING is both placing helices designably close to each other (which is measured by MotifScore) and that it is also doing so for helices not adjacent in sequence space (as measured by InterModelMotifScore.) 
 
 ## DEFINITIONS AND COMMENTS
-#### State anything you think is important for someone else to replicate your results. 
+#### State anything you think is important for someone else to replicate your results.
 Run with 1000 minimum and maximum cycles, 9 minimum and maximum segments, a hash window width of 4, and a MotifScore:InterModelMotifScore weight ratio of 1:10, as described in the paper.
 
 ## LIMITATIONS
-#### What are the limitations of the benchmark? Consider dataset, quality measures, protocol etc. 
+#### What are the limitations of the benchmark? Consider dataset, quality measures, protocol etc.
 #### How could the benchmark be improved?
 #### What goals should be hit to make this a "good" benchmark?
-This protocol is intentionally agnostic to idiosyncrasies in the correlation between (InterModel)MotifScore and final full-atom score; a future, multistage-compatible SEWING could be better benchmarked by actually relaxing those structures that passed the post-SEWING filters. 
+This protocol is intentionally agnostic to idiosyncrasies in the correlation between (InterModel)MotifScore and final full-atom score; a future, multistage-compatible SEWING could be better benchmarked by actually relaxing those structures that passed the post-SEWING filters.

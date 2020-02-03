@@ -4,7 +4,7 @@ Vikram K. Mulligan (vmulligan@flatironinstitute.org), Center for Computational B
 ## PURPOSE OF THE TEST
 
 This test ensures that the simple_cycpep_predict application retains its scientific performance.  This application is intended to predict the structures of peptide macrocycles built from arbitrary canonical or non-canonical building-blocks.
- 
+
 #### What does the benchmark test and why?
 
 This test case is a peptide known to fold into the designed structure, for which multiple crystal structures have been solved.  The application samples peptide conformations and attempts to predict the native state from sequence alone.  The test is successful if:
@@ -32,7 +32,7 @@ This test case is a peptide known to fold into the designed structure, for which
 ## PROTOCOL
 #### State and briefly describe the protocol.
 
-The simple_cycpep_predict application uses the generalized kinematic closure algorithm (GenKIC) to rapidly sample closed conformations of a heteropolymer macrocycle built from any combination of alpha-amino acids, peptoids, or other related building-blocks.  Each closure attempt is relaxed using the FastRelax protocol.  For small (~8 to ~10 residue) peptide macrocycles, the application can usually sample close to the native state with less expense than protien _ab initio_.
+The simple_cycpep_predict application uses the generalized kinematic closure algorithm (GenKIC) to rapidly sample closed conformations of a heteropolymer macrocycle built from any combination of alpha-amino acids, peptoids, or other related building-blocks.  Each closure attempt is relaxed using the FastRelax protocol.  For small (~8 to ~10 residue) peptide macrocycles, the application can usually sample close to the native state with less expense than protein _ab initio_.
 
 The simple_cycpep_predict application supports hierarchical MPI-based job distribution and data reduction, as well as multi-threaded parallel job execution within a node.  In MPI mode, statistics about the full sampled ensemble, including the funnel quality metric PNear, are computed automatically during the data collection and reduction phase.
 
@@ -60,7 +60,7 @@ All of the following must be true for the test to pass:
 - Lowest-RMSD sample < 0.25 A from native.
 - Highest-RMSD sample > 2.6 A from native.
 - Lowest-energy sample < 0.3 A from native.
-- Energy gap (gap between lowest-eneryg sample > 1.5 A and overall lowest) bigger than 6 kcal/mol
+- Energy gap (gap between lowest-energy sample > 1.5 A and overall lowest) bigger than 6 kcal/mol
 - PNear > 0.92.
 
 #### How do you define a pass/fail for this test?
@@ -78,13 +78,13 @@ of this peptide on 27 June 2019.
 
 Past iterations of this test.
 
-#### Describe outliers in the dataset. 
+#### Describe outliers in the dataset.
 
 N/A.
 
 ## DEFINITIONS AND COMMENTS
 
-#### State anything you think is important for someone else to replicate your results. 
+#### State anything you think is important for someone else to replicate your results.
 
 N/A.
 
@@ -99,5 +99,3 @@ We have very few known crystal structures of cyclic peptides.
 More peptides.  (We will add more in the future.)
 
 #### What goals should be hit to make this a "good" benchmark?
-
-Being beloved by Munchkinlanders.  Dropping houses on Wicked Witches of the East and/or West.
