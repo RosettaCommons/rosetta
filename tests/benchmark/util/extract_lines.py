@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python
 
 """extract_lines.py - splits a file based on the the presence/abscence of lines in another file.
 

@@ -86,7 +86,9 @@ def process_file( filename, compile_type ):
     tests_to_run = TESTS_TO_RUN
 
     define_options = parse_defines( compile_type )
-    commandline = "cppcheck --suppressions-list=cppcheck_suppressions.txt {defines} --enable={tests} {filename}".format(defines=define_options,tests=tests_to_run,filename=filename )
+    cppcheckincludes = "-I ." # Needed for recent versions to look at header files and for 1.90 to recognize errors at all.
+    outputformat = "{callstack}: ({severity}) {message} [{id}]" # 1.90 changed the format, so let's explicitly make a decent one.
+    commandline = "cppcheck {includes} --template='{format}' --suppressions-list=cppcheck_suppressions.txt {defines} --enable={tests} {filename}".format(defines=define_options,tests=tests_to_run,filename=filename,format=outputformat,includes=cppcheckincludes )
 
     print '\t', commandline
     res, output = commands.getstatusoutput( commandline )

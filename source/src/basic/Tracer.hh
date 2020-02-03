@@ -76,16 +76,16 @@ public:
 	/// We return a TracerImpl instead of ourself to make subsequent access faster.
 	template< typename T >
 	TracerImpl & operator <<( T const & entry ) {
-		TracerImpl & TR( tracer_impl() );
-		TR << entry;
-		return TR;
+		TracerImpl & TR_impl( tracer_impl() );
+		TR_impl << entry;
+		return TR_impl;
 	}
 
 	// Due to funky definition, have to special case std::endl and other stream manipulators
 	TracerImpl & operator <<( std::ostream& (*entry)(std::ostream&) ) {
-		TracerImpl & TR( tracer_impl() );
-		TR << entry;
-		return TR;
+		TracerImpl & TR_impl( tracer_impl() );
+		TR_impl << entry;
+		return TR_impl;
 	}
 
 	/// @brief Allow Tracer object to be passed to something expecting a std::ostream
@@ -162,17 +162,17 @@ public:
 		/// We return a TracerProxyImpl instead of ourself to make subsequent access faster.
 		template< typename T >
 		TracerImpl::TracerProxyImpl & operator <<( T const & entry ) {
-			TracerImpl::TracerProxyImpl & TR( tracer_proxy_impl() );
-			TR << entry;
-			return TR;
+			TracerImpl::TracerProxyImpl & TR_impl( tracer_proxy_impl() );
+			TR_impl << entry;
+			return TR_impl;
 		}
 
 		// Due to funky definition, have to special case std::endl and other stream manipulators
 		// Have to special case std::endl, due to it's funky definition.
 		TracerImpl::TracerProxyImpl & operator <<( std::ostream& (*entry)(std::ostream&) ) {
-			TracerImpl::TracerProxyImpl & TR( tracer_proxy_impl() );
-			TR << entry;
-			return TR;
+			TracerImpl::TracerProxyImpl & TR_impl( tracer_proxy_impl() );
+			TR_impl << entry;
+			return TR_impl;
 		}
 
 		/// @brief Allow Tracer object to be passed to something expecting a std::ostream

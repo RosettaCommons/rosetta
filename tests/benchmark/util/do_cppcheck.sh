@@ -66,7 +66,7 @@ find ./ -name '*.cc' | sed "s|^|${CPPCHECK_DIR}/cppcheck_single.py ${COMPILETYPE
 find ${CACHEDIR}/ -name '*.cppcheck' -exec cat {} \; > ${CACHEDIR}/all_lines.txt
 
 #Running error lines, if any
-grep -L '^\[' ${CACHEDIR}/all_lines.txt | uniq > ${CACHEDIR}/error_output.txt
+grep -v '^\[' ${CACHEDIR}/all_lines.txt | uniq > ${CACHEDIR}/error_output.txt
 #The problem list
 grep '^\[' ${CACHEDIR}/all_lines.txt | sort | uniq > ${CACHEDIR}/output.txt
 

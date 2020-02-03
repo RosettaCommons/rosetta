@@ -25,6 +25,8 @@ unnecessaryForwardDeclaration
 constStatement
 // This is a style warning, and Rosetta style isn't much for std algorithms with iterators and lambdas.
 useStlAlgorithm
+// Single argument constructors not marked as explicit are okay. We shouldn't worry.
+noExplicitConstructor
 
 //////////////////////
 // SPECIFIC EXCLUSIONS
