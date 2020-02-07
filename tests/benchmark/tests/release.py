@@ -47,7 +47,8 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
 
     TR = Tracer(True)
 
-    branch=config['branch']
+    branch = config['branch']
+    release_root = config['release_root']
 
     package_versioning_name = '{package_name}.{branch}-{revision}'.format(package_name=package_name, branch=config['branch'], revision=config['revision'])
 
@@ -60,56 +61,62 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
         assert file.endswith('.tar.bz2')
         archive = file
 
-    release_path = '{release_dir}/{name}/archive/{branch}/{package_name}/'.format(release_dir=config['release_root'], **vars())
+    release_path = f'{release_root}/{name}/archive/{branch}/{package_name}'
     if not os.path.isdir(release_path): os.makedirs(release_path)
-    shutil.move(archive, release_path + package_versioning_name + '.tar.bz2')
 
-    # removing old archives and adjusting _latest_html_
-    files = [f for f in os.listdir(release_path) if f != _latest_html_]
-    files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
-    for f in files[:-_number_of_archive_files_to_keep_]: os.remove(release_path+'/'+f)
-    if files:
-        with open(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr=name, link=files[-1]))
+    with FileLock( f'{release_path}/.release.lock' ):
+        shutil.move(archive, release_path + '/' + package_versioning_name + '.tar.bz2')
+
+        # removing old archives and adjusting _latest_html_
+        files = [f for f in os.listdir(release_path) if f != _latest_html_]
+        files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
+        for f in files[:-_number_of_archive_files_to_keep_]: os.remove(release_path+'/'+f)
+        if files:
+            with open(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr=name, link=files[-1]))
 
 
-    # Creating git repository with binaries, only for named branches
-    if release_as_git_repository: #config['branch'] != 'commits' or True:
+    # Creating git repository
+    if release_as_git_repository:
         TR('Creating git repository for {name} as {package_name}...'.format(**vars()) )
 
         git_repository_name = '{package_name}.{branch}'.format(**vars())
         git_release_path = '{}/{name}/git/{branch}/'.format(config['release_root'], **vars())
         git_origin = os.path.abspath(git_release_path + git_repository_name + '.git')  # bare repositiry
+
         git_working_dir = working_dir + '/' + git_repository_name
         if not os.path.isdir(git_release_path): os.makedirs(git_release_path)
-        if not os.path.isdir(git_origin): execute('Origin git repository is not present, initializing...', 'git init --bare {git_origin} && cd {git_origin} && git update-server-info'.format(**vars()) )
 
-        execute('Clonning origin...', 'cd {working_dir} && git clone {git_origin}'.format(**vars()))
+        with FileLock(f'{git_origin}/.release.lock'):
 
-        # Removing all old files but preserve .git dir...
-        execute('Removing previous files...', 'cd {working_dir}/{git_repository_name} && mv .git .. && rm -r * .* ; mv ../.git .'.format(**vars()), return_='tuple')
+            if not os.path.isdir(git_origin): execute('Origin git repository is not present, initializing...', 'git init --bare {git_origin} && cd {git_origin} && git update-server-info'.format(**vars()) )
 
-        for f in os.listdir(package_dir):
-            # for c in file_list:
-            #     if f.startswith(c):
-            src = package_dir+'/'+f;  dest = working_dir+'/'+git_repository_name+'/'+f
-            if os.path.isfile(src): shutil.copy(src, dest)
-            elif os.path.isdir(src): shutil.copytree(src, dest)
-            execute('Git add {f}...', 'cd {working_dir}/{git_repository_name} && git add {f}'.format(**vars()))
+            execute('Clonning origin...', 'cd {working_dir} && git clone {git_origin}'.format(**vars()))
 
-        res, git_output = execute('Git commiting changes...', 'cd {working_dir}/{git_repository_name} && git commit -a -m "{package_name}"'.format(**vars()), return_='tuple')
-        if res  and 'nothing to commit, working directory clean' not in git_output: raise BenchmarkError('Could not commit changess to: {}!'.format(git_origin))
+            # Removing all old files but preserve .git dir...
+            execute('Removing previous files...', 'cd {working_dir}/{git_repository_name} && mv .git .. && rm -r * .* ; mv ../.git .'.format(**vars()), return_='tuple')
 
-        res, oldest_sha = execute('Getting HEAD~N old commit...', 'cd {working_dir}/{git_repository_name} && git rev-parse HEAD~{}'.format(_number_of_py_rosetta_revisions_to_keep_in_git_, **vars()), return_='tuple')
-        oldest_sha = oldest_sha.split()[0]  # removing \n at the end of output
+            for f in os.listdir(package_dir):
+                # for c in file_list:
+                #     if f.startswith(c):
+                src = package_dir+'/'+f;  dest = working_dir+'/'+git_repository_name+'/'+f
+                if os.path.isfile(src): shutil.copy(src, dest)
+                elif os.path.isdir(src): shutil.copytree(src, dest)
+                execute('Git add {f}...', 'cd {working_dir}/{git_repository_name} && git add {f}'.format(**vars()))
 
-        if not res:  # if there is no histore error would be raised, but that also mean that rebase is not needed...
-            git_truncate = 'git checkout --orphan _temp_ {oldest_sha} && git commit -m "Truncating git history" && git rebase --onto _temp_ {oldest_sha} master && git checkout master && git branch -D _temp_'.format(**vars())  #
-            execute('Trimming git history...', 'cd {working_dir}/{git_repository_name} && {git_truncate}'.format(**vars()))
+            res, git_output = execute('Git commiting changes...', 'cd {working_dir}/{git_repository_name} && git commit -a -m "{package_name}"'.format(**vars()), return_='tuple')
+            if res  and 'nothing to commit, working directory clean' not in git_output: raise BenchmarkError('Could not commit changess to: {}!'.format(git_origin))
 
-        #execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --prune=now && git remote prune origin && git push -f'.format(**vars()))
-        execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git remote prune origin && git push -f'.format(**vars()))
+            res, oldest_sha = execute('Getting HEAD~N old commit...', 'cd {working_dir}/{git_repository_name} && git rev-parse HEAD~{}'.format(_number_of_py_rosetta_revisions_to_keep_in_git_, **vars()), return_='tuple')
+            oldest_sha = oldest_sha.split()[0]  # removing \n at the end of output
 
-        execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
+            if not res:  # if there is no histore error would be raised, but that also mean that rebase is not needed...
+                git_truncate = 'git checkout --orphan _temp_ {oldest_sha} && git commit -m "Truncating git history" && git rebase --onto _temp_ {oldest_sha} master && git checkout master && git branch -D _temp_'.format(**vars())  #
+                execute('Trimming git history...', 'cd {working_dir}/{git_repository_name} && {git_truncate}'.format(**vars()))
+
+            #execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git gc --prune=now && git remote prune origin && git push -f'.format(**vars()))
+            execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git remote prune origin && git push -f'.format(**vars()))
+
+            execute('Pruning origin...', 'cd {git_origin} && git gc --prune=now'.format(**vars()))
 
         if os.path.isdir(git_working_dir): shutil.rmtree(git_working_dir)  # removing git dir to keep size of database small
 
@@ -398,6 +405,8 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
 
     TR('Running PyRosetta4-documentaion release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
+    release_root = config['release_root']
+
     python_environment = local_python_install(platform, config)
     ve = setup_python_virtual_environment(working_dir+'/ve', python_environment, 'sphinx')
 
@@ -436,14 +445,17 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
             with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
 
         else:
-            release_path = '{release_dir}/PyRosetta4/documentation/PyRosetta-4.documentation.{branch}.{kind}.python{python_version}.{os}'.format(release_dir=config['release_root'], branch=config['branch'], os=platform['os'], python_version=platform['python'][:3].replace('.', ''), **vars())
 
-            if os.path.isdir(release_path): shutil.rmtree(release_path)
-            shutil.move(documentation_dir, release_path)
+            with FileLock( f'{release_root}/PyRosetta4/documentation/.release.lock' ):
 
-            res_code = _S_passed_
-            results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output+output2 }
-            with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+                release_path = '{release_root}/PyRosetta4/documentation/PyRosetta-4.documentation.{branch}.{kind}.python{python_version}.{os}'.format(branch=config['branch'], os=platform['os'], python_version=platform['python'][:3].replace('.', ''), **vars())
+
+                if os.path.isdir(release_path): shutil.rmtree(release_path)
+                shutil.move(documentation_dir, release_path)
+
+                res_code = _S_passed_
+                results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output+output2 }
+                with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
     return results
 
@@ -608,20 +620,23 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
             conda_release_path = '{release_dir}/PyRosetta4/conda/{release_kind}'.format(release_dir=config['release_root'], release_kind = release_kind)
             if not os.path.isdir(conda_release_path): os.makedirs(conda_release_path)
 
-            conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet {recipe_dir}  --output-folder {conda_release_path}'
-            conda_package = execute('Getting Conda package name...', f'{conda_build_command_line} --output', return_='output', silent=True).split()[0]  # removing '\n' at the end
+            with FileLock( '{conda_release_path}/.{os}.python{python_version}.release.lock'.format(os=platform['os'], python_version=platform['python'][:3].replace('.', ''), **vars()) ):
 
-            TR(f'Building Conda package: {conda_package}...')
-            res, conda_log = execute('Creating Conda package...', conda_build_command_line, return_='tuple', add_message_and_command_line_to_output=True)
+                conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet {recipe_dir}  --output-folder {conda_release_path}'
+                conda_package = execute('Getting Conda package name...', f'{conda_build_command_line} --output', return_='output', silent=True).split()[0]  # removing '\n' at the end
 
-            results[_LogKey_]  += f'Got package name from conda build command line `{conda_build_command_line}` : {conda_package}\n' + conda_log
-            with open(working_dir+'/conda-build-log.txt', 'w') as f: f.write( to_unicode(conda_log) )
+                TR(f'Building Conda package: {conda_package}...')
+                res, conda_log = execute('Creating Conda package...', conda_build_command_line, return_='tuple', add_message_and_command_line_to_output=True)
+
+                results[_LogKey_]  += f'Got package name from conda build command line `{conda_build_command_line}` : {conda_package}\n' + conda_log
+                with open(working_dir+'/conda-build-log.txt', 'w') as f: f.write( to_unicode(conda_log) )
 
             if res:
                 results[_StateKey_] = _S_script_failed_
                 results[_LogKey_]  += conda_log
             else:
-                execute('Regenerating Conda package index...', f'{conda.activate_base} && cd {conda_release_path} && conda index .')
+                with FileLock( f'{conda_release_path}/.release.lock' ):
+                    execute('Regenerating Conda package index...', f'{conda.activate_base} && cd {conda_release_path} && conda index .')
 
                 conda_package_version = conda_package.split('/')[-1].split('-')[1]
                 with open(f'{working_dir}/index.html', 'w') as f: f.write( _index_html_template_.format(**vars() ) )

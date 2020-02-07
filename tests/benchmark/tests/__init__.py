@@ -627,7 +627,7 @@ def setup_python_virtual_environment(working_dir, python_environment, packages='
 
 def generate_version_information(rosetta_dir, **kwargs):
     ''' Generate standard Rosetta version structure and save it to JSON file if file_name is provided.
-    
+
     This is a light wrapper around the generate_version_information() function in Rosetta/main/source/version.py -- see there for the interface definition.
     '''
 
@@ -742,3 +742,43 @@ def setup_conda_virtual_environment(working_dir, platform, config, packages=''):
     il = get_python_include_and_lib(python)
 
     return NT( activate = activate, root = prefix, python = python, python_include_dir=il.python_include_dir, python_lib_dir=il.python_lib_dir, version=python_version, activate_base = conda_root_env.activate)
+
+
+
+class FileLock():
+    ''' Implementation of file-lock object that could be use with Python `with` statement
+    '''
+
+    def __init__(self, file_name):
+        self.locked = False
+        self.file_name = file_name
+
+
+    def __enter__(self):
+        if not self.locked: self.acquire()
+        return self
+
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self.locked: self.release()
+
+
+    def __del__(self):
+        self.release()
+
+
+    def acquire(self):
+        while True:
+            try:
+                os.close( os.open(self.file_name, os.O_CREAT | os.O_EXCL, mode=0o600) )
+                self.locked = True
+                break
+
+            except FileExistsError as e:
+                time.sleep(60)
+
+
+    def release(self):
+        if self.locked:
+            os.remove(self.file_name)
+            self.locked = False
