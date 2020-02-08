@@ -1,6 +1,8 @@
 
 cd %(workdir)s
 
+date > start-time.ignore
+
 # Do the tests actually exist?
 [ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
 
@@ -28,3 +30,6 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true
     -parser:protocol tree_relax_shear.xml -s two_glycans.pdb -out:prefix shear_ -testing:INTEGRATION_TEST \
     2>&1 | egrep -vf ../../ignore_list > shear_info.log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+date > end-time.ignore
+#End of script

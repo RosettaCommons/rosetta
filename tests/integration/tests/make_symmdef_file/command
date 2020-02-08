@@ -41,3 +41,14 @@ echo "Making symmetric pose and extracting the asymmetric unit:" >> log
 	>> log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
+
+echo "Generating non-crystallographic symmetry file for 'inputs/3UKM.pdb': " > nc_log
+perl ${make_symmdef_file} -m NCS -a A -i B -p inputs/3UKM.pdb > 3UKM.symm 2>> nc_log
+
+echo "Making symmetric pose and extracting the asymmetric unit:" >> nc_log
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @nc_flags -database %(database)s -testing:INTEGRATION_TEST 2>&1 \
+	| egrep -vf ../../ignore_list \
+	>> nc_log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
+

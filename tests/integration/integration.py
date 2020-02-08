@@ -743,6 +743,7 @@ def format_demo_line(command, demo_subdir):
     new_command = new_command.replace("$ROSETTA3_DB", "%(database)s")
     new_command = new_command.replace("$ROSETTA3", "%(minidir)s")
 
+    new_command = new_command.replace("$ROSETTA_MAIN", "%(rosetta_main)s")
     new_command = new_command.replace("$ROSETTA_TOOLS", "%(rosetta_tools)s")
     new_command = new_command.replace("$ROSETTA_DEMOS", "%(rosetta_demos)s")
     new_command = new_command.replace("$ROSETTA_BINEXT","%(binext)s")
@@ -1052,6 +1053,7 @@ def generateIntegrationTestGlobalSubstitutionParameters():
     #No idea why this won't work in the function below.
     rosetta_demos = root_demos_dir
     rosetta_tools = root_tools_dir
+    rosetta_main  = root_main_dir
 
     ##Merge locals
     local_vars.update(dict(locals()))

@@ -56,7 +56,7 @@ public:
 	HBondsTrieVsTrieCachedDataContainer(HBondsTrieVsTrieCachedDataContainer const & src);
 
 	/// @brief Destructor.
-	virtual ~HBondsTrieVsTrieCachedDataContainer();
+	~HBondsTrieVsTrieCachedDataContainer() override;
 
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	core::scoring::trie::TrieVsTrieCachedDataContainerBaseOP clone() const override;

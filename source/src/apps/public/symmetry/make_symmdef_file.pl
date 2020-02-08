@@ -448,7 +448,6 @@ if ($ncs_mode == 1) {
 			$com_secondary = vadd( $del_COM, vadd( $COM_0, mapply( $newR , vsub ( $com_complex , $COM_0 ) ) ) );
 		}
 		my $newDelCOM = vsub ( $com_secondary , $com_complex );
-        print "com_complex=".vstr($com_complex)."\n";
 
 		# symmetrize newT
 		my $err_pos = [0,0,0];

@@ -40,7 +40,7 @@ public:
 	TrieVsTrieCachedDataContainerBase(TrieVsTrieCachedDataContainerBase const & src);
 
 	/// @brief Destructor.
-	virtual ~TrieVsTrieCachedDataContainerBase();
+	~TrieVsTrieCachedDataContainerBase() override;
 
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	/// @details Must be implemented by derived classes.  (This is a pure virtual base class.)

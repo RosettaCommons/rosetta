@@ -47,6 +47,15 @@ if( os.path.exists( f'{working_dir}/hpc-logs/.hpc.{testname}.output.0.log' ) == 
 else:
 	logfile = f'{working_dir}/hpc-logs/.hpc.{testname}.log'
 
+# Check that it exists and has contents.
+if not os.path.exists( logfile ):
+    raise ValueError( "Logfile `" + logfile + "` does not exist, but should." )
+with open( logfile ) as f:
+    logfile_contents = f.readlines()
+    if len( ''.join( l.strip() for l in logfile_contents[:10] ):
+        #Empty, or at least nothing in the first 10 lines ... problem
+    raise ValueError( "Logfile `" + logfile + "` is empty, but it shouldn't be." )
+
 # read relevant data:
 rmsd_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $3} }'" ) ).split() ]
 rmsd_vals_to_lowest = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $4} }'" ) ).split() ]
@@ -54,8 +63,8 @@ energy_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " +
 pnear = float( str( subprocess.getoutput( "grep PNear: " + logfile + " | awk '{print $2}'" ) ) )
 pnear_to_lowest = float( str( subprocess.getoutput( "grep PNearLowest: " + logfile + " | awk '{print $2}'" ) ) )
 
-print( "Read PNear=" + str(pnear) + " from " + logfile + "." ) 
-print( "Read PNearLowest=" + str(pnear_to_lowest) + " from " + logfile + "." ) 
+print( "Read PNear=" + str(pnear) + " from " + logfile + "." )
+print( "Read PNearLowest=" + str(pnear_to_lowest) + " from " + logfile + "." )
 
 total_samples = int( str( subprocess.getoutput( 'grep "application completed" ' + logfile + " | awk '{print $8}'" ) ) )
 print ( "Determined that " + str( total_samples ) + " samples were performed." )
