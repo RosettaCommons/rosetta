@@ -17,7 +17,7 @@
     <MOVERS>
 	<PeptideCyclizeMover name="close" residue_selector="chainb">
 	</PeptideCyclizeMover>
-	<FastRelax name="relax" scorefxn="score_cst" ramp_down_constraints="false" repeats="1" >
+	<FastRelax name="relax" movemap_disables_packing_of_fixed_chi_positions="true" scorefxn="score_cst" ramp_down_constraints="false" repeats="1" >
 		<MoveMap name="frlx1_mm">
                 	<Span begin="1" end="348" chi="0" bb="0"/>
                 	<Span begin="349" end="359" chi="1" bb="1"/>

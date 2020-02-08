@@ -7356,6 +7356,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
     #Option( 'enforce_until_ramp_step', 'Real', default='0.4', desc='Enforce explicit waters until the ramp step reaches this value if -enforce_waters_during_relax is true'),
 
 		## Options to manipulate the movemap
+		Option( 'movemap_disables_packing_of_fixed_chi_positions', 'Boolean', default='false', desc='If true, positions for which the movemap prevents sidechain minimization will also have packing disabled.  False by default.' ),
 		Option( 'bb_move', 'Boolean', default='true', desc='allow backbone to move during relax'),
 		Option( 'chi_move', 'Boolean', default='true', desc='allow sidechain to move during relax'),
 		Option( 'jump_move', 'Boolean', default='false', desc='allow jump to move during relax'),

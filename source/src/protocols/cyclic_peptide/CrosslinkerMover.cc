@@ -815,6 +815,7 @@ CrosslinkerMover::pack_and_minimize_linker_and_sidechains(
 			}
 
 			frlx.set_movemap(movemap);
+			frlx.set_movemap_disables_packing_of_fixed_chi_positions(true);
 		}
 
 		frlx.apply(pose);

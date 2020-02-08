@@ -65,7 +65,7 @@
 			<Add mover="small_mc_low_temp"/>
 		</ParsedProtocol>
 		<GenericMonteCarlo name="outer_loop" scorefxn_name="score12" mover_name="frag_shear_small" temperature="0.4" trials="5"/>
-		<FastRelax name="relax_chainb" scorefxn="score12">
+		<FastRelax name="relax_chainb" movemap_disables_packing_of_fixed_chi_positions="true" scorefxn="score12">
 			<MoveMap>
 				<Chain number="1" bb="0" chi="0"/>
 				<Chain number="2" bb="1" chi="1"/>

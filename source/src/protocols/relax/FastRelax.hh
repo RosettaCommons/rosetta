@@ -125,6 +125,14 @@ public:
 	/// @brief Return the number of repeats
 	core::Size default_repeats() const { return default_repeats_; }
 
+	/// @brief Set whether the MoveMap can automatically disable packing of positions
+	/// where sidechain minimization is prohibited.  Default false.
+	void set_movemap_disables_packing_of_fixed_chi_positions( bool const setting );
+
+	/// @brief Get whether the MoveMap can automatically disable packing of positions
+	/// where sidechain minimization is prohibited.  Default false.
+	inline bool movemap_disables_packing_of_fixed_chi_positions() const { return movemap_disables_packing_of_fixed_chi_positions_; }
+
 	/// @brief virtual constructor to allow derivation
 	~FastRelax() override;
 
@@ -328,6 +336,10 @@ private:   // options
 	/// @brief Number of repeats if using default script
 	core::Size default_repeats_;
 
+	/// @brief Option to have the MoveMap disable packing at positions where sidechain minimization is disabled.
+	/// @details Defaults to false.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool movemap_disables_packing_of_fixed_chi_positions_ = false;
 
 	/// @brief If true, delete virtual residues at the end of FastRelax for smooth rmsd calculation later
 	bool delete_virtual_residues_after_FastRelax_;

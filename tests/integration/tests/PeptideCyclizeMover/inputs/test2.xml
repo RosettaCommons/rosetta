@@ -26,7 +26,7 @@
 	<SetTorsion name="initialize_tors">
           <Torsion residue="349,359" torsion_name="omega" angle="180.0" />
         </SetTorsion>
-	<FastRelax name="relax" scorefxn="score_cst" repeats="3" >
+	<FastRelax name="relax" movemap_disables_packing_of_fixed_chi_positions="true" scorefxn="score_cst" repeats="3" >
 		<MoveMap name="frlx1_mm">
                 	<Span begin="1" end="348" chi="0" bb="0"/>
                 	<Span begin="349" end="359" chi="1" bb="1"/>

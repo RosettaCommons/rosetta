@@ -334,6 +334,15 @@ FastRelax::dualspace() {
 	return dualspace_;
 }
 
+/// @brief Set whether the MoveMap can automatically disable packing of positions
+/// where sidechain minimization is prohibited.  Default false.
+void
+FastRelax::set_movemap_disables_packing_of_fixed_chi_positions(
+	bool const setting
+) {
+	movemap_disables_packing_of_fixed_chi_positions_ = setting;
+}
+
 void
 FastRelax::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -409,6 +418,8 @@ FastRelax::parse_my_tag(
 	cartesian (tag->getOption< bool >( "cartesian", cartesian() ) );
 	dualspace (tag->getOption< bool >( "dualspace", dualspace() ) );
 
+	set_movemap_disables_packing_of_fixed_chi_positions( tag->getOption< bool >( "movemap_disables_packing_of_fixed_chi_positions", movemap_disables_packing_of_fixed_chi_positions_ ) );
+
 	ramp_down_constraints( tag->getOption< bool >( "ramp_down_constraints", ramp_down_constraints() ) );
 
 
@@ -440,6 +451,7 @@ void FastRelax::set_to_default( )
 	using namespace basic::options;
 
 	default_repeats_ = basic::options::option[ OptionKeys::relax::default_repeats ]();
+	movemap_disables_packing_of_fixed_chi_positions_ = basic::options::option[ OptionKeys::relax::movemap_disables_packing_of_fixed_chi_positions ]();
 	ramady_ = basic::options::option[ OptionKeys::relax::ramady ]();
 	repack_ = basic::options::option[ OptionKeys::relax::chi_move]();
 	test_cycles_ = basic::options::option[ OptionKeys::run::test_cycles ]();
@@ -584,16 +596,23 @@ FastRelax::setup_local_tf(
 			TR << "Using Resfile for packing step. " <<std::endl;
 		} else {
 			//Keep the same behavior as before if no resfile given for design.
-			//Though, as mentioned in the doc, movemap now overrides chi_move as it was supposed to.
+			//~~Though, as mentioned in the doc, movemap now overrides chi_move as it was supposed to.~~
+			//EDIT: As of 30 January 2020, the movemap does NOT alter packing unless a user opts IN to having
+			//it do so.  Movemaps control minimization; task operations control packing. --VKM
 
 			local_tf->push_back(utility::pointer::make_shared< RestrictToRepacking >());
-			PreventRepackingOP turn_off_packing( utility::pointer::make_shared< PreventRepacking >() );
-			for ( Size pos = 1; pos <= pose.size(); ++pos ) {
-				if ( ! local_movemap->get_chi(pos) ) {
-					turn_off_packing->include_residue(pos);
+
+			if ( movemap_disables_packing_of_fixed_chi_positions_ ) {
+				bool at_least_one(false);
+				PreventRepackingOP turn_off_packing( utility::pointer::make_shared< PreventRepacking >() );
+				for ( Size pos = 1; pos <= pose.size(); ++pos ) {
+					if ( ! local_movemap->get_chi(pos) ) {
+						at_least_one = true;
+						turn_off_packing->include_residue(pos);
+					}
 				}
+				if ( at_least_one ) { local_tf->push_back(turn_off_packing); }
 			}
-			local_tf->push_back(turn_off_packing);
 		}
 	}
 	//Include current rotamer by default - as before.
@@ -1790,6 +1809,12 @@ FastRelax::complex_type_generator_for_fast_relax( utility::tag::XMLSchemaDefinit
 		"dualspace", xsct_rosetta_bool,
 		"Use dualspace minimization",
 		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"movemap_disables_packing_of_fixed_chi_positions", xsct_rosetta_bool,
+		"If true, positions that are prohibited from undergoing sidechain minimization by the movemap are ALSO prohibited from packing.  False by default.",
+		"false"
+	);
 
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"ramp_down_constraints", xsct_rosetta_bool,
