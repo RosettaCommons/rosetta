@@ -230,7 +230,8 @@ static bool show_crash_report_on_console_ = false;
 static std::string const HEADER(
 	"##############################################################################################################\n"
 	"#\n"
-	"# Rosetta crash log. \n" // " Please submit the contents of this file to http://test.rosettacommons.org/crash_reports\n"
+	"# Rosetta crash log. Please submit the contents of this file to http://crash.rosettacommons.org/\n"
+	"# or use the script Rosetta/main/source/scripts/python/public/report_crashes.py\n"
 	"#\n\n"
 );
 
@@ -409,7 +410,7 @@ void save_crash_report_to_file(char const * message, std::string const & file, i
 
 	// Don't need izstream, because we always want to open this unzipped
 	// NOTE: I hope opening as `app` here means that interleaving behavior from multiple processes is sane
-	// if not, we may have to drop to the plain C interface level, which has better gurantees
+	// if not, we may have to drop to the plain C interface level, which has better guarantees
 	std::fstream fileout( CRASH_FILE, std::fstream::out | std::fstream::app);
 	if ( fileout ) {
 		fileout << crash_log.str();
@@ -417,9 +418,7 @@ void save_crash_report_to_file(char const * message, std::string const & file, i
 	}
 	fileout.close();
 
-	//std::cerr << "\n\nAN INTERNAL ERROR HAS OCCURED. PLEASE SUBMIT THE CONTENTS OF " << CRASH_FILE << " TO http://test.rosettacommons.org/crash_reports TO REPORT.\n\n" << std::endl;
 	std::cerr << "\n\nAN INTERNAL ERROR HAS OCCURED. PLEASE SEE THE CONTENTS OF " << CRASH_FILE << " FOR DETAILS.\n\n" << std::endl;
-	// TODO: Have a script which does the submission for you (and then deletes)
 }
 
 void save_crash_report_to_console(char const *, std::string const &, int, std::string const & traceback) {

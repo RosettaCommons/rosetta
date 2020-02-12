@@ -207,14 +207,14 @@ main( int argc, char * argv [] )
 			test_mover->set_fail_no_retry_ = true;
 			try {
 				protocols::jd2::JobDistributor::get_instance()->go(test_mover);
-			} catch (utility::excn::JD2Failure const & e ) {
+			} catch (protocols::jd2::JD2Failure const & e ) {
 				TR << "successfully caught JD2 exception after fail_no_retry" << std::endl;
 			}
 		} else if ( set_fail_bad_input ) {
 			test_mover->set_fail_bad_input_ = true;
 			try {
 				protocols::jd2::JobDistributor::get_instance()->go(test_mover);
-			} catch (utility::excn::JD2Failure const & e ) {
+			} catch (protocols::jd2::JD2Failure const & e ) {
 				TR << "successfully caught JD2 exception after fail_bad_input" << std::endl;
 			}
 		} else {

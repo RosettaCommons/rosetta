@@ -147,11 +147,6 @@ public:
 	using RangeError::RangeError;
 };
 
-class JD2Failure : public Exception {
-public:
-	using Exception::Exception;
-};
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class UserCorrectableIssue: public Exception {

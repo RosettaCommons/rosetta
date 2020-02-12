@@ -326,7 +326,7 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 	// The result in most applications will be a non-zero exit code
 	// In the MPI case, number_failed_jobs_ will stay zero because MPI overrides job_failed()
 	if ( option[OptionKeys::jd2::failed_job_exception]() && (number_failed_jobs_ > 0) ) {
-		throw( CREATE_EXCEPTION(utility::excn::JD2Failure, utility::to_string(number_failed_jobs_) + " jobs failed; check output for error messages") );
+		throw( CREATE_EXCEPTION(JD2Failure, utility::to_string(number_failed_jobs_) + " jobs failed;") );
 	}
 
 	basic::prof_show();
@@ -1182,6 +1182,16 @@ void JobDistributor::get_job_list_from_job_inputter() {
 	}
 }
 
+void
+JD2Failure::display() const {
+	std::cerr << utility::CSI_Magenta(); // set color of cerr to magenta
+	std::cerr << "\n---------------------------------------------------------------\n";
+	std::cerr << "[ ERROR ]: Error(s) were encountered when running jobs.\n";
+	std::cerr << raw_msg() << "\n";
+	std::cerr << "Check the output further up for additional error messages.\n";
+	std::cerr << "---------------------------------------------------------------\n";
+	std::cerr << utility::CSI_Reset() << '\n';
+}
 
 } //jd2
 } //protocols

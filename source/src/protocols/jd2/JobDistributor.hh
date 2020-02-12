@@ -37,6 +37,7 @@
 // Utility headers
 #include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <string>
@@ -53,6 +54,18 @@
 
 namespace protocols {
 namespace jd2 {
+
+/// @brief A catchable exception which represents that some issue has occured during the JD2 run.
+/// This isn't an error in itself, but represents that JD2 caught another error and then continued,
+/// raising this exception after the remaining jobs had a chance to continue.
+class JD2Failure : public utility::excn::Exception {
+public:
+	using Exception::Exception;
+	void display() const override;
+
+	/// @brief The crash log should already be generated from the underlying error.
+	void crash_log() const override {};
+};
 
 ///Enforced JobDistributor destruction turned out to cause problems - calls to Tracers and/or the Options system
 ///during destruction caused crashes if those systems had been destructed first.  So this is deprecated.
