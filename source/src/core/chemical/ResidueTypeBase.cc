@@ -289,7 +289,7 @@ ResidueTypeBase::has_property( ResidueProperty const property ) const
 core::Real
 ResidueTypeBase::get_numeric_property(std::string const & tag) const
 {
-	std::map<std::string, core::Real> const numeric_properties( properties_->numeric_properties() );
+	std::map<std::string, core::Real> const & numeric_properties( properties_->numeric_properties() );
 	auto property_it( numeric_properties.find( tag ) );
 	if ( property_it == numeric_properties.end() ) {
 		throw CREATE_EXCEPTION(utility::excn::KeyError,  tag + " does not exist in ResidueTypeBase with name " + name3_ );
@@ -302,7 +302,7 @@ ResidueTypeBase::get_numeric_property(std::string const & tag) const
 std::string
 ResidueTypeBase::get_string_property(std::string const & tag) const
 {
-	std::map<std::string, std::string> const string_properties( properties_->string_properties() );
+	std::map<std::string, std::string> const & string_properties( properties_->string_properties() );
 	auto property_it(string_properties.find(tag));
 	if ( property_it == string_properties.end() ) {
 		throw CREATE_EXCEPTION(utility::excn::KeyError, tag + " does not exist in ResidueTypeBase with name " + name3_);

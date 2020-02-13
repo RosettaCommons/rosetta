@@ -79,6 +79,9 @@ public:
 	void
 	set_rotamers( utility::vector1< std::map< std::string, core::Vector > > const & confs );
 
+	void
+	describe( std::ostream & out ) const override;
+
 	std::string
 	keyname() const override;
 

@@ -77,6 +77,10 @@ public:
 	friend class utility::SingletonBase< ChemicalManager >;
 
 public:
+	/// @brief query atom_type_set by mode
+	AtomTypeSetCOP
+	atom_type_set( TypeSetMode type_set_type );
+
 	/// @brief query atom_type_set by a name tag
 	AtomTypeSetCOP
 	atom_type_set( std::string const & tag );

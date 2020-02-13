@@ -81,6 +81,11 @@ CenrotRotamerLibrarySpecification::aa( AA aa_setting ) {
 	aa_ = aa_setting;
 }
 
+void
+CenrotRotamerLibrarySpecification::describe( std::ostream & out ) const {
+	out << "ROTAMERS " << library_name() << " " << name_from_aa( aa_ ) << "\n";
+}
+
 std::string
 CenrotRotamerLibrarySpecification::keyname() const {
 	return library_name();

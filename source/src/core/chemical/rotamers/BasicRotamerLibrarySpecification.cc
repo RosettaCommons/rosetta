@@ -67,6 +67,11 @@ BasicRotamerLibrarySpecification::cache_tag(ResidueType const &) const {
 	return library_name();
 }
 
+void
+BasicRotamerLibrarySpecification::describe( std::ostream & out ) const {
+	out << "ROTAMERS " << library_name() << "\n";
+}
+
 std::string
 BasicRotamerLibrarySpecification::library_name() {
 	return "BASIC";

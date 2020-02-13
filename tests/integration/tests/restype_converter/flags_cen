@@ -3,7 +3,7 @@
 -name3 TRP
 -extra_res_mol input/XST.sdf
 
--out:path:all output
+-out:path:all output_cen
 -out:prefix CEN_
 -out:pdb
 -params_out

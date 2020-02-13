@@ -1,0 +1,10 @@
+-cenrot
+-types GLY VRT DALA GLU:NtermProteinFull 
+-name3 TRP 
+-extra_res_mol input/XST.sdf
+
+-out:path:all output_cenrot
+-out:prefix CENROT_
+-out:pdb
+-params_out
+-sdf_out

@@ -50,9 +50,9 @@ string_to_icoord_type(std::string const & name ) {
 		return ICoordAtomIDType::INTERNAL;
 	} else if ( name.substr(0,4) == "CONN" ) {
 		return ICoordAtomIDType::CONNECT;
-	} else if ( name == "LOWER" ) {
+	} else if ( name == "LOWER" || name == "POLYMER_LOWER" ) {
 		return ICoordAtomIDType::POLYMER_LOWER;
-	} else if ( name == "UPPER" ) {
+	} else if ( name == "UPPER" || name == "POLYMER_UPPER" ) {
 		return ICoordAtomIDType::POLYMER_UPPER;
 	} else {
 		// TODO: Are we sure that we never get atom names larger than 4 characters?

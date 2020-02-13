@@ -64,6 +64,9 @@ public:
 	std::string
 	cache_tag(ResidueType const &) const override { return ""; }
 
+	void
+	describe( std::ostream & out ) const override;
+
 	/// @brief Static function for access to type_name, to have a single string which is used for both
 	/// this class and for the SingleResidueRotamerLibraryCreator.
 	static std::string library_name();

@@ -37,6 +37,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <utility/options/OptionCollection.hh>
@@ -122,50 +123,76 @@ collect_residue_types() {
 
 	utility::vector1< core::chemical::ResidueTypeCOP > restypes;
 
-	ResidueTypeSetCOP type_set;
-	std::string type_set_name; // For diagnostic output
+	TypeSetMode mode = FULL_ATOM_t;
+	std::string type_set_name = "Full atom"; // For diagnostic output
+	// Defer loading of the RTS if we're actually going to use it.
+	// This allows us to use the restype_converter with params files which "double up" on the names in the regular set.
+	ResidueTypeSetCOP type_set = nullptr; // Only load the RTS if we're actually going to use it.
+
 	if ( option[ in::file::centroid ]() ) {
+		mode = CENTROID_t;
 		type_set_name = "Centroid";
-		type_set = ChemicalManager::get_instance()->residue_type_set( CENTROID_t );
+	} else if ( option[ corrections::score::cenrot ] ) {
+		mode = CENTROID_ROT_t;
+		type_set_name = "Centroid Rotamer";
+	}
+
+	if ( option[ OptionKeys::restype_convert::types ].user() || option[ restype_convert::name3 ].user() ) {
+		type_set = ChemicalManager::get_instance()->residue_type_set( mode );
+
+		for ( auto const & name: option[ OptionKeys::restype_convert::types ]() ) {
+			if ( ! type_set->has_name( name ) ) {
+				TR.Error << type_set_name << " type set does not have residue '" << name << "'" << std::endl;
+				continue;
+			}
+			restypes.push_back( type_set->name_mapOP( name ) );
+		}
+
+		for ( auto const & name3: option[ restype_convert::name3 ]() ) {
+			if ( ! type_set->has_name3( name3 ) ) {
+				TR.Error << type_set_name << " type set does not have any residue with the three letter code '" << name3 << "'" << std::endl;
+				continue;
+			}
+			ResidueTypeFinder rtf( *type_set );
+			rtf.name3( name3 );
+			restypes.append( rtf.get_all_possible_residue_types( true /* allow_extra_variants */ ) ); // Match how PDB loading does it.
+		}
+	}
+
+	core::chemical::AtomTypeSetCOP atom_types;
+	core::chemical::ElementSetCOP elements;
+	core::chemical::MMAtomTypeSetCOP mm_atom_types;
+	core::chemical::orbitals::OrbitalTypeSetCOP orbital_atom_types = nullptr;
+
+	// Reuse the type sets from the RTS if possible, else build the likely ones.
+	if ( type_set == nullptr ) {
+		atom_types = ChemicalManager::get_instance()->atom_type_set(mode);
+		elements = ChemicalManager::get_instance()->element_set("default");
+		mm_atom_types = ChemicalManager::get_instance()->mm_atom_type_set("fa_standard");
+		orbital_atom_types = nullptr; // Don't need to do this.
 	} else {
-		type_set_name = "Full atom";
-		type_set = ChemicalManager::get_instance()->residue_type_set( FULL_ATOM_t );
+		atom_types = type_set->atom_type_set();
+		elements = type_set->element_set();
+		mm_atom_types = type_set->mm_atom_type_set();
+		orbital_atom_types = type_set->orbital_type_set();
 	}
 
-	for ( auto const & name: option[ OptionKeys::restype_convert::types ]() ) {
-		if ( ! type_set->has_name( name ) ) {
-			TR.Error << type_set_name << " type set does not have residue '" << name << "'" << std::endl;
-			continue;
-		}
-		restypes.push_back( type_set->name_mapOP( name ) );
-	}
-
-	for ( auto const & name3: option[ restype_convert::name3 ]() ) {
-		if ( ! type_set->has_name3( name3 ) ) {
-			TR.Error << type_set_name << " type set does not have any residue with the three letter code '" << name3 << "'" << std::endl;
-			continue;
-		}
-		ResidueTypeFinder rtf( *type_set );
-		rtf.name3( name3 );
-		restypes.append( rtf.get_all_possible_residue_types( true /* allow_extra_variants */ ) ); // Match how PDB loading does it.
-	}
-
-	if ( type_set->mode() == FULL_ATOM_t ) {
+	if ( mode == FULL_ATOM_t ) {
 		for ( auto const & filename: option[OptionKeys::in::file::extra_res_fa]() ) {
-			MutableResidueTypeOP restype = read_topology_file( filename, type_set );
+			MutableResidueTypeOP restype = read_topology_file( filename, atom_types, elements, mm_atom_types, orbital_atom_types );
 			restypes.push_back( ResidueType::make( *restype ) );
 		}
 	}
 
-	if ( type_set->mode() == CENTROID_t ) {
+	if ( mode == CENTROID_t ) {
 		for ( auto const & filename: option[OptionKeys::in::file::extra_res_cen]() ) {
-			MutableResidueTypeOP restype = read_topology_file( filename, type_set );
+			MutableResidueTypeOP restype = read_topology_file( filename, atom_types, elements, mm_atom_types, orbital_atom_types );
 			restypes.push_back( ResidueType::make( *restype ) );
 		}
 	}
 
 	for ( core::chemical::ResidueTypeCOP fa_type: load_as_fullatom() ) {
-		if ( type_set->mode() == CENTROID_t ) {
+		if ( mode == CENTROID_t ) {
 			MutableResidueTypeOP centroid_type( make_centroid( *fa_type ) );
 			restypes.push_back( ResidueType::make( *centroid_type ) );
 		} else {
@@ -202,6 +229,7 @@ output_residue_types( utility::vector1< core::chemical::ResidueTypeCOP > const &
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 
+	bool files_outputted = false;
 	for ( ResidueTypeCOP restype: restypes ) {
 		TR << "Outputting residue type '" << restype->name() << "' with three letter code '" << restype->name3() << "'" << std::endl;
 
@@ -213,17 +241,24 @@ output_residue_types( utility::vector1< core::chemical::ResidueTypeCOP > const &
 			pose.append_residue_by_bond( *res );
 
 			pose.dump_pdb( determine_output_name( name, "pdb" ) );
+			files_outputted = true;
 		}
 
 		if ( option[ restype_convert::params_out ]() ) {
 			write_topology_file( *restype, determine_output_name( name, "params" ) );
+			files_outputted = true;
 		}
 
 		if ( option[ restype_convert::sdf_out ]() ) {
 			sdf::MolWriter writer;
 			writer.output_residue( determine_output_name( name, "sdf" ), restype );
+			files_outputted = true;
 		}
 
+	}
+
+	if ( ! files_outputted ) {
+		TR.Warning << "No files output. Did you forget the output options? (-out:pdb -params_out or -sdf_out)" << std::endl;
 	}
 }
 
@@ -243,6 +278,9 @@ main( int argc, char * argv [] )
 		register_options();
 
 		utility::vector1< core::chemical::ResidueTypeCOP > restypes = collect_residue_types();
+		if ( restypes.empty() ) {
+			TR.Warning << "No input residue types specified!" << std::endl;
+		}
 		output_residue_types( restypes );
 
 	} catch ( utility::excn::Exception const & e ) {

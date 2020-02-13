@@ -721,6 +721,8 @@ read_topology_file(
 				rsd->add_property( tag );
 			} else if ( tag == "LIGAND" ) {
 				rsd->add_property( tag );
+			} else {
+				utility_exit_with_message("TYPE line with `" + tag + "` type not recognized.");
 			}
 		} else if ( tag == "METAL_BINDING_ATOMS" ) {
 			l >> atom1;
@@ -1127,8 +1129,7 @@ read_topology_file(
 			setup_icoor_reassignments_from_commandline( myname, atom_types.lock()->mode(), icoor_reassignments );
 		}
 
-		std::map< std::string, Vector > rsd_xyz;  // The coordinates of each atom in the residue.
-
+		utility::vector1< std::string > icoor_order; // The order of atoms in the file
 		for ( Size i=1; i<= nlines; ++i ) {
 
 			std::string const & line( lines[i] );
@@ -1162,71 +1163,15 @@ read_topology_file(
 
 			phi = radians(phi); theta = radians(theta); // in degrees in the file for human readability
 
-			// This code should probably be extracted to a util function
-			if ( natoms > 1 ) {
-				// build the Cartesian coords for the new atom:
-				if ( child_atom == parent_atom ) {
-					if ( ! rsd_xyz.empty() ) {
-						utility_exit_with_message("Only the first ICOOR atom in a topology file should list itself as its own parent atom, from file " + filename );
-					}
-					rsd_xyz[ child_atom ] = Vector( 0.0 );
-
-				} else if ( child_atom == angle_atom ) {
-					if ( rsd_xyz.size() != 1 ) {
-						utility_exit_with_message("Only the second ICOOR atom in a topology file should list itself as its own angle atom, from file " + filename  );
-					}
-					if ( ! rsd_xyz.count( parent_atom ) ) {
-						utility_exit_with_message("In second ICOOR atom in topology file - parent atom not found, from file " + filename );
-					}
-					rsd_xyz[ child_atom ] = Vector( d, 0.0, 0.0 );
-				} else {
-					Vector torsion_xyz;
-					if ( child_atom == torsion_atom ) {
-						if ( rsd_xyz.size() != 2 ) {
-							utility_exit_with_message("Only the third ICOOR atom in a topology file should list itself as its own dihedral atom, from file " + filename );
-						}
-						if ( ! rsd_xyz.count( parent_atom ) || ! rsd_xyz.count( angle_atom ) ) {
-							utility_exit_with_message("In third ICOOR atom in topology file - parent and/or angle atom not found, from file " + filename );
-						}
-						torsion_xyz = Vector( 1.0, 1.0, 0.0 );
-					} else {
-						if ( ! ( rsd_xyz.count( parent_atom ) && rsd_xyz.count( angle_atom ) &&
-								rsd_xyz.count( torsion_atom ) ) ) {
-							utility_exit_with_message("In ICOOR atom line in topology file: " + filename +
-								"; reference atoms must be specified in earlier line.  Missing " +
-								parent_atom + " or " + angle_atom + " or " + torsion_atom);
-						}
-						torsion_xyz = rsd_xyz[ torsion_atom ];
-					}
-
-					kinematics::Stub const stub( rsd_xyz[ parent_atom ], rsd_xyz[ angle_atom ], torsion_xyz );
-					rsd_xyz[ child_atom ] = stub.spherical( phi, theta, d );
-				}
-			}
-
 			// set icoor
 			rsd->set_icoor(child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom );
 
+			icoor_order.push_back( child_atom );
+
 		} // loop over file lines looking for ICOOR_INTERNAL lines
 
-
-		// fill in the rsd-xyz values
-		debug_assert( natoms == rsd->natoms() );
-		if ( natoms == 1 ) {
-			std::string const name( rsd->atom_name( rsd->all_atoms()[1] ) );
-			rsd->set_ideal_xyz( name, Vector(0.0) );
-
-		} else {
-			// now fill in the icoor values -- in principle the rsd itself could be doing this...
-			for ( VD atm: rsd->all_atoms() ) {
-				std::string name( rsd->atom_name( atm ) );
-				strip_whitespace( name );
-				debug_assert( rsd_xyz.count( name ) );
-				rsd->set_ideal_xyz( name, rsd_xyz[ name ] );
-				//rsd->set_xyz( rsd->atom_name(i), atom_tree.xyz( id::AtomID(i,1) ) );
-				//rsd->atom(i).xyz( atom_tree.xyz( id::AtomID(i,1) ) );
-			}
-		}
+		// Now that we have the ICOORs, fill in the default XYZ coordinates.
+		rsd->fill_ideal_xyz_from_icoor();
 
 		// Handle the case of explicitly set main chain atoms
 		if ( ! mainchain_atoms.empty() ) {
@@ -1252,7 +1197,7 @@ read_topology_file(
 			bool is_l_aa = false;
 			bool is_d_aa = false;
 
-			detect_ld_chirality_from_polymer_residue( rsd_xyz, rsd->name3(), is_d_aa, is_l_aa );
+			detect_ld_chirality_from_polymer_residue( *rsd, is_d_aa, is_l_aa );
 
 			tr.Trace << "Detected chirality " << ( is_l_aa ? "L" : ( is_d_aa ? "D" : "ACHIRAL" ) ) << " from params " << std::endl;
 
@@ -1282,7 +1227,7 @@ read_topology_file(
 			//for ( auto const & xyz_elem : rsd_xyz ) {
 			// std::cout << "|" << xyz_elem.first << "|" << std::endl;
 			//}
-			detect_ld_chirality_from_polymer_residue( rsd_xyz, rsd->name3(), is_d_na, is_l_na );
+			detect_ld_chirality_from_polymer_residue( *rsd, is_d_na, is_l_na );
 			if ( is_l_na ) rsd->add_property( "L_RNA" );
 			if ( is_d_na ) rsd->add_property( "D_RNA" );
 			if ( !is_l_na && !is_d_na ) {
@@ -1321,38 +1266,103 @@ write_topology_file(
 
 	std::ofstream out( filename.c_str() );
 
-	out << "#rosetta residue topology file \n";
-	out << "#version ??? \n";
-	out << "#This automatically generated file is not really formatted, but should work, excpet that enums for connection types \n# are given in numbers and not strings. \n";
+	out << "#rosetta residue topology file\n";
+	out << "#version ???\n";
+	out << "#This automatically generated file is not really formatted well, and is missing some entries, but should work.\n";
 
 	// first write out all the general tags
-	out << "NAME " << rsd.name() << " \n";
-	out << "IO_STRING " << rsd.name3() << " " << rsd.name1() << " \n";
-	if ( rsd.is_polymer() ) { out << "TYPE POLYMER \n"; }
-	else if ( rsd.is_ligand() ) { out << "TYPE LIGAND \n"; }
-	else if ( rsd.is_surface() ) { out << "TYPE SURFACE \n"; }
-	out << "AA " << rsd.aa() << " \n";
+	out << "NAME " << rsd.name() << "\n";
+
+	utility::vector1< std::string > const & variants = rsd.variant_types();
+	if ( ! variants.empty() ) {
+		out << "VARIANT";
+		for ( std::string const & variant: variants ) {
+			out << " " << variant;
+		}
+		out << "\n";
+	}
+
+	out << "IO_STRING " << rsd.name3() << " " << rsd.name1() << "\n";
+	if ( rsd.is_polymer() ) { out << "TYPE POLYMER\n"; }
+	else if ( rsd.is_ligand() ) { out << "TYPE LIGAND\n"; }
+	out << "AA " << rsd.aa() << "\n";
+	if ( rsd.backbone_aa() != rsd.aa() ) {
+		out << "BACKBONE_AA " << rsd.backbone_aa() << "\n";
+	}
+	if ( rsd.base_analogue() != rsd.aa() ) {
+		out << "BASE_ANALOGUE " << rsd.base_analogue() << "\n";
+	}
+	if ( rsd.na_analogue() != rsd.aa() ) {
+		out << "NA_ANALOGUE " << rsd.na_analogue() << "\n";
+	}
+
+	if ( rsd.interchangeability_group() != rsd.name3() ) {
+		out << "INTERCHANGEABILITY_GROUP " << rsd.interchangeability_group() << "\n";
+	}
 
 	// then write out the atoms
 	for ( Size i=1; i <= rsd.natoms(); ++i ) {
-
 		std::string atom_out = "ATOM " + rsd.atom_name( i ) + " " + rsd.atom_type( i ).name() + "  ";
 		atom_out = atom_out + rsd.mm_atom_type(i).name();
-		out << atom_out << " " << rsd.atom_charge(i) << " \n";
-
+		out << atom_out << " " << rsd.atom_charge(i) << "\n";
+		// NOTE: Unless we're using them (in which case they're the regular charges), we don't ever save the parse charges, so we can't write them out.
 	} // atom write out
 
-	if ( rsd.is_polymer() ) {
-		if ( !rsd.is_lower_terminus() ) { out << "LOWER_CONNECT " << rsd.atom_name( rsd.lower_connect().atomno() ) << " \n"; }
-		if ( !rsd.is_upper_terminus() ) { out << "UPPER_CONNECT " << rsd.atom_name( rsd.upper_connect().atomno() ) << " \n";}
+	// Atom aliases
+	for ( auto const & entry: rsd.atom_aliases() ) {
+		if ( entry.second.size() != 4 || entry.first.size() != 4 ) {
+			// The reader has issues if things are padded to four characters. (And besides, the atom alias list typically has the stripped versions too.
+			tr.Debug << "Ignoring alias of `" << entry.first << "` to `" << entry.second << "` as they're not both four characters." << std::endl;
+			continue;
+		}
+		out << "ATOM_ALIAS " << entry.second << " " << entry.first << "\n";
+	}
+
+	// Output connections
+	for ( core::Size ii(1); ii <= rsd.n_possible_residue_connections(); ++ii ) {
+		if ( ii == rsd.lower_connect_id() ) {
+			out << "LOWER_CONNECT " << rsd.atom_name( rsd.lower_connect().atomno() ) << "\n";
+		} else if ( ii == rsd.upper_connect_id() ) {
+			out << "UPPER_CONNECT " << rsd.atom_name( rsd.upper_connect().atomno() ) << "\n";
+		} else {
+			out << "CONNECT " << rsd.atom_name( rsd.residue_connection( ii ).atomno() ) << "\n";
+		}
 	}
 
 	// then all the bonds
 	for ( Size i=1; i <= rsd.natoms(); ++i ) {
 		for ( Size const atom_index : rsd.nbrs(i) ) {// bond_this_atom
-			if ( atom_index > i ) {  //don't write out bonds more than once
-				out << "BOND  " << rsd.atom_name( i ) << "    " << rsd.atom_name( atom_index ) << " \n";
+			if ( i > atom_index ) continue; // //don't write out bonds more than once
+			if ( rsd.bond_type(i, atom_index) == SingleBond ) {
+				out << "BOND  " << rsd.atom_name( i ) << "    " << rsd.atom_name( atom_index ) << "\n";
+			} else {
+				out << "BOND_TYPE  " << rsd.atom_name( i ) << "    " << rsd.atom_name( atom_index ) << "   ";
+				BondName type = rsd.bond_type(i, atom_index);
+				switch ( type ) {
+				case SingleBond:
+				case DoubleBond:
+				case TripleBond :
+					out << type << "\n";
+					break;
+				case AromaticBond :
+					out << "DELOCALIZED\n";
+					break;
+				case OrbitalBond :
+					out << "ORBITAL\n";
+					break;
+				case PseudoBond :
+					out << "PSEUDO\n";
+					break;
+				default :
+					out << "UNKNOWN\n";
+					break;
+				}
+				// TODO: Add RING annotations?
 			}
+		}
+		for ( Size const cb_atom_index : rsd.cut_bond_neighbor(i) ) {
+			if ( i > cb_atom_index ) continue; // //don't write out bonds more than once
+			out << "CUT_BOND " << rsd.atom_name( i ) << "    " << rsd.atom_name( cb_atom_index ) << "\n";
 		}
 	} // bond write out
 
@@ -1364,7 +1374,7 @@ write_topology_file(
 		for ( core::Size & at_it : atoms_this_chi ) {
 			out << "   " << rsd.atom_name( at_it );
 		}
-		out << " \n";
+		out << "\n";
 	} //chi write out
 
 	// and now the proton chis
@@ -1380,10 +1390,39 @@ write_topology_file(
 			for ( Size j = 1; j <= pchi_samples.size(); j++ ) { out << " " << pchi_samples[j]; }
 			out << " EXTRA " << pchi_extra.size();
 			for ( Size j = 1; j <= pchi_extra.size(); j++ ) { out << " " << pchi_extra[j]; }
-			out << " \n";
+			out << "\n";
 
 		}
 	}//proton chi write out
+
+	for ( Size ii=1; ii <= rsd.nchi(); ++ii ) {
+		for ( auto const & entry: rsd.chi_rotamers(ii) ) {
+			out << "CHI_ROTAMERS " << ii << " " << entry.first << " " << entry.second << "\n";
+		}
+	}
+
+	// The rings
+	for ( Size ii = 1; ii <= rsd.n_rings(); ++ii ) {
+		out << "ADD_RING " << ii;
+		if ( rsd.ring_saturation_type(ii) == rings::AROMATIC ) {
+			out << " AROMATIC";
+		}
+		for ( core::Size atm: rsd.ring_atoms(ii) ) {
+			out << " " << rsd.atom_name( atm );
+		}
+		out << "\n";
+
+		if ( ! rsd.lowest_ring_conformers()[ii].empty() ) {
+			out << "LOWEST_RING_CONFORMER " << ii << " " << rsd.lowest_ring_conformers()[ii] << "\n";
+		}
+		if ( ! rsd.low_ring_conformers().empty() ) {
+			out << "LOW_RING_CONFORMERS " << ii;
+			for ( std::string const & conf: rsd.low_ring_conformers()[ii] ) {
+				out << " " << conf;
+			}
+			out << "\n";
+		}
+	}
 
 	// Now the nus...
 	for ( Size i = 1, n_nus = rsd.n_nus(); i <= n_nus; ++i ) {
@@ -1392,27 +1431,96 @@ write_topology_file(
 		for ( core::Size & at_it : atoms_for_this_nu ) {
 			out << "   " << rsd.atom_name(at_it);
 		}
-		out << std::endl;
+		out << "\n";
+	}
+
+	// Mainchain atoms
+	if ( ! rsd.mainchain_atoms().empty() ) {
+		out << "MAINCHAIN_ATOMS";
+		for ( Size atm: rsd.mainchain_atoms() ) {
+			out << " " << rsd.atom_name(atm);
+		}
+		out << "\n";
+	}
+
+	// Rotamers
+	if ( rsd.rotamer_library_specification() != nullptr ) {
+		rsd.rotamer_library_specification()->describe( out ); // Will add the newline itself
+	}
+
+	// Charges
+	if ( rsd.net_formal_charge() > 0 ) {
+		out << "NET_FORMAL_CHARGE +" << rsd.net_formal_charge() << "\n";
+	} else if ( rsd.net_formal_charge() < 0 ) {
+		out << "NET_FORMAL_CHARGE " << rsd.net_formal_charge() << "\n";
+	}
+	for ( Size i=1; i <= rsd.natoms(); ++i ) {
+		if ( rsd.formal_charge(i) != 0 ) {
+			out << "CHARGE " << rsd.atom_name( i ) << " FORMAL  " << rsd.formal_charge(i) << "\n";
+		}
 	}
 
 	// now all the properties
-	out << "PROPERTIES";
 	utility::vector1< std::string > const & properties( rsd.properties().get_list_of_properties() );
-	Size const n_properties( properties.size() );
-	for ( core::uint i = 1; i <= n_properties; ++i ) {
-		out << ' ' << properties[ i ];
+	if ( ! properties.empty() ) {
+		out << "PROPERTIES";
+		for ( std::string const & prop: properties ) {
+			if ( prop == "POLYMER" || prop == "LIGAND" ) {
+				continue; // These are handled by the TYPE line.
+			}
+			out << ' ' << prop;
+		}
+		out << "\n";
 	}
-	out << " \n";
+	for ( auto const & entry: rsd.properties().numeric_properties() ) {
+		out << "NUMERIC_PROPERTY " << entry.first << " " << entry.second << "\n";
+	}
+	for ( auto const & entry: rsd.properties().string_properties() ) {
+		out << "STRING_PROPERTY " << entry.first << " " << entry.second << "\n";
+	}
 
-	out << "NBR_ATOM " << rsd.atom_name( rsd.nbr_atom() ) << " \n";
-	out << "NBR_RADIUS " << rsd.nbr_radius() << " \n";
+	// Metal binding atoms
+	utility::vector1< std::string > const & metal_binding_atoms = rsd.get_metal_binding_atoms();
+	if ( ! metal_binding_atoms.empty() ) {
+		out << "METAL_BINDING_ATOMS";
+		for ( auto const & atm: metal_binding_atoms ) {
+			out << " " << atm;
+		}
+		out << "\n";
+	}
+	if ( ! rsd.get_disulfide_atom_name().empty() && rsd.get_disulfide_atom_name() != "NONE" ) {
+		out << "DISULFIDE_ATOM_NAME " << rsd.get_disulfide_atom_name() << "\n";
+	}
+
+	if ( rsd.remap_pdb_atom_names() ) {
+		out << "REMAP_PDB_ATOM_NAMES\n";
+	}
+
+	out << "NBR_ATOM " << rsd.atom_name( rsd.nbr_atom() ) << "\n";
+	out << "NBR_RADIUS " << rsd.nbr_radius() << "\n";
 	if ( rsd.force_nbr_atom_orient() ) { out << "ORIENT_ATOM NBR\n"; }
 
-	// Charges
-	for ( Size i=1; i <= rsd.natoms(); ++i ) {
-		if ( rsd.formal_charge(i) != 0 ) {
-			out << "CHARGE " << rsd.atom_name( i ) << " FORMAL  " << rsd.formal_charge(i) << " \n";
+	if ( rsd.has_shadow_atoms() ) {
+		for ( core::Size ii(1); ii <= rsd.natoms(); ++ii ) {
+			if ( rsd.atom_being_shadowed(ii) != 0 ) {
+				out << "VIRTUAL_SHADOW " << rsd.atom_name(ii) << " " << rsd.atom_name( rsd.atom_being_shadowed(ii) ) << "\n";
+			}
 		}
+	}
+
+	if ( rsd.first_sidechain_atom() > 1 && rsd.first_sidechain_atom() <= rsd.natoms() ) {
+		out << "FIRST_SIDECHAIN_ATOM " << rsd.atom_name( rsd.first_sidechain_atom() ) << "\n";
+	} else if ( rsd.first_sidechain_atom() > rsd.natoms() ) {
+		out << "FIRST_SIDECHAIN_ATOM NONE\n";
+	} // Default is all atoms are sidechains (rsd.first_sidechain_atom() == 1)
+
+	if ( ! rsd.get_rama_prepro_map_file_name(false).empty() ) {
+		// We assume that if the true version is set, the false is too.
+		out << "RAMA_PREPRO_FILENAME " << rsd.get_rama_prepro_map_file_name(false) << " " << rsd.get_rama_prepro_map_file_name(true) << "\n";
+	}
+	if ( ! rsd.get_rama_prepro_mainchain_torsion_potential_name(false).empty() && rsd.get_rama_prepro_mainchain_torsion_potential_name(false) != rsd.name()  ) {
+		// We assume that they're set to the same value (as there's no facility in params file for otherwise.)
+		out << "RAMA_PREPRO_RESNAME " << rsd.get_rama_prepro_mainchain_torsion_potential_name(false) << "\n";
 	}
 
 	// actcoord atoms
@@ -1422,32 +1530,51 @@ write_topology_file(
 		for ( core::Size & act_atom : act_atoms ) {
 			out << rsd.atom_name( act_atom ) << " ";
 		}
-		out << "END \n";
+		out << "END\n";
 	}
 
 
 	// last but not least the internal coordinates
-	for ( Size i=1; i <= rsd.natoms(); i++ ) {
+	for ( Size i=1; i <= rsd.natoms(); ++i ) {
 		AtomICoor cur_icoor = rsd.icoor( i );
-		out << "ICOOR_INTERNAL   " << rsd.atom_name( i ) << "  " << degrees( cur_icoor.phi() ) << "  ";
-		out << degrees( cur_icoor.theta() ) << "  " << cur_icoor.d();
-		if ( ( cur_icoor.stub_atom1().atomno() <= rsd.natoms() ) && ( cur_icoor.stub_atom1().atomno() > 0 ) ) {
-			out << "   " << rsd.atom_name( cur_icoor.stub_atom1().atomno() );
-		} else { out << "   " << cur_icoor.stub_atom1().type(); }
-
-		if ( ( cur_icoor.stub_atom2().atomno() <= rsd.natoms()  ) && ( cur_icoor.stub_atom2().atomno() > 0 ) ) {
-			out << "   " << rsd.atom_name( cur_icoor.stub_atom2().atomno() );
-		} else { out << "  "  << cur_icoor.stub_atom2().type(); }
-
-		if ( ( cur_icoor.stub_atom3().atomno() <= rsd.natoms()  ) && ( cur_icoor.stub_atom3().atomno() > 0 ) ) {
-			out << "   " << rsd.atom_name( cur_icoor.stub_atom3().atomno() );
-		} else { out << "  "  << cur_icoor.stub_atom3().type() ; }
-
-		out << " \n";
-
+		out << "ICOOR_INTERNAL   " << rsd.atom_name( i );
+		out << "  " << degrees( cur_icoor.phi() ) << "  " << degrees( cur_icoor.theta() ) << "  " << cur_icoor.d();
+		out << "  " << cur_icoor.stub_atom1().name( rsd );
+		out << "  " << cur_icoor.stub_atom2().name( rsd );
+		out << "  " << cur_icoor.stub_atom3().name( rsd );
+		out << "\n";
 	} //atom icoor write out
 
-	// TODO: now write out icoors for connections (polymer, other)
+	// Connection ICOOR
+	for ( Size ii=1; ii <= rsd.n_possible_residue_connections(); ++ii ) {
+		ResidueConnection const & conn( rsd.residue_connection(ii) );
+		AtomICoor const & cur_icoor( conn.icoor() );
+
+		out << "ICOOR_INTERNAL   ";
+		// There's not an easy way to print this info directly?
+		if ( ii == rsd.lower_connect_id() ) {
+			out << "LOWER";
+		} else if ( ii == rsd.upper_connect_id() ) {
+			out << "UPPER";
+		} else {
+			out << "CONN" << ii;
+		}
+		out << "  " << degrees( cur_icoor.phi() ) << "  " << degrees( cur_icoor.theta() ) << "  " << cur_icoor.d();
+		out << "  " << cur_icoor.stub_atom1().name( rsd );
+		out << "  " << cur_icoor.stub_atom2().name( rsd );
+		out << "  " << cur_icoor.stub_atom3().name( rsd );
+		out << "\n";
+	}
+
+	// ADDUCTS
+	for ( auto const & adduct: rsd.defined_adducts() ) {
+		out << "ADDUCT " << adduct.adduct_name() << " " << adduct.atom_name();
+		out << " " << adduct.atom_type_name() << " " << adduct.mm_atom_type_name();
+		out << " " << adduct.atom_charge();
+		out << " " << adduct.phi() << " " << adduct.theta() << " " << adduct.d();
+		out << " " << adduct.stub_atom1() << " " << adduct.stub_atom2() << " " << adduct.stub_atom3();
+		out << "\n";
+	}
 
 	out.close();
 

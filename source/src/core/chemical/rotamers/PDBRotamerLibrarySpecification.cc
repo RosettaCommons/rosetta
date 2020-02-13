@@ -69,6 +69,11 @@ PDBRotamerLibrarySpecification::clone() const {
 	return utility::pointer::make_shared< PDBRotamerLibrarySpecification >( *this );
 }
 
+void
+PDBRotamerLibrarySpecification::describe( std::ostream & out ) const {
+	out << "ROTAMERS " << library_name() << " " << pdb_rotamers_file_ << "\n";
+}
+
 std::string
 PDBRotamerLibrarySpecification::keyname() const {
 	return library_name();

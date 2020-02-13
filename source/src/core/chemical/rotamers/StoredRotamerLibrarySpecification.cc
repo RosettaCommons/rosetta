@@ -20,7 +20,7 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <numeric/xyzVector.hh>
-
+#include <basic/Tracer.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -40,6 +40,8 @@
 namespace core {
 namespace chemical {
 namespace rotamers {
+
+static basic::Tracer TR( "core.chemical.rotamers.StoredRotamerLibrarySpecification" );
 
 // Creator Functions
 
@@ -87,6 +89,12 @@ StoredRotamerLibrarySpecification::add_rotamers( utility::vector1< std::map< std
 void
 StoredRotamerLibrarySpecification::set_rotamers( utility::vector1< std::map< std::string, core::Vector > > const & confs ) {
 	coordinates_ = confs;
+}
+
+void
+StoredRotamerLibrarySpecification::describe( std::ostream & ) const {
+	TR.Warning << "A StoredRotamerLibrarySpecification cannot be stored in a params-file-like context." << std::endl;
+	TR.Warning << "The details of this rotamer library specification will be lost." << std::endl;
 }
 
 std::string

@@ -97,6 +97,9 @@ public:
 	std::string
 	cache_tag(core::chemical::ResidueType const &) const override;
 
+	void
+	describe( std::ostream & out ) const override;
+
 	static std::string library_name();
 
 	/// @brief Add a backbone torsion index that the rotamer library is dependent on.
@@ -116,6 +119,10 @@ private:
 
 	/// @brief path to the NCAA rotlib
 	std::string ncaa_rotlib_path_;
+
+	/// RM: The amount of data we have to side-encode seems like a lot.
+	/// Much of this stuff seems like something that should be encoded in the library file itself.
+
 	// /// @brief the number of non-hydrogen chi angles in the NCAA rotlib
 	// core::Size ncaa_rotlib_n_rots_;
 	/// @brief the number of rotamer bins for each chi angle in the NCAA rotlib

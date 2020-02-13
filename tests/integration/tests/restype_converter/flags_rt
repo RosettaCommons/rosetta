@@ -1,0 +1,4 @@
+-out:path:all output_rt
+-params_out
+#-out:pdb # Too many minor coordinate changes
+#-sdf_out # Too many minor coordinate changes

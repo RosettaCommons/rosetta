@@ -32,7 +32,10 @@ cd %(workdir)s
 # making script terminate with error after any command that return non zero exit code
 set -e
 
-mkdir output
+mkdir output_fa
+mkdir output_cen
+mkdir output_cenrot
+mkdir output_rt
 
 [ -x %(bin)s/restype_converter.%(binext)s ] || exit 1
 %(bin)s/restype_converter.%(binext)s %(additional_flags)s @flags -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
@@ -46,4 +49,27 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
     > log_cen
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+%(bin)s/restype_converter.%(binext)s %(additional_flags)s @flags_cenrot -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log_cenrot
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+# Test round-triping
+# This is both to check that the output params files are readable, as well as to make sure they reconsititue properly.
+# The auto-capturing of all the output params files is a bit complicated because of the naming of the Glc residue types 
+
+echo "-extra_res_fa " `ls output_fa/*.params` > fa_params_output
+
+%(bin)s/restype_converter.%(binext)s %(additional_flags)s @flags_rt @fa_params_output -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log_rt
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+# The params files should be identical -- use diff to find those which are not.
+# We ignore the pdb and sdf files which are only in one directory
+# And we ignore whitespace changes, as most of the params file is whitespace insensitive. 
+diff -w output_rt/ output_fa/ | grep -v "Only in" | sed "s/^/[`date`] /" > round_trip_issues.txt
 

@@ -79,6 +79,13 @@ static basic::Tracer TR( "core.chemical.ChemicalManager" );
 /// @brief private constructor to guarantee the singleton
 ChemicalManager::ChemicalManager()= default;
 
+/// @brief query residue_type_set by a type
+AtomTypeSetCOP
+ChemicalManager::atom_type_set( TypeSetMode type_set_mode ) {
+	std::string const & standard_name( string_from_type_set_mode( type_set_mode ) );
+	return atom_type_set( standard_name );
+}
+
 /// @details if the tag is not in the map, input it from a database file and add it
 /// to the map for future look-up.
 AtomTypeSetCOP
@@ -269,7 +276,7 @@ ChemicalManager::create_mm_atom_type_set( std::string const & tag ) const
 /// @brief query residue_type_set by a type
 ResidueTypeSetCOP
 ChemicalManager::residue_type_set( TypeSetMode type_set_mode ) {
-	std::string standard_name( string_from_type_set_mode( type_set_mode ) );
+	std::string const & standard_name( string_from_type_set_mode( type_set_mode ) );
 	return residue_type_set( standard_name );
 }
 

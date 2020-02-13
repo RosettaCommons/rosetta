@@ -58,6 +58,7 @@ sources = {
 		"packstat",
 		"relax",
 		"remodel",
+		"restype_converter",
 		"sequence_tolerance",
 		"SymDock",
 		"vip",

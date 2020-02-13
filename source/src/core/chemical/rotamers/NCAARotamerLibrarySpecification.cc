@@ -150,6 +150,35 @@ NCAARotamerLibrarySpecification::cache_tag(core::chemical::ResidueType const & r
 	return ss.str();
 }
 
+void
+NCAARotamerLibrarySpecification::describe( std::ostream & out ) const {
+	// The single line version doesn't really work. We can do a multi-line one instead.
+	out << "NCAA_ROTLIB_PATH " << ncaa_rotlib_path_ << "\n";
+	if ( ! ncaa_rotlib_n_bins_per_rot_.empty() ) {
+		out << "NCAA_ROTLIB_NUM_ROTAMER_BINS " << ncaa_rotlib_n_bins_per_rot_.size();
+		for ( Size nbin: ncaa_rotlib_n_bins_per_rot_ ) {
+			out << " " << nbin;
+		}
+		out << "\n";
+	}
+	if ( semirotameric_ncaa_rotlib_ ) {
+		out << "NCAA_SEMIROTAMERIC\n";
+	}
+	if ( nrchi_symmetric_ ) {
+		out << "NRCHI_SYMMETRIC\n";
+	}
+	if ( nrchi_start_angle_ != 0 ) { // If abscent, will be loaded as zero.
+		out << "NRCHI_START_ANGLE " << nrchi_start_angle_ << "\n";
+	}
+	if ( ! rotamer_bb_torsion_indices_.empty() ) {
+		out << "NCAA_ROTLIB_BB_TORSIONS";
+		for ( Size bbtors: rotamer_bb_torsion_indices_ ) {
+			out << " " << bbtors;
+		}
+		out << "\n";
+	}
+}
+
 } //namespace rotamers
 } //namespace chemical
 } //namespace core

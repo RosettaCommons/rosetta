@@ -27,6 +27,7 @@
 
 // C++ headers
 #include <istream>
+#include <iosfwd>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -79,6 +80,12 @@ public:
 	virtual
 	std::string
 	cache_tag(core::chemical::ResidueType const &) const { return ""; }
+
+	/// @brief Write a params-file-like description of this RotamerLibrarySpecification to the given output stream.
+	/// Can be multi-line, will be ended with a newline.
+	virtual
+	void
+	describe( std::ostream & out ) const = 0;
 
 #ifdef    SERIALIZATION
 public:

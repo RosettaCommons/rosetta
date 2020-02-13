@@ -557,6 +557,20 @@ unset_acceptor_ether_oxygens( AtomTypeSet & atom_type_set ) {
 
 void
 detect_ld_chirality_from_polymer_residue(
+	core::chemical::MutableResidueType const & restype,
+	bool & is_d_aa,
+	bool & is_l_aa
+) {
+	std::map< std::string, Vector > xyz;
+	for ( VD atm: restype.all_atoms() ) {
+		xyz[ restype.atom_name(atm) ] = restype.atom(atm).ideal_xyz();
+		xyz[ utility::stripped_whitespace( restype.atom_name(atm) ) ] = restype.atom(atm).ideal_xyz();
+	}
+	detect_ld_chirality_from_polymer_residue( xyz, restype.name(), is_d_aa, is_l_aa );
+}
+
+void
+detect_ld_chirality_from_polymer_residue(
 	std::map< std::string, Vector > const & xyz,
 	std::string const & name3,
 	bool & is_d_aa,

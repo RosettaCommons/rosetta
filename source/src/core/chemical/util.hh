@@ -96,6 +96,12 @@ void enlarge_h_lj_wdepth( AtomTypeSet & atom_type_set );
 void unset_acceptor_ether_oxygens( AtomTypeSet & atom_type_set );
 
 void detect_ld_chirality_from_polymer_residue(
+	core::chemical::MutableResidueType const & restype,
+	bool & is_d_aa,
+	bool & is_l_aa
+);
+
+void detect_ld_chirality_from_polymer_residue(
 	std::map< std::string, Vector > const & xyz,
 	std::string const & name3,
 	bool & is_d_aa,

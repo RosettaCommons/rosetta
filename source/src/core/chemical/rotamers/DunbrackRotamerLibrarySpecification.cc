@@ -80,6 +80,12 @@ DunbrackRotamerLibrarySpecification::aa( AA aa_setting ) {
 	}
 	aa_ = aa_setting;
 }
+
+void
+DunbrackRotamerLibrarySpecification::describe( std::ostream & out ) const {
+	out << "ROTAMERS " << library_name() << " " << name_from_aa( aa_ ) << "\n";
+}
+
 std::string
 DunbrackRotamerLibrarySpecification::keyname() const {
 	return library_name();
