@@ -106,12 +106,17 @@ CR  CR -  Nad X    wc  0.000 -0.226  0.000  0.093 offset -0.275 2 4 #ad hoc; Rin
 X   CR -  NG2 X    wc  0.000  0.187  0.000  0.116 offset -0.600 2 4
 X   CD -  NG2 X    wc  0.000  0.187  0.000  0.116 offset -0.600 2 4
 X   NG2 - NG2 X    wc  0.000  0.202  0.000  0.103 offset -0.267 2 4
-HC  CSQ @ CSQ HC   wc  0.000  0.000  0.100  0.000 offset -0.092 3   # make sure HC doesn't get affected by below
-X   CSQ @ CSQ HC   wc  0.000  0.000  0.100  0.000 offset -0.092 3   # make sure HC doesn't get affected by below
-X   CSQ @ CSQ X    wc  0.000 -20.00  0.000  0.000 offset -0.00  2   # 3/4-membered rings
-HC  CSQ - CSQ HC   wc  0.000  0.000  0.100  0.000 offset -0.092 3   # make sure HC doesn't get affected by below
-X   CSQ - CSQ HC   wc  0.000  0.000  0.100  0.000 offset -0.092 3   # make sure HC doesn't get affected by below
-X   CSQ - CSQ X    wc  0.000 -20.00  0.000  0.000 offset -0.00  2   # 3/4-membered rings
+# The followings are for 3/4-membered rings. GZ: fit to torsion distribution, may need optimization
+HC  CSQ @ CSQ HC   wc  0.000  -0.219  -0.453  0.000 offset -0.092 3   # make sure HC doesn't get affected by below
+X   CSQ @ CSQ HC   wc  0.173  0.000  -0.473  0.000 offset -0.092 3   # make sure HC doesn't get affected by below
+X   CSQ @ CSQ X    wc  0.122 0.028  -0.468  0.000 offset -0.00  2   #
+HC  CSQ - CSQ CSQ  wc  1.150  1.244  -0.537  -0.198 offset -0.00 1 2 3 4 # 
+HC  CSQ - CSQ HC   wc  0.000  -0.219  -0.453  0.000 offset -0.092 3   # make sure HC doesn't get affected by below
+X   CSQ - CSQ HC   wc  0.173  0.000  -0.473  0.000 offset -0.092 3   # make sure HC doesn't get affected by below
+X   CSQ ~ CSQ CSQ  wc  0.260  0.694  -0.553  0.014 offset -0.092 1 2 3 4 # 
+X   CSQ - CSQ X    wc  0.122 0.028  -0.468  0.000 offset -0.00  2   # 3/4-membered rings
+
+
 
 #NOTE:
 # functional form: k*cos(nx), n=1,2,3

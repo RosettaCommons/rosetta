@@ -35,6 +35,9 @@ def report_raw_torsions(molecule, outfile):
         #print molecule.atms[i1],molecule.atms[i2]
     
         content.append("%6s %6s %6s %6s %2d %.2f \n"%(at0, at1, at2, at3, bt, t))
+    dirname = os.path.dirname(outfile)
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
     with open(outfile,'w') as output:
         output.writelines(content)
     print("Saved: %s"%outfile)

@@ -475,10 +475,26 @@ def is_colinear(crd1, crd2, crd3, eps=1.0e-5):
         return True
     return False
 
+def validate_order(nodes, parents):
+    new_nodes = []
+    cur_parent=-999
+    children_nodes = []
+    for i in nodes:
+        if cur_parent != parents[i]:
+            new_nodes.extend( np.sort(children_nodes) )
+            children_nodes = [i]
+            cur_parent = parents[i]
+        else:
+            children_nodes.append(i)
+    new_nodes.extend( np.sort(children_nodes) )
+
+    return new_nodes
+
 # Scipy-version
 def define_icoord(mol):
     '''AtomTree setup using scipy graph construct'''
     nodes,parents = scipy.sparse.csgraph.breadth_first_order(mol.tree, mol.nbratom, directed=False)
+    nodes = validate_order(nodes, parents)
     first_children = np.zeros_like(parents)
     mol.ATorder = nodes
     colinear_child = -9999

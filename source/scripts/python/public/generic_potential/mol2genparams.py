@@ -86,7 +86,9 @@ def run_mol2_tar_gz(mol2file,option):
             fobj = intar.extractfile(member)
             if fobj is None:
                 continue
-            print(name, member)
+            if not name.endswith(".mol2"):
+                print("Warning: skipping %s due to non-mol2 extension."%os.path.basename(name))
+                continue
             
             if option.opt.prefix == None:
                 prefix = os.path.basename(name).split(".")[0]
@@ -120,7 +122,7 @@ def run_mol2_tar_gz(mol2file,option):
                 molecule.report_grpdeffile('%s.grpdef'%prefix)
             
             if option.opt.write_raw_torsion:
-                torsion_outfn = os.path.join(outdir, '%s.torsion'%prefix)
+                torsion_outfn = os.path.join(outdir, 'torsions', '%s.torsion'%prefix)
                 report_raw_torsions( molecule, torsion_outfn )
 
 

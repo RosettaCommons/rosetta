@@ -24,7 +24,7 @@ class OptionClass:
         self.resname_counter = 0
         
         # chi angle control
-        self.opt.report_puckering_chi = True
+        self.opt.report_puckering_chi = False
         self.opt.report_Hapol_chi = False
         self.opt.report_nbonded_chi = False
         self.opt.report_amide_chi = False
