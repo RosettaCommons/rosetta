@@ -52,9 +52,9 @@ if not os.path.exists( logfile ):
     raise ValueError( "Logfile `" + logfile + "` does not exist, but should." )
 with open( logfile ) as f:
     logfile_contents = f.readlines()
-    if len( ''.join( l.strip() for l in logfile_contents[:10] ):
+    if len( ''.join( l.strip() for l in logfile_contents[:10] ) ) == 0:
         #Empty, or at least nothing in the first 10 lines ... problem
-    raise ValueError( "Logfile `" + logfile + "` is empty, but it shouldn't be." )
+        raise ValueError( "Logfile `" + logfile + "` is empty, but it shouldn't be." )
 
 # read relevant data:
 rmsd_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $3} }'" ) ).split() ]
