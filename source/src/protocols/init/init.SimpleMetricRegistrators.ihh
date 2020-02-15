@@ -44,6 +44,7 @@ static SimpleMetricRegistrator< core::simple_metrics::metrics::SequenceSimilarit
 static SimpleMetricRegistrator< core::simple_metrics::metrics::TimingProfileMetricCreator          > reg_TimingProfileMetricCreator;
 static SimpleMetricRegistrator< core::simple_metrics::metrics::TotalEnergyMetricCreator      > reg_TotalEnergyMetricCreator;
 
+
 /////////// Testing  /////////////
 static SimpleMetricRegistrator< core::simple_metrics::TestRealMetricCreator  > reg_TestRealMetricCreator;
 static SimpleMetricRegistrator< core::simple_metrics::TestStringMetricCreator  > reg_TestStringMetricCreator;
@@ -54,6 +55,7 @@ static SimpleMetricRegistrator< core::simple_metrics::TestCompositeStringMetricC
 static SimpleMetricRegistrator< core::simple_metrics::TestPerResidueRealMetricCreator  > reg_TestPerResidueRealMetricCreator;
 static SimpleMetricRegistrator< core::simple_metrics::TestPerResidueStringMetricCreator  > reg_TestPerResidueStringMetricCreator;
 
+
 /////////// Composite   /////////////
 
 static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::CompositeEnergyMetricCreator  > reg_CompositeEnergyMetricCreator;
@@ -63,6 +65,10 @@ static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::Electro
 static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::ProtocolSettingsMetricCreator  > reg_ProtocolSettingsMetricCreator;
 
 /////////// Per Residue ////////////
+static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::HbondMetricCreator > reg_HbondMetricCreator;
+
+static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::WaterMediatedHbondMetricCreator > reg_WaterMediatedHbondMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueClashMetricCreator > reg_PerResidueClashMetricCreator;
 
 static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::PerResidueDensityFitMetricCreator > reg_PerResidueDensityFitMetricCreator;

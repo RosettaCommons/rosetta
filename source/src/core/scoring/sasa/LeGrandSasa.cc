@@ -484,6 +484,9 @@ LeGrandSasa::calc_atom_masks(
 			if ( ! atom_subset[ jji_atomid ] ) continue; // jk skip this atom if not part of the subset
 
 			Atom const & jja_atom( jrsd.atom( jja ) );
+
+			if ( jrsd.atom_type(jja).is_virtual() ) continue; //Skip virt atoms.  This was done in params - but its easier to see in code.
+
 			Vector const & jja_atom_xyz = jja_atom.xyz();
 			Real const jja_atom_radius = radii[ jja_atom.type() ] + probe_radius;
 

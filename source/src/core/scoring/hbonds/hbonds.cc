@@ -47,8 +47,11 @@
 // Hydrogen bonding for membrane proteins - using membrane framework
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueType.hh>
 
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/hydrate.OptionKeys.gen.hh>
@@ -58,7 +61,7 @@
 
 //Standard I/O
 //#include <stdio.h>
-
+#include <map>
 
 //#include <core/scoring/Energies.hh>
 
@@ -69,6 +72,7 @@ using namespace ObjexxFCL;
 //pba
 using namespace basic::options;
 using namespace OptionKeys;
+using utility::to_string;
 
 namespace core {
 namespace scoring {
@@ -94,6 +98,80 @@ residue_near_water(
 		}
 	}
 	return false;
+}
+
+///@author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+core::Size
+next_hb_res(HBond const & c_hb, core::Size const res) {
+	if ( c_hb.don_res() == res ) {
+		return c_hb.acc_res();
+	} else {
+		return c_hb.don_res();
+	}
+}
+
+///@brief Recursive function to find all unique HBond paths involving bridge_residues and ending with
+///  a residue that is not in our bridged_residue list.
+///@author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+void
+find_hb_paths(
+	HBondSet const & local_hb_set,
+	utility::vector1< core::Size > const & bridge_residues,
+	std::map<std::string, core::Size> & paths,
+	core::Size const current_res,
+	core::Size const max_depth /*1*/,
+	std::string const current_path /*""*/,
+	core::Size const current_depth /*0*/,
+	HBondCOP prev_hb /*nullptr*/) {
+
+	utility::vector1< HBondCOP> const & hbs = local_hb_set.residue_hbonds(current_res);
+
+	if ( current_depth > max_depth ) return;
+
+	//tr << "Current_Depth: " << current_depth << std::endl;
+	if ( hbs.size() > 0 ) {
+		for ( HBondCOP local_hb: hbs ) {
+			core::Size next_res = next_hb_res(*local_hb, current_res);
+
+			//Do not continue if this hb is the same hb as what got us here.
+			if ( prev_hb ) {
+				if ( *prev_hb == *local_hb ) continue;
+			}
+
+			if ( current_depth == 0 ) {
+				if ( bridge_residues.contains(next_res) ) {
+					std::string const current_p = to_string(current_res)+"-"+to_string(next_res);
+					core::Size const new_depth = current_depth+1;
+					find_hb_paths(local_hb_set, bridge_residues, paths, next_res, max_depth, current_p, new_depth, local_hb);
+				} else {
+					continue;
+				}
+			} else {
+
+				//Reached max depth or next residue is not a water
+				std::string const current_p = current_path+"-"+to_string(next_res);
+				//tr << "Water: " << (bridge_residues.contains(next_res)) << std::endl;
+				if ( ((current_depth == max_depth) && (!bridge_residues.contains(next_res))) || (! bridge_residues.contains(next_res)) ) {
+
+					if ( paths.count(current_p) ) {
+						paths[current_p] += 1;
+					} else {
+						paths[current_p] = 1;
+					}
+					//tr << "End of line" << std::endl;
+
+					continue;
+				} else if ( bridge_residues.contains(next_res) ) {
+					core::Size const new_depth = current_depth + 1;
+					find_hb_paths(local_hb_set, bridge_residues, paths, next_res, max_depth, current_p, new_depth, local_hb);
+				} else {
+					continue;
+				}
+			}
+		}
+	} else {
+		return;
+	}
 }
 
 

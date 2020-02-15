@@ -7,20 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file core/simple_metrics/per_residue_metrics/PerResidueSasaMetric.hh
-/// @brief A per-residue metric that will calculate SASA for each residue given in a selector.
+/// @file core/simple_metrics/per_residue_metrics/HbondMetric.hh
+/// @brief A metric to report the total h-bonds of a residue, or from a set of residues to another set of residues.  Use the SummaryMetric to get total hbonds of a selection or between selections. See the WaterMediatedBridgedHBondMetric for water-mediated h-bonds.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
-/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added support for polar or hydrophobic SASA.
 
-#ifndef INCLUDED_core_simple_metrics_per_residue_metrics_PerResidueSasaMetric_HH
-#define INCLUDED_core_simple_metrics_per_residue_metrics_PerResidueSasaMetric_HH
+#ifndef INCLUDED_core_simple_metrics_per_residue_metrics_HbondMetric_HH
+#define INCLUDED_core_simple_metrics_per_residue_metrics_HbondMetric_HH
 
-#include <core/simple_metrics/per_residue_metrics/PerResidueSasaMetric.fwd.hh>
+#include <core/simple_metrics/per_residue_metrics/HbondMetric.fwd.hh>
 #include <core/simple_metrics/PerResidueRealMetric.hh>
 
 // Core headers
 #include <core/types.hh>
-#include <core/scoring/sasa/SasaMethod.hh>
+#include <core/scoring/hbonds/HBondSet.fwd.hh>
 
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -28,13 +27,23 @@
 // C++ headers
 #include <map>
 
+#ifdef    SERIALIZATION
+// Cereal headers
+#include <cereal/types/polymorphic.fwd.hpp>
+#endif // SERIALIZATION
+
 namespace core {
 namespace simple_metrics {
 namespace per_residue_metrics {
 
-///@brief A per-residue metric that will calculate SASA for each residue given in a selector.
-///@details Virtual atoms are skipped completely.
-class PerResidueSasaMetric : public core::simple_metrics::PerResidueRealMetric{
+///@brief A metric to report the total h-bonds residues from a selection to all [OTHER] residues, or from a set of residues to another set of residues.  If No selection is given, will report ALL vs ALL.
+///
+///Tips:
+///  Use the SummaryMetric to get total hbonds of a selection or total number of residues having some number of hbonds. . See the WaterMediatedBridgedHBondMetric for water-mediated h-bonds.
+///
+///  By default does not report self-self hbonds
+///
+class HbondMetric : public core::simple_metrics::PerResidueRealMetric{
 
 public:
 
@@ -43,17 +52,16 @@ public:
 	/////////////////////
 
 	/// @brief Default constructor
-	PerResidueSasaMetric() = default;
-
-	/// @brief Mode constructor.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	PerResidueSasaMetric( core::scoring::sasa::SasaMethodHPMode const mode );
+	HbondMetric();
 
 	/// @brief Copy constructor (not needed unless you need deep copies)
-	PerResidueSasaMetric( PerResidueSasaMetric const & ) = default;
+	HbondMetric( HbondMetric const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	~PerResidueSasaMetric() override;
+	~HbondMetric() override;
+
+
+public:
 
 	/////////////////////
 	/// Metric Methods ///
@@ -86,6 +94,23 @@ public:
 
 public:
 
+	///@brief Set to include hbonds as so:
+	///  resi - resi
+	/// Default false.
+	///
+	/// Will only find these if selector1 and selector2 contain the same residue.
+	void
+	set_include_self( bool include_self);
+
+	///@brief Optionally set a second residue selector to get bridged hbonds between
+	///  bothselections.
+	void
+	set_residue_selector2( core::select::residue_selector::ResidueSelectorCOP selector);
+
+
+
+public:
+
 	///@brief Name of the class
 	std::string
 	name() const override;
@@ -114,38 +139,29 @@ public:
 	core::simple_metrics::SimpleMetricOP
 	clone() const override;
 
-public:
-
-	/// @brief Set the SASA mode (all SASA, polar only, hydrophobic only, etc.).
-	/// @note The enum class is defined in core/simple_metrics/metrics/SasaMetric.hh.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-	void set_mode( core::scoring::sasa::SasaMethodHPMode const mode_in );
-
-	/// @brief Set the SASA mode (all SASA, polar only, hydrophobic only, etc.).
-	/// @note The enum class is defined in core/simple_metrics/metrics/SasaMetric.hh.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-	void set_mode( std::string const & mode_in );
-
-	/// @brief Get the SASA mode (all SASA, polar only, hydrophobic only, etc.).
-	/// @note The enum class is defined in core/simple_metrics/metrics/SasaMetric.hh.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-	inline core::scoring::sasa::SasaMethodHPMode mode() const { return mode_; }
-
 private:
 
-	/// @brief The SASA mode (all SASA, polar only, hydrophobic only, etc.).
-	/// @note The enum class is defined in core/simple_metrics/metrics/SasaMetric.hh.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-	core::scoring::sasa::SasaMethodHPMode mode_ = core::scoring::sasa::SasaMethodHPMode::ALL_SASA;
+	bool include_self_;
+	core::select::residue_selector::ResidueSelectorCOP selector_two_ = nullptr;
+
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
 };
 
-} //core
-} //simple_metrics
 } //per_residue_metrics
+} //simple_metrics
+} //core
 
+#ifdef    SERIALIZATION
+CEREAL_FORCE_DYNAMIC_INIT( core_simple_metrics_per_residue_metrics_HbondMetric )
+#endif // SERIALIZATION
 
-
-#endif //core_simple_metrics_per_residue_metrics_PerResidueSasaMetric_HH
+#endif //core_simple_metrics_per_residue_metrics_HbondMetric_HH
 
 
 

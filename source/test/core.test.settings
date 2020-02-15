@@ -643,7 +643,9 @@ sources = {
 		"SequenceMotifUtilTests",
 	],
 	"simple_metrics" : [
+		"HbondMetricTests",
 		"SimpleMetricTests",
+		"WaterMediatedHbondMetricTests",
 	],
 	"simple_metrics/metrics" : [
 		"SelectedResidueCountMetricTests",
@@ -1362,6 +1364,7 @@ testinputfiles = [
 	"sequence/test.grishin_aln",
 	"simple_metrics/2r0l_1_1.pdb",
 	"simple_metrics/two_glycans.pdb",
+	"simple_metrics/2cl2_opt_waters2.pdb",
 	"simple_metrics/metrics/testpose.pdb",
 	"util/2c9v_stripped.pdb"
 ]

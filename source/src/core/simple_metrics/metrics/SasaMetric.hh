@@ -34,6 +34,7 @@ namespace metrics {
 
 /// @brief A Metric to cacluate overall sasa of a pose.
 /// @details Use the Apply method to calculate and add the metric to the pose score to be written
+///  Virtual atoms are skipped completely.
 class SasaMetric : public core::simple_metrics::RealMetric{
 
 public:

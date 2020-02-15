@@ -149,7 +149,7 @@ SasaMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
 		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
-		"A metric for measuring SASA and adding it to the resulting score file.  Modified 19 Aug. 2019 by Vikram K. Mulligan to add options for polar or hydrophobic SASA.", attlist);
+		"A metric for measuring SASA and adding it to the resulting score file. Virtual atoms are skipped completely. Modified 19 Aug. 2019 by Vikram K. Mulligan to add options for polar or hydrophobic SASA.", attlist);
 }
 
 void

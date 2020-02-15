@@ -105,7 +105,7 @@ utility::vector1< core::id::AtomID > get_reference_atoms( uint const named_torsi
 /// @brief  Get the main chain or branch TorsionID defined by these four AtomIDs.
 core::id::TorsionID get_non_NU_TorsionID_from_AtomIDs(
 	Conformation const & conf,
-	utility::vector1< core::id::AtomID > const & atoms );
+	utility::vector1< core::id::AtomID > const & atoms);
 
 /// @brief  Get a list of the TorsionIDs of all glycosidic torsions for the residue at this position.
 utility::vector1< core::id::TorsionID > get_glycosidic_TorsionIDs(

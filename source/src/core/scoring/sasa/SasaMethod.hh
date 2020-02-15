@@ -64,6 +64,8 @@ enum SasaRadii {
 
 
 /// @brief Abstract base class for SasaMethods.  Feel free to edit as needed.
+///  Virt atms are skipped as radii=0
+///
 class SasaMethod : public utility::pointer::ReferenceCount {
 
 

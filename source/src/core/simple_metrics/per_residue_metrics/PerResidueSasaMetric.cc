@@ -105,7 +105,7 @@ PerResidueSasaMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 	core::simple_metrics::xsd_per_residue_real_metric_type_definition_w_attributes(xsd, name_static(),
 		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
-		"A metric for measuring per-residue SASA and adding it to the resulting score file.  Modified 19 Aug. 2019 by Vikram K. Mulligan to add options for polar or hydrophobic SASA.", attlist);
+		"A metric for measuring per-residue SASA and adding it to the resulting score file.  Virtual atoms are skipped completely. Modified 19 Aug. 2019 by Vikram K. Mulligan to add options for polar or hydrophobic SASA.", attlist);
 }
 
 std::map< core::Size, core::Real >

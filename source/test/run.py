@@ -19,7 +19,7 @@ import os, re, subprocess, time, os.path
 from os import path
 from optparse import OptionParser
 
-import json, codecs
+import json, codecs, time
 
 
 #The factor by which to multiply the single test timeout value for a suite
@@ -618,7 +618,7 @@ def main(args):
 
     parser.add_option("-1", "--one",
       default=False, action="store_true",
-      help="Run using the older 'one-by-one' method. \
+      help="DEPRECATED. Run using the older 'one-by-one' method. \
             This will automatically be enabled if you specified a subtest (with a colon) instead of a full suite."
     )
 
@@ -707,6 +707,11 @@ def main(args):
 
     options.test_list = args
     # Need old style to run colon-containing tests, due to lack of json output
+    if options.one:
+        print("This option is deprecated and will NOT give you a summary for your subtests (and will say all passed when they don't.")
+        print("Please pass in the test name without the -1 option.")
+        time.sleep(10)
+
     if not options.one and any( ':' in t for t in options.test_list ):
         print("A subtest (with a colon) was specified: automatically turning on one-by-one running.")
         options.one = True
@@ -755,7 +760,7 @@ def main(args):
 
     T = Tester()
     T.runUnitTests()
-    if not Options.one : T.printSummary()
+    if not options.one: T.printSummary()
 
     print("Done!")
 

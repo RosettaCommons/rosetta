@@ -205,12 +205,14 @@ sources = {
 		"test_classes",
 	],
 	"core/simple_metrics/per_residue_metrics": [
+		"HbondMetric",
 		"PerResidueClashMetric",
 		"PerResidueDensityFitMetric",
 		"PerResidueEnergyMetric",
 		"PerResidueGlycanLayerMetric",
 		"PerResidueRMSDMetric",
 		"PerResidueSasaMetric",
+		"WaterMediatedHbondMetric",
 	],
 	"core/simple_metrics/metrics": [
 		"DihedralDistanceMetric",

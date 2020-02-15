@@ -43,6 +43,7 @@ namespace sasa {
 
 /// @brief LeGrand SASA approximation method
 ///  Used by SasaCalc but can be used by itself.
+///  Virt atms are skipped as radii=0
 ///
 /// @details LeGrand S, Merz KM. Rapid approximation to molecular surface area via the use of Boolean logic and look-up tables.
 ///   J Comput Chem 1993;14:349-352.

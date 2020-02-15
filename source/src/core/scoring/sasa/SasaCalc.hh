@@ -31,6 +31,8 @@ namespace scoring {
 namespace sasa {
 
 /// @brief Main interface to sasa calculations outside of pose metrics.
+///  Virt atms are skipped as radii=0
+///
 class SasaCalc : public utility::pointer::ReferenceCount {
 
 public:
