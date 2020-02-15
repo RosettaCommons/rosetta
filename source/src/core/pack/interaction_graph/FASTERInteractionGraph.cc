@@ -613,12 +613,12 @@ void FASTERNode::tell_neighbors_to_prep_for_relaxation()
 
 	//decide which neighbors to relax
 	if ( get_num_incident_edges() > num_to_relax ) {
-		int whichBottom;
-		core::PackerEnergy bottom_of_top10;
+		int whichBottom(0); //this is safe, line 621 always resets this on first iteration
+		core::PackerEnergy bottom_of_top10(0.0); //This is safe, line 621 always resets this on the first iteration
 		for ( int ii = 1; ii <= num_to_relax; ++ii ) {
 			top10[ ii - 1 ] = std::abs(perturbed_two_body_energies_[ ii ]);
 			which10[ ii - 1] = ii;
-			if ( ii == 1 || bottom_of_top10 > top10[ ii-1 ] ) {
+			if ( ii == 1 || bottom_of_top10 > top10[ ii-1 ] ) { //if you remove the ii==1 clause fix the variable non-initializations above
 				bottom_of_top10 = top10[ ii-1 ];
 				whichBottom = ii-1;
 			}
@@ -1551,4 +1551,3 @@ EdgeBase* FASTERInteractionGraph::create_new_edge( int index1, int index2)
 } // namespace interaction_graph
 } // namespace pack
 } // namespace core
-
