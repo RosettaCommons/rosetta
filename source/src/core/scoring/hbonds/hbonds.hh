@@ -72,7 +72,7 @@ find_hb_paths(
 	std::map<std::string, core::Size> & paths,
 	core::Size const current_res,
 	core::Size const max_depth=1,
-	std::string const current_path = "",
+	std::string const & current_path = "",
 	core::Size const current_depth=0,
 	core::scoring::hbonds::HBondCOP prev_hb= nullptr);
 

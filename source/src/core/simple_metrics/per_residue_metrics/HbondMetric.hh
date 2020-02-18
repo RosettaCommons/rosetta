@@ -141,7 +141,7 @@ public:
 
 private:
 
-	bool include_self_;
+	bool include_self_ = false;
 	core::select::residue_selector::ResidueSelectorCOP selector_two_ = nullptr;
 
 

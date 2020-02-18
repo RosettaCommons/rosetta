@@ -57,7 +57,6 @@ namespace per_residue_metrics {
 using namespace core::select;
 using namespace core::select::residue_selector;
 using namespace core::scoring::hbonds;
-using utility::to_string;
 
 /////////////////////
 /// Constructors  ///
@@ -211,7 +210,7 @@ WaterMediatedHbondMetric::find_hb_paths(
 	std::map<std::string, core::Size> & paths,
 	core::Size const current_res,
 	core::Size const max_depth /*1*/,
-	std::string const current_path /*""*/,
+	std::string const & current_path /*""*/,
 	core::Size const current_depth /*0*/,
 	HBondCOP prev_hb /*nullptr*/) const {
 

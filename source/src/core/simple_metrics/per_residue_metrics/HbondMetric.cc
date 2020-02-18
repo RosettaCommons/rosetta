@@ -57,7 +57,6 @@ namespace per_residue_metrics {
 using namespace core::select;
 using namespace core::select::residue_selector;
 using namespace core::scoring::hbonds;
-using utility::to_string;
 
 /////////////////////
 /// Constructors  ///
