@@ -16,19 +16,20 @@ IWD: modified to work on Python 2.3
 Author: Ian W. Davis
 """
 
+from __future__ import print_function
 from random import uniform, sample
 
 def argmax(array):
     '''Returns the index of the largest value in the iterable (last on ties).'''
-    from itertools import izip
+    # from itertools import izip # izip deprecated in python 3.x, replace izip with zip
     # cmp(tuple, tuple) compares on first element, breaking ties on second, etc.
-    return max(izip(array, xrange(len(array))))[1]
+    return max(zip(array, range(len(array))))[1]  # izip deprecated in python 3.x, replace izip with zip. xrange replaced with range.
 
 def argmin(array):
     '''Returns the index of the smallest value in the iterable (first on ties).'''
-    from itertools import izip
+    # from itertools import izip # izip deprecated in python 3.x, replace izip with zip
     # cmp(tuple, tuple) compares on first element, breaking ties on second, etc.
-    return min(izip(array, xrange(len(array))))[1]
+    return min(zip(array, range(len(array))))[1] # izip deprecated in python 3.x, replace izip with zip. xrange replaced with range.
 
 def order(x, NoneIsLast = True, decreasing = False):
     """
@@ -197,14 +198,14 @@ rank(x, NoneIsLast= None ,decreasing= False ,ties= max ) [7, 8, 3, 4, 3, 0, 7, 7
 rank(x, NoneIsLast= None ,decreasing= False ,ties= random ) [9, 8, 4, 4, 6, 0, 0, 8, 1]
     """
     x = [5, None, None, 6, 2, 3, 2, 0, 5, 5, 1, None]
-    print "vector ", x
+    print( "vector ", x )
     for NoneIsLast in [True, False, None]:
         for decreasing in [True, False]:
             O = order(x, NoneIsLast=NoneIsLast, decreasing=decreasing)
-            print "order(NoneIsLast=", NoneIsLast, ",decreasing=", decreasing, ")", O
+            print( "order(NoneIsLast=", NoneIsLast, ",decreasing=", decreasing, ")", O )
 
             for ties in ["first", "average", "min", "max", "random"]:
                 R = rank(x, NoneIsLast=NoneIsLast, decreasing=decreasing, ties=ties)
-                print "rank(x, NoneIsLast=", NoneIsLast, ",decreasing=", decreasing, ",ties=", ties, ")", R
-            print
-        print
+                print( "rank(x, NoneIsLast=", NoneIsLast, ",decreasing=", decreasing, ",ties=", ties, ")", R )
+            print()
+        print()

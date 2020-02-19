@@ -232,6 +232,7 @@ def assign_rosetta_types(atoms): #{{{
     def is_saturated(atom):
         return all( bond.order == Bond.SINGLE for bond in atom.bonds if not bond.a2.is_virtual )
     # For each atom, analyze bonding pattern to determine type
+
     for i, a in enumerate(atoms): # i just used for debugging output
         # H, C, O, N have complicated rules.
         # Everything else maps to a single atom type.
@@ -711,7 +712,7 @@ def build_fragment_trees(molfile, options): #{{{
         def tree_dfs(parent):
             # Want to visit non-H children first
             tmp_children = [b.a2 for b in parent.bonds]
-            tmp_children.sort(lambda a,b: cmp(a.is_H, b.is_H))
+            tmp_children.sort( key = lambda a: a.is_H)
             for child in tmp_children:
                 if child.fragment_id != parent.fragment_id: continue
                 if child.parent is not None or child.is_root: continue
@@ -936,7 +937,7 @@ def dijkstra(start, nodes, nbr, dist): #{{{
     return [ shortest[node][DIST] for node in nodes ]
 #}}}
 def write_ligand_kinemage(f, molfile): #{{{
-    if not isinstance(f, file): f = gz_open(f, 'w')
+    if isinstance(f, str): f = gz_open(f, 'w')
     f.write("@text\n")
     f.write("View this file with KiNG or Mage from http://kinemage.biochem.duke.edu\n")
     f.write("@kinemage 1\n")
@@ -1013,7 +1014,7 @@ def write_param_file(f, molfile, name, frag_id, base_confs, max_confs, amino_aci
     conformer_file is either empty, or the name of the file which contains the conformers
     '''
     close_file = False
-    if not isinstance(f, file):
+    if isinstance(f, str):
         f = gz_open(f, 'w')
         close_file = True
     full_name = name # keep the untruncated name so we can use it with the long_names option
@@ -1187,7 +1188,7 @@ def write_ligand_pdb(f, molfile_tmpl, molfile_xyz, resname, ctr=None, chain_id='
     while the actual XYZ coordinates are taken from molfile_xyz.
     resname provides the first two characters of the residue name.
     f may be a file name or file handle.'''
-    if not isinstance(f, file): f = gz_open(f, 'w')
+    if isinstance( f, str): f = gz_open(f, 'w') 
     # If ctr is set, make it an offset vector for recentering ligands
     if ctr is not None:
         curr_ctr = r3.centroid([a for a in molfile_xyz.atoms if not a.is_H])

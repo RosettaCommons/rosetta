@@ -21,16 +21,16 @@ See the official specification at http://tripos.com/data/support/mol2.pdf
 Author: Ian W. Davis
 '''
 
-import sys, math, copy, gzip
-
+from __future__ import print_function
+import os, sys, math, copy, gzip
 
 try: set
 except: from sets import Set as set
 
 #open file normally or with gzip depending on the file extension
 def gz_open(file,mode):
-    extension = file.split(".")[-1]
-    if extension == "gz":
+    filename, extension = os.path.splitext( file )
+    if extension == ".gz":
         return gzip.open(file,mode)
     else:
         return open(file,mode)
@@ -228,7 +228,7 @@ def assign_mdl_charges(line, atoms):
     nentries = int(line[6:9])
     line = line[9:].split()
     if( nentries*2 != len(line) ):
-        print "Warning: Malformed charge line. Ignoring."
+        print( "Warning: Malformed charge line. Ignoring." )
         return
     for i in range(nentries):
         atom = int(line[2*i]);
@@ -458,7 +458,7 @@ def read_tripos_mol2(f, do_find_rings=True):
             elif f[3] == "3": order = Bond.TRIPLE
             elif f[3] == "ar" or f[3] == "am": order = Bond.AROMATIC
             elif f[3] == "du" or f[3] == "un" or f[3] == "nc":
-                print "NOTE: Bond of order '%s' treated as single bond." % f[3]
+                print( "NOTE: Bond of order '%s' treated as single bond." % f[3] )
                 order = Bond.SINGLE
             else:
                 raise ValueError("Unrecognized bond order '%s' on line %i" % ( f[3], line_num[0] ))
