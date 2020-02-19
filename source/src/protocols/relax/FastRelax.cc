@@ -264,11 +264,8 @@ FastRelax::FastRelax(
 {
 	set_to_default();
 	if ( standard_repeats == 0 ) standard_repeats = default_repeats_;
-	if ( explicit_ramp_constraints() && ! ramp_down_constraints() ) {
-		read_script_file( "NO CST RAMPING", standard_repeats );
-	} else {
-		read_script_file( "default", standard_repeats );
-	}
+
+	read_script_file( "default", standard_repeats );
 }
 
 
@@ -281,11 +278,7 @@ FastRelax::FastRelax(
 {
 	set_to_default();
 	if ( standard_repeats == 0 ) standard_repeats = default_repeats_;
-	if ( explicit_ramp_constraints() && ! ramp_down_constraints() ) {
-		read_script_file( "NO CST RAMPING", standard_repeats );
-	} else {
-		read_script_file( "default", standard_repeats );
-	}
+	read_script_file( "default", standard_repeats );
 }
 
 
@@ -696,7 +689,7 @@ FastRelax::inner_loop_ramp_repack_min_command(
 	local_scorefxn->set_weight( scoring::fa_rep, full_weights[ scoring::fa_rep ] * relative_repulsive_weight );
 
 	// The third paramter is the coordinate constraint weight
-	if ( ( constrain_coords() || ramp_down_constraints() ) && (cmd.nparams >= 3) ) {
+	if ( ramp_down_constraints() && (cmd.nparams >= 3) ) {
 		set_constraint_weight( local_scorefxn, full_weights, cmd.param3, pose );
 	}
 
@@ -1031,7 +1024,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		} else if ( cmd.command == "coord_cst_weight" ) {
 			if ( cmd.nparams < 1 ) {
 				utility_exit_with_message( "More parameters expected after : " + cmd.command  );
-			} else if ( constrain_coords() || ramp_down_constraints() ) {
+			} else if ( ramp_down_constraints() ) {
 				set_constraint_weight( local_scorefxn, full_weights, cmd.param1, pose );
 			}
 		} else if ( cmd.command == "ramp_repack_min" ) {

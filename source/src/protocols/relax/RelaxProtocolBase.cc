@@ -286,7 +286,6 @@ void RelaxProtocolBase::set_default_coordinate_settings(){
 	if ( coord_constrain_sidechains_ && ! constrain_coords_ ) {
 		utility_exit_with_message("Option -relax:coord_constrain_sidechains also requires either -relax:constrain_relax_to_start_coords or -relax:constrain_relax_to_native_coords");
 	}
-	explicit_ramp_constraints_ = option[ OptionKeys::relax::ramp_constraints ].user();
 	ramp_down_constraints_ = option[ OptionKeys::relax::ramp_constraints ]();
 	if ( constrain_coords_ ) {
 		if ( !option[ OptionKeys::relax::ramp_constraints ].user() ) {
@@ -362,7 +361,6 @@ void RelaxProtocolBase::coord_constrain_sidechains( bool coord_constrain_sidecha
 }
 void RelaxProtocolBase::constrain_relax_segments( bool constrain_relax_segments ) { constrain_relax_segments_ = constrain_relax_segments; }
 void RelaxProtocolBase::ramp_down_constraints( bool ramp_down_constraints ) {
-	explicit_ramp_constraints_ = true;
 	ramp_down_constraints_ =  ramp_down_constraints;
 }
 

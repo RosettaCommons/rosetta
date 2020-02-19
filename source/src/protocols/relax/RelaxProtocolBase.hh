@@ -78,7 +78,6 @@ public:
 	bool constrain_relax_to_start_coords() const { return constrain_relax_to_start_coords_; }
 	bool constrain_coords() const { return constrain_coords_; }
 	bool coord_constrain_sidechains() const { return coord_constrain_sidechains_; }
-	bool explicit_ramp_constraints() const { return explicit_ramp_constraints_; }
 	bool ramp_down_constraints() const { return ramp_down_constraints_; }
 	bool constrain_relax_segments() const { return constrain_relax_segments_; }
 
@@ -148,7 +147,6 @@ private:
 	bool constrain_relax_to_start_coords_;
 	bool constrain_coords_;
 	bool coord_constrain_sidechains_;
-	bool explicit_ramp_constraints_;
 	bool ramp_down_constraints_;
 	bool constrain_relax_segments_;
 	utility::vector1< std::string > cst_files_;
