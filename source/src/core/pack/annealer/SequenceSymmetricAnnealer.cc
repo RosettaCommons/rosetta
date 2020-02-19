@@ -229,6 +229,10 @@ SequenceSymmetricAnnealer::create_corresponding_mress_for_mres() const {
 	mress_for_key.max_load_factor( 0.1 );
 
 	for ( Size mres = 1; mres <= nmoltenres; ++mres ) {
+		//TR << mres << " " << rotamer_sets()->nrotamers_for_moltenres( mres ) << std::endl;
+
+		if ( rotamer_sets()->nrotamers_for_moltenres( mres ) == 0 ) continue;
+		if ( rotamer_sets()->rotamer_for_moltenres( mres, 1 )->is_virtual_residue() ) continue;
 		Size const resid = rotamer_sets()->moltenres_2_resid( mres );
 		Size const pdb_num = pdb_info_->number( resid );
 
