@@ -224,8 +224,11 @@ core::Size Job::elapsed_time() const {
 		return time(nullptr) - start_time_;
 	}
 	// job completed
-	runtime_assert( end_time_ >= start_time_ );
-	return end_time_ - start_time_;
+	if ( end_time_ < start_time_ ) {
+		return 0; // This can happen due to NTP slew - return a reasonable result, rather than a huge unsigned value.
+	} else {
+		return end_time_ - start_time_;
+	}
 }
 
 std::string Job::timestamp() const {
