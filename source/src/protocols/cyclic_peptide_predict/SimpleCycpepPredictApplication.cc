@@ -4391,15 +4391,32 @@ void
 SimpleCycpepPredictApplication::set_up_terminal_disulfide_variants(
 	core::pose::PoseOP pose
 ) const {
+
+	std::string const errmsg( "Error in SimpleCycpepPredictApplication::set_up_terminal_disulfide_variants():  ");
+
+	core::Size first_polymer_res(0), last_polymer_res(0);
+	for ( core::Size ir(1), irmax(pose->total_residue()); ir<=irmax; ++ir ) {
+		if ( pose->residue_type(ir).is_polymer() ) {
+			last_polymer_res = ir;
+			if ( first_polymer_res == 0 ) first_polymer_res = ir;
+		}
+	}
+	runtime_assert_string_msg( last_polymer_res != 0, errmsg + "No polymeric residue types were found in this pose!  This isn't a macrocycle!" );
+	runtime_assert_string_msg( last_polymer_res > first_polymer_res, errmsg + "Only one polymeric residue type was found in this pose!  This isn't a macrocycle!" );
+
 	protocols::simple_moves::ModifyVariantTypeMover add_disulf_var;
 	add_disulf_var.set_additional_type_to_add("DISULFIDE");
 	core::select::residue_selector::ResidueIndexSelectorOP selector( new core::select::residue_selector::ResidueIndexSelector );
-	selector->append_index( find_first_disulf_res(pose) );
-	selector->append_index( find_last_disulf_res(pose) );
+	core::Size const first_disulf( find_first_disulf_res(pose) ), last_disulf( find_last_disulf_res(pose) );
+	runtime_assert_string_msg( first_disulf != 0 && last_disulf > first_disulf, errmsg + "Indices " + std::to_string(first_disulf) + " and " + std::to_string(last_disulf) + " are invalid for a disulfide bonded pair." );
+	selector->append_index( first_disulf );
+	selector->append_index( last_disulf );
 	add_disulf_var.set_residue_selector(selector);
 	add_disulf_var.apply(*pose);
-	core::pose::add_lower_terminus_type_to_pose_residue( *pose, 1 );
-	core::pose::add_upper_terminus_type_to_pose_residue( *pose, sequence_length() );
+	core::pose::add_lower_terminus_type_to_pose_residue( *pose, first_polymer_res );
+	core::pose::add_upper_terminus_type_to_pose_residue( *pose, last_polymer_res );
+	TR << "Added DISULFIDE variant to residues " << first_disulf << " and " << last_disulf << "." << std::endl;
+	TR << "Added lower and upper terminal variant types to residues " << first_polymer_res << " and " << last_polymer_res << ", respectively." << std::endl;
 }
 
 /// @brief Given a pose, add sidechain conjugation variant types to sidechains involved in making an isopeptide
