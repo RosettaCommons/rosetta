@@ -52,12 +52,13 @@ date > start-time.ignore
 # in this directory too:
 
 TESTPYTHON=`which python3`
-%(python3)s -m venv virtual_env_for_networkx && source virtual_env_for_networkx/bin/activate 
+%(python3)s -m venv virtual_env_for_networkx >> install_log.ignore 2>&1
+source virtual_env_for_networkx/bin/activate >> install_log.ignore 2>&1
 if [ "$TESTPYTHON" -eq `which python3` ] ; then
-    echo "Awful! Environment activation failed."
+    echo "Awful! Environment activation failed." >> install_log.ignore 2>&1
     exit 1
 fi
-`which python3` -m pip install networkx mrcfile
+`which python3` -m pip install networkx mrcfile >> install_log.ignore 2>&1
 
 `which python3` %(minidir)s/src/apps/public/DRRAFTER/DRRAFTER.py -fasta fasta.txt -secstruct secstruct.txt -start_struct protein_and_RNA_helix_fit_into_density.pdb -map_file 1wsu_simulated_7A.mrc -map_reso 7.0 -residues_to_model E:1-23 -include_as_rigid_body_structures protein_fit_into_density.pdb RNA_helix.pdb -absolute_coordinates_rigid_body_structure protein_fit_into_density.pdb -job_name demo_run -dock_into_density -demo_settings  2>&1 \
     | egrep -vf ../../ignore_list \
@@ -66,7 +67,7 @@ fi
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 deactivate
-rm -r virtual_env_for_networkx
+rm -r virtual_env_for_networkx install_log.ignore
 
 # ^^^^ you want to add this line after each call to app-protocol in case they terminate abnormally
 

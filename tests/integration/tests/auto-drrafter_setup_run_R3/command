@@ -53,12 +53,13 @@ date > start-time.ignore
 # in this directory too:
 
 TESTPYTHON=`which python3`
-%(python3)s -m venv virtual_env_for_networkx && source virtual_env_for_networkx/bin/activate 
-if [[ "$TESTPYTHON" == "`which python3`" ]] ; then
-    echo "Awful! Environment activation failed."
+%(python3)s -m venv virtual_env_for_networkx >> install_log.ignore 2>&1 
+source virtual_env_for_networkx/bin/activate >> install_log.ignore 2>&1 
+if [[ "$TESTPYTHON" == "`which python3`" ]] ; then 
+    echo "Awful! Environment activation failed." >> install_log.ignore 2>&1
     exit 1
 fi
-`which python3` -m pip install networkx mrcfile
+`which python3` -m pip install networkx mrcfile >> install_log.ignore 2>&1
 
 `which python3` %(minidir)s/src/apps/public/DRRAFTER/auto-DRRAFTER_setup_next_round.py -out_pref mini_example -curr_round FINAL_R2 -nmodels 10 -rosetta_directory %(bin)s/ -rosetta_extension .%(binext)s -test  2>&1 \
     | egrep -vf ../../ignore_list \
@@ -72,7 +73,7 @@ fi
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 deactivate
-rm -r virtual_env_for_networkx
+rm -r virtual_env_for_networkx install_log.ignore
 
 # ^^^^ you want to add this line after each call to app-protocol in case they terminate abnormally
 
