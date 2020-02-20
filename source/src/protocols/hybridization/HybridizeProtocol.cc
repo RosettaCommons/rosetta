@@ -440,7 +440,7 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 
 		fragbiglen = std::min( fragbiglen, nres_tgt );
 
-		core::fragment::FragSetOP frags( new core::fragment::ConstantLengthFragSet(  ) );
+		core::fragment::FragSetOP frags( utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >() );
 
 		// sequence
 		std::string tgt_seq = pose.sequence();
@@ -477,7 +477,7 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 
 		// pick from vall based on template SS + target sequence
 		for ( core::Size j=1; j<=nres_tgt-fragbiglen+1; ++j ) {
-			core::fragment::FrameOP frame( new core::fragment::Frame( j, fragbiglen ) );
+			core::fragment::FrameOP frame( utility::pointer::make_shared< core::fragment::Frame >(j, fragbiglen) );
 
 			if ( j > residue_sample_abinitio_.size() || residue_sample_abinitio_[j] ) {
 				frame->add_fragment(
@@ -489,7 +489,7 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 		fragments_big_.push_back( frags );
 	}
 	if ( !fragments_small_.size() ) {
-		core::fragment::FragSetOP frags( new core::fragment::ConstantLengthFragSet( 3 ) );
+		core::fragment::FragSetOP frags( utility::pointer::make_shared< core::fragment::ConstantLengthFragSet >(3) );
 
 		// make them from big fragments
 		core::fragment::chop_fragments( *fragments_big_[1], *frags );
@@ -591,15 +591,15 @@ HybridizeProtocol::add_fragment_csts( core::pose::Pose &pose ) {
 		if ( !pose.residue(i).is_protein() ) continue;
 
 		if ( i>1 && pose.residue(i-1).is_protein() ) {
-			FuncOP phi_func( new CircularSplineFunc( 1.0, phi_distr[i] ) );
-			ConstraintOP phi_cst( new DihedralConstraint(
+			FuncOP phi_func( utility::pointer::make_shared< CircularSplineFunc >( 1.0, phi_distr[i] ) );
+			ConstraintOP phi_cst( utility::pointer::make_shared< DihedralConstraint >(
 				core::id::AtomID(3,i-1),core::id::AtomID(1,i),core::id::AtomID(2,i),core::id::AtomID(3,i), phi_func  ) );
 			pose.add_constraint( scoring::constraints::ConstraintCOP( phi_cst ) );
 		}
 
 		if ( i<(int)frag_nres && pose.residue(i+1).is_protein() ) {
-			FuncOP psi_func( new CircularSplineFunc( 1.0, psi_distr[i] ) );
-			ConstraintOP psi_cst( new DihedralConstraint(
+			FuncOP psi_func( utility::pointer::make_shared< CircularSplineFunc >( 1.0, psi_distr[i] ) );
+			ConstraintOP psi_cst( utility::pointer::make_shared< DihedralConstraint >(
 				core::id::AtomID(1,i),core::id::AtomID(2,i),core::id::AtomID(3,i),core::id::AtomID(1,i+1), psi_func  ) );
 			pose.add_constraint( scoring::constraints::ConstraintCOP( psi_cst ) );
 		}
@@ -640,7 +640,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 
 	if ( pose.residue(nres_tgt).aa() == core::chemical::aa_vrt ) nres_tgt--;
 
-	protocols::loops::LoopsOP loops( new protocols::loops::Loops );
+	protocols::loops::LoopsOP loops( utility::pointer::make_shared< protocols::loops::Loops >() );
 	utility::vector1< bool > templ_coverage(nres_tgt, false);
 
 	for ( Size i=1; i<=chosen_templ->size(); ++i ) {
@@ -698,7 +698,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 		protocols::loops::add_cutpoint_variants( pose );
 
 		// set movemap
-		core::kinematics::MoveMapOP mm_loop( new core::kinematics::MoveMap() );
+		core::kinematics::MoveMapOP mm_loop( utility::pointer::make_shared< core::kinematics::MoveMap >() );
 		for ( auto const & it : *loops ) {
 			for ( Size i=it.start(); i<=it.stop(); ++i ) {
 				mm_loop->set_bb(i, true);
@@ -726,7 +726,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 		// setup MC
 		scorefxn->set_weight( core::scoring::linear_chainbreak, 0.5 );
 		(*scorefxn)(pose);
-		protocols::moves::MonteCarloOP mc1( new protocols::moves::MonteCarlo( pose, *scorefxn, 2.0 ) );
+		protocols::moves::MonteCarloOP mc1( utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose, *scorefxn, 2.0 ) );
 
 		auto neffcycles = (core::Size)(1000*option[cm::hybridize::stage1_increase_cycles]());
 		for ( Size n=1; n<=neffcycles; ++n ) {
@@ -742,7 +742,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 
 		scorefxn->set_weight( core::scoring::linear_chainbreak, 2.0 );
 		(*scorefxn)(pose);
-		protocols::moves::MonteCarloOP mc2( new protocols::moves::MonteCarlo( pose, *scorefxn, 2.0 ) );
+		protocols::moves::MonteCarloOP mc2( utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose, *scorefxn, 2.0 ) );
 		for ( Size n=1; n<=neffcycles; ++n ) {
 			frag9mover->apply( pose ); (*scorefxn)(pose); mc2->boltzmann( pose , "frag9" );
 			frag3mover->apply( pose ); (*scorefxn)(pose); mc2->boltzmann( pose , "frag3" );
@@ -762,30 +762,25 @@ HybridizeProtocol::initialize_and_sample_loops(
 
 
 void HybridizeProtocol::add_template(
-	std::string template_fn,
-	std::string cst_fn,
-	std::string symm_file,
-	core::Real weight,
-	utility::vector1<char> randchains)
+	std::string const & template_fn,
+	std::string const & cst_fn,
+	std::string const & symm_file,
+	core::Real const weight,
+	utility::vector1<char> const & randchains,
+	bool const align_pdb_info)
 {
-	core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+	core::chemical::ResidueTypeSetCOP const residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 
+	core::pose::PoseOP template_pose( utility::pointer::make_shared< core::pose::Pose >() );
 	if ( template_fn == "extended" ) {
-		//
-		core::pose::PoseOP template_pose( new core::pose::Pose() );
-
 		// auto constraints make no sense
 		if ( cst_fn == "AUTO" ) {
 			TR.Error << "Warning!  Turning off auto constraints for extended pose" << std::endl;
-			cst_fn = "NONE";
 		}
-
-		add_null_template( template_pose, cst_fn, symm_file, weight );
+		add_null_template( template_pose, "NONE", symm_file, weight );
 	} else {
-		core::pose::PoseOP template_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_file( *template_pose, *residue_set, template_fn , core::import_pose::PDB_file);
-
-		add_template( template_pose, cst_fn, symm_file, weight, randchains, template_fn );
+		add_template( template_pose, cst_fn, symm_file, weight, randchains, template_fn, align_pdb_info);
 	}
 }
 
@@ -796,7 +791,7 @@ void HybridizeProtocol::add_null_template(
 	std::string symm_file,
 	core::Real weight)
 {
-	template_fn_.push_back("null");
+	template_fns_.push_back("null");
 	templates_.push_back(template_pose);
 	templates_aln_.push_back(template_pose); // shallow copy
 	template_cst_fn_.push_back(cst_fn);
@@ -809,11 +804,12 @@ void HybridizeProtocol::add_null_template(
 
 void HybridizeProtocol::add_template(
 	core::pose::PoseOP template_pose,
-	std::string cst_fn,
-	std::string symm_file,
-	core::Real weight,
-	utility::vector1<char> rand_chains,
-	std::string filename)
+	std::string const & cst_fn,
+	std::string const & symm_file,
+	core::Real const weight,
+	utility::vector1<char> const & rand_chains,
+	std::string const & filename,
+	bool const align_pdb_info)
 {
 	// add secondary structure information to the template pose
 	core::scoring::dssp::Dssp dssp_obj( *template_pose );
@@ -834,7 +830,7 @@ void HybridizeProtocol::add_template(
 	TR.Debug << "Chunks from template\n" << chunks << std::endl;
 	TR.Debug << "Contigs from template\n" << contigs << std::endl;
 
-	template_fn_.push_back(filename);
+	template_fns_.push_back(filename);
 	templates_.push_back(template_pose);
 	templates_aln_.push_back(template_pose); // shallow copy
 	template_cst_fn_.push_back(cst_fn);
@@ -843,20 +839,21 @@ void HybridizeProtocol::add_template(
 	template_chunks_.push_back(chunks);
 	template_contigs_.push_back(contigs);
 	randomize_chains_.push_back(rand_chains);
+	should_align_pdb_infos_.push_back(align_pdb_info);
 
 	non_null_template_indices_.push_back( templates_.size() );
 }
 
-void HybridizeProtocol::update_last_template()
+void HybridizeProtocol::update_template(core::Size const template_idx )
 {
-	core::pose::PoseOP template_pose = templates_[templates_.size()];
+	core::pose::PoseOP const template_pose(templates_[template_idx]);
 
 	// add secondary structure information to the template pose
 	core::scoring::dssp::Dssp dssp_obj( *template_pose );
 	dssp_obj.insert_ss_into_pose( *template_pose );
 
 	// find ss chunks in template
-	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose);
+	protocols::loops::Loops const contigs = protocols::loops::extract_continuous_chunks(*template_pose);
 
 	protocols::loops::Loops chunks;
 	if ( include_loop_ss_chunks_ ) {
@@ -866,16 +863,16 @@ void HybridizeProtocol::update_last_template()
 	}
 	if ( chunks.num_loop() == 0 ) chunks = contigs;
 
-	template_chunks_[templates_.size()] = chunks;
-	template_contigs_[templates_.size()] = contigs;
+	template_chunks_[template_idx] = chunks;
+	template_contigs_[template_idx] = contigs;
 }
 
 
 // validate input templates match input sequence
 // TO DO: if only sequences mismatch try realigning
 void HybridizeProtocol::validate_template(
-	std::string filename,
-	std::string fasta,
+	std::string const & filename,
+	std::string const & fasta,
 	core::pose::PoseOP template_pose,
 	bool & align_pdb_info)
 {
@@ -916,10 +913,10 @@ void HybridizeProtocol::validate_template(
 		core::pose::Pose pose_for_seq;
 		core::pose::symmetry::extract_asymmetric_unit(*template_pose, pose_for_seq, false);
 
-		core::sequence::SequenceOP full_length_seq( new core::sequence::Sequence( fasta, "target" ));
-		core::sequence::SequenceOP t_pdb_seq( new core::sequence::Sequence( pose_for_seq.sequence(), "pose_seq" ));
+		core::sequence::SequenceOP full_length_seq( utility::pointer::make_shared< core::sequence::Sequence >( fasta, "target" ));
+		core::sequence::SequenceOP t_pdb_seq( utility::pointer::make_shared< core::sequence::Sequence >( pose_for_seq.sequence(), "pose_seq" ));
 		core::sequence::SWAligner sw_align;
-		core::sequence::ScoringSchemeOP ss(  new core::sequence::SimpleScoringScheme(120, 0, -100, 0));
+		core::sequence::ScoringSchemeOP ss(  utility::pointer::make_shared< core::sequence::SimpleScoringScheme >(120, 0, -100, 0));
 		core::sequence::SequenceAlignment fasta2template;
 
 		fasta2template = sw_align.align(full_length_seq, t_pdb_seq, ss);
@@ -1024,9 +1021,56 @@ void HybridizeProtocol::domain_parse_templates(core::Size nres) {
 			}
 		}
 
-		TR << "Found " << domains_all_templ_[i_template].size() << " domains using template " << template_fn_[i_template] << std::endl;
+		TR << "Found " << domains_all_templ_[i_template].size() << " domains using template " << template_fns_[i_template] << std::endl;
 		for ( Size i=1; i<=domains_all_templ_[i_template].size(); ++i ) {
 			TR << "domain " << i << ": " << domains_all_templ_[i_template][i] << std::endl;
+		}
+	}
+}
+
+void
+HybridizeProtocol::setup_templates_and_sampling_options( core::pose::Pose const & pose ) {
+	std::string const & pose_sequence(pose.sequence());
+	if ( coord_cst_res_.size() ) {
+		user_csts_ = core::pose::get_resnum_list_ordered( coord_cst_res_, pose );
+	}
+	for ( core::Size i=1; i<=template_fns_.size(); ++i ) {
+		bool align_pdb_info = should_align_pdb_infos_[i];
+		validate_template( template_fns_[i], pose_sequence, templates_[i], align_pdb_info );
+
+		if ( align_pdb_info ) {
+			align_pdb_info = false;
+			validate_template( template_fns_[i], pose_sequence, templates_[i], align_pdb_info );
+			update_template(i);
+		}
+	}
+
+	core::Size const nres_nonvirt = get_num_residues_nonvirt(pose);
+	if ( detailed_controls_settings_.size() ) {
+		residue_sample_template_.resize(nres_nonvirt, true);
+		residue_sample_abinitio_.resize(nres_nonvirt, true);
+	}
+	for ( auto const & detailed_control_settings : detailed_controls_settings_ ) {
+		if ( detailed_control_settings.type_ == "task_operations" ) {
+			core::pack::task::PackerTaskOP task = detailed_control_settings.taskFactOP_->create_task_and_apply_taskoperations( pose );
+			for ( core::Size ires = 1; ires <= nres_nonvirt; ++ires ) {
+				if ( !task->residue_task( ires ).being_packed() ) {
+					residue_sample_template_[ires] = false;
+					residue_sample_abinitio_[ires] = false;
+				}
+			}
+		} else {
+			core::Size const stop_res(detailed_control_settings.stop_res_ == 0 ? nres_nonvirt : detailed_control_settings.stop_res_);
+			if ( detailed_control_settings.sample_template_ != sampleEnum::unset ) {
+				for ( core::Size ires=detailed_control_settings.start_res_; ires<=stop_res; ++ires ) {
+					residue_sample_template_[ires] = (detailed_control_settings.sample_template_ == sampleEnum::off ? false : true);
+				}
+			}
+			if ( detailed_control_settings.sample_abinitio_ != sampleEnum::unset ) {
+				for ( core::Size ires=detailed_control_settings.start_res_; ires<=stop_res; ++ires ) {
+					residue_sample_abinitio_[ires] = (detailed_control_settings.sample_abinitio_ == sampleEnum::off ? false : true);
+				}
+			}
 		}
 	}
 }
@@ -1039,6 +1083,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	using namespace core::pose::datacache;
 	using namespace core::io::silent;
 	using namespace ObjexxFCL::format;
+	setup_templates_and_sampling_options(pose);
 
 	// number of residues in asu without VRTs
 	core::Size nres_tgt = pose.size();
@@ -1055,14 +1100,14 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	while ( !pose.residue(nres_protein_tgt).is_protein() ) nres_protein_tgt--;
 
 	//save necessary constraint in pose
-	core::scoring::constraints::ConstraintSetOP save_pose_constraint_set( new core::scoring::constraints::ConstraintSet() ) ;
+	core::scoring::constraints::ConstraintSetOP save_pose_constraint_set( utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >() ) ;
 	if ( keep_pose_constraint_ ) {
 		save_pose_constraint_set = pose.constraint_set()->clone();
 		core::scoring::constraints::remove_nonbb_constraints(pose);
 	}
 
 	if ( pose.is_fullatom() ) {
-		protocols::moves::MoverOP tocen( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
+		protocols::moves::MoverOP tocen( utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >( core::chemical::CENTROID ) );
 		tocen->apply(pose);
 	}
 
@@ -1089,7 +1134,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// pick starting template
 		core::Size initial_template_index = pick_starting_template();
-		TR << "Using initial template: " << I(4,initial_template_index) << " " << template_fn_[initial_template_index] << std::endl;
+		TR << "Using initial template: " << I(4,initial_template_index) << " " << template_fns_[initial_template_index] << std::endl;
 
 		// ensure
 		//    1)that no CONTIGS cross multiple CHAINS
@@ -1307,13 +1352,13 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		//     keep after symm
 		//     should we check if a map is loaded (or density scoring is on) instead??
 		if ( option[ OptionKeys::edensity::mapfile ].user() || user_csts_.size() > 0 ) {
-			MoverOP dens( new protocols::electron_density::SetupForDensityScoringMover );
+			MoverOP dens( utility::pointer::make_shared< protocols::electron_density::SetupForDensityScoringMover >() );
 			dens->apply( pose );
 		}
 
 		// (5) initialize template history
 		//     keep after symm
-		TemplateHistoryOP history( new TemplateHistory(pose) );
+		TemplateHistoryOP history( utility::pointer::make_shared< TemplateHistory >(pose) );
 		history->setall( initial_template_index );
 		pose.data().set( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY, history );
 
@@ -1341,7 +1386,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				std::string cst_fn = template_cst_fn_[initial_template_index];
 
 				FoldTreeHybridizeOP ft_hybridize(
-					new FoldTreeHybridize(
+					utility::pointer::make_shared< FoldTreeHybridize >(
 					initial_template_index, templates_aln_, template_weights_,
 					template_chunks_, frags_small, frags_big) ) ;
 
@@ -1405,7 +1450,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// realign domains to the output of stage 1
 		if ( jump_move_ || realign_domains_stage2_ ) {
 			TR << "Realigning template domains to stage1 pose." << std::endl;
-			core::pose::PoseOP stage1pose( new core::pose::Pose( pose ) );
+			core::pose::PoseOP stage1pose( utility::pointer::make_shared< core::pose::Pose >( pose ) );
 			align_templates_by_domain(stage1pose); // don't use stored domains; recompute parse from model
 		}
 
@@ -1458,7 +1503,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			stage2_scorefxn_clone->set_energy_method_options(lowres_options);
 
 			CartesianHybridizeOP cart_hybridize(
-				new CartesianHybridize( templates_aln_, template_weights_, template_chunks_,template_contigs_, frags_big ) );
+				utility::pointer::make_shared< CartesianHybridize >( templates_aln_, template_weights_, template_chunks_,template_contigs_, frags_big ) );
 
 			// default scorefunctions (cenrot-compatable)
 			if ( stage2_scorefxn_!=nullptr ) cart_hybridize->set_scorefunction( stage2_scorefxn_ );
@@ -1502,7 +1547,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		for ( Size i=1; i<= history->size(); ++i ) { TR << I(4, history->get(i)); }
 		TR << std::endl;
 
-		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
+		core::kinematics::MoveMapOP mm( utility::pointer::make_shared< core::kinematics::MoveMap >() );
 		mm->set_bb  ( true );
 		mm->set_chi ( true );
 		mm->set_jump( true );
@@ -1554,7 +1599,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				pose.conformation().detect_disulfides();
 			}
 
-			protocols::moves::MoverOP tofa( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
+			protocols::moves::MoverOP tofa( utility::pointer::make_shared< protocols::simple_moves::SwitchResidueTypeSetMover >( core::chemical::FA_STANDARD ) );
 			tofa->apply(pose);
 
 			// apply fa constraints
@@ -1617,7 +1662,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 					relax_prot.set_script_to_batchrelax_default( relax_repeats_ );
 
 					// need to use a packer task factory to handle poses with different disulfide patterning
-					core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory );
+					core::pack::task::TaskFactoryOP tf( utility::pointer::make_shared< core::pack::task::TaskFactory >() );
 					tf->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 					tf->push_back( utility::pointer::make_shared< core::pack::task::operation::IncludeCurrent >() );
 					tf->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
@@ -1674,7 +1719,7 @@ HybridizeProtocol::align_templates_by_domain(core::pose::PoseOP & ref_pose, util
 	for ( Size i_pose=1; i_pose <= templates_aln_.size(); ++i_pose ) {
 		if ( templates_aln_[i_pose] == ref_pose ) continue; // compare pointers
 		align_by_domain(*templates_aln_[i_pose], *working_pose, domains);
-		//std::string out_fn = template_fn_[i_pose] + "_realigned.pdb";
+		//std::string out_fn = template_fns_[i_pose] + "_realigned.pdb";
 		//poses[i_pose]->dump_pdb(out_fn);
 	}
 }
@@ -1779,26 +1824,26 @@ HybridizeProtocol::do_intrastage_docking(core::pose::Pose & pose) {
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		/////
 		/////  SYMM LOGIC
-		protocols::symmetric_docking::SymDockingLowResOP docking_lowres_mover( new protocols::symmetric_docking::SymDockingLowRes(stage1_scorefxn_) );
+		protocols::symmetric_docking::SymDockingLowResOP docking_lowres_mover( utility::pointer::make_shared< protocols::symmetric_docking::SymDockingLowRes >(stage1_scorefxn_) );
 		docking_lowres_mover->apply(pose);
 
-		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
+		core::kinematics::MoveMapOP mm( utility::pointer::make_shared< core::kinematics::MoveMap>() );
 		mm->set_bb( false ); mm->set_chi( false ); mm->set_jump( true );
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 
 		protocols::minimization_packing::MinMoverOP min_mover(
-			new protocols::minimization_packing::MinMover( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true ) );
+			utility::pointer::make_shared< protocols::minimization_packing::MinMover >( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 		min_mover->apply(pose);
 	} else {
 		/////
 		/////  ASYMM LOGIC
 		core::Size const rb_move_jump = 1; // use the first jump as the one between partners <<<< fpd: MAKE THIS A PARSIBLE OPTION
-		protocols::docking::DockingLowResOP docking_lowres_mover( new protocols::docking::DockingLowRes( stage1_scorefxn_, rb_move_jump ) );
+		protocols::docking::DockingLowResOP docking_lowres_mover( utility::pointer::make_shared< protocols::docking::DockingLowRes >( stage1_scorefxn_, rb_move_jump ) );
 		docking_lowres_mover->apply(pose);
 
-		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
+		core::kinematics::MoveMapOP mm( utility::pointer::make_shared< core::kinematics::MoveMap >() );
 		mm->set_bb( false ); mm->set_chi( false ); mm->set_jump( rb_move_jump, true );
-		protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true ) );
+		protocols::minimization_packing::MinMoverOP min_mover( utility::pointer::make_shared< protocols::minimization_packing::MinMover >( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 		min_mover->apply(pose);
 	}
 }
@@ -1813,7 +1858,7 @@ HybridizeProtocol::parse_my_tag(
 	basic::datacache::DataMap & data,
 	filters::Filters_map const &,
 	moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	// basic options
 	stage1_increase_cycles_ = tag->getOption< core::Real >( "stage1_increase_cycles", 1. );
@@ -1965,12 +2010,10 @@ HybridizeProtocol::parse_my_tag(
 	length_ = tag->getOption< core::Size >( "domain_length" , 38);
 
 	// user constraints
-	if ( tag->hasOption( "coord_cst_res" ) ) {
-		user_csts_ = core::pose::get_resnum_list_ordered( tag->getOption<std::string>( "coord_cst_res" ), pose );
-	}
+	coord_cst_res_ = tag->getOption<std::string>( "coord_cst_res", "" );
 
 	// if user constraints are defined, make sure coord_csts are defined in at least one stage
-	if ( user_csts_.size() > 0 ) {
+	if ( coord_cst_res_.size() > 0 ) {
 		runtime_assert(
 			stage1_scorefxn_->get_weight( core::scoring::coordinate_constraint ) > 0 ||
 			stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) > 0 ||
@@ -2003,12 +2046,11 @@ HybridizeProtocol::parse_my_tag(
 			}
 		}
 
-		std::string fasta = pose.sequence();
 		if ( (*tag_it)->getName() == "Template" ) {
-			std::string template_fn = (*tag_it)->getOption<std::string>( "pdb" );
-			std::string cst_fn = (*tag_it)->getOption<std::string>( "cst_file", "AUTO" );  // should this be NONE?
-			auto weight = (*tag_it)->getOption<core::Real>( "weight", 1.0 );
-			std::string symm_file = (*tag_it)->getOption<std::string>( "symmdef", "" );
+			std::string const template_fn = (*tag_it)->getOption<std::string>( "pdb" );
+			std::string const cst_fn = (*tag_it)->getOption<std::string>( "cst_file", "AUTO" );  // should this be NONE?
+			auto const weight = (*tag_it)->getOption<core::Real>( "weight", 1.0 );
+			std::string const symm_file = (*tag_it)->getOption<std::string>( "symmdef", "" );
 
 			// randomize some chains
 			utility::vector1< char > rand_chains;
@@ -2021,19 +2063,8 @@ HybridizeProtocol::parse_my_tag(
 					}
 				}
 			}
-
-			bool align_pdb_info = (*tag_it)->getOption<bool>( "auto_align", true );
-
-			add_template(template_fn, cst_fn, symm_file, weight, rand_chains);
-
-			// validate here since we have the pose (add_template does not) ... could do this in apply as well (?)
-			validate_template( template_fn, fasta, templates_[templates_.size()], align_pdb_info );
-
-			if ( align_pdb_info ) {
-				align_pdb_info = false;
-				validate_template( template_fn, fasta, templates_[templates_.size()], align_pdb_info );
-				update_last_template();
-			}
+			bool const align_pdb_info = (*tag_it)->getOption<bool>( "auto_align", true );
+			add_template(template_fn, cst_fn, symm_file, weight, rand_chains, align_pdb_info);
 		}
 
 		// strand pairings
@@ -2055,36 +2086,23 @@ HybridizeProtocol::parse_my_tag(
 
 		// per-residue control
 		if ( (*tag_it)->getName() == "DetailedControls" ) {
-			core::Size nres_nonvirt = get_num_residues_nonvirt(pose);
-
-			residue_sample_template_.resize(nres_nonvirt, true);
-			residue_sample_abinitio_.resize(nres_nonvirt, true);
-
 			if ( (*tag_it)->hasOption( "task_operations" ) ) {
 				core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( *tag_it, data );
-				core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
-
-				for ( core::Size ires = 1; ires <= nres_nonvirt; ++ires ) {
-					if ( !task->residue_task( ires ).being_packed() ) {
-						residue_sample_template_[ires] = false;
-						residue_sample_abinitio_[ires] = false;
-					}
-				}
+				detailed_controls_settings_.push_back(
+					detailedControlsTagSetting("task_operations", task_factory, 0, 0, sampleEnum::unset, sampleEnum::unset));
 			} else {
-				auto start_res = (*tag_it)->getOption<core::Size>( "start_res", 1 );
-				auto stop_res = (*tag_it)->getOption<core::Size>( "stop_res", nres_nonvirt );
+				core::Size const start_res = (*tag_it)->getOption<core::Size>( "start_res", 1 );
+				core::Size const stop_res = (*tag_it)->getOption<core::Size>( "stop_res", 0 );
+
+				sampleEnum sample_template(sampleEnum::unset), sample_abinitio(sampleEnum::unset);
 				if ( (*tag_it)->hasOption( "sample_template" ) ) {
-					bool sample_template = (*tag_it)->getOption<bool>( "sample_template", true );
-					for ( core::Size ires=start_res; ires<=stop_res; ++ires ) {
-						residue_sample_template_[ires] = sample_template;
-					}
+					sample_template = (*tag_it)->getOption<bool>( "sample_template", true ) ? sampleEnum::on : sampleEnum::off;
 				}
 				if ( (*tag_it)->hasOption( "sample_abinitio" ) ) {
-					bool sample_abinitio = (*tag_it)->getOption<bool>( "sample_abinitio", true );
-					for ( core::Size ires=start_res; ires<=stop_res; ++ires ) {
-						residue_sample_abinitio_[ires] = sample_abinitio;
-					}
+					sample_abinitio = (*tag_it)->getOption<bool>( "sample_abinitio", true ) ? sampleEnum::on : sampleEnum::off;
 				}
+				detailed_controls_settings_.push_back(
+					detailedControlsTagSetting("else", nullptr, start_res, stop_res, sample_template, sample_abinitio));
 			} // if tag == DetailedControls
 		} //forach tag
 	}

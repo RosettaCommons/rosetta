@@ -35,6 +35,26 @@
 namespace protocols {
 namespace hybridization {
 
+enum sampleEnum{off = 0, on, unset};
+
+struct detailedControlsTagSetting {
+	detailedControlsTagSetting(
+		std::string const & type,
+		core::pack::task::TaskFactoryOP const taskFactOP,
+		core::Size const start_res,
+		core::Size const stop_res,
+		sampleEnum const sample_template,
+		sampleEnum const sample_abinitio) :
+		type_(type), taskFactOP_(taskFactOP), start_res_(start_res), stop_res_(stop_res),
+		sample_template_(sample_template), sample_abinitio_(sample_abinitio) {}
+
+	std::string type_;
+	core::pack::task::TaskFactoryOP taskFactOP_;
+	core::Size start_res_, stop_res_;
+	sampleEnum sample_template_, sample_abinitio_;
+};
+
+
 class HybridizeProtocol : public protocols::moves::Mover {
 
 public:
@@ -54,14 +74,15 @@ public:
 
 	void init();
 
-	void update_last_template();
+	void update_template(core::Size const template_idx );
 
 	void add_template(
-		std::string template_fn,
-		std::string cst_fn,
-		std::string symmdef_file = "NULL",
-		core::Real weight = 1.,
-		utility::vector1<char> rand_chains = utility::vector1<core::Size>(0) );
+		std::string const & template_fn,
+		std::string const & cst_fn,
+		std::string const & symmdef_file = "NULL",
+		core::Real const weight = 1.,
+		utility::vector1<char> const & rand_chains = utility::vector1<core::Size>(0),
+		bool const align_pdb_info = true);
 
 	void add_null_template(
 		core::pose::PoseOP template_pose,
@@ -71,15 +92,16 @@ public:
 
 	void add_template(
 		core::pose::PoseOP template_pose,
-		std::string cst_fn,
-		std::string symmdef_file = "NULL",
-		core::Real weight = 1.,
-		utility::vector1<char> rand_chains = utility::vector1<core::Size>(0),
-		std::string filename="default" );
+		std::string const & cst_fn,
+		std::string const & symmdef_file = "NULL",
+		core::Real const weight = 1.,
+		utility::vector1<char> const & rand_chains = utility::vector1<core::Size>(0),
+		std::string const & filename="default",
+		bool const align_pdb_info = true);
 
 	void validate_template(
-		std::string filename,
-		std::string fasta,
+		std::string const & filename,
+		std::string const & fasta,
 		core::pose::PoseOP template_pose,
 		bool & align_pdb_info
 	);
@@ -114,6 +136,9 @@ public:
 
 	// check fragments ... if they do not exist dynamically allocate them
 	void check_and_create_fragments( Pose & );
+
+	void
+	setup_templates_and_sampling_options( core::pose::Pose const & pose );
 
 	void apply( Pose & ) override;
 
@@ -194,24 +219,26 @@ private:
 	core::Size batch_relax_, relax_repeats_;
 
 	// abinitio fragment sets
-	utility::vector1 <core::fragment::FragSetOP> fragments_big_;   // 9mers/fragA equivalent in AbrelaxApplication
-	utility::vector1 <core::fragment::FragSetOP> fragments_small_; // 3mers/fragB equivalent in AbrelaxApplication
+	utility::vector1<core::fragment::FragSetOP> fragments_big_;   // 9mers/fragA equivalent in AbrelaxApplication
+	utility::vector1<core::fragment::FragSetOP> fragments_small_; // 3mers/fragB equivalent in AbrelaxApplication
 
 	// native pose, aln
 	core::pose::PoseOP native_;
 	core::sequence::SequenceAlignmentOP aln_;
 
 	// template information
-	utility::vector1 < core::Size > non_null_template_indices_;
-	utility::vector1 < core::pose::PoseOP > templates_;  // template poses
-	utility::vector1 < core::pose::PoseOP > templates_aln_;  // aligned template PDBs (deep copy for multidom, shallow for single dom)
-	utility::vector1 < std::string > template_fn_;       // template file tags
-	utility::vector1 < std::string > template_cst_fn_;   // template constraint file tags
-	utility::vector1 < std::string > symmdef_files_;     // template symmdef files
-	utility::vector1 < core::Real > template_weights_;   // template weights
-	utility::vector1 < protocols::loops::Loops > template_chunks_;    // template secstruct definitions
-	utility::vector1 < protocols::loops::Loops > template_contigs_;   // template continuous pieces
-	utility::vector1 < utility::vector1<char> > randomize_chains_;  // per-template chain randomization
+	utility::vector1< core::Size > non_null_template_indices_;
+	utility::vector1< core::pose::PoseOP > templates_;  // template poses
+	utility::vector1< core::pose::PoseOP > templates_aln_;  // aligned template PDBs (deep copy for multidom, shallow for single dom)
+	utility::vector1< std::string > template_fns_;       // template file tags
+	utility::vector1< std::string > template_cst_fn_;   // template constraint file tags
+	utility::vector1< std::string > symmdef_files_;     // template symmdef files
+	utility::vector1< core::Real > template_weights_;   // template weights
+	utility::vector1< bool > should_align_pdb_infos_;
+	utility::vector1< protocols::loops::Loops > template_chunks_;    // template secstruct definitions
+	utility::vector1< protocols::loops::Loops > template_contigs_;   // template continuous pieces
+	utility::vector1< utility::vector1<char> > randomize_chains_;  // per-template chain randomization
+	utility::vector1< detailedControlsTagSetting > detailed_controls_settings_;
 
 	std::string cen_cst_in_;
 
@@ -234,6 +261,7 @@ private:
 
 	// constraint
 	bool keep_pose_constraint_;
+	std::string coord_cst_res_;
 	utility::vector1 < core::Size > user_csts_;
 };
 
