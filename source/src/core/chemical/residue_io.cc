@@ -72,7 +72,6 @@
 #include <sstream>
 
 using ObjexxFCL::stripped;
-using ObjexxFCL::strip_whitespace;
 
 namespace core {
 namespace chemical {
