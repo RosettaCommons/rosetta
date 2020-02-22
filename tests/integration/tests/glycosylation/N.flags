@@ -5,7 +5,7 @@
 -unmute protocols.enzymatic_movers
 #-enzymes:species h_sapiens
 #-enzymes:enzyme OGT
--s input/NPC1_luminal_domain_C.pdb
+-s input/NESSIEISREAL.pdb
 -overwrite
 -nstruct 5
 -out:prefix output/N-linked/

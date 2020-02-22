@@ -1,8 +1,8 @@
 # File created by Xiang "Helen" Ji
 
-# Consensus  Sequence  Residue of    Atom
-# Sequence   Type      CS to Modify  To Modify  Efficiency
-  (S/T)      AA        1             O          1.00
+# Consensus     Sequence  Residue of    Atom
+# Sequence      Type      CS to Modify  To Modify  Efficiency
+  PV(S/T)(S/T)  AA        3             O          1.00
 
 # Glycan to Transfer
 ->4)-b-D-GlcpNAc
