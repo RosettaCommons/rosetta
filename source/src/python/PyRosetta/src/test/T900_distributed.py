@@ -36,15 +36,15 @@ test_suites = [
               ]
 
 with tempfile.TemporaryDirectory(prefix="tmp_pyrosetta_env") as venv_dir:
-    
+
     venv.create(venv_dir, clear=True, system_site_packages=False, with_pip=True)
-    
+
     packages = "blosc dask distributed jupyter numpy pandas py3Dmol scipy traitlets"
     e(
-        "source {0}/bin/activate && {0}/bin/pip install {1}".format(venv_dir, packages)
+        ". {0}/bin/activate && {0}/bin/pip install {1}".format(venv_dir, packages)
     )
-    
+
     for test_suite in test_suites:
         e(
-            "source {0}/bin/activate && {0}/bin/python -m unittest {1}".format(venv_dir, test_suite)
+            ". {0}/bin/activate && {0}/bin/python -m unittest {1}".format(venv_dir, test_suite)
         )

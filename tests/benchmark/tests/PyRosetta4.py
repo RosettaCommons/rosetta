@@ -71,29 +71,33 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
         #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
         gui_flag, res, output = '', result.exitcode, result.output
-        command_line = f'cd {result.pyrosetta_path}/build && {rosetta_dir}/source/test/timelimit.py 60 {result.python} self-test.py {gui_flag} -j{jobs}'
+        command_line = f'cd {result.pyrosetta_path}/build && {rosetta_dir}/source/test/timelimit.py 32 {result.python} self-test.py {gui_flag} -j{jobs}'
         output += '\nRunning PyRosetta tests: ' + command_line + '\n'
-        if not res:
-            res, o = execute('Running PyRosetta tests...', command_line, return_='tuple')
-            output += o
 
-        json_file = result.pyrosetta_path + '/build/.test.output/.test.results.json'
-        with open(json_file) as f: results = json.load(f)
+        res, o = execute('Running PyRosetta tests...', command_line, return_='tuple')
+        output += o
 
-        execute('Deleting PyRosetta tests output...', 'cd {pyrosetta_path}/build && unset PYTHONPATH && unset __PYVENV_LAUNCHER__ && {python} self-test.py --delete-tests-output'.format(pyrosetta_path=result.pyrosetta_path, python=result.python), return_='tuple')
-        extra_files = [f for f in os.listdir(result.pyrosetta_path+'/build') if f not in distr_file_list]  # not f.startswith('.test.')  and
-        if extra_files:
-            results['results']['tests']['self-test'] = dict(state='failed', log='self-test.py scripts failed to delete files: ' + ' '.join(extra_files))
-            results[_StateKey_] = 'failed'
+        if res:
+            results = {_StateKey_ : _S_script_failed_,  _ResultsKey_ : {},  _LogKey_ : f'{output}\n\nPyRosetta self-test.py script terminated with non-zero exit code, terminating with script failure!\n' }
 
-        if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
-        output = 'Running: {}\n'.format(result.command_line) + output  # Making sure that exact command line used is stored
+        else:
+            json_file = result.pyrosetta_path + '/build/.test.output/.test.results.json'
+            with open(json_file) as f: results = json.load(f)
 
-        #r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
-        results[_LogKey_] = output
+            execute('Deleting PyRosetta tests output...', 'cd {pyrosetta_path}/build && unset PYTHONPATH && unset __PYVENV_LAUNCHER__ && {python} self-test.py --delete-tests-output'.format(pyrosetta_path=result.pyrosetta_path, python=result.python), return_='tuple')
+            extra_files = [f for f in os.listdir(result.pyrosetta_path+'/build') if f not in distr_file_list]  # not f.startswith('.test.')  and
+            if extra_files:
+                results['results']['tests']['self-test'] = dict(state='failed', log='self-test.py scripts failed to delete files: ' + ' '.join(extra_files))
+                results[_StateKey_] = 'failed'
 
-        # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
-        with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
+            if results[_StateKey_] == _S_passed_: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
+            output = 'Running: {}\n'.format(result.command_line) + output  # Making sure that exact command line used is stored
+
+            #r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+            results[_LogKey_] = output
+
+            # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+            with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
 
     return results
 

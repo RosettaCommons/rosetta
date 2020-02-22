@@ -363,13 +363,13 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
             results['results']['tests']['self-test'] = dict(state='failed', log='self-test.py scripts failed to delete files: ' + ' '.join(extra_files))
             results[_StateKey_] = 'failed'
 
-        if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
+        if results[_StateKey_] == _S_passed_: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
         output = 'Running: {}\n'.format(build_command_line) + output  # Making sure that exact command line used is stored
 
         #r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
         results[_LogKey_] = output
 
-        if results[_StateKey_] == 'failed':
+        if results[_StateKey_] == _S_failed_:
             with open(working_dir+'/output.json', 'w') as f: json.dump(results, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
             # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
@@ -575,12 +575,12 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
                 results['results']['tests']['self-test'] = dict(state='failed', log='self-test.py scripts failed to delete files: ' + ' '.join(extra_files))
                 results[_StateKey_] = 'failed'
 
-            if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
+            if results[_StateKey_] == _S_passed_: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
             output = 'Running: {}\n'.format(build_command_line) + output  # Making sure that exact command line used is stored
 
             results[_LogKey_] = output
 
-        if results[_StateKey_] == 'failed':
+        if results[_StateKey_] == _S_failed_:
             # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
             with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
         else:

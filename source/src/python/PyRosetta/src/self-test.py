@@ -182,7 +182,8 @@ def main(args):
         for t in failed_tests: print(t, '- FAILED')
 
     if state == 'passed': print('\nAll PyRosetta Tests passed!\n')
-    else: sys.exit(1)
+    # always return with zero exit code (even if some of the unit tests has failed) and leave non-zero exit code to indicate script failure
+    #else: sys.exit(1)
 
 
 if __name__ == "__main__":
