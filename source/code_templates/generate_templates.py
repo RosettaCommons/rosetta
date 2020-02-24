@@ -177,10 +177,10 @@ class GenerateRosettaTemplates(object):
             if self.options.type == "residue_selector":
 
                 if self.options.namespace[0] == "core":
-                    print("\nRegister in (core.3): \n"+\
+                    print("\nRegister in (core.6): \n"+\
                             "   "+self.get_base_outdir()+"/"+"core/init/init.cc")
                 else:
-                    print("\nRegister in (protocols.7):\n" \
+                    print("\nRegister in (protocols.8):\n" \
                             "   "+self.get_base_outdir()+"/"+"protocols/init/init.ResidueSelectorCreators.ihh\n" \
                             "   "+self.get_base_outdir()+"/"+"protocols/init/init.ResidueSelectorRegistrators.ihh\n")
 
@@ -193,16 +193,16 @@ class GenerateRosettaTemplates(object):
                       "  "+self.replacement["--namespace_2colon--"]()+"::"+self.replacement["--class--"]()+"::get_instance()->")
 
             elif self.options.type == "mover":
-                print("\nMover Creator should be registered in (protocols.7) \n" \
+                print("\nMover Creator should be registered in (protocols.8) \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.MoverRegistrators.ihh and \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.MoverCreators.ihh\n")
 
             elif self.options.type == "features_reporter":
-                print("\nFeature Reporter Creator should be registered in (protocols.7) \n" \
+                print("\nFeature Reporter Creator should be registered in (protocols.8) \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.FeaturesReporterRegistrators.ihh and \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.FeaturesReporterCreators.ihh\n")
             elif self.options.type == "constraint_generator":
-                print("\nConstraint Generator Creator should be registered in (protocols.7) \n" \
+                print("\nConstraint Generator Creator should be registered in (protocols.8) \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.ConstraintGeneratorRegistrators.ihh and \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.ConstraintGeneratorCreators.ihh\n")
 
@@ -210,7 +210,7 @@ class GenerateRosettaTemplates(object):
                      print("\n   "+"This template is for a standard JD3 app, however, much more complex apps can be created.  See the docs for more.\n")
 
             elif re.search("metric_", self.options.type):
-                print("\nSimple Metric Creator should be registered in (protocols.7) \n" \
+                print("\nSimple Metric Creator should be registered in (protocols.8) \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.SimpleMetricRegistrators.ihh and \n" \
                       "   "+self.get_base_outdir()+"/"+"protocols/init/init.SimpleMetricCreators.ihh\n")
 
