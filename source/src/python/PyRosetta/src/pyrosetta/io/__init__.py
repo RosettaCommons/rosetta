@@ -6,11 +6,11 @@
 # (c) For more information, see http://www.rosettacommons.org.
 # (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 
-
 import pyrosetta.rosetta as rosetta
+import sys
 
-from pyrosetta.rosetta.core.pose import make_pose_from_sequence, Pose
 from pyrosetta.rosetta.core.import_pose import pose_from_file
+from pyrosetta.rosetta.core.pose import make_pose_from_sequence, Pose
 from pyrosetta.io.silent_file_map import SilentFileMap
 
 # for backward-compatibility
@@ -22,7 +22,7 @@ def pose_from_pdb(filename):
 
 def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
     """
-    Returns a pose generated from a single-letter sequence of amino acid
+    Returns a Pose object generated from a single-letter sequence of amino acid
     residues in <seq> using the <res_type> ResidueType and creates N- and C-
     termini if <auto_termini> is set to True.
 
@@ -39,7 +39,7 @@ def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
     """
     pose = Pose()
     make_pose_from_sequence(pose, seq, res_type, auto_termini)
-    #print 'Setting phi, psi, omega...'
+
     for i in range(0, pose.total_residue()):
         res = pose.residue(i + 1)
         if not res.is_protein() or res.is_peptoid() or res.is_carbohydrate():
@@ -48,13 +48,36 @@ def pose_from_sequence(seq, res_type="fa_standard", auto_termini=True):
         pose.set_phi(i + 1, 180)
         pose.set_psi(i + 1, 180)
         pose.set_omega(i + 1, 180)
-    #print 'Attaching PDBInfo...'
+
     # Empty PDBInfo (rosetta.core.pose.PDBInfo()) is not correct here;
     # we have to reserve space for atoms....
     pose.pdb_info(rosetta.core.pose.PDBInfo(pose))
     pose.pdb_info().name(seq[:8])
-    # print pose
+
     return pose
+
+
+def poses_from_files(objs, *args, **kwargs):
+    """
+    Returns an iterator object which is composed of Pose objects from input files.
+
+    Example:
+    import glob
+    poses = pyrosetta.io.poses_from_files(glob.glob("path/to/pdbs/*.pdb"))
+    """
+    for obj in objs:
+        yield pose_from_file(obj, *args, **kwargs)
+
+
+def poses_from_sequences(objs, *args, **kwargs):
+    """
+    Returns an iterator object which is composed of Pose objects with input sequences.
+
+    Example:
+    poses = pyrosetta.io.poses_from_sequences(["TEST", "TESTING [ATP]", "ACDEFGHIKLMNPQRSTVWY"])
+    """
+    for obj in objs:
+        yield pose_from_sequence(obj, *args, **kwargs)
 
 
 def poses_from_silent(silent_filename):
@@ -74,7 +97,7 @@ def poses_from_silent(silent_filename):
 
 def poses_to_silent(poses, output_filename):
     """Takes a Pose or list of poses and outputs them as a binary silent file.
-    This method requires a Pose object. 
+    This method requires a Pose object.
     If you are using a PackedPose, use pyrosetta.distributed.io.to_silent()
 
     Inputs:

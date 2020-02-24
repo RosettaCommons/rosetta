@@ -61,6 +61,15 @@ class SmokeTestDistributed(unittest.TestCase):
             """
         pyrosetta.distributed.init(flags)
 
+        flags_dict = {
+            "-ignore_unrecognized_res": "1",  # Test comment 1
+            "-out:level": "500",  # Test comment 2
+        }
+        self.assertEqual(
+            pyrosetta.distributed._normflags(flags_dict),
+            "-ignore_unrecognized_res 1 -out:level 500",
+        )
+
         score_task = score.ScorePoseTask()
         rs_task = rosetta_scripts.SingleoutputRosettaScriptsTask(self.min_rs)
 

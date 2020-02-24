@@ -6,6 +6,7 @@
 # (c) For more information, see http://www.rosettacommons.org.
 # (c) Questions about this can be addressed to University of Washington CoMotion, email: license@uw.edu.
 
+import glob
 import os
 import pyrosetta
 import pyrosetta.rosetta.core.pose as pose
@@ -189,6 +190,38 @@ class TestPoseResidueLabelAccessor(unittest.TestCase):
         self.assertSequenceEqual(
             list(test_pose.reslabels),
             [{"foo"}] + [set()] * (len(test_pose.residues) - 2) + [{"bar"}])
+
+
+class TestPoseIO(unittest.TestCase):
+    def test_pose_io(self):
+        with tempfile.TemporaryDirectory() as workdir:
+            seqs = ["TEST" * i for i in range(3, 8)]
+            test_poses_seqs = [
+                p.sequence() for p in pyrosetta.io.poses_from_sequences(seqs)
+            ]
+            self.assertListEqual(
+                test_poses_seqs, seqs, msg="Sequences diverge from inputs."
+            )
+            self.assertListEqual(
+                test_poses_seqs,
+                [p.sequence() for p in pyrosetta.poses_from_sequences(tuple(seqs))],
+                msg="Sequences diverge with tuple of sequences.",
+            )
+            for i, test_pose in enumerate(
+                pyrosetta.io.poses_from_sequences(seqs), start=1
+            ):
+                test_pose.dump_pdb(os.path.join(workdir, "%s.pdb" % i))
+            returned_poses_seqs = [
+                p.sequence()
+                for p in pyrosetta.poses_from_files(
+                    glob.glob(os.path.join(workdir, "*.pdb"))
+                )
+            ]
+            self.assertListEqual(
+                list(sorted(test_poses_seqs)),
+                list(sorted(returned_poses_seqs)),
+                msg="Sequences diverge with IO.",
+            )
 
 
 class TestPosesToSilent(unittest.TestCase):

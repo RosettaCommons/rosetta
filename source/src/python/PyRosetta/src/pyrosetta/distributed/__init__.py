@@ -27,9 +27,16 @@ _access_lock = threading.RLock()
 
 
 def _normflags(flags):
-    """Normalize tuple/list/str of flags into str."""
-    if not isinstance(flags, str):
+    """Normalize list/tuple/set/dict/str of flags into str."""
+    if isinstance(flags, (list, tuple, set)):
         flags = " ".join(flags)
+    elif isinstance(flags, dict):
+        flags = " ".join(
+            [
+                ("-" + k if not k.startswith("-") else k) + " " + v
+                for k, v in flags.items()
+            ]
+        )
     return " ".join(
         " ".join([line.split("#")[0] for line in flags.split("\n")]).split()
     )
@@ -61,10 +68,15 @@ def with_lock(func):
 
 @with_lock
 def maybe_init(**kwargs):
-    """Call pyrosetta.init if not already initialized."""
+    """Call pyrosetta.init with reformatted options and extra_options if not already initialized."""
     # if "set_logging_handler" not in kwargs:
     #     kwargs["set_logging_handler"] = "logging"
     # TODO In multithreaded builds the python-based logging handler appears to fail...
+    for option in ["options", "extra_options"]:
+        if option in kwargs:
+            normflags = _normflags(kwargs[option])
+            _logger.debug("maybe_init normalizing '%s': '%s'" % (option, normflags))
+            kwargs[option] = normflags
     if "extra_options" not in kwargs:
         kwargs["extra_options"] = "-out:levels all:warning"
     if "silent" not in kwargs:
@@ -72,7 +84,7 @@ def maybe_init(**kwargs):
 
     if not pyrosetta.rosetta.basic.was_init_called():
         init_kwargs = {}
-        for arg in inspect.getargspec(pyrosetta.init)[0]:
+        for arg in inspect.getfullargspec(pyrosetta.init).args:
             if arg in kwargs:
                 init_kwargs[arg] = kwargs[arg]
         _logger.info("maybe_init performing pyrosetta initialization: %s", init_kwargs)
@@ -104,7 +116,7 @@ def requires_init(func):
 
 
 def init(options=None, **kwargs):
-    """Initialize PyRosetta with command line options."""
-    if options and ("extra_options" not in kwargs):
-        kwargs["extra_options"] = _normflags(options)
+    """Initialize PyRosetta with reformatted command line options."""
+    if options:
+        kwargs["options"] = options
     maybe_init(**kwargs)
