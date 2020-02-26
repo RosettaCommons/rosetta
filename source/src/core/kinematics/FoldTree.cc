@@ -221,7 +221,7 @@ FoldTree::delete_jump_and_intervening_cutpoint( Size jump_begin, Size jump_end, 
 
 	if ( jump_number < old_num_jump ) {
 		TR << "delete_jump_and_intervening_cutpoint: renumbering the remaining jumps!" << std::endl;
-		for ( auto & it : *this ) {
+		for ( auto & it : edge_list_ ) {
 			if ( it.is_jump() && (Size)(it.label()) > jump_number ) it.label() = it.label() - 1;
 		}
 	}
@@ -263,7 +263,7 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 	Size const pos2( std::max( new_res1, new_res2 ) );
 	utility::vector1< Edge > new_edges, remove_edges;
 	Size const original_root( root() );
-	for ( auto & it : *this ) {
+	for ( auto & it : edge_list_ ) {
 		auto const start( (core::Size)it.start() );
 		auto const stop( (core::Size)it.stop() );
 		if ( it.label() != Edge::PEPTIDE ) continue;
@@ -399,7 +399,7 @@ FoldTree::delete_jump_seqpos( Size const seqpos )
 	}
 
 	// now remap the edges that contain seqpos
-	for ( auto & it : *this ) {
+	for ( auto & it : edge_list_ ) {
 		if ( it.stop() == seqpos ) it.stop() = new_seqpos;
 		else if ( it.start() == seqpos ) it.start() = new_seqpos;
 	}
@@ -491,7 +491,7 @@ FoldTree::delete_seqpos_simple( Size const seqpos )
 
 	// first remap the edge (if it exists) that contains seqpos as a vertex
 	// do this before renumbering everything
-	for ( auto it = begin(), ite = end(); it != ite; ++it ) {
+	for ( auto it = nc_begin(), ite = nc_end(); it != ite; ++it ) {
 		debug_assert( it->start() != seqpos );
 		if ( it->stop() == seqpos ) {
 			debug_assert( it->is_polymer() );
@@ -522,7 +522,7 @@ void
 FoldTree::apply_sequence_mapping( id::SequenceMapping const & old2new )
 {
 
-	for ( auto & it : *this ) {
+	for ( auto & it : edge_list_ ) {
 		it.start() = old2new[ it.start() ];
 		it.stop () = old2new[ it.stop () ];
 	}

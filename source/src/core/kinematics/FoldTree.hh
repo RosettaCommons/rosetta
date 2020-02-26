@@ -158,6 +158,8 @@ public:
 	}
 
 	/// @brief begin iterator of the edge_list
+	// note that this is the public, const accessor for const_iterator
+	// the private, nonconst version has been changed to nc_begin to dodge compilation issues.
 	inline
 	const_iterator
 	begin() const
@@ -166,6 +168,8 @@ public:
 	}
 
 	/// @brief end iterator of the edge_list
+	// note that this is the public, const accessor for const_iterator
+	// the private, nonconst version has been changed to nc_end to dodge compilation issues.
 	inline
 	const_iterator
 	end() const
@@ -931,17 +935,21 @@ private:
 
 
 	/// @brief non-const begin iterator of edge_list
+	// note that this is the private, nonconst accessor for iterator
+	// its name has been changed to nc_begin to dodge compilation issues.
 	inline
 	iterator
-	begin()
+	nc_begin()
 	{
 		return edge_list_.begin();
 	}
 
 	/// @brief non-const end iterator of edge_list
+	// note that this is the private, nonconst accessor for iterator
+	// its name has been changed to nc_end to dodge compilation issues.
 	inline
 	iterator
-	end()
+	nc_end()
 	{
 		return edge_list_.end();
 	}
