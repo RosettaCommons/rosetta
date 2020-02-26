@@ -2092,21 +2092,21 @@ public:
 		return rsd_type_.is_coarse();
 	}
 
-	/// @brief Returns true if the residue has a terminus variant
+	/// @brief Returns true if the residue has a terminus property
 	bool
 	is_terminus() const
 	{
 		return rsd_type_.is_terminus();
 	}
 
-	/// @brief Return true if the residue has an upper terminus variant
+	/// @brief Return true if the residue has an upper terminus property
 	bool
 	is_upper_terminus() const
 	{
 		return rsd_type_.is_upper_terminus();
 	}
 
-	/// @brief Returns true if the residue has a lower terminus variant
+	/// @brief Returns true if the residue has a lower terminus property
 	bool
 	is_lower_terminus() const
 	{

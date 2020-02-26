@@ -178,6 +178,7 @@ sources = {
 	"public/post-translational_modification": [
 		"glycosyltransfer",
 		"phosphorylation",
+		"N-terminal_acetylation",
 	],
 	"public/rna": [
 		"rna_denovo",

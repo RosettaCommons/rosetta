@@ -23,7 +23,7 @@ namespace core {
 namespace enzymes {
 
 // This helper function for get_3_letter_codes_from_peptide_consensus_sequence() returns a list of AA residue 3-letter
-// codes or a 1-element vector with a single-character "punctuation" symbol of "(", "/", or ")".
+// codes or a 1-element vector with a single-character "punctuation" symbol of "<", ">", "(", ")", "{", "}", or "/".
 // It is intentionally not forward-declared.
 // <char_pos> is passed as a non-const reference, because the one-letter code "X", if followed by square brackets,
 // counts as a single character with the bracket contents specifying its identity, and the next character parsed by
@@ -36,7 +36,10 @@ get_AA_3_letter_codes_or_punctuation_from_1_letter_code_at_position( std::string
 	using namespace core::chemical;
 
 	char const first_char( sequence[ char_pos ] );
-	if ( ( first_char == '(' ) || ( first_char == '/' ) || ( first_char == ')' ) ) {
+	if ( ( first_char == '<' ) || ( first_char == '>' ) ||
+			( first_char == '(' ) || ( first_char == ')' ) ||
+			( first_char == '{' ) || ( first_char == '}' ) ||
+			( first_char == '/' ) ) {
 		return vector1< string >( { string( 1, first_char ) } );
 	} else if ( first_char == 'B' ) {
 		return vector1< string >( { "ASP", "ASN" } );
@@ -83,7 +86,9 @@ get_AA_3_letter_codes_or_punctuation_from_1_letter_code_at_position( std::string
 /// Pyl, Sec, and Glx, respectively.  X alone is recognized to be any of the 20 canonical amino acids; X followed by
 /// square brackets specifies a single non-canonical amino acid by 3-letter code. For example, X[SEP] specifies
 /// phosphoserine.  Parentheses are used to specify multiple possible residue types at that site, separated by forward
-/// slashes, e.g., A/G) specifies either Ala or Gly at that position.
+/// slashes, e.g., A/G) specifies either Ala or Gly at that position.  < and > signify a sequon that is at the
+/// N-terminus or C-terminus, repsectively, and these characters are skipped by this function and handled instead by
+/// EnzymaticMover::set_pose_reactive_sites().
 /// @note     A vector of vectors is returned, because each position may have options and not a specific residue.
 utility::vector1< utility::vector1< std::string > >
 get_3_letter_codes_from_peptide_consensus_sequence( std::string const & sequence )
@@ -102,7 +107,7 @@ get_3_letter_codes_from_peptide_consensus_sequence( std::string const & sequence
 		char const first_char( codes_or_punctuation[ 1 ][ 0 ] );
 		if ( first_char == '(' ) {
 			in_parentheses = true;
-		} else if ( first_char == '/' ) {
+		} else if ( ( first_char == '<' ) || ( first_char == '>' ) || ( first_char == '/' ) ) {
 			continue;
 		} else if ( first_char == ')' ) {
 			in_parentheses = false;

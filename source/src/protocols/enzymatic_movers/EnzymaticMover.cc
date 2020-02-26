@@ -284,6 +284,7 @@ EnzymaticMover::set_pose_reactive_sites( core::pose::Pose const & pose )
 	core::uint const site_residue_position( EnzymeManager::get_reactive_residue_consensus_sequence_position(
 		enzyme_family_, species_name_, enzyme_name_ ) );
 	vector1< string > const & site_residues( consensus_residues[ site_residue_position ] );  // could be more than one
+
 	Size const n_consensus_residues( consensus_residues.size() );
 	Size const n_residues_left_of_site( site_residue_position - 1 );
 	Size const n_residues_right_of_site( n_consensus_residues - site_residue_position );
@@ -291,8 +292,24 @@ EnzymaticMover::set_pose_reactive_sites( core::pose::Pose const & pose )
 
 	TR << "Searching for reactive sites within consensus sequence " << consensus << "..." << endl;
 
-	Size const n_residues( pose.total_residue() );
-	for ( core::uint i( 1 ); i <= n_residues; ++i ) {
+	Size const n_residues( pose.size() );
+	core::uint start_res, stop_res;
+	if ( consensus.back() == '>' ) {
+		// A ">" at the end of the consensus sequence means that this sequon must come at the C-terminus.
+		// There is no point starting the search at residue 1; start n_consensus_residues away.
+		start_res = 1 + n_residues - n_consensus_residues;
+	} else {
+		start_res = 1;
+	}
+	if ( consensus.front() == '<' ) {
+		// A "<" at the start of the consensus sequence means that this sequon must come at the N-terminus.
+		// There is no point continuing the search any more than n_consensus_residues residues.
+		stop_res = n_consensus_residues;
+	} else {
+		stop_res = pose.size();
+	}
+
+	for ( core::uint i( start_res ); i <= stop_res; ++i ) {
 		if ( excluded_sites_.contains( i ) ) { continue; }
 		string const & res_i( pose.residue( i ).name3() );
 		if ( site_residues.contains( res_i ) ) {
@@ -338,7 +355,7 @@ EnzymaticMover::set_pose_reactive_sites( core::pose::Pose const & pose )
 		}
 	}
 
-	TR << "Found " << reaction_sites_.size() << " potential reaction sites." << endl;
+	TR << "Found " << reaction_sites_.size() << " potential reaction site(s)." << endl;
 }
 
 

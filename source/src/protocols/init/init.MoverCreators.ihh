@@ -161,6 +161,7 @@
 
 #include <protocols/enzymatic_movers/GlycosyltransferaseMoverCreator.hh>
 #include <protocols/enzymatic_movers/KinaseMoverCreator.hh>
+#include <protocols/enzymatic_movers/NTerminalAcetyltransferaseMoverCreator.hh>
 
 #include <protocols/evolution/EvolutionaryDynamicsMoverCreator.hh>
 #include <protocols/evolution/NucleotideMutationCreator.hh>

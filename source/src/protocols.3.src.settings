@@ -113,6 +113,7 @@ sources = {
 		"EnzymaticMover",
 		"GlycosyltransferaseMover",
 		"KinaseMover",
+		"NTerminalAcetyltransferaseMover",
 	],
 	"protocols/fibril": [
 		"fibril_util",
