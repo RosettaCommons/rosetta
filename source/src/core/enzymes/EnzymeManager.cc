@@ -149,7 +149,7 @@ EnzymeManager::parse_consensus_sequence( EnzymeData & enzyme_data ) const
 		enzyme_data.consensus_residues = get_3_letter_codes_from_peptide_consensus_sequence( consensus );
 		break;
 	case NA :
-		enzyme_data.consensus_residues = get_codes_from_NA_consensus_sequence( consensus );
+		enzyme_data.consensus_residues = get_3_letter_codes_from_NA_consensus_sequence( consensus );
 		break;
 	case SACCHARIDE :
 		enzyme_data.consensus_residues = get_codes_from_saccharide_consensus_sequence( consensus );

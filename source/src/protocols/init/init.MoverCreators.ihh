@@ -159,6 +159,7 @@
 #include <protocols/enzdes/EnzRepackMinimizeCreator.hh>
 #include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
 
+#include <protocols/enzymatic_movers/DNAMethyltransferaseMoverCreator.hh>
 #include <protocols/enzymatic_movers/GlycosyltransferaseMoverCreator.hh>
 #include <protocols/enzymatic_movers/KinaseMoverCreator.hh>
 #include <protocols/enzymatic_movers/NTerminalAcetyltransferaseMoverCreator.hh>

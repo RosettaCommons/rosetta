@@ -176,6 +176,7 @@ sources = {
 		"enzyme_design",
 	],
 	"public/post-translational_modification": [
+		"DNA_methylation",
 		"glycosyltransfer",
 		"phosphorylation",
 		"N-terminal_acetylation",

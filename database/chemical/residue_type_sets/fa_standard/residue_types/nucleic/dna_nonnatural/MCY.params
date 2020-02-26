@@ -2,6 +2,8 @@
 NAME MCY
 IO_STRING MCY Z
 TYPE POLYMER #residue type
+VARIANT C5_METHYLATED_NA
+VARIANT_OF CYT
 AA UNP
 ATOM  P   Phos P    1.5
 ATOM  OP2 OOC  ON3  -0.78
@@ -87,7 +89,7 @@ BOND  C6   H6
 CHI 1 O4' C1' N1 C2
 # Properly, this is a DNA type, but we need not to break DNA design
 # integration tests. Better to model it as RNA.
-PROPERTIES  RNA D_RNA POLAR CHARGED AROMATIC PYRIMIDINE
+PROPERTIES  RNA D_RNA POLAR CHARGED AROMATIC PYRIMIDINE C5_MODIFIED METHYLATED_NA
 NA_ANALOGUE RCY
 ## these need to be fixed!
 ## and need to add chi1

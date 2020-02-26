@@ -29,8 +29,8 @@ namespace enzymes {
 utility::vector1< utility::vector1< std::string > > get_3_letter_codes_from_peptide_consensus_sequence(
 	std::string const & sequence );
 
-/// @brief  Parse a nucleic acid consensus sequence and return a list of NA residue codes.
-utility::vector1< utility::vector1< std::string > > get_codes_from_NA_consensus_sequence(
+/// @brief  Parse a nucleic acid consensus sequence and return a list of NA residue 3-letter codes.
+utility::vector1< utility::vector1< std::string > > get_3_letter_codes_from_NA_consensus_sequence(
 	std::string const & sequence );
 
 /// @brief  Parse a saccharide consensus sequence and return a list of monosaccharide residue codes.

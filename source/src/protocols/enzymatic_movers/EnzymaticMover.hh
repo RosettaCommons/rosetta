@@ -45,10 +45,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 	EnzymaticMover( std::string const & enzyme_family );
 
 	/// @brief  Copy constructor
-	EnzymaticMover( EnzymaticMover const & object_to_copy );
-
-	// Assignment operator
-	EnzymaticMover & operator=( EnzymaticMover const & object_to_copy );
+	EnzymaticMover( EnzymaticMover const & ) = default;
 
 	// Destructor
 	~EnzymaticMover() override = default;
@@ -261,9 +258,6 @@ private:  // Private methods //////////////////////////////////////////////////
 
 	// Initialize data members from arguments.
 	void init( std::string const & enzyme_family );
-
-	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
-	void copy_data( EnzymaticMover & object_to_copy_to, EnzymaticMover const & object_to_copy_from );
 
 
 	// Access the EnzymeManager to set efficiency.

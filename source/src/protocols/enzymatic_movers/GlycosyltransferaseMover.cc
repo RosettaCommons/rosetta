@@ -37,22 +37,6 @@ GlycosyltransferaseMover::GlycosyltransferaseMover(): EnzymaticMover( "glycosylt
 	type( "GlycosyltransferaseMover" );
 }
 
-// Copy constructor
-GlycosyltransferaseMover::GlycosyltransferaseMover( GlycosyltransferaseMover const & object_to_copy ) :
-	EnzymaticMover( object_to_copy )
-{}
-
-// Assignment operator
-GlycosyltransferaseMover &
-GlycosyltransferaseMover::operator=( GlycosyltransferaseMover const & object_to_copy )
-{
-	// Abort self-assignment.
-	if ( this != &object_to_copy ) {
-		EnzymaticMover::operator=( object_to_copy );
-	}
-	return *this;
-}
-
 
 // Standard Rosetta methods ///////////////////////////////////////////////////
 // General methods

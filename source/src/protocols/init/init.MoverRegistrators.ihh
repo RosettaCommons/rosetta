@@ -173,6 +173,7 @@ static MoverRegistrator< enzdes::PackRotamersMoverPartGreedyCreator > reg_PackRo
 static MoverRegistrator< enzdes::PredesignPerturbMoverCreator > reg_PredesignPerturbMoverCreator;
 static MoverRegistrator< enzdes::UpdateEnzdesHeaderMoverCreator > reg_UpdateEnzdesHeaderMoverCreator;
 
+static MoverRegistrator< enzymatic_movers::DNAMethyltransferaseMoverCreator > reg_DNAMethyltransferaseMoverCreator;
 static MoverRegistrator< enzymatic_movers::GlycosyltransferaseMoverCreator > reg_GlycosyltransferaseMoverCreator;
 static MoverRegistrator< enzymatic_movers::KinaseMoverCreator > reg_KinaseMoverCreator;
 static MoverRegistrator< enzymatic_movers::NTerminalAcetyltransferaseMoverCreator > reg_NTerminalAcetyltransferaseMoverCreator;

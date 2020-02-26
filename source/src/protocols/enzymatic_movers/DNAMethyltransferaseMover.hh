@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/enzymatic_movers/KinaseMover.hh
-/// @brief  Declarations and simple accessor/mutator definitions for KinaseMover
+/// @file   protocols/enzymatic_movers/DNAMethyltransferaseMover.hh
+/// @brief  Declarations and simple accessor/mutator definitions for DNAMethyltransferaseMover
 /// @author Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_protocols_enzymatic_movers_KinaseMover_HH
-#define INCLUDED_protocols_enzymatic_movers_KinaseMover_HH
+#ifndef INCLUDED_protocols_enzymatic_movers_DNAMethyltransferaseMover_HH
+#define INCLUDED_protocols_enzymatic_movers_DNAMethyltransferaseMover_HH
 
 // Unit headers
-#include <protocols/enzymatic_movers/KinaseMover.fwd.hh>
+#include <protocols/enzymatic_movers/DNAMethyltransferaseMover.fwd.hh>
 #include <protocols/enzymatic_movers/EnzymaticMover.hh>
 
 // Project headers
@@ -26,18 +26,18 @@
 namespace protocols {
 namespace enzymatic_movers {
 
-/// @details  This Mover simulates the activity of a virtual kinase enzyme on a Pose by phosphorylating a residue at a
-///           biologically relevant sequon position.
-class KinaseMover : public EnzymaticMover {
+/// @details  This Mover simulates the activity of a virtual DNA methyltransferase enzyme on a Pose by methylating a
+///           nucleic-acid residue at a biologically relevant sequon position.
+class DNAMethyltransferaseMover : public EnzymaticMover {
 public:  // Standard methods //////////////////////////////////////////////////
 	/// @brief  Default constructor
-	KinaseMover();
+	DNAMethyltransferaseMover();
 
 	/// @brief  Copy constructor
-	KinaseMover( KinaseMover const & ) = default;
+	DNAMethyltransferaseMover( DNAMethyltransferaseMover const & ) = default;
 
 	// Destructor
-	~KinaseMover() override = default;
+	~DNAMethyltransferaseMover() override = default;
 
 
 public: // Standard Rosetta methods ///////////////////////////////////////////
@@ -50,7 +50,7 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 	/// @brief  Return the name of the Mover.
 	std::string get_name() const override;
 
-	static std::string mover_name() { return "KinaseMover"; }
+	static std::string mover_name() { return "DNAMethyltransferaseMover"; }
 
 
 	moves::MoverOP clone() const override;
@@ -66,12 +66,12 @@ protected:
 		core::pose::Pose & input_pose,
 		core::uint const site,
 		std::string const & cosubstrate ) override;
-};  // class KinaseMover
+};  // class DNAMethyltransferaseMover
 
-// Insertion operator (overloaded so that KinaseMover can be "printed" in PyRosetta).
-std::ostream & operator<<( std::ostream & output, KinaseMover const & object_to_output );
+// Insertion operator (overloaded so that DNAMethyltransferaseMover can be "printed" in PyRosetta).
+std::ostream & operator<<( std::ostream & output, DNAMethyltransferaseMover const & object_to_output );
 
 }  // namespace enzymatic_movers
 }  // namespace protocols
 
-#endif  // INCLUDED_protocols_enzymatic_movers_KinaseMover_HH
+#endif  // INCLUDED_protocols_enzymatic_movers_DNAMethyltransferaseMover_HH

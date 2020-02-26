@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    protocols/enzymatic_movers/KinaseMover.cc
-/// @brief   Method definitions for KinaseMover.
+/// @file    protocols/enzymatic_movers/DNAMethyltransferaseMover.cc
+/// @brief   Method definitions for DNAMethyltransferaseMover.
 /// @author  Labonte  <JWLabonte@jhu.edu>
 
 
 // Unit headers
-#include <protocols/enzymatic_movers/KinaseMover.hh>
-#include <protocols/enzymatic_movers/KinaseMoverCreator.hh>
+#include <protocols/enzymatic_movers/DNAMethyltransferaseMover.hh>
+#include <protocols/enzymatic_movers/DNAMethyltransferaseMoverCreator.hh>
 #include <protocols/enzymatic_movers/EnzymaticMover.hh>
 
 // Project headers
@@ -23,8 +23,14 @@
 #include <core/chemical/VariantType.hh>
 #include <core/pose/variant_util.hh>
 
-// Utility headers
+// Utility header
 #include <utility/tag/XMLSchemaGeneration.hh>
+
+// Basic header
+#include <basic/Tracer.hh>
+
+// Construct tracers.
+static basic::Tracer TR( "protocols.enzymatic_movers.DNAMethyltransferaseMover" );
 
 
 namespace protocols {
@@ -33,16 +39,16 @@ namespace enzymatic_movers {
 // Public methods /////////////////////////////////////////////////////////////
 // Standard methods ///////////////////////////////////////////////////////////
 // Default constructor
-KinaseMover::KinaseMover(): EnzymaticMover( "kinases" )
+DNAMethyltransferaseMover::DNAMethyltransferaseMover(): EnzymaticMover( "DNA_methyltransferases" )
 {
-	type( "KinaseMover" );
+	type( "DNAMethyltransferaseMover" );
 }
 
 
 // Standard Rosetta methods ///////////////////////////////////////////////////
 // General methods
 void
-KinaseMover::register_options()
+DNAMethyltransferaseMover::register_options()
 {
 	EnzymaticMover::register_options();
 }
@@ -50,71 +56,75 @@ KinaseMover::register_options()
 
 // Mover methods
 std::string
-KinaseMover::get_name() const {
+DNAMethyltransferaseMover::get_name() const {
 	return mover_name();
 }
 
 moves::MoverOP
-KinaseMover::clone() const
+DNAMethyltransferaseMover::clone() const
 {
-	return utility::pointer::make_shared< KinaseMover >( *this );
+	return utility::pointer::make_shared< DNAMethyltransferaseMover >( *this );
 }
 
 moves::MoverOP
-KinaseMover::fresh_instance() const
+DNAMethyltransferaseMover::fresh_instance() const
 {
-	return utility::pointer::make_shared< KinaseMover >();
+	return utility::pointer::make_shared< DNAMethyltransferaseMover >();
 }
 
 
 void
-KinaseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+DNAMethyltransferaseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 
 	EnzymaticMover::xml_schema_complex_type_generator()->element_name( mover_name() )
 		.complex_type_naming_func( & moves::complex_type_name_for_mover )
-		.description( "Enzymatic mover to phosphorylate a pose" )
+		.description( "Enzymatic mover to methylate a DNA-containing pose" )
 		.write_complex_type_to_schema( xsd );
 }
 
 // Protected methods //////////////////////////////////////////////////////////
 void
-KinaseMover::perform_reaction(
+DNAMethyltransferaseMover::perform_reaction(
 	core::pose::Pose & input_pose,
 	core::uint const site,
 	std::string const & /*cosubstrate*/ )
 {
-	core::pose::add_variant_type_to_pose_residue(
-		input_pose,
-		core::chemical::PHOSPHORYLATION,
-		get_reactive_site_sequence_position( site ) );
+	core::uint const seqpos( get_reactive_site_sequence_position( site ) );
+	std::string const & name( input_pose.residue( seqpos ).name3() );
+	if ( ( name == " DC" ) ) {
+		core::pose::add_variant_type_to_pose_residue( input_pose, core::chemical::C5_METHYLATED_NA, seqpos );
+	} else {
+		TR << "Rosetta can currently only perform 5-methylations of deoxycytidine, ";
+		TR << "since other ResidueTypes have not yet been added to the database." << std::endl;
+	}
 }
 
 
 // Creator methods ////////////////////////////////////////////////////////////
 std::string
-KinaseMoverCreator::keyname() const {
-	return KinaseMover::mover_name();
+DNAMethyltransferaseMoverCreator::keyname() const {
+	return DNAMethyltransferaseMover::mover_name();
 }
 
 // Return an up-casted owning pointer (MoverOP) to the mover.
 protocols::moves::MoverOP
-KinaseMoverCreator::create_mover() const {
-	return utility::pointer::make_shared< KinaseMover >();
+DNAMethyltransferaseMoverCreator::create_mover() const {
+	return utility::pointer::make_shared< DNAMethyltransferaseMover >();
 }
 
 void
-KinaseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+DNAMethyltransferaseMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
-	KinaseMover::provide_xml_schema( xsd );
+	DNAMethyltransferaseMover::provide_xml_schema( xsd );
 }
 
 
 // Helper methods /////////////////////////////////////////////////////////////
-// Insertion operator (overloaded so that KinaseMover can be "printed" in PyRosetta).
+// Insertion operator (overloaded so that DNAMethyltransferaseMover can be "printed" in PyRosetta).
 std::ostream &
-operator<<( std::ostream & output, KinaseMover const & object_to_output )
+operator<<( std::ostream & output, DNAMethyltransferaseMover const & object_to_output )
 {
 	object_to_output.show( output );
 	return output;

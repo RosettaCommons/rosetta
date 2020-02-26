@@ -110,6 +110,7 @@ sources = {
 		"VoxelSpacingRefinementMover",
 	],
 	"protocols/enzymatic_movers": [
+		"DNAMethyltransferaseMover",
 		"EnzymaticMover",
 		"GlycosyltransferaseMover",
 		"KinaseMover",
@@ -139,7 +140,7 @@ sources = {
 	],
 	"protocols/indexed_structure_store": [
 		"DirectSegmentLookup",
-    "SegmentSequenceProfile",
+		"SegmentSequenceProfile",
 		"utility",
 		"FragmentStore",
 		"FragmentLookup",
@@ -153,7 +154,7 @@ sources = {
 		"DirStructureStoreBackend",
 		"SilentStructureStoreBackend",
 		"StructureStoreManager",
-    "pose_utility",
+		"pose_utility",
 	],
 	"protocols/kinematic_closure" : [
 		"internal",

@@ -82,4 +82,33 @@ public: // Tests //////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( consensus_residues[ 17 ][ 2 ], "GLN" );
 		TS_ASSERT_EQUALS( consensus_residues[ 21 ].size(), 20 );  // X is any CAA.
 	}
+
+	// Confirm that nucleic-acid consensus sequences are parsed properly.
+	void test_get_3_letter_codes_from_NA_consensus_sequence()
+	{
+		using namespace std;
+		using namespace utility;
+
+		TR << "Testing get_3_letter_codes_from_NA_consensus_sequence()..." << std::endl;
+
+		string const sequence( "GATACAWARGUT" );
+		vector1< vector1< string > > consensus_residues;
+
+		consensus_residues = core::enzymes::get_3_letter_codes_from_NA_consensus_sequence( sequence );
+
+		TS_ASSERT_EQUALS( consensus_residues.size(), 12 );
+		TS_ASSERT_EQUALS( consensus_residues[ 1 ].size(), 2 );  // both RNA & DNA
+		TS_ASSERT_EQUALS( consensus_residues[ 1 ][ 1 ], "  G" );
+		TS_ASSERT_EQUALS( consensus_residues[ 1 ][ 2 ], " DG" );
+		TS_ASSERT_EQUALS( consensus_residues[ 2 ].size(), 2 );  // both RNA & DNA
+		TS_ASSERT_EQUALS( consensus_residues[ 2 ][ 1 ], "  A" );
+		TS_ASSERT_EQUALS( consensus_residues[ 2 ][ 2 ], " DA" );
+		TS_ASSERT_EQUALS( consensus_residues[ 3 ].size(), 1 );  // only DNA
+		TS_ASSERT_EQUALS( consensus_residues[ 3 ][ 1 ], " DT" );
+		TS_ASSERT_EQUALS( consensus_residues[ 5 ].size(), 2 );  // both RNA & DNA
+		TS_ASSERT_EQUALS( consensus_residues[ 7 ].size(), 4 );  // A, dA, T, & U
+		TS_ASSERT_EQUALS( consensus_residues[ 9 ].size(), 4 );  // RNA & DNA purines
+		TS_ASSERT_EQUALS( consensus_residues[ 11 ].size(), 1 );  // only RNA
+		TS_ASSERT_EQUALS( consensus_residues[ 11 ][ 1 ], "  U" );
+	}
 };  // class ConsensusSequenceParserTests

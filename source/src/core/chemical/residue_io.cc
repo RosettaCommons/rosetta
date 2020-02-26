@@ -548,6 +548,10 @@ read_topology_file(
 /// patches to certain residue types.  E.g., "VARIANT DISULFIDE".
 /// from CYD.params.
 ///
+/// VARIANT_OF:
+/// Used with VARIANT, this declares the "base name" of the ResidueType for
+/// which this is a VARIANT_TYPE.  E.g., "VARIANT_OF CYT".
+///
 /// VIRTUAL_SHADOW:
 /// Declares the first atom as a shadower of the second atom, implying
 /// that the atoms ought to be restrained to lie directly on top of each
@@ -890,6 +894,9 @@ read_topology_file(
 				rsd->add_variant_type( tag );
 				l >> tag;
 			}
+		} else if ( tag == "VARIANT_OF" ) {
+			l >> tag;
+			rsd->base_name( tag );
 		} else if ( tag == "MAINCHAIN_ATOMS" ) {
 			// Note: Main-chain atoms describe the linear connection of atoms from the lower-terminus to the upper-
 			// terminus in a residue.  This is NOT synonymous with "backbone atoms".  (Backbone atoms are any atoms NOT
@@ -961,8 +968,11 @@ read_topology_file(
 			rsd->set_rama_prepro_mainchain_torsion_potential_name(tag, true);
 		}  else if ( tag == "NAME" ) {
 			l >> tag;
-			rsd->name( tag ); //The name will have variant types appended to it; it will be the unique identifier for a ResidueType.
-			rsd->base_name( tag ); //The base name stays the same once set.  It's common to all ResidueTypes that share a base type but differ in their VariantTypes.
+			// The name will have variant types appended to it; it will be the unique identifier for a ResidueType.
+			rsd->name( tag );
+			// The base name is common to all ResidueTypes that share a base type but differ in their VariantTypes.
+			// It can be set to a different value from NAME by the VARIANT_OF record.
+			rsd->base_name( tag );
 		} else if ( tag == "CHI_ROTAMERS" ) {
 			Size chino;
 			Real mean, sdev;
@@ -1259,8 +1269,10 @@ write_topology_file(
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
 
+	std::string const & rsd_name( rsd.name() );
+
 	if ( ! filename.size() ) {
-		filename = rsd.name() + ".params";
+		filename = rsd_name + ".params";
 	}
 
 	std::ofstream out( filename.c_str() );
@@ -1270,7 +1282,7 @@ write_topology_file(
 	out << "#This automatically generated file is not really formatted well, and is missing some entries, but should work.\n";
 
 	// first write out all the general tags
-	out << "NAME " << rsd.name() << "\n";
+	out << "NAME " << rsd_name << "\n";
 
 	utility::vector1< std::string > const & variants = rsd.variant_types();
 	if ( ! variants.empty() ) {
@@ -1279,6 +1291,11 @@ write_topology_file(
 			out << " " << variant;
 		}
 		out << "\n";
+	}
+
+	std::string const & base_name( rsd.base_name() );
+	if ( base_name != rsd_name ) {
+		out << "VARIANT_OF " << base_name << "\n";
 	}
 
 	out << "IO_STRING " << rsd.name3() << " " << rsd.name1() << "\n";

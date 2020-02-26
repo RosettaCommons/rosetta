@@ -58,24 +58,6 @@ EnzymaticMover::EnzymaticMover( std::string const & enzyme_family )
 	init( enzyme_family );
 }
 
-// Copy constructor
-EnzymaticMover::EnzymaticMover( EnzymaticMover const & object_to_copy ) : moves::Mover( object_to_copy )
-{
-	copy_data( *this, object_to_copy );
-}
-
-// Assignment operator
-EnzymaticMover &
-EnzymaticMover::operator=( EnzymaticMover const & object_to_copy )
-{
-	// Abort self-assignment.
-	if ( this != &object_to_copy ) {
-		moves::Mover::operator=( object_to_copy );
-		copy_data( *this, object_to_copy );
-	}
-	return *this;
-}
-
 
 // Standard Rosetta methods ///////////////////////////////////////////////////
 // General methods
@@ -380,21 +362,6 @@ EnzymaticMover::init( std::string const & enzyme_family )
 	TR << "Initializing EnzymaticMover from the " << enzyme_family << " family..." << std::endl;
 	set_enzyme_family( enzyme_family );
 	set_commandline_options();
-}
-
-// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
-void
-EnzymaticMover::copy_data( EnzymaticMover & object_to_copy_to, EnzymaticMover const & object_to_copy_from )
-{
-	object_to_copy_to.enzyme_family_ = object_to_copy_from.enzyme_family_;
-	object_to_copy_to.species_name_ = object_to_copy_from.species_name_;
-	object_to_copy_to.enzyme_name_ = object_to_copy_from.enzyme_name_;
-	object_to_copy_to.efficiency_ = object_to_copy_from.efficiency_;
-	object_to_copy_to.excluded_sites_ = object_to_copy_from.excluded_sites_;
-	object_to_copy_to.ensured_sites_ = object_to_copy_from.ensured_sites_;
-	object_to_copy_to.reaction_sites_ = object_to_copy_from.reaction_sites_;
-	object_to_copy_to.co_substrates_ = object_to_copy_from.co_substrates_;
-	object_to_copy_to.performs_major_reaction_only_ = object_to_copy_from.performs_major_reaction_only_;
 }
 
 

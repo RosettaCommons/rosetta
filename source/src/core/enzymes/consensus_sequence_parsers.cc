@@ -128,21 +128,88 @@ get_3_letter_codes_from_peptide_consensus_sequence( std::string const & sequence
 	return residues_in_consensus;
 }
 
-// TODO: copied from Slack convo. w/ Andy:
-// B = ‘not A’; D = ‘not C’; H = ‘not G’; V = ‘not U’
-// R = AG, Y = CU
-// S = GC, W = AU (weak/strong)
-// K = GU, M = AC (idk why)
-// N = ACGU
-
-// Parse a nucleic acid consensus sequence and return a list of NA residue codes.
-/// @note  A vector of vectors is returned, because each position may have options and not a specific residue.
+// Parse a nucleic acid consensus sequence and return a list of NA residue 3-letter codes.
+/// @details  This parser recognizes the following one-letter codes:\n
+///            - A: adenine
+///            - B: not A
+///            - C: cytosine
+///            - D: not C
+///            - G: guanine
+///            - H: not G
+///            - K: G or T/U
+///            - M: A or C
+///            - N: A, C, G, or t/U (aNy)
+///            - R: A or G (puRines)
+///            - S: G or C ("strong" nucleobases)
+///            - T: thymine (m5U)
+///            - U: uracil
+///            - V: not T/U
+///            - W: A or T/U ("weak" nucleobases)
+///            - Y: C or T/U (pYrimidines)
+/// @note     A vector of vectors is returned, because each position may have options and not a specific residue.
 utility::vector1< utility::vector1< std::string > >
-get_codes_from_NA_consensus_sequence( std::string const & /*sequence*/ )
+get_3_letter_codes_from_NA_consensus_sequence( std::string const & sequence )
 {
 	using namespace std;
 	using namespace utility;
-	return vector1< vector1< string> >( 1, vector1< string >( 1, "XXX" ) );  // TODO: Fill in.
+
+	vector1< vector1< string > > residues_in_consensus;  // a vector of vectors because a position may have options
+
+	Size const n_char( sequence.size() );
+	for ( uint char_pos( 0 ); char_pos < n_char; ++char_pos ) {
+		char const code( sequence[ char_pos ] );
+		switch ( code ) {
+		case 'A' :
+			residues_in_consensus.push_back( vector1< string >( { "  A", " DA" } ) );
+			break;
+		case 'B' :  // not A
+			residues_in_consensus.push_back( vector1< string >( { "  C", " DC", "  G", " DG", " DT", "  U" } ) );
+			break;
+		case 'C' :
+			residues_in_consensus.push_back( vector1< string >( { "  C", " DC" } ) );
+			break;
+		case 'D' :  // not C
+			residues_in_consensus.push_back( vector1< string >( { "  A", " DA", "  G", " DG", " DT", "  U" } ) );
+			break;
+		case 'G' :
+			residues_in_consensus.push_back( vector1< string >( { "  G", " DG" } ) );
+			break;
+		case 'H' :  // not G
+			residues_in_consensus.push_back( vector1< string >( { "  A", " DA", "  C", " DC", " DT", "  U" } ) );
+			break;
+		case 'K' :  // G or U
+			residues_in_consensus.push_back( vector1< string >( { "  G", " DG", "  U" } ) );
+			break;
+		case 'M' :  // A or C
+			residues_in_consensus.push_back( vector1< string >( { "  A", " DA", "  C", " DC" } ) );
+			break;
+		case 'N' :  // RNA bases
+			residues_in_consensus.push_back( vector1< string >( { "  A", "  C", "  G", "  U" } ) );
+			break;
+		case 'R' :  // purines
+			residues_in_consensus.push_back( vector1< string >( { "  A", " DA", "  G", " DG" } ) );
+			break;
+		case 'S' :  // "strong" nucleobases
+			residues_in_consensus.push_back( vector1< string >( { "  C", " DC", "  G", " DG" } ) );
+			break;
+		case 'T' :
+			residues_in_consensus.push_back( vector1< string >( { " DT" } ) );
+			break;
+		case 'U' :
+			residues_in_consensus.push_back( vector1< string >( { "  U" } ) );
+			break;
+		case 'V' :  // not U
+			residues_in_consensus.push_back( vector1< string >( { "  A", " DA", "  C", " DC", "  G", " DG", " DT" } ) );
+			break;
+		case 'W' :  // "weak" nucleobases
+			residues_in_consensus.push_back( vector1< string >( { "  A", " DA", " DT", "  U" } ) );
+			break;
+		default :
+			continue;
+		}
+	}
+
+	return residues_in_consensus;
 }
 
 // Parse a saccharide consensus sequence and return a list of monosaccharide residue codes.

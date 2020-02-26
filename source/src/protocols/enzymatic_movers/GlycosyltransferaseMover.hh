@@ -34,10 +34,7 @@ public:  // Standard methods //////////////////////////////////////////////////
 	GlycosyltransferaseMover();
 
 	/// @brief  Copy constructor
-	GlycosyltransferaseMover( GlycosyltransferaseMover const & object_to_copy );
-
-	// Assignment operator
-	GlycosyltransferaseMover & operator=( GlycosyltransferaseMover const & object_to_copy );
+	GlycosyltransferaseMover( GlycosyltransferaseMover const & ) = default;
 
 	// Destructor
 	~GlycosyltransferaseMover() override = default;
