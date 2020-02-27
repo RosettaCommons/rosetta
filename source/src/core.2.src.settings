@@ -236,6 +236,11 @@ sources = {
 		"BondedAtom",
 		"JumpAtom",
 	],
+    "core/kinematics/jacobian": [
+        "JacobianStructure",
+        "SeriesJacobians",
+        "ModuleType1",
+    ],
 }
 include_path = [
 ]

@@ -440,6 +440,7 @@ sources = {
 
 	"loops/closers" : [
 		"CCDLoopClosureMover",
+		"JacobiLoopClosureMover",
 	],
 
 	"loop_modeling" : [

@@ -17,6 +17,9 @@ sources = {
 	"protocols/coupled_moves": [
 		"CoupledMovesProtocol",
 	],
+	"protocols/loops/loop_closure/jacobi": [
+		"JacobiLoopClosureMover",
+	],
 	"protocols/unfolded_state_energy_calculator": [
 		"UnfoldedStateEnergyCalculatorJobDistributor",
 		"UnfoldedStateEnergyCalculatorMover",
