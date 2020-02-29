@@ -161,6 +161,10 @@ sources = {
 		"MPDockingSetupMoverTest",
 	],
 
+	"drug_design": [
+		"orphan_restypes",
+	],
+
 	"energy_based_clustering" : [
 		"EnergyBasedClusteringTests",
 		"EnergyBasedClusteringTests_alpha_aa",
@@ -350,8 +354,8 @@ sources = {
 	],
 
 	"indexed_structure_store" : [
-	"DirectSegmentLookup",
-	"SegmentSequenceProfile",
+		"DirectSegmentLookup",
+		"SegmentSequenceProfile",
 		"FragmentLookup",
 		"StructureStore",
 	],
@@ -403,12 +407,6 @@ sources = {
 	#"kinematic_closure" : [
 	#    "ClosureTests",
 	#],
-
-	"drug_design": [
-		"orphan_restypes",
-	],
-
-
 	"legacy_sewing" : [
 		"SewingHasherTests",
 	],
@@ -503,8 +501,8 @@ sources = {
 	],
 	"moves" : [
 		"BackrubMover",
-                "FilterReportAsPoseExtraScoresMover",
-                "MonteCarloTests",
+		"FilterReportAsPoseExtraScoresMover",
+		"MonteCarloTests",
 		"MoverContainer",
 		"MoversTest",
 		"MoverFactory",
@@ -533,10 +531,10 @@ sources = {
 	"nmr/rdc" : [
 		"RDCEnergy",
 	],
-        "multistage_rosetta_scripts" : [
-                "MRSJobQueen",
-                "MRSClustering",
-        ],
+	"multistage_rosetta_scripts" : [
+		"MRSJobQueen",
+		"MRSClustering",
+	],
 	"nonlocal" : [
 		"Chunk",
 		"NonlocalUtil",
@@ -554,19 +552,26 @@ sources = {
 		"MultistateFitnessFunction",
 		"PackDaemon",
 	],
-    "pack_interface" : [
-        "ProteinProteinInterfaceUpweighterTaskOperation",
-    ],
+
+	"pack_interface" : [
+		"ProteinProteinInterfaceUpweighterTaskOperation",
+	],
+
 	"parser" : [
 		"BluePrint",
-                "DataLoaders"
-	],
-	"pmut_scan" : [
-		"PointMutScanDriver",
+		"DataLoaders"
 	],
 
 	"peptide_deriver" : [
 		"PeptideDeriverFilterTests",
+	],
+
+	"pmut_scan" : [
+		"PointMutScanDriver",
+	],
+
+	"pose_creation" : [
+		"PoseFromSequenceMoverTests",
 	],
 
 	"protein_interface_design" : [
@@ -813,9 +818,9 @@ sources = {
 	"util": [
 		"cout",
 	],
-	"vardist_solaccess" : [
-                "VarSolDRotamerDots",
-        ],
+		"vardist_solaccess" : [
+		"VarSolDRotamerDots",
+	],
 
 }
 include_path = [ "#external/cxxtest", "#" ]
@@ -1198,7 +1203,7 @@ testinputfiles = [
 	"nmr/pre/sim_pres_cu2_1h_r2.txt",
 	"nmr/pre/sim_pres_mn2_1h_r1.txt",
 	"nmr/pre/sim_pres_mn2_1h_r2.txt",
-        "nmr/rdc/g_nmr_A.pdb",
+	"nmr/rdc/g_nmr_A.pdb",
 	"nmr/rdc/rdc_data_g_input_file.txt",
 	"nmr/rdc/bicelles_nh_norm_toNH.txt",
 	"nmr/rdc/bicelles_hnc_norm_toNH.txt",
@@ -1212,7 +1217,7 @@ testinputfiles = [
 	"optimize_weights/1UAD.wt_unbounded.pdb",
 	"optimize_weights/1UAD.E38A.mut_complex.pdb",
 	"optimize_weights/1UAD.E38A.mut_unbounded.pdb",
-    "pack_interface/4SER_buriedASP.pdb.gz",
+	"pack_interface/4SER_buriedASP.pdb.gz",
 	"peptide_deriver/PeptideDeriverFilter.u",
 	"peptide_deriver/2hle_remixed.pdb",
 	"peptide_deriver/1sfi_short.pdb",
@@ -1220,6 +1225,8 @@ testinputfiles = [
 	"pmut_scan/mutants.txt",
 	"pmut_scan/shortloop.01.pdb.gz",
 	"pmut_scan/shortloop.02.pdb.gz",
+	"pose_creation/PFSM_01.fasta",
+	"pose_creation/PFSM_02.fasta",
 	"recon_design/design.resfile",
 	"recon_design/design2.resfile",
 	"qsar/scoring_grid/2JJC.pdb",
@@ -1271,9 +1278,9 @@ testinputfiles = [
 	"rosetta_scripts/test2.xml",
 	"scoring/Interface.u",
 	"scoring/dock_in.pdb",
-        "sewing/inputs/test.segments",
-        "sewing/inputs/single_helix.pdb",
-        "sewing/inputs/zinc_site_10_12.pdb",
+	"sewing/inputs/test.segments",
+	"sewing/inputs/single_helix.pdb",
+	"sewing/inputs/zinc_site_10_12.pdb",
 	"simple_filters/interface_hbonds_input.pdb",
 	"simple_moves/1bl0_auto.fasta.pssm",
 	"simple_moves/DisulfideInsertionMover.xml",

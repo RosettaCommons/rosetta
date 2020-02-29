@@ -1360,7 +1360,7 @@ Options = Option_Group( '',
 		#this is unnecessary and unsafe, use the the faster mpi_filebuf_jobdistributor instead
 		Option( 'mpi_fast_nonblocking_output', 'Boolean', desc='By default the master node blocks while a slave node outputs to avoid two slaves writing to a score file or silent file at the same time setting this to true disables that feature', default='false' ),
 
-
+		Option( 'input_empty_pose', 'Boolean', default='false', desc='Give the job distributor an empty pose.'),
 		Option( 'dd_parser', 'Boolean', desc='determine whether to use the dock_design_parser', default='false' ),
 		Option( 'ntrials', 'Integer', desc='number of attempts at creating an output file for each nstruct. e.g., ntrials 3 and nstruct 10 would mean that each of 10 trajectories would attempt to write an output file 3 times and if unsuccessful would fail.', default='1' ),
 		Option( 'generic_job_name', 'String', desc='job name when using GenericJobInputter (i.e. abinitio)', default = 'S'),#no I don't know why it's S, I think it's S for Success

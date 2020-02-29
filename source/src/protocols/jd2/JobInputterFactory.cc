@@ -83,8 +83,11 @@ JobInputterFactory::get_new_JobInputter()
 {
 	using namespace basic::options;
 
-	//initial copy of this code copied at XRW2 by SML+BDW from about SVN:46190 from JobDistributorFactory.cc
+	if ( basic::options::option[ basic::options::OptionKeys::jd2::input_empty_pose ]() ) {
+		return get_JobInputter_from_string( "EmptyPoseJobInputter" );
+	}
 
+	//initial copy of this code copied at XRW2 by SML+BDW from about SVN:46190 from JobDistributorFactory.cc
 	if ( basic::options::option[ basic::options::OptionKeys::jd2::pose_input_stream ]() ) {
 		return get_JobInputter_from_string( "PoseInputStreamJobInputter" );
 	}

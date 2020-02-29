@@ -618,9 +618,14 @@ JobDistributor::run_one_job(
 				<< "input job '" << current_job_->input_tag() << "', "
 				<< "but the generated pose has no residues."
 				<< "make sure you specified a valid input PDB, silent file "
-				<< "or database.";
+				<< "or database."
+				<< " If this is intended, use the flag '-input_empty_pose true'"
+				<< " (we check this to quickly curb silly mistakes, such as"
+				<< " accidentally providing pdb (or other input) files with no atoms)";
 
-			runtime_assert_string_msg( pose.size() > 0, err_msg.str() );
+			if ( !option[OptionKeys::jd2::input_empty_pose]() ) {
+				runtime_assert_string_msg(pose.size() > 0, err_msg.str());
+			}
 
 			bool allow_job_update = true;
 			bool gaurantee_new_mover = false;

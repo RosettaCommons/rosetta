@@ -22,6 +22,7 @@ static JobInputterRegistrator< EnsembleJobInputterCreator > reg_EnsembleJobInput
 static JobInputterRegistrator< LargeNstructJobInputterCreator > reg_LargeNstructJobInputterCreator;
 static JobInputterRegistrator< LazySilentFileJobInputterCreator > reg_LazySilentFileJobInputterCreator;
 static JobInputterRegistrator< PDBJobInputterCreator > reg_PDBJobInputterCreator;
+static JobInputterRegistrator< EmptyPoseJobInputterCreator > reg_EmptyPoseJobInputterCreator;
 static JobInputterRegistrator< ScreeningJobInputterCreator > reg_ScreeningJobInputterCreator;
 static JobInputterRegistrator< SerializedPoseJobInputterCreator > reg_SerializedPoseJobInputterCreator;
 static JobInputterRegistrator< SilentFileJobInputterCreator > reg_SilentFileJobInputterCreator;

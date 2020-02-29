@@ -241,15 +241,16 @@ sources = {
 	],
 
 	"protocols/pose_creation": [
-		"HelixFromSequence",
 		"ExtendedPoseMover",
 		"ExtendedPoseMoverCreator",
+		"HelixFromSequence",
+		"LoadPDBMover",
 		"MakePolyXMover",
 		"MakeJunctionsMover",
-		"LoadPDBMover",
-		"RepeatPropagationMover",
 		"MergePDBatOverlapMover",
 		"MergePDBMover",
+		"PoseFromSequenceMover",
+		"RepeatPropagationMover",
 		"SliceToMiniProteinMover",
 	],
 
