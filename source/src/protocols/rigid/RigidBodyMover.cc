@@ -490,8 +490,8 @@ void RigidBodyPerturbNoCenterMoverCreator::provide_xml_schema( utility::tag::XML
 RigidBodyRandomizeMover::RigidBodyRandomizeMover() :
 	parent(),
 	partner_( partner_downstream ),
-	phi_angle_(360),
-	psi_angle_(360),
+	phi_angle_(360.0),
+	psi_angle_(360.0),
 	update_center_after_move_(true)
 {
 	moves::Mover::type( "RigidBodyRandomize" );
@@ -502,8 +502,8 @@ RigidBodyRandomizeMover::RigidBodyRandomizeMover(
 	core::pose::Pose const & pose_in,
 	int const rb_jump_in,
 	Partner const partner_in,
-	int phi_angle,
-	int psi_angle,
+	core::Real phi_angle,
+	core::Real psi_angle,
 	bool update_center_after_move
 ):
 	RigidBodyMover( rb_jump_in ),
@@ -573,12 +573,12 @@ RigidBodyRandomizeMover::show(std::ostream & output) const
 		"\nPsi angle:   " << get_psi() << std::endl;
 }
 
-core::Size
+core::Real
 RigidBodyRandomizeMover::get_phi() const {
 	return phi_angle_;
 }
 
-core::Size
+core::Real
 RigidBodyRandomizeMover::get_psi() const {
 	return psi_angle_;
 }

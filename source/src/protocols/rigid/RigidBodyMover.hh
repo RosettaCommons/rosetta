@@ -310,8 +310,8 @@ public:
 		core::pose::Pose const & pose_in,
 		int const rb_jump_in=1,
 		Partner const partner_in=partner_downstream,
-		int phi_angle=360,
-		int psi_angle=360,
+		core::Real phi_angle=360,
+		core::Real psi_angle=360,
 		bool update_center_after_move=true
 	);
 
@@ -322,13 +322,13 @@ public:
 	std::string get_name() const override;
 	void show(std::ostream & output=std::cout) const override;
 
-	core::Size get_phi() const;
-	core::Size get_psi() const;
+	core::Real get_phi() const;
+	core::Real get_psi() const;
 
 private:
 	Partner partner_; // which partner gets randomized
-	core::Size phi_angle_;
-	core::Size psi_angle_;
+	core::Real phi_angle_;
+	core::Real psi_angle_;
 	numeric::xyzMatrix_double rotation_matrix_;
 	bool update_center_after_move_;
 };  // class RigidBodyRandomizeMover

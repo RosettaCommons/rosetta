@@ -201,6 +201,8 @@ Rotate::parse_my_tag(
 	rotate_info_.degrees = tag->getOption<core::Size>("degrees");
 	rotate_info_.cycles = tag->getOption<core::Size>("cycles");
 
+	runtime_assert_string_msg( rotate_info_.degrees >= 0.0, "Error in Rotate::parse_my_tag(): The number of degrees must be greater than or equal to zero.  Got " + std::to_string(rotate_info_.degrees) + ", which is invalid." );
+
 	if ( tag->hasOption("tag_along_chains") ) {
 		std::string const tag_along_chains_str = tag->getOption<std::string>("tag_along_chains");
 		rotate_info_.set_tag_along_chains( utility::string_split(tag_along_chains_str, ',') );
@@ -391,7 +393,7 @@ void Rotate::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	AttributeList attlist;
 	attlist
 		+ XMLSchemaAttribute::required_attribute("distribution", xs_string, "Sampling distribution; Either \"uniform\" or \"gaussian\"")
-		+ XMLSchemaAttribute::required_attribute("degrees", xsct_non_negative_integer, "How degrees should be rotated around. Recommended=360")
+		+ XMLSchemaAttribute::required_attribute("degrees", xsct_real, "How degrees should be rotated around. Recommended=360")
 		+ XMLSchemaAttribute::required_attribute("cycles", xsct_non_negative_integer, "Number of cycles. Recommended: 1000")
 		+ XMLSchemaAttribute("chain", xs_string, "Chain ID. MUST be a completely connected single chain.")
 		+ XMLSchemaAttribute("tag_along_chains", xs_string,

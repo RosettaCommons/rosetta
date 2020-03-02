@@ -44,7 +44,7 @@ namespace ligand_docking {
 
 struct Rotate_info{ // including default values
 	Distribution distribution = Uniform;
-	core::Size degrees = 0;
+	core::Real degrees = 0;
 	core::Size cycles = 0;
 
 	Rotate_info() = default;
