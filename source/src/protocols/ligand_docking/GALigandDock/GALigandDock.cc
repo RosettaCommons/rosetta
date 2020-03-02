@@ -1539,7 +1539,7 @@ GALigandDock::parse_my_tag(
 	if ( tag->hasOption("favor_native") ) { favor_native_ = tag->getOption<core::Real>("favor_native"); }
 	if ( tag->hasOption("optimize_input_H") ) { optimize_input_H_ = tag->getOption<bool>("optimize_input_H"); }
 
-	if ( tag->hasOption("sample_ring_conformers") ) { sample_ring_conformers_ = tag->getOption<core::Real>("sample_ring_conformers"); }
+	if ( tag->hasOption("sample_ring_conformers") ) { sample_ring_conformers_ = tag->getOption<bool>("sample_ring_conformers"); }
 	if ( tag->hasOption("altcrossover") ) { altcrossover_ = tag->getOption<core::Real>("altcrossover"); }
 
 	// input params
