@@ -1735,8 +1735,8 @@ Options = Option_Group( '',
 	# Global options for multi-threading using the RosettaThreadManager ---------------------------------------
 	Option_Group( 'multithreading',
 		Option( 'total_threads', 'Integer',
-			desc='The number of threads to launch in the global thread pool.  All thread-parallelized work will be distributed over these threads.  The default (0) means that all available threads will be used in the multithreaded build.  The default build only ever uses 1 thread.',
-			default='0',
+			desc='The number of threads to launch in the global thread pool.  All thread-parallelized work will be distributed over these threads.  The default is to launch 1 thread per process.  Setting this to 0 means that all available threads will be used in the multithreaded build.  The default (single-threaded) build only ever uses 1 thread.  IMPORTANT: TO TAKE ADVANTAGE OF MULTI-THREADING, YOU MUST BUILD WITH extras=cxx11thead, AND YOU MUST SET THIS TO A VALUE OTHER THAN 1.  Values greater than about 4 result in diminishing returns on performance.',
+			default='1',
 		), #-multithreading:total_threads
 		Option( 'interaction_graph_threads', 'Integer',
 			desc="The number of threads that the packer will request by default when calculating the interaction graph.  This option is only used in the multi-threaded (extras=cxx11thread) build of Rosetta.  Note that the total number of threads must be set with the -multi_threading:total_threads option.  A given packing job may be assigned fewer threads than the number requested, depending on availability.  Protocols may also override the default request.  The default (0) means that all available threads will be used.",
