@@ -2,6 +2,7 @@
 -unmute core.enzymes
 -unmute protocols.enzymatic_movers
 -s input/ACETYLATEME.pdb
+-species s_solfataricus
 -enzyme Ard1
 -overwrite
 -nstruct 3
