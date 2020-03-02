@@ -3828,13 +3828,13 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 		Option('input_ab_scheme', 'String',
 			desc='The numbering scheme of the PDB file.',
-			legal=['Chothia',        'Enhanced_Chothia',        'AHo',        'AHO'         'IMGT',        'Kabat', \
+			legal=['Chothia',        'Enhanced_Chothia',        'AHo',        'AHO',         'IMGT',        'Kabat', \
 			       'Chothia_Scheme', 'Enhanced_Chothia_Scheme', 'AHo_Scheme', 'AHO_Scheme', 'IMGT_Scheme', 'Kabat_Scheme'],
 			default='Chothia_Scheme'
 			),
 		Option('output_ab_scheme', 'String',
 			desc = "Output numbering scheme supported by most antibody apps that output pdbs.  Please see documentation.",
-			legal=['Chothia',        'Enhanced_Chothia',        'AHo',        'AHO'         'IMGT',        'Kabat', \
+			legal=['Chothia',        'Enhanced_Chothia',        'AHo',        'AHO',         'IMGT',        'Kabat', \
 			       'Chothia_Scheme', 'Enhanced_Chothia_Scheme', 'AHo_Scheme', 'AHO_Scheme', 'IMGT_Scheme', 'Kabat_Scheme'],
 			default = 'Chothia_Scheme'
 			),
