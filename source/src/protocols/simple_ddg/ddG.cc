@@ -124,7 +124,7 @@ ddG::ddG() :
 	solvate_(false),
 	solvate_unbound_(false),
 	solvate_rbmin_(false),
-	min_water_jump_(false),
+	min_water_jump_(true),
 	pb_enabled_(false),
 	translate_by_(1000.0),
 	bound_HOH_(0),
@@ -156,7 +156,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	solvate_(false),
 	solvate_unbound_(false),
 	solvate_rbmin_(false),
-	min_water_jump_(false),
+	min_water_jump_(true),
 	pb_enabled_(false),
 	translate_by_(1000.0),
 	bound_HOH_(0),
@@ -202,7 +202,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	solvate_(false),
 	solvate_unbound_(false),
 	solvate_rbmin_(false),
-	min_water_jump_(false),
+	min_water_jump_(true),
 	pb_enabled_(false),
 	translate_by_(1000.0),
 	bound_HOH_(0),
@@ -253,7 +253,7 @@ void ddG::parse_my_tag(
 	solvate_ = tag->getOption<bool>("solvate",false);
 	solvate_unbound_ = tag->getOption<bool>("solvate_unbound",false);
 	solvate_rbmin_ = tag->getOption<bool>("solvate_rbmin",false);
-	min_water_jump_ = tag->getOption<bool>("min_water_jump",false);
+	min_water_jump_ = tag->getOption<bool>("min_water_jump",true);
 	translate_by_ = tag->getOption<core::Real>("translate_by", 1000.0);
 	compute_rmsd_ = tag->getOption<bool>("compute_rmsd",false);
 
@@ -898,23 +898,15 @@ ddG::do_minimize( Pose & pose ) const
 		}
 	}
 
-	if ( min_water_jump_ ) {
-		// allow waters jumps to minimize
-		for ( int j=1; j<=(int)pose.fold_tree().num_jump(); ++j ) {
-			kinematics::Edge jump_j = pose.fold_tree().jump_edge( j );
-			Size const us_res = pose.fold_tree().upstream_jump_residue( j );
-			Size const ds_res = pose.fold_tree().downstream_jump_residue( j );
-			if ( pose.residue(us_res).is_water() || pose.residue(ds_res).is_water() ) {
-				mm->set_jump( j, true );
-			}
-		}
-	}
-
 	Size const nres( task_->total_residue() );
 	for ( Size i(1); i <=nres; ++i ) {
 		if ( pose.residue(i).is_water() ) {
-			core::Size jump_i = pose.fold_tree().get_jump_that_builds_residue( i );
-			mm->set_jump( jump_i, true );
+			// rigid body minimization of waters is turned on by default
+			// min_water_jump_ can be set to false to restrict this motion during minimization
+			if ( min_water_jump_ ) {
+				core::Size jump_i = pose.fold_tree().get_jump_that_builds_residue( i );
+				mm->set_jump( jump_i, true );
+			}
 		} else {
 			if ( task_->design_residue( i ) || task_->pack_residue( i ) ) {
 				mm->set_chi( i, true );
@@ -1073,7 +1065,7 @@ ddG::define_ddG_schema() {
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"min_water_jump", xsct_rosetta_bool,
 		"Include waters in rigid-body minimization following solvation and packing",
-		"false");
+		"true");
 
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"compute_rmsd", xsct_rosetta_bool,
