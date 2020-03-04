@@ -383,9 +383,73 @@ residue_types/carbohydrates/aldoses/hexoses/taloses/to6-beta-L-Talp.params
 #### Fructoses
 residue_types/carbohydrates/ketoses/hexoses/fructoses/to4-alpha-D-Fruf.params
 residue_types/carbohydrates/ketoses/hexoses/fructoses/to4-beta-D-Fruf.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to1-alpha-D-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to1-beta-D-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to3-alpha-D-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to3-beta-D-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to4-alpha-D-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to4-beta-D-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to5-alpha-D-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to5-beta-D-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to1-alpha-L-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to1-beta-L-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to3-alpha-L-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to3-beta-L-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to4-alpha-L-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to4-beta-L-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to5-alpha-L-Frup.params
+residue_types/carbohydrates/ketoses/hexoses/fructoses/to5-beta-L-Frup.params
 #### Psicoses
+residue_types/carbohydrates/ketoses/hexoses/psicoses/to1-alpha-D-Psip.params
+residue_types/carbohydrates/ketoses/hexoses/psicoses/to1-beta-D-Psip.params
+residue_types/carbohydrates/ketoses/hexoses/psicoses/to3-alpha-D-Psip.params
+residue_types/carbohydrates/ketoses/hexoses/psicoses/to3-beta-D-Psip.params
+residue_types/carbohydrates/ketoses/hexoses/psicoses/to4-alpha-D-Psip.params
+residue_types/carbohydrates/ketoses/hexoses/psicoses/to4-beta-D-Psip.params
 residue_types/carbohydrates/ketoses/hexoses/psicoses/to5-alpha-D-Psip.params
 residue_types/carbohydrates/ketoses/hexoses/psicoses/to5-beta-D-Psip.params
+residue_types/carbohydrates/ketoses/hexoses/psicoses/to1-alpha-L-Psip.params
+residue_types/carbohydrates/ketoses/hexoses/psicoses/to1-beta-L-Psip.params
+residue_types/carbohydrates/ketoses/hexoses/psicoses/to3-alpha-L-Psip.params
+residue_types/carbohydrates/ketoses/hexoses/psicoses/to3-beta-L-Psip.params
+residue_types/carbohydrates/ketoses/hexoses/psicoses/to4-alpha-L-Psip.params
+residue_types/carbohydrates/ketoses/hexoses/psicoses/to4-beta-L-Psip.params
+residue_types/carbohydrates/ketoses/hexoses/psicoses/to5-alpha-L-Psip.params
+residue_types/carbohydrates/ketoses/hexoses/psicoses/to5-beta-L-Psip.params
+#### Sorboses
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to1-alpha-D-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to1-beta-D-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to3-alpha-D-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to3-beta-D-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to4-alpha-D-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to4-beta-D-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to5-alpha-D-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to5-beta-D-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to1-alpha-L-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to1-beta-L-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to3-alpha-L-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to3-beta-L-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to4-alpha-L-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to4-beta-L-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to5-alpha-L-Sorp.params
+residue_types/carbohydrates/ketoses/hexoses/sorboses/to5-beta-L-Sorp.params
+#### Tagatoses
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to1-alpha-D-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to1-beta-D-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to3-alpha-D-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to3-beta-D-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to4-alpha-D-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to4-beta-D-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to5-alpha-D-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to5-beta-D-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to1-alpha-L-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to1-beta-L-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to3-alpha-L-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to3-beta-L-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to4-alpha-L-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to4-beta-L-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to5-alpha-L-Tagp.params
+residue_types/carbohydrates/ketoses/hexoses/tagatoses/to5-beta-L-Tagp.params
 ### Ketononoses
 #### Ketoaldonic Acids (e.g., Sialic Acids)
 residue_types/carbohydrates/ketoses/nonoses/to8-alpha-Neup.params
