@@ -939,6 +939,16 @@ residue_types/beta-peptide/transACPC.params
 ## Saccharide Types (require -include_sugars flag to be loaded in)
 ### Aldopentoses
 #### Arabanoses
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to2-alpha-D-Araf.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to2-beta-D-Araf.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to3-alpha-D-Araf.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to3-beta-D-Araf.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to5-alpha-D-Araf.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to5-beta-D-Araf.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to2-alpha-L-Araf.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to2-beta-L-Araf.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to3-alpha-L-Araf.params
+residue_types/carbohydrates/aldoses/pentoses/arabinoses/to3-beta-L-Araf.params
 residue_types/carbohydrates/aldoses/pentoses/arabinoses/to5-alpha-L-Araf.params
 residue_types/carbohydrates/aldoses/pentoses/arabinoses/to5-beta-L-Araf.params
 residue_types/carbohydrates/aldoses/pentoses/arabinoses/to2-alpha-D-Arap.params
@@ -954,6 +964,18 @@ residue_types/carbohydrates/aldoses/pentoses/arabinoses/to3-beta-L-Arap.params
 residue_types/carbohydrates/aldoses/pentoses/arabinoses/to4-alpha-L-Arap.params
 residue_types/carbohydrates/aldoses/pentoses/arabinoses/to4-beta-L-Arap.params
 #### Lyxoses
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to2-alpha-D-Lyxf.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to2-beta-D-Lyxf.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to3-alpha-D-Lyxf.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to3-beta-D-Lyxf.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to5-alpha-D-Lyxf.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to5-beta-D-Lyxf.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to2-alpha-L-Lyxf.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to2-beta-L-Lyxf.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to3-alpha-L-Lyxf.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to3-beta-L-Lyxf.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to5-alpha-L-Lyxf.params
+residue_types/carbohydrates/aldoses/pentoses/lyxoses/to5-beta-L-Lyxf.params
 residue_types/carbohydrates/aldoses/pentoses/lyxoses/to2-alpha-D-Lyxp.params
 residue_types/carbohydrates/aldoses/pentoses/lyxoses/to2-beta-D-Lyxp.params
 residue_types/carbohydrates/aldoses/pentoses/lyxoses/to3-alpha-D-Lyxp.params
@@ -967,6 +989,18 @@ residue_types/carbohydrates/aldoses/pentoses/lyxoses/to3-beta-L-Lyxp.params
 residue_types/carbohydrates/aldoses/pentoses/lyxoses/to4-alpha-L-Lyxp.params
 residue_types/carbohydrates/aldoses/pentoses/lyxoses/to4-beta-L-Lyxp.params
 #### Riboses
+residue_types/carbohydrates/aldoses/pentoses/riboses/to2-alpha-D-Ribf.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to2-beta-D-Ribf.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to3-alpha-D-Ribf.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to3-beta-D-Ribf.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to5-alpha-D-Ribf.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to5-beta-D-Ribf.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to2-alpha-L-Ribf.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to2-beta-L-Ribf.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to3-alpha-L-Ribf.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to3-beta-L-Ribf.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to5-alpha-L-Ribf.params
+residue_types/carbohydrates/aldoses/pentoses/riboses/to5-beta-L-Ribf.params
 residue_types/carbohydrates/aldoses/pentoses/riboses/to2-alpha-D-Ribp.params
 residue_types/carbohydrates/aldoses/pentoses/riboses/to2-beta-D-Ribp.params
 residue_types/carbohydrates/aldoses/pentoses/riboses/to3-alpha-D-Ribp.params
@@ -980,6 +1014,18 @@ residue_types/carbohydrates/aldoses/pentoses/riboses/to3-beta-L-Ribp.params
 residue_types/carbohydrates/aldoses/pentoses/riboses/to4-alpha-L-Ribp.params
 residue_types/carbohydrates/aldoses/pentoses/riboses/to4-beta-L-Ribp.params
 #### Xyloses
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to2-alpha-D-Xylf.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to2-beta-D-Xylf.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to3-alpha-D-Xylf.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to3-beta-D-Xylf.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to5-alpha-D-Xylf.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to5-beta-D-Xylf.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to2-alpha-L-Xylf.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to2-beta-L-Xylf.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to3-alpha-L-Xylf.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to3-beta-L-Xylf.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to5-alpha-L-Xylf.params
+residue_types/carbohydrates/aldoses/pentoses/xyloses/to5-beta-L-Xylf.params
 residue_types/carbohydrates/aldoses/pentoses/xyloses/to2-alpha-D-Xylp.params
 residue_types/carbohydrates/aldoses/pentoses/xyloses/to2-beta-D-Xylp.params
 residue_types/carbohydrates/aldoses/pentoses/xyloses/to3-alpha-D-Xylp.params
