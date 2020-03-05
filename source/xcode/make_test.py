@@ -20,11 +20,11 @@ def project_callback(test, test_path, test_files):
 			if (file[1]):
 				source_files.append(file[1])
 
-		print dir
+		print(dir)
 		xcode_files.append(('test/' + dir, header_files))
 		xcode_files.append(('xcode/test_area/' + dir, source_files))
 
-	print xcode_files
+	print(xcode_files)
 
 	# get keys
 

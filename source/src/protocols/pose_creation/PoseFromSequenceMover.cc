@@ -160,7 +160,7 @@ PoseFromSequenceMover::parse_my_tag(
 	if ( tag->hasOption( "fasta" ) ) {
 		utility::vector1< core::sequence::SequenceOP > const sequences(core::sequence::read_fasta_file( tag->getOption< std::string >( "fasta" ) ));
 		if ( tag->getOption<bool>( "use_all_in_fasta", false ) ) {
-			for ( auto const seqOP : sequences ) {
+			for ( auto const & seqOP : sequences ) {
 				sequence += seqOP->sequence() + "/";
 			}
 			sequence.pop_back();

@@ -73,7 +73,7 @@ KNOWN_TESTS = [
 def project_callback(project, project_path, project_files):
 
     # get keys
-    print project
+    print(project)
     #print project_files
     group_key = xcode_util.PROJECT_KEYS[project][0]
     sources_key = xcode_util.PROJECT_KEYS[project][1]
