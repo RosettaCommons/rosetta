@@ -82,7 +82,7 @@ public:
 	ModuleType1(ModuleType1 const & src);
 
 	/// @brief Destructor.
-	virtual ~ModuleType1();
+	~ModuleType1() override;
 
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	ModuleType1OP clone() const;

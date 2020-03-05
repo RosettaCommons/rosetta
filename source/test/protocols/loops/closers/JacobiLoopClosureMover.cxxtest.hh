@@ -62,7 +62,7 @@ public:
 		protocols::loops::loop_closure::jacobi::JacobiLoopClosureMover jacobi_mover;
 
 		// apply mover without a loop and mm, this should throw an exception
-		TS_ASSERT_THROWS(jacobi_mover.apply(pose), std::exception e);
+		TS_ASSERT_THROWS(jacobi_mover.apply(pose), const std::exception &);
 	}
 
 	// Test the Mover initialisation, and the homogeneous transformations used to define the target and current
@@ -95,7 +95,7 @@ public:
 		protocols::loops::Loop const loop( 14, 7, 10 );
 
 		// initialize Jacobi Loop Closure Mover
-		TS_ASSERT_THROWS(protocols::loops::loop_closure::jacobi::JacobiLoopClosureMover jacobi_mover (loop), std::exception e);
+		TS_ASSERT_THROWS(protocols::loops::loop_closure::jacobi::JacobiLoopClosureMover jacobi_mover (loop), const std::exception & );
 	}
 
 	// Test exception to catch bad foldtree in the pose
@@ -116,7 +116,7 @@ public:
 		pose.fold_tree( ft );
 
 		// apply mover with faulty input pose and catch exception
-		TS_ASSERT_THROWS(jacobi_mover.apply(pose), std::exception e);
+		TS_ASSERT_THROWS(jacobi_mover.apply(pose), const std::exception & );
 	}
 
 	// Test a simple loop closure with few DoFs
@@ -281,13 +281,18 @@ public:
 		using core::Real;
 
 		// Set up tag so all options are not default
-		TagOP tag( new Tag );
+		TagOP tag ( utility::pointer::make_shared< Tag >() );
 		tag->setName( mover_name );
 		tag->setOption< Real >( "max_cycles", 0 );
 		tag->setOption< Real >( "err_rot_allowed", 0 );
 		tag->setOption< Real >( "err_lin_allowed", 0 );
-		tag->setOption< Real >( "dq_max_allowed", 0 );
 		tag->setOption< bool >( "verbose", false);
+		// set up Loop subtag
+		TagOP subtag ( utility::pointer::make_shared< Tag >() );
+		subtag->setName( "Loop" );
+		subtag->setOption< core::Size >( "start", 10 );
+		subtag->setOption< core::Size >( "stop", 13 );
+		tag->addTag(subtag);
 
 		// Only the Tag is used by the JacobiLoopClosureMover's parse_my_tag, so the other instances that I'm passing through
 		// can be nonsense
@@ -300,7 +305,8 @@ public:
 		TS_ASSERT_EQUALS( configured_jacobi_mover->get_max_cycles(), 0 );
 		TS_ASSERT_EQUALS( configured_jacobi_mover->get_allowed_norm_lin(), 0 );
 		TS_ASSERT_EQUALS( configured_jacobi_mover->get_allowed_norm_rot(), 0 );
-		TS_ASSERT_EQUALS( configured_jacobi_mover->get_dq_max_allowed(), 0 );
+		TS_ASSERT_EQUALS( configured_jacobi_mover->get_loop().start(), 10 );
+		TS_ASSERT_EQUALS( configured_jacobi_mover->get_loop().stop(), 13 );
 	}
 
 	void tearDown(){

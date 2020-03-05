@@ -58,7 +58,7 @@ public:
 	SeriesJacobians(SeriesJacobians const & src);
 
 	/// @brief Destructor.
-	virtual ~SeriesJacobians();
+	~SeriesJacobians() override;
 
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	SeriesJacobiansOP clone() const;

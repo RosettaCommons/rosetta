@@ -19,17 +19,18 @@
 // Core headers
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
+#include <core/kinematics/jacobian/JacobianStructure.hh>
+#include <core/kinematics/jacobian/SeriesJacobians.hh>
+#include <core/kinematics/jacobian/ModuleType1.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 
 // Protocol headers
-#include <numeric/wrap_angles.hh>
+#include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
-#include <core/kinematics/jacobian/JacobianStructure.hh>
-#include <core/kinematics/jacobian/SeriesJacobians.hh>
-#include <core/kinematics/jacobian/ModuleType1.hh>
+#include <numeric/wrap_angles.hh>
 #include <numeric/MathMatrix_operations.hh>
 #include <numeric/MathVector_operations.hh>
 
@@ -41,6 +42,8 @@
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+#include <protocols/loop_modeling/utilities/rosetta_scripts.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 static basic::Tracer TR( "protocols.loops.loop_closure.jacobi.JacobiLoopClosureMover" );
 
@@ -69,13 +72,7 @@ JacobiLoopClosureMover::JacobiLoopClosureMover( protocols::loops::Loop const & l
 	}
 
 	// create default MoveMap
-	core::kinematics::MoveMapOP mm (utility::pointer::make_shared<  core::kinematics::MoveMap >() );
-	// with all backbone atoms in the loop moveable
-	mm->set_bb_true_range(loop.start(), loop.stop());
-	// except the omega angles
-	for ( core::uint i = loop.start(); i <= loop.stop(); ++i ) {
-		mm->set( core::id::TorsionID( i, core::id::BB, 3 ), false );
-	}
+	core::kinematics::MoveMapOP mm = create_default_movemap(loop);
 
 	// run the constructor initialization
 	init_constructor( loop, mm );
@@ -335,27 +332,42 @@ JacobiLoopClosureMover::parse_my_tag(
 	core::pose::Pose const & )
 {
 	max_cycles_ = tag->getOption< core::Size >( "max_cycles" );
-	err_rot_allowed_ = tag->getOption< core::Real >( "err_rot_allowed" );
+	err_rot_allowed_ = tag->getOption< core::Real >( "err_rot_allowed" ) * numeric::constants::d::degrees_to_radians;
 	err_lin_allowed_ = tag->getOption< core::Real >( "err_lin_allowed" );
-	dq_max_allowed_ = tag->getOption< core::Real >( "dq_max_allowed" );
 	verbose_ = tag->getOption< bool >( "verbose" );
+
+	// extract loop and initialize closure mover
+	protocols::loops::LoopsOP parsed_loops(protocols::loop_modeling::utilities::parse_loops_from_tag(tag));
+	// confirm loop is provided
+	if ( parsed_loops == nullptr ) { utility_exit_with_message("Input does not contain a loop: please add a Loop subtag"); }
+	// confirm single loop has been provided
+	if ( parsed_loops->size() != 1 ) { utility_exit_with_message("Input does not contain exactly one loop"); }
+
+	// copy loop and generate MoveMap based on loop
+	protocols::loops::Loop loop = *parsed_loops->begin();
+	core::kinematics::MoveMapOP mm = create_default_movemap(loop);
+
+	// run the constructor initialization
+	init_constructor( loop, mm );
 }
 
 void JacobiLoopClosureMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
-
 	using namespace utility::tag;
 	AttributeList attlist;
 
-	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the provided AttributeList.
+	// here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the provided AttributeList.
+	// First, add loop to attribute list
+	utility::tag::XMLSchemaSimpleSubelementList subelements;
+	loop_modeling::utilities::append_subelement_and_attributes_for_parse_loops_from_tag( xsd, subelements, attlist );
+
 	attlist
 		+ XMLSchemaAttribute::attribute_w_default("max_cycles", xsct_non_negative_integer, "Maximum number of cycles per run. Quit the run even if not converged at this point.","200")
-		+ XMLSchemaAttribute::attribute_w_default("err_rot_allowed", xsct_real, "Maximum norm of rotational error (deg) for closure to be accepted as successful.", "1")
-		+ XMLSchemaAttribute::attribute_w_default("err_lin_allowed", xsct_real, "Maximum norm of linear error (Ang) for closure to be accepted as successful.", "0.01")
-		+ XMLSchemaAttribute::attribute_w_default("dq_max_allowed", xsct_real, "Maximum change in dihedral angle in each cycle.", "0.052")
+		+ XMLSchemaAttribute::attribute_w_default("err_rot_allowed", xsct_real, "Maximum norm of rotational error [deg] for closure to be accepted as successful.", "5")
+		+ XMLSchemaAttribute::attribute_w_default("err_lin_allowed", xsct_real, "Maximum norm of linear error [Ang] for closure to be accepted as successful.", "0.1")
 		+ XMLSchemaAttribute::attribute_w_default("verbose", xsct_rosetta_bool, "Setting that determines whether or not to output non-critical information.", "false");
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Performs loop closure using the Jacobi algorithm", attlist );
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Performs loop closure on a single loop using the Jacobi algorithm", attlist, subelements );
 }
 
 
@@ -413,6 +425,20 @@ operator<<( std::ostream & os, JacobiLoopClosureMover const & mover )
 {
 	mover.show(os);
 	return os;
+}
+
+/// @brief Create default MoveMap
+core::kinematics::MoveMapOP
+JacobiLoopClosureMover::create_default_movemap( protocols::loops::Loop loop) {
+	core::kinematics::MoveMapOP mm(utility::pointer::make_shared<core::kinematics::MoveMap>());
+	// with all backbone atoms in the loop moveable
+	mm->set_bb_true_range(loop.start(), loop.stop());
+	// except the omega angles
+	for ( core::uint i = loop.start(); i <= loop.stop(); ++i ) {
+		mm->set(core::id::TorsionID(i, core::id::BB, 3), false);
+	}
+
+	return mm;
 }
 
 /// @brief Initializes data members from constructor input arguments

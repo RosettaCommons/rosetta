@@ -79,6 +79,9 @@ public:
 	void
 	set_loop( protocols::loops::Loop const & new_loop );
 
+	protocols::loops::Loop
+	get_loop(){ return loop_; };
+
 	/// @brief Set the MoveMap
 	void
 	set_movemap( core::kinematics::MoveMapOP const new_mm );
@@ -167,6 +170,10 @@ public:
 
 private: // METHODS
 
+	/// @brief Create default MoveMap
+	core::kinematics::MoveMapOP
+	create_default_movemap( protocols::loops::Loop loop);
+
 	/// @brief Initializes data members from constructor input arguments
 	void
 	init_constructor(protocols::loops::Loop const & loop, core::kinematics::MoveMapCOP const & mm);
@@ -230,7 +237,7 @@ private: // INTERNALLY-MANAGED OBJECTS AND VARIABLES
 	utility::vector1<core::Size> free_residues_;
 
 	/// @brief pointer to vector with Jacobian objects
-	core::kinematics::jacobian::SeriesJacobiansOP jacobian_chain_{NULL};
+	core::kinematics::jacobian::SeriesJacobiansOP jacobian_chain_{nullptr};
 
 	/// @brief counter of number of cycles in the loop closure while-loop
 	core::Size closure_cycles_{0};

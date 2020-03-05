@@ -50,7 +50,7 @@ public:
 	JacobianStructure(JacobianStructure const & src);
 
 	/// @brief Destructor.
-	virtual ~JacobianStructure();
+	~JacobianStructure() override;
 
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	JacobianStructureOP clone() const;
