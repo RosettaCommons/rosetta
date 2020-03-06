@@ -223,7 +223,7 @@ if ($cryst_mode == 1) {
 				$spacegp =	substr ($_, 55, 11);
 			} elsif (/^ATOM/ || /^HETATM/) {
 				my $atom = substr ($_, 12, 4);
-				if ($atom eq " CA ") {
+				if ($atom eq " CA " || $atom eq " P  ") {
 					push @chaintrace, [substr ($_, 30, 8),substr ($_, 38, 8),substr ($_, 46, 8)];
 					$CoM = vadd( $chaintrace[ $#chaintrace ], $CoM );
 				}
@@ -578,7 +578,7 @@ if ($ncs_mode == 1) {
 	print "\n";
 	$counter++;
 	print "set_jump_group JUMPGROUP$counter";
-	foreach my $tag ( keys %symminterface ) {
+	foreach my $tag ( sort (keys %symminterface) ) {
 		print " JUMP$tag"."_to_subunit";
 	}
 	print "\n";

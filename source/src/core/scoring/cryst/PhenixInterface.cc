@@ -31,6 +31,8 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 #include <core/scoring/cryst/util.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <basic/options/option.hh>
@@ -113,14 +115,14 @@ PhenixInterface::PhenixInterface() {
 	// set default phenix paths
 	char path[] = "path";
 	PyObject *sys_path = PySys_GetObject(path);
-  std::stringstream path_strings(PHENIX_PYTHON_PATHS);
+	std::stringstream path_strings(PHENIX_PYTHON_PATHS);
 	std::string item;
-  while (std::getline(path_strings, item, ':')) {
+	while ( std::getline(path_strings, item, ':') ) {
 		std::vector< char > item_char(item.c_str(), item.c_str()+item.length()+1);
 		PyObject *search_path = PyUnicode_FromString(&item_char[0]);
 		PyList_Append(sys_path, search_path);
-  }
-  HANDLE_PYTHON_ERROR("failed setting up Phenix interface");
+	}
+	HANDLE_PYTHON_ERROR("failed setting up Phenix interface");
 
 	phenix_home_ = PHENIXHOME;
 
@@ -132,13 +134,13 @@ PhenixInterface::PhenixInterface() {
 /// @brief score a structure
 core::Real PhenixInterface::getScore (
 #ifdef WITH_PYTHON
-		core::pose::Pose const & pose)
+	core::pose::Pose const & pose)
 #else
 	core::pose::Pose const & /*pose*/)
 #endif
 {
 #ifdef WITH_PYTHON
-	if (!target_evaluator_) {
+	if ( !target_evaluator_ ) {
 		initialize_target_evaluator( pose );
 	}
 
@@ -153,7 +155,7 @@ core::Real PhenixInterface::getScore (
 
 	pMethod = PyString_FromString("compute_target");
 	PyObject *result_tuple = PyObject_CallMethodObjArgs(target_evaluator_, pMethod, Py_False, Py_False, NULL);
-  HANDLE_PYTHON_ERROR("error computing X-ray target");
+	HANDLE_PYTHON_ERROR("error computing X-ray target");
 
 	Py_XDECREF(pMethod);
 
@@ -175,15 +177,15 @@ core::Real PhenixInterface::getScore (
 /// @brief score a structure with derivatives
 core::Real PhenixInterface::getScoreAndDerivs (
 #ifdef WITH_PYTHON
-		core::pose::Pose const & pose,
-		utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & grads)
+	core::pose::Pose const & pose,
+	utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & grads)
 #else
 	core::pose::Pose const & /*pose*/,
 	utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & /*grads*/)
 #endif
 {
 #ifdef WITH_PYTHON
-	if (!target_evaluator_) {
+	if ( !target_evaluator_ ) {
 		initialize_target_evaluator( pose );
 	}
 
@@ -197,12 +199,12 @@ core::Real PhenixInterface::getScoreAndDerivs (
 
 	pMethod = PyString_FromString("compute_functional_and_gradients_rosetta");
 	PyObject *result_tuple = PyObject_CallMethodObjArgs(target_evaluator_, pMethod, NULL);
-  HANDLE_PYTHON_ERROR("error computing X-ray target and gradients");
+	HANDLE_PYTHON_ERROR("error computing X-ray target and gradients");
 
 	// get score, r_work, and r_free
 	core::Real score = PyFloat_AsDouble( PyTuple_GetItem(result_tuple, 0) );  // borrowed object no need to deref
 	PyObject *grad_list = PyTuple_GetItem(result_tuple, 1); // borrowed object no need to deref
- debug_assert (grad_list != NULL);
+	debug_assert (grad_list != NULL);
 	HANDLE_PYTHON_ERROR("error getting gradients list");
 
 	// parse the python result
@@ -227,7 +229,7 @@ core::Real PhenixInterface::getScoreAndDerivs (
 /// @brief fit bfactors
 void PhenixInterface::fitBfactors (
 #ifdef WITH_PYTHON
-		core::pose::Pose & pose)
+	core::pose::Pose & pose)
 #else
 	core::pose::Pose & /*pose*/)
 #endif
@@ -242,7 +244,9 @@ void PhenixInterface::fitBfactors (
 	//pose.conformation().detect_disulfides();
 	core::pose::initialize_disulfide_bonds( pose );
 
-	chdir(tempdir_.c_str());
+	if ( chdir(tempdir_.c_str()) ) {
+		utility_exit_with_message( "Unable to save temp data in PhenixInterface" );
+	}
 
 	char pdbout[256] = "outtmp_adp.pdb";
 	core::pose::Pose pose_asu;
@@ -263,36 +267,36 @@ void PhenixInterface::fitBfactors (
 	// 'refinement.input.xray_data.high_resolution=4.0' 'refinement.input.xray_data.low_resolution=4.0' ...
 	//  'write_eff_file=false' 'write_geo_file=false' 'write_def_file=false' 'write_maps=false' 'write_map_coefficients=false']
 	std::string mtzout = mtzfile_;
-	if (mtzout[0] != '/') mtzout = "../"+mtzout;   // if path is relative, update
+	if ( mtzout[0] != '/' ) mtzout = "../"+mtzout;   // if path is relative, update
 	std::string adp_strategy; // = "strategy=group_adp";
 	std::string adp_groupstrat; // = "group_adp_refinement_mode=two_adp_groups_per_residue";
 
- 	if (adp_strategy_ == "group" || adp_strategy_ == "group1") {
+	if ( adp_strategy_ == "group" || adp_strategy_ == "group1" ) {
 		TR << "Refining group ADPs (1 group per residue)" << std::endl;
- 		adp_strategy = "strategy=group_adp";
+		adp_strategy = "strategy=group_adp";
 		adp_groupstrat = "group_adp_refinement_mode=one_adp_group_per_residue";
-	} else if (adp_strategy_ == "group2") {
+	} else if ( adp_strategy_ == "group2" ) {
 		TR << "Refining group ADPs (2 groups per residue)" << std::endl;
- 		adp_strategy = "strategy=group_adp";
+		adp_strategy = "strategy=group_adp";
 		adp_groupstrat = "group_adp_refinement_mode=two_adp_groups_per_residue";
- 	} else if (adp_strategy_ == "individual") {
+	} else if ( adp_strategy_ == "individual" ) {
 		TR << "Refining individual ADPs" << std::endl;
- 		adp_strategy = "strategy=individual_adp";
+		adp_strategy = "strategy=individual_adp";
 		adp_groupstrat = "group_adp_refinement_mode=one_adp_group_per_residue";  // ignored
- 	} else {
+	} else {
 		TR.Error << "Unknown ADP strategy " << adp_strategy_ << std::endl;
 		utility_exit();
 	}
 
 	std::string hires_str="refinement.input.xray_data.high_resolution=None",
-	            lowres_str="refinement.input.xray_data.low_resolution=None";
+		lowres_str="refinement.input.xray_data.low_resolution=None";
 
-	if (res_high_ > 0) {
+	if ( res_high_ > 0 ) {
 		std::ostringstream oss;
 		oss << "refinement.input.xray_data.high_resolution=" << res_high_;
 		hires_str=oss.str();
 	}
-	if (res_low_ > 0) {
+	if ( res_low_ > 0 ) {
 		std::ostringstream oss;
 		oss << "refinement.input.xray_data.low_resolution=" << res_low_;
 		lowres_str=oss.str();
@@ -300,7 +304,7 @@ void PhenixInterface::fitBfactors (
 
 	bool has_twin_law=false;
 	std::string twinlawstr;
-	if (( twin_law_.length() != 0 ) && (twin_law_ != "None")) {
+	if ( ( twin_law_.length() != 0 ) && (twin_law_ != "None") ) {
 		has_twin_law=true;
 		std::ostringstream oss;
 		oss << "twin_law=" << "\"" << twin_law_ << "\"";
@@ -339,14 +343,14 @@ void PhenixInterface::fitBfactors (
 		PyList_SetItem(inlist, 11, PyString_FromString(arg11_str));
 		char arg12_str[] = "--overwrite";
 		PyList_SetItem(inlist, 12, PyString_FromString(arg12_str));
-		if (has_twin_law) {
+		if ( has_twin_law ) {
 			std::vector< char > twinlawstr_char(twinlawstr.c_str(), twinlawstr.c_str()+twinlawstr.length()+1);
 			PyList_SetItem(inlist, 13, PyString_FromString(&twinlawstr_char[0]));
 		}
 
-		for (int i=1; i<= (int)cif_files_.size(); ++i) {
+		for ( int i=1; i<= (int)cif_files_.size(); ++i ) {
 			std::string cif_file_i = cif_files_[i];
-			if (cif_file_i[0] != '/') cif_file_i = "../"+cif_file_i;   // if path is relative, update
+			if ( cif_file_i[0] != '/' ) cif_file_i = "../"+cif_file_i;   // if path is relative, update
 			std::vector< char > cif_file_i_char(cif_file_i.c_str(), cif_file_i.c_str()+cif_file_i.length()+1);
 			PyList_SetItem(inlist, nargs_no_cif+i-1, PyString_FromString(&cif_file_i_char[0]));
 		}
@@ -356,12 +360,12 @@ void PhenixInterface::fitBfactors (
 		PyObject *pValue = PyObject_CallMethodObjArgs( pModule, cmd, exe, inlist, NULL);
 
 		//PyObject *pValue = PyObject_CallMethod(pModule, "run", "(s[sssssssssssss])",
-		//	"phenix.refine", pdbout, mtzout.c_str(), adp_strategy.c_str(), adp_groupstrat.c_str(), hires_str.c_str(), lowres_str.c_str(),
-		//	"main.number_of_macro_cycles=1", "write_eff_file=false", "write_geo_file=false",
-		//	"write_def_file=false", "write_maps=false", "write_map_coefficients=false", "--overwrite");
+		// "phenix.refine", pdbout, mtzout.c_str(), adp_strategy.c_str(), adp_groupstrat.c_str(), hires_str.c_str(), lowres_str.c_str(),
+		// "main.number_of_macro_cycles=1", "write_eff_file=false", "write_geo_file=false",
+		// "write_def_file=false", "write_maps=false", "write_map_coefficients=false", "--overwrite");
 		HANDLE_PYTHON_ERROR("phenix.refine failed");
 
-		if (!pValue) {
+		if ( !pValue ) {
 			utility_exit_with_message( "In PhenixInterface::fitBfactors: error!" );
 		}
 
@@ -373,7 +377,9 @@ void PhenixInterface::fitBfactors (
 	}
 
 	// cleanup
-	chdir("..");
+	if ( chdir("..") ) {
+		utility_exit_with_message( "Unable to save temp data in PhenixInterface" );
+	}
 
 	// read in b factors & update
 	// outfile is outtmp_adp_refine_001.pdb
@@ -381,13 +387,13 @@ void PhenixInterface::fitBfactors (
 
 	// after B factor refinement the python fmodel is out of date
 	// nuke the target evaluator
-	if (target_evaluator_) {
+	if ( target_evaluator_ ) {
 		Py_XDECREF(target_evaluator_);
 		target_evaluator_ = NULL;
 	}
 
 	// get rid of ref pose
-	if (ref_pose_) {
+	if ( ref_pose_ ) {
 		ref_pose_ = NULL;
 	}
 #else
@@ -404,28 +410,28 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 	// copy coordinates from pose
 	utility::vector1< numeric::xyzVector< core::Real > > coords;
 
-	if (is_symmetric( pose )) {
+	if ( is_symmetric( pose ) ) {
 		SymmetricConformation const & symm_conf (
-		      dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
+			dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-		for (int i=1; i<=(int)symm_info->num_total_residues_without_pseudo(); ++i) {
-			if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
-			if (!symm_info->bb_is_independent(i)) continue;
+		for ( int i=1; i<=(int)symm_info->num_total_residues_without_pseudo(); ++i ) {
+			if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
+			if ( !symm_info->bb_is_independent(i) ) continue;
 
 			core::conformation::Residue const &rsd_i = pose.residue(i);
 
 			// disulfide changes
 			bool ignore_cys_hg = ( !pose.residue(i).has_variant_type( core::chemical::DISULFIDE ) &&
-			                       ref_pose_->residue(i).has_variant_type( core::chemical::DISULFIDE ) );
+				ref_pose_->residue(i).has_variant_type( core::chemical::DISULFIDE ) );
 			bool add_cys_hg = ( pose.residue(i).has_variant_type( core::chemical::DISULFIDE ) &&
-			                    !ref_pose_->residue(i).has_variant_type( core::chemical::DISULFIDE ) );
+				!ref_pose_->residue(i).has_variant_type( core::chemical::DISULFIDE ) );
 
-			for (int j=1; j<=(int)rsd_i.natoms(); ++j) {
-				if (pose.residue_type(i).atom_name(j) == " CEN") continue;
-				if (pose.residue_type(i).atom_type(j).is_virtual()) continue;
+			for ( int j=1; j<=(int)rsd_i.natoms(); ++j ) {
+				if ( pose.residue_type(i).atom_name(j) == " CEN" ) continue;
+				if ( pose.residue_type(i).atom_type(j).is_virtual() ) continue;
 
-				if (ignore_cys_hg && pose.residue(i).atom_name(j) == " HG ") {
+				if ( ignore_cys_hg && pose.residue(i).atom_name(j) == " HG " ) {
 					TR.Warning << "Correcting disulfide at residue " << i << std::endl;
 					continue;
 				}
@@ -433,7 +439,7 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 				coords.push_back( rsd_i.xyz( j ) );
 			}
 
-			if (add_cys_hg) { // disulfide accross symm interface
+			if ( add_cys_hg ) { // disulfide accross symm interface
 				TR.Warning << "Correcting disulfide at residue " << i << std::endl;
 
 				// convert CYS->CYD
@@ -454,12 +460,12 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 			}
 		}
 	} else {
-		for (int i=1; i<=(int)pose.size(); ++i) {
-			if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
+		for ( int i=1; i<=(int)pose.size(); ++i ) {
+			if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 			core::conformation::Residue const &rsd_i = pose.residue(i);
-			for (int j=1; j<=(int)rsd_i.natoms(); ++j) {
-				if (pose.residue_type(i).atom_name(j) == " CEN") continue;
-				if (pose.residue_type(i).atom_type(j).is_virtual()) continue;
+			for ( int j=1; j<=(int)rsd_i.natoms(); ++j ) {
+				if ( pose.residue_type(i).atom_name(j) == " CEN" ) continue;
+				if ( pose.residue_type(i).atom_type(j).is_virtual() ) continue;
 				coords.push_back( rsd_i.xyz( j ) );
 			}
 		}
@@ -471,7 +477,7 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 	//fpd casting to float should take care of this
 	// convert to python obj
 	PyObject *pCoords = PyList_New(coords.size()*3);
-	for (int i=1; i<=(int)coords.size(); ++i) {
+	for ( int i=1; i<=(int)coords.size(); ++i ) {
 		//PyList_SET_ITEM( pCoords, 3*(i-1)+0, PyFloat_FromDouble( (float)coords[i][0]) );
 		//PyList_SET_ITEM( pCoords, 3*(i-1)+1, PyFloat_FromDouble( (float)coords[i][1]) );
 		//PyList_SET_ITEM( pCoords, 3*(i-1)+2, PyFloat_FromDouble( (float)coords[i][2]) );
@@ -486,13 +492,13 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 
 #ifdef WITH_PYTHON
 void PhenixInterface::pylist_to_grads(
-			core::pose::Pose const & pose,
-			PyObject* pygrads,
-			utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & grads ) {
+	core::pose::Pose const & pose,
+	PyObject* pygrads,
+	utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & grads ) {
 	using namespace core::pose::symmetry;
 	using namespace core::conformation::symmetry;
 
-debug_assert (pygrads != NULL);
+	debug_assert (pygrads != NULL);
 
 	SymmetryInfoCOP symm_info;
 	int nres = (int)pose.size();
@@ -505,35 +511,35 @@ debug_assert (pygrads != NULL);
 
 	grads.resize( nres );
 	int listCounter = 0;
-	for (int i=1; i<=(int)pose.size(); ++i) {
-		if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
-		if (symm_info && !symm_info->bb_is_independent(i)) continue;
+	for ( int i=1; i<=(int)pose.size(); ++i ) {
+		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
+		if ( symm_info && !symm_info->bb_is_independent(i) ) continue;
 
 		core::conformation::Residue const &rsd_i = pose.residue(i);
 
 		// disulfide changes
 		bool ignore_cys_hg = ( !pose.residue(i).has_variant_type( core::chemical::DISULFIDE ) &&
-		                       ref_pose_->residue(i).has_variant_type( core::chemical::DISULFIDE ) );
+			ref_pose_->residue(i).has_variant_type( core::chemical::DISULFIDE ) );
 		bool add_cys_hg = ( pose.residue(i).has_variant_type( core::chemical::DISULFIDE ) &&
-		                    !ref_pose_->residue(i).has_variant_type( core::chemical::DISULFIDE ) );
+			!ref_pose_->residue(i).has_variant_type( core::chemical::DISULFIDE ) );
 
 		grads[i].resize( rsd_i.natoms() );
-		for (int j=1; j<=(int)rsd_i.natoms(); ++j) {
-			if (pose.residue_type(i).atom_type(j).is_virtual()) {
+		for ( int j=1; j<=(int)rsd_i.natoms(); ++j ) {
+			if ( pose.residue_type(i).atom_type(j).is_virtual() ) {
 				grads[i][j][0] = grads[i][j][1] = grads[i][j][2] = 0; // placeholder
-			} else if (pose.residue_type(i).atom_name(j) == " CEN") {
+			} else if ( pose.residue_type(i).atom_name(j) == " CEN" ) {
 				grads[i][j][0] = grads[i][j][1] = grads[i][j][2] = 0; // placeholder
-			} else if (ignore_cys_hg && pose.residue(i).atom_name(j) == " HG ") {
+			} else if ( ignore_cys_hg && pose.residue(i).atom_name(j) == " HG " ) {
 				grads[i][j][0] = grads[i][j][1] = grads[i][j][2] = 0; // placeholder
 			} else {
 				PyObject *gx = PyList_GetItem( pygrads, listCounter++);
 				PyObject *gy = PyList_GetItem( pygrads, listCounter++);
 				PyObject *gz = PyList_GetItem( pygrads, listCounter++);
-				if (PyErr_Occurred()) {
+				if ( PyErr_Occurred() ) {
 					TR << "PyList_GetItem() failure at " << i << "," << j << "(" << listCounter << ")" << std::endl;
 					utility_exit_with_message("PhenixInterface::pylist_to_grads failed");
 				}
-			debug_assert(! ((gx == NULL) || (gy == NULL) || (gz == NULL)));
+				debug_assert(! ((gx == NULL) || (gy == NULL) || (gz == NULL)));
 				grads[i][j][0] = PyFloat_AsDouble( gx );
 				grads[i][j][1] = PyFloat_AsDouble( gy );
 				grads[i][j][2] = PyFloat_AsDouble( gz );
@@ -541,7 +547,7 @@ debug_assert (pygrads != NULL);
 		}
 
 		// ignore CYS H
-		if (add_cys_hg) {
+		if ( add_cys_hg ) {
 			listCounter += 3; // placeholder
 		}
 	}
@@ -551,8 +557,8 @@ debug_assert (pygrads != NULL);
 
 void PhenixInterface::stealBfactorsFromFile(
 #ifdef WITH_PYTHON
-		core::pose::Pose & pose,
-		std::string filename)
+	core::pose::Pose & pose,
+	std::string filename)
 #else
 	core::pose::Pose & /*pose*/,
 	std::string /*filename*/)
@@ -565,10 +571,10 @@ void PhenixInterface::stealBfactorsFromFile(
 	// open PDB file
 	std::ifstream PDBIN( filename.c_str() , std::ifstream::in );
 	std::string atmLine;
-	while(!PDBIN.eof()) {
+	while ( !PDBIN.eof() ) {
 		std::getline(PDBIN,atmLine);
-		if (atmLine.substr(0,6) != "ATOM  " && atmLine.substr(0,6) != "HETATM") continue;
-	  if (atmLine.size() < 78) {
+		if ( atmLine.substr(0,6) != "ATOM  " && atmLine.substr(0,6) != "HETATM" ) continue;
+		if ( atmLine.size() < 78 ) {
 			TR  << "format error:" << std::endl;
 			TR  << atmLine << std::endl;
 			continue;
@@ -580,27 +586,27 @@ void PhenixInterface::stealBfactorsFromFile(
 		core::Size resid_ros = pose_asu.pdb_info()->pdb2pose( chainid[0], resid, icode[0] );
 		core::Size residALT_ros = pose.pdb_info()->pdb2pose( chainid[0], resid, icode[0] );
 
-		if (resid_ros != residALT_ros) {
+		if ( resid_ros != residALT_ros ) {
 			TR.Fatal << "ResID mismatch: " << resid_ros << " != " << residALT_ros << std::endl;
 			TR.Fatal << "reading line: " << atmLine << std::endl;
 			utility_exit_with_message( "aborting!" );
 		}
 
-		if (resid_ros == 0) {
+		if ( resid_ros == 0 ) {
 			TR << "error finding res! " << resid << chainid << " first res = " << pose.pdb_info()->pose2pdb(1) << std::endl;
 			utility_exit_with_message( "aborting!" );
 		}
 
 		// fpd handle H internally
-		if (atmLine.substr(76,2) == " H") continue;
+		if ( atmLine.substr(76,2) == " H" ) continue;
 		std::string atom_name = atmLine.substr(12,4);
-		if (basic::options::option[ basic::options::OptionKeys::inout::output_alternate_atomids ].value() ){
-				//this is a hack to get around the fact that the normal atom aliases don't include spaces in their naming conventions...they really should
-				for( auto const & res_pair: pose_asu.residue_type(resid_ros).canonical_atom_aliases() ){
-						if( res_pair.second == atom_name ){
-								atom_name = res_pair.first;
-						}
+		if ( basic::options::option[ basic::options::OptionKeys::inout::output_alternate_atomids ].value() ) {
+			//this is a hack to get around the fact that the normal atom aliases don't include spaces in their naming conventions...they really should
+			for ( auto const & res_pair: pose_asu.residue_type(resid_ros).canonical_atom_aliases() ) {
+				if ( res_pair.second == atom_name ) {
+					atom_name = res_pair.first;
 				}
+			}
 		}
 
 		core::Size atmid = pose_asu.residue_type(resid_ros).atom_index( atom_name );
@@ -626,11 +632,11 @@ void PhenixInterface::updateFcalc () {
 /// @brief update mask
 void PhenixInterface::updateSolventMask () {
 #ifdef WITH_PYTHON
-	if (!target_evaluator_) return;
+	if ( !target_evaluator_ ) return;
 
 	char update_fmask_str[] = "update_fmask";
 	PyObject_CallMethod(target_evaluator_, update_fmask_str, NULL);
-  HANDLE_PYTHON_ERROR("update_fmask failed");
+	HANDLE_PYTHON_ERROR("update_fmask failed");
 
 	core::Real rwork = getR();
 	core::Real rfree = getRfree();
@@ -645,9 +651,9 @@ void PhenixInterface::updateSolventMask () {
 void PhenixInterface::updateSolventMask (
 
 #ifdef WITH_PYTHON
-		core::pose::Pose const & pose)
+	core::pose::Pose const & pose)
 {
-		if (!target_evaluator_) {
+	if ( !target_evaluator_ ) {
 		initialize_target_evaluator( pose );
 	}
 
@@ -675,11 +681,11 @@ void PhenixInterface::updateSolventMask (
 /// @brief explicitly recompute ksol/bsol
 void PhenixInterface::optimizeSolventMask () {
 #ifdef WITH_PYTHON
-	if (!target_evaluator_) return;
+	if ( !target_evaluator_ ) return;
 
 	char optimize_mask_str[] = "optimize_mask";
 	PyObject *pValue = PyObject_CallMethod(target_evaluator_, optimize_mask_str, NULL);
-  HANDLE_PYTHON_ERROR("optimize_mask failed");
+	HANDLE_PYTHON_ERROR("optimize_mask failed");
 
 	core::Real rwork = getR();
 	core::Real rfree = getRfree();
@@ -697,11 +703,11 @@ void PhenixInterface::optimizeSolventMask () {
 /// @brief explicitly recompute ksol/bsol
 void PhenixInterface::optimizeSolvParams () {
 #ifdef WITH_PYTHON
-	if (!target_evaluator_) return;
+	if ( !target_evaluator_ ) return;
 
 	char update_solvent_and_scale_str[] = "update_solvent_and_scale";
 	PyObject *pValue = PyObject_CallMethod(target_evaluator_, update_solvent_and_scale_str, NULL);
-  HANDLE_PYTHON_ERROR("update_solvent_and_scale failed");
+	HANDLE_PYTHON_ERROR("update_solvent_and_scale failed");
 	core::Real rwork = getR();
 	core::Real rfree = getRfree();
 	TR << "After optimizeSolvParams r/rfree = " << rwork << "/" << rfree << std::endl;
@@ -717,7 +723,7 @@ void PhenixInterface::optimizeSolvParams () {
 /// @brief explicitly recompute ksol/bsol and fmask
 void PhenixInterface::optimizeSolvParamsAndMask () {
 #ifdef WITH_PYTHON
-	if (!target_evaluator_) return;
+	if ( !target_evaluator_ ) return;
 
 	char optimize_mask_and_update_solvent_and_scale_str[] = "optimize_mask_and_update_solvent_and_scale";
 	PyObject *pValue = PyObject_CallMethod(target_evaluator_, optimize_mask_and_update_solvent_and_scale_str, NULL);
@@ -738,8 +744,8 @@ void PhenixInterface::optimizeSolvParamsAndMask () {
 /// @brief update res limits
 void PhenixInterface::setResLimits(
 #ifdef WITH_PYTHON
-		core::Real res_high /*=0.0*/,
-		core::Real res_low /*=0.0*/)
+	core::Real res_high /*=0.0*/,
+	core::Real res_low /*=0.0*/)
 #else
 	core::Real /*res_high=0.0*/,
 	core::Real /*res_low=0.0*/)
@@ -751,7 +757,7 @@ void PhenixInterface::setResLimits(
 	res_high_ = res_high;
 
 	// nuke the target evaluator
-	if (target_evaluator_) {
+	if ( target_evaluator_ ) {
 		Py_XDECREF(target_evaluator_);
 		target_evaluator_ = NULL;
 	}
@@ -763,7 +769,7 @@ void PhenixInterface::setResLimits(
 void
 PhenixInterface::setTwinLaw(
 #ifdef WITH_PYTHON
-		std::string twin_law)
+	std::string twin_law)
 #else
 	std::string /*twin_law*/)
 #endif
@@ -772,7 +778,7 @@ PhenixInterface::setTwinLaw(
 	twin_law_ = twin_law;
 
 	// nuke the target evaluator
-	if (target_evaluator_) {
+	if ( target_evaluator_ ) {
 		Py_XDECREF(target_evaluator_);
 		target_evaluator_ = NULL;
 	}
@@ -784,7 +790,7 @@ PhenixInterface::setTwinLaw(
 void
 PhenixInterface::setAlgorithm(
 #ifdef WITH_PYTHON
-		std::string algo)
+	std::string algo)
 #else
 	std::string /*algo*/)
 #endif
@@ -793,7 +799,7 @@ PhenixInterface::setAlgorithm(
 	algo_ = algo;
 
 	// nuke the target evaluator
-	if (target_evaluator_) {
+	if ( target_evaluator_ ) {
 		Py_XDECREF(target_evaluator_);
 		target_evaluator_ = NULL;
 	}
@@ -805,7 +811,7 @@ PhenixInterface::setAlgorithm(
 void
 PhenixInterface::set_map_type(
 #ifdef WITH_PYTHON
-		std::string map_type)
+	std::string map_type)
 #else
 	std::string /*map_type*/)
 #endif
@@ -814,7 +820,7 @@ PhenixInterface::set_map_type(
 	map_type_ = map_type;
 
 	// nuke the target evaluator
-	if (target_evaluator_) {
+	if ( target_evaluator_ ) {
 		Py_XDECREF(target_evaluator_);
 		target_evaluator_ = NULL;
 	}
@@ -826,7 +832,7 @@ PhenixInterface::set_map_type(
 
 std::string PhenixInterface::getInfoLine() {
 #ifdef WITH_PYTHON
-	if (!target_evaluator_) return "0.00/0.00";
+	if ( !target_evaluator_ ) return "0.00/0.00";
 
 	core::Real rwork = getR();
 	core::Real rfree = getRfree();
@@ -845,7 +851,7 @@ core::Real PhenixInterface::getR() {
 	char r_work_str[] = "r_work";
 	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, r_work_str, NULL);
 	core::Real rwork = 0;
-	if (r_work_py != NULL) {
+	if ( r_work_py != NULL ) {
 		rwork = PyFloat_AsDouble(r_work_py);
 		Py_XDECREF(r_work_py);
 	}
@@ -862,7 +868,7 @@ core::Real PhenixInterface::getRfree() {
 	char r_free_str[] = "r_free";
 	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, r_free_str, NULL);
 	core::Real rfree = 0;
-	if (r_free_py != NULL) {
+	if ( r_free_py != NULL ) {
 		rfree = PyFloat_AsDouble(r_free_py);
 		Py_XDECREF(r_free_py);
 	}
@@ -876,8 +882,8 @@ core::Real PhenixInterface::getRfree() {
 
 void PhenixInterface::initialize_target_evaluator(
 #ifdef WITH_PYTHON
-		core::pose::Pose const & pose,
-		std::string eff_file /*=""*/)
+	core::pose::Pose const & pose,
+	std::string eff_file /*=""*/)
 #else
 	core::pose::Pose const & /*pose*/,
 	std::string /*eff_file=""*/)
@@ -885,7 +891,7 @@ void PhenixInterface::initialize_target_evaluator(
 {
 #ifdef WITH_PYTHON
 	// nuke the target evaluator if one exists
-	if (target_evaluator_) {
+	if ( target_evaluator_ ) {
 		Py_XDECREF(target_evaluator_);
 		target_evaluator_ = NULL;
 	}
@@ -893,35 +899,43 @@ void PhenixInterface::initialize_target_evaluator(
 	// obvious error check 1
 	//   check that the crystal refinement flag is specified
 	//   if not, don't die but warn the user
-	if (!basic::options::option[ basic::options::OptionKeys::cryst::crystal_refine ].value())
+	if ( !basic::options::option[ basic::options::OptionKeys::cryst::crystal_refine ].value() ) {
 		TR.Warning << "The flag -cryst::cryst_refine should be given for crystal refinement!  Continuing..." << std::endl;
+	}
 
 	// obvious error check 3
 	//    make sure mtzfile is specified
-	if (mtzfile_.length() == 0)
+	if ( mtzfile_.length() == 0 ) {
 		utility_exit_with_message( "No MTZ file loaded!  An MTZ file must be specified with -cryst::mtzfile" );
+	}
 
 	// obvious error check 2
 	//   make sure CRYST1 line is in input structure
 	//   if not die (since next step will certainly fail)
-	if ( !pose.pdb_info() || pose.pdb_info()->crystinfo().A()*pose.pdb_info()->crystinfo().B()*pose.pdb_info()->crystinfo().C() == 0 )
+	if ( !pose.pdb_info() || pose.pdb_info()->crystinfo().A()*pose.pdb_info()->crystinfo().B()*pose.pdb_info()->crystinfo().C() == 0 ) {
 		utility_exit_with_message( "Invalid crystal parameters!  Does the input PDB contain a valid CRYST1 line?" );
+	}
 
 	// first time we call this we read in PDB from disk
 	char buffer[256] = "outtmp.pdb";
 	core::pose::Pose pose_asu;
-	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
+
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
+	} else {
+		pose_asu = pose;
+		//fd:  if this is called while scoring, we need to "unmark" the is_scoring flag
+		//     (since pose writing does not work while scoring)
+		pose_asu.energies().scoring_end(core::scoring::ScoreFunction());
+	}
 
 	core::pose::initialize_disulfide_bonds( pose_asu ); //fpd
 
-	// sometimes H bfactors get lost/don't exist ... fix them
-	//fix_bfactorsH( pose_asu );
-	//fix_bfactorsMissing( pose_asu );
-
 	ref_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose_asu );
-	//ref_pose_->conformation().detect_disulfides();
 
-	chdir(tempdir_.c_str());
+	if ( chdir(tempdir_.c_str()) ) {
+		utility_exit_with_message( "Unable to save temp data in PhenixInterface" );
+	}
 
 	pose_asu.dump_pdb( buffer );
 
@@ -938,12 +952,12 @@ void PhenixInterface::initialize_target_evaluator(
 
 	// (2) mtz file
 	std::string arg2 = mtzfile_;
-	if (arg2[0] != '/') arg2 = "../"+arg2;   // if path is relative, update
+	if ( arg2[0] != '/' ) arg2 = "../"+arg2;   // if path is relative, update
 	std::vector< char > arg2_char(arg2.c_str(), arg2.c_str()+arg2.length()+1);
 
 	// (3-4) res limits
 	std::ostringstream oss;
-	if (res_high_ > 0) {
+	if ( res_high_ > 0 ) {
 		oss << "input.xray_data.high_resolution=" << res_high_;
 	} else {
 		oss << "input.xray_data.high_resolution=None";
@@ -952,7 +966,7 @@ void PhenixInterface::initialize_target_evaluator(
 	std::vector< char > arg3_char(arg3.c_str(), arg3.c_str()+arg3.length()+1);
 
 	oss.clear(); oss.str("");
-	if (res_low_ > 0) {
+	if ( res_low_ > 0 ) {
 		oss << "input.xray_data.low_resolution=" << res_low_;
 	} else {
 		oss << "input.xray_data.low_resolution = None";
@@ -969,8 +983,8 @@ void PhenixInterface::initialize_target_evaluator(
 	// (6) if target function==lsq then use lsq bulk solvent
 	oss.clear(); oss.str("");
 	oss << "bss.target = ";
-	if (( target_function_ == "lsq" ) ||
-			(( twin_law_.length() != 0 ) && (twin_law_ != "None"))) {
+	if ( ( target_function_ == "lsq" ) ||
+			(( twin_law_.length() != 0 ) && (twin_law_ != "None")) ) {
 		oss << "ls_wunit_k1";
 	} else {
 		oss << "ml";
@@ -981,29 +995,31 @@ void PhenixInterface::initialize_target_evaluator(
 	// (7) sf calc algo
 	oss.clear(); oss.str("");
 	oss << "structure_factors_accuracy.algorithm = ";
-	if ( algo_.length() == 0 )
+	if ( algo_.length() == 0 ) {
 		oss << "fft";
-	else
+	} else {
 		oss << algo_;
+	}
 	std::string arg7 = oss.str();
 	std::vector< char > arg7_char(arg7.c_str(), arg7.c_str()+arg7.length()+1);
 
 	// (8) twin law
 	oss.clear(); oss.str("");
 	oss << "options.twin_law = ";
-	if ( twin_law_.length() == 0 )
+	if ( twin_law_.length() == 0 ) {
 		oss << "None";
-	else
+	} else {
 		oss << twin_law_;
+	}
 	std::string arg8 = oss.str();
 	std::vector< char > arg8_char(arg8.c_str(), arg8.c_str()+arg8.length()+1);
 
 	// (9) map type
 	oss.clear(); oss.str("");
-  if (( map_type_.length() != 0 ) && (map_type_ != "Auto") && (map_type_.substr(0,2) != "%%") ) { // 3rd case bad RS tag
-		if (map_type_ == "dm" || map_type_ == "density_modify") {
+	if ( ( map_type_.length() != 0 ) && (map_type_ != "Auto") && (map_type_.substr(0,2) != "%%") ) { // 3rd case bad RS tag
+		if ( map_type_ == "dm" || map_type_ == "density_modify" ) {
 			oss << "density_modify=True";
-		} else if (map_type_ == "prime_and_switch") {
+		} else if ( map_type_ == "prime_and_switch" ) {
 			oss << "prime_and_switch=True";
 		} else {
 			oss << "map_type=" << map_type_;
@@ -1017,15 +1033,15 @@ void PhenixInterface::initialize_target_evaluator(
 
 	// (10) b sharpen
 	oss.clear(); oss.str("");
-  if (sharpen_b_ != 0.0) {
-			oss << "sharpen_b=" << sharpen_b_;
+	if ( sharpen_b_ != 0.0 ) {
+		oss << "sharpen_b=" << sharpen_b_;
 	}
 	std::string arg10 = oss.str();
 	std::vector< char > arg10_char(arg10.c_str(), arg10.c_str()+arg10.length()+1);
 
 	// (optional) .eff file
 	std::vector< char > arg_opt;
-	if (eff_file.length() > 0) {
+	if ( eff_file.length() > 0 ) {
 		arg_opt = std::vector< char >(eff_file.c_str(), eff_file.c_str()+eff_file.length()+1);
 	}
 
@@ -1043,8 +1059,8 @@ void PhenixInterface::initialize_target_evaluator(
 		char s10_str[] = "([ssssssssss])";
 		char s11_str[] = "([sssssssssss])";
 
- 		if (eff_file.length() == 0)
- 			target_evaluator_ = PyObject_CallMethod(pModule,
+		if ( eff_file.length() == 0 ) {
+			target_evaluator_ = PyObject_CallMethod(pModule,
 				run_str,
 				s10_str,
 				&arg1_char[0],  // pdb file
@@ -1057,25 +1073,26 @@ void PhenixInterface::initialize_target_evaluator(
 				&arg8_char[0],  // twin law
 				&arg9_char[0],  // map type
 				&arg10_char[0]); // b sharpen
- 		else
- 			target_evaluator_ = PyObject_CallMethod(pModule,
+		} else {
+			target_evaluator_ = PyObject_CallMethod(pModule,
 				run_str,
 				s11_str,
- 			  &arg1_char[0],  // pdb file
+				&arg1_char[0],  // pdb file
 				&arg2_char[0],  // mtz file
 				&arg_opt[0],    // eff file
-        &arg3_char[0],  // high resolution
-        &arg4_char[0],  // low resolution
-        &arg5_char[0],  // target function
-        &arg6_char[0],  // bss target
-        &arg7_char[0],  // sf calc method
-        &arg8_char[0],  // twin law
-        &arg9_char[0],  // map type
+				&arg3_char[0],  // high resolution
+				&arg4_char[0],  // low resolution
+				&arg5_char[0],  // target function
+				&arg6_char[0],  // bss target
+				&arg7_char[0],  // sf calc method
+				&arg8_char[0],  // twin law
+				&arg9_char[0],  // map type
 				&arg10_char[0]); // b sharpen
+		}
 
 		HANDLE_PYTHON_ERROR("initialization of target evaluator failed");
 		//
-		if (!target_evaluator_) {
+		if ( !target_evaluator_ ) {
 			TR << buffer << std::endl;
 			utility_exit_with_message( "In PhenixInterface::initialize_target_evaluator: error initializing evaluator!" );
 		}
@@ -1087,7 +1104,9 @@ void PhenixInterface::initialize_target_evaluator(
 
 	Py_XDECREF(pModule);
 
-	chdir("..");
+	if ( chdir("..") ) {
+		utility_exit_with_message( "Unable to save temp data in PhenixInterface" );
+	}
 #else
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
 #endif
@@ -1095,19 +1114,21 @@ void PhenixInterface::initialize_target_evaluator(
 
 std::string PhenixInterface::calculateDensityMap (
 #ifdef WITH_PYTHON
-		core::pose::Pose & pose,
-		bool /*no_sidechain =false*/)
+	core::pose::Pose & pose,
+	bool /*no_sidechain =false*/)
 #else
 	core::pose::Pose & /*pose*/,
 	bool /*no_sidechain=false*/)
 #endif
 {
 #ifdef WITH_PYTHON
-	if (!target_evaluator_) {
+	if ( !target_evaluator_ ) {
 		initialize_target_evaluator( pose );
 	}
 
-	chdir(tempdir_.c_str());
+	if ( chdir(tempdir_.c_str()) ) {
+		utility_exit_with_message( "Unable to save temp data in PhenixInterface" );
+	}
 
 	char write_map_str[] = "write_map";
 	char s1_str[] = "(s)";
@@ -1116,7 +1137,9 @@ std::string PhenixInterface::calculateDensityMap (
 
 	HANDLE_PYTHON_ERROR("PhenixInterface::calculateDensityMap() : error writing map");
 
-	chdir("..");
+	if ( chdir("..") ) {
+		utility_exit_with_message( "Unable to save temp data in PhenixInterface" );
+	}
 	return tempdir_+"/outtmp.map";
 #else
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
