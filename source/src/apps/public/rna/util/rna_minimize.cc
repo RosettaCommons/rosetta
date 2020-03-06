@@ -237,7 +237,7 @@ rna_fullatom_minimize_test()
 				option[OptionKeys::constraints::cst_fa_file][1], utility::pointer::make_shared< ConstraintSet >(), test_pose );
 			pose->constraint_set( cst_set );
 		}
-
+		
 		AtomLevelDomainMapOP atom_level_domain_map( new AtomLevelDomainMap( *pose ) );
 		if ( option[ in::file::minimize_res ].user() ) {
 			// don't allow anything to move, and then supply minimize_res as 'extra' minimize_res.
@@ -254,6 +254,10 @@ rna_fullatom_minimize_test()
 			atom_level_domain_map->set( true );
 		}
 		rna_minimizer.set_atom_level_domain_map( atom_level_domain_map );
+		
+		// AMW: permit minimization to a native
+		vector1< Size > moving_res_list = get_moving_res( *pose, atom_level_domain_map );
+		if ( native_pose != nullptr ) protocols::stepwise::modeler::align::align_pose_and_add_rmsd_constraints( *pose, native_pose, moving_res_list, option[ basic::options::OptionKeys::stepwise::rmsd_screen ] );
 
 		// Base pair constraints
 		if ( option[ OptionKeys::rna::denovo::secstruct ].user() || option[  OptionKeys::rna::denovo::secstruct_file ].user() ) {
