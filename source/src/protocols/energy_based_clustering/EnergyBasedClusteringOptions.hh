@@ -9,7 +9,7 @@
 
 /// @file protocols/energy_based_clustering/EnergyBasedClusteringOptions.hh
 /// @brief A container for the options used by the EnergyBasedClusteringProtocol.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 
 #ifndef INCLUDED_protocols_cluster_energy_based_clustering_EnergyBasedClusteringOptions_hh

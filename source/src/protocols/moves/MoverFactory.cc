@@ -17,10 +17,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-// required for passing to Mover::parse_my_tag
-
-#include <basic/Tracer.hh>
-
 // Utility headers
 #include <utility/exit.hh> // runtime_assert, throw utility::excn::EXCN_RosettaScriptsOption
 #include <utility/tag/Tag.hh>
@@ -30,6 +26,10 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/thread/threadsafe_creation.hh>
+
+// Basic headers:
+#include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 // Boost headers
 #include <boost/bind.hpp>
@@ -144,6 +144,12 @@ MoverFactory::newMover(
 	MoverOP mover( newMover( tag->getName() ) );
 	runtime_assert( mover != nullptr );
 	mover->parse_my_tag( tag, data, filters, movers, pose );
+
+	//Register the new mover with the citation manager:
+	basic::citation_manager::CitationManager * cc( basic::citation_manager::CitationManager::get_instance() );
+	cc->add_citations( mover->provide_citation_info() );
+	cc->add_unpublished_modules( mover->provide_authorship_info_for_unpublished() );
+
 	return mover;
 }
 

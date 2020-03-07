@@ -35,6 +35,8 @@
 
 // Package Headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
@@ -575,6 +577,71 @@ ParsedProtocol::apply_filter( Pose & pose, MoverFilterPair const & mover_pair) {
 	}
 	return true;
 }
+
+/// @brief This mover does not provide citation info for itself, though it might for
+/// movers or filters that it invokes.  It therefore returns false.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+ParsedProtocol::mover_provides_citation_info() const {
+	return false;
+}
+
+/// @brief Provide the citation.
+/// @returns A vector of citation collections.  This allows the mover to provide citations for
+/// itself and for any modules that it invokes.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+ParsedProtocol::provide_citation_info() const {
+	using namespace basic::citation_manager;
+	utility::vector1< CitationCollectionCOP > returnvec;
+
+	// Add citations for all movers and filters:
+	for ( MoverFilterPair const & mf_pair : movers_ ) {
+		if ( mf_pair.first.first != nullptr ) {
+			merge_into_citation_collection_vector( mf_pair.first.first->provide_citation_info(), returnvec );
+		}
+		if ( mf_pair.second != nullptr ) {
+			merge_into_citation_collection_vector( mf_pair.second->provide_citation_info(), returnvec );
+		}
+	}
+
+	//TODO scorefunction, etc.
+
+	//Additional mover:
+	if ( last_mover_ != nullptr ) {
+		merge_into_citation_collection_vector( last_mover_->provide_citation_info(), returnvec );
+	}
+
+	return returnvec;
+}
+
+/// @brief This mover is not unpublished.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool ParsedProtocol::mover_is_unpublished() const { return false; }
+
+/// @brief This mover does provide information for unpublished movers and filters that it invokes.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+ParsedProtocol::provide_authorship_info_for_unpublished() const {
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
+	for ( MoverFilterPair const & mf_pair : movers_ ) {
+		if ( mf_pair.first.first != nullptr ) {
+			basic::citation_manager::merge_into_unpublished_collection_vector( mf_pair.first.first->provide_authorship_info_for_unpublished(), returnvec );
+		}
+		if ( mf_pair.second != nullptr ) {
+			basic::citation_manager::merge_into_unpublished_collection_vector( mf_pair.second->provide_authorship_info_for_unpublished(), returnvec );
+		}
+	}
+
+	//TODO scorefunction, etc.
+
+	//Additional mover:
+	if ( last_mover_ != nullptr ) {
+		merge_into_unpublished_collection_vector( last_mover_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	return returnvec;
+}
+
 
 void ParsedProtocol::finish_protocol(Pose & pose) {
 	protocols::moves::Mover::set_last_move_status( protocols::moves::MS_SUCCESS ); // tell jobdistributor to save pose

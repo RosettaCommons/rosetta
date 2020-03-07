@@ -26,6 +26,16 @@ cat %(minidir)s/src/protocols/jd2/JobDistributor.hh > JobDistributor.hh
 [ -a %(minidir)s/src/protocols/jd2/JobDistributor.cc ] || exit 1
 cat %(minidir)s/src/protocols/jd2/JobDistributor.cc > JobDistributor.cc
 
+#Check CitationManager machinery.
+[ -a %(minidir)s/src/basic/citation_manager/CitationManager.hh ] || exit 1
+cat %(minidir)s/src/basic/citation_manager/CitationManager.hh > CitationManager.hh
+[ -a %(minidir)s/src/basic/citation_manager/Citation.hh ] || exit 1
+cat %(minidir)s/src/basic/citation_manager/Citation.hh > Citation.hh
+[ -a %(minidir)s/src/basic/citation_manager/CitationCollection.hh ] || exit 1
+cat %(minidir)s/src/basic/citation_manager/CitationCollection.hh > CitationCollection.hh
+[ -a %(minidir)s/src/basic/citation_manager/UnpublishedModuleInfo.hh ] || exit 1
+cat %(minidir)s/src/basic/citation_manager/UnpublishedModuleInfo.hh > UnpublishedModuleInfo.hh
+
 #Check RosettaThreadManager machinery.
 [ -a %(minidir)s/src/basic/thread_manager/RosettaThreadManager.hh ] || exit 1
 cat %(minidir)s/src/basic/thread_manager/RosettaThreadManager.hh > RosettaThreadManager.hh

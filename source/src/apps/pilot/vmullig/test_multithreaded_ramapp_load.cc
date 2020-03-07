@@ -9,7 +9,7 @@
 
 /// @file apps/pilot/vmullig/test_multithreaded_ramapp_load.cc
 /// @brief A pilot app to test the load of RamaPrePro data when many threads are trying to do this at once.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 // devel headers
 #include <devel/init.hh>

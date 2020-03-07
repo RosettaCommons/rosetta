@@ -60,6 +60,12 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <protocols/calc_taskop_filters/OperatorFilter.hh>
 #include <protocols/filters/BasicFilters.hh>
+
+// Basic headers
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationManager.hh>
+
 //////////////////////////////////////////////////
 // option key includes
 #include <basic/options/option.hh>
@@ -1372,6 +1378,69 @@ GenericMonteCarloMover::define_composition_schema( utility::tag::XMLSchemaDefini
 		.set_subelements_repeatable( genmc_subelements );
 
 	return genmc_ct_gen;
+}
+
+/// @brief This mover provides citation info (returns true).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+GenericMonteCarloMover::mover_provides_citation_info() const {
+	return true;
+}
+
+/// @brief Provide the citation (Fleishman 2011).
+/// @returns A vector of citation collections for this mover and any published movers and filters that it invokes.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+GenericMonteCarloMover::provide_citation_info() const {
+	using namespace basic::citation_manager;
+	CitationCollectionOP mycitation( utility::pointer::make_shared<CitationCollection>( get_name(), CitedModuleType::Mover ));
+	mycitation->add_citation( CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pone.0020161" ) );
+	utility::vector1< CitationCollectionCOP > returnvec { mycitation };
+
+	//Add citations for modules that this mover invokes:
+	if ( scorefxn_ != nullptr ) {
+		merge_into_citation_collection_vector( scorefxn_->provide_citation_info(), returnvec );
+	}
+	if ( stopping_condition_ != nullptr ) {
+		merge_into_citation_collection_vector( stopping_condition_->provide_citation_info(), returnvec );
+	}
+	if ( mover_ != nullptr ) {
+		merge_into_citation_collection_vector( mover_->provide_citation_info(), returnvec );
+	}
+	for ( protocols::filters::FilterCOP const & filter : filters_ ) {
+		if ( filter != nullptr ) {
+			merge_into_citation_collection_vector( filter->provide_citation_info(), returnvec );
+		}
+	}
+
+	return returnvec;
+}
+
+/// @brief Provides unpublished citation info for any unpublished movers and filters that this mover invokes.
+/// @returns A list of pairs of (author, e-mail address).  Empty list if none are unpublished.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+GenericMonteCarloMover::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+	utility::vector1< UnpublishedModuleInfoCOP > returnvec;
+
+	//Add citations for modules that this mover invokes:
+	if ( scorefxn_ != nullptr ) {
+		merge_into_unpublished_collection_vector( scorefxn_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	if ( stopping_condition_ != nullptr ) {
+		merge_into_unpublished_collection_vector( stopping_condition_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	if ( mover_ != nullptr ) {
+		merge_into_unpublished_collection_vector( mover_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	for ( protocols::filters::FilterCOP const & filter : filters_ ) {
+		if ( filter != nullptr ) {
+			merge_into_unpublished_collection_vector( filter->provide_authorship_info_for_unpublished(), returnvec );
+		}
+	}
+
+	return returnvec;
 }
 
 

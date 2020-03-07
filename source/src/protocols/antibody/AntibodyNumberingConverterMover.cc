@@ -28,6 +28,8 @@
 #include <protocols/antibody/util.hh>
 
 // Basic/Utility headers
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
@@ -58,6 +60,29 @@ AntibodyNumberingConverterMover::AntibodyNumberingConverterMover(
 	set_defaults();
 	from_scheme_ = from;
 	to_scheme_ = to;
+}
+
+bool
+AntibodyNumberingConverterMover::mover_provides_citation_info() const {
+	return true;
+}
+
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+AntibodyNumberingConverterMover::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"AntibodyNumberingConverterMover", basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+
+	//RosettaAntibody
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "doi:10.1038/nprot.2016.180" ) );
+
+	//RosettaAntibodyDesign
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
+
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
+	return returnvec;
 }
 
 void

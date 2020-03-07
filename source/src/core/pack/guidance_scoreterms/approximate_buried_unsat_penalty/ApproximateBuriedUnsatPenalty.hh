@@ -185,6 +185,17 @@ public:
 	Distance
 	atomic_interaction_cutoff() const override { return 6.0; }
 
+public: //CitationManager functions:
+
+	/// @brief This energy method IS unpublished (returns true).
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool energy_method_is_unpublished() const override;
+
+	/// @brief Provide a list of authors and their e-mail addresses, as strings.
+	/// @returns Brian Coventry's name, affiliation, and e-mail address.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
+
 private:
 
 	basic::datacache::CacheableResRotPairFloatMapCOP

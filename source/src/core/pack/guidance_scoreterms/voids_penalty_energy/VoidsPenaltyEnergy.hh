@@ -123,6 +123,17 @@ public:
 	/// @brief Get whether this term is disabled except during packing.
 	inline bool disabled_except_during_packing( ) const { return disabled_except_during_packing_; }
 
+public: //CitationManager functions:
+
+	/// @brief This energy method IS unpublished (returns true).
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool energy_method_is_unpublished() const override;
+
+	/// @brief Provide a list of authors and their e-mail addresses, as strings.
+	/// @returns A list of pairs of (author, e-mail address).
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
+
 private:
 
 	/******************

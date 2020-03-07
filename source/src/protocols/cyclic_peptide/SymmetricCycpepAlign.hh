@@ -10,7 +10,7 @@
 /// @file protocols/cyclic_peptide/SymmetricCycpepAlign.hh
 /// @brief Given a quasi-symmetric cyclic peptide, this mover aligns the peptide so that the cyclic symmetry axis lies along the Z-axis and the centre of mass is at the origin.
 /// It then optionally removes all but one symmetry repeat, so that true symmetry may be set up with the SetupForSymmetry mover.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 #ifndef INCLUDED_protocols_cyclic_peptide_SymmetricCycpepAlign_HH
 #define INCLUDED_protocols_cyclic_peptide_SymmetricCycpepAlign_HH
@@ -27,6 +27,7 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Basic/Utility headers
+#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 //#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from Mover
 
@@ -158,6 +159,14 @@ public: // setters and getters
 	/// @brief Set whether we're aligning the peptide normal with the Z-axis (false) or the inverse Z-axis (true).
 	///
 	inline void set_invert( bool const setting ) { invert_ = setting; }
+
+public: //Function overrides needed for the citation manager:
+
+	/// @brief Indicate that this mover is unpublished.
+	bool mover_is_unpublished() const override;
+
+	/// @brief Provide authorship information for an unpublished Rosetta module.
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
 
 private: // methods
 

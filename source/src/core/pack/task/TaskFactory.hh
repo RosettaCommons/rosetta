@@ -93,6 +93,9 @@ public:
 	/// @brief Has a PackerPalette been set for this TaskFactory?
 	inline bool has_packer_palette() const { return packer_palette_ != nullptr; }
 
+	/// @brief Access the PackerPalette (const-access only).
+	inline PackerPaletteCOP packer_palette() const { return packer_palette_; }
+
 	/// @brief begin iterator of operations_
 	const_iterator
 	begin() const;

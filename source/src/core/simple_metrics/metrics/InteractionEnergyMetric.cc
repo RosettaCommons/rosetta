@@ -38,6 +38,8 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
@@ -345,6 +347,62 @@ InteractionEnergyMetric::calculate(const core::pose::Pose & pose ) const {
 	//Save the total (weighted) delta score
 	weighted_total = final_energies_unweighted.dot(weights);
 	return weighted_total;
+}
+
+/// @brief This simple metric is unpublished, but can provide citation information for the residue
+/// selector that it uses.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+InteractionEnergyMetric::provide_citation_info() const {
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec;
+	if ( selector1_ != nullptr ) {
+		basic::citation_manager::merge_into_citation_collection_vector( selector1_->provide_citation_info(), returnvec );
+	}
+	if ( selector2_ != nullptr ) {
+		basic::citation_manager::merge_into_citation_collection_vector( selector2_->provide_citation_info(), returnvec );
+	}
+	if ( scorefxn_ != nullptr ) {
+		basic::citation_manager::merge_into_citation_collection_vector( scorefxn_->provide_citation_info(), returnvec );
+	}
+	return returnvec;
+}
+
+/// @brief This simple metric is unpublished (returns true).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+InteractionEnergyMetric::simple_metric_is_unpublished() const {
+	return true;
+}
+
+/// @brief This simple metric is unpublished.  It returns Jared Adolf-Bryfogle.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+InteractionEnergyMetric::provide_authorship_info_for_unpublished() const {
+	basic::citation_manager::UnpublishedModuleInfoOP authors (
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		name(), basic::citation_manager::CitedModuleType::SimpleMetric,
+		"Jared Adolf-Bryfogle",
+		"Scripps Research Institute",
+		"jadolfbr@gmail.com",
+		"Wrote the InteractionEnergyMetric."
+		)
+	);
+
+	authors->add_author( "John Karanicolas", "Department of Molecular Biosciences, University of Kansas", "johnk@ku.edu", "Original logic from InterfaceDeltaEnergetics." );
+	authors->add_author( "Roland A. Pache", "Department of Bioengineering and Therapeutic Sciences, University of California San Francisco", "johnk@ku.edu", "Original logic from InterfaceDeltaEnergetics." );
+
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{ authors };
+
+	if ( selector1_ != nullptr ) {
+		basic::citation_manager::merge_into_unpublished_collection_vector( selector1_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	if ( selector2_ != nullptr ) {
+		basic::citation_manager::merge_into_unpublished_collection_vector( selector2_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	if ( scorefxn_ != nullptr ) {
+		basic::citation_manager::merge_into_unpublished_collection_vector( scorefxn_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	return returnvec;
 }
 
 void

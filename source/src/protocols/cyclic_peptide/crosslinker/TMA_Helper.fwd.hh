@@ -10,7 +10,7 @@
 /// @file protocols/cyclic_peptide/crosslinker/TMA_Helper.fwd.hh
 /// @brief A derived class of the CrosslinkerMoverHelper base class, used to set up
 /// the trimesic acid (TMA) cross-linker.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 
 #ifndef INCLUDED_protocols_cyclic_peptide_crosslinker_TMA_Helper_fwd_hh

@@ -99,6 +99,10 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
+
 namespace protocols {
 namespace ligand_docking {
 
@@ -705,6 +709,36 @@ bool sort_by_binding(const ProtLigPair_info & left_pair, const ProtLigPair_info 
 	}
 }
 
+/// @brief Does this mover provide information about how to cite it?
+/// @details Returns true.
+bool
+ProtLigEnsemble::mover_provides_citation_info() const {
+	return true;
+}
+
+/// @brief Provide the citation.
+/// @returns A vector of citation collections.  This allows the mover to provide citations for itself and for any modules that it invokes.
+/// @details Also provides citations for movers called by the ProtLigEnsemble.
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+ProtLigEnsemble::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"ProtLigEnsemble", basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1021/acsomega.7b02059" ) );
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
+	return returnvec;
+}
+
+/// @brief Provide a list of authors and their e-mail addresses, as strings.
+/// @returns A list of pairs of (author, e-mail address).  This mover IS published, so it returns nothing for itself, but can return  information for preselection filters and movers.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+ProtLigEnsemble::provide_authorship_info_for_unpublished() const {
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
+	return returnvec;
+}
 
 } //namespace ligand_docking
 } //namespace protocols

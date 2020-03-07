@@ -33,6 +33,8 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -160,6 +162,43 @@ NeighborhoodResidueSelector::clear_focus(){
 	focus_.clear();
 	focus_selector_ = nullptr;
 }
+
+/// @brief Provide the citation.
+/// @returns A vector of citation collections.  This allows the residue selector to provide citations for
+/// itself and for any modules that it invokes.
+/// @details This residue selector provides no citation information of its own, but it can provide citation
+/// information for the residue selectors that it contains.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+NeighborhoodResidueSelector::provide_citation_info() const {
+	using namespace basic::citation_manager;
+	utility::vector1< CitationCollectionCOP > returnvec;
+	if ( focus_selector_ != nullptr ) {
+		merge_into_citation_collection_vector( focus_selector_->provide_citation_info(), returnvec );
+	}
+	return returnvec;
+}
+
+/// @brief Provide a list of authors and their e-mail addresses, as strings.
+/// @returns Robert, Jared, and Gerard as authors.  Unpublished information for residue selectors that it
+/// contains.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+NeighborhoodResidueSelector::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+	UnpublishedModuleInfoOP moduleinfo( utility::pointer::make_shared< UnpublishedModuleInfo>( "NeighborhoodResidueSelector", CitedModuleType::ResidueSelector ) );
+	moduleinfo->add_author( "Robert Lindner", "Natural Sciences and Mathematics, Ruperto-Carola University, Heidelberg, Germany", "rlindner@mpimf-heidelberg.mpg.de" );
+	moduleinfo->add_author( "Jared Adolf-Bryfogle", "Schief lab, Scripps Research Institute", "jadolfbr@gmail.com" );
+	moduleinfo->add_author( "Gerard Daniel", "Institue for Protein Design, University of Washington", "gerardda@uw.edu" );
+
+	utility::vector1< UnpublishedModuleInfoCOP > returnvec{ moduleinfo };
+
+	if ( focus_selector_ != nullptr ) {
+		merge_into_unpublished_collection_vector( focus_selector_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	return returnvec;
+}
+
 
 void
 NeighborhoodResidueSelector::parse_my_tag(

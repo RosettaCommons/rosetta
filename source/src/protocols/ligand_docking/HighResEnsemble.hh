@@ -109,7 +109,35 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-private:
+public:
+
+	/// @brief Does this mover provide information about how to cite it?
+	/// @details Returns true.
+	bool mover_provides_citation_info() const override;
+
+	/// @brief Provide the citation.
+	/// @returns A vector of citation collections.  This allows the mover to provide citations for itself
+	/// and for any modules that it invokes.
+	/// @details Also provides citations for movers called by the HighResEnsemble.
+	utility::vector1< basic::citation_manager::CitationCollectionCOP >
+	provide_citation_info() const override;
+
+	/// @brief Provide a list of authors and their e-mail addresses, as strings.
+	/// @returns A list of pairs of (author, e-mail address).  This mover IS published, so it returns nothing for
+	/// itself, but can return  information for preselection filters and movers.
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+	provide_authorship_info_for_unpublished() const override;
+
+private: //Functions
+
+	void prepare_single_ligand_pose(core::pose::Pose pose, core::Size chain_to_keep);
+
+	// void get_ranks_from_file(core::pose::Pose const pose, std::string filename);
+
+	core::Real qsar_correlation();
+
+private: //Data
+
 	core::Size num_cycles_;
 	core::Size repack_every_Nth_;
 	std::vector<std::string> chains_;
@@ -139,11 +167,6 @@ private:
 	utility::vector1<std::string> rosetta_names_;    //QSAR compound names from file only
 	utility::vector1<char> rosetta_chars_;          //Ligand chain identifiers
 
-	void prepare_single_ligand_pose(core::pose::Pose pose, core::Size chain_to_keep);
-
-	// void get_ranks_from_file(core::pose::Pose const pose, std::string filename);
-
-	core::Real qsar_correlation();
 };
 
 //non-member functions

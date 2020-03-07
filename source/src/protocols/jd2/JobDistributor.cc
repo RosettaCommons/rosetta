@@ -54,6 +54,7 @@
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
 #include <basic/datacache/BasicDataCache.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 #ifdef BOINC
 #include <protocols/boinc/boinc.hh>
@@ -334,6 +335,9 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 		// We had a successful run - show any options which were set by the user, but not accessed.
 		// (This shouldn't be printed for errors and for no outputs, as not all the protocol may have been run.)
 		basic::options::option.show_unused_options( tr.Warning );
+
+		// List all modules used that should be cited, or unpublished modules used.
+		write_citations_and_clear_citation_tracking();
 	}
 }
 
@@ -628,7 +632,7 @@ JobDistributor::run_one_job(
 			}
 
 			bool allow_job_update = true;
-			bool gaurantee_new_mover = false;
+			bool guarantee_new_mover = false;
 
 			// generate_mover_from_pose returns true if there was a pose change
 			// (i.e. NOT if only the mover changed)
@@ -636,7 +640,7 @@ JobDistributor::run_one_job(
 					"" /*empty xml_fname, this means go to options system*/,
 					current_job_->input_tag(),
 					job_outputter_->output_name(current_job_),
-					gaurantee_new_mover ) ) {
+					guarantee_new_mover ) ) {
 
 				if ( allow_job_update && new_input ) {
 					// Store the modified pose into the job.  This is done only if new_input is true even if
@@ -711,6 +715,16 @@ JobDistributor::run_one_job(
 		mover_copy->set_current_tag( job_outputter_->output_name(current_job_) );
 
 		///////////////////////
+		//////// CITE  ////////
+		// (Note citations.) //
+		///////////////////////
+		if ( tr.visible() ) { //Skip this if we're not going to write them out anyways.
+			basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
+			cm->add_citations( mover_copy->provide_citation_info() );
+			cm->add_unpublished_modules( mover_copy->provide_authorship_info_for_unpublished() );
+		}
+
+		///////////////////////
 		//////// APPLY ////////
 		///////////////////////
 		mover_copy->apply(pose);
@@ -775,6 +789,17 @@ JobDistributor::get_job_time_estimate() const {
 		time_sum = time_sum / number_completed;
 	}
 	return time_sum;
+}
+
+/// @brief Write out information about all modules that have been used that should be cited, then clear
+/// the list of citations from the CitationManager.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+JobDistributor::write_citations_and_clear_citation_tracking() const {
+	basic::citation_manager::CitationManager * citeman( basic::citation_manager::CitationManager::get_instance() );
+
+	citeman->write_all_citations_and_unpublished_author_info();
+	citeman->clear_citations();
 }
 
 void JobDistributor::setup_pymol_observer( core::pose::Pose & pose )

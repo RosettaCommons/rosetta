@@ -25,6 +25,11 @@
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.hh>
 
+// Basic headers
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+
 
 namespace protocols {
 namespace enzymatic_movers {
@@ -76,6 +81,32 @@ GlycosyltransferaseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		.description( "Enzymatic mover to glycosylate a pose" )
 		.write_complex_type_to_schema( xsd );
 }
+
+
+// Citation Management
+// Does this EnzymaticMover provide information about how to cite it?
+/// @returns  true
+bool
+GlycosyltransferaseMover::mover_provides_citation_info() const {
+	return true;
+}
+
+// Provide a list of authors and their e-mail addresses, as strings.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+GlycosyltransferaseMover::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+
+	return utility::vector1< UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		mover_name(),
+		CitedModuleType::Mover,
+		"Jason W. Labonte",
+		"Department of Chemistry, Johns Hopkins University, Baltimore, MD",
+		"JWLabonte@jhu.edu"
+		)
+		};
+}
+
 
 // Protected methods //////////////////////////////////////////////////////////
 void

@@ -364,12 +364,29 @@ private:
 	void
 	print_str_vec(std::string const name, utility::vector1<std::string> const & vec, std::ostream & output=std::cout) const;
 
-	///@brief Add cluster comments, fixes CDR numbering for certain cases, runs IAM
+	/// @brief Add cluster comments, fixes CDR numbering for certain cases, runs IAM
 	void
 	finalize_pose(AntibodyInfoCOP ab_info, core::pose::Pose & pose );
 
 	AntibodyInfoOP
 	init_ab_info(core::pose::Pose const & pose );
+
+public: //CitationManager
+
+	/// @brief Does this mover provide information about how to cite it?
+	/// @details Returns true.
+	bool
+	mover_provides_citation_info() const override;
+
+	/// @brief Provide the citation.
+	/// @returns A vector of citation collections.  This allows the mover to provide citations for itself and
+	/// for any modules that it invokes.
+	utility::vector1< basic::citation_manager::CitationCollectionCOP >
+	provide_citation_info() const override;
+
+	/// @brief This mover is published, but can provide unpublished author info for modules that it invokes.
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+	provide_authorship_info_for_unpublished() const override;
 
 private:
 

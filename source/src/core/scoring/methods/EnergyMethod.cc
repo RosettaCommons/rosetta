@@ -158,6 +158,44 @@ EnergyMethod::set_score_types( EnergyMethodCreatorOP creator ) {
 /// @brief show additional information of the energy method
 void EnergyMethod::show_additional_info(std::ostream &, pose::Pose &, bool) const {}
 
+/// @brief Does this energy method provide information about how to cite it?
+/// @details Defaults to false.  Derived classes may override this to provide citation info.  If set to
+/// true, the provide_citation_info() override should also be provided.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+EnergyMethod::energy_method_provides_citation_info() const {
+	return false;
+}
+
+/// @brief Provide the citation.
+/// @returns A vector of citation collections.  This allows the energy method to provide citations for
+/// itself and for any modules that it invokes.
+/// @details The default implementation of this function provides an empty vector.  It may be
+/// overriden by energy methods wishing to provide citation information.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+EnergyMethod::provide_citation_info() const {
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP >();
+}
+
+/// @brief Does this energy method indicate that it is unpublished (and, by extension, that the author should be
+/// included in publications resulting from it)?
+/// @details Defaults to false.  Derived classes may override this to provide authorship info.  If set to
+/// true, the provide_authorship_info_for_unpublished() override should also be provided.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+EnergyMethod::energy_method_is_unpublished() const {
+	return false;
+}
+
+/// @brief Provide a list of authors and their e-mail addresses, as strings.
+/// @returns A list of pairs of (author, e-mail address).  Empty list if not unpublished.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+EnergyMethod::provide_authorship_info_for_unpublished() const {
+	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >();
+}
+
 } // methods
 } // scoring
 } // core

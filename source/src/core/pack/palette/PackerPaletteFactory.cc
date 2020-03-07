@@ -25,6 +25,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <utility/io/izstream.hh>
@@ -95,6 +96,12 @@ PackerPaletteFactory::newPackerPalette(
 		PackerPaletteOP packer_palette( iter->second->create_packer_palette() );
 		// parse tag if tag pointer is pointing to one
 		if ( tag.get() != nullptr ) packer_palette->parse_my_tag( tag, datamap );
+
+		//Register this packer palette with the citation manager:
+		basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
+		cm->add_citations( packer_palette->provide_citation_info() );
+		cm->add_unpublished_modules( packer_palette->provide_authorship_info_for_unpublished() );
+
 		return packer_palette;
 	} else {
 		TR<<"Available options: ";

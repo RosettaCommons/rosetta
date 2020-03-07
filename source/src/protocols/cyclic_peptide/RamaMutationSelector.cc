@@ -9,7 +9,7 @@
 
 /// @file   core/pack/task/residue_selector/RamaMutationSelector.hh
 /// @brief  Selects positions that would have a rama_prepro score below a given threshold IF mutated to a given residue type.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 // Unit headers
 #include <protocols/cyclic_peptide/RamaMutationSelector.hh>

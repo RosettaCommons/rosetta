@@ -25,6 +25,8 @@
 #include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataCache.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -58,6 +60,22 @@ ReplaceRegionMover::ReplaceRegionMover(
 	src_pose_ = utility::pointer::make_shared< core::pose::Pose >(src_pose);
 }
 
+bool
+ReplaceRegionMover::mover_provides_citation_info() const {
+	return true;
+}
+
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+ReplaceRegionMover::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"ReplaceRegionMover", basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
+	return returnvec;
+}
 
 ReplaceRegionMover::ReplaceRegionMover(const ReplaceRegionMover& ) = default;
 

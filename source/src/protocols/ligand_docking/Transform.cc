@@ -66,6 +66,10 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
+
 namespace protocols {
 namespace ligand_docking {
 
@@ -770,6 +774,28 @@ void Transform::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 		"Performs a monte carlo search of the ligand binding site using precomputed scoring grids. "
 		"Replaces the Translate, Rotate, and SlideTogether movers.", attlist );
+}
+
+///@brief Does this mover provide information about how to cite it?
+///@details Returns true.
+bool
+Transform::mover_provides_citation_info() const {
+	return true;
+}
+
+/// @brief Provide the citation.
+/// @returns A vector of citation collections.  This allows the mover to provide citations for itself
+/// and for any modules that it invokes.
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+Transform::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"Transform", basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pone.0132508" ) );
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP > { cc };
 }
 
 std::string TransformCreator::keyname() const {

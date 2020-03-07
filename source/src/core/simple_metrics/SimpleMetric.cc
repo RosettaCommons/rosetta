@@ -75,6 +75,44 @@ SimpleMetric::get_final_sm_type() const{
 	return custom_type + metric();
 }
 
+/// @brief Does this simple metric provide information about how to cite it?
+/// @details Defaults to false.  Derived classes may override this to provide citation info.  If set to
+/// true, the provide_citation_info() override should also be provided.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+SimpleMetric::simple_metric_provides_citation_info() const {
+	return false;
+}
+
+/// @brief Provide the citation.
+/// @returns A vector of citation collections.  This allows the simple metric to provide citations for
+/// itself and for any modules that it invokes.
+/// @details The default implementation of this function provides an empty vector.  It may be
+/// overriden by simple metrics wishing to provide citation information.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+SimpleMetric::provide_citation_info() const {
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP >();
+}
+
+/// @brief Does this simple metric indicate that it is unpublished (and, by extension, that the author should be
+/// included in publications resulting from it)?
+/// @details Defaults to false.  Derived classes may override this to provide authorship info.  If set to
+/// true, the provide_authorship_info_for_unpublished() override should also be provided.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+SimpleMetric::simple_metric_is_unpublished() const {
+	return false;
+}
+
+/// @brief Provide a list of authors and their e-mail addresses, as strings.
+/// @returns A list of pairs of (author, e-mail address).  Empty list if not unpublished.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+SimpleMetric::provide_authorship_info_for_unpublished() const {
+	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >();
+}
+
 utility::tag::XMLSchemaComplexTypeGeneratorOP
 SimpleMetric::complex_type_generator_for_simple_metric( utility::tag::XMLSchemaDefinition &  ) {
 

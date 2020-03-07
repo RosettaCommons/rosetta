@@ -11,7 +11,7 @@
 /// @brief Forward declarations and owning pointers for the OversaturatedHbondAcceptorFilter.
 /// @details This filter flags poses containing more than two hydrogen bonds to an oxygen atom, a common pathology that results from Rosetta's
 /// pairwise-decomposible scorefunction, which can't penalize excessive hydrogen bonds.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 
 #ifndef INCLUDED_protocols_cyclic_peptide_OversaturatedHbondAcceptorFilter_fwd_hh

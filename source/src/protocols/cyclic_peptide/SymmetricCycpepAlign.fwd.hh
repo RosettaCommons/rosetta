@@ -10,7 +10,7 @@
 /// @file protocols/cyclic_peptide/SymmetricCycpepAlign.fwd.hh
 /// @brief Given a quasi-symmetric cyclic peptide, this mover aligns the peptide so that the cyclic symmetry axis lies along the Z-axis and the centre of mass is at the origin.
 /// It then optionally removes all but one symmetry repeat, so that true symmetry may be set up with the SetupForSymmetry mover.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 #ifndef INCLUDED_protocols_cyclic_peptide_SymmetricCycpepAlign_fwd_hh
 #define INCLUDED_protocols_cyclic_peptide_SymmetricCycpepAlign_fwd_hh

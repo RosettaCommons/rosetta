@@ -46,6 +46,10 @@
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/thread/mutable_cache.hh>
 
+// Basic Headers
+#include <basic/citation_manager/CitationCollection.fwd.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
+
 // STL Headers
 #include <map>
 #include <list>
@@ -223,6 +227,34 @@ protected: //Protected functions:
 	utility::vector1< std::string > get_base_names_by_properties(
 		core::chemical::ResidueTypeSet const & restypeset,
 		utility::vector1< core::chemical::ResidueProperty > const & properties ) const;
+
+public: //Functions for the CitationManager:
+
+	/// @brief Does this packer palette provide information about how to cite it?
+	/// @details Defaults to false.  Derived classes may override this to provide citation info.  If set to
+	/// true, the provide_citation_info() override should also be provided.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	virtual bool packer_palette_provides_citation_info() const;
+
+	/// @brief Provide the citation.
+	/// @returns A vector of citation collections.  This allows the packer palette to provide citations for
+	/// itself and for any modules that it invokes.
+	/// @details The default implementation of this function provides an empty vector.  It may be
+	/// overriden by packer palettes wishing to provide citation information.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	virtual utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const;
+
+	/// @brief Does this packer palette indicate that it is unpublished (and, by extension, that the author should be
+	/// included in publications resulting from it)?
+	/// @details Defaults to false.  Derived classes may override this to provide authorship info.  If set to
+	/// true, the provide_authorship_info_for_unpublished() override should also be provided.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	virtual bool packer_palette_is_unpublished() const;
+
+	/// @brief Provide a list of authors and their e-mail addresses, as strings.
+	/// @returns A list of pairs of (author, e-mail address).  Empty list if not unpublished.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	virtual utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const;
 
 
 private: //Private class methods:

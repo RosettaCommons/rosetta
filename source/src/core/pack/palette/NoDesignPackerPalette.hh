@@ -82,6 +82,16 @@ public:
 	/// @brief Get the name of this object ("NoDesignPackerPalette").
 	std::string const & name() const override;
 
+public: //Functions for the CitationManager:
+
+	/// @brief Returns true (this packer palette is unpublished).
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool packer_palette_is_unpublished() const override;
+
+	/// @brief Returns VK Mulligan as the author.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
+
 protected:
 
 	/// @brief Generate a list of possible base residue types

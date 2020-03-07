@@ -26,6 +26,7 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/util.hh>
 #include <utility/string_util.hh>
@@ -126,6 +127,42 @@ ResidueSummaryMetric::set_use_cached_data(bool use_cache, std::string prefix, st
 void
 ResidueSummaryMetric::set_fail_on_missing_cache(bool fail){
 	fail_on_missing_cache_ = fail;
+}
+
+/// @brief This simple metric is unpublished, but can provide citation information for the simple metric that it uses.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+ResidueSummaryMetric::provide_citation_info() const {
+	if ( metric_ != nullptr ) {
+		return metric_->provide_citation_info();
+	}
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP >();
+}
+
+/// @brief This simple metric is unpublished (returns true).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+ResidueSummaryMetric::simple_metric_is_unpublished() const {
+	return true;
+}
+
+/// @brief This simple metric is unpublished.  It returns Jared Adolf-Bryfogle.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+ResidueSummaryMetric::provide_authorship_info_for_unpublished() const {
+	basic::citation_manager::UnpublishedModuleInfoOP authors (
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		name(), basic::citation_manager::CitedModuleType::SimpleMetric,
+		"Jared Adolf-Bryfogle",
+		"Scripps Research Institute",
+		"jadolfbr@gmail.com"
+		)
+	);
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{ authors };
+	if ( metric_ != nullptr ) {
+		basic::citation_manager::merge_into_unpublished_collection_vector( metric_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	return returnvec;
 }
 
 void

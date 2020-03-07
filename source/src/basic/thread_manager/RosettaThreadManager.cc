@@ -27,6 +27,10 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/multithreading.OptionKeys.gen.hh>
+#ifdef MULTI_THREADED
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#endif
 
 // C++ headers
 #include <string>
@@ -74,7 +78,8 @@ RosettaThreadManager::~RosettaThreadManager() {
 #ifdef MULTI_THREADED
 /// @brief Creates the thread pool if it has not yet been created.  Safe to call repeatedly.  The
 /// thread_pool_mutex_ must be locked before calling this function!
-/// @details Accesses the global options system to determine the number of threads to launch.
+/// @details Accesses the global options system to determine the number of threads to launch.  Also, registers the
+/// RosettaThreadManager with the CitationManager if launching threads.
 void
 RosettaThreadManager::create_thread_pool() {
 	using namespace basic::options;
@@ -94,6 +99,7 @@ RosettaThreadManager::create_thread_pool() {
 		TR << "Creating a thread pool of " << nthreads_ << " threads." << std::endl;
 		thread_pool_ = utility::pointer::make_shared< RosettaThreadPool >( nthreads_, RosettaThreadPoolInstantiationKey() );
 		thread_id_to_rosetta_thread_index_ = thread_pool_->get_thread_id_to_rosetta_thread_index_map();
+		register_thread_manager_with_citation_manager();
 	} else {
 		TR.Warning << "WARNING WARNING WARNING!  RosettaThreadManager::create_thread_pool() was called, but the thread pool has already been created!" << std::endl;
 	}
@@ -101,6 +107,23 @@ RosettaThreadManager::create_thread_pool() {
 	RosettaThreadManagerInitializationTracker::get_instance()->mark_thread_manager_as_initialized();
 	debug_assert( thread_pool_was_launched_ == false );
 	thread_pool_was_launched_ = true;
+}
+
+/// @brief Adds citation information for the RosettaThreadManager to the CitationManager.
+/// @details The thread_pool_mutex_ must be locked before calling this function!
+void
+RosettaThreadManager::register_thread_manager_with_citation_manager() const {
+	using namespace basic::citation_manager;
+	CitationManager::get_instance()->add_unpublished_modules(
+		utility::vector1< UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		"RosettaThreadManager", CitedModuleType::Singleton,
+		"Vikram K. Mulligan",
+		"Systems Biology, Center for Computational Biology, Flatiron Institute",
+		"vmulligan@flatironinstitute.org"
+		)
+		}
+	);
 }
 
 /// @brief Trigger launch of threads.

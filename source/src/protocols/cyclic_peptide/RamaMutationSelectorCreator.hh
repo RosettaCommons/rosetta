@@ -9,7 +9,7 @@
 
 /// @file protocols/cyclic_peptide/RamaMutationSelectorCreator.hh
 /// @brief Selects positions that would have a rama_prepro score below a given threshold IF mutated to a given residue type.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 #ifndef INCLUDED_protocols_cyclic_peptide_RamaMutationSelectorCreator_HH
 #define INCLUDED_protocols_cyclic_peptide_RamaMutationSelectorCreator_HH

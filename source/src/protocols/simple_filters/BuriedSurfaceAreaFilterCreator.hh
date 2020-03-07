@@ -11,7 +11,7 @@
 /// @brief Creator for the BuriedSurfaceAreaFilter.
 /// @details The BuriedSurfaceAreaFilter calculates buried surface area (exposed surface area minus total surface area, on a
 /// per-residue basis).  Accepts a residue selector to allow buried subsets to be considered.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 #ifndef INCLUDED_protocols_simple_filters_BuriedSurfaceAreaFilterCreator_hh
 #define INCLUDED_protocols_simple_filters_BuriedSurfaceAreaFilterCreator_hh

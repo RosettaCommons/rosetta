@@ -24,6 +24,7 @@
 // Basic headers
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 // Utility headers
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
@@ -134,6 +135,12 @@ TaskOperationFactory::newTaskOperation(
 		TaskOperationOP task_operation( iter->second->create_task_operation() );
 		// parse tag if tag pointer is pointing to one
 		if ( tag.get() != nullptr ) task_operation->parse_tag( tag, datamap );
+
+		// Register this task operation with the citation manager:
+		basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
+		cm->add_citations( task_operation->provide_citation_info() );
+		cm->add_unpublished_modules( task_operation->provide_authorship_info_for_unpublished() );
+
 		return task_operation;
 	} else {
 		TR<<"Available options: ";

@@ -24,6 +24,8 @@
 #include <utility/string_util.hh>
 #include <utility/py/PyAssert.hh>
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -185,6 +187,21 @@ void KeepRegionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	KeepRegionMover::provide_xml_schema( xsd );
 }
 
+bool
+KeepRegionMover::mover_provides_citation_info() const {
+	return true;
+}
+
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+KeepRegionMover::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"KeepRegionMover", basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP > { cc };
+}
 
 }
 }

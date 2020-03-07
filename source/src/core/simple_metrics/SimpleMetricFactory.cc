@@ -26,6 +26,9 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 
+// Basic headers
+#include <basic/citation_manager/CitationManager.hh>
+
 namespace core {
 namespace simple_metrics {
 
@@ -64,6 +67,12 @@ SimpleMetricFactory::new_simple_metric(
 	auto iter = creator_map_.find( simple_metric_name );
 	SimpleMetricOP new_simple_metric = iter->second->create_simple_metric();
 	new_simple_metric->parse_my_tag( tag, datamap );
+
+	//Register with the CitationManager:
+	basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
+	cm->add_citations( new_simple_metric->provide_citation_info() );
+	cm->add_unpublished_modules( new_simple_metric->provide_authorship_info_for_unpublished() );
+
 	return new_simple_metric;
 }
 

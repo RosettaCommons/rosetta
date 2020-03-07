@@ -24,6 +24,7 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/Tracer.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
@@ -69,6 +70,27 @@ RunSimpleMetricsMover::~RunSimpleMetricsMover()= default;
 void
 RunSimpleMetricsMover::set_override(bool override_existing_data){
 	override_existing_data_ = override_existing_data;
+}
+
+bool
+RunSimpleMetricsMover::mover_provides_citation_info() const {
+	return true;
+}
+
+// Provide a list of authors and their e-mail addresses, as strings.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+RunSimpleMetricsMover::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+
+	return utility::vector1< UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		mover_name(),
+		CitedModuleType::Mover,
+		"Jared Adolf-Bryfogle",
+		"The Scripps Research Institute, La Jolla, CA",
+		"jadolfbr@gmail.com"
+		)
+		};
 }
 
 void

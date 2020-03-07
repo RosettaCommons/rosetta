@@ -38,6 +38,7 @@
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #include <sstream>
 
 #include <utility/string_util.hh>
@@ -118,6 +119,12 @@ ScoreFunctionFactory::create_score_function(
 	// allow user to change weights via options system
 	apply_user_defined_reweighting_( options, scorefxn );
 	scorefxn->name( weights_tag );
+
+	// Register this scorefunction with the citation manager:
+	basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
+	cm->add_citations( scorefxn->provide_citation_info() );
+	cm->add_unpublished_modules( scorefxn->provide_authorship_info_for_unpublished() );
+
 	return scorefxn;
 }
 

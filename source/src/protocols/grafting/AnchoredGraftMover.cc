@@ -58,6 +58,9 @@
 #include <basic/options/option.hh>
 
 //Basic and Utility
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/rms_util.hh>
 #include <map>
@@ -150,6 +153,45 @@ protocols::moves::MoverOP
 AnchoredGraftMover::fresh_instance() const
 {
 	return utility::pointer::make_shared< AnchoredGraftMover >();
+}
+
+bool
+AnchoredGraftMover::mover_provides_citation_info() const {
+	return true;
+}
+
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+AnchoredGraftMover::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"AnchoredGraftMover", basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+
+	//Lewis; AnchoredDesign
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "doi:10.1371/journal.pone.0020872" ) );
+
+	//Adolf-Bryfogle; RosettaAntibodyDesign
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
+
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
+
+	protocols::simple_moves::SmallMover tempmover;
+	basic::citation_manager::merge_into_citation_collection_vector( setup_default_min_mover()->provide_citation_info(), returnvec );
+	basic::citation_manager::merge_into_citation_collection_vector( tempmover.provide_citation_info(), returnvec );
+
+	return returnvec;
+}
+
+/// @brief Although this mover is published, it can also provide information for unpublished modules that it invokes.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+AnchoredGraftMover::provide_authorship_info_for_unpublished() const {
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > vec;
+
+	protocols::simple_moves::SmallMover tempmover;
+	basic::citation_manager::merge_into_unpublished_collection_vector( setup_default_min_mover()->provide_authorship_info_for_unpublished(), vec );
+	basic::citation_manager::merge_into_unpublished_collection_vector( tempmover.provide_authorship_info_for_unpublished(), vec );
+	return vec;
 }
 
 void
@@ -458,14 +500,14 @@ AnchoredGraftMover::set_regions_from_movemap(Pose & pose){
 }
 
 MinMoverOP
-AnchoredGraftMover::setup_default_min_mover(){
+AnchoredGraftMover::setup_default_min_mover() const {
 
 	MinMoverOP min_mover( new MinMover(movemap_, cen_scorefxn_, mintype_, 0.01, true /*use_nblist*/ ) );
 	return min_mover;
 }
 
 SmallMoverOP
-AnchoredGraftMover::setup_default_small_mover(){
+AnchoredGraftMover::setup_default_small_mover() const {
 	SmallMoverOP small( new SmallMover(movemap_, 10, 200) ); //huge moves for sampling
 	small->angle_max( 'H', 180.0 );
 	small->angle_max( 'E', 180.0 );

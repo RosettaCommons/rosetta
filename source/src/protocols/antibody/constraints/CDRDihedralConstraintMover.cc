@@ -38,6 +38,8 @@
 #include <basic/options/option.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DataCache.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <utility>
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
@@ -140,6 +142,22 @@ CDRDihedralConstraintMover::read_command_line_options(){
 	bool use_outliers = option[OptionKeys::antibody::design::use_outliers]();
 	bool force_outliers = option[OptionKeys::antibody::force_use_of_cluster_csts_with_outliers]();
 	if ( use_outliers || force_outliers ) use_outliers_ = true;
+}
+
+bool
+CDRDihedralConstraintMover::mover_provides_citation_info() const {
+	return true;
+}
+
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+CDRDihedralConstraintMover::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"CDRDihedralConstraintMover", basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP > { cc };
 }
 
 void

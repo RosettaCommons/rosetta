@@ -72,6 +72,8 @@
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #ifdef PYROSETTA
 #include <basic/init.hh>
 #endif
@@ -3171,6 +3173,37 @@ ScoreFunction::info() const
 
 ScoreFunction::AllMethods const & ScoreFunction::all_methods() const {
 	return all_methods_;
+}
+
+/// @brief Provide the citation.
+/// @returns A vector of citation collections.  This allows the scorefunction to provide citations for
+/// itself and for any modules that it invokes (particularl energy methods).
+/// @details The default implementation of this provides a vector of citations from all energy methods that
+/// this scorefunction has that have nonzero weights.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+ScoreFunction::provide_citation_info() const {
+	using namespace basic::citation_manager;
+	utility::vector1< CitationCollectionCOP > returnvec;
+	for ( methods::EnergyMethodCOP const & method : all_methods_ ) {
+		merge_into_citation_collection_vector( method->provide_citation_info(), returnvec );
+	}
+	return returnvec;
+}
+
+/// @brief Provide a list of authors and their e-mail addresses, as strings.
+/// @returns A list of pairs of (author, e-mail address).  Empty list if not unpublished.
+/// @details The default implementation of this provides a vector of unpublished author info from all energy methods that
+/// this scorefunction has that have nonzero weights.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+ScoreFunction::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+	utility::vector1< UnpublishedModuleInfoCOP > returnvec;
+	for ( methods::EnergyMethodCOP const & method : all_methods_ ) {
+		merge_into_unpublished_collection_vector( method->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	return returnvec;
 }
 
 

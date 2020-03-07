@@ -18,25 +18,27 @@
 #include <protocols/calc_taskop_movers/CreateSequenceMotifMover.hh>
 
 // Core headers
+#include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-
-// Basic/Utility headers
-#include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
-#include <core/types.hh>
-
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ReturnResidueSubsetSelector.hh>
 #include <core/select/residue_selector/util.hh>
 
-
-// XSD Includes
-#include <utility/tag/XMLSchemaGeneration.hh>
+// Protocols headers
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/rosetta_scripts/util.hh>
+
+// Basic/Utility headers
+#include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/string_util.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
+
 
 static basic::Tracer TR( "protocols.carbohydrates.CreateGlycanSequonMover" );
 
@@ -371,6 +373,31 @@ CreateGlycanSequonMover::apply( core::pose::Pose& pose ){
 	motif_mover_->set_score_function( scorefxn_ );
 
 	motif_mover_->apply( pose );
+}
+
+
+// Citation Management
+// Does this mover provide information about how to cite it?
+/// @returns  true
+bool
+CreateGlycanSequonMover::mover_provides_citation_info() const {
+	return true;
+}
+
+// Provide a list of authors and their e-mail addresses, as strings.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+CreateGlycanSequonMover::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+
+	return utility::vector1< UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		mover_name(),
+		CitedModuleType::Mover,
+		"Jared Adolf-Bryfogle",
+		"The Scripps Research Institute, La Jolla, CA",
+		"jadolfbr@gmail.com"
+		)
+		};
 }
 
 

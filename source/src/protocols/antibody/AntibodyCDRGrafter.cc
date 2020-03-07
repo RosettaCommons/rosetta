@@ -38,6 +38,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -633,6 +636,42 @@ void AntibodyCDRGrafterCreator::provide_xml_schema( utility::tag::XMLSchemaDefin
 	AntibodyCDRGrafter::provide_xml_schema( xsd );
 }
 
+bool
+AntibodyCDRGrafter::mover_provides_citation_info() const {
+	return true;
+}
+
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+AntibodyCDRGrafter::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"AntibodyCDRGrafter", basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
+	if ( graft_mover_!=nullptr ) {
+		basic::citation_manager::merge_into_citation_collection_vector( graft_mover_->provide_citation_info(), returnvec );
+	}
+	if ( anchored_graft_mover_!=nullptr ) {
+		basic::citation_manager::merge_into_citation_collection_vector( anchored_graft_mover_->provide_citation_info(), returnvec );
+	}
+	return returnvec;
+}
+
+/// @brief This mover is published, but it can still provide unpublished info for the modules
+/// that it invokes.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+AntibodyCDRGrafter::provide_authorship_info_for_unpublished() const {
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
+	if ( graft_mover_!=nullptr ) {
+		basic::citation_manager::merge_into_unpublished_collection_vector( graft_mover_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	if ( anchored_graft_mover_!=nullptr ) {
+		basic::citation_manager::merge_into_unpublished_collection_vector( anchored_graft_mover_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	return returnvec;
+}
 
 }//protocols
 }//antibody

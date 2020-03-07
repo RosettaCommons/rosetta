@@ -88,6 +88,16 @@ public:
 
 	friend std::ostream &operator<< (std::ostream &os, MoverContainer const &mover);
 
+public: //Functions needed for the citation manager
+
+	/// @brief Provide the citations for the movers contained in this MoverContainer.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+
+	/// @brief Provide a list of authors for the movers contained in this MoverContainer.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
+
 protected:
 	// the weight is only used for RandomMover to pick which one is used, can this be changed?
 	utility::vector0< core::Real > weight_;           ///< relative weight when part of MoverContainer.

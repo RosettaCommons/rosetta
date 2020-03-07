@@ -27,6 +27,7 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
@@ -128,7 +129,7 @@ SelectedResiduesPyMOLMetric::calculate(const pose::Pose & pose) const {
 	if ( ! selector_ ) {
 		utility_exit_with_message("SelectedResiduesMetricPyMOL: Residue Selector required!");
 	} else if ( pose.pdb_info() == nullptr ) {
-		utility_exit_with_message("SelectedResiduesMetricPyMOL Requires an in-tact PDBInfo!");
+		utility_exit_with_message("SelectedResiduesMetricPyMOL Requires an intact PDBInfo!");
 	} else if ( pose.pdb_info()->obsolete() ) {
 		utility_exit_with_message("SelectedResiduesMetricPyMOL Requires an up-to-date PDBInfo!");
 	}
@@ -180,10 +181,47 @@ SelectedResiduesPyMOLMetric::calculate(const pose::Pose & pose) const {
 			}
 		}
 		subselection+=")";
-		//TR << chain <<" " <<subselection << std::endl;
+		//TR << chain << " " << subselection << std::endl;
 		selection += subselection;
 	}
 	return selection;
+}
+
+/// @brief This simple metric is unpublished, but can provide citation information for the residue
+/// selector that it uses.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+SelectedResiduesPyMOLMetric::provide_citation_info() const {
+	if ( selector_ != nullptr ) {
+		return selector_->provide_citation_info();
+	}
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP >();
+}
+
+/// @brief This simple metric is unpublished (returns true).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+SelectedResiduesPyMOLMetric::simple_metric_is_unpublished() const {
+	return true;
+}
+
+/// @brief This simple metric is unpublished.  It returns Jared Adolf-Bryfogle.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+SelectedResiduesPyMOLMetric::provide_authorship_info_for_unpublished() const {
+	basic::citation_manager::UnpublishedModuleInfoOP authors (
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		name(), basic::citation_manager::CitedModuleType::SimpleMetric,
+		"Jared Adolf-Bryfogle",
+		"Scripps Research Institute",
+		"jadolfbr@gmail.com"
+		)
+	);
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{ authors };
+	if ( selector_ != nullptr ) {
+		basic::citation_manager::merge_into_unpublished_collection_vector( selector_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	return returnvec;
 }
 
 void

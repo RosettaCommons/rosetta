@@ -164,8 +164,19 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+public:
+
+	/// @brief Does this filter provide information about how to cite it?
+	/// @details Returns true.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool filter_provides_citation_info() const override;
+
+	/// @brief Provide the citation (Dang et al 2017).
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
 
 protected:
+
 	// @brief Default constructor
 	FragmentLookupFilter();
 

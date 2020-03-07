@@ -10,7 +10,7 @@
 /// @file protocols/cyclic_peptide/SymmetricCycpepAlign.cc
 /// @brief Given a quasi-symmetric cyclic peptide, this mover aligns the peptide so that the cyclic symmetry axis lies along the Z-axis and the centre of mass is at the origin.
 /// It then optionally removes all but one symmetry repeat, so that true symmetry may be set up with the SetupForSymmetry mover.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 // Unit headers
 #include <protocols/cyclic_peptide/SymmetricCycpepAlign.hh>
@@ -32,6 +32,7 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/Tag.hh>
 
 // XSD Includes
@@ -234,6 +235,20 @@ SymmetricCycpepAlign::set_trim_info(
 	trim_to_single_repeat_ = do_trim;
 	runtime_assert_string_msg( repeat_to_preserve > 0, "Error in protocols::cyclic_peptide::SymmetricCycpepAlign::set_trim_info(): The index of the symmetry repeat to preserve must be greater than zero." );
 	repeat_to_preserve_ = repeat_to_preserve;
+}
+
+/// @brief Indicate that this mover is unpublished.
+bool
+SymmetricCycpepAlign::mover_is_unpublished() const {
+	return true;
+}
+
+/// @brief Provide authorship information for an unpublished Rosetta module.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+SymmetricCycpepAlign::provide_authorship_info_for_unpublished() const {
+	basic::citation_manager::UnpublishedModuleInfoOP moduleinfo( utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >( "SymmetricCycpepAlign", basic::citation_manager::CitedModuleType::Mover ) );
+	moduleinfo->add_author( "Vikram K. Mulligan", "Systems Biology, Center for Computational Biology, Flatiron Institute", "vmulligan@flatironinstitute.org" );
+	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > { moduleinfo };
 }
 
 /////////////// Private methods ///////

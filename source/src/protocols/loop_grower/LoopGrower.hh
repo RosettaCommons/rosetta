@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @author Yifan Song
+/// @author Brandon Frenz
 /// @author Frank DiMaio
 
 
@@ -584,6 +584,12 @@ public:
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
+
+	/// @brief Indiciate that this mover is published
+	bool mover_provides_citation_info() const override;
+
+	/// @brief Provide authorship information for a published Rosetta module
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
 
 private:
 	core::Size beamwidth_ = 1;

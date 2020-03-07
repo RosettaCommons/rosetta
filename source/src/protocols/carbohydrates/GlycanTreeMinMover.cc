@@ -41,6 +41,9 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 #include <numeric/random/random.hh>
 
@@ -268,6 +271,32 @@ GlycanTreeMinMover::apply( core::pose::Pose& pose){
 	min_mover_->apply(pose);
 }
 
+
+// Citation Management
+// Does this mover provide information about how to cite it?
+/// @returns  true
+bool
+GlycanTreeMinMover::mover_provides_citation_info() const {
+	return true;
+}
+
+// Provide a list of authors and their e-mail addresses, as strings.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+GlycanTreeMinMover::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+
+	return utility::vector1< UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		get_name(),
+		CitedModuleType::Mover,
+		"Jared Adolf-Bryfogle",
+		"The Scripps Research Institute, La Jolla, CA",
+		"jadolfbr@gmail.com"
+		)
+		};
+}
+
+
 void
 GlycanTreeMinMover::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -321,4 +350,3 @@ void GlycanTreeMinMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefin
 
 } //protocols
 } //carbohydrates
-

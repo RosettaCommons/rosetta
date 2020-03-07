@@ -129,6 +129,15 @@ public:
 	/// @details See the core::select::util::SelectResiduesByLayer class for details of the math.
 	void set_dist_exponent( core::Real val );
 
+public:
+
+	/// @brief Provide the citation.
+	/// @returns A vector of citation collections.  This allows the residue selector to provide citations for
+	/// itself and for any modules that it invokes.
+	/// @details This residue selector was published in Dang, Hu, Mulligan et al. 2017.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+
 private: // data members
 
 	/// @brief Whether to cache the residue selection or recompute it when requested.

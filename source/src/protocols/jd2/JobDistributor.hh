@@ -337,6 +337,11 @@ protected:
 	core::Size
 	get_job_time_estimate() const;
 
+	/// @brief Write out information about all modules that have been used that should be cited, then clear
+	/// the list of citations from the CitationManager.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void write_citations_and_clear_citation_tracking() const;
+
 private:
 
 	/// @brief private singleton creation function to be used with

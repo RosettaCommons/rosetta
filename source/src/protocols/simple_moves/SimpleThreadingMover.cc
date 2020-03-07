@@ -31,6 +31,7 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 // XSD XRW Includes
@@ -115,6 +116,27 @@ moves::MoverOP
 SimpleThreadingMover::fresh_instance() const {
 	return utility::pointer::make_shared< SimpleThreadingMover >();
 
+}
+
+bool
+SimpleThreadingMover::mover_provides_citation_info() const {
+	return true;
+}
+
+// Provide a list of authors and their e-mail addresses, as strings.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+SimpleThreadingMover::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+
+	return utility::vector1< UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		mover_name(),
+		CitedModuleType::Mover,
+		"Jared Adolf-Bryfogle",
+		"The Scripps Research Institute, La Jolla, CA",
+		"jadolfbr@gmail.com"
+		)
+		};
 }
 
 void
@@ -314,6 +336,7 @@ void SimpleThreadingMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDef
 {
 	SimpleThreadingMover::provide_xml_schema( xsd );
 }
+
 
 
 

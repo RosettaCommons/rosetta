@@ -87,6 +87,15 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 	void apply( core::pose::Pose & input_pose ) override;
 
 
+public:  // Citation Management ///////////////////////////////////////////////
+	/// @brief  Does this mover provide information about how to cite it?
+	bool mover_provides_citation_info() const override;
+
+	/// @brief  Provide the citation.
+	utility::vector1< basic::citation_manager::CitationCollectionCOP >
+	provide_citation_info() const override;
+
+
 public: // Accessors/Mutators /////////////////////////////////////////////////
 	/// @brief  Get the current MoveMap, creating it if needed.
 	core::kinematics::MoveMapCOP movemap( core::pose::Pose const & pose );

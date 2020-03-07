@@ -37,6 +37,8 @@
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 // Utility header
 #include <utility/tag/Tag.hh>
@@ -122,6 +124,30 @@ IdealizeAnomericHydrogensCreator::create_mover() const {
 void IdealizeAnomericHydrogensCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
 {
 	IdealizeAnomericHydrogens::provide_xml_schema( xsd );
+}
+
+//Citation Manager
+
+bool IdealizeAnomericHydrogens::mover_provides_citation_info() const {
+	return true;
+}
+
+/// @brief Provide the citation.
+/// @returns A vector of citation collections.  This allows the mover to provide citations for
+/// itself and for any modules that it invokes.
+/// @details Also provides citations for movers called by the BundleGridSampler.
+/// @author Brandon Frenz (brandon.frenz@brandon.frenz@gmail.com)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+IdealizeAnomericHydrogens::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		get_name(), basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1016/j.str.2018.09.006" ) );
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
+	return returnvec;
 }
 
 

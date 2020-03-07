@@ -28,6 +28,7 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <core/types.hh>
 #include <numeric/random/random.hh>
 #include <core/id/TorsionID.hh>
@@ -526,6 +527,26 @@ void MakeBundle::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	ssl.add_simple_subelement( "Helix", subtag_attributes, "Tags describing individual helices in the bundle"/*, 0 minoccurs*/ );
 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "The MakeBundle mover builds a helical bundle parametrically, using the Crick parameterization, given a set of Crick parameter values.  Note that the Crick parameterization is compatible with arbitrary helices (including strands, which are special cases of helices in which the turn per residue is about 180 degrees).", attlist, ssl );
+}
+
+/// @brief Indicate that this mover is unpublished.
+bool
+MakeBundle::mover_is_unpublished() const {
+	return true;
+}
+
+/// @brief Provide authorship information for an unpublished Rosetta module.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+MakeBundle::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+	return utility::vector1< UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		"MakeBundle", CitedModuleType::Mover,
+		"Vikram K. Mulligan",
+		"Systems Biology, Center for Computational Biology, Flatiron Institute",
+		"vmulligan@flatironinstitute.org"
+		)
+		};
 }
 
 std::string MakeBundleCreator::keyname() const {

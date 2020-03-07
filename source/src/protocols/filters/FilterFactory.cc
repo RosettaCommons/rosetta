@@ -28,6 +28,9 @@
 #include <utility/vector1.hh>
 #include <utility/thread/threadsafe_creation.hh>
 
+// Basic headers
+#include <basic/citation_manager/CitationManager.hh>
+
 // Boost headers
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
@@ -154,6 +157,12 @@ const
 	}
 	filter->set_user_defined_name( filter_name );
 	filter->parse_my_tag( tag, data, filters, movers, pose );
+
+	//Register with the citation manager:
+	basic::citation_manager::CitationManager * cc( basic::citation_manager::CitationManager::get_instance() );
+	cc->add_citations( filter->provide_citation_info() );
+	cc->add_unpublished_modules( filter->provide_authorship_info_for_unpublished() );
+
 	// if confidence specified, link to StochasticFilter and wrap inside CompoundFilter
 	core::Real const confidence( tag->getOption< core::Real >( "confidence", 1.0 ) );
 	if ( confidence <= 0.999 ) { // fuzzy logic
@@ -162,6 +171,10 @@ const
 		// and run the subfilter when it's false.
 		FilterOP stochastic_filter( new StochasticFilter( (1.0-confidence), filter->clone(), /*run_subfilter_on*/ false ) );
 		stochastic_filter->set_user_defined_name( tag->getOption<std::string>("name") );
+
+		cc->add_citations( stochastic_filter->provide_citation_info() );
+		cc->add_unpublished_modules( stochastic_filter->provide_authorship_info_for_unpublished() );
+
 		return stochastic_filter;
 	}
 	return filter;

@@ -110,8 +110,13 @@ private:  // Private methods //////////////////////////////////////////////////
 #ifdef MULTI_THREADED
 	/// @brief Creates the thread pool if it has not yet been created.  Safe to call repeatedly.  The
 	/// thread_pool_mutex_ must be locked before calling this function!
-	/// @details Accesses the global options system to determine the number of threads to launch.
+	/// @details Accesses the global options system to determine the number of threads to launch.  Also, registers the
+	/// RosettaThreadManager with the CitationManager if launching threads.
 	void create_thread_pool();
+
+	/// @brief Adds citation information for the RosettaThreadManager to the CitationManager.
+	/// @details The thread_pool_mutex_ must be locked before calling this function!
+	void register_thread_manager_with_citation_manager() const;
 #endif
 
 public:  // Public methods ////////////////////////////////////////////////////

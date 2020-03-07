@@ -111,7 +111,7 @@ public:  // Static constant data access ///////////////////////////////////////
 	static std::map< std::string, std::string> const & get_short_name_to_iupac_strings_map();
 
 private:  // Private methods //////////////////////////////////////////////////
-	// Empty constructor
+	/// @brief Default constructor.
 	CarbohydrateInfoManager();
 
 	// Get the map of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root and default

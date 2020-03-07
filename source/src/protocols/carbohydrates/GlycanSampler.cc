@@ -72,6 +72,9 @@
 #include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -966,6 +969,32 @@ GlycanSampler::apply( core::pose::Pose& pose ){
 	}
 	mc_->show_counters();
 }
+
+
+// Citation Management
+// Does this mover provide information about how to cite it?
+/// @returns  true
+bool
+GlycanSampler::mover_provides_citation_info() const {
+	return true;
+}
+
+// Provide a list of authors and their e-mail addresses, as strings.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+GlycanSampler::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+
+	return utility::vector1< UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		mover_name(),
+		CitedModuleType::Mover,
+		"Jared Adolf-Bryfogle",
+		"The Scripps Research Institute, La Jolla, CA",
+		"jadolfbr@gmail.com"
+		)
+		};
+}
+
 
 /////////////// Creator ///////////////
 

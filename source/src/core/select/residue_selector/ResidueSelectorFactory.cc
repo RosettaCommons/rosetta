@@ -26,6 +26,9 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 
+// Basic headers
+#include <basic/citation_manager/CitationManager.hh>
+
 // Boost headers
 #include <boost/bind.hpp>
 
@@ -81,6 +84,12 @@ ResidueSelectorOP ResidueSelectorFactory::new_residue_selector(
 	auto iter = creator_map_.find( selector_name );
 	ResidueSelectorOP new_selector = iter->second->create_residue_selector();
 	new_selector->parse_my_tag( tag, datamap );
+
+	//Register with the CitationManager:
+	basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
+	cm->add_citations( new_selector->provide_citation_info() );
+	cm->add_unpublished_modules( new_selector->provide_authorship_info_for_unpublished() );
+
 	return new_selector;
 }
 

@@ -228,6 +228,19 @@ protected:
 		core::kinematics::MoveMapOP const & local_movemap //note that the movemap itself is not const
 	);
 
+public: // CitationManager fxns:
+
+	/// @brief Does this mover provide information about how to cite it?
+	/// @details Returns true.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool mover_provides_citation_info() const override;
+
+	/// @brief Provide the citation.
+	/// @returns A vector of citation collections.  This allows the mover to provide citations for
+	/// itself and for any modules that it invokes.
+	/// @details This function provides citations for the task operations in the task factory and for FastRelax.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
 
 protected: //getters and setters
 	bool script_file_specified() const {

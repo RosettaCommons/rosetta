@@ -9,7 +9,7 @@
 
 /// @file core/pack/dunbrack/RotamericSingleResidueDunbrackLibraryParser.cc
 /// @brief A helper class to assist in parsing rotamer libraries.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 //Core includes
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibraryParser.hh>

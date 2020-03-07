@@ -10,7 +10,7 @@
 /// @brief Performs a kinematic closure move on a peptide segment
 /// @author Daniel J. Mandell
 /// @author Amelie Stein (amelie.stein@ucsf.edu), Oct 2012 -- next-generation KIC
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu), August 2013 -- generalization for beta-3-amino acids and other nonstandard backbones
+/// @author Vikram K. Mulligan (vmullig@uw.edu), August 2013 -- generalization for beta-3-amino acids and other nonstandard backbones
 
 // Unit Headers
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>

@@ -36,10 +36,12 @@
 // Numeric headers
 #include <numeric/random/random.hh>
 
-// Basic header
+// Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/rings.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 // C++ headers
 #include <string>
@@ -257,6 +259,29 @@ RingConformationMover::apply( Pose & input_pose )
 
 	TR << "Move(s) complete." << endl;
 	set_last_move_status( moves::MS_SUCCESS );
+}
+
+
+// Citation Management
+// Does this mover provide information about how to cite it?
+/// @returns  true
+bool
+RingConformationMover::mover_provides_citation_info() const {
+	return true;
+}
+
+// Provide the citation.
+/// @returns  A vector of citation collections.
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+RingConformationMover::provide_citation_info() const {
+	using namespace basic::citation_manager;
+
+	CitationCollectionOP collection( utility::pointer::make_shared< CitationCollection >(
+		mover_name(), CitedModuleType::Mover ) );
+	// Add Labonte et al. (2017).
+	collection->add_citation( CitationManager::get_instance()->get_citation_by_doi( "10.1002/jcc.24679" ) );
+
+	return utility::vector1< CitationCollectionCOP > { collection };
 }
 
 

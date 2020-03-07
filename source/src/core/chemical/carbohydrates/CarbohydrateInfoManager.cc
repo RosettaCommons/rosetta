@@ -25,6 +25,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/Citation.fwd.hh>
 
 // C++ header
 #include <map>
@@ -186,8 +189,17 @@ CarbohydrateInfoManager::branch_variant_type_from_position( core::uint const pos
 
 
 // Private methods ////////////////////////////////////////////////////////////
-// Empty constructor
-CarbohydrateInfoManager::CarbohydrateInfoManager() = default;
+/// @brief Default constructor.
+CarbohydrateInfoManager::CarbohydrateInfoManager() {
+	//Uncomment the following if we want the CarbohydrateInfoManager to be registered with the CitationManager.
+	//I'm commenting it out because the CarbohydrateInfoManager gets instantiated whenever we have a pose readin
+	//event. --VKM, 6 Feb. 2020.
+	/*using namespace basic::citation_manager;
+	CitationManager * cc( CitationManager::get_instance() );
+	CitationCollectionOP collection( utility::pointer::make_shared< CitationCollection >( "CarbohydrateInfoManager", CitedModuleType::Singleton ) );
+	collection->add_citation( cc->get_citation_by_doi( "10.1002/jcc.24679" ) );
+	cc->add_citations( utility::vector1< CitationCollectionCOP >{collection} );*/
+}
 
 // Get the map of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root requested,
 // creating them if necessary.

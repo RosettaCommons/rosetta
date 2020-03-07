@@ -30,6 +30,7 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 
 // XSD Includes
@@ -190,12 +191,35 @@ GlycanInfoMover::clone() const
 	return utility::pointer::make_shared< GlycanInfoMover >( *this );
 }
 
-std::string GlycanInfoMover::get_name() const {
+std::string
+GlycanInfoMover::get_name() const {
 	return mover_name();
 }
 
-std::string GlycanInfoMover::mover_name() {
+std::string
+GlycanInfoMover::mover_name() {
 	return "GlycanInfoMover";
+}
+
+bool
+GlycanInfoMover::mover_provides_citation_info() const {
+	return true;
+}
+
+// Provide a list of authors and their e-mail addresses, as strings.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+GlycanInfoMover::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+
+	return utility::vector1< UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		mover_name(),
+		CitedModuleType::Mover,
+		"Jared Adolf-Bryfogle",
+		"The Scripps Research Institute, La Jolla, CA",
+		"jadolfbr@gmail.com"
+		)
+		};
 }
 
 

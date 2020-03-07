@@ -39,6 +39,8 @@
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.hh>
@@ -80,6 +82,18 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
+
+		//Register the RosettaScripts app with the CitationManager:
+		{
+			basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
+			basic::citation_manager::CitationCollectionOP rosettascripts_citationcollection(
+				utility::pointer::make_shared< basic::citation_manager::CitationCollection > ( "rosetta_scripts", basic::citation_manager::CitedModuleType::Application )
+			);
+			rosettascripts_citationcollection->add_citation( cm->get_citation_by_doi( "10.1371/journal.pone.0020161" ) );
+			cm->add_citations(
+				utility::vector1< basic::citation_manager::CitationCollectionCOP > { rosettascripts_citationcollection }
+			);
+		}
 
 		if ( option[ parser::info ].user() ) { // If the -parser::info option is used, just print information about the requested component(s) and exit.
 			protocols::rosetta_scripts::print_information( option[ parser::info ]() );

@@ -38,6 +38,9 @@
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
 
+// Basic Headers
+#include <basic/citation_manager/CitationCollection.fwd.hh>
+
 #include <set>
 
 #include <core/grid/CartGrid.fwd.hh>
@@ -475,6 +478,24 @@ public:
 	/// @brief Gets whether this mover corrects positions of polymer-dependent atoms.
 	///
 	inline bool correct_polymer_dependent_atoms() const { return correct_polymer_dependent_atoms_; }
+
+public: //Methods needed for the citation manager:
+
+	/// @brief This mover provides citation information.
+	bool mover_provides_citation_info() const override;
+
+	/// @brief Citation information for the GeneralizedKIC mover.
+	/// @details Will also include citation information for any preselection movers, if these
+	/// have been configured.
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+
+	/// @brief This mover is not unpublished, so this returns false.  (Nevertheless, it may provide
+	/// information about authorship for unpublished movers or filters that it invokes.)
+	bool mover_is_unpublished() const override;
+
+	/// @brief This mover provides no information about its authorship with this function, since it is published.  However,
+	/// if a preselection mover is set up, it may provide authorship information about that if it is unpublished.
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
 
 private:
 

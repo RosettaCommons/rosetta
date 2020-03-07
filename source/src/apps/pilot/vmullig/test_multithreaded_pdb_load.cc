@@ -9,7 +9,7 @@
 
 /// @file apps/pilot/vmullig/test_multithreaded_pdb_load.cc
 /// @brief A pilot app to test the creation of several poses at once (without first initializing anything by having a single thread initialize the pose).
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 // devel headers
 #include <devel/init.hh>

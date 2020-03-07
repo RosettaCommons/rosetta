@@ -120,7 +120,42 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-private:
+public: //Citations
+
+	/// @brief Does this mover provide information about how to cite it?
+	/// @details Returns true.
+	bool mover_provides_citation_info() const override;
+
+	/// @brief Provide the citation.
+	/// @returns A vector of citation collections.  This allows the mover to provide citations for itself and
+	/// for any modules that it invokes.
+	/// @details Also provides citations for movers called by the ProtLigEnsemble.
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+
+	/// @brief Provide a list of authors and their e-mail addresses, as strings.
+	/// @returns A list of pairs of (author, e-mail address).  This mover IS published, so it returns nothing
+	/// for itself, but can return  information for preselection filters and movers.
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+	provide_authorship_info_for_unpublished() const override;
+
+private: //Functions
+
+	void enable_ligand_rotamer_packing(
+		core::pose::Pose const & pose,
+		core::Size const ligand_residue_id,
+		core::pack::task::PackerTaskOP & pack_task
+	) const;
+
+	void read_qsar_file(std::string filename);
+
+	void prepare_single_ligand_pose(core::pose::Pose & pose, ProtLigPair_info & info, core::Size count);
+
+	core::pack::task::PackerTaskOP make_packer_task(core::pose::Pose const & pose, utility::vector1<bool> const & interface_residues);
+
+	core::Real qsar_correlation();
+
+private: //Data
+
 	utility::vector1<ProtLigPair_info> pose_infos_;
 	core::Size ignore_correlation_until_;
 	core::Size ignore_correlation_after_;
@@ -139,20 +174,6 @@ private:
 	utility::vector1<std::pair<core::Size, core::Real> > rosetta_lowest_scores_; // Vector of chain ID/Affinity pairs
 	utility::vector1<core::pose::Pose> rosetta_lowest_poses_; // Vector of Poses
 
-
-	void enable_ligand_rotamer_packing(
-		core::pose::Pose const & pose,
-		core::Size const ligand_residue_id,
-		core::pack::task::PackerTaskOP & pack_task
-	) const;
-
-	void read_qsar_file(std::string filename);
-
-	void prepare_single_ligand_pose(core::pose::Pose & pose, ProtLigPair_info & info, core::Size count);
-
-	core::pack::task::PackerTaskOP make_packer_task(core::pose::Pose const & pose, utility::vector1<bool> const & interface_residues);
-
-	core::Real qsar_correlation();
 };
 
 //non-member functions

@@ -34,6 +34,7 @@
 // Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/ContingentFilter.fwd.hh>
@@ -142,6 +143,13 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+public: //Function overrides needed for the citation manager:
+
+	/// @brief Indicate that this mover is unpublished.
+	bool mover_is_unpublished() const override;
+
+	/// @brief Provide authorship information for an unpublished Rosetta module.
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
 
 private:
 	////////////////////////////////////////////////////////////////////////////////

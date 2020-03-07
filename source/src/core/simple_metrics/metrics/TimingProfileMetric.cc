@@ -27,6 +27,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -133,6 +134,27 @@ TimingProfileMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
 		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"A metric for measuring a TimingProfile and adding it to the resulting score file.  The time is between construction and calls of apply.  If you use it in RosettaScripts, you can have multiple timings between mover sets and determine the time between them using separate TimingProfileMetrics.   Useful to get runtimes of new movers and applications. ", attlist);
+}
+
+/// @brief This simple metric is unpublished (returns true).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+TimingProfileMetric::simple_metric_is_unpublished() const {
+	return true;
+}
+
+/// @brief This simple metric is unpublished.  It returns Jared Adolf-Bryfogle as the author.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+TimingProfileMetric::provide_authorship_info_for_unpublished() const {
+	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP> {
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		name(), basic::citation_manager::CitedModuleType::SimpleMetric,
+		"Jared Adolf-Bryfogle",
+		"Scripps Research Institute",
+		"jadolfbr@gmail.com"
+		)
+		};
 }
 
 void

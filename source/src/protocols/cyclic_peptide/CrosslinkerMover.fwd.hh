@@ -11,7 +11,7 @@
 /// @brief This mover links three cysteine residues with a three-way cross-linker.  It adds the crosslinker,
 /// sets up constraints, optionally packs and energy-mimizes it into place (packing/minimizing only the crosslinker and
 /// the side-chains to which it connects), andthen optionally relaxes the whole structure.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 
 #ifndef INCLUDED_protocols_cyclic_peptide_CrosslinkerMover_fwd_hh

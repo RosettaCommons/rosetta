@@ -24,6 +24,8 @@
 
 // Basic Headers
 #include <basic/datacache/DataMap.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -318,6 +320,23 @@ LayerSelector::set_dist_exponent( core::Real const val )
 		TR.flush();
 	}
 	return;
+}
+
+/// @brief Provide the citation.
+/// @returns A vector of citation collections.  This allows the residue selector to provide citations for
+/// itself and for any modules that it invokes.
+/// @details This residue selector was published in Dang, Hu, Mulligan et al. 2017.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+LayerSelector::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"LayerSelector", basic::citation_manager::CitedModuleType::ResidueSelector
+		)
+	);
+
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1073/pnas.1710695114" ) );
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP >{ cc };
 }
 
 /// @brief Return an owning pointer to a new LayerSelector object.

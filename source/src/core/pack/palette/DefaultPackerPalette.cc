@@ -25,6 +25,8 @@
 
 // Basic Headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -108,6 +110,26 @@ std::string const &
 DefaultPackerPalette::name() const {
 	static const std::string myname( "DefaultPackerPalette" );
 	return myname;
+}
+
+/// @brief This packer palette does provide citation info.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+DefaultPackerPalette::packer_palette_provides_citation_info() const {
+	return true;
+}
+
+/// @brief Provide the citation (Mulligan et al. 2020).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+DefaultPackerPalette::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP my_citation(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		name(), basic::citation_manager::CitedModuleType::PackerPalette
+		)
+	);
+	my_citation->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "Mulligan_2020_underreview" ) );
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP > { my_citation };
 }
 
 /// @brief Set up the DefaultPackerPalette with the default set of position-specific behaviours.

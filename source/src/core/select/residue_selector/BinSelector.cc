@@ -9,7 +9,7 @@
 
 /// @file   core/pack/task/residue_selector/BinSelector.hh
 /// @brief  A ResidueSelector that selects residues based on their torsion bin (e.g. ABEGO bin).
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 // Unit headers
 #include <core/select/residue_selector/BinSelector.hh>

@@ -27,6 +27,7 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 static basic::Tracer TR( "core.simple_metrics.metrics.SasaMetric" );
@@ -150,6 +151,52 @@ SasaMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
 		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
 		"A metric for measuring SASA and adding it to the resulting score file. Virtual atoms are skipped completely. Modified 19 Aug. 2019 by Vikram K. Mulligan to add options for polar or hydrophobic SASA.", attlist);
+}
+
+/// @brief This simple metric is unpublished, but can provide citation information for the residue
+/// selector that it uses.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+SasaMetric::provide_citation_info() const {
+	if ( selector_ != nullptr ) {
+		return selector_->provide_citation_info();
+	}
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP >();
+}
+
+/// @brief This simple metric is unpublished (returns true).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+SasaMetric::simple_metric_is_unpublished() const {
+	return true;
+}
+
+/// @brief This simple metric is unpublished.  It returns Jared Adolf-Bryfogle and Vikram K. Mulligan.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+SasaMetric::provide_authorship_info_for_unpublished() const {
+	basic::citation_manager::UnpublishedModuleInfoOP authors (
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		name(), basic::citation_manager::CitedModuleType::SimpleMetric,
+		"Jared Adolf-Bryfogle",
+		"Scripps Research Institute",
+		"jadolfbr@gmail.com",
+		"Original author"
+		)
+	);
+
+	authors->add_author(
+		"Vikram K. Mulligan",
+		"Systems Biology, Center for Computational Biology, Flatiron Institute",
+		"vmulligan@flatironinstitute.org",
+		"Added support for polar or hydrophobic SASA on 19 Aug. 2019."
+	);
+
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{ authors };
+	if ( selector_ != nullptr ) {
+		basic::citation_manager::merge_into_unpublished_collection_vector( selector_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	return returnvec;
 }
 
 void

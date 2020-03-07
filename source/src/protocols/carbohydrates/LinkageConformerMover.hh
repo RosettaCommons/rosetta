@@ -170,6 +170,25 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+public: //Functions needed for the citation manager
+
+	/// @brief Does this mover provide information about how to cite it?
+	/// @details Returns true -- this mover does.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool mover_provides_citation_info() const override;
+
+	/// @brief Provide the citation.
+	/// @returns A vector of citation collections.  This mover was published in Labonte et al. (2017).
+	/// @details Also provides citations for modules invoked by this mover.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+
+	/// @brief Provide a list of authors and their e-mail addresses, as strings.
+	/// @returns Empty list by default, since this mover is published.  Can provide information about
+	/// modules that this mover invokes.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
+
 
 private:
 	//std::pair< core::Size, core::Size > linkage_pair_; Can't check if this exists.

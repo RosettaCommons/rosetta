@@ -26,6 +26,13 @@ sources = {
 		"TracerImpl",
 		"TracerToFile",
 	],
+	"basic/citation_manager" : [
+		"Citation",
+		"CitationCollection",
+		"CitationManager",
+		"UnpublishedModuleAuthor",
+		"UnpublishedModuleInfo",
+	],
 	"basic/database": [
 		"open",
 		"sql_utils",

@@ -9,7 +9,7 @@
 
 /// @file protocols/simple_filters/LongestContinuousPolarSegmentFilter.hh
 /// @brief This filter computes the longest continuous stretch of polar residues within a pose or selection.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 #ifndef INCLUDED_protocols_simple_filters_LongestContinuousPolarSegmentFilter_hh
 #define INCLUDED_protocols_simple_filters_LongestContinuousPolarSegmentFilter_hh

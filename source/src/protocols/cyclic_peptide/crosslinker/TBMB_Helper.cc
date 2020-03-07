@@ -10,7 +10,7 @@
 /// @file protocols/cyclic_peptide/crosslinker/TBMB_Helper.cc
 /// @brief A derived class of the CrosslinkerMoverHelper base class, used to set up
 /// the 1,3,5-tris(bromomethyl)benzene (TBMB) cross-linker.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 // Unit headers
 #include <protocols/cyclic_peptide/crosslinker/TBMB_Helper.hh>

@@ -25,6 +25,11 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+// Basic headers
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationManager.hh>
+
 
 namespace protocols {
 namespace protein_interface_design {
@@ -162,6 +167,53 @@ void LoopOver::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute::attribute_w_default( "ms_whenfail", "mover_status", "Mover status to emit upon failure", "MS_SUCCESS" );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
+}
+
+/// @brief This mover provides citation info (returns true).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+LoopOver::mover_provides_citation_info() const {
+	return true;
+}
+
+/// @brief Provide the citation (Fleishman 2011).
+/// @returns A vector of citation collections for this mover and any published movers and filters that it invokes.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+LoopOver::provide_citation_info() const {
+	using namespace basic::citation_manager;
+	CitationCollectionOP mycitation( utility::pointer::make_shared<CitationCollection>( get_name(), CitedModuleType::Mover ));
+	mycitation->add_citation( CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pone.0020161" ) );
+	utility::vector1< CitationCollectionCOP > returnvec { mycitation };
+
+	//Add citations for modules that this mover invokes:
+	if ( mover_ != nullptr ) {
+		merge_into_citation_collection_vector( mover_->provide_citation_info(), returnvec );
+	}
+	if ( condition_ != nullptr ) {
+		merge_into_citation_collection_vector( condition_->provide_citation_info(), returnvec );
+	}
+
+	return returnvec;
+}
+
+/// @brief Provides unpublished citation info for any unpublished movers and filters that this mover invokes.
+/// @returns A list of pairs of (author, e-mail address).  Empty list if none are unpublished.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+LoopOver::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+	utility::vector1< UnpublishedModuleInfoCOP > returnvec;
+
+	//Add citations for modules that this mover invokes:
+	if ( mover_ != nullptr ) {
+		merge_into_unpublished_collection_vector( mover_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	if ( condition_ != nullptr ) {
+		merge_into_unpublished_collection_vector( condition_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+
+	return returnvec;
 }
 
 std::string LoopOverCreator::keyname() const {

@@ -36,6 +36,9 @@
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -106,8 +109,43 @@ CCDEndsGraftMover::fresh_instance() const{
 	return utility::pointer::make_shared< CCDEndsGraftMover >();
 }
 
+bool
+CCDEndsGraftMover::mover_provides_citation_info() const {
+	return true;
+}
+
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+CCDEndsGraftMover::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"CCDEndsGraftMover", basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
+
+	protocols::simple_moves::SmallMover tempmover;
+	basic::citation_manager::merge_into_citation_collection_vector( setup_default_min_mover()->provide_citation_info(), returnvec );
+	basic::citation_manager::merge_into_citation_collection_vector( tempmover.provide_citation_info(), returnvec );
+
+	return returnvec;
+}
+
+/// @brief Although this mover is published, it can also provide information for unpublished modules that it invokes.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+CCDEndsGraftMover::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+	utility::vector1< UnpublishedModuleInfoCOP > returnvec;
+
+	protocols::simple_moves::SmallMover tempmover;
+	merge_into_unpublished_collection_vector( setup_default_min_mover()->provide_authorship_info_for_unpublished(), returnvec );
+	merge_into_unpublished_collection_vector( tempmover.provide_authorship_info_for_unpublished(), returnvec );
+
+	return returnvec;
+}
+
 SmallMoverOP
-CCDEndsGraftMover::setup_default_small_mover(){
+CCDEndsGraftMover::setup_default_small_mover() const {
 
 	using namespace core::kinematics;
 	using namespace protocols::simple_moves;

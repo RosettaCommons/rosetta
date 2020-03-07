@@ -214,6 +214,21 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+public: //CitationManager
+
+	///@brief Does this mover provide information about how to cite it?
+	///@details Returns true.
+	bool
+	mover_provides_citation_info() const override;
+
+	///@brief Provide the citation.
+	///@returns A vector of citation collections.  This allows the mover to provide citations for itself and for any modules that it invokes.
+	utility::vector1< basic::citation_manager::CitationCollectionCOP >
+	provide_citation_info() const override;
+
+	/// @brief Although this mover is published, it can also provide information for unpublished modules that it invokes.
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+	provide_authorship_info_for_unpublished() const override;
 
 protected:
 
@@ -263,10 +278,10 @@ protected:
 
 protected:
 	virtual protocols::minimization_packing::MinMoverOP
-	setup_default_min_mover();
+	setup_default_min_mover() const;
 
 	virtual protocols::simple_moves::SmallMoverOP
-	setup_default_small_mover();
+	setup_default_small_mover() const;
 
 protected:
 	//Accessors and Mutators of private data for derived classes

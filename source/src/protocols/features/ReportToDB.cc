@@ -61,6 +61,8 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/DbDataType.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 // Numeric Headers
 #include <numeric>
@@ -910,6 +912,26 @@ void ReportToDBCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 }
 
 
+bool ReportToDB::mover_provides_citation_info() const {
+	return true;
+}
+
+/// @brief Provide the citation.
+/// @returns A vector of citation collections.  This allows the mover to provide citations for
+/// itself and for any modules that it invokes.
+/// @details Also provides citations for movers called by the BundleGridSampler.
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+ReportToDB::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		get_name(), basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1016/B978-0-12-394292-0.00006-0" ) );
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
+	return returnvec;
+}
 
 } // namespace
 } // namespace

@@ -14,6 +14,9 @@ sources = {
 		"CmdlineOptionsOrderTests",
 		"options_system",
 	],
+	"citation_manager" : [
+		"CitationManagerTests",
+	],
 	"datacache" : [
 		"HierarchicalDataMap",
 	],

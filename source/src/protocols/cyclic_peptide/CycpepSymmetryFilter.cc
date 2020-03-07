@@ -9,7 +9,7 @@
 
 /// @file protocols/cyclic_peptide/CycpepSymmetryFilter.cc
 /// @brief A filter that examines a cyclic peptide's structure and returns TRUE if and only if it has a desired backbone symmetry.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 #include <protocols/cyclic_peptide/CycpepSymmetryFilter.hh>
 #include <protocols/cyclic_peptide/CycpepSymmetryFilterCreator.hh>

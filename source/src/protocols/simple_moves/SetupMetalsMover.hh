@@ -142,6 +142,30 @@ protected:
 
 	void
 	set_defaults_from_command_line();
+
+public: //Citation functions
+
+	/// @brief Does this mover provide information about how to cite it?  Returns false.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool mover_provides_citation_info() const override;
+
+	/// @brief Provide the citation.
+	/// @returns Nothing for this mover, since it is unpublished.  Can return citations for residue selectors
+	/// that this mover links.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+
+	/// @brief Does this mover indicate that it is unpublished (and, by extension, that the author should be
+	/// included in publications resulting from it)?
+	/// @details Returns true.  This mover is unpublished.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool mover_is_unpublished() const override;
+
+	/// @brief Provide a list of authors and their e-mail addresses, as strings.
+	/// @returns Sharon Guffy's authorship information.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
+
 private:
 	// data
 	//These data members are based on the options currently available on the command line

@@ -43,6 +43,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 // Utility headers
 #include <utility/io/ozstream.hh>
@@ -306,6 +307,31 @@ HBNetEnergy::hbnet_energy_ramping_string_from_enum(
 /// @brief Set the maximum network size, beyond which there is no bonus for making a network bigger.
 /// @details A value of "0" (the default) means no max.
 void HBNetEnergy::max_network_size( core::Size const setting ) { max_network_size_ = setting; }
+
+//////////////////////////////CITATION MANAGER FUNCTIONS/////////////////////////////////
+
+/// @brief This energy method IS unpublished (returns true).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+HBNetEnergy::energy_method_is_unpublished() const {
+	return true;
+}
+
+/// @brief Provide a list of authors and their e-mail addresses, as strings.
+/// @returns A list of pairs of (author, e-mail address).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+HBNetEnergy::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+	return utility::vector1< UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		"HBNetEnergy", CitedModuleType::EnergyMethod,
+		"Vikram K. Mulligan",
+		"Systems Biology, Center for Computational Biology, Flatiron Institute",
+		"vmulligan@flatironinstitute.org"
+		)
+		};
+}
 
 //////////////////////////////////PRIVATE FUNCTIONS//////////////////////////////////////
 

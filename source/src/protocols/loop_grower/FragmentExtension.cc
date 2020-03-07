@@ -136,6 +136,8 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
@@ -1269,6 +1271,28 @@ FragmentExtension::cluster_fragments( utility::vector1<core::fragment::FragSetOP
 		}
 		fragments[i]=newfrags;
 	}
+}
+
+bool FragmentExtension::mover_provides_citation_info() const {
+	return true;
+}
+
+/// @brief Provide the citation.
+/// @returns A vector of citation collections.  This allows the mover to provide citations for
+/// itself and for any modules that it invokes.
+/// @details Also provides citations for movers called by the BundleGridSampler.
+/// @author Brandon Frenz (brandon.frenz@brandon.frenz@gmail.com)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+FragmentExtension::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"FragmentExtension", basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1038/nmeth.4340" ) );
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
+	return returnvec;
 }
 
 }

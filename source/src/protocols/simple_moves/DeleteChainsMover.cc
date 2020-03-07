@@ -23,6 +23,8 @@
 
 #include <basic/datacache/DataMapObj.hh>
 #include <basic/datacache/DataMap.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
@@ -53,6 +55,23 @@ void
 DeleteChainsMover::set_defaults(){
 	set_detect_bonds( true );
 	set_detect_pseudobonds( true );
+}
+
+bool
+DeleteChainsMover::mover_provides_citation_info() const {
+	return true;
+}
+
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+DeleteChainsMover::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"DeleteChainsMover", basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
+	return returnvec;
 }
 
 void

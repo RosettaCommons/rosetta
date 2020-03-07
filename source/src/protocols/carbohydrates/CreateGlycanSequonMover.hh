@@ -29,7 +29,7 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-//#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from Mover
+
 
 namespace protocols {
 namespace carbohydrates {
@@ -88,9 +88,17 @@ public:
 	void
 	apply( core::pose::Pose & pose ) override;
 
+
+public:  // Citation Management
+	/// @brief Does this mover provide information about how to cite it?
+	bool mover_provides_citation_info() const override;
+
+	/// @brief Provide a list of authors and their e-mail addresses, as strings.
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+	provide_authorship_info_for_unpublished() const override;
+
+
 public:
-
-
 	///@brief Set the target glycosylation position for which the sequence motif will be created around.
 	/// If this is in beginning or end of protein and could not be created, will set fail do not retry mover status.
 	///

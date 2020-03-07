@@ -46,6 +46,8 @@
 
 // Other Headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 
@@ -322,6 +324,32 @@ AACompositionEnergy::finalize_after_minimizing( pose::Pose & /*pose*/ ) const {
 	TR << "Re-enabling AACompositionEnergy following minimization." << std::endl;
 	disabled_ = false;
 }
+
+/***************************
+Citation Manager functions:
+***************************/
+
+/// @brief Returns true (this method is published).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+AACompositionEnergy::energy_method_provides_citation_info() const {
+	return true;
+}
+
+/// @brief Provide the citation (Hosseinzadeh, Bhardwaj, Mulligan et al. Science 2017).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+AACompositionEnergy::provide_citation_info() const {
+	using namespace basic::citation_manager;
+	CitationManager * cm( CitationManager::get_instance() );
+	CitationCollectionOP my_citation( utility::pointer::make_shared< CitationCollection >( "AACompositionEnergy", CitedModuleType::EnergyMethod ) );
+	my_citation->add_citation( cm->get_citation_by_doi( "10.1126/science.aap7577" ) ); //Hosseinzadeh, Bhardwaj, Mulligan et al. Science 2017
+	return utility::vector1< CitationCollectionCOP >{ my_citation };
+}
+
+/******************
+Private functions:
+******************/
 
 /// @brief Given a pose, pull out the AACompositionEnergySetup objects stored in SequenceConstraints in the pose and
 /// append them to the setup_helpers_ vector, returning a new vector.  This also generates a vector of masks simultaneously.

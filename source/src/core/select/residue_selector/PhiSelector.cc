@@ -10,7 +10,7 @@
 /// @file   core/pack/task/residue_selector/PhiSelector.hh
 /// @brief  A ResidueSelector that selects alpha-amino acids that are either in the positive phi or negative
 /// phi region of Ramachandran space (depending on user preferences).
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 // Unit headers
 #include <core/select/residue_selector/PhiSelector.hh>

@@ -35,6 +35,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/enzymes.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 
 // Construct tracers.
@@ -188,6 +191,31 @@ EnzymaticMover::apply( Pose & input_pose )
 	}
 
 	TR << "Move(s) complete." << endl;
+}
+
+
+// Citation Management
+// Does this EnzymaticMover provide information about how to cite it?
+/// @returns  true
+bool
+EnzymaticMover::mover_provides_citation_info() const {
+	return true;
+}
+
+// Provide a list of authors and their e-mail addresses, as strings.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+EnzymaticMover::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+
+	return utility::vector1< UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		get_name(),
+		CitedModuleType::Mover,
+		"Jason W. Labonte",
+		"Department of Chemistry, Johns Hopkins University, Baltimore, MD",
+		"JWLabonte@jhu.edu"
+		)
+		};
 }
 
 

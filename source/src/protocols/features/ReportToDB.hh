@@ -236,6 +236,12 @@ public:
 	void
 	attributes_for_report_to_db( utility::tag::AttributeList &, utility::tag::XMLSchemaDefinition & );
 
+	/// @brief Indiciate that this mover is published
+	bool mover_provides_citation_info() const override;
+
+	/// @brief Provide authorship information for a published Rosetta module
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+
 protected:
 
 	/// @brief Checks if structure tags are not null and updates them

@@ -9,7 +9,7 @@
 
 /// @file protocols/cluster/energy_based_clustering/EnergyBasedClusteringTests.fwd.hh
 /// @brief Forward declarations for the unit test class for the EnergyBasedClusteringProtocol.  Needed for friendship.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 #ifndef INCLUDED_protocols_cluster_energy_based_clustering_EnergyBasedClusteringTests_fwd_hh
 #define INCLUDED_protocols_cluster_energy_based_clustering_EnergyBasedClusteringTests_fwd_hh

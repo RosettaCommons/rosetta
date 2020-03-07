@@ -25,6 +25,8 @@
 
 #include <core/id/types.hh>
 
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
@@ -301,6 +303,43 @@ BBDihedralSamplerMoverCreator::keyname() const {
 std::string
 BBDihedralSamplerMoverCreator::mover_name(){
 	return "BBDihedralSamplerMover";
+}
+
+bool
+BBDihedralSamplerMover::mover_provides_citation_info() const {
+	return true;
+}
+
+// Provide a list of authors and their e-mail addresses, as strings.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+BBDihedralSamplerMover::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+
+	utility::vector1< UnpublishedModuleInfoCOP > returnvec{
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		get_name(),
+		CitedModuleType::Mover,
+		"Jared Adolf-Bryfogle",
+		"The Scripps Research Institute, La Jolla, CA",
+		"jadolfbr@gmail.com"
+		)
+		};
+
+	if ( selector_ != nullptr ) {
+		merge_into_unpublished_collection_vector( selector_->provide_authorship_info_for_unpublished(), returnvec);
+	}
+
+	return returnvec;
+}
+
+/// @brief Although this mover has no citation info since it is unpublished, it can provide
+/// citation info for the residue selector that it calls.
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+BBDihedralSamplerMover::provide_citation_info() const {
+	if ( selector_ != nullptr ) {
+		return selector_->provide_citation_info();
+	}
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP >();
 }
 
 } //protocols

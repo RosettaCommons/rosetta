@@ -35,6 +35,8 @@
 #include <utility/options/OptionCollection.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <numeric/NumericTraits.hh>
@@ -274,7 +276,49 @@ DihedralDistanceMetric::calculate(const core::pose::Pose & pose) const {
 	return normalized_in_degrees;
 }
 
+/// @brief This simple metric is unpublished, but can provide citation information for the residue
+/// selector that it uses.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+DihedralDistanceMetric::provide_citation_info() const {
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec;
+	if ( residue_selector_ != nullptr ) {
+		basic::citation_manager::merge_into_citation_collection_vector( residue_selector_->provide_citation_info(), returnvec );
+	}
+	if ( residue_selector_ref_ != nullptr ) {
+		basic::citation_manager::merge_into_citation_collection_vector( residue_selector_ref_->provide_citation_info(), returnvec );
+	}
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP >();
+}
 
+/// @brief This simple metric is unpublished (returns true).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+DihedralDistanceMetric::simple_metric_is_unpublished() const {
+	return true;
+}
+
+/// @brief This simple metric is unpublished.  It returns Jared Adolf-Bryfogle.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+DihedralDistanceMetric::provide_authorship_info_for_unpublished() const {
+	basic::citation_manager::UnpublishedModuleInfoOP authors (
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		name(), basic::citation_manager::CitedModuleType::SimpleMetric,
+		"Jared Adolf-Bryfogle",
+		"Scripps Research Institute",
+		"jadolfbr@gmail.com"
+		)
+	);
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{ authors };
+	if ( residue_selector_ != nullptr ) {
+		basic::citation_manager::merge_into_unpublished_collection_vector( residue_selector_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	if ( residue_selector_ref_ != nullptr ) {
+		basic::citation_manager::merge_into_unpublished_collection_vector( residue_selector_ref_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	return returnvec;
+}
 
 void
 DihedralDistanceMetricCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const {

@@ -30,6 +30,7 @@
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/datacache/DataMap.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
@@ -387,6 +388,13 @@ ScoreFunctionLoader::create_scorefxn_from_tag(
 		}
 		in_scorefxn->set_energy_method_options( emoptions );
 	}
+
+	//KEEP THIS LAST: Register the newly-created scorefunction and its energy methods
+	//with the citation manager:
+	basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
+	cm->add_citations( in_scorefxn->provide_citation_info() );
+	cm->add_unpublished_modules( in_scorefxn->provide_authorship_info_for_unpublished() );
+
 	return in_scorefxn;
 }
 

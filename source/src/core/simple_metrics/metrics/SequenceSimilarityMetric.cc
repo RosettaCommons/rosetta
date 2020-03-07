@@ -30,6 +30,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
@@ -203,6 +204,43 @@ SequenceSimilarityMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
 		"A metric for measuring sequence similarity between the trajectry pose and the native pose. Sums the score of each selected position using BLOSUM62 (note that the score of an unmutated pose is almost certainly not 0). Must use the -native flag for this to work correctly.", attlist);
+}
+
+/// @brief This simple metric is unpublished, but can provide citation information for the residue
+/// selector that it uses.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+SequenceSimilarityMetric::provide_citation_info() const {
+	if ( selector_ != nullptr ) {
+		return selector_->provide_citation_info();
+	}
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP >();
+}
+
+/// @brief This simple metric is unpublished (returns true).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+SequenceSimilarityMetric::simple_metric_is_unpublished() const {
+	return true;
+}
+
+/// @brief This simple metric is unpublished.  It returns Jack Maguire.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+SequenceSimilarityMetric::provide_authorship_info_for_unpublished() const {
+	basic::citation_manager::UnpublishedModuleInfoOP authors (
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		name(), basic::citation_manager::CitedModuleType::SimpleMetric,
+		"Jack Maguire",
+		"University of North Carolina at Chapel Hill",
+		"jackmaguire1444@gmail.com"
+		)
+	);
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{ authors };
+	if ( selector_ != nullptr ) {
+		basic::citation_manager::merge_into_unpublished_collection_vector( selector_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	return returnvec;
 }
 
 void

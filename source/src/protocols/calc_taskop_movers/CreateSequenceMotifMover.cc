@@ -32,6 +32,9 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/string_util.hh>
@@ -95,6 +98,44 @@ CreateSequenceMotifMover::CreateSequenceMotifMover( CreateSequenceMotifMover con
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
 CreateSequenceMotifMover::~CreateSequenceMotifMover(){}
+
+bool
+CreateSequenceMotifMover::mover_provides_citation_info() const {
+	return true;
+}
+
+// Provide a list of authors and their e-mail addresses, as strings.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+CreateSequenceMotifMover::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+
+	utility::vector1< UnpublishedModuleInfoCOP > returnvec {
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		mover_name(),
+		CitedModuleType::Mover,
+		"Jared Adolf-Bryfogle",
+		"The Scripps Research Institute, La Jolla, CA",
+		"jadolfbr@gmail.com"
+		)
+		};
+
+	if ( selector_!=nullptr ) {
+		merge_into_unpublished_collection_vector( selector_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+
+	return returnvec;
+}
+
+/// @brief Although this mover is unpublished and provides no citation info of its own,
+/// it can provide citation info for modules that it calls.
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+CreateSequenceMotifMover::provide_citation_info() const {
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec;
+	if ( selector_ !=nullptr ) {
+		basic::citation_manager::merge_into_citation_collection_vector( selector_->provide_citation_info(), returnvec );
+	}
+	return returnvec;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///

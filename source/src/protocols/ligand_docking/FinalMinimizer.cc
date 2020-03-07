@@ -9,7 +9,7 @@
 
 /// @file   core/pack/task/ResfileReader.cc
 /// @brief  implementation of resfile reader and its command classes
-/// @author Gordon Lemmon (glemmon@gmail.com), adapted from the ResfileReader code
+/// @author Gordon Lemmon , adapted from the ResfileReader code
 /// by Steven Lewis (smlewi@gmail.com) and Andrew Leaver-Fay
 
 // Unit Headers
@@ -44,6 +44,9 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 namespace protocols {
 namespace ligand_docking {
@@ -193,6 +196,39 @@ void FinalMinimizerCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	FinalMinimizer::provide_xml_schema( xsd );
 }
 
+///@brief Does this mover provide information about how to cite it?
+///@details Returns true.
+///@author Gordon Lemmon
+bool
+FinalMinimizer::mover_provides_citation_info() const {
+	return true;
+}
+
+///@brief Provide the citation.
+///@returns A vector of citation collections.  This allows the mover to provide citations for itself and for any modules that it invokes.
+///@details Also provides citations for movers called by the FinalMinimizer.
+///@author Gordon Lemmon
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+FinalMinimizer::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"FinalMinimizer", basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1007/978-1-61779-465-0_10" ) );
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
+	return returnvec;
+}
+
+///@brief Provide a list of authors and their e-mail addresses, as strings.
+///@returns A list of pairs of (author, e-mail address).  This mover IS published, so it returns nothing for itself, but can return  information for preselection filters and movers.
+///@author Gordon Lemmon
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+FinalMinimizer::provide_authorship_info_for_unpublished() const {
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
+	//TODO ADD CITATION FOR MOVEMAP BUILDER AND SCOREFUNCTION!!!
+	return returnvec;
+}
 
 } //namespace ligand_docking
 } //namespace protocols

@@ -10,7 +10,7 @@
 /// @file protocols/energy_based_clustering/EnergyBasedClusteringProtocol.hh
 /// @brief Performs the work done by the energy_based_clustering app.  Uses an energy-biased cookie-cutter approach to
 /// cluster a large number of structures without generating an all-by-all RMSD matrix.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 
 #ifndef INCLUDED_protocols_cluster_energy_based_clustering_EnergyBasedClusteringProtocol_hh

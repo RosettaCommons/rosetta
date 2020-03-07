@@ -23,6 +23,7 @@
 #include <core/pack/palette/xsd_util.hh>
 
 // Basic Headers
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
@@ -96,6 +97,25 @@ std::string const &
 NoDesignPackerPalette::name() const {
 	static const std::string myname( "NoDesignPackerPalette" );
 	return myname;
+}
+
+/// @brief Returns true (this packer palette is unpublished).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+NoDesignPackerPalette::packer_palette_is_unpublished() const {
+	return true;
+}
+
+/// @brief Returns VK Mulligan as the author.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+NoDesignPackerPalette::provide_authorship_info_for_unpublished() const {
+	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		name(), basic::citation_manager::CitedModuleType::PackerPalette,
+		"Vikram K. Mulligan", "Systems Biology, Center for Computational Biology, Flatiron Institute", "vmulligan@flatironinstitute.org"
+		)
+		};
 }
 
 BaseTypeList

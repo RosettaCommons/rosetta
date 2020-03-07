@@ -60,8 +60,6 @@ public:
 		Pose const & pose
 	) override;
 
-
-
 	/// @brief Attempt to add cluster-based dihedral constraints.  If this is set to false will simply add General Dihedral constraints instead.
 	/// Default True
 	void
@@ -82,7 +80,6 @@ public:
 
 	void
 	apply(core::pose::Pose & pose) override;
-
 
 public:
 
@@ -110,7 +107,6 @@ public:
 	void
 	set_use_cluster_for_H3(bool use_cluster_for_H3);
 
-
 public:
 	void
 	set_general_phi_sd(core::Real phi_sd);
@@ -123,11 +119,7 @@ public:
 	void
 	set_ignore_pose_datacache(bool ignore_pose_datacache);
 
-
 public:
-
-
-
 
 	protocols::moves::MoverOP
 	clone() const override;
@@ -147,6 +139,17 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+public: //CitationManager
+
+	///@brief Does this mover provide information about how to cite it?
+	///@details Returns true.
+	bool
+	mover_provides_citation_info() const override;
+
+	///@brief Provide the citation.
+	///@returns A vector of citation collections.  This allows the mover to provide citations for itself and for any modules that it invokes.
+	utility::vector1< basic::citation_manager::CitationCollectionCOP >
+	provide_citation_info() const override;
 
 private:
 

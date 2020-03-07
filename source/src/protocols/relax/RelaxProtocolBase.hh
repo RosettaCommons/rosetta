@@ -110,6 +110,36 @@ public:
 	void minimize_bond_lengths( bool minimize_bond_lengths );
 	void minimize_bond_angles( bool minimize_bond_angles );
 
+public: // CitationManager fxns:
+
+	/// @brief Does this mover provide information about how to cite it?
+	/// @details Defaults to false.  Derived relax protocols may override this to provide citation info.  If set to
+	/// true, the provide_citation_info() override should also be provided.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool mover_provides_citation_info() const override;
+
+	/// @brief Provide the citation.
+	/// @returns A vector of citation collections.  This allows the mover to provide citations for
+	/// itself and for any modules that it invokes.
+	/// @details The default implementation of this function provides citations only for the task operations
+	/// in the task factory.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+
+	/// @brief Does this mover indicate that it is unpublished (and, by extension, that the author should be
+	/// included in publications resulting from it)?
+	/// @details Defaults to false.  Derived relax protocols may override this to provide authorship info.  If set to
+	/// true, the provide_authorship_info_for_unpublished() override should also be provided.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool mover_is_unpublished() const override;
+
+	/// @brief Provide a list of authors and their e-mail addresses, as strings.
+	/// @returns A list of pairs of (author, e-mail address).  The default version only provides authorship information
+	/// for gthe task operations in the task factory.  Empty list if not unpublished.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
+
+
 protected:
 
 	core::scoring::ScoreFunctionOP get_scorefxn();

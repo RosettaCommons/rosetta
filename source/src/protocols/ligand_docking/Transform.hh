@@ -130,6 +130,18 @@ public:
 	/// @brief copy the ligand into the desired receptor model and update conformation using the best model
 	core::Real convert_to_full_pose(core::pose::Pose & pose, core::conformation::UltraLightResidue & residue, core::Size chain_id );
 
+public: //Citations
+
+	///@brief Does this mover provide information about how to cite it?
+	///@details Returns true.
+	bool mover_provides_citation_info() const override;
+
+	/// @brief Provide the citation.
+	/// @returns A vector of citation collections.  This allows the mover to provide citations for itself
+	/// and for any modules that it invokes.
+	utility::vector1< basic::citation_manager::CitationCollectionCOP >
+	provide_citation_info() const override;
+
 private:
 	/// @brief Estimate how much the ligand will travel during the MC translation
 	/// @details - success_rate is the MC success rate. Will be bumped to a reasonable minimum

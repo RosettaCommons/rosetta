@@ -28,6 +28,8 @@
 #include <protocols/indexed_structure_store/filters/FragmentLookupFilterCreator.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.hh>
 
@@ -336,6 +338,31 @@ void FragmentLookupFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		"default store defined in the FragmentStoreManager class via the options "
 		"system.",
 		attlist );
+}
+
+/// @brief Does this filter provide information about how to cite it?
+/// @details Returns true.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool FragmentLookupFilter::filter_provides_citation_info() const { return true; }
+
+/// @brief Provide the citation (Dang et al 2017).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+FragmentLookupFilter::provide_citation_info() const {
+
+	// Create a citation collection that names this filter and its type:
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"FragmentLookupFilter", basic::citation_manager::CitedModuleType::Filter
+		)
+	);
+
+	// Add at least one citation to it:
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1073/pnas.1710695114" ) );
+
+	// Return a vector of citation collections.  (Note that this is a vector so that we could
+	// return citation collections for modules that this module invokes, too):
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP >{ cc };
 }
 
 std::string FragmentLookupFilterCreator::keyname() const {

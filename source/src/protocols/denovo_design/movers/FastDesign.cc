@@ -40,6 +40,8 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
@@ -353,6 +355,29 @@ void FastDesign::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		.write_complex_type_to_schema( xsd );
 
 
+}
+
+/// @brief Does this mover provide information about how to cite it?
+/// @details Returns true.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+FastDesign::mover_provides_citation_info() const {
+	return true;
+}
+
+/// @brief Provide the citation.
+/// @returns A vector of citation collections.  This allows the mover to provide citations for
+/// itself and for any modules that it invokes.
+/// @details This function provides citations for the task operations in the task factory and for FastRelax.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+FastDesign::provide_citation_info() const {
+	basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
+	basic::citation_manager::CitationCollectionOP collection( utility::pointer::make_shared< basic::citation_manager::CitationCollection >( get_name(), basic::citation_manager::CitedModuleType::Mover ) );
+	collection->add_citation( cm->get_citation_by_doi( "10.1038/nature19791" ) );
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ collection };
+	basic::citation_manager::merge_into_citation_collection_vector( RelaxProtocolBase::provide_citation_info(), returnvec ); //Gets citations for task operations and packer palette.
+	return returnvec;
 }
 
 std::string FastDesignCreator::keyname() const {

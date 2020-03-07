@@ -46,6 +46,7 @@
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
 
 #include <set>
 
@@ -240,6 +241,25 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+public: //Function overrides needed for the citation manager:
+
+	/// @brief Does this mover provide information about how to cite it?
+	/// @details Returns true.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool mover_provides_citation_info() const override;
+
+	/// @brief Provide the citation.
+	/// @returns A vector of citation collections.  This allows the mover to provide citations for
+	/// itself and for any modules that it invokes.
+	/// @details Also provides citations for movers called by the BundleGridSampler.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+
+	/// @brief Provide a list of authors and their e-mail addresses, as strings.
+	/// @returns A list of pairs of (author, e-mail address).  This mover IS published, so it returns nothing
+	/// for itself, but can return  information for preselection filters and movers.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
 
 private:
 	////////////////////////////////////////////////////////////////////////////////

@@ -39,6 +39,8 @@
 #include <core/pose/util.tmpl.hh>
 #include <core/pose/variant_util.hh>
 #include <core/chemical/VariantType.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 //JD2:
 #include <protocols/jd2/util.hh>
@@ -806,6 +808,49 @@ void BackboneGridSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		.complex_type_naming_func( & subtag_for_bbgrid );
 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Sample mainchain torsions for peptides in a grid, saving good conformations", attlist, ssl );
+}
+
+/// @brief Provides citation info for any published pre-scoring movers or filters, though this mover is
+/// unpublished and has no citation information of its own.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+BackboneGridSampler::provide_citation_info() const {
+	using namespace basic::citation_manager;
+	utility::vector1< CitationCollectionCOP > returnvec;
+	if ( pre_scoring_filter_!=nullptr ) {
+		merge_into_citation_collection_vector( pre_scoring_filter_->provide_citation_info(), returnvec );
+	}
+	if ( pre_scoring_mover_!=nullptr ) {
+		merge_into_citation_collection_vector( pre_scoring_mover_->provide_citation_info(), returnvec );
+	}
+	return returnvec;
+}
+
+/// @brief Indicate that this mover is unpublished.
+bool
+BackboneGridSampler::mover_is_unpublished() const {
+	return true;
+}
+
+/// @brief Provide authorship information for an unpublished Rosetta module.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+BackboneGridSampler::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+	utility::vector1< UnpublishedModuleInfoCOP > returnvec{
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		"BackboneGridSampler", CitedModuleType::Mover,
+		"Vikram K. Mulligan",
+		"Systems Biology, Center for Computational Biology, Flatiron Institute",
+		"vmulligan@flatironinstitute.org"
+		)
+		};
+	if ( pre_scoring_filter_ != nullptr ) {
+		merge_into_unpublished_collection_vector( pre_scoring_filter_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	if ( pre_scoring_mover_ != nullptr ) {
+		merge_into_unpublished_collection_vector( pre_scoring_mover_->provide_authorship_info_for_unpublished(), returnvec );
+	}
+	return returnvec;
 }
 
 std::string BackboneGridSamplerCreator::keyname() const {

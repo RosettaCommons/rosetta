@@ -31,6 +31,9 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/util.hh>
 
+// Basic headers
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 #include <string>
 
@@ -105,6 +108,33 @@ void MoverContainer::set_current_tag( std::string const & new_tag ){
 	}
 
 }
+
+/// @brief Provide the citations for the movers contained in this MoverContainer.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+MoverContainer::provide_citation_info() const {
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec;
+	for ( MoverCOP const & mover : movers_ ) {
+		if ( mover != nullptr ) {
+			basic::citation_manager::merge_into_citation_collection_vector( mover->provide_citation_info(), returnvec );
+		}
+	}
+	return returnvec;
+}
+
+/// @brief Provide a list of authors for the movers contained in this MoverContainer.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+MoverContainer::provide_authorship_info_for_unpublished() const {
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
+	for ( MoverCOP const & mover : movers_ ) {
+		if ( mover != nullptr ) {
+			basic::citation_manager::merge_into_unpublished_collection_vector( mover->provide_authorship_info_for_unpublished(), returnvec );
+		}
+	}
+	return returnvec;
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

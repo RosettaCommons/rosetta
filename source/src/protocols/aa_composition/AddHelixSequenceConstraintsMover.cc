@@ -9,7 +9,7 @@
 
 /// @file protocols/aa_composition/AddHelixSequenceConstraintsMover.cc
 /// @brief This mover adds sequence constraints to the ends of each helix, requiring at least one positively-charged residue in the three C-terminal residues, and at least one negatively-charged resiude in the three N-terminal residues.
-/// @author Vikram K. Mulligan (vmullig@u.washington.edu -- wrote the mover)
+/// @author Vikram K. Mulligan (vmullig@uw.edu -- wrote the mover)
 /// @author Gabriel Rocklin (came up with the rules that this mover should apply, based on high-throughput experiments)
 
 // Unit headers

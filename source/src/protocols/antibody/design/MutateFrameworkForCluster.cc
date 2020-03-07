@@ -35,6 +35,8 @@
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <basic/datacache/BasicDataCache.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
 
@@ -409,6 +411,29 @@ MutateFrameworkForClusterCreator::mover_name() {
 	return "MutateFrameworkForCluster";
 }
 
+bool
+MutateFrameworkForCluster::mover_provides_citation_info() const {
+	return true;
+}
+
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+MutateFrameworkForCluster::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		get_name(), basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
+	return returnvec;
+}
+
+
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+MutateFrameworkForCluster::provide_authorship_info_for_unpublished() const {
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
+	return returnvec;
+}
 
 } //design
 } //antibody

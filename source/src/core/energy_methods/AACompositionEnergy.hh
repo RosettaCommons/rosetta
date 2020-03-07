@@ -118,6 +118,20 @@ public:
 	/// @brief Re-enable this energy after minimization.
 	void finalize_after_minimizing( pose::Pose & pose ) const override;
 
+public:
+
+	/***************************
+	Citation Manager functions:
+	***************************/
+
+	/// @brief Returns true (this method is published).
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool energy_method_provides_citation_info() const override;
+
+	/// @brief Provide the citation (Hosseinzadeh, Bhardwaj, Mulligan et al. Science 2017).
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+
 private:
 
 	/******************

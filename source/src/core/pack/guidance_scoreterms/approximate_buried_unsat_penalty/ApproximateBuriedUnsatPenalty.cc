@@ -32,6 +32,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #ifdef MULTI_THREADED
 #include <basic/options/option.hh>
 #include <basic/options/keys/multithreading.OptionKeys.gen.hh>
@@ -438,6 +439,30 @@ ApproximateBuriedUnsatPenalty::eval_intrares_energy(
 
 }
 
+//////////////////////////////CITATION MANAGER FUNCTIONS/////////////////////////////////
+
+/// @brief This energy method IS unpublished (returns true).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+ApproximateBuriedUnsatPenalty::energy_method_is_unpublished() const {
+	return true;
+}
+
+/// @brief Provide a list of authors and their e-mail addresses, as strings.
+/// @returns Brian Coventry's name, affiliation, and e-mail address.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+ApproximateBuriedUnsatPenalty::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+	return utility::vector1< UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		"ApproximateBuriedUnsatPenalty", CitedModuleType::EnergyMethod,
+		"Brian Coventry",
+		"Dept. of Biochemistry, Institute for Protein Design, University of Washington",
+		"bcov@uw.edu"
+		)
+		};
+}
 
 basic::datacache::CacheableResRotPairFloatMapCOP
 ApproximateBuriedUnsatPenalty::get_energies_cache( pose::Pose const & pose ) const {

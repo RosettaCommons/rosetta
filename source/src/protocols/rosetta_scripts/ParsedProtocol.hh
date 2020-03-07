@@ -141,6 +141,27 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief This mover does not provide citation info for itself, though it might for
+	/// movers or filters that it invokes.  It therefore returns false.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool mover_provides_citation_info() const override;
+
+	/// @brief Provide the citation.
+	/// @returns A vector of citation collections.  This allows the mover to provide citations for
+	/// itself and for any modules that it invokes.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+
+	/// @brief This mover is not unpublished.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool mover_is_unpublished() const override;
+
+	/// @brief This mover does provide information for unpublished movers and filters that it invokes.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
+
+
+
 private:
 	void finish_protocol(Pose & pose);
 

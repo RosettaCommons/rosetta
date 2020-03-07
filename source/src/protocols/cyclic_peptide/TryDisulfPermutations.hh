@@ -33,6 +33,7 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/constants.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -109,6 +110,13 @@ public: //Constructors, destructors, clone operator, etc.
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+public: //Function overrides needed for the citation manager:
+
+	/// @brief Indicate that this mover is unpublished.
+	bool mover_is_unpublished() const override;
+
+	/// @brief Provide authorship information for an unpublished Rosetta module.
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
 
 private:
 

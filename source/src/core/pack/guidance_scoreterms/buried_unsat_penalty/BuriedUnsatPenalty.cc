@@ -56,6 +56,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 // Utility headers
 #include <utility/io/ozstream.hh>
@@ -501,6 +502,31 @@ BuriedUnsatPenalty::provide_pymol_commands_to_show_groups(
 ) const {
 	runtime_assert( unsat_graph_ != nullptr );
 	unsat_graph_->provide_pymol_commands_to_show_groups(out, pose);
+}
+
+//////////////////////////////CITATION MANAGER FUNCTIONS/////////////////////////////////
+
+/// @brief This energy method IS unpublished (returns true).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+BuriedUnsatPenalty::energy_method_is_unpublished() const {
+	return true;
+}
+
+/// @brief Provide a list of authors and their e-mail addresses, as strings.
+/// @returns A list of pairs of (author, e-mail address).
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+BuriedUnsatPenalty::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+	return utility::vector1< UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		"BuriedUnsatPenalty", CitedModuleType::EnergyMethod,
+		"Vikram K. Mulligan",
+		"Systems Biology, Center for Computational Biology, Flatiron Institute",
+		"vmulligan@flatironinstitute.org"
+		)
+		};
 }
 
 //////////////////////////////////PRIVATE FUNCTIONS//////////////////////////////////////

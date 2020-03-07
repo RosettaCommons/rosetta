@@ -65,6 +65,10 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
+
 namespace protocols {
 namespace ligand_docking {
 
@@ -739,6 +743,28 @@ void TransformEnsemble::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		"Replaces the Translate, Rotate, and SlideTogether movers.", attlist );
 }
 
+/// @brief Does this mover provide information about how to cite it?
+/// @details Returns true.
+bool
+TransformEnsemble::mover_provides_citation_info() const {
+	return true;
+}
+
+/// @brief Provide the citation.
+/// @returns A vector of citation collections.  This allows the mover to provide citations for itself
+/// and for any modules that it invokes.
+/// @details Also provides citations for movers called by the TransformEnsemble.
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+TransformEnsemble::provide_citation_info() const {
+	basic::citation_manager::CitationCollectionOP cc(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"TransformEnsemble", basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+
+	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1021/acsomega.7b02059" ) );
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP > { cc };
+}
 
 protocols::moves::MoverOP TransformEnsembleCreator::create_mover() const
 {

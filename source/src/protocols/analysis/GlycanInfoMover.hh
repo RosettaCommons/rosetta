@@ -111,6 +111,16 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+public:  // Citation Management
+
+	/// @brief Does this mover provide information about how to cite it?
+	bool
+	mover_provides_citation_info() const override;
+
+	/// @brief Provide a list of authors and their e-mail addresses, as strings.
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+	provide_authorship_info_for_unpublished() const override;
+
 private: // methods
 
 private: // data

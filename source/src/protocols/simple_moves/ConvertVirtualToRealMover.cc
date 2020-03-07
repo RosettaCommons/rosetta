@@ -24,6 +24,8 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
 
@@ -63,6 +65,48 @@ ConvertVirtualToRealMover::ConvertVirtualToRealMover( ConvertVirtualToRealMover 
 	if ( src.selector_ ) selector_ = src.selector_->clone();
 }
 
+bool
+ConvertVirtualToRealMover::mover_provides_citation_info() const {
+	return true;
+}
+
+// Provide a list of authors and their e-mail addresses, as strings.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+ConvertVirtualToRealMover::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+
+	utility::vector1< UnpublishedModuleInfoCOP > modules;
+	modules.push_back(utility::pointer::make_shared< UnpublishedModuleInfo >(
+		mover_name(),
+		CitedModuleType::Mover,
+		"Jared Adolf-Bryfogle",
+		"The Scripps Research Institute, La Jolla, CA",
+		"jadolfbr@gmail.com"
+		));
+
+	modules.push_back(utility::pointer::make_shared< UnpublishedModuleInfo >(
+		mover_name(),
+		CitedModuleType::Mover,
+		"Sebastian Rämisch",
+		"The Scripps Research Institute, La Jolla, CA",
+		"raemisch@scripps.edu"
+		));
+
+	if ( selector_ != nullptr ) {
+		merge_into_unpublished_collection_vector( selector_->provide_authorship_info_for_unpublished(),  modules );
+	}
+
+	return modules;
+}
+
+/// @brief Although this mover has no citation info, the residue selector that it calls might have some.
+utility::vector1< basic::citation_manager::CitationCollectionCOP >
+ConvertVirtualToRealMover::provide_citation_info() const {
+	if ( selector_ != nullptr ) {
+		return selector_->provide_citation_info();
+	}
+	return utility::vector1< basic::citation_manager::CitationCollectionCOP >();
+}
 
 void
 ConvertVirtualToRealMover::set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector){
