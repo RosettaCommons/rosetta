@@ -378,15 +378,17 @@ public:
 		ft.add_edge( 24, 30, -1 );
 		ft.add_edge( 22, 31, "O6", "C1" );
 		ft.add_edge( 31, 33, -1 );
+		ft.add_edge( 33, 34, core::kinematics::Edge::CHEMICAL, "O12", "C7" );
 
 		TS_ASSERT( ft.check_fold_tree() );
 
 		utility::vector1< core::kinematics::Edge > const chemical_edges( ft.get_chemical_edges() );
-		TS_ASSERT_EQUALS( chemical_edges.size(), 3 );
+		TS_ASSERT_EQUALS( chemical_edges.size(), 4 );
 
 		core::kinematics::Edge const edge1( chemical_edges[ 1 ] );
 		core::kinematics::Edge const edge2( chemical_edges[ 2 ] );
 		core::kinematics::Edge const edge3( chemical_edges[ 3 ] );
+		core::kinematics::Edge const edge4( chemical_edges[ 4 ] );
 
 		TS_ASSERT( edge1.valid() );
 		TS_ASSERT( edge1.is_chemical_bond() );
@@ -399,6 +401,12 @@ public:
 
 		TS_ASSERT_EQUALS( edge3.start(), 22 );
 		TS_ASSERT_EQUALS( edge3.stop(), 31 );
+
+		TS_ASSERT_EQUALS( edge4.start(), 33 );
+		TS_ASSERT_EQUALS( edge4.stop(), 34 );
+		TS_ASSERT_EQUALS( edge4.start_atom(), "O12" );
+		TS_ASSERT_EQUALS( edge4.stop_atom(), "C7" );
+		TS_ASSERT_EQUALS( edge4.label(), core::kinematics::Edge::CHEMICAL );
 	}
 
 	void test_get_polymer_residue_direction()

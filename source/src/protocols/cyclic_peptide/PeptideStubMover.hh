@@ -10,6 +10,9 @@
 /// @file protocols/cyclic_peptide/PeptideStubMover.hh
 /// @brief Add constraints to the current pose conformation.
 /// @author Yifan Song
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org): Added support for stripping
+/// N-acetylation and C-methylamidation when appending residues, preserving phi and the previous
+/// omega in the first case and psi and the following omega in the second.
 
 #ifndef INCLUDED_protocols_cyclic_peptide_PeptideStubMover_hh
 #define INCLUDED_protocols_cyclic_peptide_PeptideStubMover_hh
@@ -110,6 +113,51 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+private: //Functions
+
+	/// @brief Remove terminal types from the upper terminus.  Store the old psi and omega values.
+	/// @returns  Returns void, but if a terminal type was removed, old_psi will be set to the previous
+	/// psi value and old_omega will be set to the previous omega value.  The replace_upper_terminal_type var
+	/// is set to true if a terminal type was replaced and false otherwise.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void
+	handle_upper_terminus(
+		core::pose::Pose & pose,
+		core::Size const anchor_rsd,
+		core::Real & old_psi,
+		core::Real & old_omega,
+		bool & replace_upper_terminal_type
+	) const;
+
+	/// @brief Remove terminal types from the lower terminus.  Store the old phi and omega_nminus1 values.
+	/// @returns  Returns void, but if a terminal type was removed, old_phi will be set to the previous
+	/// phi value and old_omega_nminus1 will be set to the previous upstream omega value.  The
+	/// replace_lower_terminal_type var is set to true if a terminal type was replaced and false otherwise.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void
+	handle_lower_terminus(
+		core::pose::Pose & pose,
+		core::Size const anchor_rsd,
+		core::Real & old_phi,
+		core::Real & old_omega_nminus1,
+		bool & replace_lower_terminal_type
+	) const;
+
+	/// @brief Update the omega-1 and phi (if we've replaced an N-acetylation) or the psi and omega
+	/// (if we've replaced a C-methylamidation) to preserve these dihedral values.
+	/// @details Builds a temporary foldtree rooted on the alpha carbon of the anchor residue.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void
+	preserve_old_mainchain_torsions(
+		core::pose::Pose & pose,
+		core::Size const anchor_res,
+		core::Real const old_omega_minus1,
+		core::Real const old_phi,
+		core::Real const old_psi,
+		core::Real const old_omega,
+		bool const replace_upper_terminal_type,
+		bool const replace_lower_terminal_type
+	) const;
 
 private:
 	bool reset_;

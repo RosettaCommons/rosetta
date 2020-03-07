@@ -206,6 +206,18 @@ public:
 		std::string const & stop_atom
 	);
 
+	/// @brief Especially useful version of add_edge for chemical edge construction
+	/// @details Allows label.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	void
+	add_edge(
+		Size const start,
+		Size const stop,
+		int const label,
+		std::string const & start_atom,
+		std::string const & stop_atom
+	);
+
 	/// @brief Add the edge  <new_edge>
 	///
 	/// example(s):

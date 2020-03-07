@@ -22,16 +22,24 @@
 
 // Project Headers
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
+#include <protocols/simple_moves/ModifyVariantTypeMover.hh>
 
 // Protocols Headers
 #include <protocols/simple_moves/MutateResidue.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pose/variant_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
+#include <core/id/AtomID.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+
+// Numeric Headers
+#include <numeric/conversions.hh>
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
@@ -39,6 +47,7 @@
 
 static basic::Tracer TR("PeptideStubMoverTests");
 
+#define TEST_DELTA 0.00001
 
 class PeptideStubMoverTests : public CxxTest::TestSuite {
 	//Define Variables
@@ -96,6 +105,296 @@ public:
 		TS_ASSERT_EQUALS( pose.residue(pose.total_residue()).connected_residue_at_lower(), original_pose_size );
 		TS_ASSERT_EQUALS( pose.residue(original_pose_size).connected_residue_at_upper(), pose.total_residue() );
 		TS_ASSERT_DELTA( pose.residue( original_pose_size ).xyz("C").distance( pose.residue( original_pose_size + 1 ).xyz("N") ), 1.328685, 0.01 ); //Check peptide bond length.
+	}
+
+	/// @brief Test appending to an N-methylamidated C-terminus and prepending on an
+	/// N-acetylated N-terminus.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	void test_append_NME_and_prepend_ACE() {
+		using namespace protocols::cyclic_peptide;
+
+		utility::vector1< core::Real > const phivals{ 21.395, -73.554, 129.445 };
+		utility::vector1< core::Real > const psivals{ 166.44, -144.31, 60.32 };
+		utility::vector1< core::Real > const omgvals{ 178.33, -174.41, 179.12 };
+		core::Real const omg_pre_val( -177.773 );
+
+		core::pose::Pose pose;
+
+		// Set up the peptide (three-residue pose with acetylated N-terminus and N-methylamidated C-terminus):
+		{
+			PeptideStubMover mover1;
+			mover1.set_reset_mode( true );
+			mover1.add_residue( "Append", "ALA", 0, true, "", 0, 0, "" );
+			mover1.add_residue( "Append", "CYS", 1, false, "", 0, 0, "" );
+			mover1.add_residue( "Append", "SER", 2, false, "", 0, 0, "" );
+			mover1.apply( pose );
+
+			core::select::residue_selector::ResidueIndexSelectorCOP select_one(
+				utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( 1 )
+			);
+			core::select::residue_selector::ResidueIndexSelectorCOP select_three(
+				utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( 3 )
+			);
+
+			protocols::simple_moves::ModifyVariantTypeMover add_ace;
+			add_ace.set_residue_selector( select_one );
+			add_ace.set_additional_type_to_add("N_ACETYLATION");
+			add_ace.set_update_polymer_bond_dependent_atoms(true);
+			add_ace.apply(pose);
+
+			protocols::simple_moves::ModifyVariantTypeMover add_nme;
+			add_nme.set_residue_selector( select_three );
+			add_nme.set_additional_type_to_add("C_METHYLAMIDATION");
+			add_nme.set_update_polymer_bond_dependent_atoms(true);
+			add_nme.apply(pose);
+
+			for ( core::Size i(1); i<=3; ++i ) {
+				pose.set_phi( i, phivals[i] );
+				pose.set_psi( i, psivals[i] );
+				pose.set_omega( i, omgvals[i] );
+			}
+			core::chemical::ResidueType const & restype( pose.residue_type(1) );
+			pose.conformation().set_torsion_angle(
+				core::id::AtomID( restype.atom_index( "CQ" ), 1 ),
+				core::id::AtomID( restype.atom_index( "CP" ), 1 ),
+				core::id::AtomID( restype.atom_index( "N" ), 1 ),
+				core::id::AtomID( restype.atom_index( "CA" ), 1 ),
+				numeric::conversions::radians( omg_pre_val )
+			);
+			pose.update_residue_neighbors();
+		}
+
+		// Check the conformation:
+		numeric::xyzVector< core::Real > old_ca_position( pose.xyz( core::id::NamedAtomID( "CA", 1 ) ) );
+		numeric::xyzVector< core::Real > old_cb_position( pose.xyz( core::id::NamedAtomID( "CB", 1 ) ) );
+		{
+			TS_ASSERT_EQUALS( pose.total_residue(), 3 );
+
+			core::chemical::ResidueType const & restype1( pose.residue_type(1) );
+			core::chemical::ResidueType const & restype2( pose.residue_type(2) );
+			core::chemical::ResidueType const & restype3( pose.residue_type(3) );
+
+			TS_ASSERT_EQUALS( restype1.name(), "ALA:N_acetylated" );
+			TS_ASSERT_EQUALS( restype2.name(), "CYS" );
+			TS_ASSERT_EQUALS( restype3.name(), "SER:C_methylamidated" );
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype1.atom_index( "CQ" ), 1 ),
+				core::id::AtomID( restype1.atom_index( "CP" ), 1 ),
+				core::id::AtomID( restype1.atom_index( "N" ), 1 ),
+				core::id::AtomID( restype1.atom_index( "CA" ), 1 )
+				) ),
+				omg_pre_val, TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype1.atom_index( "CP" ), 1 ),
+				core::id::AtomID( restype1.atom_index( "N" ), 1 ),
+				core::id::AtomID( restype1.atom_index( "CA" ), 1 ),
+				core::id::AtomID( restype1.atom_index( "C" ), 1 )
+				) ),
+				phivals[1], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype1.atom_index( "N" ), 1 ),
+				core::id::AtomID( restype1.atom_index( "CA" ), 1 ),
+				core::id::AtomID( restype1.atom_index( "C" ), 1 ),
+				core::id::AtomID( restype2.atom_index( "N" ), 2 )
+				) ),
+				psivals[1], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype1.atom_index( "CA" ), 1 ),
+				core::id::AtomID( restype1.atom_index( "C" ), 1 ),
+				core::id::AtomID( restype2.atom_index( "N" ), 2 ),
+				core::id::AtomID( restype2.atom_index( "CA" ), 2 )
+				) ),
+				omgvals[1], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype1.atom_index( "C" ), 1 ),
+				core::id::AtomID( restype2.atom_index( "N" ), 2 ),
+				core::id::AtomID( restype2.atom_index( "CA" ), 2 ),
+				core::id::AtomID( restype2.atom_index( "C" ), 2)
+				) ),
+				phivals[2], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype2.atom_index( "N" ), 2 ),
+				core::id::AtomID( restype2.atom_index( "CA" ), 2 ),
+				core::id::AtomID( restype2.atom_index( "C" ), 2 ),
+				core::id::AtomID( restype3.atom_index( "N" ), 3 )
+				) ),
+				psivals[2], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype2.atom_index( "CA" ), 2 ),
+				core::id::AtomID( restype2.atom_index( "C" ), 2 ),
+				core::id::AtomID( restype3.atom_index( "N" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "CA" ), 3 )
+				) ),
+				omgvals[2], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype2.atom_index( "C" ), 2 ),
+				core::id::AtomID( restype3.atom_index( "N" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "CA" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "C" ), 3)
+				) ),
+				phivals[3], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype3.atom_index( "N" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "CA" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "C" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "NR" ), 3 )
+				) ),
+				psivals[3], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype3.atom_index( "CA" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "C" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "NR" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "CS" ), 3 )
+				) ),
+				omgvals[3], TEST_DELTA
+			);
+		}
+
+		// Prepend and append residues:
+		{
+			//pose.dump_pdb( "ACE_NME_TEST_BEFORE.pdb" );
+			PeptideStubMover mover2;
+			mover2.set_reset_mode( false );
+			mover2.add_residue( "Append", "VAL", 3, false, "", 0, 0, "" );
+			mover2.add_residue( "Prepend", "GLY", 1, false, "", 0, 0, "" );
+			mover2.apply( pose );
+			//pose.dump_pdb( "ACE_NME_TEST_AFTER.pdb" );
+		}
+
+		// Check the new conformation:
+		numeric::xyzVector< core::Real > new_ca_position( pose.xyz( core::id::NamedAtomID( "CA", 2 ) ) );
+		numeric::xyzVector< core::Real > new_cb_position( pose.xyz( core::id::NamedAtomID( "CB", 2 ) ) );
+		{
+			TS_ASSERT_EQUALS( pose.total_residue(), 5 );
+
+			TS_ASSERT_DELTA( new_ca_position.x(), old_ca_position.x(), TEST_DELTA );
+			TS_ASSERT_DELTA( new_ca_position.y(), old_ca_position.y(), TEST_DELTA );
+			TS_ASSERT_DELTA( new_ca_position.z(), old_ca_position.z(), TEST_DELTA );
+			TS_ASSERT_DELTA( new_cb_position.x(), old_cb_position.x(), TEST_DELTA );
+			TS_ASSERT_DELTA( new_cb_position.y(), old_cb_position.y(), TEST_DELTA );
+			TS_ASSERT_DELTA( new_cb_position.z(), old_cb_position.z(), TEST_DELTA );
+
+			core::chemical::ResidueType const & restype1( pose.residue_type(1) );
+			core::chemical::ResidueType const & restype2( pose.residue_type(2) );
+			core::chemical::ResidueType const & restype3( pose.residue_type(3) );
+			core::chemical::ResidueType const & restype4( pose.residue_type(4) );
+			core::chemical::ResidueType const & restype5( pose.residue_type(5) );
+
+			TS_ASSERT_EQUALS( restype1.name(), "GLY" );
+			TS_ASSERT_EQUALS( restype2.name(), "ALA" );
+			TS_ASSERT_EQUALS( restype3.name(), "CYS" );
+			TS_ASSERT_EQUALS( restype4.name(), "SER" );
+			TS_ASSERT_EQUALS( restype5.name(), "VAL" );
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype1.atom_index( "CA" ), 1 ),
+				core::id::AtomID( restype1.atom_index( "C" ), 1 ),
+				core::id::AtomID( restype2.atom_index( "N" ), 2 ),
+				core::id::AtomID( restype2.atom_index( "CA" ), 2 )
+				) ),
+				omg_pre_val, TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype1.atom_index( "C" ), 1 ),
+				core::id::AtomID( restype2.atom_index( "N" ), 2 ),
+				core::id::AtomID( restype2.atom_index( "CA" ), 2 ),
+				core::id::AtomID( restype2.atom_index( "C" ), 2 )
+				) ),
+				phivals[1], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype2.atom_index( "N" ), 2 ),
+				core::id::AtomID( restype2.atom_index( "CA" ), 2 ),
+				core::id::AtomID( restype2.atom_index( "C" ), 2 ),
+				core::id::AtomID( restype3.atom_index( "N" ), 3 )
+				) ),
+				psivals[1], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype2.atom_index( "CA" ), 2 ),
+				core::id::AtomID( restype2.atom_index( "C" ), 2 ),
+				core::id::AtomID( restype3.atom_index( "N" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "CA" ), 3 )
+				) ),
+				omgvals[1], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype2.atom_index( "C" ), 2 ),
+				core::id::AtomID( restype3.atom_index( "N" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "CA" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "C" ), 3)
+				) ),
+				phivals[2], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype3.atom_index( "N" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "CA" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "C" ), 3 ),
+				core::id::AtomID( restype4.atom_index( "N" ), 4 )
+				) ),
+				psivals[2], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype3.atom_index( "CA" ), 3 ),
+				core::id::AtomID( restype3.atom_index( "C" ), 3 ),
+				core::id::AtomID( restype4.atom_index( "N" ), 4 ),
+				core::id::AtomID( restype4.atom_index( "CA" ), 4 )
+				) ),
+				omgvals[2], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype3.atom_index( "C" ), 3 ),
+				core::id::AtomID( restype4.atom_index( "N" ), 4 ),
+				core::id::AtomID( restype4.atom_index( "CA" ), 4 ),
+				core::id::AtomID( restype4.atom_index( "C" ), 4)
+				) ),
+				phivals[3], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype4.atom_index( "N" ), 4 ),
+				core::id::AtomID( restype4.atom_index( "CA" ), 4 ),
+				core::id::AtomID( restype4.atom_index( "C" ), 4 ),
+				core::id::AtomID( restype5.atom_index( "N" ), 5 )
+				) ),
+				psivals[3], TEST_DELTA
+			);
+
+			TS_ASSERT_DELTA( numeric::conversions::degrees( pose.conformation().torsion_angle(
+				core::id::AtomID( restype4.atom_index( "CA" ), 4 ),
+				core::id::AtomID( restype4.atom_index( "C" ), 4 ),
+				core::id::AtomID( restype5.atom_index( "N" ), 5 ),
+				core::id::AtomID( restype5.atom_index( "CA" ), 5 )
+				) ),
+				omgvals[3], TEST_DELTA
+			);
+		}
 	}
 
 	void test_multi_append() {

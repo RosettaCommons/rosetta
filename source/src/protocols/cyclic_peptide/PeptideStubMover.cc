@@ -10,6 +10,9 @@
 /// @file
 /// @brief Add constraints to the current pose conformation.
 /// @author Yifan Song
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org): Added support for stripping
+/// N-acetylation and C-methylamidation when appending residues, preserving phi and the previous
+/// omega in the first case and psi and the following omega in the second.
 
 #include <protocols/cyclic_peptide/PeptideStubMover.hh>
 #include <protocols/cyclic_peptide/PeptideStubMoverCreator.hh>
@@ -20,6 +23,8 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueConnection.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/chemical/AtomICoor.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/conformation/ResidueFactory.hh>
@@ -28,10 +33,12 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/variant_util.hh>
+#include <core/id/AtomID.hh>
 
-#include <core/chemical/VariantType.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/util.hh>
+
+#include <numeric/conversions.hh>
 
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
@@ -80,8 +87,7 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 	using namespace core::chemical;
 
 	for ( core::Size istub=1; istub<=stub_rsd_names_.size(); ++istub ) {
-		core::conformation::ResidueOP new_rsd( nullptr );
-		new_rsd = core::conformation::ResidueFactory::create_residue( standard_residues->name_map(stub_rsd_names_[istub]) );
+		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( standard_residues->name_map(stub_rsd_names_[istub]) ) );
 
 		// first stub always starts with a jump
 		if ( istub == 1 && pose.size() == 0 ) {
@@ -100,13 +106,13 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 				}
 			}
 
-			if ( stub_rsd_jumping_[istub] ) {
+			if ( stub_rsd_jumping_[istub] ) { //Appending by jump.
 				runtime_assert_string_msg(stub_mode_[istub] == PSM_append, "Can only use append for jumps");
 				pose.append_residue_by_jump(*new_rsd, anchor_rsd);
 				for ( Size i_repeat = 2; i_repeat <= stub_rsd_repeat_[istub]; ++i_repeat ) {
 					pose.append_residue_by_bond(*new_rsd, true);
 				}
-			} else {
+			} else { //Appending by bond.
 				core::Size connecting_id(0);
 				if ( stub_rsd_connecting_atom_[istub] == "" ) {
 					connecting_id = new_rsd->type().lower_connect_id();
@@ -119,11 +125,17 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 				}
 
 				core::Size anchor_connecting_id(0);
+				core::Size new_index( anchor_rsd ); //The anchor residue's new index after appending or prepending or whatnot.
+				core::Real old_omega_minus1(0), old_phi(0), old_psi(0), old_omega(0); //Only used to preserve phi and omega if we're replacing a C-methylamidation or an N-acetylation.
+				bool replace_upper_terminal_type(false), replace_lower_terminal_type(false);
 				if ( stub_anchor_rsd_connecting_atom_[istub] == "" ) {
-					if ( pose.residue_type(anchor_rsd).is_upper_terminus() ) {
-						core::pose::remove_upper_terminus_type_from_pose_residue(pose, anchor_rsd);
+					if ( stub_mode_[istub] == PSM_append ) {
+						handle_upper_terminus( pose, anchor_rsd, old_psi, old_omega, replace_upper_terminal_type );
+						anchor_connecting_id = pose.residue_type(anchor_rsd).upper_connect_id();
+					} else if ( stub_mode_[istub] == PSM_prepend ) {
+						handle_lower_terminus( pose, anchor_rsd, old_phi, old_omega_minus1, replace_lower_terminal_type );
+						anchor_connecting_id = pose.residue_type(anchor_rsd).lower_connect_id();
 					}
-					anchor_connecting_id = pose.residue_type(anchor_rsd).upper_connect_id();
 				} else {
 					core::Size atomid(pose.residue_type(anchor_rsd).atom_index(stub_anchor_rsd_connecting_atom_[istub]));
 					anchor_connecting_id = pose.residue_type(anchor_rsd).residue_connection_id_for_atom(atomid);
@@ -132,38 +144,41 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 						TR << "Error! Residue " << stub_rsd_names_[anchor_rsd] << " Atom " << stub_anchor_rsd_connecting_atom_[istub] << " cannot be connected" << std::endl;
 					}
 				}
-				if ( anchor_connecting_id == pose.residue_type(anchor_rsd).upper_connect_id() ) {
-					if ( pose.residue_type(anchor_rsd).is_upper_terminus() ) {
-						core::pose::remove_upper_terminus_type_from_pose_residue(pose, anchor_rsd);
-					}
-					if ( pose.residue_type(anchor_rsd).has_variant_type(core::chemical::CUTPOINT_LOWER) ) {
-						core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_LOWER, anchor_rsd);
-					}
+				if ( (!replace_upper_terminal_type) && anchor_connecting_id == pose.residue_type(anchor_rsd).upper_connect_id() ) {
+					handle_upper_terminus( pose, anchor_rsd, old_psi, old_omega, replace_upper_terminal_type );
 				}
-				if ( anchor_connecting_id == pose.residue_type(anchor_rsd).lower_connect_id() ) {
-					if ( pose.residue_type(anchor_rsd).is_lower_terminus() ) {
-						core::pose::remove_lower_terminus_type_from_pose_residue(pose, anchor_rsd);
-					}
-					if ( pose.residue_type(anchor_rsd).has_variant_type(core::chemical::CUTPOINT_UPPER) ) {
-						core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_UPPER, anchor_rsd);
-					}
+				if ( (!replace_lower_terminal_type) && anchor_connecting_id == pose.residue_type(anchor_rsd).lower_connect_id() ) {
+					handle_lower_terminus( pose, anchor_rsd, old_phi, old_omega_minus1, replace_lower_terminal_type );
 				}
 
 				if ( stub_mode_[istub] == PSM_append ) {
 					pose.append_residue_by_bond(*new_rsd, true, connecting_id, anchor_rsd, anchor_connecting_id, false);
+					new_index = anchor_rsd;
 					//rebuild the polymer bond dependent atoms:
-					rebuild_atoms(pose, anchor_rsd);
+					rebuild_atoms(pose, new_index);
 				} else if ( stub_mode_[istub] == PSM_prepend ) {
 					pose.prepend_polymer_residue_before_seqpos(*new_rsd, anchor_rsd, true);
-					rebuild_atoms(pose, anchor_rsd);
+					new_index = anchor_rsd + 1; //The anchor residue's index has shifted by one.
+					rebuild_atoms(pose, new_index);
 				} else if ( stub_mode_[istub] == PSM_insert ) {
 					if ( stub_insert_pos_[istub] != 0 ) {
 						pose.insert_residue_by_bond(*new_rsd, stub_insert_pos_[istub], anchor_rsd, true, stub_anchor_rsd_connecting_atom_[istub], stub_rsd_connecting_atom_[istub], false, true);
+						if ( stub_insert_pos_[istub] <= anchor_rsd ) {
+							new_index = anchor_rsd + 1;
+						} else {
+							new_index = anchor_rsd;
+						}
 						//pose.dump_pdb("test.pdb");
 					} else {
 						pose.append_polymer_residue_after_seqpos(*new_rsd, anchor_rsd, true);
+						new_index = anchor_rsd;
 					}
-					rebuild_atoms(pose, anchor_rsd);
+					rebuild_atoms(pose, new_index);
+				}
+
+				//Update the omega-1 and phi (if we've replaced an N-acetylation) or the psi and omega (if we've replaced a C-methylamidation) to preserve these dihedral values:
+				if ( !reset_ ) {
+					preserve_old_mainchain_torsions( pose, new_index, old_omega_minus1, old_phi, old_psi, old_omega, replace_upper_terminal_type, replace_lower_terminal_type );
 				}
 
 				for ( Size i_repeat = 2; i_repeat <= stub_rsd_repeat_[istub]; ++i_repeat ) {
@@ -412,6 +427,189 @@ void PeptideStubMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 		.add_simple_subelement( "Insert", subelement_attributes, "Specify a residue to insert at a position" );
 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Used to append/insert/prepend residues to a pose", attlist, subelements );
+}
+
+/// @brief Remove terminal types from the upper terminus.  Store the old psi and omega values.
+/// @returns  Returns void, but if a terminal type was removed, old_psi will be set to the previous
+/// psi value and old_omega will be set to the previous omega value.  The replace_upper_terminal_type var
+/// is set to true if a terminal type was replaced and false otherwise.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+PeptideStubMover::handle_upper_terminus(
+	core::pose::Pose & pose,
+	core::Size const anchor_rsd,
+	core::Real & old_psi,
+	core::Real & old_omega,
+	bool & replace_upper_terminal_type
+) const {
+	replace_upper_terminal_type = false;
+	bool const is_valid_type( pose.residue_type(anchor_rsd).is_alpha_aa() || pose.residue_type(anchor_rsd).is_beta_aa() || pose.residue_type(anchor_rsd).is_peptoid() );
+	if ( pose.residue_type( anchor_rsd ).is_upper_terminus() ||
+			pose.residue_type( anchor_rsd ).has_variant_type( core::chemical::C_METHYLAMIDATION ) ||
+			pose.residue_type( anchor_rsd ).has_variant_type(core::chemical::CUTPOINT_LOWER )
+			) {
+		if ( is_valid_type ) {
+			replace_upper_terminal_type = true;
+			old_psi=pose.psi(anchor_rsd);
+			//old omega stored below:
+		}
+		if ( pose.residue_type( anchor_rsd ).has_variant_type( core::chemical::C_METHYLAMIDATION ) ) {
+			if ( is_valid_type ) old_omega=pose.omega(anchor_rsd);
+			core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::C_METHYLAMIDATION, anchor_rsd);
+		} else if ( pose.residue_type(anchor_rsd).has_variant_type(core::chemical::CUTPOINT_LOWER) ) {
+			if ( is_valid_type ) old_omega=0.0;
+			core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_LOWER, anchor_rsd);
+		} else {
+			if ( is_valid_type ) old_omega=0.0;
+			core::pose::remove_upper_terminus_type_from_pose_residue(pose, anchor_rsd);
+		}
+	}
+}
+
+/// @brief Remove terminal types from the lower terminus.  Store the old phi and omega_nminus1 values.
+/// @returns  Returns void, but if a terminal type was removed, old_phi will be set to the previous
+/// phi value and old_omega_nminus1 will be set to the previous upstream omega value.  The
+/// replace_lower_terminal_type var is set to true if a terminal type was replaced and false otherwise.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+PeptideStubMover::handle_lower_terminus(
+	core::pose::Pose & pose,
+	core::Size const anchor_rsd,
+	core::Real & old_phi,
+	core::Real & old_omega_nminus1,
+	bool & replace_lower_terminal_type
+) const {
+	replace_lower_terminal_type = false;
+	bool const is_valid_type( pose.residue_type(anchor_rsd).is_alpha_aa() || pose.residue_type(anchor_rsd).is_beta_aa() || pose.residue_type(anchor_rsd).is_peptoid() );
+	if ( pose.residue_type( anchor_rsd ).is_upper_terminus() ||
+			pose.residue_type( anchor_rsd ).has_variant_type( core::chemical::N_ACETYLATION ) ||
+			pose.residue_type( anchor_rsd ).has_variant_type(core::chemical::CUTPOINT_UPPER )
+			) {
+		if ( is_valid_type ) {
+			replace_lower_terminal_type = true;
+			old_phi=pose.phi(anchor_rsd);
+			//old omega stored below:
+		}
+		if ( pose.residue_type( anchor_rsd ).has_variant_type( core::chemical::N_ACETYLATION ) ) {
+			if ( is_valid_type ) {
+				core::chemical::ResidueType const & restype( pose.residue_type(anchor_rsd) );
+				old_omega_nminus1 = numeric::conversions::degrees( pose.conformation().torsion_angle(
+					core::id::AtomID( restype.atom_index("CQ"), anchor_rsd ),
+					core::id::AtomID( restype.atom_index("CP"), anchor_rsd ),
+					core::id::AtomID( restype.atom_index("N"), anchor_rsd ),
+					core::id::AtomID( restype.atom_index("CA"), anchor_rsd )
+					) );
+			}
+			core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::N_ACETYLATION, anchor_rsd);
+		} else if ( pose.residue_type(anchor_rsd).has_variant_type(core::chemical::CUTPOINT_UPPER) ) {
+			if ( is_valid_type ) old_omega_nminus1=0.0;
+			core::pose::remove_variant_type_from_pose_residue(pose, core::chemical::CUTPOINT_UPPER, anchor_rsd);
+		} else {
+			if ( is_valid_type ) old_omega_nminus1=0.0;
+			core::pose::remove_upper_terminus_type_from_pose_residue(pose, anchor_rsd);
+		}
+	}
+}
+
+/// @brief Update the omega-1 and phi (if we've replaced an N-acetylation) or the psi and omega
+/// (if we've replaced a C-methylamidation) to preserve these dihedral values.
+/// @details Builds a temporary foldtree rooted on the alpha carbon of the anchor residue.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+PeptideStubMover::preserve_old_mainchain_torsions(
+	core::pose::Pose & pose,
+	core::Size const anchor_res,
+	core::Real const old_omega_minus1,
+	core::Real const old_phi,
+	core::Real const old_psi,
+	core::Real const old_omega,
+	bool const replace_upper_terminal_type,
+	bool const replace_lower_terminal_type
+) const {
+	if ( !(replace_upper_terminal_type || replace_lower_terminal_type ) ) return; //Do nothing if there was no terminal type replaced.
+
+	core::chemical::ResidueType const & restype( pose.residue_type(anchor_res) );
+	if ( !(restype.is_alpha_aa() || restype.is_beta_aa() || restype.is_peptoid() ) ) return; //Do nothing if this isn't a suitable type.
+
+
+	// Store the old foldtree:
+	core::kinematics::FoldTree const saved_ft( pose.fold_tree() );
+
+	// Temporarily append a virtual residue, which will be the root of the new foldtree.
+	core::conformation::ResidueOP new_virt( core::conformation::ResidueFactory::create_residue( pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t )->name_map("VRT") ) );
+	pose.append_residue_by_jump( *new_virt, anchor_res, "", "", true );
+	core::Size const virtres( pose.total_residue() ); //Index of the new virtual.
+
+	// Build a temporary foldtree:
+	core::kinematics::FoldTree ft_copy;
+	ft_copy.clear();
+	core::Size jumpcount(1);
+	core::Size const chaincount( pose.conformation().num_chains() );
+
+	for ( core::Size chain(1); chain<chaincount; ++chain ) { //Loop through all chains
+		core::Size const chnbgn( pose.conformation().chain_begin(chain) );
+		core::Size const chnend( pose.conformation().chain_end(chain) );
+		if ( anchor_res <= chnend && anchor_res >= chnbgn ) { //If the new root is in the current chain
+			ft_copy.add_edge( virtres, anchor_res, jumpcount++, pose.residue_type(virtres).atom_name( pose.residue_type(virtres).root_atom()), "CA");
+			if ( anchor_res < chnend ) ft_copy.add_edge( anchor_res, chnend, -1, "CA", pose.residue_type(chnend).atom_name(pose.residue_type(chnend).root_atom()) );
+			if ( anchor_res > chnbgn ) ft_copy.add_edge( anchor_res, chnbgn, -1, "CA", pose.residue_type(chnbgn).atom_name(pose.residue_type(chnbgn).root_atom()) );
+		} else { //Otherwise, just add the chain.
+			ft_copy.add_edge( virtres, chnbgn, jumpcount++);
+			ft_copy.add_edge( chnbgn, chnend, -1);
+		}
+	}
+	ft_copy.reorder( virtres );
+	if ( TR.visible() ) {
+		TR << "Temporary fold tree: " << ft_copy << std::endl;
+	}
+	pose.fold_tree(ft_copy);
+
+	if ( replace_upper_terminal_type ) {
+		pose.set_psi( anchor_res, old_psi );
+		pose.set_omega( anchor_res, old_omega );
+	}
+	if ( replace_lower_terminal_type ) {
+		pose.set_phi( anchor_res, old_phi );
+		//Ugh.  Need to march upstream to get atoms in prepended residue:
+		core::conformation::Residue const & thisres( pose.residue(anchor_res) );
+		core::Size const other_res_index( thisres.connected_residue_at_lower() ); //Index of residue connected at this residue's lower connection.
+		runtime_assert( other_res_index != 0 ); //Should be true.
+		core::conformation::Residue const & otherres( pose.residue(other_res_index) );
+		core::Size const other_res_conn_atom( otherres.connect_atom(thisres) ); //The atom on the other residue that connects to this residue.
+		runtime_assert( other_res_conn_atom != 0 ); //Should  be true.
+		core::chemical::ResidueType const & otherrestype( otherres.type() );
+		core::Size const other_res_conn_atom_parent( other_res_conn_atom == otherrestype.root_atom() ? 2 : otherrestype.icoor( other_res_conn_atom ).stub_atom1().atomno() );
+		core::Size const this_res_downstream_atom( restype.lower_connect_atom() == restype.root_atom() /*I think this is always true, but better safe than sorry*/ ? 2 : restype.icoor(restype.lower_connect_atom()).stub_atom1().atomno() );
+
+		pose.conformation().set_torsion_angle(
+			core::id::AtomID( other_res_conn_atom_parent, other_res_index ),
+			core::id::AtomID( other_res_conn_atom, other_res_index ),
+			core::id::AtomID( restype.lower_connect_atom(), anchor_res ),
+			core::id::AtomID( this_res_downstream_atom, anchor_res ),
+			numeric::conversions::radians( old_omega_minus1 )
+		);
+	}
+
+	// Set a foldtree without a JEDGE for removing the virtual (crashes otherwise):
+	ft_copy.clear();
+	jumpcount = 1;
+	for ( core::Size chain(1), chainmax(pose.conformation().num_chains()); chain<=chainmax; ++chain ) {
+		if ( chain > 1 ) {
+			ft_copy.add_edge( 1, pose.conformation().chain_begin(chain), jumpcount++ );
+		}
+		ft_copy.add_edge( pose.conformation().chain_begin(chain), pose.conformation().chain_end(chain), -1 );
+	}
+	pose.fold_tree(ft_copy);
+
+	// Remove the virtual
+	pose.delete_residue_slow( virtres );
+
+	// Swap the old foldtree back in:
+	pose.fold_tree( saved_ft );
+
+	// Update residue neighbours:
+	pose.update_residue_neighbors();
+
 }
 
 std::string PeptideStubMoverCreator::keyname() const {

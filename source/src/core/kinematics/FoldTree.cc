@@ -867,6 +867,23 @@ FoldTree::add_edge(
 	edge_list_.push_back( Edge( start, stop, start_atom, stop_atom ) );
 }
 
+/// @brief Especially useful version of add_edge for chemical edge construction
+/// @details Allows label.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+void
+FoldTree::add_edge(
+	Size const start,
+	Size const stop,
+	int const label,
+	std::string const & start_atom,
+	std::string const & stop_atom
+) {
+	if ( start == stop && !( start == 1 && edge_list_.empty() ) ) return;
+	runtime_assert( start > 0 );
+	runtime_assert( stop  > 0 );
+	new_topology = true; // book-keeping
+	edge_list_.push_back( Edge( start, stop, label, start_atom, stop_atom, true ) );
+}
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details  Does not ensure proper folding order
