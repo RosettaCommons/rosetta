@@ -24,6 +24,7 @@
 
 // Basic Headers
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
@@ -71,14 +72,26 @@ NoDesignPackerPalette::clone() const
 }
 
 /// @brief Function to parse XML tags, implemented by derived classes.
-/// @brief Failure to implement this results in a warning message, but does not prevent compilation or
-/// program execution.
+/// @details This parse_my_tag is unusual in that it handles the registration with the CitationManager.  The
+/// NoDesignPackerPalette probably doesn't need to be cited unless the user has explicitly scripted it in a
+/// RosettaScripts script.  Normally, registration would be handled by provide_authorship_info_for_unpublished().
 void
 NoDesignPackerPalette::parse_my_tag(
 	utility::tag::TagCOP const &/*tag*/,
 	basic::datacache::DataMap const &/*datamap*/
 ) {
 	TR.Debug << "Parsing XML for NoDesignPackerPalette.  (No user-configurable options)." << std::endl;
+
+	// Only register this PackerPalette with the CitationManager if it is explicitly RosettaScripts-scripted:
+	basic::citation_manager::CitationManager::get_instance()->add_unpublished_modules(
+		utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > {
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		name(), basic::citation_manager::CitedModuleType::PackerPalette,
+		"Vikram K. Mulligan", "Systems Biology, Center for Computational Biology, Flatiron Institute",
+		"vmulligan@flatironinstitute.org"
+		)
+		}
+	);
 }
 
 /// @brief Provide information about the XML options available for this PackerPalette.
@@ -97,25 +110,6 @@ std::string const &
 NoDesignPackerPalette::name() const {
 	static const std::string myname( "NoDesignPackerPalette" );
 	return myname;
-}
-
-/// @brief Returns true (this packer palette is unpublished).
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-NoDesignPackerPalette::packer_palette_is_unpublished() const {
-	return true;
-}
-
-/// @brief Returns VK Mulligan as the author.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-NoDesignPackerPalette::provide_authorship_info_for_unpublished() const {
-	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > {
-		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
-		name(), basic::citation_manager::CitedModuleType::PackerPalette,
-		"Vikram K. Mulligan", "Systems Biology, Center for Computational Biology, Flatiron Institute", "vmulligan@flatironinstitute.org"
-		)
-		};
 }
 
 BaseTypeList

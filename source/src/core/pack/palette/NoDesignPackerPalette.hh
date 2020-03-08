@@ -68,8 +68,9 @@ public:
 	PackerPaletteOP clone() const override;
 
 	/// @brief Function to parse XML tags, implemented by derived classes.
-	/// @brief Failure to implement this results in a warning message, but does not prevent compilation or
-	/// program execution.
+	/// @details This parse_my_tag is unusual in that it handles the registration with the CitationManager.  The
+	/// NoDesignPackerPalette probably doesn't need to be cited unless the user has explicitly scripted it in a
+	/// RosettaScripts script.  Normally, registration would be handled by provide_authorship_info_for_unpublished().
 	void
 	parse_my_tag(
 		utility::tag::TagCOP const &tag,
@@ -81,16 +82,6 @@ public:
 
 	/// @brief Get the name of this object ("NoDesignPackerPalette").
 	std::string const & name() const override;
-
-public: //Functions for the CitationManager:
-
-	/// @brief Returns true (this packer palette is unpublished).
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	bool packer_palette_is_unpublished() const override;
-
-	/// @brief Returns VK Mulligan as the author.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
 
 protected:
 
