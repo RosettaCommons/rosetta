@@ -26,16 +26,14 @@ static basic::Tracer TR( "--namespace_dot--.--class--" );
 --namespace--
 
 /// @brief Default constructor.
---class--::--class--():
- utility::pointer::ReferenceCount()
-{}
+--class--::--class--() = default;
 
 /// @brief Copy constructor.  Keep default unless deep copying is needed (and in that case,
 /// consider using DeepCopyOPs.)
---class--::--class--( --class-- const & )=default;
+--class--::--class--( --class-- const & ) = default;
 
 /// @brief Destructor.
---class--::~--class--(){}
+--class--::~--class--() = default;
 
 /// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 --class--OP

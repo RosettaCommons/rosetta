@@ -40,7 +40,7 @@ public:
 	AuthorNames( std::string const &given_names, std::string const &surname, std::string const &initials );
 
 	AuthorNames( AuthorNames const & ) = default;
-	virtual ~AuthorNames() = default;
+	~AuthorNames() override = default;
 	AuthorNamesOP clone() const;
 
 	/// @brief Assignment operator.
@@ -115,7 +115,7 @@ public:
 	/// @brief Copy constructor.
 	Citation(Citation const &) = default;
 
-	virtual ~Citation() = default;
+	~Citation() override = default;
 
 	CitationOP clone() const;
 

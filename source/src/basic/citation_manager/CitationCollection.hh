@@ -42,7 +42,7 @@ public:
 	CitationCollection( std::string const & module_name, std::string const & module_type_name );
 
 	/// @brief Destructor.
-	virtual ~CitationCollection() = default;
+	~CitationCollection() override = default;
 
 	/// @brief Copy constructor.
 	CitationCollection(CitationCollection const &) = default;

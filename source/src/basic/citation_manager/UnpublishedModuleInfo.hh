@@ -68,7 +68,7 @@ public:
 	UnpublishedModuleInfo(UnpublishedModuleInfo const &) = default;
 
 	/// @brief Destructor.
-	virtual ~UnpublishedModuleInfo() = default;
+	~UnpublishedModuleInfo() override = default;
 
 	/// @brief Comparison operator.
 	bool operator==( UnpublishedModuleInfo const & other ) const;

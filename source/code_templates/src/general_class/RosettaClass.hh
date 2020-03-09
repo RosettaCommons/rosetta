@@ -36,7 +36,7 @@ public:
 	--class--(--class-- const & src);
 
 	/// @brief Destructor.
-	virtual ~--class--();
+	~--class--() override;
 
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	--class--OP clone() const;

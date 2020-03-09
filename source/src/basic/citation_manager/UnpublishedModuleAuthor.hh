@@ -46,7 +46,7 @@ public:
 	UnpublishedModuleAuthor(UnpublishedModuleAuthor const &) = default;
 
 	/// @brief Destructor.
-	virtual ~UnpublishedModuleAuthor() = default;
+	~UnpublishedModuleAuthor() override = default;
 
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	UnpublishedModuleAuthorOP clone() const;
