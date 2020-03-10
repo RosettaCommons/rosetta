@@ -64,16 +64,23 @@ ResidueSelectorOP SSElementSelector::clone() const { return utility::pointer::ma
 
 utility::vector1<SSElementSelector::SSElement> SSElementSelector::parse_ss(core::pose::Pose const & pose) const{
 	utility::vector1<SSElementSelector::SSElement> ss_elements;
-	core::scoring::dssp::Dssp dssp( pose );
-	dssp.dssp_reduced();
+
 	//initilize-------------------------------
 	//default case --------
 	Size start_pose_res = 1;
 	Size end_pose_res = pose.size();
+	core::pose::Pose pose_asym;
 	//symmetric case  ------
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		end_pose_res = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+		core::pose::symmetry::extract_asymmetric_unit( pose,pose_asym );
+	} else {
+		pose_asym=pose;
 	}
+
+	core::scoring::dssp::Dssp dssp( pose_asym );
+	dssp.dssp_reduced();
+
 	//chain entered case  ------
 	bool skip_first_SS=false;
 	if ( chain_!="" ) {
