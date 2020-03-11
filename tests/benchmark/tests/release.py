@@ -68,7 +68,7 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
         shutil.move(archive, release_path + '/' + package_versioning_name + '.tar.bz2')
 
         # removing old archives and adjusting _latest_html_
-        files = [f for f in os.listdir(release_path) if f != _latest_html_]
+        files = [f for f in os.listdir(release_path) if f != _latest_html_  and  f[0] != '.' ]
         files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
         for f in files[:-_number_of_archive_files_to_keep_]: os.remove(release_path+'/'+f)
         if files:
@@ -80,13 +80,13 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
         TR('Creating git repository for {name} as {package_name}...'.format(**vars()) )
 
         git_repository_name = '{package_name}.{branch}'.format(**vars())
-        git_release_path = '{}/{name}/git/{branch}/'.format(config['release_root'], **vars())
+        git_release_path = f'{config["release_root"]}/{name}/git/{branch}/'
         git_origin = os.path.abspath(git_release_path + git_repository_name + '.git')  # bare repositiry
 
         git_working_dir = working_dir + '/' + git_repository_name
         if not os.path.isdir(git_release_path): os.makedirs(git_release_path)
 
-        with FileLock(f'{git_origin}/.release.lock'):
+        with FileLock(f'{git_release_path}/.{git_repository_name}.release.lock'):
 
             if not os.path.isdir(git_origin): execute('Origin git repository is not present, initializing...', 'git init --bare {git_origin} && cd {git_origin} && git update-server-info'.format(**vars()) )
 
@@ -133,7 +133,7 @@ def convert_to_release(rosetta_dir, working_dir, config, git_repository_name, re
                                         url='https://www.rosettacommons.org',
                                         file_name='{working_dir}/{git_repository_name}/main/.release.json'.format(**vars()))  # we placing this into rosetta/main/ instead of rosetta/ so Rosetta developers could not accidently trigger this unnoticed
 
-    execute('Convertion sources to release form...', 'cd {working_dir}/{git_repository_name} && ./tools/release/convert_to_release.bash'.format(**vars()))
+    execute('Convertion sources to release form...', 'cd {working_dir}/{git_repository_name} && ./main/tools/release/convert_to_release.bash'.format(**vars()))
 
     ## These have already been cloned via the convert_to_release.bash script
     #execute('Clonning Binder...', 'cd {working_dir}/{git_repository_name}/main/source/src/python/PyRosetta && git clone https://github.com/RosettaCommons/binder.git && cd binder && git checkout {} && rm -rf .git'.format(info['source']['binder'], **vars()))
@@ -166,10 +166,13 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
     # Removing all old files but preserve .git dir...
     execute('Removing previous files...', 'cd {working_dir}/{git_repository_name} && mv .git .. && rm -r * .*'.format(**vars()), return_='tuple')
 
-    execute('Clonning current checkout of rosetta main...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir} main'.format(**vars()))
-    execute('Clonning current checkout of rosetta tools...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../tools tools'.format(**vars()))
-    execute('Clonning current checkout of rosetta demos...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../demos demos'.format(**vars()))
-    execute('Clonning current checkout of rosetta documentation...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../documentation documentation'.format(**vars()))
+    execute('Clonning current checkout of rosetta main...', f'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir} main')
+    convert_submodule_urls_from_ssh_to_https(f'{working_dir}/{git_repository_name}/main')
+    execute('Initing and updating all submodule...', f'cd {working_dir}/{git_repository_name}/main && git submodule update --init --recursive')
+
+    # execute('Clonning current checkout of rosetta tools...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../tools tools'.format(**vars()))
+    # execute('Clonning current checkout of rosetta demos...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../demos demos'.format(**vars()))
+    # execute('Clonning current checkout of rosetta documentation...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../documentation documentation'.format(**vars()))
 
     # DANGER DANGER DANGER     DEBUG ONLY, REMOVE LINES BELOW BEFORE COMMITING!!!!!
     # execute('Copying convert_to_release script...', 'cp {rosetta_dir}/../tools/release/convert_to_release.bash {working_dir}/{git_repository_name}/tools/release'.format(**vars()))
@@ -239,10 +242,13 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
     # Removing all old files but preserve .git dir...
     execute('Removing previous files...', 'cd {working_dir}/{git_repository_name} && mv .git .. && rm -r * .*'.format(**vars()), return_='tuple')
 
-    execute('Clonning current checkout of rosetta main...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir} main'.format(**vars()))
-    execute('Clonning current checkout of rosetta tools...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../tools tools'.format(**vars()))
-    execute('Clonning current checkout of rosetta demos...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../demos demos'.format(**vars()))
-    execute('Clonning current checkout of rosetta documentation...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../documentation documentation'.format(**vars()))
+    execute('Clonning current checkout of rosetta main...', f'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir} main')
+    convert_submodule_urls_from_ssh_to_https(f'{working_dir}/{git_repository_name}/main')
+    execute('Initing and updating all submodule...', f'cd {working_dir}/{git_repository_name}/main && git submodule update --init --recursive')
+
+    # execute('Clonning current checkout of rosetta tools...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../tools tools'.format(**vars()))
+    # execute('Clonning current checkout of rosetta demos...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../demos demos'.format(**vars()))
+    # execute('Clonning current checkout of rosetta documentation...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../documentation documentation'.format(**vars()))
 
     # DANGER DANGER DANGER     DEBUG ONLY, REMOVE LINE BELOW BEFORE COMMITING!!!!!
     #execute('Copying convert_to_release script...', 'cp {rosetta_dir}/../tools/release/convert_to_release.bash {working_dir}/{git_repository_name}/tools/release'.format(**vars()))
@@ -259,7 +265,7 @@ def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config
     if not os.path.isdir(release_path): os.makedirs(release_path)
 
     execute('Moving back upstream .git dir and commiting new release...', 'cd {working_dir}/{git_repository_name} && mv ../.git .'.format(**vars()))
-    execute('Adding files and commiting new release...', 'cd {working_dir}/{git_repository_name} && git add * && git add -f main/source/bin/* main/source/build/* && git ci -a -m "{release_name}"'.format(**vars()))
+    execute('Adding files and commiting new release...', f'cd {working_dir}/{git_repository_name} && git add * && git add -f main/source/bin/* main/source/build/* && git commit -a -m "{release_name}"')
 
     res, oldest_sha = execute('Getting HEAD~N old commit...', 'cd {working_dir}/{git_repository_name} && git rev-parse HEAD~{_number_of_rosetta_binary_revisions_to_keep_in_git_}'.format(_number_of_rosetta_binary_revisions_to_keep_in_git_=_number_of_rosetta_binary_revisions_to_keep_in_git_, **vars()), return_='tuple')
     if not res:  # if there is no histore error would be raised, but that also mean that rebase is not needed...
@@ -437,7 +443,7 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
     else:
         documentation_dir = os.path.abspath(working_dir+'/documentation')
 
-        res, output2 = execute('Generating PyRosetta-4 documentation...', "source {ve.activate} && {build_command_line} -s -d --documentation {documentation_dir}".format(**vars()), return_='tuple', add_message_and_command_line_to_output=True)
+        res, output2 = execute('Generating PyRosetta-4 documentation...', "{ve.activate} && {build_command_line} -s -d --documentation {documentation_dir}".format(**vars()), return_='tuple', add_message_and_command_line_to_output=True)
 
         if res:
             res_code = _S_build_failed_
@@ -525,6 +531,8 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
     memory = config['memory'];  jobs = config['cpu_count']
     if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
 
+    if 'cxx11thread' not in platform['extras']  or  'serialization' not in platform['extras']: raise BenchmarkError( f'Running native_libc_py_rosetta4_conda_release: on platform with extras={platform["extras"]}, however Conda build on platform without cxx11thread or serialization is not supported!' )
+
     TR = Tracer(True)
 
     TR('Running PyRosetta4 conda release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
@@ -537,7 +545,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
     version_file = working_dir + '/version.json'
     version = generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=release_name, url='http://www.pyrosetta.org', file_name=version_file)  # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
 
-    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, conda=conda, skip_compile=debug, version=version_file, options='--multi-threaded --no-strip-module --binder-config rosetta.distributed.config --serialization')
+    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, conda=conda, skip_compile=debug, version=version_file, options='--no-strip-module --binder-config rosetta.distributed.config')  # --multi-threaded  --serialization
     build_command_line = result.command_line
     pyrosetta_path = result.pyrosetta_path
 
@@ -561,10 +569,15 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
         else:
             distr_file_list = os.listdir(pyrosetta_path+'/build')
 
+            packages = ' '.join( get_required_pyrosetta_packages_for_platform(platform) ).replace('>', '=').replace('<', '=')
+
+            local_python = local_python_install(platform, config)
+            python_virtual_environment = setup_persistent_python_virtual_environment(local_python, packages)
+
             #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
             gui_flag, res, output = '', result.exitcode, result.output
             if False  and  kind == 'Debug': res, output = 0, 'Debug build, skipping PyRosetta unit tests run...\n'
-            else: res, output = execute('Running PyRosetta tests...', 'cd {pyrosetta_path}/build && {python} self-test.py {gui_flag} -j{jobs}'.format(pyrosetta_path=pyrosetta_path, python=result.python, jobs=jobs, gui_flag=gui_flag), return_='tuple')
+            else: res, output = execute('Running PyRosetta tests...', f'{python_virtual_environment.activate} && cd {pyrosetta_path}/build && {rosetta_dir}/source/test/timelimit.py 32 {result.python} self-test.py {gui_flag} -j{jobs}', return_='tuple')
 
             json_file = pyrosetta_path + '/build/.test.output/.test.results.json'
             with open(json_file) as f: results = json.load(f)
@@ -601,7 +614,8 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
                 requirements = dict(
                     build = [f'python =={platform["python"]}'],
                     host  = [f'python =={platform["python"]}', 'setuptools', 'numpy', 'zlib'],
-                    run   = [f'python =={platform["python"]}', "{{ pin_compatible('numpy') }}", 'zlib', 'pandas >=0.18', 'scipy >=1.0', 'traitlets', 'python-blosc'],
+                    #run   = [f'python =={platform["python"]}', "{{ pin_compatible('numpy') }}", 'zlib', 'pandas >=0.18', 'scipy >=1.0', 'traitlets', 'python-blosc'],
+                    run   = [f'python =={platform["python"]}', 'zlib', ] + get_required_pyrosetta_packages_for_platform(platform, conda=True),
                 ),
                 test = dict( commands = ['python -m unittest pyrosetta.tests.distributed.test_smoke'] ),
 
@@ -622,7 +636,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
 
             with FileLock( '{conda_release_path}/.{os}.python{python_version}.release.lock'.format(os=platform['os'], python_version=platform['python'][:3].replace('.', ''), **vars()) ):
 
-                conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet {recipe_dir}  --output-folder {conda_release_path}'
+                conda_build_command_line = f'{conda.activate_base} && conda build purge && conda build --no-locking --quiet --channel conda-forge {recipe_dir}  --output-folder {conda_release_path}'
                 conda_package = execute('Getting Conda package name...', f'{conda_build_command_line} --output', return_='output', silent=True).split()[0]  # removing '\n' at the end
 
                 TR(f'Building Conda package: {conda_package}...')

@@ -12,7 +12,7 @@
 ## @brief  Common constats and types for all test types
 ## @author Sergey Lyskov
 
-import os, time, sys, shutil, codecs, urllib.request, imp, subprocess, json  # urllib.error, urllib.parse,
+import os, time, sys, shutil, codecs, urllib.request, imp, subprocess, json, hashlib  # urllib.error, urllib.parse,
 import platform as  platform_module
 import types as types_module
 
@@ -357,6 +357,38 @@ def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=Fals
     return res, output, build_command_line
 
 
+
+def get_required_pyrosetta_packages_for_platform(platform, conda=False):
+    ''' return list of Python packages that is required to run PyRosetta for given platform
+
+        IMPORTANT: each package should have version specification in it by either using ==, >= or <=
+        so we can have reproducible test enviroment
+
+        IMPORTANT: there should be no spaces between package name and version number
+    '''
+    packages = '\
+    blosc==1.8.3         \
+    cloudpickle==0.7.0   \
+    dask>=2.11.0         \
+    dask-jobqueue>=0.7.0 \
+    distributed>=2.11.0  \
+    jupyter>=1.0.0       \
+    numpy>=1.17.3        \
+    pandas>=0.25.2       \
+    py3Dmol>=0.8.0       \
+    scipy>=1.3.1         \
+    traitlets>=4.3.3     \
+    '
+
+    if conda: packages = packages.replace('blosc', 'python-blosc')
+
+    packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', '3.6')[:2] != '2.' else []
+
+    for p in packages: assert '=' in p
+
+    return packages
+
+
 def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', options='', conda=None, verbose=False, skip_compile=False, version=None):
     ''' Compile Rosetta binaries on a given platform return NT(exitcode, output, build_command_line, pyrosetta_path, python) '''
 
@@ -386,7 +418,7 @@ def build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', opti
     else:
         res, output = execute('Building PyRosetta {}...'.format(mode), command_line, return_='tuple', add_message_and_command_line_to_output=True)
 
-    return NT(exitcode=res, output=output, command_line=command_line, pyrosetta_path=pyrosetta_path, python=py_env.python, root=py_env.root)
+    return NT(exitcode=res, output=output, command_line=command_line, pyrosetta_path=pyrosetta_path, python=py_env.python, root=py_env.root, python_environment=py_env)
 
 
 
@@ -460,7 +492,8 @@ def get_python_include_and_lib(python):
     ''' calculate python include dir and lib dir from given python executable executable
     '''
     python_bin_dir = python.rpartition('/')[0]
-    info = execute('Getting python configuration info...', 'unset __PYVENV_LAUNCHER__ && cd {python_bin_dir} && PATH=.:$PATH && {python}-config --prefix --includes'.format(**vars()), return_='output').replace('\r', '').split('\n')  # Python-3 only: --abiflags
+    python_config = f'{python} {python}-config' if python.endswith('2.7') else f'{python}-config'
+    info = execute('Getting python configuration info...', f'unset __PYVENV_LAUNCHER__ && cd {python_bin_dir} && PATH=.:$PATH && {python_config} --prefix --includes', return_='output').replace('\r', '').split('\n')  # Python-3 only: --abiflags
     python_prefix = info[0]
     python_include_dir = info[1].split()[0][len('-I'):]
     python_lib_dir = python_prefix + '/lib'
@@ -498,6 +531,7 @@ def local_open_ssl_install(prefix, build_prefix, jobs):
 def local_python_install(platform, config):
     ''' Perform local install of given Python version and return path-to-python-interpreter, python_include_dir, python_lib_dir
         If previous install is detected skip installiation.
+        Provided Python install will _persistent_ and _immutable_
     '''
     prefix = config['prefix']
     jobs = config['cpu_count']
@@ -513,11 +547,12 @@ def local_python_install(platform, config):
 
     # for security reasons we only allow installs for version listed here with hand-coded URL's
     python_sources = {
-        '2.7' : 'https://www.python.org/ftp/python/2.7.14/Python-2.7.14.tgz',
+        '2.7' : 'https://www.python.org/ftp/python/2.7.17/Python-2.7.17.tgz',
 
-        '3.5' : 'https://www.python.org/ftp/python/3.5.5/Python-3.5.5.tgz',
-        '3.6' : 'https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz',
-        '3.7' : 'https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tgz',
+        '3.5' : 'https://www.python.org/ftp/python/3.5.9/Python-3.5.9.tgz',
+        '3.6' : 'https://www.python.org/ftp/python/3.6.10/Python-3.6.10.tgz',
+        '3.7' : 'https://www.python.org/ftp/python/3.7.6/Python-3.7.6.tgz',
+        '3.8' : 'https://www.python.org/ftp/python/3.8.2/Python-3.8.2.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
@@ -537,7 +572,8 @@ def local_python_install(platform, config):
 
     extra = ('unset __PYVENV_LAUNCHER__ && ' + extra[0], extra[1])
 
-    signature = 'v1.1 url: {url}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'.format( **vars() )
+    options = '--without-ensurepip'
+    signature = f'v1.1 url: {url}\noptions: {options}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'
 
     machine_name = os.uname()[1]
     suffix = platform['os'] + '.' + machine_name
@@ -589,7 +625,7 @@ def local_python_install(platform, config):
         execute('Unpacking {}'.format(archive), 'cd {build_prefix} && tar -xvzf {archive}'.format(**vars()) )
 
         #execute('Building and installing...', 'cd {} && CC={compiler} CXX={cpp_compiler} {extra[0]} ./configure {extra[1]} --prefix={root} && {extra[0]} make -j{jobs} && {extra[0]} make install'.format(build_dir, **locals()) )
-        execute('Configuring...', 'cd {} && CC={compiler} CXX={cpp_compiler} {extra[0]} ./configure {extra[1]} --prefix={root}'.format(build_dir, **locals()) )
+        execute('Configuring...', 'cd {} && CC={compiler} CXX={cpp_compiler} {extra[0]} ./configure {options} {extra[1]} --prefix={root}'.format(build_dir, **locals()) )
         execute('Building...', 'cd {} && {extra[0]} make -j{jobs}'.format(build_dir, **locals()) )
         execute('Installing...', 'cd {} && {extra[0]} make -j{jobs} install'.format(build_dir, **locals()) )
 
@@ -603,7 +639,16 @@ def local_python_install(platform, config):
 
     il = get_python_include_and_lib(executable)
 
-    return NT(python=executable, root=root, python_include_dir=il.python_include_dir, python_lib_dir=il.python_lib_dir, version=python_version)
+    return NT(
+        python=executable,
+        root=root,
+        python_include_dir=il.python_include_dir,
+        python_lib_dir=il.python_lib_dir,
+        version=python_version,
+        url=url,
+        platform=platform,
+        config=config,
+    )
 
 
 
@@ -613,16 +658,53 @@ def setup_python_virtual_environment(working_dir, python_environment, packages='
 
     python = python_environment.python
 
-    execute('Setting up Python virtual environment...', '{python} -m venv {working_dir}'.format(**vars()) )
+    execute('Setting up Python virtual environment...', '{python} -m venv --clear {working_dir}'.format(**vars()) )
 
-    activate = working_dir + '/bin/activate'
+    activate = f'. {working_dir}/bin/activate'
 
     bin=working_dir+'/bin'
 
-    if packages: execute('Installing packages: {}...'.format(packages), '{bin}/python {bin}/pip install --upgrade pip && {bin}/python {bin}/pip install {packages}'.format(**vars()) )
+    if packages: execute('Installing packages: {}...'.format(packages), '{bin}/python {bin}/pip install --progress-bar off --upgrade pip && {bin}/python {bin}/pip install {packages}'.format(**vars()) )
     #if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip{python_environment.version} install {packages}'.format(**vars()) )
 
     return NT(activate = activate, python = bin + '/python', root = working_dir, bin = bin)
+
+
+
+def setup_persistent_python_virtual_environment(python_environment, packages):
+    ''' Setup _persistent_ and _immutable_ Python virtual environment which will be saved between test runs
+    '''
+
+    if python_environment.version.startswith('2.'):
+        assert not packages, f'ERROR: setup_persistent_python_virtual_environment does not support Python-2.* with non-empty package list!'
+        return NT(activate = ':', python = python_environment.python, root = python_environment.root, bin = python_environment.root + '/bin')
+
+    else:
+
+        h = hashlib.md5()
+        h.update(f'platform: {python_environment.platform} python_source_url: {python_environment.url} packages: {packages}'.encode('utf-8', errors='replace') )
+        hash =h.hexdigest()
+
+        machine_name = os.uname()[1]
+        suffix = python_environment.platform['os'] + '.' + machine_name
+
+        root = os.path.abspath(python_environment.config['prefix'] + '/' + suffix + '/python_virtual_environments/' + '/python-' + python_environment.version + '/' + hash)
+        signature_file_name = root + '/.signature'
+
+        activate = f'. {root}/bin/activate'
+        bin = f'{root}/bin'
+
+        if os.path.isfile(signature_file_name): pass
+        else:
+            if os.path.isdir(root): shutil.rmtree(root)
+            setup_python_virtual_environment(root, python_environment, packages=packages)
+            for f in os.listdir(root + '/bin'):  # removing all pip's and easy_install's to make sure that environment is immutable
+                for p in ['pip', 'easy_install']:
+                    if f.startswith(p): os.remove(root + '/bin/' + f)
+            with open(signature_file_name, 'w') as f: pass
+
+        return NT(activate = activate, python = bin + '/python', root = root, bin = bin)
+
 
 
 def generate_version_information(rosetta_dir, **kwargs):
@@ -715,7 +797,7 @@ def _get_path_to_conda_root(platform, config):
 
         print( f'Installing MiniConda, using {url}... Done.' )
 
-    return NT(conda=executable, root=root, activate=activate)
+    return NT(conda=executable, root=root, activate=activate, url=url)
 
 
 
@@ -741,7 +823,18 @@ def setup_conda_virtual_environment(working_dir, platform, config, packages=''):
 
     il = get_python_include_and_lib(python)
 
-    return NT( activate = activate, root = prefix, python = python, python_include_dir=il.python_include_dir, python_lib_dir=il.python_lib_dir, version=python_version, activate_base = conda_root_env.activate)
+    return NT(
+        activate = activate,
+        root = prefix,
+        python = python,
+        python_include_dir = il.python_include_dir,
+        python_lib_dir = il.python_lib_dir,
+        version = python_version,
+        activate_base = conda_root_env.activate,
+        url = prefix, # conda_root_env.url,
+        platform=platform,
+        config=config,
+    )
 
 
 
@@ -782,3 +875,11 @@ class FileLock():
         if self.locked:
             os.remove(self.file_name)
             self.locked = False
+
+
+
+def convert_submodule_urls_from_ssh_to_https(repository_root):
+    ''' switching submodules URL to HTTPS so we can clone without SSH key
+    '''
+    with open(f'{repository_root}/.gitmodules') as f: m = f.read()
+    with open(f'{repository_root}/.gitmodules', 'w') as f: f.write( m.replace('git@github.com:', 'https://github.com/') )

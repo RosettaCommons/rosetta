@@ -50,7 +50,7 @@ def copy_files(files_location, working_dir):
             #     fl = working_dir + '/' + d + '/' + f
             #     if os.path.isfile(fl): ignore.append(d + '/' + f)  #os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
 
-def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results):
+def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results, config):
     """
     Run the typical integration tests for integration and demos
 
@@ -94,7 +94,11 @@ def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_co
     if re.search("--valgrind", additional_flags):
         timeout = 24*60*60  # If we've spent a full day on it, and it's still running, we're probably hosed.
 
-    command_line = 'cd {}/tests/integration && {python} ./integration.py --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs} {additional_flags}'.format(rosetta_dir, python=sys.executable, jobs=jobs, mode=mode, compiler=compiler, extras=extras, timeout=timeout, additional_flags=additional_flags)
+    python_environment = local_python_install(platform, config)
+    python_virtual_environment = setup_persistent_python_virtual_environment(python_environment, 'numpy scipy mmtf-python networkx mrcfile')
+
+    command_line = f'{python_virtual_environment.activate} && cd {rosetta_dir}/tests/integration && python ./integration.py --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs} {additional_flags}'
+
     TR( 'Running integration script: {}'.format(command_line) )
 
     #JAB - Why is this not run in debug mode, isn't this half the point?
@@ -136,7 +140,7 @@ def run_integration_tests(mode, rosetta_dir, working_dir, platform, config, hpc_
         return results
 
     #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
-    command_line, output, results, full_log = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results)
+    command_line, output, results, full_log = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results, config=config)
 
     ignore = []
     files_location = rosetta_dir+'/tests/integration/new/'
@@ -182,7 +186,7 @@ def run_demo_tests(mode, rosetta_dir, working_dir, platform, config, hpc_driver=
         results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + full_log
         return results
 
-    command_line, output, results, full_log = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results)
+    command_line, output, results, full_log = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results, config=config)
 
     ignore = []
 
@@ -230,7 +234,7 @@ def run_valgrind_tests(mode, rosetta_dir, working_dir, platform, config, hpc_dri
 
     files_location = rosetta_dir+'/tests/integration/valgrind/'
     json_results_file = os.path.abspath( files_location +"/valgrind_results.yaml" )
-    command_line, output, results, full_log = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results)
+    command_line, output, results, full_log = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results, config=config)
 
     ignore = []
     # Copy just the valgrind output to the archive directory - we don't need the other output

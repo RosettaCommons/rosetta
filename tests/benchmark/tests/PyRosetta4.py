@@ -69,9 +69,13 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
         distr_file_list = os.listdir(result.pyrosetta_path+'/build')
 
+        packages = ' '.join( get_required_pyrosetta_packages_for_platform(platform) ).replace('>', '=').replace('<', '=')
+
+        python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
+
         #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
         gui_flag, res, output = '', result.exitcode, result.output
-        command_line = f'cd {result.pyrosetta_path}/build && {rosetta_dir}/source/test/timelimit.py 32 {result.python} self-test.py {gui_flag} -j{jobs}'
+        command_line = f'{python_virtual_environment.activate} && cd {result.pyrosetta_path}/build && {rosetta_dir}/source/test/timelimit.py 32 {result.python} self-test.py {gui_flag} -j{jobs}'
         output += '\nRunning PyRosetta tests: ' + command_line + '\n'
 
         res, o = execute('Running PyRosetta tests...', command_line, return_='tuple')
@@ -127,7 +131,7 @@ def run_notebook_tests(rosetta_dir, working_dir, platform, config, hpc_driver, v
 
         jobs = {}
         for n in notebooks:
-            command_line = f'cd {notebooks_path} && {P.python_virtual_environment.python} -m nbconvert --to script {n}.ipynb && export DEBUG="DEBUG" && {rosetta_dir}/source/test/timelimit.py 8 {P.python_virtual_environment.bin}/ipython {n}.py'
+            command_line = f'cd {notebooks_path} && {P.python_virtual_environment.python} -m nbconvert --to script {n}.ipynb && export DEBUG="DEBUG" && {rosetta_dir}/source/test/timelimit.py 8 {P.python_virtual_environment.bin}/ipython --HistoryManager.enabled=False {n}.py'
             jobs[n] = command_line
 
         notebook_test_results = parallel_execute('notebook_tests', jobs, rosetta_dir, working_dir, config['cpu_count'], time=60)

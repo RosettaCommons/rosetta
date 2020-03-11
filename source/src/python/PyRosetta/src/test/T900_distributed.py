@@ -40,30 +40,32 @@ test_suites = [
     "pyrosetta.tests.numeric.test_alignment",
 ]
 
-with tempfile.TemporaryDirectory(prefix="tmp_pyrosetta_env") as venv_dir:
 
-    venv.create(venv_dir, clear=True, system_site_packages=False, with_pip=True)
+for test_suite in test_suites: e( "python -m unittest {}".format(test_suite) )
 
-    packages = " ".join(
-        [
-            "blosc==1.8.1",
-            "cloudpickle==0.7.0",
-            "dask==2.11.0",
-            "dask-jobqueue==0.7.0",
-            "distributed==2.11.0",
-            "jupyter==1.0.0",
-            "numpy==1.17.3",
-            "pandas==0.25.2",
-            "py3Dmol==0.8.0",
-            "scipy==1.3.1",
-            "traitlets==4.3.3",
-        ]
-    )
-    e(". {0}/bin/activate && {0}/bin/pip install {1}".format(venv_dir, packages))
 
-    for test_suite in test_suites:
-        e(
-            ". {0}/bin/activate && {0}/bin/python -m unittest {1}".format(
-                venv_dir, test_suite
-            )
-        )
+# with tempfile.TemporaryDirectory(prefix="tmp_pyrosetta_env") as venv_dir:
+#     venv.create(venv_dir, clear=True, system_site_packages=False, with_pip=True)
+#     packages = " ".join(
+#         [
+#             "blosc==1.8.1",
+#             "cloudpickle==0.7.0",
+#             "dask==2.11.0",
+#             "dask-jobqueue==0.7.0",
+#             "distributed==2.11.0",
+#             "jupyter==1.0.0",
+#             "numpy==1.17.3",
+#             "pandas==0.25.2",
+#             "py3Dmol==0.8.0",
+#             "scipy==1.3.1",
+#             "traitlets==4.3.3",
+#         ]
+#     )
+#     e(". {0}/bin/activate && {0}/bin/pip install {1}".format(venv_dir, packages))
+
+#     for test_suite in test_suites:
+#         e(
+#             ". {0}/bin/activate && {0}/bin/python -m unittest {1}".format(
+#                 venv_dir, test_suite
+#             )
+#         )

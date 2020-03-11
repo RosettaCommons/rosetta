@@ -66,8 +66,7 @@ def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_dr
     # symlink(rosetta_dir + '/tests/benchmark/hpc_drivers', working_dir + '/benchmark/hpc_drivers')
 
     python_environment = local_python_install(platform, config)
-    python_virtual_environment_path = working_dir+'/.python_virtual_environment'
-    python_virtual_environment = setup_python_virtual_environment(python_virtual_environment_path, python_environment, python_packages)
+    python_virtual_environment = setup_persistent_python_virtual_environment(python_environment, python_packages)
 
     multi_step_config = dict( config,
                               test = test,
@@ -100,7 +99,7 @@ def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_dr
     else:
         with open(f'{working_dir}/{_multi_step_result_}') as f: result = json.load(f)
 
-    if not config['emulation'] and os.path.isdir(python_virtual_environment_path): shutil.rmtree(python_virtual_environment_path)
+    #if not config['emulation'] and os.path.isdir(python_virtual_environment_path): shutil.rmtree(python_virtual_environment_path)
 
     return result
 
@@ -111,11 +110,12 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     # will not accidentally break when a new version of upstream package got released in the future
     tests = dict(
         _template_               = '',
-        relax_cartesian          = 'numpy matplotlib',
-        relax_fast               = 'numpy matplotlib',
-        relax_fast_5iter         = 'numpy matplotlib',
 
-        dock_glycans           = 'numpy matplotlib',
+        relax_cartesian  = 'numpy matplotlib',
+        relax_fast       = 'numpy matplotlib',
+        relax_fast_5iter = 'numpy matplotlib',
+
+        dock_glycans     = 'numpy matplotlib',
 
         stepwise_rna_favorites = 'numpy matplotlib',
         rna_denovo_favorites   = 'numpy matplotlib',
@@ -126,34 +126,35 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         fragments_picking      = 'numpy matplotlib',
         cofactor_binding_sites = 'numpy matplotlib',
 
-        mp_f19_energy_landscape  = 'numpy matplotlib scipy',
-        mp_f19_sequence_recovery = 'numpy matplotlib',
-        mp_f19_ddG_of_mutation = 'numpy matplotlib',
+        mp_f19_energy_landscape     = 'numpy matplotlib scipy',
+        mp_f19_sequence_recovery    = 'numpy matplotlib',
+        mp_f19_ddG_of_mutation      = 'numpy matplotlib',
         mp_f19_decoy_discrimination = 'numpy matplotlib',
 
-        mp_dock                  = 'numpy matplotlib',
-        mp_relax                 = 'numpy matplotlib',
-        mp_symdock               = 'numpy matplotlib',
-        mp_lipid_acc             = 'numpy matplotlib',
-        mp_domain_assembly       = 'numpy matplotlib',
+        mp_dock            = 'numpy matplotlib',
+        mp_relax           = 'numpy matplotlib',
+        mp_symdock         = 'numpy matplotlib',
+        mp_lipid_acc       = 'numpy matplotlib',
+        mp_domain_assembly = 'numpy matplotlib',
 
-        sewing                   = 'numpy matplotlib',
+        sewing               = 'numpy matplotlib',
 
-        antibody_grafting        = 'numpy matplotlib',
-        antibody_h3_modeling     = 'numpy matplotlib',
-        antibody_snugdock        = 'numpy matplotlib',
-        loop_modeling_ngk_12res = 'numpy matplotlib',
+        antibody_grafting    = 'numpy matplotlib',
+        antibody_h3_modeling = 'numpy matplotlib',
+        antibody_snugdock    = 'numpy matplotlib',
+
+        loop_modeling_ngk_12res           = 'numpy matplotlib',
         loop_modeling_kic_fragments_12res = 'numpy matplotlib',
-        loop_modeling_kic_12res = 'numpy matplotlib',
-        loop_modeling_ccd_12res = 'numpy matplotlib',
+        loop_modeling_kic_12res           = 'numpy matplotlib',
+        loop_modeling_ccd_12res           = 'numpy matplotlib',
 
-        make_fragments           = 'numpy matplotlib',
-        ligand_docking		= 'numpy matplotlib',
+        make_fragments         = 'numpy matplotlib',
+        ligand_docking	       = 'numpy matplotlib',
         ligand_scoring_ranking = 'numpy matplotlib pandas==0.23.4 sklearn scipy ',
         mhc_epitope_energy     = 'numpy matplotlib',
         FlexPepDock            = 'numpy matplotlib',
-        docking                  = 'numpy matplotlib',
-        ddg_ala_scan             = 'numpy matplotlib pandas==0.24.2 scipy==1.1.0',
+        docking                = 'numpy matplotlib',
+        ddg_ala_scan           = 'numpy matplotlib pandas==0.24.2 scipy==1.1.0',
     )
 
     if test.endswith('.debug'): test = test[:-len('.debug')];  debug = True

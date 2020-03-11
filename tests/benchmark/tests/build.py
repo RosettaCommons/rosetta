@@ -126,9 +126,8 @@ def run_test_on_fresh_clone(test, rosetta_dir, working_dir, platform, config, hp
 
     execute('Cloning main...', 'cd {working_dir} && git clone {rosetta_dir} {clean_main}'.format(**vars()) )
 
-    # switching submodules URL to HTTPS so we can clone without SSH key
-    with open(f'{working_dir}/clean_main/.gitmodules') as f: m = f.read()
-    with open(f'{working_dir}/clean_main/.gitmodules', 'w') as f: f.write( m.replace('git@github.com:', 'https://github.com/') )
+
+    convert_submodule_urls_from_ssh_to_https(f'{working_dir}/clean_main')
 
     res = run_test(test, working_dir + '/' + clean_main, working_dir, platform, config, hpc_driver, verbose, debug)
 
