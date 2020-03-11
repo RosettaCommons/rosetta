@@ -1354,6 +1354,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	if ( flags_.ppk_only ) {
 		prepack_only(pose, !flags_.no_prepack1/*ppk_receptor*/, !flags_.no_prepack2/*ppk_peptide*/);
 	} else if ( flags_.min_only ) {
+		core::scoring::constraints::add_fa_constraints_from_cmdline(pose, *scorefxn_);
 		minimize_only(pose,"lbfgs_armijo_atol", 0.01/*tolerance*/);
 	} else if ( flags_.torsionsMCM || flags_.rbMCM || flags_.lowres_preoptimize || flags_.lowres_abinitio ) {
 		// Main protocol:
