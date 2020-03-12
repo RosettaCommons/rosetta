@@ -161,7 +161,7 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
     if res: binder_head = 'unknown'
     else: binder_head = output.split('\n')[0]
 
-    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.0', binder = binder_head, llvm_version=llvm_version, compiler=Options.compiler, gcc_install_prefix=Options.gcc_install_prefix)
+    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.0, HTTPS', binder = binder_head, llvm_version=llvm_version, compiler=Options.compiler, gcc_install_prefix=Options.gcc_install_prefix)
     signature_file_name = build_dir + '/.signature.json'
 
     disk_signature = dict(config = 'unknown', binder = 'unknown')
@@ -177,9 +177,9 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
 
         clang_path = "{prefix}/tools/clang".format(**locals())
 
-        if not os.path.isfile(prefix + '/CMakeLists.txt'): execute('Download LLVM source...', 'cd {prefix_root} && curl http://releases.llvm.org/{llvm_version}/llvm-{llvm_version}.src.tar.xz | tar -Jxo && mv llvm-{llvm_version}.src {prefix}'.format(**locals()) )
+        if not os.path.isfile(prefix + '/CMakeLists.txt'): execute('Download LLVM source...', 'cd {prefix_root} && curl https://releases.llvm.org/{llvm_version}/llvm-{llvm_version}.src.tar.xz | tar -Jxo && mv llvm-{llvm_version}.src {prefix}'.format(**locals()) )
 
-        if not os.path.isdir(clang_path): execute('Download Clang source...', 'cd {prefix_root} && curl http://releases.llvm.org/{llvm_version}/cfe-{llvm_version}.src.tar.xz | tar -Jxo && mv cfe-{llvm_version}.src {clang_path}'.format(**locals()) )
+        if not os.path.isdir(clang_path): execute('Download Clang source...', 'cd {prefix_root} && curl https://releases.llvm.org/{llvm_version}/cfe-{llvm_version}.src.tar.xz | tar -Jxo && mv cfe-{llvm_version}.src {clang_path}'.format(**locals()) )
 
         if not os.path.isdir(prefix+'/tools/clang/tools/extra'): os.makedirs(prefix+'/tools/clang/tools/extra')
 
