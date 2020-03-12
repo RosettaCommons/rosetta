@@ -1052,6 +1052,14 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			} else if ( ramp_down_constraints() ) {
 				set_constraint_weight( local_scorefxn, full_weights, cmd.param1, pose );
 			}
+		} else if ( cmd.command == "nloop" ) {
+			if ( cmd.nparams < 1 ) {
+				utility_exit_with_message( "More parameters expected after : " + cmd.command  );
+			} else {
+				core::Size const new_loop( cmd.param1 );
+				TR << "Setting nloop to " << new_loop << std::endl;
+				pack_full_repack->nloop( new_loop );
+			}
 		} else if ( cmd.command == "ramp_repack_min" ) {
 			inner_loop_ramp_repack_min_command( cmd, total_repeat_count, do_rama_repair, full_weights, pose, pack_full_repack, repeat_count, total_count, local_movemap, local_scorefxn, chk_counter, dump_counter );
 		} else if ( cmd.command == "accept_to_best" ) {
