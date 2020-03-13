@@ -573,7 +573,7 @@ def local_python_install(platform, config):
     extra = ('unset __PYVENV_LAUNCHER__ && ' + extra[0], extra[1])
 
     options = '--without-ensurepip'
-    signature = f'v1.1 url: {url}\noptions: {options}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'
+    signature = f'v1.2 url: {url}\noptions: {options}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'
 
     machine_name = os.uname()[1]
     suffix = platform['os'] + '.' + machine_name
@@ -664,7 +664,7 @@ def setup_python_virtual_environment(working_dir, python_environment, packages='
 
     bin=working_dir+'/bin'
 
-    if packages: execute('Installing packages: {}...'.format(packages), '{bin}/python {bin}/pip install --progress-bar off --upgrade pip && {bin}/python {bin}/pip install {packages}'.format(**vars()) )
+    if packages: execute('Installing packages: {}...'.format(packages), '{bin}/python {bin}/pip install --upgrade pip && {bin}/python {bin}/pip install --progress-bar off {packages}'.format(**vars()) )
     #if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip{python_environment.version} install {packages}'.format(**vars()) )
 
     return NT(activate = activate, python = bin + '/python', root = working_dir, bin = bin)
@@ -682,7 +682,7 @@ def setup_persistent_python_virtual_environment(python_environment, packages):
     else:
 
         h = hashlib.md5()
-        h.update(f'platform: {python_environment.platform} python_source_url: {python_environment.url} packages: {packages}'.encode('utf-8', errors='replace') )
+        h.update(f'platform: {python_environment.platform} python_source_url: {python_environment.url} packages: {packages}'.encode('utf-8', errors='backslashreplace') )
         hash =h.hexdigest()
 
         machine_name = os.uname()[1]
