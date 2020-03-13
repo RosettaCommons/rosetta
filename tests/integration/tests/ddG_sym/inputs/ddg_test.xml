@@ -1,0 +1,71 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+        <ScoreFunction name="sfxn" weights="ref2015" symmetric="1" />
+    </SCOREFXNS>
+    
+    //legacy interface detection code that does not work with ResidueSelectors. See RESIDUE_SELECTORS section.
+    <TASKOPERATIONS> 
+        //detects residues between building blocks
+        <BuildingBlockInterface name="design_bbi_2comp" multicomp="1" sym_dof_names="JAC1,JBC1" fa_rep_cut="3.0" contact_dist="10" bblock_dist="5" />
+        //selects surface and boundary residues of BUILDING BLOCK
+        <SelectBySASA name="bb_surf" mode="sc" state="monomer" core_asa="0" surface_asa="0" core="0" boundary="1" surface="1" verbose="0" />
+        //MAKE SURE invert=0, detects if any residues are not the same as native input
+        <RestrictNativeResidues name="nonnative" prevent_repacking="1" invert="0" />
+    </TASKOPERATIONS>
+
+    <RESIDUE_SELECTORS>
+        //selects CPG residues
+        <ResidueName name="CPG" residue_name3="CYS,PRO,GLY" />
+            <Not name="not_CPG" selector="CPG" />
+
+        //import legacy interface detection code
+        <Task name="design_bbi_selector" designable="true" task_operations="design_bbi_2comp" />
+        <Task name="bb_surf_selector" designable="true" task_operations="bb_surf" />
+            <And name="design_int_no_nonnative" selectors="design_bbi_selector,bb_surf_selector,not_CPG" />
+        <Task name="nonnative_selector" designable="true" task_operations="nonnative" />
+
+        //set design_resis
+        <Or name="design_resis" selectors="design_int_no_nonnative,nonnative_selector" /> //selects full interface, including preserved residues
+        <Neighborhood name="pack_resis" selector="design_resis" distance="5" include_focus_in_subset="false" />
+        <Or name="design_and_pack_resis" selectors="design_resis,pack_resis" />
+            <Not name="lock_resis" selector="design_and_pack_resis" />
+    </RESIDUE_SELECTORS>
+    
+    <TASKOPERATIONS>
+        <IncludeCurrent name="ic" />                                        //includes input pdb's rotamers
+        <LimitAromaChi2 name="limitaro" chi2max="110" chi2min="70" />       //disallow extreme aromatic rotamers
+        <RestrictToRepacking name="repack_only" />                          //for minimize/repack
+        <ExtraRotamersGeneric name="ex1_ex2" ex1="1" ex2="0" ex2aro="1" />  //use ex1 ex2 rotamers
+
+        //setup tasks
+        <OperateOnResidueSubset name="pack_task" selector="pack_resis" >
+            <RestrictToRepackingRLT/> </OperateOnResidueSubset>
+        <OperateOnResidueSubset name="lock_task" selector="lock_resis" >
+            <PreventRepackingRLT/> </OperateOnResidueSubset>
+    </TASKOPERATIONS>
+
+    <MOVERS>
+        //regen sym and sample without a/r; 2-component
+        <SymDofMover name="gen_docked_config_no_transforms_2comp_mover" symm_file="inputs/T33.sym" sym_dof_names="JAC1,JBC1" flip_input_about_axes="0,0" />
+        <TaskAwareSymMinMover name="min_clean_no_rb" scorefxn="sfxn" bb="0" chi="1" rb="0" task_operations="pack_task,lock_task,repack_only" /> //this is for ddG
+    </MOVERS>
+
+    <FILTERS>
+        <Ddg name="ddG" repeats="3" extreme_value_removal="1" translate_by="1000" scorefxn="sfxn" task_operations="pack_task,lock_task,repack_only,ic,ex1_ex2" threshold="0" relax_mover="min_clean_no_rb"
+        	repack="1" 
+        	repack_bound="1" 
+        	relax_bound="1" 
+        	repack_unbound="1" 
+        	relax_unbound="1"
+        	confidence="0" />
+    </FILTERS>
+
+    <PROTOCOLS>
+        //generate docked configuration
+        <Add mover_name="gen_docked_config_no_transforms_2comp_mover" />
+        //filters
+		<Add filter_name="ddG" />
+    </PROTOCOLS>
+    
+    <OUTPUT scorefxn="sfxn" />
+</ROSETTASCRIPTS>

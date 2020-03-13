@@ -1,0 +1,5 @@
+-s inputs/T33-21.pdb
+-native inputs/T33-21.pdb
+-parser:protocol inputs/ddg_test.xml
+-mute all
+-unmute protocols.rosetta_scripts.ParsedProtocol protocols.matdes.BuildingBlockInterfaceOperation protocols.task_operations.RestrictNativeResiduesOperation protocols.simple_ddg.ddG protocols.simple_filters.DdgFilter
