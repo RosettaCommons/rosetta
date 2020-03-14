@@ -325,6 +325,13 @@ def calculate_extension(platform, mode='release'):
     return extras + "." + os + platform['compiler'] + mode
 
 
+def calculate_unique_prefix_path(platform, config):
+    ''' calculate path for prefix location that is unique for this machine and OS
+    '''
+    hostname = os.uname()[1]
+    return config['prefix'] + '/' + hostname + '/' + platform['os']
+
+
 def platform_to_pretty_string(platform):
     ''' Take platform as json object and return normalized human-readable string '''
     return '{}.{}{}{}'.format(platform['os'], platform['compiler'], ('.'+'.'.join(platform['extras']) if 'extras' in platform  and  platform['extras'] else ''), ('.python'+platform['python'] if 'python' in platform else ''))
@@ -441,11 +448,13 @@ def build_and_install_pyrosetta(working_dir, rosetta_dir, platform, jobs, config
 
 
 
-def install_llvm_tool(name, source_location, config, clean=True):
+def install_llvm_tool(name, source_location, platform, config, clean=True):
     ''' Install and update (if needed) custom LLVM tool at given prefix (from config).
         Return absolute path to executable on success and raise BenchmarkError exception on failure (do not catch this! if you really need 'normal' exit from this function on failure - refactor it instead)
     '''
-    prefix = config['prefix']
+
+    prefix = calculate_unique_prefix_path(platform, config)
+
     jobs = config['cpu_count']
 
     release = 'release_37'
@@ -533,7 +542,6 @@ def local_python_install(platform, config):
         If previous install is detected skip installiation.
         Provided Python install will _persistent_ and _immutable_
     '''
-    prefix = config['prefix']
     jobs = config['cpu_count']
     compiler, cpp_compiler = ('clang', 'clang++') if platform['os'] == 'mac' else ('gcc', 'g++')  # disregarding platform compiler setting and instead use default compiler for platform
 
@@ -575,10 +583,7 @@ def local_python_install(platform, config):
     options = '--without-ensurepip'
     signature = f'v1.2 url: {url}\noptions: {options}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'
 
-    machine_name = os.uname()[1]
-    suffix = platform['os'] + '.' + machine_name
-
-    root = os.path.abspath(prefix + '/' + suffix + '/python-' + python_version + '.' +  compiler)
+    root = calculate_unique_prefix_path(platform, config) + '/python-' + python_version + '.' +  compiler
 
     signature_file_name = root + '/.signature'
 
@@ -685,10 +690,9 @@ def setup_persistent_python_virtual_environment(python_environment, packages):
         h.update(f'platform: {python_environment.platform} python_source_url: {python_environment.url} packages: {packages}'.encode('utf-8', errors='backslashreplace') )
         hash =h.hexdigest()
 
-        machine_name = os.uname()[1]
-        suffix = python_environment.platform['os'] + '.' + machine_name
+        prefix = calculate_unique_prefix_path(python_environment.platform, python_environment.config)
 
-        root = os.path.abspath(python_environment.config['prefix'] + '/' + suffix + '/python_virtual_environments/' + '/python-' + python_environment.version + '/' + hash)
+        root = os.path.abspath( prefix + '/python_virtual_environments/' + '/python-' + python_environment.version + '/' + hash )
         signature_file_name = root + '/.signature'
 
         activate = f'. {root}/bin/activate'
@@ -722,8 +726,6 @@ def _get_path_to_conda_root(platform, config):
     ''' Perform local (prefix) install of miniconda and return NT(activate, conda_root_dir, conda)
         this function is for inner use only, - to setup custom conda environment inside your test use `setup_conda_virtual_environment` below
     '''
-    prefix = config['prefix']
-
     miniconda_sources = {
         'mac'    : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh',
         'linux'  : 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh',
@@ -749,10 +751,7 @@ def _get_path_to_conda_root(platform, config):
 
     signature = f'url: {url}\nversion: {version}\channels: {channels}\npackages: {packages}\n'
 
-    machine_name = os.uname()[1]
-    suffix = platform['os'] + '.' + machine_name
-
-    root = os.path.abspath( prefix + '/' + suffix + '/conda' )
+    root = calculate_unique_prefix_path(platform, config) + '/conda'
 
     signature_file_name = root + '/.signature'
 

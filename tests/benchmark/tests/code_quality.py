@@ -30,7 +30,7 @@ def run_serialization_test(rosetta_dir, working_dir, platform, config, hpc_drive
 
     execute('Updating options, ResidueTypes and version info...', 'cd {}/source && ./update_options.sh && ./update_ResidueType_enum_files.sh && python version.py'.format(rosetta_dir) )
 
-    executable = install_llvm_tool('serialization_validator', source_location='{}/tools/clang_ast_transform/rosetta-refactor-tool'.format(rosetta_dir), config=config)
+    executable = install_llvm_tool('serialization_validator', source_location='{}/tools/clang_ast_transform/rosetta-refactor-tool'.format(rosetta_dir), platform=platform, config=config)
     #executable_path = executable.rpartition('/')[0]
 
     tools_dir = os.path.abspath(rosetta_dir+'/tools')

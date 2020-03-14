@@ -95,7 +95,12 @@ def setup_from_options(options):
 
     if 'results_root' not in config: config['results_root'] = os.path.abspath('./results/')
 
-    if 'prefix' not in config: config['prefix'] = os.path.abspath( config['results_root'] + '/prefix')
+    if 'prefix' in config:
+        assert os.path.isabs( config['prefix'] ), f'ERROR: `prefix` path must be absolute! Got: {config["prefix"]}'
+
+    else: config['prefix'] = os.path.abspath( config['results_root'] + '/prefix')
+
+
 
     if options.skip_compile is not None: config['skip_compile'] = options.skip_compile
 
