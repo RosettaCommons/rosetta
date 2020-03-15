@@ -155,7 +155,7 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
     llvm_version='6.0.1'
     prefix = prefix_root + '/llvm-' + llvm_version
 
-    build_dir = prefix+'/llvm-' + llvm_version + '.' + Platform + '.' +_machine_name_ + ('.debug' if debug else '.release')
+    build_dir = prefix+'/llvm-' + llvm_version + '.' + platform.platform() + '.' + _machine_name_ + ('.debug' if debug else '.release')
 
     res, output = execute('Getting binder HEAD commit SHA1...', 'cd {} && git rev-parse HEAD'.format(source_location), return_='tuple', silent=True)
     if res: binder_head = 'unknown'
