@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os,sys,re,string
 #from AshworthUtil import get_oneletter
 
@@ -20,7 +20,7 @@ oneletter = {'ALA':'A','CYS':'C','ASP':'D','GLU':'E','PHE':'F','GLY':'G',
 						 ' DA':'a',' DC':'c',' DG':'g',' DT':'t'} # new pdb spec
 
 def get_oneletter(aa3):
-	if oneletter.has_key(aa3): return oneletter[aa3]
+	if aa3 in oneletter: return oneletter[aa3]
 	return aa3.strip()[0]
 
 # initialization of lookup matrix
@@ -64,7 +64,7 @@ if opt.matrix:
 #print 'Verifying substitution matrix:'
 for aa1 in aas:
 	for aa2 in aas:
-		if not substitution_matrix.has_key( (aa1,aa2) ):
+		if (aa1,aa2) not in substitution_matrix:
 			sys.stderr.write('error, substitution matrix missing key (%s,%s)\n' %(aa1,aa2)); sys.exit()
 		score = substitution_matrix[(aa1,aa2)]
 		if score == None:

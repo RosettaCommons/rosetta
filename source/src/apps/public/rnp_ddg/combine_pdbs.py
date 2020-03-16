@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+
 from util import read_pdb
 import os
 import argparse
@@ -12,7 +14,7 @@ def combine_pdbs(full_pdb, subset_pdbs, output_pdb):
 		string_of_subset_pdbs+=s
 		string_of_subset_pdbs+=' '
 	os.system('cat %s > tmp_subsets.pdb' %(string_of_subset_pdbs))
-	
+
 	(s_coords, s_pdb_lines, s_sequence, s_chains, s_residues) = read_pdb( 'tmp_subsets.pdb' )
 
 	#loop through the full pdb
@@ -42,7 +44,7 @@ def combine_pdbs(full_pdb, subset_pdbs, output_pdb):
 
 	os.remove('tmp_subsets.pdb')
 	fout.close()
-	
+
 if __name__ == '__main__':
 	parser=argparse.ArgumentParser(description="Combine a full pdb with rebuilt subsets")
 	parser.add_argument('-f', '--full_pdb', type=str, help='The full/original pdb file')

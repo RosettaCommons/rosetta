@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+
 import os
 from sys import exit
 import argparse
@@ -23,7 +25,7 @@ relax_commands = [
 
 'rnp_ddg -ignore_zero_occupancy false -s min8.min7_0001.pdb -score:weights SFXN -move_backbone true -move_protein_backbone true -out_prefix min_START_STRUCT_PREF_ -relax_cutoff_dist 200.0 -min_jumps true -protein_pack_reps 0 -restore_talaris_behavior > relax_1.log',
 
-'rnp_ddg -ignore_zero_occupancy false -s min_START_STRUCT_PREF_wildtype_bound.pdb -score:weights SFXN -move_backbone true -move_protein_backbone true -out_prefix min_again_START_STRUCT_PREF_ -relax_cutoff_dist 200.0 -min_jumps true -protein_pack_reps 0 -restore_talaris_behavior > relax_2.log' 
+'rnp_ddg -ignore_zero_occupancy false -s min_START_STRUCT_PREF_wildtype_bound.pdb -score:weights SFXN -move_backbone true -move_protein_backbone true -out_prefix min_again_START_STRUCT_PREF_ -relax_cutoff_dist 200.0 -min_jumps true -protein_pack_reps 0 -restore_talaris_behavior > relax_2.log'
 ]
 
 def main( args ):
@@ -37,7 +39,7 @@ def main( args ):
 	relax_dir = run_dir + '/relax_%s' %(start_struct_pref)
 	if not os.path.exists(relax_dir):
 		os.mkdir( relax_dir )
-	else: 
+	else:
 		print "Directory relax_%s already exists!" %(start_struct_pref)
 		exit( 0 )
 	command_file = open('ALL_RELAX_COMMANDS', 'w')
@@ -66,11 +68,11 @@ def main( args ):
 
 	with open( '%s/input_lists/input_2.txt' %(relax_dir), 'w') as f:
 		f.write( 'min1.%s_0001.pdb\n' %(start_struct_pref) )
-		
+
 	for i in range( 3, 9):
 		with open( '%s/input_lists/input_%d.txt' %(relax_dir,i), 'w') as f:
 			f.write( 'min%d.min%d_0001.pdb\n' %(i-1, i-2) )
-		
+
 	# Find the final lowest scoring structure (in the command_file)
 	command_file.write( 'cd %s\n' %(run_dir))
 	command_file.close()
@@ -86,7 +88,7 @@ def main( args ):
 	print "Alternatively, commands are separated out in the RELAX_COMMAND_* files."
 	print "(This is especially useful if you are running on a cluster: each command can be run separately.)"
 	print "These can also be run by typing e.g.: source RELAX_COMMAND_1"
-	
+
 
 if __name__ == '__main__':
 	parser=argparse.ArgumentParser(description="Relax an experimental structure in preparation for ddG predictions")

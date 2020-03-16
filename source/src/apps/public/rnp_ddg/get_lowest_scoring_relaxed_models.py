@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+
 import argparse
 import os
 import glob
@@ -19,7 +21,7 @@ def main( args ):
 		if not os.path.exists( '%s/relax_2.log' %(full_d)): continue
 		score = 0
 		for line in open( '%s/relax_2.log' %(full_d)):
-			if "Score of the complex" in line: 
+			if "Score of the complex" in line:
 				score = float( line.split()[-1].replace('\n',''))
 				break
 		scores_and_dirs.append( [ score, pdb ] )

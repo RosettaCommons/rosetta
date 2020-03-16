@@ -356,10 +356,13 @@ EXAMPLES For Running Demos/Tutorials
     print("\n")
 
     globalparams = generateIntegrationTestGlobalSubstitutionParameters()
-    print("Python: `"+globalparams.get("python","")+"`")
-    print("Python2: `"+globalparams.get("python2","")+"`")
-    print("Python3: `"+globalparams.get("python3","")+"`")
+    print("Python: `"  + globalparams.get("python","")  +"`")
+    print("Python2: `" + globalparams.get("python2","") +"`")
+    print("Python3: `" + globalparams.get("python3","") +"`")
     print("\n")
+
+    verify_python_version(globalparams.get("python2",""), 2)
+    verify_python_version(globalparams.get("python3",""), 3)
 
     #All tests are in a subdirectory.  We set these up here.
     test_subdir = "tests"
@@ -1014,6 +1017,11 @@ def get_binext():
     binext = extras.replace(',', '')+"."+platform+compiler+mode
     return binext, dict(locals())
 
+
+def verify_python_version(executable, version):
+    command_line = "{executable} -c 'import sys; sys.exit(sys.version_info[0] != {version})'".format(**vars())
+    execute('Verifying Python {executable} to have version {version}.*...'.format(**vars()), command_line)
+
 def generateIntegrationTestGlobalSubstitutionParameters():
     # Variables that may be referenced in the cmd string:
     python = sys.executable
@@ -1025,7 +1033,8 @@ def generateIntegrationTestGlobalSubstitutionParameters():
         python2 = execute("Find python2","which python2",return_="stdout",print_output=False,verbose=False).strip()
         if python2 == "":
             # On the Mac test servers, there isn't a `python2`, but the regular `python` should be python2
-            python2 = execute("Find python (assume python2)", "which python",return_="stdout",print_output=False,verbose=False).strip()
+            # however if we inside Python virtual environemnt then `which python2` migh give nothing so we will look for python2.7
+            python2 = execute("Find python (assume python2.7)", "which python2.7",return_="stdout",print_output=False,verbose=False).strip()
     else:
         print("ERROR: Unrecognized Python version!")
         sys.exit(-1)

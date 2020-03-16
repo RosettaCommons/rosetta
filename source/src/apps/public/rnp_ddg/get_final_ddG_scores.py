@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+
 import os
 import glob
 import argparse
@@ -66,7 +68,7 @@ def main( args ):
 			# Go to the wt_dir and read the dG
 			with open('../%s/dG_score.txt' %(wt_dir), 'r') as gwf:
 				dG_wt = float( gwf.readline().split()[0].replace('\n',''))
-				
+
 		else:
 			dG_wt = dG_wt_0
 
@@ -95,7 +97,7 @@ def get_scores( wt_protein_score ): # works in the current directory
 	os.system('grep "Average of top" get_complex_scores.log > complex_score.txt')
 	with open('complex_score.txt', 'r') as cfil:
 		line = cfil.readline()
-		if len(line) < 2: 
+		if len(line) < 2:
 			print "NO COMPLEX score in %s" %(os.getcwd())
 			return 0.0, 0.0, 0.0
 		complex_score = float(line.split()[-1].replace('\n',''))

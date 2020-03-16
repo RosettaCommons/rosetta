@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+
 from sys import exit
 from util import read_pdb
 from collections import OrderedDict
@@ -10,9 +12,9 @@ from util import get_surrounding_res
 from copy import deepcopy
 from util import make_tag_with_dashes
 
-protein_residues = ['ALA', 'CYS', 'ASP', 'GLU', 'PHE', 'GLY', 'HIS', 'ILE', 'LYS', 'LEU', 
+protein_residues = ['ALA', 'CYS', 'ASP', 'GLU', 'PHE', 'GLY', 'HIS', 'ILE', 'LYS', 'LEU',
 			'MET', 'ASN', 'PRO', 'GLN', 'ARG', 'SER', 'THR', 'VAL', 'TRP', 'TYR' ]
-protein_residues_1letter = [ 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 
+protein_residues_1letter = [ 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N',
 			'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y']
 RNA_residues = ['  A', '  U', '  C', '  G']
 RNA_residues_1letter = [ 'a', 'u', 'c', 'g' ]
@@ -89,7 +91,7 @@ def figure_out_WT_seq( wt_struct ):
 	for c in sorted(set(RNA_chains)):
 		rna_nums += c + ':' + str(min(sequence[c].keys())) + '-'
 		rna_nums += str(max(sequence[c].keys())) + ' '
-			
+
 	wt_pdb_tag = make_tag_with_dashes( full_residue_list, full_chain_list )
 
 	return set(RNA_chains), set(protein_chains), wt_seq_full, wt_RNA_seq, rna_nums, wt_pdb_tag
@@ -106,7 +108,7 @@ def get_ss( seq, T=37 ):
 	with open( 'tmp_ss.out', 'r') as ssfile:
 		for line in islice( ssfile, 1, 2):
 			ss = line.split()[0]
-			
+
 	# remove the temporary sequence and output files
 	os.system('rm tmp_seq.txt')
 	os.system('rm tmp_ss.out')
@@ -129,18 +131,18 @@ def find_pairs( secstruct ):
 			for j in xrange(i+1,len(ss)):
 				if ss[j]=='(': count+=1
 				elif ss[j] ==')': count-=1
-				if count == 0: 
+				if count == 0:
 					pair['end'] = j
 					all_pairs.append(pair)
 					# get rid of those parentheses now
 					ss[pair['start']] = ''
 					ss[pair['end']] = ''
 					break
-	
+
 	return all_pairs
 
 # Returns a list of indices that index input bps
-def list_NC_BPs( bps, #list of dicts 
+def list_NC_BPs( bps, #list of dicts
 		seq ):
 
 	list_nc_bps = []
@@ -154,7 +156,7 @@ def list_NC_BPs( bps, #list of dicts
 		list_nc_bps.append(i)
 
 	# Return a list of indices of nc base pairs, can be used to index bps
-	return list_nc_bps 
+	return list_nc_bps
 
 # Like list_NC_BPs, returns a list of indices that index input bps
 def list_mutated_BPs( bps, seq ):
@@ -162,7 +164,7 @@ def list_mutated_BPs( bps, seq ):
 	# loop through the list of base pairs
 	for i in range(len(bps)):
 		# check if base pair sequence is different from WT
-		if ((seq[bps[i]['start']] != wt_seq[bps[i]['start']]) or 
+		if ((seq[bps[i]['start']] != wt_seq[bps[i]['start']]) or
 			(seq[bps[i]['end']] != wt_seq[bps[i]['end']])):
 			list_mut_bps.append(i)
 
@@ -171,7 +173,7 @@ def list_mutated_BPs( bps, seq ):
 class MutantModeler:
 	"""
 	Class in charge of making mutants of a given WT structure
-	Generates commands that will make mutant structures 
+	Generates commands that will make mutant structures
 	starting from a 'WT' structure
 	Uses either the low-res, med-res, or high-res protocols
 	"""
@@ -184,7 +186,7 @@ class MutantModeler:
 		self.med_res_WT_rebuild = [] # a list of lists of non-canonical rebuild positions
 		self.compare_to_full_WT = False # Will be reset during first call to add_mutant
 		# Figure out the WT sequence and which chains are RNA and protein
-		# This will also create a new reordered version of the pdb 
+		# This will also create a new reordered version of the pdb
 		# all protein will come first, then all RNA
 		self.RNA_chains, self.protein_chains, self.wt_seq_full, self.wt_RNA_seq, self.RNA_nums, self.wt_pdb_tag = figure_out_WT_seq( wt_struct )
 		# Figure out the WT RNA secondary structure, this can be overwritten later
@@ -220,7 +222,7 @@ class MutantModeler:
 		mut_pos = []
 		if self.compare_to_full_WT:
 			compare_seq = self.wt_seq_full
-		else: 
+		else:
 			compare_seq = self.wt_RNA_seq
 
 		for i in range(0,len(seq)):
@@ -248,7 +250,7 @@ class MutantModeler:
 		self.mutant_seqs.append( [seq, mutated_positions] )
 		self.mutant_index+=1
 		return self.mutant_index
-	
+
 	# Define extra command line options
 	def set_cmd_opts( self, cmd_opts ):
 		self.cmd_opts = cmd_opts
@@ -288,8 +290,8 @@ class MutantModeler:
 					return self.protein_pack_reps
 		# if no protein mutations and not the WT seq, then return 0 protein pack reps
 		return 0
-			
-	
+
+
 	def get_low_res_command_lines( self, index ):
 		# Write the mutfile
 		self.write_mutfile( self.mutant_seqs[index][1], self.mutant_seqs[index][0], 'none', 'mutfile' )
@@ -332,12 +334,12 @@ class MutantModeler:
 			if bp > 0: # Add the base pair below (as long as it's not the 1st BP)
 				surround_pos.add( self.wt_base_pairs[bp-1]['start'] )
 				surround_pos.add( self.wt_base_pairs[bp-1]['end'] )
-			if bp < len(self.wt_base_pairs)-1: 
+			if bp < len(self.wt_base_pairs)-1:
 				# Add the base pair above (as long as it's not the last base pair)
 				surround_pos.add( self.wt_base_pairs[bp+1]['start'] )
 				surround_pos.add( self.wt_base_pairs[bp+1]['end'] )
 		# get rid of "surrounding positions" that are actually NC BPs
-		surround_pos-=set(list_nc_pos) 
+		surround_pos-=set(list_nc_pos)
 		# Find mutated positions that aren't NC BPs or surrounding
 		other_mut_pos = [] #should be in full indexing if compare_to_full_WT, otherwise RNA indexing
 		for i in self.mutant_seqs[index][1]:
@@ -382,7 +384,7 @@ class MutantModeler:
 		excise_str = ''
 		excise_list = []
 		excise_pos = surround_pos
-		for i in list_nc_pos: 
+		for i in list_nc_pos:
 			excise_pos.add( i )
 		for i in excise_pos:
 			excise_str+=('A'+str(i+1)+' ')
@@ -399,7 +401,7 @@ class MutantModeler:
 				#this means that we're remodeling one of the last 3 non-canonical base pairs
 				cut_below_point = i
 				break # checking in highest to lowest order, so this is the top of where to cut
-		if cut_below_point > 0: 
+		if cut_below_point > 0:
 			for i in range( cut_below_point ):
 				excise_str+=('A'+str(self.wt_base_pairs[i]['start']+1)+' ')
 				excise_list.append(self.wt_base_pairs[i]['start'])
@@ -445,7 +447,7 @@ class MutantModeler:
 		# Done with the setup commands (this will run the farfar jobs
 		# Now create the finalize commands, these need to cleanup results from setup
 		# and submit the final ddG jobs
-		
+
 		# Write a mutfile for the final ddG job (there are no more mutations, there will just be
 		# minimization, repacking, and scoring)
 		with open( 'mutfile', 'w') as mfil:
@@ -500,7 +502,7 @@ class MutantModeler:
 			os.system('cp %s complex_start_struct.pdb' %(self.wt_struct))
 			# Extract the RNA chains
 			os.system('extract_chain.py complex_start_struct.pdb %s' %(' '.join(self.RNA_chains)))
-			# Rename for simplicity 
+			# Rename for simplicity
 			os.system('mv complex_start_struct%s.pdb RNA_bound_conf.pdb' %(''.join(self.RNA_chains ) ))
 			# Renumber for simplicity
 			os.system('renumber_pdb_in_place.py RNA_bound_conf.pdb A:1-%d' %(len(self.wt_RNA_seq)))
@@ -556,7 +558,7 @@ class MutantModeler:
 			final_cmd += '-out_prefix ddG_ '
 			final_cmd += '-protein_pack_reps %d ' %(pack_reps)
 			final_cmd += '%s > get_complex_scores.log\n' %( self.cmd_opts )
-			
+
 			os.chdir( mut_dir )
 			wt_index = len(self.med_res_WT_rebuild)
 			self.med_res_WT_rebuild.append(list_nc_pos)
@@ -569,7 +571,7 @@ class MutantModeler:
 		############END WT REBUILD ##############################################
 
 		return setup_cmd, model_cmd_files, final_cmd, []
-			
+
 
 	def get_high_res_command_lines( self, index ):
 		model_cmd_files_with_dir = []
@@ -596,11 +598,11 @@ class MutantModeler:
 				if self.wt_RNA_secstruct[mut_ind] == '.':
 					RNA_seq_loop_mut_index.append( mut_ind )
 				else:
-					# this is a mutation within a S.S. element 
+					# this is a mutation within a S.S. element
 					other_mutations.append( mut )
 			else: #this is a protein mutation
 				other_mutations.append( mut )
-		
+
 		if len( RNA_seq_loop_mut_index ) == 0: # there are no loop mutations to be built w/ stepwise
 			# Then just run the low-res protocol
 			final_ddg_commands = self.get_low_res_command_lines( index )
@@ -610,7 +612,7 @@ class MutantModeler:
 		# This is part of the setup command
 		setup_cmd = ''
 		if len(other_mutations) > 0 :
-		
+
 			self.write_mutfile( other_mutations, self.mutant_seqs[index][0], 'none', 'mutfile_initial' )
 
 			# Write the setup commands
@@ -645,7 +647,7 @@ class MutantModeler:
 		for i in RNA_seq_loop_mut_index:
 			rebuild_res = ['B'+ str(i+protein_len+1)]
 			rebuild_res_nums = [ i+protein_len+1 ]
-			# If we want to rebuild the surrounding residues as well ( for now just resample - 
+			# If we want to rebuild the surrounding residues as well ( for now just resample -
 			# can figure that out from the rebuild_res_nums later )
 			#if i+protein_len > protein_len:
 			#	rebuild_res.append('B'+str(i+protein_len-1))
@@ -690,7 +692,7 @@ class MutantModeler:
 
 
 		# Check through the master list of subsets (for all mutants) and see if any of these matches
-		# something we're trying to build here, if it does, then delete that subset from the current 
+		# something we're trying to build here, if it does, then delete that subset from the current
 		# list (we don't want to build the same thing twice) and add the mutant index and the subset
 		# index to the list of dependencies for this mutant
 		for curr_sub in mut_subsets_with_ID_copy:
@@ -707,7 +709,7 @@ class MutantModeler:
 							mut_subsets_with_ID.remove(curr_sub)
 							mut_depends.append([sub_list[1],sub])
 
-		
+
 		# Now add these subsets to the master list of subsets for each mutant
 		self.mutant_subsets.append([mut_subsets_with_ID,index])
 
@@ -729,16 +731,16 @@ class MutantModeler:
 			for r in sub_list[1]: # the list of residues being mutated
 				new_mut_list.append( int(r[:-1]) )
 			mut_subsets_min.append([new_mut_set, new_mut_list])
-		
+
 		# Make all the subsets and stepwise command lines
 		subset_setup_cmds, subset_model_cmd_files, subset_final_cmds = self.make_high_res_subsets_and_cmd_lines( index, mut_subsets_min, mutant_seq_full, 'threaded_mut.pdb', mut_depends )
 		setup_cmd += subset_setup_cmds
 		final_cmd += subset_final_cmds
-		
+
 		for fil in subset_model_cmd_files:
 			newfil = '%d/%s' %(index, fil)
 			model_cmd_files_with_dir.append(newfil)
-		
+
 		################
 
 
@@ -760,7 +762,7 @@ class MutantModeler:
 			os.chdir( 'wt_%d' %(len(self.high_res_WT_rebuild)) )
 			# Copy the wt start struct here as the "native"
 			os.system('cp %s complex_start_struct.pdb\n' %(self.wt_struct))
-			# Renumber this for simplicity 
+			# Renumber this for simplicity
 			os.system('renumber_pdb_in_place.py complex_start_struct.pdb A:1-%d B:%d-%d' %(protein_len, protein_len+1, full_len))
 			# Make all the subsets and stepwise command lines
 			# TODO: Might be worth figuring out WT subset dependencies (for now I don't think it will actually end up making a difference)
@@ -778,7 +780,7 @@ class MutantModeler:
 			os.chdir( mut_dir )
 			wt_index = len(self.high_res_WT_rebuild)
 			self.high_res_WT_rebuild.append(RNA_seq_loop_mut_index)
-	
+
 		# write a wt_comparison.txt file in the dir that says which wt struct should be
 		# used for comparison
 		with open( 'wt_comparison.txt', 'w') as cfil:
@@ -792,7 +794,7 @@ class MutantModeler:
 
 		return setup_cmd, model_cmd_files_with_dir, final_cmd, mut_depend_indices
 
-				
+
 	def make_high_res_subsets_and_cmd_lines( self, index, mut_subsets, mutant_seq_full, native_pdb, mut_depends ):
 		setup_cmd = ''
 		model_cmd_files = []
@@ -822,7 +824,7 @@ class MutantModeler:
 			with open( 'subset_%d.fasta' %(sub), 'w' ) as ffil:
 				ffil.write( '> subset_%d_complex_start_struct.pdb %s\n' %(sub,fasta_tag))
 				ffil.write( fasta_seq + '\n' )
-				
+
 			# Make the stepwise command line, write to README_STEPWISE
 			with open('README_STEPWISE_sub_%d' %(sub), 'w') as cmdfil:
 				cmdfil.write('%sstepwise -fasta subset_%d.fasta -s subset_%d_complex_start_struct.pdb ' %(self.rosetta_prefix,sub,sub))
@@ -833,7 +835,7 @@ class MutantModeler:
 				cycles = 1000*N_rebuild
 				cmdfil.write( '-virtualize_free_moieties_in_native false -nstruct 100 -cycles %d ' %(cycles) )
 				# TODO: assumes there is a variant of the sfxn called sfxn-stepwise.wts
-				cmdfil.write( '-score:weights %s-stepwise ' %(self.sfxn)) 
+				cmdfil.write( '-score:weights %s-stepwise ' %(self.sfxn))
 				cmdfil.write( '-out:file:silent subset_%d.out -protein_prepack false ' %(sub) )
 				cmdfil.write( '-global_optimize false -switch_focus_frequency 0 -skip_preminimize ' )
 				cmdfil.write( '-pack_protein_side_chains false -rmsd_screen 6.0 -native %s ' %(native_pdb))
@@ -863,7 +865,7 @@ class MutantModeler:
 			#	setup_cmd += 'rosetta_submit.py README_STEPWISE_sub_%d stepwise_out_sub_%d 50 24\n' %(sub, sub)
 			#	setup_cmd += 'source ./qsubMINI\n'
 			model_cmd_files.append('README_STEPWISE_sub_%d' %(sub))
-			
+
 			# Write the final cmd
 			# Collect the results from the stepwise runs
 			if not self.run_local:
@@ -876,7 +878,7 @@ class MutantModeler:
 		# Concatenate into full structure from subsets (include those from dependencies)
 		# For now actually do the combinatorial recombination
 		# TODO: if for some reason there are actually a lot of subsets, then this is going to
-		# explode pretty quickly 
+		# explode pretty quickly
 		# TODO: NEED TO USE mut_depends also!!!!
 		final_cmd += 'rm combined_complex_*.pdb\n' # in case some already exist
 		final_cmd += 'rm top_complexes.out\n' # in case the silent already exists (don't want to append here)
@@ -894,7 +896,7 @@ class MutantModeler:
 
 			# Renumber the pdbs back to original numbering
 			final_cmd += 'renumber_pdb_in_place.py combined_complex_%s.pdb %s\n' %(pdb_tag, self.wt_pdb_tag)
-		
+
 
 		# Combine the pdbs back into a silent file
 		final_cmd += '%scombine_silent -s combined_complex_*.pdb -out:file:silent_struct_type binary ' %(self.rosetta_prefix)
@@ -917,14 +919,14 @@ class MutantModeler:
 		# Write the REBUILD_RESIDUES.txt file so that neighbors can be repacked and min'ed later
 		all_rebuild_residues = []
 		for subset in mut_subsets:
-			for r in subset[1]: 
+			for r in subset[1]:
 				# mut_subsets should be in full complex numbering and should have 1-based indexing
 				all_rebuild_residues.append(str(r))
 		with open('REBUILD_RESIDUES.txt', 'w') as resfile:
 			resfile.write(' '.join(all_rebuild_residues)+'\n')
 
 		return setup_cmd, model_cmd_files, final_cmd
-	
+
 
 	def get_command_lines( self, index ):
 		# Make a directory and change into that directory
@@ -945,10 +947,8 @@ class MutantModeler:
 			setup_commands, model_cmd_files, final_ddg_commands, depend_indices = self.get_med_res_command_lines( index )
 		else: #'high-res'
 			setup_commands, model_cmd_files, final_ddg_commands, depend_indices = self.get_high_res_command_lines( index )
-		
+
 
 		os.chdir( curr_dir )
 
 		return setup_commands, model_cmd_files, final_ddg_commands, depend_indices
-
-

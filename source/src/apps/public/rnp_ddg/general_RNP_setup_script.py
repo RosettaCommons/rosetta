@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+
 import os
 import argparse
 import subprocess
@@ -20,7 +22,7 @@ def main( args ):
 	# Set up the mutant modeler, this will get the wt sequence (full and RNA)
 	# and it will figure out the RNA and protein chains
 	modeler = mutant_modeler.MutantModeler( method, start_struct_path )
-	if args.wt_secstruct != '': 
+	if args.wt_secstruct != '':
 		modeler.set_wt_RNA_secstruct( args.wt_secstruct )
 	modeler.set_sfxn( args.sfxn )
 	modeler.set_rosetta_prefix( args.rosetta_prefix )
@@ -40,7 +42,7 @@ def main( args ):
 		cmd_opts += '-move_protein_backbone true '
 
 	cmd_opts += '-restore_talaris_behavior '
-	
+
 	modeler.set_cmd_opts( cmd_opts )
 
 	# Go through all the mutants and add them to the modeler
@@ -49,7 +51,7 @@ def main( args ):
 		for line in sfil:
 			mut_index = modeler.add_mutant( line.replace('\n','') )
 			mutant_indices.append( mut_index )
-	
+
 	# Make the base directory and change into it so all new files will be written there
 	script_run_dir = os.getcwd()
 	if not os.path.exists( script_run_dir + '/' + output_dir ):
@@ -66,7 +68,7 @@ def main( args ):
 		sfil.write('WT_SECSTRUCT: %s\n' %(modeler.wt_RNA_secstruct))
 		sfil.write('SEQ_FILE: %s\n' %(args.seq_file))
 		sfil.write('Extra command line options: %s\n' %(cmd_opts))
-		
+
 
 	# TODO: Might want to reorder list of mutants by number of mutations, in some cases might save computation
 
@@ -76,7 +78,7 @@ def main( args ):
 	for mutant_index in mutant_indices:
 		local_file_m = open('COMMAND_%d' %(mutant_index), 'w')
 		setup_commands, model_cmd_files, final_ddg_commands, depend_indices = modeler.get_command_lines( mutant_index )
-		# Make qsub files, if specified	
+		# Make qsub files, if specified
 		run_dir = script_run_dir + '/' + output_dir + '/' + str(mutant_index)
 
 		# Write to a single file that can be run locally
@@ -89,7 +91,7 @@ def main( args ):
 		local_file_m.write('cd ' + script_run_dir + '/' + output_dir + '/' + str(mutant_index) + '\n')
 		local_file.write(final_ddg_commands + '\n')
 		local_file_m.write(final_ddg_commands + '\n')
-		
+
 		local_file.write( 'cd ' + script_run_dir + '\n')
 		local_file_m.write( 'cd ' + script_run_dir + '\n')
 		# Write nearest neighbor energy
@@ -116,7 +118,7 @@ def main( args ):
 						if len(l.split())>2:
 							fe_ = l.split()[2]
 							fe = fe_.replace(']','')
-						else: 
+						else:
 							fe__ = l.split()[1]
 							fe_ = fe__.replace('[','')
 							fe = fe_.replace(']','')
