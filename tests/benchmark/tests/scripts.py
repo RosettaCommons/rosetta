@@ -13,7 +13,7 @@
 ## @author Sergey Lyskov
 
 
-import os, imp, json, shutil, distutils.dir_util, codecs
+import os, sys, imp, json, shutil, distutils.dir_util, codecs
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
 _api_version_ = '1.0'
@@ -22,6 +22,7 @@ _api_version_ = '1.0'
 
 def run_rosetta_scripts_test(name, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     memory = config['memory'];  jobs = config['cpu_count']
+    python_executable=sys.executable
 
     TR = Tracer(verbose)
 
@@ -47,8 +48,7 @@ def run_rosetta_scripts_test(name, rosetta_dir, working_dir, platform, config, h
         test_output_json = working_dir + '/' + name + '.json'
 
         command_line_args = '--rosetta {rosetta_dir} --compiler {compiler} --os {os} --extras {extras} --output-file {test_output_json} --keep-intermediate-files --working-dir {working_dir}'.format(compiler=platform['compiler'], **vars())
-
-        res, output = execute('Running {}...'.format(name), 'cd  {rosetta_dir}/rosetta_scripts_scripts/tests && python {rosetta_dir}/rosetta_scripts_scripts/tests/{script} {command_line_args}'.format(**vars()), return_='tuple', add_message_and_command_line_to_output=True)
+        res, output = execute('Running {}...'.format(name), 'cd  {rosetta_dir}/rosetta_scripts_scripts/tests && {python_executable} {rosetta_dir}/rosetta_scripts_scripts/tests/{script} {command_line_args}'.format(**vars()), return_='tuple', add_message_and_command_line_to_output=True)
 
         output = rosetta_scripts_revision + output
 

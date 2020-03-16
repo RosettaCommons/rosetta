@@ -83,20 +83,16 @@ class Runner:
         p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         output, errors = p.communicate()
-        output = output.decode('utf-8', errors='backslashreplace')
-        errors = errors.decode('utf-8', errors='backslashreplace')
-
         # p.communicate() give us raw byte streams, which we then throw to files/output as raw byte streams
         # There's only unicode issues if the input and output encoding doesn't match (and there's no way to tell that).
-
         if output_file:
-            with open(output_file, 'w') as fh:
+            with open(output_file, 'wb') as fh:
                 fh.write(output)
                 fh.write(errors)
-            sys.stderr.write(errors)
+            os.write(sys.stderr.fileno(), errors)
         else:
-            sys.stdout.write(output)
-            sys.stderr.write(errors)
+            os.write(sys.stdout.fileno(), output)
+            os.write(sys.stderr.fileno(), errors)
 
         return p.returncode
 
