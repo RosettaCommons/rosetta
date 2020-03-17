@@ -156,6 +156,7 @@ enum XMLSchemaCommonType {
 	xsct_non_negative_integer,
 	xsct_positive_integer,
 	xsct_rosetta_bool,
+	xsct_rosetta_autobool,
 	xsct_residue_number,
 	xsct_residue_number_cslist,
 	xsct_refpose_enabled_residue_number,

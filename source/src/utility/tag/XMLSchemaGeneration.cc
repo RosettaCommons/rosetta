@@ -64,6 +64,7 @@ std::string name_for_common_type( XMLSchemaCommonType common_type )
 	case xsct_refpose_enabled_residue_number : return "refpose_enabled_residue_number";
 	case xsct_refpose_enabled_residue_number_cslist : return "refpose_enabled_residue_number_cslist";
 	case xsct_rosetta_bool : return "rosetta_bool";
+	case xsct_rosetta_autobool : return "rosetta_autobool";
 	case xsct_bool_cslist : return "bool_cslist";
 	case xsct_bool_wsslist : return "bool_wsslist";
 	case xsct_char : return "char";
@@ -262,6 +263,10 @@ std::string rosetta_bool_string() {
 	return "true|True|TRUE|t|T|1|on|On|ON|y|Y|yes|Yes|YES|false|False|FALSE|f|F|0|off|Off|OFF|n|N|no|No|NO";
 }
 
+std::string rosetta_autobool_string() {
+	return rosetta_bool_string() + "|auto|Auto|AUTO";
+}
+
 std::string  chain_cslist_string() {
 	return "[" + chr_chains_nonrepeated() + "](,[" + chr_chains_nonrepeated() + "])*";
 }
@@ -382,6 +387,12 @@ activate_common_simple_type(
 		boolean.base_type( xs_string );
 		boolean.add_restriction( xsr_pattern, rosetta_bool_string() );
 		xsd.add_top_level_element( boolean );
+	} else if ( common_type == xsct_rosetta_autobool ) {
+		XMLSchemaRestriction autoboolean;
+		autoboolean.name( name_for_common_type( common_type ));
+		autoboolean.base_type( xs_string );
+		autoboolean.add_restriction( xsr_pattern, rosetta_autobool_string() );
+		xsd.add_top_level_element( autoboolean );
 	} else if ( common_type == xsct_refpose_enabled_residue_number ) {
 		XMLSchemaRestriction refpose_resnum;
 		refpose_resnum.name( name_for_common_type( common_type ));

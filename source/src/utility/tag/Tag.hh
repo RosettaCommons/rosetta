@@ -24,6 +24,7 @@
 #include <iostream>
 
 // Utility headers
+#include <utility/tag/AutoBool.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector0.hh>
@@ -239,6 +240,14 @@ Tag::getOption<bool>(std::string const& key, bool const& t_default) const;
 template<>
 bool
 Tag::getOption<bool>(std::string const& key) const;
+
+template<>
+AutoBool
+Tag::getOption<AutoBool>(std::string const& key, AutoBool const& t_default) const;
+
+template<>
+AutoBool
+Tag::getOption<AutoBool>(std::string const& key) const;
 
 } // namespace tag
 } // namespace utility

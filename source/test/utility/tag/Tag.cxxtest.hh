@@ -39,7 +39,7 @@ public:
 			TS_ASSERT(false);
 		} catch (utility::excn::BadInput & e ){
 			std::stringstream expected_error;
-			if(col==0){
+			if ( col==0 ) {
 				expected_error
 					<< "Tag::read - parse error, printing backtrace." << std::endl
 					<< std::endl;
@@ -51,7 +51,7 @@ public:
 					<< "Tag::read - parse error - file:istream line:1 column:" << col << " -" << std::string(col, ' ') << "^" << std::endl
 					<< std::endl;
 			}
-			if( e.msg().find( expected_error.str() ) == std::string::npos ) {
+			if ( e.msg().find( expected_error.str() ) == std::string::npos ) {
 				std::cout << "expected error: '" << expected_error.str() << "'" << std::endl;
 				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
@@ -393,12 +393,12 @@ public:
 		utility::tag::TagCOP tags(utility::tag::Tag::create(in));
 		TS_ASSERT_EQUALS(tags->getOption<std::string>(key1), val1);
 		TS_ASSERT_EQUALS(tags->size(), 2);
-		for(
-			utility::tag::Tag::tags_t::const_iterator
+		for (
+				utility::tag::Tag::tags_t::const_iterator
 				tag_iter = tags->getTags().begin(),
 				tag_iter_end = tags->getTags().end();
-			tag_iter != tag_iter_end; ++tag_iter
-		) {
+				tag_iter != tag_iter_end; ++tag_iter
+				) {
 			TS_ASSERT_EQUALS((*tag_iter)->getOption<std::string>(key2), val2);
 			TS_ASSERT_EQUALS((*tag_iter)->size(), 1);
 		}
@@ -416,5 +416,14 @@ public:
 		do_test_nested_tags("<name abc=def> >> <name2 xyz=uvw/> <!-- <name3 hij=klm/> --> </name>", "abc", "def", "xyz", "uvw");
 	}
 
+	void test_autobool(){
+		std::string const in_tag = "<name a=\"1\" b=\"0\" c=\"auto\" />";
+		std::stringstream in;
+		in << in_tag;
+		utility::tag::TagCOP tags(utility::tag::Tag::create(in));
+		TS_ASSERT_EQUALS( int( tags->getOption<utility::tag::AutoBool>( "a" ) ), int( utility::tag::AutoBool::True ) );
+		TS_ASSERT_EQUALS( int( tags->getOption<utility::tag::AutoBool>( "b" ) ), int( utility::tag::AutoBool::False ) );
+		TS_ASSERT_EQUALS( int( tags->getOption<utility::tag::AutoBool>( "c" ) ), int( utility::tag::AutoBool::Auto ) );
+	}
 
 };

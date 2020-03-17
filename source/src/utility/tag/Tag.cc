@@ -351,6 +351,45 @@ Tag::getOption<bool>(std::string const& key) const {
 	return false; // appease compiler
 }
 
+template<>
+AutoBool
+Tag::getOption< AutoBool >(std::string const& key, AutoBool const& t_default) const {
+	auto i = mOptions_.find(key);
+	if ( i == mOptions_.end() ) {
+		accessed_options_[key]= key;
+		return t_default;
+	}
+	accessed_options_[key]= i->second;
+	if ( utility::is_true_string( i->second ) ) { return AutoBool::True; }
+	if ( utility::is_false_string( i->second ) ) { return AutoBool::False; }
+	if ( utility::upper( i->second ) == "AUTO" ) { return AutoBool::Auto; }
+	std::stringstream error_message;
+	error_message << "getOption: key= " << key << " stream extraction for autoboolean value failed! Tried to parse '" << i->second << "\n";
+	throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str() );
+	return t_default;
+}
+
+/// @throws Throws a utility::excn::EXCN_Msg_Exception if none of the
+/// accepted boolean strings is provided.
+template<>
+AutoBool
+Tag::getOption< AutoBool >(std::string const& key) const {
+	auto i = mOptions_.find(key);
+	if ( i == mOptions_.end() ) {
+		std::stringstream error_message;
+		error_message << "Option '" << key << "' not found in Tag named '" << this->getName() << "'.";
+		throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str() );
+	}
+	accessed_options_[key]= i->second;
+	if ( utility::is_true_string( i->second ) ) { return AutoBool::True; }
+	if ( utility::is_false_string( i->second ) ) { return AutoBool::False; }
+	if ( utility::upper( i->second ) == "AUTO" ) { return AutoBool::Auto; }
+	std::stringstream error_message;
+	error_message << "getOption: key= " << key << " stream extraction for autoboolean value failed! Tried to parse '" << i->second << "\n";
+	throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str() );
+	return AutoBool::False; // appease compiler
+}
+
 // ____________________ <boost::spirit parser definition> ____________________
 
 namespace {
