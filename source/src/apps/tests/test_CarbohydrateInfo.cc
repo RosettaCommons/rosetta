@@ -92,7 +92,7 @@ main( int argc, char *argv[] )
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
 			O_linked, psicose, neuraminate, bacillosamine, Lex, SLex, GalCer, UDP_D_Glc, target57, maltobiose,
-			Me_glycoside, C_linked, Ac_sugar, whacky_sugar, pdb_code_pdb, bad_pdb;
+			Me_glycoside, methyl_glycoside, methyl_glycoside_3mer, C_linked, Ac_sugar, whacky_sugar, pdb_code_pdb, bad_pdb;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
@@ -321,6 +321,22 @@ main( int argc, char *argv[] )
 
 		test_sugar( Me_glycoside );
 
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating a single methyl glycoside from sequence alpha-D-ManpOMe:" << endl;
+
+		make_pose_from_saccharide_sequence( methyl_glycoside, "alpha-D-ManpOMe", *residue_set );
+
+		test_sugar( methyl_glycoside );
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating a 3-mer branched chain with methyl glycoside from sequence" <<
+			" alpha-D-Galp-(1->2)-[alpha-D-Abep-(1->3)]-alpha-D-ManpOMe" <<
+			" (based on PDB 1MFA):" << endl;
+
+		make_pose_from_saccharide_sequence( methyl_glycoside_3mer,
+			"alpha-D-Galp-(1->2)-[alpha-D-Abep-(1->3)]-alpha-D-ManpOMe", *residue_set );
+
+		test_sugar( methyl_glycoside_3mer );
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Creating C-linked glycan from sequences: AWAAWA and alpha-D-Manp" << endl;

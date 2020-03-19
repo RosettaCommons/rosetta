@@ -43,6 +43,27 @@ using namespace core;
 
 // Public methods /////////////////////////////////////////////////////////////
 // Static constant data access
+std::string const &
+CarbohydrateInfoManager::codes_to_root_map_file()
+{
+	static std::string const filename( "chemical/carbohydrates/codes_to_roots.map" );
+	return filename;
+}
+
+std::string const &
+CarbohydrateInfoManager::sugar_modifications_table_file()
+{
+	static std::string const filename( "chemical/carbohydrates/sugar_modifications.table" );
+	return filename;
+}
+
+std::string const &
+CarbohydrateInfoManager::ring_size_to_morphemes_map_file()
+{
+	static std::string const filename( "chemical/carbohydrates/ring_size_to_morphemes.map" );
+	return filename;
+}
+
 bool
 CarbohydrateInfoManager::is_valid_sugar_code( std::string const & code )
 {
@@ -55,7 +76,7 @@ CarbohydrateInfoManager::root_from_code( std::string const & code )
 	if ( ! is_valid_sugar_code( code ) ) {
 		utility_exit_with_message( "CarbohydrateInfoManager::root_from_code(): " +
 			code + " is not a valid 3-letter code for carbohydrates.  " +
-			"Has it been added to database/chemical/carbohydrates/codes_to_roots.map?");
+			"Has it been added to " + get_instance()->codes_to_root_map_file() + " in the database?");
 	}
 	return get_instance()->code_to_root_map().at( code ).root;
 }
@@ -218,14 +239,14 @@ CarbohydrateInfoManager::code_to_root_map()
 		utility::thread::WriteLockGuard writelock(code_to_root_map_mutex_);
 		if ( code_to_root_map_.empty() ) {
 			code_to_root_map_ = read_codes_and_roots_from_database_file(
-				basic::database::full_name( "chemical/carbohydrates/codes_to_roots.map" ) );
+				basic::database::full_name( get_instance()->codes_to_root_map_file() ) );
 		}
 	}
 #else
 	// Only create map one time, as needed.
 	if ( code_to_root_map_.empty() ) {
 		code_to_root_map_ = read_codes_and_roots_from_database_file(
-			basic::database::full_name( "chemical/carbohydrates/codes_to_roots.map" ) );
+			basic::database::full_name( get_instance()->codes_to_root_map_file() ) );
 	}
 #endif
 	return code_to_root_map_;
@@ -250,14 +271,14 @@ CarbohydrateInfoManager::ring_size_to_morphemes_map()
 		utility::thread::WriteLockGuard writelock(ring_size_to_morphemes_mutex_);
 		if ( ring_size_to_morphemes_map_.empty() ) {
 			ring_size_to_morphemes_map_ = read_ring_sizes_and_morphemes_from_database_file(
-				basic::database::full_name( "chemical/carbohydrates/ring_size_to_morphemes.map" ) );
+				basic::database::full_name( get_instance()->ring_size_to_morphemes_map_file() ) );
 		}
 	}
 #else
 	// Only create map one time, as needed.
 	if ( ring_size_to_morphemes_map_.empty() ) {
 		ring_size_to_morphemes_map_ = read_ring_sizes_and_morphemes_from_database_file(
-			basic::database::full_name( "chemical/carbohydrates/ring_size_to_morphemes.map" ) );
+			basic::database::full_name( get_instance()->ring_size_to_morphemes_map_file() ) );
 	}
 #endif
 	return ring_size_to_morphemes_map_;
@@ -318,14 +339,14 @@ CarbohydrateInfoManager::nomenclature_table()
 		utility::thread::WriteLockGuard writelock(nomenclature_table_mutex_);
 		if ( nomenclature_table_.empty() ) {
 			nomenclature_table_ = read_nomenclature_table_from_database_file(
-				basic::database::full_name( "chemical/carbohydrates/sugar_modifications.table" ) );
+				basic::database::full_name( get_instance()->sugar_modifications_table_file() ) );
 		}
 	}
 #else
 	// Only create table one time, as needed.
 	if ( nomenclature_table_.empty() ) {
 		nomenclature_table_ = read_nomenclature_table_from_database_file(
-			basic::database::full_name( "chemical/carbohydrates/sugar_modifications.table" ) );
+			basic::database::full_name( get_instance()->sugar_modifications_table_file() ) );
 	}
 #endif
 	return nomenclature_table_;

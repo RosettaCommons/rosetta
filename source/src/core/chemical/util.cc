@@ -476,6 +476,21 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 		// xyz_missing is number of candidate ResidueType's atoms that do not match target atom names
 		for ( Size k=1; k<= rsd_type.natoms(); ++k ) {
 			bool found_match( false );
+			// @mlnance: Quote from @roccomoretti from PR #4570
+			// "While most input PDBs won't have virtual atoms, you can have Rosetta-output files
+			// which have virtual atoms present, and if they are present, then you would want to
+			// count them in the accept/reject criteria."
+			// [Accordingly,] "We don't expect virtual atoms to be present in the PDB file,
+			// so don't count it against the residue type if they aren't"
+			// "Not counting virtuals at all does make a bit more sense than counting them fully."
+			// Can (hopefully) expect better behavior with carbohydrates, which use more virtual
+			// atoms than other ResidueTypes.
+			// TODO (also quote from RM from PR #4570)
+			// "some 'half' approach which considers virtuals but not the same as non-virtuals
+			// (e.g. just as a tiebreaker) might be the better approach" [It may be]
+			// "worth putting in missing virtuals as a secondary, lower level check,
+			// versus being equivalent to a missing real atom."
+			if ( rsd_type.is_virtual(k) ) { continue; } // note this is checking if the ATOM is virtual
 			for ( Size m = 1; m <= atom_names.size(); ++m ) {
 				if ( ObjexxFCL::stripped_whitespace( atom_names[m] ) == ObjexxFCL::stripped_whitespace( rsd_type.atom_name(k) ) ) {
 					found_match = true; break;
@@ -496,7 +511,7 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 			}
 		}
 
-		// TR.Debug << "checking: " << rsd_type.name() << "  rsd_missing " << rsd_missing << "  xyz_missing " << xyz_missing << "  rsd_missing names in xyz not captured by ResidueType" << rsd_missing_atoms << "  xyz_missing names in ResidueType not captured in atoms " << xyz_missing_atoms << std::endl;
+		//TR.Debug << "checking: " << rsd_type.name() << "  rsd_missing " << rsd_missing << "  xyz_missing " << xyz_missing << "  rsd_missing names in xyz not captured by ResidueType" << rsd_missing_atoms << "  xyz_missing names in ResidueType not captured in atoms " << xyz_missing_atoms << std::endl;
 
 		if ( ( rsd_missing < best_rsd_missing ) ||
 				( rsd_missing == best_rsd_missing && xyz_missing < best_xyz_missing ) ) {

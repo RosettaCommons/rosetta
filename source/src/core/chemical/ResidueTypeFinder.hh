@@ -106,7 +106,7 @@ public:
 		return *this;
 	}
 
-	/// @brief Disable metapatches.
+	/// @brief Disable metapatches and do not consider them while patching.
 	/// @details By default, metapatched ResidueTypes will be considered.  This disables that.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	ResidueTypeFinder &
@@ -115,7 +115,7 @@ public:
 		return *this;
 	}
 
-	/// @brief Have metapatched ResidueTypes been disabled?
+	/// @brief Have metapatched ResidueTypes been disabled (true)? Or are they to be considered (false)?
 	/// @author Vikram K. Mulligan (vmullig@.uw.edu).
 	inline bool no_metapatches() const { return no_metapatches_; }
 
@@ -390,7 +390,7 @@ private:
 	bool disallow_carboxyl_conjugation_at_glu_asp_; // special case
 	bool check_nucleic_acid_virtual_phosphates_ = false; // special case (could be generalized to match virtual atoms to missing atoms)
 
-	/// @brief Disable consideration of metapatched variants (for speed).
+	/// @brief Disable consideration of metapatched variants (relevant for speed).
 	/// @details False by default (considers metapatches); if true, metapatches are disabled.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	bool no_metapatches_ = false;
