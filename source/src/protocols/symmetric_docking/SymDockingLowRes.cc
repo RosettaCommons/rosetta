@@ -38,6 +38,8 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/kinematics/FoldTree.hh>
 
+#include <protocols/moves/PyMOLMover.hh>
+
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
 
@@ -98,13 +100,13 @@ SymDockingLowRes::set_default( core::pose::Pose & pose ) {
 	if ( option[ OptionKeys::docking::dock_mcm_trans_magnitude ].user() ) {
 		trans_magnitude_ = option[ OptionKeys::docking::dock_mcm_trans_magnitude ]();
 	} else {
-		trans_magnitude_ = 1.5;
+		trans_magnitude_ = 3;
 	}
 
 	if ( option[ OptionKeys::docking::dock_mcm_rot_magnitude ].user() ) {
 		rot_magnitude_ = option[ OptionKeys::docking::dock_mcm_rot_magnitude ]();
 	} else {
-		rot_magnitude_ = 4;
+		rot_magnitude_ = 8;
 	}
 
 	chi_ = false;
@@ -122,6 +124,9 @@ SymDockingLowRes::set_default( core::pose::Pose & pose ) {
 
 moves::MonteCarloOP
 SymDockingLowRes::get_mc() { return mc_; }
+
+moves::PyMOLMoverOP
+SymDockingLowRes::get_pymol_mover() { return pymol_mover_; }
 
 void
 SymDockingLowRes::set_default_mc( pose::Pose & pose ) {
@@ -151,6 +156,9 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 
 	rb_mover_ = utility::pointer::make_shared< rigid::RigidBodyDofSeqPerturbMover >( dofs , rot_magnitude_, trans_magnitude_ );
 
+	pymol_mover_ = PyMOLMoverOP( new PyMOLMover() );
+	pymol_mover_->keep_history( true );
+
 	docking_lowres_protocol_ = utility::pointer::make_shared< SequenceMover >();
 	docking_lowres_protocol_->add_mover( rb_mover_ );
 
@@ -163,6 +171,7 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 			}
 		}
 	}
+	docking_lowres_protocol_->add_mover( pymol_mover_ );
 
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -191,6 +200,8 @@ void SymDockingLowRes::apply( core::pose::Pose & pose )
 	TR << "::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::\n";
 
 	for ( int i=1; i<=outer_cycles_; ++i ) {
+		TR.Debug << "Translation magnitude: " << trans_magnitude_ << std::endl;
+		TR.Debug << "Rotation magnitude: " << rot_magnitude_ << std::endl;
 		rigid_body_trial( pose );
 		if ( accept_rate_ < 0.5 ) {
 			trans_magnitude_ *= 0.9;

@@ -33,6 +33,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 // Package Headers
+#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -127,6 +128,22 @@ public:
 	/// @brief Calculate RMSD from partner to symmetric starting structure
 	core::Real
 	calc_rms( core::pose::Pose & pose );
+
+	/// @brief Calculate interface RMSD of one chain to symmetric starting structure assuming correct native chain order
+	core::Real
+	calc_Irms( core::pose::Pose & pose );
+
+	/// @brief Calculate fraction of native contacts recovered for one chain assuming correct native chain order
+	core::Real
+	calc_fnat( core::pose::Pose & pose, core::scoring::ScoreFunctionOP dock_scorefxn );
+
+	/// @brief Calculate whether two residues are within a distance cutoff of each other
+	bool
+	calc_res_contact( core::conformation::ResidueOP const rsd1, core::conformation::ResidueOP const rsd2, core::Real const dist_cutoff );
+
+	/// @brief Calculate fraction of native contacts recovered for one chain assuming correct native chain order
+	core::Real
+	calc_CAPRI_rank( core::Real const Irmsd, core::Real const Lrmsd, core::Real const Fnat );
 
 	/// @brief Recover sidechains from the native pose
 	void recover_sidechains( core::pose::Pose & pose, const core::pose::Pose & native_pose );

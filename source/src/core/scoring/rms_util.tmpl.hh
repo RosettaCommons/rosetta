@@ -573,11 +573,10 @@ sym_rmsd_with_super_subset(
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 	int const N ( symm_info->subunits() );
-	int const nres ( symm_info->num_total_residues_without_pseudo() );
-	ObjexxFCL::FArray2D< core::Real > p1a_shuffle( 3, nres );
+	ObjexxFCL::FArray2D< core::Real > p1a_shuffle( 3, natoms );
 
 	core::Real rms = 1e3; //Since fast_rms has not been evaluated yet
-	int const num_atoms_subunit (natoms);
+	int const num_atoms_subunit (natoms / N);
 	std::vector< std::vector<int> > shuffle_map;
 	create_shuffle_map_recursive_rms(std::vector<int>(), N,shuffle_map);
 	for ( int j=1; j < int (shuffle_map.size()); j++ ) {

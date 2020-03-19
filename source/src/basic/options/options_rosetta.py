@@ -5507,6 +5507,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			short='manually sets the lowres docking filter: -dock_lowres_filter <INTERCHAIN_CONTACT CUTOFF> <INTERCHAIN_VDW CUTOFF> <RESTRAINT CUTOFF>',
 			desc='manually sets the lowres docking filter: -dock_lowres_filter <INTERCHAIN_CONTACT CUTOFF> <INTERCHAIN_VDW CUTOFF> <RESTRAINT CUTOFF>. Default values for protein docking are 10.0 and 1.0'
 			),
+		Option('SymDock_lowres_filter', 'Real',
+			short='Manually sets the lowres docking filter',
+			desc='Manually sets the lowres docking filter value that will be multiplied by the number of interfaces',
+			default='5.0'
+			),
 		Option( 'multibody', 'IntegerVector', desc="List of jumps allowed to move during docking" ),
 
 		Option('ignore_default_docking_task', 'Boolean',
@@ -5543,6 +5548,21 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			short='See conformer switch moves in PyMOL.',
 			desc='See conformer switch moves in PyMOL. Color changes when switch is accepted.',
 			default='false'
+			),
+		Option('SymDock_reduce_motif_dock_weights', 'Boolean',
+			short='Reduces motif_dock_score weights to proportionally',
+			desc='Reduces motif_dock_score weights to 1/N, where N = number of subunits',
+			default='false'
+			),
+		Option('SymDock_fa_rep_max', 'Real',
+			short='Changes the max value of fa_rep in high-res',
+			desc='Changes the max value of fa_rep for the docking_hires_mover, but not for jd2 score file.',
+			default='0.55'
+			),
+		Option('SymDock_fa_sol_max', 'Real',
+			short='Changes the max value of fa_sol in high-res',
+			desc='Changes the max value of fa_sol for the docking_hires_mover, but not for jd2 score file.',
+			default='1.0'
 			),
 
 		###################################################################################

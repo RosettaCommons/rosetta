@@ -24,6 +24,7 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
+#include <protocols/moves/PyMOLMover.fwd.hh>
 
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <utility/vector1.hh>
@@ -55,6 +56,7 @@ public:
 	void set_default_move_map( core::pose::Pose & pose );
 
 	moves::MonteCarloOP get_mc();
+	moves::PyMOLMoverOP get_pymol_mover();
 
 	// protocol functions
 	void apply( core::pose::Pose & pose ) override;
@@ -68,6 +70,7 @@ private:
 	moves::MonteCarloOP mc_;
 	moves::SequenceMoverOP docking_lowres_protocol_;
 	rigid::RigidBodyDofSeqPerturbMoverOP rb_mover_;
+	protocols::moves::PyMOLMoverOP pymol_mover_;
 
 	// docking
 	int inner_cycles_, outer_cycles_;

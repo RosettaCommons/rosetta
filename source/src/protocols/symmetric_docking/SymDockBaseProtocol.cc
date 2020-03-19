@@ -37,7 +37,7 @@ SymDockBaseProtocol::SymDockBaseProtocol() :
 	using namespace basic::options;
 	using namespace core::scoring;
 	scorefxn_lowres_ = ScoreFunctionFactory::create_score_function( "interchain_cen" );
-	scorefxn_hires_ =  ScoreFunctionFactory::create_score_function( core::scoring::PRE_TALARIS_2013_STANDARD_WTS, core::scoring::DOCK_PATCH );
+	scorefxn_hires_ =  core::scoring::get_score_function();
 
 }
 

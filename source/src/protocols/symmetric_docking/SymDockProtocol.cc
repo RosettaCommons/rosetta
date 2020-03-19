@@ -28,6 +28,8 @@
 #include <basic/options/option.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -38,6 +40,8 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
+
+#include <core/kinematics/FoldTree.hh>
 
 #include <basic/datacache/DiagnosticData.hh>
 
@@ -76,6 +80,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
+#include <protocols/scoring/Interface.hh>
 
 #include <protocols/viewer/viewers.hh>
 //for resfile reading
@@ -244,10 +249,20 @@ SymDockProtocol::set_default()
 	passed_highres_filter_ = true;
 
 	//how to turn on  atom_pair_constraint without patches by default to weight 1
-	docking_score_low_  = ScoreFunctionFactory::create_score_function(  "interchain_cen" );
-	docking_score_high_  = ScoreFunctionFactory::create_score_function( "docking" );
-	docking_score_high_min_ = ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
-	docking_score_pack_ = get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+
+	// Ideally would like to have motif dock score as default low-res score function,
+	// but cannot make it default as score tables need to be imported from Git-LFS
+	// and it won't work without it, so keeping interchain_cen as placeholder.
+
+	if ( option[ OptionKeys::docking::docking_low_res_score ].user() ) {
+		docking_score_low_ = ScoreFunctionFactory::create_score_function( option[ OptionKeys::docking::docking_low_res_score ]() );
+	} else if ( docking_score_low_ == nullptr ) {
+		docking_score_low_ = ScoreFunctionFactory::create_score_function( "interchain_cen", option[ OptionKeys::score::patch ]() );
+	}
+
+	docking_score_high_  = core::scoring::get_score_function();
+	docking_score_high_min_ = core::scoring::get_score_function();
+	docking_score_pack_ = core::scoring::get_score_function();
 
 	if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 		docking_score_low_->set_weight(core::scoring::atom_pair_constraint, 1.0);
@@ -324,12 +339,20 @@ SymDockProtocol::apply( pose::Pose & pose )
 	using namespace basic::options;
 	using namespace moves;
 	using utility::file::FileName;
+	using namespace core::conformation::symmetry;
+	using namespace core::scoring;
 
 	using namespace viewer;
 	add_conformation_viewer( pose.conformation(), "start_pose", 450, 450 );
 
 	//initialize docking protocol movers
 	if ( !docking_low_ ) docking_low_ = utility::pointer::make_shared< SymDockingLowRes >( docking_score_low_ );
+
+	docking_score_high_min_->set_weight( core::scoring::fa_rep,  basic::options::option[ basic::options::OptionKeys::docking::SymDock_fa_rep_max ]() );
+	docking_score_pack_->set_weight( core::scoring::fa_rep,  basic::options::option[ basic::options::OptionKeys::docking::SymDock_fa_rep_max ]() );
+	docking_score_high_min_->set_weight( core::scoring::fa_sol,  basic::options::option[ basic::options::OptionKeys::docking::SymDock_fa_sol_max ]() );
+	docking_score_pack_->set_weight( core::scoring::fa_sol,  basic::options::option[ basic::options::OptionKeys::docking::SymDock_fa_sol_max ]() );
+
 	if ( !docking_high_ ) docking_high_ = utility::pointer::make_shared< SymDockingHiRes >( docking_score_high_min_, docking_score_pack_ );
 
 	// make sure the input pose has the right size
@@ -360,6 +383,15 @@ SymDockProtocol::apply( pose::Pose & pose )
 	core::pose::Pose starting_pose = pose;
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
+
+
+	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
+
+	SymmetricConformation const & symm_conf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
+
+	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+	Size const N ( symm_info->subunits() );
+
 	if ( option[ OptionKeys::run::score_only ]() ) {
 		score_only( pose );
 		return;
@@ -373,7 +405,13 @@ SymDockProtocol::apply( pose::Pose & pose )
 
 		//MonteCarloOP mc;
 		if ( !local_refine_ ) {
+
 			docking_scorefxn = docking_score_low_->clone();
+			if ( option[ OptionKeys::docking::docking_low_res_score ]()=="motif_dock_score" && option[ OptionKeys::docking::SymDock_reduce_motif_dock_weights ]() ) {
+				TR << "Setting weight of the score function to " << (Real) 1/N << " times the default value." << std::endl;
+				docking_scorefxn->set_weight( score_type_from_name("motif_dock"), (Real) 1/N );
+			}
+			std::map < std::string, core::Real > lowres_scores;
 
 			// first convert to centroid mode
 			to_centroid.apply( pose );
@@ -409,6 +447,23 @@ SymDockProtocol::apply( pose::Pose & pose )
 				Real cen_rms = calc_rms( pose );
 				score_map_["cen_rms"] = cen_rms; //jd1
 				job->add_string_real_pair("cen_rms", cen_rms);
+			}
+
+			// store the low res scores for output
+			if ( !hurry_ ) {
+				core::io::raw_data::ScoreMap::add_energies_data_from_scored_pose( pose, lowres_scores );
+
+				// output low-res terms in score file if low res was run
+				if ( !lowres_scores.empty() ) {
+					for ( std::map< std::string, core::Real >::const_iterator pair=lowres_scores.begin(); pair!=lowres_scores.end(); ++pair ) {
+						if ( pair->first == "total_score" ) {
+							// because total_score should be the high-res one
+							job->add_string_real_pair( "total_lowres_score", pair->second );
+						} else {
+							job->add_string_real_pair( pair->first, pair->second );
+						}
+					}
+				}
 			}
 		}
 
@@ -458,6 +513,15 @@ SymDockProtocol::apply( pose::Pose & pose )
 			Real rms = calc_rms( pose );
 			score_map_["rms"] = rms; //jd1
 			job->add_string_real_pair("rms", rms);
+			Real Irms = calc_Irms( pose );
+			score_map_["Irms"] = Irms;
+			job->add_string_real_pair("Irms", Irms);
+			Real Fnat = calc_fnat( pose, docking_score_pack_ );
+			score_map_["Fnat"] = Fnat;
+			job->add_string_real_pair("Fnat", Fnat);
+			Real CAPRI_rank = calc_CAPRI_rank( Irms, rms, Fnat );
+			score_map_["CAPRI_rank"] = CAPRI_rank;
+			job->add_string_real_pair("CAPRI_rank", CAPRI_rank);
 		}
 
 		if ( pose.is_fullatom() ) {
@@ -492,10 +556,24 @@ SymDockProtocol::docking_lowres_filter( core::pose::Pose & pose){
 
 	bool passed_filter = true;
 
+	using namespace core::conformation::symmetry;
+	SymmetricConformation const & symm_conf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
+
+	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+	Size const N ( symm_info->subunits() );
+
 	//criterion for failure
-	Real interchain_contact_cutoff = 10.0;
 	Real interchain_vdw_cutoff = 1.0;
+	Real interchain_contact_cutoff = 10.0;
 	Real distance_constraint_cutoff = 1.0; //distance constraint is soft for now
+
+	//MDS requires only one filter and we set it to a looser bound
+
+	if ( option[ OptionKeys::docking::docking_low_res_score ]()=="motif_dock_score" ) {
+		Real base_interchain_vdw_cutoff = option[ OptionKeys::docking::SymDock_lowres_filter ]();
+		TR << "Motif Dock Score: setting clash filter to "<< base_interchain_vdw_cutoff << " x " << N << " (number of interfaces per subunit)." << std::endl;
+		interchain_vdw_cutoff = base_interchain_vdw_cutoff * N;
+	}
 
 	if ( option[ OptionKeys::docking::dock_lowres_filter ].user() ) {
 		utility::vector1< Real > dock_filters = option[ OptionKeys::docking::dock_lowres_filter ]();
@@ -517,9 +595,23 @@ SymDockProtocol::docking_lowres_filter( core::pose::Pose & pose){
 	icvdw_score = icvdw_sf(pose);
 	cst_score = cst_sf(pose);
 
-	if ( icc_score >= interchain_contact_cutoff ) passed_filter = false;
-	if ( icvdw_score >= interchain_vdw_cutoff ) passed_filter = false;
-	if ( cst_score >= distance_constraint_cutoff ) passed_filter = false;
+
+	// For MDS we only care about interchain_vdw filter
+
+	if ( option[ OptionKeys::docking::docking_low_res_score ]()=="motif_dock_score" ) {
+		if ( interchain_vdw_cutoff < 0 ) {
+			// a negative filter means no lowres filter
+			passed_filter = true;
+		} else {
+			if ( icvdw_score >= interchain_vdw_cutoff ) passed_filter = false;
+		}
+
+	} else {
+
+		if ( icc_score >= interchain_contact_cutoff ) passed_filter = false;
+		if ( icvdw_score >= interchain_vdw_cutoff ) passed_filter = false;
+		if ( cst_score >= distance_constraint_cutoff ) passed_filter = false;
+	}
 
 	if ( ( option[basic::options::OptionKeys::filters::set_saxs_filter ].user() ) &&
 			( option[basic::options::OptionKeys::score::saxs::ref_spectrum ].user() ) ) {
@@ -666,6 +758,366 @@ SymDockProtocol::calc_rms( core::pose::Pose & pose ){
 		}
 	}
 	return -1;
+}
+
+
+
+core::Real
+SymDockProtocol::calc_Irms( core::pose::Pose & pose ){
+
+	using namespace core::conformation::symmetry;
+	using namespace basic::options;
+
+	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
+
+	SymmetricConformation const & symm_conf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
+
+	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+	Size const N ( symm_info->subunits() );
+	Size const nres_per_monomer ( symm_info->num_total_residues_without_pseudo()/N );
+
+	using namespace scoring;
+	Real Irmsd( 1e3 ); // starting value
+
+	core::pose::Pose native_docking_pose = *get_native_pose()->clone();
+
+	debug_assert( native_docking_pose.size() == pose.size() - N );// one is symmterized pose with N virtual atoms
+
+	if ( N > 2 ) {
+
+		using namespace core::kinematics;
+		auto const cutpoints = native_docking_pose.fold_tree().cutpoints();
+		Size chainB_start = cutpoints[1] + 1;
+
+		FoldTree ft;
+
+		ft.add_edge(1, cutpoints[1], -1);
+		ft.add_edge(1, chainB_start, 1);
+		ft.add_edge(chainB_start, cutpoints[2], -1);
+
+		for ( Size i = 2; i <= cutpoints.size(); ++i ) {
+			ft.add_edge(chainB_start, cutpoints[i]+1, i);
+			if ( i != cutpoints.size() ) {
+				ft.add_edge( cutpoints[i] + 1, cutpoints[i+1], -1);
+			} else {
+				ft.add_edge( cutpoints[i] + 1, native_docking_pose.size(), -1);
+			}
+		}
+
+		ft.check_fold_tree();
+
+		TR << "Restructing native foldtree for interface detection of first chain. New foldtree:" << std::endl;
+		TR << ft << std::endl;
+
+		native_docking_pose.fold_tree( ft );
+	} // no need to resturcture for C2
+
+	// superimposing the first chains of pose and native_dockng_pose
+
+	using namespace core::id;
+	AtomID_Map< AtomID > atom_map;
+	core::pose::initialize_atomid_map( atom_map, native_docking_pose, AtomID::BOGUS_ATOM_ID() );
+
+	for ( Size i=1; i<=nres_per_monomer; ++i ) {
+		AtomID const id1( native_docking_pose.residue(i).atom_index("CA"), i );
+		AtomID const id2( pose.residue(i).atom_index("CA"), i );
+		atom_map[ id1 ] = id2;
+	}
+
+
+	using namespace core::scoring;
+
+
+	utility::vector1< utility::vector1<Size> > individual_rmsds(N - 1);
+
+	for ( Size i=2; i<=N; ++i ) {
+
+		utility::vector1<Size> rmsd_chain_temp;
+		for ( Size j=2; j<=N; ++j ) {
+
+			utility::vector1< Size > native_residues;
+			utility::vector1< Size > pose_residues;
+
+			for ( Size k=1; k<=nres_per_monomer; ++k ) {
+				native_residues.push_back(nres_per_monomer * (i-1) + k);
+				pose_residues.push_back(nres_per_monomer * (j-1) + k);
+			}
+
+			rmsd_chain_temp.push_back( rmsd_no_super( native_docking_pose, pose, native_residues, pose_residues, is_protein_CA ) );
+		}
+		individual_rmsds[i-1] = rmsd_chain_temp;
+	}
+
+	// Verifying individual_rmsds
+	for ( Size i = 1; i <= individual_rmsds.size(); ++i ) {
+
+		TR.Debug << "RMSDs of all permutations:  ";
+
+		for ( Size j = 1; j <= individual_rmsds[i].size(); ++j ) {
+
+			TR.Debug << individual_rmsds[i][j] << "  ";
+		}
+		TR.Debug << std::endl;
+	}
+
+	// Obtaining optimal chain ordering based on lowest RMSD combinations
+
+	std::map< Size, Size > chain_order;
+	chain_order[ 1 ] = 1;
+
+	utility::vector1<Size> native_excluded_chains;
+	utility::vector1<Size> pose_excluded_chains;
+
+	Real min_rmsd( 1e3 ); // starting value
+	Size native_chain = 1;
+	Size pose_chain = 1;
+
+	for ( Size k=1; k<=N-1; ++k ) {
+
+		for ( Size row=1; row<=N-1; ++row ) {
+
+			if ( !pose_excluded_chains.has_value(row) ) {
+
+				for ( Size col=1; col<=N-1; ++col ) {
+					if ( !native_excluded_chains.has_value(col) ) {
+
+						Real rmsd_temp = individual_rmsds[row][col];
+						if ( rmsd_temp < min_rmsd ) {
+							min_rmsd = rmsd_temp;
+							pose_chain = row;
+							native_chain = col;
+						}
+					}
+				}
+			}
+		}
+
+		// identified the lowest remaining value in the table, excluding these chains now
+		chain_order[ native_chain + 1 ] = pose_chain + 1;
+		native_excluded_chains.push_back(native_chain);
+		pose_excluded_chains.push_back(pose_chain);
+		min_rmsd = 1e3;
+		native_chain = 1;
+		pose_chain = 1;
+	}
+
+
+	// Arranging chains based on optimal ordering and calculating the rmsd
+	AtomID_Map< AtomID > atom_map_final;
+	core::pose::initialize_atomid_map( atom_map_final, native_docking_pose, AtomID::BOGUS_ATOM_ID() );
+
+	for ( Size i=1; i<=N; ++i ) {
+		Size j = chain_order[i];
+		for ( Size k=1; k<=nres_per_monomer; ++k ) {
+
+			TR.Debug << "Native: " << i << "\t" << k << "\t" << nres_per_monomer * (i-1) + k << std::endl;
+			AtomID const id1( native_docking_pose.residue(nres_per_monomer * (i-1) + k).atom_index("CA"), nres_per_monomer * (i-1) + k );
+			TR.Debug << "Pose: " << j << "\t" << k << "\t" << nres_per_monomer * (j-1) + k << std::endl;
+			AtomID const id2( pose.residue(nres_per_monomer * (j-1) + k).atom_index("CA"), nres_per_monomer * (j-1) + k );
+			atom_map_final[ id1 ] = id2;
+		}
+	}
+
+	Irmsd = superimpose_pose( native_docking_pose, pose, atom_map_final );
+
+	return Irmsd;
+
+
+}
+
+
+core::Real
+SymDockProtocol::calc_fnat( core::pose::Pose & pose, core::scoring::ScoreFunctionOP dock_scorefxn ){
+
+	using namespace core::conformation::symmetry;
+	using namespace basic::options;
+	using namespace core::conformation;
+
+	debug_assert( core::pose::symmetry::is_symmetric( pose ) );
+
+	SymmetricConformation const & symm_conf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
+
+	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+	Size const N ( symm_info->subunits() );
+	Size const nres_per_monomer ( symm_info->num_total_residues_without_pseudo()/N );
+
+	using namespace scoring;
+	Real fnat( 0 ); // starting value
+	Real cutoff = 5.0;
+
+	core::pose::Pose native_docking_pose = *get_native_pose()->clone();
+
+
+	debug_assert( native_docking_pose.size() == pose.size() - N );// one is symmterized pose with N virtual atoms
+
+	if ( N > 2 ) {
+
+		using namespace core::kinematics;
+		auto const cutpoints = native_docking_pose.fold_tree().cutpoints();
+		Size chainB_start = cutpoints[1] + 1;
+
+		FoldTree ft;
+
+		ft.add_edge(1, cutpoints[1], -1);
+		ft.add_edge(1, chainB_start, 1);
+		ft.add_edge(chainB_start, cutpoints[2], -1);
+
+		for ( Size i = 2; i <= cutpoints.size(); ++i ) {
+			ft.add_edge(chainB_start, cutpoints[i]+1, i);
+			if ( i != cutpoints.size() ) {
+				ft.add_edge( cutpoints[i] + 1, cutpoints[i+1], -1);
+			} else {
+				ft.add_edge( cutpoints[i] + 1, native_docking_pose.size(), -1);
+			}
+		}
+
+		ft.check_fold_tree();
+
+		TR << "Restructing native foldtree for interface detection of first chain. New foldtree:" << std::endl;
+		TR << ft << std::endl;
+
+		native_docking_pose.fold_tree( ft );
+	}
+
+	// score to set up interface object
+	// scoring only happened here to update the residue neighbors
+	core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone();
+
+	( *scorefxn )( native_docking_pose );
+
+	protocols::scoring::Interface interface( 1 ); //only considering interfaces A makes
+	interface.distance( 8.0 );
+	interface.calculate( native_docking_pose );
+
+	utility::vector1< utility::vector1<Size> > native_interface_residues(N); // empty 2-D vector array, each row is for one subunit
+
+	Size chain_number = 0;
+	for ( Size i = 1; i <= native_docking_pose.size(); ++i ) {
+		if ( interface.is_interface( i ) ) {
+			chain_number = native_docking_pose.chain(i);
+			native_interface_residues[chain_number].push_back(i);
+		}
+	}
+
+	// creating contact pair list (not using ObjexxFCL::FArray3D_bool as we need variable sized arrays)
+	// populating contact list with falses
+	utility::vector1< utility::vector1<utility::vector1<bool>> > contact_list( N-1 );
+
+	for ( Size i = 2; i <= N; ++i ) {
+		utility::vector1<bool> temp_interface_list( native_interface_residues[i].size() );
+		utility::vector1< utility::vector1<bool> > temp_2D_bool_list;
+		for ( Size j = 1; j <= native_interface_residues[1].size(); ++j ) {
+			utility::vector1<bool> temp_bool_list = temp_interface_list; // deep copying
+			temp_2D_bool_list.push_back(temp_bool_list);
+		}
+		contact_list[i-1] = temp_2D_bool_list;
+		temp_2D_bool_list.clear();
+		temp_interface_list.clear();
+	}
+
+	//identify native contacts across the interface
+	utility::vector1< utility::vector1<utility::vector1<bool>> > native_contact_list = contact_list;
+
+	for ( Size i = 2; i<= N; ++i ) {
+		for ( Size j = 1; j <= native_interface_residues[1].size(); ++j ) {
+			ResidueOP rsd1( new Residue( native_docking_pose.residue( native_interface_residues[1][j] ) ) );
+			for ( Size k = 1; k <= native_interface_residues[i].size(); ++k ) {
+				ResidueOP rsd2( new Residue( native_docking_pose.residue( native_interface_residues[i][k] ) ) );
+				native_contact_list[i-1][j][k] = calc_res_contact( rsd1, rsd2, cutoff ) ;
+			}
+		}
+	}
+
+	// manually calculating permutations for all chains except the very first chain
+	// then calculating rmsd with superposition and taking the minimum to get correct chain orientation
+
+	std::string secondary_chains;
+	for ( Size i = 1; i < N; ++i ) {
+		secondary_chains += std::to_string(i);
+	}
+
+	utility::vector1< std::string > chain_permut;
+	do {
+		chain_permut.push_back(secondary_chains);
+	} while(std::next_permutation(secondary_chains.begin(), secondary_chains.end()));
+
+	// finding best permutation of chains to get highest Fnat
+	for ( auto & chain_order : chain_permut ) {
+
+		utility::vector1< utility::vector1<utility::vector1<bool>> > pose_contact_list = contact_list;
+		Real native_ncontact = 0;
+		Real pose_ncontact = 0;
+
+		for ( Size i = 2; i<= N; ++i ) {
+			for ( Size j = 1; j <= native_interface_residues[1].size(); ++j ) {
+				ResidueOP rsd1( new Residue( pose.residue( native_interface_residues[1][j] ) ) );
+				for ( Size k = 1; k <= native_interface_residues[i].size(); ++k ) {
+					Size orig_res_number = native_interface_residues[i][k];
+					Size chain_number = orig_res_number / nres_per_monomer;
+					if ( orig_res_number % nres_per_monomer == 0 ) chain_number = chain_number - 1; // this happens for the C-terminus residue
+					Size chain_number_on_first = orig_res_number - ( chain_number * nres_per_monomer );
+					Size new_residue_number = ( (int) chain_order[ chain_number - 1 ] - '0' ) * nres_per_monomer+ chain_number_on_first ;
+					ResidueOP rsd2( new Residue( pose.residue( new_residue_number ) ) );
+					pose_contact_list[i-1][j][k] = calc_res_contact( rsd1, rsd2, cutoff ) ;
+				}
+			}
+		}
+
+		//identify which native contacts are recovered in the decoy
+		for ( Size i = 1; i<= native_contact_list.size(); ++i ) {
+			for ( Size j = 1; j<= native_contact_list[i].size(); ++j ) {
+				for ( Size k = 1; k<= native_contact_list[i][j].size(); ++k ) {
+					if ( native_contact_list[i][j][k] ) {
+						++native_ncontact;
+						if ( pose_contact_list[i][j][k] ) {
+							++pose_ncontact;
+						}
+					}
+
+				}
+			}
+		}
+		if ( fnat < pose_ncontact/native_ncontact ) fnat = pose_ncontact/native_ncontact;
+	}
+
+	return fnat;
+
+}
+
+bool SymDockProtocol::calc_res_contact(
+	conformation::ResidueOP const rsd1,
+	conformation::ResidueOP const rsd2,
+	Real const dist_cutoff ) {
+	Real dist_cutoff2 = dist_cutoff * dist_cutoff;
+	double dist2 = 9999.0;
+
+	for ( Size m = 1; m <= rsd1->nheavyatoms(); m++ ) {
+		for ( Size n = 1; n <= rsd2->nheavyatoms(); n++ ) {
+			dist2 = rsd1->xyz( m ).distance_squared( rsd2->xyz( n ) );
+			if ( dist2 <= dist_cutoff2 ) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+core::Real
+SymDockProtocol::calc_CAPRI_rank( Real const Irmsd, Real const Lrmsd, Real const Fnat ) {
+
+	if ( (Fnat >= 0.5 ) && ( Lrmsd <= 1 || Irmsd <= 1 ) ) {
+		return 3; // high quality
+	} else if ( (Fnat >= 0.5 && Lrmsd > 1 && Irmsd > 1) || (Fnat >= 0.3 && (Lrmsd <= 5 || Irmsd <= 2)) ) {
+		return 2; // medium quality
+	} else if ( (Fnat >= 0.3 && Lrmsd > 5 && Irmsd > 2) || (Fnat >= 0.1 && (Lrmsd <= 10 || Irmsd <= 4)) ) {
+		return 1; // acceptable quality
+	} else if ( (Fnat < 0.1) || (Lrmsd > 10 && Irmsd > 4) ) {
+		return 0; // incorrect structure
+	} else {
+		TR.Debug << "Unreachable code" << std::endl;
+		return -1; // should never be reached
+	}
+
 }
 
 // turn on design of partner2 during docking. Not thoroughly tested!

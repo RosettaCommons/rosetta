@@ -17,6 +17,7 @@
 /// @author Modified by Sid Chaudhury
 /// @author Modified by Jacob Corn
 /// @author ingemar André. Based on the standard docking protocol
+/// @author Shourya S. Roy Burman - SymDock2 modifications
 
 #include <protocols/symmetric_docking/SymDockingHiRes.hh>
 #include <protocols/symmetric_docking/SymSidechainMinMover.hh>
@@ -57,6 +58,8 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/moves/RepeatMover.hh>
+#include <protocols/relax/FastRelax.hh>
+
 //for resfile reading
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
@@ -92,8 +95,8 @@ namespace symmetric_docking {
 // default constructor
 SymDockingHiRes::SymDockingHiRes() : Mover()
 {
-	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
-	scorefxn_pack_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	scorefxn_ = core::scoring::get_score_function();
+	scorefxn_pack_ = core::scoring::get_score_function();
 	moves::Mover::type( "SymDockingHiRes" );
 	init_task_factory_=nullptr;
 	design_ = false;
@@ -318,6 +321,11 @@ void SymDockingHiRes::apply( core::pose::Pose & pose )
 
 	docking_highres_protocol_mover_->apply( pose );
 	mc_->recover_low( pose );
+	// SymDock2: new relax step greatly improves result.
+	protocols::relax::FastRelax fastrelax( scorefxn_, 1 );
+	fastrelax.max_iter( 100 ); //the default of 2000 was too slow and perhaps unnecessary
+	fastrelax.apply( pose );
+
 }
 
 std::string
@@ -356,8 +364,8 @@ void SymDockingHiRes::set_dock_min_protocol() {
 ///////////////////////////////////////////////////////////////////////////////////
 ///
 /// @brief main entrance to do monte carlo minimization
-/// @details
-///   a total of 50 cycles of monte-carlo minimization will be
+/// @details one cycle of repack and minimization before relax
+///   Old:a total of 1 cycle of monte-carlo minimization will be
 ///   carried out if the minimized structure can pass the filter
 ///   after the first and fifth cycle.  Then it is rigid-body minimized
 ///   to a stringent tolerance.
@@ -367,8 +375,8 @@ void SymDockingHiRes::set_dock_min_protocol() {
 /// @references docking_mcm_protocol from docking_minimize.cc
 ///    pose_docking_monte_carlo_minimize from pose_docking.cc
 ///
-/// @author Sid Chaudhury May 28 2009, modified for symmetric docking
-///      by Ingemar Andre
+/// @author Oroginally: Sid Chaudhury May 28 2009, modified for symmetric docking
+///      by Ingemar Andre, SymDock2: modified by Shourya S. Roy Burman
 ///
 /////////////////////////////////////////////////////////////////////////////////
 void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
@@ -476,17 +484,19 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	TrialMoverOP minimize_trial( new TrialMover( min_mover, mc_ ) );
 
 	//set up mcm cycles and mcm_repack cycles
-	RepeatMoverOP mcm_four_cycles( new RepeatMover( rb_mover_min_trial, 4 ) );
-	RepeatMoverOP mcm_fortyfive_cycles( new RepeatMover( rb_mover_min_trial_repack, 45 ) );
+	//RepeatMoverOP mcm_four_cycles( new RepeatMover( rb_mover_min_trial, 4 ) );
+	//RepeatMoverOP mcm_fortyfive_cycles( new RepeatMover( rb_mover_min_trial_repack, 45 ) );
+
+
 	//set up protocol mover
 	TR << "::::::::::::::::::DOCK_MCM:::::::::::::::::::" << std::endl;
 
 	docking_highres_protocol_mover_ = utility::pointer::make_shared< SequenceMover >();
 	if ( repack_switch_ ) docking_highres_protocol_mover_->add_mover( initial_repack );
 	docking_highres_protocol_mover_->add_mover( minimize_trial );
-	docking_highres_protocol_mover_->add_mover( mcm_four_cycles );
-	docking_highres_protocol_mover_->add_mover( mcm_fortyfive_cycles );
-	docking_highres_protocol_mover_->add_mover( minimize_trial );
+	//docking_highres_protocol_mover_->add_mover( mcm_four_cycles );
+	//docking_highres_protocol_mover_->add_mover( mcm_fortyfive_cycles );
+	//docking_highres_protocol_mover_->add_mover( minimize_trial );
 
 }
 
