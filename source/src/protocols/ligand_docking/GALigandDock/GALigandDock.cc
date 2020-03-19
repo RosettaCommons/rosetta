@@ -481,6 +481,7 @@ GALigandDock::get_movable_scs( core::pose::Pose const &pose,
 			if ( pose.residue(i).aa() == core::chemical::aa_ala || pose.residue(i).aa() == core::chemical::aa_gly ) continue;
 			if ( pose.residue(i).type().has_variant_type( core::chemical::DISULFIDE ) ) continue;
 			if ( !pose.residue(i).is_protein() ) continue; //skip anything not amino-acid
+			if ( frozen_residues_.find(i) != frozen_residues_.end() ) continue;
 
 			if ( gridscore->is_residue_in_grid(pose.residue(i), 75.0, sc_edge_buffer_ ) ) { // 75 degree "angle buffer" check
 				movable_scs.push_back( i );
@@ -538,6 +539,7 @@ GALigandDock::get_movable_scs( core::pose::Pose const &pose,
 			if ( pose.residue(i).aa() == core::chemical::aa_ala || pose.residue(i).aa() == core::chemical::aa_gly ) continue;
 			if ( pose.residue(i).type().has_variant_type( core::chemical::DISULFIDE ) ) continue;
 			if ( !pose.residue(i).is_protein() ) continue; //skip anything not amino-acid
+			if ( frozen_residues_.find(i) != frozen_residues_.end() ) continue;
 
 			if ( gridscore->is_residue_in_grid(pose.residue(i), sc_edge_buffer_, eigvalS, eigvecS) ) {
 				movable_scs.push_back( i );
@@ -551,6 +553,10 @@ GALigandDock::get_movable_scs( core::pose::Pose const &pose,
 			if ( pose.residue(*res_i).aa() == core::chemical::aa_ala
 					|| pose.residue(*res_i).aa() == core::chemical::aa_gly ) continue; // don't warn
 			if ( pose.residue(*res_i).type().has_variant_type( core::chemical::DISULFIDE ) ) continue; // don't warn
+			if ( frozen_residues_.find(*res_i) != frozen_residues_.end() ) {
+				TR.Warning << "Residue " << *res_i << " is declared as both moving and frozen! Treating as frozen" << std::endl;
+				continue;
+			}
 
 			if ( gridscore->is_residue_in_grid(pose.residue(*res_i), 0.0, 0.0 ) ) { // for user-defined, ignore angle/dist checks
 				movable_scs.push_back( *res_i );
@@ -897,36 +903,16 @@ GALigandDock::final_exact_cartmin(
 	for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
 		if ( (pose.residue_type(j).is_water() && move_water_)
 				|| !pose.residue(j).is_protein() ) {
-			core::Size wjump = pose.fold_tree().get_jump_that_builds_residue( j );
-			mm->set_jump( wjump, true );
-			mm2->set_jump( wjump, true ); // mm2 only jump
-			mm->set_chi( j, true );
+			if ( frozen_residues_.find(j) == frozen_residues_.end() ) {
+				core::Size wjump = pose.fold_tree().get_jump_that_builds_residue( j );
+				mm->set_jump( wjump, true );
+				mm2->set_jump( wjump, true ); // mm2 only jump
+				mm->set_chi( j, true );
+			}
 		}
 	}
 
 	std::vector< std::string > lines;
-
-	// Torsion-relax in dual relax: run before any cst
-	// hard coded internal coord part
-	/*
-	if ( dualrelax ) {
-	TR << "Dual-relax mode: calling torsion-relax before cartrelax" << std::endl;
-	protocols::relax::FastRelax relax_dual;
-	relax_dual.set_scorefxn( scfxn_ ); // use grid score with softer farep
-	mm2->set_bb( false ); // turn off bb
-	lines.push_back( "switch:torsion" );
-	lines.push_back( "repeat 2" );
-	lines.push_back( "ramp_repack_min 0.02 0.01 1.0 50" );
-	lines.push_back( "ramp_repack_min 1.0  0.00001 0.0 100" );
-	lines.push_back( "accept_to_best" );
-	lines.push_back( "endrepeat" );
-	relax_dual.set_script_from_lines( lines );
-
-	relax_dual.set_movemap( mm2 );
-	relax_dual.apply( pose );
-	lines.resize( 0 );
-	}
-	*/
 
 	/////
 	// (2) setup constraints if cst weight is on
@@ -1041,10 +1027,9 @@ GALigandDock::final_exact_scmin(
 	for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
 		if ( (pose.residue_type(j).is_water() && move_water_)
 				|| !pose.residue(j).is_protein() ) {
-			//core::Size wjump = pose.fold_tree().get_jump_that_builds_residue( j );
-			//mm->set_jump( wjump, true );
-			// let's be more conservative...
-			mm->set_chi( j, true );
+			if ( frozen_residues_.find(j) == frozen_residues_.end() ) {
+				mm->set_chi( j, true );
+			}
 		}
 	}
 
@@ -1508,7 +1493,7 @@ GALigandDock::parse_my_tag(
 	basic::datacache::DataMap & datamap,
 	filters::Filters_map const &,
 	moves::Movers_map const &,
-	core::pose::Pose const &
+	core::pose::Pose const &pose
 ) {
 
 	scfxn_ = protocols::rosetta_scripts::parse_score_function( tag, datamap );
@@ -1554,11 +1539,19 @@ GALigandDock::parse_my_tag(
 	if ( tag->hasOption("use_mean_maxRad") ) { use_mean_maxRad_ = tag->getOption<bool>("use_mean_maxRad"); }
 	if ( tag->hasOption("stdev_multiplier") ) { stdev_multiplier_ = tag->getOption<core::Real>("stdev_multiplier"); }
 
+	if ( tag->hasOption("frozen_scs") ) {
+		std::string frozen_scs = tag->getOption<std::string>("frozen_scs");
+		if ( frozen_scs != "none" ) {
+			// parse as residue numbers
+			frozen_residues_ = core::pose::get_resnum_list( frozen_scs, pose );
+		}
+	}
+
 	if ( tag->hasOption("multiple_ligands") ) {
 		std::string ligands_string = tag->getOption<std::string>("multiple_ligands");
 		multiple_ligands_ = utility::string_split( ligands_string, ',' );
 		if ( multiple_ligands_.size() > 1000 ) {
-			TR.Error << "multiple_ligands arguments cannot be more than 100! " << std::endl;
+			TR.Error << "multiple_ligands arguments cannot be more than 1000! " << std::endl;
 			utility_exit();
 		}
 	}
@@ -1893,6 +1886,7 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "reference_frac", xsct_real, "If reference pool is provided, the fraction of structures from the reference pool.");
 	attlist + XMLSchemaAttribute( "reference_frac_auto", xsct_rosetta_bool, "Select Nstruct to sample by reference automatically");
 	attlist + XMLSchemaAttribute( "sidechains", xs_string, "Sidechains to move: none, auto, or residue IDs.");
+	attlist + XMLSchemaAttribute( "frozen_scs", xs_string, "Sidechains to freeze: list of residue IDs.");
 	attlist + XMLSchemaAttribute( "sc_edge_buffer", xsct_real, "Scaling factor of maxdistance when deciding to include sc as movable");
 	attlist + XMLSchemaAttribute( "fa_rep_grid", xsct_real, "Repulsion weight at grid scoring stage");
 	attlist + XMLSchemaAttribute( "grid_bound_penalty", xsct_real, "Penalty factor when ligand atm gets out of boundary");

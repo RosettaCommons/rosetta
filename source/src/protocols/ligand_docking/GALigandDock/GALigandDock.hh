@@ -308,6 +308,7 @@ private:
 
 	//  ... define the "movable" parts
 	std::string ligid_, sidechains_;
+	std::set<core::Size> frozen_residues_;
 	core::Real sc_edge_buffer_;
 	bool move_water_;
 
