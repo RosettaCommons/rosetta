@@ -591,12 +591,15 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 		ft_cuts(i) = cuts[i];
 	}
 
-	bool status = tree.tree_from_jumps_and_cuts(num_nonvirt_residues_+1,   // nres_in
+	bool const status = tree.tree_from_jumps_and_cuts(num_nonvirt_residues_+1,   // nres_in
 		jumps.size(),   // num_jump_in
 		ft_jumps,    // jump_point
 		ft_cuts,  // cuts
 		num_nonvirt_residues_+1);  // root
 
+	if ( !status ) {
+		utility_exit_with_message("HybridizeFoldtreeDynamic: failed to build fold tree from cuts and jumps");
+	}
 
 	// strand pairings
 	if ( strand_pairs_.size() ) {
@@ -671,9 +674,6 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 		}
 	} // strand pairings
 
-	if ( !status ) {
-		utility_exit_with_message("HybridizeFoldtreeDynamic: failed to build fold tree from cuts and jumps");
-	}
 
 	// Update the pose's fold tree
 	core::pose::symmetry::set_asymm_unit_fold_tree( pose , tree );
