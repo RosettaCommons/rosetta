@@ -27,6 +27,8 @@
 
 // C++ headers
 #include <string>
+#include <unordered_set>
+#include <random>
 
 #include <utility/vector1.hh>
 
@@ -51,6 +53,46 @@ ShuffleFileSystemJobDistributor::ShuffleFileSystemJobDistributor() :
 ///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
 ShuffleFileSystemJobDistributor::~ShuffleFileSystemJobDistributor() = default;
 
+utility::vector1<core::Size>
+get_spanning_jobs( JobsContainer const & jobs ) {
+	std::unordered_set< std::string > input_tags;
+
+	utility::vector1<core::Size> spanning_set;
+
+	for ( core::Size i = 1; i <= jobs.size(); i++ ) {
+		if ( input_tags.count( jobs[i]->input_tag() ) == 0 ) {
+			input_tags.emplace( jobs[i]->input_tag() );
+			spanning_set.push_back( i );
+		}
+	}
+	return spanning_set;
+}
+
+void
+ShuffleFileSystemJobDistributor::scramble_job_order( JobsContainer const & jobs ) {
+	utility::vector1<core::Size> spanning_set = get_spanning_jobs( jobs );
+
+	std::random_device rd;
+	std::mt19937 g(rd());
+
+	std::shuffle(spanning_set.begin(), spanning_set.end(), g);
+
+
+	scrambled_job_order_.clear();
+	core::Size from_span = 1;
+
+	// new, random without replacement
+	for ( int i=0; i < basic::options::option[ basic::options::OptionKeys::out::nstruct ].value() ; i++ ) {
+		scrambled_job_order_.push_back( spanning_set[from_span] );
+		from_span++;
+		if ( from_span > spanning_set.size() ) from_span = 1;
+	}
+
+	// old, random with replacement
+	// for ( int i=0; i < basic::options::option[ basic::options::OptionKeys::out::nstruct ].value() ; i++ ) {
+	//  scrambled_job_order_.push_back( numeric::random::rg().random_range(1,jobs.size() ) );
+	// }
+}
 
 /// @brief dummy for master/slave version
 core::Size
@@ -61,13 +103,11 @@ ShuffleFileSystemJobDistributor::get_new_job_id()
 
 	JobOutputterOP outputter = job_outputter();
 
+	if ( (int)next_random_job_ >= (int)basic::options::option[ basic::options::OptionKeys::out::nstruct ].value() ) return 0; // we're done (nstruct decoys done)
+	if ( next_random_job_ >= scrambled_job_order_.size() ) next_random_job_ = 0; // re-scramble the list
+
 	if ( next_random_job_ == 0 ) {
-		scrambled_job_order_.clear();
-		for ( int i=0; i < basic::options::option[ basic::options::OptionKeys::out::nstruct ].value() ; i++ ) {
-			scrambled_job_order_.push_back( numeric::random::rg().random_range(1,jobs.size() ) );
-		}
-
-
+		scramble_job_order( jobs );
 	}
 	next_random_job_++;
 
@@ -76,8 +116,6 @@ ShuffleFileSystemJobDistributor::get_new_job_id()
 	// }
 	//
 	core::Size choice = scrambled_job_order_[next_random_job_];
-	if ( (int)next_random_job_ > (int)basic::options::option[ basic::options::OptionKeys::out::nstruct ].value() ) return 0; // we're done (nstruct decoys done)
-	if ( next_random_job_ > scrambled_job_order_.size() ) next_random_job_ = 0; // re-scramble the list
 
 	// Now go backwards to find the last nstruct that hasn't been done yet.
 	// If we're not done

@@ -60,6 +60,10 @@ public:
 	core::Size                     next_random_job() { return next_random_job_; }
 
 private:
+	void
+	scramble_job_order( JobsContainer const & jobs );
+
+private:
 	utility::vector1< core::Size > scrambled_job_order_;
 	core::Size                     next_random_job_;
 };
