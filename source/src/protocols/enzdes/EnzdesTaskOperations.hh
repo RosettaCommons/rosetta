@@ -127,6 +127,9 @@ public:
 
 	static void register_options();
 
+	bool get_detect_interface() const { return detect_design_interface_; }
+	void set_detect_interface(bool setting) { detect_design_interface_ = setting; }
+
 	bool get_design() const { return design_;}
 	void set_design(bool const design_in) {design_ = design_in;}
 

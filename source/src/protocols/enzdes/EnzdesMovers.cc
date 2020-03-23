@@ -491,8 +491,11 @@ RepackLigandSiteWithoutLigandMover::apply(
 
 	//2. construct the proper task
 	DetectProteinLigandInterfaceOP detect_enzdes_interface( new DetectProteinLigandInterface() );
+	detect_enzdes_interface->set_detect_interface(true); // By default it reads from the options, which may be (defaults to) false.
 	detect_enzdes_interface->set_design(false);
 	core::pack::task::TaskFactory taskfactory;
+	// The detect interface should be set to turn it off, but if we have a resfile it might accidentally design, which is not what we want.
+	taskfactory.push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 	taskfactory.push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 	taskfactory.push_back( detect_enzdes_interface);
 	ptask_ = taskfactory.create_task_and_apply_taskoperations( pose );
