@@ -142,7 +142,6 @@ GlobalResidueTypeSet::init_restypes_from_database() {
 
 	using namespace basic::options;
 
-	TR.Debug << "init_restypes_from_database: initializing residue types from database" << std::endl;
 	std::string const list_filename( database_directory_ + "residue_types.txt" );
 	utility::io::izstream data( list_filename.c_str() );
 	if ( !data.good() ) {
@@ -221,7 +220,6 @@ GlobalResidueTypeSet::init_restypes_from_database() {
 
 void GlobalResidueTypeSet::init_restypes_from_commandline() {
 
-	TR.Debug << "init_restypes_from_commandline: initializing residue types from commandline" << std::endl;
 	utility::vector1< std::string > extra_params_files( params_files_from_commandline() );
 
 	for ( std::string const & filename : extra_params_files ) {
@@ -441,7 +439,6 @@ GlobalResidueTypeSet::load_residue_types_from_sql_database() {
 void GlobalResidueTypeSet::init_patches_from_database() {
 	using namespace basic::options;
 
-	TR.Debug << "init_patches_from_database: initializing patches from database" << std::endl;
 	utility::vector1< std::string > patch_filenames;
 	utility::vector1< std::string > metapatch_filenames;
 
@@ -542,7 +539,6 @@ void GlobalResidueTypeSet::init_patches_from_database() {
 void GlobalResidueTypeSet::init_patches_from_commandline() {
 	using namespace basic::options;
 
-	TR.Debug << "init_patches_from_commandline: initializing patches from commandline" << std::endl;
 	utility::vector1< std::string > extra_patch_files;
 
 	if ( mode() == FULL_ATOM_t ) {

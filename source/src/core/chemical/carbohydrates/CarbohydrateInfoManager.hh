@@ -58,15 +58,6 @@ public:  // Declare friends ///////////////////////////////////////////////////
 
 
 public:  // Static constant data access ///////////////////////////////////////
-	/// @brief Get the path to the codes_to_root.map database file
-	static std::string const & codes_to_root_map_file();
-
-	/// @brief Get the path to the sugar_modifications.table database file
-	static std::string const & sugar_modifications_table_file();
-
-	/// @brief Get the path to the ring_size_to_morphemes.map database file
-	static std::string const & ring_size_to_morphemes_map_file();
-
 	/// @brief  Is the given 3-letter code a valid Rosetta/IUPAC code for carbohydrates?
 	static bool is_valid_sugar_code( std::string const & code );
 

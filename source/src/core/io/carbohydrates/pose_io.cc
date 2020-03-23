@@ -81,17 +81,15 @@ sugar_modifications_from_suffix( std::string const & suffix )
 		// * an alphabetic symbol, which is or is part of the affix for a modification.
 		if ( letter == ',' ) {
 			if ( char_to_int( prev_letter ) == 0 || char_to_int( next_letter ) == 0 ) {
-				utility_exit_with_message( "Saccharide sequence input error:"
-					" A comma must come between two numerals in a suffix!"
-					" Error interpretting modification suffix '" + suffix + "'" );
+				utility_exit_with_message( "Saccharide sequence input error: "
+					"A comma must come between two numerals in a suffix." );
 			}
 			// If it's a valid location for a comma, we just move on.
 		} else if ( char_to_int( letter ) != 0 ) {  // It's a number.
 			if ( char_to_int( next_letter ) != 0 ) {  // If the next letter is also a number....
-				utility_exit_with_message( "Saccharide sequence input error:"
-					" A comma must come between two numerals in a suffix;"
-					" Rosetta cannot handle sugars with more than 9 carbons!"
-					" Error interpretting modification suffix '" + suffix + "'" );
+				utility_exit_with_message( "Saccharide sequence input error: "
+					"A comma must come between two numerals in a suffix and "
+					"Rosetta cannot handle sugars with more than 9 carbons." );;
 			}
 			if ( i != 0 && char_to_int( prev_letter ) == 0 && prev_letter != ',' ) {
 				// If the previous letter was a letter, the information about the previous modifications are complete;
@@ -114,10 +112,6 @@ sugar_modifications_from_suffix( std::string const & suffix )
 	Size const n_modifications( current_positions.size() );
 	for ( uint j( 1 ); j <= n_modifications; ++j ) {
 		modifications.push_back( make_pair( current_positions[ j ], current_affix ) );
-		TR.Debug << "Interpretted sugar modification " <<
-			modifications.size() << " as " << current_affix <<
-			" at position " << current_positions[j] <<
-			" from suffix '" << suffix << "'" << std::endl;
 	}
 
 	return modifications;

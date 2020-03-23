@@ -104,7 +104,7 @@ read_codes_and_roots_from_database_file( std::string const & filename )
 		codes_to_roots[ key ] = { root, stereochem, anomeric };
 	}
 
-	TR.Debug << "Read " << codes_to_roots.size() << " 3-letter code mappings from the carbohydrate database file " << filename << endl;
+	TR.Debug << "Read " << codes_to_roots.size() << " 3-letter code mappings from the carbohydrate database." << endl;
 
 	return codes_to_roots;
 }
@@ -139,7 +139,7 @@ read_ring_sizes_and_morphemes_from_database_file( std::string const & filename )
 	}
 
 	TR.Debug << "Read " << ring_size_to_morphemes.size() <<
-		" ring size mappings from the carbohydrate database file " << filename << endl;
+		" ring size mappings from the carbohydrate database." << endl;
 
 	return ring_size_to_morphemes;
 }
@@ -180,7 +180,7 @@ read_nomenclature_table_from_database_file( std::string const & filename )
 	}
 
 	TR.Debug << "Read " << table.size() <<
-		" rows from the sugar modifications table in the carbohydrate database file " << filename << endl;
+		" rows from the sugar modifications table in the carbohydrate database." << endl;
 
 	return table;
 }
