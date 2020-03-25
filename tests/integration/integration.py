@@ -649,47 +649,48 @@ def setup_demo_command_file(demo_subdir):
     rosetta_binaries = []
     total_commands = 0
     for md_file in md_files:
-        INFILE = open(md_file, 'r')
-        if os.path.basename(md_file) == "README.md":
-            demo_name = os.path.dirname(md_file).split('/')[-1]
-        else:
-            demo_name = os.path.basename(md_file).replace(".md", "")
 
-        commands.append("# "+demo_name+"\n\n")
-        for line in INFILE:
-            #print line
-            line = line.strip()
-            line = line.replace("```", "") #Replace code line.
-            line = line.replace("<code>", "")
-            line = line.replace("</code>","")
+        with io.open(md_file, 'r', encoding="UTF-8", errors='backslashreplace') as f:
+            md_file_data = f.read()
 
-
-            #$ Charactor is the line for an actual command that will be tested.
-            if not line or not line.startswith("$>"): continue
-
-            line = line.replace("`", "")
-
-            #Replace rosetta binaries with that with which they are being run on.
-            #Repalce flags files with any short version present.
-            line, line_exe = format_demo_line(line, demo_subdir)
-            if len(line_exe) > 0:
-                total_commands+=1
-                line = line+ " -database %(database)s -run:constant_seed -nodelay 2>&1 " \
-                       + "| egrep -vf "+os.path.dirname(this_file_path)+"/ignore_list > log"+str(total_commands)
-
+            if os.path.basename(md_file) == "README.md":
+                demo_name = os.path.dirname(md_file).split('/')[-1]
             else:
-                total_commands+=1
-                if not re.search('cd', line):
-                    #Parenthesis allow proper IO direction around command (for example piping the symdef files into a file)
-                    # They are required.  Thanks to Rocco Moretti for figuring out how to accomplish this.
+                demo_name = os.path.basename(md_file).replace(".md", "")
 
-                    line = "("+line+")"+ " 2>&1 | egrep -vf "+os.path.dirname(this_file_path)+"/ignore_list > log"+str(total_commands)
+            commands.append("# "+demo_name+"\n\n")
+            for line in md_file_data.split('\n'):
+                #print line
+                line = line.strip()
+                line = line.replace("```", "") #Replace code line.
+                line = line.replace("<code>", "")
+                line = line.replace("</code>","")
 
 
-            rosetta_binaries.extend(line_exe)
-            commands.append(line)
+                #$ Charactor is the line for an actual command that will be tested.
+                if not line or not line.startswith("$>"): continue
 
-        INFILE.close()
+                line = line.replace("`", "")
+
+                #Replace rosetta binaries with that with which they are being run on.
+                #Repalce flags files with any short version present.
+                line, line_exe = format_demo_line(line, demo_subdir)
+                if len(line_exe) > 0:
+                    total_commands+=1
+                    line = line+ " -database %(database)s -run:constant_seed -nodelay 2>&1 " \
+                           + "| egrep -vf "+os.path.dirname(this_file_path)+"/ignore_list > log"+str(total_commands)
+
+                else:
+                    total_commands+=1
+                    if not re.search('cd', line):
+                        #Parenthesis allow proper IO direction around command (for example piping the symdef files into a file)
+                        # They are required.  Thanks to Rocco Moretti for figuring out how to accomplish this.
+
+                        line = "("+line+")"+ " 2>&1 | egrep -vf "+os.path.dirname(this_file_path)+"/ignore_list > log"+str(total_commands)
+
+
+                rosetta_binaries.extend(line_exe)
+                commands.append(line)
 
     if total_commands == 0:
         return False
