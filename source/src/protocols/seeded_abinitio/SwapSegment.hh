@@ -22,10 +22,16 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pose/ResidueIndexDescription.fwd.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
 namespace seeded_abinitio {
+
+struct SegmentSpec {
+	core::pose::ResidueIndexDescriptionCOP start;
+	core::pose::ResidueIndexDescriptionCOP stop;
+};
 
 class SwapSegment : public protocols::moves::Mover {
 public:
@@ -87,7 +93,7 @@ private:
 	///check for the segments
 	bool seeds_presence_;
 
-	protocols::loops::Loops all_seeds_;
+	utility::vector1< SegmentSpec > segment_specs_;
 
 	///chain that contains the seed in the seed_pdb
 	core::Size from_chain_;

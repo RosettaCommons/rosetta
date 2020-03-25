@@ -77,7 +77,7 @@ private:
 private:
 
 	protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler_;
-	utility::vector1< core::Size > residues_to_instantiate_in_full_model_numbering_;
+	std::string move_str_;
 
 };
 

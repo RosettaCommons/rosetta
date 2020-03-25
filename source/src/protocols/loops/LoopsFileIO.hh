@@ -20,6 +20,7 @@
 // Package headers
 #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
+#include <protocols/loops/loops_definers/LoopsDefiner.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -135,6 +136,9 @@ public:
 	/// @brief constructor from a loops-file-data object: sets this object in an "in charge" state.
 	GuardedLoopsFromFile( LoopsFileData const & lfd );
 
+	/// @brief constructor from a loops-definer object: sets this object in an "in charge" state.
+	GuardedLoopsFromFile( loops_definers::LoopsDefinerOP ld );
+
 	/// @brief constructor from loops pointer: sets this object in a "not in charge" state.
 	GuardedLoopsFromFile( LoopsOP loops );
 
@@ -185,13 +189,19 @@ public:
 	void loops( LoopsFileData const & setting );
 
 	/// @brief read access to the LoopsFileData
-	LoopsFileData const & loops_file_data() const;
+	LoopsFileDataCOP loops_file_data() const;
+
+	/// @brief set the LoopsDefiner object directly
+	void loops( loops_definers::LoopsDefinerOP const & setting );
+
+	loops_definers::LoopsDefinerCOP loops_definer() const;
 
 private:
 	bool in_charge_;
 	bool pose_has_resolved_loop_indices_;
 	bool rely_on_loopfile_indices_;
-	LoopsFileData loops_file_data_;
+	LoopsFileDataOP loops_file_data_;
+	loops_definers::LoopsDefinerOP loops_definer_;
 	LoopsOP loops_;
 };
 

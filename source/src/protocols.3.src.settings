@@ -220,6 +220,7 @@ sources = {
 		"LoopsExplicitDefinerCreator",
 		"LoopsFileDefiner",
 		"LoopsFileDefinerCreator",
+		"LoopsStringDefiner",
 		"util",
 	],
 	"protocols/loops/loop_mover": [

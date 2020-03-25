@@ -15,6 +15,8 @@
 // Unit headers
 #include <protocols/loops/loops_definers/LoopsDefiner.hh>
 
+#include <protocols/loops/loops_definers/LoopsStringDefiner.hh>
+
 // Package headers
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -35,11 +37,10 @@ namespace protocols {
 namespace loops {
 namespace loops_definers {
 
-LoopsOP
+LoopsDefinerOP
 load_loop_definitions(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap const & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap const & data
 ) {
 	using namespace loops;
 	using namespace loops_definers;
@@ -47,15 +48,10 @@ load_loop_definitions(
 	std::string loops_str( tag->getOption< std::string >( "loops" ) );
 
 	if ( data.has("loops_definers", loops_str) ) {
-		LoopsDefinerOP loops_definer(
-			data.get_ptr< LoopsDefiner >("loops_definers", loops_str));
-		return utility::pointer::make_shared< Loops >(loops_definer->apply(pose));
+		return data.get_ptr< LoopsDefiner >("loops_definers", loops_str);
 	} else {
-		return loops_from_string(loops_str, pose );
+		return utility::pointer::make_shared< LoopsStringDefiner >( loops_str );
 	}
-
-	return nullptr;
-
 }
 
 std::string
@@ -86,9 +82,7 @@ xsd_type_definition_w_attributes(
 		.write_complex_type_to_schema( xsd );
 }
 
-//loops( loops::loops_definers::load_loop_definitions(tag, data, pose) )
 /// @brief Appends the attributes read by load_loop_definitions
-
 void
 attributes_for_load_loop_definitions( utility::tag::AttributeList & attributes )
 {

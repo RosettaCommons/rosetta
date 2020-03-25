@@ -170,6 +170,7 @@ private:
 private:
 
 	AntibodyInfoCOP ab_info_;
+	bool regenerate_abinfo_ = false;
 	core::scoring::ScoreFunctionCOP scorefxn_;
 
 	std::map<clusters::CDRClusterEnum, utility::vector1<MutantPosition> > mutant_info_;

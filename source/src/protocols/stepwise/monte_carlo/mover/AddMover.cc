@@ -91,13 +91,15 @@ AddMover::~AddMover() = default;
 void
 AddMover::apply( core::pose::Pose & pose  )
 {
-	// This syntax is only used by RoesttaScripts and assumes you have
-	// already set swa_move_.
-	//std::cout << "not defined yet" << std::endl;
+	// Only used with RosettaScripts;
+	runtime_assert( ! move_str_.empty() );
 
 	// Not sure -- haven't even checked -- how to best differentiate the
 	// two poses.
-	apply( pose, swa_move_ );
+	apply(
+		pose,
+		StepWiseMove( utility::string_split( move_str_ ), const_full_model_info( pose ).full_model_parameters() )
+	);
 }
 
 protocols::moves::MoverOP
@@ -111,9 +113,7 @@ AddMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose ) {
-
-	// Oh man, we have access to the pose here! hooray.
+	core::pose::Pose const & ) {
 
 	// We have to define the swa_move here, in addition to possibly setting the members
 	// that are by default set in the ctor
@@ -129,11 +129,8 @@ AddMover::parse_my_tag(
 	kT_ = tag->getOption< Real >( "kT", kT_ );
 
 	// required.
-	std::string move_str = tag->getOption< std::string >( "swa_move" );
+	move_str_ = tag->getOption< std::string >( "swa_move" );
 
-	// swa_move_ -- formatted as ADD $move_element $attachments
-	// for example, ADD 4 BOND_TO_PREVIOUS 3
-	swa_move_ = StepWiseMove( utility::string_split( move_str ), const_full_model_info( pose ).full_model_parameters() );
 }
 
 std::string AddMover::get_name() const {

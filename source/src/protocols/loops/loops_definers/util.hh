@@ -15,6 +15,7 @@
 #define INCLUDED_protocols_loops_loops_definers_util_HH
 
 // Package headers
+#include <protocols/loops/loops_definers/LoopsDefiner.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 
 // Project headers
@@ -31,11 +32,10 @@ namespace protocols {
 namespace loops {
 namespace loops_definers {
 
-LoopsOP
+LoopsDefinerOP
 load_loop_definitions(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap const & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap const & data
 );
 
 std::string

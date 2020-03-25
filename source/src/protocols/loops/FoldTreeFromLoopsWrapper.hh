@@ -19,6 +19,7 @@
 
 // Package headers
 #include <protocols/loops/Loops.fwd.hh>
+#include <protocols/loops/loops_definers/LoopsDefiner.fwd.hh>
 
 namespace protocols {
 namespace loops {
@@ -41,13 +42,11 @@ public:
 		Pose const &
 	) override;
 
-	void loop_str( std::string const & str );
-
-	std::string loop_str() const;
-
+	/// @brief Manually set the loops to be used.
 	void loops( LoopsOP const l );
 
-	LoopsOP loops() const;
+	/// @brief Not a getter - will compute the loops to be used with the passed pose.
+	LoopsOP loops(core::pose::Pose const & pose ) const;
 
 	std::string
 	get_name() const override;
@@ -67,8 +66,8 @@ public:
 
 
 private:
-	std::string loop_str_; // loaded at parsetime but only realized at apply
-	LoopsOP loops_; // a different interface into FoldTreeFromLoops, which takes precedence over loop_str_;
+	loops_definers::LoopsDefinerOP loop_definer_; // loaded at parsetime but only realized at apply
+	LoopsOP loops_;
 	bool add_cp_variants_ = false;
 };
 

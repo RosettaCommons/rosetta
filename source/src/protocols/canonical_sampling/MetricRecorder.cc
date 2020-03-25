@@ -84,6 +84,7 @@ MetricRecorder::MetricRecorder(
 	prepend_output_name_(other.prepend_output_name_),
 	step_count_(other.step_count_),
 	torsion_ids_(other.torsion_ids_),
+	torsion_specs_(other.torsion_specs_),
 	last_flush_(other.last_flush_)
 {}
 
@@ -106,7 +107,7 @@ MetricRecorder::parse_my_tag(
 	basic::datacache::DataMap & /* data */,
 	protocols::filters::Filters_map const & /* filters */,
 	protocols::moves::Movers_map const & /* movers */,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	stride_ = tag->getOption< core::Size >( "stride", 100 );
@@ -122,35 +123,24 @@ MetricRecorder::parse_my_tag(
 		protocols::moves::MoverOP mover;
 
 		if ( subtag->getName() == "Torsion" ) {
+			TorsionSpec torsion;
+			torsion.style = TorsionSpecStyle::Single;
+			torsion.rsd = subtag->getOption< std::string >( "rsd" );
+			torsion.type = subtag->getOption< std::string >( "type" );
+			torsion.number = subtag->getOption< core::Size >( "torsion" );
+			torsion.name = subtag->getOption< std::string >( "name", "" );
+			if ( subtag->hasOption("name") ) torsion.name = subtag->getOptions().find("name")->second;
 
-			std::string rsd = subtag->getOption< std::string >( "rsd" );
-			std::string type = subtag->getOption< std::string >( "type" );
-			auto torsion = subtag->getOption< core::Size >( "torsion" );
-			std::string name = subtag->getOption< std::string >( "name", "" );
-			if ( subtag->hasOption("name") ) name = subtag->getOptions().find("name")->second;
-
-			add_torsion(pose, rsd, type, torsion, name);
+			add_torsion( torsion );
 
 		} else if ( subtag->getName() == "AllChi" ) {
-			for ( Size i = 1; i <= pose.size(); ++i ) {
-				for ( Size j = 1; j <= pose.residue_type(i).nchi(); ++j ) {
-					std::ostringstream name_stream;
-					name_stream << pose.residue_type(i).name3() << "_" << i << "_Chi" << j ;
-					std::ostringstream res_id_str;
-					res_id_str << i;
-					add_torsion(pose, res_id_str.str(), "CHI", j, name_stream.str());
-				}
-			}
-
+			TorsionSpec torsion;
+			torsion.style = TorsionSpecStyle::AllChi;
+			add_torsion( torsion );
 		} else if ( subtag->getName() == "AllBB" ) {
-			for ( Size i = 1; i <= pose.size(); ++i ) {
-				std::ostringstream res_id_str;
-				res_id_str << i;
-				add_torsion(pose, res_id_str.str(), "BB", 1, pose.residue_type(i).name3() + "_" + res_id_str.str() + "_phi");
-				add_torsion(pose, res_id_str.str(), "BB", 2, pose.residue_type(i).name3() + "_" + res_id_str.str() + "_psi");
-				add_torsion(pose, res_id_str.str(), "BB", 3, pose.residue_type(i).name3() + "_" + res_id_str.str() + "_omega");
-			}
-
+			TorsionSpec torsion;
+			torsion.style = TorsionSpecStyle::AllBB;
+			add_torsion( torsion );
 		} else {
 			utility_exit_with_message("Parsed unknown metric type in MetricRecorder" + subtag->getName());
 		}
@@ -230,31 +220,40 @@ MetricRecorder::prepend_output_name(
 void
 MetricRecorder::add_torsion(
 	core::id::TorsionID const & torsion_id,
-	std::string name // = ""
+	std::string const & name // = ""
 )
 {
 	runtime_assert(torsion_id.valid());
 
-	if ( name == "" ) {
-
-		std::ostringstream name_stream;
-		name_stream << torsion_id;
-		name = name_stream.str();
+	if ( name != "" ) {
+		torsion_ids_.push_back( {torsion_id, name} );
+	} else {
+		torsion_ids_.push_back( {torsion_id, torsion_id.str()} );
 	}
 
-	torsion_ids_.push_back(std::pair<core::id::TorsionID, std::string>(torsion_id, name));
 }
 
 void
 MetricRecorder::add_torsion(
 	core::pose::Pose const & pose,
 	std::string const & rsd,
-	std::string type,
+	std::string const & type,
 	core::Size torsion,
-	std::string name // = ""
+	std::string const & name // = ""
 )
 {
 	core::Size parsed_rsd = core::pose::parse_resnum(rsd, pose);
+	add_torsion( torsion_ids_, parsed_rsd, type, torsion, name );
+}
+
+void
+MetricRecorder::add_torsion(
+	utility::vector1<std::pair<core::id::TorsionID, std::string> > & torsion_ids,
+	core::Size rsd,
+	std::string type,
+	core::Size torsion,
+	std::string const & name // = ""
+) const {
 
 	std::transform(type.begin(), type.end(), type.begin(), toupper);
 	core::id::TorsionType parsed_type;
@@ -268,10 +267,21 @@ MetricRecorder::add_torsion(
 		utility_exit_with_message("Unknown torsion type");
 	}
 
-	core::id::TorsionID torsion_id(parsed_rsd, parsed_type, torsion);
+	core::id::TorsionID torsion_id(rsd, parsed_type, torsion);
+	runtime_assert( torsion_id.valid() );
 
-	add_torsion(torsion_id, name);
+	if ( name != "" ) {
+		torsion_ids.push_back( {torsion_id,name} );
+	} else {
+		torsion_ids.push_back( {torsion_id,torsion_id.str()} );
+	}
 }
+
+void
+MetricRecorder::add_torsion( TorsionSpec const & torsion ) {
+	torsion_specs_.push_back( torsion );
+}
+
 
 void
 MetricRecorder::reset(
@@ -309,6 +319,9 @@ MetricRecorder::update_after_boltzmann(
 		tempering = utility::pointer::dynamic_pointer_cast< TemperingBase const >( metropolis_hastings_mover->tempering() );
 	}
 
+	// Get the parsed torsions, now that we have a pose.
+	utility::vector1<std::pair<core::id::TorsionID, std::string> > torsion_ids = get_torsion_ids(pose);
+
 	if ( step_count_ == 0 ) {
 
 		// output header if not cumulating, replica exchange inactive, or this is the first replica
@@ -320,8 +333,8 @@ MetricRecorder::update_after_boltzmann(
 			if ( tempering ) recorder_stream_ << '\t' << "Temperature";
 			recorder_stream_ << '\t' << "Score";
 
-			for ( core::Size i = 1; i <= torsion_ids_.size(); ++i ) {
-				recorder_stream_ << '\t' << torsion_ids_[i].second;
+			for ( core::Size i = 1; i <= torsion_ids.size(); ++i ) {
+				recorder_stream_ << '\t' << torsion_ids[i].second;
 			}
 
 			recorder_stream_ << std::endl;
@@ -338,8 +351,8 @@ MetricRecorder::update_after_boltzmann(
 		if ( tempering ) recorder_stream_ << '\t' << metropolis_hastings_mover->monte_carlo()->temperature();
 		recorder_stream_ << '\t' << pose.energies().total_energy();
 
-		for ( core::Size i = 1; i <= torsion_ids_.size(); ++i ) {
-			recorder_stream_ << '\t' << pose.torsion(torsion_ids_[i].first);
+		for ( core::Size i = 1; i <= torsion_ids.size(); ++i ) {
+			recorder_stream_ << '\t' << pose.torsion(torsion_ids[i].first);
 		}
 
 		recorder_stream_ << std::endl;
@@ -462,6 +475,43 @@ void MetricRecorderCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	MetricRecorder::provide_xml_schema( xsd );
 }
 
+utility::vector1<std::pair<core::id::TorsionID, std::string> >
+MetricRecorder::get_torsion_ids( core::pose::Pose const & pose ) const {
+	utility::vector1<std::pair<core::id::TorsionID, std::string> > torsion_ids = torsion_ids_;
+	for ( TorsionSpec const & spec: torsion_specs_ ) {
+		switch ( spec.style ) {
+		case TorsionSpecStyle::Single :
+			{
+			core::Size parsed_rsd = core::pose::parse_resnum(spec.rsd, pose);
+			add_torsion( torsion_ids, parsed_rsd, spec.type, spec.number, spec.name );
+			break;
+		}
+		case TorsionSpecStyle::AllChi :
+			{
+			for ( Size i = 1; i <= pose.size(); ++i ) {
+				for ( Size j = 1; j <= pose.residue_type(i).nchi(); ++j ) {
+					std::ostringstream name_stream;
+					name_stream << pose.residue_type(i).name3() << "_" << i << "_Chi" << j ;
+					add_torsion( torsion_ids, i, "CHI", j, name_stream.str() );
+				}
+			}
+			break;
+		}
+		case TorsionSpecStyle::AllBB :
+			{
+			for ( Size i = 1; i <= pose.size(); ++i ) {
+				add_torsion(torsion_ids, i, "BB", 1, pose.residue_type(i).name3() + "_" + std::to_string(i) + "_phi");
+				add_torsion(torsion_ids, i, "BB", 2, pose.residue_type(i).name3() + "_" + std::to_string(i) + "_psi");
+				add_torsion(torsion_ids, i, "BB", 3, pose.residue_type(i).name3() + "_" + std::to_string(i) + "_omega");
+			}
+			break;
+		}
+		default :
+			utility_exit_with_message("TorsionSpec style not recognized.");
+		}
+	}
+	return torsion_ids;
+}
 
 
 } // namespace canonical_sampling

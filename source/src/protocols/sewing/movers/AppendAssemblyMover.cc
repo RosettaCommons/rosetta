@@ -62,26 +62,7 @@ AppendAssemblyMover::AppendAssemblyMover():
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
-AppendAssemblyMover::AppendAssemblyMover( AppendAssemblyMover const & src ):
-	AssemblyMover( src )
-{
-	if ( src.get_partner_pdb() != nullptr ) {
-		partner_pdb_ = src.get_partner_pdb()->clone();
-	}
-	ligands_ = src.ligands_;
-	required_resnums_ = src.get_required_resnums();
-	required_selector_ = src.get_required_selector();
-	TR << src.class_name() << std::endl;
-	segments_from_dssp_ = src.get_segments_from_dssp();
-	modifiable_terminus_ = src.get_modifiable_terminus();
-	output_partner_ = src.get_output_partner();
-	pose_segment_starts_string_ = src.get_pose_segment_starts_string();
-	pose_segment_ends_string_ = src.get_pose_segment_ends_string();
-	pose_segment_dssp_ = src.get_pose_segment_dssp();
-	strict_dssp_changes_ = src.get_strict_dssp_changes();
-	extend_mode_ = src.get_extend_mode();
-	start_node_vital_segments_ = src.get_start_node_vital_segments();
-}
+AppendAssemblyMover::AppendAssemblyMover( AppendAssemblyMover const & ) = default;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///
@@ -90,6 +71,10 @@ AppendAssemblyMover::AppendAssemblyMover( AppendAssemblyMover const & src ):
 /// @brief Apply the mover
 void
 AppendAssemblyMover::apply( core::pose::Pose& pose){
+
+	if ( alignment_settings_ != nullptr ) {
+		hashing::AlignmentFileGeneratorMover::basis_map_from_alignment( *alignment_settings_, pose, get_basis_map_generator() );
+	}
 
 	//Try to generate an assembly
 	core::Size starttime = time(nullptr);
@@ -368,7 +353,7 @@ AppendAssemblyMover::parse_my_tag(
 
 	//get alignment settings
 	if ( get_hashed() ) {
-		hashing::AlignmentFileGeneratorMover::alignment_settings_from_tag( tag, datamap, filtermap, movermap, pose, get_basis_map_generator() );
+		alignment_settings_ = hashing::AlignmentFileGeneratorMover::alignment_settings_from_tag( tag );
 	}
 	pose_segment_starts_string_ = tag->getOption< std::string >( "pose_segment_starts", "" );
 	pose_segment_ends_string_ = tag->getOption< std::string >( "pose_segment_ends", "" );
@@ -408,6 +393,10 @@ AppendAssemblyMover::parse_my_tag(
 
 }
 
+hashing::AlignmentFGMSettingsOP
+AppendAssemblyMover::alignment_settings() {
+	return alignment_settings_;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief required in the context of the parser/scripting scheme

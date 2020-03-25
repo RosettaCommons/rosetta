@@ -147,7 +147,9 @@ public: // Types
 	typedef core::Size              Size;
 	typedef core::scoring::nmr::pre::PREData        PREData;
 	typedef core::scoring::nmr::pre::PREDataOP         PREDataOP;
+	typedef core::scoring::nmr::pre::PREDataOP         PREDataCOP;
 	typedef core::scoring::ScoreFunctionOP          ScoreFunctionOP;
+	typedef core::scoring::ScoreFunctionCOP          ScoreFunctionCOP;
 	typedef core::pose::Pose            Pose;
 	typedef protocols::moves::MoverOP          MoverOP;
 	// spinlabel code to histogram file and histogram bin size
@@ -209,13 +211,15 @@ public: // Methods
 	static void provide_xml_schema(utility::tag::XMLSchemaDefinition & xsd);
 
 	/// Getter and Setters
-	PREDataOP get_pre_data() { return pre_data_; }
-	ScoreFunctionOP get_scorefunction() const { return sfxn_; }
+	/// @details Can be null
+	PREDataCOP get_pre_data() { return pre_data_; }
+	std::string const & get_pre_data_file() { return pre_data_file_; }
+	ScoreFunctionCOP get_scorefunction() const { return sfxn_; }
 	bool weighted_average() const { return weighted_average_; }
 	bool minimize_w_pre_csts() const { return minimize_; }
 
-	void set_pre_data(PREDataOP pre_data) { pre_data_ = pre_data; }
-	void set_scorefunction(ScoreFunctionOP sfxn) { sfxn_ = sfxn; }
+	void set_pre_data(PREDataCOP pre_data) { pre_data_ = pre_data; }
+	void set_scorefunction(ScoreFunctionCOP sfxn) { sfxn_ = sfxn; }
 	void set_weighted_average(bool av) { weighted_average_ = av; }
 	void set_minimize_w_pre_csts(bool min) {minimize_ = min; }
 
@@ -268,7 +272,7 @@ private: // Methods
 	///        to their respective spinlabel and protein residue(s)
 	void
 	pre_data_to_distances(
-		core::scoring::nmr::pre::PREData & pre_data,
+		core::scoring::nmr::pre::PREData const & pre_data,
 		SpinlabelToPREDistances & all_sl_distances
 	);
 
@@ -281,10 +285,12 @@ private: // Data
 	SpinlabelHistogramMap histogram_files_;
 
 	/// @brief collection of all PRE datasets for multiple spinlabel sites
-	PREDataOP pre_data_;
+	PREDataCOP pre_data_;
+	/// @brief The file to read the PRE data from at apply time
+	std::string pre_data_file_;
 
 	/// @brief scorefunction object
-	ScoreFunctionOP sfxn_;
+	ScoreFunctionCOP sfxn_;
 
 	/// @brief use PRESingleSet weights to calculate an average distance
 	///        in case that the same PRE distance was measured multiple times

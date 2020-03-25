@@ -127,6 +127,9 @@ public: // Properties
 	bool
 	valid() const { return ( rsd_ > 0 && torsion_ > 0 ); }
 
+	std::string
+	str() const { return "TorsionID " + std::to_string(rsd_) + ' ' + to_string(type_) + ' ' + std::to_string(torsion_); }
+
 public: // Friends
 
 	friend

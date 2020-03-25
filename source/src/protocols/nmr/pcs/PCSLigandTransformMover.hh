@@ -149,8 +149,10 @@ public: // Typedefs
 	typedef core::scoring::nmr::Matrix Matrix;
 	typedef core::scoring::nmr::pcs::PCSData PCSData;
 	typedef core::scoring::nmr::pcs::PCSDataOP PCSDataOP;
+	typedef core::scoring::nmr::pcs::PCSDataCOP PCSDataCOP;
 	typedef core::pose::Pose Pose;
 	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
+	typedef core::scoring::ScoreFunctionCOP ScoreFunctionCOP;
 	typedef core::conformation::Residue Residue;
 	typedef numeric::geometry::BoundingBox< core::Vector > BoundingBox;
 	typedef core::scoring::nmr::Vec5 Vec5;
@@ -200,8 +202,8 @@ public: // Methods
 
 	// @brief Construct from PCSData
 	PCSLigandTransformMover(
-		PCSDataOP data,
-		ScoreFunctionOP sfxn
+		PCSDataCOP data,
+		ScoreFunctionCOP sfxn
 	);
 
 	/// @brief Copy constructor
@@ -241,7 +243,7 @@ public: // Methods
 
 	// Getters & Setters
 	PCSData const & get_pcs_data() const { return *pcs_data_; }
-	ScoreFunctionOP get_scorefunction() { return sfxn_; }
+	ScoreFunctionCOP get_scorefunction() { return sfxn_; }
 	BoundingBox const & get_gridsearch_range() const { return gs_box_; }
 	Real get_trans_step() const { return trans_step_; }
 	Real get_rot_step() const { return rot_step_; }
@@ -317,10 +319,12 @@ private: // Methods
 private: // Data
 
 	/// @brief experimental PCS data for all lanthanides and tagging sites
-	PCSDataOP pcs_data_;
+	PCSDataCOP pcs_data_;
+	/// @brief The file from which to read the PCS data at apply time
+	std::string pcs_data_file_;
 
 	/// @brief a scorefunction to monitor if ligand touches the protein
-	ScoreFunctionOP sfxn_;
+	ScoreFunctionCOP sfxn_;
 
 	/// @brief voxelgrid that spans around the protein and which is used for clash check
 	AtomGrid grid_;

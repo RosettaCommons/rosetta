@@ -32,6 +32,7 @@
 #include <core/pack/task/TaskFactory.hh>
 
 #include <vector>
+#include <set>
 
 namespace protocols {
 namespace simple_ddg {
@@ -64,7 +65,9 @@ public :
 	void repeats( core::Size repeats ) { repeats_ = repeats; }
 	core::Real translate_by() const { return translate_by_; }
 	void translate_by( core::Real translate_by ) { translate_by_ = translate_by; }
+	///@brief Get the hard-set chain ids. Note these are not necessarily the only chains to be moved.
 	utility::vector1<core::Size> chain_ids() const { return chain_ids_; }
+	std::set< core::Size > get_movable_jumps( core::pose::Pose const & pose ) const;
 	~ddG() override;
 	protocols::moves::MoverOP fresh_instance() const override { return (protocols::moves::MoverOP) utility::pointer::make_shared< ddG >(); }
 	protocols::moves::MoverOP clone() const override;
@@ -138,6 +141,7 @@ private :
 	void fill_per_residue_energy_vector(Pose const & pose, std::map<Size,Real> & energy_map);
 	core::Size rb_jump_;
 	utility::vector1<core::Size> chain_ids_;
+	utility::vector1<std::string> chain_names_;
 	bool per_residue_ddg_;
 	bool repack_unbound_;
 	protocols::moves::MoverOP relax_mover_; //dflt NULL

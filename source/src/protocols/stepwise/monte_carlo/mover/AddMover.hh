@@ -159,6 +159,7 @@ private:
 	core::Size suite_num_ = 0, nucleoside_num_ = 0;
 	core::Size res_to_add_in_full_model_numbering_ = 0, res_to_build_off_in_full_model_numbering_ = 0;
 	StepWiseMove swa_move_;
+	std::string move_str_;
 
 };
 

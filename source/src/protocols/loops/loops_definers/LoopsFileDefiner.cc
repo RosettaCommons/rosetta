@@ -44,9 +44,7 @@ namespace protocols {
 namespace loops {
 namespace loops_definers {
 
-LoopsFileDefiner::LoopsFileDefiner() :
-	loop_list_()
-{}
+LoopsFileDefiner::LoopsFileDefiner() = default;
 
 LoopsFileDefiner::~LoopsFileDefiner() = default;
 
@@ -65,7 +63,7 @@ void
 LoopsFileDefiner::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap const &,
-	Pose const & p
+	Pose const &
 ) {
 
 	if ( !tag->hasOption("name") ) {
@@ -85,15 +83,15 @@ LoopsFileDefiner::parse_my_tag(
 	}
 
 	LoopsFileIO loops_file_io;
-	LoopsFileDataOP lfd = loops_file_io.read_loop_file( filename );
-	loop_list_ = lfd->resolve_as_serialized_loops( p );
+	lfd_ = loops_file_io.read_loop_file( filename );
 }
 
 SerializedLoopList
 LoopsFileDefiner::apply(
-	Pose const &
+	Pose const & pose
 ) {
-	return loop_list_;
+	runtime_assert( lfd_ != nullptr );
+	return lfd_->resolve_as_serialized_loops( pose );
 }
 
 std::string LoopsFileDefiner::class_name()

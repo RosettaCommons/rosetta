@@ -241,7 +241,7 @@ core::pack::task::TaskFactoryCOP LoopMover_Refine_CCD::get_task_factory() const 
 
 
 void
-LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
+LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) {
 	using namespace basic::options;
 	packing_isolated_to_active_loops_ = false;
 	//using parser implies that the fold tree probably isn't set correctly
@@ -260,7 +260,7 @@ LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 		move_map_factory_ = protocols::rosetta_scripts::parse_movemap_factory_legacy( tag, data, false /*don't reset movemap, keep falses, unless stated otherwise*/, mmf );
 	}
 	if ( tag->hasOption( "loops" ) ) {
-		loops( loops_definers::load_loop_definitions(tag, data, pose) );
+		loops( loops_definers::load_loop_definitions(tag, data) );
 	}
 	if ( tag->hasOption( "scorefxn" ) ) this->set_scorefxn( data.get< core::scoring::ScoreFunction * >( "scorefxns", tag->getOption<std::string>( "scorefxn" ) )->clone() );
 

@@ -385,13 +385,19 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 }
 
 LoopsOP
-loops_from_string( std::string const & loop_str, core::pose::Pose const & pose ){
+loops_from_string( std::string const & loop_str, core::pose::Pose const & pose ) {
+	return utility::pointer::make_shared< Loops >( serialized_loops_from_string(loop_str,pose) );
+}
+
+SerializedLoopList
+serialized_loops_from_string( std::string const & loop_str, core::pose::Pose const & pose ) {
+	SerializedLoopList loops;
+
 	utility::vector1< std::string > const loops_vec( utility::string_split( loop_str, ',' ) );
 
 	// each loop should have the format loop_start:loop_end:cut
 	// if cut is not set then it's taken to be 0. Residue numbering can follow the
 	// pdb numbering
-	LoopsOP loops_from_tag( new Loops() );
 	for ( std::string const & residue_pair : loops_vec ) {
 		utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
 		if ( residues.size() != 2 && residues.size() != 3 ) {
@@ -410,9 +416,15 @@ loops_from_string( std::string const & loop_str, core::pose::Pose const & pose )
 		runtime_assert( loop_start <= loop_stop );
 		runtime_assert( loop_start >= 1 );
 		runtime_assert( loop_stop <= pose.size() );
-		loops_from_tag->add_loop( loop_start, loop_stop, loop_cut );
+
+		SerializedLoop loop;
+		loop.start = loop_start;
+		loop.stop = loop_stop;
+		loop.cut = loop_cut;
+
+		loops.push_back(loop);
 	}
-	return( loops_from_tag );
+	return( loops );
 }
 
 void define_scorable_core_from_secondary_structure(

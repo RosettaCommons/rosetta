@@ -12,8 +12,8 @@
 -parser:script_vars symm_file=./input/C2.symm
 -in:file:native ./input/gpa2_embed.pdb
 
--parser:script_vars span_starts=1A,22B
--parser:script_vars span_ends=21A,42B
+-parser:script_vars span_starts=1,22
+-parser:script_vars span_ends=21,42
 -parser:script_vars span_oris=out2in,out2in
 -parser:script_vars span_start_1=1
 -parser:script_vars span_end_1=21

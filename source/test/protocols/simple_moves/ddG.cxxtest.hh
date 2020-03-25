@@ -73,8 +73,9 @@ public:
 		TS_ASSERT_EQUALS( ddg_mover.sum_ddG(), 111 );
 	}
 
-	/// @details This test tests the ability of the mover to move all other chains (other than 1)
+	/// @details This test originally tested the ability of the mover to move all other chains (other than 1)
 	/// if chain 1 is originally asked to be moved
+	/// That is no longer quite the case, as the chain inversion is taken care of at a slightly deferred state
 	void test_chains_to_move_invert() {
 		basic::datacache::DataMap data;
 		Filters_map filters;
@@ -87,14 +88,16 @@ public:
 		testmover.parse_my_tag( tag, data, filters, movers, *test_dimer_pose_ );
 
 		TS_ASSERT_EQUALS( testmover.chain_ids().size(), 1 );
-		TS_ASSERT_EQUALS( testmover.chain_ids()[1], 2 );
+		TS_ASSERT_EQUALS( testmover.chain_ids()[1], 1 );
+		TS_ASSERT_EQUALS( testmover.get_movable_jumps(*test_dimer_pose_), std::set<core::Size>({1}) );
 
 		protocols::simple_ddg::ddG testmover2;
-		tag = tagptr_from_string("<ddG name=test chain_num=3 />\n");
+		tag = tagptr_from_string("<ddG name=test chain_num=2 />\n");
 		testmover2.parse_my_tag( tag, data, filters, movers, *test_dimer_pose_ );
 
 		TS_ASSERT_EQUALS( testmover2.chain_ids().size(), 1 );
-		TS_ASSERT_EQUALS( testmover2.chain_ids()[1], 3 );
+		TS_ASSERT_EQUALS( testmover2.chain_ids()[1], 2 );
+		TS_ASSERT_EQUALS( testmover.get_movable_jumps(*test_dimer_pose_), std::set<core::Size>({1}) );
 	}
 
 	void test_filter_parsing_dimer() {

@@ -75,6 +75,9 @@ add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::pose::P
 LoopsOP
 loops_from_string( std::string const & loop_str, core::pose::Pose const & pose );
 
+SerializedLoopList
+serialized_loops_from_string( std::string const & loop_str, core::pose::Pose const & pose );
+
 // this function will return a bunch of "loops" that refer to residues that are considered part of the core:
 // not scored are loops with 4 or more residues, short helices (<=5) that terminate a loop are not scored, too
 void

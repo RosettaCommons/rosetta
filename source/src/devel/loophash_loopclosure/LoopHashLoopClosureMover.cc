@@ -88,6 +88,16 @@ LoopHashLoopClosureMover::apply( core::pose::Pose & pose )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
+	if ( ! loop_insert_instruction_.empty() ) {
+		if ( use_MyLoop_insert_ ) {
+			std::vector<MyLoop> loops = make_loops(loop_insert_instruction_);
+			make_blueprint(pose, loops, option[ OptionKeys::remodel::blueprint ].value() );
+		} else {
+			make_blueprint(pose, loop_insert_instruction_, option[ OptionKeys::remodel::blueprint ].value() );
+		}
+		loop_insert_instruction_ = ""; // Hella hacky run-once approach.
+	}
+
 	if ( !option[ remodel::blueprint ].user() ) {
 		TR.Error << "remodel:blueprint must be specified" << std::endl;
 		utility_exit();
@@ -272,7 +282,7 @@ void LoopHashLoopClosureMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & ,
 	protocols::filters::Filters_map const & ,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose ) {
+	core::pose::Pose const & ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -302,16 +312,15 @@ void LoopHashLoopClosureMover::parse_my_tag( utility::tag::TagCOP tag,
 		// Instruction string in Residue:Chain:Length format:
 		// e.g.  25:A:6,50:B:7 for a loop of size 6 residues after 25 (and before 26, implicit)
 		// and another of size 7 residues between 50 and 51.
-		std::string loop_insert_instruction = tag->getOption<std::string>("loop_insert_rclrc");
-		std::vector<MyLoop> loops = make_loops(loop_insert_instruction);
-		make_blueprint(pose, loops, bpname);
-		TR << "Use loop_insert_rclrc string \"" << loop_insert_instruction << "\" (and generate " << bpname << " blueprint file)." << std::endl;
+		loop_insert_instruction_ = tag->getOption<std::string>("loop_insert_rclrc");
+		use_MyLoop_insert_ = true;
+		TR << "Use loop_insert_rclrc string \"" << loop_insert_instruction_ << "\" (and generate " << bpname << " blueprint file)." << std::endl;
 	} else if ( tag->hasOption("loop_insert") ) {
 		// Instruction string in Between Chains format:
 		// e.g. "A6B7CDE" to insert a loop of size 6 between chain A and B and another of 7 between B and C.
-		std::string loop_insert_instruction = tag->getOption<std::string>("loop_insert");
-		make_blueprint(pose, loop_insert_instruction,bpname);
-		TR << "User loop_insert string \"" << loop_insert_instruction << "\" (and generate " << bpname << " blueprint file)." << std::endl;
+		loop_insert_instruction_ = tag->getOption<std::string>("loop_insert");
+		use_MyLoop_insert_ = false;
+		TR << "User loop_insert string \"" << loop_insert_instruction_ << "\" (and generate " << bpname << " blueprint file)." << std::endl;
 	} else if ( tag->hasOption("blueprint") ) {
 		bpname = tag->getOption<std::string>("blueprint");
 		TR << "Use blueprint file: " << bpname << std::endl;

@@ -72,18 +72,7 @@ MutateFrameworkForCluster::MutateFrameworkForCluster(AntibodyInfoCOP ab_info):
 
 MutateFrameworkForCluster::~MutateFrameworkForCluster() = default;
 
-
-
-MutateFrameworkForCluster::MutateFrameworkForCluster(MutateFrameworkForCluster const & src) :
-	protocols::moves::Mover(src),
-	mutant_info_(src.mutant_info_),
-	cdrs_(src.cdrs_),
-	pack_shell_(src.pack_shell_)
-{
-	if ( src.ab_info_ ) ab_info_ = utility::pointer::make_shared< AntibodyInfo >( *src.ab_info_ );
-	if ( src.scorefxn_ ) scorefxn_ = scorefxn_->clone();
-
-}
+MutateFrameworkForCluster::MutateFrameworkForCluster(MutateFrameworkForCluster const & ) = default;
 
 void
 MutateFrameworkForCluster::set_defaults() {
@@ -115,14 +104,13 @@ MutateFrameworkForCluster::parse_my_tag(
 	basic::datacache::DataMap& data,
 	const Filters_map&,
 	const moves::Movers_map&,
-	const Pose& pose)
+	const Pose&)
 {
-	ab_info_ = utility::pointer::make_shared< AntibodyInfo >( pose );
+	regenerate_abinfo_ = true;
 	cdrs_ = get_cdr_bool_from_tag(tag, "cdrs");
 	pack_shell_ = tag->getOption("pack_shell", pack_shell_);
 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn", data ) ;
-
 }
 
 void
@@ -302,6 +290,9 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
+	if ( regenerate_abinfo_ ) {
+		ab_info_ = utility::pointer::make_shared< AntibodyInfo >( pose );
+	}
 
 	/*
 	//Check to make sure everything is loaded correctly.

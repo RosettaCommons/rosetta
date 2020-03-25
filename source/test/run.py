@@ -19,7 +19,7 @@ import os, re, subprocess, time, os.path
 from os import path
 from optparse import OptionParser
 
-import json, codecs, time
+import json, codecs
 
 
 #The factor by which to multiply the single test timeout value for a suite
@@ -235,24 +235,26 @@ class Tester:
 
         f = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr
         if Options.valgrind:
-            self.parseOneLibValgrind(f, output, yjson_file)
+            self.parseOneLibValgrind(test_name, f, output, yjson_file)
         else:
-            self.parseOneLib(f, output)
+            self.parseOneLib(test_name, f, output)
 
         f.close()
 
         output = [ to_unicode(s) for s in output ]
         with codecs.open(log_file, 'w', encoding='utf-8', errors='backslashreplace') as f: f.write(''.join(output))
 
-    def parseOneLib(self, f, output):
+    def parseOneLib(self, test_name, f, output):
         '''Parse output for OneLib run for regular unit tests.'''
         for line in f:
             l = line.decode('utf-8', errors="backslashreplace")
+            if "All tests passed!" in l:
+                l = test_name + ": PASSED\n"
             print(l, end='')
             output.append(l)
             sys.stdout.flush()
 
-    def parseOneLibValgrind(self, f, output, yjson_file):
+    def parseOneLibValgrind(self, test_name, f, output, yjson_file):
         valgrind_errors = 0
         for line in f:
             if line.startswith("=="):
@@ -417,13 +419,16 @@ class Tester:
 
         # Actually launch the tests
         if Options.one:
+            test_logs = []
             for test_name in Options.test_list:
                 for lib in self.libs_for_test.get(test_name,set()):
 
-                    log_file = self.testpath + '/' + lib + '.log'
-                    yjson_file = self.testpath + '/' + lib + '.json'
+                    log_file = self.testpath + '/' + lib + "_" + test_name + '.log'
+                    yjson_file = self.testpath + '/' + lib + "_" + test_name + '.json'
 
                     logs_yjsons[lib] = (log_file, yjson_file)
+
+                    test_logs.append( ( test_name, log_file ) )
 
                     pid = self.mfork()
                     if not pid:
@@ -431,6 +436,30 @@ class Tester:
                         sys.exit(0)
 
             self.wait_all()
+
+            # This is a somewhat hacky approach to get pass/fail results.
+            # It's not necesarily the best way to do it.
+            failed_tests = []
+            for name, log in test_logs:
+                if not os.path.exists( log ):
+                    failed_tests.append(name)
+                    continue
+                with open( log ) as f:
+                    if Options.valgrind:
+                        if "ERROR SUMMARY: 0 errors" not in f.read():
+                            failed_tests.append(name)
+                    else:
+                        if "PASSED" not in f.read():
+                            failed_tests.append(name)
+
+            if len(failed_tests) == 0:
+                print("\nAll tests passed.")
+            else:
+                print("\n--------------------------")
+                print("FAILED TESTS:")
+                for t in failed_tests:
+                    print("\t", t)
+                print("--------------------------")
 
         else: # running Unit test on multiple CPU's, new style, fully parallel
             for suite in Options.test_list:
@@ -618,7 +647,7 @@ def main(args):
 
     parser.add_option("-1", "--one",
       default=False, action="store_true",
-      help="DEPRECATED. Run using the older 'one-by-one' method. \
+      help="Run using the older 'one-by-one' method. \
             This will automatically be enabled if you specified a subtest (with a colon) instead of a full suite."
     )
 
@@ -706,12 +735,10 @@ def main(args):
     (options, args) = parser.parse_args(args=args[1:])
 
     options.test_list = args
-    # Need old style to run colon-containing tests, due to lack of json output
     if options.one:
-        print("This option is deprecated and will NOT give you a summary for your subtests (and will say all passed when they don't.")
-        print("Please pass in the test name without the -1 option.")
-        time.sleep(10)
+        print("The -1 option is no longer necesssary. Better results can be obtained by just passing the name of the test suites directly.")
 
+    # Need old style to run colon-containing tests, due to lack of json output
     if not options.one and any( ':' in t for t in options.test_list ):
         print("A subtest (with a colon) was specified: automatically turning on one-by-one running.")
         options.one = True
@@ -760,9 +787,9 @@ def main(args):
 
     T = Tester()
     T.runUnitTests()
-    if not options.one: T.printSummary()
-
-    print("Done!")
+    if not options.one:
+        T.printSummary()
+        print("Done!")
 
 
 if __name__ == "__main__": main(sys.argv)

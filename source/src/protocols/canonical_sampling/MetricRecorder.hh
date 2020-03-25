@@ -33,6 +33,21 @@
 namespace protocols {
 namespace canonical_sampling {
 
+enum class TorsionSpecStyle {
+	Single,
+	AllChi,
+	AllBB
+};
+
+/// @brief A simple class to hold info about torsions to use (deferred parsing)
+struct TorsionSpec {
+	TorsionSpecStyle style = TorsionSpecStyle::Single;
+	std::string rsd;
+	std::string type;
+	core::Size number = 0;
+	std::string name;
+};
+
 /// @brief Periodically output miscellaneous information.
 /// @details This class is capable of writing out a variety of data related to
 /// the trajectory.  This includes the job name, the replica, the temperature,
@@ -146,7 +161,7 @@ public: // Methods
 	void
 	add_torsion(
 		core::id::TorsionID const & torsion_id,
-		std::string name = ""
+		std::string const & name = ""
 	);
 
 	/// @brief Include the given torsion in the output.
@@ -154,10 +169,13 @@ public: // Methods
 	add_torsion(
 		core::pose::Pose const & pose,
 		std::string const & rsd,
-		std::string type,
+		std::string const & type,
 		core::Size torsion,
-		std::string name = ""
+		std::string const & name = ""
 	);
+
+	void
+	add_torsion( TorsionSpec const & torsion );
 
 	/// @brief Truncate the output file and rewrite the output header.
 	/// @details This method may not actually truncate the output file.  It
@@ -216,6 +234,20 @@ public: // Methods
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+protected:
+
+	void
+	add_torsion(
+		utility::vector1<std::pair<core::id::TorsionID, std::string> > & torsion_ids,
+		core::Size rsd,
+		std::string type,
+		core::Size torsion,
+		std::string const & name = ""
+	) const;
+
+	/// @brief Expand the list of torsion ids based on the Pose.
+	utility::vector1<std::pair<core::id::TorsionID, std::string> >
+	get_torsion_ids( core::pose::Pose const & pose ) const;
 
 private: // Fields
 
@@ -227,6 +259,7 @@ private: // Fields
 	core::Size step_count_;
 	utility::io::ozstream recorder_stream_;
 	utility::vector1<std::pair<core::id::TorsionID, std::string> > torsion_ids_;
+	utility::vector1< TorsionSpec > torsion_specs_;
 	time_t last_flush_;
 
 }; // MetricRecorder

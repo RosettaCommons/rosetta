@@ -2455,6 +2455,13 @@ std::ostream & operator << ( std::ostream & os, Pose const & pose)
 	return os;
 }
 
+/// @details Note that this does a `clone()`, which isn't actually a full deep copy (which would be `detached_copy()`)
+/// This may or may not have implications for multithreaded use.
+PoseOP
+deep_copy( Pose const & source) {
+	return source.clone();
+}
+
 } // pose
 } // core
 

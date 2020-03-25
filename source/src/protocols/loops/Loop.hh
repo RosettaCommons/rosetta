@@ -48,11 +48,11 @@ namespace loops {
 
 /// @brief Bare-bones representation of a loop
 struct SerializedLoop {
-	core::Size start;
-	core::Size stop;
-	core::Size cut;
-	core::Real skip_rate;
-	bool extended;
+	core::Size start = 0;
+	core::Size stop = 0;
+	core::Size cut = 0;
+	core::Real skip_rate = 0.0;
+	bool extended = false;
 };
 
 /// single loop definition

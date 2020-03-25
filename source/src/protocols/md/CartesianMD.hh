@@ -93,18 +93,14 @@ public:
 	void
 	parse_opts(
 		TagCOP tag,
-		basic::datacache::DataMap & data,
-		//Filters_map const &,
-		//protocols::moves::Movers_map const &,
-		Pose const & pose );
+		basic::datacache::DataMap & data
+	);
 
 	void
 	parse_movemap(
 		TagCOP tag,
-		basic::datacache::DataMap & data,
-		//Filters_map const &,
-		//protocols::moves::Movers_map const &,
-		Pose const & pose );
+		basic::datacache::DataMap & data
+	);
 
 	std::string
 	get_name() const override;
@@ -158,10 +154,10 @@ private:
 
 	core::optimization::CartesianMinimizerMap min_map_;
 	timeval inittime_;
-	bool use_rattle_;
+	bool use_rattle_ = true;
 
 	core::pose::Pose native_;
-	bool native_given_;
+	bool native_given_ = false;
 	std::map< Size, Size > native_resmap_;
 
 }; //class

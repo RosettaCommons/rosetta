@@ -118,8 +118,12 @@ AntibodyFeatures::report_features(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session) {
 
-	if ( ! ab_info_ ) {
-		ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose);
+	if ( ! ab_info_ || regenerate_abinfo_ ) {
+		if ( regenerate_abinfo_ ) {
+			ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose, scheme_, definition_);
+		} else {
+			ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose);
+		}
 	}
 
 	std::map<std::string, std::string > db_interfaces;
@@ -671,7 +675,7 @@ AntibodyFeatures::parse_my_tag(
 	basic::datacache::DataMap& data,
 	protocols::filters::Filters_map const & /*data*/,
 	protocols::moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose)
+	core::pose::Pose const & )
 {
 
 	pack_separated_ = tag->getOption<bool>("pack_separated", true);
@@ -706,10 +710,9 @@ AntibodyFeatures::parse_my_tag(
 
 		AntibodyEnumManager manager = AntibodyEnumManager();
 
-		CDRDefinitionEnum definition = manager.cdr_definition_string_to_enum(tag->getOption<std::string>("cdr_definition"));
-		AntibodyNumberingSchemeEnum scheme = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("input_ab_scheme"));
-
-		ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose, scheme, definition);
+		regenerate_abinfo_ = true;
+		definition_ = manager.cdr_definition_string_to_enum(tag->getOption<std::string>("cdr_definition"));
+		scheme_ = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("input_ab_scheme"));
 
 	} else if ( tag->hasOption("cdr_definition") || tag->hasOption("input_ab_scheme") ) {
 		TR <<"Please pass both cdr_definition and input_ab_scheme.  These can also be set via cmd line options of the same name." << std::endl;

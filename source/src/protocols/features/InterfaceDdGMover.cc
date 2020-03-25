@@ -69,7 +69,7 @@ InterfaceDdGMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & ,
 	protocols::moves::Movers_map const & movers,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 
 	// First, check for errors and throw exception
@@ -82,37 +82,35 @@ InterfaceDdGMover::parse_my_tag(
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "you can specify chains either by number or by name, but not both");
 	}
 
-	if ( core::pose::symmetry::is_symmetric( pose ) && ( tag->hasOption("chain_num") || tag->hasOption("chain_name") || tag->hasOption("jump") ) ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "you can't specify chains or jumps when using a symmetric pose" );
-	}
-
 	if ( tag->hasOption("mut_ref_savepose_mover") && tag->hasOption("wt_ref_savepose_mover") ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "you can only specify either the mutant reference pose (SavePoseMover) or the wildtype reference pose (SavePoseMover) in this tag. The undefined pose will be set as the pose given to this mover in the apply function." );
 	}
 
 	chain_ids_.clear(); // Useful if parse_my_tag is called multiple times in unit tests
+	chain_names_.clear();
+	jump_ids_.clear();
 
 	if ( tag->hasOption("jump") ) {
-		add_jump_id( tag->getOption<core::Size>("jump"), pose );
+		add_jump_id( tag->getOption<core::Size>("jump") );
 	}
 
 	if ( tag->hasOption("chain_num") ) {
 		for ( auto & chain_num : utility::string_split( tag->getOption<std::string>("chain_num"), ',', core::Size() ) ) {
-			add_chain_id( chain_num, pose );
+			add_chain_id( chain_num );
 		}
 	}
 
 	if ( tag->hasOption("chain_name") ) {
 		utility::vector1<std::string> chain_names = utility::string_split(tag->getOption<std::string>("chain_name"),',',std::string());
 		for ( auto & chain_name : chain_names ) {
-			add_chain_name( chain_name, pose );
+			add_chain_name( chain_name );
 		}
 	}
 
 	// Use a default of chain 1 if no chain or jump to move has been defined yet
-	if ( chain_ids_.size() == 0 ) {
+	if ( chain_ids_.size() == 0 && chain_names_.size() == 0 && jump_ids_.size() == 0 ) {
 		TR.Warning << "No chain/jump defined to move; defaulting to first chain" << std::endl;
-		add_chain_id( 1, pose );
+		add_chain_id( 1 );
 	}
 
 	set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, "commandline" ) );
@@ -156,34 +154,53 @@ InterfaceDdGMover::set_db_reporter(
 	report_to_db_ = true;
 }
 
-void
-InterfaceDdGMover::unbind (
-	core::pose::Pose & pose
-) const {
+std::set< core::Size >
+InterfaceDdGMover::get_movable_jumps( core::pose::Pose const & pose ) const {
+
+	std::set< core::Size > jumps;
+
+	if ( !jump_ids_.empty() && ( !chain_ids_.empty() || !chain_names_.empty() ) ) {
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "you can specify either chains or jump in the ddG mover, but not both");
+	}
+
+	if ( !jump_ids_.empty() ) {
+		// We can't/don't need to invert if we're just jump specifications.
+		jumps.insert( jump_ids_.begin(), jump_ids_.end() );
+		return jumps;
+	}
+
+	// There's probably a way to do this which is slightly more direct, but this was (more or less) the existing algorithm.
+
+	std::set< core::Size > chain_ids( chain_ids_.begin(), chain_ids_.end() );
+
+	for ( std::string const & chain_name: chain_names_ ) {
+		auto const & ids_from_name = core::pose::get_chain_ids_from_chain(chain_name, pose);
+		chain_ids.insert( ids_from_name.begin(), ids_from_name.end() );
+	}
 
 	// Test to see if chain 1 is selected to be unbound
 	// If so, invert selection of chains to move, as we can't move the root chain 1, but we
 	// can move everything else to get the same result
-	bool invert_chain_ids = false;
-	if ( std::find(chain_ids_.begin(), chain_ids_.end(), 1) != chain_ids_.end() ) {
-		invert_chain_ids = true;
-	}
+	bool invert_chain_ids = (chain_ids.count(1) >= 1);
 
-	utility::vector1<core::Size> chain_ids_to_move;
+	std::set<core::Size> chain_ids_to_move;
 	if ( invert_chain_ids ) {
 		// Add inverted chain ids
 		for ( core::Size pose_chain = 1 ; pose_chain <= pose.conformation().num_chains() ; pose_chain++ ) {
-			if ( std::find(chain_ids_.begin(), chain_ids_.end(), pose_chain) == chain_ids_.end() ) {
-				chain_ids_to_move.push_back( pose_chain );
+			if ( chain_ids.count( pose_chain ) == 0 ) {
+				chain_ids_to_move.insert( pose_chain );
 			}
 		}
 	} else {
 		// Add non-inverted chain ids
-		chain_ids_to_move = chain_ids_;
+		chain_ids_to_move = chain_ids;
 	}
 
-	// Sort chain_ids_to_move and print to tracer
-	std::sort(chain_ids_to_move.begin(), chain_ids_to_move.end());
+	if ( chain_ids_to_move.empty() ) {
+		throw CREATE_EXCEPTION(utility::excn::BadInput, "In InterfaceDdGMover, there are no valid chains to translate when unbinding!");
+	}
+
+	// Print chain_ids_to_move to tracer
 	if ( invert_chain_ids ) {
 		TR << "Translating/unbinding (inverted because we can't move the first chain) chain ID(s): ";
 	} else {
@@ -194,36 +211,50 @@ InterfaceDdGMover::unbind (
 	}
 	TR << std::endl;
 
-	// Check that all chain ids are actually in passed Pose
+	// Check that all chain ids are actually in passed Pose, and convert to jumps
 	for ( auto & chain_id : chain_ids_to_move ) {
 		runtime_assert( chain_id >= 1 && chain_id <= pose.conformation().num_chains() );
+		jumps.insert( core::pose::get_jump_id_from_chain_id( chain_id, pose ) );
 	}
 
+	return jumps;
+}
+
+void
+InterfaceDdGMover::unbind (
+	core::pose::Pose & pose
+) const {
+
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		// Have to defer this check to now, as we don't have a pose to check the symmetry of at parse time.
+		if ( ! jump_ids_.empty() || ! chain_names_.empty() || chain_ids_.size() > 1 || ( chain_ids_.size() == 1 && chain_ids_[1] != 1 ) ) {
+			throw CREATE_EXCEPTION(utility::excn::BadInput, "You can't specify chains or jumps when using a symmetric pose with InterfaceDdGMover." );
+		}
+
 		auto & symm_conf( dynamic_cast<core::conformation::symmetry::SymmetricConformation & > ( pose.conformation()) );
 		std::map< Size, core::conformation::symmetry::SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
 		rigid::RigidBodyDofSeqTransMoverOP translate( new rigid::RigidBodyDofSeqTransMover( dofs ) );
-		if ( chain_ids_to_move.size() > 0 ) {
-			TR.Warning << "Translating along symmetric degrees of freedom, not using defined chain ids/names";
-		}
 		translate->step_size( translate_by_ );
 		translate->apply( pose );
-	} else if ( chain_ids_to_move.size() > 0 ) {
-		//We want to translate each chain the same direction, though it doesnt matter much which one
-		core::Vector translation_axis(1,0,0);
-		for ( unsigned long current_chain_id : chain_ids_to_move ) {
-			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id( current_chain_id, pose );
-			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
-			translate->step_size( translate_by_ );
-			translate->trans_axis( translation_axis );
-			translate->apply( pose );
-		}
-	} else {
+		return;
+	}
+
+	std::set< core::Size > jumps_to_move = get_movable_jumps(pose);
+
+	if ( jumps_to_move.empty() ) {
 		// We have no information about chains or jumps to move, so let's not try and unbind
 		throw CREATE_EXCEPTION(utility::excn::BadInput,  "InterfaceDdGMover needs to have chains (numbers or names) or jumps defined to move" );
 	}
 
+	// We want to translate each jump the same direction, though it doesnt matter much which one
+	core::Vector translation_axis(1,0,0);
+	for ( core::Size jump_id: jumps_to_move ) {
+		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, jump_id ) );
+		translate->step_size( translate_by_ );
+		translate->trans_axis( translation_axis );
+		translate->apply( pose );
+	}
 }
 
 protocols::moves::MoverOP
@@ -348,11 +379,6 @@ InterfaceDdGMover::compute()
 	return ddG_score_;
 }
 
-const utility::vector1<core::Size> &
-InterfaceDdGMover::get_chain_ids() const {
-	return chain_ids_;
-}
-
 ///@brief appends chain_id to chain_ids_
 ///@details takes pose in as an argument for input checking
 void
@@ -366,17 +392,27 @@ InterfaceDdGMover::add_chain_id( core::Size chain_id, core::pose::Pose const & p
 	chain_ids_.push_back( chain_id );
 }
 
+void
+InterfaceDdGMover::add_chain_id( core::Size chain_id ) {
+	chain_ids_.push_back( chain_id );
+}
+
 ///@brief converts chain_name to a chain_id and then appends
 ///@details takes pose in as an argument for input checking
 void
-InterfaceDdGMover::add_chain_name( std::string chain_name, core::pose::Pose const & pose ) {
+InterfaceDdGMover::add_chain_name( std::string const & chain_name, core::pose::Pose const & pose ) {
 	if ( ! core::pose::has_chain( chain_name, pose ) ) {
 		throw CREATE_EXCEPTION(utility::excn::BadInput,
 			"InterfaceDdGMover cannot add chain_name " + chain_name + " to pose; out of range"
 		);
 	}
 
-	add_chain_id( core::pose::get_chain_id_from_chain(chain_name, pose), pose );
+	chain_names_.push_back( chain_name );
+}
+
+void
+InterfaceDdGMover::add_chain_name( std::string const & chain_name ) {
+	chain_names_.push_back( chain_name );
 }
 
 ///@brief converts jump to a chain_id and then appends
@@ -390,7 +426,12 @@ InterfaceDdGMover::add_jump_id( core::Size jump, core::pose::Pose const & pose )
 		);
 	}
 
-	add_chain_id( core::pose::get_chain_id_from_jump_id(jump, pose), pose );
+	jump_ids_.push_back( jump );
+}
+
+void
+InterfaceDdGMover::add_jump_id( core::Size jump ) {
+	jump_ids_.push_back( jump );
 }
 
 void

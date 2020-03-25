@@ -79,7 +79,6 @@ public:
 
 
 private:
-	protocols::forge::remodel::RemodelMover_OP remodel_;
 	void make_blueprint( const core::pose::Pose& pose,
 		const std::string & loop_insert_instruction,
 		const std::string & bpname ) const;
@@ -89,6 +88,11 @@ private:
 	const std::vector<std::string> tokenize( const std::string& in_str,
 		const std::string& delimiters ) const;
 	const std::vector<MyLoop> make_loops(const std::string & loop_insert_instruction) const;
+
+private:
+	protocols::forge::remodel::RemodelMover_OP remodel_;
+	std::string loop_insert_instruction_;
+	bool use_MyLoop_insert_ = false;
 };
 
 } // loophash_loopclosure

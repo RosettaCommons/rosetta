@@ -37,11 +37,16 @@
 
 // Project Headers
 #include <core/conformation/membrane/SpanningTopology.fwd.hh>
-#include <core/conformation/membrane/Span.fwd.hh>
+#include <core/conformation/membrane/Span.hh> // hh for Orientation enum
 
 // Package Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#ifdef PYROSETTA
+#include <core/pose/ResidueIndexDescription.hh>
+#else
+#include <core/pose/ResidueIndexDescription.fwd.hh>
+#endif
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -53,6 +58,13 @@
 
 namespace protocols {
 namespace membrane {
+
+/// @brief A utility class to store deferred parse span information
+struct SpanInfo {
+	core::conformation::membrane::Orientation orient;
+	core::pose::ResidueIndexDescriptionCOP start;
+	core::pose::ResidueIndexDescriptionCOP stop;
+};
 
 /// @brief   Initialize the RosettaMP framework by adding representations of the membrane
 class AddMembraneMover : public protocols::moves::Mover {
@@ -188,7 +200,7 @@ private:
 	// SpanningTopology
 	std::string spanfile_;
 	core::conformation::membrane::SpanningTopologyOP topology_;
-	bool read_spans_from_xml_;
+	utility::vector1< SpanInfo > span_infos_;
 
 	// the membrane residue is anchored to this residue posiiton by jump
 	core::Size anchor_rsd_;

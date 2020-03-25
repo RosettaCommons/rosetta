@@ -183,6 +183,10 @@ private:
 private:
 
 	AntibodyInfoOP ab_info_;
+	bool regenerate_abinfo_ = false;
+	CDRDefinitionEnum definition_;
+	AntibodyNumberingSchemeEnum scheme_;
+
 	utility::vector1<std::string> intermediate_interfaces_; //Intermediate interfaces: L_A, H_A, LH_A, L_H
 	bool skip_antigen_reports_;
 

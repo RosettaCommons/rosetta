@@ -21,6 +21,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/loops_definers/util.hh>
+#include <protocols/loops/loops_definers/LoopsDefiner.hh>
 
 // Project headers
 #include <core/kinematics/FoldTree.hh>
@@ -39,12 +40,8 @@ namespace loops {
 static basic::Tracer TR( "protocols.loops.FoldTreeFromLoopsWrapper" );
 
 FoldTreeFromLoops::FoldTreeFromLoops() :
-	Mover( FoldTreeFromLoops::mover_name() ), loop_str_( "" )
-{
-	loops_ = utility::pointer::make_shared< Loops >();
-	loops_->clear();
-}
-
+	Mover( FoldTreeFromLoops::mover_name() )
+{}
 
 FoldTreeFromLoops::~FoldTreeFromLoops() = default;
 
@@ -61,11 +58,12 @@ protocols::moves::MoverOP FoldTreeFromLoops::fresh_instance() const
 void
 FoldTreeFromLoops::apply( core::pose::Pose & pose )
 {
-	if ( loops()->empty() ) {
+	LoopsOP local_loops = loops( pose );
+	if ( local_loops->empty() ) {
 		utility_exit_with_message( "No loops were specified");
 	}
 	core::kinematics::FoldTree f;
-	fold_tree_from_loops( pose, *loops(), f );
+	fold_tree_from_loops( pose, *local_loops, f );
 	TR<<"old foldtree "<<pose.fold_tree()<<"\nNew foldtree ";
 	pose.fold_tree( f );
 	TR<<pose.fold_tree()<<std::endl;
@@ -81,20 +79,11 @@ FoldTreeFromLoops::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 ) {
 
-	loops_ = loops_definers::load_loop_definitions(tag, data, pose);
+	loop_definer_ = loops_definers::load_loop_definitions(tag, data);
 	add_cutpoint_variants(tag->getOption<bool>("add_cp_variants", add_cp_variants_));
-}
-
-void FoldTreeFromLoops::loop_str( std::string const & str )
-{
-	loop_str_ = str;
-}
-std::string FoldTreeFromLoops::loop_str() const
-{
-	return loop_str_;
 }
 
 void FoldTreeFromLoops::loops( LoopsOP const l )
@@ -102,11 +91,14 @@ void FoldTreeFromLoops::loops( LoopsOP const l )
 	loops_ = l;
 }
 
-LoopsOP FoldTreeFromLoops::loops() const
+LoopsOP FoldTreeFromLoops::loops( core::pose::Pose const & pose ) const
 {
-	return loops_;
+	if ( loops_ != nullptr ) {
+		return loops_->clone();
+	}
+	runtime_assert( loop_definer_ != nullptr );
+	return utility::pointer::make_shared< Loops >(loop_definer_->apply(pose));
 }
-
 
 
 

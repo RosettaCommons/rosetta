@@ -98,7 +98,7 @@ private:
 	bool minimize_after_delete_;
 	utility::vector1< core::Size > interface_res_;
 	// for RosettaScripts style use
-	utility::vector1< core::Size > residues_to_delete_in_full_model_numbering_;
+	std::string move_str_;
 
 };
 

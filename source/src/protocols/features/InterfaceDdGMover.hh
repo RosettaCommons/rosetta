@@ -28,6 +28,8 @@
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 
+#include <set>
+
 namespace protocols {
 namespace features {
 
@@ -78,16 +80,20 @@ public:
 	void unbind(core::pose::Pose & pose) const;
 
 	// Getters/setters
-	const utility::vector1<core::Size> & get_chain_ids() const;
+
+	std::set< core::Size > get_movable_jumps( core::pose::Pose const & pose ) const;
 
 	///@brief appends chain_id
 	void add_chain_id( core::Size chain_id, core::pose::Pose const & pose );
+	void add_chain_id( core::Size chain_id );
 
 	///@brief converts chain_name to a chain_id, and then appends
-	void add_chain_name( std::string chain_name, core::pose::Pose const & pose );
+	void add_chain_name( std::string const & chain_name, core::pose::Pose const & pose );
+	void add_chain_name( std::string const & chain_name );
 
 	///@brief gets chain_id from jump id, and then appends
 	void add_jump_id( core::Size jump, core::pose::Pose const & pose );
+	void add_jump_id( core::Size jump );
 
 	/// @brief Sets the scorefunction.
 	void set_scorefxn( core::scoring::ScoreFunctionCOP sfxn_in );
@@ -120,6 +126,8 @@ private:
 	core::Real compute();
 
 	utility::vector1<core::Size> chain_ids_;
+	utility::vector1<std::string> chain_names_;
+	utility::vector1<core::Size> jump_ids_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 

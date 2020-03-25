@@ -86,6 +86,12 @@ PlaceProbeMover::PlaceProbeMover(
 
 void PlaceProbeMover::apply(core::pose::Pose & pose)
 {
+	if ( target_residue_ == nullptr ) {
+		// Initialize residue representation
+		target_residue_ = StubGenerator::getStubByName( residue_name_ );
+		target_residue_ = core::pose::add_variant_type_to_residue( *target_residue_, core::chemical::SC_FRAGMENT, pose );
+	}
+
 	check_and_initialize(pose);
 
 	if ( current_mode_ == OnePerStruct ) {
@@ -222,11 +228,8 @@ core::pack::task::PackerTaskOP PlaceProbeMover::create_refinement_packing_task(c
 
 void
 PlaceProbeMover::parse_place_probe_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
-	core::pose::Pose const & target_pose)
-{
+	basic::datacache::DataMap & data
+) {
 	// Residue spec
 	if ( tag->hasOption("residue_name") ) {
 		residue_name_ = tag->getOption<std::string>("residue_name");
@@ -259,9 +262,6 @@ PlaceProbeMover::parse_place_probe_tag( utility::tag::TagCOP tag,
 	// Refinement scorefunction
 	refinement_scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 
-	// Initialize residue representation
-	target_residue_ = StubGenerator::getStubByName( residue_name_ );
-	target_residue_ = core::pose::add_variant_type_to_residue( *target_residue_, core::chemical::SC_FRAGMENT, target_pose );
 }
 
 

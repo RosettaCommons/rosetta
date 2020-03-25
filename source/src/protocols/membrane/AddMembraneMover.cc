@@ -56,6 +56,7 @@
 
 #include <protocols/moves/DsspMover.hh>
 #include <core/pose/selection.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -131,7 +132,6 @@ AddMembraneMover::AddMembraneMover() :
 	/* Spanning Topology Information */
 	spanfile_(),
 	topology_( new core::conformation::membrane::SpanningTopology() ),
-	read_spans_from_xml_( false ),
 	/* FoldTree Configuration */
 	anchor_rsd_( 1 ),
 	membrane_rsd_( 0 ),
@@ -166,7 +166,6 @@ AddMembraneMover::AddMembraneMover(
 	/* Spanning Topology Information */
 	spanfile_(std::move( spanfile )),
 	topology_( new core::conformation::membrane::SpanningTopology() ),
-	read_spans_from_xml_( false ),
 	/* FoldTree Configuration */
 	anchor_rsd_( 1 ),
 	/* Membrane Position */
@@ -200,7 +199,6 @@ AddMembraneMover::AddMembraneMover(
 	/* Spanning Topology Information */
 	spanfile_(),
 	topology_( new core::conformation::membrane::SpanningTopology() ),
-	read_spans_from_xml_( false ),
 	/* FoldTree Configuration */
 	anchor_rsd_( 1 ),
 	membrane_rsd_( membrane_rsd ),
@@ -236,7 +234,6 @@ AddMembraneMover::AddMembraneMover(
 	/* Spanning Topology Information */
 	spanfile_( "" ),
 	topology_( std::move( topology ) ),
-	read_spans_from_xml_( false ),
 	/* FoldTree Configuration */
 	anchor_rsd_( anchor_rsd ),
 	membrane_rsd_( membrane_rsd ),
@@ -272,7 +269,6 @@ AddMembraneMover::AddMembraneMover(
 	/* Spanning Topology Information */
 	spanfile_( "" ),
 	topology_( new core::conformation::membrane::SpanningTopology() ),
-	read_spans_from_xml_( false ),
 	/* FoldTree Configuration */
 	anchor_rsd_( anchor_rsd ),
 	membrane_rsd_( membrane_rsd ),
@@ -320,7 +316,14 @@ AddMembraneMover::apply( Pose & pose ) {
 	core::Size membrane_pos = initialize_membrane_residue( pose, membrane_rsd_ );
 
 	// Step 2: Initialize the spanning topology
-	if ( topology_->nres_topo() == 0 && ! read_spans_from_xml_ ) {
+	if ( ! span_infos_.empty() ) {
+		for ( SpanInfo const & span_info: span_infos_ ) {
+			core::Size start = span_info.start->resolve_index(pose);
+			core::Size end = span_info.stop->resolve_index(pose);
+			core::conformation::membrane::Span span( start, end, span_info.orient );
+			topology_->add_span( span );
+		}
+	} else if ( topology_->nres_topo() == 0 ) {
 
 		// In single TM mode, derive a single-span topology from the begin & end residues
 		if ( spanfile_ == "single_TM_mode" ) {
@@ -614,8 +617,10 @@ AddMembraneMover::parse_my_tag(
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 ) {
+
+	using namespace core::conformation::membrane;
 
 	// read option to restore lazaridis parameters
 	if ( tag->hasOption( "restore_lazaridis_IMM1_behavior" ) ) {
@@ -685,51 +690,54 @@ AddMembraneMover::parse_my_tag(
 		membrane_core_ = tag->getOption< core::Real >( "membrane_core" );
 	}
 
-	if ( tag->hasOption( "span_starts" ) || tag->hasOption( "span_starts_num" ) ) {
-		using namespace core::conformation::membrane;
-		core::conformation::membrane::Orientation orientation;
-		utility::vector1< core::Size > span_starts;
-		span_starts.clear();
-		utility::vector1< core::Size > span_ends;
-		span_ends.clear();
-		if ( tag->hasOption( "span_starts_num" ) ) {
-			for ( auto const & i : utility::string_split( tag->getOption< std::string >("span_starts_num"), ',') ) {
-				span_starts.push_back( std::atof( i.c_str() ) );
-			}
-			for ( auto const & i : utility::string_split( tag->getOption< std::string >("span_ends_num"), ',') ) {
-				span_ends.push_back( std::atof( i.c_str() ) );
-			}
-		} else if ( tag->hasOption( "span_starts" ) ) {
-			std::string span_starts_str = tag->getOption< std::string >("span_starts");
-			std::string span_ends_str = tag->getOption< std::string >("span_ends");
-			span_starts = core::pose::get_resnum_list_ordered( span_starts_str, pose );
-			span_ends = core::pose::get_resnum_list_ordered( span_ends_str, pose );
-		} else {
-			runtime_assert_string_msg(true, "span_orientations specified, but neither span_starts nor span_starts_num were");
-		}
-		std::string span_oris_str( tag->getOption< std::string >("span_orientations") );
-		utility::vector1<std::string> span_oris( utility::string_split(span_oris_str, ',') );
-		runtime_assert( span_starts.size() == span_ends.size() && span_starts.size() == span_oris.size() );
+	// Use general method to read in center / normal
+	read_center_normal_from_tag( center_, normal_, tag );
 
-		for ( core::Size i=1; i<=span_starts.size(); ++i ) {
-			core::Size start = span_starts[ i ];
-			core::Size end = span_ends[ i ];
-			if ( span_oris[i] == "out2in" ) {
+	if ( tag->hasOption( "span_starts" ) || tag->hasOption( "span_starts_num" ) ) {
+		if ( spanfile_ != "" ) {
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "user provided span in a span file AND in span_starts options. remove one of them");
+		}
+		std::string const & span_oris_str( tag->getOption< std::string >("span_orientations") );
+		utility::vector1<std::string> span_oris( utility::string_split(span_oris_str, ',') );
+
+		utility::vector1<std::string> span_starts;
+		utility::vector1<std::string> span_ends;
+		if ( tag->hasOption( "span_starts_num" ) ) {
+			span_starts = utility::string_split( tag->getOption< std::string >("span_starts_num"), ',' );
+			span_ends = utility::string_split( tag->getOption< std::string >("span_ends_num"), ',');
+		} else if ( tag->hasOption( "span_starts" ) ) {
+			span_starts = utility::string_split( tag->getOption< std::string >("span_starts"), ',' );
+			span_ends = utility::string_split( tag->getOption< std::string >("span_ends"), ',' );
+		} else {
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Error in finding span start option in AddMembraneMover.");
+		}
+
+		if ( span_starts.size() != span_ends.size() ) {
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The number of of span starts must equal the number of span ends in AddMembraneMover.");
+		}
+		if ( span_starts.size() != span_oris.size() ) {
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The number of span_orientations must equal the number of span ends in AddMembraneMover.");
+		}
+
+		for ( core::Size ii=1; ii<=span_starts.size(); ++ii ) {
+			core::pose::ResidueIndexDescriptionCOP start = core::pose::parse_resnum( span_starts[ ii ] );
+			runtime_assert( start != nullptr );
+			core::pose::ResidueIndexDescriptionCOP end = core::pose::parse_resnum( span_ends[ ii ] );
+			runtime_assert( end != nullptr );
+			core::conformation::membrane::Orientation orientation;
+			if ( span_oris[ii] == "out2in" ) {
 				orientation = out;
-			} else if ( span_oris[i] == "in2out" ) {
+			} else if ( span_oris[ii] == "in2out" ) {
 				orientation = in;
 			} else {
-				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "provided orientation is wrong for span number acceptable options are in2out or out2in.");
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "provided orientation of '" + span_oris[ii] + "' is not understood: acceptable options are in2out or out2in.");
 			}
-			core::conformation::membrane::SpanOP span( new core::conformation::membrane::Span( start, end, orientation ) );
-			core::Size offset = 0;
-			topology_->add_span( *span, offset );
+
+			span_infos_.push_back( SpanInfo{ orientation, start, end } );
+
 		}
 		TR << "finished reading span from span_starts/ends/orientations (xml) " << std::endl;
 	}
-
-	// Use general method to read in center / normal
-	read_center_normal_from_tag( center_, normal_, tag );
 
 	// if the user supplied a span in RosettaScripts xml, parse those and keep them in topology_. this will
 	// be used to create the span topology
@@ -738,25 +746,27 @@ AddMembraneMover::parse_my_tag(
 		if ( spanfile_ != "" ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "user provided span in a span file AND in the xml subtags. remove one of them");
 		}
-		BOOST_FOREACH ( TagCOP const sub_tag, sub_tags  ) {
-			if ( sub_tag->getName() == "Span" ) {
-				using namespace core::conformation::membrane;
-				read_spans_from_xml_ = true;
-				core::Size start = sub_tag->getOption< core::Size >( "start" );
-				core::Size end  = sub_tag->getOption< core::Size >( "end" );
-				std::string orientation_tag = sub_tag->getOption< std::string >( "orientation" );
-				core::conformation::membrane::Orientation orientation;
-				if ( orientation_tag == "out2in" ) {
-					orientation = out;
-				} else if ( orientation_tag == "in2out" ) {
-					orientation = in;
-				} else {
-					throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "provided orientation is wrong for span number acceptable options are in2out or out2in.");
-				}
-				core::conformation::membrane::SpanOP span( new core::conformation::membrane::Span( start, end, orientation  ) );
-				core::Size offset = 0;
-				topology_->add_span( *span, offset );
+		for ( TagCOP const sub_tag: sub_tags  ) {
+			if ( sub_tag->getName() != "Span" ) continue;
+
+			std::string const & start_str = sub_tag->getOption< std::string >( "start" );
+			core::pose::ResidueIndexDescriptionCOP start = core::pose::parse_resnum( start_str );
+			runtime_assert( start != nullptr );
+			std::string const & end_str = sub_tag->getOption< std::string >( "end" );
+			core::pose::ResidueIndexDescriptionCOP end = core::pose::parse_resnum( end_str );
+			runtime_assert( end != nullptr );
+			std::string const & orientation_tag = sub_tag->getOption< std::string >( "orientation" );
+			core::conformation::membrane::Orientation orientation;
+			if ( orientation_tag == "out2in" ) {
+				orientation = out;
+			} else if ( orientation_tag == "in2out" ) {
+				orientation = in;
+			} else {
+				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "provided orientation of '" + orientation_tag + "' is not understood: acceptable options are in2out or out2in.");
 			}
+
+			span_infos_.push_back( SpanInfo{ orientation, start, end } );
+
 		}
 		TR << "finished reading span from sub tags (xml) " << std::endl;
 	}

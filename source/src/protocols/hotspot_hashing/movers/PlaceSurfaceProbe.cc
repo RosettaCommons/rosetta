@@ -209,16 +209,13 @@ SearchPatternOP PlaceSurfaceProbe::initialize_refinement_pattern()
 void
 PlaceSurfaceProbe::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters_map,
-	protocols::moves::Movers_map const & movers_map,
-	core::pose::Pose const & target_pose)
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &)
 {
 	parse_place_probe_tag(
 		tag,
-		data,
-		filters_map,
-		movers_map,
-		target_pose
+		data
 	);
 
 	// Surface Spec

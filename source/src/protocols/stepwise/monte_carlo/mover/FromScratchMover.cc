@@ -67,8 +67,10 @@ void
 FromScratchMover::apply( core::pose::Pose & pose )
 {
 	//std::cout << "not defined" << std::endl;
-	// AMW arises from the RosettaScripts case... this is where storing residues_to_instantiate_in_full_model_numbering_ as a member comes in handy.
-	apply( pose, residues_to_instantiate_in_full_model_numbering_ );
+	// AMW arises from the RosettaScripts case...
+	runtime_assert( ! move_str_.empty() );
+	StepWiseMove swa_move( utility::string_split( move_str_ ), const_full_model_info( pose ).full_model_parameters() );
+	apply( pose, swa_move.move_element() );
 }
 
 void FromScratchMover::parse_my_tag(
@@ -76,15 +78,13 @@ void FromScratchMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose ) {
+	core::pose::Pose const & ) {
 
 	auto options( utility::pointer::make_shared< protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions >() );
 	auto scorefxn  = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	stepwise_modeler_ = setup_unified_stepwise_modeler( options, scorefxn );
 
-	std::string move_str = tag->getOption< std::string >( "swa_move" );
-	StepWiseMove swa_move = StepWiseMove( utility::string_split( move_str ), const_full_model_info( pose ).full_model_parameters() );
-	residues_to_instantiate_in_full_model_numbering_ = swa_move.move_element();
+	move_str_ = tag->getOption< std::string >( "swa_move" );
 }
 
 void FromScratchMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

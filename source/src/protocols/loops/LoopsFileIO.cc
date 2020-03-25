@@ -17,6 +17,7 @@
 // Package headers
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/loops_definers/LoopsDefiner.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -203,7 +204,16 @@ GuardedLoopsFromFile::GuardedLoopsFromFile( LoopsFileData const & lfd ) :
 	in_charge_( true ),
 	pose_has_resolved_loop_indices_( false ),
 	rely_on_loopfile_indices_( true ),
-	loops_file_data_( lfd ),
+	loops_file_data_( utility::pointer::make_shared< LoopsFileData >(lfd) ),
+	loops_( utility::pointer::make_shared< Loops >() )
+{}
+
+/// @details construct from LoopsFileData: set state to expect a Pose
+GuardedLoopsFromFile::GuardedLoopsFromFile( loops_definers::LoopsDefinerOP ld ) :
+	in_charge_( true ),
+	pose_has_resolved_loop_indices_( false ),
+	rely_on_loopfile_indices_( true ),
+	loops_definer_( ld ),
 	loops_( utility::pointer::make_shared< Loops >() )
 {}
 
@@ -227,42 +237,20 @@ GuardedLoopsFromFile::GuardedLoopsFromFile( Loops const & loops ) :
 /// @details Shallow copy of the LoopsOP data so that it can be shared between
 /// multiple objects; take the "in_charge_" bit from the source in the event that
 /// this is a called as part of a clone.
-GuardedLoopsFromFile::GuardedLoopsFromFile( GuardedLoopsFromFile const & src ) :
-	utility::pointer::ReferenceCount(),
-	in_charge_( src.in_charge_ ),
-	pose_has_resolved_loop_indices_( src.pose_has_resolved_loop_indices_ ),
-	rely_on_loopfile_indices_( src.rely_on_loopfile_indices_ ),
-	loops_file_data_( src.loops_file_data_ ),
-	loops_( src.loops_ )
-{}
+GuardedLoopsFromFile::GuardedLoopsFromFile( GuardedLoopsFromFile const & ) = default;
 
 /// @details Shallow copy of the LoopsOP data so that it can be shared between
 /// multiple objects -- also assume that the GuardedLoopsFromFile object is the one that is in charge.
 GuardedLoopsFromFile::GuardedLoopsFromFile( GuardedLoopsFromFile const & src, bool ) :
-	utility::pointer::ReferenceCount(),
-	in_charge_( false ),
-	pose_has_resolved_loop_indices_( src.pose_has_resolved_loop_indices_ ),
-	rely_on_loopfile_indices_( src.rely_on_loopfile_indices_ ),
-	loops_file_data_( src.loops_file_data_ ),
-	loops_( src.loops_ )
-{}
+	GuardedLoopsFromFile(src) // Delegate copy for most items
+{
+	in_charge_ = false;
+}
 
 GuardedLoopsFromFile::~GuardedLoopsFromFile() = default;
 
 GuardedLoopsFromFile &
-GuardedLoopsFromFile::operator = ( GuardedLoopsFromFile const & rhs ) {
-	if ( this != & rhs ) {
-		// should this be set to false under the assumption that "this" is subserviant to "rhs" (rhs may or may not be in charge)?
-		/// no, because this function might be called from an assignment operator
-		in_charge_ = rhs.in_charge_;
-
-		pose_has_resolved_loop_indices_ = rhs.pose_has_resolved_loop_indices_;
-		rely_on_loopfile_indices_ = rhs.rely_on_loopfile_indices_;
-		loops_file_data_ = rhs.loops_file_data_;
-		loops_ = rhs.loops_;
-	}
-	return *this;
-}
+GuardedLoopsFromFile::operator = ( GuardedLoopsFromFile const & ) = default;
 
 void
 GuardedLoopsFromFile::in_charge( bool setting )
@@ -278,8 +266,14 @@ GuardedLoopsFromFile::resolve_loop_indices( core::pose::Pose const & pose )
 {
 	if ( ! in_charge_ ) return;
 	if ( ! rely_on_loopfile_indices_ ) { pose_has_resolved_loop_indices_ = true; return; }
-	LoopsOP loops_from_lfd = loops_file_data_.resolve_loops( pose );
-	(*loops_) = (*loops_from_lfd );
+	if ( loops_file_data_ != nullptr ) {
+		(*loops_) = *( loops_file_data_->resolve_loops( pose ));
+	} else if ( loops_definer_ != nullptr ) {
+		Loops loops( loops_definer_->apply(pose) );
+		(*loops_) = loops;
+	} else {
+		utility_exit_with_message("GuardedLoopsFromFile was supposed to resolve loops, but it has nothing to resolve.");
+	}
 	pose_has_resolved_loop_indices_ = true;
 }
 
@@ -340,14 +334,31 @@ GuardedLoopsFromFile::loops( LoopsFileData const & setting )
 	debug_assert( in_charge_ ); // if not in_charge, then this data will never be used.
 	pose_has_resolved_loop_indices_ = false;
 	rely_on_loopfile_indices_ = true;
-	loops_file_data_ = setting;
+	loops_file_data_ = utility::pointer::make_shared< LoopsFileData >(setting);
 }
 
 /// @brief read access to the LoopsFileData
-LoopsFileData const &
+LoopsFileDataCOP
 GuardedLoopsFromFile::loops_file_data() const
 {
 	return loops_file_data_;
+}
+
+/// @brief set the LoopsFileData object directly
+void
+GuardedLoopsFromFile::loops( loops_definers::LoopsDefinerOP const & setting )
+{
+	debug_assert( in_charge_ ); // if not in_charge, then this data will never be used.
+	pose_has_resolved_loop_indices_ = false;
+	rely_on_loopfile_indices_ = true;
+	loops_definer_ = setting;
+}
+
+/// @brief read access to the LoopsFileData
+loops_definers::LoopsDefinerCOP
+GuardedLoopsFromFile::loops_definer() const
+{
+	return loops_definer_;
 }
 
 

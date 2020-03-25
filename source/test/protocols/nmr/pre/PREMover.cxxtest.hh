@@ -158,7 +158,7 @@ public:
 
 		// Have PRE data been parsed?
 		pm_op->parse_my_tag(tag2, data, f_map, m_map, gb1_);
-		TS_ASSERT_EQUALS(pm_op->get_pre_data()->get_number_spinlabel_sites(), 1);
+		TS_ASSERT_EQUALS(pm_op->get_pre_data_file(), "protocols/nmr/pre/pre_data_input.txt");
 
 		// Have boolean options been parsed?
 		pm_op->parse_my_tag(tag3, data, f_map, m_map, gb1_);

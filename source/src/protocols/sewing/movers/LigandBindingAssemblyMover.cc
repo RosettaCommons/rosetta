@@ -69,17 +69,7 @@ LigandBindingAssemblyMover::LigandBindingAssemblyMover():
 }
 
 /// @brief Copy constructor (not needed unless you need deep copies)
-LigandBindingAssemblyMover::LigandBindingAssemblyMover( LigandBindingAssemblyMover const & src ):
-	AppendAssemblyMover( src )
-{
-	set_distance_cutoff( src.get_distance_cutoff() );
-	set_segment_distance_cutoff( src.get_segment_distance_cutoff() );
-	//Do a deep copy of this map? Should be unnecessary since it's const & on the heap
-	set_ligand_requirements( src.get_ligand_requirements() );
-	set_non_ligand_requirements( src.get_non_ligand_requirements() );
-	set_build_site_only( src.get_build_site_only() );
-	expanded_ligands_ = src.expanded_ligands_;
-}
+LigandBindingAssemblyMover::LigandBindingAssemblyMover( LigandBindingAssemblyMover const & ) = default;
 
 /////////////////////
 /// Mover Methods ///
@@ -89,6 +79,9 @@ LigandBindingAssemblyMover::LigandBindingAssemblyMover( LigandBindingAssemblyMov
 void
 LigandBindingAssemblyMover::apply( core::pose::Pose & pose ){
 
+	if ( alignment_settings() != nullptr ) {
+		hashing::AlignmentFileGeneratorMover::basis_map_from_alignment( *alignment_settings(), pose, get_basis_map_generator() );
+	}
 
 	core::Size starttime = time(nullptr);
 	set_last_move_status(protocols::moves::MS_SUCCESS);

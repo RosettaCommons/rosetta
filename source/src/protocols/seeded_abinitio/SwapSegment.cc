@@ -27,6 +27,7 @@
 //other
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <core/pose/ResidueIndexDescription.hh>
 
 // C++ headers
 #include <string>
@@ -153,6 +154,11 @@ void
 SwapSegment::apply( core::pose::Pose & pose )
 {
 
+	protocols::loops::Loops all_seeds;
+	for ( SegmentSpec const & seg: segment_specs_ ) {
+		all_seeds.add_loop( seg.start->resolve_index(pose), seg.stop->resolve_index(pose), 0, 0, false );
+	}
+
 	core::pose::PoseOP segment = seeds_pdb_->split_by_chain( from_chain_ );
 	core::pose::PoseOP target_c = seeds_pdb_->split_by_chain( swap_chain_ );
 	//assert sizes of target chain and input pose chain
@@ -172,29 +178,29 @@ SwapSegment::apply( core::pose::Pose & pose )
 	// adjust_numbering = pose.conformation().chain_end( 1 );
 
 	//need to assert that the seed elements are the same residue numbers as in the input pdb!!
-	TR.Debug<<"all_seeds_.loop_size() " << all_seeds_.loop_size() <<" total residues in seeds pdb: " << segment->size() <<std::endl;
+	TR.Debug<<"all_seeds.loop_size() " << all_seeds.loop_size() <<" total residues in seeds pdb: " << segment->size() <<std::endl;
 	TR<<"adjusting for chain numbering by: " <<adjust_numbering <<std::endl;
 
-	all_seeds_.make_sequence_shift( adjust_numbering );
-	TR.Debug <<"new loops: " <<all_seeds_ <<std::endl;
+	all_seeds.make_sequence_shift( adjust_numbering );
+	TR.Debug <<"new loops: " <<all_seeds <<std::endl;
 
 	if ( swap_chain_ > 0 ) {
 		TR<<"swapping chain: " << swap_chain_ << std::endl;
 		swap_chain( pose, target_c , swap_chain_ );
 	}
 
-	if ( all_seeds_.loop_size() != segment->size() ) {
+	if ( all_seeds.loop_size() != segment->size() ) {
 		utility_exit_with_message("residues specified under the seeds does not agree with the number of residues provided as segment");
 	}
 
 	if ( copy_sidechains_ ) {
-		copying_side_chains( pose, segment, all_seeds_);
+		copying_side_chains( pose, segment, all_seeds);
 		(*scorefxn_)(pose);
 		TR<<"adopting side chains" << std::endl;
 	}
 
 	if ( swap_segment_ ) {
-		swap_segment( pose, segment, all_seeds_);
+		swap_segment( pose, segment, all_seeds);
 		TR<<"swapping segment" <<std::endl;
 		(*scorefxn_)(pose);
 	}
@@ -210,9 +216,9 @@ SwapSegment::parse_my_tag(
 	basic::datacache::DataMap & data ,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose ){
+	core::pose::Pose const & ){
 
-	all_seeds_.clear();//just in case
+	segment_specs_.clear();//just in case
 
 	//need scorefxn to score after swapping
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
@@ -260,28 +266,19 @@ SwapSegment::parse_my_tag(
 
 		if ( btag->getName() == "Seeds" ) { //need an assertion for the presence of these or at least for the option file
 
-			core::Size begin;
-			core::Size end;
+			SegmentSpec spec;
+			std::string const beginS( btag->getOption<std::string>( "begin" ) );
+			std::string const endS( btag->getOption<std::string>( "end" ) );
+			TR.Debug<<"string seeds: \n"<< beginS <<" and " << endS <<std::endl;
+			spec.start = core::pose::parse_resnum( beginS );
+			spec.stop = core::pose::parse_resnum( endS );
 
-			if ( !previously_grown_ ) {
-				std::string const beginS( btag->getOption<std::string>( "begin" ) );
-				std::string const endS( btag->getOption<std::string>( "end" ) );
-				begin =( core::pose::parse_resnum( beginS, pose ) );
-				end   =( core::pose::parse_resnum( endS, pose ) );
-				TR.Debug<<"string seeds: \n"<< beginS <<" and " << endS <<std::endl;
-			} else {
-				begin = ( btag->getOption< core::Size >( "begin" ) );
-				end = ( btag->getOption< core::Size >( "end" ) );
-			}
+			segment_specs_.push_back( spec );
 
-			all_seeds_.add_loop( begin , end , 0, 0, false );
-
-			TR.Debug<<"parsing seeds: \n"<< begin <<" and " << end <<std::endl;
-			TR.Debug<<"seeds: "<< all_seeds_ <<std::endl;
 		}//end seed tags
 	}//end branch tags
 
-	if ( all_seeds_.size() == 0 ) {
+	if ( segment_specs_.size() == 0 ) {
 		utility_exit_with_message("NEED TO SPECIFY A SEGMENT TO REPLACE!!!, whole pose swap currently not supported");
 	}
 

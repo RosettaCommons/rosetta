@@ -1440,7 +1440,7 @@ void LoopRelaxMover::set_defaults_() {
 using namespace utility::tag;
 using namespace protocols::moves;
 void
-LoopRelaxMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+LoopRelaxMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	cmd_line_csts( tag->getOption< bool >( "cmd_line_csts", true ) );
 	copy_sidechains( tag->getOption< bool >( "copy_sidechains", true ) );
@@ -1461,7 +1461,7 @@ LoopRelaxMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data,
 	//cen_scorefxn_->set_weight( core::scoring::chainbreak, 10.0 / 3.0 );
 	loops::loop_mover::loops_set_chainbreak_weight(  cen_scorefxn_, 1 );
 
-	loops( loops::loops_definers::load_loop_definitions(tag, data, pose) );
+	guarded_loops_->loops( loops::loops_definers::load_loop_definitions(tag, data) );
 }
 
 

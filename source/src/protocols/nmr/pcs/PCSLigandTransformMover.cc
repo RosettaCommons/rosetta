@@ -173,8 +173,8 @@ PCSLigandTransformMover::PCSLigandTransformMover() :
 {}
 
 PCSLigandTransformMover::PCSLigandTransformMover(
-	PCSDataOP data,
-	ScoreFunctionOP sfxn
+	PCSDataCOP data,
+	ScoreFunctionCOP sfxn
 ) :
 	protocols::moves::Mover(),
 	pcs_data_(data),
@@ -188,26 +188,10 @@ PCSLigandTransformMover::PCSLigandTransformMover(
 	chain_('X')
 {}
 
-PCSLigandTransformMover::PCSLigandTransformMover(PCSLigandTransformMover const & other) :
-	protocols::moves::Mover(other),
-	pcs_data_( new PCSData( *(other.pcs_data_) ) ),
-	sfxn_( other.sfxn_->clone() ),
-	grid_(other.grid_),
-	gs_box_(other.gs_box_),
-	trans_step_(other.trans_step_),
-	rot_step_(other.rot_step_),
-	rsol_damping_(other.rsol_damping_),
-	optimize_transform_(other.optimize_transform_),
-	chain_(other.chain_)
-{}
+PCSLigandTransformMover::PCSLigandTransformMover(PCSLigandTransformMover const & ) = default;
 
 PCSLigandTransformMover &
-PCSLigandTransformMover::operator=(PCSLigandTransformMover const & rhs) {
-	if ( this == &rhs ) {
-		return *this;
-	}
-	return *( new PCSLigandTransformMover( *this ) ); // ?????
-}
+PCSLigandTransformMover::operator=(PCSLigandTransformMover const & ) = default;
 
 PCSLigandTransformMover::~PCSLigandTransformMover() {}
 
@@ -246,6 +230,10 @@ PCSLigandTransformMover::apply(Pose & pose) {
 
 	using namespace core::pose;
 	using namespace core::conformation;
+
+	if ( ! pcs_data_file_.empty() ) {
+		pcs_data_ = utility::pointer::make_shared< PCSData >(pcs_data_file_, pose);
+	}
 
 	Size lig_resid = get_resnums_for_chain(pose, chain_)[1];
 	Residue const & lig = pose.residue(lig_resid);
@@ -732,7 +720,7 @@ PCSLigandTransformMover::parse_my_tag(
 	basic::datacache::DataMap & datamap,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	try {
@@ -743,7 +731,7 @@ PCSLigandTransformMover::parse_my_tag(
 			if ( filename == "" ) {
 				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'PCSLigandTransformMover' requires 'pcs_input_file' tag.");
 			} else {
-				pcs_data_ = PCSDataOP(new PCSData(filename, pose));
+				pcs_data_file_ = filename;
 			}
 		}
 		// ScoreFunction

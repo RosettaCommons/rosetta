@@ -27,6 +27,7 @@
 #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/LoopsFileIO.fwd.hh>
+#include <protocols/loops/loops_definers/LoopsDefiner.fwd.hh>
 
 #include <protocols/checkpoint/CheckPointer.fwd.hh>
 
@@ -94,6 +95,8 @@ public:
 
 	/// @brief Set the loops by giving the LoopMover unresolved loop indices (which cannot be resolved until apply() ).
 	void loops( LoopsFileData const & loop_file_data );
+
+	void loops( protocols::loops::loops_definers::LoopsDefinerOP setting );
 
 	/// @brief Set the guarded_loops pointer
 	void loops( protocols::loops::GuardedLoopsFromFileOP guarded_loops );

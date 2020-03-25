@@ -70,10 +70,8 @@ protected:
 	/// @brief Parses tag compoments for PlaceProbeMover
 	void parse_place_probe_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &);
+		basic::datacache::DataMap & data
+	);
 
 	StructureOutputMode parse_output_mode(std::string name);
 

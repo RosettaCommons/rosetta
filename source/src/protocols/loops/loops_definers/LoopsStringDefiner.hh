@@ -7,24 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   protocols/loops/loops_definers/LoopsFileDefiner.hh
-/// @brief  A loops definer is creates a serialized loops list
-/// @author Matthew O'Meara (mattjomear@gmail.com)
+/// @file   protocols/loops/loops_definers/LoopsStringDefiner.hh
+/// @brief  Creates a serialized loops list based on a string specification
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
-#ifndef INCLUDED_protocols_loops_loops_definers_LoopsFileDefiner_HH
-#define INCLUDED_protocols_loops_loops_definers_LoopsFileDefiner_HH
+#ifndef INCLUDED_protocols_loops_loops_definers_LoopsStringDefiner_HH
+#define INCLUDED_protocols_loops_loops_definers_LoopsStringDefiner_HH
 
 // Unit Headers
 #include <protocols/loops/loops_definers/LoopsDefiner.hh>
-#include <protocols/loops/loops_definers/LoopsFileDefiner.fwd.hh>
+#include <protocols/loops/loops_definers/LoopsStringDefiner.fwd.hh>
 
 #ifdef WIN32
 #include <protocols/loops/Loop.hh>
 #else
 #include <protocols/loops/Loop.fwd.hh>
 #endif
-
-#include <protocols/loops/LoopsFileIO.hh>
 
 // Platform Headers
 #include <core/pose/Pose.fwd.hh>
@@ -43,28 +41,29 @@ namespace protocols {
 namespace loops {
 namespace loops_definers {
 
-class LoopsFileDefiner : public LoopsDefiner {
+/// @brief A LoopsDefiner which can be configured with a string in a
+/// Start:End:Cut,Start:End:Cut... format. (Cut optional, PDB numbering acceptable.)
+class LoopsStringDefiner : public LoopsDefiner {
 public:
 
-	LoopsFileDefiner();
+	LoopsStringDefiner(std::string const & in = "");
 
-	~LoopsFileDefiner() override;
+	~LoopsStringDefiner() override;
 
-	LoopsFileDefiner(
-		LoopsFileDefiner const & src);
+	LoopsStringDefiner(
+		LoopsStringDefiner const & src);
 
 	/// @brief Create another loops definer of the type matching the most-derived
 	/// version of the class.
 	LoopsDefinerOP
 	clone() const override;
 
-
-	/// @brief Used to parse an xml-like tag to load parameters and properties.
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap const & data,
 		core::pose::Pose const &) override;
+
 
 	SerializedLoopList
 	apply(
@@ -74,7 +73,8 @@ public:
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	LoopsFileDataOP lfd_;
+	std::string loop_spec_;
+
 };
 
 } //namespace

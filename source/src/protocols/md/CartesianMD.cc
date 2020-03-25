@@ -100,16 +100,14 @@ using namespace ObjexxFCL::format;
 
 
 // mover
-CartesianMD::CartesianMD():
-	use_rattle_( true )
+CartesianMD::CartesianMD()
 {
 	init();
 }
 
 CartesianMD::CartesianMD( core::pose::Pose const & pose,
 	core::scoring::ScoreFunctionCOP sfxn,
-	core::kinematics::MoveMapCOP movemap ) :
-	use_rattle_( true )
+	core::kinematics::MoveMapCOP movemap )
 {
 	if ( movemap == nullptr ) {
 		core::kinematics::MoveMapOP mmloc( new core::kinematics::MoveMap );
@@ -123,12 +121,10 @@ CartesianMD::CartesianMD( core::pose::Pose const & pose,
 	set_scorefxn( sfxn );
 	set_scorefxn_obj( sfxn );
 	init();
-	get_native_info( pose );
 }
 
 CartesianMD::CartesianMD( core::pose::Pose const & pose,
-	core::scoring::ScoreFunction const &sfxn ) :
-	use_rattle_( true )
+	core::scoring::ScoreFunction const &sfxn )
 {
 	core::kinematics::MoveMapOP mmloc( new core::kinematics::MoveMap );
 	mmloc->set_jump( true ); mmloc->set_bb( true ); mmloc->set_chi( true );
@@ -138,20 +134,17 @@ CartesianMD::CartesianMD( core::pose::Pose const & pose,
 	set_scorefxn( sfxn );
 	set_scorefxn_obj( sfxn );
 	init();
-	get_native_info( pose );
 }
 
 CartesianMD::CartesianMD( core::pose::Pose const & pose,
 	core::scoring::ScoreFunction const &sfxn,
-	core::kinematics::MoveMap const &movemap ) :
-	use_rattle_( true )
+	core::kinematics::MoveMap const &movemap )
 {
 	set_movemap( pose, movemap.clone() );
 
 	set_scorefxn( sfxn );
 	set_scorefxn_obj( sfxn );
 	init(); // MDBase
-	get_native_info( pose );
 }
 
 CartesianMD::~CartesianMD() = default;
@@ -437,6 +430,8 @@ CartesianMD::cst_on_pose_dynamic( core::pose::Pose &pose,
 
 void CartesianMD::apply( core::pose::Pose & pose ) {
 	using namespace core::optimization;
+
+	get_native_info( pose );
 
 	if ( movemap_factory_ ) {
 		// reset the movemap if we have a valid MoveMapFactory
@@ -849,22 +844,19 @@ void  CartesianMD::parse_my_tag(
 	basic::datacache::DataMap & data,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
-	Pose const & pose )
+	Pose const & )
 {
 	// Other options
-	parse_opts( tag, data, pose );
+	parse_opts( tag, data );
 
 	// Movemap
-	parse_movemap( tag, data, pose );
+	parse_movemap( tag, data );
 }
 
 void CartesianMD::parse_opts(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	//Filters_map const &,
-	//protocols::moves::Movers_map const &,
-	Pose const & pose )
-{
+	basic::datacache::DataMap & data
+) {
 	using namespace core;
 	using namespace scoring;
 
@@ -899,19 +891,12 @@ void CartesianMD::parse_opts(
 		parse_schfile( schfile );
 		set_scheduled( true );
 	}
-
-	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-		get_native_info( pose );
-	}
 }
 
 void CartesianMD::parse_movemap(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	//Filters_map const &,
-	//protocols::moves::Movers_map const &,
-	Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	// set initial guess
 	core::select::movemap::MoveMapFactoryOP mmf( new core::select::movemap::MoveMapFactory );
 	bool const chi( tag->getOption< bool >( "chi", true ) ), bb( tag->getOption< bool >( "bb", true ) );

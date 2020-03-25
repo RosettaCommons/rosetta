@@ -153,23 +153,11 @@ PREMover::PREMover(
 }
 
 /// @brief Copy constructor
-PREMover::PREMover(PREMover const & other) :
-	protocols::moves::Mover( other ),
-	histogram_files_(other.histogram_files_),
-	pre_data_( new PREData( *(other.pre_data_) ) ),
-	sfxn_( other.sfxn_->clone() ),
-	weighted_average_(other.weighted_average_),
-	minimize_(other.minimize_)
-{ }
+PREMover::PREMover(PREMover const & ) = default;
 
 /// @brief Copy assignment
 PREMover &
-PREMover::operator=(PREMover const & rhs) {
-	if ( this == &rhs ) {
-		return *this;
-	}
-	return *( new PREMover( *this ) ); // ????????
-}
+PREMover::operator=(PREMover const & ) = default;
 
 /// @brief destructor
 PREMover::~PREMover() {}
@@ -321,14 +309,14 @@ PREMover::R1_to_dist_dd_curie(
 ///        to their respective spinlabel and protein residue(s)
 void
 PREMover::pre_data_to_distances(
-	core::scoring::nmr::pre::PREData & pre_data,
+	core::scoring::nmr::pre::PREData const & pre_data,
 	SpinlabelToPREDistances & all_sl_distances
 )
 {
 	using namespace core::scoring::nmr;
 	using namespace core::scoring::nmr::pre;
 
-	utility::vector1< PREMultiSetOP > & multiset_vec = pre_data.get_pre_multiset_vec();
+	utility::vector1< PREMultiSetOP > const & multiset_vec = pre_data.get_pre_multiset_vec();
 	Size num_sl_sites = pre_data.get_number_spinlabel_sites();
 	Vec8 exp_params(8);
 
@@ -449,6 +437,10 @@ PREMover::apply(Pose & pose) {
 	using namespace core::scoring::func;
 	using namespace core::scoring::constraints;
 	using namespace core::scoring;
+
+	if ( ! pre_data_file_.empty() ) {
+		pre_data_ = utility::pointer::make_shared< PREData >(pre_data_file_, pose);
+	}
 
 	// PRE distances for all spinlabel sites
 	SpinlabelToPREDistances sl_all_distances;
@@ -572,6 +564,8 @@ PREMover::show(std::ostream& tracer) const {
 	tracer << " * * * PREMover Data * * * " << std::endl;
 	if ( pre_data_ ) {
 		pre_data_->show(tracer);
+	} else if ( ! pre_data_file_.empty() ) {
+		tracer << "From file " << pre_data_file_;
 	}
 	tracer << "Spinlabel histograms:" << std::endl;
 	for ( SpinlabelHistogramMap::const_iterator iter = histogram_files_.begin(), last = histogram_files_.end(); iter != last; ++iter ) {
@@ -586,7 +580,7 @@ PREMover::parse_my_tag(
 	basic::datacache::DataMap & datamap,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 )
 {
 	try {
@@ -597,7 +591,7 @@ PREMover::parse_my_tag(
 			if ( filename == "" ) {
 				utility_exit_with_message("ERROR: No PRE data input filename provided for PREMover.");
 			} else {
-				pre_data_ = PREDataOP(new PREData(filename, pose));
+				pre_data_file_ = filename;
 			}
 		}
 		// ScoreFunction for optional minimization

@@ -106,19 +106,15 @@ AlignmentFileGeneratorMover::AlignmentFileGeneratorMover(
 
 AlignmentFileGeneratorMover::~AlignmentFileGeneratorMover(){}
 
-AlignmentFileGeneratorMover::AlignmentFileGeneratorMover( AlignmentFileGeneratorMover const & src ):
-	protocols::moves::Mover( src )
-{
-	basis_map_generator_ = src.basis_map_generator();
-}
+AlignmentFileGeneratorMover::AlignmentFileGeneratorMover( AlignmentFileGeneratorMover const & ) = default;
 
 void
 AlignmentFileGeneratorMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap,
-	protocols::filters::Filters_map const & filtermap,
-	protocols::moves::Movers_map const & movermap,
-	core::pose::Pose const & pose)
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & )
 {
 	//NOTE this currently allows users to specify options either in tag or on command line, but we may remove the command-line options at some point
 	//model file
@@ -139,7 +135,8 @@ AlignmentFileGeneratorMover::parse_my_tag(
 		//It seems unnecessary to parse conformers, too
 	}
 	//Now get the information for the alignment settings
-	alignment_settings_from_tag( tag, datamap, filtermap, movermap, pose, basis_map_generator_ );
+
+	align_settings_ = alignment_settings_from_tag( tag );
 	//Not currently compatible with providing these as command-line options
 	required_resnums_ = tag->getOption< std::string >( "required_resnums", "");
 	//required_starting_residues_ = core::pose::get_resnum_list_ordered( str_required_res, pose );
@@ -347,7 +344,12 @@ std::ostream &operator<< (std::ostream &os, AlignmentFileGeneratorMover const &m
 
 
 void
-AlignmentFileGeneratorMover::apply( core::pose::Pose& pose){
+AlignmentFileGeneratorMover::apply( core::pose::Pose& pose) {
+
+	if ( align_settings_ != nullptr ) {
+		basis_map_from_alignment( *align_settings_, pose, basis_map_generator_ );
+	}
+
 	//A.Convert pose to segments
 	//The new function should just go ahead and add it to the segment_vector in place
 
@@ -1752,54 +1754,63 @@ AlignmentFileGeneratorMover::basis_map_generator( BasisMapGeneratorOP bmg)
 	basis_map_generator_ = bmg;
 }
 
-void
+AlignmentFGMSettingsOP
 AlignmentFileGeneratorMover::alignment_settings_from_tag(
-	utility::tag::TagCOP tag,
-	basic::datacache::DataMap&,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose,
-	BasisMapGeneratorOP bmg)
-{
-	//recursive_depth
-	utility::vector1< core::Size> pose_segment_starts;
-	utility::vector1< core::Size> pose_segment_ends;
-	utility::vector1< core::Size> match_segments;
-	core::Size recursive_depth = tag->getOption< core::Size>( "max_recursion", 1 );
+	utility::tag::TagCOP tag
+) {
+	AlignmentFGMSettingsOP settings = utility::pointer::make_shared< AlignmentFGMSettings >();
+	settings->recursive_depth = tag->getOption< core::Size>( "max_recursion", 1 );
 
-	if ( tag->hasOption( "pose_segment_starts" ) ) {
-		std::string str_seg_starts = tag->getOption< std::string >( "pose_segment_starts" );
-		pose_segment_starts = core::pose::get_resnum_list_ordered( str_seg_starts, pose );
-	} else {
-		pose_segment_starts.clear();
-		pose_segment_starts.push_back( 1 );
-	}
+	settings->pose_segment_starts = tag->getOption< std::string >( "pose_segment_starts", "1" );
 	//Same for pose_segment_ends
 	if ( tag->hasOption( "pose_segment_ends" ) ) {
-		std::string str_seg_ends = tag->getOption< std::string >( "pose_segment_ends" );
-		pose_segment_ends = core::pose::get_resnum_list_ordered( str_seg_ends, pose );
+		settings->pose_segment_ends = tag->getOption< std::string >( "pose_segment_ends" );
 	} else {
-		pose_segment_ends.clear();
-		pose_segment_ends.push_back( pose.total_residue() );
+		settings->pose_segment_ends = ""; // Signal value
 	}
 	//This one's a little different--not resnums, so we don't have a handy
 	//built-in function available
 	if ( tag->hasOption( "match_segments" ) ) {
-		std::string str_ms = tag->getOption< std::string>( "match_segments" );
-		utility::vector1< std::string > str_vec_ms( utility::string_split( str_ms, ',' ) );
-		//Now we will loop through all of the strings and convert to core::Size
-		for ( core::Size i = 1; i <= str_vec_ms.size(); ++i ) {
-			match_segments.push_back( core::Size( std::stoi( str_vec_ms[ i ] ) ) );
-		}
+		settings->match_segments = tag->getOption< std::string>( "match_segments" );
 	} else {
+		settings->match_segments = ""; // Signal value
+	}
+	return settings;
+}
+
+void
+AlignmentFileGeneratorMover::basis_map_from_alignment(
+	AlignmentFGMSettings const & alignment,
+	core::pose::Pose const & pose,
+	BasisMapGeneratorOP bmg)
+{
+	utility::vector1< core::Size> pose_segment_starts = core::pose::get_resnum_list_ordered( alignment.pose_segment_starts, pose );
+
+	utility::vector1< core::Size> pose_segment_ends;
+	if ( alignment.pose_segment_ends.empty() ) {
+		pose_segment_ends = core::pose::get_resnum_list_ordered( alignment.pose_segment_ends, pose );
+	} else {
+		pose_segment_ends.push_back( pose.total_residue() );
+	}
+
+	//This one's a little different--not resnums, so we don't have a handy
+	//built-in function available
+	utility::vector1< core::Size> match_segments;
+	if ( alignment.match_segments.empty() ) {
 		//If none provided, it will be the first and last segments
 		match_segments.push_back( 1 );
 		if ( pose_segment_starts.size() > 1 ) {
 			match_segments.push_back( pose_segment_starts.size() );
 		}
+	} else {
+		utility::vector1< std::string > str_vec_ms( utility::string_split( alignment.match_segments, ',' ) );
+		//Now we will loop through all of the strings and convert to core::Size
+		for ( core::Size i = 1; i <= str_vec_ms.size(); ++i ) {
+			match_segments.push_back( core::Size( std::stoi( str_vec_ms[ i ] ) ) );
+		}
 	}
-	bmg->set_alignment_settings( match_segments, pose_segment_starts, pose_segment_ends, recursive_depth );
 
+	bmg->set_alignment_settings( match_segments, pose_segment_starts, pose_segment_ends, alignment.recursive_depth );
 }
 
 

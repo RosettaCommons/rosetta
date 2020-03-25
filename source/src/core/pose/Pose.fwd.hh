@@ -36,6 +36,10 @@ using PoseCUP = std::unique_ptr< Pose const >;
 using PoseOPs  = utility::vector1< PoseOP >;
 using PoseCOPs = utility::vector1< PoseCOP >;
 
+/// @details Note that this does a `clone()`, which isn't actually a full deep copy (which would be `detached_copy()`)
+/// This may or may not have implications for multithreaded use.
+PoseOP deep_copy( Pose const & source);
+
 } // namespace pose
 } // namespace core
 

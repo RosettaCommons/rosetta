@@ -37,7 +37,14 @@ namespace protocols {
 namespace sewing {
 namespace hashing {
 
+struct AlignmentFGMSettings {
+	core::Size recursive_depth = 1;
+	std::string pose_segment_starts;
+	std::string pose_segment_ends;
+	std::string match_segments;
+};
 
+using AlignmentFGMSettingsOP = utility::pointer::shared_ptr< AlignmentFGMSettings >;
 
 ///@brief Given a model file, edge file ,and one or more input structures, generates alignment files for use with AppendAssemblyMover.
 class AlignmentFileGeneratorMover : public protocols::moves::Mover {
@@ -174,14 +181,17 @@ public:
 	static std::string
 	ligands_subtag_ct_namer( std::string );
 
-	static void
-	alignment_settings_from_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap&,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
-		core::pose::Pose const &,
-		BasisMapGeneratorOP bmg);
+	static
+	AlignmentFGMSettingsOP
+	alignment_settings_from_tag( utility::tag::TagCOP tag );
+
+	static
+	void
+	basis_map_from_alignment(
+		AlignmentFGMSettings const & alignment,
+		core::pose::Pose const & pose,
+		BasisMapGeneratorOP bmg
+	);
 
 	static void
 	parse_ligand_conformers(
@@ -198,6 +208,7 @@ public:
 
 private:
 	BasisMapGeneratorOP basis_map_generator_;
+	AlignmentFGMSettingsOP align_settings_;
 	utility::vector1< data_storage::LigandDescription > ligands_;
 	std::string required_resnums_;
 	core::select::residue_selector::ResidueSelectorCOP required_selector_;

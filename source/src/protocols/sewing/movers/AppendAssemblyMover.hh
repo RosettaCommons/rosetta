@@ -27,6 +27,7 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
+#include <utility/pointer/deep_copy.hh>
 
 namespace protocols {
 namespace sewing {
@@ -187,10 +188,14 @@ public:
 	utility::vector1< data_storage::LigandDescription > &
 	get_nonconst_ligands();
 
+protected:
+
+	hashing::AlignmentFGMSettingsOP
+	alignment_settings();
 
 private: // data
 
-	core::pose::PoseOP partner_pdb_;
+	utility::pointer::DeepCopyOP< core::pose::Pose > partner_pdb_;
 	std::string required_resnums_;
 	core::select::residue_selector::ResidueSelectorCOP required_selector_;
 	utility::vector1< data_storage::LigandDescription > ligands_;
@@ -204,6 +209,7 @@ private: // data
 	bool strict_dssp_changes_ = false;
 	bool extend_mode_ = false;
 
+	hashing::AlignmentFGMSettingsOP alignment_settings_;
 };
 std::ostream &
 operator<<( std::ostream & os, AppendAssemblyMover const & mover );

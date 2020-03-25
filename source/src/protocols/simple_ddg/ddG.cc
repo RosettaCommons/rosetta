@@ -236,7 +236,7 @@ void ddG::parse_my_tag(
 	basic::datacache::DataMap  & data,
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
-	core::pose::Pose const& pose)
+	core::pose::Pose const& )
 {
 	rb_jump_ = tag->getOption<core::Size>("jump", 1);
 	if ( tag->hasOption("symmetry") ) {
@@ -278,21 +278,7 @@ void ddG::parse_my_tag(
 	}
 
 	if ( tag->hasOption("chain_name") ) {
-		utility::vector1<std::string> chain_names = utility::string_split(tag->getOption<std::string>("chain_name"),',',std::string());
-		for ( auto & chain_name : chain_names ) {
-			chain_ids_.push_back(core::pose::get_chain_id_from_chain(chain_name,pose));
-		}
-	}
-
-	if ( std::find(chain_ids_.begin(), chain_ids_.end(), 1) != chain_ids_.end() ) {
-		// Instead of throwing error in the case, we invert the chains to be moved to take care of this
-		utility::vector1<core::Size> inverted_chain_ids_;
-		for ( core::Size i=1 ; i <= pose.conformation().num_chains() ; ++i ) {
-			if ( std::find(chain_ids_.begin(), chain_ids_.end(), i) == chain_ids_.end() ) {
-				inverted_chain_ids_.push_back(i);
-			}
-		}
-		chain_ids_ = inverted_chain_ids_;
+		chain_names_ = utility::string_split(tag->getOption<std::string>("chain_name"),',',std::string());
 	}
 
 	// Construct score function.
@@ -323,6 +309,37 @@ void ddG::scorefxn( core::scoring::ScoreFunctionCOP scorefxn_in ) {
 	scorefxn_ = scorefxn_in->clone();
 }
 
+std::set< core::Size > ddG::get_movable_jumps( core::pose::Pose const & pose ) const {
+	std::set< core::Size > jumps;
+
+	std::set< core::Size > chain_ids( chain_ids_.begin(), chain_ids_.end() );
+	for ( std::string const & chain_name: chain_names_ ) {
+		auto const & ids_from_name = core::pose::get_chain_ids_from_chain(chain_name, pose);
+		chain_ids.insert( ids_from_name.begin(), ids_from_name.end() );
+	}
+
+	// If the first chain (immovable) is in the set, just invert it.
+	if ( chain_ids.count(1) >= 1 ) {
+		std::set<core::Size> chain_ids_to_move;
+		for ( core::Size pose_chain = 1 ; pose_chain <= pose.num_chains() ; pose_chain++ ) {
+			if ( chain_ids.count( pose_chain ) == 0 ) {
+				chain_ids_to_move.insert( pose_chain );
+			}
+		}
+		chain_ids = chain_ids_to_move;
+	}
+
+	for ( auto & chain_id : chain_ids ) {
+		runtime_assert( chain_id >= 1 && chain_id <= pose.conformation().num_chains() );
+		jumps.insert( core::pose::get_jump_id_from_chain_id( chain_id, pose ) );
+	}
+
+	if ( jumps.empty() && rb_jump_ != 0 ) {
+		jumps.insert( rb_jump_ );
+	}
+
+	return jumps;
+}
 
 void ddG::apply(Pose & pose)
 {
@@ -529,10 +546,11 @@ ddG::compute_rmsd_with_super( pose::Pose const & pose, core::Real & input_rmsd_s
 	ObjexxFCL::FArray1D_bool temp_part( pose_copy.size(), false );
 	ObjexxFCL::FArray1D_bool superpos_partner( pose_copy.size(), false );
 
-	pose_copy.fold_tree().partition_by_jump( core::pose::get_jump_id_from_chain_id(chain_ids_[1],pose_copy), temp_part );
-	for ( Size i = 1; i <= pose_copy.size(); ++i ) {
-		if ( temp_part( i ) ) superpos_partner( i ) = false;
-		else superpos_partner( i ) = true;
+	for ( core::Size jump: get_movable_jumps( pose_copy ) ) {
+		pose_copy.fold_tree().partition_by_jump( jump, temp_part );
+		for ( Size i = 1; i <= pose_copy.size(); ++i ) {
+			if ( ! temp_part( i ) ) superpos_partner( i ) = true; // True for all the downstream residues
+		}
 	}
 	input_rmsd_super = core::scoring::rmsd_with_super_subset( *native_, pose_copy, superpos_partner, is_protein_CA );
 	input_rmsd = core::scoring::native_CA_rmsd(  *native_, pose_copy );
@@ -560,8 +578,13 @@ ddG::calculate( pose::Pose const & pose_original )
 		core::import_pose::pose_from_file( *native_, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() , core::import_pose::PDB_file);
 		// calculate lig_id separate for native in case native pose had different numbering
 
-		lig_id_native_ = static_cast< core::Size >( native_->fold_tree().downstream_jump_residue( core::pose::get_jump_id_from_chain_id(chain_ids_[1], *native_) ) );
-		lig_id_ = static_cast< core::Size >( pose.fold_tree().downstream_jump_residue( core::pose::get_jump_id_from_chain_id(chain_ids_[1],pose) ) );
+		std::set< core::Size > jumps = get_movable_jumps( pose );
+		std::set< core::Size > jumps_native = get_movable_jumps( *native_ );
+		if ( jumps.size() != 1 || jumps_native.size() != 1 ) {
+			TR.Warning << "In ddG, more than one jump is active for ligand rmsd." << std::endl;
+		}
+		lig_id_native_ = static_cast< core::Size >( native_->fold_tree().downstream_jump_residue( *jumps_native.begin() ) );
+		lig_id_ = static_cast< core::Size >( pose.fold_tree().downstream_jump_residue( *jumps.begin() ) );
 		core::Real input_rmsd( 0 );
 		core::Real input_rmsd_super( 0 );
 		if ( pose.residue(lig_id_).is_ligand() ) {
@@ -783,23 +806,17 @@ ddG::setup_task( pose::Pose const & pose) {
 		core::pack::task::operation::NoRepackDisulfides nodisulf;
 		nodisulf.apply( pose, *task_ );
 
-		if ( chain_ids_.size() > 0 ) {
-			if ( core::pose::symmetry::is_symmetric( pose ) ) {
-				utility_exit_with_message("Use of chain IDs in ddG with symmetric poses is not yet supported.");
-				// Mostly because I don't know if the following code is sensible with symmetric poses.
-			}
-			//We want to translate each chain the same direction, though it doesnt matter much which one
-			core::Size first_jump = core::pose::get_jump_id_from_chain_id(chain_ids_[1],pose);
-			protocols::simple_task_operations::RestrictToInterface rti( first_jump, 8.0 /*interface_distance_cutoff_*/ );
-			if ( chain_ids_.size() > 1 ) {
-				for ( core::Size chain_index = 2; chain_index <= chain_ids_.size(); ++chain_index ) {
-					core::Size current_jump = core::pose::get_jump_id_from_chain_id(chain_ids_[chain_index],pose);
-					rti.add_jump(current_jump);
-				}
-			}
-			rti.apply(pose,*task_);
-		} else if ( rb_jump_ != 0 ) {
-			protocols::simple_task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
+		if ( core::pose::symmetry::is_symmetric( pose ) && (chain_ids_.size() != 0 || chain_names_.size() != 0) ) {
+			utility_exit_with_message("Use of chain IDs in ddG with symmetric poses is not yet supported.");
+			// Mostly because I don't know if the following code is sensible with symmetric poses.
+		}
+
+		std::set< core::Size > jumps = get_movable_jumps(pose);
+		if ( ! jumps.empty() ) {
+			protocols::simple_task_operations::RestrictToInterface rti;
+			rti.distance(8.0);
+			utility::vector1<int> jumplist( jumps.begin(), jumps.end() );
+			rti.set_movable_jumps( jumplist );
 			rti.apply( pose, *task_ );
 		}
 	} // use_custom_task
@@ -888,13 +905,8 @@ ddG::do_minimize( Pose & pose ) const
 
 	if ( solvate_rbmin_ ) {
 		// get jump # of interface
-		if ( chain_ids_.size() > 0 ) {
-			for ( core::Size current_chain_id : chain_ids_ ) {
-				core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
-				mm->set_jump( current_jump_id, true );
-			}
-		} else if ( rb_jump_ != 0 ) {
-			mm->set_jump( rb_jump_, true );
+		for ( core::Size current_jump_id: get_movable_jumps(pose) ) {
+			mm->set_jump( current_jump_id, true );
 		}
 	}
 
@@ -932,33 +944,27 @@ ddG::unbind( pose::Pose & pose ) const
 		rigid::RigidBodyDofSeqTransMoverOP translate( new rigid::RigidBodyDofSeqTransMover( dofs ) );
 		translate->step_size( translate_by_ );
 		translate->apply( pose );
-	} else if ( chain_ids_.size() > 0 ) {
-		//We want to translate each chain the same direction, though it doesnt matter much which one
-		Vector translation_axis(1,0,0);
-		for ( core::Size current_chain_id : chain_ids_ ) {
-			core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,pose);
+	} else {
+		std::set< core::Size > jumps = get_movable_jumps( pose );
+		if ( jumps.empty() ) {
+			// We have no information about chains or jumps to move, so let's not try and unbind
+			return false;
+		}
+		for ( core::Size current_jump_id: get_movable_jumps( pose ) ) {
 			if ( solvate_ ) {
 				duplicate_waters_across_jump( pose, current_jump_id );
 			}
-			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id) );
-
+			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, current_jump_id ) );
 			// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.
 			translate->step_size( translate_by_ );
-			translate->trans_axis(translation_axis);
+			if ( jumps.size() != 1 ) {
+				// We want to translate each chain the same direction, though it doesnt matter much which one
+				// (For just a single jump, use the default centroid-based axis.)
+				Vector translation_axis(1,0,0);
+				translate->trans_axis(translation_axis);
+			}
 			translate->apply( pose );
 		}
-	} else if ( rb_jump_ != 0 ) {
-		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
-		if ( solvate_ ) {
-			duplicate_waters_across_jump( pose, rb_jump_ );
-		}
-
-		// Commented by honda: APBS blows up grid > 500.  Just use the default just like bound-state.
-		translate->step_size( translate_by_ );
-		translate->apply( pose );
-	} else {
-		// We have no information about chains or jumps to move, so let's not try and unbind
-		return false;
 	}
 	return true;
 }

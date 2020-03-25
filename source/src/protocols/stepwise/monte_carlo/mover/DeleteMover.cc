@@ -92,13 +92,11 @@ void DeleteMover::parse_my_tag(
 	basic::datacache::DataMap &,// data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose ) {
+	core::pose::Pose const & ) {
 
 	minimize_after_delete_ = tag->getOption< bool >( "minimize_after_delete", minimize_after_delete_ );
 
-	std::string move_str = tag->getOption< std::string >( "swa_move" );
-	StepWiseMove swa_move = StepWiseMove( utility::string_split( move_str ), const_full_model_info( pose ).full_model_parameters() );
-	residues_to_delete_in_full_model_numbering_ = swa_move.move_element();
+	move_str_ = tag->getOption< std::string >( "swa_move" );
 }
 
 void DeleteMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
@@ -118,9 +116,9 @@ DeleteMover::apply( core::pose::Pose & pose )
 {
 	//std::cout << "not defined" << std::endl;
 	// We get here from RosettaScripts applications
-	// so, assume we were able to set residues_to_delete_in_full_model_numbering_
-	// based on swa_move option.
-	apply( pose, residues_to_delete_in_full_model_numbering_ );
+	runtime_assert( ! move_str_.empty() );
+	StepWiseMove swa_move( utility::string_split( move_str_ ), const_full_model_info( pose ).full_model_parameters() );
+	apply( pose, swa_move.move_element() );
 }
 
 

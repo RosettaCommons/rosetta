@@ -154,6 +154,11 @@ void LoopMover::loops( protocols::loops::LoopsFileData const & loops )
 	guarded_loops_->loops( loops );
 }
 
+void LoopMover::loops( protocols::loops::loops_definers::LoopsDefinerOP setting )
+{
+	guarded_loops_->loops( setting );
+}
+
 /// @brief Set the guarded_loops pointer
 void LoopMover::loops( protocols::loops::GuardedLoopsFromFileOP guarded_loops )
 {

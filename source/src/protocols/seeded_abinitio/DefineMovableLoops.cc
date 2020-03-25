@@ -215,6 +215,11 @@ void
 DefineMovableLoops::apply( core::pose::Pose & pose ){
 	using protocols::loops::Loops;
 
+	if ( secstructure_ == "self" ) {
+		secstructure_ = pose.secstruct();
+		TR<<"extracting secondary structure from input pose" <<std::endl;
+	}
+
 	utility::vector1< core::Size > chains_local = chains_;
 	if ( chains_local.empty() ) {
 		TR<<"no chains specified, defaulting to use all chains" << std::endl;
@@ -263,7 +268,7 @@ DefineMovableLoops::parse_my_tag(
 	basic::datacache::DataMap & data ,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	TR<<"DefineMovableLoops has been instantiated"<<std::endl;
 
@@ -280,7 +285,6 @@ DefineMovableLoops::parse_my_tag(
 		secstructure_ = tag->getOption< std::string > ( "secstrct" );
 		TR<<"getting secstructure from a string" <<std::endl;
 		if ( secstructure_ == "self" ) {
-			secstructure_ = pose.secstruct();
 			TR<<"extracting secondary structure from input pose" <<std::endl;
 		}
 	}
