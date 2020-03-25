@@ -1,0 +1,70 @@
+
+Overview
+========
+
+Each subdirectory (except for boost/) in this directory is a submodule of boost (See https://github.com/boostorg/boost/ for the superproject.)
+See the submodule.txt for a list of the current submodules, and for any notes as to why they're included.
+
+The boost/ directory itself is not a submodule, but instead a collection of symlinks into the submodule contents.
+
+Initial cloning
+--------------
+
+    git submodule add git@github.com:boostorg/${r}.git source/external/boost_submod/${r}
+
+or 
+
+    for r in `grep -v '^#' source/external/boost_submod/submodules.txt`; do
+        git submodule add git@github.com:boostorg/${r}.git source/external/boost_submod/${r}
+	sleep 5 # Rate limiting
+    done
+
+Note that GitHub apparently doesn't like rapid submodule additions under ssh, so you need some sort of rate limiting in the automated process to keep from dying partway through
+(And it's really difficult to recover from dying when doing a git submodule add.)
+Using HTTPS instead for the cloning looks to do better -- we've converted to https.
+
+To update all the submodules to a particular revision
+----------------------------------------------------- 
+
+    TAG=boost-1.71.0
+    
+    for d in */; do
+        pushd $d
+	echo "===================" $d
+	git fetch; git fetch --tags
+        git checkout $TAG
+	sleep 5 # Rate limiting
+        popd
+    done
+
+# Be careful about the results. On my machine after a while I get a bunch of ssh errors. 
+# It might be related to rate limiting on Githubs end - you might want to add some sort of rate limter (as sleep statement) within the loop.
+# Though it looks like using HTTPS avoids that issue.
+
+# NOTE: Some submodules have Rosetta-specific additions/alterations.
+# You'll need to update them accordingly.
+# Generally, you'll need to merge in the "Rosetta" branch with the new version of the repo.
+# Take a look at the .gitmodules files for the list of the submodules which were forked for Rosetta-specific modifications.
+
+MODULES WITH MODIFICATIONS:
+---------------------------
+
+* multi_index 
+    * Alterations to the buckets on the bucket array for PyRosetta
+* integer
+    * Disable some templates for PyRosetta
+* lexical_cast
+    * Disable compile time checking for PyRosetta (specifically for the PYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK define.)
+
+
+To update the boost/ directory symlinks
+---------------------------------------
+
+This should be done after any major update to the submodules.
+
+    ./update_boost_links.sh
+
+The changes in the symlinks in the source/external/boost_submod/boost/ should be committed to the repo.
+
+
+

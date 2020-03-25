@@ -28,7 +28,7 @@ _api_version_ = '1.0'  # api version
 def run_serialization_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     jobs = config['cpu_count']
 
-    execute('Updating options, ResidueTypes and version info...', 'cd {}/source && ./update_options.sh && ./update_ResidueType_enum_files.sh && python version.py'.format(rosetta_dir) )
+    setup_for_compile(rosetta_dir)
 
     executable = install_llvm_tool('serialization_validator', source_location='{}/tools/clang_ast_transform/rosetta-refactor-tool'.format(rosetta_dir), platform=platform, config=config)
     #executable_path = executable.rpartition('/')[0]
@@ -383,7 +383,7 @@ def run_beautification_test(rosetta_dir, working_dir, platform, config, hpc_driv
     '''
     jobs = config['cpu_count']
 
-    execute('Updating options, ResidueTypes and version info...', 'cd {}/source && ./update_options.sh && ./update_ResidueType_enum_files.sh && python version.py'.format(rosetta_dir) )
+    setup_for_compile(rosetta_dir)
 
     state, results, output = _S_script_failed_, {}, ''
     res, o = execute('Reading the source code, trying to see a beauty in it...', 'cd {}/source && python ../tools/python_cc_reader/test_all_files_already_beautiful.py -j {}'.format(rosetta_dir, jobs), return_='tuple')
@@ -404,7 +404,7 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
 
     state, results, output = _S_script_failed_, {}, ''
 
-    execute('Updating options, ResidueTypes and version info...', 'cd {}/source && ./update_options.sh && ./update_ResidueType_enum_files.sh && python version.py'.format(rosetta_dir) )
+    setup_for_compile(rosetta_dir)
 
     res, _ = execute('Checking if there is local changes in main repository...', 'cd {} && ( git --no-pager diff --no-color --exit-code >/dev/null || git --no-pager diff --no-color --exit-code --cached >/dev/null ) '.format(rosetta_dir), return_='tuple')
     if res:

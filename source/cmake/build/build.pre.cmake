@@ -27,11 +27,11 @@ INCLUDE_DIRECTORIES(SYSTEM ../../external/dbio)
 
 ADD_DEFINITIONS(-DBOOST_ERROR_CODE_HEADER_ONLY)
 ADD_DEFINITIONS(-DBOOST_SYSTEM_NO_DEPRECATED)
-INCLUDE_DIRECTORIES(SYSTEM ../../external/boost_1_55_0)
+INCLUDE_DIRECTORIES(SYSTEM ../../external/boost_submod)
 
 INCLUDE_DIRECTORIES(SYSTEM ../../external/cxxtest)
 
-LINK_DIRECTORIES(../../external/boost_1_55_0)
+LINK_DIRECTORIES(../../external/boost_submod)
 LINK_DIRECTORIES(../../external/lib)
 
 # Platform-specific includes

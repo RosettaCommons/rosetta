@@ -41,7 +41,6 @@ namespace protocols {
 namespace antibody {
 
 using namespace core;
-using namespace boost;
 using namespace protocols::antibody;
 using namespace protocols::antibody::clusters;
 using utility::io::izstream;

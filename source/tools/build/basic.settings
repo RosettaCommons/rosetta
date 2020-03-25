@@ -86,7 +86,7 @@ settings = {
 
             # now done with -isystem flag at "compiler" handles
                 # "#external/libxml2/include",
-                # "#external/boost_1_55_0",
+                # "#external/boost_submod",
                 # "#external/",
                 # "#external/dbio",
             ],
@@ -151,7 +151,7 @@ settings = {
                 # ings from these external headers.
                 "cc" : [
                     "std=c99",
-                    "isystem external/boost_1_55_0/",
+                    "isystem external/boost_submod/",
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
@@ -161,7 +161,7 @@ settings = {
                     "std=c++0x",
                     "ffor-scope",
 
-                    "isystem external/boost_1_55_0/",
+                    "isystem external/boost_submod/",
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
@@ -1358,7 +1358,7 @@ settings = {
                 "cc" : [
                     "std=c99",
 
-                    "isystem external/boost_1_55_0/",
+                    "isystem external/boost_submod/",
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
@@ -1367,7 +1367,7 @@ settings = {
                 "cxx" : [
                     "std=c++11",
 
-                    "isystem external/boost_1_55_0/",
+                    "isystem external/boost_submod/",
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
@@ -1881,7 +1881,7 @@ settings = {
     #        "cxx" : "mpCC",
     #        "version" : [ ],
     #        "include_path" : [
-    #            "#external/boost_1_55_0",
+    #            "#external/boost_submod",
     #            "#external/dbio",
     #        ],
     #    },
@@ -1920,7 +1920,7 @@ settings = {
     #        "cxx" : "mpCC",
     #        "version" : [ ],
     #        "include_path" : [
-    #            "#external/boost_1_55_0",
+    #            "#external/boost_submod",
     #            "#external/dbio",
     #        ],
     #    },
@@ -1950,7 +1950,7 @@ settings = {
             "cxx" : "/bgsys/drivers/ppcfloor/comm/bin/mpicxx",
             "version" : [ ],
             "include_path" : [
-                "#external/boost_1_55_0",
+                "#external/boost_submod",
                 "#external/dbio",
             ],
         },
@@ -1985,7 +1985,7 @@ settings = {
                 "cc" : [
                     "std=c99",
 
-                    "isystem external/boost_1_55_0/",
+                    "isystem external/boost_submod/",
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",
@@ -1994,7 +1994,7 @@ settings = {
                 "cxx" : [
                     "std=c++11",
 
-                    "isystem external/boost_1_55_0/",
+                    "isystem external/boost_submod/",
                     "isystem external/",
                     "isystem external/include/",
                     "isystem external/dbio/",

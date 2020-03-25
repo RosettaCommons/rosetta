@@ -32,7 +32,7 @@
 //#include <sstream>
 #include <string>
 #include <cmath>
-#include <boost/uuid/sha1.hpp>
+#include <boost/uuid/uuid_generators.hpp>
 #include <algorithm>
 
 #if (defined WIN32) && (!defined WIN_PYROSETTA)

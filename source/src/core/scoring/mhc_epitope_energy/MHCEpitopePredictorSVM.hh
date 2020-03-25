@@ -30,8 +30,6 @@ public:
 	/// @brief MHCEpitopePredictorSVM constructor, taking a NMerSVMEnergyOP configured with scoring options.
 	MHCEpitopePredictorSVM(core::scoring::methods::NMerSVMEnergyOP);
 
-	~MHCEpitopePredictorSVM() override {}
-
 	bool operator==(MHCEpitopePredictor const & /* other */) override;
 
 	std::string report() const override;

@@ -78,12 +78,8 @@ def project_callback(project, project_path, project_files):
     group_key = xcode_util.PROJECT_KEYS[project][0]
     sources_key = xcode_util.PROJECT_KEYS[project][1]
 
-    # read file
-
-    if not os.path.exists( xcode_filename ):
-        shutil.copyfile( xcode_filename + '.template', xcode_filename )
-
-    lines = open(xcode_filename, 'r').readlines()
+    # read file (note that we have entries from the current run but previous projects in this file)
+    lines = open(xcode_filename).readlines()
 
     # find the relevant sections
 
@@ -180,6 +176,9 @@ if __name__ == "__main__":
 
     # (re)generate ResidueType enum files
     os.system('cd {source_dir}; ./update_ResidueType_enum_files.sh'.format(source_dir=source_dir))
+
+    # The template may change (e.g. from a pull/merge) - we need to make sure we update things if that's the case
+    shutil.copyfile(xcode_filename + '.template', xcode_filename)
 
     #print repr(KNOWN_PROJECTS)
 

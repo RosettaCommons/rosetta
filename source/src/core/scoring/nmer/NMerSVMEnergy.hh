@@ -87,8 +87,6 @@ public:
 		std::string const & aa_matrix
 	);
 
-	~NMerSVMEnergy() override;
-
 	EnergyMethodOP
 	clone() const override;
 

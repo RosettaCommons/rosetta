@@ -225,8 +225,6 @@ NMerSVMEnergy::NMerSVMEnergy(
 	NMerSVMEnergy::read_aa_encoding_matrix( aa_matrix );
 }
 
-NMerSVMEnergy::~NMerSVMEnergy() = default;
-
 void
 NMerSVMEnergy::read_nmer_svms_from_options( EnergyMethodOptions const & options ) {
 

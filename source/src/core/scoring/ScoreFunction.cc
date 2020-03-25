@@ -26,6 +26,7 @@
 
 // External headers
 #include <boost/algorithm/string/join.hpp>
+#include <boost/format.hpp>
 
 // Package headers
 #include <core/scoring/Energies.hh>

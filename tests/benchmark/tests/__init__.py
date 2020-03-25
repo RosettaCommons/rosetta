@@ -58,6 +58,8 @@ _multi_step_result_ = 'result.json'
 PyRosetta_unix_memory_requirement_per_cpu = 2.5  # Memory per sub-process in Gb's
 PyRosetta_unix_unit_test_memory_requirement_per_cpu = 3.0  # Memory per sub-process in Gb's for running PyRosetta unit tests
 
+# Commands to run all the scripts needed for setting up Rosetta compiles. (Run from main/source directory)
+PRE_COMPILE_SETUP_SCRIPTS = [ "./update_options.sh", "./update_submodules.sh", "./update_ResidueType_enum_files.sh", "python version.py" ]
 
 # Standard funtions and classes below ---------------------------------------------------------------------------------
 
@@ -336,6 +338,8 @@ def platform_to_pretty_string(platform):
     ''' Take platform as json object and return normalized human-readable string '''
     return '{}.{}{}{}'.format(platform['os'], platform['compiler'], ('.'+'.'.join(platform['extras']) if 'extras' in platform  and  platform['extras'] else ''), ('.python'+platform['python'] if 'python' in platform else ''))
 
+def setup_for_compile(rosetta_dir):
+    execute('Updating options, ResidueTypes and version info...', f'cd {rosetta_dir}/source && ' + ' && '.join(PRE_COMPILE_SETUP_SCRIPTS) )
 
 def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=False, verbose=False):
     ''' Compile Rosetta binaries on a given platform return (res, output, build_command_line) '''

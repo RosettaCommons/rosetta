@@ -16,7 +16,7 @@
 
 /*
 /// Workaround for:
-/// external/boost_1_55_0/boost/bind/mem_fn_template.hpp:156:30: error: no matching function for call to 'get_pointer'
+/// external/boost_submod/boost/bind/mem_fn_template.hpp:156:30: error: no matching function for call to 'get_pointer'
 ///   BOOST_MEM_FN_RETURN (get_pointer(u)->*f_)(b1);
 /// Get pointer of owning_ptr: needed by boost::mem_fn
 #ifdef __clang__

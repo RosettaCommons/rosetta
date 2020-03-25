@@ -19,6 +19,7 @@
 
 // External headers
 #include <boost/unordered/unordered_map.hpp>
+#include <boost/format.hpp>
 
 // Utility headers
 #include <basic/options/option.hh>

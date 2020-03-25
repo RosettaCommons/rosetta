@@ -24,7 +24,7 @@
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
-#include <boost/spirit/home/phoenix/bind/bind_function.hpp>
+#include <boost/phoenix/bind/bind_function.hpp>
 
 namespace numeric {
 

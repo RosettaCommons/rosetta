@@ -18,7 +18,7 @@ import os, os.path, commands
 import sys, errno
 import codecs
 
-INCLUDES = "-I ./ -I ./platform/linux/ -isystem ../external/boost_1_55_0/ -isystem ../external/include/ -isystem ../external/dbio/"
+INCLUDES = "-I ./ -I ./platform/linux/ -isystem ../external/boost_submod/ -isystem ../external/include/ -isystem ../external/dbio/"
 
 CACHE_DIRECTORY = '../build/cppcheck/src/' # from the source/src/ directory
 

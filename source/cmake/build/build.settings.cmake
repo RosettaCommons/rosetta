@@ -143,7 +143,7 @@ if( ${COMPILER} STREQUAL "gcc" AND ${MODE} STREQUAL "release_bluegene" )
 
 	)
 	list( APPEND compile
-			-I ../../external/boost_1_55_0
+			-I ../../external/boost_submod
 			-I ../../external/include
 			-I ../../src
 			-I ../../src/platform/linux
@@ -362,7 +362,7 @@ if( ${COMPILER} STREQUAL "clang" AND ${MODE} STREQUAL "release_bluegene" )
 			-stdlib=libstdc++
 	)
 	list( APPEND compile
-			-I ../../external/boost_1_55_0
+			-I ../../external/boost_submod
 			-I ../../external/include
 			-I ../../src
 			#-I /usr/include

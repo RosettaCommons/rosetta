@@ -2176,8 +2176,6 @@ void RotamerLibrary::write_to_binary(utility::io::ozstream & out) const {
 /// leads the "nlibraries (aa, aa_data)*" format perscribed in this function.
 void RotamerLibrary::read_from_binary(utility::io::izstream & in) {
 
-	using namespace boost;
-
 	DunbrackAAParameterSet dps( dun10_ ? DunbrackAAParameterSet::get_dun10_aa_parameters() : DunbrackAAParameterSet::get_dun02_aa_parameters() );
 
 	// We need to cast the aa to an RT.

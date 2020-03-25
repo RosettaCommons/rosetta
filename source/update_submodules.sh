@@ -22,10 +22,19 @@ if [ ! -d ".git" ]; then
   exit 0
 fi
 
+echo "Updating submodules needed for compilation."
+
 # Update submodules used for all compilations
-# git submodule update --init -- source/external/foo/
 git submodule update --init -- source/external/mmtf/mmtf-cpp
 git submodule update --init -- source/external/msgpack/msgpack-c.upstream
+
+# This should update all the submodules under the boost_submod directory
+# On some systems Git/GitHub apparently throttles things. 
+# The until loop is there to make sure this command eventually finishes.
+until git submodule update --recursive --init -- source/external/boost_submod/; do
+    echo ">>>>>>>>> Boost submodule update did not complete successfully. Retrying. <<<<<<<<<" | tee >(cat >&2) # Also send to stderr, for test server purposes
+    sleep 10
+done
 
 # Update submodules which are extras conditional
 

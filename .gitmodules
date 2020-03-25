@@ -1,33 +1,292 @@
-[submodule "source/src/python/PyRosetta/binder"]
-	path = source/src/python/PyRosetta/binder
-	url = git@github.com:RosettaCommons/binder.git
-[submodule "pyrosetta_scripts"]
-	path = pyrosetta_scripts
-	url = git@github.com:RosettaCommons/pyrosetta_scripts.git
-[submodule "rosetta_scripts_scripts"]
-	path = rosetta_scripts_scripts
-	url = git@github.com:RosettaCommons/rosetta_scripts_scripts.git
+############################
+# External Modules
+############################
 [submodule "source/external/msgpack/msgpack-c.upstream"]
 	path = source/external/msgpack/msgpack-c.upstream
 	url = git@github.com:msgpack/msgpack-c.git
 [submodule "source/external/libzmq"]
 	path = source/external/libzmq
 	url = git@github.com:RosettaCommons/libzmq.git
-[submodule "database/additional_protocol_data"]
-	path = database/additional_protocol_data
-	url = git@github.com:RosettaCommons/additional_protocol_data.git
-[submodule "source/external/pybind11"]
-	path = source/external/pybind11
-	url = git@github.com:RosettaCommons/pybind11.git
-[submodule "tests/scientific/data"]
-	path = tests/scientific/data
-	url = git@github.com:RosettaCommons/scientific_benchmark_data.git
 [submodule "source/external/mmtf/mmtf-cpp"]
 	path = source/external/mmtf/mmtf-cpp
 	url = git@github.com:RosettaCommons/mmtf-cpp.git
-[submodule "PyRosetta.notebooks"]
-	path = PyRosetta.notebooks
-	url = git@github.com:RosettaCommons/PyRosetta.notebooks.git
+############################
+# Boost Modules
+############################
+
+# Rosetta forks
+[submodule "source/external/boost_submod/integer"]
+	path = source/external/boost_submod/integer
+	url = https://github.com/RosettaCommons/boost_integer.git
+[submodule "source/external/boost_submod/lexical_cast"]
+	path = source/external/boost_submod/lexical_cast
+	url = https://github.com/RosettaCommons/boost_lexical_cast.git
+[submodule "source/external/boost_submod/multi_index"]
+	path = source/external/boost_submod/multi_index
+	url = https://github.com/RosettaCommons/boost_multi_index.git
+
+# Original boost modules
+[submodule "source/external/boost_submod/accumulators"]
+	path = source/external/boost_submod/accumulators
+	url = https://github.com/boostorg/accumulators.git
+[submodule "source/external/boost_submod/algorithm"]
+	path = source/external/boost_submod/algorithm
+	url = https://github.com/boostorg/algorithm.git
+[submodule "source/external/boost_submod/any"]
+	path = source/external/boost_submod/any
+	url = https://github.com/boostorg/any.git
+[submodule "source/external/boost_submod/array"]
+	path = source/external/boost_submod/array
+	url = https://github.com/boostorg/array.git
+[submodule "source/external/boost_submod/assert"]
+	path = source/external/boost_submod/assert
+	url = https://github.com/boostorg/assert.git
+[submodule "source/external/boost_submod/assign"]
+	path = source/external/boost_submod/assign
+	url = https://github.com/boostorg/assign.git
+[submodule "source/external/boost_submod/atomic"]
+	path = source/external/boost_submod/atomic
+	url = https://github.com/boostorg/atomic.git
+[submodule "source/external/boost_submod/bimap"]
+	path = source/external/boost_submod/bimap
+	url = https://github.com/boostorg/bimap.git
+[submodule "source/external/boost_submod/bind"]
+	path = source/external/boost_submod/bind
+	url = https://github.com/boostorg/bind.git
+[submodule "source/external/boost_submod/chrono"]
+	path = source/external/boost_submod/chrono
+	url = https://github.com/boostorg/chrono.git
+[submodule "source/external/boost_submod/circular_buffer"]
+	path = source/external/boost_submod/circular_buffer
+	url = https://github.com/boostorg/circular_buffer.git
+[submodule "source/external/boost_submod/compute"]
+	path = source/external/boost_submod/compute
+	url = https://github.com/boostorg/compute.git
+[submodule "source/external/boost_submod/concept_check"]
+	path = source/external/boost_submod/concept_check
+	url = https://github.com/boostorg/concept_check.git
+[submodule "source/external/boost_submod/config"]
+	path = source/external/boost_submod/config
+	url = https://github.com/boostorg/config.git
+[submodule "source/external/boost_submod/container"]
+	path = source/external/boost_submod/container
+	url = https://github.com/boostorg/container.git
+[submodule "source/external/boost_submod/container_hash"]
+	path = source/external/boost_submod/container_hash
+	url = https://github.com/boostorg/container_hash.git
+[submodule "source/external/boost_submod/conversion"]
+	path = source/external/boost_submod/conversion
+	url = https://github.com/boostorg/conversion.git
+[submodule "source/external/boost_submod/core"]
+	path = source/external/boost_submod/core
+	url = https://github.com/boostorg/core.git
+[submodule "source/external/boost_submod/date_time"]
+	path = source/external/boost_submod/date_time
+	url = https://github.com/boostorg/date_time.git
+[submodule "source/external/boost_submod/detail"]
+	path = source/external/boost_submod/detail
+	url = https://github.com/boostorg/detail.git
+[submodule "source/external/boost_submod/dynamic_bitset"]
+	path = source/external/boost_submod/dynamic_bitset
+	url = https://github.com/boostorg/dynamic_bitset.git
+[submodule "source/external/boost_submod/endian"]
+	path = source/external/boost_submod/endian
+	url = https://github.com/boostorg/endian.git
+[submodule "source/external/boost_submod/exception"]
+	path = source/external/boost_submod/exception
+	url = https://github.com/boostorg/exception.git
+[submodule "source/external/boost_submod/filesystem"]
+	path = source/external/boost_submod/filesystem
+	url = https://github.com/boostorg/filesystem.git
+[submodule "source/external/boost_submod/foreach"]
+	path = source/external/boost_submod/foreach
+	url = https://github.com/boostorg/foreach.git
+[submodule "source/external/boost_submod/format"]
+	path = source/external/boost_submod/format
+	url = https://github.com/boostorg/format.git
+[submodule "source/external/boost_submod/function"]
+	path = source/external/boost_submod/function
+	url = https://github.com/boostorg/function.git
+[submodule "source/external/boost_submod/functional"]
+	path = source/external/boost_submod/functional
+	url = https://github.com/boostorg/functional.git
+[submodule "source/external/boost_submod/function_types"]
+	path = source/external/boost_submod/function_types
+	url = https://github.com/boostorg/function_types.git
+[submodule "source/external/boost_submod/fusion"]
+	path = source/external/boost_submod/fusion
+	url = https://github.com/boostorg/fusion.git
+[submodule "source/external/boost_submod/geometry"]
+	path = source/external/boost_submod/geometry
+	url = https://github.com/boostorg/geometry.git
+[submodule "source/external/boost_submod/graph"]
+	path = source/external/boost_submod/graph
+	url = https://github.com/boostorg/graph.git
+[submodule "source/external/boost_submod/interval"]
+	path = source/external/boost_submod/interval
+	url = https://github.com/boostorg/interval.git
+[submodule "source/external/boost_submod/intrusive"]
+	path = source/external/boost_submod/intrusive
+	url = https://github.com/boostorg/intrusive.git
+[submodule "source/external/boost_submod/io"]
+	path = source/external/boost_submod/io
+	url = https://github.com/boostorg/io.git
+[submodule "source/external/boost_submod/iostreams"]
+	path = source/external/boost_submod/iostreams
+	url = https://github.com/boostorg/iostreams.git
+[submodule "source/external/boost_submod/iterator"]
+	path = source/external/boost_submod/iterator
+	url = https://github.com/boostorg/iterator.git
+[submodule "source/external/boost_submod/locale"]
+	path = source/external/boost_submod/locale
+	url = https://github.com/boostorg/locale.git
+[submodule "source/external/boost_submod/math"]
+	path = source/external/boost_submod/math
+	url = https://github.com/boostorg/math.git
+[submodule "source/external/boost_submod/move"]
+	path = source/external/boost_submod/move
+	url = https://github.com/boostorg/move.git
+[submodule "source/external/boost_submod/mp11"]
+	path = source/external/boost_submod/mp11
+	url = https://github.com/boostorg/mp11.git
+[submodule "source/external/boost_submod/mpi"]
+	path = source/external/boost_submod/mpi
+	url = https://github.com/boostorg/mpi.git
+[submodule "source/external/boost_submod/mpl"]
+	path = source/external/boost_submod/mpl
+	url = https://github.com/boostorg/mpl.git
+[submodule "source/external/boost_submod/multiprecision"]
+	path = source/external/boost_submod/multiprecision
+	url = https://github.com/boostorg/multiprecision.git
+[submodule "source/external/boost_submod/numeric_conversion"]
+	path = source/external/boost_submod/numeric_conversion
+	url = https://github.com/boostorg/numeric_conversion.git
+[submodule "source/external/boost_submod/optional"]
+	path = source/external/boost_submod/optional
+	url = https://github.com/boostorg/optional.git
+[submodule "source/external/boost_submod/parameter"]
+	path = source/external/boost_submod/parameter
+	url = https://github.com/boostorg/parameter.git
+[submodule "source/external/boost_submod/phoenix"]
+	path = source/external/boost_submod/phoenix
+	url = https://github.com/boostorg/phoenix.git
+[submodule "source/external/boost_submod/pool"]
+	path = source/external/boost_submod/pool
+	url = https://github.com/boostorg/pool.git
+[submodule "source/external/boost_submod/predef"]
+	path = source/external/boost_submod/predef
+	url = https://github.com/boostorg/predef.git
+[submodule "source/external/boost_submod/preprocessor"]
+	path = source/external/boost_submod/preprocessor
+	url = https://github.com/boostorg/preprocessor.git
+[submodule "source/external/boost_submod/property_map"]
+	path = source/external/boost_submod/property_map
+	url = https://github.com/boostorg/property_map.git
+[submodule "source/external/boost_submod/property_tree"]
+	path = source/external/boost_submod/property_tree
+	url = https://github.com/boostorg/property_tree.git
+[submodule "source/external/boost_submod/proto"]
+	path = source/external/boost_submod/proto
+	url = https://github.com/boostorg/proto.git
+[submodule "source/external/boost_submod/ptr_container"]
+	path = source/external/boost_submod/ptr_container
+	url = https://github.com/boostorg/ptr_container.git
+[submodule "source/external/boost_submod/python"]
+	path = source/external/boost_submod/python
+	url = https://github.com/boostorg/python.git
+[submodule "source/external/boost_submod/qvm"]
+	path = source/external/boost_submod/qvm
+	url = https://github.com/boostorg/qvm.git
+[submodule "source/external/boost_submod/random"]
+	path = source/external/boost_submod/random
+	url = https://github.com/boostorg/random.git
+[submodule "source/external/boost_submod/range"]
+	path = source/external/boost_submod/range
+	url = https://github.com/boostorg/range.git
+[submodule "source/external/boost_submod/ratio"]
+	path = source/external/boost_submod/ratio
+	url = https://github.com/boostorg/ratio.git
+[submodule "source/external/boost_submod/rational"]
+	path = source/external/boost_submod/rational
+	url = https://github.com/boostorg/rational.git
+[submodule "source/external/boost_submod/regex"]
+	path = source/external/boost_submod/regex
+	url = https://github.com/boostorg/regex.git
+[submodule "source/external/boost_submod/serialization"]
+	path = source/external/boost_submod/serialization
+	url = https://github.com/boostorg/serialization.git
+[submodule "source/external/boost_submod/smart_ptr"]
+	path = source/external/boost_submod/smart_ptr
+	url = https://github.com/boostorg/smart_ptr.git
+[submodule "source/external/boost_submod/spirit"]
+	path = source/external/boost_submod/spirit
+	url = https://github.com/boostorg/spirit.git
+[submodule "source/external/boost_submod/static_assert"]
+	path = source/external/boost_submod/static_assert
+	url = https://github.com/boostorg/static_assert.git
+[submodule "source/external/boost_submod/system"]
+	path = source/external/boost_submod/system
+	url = https://github.com/boostorg/system.git
+[submodule "source/external/boost_submod/thread"]
+	path = source/external/boost_submod/thread
+	url = https://github.com/boostorg/thread.git
+[submodule "source/external/boost_submod/throw_exception"]
+	path = source/external/boost_submod/throw_exception
+	url = https://github.com/boostorg/throw_exception.git
+[submodule "source/external/boost_submod/timer"]
+	path = source/external/boost_submod/timer
+	url = https://github.com/boostorg/timer.git
+[submodule "source/external/boost_submod/tokenizer"]
+	path = source/external/boost_submod/tokenizer
+	url = https://github.com/boostorg/tokenizer.git
+[submodule "source/external/boost_submod/tti"]
+	path = source/external/boost_submod/tti
+	url = https://github.com/boostorg/tti.git
+[submodule "source/external/boost_submod/tuple"]
+	path = source/external/boost_submod/tuple
+	url = https://github.com/boostorg/tuple.git
+[submodule "source/external/boost_submod/type_index"]
+	path = source/external/boost_submod/type_index
+	url = https://github.com/boostorg/type_index.git
+[submodule "source/external/boost_submod/typeof"]
+	path = source/external/boost_submod/typeof
+	url = https://github.com/boostorg/typeof.git
+[submodule "source/external/boost_submod/type_traits"]
+	path = source/external/boost_submod/type_traits
+	url = https://github.com/boostorg/type_traits.git
+[submodule "source/external/boost_submod/ublas"]
+	path = source/external/boost_submod/ublas
+	url = https://github.com/boostorg/ublas.git
+[submodule "source/external/boost_submod/unordered"]
+	path = source/external/boost_submod/unordered
+	url = https://github.com/boostorg/unordered.git
+[submodule "source/external/boost_submod/utility"]
+	path = source/external/boost_submod/utility
+	url = https://github.com/boostorg/utility.git
+[submodule "source/external/boost_submod/uuid"]
+	path = source/external/boost_submod/uuid
+	url = https://github.com/boostorg/uuid.git
+[submodule "source/external/boost_submod/variant"]
+	path = source/external/boost_submod/variant
+	url = https://github.com/boostorg/variant.git
+[submodule "source/external/boost_submod/winapi"]
+	path = source/external/boost_submod/winapi
+	url = https://github.com/boostorg/winapi.git
+[submodule "source/external/boost_submod/xpressive"]
+	path = source/external/boost_submod/xpressive
+	url = https://github.com/boostorg/xpressive.git
+############################
+# PyRosetta-build-related
+###########################
+[submodule "source/src/python/PyRosetta/binder"]
+	path = source/src/python/PyRosetta/binder
+	url = git@github.com:RosettaCommons/binder.git
+[submodule "source/external/pybind11"]
+	path = source/external/pybind11
+	url = git@github.com:RosettaCommons/pybind11.git
+###########################
+# Rosetta modules 
+###########################
 [submodule "tools"]
 	path = tools
 	url = git@github.com:RosettaCommons/tools.git
@@ -37,3 +296,18 @@
 [submodule "documentation"]
 	path = documentation
 	url = git@github.com:RosettaCommons/documentation.git
+[submodule "database/additional_protocol_data"]
+	path = database/additional_protocol_data
+	url = git@github.com:RosettaCommons/additional_protocol_data.git
+[submodule "tests/scientific/data"]
+	path = tests/scientific/data
+	url = git@github.com:RosettaCommons/scientific_benchmark_data.git
+[submodule "rosetta_scripts_scripts"]
+	path = rosetta_scripts_scripts
+	url = git@github.com:RosettaCommons/rosetta_scripts_scripts.git
+[submodule "pyrosetta_scripts"]
+	path = pyrosetta_scripts
+	url = git@github.com:RosettaCommons/pyrosetta_scripts.git
+[submodule "PyRosetta.notebooks"]
+	path = PyRosetta.notebooks
+	url = git@github.com:RosettaCommons/PyRosetta.notebooks.git

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 // This file contains code derived from the Boost graph library.
-// See Rosetta/main/source/external/boost_1_55_0/LICENSE_1_0.txt
+// See Rosetta/main/source/external/boost_submod/LICENSE_1_0.txt
 // for the Boost library license.
 
 /// @file   utility/graph/DFS_sort.hh
