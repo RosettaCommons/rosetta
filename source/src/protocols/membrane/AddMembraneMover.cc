@@ -746,7 +746,7 @@ AddMembraneMover::parse_my_tag(
 		if ( spanfile_ != "" ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "user provided span in a span file AND in the xml subtags. remove one of them");
 		}
-		for ( TagCOP const sub_tag: sub_tags  ) {
+		for ( TagCOP const & sub_tag: sub_tags  ) {
 			if ( sub_tag->getName() != "Span" ) continue;
 
 			std::string const & start_str = sub_tag->getOption< std::string >( "start" );

@@ -39,7 +39,6 @@
 /// cleanup script
 
 using std::string;
-using std::endl;
 using std::stringstream;
 using core::Real;
 using core::pose::Pose;
