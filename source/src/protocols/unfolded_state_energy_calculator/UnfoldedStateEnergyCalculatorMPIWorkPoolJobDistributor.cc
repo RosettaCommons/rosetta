@@ -130,7 +130,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 			MPI_Recv( &slave_data_vector, n_score_types, MPI_DOUBLE, status.MPI_SOURCE, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD, &status);
 
 			// convert to emap
-			for ( Size i( 1 ); i <= n_score_types; ++i ) {
+			for ( core::Size i( 1 ); i <= n_score_types; ++i ) {
 				slave_data_emap[ ScoreType( i ) ] = slave_data_vector[ i - 1 ];
 			}
 
@@ -150,7 +150,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 			MPI_Recv( &slave_data_vector, n_score_types, MPI_DOUBLE, status.MPI_SOURCE, UNFOLDED_ENERGY_TERMS_TAG, MPI_COMM_WORLD, &status);
 
 			// convert to emap
-			for ( Size i( 1 ); i <= n_score_types; ++i ) {
+			for ( core::Size i( 1 ); i <= n_score_types; ++i ) {
 				slave_data_emap[ ScoreType( i ) ] = slave_data_vector[ i - 1 ];
 			}
 
@@ -205,7 +205,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 			MPI_Recv( &slave_data_vector, n_score_types, MPI_DOUBLE, status.MPI_SOURCE, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD, &status);
 
 			// convert to emap
-			for ( Size i( 1 ); i <= n_score_types; ++i ) {
+			for ( core::Size i( 1 ); i <= n_score_types; ++i ) {
 				slave_data_emap[ ScoreType( i ) ] = slave_data_vector[ i - 1 ];
 			}
 
@@ -225,7 +225,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 			MPI_Recv( &slave_data_vector, n_score_types, MPI_DOUBLE, status.MPI_SOURCE, UNFOLDED_ENERGY_TERMS_TAG, MPI_COMM_WORLD, &status);
 
 			// convert to emap
-			for ( Size i( 1 ); i <= n_score_types; ++i ) {
+			for ( core::Size i( 1 ); i <= n_score_types; ++i ) {
 				slave_data_emap[ ScoreType( i ) ] = slave_data_vector[ i - 1 ];
 			}
 
@@ -292,7 +292,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::slave_add_unfolded_energ
 	MPI_Send( &tlc_vector, 3, MPI_CHAR, 0, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD );
 
 	// convert EMapVector to vector of core::Reals
-	for ( Size i( 1 ); i <= n_score_types; ++i ) {
+	for ( core::Size i( 1 ); i <= n_score_types; ++i ) {
 		data_vector[ i - 1 ] = scores[ ScoreType( i ) ];
 	}
 
@@ -325,7 +325,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_set_energy_terms(
 	energy_terms_ = weights;
 
 	// for each energy term in the EMapVector
-	for ( Size i( 1 ); i <= n_score_types; ++i ) {
+	for ( core::Size i( 1 ); i <= n_score_types; ++i ) {
 
 		// if the energy term has a non-zero weight set it to one
 		if ( energy_terms_[ ScoreType( i ) ] > 0 ) {
@@ -357,7 +357,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::slave_set_energy_terms(c
 	TR << "Slave Node " << rank_ << ": Sending unfolded energy terms to master" <<std::endl;
 
 	// convert EMapVector to vector of core::Reals
-	for ( Size i( 1 ); i <= n_score_types; ++i ) {
+	for ( core::Size i( 1 ); i <= n_score_types; ++i ) {
 		data_vector[ i - 1 ] = weights[ ScoreType( i ) ];
 	}
 

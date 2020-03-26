@@ -38,7 +38,7 @@ namespace simple_moves {
 
 typedef utility::vector1< core::Real > ScoreList;
 
-class FragmentCost : public utility::pointer::ReferenceCount {
+class FragmentCost : public utility::VirtualBase {
 protected:
 	// Constructor protected for base class
 	FragmentCost( std::string const & type, core::Real cutoff ) : type_( type ), cutoff_( cutoff ) {};
@@ -98,8 +98,8 @@ protected:
 	choose_fragment(
 		core::fragment::FrameList const&,
 		core::pose::Pose const&,
-		Size &frame_num,
-		Size &frag_num
+		core::Size &frame_num,
+		core::Size &frag_num
 	) const override;
 
 	virtual

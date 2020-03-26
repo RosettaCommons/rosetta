@@ -52,11 +52,11 @@ namespace toolbox {
 namespace rigid_body {
 
 void
-get_atom_coordinates( utility::vector1< std::pair < id::AtomID, numeric::xyzVector< Real > > > & xyz_list, Size const & seq_num,
+get_atom_coordinates( utility::vector1< std::pair < id::AtomID, numeric::xyzVector< Real > > > & xyz_list, core::Size const & seq_num,
 	conformation::Residue const & rsd_at_origin, kinematics::Stub const & moving_res_base_stub ){
 	xyz_list.clear();
 	Vector atom_pos;
-	for ( Size at = 1; at <= rsd_at_origin.natoms(); at++ ) {
+	for ( core::Size at = 1; at <= rsd_at_origin.natoms(); at++ ) {
 		id::AtomID const id( at, seq_num );
 		get_specific_atom_coordinate( at, atom_pos, rsd_at_origin, moving_res_base_stub );
 		xyz_list.push_back( std::make_pair( id, atom_pos ) );
@@ -66,7 +66,7 @@ get_atom_coordinates( utility::vector1< std::pair < id::AtomID, numeric::xyzVect
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-get_specific_atom_coordinate( Size const atom_index,
+get_specific_atom_coordinate( core::Size const atom_index,
 	Vector & atom_pos,
 	conformation::Residue const & rsd_at_origin,
 	kinematics::Stub const & moving_res_base_stub ) {
@@ -98,11 +98,11 @@ get_specific_atom_coordinate( std::string const & atom_name,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Size
 figure_out_reference_res_for_jump( pose::Pose const & pose,
-	Size const moving_res ){
+	core::Size const moving_res ){
 	kinematics::FoldTree const & fold_tree = pose.fold_tree();
-	for ( Size n = 1; n <= fold_tree.num_jump(); n++ ) {
+	for ( core::Size n = 1; n <= fold_tree.num_jump(); n++ ) {
 		if ( fold_tree.downstream_jump_residue( n ) == moving_res ) {
-			Size const reference_res = fold_tree.upstream_jump_residue( n );
+			core::Size const reference_res = fold_tree.upstream_jump_residue( n );
 			return reference_res;
 		}
 	}
@@ -110,13 +110,13 @@ figure_out_reference_res_for_jump( pose::Pose const & pose,
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< Size >
+utility::vector1< core::Size >
 figure_out_moving_partition_res( pose::Pose const & pose,
-	Size const moving_res, Size const reference_res ){
+	core::Size const moving_res, core::Size const reference_res ){
 
-	Size jump_number( 0 );
+	core::Size jump_number( 0 );
 	kinematics::FoldTree const & fold_tree = pose.fold_tree();
-	for ( Size n = 1; n <= fold_tree.num_jump(); n++ ) {
+	for ( core::Size n = 1; n <= fold_tree.num_jump(); n++ ) {
 		if ( fold_tree.downstream_jump_residue( n ) == moving_res &&
 				fold_tree.upstream_jump_residue( n ) == reference_res ) {
 			jump_number = n;
@@ -127,8 +127,8 @@ figure_out_moving_partition_res( pose::Pose const & pose,
 	ObjexxFCL::FArray1D<bool> partition_definition( pose.size(), false );
 	pose.fold_tree().partition_by_jump( jump_number, partition_definition );
 
-	utility::vector1< Size > moving_partition_res;
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	utility::vector1< core::Size > moving_partition_res;
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( partition_definition( n ) == partition_definition( moving_res ) ) moving_partition_res.push_back( n );
 	}
 	return moving_partition_res;
@@ -137,8 +137,8 @@ figure_out_moving_partition_res( pose::Pose const & pose,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Set sets the base to the origin....
 void
-set_to_origin( pose::Pose & pose, Size const seq_num,
-	utility::vector1< Size > const & move_res_list,
+set_to_origin( pose::Pose & pose, core::Size const seq_num,
+	utility::vector1< core::Size > const & move_res_list,
 	bool verbose = false ){
 
 	using namespace chemical;
@@ -156,8 +156,8 @@ set_to_origin( pose::Pose & pose, Size const seq_num,
 	numeric::xyzMatrix< Real > base_coordinate_matrix = chemical::rna::get_rna_base_coordinate_system( rsd, centroid );
 	numeric::xyzMatrix< Real > invert_coordinate_matrix = inverse( base_coordinate_matrix );
 
-	for ( Size const i : move_res_list ) {
-		for ( Size at = 1; at <= pose.residue_type( i ).natoms(); at++ ) {
+	for ( core::Size const i : move_res_list ) {
+		for ( core::Size at = 1; at <= pose.residue_type( i ).natoms(); at++ ) {
 			id::AtomID const id( at, i );
 			pose.set_xyz( id, pose.xyz( id ) - centroid ); //I think the order here does matter. Translate centroid to origin.
 			pose.set_xyz( id, invert_coordinate_matrix * pose.xyz( id ) ); //I think the order here does matter. Rotate coordinate so that it equal to Rosetta internal reference frame
@@ -167,8 +167,8 @@ set_to_origin( pose::Pose & pose, Size const seq_num,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-set_to_origin( pose::Pose & pose, Size const seq_num, bool verbose ){
-	utility::vector1< Size > const move_res_list = utility::tools::make_vector1( seq_num );
+set_to_origin( pose::Pose & pose, core::Size const seq_num, bool verbose ){
+	utility::vector1< core::Size > const move_res_list = utility::tools::make_vector1( seq_num );
 	set_to_origin( pose, seq_num,
 		move_res_list, verbose );
 }
@@ -186,8 +186,8 @@ initialize_stub( conformation::Residue const & rsd ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 PoseCOP
 transform_moving_partition_to_origin( pose::Pose const & pose_start,
-	Size const moving_res,
-	utility::vector1< Size > const & moving_partition_res ){
+	core::Size const moving_res,
+	utility::vector1< core::Size > const & moving_partition_res ){
 	pose::PoseOP pose = pose_start.clone();
 	set_to_origin( *pose, moving_res, moving_partition_res );
 	return pose;
@@ -292,14 +292,14 @@ get_euler_angles( Real & alpha, Real & beta, Real & gamma, Matrix M1, Matrix M2,
 void
 translate( pose::Pose & pose, Vector const & shift,
 	pose::Pose const & ref_pose,
-	utility::vector1< Size > const & moving_res ){
+	utility::vector1< core::Size > const & moving_res ){
 
 	using namespace core::id;
 
-	for ( Size n = 1; n <= moving_res.size(); n++ ) {
-		Size const i = moving_res[ n ];
+	for ( core::Size n = 1; n <= moving_res.size(); n++ ) {
+		core::Size const i = moving_res[ n ];
 
-		for ( Size m = 1; m <= pose.residue_type( i ).natoms(); m++ ) {
+		for ( core::Size m = 1; m <= pose.residue_type( i ).natoms(); m++ ) {
 			pose.set_xyz( AtomID(m,i),   ref_pose.xyz( AtomID(m,i) ) + shift );
 		}
 
@@ -312,15 +312,15 @@ translate( pose::Pose & pose, Vector const & shift,
 void
 rotate( pose::Pose & pose, Matrix const & M,
 	pose::Pose const & ref_pose,
-	utility::vector1< Size > const & moving_res,
+	utility::vector1< core::Size > const & moving_res,
 	Vector const & centroid ){
 
 	using namespace core::id;
 
-	for ( Size n = 1; n <= moving_res.size(); n++ ) {
-		Size const i = moving_res[ n ];
+	for ( core::Size n = 1; n <= moving_res.size(); n++ ) {
+		core::Size const i = moving_res[ n ];
 
-		for ( Size m = 1; m <= pose.residue_type( i ).natoms(); m++ ) {
+		for ( core::Size m = 1; m <= pose.residue_type( i ).natoms(); m++ ) {
 			pose.set_xyz( AtomID(m,i),  M * ( ref_pose.xyz( AtomID(m,i) ) - centroid ) + centroid );
 		}
 	}
@@ -331,7 +331,7 @@ rotate( pose::Pose & pose, Matrix const & M,
 void
 rotate( pose::Pose & pose, Matrix const & M,
 	pose::Pose const & ref_pose,
-	utility::vector1< Size > const & moving_res ){
+	utility::vector1< core::Size > const & moving_res ){
 
 	Vector centroid( 0.0, 0.0, 0.0 );
 	rotate( pose, M, ref_pose, moving_res, centroid );
@@ -339,7 +339,7 @@ rotate( pose::Pose & pose, Matrix const & M,
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-get_base_centroid_and_rotation_matrix( pose::Pose const & pose, Size const i, Vector & centroid, Matrix & M ){
+get_base_centroid_and_rotation_matrix( pose::Pose const & pose, core::Size const i, Vector & centroid, Matrix & M ){
 
 	using namespace scoring::rna;
 	using namespace kinematics;
@@ -352,7 +352,7 @@ get_base_centroid_and_rotation_matrix( pose::Pose const & pose, Size const i, Ve
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-translate_and_rotate_residue_to_origin( pose::Pose & pose, Size const i, utility::vector1< Size > const & moving_res, bool const do_not_rotate  ){
+translate_and_rotate_residue_to_origin( pose::Pose & pose, core::Size const i, utility::vector1< core::Size > const & moving_res, bool const do_not_rotate  ){
 
 	Vector centroid;
 	Matrix M;
@@ -365,7 +365,7 @@ translate_and_rotate_residue_to_origin( pose::Pose & pose, Size const i, utility
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-translate_and_rotate_residue_to_origin( pose::Pose & pose, Size const i ){
+translate_and_rotate_residue_to_origin( pose::Pose & pose, core::Size const i ){
 	translate_and_rotate_residue_to_origin( pose, i, utility::tools::make_vector1( i ) );
 }
 

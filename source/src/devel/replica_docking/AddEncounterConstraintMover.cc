@@ -117,8 +117,8 @@ AddEncounterConstraintMover::generate_encounter_cst( pose::Pose & pose) {
 	f.partition_by_jump( interface_jump_, subunit_separation );
 	// i is subunit 1 if domain_separation( i ) == true
 	// i is subunit 2 if domain_separation( j ) == false
-	Size pos1_end = 0;
-	for ( Size i =1, i_end = pose.size() ; i <= i_end; i++ ) {
+	core::Size pos1_end = 0;
+	for ( core::Size i =1, i_end = pose.size() ; i <= i_end; i++ ) {
 		if ( subunit_separation(i) ) {
 			pos1_end = i;
 		}
@@ -126,8 +126,8 @@ AddEncounterConstraintMover::generate_encounter_cst( pose::Pose & pose) {
 	tr.Debug << " pos1_end got using partition_by_jump: " << pos1_end << std::endl;
 	tr.Debug << " cutpoint_by_jump: " << f.cutpoint_by_jump( interface_jump_ ) << std::endl;
 
-	Size center_pos1 (core::pose::residue_center_of_mass( pose, 1, pos1_end ) );  //mass center of partner 1
-	Size center_pos2 (core::pose::residue_center_of_mass( pose, pos1_end + 1, pose.size() ) ); // mass center of partner 2
+	core::Size center_pos1 (core::pose::residue_center_of_mass( pose, 1, pos1_end ) );  //mass center of partner 1
+	core::Size center_pos2 (core::pose::residue_center_of_mass( pose, pos1_end + 1, pose.size() ) ); // mass center of partner 2
 	tr.Debug << "center_pos1: " << center_pos1 << "; center_pos2: " << center_pos2 << std::endl;
 
 	Real dist_pos1 = 0.0;
@@ -137,12 +137,12 @@ AddEncounterConstraintMover::generate_encounter_cst( pose::Pose & pose) {
 	id::AtomID atom_pos2( pose.residue_type( center_pos2 ).atom_index( "CA" ), center_pos2 );
 	numeric::xyzVector<double> coords_center_pos1 = pose.xyz( atom_pos1 );
 	numeric::xyzVector<double> coords_center_pos2 = pose.xyz( atom_pos2 );
-	for ( Size i = 1; i<= pos1_end; i++ ) {
+	for ( core::Size i = 1; i<= pos1_end; i++ ) {
 		tmp = coords_center_pos1.distance_squared( pose.xyz( id::AtomID( pose.residue_type( i ).atom_index( "CA" ), i) ) );
 		if ( dist_pos1 < tmp ) { dist_pos1 = tmp; }
 	}
 
-	for ( Size i = pos1_end + 1; i<= pose.size(); i++ ) {
+	for ( core::Size i = pos1_end + 1; i<= pose.size(); i++ ) {
 		tmp = coords_center_pos2.distance_squared( pose.xyz( id::AtomID( pose.residue_type( i ).atom_index( "CA" ), i) ) );
 		if ( dist_pos2 < tmp ) { dist_pos2 = tmp; }
 	}

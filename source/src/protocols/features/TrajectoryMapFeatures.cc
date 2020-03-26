@@ -111,7 +111,7 @@ TrajectoryMapFeatures::report_features(
 	trajectory_structures_steps_insert.add_column("step");
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id", struct_id) );
-	RowDataBaseOP step_data( new RowData<Size>("step", current_cycle_) );
+	RowDataBaseOP step_data( new RowData<core::Size>("step", current_cycle_) );
 
 	trajectory_structures_steps_insert.add_row(
 		utility::tools::make_vector(struct_id_data, step_data)

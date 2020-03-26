@@ -100,7 +100,7 @@ enum perturber_effect {
 //   GENERALIZED KIC PERTURBER CLASS                                 //
 ///////////////////////////////////////////////////////////////////////
 
-class GeneralizedKICperturber : public utility::pointer::ReferenceCount
+class GeneralizedKICperturber : public utility::VirtualBase
 {
 public:
 	GeneralizedKICperturber();

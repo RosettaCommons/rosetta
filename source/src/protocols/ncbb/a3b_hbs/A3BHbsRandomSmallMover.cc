@@ -76,8 +76,8 @@ void A3BHbsRandomSmallMover::apply( core::pose::Pose & pose ){
 
 	TR<< "in A3BHbsRandomSmallMover::apply" << std::endl;
 	//kdrew: input assertion check
-	Size hbs_pre_pos = hbs_seq_position_;
-	Size hbs_post_pos = hbs_pre_pos+2;
+	core::Size hbs_pre_pos = hbs_seq_position_;
+	core::Size hbs_post_pos = hbs_pre_pos+2;
 	TR<< "hbs_pre_pos:" << hbs_pre_pos << " hbs_post_pos:" << hbs_post_pos << std::endl;
 
 	//runtime_assert ( pose.residue(hbs_pre_pos).has_variant_type(chemical::HBS_PRE) == 1) ;

@@ -102,11 +102,11 @@ RNA_AddDeleteMonteCarlo::apply( core::pose::Pose & pose )
 	//bool accepted( true );
 	std::string move_type;
 
-	for ( Size count = 1; count <= num_cycles_; count++ ) {
+	for ( core::Size count = 1; count <= num_cycles_; count++ ) {
 
 		Real const random_number = numeric::random::rg().uniform();
 		move_type = "";
-		utility::vector1< Size > moving_res_list = get_moving_res_from_full_model_info( pose );
+		utility::vector1< core::Size > moving_res_list = get_moving_res_from_full_model_info( pose );
 
 		if ( (random_number < 0.01 && do_add_delete_) || moving_res_list.size() == 0 /*got to add something!*/ ) {
 			rna_add_or_delete_mover_->apply( pose, move_type );
@@ -154,20 +154,20 @@ RNA_AddDeleteMonteCarlo::initialize_next_suite_atoms() {
 // Following assumed that pose is already properly aligned to native pose!
 // stuff into RNA_AddDeleteMonteCarlo.
 void
-RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, Size const count ){
+RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, core::Size const count ){
 
 	using namespace core::io::silent;
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
 	using namespace core::pose::full_model_info;
 
-	utility::vector1< Size > const & working_res_list = get_moving_res_from_full_model_info( pose );
-	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+	utility::vector1< core::Size > const & working_res_list = get_moving_res_from_full_model_info( pose );
+	utility::vector1< core::Size > const & res_list = get_res_list_from_full_model_info( pose );
 
 	// useful to keep track of what's a working residue and what's not.
 	utility::vector1< bool > is_working_res;
-	for ( Size i = 1; i <= pose.size(); i++ ) is_working_res.push_back( false );
-	for ( Size n = 1; n <= working_res_list.size(); n++ ) is_working_res[ working_res_list[n] ] = true;
+	for ( core::Size i = 1; i <= pose.size(); i++ ) is_working_res.push_back( false );
+	for ( core::Size n = 1; n <= working_res_list.size(); n++ ) is_working_res[ working_res_list[n] ] = true;
 
 	std::string const tag = "S_"+lead_zero_string_of(count,6);
 	BinarySilentStruct s( *silent_file_options_, pose, tag );
@@ -176,10 +176,10 @@ RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, Size const count
 
 	Real dev( 0.0 );
 	Real rmsd( 0.0 );
-	Size natoms( 0 );
+	core::Size natoms( 0 );
 
-	for ( Size const i : working_res_list ) {
-		Size const i_full = res_list[ i ];
+	for ( core::Size const i : working_res_list ) {
+		core::Size const i_full = res_list[ i ];
 
 		//  std::cout << "NATIVE CHECK: " <<  i << ' ' << i_full << std::endl;
 
@@ -189,12 +189,12 @@ RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, Size const count
 		if ( rsd.aa() != rsd_native.aa() )   std::cout << "mismatch:   pose " << i << ' ' << rsd.aa() << "   native " << i_full << rsd_native.aa() << std::endl;
 		runtime_assert( rsd.aa() == rsd_native.aa() );
 
-		for ( Size j = 1; j <= rsd.nheavyatoms(); j++ ) {
+		for ( core::Size j = 1; j <= rsd.nheavyatoms(); j++ ) {
 			if ( rsd.is_virtual( j ) ) continue;  // note virtual phosphates on 5'-ends of loops.
 			std::string atom_name = rsd.atom_name( j );
 			//   std::cout << "RMSD: " << i << atom_name << std::endl;
 			if ( !rsd_native.has( atom_name ) ) continue;
-			Size const j_full = rsd_native.atom_index( atom_name );
+			core::Size const j_full = rsd_native.atom_index( atom_name );
 			dev += ( rsd_native.xyz( j_full ) - rsd.xyz( j ) ).length_squared();
 			natoms++;
 		}
@@ -202,8 +202,8 @@ RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, Size const count
 		// also add in atoms in next suite, if relevant (and won't be covered later in rmsd calc.)
 		if ( i >= pose.size() || is_working_res[ i+1 ] || pose.fold_tree().is_cutpoint(i) ) continue;
 
-		Size const i_next      = i+1;
-		Size const i_next_full = res_list[ i+1 ];
+		core::Size const i_next      = i+1;
+		core::Size const i_next_full = res_list[ i+1 ];
 		runtime_assert( i_next_full == i_full + 1 ); //better be a connection in both the pose & native pose!
 
 		Residue const & rsd_next        = pose.residue( i_next );
@@ -215,8 +215,8 @@ RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, Size const count
 			//std::cout << "RMSD: " << i+1 << atom_name << std::endl;
 			runtime_assert( rsd_next.has( atom_name ) );
 			runtime_assert( rsd_next_native.has( atom_name ) );
-			Size const j = rsd_next.atom_index( atom_name );
-			Size const j_full = rsd_next_native.atom_index( atom_name );
+			core::Size const j = rsd_next.atom_index( atom_name );
+			core::Size const j_full = rsd_next_native.atom_index( atom_name );
 			dev += ( rsd_next_native.xyz( j_full ) - rsd_next.xyz( j ) ).length_squared();
 			natoms++;
 		}
@@ -231,7 +231,7 @@ RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, Size const count
 		built_res = "-";
 	} else {
 		built_res += string_of( working_res_list[1] );
-		for ( Size n = 2; n <= working_res_list.size(); n++ ) built_res += "-"+string_of( res_list[ working_res_list[n] ] );
+		for ( core::Size n = 2; n <= working_res_list.size(); n++ ) built_res += "-"+string_of( res_list[ working_res_list[n] ] );
 	}
 	s.add_string_value( "built_res", built_res);
 

@@ -74,7 +74,7 @@ load_coords_and_torsions(
 	//
 	// In the case of loop modeling, this is really easy -- index 1 is the first residue of the loop, we can
 	// test that the size() of the vector is the same as the loop length, etc.
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	coords.resize( nres );
 	torsions.resize( nres );
 
@@ -83,7 +83,7 @@ load_coords_and_torsions(
 
 		// This needs to be private data of the new class. ~Labonte
 		// Also, here, we define this for each residue, where higher in the code, we do not. ~Labonte
-		Size const n_mainchain_atoms( rsd.mainchain_atoms().size() );
+		core::Size const n_mainchain_atoms( rsd.mainchain_atoms().size() );
 		if ( n_mainchain_atoms ) {
 			coords[i].resize( n_mainchain_atoms );
 			torsions[i].resize( n_mainchain_atoms );
@@ -113,7 +113,7 @@ get_overlap_pos(
 
 	bool const local_debug( false/*true*/ );
 
-	Size const n_mainchain_atoms( coords[cutpoint].size() );
+	core::Size const n_mainchain_atoms( coords[cutpoint].size() );
 	debug_assert( n_mainchain_atoms >= 3 ); // only true for proteins. what if you want to close a sugar loop?
 
 	// These  magic numbers are correct for proteins -- what should they be for sugars?
@@ -225,7 +225,7 @@ get_deviation( core::pose::Pose const & pose, core::uint const cutpoint )
 	Angle const bond_angle2( pose.residue( cutpoint+1 ).lower_connect().icoor().theta() ); // C=N-CA bond angle
 	Length const bond_length( pose.residue( cutpoint+1 ).lower_connect().icoor().d() ); // C=N distance
 
-	Size const n_mainchain_atoms( pose.residue( cutpoint ).mainchain_atoms().size() );
+	core::Size const n_mainchain_atoms( pose.residue( cutpoint ).mainchain_atoms().size() );
 
 	vector1< vector1< Vector > > coords;
 	vector1< vector1< Real > > torsions;

@@ -225,8 +225,8 @@ void ThreadingMover::apply(
 
 	core::id::AtomID_Mask missing( true );
 	core::pose::initialize_atomid_map( missing, query_pose ); // used for repacking atoms
-	for ( Size resi = 1; resi <= query_pose.size(); resi++ ) {
-		Size const t_resi = query_to_pdbseq[ resi ];
+	for ( core::Size resi = 1; resi <= query_pose.size(); resi++ ) {
+		core::Size const t_resi = query_to_pdbseq[ resi ];
 
 		// skip this residue if we're not aligned
 		if ( t_resi == 0 ) {
@@ -244,7 +244,7 @@ void ThreadingMover::apply(
 
 		tr.Debug << "copying residue in query " << resi << " from template residue "
 			<< t_resi << std::endl;
-		for ( Size atomj = 1; atomj <= query_pose.residue(resi).natoms(); ++atomj ) {
+		for ( core::Size atomj = 1; atomj <= query_pose.residue(resi).natoms(); ++atomj ) {
 			std::string const atom_name( query_pose.residue(resi).atom_name( atomj ));
 			std::string t_atom_name = atom_name;
 
@@ -335,7 +335,7 @@ void ThreadingMover::apply(
 			loops::loop_mover::LoopMoverOP loop_mover = protocols::loops::LoopMoverFactory::get_instance()->create_loop_mover(
 				option[ cm::loop_mover ](), query_loops
 			);
-			for ( Size ii = 1; ii <= frag_libs().size(); ++ii ) {
+			for ( core::Size ii = 1; ii <= frag_libs().size(); ++ii ) {
 				loop_mover->add_fragments( frag_libs()[ii] );
 			}
 			loop_mover->apply( query_pose );

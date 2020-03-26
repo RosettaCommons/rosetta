@@ -21,7 +21,7 @@
 #include <core/chemical/AtomProperty.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -42,7 +42,7 @@ namespace chemical {
 /// @details This is a container class for storing properties specific to a ResidueType's atoms.
 /// These properties belong to a particular ResidueType's Atoms; they do not belong to an AtomType.
 /// chemical::Atoms store both AtomTypes and AtomProperties.
-class AtomProperties : public utility::pointer::ReferenceCount {
+class AtomProperties : public utility::VirtualBase {
 public:  // Standard methods //////////////////////////////////////////////////
 	/// @brief  Default constructor
 	AtomProperties();

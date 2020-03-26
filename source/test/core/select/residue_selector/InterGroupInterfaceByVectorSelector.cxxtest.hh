@@ -39,7 +39,7 @@ using namespace core::select::residue_selector;
 
 class ResRangeSelector : public ResidueSelector {
 public:
-	ResRangeSelector( Size lower, Size upper ) : lower_( lower ), upper_( upper ) {}
+	ResRangeSelector( core::Size lower, core::Size upper ) : lower_( lower ), upper_( upper ) {}
 
 	ResRangeSelector( ResRangeSelector const &src ) :
 		lower_(src.lower_),

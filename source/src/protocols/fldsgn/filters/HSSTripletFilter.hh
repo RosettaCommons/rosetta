@@ -118,7 +118,7 @@ public:// mutator
 	void filter_max_angle( Real const r );
 
 	/// @brief set output id
-	void output_id( Size const i );
+	void output_id( core::Size const i );
 
 	/// @brief set output type
 	void output_type( String const & s );
@@ -217,7 +217,7 @@ private:
 	Real filter_max_angle_;
 
 	/// @brief output id of HSSTriplet
-	Size output_id_;
+	core::Size output_id_;
 
 	/// @brief output type, dist or angle
 	String output_type_;

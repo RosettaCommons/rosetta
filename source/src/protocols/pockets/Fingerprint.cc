@@ -60,7 +60,7 @@ namespace protocols {
 namespace pockets {
 
 FingerprintBase::FingerprintBase () :
-	ReferenceCount()
+	VirtualBase()
 {
 	origin_.zero();
 	CoM_.zero();
@@ -369,18 +369,18 @@ void NonPlaidFingerprint::write_eggshell_to_pdb_file( std::string const & output
 	outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   ORI A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<origin_.z()<<std::endl;
 	outPDB_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.z()<<std::endl;
 
-	Size counter = 0;
+	core::Size counter = 0;
 	for ( auto const & pd : eggshell_list_ ) {
 		++counter;
 		std::string record_name = "ATOM  ";
-		Size atom_serial_number = counter;
+		core::Size atom_serial_number = counter;
 		std::string gap1 = " ";
 		std::string atom_name = "C";
 		std::string alternate_location_indicator = " ";
 		std::string residue_name = "EGG";
 		std::string gap2 = " ";
 		std::string chain_identifier = "A";
-		Size residue_sequence_number = counter;
+		core::Size residue_sequence_number = counter;
 		std::string code_for_insertion_of_residues = " ";
 		std::string gap3 = "   ";
 
@@ -406,14 +406,14 @@ void NonPlaidFingerprint::write_eggshell_to_pdb_file( std::string const & output
 	for ( auto const & pd : extshell_list_ ) {
 		++counter;
 		std::string record_name = "ATOM  ";
-		Size atom_serial_number = counter;
+		core::Size atom_serial_number = counter;
 		std::string gap1 = " ";
 		std::string atom_name = "O";
 		std::string alternate_location_indicator = " ";
 		std::string residue_name = "EXT";
 		std::string gap2 = " ";
 		std::string chain_identifier = "B";
-		Size residue_sequence_number = counter;
+		core::Size residue_sequence_number = counter;
 		std::string code_for_insertion_of_residues = " ";
 		std::string gap3 = "   ";
 
@@ -457,9 +457,9 @@ void NonPlaidFingerprint::set_origin( core::pose::Pose const & protein_pose, std
 void NonPlaidFingerprint::choose_origin_with_lowest_eggshell_ruggedness( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell ) {
 
 	//choose best origin by finding the lowest R (ruggedness) value from different origin position
-	Size best_origin_option(0);
+	core::Size best_origin_option(0);
 	core::Real best_R(999.);
-	for ( Size set_origin_option = 1; set_origin_option < 4; ++set_origin_option ) {
+	for ( core::Size set_origin_option = 1; set_origin_option < 4; ++set_origin_option ) {
 		core::Real new_R = get_Rvalue( protein_pose, egg_and_extra_shell, set_origin_option );
 		//std::cout << "set_origin_option " << set_origin_option << " new_Rvalue " << new_R << std::endl;
 		if ( new_R < best_R ) {
@@ -475,7 +475,7 @@ void NonPlaidFingerprint::choose_origin_with_lowest_eggshell_ruggedness( core::p
 }
 
 
-core::Real NonPlaidFingerprint::get_Rvalue( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, Size const & set_origin_option ) {
+core::Real NonPlaidFingerprint::get_Rvalue( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, core::Size const & set_origin_option ) {
 
 	set_origin_from_option_( protein_pose, egg_and_extra_shell, set_origin_option );
 
@@ -502,7 +502,7 @@ core::Real NonPlaidFingerprint::get_Rvalue( core::pose::Pose const & protein_pos
 	return min_rho_difference / num_points;
 }
 
-void NonPlaidFingerprint::set_origin_from_option_( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, Size const & set_origin_option ) {
+void NonPlaidFingerprint::set_origin_from_option_( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, core::Size const & set_origin_option ) {
 
 	if ( set_origin_option == 0 ) {
 		choose_origin_with_lowest_eggshell_ruggedness(protein_pose, egg_and_extra_shell);
@@ -809,7 +809,7 @@ void NonPlaidFingerprint::setup_from_EggshellGrid() {
 			numeric::xyzVector<core::Real> ligand_com(0.);
 			//copy atomcoords without hydrogens (included 'radius') for shapeonly calculations
 			//aslo copy center of mass of each conformers
-			for (Size i = 1; i <= ligand_natoms_shapecalc; ++i) {
+			for (core::Size i = 1; i <= ligand_natoms_shapecalc; ++i) {
 				core::Real const this_atom_radius = ( ligand_rsd->atom_type(i).lj_radius() - atom_buffer ) * radius_scale;
 				basic::gpu::float4 atomcoord_shapecalc = { static_cast<float>(ligand_rsd->atom(i).xyz()(1)), static_cast<float>(ligand_rsd->atom(i).xyz()(2)), static_cast<float>(ligand_rsd->atom(i).xyz()(3)), static_cast<float>(this_atom_radius) };
 				atomcoords_shapecalc.push_back(atomcoord_shapecalc);
@@ -822,7 +822,7 @@ void NonPlaidFingerprint::setup_from_EggshellGrid() {
 			ligCoM.push_back(lig_conf_com);
 
 			//copy atomcoords with hydrogens (and 'charges') for electrostatic calculations
-			for (Size i = 1; i <= ligand_natoms_elstscalc; ++i) {
+			for (core::Size i = 1; i <= ligand_natoms_elstscalc; ++i) {
 				basic::gpu::float4 atomcoord_elstscalc = { static_cast<float>(ligand_rsd->atom(i).xyz()(1)), static_cast<float>(ligand_rsd->atom(i).xyz()(2)), static_cast<float>(ligand_rsd->atom(i).xyz()(3)), static_cast<float>(ligand_rsd->atomic_charge(i)) };
 			atomcoords_elstscalc.push_back(atomcoord_elstscalc);
 			}
@@ -899,9 +899,9 @@ void NonPlaidFingerprint::setup_from_EggshellGrid() {
 		std::vector<float> gpu_espGrid;
 		std::vector<float> gpu_typGrid;
 
-		for (Size ix=0; ix<esp_dim_.x(); ++ix){
-			for (Size iy=0; iy<esp_dim_.y(); ++iy){
-				for (Size iz=0; iz<esp_dim_.z(); ++iz){
+		for (core::Size ix=0; ix<esp_dim_.x(); ++ix){
+			for (core::Size iy=0; iy<esp_dim_.y(); ++iy){
+				for (core::Size iz=0; iz<esp_dim_.z(); ++iz){
 					float esp = espGrid_[ix][iy][iz];
 					float typ = typGrid_[ix][iy][iz];
 					gpu_espGrid.push_back(esp);
@@ -1001,7 +1001,7 @@ void NonPlaidFingerprint::setup_from_EggshellGrid() {
 		std::vector<float> particletest_scores(gpu_memory_.num_particles);
 		gpu_.ReadData(&particletest_scores[0], gpu_memory_.particletest_scores, gpu_memory_.particletest_scores_size);
 
-		Size j =0;
+		core::Size j =0;
 		for (std::vector<float>::const_iterator ci = particletest_scores.begin(); ci != particletest_scores.end(); ++ci) {
 			core::Real score = (float)*ci;
 			//std::cout<<"Particle score(gpu): "<<score<<std::endl;
@@ -1417,7 +1417,7 @@ void NonPlaidFingerprint::include_eggshell_points_based_on_known_ligand( core::p
 	core::Size ligand_total_atoms = curr_rsd.nheavyatoms();
 	numeric::xyzVector<core::Real> lig_atom_coord;
 	std::list< numeric::xyzVector<core::Real> > lig_atom_coord_list;
-	for ( Size i = 1, i_end = ligand_total_atoms; i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = ligand_total_atoms; i <= i_end; ++i ) {
 		lig_atom_coord.x() = curr_rsd.atom(i).xyz()(1);
 		lig_atom_coord.y() = curr_rsd.atom(i).xyz()(2);
 		lig_atom_coord.z() = curr_rsd.atom(i).xyz()(3);
@@ -1451,7 +1451,7 @@ void NonPlaidFingerprint::include_eggshell_points_based_on_known_ligand( core::p
 	return;
 }
 
-void NonPlaidFingerprint::set_origin_away_from_eggshell_plane( std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, core::pose::Pose const & protein_pose, Size const & set_origin_option ) {
+void NonPlaidFingerprint::set_origin_away_from_eggshell_plane( std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, core::pose::Pose const & protein_pose, core::Size const & set_origin_option ) {
 
 	origin_.zero();
 
@@ -1611,7 +1611,7 @@ void NonPlaidFingerprint::set_origin_from_residue(core::pose::Pose const & prote
 	core::Size rosetta_pose_pdb_number = get_pose_resnum(pdb_number, chain, protein_pose);
 	core::conformation::Residue const & curr_rsd  = protein_pose.residue(rosetta_pose_pdb_number);
 	numeric::xyzVector<core::Real> residue_com(0.);
-	for ( Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i ) {
 		residue_com.x() += curr_rsd.atom(i).xyz()(1);
 		residue_com.y() += curr_rsd.atom(i).xyz()(2);
 		residue_com.z() += curr_rsd.atom(i).xyz()(3);
@@ -1645,7 +1645,7 @@ numeric::xyzVector<core::Real> NonPlaidFingerprint::calculate_protein_CoM(core::
 	for ( int j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
 		core::conformation::Residue const & curr_rsd = protein_pose.residue(j);
 		if ( curr_rsd.is_protein() ) {
-			for ( Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i ) {
+			for ( core::Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i ) {
 				protein_com.x() += curr_rsd.atom(i).xyz()(1);
 				protein_com.y() += curr_rsd.atom(i).xyz()(2);
 				protein_com.z() += curr_rsd.atom(i).xyz()(3);
@@ -1688,7 +1688,7 @@ void PlaidFingerprint::apply_rotation_offset_to_pose_( core::pose::Pose & pose, 
 	numeric::xyzVector<core::Real> ligand_CoM(0.);
 	core::conformation::Residue const & curr_rsd = pose.conformation().residue(lig_res_num);
 	core::Size ligand_total_atoms = compute_ligand_natoms(pose);
-	for ( Size i = 1, i_end = ligand_total_atoms; i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = ligand_total_atoms; i <= i_end; ++i ) {
 		ligand_CoM.x() += curr_rsd.atom(i).xyz()(1);
 		ligand_CoM.y() += curr_rsd.atom(i).xyz()(2);
 		ligand_CoM.z() += curr_rsd.atom(i).xyz()(3);
@@ -1815,7 +1815,7 @@ void PlaidFingerprint::update_rhos_(FingerprintBase & fp, core::conformation::Re
 		core::Real min_phi( 999. );
 		core::Real min_psi( 999. );
 
-		for ( Size i = 1, i_end = ligand_natoms; i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = ligand_natoms; i <= i_end; ++i ) {
 
 			numeric::xyzVector<core::Real> this_atomcoors = curr_ligand_rsd->atom(i).xyz() - *i_mori;
 			core::Real const this_atom_radius = ( curr_ligand_rsd->atom_type(i).lj_radius() - atom_buffer ) * radius_scale;
@@ -1880,8 +1880,8 @@ void PlaidFingerprint::update_rhos_(FingerprintBase & fp, core::conformation::Re
 	derivs_of_ray_distances_.clear();
 
 	//float orig_cpu_total_dist = 0.;
-	//Size orig_cpu_total_num = 0;
-	//Size orig_cpu_num_evaluations = 0;
+	//core::Size orig_cpu_total_num = 0;
+	//core::Size orig_cpu_num_evaluations = 0;
 
 	for ( auto const & ni : fp.triplet_fingerprint_data() ) {
 
@@ -1891,7 +1891,7 @@ void PlaidFingerprint::update_rhos_(FingerprintBase & fp, core::conformation::Re
 		// if the current phi and/or psi is outside the overall max/min, set best_rho to zero and jumpout (ie. ray misses the ligand)
 		core::Real best_rho_sq(9999.);
 		//core::Size best_intersecting_atom(0);
-		for ( Size i = 1, i_end = ligand_natoms; i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = ligand_natoms; i <= i_end; ++i ) {
 			if ( ori_atom_radius[curr_ori][i] < 0.001 ) continue;
 			while ( curr_phi < ori_atom_min_phi[curr_ori][i] ) {
 				curr_phi += numeric::constants::r::pi_2;
@@ -2268,7 +2268,7 @@ void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pos
 	core::Size lig_res_num = compute_ligand_resnum( tmp_pose );
 
 	core::conformation::Residue const & curr_rsd = tmp_pose.conformation().residue(lig_res_num);
-	for ( Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i ) {
 		//out_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   MAP A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<curr_rsd.atom(i).xyz()(1) <<std::setw(8)<<std::fixed<<std::setprecision(3)<< curr_rsd.atom(i).xyz()(2) <<std::setw(8)<<std::fixed<<std::setprecision(3)<<curr_rsd.atom(i).xyz()(3) <<std::endl;
 		out_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   MAP A   1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<curr_rsd.atom(i).xyz()(1)+back_to_FingerprintBase_origin.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<< curr_rsd.atom(i).xyz()(2)+back_to_FingerprintBase_origin.y() <<std::setw(8)<<std::fixed<<std::setprecision(3)<<curr_rsd.atom(i).xyz()(3)+back_to_FingerprintBase_origin.z() <<std::endl;
 	}
@@ -2325,7 +2325,7 @@ numeric::xyzVector<core::Real> PlaidFingerprint::calculate_ligand_CoM(core::pose
 	numeric::xyzVector<core::Real> ligand_com(0.);
 	core::conformation::Residue const & curr_rsd = ligand_pose.conformation().residue(lig_res_num);
 	core::Size ligand_total_atoms = compute_ligand_natoms( ligand_pose );
-	for ( Size i = 1, i_end = ligand_total_atoms; i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = ligand_total_atoms; i <= i_end; ++i ) {
 		ligand_com.x() += curr_rsd.atom(i).xyz()(1);
 		ligand_com.y() += curr_rsd.atom(i).xyz()(2);
 		ligand_com.z() += curr_rsd.atom(i).xyz()(3);
@@ -2343,7 +2343,7 @@ core::Real PlaidFingerprint::rmsd(core::pose::Pose const & original_pose, core::
 	core::conformation::Residue const & pose2_rsd = oriented_pose.conformation().residue(lig_res_num);
 
 	core::Real rmsd, dist_sum(0.);
-	for ( Size i = 1, i_end = pose1_rsd.nheavyatoms(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pose1_rsd.nheavyatoms(); i <= i_end; ++i ) {
 		core::Real x_dist =  ( (pose1_rsd.atom(i).xyz()(1) - pose2_rsd.atom(i).xyz()(1)) * (pose1_rsd.atom(i).xyz()(1) - pose2_rsd.atom(i).xyz()(1)) );
 		core::Real y_dist =  ( (pose1_rsd.atom(i).xyz()(2) - pose2_rsd.atom(i).xyz()(2)) * (pose1_rsd.atom(i).xyz()(2) - pose2_rsd.atom(i).xyz()(2)) );
 		core::Real z_dist =  ( (pose1_rsd.atom(i).xyz()(3) - pose2_rsd.atom(i).xyz()(3)) * (pose1_rsd.atom(i).xyz()(3) - pose2_rsd.atom(i).xyz()(3)) );
@@ -2714,9 +2714,9 @@ core::Real NonPlaidFingerprint::get_electrostatics_energy(core::pose::Pose const
 	}
 	core::conformation::Residue const & ligand_rsd = ligand_pose.residue(lig_res_num);
 	//we include ligand hyfrogen atoms for electrostatics calculations
-	Size ligand_total_atoms = ligand_rsd.natoms();
+	core::Size ligand_total_atoms = ligand_rsd.natoms();
 
-	for ( Size i = 1, i_end = ligand_total_atoms; i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = ligand_total_atoms; i <= i_end; ++i ) {
 
 		ligand_atom.x() = ligand_rsd.atom(i).xyz()(1);
 		ligand_atom.y() = ligand_rsd.atom(i).xyz()(2);
@@ -2784,10 +2784,10 @@ core::Real NonPlaidFingerprint::get_interpolated_esp_energy(numeric::xyzVector<c
 		core::Real Yd = (Y-Y0)/(Y1-Y0);
 		core::Real Zd = (Z-Z0)/(Z1-Z0);
 
-		core::Real C00 = espGrid_[Size(X0)][Size(Y0)][Size(Z0)]*(1-Xd) + espGrid_[Size(X1)][Size(Y0)][Size(Z0)]*Xd;
-		core::Real C10 = espGrid_[Size(X0)][Size(Y1)][Size(Z0)]*(1-Xd) + espGrid_[Size(X1)][Size(Y1)][Size(Z0)]*Xd;
-		core::Real C01 = espGrid_[Size(X0)][Size(Y0)][Size(Z1)]*(1-Xd) + espGrid_[Size(X1)][Size(Y0)][Size(Z1)]*Xd;
-		core::Real C11 = espGrid_[Size(X0)][Size(Y1)][Size(Z1)]*(1-Xd) + espGrid_[Size(X1)][Size(Y1)][Size(Z1)]*Xd;
+		core::Real C00 = espGrid_[core::Size(X0)][core::Size(Y0)][core::Size(Z0)]*(1-Xd) + espGrid_[core::Size(X1)][core::Size(Y0)][core::Size(Z0)]*Xd;
+		core::Real C10 = espGrid_[core::Size(X0)][core::Size(Y1)][core::Size(Z0)]*(1-Xd) + espGrid_[core::Size(X1)][core::Size(Y1)][core::Size(Z0)]*Xd;
+		core::Real C01 = espGrid_[core::Size(X0)][core::Size(Y0)][core::Size(Z1)]*(1-Xd) + espGrid_[core::Size(X1)][core::Size(Y0)][core::Size(Z1)]*Xd;
+		core::Real C11 = espGrid_[core::Size(X0)][core::Size(Y1)][core::Size(Z1)]*(1-Xd) + espGrid_[core::Size(X1)][core::Size(Y1)][core::Size(Z1)]*Xd;
 		core::Real C0 = C00*(1-Yd) + C10*Yd;
 		core::Real C1 = C01*(1-Yd) + C11*Yd;
 		core::Real C = C0*(1-Zd) + C1*Zd;
@@ -2829,24 +2829,24 @@ core::Real NonPlaidFingerprint::get_interpolated_esp_energy_with_type(numeric::x
 		core::Real Yd = (Y-Y0)/(Y1-Y0);
 		core::Real Zd = (Z-Z0)/(Z1-Z0);
 
-		core::Real C00 = espGrid_[Size(X0)][Size(Y0)][Size(Z0)]*(1-Xd) + espGrid_[Size(X1)][Size(Y0)][Size(Z0)]*Xd;
-		core::Real C10 = espGrid_[Size(X0)][Size(Y1)][Size(Z0)]*(1-Xd) + espGrid_[Size(X1)][Size(Y1)][Size(Z0)]*Xd;
-		core::Real C01 = espGrid_[Size(X0)][Size(Y0)][Size(Z1)]*(1-Xd) + espGrid_[Size(X1)][Size(Y0)][Size(Z1)]*Xd;
-		core::Real C11 = espGrid_[Size(X0)][Size(Y1)][Size(Z1)]*(1-Xd) + espGrid_[Size(X1)][Size(Y1)][Size(Z1)]*Xd;
+		core::Real C00 = espGrid_[core::Size(X0)][core::Size(Y0)][core::Size(Z0)]*(1-Xd) + espGrid_[core::Size(X1)][core::Size(Y0)][core::Size(Z0)]*Xd;
+		core::Real C10 = espGrid_[core::Size(X0)][core::Size(Y1)][core::Size(Z0)]*(1-Xd) + espGrid_[core::Size(X1)][core::Size(Y1)][core::Size(Z0)]*Xd;
+		core::Real C01 = espGrid_[core::Size(X0)][core::Size(Y0)][core::Size(Z1)]*(1-Xd) + espGrid_[core::Size(X1)][core::Size(Y0)][core::Size(Z1)]*Xd;
+		core::Real C11 = espGrid_[core::Size(X0)][core::Size(Y1)][core::Size(Z1)]*(1-Xd) + espGrid_[core::Size(X1)][core::Size(Y1)][core::Size(Z1)]*Xd;
 		core::Real C0 = C00*(1-Yd) + C10*Yd;
 		core::Real C1 = C01*(1-Yd) + C11*Yd;
 		core::Real C = C0*(1-Zd) + C1*Zd;
 		//std::cout<<"Found_s : "<<C<<" "<<atom_charge<<" "<<C * atom_charge<<std::endl;
 		atm_esp_energy = C * atom_charge;
 
-		if ( ( typGrid_[Size(X0)][Size(Y0)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
-				( typGrid_[Size(X0)][Size(Y1)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
-				( typGrid_[Size(X0)][Size(Y0)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
-				( typGrid_[Size(X0)][Size(Y1)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
-				( typGrid_[Size(X1)][Size(Y0)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
-				( typGrid_[Size(X1)][Size(Y1)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
-				( typGrid_[Size(X1)][Size(Y0)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
-				( typGrid_[Size(X1)][Size(Y1)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ) {
+		if ( ( typGrid_[core::Size(X0)][core::Size(Y0)][core::Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+				( typGrid_[core::Size(X0)][core::Size(Y1)][core::Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+				( typGrid_[core::Size(X0)][core::Size(Y0)][core::Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+				( typGrid_[core::Size(X0)][core::Size(Y1)][core::Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+				( typGrid_[core::Size(X1)][core::Size(Y0)][core::Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+				( typGrid_[core::Size(X1)][core::Size(Y1)][core::Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+				( typGrid_[core::Size(X1)][core::Size(Y0)][core::Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+				( typGrid_[core::Size(X1)][core::Size(Y1)][core::Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ) {
 			// std::cout<<"\nFound_protein"<<std::endl;
 			// return zero if the energy is favourable and the atom goes into protein
 			if ( atm_esp_energy < 0. ) atm_esp_energy = 0.;

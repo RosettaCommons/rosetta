@@ -85,7 +85,7 @@ public:
 	set_aa_probabilities_from_file( const std::string& weights_file);
 
 	/// @brief Set the probability for a particular aa @ a particular resnum.
-	//set_aa_probability( Size resnum, core::chemical::AA const amino_acid, Real probability );
+	//set_aa_probability( core::Size resnum, core::chemical::AA const amino_acid, Real probability );
 
 	/// @brief Sets aa probabilities for all positions not given specifically. All designable residues will use these probabilities this if not specified through other functions.
 	void
@@ -142,7 +142,7 @@ public:
 	void
 	set_picking_rounds(core::Size picking_rounds);
 
-	Size
+	core::Size
 	picking_rounds() const;
 
 

@@ -23,7 +23,7 @@
 #include <protocols/rotamer_recovery/RRReporter.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <string>
@@ -33,7 +33,7 @@ namespace rotamer_recovery {
 
 /// @brief The Creator class is responsible for creating a particular
 /// mover class.
-class RRProtocolCreator : public utility::pointer::ReferenceCount {
+class RRProtocolCreator : public utility::VirtualBase {
 public:
 	RRProtocolCreator() {}
 	~RRProtocolCreator() override = default;
@@ -116,7 +116,7 @@ public:
 
 /// @brief The Creator class is responsible for creating a particular
 /// mover class.
-class RRComparerCreator : public utility::pointer::ReferenceCount {
+class RRComparerCreator : public utility::VirtualBase {
 public:
 	RRComparerCreator() {}
 	~RRComparerCreator() override = default;
@@ -168,7 +168,7 @@ public:
 
 /// @brief The Creator class is responsible for creating a particular
 /// mover class.
-class RRReporterCreator : public utility::pointer::ReferenceCount {
+class RRReporterCreator : public utility::VirtualBase {
 public:
 	RRReporterCreator() {}
 	~RRReporterCreator() override = default;

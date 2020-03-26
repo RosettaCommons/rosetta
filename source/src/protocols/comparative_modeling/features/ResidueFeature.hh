@@ -15,7 +15,7 @@
 #ifndef INCLUDED_protocols_comparative_modeling_features_ResidueFeature_HH
 #define INCLUDED_protocols_comparative_modeling_features_ResidueFeature_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -34,10 +34,10 @@ namespace protocols {
 namespace comparative_modeling {
 namespace features {
 
-class ResidueFeature : public utility::pointer::ReferenceCount {
+class ResidueFeature : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ResidueFeature() override;
 	virtual utility::vector1< ResidueFeatureOP >
 	values_from_pose( core::pose::Pose & pose ) const = 0;
@@ -52,7 +52,7 @@ public:
 	void remap( core::id::SequenceMapping const & mapping );
 
 private:
-	Size resnum_;
+	core::Size resnum_;
 };
 
 } // protocols

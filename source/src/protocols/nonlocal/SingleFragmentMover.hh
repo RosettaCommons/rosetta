@@ -54,7 +54,7 @@ class SingleFragmentMover : public protocols::moves::Mover {
 	typedef core::kinematics::MoveMapOP MoveMapOP;
 	typedef core::pose::Pose Pose;
 
-	typedef boost::unordered_map<Size, Frame> FrameMap;
+	typedef boost::unordered_map<core::Size, Frame> FrameMap;
 	typedef utility::vector1<Chunk> Chunks;
 
 public:

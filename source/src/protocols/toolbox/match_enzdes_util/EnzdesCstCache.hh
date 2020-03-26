@@ -32,7 +32,7 @@
 #include <core/types.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -51,7 +51,7 @@ namespace match_enzdes_util {
 
 /// @brief a simple class to store the pose specific
 /// enzdes constraint information in the actual pose
-class EnzdesCstCache : public utility::pointer::ReferenceCount {
+class EnzdesCstCache : public utility::VirtualBase {
 
 public: //constructor/destructor/
 
@@ -118,7 +118,7 @@ public:
 };
 
 
-class EnzdesCstParamCache : public utility::pointer::ReferenceCount {
+class EnzdesCstParamCache : public utility::VirtualBase {
 
 public: //typedefs
 
@@ -199,7 +199,7 @@ public:
 
 };
 
-class EnzCstTemplateResCache : public utility::pointer::ReferenceCount {
+class EnzCstTemplateResCache : public utility::VirtualBase {
 
 public: //typedefs
 
@@ -217,12 +217,12 @@ public: //constructor/destructor
 
 public:  //accessors
 
-	std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator
+	std::map< core::Size, EnzCstTemplateResAtomsOP >::const_iterator
 	seqpos_map_begin() const{
 		return seqpos_map_.begin();
 	}
 
-	std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator
+	std::map< core::Size, EnzCstTemplateResAtomsOP >::const_iterator
 	seqpos_map_end() const{
 		return seqpos_map_.end();
 	}

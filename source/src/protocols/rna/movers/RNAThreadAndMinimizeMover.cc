@@ -99,7 +99,7 @@ RNAThreadAndMinimizeMover::RNAThreadAndMinimizeMover( std::string const & seq,
 	input_sequence_type_( input_sequence_type ),
 	scorefxn_( core::scoring::get_score_function() ),
 	target_sequence_( "" ),
-	working_res_( utility::vector1< Size >() ),
+	working_res_( utility::vector1< core::Size >() ),
 	mutation_list_( mutation_list ),
 	insertion_list_( insertion_list )
 {}
@@ -119,7 +119,7 @@ RNAThreadAndMinimizeMover::obtain_rtypes_for_target_sequence() {
 		std::istringstream iss( mutation );
 		std::string seqpos_str, new_identity;
 		std::getline( iss, seqpos_str, ',');
-		Size const seqpos = stoi( seqpos_str );
+		core::Size const seqpos = stoi( seqpos_str );
 		iss >> new_identity;//std::getline( iss, identity, ',')
 		if ( input_sequence_type_ == "MODOMICS" ) {
 			new_identity = core::io::NomenclatureManager::get_instance()
@@ -137,10 +137,10 @@ void RNAThreadAndMinimizeMover::set_up_target_sequence( core::pose::Pose & pose 
 
 	using namespace core::pose;
 
-	Size const nres = pose.total_residue();
+	core::Size const nres = pose.total_residue();
 	Pose const template_pose = pose;
 
-	utility::vector1< Size > residues_missing_from_intended_sequence;
+	utility::vector1< core::Size > residues_missing_from_intended_sequence;
 
 	// AMW TODO: consider processing mutlist first if provided
 	// so that you can "mutlist" to a gap
@@ -156,8 +156,8 @@ void RNAThreadAndMinimizeMover::set_up_target_sequence( core::pose::Pose & pose 
 		seq_ += 'X';
 	}
 
-	Size const alignment_length = core::pose::rna::remove_bracketed( seq_ ).size();
-	std::map <Size, Size> template_alignment2sequence, target_alignment2sequence;
+	core::Size const alignment_length = core::pose::rna::remove_bracketed( seq_ ).size();
+	std::map <core::Size, core::Size> template_alignment2sequence, target_alignment2sequence;
 	//if ( sequence_mask_.size() == 0 ) sequence_mask_ = ObjexxFCL::FArray1D_bool( alignment_length, true );
 
 
@@ -170,7 +170,7 @@ void RNAThreadAndMinimizeMover::set_up_target_sequence( core::pose::Pose & pose 
 	// AMW: to handle all of this, we need a method that takes an annotated sequence and pushes back
 	// residues worth of that. My thought is actually creating a second vector of
 	// rtypes that only has the desired rtypes
-	for ( Size i = 1; i <= alignment_length; i++ ) {
+	for ( core::Size i = 1; i <= alignment_length; i++ ) {
 		//target_sequence += seq_[i-1];
 		working_res_.push_back( target_alignment2sequence[i] /*+ offset_*/); // will be used for PDB numbering
 	}
@@ -182,18 +182,18 @@ RNAThreadAndMinimizeMover::long_mutate_strategy( core::pose::Pose & pose ) {
 
 	core::pose::set_reasonable_fold_tree( pose );
 
-	utility::vector1< Size > changed_pos;
+	utility::vector1< core::Size > changed_pos;
 	utility::vector1< int> changed_pos_working;
-	//Size cycles = 0;
+	//core::Size cycles = 0;
 	//core::kinematics::MoveMapOP mm;
 
 	bool missing_residues = false;
 
-	std::set< Size > remaining_res_in_pose;
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) remaining_res_in_pose.insert( ii );
+	std::set< core::Size > remaining_res_in_pose;
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) remaining_res_in_pose.insert( ii );
 	//while ( ! identical_save_for_deletions( pose.annotated_sequence(), target_sequence_ ) ) {
 	while ( remaining_res_in_pose.size() != 0 ) {
-		Size const i = numeric::random::rg().uniform() * remaining_res_in_pose.size();
+		core::Size const i = numeric::random::rg().uniform() * remaining_res_in_pose.size();
 		auto it = remaining_res_in_pose.begin();
 		std::advance( it, i ); if ( it == remaining_res_in_pose.end() ) continue;
 
@@ -207,7 +207,7 @@ RNAThreadAndMinimizeMover::long_mutate_strategy( core::pose::Pose & pose ) {
 		if ( pose::rna::mutate_position( pose, *it, *rtypes_[*it] ) ) {
 			changed_pos.push_back( *it );
 			changed_pos_working.push_back( working_res_[*it] );
-			utility::vector1< Size > just_one;
+			utility::vector1< core::Size > just_one;
 			just_one.push_back( *it );
 
 			protocols::minimization_packing::MinMoverOP minm(
@@ -238,8 +238,8 @@ RNAThreadAndMinimizeMover::long_mutate_strategy( core::pose::Pose & pose ) {
 }
 
 void RNAThreadAndMinimizeMover::process_deletions( core::pose::Pose & pose ) {
-	std::set< Size > seqpos_for_deletion;
-	for ( Size ii = 1; ii <= rtypes_.size(); ++ii ) {
+	std::set< core::Size > seqpos_for_deletion;
+	for ( core::Size ii = 1; ii <= rtypes_.size(); ++ii ) {
 		if ( ! rtypes_[ii] ) seqpos_for_deletion.insert( ii );
 	}
 
@@ -259,18 +259,18 @@ void RNAThreadAndMinimizeMover::process_deletions( core::pose::Pose & pose ) {
 	}
 }
 
-void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, Size const insertion_begin, Size const seqpos ) {
+void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, core::Size const insertion_begin, core::Size const seqpos ) {
 	core::chemical::ResidueTypeSetCOP rsd_set = pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t );
 	core::pose::Pose ref_pose = pose;
 
-	Size const width = 3;
-	Size begin = insertion_begin > width ? insertion_begin - width : 1;
-	Size end   = seqpos < pose.total_residue() - width ? seqpos + width : pose.total_residue();
+	core::Size const width = 3;
+	core::Size begin = insertion_begin > width ? insertion_begin - width : 1;
+	core::Size end   = seqpos < pose.total_residue() - width ? seqpos + width : pose.total_residue();
 	core::pose::addVirtualResAsRoot( pose );
 	auto old_ft = pose.fold_tree();
 
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 
 		if ( ! pose.residue_type( ii ).has( "P" ) ) continue;
 		if ( ii >= insertion_begin && ii <= seqpos ) continue;
@@ -299,11 +299,11 @@ void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, Size cons
 
 	Pose recovered_low;
 	//Real const temp = 1.0;
-	Size const nrep = 3;
-	for ( Size ii = 1; ii <= nrep; ++ii ) {
-		Size moving = 0;
+	core::Size const nrep = 3;
+	for ( core::Size ii = 1; ii <= nrep; ++ii ) {
+		core::Size moving = 0;
 		while ( moving == 0 || moving == insertion_begin ) {
-			moving = Size( numeric::random::rg().uniform() * ( end - begin ) + begin );
+			moving = core::Size( numeric::random::rg().uniform() * ( end - begin ) + begin );
 		}
 
 		if ( pose::rna::mutate_position( pose, moving+1,
@@ -318,19 +318,19 @@ void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, Size cons
 		}
 
 		// Randomly perturb all bb torsions from begin to end
-		Size const npert = 1000;
+		core::Size const npert = 1000;
 		Real pert_size = 40;
-		for ( Size rr = 1; rr <= npert; ++rr ) {
+		for ( core::Size rr = 1; rr <= npert; ++rr ) {
 			if ( rr > npert/2 ) pert_size = 20;
 			if ( rr > 3*npert/4 ) pert_size = 10;
 			if ( rr > 7*npert/8 ) pert_size = 5;
 
 			Real old_score = ( *loop_close_score )( pose );
 
-			std::map< Size, std::map< Size, Real > > old_torsions;
-			for ( Size jj = begin; jj <= end; ++jj ) {
-				old_torsions[ jj ] = std::map< Size, Real >();
-				for ( Size kk = 1; kk <= pose.residue_type( jj ).mainchain_atoms().size(); ++kk ) {
+			std::map< core::Size, std::map< core::Size, Real > > old_torsions;
+			for ( core::Size jj = begin; jj <= end; ++jj ) {
+				old_torsions[ jj ] = std::map< core::Size, Real >();
+				for ( core::Size kk = 1; kk <= pose.residue_type( jj ).mainchain_atoms().size(); ++kk ) {
 					auto const tid = id::TorsionID( jj, id::BB, kk );
 					old_torsions[ jj ][ kk ] = pose.torsion( tid );
 					if ( jj == moving && kk == 6 ) continue;
@@ -366,10 +366,10 @@ void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, Size cons
 		ins_mm->set_chi( false );
 		ins_mm->set_bb( false );
 		// add additional changed pos - also add base pairing, maybe use slice mechanism
-		for ( Size ii = begin; ii <= end; ++ii ) {
+		for ( core::Size ii = begin; ii <= end; ++ii ) {
 			ins_mm->set_bb( ii, true );
 			ins_mm->set_chi( ii, true );
-			for ( Size jj = 1; jj <= pose.residue_type( ii ).natoms(); ++jj ) {
+			for ( core::Size jj = 1; jj <= pose.residue_type( ii ).natoms(); ++jj ) {
 				ins_mm->set( id::DOF_ID( id::AtomID( jj, ii ), id::D ), true );
 				ins_mm->set( id::DOF_ID( id::AtomID( jj, ii ), id::THETA ), true );
 			}
@@ -424,10 +424,10 @@ void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, Size cons
 	ins_mm->set_chi( false );
 	ins_mm->set_bb( false );
 	// add additional changed pos - also add base pairing, maybe use slice mechanism
-	for ( Size ii = begin; ii <= end; ++ii ) {
+	for ( core::Size ii = begin; ii <= end; ++ii ) {
 		ins_mm->set_bb( ii, true );
 		ins_mm->set_chi( ii, true );
-		for ( Size jj = 1; jj <= pose.residue_type( ii ).natoms(); ++jj ) {
+		for ( core::Size jj = 1; jj <= pose.residue_type( ii ).natoms(); ++jj ) {
 			ins_mm->set( id::DOF_ID( id::AtomID( jj, ii ), id::D ), true );
 			ins_mm->set( id::DOF_ID( id::AtomID( jj, ii ), id::THETA ), true );
 		}
@@ -454,7 +454,7 @@ void RNAThreadAndMinimizeMover::accomodate_length_change( Pose & pose, Size cons
 	core::kinematics::MoveMapOP final_mm( new core::kinematics::MoveMap );
 	final_mm->set_chi( false );
 	final_mm->set_bb( false );
-	for ( Size ii = begin; ii <= end; ++ii ) {
+	for ( core::Size ii = begin; ii <= end; ++ii ) {
 		final_mm->set_bb( ii, true );
 		final_mm->set_chi( ii, true );
 	}
@@ -480,8 +480,8 @@ void RNAThreadAndMinimizeMover::process_insertions( core::pose::Pose & pose ) {
 		std::string to_be_added, seqpos_str;
 		std::getline( iss, seqpos_str, ',');
 		iss >> to_be_added;
-		Size seqpos = stoi( seqpos_str );
-		Size const insertion_begin = seqpos;
+		core::Size seqpos = stoi( seqpos_str );
+		core::Size const insertion_begin = seqpos;
 		if ( input_sequence_type_ == "MODOMICS" ) {
 			to_be_added = core::io::NomenclatureManager::annotated_sequence_from_modomics_oneletter_sequence( to_be_added );
 		} else if ( input_sequence_type_ == "IUPAC" ) {
@@ -508,9 +508,9 @@ void RNAThreadAndMinimizeMover::process_insertions( core::pose::Pose & pose ) {
 
 void
 RNAThreadAndMinimizeMover::mutate_all_at_once( core::pose::Pose & pose ) {
-	utility::vector1< Size > changed_pos;
+	utility::vector1< core::Size > changed_pos;
 	utility::vector1< int> changed_pos_working;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( core::Size i = 1; i <= pose.total_residue(); i++ ) {
 		if ( pose::rna::mutate_position( pose, i, *rtypes_[i] ) ) {
 			//if ( pose::rna::mutate_position( pose, i, special_res[i-1] ) ) {
 			changed_pos.push_back( i );
@@ -534,7 +534,7 @@ RNAThreadAndMinimizeMover::mutate_all_at_once( core::pose::Pose & pose ) {
 }
 
 core::kinematics::MoveMapOP
-RNAThreadAndMinimizeMover::mm_from_residues( core::pose::Pose const & pose, utility::vector1< Size > const & changed_pos, bool add_nearby/*=false*/ ) {
+RNAThreadAndMinimizeMover::mm_from_residues( core::pose::Pose const & pose, utility::vector1< core::Size > const & changed_pos, bool add_nearby/*=false*/ ) {
 
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_chi( false );
@@ -545,7 +545,7 @@ RNAThreadAndMinimizeMover::mm_from_residues( core::pose::Pose const & pose, util
 
 	if ( add_nearby ) {
 		// add additional changed pos - also add base pairing, maybe use slice mechanism
-		for ( Size ii = 1; ii <= changed_pos.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= changed_pos.size(); ++ii ) {
 			if ( changed_pos[ ii ] > 1 ) {
 				mm->set_bb( changed_pos[ ii ]-1, bb_setting );
 				mm->set_chi( changed_pos[ ii ]-1, true );
@@ -556,7 +556,7 @@ RNAThreadAndMinimizeMover::mm_from_residues( core::pose::Pose const & pose, util
 			}
 		}
 	}
-	for ( Size ii = 1; ii <= changed_pos.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= changed_pos.size(); ++ii ) {
 		mm->set_bb( changed_pos[ ii ], bb_setting );
 		mm->set_chi( changed_pos[ ii ], true );
 	}
@@ -618,7 +618,7 @@ RNAThreadAndMinimizeMover::apply( core::pose::Pose & pose )
 
 	// A nice strategy for keeping the input close w/o having to sequence-match
 	if ( basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
-		Size nres = pose.size();
+		core::Size nres = pose.size();
 
 		// if already rooted on virtual residue , return
 		if ( pose.residue_type( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {

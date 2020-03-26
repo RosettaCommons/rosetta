@@ -54,7 +54,7 @@ namespace select {
 namespace util {
 
 /// @brief default constructor
-SelectResiduesByLayer::SelectResiduesByLayer() : utility::pointer::ReferenceCount(),
+SelectResiduesByLayer::SelectResiduesByLayer() : utility::VirtualBase(),
 	pick_core_( false ),
 	pick_boundary_( false ),
 	pick_surface_( false ),
@@ -74,6 +74,7 @@ SelectResiduesByLayer::SelectResiduesByLayer() : utility::pointer::ReferenceCoun
 /// @brief Copy constructor
 ///
 SelectResiduesByLayer::SelectResiduesByLayer( SelectResiduesByLayer const &src ) :
+	VirtualBase( src ),
 	pick_core_(src.pick_core_),
 	pick_boundary_(src.pick_boundary_),
 	pick_surface_(src.pick_surface_),
@@ -102,7 +103,7 @@ SelectResiduesByLayer::SelectResiduesByLayer(
 	bool const pick_core,
 	bool const pick_boundary,
 	bool const pick_surface ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	pick_core_( pick_core ),
 	pick_boundary_( pick_boundary ),
 	pick_surface_( pick_surface ),
@@ -120,7 +121,7 @@ SelectResiduesByLayer::SelectResiduesByLayer(
 }
 
 /// @brief value constructor
-SelectResiduesByLayer::SelectResiduesByLayer( String const &pick ) : utility::pointer::ReferenceCount(),
+SelectResiduesByLayer::SelectResiduesByLayer( String const &pick ) : utility::VirtualBase(),
 	pick_core_( false ),
 	pick_boundary_( false ),
 	pick_surface_( false ),

@@ -126,7 +126,7 @@ namespace protocols {
 namespace flexpep_docking {
 
 // constructor
-FlexPepDockingProtocol::FlexPepDockingProtocol(Size const rb_jump_in)
+FlexPepDockingProtocol::FlexPepDockingProtocol(core::Size const rb_jump_in)
 : Mover(),
 	rb_jump_(rb_jump_in),
 	flags_(),
@@ -139,7 +139,7 @@ FlexPepDockingProtocol::FlexPepDockingProtocol(Size const rb_jump_in)
 
 // constructor
 FlexPepDockingProtocol::FlexPepDockingProtocol(
-	Size const rb_jump_in,
+	core::Size const rb_jump_in,
 	bool const fullatom,
 	bool const view
 ) :
@@ -288,14 +288,14 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 	// This assert does not hold if we add ligand residues other than the protein and the peptide
 	// runtime_assert( flags_.receptor_nres() + flags_.peptide_nres() == (int)pose.size());
 
-	ObjexxFCL::FArray1D< Size > cuts( 1000 ); // dim1 = serial numbers of cut
-	ObjexxFCL::FArray2D< Size > jumps( 2,1000 ); // dim1 = from/to; dim2 = serial numbers of jump
-	std::map< Size, Size > const & peptide_cuts = flags_.peptide_cuts;
-	std::map< Size, Size > const & peptide_anchors = flags_.peptide_anchors;
-	Size const JUMP_FROM = 1;
-	Size const JUMP_TO = 2;
+	ObjexxFCL::FArray1D< core::Size > cuts( 1000 ); // dim1 = serial numbers of cut
+	ObjexxFCL::FArray2D< core::Size > jumps( 2,1000 ); // dim1 = from/to; dim2 = serial numbers of jump
+	std::map< core::Size, core::Size > const & peptide_cuts = flags_.peptide_cuts;
+	std::map< core::Size, core::Size > const & peptide_anchors = flags_.peptide_anchors;
+	core::Size const JUMP_FROM = 1;
+	core::Size const JUMP_TO = 2;
 
-	Size receptor_ncuts = 0;
+	core::Size receptor_ncuts = 0;
 	if ( ! flags_.pep_fold_only ) { // receptor = docking mode
 		jumps(JUMP_FROM, 1) = flags_.receptor_anchor_pos; // first jump is from receptor anchor (towards first peptide anchor, below)
 		cuts( 1 ) = flags_.receptor_last_res();
@@ -305,11 +305,11 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 		cuts( elem.first + receptor_ncuts ) = elem.second;
 	}
 	// add jump from each anchor to the following anchor (and from receptor, to first peptide anchor, if in docking mode)
-	Size num_jumps = 0; Size max_jump = 0;
+	core::Size num_jumps = 0; core::Size max_jump = 0;
 	for ( auto const & elem : peptide_anchors ) {
-		Size pep_anchor_num = elem.first;
-		Size residue = elem.second;
-		Size cur_jump = pep_anchor_num + receptor_ncuts - 1;
+		core::Size pep_anchor_num = elem.first;
+		core::Size residue = elem.second;
+		core::Size cur_jump = pep_anchor_num + receptor_ncuts - 1;
 		if ( cur_jump >= 1 ) { // this anchor is destination of either previous anchor (>=2), or of the receptor, if in docking mode
 			jumps(JUMP_TO, cur_jump) = residue;
 			num_jumps++;
@@ -330,8 +330,8 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 	// multichain receptor
 	if ( ! flags_.pep_fold_only && flags_.receptor_chain().size() > 1 ) {
 		core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
-		Size resi = 1;
-		Size chain = 0;
+		core::Size resi = 1;
+		core::Size chain = 0;
 		while ( resi < pose.size() && chain < flags_.receptor_chain().size()-1 ) {
 			if ( pdbinfo->chain(resi+1) != flags_.receptor_chain().at(chain) ) {
 				int new_jump = ++max_jump;
@@ -351,10 +351,10 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 		core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
 		if ( flags_.receptor_nres() + flags_.peptide_nres() < pose.size() ) {
 			cuts ( num_jumps+1 ) = flags_.peptide_last_res();
-			Size resi = flags_.receptor_nres() + flags_.peptide_nres() + 1;
+			core::Size resi = flags_.receptor_nres() + flags_.peptide_nres() + 1;
 			while ( resi <= pose.size() ) {
 				char currChain = pdbinfo->chain(resi);
-				Size ligand_jump = ++max_jump;
+				core::Size ligand_jump = ++max_jump;
 				jumps(JUMP_FROM, ligand_jump) = flags_.receptor_anchor_pos; // TODO: this line is probably incompatible with pep_fold_only
 				jumps(JUMP_TO, ligand_jump) = resi;
 				num_jumps++;
@@ -392,7 +392,7 @@ FlexPepDockingProtocol::set_receptor_constraints( core::pose::Pose & pose )
 	ConstraintSetOP cst_set( new ConstraintSet() );
 	core::scoring::func::HarmonicFuncOP spring( new core::scoring::func::HarmonicFunc( 0 /*mean*/, 1 /*std-dev*/) );
 	conformation::Conformation const & conformation( pose.conformation() );
-	for ( Size i=flags_.receptor_first_res();
+	for ( core::Size i=flags_.receptor_first_res();
 			i <= flags_.receptor_last_res(); i++ ) {
 		// Residue const  & reside = pose.residue( i );
 		AtomID CAi ( pose.residue(i).atom_index( " CA " ), i );
@@ -433,7 +433,7 @@ FlexPepDockingProtocol::set_allowed_moves( )
 	// minimizer may also allow receptor bb to move
 	movemap_minimizer_=movemap_->clone();
 	if ( flags_.min_receptor_bb && ! flags_.pep_fold_only ) {
-		for ( Size i=flags_.receptor_first_res();
+		for ( core::Size i=flags_.receptor_first_res();
 				i <= flags_.receptor_last_res(); i++ ) {
 			movemap_minimizer_->set_bb(i, true);
 		}
@@ -570,26 +570,26 @@ FlexPepDockingProtocol::place_peptide_on_binding_site(
 		TR << "Read Site Constraints: " << ( site_cstset->has_constraints() ? "YES" : "NONE" ) << std::endl;
 		utility::vector1< core::scoring::constraints::ConstraintCOP > site_cstset_list( site_cstset->get_all_constraints() );
 
-		utility::vector1< Size > site_cst_residues;
-		utility::vector1< Size > binding_site_residues;
+		utility::vector1< core::Size > site_cst_residues;
+		utility::vector1< core::Size > binding_site_residues;
 
 		for ( utility::vector1< core::scoring::constraints::ConstraintCOP >::const_iterator i = site_cstset_list.begin(), end = site_cstset_list.end(); i != end; ++i ) {
 			site_cst_residues = (*i)->residues();
 			binding_site_residues.push_back(site_cst_residues[1]);
 		}
-		for ( utility::vector1< Size >::const_iterator i = binding_site_residues.begin(), end = binding_site_residues.end(); i != end; ++i ) {
+		for ( utility::vector1< core::Size >::const_iterator i = binding_site_residues.begin(), end = binding_site_residues.end(); i != end; ++i ) {
 			TR << "Binding site residues : " << *i << std::endl;
 		}
 
 		// calculating peptide COM and principle components
 		utility::vector1< Vector > peptide_c_alpha_coords;
-		for ( Size i = flags_.peptide_first_res(); i <= flags_.peptide_last_res(); ++i ) {
+		for ( core::Size i = flags_.peptide_first_res(); i <= flags_.peptide_last_res(); ++i ) {
 			peptide_c_alpha_coords.push_back( pose.residue( i ).xyz( "CA" ) );
 		}
 		Vector peptide_c_alpha_centroid(0, 0, 0);
-		Size peptide_n_res = peptide_c_alpha_coords.size();
+		core::Size peptide_n_res = peptide_c_alpha_coords.size();
 
-		for ( Size i = 1; i <= peptide_n_res; ++i ) {
+		for ( core::Size i = 1; i <= peptide_n_res; ++i ) {
 			peptide_c_alpha_centroid += peptide_c_alpha_coords[i];
 		}
 		peptide_c_alpha_centroid /= peptide_n_res;
@@ -605,13 +605,13 @@ FlexPepDockingProtocol::place_peptide_on_binding_site(
 
 		// calculating binding site COM and principle components
 		utility::vector1< Vector > binding_site_c_alpha_coords;
-		for ( Size const res : binding_site_residues ) {
+		for ( core::Size const res : binding_site_residues ) {
 			binding_site_c_alpha_coords.push_back( pose.residue( res ).xyz( "CA" ) );
 		}
 		Vector binding_site_c_alpha_centroid(0, 0, 0);
-		Size binding_site_n_res = binding_site_c_alpha_coords.size();
+		core::Size binding_site_n_res = binding_site_c_alpha_coords.size();
 
-		for ( Size i = 1; i <= binding_site_n_res; ++i ) {
+		for ( core::Size i = 1; i <= binding_site_n_res; ++i ) {
 			binding_site_c_alpha_centroid += binding_site_c_alpha_coords[i];
 		}
 		binding_site_c_alpha_centroid /= binding_site_n_res;
@@ -681,17 +681,17 @@ void FlexPepDockingProtocol::flip_in_pcs( core::pose::Pose & pose )
 	using namespace protocols;
 	using namespace std;
 
-	Size pcs_num = flags_.sample_pc;
+	core::Size pcs_num = flags_.sample_pc;
 	utility::vector1< Vector > peptide_c_alpha_coords;
 
-	for ( Size i = flags_.peptide_first_res(); i <= flags_.peptide_last_res(); ++i ) {
+	for ( core::Size i = flags_.peptide_first_res(); i <= flags_.peptide_last_res(); ++i ) {
 		peptide_c_alpha_coords.push_back( pose.residue( i ).xyz( "CA" ) );
 	}
 
 	Vector peptide_c_alpha_centroid(0, 0, 0);
-	Size peptide_n_res = peptide_c_alpha_coords.size();
+	core::Size peptide_n_res = peptide_c_alpha_coords.size();
 
-	for ( Size i = 1; i <= peptide_n_res; ++i ) {
+	for ( core::Size i = 1; i <= peptide_n_res; ++i ) {
 		peptide_c_alpha_centroid += peptide_c_alpha_coords[i];
 	}
 	peptide_c_alpha_centroid /= peptide_n_res;
@@ -705,7 +705,7 @@ void FlexPepDockingProtocol::flip_in_pcs( core::pose::Pose & pose )
 	Vector third_pc_axis(peptide_eigenvectors.col_z()[0], peptide_eigenvectors.col_z()[1], peptide_eigenvectors.col_z()[2] );
 
 	if ( pcs_num == 1 ) {
-		Size rand_num = std::lround( numeric::random::uniform() );
+		core::Size rand_num = std::lround( numeric::random::uniform() );
 		float rot_angle = 180.0*(rand_num);
 		TR << "Flipping the peptide " << std::endl;
 		rigid::RigidBodyDeterministicSpinMover spin_mover ( rb_jump_, second_pc_axis, peptide_c_alpha_centroid, rot_angle );
@@ -713,7 +713,7 @@ void FlexPepDockingProtocol::flip_in_pcs( core::pose::Pose & pose )
 	}
 
 	if ( pcs_num == 2 ) {
-		Size rand_num = std::lround( numeric::random::random_range(1,4) );
+		core::Size rand_num = std::lround( numeric::random::random_range(1,4) );
 		float rot_angle = 90.0*(rand_num);
 		TR << "Flipping the peptide " << std::endl;
 		rigid::RigidBodyDeterministicSpinMover spin_mover ( rb_jump_, second_pc_axis, peptide_c_alpha_centroid, rot_angle );
@@ -784,7 +784,7 @@ FlexPepDockingProtocol::random_peptide_phi_psi_perturbation(
 
 	core::Real pertSize = flags_.random_phi_psi_pert_size;
 
-	for ( Size i=flags_.peptide_first_res();
+	for ( core::Size i=flags_.peptide_first_res();
 			i < flags_.peptide_first_res()+flags_.peptide_nres(); i++ ) {
 		core::Real phi_offset = numeric::random::uniform()*(pertSize)*2 - pertSize;
 		core::Real psi_offset = numeric::random::uniform()*(pertSize)*2 - pertSize;
@@ -808,7 +808,7 @@ FlexPepDockingProtocol::extend_peptide(
 	using namespace std;
 	using namespace numeric;
 
-	for ( Size i=flags_.peptide_first_res();
+	for ( core::Size i=flags_.peptide_first_res();
 			i < flags_.peptide_first_res() + flags_.peptide_nres(); i++ ) {
 		pose.set_phi(i,-135);
 		pose.set_psi(i,135);
@@ -901,7 +901,7 @@ FlexPepDockingProtocol::backrub_move(
 
 	// determine list of residues to backrub
 	utility::vector1<core::Size> resnums;
-	for ( Size i=flags_.peptide_first_res();
+	for ( core::Size i=flags_.peptide_first_res();
 			i < flags_.peptide_first_res() + flags_.peptide_nres(); i++ ) {
 		resnums.push_back(i);
 	}
@@ -934,7 +934,7 @@ FlexPepDockingProtocol::polyAla(
 	//   ResidueTypeSet const & residue_set ( pose.residue(1).residue_type_set() );
 	ResidueType const & restype( residue_set->name_map( "ALA" ) );
 	ResidueOP ala;
-	for ( Size i=flags_.peptide_first_res();
+	for ( core::Size i=flags_.peptide_first_res();
 			i < flags_.peptide_first_res() + flags_.peptide_nres(); i++ ) {
 		ala = ResidueFactory::create_residue(restype);// ,pose.residue(i),pose.conformation(),true/*preserve CB*/);
 		pose.replace_residue(i,*ala,true);
@@ -975,7 +975,7 @@ FlexPepDockingProtocol::randomlySlidePeptideJump(core::pose::Pose & pose){
 
 	using namespace core::kinematics;
 	using namespace numeric;
-	auto new_rand_cut = (Size)(numeric::random::uniform()*(flags_.peptide_nres()));
+	auto new_rand_cut = (core::Size)(numeric::random::uniform()*(flags_.peptide_nres()));
 	FoldTree f = pose.fold_tree();
 	f.slide_jump(rb_jump_, //along which jump
 		f.upstream_jump_residue(rb_jump_),//keep prot anchor
@@ -1128,11 +1128,11 @@ FlexPepDockingProtocol::peptide_random_loop_model(
 		return;
 	}
 	// set up and model a random loop
-	Size first_res =  flags_.peptide_first_res(); // TODO: make sure it is ok to use the N' residue
-	Size last_res = flags_.peptide_last_res() - 1; // TODO: add the C' terminal, Dan sais there might be a bug with C' followed by another chain
+	core::Size first_res =  flags_.peptide_first_res(); // TODO: make sure it is ok to use the N' residue
+	core::Size last_res = flags_.peptide_last_res() - 1; // TODO: add the C' terminal, Dan sais there might be a bug with C' followed by another chain
 	protocols::loops::LoopsOP loops( new protocols::loops::Loops() );
 	loops->add_loop(first_res, last_res); // TODO: cut defaults to zero, is this a random cut?
-	for ( Size i = first_res; i <= last_res ; i++ ) {
+	for ( core::Size i = first_res; i <= last_res ; i++ ) {
 		runtime_assert( movemap_->get_bb(i) ); // verify loop is movable, this should have been always true for the peptide
 	}
 	loop_relax_mover_->loops( loops );
@@ -1412,7 +1412,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 // @param native_interface_residues[out]
 // An array of positions - set to true for interface residues
 // @param distance
-// Size - the atom pair distance under which the pair is considered in contact
+// core::Size - the atom pair distance under which the pair is considered in contact
 
 void
 FlexPepDockingProtocol::markInterfaceBySideChainContacts
@@ -1423,9 +1423,9 @@ FlexPepDockingProtocol::markInterfaceBySideChainContacts
 	core::pose::PDBInfoCOP pdbinfo = native_pose.pdb_info();
 
 
-	for ( Size i=flags_.peptide_first_res(); i<=flags_.peptide_last_res(); ++i ) {
+	for ( core::Size i=flags_.peptide_first_res(); i<=flags_.peptide_last_res(); ++i ) {
 		//iterate over the protein
-		for ( Size j=flags_.receptor_first_res(); j<=flags_.receptor_last_res(); ++j ) {
+		for ( core::Size j=flags_.receptor_first_res(); j<=flags_.receptor_last_res(); ++j ) {
 			if ( fpdock_metrics_.isInContact(native_pose.residue(i),native_pose.residue(j),distance) ) {
 				native_interface_residues(i)=true;
 				native_interface_residues(j)=true;
@@ -1468,7 +1468,7 @@ FlexPepDockingProtocol::markNativeInterface
 		native_pose.update_residue_neighbors();
 		native_interface->calculate( native_pose );
 		if ( mark_receptor_interface ) {
-			for ( Size i=flags_.receptor_first_res(); i <= flags_.receptor_last_res(); ++i ) {
+			for ( core::Size i=flags_.receptor_first_res(); i <= flags_.receptor_last_res(); ++i ) {
 				if ( native_interface->is_interface(i) ) {
 					TR.Debug << "Receptor residue " << i-flags_.receptor_first_res()+1
 						<< " in interface" << std::endl;
@@ -1479,7 +1479,7 @@ FlexPepDockingProtocol::markNativeInterface
 		}
 	}
 	// mark interface and peptide residues
-	for ( Size i=flags_.peptide_first_res();
+	for ( core::Size i=flags_.peptide_first_res();
 			i <= flags_.peptide_last_res(); ++i ) {
 		superpos_partner(i)=true;
 		if ( flags_.pep_fold_only ) { // not docking mode
@@ -1734,7 +1734,7 @@ FlexPepDockingProtocol::storeJobStatistics
 		protocols::jd2::add_string_real_pair_to_current_job( "frac_iatoms_less_1.5A", frac1_5 );
 		protocols::jd2::add_string_real_pair_to_current_job( "frac_iatoms_less_2A", frac2 );
 		std::map<core::Size,core::Real> subsetRMS;
-		for ( Size k=4; k <= flags_.peptide_nres(); k++ ) {
+		for ( core::Size k=4; k <= flags_.peptide_nres(); k++ ) {
 			subsetRMS[k] = fpdock_metrics_.best_Kmer_rms
 				( native_pose, final_pose,&is_polymer_heavyatom, k);
 			std::ostringstream oss;
@@ -1776,7 +1776,7 @@ void FlexPepDockingProtocol::parse_my_tag(
 	flags_.lowres_preoptimize = tag->getOption<bool>( "lowres_preoptimize", flags_.lowres_preoptimize ) ;
 	flags_.min_only = tag->getOption<bool>( "min_only", flags_.min_only ) ;
 	flags_.random_phi_psi_pert = tag->getOption<bool>( "random_phi_psi_pert", flags_.random_phi_psi_pert ) ;
-	flags_.random_phi_psi_pert_size  = tag->getOption<core::Size>( "random_phi_psi_pert_size", (Size)(flags_.random_phi_psi_pert_size) ) ;
+	flags_.random_phi_psi_pert_size  = tag->getOption<core::Size>( "random_phi_psi_pert_size", (core::Size)(flags_.random_phi_psi_pert_size) ) ;
 	flags_.extend = tag->getOption<bool>( "extend", flags_.extend ) ;
 	flags_.place_peptide = tag->getOption<bool>( "place_peptide", flags_.place_peptide ) ;
 	flags_.sample_pc = tag->getOption<core::Size>( "sample_pc", flags_.sample_pc ) ;

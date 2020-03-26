@@ -30,7 +30,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/noesy_assign/CrossPeakList.fwd.hh>
@@ -48,13 +48,13 @@ namespace protocols {
 namespace noesy_assign {
 
 /// WARNING WARNING WARNING THREAD UNSAFE FOR USING THE COVALENTCOMPLIANCE CLASS IN A NON-CONST WAY
-class NoesyModule : public utility::pointer::ReferenceCount {
+class NoesyModule : public utility::VirtualBase {
 
 private:
 	static bool options_registered_;
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~NoesyModule() override;
 	/// @brief register options
 	static void register_options();

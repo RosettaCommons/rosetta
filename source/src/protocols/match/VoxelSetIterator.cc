@@ -64,16 +64,16 @@ VoxelSetIterator::VoxelSetIterator(
 	/// 2. For euler angles "phi" and "psi", the angles are periodic in the range between [ 0 .. 360 ]
 	/// 3. For euler angle "theta" near 180 or 0, we "flip" the "phi" and "psi" angles if phi is greater than 180.
 
-	for ( Size ii = 1; ii <= 3; ++ii ) {
-		basebin_[ ii ]     = static_cast< Size > (( point_[ ii ] - bb_.lower()( ii )) / xyz_bin_widths_[ ii ] );
-		basehalfbin_[ ii ] = static_cast< Size > (( point_[ ii ] - bb_.lower()( ii )) / xyz_bin_halfwidths_[ ii ] ) - 2 * basebin_[ ii ];
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
+		basebin_[ ii ]     = static_cast< core::Size > (( point_[ ii ] - bb_.lower()( ii )) / xyz_bin_widths_[ ii ] );
+		basehalfbin_[ ii ] = static_cast< core::Size > (( point_[ ii ] - bb_.lower()( ii )) / xyz_bin_halfwidths_[ ii ] ) - 2 * basebin_[ ii ];
 		if ( basebin_[ ii ] >= n_xyz_bins_[ ii ] ) return;
 	}
-	for ( Size ii = 4, ii_minus3 = 1; ii <= 6; ++ii, ++ii_minus3 ) {
+	for ( core::Size ii = 4, ii_minus3 = 1; ii <= 6; ++ii, ++ii_minus3 ) {
 		debug_assert( point_[ ii ] >= 0 && point_[ ii ] <= 360 );
 		debug_assert( ii != 6 || point_[ ii ] <= 180 ); /// theta must range between 0 and 180.
-		basebin_[ ii ]     = static_cast< Size > ( point_[ ii ] / euler_bin_widths_[ ii_minus3 ] );
-		basehalfbin_[ ii ] = static_cast< Size > ( point_[ ii ] / euler_bin_halfwidths_[ ii_minus3 ] ) - 2 * basebin_[ ii ];
+		basebin_[ ii ]     = static_cast< core::Size > ( point_[ ii ] / euler_bin_widths_[ ii_minus3 ] );
+		basehalfbin_[ ii ] = static_cast< core::Size > ( point_[ ii ] / euler_bin_halfwidths_[ ii_minus3 ] ) - 2 * basebin_[ ii ];
 
 		// In floating point, sometimes (360 - epsilon) / X = 360 / X for
 		// values of X that evenly divide 360, and epsilon non-zero. )
@@ -83,7 +83,7 @@ VoxelSetIterator::VoxelSetIterator(
 
 	}
 
-	fixedsizearray1< Size, 6 > twos( 2 );
+	fixedsizearray1< core::Size, 6 > twos( 2 );
 	iter64_.set_dimension_sizes( twos );
 
 	theta_near_0_   = point_[ 6 ] < euler_bin_halfwidths[ 3 ];
@@ -102,10 +102,10 @@ VoxelSetIterator::VoxelSetIterator(
 			wrapped_phi = point_[ 4 ];
 			wrapped_psi = point_[ 5 ];
 		}
-		wrapped_phipsi_bins_[ 1 ]     = static_cast< Size > (( wrapped_phi ) / euler_bin_widths_[ 1 ] );
-		wrapped_phipsi_bins_[ 2 ]     = static_cast< Size > (( wrapped_psi ) / euler_bin_widths_[ 2 ] );
-		wrapped_phipsi_halfbins_[ 1 ] = static_cast< Size > (( wrapped_phi ) / euler_bin_halfwidths_[ 1 ] ) - 2 * wrapped_phipsi_bins_[ 1 ];
-		wrapped_phipsi_halfbins_[ 2 ] = static_cast< Size > (( wrapped_psi ) / euler_bin_halfwidths_[ 2 ] ) - 2 * wrapped_phipsi_bins_[ 2 ];
+		wrapped_phipsi_bins_[ 1 ]     = static_cast< core::Size > (( wrapped_phi ) / euler_bin_widths_[ 1 ] );
+		wrapped_phipsi_bins_[ 2 ]     = static_cast< core::Size > (( wrapped_psi ) / euler_bin_widths_[ 2 ] );
+		wrapped_phipsi_halfbins_[ 1 ] = static_cast< core::Size > (( wrapped_phi ) / euler_bin_halfwidths_[ 1 ] ) - 2 * wrapped_phipsi_bins_[ 1 ];
+		wrapped_phipsi_halfbins_[ 2 ] = static_cast< core::Size > (( wrapped_psi ) / euler_bin_halfwidths_[ 2 ] ) - 2 * wrapped_phipsi_bins_[ 2 ];
 	}
 	calc_bin_and_pos();
 }
@@ -113,12 +113,12 @@ VoxelSetIterator::VoxelSetIterator(
 void VoxelSetIterator::operator ++ ()
 {
 	if ( iter64_.at_end() ) return;
-	Size start = 7 - ++iter64_; /// start at the x coordinate if all 6 dimensions rolled over;
+	core::Size start = 7 - ++iter64_; /// start at the x coordinate if all 6 dimensions rolled over;
 	while ( true ) {
 		if ( iter64_.at_end() ) break;
 
 		bool outside_bounding_box( false );
-		for ( Size ii = start; ii <= 3; ++ii ) {
+		for ( core::Size ii = start; ii <= 3; ++ii ) {
 			if ( iter64_[ ii ] == 2 && basebin_[ ii ] == n_xyz_bins_[ ii ] - 1 && basehalfbin_[ ii ] == 1 ) {
 				/// walked out of bounds.
 				start = 7 - iter64_.continue_at_dimension( ii );
@@ -137,7 +137,7 @@ bool VoxelSetIterator::at_end() const
 	return iter64_.at_end();
 }
 
-void VoxelSetIterator::get_bin_and_pos( Size6 & bin, Size & pos ) const
+void VoxelSetIterator::get_bin_and_pos( Size6 & bin, core::Size & pos ) const
 {
 	debug_assert( ! at_end() );
 	bin = curr_bin_;
@@ -149,7 +149,7 @@ void VoxelSetIterator::calc_bin_and_pos()
 	debug_assert( ! at_end() );
 	curr_pos_ = 1; /// curr pos ranges from 1 and 64.  The math below will add between 0 and 63 to curr_pos_.
 
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		curr_bin_[ ii ] = basebin_[ ii ];
 		if ( iter64_[ ii ] == 2 && basehalfbin_[ ii ] == 1 ) {
 			curr_bin_[ ii ] += 1;
@@ -166,7 +166,7 @@ void VoxelSetIterator::calc_bin_and_pos()
 	if ( ( theta_near_0_ && iter64_[ 6 ] == 1 ) || ( theta_near_180_ && iter64_[ 6 ] == 2 ) ) {
 
 		// phi and psi
-		for ( Size ii = 4, ii_minus3 = 1; ii <= 5; ++ii, ++ii_minus3 ) {
+		for ( core::Size ii = 4, ii_minus3 = 1; ii <= 5; ++ii, ++ii_minus3 ) {
 			curr_bin_[ ii ] = wrapped_phipsi_bins_[ ii_minus3 ];
 			if ( iter64_[ ii ] == 2 && wrapped_phipsi_halfbins_[ ii_minus3 ] == 1 ) {
 				// increment, and wrap at 360 if necessary
@@ -184,7 +184,7 @@ void VoxelSetIterator::calc_bin_and_pos()
 			curr_pos_ += 1;
 		}
 	} else {
-		for ( Size ii = 4, ii_minus3 = 1; ii <= 6; ++ii, ++ii_minus3 ) {
+		for ( core::Size ii = 4, ii_minus3 = 1; ii <= 6; ++ii, ++ii_minus3 ) {
 			curr_bin_[ ii ] = basebin_[ ii ];
 			if ( iter64_[ ii ] == 2 && basehalfbin_[ ii ] == 1 ) {
 				// Wrap at > 360 -- only applies to phi and psi, but we've gotten to this point knowing

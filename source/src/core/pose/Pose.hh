@@ -18,7 +18,7 @@
 /// recompile when modified.  I pledge a personally delivered, hand-crafted
 /// ass-whooping for any fool that #includes an unnecessary .hh file in Pose.hh.
 /// Allowed .hh files are only those related to the (templated) event signaling
-/// files, those related to our smart pointer system (ReferenceCount.hh and owning_ptr.hh)
+/// files, those related to our smart pointer system (VirtualBase.hh and owning_ptr.hh)
 /// or that contain enums (AA.hh), typedefs (types.hh).
 /// Everything else should be forward included, or not included at all.
 /// If you find yourself adding a #include of an .hh file, stop and write Andrew
@@ -162,7 +162,7 @@ Pose.sequence
 Pose.size
 **/
 
-class Pose : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Pose >
+class Pose : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< Pose >
 {
 public:
 	typedef id::AtomID AtomID;
@@ -1957,7 +1957,7 @@ private:
 	void store_const_data(
 		std::string const & category,
 		std::string const & name,
-		utility::pointer::ReferenceCountCOP
+		utility::VirtualBaseCOP
 	);
 
 private: // observer notifications

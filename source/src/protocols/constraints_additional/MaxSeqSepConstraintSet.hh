@@ -98,11 +98,11 @@ public:
 		core::id::SequenceMappingCOP smap = nullptr
 	) const override;
 
-	Size max_seq_sep () const {
+	core::Size max_seq_sep () const {
 		return max_seq_sep_;
 	}
 
-	void set_max_seq_sep( Size setting ) {
+	void set_max_seq_sep( core::Size setting ) {
 		max_seq_sep_=setting;
 		mark_revision_id_expired(); //force recompute of cached energies
 	}
@@ -119,7 +119,7 @@ public:
 
 	bool too_far( int const pos1, int const pos2 ) const;
 
-	Size
+	core::Size
 	largest_possible_sequence_sep( core::pose::Pose const& pose ) const;
 
 
@@ -151,8 +151,8 @@ public:
 
 	using Parent::show_violations;
 
-	Size
-	show_violations( std::ostream& out, core::pose::Pose&, Size verbose_level, core::Real threshold = 1  );
+	core::Size
+	show_violations( std::ostream& out, core::pose::Pose&, core::Size verbose_level, core::Real threshold = 1  );
 
 	core::kinematics::ShortestPathInFoldTree const&
 	shortest_path() const {
@@ -184,7 +184,7 @@ protected:
 private:
 	MaxSeqSepConstraintSet(); // private default constructor for use in the call to detached_clone
 
-	Size max_seq_sep_;
+	core::Size max_seq_sep_;
 	core::kinematics::ShortestPathInFoldTreeCOP shortest_path_;
 #ifdef    SERIALIZATION
 	friend class cereal::access;

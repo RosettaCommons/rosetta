@@ -120,14 +120,14 @@ void SingleFragmentMover::apply(core::pose::Pose& pose) {
 		return;
 	}
 
-	Size insertion_pos = chunk->choose();
+	core::Size insertion_pos = chunk->choose();
 
 	while ( !movable->get_bb(insertion_pos) )
 			insertion_pos = chunk->choose();
 
 	// delegate responsibility for choosing the fragment to the policy
 	const Frame& frame = library_[insertion_pos];
-	Size fragment_pos = policy_->choose(frame, pose);
+	core::Size fragment_pos = policy_->choose(frame, pose);
 	frame.apply(*movable, fragment_pos, pose);
 	TR.Debug << "Inserted fragment at position " << insertion_pos << std::endl;
 }
@@ -176,7 +176,7 @@ bool SingleFragmentMover::valid() const {
 void SingleFragmentMover::initialize_library() {
 	core::fragment::ConstFrameIterator i;
 	for ( i = fragments_->begin(); i != fragments_->end(); ++i ) {
-		Size position = (*i)->start();
+		core::Size position = (*i)->start();
 		library_[position] = **i;
 	}
 }
@@ -198,14 +198,14 @@ void SingleFragmentMover::initialize_chunks(const core::kinematics::FoldTree& tr
 	using core::Real;
 
 	// Assumption: constant-length fragments at each insertion position
-	Size fragment_len = fragments_->max_frag_length();
+	core::Size fragment_len = fragments_->max_frag_length();
 
 	// Last position to examine
-	Size last_pos = fragments_->max_pos() - fragment_len + 1;
+	core::Size last_pos = fragments_->max_pos() - fragment_len + 1;
 
-	Size p = fragments_->min_pos();
+	core::Size p = fragments_->min_pos();
 	do {
-		Size q = p + 1;
+		core::Size q = p + 1;
 		while ( !tree.is_cutpoint(q++) ) {}
 
 		// During fold tree construction, it may happen that the distance between
@@ -232,14 +232,14 @@ void SingleFragmentMover::initialize_chunks(const core::kinematics::FoldTree& tr
 	// Assign probabilities of selection to each Chunk according to its length
 	Real N = fragments_->max_pos();
 	Real sum = 0;
-	for ( Size i = 1; i <= chunks_.size(); ++i ) {
+	for ( core::Size i = 1; i <= chunks_.size(); ++i ) {
 		Real prob = chunks_[i].length() / N;
 		probs_.push_back(prob);
 		sum += prob;
 	}
 
 	// Normalize probabilities
-	for ( Size i = 1; i <= probs_.size(); ++i ) {
+	for ( core::Size i = 1; i <= probs_.size(); ++i ) {
 		probs_[i] /= sum;
 		TR << "P(c_" << i << ")=" << probs_[i] << std::endl;
 	}
@@ -254,8 +254,8 @@ const Chunk* SingleFragmentMover::random_chunk() const {
 	vector1<Real> fitnesses(probs_);
 
 	// convert to a CDF
-	Size n = fitnesses.size();
-	for ( Size i = 2; i <= n; ++i ) {
+	core::Size n = fitnesses.size();
+	for ( core::Size i = 2; i <= n; ++i ) {
 		fitnesses[i] += fitnesses[i-1];
 	}
 
@@ -263,7 +263,7 @@ const Chunk* SingleFragmentMover::random_chunk() const {
 	Real x = numeric::random::uniform();
 
 	// this could be done more efficiently with binary search
-	for ( Size i = 2; i <= n; ++i ) {
+	for ( core::Size i = 2; i <= n; ++i ) {
 		if ( fitnesses[i-1] < x && x <= fitnesses[i] ) {
 			return &chunks_[i];
 		}

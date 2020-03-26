@@ -34,8 +34,8 @@ using namespace std;
 Loop FixedOffsetsPivots::pick(Pose const &, Loop const & loop) {
 	using numeric::random::random_range;
 
-	Size max_offset = loop.stop() - loop.start();
-	utility::vector1 <Size> valid_offsets;
+	core::Size max_offset = loop.stop() - loop.start();
+	utility::vector1 <core::Size> valid_offsets;
 
 	for ( auto os : offsets_ ) {
 		if ( os <= max_offset ) {
@@ -45,11 +45,11 @@ Loop FixedOffsetsPivots::pick(Pose const &, Loop const & loop) {
 
 	runtime_assert(valid_offsets.size() > 0);
 
-	Size offset = valid_offsets[random_range(1, valid_offsets.size())];
+	core::Size offset = valid_offsets[random_range(1, valid_offsets.size())];
 
-	Size pivot_1 = random_range(loop.start(), loop.stop() - offset);
-	Size pivot_3 = pivot_1 + offset;
-	Size pivot_2 = pivot_1 + offset / 2;
+	core::Size pivot_1 = random_range(loop.start(), loop.stop() - offset);
+	core::Size pivot_3 = pivot_1 + offset;
+	core::Size pivot_2 = pivot_1 + offset / 2;
 
 	return Loop(pivot_1, pivot_3, pivot_2);
 }

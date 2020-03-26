@@ -203,27 +203,27 @@ public: // accessors
 
 	/// @brief get the absolute index of the insertion point with respect to the
 	///  flanking regions (i.e. the index inside the ss string)
-	Size insertion_point_absolute_index() const;
+	core::Size insertion_point_absolute_index() const;
 
 
 	/// @brief get the residue at the start of the insertion relative to the
 	///  modified interval (flanking positions are not part of the insertion!)
-	Size insertion_start_residue() const;
+	core::Size insertion_start_residue() const;
 
 
 	/// @brief get the residue at the end of the insertion relative to the
 	///  modified interval (flanking positions are not part of the insertion!)
-	Size insertion_end_residue() const;
+	core::Size insertion_end_residue() const;
 
 
 	/// @brief get the number of flanking residues to the left of the insertion
 	///  point
-	Size flanking_left_nres() const;
+	core::Size flanking_left_nres() const;
 
 
 	/// @brief get the number of flanking residues to the right of the insertion
 	///  point
-	Size flanking_right_nres() const;
+	core::Size flanking_right_nres() const;
 
 
 	/// @brief get the ss string of the flanking residues to the left of the

@@ -54,7 +54,7 @@ void DarcParticleSwarmMinimizer::score_all_particles(core::optimization::Multifu
 		std::vector<basic::gpu::float4> particles_translation_offset(N);
 		//In this GPU block, we compute only the arrays required to be passed for GPU calculations
 		//No CPU computations goes in here
-		for (Size j = 1; j <= N; ++j) {
+		for (core::Size j = 1; j <= N; ++j) {
 			core::optimization::Multivec const vars = particles[j]->p_;//particles[particles_num]->p_;
 			core::Size conformer=((core::Size)(floor(vars[7])) % nconformers);
 			//fill array with translation offset; Note: particles indexed from 0.
@@ -84,7 +84,7 @@ void DarcParticleSwarmMinimizer::score_all_particles(core::optimization::Multifu
 	utility::vector1< std::vector<basic::gpu::float4> >atom_maxmin_phipsi(num_origins_, std::vector<basic::gpu::float4>(ligand_natoms_shapecalc_ * N));
 	std::vector<basic::gpu::float4> eatoms(ligand_natoms_elstscalc_ * N);
 	//Initialize arrays requird for CPU calculations
-	for ( Size j = 1; j <= N; ++j ) {
+	for ( core::Size j = 1; j <= N; ++j ) {
 		core::optimization::Multivec const vars = particles[j]->p_;//particles[particles_num]->p_;
 		numeric::xyzVector<core::Real> origin_offset;
 		origin_offset.x() = vars[1];
@@ -132,7 +132,7 @@ void DarcParticleSwarmMinimizer::fill_atom_arrays_( core::Size particle_inx, cor
 	core::Size origin_num = 1;
 	for ( utility::vector1<numeric::xyzVector<core::Real> >::const_iterator i_mori = pfp_.multi_origin_list_.begin(); i_mori != pfp_.multi_origin_list_.end(); ++i_mori, ++origin_num ) {
 
-		for ( Size i = 1; i <= ligand_natoms_shapecalc_; ++i ) {
+		for ( core::Size i = 1; i <= ligand_natoms_shapecalc_; ++i ) {
 			core::Size const curr_array_inx = ( ligand_natoms_shapecalc_ * particle_inx ) + ( i-1 );
 			numeric::xyzVector<core::Real> this_atomcoors = ligand_rsd->atom(i).xyz() - *i_mori;
 			core::Real const this_atom_radius = ( ligand_rsd->atom_type(i).lj_radius() - atom_buffer ) * radius_scale;
@@ -196,7 +196,7 @@ void DarcParticleSwarmMinimizer::fill_atom_arrays_for_electrostatics_( core::Siz
 	}
 	core::conformation::Residue const & ligand_rsd = ligand_pose_for_elec_calc.residue(lig_res_num);
 
-	for ( Size i = 1; i <= ligand_natoms_elstscalc_; ++i ) {
+	for ( core::Size i = 1; i <= ligand_natoms_elstscalc_; ++i ) {
 
 		core::Size const curr_array_inx = ( ligand_natoms_elstscalc_ * particle_inx ) + ( i-1 );
 
@@ -230,7 +230,7 @@ DarcParticleSwarmMinimizer::DarcPSO_fp_compare_(
 		core::Size curr_ori = ni.ori;
 		core::Real best_rho_sq(9999.);
 		//    core::Size best_intersecting_atom(0);
-		for ( Size i = 1, i_end = ligand_natoms_shapecalc_; i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = ligand_natoms_shapecalc_; i <= i_end; ++i ) {
 			core::Size const curr_array_inx = ( ligand_natoms_shapecalc_ * particle_inx ) + ( i-1 );
 
 			if ( atoms[curr_ori][curr_array_inx].w < 0.001 ) continue;
@@ -344,24 +344,24 @@ DarcParticleSwarmMinimizer::DarcPSO_elsts_score_(
 			core::Real Zd = (Z-Z0)/(Z1-Z0);
 
 
-			core::Real C00 = espGrid[Size(X0)][Size(Y0)][Size(Z0)]*(1-Xd) + espGrid[Size(X1)][Size(Y0)][Size(Z0)]*Xd;
-			core::Real C10 = espGrid[Size(X0)][Size(Y1)][Size(Z0)]*(1-Xd) + espGrid[Size(X1)][Size(Y1)][Size(Z0)]*Xd;
-			core::Real C01 = espGrid[Size(X0)][Size(Y0)][Size(Z1)]*(1-Xd) + espGrid[Size(X1)][Size(Y0)][Size(Z1)]*Xd;
-			core::Real C11 = espGrid[Size(X0)][Size(Y1)][Size(Z1)]*(1-Xd) + espGrid[Size(X1)][Size(Y1)][Size(Z1)]*Xd;
+			core::Real C00 = espGrid[core::Size(X0)][core::Size(Y0)][core::Size(Z0)]*(1-Xd) + espGrid[core::Size(X1)][core::Size(Y0)][core::Size(Z0)]*Xd;
+			core::Real C10 = espGrid[core::Size(X0)][core::Size(Y1)][core::Size(Z0)]*(1-Xd) + espGrid[core::Size(X1)][core::Size(Y1)][core::Size(Z0)]*Xd;
+			core::Real C01 = espGrid[core::Size(X0)][core::Size(Y0)][core::Size(Z1)]*(1-Xd) + espGrid[core::Size(X1)][core::Size(Y0)][core::Size(Z1)]*Xd;
+			core::Real C11 = espGrid[core::Size(X0)][core::Size(Y1)][core::Size(Z1)]*(1-Xd) + espGrid[core::Size(X1)][core::Size(Y1)][core::Size(Z1)]*Xd;
 			core::Real C0 = C00*(1-Yd) + C10*Yd;
 			core::Real C1 = C01*(1-Yd) + C11*Yd;
 			core::Real C = C0*(1-Zd) + C1*Zd;
 
 			atm_esp_energy = C * curr_charge;
 
-			if ( ( typGrid[Size(X0)][Size(Y0)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
-					( typGrid[Size(X0)][Size(Y1)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
-					( typGrid[Size(X0)][Size(Y0)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
-					( typGrid[Size(X0)][Size(Y1)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
-					( typGrid[Size(X1)][Size(Y0)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
-					( typGrid[Size(X1)][Size(Y1)][Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
-					( typGrid[Size(X1)][Size(Y0)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
-					( typGrid[Size(X1)][Size(Y1)][Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ) {
+			if ( ( typGrid[core::Size(X0)][core::Size(Y0)][core::Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+					( typGrid[core::Size(X0)][core::Size(Y1)][core::Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+					( typGrid[core::Size(X0)][core::Size(Y0)][core::Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+					( typGrid[core::Size(X0)][core::Size(Y1)][core::Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+					( typGrid[core::Size(X1)][core::Size(Y0)][core::Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+					( typGrid[core::Size(X1)][core::Size(Y1)][core::Size(Z0)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+					( typGrid[core::Size(X1)][core::Size(Y0)][core::Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ||
+					( typGrid[core::Size(X1)][core::Size(Y1)][core::Size(Z1)] == ElectrostaticpotentialGrid::PROTEIN ) ) {
 				// return zero if the energy is favourable and the atom goes into protein
 				if ( atm_esp_energy < 0. ) atm_esp_energy = 0.;
 			}

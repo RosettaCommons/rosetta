@@ -22,7 +22,7 @@
 #include <numeric/linear_algebra/EllipseParameters.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <cstdlib>
 
 namespace numeric {

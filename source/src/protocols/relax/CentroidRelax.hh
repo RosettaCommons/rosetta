@@ -59,7 +59,7 @@ public:
 
 	void set_defaults();
 
-	void set_rounds(Size rounds);
+	void set_rounds(core::Size rounds);
 
 	/// @brief use larger VDW radii for atoms - bb for now - default True (Courtesy of Frank Dimaio)
 	void set_use_increased_vdw_radii(bool use);

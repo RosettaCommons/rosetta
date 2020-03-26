@@ -36,7 +36,7 @@ public:
 	typedef core::Size       Size;
 public:
 	PoseInserter( Pose & pose_to_modify );
-	PoseInserter( Pose & pose_to_modify, Size resid_to_replace );
+	PoseInserter( Pose & pose_to_modify, core::Size resid_to_replace );
 	~PoseInserter() override;
 
 	/// @brief Take a conformation::Residue from the upstream builder and
@@ -48,11 +48,11 @@ public:
 	) override;
 
 	void
-	set_replacement_resid( Size seqpos );
+	set_replacement_resid( core::Size seqpos );
 
 private:
 	Pose & pose_;
-	Size   resid_to_replace_;
+	core::Size   resid_to_replace_;
 };
 
 }

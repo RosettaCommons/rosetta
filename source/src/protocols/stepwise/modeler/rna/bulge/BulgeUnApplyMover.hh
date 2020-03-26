@@ -31,7 +31,7 @@ class BulgeUnApplyMover: public protocols::moves::Mover {
 public:
 
 	//constructor
-	BulgeUnApplyMover( Size const moving_res );
+	BulgeUnApplyMover( core::Size const moving_res );
 
 	//destructor
 	~BulgeUnApplyMover() override;
@@ -44,7 +44,7 @@ public:
 
 private:
 
-	Size const moving_res_;
+	core::Size const moving_res_;
 
 };
 

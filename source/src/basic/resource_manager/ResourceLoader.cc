@@ -16,7 +16,7 @@
 #include <basic/resource_manager/ResourceLoader.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace basic {
 namespace resource_manager {

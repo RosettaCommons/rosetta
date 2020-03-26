@@ -33,7 +33,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -61,7 +61,7 @@ struct hash_upstream_hit
 
 
 SecondaryMatcherToUpstreamResidue::SecondaryMatcherToUpstreamResidue(
-	Size geom_cst_id
+	core::Size geom_cst_id
 ) :
 	parent( geom_cst_id ),
 	target_geomcst_id_( 0 ),
@@ -122,7 +122,7 @@ SecondaryMatcherToUpstreamResidue::build_hits_at_all_positions(
 
 	utility::vector1< std::list< Hit > > hits( my_build_points.size() );
 
-	for ( Size ii = 1; ii <= target_build_points.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= target_build_points.size(); ++ii ) {
 		if ( ! prepare_for_hit_generation_at_target_build_point( matcher, *target_build_points[ ii ] ) ) {
 			continue;
 		}
@@ -130,11 +130,11 @@ SecondaryMatcherToUpstreamResidue::build_hits_at_all_positions(
 		//TR << "Secondary matching against geomcst " << target_geomcst_id_ << " hits from build point " << target_build_points[ ii ]->index() << std::endl;
 		//TR << "Secondary matching against geomcst " << target_geomcst_id_ << " hits from protein build point " << target_build_points[ ii ]->original_insertion_point() << std::endl;
 
-		Size ii_total_found_matches( 0 );
+		core::Size ii_total_found_matches( 0 );
 #ifdef USE_OPENMP
 		#pragma omp parallel for reduction( + : ii_total_found_matches )
 #endif
-		for ( Size jj = 1; jj <= my_build_points.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= my_build_points.size(); ++jj ) {
 			//Most of the time we don't want to build residue at the same point
 			//as the target build point, but in the case of backbone matching
 			//if ( target_build_points[ ii ]->index() != my_build_points[ jj ]->index() ) {
@@ -149,7 +149,7 @@ SecondaryMatcherToUpstreamResidue::build_hits_at_all_positions(
 
 	std::list< Hit > all_hits;
 	us_secmatch_hit_compare compare;
-	for ( Size ii = 1; ii <= my_build_points.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= my_build_points.size(); ++ii ) {
 		hits[ ii ].sort( compare );
 		all_hits.splice( all_hits.end(), hits[ ii ] );
 	}
@@ -165,7 +165,7 @@ SecondaryMatcherToUpstreamResidue::build_hits_at_all_positions(
 void
 SecondaryMatcherToUpstreamResidue::respond_to_primary_hitlist_change(
 	Matcher & matcher,
-	Size /*round_just_completed*/
+	core::Size /*round_just_completed*/
 )
 {
 
@@ -173,8 +173,8 @@ SecondaryMatcherToUpstreamResidue::respond_to_primary_hitlist_change(
 	Matcher::HitList const & my_hits = matcher.hits( geom_cst_id() );
 	for ( auto const & my_hit : my_hits ) {
 		Size2 target_hit;
-		target_hit[ 1 ] = static_cast< Size > ( my_hit.second()[ 1 ] );
-		target_hit[ 2 ] = static_cast< Size > ( my_hit.second()[ 2 ] );
+		target_hit[ 1 ] = static_cast< core::Size > ( my_hit.second()[ 1 ] );
+		target_hit[ 2 ] = static_cast< core::Size > ( my_hit.second()[ 2 ] );
 		boost::unordered_map< Size2Tuple, bool, hash_upstream_hit >::const_iterator
 			hash_iter = targets_hits_matched.find( target_hit );
 		if ( hash_iter == targets_hits_matched.end() ) {
@@ -185,14 +185,14 @@ SecondaryMatcherToUpstreamResidue::respond_to_primary_hitlist_change(
 	auto target_hit_iter = matcher.hit_list_begin( target_geomcst_id_ );
 	auto target_hit_iter_end = matcher.hit_list_end( target_geomcst_id_ );
 
-	Size drop_count( 0 );
+	core::Size drop_count( 0 );
 	while ( target_hit_iter != target_hit_iter_end ) {
 		auto target_hit_iter_next = target_hit_iter;
 		++target_hit_iter_next;
 
 		Size2 target_hit;
-		target_hit[ 1 ] = static_cast< Size > ( target_hit_iter->first()[ 1 ] );
-		target_hit[ 2 ] = static_cast< Size > ( target_hit_iter->first()[ 2 ] );
+		target_hit[ 1 ] = static_cast< core::Size > ( target_hit_iter->first()[ 1 ] );
+		target_hit[ 2 ] = static_cast< core::Size > ( target_hit_iter->first()[ 2 ] );
 		boost::unordered_map< Size2Tuple, bool, hash_upstream_hit >::const_iterator
 			hash_iter = targets_hits_matched.find( target_hit );
 		if ( hash_iter == targets_hits_matched.end() ) {
@@ -239,14 +239,14 @@ SecondaryMatcherToUpstreamResidue::respond_to_peripheral_hitlist_change(
 	auto hit_iter = matcher.hit_list_begin( geom_cst_id() );
 	auto hit_iter_end = matcher.hit_list_end( geom_cst_id() );
 
-	Size drop_count( 0 );
+	core::Size drop_count( 0 );
 	while ( hit_iter != hit_iter_end ) {
 		auto hit_iter_next = hit_iter;
 		++hit_iter_next;
 
 		Size2 target_hit;
-		target_hit[ 1 ] = static_cast< Size > ( hit_iter->second()[ 1 ] );
-		target_hit[ 2 ] = static_cast< Size > ( hit_iter->second()[ 2 ] );
+		target_hit[ 1 ] = static_cast< core::Size > ( hit_iter->second()[ 1 ] );
+		target_hit[ 2 ] = static_cast< core::Size > ( hit_iter->second()[ 2 ] );
 		boost::unordered_map< Size2Tuple, bool, hash_upstream_hit >::const_iterator
 			hash_iter = target_hit_hash.find( target_hit );
 		if ( hash_iter == target_hit_hash.end() ) {
@@ -274,25 +274,25 @@ SecondaryMatcherToUpstreamResidue::respond_to_peripheral_hitlist_change(
 /// build_at_all_positions method.)
 std::list< Hit >
 SecondaryMatcherToUpstreamResidue::build(
-	Size const scaffold_build_point_id,
-	Size const upstream_conf_id,
+	core::Size const scaffold_build_point_id,
+	core::Size const upstream_conf_id,
 	core::conformation::Residue const & upstream_residue
 ) const
 {
 	std::list< Hit > hits;
-	for ( Size ii = 1; ii <= target_geomcst_coords_->n_restypes(); ++ii ) {
+	for ( core::Size ii = 1; ii <= target_geomcst_coords_->n_restypes(); ++ii ) {
 		core::conformation::Residue target_residue( *target_geomcst_coords_->restype( ii ), false );
-		Size const ii_natoms = target_geomcst_coords_->n_atoms_for_restype( ii );
+		core::Size const ii_natoms = target_geomcst_coords_->n_atoms_for_restype( ii );
 		core::chemical::ResidueTypeCOP us_res_type = upstream_residue.type_ptr();
 		//TR << " sec. matched  residue type:  " << us_res_type->name() << std::endl;
 
-		for ( Size jj = 1; jj <= target_geomcst_coords_->n_rotamers_for_restype( ii ); ++jj ) {
+		for ( core::Size jj = 1; jj <= target_geomcst_coords_->n_rotamers_for_restype( ii ); ++jj ) {
 			//TR << "number of rotamers for restype " << target_geomcst_coords_->n_rotamers_for_restype( ii ) << std::endl;
 
 
 			target_residue.seqpos(smUR_pose_build_resids_[target_geomcst_coords_->hit( ii, jj ).scaffold_build_id()]);
 			/// Set the coordinates for only the atoms that I need to give to the evaluator
-			for ( Size kk = 1; kk <= ii_natoms; ++kk ) {
+			for ( core::Size kk = 1; kk <= ii_natoms; ++kk ) {
 				target_residue.set_xyz(
 					target_geomcst_coords_->restype_atomno( ii, kk ),
 					target_geomcst_coords_->coord( ii, jj, kk ));
@@ -351,8 +351,8 @@ SecondaryMatcherToUpstreamResidue::prepare_for_match_enumeration( Matcher const 
 	Matcher::HitList const & hits( matcher.hits( geom_cst_id() ));
 	for ( auto const & hit : hits ) {
 		Size2 target_hit;
-		target_hit[ 1 ] = static_cast< Size > ( hit.second()[ 1 ] );
-		target_hit[ 2 ] = static_cast< Size > ( hit.second()[ 2 ] );
+		target_hit[ 1 ] = static_cast< core::Size > ( hit.second()[ 1 ] );
+		target_hit[ 2 ] = static_cast< core::Size > ( hit.second()[ 2 ] );
 		std::map< Size2Tuple, HitPtrListOP >::const_iterator list_iter =
 			my_hits_for_target_hit_map_.find( target_hit );
 		if ( list_iter == my_hits_for_target_hit_map_.end() ) {
@@ -372,8 +372,8 @@ SecondaryMatcherToUpstreamResidue::hits_to_include_with_partial_match(
 {
 	HitPtrListCOP hitptrlist( nullptr );
 	Size2 target_hit;
-	target_hit[ 1 ] = static_cast< Size > ( m.upstream_hits[ target_geomcst_id_ ].scaffold_build_id() );
-	target_hit[ 2 ] = static_cast< Size > ( m.upstream_hits[ target_geomcst_id_ ].upstream_conf_id() );
+	target_hit[ 1 ] = static_cast< core::Size > ( m.upstream_hits[ target_geomcst_id_ ].scaffold_build_id() );
+	target_hit[ 2 ] = static_cast< core::Size > ( m.upstream_hits[ target_geomcst_id_ ].upstream_conf_id() );
 	auto list_iter =
 		my_hits_for_target_hit_map_.find( target_hit );
 	if ( list_iter != my_hits_for_target_hit_map_.end() ) {
@@ -398,7 +398,7 @@ SecondaryMatcherToUpstreamResidue::n_possible_hits_per_upstream_conformation() c
 //}
 
 void
-SecondaryMatcherToUpstreamResidue::set_target_geomcst_id( Size target_geomcst_id )
+SecondaryMatcherToUpstreamResidue::set_target_geomcst_id( core::Size target_geomcst_id )
 {
 	target_geomcst_id_ = target_geomcst_id;
 }
@@ -416,7 +416,7 @@ void
 SecondaryMatcherToUpstreamResidue::add_evaluator_for_target_restype(
 	core::chemical::ResidueTypeCOP  target_restype,
 	SecMatchResiduePairEvaluatorCOP evaluator,
-	Size                            mcfi_id_for_evaluator
+	core::Size                            mcfi_id_for_evaluator
 )
 {
 	runtime_assert( target_restype_index_map_.find( target_restype ) != target_restype_index_map_.end() );
@@ -454,7 +454,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation(
 	target_geomcst_coords_ = utility::pointer::make_shared< TargetRotamerCoords >();
 	upstream::UpstreamBuilderCOP usbuilder = matcher.upstream_builder( target_geomcst_id_ );
 
-	Size n_target_restypes = usbuilder->n_restypes_to_build();
+	core::Size n_target_restypes = usbuilder->n_restypes_to_build();
 	target_geomcst_coords_->set_num_restypes( n_target_restypes );
 	n_rotamers_per_target_restype_.resize( n_target_restypes );
 
@@ -469,7 +469,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation(
 		secmatcher->reorder_restypes( *usbuilder );
 	}
 
-	for ( Size ii = 1; ii <= n_target_restypes; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_target_restypes; ++ii ) {
 		core::chemical::ResidueTypeCOP iirestype = usbuilder->restype( ii );
 		target_geomcst_coords_->set_restype( ii, iirestype );
 		utility::vector1< bool > atom_required( iirestype->natoms(), false );
@@ -491,7 +491,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation(
 		if ( any_evaluator_requires_all_atoms ) {
 			std::fill( atom_required.begin(), atom_required.end(), true );
 		} else {
-			for ( Size jj = 1; jj <= iirestype->natoms(); ++jj ) {
+			for ( core::Size jj = 1; jj <= iirestype->natoms(); ++jj ) {
 				for ( std::list< SecondaryMatcherToUpstreamResidueOP >::const_iterator iter = secmatch_algs.begin(),
 						iter_end = secmatch_algs.end(); iter != iter_end; ++iter ) {
 
@@ -520,7 +520,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation_at_target_build_po
 {
 	TR << "Preparing to examine geomcst-" << target_geomcst_id_ << "'s hits built from scaffold build point " << target_build_point.original_insertion_point() << std::endl;
 
-	Size target_build_id = target_build_point.index();
+	core::Size target_build_id = target_build_point.index();
 
 	/// Find the range of iterators that cover the hits for the upstream matcher
 	while ( target_hits_for_focused_build_point_begin_ != target_hits_end_ ) {
@@ -532,7 +532,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation_at_target_build_po
 		++target_hits_for_focused_build_point_begin_;
 	}
 	target_hits_for_focused_build_point_end_ = target_hits_for_focused_build_point_begin_;
-	Size count_target_hits( 0 );
+	core::Size count_target_hits( 0 );
 	while ( target_hits_for_focused_build_point_end_ != target_hits_end_ ) {
 		if ( target_hits_for_focused_build_point_end_->scaffold_build_id() != target_build_id ) {
 			break;
@@ -547,7 +547,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation_at_target_build_po
 	}
 
 	std::list< Hit > unique_upstream_hits;
-	Size last_conf_id( 0 );
+	core::Size last_conf_id( 0 );
 	for ( auto iter = target_hits_for_focused_build_point_begin_;
 			iter != target_hits_for_focused_build_point_end_; ++iter ) {
 		//get_all_hits_for_clash_cheicking
@@ -658,24 +658,24 @@ void SecondaryMatcherToUpstreamResidue::reorder_restypes(
 	upstream::UpstreamBuilder const & usbuilder
 )
 {
-	utility::vector1< Size > old_2_new( target_restypes_.size(), 0 );
+	utility::vector1< core::Size > old_2_new( target_restypes_.size(), 0 );
 	//TR << "TARGET RESTYPES: "<< target_restypes_.size() << " UPSTREAMBUILDER RESTYPES: " << usbuilder.n_restypes_to_build() << std::endl;
 	runtime_assert( target_restypes_.size() == usbuilder.n_restypes_to_build() );
-	for ( Size ii = 1; ii <= usbuilder.n_restypes_to_build(); ++ii ) {
-		std::map< core::chemical::ResidueTypeCOP, Size >::const_iterator
+	for ( core::Size ii = 1; ii <= usbuilder.n_restypes_to_build(); ++ii ) {
+		std::map< core::chemical::ResidueTypeCOP, core::Size >::const_iterator
 			olditer = target_restype_index_map_.find( usbuilder.restype( ii ) );
 		//TR << "TARGET RESTYPES: " << usbuilder.restype( ii )->name() << std::endl;
 		runtime_assert( olditer != target_restype_index_map_.end() );
 		old_2_new[ olditer->second ] = ii;
 	}
-	for ( Size ii = 1; ii <= usbuilder.n_restypes_to_build(); ++ii ) {
+	for ( core::Size ii = 1; ii <= usbuilder.n_restypes_to_build(); ++ii ) {
 		runtime_assert( old_2_new[ ii ] != 0 );
 	}
 
 	utility::vector1< core::chemical::ResidueTypeCOP >  old_target_restypes( target_restypes_ );
 	utility::vector1< EvaluatorSet > old_respair_evaluators( respair_evaluators_ );
 
-	for ( Size ii = 1; ii <= usbuilder.n_restypes_to_build(); ++ii ) {
+	for ( core::Size ii = 1; ii <= usbuilder.n_restypes_to_build(); ++ii ) {
 		target_restypes_[    old_2_new[ ii ] ] = old_target_restypes[    ii ];
 		respair_evaluators_[ old_2_new[ ii ] ] = old_respair_evaluators[ ii ];
 		target_restype_index_map_[ target_restypes_[ old_2_new[ ii ] ] ] = old_2_new[ ii ];
@@ -691,7 +691,7 @@ TargetRotamerCoords::TargetRotamerCoords() :
 
 TargetRotamerCoords::~TargetRotamerCoords() = default;
 
-void TargetRotamerCoords::set_num_restypes( Size n_restypes )
+void TargetRotamerCoords::set_num_restypes( core::Size n_restypes )
 {
 	target_restypes_.resize( n_restypes );
 	atom_ids_for_coordinates_.resize( n_restypes );
@@ -700,24 +700,24 @@ void TargetRotamerCoords::set_num_restypes( Size n_restypes )
 }
 
 void TargetRotamerCoords::set_restype(
-	Size restype_index,
+	core::Size restype_index,
 	core::chemical::ResidueTypeCOP restype )
 {
 	target_restypes_[ restype_index ] = restype;
 }
 
 void TargetRotamerCoords::set_required_atoms(
-	Size restype_index,
+	core::Size restype_index,
 	utility::vector1< bool > const & atom_required
 )
 {
-	Size count_required( 0 );
+	core::Size count_required( 0 );
 	runtime_assert( atom_required.size() == target_restypes_[ restype_index ]->natoms() );
 
-	for ( Size ii = 1; ii <= atom_required.size(); ++ii ) if ( atom_required[ ii ] ) ++count_required;
+	for ( core::Size ii = 1; ii <= atom_required.size(); ++ii ) if ( atom_required[ ii ] ) ++count_required;
 	atom_ids_for_coordinates_[ restype_index ].resize( count_required );
 	count_required = 0;
-	for ( Size ii = 1; ii <= atom_required.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= atom_required.size(); ++ii ) {
 		if ( atom_required[ ii ] ) {
 			++count_required;
 			atom_ids_for_coordinates_[ restype_index ][ count_required ] = ii;
@@ -727,12 +727,12 @@ void TargetRotamerCoords::set_required_atoms(
 }
 
 void TargetRotamerCoords::set_num_target_rotamers(
-	utility::vector1< Size > const & n_rotamers_per_target_restype
+	utility::vector1< core::Size > const & n_rotamers_per_target_restype
 )
 {
 	runtime_assert( n_rotamers_per_target_restype.size() == target_restypes_.size() );
 	n_rots_total_ = 0;
-	for ( Size ii = 1; ii <= n_rotamers_per_target_restype.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= n_rotamers_per_target_restype.size(); ++ii ) {
 		n_rots_total_ += n_rotamers_per_target_restype[ ii ];
 		if ( n_rotamers_per_target_restype[ ii ] != 0 ) {
 			//std::cout << "Setting n_rotamers for " << target_restypes_[ ii ]->name() << " " << atom_ids_for_coordinates_[ ii ].size() << " " << n_rotamers_per_target_restype[ ii ] << std::endl;
@@ -747,8 +747,8 @@ void TargetRotamerCoords::set_num_target_rotamers(
 
 
 void TargetRotamerCoords::set_num_target_rotamers(
-	Size target_restype_id,
-	Size n_rotamers
+	core::Size target_restype_id,
+	core::Size n_rotamers
 )
 {
 
@@ -768,13 +768,13 @@ void TargetRotamerCoords::set_num_target_rotamers(
 
 
 void TargetRotamerCoords::set_coordinates_for_rotamer(
-	Size restype_index,
-	Size rotamer_index,
+	core::Size restype_index,
+	core::Size rotamer_index,
 	Hit const & hit,
 	core::conformation::Residue const & rescoords
 )
 {
-	for ( Size ii = 1, ii_end = n_atoms_for_restype( restype_index ); ii <= ii_end; ++ii ) {
+	for ( core::Size ii = 1, ii_end = n_atoms_for_restype( restype_index ); ii <= ii_end; ++ii ) {
 		coords_[ restype_index ]( ii, rotamer_index ) = rescoords.xyz( atom_ids_for_coordinates_[ restype_index ][ ii ] );
 		/*std::cout << "Coord: " << rescoords.name() << " " << ii << " " << rescoords.atom_name( atom_ids_for_coordinates_[ restype_index ][ ii ] );
 		std::cout << " " << coords_[ restype_index ]( ii, rotamer_index ).x();

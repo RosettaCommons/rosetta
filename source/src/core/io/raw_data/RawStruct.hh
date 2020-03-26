@@ -22,7 +22,7 @@
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 
@@ -37,7 +37,7 @@ namespace raw_data {
 
 /////////////////////////////////////////////////////////////////////////////
 // holds all the data for a single entry in a silent file
-class RawStruct : public utility::pointer::ReferenceCount {
+class RawStruct : public utility::VirtualBase {
 
 public:
 	// destructor

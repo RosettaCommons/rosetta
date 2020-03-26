@@ -216,7 +216,7 @@ core::kinematics::FoldTreeOP MinimizeBackbone::create_fold_tree_with_cutpoints(
 		const int e_stop = edge_itr.stop();
 
 		int last_rigid = e_start;
-		for ( Size i = 1; i <= loops.size(); ++i ) {
+		for ( core::Size i = 1; i <= loops.size(); ++i ) {
 			protocols::loops::Loop const & l = loops[i];
 			int first = std::max(int(e_start), int(l.start() - 1));
 			int last = std::min(int(e_stop), int(l.stop() + 1));
@@ -271,7 +271,7 @@ utility::vector1< protocols::loops::Loop> MinimizeBackbone::add_cut_points(
 
 		runtime_assert( cut_start <= cut_end );
 
-		auto cutpt = Size(numeric::random::rg().random_range(cut_start, cut_end)); // cut is made between cutpt and cutpt+1
+		auto cutpt = core::Size(numeric::random::rg().random_range(cut_start, cut_end)); // cut is made between cutpt and cutpt+1
 
 		loops.push_back(protocols::loops::Loop(start, stop, cutpt));
 		// also need to set up residue variants so chainbreak score works correctly!

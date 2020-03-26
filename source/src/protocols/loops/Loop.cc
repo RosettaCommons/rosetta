@@ -42,6 +42,8 @@
 namespace protocols {
 namespace loops {
 
+using core::Size;
+
 /// @details Auto-generated virtual destructor
 Loop::~Loop() = default;
 
@@ -55,7 +57,7 @@ Loop::switch_movemap(
 	core::id::TorsionType id,
 	bool allow_moves
 ) const {
-	for ( Size pos = start(); pos <= stop(); pos++ ) {
+	for ( core::Size pos = start(); pos <= stop(); pos++ ) {
 		movemap.set( core::kinematics::MoveMap::MoveMapTorsionID( pos, id ), allow_moves );
 	}
 }
@@ -68,18 +70,18 @@ void
 Loop::choose_cutpoint( core::pose::Pose const & pose ) {
 	using core::Size;
 
-	Size const loop_size  ( stop_ - start_ + 1 );
-	Size const nres( pose.size() );
+	core::Size const loop_size  ( stop_ - start_ + 1 );
+	core::Size const nres( pose.size() );
 
 	// Special case if we are extending the loop????
 
 	// set up a weight-map for picking cut_s, we want the cut to be internal to
 	// the loop, so that the splice-rmsds are calculated between idealized atoms
 	// so also only use chainbreak_overlap = 1
-	Size const      n_cut_s ( loop_size - 1 );
+	core::Size const      n_cut_s ( loop_size - 1 );
 	ObjexxFCL::FArray1D_float cut_weight( n_cut_s );
 	core::Real     total_cut_weight( 0 );
-	for ( Size i = 1; i <= n_cut_s; ++i ) {
+	for ( core::Size i = 1; i <= n_cut_s; ++i ) {
 		// eg: for a 7 rsd loop: 1 2 3 4 3 2 1
 		core::Real const weight ( std::max( i, n_cut_s-i + 1 ) );
 		total_cut_weight += weight;
@@ -90,11 +92,11 @@ Loop::choose_cutpoint( core::pose::Pose const & pose ) {
 
 	if ( start_ > 1 && stop_ < nres ) {
 		//char ss;
-		Size nfail( 0 );
+		core::Size nfail( 0 );
 		do {
 			nfail++;
 			core::Real const weight ( numeric::random::uniform()*total_cut_weight );
-			for ( Size i = 1; i <= n_cut_s; ++i ) {
+			for ( core::Size i = 1; i <= n_cut_s; ++i ) {
 				if ( weight <= cut_weight(i) ) {
 					cut_ = start_ + i - 1;
 					break;
@@ -132,7 +134,7 @@ Loop::choose_cutpoint( core::pose::Pose const & pose ) {
 		<< " as " << cut_ << "." << std::endl;
 }
 
-void Loop::get_residues( utility::vector1< Size>& selection ) const {
+void Loop::get_residues( utility::vector1< core::Size>& selection ) const {
 	for ( core::Size i = start_; i<= stop_; i++ ) {
 		selection.push_back( i );
 	}

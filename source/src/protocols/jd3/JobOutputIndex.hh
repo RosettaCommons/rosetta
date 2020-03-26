@@ -22,7 +22,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -34,7 +34,7 @@ namespace jd3 {
 
 /// @brief The %JobOutputIndex holds the four relevant counts for describing
 /// the "name" for an output (e.g. a Pose) that is going to be written out to disk
-struct JobOutputIndex : utility::pointer::ReferenceCount
+struct JobOutputIndex : utility::VirtualBase
 {
 	// There might be several jobs that ran with the same "job tag" (e.g. the same starting structure), but
 	// perhaps their outputs are not all going to be written out to disk. The prime_output_index

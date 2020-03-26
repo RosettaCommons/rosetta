@@ -120,7 +120,7 @@ using utility::io::izstream;
 using utility::io::ozstream;
 using utility::pointer::owning_ptr;
 using utility::pointer::access_ptr;
-using utility::pointer::ReferenceCount;
+using utility::VirtualBase;
 using utility::vector1;
 using std::endl;
 using core::import_pose::pose_from_file;

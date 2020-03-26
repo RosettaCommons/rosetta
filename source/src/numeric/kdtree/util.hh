@@ -22,7 +22,7 @@
 #include <numeric/kdtree/KDPoint.fwd.hh>
 #include <numeric/kdtree/HyperRectangle.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/VirtualBase.fwd.hh>
 
 #include <iostream>
 
@@ -82,7 +82,7 @@ HyperRectangleOP get_percentile_bounds(
 /// with the nth entry in points.
 utility::vector1< KDPointOP > make_points(
 	utility::vector1< utility::vector1< numeric::Real > > const & points,
-	utility::vector1< utility::pointer::ReferenceCountOP > const & data
+	utility::vector1< utility::VirtualBaseOP > const & data
 );
 
 /// @brief output operator for vector1< Real >

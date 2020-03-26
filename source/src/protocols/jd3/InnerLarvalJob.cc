@@ -18,7 +18,7 @@
 #include <protocols/jd3/InputSource.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.hh>
 
 // Basic headers
@@ -57,6 +57,7 @@ InnerLarvalJob::InnerLarvalJob() :
 {}
 
 InnerLarvalJob::InnerLarvalJob( InnerLarvalJob const & src ) :
+	VirtualBase( src ),
 	input_tag_                ( src.input_tag_                ),
 	job_tag_                  ( src.job_tag_                  ),
 	outputter_                ( src.outputter_                ),
@@ -273,13 +274,13 @@ InnerLarvalJob::input_source_cop() const
 
 
 InputSource const &
-InnerLarvalJob::input_source( Size index ) const
+InnerLarvalJob::input_source( core::Size index ) const
 {
 	return *input_sources_[ index ];
 }
 
 InputSourceCOP const &
-InnerLarvalJob::input_source_cop( Size index ) const
+InnerLarvalJob::input_source_cop( core::Size index ) const
 {
 	return input_sources_[ index ];
 }

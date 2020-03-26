@@ -43,7 +43,7 @@ public:
 	//destructor -- necessary? -- YES destructors are necessary.
 	~RNA_O2PrimeMover() override;
 
-	// Undefinded, commenting out to fix PyRosetta build  void apply( core::pose::Pose & pose, Size const res_to_delete, protocols::stepwise::monte_carlo::MovingResidueCase const moving_residue_case  );
+	// Undefinded, commenting out to fix PyRosetta build  void apply( core::pose::Pose & pose, core::Size const res_to_delete, protocols::stepwise::monte_carlo::MovingResidueCase const moving_residue_case  );
 
 	/// @brief Apply the minimizer to one pose
 	using protocols::moves::Mover::apply;
@@ -56,13 +56,13 @@ public:
 private:
 
 	void
-	sample_near_o2prime_torsion( core::pose::Pose & pose, Size const moving_res, core::Real const sample_range);
+	sample_near_o2prime_torsion( core::pose::Pose & pose, core::Size const moving_res, core::Real const sample_range);
 
-	Size
+	core::Size
 	get_random_o2prime_residue( core::pose::Pose & pose );
 
-	Size
-	get_random_o2prime_residue_near_moving_residue( core::pose::Pose & pose, utility::vector1< Size > const & moving_res_list );
+	core::Size
+	get_random_o2prime_residue_near_moving_residue( core::pose::Pose & pose, utility::vector1< core::Size > const & moving_res_list );
 
 private:
 

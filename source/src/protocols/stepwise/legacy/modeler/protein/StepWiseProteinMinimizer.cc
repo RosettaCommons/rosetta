@@ -64,7 +64,7 @@ namespace protein {
 
 //////////////////////////////////////////////////////////////////////////
 StepWiseProteinMinimizer::StepWiseProteinMinimizer( utility::vector1< pose::PoseOP > const & pose_list,
-	utility::vector1< Size > const & moving_residues ):
+	utility::vector1< core::Size > const & moving_residues ):
 	Mover(),
 	moving_residues_( moving_residues ),
 	pose_list_( pose_list )
@@ -126,8 +126,8 @@ StepWiseProteinMinimizer::apply( core::pose::Pose & pose )
 	//  output_movemap( mm_start, pose, TR );
 
 	// testing unification...
-	utility::vector1< Size > working_minimize_res;
-	for ( Size n = 1; n <= pose.size(); n++ ) { if ( !fixed_res_.has_value( n ) ) working_minimize_res.push_back( n );}
+	utility::vector1< core::Size > working_minimize_res;
+	for ( core::Size n = 1; n <= pose.size(); n++ ) { if ( !fixed_res_.has_value( n ) ) working_minimize_res.push_back( n );}
 	figure_out_stepwise_movemap( mm_start, pose, working_minimize_res, move_takeoff_torsions_ );
 	//  output_movemap( mm_start, pose, TR );
 
@@ -135,7 +135,7 @@ StepWiseProteinMinimizer::apply( core::pose::Pose & pose )
 	Real const original_coordinate_cst_weight = fa_scorefxn_->get_weight( coordinate_constraint );
 
 	utility::vector1< PoseOP > output_pose_list;
-	for ( Size n = 1; n <= pose_list_.size(); ++n ) {
+	for ( core::Size n = 1; n <= pose_list_.size(); ++n ) {
 		auto const & poseop = pose_list_[n];
 
 		if ( num_pose_minimize_ > 0 && n > num_pose_minimize_ ) break;
@@ -207,20 +207,20 @@ StepWiseProteinMinimizer::let_neighboring_chis_minimize(
 	(*fa_scorefxn_)( pose );
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-	for ( Size const i : moving_residues_ ) {
+	for ( core::Size const i : moving_residues_ ) {
 		if ( pose.residue_type(i).is_protein() ) { // these should be activated, but make sure . VIRTUAL_SIDE_CHAIN issue!
 			mm.set_chi( i, true );
 		}
 	}
 
-	for ( Size const i : moving_residues_ ) {
+	for ( core::Size const i : moving_residues_ ) {
 
 		for ( utility::graph::Graph::EdgeListConstIter
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
 				iter != energy_graph.get_node( i )->const_edge_list_end();
 				++iter ) {
 
-			Size j( (*iter)->get_other_ind( i ) );
+			core::Size j( (*iter)->get_other_ind( i ) );
 			if ( pose.residue_type(j).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
 
 			if ( pose.residue_type(j).is_protein() ) {
@@ -238,7 +238,7 @@ StepWiseProteinMinimizer::pose_has_chainbreak( pose::Pose const & pose ){
 	// this is pretty conservative -- actually  there might be
 	// cases where the pose has a chainbreak but the minimized dofs would
 	// not affect the relative positions of the chainbreak residues.
-	for ( Size i = 1; i <= pose.size(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		if ( pose.residue_type(i).has_variant_type( "CUTPOINT_UPPER" ) ) return true;
 		if ( pose.residue_type(i).has_variant_type( "CUTPOINT_LOWER" ) ) return true;
 	}

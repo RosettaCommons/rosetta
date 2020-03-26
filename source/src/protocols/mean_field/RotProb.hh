@@ -26,7 +26,7 @@
 #include <core/conformation/Residue.hh>
 
 // Utility headers
-//#include <utility/pointer/ReferenceCount.fwd.hh>
+//#include <utility/VirtualBase.fwd.hh>
 #include <core/types.hh>
 
 // Numeric headers

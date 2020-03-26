@@ -70,7 +70,7 @@ ZincSecondShell::ZincSecondShell( core::pose::Pose const & pose, utility::vector
 
 ZincSecondShell::~ZincSecondShell() = default;
 
-// basic::MetricValue< std::set<Size> >
+// basic::MetricValue< std::set<core::Size> >
 // ZincSecondShell::get_ligand_neighbors() {
 //  return ligand_neighbors_;
 // }
@@ -95,7 +95,7 @@ ZincSecondShell::get_atom_sasa() {
 	return atom_sasa_;
 }
 
-basic::MetricValue< id::AtomID_Map< Size > >
+basic::MetricValue< id::AtomID_Map< core::Size > >
 ZincSecondShell::get_atom_hbonds() {
 	return atom_hbonds_;
 }
@@ -124,8 +124,8 @@ ZincSecondShell::register_calculators() {
 void
 ZincSecondShell::fill_first_shell_atom_ids() {
 
-	for ( Size i(2) /*zinc is 1*/; i <= msr_.size(); ++i ) {
-		Size resnum = msr_[i]->get_seqpos();
+	for ( core::Size i(2) /*zinc is 1*/; i <= msr_.size(); ++i ) {
+		core::Size resnum = msr_[i]->get_seqpos();
 		std::string ligand_atom_name = msr_[i]->get_ligand_atom_name();
 		first_shell_atom_names_.push_back( ligand_atom_name );
 
@@ -156,7 +156,7 @@ ZincSecondShell::fill_first_shell_atom_ids() {
 
 	TR << "first shell size:  " << first_shell_atom_ids_.size() << std::endl;
 
-	for ( Size i = 1; i <= first_shell_atom_ids_.size(); ++i ) {
+	for ( core::Size i = 1; i <= first_shell_atom_ids_.size(); ++i ) {
 		TR << "  FIRST SHELL : " << first_shell_atom_names_[i] << " " << first_shell_atom_ids_[i].atomno() << " " << first_shell_atom_ids_[i].rsd() << std::endl;
 	}
 
@@ -167,8 +167,8 @@ ZincSecondShell::fill_first_shell_atom_ids() {
 void
 ZincSecondShell::fill_second_shell_atom_ids() {
 
-	for ( Size i(2) /*zinc is 1*/; i <= msr_.size(); ++i ) {
-		Size resnum = msr_[i]->get_seqpos();
+	for ( core::Size i(2) /*zinc is 1*/; i <= msr_.size(); ++i ) {
+		core::Size resnum = msr_[i]->get_seqpos();
 		std::string ligand_atom_name = msr_[i]->get_ligand_atom_name();
 		second_shell_atom_hbond_energy_.push_back(0.0);//initialize hbond energy
 
@@ -203,7 +203,7 @@ ZincSecondShell::fill_second_shell_atom_ids() {
 
 	TR << "second shell size: " << second_shell_atom_ids_.size() << std::endl;
 
-	for ( Size i = 1; i <= second_shell_atom_ids_.size(); ++i ) {
+	for ( core::Size i = 1; i <= second_shell_atom_ids_.size(); ++i ) {
 		TR << "  SECOND SHELL: " << second_shell_atom_names_[i] << " " << second_shell_atom_ids_[i].atomno() << " " << second_shell_atom_ids_[i].rsd() << std::endl;
 	}
 
@@ -236,23 +236,23 @@ ZincSecondShell::report_buried_unsat( utility::vector1< id::AtomID > atom_ids) {
 	std::stringstream ss;
 	ss << pdbname_ << " second_shell_summary: ";
 
-	for ( Size j = 1; j <= atom_ids.size(); ++j ) {
+	for ( core::Size j = 1; j <= atom_ids.size(); ++j ) {
 		core::id::AtomID atid( atom_ids[j] );
-		Size this_atomno( atid.atomno() );
-		Size this_resnum( atid.rsd() );
+		core::Size this_atomno( atid.atomno() );
+		core::Size this_resnum( atid.rsd() );
 
 		//TR << "  j: " << j << " atmono: " << this_atomno << " resnum: " << this_resnum << std::endl;
 
 		if ( pose_.residue(this_resnum).atom_type( this_atomno ).is_acceptor() || pose_.residue(this_resnum).atom_type( this_atomno ).is_donor() ) {
 			//we have to add up the sasas for the H attached to this atom
 			Real cursasa =  atom_sasa_.value()[ atid ];
-			for ( Size hcount = pose_.residue(this_resnum).type().attached_H_begin( this_atomno ); hcount<= pose_.residue(this_resnum).type().attached_H_end( this_atomno ); hcount++ ) {
+			for ( core::Size hcount = pose_.residue(this_resnum).type().attached_H_begin( this_atomno ); hcount<= pose_.residue(this_resnum).type().attached_H_end( this_atomno ); hcount++ ) {
 				cursasa = cursasa + atom_sasa_.value()[ core::id::AtomID ( hcount, this_resnum ) ];
 			}
 
 			if ( cursasa == 0 /*< burial_sasa_cutoff_*/ ) {
-				Size satisfac_cut = satisfaction_cutoff( pose_.residue(this_resnum).type().atom_type( this_atomno ).name() );
-				Size bonded_heavyatoms = pose_.residue(this_resnum).n_bonded_neighbor_all_res( this_atomno ) - pose_.residue(this_resnum).type().number_bonded_hydrogens( this_atomno );
+				core::Size satisfac_cut = satisfaction_cutoff( pose_.residue(this_resnum).type().atom_type( this_atomno ).name() );
+				core::Size bonded_heavyatoms = pose_.residue(this_resnum).n_bonded_neighbor_all_res( this_atomno ) - pose_.residue(this_resnum).type().number_bonded_hydrogens( this_atomno );
 				if ( ( bonded_heavyatoms + atom_hbonds_.value()[ atid ] ) < satisfac_cut ) {
 					TR << pose_.pdb_info()->name() << " buried unsat: " << pose_.residue(this_resnum).type().atom_name( this_atomno ) << " of res " << this_resnum << " has " << atom_sasa_.value()[atid] << " sasa and " << cursasa << " combined sasa, and " << bonded_heavyatoms << " bonded heavyatoms, and " <<  atom_hbonds_.value()[ atid ] << " hbonds, counts as buried unsatisfied." << std::endl;
 					ss << atid << " buried_unsat. ";

@@ -25,7 +25,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Platform headers
 #include <platform/types.hh>
@@ -64,7 +64,7 @@ public:
 
 /// @brief A container for a thread in a RosettaThreadPool.  The thread idles continuously until loaded with a function to execute.
 /// It then executes the function and returns to the idle state.
-class RosettaThread : public utility::pointer::ReferenceCount {
+class RosettaThread : public utility::VirtualBase {
 
 public:
 

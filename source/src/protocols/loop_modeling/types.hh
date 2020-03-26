@@ -37,7 +37,7 @@ using protocols::loops::LoopsOP;
 using protocols::loops::LoopsCOP;
 using utility::vector1;
 
-typedef vector1<Size> IndexList;
+typedef vector1<core::Size> IndexList;
 typedef vector1<LoopMoverOP> LoopMovers;
 
 }

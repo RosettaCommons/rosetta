@@ -69,7 +69,7 @@ NetChargeEnergySetup class:
 /// @brief Default constructor for NetChargeEnergySetup.
 ///
 NetChargeEnergySetup::NetChargeEnergySetup() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	desired_charge_(0),
 	charge_penalties_range_( std::pair< signed long int, signed long int>(0, 0) ),
 	penalties_(),

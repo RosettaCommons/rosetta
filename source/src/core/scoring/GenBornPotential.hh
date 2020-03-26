@@ -31,7 +31,7 @@
 //#include <core//.fwd.hh>
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -63,7 +63,7 @@ namespace scoring {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class GenBornResidueInfo : public utility::pointer::ReferenceCount {
+class GenBornResidueInfo : public utility::VirtualBase {
 
 public:
 	typedef conformation::Residue Residue;
@@ -338,7 +338,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class GenBornPotential : public utility::pointer::ReferenceCount {
+class GenBornPotential : public utility::VirtualBase {
 public:
 	typedef conformation::Residue Residue;
 

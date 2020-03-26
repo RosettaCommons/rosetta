@@ -90,9 +90,9 @@ CombinePoseMover::apply( pose::Pose &pose2 )
 
 	sampled_structures_.resize( 0 );
 
-	Size const nres( pose_ref().size() );
-	Size models_failed( 0 );
-	Size models_built( 0 );
+	core::Size const nres( pose_ref().size() );
+	core::Size models_failed( 0 );
+	core::Size models_built( 0 );
 
 	// Clear combined residue indices
 	clear_combine_history();
@@ -113,9 +113,9 @@ CombinePoseMover::apply( pose::Pose &pose2 )
 	pose::Pose pose0( pose_ref() );
 	pose::Pose pose_min( pose_ref() );
 
-	Size i_struct( 0 );
-	Size ntry( 0 );
-	Size n_seg_search( 0 );
+	core::Size i_struct( 0 );
+	core::Size ntry( 0 );
+	core::Size n_seg_search( 0 );
 
 	while ( true ) {
 
@@ -127,14 +127,14 @@ CombinePoseMover::apply( pose::Pose &pose2 )
 			= numeric::random::rg().uniform()*(maxfrac_crossover_ - minfrac_crossover_) + minfrac_crossover_;
 
 		// Get Starting/Ending seqpos
-		auto n_crossover = (Size)(nres*f_crossover);
+		auto n_crossover = (core::Size)(nres*f_crossover);
 
-		Size res1( numeric::random::rg().uniform()*( nres - n_crossover ) );
-		Size res2( res1 + n_crossover - 1 );
+		core::Size res1( numeric::random::rg().uniform()*( nres - n_crossover ) );
+		core::Size res2( res1 + n_crossover - 1 );
 
 		// make sure
-		Size const start( res1 >= 1 ? res1 : 1 );
-		Size const end( res2 <= nres ? res2 : nres );
+		core::Size const start( res1 >= 1 ? res1 : 1 );
+		core::Size const end( res2 <= nres ? res2 : nres );
 
 		// scan through to get deviation part, filter out if the region is too similar to each other
 		core::Real seg_meand( 0.0 );
@@ -160,14 +160,14 @@ CombinePoseMover::apply( pose::Pose &pose2 )
 		// Replace residues
 		pose::Pose newpose( pose_ref() );
 
-		std::vector< Size > combineres;
+		std::vector< core::Size > combineres;
 		combineres.push_back( start ); combineres.push_back( end );
 		append_combine_history( combineres );
 
-		for ( Size ires = start; ires <= end; ++ ires ) {
+		for ( core::Size ires = start; ires <= end; ++ ires ) {
 			if ( cartesian_crossover_ ) {
 				// Copy cartesian coordinate
-				for ( Size j = 1; j <= newpose.residue(ires).natoms(); ++j ) {
+				for ( core::Size j = 1; j <= newpose.residue(ires).natoms(); ++j ) {
 					Vector xyz( pose2.residue( ires ).xyz( j ) );
 					core::id::AtomID id( j, ires );
 					newpose.set_xyz( id, xyz );
@@ -178,7 +178,7 @@ CombinePoseMover::apply( pose::Pose &pose2 )
 				newpose.set_phi  ( ires, pose2.phi( ires ) );
 				newpose.set_psi  ( ires, pose2.psi( ires ) );
 				newpose.set_omega( ires, pose2.omega( ires ) );
-				for ( Size ichi = 1; ichi <= newpose.residue_type( ires ).nchi(); ++ichi ) {
+				for ( core::Size ichi = 1; ichi <= newpose.residue_type( ires ).nchi(); ++ichi ) {
 					newpose.set_chi( ichi, ires, pose2.chi( ichi, ires ) );
 				}
 			}

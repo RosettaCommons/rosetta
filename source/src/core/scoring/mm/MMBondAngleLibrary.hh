@@ -25,7 +25,7 @@
 // Utility header
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -50,11 +50,11 @@ typedef std::multimap< mm_bondangle_atom_tri, mm_bondangle_param_set > mm_bondan
 typedef std::multimap< mm_bondangle_atom_tri, mm_bondangle_param_set >::const_iterator mm_bondangle_library_citer;
 typedef std::pair< mm_bondangle_library_citer, mm_bondangle_library_citer > mm_bondangle_library_citer_pair;
 
-class MMBondAngleLibrary  : public utility::pointer::ReferenceCount
+class MMBondAngleLibrary  : public utility::VirtualBase
 {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~MMBondAngleLibrary() override;
 	/// @brief ctor
 	MMBondAngleLibrary( std::string filename, core::chemical::MMAtomTypeSetCAP mm_atom_set );

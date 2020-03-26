@@ -1,9 +1,9 @@
 /*
- * CycPepProtocol.h
- *
- *  Created on: Nov 18, 2009
- *      Author: Lior Zimmerman
- */
+* CycPepProtocol.h
+*
+*  Created on: Nov 18, 2009
+*      Author: Lior Zimmerman
+*/
 
 #ifndef CYCPEPPROTOCOL_H_
 #define CYCPEPPROTOCOL_H_
@@ -88,11 +88,11 @@ private:
 	core::scoring::constraints::ConstraintSetOP prolineConstraint(pose::Pose& workpose);
 	core::scoring::constraints::ConstraintSetOP IleConstraint(pose::Pose& workpose);
 	void printEnergies(pose::Pose& workpose);
-	void rotateUntilCys(pose::Pose& workpose, Size untilCys);
-	void updateSSAtoms(pose::Pose& workpose, Size upNum, utility::vector1_int& vec, Size pepsize);
+	void rotateUntilCys(pose::Pose& workpose, core::Size untilCys);
+	void updateSSAtoms(pose::Pose& workpose, core::Size upNum, utility::vector1_int& vec, core::Size pepsize);
 	Real scoreNoConstraint(pose::Pose& workpose);
 	core::scoring::constraints::ConstraintSetOP createDihedralConstraint(pose::Pose& workpose);
-	void modelSSLoop(Size startCys, Size endCys, pose::Pose& workpose);
+	void modelSSLoop(core::Size startCys, core::Size endCys, pose::Pose& workpose);
 	protocols::comparative_modeling::LoopRelaxMover _loop_relax_mover;
 	core::scoring::ScoreFunctionOP _scorefxn;
 	pack::task::PackerTaskOP _packTask;

@@ -105,7 +105,7 @@ SequenceMapping::~SequenceMapping() = default;
 
 
 SequenceMapping::SequenceMapping( SequenceMapping const & src )
-: ReferenceCount(src)
+: VirtualBase(src)
 {
 	*this = src;
 }

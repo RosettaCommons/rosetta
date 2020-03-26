@@ -113,7 +113,7 @@ public: // Methods
 	refresh(
 		Pose const & pose,
 		Vector const & center,
-		Size const & ligand_chain_id_to_exclude
+		core::Size const & ligand_chain_id_to_exclude
 	) override;
 
 	/// @brief populate the grid with PCS values based on a passed pose
@@ -121,7 +121,7 @@ public: // Methods
 	refresh(
 		Pose const & pose,
 		Vector const & center,
-		utility::vector1<Size> ligand_chain_ids_to_exclude
+		utility::vector1<core::Size> ligand_chain_ids_to_exclude
 	) override;
 
 	/// @brief return the current score of an UltraLightResidue using the current PCSSingleGrid
@@ -136,7 +136,7 @@ public: // Methods
 	Real
 	atom_score(
 		UltraLightResidue const & residue,
-		Size atomno,
+		core::Size atomno,
 		qsarMapCOP qsar_map
 	) const override;
 
@@ -152,7 +152,7 @@ public: // Methods
 	Real
 	atom_score(
 		Residue const & residue,
-		Size atomno,
+		core::Size atomno,
 		qsarMapCOP qsar_map
 	) const override;
 

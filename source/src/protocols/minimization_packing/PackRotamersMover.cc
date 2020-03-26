@@ -130,7 +130,7 @@ PackRotamersMover::PackRotamersMover( std::string const & type_name ) :
 PackRotamersMover::PackRotamersMover(
 	ScoreFunctionCOP scorefxn,
 	PackerTaskCOP task,
-	Size nloop
+	core::Size nloop
 ) :
 	protocols::moves::Mover("PackRotamersMover"),
 	scorefxn_(std::move( scorefxn )),
@@ -144,7 +144,7 @@ PackRotamersMover::PackRotamersMover(
 PackRotamersMover::~PackRotamersMover()= default;
 
 PackRotamersMover::PackRotamersMover( PackRotamersMover const & other ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	protocols::moves::Mover( other )
 {
 	scorefxn_ = other.score_function();
@@ -165,7 +165,7 @@ PackRotamersMover::apply( Pose & pose )
 	core::PackerEnergy best_energy(0.);
 	Pose best_pose;
 	best_pose = pose;
-	for ( Size run(1); run <= nloop_; ++run ) {
+	for ( core::Size run(1); run <= nloop_; ++run ) {
 		// run SimAnnealer
 		core::PackerEnergy packer_energy( this->run( pose ) );
 		// Real const score( scorefxn_( pose ) ); another option for deciding which is the 'best' result
@@ -212,7 +212,7 @@ bool
 PackRotamersMover::task_is_valid( Pose const & pose ) const
 {
 	if ( task_->total_residue() != pose.size() ) return false;
-	for ( Size i(1); i <= pose.size(); ++i ) {
+	for ( core::Size i(1); i <= pose.size(); ++i ) {
 		chemical::ResidueTypeCOP r = pose.residue_type_ptr(i);
 		if ( ! task_->residue_task(i).is_original_type( r ) ) return false;
 	}
@@ -230,7 +230,7 @@ PackRotamersMover::parse_my_tag(
 )
 {
 	if ( tag->hasOption("nloop") ) {
-		nloop_ = tag->getOption<Size>("nloop",1);
+		nloop_ = tag->getOption<core::Size>("nloop",1);
 		runtime_assert( nloop_ > 0 );
 	}
 	parse_score_function( tag, datamap, filters, movers, pose );
@@ -348,7 +348,7 @@ void PackRotamersMover::note_packertask_settings( Pose const & pose )
 	packable << "REMARK PackingRes";
 	designable << "REMARK DesignRes";
 
-	for ( Size i(1), end( task_->total_residue() ); i <= end; ++i ) {
+	for ( core::Size i(1), end( task_->total_residue() ); i <= end; ++i ) {
 		ResidueLevelTask const & rtask( task_->residue_task(i) );
 		if ( rtask.being_designed() ) {
 			designable << ", ";
@@ -386,7 +386,7 @@ void PackRotamersMover::task_factory( TaskFactoryCOP tf )
 	task_factory_ = tf;
 }
 
-void PackRotamersMover::nloop( Size nloop_in ) { nloop_ = nloop_in; }
+void PackRotamersMover::nloop( core::Size nloop_in ) { nloop_ = nloop_in; }
 
 // accessors
 ScoreFunctionCOP PackRotamersMover::score_function() const { return scorefxn_; }

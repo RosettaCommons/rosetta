@@ -24,7 +24,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 #if defined(WIN32) || defined(PYROSETTA)
@@ -35,7 +35,7 @@ namespace protocols {
 namespace stepwise {
 namespace options {
 
-class StepWiseBasicOptions: public virtual utility::pointer::ReferenceCount {
+class StepWiseBasicOptions: public virtual utility::VirtualBase {
 
 public:
 
@@ -135,8 +135,8 @@ public:
 	modeler::MinimizerMode const & minimizer_mode() const { return minimizer_mode_; }
 	void set_minimizer_mode( modeler::MinimizerMode const & setting ){ minimizer_mode_ = setting; }
 
-	Size n_cycles() const { return n_cycles_; }
-	void set_n_cycles( Size const setting ) { n_cycles_ = setting; }
+	core::Size n_cycles() const { return n_cycles_; }
+	void set_n_cycles( core::Size const setting ) { n_cycles_ = setting; }
 
 	core::Real thermal_sampler_temperature() const { return thermal_sampler_temperature_; }
 
@@ -193,7 +193,7 @@ private:
 
 	// thermal_sampler
 	modeler::MinimizerMode minimizer_mode_;
-	Size n_cycles_;
+	core::Size n_cycles_;
 	core::Real thermal_sampler_temperature_;
 	bool thermal_sampler_output_min_pose_;
 	bool sample_pH_;

@@ -128,7 +128,7 @@ std::map<numeric::Size, FragmentStoreOP> FragmentStoreManager::load_grouped_frag
 	using namespace numeric;
 	std::string if_cached_name;
 	if_cached_name = group_field + lookup_name;
-	for ( Size ii=1; ii<=fields_to_load.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=fields_to_load.size(); ++ii ) {
 		if_cached_name += fields_to_load[ii];
 	}
 	GroupedFragmentMap::const_iterator iter(grouped_fragment_map_.find(if_cached_name));
@@ -148,41 +148,41 @@ std::map<numeric::Size, FragmentStoreOP> FragmentStoreManager::load_grouped_frag
 		// std::cout <<"Pause hereC-after delete to watch memory memory" << std::endl;
 		// usleep(10000000);
 		// std::cout << "end pauseC-after delete" << std::endl;
-		std::map <Size,Size> type_ct;
-		std::map <Size,Size>::iterator type_ct_iter;
-		std::vector<Size> fragsGroupIds = fullStore->int64_groups[group_field];
-		Size fragment_length = fullStore->fragment_specification.fragment_length;
+		std::map <core::Size,Size> type_ct;
+		std::map <core::Size,Size>::iterator type_ct_iter;
+		std::vector<core::Size> fragsGroupIds = fullStore->int64_groups[group_field];
+		core::Size fragment_length = fullStore->fragment_specification.fragment_length;
 		for ( core::Size & fragsGroupId : fragsGroupIds ) {
 			//second time id seen increment counter 1st time increment to 1
 			type_ct_iter = type_ct.find(fragsGroupId);
 			if ( type_ct_iter != type_ct.end() ) {
 				type_ct_iter->second++;
 			} else {
-				type_ct.insert(std::pair<Size,Size>(fragsGroupId,1));
+				type_ct.insert(std::pair<core::Size,Size>(fragsGroupId,1));
 			}
 		}
 		//create correctly sized fragmentStores
-		std::map<Size,FragmentStoreOP> typed_frags;
+		std::map<core::Size,FragmentStoreOP> typed_frags;
 		FragmentSpecification fragment_spec = fullStore->fragment_specification;
 		for ( type_ct_iter=type_ct.begin(); type_ct_iter != type_ct.end(); ++type_ct_iter ) {
 			FragmentStoreOP fragment_store = utility::pointer::make_shared< FragmentStore >(fragment_spec, type_ct_iter->second );
 			fragment_store->hash_id = type_ct_iter->first;
-			typed_frags.insert(std::pair<Size,FragmentStoreOP> (type_ct_iter->first, fragment_store));
+			typed_frags.insert(std::pair<core::Size,FragmentStoreOP> (type_ct_iter->first, fragment_store));
 		}
 		//populate fragment stores
-		std::map <Size,Size> type_currentCt;
-		for ( Size ii =0; ii<fragsGroupIds.size(); ++ii ) {
-			Size newFragStartPosition = 0; //position in new fragment array the fragment should start
-			Size originalFragStartPosition = ii*fragment_length;
+		std::map <core::Size,Size> type_currentCt;
+		for ( core::Size ii =0; ii<fragsGroupIds.size(); ++ii ) {
+			core::Size newFragStartPosition = 0; //position in new fragment array the fragment should start
+			core::Size originalFragStartPosition = ii*fragment_length;
 			type_ct_iter = type_currentCt.find(fragsGroupIds[ii]);
 			if ( type_ct_iter != type_currentCt.end() ) {
 				newFragStartPosition = type_ct_iter->second*fragment_length;
 				type_ct_iter->second++;
 			} else {
 				newFragStartPosition = 0*fragment_length;  //always will be 0 just set so I remember what is actually going on.
-				type_currentCt.insert(std::pair<Size,Size>(fragsGroupIds[ii],1));
+				type_currentCt.insert(std::pair<core::Size,Size>(fragsGroupIds[ii],1));
 			}
-			for ( Size jj=0; jj<fragment_length; ++jj ) {
+			for ( core::Size jj=0; jj<fragment_length; ++jj ) {
 				typed_frags[fragsGroupIds[ii]]->fragment_coordinates[newFragStartPosition+jj] =fullStore->fragment_coordinates[originalFragStartPosition+jj];
 			}
 		}//ends the copying of the fragmentCoordinates
@@ -191,7 +191,7 @@ std::map<numeric::Size, FragmentStoreOP> FragmentStoreManager::load_grouped_frag
 		//-------------Copy the real_groups
 		for ( auto itr = fullStore->real_groups.begin(); itr !=  fullStore->real_groups.end(); ++itr ) {
 			std::string tmp_group_name = itr->first;
-			for ( Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
+			for ( core::Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
 				if ( typed_frags[fragsGroupIds[ii]]->real_groups[tmp_group_name].size() == 0 ) {
 					std::vector<Real> real_vector;
 					typed_frags[fragsGroupIds[ii]]->real_groups.insert(std::pair<std::string,std::vector<Real> > (tmp_group_name,real_vector));
@@ -204,13 +204,13 @@ std::map<numeric::Size, FragmentStoreOP> FragmentStoreManager::load_grouped_frag
 		//-------------Copy the realVector_groups
 		for ( auto itr = fullStore->realVector_groups.begin(); itr !=  fullStore->realVector_groups.end(); ++itr ) {
 			std::string tmp_group_name = itr->first;
-			for ( Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
+			for ( core::Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
 				if ( typed_frags[fragsGroupIds[ii]]->realVector_groups[tmp_group_name].size() == 0 ) {
 					std::vector<std::vector<Real> >real_vector_vector;
 					typed_frags[fragsGroupIds[ii]]->realVector_groups.insert(std::pair<std::string,std::vector< std::vector< Real> > > (tmp_group_name,real_vector_vector));
 				}
 				std::vector<Real> real_vector;
-				for ( Size jj=0; jj<fullStore->realVector_groups[tmp_group_name][jj].size(); ++jj ) {
+				for ( core::Size jj=0; jj<fullStore->realVector_groups[tmp_group_name][jj].size(); ++jj ) {
 					real_vector.push_back(fullStore->realVector_groups[tmp_group_name][ii][jj]);
 				}
 				typed_frags[fragsGroupIds[ii]]->realVector_groups[tmp_group_name].push_back(real_vector);
@@ -221,7 +221,7 @@ std::map<numeric::Size, FragmentStoreOP> FragmentStoreManager::load_grouped_frag
 		//-------------Copy the string_groups
 		for ( auto itr = fullStore->string_groups.begin(); itr !=  fullStore->string_groups.end(); ++itr ) {
 			std::string tmp_group_name = itr->first;
-			for ( Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
+			for ( core::Size ii=0; ii<fragsGroupIds.size(); ++ii ) {
 				if ( typed_frags[fragsGroupIds[ii]]->string_groups[tmp_group_name].size() == 0 ) {
 					std::vector<std::string> string_vector;
 					typed_frags[fragsGroupIds[ii]]->string_groups.insert(std::pair<std::string,std::vector< std::string > > (tmp_group_name,string_vector));
@@ -235,7 +235,7 @@ std::map<numeric::Size, FragmentStoreOP> FragmentStoreManager::load_grouped_frag
 		for ( auto itr = fullStore->int64_groups.begin(); itr !=  fullStore->int64_groups.end(); ++itr ) {
 			std::string tmp_group_name = itr->first;
 			if ( tmp_group_name != group_field ) {
-				for ( Size ii =0; ii<fragsGroupIds.size(); ++ii ) {
+				for ( core::Size ii =0; ii<fragsGroupIds.size(); ++ii ) {
 					if ( typed_frags[fragsGroupIds[ii]]->int64_groups[tmp_group_name].size() == 0 ) {
 						std::vector<numeric::Size> int64_vector;
 						typed_frags[fragsGroupIds[ii]]->int64_groups.insert(std::pair<std::string,std::vector< numeric::Size > > (tmp_group_name,int64_vector));

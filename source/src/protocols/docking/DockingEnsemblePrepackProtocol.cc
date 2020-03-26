@@ -159,7 +159,7 @@ void DockingEnsemblePrepackProtocol::finalize_setup( pose::Pose & pose ) {
 	if ( ensemble1_filename_ == "" || ensemble2_filename_ == "" ) utility_exit_with_message( "Must define ensemble file for both partners");
 	runtime_assert( movable_jumps().size() == 1 ); // ensemble mode is only allowed for traditional docking
 	core::Size const rb_jump = movable_jumps()[1];
-	Size start_res(1), end_res(1), cutpoint(pose.fold_tree().cutpoint_by_jump( rb_jump ));
+	core::Size start_res(1), end_res(1), cutpoint(pose.fold_tree().cutpoint_by_jump( rb_jump ));
 
 	TR << "Ensemble 1: " << ensemble1_filename_ << std::endl;
 	start_res = 1;
@@ -404,7 +404,7 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 	starting_pose = pose;
 
 	switch_mover = utility::pointer::make_shared< protocols::docking::ConformerSwitchMover >( ensemble1_ );
-	for ( Size i=1; i<=ensemble1_->size(); ++i ) {
+	for ( core::Size i=1; i<=ensemble1_->size(); ++i ) {
 
 		to_centroid.apply( pose );
 		switch_mover->switch_conformer( pose, i );
@@ -424,7 +424,7 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 	// reset to starting pose
 	pose = starting_pose;
 	switch_mover = utility::pointer::make_shared< protocols::docking::ConformerSwitchMover >( ensemble2_ );
-	for ( Size i=1; i<=ensemble2_->size(); ++i ) {
+	for ( core::Size i=1; i<=ensemble2_->size(); ++i ) {
 
 		to_centroid.apply( pose );
 		switch_mover->switch_conformer( pose, i );

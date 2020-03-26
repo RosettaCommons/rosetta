@@ -30,7 +30,7 @@
 
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //Utility Headers
 
@@ -65,10 +65,10 @@ namespace match_enzdes_util {
 
 /// @brief helper class for EnzCstTemplateRes, holds atom ids corresponding
 /// @brief to the residue types in a certain pose
-class EnzCstTemplateResAtoms : public utility::pointer::ReferenceCount {
+class EnzCstTemplateResAtoms : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~EnzCstTemplateResAtoms() override;
 
 	friend class EnzCstTemplateRes; //::check_data_consistency(pose::Pose const & pose);
@@ -99,11 +99,11 @@ public:
 
 /// @brief helper class for class EnzConstraintParameters, gathers information
 /// @brief from cst input and pdb input
-class EnzCstTemplateRes : public utility::pointer::ReferenceCount {
+class EnzCstTemplateRes : public utility::VirtualBase {
 
 	//friend class EnzConstraintParameters;
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~EnzCstTemplateRes() override;
 
 	typedef std::map< core::chemical::ResidueTypeCOP, utility::vector1< utility::vector1< core::Size > > > RestypeToTemplateAtomsMap;

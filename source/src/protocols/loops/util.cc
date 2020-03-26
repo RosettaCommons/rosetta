@@ -103,8 +103,8 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 	}
 
 	for ( auto const & it : rigid ) {
-		for ( Size pos = it.start(); pos <= it.stop(); ++pos ) {
-			Size const seq_dist( std::min( (int) pos - it.start(), (int) it.stop() - pos ) + 1);
+		for ( core::Size pos = it.start(); pos <= it.stop(); ++pos ) {
+			core::Size const seq_dist( std::min( (int) pos - it.start(), (int) it.stop() - pos ) + 1);
 			Real coord_sdev;
 			if ( bReadWeights ) {
 				coord_sdev = weights[ pos ];
@@ -115,7 +115,7 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 			core::scoring::func::FuncOP fx( new scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
 			conformation::Residue const & rsd( pose.residue( pos ) );
 			if ( bCstAllAtom ) {
-				for ( Size ii = 1; ii<= rsd.natoms(); ++ii ) {
+				for ( core::Size ii = 1; ii<= rsd.natoms(); ++ii ) {
 					pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< scoring::constraints::CoordinateConstraint >(
 						id::AtomID( ii, pos),
 						id::AtomID( 1, pos ) /*this is completely ignored! */,
@@ -141,7 +141,7 @@ void select_loop_frags(
 	loops::Loops const& loops,
 	core::fragment::FragSet& source,
 	core::fragment::FragSet& loop_frags,
-	Size shorten
+	core::Size shorten
 ) {
 	using namespace core::fragment;
 	//assuming backbone degrees of freedom are wanted by the loops.
@@ -156,21 +156,21 @@ void select_loop_frags(
 	source.generate_insert_map( movemap, insert_map, insert_size);
 
 	{ //debug
-		Size const total_insert = insert_map.size();
+		core::Size const total_insert = insert_map.size();
 		TR.Trace << "size of insertmap: " << total_insert << " -- ";
-		for ( Size i = 1; i<=total_insert; i++ ) TR.Trace << " " << insert_map[ i ];
+		for ( core::Size i = 1; i<=total_insert; i++ ) TR.Trace << " " << insert_map[ i ];
 		TR.Trace << "insert_size: \nRESIDUES: ";
-		for ( Size i = 1; i<=insert_map[ total_insert ]; i++ ) TR.Trace << " " << RJ(3,i);
+		for ( core::Size i = 1; i<=insert_map[ total_insert ]; i++ ) TR.Trace << " " << RJ(3,i);
 		TR.Trace <<"\nINSERT:   ";
-		for ( Size i = 1; i<=insert_map[ total_insert ]; i++ ) TR.Trace << " " << RJ(3,insert_size[ i ]);
+		for ( core::Size i = 1; i<=insert_map[ total_insert ]; i++ ) TR.Trace << " " << RJ(3,insert_size[ i ]);
 		TR.Trace << std::endl;
 	}
 
-	Size const total_insert = insert_map.size();
+	core::Size const total_insert = insert_map.size();
 
-	for ( Size i = 1; i<=total_insert; i++ ) {
-		Size const pos ( insert_map[ i ] );
-		Size const size ( insert_size[ pos ] );
+	for ( core::Size i = 1; i<=total_insert; i++ ) {
+		core::Size const pos ( insert_map[ i ] );
+		core::Size const size ( insert_size[ pos ] );
 		FrameList copy_frames;
 		source.frames( pos, copy_frames );
 		for ( auto & copy_frame : copy_frames ) {
@@ -206,7 +206,7 @@ void set_extended_torsions_and_idealize_loops(core::pose::Pose& pose, loops::Loo
 
 	Conformation& conf = pose.conformation();
 	for ( auto const & loop : loops ) {
-		for ( Size j = loop.start(); j <= loop.stop(); ++j ) {
+		for ( core::Size j = loop.start(); j <= loop.stop(); ++j ) {
 			core::conformation::idealize_position(j, conf);
 			pose.set_phi(j, EXT_PHI);
 			pose.set_psi(j, EXT_PSI);
@@ -225,9 +225,9 @@ void addScoresForLoopParts(
 
 	using namespace core;
 
-	Size nres = pose.size();
+	core::Size nres = pose.size();
 	utility::vector1< core::Size > all_loop_list;
-	for ( Size i = 1; i < nres; i ++ ) {
+	for ( core::Size i = 1; i < nres; i ++ ) {
 		if ( loops.is_loop_residue(i) ) all_loop_list.push_back( i );
 	}
 	scorefxn(pose);
@@ -235,7 +235,7 @@ void addScoresForLoopParts(
 
 	Real score =  scorefxn(pose);
 
-	for ( Size l = 1; l <= nloops; l++ ) {
+	for ( core::Size l = 1; l <= nloops; l++ ) {
 		if ( l > loops.size() ) {
 			setPoseExtraScore( pose, "ScoreLoopI" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
 			setPoseExtraScore( pose, "ScoreLoopC" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
@@ -244,7 +244,7 @@ void addScoresForLoopParts(
 		}
 		utility::vector1< core::Size > loop_list;
 		utility::vector1< core::Size > non_loop_list;
-		for ( Size i = 1; i < nres; i ++ ) {
+		for ( core::Size i = 1; i < nres; i ++ ) {
 			if ( ( i < loops[l].start() ) || ( i > loops[l].stop() ) ) {
 				loop_list.push_back( i );
 			} else {
@@ -278,7 +278,7 @@ void addScoresForLoopParts(
 	int corelength;
 	setPoseExtraScore( pose, "corerms", native_loop_core_CA_rmsd( native_pose, pose, loops, corelength ) );
 
-	for ( Size l = 1; l <= nloops; l++ ) {
+	for ( core::Size l = 1; l <= nloops; l++ ) {
 		if ( l > loops.size() ) {
 			setPoseExtraScore( pose, "RMSLoop" + ObjexxFCL::right_string_of(l,3,'0'), 0 );
 			continue;
@@ -298,11 +298,11 @@ loops::Loops compute_ss_regions(
 
 	using core::Size;
 
-	Size start( 0 );
-	Size last( 0 );
-	Size max_gap( 2 );
+	core::Size start( 0 );
+	core::Size last( 0 );
+	core::Size max_gap( 2 );
 	loops::Loops ss_regions;
-	for ( Size pos = 1; pos <= ss.total_residue(); ++pos ) {
+	for ( core::Size pos = 1; pos <= ss.total_residue(); ++pos ) {
 		if ( ss.loop_fraction( pos ) <= max_loop_frac ) {
 			if ( !start ) {
 				start = pos;
@@ -366,15 +366,15 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 	}
 
 
-	Size nres = pose.size();
+	core::Size nres = pose.size();
 	Real const coord_sdev( 0.5 );
 	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
 
-	for ( Size i = 1; i<= (Size)nres; ++i ) {
-		if ( i==(Size)pose.fold_tree().root() ) continue;
+	for ( core::Size i = 1; i<= (core::Size)nres; ++i ) {
+		if ( i==(core::Size)pose.fold_tree().root() ) continue;
 		if ( coordconstraint_segments.is_loop_residue( i ) ) {
 			Residue const & nat_i_rsd( pose.residue(i) );
-			for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
+			for ( core::Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
 				pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(
 					AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
 					fx ) ) );
@@ -433,10 +433,10 @@ void define_scorable_core_from_secondary_structure(
 {
 	using namespace core;
 	using namespace basic::options;
-	// Size const max_loop_size( 3 );
-	// Size const max_short_helix( 5 );
-	Size const max_loop_size( option[ OptionKeys::evaluation::score_sscore_maxloop ]() );
-	Size const max_short_helix( option[ OptionKeys::evaluation::score_sscore_short_helix ]() );
+	// core::Size const max_loop_size( 3 );
+	// core::Size const max_short_helix( 5 );
+	core::Size const max_loop_size( option[ OptionKeys::evaluation::score_sscore_maxloop ]() );
+	core::Size const max_short_helix( option[ OptionKeys::evaluation::score_sscore_short_helix ]() );
 
 	//find residues that are part of a short helix -- less than or equal to 5 residues
 	utility::vector1< bool > short_helix( ss_def.total_residue(), false );
@@ -446,12 +446,12 @@ void define_scorable_core_from_secondary_structure(
 	//subsequently add also helices that have fewer than 6 residues if they terminated a long loop (>=4)
 	loops::Loops unscored_loops;
 
-	for ( Size pos=1; pos <= ss_def.total_residue(); pos++ ) {
+	for ( core::Size pos=1; pos <= ss_def.total_residue(); pos++ ) {
 
 		//detect loops
 		if ( ss_def.loop_fraction( pos ) > 0.1 ) {
 			//go to end of loop
-			Size lpos = 1;
+			core::Size lpos = 1;
 			for ( ; ( lpos+pos <= ss_def.total_residue() ) && ( ss_def.loop_fraction( pos+lpos ) > 0.1); ++lpos ) {}
 			if ( lpos > max_loop_size ) { //this loop has 4 or more residues
 				unscored_loops.add_loop( pos, pos+lpos-1 );
@@ -461,10 +461,10 @@ void define_scorable_core_from_secondary_structure(
 
 		// look for short helices and store in short_helix
 		if ( ss_def.helix_fraction( pos ) > 0.1 ) {
-			Size hpos = 1;
+			core::Size hpos = 1;
 			for ( ; ( hpos+pos <= ss_def.total_residue() ) && ( ss_def.helix_fraction( pos+hpos ) > 0.1); ++hpos ) {}
 			if ( hpos <= max_short_helix   ) { //this helix has 5 or fewer residues
-				for ( Size ipos = 0; ipos < hpos; ++ipos ) {
+				for ( core::Size ipos = 0; ipos < hpos; ++ipos ) {
 					short_helix[ pos+ipos] = true;
 				}
 			}
@@ -476,7 +476,7 @@ void define_scorable_core_from_secondary_structure(
 	//elongate loops if they are terminated by a short helix
 	loops::Loops removed_short_helices( unscored_loops );
 	for ( auto const & unscored_loop : unscored_loops ) {
-		Size npos( unscored_loop.stop() + 1 );
+		core::Size npos( unscored_loop.stop() + 1 );
 		while ( short_helix[ npos ] ) {
 			removed_short_helices.add_loop( npos-1, npos );
 			npos++;
@@ -494,8 +494,8 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 	Loops secondary_structure_chunks;
 
 	bool ss_chunk_started = false;
-	Size chunk_start_seqpos(0);
-	Size chunk_end_seqpos(0);
+	core::Size chunk_start_seqpos(0);
+	core::Size chunk_end_seqpos(0);
 
 	for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
 		if ( !ss_chunk_started ) {

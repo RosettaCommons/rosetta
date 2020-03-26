@@ -29,7 +29,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
@@ -138,22 +138,22 @@ protected:
 	//@brief called in each iteration of inner loop in stage3 before stage3_cycles_ of trials commence
 	void prepare_loop_in_stage3(
 		core::pose::Pose&,
-		Size, /* loop_iteration*/
-		Size  /* total_iterations */
+		core::Size, /* loop_iteration*/
+		core::Size  /* total_iterations */
 	) override;
 
 	//@brief called in each iteration of the loop in stage4 before the stage4_cycles_ of trials commence
 	void prepare_loop_in_stage4(
 		core::pose::Pose&,
-		Size, /* loop_iteration*/
-		Size  /* total_iterations */
+		core::Size, /* loop_iteration*/
+		core::Size  /* total_iterations */
 	) override;
 
 	void set_show_viol_level( core::Size setting ) {
 		show_viol_level_ = setting;
 	}
 
-	virtual void set_max_seq_sep( core::pose::Pose& pose, Size setting );
+	virtual void set_max_seq_sep( core::pose::Pose& pose, core::Size setting );
 
 	core::Real max_seq_sep_fudge() const {
 		return max_seq_sep_fudge_;
@@ -167,7 +167,7 @@ protected:
 		return *constraints_;
 	}
 
-	Size total_res( core::pose::Pose const& pose ) const;
+	core::Size total_res( core::pose::Pose const& pose ) const;
 
 	void set_seq_sep_stage1 ( core::Real setting ) {
 		seq_sep_stage1_ = setting;
@@ -195,7 +195,7 @@ private:
 	bool bSkipOnNoViolation_;
 
 	//@brief just for screen output: how verbose should it be
-	Size show_viol_level_;
+	core::Size show_viol_level_;
 
 	//@brief usually we do a recover_low before we increase the number of active constraints
 	bool bNoRecoverLowAtSwitch_;

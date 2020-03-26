@@ -38,8 +38,8 @@ StepWiseSamplerRingConformer::StepWiseSamplerRingConformer():
 {}
 
 StepWiseSamplerRingConformer::StepWiseSamplerRingConformer(
-	Size const ring_num,
-	Size const moving_rsd,
+	core::Size const ring_num,
+	core::Size const moving_rsd,
 	core::chemical::rings::RingConformerSetCOP ring_conformer_set
 ):
 	ring_num_( ring_num ),
@@ -53,7 +53,7 @@ StepWiseSamplerRingConformer::~StepWiseSamplerRingConformer()= default;
 core::Size
 StepWiseSamplerRingConformer::size() const { return ring_conformers_.size(); }
 
-void StepWiseSamplerRingConformer::apply( core::pose::Pose & pose, Size const i ) {
+void StepWiseSamplerRingConformer::apply( core::pose::Pose & pose, core::Size const i ) {
 	// How to ensure that i is appropriate?
 	pose.set_ring_conformation( moving_rsd_, ring_num_, ring_conformers_[ i ] );
 }

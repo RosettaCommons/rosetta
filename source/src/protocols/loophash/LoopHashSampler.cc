@@ -190,19 +190,19 @@ LoopHashSampler::build_structures(
 	long starttime = time(nullptr);
 
 	// Statistics counters
-	Size count_filter_rejects = 0;
-	Size count_total_loops = 0;
-	Size count_loop_builds = 0;
-	Size count_filter_pro = 0;
-	Size count_filter_beta = 0;
-	Size count_filter_gly = 0;
-	Size count_rejected_carms = 0;
-	Size count_rejected_bbrms = 0;
-	Size count_max_rad = 0;
+	core::Size count_filter_rejects = 0;
+	core::Size count_total_loops = 0;
+	core::Size count_loop_builds = 0;
+	core::Size count_filter_pro = 0;
+	core::Size count_filter_beta = 0;
+	core::Size count_filter_gly = 0;
+	core::Size count_rejected_carms = 0;
+	core::Size count_rejected_bbrms = 0;
+	core::Size count_max_rad = 0;
 
 	// Parameters
-	core::Size models_build_this_loopsize_max =         std::max( Size(1), Size( max_struct_ / library_->hash_sizes().size()) );
-	core::Size models_build_this_loopsize_per_rad_max = std::max( Size(1), Size( models_build_this_loopsize_max * 2 / max_radius_ ));
+	core::Size models_build_this_loopsize_max =         std::max( core::Size(1), core::Size( max_struct_ / library_->hash_sizes().size()) );
+	core::Size models_build_this_loopsize_per_rad_max = std::max( core::Size(1), core::Size( models_build_this_loopsize_max * 2 / max_radius_ ));
 	core::Size fragments_tried_this_loopsize_max =      models_build_this_loopsize_max * 200;
 	TR <<  "LoopHashSampler limits: " << max_struct_ << " " << models_build_this_loopsize_max << "  " << models_build_this_loopsize_per_rad_max << "  " << fragments_tried_this_loopsize_max << std::endl;
 
@@ -216,8 +216,8 @@ LoopHashSampler::build_structures(
 	kinematics::MoveMap final_mm;
 	final_mm.set_bb(true);
 
-	Size nres = start_pose.size();
-	Size ir, jr;
+	core::Size nres = start_pose.size();
+	core::Size ir, jr;
 
 	core::Size start_res = start_res_;
 	core::Size stop_res = stop_res_;
@@ -257,7 +257,7 @@ LoopHashSampler::build_structures(
 			core::Size fragments_tried_this_loopsize = 0;
 			core::Size models_build_this_loopsize = 0;
 
-			for ( Size radius = 0; radius <= max_radius_; radius++ ) {
+			for ( core::Size radius = 0; radius <= max_radius_; radius++ ) {
 				count_max_rad = std::max( count_max_rad, radius );
 				core::Size models_build_this_loopsize_this_rad = 0;
 				std::vector < core::Size > leap_index_bucket;

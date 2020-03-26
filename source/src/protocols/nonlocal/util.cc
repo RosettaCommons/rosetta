@@ -70,9 +70,9 @@ void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Lo
 	debug_assert(chunks);
 	debug_assert(threshold > 0);
 
-	vector1<Size> violated_residues;
+	vector1<core::Size> violated_residues;
 	violated_residues.push_back(1);
-	for ( Size i = 2; i <= pose.size(); ++i ) {
+	for ( core::Size i = 2; i <= pose.size(); ++i ) {
 		const xyzVector<core::Real>& prev_xyz = pose.xyz(NamedAtomID("CA", i - 1));
 		const xyzVector<core::Real>& curr_xyz = pose.xyz(NamedAtomID("CA", i));
 
@@ -85,10 +85,10 @@ void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Lo
 	violated_residues.push_back(pose.size() + 1);
 
 	// violated_residues = [ 1, ..., n ]
-	for ( Size i = 2; i <= violated_residues.size(); ++i ) {
-		const Size prev_start = violated_residues[i - 1];
-		const Size curr_start = violated_residues[i];
-		const Size prev_stop  = curr_start - 1;
+	for ( core::Size i = 2; i <= violated_residues.size(); ++i ) {
+		const core::Size prev_start = violated_residues[i - 1];
+		const core::Size curr_start = violated_residues[i];
+		const core::Size prev_stop  = curr_start - 1;
 
 		// Add the chunk
 		Loop chunk(prev_start, prev_stop);
@@ -155,7 +155,7 @@ void decompose(core::Size min_chunk_sz,
 		return;
 	}
 
-	Size midpoint = loop.start() + loop.length() / 2;
+	core::Size midpoint = loop.start() + loop.length() / 2;
 	Loop candidate_left(loop.start(), midpoint - 1);
 	Loop candidate_right(midpoint, loop.stop());
 
@@ -168,7 +168,7 @@ void decompose(core::Size min_chunk_sz,
 
 	// TODO(cmiles) consider including additional information (e.g. secondary
 	// structure, structural conservation) to inform pivot selection
-	Size pivot = numeric::random::random_range(
+	core::Size pivot = numeric::random::random_range(
 		loop.start() + min_chunk_sz - 1,
 		loop.stop() - min_chunk_sz + 1);
 
@@ -197,8 +197,8 @@ void find_regions_with_minimum_size(const core::sequence::SequenceAlignment& ali
 	debug_assert(aligned_regions);
 	debug_assert(unaligned_regions);
 
-	Size pose_space_num_residues = 0;
-	for ( Size ii = 1; ii <= alignment.length(); ++ii ) {
+	core::Size pose_space_num_residues = 0;
+	for ( core::Size ii = 1; ii <= alignment.length(); ++ii ) {
 		pose_space_num_residues = std::max(pose_space_num_residues, alignment.sequence(1)->resnum(ii));
 	}
 

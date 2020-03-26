@@ -18,7 +18,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // c++ headers
@@ -29,7 +29,7 @@ namespace moves {
 
 /// @brief Abstract base class for a Mover factory; the Creator class is responsible for
 /// creating a particular mover class.
-class MoverCreator : public utility::pointer::ReferenceCount
+class MoverCreator : public utility::VirtualBase
 {
 public:
 	MoverCreator();

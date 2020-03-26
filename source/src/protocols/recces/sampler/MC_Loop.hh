@@ -42,7 +42,7 @@ public:
 	toolbox::SamplerPlusPlusType type() const override { return toolbox::MC_LOOP; }
 
 	/// @brief output summary of class
-	void show( std::ostream & out, Size const indent = 0 ) const override;
+	void show( std::ostream & out, core::Size const indent = 0 ) const override;
 
 };
 

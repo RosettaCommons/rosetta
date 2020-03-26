@@ -42,7 +42,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/io/izstream.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <boost/lexical_cast.hpp>

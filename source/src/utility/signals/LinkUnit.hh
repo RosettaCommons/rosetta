@@ -24,7 +24,7 @@
 #include <utility/signals/LinkUnit.fwd.hh>
 
 // package headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/assert.hh>
 
@@ -35,13 +35,13 @@ namespace signals {
 /// @brief struct specifying actual link data between observers and subjects
 /// @remarks Used internally by SignalHub.  There is no copy constructor and
 ///  copy assignment, a LinkUnit is meant to be created only once for each connection.
-struct LinkUnit : public utility::pointer::ReferenceCount {
+struct LinkUnit : public utility::VirtualBase {
 
 
 private:
 
 
-	typedef utility::pointer::ReferenceCount Super;
+	typedef utility::VirtualBase Super;
 
 
 	/// @brief disallow default constructor

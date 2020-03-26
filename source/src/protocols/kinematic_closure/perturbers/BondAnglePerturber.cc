@@ -33,7 +33,7 @@ void BondAnglePerturber::perturb_subset(
 	// Sorry for using magic numbers.  Both values were taken from a gaussian fit
 	// of the bond angle distribution observed in the Top8000 database.
 
-	for ( Size const residue : residues ) {
+	for ( core::Size const residue : residues ) {
 		Real angle = 111.24096 + 2.27632 * gaussian();
 		problem->perturb_n_ca_c(residue, angle, DEGREES);
 	}

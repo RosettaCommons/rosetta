@@ -128,14 +128,14 @@ void FragmentJumpClaimer::init_jumps() {
 			<< std::endl;
 		current_jumps_ = jumping::JumpSample( input_pose_.fold_tree() );
 		if ( current_jumps_.size() == 0 ) return;
-		std::set< Size > active_region;
+		std::set< core::Size > active_region;
 		get_sequence_region( active_region );
 		ObjexxFCL::FArray2D_int filtered_jumps( 2, current_jumps_.size() );
 		ObjexxFCL::FArray1D_int filtered_cuts( current_jumps_.size() );
-		Size ct( 0 );
-		for ( Size i = 1; i<=current_jumps_.size(); ++i ) {
-			Size jump1( current_jumps_.jumps()( 1, i ) );
-			Size jump2( current_jumps_.jumps()( 2, i ) );
+		core::Size ct( 0 );
+		for ( core::Size i = 1; i<=current_jumps_.size(); ++i ) {
+			core::Size jump1( current_jumps_.jumps()( 1, i ) );
+			core::Size jump2( current_jumps_.jumps()( 2, i ) );
 			if ( active_region.find( jump1 ) != active_region.end()
 					&& active_region.find( jump2 ) != active_region.end() ) {
 				++ct;
@@ -152,7 +152,7 @@ void FragmentJumpClaimer::init_jumps() {
 		if ( !jump_def_ ) return;
 		runtime_assert( jump_def_ != nullptr );
 		tr.Info << type() << ": create new random jumps" << std::endl;
-		Size attempts( 10 );
+		core::Size attempts( 10 );
 		do {
 			current_jumps_ = jump_def_->create_jump_sample();
 
@@ -218,14 +218,14 @@ void FragmentJumpClaimer::generate_claims( claims::DofClaims& new_claims,
 		jump_frags->add( jump_frames );
 	}
 
-	Size nr_jumps = current_jumps_.size();
+	core::Size nr_jumps = current_jumps_.size();
 	// runtime_assert( jump_frags->nr_frames() == nr_jumps );
-	for ( Size i = 1; i<=nr_jumps; ++i ) {
-		Size const up( current_jumps_.jumps()( 1, i ) );
-		Size const down( current_jumps_.jumps()( 2, i ) );
+	for ( core::Size i = 1; i<=nr_jumps; ++i ) {
+		core::Size const up( current_jumps_.jumps()( 1, i ) );
+		core::Size const down( current_jumps_.jumps()( 2, i ) );
 
-		Size local_upnum = up - broker().sequence_number_resolver().offset( uplabel );
-		Size local_downnum = down - broker().sequence_number_resolver().offset( downlabel );
+		core::Size local_upnum = up - broker().sequence_number_resolver().offset( uplabel );
+		core::Size local_downnum = down - broker().sequence_number_resolver().offset( downlabel );
 		claims::LocalPosition const local_up = std::make_pair( uplabel, local_upnum );
 		claims::LocalPosition const local_dn = std::make_pair( downlabel, local_downnum );
 

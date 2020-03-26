@@ -23,7 +23,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -39,7 +39,7 @@ namespace environment {
 
 typedef core::environment::LocalPosition LocalPosition;
 
-class SequenceAnnotation : public utility::pointer::ReferenceCount {
+class SequenceAnnotation : public utility::VirtualBase {
 	typedef utility::vector1< std::map< std::string, core::Size> > NumMap;
 	typedef std::map< std::string, utility::vector1< core::Size > > SeqLabelMap;
 	typedef std::map< std::string, core::Size > JumpLabelMap;

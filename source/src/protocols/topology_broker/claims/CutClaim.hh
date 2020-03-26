@@ -38,7 +38,7 @@
 //#include <basic/Tracer.hh>
 //#include <basic/options/option.hh>
 #include <utility/exit.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //#include <basic/options/option_macros.hh>
 

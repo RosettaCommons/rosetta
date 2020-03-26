@@ -63,7 +63,7 @@ namespace mainchain_potential {
 /// @details Optionally takes a GenerageMainchainPotentialOptions const-owning pointer.  If null, this object initializes itself
 /// to default values.
 GenerateMainchainPotential::GenerateMainchainPotential( GenerateMainchainPotentialOptionsCOP options /*= nullptr*/ ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	options_( options == nullptr ? utility::pointer::make_shared< GenerateMainchainPotentialOptions >(false) : options->clone() ),
 	last_generated_scoretable_(nullptr),
 	last_generated_scoretables_by_scoreterm_()
@@ -73,7 +73,7 @@ GenerateMainchainPotential::GenerateMainchainPotential( GenerateMainchainPotenti
 GenerateMainchainPotential::GenerateMainchainPotential(
 	GenerateMainchainPotential const & src
 ) :
-	utility::pointer::ReferenceCount(src),
+	utility::VirtualBase(src),
 	options_( src.options_ != nullptr ? options_->clone() : utility::pointer::make_shared< GenerateMainchainPotentialOptions >(false) ),
 	last_generated_scoretable_( src.last_generated_scoretable_ == nullptr ? nullptr : src.last_generated_scoretable_->clone() ),
 	last_generated_scoretables_by_scoreterm_()

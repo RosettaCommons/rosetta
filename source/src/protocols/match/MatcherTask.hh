@@ -25,7 +25,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Numeric headers
 #include <numeric/geometry/BoundingBox.hh>
@@ -46,7 +46,7 @@
 namespace protocols {
 namespace match {
 
-class MatcherTask : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< MatcherTask >
+class MatcherTask : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< MatcherTask >
 {
 public:
 	typedef core::Real                               Real;
@@ -97,7 +97,7 @@ public:
 	void
 	set_ignore_cmdline_for_build_points( bool setting );
 	/// @brief Uniformly consider the same set of build points for each of the geometric constrains
-	void set_original_scaffold_build_points( utility::vector1< Size > const & resids );
+	void set_original_scaffold_build_points( utility::vector1< core::Size > const & resids );
 
 	/// @brief modify the match positions according to what is specified
 	/// in the cstfile
@@ -108,13 +108,13 @@ public:
 	/// geometric constraint -- the task then needs to know how many geometric constraints
 	/// there are.
 	void use_different_build_points_for_each_geometric_constraint(
-		Size n_geometric_constraints
+		core::Size n_geometric_constraints
 	);
 
 	/// @brief Set the build point id's for a particular geometric constraint
 	void set_original_scaffold_build_points_for_geometric_constraint(
-		Size geom_cst_id,
-		utility::vector1< Size > const & resids
+		core::Size geom_cst_id,
+		utility::vector1< core::Size > const & resids
 	);
 
 	void
@@ -124,7 +124,7 @@ public:
 	define_active_site_from_residue_radii_list();
 
 	void
-	append_upstream_resiue_as_defining_active_site( Size resid, Real radius );
+	append_upstream_resiue_as_defining_active_site( core::Size resid, Real radius );
 
 	void
 	append_downstream_atom_to_active_site_required_list( core::id::AtomID atid );
@@ -159,7 +159,7 @@ public:
 	void consolidate_matches( bool setting );
 	/// @brief For use with the match consolidator; specify the number of output matches that the
 	/// consolidator should select for each group.
-	void n_to_output_per_group( Size setting );
+	void n_to_output_per_group( core::Size setting );
 	/// @brief Add a filter by name to the set of filters being included.  If that filter requires
 	/// extra data (as, for example, the UpstreamCollisionFilter) then the task should be expanded
 	/// to include all the data necessary to create and initialize that filter.  No valid options
@@ -222,8 +222,8 @@ public:  // Accessors
 	bool
 	only_enumerate_non_match_redundant_ligand_rotamers() const;
 
-	utility::vector1< Size > const &
-	upstream_pose_build_resids_for_geometric_constraint( Size cst_id ) const;
+	utility::vector1< core::Size > const &
+	upstream_pose_build_resids_for_geometric_constraint( core::Size cst_id ) const;
 
 	std::map< core::Size, core::Size > const &
 	upstream_only_geom_cst() const;
@@ -238,7 +238,7 @@ public:  // Accessors
 
 	/// @brief Accessor for the data defining the active site by-residue.  This data is only
 	/// active if gridlig_active_site_definition() returns false.
-	std::list< std::pair< Size, Real > > const &
+	std::list< std::pair< core::Size, Real > > const &
 	upstream_resids_and_radii_defining_active_site() const;
 
 	std::list< core::id::AtomID > const &
@@ -259,7 +259,7 @@ public:  // Accessors
 	bool dynamic_grid_refinement() const;
 	bool consolidate_matches() const;
 
-	Size n_to_output_per_group() const;
+	core::Size n_to_output_per_group() const;
 
 	std::list< std::string > const &
 	filter_names() const;
@@ -373,8 +373,8 @@ private:
 
 	bool ignore_cmdline_for_build_points_;
 	bool share_build_points_for_geomcsts_;
-	utility::vector1< Size > generic_pose_build_resids_;
-	utility::vector1< utility::vector1< Size > > per_cst_pose_build_resids_;
+	utility::vector1< core::Size > generic_pose_build_resids_;
+	utility::vector1< utility::vector1< core::Size > > per_cst_pose_build_resids_;
 
 	//for upstream only constraints, this maps between the geom cst
 	//and the geom cst of the upstream target
@@ -384,10 +384,10 @@ private:
 	std::string gridlig_fname_;
 	std::string upstream_pose_name_;
 	std::string cstfile_name_;
-	std::list< std::pair< Size, Real > > upstream_resids_and_radii_defining_active_site_;
+	std::list< std::pair< core::Size, Real > > upstream_resids_and_radii_defining_active_site_;
 
 	std::list< core::id::AtomID > downstream_atoms_required_inside_active_site_;
-	utility::vector1< Size > downstream_atom_inds_used_in_matching_;
+	utility::vector1< core::Size > downstream_atom_inds_used_in_matching_;
 
 	BoundingBox occ_space_bounding_box_;
 	Vector euclidean_bin_widths_;
@@ -398,7 +398,7 @@ private:
 	bool use_input_sc_;
 	bool dynamic_grid_refinement_;
 	bool consolidate_matches_; /// MatchConsolidator vs MatchOutputter
-	Size n_to_output_per_group_;
+	core::Size n_to_output_per_group_;
 	std::list< std::string > filter_names_;
 	std::string grouper_name_;
 	std::string evaluator_name_;

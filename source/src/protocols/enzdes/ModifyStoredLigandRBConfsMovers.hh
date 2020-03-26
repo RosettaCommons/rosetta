@@ -110,7 +110,7 @@ public:
 public:
 
 	GenerateStoredRBConfs(
-		Size num_total_rbconfs,
+		core::Size num_total_rbconfs,
 		bool include_metals );
 
 	~GenerateStoredRBConfs() override;
@@ -121,7 +121,7 @@ public:
 
 private:
 
-	Size num_total_rbconfs_;
+	core::Size num_total_rbconfs_;
 	bool include_metals_;
 
 };
@@ -205,7 +205,7 @@ public:
 
 private:
 	Real min_rms_;
-	Size max_trials_;
+	core::Size max_trials_;
 
 };
 

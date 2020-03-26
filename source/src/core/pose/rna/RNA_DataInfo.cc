@@ -49,7 +49,7 @@ namespace rna {
 
 /// @details Copy constructors must copy all data, not just some...
 RNA_DataInfo::RNA_DataInfo( RNA_DataInfo const & src ):
-	utility::pointer::ReferenceCount( src )
+	utility::VirtualBase( src )
 {
 	*this = src;
 }

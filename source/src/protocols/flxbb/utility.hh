@@ -49,11 +49,11 @@ ConstraintOPs
 constraints_NtoC( Pose const & pose, Real const coef, Real const condist=11.0 );
 
 /// @brief Looks for unknown amino acids in the pose and returns their indices
-utility::vector1<Size>
+utility::vector1<core::Size>
 find_ligands( Pose const & pose );
 
 // @brief finds the first non-ligand residue in the pose  (should be the N-terminus)
-// Undefined, commenting out to fix PyRosetta build  Size get_first_protein_residue( Pose const & pose );
+// Undefined, commenting out to fix PyRosetta build  core::Size get_first_protein_residue( Pose const & pose );
 
 } // namespace flxbb
 } // namespace protocols

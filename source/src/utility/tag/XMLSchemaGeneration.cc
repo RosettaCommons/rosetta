@@ -997,6 +997,7 @@ XMLSchemaSimpleSubelementList::XMLSchemaSimpleSubelementList() = default;
 XMLSchemaSimpleSubelementList::~XMLSchemaSimpleSubelementList() = default;
 
 XMLSchemaSimpleSubelementList::XMLSchemaSimpleSubelementList( XMLSchemaSimpleSubelementList const & src ) :
+	VirtualBase( src ),
 	ct_naming_func_for_simple_subelements_( src.ct_naming_func_for_simple_subelements_ ),
 	elements_( src.elements_ )
 {}
@@ -1315,7 +1316,7 @@ XMLSchemaSimpleSubelementList::element_summary_as_group_subelement(
 }
 
 
-class XMLSchemaComplexTypeGeneratorImpl : public utility::pointer::ReferenceCount
+class XMLSchemaComplexTypeGeneratorImpl : public utility::VirtualBase
 {
 public:
 	using DerivedNameFunction = std::function<std::string (const std::string &)>;

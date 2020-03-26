@@ -21,7 +21,7 @@
 #include <basic/resource_manager/ResourceLocator.fwd.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++ headers
@@ -35,7 +35,7 @@ namespace resource_manager {
 /// @brief The %ResourceLocatorCreator class serves to link the name of
 /// a locator type and the (derived) ResourceLocator class that's responsible
 /// for retrieving data from a data store.
-class ResourceLocatorCreator : public utility::pointer::ReferenceCount
+class ResourceLocatorCreator : public utility::VirtualBase
 {
 public:
 

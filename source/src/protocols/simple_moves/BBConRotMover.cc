@@ -97,7 +97,7 @@ std::string BBConRotMover::get_name() const
 
 void BBConRotMover::apply(Pose &pose)
 {
-	Size iter=0;
+	core::Size iter=0;
 	while ( make_move(pose) )
 			{
 		if ( iter++ > 100 ) break;
@@ -115,7 +115,7 @@ bool BBConRotMover::make_move(Pose &pose)
 	setup_list(pose);
 	auto ndx=static_cast< int >( numeric::random::rg().uniform()*available_seg_list_.size()+1 );
 
-	Size left = available_seg_list_[ ndx ].first;
+	core::Size left = available_seg_list_[ ndx ].first;
 	resnum_ = available_seg_list_[ ndx ].second;
 	TR.Debug << "Pick: " << left << " <--> " << resnum_ << std::endl;
 	if ( resnum_-left+1 < n_pert_res_ ) {
@@ -126,7 +126,7 @@ bool BBConRotMover::make_move(Pose &pose)
 	}
 	debug_assert(resnum_-left == n_pert_res_-1);
 
-	Size nres(pose.size());
+	core::Size nres(pose.size());
 	xyzVector oldv(pose.residue(nres).atom("CA").xyz());
 
 	//using whole pose
@@ -277,7 +277,7 @@ bool BBConRotMover::make_move(Pose &pose)
 
 void BBConRotMover::get_VdRdPhi(Pose const &segment)
 {
-	Size nres=resnum_; //using the whole pose
+	core::Size nres=resnum_; //using the whole pose
 	conformation::Residue const & rsd0(segment.residue(nres-4));
 	conformation::Residue const & rsd1(segment.residue(nres-3));
 	conformation::Residue const & rsd2(segment.residue(nres-2));
@@ -379,8 +379,8 @@ void BBConRotMover::get_VdRdPhi(Pose const &segment)
 
 void BBConRotMover::get_G()
 {
-	for ( Size i=1; i<=n_dof_angle_; i++ ) {
-		for ( Size j=i; j<=n_dof_angle_; j++ ) {
+	for ( core::Size i=1; i<=n_dof_angle_; i++ ) {
+		for ( core::Size j=i; j<=n_dof_angle_; j++ ) {
 			matrix_G[i][j] = matrix_dRdPhi[1][i].dot(matrix_dRdPhi[1][j]);
 			if ( i<j ) matrix_G[j][i]=matrix_G[i][j];
 		}
@@ -392,8 +392,8 @@ void BBConRotMover::get_A()
 	//A = a(1+bG)
 	//A = L^-1 * L
 	//L(angle) -> c * L(angle)
-	for ( Size i=1; i<=n_dof_angle_; i++ ) {
-		for ( Size j=i; j<=n_dof_angle_; j++ ) {
+	for ( core::Size i=1; i<=n_dof_angle_; i++ ) {
+		for ( core::Size j=i; j<=n_dof_angle_; j++ ) {
 			matrix_A[i][j] = factorB_ * matrix_G[i][j];
 			if ( i==j ) matrix_A[i][j] += 1.0;
 			matrix_A[i][j] *= factorA_;
@@ -410,17 +410,17 @@ core::Real BBConRotMover::get_L_move(Pose &segment)
 	using numeric::constants::d::pi;
 	using numeric::constants::d::pi_2;
 
-	Size nres=resnum_; //using the whole pose
-	//Size nres=6; //using copy segment
+	core::Size nres=resnum_; //using the whole pose
+	//core::Size nres=6; //using copy segment
 
 	//gerate a Gaussian dx vector
 	Vector delta(n_dof_angle_);
-	for ( Size i=1; i<=n_dof_angle_; i++ ) delta[i]=numeric::random::rg().gaussian();
+	for ( core::Size i=1; i<=n_dof_angle_; i++ ) delta[i]=numeric::random::rg().gaussian();
 	//Debug: no angle changes
-	//for (Size i=7; i<=n_dof_angle_; i++) delta[i]=0;
+	//for (core::Size i=7; i<=n_dof_angle_; i++) delta[i]=0;
 
 	Real d2=0.0;
-	for ( Size i=1; i<=n_dof_angle_; i++ ) d2+=delta[i]*delta[i];
+	for ( core::Size i=1; i<=n_dof_angle_; i++ ) d2+=delta[i]*delta[i];
 
 	//cholesky, get L^t, L^-1
 	Real detL = cholesky_fw(matrix_A, n_dof_angle_, delta, dphi, 7, 15, factorC_);
@@ -486,7 +486,7 @@ core::Real BBConRotMover::get_L_prime()
 	Vector delta(n_dof_angle_);
 	Real detL = cholesky_bw(matrix_A, n_dof_angle_, dphi, delta, 7, 15, factorC_);
 	Real d2=0.0;
-	for ( Size i=1; i<=n_dof_angle_; i++ ) d2+=delta[i]*delta[i];
+	for ( core::Size i=1; i<=n_dof_angle_; i++ ) d2+=delta[i]*delta[i];
 	return detL*exp(-d2/2.0);
 }
 

@@ -32,7 +32,7 @@ namespace rna {
 namespace sugar {
 
 //Constructor
-SugarInstantiateMover::SugarInstantiateMover( Size const moving_res ):
+SugarInstantiateMover::SugarInstantiateMover( core::Size const moving_res ):
 	moving_res_( moving_res )
 {}
 

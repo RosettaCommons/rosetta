@@ -56,7 +56,7 @@ using namespace ObjexxFCL::format;
 /// constructors or the clone() methods of the objects being pointed at.  This is important, since otherwise,
 /// a copy of a Monte Carlo object could corrupt the state held in the original MonteCarlo object.
 MonteCarlo::MonteCarlo( MonteCarlo const & src ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	last_accepted_pose_( src.last_accepted_pose_ ? new core::pose::Pose( * src.last_accepted_pose_ ) : nullptr ),
 	lowest_score_pose_( src.lowest_score_pose_ ? new core::pose::Pose( * src.lowest_score_pose_ ) : nullptr ),
 	temperature_( src.temperature_ ),

@@ -31,7 +31,7 @@ namespace task_operations {
 class ProteinCore : public core::pack::task::operation::ResFilter {
 public:
 	ProteinCore();
-	bool operator() ( Pose const &, Size ) const override;
+	bool operator() ( Pose const &, core::Size ) const override;
 	core::pack::task::operation::ResFilterOP clone() const override {return (utility::pointer::make_shared< ProteinCore >( *this));}
 	void parse_tag( TagCOP ) override;
 

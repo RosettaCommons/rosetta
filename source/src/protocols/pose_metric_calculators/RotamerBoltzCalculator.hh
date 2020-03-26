@@ -108,7 +108,7 @@ private:
 		core::pack::task::PackerTaskOP task ) const;
 
 	core::Real
-	computeBoltzWeight_lazy(core::pose::Pose& pose, Size resi,  protocols::minimization_packing::MinMoverOP min_mover, core::pack::task::PackerTaskOP task);
+	computeBoltzWeight_lazy(core::pose::Pose& pose, core::Size resi,  protocols::minimization_packing::MinMoverOP min_mover, core::pack::task::PackerTaskOP task);
 
 	core::pack::rotamer_set::RotamerSetOP
 	create_rotamer_set( core::pose::Pose const & pose, core::Size const resi ) const;

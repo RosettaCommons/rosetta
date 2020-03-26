@@ -582,7 +582,7 @@ ParaNMRScoreMover::add_pre_scores_to_scorefile(
 		} else {
 			std::string line;
 			std::string header = LJ(8, "Position") + RJ(12, "Experiments") + RJ(5, "PREs") + RJ(10, "Spinlabel")
-				+ RJ(8, "Radical") + RJ(5, "Size") + RJ(12, "tau_r") + RJ(12, "tau_c") + RJ(12, "tau_t") + LJ(12," Description");
+				+ RJ(8, "Radical") + RJ(5, "core::Size") + RJ(12, "tau_r") + RJ(12, "tau_c") + RJ(12, "tau_t") + LJ(12," Description");
 			while ( std::getline(pre_info, line) && line.find(header) == std::string::npos )
 					pre_info.seekg(0, std::ios::end);
 			if ( pre_info.eof() ) {

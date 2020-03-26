@@ -18,7 +18,7 @@
 
 // Utility headers
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -36,7 +36,7 @@ namespace nonlocal {
 /// fragment from set of possibilities. This class is based on the observation
 /// that fragment insertion methods differ primarily in the manner in which they
 /// choose from among a set of possibilities.
-class Policy : public utility::pointer::ReferenceCount {
+class Policy : public utility::VirtualBase {
 	typedef core::fragment::FragSetCOP FragSetCOP;
 
 public:

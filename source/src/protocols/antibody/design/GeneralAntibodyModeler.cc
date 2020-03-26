@@ -88,7 +88,7 @@ using std::string;
 using utility::vector1;
 
 GeneralAntibodyModeler::GeneralAntibodyModeler(AntibodyInfoOP ab_info) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	ab_info_(std::move(ab_info))
 {
 
@@ -119,7 +119,7 @@ GeneralAntibodyModeler::set_defaults(){
 GeneralAntibodyModeler::~GeneralAntibodyModeler()= default;
 
 GeneralAntibodyModeler::GeneralAntibodyModeler( GeneralAntibodyModeler const & src ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	interface_dis_( src.interface_dis_),
 	neighbor_dis_( src.neighbor_dis_),
 	ab_dock_chains_(src.ab_dock_chains_),
@@ -298,9 +298,9 @@ GeneralAntibodyModeler::get_cdr_loops(Pose const & pose) const {
 
 	for ( auto const & cdr : ab_info_->get_all_cdrs_present( true /* include_cdr4 */) ) {
 		if ( model_cdrs_[ cdr ] ) {
-			Size start = ab_info_->get_CDR_start(cdr, pose);
-			Size stop =  ab_info_->get_CDR_end(cdr, pose);
-			Size cutpoint = (stop-start)/2+start;
+			core::Size start = ab_info_->get_CDR_start(cdr, pose);
+			core::Size stop =  ab_info_->get_CDR_end(cdr, pose);
+			core::Size cutpoint = (stop-start)/2+start;
 			protocols::loops::Loop cdr_loop = protocols::loops::Loop(start, stop, cutpoint);
 			cdr_loops->add_loop(cdr_loop);
 		}
@@ -325,9 +325,9 @@ GeneralAntibodyModeler::get_cdr_loops_with_overhang(Pose const & pose) const {
 protocols::loops::Loop
 GeneralAntibodyModeler::get_cdr_loop_with_overhang(Pose const & pose, CDRNameEnum cdr) const {
 
-	Size start = ab_info_->get_CDR_start(cdr, pose) - overhangs_[cdr];
-	Size stop =  ab_info_->get_CDR_end(cdr, pose) + overhangs_[cdr];
-	Size cutpoint = (stop-start)/2+start;
+	core::Size start = ab_info_->get_CDR_start(cdr, pose) - overhangs_[cdr];
+	core::Size stop =  ab_info_->get_CDR_end(cdr, pose) + overhangs_[cdr];
+	core::Size cutpoint = (stop-start)/2+start;
 	protocols::loops::Loop cdr_loop = protocols::loops::Loop(start, stop, cutpoint);
 	return cdr_loop;
 
@@ -751,8 +751,8 @@ GeneralAntibodyModeler::repack_antigen_interface(Pose & pose) const {
 
 	core::Real start_e = (*scorefxn_)(pose);
 	core::pack::task::TaskFactoryOP tf = interface_tf_->clone();
-	Size L_chain  = core::pose::get_chain_id_from_chain('L', pose);
-	Size H_chain = core::pose::get_chain_id_from_chain('H', pose);
+	core::Size L_chain  = core::pose::get_chain_id_from_chain('L', pose);
+	core::Size H_chain = core::pose::get_chain_id_from_chain('H', pose);
 	tf->push_back(utility::pointer::make_shared< PreventChainFromRepackingOperation >(L_chain));
 	tf->push_back(utility::pointer::make_shared< PreventChainFromRepackingOperation >(H_chain));
 
@@ -780,8 +780,8 @@ GeneralAntibodyModeler::repack_antibody_interface(Pose & pose) const {
 	core::Real start_e = (*scorefxn_)(pose) ;
 	core::pack::task::TaskFactoryOP tf = interface_tf_->clone();
 
-	for ( Size i = 1; i <= antigen_chains.size(); ++i ) {
-		Size chain = core::pose::get_chain_id_from_chain(antigen_chains[i], pose);
+	for ( core::Size i = 1; i <= antigen_chains.size(); ++i ) {
+		core::Size chain = core::pose::get_chain_id_from_chain(antigen_chains[i], pose);
 		tf->push_back(utility::pointer::make_shared< PreventChainFromRepackingOperation >(chain));
 	}
 	core::pack::task::PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);

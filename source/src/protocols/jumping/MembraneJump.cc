@@ -86,31 +86,31 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps)
 		return;
 	}
 	tr << "setting up fold_tree with " << njumps << " jump(s)\n";
-	Size nres=pose.size();
+	core::Size nres=pose.size();
 	core::kinematics::FoldTree f(nres);
-	Size tries(0);
+	core::Size tries(0);
 	core::scoring::MembraneTopology const & topology(*( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )));
-	FArray1D< Size > tmh(pose.size());
-	FArray1D< Size > tmh2(pose.size());
-	Size total_tmhelix(topology.tmhelix());
+	FArray1D< core::Size > tmh(pose.size());
+	FArray1D< core::Size > tmh2(pose.size());
+	core::Size total_tmhelix(topology.tmhelix());
 	FArray1D_bool tmh_involved_in_jump(total_tmhelix,false);
 
-	for ( Size j = 1; j <= pose.size(); ++j ) {
+	for ( core::Size j = 1; j <= pose.size(); ++j ) {
 		//bw change definition of membrane region to include jumps to non-tmh.
 		if ( j<=topology.span_end(1) ) { //membrane_helix(1,2))
 			tmh(j)=1;
 		} else if ( j>topology.span_end(total_tmhelix) ) {
 			tmh(j)=total_tmhelix;
 		} else {
-			for ( Size reg = 2; reg <= total_tmhelix; ++reg ) {
+			for ( core::Size reg = 2; reg <= total_tmhelix; ++reg ) {
 				if ( j>topology.span_end(reg-1) && j<=topology.span_end(reg) ) { //membrane_helix( reg-1, 2 ) && j<=membrane_helix(reg,2))
 					tmh(j)=reg;
 				}
 			}
 		}
 	}
-	for ( Size i = 1; i <= pose.size(); ++i ) {
-		for ( Size j = 1; j <= total_tmhelix; ++j ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
+		for ( core::Size j = 1; j <= total_tmhelix; ++j ) {
 			if ( i>topology.span_begin(j) && i < topology.span_end(j) ) {
 				tmh2(i)=j;
 			}
@@ -118,7 +118,7 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps)
 	}
 
 	while ( selected_pairings_.size()<njumps && tries < 10 ) {
-		Size index = numeric::random::rg().uniform()*pairings_.size()+1;
+		core::Size index = numeric::random::rg().uniform()*pairings_.size()+1;
 		std::cout << "Tries : " << tries << " " << index << ' ' << pairings_[index].Pos1()  << ' ' << tmh(pairings_[index].Pos1()) << ' ' << pairings_[index].Pos2() << ' ' << tmh(pairings_[index].Pos2()) <<std::endl;
 		bool check_compatible=true;
 
@@ -128,7 +128,7 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps)
 				check_compatible=false;
 			}
 		}
-		for ( Size j = 1; j <= selected_pairings_.size(); ++j ) {
+		for ( core::Size j = 1; j <= selected_pairings_.size(); ++j ) {
 			if ( selected_pairings_[j].Pos1() == pairings_[index].Pos1() &&
 					selected_pairings_[j].Pos2() == pairings_[index].Pos2() ) { // already in a jump
 				check_compatible=false;
@@ -145,19 +145,19 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps)
 	if ( selected_pairings_.size()<njumps ) {
 		tr.Warning << "Only picked " << selected_pairings_.size() << " given number was " << njumps << " only allow one jump between any two TMHs " << std::endl;
 	}
-	FArray2D< Size > jumps(2,selected_pairings_.size());
-	for ( Size i=1; i<=selected_pairings_.size(); ++i ) {
+	FArray2D< core::Size > jumps(2,selected_pairings_.size());
+	for ( core::Size i=1; i<=selected_pairings_.size(); ++i ) {
 		jumps(1,i)=selected_pairings_[i].Pos1();
 		jumps(2,i)=selected_pairings_[i].Pos2();
 	}
 	FArray1D_float cut_bias(nres,0.0);
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( tmh2(i)==0 ) {
 			cut_bias(i)=1;
 		}
 	}
 
-	Size num_jumps_in=selected_pairings_.size();
+	core::Size num_jumps_in=selected_pairings_.size();
 	f.random_tree_from_jump_points(nres,num_jumps_in,jumps,cut_bias);
 	f.put_jump_stubs_intra_residue();
 
@@ -168,9 +168,9 @@ void
 MembraneJump::rt_templates(core::pose::Pose& pose)
 {
 
-	for ( Size i=1; i<=selected_pairings_.size(); ++i ) {
-		Size p1=selected_pairings_[i].Pos1();
-		Size p2=selected_pairings_[i].Pos2();
+	for ( core::Size i=1; i<=selected_pairings_.size(); ++i ) {
+		core::Size p1=selected_pairings_[i].Pos1();
+		core::Size p2=selected_pairings_[i].Pos2();
 		core::kinematics::FoldTree f(pose.fold_tree());
 		core::kinematics::RT rt(templates_.get_random_tmh_jump(selected_pairings_[i].Orientation(),p1,p2));
 		id::StubID up_stub(   core::pose::named_stub_id_to_stub_id( core::id::NamedStubID( "CA","N","CA","C", p1 ), pose ) );

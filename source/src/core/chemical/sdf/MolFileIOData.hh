@@ -22,7 +22,7 @@
 #include <core/chemical/ElementSet.fwd.hh>         // for ElementSetCOP
 #include <core/chemical/MMAtomTypeSet.fwd.hh>      // for MMAtomTypeSetCOP
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/xyzVector.hh>
 
 #include <boost/graph/undirected_graph.hpp>
@@ -65,7 +65,7 @@ typedef core::Size BondIndex;
 typedef std::map<std::string, std::string> StrStrMap;
 //typedef std::map<std::string, core::Real> StrRealMap;
 
-class MolFileIOAtom : public utility::pointer::ReferenceCount
+class MolFileIOAtom : public utility::VirtualBase
 {
 public:
 	MolFileIOAtom();
@@ -107,7 +107,7 @@ private:
 	//StrRealMap atom_real_data_;
 };
 
-class MolFileIOBond : public utility::pointer::ReferenceCount
+class MolFileIOBond : public utility::VirtualBase
 {
 public:
 	MolFileIOBond();
@@ -134,7 +134,7 @@ private:
 };
 
 
-class MolFileIOMolecule : public utility::pointer::ReferenceCount
+class MolFileIOMolecule : public utility::VirtualBase
 {
 public:
 	MolFileIOMolecule();

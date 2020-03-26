@@ -36,9 +36,9 @@ public:
 	/// outside of RosettaScripts.
 	virtual void
 	set(
-		utility::vector1<Size> const &res1,
+		utility::vector1<core::Size> const &res1,
 		utility::vector1<std::string> const &atom1,
-		utility::vector1<Size> const &res2,
+		utility::vector1<core::Size> const &res2,
 		utility::vector1<std::string> const &atom2,
 		utility::vector1<std::string> const &cst_function
 	);
@@ -59,9 +59,9 @@ public:
 
 
 private:
-	utility::vector1<Size> res1_;
+	utility::vector1<core::Size> res1_;
 	utility::vector1<std::string> atom1_;
-	utility::vector1<Size> res2_;
+	utility::vector1<core::Size> res2_;
 	utility::vector1<std::string> atom2_;
 	utility::vector1<std::string> cst_func_;
 };

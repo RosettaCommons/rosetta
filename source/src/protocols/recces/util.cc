@@ -114,7 +114,7 @@ print_base_centroid_atoms_for_rb_entropy( core::conformation::Residue const & rs
 {
 	utility::io::ozstream out_xyz;
 	out_xyz.open( filename_xyz );
-	for ( Size i = rsd.first_sidechain_atom() + 1; i <= rsd.nheavyatoms(); ++i ) { //rsd.first_sidechain_atom()+1 to not include the O2prime oxygen.
+	for ( core::Size i = rsd.first_sidechain_atom() + 1; i <= rsd.nheavyatoms(); ++i ) { //rsd.first_sidechain_atom()+1 to not include the O2prime oxygen.
 		//  TR << rsd.atom_name( i ) << std::endl;
 		if ( rsd.is_virtual( i ) ) continue;
 		out_xyz << rsd.xyz(i).x() << " " << rsd.xyz(i).y() << " " << rsd.xyz(i).z() << std::endl;

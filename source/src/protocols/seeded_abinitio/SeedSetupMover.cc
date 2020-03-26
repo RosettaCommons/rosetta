@@ -147,7 +147,7 @@ SeedSetupMover::set_packerTasks_target_and_seeds (  core::pose::Pose & pose ,
 	using namespace core::pack::task::operation;
 	using namespace protocols::task_operations;
 
-	Size num_chains = pose.conformation().num_chains();
+	core::Size num_chains = pose.conformation().num_chains();
 
 
 	///////////////////////////////
@@ -157,12 +157,12 @@ SeedSetupMover::set_packerTasks_target_and_seeds (  core::pose::Pose & pose ,
 	TR<<"disallowing target chain(s) to repack" << std::endl;
 	if ( num_chains > 1  && repack_target_ ) {
 		PreventChainFromRepackingOperationOP pcfr( new PreventChainFromRepackingOperation ) ;
-		Size chains_norepack = num_chains;
+		core::Size chains_norepack = num_chains;
 		if ( repack_foldpose_ ) {
 			chains_norepack -= 1;
 			TR << "allowing repacking of fold pose" <<std::endl;
 		}
-		for ( Size chain = 1; chain <= chains_norepack ; chain++ ) {
+		for ( core::Size chain = 1; chain <= chains_norepack ; chain++ ) {
 			pcfr->chain( chain );
 			//pcfr.apply( pose, *tasks );
 		}
@@ -180,7 +180,7 @@ SeedSetupMover::set_packerTasks_target_and_seeds (  core::pose::Pose & pose ,
 
 	/*
 	/// disallow specified residues to repack:
-	for( const Size res , norepack_res ){
+	for( const core::Size res , norepack_res ){
 	using namespace core::pack::task::operation;
 	PreventRepackingOP pr = new PreventRepacking;
 	pr->include_residue( res );
@@ -198,7 +198,7 @@ SeedSetupMover::set_packerTasks_target_and_seeds (  core::pose::Pose & pose ,
 
 	if ( !design_target_ ) {
 		RestrictChainToRepackingOperationOP rctr( new RestrictChainToRepackingOperation );
-		for ( Size chain = 1; chain <= num_chains - 1 ; chain++ ) {
+		for ( core::Size chain = 1; chain <= num_chains - 1 ; chain++ ) {
 			rctr->chain( chain );
 		}
 		tf->push_back( rctr );
@@ -251,7 +251,7 @@ void define_movemap_chains(
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	Size num_chains = pose.conformation().num_chains();
+	core::Size num_chains = pose.conformation().num_chains();
 
 	movemap->set_bb( false );
 	movemap->set_chi( false );
@@ -262,7 +262,7 @@ void define_movemap_chains(
 
 		//setting up interface object
 		//multy chain possible, make jump a variable
-		Size rb_jump = 1;
+		core::Size rb_jump = 1;
 		//kinematics::FoldTree ori_ft = pose.fold_tree();
 		pose.update_residue_neighbors(); // o/w fails assertion `graph_state_ == GOOD`
 		protocols::scoring::Interface interface_obj(rb_jump );
@@ -271,7 +271,7 @@ void define_movemap_chains(
 		//protocols::scoring::Interface interface_obj(rb_jump);
 
 		TR<<"disallowing all chains to be movable but the last one" <<std::endl;
-		for ( Size i = 1; i <= pose.conformation().chain_end( num_chains - 1 ); ++i ) {
+		for ( core::Size i = 1; i <= pose.conformation().chain_end( num_chains - 1 ); ++i ) {
 			//to be safe
 			movemap->set_bb( i , false );
 			movemap->set_chi( i, false );
@@ -285,7 +285,7 @@ void define_movemap_chains(
 		}
 	}
 	//iterating through the last chain (this is the one that gets folded, and allowing the different degrees of freedom
-	for ( Size pos = pose.conformation().chain_begin( num_chains ); pos <= pose.conformation().chain_end( num_chains ) ; pos++ ) {
+	for ( core::Size pos = pose.conformation().chain_begin( num_chains ); pos <= pose.conformation().chain_end( num_chains ) ; pos++ ) {
 		if ( !seeds.is_loop_residue( pos ) ) {
 			movemap->set_bb( pos, true );
 			movemap->set_chi(pos, true );
@@ -296,7 +296,7 @@ void define_movemap_chains(
 	}
 
 	TR<<"setting movemap method:"<<std::endl;
-	for ( Size i = 1 ; i <=pose.size(); ++i ) {
+	for ( core::Size i = 1 ; i <=pose.size(); ++i ) {
 		TR.Debug<<"i: "<<i<<", bb: "<< movemap->get_bb(i)<< ", chi: "<<movemap->get_chi(i)<<std::endl;
 	}
 
@@ -332,10 +332,10 @@ SeedSetupMover::apply( core::pose::Pose & pose ){
 	/// re-parsing seed residues at runtime since they might have changed within the trajectory due to length changes
 
 	/// 1. re-parsing the input elements
-	utility::vector1 <Size > designable_residues_motif;
+	utility::vector1 <core::Size > designable_residues_motif;
 	all_seeds_ = parse_seeds( pose , seed_vector_ );
 	designable_residues_motif = adjust_des_residues( pose , design_res_);
-	utility::vector1 <Size> norepack_residues = adjust_des_residues( pose, norepack_res_ );
+	utility::vector1 <core::Size> norepack_residues = adjust_des_residues( pose, norepack_res_ );
 
 	/// 2. set movemap
 	debug_assert( movemap_factory_ );
@@ -358,7 +358,7 @@ SeedSetupMover::apply( core::pose::Pose & pose ){
 		set_packerTasks_target_and_seeds( pose, all_seeds_ , designable_residues_motif , norepack_residues , task_factory_ ); //, repack_target_, design_foldpose_, design_target_ )
 
 		//TR<<"at the end of apply movemap:"<<std::endl;
-		for ( Size i = 1 ; i <= pose.size(); ++i ) {
+		for ( core::Size i = 1 ; i <= pose.size(); ++i ) {
 			TR.Debug <<"position: "<< i <<", bb: "<< movemap->get_bb(i)<< ", chi: "<<movemap->get_chi(i)<<std::endl;
 		}
 

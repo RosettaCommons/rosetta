@@ -101,7 +101,7 @@ utility::vector1<core::Real> get_torsions(
 	const Pose & pose
 ) {
 	utility::vector1<core::Real> curr_torsions;
-	for ( Size i = 1; i <= torsion_ids.size(); ++i ) {
+	for ( core::Size i = 1; i <= torsion_ids.size(); ++i ) {
 		curr_torsions.push_back( pose.torsion( torsion_ids[i] ) );
 	}
 	return curr_torsions;
@@ -113,8 +113,8 @@ void set_gaussian_stdevs(
 	utility::vector1<protocols::recces::sampler::MC_OneTorsionOP> & chi_sampler,
 	sampler::rna::MC_RNA_MultiSuite & standard_bb_sampler,
 	moves::SimulatedTempering const & tempering,
-	Size const & total_rsd,
-	Size const & sampled_rsd,
+	core::Size const & total_rsd,
+	core::Size const & sampled_rsd,
 	utility::vector1<bool> is_free
 ) {
 	Real const temp( tempering.temperature() );
@@ -128,10 +128,10 @@ void set_gaussian_stdevs(
 		chi_stdev = -1 ;
 		standard_bb_stdev = -1 ;
 	}
-	for ( Size i = 1; i <= internal_bb_sampler.size(); ++i ) {
+	for ( core::Size i = 1; i <= internal_bb_sampler.size(); ++i ) {
 		internal_bb_sampler[i]->set_gaussian_stdev( internal_bb_stdev );
 	}
-	for ( Size i = 1; i <= chi_sampler.size(); ++i ) {
+	for ( core::Size i = 1; i <= chi_sampler.size(); ++i ) {
 		if ( is_free[i] ) {
 			chi_sampler[i]->set_gaussian_stdev( free_chi_stdev );
 		} else chi_sampler[i]->set_gaussian_stdev( chi_stdev );

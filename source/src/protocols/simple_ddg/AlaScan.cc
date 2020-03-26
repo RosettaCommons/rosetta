@@ -113,7 +113,7 @@ AlaScan::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & dat
 	distance_threshold_ = tag->getOption<core::Real>( "interface_distance_cutoff", distance_threshold_ );
 	chain1_ = tag->getOption< bool >( "partner1", chain1_ );
 	chain2_ = tag->getOption< bool >( "partner2", chain2_ );
-	jump_ = tag->getOption< Size >( "jump", jump_ );
+	jump_ = tag->getOption< core::Size >( "jump", jump_ );
 	runtime_assert( chain1_ || chain2_ );
 	repeats_ = tag->getOption< core::Size >( "repeats", repeats_ );
 	symmetry_ = tag->getOption< bool >( "symmetry", symmetry_ );

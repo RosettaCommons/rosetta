@@ -70,7 +70,7 @@ using core::io::pdb::RecordCollection;
 
 static basic::Tracer TR( "core.io.pdb.HeaderInformation" );
 
-HeaderInformation::HeaderInformation() : utility::pointer::ReferenceCount(),
+HeaderInformation::HeaderInformation() : utility::VirtualBase(),
 	classification_( "" ),
 	dep_year_( 0 ),
 	dep_month_( 0 ),
@@ -87,7 +87,7 @@ HeaderInformation::HeaderInformation() : utility::pointer::ReferenceCount(),
 	author_in_progress_( false )
 {}
 
-HeaderInformation::HeaderInformation( HeaderInformation const & src ) : utility::pointer::ReferenceCount(),
+HeaderInformation::HeaderInformation( HeaderInformation const & src ) : utility::VirtualBase(),
 	classification_( src.classification_ ),
 	dep_year_( src.dep_year_ ),
 	dep_month_( src.dep_month_ ),

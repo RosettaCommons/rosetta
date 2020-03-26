@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_rna_checker_RNA_ChainClosableGeometryChecker_HH
 #define INCLUDED_protocols_stepwise_rna_checker_RNA_ChainClosableGeometryChecker_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
@@ -29,7 +29,7 @@ namespace modeler {
 namespace rna {
 namespace checker {
 
-class RNA_ChainClosableGeometryChecker: public utility::pointer::ReferenceCount {
+class RNA_ChainClosableGeometryChecker: public utility::VirtualBase {
 
 public:
 

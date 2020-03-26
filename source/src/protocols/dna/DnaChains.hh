@@ -19,7 +19,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <iosfwd>
 #include <map>
@@ -31,7 +31,7 @@ namespace protocols {
 namespace dna {
 
 class DnaPosition {
-	/// @brief Stores residue index/indices for a DNA position, which could be a basepair or a single-stranded position.  Accomplishes what std::pair<Size,Size> would, but is nicer to use
+	/// @brief Stores residue index/indices for a DNA position, which could be a basepair or a single-stranded position.  Accomplishes what std::pair<core::Size,Size> would, but is nicer to use
 public: // constructors
 	// default empty constructor
 	DnaPosition() : top_(0), bottom_(0), paired_(false) {}
@@ -55,7 +55,7 @@ private:
 
 typedef std::map< core::Size, DnaPosition > DnaPositions;
 
-class DnaChains : public utility::pointer::ReferenceCount {
+class DnaChains : public utility::VirtualBase {
 	// this class is a light wrapper for DnaPositions (a map which is typedefed above)
 public: // constructors
 	DnaChains();

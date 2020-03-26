@@ -70,7 +70,7 @@ SS_Base::SS_Base():
 
 
 /// @brief value constructor
-SS_Base::SS_Base( Size const & begin, Size const & end ):
+SS_Base::SS_Base( core::Size const & begin, core::Size const & end ):
 	begin_( begin ), end_( end ),
 	is_geometry_initialized_( false )
 {
@@ -93,7 +93,7 @@ Strand::Strand():
 
 
 /// @brief value constructor
-Strand::Strand( Size const & begin, Size const & end ):
+Strand::Strand( core::Size const & begin, core::Size const & end ):
 	SS_Base( begin, end )
 {}
 
@@ -126,7 +126,7 @@ Strand::calc_geometry( BB_Pos const & bbpos )
 	Vector v = Cend_pos() - Nend_pos();
 	orient( v.normalized() );
 
-	Size pos = ( end() - begin() )/2 + begin();
+	core::Size pos = ( end() - begin() )/2 + begin();
 	if ( ( end() - begin() )%2 == 0 ) {
 		mid_pos( ( bbpos.N( pos ) + bbpos.C( pos ) )/2.0 );
 	} else {
@@ -147,7 +147,7 @@ Helix::Helix():
 
 
 /// @brief value constructor
-Helix::Helix( Size const & begin, Size const & end ):
+Helix::Helix( core::Size const & begin, core::Size const & end ):
 	SS_Base( begin, end ),
 	bend_( 0 )
 {}
@@ -174,15 +174,15 @@ Helix::calc_geometry( BB_Pos const & bbpos )
 {
 	is_geometry_initialized( true );
 
-	Size begin( (*this).begin() );
-	Size end( (*this).end() );
+	core::Size begin( (*this).begin() );
+	core::Size end( (*this).end() );
 
 	static Real const eleven_inv = 1.0 / 11.0;
 
-	Size const s1 = int ( begin );
-	Size const s2 = s1 + 1;
-	Size const s3 = s2 + 1;
-	Size const s4 = s3 + 1;
+	core::Size const s1 = int ( begin );
+	core::Size const s2 = s1 + 1;
+	core::Size const s3 = s2 + 1;
+	core::Size const s4 = s3 + 1;
 
 	Vector const p1 = (                 bbpos.CA( s1 ) + bbpos.C( s1 ) ) +
 		( bbpos.N( s2 ) + bbpos.CA( s2 ) + bbpos.C( s2 ) ) +
@@ -193,10 +193,10 @@ Helix::calc_geometry( BB_Pos const & bbpos )
 	Vector const Nend_pos2 = ( p1 + bbpos.C( s4 ) ) * eleven_inv;
 	Nend_orient( ( Nend_pos2 - Nend_pos1 ).normalized() );
 
-	Size const n1 = int ( end - 3 );
-	Size const n2 = n1 + 1;
-	Size const n3 = n2 + 1;
-	Size const n4 = n3 + 1;
+	core::Size const n1 = int ( end - 3 );
+	core::Size const n2 = n1 + 1;
+	core::Size const n3 = n2 + 1;
+	core::Size const n4 = n3 + 1;
 
 	Vector const p2 = (                 bbpos.CA( n1 ) + bbpos.C( n1 ) ) +
 		( bbpos.N( n2 ) + bbpos.CA( n2 ) + bbpos.C( n2 ) ) +
@@ -229,7 +229,7 @@ Loop::Loop():
 
 
 /// @brief value constructor
-Loop::Loop( Size const begin, Size const end, String const & type ):
+Loop::Loop( core::Size const begin, core::Size const end, String const & type ):
 	SS_Base( begin, end ),
 	type_( type )
 {}
@@ -300,7 +300,7 @@ SS_Info2::clear_data()
 
 /// @brief resize vectors
 void
-SS_Info2::resize( Size const nres )
+SS_Info2::resize( core::Size const nres )
 {
 	bb_pos_.resize( int(nres) );
 	helix_id_.resize( nres );
@@ -359,7 +359,7 @@ void
 SS_Info2::initialize( String const & secstruct )
 {
 	clear_data(); // data all clear
-	Size nres( secstruct.size() );
+	core::Size nres( secstruct.size() );
 	runtime_assert( nres > 0 );
 	secstruct_ = secstruct;
 	resize( nres );
@@ -370,7 +370,7 @@ SS_Info2::initialize( String const & secstruct )
 /// @brief
 std::ostream & operator<<(std::ostream & out, const SS_Info2 & ssinfo )
 {
-	Size count( 0 );
+	core::Size count( 0 );
 	out << "#### SS_Info " << std::endl;
 	for ( auto const & helice : ssinfo.helices_ ) {
 		count ++;
@@ -422,11 +422,11 @@ SS_Info2::identify_ss( String const & secstruct )
 	bool flag_L( false );
 	bool flag_E( false );
 	bool flag_H( false );
-	Size beginE( 0 ), beginH( 0 ), beginL( 0 );
-	Size istrand( 0 ), ihelix( 0 ), iloop( 0 ), iss( 0 );
+	core::Size beginE( 0 ), beginH( 0 ), beginL( 0 );
+	core::Size istrand( 0 ), ihelix( 0 ), iloop( 0 ), iss( 0 );
 
 	String prev( "" );
-	for ( Size i=1; i<= secstruct.length(); ++i ) {
+	for ( core::Size i=1; i<= secstruct.length(); ++i ) {
 		String const & ss( secstruct.substr( i-1, 1 ) );
 
 		strand_id_[ i ] = 0;
@@ -495,7 +495,7 @@ SS_Info2::identify_ss( String const & secstruct )
 		}
 		ss_element_id_[ i ] = iss;
 
-	} // for( Size i )
+	} // for( core::Size i )
 
 	if ( flag_E == true ) {
 		if ( ( secstruct.length() - beginE + 1 ) >= 2 ) {
@@ -533,8 +533,8 @@ SS_Info2::identify_ss( String const & secstruct )
 template< class Archive >
 void
 protocols::fldsgn::topology::SS_Base::save( Archive & arc ) const {
-	arc( CEREAL_NVP( begin_ ) ); // Size
-	arc( CEREAL_NVP( end_ ) ); // Size
+	arc( CEREAL_NVP( begin_ ) ); // core::Size
+	arc( CEREAL_NVP( end_ ) ); // core::Size
 	arc( CEREAL_NVP( is_geometry_initialized_ ) ); // _Bool
 	arc( CEREAL_NVP( orient_ ) ); // Vector
 	arc( CEREAL_NVP( Nend_orient_ ) ); // Vector
@@ -548,8 +548,8 @@ protocols::fldsgn::topology::SS_Base::save( Archive & arc ) const {
 template< class Archive >
 void
 protocols::fldsgn::topology::SS_Base::load( Archive & arc ) {
-	arc( begin_ ); // Size
-	arc( end_ ); // Size
+	arc( begin_ ); // core::Size
+	arc( end_ ); // core::Size
 	arc( is_geometry_initialized_ ); // _Bool
 	arc( orient_ ); // Vector
 	arc( Nend_orient_ ); // Vector
@@ -630,12 +630,12 @@ protocols::fldsgn::topology::SS_Info2::save( Archive & arc ) const {
 	arc( CEREAL_NVP( secstruct_ ) ); // String
 	arc( CEREAL_NVP( bb_pos_ ) ); // BB_Pos
 	arc( CEREAL_NVP( strands_ ) ); // Strands
-	arc( CEREAL_NVP( strand_id_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( strand_id_ ) ); // utility::vector1<core::Size>
 	arc( CEREAL_NVP( helices_ ) ); // Helices
-	arc( CEREAL_NVP( helix_id_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( helix_id_ ) ); // utility::vector1<core::Size>
 	arc( CEREAL_NVP( loops_ ) ); // Loops
-	arc( CEREAL_NVP( loop_id_ ) ); // utility::vector1<Size>
-	arc( CEREAL_NVP( ss_element_id_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( loop_id_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( ss_element_id_ ) ); // utility::vector1<core::Size>
 }
 
 /// @brief Automatically generated deserialization method
@@ -647,12 +647,12 @@ protocols::fldsgn::topology::SS_Info2::load( Archive & arc ) {
 	arc( secstruct_ ); // String
 	arc( bb_pos_ ); // BB_Pos
 	arc( strands_ ); // Strands
-	arc( strand_id_ ); // utility::vector1<Size>
+	arc( strand_id_ ); // utility::vector1<core::Size>
 	arc( helices_ ); // Helices
-	arc( helix_id_ ); // utility::vector1<Size>
+	arc( helix_id_ ); // utility::vector1<core::Size>
 	arc( loops_ ); // Loops
-	arc( loop_id_ ); // utility::vector1<Size>
-	arc( ss_element_id_ ); // utility::vector1<Size>
+	arc( loop_id_ ); // utility::vector1<core::Size>
+	arc( ss_element_id_ ); // utility::vector1<core::Size>
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::fldsgn::topology::SS_Info2 );

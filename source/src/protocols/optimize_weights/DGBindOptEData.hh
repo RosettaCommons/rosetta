@@ -51,7 +51,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -68,7 +68,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -85,7 +85,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -104,7 +104,7 @@ public:
 	) const override;
 
 
-	Size
+	core::Size
 	size() const override
 	{ return 2; }
 
@@ -134,7 +134,7 @@ public:
 	{}
 
 
-	Size
+	core::Size
 	memory_use() const override;
 
 #ifdef USEMPI

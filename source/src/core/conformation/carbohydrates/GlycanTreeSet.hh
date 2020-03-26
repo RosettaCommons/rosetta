@@ -28,7 +28,7 @@
 #include <core/conformation/Conformation.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -49,7 +49,7 @@ namespace carbohydrates {
 /// This class contains a map, where the key is the first glycan residue
 /// If the key would be the root residue (Asn), we couldn't work with pure glycans.
 ///
-class GlycanTreeSet : public utility::pointer::ReferenceCount  {
+class GlycanTreeSet : public utility::VirtualBase  {
 
 public:
 

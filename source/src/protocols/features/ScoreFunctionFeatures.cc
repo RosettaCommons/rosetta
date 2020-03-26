@@ -168,7 +168,7 @@ ScoreFunctionFeatures::report_features(
 	StructureID const struct_id,
 	sessionOP db_session
 ){
-	Size const batch_id(get_batch_id(struct_id, db_session));
+	core::Size const batch_id(get_batch_id(struct_id, db_session));
 
 	insert_score_function_weights_rows(batch_id, db_session);
 	scfxn_->energy_method_options().insert_score_function_method_options_rows(
@@ -205,7 +205,7 @@ ScoreFunctionFeatures::insert_score_function_weights_rows(
 
 	statement stmt(safely_prepare_statement(statement_string, db_session));
 
-	for ( Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id ) {
+	for ( core::Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id ) {
 		auto type(static_cast<ScoreType>(score_type_id));
 
 		Real const weight( scfxn_->weights()[type] );

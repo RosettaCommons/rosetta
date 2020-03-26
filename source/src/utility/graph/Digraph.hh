@@ -23,7 +23,7 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // STL Headers
 #include <iosfwd>
@@ -675,7 +675,7 @@ private:
 };
 
 /// @brief A Digraph with constant time edge insertion and deletion.  Extensible.
-class Digraph : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Digraph >
+class Digraph : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< Digraph >
 {
 public:
 	/// self pointers
@@ -688,7 +688,7 @@ public:
 	typedef DirectedNode::DirectedEdgeListIter DirectedEdgeListIter;
 	typedef DirectedNode::DirectedEdgeListConstIter DirectedEdgeListConstIter;
 
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 
 public:
 

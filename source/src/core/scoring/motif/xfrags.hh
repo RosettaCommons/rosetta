@@ -121,7 +121,7 @@ bool write_xfrag_binary(  std::ostream        & out  , utility::vector1<Xfrag> c
 bool write_xfrag_binary(   std::string const & fname , utility::vector1<Xfrag> const & xfrag, utility::vector1<Xfres> const & xfres);
 bool read_xfrag_binary (utility::vector1<std::string> const & fnames, utility::vector1<Xfrag>       & xfrag, utility::vector1<Xfres>       & xfres);
 
-class XfragSet : public utility::pointer::ReferenceCount {
+class XfragSet : public utility::VirtualBase {
 	typedef boost::uint64_t Key;
 	typedef numeric::geometry::hashing::SixDCoordinateBinner SixDCoordinateBinner;
 	typedef numeric::geometry::hashing::bin_index_hasher bin_index_hasher;

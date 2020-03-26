@@ -41,6 +41,7 @@ static basic::Tracer TR( "protocols.task_operations.CrystalContactsOperation" );
 namespace protocols {
 namespace task_operations {
 
+using core::Size;
 using namespace core::pack::task::operation;
 using namespace utility::tag;
 
@@ -99,13 +100,13 @@ CrystalContactsOperation::apply( core::pose::Pose const & pose, core::pack::task
 
 	// find crystal contacts - iterate through all residue pairs between subunit 1 and the other subunits
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
-	std::set<Size> contacts;
-	for ( Size ir=1; ir<=sym_info->num_independent_residues(); ir++ ) {
+	std::set<core::Size> contacts;
+	for ( core::Size ir=1; ir<=sym_info->num_independent_residues(); ir++ ) {
 		TR.Debug << "sasa: " << ir << " " << rsd_sasa[ir] << std::endl;
 		if ( rsd_sasa[ir] < max_buried_sasa_ ) continue;      // if residue has no sc SASA, ignore
 		if ( !pose.residue(ir).is_protein() ) continue;
 
-		for ( Size jr=sym_info->num_independent_residues()+1; jr<=sym_info->num_total_residues_without_pseudo(); jr++ ) {
+		for ( core::Size jr=sym_info->num_independent_residues()+1; jr<=sym_info->num_total_residues_without_pseudo(); jr++ ) {
 			if ( !pose.residue(jr).is_protein() ) continue;
 
 			if ( is_crystal_contact( pose.residue(ir), pose.residue(jr) ) ) {
@@ -116,7 +117,7 @@ CrystalContactsOperation::apply( core::pose::Pose const & pose, core::pack::task
 	}
 
 	std::string design_select = "";
-	for ( Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++ ) {
+	for ( core::Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++ ) {
 		// if find residue in contacts or greater than asymm.nres, exclude
 		// use != invert_ to flip Boolean, exclude residues not in contact or greater than asymm nres
 		if ( ( ((contacts.find(ir) != contacts.end()) != invert_ )) || ir > sym_info->num_independent_residues() ) {
@@ -147,7 +148,7 @@ CrystalContactsOperation::is_crystal_contact( core::conformation::Residue const 
 		}
 	} else if ( nbr_radius_to_atoms_ ) {
 		// is CBeta to atom distance less than asymm nbr_radius plus gaps?
-		for ( Size atom_symm2 = symm_residue.natoms(); atom_symm2 > 0; --atom_symm2 ) {
+		for ( core::Size atom_symm2 = symm_residue.natoms(); atom_symm2 > 0; --atom_symm2 ) {
 			contact_distance = asymm_residue.nbr_radius() + all_gap_;
 			if ( asymm_residue.is_polar() && (symm_residue.atom_type(atom_symm2).is_acceptor() || symm_residue.atom_type(atom_symm2).is_polar_hydrogen() || symm_residue.atom_type(atom_symm2).is_donor() ) ) {
 				contact_distance += polar_gap_;
@@ -164,8 +165,8 @@ CrystalContactsOperation::is_crystal_contact( core::conformation::Residue const 
 		}//for atom_symm2
 	} else if ( atoms_to_atoms_ ) {
 		// are atom to atom distances less than gaps?
-		for ( Size atom_asymm2 = asymm_residue.natoms(); atom_asymm2 > 0; --atom_asymm2 ) {
-			for ( Size atom_symm2 = symm_residue.natoms(); atom_symm2 > 0; --atom_symm2 ) {
+		for ( core::Size atom_asymm2 = asymm_residue.natoms(); atom_asymm2 > 0; --atom_asymm2 ) {
+			for ( core::Size atom_symm2 = symm_residue.natoms(); atom_symm2 > 0; --atom_symm2 ) {
 				contact_distance = all_gap_;
 				if ( (asymm_residue.atom_type(atom_symm2).is_acceptor() && symm_residue.atom_type(atom_symm2).is_polar_hydrogen()) ||
 						(asymm_residue.atom_type(atom_symm2).is_polar_hydrogen() && symm_residue.atom_type(atom_symm2).is_acceptor()) ) {

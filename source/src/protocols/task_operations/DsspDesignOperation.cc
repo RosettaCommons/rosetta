@@ -194,7 +194,7 @@ DsspDesignOperation::apply( core::pose::Pose const & input_pose, core::pack::tas
 	bool flag( false );
 	utility::vector1< bool > helix_capping( pose.size(), false );
 	utility::vector1< bool > initial_helix( pose.size(), false );
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 
 		// ignore non-protein residues
 		if ( ! pose.residue( i ).is_protein() ) continue;
@@ -213,7 +213,7 @@ DsspDesignOperation::apply( core::pose::Pose const & input_pose, core::pack::tas
 
 
 	// apply restrictions to PackerTask
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 
 		// if residue is not a protein, continue
 		// make repackable only?

@@ -20,7 +20,7 @@
 #include <core/scoring/func/Func.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 namespace protocols {
@@ -29,7 +29,7 @@ namespace scores {
 
 /// @brief Holds data about a single four-body constraint in the form usefull for InterbondAngleScore and DihedralConstraintsScore classes
 /// @details This class is used to store data obtained from file before score method is created
-class FourAtomsConstraintData: public utility::pointer::ReferenceCount {
+class FourAtomsConstraintData: public utility::VirtualBase {
 public:
 
 	/// @brief makes a new object

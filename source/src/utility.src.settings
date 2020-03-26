@@ -31,6 +31,7 @@ sources = {
 		"string_util",
 		"vector0.srlz",
 		"vector1.srlz",
+		"VirtualBase.srlz",
 	],
 	"utility/boinc": [
 		"boinc_util",
@@ -121,7 +122,7 @@ sources = {
 		"VectorOptionKey",
 	],
 	"utility/pointer": [
-		"ReferenceCount.srlz",
+		# leave this here so Xcode will include the headers in the project!
 	],
 	"utility/pointer/boost": [
 		# leave this here so Xcode will include the headers in the project!

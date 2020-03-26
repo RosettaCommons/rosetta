@@ -58,7 +58,7 @@ namespace sspot {
 /// @brief default constructor
 SSPairPotential::SSPairPotential():
 	strand_dist_cutoff_( 6.5 ),
-	dimer_seqsep_cutoff_( 11 ),  // Size or 6 ?
+	dimer_seqsep_cutoff_( 11 ),  // core::Size or 6 ?
 	lowstrand_( 1 ),
 	phithetascore_( 2, 3, 36, 36 ),
 	dotscore_( 6 ),
@@ -73,9 +73,9 @@ SSPairPotential::~SSPairPotential() = default;
 
 /// @brief return score of phitheta
 core::Real
-SSPairPotential::calc_phithetascore( Size const strand_seqsep, Real const phi, Real const theta ) const
+SSPairPotential::calc_phithetascore( core::Size const strand_seqsep, Real const phi, Real const theta ) const
 {
-	Size istrand_seqsep;
+	core::Size istrand_seqsep;
 	if ( strand_seqsep >= 2 && strand_seqsep <= 10 ) {
 		istrand_seqsep = 2;
 	} else {
@@ -85,13 +85,13 @@ SSPairPotential::calc_phithetascore( Size const strand_seqsep, Real const phi, R
 			istrand_seqsep = 1;
 		}
 	}
-	auto iphi = static_cast< Size >( 1 + ( phi + 180.0 )/10 );
+	auto iphi = static_cast< core::Size >( 1 + ( phi + 180.0 )/10 );
 	if ( iphi > 36 ) {
 		iphi = 36;
 	} else if ( iphi < 1 ) {
 		iphi = 1;
 	}
-	auto itheta = static_cast< Size >( 1 + ( theta/5 ) );
+	auto itheta = static_cast< core::Size >( 1 + ( theta/5 ) );
 	if ( itheta > 36 ) {
 		itheta = 36;
 	} else if ( itheta < 1 ) {
@@ -125,20 +125,20 @@ SSPairPotential::calc_dotscore( Real const dpall ) const
 
 /// @brief return rsigma score
 core::Real
-SSPairPotential::calc_rsigmascore( Real sig, Real dist, Size const sign1, Size const sign2 ) const
+SSPairPotential::calc_rsigmascore( Real sig, Real dist, core::Size const sign1, core::Size const sign2 ) const
 {
 	if ( sig > 179.0 ) {
 		sig = 179.0;
 	} else if ( sig < 0.0 ) {
 		sig = 0.0;
 	}
-	Size isig = static_cast< Size >( sig / 10 ) + 1;
+	core::Size isig = static_cast< core::Size >( sig / 10 ) + 1;
 	if ( dist > 6.4 ) {
 		dist = 6.4;
 	} else if ( dist < 3.5 ) {
 		dist = 3.5;
 	}
-	Size idist = static_cast< Size >( ( dist - 3.5 ) / 0.25 ) + 1;
+	core::Size idist = static_cast< core::Size >( ( dist - 3.5 ) / 0.25 ) + 1;
 
 	// FIX THIS !!!!!!!!!!!!!!
 	// The definition of dimer signs (sign1,sign2) appears inverted (1 should be 2, vice versa).
@@ -159,13 +159,13 @@ SSPairPotential::calc_rsigmascore( Real sig, Real dist, Size const sign1, Size c
 /// @brief to determine which direction the CO groups point
 void
 SSPairPotential::pair_dp(
-	Size const & ss1,
-	Size const & ss2,
+	core::Size const & ss1,
+	core::Size const & ss2,
 	BB_Pos const & bb_pos,
 	Real & dp,
 	Vector const & mid_vector,
-	Size & sign1,
-	Size & sign2
+	core::Size & sign1,
+	core::Size & sign2
 ) const
 {
 	// length of C=O bond
@@ -177,7 +177,7 @@ SSPairPotential::pair_dp(
 
 	Real dp1( 0.0 );
 	Real sdp1( 0.0 );
-	for ( Size i=ss1; i<=ss1+1; ++i ) {
+	for ( core::Size i=ss1; i<=ss1+1; ++i ) {
 		Vector temp;
 		if ( i == ss1+1 ) {
 			temp = dist_co_inv * ( bb_pos.C(i) - bb_pos.O(i) );
@@ -193,7 +193,7 @@ SSPairPotential::pair_dp(
 
 	Real dp2( 0.0 );
 	Real sdp2( 0.0 );
-	for ( Size i=ss2; i<=ss2+1; ++i ) {
+	for ( core::Size i=ss2; i<=ss2+1; ++i ) {
 		Vector temp;
 		if ( i == ss2+1 ) {
 			temp = dist_co_inv * ( bb_pos.C(i) - bb_pos.O(i) );
@@ -241,24 +241,24 @@ SSPairPotential::score(
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-	for ( Size istrand=1; istrand<=strands.size(); istrand++ ) {
+	for ( core::Size istrand=1; istrand<=strands.size(); istrand++ ) {
 
 		StrandOP const strand( strands[ istrand ] );
 		if ( strand->length() < 2 ) continue;
-		for ( Size ss1=strand->begin(); ss1<strand->end(); ss1++ ) {
+		for ( core::Size ss1=strand->begin(); ss1<strand->end(); ss1++ ) {
 
 			for ( utility::graph::Graph::EdgeListConstIter
 					iru  = energy_graph.get_node( ss1 )->const_upper_edge_list_begin(),
 					irue = energy_graph.get_node( ss1 )->const_upper_edge_list_end();
 					iru != irue; ++iru ) {
 
-				Size const ss2( (*iru)->get_second_node_ind() );
-				Size jstrand = ss_info.strand_id( ss2 );
+				core::Size const ss2( (*iru)->get_second_node_ind() );
+				core::Size jstrand = ss_info.strand_id( ss2 );
 				if ( pose.residue_type( ss2 ).is_upper_terminus() ) continue;
 				if ( ss_info.strand_id( ss2+1 ) == 0 || jstrand == 0 || istrand == jstrand ) continue;
 
-				Size const strand_seqsep = get_foldtree_seqsep( pose, strands[ jstrand ]->begin()-1, strands[ istrand ]->end()+1 ) + 1;
-				Size const dimer_seqsep  = get_foldtree_seqsep( pose, ss2, ss1 );
+				core::Size const strand_seqsep = get_foldtree_seqsep( pose, strands[ jstrand ]->begin()-1, strands[ istrand ]->end()+1 ) + 1;
+				core::Size const dimer_seqsep  = get_foldtree_seqsep( pose, ss2, ss1 );
 
 				Vector const & pt1( bb_pos.N( ss1   ) );
 				Vector const & pt2( bb_pos.C( ss1+1 ) );
@@ -289,7 +289,7 @@ SSPairPotential::score(
 						Real distscore( 0.0 );
 						Real dimer_pair_score( 0.0 );
 						Real dpall;
-						Size sign1, sign2;
+						core::Size sign1, sign2;
 						pair_dp( ss1, ss2, bb_pos, dpall, mid_vector, sign1, sign2 );
 						dotscore = calc_dotscore( dpall );
 
@@ -346,8 +346,8 @@ SSPairPotential::score(
 
 		int const res1 ( pairing.res1() );
 		int const res2 ( pairing.res2() );
-		Size const strand1( ss_info.strand_id( res1 ) );
-		Size const strand2( ss_info.strand_id( res2 ) );
+		core::Size const strand1( ss_info.strand_id( res1 ) );
+		core::Size const strand2( ss_info.strand_id( res2 ) );
 		int const edge1( strands[ strand1 ]->end()+1 );
 		int const edge2( strands[ strand2 ]->begin()-1 );
 

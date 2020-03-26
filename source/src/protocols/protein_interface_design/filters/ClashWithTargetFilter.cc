@@ -92,7 +92,7 @@ core::Size ClashWithTargetFilter::compute( core::pose::Pose const & pose ) const
 
 	//Append target pose
 	core::pose::PoseOP context_pose= core::import_pose::pose_from_file( context_pdbname_, false , core::import_pose::PDB_file);
-	Size chain1end(pose_copy.conformation().chain_end( 1 ) );
+	core::Size chain1end(pose_copy.conformation().chain_end( 1 ) );
 	pose_copy.append_pose_by_jump(*context_pose,chain1end);
 	//pose_copy.dump_pdb("target_inputAlign.pdb");
 
@@ -174,10 +174,10 @@ ClashWithTargetFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache:
 	clash_residues_= tag->getOption<std::string>( "clash_residues", "ALA" );
 
 	if ( tag->hasOption("ref_start") && tag->hasOption("ref_end") && tag->hasOption("pose_start") && tag->hasOption("pose_end")  ) {
-		ref_start_ = tag->getOption< Size >("ref_start");
-		ref_end_ = tag->getOption< Size >("ref_end");
-		pose_start_ = tag->getOption< Size >("pose_start");
-		pose_end_ = tag->getOption< Size >("pose_end");
+		ref_start_ = tag->getOption< core::Size >("ref_start");
+		ref_end_ = tag->getOption< core::Size >("ref_end");
+		pose_start_ = tag->getOption< core::Size >("pose_start");
+		pose_end_ = tag->getOption< core::Size >("pose_end");
 		runtime_assert(ref_start_ > 0 && ref_start_ < ref_end_);
 		runtime_assert(pose_start_ > 0 && pose_start_ < pose_end_);
 	} else if ( !tag->hasOption("ref_start") && !tag->hasOption("ref_end") && !tag->hasOption("pose_start") && !tag->hasOption("pose_end") ) {

@@ -17,7 +17,7 @@
 #include <devel/metal_interface/ZincSecondShell.fwd.hh>
 
 #include <devel/metal_interface/MetalSiteResidue.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 //#include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
@@ -35,19 +35,19 @@ namespace metal_interface {
 
 
 /// @details
-class ZincSecondShell : public utility::pointer::ReferenceCount {
+class ZincSecondShell : public utility::VirtualBase {
 
 public:
 
 	typedef core::pose::Pose Pose;
 
-  /// @brief
-  ZincSecondShell( core::pose::Pose const & pose, utility::vector1< devel::metal_interface::MetalSiteResidueOP > msr );
+	/// @brief
+	ZincSecondShell( core::pose::Pose const & pose, utility::vector1< devel::metal_interface::MetalSiteResidueOP > msr );
 
-  ~ZincSecondShell() override;
+	~ZincSecondShell() override;
 
 
-  virtual void register_calculators();
+	virtual void register_calculators();
 
 	virtual utility::vector1< core::id::AtomID > get_first_shell_atom_ids();
 	virtual utility::vector1< core::id::AtomID > get_second_shell_atom_ids();

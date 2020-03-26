@@ -19,7 +19,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
 

@@ -69,7 +69,7 @@ private: ///functions
 		core::Size offset,
 		protocols::loops::Loops seeds );
 
-	bool is_cut( utility::vector1<Size> & cut_points, Size residue);
+	bool is_cut( utility::vector1<core::Size> & cut_points, core::Size residue);
 
 	bool chainbreakweights();
 

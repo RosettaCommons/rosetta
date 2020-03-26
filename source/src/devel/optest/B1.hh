@@ -4,7 +4,7 @@
 #include <devel/optest/B1.fwd.hh>
 #include <devel/optest/A.hh>  /// <--- Try to replace with devel/optest/A.fwd.hh
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace devel {
 namespace optest {
@@ -35,9 +35,9 @@ namespace optest {
 /// this header, and comment it out from B1.cc.
 /// Third:  Try to compile C1.cc.  Can you explain why C1.cc will not compile?
 
-class B1 : public utility::pointer::ReferenceCount {
+class B1 : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~B1() override;
 
 	/*B1();

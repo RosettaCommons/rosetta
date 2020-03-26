@@ -31,7 +31,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
@@ -41,7 +41,7 @@ namespace scoring {
 namespace nmr {
 
 /// @brief Base class of a point object from which the voxel grid is created.
-class VoxelGridPoint : public utility::pointer::ReferenceCount {
+class VoxelGridPoint : public utility::VirtualBase {
 
 public: // Methods
 

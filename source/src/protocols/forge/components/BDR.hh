@@ -166,7 +166,7 @@ public: // accessors
 
 	/// @brief the number of design-refine cycles to perform, default 3
 	inline
-	Size dr_cycles() const {
+	core::Size dr_cycles() const {
 		return dr_cycles_;
 	}
 
@@ -250,7 +250,7 @@ public: // mutators
 	/// @brief set the number of design-refine cycles to perform
 	/// @remarks set this to 0 to skip design-refine
 	inline
-	void dr_cycles( Size const cycles ) {
+	void dr_cycles( core::Size const cycles ) {
 		dr_cycles_ = cycles;
 	}
 
@@ -404,7 +404,7 @@ private: // data
 
 
 	/// @brief the number of design-refine cycles to perform, default 3
-	Size dr_cycles_;
+	core::Size dr_cycles_;
 
 
 	/// @brief the centroid scorefunction to use, default "remodel_cen"

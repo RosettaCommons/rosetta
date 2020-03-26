@@ -22,7 +22,7 @@
 //#include <protocols/loops/BackboneDB.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/wum/SilentStructStore.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <string>
 #include <vector>
@@ -35,7 +35,7 @@ namespace wum {
 
 /// @brief  The base class for all work units
 
-class WorkUnitBase  : public utility::pointer::ReferenceCount   {
+class WorkUnitBase  : public utility::VirtualBase   {
 public:
 	friend class MPI_WorkUnitManager;
 	friend class MPI_WorkUnitManager_Slave;

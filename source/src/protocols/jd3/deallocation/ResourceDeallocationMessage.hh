@@ -21,7 +21,7 @@
 #include <protocols/jd3/deallocation/DeallocationMessage.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <string>
 

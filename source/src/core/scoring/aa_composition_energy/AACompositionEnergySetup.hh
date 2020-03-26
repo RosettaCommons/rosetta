@@ -72,7 +72,7 @@ enum TailFunction {
 /// @details The logic is as follows: a residue is counted if and only if [any TYPE matches] OR [ (no NOT_TYPE matches) AND
 /// ( {all PROPERTIES match} OR {any OR_PROPERTIES match} OR {no TYPEs defined AND no PROPERTIES defined AND no OR_PROPERTIES defined } ) AND
 /// ( no NOT_PROPERTIES match) ]
-class AACompositionPropertiesSet : public utility::pointer::ReferenceCount {
+class AACompositionPropertiesSet : public utility::VirtualBase {
 public:
 
 	/// @brief Default constructor for AACompositionPropertiesSet.
@@ -245,7 +245,7 @@ public:
 
 /// @brief AACompositionEnergySetup, a helper class for the AACompositionEnergy energy method
 /// that stores all of its setup data.
-class AACompositionEnergySetup : public utility::pointer::ReferenceCount {
+class AACompositionEnergySetup : public utility::VirtualBase {
 public:
 
 	/// @brief Default constructor for AACompositionEnergySetup.

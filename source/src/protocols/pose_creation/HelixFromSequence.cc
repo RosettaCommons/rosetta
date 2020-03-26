@@ -101,7 +101,7 @@ HelixFromSequence::apply( core::pose::Pose & pose ){
 	pose.pdb_info( pdbinfo );
 
 	// 3. create ideal helices from SSEs
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		pose.set_phi(   i, -62 );
 		pose.set_psi(   i, -41 );
 		pose.set_omega( i, 180 );

@@ -53,13 +53,13 @@ using namespace core::conformation::signals;
 
 
 GlycanTreeSetObserver::GlycanTreeSetObserver():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 
 }
 
 GlycanTreeSetObserver::GlycanTreeSetObserver( conformation::Conformation const & conf ):
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	glycan_tree_set_ = utility::pointer::make_shared< GlycanTreeSet >( conf );
 }
@@ -79,7 +79,7 @@ GlycanTreeSetObserver::~GlycanTreeSetObserver(){
 }
 
 GlycanTreeSetObserver::GlycanTreeSetObserver( GlycanTreeSetObserver const & observer):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	glycan_tree_set_( new GlycanTreeSet( *observer.glycan_tree_set_))
 
 {

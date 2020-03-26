@@ -23,7 +23,7 @@
 
 // utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // basic headers
 #include <basic/options/option.hh>
@@ -58,7 +58,7 @@ typedef utility::vector1< CentroidRotNumVec > CentroidRotNumVecVec;
 enum MakeRotLibPolymerType { PEPTIDE, PEPTOID };
 
 /// @details Stores all options contained in a MakeRotLib option file
-class MakeRotLibOptionsData : public utility::pointer::ReferenceCount
+class MakeRotLibOptionsData : public utility::VirtualBase
 {
 public:
 

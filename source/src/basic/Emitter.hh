@@ -16,7 +16,7 @@
 #define INCLUDED_basic_Emitter_hh
 
 #include <basic/Tracer.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <cstddef>
 #include <iosfwd>
@@ -57,7 +57,7 @@ typedef utility::pointer::shared_ptr< JsonEmitter const > JsonEmitterCOP;
 ///  (i.e., be printed all on one line), but all lists and maps nested inside it
 ///  will also be printed without linebreaks, regardless of the requested indentation.
 ///  YAML refers to these two styles as "block" and "flow", respectively.
-class Emitter : public utility::pointer::ReferenceCount
+class Emitter : public utility::VirtualBase
 {
 public:
 

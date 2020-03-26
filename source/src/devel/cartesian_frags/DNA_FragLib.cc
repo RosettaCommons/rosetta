@@ -73,7 +73,7 @@ build_frag_libraries(
 	using namespace scoring::dna;
 
 
-	for ( Size n=1; n<= files.size(); ++n ) {
+	for ( core::Size n=1; n<= files.size(); ++n ) {
 		Pose pose;
 		td << "Reading " << files[n] << std::endl;
 
@@ -85,8 +85,8 @@ build_frag_libraries(
 
 		Conformation const & conf( pose.conformation() );
 
-		Size const nres( pose.size() );
-		for ( Size i=1; i<= nres; ++i ) {
+		core::Size const nres( pose.size() );
+		for ( core::Size i=1; i<= nres; ++i ) {
 			Residue const & rsd( pose.residue(i) );
 
 			if ( !rsd.is_DNA() ) continue;
@@ -178,8 +178,8 @@ setup_suite_pose(
 //    ScoreFunction scorefxn;
 //    scorefxn.set_weight( atom_pair_constraint, 1.0 );
 //    scorefxn.set_weight(     angle_constraint, 1.0 );
-//    Size nstep(0.0);
-//    for ( Size i=1; i< pose.size(); ++i ) {
+//    core::Size nstep(0.0);
+//    for ( core::Size i=1; i< pose.size(); ++i ) {
 //     Residue const & rsd1( pose.residue( i   ) );
 //     Residue const & rsd2( pose.residue( i+1 ) );
 //     if ( rsd1.is_DNA() && !rsd1.is_upper_terminus() && rsd2.is_DNA() && !rsd2.is_lower_terminus() ) {

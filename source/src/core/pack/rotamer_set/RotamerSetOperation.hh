@@ -29,7 +29,7 @@
 #include <core/pack/dunbrack/ChiSet.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>
@@ -57,7 +57,7 @@ namespace rotamer_set {
 ///     in their alter_rotamer_set operations.  For correlated alterations to rotamer
 ///     sets, the RotamerSetsOperation class should be used.
 
-class RotamerOperation : public utility::pointer::ReferenceCount
+class RotamerOperation : public utility::VirtualBase
 {
 public:
 	RotamerOperation();
@@ -76,7 +76,7 @@ public:
 
 };
 
-class RotamerSetOperation : public utility::pointer::ReferenceCount
+class RotamerSetOperation : public utility::VirtualBase
 {
 public:
 	RotamerSetOperation();
@@ -119,7 +119,7 @@ public:
 ///     to the PackerTask's operation list.
 ///
 
-class RotamerSetsOperation : public utility::pointer::ReferenceCount
+class RotamerSetsOperation : public utility::VirtualBase
 {
 public:
 	RotamerSetsOperation();

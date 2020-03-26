@@ -113,7 +113,7 @@ void ConformerSwitchMover::apply( core::pose::Pose & pose )
 	if ( !random_conformer_ && lowres_filter_->apply( pose ) ) {  //only calculate partition function if filters are passed
 		GenerateProbTable( pose );
 		core::Real rand_num( numeric::random::rg().uniform() );
-		for ( Size i = 1; i <= ensemble_->size(); i++ ) {
+		for ( core::Size i = 1; i <= ensemble_->size(); i++ ) {
 			if ( (rand_num >= prob_table_[i]) ) conf_num++;
 		}
 	} else if ( specific_conformer_ != 0 ) {  // if specific_conformer_ is zero then a conformer is chosen at random
@@ -197,14 +197,14 @@ void ConformerSwitchMover::switch_conformer(
 
 	interface.calculate( pose );
 
-	utility::vector1<Size>conf_interface;
-	for ( Size i = ensemble_->start_res(); i <= ensemble_->end_res(); i++ ) {
+	utility::vector1<core::Size>conf_interface;
+	for ( core::Size i = ensemble_->start_res(); i <= ensemble_->end_res(); i++ ) {
 		if ( interface.is_interface(i) ) conf_interface.push_back( i );
 	}
 
 	if ( conf_interface.size() <= 5 ) {
 		conf_interface.clear();
-		for ( Size i = ensemble_->start_res(); i <= ensemble_->end_res(); i++ ) {
+		for ( core::Size i = ensemble_->start_res(); i <= ensemble_->end_res(); i++ ) {
 			conf_interface.push_back( i );
 		}
 	}
@@ -212,9 +212,9 @@ void ConformerSwitchMover::switch_conformer(
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, new_conf, core::id::AtomID::BOGUS_ATOM_ID() ); // maps every atomid to bogus
 
-	for ( Size i = 1; i <= conf_interface.size(); i++ ) {
-		Size new_conf_resnum = conf_interface[i]-ensemble_->start_res()+1;
-		Size pose_resnum = conf_interface[i];
+	for ( core::Size i = 1; i <= conf_interface.size(); i++ ) {
+		core::Size new_conf_resnum = conf_interface[i]-ensemble_->start_res()+1;
+		core::Size pose_resnum = conf_interface[i];
 		core::id::AtomID const id1( new_conf.residue(new_conf_resnum).atom_index("CA"), new_conf_resnum );
 		core::id::AtomID const id2( pose.residue(pose_resnum).atom_index("CA"), pose_resnum );
 		atom_map[ id1 ] = id2;

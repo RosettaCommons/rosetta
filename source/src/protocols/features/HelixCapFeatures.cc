@@ -164,7 +164,7 @@ HelixCapFeatures::report_features(
 
 	core::scoring::dssp::Dssp all_dssp(pose);
 
-	for ( Size i = 5; i <= pose.size()-5; ++i ) {
+	for ( core::Size i = 5; i <= pose.size()-5; ++i ) {
 
 		core::conformation::Residue const & resi = pose.residue(i);
 		if ( !resi.is_protein() ) continue;
@@ -201,8 +201,8 @@ HelixCapFeatures::report_features(
 			basic::database::safely_write_to_database(stmt);
 		} else if ( (ss != ssN) && ((ss == "H") || (ss == "E")) ) {
 			// Get the helix length
-			Size work_resid( i+1 );
-			Size helix_length( 1 );
+			core::Size work_resid( i+1 );
+			core::Size helix_length( 1 );
 			while ( work_resid <= pose.size() && all_dssp.get_dssp_secstruct(work_resid) == 'H' ) {
 				helix_length++;
 				work_resid++;

@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: LoopModeler
+///   Contains currently: LoopModeler
 ///
 ///
 /// @author Vatsan Raman
@@ -42,7 +42,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <cstdlib>
@@ -71,8 +71,8 @@ public:
 		Loops LoopList,
 		core::scoring::ScoreFunctionOP scorefxn
 	) : Mover(),
-			LoopList_( LoopList ),
-			scorefxn_( scorefxn )
+		LoopList_( LoopList ),
+		scorefxn_( scorefxn )
 	{
 		Mover::type("LoopMover");
 		set_default();
@@ -99,10 +99,10 @@ protected:
 	//vprotected:
 	Loops LoopList_;
 	core::scoring::ScoreFunctionOP scorefxn_;
-	utility::vector1< utility::vector1< Size > > CompositeLoopIndex_;
+	utility::vector1< utility::vector1< core::Size > > CompositeLoopIndex_;
 	core::kinematics::MoveMapOP movemap_;
 	Real mc_temperature_;//default temperature
-	Size nmoves_;
+	core::Size nmoves_;
 	protocols::moves::MonteCarloOP mc_;
 	protocols::minimization_packing::MinMoverOP min_mover_;
 	bool mc_created;
@@ -124,8 +124,8 @@ public:
 		core::fragment::FragSetCOP fragset3mer,
 		core::fragment::FragSetCOP fragset9mer
 	) : LoopMover( LoopList, scorefxn),
-			fragset3mer_( fragset3mer ),
-			fragset9mer_( fragset9mer )
+		fragset3mer_( fragset3mer ),
+		fragset9mer_( fragset9mer )
 	{
 		Mover::type("LoopModeler");
 	}
@@ -166,9 +166,9 @@ private:
 	protocols::moves::SequenceMoverOP shear_move_rot_trial_mover( core::kinematics::MoveMapOP movemap_one_loop );
 	protocols::minimization_packing::RotamerTrialsMoverOP rotamer_trial_mover( core::pose::Pose & pose );
 
-	//	moves::SequenceMoverOP SmallMovesRotTrial;
-	//	moves::SequenceMoverOP ShearMovesRotTrial;
-	//	protocols::minimization_packing::RotamerTrialsMoverOP RotTrial;
+	// moves::SequenceMoverOP SmallMovesRotTrial;
+	// moves::SequenceMoverOP ShearMovesRotTrial;
+	// protocols::minimization_packing::RotamerTrialsMoverOP RotTrial;
 
 };
 

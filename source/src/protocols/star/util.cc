@@ -48,7 +48,7 @@ void emit_intermediate(const core::pose::Pose& pose, const std::string& silent_f
 		return;
 	}
 
-	static Size num_structures = 0;
+	static core::Size num_structures = 0;
 
 	SilentFileOptions opts;
 	SilentStructOP silent = SilentStructFactory::get_instance()->get_silent_struct_out( opts );

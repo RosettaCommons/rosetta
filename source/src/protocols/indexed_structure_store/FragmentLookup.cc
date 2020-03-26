@@ -25,6 +25,8 @@
 namespace protocols {
 namespace indexed_structure_store {
 
+using core::Size;
+
 FragmentLookupResult::FragmentLookupResult() :
 	found_match(false),
 	match_score(0),
@@ -60,14 +62,14 @@ std::vector< std::pair< numeric::Size, numeric::Size > > FragmentLookup::get_fra
 	//   residues this will be the residue after the break.
 	//
 	//   std::map stores the results in increasing order.
-	std::map<Size, Size> span_breaks_to_next_start;
-	typedef std::map<Size, Size>::value_type SpanBreakValue;
+	std::map<core::Size, core::Size> span_breaks_to_next_start;
+	typedef std::map<core::Size, core::Size>::value_type SpanBreakValue;
 
-	for ( Size i = 1; i <= pose.conformation().num_chains(); i++ ) {
+	for ( core::Size i = 1; i <= pose.conformation().num_chains(); i++ ) {
 		span_breaks_to_next_start[pose.conformation().chain_end(i) + 1] = pose.conformation().chain_end(i) + 1;
 	}
 
-	for ( Size i = 1; i <= pose.size(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue(i).is_protein() ) {
 			span_breaks_to_next_start[i] = i + 1;
 		}
@@ -83,8 +85,8 @@ std::vector< std::pair< numeric::Size, numeric::Size > > FragmentLookup::get_fra
 	// where a span runs along [start, end).
 	numeric::Size span_start = 1;
 	for ( SpanBreakValue const & break_and_start : span_breaks_to_next_start ) {
-		Size next_break = break_and_start.first;
-		Size next_start = break_and_start.second;
+		core::Size next_break = break_and_start.first;
+		core::Size next_start = break_and_start.second;
 
 		if ( next_break >= span_start ) {
 			valid_residue_spans.emplace_back(span_start, next_break);
@@ -135,16 +137,16 @@ FragmentLookupResult FragmentLookup::lookup_closest_fragment_subset_v(std::vecto
 }
 
 
-std::vector<FragmentLookupResult> FragmentLookup::lookup_close_fragments_v(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates,  numeric::Real rms_threshold, Size max_matches)
+std::vector<FragmentLookupResult> FragmentLookup::lookup_close_fragments_v(std::vector< numeric::xyzVector<numeric::Real> > & query_coordinates,  numeric::Real rms_threshold, core::Size max_matches)
 {
 	std::vector<FragmentLookupResult> results;
-	std::vector<Size>match_indexes;
+	std::vector<core::Size>match_indexes;
 	std::vector<numeric::Real>distances;
 
 	numeric::Real* coordinate_start = &(query_coordinates[0].x());
 
 	lookup_.all_matches_below_threshold(coordinate_start, match_indexes, distances,rms_threshold);
-	for ( Size ii=0; (ii<match_indexes.size() && results.size()<max_matches); ++ii ) {
+	for ( core::Size ii=0; (ii<match_indexes.size() && results.size()<max_matches); ++ii ) {
 		FragmentLookupResult result;
 		result.match_index =match_indexes[ii];
 		result.match_rmsd=distances[ii];

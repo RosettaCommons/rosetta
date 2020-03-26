@@ -40,7 +40,7 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <numeric/alignment/QCPKernel.hh>
 #include <numeric/xyzVector.hh>
@@ -78,9 +78,9 @@ protocols::loops::Loops AnalyzeLoopModeling::get_loops(core::pose::Pose const & 
 	dssp.dssp_reduced();
 	std::string dssp_string = dssp.get_dssp_secstruct();
 	string lastSecStruct = dssp_string.substr(0,1);
-	Size startLoop = 0;
-	Size endLoop = 0;
-	Size min_SS_length = 4;
+	core::Size startLoop = 0;
+	core::Size endLoop = 0;
+	core::Size min_SS_length = 4;
 	if ( dssp_string.substr(0,1) == "L" ) {
 		startLoop = 1;
 	}
@@ -96,20 +96,20 @@ protocols::loops::Loops AnalyzeLoopModeling::get_loops(core::pose::Pose const & 
 		}
 		lastSecStruct = dssp_string.substr(ii-1,1);
 	}
-	for ( Size ii=2; ii<pose_loops.num_loop(); ++ii ) {
-		Size before_loop_start = pose_loops[ii-1].stop()+1;
-		Size before_loop_end = pose_loops[ii].start()-1;
+	for ( core::Size ii=2; ii<pose_loops.num_loop(); ++ii ) {
+		core::Size before_loop_start = pose_loops[ii-1].stop()+1;
+		core::Size before_loop_end = pose_loops[ii].start()-1;
 		bool same_res_type = true;
-		for ( Size jj=before_loop_start+1; jj<=before_loop_end; ++jj ) { //gets rid of screwing helix-sheet transitions
+		for ( core::Size jj=before_loop_start+1; jj<=before_loop_end; ++jj ) { //gets rid of screwing helix-sheet transitions
 			if ( dssp_string[jj-1]!= dssp_string[before_loop_start-1] ) {
 				same_res_type = false;
 			}
 		}
-		Size length_before_loop = before_loop_end-before_loop_start+1;
-		Size after_loop_start = pose_loops[ii].stop()+1;
-		Size after_loop_end = pose_loops[ii+1].start()-1;
-		Size length_after_loop = after_loop_end-after_loop_start+1;
-		for ( Size jj=after_loop_start+1; jj<=after_loop_end; ++jj ) {
+		core::Size length_before_loop = before_loop_end-before_loop_start+1;
+		core::Size after_loop_start = pose_loops[ii].stop()+1;
+		core::Size after_loop_end = pose_loops[ii+1].start()-1;
+		core::Size length_after_loop = after_loop_end-after_loop_start+1;
+		for ( core::Size jj=after_loop_start+1; jj<=after_loop_end; ++jj ) {
 			if ( dssp_string[jj-1]!= dssp_string[after_loop_start-1] ) {
 				same_res_type = false;
 			}
@@ -120,9 +120,9 @@ protocols::loops::Loops AnalyzeLoopModeling::get_loops(core::pose::Pose const & 
 	}
 	//std::cout << dssp_string << std::endl;
 	// for (int ii=pose_loops_pass2.num_loop(); ii>=0; --ii ) {
-	//  Size loopStart=pose_loops_pass2[ii].start();
-	//  Size loopEnd=pose_loops_pass2[ii].stop();
-	//  Size loopLength = loopEnd-loopStart+1;
+	//  core::Size loopStart=pose_loops_pass2[ii].start();
+	//  core::Size loopEnd=pose_loops_pass2[ii].stop();
+	//  core::Size loopLength = loopEnd-loopStart+1;
 	//  if(loopLength>=loopLengthRangeLow_ && loopLength<= loopLengthRangeHigh_){
 	//   std::cout << loopStart << "-" << loopEnd << std::endl;
 	//  }
@@ -138,11 +138,11 @@ Real AnalyzeLoopModeling::rmsd_between_coordinates(std::vector< numeric::xyzVect
 		QCPKernel::CoordMap(&coordinates.front().x(), 3, coordinates.size()));
 }
 
-Real AnalyzeLoopModeling::get_loop_rmsd(core::pose::Pose native_pose,core::pose::Pose test_pose, Size loopStart, Size loopEnd){
+Real AnalyzeLoopModeling::get_loop_rmsd(core::pose::Pose native_pose,core::pose::Pose test_pose, core::Size loopStart, core::Size loopEnd){
 	using namespace chemical;
 	std::vector< numeric::xyzVector<numeric::Real> > native_coordinates;
 	std::vector< numeric::xyzVector<numeric::Real> > test_coordinates;
-	for ( Size ii = loopStart;  ii <= loopEnd; ++ii ) {
+	for ( core::Size ii = loopStart;  ii <= loopEnd; ++ii ) {
 		native_coordinates.push_back(native_pose.residue(ii).xyz("CA"));
 		test_coordinates.push_back(test_pose.residue(ii).xyz("CA"));
 	}
@@ -158,14 +158,14 @@ Size AnalyzeLoopModeling::get_valid_resid(int resid,core::pose::Pose const pose)
 		TR << "invalid resid encountered c-term" << resid << std::endl;
 		resid = (int)pose.total_residue()-9+1;
 	}
-	return(Size(resid));
+	return(core::Size(resid));
 }
 
 
-Real AnalyzeLoopModeling::generate_lookback_rmsd(core::pose::Pose pose, Size position){
-	vector1<Size> resids;
+Real AnalyzeLoopModeling::generate_lookback_rmsd(core::pose::Pose pose, core::Size position){
+	vector1<core::Size> resids;
 	for ( int ii=position-3; ii<=(int)position+2; ii=ii+3 ) {
-		Size tmp_resid = get_valid_resid(ii,pose);
+		core::Size tmp_resid = get_valid_resid(ii,pose);
 		resids.push_back(tmp_resid);
 	}
 	Real rmsd = SSHashedFragmentStore_->max_rmsd_in_region(pose,resids);
@@ -187,7 +187,7 @@ void AnalyzeLoopModeling::apply(core::pose::Pose & pose) {
 	Real max_vdw_change=0;
 	bool ideal=false;
 	utility::io::ozstream acc_out("loop_accuracy.txt", std::ios_base::app);
-	for ( Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
+	for ( core::Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
 		resAdjustmentStartLow = 0;
 		resAdjustmentStartHigh = 0;
 		resAdjustmentStopLow = 0;
@@ -196,9 +196,9 @@ void AnalyzeLoopModeling::apply(core::pose::Pose & pose) {
 		resAdjustmentStartHigh_sheet = 0;
 		resAdjustmentStopLow_sheet = 0;
 		resAdjustmentStopHigh_sheet = 0;
-		Size loopStart=pose_loops[ii].start();
-		Size loopEnd=pose_loops[ii].stop();
-		Size loopLength = loopEnd-loopStart+1;
+		core::Size loopStart=pose_loops[ii].start();
+		core::Size loopEnd=pose_loops[ii].stop();
+		core::Size loopLength = loopEnd-loopStart+1;
 		std::string tag = protocols::jd2::current_input_tag();
 		if ( loopLength>=loopLengthRangeLow_ && loopLength<= loopLengthRangeHigh_ ) {
 			core::pose::PoseOP kicPoseOP = pose.clone();

@@ -31,7 +31,7 @@ namespace rna {
 namespace bulge {
 
 //Constructor
-BulgeApplyMover::BulgeApplyMover( Size const moving_res ):
+BulgeApplyMover::BulgeApplyMover( core::Size const moving_res ):
 	moving_res_( moving_res )
 {}
 

@@ -31,19 +31,19 @@ class MolecularMassFilter : public protocols::filters::Filter
 {
 public:
 	MolecularMassFilter() :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "MolecularMass" )
 	{}
 
 	MolecularMassFilter(std::string const & chain, core::Size mass_limit ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "MolecularMass" ),
 		chain_(chain),
 		mass_limit_(mass_limit)
 	{}
 
 	MolecularMassFilter( MolecularMassFilter const & init ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( init ),
 		chain_(init.chain_),
 		mass_limit_(init.mass_limit_)

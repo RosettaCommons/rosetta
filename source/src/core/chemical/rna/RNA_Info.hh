@@ -26,7 +26,7 @@
 // Numeric headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <utility/vector1.hh>
@@ -38,7 +38,7 @@ namespace rna {
 
 
 /////////////////////////////////////Parin S, Dec 23, 2011: RNA stuff//////////////////////////////////////////
-class RNA_Info : public utility::pointer::ReferenceCount {
+class RNA_Info : public utility::VirtualBase {
 
 
 public:

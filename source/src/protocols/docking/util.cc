@@ -91,10 +91,10 @@ void setup_edges_for_partner(
 
 	// create an `Edge` for each contiguous stretch of residues in the partner
 	bool prev_residue_is_in_partner( false );
-	Size edge_start( 0 );
-	Size partner_start( 0 );
+	core::Size edge_start( 0 );
+	core::Size partner_start( 0 );
 
-	for ( Size i = partner.l(); i <= partner.u(); ++i ) {
+	for ( core::Size i = partner.l(); i <= partner.u(); ++i ) {
 		bool const residue_is_in_partner( partner[ i ] );
 
 		if ( ! residue_is_in_partner && prev_residue_is_in_partner ) {
@@ -128,7 +128,7 @@ void setup_edges_for_partner(
 	}
 
 	// connect the edges associated with the partner with a jump
-	for ( Size i = edge_list.l() + 1; i <= edge_list.u(); ++i ) {
+	for ( core::Size i = edge_list.l() + 1; i <= edge_list.u(); ++i ) {
 		ft.add_edge( edge_list[ i - 1 ].stop(), edge_list[ i ].start(), ft.num_jump() + 1 );
 	}
 
@@ -152,8 +152,8 @@ core::Size setup_dock_jump(
 	using core::kinematics::Edge;
 	using core::Size;
 
-	Size const last_jump_number( ft.num_jump() + 1 );
-	Size const dock_jump_number( make_dock_jump_label_1 ?  1 : last_jump_number );
+	core::Size const last_jump_number( ft.num_jump() + 1 );
+	core::Size const dock_jump_number( make_dock_jump_label_1 ?  1 : last_jump_number );
 
 	if ( make_dock_jump_label_1 && ft.num_jump() ) {
 		// change the label of Jump 1 to be the last Jump so the rigid body docking jump can be "1"
@@ -193,8 +193,8 @@ setup_foldtree(
 	if ( partner_chainID == "_" ) {
 		debug_assert( pose.chain( pose.size() ) > 1 );
 
-		Size const last_res_of_first_chain( pose.conformation().chain_end( 1 ) );
-		for ( Size i = partner1.l(); i <= last_res_of_first_chain; ++i ) { partner1[ i ] = true; }
+		core::Size const last_res_of_first_chain( pose.conformation().chain_end( 1 ) );
+		for ( core::Size i = partner1.l(); i <= last_res_of_first_chain; ++i ) { partner1[ i ] = true; }
 	} else {
 		vector1< string > const partners = string_split( partner_chainID, '_' );
 
@@ -252,8 +252,8 @@ setup_foldtree(
 	vector1< bool > const partner2( partner1.invert() );
 
 	// identify the residue closest to the center of masses of each partner
-	Size const jump_pos1( residue_center_of_mass( pose, partner1 ) );
-	Size const jump_pos2( residue_center_of_mass( pose, partner2 ) );
+	core::Size const jump_pos1( residue_center_of_mass( pose, partner1 ) );
+	core::Size const jump_pos2( residue_center_of_mass( pose, partner2 ) );
 
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "jump1: " << jump_pos1 << endl;

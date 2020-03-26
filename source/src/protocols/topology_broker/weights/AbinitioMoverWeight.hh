@@ -31,7 +31,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <utility/pointer/access_ptr.fwd.hh>
@@ -50,7 +50,7 @@ namespace protocols {
 namespace topology_broker {
 namespace weights {
 
-class AbinitioMoverWeight : public utility::pointer::ReferenceCount {
+class AbinitioMoverWeight : public utility::VirtualBase {
 public:
 	~AbinitioMoverWeight() override {};
 	virtual core::Real weight( core::Size stageID, core::Real progress /* progress within stage */ ) const = 0;

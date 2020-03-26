@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_monte_carlo_StepWiseMoveSelector_HH
 #define INCLUDED_protocols_stepwise_monte_carlo_StepWiseMoveSelector_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMoveSelector.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 #include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.fwd.hh>
@@ -30,7 +30,7 @@ namespace stepwise {
 namespace monte_carlo {
 namespace mover {
 
-class StepWiseMoveSelector: public utility::pointer::ReferenceCount {
+class StepWiseMoveSelector: public utility::VirtualBase {
 
 public:
 

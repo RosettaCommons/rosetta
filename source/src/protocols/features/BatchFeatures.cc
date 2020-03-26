@@ -60,7 +60,7 @@ using cppdb::result;
 
 BatchFeatures::BatchFeatures()= default;
 
-BatchFeatures::BatchFeatures( BatchFeatures const & ) : utility::pointer::ReferenceCount() {}
+BatchFeatures::BatchFeatures( BatchFeatures const & ) : utility::VirtualBase() {}
 
 BatchFeatures::~BatchFeatures()= default;
 
@@ -127,8 +127,8 @@ BatchFeatures::indices() const {
 
 Size
 BatchFeatures::report_features(
-	Size batch_id,
-	Size protocol_id,
+	core::Size batch_id,
+	core::Size protocol_id,
 	std::string name,
 	std::string description,
 	sessionOP db_session

@@ -246,7 +246,7 @@ ResidueCountFilter::compute(
 	}
 	if ( count_as_percentage_ ) {
 		Real count_as_percentage = round_to_Real((static_cast<Real>(count)*100)/static_cast<Real>(target_res.size()));
-		//without static_cast<Real>, division returns only Size (integer-like)
+		//without static_cast<Real>, division returns only core::Size (integer-like)
 		return count_as_percentage;
 	} else {
 		return count;

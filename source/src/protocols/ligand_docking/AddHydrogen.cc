@@ -46,14 +46,14 @@ namespace ligand_docking {
 
 
 AddHydrogen::AddHydrogen():
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Mover("AddHydrogen")
 {
 	Mover::type( "AddHydrogen" );
 }
 
 AddHydrogen::AddHydrogen(core::Size const residue_index, core::Size const connection_id):
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Mover("AddHydrogen"),
 	residue_index_(residue_index),
 	connection_id_(connection_id)

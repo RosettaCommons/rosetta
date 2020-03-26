@@ -513,7 +513,7 @@ MPI_LoopHashRefine_Master::load_sample_weight() {
 	} else {
 		TR << "Using default sample weight of 50 for every residue" << std::endl;
 		std::string t = "50";
-		for ( Size i = 0; i < (*(library_central().begin()))->nres() - 1; i++ ) {
+		for ( core::Size i = 0; i < (*(library_central().begin()))->nres() - 1; i++ ) {
 			t += " 50";
 		}
 		sample_weight_str_ = t;

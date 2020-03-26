@@ -84,7 +84,7 @@ SurfaceCalculator::print( std::string const & key ) const {
 	} else if ( key == "residue_surface" ) {
 		std::ostringstream ss;
 		ss << "[";
-		for ( Size ii=1; ii < residue_surface_energy_.size(); ++ii ) {
+		for ( core::Size ii=1; ii < residue_surface_energy_.size(); ++ii ) {
 			ss << ii << ":";
 			if ( residue_surface_energy_[ ii ] != 0.00 ) {
 				ss << ObjexxFCL::format::F(8,4, residue_surface_energy_[ ii ]);

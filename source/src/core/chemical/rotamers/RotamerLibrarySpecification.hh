@@ -23,7 +23,7 @@
 // Basic headers
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <istream>
@@ -38,7 +38,7 @@ namespace core {
 namespace chemical {
 namespace rotamers {
 
-class RotamerLibrarySpecification : public utility::pointer::ReferenceCount {
+class RotamerLibrarySpecification : public utility::VirtualBase {
 public:
 	RotamerLibrarySpecification() = default;
 

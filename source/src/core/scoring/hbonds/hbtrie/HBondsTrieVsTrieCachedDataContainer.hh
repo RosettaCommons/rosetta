@@ -20,7 +20,6 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
 
 // Core headers
 #include <core/scoring/EnergyMap.hh>

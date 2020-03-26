@@ -18,7 +18,7 @@
 #include <core/types.hh>
 #include <basic/options/option.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 #include <ObjexxFCL/format.hh>

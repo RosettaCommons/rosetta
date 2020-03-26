@@ -73,7 +73,7 @@ BluePrint::~BluePrint() = default;
 
 /// @brief copy constructor
 BluePrint::BluePrint( BluePrint const & src ):
-	ReferenceCount(),
+	VirtualBase(),
 	total_residue_( src.total_residue_ ),
 	total_residue_wolig_( src.total_residue_wolig_ ),
 	sequence_( src.sequence_ ),
@@ -165,12 +165,12 @@ BluePrint::resnum( core::Size seqpos ) const
 
 /// @brief translate residue number of pose to that of blueprint file
 BluePrint::Size
-BluePrint::resnum_map( Size resnum_pose ) const
+BluePrint::resnum_map( core::Size resnum_pose ) const
 {
-	std::map<Size,Size>::const_iterator itr;
+	std::map<core::Size,Size>::const_iterator itr;
 	itr = resnum_map_.find( resnum_pose );
 	if ( itr != resnum_map_.end() ) {
-		Size resnum_blueprint = itr->second;
+		core::Size resnum_blueprint = itr->second;
 		return resnum_blueprint;
 	} else {
 		return 0;
@@ -261,7 +261,7 @@ BluePrint::read_blueprint_stream( std::istream & data, std::string const & filen
 	String spairs;
 
 	String line;
-	Size linecount( 0 ), count( 0 );
+	core::Size linecount( 0 ), count( 0 );
 	while ( getline( data, line ) ) {
 		linecount++;
 		utility::vector1< String > tokens ( utility::split( line ) );
@@ -308,14 +308,14 @@ BluePrint::read_blueprint_stream( std::istream & data, std::string const & filen
 			runtime_assert( tokens.size() == 3 || tokens.size() == 4 || tokens.size() == 5 );
 
 			count ++;
-			auto ii = boost::lexical_cast<Size>( tokens[1] );
+			auto ii = boost::lexical_cast<core::Size>( tokens[1] );
 			char aa ( tokens[2][0] );
 			char sec( tokens[3][0] );
 			String abego("");
 			if ( tokens[3].length() > 1 ) {
 				core::sequence::ABEGOManager am;
 				// check characters of abego is appropriate or not
-				for ( Size k=2; k<=tokens[3].length(); k++ ) {
+				for ( core::Size k=2; k<=tokens[3].length(); k++ ) {
 					am.symbol2index( tokens[3][k-1] );
 				}
 				abego = tokens[3].substr( 1, tokens[3].length() - 1 );
@@ -334,7 +334,7 @@ BluePrint::read_blueprint_stream( std::istream & data, std::string const & filen
 			sstype_.push_back( sec );
 			abego_.push_back( abego );
 			if ( ii != 0 ) {
-				resnum_map_.insert( std::map<Size, Size>::value_type( ii, count ) );
+				resnum_map_.insert( std::map<core::Size, core::Size>::value_type( ii, count ) );
 			}
 
 			if ( tokens.size() >= 4 ) {
@@ -370,7 +370,7 @@ BluePrint::read_blueprint_stream( std::istream & data, std::string const & filen
 	debug_assert( total_residue_ > 0 );
 
 	total_residue_wolig_ = 0;
-	for ( Size ii=1; ii<=total_residue(); ii++ ) {
+	for ( core::Size ii=1; ii<=total_residue(); ii++ ) {
 		if ( extra( ii ) == "LIGAND" ) continue;
 		total_residue_wolig_ ++;
 	}
@@ -399,7 +399,7 @@ BluePrint::read_blueprint_stream( std::istream & data, std::string const & filen
 void
 BluePrint::set_movemap( MoveMapOP & movemap )
 {
-	for ( Size i=1; i<=total_residue_ ; ++i ) {
+	for ( core::Size i=1; i<=total_residue_ ; ++i ) {
 		if ( buildtype( i ) == '.' ) {
 			movemap->set_bb( i, true );
 			movemap->set_chi( i, true );
@@ -426,8 +426,8 @@ BluePrint::set_movemap( MoveMapOP & movemap )
 void
 BluePrint::insert_ss_into_pose( Pose & pose )
 {
-	for ( Size i=1; i<= pose.size(); i++ ) {
-		Size resi = resnum_map( i );
+	for ( core::Size i=1; i<= pose.size(); i++ ) {
+		core::Size resi = resnum_map( i );
 		if ( resi == 0 ) continue;
 		char ss = secstruct( resi );
 		pose.set_secstruct( i, boost::lexical_cast<char>( ss ) );

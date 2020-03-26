@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreType.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -35,7 +35,7 @@
 namespace protocols {
 namespace moves {
 
-class SimulatedTempering : public utility::pointer::ReferenceCount {
+class SimulatedTempering : public utility::VirtualBase {
 public:
 	SimulatedTempering(
 		core::pose::Pose & pose,

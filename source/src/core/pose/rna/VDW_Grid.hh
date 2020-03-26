@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_pose_rna_VDW_Grid_HH
 #define INCLUDED_core_pose_rna_VDW_Grid_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/rna/VDW_Grid.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
@@ -40,7 +40,7 @@ struct Atom_Bin {
 };
 
 
-class VDW_Grid : public utility::pointer::ReferenceCount {
+class VDW_Grid : public utility::VirtualBase {
 
 public:
 

@@ -104,7 +104,7 @@ vector1<Size> allifnone(vector1<Size> v, Size n) {
 	return(v);
 }
 
-class RotSel : public utility::pointer::ReferenceCount {
+class RotSel : public utility::VirtualBase {
 protected:
 	Pose const pose_;
 	vector1<Size> const pos_;

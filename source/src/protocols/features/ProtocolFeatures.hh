@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_features_ProtocolFeatures_hh
 
 // Unit Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/ProtocolFeatures.fwd.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
@@ -33,7 +33,7 @@
 namespace protocols {
 namespace features {
 
-class ProtocolFeatures : public utility::pointer::ReferenceCount{
+class ProtocolFeatures : public utility::VirtualBase{
 public:
 	ProtocolFeatures();
 

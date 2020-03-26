@@ -47,7 +47,7 @@ RelativeConnectRight::RelativeConnectRight() :
 ///  modify( pose_left ) is called
 RelativeConnectRight::RelativeConnectRight(
 	RelativeSequencePositionOP const & rp,
-	Size const right_position,
+	core::Size const right_position,
 	Pose const & pose_right
 ) :
 	Super( 0u, right_position, pose_right ),

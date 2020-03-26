@@ -116,7 +116,7 @@ OptEPositionData::update_range(
 	EnergyMap & upper_bound
 ) const
 {
-	for ( Size ii = 1; ii <= free_score_list.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= free_score_list.size(); ++ii ) {
 		Real ii_min = lower_bound[ free_score_list[ ii ] ];
 		Real ii_max = upper_bound[ free_score_list[ ii ] ];
 		if ( ii_min > structure->free_data()[ ii ] ) {
@@ -129,7 +129,7 @@ OptEPositionData::update_range(
 		upper_bound[ free_score_list[ ii ] ] = ii_max;
 	}
 
-	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 		Real ii_min = lower_bound[ fixed_score_list[ ii ] ];
 		Real ii_max = upper_bound[ fixed_score_list[ ii ] ];
 		if ( ii_min > structure->fixed_data()[ ii ] ) {
@@ -216,7 +216,7 @@ PNatAAOptEPositionData::get_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const num_ref_dofs,
 	int const,
 	EnergyMap const & fixed_terms,
@@ -228,7 +228,7 @@ PNatAAOptEPositionData::get_score(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	Size const aa_range( chemical::num_canonical_aas );
+	core::Size const aa_range( chemical::num_canonical_aas );
 	chemical::AA const this_native_aa( native_aa() );
 
 	static Real const inv_kT( option[ optE::inv_kT_nataa ] );
@@ -246,7 +246,7 @@ PNatAAOptEPositionData::get_score(
 		best_energy_by_aa, unweighted_E_dof, ref_deriv_weight );
 
 	//Real const very_best = utility::min( best_energy_by_aa );
-	//for ( Size ii = 1; ii <= best_energy_by_aa.size(); ++ii ) {
+	//for ( core::Size ii = 1; ii <= best_energy_by_aa.size(); ++ii ) {
 	// best_energy_by_aa[ ii ] -= very_best;
 	//}
 
@@ -257,7 +257,7 @@ PNatAAOptEPositionData::get_score(
 	Real numerator(0.0), partition(0.0);
 	Multivec dpartition( vars.size(), 0.0 ), dnumerator( vars.size(), 0.0 );
 
-	for ( Size aa(1); aa <= aa_range; ++aa ) {
+	for ( core::Size aa(1); aa <= aa_range; ++aa ) {
 
 		Real const exp_term( std::exp( -1.0 * inv_kT * best_energy_by_aa[ aa ] ) );
 		partition += exp_term;
@@ -277,7 +277,7 @@ PNatAAOptEPositionData::get_score(
 
 		// partitions for energy derivatives
 		// note for derivatives: d/dw( e^-(E*w+...) ) = -E * e^-(E*w+...)
-		for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+		for ( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 			Real e_dof_deriv( -1.0 * inv_kT * unweighted_E_dof[ aa ][ e_dof ] * exp_term );
 			dpartition[ e_dof ] += e_dof_deriv;
 			if ( aa == size_t(this_native_aa) ) {
@@ -287,7 +287,7 @@ PNatAAOptEPositionData::get_score(
 	}
 
 	// accumulate to passed-in derivative sums
-	for ( Size dof(1); dof <= vars.size(); ++dof ) {
+	for ( core::Size dof(1); dof <= vars.size(); ++dof ) {
 		dE_dvars[ dof ] += component_weights[ type() ] * ( dpartition[ dof ] / partition - dnumerator[ dof ] / numerator );
 	}
 
@@ -301,7 +301,7 @@ PNatAAOptEPositionData::print_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const num_ref_dofs,
 	int const,
 	EnergyMap const & fixed_terms,
@@ -314,7 +314,7 @@ PNatAAOptEPositionData::print_score(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	Size const aa_range( chemical::num_canonical_aas );
+	core::Size const aa_range( chemical::num_canonical_aas );
 	chemical::AA const this_native_aa( native_aa() );
 
 
@@ -338,7 +338,7 @@ PNatAAOptEPositionData::print_score(
 	Real numerator(0.0), partition(0.0);
 	Multivec dpartition( vars.size(), 0.0 ), dnumerator( vars.size(), 0.0 );
 
-	for ( Size aa(1); aa <= aa_range; ++aa ) {
+	for ( core::Size aa(1); aa <= aa_range; ++aa ) {
 
 		Real const exp_term( std::exp( -1.0 * inv_kT * best_energy_by_aa[ aa ] ) );
 		partition += exp_term;
@@ -353,7 +353,7 @@ PNatAAOptEPositionData::print_score(
 		}
 
 		// partitions for energy derivatives
-		for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+		for ( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 			// note for derivatives: d/dw( e^-(E*w+...) ) = -E * e^-(E*w+...)
 			Real e_dof_deriv( -1.0 * inv_kT * unweighted_E_dof[ aa ][ e_dof ] * exp_term );
 			dpartition[ e_dof ] += e_dof_deriv;
@@ -362,7 +362,7 @@ PNatAAOptEPositionData::print_score(
 	}
 
 	// accumulate to passed-in derivative sums
-	for ( Size dof(1); dof <= vars.size(); ++dof ) {
+	for ( core::Size dof(1); dof <= vars.size(); ++dof ) {
 		dE_dvars[ dof ] += dpartition[ dof ] / partition - dnumerator[ dof ] / numerator;
 	}
 
@@ -393,7 +393,7 @@ PNatAAOptEPositionData::range(
 	EnergyMap & upper_bound
 ) const
 {
-	for ( Size ii = 1; ii <= free_score_list.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= free_score_list.size(); ++ii ) {
 		Real ii_min = lower_bound[ free_score_list[ ii ] ];
 		Real ii_max = upper_bound[ free_score_list[ ii ] ];
 		for ( auto iter = rotamer_data_begin(),
@@ -409,7 +409,7 @@ PNatAAOptEPositionData::range(
 		upper_bound[ free_score_list[ ii ] ] = ii_max;
 	}
 
-	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 		Real ii_min = lower_bound[ fixed_score_list[ ii ] ];
 		Real ii_max = upper_bound[ fixed_score_list[ ii ] ];
 		for ( auto iter = rotamer_data_begin(),
@@ -429,11 +429,11 @@ PNatAAOptEPositionData::range(
 void
 PNatAAOptEPositionData::process_rotamers(
 	optimization::Multivec const & vars,
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	EnergyMap const & fixed_terms,
 	ScoreTypes const &,
 	ScoreTypes const & fixed_score_list,
-	Size const ,
+	core::Size const ,
 	utility::vector1< Real > const & dummy_set,
 	utility::vector1< Real > & best_energy_by_aa,
 	utility::vector1< utility::vector1< Real > > & unweighted_E_dof,
@@ -445,11 +445,11 @@ PNatAAOptEPositionData::process_rotamers(
 
 		Real weighted_energy( 0.0 );
 		// Variable-weighted energy terms
-		for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+		for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 			weighted_energy += vars[ ii ] * ((**itr)[ ii ]);
 		}
 		// Fixed-weight energy terms
-		for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 			weighted_energy += fixed_terms[ fixed_score_list[ ii ] ] * (*itr)->fixed_data()[ ii ];
 		}
 		// Reference energy term
@@ -514,22 +514,22 @@ PNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 	getline( infile, line );
 	Strings words( string_split( line, ' ' ) );
 	runtime_assert( words[ 1 ] == "position" );
-	position_ = from_string( words[ 2 ], Size( 0 ) );
+	position_ = from_string( words[ 2 ], core::Size( 0 ) );
 	runtime_assert( words[ 3 ] == "nataa" );
 	native_aa_ = chemical::aa_from_name( words[ 4 ] );
 	runtime_assert( words[ 5 ] == "neighbor_count" );
-	neighbor_count_ = from_string( words[ 6 ], Size( 0 ) );
+	neighbor_count_ = from_string( words[ 6 ], core::Size( 0 ) );
 	runtime_assert( words[ 7] == "nrots" );
-	Size num_rotamers = from_string( words[ 8 ], Size( 0 ) );
+	core::Size num_rotamers = from_string( words[ 8 ], core::Size( 0 ) );
 
-	for ( Size ii = 1; ii <= num_rotamers; ++ii ) {
+	for ( core::Size ii = 1; ii <= num_rotamers; ++ii ) {
 		getline( infile, line );
 
 		// rotamers for existing position: parse, append new OptERotamerDataOP to OptEPositionDataOP
 		Strings sections( string_split( line, ',' ) );
 		// sections:
 		// 0 - rotnum, 1 - aa three-letter code, 2 - energies for fixed terms, 3 - energies for free terms
-		Size rotnum;
+		core::Size rotnum;
 		std::istringstream ss( sections[1] );
 		ss >> rotnum;
 		chemical::AA aa( chemical::aa_from_name( sections[2] ) );
@@ -560,29 +560,29 @@ PNatAAOptEPositionData::write_to_binary_file( std::ofstream & outfile ) const
 {
 	// compiler wanted these temporary variables instead of calls to class accessor functions,
 	// which produced the error "non-lvalue in unary `&'"
-	//Size const position( (position_ ),
+	//core::Size const position( (position_ ),
 	//     neighbor_count( neighbor_count() );
 	//chemical::AA native_aa( native_aa() );
-	outfile.write( (char*) & position_, sizeof(Size) );
+	outfile.write( (char*) & position_, sizeof(core::Size) );
 	outfile.write( (char*) & native_aa_, sizeof(chemical::AA) );
-	outfile.write( (char*) & neighbor_count_, sizeof(Size) );
+	outfile.write( (char*) & neighbor_count_, sizeof(core::Size) );
 
-	Size const nrotamers( data().size() );
-	outfile.write( (char*) &nrotamers, sizeof(Size) );
+	core::Size const nrotamers( data().size() );
+	outfile.write( (char*) &nrotamers, sizeof(core::Size) );
 	for ( auto const & rot : data() ) {
 		chemical::AA this_aa( rot->this_aa() );
-		Size rot_number( rot->rot_number() );
+		core::Size rot_number( rot->rot_number() );
 		outfile.write( (char*) &this_aa, sizeof(chemical::AA) );
-		outfile.write( (char*) &rot_number, sizeof(Size) );
+		outfile.write( (char*) &rot_number, sizeof(core::Size) );
 
-		Size const nfree( rot->data().size() );
-		outfile.write( (char*) &nfree, sizeof(Size) );
+		core::Size const nfree( rot->data().size() );
+		outfile.write( (char*) &nfree, sizeof(core::Size) );
 		for ( core::Real energy : rot->data() ) {
 			outfile.write( (char*) &energy, sizeof(Real) );
 		}
 
-		Size const nfixed( rot->fixed_data().size() );
-		outfile.write( (char*) &nfixed, sizeof(Size) );
+		core::Size const nfixed( rot->fixed_data().size() );
+		outfile.write( (char*) &nfixed, sizeof(core::Size) );
 		for ( core::Real fixed_energy : rot->fixed_data() ) {
 			outfile.write( (char*) &fixed_energy, sizeof(Real) );
 		}
@@ -598,36 +598,36 @@ PNatAAOptEPositionData::read_from_binary_file( std::ifstream & infile )
 	using Energies = utility::vector1<Real>;
 	//typedef Energies::const_iterator Energies_CItr;
 
-	//Size position(0), neighbor_count(0);
+	//core::Size position(0), neighbor_count(0);
 	//chemical::AA nataa( chemical::aa_unk );
-	infile.read( (char*) & position_, sizeof(Size) );
+	infile.read( (char*) & position_, sizeof(core::Size) );
 	infile.read( (char*) & native_aa_, sizeof(chemical::AA) );
-	infile.read( (char*) & neighbor_count_, sizeof(Size) );
+	infile.read( (char*) & neighbor_count_, sizeof(core::Size) );
 	//pos_data->set_position( position );
 	//pos_data->set_neighbor_count( neighbor_count );
 	//pos_data->set_native_aa( nataa );
 
-	Size nrotamers(0);
-	infile.read( (char*) &nrotamers, sizeof(Size) );
-	for ( Size j(1); j <= nrotamers; ++j ) {
+	core::Size nrotamers(0);
+	infile.read( (char*) &nrotamers, sizeof(core::Size) );
+	for ( core::Size j(1); j <= nrotamers; ++j ) {
 
 		chemical::AA rot_aa( chemical::aa_unk );
-		Size rot_number(0);
+		core::Size rot_number(0);
 		infile.read( (char*) &rot_aa, sizeof(chemical::AA) );
-		infile.read( (char*) &rot_number, sizeof(Size) );
+		infile.read( (char*) &rot_number, sizeof(core::Size) );
 
 		Energies energies, fixed_energies;
-		Size nfree(0);
-		infile.read( (char*) &nfree, sizeof(Size) );
-		for ( Size k(1); k <= nfree; ++k ) {
+		core::Size nfree(0);
+		infile.read( (char*) &nfree, sizeof(core::Size) );
+		for ( core::Size k(1); k <= nfree; ++k ) {
 			Real energy(0.0);
 			infile.read( (char*) &energy, sizeof(Real) );
 			energies.push_back( energy );
 		}
 
-		Size nfixed(0);
-		infile.read( (char*) &nfixed, sizeof(Size) );
-		for ( Size k(1); k <= nfixed; ++k ) {
+		core::Size nfixed(0);
+		infile.read( (char*) &nfixed, sizeof(core::Size) );
+		for ( core::Size k(1); k <= nfixed; ++k ) {
 			Real fixed_energy(0.0);
 			infile.read( (char*) &fixed_energy, sizeof(Real) );
 			fixed_energies.push_back( fixed_energy );
@@ -642,7 +642,7 @@ PNatAAOptEPositionData::read_from_binary_file( std::ifstream & infile )
 Size
 PNatAAOptEPositionData::memory_use() const
 {
-	Size total = sizeof( PNatAAOptEPositionData ) +
+	core::Size total = sizeof( PNatAAOptEPositionData ) +
 		sizeof( PNatAAOptERotamerData ) * data_.size();
 	if ( data_.size() > 0 ) {
 		total +=  sizeof( Real ) * ( data_[ 1 ]->data().size() + data_[ 1 ]->fixed_data().size() ) * data_.size();
@@ -672,13 +672,13 @@ PNatAAOptEPositionData::send_to_node( int const destination_node, int const tag 
 	MPI_Send( & ii_neighbor_count, 1, MPI_INT, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 6. The number of rotamers for this position
-	Size ii_num_rotamers = size();
+	core::Size ii_num_rotamers = size();
 	MPI_Send( & ii_num_rotamers, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	if ( ii_num_rotamers == 0 ) return;
 
-	Size free_count = data_[1]->data().size();
-	Size fixed_count = data_[1]->fixed_data().size();
+	core::Size free_count = data_[1]->data().size();
+	core::Size fixed_count = data_[1]->fixed_data().size();
 
 	/// 6b The size of the free and fixed data, since that context is not available.
 	MPI_Send( & free_count, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
@@ -688,13 +688,13 @@ PNatAAOptEPositionData::send_to_node( int const destination_node, int const tag 
 	int * ii_rot_nums = new int[ ii_num_rotamers ];
 	Real * free_data = new Real[ ii_num_rotamers * free_count ];
 	Real * fixed_data = new Real[ ii_num_rotamers * fixed_count ];
-	for ( Size jj = 1; jj <= ii_num_rotamers; ++jj ) {
+	for ( core::Size jj = 1; jj <= ii_num_rotamers; ++jj ) {
 		ii_aa_types[ jj - 1 ] = data()[ jj ]->this_aa();
 		ii_rot_nums[ jj - 1 ] = data()[ jj ]->rot_number();
-		for ( Size kk = 1; kk <= free_count; ++kk ) {
+		for ( core::Size kk = 1; kk <= free_count; ++kk ) {
 			free_data[ ( jj - 1 ) * free_count + kk - 1 ] = data()[ jj ]->data()[ kk ];
 		}
-		for ( Size kk = 1; kk <= fixed_count; ++kk ) {
+		for ( core::Size kk = 1; kk <= fixed_count; ++kk ) {
 			fixed_data[ ( jj - 1 ) * fixed_count + kk - 1 ] = data()[ jj ]->fixed_data()[ kk ];
 		}
 	}
@@ -744,13 +744,13 @@ PNatAAOptEPositionData::receive_from_node( int const source_node, int const tag 
 	set_neighbor_count( ii_neighbor_count );
 
 	/// 6. The number of rotamers for this position
-	Size ii_num_rotamers;
+	core::Size ii_num_rotamers;
 	MPI_Recv( & ii_num_rotamers, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	if ( ii_num_rotamers == 0 ) return;
 
-	Size free_count(0);
-	Size fixed_count(0);
+	core::Size free_count(0);
+	core::Size fixed_count(0);
 
 	/// 6b The size of the free and fixed data, since that context is not available.
 	MPI_Recv( & free_count, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
@@ -777,11 +777,11 @@ PNatAAOptEPositionData::receive_from_node( int const source_node, int const tag 
 	utility::vector1< Real > free_data_vect( free_count );
 	utility::vector1< Real > fixed_data_vect( fixed_count );
 
-	for ( Size jj = 1; jj <= ii_num_rotamers; ++jj ) {
-		for ( Size kk = 1; kk <= free_count; ++kk ) {
+	for ( core::Size jj = 1; jj <= ii_num_rotamers; ++jj ) {
+		for ( core::Size kk = 1; kk <= free_count; ++kk ) {
 			free_data_vect[ kk ] = free_data[ ( jj - 1 ) * free_count + kk - 1 ];
 		}
-		for ( Size kk = 1; kk <= fixed_count; ++kk ) {
+		for ( core::Size kk = 1; kk <= fixed_count; ++kk ) {
 			fixed_data_vect[ kk ] = fixed_data[ ( jj - 1 ) * fixed_count + kk - 1 ];
 		}
 		PNatAAOptERotamerDataOP jj_rotamer_data( new PNatAAOptERotamerData(
@@ -820,7 +820,7 @@ PSSMOptEPositionData::get_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const,
 	int const,
 	EnergyMap const & fixed_terms,
@@ -834,7 +834,7 @@ PSSMOptEPositionData::get_score(
 
 	static Real const inv_kT( option[ optE::inv_kT_nataa ] );
 
-	Size const aa_range( chemical::num_canonical_aas );
+	core::Size const aa_range( chemical::num_canonical_aas );
 
 	utility::vector1< Real > best_energy_by_aa( aa_range, 1000.0 );
 
@@ -847,7 +847,7 @@ PSSMOptEPositionData::get_score(
 		vars, num_energy_dofs, fixed_terms, score_list, fixed_score_list, aa_range, dummy_set,
 		best_energy_by_aa, unweighted_E_dof, ref_deriv_weight );
 
-	for ( Size ii = 1; ii <= aa_range; ++ii ) {
+	for ( core::Size ii = 1; ii <= aa_range; ++ii ) {
 		if ( best_energy_by_aa[ ii ] == 1000.0 ) {
 			//std::cerr << "Position " << position() << " with no energy represented for aa: " << chemical::AA( ii ) << std::endl;
 			return 0.0;
@@ -855,7 +855,7 @@ PSSMOptEPositionData::get_score(
 	}
 
 	//Real const very_best = utility::min( best_energy_by_aa );
-	//for ( Size ii = 1; ii <= best_energy_by_aa.size(); ++ii ) {
+	//for ( core::Size ii = 1; ii <= best_energy_by_aa.size(); ++ii ) {
 	// best_energy_by_aa[ ii ] -= very_best;
 	//}
 
@@ -866,7 +866,7 @@ PSSMOptEPositionData::get_score(
 	if ( option[ optE::sqrt_pssm ].user() && option[ optE::sqrt_pssm ].value() ) {
 
 		utility::vector1< Real > boltz_coeff( aa_range, 0.0 );
-		for ( Size ii = 1; ii <= aa_range; ++ii ) {
+		for ( core::Size ii = 1; ii <= aa_range; ++ii ) {
 			Real const exp_term( std::exp( -1.0 *  inv_kT * best_energy_by_aa[ ii ] ) );
 			partition += exp_term;
 			boltz_coeff[ ii ] = exp_term;
@@ -875,27 +875,27 @@ PSSMOptEPositionData::get_score(
 		Real dot_product = 0;
 		utility::vector1< Real > energy_coeff( num_energy_dofs, 0.0 );
 		//std::cout << "score: " << position() << " ";
-		for ( Size ii = 1; ii <= aa_range; ++ii ) {
+		for ( core::Size ii = 1; ii <= aa_range; ++ii ) {
 			/// pssm_probabilities_ holds the squareroot of the probabilities
 			dot_product += pssm_probabilities_[ ii ] * std::sqrt( boltz_coeff[ ii ] / partition );
 			//std::cout << "( " << pssm_probabilities_[ ii ] << ", " << std::sqrt( boltz_coeff[ ii ] / partition ) << ") ";
-			for ( Size jj = 1; jj <= num_energy_dofs; ++jj ) {
+			for ( core::Size jj = 1; jj <= num_energy_dofs; ++jj ) {
 				energy_coeff[ jj ] += unweighted_E_dof[ ii ][ jj ] * boltz_coeff[ ii ];
 			}
 
 		}
 		//std::cout << " total: " << -1.0 * dot_product << std::endl;
-		for ( Size ii = 1; ii <= aa_range; ++ii ) {
+		for ( core::Size ii = 1; ii <= aa_range; ++ii ) {
 			Real const ii_negsqrt_prob = std::pow( boltz_coeff[ ii ] / partition, -0.5 );
 
-			for ( Size jj = 1; jj <= num_energy_dofs; ++jj ) {
+			for ( core::Size jj = 1; jj <= num_energy_dofs; ++jj ) {
 				dE_dvars[ jj ] += -0.5 * pssm_probabilities_[ ii ] *
 					( ii_negsqrt_prob ) * component_weights[ type() ] *
 					( boltz_coeff[ ii ] * energy_coeff[ jj ] -
 					inv_kT * unweighted_E_dof[ ii ][ jj ] * boltz_coeff[ ii ] * partition ) /
 					( partition2 );
 			}
-			for ( Size jj = 1; jj <= aa_range; ++jj ) {
+			for ( core::Size jj = 1; jj <= aa_range; ++jj ) {
 				if ( ii == jj ) {
 					dE_dvars[ num_energy_dofs + jj ] += -0.5 * pssm_probabilities_[ ii ] *
 						( ii_negsqrt_prob ) * component_weights[ type() ] *
@@ -911,7 +911,7 @@ PSSMOptEPositionData::get_score(
 		return -1.0 * component_weights[ type() ] * dot_product;
 	} else {
 
-		for ( Size ii = 1; ii <= aa_range; ++ii ) {
+		for ( core::Size ii = 1; ii <= aa_range; ++ii ) {
 			Real const exp_term( std::exp( -1.0 * inv_kT *  best_energy_by_aa[ ii ] ) );
 			partition += exp_term;
 			pssm_partition += pssm_probabilities_[ ii ] * exp_term;
@@ -920,18 +920,18 @@ PSSMOptEPositionData::get_score(
 			dpartition[ num_energy_dofs + ii ] = ref_deriv_term;
 			dpssm_partition[ num_energy_dofs + ii ] = pssm_probabilities_[ ii ] * ref_deriv_term;
 
-			for ( Size jj = 1; jj <= num_energy_dofs; ++jj ) {
+			for ( core::Size jj = 1; jj <= num_energy_dofs; ++jj ) {
 				Real e_dof_deriv( -1.0 * inv_kT * unweighted_E_dof[ ii ][ jj ] * exp_term );
 				dpartition[ jj ] += e_dof_deriv;
 				dpssm_partition[ jj ] += pssm_probabilities_[ ii ] * e_dof_deriv;
 			}
 		}
-		for ( Size ii = 1; ii <= vars.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= vars.size(); ++ii ) {
 			dE_dvars[ ii ] += component_weights[ pssm_data ] * ( dpartition[ ii ] / partition - dpssm_partition[ ii ] / pssm_partition );
 		}
 
 		//std::cout << "Position data: ";
-		//for ( Size ii = 1; ii <= aa_range; ++ii ) {
+		//for ( core::Size ii = 1; ii <= aa_range; ++ii ) {
 		//Real const exp_term( std::exp( -1.0 * best_energy_by_aa[ ii ] ) );
 		//Real const ii_prob = exp_term / partition;
 		//std::cout << "(" << ii_prob << ", " << pssm_probabilities_[ ii ] << ") ";
@@ -949,7 +949,7 @@ PSSMOptEPositionData::print_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const,
 	int const,
 	EnergyMap const & fixed_terms,
@@ -965,7 +965,7 @@ PSSMOptEPositionData::print_score(
 
 	static Real const inv_kT( option[ optE::inv_kT_nataa ] );
 
-	Size const aa_range( chemical::num_canonical_aas );
+	core::Size const aa_range( chemical::num_canonical_aas );
 
 	utility::vector1< Real > best_energy_by_aa( aa_range, 1000.0 );
 
@@ -978,7 +978,7 @@ PSSMOptEPositionData::print_score(
 		vars, num_energy_dofs, fixed_terms, score_list, fixed_score_list, aa_range, dummy_set,
 		best_energy_by_aa, unweighted_E_dof, ref_deriv_weight );
 
-	for ( Size ii = 1; ii <= aa_range; ++ii ) {
+	for ( core::Size ii = 1; ii <= aa_range; ++ii ) {
 		if ( best_energy_by_aa[ ii ] == 1000.0 ) {
 			//std::cerr << "Position " << position() << " with no energy represented for aa: " << chemical::AA( ii ) << std::endl;
 			return;// 0.0;
@@ -991,7 +991,7 @@ PSSMOptEPositionData::print_score(
 	if ( option[ optE::sqrt_pssm ].user() && option[ optE::sqrt_pssm ].value() ) {
 
 		utility::vector1< Real > boltz_coeff( aa_range, 0.0 );
-		for ( Size ii = 1; ii <= aa_range; ++ii ) {
+		for ( core::Size ii = 1; ii <= aa_range; ++ii ) {
 			Real const exp_term( std::exp( -1.0 * inv_kT * best_energy_by_aa[ ii ] ) );
 			partition += exp_term;
 			boltz_coeff[ ii ] = exp_term;
@@ -1000,27 +1000,27 @@ PSSMOptEPositionData::print_score(
 		Real dot_product = 0;
 		utility::vector1< Real > energy_coeff( num_energy_dofs, 0.0 );
 		//std::cout << "score: " << position() << " ";
-		for ( Size ii = 1; ii <= aa_range; ++ii ) {
+		for ( core::Size ii = 1; ii <= aa_range; ++ii ) {
 			/// pssm_probabilities_ holds the squareroot of the probabilities
 			dot_product += pssm_probabilities_[ ii ] * std::sqrt( boltz_coeff[ ii ] / partition );
 			//std::cout << "( " << pssm_probabilities_[ ii ] << ", " << std::sqrt( boltz_coeff[ ii ] / partition ) << ") ";
-			for ( Size jj = 1; jj <= num_energy_dofs; ++jj ) {
+			for ( core::Size jj = 1; jj <= num_energy_dofs; ++jj ) {
 				energy_coeff[ jj ] += unweighted_E_dof[ ii ][ jj ] * boltz_coeff[ ii ];
 			}
 
 		}
 		//std::cout << " total: " << -1.0 * dot_product << std::endl;
-		for ( Size ii = 1; ii <= aa_range; ++ii ) {
+		for ( core::Size ii = 1; ii <= aa_range; ++ii ) {
 			Real const ii_negsqrt_prob = std::pow( boltz_coeff[ ii ] / partition, -0.5 );
 
-			for ( Size jj = 1; jj <= num_energy_dofs; ++jj ) {
+			for ( core::Size jj = 1; jj <= num_energy_dofs; ++jj ) {
 				dE_dvars[ jj ] += -0.5 * pssm_probabilities_[ ii ] *
 					( ii_negsqrt_prob ) *
 					( boltz_coeff[ ii ] * energy_coeff[ jj ] -
 					inv_kT * unweighted_E_dof[ ii ][ jj ] * boltz_coeff[ ii ] * partition ) /
 					( partition2 );
 			}
-			for ( Size jj = 1; jj <= aa_range; ++jj ) {
+			for ( core::Size jj = 1; jj <= aa_range; ++jj ) {
 				if ( ii == jj ) {
 					dE_dvars[ num_energy_dofs + jj ] += -0.5 * pssm_probabilities_[ ii ] *
 						( ii_negsqrt_prob ) *
@@ -1036,7 +1036,7 @@ PSSMOptEPositionData::print_score(
 
 		ostr << "PSSM_SQRT " << native_aa() << " " << (int) native_aa();
 		ostr << " nneighb: " << neighbor_count() << " dotpr: " << dot_product << " ";
-		for ( Size ii = 1; ii <= aa_range; ++ii ) {
+		for ( core::Size ii = 1; ii <= aa_range; ++ii ) {
 			ostr << "([ " << ii << "] " << pssm_probabilities_[ ii ] << " , " << std::sqrt( boltz_coeff[ ii ] / partition ) << " ) ";
 		}
 		ostr << " " << tag() << "\n";
@@ -1046,7 +1046,7 @@ PSSMOptEPositionData::print_score(
 		return;// -1.0 * dot_product;
 	} else {
 
-		for ( Size ii = 1; ii <= aa_range; ++ii ) {
+		for ( core::Size ii = 1; ii <= aa_range; ++ii ) {
 			Real const exp_term( std::exp( -1.0 * inv_kT * best_energy_by_aa[ ii ] ) );
 			partition += exp_term;
 			pssm_partition += pssm_probabilities_[ ii ] * exp_term;
@@ -1055,18 +1055,18 @@ PSSMOptEPositionData::print_score(
 			dpartition[ num_energy_dofs + ii ] = ref_deriv_term;
 			dpssm_partition[ num_energy_dofs + ii ] = pssm_probabilities_[ ii ] * ref_deriv_term;
 
-			for ( Size jj = 1; jj <= num_energy_dofs; ++jj ) {
+			for ( core::Size jj = 1; jj <= num_energy_dofs; ++jj ) {
 				Real e_dof_deriv( -1.0 * inv_kT * unweighted_E_dof[ ii ][ jj ] * exp_term );
 				dpartition[ jj ] += e_dof_deriv;
 				dpssm_partition[ jj ] += pssm_probabilities_[ ii ] * e_dof_deriv;
 			}
 		}
-		for ( Size ii = 1; ii <= vars.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= vars.size(); ++ii ) {
 			dE_dvars[ ii ] += dpartition[ ii ] / partition - dpssm_partition[ ii ] / pssm_partition;
 		}
 
 		//std::cout << "Position data: ";
-		//for ( Size ii = 1; ii <= aa_range; ++ii ) {
+		//for ( core::Size ii = 1; ii <= aa_range; ++ii ) {
 		//Real const exp_term( std::exp( -1.0 * best_energy_by_aa[ ii ] ) );
 		//Real const ii_prob = exp_term / partition;
 		//std::cout << "(" << ii_prob << ", " << pssm_probabilities_[ ii ] << ") ";
@@ -1077,7 +1077,7 @@ PSSMOptEPositionData::print_score(
 		ostr << " nneighb: " << neighbor_count() << " pssmpart: " << pssm_partition / partition << " ";
 		ostr << " -lnpssmpart: " <<  -1.0 * std::log(  pssm_partition / partition ) << " ";
 		ostr << " -compwt_lnpssm " << -1.0 * component_weights[ pssm_data ] * std::log(  pssm_partition / partition );
-		for ( Size ii = 1; ii <= aa_range; ++ii ) {
+		for ( core::Size ii = 1; ii <= aa_range; ++ii ) {
 			ostr << "([ " << ii << "] " << pssm_probabilities_[ ii ] << " , " << std::exp( -1.0 * best_energy_by_aa[ ii ] ) / partition << " ) ";
 		}
 
@@ -1105,7 +1105,7 @@ PSSMOptEPositionData::set_pssm_probabilities(
 	// Store the squareroot of the input probabilities if we're optimizing using the
 	// dot product of unit vectors.
 	if ( option[ optE::sqrt_pssm ].user() && option[ optE::sqrt_pssm ].value() ) {
-		for ( Size ii = 1; ii <= pssm_probs.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pssm_probs.size(); ++ii ) {
 			pssm_probabilities_[ ii ] = std::sqrt( pssm_probs[ ii ] );
 		}
 	}
@@ -1122,7 +1122,7 @@ void
 PSSMOptEPositionData::write_to_file( std::ofstream & outfile ) const
 {
 	outfile << pssm_probabilities_.size() << " ";
-	for ( Size ii = 1; ii <= pssm_probabilities_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pssm_probabilities_.size(); ++ii ) {
 		outfile << pssm_probabilities_[ ii ] << " ";
 	}
 	outfile << "\n";
@@ -1133,10 +1133,10 @@ PSSMOptEPositionData::write_to_file( std::ofstream & outfile ) const
 void
 PSSMOptEPositionData::read_from_file( std::ifstream & infile )
 {
-	Size nprobs;
+	core::Size nprobs;
 	infile >> nprobs;
 	pssm_probabilities_.resize( nprobs );
-	for ( Size ii = 1; ii <= pssm_probabilities_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pssm_probabilities_.size(); ++ii ) {
 		infile >> pssm_probabilities_[ ii ];
 	}
 	parent::read_from_file( infile );
@@ -1155,7 +1155,7 @@ PSSMOptEPositionData::read_from_binary_file( std::ifstream & /*infile*/ )
 Size
 PSSMOptEPositionData::memory_use() const
 {
-	Size total = pssm_probabilities_.size() * sizeof( Real );
+	core::Size total = pssm_probabilities_.size() * sizeof( Real );
 	return total + parent::memory_use();
 }
 
@@ -1216,7 +1216,7 @@ PNatRotOptEPositionData::get_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const dummy1,
 	int const dummy2,
 	EnergyMap const & fixed_terms,
@@ -1248,8 +1248,8 @@ utility::vector1< Real > dummy_set( score_list.size(), 0.0 );
 utility::vector1< utility::vector1< Real > > unweighted_E_dof( n_wells_, dummy_set );
 
 /// Zero the static data
-//for ( Size ii = 1; ii <= unweighted_E_dof.size(); ++ii ) {
-// for ( Size jj = 1; jj <= unweighted_E_dof[ii].size(); ++jj ) {
+//for ( core::Size ii = 1; ii <= unweighted_E_dof.size(); ++ii ) {
+// for ( core::Size jj = 1; jj <= unweighted_E_dof[ii].size(); ++jj ) {
 //  unweighted_E_dof[ ii ][ jj ] = 0.0;
 // }
 //}
@@ -1262,7 +1262,7 @@ bool best_energy_is_native( false ), first_round( true );
 
 for( PNatRotOptERotamerDataOPs::const_iterator itr = rotamer_data_begin(),
 e_itr = rotamer_data_end() ; itr != e_itr; ++itr ) {
-utility::vector1< Size > const & this_rotindex( (*itr)->rotamer_index() );
+utility::vector1< core::Size > const & this_rotindex( (*itr)->rotamer_index() );
 Size this_rotwell = rotamer_index_2_well_id( this_rotindex );
 
 if ( this_rotwell != natrotwell && count_rotamer_as_native( *itr ) ) {
@@ -1271,11 +1271,11 @@ this_rotwell = natrotwell;
 
 Real weighted_energy( 0.0 );
 // Variable-weighted energy terms
-for( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+for( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 weighted_energy += vars[ ii ] * ((**itr)[ ii ]);
 }
 // Fixed-weight energy terms
-for( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+for( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 weighted_energy += fixed_terms[ fixed_score_list[ ii ] ] * (*itr)->fixed_data()[ ii ];
 }
 
@@ -1323,7 +1323,7 @@ bool const native_rotamer( is_native_rotamer_well( iter ));
 if ( native_rotamer ) numerator = exp_term;
 
 // partitions for energy derivatives
-for( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+for( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 // note for derivatives: d/dw( e^-(E*w+...) ) = -E * e^-(E*w+...)
 Real e_dof_deriv( -1.0 * inv_kT * unweighted_E_dof[ iter_rotwell ][ e_dof ] * exp_term );
 dpartition[ e_dof ] += e_dof_deriv;
@@ -1332,7 +1332,7 @@ if ( native_rotamer ) dnumerator[ e_dof ] = e_dof_deriv;
 }
 
 // accumulate to passed-in derivative sums
-for ( Size dof(1); dof <= vars.size(); ++dof ) {
+for ( core::Size dof(1); dof <= vars.size(); ++dof ) {
 dE_dvars[ dof ] += component_weights[ prob_native_rotamer ] * ( dpartition[ dof ] / partition - dnumerator[ dof ] / numerator );
 }
 
@@ -1348,7 +1348,7 @@ PNatRotOptEPositionData::print_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const dummy1,
 	int const dummy2,
 	EnergyMap const & fixed_terms,
@@ -1371,7 +1371,7 @@ PNatRotOptEPositionData::process_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const,
 	int const,
 	EnergyMap const & fixed_terms,
@@ -1399,8 +1399,8 @@ PNatRotOptEPositionData::process_score(
 	utility::vector1< utility::vector1< Real > > unweighted_E_dof( n_wells_, dummy_set );
 
 	/// Zero the static data
-	//for ( Size ii = 1; ii <= unweighted_E_dof.size(); ++ii ) {
-	// for ( Size jj = 1; jj <= unweighted_E_dof[ii].size(); ++jj ) {
+	//for ( core::Size ii = 1; ii <= unweighted_E_dof.size(); ++ii ) {
+	// for ( core::Size jj = 1; jj <= unweighted_E_dof[ii].size(); ++jj ) {
 	//  unweighted_E_dof[ ii ][ jj ] = 0.0;
 	// }
 	//}
@@ -1409,14 +1409,14 @@ PNatRotOptEPositionData::process_score(
 	Real best_energyHACK( 0.0 );
 	bool best_energy_is_native( false ), first_round( true );
 
-	Size const natrotwell = rotamer_index_2_well_id( native_rotamer_index_ );
-	Size nnearnative( 0 );
-	Size ndecoys( 0 );
+	core::Size const natrotwell = rotamer_index_2_well_id( native_rotamer_index_ );
+	core::Size nnearnative( 0 );
+	core::Size ndecoys( 0 );
 
 	for ( auto itr = rotamer_data_begin(),
 			e_itr = rotamer_data_end() ; itr != e_itr; ++itr ) {
-		utility::vector1< Size > const & this_rotindex( (*itr)->rotamer_index() );
-		Size this_rotwell = rotamer_index_2_well_id( this_rotindex );
+		utility::vector1< core::Size > const & this_rotindex( (*itr)->rotamer_index() );
+		core::Size this_rotwell = rotamer_index_2_well_id( this_rotindex );
 
 		bool count_as_native( false );
 		if ( this_rotwell != natrotwell && count_rotamer_as_native( *itr ) ) {
@@ -1446,11 +1446,11 @@ PNatRotOptEPositionData::process_score(
 			///weighted_energy = 0; // TEMP TEMP TEMP deactivate entropy bonus.
 		}
 		// Variable-weighted energy terms
-		for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+		for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 			weighted_energy += vars[ ii ] * ((**itr)[ ii ]);
 		}
 		// Fixed-weight energy terms
-		for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 			weighted_energy += fixed_terms[ fixed_score_list[ ii ] ] * (*itr)->fixed_data()[ ii ];
 		}
 
@@ -1483,13 +1483,13 @@ PNatRotOptEPositionData::process_score(
 	Real numerator(0.0), partition(0.0);
 	Multivec dpartition( vars.size(), 0.0 ), dnumerator( vars.size(), 0.0 );
 	static Real const SENTINEL = 1234;
-	Real best_energy( SENTINEL ); Size best_rotind( 0 );
-	utility::vector1< Size > best_rotwell( rotamer_well_counts_.size(), 0 );
-	utility::vector1< Size > native_rotwell( rotamer_well_counts_.size(), 0 );
+	Real best_energy( SENTINEL ); core::Size best_rotind( 0 );
+	utility::vector1< core::Size > best_rotwell( rotamer_well_counts_.size(), 0 );
+	utility::vector1< core::Size > native_rotwell( rotamer_well_counts_.size(), 0 );
 
 
 	for ( LexicographicalIterator iter( rotamer_well_counts_ ); ! iter.at_end(); ++iter ) {
-		Size const iter_rotwell = rotamer_index_2_well_id( iter );
+		core::Size const iter_rotwell = rotamer_index_2_well_id( iter );
 		if ( ! well_is_represented[ iter_rotwell ] ) continue;
 
 		Real const exp_term( std::exp( -1.0 * inv_kT * best_energy_by_rotwell[ iter_rotwell ] ) );
@@ -1500,18 +1500,18 @@ PNatRotOptEPositionData::process_score(
 		if ( best_energy == SENTINEL || best_energy > best_energy_by_rotwell[ iter_rotwell ] ) {
 			best_energy = best_energy_by_rotwell[ iter_rotwell ];
 			best_rotind = iter_rotwell;
-			for ( Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) {
+			for ( core::Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) {
 				best_rotwell[ ii ] = iter[ ii ];
 			}
 		}
 
 		if ( native_rotamer ) {
-			for ( Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) {
+			for ( core::Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) {
 				native_rotwell[ ii ] = iter[ ii ];
 			}
 		}
 		// partitions for energy derivatives
-		for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+		for ( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 			// note for derivatives: d/dw( e^-(E*w+...) ) = -E * e^-(E*w+...)
 			Real e_dof_deriv( -1.0 * inv_kT * unweighted_E_dof[ iter_rotwell ][ e_dof ] * exp_term );
 			dpartition[ e_dof ] += e_dof_deriv;
@@ -1531,14 +1531,14 @@ PNatRotOptEPositionData::process_score(
 			ostr << " compwt_lnp: " << 100;
 			ostr << " n<d? " << 0 << " " << tag() << " " << rotamer_well_counts_.size() << " n:";
 
-			for ( Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) ostr << " " << native_rotwell[ ii ] << " " << native_chi_[ ii ];
+			for ( core::Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) ostr << " " << native_rotwell[ ii ] << " " << native_chi_[ ii ];
 			ostr << " phi/psi:" << phi_ << " " << psi_ << "\n";
 
 			for ( auto itr = rotamer_data_begin(),
 					e_itr = rotamer_data_end() ; itr != e_itr; ++itr ) {
 
 				ostr << "NON-NATIVE-ROT " << tag() << " ";
-				for ( Size ii = 1; ii <= (*itr)->rotamer_index().size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= (*itr)->rotamer_index().size(); ++ii ) {
 					ostr << (*itr)->rotamer_index()[ ii ] << " "<< (*itr)->chi()[ ii ] << " ";
 				}
 				ostr << "\n";
@@ -1551,7 +1551,7 @@ PNatRotOptEPositionData::process_score(
 
 
 	// accumulate to passed-in derivative sums
-	for ( Size dof(1); dof <= vars.size(); ++dof ) {
+	for ( core::Size dof(1); dof <= vars.size(); ++dof ) {
 		dE_dvars[ dof ] += dpartition[ dof ] / partition - dnumerator[ dof ] / numerator;
 	}
 
@@ -1561,9 +1561,9 @@ PNatRotOptEPositionData::process_score(
 		ostr << " compwt_lnp: " << -1.0 * component_weights[ prob_native_rotamer ] * std::log( numerator / partition );
 		ostr << " n<d? " << best_energy_is_native << " " << tag() << " " << rotamer_well_counts_.size() << " n:";
 
-		for ( Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) ostr << " " << native_rotwell[ ii ] << " " << native_chi_[ ii ];
+		for ( core::Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) ostr << " " << native_rotwell[ ii ] << " " << native_chi_[ ii ];
 		ostr << " b:";
-		for ( Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) {
 			ostr << " " << best_rotwell[ ii ] << " " << best_rotamer_by_rotwell[ best_rotind ]->chi()[ ii ] ;
 		}
 		ostr << " phi/psi:" << phi_ << " " << psi_ << "\n";
@@ -1583,7 +1583,7 @@ PNatRotOptEPositionData::range(
 	EnergyMap & upper_bound
 ) const
 {
-	for ( Size ii = 1; ii <= free_score_list.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= free_score_list.size(); ++ii ) {
 		Real ii_min = lower_bound[ free_score_list[ ii ] ];
 		Real ii_max = upper_bound[ free_score_list[ ii ] ];
 		for ( auto iter = rotamer_data_begin(),
@@ -1599,7 +1599,7 @@ PNatRotOptEPositionData::range(
 		upper_bound[ free_score_list[ ii ] ] = ii_max;
 	}
 
-	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 		Real ii_min = lower_bound[ fixed_score_list[ ii ] ];
 		Real ii_max = upper_bound[ fixed_score_list[ ii ] ];
 		for ( auto iter = rotamer_data_begin(),
@@ -1653,13 +1653,13 @@ PNatRotOptEPositionData::read_from_binary_file( std::ifstream & /*infile*/ )
 Size
 PNatRotOptEPositionData::memory_use() const
 {
-	Size total = sizeof( PNatRotOptEPositionData ) +
+	core::Size total = sizeof( PNatRotOptEPositionData ) +
 		sizeof( PNatRotOptERotamerData ) * data_.size() +
-		sizeof( Size ) * native_rotamer_index_.size() +
-		sizeof( Size ) * rotamer_well_counts_.size();
+		sizeof( core::Size ) * native_rotamer_index_.size() +
+		sizeof( core::Size ) * rotamer_well_counts_.size();
 	if ( data_.size() > 0 ) {
 		total += sizeof( Real ) * ( data_[ 1 ]->free_data().size() + data_[ 1 ]->fixed_data().size() ) * data_.size();
-		total += sizeof( Size ) * data_[ 1 ]->rotamer_index().size() * data_.size();
+		total += sizeof( core::Size ) * data_[ 1 ]->rotamer_index().size() * data_.size();
 	}
 	return total;
 }
@@ -1698,26 +1698,26 @@ PNatRotOptEPositionData::send_to_node( int const destination_node, int const tag
 	}
 
 	/// 6. The number of rotamers for this position
-	Size ii_num_rotamers = data_.size();
+	core::Size ii_num_rotamers = data_.size();
 	MPI_Send( & ii_num_rotamers, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	if ( ii_num_rotamers == 0 ) return;
 
-	Size free_count(  data_[ 1 ]->free_data().size() );
-	Size fixed_count( data_[ 1 ]->fixed_data().size() );
+	core::Size free_count(  data_[ 1 ]->free_data().size() );
+	core::Size fixed_count( data_[ 1 ]->fixed_data().size() );
 
 	/// 7 The size of the free and fixed data.
 	MPI_Send( & free_count,  1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 	MPI_Send( & fixed_count, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 
-	Size * ii_rot_indices = new Size[ ii_num_rotamers * n_chi ];
+	core::Size * ii_rot_indices = new core::Size[ ii_num_rotamers * n_chi ];
 	Real * chi = new Real[ ii_num_rotamers * n_chi ];
 	Real * free_data = new Real[ ii_num_rotamers * free_count ];
 	Real * fixed_data = new Real[ ii_num_rotamers * fixed_count ];
 
-	for ( Size jj = 1; jj <= ii_num_rotamers; ++jj ) {
-		utility::vector1< Size > const & rotamer_index_vect( data_[ jj ]->rotamer_index() );
+	for ( core::Size jj = 1; jj <= ii_num_rotamers; ++jj ) {
+		utility::vector1< core::Size > const & rotamer_index_vect( data_[ jj ]->rotamer_index() );
 		utility::vector1< Real > const & chi_vect( data_[ jj ]->chi() );
  		utility::vector1< Real > const & free_data_vect( data_[ jj ]->free_data() );
 		utility::vector1< Real > const & fixed_data_vect( data_[ jj ]->fixed_data() );
@@ -1726,10 +1726,10 @@ PNatRotOptEPositionData::send_to_node( int const destination_node, int const tag
 			ii_rot_indices[ ( jj - 1 ) * n_chi + kk - 1 ] = rotamer_index_vect[ kk ];
 			chi[ ( jj - 1 ) * n_chi + kk - 1 ] = chi_vect[ kk ];
 		}
-		for ( Size kk = 1; kk <= free_count; ++kk ) {
+		for ( core::Size kk = 1; kk <= free_count; ++kk ) {
 			free_data[ ( jj - 1 ) * free_count + kk - 1 ] = free_data_vect[ kk ];
 		}
-		for ( Size kk = 1; kk <= fixed_count; ++kk ) {
+		for ( core::Size kk = 1; kk <= fixed_count; ++kk ) {
 			fixed_data[ ( jj - 1 ) * fixed_count + kk - 1 ] = fixed_data_vect[ kk ];
 		}
 
@@ -1751,21 +1751,21 @@ PNatRotOptEPositionData::send_to_node( int const destination_node, int const tag
 	delete [] fixed_data;  fixed_data  = 0;
 
 	/// 11. Native chi data
-	Size nnative_chi = native_chi_.size();
+	core::Size nnative_chi = native_chi_.size();
 	MPI_Send( & nnative_chi, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 	if ( nnative_chi != 0 ) {
 		Real * native_chi = new Real[ nnative_chi ];
-		for ( Size ii = 1; ii <= nnative_chi; ++ii ) native_chi[ ii - 1 ] = native_chi_[ ii ];
+		for ( core::Size ii = 1; ii <= nnative_chi; ++ii ) native_chi[ ii - 1 ] = native_chi_[ ii ];
 		MPI_Send( native_chi, nnative_chi, MPI_DOUBLE, destination_node, tag, MPI_COMM_WORLD );
 		delete [] native_chi;
 	}
 
 	/// 12. Native chi periodicity data
-	Size nnative_chi_periodicity = native_chi_periodicity_.size();
+	core::Size nnative_chi_periodicity = native_chi_periodicity_.size();
 	MPI_Send( & nnative_chi_periodicity, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 	if ( nnative_chi_periodicity != 0 ) {
 		Real * native_chi_periodicity = new Real[ nnative_chi_periodicity ];
-		for ( Size ii = 1; ii <= nnative_chi_periodicity; ++ii ) native_chi_periodicity[ ii - 1 ] = native_chi_periodicity_[ ii ];
+		for ( core::Size ii = 1; ii <= nnative_chi_periodicity; ++ii ) native_chi_periodicity[ ii - 1 ] = native_chi_periodicity_[ ii ];
 		MPI_Send( native_chi_periodicity, nnative_chi_periodicity, MPI_DOUBLE, destination_node, tag, MPI_COMM_WORLD );
 		delete [] native_chi_periodicity;
 	}
@@ -1804,7 +1804,7 @@ PNatRotOptEPositionData::receive_from_node( int const source_node, int const tag
 	/// 4. How many chi wells
 	int * rotamer_well_counts = new int[ n_chi ];
 	MPI_Recv( rotamer_well_counts, n_chi, MPI_INT, source_node, tag, MPI_COMM_WORLD, &stat );
-	utility::vector1< Size > rotamer_well_counts_v( n_chi );
+	utility::vector1< core::Size > rotamer_well_counts_v( n_chi );
 	for ( int ii = 1; ii <= n_chi; ++ii ) {
 		rotamer_well_counts_v[ ii ] = rotamer_well_counts[ ii - 1 ];
 		//TR << "PNatRotOptEPositionData:: received rotamer_well_counts[  " << ii << "] "  << rotamer_well_counts[ ii - 1 ] << std::endl;
@@ -1817,7 +1817,7 @@ PNatRotOptEPositionData::receive_from_node( int const source_node, int const tag
 	/// 5. What is the native rotamer at this position?
 	int * native_rotamer = new int[ n_chi ];
 	MPI_Recv( native_rotamer, n_chi, MPI_INT, source_node, tag, MPI_COMM_WORLD, &stat );
-	utility::vector1< Size > native_rotamer_v( n_chi );
+	utility::vector1< core::Size > native_rotamer_v( n_chi );
 	for ( int ii = 1; ii <= n_chi; ++ii ) {
 		native_rotamer_v[ ii ] = native_rotamer[ ii -1 ];
 		//TR << "PNatRotOptEPositionData:: received native_rotamer[  " << ii << "] "  << native_rotamer[ ii - 1 ] << std::endl;
@@ -1827,21 +1827,21 @@ PNatRotOptEPositionData::receive_from_node( int const source_node, int const tag
 	}
 
 	/// 6. The number of rotamers for this position
-	Size ii_num_rotamers;
+	core::Size ii_num_rotamers;
 	MPI_Recv( & ii_num_rotamers, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 	//TR << "PNatRotOptEPositionData:: received ii_num_rotamers  " << ii_num_rotamers << std::endl;
 
 	if ( ii_num_rotamers == 0 ) return;
 
-	Size free_count(0);
-	Size fixed_count(0);
+	core::Size free_count(0);
+	core::Size fixed_count(0);
 
 	/// 7 The size of the free and fixed data.
 	MPI_Recv( & free_count,  1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 	MPI_Recv( & fixed_count, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 
-	Size * ii_rot_indices = new Size[ ii_num_rotamers * n_chi ];
+	core::Size * ii_rot_indices = new core::Size[ ii_num_rotamers * n_chi ];
 	Real * chi = new Real[ ii_num_rotamers * n_chi ];
 	Real * free_data = new Real[ ii_num_rotamers * free_count ];
 	Real * fixed_data = new Real[ ii_num_rotamers * fixed_count ];
@@ -1856,20 +1856,20 @@ PNatRotOptEPositionData::receive_from_node( int const source_node, int const tag
 	/// 10. All the fixed data for all rotamers
 	MPI_Recv( fixed_data, ii_num_rotamers * fixed_count, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
 
-	utility::vector1< Size > rotamer_index_vect( n_chi );
+	utility::vector1< core::Size > rotamer_index_vect( n_chi );
 	utility::vector1< Real > chi_vect( n_chi );
  	utility::vector1< Real > free_data_vect( free_count );
 	utility::vector1< Real > fixed_data_vect( fixed_count );
 
-	for ( Size jj = 1; jj <= ii_num_rotamers; ++jj ) {
+	for ( core::Size jj = 1; jj <= ii_num_rotamers; ++jj ) {
 		for ( int kk = 1; kk <= n_chi; ++kk ) {
 			rotamer_index_vect[ kk ] = ii_rot_indices[ ( jj - 1 ) * n_chi + kk - 1 ];
 			chi_vect[ kk ] = chi[ ( jj - 1 ) * n_chi + kk - 1 ];
 		}
-		for ( Size kk = 1; kk <= free_count; ++kk ) {
+		for ( core::Size kk = 1; kk <= free_count; ++kk ) {
 			free_data_vect[ kk ] = free_data[ ( jj - 1 ) * free_count + kk - 1 ];
 		}
-		for ( Size kk = 1; kk <= fixed_count; ++kk ) {
+		for ( core::Size kk = 1; kk <= fixed_count; ++kk ) {
 			fixed_data_vect[ kk ] = fixed_data[ ( jj - 1 ) * fixed_count + kk - 1 ];
 		}
 		PNatRotOptERotamerDataOP jj_rotamer_data( new PNatRotOptERotamerData(
@@ -1887,24 +1887,24 @@ PNatRotOptEPositionData::receive_from_node( int const source_node, int const tag
 	delete [] fixed_data;  fixed_data  = 0;
 
 	/// 11. Native chi data
-	Size nnative_chi;
+	core::Size nnative_chi;
 	MPI_Recv( & nnative_chi, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 	if ( nnative_chi != 0 ) {
 		native_chi_.resize( nnative_chi );
 		Real * native_chi = new Real[ nnative_chi ];
 		MPI_Recv( native_chi, nnative_chi, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
-		for ( Size ii = 1; ii <= nnative_chi; ++ii ) native_chi_[ ii ] = native_chi[ ii - 1 ];
+		for ( core::Size ii = 1; ii <= nnative_chi; ++ii ) native_chi_[ ii ] = native_chi[ ii - 1 ];
 		delete [] native_chi;
 	}
 
 	/// 12. Native chi periodicity data
-	Size nnative_chi_periodicity = native_chi_periodicity_.size();
+	core::Size nnative_chi_periodicity = native_chi_periodicity_.size();
 	MPI_Recv( & nnative_chi_periodicity, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 	if ( nnative_chi_periodicity != 0 ) {
 		Real * native_chi_periodicity = new Real[ nnative_chi_periodicity ];
 		MPI_Recv( native_chi_periodicity, nnative_chi_periodicity, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
 		native_chi_periodicity_.resize( nnative_chi_periodicity );
-		for ( Size ii = 1; ii <= nnative_chi_periodicity; ++ii ) native_chi_periodicity_[ ii ] = native_chi_periodicity[ ii -1 ];
+		for ( core::Size ii = 1; ii <= nnative_chi_periodicity; ++ii ) native_chi_periodicity_[ ii ] = native_chi_periodicity[ ii -1 ];
 		delete [] native_chi_periodicity;
 	}
 
@@ -1928,13 +1928,13 @@ PNatRotOptEPositionData::receive_from_node( int const source_node, int const tag
 
 void
 PNatRotOptEPositionData::set_native_rotamer_index(
-	utility::vector1< Size > const & native_rotamer_index
+	utility::vector1< core::Size > const & native_rotamer_index
 )
 {
 	runtime_assert( rotamer_well_counts_.size() != 0 ); // set well counts before native rotamer
 	runtime_assert( native_rotamer_index.size() == rotamer_well_counts_.size() );
 	native_rotamer_index_ = native_rotamer_index;
-	for ( Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) {
 		runtime_assert( native_rotamer_index_[ ii ] > 0 );
 		runtime_assert( native_rotamer_index_[ ii ] <= rotamer_well_counts_[ ii ] );
 	}
@@ -1960,13 +1960,13 @@ bool
 PNatRotOptEPositionData::count_rotamer_as_native( PNatRotOptERotamerDataOP rotamer ) const
 {
 	static Real const TOLERANCE = 40.0;
-	for ( Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) {
 		if ( std::abs( numeric::mod( rotamer->chi()[ ii ] - native_chi_[ ii ], native_chi_periodicity_[ ii ] )) > TOLERANCE ) {
 			return false;
 		}
 	}
 	//std::cout << "Counting as native:";
-	//for ( Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) {
+	//for ( core::Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) {
 	// std::cout << " ( " << rotamer->chi()[ ii ] << " " << native_chi_[ ii ] << " " << native_chi_periodicity_[ ii ] << " )";
 	//}
 	//std::cout << std::endl;
@@ -1975,14 +1975,14 @@ PNatRotOptEPositionData::count_rotamer_as_native( PNatRotOptERotamerDataOP rotam
 
 void
 PNatRotOptEPositionData::set_rotamer_well_counts(
-	utility::vector1< Size > const & rotamer_well_counts
+	utility::vector1< core::Size > const & rotamer_well_counts
 )
 {
 	runtime_assert( rotamer_well_counts_.size() == 0 );
 	runtime_assert( rotamer_well_counts.size() > 0 );
 	rotamer_well_counts_ = rotamer_well_counts;
 	n_wells_ = 1;
-	for ( Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rotamer_well_counts_.size(); ++ii ) {
 		n_wells_ *= rotamer_well_counts_[ ii ];
 	}
 }
@@ -2027,12 +2027,12 @@ Real & PNatRotOptEPositionData::psi() { return psi_; }
 
 Size
 PNatRotOptEPositionData::rotamer_index_2_well_id(
-	utility::vector1< Size > const & rotamer_index
+	utility::vector1< core::Size > const & rotamer_index
 ) const
 {
 	if ( rotamer_well_counts_.size() == 0 ) return 0;
-	Size well_id = rotamer_index[ 1 ] - 1;
-	for ( Size ii = 2; ii <= rotamer_well_counts_.size(); ++ii ) {
+	core::Size well_id = rotamer_index[ 1 ] - 1;
+	for ( core::Size ii = 2; ii <= rotamer_well_counts_.size(); ++ii ) {
 		well_id *= rotamer_well_counts_[ ii ];
 		well_id += rotamer_index[ ii ] - 1;
 	}
@@ -2045,8 +2045,8 @@ PNatRotOptEPositionData::rotamer_index_2_well_id(
 ) const
 {
 	if ( rotamer_well_counts_.size() == 0 ) return 0;
-	Size well_id = lexiter[ 1 ] - 1;
-	for ( Size ii = 2; ii <= rotamer_well_counts_.size(); ++ii ) {
+	core::Size well_id = lexiter[ 1 ] - 1;
+	for ( core::Size ii = 2; ii <= rotamer_well_counts_.size(); ++ii ) {
 		well_id *= rotamer_well_counts_[ ii ];
 		well_id += lexiter[ ii ] - 1;
 	}
@@ -2055,10 +2055,10 @@ PNatRotOptEPositionData::rotamer_index_2_well_id(
 
 bool
 PNatRotOptEPositionData::is_native_rotamer_well(
-	utility::vector1< Size > const & rotamer_index
+	utility::vector1< core::Size > const & rotamer_index
 ) const
 {
-	for ( Size ii = 1; ii <= native_rotamer_index_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= native_rotamer_index_.size(); ++ii ) {
 		if ( rotamer_index[ ii ] != native_rotamer_index_[ ii ] ) return false;
 	}
 	return true;
@@ -2069,7 +2069,7 @@ PNatRotOptEPositionData::is_native_rotamer_well(
 	utility::LexicographicalIterator const & lexiter
 ) const
 {
-	for ( Size ii = 1; ii <= native_rotamer_index_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= native_rotamer_index_.size(); ++ii ) {
 		if ( lexiter[ ii ] != native_rotamer_index_[ ii ] ) return false;
 	}
 	return true;
@@ -2103,7 +2103,7 @@ PNatStructureOptEData::get_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const dummy1,
 	int const dummy2,
 	EnergyMap const & fixed_terms,
@@ -2132,24 +2132,24 @@ PNatStructureOptEData::get_score(
 //
 //      utility::vector1< Real > decoy_energies( decoys_.size(), 0.0 );
 //      utility::vector1< Real > native_energies( natives_.size(), 0.0 );
-//      for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
-//              for ( Size jj = 1; jj <= natives_.size(); ++jj ) {
+//      for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+//              for ( core::Size jj = 1; jj <= natives_.size(); ++jj ) {
 //                      native_energies[ jj ] += vars[ ii ]  * natives_[ jj ]->free_data()[ ii ];
 //              }
-//              for ( Size jj = 1; jj <= decoys_.size(); ++jj ) {
+//              for ( core::Size jj = 1; jj <= decoys_.size(); ++jj ) {
 //                      decoy_energies[ jj ] += vars[ ii ] * decoys_[ jj ]->free_data()[ ii ];
 //              }
 //      }
-//      for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
-//              for ( Size jj = 1; jj <= natives_.size(); ++jj ) {
+//      for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+//              for ( core::Size jj = 1; jj <= natives_.size(); ++jj ) {
 //                      native_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * natives_[ jj ]->fixed_data()[ ii ];
 //              }
-//              for ( Size jj = 1; jj <= decoys_.size(); ++jj ) {
+//              for ( core::Size jj = 1; jj <= decoys_.size(); ++jj ) {
 //                      decoy_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * decoys_[ jj ]->fixed_data()[ ii ];
 //              }
 //      }
 //
-//      utility::vector1< Size > top_natives( n_top_natives_to_score_, 0 );
+//      utility::vector1< core::Size > top_natives( n_top_natives_to_score_, 0 );
 //      if ( n_top_natives_to_score_ == 1 ) {
 //              top_natives[ 1 ] = arg_min( native_energies );
 //      } else {
@@ -2157,7 +2157,7 @@ PNatStructureOptEData::get_score(
 //      }
 //  /*if ( top_natives.size() == 0  ) {
 //              std::cerr << "No top natives?! "<< tag() << std::endl << "E:";
-//    for ( Size ii = 1; ii <= native_energies.size(); ++ii ) {
+//    for ( core::Size ii = 1; ii <= native_energies.size(); ++ii ) {
 //      std::cerr << " " << native_energies[ ii ];
 //    }
 //    std::cerr << std::endl;
@@ -2169,10 +2169,10 @@ PNatStructureOptEData::get_score(
 //
 //              /// Avoid dividing by zero -- but what is the appropriate scale factor if the SD is measured 0?
 //              Real const scaling_factor = sd == 0.0 ? 1 : initial_decoy_stdev_ < sd : initial_decoy_stddev_ / sd : 1.0; /// APL TEMP -- do not prevent the compression of decoy stdev; only prevent the expansion.
-//              for ( Size jj = 1; jj <= decoy_energies.size(); ++jj ) {
+//              for ( core::Size jj = 1; jj <= decoy_energies.size(); ++jj ) {
 //                      decoy_energies[ jj ] *= scaling_factor;
 //              }
-//              for ( Size jj = 1; jj <= native_energies.size(); ++jj ) {
+//              for ( core::Size jj = 1; jj <= native_energies.size(); ++jj ) {
 //                      native_energies[ jj ] *= scaling_factor;
 //              }
 //      }
@@ -2185,7 +2185,7 @@ PNatStructureOptEData::get_score(
 //              static Real const neg_lnalpha = -std::log( option[ optE::approximate_decoy_entropy ] );
 //              Real const energy_offset = neg_lnalpha * total_residue_ + ln_nhighentropy_decoys;
 //              Real const offset = ( energy_offset < 0 ) ? energy_offset : 0;
-//              for ( Size jj = 1; jj <= decoys_.size(); ++jj ) {
+//              for ( core::Size jj = 1; jj <= decoys_.size(); ++jj ) {
 //                      if ( decoys_[ jj ]->rms() > high_entropy_rms_cutoff_ ) {
 //                              decoy_energies[ jj ] += offset;
 //                      }
@@ -2198,10 +2198,10 @@ PNatStructureOptEData::get_score(
 //      Real const best_decoy_energy = min( decoy_energies );
 //      Real const best_energy =  best_native_energy < best_decoy_energy ? best_native_energy : best_decoy_energy;
 //
-//      for ( Size ii = 1; ii <= top_natives.size(); ++ii ) {
+//      for ( core::Size ii = 1; ii <= top_natives.size(); ++ii ) {
 //              native_energies[ top_natives[ ii ] ] -= best_energy;
 //      }
-//      for ( Size ii = 1; ii <= decoys_.size(); ++ii ) {
+//      for ( core::Size ii = 1; ii <= decoys_.size(); ++ii ) {
 //              decoy_energies[ ii ] -= best_energy;
 //      }
 //
@@ -2209,7 +2209,7 @@ PNatStructureOptEData::get_score(
 //      Real numerator(0.0), partition(0.0);
 //      Multivec dpartition( vars.size(), 0.0 ), dnumerator( vars.size(), 0.0 );
 //
-//      for ( Size ii = 1; ii <= top_natives.size(); ++ii ) {
+//      for ( core::Size ii = 1; ii <= top_natives.size(); ++ii ) {
 //              Real exp_term( std::exp( -1.0 * inv_kT *  native_energies[ top_natives[ ii ] ] ) );
 //              // iwd Limit the improbability of each native to 1 in a million
 //              // This prevents numerator ~ 0, which causes NANs and INFs in the derivatives
@@ -2219,7 +2219,7 @@ PNatStructureOptEData::get_score(
 //              partition += exp_term;
 //              numerator += exp_term;
 //              // partitions for energy derivatives
-//              for( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+//              for( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 //                      // note for derivatives: d/dw( e^-(E*w+...) ) = -E * e^-(E*w+...)
 //                      Real e_dof_deriv( -1.0 * inv_kT * score_factor * natives_[ top_natives[ ii ] ]->free_data()[ e_dof ] * exp_term );
 //                      dpartition[ e_dof ] += e_dof_deriv;
@@ -2227,13 +2227,13 @@ PNatStructureOptEData::get_score(
 //              }
 //      }
 //
-//      for( Size ii(1); ii <= decoys_.size(); ++ii ) {
+//      for( core::Size ii(1); ii <= decoys_.size(); ++ii ) {
 //
 //              Real const exp_term( std::exp( -1.0 * inv_kT *  decoy_energies[ ii ] ) );
 //              partition += exp_term;
 //
 //              // partitions for energy derivatives
-//              for( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+//              for( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 //                      // note for derivatives: d/dw( e^{-(E*w+...)/kT} ) = -E/kT * e^-(E*w+...)
 //                      Real e_dof_deriv( -1.0 * inv_kT * score_factor * decoys_[ ii ]->free_data()[ e_dof ] * exp_term );
 //                      dpartition[ e_dof ] += e_dof_deriv;
@@ -2242,7 +2242,7 @@ PNatStructureOptEData::get_score(
 //
 //      // accumulate to passed-in derivative sums -- excludes reference energies
 //      //std::cout << "vars (dvars): ";
-//      for ( Size dof(1); dof <= num_energy_dofs; ++dof ) {
+//      for ( core::Size dof(1); dof <= num_energy_dofs; ++dof ) {
 //              dE_dvars[ dof ] += component_weights[ prob_native_structure ] * (dpartition[ dof ] / partition - dnumerator[ dof ] / numerator);
 //              //std::cout << " " << vars[ dof ] << "(" << dpartition[ dof ] / partition - dnumerator[ dof ] / numerator << ")";
 //      }
@@ -2253,22 +2253,22 @@ PNatStructureOptEData::get_score(
 //
 //      /*if ( partition == 0 ) {
 //              std::cerr << tag() << " partition of zero: inv_kT " << inv_kT;
-//    for ( Size ii = 1; ii <= decoys_.size(); ++ii ) {
+//    for ( core::Size ii = 1; ii <= decoys_.size(); ++ii ) {
 //                      std::cerr << " d: " << decoy_energies[ ii ] << " " << std::exp( -1.0 * inv_kT *  decoy_energies[ ii ] ) << " ";
-//                      for ( Size jj = 1; jj <= num_energy_dofs; ++jj ) {
+//                      for ( core::Size jj = 1; jj <= num_energy_dofs; ++jj ) {
 //                              std::cerr << free_score_list[ jj ] << ": " << decoys_[ ii ]->free_data()[ jj ] << " ";
 //                      }
 //                      std::cerr << std::endl;
 //              }
-//              for ( Size ii = 1; ii <= top_natives.size(); ++ii ) {
+//              for ( core::Size ii = 1; ii <= top_natives.size(); ++ii ) {
 //                      std::cerr << " top nat: " << native_energies[ top_natives[ ii ] ] << " " << std::exp( -1.0 * inv_kT *  native_energies[ top_natives[ ii ] ] ) << " ";
-//                      for ( Size jj = 1; jj <= num_energy_dofs; ++jj ) {
+//                      for ( core::Size jj = 1; jj <= num_energy_dofs; ++jj ) {
 //                              std::cerr << free_score_list[ jj ] << ": " << natives_[ top_natives[ ii ] ]->free_data()[ jj ] << " ";
 //                      }
 //                      std::cerr << std::endl;
 //              }
 //              std::cerr << std::endl;
-//    for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+//    for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 //                      std::cerr << " " << free_score_list[ ii ] << ": " << vars[ ii ] << std::endl;
 //              }
 //              return 0.0;
@@ -2286,7 +2286,7 @@ PNatStructureOptEData::print_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const dummy1,
 	int const dummy2,
 	EnergyMap const & fixed_terms,
@@ -2308,7 +2308,7 @@ PNatStructureOptEData::process_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const,
 	int const,
 	EnergyMap const & fixed_terms,
@@ -2336,19 +2336,19 @@ PNatStructureOptEData::process_score(
 	/// Compute the energies for natives and decoys given the set of input weights;
 	utility::vector1< Real > decoy_energies( decoys_.size(), 0.0 );
 	utility::vector1< Real > native_energies( natives_.size(), 0.0 );
-	for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
-		for ( Size jj = 1; jj <= natives_.size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+		for ( core::Size jj = 1; jj <= natives_.size(); ++jj ) {
 			native_energies[ jj ] += vars[ ii ]  * natives_[ jj ]->free_data()[ ii ];
 		}
-		for ( Size jj = 1; jj <= decoys_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= decoys_.size(); ++jj ) {
 			decoy_energies[ jj ] += vars[ ii ] * decoys_[ jj ]->free_data()[ ii ];
 		}
 	}
-	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
-		for ( Size jj = 1; jj <= natives_.size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+		for ( core::Size jj = 1; jj <= natives_.size(); ++jj ) {
 			native_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * natives_[ jj ]->fixed_data()[ ii ];
 		}
-		for ( Size jj = 1; jj <= decoys_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= decoys_.size(); ++jj ) {
 			decoy_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * decoys_[ jj ]->fixed_data()[ ii ];
 		}
 	}
@@ -2367,10 +2367,10 @@ PNatStructureOptEData::process_score(
 		bool const noentropy_native_beats_decoys( noentropy_best_native_energy < noentropy_best_decoy_energy );
 		Real const noentropy_best_energy =  noentropy_native_beats_decoys ? noentropy_best_native_energy : noentropy_best_decoy_energy;
 
-		for ( Size ii = 1; ii <= native_energies.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= native_energies.size(); ++ii ) {
 			noentropy_native_energies[ ii ] -= noentropy_best_energy;
 		}
-		for ( Size ii = 1; ii <= decoys_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= decoys_.size(); ++ii ) {
 			noentropy_decoy_energies[ ii ] -= noentropy_best_energy;
 		}
 
@@ -2382,10 +2382,10 @@ PNatStructureOptEData::process_score(
 
 		/// Avoid dividing by zero -- but what is the appropriate scale factor if the SD is measured 0?
 		Real const scaling_factor = sd == 0.0 ? 1 : initial_decoy_stddev_ / sd;
-		for ( Size jj = 1; jj <= decoy_energies.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= decoy_energies.size(); ++jj ) {
 			decoy_energies[ jj ] *= scaling_factor;
 		}
-		for ( Size jj = 1; jj <= native_energies.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= native_energies.size(); ++jj ) {
 			native_energies[ jj ] *= scaling_factor;
 		}
 	}
@@ -2400,7 +2400,7 @@ PNatStructureOptEData::process_score(
 
 		Real const energy_offset = neg_lnalpha * total_residue_ + std::log( (Real)n_high_entropy_decoys_ );
 		Real const offset = ( energy_offset < 0 ) ? energy_offset : 0;
-		for ( Size jj = 1; jj <= decoys_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= decoys_.size(); ++jj ) {
 			if ( decoys_[ jj ]->rms() > high_entropy_rms_cutoff_ ) {
 				decoy_energies[ jj ] += offset;
 			}
@@ -2409,19 +2409,19 @@ PNatStructureOptEData::process_score(
 
 	if ( option[ optE::ramp_nativeness ] ) {
 		Real native_entropy_penalty = std::log( nativeness_sum_ );
-		for ( Size jj = 1; jj <= native_energies.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= native_energies.size(); ++jj ) {
 			native_energies[ jj ] += native_entropy_penalty;
 		}
 	}
 
-	utility::vector1< Size > top_natives( n_top_natives_to_score_, 0 );
+	utility::vector1< core::Size > top_natives( n_top_natives_to_score_, 0 );
 	if ( n_top_natives_to_score_ == 1 ) {
 		top_natives[ 1 ] = arg_min( native_energies );
 	} else if ( option[ optE::approximate_decoy_entropy ].user() ) {
 		/// ALL nativish structures are getting scored; it's only important
 		/// that the best native structure is in position 1 of the top_natives array.
 		top_natives[ 1 ] = arg_min( native_energies );
-		for ( Size ii = 2; ii <= n_top_natives_to_score_; ++ii ) top_natives[ ii ] = ii;
+		for ( core::Size ii = 2; ii <= n_top_natives_to_score_; ++ii ) top_natives[ ii ] = ii;
 		top_natives[ top_natives[ 1 ] ] = 1;
 	} else {
 		arg_least_several( native_energies, top_natives );
@@ -2434,14 +2434,14 @@ PNatStructureOptEData::process_score(
 	bool const native_beats_decoys( best_native_energy < best_decoy_energy );
 	Real const best_energy =  native_beats_decoys ? best_native_energy : best_decoy_energy;
 
-	for ( Size ii = 1; ii <= native_energies.size(); ++ii ) native_energies[ ii ] -= best_energy;
-	for ( Size ii = 1; ii <= decoys_.size(); ++ii ) decoy_energies[ ii ] -= best_energy;
+	for ( core::Size ii = 1; ii <= native_energies.size(); ++ii ) native_energies[ ii ] -= best_energy;
+	for ( core::Size ii = 1; ii <= decoys_.size(); ++ii ) decoy_energies[ ii ] -= best_energy;
 
 
 	Real numerator(0.0), partition(0.0);
 	Multivec dpartition( vars.size(), 0.0 ), dnumerator( vars.size(), 0.0 );
 
-	for ( Size ii = 1; ii <= top_natives.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= top_natives.size(); ++ii ) {
 		Real exp_term( std::exp( -1.0 * inv_kT *  native_energies[ top_natives[ ii ] ] ) );
 		// iwd Limit the improbability of each native to 1 in a million
 		// This prevents numerator ~ 0, which causes NANs and INFs in the derivatives
@@ -2452,7 +2452,7 @@ PNatStructureOptEData::process_score(
 		partition += exp_term;
 		numerator += exp_term * iinativeness;
 		// partitions for energy derivatives
-		for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+		for ( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 			// note for derivatives: d/dw( e^-(E*w+...) ) = -E * e^-(E*w+...)
 			Real e_dof_deriv( -1.0 * inv_kT * score_factor * natives_[ top_natives[ ii ] ]->free_data()[ e_dof ] * exp_term );
 			dpartition[ e_dof ] += e_dof_deriv;
@@ -2460,13 +2460,13 @@ PNatStructureOptEData::process_score(
 		}
 	}
 
-	for ( Size ii(1); ii <= decoys_.size(); ++ii ) {
+	for ( core::Size ii(1); ii <= decoys_.size(); ++ii ) {
 
 		Real const exp_term( std::exp( -1.0 * inv_kT * decoy_energies[ ii ] ) );
 		partition += exp_term;
 
 		// partitions for energy derivatives
-		for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+		for ( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 			// note for derivatives: d/dw( e^{-(E*w+...)/kT} ) = -E/kT * e^-(E*w+...)
 			Real e_dof_deriv( -1.0 * inv_kT * score_factor * decoys_[ ii ]->free_data()[ e_dof ] * exp_term );
 			dpartition[ e_dof ] += e_dof_deriv;
@@ -2475,7 +2475,7 @@ PNatStructureOptEData::process_score(
 
 	// accumulate to passed-in derivative sums -- excludes reference energies
 	//std::cout << "vars (dvars): ";
-	for ( Size dof(1); dof <= num_energy_dofs; ++dof ) {
+	for ( core::Size dof(1); dof <= num_energy_dofs; ++dof ) {
 		dE_dvars[ dof ] += dpartition[ dof ] / partition - dnumerator[ dof ] / numerator;
 	}
 
@@ -2486,10 +2486,10 @@ PNatStructureOptEData::process_score(
 		ostr << " -compwt_lnp " << component_weights[ prob_native_structure ] *  -1.0 * score_factor * std::log( numerator / partition );
 		ostr << " " << tag() << "\n";
 
-		for ( Size ii = 1; ii <= natives_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= natives_.size(); ++ii ) {
 			ostr << "DECDISCRIM NATIVE " << tag() << " rms: " << natives_[ ii ]->rms() << " sc(w/o_etropy): " << noentropy_native_energies[ ii ] << " sc(w/entropy): "  << native_energies[ ii ] << " " << natives_[ ii ]->tag() << "\n";
 		}
-		for ( Size ii = 1; ii <= decoys_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= decoys_.size(); ++ii ) {
 			ostr << "DECDISCRIM DECOY  " << tag() << " rms: " << decoys_[ ii ]->rms() << " sc(w/o_entropy): " << noentropy_decoy_energies[ ii ] << " sc(w/entropy): "  << decoy_energies[ ii ] << " " << decoys_[ ii ]->tag()  << "\n";
 		}
 	}
@@ -2505,10 +2505,10 @@ PNatStructureOptEData::range(
 	EnergyMap & upper_bound
 ) const
 {
-	for ( Size jj = 1; jj <= natives_.size(); ++jj ) {
+	for ( core::Size jj = 1; jj <= natives_.size(); ++jj ) {
 		update_range( natives_[ jj ], free_score_list, fixed_score_list, lower_bound, upper_bound );
 	}
-	for ( Size jj = 1; jj <= decoys_.size(); ++jj ) {
+	for ( core::Size jj = 1; jj <= decoys_.size(); ++jj ) {
 		update_range( decoys_[ jj ],  free_score_list, fixed_score_list, lower_bound, upper_bound );
 	}
 }
@@ -2550,7 +2550,7 @@ PNatStructureOptEData::read_from_binary_file( std::ifstream & /*infile*/ )
 Size
 PNatStructureOptEData::memory_use() const
 {
-	Size total = sizeof( PNatStructureOptEData ) +
+	core::Size total = sizeof( PNatStructureOptEData ) +
 		sizeof( SingleStructureData ) * natives_.size() +
 		sizeof( SingleStructureData ) * decoys_.size();
 	if ( natives_.size() > 0 ) {
@@ -2570,26 +2570,26 @@ PNatStructureOptEData::send_to_node( int const destination_node, int const tag )
 {
 	//std::cout << "sending total_residue to node " << destination_node << std::endl;
 	/// 1. total residue
-	Size total_residue = total_residue_;
+	core::Size total_residue = total_residue_;
 	MPI_Send( & total_residue, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 1b. n_top_natives_to_score_
-	Size n_top = n_top_natives_to_score_;
+	core::Size n_top = n_top_natives_to_score_;
 	MPI_Send( & n_top, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	// 2a. n natives
 	//std::cout << "sending nnatives to node " << destination_node << std::endl;
-	Size nnatives = natives_.size();
+	core::Size nnatives = natives_.size();
 	MPI_Send( & nnatives, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 2b. n decoys
 	//std::cout << "sending ndecoys to node " << destination_node << std::endl;
-	Size ndecoys = decoys_.size();
+	core::Size ndecoys = decoys_.size();
 	MPI_Send( & ndecoys, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 2c. n_high_entropy_decoys_
 	//std::cout << "sending ndecoys to node " << destination_node << std::endl;
-	Size n_high_entropy_decoys = n_high_entropy_decoys_;
+	core::Size n_high_entropy_decoys = n_high_entropy_decoys_;
 	MPI_Send( & n_high_entropy_decoys, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 2d. normalize_decoy_stddev_
@@ -2611,12 +2611,12 @@ PNatStructureOptEData::send_to_node( int const destination_node, int const tag )
 	}
 
 	/// 3. n free
-	Size n_free = decoys_[ 1 ]->free_data().size();
+	core::Size n_free = decoys_[ 1 ]->free_data().size();
 	//std::cout << "sending n_free to node " << destination_node << " " << n_free << std::endl;
 	MPI_Send( & n_free, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 4. n fixed
-	Size n_fixed = decoys_[ 1 ]->fixed_data().size();
+	core::Size n_fixed = decoys_[ 1 ]->fixed_data().size();
 	//std::cout << "sending n_fixed to node " << destination_node  << " " << n_fixed << std::endl;
 	MPI_Send( & n_fixed, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
@@ -2624,12 +2624,12 @@ PNatStructureOptEData::send_to_node( int const destination_node, int const tag )
 	Real * rms = new Real[ nnatives ];
 	Real * free_data = new Real[ n_free * nnatives ];
 	Real * fixed_data = new Real[ n_fixed * nnatives ];
-	for ( Size ii = 1; ii <= nnatives; ++ ii ) {
+	for ( core::Size ii = 1; ii <= nnatives; ++ ii ) {
 		rms[ (ii-1) ] = natives_[ ii ]->rms();
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ] = natives_[ ii ]->free_data()[ jj ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ] = natives_[ ii ]->fixed_data()[ jj ];
 		}
 	}
@@ -2650,12 +2650,12 @@ PNatStructureOptEData::send_to_node( int const destination_node, int const tag )
 	Real * decoy_rms = new Real[ ndecoys ];
 	Real * decoy_free_data = new Real[ n_free * ndecoys ];
 	Real * decoy_fixed_data = new Real[ n_fixed * ndecoys ];
-	for ( Size ii = 1; ii <= ndecoys; ++ ii ) {
+	for ( core::Size ii = 1; ii <= ndecoys; ++ ii ) {
 		decoy_rms[ (ii-1) ] = decoys_[ ii ]->rms();
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			decoy_free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ] = decoys_[ ii ]->free_data()[ jj ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			decoy_fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ] = decoys_[ ii ]->fixed_data()[ jj ];
 		}
 	}
@@ -2680,11 +2680,11 @@ PNatStructureOptEData::send_to_node( int const destination_node, int const tag )
 
 	/// 9. structure tags
 	/// 9a. natives
-	for ( Size ii = 1; ii <= natives_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= natives_.size(); ++ii ) {
 		IterativeOptEDriver::send_string_to_node( destination_node, natives_[ ii ]->tag() );
 	}
 	/// 9b. decoys
-	for ( Size ii = 1; ii <= decoys_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= decoys_.size(); ++ii ) {
 		IterativeOptEDriver::send_string_to_node( destination_node, decoys_[ ii ]->tag() );
 	}
 
@@ -2699,26 +2699,26 @@ PNatStructureOptEData::receive_from_node( int const source_node, int const tag )
 	//TR << "PNatStructureOptEData::Recieving data from node... " << source_node << std::endl;
 
 	/// 1. total residue
-	Size total_residue( 0 );
+	core::Size total_residue( 0 );
 	MPI_Recv( & total_residue, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 	total_residue_ = total_residue;
 
 	/// 1b. n_top_natives_to_score_
-	Size n_top;
+	core::Size n_top;
 	MPI_Recv( & n_top, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 	n_top_natives_to_score_ = n_top;
 
 	/// 2a. n natives
-	Size nnatives( 0 );
+	core::Size nnatives( 0 );
 	MPI_Recv( & nnatives, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	/// 2b. n decoys
-	Size ndecoys( 0 );
+	core::Size ndecoys( 0 );
 	MPI_Recv( & ndecoys, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	/// 2c. n_high_entropy_decoys_
 	//std::cout << "sending ndecoys to node " << destination_node << std::endl;
-	Size n_high_entropy_decoys( 0 );
+	core::Size n_high_entropy_decoys( 0 );
 	MPI_Recv( & n_high_entropy_decoys, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 	n_high_entropy_decoys_ = n_high_entropy_decoys;
 
@@ -2745,11 +2745,11 @@ PNatStructureOptEData::receive_from_node( int const source_node, int const tag )
 	decoys_.reserve( ndecoys );
 
 	/// 3. n free
-	Size n_free( 0 );
+	core::Size n_free( 0 );
 	MPI_Recv( & n_free, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	/// 4. n fixed
-	Size n_fixed( 0 );
+	core::Size n_fixed( 0 );
 	MPI_Recv( & n_fixed, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	/// Recieve native data first, then decoys
@@ -2767,11 +2767,11 @@ PNatStructureOptEData::receive_from_node( int const source_node, int const tag )
 
 	utility::vector1< Real > free_data_v( n_free );
 	utility::vector1< Real > fixed_data_v( n_fixed );
-	for ( Size ii = 1; ii <= nnatives; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= nnatives; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data_v[ jj ] = free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
 		natives_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
@@ -2796,11 +2796,11 @@ PNatStructureOptEData::receive_from_node( int const source_node, int const tag )
 	/// 6. fixed data
 	MPI_Recv( fixed_data, ndecoys * n_fixed, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
 
-	for ( Size ii = 1; ii <= ndecoys; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= ndecoys; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data_v[ jj ] = free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
 		decoys_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
@@ -2815,11 +2815,11 @@ PNatStructureOptEData::receive_from_node( int const source_node, int const tag )
 
 	/// 9. structure tags
 	/// 9a. natives
-	for ( Size ii = 1; ii <= natives_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= natives_.size(); ++ii ) {
 		natives_[ ii ]->tag( IterativeOptEDriver::receive_string_from_node( source_node ));
 	}
 	/// 9b. decoys
-	for ( Size ii = 1; ii <= decoys_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= decoys_.size(); ++ii ) {
 		decoys_[ ii ]->tag( IterativeOptEDriver::receive_string_from_node( source_node ));
 	}
 
@@ -2850,13 +2850,13 @@ PNatStructureOptEData::add_decoy( SingleStructureDataOP decoy )
 }
 
 void
-PNatStructureOptEData::set_total_residue( Size total_residue ) {
+PNatStructureOptEData::set_total_residue( core::Size total_residue ) {
 	total_residue_ = total_residue;
 	//total_residue_ = 1; // This line removes the total-residue reweighting.
 }
 
 void
-PNatStructureOptEData::n_top_natives_to_score( Size n_top )
+PNatStructureOptEData::n_top_natives_to_score( core::Size n_top )
 {
 	if ( n_top < 1 ) {
 		std::cerr << "ERROR: PNatStructureOptEData will not score fewer than one top native!" << std::endl;
@@ -2970,8 +2970,8 @@ ConstraintedOptimizationWeightFunc::initialize_constraints_from_file( std::ifstr
 		}
 
 		score_types_seen[ term ] = true;
-		Size term_index( 0 );
-		for ( Size ii = 1; ii <= free_terms_.size(); ++ii ) {
+		core::Size term_index( 0 );
+		for ( core::Size ii = 1; ii <= free_terms_.size(); ++ii ) {
 			if ( free_terms_[ ii ] == term ) {
 				term_index = ii;
 				break;
@@ -3004,7 +3004,7 @@ ConstraintedOptimizationWeightFunc::get_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const,
 	int const,
 	EnergyMap const &,
@@ -3014,7 +3014,7 @@ ConstraintedOptimizationWeightFunc::get_score(
 {
 	using namespace core::optimization;
 	Real total( 0 );
-	for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+	for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 		if ( ! free_term_constraints_[ ii ].active_ ) continue;
 
 		WeightRangeConstraint wrc = free_term_constraints_[ ii ];
@@ -3039,7 +3039,7 @@ ConstraintedOptimizationWeightFunc::print_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec &,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const,
 	int const,
 	EnergyMap const &,
@@ -3051,7 +3051,7 @@ ConstraintedOptimizationWeightFunc::print_score(
 	ostr << "CONSTR ";
 	Real total( 0.0 );
 	std::ostringstream sstr;
-	for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+	for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 
 		if ( ! free_term_constraints_[ ii ].active_ ) continue;
 
@@ -3118,7 +3118,7 @@ ConstraintedOptimizationWeightFunc::read_from_binary_file( std::ifstream & /*inf
 Size
 ConstraintedOptimizationWeightFunc::memory_use() const
 {
-	Size total = sizeof( ConstraintedOptimizationWeightFunc );
+	core::Size total = sizeof( ConstraintedOptimizationWeightFunc );
 	return total;
 }
 
@@ -3196,7 +3196,7 @@ DDGMutationOptEData::get_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const num_ref_dofs,
 	int const num_total_dofs,
 	EnergyMap const & fixed_terms,
@@ -3238,19 +3238,19 @@ utility::vector1< Real > wt_energies( wts_.size(), 0.0 );
 utility::vector1< Real > mut_energies( muts_.size(), 0.0 );
 
 // go through and come up with a total score for each structure in the wts_ and muts_ list
-for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
-for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 wt_energies[ jj ] += vars[ ii ] * wts_[ jj ]->free_data()[ ii ];
 }
-for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 mut_energies[ jj ] += vars[ ii ] * muts_[ jj ]->free_data()[ ii ];
 }
 }
-for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
-for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 wt_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * wts_[ jj ]->fixed_data()[ ii ];
 }
-for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 mut_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * muts_[ jj ]->fixed_data()[ ii ];
 }
 }
@@ -3258,10 +3258,10 @@ mut_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * muts_[ jj ]->fixed
 // I presume these are the reference energies that are being added in?
 // num_energy_dofs is the number of free, non-reference energy parameters in the run -ronj
 if ( num_ref_dofs != 0 ) {
-for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 wt_energies[ jj ] += vars[ num_energy_dofs + wt_aa_ ];
 }
-for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 mut_energies[ jj ] += vars[ num_energy_dofs + mut_aa_ ];
 }
 }
@@ -3277,7 +3277,7 @@ Real const best_mut_energy = mut_energies[ best_mut ];
 Real const predicted_ddG = best_mut_energy - best_wt_energy;
 Real const ddG_diff = predicted_ddG - experimental_ddG_;
 
-for( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+for( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 dE_dvars[ e_dof ] += 2 * component_weights[ ddG_mutation_correlation ] * ddG_diff * ( muts_[ best_mut ]->free_data()[ e_dof ] - wts_[ best_wt ]->free_data()[ e_dof ] );
 }
 
@@ -3299,7 +3299,7 @@ DDGMutationOptEData::print_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const num_ref_dofs,
 	int const num_total_dofs,
 	EnergyMap const & fixed_terms,
@@ -3321,7 +3321,7 @@ DDGMutationOptEData::process_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const num_ref_dofs,
 	int const,
 	EnergyMap const & fixed_terms,
@@ -3348,8 +3348,8 @@ DDGMutationOptEData::process_score(
 	#define CAP_FA_REP 1
 
 	// go through and come up with a total score for each structure in the wts_ and muts_ list
-	for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
-		for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+		for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 
 			// cap the fa_rep term at some value - this at least keeps it around for most of the mutants
 #ifdef CAP_FA_REP
@@ -3360,7 +3360,7 @@ DDGMutationOptEData::process_score(
 
 			wt_dG_energies[ jj ][ ii ] = vars[ ii ]  * wts_[ jj ]->free_data()[ ii ];
 		}
-		for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 			// cap the fa_rep term at some value - this at least keeps it around for most of the mutants
 #ifdef CAP_FA_REP
 			if ( ( score_list[ ii ] == fa_rep ) && ( vars[ ii ] * muts_[ jj ]->free_data()[ ii ] > 10 ) ) { mut_energies[ jj ] += 10; }
@@ -3371,8 +3371,8 @@ DDGMutationOptEData::process_score(
 			mut_dG_energies[ jj ][ ii ] = vars[ ii ] * muts_[ jj ]->free_data()[ ii ];
 		}
 	}
-	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
-		for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+		for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 #ifdef CAP_FA_REP
 			if ( ( fixed_score_list[ ii ] == fa_rep ) && ( fixed_terms[ fixed_score_list[ ii ] ] * wts_[ jj ]->fixed_data()[ ii ] > 10 ) ) { wt_energies[ jj ] += 10; }
 			else
@@ -3381,7 +3381,7 @@ DDGMutationOptEData::process_score(
 
 			wt_dG_energies[ jj ][ num_energy_dofs + ii ] = fixed_terms[ fixed_score_list[ ii ] ] * wts_[ jj ]->fixed_data()[ ii ];
 		}
-		for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 #ifdef CAP_FA_REP
 			if ( ( fixed_score_list[ ii ] == fa_rep ) && ( fixed_terms[ fixed_score_list[ ii ] ] * muts_[ jj ]->fixed_data()[ ii ] > 10 ) ) { mut_energies[ jj ] += 10; }
 			else
@@ -3395,20 +3395,20 @@ DDGMutationOptEData::process_score(
 	// I presume these are the reference energies that are being added in?
 	// num_energy_dofs is the number of free, non-reference energy parameters in the run -ronj
 	if ( num_ref_dofs != 0 ) {
-		for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 			wt_energies[ jj ] += vars[ num_energy_dofs + wt_aa_ ];
 		}
-		for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 			mut_energies[ jj ] += vars[ num_energy_dofs + mut_aa_ ];
 		}
 	}
 
 	//if ( print ) {
-	// for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+	// for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 	//  ostr << "EXTRA " << tag() << " structure " << jj << " ddG by term: [ ";
-	//  for ( Size ii = 1; ii <= num_energy_dofs; ++ii )
+	//  for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii )
 	//   ostr << name_from_score_type( score_list[ ii ] ) << ": " << ( mut_dG_energies[ jj ][ ii ] - wt_dG_energies[ jj ][ ii ] ) << ", ";
-	//  for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii )
+	//  for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii )
 	//   ostr << name_from_score_type( fixed_score_list[ ii ] ) << ": " << ( mut_dG_energies[ jj ][ num_energy_dofs + ii ] - wt_dG_energies[ jj ][ num_energy_dofs + ii ] ) << ", ";
 	//  ostr << "]" << std::endl;
 	// }
@@ -3438,11 +3438,11 @@ DDGMutationOptEData::process_score(
 		} else {
 			Real const inv_nmuts = 1.0 / muts_.size();
 			Real const inv_nwts  = 1.0 / wts_.size();
-			for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
-				for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+			for ( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+				for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 					dE_dvars[ e_dof ] += inv_nmuts * 2 * component_weights[ ddG_mutation_correlation ] * ddG_diff * muts_[ jj ]->free_data()[ e_dof ];
 				}
-				for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+				for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 					dE_dvars[ e_dof ] += -1 * inv_nwts * 2 * component_weights[ ddG_mutation_correlation ] * ddG_diff * wts_[ jj ]->free_data()[ e_dof ];
 				}
 			}
@@ -3461,8 +3461,8 @@ DDGMutationOptEData::process_score(
 		Real best_wt = utility::min( wt_energies );
 		Real best_mut = utility::min( mut_energies );
 		Real best_of_best = std::min( best_wt, best_mut );
-		for ( Size ii = 1; ii <= wt_energies.size(); ++ii ) wt_energies[ ii ] -= best_of_best;
-		for ( Size ii = 1; ii <= mut_energies.size(); ++ii ) mut_energies[ ii ] -= best_of_best;
+		for ( core::Size ii = 1; ii <= wt_energies.size(); ++ii ) wt_energies[ ii ] -= best_of_best;
+		for ( core::Size ii = 1; ii <= mut_energies.size(); ++ii ) mut_energies[ ii ] -= best_of_best;
 
 		/// Now compute the boltzman probabilities of each of the structures.
 
@@ -3470,12 +3470,12 @@ DDGMutationOptEData::process_score(
 		Real mut_denom(0.0);
 		utility::vector1< Real > wt_partition( wts_.size(), 0.0 );
 		utility::vector1< Real > mut_partition( muts_.size(), 0.0 );
-		for ( Size ii = 1; ii <= wt_partition.size(); ++ii ) wt_denom += wt_partition[ ii ] = std::exp( -1 * wt_energies[ ii ] * inv_kT );
-		for ( Size ii = 1; ii <= mut_partition.size(); ++ii ) mut_denom += mut_partition[ ii ] = std::exp( -1 * mut_energies[ ii ] * inv_kT );
+		for ( core::Size ii = 1; ii <= wt_partition.size(); ++ii ) wt_denom += wt_partition[ ii ] = std::exp( -1 * wt_energies[ ii ] * inv_kT );
+		for ( core::Size ii = 1; ii <= mut_partition.size(); ++ii ) mut_denom += mut_partition[ ii ] = std::exp( -1 * mut_energies[ ii ] * inv_kT );
 
 		Real wt_avg_energy( 0.0 ), mut_avg_energy( 0.0 );
-		for ( Size ii = 1; ii <= wt_partition.size(); ++ii ) wt_avg_energy += wt_partition[ ii ] * wt_energies[ ii ];
-		for ( Size ii = 1; ii <= mut_partition.size(); ++ii ) mut_avg_energy +=  mut_partition[ ii ] * mut_energies[ ii ];
+		for ( core::Size ii = 1; ii <= wt_partition.size(); ++ii ) wt_avg_energy += wt_partition[ ii ] * wt_energies[ ii ];
+		for ( core::Size ii = 1; ii <= mut_partition.size(); ++ii ) mut_avg_energy +=  mut_partition[ ii ] * mut_energies[ ii ];
 		wt_avg_energy /= wt_denom;
 		mut_avg_energy /= mut_denom;
 
@@ -3489,10 +3489,10 @@ DDGMutationOptEData::process_score(
 			ostr << " " << tag() << "\n";
 		} else {
 
-			for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+			for ( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 				/// quotient rule: d/dx f/g == (f'g - g'f)/(g*g).
 				Real fmut(0.0), fprimemut(0.0), gmut( mut_denom ), gprimemut(0.0);
-				for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+				for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 					fmut += mut_partition[ jj ] * mut_energies[ jj ];
 					fprimemut += -1 * muts_[ jj ]->free_data()[ e_dof ] * inv_kT * mut_partition[ jj ] + muts_[ jj ]->free_data()[ e_dof ] * mut_partition[ jj ];
 					gprimemut += -1 * muts_[ jj ]->free_data()[ e_dof ] * inv_kT * mut_partition[ jj ];
@@ -3500,7 +3500,7 @@ DDGMutationOptEData::process_score(
 				dE_dvars[ e_dof ] += 2 * component_weights[ ddG_mutation_correlation ] * ddG_diff * ( fprimemut * gmut - gprimemut * fmut ) / (gmut*gmut);
 
 				Real fwt(0.0), fprimewt(0.0), gwt( wt_denom ), gprimewt(0.0);
-				for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+				for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 					fwt += wt_partition[ jj ] * wt_energies[ jj ];
 					fprimewt += -1 * wts_[ jj ]->free_data()[ e_dof ] * inv_kT * wt_partition[ jj ] + wts_[ jj ]->free_data()[ e_dof ] * wt_partition[ jj ];
 					gprimewt += -1 * wts_[ jj ]->free_data()[ e_dof ] * inv_kT * wt_partition[ jj ];
@@ -3516,8 +3516,8 @@ DDGMutationOptEData::process_score(
 
 
 	} else {
-		Size const best_wt = arg_min( wt_energies );
-		Size const best_mut = arg_min( mut_energies );
+		core::Size const best_wt = arg_min( wt_energies );
+		core::Size const best_mut = arg_min( mut_energies );
 
 		Real const best_wt_energy = wt_energies[ best_wt ];
 		Real const best_mut_energy = mut_energies[ best_mut ];
@@ -3534,7 +3534,7 @@ DDGMutationOptEData::process_score(
 
 		} else {
 
-			for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+			for ( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 				if ( ( score_list[ e_dof ] == fa_rep ) && ( muts_[ best_mut ]->free_data()[ e_dof ] - wts_[ best_wt ]->free_data()[ e_dof ] ) > 10 ) {
 					dE_dvars[ e_dof ] += 2 * component_weights[ ddG_mutation_correlation ] * ddG_diff * 10;
 				} else {
@@ -3578,28 +3578,28 @@ if ( muts_.size() == 0 || wts_.size() == 0 ) return;
 
 utility::vector1< Real > wt_energies( wts_.size(), 0.0 );
 utility::vector1< Real > mut_energies( muts_.size(), 0.0 );
-for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
-for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 wt_energies[ jj ] += vars[ ii ]  * wts_[ jj ]->free_data()[ ii ];
 }
-for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 mut_energies[ jj ] += vars[ ii ] * muts_[ jj ]->free_data()[ ii ];
 }
 }
-for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
-for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 wt_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * wts_[ jj ]->fixed_data()[ ii ];
 }
-for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 mut_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * muts_[ jj ]->fixed_data()[ ii ];
 }
 }
 
 if ( num_ref_dofs != 0 ) {
-for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 wt_energies[ jj ] += vars[ num_energy_dofs + wt_aa_ ];
 }
-for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 mut_energies[ jj ] += vars[ num_energy_dofs + mut_aa_ ];
 }
 }
@@ -3622,7 +3622,7 @@ ostr << component_weights[ ddG_mutation_correlation ] * ddG_diff * ddG_diff;
 ostr << " " << tag() << "\n";
 
 //ostr << "DDGMutRaw: " << best_wt << " " << best_wt_energy << " " << best_mut << " " << best_mut_energy << " : ";
-//for ( Size ii = 1; ii <= wts_[ best_wt ]->free_data().size(); ++ii ) {
+//for ( core::Size ii = 1; ii <= wts_[ best_wt ]->free_data().size(); ++ii ) {
 // ostr << " ( " << wts_[ best_wt ]->free_data()[ ii ] << " , " << muts_[ best_mut ]->free_data()[ ii ] << " ) ";
 //}
 //ostr << "\n";
@@ -3638,10 +3638,10 @@ DDGMutationOptEData::range(
 	EnergyMap & upper_bound
 ) const
 {
-	for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+	for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 		update_range( wts_[ jj ],  free_score_list, fixed_score_list, lower_bound, upper_bound );
 	}
-	for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+	for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 		update_range( muts_[ jj ], free_score_list, fixed_score_list, lower_bound, upper_bound );
 	}
 }
@@ -3683,7 +3683,7 @@ DDGMutationOptEData::read_from_binary_file( std::ifstream & /*infile*/ )
 Size
 DDGMutationOptEData::memory_use() const
 {
-	Size total = sizeof( DDGMutationOptEData ) +
+	core::Size total = sizeof( DDGMutationOptEData ) +
 		sizeof( SingleStructureData ) * wts_.size() +
 		sizeof( SingleStructureData ) * muts_.size();
 	if ( wts_.size() > 0 ) {
@@ -3710,34 +3710,34 @@ DDGMutationOptEData::send_to_node( int const destination_node, int const tag ) c
 
 	// 2a. n natives
 	//std::cout << "sending nwts to node " << destination_node << std::endl;
-	Size nwts = wts_.size();
+	core::Size nwts = wts_.size();
 	MPI_Send( & nwts, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 2b. n decoys
 	//std::cout << "sending nmuts to node " << destination_node << std::endl;
-	Size nmuts = muts_.size();
+	core::Size nmuts = muts_.size();
 	MPI_Send( & nmuts, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	if ( nwts == 0 || nmuts == 0 ) return;
 
 	/// 3. n free
-	Size n_free = muts_[ 1 ]->free_data().size();
+	core::Size n_free = muts_[ 1 ]->free_data().size();
 	//std::cout << "sending n_free to node " << destination_node << " " << n_free << std::endl;
 	MPI_Send( & n_free, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 4. n fixed
-	Size n_fixed = muts_[ 1 ]->fixed_data().size();
+	core::Size n_fixed = muts_[ 1 ]->fixed_data().size();
 	//std::cout << "sending n_fixed to node " << destination_node  << " " << n_fixed << std::endl;
 	MPI_Send( & n_fixed, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// Send natives, then send decoys
 	Real * free_data = new Real[ n_free * nwts ];
 	Real * fixed_data = new Real[ n_fixed * nwts ];
-	for ( Size ii = 1; ii <= nwts; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= nwts; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ] = wts_[ ii ]->free_data()[ jj ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ] = wts_[ ii ]->fixed_data()[ jj ];
 		}
 	}
@@ -3755,11 +3755,11 @@ DDGMutationOptEData::send_to_node( int const destination_node, int const tag ) c
 	/// now send decoys
 	Real * decoy_free_data = new Real[ n_free * nmuts ];
 	Real * decoy_fixed_data = new Real[ n_fixed * nmuts ];
-	for ( Size ii = 1; ii <= nmuts; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= nmuts; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			decoy_free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ] = muts_[ ii ]->free_data()[ jj ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			decoy_fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ] = muts_[ ii ]->fixed_data()[ jj ];
 		}
 	}
@@ -3796,11 +3796,11 @@ DDGMutationOptEData::receive_from_node( int const source_node, int const tag )
 	mut_aa_ = static_cast< AA > ( mut_aa );
 
 	/// 2a. n wts
-	Size nwts( 0 );
+	core::Size nwts( 0 );
 	MPI_Recv( & nwts, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	/// 2b. n decoys
-	Size nmuts( 0 );
+	core::Size nmuts( 0 );
 	MPI_Recv( & nmuts, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	if ( nwts == 0 || nmuts == 0 ) return;
@@ -3808,11 +3808,11 @@ DDGMutationOptEData::receive_from_node( int const source_node, int const tag )
 	muts_.reserve( nmuts );
 
 	/// 3. n free
-	Size n_free( 0 );
+	core::Size n_free( 0 );
 	MPI_Recv( & n_free, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	/// 4. n fixed
-	Size n_fixed( 0 );
+	core::Size n_fixed( 0 );
 	MPI_Recv( & n_fixed, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	/// Recieve native data first, then decoys
@@ -3827,11 +3827,11 @@ DDGMutationOptEData::receive_from_node( int const source_node, int const tag )
 
 	utility::vector1< Real > free_data_v( n_free );
 	utility::vector1< Real > fixed_data_v( n_fixed );
-	for ( Size ii = 1; ii <= nwts; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= nwts; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data_v[ jj ] = free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
 		wts_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
@@ -3851,11 +3851,11 @@ DDGMutationOptEData::receive_from_node( int const source_node, int const tag )
 	/// 6. fixed data
 	MPI_Recv( fixed_data, nmuts * n_fixed, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
 
-	for ( Size ii = 1; ii <= nmuts; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= nmuts; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data_v[ jj ] = free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
 		muts_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
@@ -4010,8 +4010,8 @@ void
 OptEData::write_to_binary_file( std::string filename ) const
 {
 	std::ofstream outfile( filename.c_str(), std::ios::out | std::ios::binary );
-	Size const npositions( data_.size() );
-	outfile.write( (char*) &npositions, sizeof(Size) );
+	core::Size const npositions( data_.size() );
+	outfile.write( (char*) &npositions, sizeof(core::Size) );
 	for ( auto const & pos : data_ ) {
 		OptEPositionDataType pos_data_type = pos->type();
 		outfile.write( (char*) & pos_data_type, sizeof(OptEPositionDataType) );
@@ -4030,10 +4030,10 @@ OptEData::read_from_binary_file( std::string filename )
 {
 
 	std::ifstream infile( filename.c_str(), std::ios::in | std::ios::binary );
-	Size npositions(0);
+	core::Size npositions(0);
 	// this while loop allows concatenation of multiple optE output files
-	while ( infile.read( (char*) &npositions, sizeof(Size) ) ) {
-		for ( Size i(1); i <= npositions; ++i ) {
+	while ( infile.read( (char*) &npositions, sizeof(core::Size) ) ) {
+		for ( core::Size i(1); i <= npositions; ++i ) {
 			OptEPositionDataType pos_data_type;
 			infile.read( (char*) &pos_data_type, sizeof( OptEPositionDataType ) );
 			OptEPositionDataOP pos_data = OptEPositionDataFactory::create_position_data( pos_data_type );
@@ -4133,7 +4133,7 @@ OptEPositionDataFactory::initialize_optE_type_name_map()
 	optE_type_2_optE_type_name_[ ddG_bind_correlation ] = "ddG_bind_correlation";
 	optE_type_2_optE_type_name_[ constrained_optimization_weight_func ] = "constrained_optimization_weight_func";
 
-	for ( Size ii = 1; ii <= n_optE_data_types; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_optE_data_types; ++ii ) {
 		optE_type_name_map_[ optE_type_2_optE_type_name_[ ii ] ] = static_cast< OptEPositionDataType > ( ii );
 	}
 }

@@ -95,7 +95,7 @@ public:
 	protocols::moves::MoverOP
 	clone() const override;
 
-	void set_n_cycle( Size const setting ) { n_cycle_ = setting; }
+	void set_n_cycle( core::Size const setting ) { n_cycle_ = setting; }
 	void set_temp( Real const temp ) { temp_ = temp; }
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) { score_fxn_ = scorefxn; }
 	void set_mm( core::kinematics::MoveMapOP mm ) { mm_ = mm; }
@@ -123,7 +123,7 @@ public:
 private: // methods
 
 private: // data
-	Size n_cycle_ = 100;
+	core::Size n_cycle_ = 100;
 	Real angle_range_chi_ = 180;
 	Real angle_range_bb_ = 60;
 	Real temp_ = 0.5;

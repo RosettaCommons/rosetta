@@ -23,7 +23,7 @@
 #include <core/pack/task/operation/ResFilter.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace core {
@@ -37,7 +37,7 @@ namespace operation {
 /// at load time (before main() begins) so that the ResFilterFactory is ready
 /// to start creating ResFilters by the time any protocol
 /// requests one.
-class ResFilterCreator : public utility::pointer::ReferenceCount
+class ResFilterCreator : public utility::VirtualBase
 {
 public:
 	/// @brief Instantiate a new ResFilter

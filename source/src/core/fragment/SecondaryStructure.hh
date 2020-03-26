@@ -36,7 +36,7 @@
 #include <core/fragment/FragSet.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -51,9 +51,9 @@ namespace fragment {
 /// so far these fractions can be computed from a FragSet
 /// other input strategies are conceivable but not implemented, yet: eg. psipred files, a bunch of poses,
 
-class SecondaryStructure: public utility::pointer::ReferenceCount {
+class SecondaryStructure: public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~SecondaryStructure() override;
 
 	SecondaryStructure() :

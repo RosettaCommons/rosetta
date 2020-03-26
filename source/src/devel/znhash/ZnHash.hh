@@ -25,7 +25,7 @@
 #include <core/scoring/constraints/Constraint.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 
@@ -109,15 +109,15 @@ public:
 
 };
 
-class ZnHash : public utility::pointer::ReferenceCount {
+class ZnHash : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ZnHash() override;
 	typedef core::Real Real;
 	typedef core::Size Size;
 	typedef numeric::geometry::hashing::bin_index_hasher bin_index_hasher;
 	typedef std::unordered_map< boost::uint64_t, utility::vector1< ZnCoord >, bin_index_hasher > ZnCoordinateHash;
-	typedef utility::fixedsizearray1< Size, 3 > Size3;
+	typedef utility::fixedsizearray1< core::Size, 3 > Size3;
 	typedef core::Vector Vector;
 
 public:
@@ -168,9 +168,9 @@ public:
 	ZnMatchData( ZnMatchData const & src );
 	ZnMatchData const & operator = ( ZnMatchData const & src );
 
-	void index( Size setting ) { index_ = setting; }
-	void res1( Size setting ) { res1_ = setting; }
-	void res2( Size setting ) { res2_ = setting; }
+	void index( core::Size setting ) { index_ = setting; }
+	void res1( core::Size setting ) { res1_ = setting; }
+	void res2( core::Size setting ) { res2_ = setting; }
 	void zn_and_orbitals( ZnCoord const & setting ) { zn_and_orbitals_ = setting; }
 	void match_pdb_file( std::string const & setting ) { match_pdb_file_ = setting; }
 	void match_cst_file( std::string const & setting ) { match_cst_file_ = setting; }
@@ -178,9 +178,9 @@ public:
 	void res2conf( core::conformation::Residue const & r2 );
 	void znconf( core::conformation::Residue const & zn );
 
-	Size index() const { return index_; }
-	Size res1() const { return res1_; }
-	Size res2() const { return res2_; }
+	core::Size index() const { return index_; }
+	core::Size res1() const { return res1_; }
+	core::Size res2() const { return res2_; }
 	ZnCoord const & zn_and_orbitals() const { return zn_and_orbitals_; }
 	std::string const & match_pdb_file() const { return match_pdb_file_; }
 	std::string const & match_cst_file() const { return match_cst_file_; }
@@ -190,9 +190,9 @@ public:
 
 private:
 
-	Size index_;
-	Size res1_;
-	Size res2_;
+	core::Size index_;
+	core::Size res1_;
+	core::Size res2_;
 	ZnCoord zn_and_orbitals_;
 	std::string match_pdb_file_;
 	std::string match_cst_file_;
@@ -207,13 +207,13 @@ public:
 
 };
 
-class ZnCoordinationScorer : public utility::pointer::ReferenceCount
+class ZnCoordinationScorer : public utility::VirtualBase
 {
 public:
 	typedef core::Real Real;
 	typedef core::Size Size;
 	typedef numeric::HomogeneousTransform< Real > HTReal;
-	typedef std::pair< Size, Size > ZnIndexPair;
+	typedef std::pair< core::Size, core::Size > ZnIndexPair;
 	typedef std::pair< Real, bool > ZnScoreAndFlipState;
 	typedef std::pair< ZnIndexPair, ZnScoreAndFlipState > CoordinationData;
 
@@ -225,23 +225,23 @@ public:
 	/// @brief set an individual atom ID to use for determining the refrence frame for the asymmetric unit
 	/// There are three atoms total which are used to define the reference frame.  By default, these are
 	/// initialized to atoms 1,2,&3 on reisude 1.
-	void set_asymm_atid( Size which_atid, core::id::AtomID atid );
+	void set_asymm_atid( core::Size which_atid, core::id::AtomID atid );
 
 	/// @brief set an individual atom ID to use for determining the reference frame for the symmetric clone.
-	void set_symm_atid( Size which_atid, core::id::AtomID atid );
+	void set_symm_atid( core::Size which_atid, core::id::AtomID atid );
 
 	/// @brief set the residue on the asymmetric unit and use atoms 1,2,&3 on that residue to define the reference
 	/// frame.
-	void set_asymm_resid( Size resid );
+	void set_asymm_resid( core::Size resid );
 
 	/// @brief set the residue on the symmetric clone and use atoms 1,2,&3 on that residue to define the reference
 	/// frame.
-	void set_symm_resid( Size resid );
+	void set_symm_resid( core::Size resid );
 
 	/// @brief Set a third residue (not the asymm resid, nor the symm resid) so that this can be treated as a three-body
 	/// interaction and therefore scored during "finalize" instead of
 	/// with the two-body energies.
-	void set_third_resid( Size resid );
+	void set_third_resid( core::Size resid );
 
 	void set_zn_reach( Real reach );
 	void set_orbital_dist( Real dist );
@@ -314,7 +314,7 @@ public:
 
 	HTReal query_frame_to_original_frame( core::pose::Pose const & pose ) const;
 
-	ZnCoord original_frame_coordinate_for_match( Size index, core::pose::Pose const & p ) const;
+	ZnCoord original_frame_coordinate_for_match( core::Size index, core::pose::Pose const & p ) const;
 
 	/// @ brief score and return the indices of the two Zn matches that produce the best score;
 	/// If the result is "p", then the indices are ordered so that p.first is the Zn from
@@ -339,8 +339,8 @@ public:
 
 	Real
 	clash_score(
-		Size m1,
-		Size m2,
+		core::Size m1,
+		core::Size m2,
 		HTReal const & to_hash_frame_transform,
 		utility::vector1< core::Vector > & symmclone_coords_res1,
 		utility::vector1< core::Vector > & symmclone_coords_res2
@@ -356,8 +356,8 @@ public:
 	void
 	insert_match_onto_pose(
 		core::pose::Pose & p, // <-- should be a symmetric pose if this match is to be applied to all clones
-		Size match_index,
-		Size chain_insertion_id // 1 for the asymm unit, 2 for the symm clone.
+		core::Size match_index,
+		core::Size chain_insertion_id // 1 for the asymm unit, 2 for the symm clone.
 	) const;
 
 public:
@@ -388,7 +388,7 @@ private:
 	HTReal inv_reference_frame_; // the inverse reference frame
 	bool idealize_input_virtual_atoms_;
 	utility::vector1< ZnMatchData > zn_matches_;
-	Size max_natoms_;
+	core::Size max_natoms_;
 	Real clash_weight_;
 	bool require_3H_;
 
@@ -398,8 +398,8 @@ private:
 	Real orbital_reach_; // at what point are the orbitals not within striking distance?
 	Real znwelldepth_; // how much should zn proximity count relative to orbital proximity?  <-- scale the whole score by modifying the metalhash_constraint weight.
 
-	Size asymm_chain_;
-	Size focsed_clone_chain_;
+	core::Size asymm_chain_;
+	core::Size focsed_clone_chain_;
 	utility::fixedsizearray1< core::id::AtomID, 3 > asymm_atids_; // build a coordinate frame on the asymmetric unit with these three atoms
 	utility::fixedsizearray1< core::id::AtomID, 3 > focused_clone_atids_; // build a coordinate frame on the focused clone with these three atoms
 	core::id::AtomID third_resid_;
@@ -434,7 +434,7 @@ public:
 	/// @brief Returns the AtomID referred to by index.
 
 	core::id::AtomID const &
-	atom( Size const index ) const override;
+	atom( core::Size const index ) const override;
 
 	// Needed to get the base class overloads
 	using Constraint::score;

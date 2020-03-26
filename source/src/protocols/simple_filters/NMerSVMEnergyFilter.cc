@@ -118,7 +118,7 @@ NMerSVMEnergyFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 struct nmer_svm_res_data{
-	Size seqpos;
+	core::Size seqpos;
 	std::string pdb_seqpos;
 	Real energy;
 	vector1< Real > svm_energies;
@@ -151,9 +151,9 @@ print_nmer_svm_energy_data(
 	// utility::io::ozstream outtable( fname, std::ios::out | std::ios::app ); // Append if logfile already exists.
 	utility::io::ozstream outtable( fname, std::ios::out ); // Overwrite if logfile already exists.
 
-	for ( Size idat = 1; idat <= nmer_svm_pose_data.size(); ++idat ) {
+	for ( core::Size idat = 1; idat <= nmer_svm_pose_data.size(); ++idat ) {
 		outtable << nmer_svm_pose_data[ idat ].pdb_seqpos << "\t" << nmer_svm_pose_data[ idat ].nmer_seq << "\t";
-		for ( Size isvm = 1; isvm <= nmer_svm_pose_data[ idat ].svm_energies.size(); ++isvm ) {
+		for ( core::Size isvm = 1; isvm <= nmer_svm_pose_data[ idat ].svm_energies.size(); ++isvm ) {
 			outtable << isvm << ":" << nmer_svm_pose_data[ idat ].svm_energies[ isvm ] << ":" << nmer_svm_pose_data[ idat ].svm_ranks[ isvm ] << "\t";
 		}
 		outtable << "AVG:" << nmer_svm_pose_data[ idat ].energy << ":" << nmer_svm_pose_data[ idat ].svm_rank_avg;
@@ -173,7 +173,7 @@ NMerSVMEnergyFilter::compute(
 	core::Real rank( 0. );
 	core::Size n_eps( 0 );
 	vector1< nmer_svm_res_data > nmer_svm_pose_data;
-	for ( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
+	for ( core::Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
 		bool incl_rsd = true; //calc info for this sequence position?
 		//if user defined a set of sequence positions, then see if seqpos is in that set
 		if ( res_set_vec.size() > 0 ) {
@@ -213,7 +213,7 @@ NMerSVMEnergyFilter::compute(
 		score += rsd_energy;
 		rank += rsd_rank;
 		//if we want to know total discreet eps > cutoff, unpack rsd_svm_energies and incr ep counter
-		for ( Size isvm = 1; isvm <= rsd_svm_energies.size(); isvm++ ) {
+		for ( core::Size isvm = 1; isvm <= rsd_svm_energies.size(); isvm++ ) {
 			// use rank avg as score for epitope cutoff?
 			if ( rank_as_score_ && rsd_svm_ranks[ isvm ] > ep_cutoff_ ) n_eps++;
 			// ...or use raw score

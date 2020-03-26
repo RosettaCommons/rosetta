@@ -44,7 +44,7 @@ StepWiseSamplerOneTorsion::StepWiseSamplerOneTorsion(
 
 StepWiseSamplerOneTorsion::~StepWiseSamplerOneTorsion()= default;
 
-void StepWiseSamplerOneTorsion::apply( core::pose::Pose & pose, Size const i ) {
+void StepWiseSamplerOneTorsion::apply( core::pose::Pose & pose, core::Size const i ) {
 	pose.set_torsion( torsion_id_, value( i ) );
 }
 ///////////////////////////////////////////////////////////////////////////

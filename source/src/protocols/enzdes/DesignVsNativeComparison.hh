@@ -26,7 +26,7 @@
 #include <core/io/silent/SilentEnergy.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
 
@@ -48,7 +48,7 @@ typedef utility::pointer::shared_ptr< DesignVsNativeComparison > DesignVsNativeC
 
 /// @brief class that holds a bunch of native poses and compares them
 /// @brief against a given input pose on request
-class DesignVsNativeComparison : public utility::pointer::ReferenceCount {
+class DesignVsNativeComparison : public utility::VirtualBase {
 
 	//friend class EnzConstraintParameters;
 

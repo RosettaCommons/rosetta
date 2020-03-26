@@ -49,7 +49,7 @@ public:
 	///
 	/// ScoreFunction  scorefxn   /function to minimize while changine rotamers
 	/// PackerTask     task       /object specifying what to design/pack
-	/// Size (int)     nloop      /number of loops in the Pose (???)
+	/// core::Size (int)     nloop      /number of loops in the Pose (???)
 	RepackSidechainsMover(
 		ScoreFunctionCOP scorefxn
 	);

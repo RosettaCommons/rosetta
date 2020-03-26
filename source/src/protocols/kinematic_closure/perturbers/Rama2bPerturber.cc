@@ -42,7 +42,7 @@ void Rama2bPerturber::perturb_subset(
 	Ramachandran2B const & rama =
 		ScoringManager::get_instance()->get_Ramachandran2B();
 
-	for ( Size const residue : residues ) {
+	for ( core::Size const residue : residues ) {
 
 		// Currently we don't have data for both neighbors together.  Instead, for
 		// each residue we consider either its left neighbor or its right neighbor

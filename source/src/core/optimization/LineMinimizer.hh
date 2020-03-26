@@ -24,7 +24,7 @@
 #include <core/optimization/LineMinimizer.fwd.hh>
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -100,7 +100,7 @@ public:
 /////////////////////////////////////////////////////////
 // base class / interface for line minimizers
 /////////////////////////////////////////////////////////
-class LineMinimizationAlgorithm : public utility::pointer::ReferenceCount
+class LineMinimizationAlgorithm : public utility::VirtualBase
 {
 public:
 	~LineMinimizationAlgorithm() override;

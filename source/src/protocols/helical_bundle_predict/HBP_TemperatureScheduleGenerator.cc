@@ -27,7 +27,7 @@ namespace helical_bundle_predict {
 
 /// @brief Default constructor:
 HBP_TemperatureScheduleGenerator::HBP_TemperatureScheduleGenerator():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	max_temperature_(50.0),
 	min_temperature_(0.62),
 	current_round_(0),
@@ -36,7 +36,7 @@ HBP_TemperatureScheduleGenerator::HBP_TemperatureScheduleGenerator():
 
 /// @brief Options constructor.
 HBP_TemperatureScheduleGenerator::HBP_TemperatureScheduleGenerator( core::Real const & max_temp, core::Real const & min_temp ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	max_temperature_(max_temp),
 	min_temperature_(min_temp),
 	current_round_(0),
@@ -48,6 +48,7 @@ HBP_TemperatureScheduleGenerator::HBP_TemperatureScheduleGenerator( core::Real c
 
 /// @brief Copy constructor.
 HBP_TemperatureScheduleGenerator::HBP_TemperatureScheduleGenerator( HBP_TemperatureScheduleGenerator const &src ) :
+	VirtualBase( src ),
 	max_temperature_( src.max_temperature_ ),
 	min_temperature_( src.min_temperature_),
 	current_round_( src.current_round_ ),

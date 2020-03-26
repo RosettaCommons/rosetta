@@ -19,7 +19,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/sewing/hashing/hasher_data.hh>
 #include <core/conformation/Atom.hh>
 #include <utility/vector1.hh>
@@ -30,7 +30,7 @@ namespace sewing {
 namespace hashing {
 
 ///@brief a reader of SEWING model files
-class ModelFileReader : public utility::pointer::ReferenceCount {
+class ModelFileReader : public utility::VirtualBase {
 
 public:
 

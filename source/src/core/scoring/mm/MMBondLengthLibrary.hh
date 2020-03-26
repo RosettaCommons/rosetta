@@ -22,7 +22,7 @@
 // Utility header
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -44,11 +44,11 @@ typedef std::multimap< mm_bondlength_atom_pair, mm_bondlength_param_set > mm_bon
 typedef std::multimap< mm_bondlength_atom_pair, mm_bondlength_param_set >::const_iterator mm_bondlength_library_citer;
 typedef std::pair< mm_bondlength_library_citer, mm_bondlength_library_citer > mm_bondlength_library_citer_pair;
 
-class MMBondLengthLibrary  : public utility::pointer::ReferenceCount
+class MMBondLengthLibrary  : public utility::VirtualBase
 {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~MMBondLengthLibrary() override;
 	/// @brief ctor
 	MMBondLengthLibrary( std::string filename, core::chemical::MMAtomTypeSetCOP mm_atom_set );

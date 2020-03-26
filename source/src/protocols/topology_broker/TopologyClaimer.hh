@@ -38,7 +38,7 @@
 #include <protocols/moves/MoverContainer.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1_bool.hh>
 
 #include <utility/vector1.hh>
@@ -64,10 +64,10 @@ namespace topology_broker {
 
 //    initialize_dofs( init_claims [ subset of your claims ] ) ///only act on internal dofs -- no structure building
 
-class TopologyClaimer : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< TopologyClaimer >
+class TopologyClaimer : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< TopologyClaimer >
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~TopologyClaimer() override= default;
 
 	TopologyClaimer() :

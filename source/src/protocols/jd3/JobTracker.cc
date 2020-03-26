@@ -45,7 +45,7 @@ namespace protocols {
 namespace jd3 {
 
 JobTracker::JobTracker():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	completed_jobs_by_dag_node_.max_load_factor( 0.7 );
 	started_jobs_by_dag_node_.max_load_factor( 0.7 );
@@ -210,7 +210,7 @@ protocols::jd3::JobTracker::save( Archive & arc ) const {
 	arc( CEREAL_NVP( failed_jobs_ ) ); // SizeDIET
 	arc( CEREAL_NVP( previously_completed_jobs_ ) ); // SizeDIET
 	arc( CEREAL_NVP( last_job_for_input_source_ ) ); // std::map<core::Size, core::Size>
-	arc( CEREAL_NVP( current_global_job_index_ ) ); // Size
+	arc( CEREAL_NVP( current_global_job_index_ ) ); // core::Size
 }
 
 /// @brief Automatically generated deserialization method
@@ -225,7 +225,7 @@ protocols::jd3::JobTracker::load( Archive & arc ) {
 	arc( failed_jobs_ ); // SizeDIET
 	arc( previously_completed_jobs_ ); // SizeDIET
 	arc( last_job_for_input_source_ ); // std::map<core::Size, core::Size>
-	arc( current_global_job_index_ ); // Size
+	arc( current_global_job_index_ ); // core::Size
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::jd3::JobTracker );

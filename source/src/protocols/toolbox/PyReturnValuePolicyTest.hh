@@ -34,13 +34,13 @@ typedef utility::pointer::shared_ptr< DummyClass const > DummyClassCOP;
 //typedef utility::pointer::access_ptr< DummyClass const > DummyClassCAP;
 
 
-class DummyClass : public utility::pointer::ReferenceCount {
+class DummyClass : public utility::VirtualBase {
 public:
 	DummyClass() {};
 	DummyClass(int) {};
 	~DummyClass() override = default;
 
-	DummyClass(DummyClass const &) {};
+	DummyClass(DummyClass const &) = default;
 
 	DummyClass & operator=( DummyClass const & ) { return *this; };
 
@@ -69,7 +69,7 @@ typedef utility::pointer::shared_ptr< SF_Replica const > SF_ReplicaCOP;
 
 
 // SF_Replica
-class SF_Replica : public utility::pointer::ReferenceCount
+class SF_Replica : public utility::VirtualBase
 {
 public:
 
@@ -80,7 +80,7 @@ public:
 	SF_Replica &
 	operator=( SF_Replica const & ) { return *this; };
 
-	SF_Replica( SF_Replica const & ) {};
+	SF_Replica( SF_Replica const & ) = default;
 
 	virtual SF_ReplicaOP clone() const { return nullptr; };
 
@@ -115,7 +115,7 @@ void out_of_bounds_memory_access();
 
 // PyRosetta inheritance tests
 namespace py_inheritance_test {
-class Base : public utility::pointer::ReferenceCount {
+class Base : public utility::VirtualBase {
 public:
 	Base() : data_(0) {};
 	~Base() override = default;

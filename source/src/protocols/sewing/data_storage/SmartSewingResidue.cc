@@ -22,7 +22,7 @@ namespace sewing {
 namespace data_storage {
 
 SmartSewingResidue::SmartSewingResidue():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	chis_.clear();
 	amino_acid_type_="NNN";
@@ -31,7 +31,9 @@ SmartSewingResidue::SmartSewingResidue():
 
 SmartSewingResidue::~SmartSewingResidue(){}
 
-SmartSewingResidue::SmartSewingResidue( SmartSewingResidue const & other ) {
+SmartSewingResidue::SmartSewingResidue( SmartSewingResidue const & other ):
+	VirtualBase( other )
+{
 	//Deep copy the atom vector
 	atom_vector_.clear();
 	for ( core::conformation::Atom atom: other.get_const_atom_vector() ) {

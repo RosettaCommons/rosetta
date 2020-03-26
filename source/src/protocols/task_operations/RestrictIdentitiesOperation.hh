@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   devel/matdes/RestrictIdentitiesOperation.hh
-/// @brief  TaskOperation class that restricts a vector of Size defined residues to repacking
+/// @brief  TaskOperation class that restricts a vector of core::Size defined residues to repacking
 ///   when parsed, it takes in a string and splits by ","
 /// @author Neil King (neilking@uw.edu)
 

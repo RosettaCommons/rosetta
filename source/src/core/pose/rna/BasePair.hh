@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_pose_rna_BasePair_HH
 #define INCLUDED_core_pose_rna_BasePair_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/rna/BasePair.fwd.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/types.hh>
@@ -37,7 +37,7 @@ namespace core {
 namespace pose {
 namespace rna {
 
-class BasePair : public utility::pointer::ReferenceCount {
+class BasePair : public utility::VirtualBase {
 
 public:
 

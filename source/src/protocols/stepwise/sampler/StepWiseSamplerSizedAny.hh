@@ -44,7 +44,7 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Apply the i-th rotamer to pose
-	void apply( core::pose::Pose & pose, Size const i ) override;
+	void apply( core::pose::Pose & pose, core::Size const i ) override;
 
 	/// @brief Get the total number of rotamers in sampler
 	core::Size size() const override {
@@ -72,7 +72,7 @@ public:
 	toolbox::SamplerPlusPlusType type() const override { return toolbox::SIZED_ANY; }
 
 	/// @brief output summary of class
-	void show( std::ostream & out, Size const indent = 0 ) const override;
+	void show( std::ostream & out, core::Size const indent = 0 ) const override;
 
 private:
 	/// @brief Convert an id number to the sampler state pair.

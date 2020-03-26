@@ -79,7 +79,7 @@ public:
 	/// @note This is implemented as a static method so that DisulfidedFilter
 	///  can share code.
 	static void disulfide_list( core::pose::Pose const & pose,
-		utility::vector1< core::Size > const& targets, Size rb_jump,
+		utility::vector1< core::Size > const& targets, core::Size rb_jump,
 		utility::vector1< std::pair<core::Size,core::Size> > & disulfides);
 
 	std::string
@@ -103,7 +103,7 @@ private:
 private:
 	static const core::scoring::disulfides::CentroidDisulfidePotential potential_;
 private:
-	Size rb_jump_;
+	core::Size rb_jump_;
 };
 
 } // movers

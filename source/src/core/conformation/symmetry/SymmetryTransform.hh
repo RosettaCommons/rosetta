@@ -33,7 +33,7 @@
 #include <numeric/HomogeneousTransform.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -51,7 +51,7 @@ namespace symmetry {
 
 //Symm_info
 
-class SymmetryTransform : public utility::pointer::ReferenceCount {
+class SymmetryTransform : public utility::VirtualBase {
 
 public: //Constructor, destructor, copy, clone:
 

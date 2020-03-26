@@ -93,7 +93,7 @@ private:
 	bool twochains_;
 
 	///vector containing all cutpoints
-	utility::vector1<Size> cut_points_;
+	utility::vector1<core::Size> cut_points_;
 
 	///seed info
 	protocols::loops::Loops all_seeds_;
@@ -112,7 +112,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 
 	//utility::vector1<core::Size> manual_jumps;
-	utility::vector1< std::pair< Size, Size > > manual_jump_pairs_;
+	utility::vector1< std::pair< core::Size, core::Size > > manual_jump_pairs_;
 	core::pose::PoseOP template_pdb_;
 	core::pose::PoseOP target_chain_;
 	core::pose::PoseOP seeds_only_;

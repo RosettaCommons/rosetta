@@ -92,8 +92,8 @@ namespace coarse {
 static basic::Tracer TR( "protocols.rna.denovo.coarse.CoarseRNA_DeNovoProtocol" );
 
 CoarseRNA_DeNovoProtocol::CoarseRNA_DeNovoProtocol(
-	Size const nstruct,
-	Size const monte_carlo_cycles,
+	core::Size const nstruct,
+	core::Size const monte_carlo_cycles,
 	std::string const silent_file ):
 	Mover(),
 	nstruct_( nstruct ),
@@ -194,7 +194,7 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	///////////////////////////////////////////////////////////////////////////
 	// Main Loop.
 	///////////////////////////////////////////////////////////////////////////
-	for ( Size n = 1; n <= nstruct_; n++ ) {
+	for ( core::Size n = 1; n <= nstruct_; n++ ) {
 
 		std::string const out_file_tag = "S_" + ObjexxFCL::lead_zero_string_of( n, 6 );
 		if ( tag_is_done_[ out_file_tag ] ) continue; // put this in later!
@@ -211,7 +211,7 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 
 		clock_t const time_start( clock() );
 
-		for ( Size r = 1; r <= rounds_; r++ ) {
+		for ( core::Size r = 1; r <= rounds_; r++ ) {
 
 			monte_carlo_->score_function( *denovo_scorefxn_ );
 
@@ -228,7 +228,7 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 			//////////////////////
 			// This is it ... do the loop.
 			//////////////////////
-			for ( Size i=1; i <= monte_carlo_cycles_/rounds_ ; ++i ) {
+			for ( core::Size i=1; i <= monte_carlo_cycles_/rounds_ ; ++i ) {
 				RNA_move_trial( pose );
 			}
 
@@ -262,7 +262,7 @@ CoarseRNA_DeNovoProtocol::get_name() const {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 core::Real
-CoarseRNA_DeNovoProtocol::get_temperature( Size const & r, Size const & rounds ) const{
+CoarseRNA_DeNovoProtocol::get_temperature( core::Size const & r, core::Size const & rounds ) const{
 
 	Real temperature = m_Temperature_;
 	if ( sim_anneal_ ) {
@@ -312,7 +312,7 @@ CoarseRNA_DeNovoProtocol::output_to_silent_file( core::pose::Pose & pose, std::s
 
 		s.add_energy( "all_rms", all_atom_rmsd( *get_native_pose(), pose ) );
 
-		std::list< Size > stem_residues( rna_structure_parameters_->get_stem_residues( pose ) );
+		std::list< core::Size > stem_residues( rna_structure_parameters_->get_stem_residues( pose ) );
 		Real rmsd_stems( 0.0 );
 		if ( !stem_residues.empty() ) { //size() > 0 ) {
 			rmsd_stems = all_atom_rmsd( *get_native_pose(), pose, stem_residues );
@@ -346,12 +346,12 @@ CoarseRNA_DeNovoProtocol::fill_pairing_dists( pose::Pose & pose ) {
 	using core::id::NamedAtomID;
 
 	pairing_dists_.clear();
-	std::map< Size, Size>  const & pairs = rna_structure_parameters_->connections();
+	std::map< core::Size, core::Size>  const & pairs = rna_structure_parameters_->connections();
 
-	for ( std::map< Size, Size >::const_iterator it = pairs.begin(), end = pairs.end();
+	for ( std::map< core::Size, core::Size >::const_iterator it = pairs.begin(), end = pairs.end();
 			it != end; ++it ) {
-		Size const i = it->first;
-		Size const j = it->second;
+		core::Size const i = it->first;
+		core::Size const j = it->second;
 		pairing_dists_.push_back( ( pose.xyz( NamedAtomID( " CEN", i ) ) -
 			pose.xyz( NamedAtomID( " CEN", j ) ) ).length() );
 	}
@@ -361,18 +361,18 @@ CoarseRNA_DeNovoProtocol::fill_pairing_dists( pose::Pose & pose ) {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
-CoarseRNA_DeNovoProtocol::check_new_pairing_dists( pose::Pose & pose, Size const & frag_pos ) {
+CoarseRNA_DeNovoProtocol::check_new_pairing_dists( pose::Pose & pose, core::Size const & frag_pos ) {
 
 	using core::id::NamedAtomID;
-	Size count( 0 );
+	core::Size count( 0 );
 	bool OK( true );
 
-	std::map< Size, Size>  const & pairs = rna_structure_parameters_->connections();
+	std::map< core::Size, core::Size>  const & pairs = rna_structure_parameters_->connections();
 
-	for ( std::map< Size, Size >::const_iterator it = pairs.begin(), end = pairs.end();
+	for ( std::map< core::Size, core::Size >::const_iterator it = pairs.begin(), end = pairs.end();
 			it != end; ++it ) {
-		Size const i = it->first;
-		Size const j = it->second;
+		core::Size const i = it->first;
+		core::Size const j = it->second;
 		Real const dist_new = ( pose.xyz( NamedAtomID( " CEN", i ) ) -
 			pose.xyz( NamedAtomID( " CEN", j ) ) ).length();
 		count++;
@@ -394,7 +394,7 @@ CoarseRNA_DeNovoProtocol::random_domain_move_trial( pose::Pose & pose ) {
 
 	// std::cout << "BEFORE: " << (*denovo_scorefxn_)( pose ) << std::endl;
 
-	Size const jumpno = multiple_domain_mover_->apply_and_return_jump( pose );
+	core::Size const jumpno = multiple_domain_mover_->apply_and_return_jump( pose );
 
 	// std::cout << "AFTER1: " << (*denovo_scorefxn_)( pose ) << std::endl;
 
@@ -415,14 +415,14 @@ CoarseRNA_DeNovoProtocol::random_fragment_trial( pose::Pose & pose ) {
 
 	if ( check_pairing_dists_ ) fill_pairing_dists( pose );
 
-	Size const frag_pos = frag_mover_->random_fragment_insertion( pose, frag_size_ );
+	core::Size const frag_pos = frag_mover_->random_fragment_insertion( pose, frag_size_ );
 
 	if ( check_pairing_dists_ ) check_new_pairing_dists( pose, frag_pos );
 	if ( check_pairing_dists_ ) fill_pairing_dists( pose );
 
 	if ( close_loops_ ) rna_loop_closer_->apply( pose, frag_pos );
 
-	Size const dummy_pos( 0 );
+	core::Size const dummy_pos( 0 );
 	if ( check_pairing_dists_ ) check_new_pairing_dists( pose, dummy_pos );
 
 	// std::cout << "frag_pos " << frag_pos << std::endl;
@@ -434,13 +434,13 @@ CoarseRNA_DeNovoProtocol::random_fragment_trial( pose::Pose & pose ) {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 Size
-CoarseRNA_DeNovoProtocol::figure_out_constraint_separation_cutoff( Size const & r, Size const & rounds, Size const & max_dist )
+CoarseRNA_DeNovoProtocol::figure_out_constraint_separation_cutoff( core::Size const & r, core::Size const & rounds, core::Size const & max_dist )
 {
 
 	//Keep score function coarse for early rounds.
 	Real const suppress  = ( r )/(rounds - 2.0);
 
-	Size separation_cutoff = static_cast< Size > ( suppress * max_dist ) + 2;
+	core::Size separation_cutoff = static_cast< core::Size > ( suppress * max_dist ) + 2;
 	if ( separation_cutoff > max_dist ) separation_cutoff = max_dist;
 
 	return separation_cutoff;
@@ -450,7 +450,7 @@ CoarseRNA_DeNovoProtocol::figure_out_constraint_separation_cutoff( Size const & 
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
-CoarseRNA_DeNovoProtocol::update_pose_constraints( Size const & r, Size const & rounds, core::pose::Pose & pose )
+CoarseRNA_DeNovoProtocol::update_pose_constraints( core::Size const & r, core::Size const & rounds, core::pose::Pose & pose )
 {
 	using namespace core::scoring::constraints;
 
@@ -461,20 +461,20 @@ CoarseRNA_DeNovoProtocol::update_pose_constraints( Size const & r, Size const & 
 	ConstraintSetOP cst_set_new( new scoring::constraints::ConstraintSet );
 
 	static core::kinematics::ShortestPathInFoldTree shortest_path_in_fold_tree( pose.fold_tree() );
-	Size const separation_cutoff = figure_out_constraint_separation_cutoff( r, rounds, shortest_path_in_fold_tree.max_dist() );
+	core::Size const separation_cutoff = figure_out_constraint_separation_cutoff( r, rounds, shortest_path_in_fold_tree.max_dist() );
 	TR << "ROUND " << r << " out of " << rounds << std::endl;
 	TR << "FOLD_TREE CURRENT SEPARATION CUTOFF " << separation_cutoff << " out of " << shortest_path_in_fold_tree.max_dist() << std::endl;
 
 	ConstraintCOPs csts( constraint_set_->get_all_constraints() );
 
-	for ( Size n = 1; n <= csts.size(); n++ ) {
+	for ( core::Size n = 1; n <= csts.size(); n++ ) {
 
 		ConstraintCOP const & cst( csts[n] );
 
 		if ( cst->natoms() == 2 )  { // currently only defined for pairwise distance constraints.
-			Size const i = cst->atom( 1 ).rsd();
-			Size const j = cst->atom( 2 ).rsd();
-			Size const dist( shortest_path_in_fold_tree.dist( i , j ) );
+			core::Size const i = cst->atom( 1 ).rsd();
+			core::Size const j = cst->atom( 2 ).rsd();
+			core::Size const dist( shortest_path_in_fold_tree.dist( i , j ) );
 			if ( dist  > separation_cutoff ) continue;
 		}
 
@@ -490,7 +490,7 @@ CoarseRNA_DeNovoProtocol::update_pose_constraints( Size const & r, Size const & 
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
-CoarseRNA_DeNovoProtocol::update_domain_rot_trans_mag( Size const & r, Size const & rounds ){
+CoarseRNA_DeNovoProtocol::update_domain_rot_trans_mag( core::Size const & r, core::Size const & rounds ){
 
 	Real const scale_factor = ( static_cast<Real>( rounds - r + 1) / rounds );
 	Real const rot_mag = 5.0 * scale_factor;

@@ -17,7 +17,7 @@
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/xyzVector.hh>
 
 #include <core/types.hh>
@@ -68,20 +68,20 @@ struct KRSQuery {
 	);
 };
 
-class FunGroupTK : public utility::pointer::ReferenceCount {
+class FunGroupTK : public utility::VirtualBase {
 protected:
 	core::pose::PoseCOP pose_;
-	utility::vector1<Size> const pos_;
+	utility::vector1<core::Size> const pos_;
 	protocols::scoring::ImplicitFastClashCheckCOP ifc_;
 	std::map<std::string,utility::vector1<core::kinematics::Stub> > stb_;
 	std::map<std::string,utility::vector1<core::conformation::ResidueOP> > rsd_;
 	core::chemical::ResidueTypeSetCAP frs_;
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~FunGroupTK() override;
 	FunGroupTK(
 		core::pose::Pose & p_in,
-		utility::vector1<Size> & pos
+		utility::vector1<core::Size> & pos
 	);
 
 	protocols::scoring::ImplicitFastClashCheck const &
@@ -115,7 +115,7 @@ class BruteFunGroupTK : public FunGroupTK {
 public:
 	BruteFunGroupTK(
 		core::pose::Pose & p_in,
-		utility::vector1<Size> pos=utility::vector1<Size>()
+		utility::vector1<core::Size> pos=utility::vector1<core::Size>()
 	);
 
 
@@ -148,7 +148,7 @@ class KinFunGroupTK : public FunGroupTK {
 public:
 	KinFunGroupTK(
 		core::pose::Pose & p_in,
-		utility::vector1<Size> pos=utility::vector1<Size>()
+		utility::vector1<core::Size> pos=utility::vector1<core::Size>()
 	);
 
 

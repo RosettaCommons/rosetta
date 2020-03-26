@@ -46,7 +46,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/xyzVector.hh>
 
 namespace core {
@@ -54,7 +54,7 @@ namespace pack {
 namespace scmin {
 
 /// @brief Class to save the state for a ResidueAtomTreeCollection
-class ResidueAtomTreeCollectionMomento : public utility::pointer::ReferenceCount
+class ResidueAtomTreeCollectionMomento : public utility::VirtualBase
 {
 public:
 	ResidueAtomTreeCollectionMomento();
@@ -86,7 +86,7 @@ private:
 /// A particular AtomTree/Residue pair can be set as "active" and manipulated
 /// by setter and getters for either the coordinates of the Residues or the
 /// chi dihedrals of the AtomTree.
-class ResidueAtomTreeCollection : public utility::pointer::ReferenceCount
+class ResidueAtomTreeCollection : public utility::VirtualBase
 {
 public:
 	ResidueAtomTreeCollection(
@@ -191,7 +191,7 @@ private:
 };
 
 /// @brief A collection of ResidueAtomTreeCollection objects for an entire design task.
-class AtomTreeCollection : public utility::pointer::ReferenceCount
+class AtomTreeCollection : public utility::VirtualBase
 {
 public:
 	/// @brief construct a forest

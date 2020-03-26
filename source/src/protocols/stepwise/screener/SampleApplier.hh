@@ -54,7 +54,7 @@ public:
 	type() const override { return SAMPLE_APPLIER; }
 
 	void
-	apply_mover( moves::CompositionMoverOP mover, Size const i, Size const j ) override;
+	apply_mover( moves::CompositionMoverOP mover, core::Size const i, core::Size const j ) override;
 
 	core::pose::Pose & pose(){ return pose_; }
 

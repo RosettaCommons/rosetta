@@ -35,7 +35,7 @@
 #include <core/io/silent/SilentStruct.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 
@@ -69,7 +69,7 @@ enum SCPA_cyclization_type {
 /// @brief Application-level code for simple_cycpep_predict application.
 /// @details Also called by the BOINC minirosetta app.
 /// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
-class SimpleCycpepPredictApplication : public utility::pointer::ReferenceCount
+class SimpleCycpepPredictApplication : public utility::VirtualBase
 {
 public:
 	/// @brief Constructor

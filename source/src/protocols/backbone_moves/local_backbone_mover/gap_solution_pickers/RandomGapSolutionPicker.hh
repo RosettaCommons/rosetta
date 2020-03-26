@@ -20,7 +20,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace backbone_moves {
@@ -36,8 +36,8 @@ public:
 
 	~RandomGapSolutionPicker() override;
 
-	Size pick(core::pose::Pose const &pose, FreePeptide const &free_peptide,
-		vector1<vector1<Real> > const & pivot_torsions, Size const pivot) const override;
+	core::Size pick(core::pose::Pose const &pose, FreePeptide const &free_peptide,
+		vector1<vector1<Real> > const & pivot_torsions, core::Size const pivot) const override;
 
 private:
 

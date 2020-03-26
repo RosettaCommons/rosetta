@@ -33,7 +33,7 @@
 // Utility Headers
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
@@ -44,9 +44,9 @@
 namespace protocols {
 namespace pose_length_moves {
 
-class PossibleLoop : public utility::pointer::ReferenceCount {
+class PossibleLoop : public utility::VirtualBase {
 public:
-	PossibleLoop(int resAdjustmentBeforeLoop, int resAdjustmentAfterLoop,Size loopLength,Size resBeforeLoop, Size resAfterLoop, char resTypeBeforeLoop, char resTypeAfterLoop, Size insertedBeforeLoopRes, Size insertedAfterLoopRes, core::pose::PoseOP fullLengthPoseOP, core::pose::PoseOP  orig_atom_type_fullLengthPoseOP);
+	PossibleLoop(int resAdjustmentBeforeLoop, int resAdjustmentAfterLoop,core::Size loopLength,core::Size resBeforeLoop, core::Size resAfterLoop, char resTypeBeforeLoop, char resTypeAfterLoop, core::Size insertedBeforeLoopRes, core::Size insertedAfterLoopRes, core::pose::PoseOP fullLengthPoseOP, core::pose::PoseOP  orig_atom_type_fullLengthPoseOP);
 	~PossibleLoop() override;
 	void evaluate_distance_closure();
 	void generate_stub_rmsd();
@@ -62,35 +62,35 @@ public:
 	std::string get_description();
 
 private:
-	void trimRegion(core::pose::PoseOP & poseOP, Size resStart, Size resStop);
-	void extendRegion(bool towardCTerm, Size resStart, Size numberAddRes,core::pose::PoseOP & poseOP);
-	bool check_loop_abego(core::pose::PoseOP & poseOP, Size loopStart, Size loopStop, std::string allowed_loop_abegos,core::Real loop_rmsd);
-	void assign_phi_psi_omega_from_lookback(Size db_index, Size fragment_index, core::pose::PoseOP & poseOP);
+	void trimRegion(core::pose::PoseOP & poseOP, core::Size resStart, core::Size resStop);
+	void extendRegion(bool towardCTerm, core::Size resStart, core::Size numberAddRes,core::pose::PoseOP & poseOP);
+	bool check_loop_abego(core::pose::PoseOP & poseOP, core::Size loopStart, core::Size loopStop, std::string allowed_loop_abegos,core::Real loop_rmsd);
+	void assign_phi_psi_omega_from_lookback(core::Size db_index, core::Size fragment_index, core::pose::PoseOP & poseOP);
 	std::vector<core::Real> get_center_of_mass( const core::Real* coordinates, int number_of_atoms);
 	void output_fragment_debug(std::vector< numeric::xyzVector<numeric::Real> > coordinates, std::string filename);
-	void add_coordinate_csts_from_lookback(Size stub_ss_index_match, Size fragment_index, Size pose_residue, bool match_stub_alone, core::pose::PoseOP & poseOP);
-	void add_dihedral_csts_from_lookback(Size stub_ss_index_match,Size fragment_index,Size pose_residue,core::pose::PoseOP & poseOP);
-	Size get_valid_resid(int resid,core::pose::Pose const pose);
-	std::vector< numeric::xyzVector<numeric::Real> > get_coordinates_from_pose(core::pose::PoseOP const poseOP,Size resid,Size length);
+	void add_coordinate_csts_from_lookback(core::Size stub_ss_index_match, core::Size fragment_index, core::Size pose_residue, bool match_stub_alone, core::pose::PoseOP & poseOP);
+	void add_dihedral_csts_from_lookback(core::Size stub_ss_index_match,core::Size fragment_index,core::Size pose_residue,core::pose::PoseOP & poseOP);
+	core::Size get_valid_resid(int resid,core::pose::Pose const pose);
+	std::vector< numeric::xyzVector<numeric::Real> > get_coordinates_from_pose(core::pose::PoseOP const poseOP,core::Size resid,core::Size length);
 	core::Real rmsd_between_coordinates(std::vector< numeric::xyzVector<numeric::Real> > fragCoordinates,std::vector< numeric::xyzVector<numeric::Real> > coordinates);
-	bool kic_closure(core::scoring::ScoreFunctionOP scorefxn_, core::pose::PoseOP & poseOP,Size firstLoopRes, Size lastLoopRes,Size numb_kic_cycles);
+	bool kic_closure(core::scoring::ScoreFunctionOP scorefxn_, core::pose::PoseOP & poseOP,core::Size firstLoopRes, core::Size lastLoopRes,core::Size numb_kic_cycles);
 	void minimize_loop(core::scoring::ScoreFunctionOP scorefxn,bool ideal_loop,core::pose::PoseOP & poseOP);
-	Size insertedBeforeLoopRes_;
-	Size insertedAfterLoopRes_;
+	core::Size insertedBeforeLoopRes_;
+	core::Size insertedAfterLoopRes_;
 	int resAdjustmentBeforeLoop_;
 	int resAdjustmentAfterLoop_;
 	char resTypeBeforeLoop_;
 	char resTypeAfterLoop_;
-	Size loopLength_;
-	Size resBeforeLoop_;
-	Size resAfterLoop_;
-	Size fullLength_resBeforeLoop_;
+	core::Size loopLength_;
+	core::Size resBeforeLoop_;
+	core::Size resAfterLoop_;
+	core::Size fullLength_resBeforeLoop_;
 	bool below_distance_threshold_;
 	core::Real stub_rmsd_match_;
-	Size stub_index_match_;
-	Size stub_ss_index_match_;
+	core::Size stub_index_match_;
+	core::Size stub_ss_index_match_;
 	core::Real uncached_stub_rmsd_;
-	Size uncached_stub_index_;
+	core::Size uncached_stub_index_;
 	bool outputed_;
 	core::pose::PoseOP original_atom_type_fullLengthPoseOP_;
 	core::pose::PoseOP fullLengthPoseOP_;
@@ -114,12 +114,12 @@ struct FinalRMSDComparator {
 class NearNativeLoopCloser : public protocols::moves::Mover {
 public:
 	NearNativeLoopCloser();
-	NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,Size loopLengthRangeLow, Size loopLengthRangeHigh,Size resBeforeLoop,Size resAfterLoop,char chainBeforeLoop, char chainAfterLoop,core::Real rmsThreshold, core::Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed, std::string closure_type="lookback",std::string allowed_loop_abegos="");
+	NearNativeLoopCloser(int resAdjustmentStartLow,int resAdjustmentStartHigh,int resAdjustmentStopLow,int resAdjustmentStopHigh,int resAdjustmentStartLow_sheet,int resAdjustmentStartHigh_sheet,int resAdjustmentStopLow_sheet,int resAdjustmentStopHigh_sheet,core::Size loopLengthRangeLow, core::Size loopLengthRangeHigh,core::Size resBeforeLoop,core::Size resAfterLoop,char chainBeforeLoop, char chainAfterLoop,core::Real rmsThreshold, core::Real max_vdw_change, bool idealExtension,bool ideal, bool output_closed, std::string closure_type="lookback",std::string allowed_loop_abegos="");
 	moves::MoverOP clone() const override { return utility::pointer::make_shared< NearNativeLoopCloser >( *this ); }
 	core::Real close_loop(Pose & pose);
 	void apply( Pose & pose ) override;
 	void combine_chains(Pose & pose);
-	void extendRegion(bool towardCTerm, Size resStart, char neighborResType, Size numberAddRes,core::pose::PoseOP & poseOP);
+	void extendRegion(bool towardCTerm, core::Size resStart, char neighborResType, core::Size numberAddRes,core::pose::PoseOP & poseOP);
 	core::pose::PoseOP create_maximum_length_pose(char resTypeBeforeLoop, char resTypeAfterLoop, core::pose::Pose pose);
 	utility::vector1<PossibleLoopOP> create_potential_loops(core::pose::Pose pose);
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
@@ -146,10 +146,10 @@ private:
 	int resAdjustmentStartHigh_sheet_;
 	int resAdjustmentStopLow_sheet_;
 	int resAdjustmentStopHigh_sheet_;
-	Size loopLengthRangeLow_;
-	Size loopLengthRangeHigh_;
-	Size resBeforeLoop_;
-	Size resAfterLoop_;
+	core::Size loopLengthRangeLow_;
+	core::Size loopLengthRangeHigh_;
+	core::Size resBeforeLoop_;
+	core::Size resAfterLoop_;
 	char chainBeforeLoop_;
 	char chainAfterLoop_;
 	core::Real rmsThreshold_;

@@ -150,11 +150,11 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 	ig->initialize( pose );
 	Real last_accepted_prop_density( 1.0 );
 	Real last_accepted_dE( 0.0 );
-	for ( Size ct = 1; ct <= ntrials(); ct++ ) {
+	for ( core::Size ct = 1; ct <= ntrials(); ct++ ) {
 		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP move = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::sidechain_moves::SidechainMoverBase > ( random_mover() );
 		runtime_assert( move != nullptr ); //fow now only Sidechain Movers...
 
-		Size resid = move->suggest_residue_number( pose );
+		core::Size resid = move->suggest_residue_number( pose );
 		conformation::ResidueOP new_state( new conformation::Residue( pose.residue( resid ) ) );
 		new_state = move->make_move( new_state );
 		set_last_move( move );
@@ -175,9 +175,9 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 		tempering()->temperature_move( current_energy );
 		move->observe_after_metropolis( *this );
 
-		Size model_count( output_count( ct ) );
+		core::Size model_count( output_count( ct ) );
 		if ( model_count ) {
-			for ( Size res_i = 1; res_i <= current.size(); res_i++ ) {
+			for ( core::Size res_i = 1; res_i <= current.size(); res_i++ ) {
 				pose.replace_residue( res_i, (*current[ res_i ]), true );
 			}
 			core::Real const score( sfxn( pose ) );
@@ -195,7 +195,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 			protocols::jd2::add_string_string_pair_to_current_job( "move_type", move->type() );
 		}
 
-		for ( Size i = 1; i <= observers().size(); ++i ) {
+		for ( core::Size i = 1; i <= observers().size(); ++i ) {
 			if ( observers()[ i ]->requires_pose() && !model_count ) continue;
 			observers()[i]->observe_after_metropolis(*this);
 		}
@@ -206,7 +206,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 }
 
 core::Size
-SidechainMetropolisHastingsMover::output_count( Size ct ) const {
+SidechainMetropolisHastingsMover::output_count( core::Size ct ) const {
 	if ( ct % stride_ == 0 ) {
 		return ct / stride_;
 	} else return 0;
@@ -238,7 +238,7 @@ SidechainMetropolisHastingsMover::parse_my_tag(
 	protocols::moves::Movers_map const & movers,
 	pose::Pose const & pose
 ) {
-	stride_ = tag->getOption< Size >( "stride", stride_ );
+	stride_ = tag->getOption< core::Size >( "stride", stride_ );
 	Parent::parse_my_tag( tag, data, filters, movers, pose );
 }
 

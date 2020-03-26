@@ -181,7 +181,7 @@ RemodelLoopMover::RemodelLoopMover( loops::LoopsOP const loops ) :
 
 /// @brief copy constructor
 RemodelLoopMover::RemodelLoopMover( RemodelLoopMover const & rval ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Super( rval ),
 	sfx_( rval.sfx_ ),
 	false_movemap_( rval.false_movemap_ ),
@@ -314,7 +314,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 	core::pose::Pose non_terminal_pose(pose);
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 		//remove the extra tail from pose, but still use the pose with tail to build
-		Size tail_count = repeat_tail_length_;
+		core::Size tail_count = repeat_tail_length_;
 		while ( tail_count ) {
 			non_terminal_pose.conformation().delete_residue_slow(non_terminal_pose.size());
 			tail_count--;
@@ -337,11 +337,11 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 		repeat_pose.fold_tree(ft);
 		core::pose::remove_lower_terminus_type_from_pose_residue(non_terminal_pose, 1);
 
-		Size repeatFactor =option[OptionKeys::remodel::repeat_structure];
-		Size count = 1;
+		core::Size repeatFactor =option[OptionKeys::remodel::repeat_structure];
+		core::Size count = 1;
 
 		while ( repeatFactor !=1 ) { // the argument should be total number of copies
-			for ( Size rsd = 1; rsd <= non_terminal_pose.size(); rsd++ ) {
+			for ( core::Size rsd = 1; rsd <= non_terminal_pose.size(); rsd++ ) {
 				//intentially insert behind the last residue, this way blueprint definition will cover the junction with fragments
 				if ( rsd == non_terminal_pose.size() ) {
 					repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.size(), false);
@@ -354,7 +354,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 				}
 			}
 
-			Size junction = (non_terminal_pose.size())* count;
+			core::Size junction = (non_terminal_pose.size())* count;
 			repeat_pose.conformation().insert_ideal_geometry_at_polymer_bond(junction);
 			/*
 			//std::cout << "junction " << junction << std::endl;
@@ -377,7 +377,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 			repeatFactor--;
 		}
 		//terminus residue check
-		for ( Size res=2; res< repeat_pose.size(); res++ ) {
+		for ( core::Size res=2; res< repeat_pose.size(); res++ ) {
 			if ( repeat_pose.residue(res).is_terminus() ) {
 				//  std::cout<< "FIX TERMINUS " << res << std::endl;
 				core::pose::remove_upper_terminus_type_from_pose_residue(repeat_pose, res);
@@ -397,8 +397,8 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 		//set private for the class
 		repeat_length_=repeat_pose.size();
 
-		Size repeat_number =option[OptionKeys::remodel::repeat_structure];
-		Size segment_length = repeat_length_/repeat_number;
+		core::Size repeat_number =option[OptionKeys::remodel::repeat_structure];
+		core::Size segment_length = repeat_length_/repeat_number;
 		//std::cout << "DEBUG: segment lenght = " << segment_length << std::endl;
 
 		//propagate jumps
@@ -407,9 +407,9 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 
 		LoopsOP repeat_loops( new Loops() );
 
-		std::set< Size > lower_termini;
-		std::set< Size > upper_termini;
-		for ( Size i = 1, ie = pose.conformation().num_chains(); i <= ie; ++i ) {
+		std::set< core::Size > lower_termini;
+		std::set< core::Size > upper_termini;
+		for ( core::Size i = 1, ie = pose.conformation().num_chains(); i <= ie; ++i ) {
 			lower_termini.insert( pose.conformation().chain_begin( i ) );
 			upper_termini.insert( pose.conformation().chain_end( i ) );
 		}
@@ -423,13 +423,13 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 				//TR << loop.start() << " " << loop.stop() << " " << loop.cut() << std::endl;
 
 				//math to figure out the different segments
-				for ( Size rep = 0; rep < repeat_number; rep++ ) {
+				for ( core::Size rep = 0; rep < repeat_number; rep++ ) {
 
 					//find equals iterator end means not found.  If the loops is internal, increment by repeats
 					if ( lower_termini.find( loop.start() ) == lower_termini.end() && upper_termini.find( loop.stop() ) == upper_termini.end() ) {
-						Size tempStart = loop.start()+(segment_length*rep);
-						Size tempStop = loop.stop()+(segment_length*rep);
-						Size tempCut = loop.cut()+(segment_length*rep);
+						core::Size tempStart = loop.start()+(segment_length*rep);
+						core::Size tempStop = loop.stop()+(segment_length*rep);
+						core::Size tempCut = loop.cut()+(segment_length*rep);
 						if ( tempStop > repeat_pose.size() ) {
 							tempStop = repeat_pose.size();
 							if ( tempCut > tempStop ) {
@@ -460,7 +460,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 
 		for ( auto l = repeat_loops->v_begin(), le = repeat_loops->v_end(); l != le; ++l ) {
 			Loop & loop = *l;
-			for ( Size jxn=loop.start(); jxn <=loop.stop(); jxn++ ) {
+			for ( core::Size jxn=loop.start(); jxn <=loop.stop(); jxn++ ) {
 				//std::cout << "GEN fix junction at " << jxn << std::endl;
 				if ( jxn != repeat_pose.size() ) { // shouldn't happen because definition on repeat1, but for safety
 					repeat_pose.conformation().insert_ideal_geometry_at_polymer_bond(jxn);
@@ -483,10 +483,10 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 		}
 
 		//take the jumps and set repeating RT
-		//Size jump_offset = pose.num_jump(); //pose at this stage should at most have only one jump;
-		//for (Size rep = 1; rep < repeat_number; rep++){
-		for ( Size i = 1; i<= repeat_pose.num_jump(); ) {
-			for ( Size j = 1; j<= pose.num_jump(); j++,i++ ) {
+		//core::Size jump_offset = pose.num_jump(); //pose at this stage should at most have only one jump;
+		//for (core::Size rep = 1; rep < repeat_number; rep++){
+		for ( core::Size i = 1; i<= repeat_pose.num_jump(); ) {
+			for ( core::Size j = 1; j<= pose.num_jump(); j++,i++ ) {
 				if ( i > repeat_pose.num_jump() ) {
 					break;
 
@@ -529,7 +529,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 		for ( Loops::iterator l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
 		Loop & loop = *l;
 		for (int i = loop.start(); i<= loop.stop(); i++){
-		for (Size rep = 0; rep < repeat_number; rep++){
+		for (core::Size rep = 0; rep < repeat_number; rep++){
 		repeat_pose.set_phi( i+(segment_length*rep), numeric::random::rg().uniform());
 		repeat_pose.set_psi( i+(segment_length*rep), numeric::random::rg().uniform());
 		}
@@ -568,7 +568,7 @@ void RemodelLoopMover::repeat_sync( //utility function
 
 	//repeat_pose.dump_pdb("repeatPose_in_rep_propagate.pdb");
 
-	Size segment_length = repeat_length_/repeat_number;
+	core::Size segment_length = repeat_length_/repeat_number;
 	//std::cout << "DEBUG: segment lenght = " << segment_length << std::endl;
 
 	//propagate jumps
@@ -577,19 +577,19 @@ void RemodelLoopMover::repeat_sync( //utility function
 
 	LoopsOP repeat_loops( new Loops() );
 
-	utility::vector1<Size> linkPositions;
+	utility::vector1<core::Size> linkPositions;
 
 	for ( auto l = loops_->v_begin(), le = loops_->v_end(); l != le; ++l ) {
 		Loop & loop = *l;
 
 		//collect the movable positions
-		for ( Size i = loop.start(); i<=loop.stop(); i++ ) {
+		for ( core::Size i = loop.start(); i<=loop.stop(); i++ ) {
 			linkPositions.push_back(i);
 		}
 
-		for ( Size i = 1; i<= linkPositions.size(); i++ ) {
+		for ( core::Size i = 1; i<= linkPositions.size(); i++ ) {
 
-			Size res = linkPositions[i];
+			core::Size res = linkPositions[i];
 			Real loop_phi = 0;
 			Real loop_psi = 0;
 			Real loop_omega = 0;
@@ -614,7 +614,7 @@ void RemodelLoopMover::repeat_sync( //utility function
 
 				}
 
-				for ( Size rep = 1; rep < repeat_number; rep++ ) {
+				for ( core::Size rep = 1; rep < repeat_number; rep++ ) {
 					repeat_pose.set_phi(res+( segment_length*rep), loop_phi );
 					repeat_pose.set_psi(res+( segment_length*rep), loop_psi );
 					repeat_pose.set_omega( res+(segment_length*rep),loop_omega );
@@ -634,7 +634,7 @@ void RemodelLoopMover::repeat_sync( //utility function
 				loop_psi = repeat_pose.psi(res-segment_length);
 				loop_omega = repeat_pose.omega(res-segment_length);
 				loop_secstruct = repeat_pose.secstruct(res-segment_length);
-				for ( Size rep = 1; rep < repeat_number; rep++ ) {
+				for ( core::Size rep = 1; rep < repeat_number; rep++ ) {
 					if ( res+( segment_length*rep)<= repeat_length_ ) {
 						repeat_pose.set_phi(res+( segment_length*rep), loop_phi );
 						repeat_pose.set_psi(res+( segment_length*rep), loop_psi );
@@ -677,7 +677,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 
 	//repeat_pose.dump_pdb("repeatPose_in_rep_propagate.pdb");
 
-	Size segment_length = repeat_length_/repeat_number;
+	core::Size segment_length = repeat_length_/repeat_number;
 	//std::cout << "DEBUG: segment lenght = " << segment_length << std::endl;
 
 	Pose junk_for_copy;
@@ -717,12 +717,12 @@ void RemodelLoopMover::repeat_propagation( //utility function
 	core::kinematics::FoldTree f;
 
 	bool build_across_jxn = false;
-	Size residues_beyond_jxn = 0;
+	core::Size residues_beyond_jxn = 0;
 
 	LoopsOP repeat_loops( new Loops() );
-	std::set< Size > lower_termini;
-	std::set< Size > upper_termini;
-	for ( Size i = 1, ie = pose.conformation().num_chains(); i <= ie; ++i ) {
+	std::set< core::Size > lower_termini;
+	std::set< core::Size > upper_termini;
+	for ( core::Size i = 1, ie = pose.conformation().num_chains(); i <= ie; ++i ) {
 		lower_termini.insert( pose.conformation().chain_begin( i ) );
 		upper_termini.insert( pose.conformation().chain_end( i ) );
 	}
@@ -746,13 +746,13 @@ void RemodelLoopMover::repeat_propagation( //utility function
 			//TR << loop.start() << " " << loop.stop() << " " << loop.cut() << std::endl;
 
 			//math to figure out the different segments
-			for ( Size rep = 0; rep < repeat_number; rep++ ) {
+			for ( core::Size rep = 0; rep < repeat_number; rep++ ) {
 
 				//find equals iterator end means not found.  If the loops is internal, increment by repeats
 				if ( lower_termini.find( loop.start() ) == lower_termini.end() && upper_termini.find( loop.stop() ) == upper_termini.end() ) {
-					Size tempStart = loop.start()+(segment_length*rep);
-					Size tempStop = loop.stop()+(segment_length*rep);
-					Size tempCut = loop.cut()+(segment_length*rep);
+					core::Size tempStart = loop.start()+(segment_length*rep);
+					core::Size tempStop = loop.stop()+(segment_length*rep);
+					core::Size tempCut = loop.cut()+(segment_length*rep);
 					if ( tempStop > repeat_pose.size() ) {
 						tempStop = repeat_pose.size();
 						if ( tempCut > tempStop ) {
@@ -780,7 +780,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 	// TR << loop.start() << " " << loop.stop() << " " << loop.cut() << std::endl;
 
 	//math to figure out the different segments
-	for (Size rep = 0; rep < repeat_number; rep++){
+	for (core::Size rep = 0; rep < repeat_number; rep++){
 	LoopOP newLoop = new Loop(loop.start()+(segment_length*rep), loop.stop()+(segment_length*rep),loop.cut()+(segment_length*rep));
 	//   TR << "adding loop in repeat propagation: " << loop.start()+(segment_length*rep) << std::endl;
 	repeat_loops->push_back(*newLoop);
@@ -798,7 +798,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 
 	for ( auto l = repeat_loops->v_begin(), le = repeat_loops->v_end(); l != le; ++l ) {
 		Loop & loop = *l;
-		for ( Size jxn=loop.start(); jxn <=loop.stop(); jxn++ ) {
+		for ( core::Size jxn=loop.start(); jxn <=loop.stop(); jxn++ ) {
 			//std::cout << "fix junction at " << jxn << std::endl;
 			if ( jxn != repeat_pose.size() ) {
 				repeat_pose.conformation().insert_ideal_geometry_at_polymer_bond(jxn);
@@ -810,9 +810,9 @@ void RemodelLoopMover::repeat_propagation( //utility function
 	/* // repeat_generation sets up the foldtree correctly, even changin cutpoint
 	* in foldtree doesn't require jump update
 	//take the jumps and set repeating RT
-	Size jump_offset = pose.num_jump();
-	for (Size rep = 1; rep < repeat_number; rep++){
-	for (Size i = 1; i<= pose.num_jump(); i++){
+	core::Size jump_offset = pose.num_jump();
+	for (core::Size rep = 1; rep < repeat_number; rep++){
+	for (core::Size i = 1; i<= pose.num_jump(); i++){
 	numeric::xyzMatrix< Real > Rot = pose.jump(i).get_rotation();
 	numeric::xyzVector< Real > Trx = pose.jump(i).get_translation();
 	// TR <<  "set ROT-TRANS from " << i << " to " << i+jump_offset*rep << std::endl;
@@ -837,12 +837,12 @@ void RemodelLoopMover::repeat_propagation( //utility function
 			residues_beyond_jxn--;
 		}
 	}
-	for ( Size rep = 0; rep < repeat_number; rep++ ) {
-		for ( Size res = 1; res <= segment_length; res++ ) {
+	for ( core::Size rep = 0; rep < repeat_number; rep++ ) {
+		for ( core::Size res = 1; res <= segment_length; res++ ) {
 			//std::cout << "DEBUG: res+segmentlength*rep = " << res+(segment_length*rep) << std::endl;
 			Real loop_phi = 0;
 			Real loop_psi = 0;
-			Size rsd_type_position = res;
+			core::Size rsd_type_position = res;
 			if ( res == 1 ) {
 				rsd_type_position = segment_length+1;
 				loop_phi = pose.phi(segment_length+1);
@@ -961,7 +961,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		// Remodel assumes chain ID is ' '
 		//pose::PDBInfoOP pdb_info ( repeat_pose_.pdb_info() );
 		pose::PDBInfoOP pdb_info ( pose.pdb_info() );
-		for ( Size i=1; i<= pdb_info->nres(); ++i ){
+		for ( core::Size i=1; i<= pdb_info->nres(); ++i ){
 		pdb_info->chain(i,' ');
 		}
 		pose.pdb_info( pdb_info );
@@ -980,12 +980,12 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		}
 
 		/* // ResidueTypeLinkingConstraints
-		Size repeat_number =option[OptionKeys::remodel::repeat_structure];
+		core::Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 		Real bonus = 10;
 		//std::cout << "RESIDUETYPELINKING CST" << std::endl;
-		Size segment_length = ( repeat_pose_.size() ) / repeat_number;
-		for ( Size rep = 1; rep < repeat_number; rep++ ) { // from 1 since first segment don't need self-linking
-		for ( Size res = 1; res <= segment_length; res++ ) {
+		core::Size segment_length = ( repeat_pose_.size() ) / repeat_number;
+		for ( core::Size rep = 1; rep < repeat_number; rep++ ) { // from 1 since first segment don't need self-linking
+		for ( core::Size res = 1; res <= segment_length; res++ ) {
 		repeat_pose_.add_constraint( new scoring::constraints::ResidueTypeLinkingConstraint( repeat_pose_, res, res+(segment_length*rep), bonus ) );
 		//std::cout << res << " " << res+(segment_length*rep) << std::endl;
 		}
@@ -1013,12 +1013,12 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 	/*
 	// ResidueTypeLinkingConstraints
-	Size repeat_number =option[OptionKeys::remodel::repeat_structure];
+	core::Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 	Real bonus = 10;
 	//std::cout << "RESIDUETYPELINKING CST" << std::endl;
-	Size segment_length = (repeat_pose_.size())/repeat_number;
-	for (Size rep = 1; rep < repeat_number; rep++ ){ // from 1 since first segment don't need self-linking
-	for (Size res = 1; res <= segment_length; res++){
+	core::Size segment_length = (repeat_pose_.size())/repeat_number;
+	for (core::Size rep = 1; rep < repeat_number; rep++ ){ // from 1 since first segment don't need self-linking
+	for (core::Size res = 1; res <= segment_length; res++){
 	repeat_pose_.add_constraint( new ResidueTypeLinkingConstraint(repeat_pose_, res, res+(segment_length*rep), bonus));
 	//    std::cout << res << " " << res+(segment_length*rep) << std::endl;
 	}
@@ -1030,7 +1030,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	// Dihedral (NCS) Constraints
 	//std::cout << "NCS CST" << std::endl;
 	protocols::symmetry::SetupNCSMover setup_ncs;
-	for (Size rep = 1; rep < repeat_number; rep++){ // from 1 since first segment don't need self-linking
+	for (core::Size rep = 1; rep < repeat_number; rep++){ // from 1 since first segment don't need self-linking
 	std::stringstream targetSS;
 	targetSS << 1+(segment_length*rep) << "-" << segment_length + (segment_length*rep);
 	//std::cout << templateRangeSS.str() << " " << targetSS.str() << std::endl;
@@ -1077,13 +1077,13 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		MoveMap movemap;
 		MoveMap movemapAll;
 		std::string ss = remodel_data_.ss;
-		Size singleRepeat = pose.size();
+		core::Size singleRepeat = pose.size();
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 			singleRepeat = (pose.size()/2);
 		}
 		//------------------------------debug code-----------------------------------------
 		//initialize all of the movemaps to false
-		for ( Size i = 1; i <= pose.size(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			movemap.set_bb( i, false );
 			movemap.set_chi( i, false );
 			movemapAll.set_bb(i, false);
@@ -1091,8 +1091,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		}
 
 		//set loop locations to true
-		for ( Size ii=1; ii<=loops_->num_loop(); ++ii ) {
-			for ( Size jj=(*loops_)[ii].start(); jj<= (*loops_)[ii].stop(); ++jj ) {
+		for ( core::Size ii=1; ii<=loops_->num_loop(); ++ii ) {
+			for ( core::Size jj=(*loops_)[ii].start(); jj<= (*loops_)[ii].stop(); ++jj ) {
 				movemap.set_bb( jj, true );
 				movemap.set_chi( jj, true );
 				movemapAll.set_bb(jj, true);
@@ -1100,9 +1100,9 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			}
 		}
 		//initialize movemap for initial residues
-		for ( Size i = 1; i <= pose.size(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( option[OptionKeys::remodel::staged_sampling::sample_over_loops].value() ) {
-				Size ssIndex = i-1;
+				core::Size ssIndex = i-1;
 				if ( ssIndex>=singleRepeat ) {
 					ssIndex = i-singleRepeat-1;
 				}
@@ -1138,8 +1138,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			fragScoreThreshold = 999.0;
 		}
 		//setup locations to sample--------------------------
-		std::set<Size> sampleAllResidues = generate_residues_to_sample(false,pose,9);
-		std::set<Size> sampleSubsetResidues = generate_residues_to_sample(true,pose,9);
+		std::set<core::Size> sampleAllResidues = generate_residues_to_sample(false,pose,9);
+		std::set<core::Size> sampleSubsetResidues = generate_residues_to_sample(true,pose,9);
 
 		//Initialize with any full length fragments-------------------------------
 		if ( option[OptionKeys::remodel::use_same_length_fragments] ) {
@@ -1148,10 +1148,10 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		}
 		//Sample with 9mers in all positions------------------------------
 		//This should be read in from staging file.
-		Size stage1_cycles = 100;
-		Size stage2_cycles = 100;
-		Size stage3_cycles = 500;
-		Size stage4_cycles = 500;
+		core::Size stage1_cycles = 100;
+		core::Size stage2_cycles = 100;
+		core::Size stage3_cycles = 500;
+		core::Size stage4_cycles = 500;
 
 		if ( basic::options::option[ basic::options::OptionKeys::run::test_cycles ] ) {
 			stage1_cycles = 10;
@@ -1275,7 +1275,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		} else {
 			mc.reset(pose);
 		}
-		for ( Size attempt = 1; attempt <= allowed_closure_attempts_; ++attempt ) {
+		for ( core::Size attempt = 1; attempt <= allowed_closure_attempts_; ++attempt ) {
 
 			TR << "* closure_attempt " << attempt << std::endl;
 
@@ -1420,13 +1420,13 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		//
 		//
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			Size copy_size =0;
+			core::Size copy_size =0;
 			if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 				copy_size = unit_length_-1;
 			} else {
 				copy_size = unit_length_;
 			}
-			for ( Size res = 1; res<=copy_size; res++ ) {
+			for ( core::Size res = 1; res<=copy_size; res++ ) {
 				pose.set_phi(res,mc.lowest_score_pose().phi(res));
 				pose.set_psi(res,mc.lowest_score_pose().psi(res));
 				pose.set_omega(res,mc.lowest_score_pose().omega(res));
@@ -1495,11 +1495,11 @@ void RemodelLoopMover::randomize_stage( Pose & pose ) {
 	// init fragment mover for each fragment set
 	FragmentMoverOPs frag_movers = create_fragment_movers( movemap );
 
-	Size const n_moveable = count_moveable_residues( movemap, 1, unit_length_ );
+	core::Size const n_moveable = count_moveable_residues( movemap, 1, unit_length_ );
 
 	// insert random number of fragments = n_frag_movers * moveable_residues
 	for ( auto & frag_mover : frag_movers ) {
-		for ( Size j = 0; j < n_moveable; ++j ) {
+		for ( core::Size j = 0; j < n_moveable; ++j ) {
 			frag_mover->apply( pose );
 		}
 	}
@@ -1545,7 +1545,7 @@ void RemodelLoopMover::insert_random_smallestmer_per_loop(
 		}
 	}
 	// find the size of the smallest fragments
-	Size smallestmer_size = ( *fragsets_.begin() )->max_frag_length();
+	core::Size smallestmer_size = ( *fragsets_.begin() )->max_frag_length();
 	for ( FragSetOPs::const_iterator f = fragsets_.begin(), fe = fragsets_.end(); f != fe; ++f ) {
 		smallestmer_size = std::min( smallestmer_size, (*f)->max_frag_length() );
 	}
@@ -1576,16 +1576,16 @@ fast_clash_check(
 {
 	using namespace core;
 	Real const clash_dist2_cut( clash_dist_cut * clash_dist_cut );
-	for ( Size iatid = 1; iatid <= check_atids.size(); ++iatid ) {
+	for ( core::Size iatid = 1; iatid <= check_atids.size(); ++iatid ) {
 		Vector const at1_xyz( pose.xyz( check_atids[ iatid ] ) );
-		for ( Size res2 = 1; res2 <= pose.size(); ++res2 ) {
-			for ( Size at2 = 1; at2 <= pose.residue( res2 ).natoms(); ++at2 ) {
+		for ( core::Size res2 = 1; res2 <= pose.size(); ++res2 ) {
+			for ( core::Size at2 = 1; at2 <= pose.residue( res2 ).natoms(); ++at2 ) {
 				//skip virtual atoms!
 				if ( pose.residue( res2 ).atom_type( at2 ).lj_wdepth() == 0.0 ) continue;
 				id::AtomID atid2( at2, res2 );
 				//skip if atid2 is in check_atids
 				bool skip_at2( false );
-				for ( Size jatid = 1; jatid <= check_atids.size(); ++jatid ) {
+				for ( core::Size jatid = 1; jatid <= check_atids.size(); ++jatid ) {
 					if ( atid2 == check_atids[ jatid ] ) { skip_at2 = true; break; }
 				}
 				if ( skip_at2 ) continue;
@@ -1643,7 +1643,7 @@ void RemodelLoopMover::set_segment_stage(
 
 	for ( auto l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l ) {
 		Loop & loop = *l;
-		Size db_to_use = loop.stop() - loop.start() + 2; // +2 for the strange way loophash RT is setup.
+		core::Size db_to_use = loop.stop() - loop.start() + 2; // +2 for the strange way loophash RT is setup.
 		loopsizes.push_back(db_to_use);
 	}
 
@@ -1702,7 +1702,7 @@ void RemodelLoopMover::set_segment_stage(
 	runtime_assert(bs_vec_.size() == loops_to_model->size());
 
 
-	Size loop_number = 1; // for lh_filter_string index
+	core::Size loop_number = 1; // for lh_filter_string index
 
 	for ( auto l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l, loop_number++ ) {
 		Loop & loop = *l;
@@ -1734,9 +1734,9 @@ void RemodelLoopMover::set_segment_stage(
 		debug_assert( !frag_movers.empty() );
 
 		// parameters
-		//Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
+		//core::Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
 		//currently looping over all the hashed loops
-		//Size const max_inner_cycles = std::max( static_cast< Size >( 50 ), 10 * n_moveable );
+		//core::Size const max_inner_cycles = std::max( static_cast< core::Size >( 50 ), 10 * n_moveable );
 
 		// set appropriate topology
 		if ( keep_input_foldtree_ ) {}
@@ -1766,7 +1766,7 @@ void RemodelLoopMover::set_segment_stage(
 		// reset counters
 		mc.reset_counters();
 
-		Size loopsize = loopsizes[loop_number];
+		core::Size loopsize = loopsizes[loop_number];
 
 		TR << "set segment from " << loop.start() << " to " << loop.stop() << " using " << loop.stop() - loop.start()+1 << " residue loops." << std::endl;
 
@@ -1787,13 +1787,13 @@ void RemodelLoopMover::set_segment_stage(
 		mc.score_function( *sfxOP );
 		// recover low
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			Size copy_size =0;
+			core::Size copy_size =0;
 			if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 				copy_size = unit_length_-1;
 			} else {
 				copy_size = unit_length_;
 			}
-			for ( Size res = 1; res<=copy_size; res++ ) {
+			for ( core::Size res = 1; res<=copy_size; res++ ) {
 				pose.set_phi(res,mc.lowest_score_pose().phi(res));
 				pose.set_psi(res,mc.lowest_score_pose().psi(res));
 				pose.set_omega(res,mc.lowest_score_pose().omega(res));
@@ -1810,11 +1810,11 @@ void RemodelLoopMover::set_segment_stage(
 		std::vector<core::Real> phi = BS.phi();
 		std::vector<core::Real> psi = BS.psi();
 		std::vector<core::Real> omega = BS.omega();
-		Size seg_length = BS.length();
+		core::Size seg_length = BS.length();
 
 
-		for ( Size i = 0; i < seg_length; i++ ) {
-			Size ires = (int)loop.start()+i;  // different behavior than loophash, as we don't need one more res.
+		for ( core::Size i = 0; i < seg_length; i++ ) {
+			core::Size ires = (int)loop.start()+i;  // different behavior than loophash, as we don't need one more res.
 			if ( ires > unit_length_ ) break;
 			//debug
 			//   std::cout << phi[i] << " " << psi[i] << " " << omega[i] << " " << ires << std::endl;
@@ -1824,8 +1824,8 @@ void RemodelLoopMover::set_segment_stage(
 		}
 
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			for ( Size i = 0; i < seg_length; i++ ) {
-				Size ires = (int)loop.start()+i;  // different behavior than loophash, as we don't need one more res.
+			for ( core::Size i = 0; i < seg_length; i++ ) {
+				core::Size ires = (int)loop.start()+i;  // different behavior than loophash, as we don't need one more res.
 				if ( ires > repeat_length_ ) break;
 				// std::cout << phi[i] << " " << psi[i] << " " << omega[i] << " " << ires << std::endl;
 				repeat_pose_.set_phi( ires, phi[i]);
@@ -1841,8 +1841,8 @@ void RemodelLoopMover::set_segment_stage(
 			repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 			//mc.boltzmann( repeat_pose_, "seg_segment-ccd");
 		} else {
-			for ( Size i = 0; i < seg_length; i++ ) {
-				Size ires = (int)loop.start()+i;  // different behavior than loophash, as we don't need one more res
+			for ( core::Size i = 0; i < seg_length; i++ ) {
+				core::Size ires = (int)loop.start()+i;  // different behavior than loophash, as we don't need one more res
 				if ( ires > unit_length_ ) break;
 				// std::cout << phi[i] << " " << psi[i] << " " << omega[i] << " " << ires << std::endl;
 				pose.set_phi( ires, phi[i]);
@@ -1924,20 +1924,20 @@ void RemodelLoopMover::loophash_stage(
 
 	for ( auto l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l ) {
 		Loop & loop = *l;
-		Size db_to_use = loop.stop() - loop.start() + 2; // +2 for the strange way loophash RT is setup.
+		core::Size db_to_use = loop.stop() - loop.start() + 2; // +2 for the strange way loophash RT is setup.
 		loopsizes.push_back(db_to_use);
 	}
 
 
 	// parameters
-	//Size const n_standard_cycles = total_standard_cycles();
-	// Size const n_standard_cycles = 3;
-	Size const max_outer_cycles = loophash_cycles();
-	// Size const max_outer_cycles = 1;
+	//core::Size const n_standard_cycles = total_standard_cycles();
+	// core::Size const n_standard_cycles = 3;
+	core::Size const max_outer_cycles = loophash_cycles();
+	// core::Size const max_outer_cycles = 1;
 
 	// per-loop frag + ccd_move
 
-	Size loop_number = 1; // for lh_filter_string index
+	core::Size loop_number = 1; // for lh_filter_string index
 
 	for ( auto l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l, loop_number++ ) {
 		Loop & loop = *l;
@@ -1958,9 +1958,9 @@ void RemodelLoopMover::loophash_stage(
 		debug_assert( !frag_movers.empty() );
 
 		// parameters
-		//Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
+		//core::Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
 		//currently looping over all the hashed loops
-		//Size const max_inner_cycles = std::max( static_cast< Size >( 50 ), 10 * n_moveable );
+		//core::Size const max_inner_cycles = std::max( static_cast< core::Size >( 50 ), 10 * n_moveable );
 
 		// set appropriate topology
 		if ( keep_input_foldtree_ ) {}
@@ -1991,7 +1991,7 @@ void RemodelLoopMover::loophash_stage(
 		// reset counters
 		mc.reset_counters();
 
-		Size loopsize = loopsizes[loop_number];
+		core::Size loopsize = loopsizes[loop_number];
 
 		loop_hash_library->load_mergeddb();
 
@@ -2008,7 +2008,7 @@ void RemodelLoopMover::loophash_stage(
 		// peptide part
 		using namespace core::chemical;
 
-		Size max_res = 0;
+		core::Size max_res = 0;
 		for ( core::Size i = 1; i<= constantPose.size(); i++ ) {
 			if ( !constantPose.residue_type(i).is_ligand() ) { //if not ligand, and assume ligand is always at the end!
 				max_res = i;
@@ -2045,11 +2045,11 @@ void RemodelLoopMover::loophash_stage(
 		BackboneSegment backbone_;
 		LoopHashMap const & hashmap = loop_hash_library->gethash(loopsize);
 
-		Size lh_ex_limit =option[OptionKeys::remodel::lh_ex_limit];
+		core::Size lh_ex_limit =option[OptionKeys::remodel::lh_ex_limit];
 		std::vector < core::Size > leap_index_list;
 
 		TR << "radius = ";
-		for ( Size radius = 0; radius <= lh_ex_limit ; radius++ ) {
+		for ( core::Size radius = 0; radius <= lh_ex_limit ; radius++ ) {
 			hashmap.radial_lookup( radius, loop_transform, leap_index_list );
 			TR << radius << "... " << leap_index_list.size() << std::endl;
 			if ( leap_index_list.size() < 1000 ) { //making sure at least harvest one segment to build.
@@ -2063,7 +2063,7 @@ void RemodelLoopMover::loophash_stage(
 		//not doing shuffle for now
 		//numeric::random::random_permutation( leap_index_list.begin(), leap_index_list.end(), numeric::random::rg() );
 
-		Size lh_frag_count = leap_index_list.size();
+		core::Size lh_frag_count = leap_index_list.size();
 		if ( leap_index_list.size() == 0 ) {
 			TR.Warning << "No fragment found within radius=" << lh_ex_limit << "A.  Skip closure..." << std::endl;
 			return;
@@ -2085,7 +2085,7 @@ void RemodelLoopMover::loophash_stage(
 		}
 
 		// do closure
-		for ( Size outer = 1; outer <= max_outer_cycles; ++outer ) {
+		for ( core::Size outer = 1; outer <= max_outer_cycles; ++outer ) {
 
 			// increment the chainbreak weight
 			ScoreFunctionOP sfxOP = mc.score_function().clone();
@@ -2107,13 +2107,13 @@ void RemodelLoopMover::loophash_stage(
 
 			// recover low
 			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-				Size copy_size =0;
+				core::Size copy_size =0;
 				if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 					copy_size = unit_length_-1;
 				} else {
 					copy_size = unit_length_;
 				}
-				for ( Size res = 1; res<=copy_size; res++ ) {
+				for ( core::Size res = 1; res<=copy_size; res++ ) {
 					pose.set_phi(res,mc.lowest_score_pose().phi(res));
 					pose.set_psi(res,mc.lowest_score_pose().psi(res));
 					pose.set_omega(res,mc.lowest_score_pose().omega(res));
@@ -2125,7 +2125,7 @@ void RemodelLoopMover::loophash_stage(
 			}
 
 			// currently it seems the collection of loops aren't too many.  So run through them all, or whatever cycle defined by n_standard_cycles
-			//for ( Size inner = 1; inner <= 1; ++inner ) {
+			//for ( core::Size inner = 1; inner <= 1; ++inner ) {
 
 			// fragments
 			if ( option[OptionKeys::remodel::lh_filter_string].user() ) {
@@ -2138,13 +2138,13 @@ void RemodelLoopMover::loophash_stage(
 					std::vector<core::Real> phi = i.phi();
 					std::vector<core::Real> psi = i.psi();
 					std::vector<core::Real> omega = i.omega();
-					Size seg_length = i.length();
+					core::Size seg_length = i.length();
 
 					//check sec. struct at stub.
-					//Size idxresStart = (int)loop.start()-1;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
-					//Size idxresStop = (int)loop.start()-1+(seg_length-1);  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
-					Size idxresStart = 0;  // 0 means starting from the jump position!
-					Size idxresStop = seg_length-1;
+					//core::Size idxresStart = (int)loop.start()-1;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
+					//core::Size idxresStop = (int)loop.start()-1+(seg_length-1);  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
+					core::Size idxresStart = 0;  // 0 means starting from the jump position!
+					core::Size idxresStop = seg_length-1;
 
 					//special case for DB's test
 					if ( option[OptionKeys::remodel::lh_filter_string].user() ) {
@@ -2154,14 +2154,14 @@ void RemodelLoopMover::loophash_stage(
 						//turn string to same case
 						boost::to_upper(target);
 
-						for ( Size idx = idxresStart; idx <= idxresStop; idx++ ) {
+						for ( core::Size idx = idxresStart; idx <= idxresStop; idx++ ) {
 							alphabet += AM.index2symbol( AM.torsion2index(phi[idx],psi[idx], omega[idx],1));
 						}
 						runtime_assert(alphabet.length() == target.length());
 
 
 						bool reject = false;
-						for ( Size idx = 0; idx < alphabet.length(); idx++ ) {
+						for ( core::Size idx = 0; idx < alphabet.length(); idx++ ) {
 							if ( target[idx] == '?' ) { //if question mark, then don't matter
 								continue;
 							} else if ( target[idx] != '?' && alphabet[idx] == target[idx] ) { // found matching element, don't skip
@@ -2199,8 +2199,8 @@ void RemodelLoopMover::loophash_stage(
 						*/
 					}
 
-					for ( Size i = 0; i < seg_length; i++ ) {
-						Size ires = (int)loop.start()-1+i;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
+					for ( core::Size i = 0; i < seg_length; i++ ) {
+						core::Size ires = (int)loop.start()-1+i;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
 						if ( ires > unit_length_ ) break;
 						// std::cout << phi[i] << " " << psi[i] << " " << omega[i] << " " << ires << std::endl;
 						pose.set_phi( ires, phi[i]);
@@ -2211,8 +2211,8 @@ void RemodelLoopMover::loophash_stage(
 					CCDLoopClosureMover ccd_mover( loop, utility::pointer::make_shared< MoveMap >( movemap ) );
 					ccd_mover.max_cycles( 50 );  // Used to be 10 moves, which would result in 50 "tries" in the old code. ~Labonte
 					if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-						for ( Size i = 0; i < seg_length; i++ ) {
-							Size ires = (int)loop.start()-1+i;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
+						for ( core::Size i = 0; i < seg_length; i++ ) {
+							core::Size ires = (int)loop.start()-1+i;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
 							if ( ires > repeat_length_ ) break;
 							// std::cout << phi[i] << " " << psi[i] << " " << omega[i] << " " << ires << std::endl;
 							repeat_pose_.set_phi( ires, phi[i]);
@@ -2229,8 +2229,8 @@ void RemodelLoopMover::loophash_stage(
 						repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 						mc.boltzmann( repeat_pose_, "loop_hash-ccd");
 					} else {
-						for ( Size i = 0; i < seg_length; i++ ) {
-							Size ires = (int)loop.start()-1+i;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
+						for ( core::Size i = 0; i < seg_length; i++ ) {
+							core::Size ires = (int)loop.start()-1+i;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
 							if ( ires > unit_length_ ) break;
 							// std::cout << phi[i] << " " << psi[i] << " " << omega[i] << " " << ires << std::endl;
 							pose.set_phi( ires, phi[i]);
@@ -2250,13 +2250,13 @@ void RemodelLoopMover::loophash_stage(
 
 		// recover low
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			Size copy_size =0;
+			core::Size copy_size =0;
 			if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 				copy_size = unit_length_-1;
 			} else {
 				copy_size = unit_length_;
 			}
-			for ( Size res = 1; res<=copy_size; res++ ) {
+			for ( core::Size res = 1; res<=copy_size; res++ ) {
 				pose.set_phi(res,mc.lowest_score_pose().phi(res));
 				pose.set_psi(res,mc.lowest_score_pose().psi(res));
 				pose.set_omega(res,mc.lowest_score_pose().omega(res));
@@ -2286,12 +2286,12 @@ void RemodelLoopMover::loophash_stage(
 /// @brief abinitio_stage::Assumes no loops need to be closed.
 void RemodelLoopMover::abinitio_stage(
 	Pose & pose,
-	Size const fragmentSize,
+	core::Size const fragmentSize,
 	MoveMap const movemap,
 	ScoreFunctionOP sfxOP,
-	Size const max_outer_cycles,
-	Size const max_inner_cycles,
-	std::set<Size> const & disallowedPos,
+	core::Size const max_outer_cycles,
+	core::Size const max_inner_cycles,
+	std::set<core::Size> const & disallowedPos,
 	bool const recover_low,
 	std::string stage_name,
 	bool const smoothMoves,
@@ -2353,14 +2353,14 @@ void RemodelLoopMover::abinitio_stage(
 	mc.reset_counters();
 
 	// simul frag + ccd_move
-	for ( Size outer = 1; outer <= max_outer_cycles; ++outer ) {
+	for ( core::Size outer = 1; outer <= max_outer_cycles; ++outer ) {
 		// increment the chainbreak weight
 		ScoreFunctionOP sfxOP = mc.score_function().clone();
 		mc.score_function( *sfxOP );
 		// recover low
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			Size copy_size =0;
-			Size total_residue = pose.total_residue();
+			core::Size copy_size =0;
+			core::Size total_residue = pose.total_residue();
 			if ( core::pose::symmetry::is_symmetric(pose) ) {
 				total_residue = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 			}
@@ -2369,7 +2369,7 @@ void RemodelLoopMover::abinitio_stage(
 			} else {
 				copy_size = total_residue;
 			}
-			for ( Size res = 1; res<=copy_size; res++ ) {
+			for ( core::Size res = 1; res<=copy_size; res++ ) {
 				pose.set_phi(res,mc.lowest_score_pose().phi(res));
 				pose.set_psi(res,mc.lowest_score_pose().psi(res));
 				pose.set_omega(res,mc.lowest_score_pose().omega(res));
@@ -2381,7 +2381,7 @@ void RemodelLoopMover::abinitio_stage(
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 			repeat_propagation( pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 		}
-		for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
+		for ( core::Size inner = 1; inner <= max_inner_cycles; ++inner ) {
 			// fragments
 			random_permutation( frag_movers.begin(), frag_movers.end(), numeric::random::rg() );
 			for ( auto & frag_mover : frag_movers ) {
@@ -2407,17 +2407,17 @@ void RemodelLoopMover::abinitio_stage(
 		// recover low
 		if ( recover_low ) {
 			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-				Size total_residue = pose.total_residue();
+				core::Size total_residue = pose.total_residue();
 				if ( core::pose::symmetry::is_symmetric(pose) ) {
 					total_residue = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 				}
-				Size copy_size =0;
+				core::Size copy_size =0;
 				if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 					copy_size = total_residue - repeat_tail_length_;
 				} else {
 					copy_size = total_residue;
 				}
-				for ( Size res = 1; res<=copy_size; res++ ) {
+				for ( core::Size res = 1; res<=copy_size; res++ ) {
 					pose.set_phi(res,mc.lowest_score_pose().phi(res));
 					pose.set_psi(res,mc.lowest_score_pose().psi(res));
 					pose.set_omega(res,mc.lowest_score_pose().omega(res));
@@ -2428,13 +2428,13 @@ void RemodelLoopMover::abinitio_stage(
 			}
 		} else {
 			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-				Size copy_size =0;
+				core::Size copy_size =0;
 				if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 					copy_size = pose.size() - repeat_tail_length_;
 				} else {
 					copy_size = pose.size();
 				}
-				for ( Size res = 1; res<=copy_size; res++ ) {
+				for ( core::Size res = 1; res<=copy_size; res++ ) {
 					pose.set_phi(res,repeat_pose_.phi(res));
 					pose.set_psi(res,repeat_pose_.psi(res));
 					pose.set_omega(res,repeat_pose_.omega(res));
@@ -2476,13 +2476,13 @@ void RemodelLoopMover::fa_relax_stage(
 	core::util::switch_to_residue_type_set( fa_pose, core::chemical::CENTROID_t );
 	//copy fa_pose to original_pose
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-		Size copy_size =0;
+		core::Size copy_size =0;
 		if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 			copy_size = pose.size()-1;
 		} else {
 			copy_size = pose.size();
 		}
-		for ( Size res = 1; res<=copy_size; res++ ) {
+		for ( core::Size res = 1; res<=copy_size; res++ ) {
 			pose.set_phi(res,fa_pose.phi(res));
 			pose.set_psi(res,fa_pose.psi(res));
 			pose.set_omega(res,fa_pose.omega(res));
@@ -2499,10 +2499,10 @@ protocols::symmetry::SetupNCSMover RemodelLoopMover::generate_ncs_csts(Pose & po
 	using namespace core::pose::symmetry;
 	using namespace protocols;
 	protocols::symmetry::SetupNCSMover setup_ncs;
-	Size asym_length = pose.size();
-	Size repeat_number =option[OptionKeys::remodel::repeat_structure];
-	Size segment_length = asym_length/2;
-	for ( Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
+	core::Size asym_length = pose.size();
+	core::Size repeat_number =option[OptionKeys::remodel::repeat_structure];
+	core::Size segment_length = asym_length/2;
+	for ( core::Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
 		std::stringstream templateRangeSS;
 		templateRangeSS << "2-" << segment_length+1; // offset by one to work around the termini
 		std::stringstream targetSS;
@@ -2511,7 +2511,7 @@ protocols::symmetry::SetupNCSMover RemodelLoopMover::generate_ncs_csts(Pose & po
 		setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
 	}
 
-	for ( Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
+	for ( core::Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
 		std::stringstream templateRangeSS;
 		templateRangeSS << "3-" << segment_length+2; // offset by one to work around the termini
 		std::stringstream targetSS;
@@ -2536,8 +2536,8 @@ void RemodelLoopMover::small_move_stage(
 	Pose & pose,
 	MoveMap const movemap,
 	ScoreFunctionOP sfxOP,
-	Size const max_outer_cycles,
-	Size const max_inner_cycles,
+	core::Size const max_outer_cycles,
+	core::Size const max_inner_cycles,
 	bool const recover_low,
 	Real const h_range,
 	Real const e_range,
@@ -2582,7 +2582,7 @@ void RemodelLoopMover::small_move_stage(
 	// reset counters
 	mc.reset_counters();
 
-	Size nmoves = 1;
+	core::Size nmoves = 1;
 
 	core::kinematics::MoveMapOP mm_temp( new core::kinematics::MoveMap( movemap ) );
 	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( mm_temp, temp, nmoves) );
@@ -2591,20 +2591,20 @@ void RemodelLoopMover::small_move_stage(
 	small_mover->angle_max( 'L', l_range );
 
 
-	for ( Size outer = 1; outer <= max_outer_cycles; ++outer ) {
+	for ( core::Size outer = 1; outer <= max_outer_cycles; ++outer ) {
 		// increment the chainbreak weight
 		ScoreFunctionOP sfxOP = mc.score_function().clone();
 		mc.score_function( *sfxOP );
 		// recover low
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			Size copy_size =0;
+			core::Size copy_size =0;
 			if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 				copy_size = pose.size()-1;
 			} else {
 				copy_size = pose.size();
 			}
 
-			for ( Size res = 1; res<=copy_size; res++ ) {
+			for ( core::Size res = 1; res<=copy_size; res++ ) {
 				pose.set_phi(res,mc.lowest_score_pose().phi(res));
 				pose.set_psi(res,mc.lowest_score_pose().psi(res));
 				pose.set_omega(res,mc.lowest_score_pose().omega(res));
@@ -2616,7 +2616,7 @@ void RemodelLoopMover::small_move_stage(
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 			repeat_propagation( pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 		}
-		for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
+		for ( core::Size inner = 1; inner <= max_inner_cycles; ++inner ) {
 			// fragments
 			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 				small_mover->apply( repeat_pose_ );
@@ -2635,13 +2635,13 @@ void RemodelLoopMover::small_move_stage(
 	// recover low
 	if ( recover_low ) {
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			Size copy_size =0;
+			core::Size copy_size =0;
 			if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 				copy_size = pose.size() - repeat_tail_length_;
 			} else {
 				copy_size = pose.size();
 			}
-			for ( Size res = 1; res<=copy_size; res++ ) {
+			for ( core::Size res = 1; res<=copy_size; res++ ) {
 				pose.set_phi(res,mc.lowest_score_pose().phi(res));
 				pose.set_psi(res,mc.lowest_score_pose().psi(res));
 				pose.set_omega(res,mc.lowest_score_pose().omega(res));
@@ -2652,13 +2652,13 @@ void RemodelLoopMover::small_move_stage(
 		}
 	} else {
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			Size copy_size =0;
+			core::Size copy_size =0;
 			if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 				copy_size = pose.size() - repeat_tail_length_;
 			} else {
 				copy_size = pose.size();
 			}
-			for ( Size res = 1; res<=copy_size; res++ ) {
+			for ( core::Size res = 1; res<=copy_size; res++ ) {
 				pose.set_phi(res,repeat_pose_.phi(res));
 				pose.set_psi(res,repeat_pose_.psi(res));
 				pose.set_omega(res,repeat_pose_.omega(res));
@@ -2730,17 +2730,17 @@ void RemodelLoopMover::simultaneous_stage(
 	enforce_false_movemap( movemap );
 
 	// parameters
-	Size const n_moveable = count_moveable_residues( movemap, 1, unit_length_ );
-	Size const n_standard_cycles = total_standard_cycles();
-	Size const max_outer_cycles = simultaneous_cycles();
-	Size const max_inner_cycles = std::max( 50 * loops_to_model->size(), 10 * n_moveable );
+	core::Size const n_moveable = count_moveable_residues( movemap, 1, unit_length_ );
+	core::Size const n_standard_cycles = total_standard_cycles();
+	core::Size const max_outer_cycles = simultaneous_cycles();
+	core::Size const max_inner_cycles = std::max( 50 * loops_to_model->size(), 10 * n_moveable );
 	bool apply_user_provided_movers( user_provided_movers_.size() != 0 );
 
 	// reset counters
 	mc.reset_counters();
 
 	// simul frag + ccd_move
-	for ( Size outer = 1; outer <= max_outer_cycles; ++outer ) {
+	for ( core::Size outer = 1; outer <= max_outer_cycles; ++outer ) {
 
 		// increment the chainbreak weight
 		ScoreFunctionOP sfxOP = mc.score_function().clone();
@@ -2756,14 +2756,14 @@ void RemodelLoopMover::simultaneous_stage(
 
 		// recover low
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			Size copy_size =0;
+			core::Size copy_size =0;
 			if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 				copy_size = unit_length_-1;
 			} else {
 				copy_size = unit_length_;
 			}
 
-			for ( Size res = 1; res<=copy_size; res++ ) {
+			for ( core::Size res = 1; res<=copy_size; res++ ) {
 				pose.set_phi(res,mc.lowest_score_pose().phi(res));
 				pose.set_psi(res,mc.lowest_score_pose().psi(res));
 				pose.set_omega(res,mc.lowest_score_pose().omega(res));
@@ -2777,7 +2777,7 @@ void RemodelLoopMover::simultaneous_stage(
 			repeat_propagation( pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 		}
 
-		for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
+		for ( core::Size inner = 1; inner <= max_inner_cycles; ++inner ) {
 
 			if ( numeric::random::rg().uniform() * n_standard_cycles > outer || pose.fold_tree().num_cutpoint() == 0 ) {
 				// fragments
@@ -2820,7 +2820,7 @@ void RemodelLoopMover::simultaneous_stage(
 					user_provided_mover->apply( pose );
 					mc.boltzmann( pose, "user_provided_simul" );
 					//if( inner % 50 == 0 ){
-					// static Size simulposecount = 0;
+					// static core::Size simulposecount = 0;
 					// simulposecount++;
 					// pose.dump_pdb("simulstage"+utility::to_string( simulposecount )+".pdb" );
 					//}
@@ -2833,13 +2833,13 @@ void RemodelLoopMover::simultaneous_stage(
 
 	// recover low
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-		Size copy_size =0;
+		core::Size copy_size =0;
 		if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 			copy_size = unit_length_ - repeat_tail_length_;
 		} else {
 			copy_size = unit_length_;
 		}
-		for ( Size res = 1; res<=copy_size; res++ ) {
+		for ( core::Size res = 1; res<=copy_size; res++ ) {
 			pose.set_phi(res,mc.lowest_score_pose().phi(res));
 			pose.set_psi(res,mc.lowest_score_pose().psi(res));
 			pose.set_omega(res,mc.lowest_score_pose().omega(res));
@@ -2935,8 +2935,8 @@ void RemodelLoopMover::independent_stage(
 	}
 
 	// parameters
-	Size const n_standard_cycles = total_standard_cycles();
-	Size const max_outer_cycles = independent_cycles();
+	core::Size const n_standard_cycles = total_standard_cycles();
+	core::Size const max_outer_cycles = independent_cycles();
 
 	// per-loop frag + ccd_move
 	for ( auto l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l ) {
@@ -2964,8 +2964,8 @@ void RemodelLoopMover::independent_stage(
 		debug_assert( !frag_movers.empty() );
 
 		// parameters
-		Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
-		Size const max_inner_cycles = std::max( static_cast< Size >( 50 ), 10 * n_moveable );
+		core::Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
+		core::Size const max_inner_cycles = std::max( static_cast< core::Size >( 50 ), 10 * n_moveable );
 		bool apply_user_provided_movers( user_provided_movers_.size() != 0 );
 
 		// set appropriate topology
@@ -2996,7 +2996,7 @@ void RemodelLoopMover::independent_stage(
 
 
 		// do closure
-		for ( Size outer = 1; outer <= max_outer_cycles; ++outer ) {
+		for ( core::Size outer = 1; outer <= max_outer_cycles; ++outer ) {
 			// increment the chainbreak weight
 			ScoreFunctionOP sfxOP = mc.score_function().clone();
 			sfxOP->add_to_weight( core::scoring::linear_chainbreak, cbreak_increment );
@@ -3018,13 +3018,13 @@ void RemodelLoopMover::independent_stage(
 
 			// recover low
 			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-				Size copy_size =0;
+				core::Size copy_size =0;
 				if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 					copy_size = unit_length_-1;
 				} else {
 					copy_size = unit_length_;
 				}
-				for ( Size res = 1; res<=copy_size; res++ ) {
+				for ( core::Size res = 1; res<=copy_size; res++ ) {
 					pose.set_phi(res,mc.lowest_score_pose().phi(res));
 					pose.set_psi(res,mc.lowest_score_pose().psi(res));
 					pose.set_omega(res,mc.lowest_score_pose().omega(res));
@@ -3038,7 +3038,7 @@ void RemodelLoopMover::independent_stage(
 				repeat_propagation(pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
 			}
 
-			for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
+			for ( core::Size inner = 1; inner <= max_inner_cycles; ++inner ) {
 				// fragments
 				if ( loop.is_terminal( pose ) || numeric::random::rg().uniform() * n_standard_cycles > ( outer + simultaneous_cycles() ) || pose.fold_tree().num_cutpoint() == 0 ) {
 					random_permutation( frag_movers.begin(), frag_movers.end(), numeric::random::rg() );
@@ -3074,7 +3074,7 @@ void RemodelLoopMover::independent_stage(
 						user_provided_mover->apply( pose );
 						mc.boltzmann( pose, "user_provided_indep" );
 						//if( inner % 50 == 0 ){
-						// static Size indepposecount = 0;
+						// static core::Size indepposecount = 0;
 						// indepposecount++;
 						// pose.dump_pdb("indepstage"+utility::to_string( indepposecount )+".pdb" );
 						//}
@@ -3087,13 +3087,13 @@ void RemodelLoopMover::independent_stage(
 
 		// recover low
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			Size copy_size =0;
+			core::Size copy_size =0;
 			if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 				copy_size = unit_length_-1;
 			} else {
 				copy_size = unit_length_;
 			}
-			for ( Size res = 1; res<=copy_size; res++ ) {
+			for ( core::Size res = 1; res<=copy_size; res++ ) {
 				pose.set_phi(res,mc.lowest_score_pose().phi(res));
 				pose.set_psi(res,mc.lowest_score_pose().psi(res));
 				pose.set_omega(res,mc.lowest_score_pose().omega(res));
@@ -3186,7 +3186,7 @@ void RemodelLoopMover::boost_closure_stage(
 	}
 
 	// find the size of the smallest fragments
-	Size smallestmer_size = ( *fragsets_.begin() )->max_frag_length();
+	core::Size smallestmer_size = ( *fragsets_.begin() )->max_frag_length();
 	for ( FragSetOPs::const_iterator f = fragsets_.begin(), fe = fragsets_.end(); f != fe; ++f ) {
 		smallestmer_size = std::min( smallestmer_size, (*f)->max_frag_length() );
 	}
@@ -3195,7 +3195,7 @@ void RemodelLoopMover::boost_closure_stage(
 	// Parameters.  Note that fragments often get rejected at this stage, so
 	// recommend keeping the number of insertions low and the number of ccd_move
 	// high.
-	Size const max_outer_cycles = boost_closure_cycles();
+	core::Size const max_outer_cycles = boost_closure_cycles();
 	Real const frag_mover_probability = 0.25; // do 1-mer insertions only 25% of the time
 
 	// 1-mer frag + ccd_move
@@ -3209,8 +3209,8 @@ void RemodelLoopMover::boost_closure_stage(
 		FragmentMoverOPs frag1_movers = create_fragment_movers( movemap, smallestmer_size );
 
 		// parameters
-		Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
-		Size const max_inner_cycles = std::max( static_cast< Size >( 50 ), 10 * n_moveable );
+		core::Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
+		core::Size const max_inner_cycles = std::max( static_cast< core::Size >( 50 ), 10 * n_moveable );
 
 		// set appropriate topology
 		if ( keep_input_foldtree_ ) {}
@@ -3240,7 +3240,7 @@ void RemodelLoopMover::boost_closure_stage(
 
 
 		// do closure
-		for ( Size outer = 1; outer <= max_outer_cycles; ++outer ) {
+		for ( core::Size outer = 1; outer <= max_outer_cycles; ++outer ) {
 			// increment the chainbreak weight
 			ScoreFunctionOP sfxOP = mc.score_function().clone();
 			sfxOP->add_to_weight( core::scoring::linear_chainbreak, cbreak_increment );
@@ -3257,13 +3257,13 @@ void RemodelLoopMover::boost_closure_stage(
 
 			// recover low
 			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-				Size copy_size =0;
+				core::Size copy_size =0;
 				if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 					copy_size = unit_length_-1;
 				} else {
 					copy_size = unit_length_;
 				}
-				for ( Size res = 1; res<=copy_size; res++ ) {
+				for ( core::Size res = 1; res<=copy_size; res++ ) {
 					pose.set_phi(res,mc.lowest_score_pose().phi(res));
 					pose.set_psi(res,mc.lowest_score_pose().psi(res));
 					pose.set_omega(res,mc.lowest_score_pose().omega(res));
@@ -3284,7 +3284,7 @@ void RemodelLoopMover::boost_closure_stage(
 				break;
 			}
 
-			for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
+			for ( core::Size inner = 1; inner <= max_inner_cycles; ++inner ) {
 				if ( (!frag1_movers.empty() && numeric::random::rg().uniform() < frag_mover_probability) || pose.fold_tree().num_cutpoint() == 0 ) { // 1-mer insertions
 
 					random_permutation( frag1_movers.begin(), frag1_movers.end(), numeric::random::rg() );
@@ -3321,13 +3321,13 @@ void RemodelLoopMover::boost_closure_stage(
 
 		// recover low
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			Size copy_size =0;
+			core::Size copy_size =0;
 			if ( option[OptionKeys::remodel::repeat_structure] == 1 ) {
 				copy_size = unit_length_-1;
 			} else {
 				copy_size = unit_length_;
 			}
-			for ( Size res = 1; res<=copy_size; res++ ) {
+			for ( core::Size res = 1; res<=copy_size; res++ ) {
 				pose.set_phi(res,mc.lowest_score_pose().phi(res));
 				pose.set_psi(res,mc.lowest_score_pose().psi(res));
 				pose.set_omega(res,mc.lowest_score_pose().omega(res));
@@ -3464,7 +3464,7 @@ bool RemodelLoopMover::check_closure_criteria(
 RemodelLoopMover::FragmentMoverOPs
 RemodelLoopMover::create_fragment_movers(
 	MoveMap const & movemap,
-	Size const largest_frag_size
+	core::Size const largest_frag_size
 ) {
 	using protocols::simple_moves::ClassicFragmentMover;
 
@@ -3490,8 +3490,8 @@ RemodelLoopMover::create_fragment_movers(
 RemodelLoopMover::FragmentMoverOPs
 RemodelLoopMover::create_fragment_movers_limit_size(
 	MoveMap const & movemap,
-	Size const frag_size,
-	std::set<Size> const & allowedPos,
+	core::Size const frag_size,
+	std::set<core::Size> const & allowedPos,
 	bool const smoothMoves,
 	ScoreFunctionOP /*scorefxnOP*/,
 	Real fragScoreThreshold
@@ -3507,8 +3507,8 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 			for ( ConstFrameIterator frame_i = f->begin(); frame_i != f->end(); ++frame_i ) {
 				if ( allowedPos.find((*frame_i)->start()) != allowedPos.end() ) {
 					FrameOP tmp_frame = (*frame_i)->clone();
-					Size frag_ct= 0;
-					for ( Size ii = 1; ii<=(*frame_i)->nr_frags(); ++ii ) {
+					core::Size frag_ct= 0;
+					for ( core::Size ii = 1; ii<=(*frame_i)->nr_frags(); ++ii ) {
 						if ( (*frame_i)->fragment(ii).score()<fragScoreThreshold ) {
 							frag_ct++;
 							tmp_frame->add_fragment((*frame_i)->fragment_ptr(ii));
@@ -3540,7 +3540,7 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 void RemodelLoopMover::create_fragment_movers(
 	MoveMap const & movemap,
 	FragmentMoverOPs & frag_movers,
-	Size const largest_frag_size
+	core::Size const largest_frag_size
 ) {
 	using protocols::simple_moves::ClassicFragmentMover;
 
@@ -3564,7 +3564,7 @@ void RemodelLoopMover::create_fragment_movers(
 ///  size is this number.  If zero, uses all fragment sets.
 RemodelLoopMover::FragmentMoverOPs RemodelLoopMover::create_per_loop_fragment_movers(
 	loops::LoopsOP const loops,
-	Size const largest_frag_size
+	core::Size const largest_frag_size
 )
 {
 	// Create fragment movers for each loop for each fragment set.  Here we
@@ -3623,7 +3623,7 @@ void RemodelLoopMover::mark_loop_moveable(
 	using core::id::omega_torsion;
 	using core::id::TorsionID;
 
-	for ( Size i = loop.start(), ie = loop.stop(); i <= ie; ++i ) {
+	for ( core::Size i = loop.start(), ie = loop.stop(); i <= ie; ++i ) {
 		movemap.set_bb( i, true );
 		movemap.set_chi( i, true );
 
@@ -3638,16 +3638,16 @@ void RemodelLoopMover::mark_loop_moveable(
 ///  given range [left, right]
 RemodelLoopMover::Size RemodelLoopMover::count_moveable_residues(
 	MoveMap const & movemap,
-	Size const left,
-	Size const right
+	core::Size const left,
+	core::Size const right
 )
 {
-	Size n_moveable = 0;
+	core::Size n_moveable = 0;
 
 	// Count total number of residues w/ moveable backbone in movemap.
 	// Depending on types of fragments (possible non-backbone?) consider
 	// changing this in the future to check chi/other dof as well.
-	for ( Size i = left; i <= right; ++i ) {
+	for ( core::Size i = left; i <= right; ++i ) {
 		if ( movemap.get_bb( i ) ) {
 			++n_moveable;
 		}
@@ -3663,13 +3663,13 @@ void RemodelLoopMover::set_starting_pdb(Pose & pose){
 	using core::Size;
 	PoseOP inputPose = core::import_pose::pose_from_file(option[OptionKeys::remodel::staged_sampling::starting_pdb], core::import_pose::PDB_file);
 	debug_assert(inputPose->size() == pose.size());
-	for ( Size ii=2; ii<pose.size(); ++ii ) {
+	for ( core::Size ii=2; ii<pose.size(); ++ii ) {
 		pose.set_phi(ii,inputPose->phi(ii));
 		pose.set_psi(ii,inputPose->psi(ii));
 		pose.set_omega(ii,inputPose->omega(ii));
 		pose.set_secstruct(ii,inputPose->secstruct(ii));
 	}
-	Size repeatRes = (pose.size()/2)+1;
+	core::Size repeatRes = (pose.size()/2)+1;
 	pose.set_phi(1,inputPose->phi(repeatRes));
 	pose.set_psi(1,inputPose->psi(repeatRes));
 	pose.set_omega(1,inputPose->omega(repeatRes));
@@ -3691,7 +3691,7 @@ void RemodelLoopMover::set_ideal_helices(Pose & pose){
 	if ( dsspSS(1)=='L' && dsspSS(2)=='H' ) { //often dssp mis-assignes residues at the beginning and end of chain.
 		dsspSS(1)='H';
 	}
-	Size n_res = pose.total_residue();
+	core::Size n_res = pose.total_residue();
 	if ( n_res>2 ) {
 		if ( dsspSS(n_res)=='L' && dsspSS(n_res-1) == 'H' ) {
 			dsspSS(n_res)='H';
@@ -3699,8 +3699,8 @@ void RemodelLoopMover::set_ideal_helices(Pose & pose){
 	}
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 		//At this point the pose is 2x. So we need to copy the helical residues twice.
-		Size repeatRes = (pose.size()/2);
-		for ( Size ii=1; ii<=ss.size(); ++ii ) {
+		core::Size repeatRes = (pose.size()/2);
+		for ( core::Size ii=1; ii<=ss.size(); ++ii ) {
 			if ( ss[ii-1] == 'H' && dsspSS(ii) != 'H' ) { //only fix the residues that are not initialized to helix
 				pose.set_phi(ii,-57.8);
 				pose.set_phi(ii+repeatRes,-57.8);
@@ -3713,7 +3713,7 @@ void RemodelLoopMover::set_ideal_helices(Pose & pose){
 			}
 		}
 	} else {
-		for ( Size ii=1; ii<=ss.size(); ++ii ) {
+		for ( core::Size ii=1; ii<=ss.size(); ++ii ) {
 			if ( ss[ii-1] == 'H' && dsspSS(ii) != 'H' ) {
 				pose.set_phi(ii,-57.8);
 				pose.set_psi(ii,-47.0);
@@ -3732,7 +3732,7 @@ void RemodelLoopMover::set_starting_sequence(Pose & pose){
 	using namespace core::chemical;
 	using core::Size;
 	std::string const & swap_sequence =option[OptionKeys::remodel::staged_sampling::starting_sequence];
-	for ( Size ii=1; ii<=swap_sequence.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=swap_sequence.size(); ++ii ) {
 		char aa = swap_sequence[ii-1];
 		AA my_aa = aa_from_oneletter_code( aa );
 		ResidueTypeSetCOP residue_set( pose.residue_type_set_for_pose( core::chemical::CENTROID_t ) );
@@ -3746,13 +3746,13 @@ void RemodelLoopMover::set_starting_sequence(Pose & pose){
 	}
 }
 
-std::set<core::Size> RemodelLoopMover::generate_residues_to_sample(bool chooseSubsetResidues, Pose & pose,Size fragmentSize){
+std::set<core::Size> RemodelLoopMover::generate_residues_to_sample(bool chooseSubsetResidues, Pose & pose,core::Size fragmentSize){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using core::Size;
-	std::set<Size> allowedRes;
+	std::set<core::Size> allowedRes;
 	if ( !chooseSubsetResidues || !option[OptionKeys::remodel::staged_sampling::residues_to_sample].user() || !option[OptionKeys::remodel::staged_sampling::sample_over_loops]() ) {
-		for ( Size ii=1; ii<=pose.size(); ++ii ) {
+		for ( core::Size ii=1; ii<=pose.size(); ++ii ) {
 			allowedRes.insert(ii);
 		}
 	} else {
@@ -3760,15 +3760,15 @@ std::set<core::Size> RemodelLoopMover::generate_residues_to_sample(bool chooseSu
 			std::string const & allowedRes_str =option[OptionKeys::remodel::staged_sampling::residues_to_sample];
 			utility::vector1< std::string > const res_keys( utility::string_split( allowedRes_str , ',' ) );
 			for ( std::string const & key : res_keys ) {
-				Size const res( utility::string2int( key ) );
+				core::Size const res( utility::string2int( key ) );
 				allowedRes.insert(res);
 			}
 		}
 		if ( option[OptionKeys::remodel::staged_sampling::sample_over_loops]() ) {
 			std::string ss = remodel_data_.ss;
-			Size repeatRes = (pose.size()/2)+1;
+			core::Size repeatRes = (pose.size()/2)+1;
 			char lastRes = ss[0];
-			for ( Size ii=1; ii<=ss.size(); ++ii ) {
+			for ( core::Size ii=1; ii<=ss.size(); ++ii ) {
 				if ( (ss[ii-1] == 'H' || ss[ii-1] == 'E')&&(lastRes == 'L') ) {
 					if ( ii-(fragmentSize-1) > 0 ) {
 						allowedRes.insert(ii-(fragmentSize-1));

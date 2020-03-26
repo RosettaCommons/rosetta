@@ -29,15 +29,15 @@ namespace toolbox {
 
 
 template< typename SilentStructIterator >
-void DecoySetEvaluation::push_back_CA_xyz_from_silent_file( Size n_decoys_in, SilentStructIterator begin, SilentStructIterator end, bool store_energies ) {
+void DecoySetEvaluation::push_back_CA_xyz_from_silent_file( core::Size n_decoys_in, SilentStructIterator begin, SilentStructIterator end, bool store_energies ) {
 	static basic::Tracer _impl_tr( "protocols.toolbox.DecoySetEvaluation" );
 
-	Size n_new_decoys( n_decoys_in );
+	core::Size n_new_decoys( n_decoys_in );
 
 	if ( begin == end ) return;
 	core::pose::Pose pose;
 	begin->fill_pose( pose);
-	Size pos = 1;
+	core::Size pos = 1;
 	for ( ; pos <= pose.size(); ++pos ) {
 		if ( !pose.residue( pos ).is_protein() ) break;
 	}

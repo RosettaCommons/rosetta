@@ -257,17 +257,17 @@ MinMover::apply_dof_tasks_to_movemap(
 		PackerTaskOP task( dof_task.second->create_task_and_apply_taskoperations( pose ) );
 
 		//modify movemap by task
-		Size const nres( task->total_residue() );
+		core::Size const nres( task->total_residue() );
 
 		//Set DOFs by task operations:
-		for ( Size i(1); i <= nres; ++i ) {
+		for ( core::Size i(1); i <= nres; ++i ) {
 			if ( dof_task.first.first == core::id::PHI ) {
 				core::kinematics::MoveMap::MoveMapTorsionID mmid;
 				mmid.first = i;
 				mmid.second = dof_task.first.second;
 				movemap.set( mmid, task->pack_residue( i ) );
 			} else {
-				for ( Size ia=1,iamax=pose.residue(i).natoms(); ia<=iamax; ++ia ) {
+				for ( core::Size ia=1,iamax=pose.residue(i).natoms(); ia<=iamax; ++ia ) {
 					movemap.set( core::id::DOF_ID( core::id::AtomID(ia,i), dof_task.first.first  ), task->pack_residue(i) );
 				}
 				//movemap.set( t->first.first, task->pack_residue( i ) );
@@ -286,7 +286,7 @@ MinMover::apply_dof_tasks_to_movemap(
 }
 
 void
-MinMover::max_iter( Size max_iter_in ) { min_options_->max_iter( max_iter_in ); }
+MinMover::max_iter( core::Size max_iter_in ) { min_options_->max_iter( max_iter_in ); }
 
 void
 MinMover::minimize(pose::Pose & pose, core::kinematics::MoveMap const & active_movemap){

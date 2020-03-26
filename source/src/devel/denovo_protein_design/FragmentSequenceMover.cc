@@ -68,9 +68,9 @@ void FragmentSequenceMover::apply( core::pose::Pose & pose ){
 	std::string new_seq = FrameList[ FrameNumber ]->fragment( FragNumber ).sequence();
 	TR << "SIZE STRING " << new_seq.size() << std::endl;
 	core::chemical::ResidueTypeSetCAP residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
-	for ( Size i=1; i<= new_seq.size(); ++i ) {
+	for ( core::Size i=1; i<= new_seq.size(); ++i ) {
 		core::conformation::Residue const & old_rsd( pose.residue( FramePosition + i - 1 ) );
-		for ( Size j=1; j<=old_rsd.type().variant_types().size(); j++ ) {
+		for ( core::Size j=1; j<=old_rsd.type().variant_types().size(); j++ ) {
 			std::cout << old_rsd.type().variant_types()[j] << std::endl;
 		}
 		// get all residue types with same AA
@@ -79,7 +79,7 @@ void FragmentSequenceMover::apply( core::pose::Pose & pose ){
 		core::chemical::ResidueTypeCOPs const & rsd_types( residue_set.aa_map( this_aa ) );
 		core::conformation::ResidueOP new_rsd( nullptr );
 		// now look for a rsdtype with same variants
-		for ( Size j=1; j<= rsd_types.size(); ++j ) {
+		for ( core::Size j=1; j<= rsd_types.size(); ++j ) {
 			core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
 			if ( old_rsd.type().variants_match( new_rsd_type ) ) {
 				new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, old_rsd, pose.conformation() );

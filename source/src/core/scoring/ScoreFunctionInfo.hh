@@ -29,7 +29,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -64,7 +64,7 @@ So all we need is a constructor and an operator==
 
 **/
 
-class ScoreFunctionInfo : public utility::pointer::ReferenceCount
+class ScoreFunctionInfo : public utility::VirtualBase
 {
 
 public:

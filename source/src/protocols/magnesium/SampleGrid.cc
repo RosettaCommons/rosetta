@@ -55,27 +55,27 @@ SampleGrid::get_mg_positions( pose::Pose const & pose ) {
 	scan_res_ = figure_out_scan_res( input_scan_res_, pose );
 
 	create_grid();
-	Size xgridsize = min_distance_grid_.size1();
-	Size ygridsize = min_distance_grid_.size2();
-	Size zgridsize = min_distance_grid_.size3();
-	ObjexxFCL::FArray3D< Size > closest_res_grid( xgridsize, ygridsize, zgridsize );
+	core::Size xgridsize = min_distance_grid_.size1();
+	core::Size ygridsize = min_distance_grid_.size2();
+	core::Size zgridsize = min_distance_grid_.size3();
+	ObjexxFCL::FArray3D< core::Size > closest_res_grid( xgridsize, ygridsize, zgridsize );
 	closest_res_grid = 0;
 
 	// THIS IS RIDICULOUS.
 	scoring::rna::RNA_ScoringInfo const & rna_scoring_info( scoring::rna::rna_scoring_info_from_pose( pose ) );
-	utility::vector1< utility::vector1< Size > > const
+	utility::vector1< utility::vector1< core::Size > > const
 		atom_numbers_for_mg_calculation( rna_scoring_info.atom_numbers_for_mg_calculation() );
 
-	for ( Size q = 1; q <= scan_res_.size(); q++ ) {
+	for ( core::Size q = 1; q <= scan_res_.size(); q++ ) {
 
-		Size const n = scan_res_[ q ];
+		core::Size const n = scan_res_[ q ];
 		if ( n > pose.size() ) continue;
 
-		utility::vector1< Size > const & atom_numbers1   ( atom_numbers_for_mg_calculation[ n ]  );
-		for ( Size m = 1; m <= atom_numbers1.size(); ++m ) {
+		utility::vector1< core::Size > const & atom_numbers1   ( atom_numbers_for_mg_calculation[ n ]  );
+		for ( core::Size m = 1; m <= atom_numbers1.size(); ++m ) {
 
 			core::conformation::Residue const & rsd1 = pose.residue( n );
-			Size const i = atom_numbers1[ m ];
+			core::Size const i = atom_numbers1[ m ];
 			if ( rsd1.is_virtual(i) ) continue;
 			if ( !rsd1.heavyatom_is_an_acceptor(i) ) continue;
 
@@ -85,14 +85,14 @@ SampleGrid::get_mg_positions( pose::Pose const & pose ) {
 			Real const min_radius = 1.5;
 
 			// defines the neighborhood around each acceptor in which to scan for Mg(2+) positions.
-			Size xbinmin, xbinmax, ybinmin, ybinmax, zbinmin, zbinmax;
+			core::Size xbinmin, xbinmax, ybinmin, ybinmax, zbinmin, zbinmax;
 			define_bins( i_xyz.x(), subgrid_radius, xmin_, xgridsize, xyz_step_, xbinmin, xbinmax );
 			define_bins( i_xyz.y(), subgrid_radius, ymin_, ygridsize, xyz_step_, ybinmin, ybinmax );
 			define_bins( i_xyz.z(), subgrid_radius, zmin_, zgridsize, xyz_step_, zbinmin, zbinmax );
 
-			for ( Size xbin = xbinmin; xbin <= xbinmax; xbin++ ) {
-				for ( Size ybin = ybinmin; ybin <= ybinmax; ybin++ ) {
-					for ( Size zbin = zbinmin; zbin <= zbinmax; zbin++ ) {
+			for ( core::Size xbin = xbinmin; xbin <= xbinmax; xbin++ ) {
+				for ( core::Size ybin = ybinmin; ybin <= ybinmax; ybin++ ) {
+					for ( core::Size zbin = zbinmin; zbin <= zbinmax; zbin++ ) {
 
 						Real const x = get_position( xbin, xmin_, xyz_step_ );
 						Real const y = get_position( ybin, ymin_, xyz_step_ );
@@ -118,10 +118,10 @@ SampleGrid::get_mg_positions( pose::Pose const & pose ) {
 	// Now go back through entire grid, and pick out bins that were within acceptable distances
 	// to acceptors on desired residues.
 	utility::vector1< Vector > mg_positions;
-	for ( Size xbin = 1; xbin <= xgridsize; xbin++ ) {
-		for ( Size ybin = 1; ybin <= ygridsize; ybin++ ) {
-			for ( Size zbin = 1; zbin <= zgridsize; zbin++ ) {
-				Size const closest_res = closest_res_grid( xbin, ybin, zbin );
+	for ( core::Size xbin = 1; xbin <= xgridsize; xbin++ ) {
+		for ( core::Size ybin = 1; ybin <= ygridsize; ybin++ ) {
+			for ( core::Size zbin = 1; zbin <= zgridsize; zbin++ ) {
+				core::Size const closest_res = closest_res_grid( xbin, ybin, zbin );
 				if ( closest_res == 0 ) continue;
 				if ( tether_to_closest_res_ && !input_scan_res_.has_value( closest_res ) ) continue;
 				Real const x = get_position( xbin, xmin_, xyz_step_ );
@@ -136,23 +136,23 @@ SampleGrid::get_mg_positions( pose::Pose const & pose ) {
 }
 
 ///////////////////////////////////////////////////////////
-utility::vector1< Size >
-SampleGrid::figure_out_scan_res( utility::vector1< Size > const & input_scan_res,
+utility::vector1< core::Size >
+SampleGrid::figure_out_scan_res( utility::vector1< core::Size > const & input_scan_res,
 	pose::Pose const & pose ) {
 
-	utility::vector1< Size > scan_res = input_scan_res;
+	utility::vector1< core::Size > scan_res = input_scan_res;
 
 	if ( input_scan_res.size() == 0 ) {
-		for ( Size n = 1; n <= pose.size(); n++ ) scan_res.push_back( n );
+		for ( core::Size n = 1; n <= pose.size(); n++ ) scan_res.push_back( n );
 	}
 
 	if ( tether_to_closest_res_ ) {
 		// expand neighborhood to scan, but later
 		// only sample grid positions that have closest residue in input_res.
 		static Distance NBR_DIST_CUTOFF( 12.0 );
-		for ( Size n = 1; n <= pose.size(); n++ ) {
+		for ( core::Size n = 1; n <= pose.size(); n++ ) {
 			if ( scan_res.has_value( n ) ) continue;
-			for ( Size q = 1; q <= input_scan_res.size(); q++ ) {
+			for ( core::Size q = 1; q <= input_scan_res.size(); q++ ) {
 				if ( ( pose.residue( input_scan_res[q] ).nbr_atom_xyz() -
 						pose.residue( n ).nbr_atom_xyz() ).length() < NBR_DIST_CUTOFF ) {
 					scan_res.push_back( n );
@@ -172,12 +172,12 @@ SampleGrid::figure_out_box_bounds( pose::Pose const & pose )
 
 	// determine bounds of scan.
 	bool init( false );
-	for ( Size i = 1; i <= pose.size(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 
 		if ( pose.residue( i ).is_virtual_residue() ) continue;
 		if ( pose.residue( i ).name3() == " MG" ) continue;
 
-		for ( Size j = 1; j <= pose.residue( i ).natoms(); j++ ) {
+		for ( core::Size j = 1; j <= pose.residue( i ).natoms(); j++ ) {
 			Vector pos = pose.residue( i ).xyz( j );
 
 			if ( !init ) {
@@ -215,9 +215,9 @@ SampleGrid::figure_out_box_bounds( pose::Pose const & pose )
 void
 SampleGrid::create_grid()
 {
-	Size xgridsize( std::lround( ( xmax_ - xmin_ ) / xyz_step_ ) );
-	Size ygridsize( std::lround( ( ymax_ - ymin_ ) / xyz_step_ ) );
-	Size zgridsize( std::lround( ( zmax_ - zmin_ ) / xyz_step_ ) );
+	core::Size xgridsize( std::lround( ( xmax_ - xmin_ ) / xyz_step_ ) );
+	core::Size ygridsize( std::lround( ( ymax_ - ymin_ ) / xyz_step_ ) );
+	core::Size zgridsize( std::lround( ( zmax_ - zmin_ ) / xyz_step_ ) );
 	min_distance_grid_.dimension( xgridsize, ygridsize, zgridsize );
 	min_distance_grid_ = 0.0;
 }
@@ -227,10 +227,10 @@ void
 SampleGrid::define_bins( Real const x,
 	Real const subgrid_radius,
 	Real const xmin,
-	Size const xgridsize,
+	core::Size const xgridsize,
 	Real const xyz_increment,
-	Size & xbinmin,
-	Size & xbinmax ) const
+	core::Size & xbinmin,
+	core::Size & xbinmax ) const
 {
 
 	xbinmin = std::max( 1,              int( ( x - subgrid_radius - xmin )/xyz_increment ) + 1 ); // The +1 is because we are indexing by 1.
@@ -239,7 +239,7 @@ SampleGrid::define_bins( Real const x,
 
 ///////////////////////////////////////////////////////////////////////////////
 Real
-SampleGrid::get_position( Size const xbin, Real const xmin, Real const xyz_increment ) const
+SampleGrid::get_position( core::Size const xbin, Real const xmin, Real const xyz_increment ) const
 {
 	return (  xmin + ( xbin - 0.5 ) * xyz_increment ); // The -0.5 is to get to the center of the bin.
 }

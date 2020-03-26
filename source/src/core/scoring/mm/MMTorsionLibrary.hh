@@ -25,7 +25,7 @@
 // Utility header
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -61,7 +61,7 @@ typedef std::pair< mm_torsion_library_citer, mm_torsion_library_citer > mm_torsi
 /// The same set of 4 atom types can corespond to multiple paramter sets with different multiplicities to more accuratly
 /// define the potential and is the reason multimaps are used instead of just maps.
 ///
-class MMTorsionLibrary  : public utility::pointer::ReferenceCount
+class MMTorsionLibrary  : public utility::VirtualBase
 {
 
 public:

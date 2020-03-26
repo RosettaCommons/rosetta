@@ -19,9 +19,10 @@
 
 // Package headers
 #include <core/scoring/EnergyMap.fwd.hh>
+#include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -31,7 +32,7 @@
 namespace core {
 namespace scoring {
 
-class ResidueNeighborIterator : public utility::pointer::ReferenceCount
+class ResidueNeighborIterator : public utility::VirtualBase
 {
 public:
 	~ResidueNeighborIterator() override;
@@ -59,7 +60,7 @@ public:
 	// NOTE -- not serializable.
 };
 
-class ResidueNeighborConstIterator : public utility::pointer::ReferenceCount
+class ResidueNeighborConstIterator : public utility::VirtualBase
 {
 public:
 	~ResidueNeighborConstIterator() override;
@@ -83,7 +84,7 @@ public:
 	// NOTE -- not serializable
 };
 
-class LREnergyContainer : public utility::pointer::ReferenceCount
+class LREnergyContainer : public utility::VirtualBase
 {
 public:
 

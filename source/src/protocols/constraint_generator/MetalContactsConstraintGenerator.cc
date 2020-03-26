@@ -839,7 +839,7 @@ MetalContactsConstraintGenerator::get_ligand_resnum( core::pose::Pose const & po
 	if ( ligand_selector_ && use_ligand_selector_ ) {
 		core::select::residue_selector::ResidueSubset lig_subset( pose.total_residue(), false );
 		lig_subset = ligand_selector_->apply( pose );
-		for ( Size ii = 1; ii <= lig_subset.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= lig_subset.size(); ++ii ) {
 			if ( lig_subset[ ii ] ) {
 				if ( found ) {
 					utility_exit_with_message( "ERROR: Ligand selector must specify only one residue!" );
@@ -862,14 +862,14 @@ MetalContactsConstraintGenerator::get_contact_resnums( core::pose::Pose const & 
 	if ( contact_selector_ && use_contact_selector_ ) {
 		core::select::residue_selector::ResidueSubset contact_subset( pose.total_residue(), false );
 		contact_subset = contact_selector_->apply( pose );
-		for ( Size ii = 1; ii <= contact_subset.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= contact_subset.size(); ++ii ) {
 			if ( contact_subset[ ii ] ) {
 				output.insert( ii );
 				TR.Debug << "Found contact residue " << ii << std::endl;
 			}
 		}
 	} else { // grab from string
-		std::set< Size > const res_vec( get_resnum_list( contact_resnum_string_, pose ) );
+		std::set< core::Size > const res_vec( get_resnum_list( contact_resnum_string_, pose ) );
 		output.insert( res_vec.begin(), res_vec.end() );
 		for ( core::Size num: output ) {
 			if ( num > pose.total_residue() || num == 0 ) {

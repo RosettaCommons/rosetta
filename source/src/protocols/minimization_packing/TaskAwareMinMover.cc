@@ -53,6 +53,7 @@ static basic::Tracer TR( "protocols.minimization_packing.TaskAwareMinMover" );
 namespace protocols {
 namespace minimization_packing {
 
+using core::Size;
 
 
 
@@ -128,11 +129,11 @@ void TaskAwareMinMover::apply( core::pose::Pose & pose ){
 
 	//modify movemap by task
 	//  core::kinematics::modify_movemap_from_packertask( *mm, *task );
-	Size const nres( task->total_residue() );
+	core::Size const nres( task->total_residue() );
 	runtime_assert_string_msg( nres == pose.total_residue(), "Error in TaskAwareMinMover: a PackerTask was provided to this mover that does not match the size of the pose." );
 
 	mm->set_jump( jump_ );
-	for ( Size i(1); i <= nres; ++i ) {
+	for ( core::Size i(1); i <= nres; ++i ) {
 		if ( task->design_residue( i ) ) {
 			// the MoveMap initializes to false for all degrees of freedom
 			// this class only turns on minimization at packable dofs, it does not turn them off

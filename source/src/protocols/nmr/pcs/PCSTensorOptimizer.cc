@@ -60,7 +60,7 @@ PCSTensorOptimizer::~PCSTensorOptimizer() {}
 /// @brief error function used in optimization of the PCS tensor parameter
 core::Real
 PCSTensorOptimizer::operator()( Multivec const & tensor_params ) const {
-	Size number_singlesets_to_optimize = singleset_vec_.size();
+	core::Size number_singlesets_to_optimize = singleset_vec_.size();
 
 	// We are optimizing the whole vector of PCSSingleSets at once because the metals should share similar coordinates.
 	// Thus we assign them all the same xyz-coordinates and expect that the number of input parameters is N*5 + 3 whereas N = number_singlesets_to_optimize
@@ -71,7 +71,7 @@ PCSTensorOptimizer::operator()( Multivec const & tensor_params ) const {
 	Vector metal_coords(tensor_params[1], tensor_params[2], tensor_params[3]);
 	Real total_score(0);
 
-	for ( Size i = 1; i <= number_singlesets_to_optimize; ++i ) {
+	for ( core::Size i = 1; i <= number_singlesets_to_optimize; ++i ) {
 		Real chiT_xx(tensor_params[3 + 5*(i-1) + 1]);
 		Real chiT_xy(tensor_params[3 + 5*(i-1) + 2]);
 		Real chiT_xz(tensor_params[3 + 5*(i-1) + 3]);
@@ -81,11 +81,11 @@ PCSTensorOptimizer::operator()( Multivec const & tensor_params ) const {
 		singleset_vec_[i]->update_matrix_A(metal_coords);
 		ObjexxFCL::FArray2D<Real> const & matrix_A =  singleset_vec_[i]->get_matrix_A();
 		ObjexxFCL::FArray1D<Real> const & pcs_values = singleset_vec_[i]->get_pcs_values();
-		Size n_pcs(singleset_vec_[i]->get_number_pcs());
+		core::Size n_pcs(singleset_vec_[i]->get_number_pcs());
 		ObjexxFCL::FArray1D<Real> const & single_pcs_weights = singleset_vec_[i]->get_pcs_single_weights();
 		Real singleset_score(0);
 
-		for ( Size j = 1; j <= n_pcs; ++j ) {
+		for ( core::Size j = 1; j <= n_pcs; ++j ) {
 			Real pcs_calc = matrix_A(j,1)*chiT_xx + matrix_A(j,2)*chiT_xy + matrix_A(j,3)*chiT_xz + matrix_A(j,4)*chiT_yy + matrix_A(j,5)*chiT_yz;
 			Real pcs_exp  = pcs_values(j);
 			singleset_score += (pcs_calc - pcs_exp) * (pcs_calc - pcs_exp) * single_pcs_weights(j);
@@ -104,7 +104,7 @@ PCSTensorOptimizer::dfunc(
 	Multivec & dPCS_dparams
 ) const
 {
-	Size number_singlesets_to_optimize = singleset_vec_.size();
+	core::Size number_singlesets_to_optimize = singleset_vec_.size();
 
 	// We are optimizing the whole vector of PCSSingleSets at once because the metals should share similar coordinates.
 	// Thus we assign them all the same xyz-coordinates and expect that the number of input parameters is N*5 + 3 whereas N = number_singlesets_to_optimize
@@ -113,14 +113,14 @@ PCSTensorOptimizer::dfunc(
 	}
 
 	// Set deviations to 0 at the beginning because we will sum up their individual contributions
-	for ( Size n = 1; n <= dPCS_dparams.size(); ++n ) {
+	for ( core::Size n = 1; n <= dPCS_dparams.size(); ++n ) {
 		dPCS_dparams[n] = 0;
 	}
 
 	Vector metal_coords(tensor_params[1], tensor_params[2], tensor_params[3]);
 
 	// loop over different lanthanides
-	for ( Size i = 1; i <= number_singlesets_to_optimize; ++i ) {
+	for ( core::Size i = 1; i <= number_singlesets_to_optimize; ++i ) {
 		Real chiT_xx(tensor_params[3 + 5*(i-1) + 1]);
 		Real chiT_xy(tensor_params[3 + 5*(i-1) + 2]);
 		Real chiT_xz(tensor_params[3 + 5*(i-1) + 3]);
@@ -132,32 +132,32 @@ PCSTensorOptimizer::dfunc(
 		ObjexxFCL::FArray2D<Real> const & matrix_A =  singleset_vec_[i]->get_matrix_A();
 		ObjexxFCL::FArray1D<Real> const & pcs_values = singleset_vec_[i]->get_pcs_values();
 		utility::vector1< utility::vector1< utility::vector1< Vector > > > const & spin_coordinates = singleset_vec_[i]->get_spin_coordinates();
-		Size n_pcs(singleset_vec_[i]->get_number_pcs());
+		core::Size n_pcs(singleset_vec_[i]->get_number_pcs());
 		ObjexxFCL::FArray1D<Real> const & single_pcs_weights = singleset_vec_[i]->get_pcs_single_weights();
 		Real scal(1.0 / singleset_vec_[i]->get_scaling_factor());
 
 		// loop over number pcs for one given lanthanide
-		for ( Size j = 1; j <= n_pcs; ++j ) {
+		for ( core::Size j = 1; j <= n_pcs; ++j ) {
 			Real pcs_calc = matrix_A(j,1)*chiT_xx + matrix_A(j,2)*chiT_xy + matrix_A(j,3)*chiT_xz + matrix_A(j,4)*chiT_yy + matrix_A(j,5)*chiT_yz;
 			Real pcs_exp  = pcs_values(j);
 			Real diff = pcs_calc - pcs_exp;
 
 			// PCS gradient with respect to chi tensor values
-			for ( Size k = 1; k <= 5; ++k ) {
+			for ( core::Size k = 1; k <= 5; ++k ) {
 				dPCS_dparams[3 + 5*(i-1)+k] += 2.0 * diff * single_pcs_weights(j) * matrix_A(j,k);
 			}
 
 			// If symmetric_pcs_calc_ is set to true for given PCSSingleSet,
 			// middle vector of spin_coordinates_ has dimension of the number
 			// of symmetric subunits, otherwise the dimension is 1
-			for ( Size su = 1; su <= spin_coordinates[j].size(); ++su ) {
+			for ( core::Size su = 1; su <= spin_coordinates[j].size(); ++su ) {
 				Real dPCS_dx_one_su(0);
 				Real dPCS_dy_one_su(0);
 				Real dPCS_dz_one_su(0);
-				Size num_eq_spins(spin_coordinates[j][su].size());
+				core::Size num_eq_spins(spin_coordinates[j][su].size());
 
 				// loop over equivalent spins (e.g. CH3 protons, or spins on multiple subunits) that give rise to one observed PCS
-				for ( Size l = 1; l <= num_eq_spins; ++l ) {
+				for ( core::Size l = 1; l <= num_eq_spins; ++l ) {
 					Real x(spin_coordinates[j][su][l].x() - metal_coords.x());
 					Real y(spin_coordinates[j][su][l].y() - metal_coords.y());
 					Real z(spin_coordinates[j][su][l].z() - metal_coords.z());

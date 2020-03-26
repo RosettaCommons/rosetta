@@ -52,7 +52,7 @@ namespace mhc_epitope_energy {
 
 /// @brief MHCEpitopeEnergySetup, a helper class for the MHCEpitopeEnergy energy method
 /// that stores all of its setup data.
-class MHCEpitopeEnergySetup : public utility::pointer::ReferenceCount {
+class MHCEpitopeEnergySetup : public utility::VirtualBase {
 public:
 
 	/// @brief Default constructor for MHCEpitopeEnergySetup.

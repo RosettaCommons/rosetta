@@ -24,7 +24,7 @@
 
 // Utility headers
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -58,7 +58,7 @@ generate_prob( PsiPredResult const & psipred_result, std::string desired_ss );
 utility::vector1< core::Size >
 nonmatching_residues( std::string const & blueprint_ss, std::string const & pred_ss );
 
-class PsiPredInterface : public utility::pointer::ReferenceCount {
+class PsiPredInterface : public utility::VirtualBase {
 public:
 	PsiPredInterface( std::string const & cmd, std::string const & scratch_dir = "" );
 

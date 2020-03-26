@@ -252,8 +252,8 @@ SegmentHybridizer::apply_frame( core::pose::Pose & pose, core::fragment::Frame &
 	R.yx( uu(1,2) ); R.yy( uu(2,2) ); R.yz( uu(3,2) );
 	R.zx( uu(1,3) ); R.zy( uu(2,3) ); R.zz( uu(3,3) );
 
-	for ( Size i = 0; i < len; ++i ) {
-		for ( Size j = 1; j <= pose.residue_type(start+i).natoms(); ++j ) {
+	for ( core::Size i = 0; i < len; ++i ) {
+		for ( core::Size j = 1; j <= pose.residue_type(start+i).natoms(); ++j ) {
 			core::id::AtomID id( j, start+i );
 			pose.set_xyz( id, R * ( pose_copy.xyz(id) - com2) + com1 );
 		}
@@ -308,7 +308,7 @@ SegmentHybridizer::hybridize( core::pose::Pose & pose , core::Size insert_pos_st
 	utility::vector1<int> max_poses(4,-1);
 
 
-	for ( Size /*int*/ i=1; i<nres; ++i ) {
+	for ( core::Size /*int*/ i=1; i<nres; ++i ) {
 		if ( pose.fold_tree().is_cutpoint(i+1) ) {
 			residuals[i] = -1;
 		} else {
@@ -403,7 +403,7 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 
 	//// 3. iterate through segments of interest
 
-	for ( Size iter = 1 ; iter <= seg_vector_.size() ; ++ iter ) {
+	for ( core::Size iter = 1 ; iter <= seg_vector_.size() ; ++ iter ) {
 
 		///  runtime parsing of input information
 		//core::Size insert_pos_start = protocols::rosetta_scripts::parse_resnum( seg_vector_[iter].first, pose ) - extend_outside_ ;
@@ -453,7 +453,7 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 						//std::cout << "ss: " << tgt_ss[it-1] << std::endl;
 					}
 				}
-				for ( Size it = insert_pos_stop + 1  ; it <= pose.size() ; it++ ) { // 1 off because ss is typically misassigned
+				for ( core::Size it = insert_pos_stop + 1  ; it <= pose.size() ; it++ ) { // 1 off because ss is typically misassigned
 					//std::cout << "ss: " << tgt_ss[it-1] << std::endl;
 					if ( tgt_ss[it-1] == 'L' ) break;
 					else {

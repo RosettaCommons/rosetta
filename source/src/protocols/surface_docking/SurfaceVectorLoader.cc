@@ -46,7 +46,7 @@ SurfaceVectorLoader::~SurfaceVectorLoader() = default;
 /// @details Takes a locator id and istream, ensures that the correct number of points are present and performs error
 /// checking that points are of the correct type before using the points to construct SurfaceParameters
 /// @throws EXCN_Msg_Exception
-utility::pointer::ReferenceCountCOP
+utility::VirtualBaseCOP
 SurfaceVectorLoader::create_resource(
 	basic::resource_manager::ResourceManager &,
 	utility::tag::TagCOP,
@@ -73,10 +73,10 @@ SurfaceVectorLoader::create_surface_params(
 	using utility::split;
 	using utility::vector1;
 
-	Size const number_of_points(3);
-	Size const number_of_dimensions(3);
+	core::Size const number_of_points(3);
+	core::Size const number_of_dimensions(3);
 
-	Size lines_read(0);
+	core::Size lines_read(0);
 	vector1< xyzVector<Real> > surf_coords(number_of_points);
 
 	string line;

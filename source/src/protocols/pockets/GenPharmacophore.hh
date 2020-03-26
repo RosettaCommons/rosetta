@@ -20,7 +20,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -96,7 +96,7 @@ public:
 	bool operator< (UnionEdge const &e) const { return dist < e.get_dist(); }
 };
 
-class GenPharmacophore : public utility::pointer::ReferenceCount {
+class GenPharmacophore : public utility::VirtualBase {
 public:
 
 	bool is_buried_ring(core::conformation::Residue const & rsd, core::Real const & ring_sasa, core::Real const & sasa_cutoff);

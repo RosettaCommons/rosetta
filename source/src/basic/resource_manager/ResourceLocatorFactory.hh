@@ -21,7 +21,7 @@
 
 //utility headers
 #include <utility/SingletonBase.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 //C++ headers
@@ -42,7 +42,7 @@ public:
 	friend class utility::SingletonBase< ResourceLocatorFactory >;
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	virtual ~ResourceLocatorFactory();
 
 	/// @brief Create a ResourceLocator given its locator_type, giving the newly created instance the name locator_tag

@@ -23,15 +23,15 @@
 #include <string>
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace core {
 namespace optimization {
 
-class MinimizerOptions : public utility::pointer::ReferenceCount {
+class MinimizerOptions : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~MinimizerOptions() override;
 	/////////////////////////////////////////////////////////////////////////////
 	// c-tor's -- might want to add a number of c-tors or a string-switched

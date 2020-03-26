@@ -22,14 +22,14 @@
 #include <core/sequence/DP_Matrix.hh>
 #include <core/sequence/Sequence.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/sequence/SequenceAlignment.fwd.hh>
 
 namespace core {
 namespace sequence {
 
-class Aligner : public utility::pointer::ReferenceCount {
+class Aligner : public utility::VirtualBase {
 
 public:
 

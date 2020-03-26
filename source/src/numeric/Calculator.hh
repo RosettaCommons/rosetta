@@ -18,7 +18,7 @@
 
 #include <numeric/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <iosfwd>
 #include <map>
@@ -28,7 +28,7 @@
 
 namespace numeric {
 
-class Calculator : public utility::pointer::ReferenceCount {
+class Calculator : public utility::VirtualBase {
 
 public:
 	~Calculator() override;

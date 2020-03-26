@@ -42,7 +42,7 @@
 namespace protocols {
 namespace moves {
 
-class RampingFunc : public utility::pointer::ReferenceCount
+class RampingFunc : public utility::VirtualBase
 {
 public:
 	typedef core::Real Real;

@@ -37,7 +37,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -49,7 +49,7 @@ namespace simple_filters {
 
 class JumpEvaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
-	JumpEvaluator( core::pose::Pose const& native_pose, Size jump_nr );
+	JumpEvaluator( core::pose::Pose const& native_pose, core::Size jump_nr );
 
 	core::Real apply( core::pose::Pose& pose  ) const override;
 

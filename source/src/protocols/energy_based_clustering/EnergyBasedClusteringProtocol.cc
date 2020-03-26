@@ -79,7 +79,7 @@ namespace energy_based_clustering {
 
 /// @brief Default constructor -- initializes from global options system.
 EnergyBasedClusteringProtocol::EnergyBasedClusteringProtocol():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	options_(true), //Read options from global options system
 	constraints_file_contents_(""),
 	n_clusters_from_last_run_(0)
@@ -89,7 +89,7 @@ EnergyBasedClusteringProtocol::EnergyBasedClusteringProtocol():
 EnergyBasedClusteringProtocol::EnergyBasedClusteringProtocol(
 	EnergyBasedClusteringOptions const & options
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	options_( options ), //Don't read options from global options system; just copy them from input.
 	constraints_file_contents_(""),
 	n_clusters_from_last_run_(0)

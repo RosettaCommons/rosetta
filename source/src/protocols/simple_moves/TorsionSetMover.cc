@@ -41,7 +41,7 @@ TorsionSetMover::~TorsionSetMover() = default;
 
 void
 TorsionSetMover::apply( core::pose::Pose & pose ) {
-	for ( Size n = 1; n <= torsion_ids_.size(); n++ ) {
+	for ( core::Size n = 1; n <= torsion_ids_.size(); n++ ) {
 		pose.set_torsion( torsion_ids_[ n ], torsion_values_[ n ] );
 	}
 }

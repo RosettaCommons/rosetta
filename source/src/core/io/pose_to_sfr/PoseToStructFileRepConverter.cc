@@ -84,7 +84,7 @@ static basic::Tracer TR( "core.io.pose_to_sfr.PoseToStructFileRepConverter" );
 /// @details Creates the StructFileRep object, which is subsequently accessible by owning pointer
 /// (using the sfr() object).  The options_ object is created and initialized from the options system.
 PoseToStructFileRepConverter::PoseToStructFileRepConverter() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	options_(), //Initialize from options system.
 	atom_indices_initialized_( false )
 {
@@ -95,7 +95,7 @@ PoseToStructFileRepConverter::PoseToStructFileRepConverter() :
 /// @details Creates the StructFileRep object, which is subsequently accessible by owning pointer
 /// (using the sfr() object).  The options_ object is duplicated from the input options object.
 PoseToStructFileRepConverter::PoseToStructFileRepConverter( StructFileRepOptions const & options_in ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	options_( options_in ),
 	atom_indices_initialized_( false )
 {

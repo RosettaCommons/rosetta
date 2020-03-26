@@ -24,7 +24,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -32,7 +32,7 @@
 namespace devel {
 namespace mmt_msd {
 
-class MMTPackingJob : public utility::pointer::ReferenceCount
+class MMTPackingJob : public utility::VirtualBase
 {
 public:
 	typedef std::list< std::pair< core::Size, std::string > > required_npds;

@@ -27,7 +27,7 @@
 // Utility header
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 
@@ -36,11 +36,11 @@ namespace scoring {
 namespace mm {
 
 /// @brief blah
-class MMLJEnergyTable : public utility::pointer::ReferenceCount
+class MMLJEnergyTable : public utility::VirtualBase
 {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~MMLJEnergyTable() override;
 
 	/// @briefs typedefs

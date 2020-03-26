@@ -27,7 +27,7 @@
 #include <core/scoring/func/SumFunc.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 #include <core/conformation/Residue.fwd.hh>
@@ -42,7 +42,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-class RNA_TorsionPotential : public utility::pointer::ReferenceCount
+class RNA_TorsionPotential : public utility::VirtualBase
 {
 
 public:

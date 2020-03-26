@@ -16,7 +16,7 @@
 
 #include <protocols/antibody/design/AntibodyDesignEnumManager.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
 #include <utility/vector1.hh>
@@ -28,7 +28,7 @@ namespace antibody {
 namespace design {
 
 
-class AntibodyDesignEnumManager : public utility::pointer::ReferenceCount {
+class AntibodyDesignEnumManager : public utility::VirtualBase {
 
 
 public:

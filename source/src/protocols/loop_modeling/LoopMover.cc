@@ -139,7 +139,7 @@ LoopsCOP LoopMover::get_loops() const { // {{{1
 	return get_tool<LoopsCOP>(ToolboxKeys::LOOPS);
 }
 
-Loop const & LoopMover::get_loop(Size index) const { // {{{1
+Loop const & LoopMover::get_loop(core::Size index) const { // {{{1
 	return (*get_loops())[index];
 }
 

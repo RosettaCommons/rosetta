@@ -37,20 +37,18 @@ namespace scores {
 
 static basic::Tracer TR( "protocols.sic_dock.scores.MotifHashRigidScore" );
 
-using core::Size;
 using core::Real;
 using utility::vector1;
 using basic::options::option;
 using namespace basic::options::OptionKeys;
 using Real = core::Real;
-using Size = core::Size;
 using Pose = core::pose::Pose;
 using Xform = Xform;
 using Vec = numeric::xyzVector<Real>;
 using Mat = numeric::xyzMatrix<Real>;
 using Vecs = utility::vector1<Vec>;
 using Reals = utility::vector1<Real>;
-using Sizes = utility::vector1<Size>;
+using Sizes = utility::vector1<core::Size>;
 using Xforms = numeric::Xforms;
 using Scores = utility::vector1<RigidScoreCOP>;
 
@@ -87,14 +85,14 @@ MotifHashRigidScore::MotifHashRigidScore(
 	xsee_ = nullptr;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_ee_from_cli();
 	xspp_ = nullptr;//core::scoring::motif::MotifHashManager::get_instance()->xform_score_sspair_from_cli();
 	mh_   = nullptr;//core::scoring::motif::MotifHashManager::get_instance()->motif_hash_from_cli();
-	for ( Size ir = 1; ir <= pose1_.size(); ++ir ) {
+	for ( core::Size ir = 1; ir <= pose1_.size(); ++ir ) {
 		// if( pose1_.secstruct(ir)=='L' ) continue;
 		Vec  N = pose1_.residue(ir).xyz(1);
 		Vec CA = pose1_.residue(ir).xyz(2);
 		Vec  C = pose1_.residue(ir).xyz(3);
 		bbx1_.push_back(Xform(CA,N,CA,C));
 	}
-	for ( Size ir = 1; ir <= pose2_.size(); ++ir ) {
+	for ( core::Size ir = 1; ir <= pose2_.size(); ++ir ) {
 		// if( pose2_.secstruct(ir)=='L' ) continue;
 		Vec  N = pose2_.residue(ir).xyz(1);
 		Vec CA = pose2_.residue(ir).xyz(2);
@@ -132,8 +130,8 @@ MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & n
 	using namespace core::scoring::motif;
 
 	Real tot_weighted=0.0;
-	std::map<Size,Real> ssp1,ssp2,mres1,mres2;
-	std::set<Size> tres1,tres2;
+	std::map<core::Size,Real> ssp1,ssp2,mres1,mres2;
+	std::set<core::Size> tres1,tres2;
 	Nhh=0; Neh=0; Nee=0; nres=0;
 	for ( Xform const & x1 : x1s ) {
 		for ( Xform const & x2 : x2s ) {
@@ -146,8 +144,8 @@ MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & n
 			if ( option[mh::score::max_contact_pairs]() < pairs.size() ) continue;
 
 			for ( intint const & p : pairs ) {
-				Size const & ir(hash_pose1_?p.second:p.first );
-				Size const & jr(hash_pose1_?p.first :p.second);
+				core::Size const & ir(hash_pose1_?p.second:p.first );
+				core::Size const & jr(hash_pose1_?p.first :p.second);
 				Xform const xb1 = x1 * bbx1_[ir];
 				Xform const xb2 = x2 * bbx2_[jr];
 				Xform const x = ~xb1 * xb2;
@@ -204,12 +202,12 @@ MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & n
 	for ( auto const & v : mres2 ) res_score += sqrt(v.second);
 
 	Nh=0; Ne=0; Nl=0;
-	for ( Size const n : tres1 ) { Nh += 'H'==pose1_.secstruct(n); Ne += 'E'==pose1_.secstruct(n); Nl += 'L'==pose1_.secstruct(n); }
-	for ( Size const n : tres2 ) { Nh += 'H'==pose2_.secstruct(n); Ne += 'E'==pose2_.secstruct(n); Nl += 'L'==pose2_.secstruct(n); }
+	for ( core::Size const n : tres1 ) { Nh += 'H'==pose1_.secstruct(n); Ne += 'E'==pose1_.secstruct(n); Nl += 'L'==pose1_.secstruct(n); }
+	for ( core::Size const n : tres2 ) { Nh += 'H'==pose2_.secstruct(n); Ne += 'E'==pose2_.secstruct(n); Nl += 'L'==pose2_.secstruct(n); }
 
 	coverage = Real(mres1.size()+mres2.size())/Real(tres1.size()+tres2.size());
 
-	Size nsheetres = ssp1.size() + ssp2.size();
+	core::Size nsheetres = ssp1.size() + ssp2.size();
 	Real nsheetsc = nsheetres / 2.0;
 
 	sselem_score = ssscore;

@@ -23,7 +23,7 @@
 
 // Utility headers
 #include <utility/vector1_bool.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -40,7 +40,7 @@
 namespace core {
 namespace sequence {
 
-class SequenceAlignment : public utility::pointer::ReferenceCount {
+class SequenceAlignment : public utility::VirtualBase {
 public:
 	/// @brief ctor
 	SequenceAlignment() {}

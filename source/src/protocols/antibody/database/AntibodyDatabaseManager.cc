@@ -87,7 +87,7 @@ typedef std::map< CDRNameEnum, vector1<CDRDBPose> > CDRDBPoseSet;
 
 
 AntibodyDatabaseManager::AntibodyDatabaseManager(AntibodyInfoCOP ab_info, bool force_north_paper_db):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	ab_info_(std::move(ab_info))
 {
 	using namespace basic::options;
@@ -129,6 +129,7 @@ AntibodyDatabaseManager::AntibodyDatabaseManager(AntibodyInfoCOP ab_info, bool f
 AntibodyDatabaseManager::~AntibodyDatabaseManager()= default;
 
 AntibodyDatabaseManager::AntibodyDatabaseManager( AntibodyDatabaseManager const & src ):
+	VirtualBase( src ),
 	db_path_( src.db_path_ ),
 	use_outliers_( src.use_outliers_ ),
 	use_h3_graft_outliers_( src.use_h3_graft_outliers_ ),

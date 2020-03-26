@@ -29,7 +29,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/json_spirit/json_spirit_writer.h>
@@ -42,7 +42,7 @@ namespace qsar {
 namespace scoring_grid {
 
 ///@brief A set of related grids
-class GridSet : public utility::pointer::ReferenceCount {
+class GridSet : public utility::VirtualBase {
 
 public:
 

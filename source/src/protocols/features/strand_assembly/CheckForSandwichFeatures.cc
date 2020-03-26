@@ -42,10 +42,10 @@ absolute_vec (numeric::xyzVector<Real> vector)
 Real
 calculate_dihedral_w_4_resnums(
 	Pose const & pose,
-	Size res1_sheet_i,
-	Size res2_sheet_i,
-	Size res1_sheet_j,
-	Size res2_sheet_j){
+	core::Size res1_sheet_i,
+	core::Size res2_sheet_i,
+	core::Size res1_sheet_j,
+	core::Size res2_sheet_j){
 	Real arr_dis_inter_sheet [4];
 	arr_dis_inter_sheet[0] = pose.residue(res1_sheet_i).atom("CA").xyz().distance(pose.residue(res1_sheet_j).atom("CA").xyz());
 	arr_dis_inter_sheet[1] = pose.residue(res1_sheet_i).atom("CA").xyz().distance(pose.residue(res2_sheet_j).atom("CA").xyz());
@@ -94,12 +94,12 @@ calculate_dihedral_w_4_resnums(
 vector<Real>
 cal_dis_angle_to_find_sheet(
 	Pose const & pose,
-	Size res_i_0,
-	Size res_i_1,
-	Size res_i_2,
-	Size res_j_0,
-	Size res_j_1,
-	Size res_j_2){
+	core::Size res_i_0,
+	core::Size res_i_1,
+	core::Size res_i_2,
+	core::Size res_j_0,
+	core::Size res_j_1,
+	core::Size res_j_2){
 	Real dis_CA_CA_0_0 = pose.residue(res_i_0).atom("CA").xyz().distance(pose.residue(res_j_0).atom("CA").xyz());
 	Vector const& first_0_xyz    ( pose.residue(res_i_0).xyz("C") );
 	Vector const& middle_0_xyz   ( pose.residue(res_i_0).xyz("O") );
@@ -136,29 +136,29 @@ cal_min_avg_dis_between_sheets_by_cen_res (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	utility::vector1<Size> all_distinct_sheet_ids,
-	Size min_num_strands_in_sheet_){
+	utility::vector1<core::Size> all_distinct_sheet_ids,
+	core::Size min_num_strands_in_sheet_){
 	Real min_dis_between_sheets_by_cen_res = 0;
 	Real avg_dis_between_sheets_by_cen_res = 0;
 	int appropriate_sheet_num = 0;
 
-	for ( Size i=1; (i <= all_distinct_sheet_ids.size()) && (appropriate_sheet_num != 2); i++ ) {
+	for ( core::Size i=1; (i <= all_distinct_sheet_ids.size()) && (appropriate_sheet_num != 2); i++ ) {
 		// now I check all possible combinations
 		if ( all_distinct_sheet_ids[i] == 99999 ) { //all_strands[i].get_size() < min_res_in_strand_
 			continue;
 		}
 
-		Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
+		core::Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
 
 		if ( num_strands_i < min_num_strands_in_sheet_ ) {
 			continue;
 		}
 		appropriate_sheet_num++;
-		for ( Size j=i+1; (j <= all_distinct_sheet_ids.size()) && (appropriate_sheet_num != 2); j++ ) {
+		for ( core::Size j=i+1; (j <= all_distinct_sheet_ids.size()) && (appropriate_sheet_num != 2); j++ ) {
 			if ( all_distinct_sheet_ids[j] == 99999 ) { //all_strands[j].get_size() < min_res_in_strand_
 				continue;
 			}
-			Size num_strands_j = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[j]); // struct_id, db_session, sheet_id
+			core::Size num_strands_j = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[j]); // struct_id, db_session, sheet_id
 
 			if ( num_strands_j < min_num_strands_in_sheet_ ) {
 				continue;
@@ -188,14 +188,14 @@ cal_min_avg_dis_between_two_sheets_by_cen_res (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	Size sheet_id_1,
-	Size sheet_id_2)
+	core::Size sheet_id_1,
+	core::Size sheet_id_2)
 {
-	vector<Size> vector_of_cen_residues_in_sheet_1;
+	vector<core::Size> vector_of_cen_residues_in_sheet_1;
 	vector_of_cen_residues_in_sheet_1.clear(); // Removes all elements from the vector (which are destroyed)
 	vector_of_cen_residues_in_sheet_1 = get_central_residues_in_this_sheet(struct_id, db_session, sheet_id_1);
 
-	vector<Size> vector_of_cen_residues_in_sheet_2;
+	vector<core::Size> vector_of_cen_residues_in_sheet_2;
 	vector_of_cen_residues_in_sheet_2.clear(); // Removes all elements from the vector (which are destroyed)
 	vector_of_cen_residues_in_sheet_2 = get_central_residues_in_this_sheet(struct_id, db_session, sheet_id_2);
 
@@ -231,30 +231,30 @@ cal_min_dis_between_sheets_by_all_res (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	utility::vector1<Size> all_distinct_sheet_ids)
+	utility::vector1<core::Size> all_distinct_sheet_ids)
 {
 	float min_dis_between_two_sheets_by_all_res = 9999.0;
 	int appropriate_sheet_num = 0;
 
-	for ( Size i=1; (i <= all_distinct_sheet_ids.size()) && (appropriate_sheet_num != 2); i++ ) {
+	for ( core::Size i=1; (i <= all_distinct_sheet_ids.size()) && (appropriate_sheet_num != 2); i++ ) {
 		// now I check all possible combinations
 		if ( all_distinct_sheet_ids[i] == 99999 ) { //all_strands[i].get_size() < min_res_in_strand_
 			continue;
 		}
 
-		Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
+		core::Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
 
 		//if (num_strands_i < min_num_strands_in_sheet_)
 		if ( num_strands_i < 3 ) {
 			continue;
 		}
 		appropriate_sheet_num++;
-		for ( Size j=i+1; (j <= all_distinct_sheet_ids.size()) && (appropriate_sheet_num != 2); j++ ) {
+		for ( core::Size j=i+1; (j <= all_distinct_sheet_ids.size()) && (appropriate_sheet_num != 2); j++ ) {
 			if ( all_distinct_sheet_ids[j] == 99999 ) {
 				//all_strands[j].get_size() < min_res_in_strand_
 				continue;
 			}
-			Size num_strands_j = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[j]); // struct_id, db_session, sheet_id
+			core::Size num_strands_j = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[j]); // struct_id, db_session, sheet_id
 
 			//if (num_strands_j < min_num_strands_in_sheet_)
 			if ( num_strands_j < 3 ) {
@@ -282,14 +282,14 @@ cal_min_dis_between_two_sheets_by_all_res (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	Size sheet_id_1,
-	Size sheet_id_2)
+	core::Size sheet_id_1,
+	core::Size sheet_id_2)
 {
-	vector<Size> vector_of_all_residues_in_sheet_1;
+	vector<core::Size> vector_of_all_residues_in_sheet_1;
 	vector_of_all_residues_in_sheet_1.clear(); // Removes all elements from the vector (which are destroyed)
 	vector_of_all_residues_in_sheet_1 = get_all_residues_in_this_sheet(struct_id, db_session, sheet_id_1);
 
-	vector<Size> vector_of_all_residues_in_sheet_2;
+	vector<core::Size> vector_of_all_residues_in_sheet_2;
 	vector_of_all_residues_in_sheet_2.clear(); // Removes all elements from the vector (which are destroyed)
 	vector_of_all_residues_in_sheet_2 = get_all_residues_in_this_sheet(struct_id, db_session, sheet_id_2);
 
@@ -315,13 +315,13 @@ cal_num_of_sheets_that_surround_this_sheet (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	utility::vector1<Size> all_distinct_sheet_ids,
-	Size sheet_id,
-	Size min_num_strands_in_sheet_,
+	utility::vector1<core::Size> all_distinct_sheet_ids,
+	core::Size sheet_id,
+	core::Size min_num_strands_in_sheet_,
 	Real inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_)
 {
-	Size num_of_sheets_that_surround_sheet_id = 0;
-	for ( Size i=1; i <= all_distinct_sheet_ids.size(); i++ ) {
+	core::Size num_of_sheets_that_surround_sheet_id = 0;
+	for ( core::Size i=1; i <= all_distinct_sheet_ids.size(); i++ ) {
 		// now I check all possible combinations
 		if ( all_distinct_sheet_ids[i] == 99999 ) { //all_strands[i].get_size() < min_res_in_strand_
 			continue;
@@ -330,7 +330,7 @@ cal_num_of_sheets_that_surround_this_sheet (
 			continue;
 		}
 
-		Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
+		core::Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
 
 		if ( num_strands_i < min_num_strands_in_sheet_ ) {
 			continue;
@@ -363,29 +363,29 @@ cal_shortest_dis_between_facing_aro_in_sw (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose const & pose,
-	utility::vector1<Size> all_distinct_sheet_ids,
-	Size min_num_strands_in_sheet_)
+	utility::vector1<core::Size> all_distinct_sheet_ids,
+	core::Size min_num_strands_in_sheet_)
 {
 	int appropriate_sheet_num = 0;
 	float min_distance_between_aro = 9999.0;
 
-	for ( Size i=1; (i <= all_distinct_sheet_ids.size()) && (appropriate_sheet_num != 2); i++ ) {
+	for ( core::Size i=1; (i <= all_distinct_sheet_ids.size()) && (appropriate_sheet_num != 2); i++ ) {
 		// now I check all possible combinations
 		if ( all_distinct_sheet_ids[i] == 99999 ) { //all_strands[i].get_size() < min_res_in_strand_
 			continue;
 		}
 
-		Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
+		core::Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
 
 		if ( num_strands_i < min_num_strands_in_sheet_ ) {
 			continue;
 		}
 		appropriate_sheet_num++;
-		for ( Size j=i+1; (j <= all_distinct_sheet_ids.size()) && (appropriate_sheet_num != 2); j++ ) {
+		for ( core::Size j=i+1; (j <= all_distinct_sheet_ids.size()) && (appropriate_sheet_num != 2); j++ ) {
 			if ( all_distinct_sheet_ids[j] == 99999 ) { //all_strands[j].get_size() < min_res_in_strand_
 				continue;
 			}
-			Size num_strands_j = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[j]); // struct_id, db_session, sheet_id
+			core::Size num_strands_j = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[j]); // struct_id, db_session, sheet_id
 
 			if ( num_strands_j < min_num_strands_in_sheet_ ) {
 				continue;
@@ -393,11 +393,11 @@ cal_shortest_dis_between_facing_aro_in_sw (
 			appropriate_sheet_num++;
 
 			if ( appropriate_sheet_num == 2 ) {
-				vector<Size> vector_of_aro_residues_in_sheet_1;
+				vector<core::Size> vector_of_aro_residues_in_sheet_1;
 				vector_of_aro_residues_in_sheet_1.clear(); // Removes all elements from the vector (which are destroyed)
 				vector_of_aro_residues_in_sheet_1 = get_aro_residues_in_this_sheet(struct_id, db_session, pose, all_distinct_sheet_ids[i]);
 
-				vector<Size> vector_of_aro_residues_in_sheet_2;
+				vector<core::Size> vector_of_aro_residues_in_sheet_2;
 				vector_of_aro_residues_in_sheet_2.clear(); // Removes all elements from the vector (which are destroyed)
 				vector_of_aro_residues_in_sheet_2 = get_aro_residues_in_this_sheet(struct_id, db_session, pose, all_distinct_sheet_ids[j]);
 
@@ -473,7 +473,7 @@ cal_shortest_dis_between_facing_aro_in_sw (
 //check_canonicalness_of_LR
 string
 check_canonicalness_of_LR(
-	Size loop_size,
+	core::Size loop_size,
 	bool intra_sheet,
 	string const & LR)
 {
@@ -509,7 +509,7 @@ check_canonicalness_of_LR(
 //check_canonicalness_of_PA
 string
 check_canonicalness_of_PA(
-	Size loop_size,
+	core::Size loop_size,
 	bool intra_sheet,
 	string const & PA_by_preceding_E,
 	string const & PA_by_following_E,
@@ -619,7 +619,7 @@ check_canonicalness_of_PA(
 //check_canonicalness_of_parallel_EE
 string
 check_canonicalness_of_parallel_EE(
-	Size loop_size,
+	core::Size loop_size,
 	bool intra_sheet,
 	string const & parallel_EE)
 {
@@ -666,12 +666,12 @@ check_canonicalness_of_parallel_EE(
 string
 check_heading_direction( // exclusively between preceding E and following E
 	Pose & dssp_pose,
-	Size residue_begin,
-	Size residue_end,
+	core::Size residue_begin,
+	core::Size residue_end,
 	string const & check_N_to_C_direction_by_)
 {
-	Size preceding_E = residue_begin-1;
-	Size following_E = residue_end+1;
+	core::Size preceding_E = residue_begin-1;
+	core::Size following_E = residue_end+1;
 
 	xyzVector<Real> vector_v = dssp_pose.xyz(NamedAtomID("CA", following_E)) - dssp_pose.xyz(NamedAtomID("CA", preceding_E));
 
@@ -743,11 +743,11 @@ check_helix_existence(
 string
 check_LR ( // check L/R chirality of sidechain
 	Pose & dssp_pose,
-	Size residue_begin,
-	Size residue_end)
+	core::Size residue_begin,
+	core::Size residue_end)
 {
-	Size preceding_E = residue_begin-1;
-	Size following_E = residue_end+1;
+	core::Size preceding_E = residue_begin-1;
+	core::Size following_E = residue_end+1;
 
 	xyzVector<Real> vector_u = dssp_pose.xyz(NamedAtomID("C", preceding_E)) - dssp_pose.xyz(NamedAtomID("N", preceding_E));
 	xyzVector<Real> vector_v = dssp_pose.xyz(NamedAtomID("CA", following_E)) - dssp_pose.xyz(NamedAtomID("CA", preceding_E));
@@ -787,11 +787,11 @@ check_LR ( // check L/R chirality of sidechain
 pair<string, string>
 check_PA( // parallel & anti-parallel
 	Pose & dssp_pose,
-	Size residue_begin,
-	Size residue_end)
+	core::Size residue_begin,
+	core::Size residue_end)
 {
-	Size preceding_E = residue_begin-1;
-	Size following_E = residue_end+1;
+	core::Size preceding_E = residue_begin-1;
+	core::Size following_E = residue_end+1;
 
 	xyzVector<Real> preceding_E_vec_a_b; //initial
 	xyzVector<Real> following_E_vec_a_b; //initial
@@ -839,10 +839,10 @@ check_strand_too_closeness(
 	// check anti-parallel sheet distance
 	// first, check the shortest distance between the two strand_pairs
 	// seeing distances between 'CA' of strand "i" and 'CA' of strand "j"
-	for ( Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
-		Size i_resnum = strand_i.get_start()+strand_i_res;
-		for ( Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
-			Size j_resnum = strand_j.get_start()+strand_j_res;
+	for ( core::Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
+		core::Size i_resnum = strand_i.get_start()+strand_i_res;
+		for ( core::Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
+			core::Size j_resnum = strand_j.get_start()+strand_j_res;
 			Real dis_CA_CA = pose.residue(i_resnum).atom("CA").xyz().distance(pose.residue(j_resnum).atom("CA").xyz());
 			if ( dis_CA_CA < min_inter_sheet_dis_CA_CA_ ) { // these two pair of strands are too close
 				return true;
@@ -864,19 +864,19 @@ check_sw_by_dis(
 	Real max_sheet_dis_
 )
 {
-	Size i_resnum_1 = 0; // just initial temporary assignment
-	Size j_resnum_1 = 0;
+	core::Size i_resnum_1 = 0; // just initial temporary assignment
+	core::Size j_resnum_1 = 0;
 
-	Size i_resnum_2 = 0;
-	Size j_resnum_2 = 0;
+	core::Size i_resnum_2 = 0;
+	core::Size j_resnum_2 = 0;
 
-	Size i_resnum_3 = 0;
-	Size j_resnum_3 = 0;
+	core::Size i_resnum_3 = 0;
+	core::Size j_resnum_3 = 0;
 
-	for ( Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
-		Size i_resnum = strand_i.get_start()+strand_i_res;
-		for ( Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
-			Size j_resnum = strand_j.get_start()+strand_j_res;
+	for ( core::Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
+		core::Size i_resnum = strand_i.get_start()+strand_i_res;
+		for ( core::Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
+			core::Size j_resnum = strand_j.get_start()+strand_j_res;
 
 			if ( antiparallel ) {
 				i_resnum_1 = i_resnum+1;
@@ -919,8 +919,8 @@ check_sw_by_dis(
 			}
 
 			return avg_dis_CA_CA;
-		} //for(Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++)
-	} //for(Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++)
+		} //for(core::Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++)
+	} //for(core::Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++)
 	return -99; // these sheets are not sandwich with these strands
 } //check_sw_by_dis
 
@@ -930,8 +930,8 @@ bool
 check_whether_hairpin_connects_short_strand(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size start_res,
-	Size next_start_res)
+	core::Size start_res,
+	core::Size next_start_res)
 {
 	string select_string =
 		"SELECT\n"
@@ -947,8 +947,8 @@ check_whether_hairpin_connects_short_strand(
 	select_statement.bind(2, start_res);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	//Size component_size_1;
-	Size component_size_1=0; // http://benchmark.graylab.jhu.edu/sub_test/17264163 shows that component_size_1 was not initialized
+	//core::Size component_size_1;
+	core::Size component_size_1=0; // http://benchmark.graylab.jhu.edu/sub_test/17264163 shows that component_size_1 was not initialized
 	while ( res.next() )
 			{
 		res >> component_size_1;
@@ -972,8 +972,8 @@ check_whether_hairpin_connects_short_strand(
 	select_statement_2.bind(2, next_start_res);
 	result res_2(basic::database::safely_read_from_database(select_statement_2));
 
-	//Size component_size_2;
-	Size component_size_2=0; // http://benchmark.graylab.jhu.edu/sub_test/17264163 shows that component_size_1 was not initialized
+	//core::Size component_size_2;
+	core::Size component_size_2=0; // http://benchmark.graylab.jhu.edu/sub_test/17264163 shows that component_size_1 was not initialized
 	while ( res_2.next() )
 			{
 		res_2 >> component_size_2;
@@ -993,8 +993,8 @@ check_whether_same_direction_strands_connect_two_sheets_or_a_loop(
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose const & pose,
-	Size start_res,
-	Size next_start_res)
+	core::Size start_res,
+	core::Size next_start_res)
 {
 	//get other terminus of start_res
 	string select_string =
@@ -1012,7 +1012,7 @@ check_whether_same_direction_strands_connect_two_sheets_or_a_loop(
 	select_statement_start_res.bind(2,start_res);
 	result res_start_res(basic::database::safely_read_from_database(select_statement_start_res));
 
-	Size other_end_of_start_res(0);
+	core::Size other_end_of_start_res(0);
 	while ( res_start_res.next() )
 			{
 		res_start_res >> other_end_of_start_res;
@@ -1034,15 +1034,15 @@ check_whether_same_direction_strands_connect_two_sheets_or_a_loop(
 	select_statement.bind(2,next_start_res);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size other_end_of_next_start_res(0);
+	core::Size other_end_of_next_start_res(0);
 	while ( res.next() )
 			{
 		res >> other_end_of_next_start_res;
 	}
 
 	/* as of 05/03/2013, I don't check size of strands, since I think that even with very short strands (like 2 residues long), it should not be more than 90 degree apart with following strand
-	Size size_of_preceding_strand = start_res - other_end_of_start_res + 1;
-	Size size_of_following_strand = other_end_of_next_start_res - next_start_res + 1;
+	core::Size size_of_preceding_strand = start_res - other_end_of_start_res + 1;
+	core::Size size_of_following_strand = other_end_of_next_start_res - next_start_res + 1;
 
 	if (size_of_preceding_strand < 3 || size_of_following_strand < 3)
 	{
@@ -1128,7 +1128,7 @@ check_whether_sheets_are_connected_with_near_bb_atoms(
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	Size sw_can_by_sh_id,
+	core::Size sw_can_by_sh_id,
 	Real min_N_O_dis_between_two_sheets_,
 	Real min_N_H_O_angle_between_two_sheets_)
 {
@@ -1147,10 +1147,10 @@ check_whether_sheets_are_connected_with_near_bb_atoms(
 	select_statement.bind(2,sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	utility::vector1<Size> sheet_id_vec;
+	utility::vector1<core::Size> sheet_id_vec;
 	while ( res.next() )
 			{
-		Size sheet_id;
+		core::Size sheet_id;
 		res >> sheet_id;
 		sheet_id_vec.push_back(sheet_id);
 	}
@@ -1161,12 +1161,12 @@ check_whether_sheets_are_connected_with_near_bb_atoms(
 	utility::vector1<SandwichFragment> all_strands_in_sheet_j = get_all_strands_in_sheet_i(struct_id, db_session, sheet_id_vec[2]);
 
 	// <begin> get list of residues in sheet_i, sheet_j
-	utility::vector1<Size> res_num_in_sheet_i = get_list_of_residues_in_sheet_i(all_strands_in_sheet_i);
-	utility::vector1<Size> res_num_in_sheet_j = get_list_of_residues_in_sheet_i(all_strands_in_sheet_j);
+	utility::vector1<core::Size> res_num_in_sheet_i = get_list_of_residues_in_sheet_i(all_strands_in_sheet_i);
+	utility::vector1<core::Size> res_num_in_sheet_j = get_list_of_residues_in_sheet_i(all_strands_in_sheet_j);
 	// <end> get list of residues in sheet_i, sheet_j
 
-	for ( Size i=1; i<=res_num_in_sheet_i.size(); i++ ) {
-		for ( Size j=1; j<=res_num_in_sheet_j.size(); j++ ) {
+	for ( core::Size i=1; i<=res_num_in_sheet_i.size(); i++ ) {
+		for ( core::Size j=1; j<=res_num_in_sheet_j.size(); j++ ) {
 			Real distance_1 = dssp_pose.residue(res_num_in_sheet_i[i]).atom("N").xyz().distance(dssp_pose.residue(res_num_in_sheet_j[j]).atom("O").xyz());
 			Real angle_1 = 0; // just initial or angle for PRO involving case
 			if ( dssp_pose.residue_type(res_num_in_sheet_i[i]).name3() != "PRO" ) {
@@ -1200,7 +1200,7 @@ bool
 check_whether_sw_by_sh_id_still_alive(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -1231,7 +1231,7 @@ check_whether_sw_is_not_connected_with_continuous_atoms(
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	Size sw_can_by_sh_id){
+	core::Size sw_can_by_sh_id){
 	// <begin> get starting_res_num/ending_res_num
 	string select_string =
 		"SELECT\n"
@@ -1248,14 +1248,14 @@ check_whether_sw_is_not_connected_with_continuous_atoms(
 
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size starting_res_num(0), ending_res_num(0);
+	core::Size starting_res_num(0), ending_res_num(0);
 	while ( res.next() )
 			{
 		res >> starting_res_num >> ending_res_num;
 	}
 	// <end> get starting_res_num/ending_res_num
 
-	for ( Size ii=starting_res_num; ii<ending_res_num; ii++ ) {
+	for ( core::Size ii=starting_res_num; ii<ending_res_num; ii++ ) {
 		Real distance = dssp_pose.residue(ii).atom("CA").xyz().distance(dssp_pose.residue(ii+1).atom("CA").xyz());
 		if ( distance > 5.0 ) {
 			return "multimer_suspected";
@@ -1276,7 +1276,7 @@ check_whether_this_pdb_should_be_excluded (
 
 	std::vector<string> to_be_excluded (args, args+4);
 	for ( const auto & i : to_be_excluded ) {
-		Size found = tag.find(i);
+		core::Size found = tag.find(i);
 		//TR << "found: " << found << endl;
 		if ( found != string::npos ) { // referred http://www.cplusplus.com/reference/string/string/find/
 			return true; // this pdb should be excluded, so don't use this pdb
@@ -1291,9 +1291,9 @@ bool
 check_whether_this_sheet_is_too_short(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size sheet_i){
+	core::Size sheet_i){
 	utility::vector1<SandwichFragment> strands_from_sheet_i = get_full_strands_from_sheet(struct_id, db_session, sheet_i);
-	for ( Size i=1; i<=strands_from_sheet_i.size(); ++i ) {
+	for ( core::Size i=1; i<=strands_from_sheet_i.size(); ++i ) {
 		if ( strands_from_sheet_i[i].get_size() > 2 ) {
 			return false; // no, this sheet is not too short
 		}
@@ -1308,7 +1308,7 @@ bool
 check_whether_strand_i_is_in_sheet(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size segment_id)
+	core::Size segment_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -1334,28 +1334,28 @@ check_whether_strand_i_is_in_sheet(
 
 
 //count_AA_w_direction
-vector<Size>
+vector<core::Size>
 count_AA_w_direction(
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose const & pose,
 	Pose const & pose_w_center_000,
-	Size sw_can_by_sh_id,
-	Size sheet_id,
-	Size residue_begin,
-	Size residue_end)
+	core::Size sw_can_by_sh_id,
+	core::Size sheet_id,
+	core::Size residue_begin,
+	core::Size residue_end)
 {
 	// TR << "count_AA_w_direction" << endl;
 
 	// time_t start_time = time(NULL);
 
-	Size arr[] = {0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0};
-	vector<Size> AA_w_direction (arr, arr+sizeof(arr)/sizeof(arr[0]));
+	core::Size arr[] = {0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0};
+	vector<core::Size> AA_w_direction (arr, arr+sizeof(arr)/sizeof(arr[0]));
 
 	//  TR << "residue_begin: " << residue_begin << endl;
 	//  TR << "residue_end: " << residue_end << endl;
 
-	for ( Size ii = residue_begin; ii <= residue_end; ii++ ) {
+	for ( core::Size ii = residue_begin; ii <= residue_end; ii++ ) {
 		//   TR << "resnum: " << ii << endl;
 
 		string heading = determine_core_heading_surface_heading_by_distance(pose_w_center_000, ii);
@@ -1445,16 +1445,16 @@ count_AA_w_direction(
 
 
 //count_AA_wo_direction
-vector<Size>
+vector<core::Size>
 count_AA_wo_direction(
 	Pose const & pose,
-	Size residue_begin,
-	Size residue_end)
+	core::Size residue_begin,
+	core::Size residue_end)
 {
 	// count AA without direction
-	Size arr[] = {0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0};
-	vector<Size> AA_wo_direction (arr, arr+sizeof(arr)/sizeof(arr[0]));
-	for ( Size ii = residue_begin; ii <= residue_end; ii++ ) {
+	core::Size arr[] = {0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0};
+	vector<core::Size> AA_wo_direction (arr, arr+sizeof(arr)/sizeof(arr[0]));
+	for ( core::Size ii = residue_begin; ii <= residue_end; ii++ ) {
 		if ( pose.residue_type(ii).name3() == "ARG" )  {   AA_wo_direction[0] = AA_wo_direction[0] + 1;  }
 		else if ( pose.residue_type(ii).name3() == "HIS" )  { AA_wo_direction[1] = AA_wo_direction[1] + 1;  }
 		else if ( pose.residue_type(ii).name3() == "LYS" )  { AA_wo_direction[2] = AA_wo_direction[2] + 1;  }
@@ -1484,7 +1484,7 @@ count_AA_wo_direction(
 string
 determine_core_heading_surface_heading_by_distance(
 	Pose const & pose_w_center_000,
-	Size ii // residue_number
+	core::Size ii // residue_number
 )
 {
 	string heading;
@@ -1531,11 +1531,11 @@ determine_heading_direction_by_vector
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
-	Size sw_can_by_sh_id,
-	Size sheet_id,
-	Size residue_begin,
-	Size residue_end,
-	Size ii // residue_number
+	core::Size sw_can_by_sh_id,
+	core::Size sheet_id,
+	core::Size residue_begin,
+	core::Size residue_end,
+	core::Size ii // residue_number
 )
 {
 	string heading;
@@ -1550,15 +1550,15 @@ determine_heading_direction_by_vector
 	}
 
 	Real to_be_rounded_ii = (residue_begin + residue_end)/(2.0);
-	Size cen_resnum_ii = round_to_Size(to_be_rounded_ii);
+	core::Size cen_resnum_ii = round_to_Size(to_be_rounded_ii);
 
-	vector<Size> vector_of_cen_residues;
+	vector<core::Size> vector_of_cen_residues;
 	vector_of_cen_residues.clear(); // Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
 	vector_of_cen_residues = get_central_residues_in_other_sheet(struct_id, db_session, sw_can_by_sh_id, sheet_id);
 
 	Real shortest_dis_between_AA_and_other_sheet = 9999;
-	Size jj_w_shorest_dis = 0 ; // initial value=0 just to avoid build warning at rosetta trunk
-	for ( Size jj = 0; jj <vector_of_cen_residues.size(); jj++ ) {
+	core::Size jj_w_shorest_dis = 0 ; // initial value=0 just to avoid build warning at rosetta trunk
+	for ( core::Size jj = 0; jj <vector_of_cen_residues.size(); jj++ ) {
 		Real distance = pose.residue(cen_resnum_ii).atom("CA").xyz().distance(pose.residue(vector_of_cen_residues[jj]).atom("CA").xyz());
 		//
 		if ( distance < shortest_dis_between_AA_and_other_sheet ) {
@@ -1613,7 +1613,7 @@ get_current_strands_in_sheet(
 	utility::vector1<SandwichFragment> all_strands;
 	while ( res.next() )
 			{
-		Size sheet_id, segment_id, residue_begin, residue_end;
+		core::Size sheet_id, segment_id, residue_begin, residue_end;
 		res >> sheet_id >> segment_id >> residue_begin >> residue_end;
 		all_strands.push_back(SandwichFragment(sheet_id, residue_begin, residue_end));
 	}
@@ -1621,7 +1621,7 @@ get_current_strands_in_sheet(
 } //get_current_strands_in_sheet
 
 //get_distinct_sheet_id_from_sheet_table
-utility::vector1<Size>
+utility::vector1<core::Size>
 get_distinct_sheet_id_from_sheet_table(
 	StructureID struct_id,
 	sessionOP db_session)
@@ -1638,10 +1638,10 @@ get_distinct_sheet_id_from_sheet_table(
 	select_statement.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	utility::vector1<Size> all_distinct_sheet_ids;
+	utility::vector1<core::Size> all_distinct_sheet_ids;
 	while ( res.next() )
 			{
-		Size distinct_sheet_id;
+		core::Size distinct_sheet_id;
 		res >> distinct_sheet_id;
 		all_distinct_sheet_ids.push_back(distinct_sheet_id);
 	}
@@ -1673,7 +1673,7 @@ get_full_strands(
 	utility::vector1<SandwichFragment> all_strands;
 	while ( res.next() )
 			{
-		Size strand_id,     residue_begin,   residue_end;
+		core::Size strand_id,     residue_begin,   residue_end;
 		res >> strand_id >> residue_begin >> residue_end;
 		all_strands.push_back(SandwichFragment(residue_begin, residue_end));
 	}
@@ -1694,10 +1694,10 @@ find_sheet(
 	bool care_smaller_sheet
 ){
 	// seeing distances between 'O' of strand "i" and 'N' of strand "j"
-	for ( Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
-		Size i_resnum = strand_i.get_start()+strand_i_res;
-		for ( Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
-			Size j_resnum = strand_j.get_start()+strand_j_res;
+	for ( core::Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
+		core::Size i_resnum = strand_i.get_start()+strand_i_res;
+		for ( core::Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
+			core::Size j_resnum = strand_j.get_start()+strand_j_res;
 
 			if ( TR.Debug.visible() ) {
 				TR.Debug << std::endl << "i_resnum: " << i_resnum << std::endl;
@@ -1844,8 +1844,8 @@ find_sheet(
 					return 1; //  may have a kinkness or not, but these strands can be part of one sheet
 				}
 			} // strand_i.get_size() >= 3 && strand_j.get_size() >= 3)
-		} // for(Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++)
-	} // for(Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++)
+		} // for(core::Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++)
+	} // for(core::Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++)
 
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "these strands cannot be in one sheet " << std::endl;
@@ -1853,11 +1853,11 @@ find_sheet(
 	return 0;
 } //find_sheet
 
-std::pair< vector<Size >, vector<Size > >
+std::pair< vector<core::Size >, vector<core::Size > >
 query_begin_end(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sheet_id) {
+	core::Size sheet_id) {
 
 	string select_string =
 		"SELECT\n"
@@ -1876,10 +1876,10 @@ query_begin_end(
 	select_statement.bind(2,sheet_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	vector<Size> vector_of_residue_begin;
+	vector<core::Size> vector_of_residue_begin;
 	vector_of_residue_begin.clear(); // Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
 	while ( res.next() ) {
-		Size residue_begin;
+		core::Size residue_begin;
 		res >> residue_begin;
 		vector_of_residue_begin.push_back(residue_begin);
 	}
@@ -1901,33 +1901,33 @@ query_begin_end(
 	select_statement_2.bind(2,sheet_id);
 	result result_end(basic::database::safely_read_from_database(select_statement_2));
 
-	vector<Size> vector_of_residue_end;
+	vector<core::Size> vector_of_residue_end;
 	vector_of_residue_end.clear(); // Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
 	while ( result_end.next() ) {
-		Size residue_end;
+		core::Size residue_end;
 		result_end >> residue_end;
 		vector_of_residue_end.push_back(residue_end);
 	}
 
-	std::pair< vector<Size>, vector<Size > > ret;
+	std::pair< vector<core::Size>, vector<core::Size > > ret;
 	ret.first  = vector_of_residue_begin;
 	ret.second = vector_of_residue_end;
 	return ret;//std::make_pair( vector_of_residue_begin, vector_of_residue_end );
 }
 
 //get_all_residues_in_this_sheet
-vector<Size>
+vector<core::Size>
 get_all_residues_in_this_sheet(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sheet_id){
-	std::pair< vector<Size>, vector<Size> > pair = query_begin_end( struct_id, db_session, sheet_id );
-	vector<Size> vector_of_residue_begin = pair.first;
-	vector<Size> vector_of_residue_end = pair.second;
+	core::Size sheet_id){
+	std::pair< vector<core::Size>, vector<core::Size> > pair = query_begin_end( struct_id, db_session, sheet_id );
+	vector<core::Size> vector_of_residue_begin = pair.first;
+	vector<core::Size> vector_of_residue_end = pair.second;
 
-	vector<Size> vector_of_all_residues;
-	for ( Size i=0; i<vector_of_residue_begin.size(); i++ ) {
-		for ( Size all_resnum_in_this_sheet = vector_of_residue_begin[i]; all_resnum_in_this_sheet <= vector_of_residue_end[i]; all_resnum_in_this_sheet++ ) {
+	vector<core::Size> vector_of_all_residues;
+	for ( core::Size i=0; i<vector_of_residue_begin.size(); i++ ) {
+		for ( core::Size all_resnum_in_this_sheet = vector_of_residue_begin[i]; all_resnum_in_this_sheet <= vector_of_residue_end[i]; all_resnum_in_this_sheet++ ) {
 			vector_of_all_residues.push_back(all_resnum_in_this_sheet);
 		}
 	}
@@ -1940,7 +1940,7 @@ utility::vector1<SandwichFragment>
 get_all_strands_in_sheet_i(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sheet_id)
+	core::Size sheet_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -1966,7 +1966,7 @@ get_all_strands_in_sheet_i(
 	utility::vector1<SandwichFragment> all_strands;
 	while ( res.next() )
 			{
-		Size sheet_id, segment_id, residue_begin, residue_end;
+		core::Size sheet_id, segment_id, residue_begin, residue_end;
 		res >> sheet_id >> segment_id >> residue_begin >> residue_end;
 		all_strands.push_back(SandwichFragment(sheet_id, segment_id, residue_begin, residue_end));
 	}
@@ -1975,12 +1975,12 @@ get_all_strands_in_sheet_i(
 
 
 //get_aro_residues_in_this_sheet
-vector<Size>
+vector<core::Size>
 get_aro_residues_in_this_sheet(
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose const & pose,
-	Size sheet_id)
+	core::Size sheet_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -1999,11 +1999,11 @@ get_aro_residues_in_this_sheet(
 	select_statement.bind(2,sheet_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	vector<Size> vector_of_residue_begin;
+	vector<core::Size> vector_of_residue_begin;
 	vector_of_residue_begin.clear(); // Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
 	while ( res.next() )
 			{
-		Size residue_begin;
+		core::Size residue_begin;
 		res >> residue_begin;
 		vector_of_residue_begin.push_back(residue_begin);
 	}
@@ -2025,18 +2025,18 @@ get_aro_residues_in_this_sheet(
 	select_statement_2.bind(2,sheet_id);
 	result result_end(basic::database::safely_read_from_database(select_statement_2));
 
-	vector<Size> vector_of_residue_end;
+	vector<core::Size> vector_of_residue_end;
 	vector_of_residue_end.clear(); // Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
 	while ( result_end.next() )
 			{
-		Size residue_end;
+		core::Size residue_end;
 		result_end >> residue_end;
 		vector_of_residue_end.push_back(residue_end);
 	}
 
-	vector<Size> vector_of_aro_residues;
-	for ( Size i=0; i<vector_of_residue_begin.size(); i++ ) {
-		for ( Size res = vector_of_residue_begin[i]; res <= vector_of_residue_end[i]; res++ ) {
+	vector<core::Size> vector_of_aro_residues;
+	for ( core::Size i=0; i<vector_of_residue_begin.size(); i++ ) {
+		for ( core::Size res = vector_of_residue_begin[i]; res <= vector_of_residue_end[i]; res++ ) {
 			if ( (pose.residue_type(res).name3() == "PHE") || (pose.residue_type(res).name3() == "TRP") || (pose.residue_type(res).name3() == "TYR") ) {
 				vector_of_aro_residues.push_back(res);
 			}
@@ -2050,14 +2050,14 @@ get_aro_residues_in_this_sheet(
 Real
 get_avg_dis_CA_CA(
 	Pose const & pose,
-	Size i_resnum,
-	Size i_resnum_1,
-	Size i_resnum_2,
-	Size i_resnum_3,
-	Size j_resnum,
-	Size j_resnum_1,
-	Size j_resnum_2,
-	Size j_resnum_3,
+	core::Size i_resnum,
+	core::Size i_resnum_1,
+	core::Size i_resnum_2,
+	core::Size i_resnum_3,
+	core::Size j_resnum,
+	core::Size j_resnum_1,
+	core::Size j_resnum_2,
+	core::Size j_resnum_3,
 	Real min_sheet_dis_,
 	Real max_sheet_dis_)
 {
@@ -2105,11 +2105,11 @@ get_avg_dis_strands(
 	}
 
 	Real sum_dis_CA_CA = 0;
-	for ( Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
-		Size i_resnum = strand_i.get_start()+strand_i_res;
+	for ( core::Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
+		core::Size i_resnum = strand_i.get_start()+strand_i_res;
 		// <tip> I don't need to worry about the possibility of having different distance results depending on directionality of strands since I calculate all possible combinatorial distances (--> confirmed by experiment!)
-		for ( Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
-			Size j_resnum = strand_j.get_start()+strand_j_res;
+		for ( core::Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
+			core::Size j_resnum = strand_j.get_start()+strand_j_res;
 			Real dis_CA_CA = pose.residue(i_resnum).atom("CA").xyz().distance(pose.residue(j_resnum).atom("CA").xyz());
 			sum_dis_CA_CA = sum_dis_CA_CA + dis_CA_CA;
 		}
@@ -2120,12 +2120,12 @@ get_avg_dis_strands(
 
 
 //get_central_residues_in_other_sheet
-vector<Size>
+vector<core::Size>
 get_central_residues_in_other_sheet(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id,
-	Size sheet_id)
+	core::Size sw_can_by_sh_id,
+	core::Size sheet_id)
 {
 	// <begin> get other sheet_id in same sw_can_by_sh_id
 	string select_string =
@@ -2144,11 +2144,11 @@ get_central_residues_in_other_sheet(
 	select_statement.bind(3,sheet_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	vector<Size> other_sheet_id;
+	vector<core::Size> other_sheet_id;
 	other_sheet_id.clear(); // Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
 	while ( res.next() )
 			{
-		Size sheet_id;
+		core::Size sheet_id;
 		res >> sheet_id;
 		other_sheet_id.push_back(sheet_id);
 	}
@@ -2173,11 +2173,11 @@ get_central_residues_in_other_sheet(
 	select_statement_1.bind(2,other_sheet_id[other_sheet_id.size()-1]);
 	result res_begin(basic::database::safely_read_from_database(select_statement_1));
 
-	vector<Size> vector_of_residue_begin;
+	vector<core::Size> vector_of_residue_begin;
 	vector_of_residue_begin.clear(); // Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
 	while ( res_begin.next() )
 			{
-		Size residue_begin;
+		core::Size residue_begin;
 		res_begin >> residue_begin;
 		vector_of_residue_begin.push_back(residue_begin);
 	}
@@ -2202,11 +2202,11 @@ get_central_residues_in_other_sheet(
 	select_statement_2.bind(2,other_sheet_id[other_sheet_id.size()-1]);
 	result result_end(basic::database::safely_read_from_database(select_statement_2));
 
-	vector<Size> vector_of_residue_end;
+	vector<core::Size> vector_of_residue_end;
 	vector_of_residue_end.clear(); // Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
 	while ( result_end.next() )
 			{
-		Size residue_end;
+		core::Size residue_end;
 		result_end >> residue_end;
 		vector_of_residue_end.push_back(residue_end);
 	}
@@ -2214,10 +2214,10 @@ get_central_residues_in_other_sheet(
 
 
 	// <begin> get central residues
-	vector<Size> vector_of_cen_residues;
-	for ( Size i=0; i<vector_of_residue_begin.size(); i++ ) {
+	vector<core::Size> vector_of_cen_residues;
+	for ( core::Size i=0; i<vector_of_residue_begin.size(); i++ ) {
 		Real to_be_rounded_i = (vector_of_residue_begin[i] + vector_of_residue_end[i])/(2.0);
-		Size cen_resnum_i = round_to_Size(to_be_rounded_i);
+		core::Size cen_resnum_i = round_to_Size(to_be_rounded_i);
 
 		vector_of_cen_residues.push_back(cen_resnum_i);
 	}
@@ -2227,20 +2227,20 @@ get_central_residues_in_other_sheet(
 
 
 //get_central_residues_in_this_sheet
-vector<Size>
+vector<core::Size>
 get_central_residues_in_this_sheet(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sheet_id)
+	core::Size sheet_id)
 {
-	std::pair< vector<Size>, vector<Size> > pair = query_begin_end( struct_id, db_session, sheet_id );
-	vector< Size > vector_of_residue_begin = pair.first;
-	vector< Size > vector_of_residue_end = pair.second;
+	std::pair< vector<core::Size>, vector<core::Size> > pair = query_begin_end( struct_id, db_session, sheet_id );
+	vector< core::Size > vector_of_residue_begin = pair.first;
+	vector< core::Size > vector_of_residue_end = pair.second;
 
-	vector<Size> vector_of_cen_residues;
-	for ( Size i=0; i<vector_of_residue_begin.size(); i++ ) {
+	vector<core::Size> vector_of_cen_residues;
+	for ( core::Size i=0; i<vector_of_residue_begin.size(); i++ ) {
 		Real to_be_rounded_i = (vector_of_residue_begin[i] + vector_of_residue_end[i])/(2.0);
-		Size cen_resnum_i = round_to_Size(to_be_rounded_i);
+		core::Size cen_resnum_i = round_to_Size(to_be_rounded_i);
 
 		vector_of_cen_residues.push_back(cen_resnum_i);
 	}
@@ -2249,15 +2249,15 @@ get_central_residues_in_this_sheet(
 
 
 //get_chain_B_resNum
-utility::vector1<Size>
+utility::vector1<core::Size>
 get_chain_B_resNum(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	// <begin> get first sheet_id
-	utility::vector1<Size> vec_sheet_id =  get_vec_distinct_sheet_id(struct_id, db_session, sw_can_by_sh_id);
-	Size first_sh_id = vec_sheet_id[1];
+	utility::vector1<core::Size> vec_sheet_id =  get_vec_distinct_sheet_id(struct_id, db_session, sw_can_by_sh_id);
+	core::Size first_sh_id = vec_sheet_id[1];
 	// <end> get first sheet_id
 
 	string select_string =
@@ -2279,10 +2279,10 @@ get_chain_B_resNum(
 	select_statement.bind(3, struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	utility::vector1<Size> vec_chain_B_resNum;
+	utility::vector1<core::Size> vec_chain_B_resNum;
 	while ( res.next() )
 			{
-		Size chain_B_resNum;
+		core::Size chain_B_resNum;
 		res >> chain_B_resNum;
 		vec_chain_B_resNum.push_back(chain_B_resNum);
 	}
@@ -2302,11 +2302,11 @@ get_closest_distance_between_strands(
 	}
 
 	Real closest_dis_CA_CA = 9999;
-	for ( Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
-		Size i_resnum = strand_i.get_start()+strand_i_res;
+	for ( core::Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
+		core::Size i_resnum = strand_i.get_start()+strand_i_res;
 		// <tip> I don't need to worry about the possibility of having different distance results depending on directionality of strands since I calculate all possible combinatorial distances (--> confirmed by experiment!)
-		for ( Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
-			Size j_resnum = strand_j.get_start()+strand_j_res;
+		for ( core::Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
+			core::Size j_resnum = strand_j.get_start()+strand_j_res;
 			Real dis_CA_CA = pose.residue(i_resnum).atom("CA").xyz().distance(pose.residue(j_resnum).atom("CA").xyz());
 			if ( closest_dis_CA_CA > dis_CA_CA ) {
 				closest_dis_CA_CA = dis_CA_CA;
@@ -2324,7 +2324,7 @@ get_central_residues_in_each_of_two_edge_strands(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
-	Size sheet_i,
+	core::Size sheet_i,
 	Real min_CA_CA_dis_,
 	Real max_CA_CA_dis_)
 {
@@ -2332,7 +2332,7 @@ get_central_residues_in_each_of_two_edge_strands(
 
 	// get central residue numbers in edge strands
 	vector<int> vector_of_central_residues_in_sheet_i;
-	for ( Size i=1; i<=strands_from_sheet_i.size(); ++i ) {
+	for ( core::Size i=1; i<=strands_from_sheet_i.size(); ++i ) {
 		if ( strands_from_sheet_i[i].get_size() <= 2 ) {
 			continue;
 		}
@@ -2351,10 +2351,10 @@ get_central_residues_in_each_of_two_edge_strands(
 		}// I ignore a unrepresentative strand
 
 		Real to_be_rounded_i = (strands_from_sheet_i[i].get_start() + strands_from_sheet_i[i].get_end())/(2.0);
-		Size cen_resnum_i = round_to_Size(to_be_rounded_i);
+		core::Size cen_resnum_i = round_to_Size(to_be_rounded_i);
 		vector_of_central_residues_in_sheet_i.push_back(cen_resnum_i);
 	}
-	Size array_size = vector_of_central_residues_in_sheet_i.size();
+	core::Size array_size = vector_of_central_residues_in_sheet_i.size();
 
 	if ( array_size == 0 ) { // this sheet maybe beta-barrel like sheet_id = 1 in 1N8O
 		return std::make_pair(-99, -99);
@@ -2362,9 +2362,9 @@ get_central_residues_in_each_of_two_edge_strands(
 
 	// <begin> get sum of distances
 	vector<Real> sum_dis_array_i;
-	for ( Size i=0; i<=array_size-1; ++i ) {
+	for ( core::Size i=0; i<=array_size-1; ++i ) {
 		Real sum_dis_i_and_j = 0;
-		for ( Size j=0; (j<=array_size-1); ++j ) {
+		for ( core::Size j=0; (j<=array_size-1); ++j ) {
 			if ( i == j ) {
 				continue;
 			}
@@ -2380,8 +2380,8 @@ get_central_residues_in_each_of_two_edge_strands(
 
 	// terminal central residue 1
 	Real max_i_1 = -99;
-	Size index_terminal_cen_res_pos_1 = 0;
-	for ( Size i=0; i<=array_size-1; ++i ) {
+	core::Size index_terminal_cen_res_pos_1 = 0;
+	for ( core::Size i=0; i<=array_size-1; ++i ) {
 		if ( max_i_1 < sum_dis_array_i[i] ) {
 			max_i_1 = sum_dis_array_i[i];
 			index_terminal_cen_res_pos_1 = i;
@@ -2390,8 +2390,8 @@ get_central_residues_in_each_of_two_edge_strands(
 
 	// terminal central residue 2
 	Real max_i_2 = -99;
-	Size index_terminal_cen_res_pos_2 = 0;
-	for ( Size i=0; i<=array_size-1; ++i ) {
+	core::Size index_terminal_cen_res_pos_2 = 0;
+	for ( core::Size i=0; i<=array_size-1; ++i ) {
 		if ( i == index_terminal_cen_res_pos_1 ) {
 			continue;
 		}
@@ -2409,15 +2409,15 @@ get_central_residues_in_each_of_two_edge_strands(
 
 
 // get_current_bs_id_and_closest_edge_bs_id_in_different_sheet
-pair<Size, Size>
+pair<core::Size, core::Size>
 get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
-	Size sw_can_by_sh_id,
-	Size sheet_id,
-	Size residue_begin,
-	Size residue_end)
+	core::Size sw_can_by_sh_id,
+	core::Size sheet_id,
+	core::Size residue_begin,
+	core::Size residue_end)
 {
 	// <begin> retrieve current sandwich_bs_id
 	string select_string =
@@ -2436,7 +2436,7 @@ get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 	select_statement.bind(3, residue_begin);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size current_sandwich_bs_id;
+	core::Size current_sandwich_bs_id;
 	while ( res.next() )
 			{
 		res >> current_sandwich_bs_id;
@@ -2468,7 +2468,7 @@ get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 	utility::vector1<SandwichFragment> other_edge_strands;
 	while ( res_2.next() )
 			{
-		Size residue_begin,   residue_end;
+		core::Size residue_begin,   residue_end;
 		res_2 >> residue_begin >> residue_end;
 		other_edge_strands.push_back(SandwichFragment(residue_begin, residue_end));
 	}
@@ -2478,8 +2478,8 @@ get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 	// <begin> see which other edge_strand in different sheet is closest to a current strand
 	SandwichFragment temp_strand_i(residue_begin, residue_end);
 	Real temp_shortest = 999;
-	Size residue_begin_of_nearest_strand = 0; // just initial value to avoid warning
-	for ( Size i=1; i<=other_edge_strands.size(); i++ ) {
+	core::Size residue_begin_of_nearest_strand = 0; // just initial value to avoid warning
+	for ( core::Size i=1; i<=other_edge_strands.size(); i++ ) {
 		SandwichFragment temp_strand_j(other_edge_strands[i].get_start(), other_edge_strands[i].get_end());
 		Real inter_strand_avg_dis = get_avg_dis_strands (pose, temp_strand_i, temp_strand_j);
 		if ( temp_shortest > inter_strand_avg_dis ) {
@@ -2504,7 +2504,7 @@ get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 	select_statement_3.bind(3, residue_begin_of_nearest_strand);
 	result res_3(basic::database::safely_read_from_database(select_statement_3));
 
-	Size closest_sandwich_bs_id;
+	core::Size closest_sandwich_bs_id;
 	while ( res_3.next() )
 			{
 		res_3 >> closest_sandwich_bs_id;
@@ -2519,7 +2519,7 @@ get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 
 
 //get_distinct_sw_id_from_sandwich_table
-utility::vector1<Size>
+utility::vector1<core::Size>
 get_distinct_sw_id_from_sandwich_table(
 	StructureID struct_id,
 	sessionOP db_session)
@@ -2536,10 +2536,10 @@ get_distinct_sw_id_from_sandwich_table(
 	select_statement.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	utility::vector1<Size> all_distinct_sw_ids;
+	utility::vector1<core::Size> all_distinct_sw_ids;
 	while ( res.next() )
 			{
-		Size distinct_sw_id;
+		core::Size distinct_sw_id;
 		res >> distinct_sw_id;
 		all_distinct_sw_ids.push_back(distinct_sw_id);
 	}
@@ -2577,7 +2577,7 @@ get_full_strands_from_sheet(
 	utility::vector1<SandwichFragment> all_strands;
 	while ( res.next() )
 			{
-		Size residue_begin,   residue_end;
+		core::Size residue_begin,   residue_end;
 		res >> residue_begin >> residue_end;
 		all_strands.push_back(SandwichFragment(residue_begin, residue_end));
 	}
@@ -2586,12 +2586,12 @@ get_full_strands_from_sheet(
 
 
 //get_next_starting_res_for_connecting_strands
-pair<Size, Size> //Size
+pair<core::Size, core::Size> //core::Size
 get_next_starting_res_for_connecting_strands(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id,
-	Size former_ending_res)
+	core::Size sw_can_by_sh_id,
+	core::Size former_ending_res)
 {
 	string select_string =
 		"SELECT\n"
@@ -2608,7 +2608,7 @@ get_next_starting_res_for_connecting_strands(
 	select_statement.bind(3,former_ending_res);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size next_starting_res_for_connecting_strands(0);
+	core::Size next_starting_res_for_connecting_strands(0);
 	while ( res.next() )
 			{
 		res >> next_starting_res_for_connecting_strands;
@@ -2629,7 +2629,7 @@ get_next_starting_res_for_connecting_strands(
 	select_sh_id_statement.bind(3,next_starting_res_for_connecting_strands);
 	result res_sh_id(basic::database::safely_read_from_database(select_sh_id_statement));
 
-	Size sh_id_of_next_start_res;
+	core::Size sh_id_of_next_start_res;
 	while ( res_sh_id.next() )
 			{
 		res_sh_id >> sh_id_of_next_start_res;
@@ -2656,7 +2656,7 @@ get_num_of_distinct_sheet_id(
 	select_statement.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size num_distinct_sheet_id(0);
+	core::Size num_distinct_sheet_id(0);
 	while ( res.next() )
 			{
 		res >> num_distinct_sheet_id;
@@ -2670,7 +2670,7 @@ Size
 get_num_of_sheets_that_surround_this_sheet(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sheet_id)
+	core::Size sheet_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -2686,7 +2686,7 @@ get_num_of_sheets_that_surround_this_sheet(
 	select_statement.bind(2, struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size num_of_sheets_that_surround_this_sheet(0);
+	core::Size num_of_sheets_that_surround_this_sheet(0);
 	while ( res.next() )
 			{
 		res >> num_of_sheets_that_surround_this_sheet;
@@ -2696,13 +2696,13 @@ get_num_of_sheets_that_surround_this_sheet(
 
 
 // get_list_of_residues_in_sheet_i
-utility::vector1<Size>
+utility::vector1<core::Size>
 get_list_of_residues_in_sheet_i(
 	utility::vector1<SandwichFragment> all_strands_in_sheet_i)
 {
-	utility::vector1<Size> list_of_residues_in_sheet_i;
-	for ( Size i=1; i<=all_strands_in_sheet_i.size(); i++ ) {
-		for ( Size j=all_strands_in_sheet_i[i].get_start(); j<=all_strands_in_sheet_i[i].get_end(); j++ ) {
+	utility::vector1<core::Size> list_of_residues_in_sheet_i;
+	for ( core::Size i=1; i<=all_strands_in_sheet_i.size(); i++ ) {
+		for ( core::Size j=all_strands_in_sheet_i[i].get_start(); j<=all_strands_in_sheet_i[i].get_end(); j++ ) {
 			list_of_residues_in_sheet_i.push_back(j);
 		}
 	}
@@ -2728,7 +2728,7 @@ get_max_sheet_id(
 	select_statement.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size max_sheet_id(0);
+	core::Size max_sheet_id(0);
 	while ( res.next() )
 			{
 		res >> max_sheet_id;
@@ -2741,7 +2741,7 @@ Size
 get_num_strands_in_this_sheet(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sheet_id)
+	core::Size sheet_id)
 {
 	//  TR << "get_num_strands_in_this_sheet" << endl;
 	// time_t start_time = time(NULL);
@@ -2759,7 +2759,7 @@ get_num_strands_in_this_sheet(
 	select_statement.bind(2,sheet_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size num_strands(0);
+	core::Size num_strands(0);
 	while ( res.next() )
 			{
 		res >> num_strands;
@@ -2775,7 +2775,7 @@ string
 get_sheet_antiparallel_info(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sheet_id)
+	core::Size sheet_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -2805,7 +2805,7 @@ Size
 get_segment_id(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size all_strands_index)
+	core::Size all_strands_index)
 {
 	string select_string =
 		"SELECT\t\n"
@@ -2820,7 +2820,7 @@ get_segment_id(
 	select_statement.bind(1,struct_id);
 	select_statement.bind(2,all_strands_index);
 	result res(basic::database::safely_read_from_database(select_statement));
-	Size segment_id(0);
+	core::Size segment_id(0);
 	while ( res.next() )
 			{
 		res >> segment_id;
@@ -2835,7 +2835,7 @@ get_shortest_among_4_vals(
 	const Real arr_dis_inter_sheet[])
 {
 	Real temp_shortest_dis = 9999;
-	for ( Size i=0; i<=3; ++i ) {
+	for ( core::Size i=0; i<=3; ++i ) {
 		if ( temp_shortest_dis > arr_dis_inter_sheet[i] ) {
 			temp_shortest_dis = arr_dis_inter_sheet[i];
 		}
@@ -2849,7 +2849,7 @@ Size
 get_size_sandwich_PK_id(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -2865,7 +2865,7 @@ get_size_sandwich_PK_id(
 	select_statement.bind(2,sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size size_of_sandwich_PK_id(0);
+	core::Size size_of_sandwich_PK_id(0);
 	while ( res.next() )
 			{
 		res >> size_of_sandwich_PK_id;
@@ -2879,16 +2879,16 @@ utility::vector1<SandwichFragment>
 get_start_end_res_num_in_the_longest_strand(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sheet_id)
+	core::Size sheet_id)
 {
 	// <begin> Identify the longest strand in this sheet
 	utility::vector1<SandwichFragment> all_strands_in_sheet_i = get_all_strands_in_sheet_i(struct_id, db_session, sheet_id);
-	Size longest_size_of_strand = 0;
-	Size residue_begin_of_the_longest_strand = 0;
-	Size residue_end_of_the_longest_strand = 0;
+	core::Size longest_size_of_strand = 0;
+	core::Size residue_begin_of_the_longest_strand = 0;
+	core::Size residue_end_of_the_longest_strand = 0;
 	utility::vector1<SandwichFragment> start_end_res_num_in_longest_strand;
-	for ( Size i=1; i<=all_strands_in_sheet_i.size() ; ++i ) {
-		Size size_of_this_strand = all_strands_in_sheet_i[i].get_size();
+	for ( core::Size i=1; i<=all_strands_in_sheet_i.size() ; ++i ) {
+		core::Size size_of_this_strand = all_strands_in_sheet_i[i].get_size();
 		if ( size_of_this_strand > longest_size_of_strand ) {
 			longest_size_of_strand = size_of_this_strand;
 			residue_begin_of_the_longest_strand = all_strands_in_sheet_i[i].get_start();
@@ -2904,12 +2904,12 @@ get_start_end_res_num_in_the_longest_strand(
 
 
 //get_starting_res_for_connecting_strands
-pair<Size, Size>
+pair<core::Size, core::Size>
 get_starting_res_for_connecting_strands(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id,
-	Size former_res_end)
+	core::Size sw_can_by_sh_id,
+	core::Size former_res_end)
 {
 	string select_string =
 		"SELECT\n"
@@ -2929,7 +2929,7 @@ get_starting_res_for_connecting_strands(
 
 	bool starting_res_for_connecting_strands_retrieved = false;
 
-	Size starting_res_for_connecting_strands;
+	core::Size starting_res_for_connecting_strands;
 	while ( res.next() )
 			{
 		starting_res_for_connecting_strands_retrieved = true;
@@ -2956,7 +2956,7 @@ get_starting_res_for_connecting_strands(
 	select_sh_id_statement.bind(3,starting_res_for_connecting_strands);
 	result res_sh_id(basic::database::safely_read_from_database(select_sh_id_statement));
 
-	Size sheet_id;
+	core::Size sheet_id;
 	while ( res_sh_id.next() )
 			{
 		res_sh_id >> sheet_id;
@@ -2990,11 +2990,11 @@ get_tag(
 	return selected_tag;
 } //get_tag
 
-utility::vector1<Size>
+utility::vector1<core::Size>
 get_vec_AA_kind (
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 
 	// <begin> sum number_of_AA
@@ -3016,9 +3016,9 @@ get_vec_AA_kind (
 	select_statement.bind(2,sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	utility::vector1<Size> vec_AA_kind;
+	utility::vector1<core::Size> vec_AA_kind;
 
-	Size pos, neg, polar, aro, pho;
+	core::Size pos, neg, polar, aro, pho;
 	while ( res.next() )
 			{
 		res >> pos >> neg >> polar >> aro >> pho;
@@ -3038,7 +3038,7 @@ get_vec_AA_kind (
 // get_vec_of_sw_can_by_sh_id
 // role: get_distinct(sw_can_by_sh_id) as a vector
 // result: mostly get_distinct(sw_can_by_sh_id) is just 1
-utility::vector1<Size>
+utility::vector1<core::Size>
 get_vec_of_sw_can_by_sh_id(
 	StructureID struct_id,
 	sessionOP db_session)
@@ -3055,10 +3055,10 @@ get_vec_of_sw_can_by_sh_id(
 	select_statement.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	utility::vector1<Size> vec_sw_can_by_sh_id;
+	utility::vector1<core::Size> vec_sw_can_by_sh_id;
 	while ( res.next() )
 			{
-		Size sw_can_by_sh_id;
+		core::Size sw_can_by_sh_id;
 		res >> sw_can_by_sh_id ;
 		vec_sw_can_by_sh_id.push_back(sw_can_by_sh_id);
 	}
@@ -3066,7 +3066,7 @@ get_vec_of_sw_can_by_sh_id(
 } //get_vec_of_sw_can_by_sh_id
 
 
-utility::vector1<Size>
+utility::vector1<core::Size>
 get_vector_of_strand_AA_distribution (
 	StructureID struct_id,
 	sessionOP db_session,
@@ -3107,9 +3107,9 @@ get_vector_of_strand_AA_distribution (
 
 	result res(basic::database::safely_read_from_database(sum_statement));
 
-	Size num_A, num_C, num_D, num_E, num_F, num_G, num_H, num_I, num_K, num_L, num_M, num_N, num_P, num_Q, num_R, num_S, num_T, num_V, num_W, num_Y;
+	core::Size num_A, num_C, num_D, num_E, num_F, num_G, num_H, num_I, num_K, num_L, num_M, num_N, num_P, num_Q, num_R, num_S, num_T, num_V, num_W, num_Y;
 
-	utility::vector1<Size> vector_strand_AA_distribution;
+	utility::vector1<core::Size> vector_strand_AA_distribution;
 
 	while ( res.next() )
 			{
@@ -3143,11 +3143,11 @@ get_vector_of_strand_AA_distribution (
 } // get_vector_of_strand_AA_distribution
 
 //get_vec_distinct_sheet_id
-utility::vector1<Size>
+utility::vector1<core::Size>
 get_vec_distinct_sheet_id(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -3165,10 +3165,10 @@ get_vec_distinct_sheet_id(
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	utility::vector1<Size> vec_sheet_id;
+	utility::vector1<core::Size> vec_sheet_id;
 	while ( res.next() )
 			{
-		Size sheet_id;
+		core::Size sheet_id;
 		res >> sheet_id ;
 		vec_sheet_id.push_back(sheet_id);
 	}
@@ -3181,7 +3181,7 @@ Size
 identify_sheet_id_by_residue_end(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size residue_end)
+	core::Size residue_end)
 {
 	string select_string =
 		"SELECT\n"
@@ -3197,7 +3197,7 @@ identify_sheet_id_by_residue_end(
 	select_statement.bind(2,residue_end);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size sheet_id(0);
+	core::Size sheet_id(0);
 	while ( res.next() )
 			{
 		res >> sheet_id;
@@ -3214,9 +3214,9 @@ is_this_strand_at_edge (
 	Pose const & pose,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size sheet_id,
-	Size residue_begin,
-	Size residue_end,
+	core::Size sheet_id,
+	core::Size residue_begin,
+	core::Size residue_end,
 	Real min_CA_CA_dis_,
 	Real max_CA_CA_dis_)
 {
@@ -3239,19 +3239,19 @@ is_this_strand_at_edge (
 
 	SandwichFragment current_strand(residue_begin, residue_end);
 	vector<Real> vec_inter_strand_dis;
-	for ( Size i=1; i<=strands_from_sheet_i.size(); ++i ) {
+	for ( core::Size i=1; i<=strands_from_sheet_i.size(); ++i ) {
 		SandwichFragment temporary_strand(strands_from_sheet_i[i].get_start(), strands_from_sheet_i[i].get_end());
 		// get_closest_distance_between_strands is refactored
 		Real closest_distance_between_strands = get_closest_distance_between_strands (pose, current_strand, temporary_strand);
 		vec_inter_strand_dis.push_back(closest_distance_between_strands);
 	}
 
-	Size size_of_vec_inter_strand_dis = vec_inter_strand_dis.size();
+	core::Size size_of_vec_inter_strand_dis = vec_inter_strand_dis.size();
 
 	// <begin> exclude self-strand
 	Real min_inter_strand_avg_dis = 9999;
-	Size index_having_self_strand = 0;
-	for ( Size i=0; i<=size_of_vec_inter_strand_dis-1; ++i ) {
+	core::Size index_having_self_strand = 0;
+	for ( core::Size i=0; i<=size_of_vec_inter_strand_dis-1; ++i ) {
 		if ( min_inter_strand_avg_dis > vec_inter_strand_dis[i] ) {
 			min_inter_strand_avg_dis = vec_inter_strand_dis[i];
 			index_having_self_strand = i+1; // index of vec_inter_strand_avg_dis starts with '0'
@@ -3262,8 +3262,8 @@ is_this_strand_at_edge (
 
 	// <begin> find the closest strand from current_strand
 	min_inter_strand_avg_dis = 9999;
-	Size index_having_min_dis = 0;
-	for ( Size i=0; i<=size_of_vec_inter_strand_dis-1; ++i ) {
+	core::Size index_having_min_dis = 0;
+	for ( core::Size i=0; i<=size_of_vec_inter_strand_dis-1; ++i ) {
 		if (
 				(i != index_having_self_strand-1) // exclude self-strand
 				&& (min_inter_strand_avg_dis > vec_inter_strand_dis[i])
@@ -3280,11 +3280,11 @@ is_this_strand_at_edge (
 
 	// <begin> calculate minimum distance between strands
 	Real to_be_rounded_i = (strands_from_sheet_i[index_having_min_dis].get_start() + strands_from_sheet_i[index_having_min_dis].get_end())/(2.0);
-	Size cen_resnum_of_the_closest_strand = round_to_Size(to_be_rounded_i);
+	core::Size cen_resnum_of_the_closest_strand = round_to_Size(to_be_rounded_i);
 
 	Real min_inter_strand_dis = 9999;
 
-	for ( Size strand_i_res = residue_begin;
+	for ( core::Size strand_i_res = residue_begin;
 			strand_i_res <= residue_end;
 			strand_i_res++ ) {
 		Real dis_CA_CA = pose.residue(strand_i_res).atom("CA").xyz().distance(pose.residue(cen_resnum_of_the_closest_strand).atom("CA").xyz());
@@ -3299,8 +3299,8 @@ is_this_strand_at_edge (
 	if ( min_inter_strand_dis > min_CA_CA_dis_ && min_inter_strand_dis < max_CA_CA_dis_ ) {
 		// <begin> find the 2nd closest strand from current_strand
 		min_inter_strand_avg_dis = 9999;
-		Size index_having_second_min_dis = 0;
-		for ( Size i=0; i<=size_of_vec_inter_strand_dis-1; ++i ) {
+		core::Size index_having_second_min_dis = 0;
+		for ( core::Size i=0; i<=size_of_vec_inter_strand_dis-1; ++i ) {
 			if (
 					(i != index_having_self_strand-1)
 					&& (i != index_having_min_dis-1)
@@ -3320,11 +3320,11 @@ is_this_strand_at_edge (
 
 		// <begin> calculate minimum distance between strands
 		to_be_rounded_i = (strands_from_sheet_i[index_having_second_min_dis].get_start() + strands_from_sheet_i[index_having_second_min_dis].get_end())/(2.0);
-		Size cental_resnum_of_the_2nd_closest_strand = round_to_Size(to_be_rounded_i);
+		core::Size cental_resnum_of_the_2nd_closest_strand = round_to_Size(to_be_rounded_i);
 
 		min_inter_strand_dis = 9999;
 
-		for ( Size strand_i_res = residue_begin;
+		for ( core::Size strand_i_res = residue_begin;
 				strand_i_res <= residue_end;
 				strand_i_res++ ) {
 			Real dis_CA_CA = pose.residue(strand_i_res).atom("CA").xyz().distance(pose.residue(cental_resnum_of_the_2nd_closest_strand).atom("CA").xyz());
@@ -3351,7 +3351,7 @@ string
 is_this_strand_at_edge_by_looking_db(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size residue_begin)
+	core::Size residue_begin)
 {
 	string select_string =
 		"SELECT\n"
@@ -3382,8 +3382,8 @@ judge_facing(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
-	Size sheet_i,
-	Size sheet_j,
+	core::Size sheet_i,
+	core::Size sheet_j,
 	Real min_CA_CA_dis_,
 	Real max_CA_CA_dis_,
 	Real min_sheet_angle_by_four_term_cen_res_,
@@ -3433,7 +3433,7 @@ judge_facing(
 	if ( start_end_res_num_in_the_longest_strand_in_sheet_i[1].get_size() > start_end_res_num_in_the_longest_strand_in_sheet_j[1].get_size() ) {
 		// Index of SandwichFragment starts with '1' not '0'
 		Real to_be_rounded_i = (start_end_res_num_in_the_longest_strand_in_sheet_j[1].get_start() + start_end_res_num_in_the_longest_strand_in_sheet_j[1].get_end())/(2.0);
-		Size cen_resnum_of_smaller_sheet = round_to_Size(to_be_rounded_i);
+		core::Size cen_resnum_of_smaller_sheet = round_to_Size(to_be_rounded_i);
 
 		Real distance_1 = pose.residue(cen_resnum_of_smaller_sheet).atom("CA").xyz().distance(pose.residue(start_end_res_num_in_the_longest_strand_in_sheet_i[1].get_start()).atom("CA").xyz());
 		Real distance_2 = pose.residue(cen_resnum_of_smaller_sheet).atom("CA").xyz().distance(pose.residue(start_end_res_num_in_the_longest_strand_in_sheet_i[1].get_end()).atom("CA").xyz());
@@ -3453,7 +3453,7 @@ judge_facing(
 		}
 	} else {
 		Real to_be_rounded_i = (start_end_res_num_in_the_longest_strand_in_sheet_i[1].get_start() + start_end_res_num_in_the_longest_strand_in_sheet_i[1].get_end())/(2.0);
-		Size cen_resnum_of_smaller_sheet = round_to_Size(to_be_rounded_i);
+		core::Size cen_resnum_of_smaller_sheet = round_to_Size(to_be_rounded_i);
 
 		Real distance_1 = pose.residue(cen_resnum_of_smaller_sheet).atom("CA").xyz().distance(pose.residue(start_end_res_num_in_the_longest_strand_in_sheet_j[1].get_start()).atom("CA").xyz());
 		Real distance_2 = pose.residue(cen_resnum_of_smaller_sheet).atom("CA").xyz().distance(pose.residue(start_end_res_num_in_the_longest_strand_in_sheet_j[1].get_end()).atom("CA").xyz());
@@ -3635,13 +3635,13 @@ report_heading_directions_of_all_AA_in_a_strand (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
-	Size sw_can_by_sh_id,
-	Size sheet_id,
-	Size residue_begin,
-	Size residue_end)
+	core::Size sw_can_by_sh_id,
+	core::Size sheet_id,
+	core::Size residue_begin,
+	core::Size residue_end)
 {
 	string heading_directions = "";
-	for ( Size ii = residue_begin; ii <= residue_end; ii++ ) {
+	for ( core::Size ii = residue_begin; ii <= residue_end; ii++ ) {
 		// determine_heading_direction_by_vector is refactored well
 		string heading = determine_heading_direction_by_vector (struct_id, db_session, pose, sw_can_by_sh_id, sheet_id, residue_begin, residue_end, ii);
 		heading_directions = heading_directions + "\t" + heading;
@@ -3655,7 +3655,7 @@ utility::vector1<int>
 retrieve_residue_num_of_rkde(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id,
+	core::Size sw_can_by_sh_id,
 	string const & dssp_code,
 	string const & heading_direction)
 {
@@ -3673,7 +3673,7 @@ retrieve_residue_num_of_rkde(
 		result res(basic::database::safely_read_from_database(select_statement));
 
 		utility::vector1<int> vector_of_residue_num_of_rkde;
-		Size residue_num_of_rkde;
+		core::Size residue_num_of_rkde;
 		while ( res.next() )
 				{
 			res >> residue_num_of_rkde;
@@ -3699,7 +3699,7 @@ retrieve_residue_num_of_rkde(
 			result res(basic::database::safely_read_from_database(select_statement));
 
 			utility::vector1<int> vector_of_residue_num_of_rkde;
-			Size residue_num_of_rkde;
+			core::Size residue_num_of_rkde;
 			while ( res.next() )
 					{
 				res >> residue_num_of_rkde;
@@ -3722,7 +3722,7 @@ retrieve_residue_num_of_rkde(
 			result res(basic::database::safely_read_from_database(select_statement));
 
 			utility::vector1<int> vector_of_residue_num_of_rkde;
-			Size residue_num_of_rkde;
+			core::Size residue_num_of_rkde;
 			while ( res.next() )
 					{
 				res >> residue_num_of_rkde;
@@ -3759,7 +3759,7 @@ Size
 round_to_Size(
 	Real x)
 {
-	auto rounded = static_cast <Size> (floor(x+.5));
+	auto rounded = static_cast <core::Size> (floor(x+.5));
 	return rounded;
 } //round_to_Size
 
@@ -3768,7 +3768,7 @@ string
 see_edge_or_core_or_loop_or_short_edge (
 	StructureID struct_id,
 	sessionOP db_session,
-	Size residue_num)
+	core::Size residue_num)
 {
 	string sum_string =
 		"SELECT\n"
@@ -3817,7 +3817,7 @@ see_whether_sheet_is_antiparallel(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
-	Size i_sheet,
+	core::Size i_sheet,
 	Real min_CA_CA_dis_,
 	Real max_CA_CA_dis_,
 	Real min_C_O_N_angle_)
@@ -3827,10 +3827,10 @@ see_whether_sheet_is_antiparallel(
 
 	// <begin> Get central residues of edge strands
 	vector<Real> vector_of_central_resnum; // array of central residues
-	vector<Size> vector_of_not_representative_edge_strands; // both core and very_short_edge strands
-	vector<Size> vector_of_short_edge_strands;
+	vector<core::Size> vector_of_not_representative_edge_strands; // both core and very_short_edge strands
+	vector<core::Size> vector_of_short_edge_strands;
 
-	for ( Size i=1; i<=strands_from_i.size(); ++i ) {
+	for ( core::Size i=1; i<=strands_from_i.size(); ++i ) {
 		string strand_is_at_edge = is_this_strand_at_edge (
 			pose,
 			struct_id,
@@ -3855,7 +3855,7 @@ see_whether_sheet_is_antiparallel(
 
 
 		Real to_be_rounded = (strands_from_i[i].get_start() + strands_from_i[i].get_end())/(2.0);
-		Size cen_resnum = round_to_Size(to_be_rounded);
+		core::Size cen_resnum = round_to_Size(to_be_rounded);
 		vector_of_central_resnum.push_back(cen_resnum);
 	}
 	// <end> Get central residues of edge strands
@@ -3863,7 +3863,7 @@ see_whether_sheet_is_antiparallel(
 
 	// <begin> Get array of sum of all distances from central residues
 	vector<Real> vec_dis_sum_from_cen_resnum; // array of sum of all distances from central residues
-	for ( Size ii=0; ii<=strands_from_i.size()-1; ++ii ) {
+	for ( core::Size ii=0; ii<=strands_from_i.size()-1; ++ii ) {
 		Real dis_from_ii = 0;
 
 		if ( vector_of_central_resnum[ii] == -999 || vector_of_central_resnum[ii] == -99 ) { // I ignore a unrepresentative strand
@@ -3872,11 +3872,11 @@ see_whether_sheet_is_antiparallel(
 			continue;
 		}
 
-		for ( Size jj=0; jj<=strands_from_i.size()-1; ++jj ) {
+		for ( core::Size jj=0; jj<=strands_from_i.size()-1; ++jj ) {
 			if ( vector_of_central_resnum[jj] == -999 || vector_of_central_resnum[jj] == -99 ) { // I ignore a unrepresentative strand
 				continue;
 			}
-			Real dis_CA_CA = pose.residue(static_cast<Size>(vector_of_central_resnum[ii])).atom("CA").xyz().distance(pose.residue(static_cast<Size>(vector_of_central_resnum[jj])).atom("CA").xyz());
+			Real dis_CA_CA = pose.residue(static_cast<core::Size>(vector_of_central_resnum[ii])).atom("CA").xyz().distance(pose.residue(static_cast<core::Size>(vector_of_central_resnum[jj])).atom("CA").xyz());
 			dis_from_ii = dis_from_ii + dis_CA_CA;
 		}
 		vec_dis_sum_from_cen_resnum.push_back(dis_from_ii);
@@ -3885,10 +3885,10 @@ see_whether_sheet_is_antiparallel(
 
 
 	// <begin> Get the largest distance and its residue index (which should indicate the furthermost strand in a sheet)
-	Size res_index_having_the_largest_dis = 0;
+	core::Size res_index_having_the_largest_dis = 0;
 	Real largest_dis = -99;
 
-	for ( Size ii=0; ii<=strands_from_i.size()-1; ++ii ) {
+	for ( core::Size ii=0; ii<=strands_from_i.size()-1; ++ii ) {
 		if ( vector_of_central_resnum[ii] == -999 || vector_of_central_resnum[ii] == -99 ) { // I ignore a unrepresentative strand
 			continue; // unrepresentative_strands
 		}
@@ -3900,21 +3900,21 @@ see_whether_sheet_is_antiparallel(
 	// <end> Get the largest distance and its residue index (which should indicate the furthermost strand in a sheet)
 
 
-	Size former_res_index_nearest_strand = res_index_having_the_largest_dis; // just for the first step of 'while' loop
-	Size former_res_index_having_the_largest_dis = res_index_having_the_largest_dis; // just for the first step of 'while' loop
+	core::Size former_res_index_nearest_strand = res_index_having_the_largest_dis; // just for the first step of 'while' loop
+	core::Size former_res_index_having_the_largest_dis = res_index_having_the_largest_dis; // just for the first step of 'while' loop
 
-	Size maximum_possible_number_of_antiparallel_matches = strands_from_i.size() -1 -vector_of_short_edge_strands.size();
-	Size count_antiparellel = 0;
+	core::Size maximum_possible_number_of_antiparallel_matches = strands_from_i.size() -1 -vector_of_short_edge_strands.size();
+	core::Size count_antiparellel = 0;
 	while ( count_antiparellel < maximum_possible_number_of_antiparallel_matches )
 			{
 		SandwichFragment current_strand(strands_from_i[former_res_index_nearest_strand+1].get_start(), strands_from_i[former_res_index_nearest_strand+1].get_end());
 
 		Real shortest_dis_inter_strand = 999;
-		Size res_index_nearest_strand = 999;
+		core::Size res_index_nearest_strand = 999;
 
 
 		//<begin> search the nearest strand from the current strand
-		for ( Size ii=0; ii<=strands_from_i.size()-1; ++ii ) {
+		for ( core::Size ii=0; ii<=strands_from_i.size()-1; ++ii ) {
 			if ( ii == former_res_index_nearest_strand || ii == former_res_index_having_the_largest_dis ) {
 				continue;
 			}
@@ -3935,7 +3935,7 @@ see_whether_sheet_is_antiparallel(
 		}
 
 		SandwichFragment nearest_strand_from_the_current_strand(strands_from_i[res_index_nearest_strand+1].get_start(), strands_from_i[res_index_nearest_strand+1].get_end());
-		Size return_of_find_sheet =
+		core::Size return_of_find_sheet =
 			find_sheet (
 			pose,
 			current_strand, nearest_strand_from_the_current_strand, true,
@@ -3962,8 +3962,8 @@ see_whether_sheets_can_be_combined(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
-	Size i_sheet,
-	Size j_sheet,
+	core::Size i_sheet,
+	core::Size j_sheet,
 	Real min_CA_CA_dis_,
 	Real max_CA_CA_dis_,
 	Real min_C_O_N_angle_)
@@ -3971,11 +3971,11 @@ see_whether_sheets_can_be_combined(
 	utility::vector1<SandwichFragment> strands_from_i = get_full_strands_from_sheet(struct_id, db_session, i_sheet);
 	utility::vector1<SandwichFragment> strands_from_j = get_full_strands_from_sheet(struct_id, db_session, j_sheet);
 
-	Size return_of_find_sheet_antiparallel(0); // temporary 'false' designation
-	Size return_of_find_sheet_parallel(0); // temporary 'false' designation
+	core::Size return_of_find_sheet_antiparallel(0); // temporary 'false' designation
+	core::Size return_of_find_sheet_parallel(0); // temporary 'false' designation
 
-	for ( Size i=1; i<=strands_from_i.size(); ++i ) {
-		for ( Size j=1; j<=strands_from_j.size(); ++j ) {
+	for ( core::Size i=1; i<=strands_from_i.size(); ++i ) {
+		for ( core::Size j=1; j<=strands_from_j.size(); ++j ) {
 			SandwichFragment temp_strand_i(strands_from_i[i].get_start(), strands_from_i[i].get_end());
 			SandwichFragment temp_strand_j(strands_from_j[j].get_start(), strands_from_j[j].get_end());
 

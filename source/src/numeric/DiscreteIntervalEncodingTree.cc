@@ -14,6 +14,8 @@
 // Unit headers
 #include <numeric/DiscreteIntervalEncodingTree.hh>
 
+#include <platform/types.hh>
+
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>

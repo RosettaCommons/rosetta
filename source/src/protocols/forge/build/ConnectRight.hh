@@ -87,8 +87,8 @@ public: // construct/destruct
 	/// @param[in] pose_right connect this pose to the right of pose_left when
 	///  modify( pose_left ) is called
 	ConnectRight(
-		Size const left_position,
-		Size const right_position,
+		core::Size const left_position,
+		core::Size const right_position,
 		Pose const & pose_right
 	);
 
@@ -246,8 +246,8 @@ public: // mutators
 	///  during modify().
 	void extract_rt(
 		Pose const & pose,
-		Size const jump_start_residue,
-		Size const jump_stop_residue
+		core::Size const jump_start_residue,
+		core::Size const jump_stop_residue
 	);
 
 
@@ -367,28 +367,28 @@ protected: // accessors
 	/// @remarks this position can shift if listening to a Pose/Conformation and the number
 	///  of residues changes
 	inline
-	Size left_position() const {
+	core::Size left_position() const {
 		return left_position_;
 	}
 
 
 	/// @brief connect at this position on 'pose_right'
 	inline
-	Size right_position() const {
+	core::Size right_position() const {
 		return right_position_;
 	}
 
 
 	/// @brief generate the NamedStubID for the left stub atoms on position 'p'
 	inline
-	NamedStubID left_named_stub_id( Size const p ) const {
+	NamedStubID left_named_stub_id( core::Size const p ) const {
 		return NamedStubID( left_stub_atoms_, p );
 	}
 
 
 	/// @brief generate the NamedStubID for the left right atoms on position 'p'
 	inline
-	NamedStubID right_named_stub_id( Size const p ) const {
+	NamedStubID right_named_stub_id( core::Size const p ) const {
 		return NamedStubID( right_stub_atoms_, p );
 	}
 
@@ -400,14 +400,14 @@ protected: // mutators
 	/// @remarks this position can shift if listening to a Pose/Conformation and the number
 	///  of residues changes
 	inline
-	void left_position( Size const i ) {
+	void left_position( core::Size const i ) {
 		left_position_ = i;
 	}
 
 
 	/// @brief connect at this position on 'pose_right'
 	inline
-	void right_position( Size const i ) {
+	void right_position( core::Size const i ) {
 		right_position_ = i;
 	}
 
@@ -432,13 +432,13 @@ private: // data
 	/// @brief connect at this position on 'pose_left' passed into modify()
 	/// @remarks this position can shift if listening to a Pose/Conformation and the number
 	///  of residues changes
-	Size left_position_;
+	core::Size left_position_;
 
 
 	/// @brief connect at this position on 'pose_right'
 	/// @remarks this position can shift if listening to a Pose/Conformation and the number
 	///  of residues changes
-	Size right_position_;
+	core::Size right_position_;
 
 
 	/// @brief connect this pose to the right of pose_left when modify( pose_left ) is called

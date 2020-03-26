@@ -24,7 +24,7 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <basic/prof.hh>
 
@@ -79,7 +79,7 @@ void NoesyModule::assign( DecoyIterator const& decoys_begin, DecoyIterator const
 
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	Real const min_sym_cont( params.min_contribution_symmetric_peaks_ );
-	for ( Size ct_repeat=1; ct_repeat <= 3; ct_repeat++ ) {
+	for ( core::Size ct_repeat=1; ct_repeat <= 3; ct_repeat++ ) {
 		//  if ( !option[ no_symm ]() )
 		if ( min_sym_cont < 0.99 || ct_repeat == 1 ) {
 			//PROF_START( basic::NOESY_ASSIGN_SYMMETRY );

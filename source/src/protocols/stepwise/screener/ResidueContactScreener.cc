@@ -28,8 +28,8 @@ using namespace core;
 
 //Constructor
 ResidueContactScreener::ResidueContactScreener(  pose::Pose & screening_pose,
-	Size const last_append_res,
-	Size const last_prepend_res,
+	core::Size const last_append_res,
+	core::Size const last_prepend_res,
 	Distance const atom_atom_overlap_dist_cutoff ):
 	screening_pose_( screening_pose ),
 	last_append_res_( last_append_res ),

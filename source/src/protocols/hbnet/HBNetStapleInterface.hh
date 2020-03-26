@@ -150,7 +150,7 @@ private:
 	core::Real interf_distance_;
 	utility::vector1< core::Size > jump_nums_;
 	utility::vector1< std::pair< core::Size, core::Size > > helix_boundaries_; //for helical bundles
-	utility::vector1< std::list< Size > > pair_lists_vec_;
+	utility::vector1< std::list< core::Size > > pair_lists_vec_;
 };
 // end HBNetStapleInterface
 

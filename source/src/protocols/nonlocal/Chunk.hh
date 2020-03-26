@@ -29,7 +29,7 @@
 
 // Utility headers
 #include <numeric/random/DistributionSampler.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace nonlocal {
@@ -39,7 +39,7 @@ namespace nonlocal {
 /// from it according to an underlying distribution. Certain residues within
 /// the region may not be movable. Current behavior mimics but improves upon
 /// existing end-biased selection.
-class Chunk : public utility::pointer::ReferenceCount {
+class Chunk : public utility::VirtualBase {
 	typedef boost::math::normal Normal;
 	typedef core::Size Size;
 	typedef core::kinematics::MoveMapOP MoveMapOP;
@@ -65,16 +65,16 @@ public:
 
 	/// @brief Chooses an allowable insertion position on [start, stop] according
 	/// to the probability distribution
-	Size choose() const;
+	core::Size choose() const;
 
 	/// @brief Lower boundary of this chunk
-	Size start() const;
+	core::Size start() const;
 
 	/// @brief Upper boundary of this chunk
-	Size stop() const;
+	core::Size stop() const;
 
 	/// @brief Returns the length of this region
-	Size length() const;
+	core::Size length() const;
 
 	/// @brief Returns true if at least one position on [start(), stop()] is movable
 	bool is_movable() const;

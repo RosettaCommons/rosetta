@@ -183,9 +183,9 @@ SlidingWindowLoopClosure::determine_loop( Pose const& more_cut, Pose& less_cut )
 	}
 
 	// which cut is missing ?
-	Size cutpoint( 0 );
-	for ( Size i = 1; i <= static_cast< Size >( f_more.num_cutpoint() ) && !cutpoint ; i++ ) {
-		Size const seqpos( f_more.cutpoint( i ) );
+	core::Size cutpoint( 0 );
+	for ( core::Size i = 1; i <= static_cast< core::Size >( f_more.num_cutpoint() ) && !cutpoint ; i++ ) {
+		core::Size const seqpos( f_more.cutpoint( i ) );
 		if ( !f_less.is_cutpoint( seqpos ) ) cutpoint = seqpos;
 	}
 	//runtime_assert( cutpoint );
@@ -195,13 +195,13 @@ SlidingWindowLoopClosure::determine_loop( Pose const& more_cut, Pose& less_cut )
 	// find min - max loop
 	// figure out where the loop can safely start and stop
 	// don't want to have jump_points inside loop because it would create motion downstream of that jump
-	//  Size min_loop_begin ( cutpoint + 1 );
-	//  Size max_loop_end  ( cutpoint );
+	//  core::Size min_loop_begin ( cutpoint + 1 );
+	//  core::Size max_loop_end  ( cutpoint );
 
 	// compute  max_loop_size...
 	// extend loop from cutpoint away until either a jump-residue or an unmovable bb-torsion is found
-	Size min_loop_begin ( cutpoint + 1 );
-	Size max_loop_end  ( cutpoint );
+	core::Size min_loop_begin ( cutpoint + 1 );
+	core::Size max_loop_end  ( cutpoint );
 	while (
 			min_loop_begin > 1
 			&& !f_more.is_jump_point( min_loop_begin - 1 )
@@ -213,7 +213,7 @@ SlidingWindowLoopClosure::determine_loop( Pose const& more_cut, Pose& less_cut )
 			&& movemap().get_bb( max_loop_end + 1 )
 			) ++max_loop_end;
 
-	//Size const actual_max_loop_size( max_loop_end_ - min_loop_begin_ + 1 );
+	//core::Size const actual_max_loop_size( max_loop_end_ - min_loop_begin_ + 1 );
 	//runtime_assert( min_loop_begin <= max_loop_end );
 	if ( min_loop_begin > max_loop_end ) { utility_exit_with_message(" Failure in SlidingWindowLoopClosure.cc : min_loop_begin > max_loop_end "); };
 
@@ -350,9 +350,9 @@ SlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut ) {
 		closure_fragments_ = utility::pointer::make_shared< fragment::OrderedFragSet >();
 	}
 
-	Size attempt_count = 0;
-	Size const actual_max_loop_size( loop_.size() );
-	Size const min_breakout_good_loops( std::max( min_breakout_good_loops_, min_good_loops_ ) );
+	core::Size attempt_count = 0;
+	core::Size const actual_max_loop_size( loop_.size() );
+	core::Size const min_breakout_good_loops( std::max( min_breakout_good_loops_, min_good_loops_ ) );
 
 	tr.Debug << "Trying loop-sizes: "
 		<< " "   << std::min( actual_max_loop_size, min_loop_size_ )
@@ -363,7 +363,7 @@ SlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut ) {
 
 	tr.Debug << "LOOP: " << loop_ << std::endl;
 
-	Size good_loop_count( 0 );
+	core::Size good_loop_count( 0 );
 
 	{ //take initial loop-conformation as closing candidate
 		using namespace fragment;
@@ -396,7 +396,7 @@ SlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut ) {
 	if ( evaluator_ && tr.Debug.visible() ) evaluate_pose( less_cut, *evaluator_, tr.Debug );
 
 	// try different loop sizes
-	for ( Size loop_size = std::min( actual_max_loop_size, min_loop_size_ );
+	for ( core::Size loop_size = std::min( actual_max_loop_size, min_loop_size_ );
 			loop_size <= std::min( actual_max_loop_size, max_loop_size_ ); ++loop_size ) {
 		tr.Debug << "loop-size: " << loop_size << std::endl;
 		// try different sliding windows, sorted by loop_fraction in window
@@ -517,7 +517,7 @@ SlidingWindowLoopClosure::process_fragments(
 	FragStore< Real > overlap_store("overlap");
 	FragStore< Real > rms_store("loop_rms");
 
-	Size good_loop_count( 0 );
+	core::Size good_loop_count( 0 );
 
 	Loops loops;
 	loops.add_loop( loop_ ); //for looprms
@@ -533,7 +533,7 @@ SlidingWindowLoopClosure::process_fragments(
 		work_pose = more_cut;
 	}
 
-	Size ct( 0 );
+	core::Size ct( 0 );
 
 	Real const start_score ( filter_score( orig_pose ) );
 	Real const vdw_start_score ( orig_pose.energies().total_energies()[ vdw_score_type_ ] );
@@ -602,19 +602,19 @@ SlidingWindowLoopClosure::process_fragments(
 }
 
 void
-SlidingWindowLoopClosure::generate_window_list( Size loop_size, WindowList& window_list ) const {
+SlidingWindowLoopClosure::generate_window_list( core::Size loop_size, WindowList& window_list ) const {
 	runtime_assert( ss_info_ != nullptr );
-	for ( Size ii= std::max( 0, - (int) loop_.cut() + (int) loop_size )  ; ii<= loop_size; ++ii ) {
+	for ( core::Size ii= std::max( 0, - (int) loop_.cut() + (int) loop_size )  ; ii<= loop_size; ++ii ) {
 		runtime_assert( (int) loop_.cut() - (int) loop_size + ii + 1  > 0 );
-		Size const loop_begin( loop_.cut() - loop_size + ii + 1);
-		Size const loop_end  ( loop_.cut() + ii );
+		core::Size const loop_begin( loop_.cut() - loop_size + ii + 1);
+		core::Size const loop_end  ( loop_.cut() + ii );
 		tr.Debug << "add-window: " << loop_begin << "-" << loop_end << std::endl;
 		runtime_assert( loop_begin <= loop_.cut()+1);
 		runtime_assert( loop_end >= loop_.cut() );
 		runtime_assert( loop_end == loop_begin + loop_size - 1 );
 		if ( loop_begin < loop_.start() || loop_end > loop_.stop() ) continue;
 		Real f(0);
-		for ( Size i = loop_begin; i <= loop_end; ++i ) {
+		for ( core::Size i = loop_begin; i <= loop_end; ++i ) {
 			f += ss_info_->loop_fraction(i);
 		}
 		window_list.push_back( std::make_pair( f/(1.0*loop_size)-loop_size*1.0, Loop( loop_begin, loop_end, loop_.cut() ) ) );

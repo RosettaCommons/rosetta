@@ -118,12 +118,12 @@ initialize_input_streams(   utility::vector1< protocols::stepwise::modeler::prot
 	using namespace import_pose::pose_stream;
 
 	// my options.
-	utility::vector1< Size > blank_size_vector;
+	utility::vector1< core::Size > blank_size_vector;
 	utility::vector1< std::string > blank_string_vector;
 
 
 	if ( option[ s1 ].user()  || option[ silent1 ].user()  ) { // assume new style of input.
-		utility::vector1< Size > slice_res_1 = blank_size_vector;
+		utility::vector1< core::Size > slice_res_1 = blank_size_vector;
 		if ( option[ slice_res1 ].user() ) slice_res_1 =  option[ slice_res1]();
 		InputStreamWithResidueInfoOP stream1( new InputStreamWithResidueInfo(
 			setup_pose_input_stream( option[ s1 ], option[ silent1 ], option[ tags1 ] ),
@@ -133,7 +133,7 @@ initialize_input_streams(   utility::vector1< protocols::stepwise::modeler::prot
 		input_streams.push_back( stream1 );
 
 		if ( option[ input_res2 ].user() ) {
-			utility::vector1< Size > slice_res_2 = blank_size_vector;
+			utility::vector1< core::Size > slice_res_2 = blank_size_vector;
 			if ( option[ slice_res2 ].user() ) slice_res_2 =  option[ slice_res2]();
 			InputStreamWithResidueInfoOP stream2( new InputStreamWithResidueInfo(
 				setup_pose_input_stream( option[ s2 ], option[ silent2 ], option[ tags2 ] ),
@@ -157,7 +157,7 @@ initialize_input_streams(   utility::vector1< protocols::stepwise::modeler::prot
 		if ( option[ in::file::s ].user() ) {
 			// Then any pdbs that need to be read in from disk.
 			utility::vector1< std::string > const pdb_tags_from_disk( option[ in::file::s ]() );
-			for ( Size n = 1; n <= pdb_tags_from_disk.size(); n++ ) pdb_tags.push_back( pdb_tags_from_disk[ n ] );
+			for ( core::Size n = 1; n <= pdb_tags_from_disk.size(); n++ ) pdb_tags.push_back( pdb_tags_from_disk[ n ] );
 		}
 		debug_assert( pdb_tags.size() > 0 );
 		initialize_input_streams_with_residue_info( input_streams,
@@ -170,8 +170,8 @@ initialize_input_streams(   utility::vector1< protocols::stepwise::modeler::prot
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 InputStreamWithResidueInfo::InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
-	utility::vector1< Size > const & input_res,
-	utility::vector1< Size > const & slice_res ):
+	utility::vector1< core::Size > const & input_res,
+	utility::vector1< core::Size > const & slice_res ):
 	pose_input_stream_(std::move( pose_input_stream )),
 	input_res_( input_res ),
 	slice_res_( slice_res ),
@@ -182,7 +182,7 @@ InputStreamWithResidueInfo::InputStreamWithResidueInfo( import_pose::pose_stream
 
 //////////////////////////////////////////////////////////////////////////
 InputStreamWithResidueInfo::InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
-	utility::vector1< Size > const & input_res ):
+	utility::vector1< core::Size > const & input_res ):
 	pose_input_stream_(std::move( pose_input_stream )),
 	input_res_( input_res ),
 	backbone_only_( false )
@@ -195,9 +195,9 @@ InputStreamWithResidueInfo::InputStreamWithResidueInfo( import_pose::pose_stream
 void
 InputStreamWithResidueInfo::initialize_defaults(){
 	if ( slice_res_.size() == 0 ) {
-		for ( Size i = 1; i <= input_res_.size(); i++ ) slice_res_.push_back( i );
+		for ( core::Size i = 1; i <= input_res_.size(); i++ ) slice_res_.push_back( i );
 	}
-	for ( Size i = 1; i <= input_res_.size(); i++ ) full_to_sub_[ input_res_[i] ] = input_res_[i];
+	for ( core::Size i = 1; i <= input_res_.size(); i++ ) full_to_sub_[ input_res_[i] ] = input_res_[i];
 }
 
 
@@ -207,20 +207,20 @@ InputStreamWithResidueInfo::~InputStreamWithResidueInfo()= default;
 import_pose::pose_stream::PoseInputStreamOP &
 InputStreamWithResidueInfo::pose_input_stream(){ return pose_input_stream_; }
 //////////////////////////////////////////////////////////////////////////
-utility::vector1< Size > const &
+utility::vector1< core::Size > const &
 InputStreamWithResidueInfo::input_res(){ return input_res_; }
 //////////////////////////////////////////////////////////////////////////
-utility::vector1< Size > const &
+utility::vector1< core::Size > const &
 InputStreamWithResidueInfo::slice_res(){ return slice_res_; }
 //////////////////////////////////////////////////////////////////////////
-std::map< Size, Size > &
+std::map< core::Size, core::Size > &
 InputStreamWithResidueInfo::full_to_sub(){ return full_to_sub_; }
 //////////////////////////////////////////////////////////////////////////
 void
-InputStreamWithResidueInfo::set_slice_res(  utility::vector1< Size > const & slice_res ){ slice_res_ = slice_res; }
+InputStreamWithResidueInfo::set_slice_res(  utility::vector1< core::Size > const & slice_res ){ slice_res_ = slice_res; }
 //////////////////////////////////////////////////////////////////////////
 void
-InputStreamWithResidueInfo::set_full_to_sub( std::map< Size, Size > const & full_to_sub ){ full_to_sub_ = full_to_sub; }
+InputStreamWithResidueInfo::set_full_to_sub( std::map< core::Size, core::Size > const & full_to_sub ){ full_to_sub_ = full_to_sub; }
 //////////////////////////////////////////////////////////////////////////
 void
 InputStreamWithResidueInfo::set_rsd_set( chemical::ResidueTypeSetCAP & rsd_set ){
@@ -286,9 +286,9 @@ InputStreamWithResidueInfo::apply_current_pose_segment( pose::Pose & pose,
 	// Dec 2010 -- why do we need this? copy is based on atom names not indexes.
 	//cleanup_pose( import_pose );
 
-	std::map< Size, Size > res_map;  //This is map from sub numbering to input_res numbering..
+	std::map< core::Size, core::Size > res_map;  //This is map from sub numbering to input_res numbering..
 
-	for ( Size n = 1; n <= input_res_.size(); n++ ) {
+	for ( core::Size n = 1; n <= input_res_.size(); n++ ) {
 		res_map[ full_to_sub_[ input_res_[n] ] ] = slice_res_[ n ];
 		//   std::cout << n << ' ' << input_res_[ n ] << ' ' << full_to_sub_[ input_res_[ n ] ] << " " << slice_res_[ n ] << std::endl;
 
@@ -323,7 +323,7 @@ InputStreamWithResidueInfo::compute_size(){
 	core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
 	runtime_assert( rsd_set != nullptr );
 	utility::vector1< core::pose::PoseOP > import_pose_list_ = pose_input_stream_->get_all_poses( *rsd_set );
-	Size const size = import_pose_list_.size();
+	core::Size const size = import_pose_list_.size();
 	pose_input_stream_->reset();
 	return size;
 }
@@ -344,7 +344,7 @@ InputStreamWithResidueInfo::cleanup_pose( pose::Pose & import_pose ) const {
 	remove_variants.push_back( core::chemical::CUTPOINT_UPPER );
 	// Also remove VIRTUAL_RESIDUE_VARIANT variant?
 
-	for ( Size n = 1; n <= import_pose.size(); n++  ) {
+	for ( core::Size n = 1; n <= import_pose.size(); n++  ) {
 		for ( auto const & variant : remove_variants ) {
 			if ( import_pose.residue_type( n ).has_variant_type( variant ) ) {
 				pose::remove_variant_type_from_pose_residue( import_pose, variant, n );
@@ -361,7 +361,7 @@ InputStreamWithResidueInfo::check_sequence( pose::Pose const & pose, pose::Pose 
 	std::cout << import_pose.annotated_sequence( true ) << std::endl;
 
 	bool match( true );
-	for ( Size n = 1; n <= slice_res_.size(); n++ ) {
+	for ( core::Size n = 1; n <= slice_res_.size(); n++ ) {
 		if ( ( slice_res_[ n ] > import_pose.size() ) ||
 				( full_to_sub_[ input_res_[ n ] ] > pose.size() ) ||
 				(  import_pose.sequence()[ slice_res_[n] - 1 ]  !=
@@ -384,20 +384,20 @@ void
 initialize_input_streams_with_residue_info( utility::vector1< InputStreamWithResidueInfoOP > & input_streams_with_residue_info,
 	utility::vector1< std::string > const & pdb_tags,
 	utility::vector1< std::string > const & silent_files_in,
-	utility::vector1< Size > const & input_res,
-	utility::vector1< Size > const & input_res2
+	utility::vector1< core::Size > const & input_res,
+	utility::vector1< core::Size > const & input_res2
 ) {
 	using namespace import_pose::pose_stream;
 
-	utility::vector1< utility::vector1< Size > > input_res_vectors;
+	utility::vector1< utility::vector1< core::Size > > input_res_vectors;
 	input_res_vectors.push_back( input_res );
 	input_res_vectors.push_back( input_res2 );
 
-	utility::vector1< Size  > blank_vector;
+	utility::vector1< core::Size  > blank_vector;
 
 	// This was a silly convention (I shouldn't have used it.)
 	// First set up silent file input
-	for ( Size i = 1; i <= silent_files_in.size(); i++ ) {
+	for ( core::Size i = 1; i <= silent_files_in.size(); i++ ) {
 		utility::vector1< std::string > silent_files1, pdb_tags1;
 		silent_files1.push_back( silent_files_in[ i ] );
 		pdb_tags1.push_back( pdb_tags[ i ] );
@@ -405,7 +405,7 @@ initialize_input_streams_with_residue_info( utility::vector1< InputStreamWithRes
 		input_streams_with_residue_info.push_back( input_stream );
 	}
 	// Then PDBs.
-	for ( Size i = silent_files_in.size()+1; i <= pdb_tags.size(); i++ ) {
+	for ( core::Size i = silent_files_in.size()+1; i <= pdb_tags.size(); i++ ) {
 		std::string pose_name = pdb_tags[ i ];
 		std::size_t found=pose_name.find(".pdb");
 		if ( found==std::string::npos ) {

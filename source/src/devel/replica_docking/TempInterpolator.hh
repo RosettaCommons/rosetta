@@ -20,12 +20,12 @@
 
 #include <utility/vector1.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 namespace devel {
 namespace replica_docking {
-class TempInterpolatorBase :  public utility::pointer::ReferenceCount {
+class TempInterpolatorBase :  public utility::VirtualBase {
 public:
 	virtual core::Real get_value(core::Size temp_level) = 0;
 };

@@ -78,9 +78,9 @@ FlexPepDockingPoseMetrics::calc_frac_native_contacts(
 		return 0.0;
 	}
 	//iterate over the peptide
-	for ( Size i=flags_->peptide_first_res(); i<=flags_->peptide_last_res(); ++i ) {
+	for ( core::Size i=flags_->peptide_first_res(); i<=flags_->peptide_last_res(); ++i ) {
 		//iterate over the protein
-		for ( Size j=flags_->receptor_first_res(); j<=flags_->receptor_last_res(); ++j ) {
+		for ( core::Size j=flags_->receptor_first_res(); j<=flags_->receptor_last_res(); ++j ) {
 			if ( isInContact(native.residue(i),native.residue(j),threashold) ) {
 				numOfNativeContacts++;
 				if ( isInContact(final.residue(i),final.residue(j),threashold) ) {
@@ -180,13 +180,13 @@ FlexPepDockingPoseMetrics::best_Kmer_rms
 	// NOTE: purposely an inefficient but simpler construction...
 	// It would be more efficient to calc the RMS of each position separately
 	// and make the calculation incrementaly, but why bother (Barak)
-	Size nres = pose1.size();
-	Size res1_first = flags_->peptide_first_res()  ;
-	Size res1_last = nres - k + 1;
+	core::Size nres = pose1.size();
+	core::Size res1_first = flags_->peptide_first_res()  ;
+	core::Size res1_last = nres - k + 1;
 	Real best_rms = std::numeric_limits<Real>::infinity();
-	for ( Size res1 = res1_first ; res1 <= res1_last ; ++res1 ) {
+	for ( core::Size res1 = res1_first ; res1 <= res1_last ; ++res1 ) {
 		ObjexxFCL::FArray1D_bool res_subset( nres, false );
-		for ( Size resi = res1; resi < res1 + k; ++resi ) {
+		for ( core::Size resi = res1; resi < res1 + k; ++resi ) {
 			res_subset(resi) = true;
 		}
 		Real cur_rms = scoring::rmsd_no_super_subset( pose1, pose2, res_subset, *predicate );
@@ -221,10 +221,10 @@ FlexPepDockingPoseMetrics::calc_phipsi_RMSD
 	using namespace core;
 	using namespace basic;
 	debug_assert(pose1.size() == pose2.size());
-	Size nres = pose1.size();
+	core::Size nres = pose1.size();
 	Real sumSqr = 0.0; // MSD = sum square deviation
-	Size n = 0;
-	for ( Size i = 1 ; i <= nres ; ++i ) {
+	core::Size n = 0;
+	for ( core::Size i = 1 ; i <= nres ; ++i ) {
 		// Calculate phi psi RMSd only for the positions that actually have these properties defined
 		if ( !res_subset(i) || (!pose1.residue_type(i).is_protein() && !pose1.residue_type(i).is_peptoid() && !pose1.residue_type(i).is_carbohydrate() ) ) {
 			continue;
@@ -251,7 +251,7 @@ FlexPepDockingPoseMetrics::calc_phipsi_RMSD
 // calculates i_sc as well
 /////////////////////////////////////////
 std::map < std::string, core::Real >
-FlexPepDockingPoseMetrics::calc_interface_metrics( core::pose::Pose & pose, Size rb_jump, core::scoring::ScoreFunctionOP scorefxn ) {
+FlexPepDockingPoseMetrics::calc_interface_metrics( core::pose::Pose & pose, core::Size rb_jump, core::scoring::ScoreFunctionOP scorefxn ) {
 	using namespace core;
 	using namespace core::pose::metrics;
 	using namespace core::scoring;
@@ -317,9 +317,9 @@ FlexPepDockingPoseMetrics::calc_interface_metrics( core::pose::Pose & pose, Size
 
 	// define containers for metrics for total complex
 	basic::MetricValue<Real> tot_sasa_mval;
-	basic::MetricValue<Size> tot_hb_mval;
+	basic::MetricValue<core::Size> tot_hb_mval;
 	basic::MetricValue<Real> tot_packstat_mval;
-	basic::MetricValue<Size> tot_unsat_mval;
+	basic::MetricValue<core::Size> tot_unsat_mval;
 
 	// define containers for metrics per peptide residue
 	basic::MetricValue< utility::vector1< core::Real > >bound_sasa_per_res_mval;
@@ -334,9 +334,9 @@ FlexPepDockingPoseMetrics::calc_interface_metrics( core::pose::Pose & pose, Size
 
 	// calculate and store total metrics for bound and unbound poses
 	float bound_sasa/* = 0.0*/, unbound_sasa;// = 0.0;
-	Size  bound_hb/* = 0*/,   unbound_hb;// = 0;
+	core::Size  bound_hb/* = 0*/,   unbound_hb;// = 0;
 	float bound_packstat = 0.0, unbound_packstat = 0.0;
-	Size  bound_unsat/* = 0*/, unbound_unsat;// = 0;
+	core::Size  bound_unsat/* = 0*/, unbound_unsat;// = 0;
 
 	//delta sasa calculation
 	pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
@@ -387,7 +387,7 @@ FlexPepDockingPoseMetrics::calc_interface_metrics( core::pose::Pose & pose, Size
 	unbound_pose.metric(hbond_calc_name,"residue_Hbonds",unbound_hb_per_res_mval);
 	unbound_pose.metric(burunsat_calc_name,"residue_bur_unsat_polars",unbound_unsat_per_res_mval);
 
-	for ( Size i=flags_->peptide_first_res();
+	for ( core::Size i=flags_->peptide_first_res();
 			i < flags_->peptide_first_res() + flags_->peptide_nres(); i++ ) {
 		TR << i
 			<< " bsa: " << unbound_sasa_per_res_mval.value()[i] - bound_sasa_per_res_mval.value()[i]
@@ -412,7 +412,7 @@ FlexPepDockingPoseMetrics::calc_pep_scores
 	pepScore = 0.0;
 	pepScore_noref = 0.0;
 
-	for ( Size i=flags_->peptide_first_res(); i <= flags_->peptide_last_res(); ++i ) {
+	for ( core::Size i=flags_->peptide_first_res(); i <= flags_->peptide_last_res(); ++i ) {
 		using namespace core::scoring;
 		Real ienergy = pose.energies().residue_total_energy(i);
 		Real ifa_ref = pose.energies().residue_total_energies(i)[ref];

@@ -15,7 +15,7 @@
 #ifndef INCLUDED_protocols_hbnet_HBNetScore_HH
 #define INCLUDED_protocols_hbnet_HBNetScore_HH
 
-//#include <utility/pointer/ReferenceCount.hh>
+//#include <utility/VirtualBase.hh>
 #include <protocols/hbnet/HBNetScore.fwd.hh>
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.hh>

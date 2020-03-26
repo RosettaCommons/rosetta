@@ -96,7 +96,7 @@ core::pack::task::TaskFactoryOP SequenceComparison::setup_tf( core::pack::task::
 std::set< core::Size > SequenceComparison::fill_designable_set( core::pose::Pose & pose, core::pack::task::TaskFactoryOP & tf ) {
 
 	//we need to score the pose for many of the task operations passed from cmd line
-	std::set< Size > designable_set;
+	std::set< core::Size > designable_set;
 	core::pack::task::PackerTaskOP design_task( tf->create_task_and_apply_taskoperations( pose ) );
 
 #ifndef NDEBUG
@@ -104,7 +104,7 @@ std::set< core::Size > SequenceComparison::fill_designable_set( core::pose::Pose
 #endif
 
 	// iterate over all residues
-	for ( Size ii = 1; ii<= design_task->total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii<= design_task->total_residue(); ++ii ) {
 		if ( design_task->being_designed( ii ) ) {
 			designable_set.insert( ii );
 		}
@@ -159,12 +159,12 @@ void SequenceComparison::measure_sequence_recovery( utility::vector1<core::pose:
 
 	ObjexxFCL::FArray2D_int sub_matrix( chemical::num_canonical_aas, chemical::num_canonical_aas, 0 );
 
-	Size n_correct_total(0); Size n_total(0);
-	Size n_correct_total_core(0); Size n_total_core(0);
-	Size n_correct_total_surface(0); Size n_total_surface(0);
+	core::Size n_correct_total(0); core::Size n_total(0);
+	core::Size n_correct_total_core(0); core::Size n_total_core(0);
+	core::Size n_correct_total_surface(0); core::Size n_total_surface(0);
 
-	Size surface_exposed_cutoff(surface_exposure_);
-	Size core_cutoff(core_cutoff_);
+	core::Size surface_exposed_cutoff(surface_exposure_);
+	core::Size core_cutoff(core_cutoff_);
 
 	// iterate through all the structures
 	auto native_itr( native_poses.begin() ), native_last( native_poses.end() );
@@ -178,7 +178,7 @@ void SequenceComparison::measure_sequence_recovery( utility::vector1<core::pose:
 
 		// figure out the task & neighbor info
 		core::pack::task::TaskFactoryOP task_factory( new core::pack::task::TaskFactory );
-		std::set< Size > design_set;
+		std::set< core::Size > design_set;
 		utility::vector1< core::Size > num_neighbors;
 
 		// setup what residues we are going to look at...
@@ -189,7 +189,7 @@ void SequenceComparison::measure_sequence_recovery( utility::vector1<core::pose:
 		// record native sequence
 		// native_sequence vector is sized for the WHOLE pose not just those being designed
 		// it doesn't matter because we only iterate over the number of designed positions
-		Size const nres( native_pose.size() );
+		core::Size const nres( native_pose.size() );
 		utility::vector1< chemical::AA > native_sequence( nres );
 
 		// iterate over designable positions
@@ -263,7 +263,7 @@ void SequenceComparison::measure_sequence_recovery( utility::vector1<core::pose:
 		<< "Residue\tNo.correct surface\tNo.native surface\tNo.designed surface\tNo.correct/ No.native\tNo.correct/ No.designed" << std::endl;
 
 	// write AA data
-	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+	for ( core::Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 
 		outputFile << chemical::name_from_aa( chemical::AA(ii) ) << "\t"
 			<< n_correct_core[ ii ] << "\t" << n_native_core[ ii ] << "\t" << n_designed_core[ ii ] << "\t";
@@ -315,15 +315,15 @@ void SequenceComparison::measure_sequence_recovery( utility::vector1<core::pose:
 
 	// write the header
 	matrixFile << "AA_TYPE" << "\t" ;
-	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+	for ( core::Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 		matrixFile << "nat_"<<chemical::name_from_aa( chemical::AA(ii) ) << "\t";
 	}
 	matrixFile<<std::endl;
 
 	// now write the numbers
-	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) { //redesigns
+	for ( core::Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) { //redesigns
 		matrixFile << "sub_" << chemical::name_from_aa( chemical::AA(ii) );
-		for ( Size jj = 1; jj <= chemical::num_canonical_aas; ++jj ) { //natives
+		for ( core::Size jj = 1; jj <= chemical::num_canonical_aas; ++jj ) { //natives
 			//std::cout<<"Native: "<< jj << " Sub: " << ii << "  Value: "<<sub_matrix( jj, ii ) << std::endl;
 			matrixFile<< "\t" << sub_matrix( jj, ii );
 		}

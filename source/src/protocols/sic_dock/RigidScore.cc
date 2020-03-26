@@ -43,20 +43,18 @@ protocols::loophash::LoopHashLibraryOP LinkerScore::loop_hash_library_ = nullptr
 
 static basic::Tracer TR( "protocols.sic_dock.RigidScore" );
 
-using core::Size;
 using core::Real;
 using core::id::AtomID;
 using std::endl;
 
 using Real = core::Real;
-using Size = core::Size;
 using Pose = core::pose::Pose;
 using Xform = Xform;
 using Vec = numeric::xyzVector<Real>;
 using Mat = numeric::xyzMatrix<Real>;
 using Vecs = utility::vector1<Vec>;
 using Reals = utility::vector1<Real>;
-using Sizes = utility::vector1<Size>;
+using Sizes = utility::vector1<core::Size>;
 using Xforms = numeric::Xforms;
 using Scores = utility::vector1<RigidScoreCOP>;
 
@@ -160,8 +158,8 @@ CBScore::score(
 LinkerScore::LinkerScore(
 	Pose const & pose1,
 	Pose const & pose2,
-	Size max_loop_len,
-	Size lookup_radius,
+	core::Size max_loop_len,
+	core::Size lookup_radius,
 	std::string const & outtag
 ):
 	loopsizes_( range(3,max_loop_len+1) ),
@@ -208,7 +206,7 @@ LinkerScore::score(
 				for ( auto const & n2 : uppers2_ ) {
 					Xform const lower = vec3_to_stub(x1,c1.second);
 					Xform const upper = vec3_to_stub(x2,n2.second);
-					Size n = count_linkers( lower, upper, loop_hash_library_, loopsizes_, lookup_radius_ );
+					core::Size n = count_linkers( lower, upper, loop_hash_library_, loopsizes_, lookup_radius_ );
 					Real s = linker_count2score(n);
 					lkscore += s;
 				}
@@ -217,7 +215,7 @@ LinkerScore::score(
 				for ( auto const & n1 : uppers1_ ) {
 					Xform const lower = vec3_to_stub(x2,c2.second);
 					Xform const upper = vec3_to_stub(x1,n1.second);
-					Size n = count_linkers( lower, upper, loop_hash_library_, loopsizes_, lookup_radius_ );
+					core::Size n = count_linkers( lower, upper, loop_hash_library_, loopsizes_, lookup_radius_ );
 					Real s = linker_count2score(n);
 					lkscore += s;
 				}
@@ -225,7 +223,7 @@ LinkerScore::score(
 
 			// if(lkscore > 3.0){
 			//  TR << "LinkerScore test " << lkscore << std::endl;
-			//   Size ndumped = 0;
+			//   core::Size ndumped = 0;
 			//  for(TermInfo::const_iterator c1 = lowers1_.begin(); c1 != lowers1_.end(); ++c1){
 			//  for(TermInfo::const_iterator n2 = uppers2_.begin(); n2 != uppers2_.end(); ++n2){
 			//   Xform const lower = vec3_to_stub(x1,c1->second);
@@ -261,7 +259,7 @@ LinkerScore::dump_linkers(
 	std::string const & out_perfix
 ) const {
 	// TR << "LinkerScore test " << lkscore << std::endl;
-	Size ndumped = 0;
+	core::Size ndumped = 0;
 	for ( auto const & c1 : lowers1_ ) {
 		for ( auto const & n2 : uppers2_ ) {
 			Xform const lower = vec3_to_stub(x1,c1.second);
@@ -317,7 +315,7 @@ public:
 
 
 	Residue const &
-	residue( Size ) const override {
+	residue( core::Size ) const override {
 		utility_exit_with_message("no Residue for NoPoseXYX_Func");
 		return dummy_pose_->residue(1234567890);
 	}
@@ -341,7 +339,7 @@ ConstraintSetScore::ConstraintSetScore(
 	using namespace core::scoring::constraints;
 	for ( auto const & i : csts_ ) {
 		Constraint const & cst(*i);
-		for ( Size j = 1; j <= cst.natoms(); ++j ) {
+		for ( core::Size j = 1; j <= cst.natoms(); ++j ) {
 			AtomID aid = cst.atom(j);
 			Vec xyz = aid.rsd() > 1000000 ? pose2.xyz(AtomID(aid.atomno(),aid.rsd()-1000000)) : pose1.xyz(aid);
 			start_coords_.insert(std::make_pair(aid,xyz));

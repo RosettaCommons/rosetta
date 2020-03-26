@@ -15,7 +15,7 @@
 #define INCLUDED_core_scoring_APBSWrapper_HH
 
 #include <core/scoring/APBSWrapper.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Utility headers
 #include <numeric/xyzVector.hh>
@@ -34,7 +34,7 @@ namespace scoring {
 ///-------------------------------------------------------------------------------------
 /// APBS wrapper
 //--------------------------------------------------------------------------------------
-class APBSWrapper : public utility::pointer::ReferenceCount {
+class APBSWrapper : public utility::VirtualBase {
 
 	PQROP pqr;
 	APBSConfigOP config;
@@ -53,7 +53,7 @@ private:
 ///-------------------------------------------------------------------------------------
 /// PQR
 //--------------------------------------------------------------------------------------
-class PQR : public utility::pointer::ReferenceCount {
+class PQR : public utility::VirtualBase {
 public:
 	PQR( pose::Pose const &pose,
 		int natoms,
@@ -68,7 +68,7 @@ public:
 ///-------------------------------------------------------------------------------------
 /// APBSResult
 //--------------------------------------------------------------------------------------
-class  APBSResult  : public utility::pointer::ReferenceCount {
+class  APBSResult  : public utility::VirtualBase {
 public:
 	APBSResult(int nsims, int natoms, int const grid_dimes[3],
 		int calcforce, int calcenergy,
@@ -100,14 +100,14 @@ public:
 ///-------------------------------------------------------------------------------------
 /// APBSConfig
 //--------------------------------------------------------------------------------------
-class APBSConfig : public utility::pointer::ReferenceCount{
+class APBSConfig : public utility::VirtualBase{
 
 public:
 
 	///---------------------------------------------------------
 	/// I_PARAM
 	///---------------------------------------------------------
-	class I_PARAM : public utility::pointer::ReferenceCount
+	class I_PARAM : public utility::VirtualBase
 	{
 		mutable int array[25];
 	public:
@@ -145,7 +145,7 @@ public:
 	///---------------------------------------------------------
 	/// R_PARAM
 	///---------------------------------------------------------
-	class R_PARAM : public utility::pointer::ReferenceCount
+	class R_PARAM : public utility::VirtualBase
 	{
 		mutable core::Real array[9];
 	public:

@@ -56,10 +56,10 @@ public:
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
 	bool
-	apply( core::pose::Pose & pose, Size const & seqpos_moved );
+	apply( core::pose::Pose & pose, core::Size const & seqpos_moved );
 
 	bool
-	apply_after_jump_change( core::pose::Pose & pose, Size const & jumpno );
+	apply_after_jump_change( core::pose::Pose & pose, core::Size const & jumpno );
 
 	std::string get_name() const override;
 
@@ -80,7 +80,7 @@ public:
 
 	core::pose::toolbox::AtomLevelDomainMapOP  atom_level_domain_map();
 
-	Size nsol(){ return nsol_; }
+	core::Size nsol(){ return nsol_; }
 
 	utility::vector1< core::Size > const & cutpos_list(){ return cutpos_list_; }
 
@@ -102,7 +102,7 @@ private:
 	////////////////////////////////////////////////////////////////////////////////////////
 	void
 	remove_res( utility::vector1< core::Size > & res_vector,
-		Size const & res );
+		core::Size const & res );
 
 	void
 	backtrack( core::kinematics::tree::Atom const * current_atom,
@@ -145,7 +145,7 @@ private:
 
 	void
 	fill_solution( core::pose::Pose & pose,
-		Size const n ) const;
+		core::Size const n ) const;
 
 	void
 	output_chainTORS( utility::vector1< core::Real > const & dt_ang,

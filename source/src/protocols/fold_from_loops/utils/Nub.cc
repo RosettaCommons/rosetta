@@ -606,7 +606,7 @@ Nub::fix_fragments()
 		small_ = fix_fragment( small_ );
 		large_ = fix_fragment( large_ );
 	} else {
-		TR << "Global Size and disposition of template residues has not changed. Fragments are OK." << std::endl;
+		TR << "Global core::Size and disposition of template residues has not changed. Fragments are OK." << std::endl;
 	}
 }
 

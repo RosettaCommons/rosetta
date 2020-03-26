@@ -68,7 +68,7 @@ public:
 	void
 	add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ) override;
 
-	Size const &
+	core::Size const &
 	anchor_sugar_solution_number() const { return anchor_sugar_solution_number_; }
 
 private:
@@ -84,7 +84,7 @@ private:
 	std::string const moving_atom_name_;
 	std::string const reference_atom_name_;
 
-	Size anchor_sugar_solution_number_;
+	core::Size anchor_sugar_solution_number_;
 };
 
 } //screener

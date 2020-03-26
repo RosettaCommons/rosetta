@@ -24,7 +24,7 @@
 #include <core/chemical/AA.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -57,7 +57,7 @@ typedef std::tuple<
 	bool //Disable metapatches
 	> Restype_Variants_VariantStrings_Exceptions;
 
-class ResidueTypeSetCache: public utility::pointer::ReferenceCount {
+class ResidueTypeSetCache: public utility::VirtualBase {
 
 public:
 

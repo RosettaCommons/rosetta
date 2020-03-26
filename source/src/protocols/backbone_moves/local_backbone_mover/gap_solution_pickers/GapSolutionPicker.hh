@@ -21,7 +21,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
@@ -36,12 +36,12 @@ namespace gap_solution_pickers {
 
 ///@brief Base class for picking solution for a gap.
 class GapSolutionPicker :
-	public utility::pointer::ReferenceCount, protected boost::noncopyable {
+	public utility::VirtualBase, protected boost::noncopyable {
 
 public:
 
-	virtual Size pick(core::pose::Pose const & pose, FreePeptide const & free_peptide,
-		vector1<vector1<Real> > const & pivot_torsions, Size const pivot) const = 0;
+	virtual core::Size pick(core::pose::Pose const & pose, FreePeptide const & free_peptide,
+		vector1<vector1<Real> > const & pivot_torsions, core::Size const pivot) const = 0;
 
 private:
 

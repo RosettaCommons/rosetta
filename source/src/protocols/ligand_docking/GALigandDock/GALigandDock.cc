@@ -751,7 +751,7 @@ GALigandDock::calculate_free_ligand_score( core::conformation::Residue const lig
 		scfxn_ligmin->set_weight( core::scoring::coordinate_constraint, 1.0 );
 
 		core::pose::Pose pose_premin( *pose );
-		for ( Size iatm = 1; iatm <= ligand.natoms(); ++iatm ) {
+		for ( core::Size iatm = 1; iatm <= ligand.natoms(); ++iatm ) {
 			core::id::AtomID atomid( iatm, 1 );
 			core::Vector const &xyz = pose->xyz( atomid );
 			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
@@ -855,7 +855,7 @@ GALigandDock::apply_coord_cst_to_sctip( core::pose::PoseOP pose,
 	}
 	TR << reportline << std::endl;
 
-	for ( Size i = 1; i <= cstatoms.size(); ++i ) {
+	for ( core::Size i = 1; i <= cstatoms.size(); ++i ) {
 		core::id::AtomID const& atomid = cstatoms[i];
 		core::Vector const &xyz = pose->xyz( atomid );
 		core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
@@ -1139,7 +1139,7 @@ GALigandDock::final_solvate(
 	core::pack::task::PackerTaskOP task_new = core::pack::task::TaskFactory::create_packer_task( pose );
 	task_new->or_include_current(true);
 
-	for ( Size i(1); i <= pose.total_residue(); ++i ) {
+	for ( core::Size i(1); i <= pose.total_residue(); ++i ) {
 		auto i_it = std::find( gene.moving_scs().begin(), gene.moving_scs().end(), i);
 		if ( i == gene.ligand_id() || i_it != gene.moving_scs().end() ) {
 			task_new->nonconst_residue_task(i).restrict_to_repacking();

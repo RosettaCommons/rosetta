@@ -23,7 +23,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -32,7 +32,7 @@ namespace cyclic_peptide_predict {
 /// @brief A pure virtual base class for the helper classes used by the HierarchicalHybridJDApplication
 /// class for transmitting information up the MPI hierarchy.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-class HierarchicalHybridJD_ResultsSummaryBase : public utility::pointer::ReferenceCount {
+class HierarchicalHybridJD_ResultsSummaryBase : public utility::VirtualBase {
 
 public:
 

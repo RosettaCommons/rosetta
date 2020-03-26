@@ -28,7 +28,7 @@
 
 // Basic/Numeric/Utility Headers
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #ifdef    SERIALIZATION
@@ -43,7 +43,7 @@ namespace protocols {
 namespace denovo_design {
 namespace components {
 
-class ResidueDihedrals : public utility::pointer::ReferenceCount {
+class ResidueDihedrals : public utility::VirtualBase {
 public:
 	ResidueDihedrals();
 
@@ -92,7 +92,7 @@ public:
 };
 
 /// @brief manages information about segments of residues
-class Segment : public utility::pointer::ReferenceCount {
+class Segment : public utility::VirtualBase {
 public:
 	Segment( std::string const & id_val );
 

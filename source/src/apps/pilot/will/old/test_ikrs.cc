@@ -140,7 +140,7 @@ vector1<Vec> vv2vecs(vector1<Reals> const & vv) {
 	return r;
 }
 
-struct Hit : utility::pointer::ReferenceCount {
+struct Hit : utility::VirtualBase {
 	Hit(core::conformation::Residue const & r1,
 		core::conformation::Residue const & r2,
 		core::kinematics::Stub & stb,

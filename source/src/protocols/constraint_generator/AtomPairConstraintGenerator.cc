@@ -213,7 +213,7 @@ AtomPairConstraintGenerator::generate_atom_pair_constraints(
 	core::scoring::constraints::ConstraintCOPs csts;
 
 	core::Size const nres = compute_nres_in_asymmetric_unit( pose );
-	for ( Size ires=1; ires<=nres; ++ires ) {
+	for ( core::Size ires=1; ires<=nres; ++ires ) {
 		if ( !subset[ ires ] ) continue;
 		if ( pose.residue(ires).aa() == core::chemical::aa_vrt ) continue;
 		core::Size const ref_ires = seqmap[ ires ];
@@ -223,7 +223,7 @@ AtomPairConstraintGenerator::generate_atom_pair_constraints(
 		}
 		MappedAtoms const iatoms = atoms_to_constrain( pose.residue( ires ), ref_pose.residue( ref_ires ) );
 
-		for ( Size jres=1; jres<=pose.size(); ++jres ) {
+		for ( core::Size jres=1; jres<=pose.size(); ++jres ) {
 			if ( !subset2[ jres ] ) continue;
 			if ( pose.residue(jres).aa() == core::chemical::aa_vrt ) continue;
 			core::Size const ref_jres = seqmap[ jres ];
@@ -249,7 +249,7 @@ AtomPairConstraintGenerator::generate_atom_pair_constraints(
 	core::scoring::constraints::ConstraintCOPs csts;
 
 	core::Size const nres = compute_nres_in_asymmetric_unit( pose );
-	for ( Size ires=1; ires<=nres; ++ires ) {
+	for ( core::Size ires=1; ires<=nres; ++ires ) {
 		if ( !subset[ ires ] ) continue;
 		if ( pose.residue(ires).aa() == core::chemical::aa_vrt ) continue;
 		core::Size const ref_ires = seqmap[ ires ];
@@ -259,7 +259,7 @@ AtomPairConstraintGenerator::generate_atom_pair_constraints(
 		}
 		MappedAtoms const iatoms = atoms_to_constrain( pose.residue( ires ), ref_pose.residue( ref_ires ) );
 
-		for ( Size jres=ires+min_seq_sep_; jres<=pose.size(); ++jres ) {
+		for ( core::Size jres=ires+min_seq_sep_; jres<=pose.size(); ++jres ) {
 			if ( !subset[ jres ] ) continue;
 			if ( pose.residue(jres).aa() == core::chemical::aa_vrt ) continue;
 			core::Size const ref_jres = seqmap[ jres ];

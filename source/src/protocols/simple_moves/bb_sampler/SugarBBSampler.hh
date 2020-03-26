@@ -20,7 +20,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -47,12 +47,12 @@ public:
 public:
 
 	core::Real
-	get_torsion(core::pose::Pose const & pose, Size resnum) const override;
+	get_torsion(core::pose::Pose const & pose, core::Size resnum) const override;
 	///Set torsions to pose
 
 
 	void
-	set_torsion_to_pose(core::pose::Pose & pose, Size resnum) const override;
+	set_torsion_to_pose(core::pose::Pose & pose, core::Size resnum) const override;
 
 	std::string
 	name() const {

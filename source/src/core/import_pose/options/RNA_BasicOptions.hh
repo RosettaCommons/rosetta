@@ -21,7 +21,7 @@
 // Utility headers
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.hh>
 
 namespace core {
@@ -29,7 +29,7 @@ namespace import_pose {
 namespace options {
 
 
-class RNA_BasicOptions: public virtual utility::pointer::ReferenceCount {
+class RNA_BasicOptions: public virtual utility::VirtualBase {
 
 public:
 

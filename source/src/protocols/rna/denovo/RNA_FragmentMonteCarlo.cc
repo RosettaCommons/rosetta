@@ -159,12 +159,12 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 
 	setup_monte_carlo_cycles( pose );
 
-	Size max_tries( 1 );
+	core::Size max_tries( 1 );
 	if ( options_->filter_lores_base_pairs() || options_->filter_chain_closure() )  max_tries = 10;
 
-	vector1< Size > moving_res_list; // used for alignment
+	vector1< core::Size > moving_res_list; // used for alignment
 
-	for ( Size ntries = 1; ntries <= max_tries; ++ntries ) {
+	for ( core::Size ntries = 1; ntries <= max_tries; ++ntries ) {
 
 		time_t pdb_start_time = time(nullptr);
 
@@ -270,7 +270,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 		if ( options_->verbose() ) TR << "Beginning main loop... " << std::endl;
 
 		bool found_solution( true );
-		for ( Size r = 1; r <= rounds_; r++ ) {
+		for ( core::Size r = 1; r <= rounds_; r++ ) {
 
 			if ( options_->verbose() ) TR << TR.Blue << "Beginning round " << r << " of " << rounds_ << TR.Reset << std::endl;
 
@@ -299,7 +299,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 			////////////////////////////////
 			// This is it ... do the loop.
 			////////////////////////////////
-			for ( Size i = 1; i <= monte_carlo_cycles_ / rounds_; ++i ) {
+			for ( core::Size i = 1; i <= monte_carlo_cycles_ / rounds_; ++i ) {
 				rna_denovo_master_mover_->apply( pose, i );
 				if ( rna_denovo_master_mover_->success() ) monte_carlo.boltzmann( pose, rna_denovo_master_mover_->move_type() );
 				outputter_->output_running_info( r, i, pose, working_denovo_scorefxn_ );
@@ -639,7 +639,7 @@ RNA_FragmentMonteCarlo::initialize_score_functions() {
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief moves should get finer as simulation progresses through rounds
 void
-RNA_FragmentMonteCarlo::update_rna_denovo_master_mover( Size const & r /*round number*/,
+RNA_FragmentMonteCarlo::update_rna_denovo_master_mover( core::Size const & r /*round number*/,
 	pose::Pose const & pose )
 {
 	// Finer and finer fragments
@@ -693,11 +693,11 @@ RNA_FragmentMonteCarlo::update_rna_denovo_master_mover( Size const & r /*round n
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @details Classic 3->2->1 RNA fragment size reduction, set by round r.
 Size
-RNA_FragmentMonteCarlo::update_frag_size( Size const & r ) const
+RNA_FragmentMonteCarlo::update_frag_size( core::Size const & r ) const
 {
 	// user defined over-ride of fragment size.
 	if ( options_->frag_size() > 0 )  return options_->frag_size();
-	Size frag_size = 3;
+	core::Size frag_size = 3;
 	if ( r > 1.0 * ( rounds_ / 3.0 ) ) frag_size = 2;
 	if ( r > 2.0 * ( rounds_ / 3.0 ) ) frag_size = 1;
 	return frag_size;
@@ -705,7 +705,7 @@ RNA_FragmentMonteCarlo::update_frag_size( Size const & r ) const
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_FragmentMonteCarlo::get_rigid_body_move_mags( Size const & r,
+RNA_FragmentMonteCarlo::get_rigid_body_move_mags( core::Size const & r,
 	Real & rot_mag,
 	Real & trans_mag,
 	Real const & rot_mag_init,
@@ -745,14 +745,14 @@ RNA_FragmentMonteCarlo::setup_monte_carlo_cycles( core::pose::Pose const & pose 
 	// figure out rough number of degrees of freedom.
 
 	// first count up number of residues with atom_level_domain_map.
-	Size const nres_move = get_moving_res( pose, atom_level_domain_map_ ).size();
+	core::Size const nres_move = get_moving_res( pose, atom_level_domain_map_ ).size();
 	if ( options_->verbose() ) TR << "Number of moving residues: " << nres_move << std::endl;
 
-	Size const nchunks = rna_chunk_library_->num_moving_chunks();
+	core::Size const nchunks = rna_chunk_library_->num_moving_chunks();
 	if ( options_->verbose() ) TR << "Number of moving chunks: " << nchunks << std::endl;
 
 	// then count up rigid bodies that need to be docked.
-	Size nbody_move = get_rigid_body_jumps( pose ).size();
+	core::Size nbody_move = get_rigid_body_jumps( pose ).size();
 	if ( nbody_move > 1 ) nbody_move--; // first rigid body does not move, by convention.
 	if ( nbody_move > 0 ) TR << "Number of moving bodies: " << nbody_move << std::endl;
 
@@ -790,7 +790,7 @@ RNA_FragmentMonteCarlo::final_score( core::pose::Pose & pose )
 ///  Analogous to abinitio protocol for proteins, where strand geometry terms are
 ///   turned on late.
 void
-RNA_FragmentMonteCarlo::update_denovo_scorefxn_weights( Size const r )
+RNA_FragmentMonteCarlo::update_denovo_scorefxn_weights( core::Size const r )
 {
 	using namespace core::scoring;
 
@@ -835,12 +835,12 @@ RNA_FragmentMonteCarlo::update_denovo_scorefxn_weights( Size const r )
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @details Used in staged_constraints only.
 Size
-RNA_FragmentMonteCarlo::figure_out_constraint_separation_cutoff( Size const r, Size const max_dist )
+RNA_FragmentMonteCarlo::figure_out_constraint_separation_cutoff( core::Size const r, core::Size const max_dist )
 {
 	//Keep score function coarse for early rounds.
 	Real const suppress  = 5.0 / 3.0 * r / rounds_;
 
-	Size const separation_cutoff ( static_cast<Size>( suppress * max_dist ) + 2 );
+	core::Size const separation_cutoff ( static_cast<core::Size>( suppress * max_dist ) + 2 );
 	if ( separation_cutoff > max_dist ) return max_dist;
 
 	return separation_cutoff;
@@ -853,7 +853,7 @@ RNA_FragmentMonteCarlo::figure_out_constraint_separation_cutoff( Size const r, S
 ///    distance in fold-tree).
 ///   Inspired by classic fold_constraints protocol for proteins.
 void
-RNA_FragmentMonteCarlo::update_pose_constraints( Size const r, core::pose::Pose & pose )
+RNA_FragmentMonteCarlo::update_pose_constraints( core::Size const r, core::pose::Pose & pose )
 {
 	using namespace core::scoring::constraints;
 
@@ -862,7 +862,7 @@ RNA_FragmentMonteCarlo::update_pose_constraints( Size const r, core::pose::Pose 
 	if ( !constraint_set_ ) return;
 
 	static core::kinematics::ShortestPathInFoldTree shortest_path_in_fold_tree( pose.fold_tree() );
-	Size const separation_cutoff = figure_out_constraint_separation_cutoff( r, shortest_path_in_fold_tree.max_dist() );
+	core::Size const separation_cutoff = figure_out_constraint_separation_cutoff( r, shortest_path_in_fold_tree.max_dist() );
 	TR << "Round " << r << " out of " << rounds_ << std::endl;
 	TR << "Fold tree current separation cutoff " << separation_cutoff << " out of " << shortest_path_in_fold_tree.max_dist() << std::endl;
 	// Fang: apparently separation_cutoff can be smaller than shortest_path_in_fold_tree.dist( i , j )
@@ -874,9 +874,9 @@ RNA_FragmentMonteCarlo::update_pose_constraints( Size const r, core::pose::Pose 
 		ConstraintSetOP cst_set_new( new core::scoring::constraints::ConstraintSet );
 		for ( ConstraintCOP const & cst : csts ) {
 			if ( cst->natoms() == 2 )  { // currently only defined for pairwise distance constraints.
-				Size const i = cst->atom( 1 ).rsd();
-				Size const j = cst->atom( 2 ).rsd();
-				Size const dist( shortest_path_in_fold_tree.dist( i , j ) );
+				core::Size const i = cst->atom( 1 ).rsd();
+				core::Size const j = cst->atom( 2 ).rsd();
+				core::Size const dist( shortest_path_in_fold_tree.dist( i , j ) );
 				if ( dist  > separation_cutoff ) continue;
 			}
 			cst_set_new->add_constraint( cst );
@@ -898,12 +898,12 @@ RNA_FragmentMonteCarlo::check_score_filter( Real const lores_score, std::list< R
 	all_lores_score.sort(); // nice -- can do this with a list!
 
 	// note that if options_->autofilter_score_quantile_ = 0.20, the first decoy will be 'passed' for free.
-	Size const n = all_lores_score.size();
-	Size const cutoff_index = static_cast< Size >( n * options_->autofilter_score_quantile() ) + 1;
+	core::Size const n = all_lores_score.size();
+	core::Size const cutoff_index = static_cast< core::Size >( n * options_->autofilter_score_quantile() ) + 1;
 
 	// the one pain with lists -- need to iterate through to find the element corresponding to the quantile score.
 	Real all_lores_score_cutoff = all_lores_score.front();
-	Size i( 1 );
+	core::Size i( 1 );
 	for ( auto iter = all_lores_score.begin(), end = all_lores_score.end(); iter != end; ++iter, i++ ) {
 		if ( i == cutoff_index ) all_lores_score_cutoff = *iter;
 	}
@@ -947,8 +947,8 @@ RNA_FragmentMonteCarlo::align_pose( core::pose::Pose & pose, bool const verbose 
 		Pose const & native_pose = *get_native_pose();
 
 		//realign to native for ease of viewing.
-		vector1< Size > superimpose_res;
-		for ( Size n = 1; n <= pose.size(); n++ )  superimpose_res.push_back( n );
+		vector1< core::Size > superimpose_res;
+		for ( core::Size n = 1; n <= pose.size(); n++ )  superimpose_res.push_back( n );
 
 		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
 			protocols::stepwise::modeler::align::create_alignment_id_map_legacy( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
@@ -965,14 +965,14 @@ RNA_FragmentMonteCarlo::align_pose( core::pose::Pose & pose, bool const verbose 
 // Andy: it would be better to remove any dependence of RNA_FragmentMonteCarlo on
 //   full_model_info if possible.
 //  -- rhiju
-vector1< Size >
+vector1< core::Size >
 RNA_FragmentMonteCarlo::reroot_pose_before_align_and_return_moving_res( pose::Pose & pose ) const
 {
 	// find connection point to 'fixed res'
-	Size moving_res_at_connection( 0 ), reference_res( 0 );
-	vector1< Size > moving_res_list = get_moving_res( pose, atom_level_domain_map_ );
-	for ( Size const moving_res : moving_res_list ) {
-		Size const parent_res = pose.fold_tree().get_parent_residue( moving_res );
+	core::Size moving_res_at_connection( 0 ), reference_res( 0 );
+	vector1< core::Size > moving_res_list = get_moving_res( pose, atom_level_domain_map_ );
+	for ( core::Size const moving_res : moving_res_list ) {
+		core::Size const parent_res = pose.fold_tree().get_parent_residue( moving_res );
 		if ( moving_res_list.has_value( parent_res ) ) continue;
 		moving_res_at_connection = moving_res;
 		reference_res            = parent_res;
@@ -985,10 +985,10 @@ RNA_FragmentMonteCarlo::reroot_pose_before_align_and_return_moving_res( pose::Po
 	// revise_root_and_moving_res() handled revision of single residue only... need to translate this
 	// switch to the whole list of residues.
 	if ( switched_moving_and_root_partitions ) {
-		vector1< Size > const moving_res_list_original = moving_res_list;
+		vector1< core::Size > const moving_res_list_original = moving_res_list;
 		moving_res_list = utility::tools::make_vector1( moving_res_at_connection );
 		if ( ! is_jump ) {
-			for ( Size const moving_res : moving_res_list_original ) {
+			for ( core::Size const moving_res : moving_res_list_original ) {
 				if ( moving_res_list_original.has_value( pose.fold_tree().get_parent_residue( moving_res ) ) ) moving_res_list.push_back( moving_res );
 			}
 		}
@@ -1025,7 +1025,7 @@ RNA_FragmentMonteCarlo::get_rmsd_stems_no_superimpose ( core::pose::Pose const &
 	using namespace core::scoring;
 
 	runtime_assert( get_native_pose() != nullptr );
-	vector1< Size > stem_residues( rna_base_pair_handler()->get_stem_residues( pose ) );
+	vector1< core::Size > stem_residues( rna_base_pair_handler()->get_stem_residues( pose ) );
 	if ( stem_residues.empty() ) return 0.0;
 
 	std::map< core::id::AtomID, core::id::AtomID > atom_id_map;
@@ -1050,7 +1050,7 @@ RNA_FragmentMonteCarlo::check_for_loop_modeling_case( std::map< core::id::AtomID
 	std::map< core::id::AtomID, core::id::AtomID > loop_atom_id_map;
 	TR << "In loop modeling mode, since there is a single user-inputted pose" << std::endl;
 	for ( auto const & elem : atom_id_map ) {
-		Size domain( rna_chunk_library_->atom_level_domain_map()->get_domain( elem.second ) );
+		core::Size domain( rna_chunk_library_->atom_level_domain_map()->get_domain( elem.second ) );
 		if ( domain == 0 || domain == ROSETTA_LIBRARY_DOMAIN ) {
 			loop_atom_id_map[ elem.first ] = elem.second;
 			// TR << TR.Cyan << "Loop atom: " << atom_id_to_named_atom_id( elem.second, pose ) << TR.Reset << std::endl;
@@ -1066,7 +1066,7 @@ RNA_FragmentMonteCarlo::setup_full_initial_structure( core::pose::Pose & pose ) 
 
 	rna_de_novo_pose_initializer_->setup_fold_tree_and_jumps_and_variants( pose, *(rna_denovo_master_mover_init_->rna_jump_mover()), rna_chunk_initialization_library_->atom_level_domain_map(), *rna_chunk_initialization_library_, true /*enumerate for new fold tree initializer*/ );
 
-	Size tries = 1;
+	core::Size tries = 1;
 	core::Real score = 100.;
 	Pose start_pose = pose;
 	while ( score > 0.5 && tries < 4 ) {
@@ -1099,7 +1099,7 @@ RNA_FragmentMonteCarlo::randomize_and_close_all_chains( core::pose::Pose & pose,
 	mc.score_function( *chainbreak_sfxn_ );
 
 	core::Real score = 100.0;
-	Size i = 0;
+	core::Size i = 0;
 	while ( score > 1.0 && i < 200 ) {
 		++i;
 		rna_denovo_master_mover_init_->rna_fragment_mover()->random_fragment_insertion( pose, 1 /*frag_size*/ );

@@ -87,7 +87,7 @@ using namespace core;
 
 
 // @brief default constructor
-SSElementBisectddGFilter::SSElementBisectddGFilter(core::scoring::ScoreFunctionOP scorefxn,Real threshold,bool report_avg,Size ignore_terminal_SS,bool only_n_term,bool only_c_term,bool skip_ss_element,bool report_sasa_instead,bool convert_charged_res_to_ala,protocols::moves::MoverOP relax_mover):
+SSElementBisectddGFilter::SSElementBisectddGFilter(core::scoring::ScoreFunctionOP scorefxn,Real threshold,bool report_avg,core::Size ignore_terminal_SS,bool only_n_term,bool only_c_term,bool skip_ss_element,bool report_sasa_instead,bool convert_charged_res_to_ala,protocols::moves::MoverOP relax_mover):
 	Filter( "SSBisectddGFilter" )
 {
 	scorefxn_=scorefxn;
@@ -148,9 +148,9 @@ protocols::loops::Loops SSElementBisectddGFilter::get_ss_elements(const Pose & p
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
 	char lastSecStruct = dssp.get_dssp_secstruct( 1 );
-	Size startSS = 0;
-	Size endSS = 0;
-	Size nres1 = pose.size();
+	core::Size startSS = 0;
+	core::Size endSS = 0;
+	core::Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_total_residues_without_pseudo();
 		if ( option[OptionKeys::score::motif_ignore_symmmetry]() ) {
@@ -180,10 +180,10 @@ protocols::loops::Loops SSElementBisectddGFilter::get_ss_elements(const Pose & p
 
 
 
-Real SSElementBisectddGFilter::get_ddg_bisect_score(Size element, protocols::loops::Loops ssElements, const Pose & pose) const{
+Real SSElementBisectddGFilter::get_ddg_bisect_score(core::Size element, protocols::loops::Loops ssElements, const Pose & pose) const{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	Size pose_length = pose.size();
+	core::Size pose_length = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		pose_length= core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 	}
@@ -191,16 +191,16 @@ Real SSElementBisectddGFilter::get_ddg_bisect_score(Size element, protocols::loo
 	//ddg_filter.repack( repack() );
 	core::pose::Pose nTerm_pose;
 	core::pose::Pose cTerm_pose;
-	utility::vector1<Size> nTerm_positions;
-	utility::vector1<Size> cTerm_positions;
-	for ( Size ii=1; ii<=ssElements[element].stop(); ++ii ) {
+	utility::vector1<core::Size> nTerm_positions;
+	utility::vector1<core::Size> cTerm_positions;
+	for ( core::Size ii=1; ii<=ssElements[element].stop(); ++ii ) {
 		nTerm_positions.push_back(ii);
 	}
-	Size c_term_element_start = element+1;
+	core::Size c_term_element_start = element+1;
 	if ( skip_ss_element_ ) {
 		c_term_element_start++;
 	}
-	for ( Size ii=ssElements[c_term_element_start].start(); ii<=pose_length; ++ii ) {
+	for ( core::Size ii=ssElements[c_term_element_start].start(); ii<=pose_length; ++ii ) {
 		cTerm_positions.push_back(ii);
 
 	}
@@ -240,8 +240,8 @@ Real SSElementBisectddGFilter::compute( const Pose & orig_pose ) const
 {
 	using protocols::loops::Loop;
 	protocols::loops::Loops ss_elements = get_ss_elements(orig_pose);
-	Size startElement = 1;
-	Size endElement = ss_elements.size();
+	core::Size startElement = 1;
+	core::Size endElement = ss_elements.size();
 	if ( ignore_terminal_SS_>0 ) {
 		startElement=ignore_terminal_SS_;
 		endElement-=ignore_terminal_SS_;
@@ -266,8 +266,8 @@ Real SSElementBisectddGFilter::compute( const Pose & orig_pose ) const
 	}
 	if ( report_avg_ ) {
 		Real tmpScore = 0;
-		Size ct = 0;
-		for ( Size ii=startElement; ii<=endElement; ++ii ) {
+		core::Size ct = 0;
+		for ( core::Size ii=startElement; ii<=endElement; ++ii ) {
 			tmpScore+=get_ddg_bisect_score(ii,ss_elements,*pose);
 			ct+=1;
 		}
@@ -276,7 +276,7 @@ Real SSElementBisectddGFilter::compute( const Pose & orig_pose ) const
 		}
 	} else {
 		Real tmpScore = -999999;
-		for ( Size ii=startElement; ii<=endElement; ++ii ) {
+		for ( core::Size ii=startElement; ii<=endElement; ++ii ) {
 			std::cout << "***start position" << ss_elements[ii].start() << std::endl;
 			Real tmp=get_ddg_bisect_score(ii,ss_elements,*pose);
 			if ( tmp>tmpScore ) {
@@ -317,7 +317,7 @@ SSElementBisectddGFilter::parse_my_tag(
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	threshold_ = tag->getOption<Real>("threshold",-999999);
 	report_avg_ = tag->getOption<bool>( "report_avg", true );
-	ignore_terminal_SS_ = tag->getOption<Size>("ignore_terminal_ss",0);
+	ignore_terminal_SS_ = tag->getOption<core::Size>("ignore_terminal_ss",0);
 	only_n_term_ = tag->getOption<bool>("only_n_term",false);
 	only_c_term_ = tag->getOption<bool>("only_c_term",false);
 	skip_ss_element_ = tag->getOption<bool>("skip_ss_element",false);

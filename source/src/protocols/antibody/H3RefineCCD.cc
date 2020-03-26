@@ -109,7 +109,7 @@ void H3RefineCCD::init( ) {
 
 	gamma_ = std::pow( (last_temp_/init_temp_), (1.0/loop_size_)); //TODO: check this gama value carefully
 
-	n_small_moves_ =  numeric::max(Size(5), Size(loop_size_/2)) ;
+	n_small_moves_ =  numeric::max(core::Size(5), core::Size(loop_size_/2)) ;
 	inner_cycles_ = loop_size_;
 	outer_cycles_ = 2; //JQX: assume the SnugFit step has done some minimization
 	if (  refine_input_loop_ ) {
@@ -183,7 +183,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 
 
 	// the list of residues that are allowed to pack
-	for ( Size ii=1; ii <=pose.size(); ii++ ) {
+	for ( core::Size ii=1; ii <=pose.size(); ii++ ) {
 		allow_repack_.push_back(false);
 	}
 	select_loop_residues( pose, the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
@@ -191,7 +191,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 
 	// the list of residues that are allowed to change backbone
 	utility::vector1< bool> allow_bb_move( pose.size(), false );
-	for ( Size ii = loop_begin_; ii <= loop_end_; ii++ ) {
+	for ( core::Size ii = loop_begin_; ii <= loop_end_; ii++ ) {
 		allow_bb_move[ ii ] = true;
 	}
 
@@ -203,7 +203,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
 
 	if ( flank_relax_ ) {
 		utility::vector1< bool> flank_allow_bb_move( allow_bb_move );
-		for ( Size i = 1; i <= pose.size(); i++ ) {
+		for ( core::Size i = 1; i <= pose.size(); i++ ) {
 			if (  (i >= (loop_begin_ - flank_size_)) && (i <= (loop_end_ + flank_size_))   ) {
 				flank_allow_bb_move[i] = true;
 			}
@@ -315,7 +315,7 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 
 
 	bool closed_cutpoints( false );
-	Size cycle( 1 );
+	core::Size cycle( 1 );
 	while ( !closed_cutpoints && cycle<max_cycle_close_trial_ ) {
 		TR <<  "    Refining CDR H3 loop in HighRes.  close_trial_cycle="<<cycle << std::endl;
 
@@ -341,12 +341,12 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 		}
 
 		// outer cycle
-		for ( Size i = 1; i <= outer_cycles_; i++ ) {
+		for ( core::Size i = 1; i <= outer_cycles_; i++ ) {
 			mc_->recover_low( pose );
-			Size h3_attempts(0); // number of H3 checks after refinement
+			core::Size h3_attempts(0); // number of H3 checks after refinement
 
 			// inner cycle
-			for ( Size j = 1; j <= inner_cycles_; j++ ) {
+			for ( core::Size j = 1; j <= inner_cycles_; j++ ) {
 				mc_->set_temperature( temperature*= gamma_ );
 
 				wiggle_cdr_h3_->apply( pose );
@@ -395,7 +395,7 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 					}
 				}
 
-				if ( numeric::mod(j,Size(20))==0 || j==inner_cycles_ ) {
+				if ( numeric::mod(j,core::Size(20))==0 || j==inner_cycles_ ) {
 					// repack trial
 					loop_repack_ = utility::pointer::make_shared< PackRotamersMover >( highres_scorefxn_ );
 					tf_ = setup_packer_task( start_pose_);

@@ -100,8 +100,8 @@ SwitchChainOrderMover::apply( Pose & pose )
 	new_pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( new_pose, true ) ); //reinitialize the PDBInfo
 
 	// Salvage old PDBInfo information. Feel free to add anything else you need here.
-	for ( Size new_seqpos = 1; new_seqpos <= new_pose.size(); new_seqpos++ ) {
-		Size old_seqpos = positions_in_new_pose.at( new_seqpos );
+	for ( core::Size new_seqpos = 1; new_seqpos <= new_pose.size(); new_seqpos++ ) {
+		core::Size old_seqpos = positions_in_new_pose.at( new_seqpos );
 		for ( auto reslabel : pose.pdb_info()->get_reslabels( old_seqpos ) ) {
 			new_pose.pdb_info()->add_reslabel( new_seqpos, reslabel );
 		}

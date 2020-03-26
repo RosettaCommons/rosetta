@@ -32,7 +32,7 @@
 namespace protocols {
 namespace environment {
 
-class DofUnlock : public utility::pointer::ReferenceCount {
+class DofUnlock : public utility::VirtualBase {
 
 public:
 	DofUnlock( core::conformation::Conformation&, core::environment::DofPassportCOP );

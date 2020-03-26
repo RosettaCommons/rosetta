@@ -58,7 +58,7 @@ void DataPoint::add_similarity(core::Size k, core::Real s_ik, core::Size max_sim
 
 
 APCluster::APCluster(core::Size total_pts, core::Size max_sims_per_pt /*= 0*/):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	pts_(),
 	is_frozen_(false)
 {

@@ -418,7 +418,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 		//recover sidechains from starting structures except H3
 		utility::vector1<bool> allow_chi_copy( pose.size(), true );
-		for ( Size ii=cdr_h3_loop.start(); ii<=cdr_h3_loop.stop(); ++ii ) {
+		for ( core::Size ii=cdr_h3_loop.start(); ii<=cdr_h3_loop.stop(); ++ii ) {
 			allow_chi_copy[ii] = false;
 		}
 		protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose, allow_chi_copy );
@@ -620,7 +620,7 @@ void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & po
 
 	// Detecting di-sulfide bond
 
-	Size H1_Cys(0), H3_Cys(0);
+	core::Size H1_Cys(0), H3_Cys(0);
 
 	if (      pose.residue( pose.pdb_info()->pdb2pose('H',32 ) ).name3() == "CYS" ) {
 		H1_Cys = pose.pdb_info()->pdb2pose( 'H', 32 );
@@ -628,7 +628,7 @@ void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & po
 		H1_Cys = pose.pdb_info()->pdb2pose( 'H', 33 );
 	}
 
-	for ( Size ii = ab_info_->get_CDR_loop(h3).start(); ii <= ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
+	for ( core::Size ii = ab_info_->get_CDR_loop(h3).start(); ii <= ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
 		if ( pose.residue(ii).name3() == "CYS" ) {
 			H3_Cys = ii;
 		}
@@ -641,7 +641,7 @@ void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & po
 
 	// Specifying extended kink
 
-	Size hfr_46(0), h3_closest(0);
+	core::Size hfr_46(0), h3_closest(0);
 	hfr_46 = pose.pdb_info()->pdb2pose( 'H', 46 );
 	if ( ab_info_->get_H3_kink_type() == Extended ) h3_closest = ab_info_->get_CDR_loop(h3).stop() - 5;
 	if ( h3_closest != 0 ) {

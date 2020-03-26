@@ -105,7 +105,7 @@ TorsionClaim::TorsionClaim( ClientMoverOP owner,
 {
 	LocalPositions local_positions = LocalPositions();
 
-	for ( Size i = range.first; i <= range.second; ++i ) {
+	for ( core::Size i = range.first; i <= range.second; ++i ) {
 		local_positions.push_back( utility::pointer::make_shared< LocalPosition >( label, i ) );
 	}
 
@@ -158,7 +158,7 @@ void TorsionClaim::yield_elements( core::pose::Pose const & pose, DOFElements& e
 
 	Conformation const & conf = pose.conformation();
 
-	for ( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
+	for ( core::Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
 		if ( !subset[seqpos] ) {
 			// If this residue isn't selected by the selector, we're not supposed to do anything.
 			// Continue on to the next residue.
@@ -166,17 +166,17 @@ void TorsionClaim::yield_elements( core::pose::Pose const & pose, DOFElements& e
 		}
 
 		if ( claim_backbone() ) {
-			for ( Size i = 1; i <= conf.residue( seqpos ).mainchain_torsions().size(); ++i ) {
+			for ( core::Size i = 1; i <= conf.residue( seqpos ).mainchain_torsions().size(); ++i ) {
 				insert_dof_element( conf, elements, seqpos, BB, i );
 			}
 		}
 		if ( claim_sidechain() ) {
-			for ( Size i = 1; i <= conf.residue( seqpos ).nchi(); ++i ) {
+			for ( core::Size i = 1; i <= conf.residue( seqpos ).nchi(); ++i ) {
 				insert_dof_element( conf, elements, seqpos, CHI, i );
 			}
 		}
 		if ( conf.residue( seqpos ).n_nus() > 0 ) {
-			for ( Size i = 1; i <= conf.residue( seqpos ).n_nus(); ++i ) {
+			for ( core::Size i = 1; i <= conf.residue( seqpos ).n_nus(); ++i ) {
 				insert_dof_element( conf, elements, seqpos, NU, i );
 			}
 			tr.Warning << "Nu angles for " << seqpos << " are being claimed. Is this what you want? You can investigate in " << __FILE__ << ":" << __LINE__ << std::endl;

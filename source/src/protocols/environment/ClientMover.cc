@@ -64,7 +64,7 @@ void ClientMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
 
 	debug_assert( sandbox_pose.conformation().fold_tree() == true_pose.conformation().fold_tree() );
 
-	for ( Size i = 1; i <= true_pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= true_pose.size(); ++i ) {
 		try {
 			if ( true_pose.residue( i ).is_protein() ) {
 				if ( ang_delta( sandbox_pose.omega( i ), true_pose.omega( i ) ) ) {
@@ -76,7 +76,7 @@ void ClientMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
 				if ( ang_delta( sandbox_pose.psi( i ), true_pose.psi( i ) ) ) {
 					true_pose.set_psi( i, sandbox_pose.psi( i ) );
 				}
-				for ( Size j = 1; j <= true_pose.conformation().residue( i ).nchi(); ++j ) {
+				for ( core::Size j = 1; j <= true_pose.conformation().residue( i ).nchi(); ++j ) {
 					if ( ang_delta( true_pose.chi( (int) j, i ), sandbox_pose.chi( (int) j, i ) ) ) {
 						true_pose.set_chi( (int) j, i, sandbox_pose.chi( (int) j, i ) );
 					}
@@ -89,7 +89,7 @@ void ClientMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
 		}
 	}
 
-	for ( Size i = 1; i <= true_pose.num_jump(); ++i ) {
+	for ( core::Size i = 1; i <= true_pose.num_jump(); ++i ) {
 		core::Real const delta_trans = sandbox_pose.jump( (int) i ).get_translation().distance( true_pose.jump( (int) i).get_translation() );
 		numeric::xyzMatrix< core::Real > const delta_rot = sandbox_pose.jump( (int) i ).get_rotation()*true_pose.jump( (int) i ).get_rotation().inverse();
 		if ( delta_trans > TOLERANCE ||

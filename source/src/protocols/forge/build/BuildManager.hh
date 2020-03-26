@@ -32,7 +32,7 @@
 #include <core/id/SequenceMapping.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -49,13 +49,13 @@ namespace build {
 /// @brief a container for managing BuildInstructions
 /// @note Compatibility checks wrt dependencies currently do not exist.
 ///  It remains to be seen how to handle this.
-class BuildManager : public utility::pointer::ReferenceCount {
+class BuildManager : public utility::VirtualBase {
 
 
 private: // typedefs
 
 
-	typedef utility::pointer::ReferenceCount Super;
+	typedef utility::VirtualBase Super;
 
 
 public: // typedefs
@@ -73,11 +73,11 @@ public: // typedefs
 	typedef utility::vector1< BuildInstructionOP > BuildInstructionOPs;
 	typedef BuildInstructionOPs::iterator BIOPIterator;
 	typedef BuildInstructionOPs::const_iterator BIOPConstIterator;
-	typedef std::pair< Size, Size > DependencyEdge;
+	typedef std::pair< core::Size, core::Size > DependencyEdge;
 	typedef utility::vector1< DependencyEdge > DependencyEdges;
-	typedef std::set< Size > Positions;
-	typedef std::map< Size, Size > Original2Modified;
-	typedef std::map< Size, Size > Modified2Original;
+	typedef std::set< core::Size > Positions;
+	typedef std::map< core::Size, core::Size > Original2Modified;
+	typedef std::map< core::Size, core::Size > Modified2Original;
 	typedef std::map< Interval, Positions > Interval2Positions;
 	typedef std::map< Interval, Interval > Interval2Interval;
 	typedef std::map< Interval, MoveMap > Interval2MoveMap;
@@ -141,7 +141,7 @@ public: // instruction interface
 
 	/// @brief current number of instructions
 	inline
-	Size size() const {
+	core::Size size() const {
 		return instructions_.size();
 	}
 
@@ -178,7 +178,7 @@ public: // instruction dependency interface
 	/// @brief the number of dependencies currently defined (i.e. # of edges in
 	///  the dependency graph)
 	inline
-	Size n_dependencies() const {
+	core::Size n_dependencies() const {
 		return instruction_dependencies_.size();
 	}
 
@@ -192,7 +192,7 @@ public: // instruction dependency interface
 
 	/// @brief clear all dependencies
 	/// @return number of dependencies dropped
-	Size clear_dependencies();
+	core::Size clear_dependencies();
 
 
 public: // pose modification interface
@@ -211,7 +211,7 @@ public: // pose modification interface
 	/// @return The final length of the modified Pose.
 	/// @remarks Use this to do a fake run of modify() if you need any
 	///  position or mapping information prior to actually calling modify().
-	Size dummy_modify( Size const nres );
+	core::Size dummy_modify( core::Size const nres );
 
 
 	/// @brief check if instruction regions are compatible with each other

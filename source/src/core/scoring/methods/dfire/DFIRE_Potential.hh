@@ -18,7 +18,7 @@
 
 // Unit Headers
 #include <core/scoring/methods/dfire/DFIRE_Potential.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <boost/unordered_map.hpp>
 
 // Utility headers
@@ -33,7 +33,7 @@ namespace scoring {
 namespace methods {
 namespace dfire {
 
-class DFIRE_Potential : public utility::pointer::ReferenceCount {
+class DFIRE_Potential : public utility::VirtualBase {
 public:
 	DFIRE_Potential();
 

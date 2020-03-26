@@ -42,7 +42,7 @@ namespace protocols {
 namespace topology_broker {
 
 SequenceNumberResolver::SequenceNumberResolver( const SequenceNumberResolver&  src ):
-	ReferenceCount()
+	VirtualBase()
 {
 	offset_map_ = src.offset_map_;
 	offset_map_reversed_ = src.offset_map_reversed_;

@@ -204,7 +204,7 @@ Size SnugDock::number_of_high_resolution_cycles() const {
 	return number_of_high_resolution_cycles_;
 }
 
-void SnugDock::number_of_high_resolution_cycles( Size const number_of_high_resolution_cycles ) {
+void SnugDock::number_of_high_resolution_cycles( core::Size const number_of_high_resolution_cycles ) {
 	number_of_high_resolution_cycles_ = number_of_high_resolution_cycles;
 }
 

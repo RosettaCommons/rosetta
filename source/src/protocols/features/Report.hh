@@ -30,7 +30,7 @@
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //Auto Headers
 #include <protocols/features/FeaturesReporter.fwd.hh>
@@ -38,7 +38,7 @@
 namespace protocols {
 namespace features {
 
-class Report : public utility::pointer::ReferenceCount {
+class Report : public utility::VirtualBase {
 
 public:
 	typedef utility::vector1< FeaturesReporterOP > FeaturesReporters;

@@ -77,7 +77,7 @@ EnvLabelSelector::EnvLabelSelector( std::string const& label,
 	std::pair< core::Size, core::Size > const& range ) {
 	LocalPositions local_positions = LocalPositions();
 
-	for ( Size i = range.first; i <= range.second; ++i ) {
+	for ( core::Size i = range.first; i <= range.second; ++i ) {
 		local_positions.push_back( utility::pointer::make_shared< LocalPosition >( label, i ) );
 	}
 

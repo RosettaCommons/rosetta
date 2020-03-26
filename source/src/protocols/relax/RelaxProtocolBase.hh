@@ -71,7 +71,7 @@ public:
 
 	bool cartesian() const { return cartesian_; }
 	std::string min_type() const { return min_type_; }
-	Size max_iter() const { return max_iter_; }
+	core::Size max_iter() const { return max_iter_; }
 	bool dry_run() const { return dry_run_; }
 
 	bool constrain_relax_to_native_coords() const { return constrain_relax_to_native_coords_; }
@@ -97,7 +97,7 @@ public:
 	/// Requires scorefunction setup for non-ideal minimization.
 	void cartesian( bool newval );
 	void min_type( std::string min_type );
-	void max_iter( Size max_iter );
+	void max_iter( core::Size max_iter );
 	void dry_run( bool setting );
 
 	void constrain_relax_to_native_coords( bool constrain_relax_to_native_coords );

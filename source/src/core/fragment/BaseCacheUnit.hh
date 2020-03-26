@@ -22,12 +22,13 @@
 // Package Headers
 
 // Project Headers
+#include <core/types.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/pointer/access_ptr.fwd.hh>
 
@@ -41,7 +42,7 @@ class BaseCacheUnit;
 typedef utility::pointer::shared_ptr< BaseCacheUnit > BaseCacheUnitOP;
 typedef utility::pointer::weak_ptr< BaseCacheUnit > BaseCacheUnitAP;
 
-class BaseCacheUnit : public utility::pointer::ReferenceCount {
+class BaseCacheUnit : public utility::VirtualBase {
 public:
 	virtual BaseCacheUnitOP clone() const = 0;
 	virtual void remap_value( BaseCacheUnit const& source, Size source_id, Size new_id ) = 0;

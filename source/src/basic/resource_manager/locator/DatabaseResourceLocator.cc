@@ -151,7 +151,7 @@ DatabaseResourceLocator::locate_resource_stream(
 	}
 
 	stringstream concatenated_result;
-	for ( Size col = 1, ncols = res.cols(); col <= ncols; ++col ) {
+	for ( platform::Size col = 1, ncols = res.cols(); col <= ncols; ++col ) {
 		std::string col_val;
 		res >> col_val;
 		concatenated_result << col_val;

@@ -15,14 +15,14 @@
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
 //#include <ObjexxFCL/format.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace numeric {
 namespace geometry {
 namespace hashing {
 
 template<typename T>
-class xyzStripeHashWithMeta : public utility::pointer::ReferenceCount {
+class xyzStripeHashWithMeta : public utility::VirtualBase {
 
 	inline short  short_min( short const a,  short const b) { return (a < b) ? a : b; }
 	inline short  short_max( short const a,  short const b) { return (a > b) ? a : b; }

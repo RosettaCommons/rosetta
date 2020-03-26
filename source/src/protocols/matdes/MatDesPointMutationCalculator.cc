@@ -124,7 +124,7 @@ MatDesPointMutationCalculator::MatDesPointMutationCalculator(
 	repack_shell_ = repack_shell;
 	force_natro_ = force_natro;
 
-	for ( Size isamp = 1; isamp <= sample_types.size(); ++isamp ) {
+	for ( core::Size isamp = 1; isamp <= sample_types.size(); ++isamp ) {
 		if ( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ) {
 			TR.Fatal << "the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
 			utility_exit_with_message("Sample type not recognized.");
@@ -170,7 +170,7 @@ MatDesPointMutationCalculator::MatDesPointMutationCalculator(
 	force_natro_ = force_natro;
 	set_task_for_filters.push_back( set_task_for_filter );
 
-	for ( Size isamp = 1; isamp <= sample_types.size(); ++isamp ) {
+	for ( core::Size isamp = 1; isamp <= sample_types.size(); ++isamp ) {
 		if ( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ) {
 			TR.Fatal << "the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
 			utility_exit_with_message("Sample type not recognized.");
@@ -344,16 +344,16 @@ return pair1.second < pair2.second;
 
 bool
 cmp_triple_by_third(
-pair< Size, pair< AA, Real > > const pair1,
-pair< Size, pair< AA, Real > > const pair2 )
+pair< core::Size, pair< AA, Real > > const pair1,
+pair< core::Size, pair< AA, Real > > const pair2 )
 {
 return pair1.second.second < pair2.second.second;
 }
 
 bool
 cmp_pair_vec_by_first_vec_val(
-pair< Size, vector1< pair< AA, Real > > > const pair1,
-pair< Size, vector1< pair< AA, Real > > > const pair2 )
+pair< core::Size, vector1< pair< AA, Real > > > const pair1,
+pair< core::Size, vector1< pair< AA, Real > > > const pair2 )
 {
 return pair1.second[ 1 ].second < pair2.second[ 1 ].second;
 }
@@ -376,17 +376,17 @@ get_nstruct(){
 void
 MatDesPointMutationCalculator::mutate_and_relax(
 	pose::Pose & pose,
-	Size const & resi,
+	core::Size const & resi,
 	AA const & target_aa
 ){
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	using namespace core::chemical;
 
-	for ( Size ifilt = 1; ifilt <= set_task_for_filters_.size(); ++ifilt ) {
+	for ( core::Size ifilt = 1; ifilt <= set_task_for_filters_.size(); ++ifilt ) {
 		TaskFactoryOP new_task_factory( new TaskFactory );
-		vector1< Size > prevent_repacking_residues;
-		for ( Size resj=1; resj<=pose.size(); ++resj ) {
+		vector1< core::Size > prevent_repacking_residues;
+		for ( core::Size resj=1; resj<=pose.size(); ++resj ) {
 			if ( resi != resj ) {
 				prevent_repacking_residues.push_back(resj);
 			}
@@ -411,7 +411,7 @@ MatDesPointMutationCalculator::mutate_and_relax(
 		// Prevent that residue from repacking in any stored_tasks passed by the user.
 		utility::vector1< core::pack::task::PackerTaskOP > tmp_tasks;
 		protocols::task_operations::STMStoredTaskOP stored_tasks = utility::pointer::static_pointer_cast< protocols::task_operations::STMStoredTask > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) );
-		for ( Size itask = 1; itask <= stored_task_names_.size(); ++itask ) {
+		for ( core::Size itask = 1; itask <= stored_task_names_.size(); ++itask ) {
 			core::pack::task::PackerTaskOP tmp_task = stored_tasks->get_task( stored_task_names_[itask] )->clone();
 			//tmp_task->nonconst_residue_task(resi).restrict_absent_canonical_aas( allowed_aas );
 			tmp_task->nonconst_residue_task(resi).prevent_repacking();
@@ -465,7 +465,7 @@ MatDesPointMutationCalculator::mutate_and_relax(
 void
 MatDesPointMutationCalculator::mutate_and_relax(
 	pose::Pose & pose,
-	Size const & resi,
+	core::Size const & resi,
 	AA const & target_aa,
 	protocols::minimization_packing::GreenPackerOP green_packer
 ){
@@ -518,7 +518,7 @@ MatDesPointMutationCalculator::eval_filters(
 	filter_pass = true;
 	vals.clear();
 	if ( filter_thresholds_.size() > 0 ) {
-		for ( Size ifilt = 1; ifilt <= filters_.size(); ++ifilt ) {
+		for ( core::Size ifilt = 1; ifilt <= filters_.size(); ++ifilt ) {
 			Real const flip_sign( sample_types_[ ifilt ] == "high" ? -1 : 1 );
 			Real const val( flip_sign * ( filters_[ ifilt ] )->report_sm( pose ) );
 			bool this_filter_pass = true;
@@ -543,7 +543,7 @@ MatDesPointMutationCalculator::eval_filters(
 			vals.push_back( val );
 		}
 	} else {
-		for ( Size ifilt = 1; ifilt <= filters_.size(); ++ifilt ) {
+		for ( core::Size ifilt = 1; ifilt <= filters_.size(); ++ifilt ) {
 			//check if this filter passes, AND it with current value of pass/fail
 			bool this_filter_pass( ( filters_[ ifilt ] )->apply( pose ) );
 			filter_pass = filter_pass && this_filter_pass;
@@ -565,10 +565,10 @@ MatDesPointMutationCalculator::eval_filters(
 
 void
 insert_point_mut_filter_vals(
-	Size const seqpos,
+	core::Size const seqpos,
 	chemical::AA const aa,
 	vector1< Real > const vals,
-	vector1< pair< Size, vector1< pair< AA, vector1< Real > > > > > & seqpos_aa_vals_vec
+	vector1< pair< core::Size, vector1< pair< AA, vector1< Real > > > > > & seqpos_aa_vals_vec
 )
 {
 	using namespace core::chemical;
@@ -577,7 +577,7 @@ insert_point_mut_filter_vals(
 	//first check if we've assigned anything for seqpos
 	//if we have, just append this aa,vals pair onto that seqpos' data
 	bool new_pos( true ); // It's a new position unless we find it
-	for ( Size iseq = 1; iseq <= seqpos_aa_vals_vec.size(); ++iseq ) {
+	for ( core::Size iseq = 1; iseq <= seqpos_aa_vals_vec.size(); ++iseq ) {
 		if ( seqpos == seqpos_aa_vals_vec[ iseq ].first ) {
 			new_pos = false;
 			bool replaced( false );
@@ -599,7 +599,7 @@ insert_point_mut_filter_vals(
 	//create a 1-element vector and add to the ptmut data
 	if ( new_pos ) {
 		vector1< pair< AA, vector1< Real > > > aa_vals_vec( 1, aa_vals_pair );
-		seqpos_aa_vals_vec.push_back( pair< Size, vector1< pair< AA, vector1< Real > > > >( seqpos, aa_vals_vec ) );
+		seqpos_aa_vals_vec.push_back( pair< core::Size, vector1< pair< AA, vector1< Real > > > >( seqpos, aa_vals_vec ) );
 	}
 }
 
@@ -607,16 +607,16 @@ insert_point_mut_filter_vals(
 void
 MatDesPointMutationCalculator::calc_point_mut_filters(
 	pose::Pose const & pose,
-	vector1< pair< Size, vector1< pair< AA, Real > > > > & seqpos_aa_val_vec
+	vector1< pair< core::Size, vector1< pair< AA, Real > > > > & seqpos_aa_val_vec
 )
 {
 	//call the default with a new tmp container
-	vector1< pair< Size, vector1< pair< AA, vector1< Real > > > > > seqpos_aa_vals_vec;
+	vector1< pair< core::Size, vector1< pair< AA, vector1< Real > > > > > seqpos_aa_vals_vec;
 	calc_point_mut_filters( pose, seqpos_aa_vals_vec );
 	//iter thru tmp container and use vals to populate input container
 	for ( auto seqpos_aa_vals = seqpos_aa_vals_vec.begin();
 			seqpos_aa_vals != seqpos_aa_vals_vec.end(); ++seqpos_aa_vals ) {
-		Size seqpos( seqpos_aa_vals->first );
+		core::Size seqpos( seqpos_aa_vals->first );
 		//seqpos_aa_vals->second is a seqpos' vector of aa/vals pairs
 		debug_assert( !seqpos_aa_vals->second.empty() );
 		vector1< pair< AA, Real > > aa_val;
@@ -626,14 +626,14 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 			debug_assert( !aa_vals->second.empty() );
 			aa_val.push_back( pair< AA, Real >( aa_vals->first, aa_vals->second[ 1 ] ) );
 		}
-		seqpos_aa_val_vec.push_back( pair< Size, vector1< pair< AA, Real > > >( seqpos, aa_val ) );
+		seqpos_aa_val_vec.push_back( pair< core::Size, vector1< pair< AA, Real > > >( seqpos, aa_val ) );
 	}
 }
 
 void
 MatDesPointMutationCalculator::calc_point_mut_filters(
 	pose::Pose const & start_pose,
-	vector1< pair< Size, vector1< pair< AA, vector1< Real > > > > > & seqpos_aa_vals_vec
+	vector1< pair< core::Size, vector1< pair< AA, vector1< Real > > > > > & seqpos_aa_vals_vec
 )
 {
 	using namespace core::pack::task;
@@ -651,9 +651,9 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 		tmptask = core::pack::make_new_symmetric_PackerTask_by_requested_method(start_pose,tmptask);
 	}
 	PackerTaskCOP task = tmptask;
-	//get vector< Size > of protein seqpos being designed and group id mask for green packer (0 is designed, 1 is rp only)
+	//get vector< core::Size > of protein seqpos being designed and group id mask for green packer (0 is designed, 1 is rp only)
 	vector1< core::Size > being_designed;
-	utility::vector1< Size > group_ids;
+	utility::vector1< core::Size > group_ids;
 	being_designed.clear();
 	for ( core::Size resi = 1; resi <= start_pose.size(); ++resi ) {
 		if ( core::pose::symmetry::is_symmetric(start_pose) ) {
@@ -753,9 +753,9 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 #endif
 
 	//make a single list of seqpos,aa pairs
-	vector1< pair< Size, AA > > all_muts;
-	for ( Size iresi = 1; iresi <= being_designed.size(); ++iresi ) {
-		Size const resi( being_designed[ iresi ] );
+	vector1< pair< core::Size, AA > > all_muts;
+	for ( core::Size iresi = 1; iresi <= being_designed.size(); ++iresi ) {
+		core::Size const resi( being_designed[ iresi ] );
 		//create vector< AA > of allowed residue types at seqpos
 		using ResidueTypeCOPList = std::list<ResidueTypeCOP>;
 		ResidueTypeCOPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
@@ -766,30 +766,30 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 		}
 		//for each allowed AA
 		for ( AA const target_aa : allow_temp ) {
-			all_muts.push_back( pair< Size, AA >( resi, target_aa ) );
+			all_muts.push_back( pair< core::Size, AA >( resi, target_aa ) );
 		}
 	}
 
-	vector1< pair< Size, AA > > my_muts( all_muts );
+	vector1< pair< core::Size, AA > > my_muts( all_muts );
 	if ( parallel() ) {
 #ifdef USEMPI
 		//split up my_muts into smaller sublists for diff procs
 		my_muts.clear();
 		//asign muts to each proc
-		for( Size imut = 1; imut <= all_muts.size(); ++imut ){
+		for( core::Size imut = 1; imut <= all_muts.size(); ++imut ){
 			//e.g. for 4 procs, hand out muts like 1,2,3,1,2,3,etc (nothing given to proc 0)
-			Size this_mpi_rank( ( imut - 1 ) % ( mpi_nprocs - mpi_rank_low ) + mpi_rank_low );
+			core::Size this_mpi_rank( ( imut - 1 ) % ( mpi_nprocs - mpi_rank_low ) + mpi_rank_low );
 			if( static_cast<int>(this_mpi_rank) == mpi_rank ){
 				my_muts.push_back( all_muts[ imut ] );
 			}
 		}
 		//TR << "Proc " << mpi_rank << " takes mutations: ";
-		//for( Size imut = 1; imut <= my_muts.size(); ++imut ) TR << my_muts[ imut ].first << my_muts[ imut ].second << " ";
+		//for( core::Size imut = 1; imut <= my_muts.size(); ++imut ) TR << my_muts[ imut ].first << my_muts[ imut ].second << " ";
 		//TR << std::endl;
 #endif
 	}
-	for ( Size imut = 1; imut <= my_muts.size(); ++imut ) {
-		Size seqpos( my_muts[ imut ].first );
+	for ( core::Size imut = 1; imut <= my_muts.size(); ++imut ) {
+		core::Size seqpos( my_muts[ imut ].first );
 		AA target_aa( my_muts[ imut ].second );
 		//make copy of original
 		pose::Pose pose( start_pose );
@@ -822,7 +822,7 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 		//worker sends ptmut data to pool leader
 		if( mpi_rank > mpi_rank_low ){
 			utility::send_integer_to_node( mpi_rank_low, seqpos_aa_vals_vec.size() );	//send int
-			for( Size iseq = 1; iseq <= seqpos_aa_vals_vec.size(); ++iseq ){
+			for( core::Size iseq = 1; iseq <= seqpos_aa_vals_vec.size(); ++iseq ){
 				utility::send_integer_to_node( mpi_rank_low, seqpos_aa_vals_vec[ iseq ].first );	//send int
 				utility::vector1< std::pair< core::chemical::AA, vector1< core::Real > > > const & aa_pairs( seqpos_aa_vals_vec[ iseq ].second );
 				utility::send_integer_to_node( mpi_rank_low, aa_pairs.size() );	//send int
@@ -830,7 +830,7 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 					utility::send_char_to_node( mpi_rank_low, chemical::oneletter_code_from_aa( aa_pairs[ iaa ].first ) );	//send char
 					//TR << "Proc " << mpi_rank << " sending seqpos,aa: " << seqpos_aa_vals_vec[ iseq ].first << aa_pairs[ iaa ].first
 					//		<< ": " << aa_pairs[ iaa ].second[ 1 ] << " to Proc 0" << std::endl;
-					for( Size ival = 1; ival <= ( filters() ).size(); ++ival ){
+					for( core::Size ival = 1; ival <= ( filters() ).size(); ++ival ){
 						utility::send_double_to_node( mpi_rank_low, aa_pairs[ iaa ].second[ ival ] );	//send Real
 					}
 				}
@@ -838,19 +838,19 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 		}
 		//pool leader receives ptmut data from workers and combines with its own
 		else if( mpi_rank == mpi_rank_low ){
-			for( Size iproc = mpi_rank_low + 1; static_cast<int>(iproc) < mpi_nprocs; ++iproc ){
+			for( core::Size iproc = mpi_rank_low + 1; static_cast<int>(iproc) < mpi_nprocs; ++iproc ){
 				//get data for one mut (seqpos, AA, and filter vals )
 				//need to know how many seqpos
-				Size n_seqpos( utility::receive_integer_from_node( iproc ) ); //rec int
-				for( Size imut = 1; imut <= n_seqpos; ++imut ){
-					Size seqpos( utility::receive_integer_from_node( iproc ) ); //rec int
+				core::Size n_seqpos( utility::receive_integer_from_node( iproc ) ); //rec int
+				for( core::Size imut = 1; imut <= n_seqpos; ++imut ){
+					core::Size seqpos( utility::receive_integer_from_node( iproc ) ); //rec int
 					//need to know how many muts at this seqpos
-					Size n_aas( utility::receive_integer_from_node( iproc ) );	//rec int
-					for( Size iaa = 1; iaa <= n_aas; ++iaa ){
+					core::Size n_aas( utility::receive_integer_from_node( iproc ) );	//rec int
+					for( core::Size iaa = 1; iaa <= n_aas; ++iaa ){
 						char aa_char( utility::receive_char_from_node( iproc ) );	//rec char
 						chemical::AA aa( chemical::aa_from_oneletter_code( aa_char ) );
 						vector1< Real > vals( ( filters() ).size(), 0. );
-						for( Size ival = 1; ival <= vals.size(); ++ival ){
+						for( core::Size ival = 1; ival <= vals.size(); ++ival ){
 							vals[ ival ] = utility::receive_double_from_node( iproc );	//rec Real
 						}
 						//TR << "Proc " << mpi_rank << " received seqpos,aa: " << seqpos << aa << ": "
@@ -863,16 +863,16 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 		//MPI_Barrier( MPI_COMM_POOL );
 		//then pool leader sends combined ptmut data back to workers
 		if( mpi_rank == mpi_rank_low ){
-			for( Size iproc = mpi_rank_low + 1; static_cast<int>(iproc) < mpi_nprocs; ++iproc ){
+			for( core::Size iproc = mpi_rank_low + 1; static_cast<int>(iproc) < mpi_nprocs; ++iproc ){
 				utility::send_integer_to_node( iproc, seqpos_aa_vals_vec.size() );	//send int
-				for( Size iseq = 1; iseq <= seqpos_aa_vals_vec.size(); ++iseq ){
+				for( core::Size iseq = 1; iseq <= seqpos_aa_vals_vec.size(); ++iseq ){
 					utility::send_integer_to_node( iproc, seqpos_aa_vals_vec[ iseq ].first );	//send int
 					utility::vector1< std::pair< core::chemical::AA, vector1< core::Real > > > const & aa_pairs( seqpos_aa_vals_vec[ iseq ].second );
 					utility::send_integer_to_node( iproc, aa_pairs.size() );	//send int
 					for( core::Size iaa = 1; iaa <= aa_pairs.size(); ++iaa ){
 						utility::send_char_to_node( iproc, chemical::oneletter_code_from_aa( aa_pairs[ iaa ].first ) );	//send char
 						//TR << "Proc " << mpi_rank << " sending seqpos,aa: " << seqpos_aa_vals_vec[ iseq ].first << aa_pairs[ iaa ].first << std::endl;
-						for( Size ival = 1; ival <= ( filters() ).size(); ++ival ){
+						for( core::Size ival = 1; ival <= ( filters() ).size(); ++ival ){
 							utility::send_double_to_node( iproc, aa_pairs[ iaa ].second[ ival ] );	//send Real
 						}
 					}
@@ -882,17 +882,17 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 		//workers receive combined ptmut data from pool leader
 		else if( mpi_rank > mpi_rank_low ){
 			//need to know how many seqpos
-			Size n_seqpos( utility::receive_integer_from_node( mpi_rank_low ) ); //rec int
-			for( Size imut = 1; imut <= n_seqpos; ++imut ){
-				Size seqpos( utility::receive_integer_from_node( mpi_rank_low ) ); //rec int
+			core::Size n_seqpos( utility::receive_integer_from_node( mpi_rank_low ) ); //rec int
+			for( core::Size imut = 1; imut <= n_seqpos; ++imut ){
+				core::Size seqpos( utility::receive_integer_from_node( mpi_rank_low ) ); //rec int
 				//need to know how many muts at this seqpos
-				Size n_aas( utility::receive_integer_from_node( mpi_rank_low ) );	//rec int
-				for( Size iaa = 1; iaa <= n_aas; ++iaa ){
+				core::Size n_aas( utility::receive_integer_from_node( mpi_rank_low ) );	//rec int
+				for( core::Size iaa = 1; iaa <= n_aas; ++iaa ){
 					char aa_char( utility::receive_char_from_node( mpi_rank_low ) );	//rec char
 					chemical::AA aa( chemical::aa_from_oneletter_code( aa_char ) );
 					//TR << "Proc " << mpi_rank << " received seqpos,aa: " << seqpos << aa << std::endl;
 					vector1< Real > vals( ( filters() ).size(), 0. );
-					for( Size ival = 1; ival <= vals.size(); ++ival ){
+					for( core::Size ival = 1; ival <= vals.size(); ++ival ){
 						vals[ ival ] = utility::receive_double_from_node( mpi_rank_low );	//rec Real
 					}
 					insert_point_mut_filter_vals( seqpos, aa, vals, seqpos_aa_vals_vec );
@@ -915,7 +915,7 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 	//best val is lowest, store all in sorted_seqpos_aa_vals_vec
 	//  pair< AA, Real > best_resid_val( aa_vals->second[ 1 ] );
 	//create the pair of seqpos and sorted AA/val pairs
-	pair< Size, vector1< pair< AA, Real > > > sorted_aa_vals( aa_vals->first, aa_vals->second );
+	pair< core::Size, vector1< pair< AA, Real > > > sorted_aa_vals( aa_vals->first, aa_vals->second );
 	seqpos_aa_vals_vec.push_back( sorted_aa_vals );
 	}
 

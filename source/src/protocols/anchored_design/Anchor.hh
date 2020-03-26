@@ -22,7 +22,7 @@
 
 // Utility Headers
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <string>
@@ -35,7 +35,7 @@ namespace anchored_design {
 
 /// @brief Anchor class provides for the "anchor" part of a scaffold in anchored interface design
 /// @details Anchor class implements the code to read in an anchor file, stores the definition of the anchor, and provides access methods for setting move maps.  It reads in PDB-keyed information, but converts it to pose resid information and internally stores only the latter.
-class Anchor : public utility::pointer::ReferenceCount
+class Anchor : public utility::VirtualBase
 {
 
 public:

@@ -3,14 +3,14 @@
 
 #include <devel/optest/A.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace devel {
 namespace optest {
 
-class A : public utility::pointer::ReferenceCount {
+class A : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~A() override;
 	A() : my_int_( ++instance_count_ ) {}
 

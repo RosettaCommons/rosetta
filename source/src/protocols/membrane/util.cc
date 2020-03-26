@@ -302,12 +302,12 @@ calc_helix_axis(
 	// Get the span from the pose
 	SpanOP helix_span( pose.membrane_info()->spanning_topology()->span( span_no ) );
 
-	// Check the core::Size of the span is sufficient for the this calculation
+	// Check the Size of the span is sufficient for the this calculation
 	if ( helix_span->end() - helix_span->start() < 6 ) {
 		utility_exit_with_message( "Transmembrane span is too small to calculate a helix axis using the center of masses - less than six residues" );
 	}
 
-	// Check the core::Size of the span relative to the core::Size of the protein is appropriate for
+	// Check the Size of the span relative to the Size of the protein is appropriate for
 	// a COM centered at the span start and end
 	bool use_centered( true );
 	if ( ( helix_span->start() < 2 ) ||

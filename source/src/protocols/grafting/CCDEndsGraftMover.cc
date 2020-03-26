@@ -74,7 +74,7 @@ CCDEndsGraftMover::CCDEndsGraftMover():
 	Cter_overhang_length(2);
 }
 
-CCDEndsGraftMover::CCDEndsGraftMover(const Size start, Size const end, bool copy_pdb_info /*false*/)
+CCDEndsGraftMover::CCDEndsGraftMover(const core::Size start, core::Size const end, bool copy_pdb_info /*false*/)
 :AnchoredGraftMover(start, end)
 {
 	Nter_overhang_length(2);
@@ -84,11 +84,11 @@ CCDEndsGraftMover::CCDEndsGraftMover(const Size start, Size const end, bool copy
 }
 
 CCDEndsGraftMover::CCDEndsGraftMover(
-	const Size start,
-	const Size end,
+	const core::Size start,
+	const core::Size end,
 	core::pose::Pose const & piece,
-	Size Nter_overhang_length,
-	Size Cter_overhang_length,
+	core::Size Nter_overhang_length,
+	core::Size Cter_overhang_length,
 	bool copy_pdb_info /*false*/)
 :AnchoredGraftMover(start, end, piece, Nter_overhang_length, Cter_overhang_length)
 {

@@ -85,7 +85,7 @@ public:
 	core::import_pose::RNA_JumpMoverOP rna_jump_mover(){ return rna_jump_mover_; }
 
 	void
-	do_random_moves( core::pose::Pose & pose, Size const & monte_carlo_cycles, bool const & check_num_rna_res = false );
+	do_random_moves( core::pose::Pose & pose, core::Size const & monte_carlo_cycles, bool const & check_num_rna_res = false );
 
 	void set_close_loops( bool const & setting ){ close_loops_ = setting; }
 	bool close_loops() const { return close_loops_; }

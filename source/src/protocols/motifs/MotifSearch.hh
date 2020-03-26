@@ -31,7 +31,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -46,14 +46,14 @@
 namespace protocols {
 namespace motifs {
 
-class MotifSearch : public utility::pointer::ReferenceCount
+class MotifSearch : public utility::VirtualBase
 {
 
 public:
 
 	typedef core::Real Real;
 	typedef core::Size Size;
-	typedef utility::vector1< Size > Sizes;
+	typedef utility::vector1< core::Size > Sizes;
 	typedef core::pose::Pose Pose;
 	typedef protocols::dna::DnaDesignDefOP DnaDesignDefOP;
 	typedef protocols::dna::DnaDesignDefOPs DnaDesignDefOPs;
@@ -93,12 +93,12 @@ public:
 
 	core::pack::rotamer_set::Rotamers
 	bp_rotamers(
-		Size const seqpos
+		core::Size const seqpos
 	);
 
 	protocols::motifs::MotifHitCOPs
 	bp_motifhits(
-		Size const seqpos
+		core::Size const seqpos
 	);
 
 
@@ -123,7 +123,7 @@ public:
 	void
 	BuildPosition_from_Size(
 		Pose const & pose,
-		Size const input_BP
+		core::Size const input_BP
 	);
 
 	void
@@ -138,15 +138,15 @@ public:
 		protocols::dna::DnaDesignDefOPs const & defs
 	);
 
-	utility::vector1< Size >
+	utility::vector1< core::Size >
 	map2keyvector(
-		std::map< Size, std::set< std::string > > mappositions
+		std::map< core::Size, std::set< std::string > > mappositions
 	);
 
-	utility::vector1< Size >
+	utility::vector1< core::Size >
 	shorten_target_list(
 		Pose const & pose,
-		Size const bp,
+		core::Size const bp,
 		Sizes & full_tl
 	);
 
@@ -172,7 +172,7 @@ public:
 		Real const & r2,
 		Real const & z2,
 		Real const & d1,
-		Size const & rlevel,
+		core::Size const & rlevel,
 		bool const bpdata,
 		bool const bump_check
 	);
@@ -189,7 +189,7 @@ public:
 	MotifCOPs const & motif_library() const { return motif_library_; }
 	Sizes const & dna_positions() const { return dna_positions_; }
 	Sizes const & protein_positions() const { return protein_positions_; }
-	std::map< Size, std::set< std::string > > const & target_positions() const { return target_positions_; }
+	std::map< core::Size, std::set< std::string > > const & target_positions() const { return target_positions_; }
 	BuildPositionOPs const & build_positionOPs() const { return build_positionOPs_; }
 	std::map< std::string, core::conformation::ResidueOPs > const & target_conformers_map() const { return target_conformers_map_; }
 	Real const & ztest_cutoff_1() const { return ztest_cutoff_1_;}
@@ -197,7 +197,7 @@ public:
 	Real const & rmsd_cutoff_1() const { return rmsd_cutoff_1_;}
 	Real const & rmsd_cutoff_2() const { return rmsd_cutoff_2_;}
 	Real const & dtest_cutoff() const { return dtest_cutoff_;}
-	Size const & rot_level() const { return rot_level_;}
+	core::Size const & rot_level() const { return rot_level_;}
 	bool const & minimize() const { return minimize_;}
 
 private:
@@ -207,7 +207,7 @@ private:
 	MotifCOPs motif_library_;
 	Sizes dna_positions_;
 	Sizes protein_positions_;
-	std::map< Size, std::set< std::string > > target_positions_;
+	std::map< core::Size, std::set< std::string > > target_positions_;
 	BuildPositionOPs build_positionOPs_;
 	std::map< std::string, core::conformation::ResidueOPs > target_conformers_map_;
 
@@ -219,7 +219,7 @@ private:
 	Real dtest_cutoff_;
 
 	// input rotamer level (4 = all chis explosion, 8 is extra deviations of explosion on all 4 chis)
-	Size rot_level_;
+	core::Size rot_level_;
 
 	bool minimize_;
 
@@ -233,7 +233,7 @@ private:
 	bool quick_and_dirty_;
 	bool dump_motifs_;
 	bool clear_bprots_;
-	Size rots2add_;
+	core::Size rots2add_;
 	bool restrict_to_wt_;
 	bool rerun_motifsearch_;
 	bool bump_check_;

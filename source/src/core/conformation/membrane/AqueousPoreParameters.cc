@@ -49,7 +49,7 @@ namespace membrane {
 typedef utility::vector1< numeric::CubicPolynomial > piecewise_poly;
 
 AqueousPoreParameters::AqueousPoreParameters() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	min_center_x_(0),
 	max_center_x_(0),
 	min_center_y_(0),
@@ -85,7 +85,7 @@ AqueousPoreParameters::AqueousPoreParameters(
 	piecewise_poly pore_major_radius,
 	piecewise_poly pore_minor_radius,
 	piecewise_poly pore_rotation_angle
-) : utility::pointer::ReferenceCount(),
+) : utility::VirtualBase(),
 	min_center_x_( min_center_x ),
 	max_center_x_( max_center_x ),
 	min_center_y_( min_center_y ),
@@ -107,7 +107,7 @@ AqueousPoreParameters::AqueousPoreParameters(
 AqueousPoreParameters::~AqueousPoreParameters() {}
 
 AqueousPoreParameters::AqueousPoreParameters( AqueousPoreParameters const & src )
-: utility::pointer::ReferenceCount( src ),
+: utility::VirtualBase( src ),
 	min_center_x_( src.min_center_x_ ),
 	max_center_x_( src.max_center_x_ ),
 	min_center_y_( src.min_center_y_ ),

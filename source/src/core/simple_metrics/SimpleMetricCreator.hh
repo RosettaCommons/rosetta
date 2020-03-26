@@ -18,7 +18,7 @@
 #include <core/simple_metrics/SimpleMetric.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
@@ -27,7 +27,7 @@
 namespace core {
 namespace simple_metrics {
 
-class SimpleMetricCreator : public utility::pointer::ReferenceCount {
+class SimpleMetricCreator : public utility::VirtualBase {
 public:
 	/// @brief Instantiate a particular SimpleMetric
 	virtual SimpleMetricOP

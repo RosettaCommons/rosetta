@@ -321,19 +321,19 @@ utility::pointer::shared_ptr<core::grid::CartGrid<int> > make_atr_rep_grid(
 
 	// Set attractive zones around all heavy atoms -- assume most ligand atoms
 	// will be near *something*, and most sidechains will stay put.
-	for ( Size r = 1, r_end = pose.size(); r <= r_end; ++r ) {
+	for ( core::Size r = 1, r_end = pose.size(); r <= r_end; ++r ) {
 		conformation::Residue const & rsd = pose.residue(r);
 		if ( !rsd.is_protein() ) continue;
-		for ( Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
+		for ( core::Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
 			set_sphere(*grid, rsd.xyz(a), atr_rad, -1);
 		}
 	}
 
 	// Set neutral core around each sidechain heavy atom, as MOST of these stay put.
-	for ( Size r = 1, r_end = pose.size(); r <= r_end; ++r ) {
+	for ( core::Size r = 1, r_end = pose.size(); r <= r_end; ++r ) {
 		conformation::Residue const & rsd = pose.residue(r);
 		if ( !rsd.is_protein() ) continue;
-		for ( Size a = rsd.first_sidechain_atom(), a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
+		for ( core::Size a = rsd.first_sidechain_atom(), a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
 			set_sphere(*grid, rsd.xyz(a), rep_rad, 0);
 		}
 	}
@@ -383,7 +383,7 @@ utility::pointer::shared_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_witho
 
 	// Set attractive zones around all heavy atoms -- assume most ligand atoms
 	// will be near *something*, and most sidechains will stay put.
-	for ( Size r = 1, r_end = pose.size(); r <= r_end; ++r ) {
+	for ( core::Size r = 1, r_end = pose.size(); r <= r_end; ++r ) {
 		conformation::Residue const & rsd = pose.residue(r);
 		if ( find(
 				ligand_chain_ids_to_exclude.begin(),
@@ -393,13 +393,13 @@ utility::pointer::shared_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_witho
 				) {
 			continue;
 		}
-		for ( Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
+		for ( core::Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
 			set_sphere(*grid, rsd.xyz(a), atr_rad, -1);
 		}
 	}
 
 	// Set neutral core around each sidechain heavy atom, as MOST of these stay put.
-	for ( Size r = 1, r_end = pose.size(); r <= r_end; ++r ) {
+	for ( core::Size r = 1, r_end = pose.size(); r <= r_end; ++r ) {
 		conformation::Residue const & rsd = pose.residue(r);
 		if ( find(
 				ligand_chain_ids_to_exclude.begin(),
@@ -410,11 +410,11 @@ utility::pointer::shared_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_witho
 			continue;
 		}
 		if ( rsd.is_protein() ) {
-			for ( Size a = rsd.first_sidechain_atom(), a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
+			for ( core::Size a = rsd.first_sidechain_atom(), a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
 				set_sphere(*grid, rsd.xyz(a), rep_rad, 0);//ligand can run into side-chains, they'll be repacked
 			}
 		} else {
-			for ( Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
+			for ( core::Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a ) {
 				set_sphere(*grid, rsd.xyz(a), rep_rad, 1); //ligand shouldn't run into other ligands
 			}
 		}

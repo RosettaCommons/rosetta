@@ -67,7 +67,7 @@ GraftedStemOptimizer::init() {
 
 
 void
-GraftedStemOptimizer::set_stem_size(Size const & setting) {
+GraftedStemOptimizer::set_stem_size(core::Size const & setting) {
 	stem_size_=setting;
 	if ( stem_size_ % 2 != 0 ) {
 		TRG<<"The stem_size_ must be dividable by 2"<<std::endl;
@@ -105,7 +105,7 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose) {
 
 	/// Small_Mover and Shear_Mover
 	Real high_move_temp = 2.00;
-	Size n_small_moves = 5 ;
+	core::Size n_small_moves = 5 ;
 	BackboneMoverOP small_mover( new SmallMover( get_stem_movemap(pose,"NC"), high_move_temp, n_small_moves ) );
 	BackboneMoverOP shear_mover( new ShearMover( get_stem_movemap(pose,"NC"), high_move_temp, n_small_moves ) );
 	small_mover->angle_max( 'H', 2.0 );
@@ -165,11 +165,11 @@ GraftedStemOptimizer::apply( pose::Pose & pose ) {
 
 	/*
 	if (deep_optimization_){
-	for(Size i=cdr_loop_->start()-stem_size_; i<=cdr_loop_->start()+stem_size_-1; ++i){
+	for(core::Size i=cdr_loop_->start()-stem_size_; i<=cdr_loop_->start()+stem_size_-1; ++i){
 	conformation::idealize_position( i, pose.conformation() );
 	pose.set_omega(i, 179.8);
 	}
-	for(Size i=cdr_loop_->stop()-stem_size_+1; i<=cdr_loop_->stop()+stem_size_; ++i){
+	for(core::Size i=cdr_loop_->stop()-stem_size_+1; i<=cdr_loop_->stop()+stem_size_; ++i){
 	conformation::idealize_position( i, pose.conformation() );
 	pose.set_omega(i, 179.8);
 	}
@@ -186,8 +186,8 @@ GraftedStemOptimizer::apply( pose::Pose & pose ) {
 	TRG<<"Score After Idealization, but Before Stem Optimization: "<<(*scorefxn_)(pose)<<std::endl;
 
 
-	Size inner_cycles( stem_size_ * 3 );
-	Size outer_cycles( 5 );
+	core::Size inner_cycles( stem_size_ * 3 );
+	core::Size outer_cycles( 5 );
 	if ( benchmark_ ) {
 		inner_cycles=1;
 		outer_cycles=1;
@@ -202,9 +202,9 @@ GraftedStemOptimizer::apply( pose::Pose & pose ) {
 	moves::TrialMoverOP optimize_trial( new moves::TrialMover(optimize_stems_, mc_) );
 
 
-	for ( Size i = 1; i <= outer_cycles; i++ ) {
+	for ( core::Size i = 1; i <= outer_cycles; i++ ) {
 		mc_->recover_low( pose );
-		for ( Size j = 1; j <= inner_cycles; j++ ) {
+		for ( core::Size j = 1; j <= inner_cycles; j++ ) {
 			temperature *= gamma;
 			mc_->set_temperature( temperature );
 			optimize_trial->apply( pose );
@@ -250,13 +250,13 @@ GraftedStemOptimizer::get_N_C_stems_foldtree( pose::Pose const & pose ) const  {
 	FoldTreeOP ft( new FoldTree() );
 	ft ->clear();
 
-	const Size  jumppoint1=cdr_loop_->start()-stem_size_-1;
-	const Size  cutpoint1=jumppoint1+(stem_size_/2);
-	const Size  jumppoint2=cdr_loop_->start();
+	const core::Size  jumppoint1=cdr_loop_->start()-stem_size_-1;
+	const core::Size  cutpoint1=jumppoint1+(stem_size_/2);
+	const core::Size  jumppoint2=cdr_loop_->start();
 
-	const Size  jumppoint3=cdr_loop_->stop();
-	const Size  cutpoint2=cdr_loop_->stop()+(stem_size_/2);
-	const Size  jumppoint4=cdr_loop_->stop()+stem_size_+1;
+	const core::Size  jumppoint3=cdr_loop_->stop();
+	const core::Size  cutpoint2=cdr_loop_->stop()+(stem_size_/2);
+	const core::Size  jumppoint4=cdr_loop_->stop()+stem_size_+1;
 
 	ft->add_edge( 1, jumppoint1, Edge::PEPTIDE );
 	ft->add_edge( jumppoint1, jumppoint2, 1 );
@@ -289,9 +289,9 @@ GraftedStemOptimizer::get_Nstem_foldtree( pose::Pose const & pose ) const  {
 	FoldTreeOP ft( new FoldTree() );
 	ft ->clear();
 
-	const Size  jumppoint1=cdr_loop_->start()-stem_size_-1;
-	const Size  cutpoint1=jumppoint1+(stem_size_/2);
-	const Size  jumppoint2=cdr_loop_->start();
+	const core::Size  jumppoint1=cdr_loop_->start()-stem_size_-1;
+	const core::Size  cutpoint1=jumppoint1+(stem_size_/2);
+	const core::Size  jumppoint2=cdr_loop_->start();
 
 	ft->add_edge( 1, jumppoint1, Edge::PEPTIDE );
 	ft->add_edge( jumppoint1, jumppoint2, 1 );
@@ -310,9 +310,9 @@ GraftedStemOptimizer::get_Cstem_foldtree( pose::Pose const & pose ) const  {
 	FoldTreeOP ft( new FoldTree() );
 	ft ->clear();
 
-	const Size  jumppoint3=cdr_loop_->stop();
-	const Size  cutpoint2=cdr_loop_->stop()+(stem_size_/2);
-	const Size  jumppoint4=cdr_loop_->stop()+stem_size_+1;
+	const core::Size  jumppoint3=cdr_loop_->stop();
+	const core::Size  cutpoint2=cdr_loop_->stop()+(stem_size_/2);
+	const core::Size  jumppoint4=cdr_loop_->stop()+stem_size_+1;
 
 	ft->add_edge( 1, jumppoint3, Edge::PEPTIDE );
 	ft->add_edge( jumppoint3, jumppoint4, 1 );
@@ -338,13 +338,13 @@ GraftedStemOptimizer::get_stem_movemap( pose::Pose const & pose, std::string con
 	utility::vector1< bool> sc_is_flexible( pose.size(), false );
 
 	if ( (type == "N") || (type == "NC")  ) {
-		for ( Size i=cdr_loop_->start()-stem_size_; i<=cdr_loop_->start()-1; ++i ) {
+		for ( core::Size i=cdr_loop_->start()-stem_size_; i<=cdr_loop_->start()-1; ++i ) {
 			bb_is_flexible[i]=true;
 			sc_is_flexible[i]=true;
 		}
 	}
 	if ( (type == "C") || (type == "NC")  ) {
-		for ( Size i=cdr_loop_->stop()+1; i<=cdr_loop_->stop()+stem_size_; ++i ) {
+		for ( core::Size i=cdr_loop_->stop()+1; i<=cdr_loop_->stop()+stem_size_; ++i ) {
 			bb_is_flexible[i]=true;
 			sc_is_flexible[i]=true;
 		}
@@ -382,12 +382,12 @@ GraftedStemOptimizer::get_stem_taskfactory( pose::Pose & pose, std::string const
 	vector1< bool> sc_is_packable( pose.size(), false );
 
 	if ( (type == "N") || (type == "NC")  ) {
-		for ( Size i=cdr_loop_->start()-stem_size_; i<=cdr_loop_->start()-1; ++i ) {
+		for ( core::Size i=cdr_loop_->start()-stem_size_; i<=cdr_loop_->start()-1; ++i ) {
 			sc_is_packable[i]=true;
 		}
 	}
 	if ( (type == "C") || (type == "NC")  ) {
-		for ( Size i=cdr_loop_->stop()+1; i<=cdr_loop_->stop()+stem_size_; ++i ) {
+		for ( core::Size i=cdr_loop_->stop()+1; i<=cdr_loop_->stop()+stem_size_; ++i ) {
 			sc_is_packable[i]=true;
 		}
 	}

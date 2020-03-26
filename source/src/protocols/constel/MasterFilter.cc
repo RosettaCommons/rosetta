@@ -47,7 +47,7 @@ void MasterFilter::addfilt(FiltPtr f) {
 ///  to be applied.
 ///
 bool MasterFilter::is_constel_valid(Pose const& ps,
-	utility::vector1<Size> const& cnl) {
+	utility::vector1<core::Size> const& cnl) {
 
 	for ( unsigned int i=1; i<=filters.size(); ++i ) {
 		if ( !filters[i](ps, cnl) ) {

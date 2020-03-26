@@ -26,7 +26,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -47,7 +47,7 @@ enum CPParameter {
 };
 
 
-class RingConformerSet : public utility::pointer::ReferenceCount {
+class RingConformerSet : public utility::VirtualBase {
 public:
 	// Standard methods //////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief  Standard constructor

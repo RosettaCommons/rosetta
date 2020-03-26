@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_import_pose_RNA_BasePairHandler_HH
 #define INCLUDED_core_import_pose_RNA_BasePairHandler_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/import_pose/RNA_BasePairHandler.fwd.hh>
 #include <core/pose/rna/BasePairStep.fwd.hh>
 #include <core/import_pose/RNA_DeNovoParameters.fwd.hh>
@@ -30,7 +30,7 @@ namespace import_pose {
 
 int const MAX_BULGE_LENGTH( 3 );
 
-class RNA_BasePairHandler: public utility::pointer::ReferenceCount {
+class RNA_BasePairHandler: public utility::VirtualBase {
 
 public:
 

@@ -19,14 +19,14 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/xyzStripeHashPose.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/kinematics/Stub.fwd.hh>
 
 
 namespace protocols {
 namespace sic_dock {
 
-class SICFast : public utility::pointer::ReferenceCount {
+class SICFast : public utility::VirtualBase {
 public:
 	typedef numeric::xyzVector<platform::Real> Vec;
 

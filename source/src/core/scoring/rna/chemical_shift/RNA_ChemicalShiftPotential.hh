@@ -21,7 +21,7 @@
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 ///////////////////////////////////
 #include <core/chemical/AA.hh>
 #include <core/scoring/rna/chemical_shift/RNA_CS_Parameters.hh>
@@ -38,7 +38,7 @@ namespace chemical_shift {
 
 
 /////////////////////////////////////////////////////////////////////////////
-class ChemicalShiftData : public utility::pointer::ReferenceCount{
+class ChemicalShiftData : public utility::VirtualBase{
 
 public:
 
@@ -78,7 +78,7 @@ public:
 };
 
 
-class RNA_ChemicalShiftPotential : public utility::pointer::ReferenceCount{
+class RNA_ChemicalShiftPotential : public utility::VirtualBase{
 
 public:
 

@@ -27,7 +27,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <iostream>
@@ -70,7 +70,7 @@ int random_range(int low, int high);
 
 
 /// @brief Random number generator system
-class RandomGenerator : public utility::pointer::ReferenceCount
+class RandomGenerator : public utility::VirtualBase
 {
 private:
 	// Private to force the instantiation of a RandomGenerator through the rg() function.

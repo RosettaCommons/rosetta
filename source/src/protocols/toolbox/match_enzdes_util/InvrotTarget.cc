@@ -34,6 +34,8 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
+using core::Size;
+
 static basic::Tracer tr( "protocols.toolbox.match_enzdes_util.InvrotTarget" );
 
 InvrotTarget::InvrotTarget()
@@ -68,7 +70,7 @@ InvrotTarget::generate_constraints(
 
 	utility::vector1< core::scoring::constraints::ConstraintCOP > node_constraints;
 
-	for ( Size i =1; i <= next_nodes_.size(); ++i ) {
+	for ( core::Size i =1; i <= next_nodes_.size(); ++i ) {
 		core::scoring::constraints::ConstraintCOP this_child_cst( (next_nodes_[i]->generate_constraints( pose, geomcst_seqpos ) ) );
 		if ( this_child_cst ) node_constraints.push_back( this_child_cst );
 	}
@@ -90,17 +92,17 @@ InvrotTarget::initialize_tree_nodes_from_enzcst_io(
 		utility_exit_with_message("child class failed to properly implement 'generate_representative_target_res_for_geom_cst' method.");
 	}
 
-	utility::vector1< Size > mcfi_to_build;
-	for ( Size i =1; i <= enzcst_io->num_mcfi_lists(); ++i ) {
+	utility::vector1< core::Size > mcfi_to_build;
+	for ( core::Size i =1; i <= enzcst_io->num_mcfi_lists(); ++i ) {
 		//make sure this geom cst is concerned with the downstream residue / object
-		std::pair< Size, Size> const & target_res( enzcst_io->target_downstream_res()[i] );
+		std::pair< core::Size, core::Size> const & target_res( enzcst_io->target_downstream_res()[i] );
 		if ( (target_res.first == 1 ) && (target_res.second == 1 ) ) {
 			mcfi_to_build.push_back( i );
 			next_nodes_.push_back( utility::pointer::make_shared< InvrotTreeNode >( get_self_weak_ptr() ) );
 		}
 	}
 
-	for ( Size i =1; i <= next_nodes_.size(); ++i ) {
+	for ( core::Size i =1; i <= next_nodes_.size(); ++i ) {
 		if ( !next_nodes_[i]->initialize_from_enzcst_io( *representative_target_res_for_geom_cst_[ mcfi_to_build[i] ], enzcst_io, mcfi_to_build[i]) ) {
 			tr << "InvrotTarget could not initialize because node initialization for geom_cst " << mcfi_to_build[i] << " failed." << std::endl;
 			return false;
@@ -124,27 +126,27 @@ InvrotTarget::collect_all_inverse_rotamers(
 ) const
 {
 	//1. make space
-	Size num_residue_lists( representative_target_res_for_geom_cst_.size() + 1 ); //+1 bc we're also counting the ligand now
-	Size input_size( invrot_collectors.size() );
+	core::Size num_residue_lists( representative_target_res_for_geom_cst_.size() + 1 ); //+1 bc we're also counting the ligand now
+	core::Size input_size( invrot_collectors.size() );
 	invrot_collectors.push_back(  utility::pointer::make_shared< InvrotCollector >( num_residue_lists ) );
 
 	//2. put target res into 0th element
 	invrot_collectors[ invrot_collectors.size() ]->set_invrots_for_listnum( 0, all_target_res_, get_self_ptr(), 1 );
 
 	//3. collect daughter node invrots
-	for ( Size i = 1; i <= next_nodes_.size(); ++i ) {
+	for ( core::Size i = 1; i <= next_nodes_.size(); ++i ) {
 		next_nodes_[i]->collect_all_inverse_rotamers( invrot_collectors );
 	}
 
 	//4. some kind of sanity check to make sure this shit actually worked maybe?
-	Size output_size( invrot_collectors.size() );
-	for ( Size i = input_size + 1; i <= output_size; ++i ) {
+	core::Size output_size( invrot_collectors.size() );
+	for ( core::Size i = input_size + 1; i <= output_size; ++i ) {
 
 		if ( invrot_collectors[ i ]->invrots().size() != num_residue_lists ) {
 			utility_exit_with_message("Tree definition "+utility::to_string( i )+" does not contain the necessary "+utility::to_string( num_residue_lists )+" residue lists.");
 		}
 
-		for ( Size j = 0; j < num_residue_lists; ++j ) {
+		for ( core::Size j = 0; j < num_residue_lists; ++j ) {
 			if ( invrot_collectors[i]->invrots()[j].size() == 0 ) utility_exit_with_message("Tree definition "+utility::to_string( i )+" does not contain rotamers for residue list "+utility::to_string( j )+".");
 		}
 		//other sanity checks necessary?
@@ -178,10 +180,10 @@ SingleResidueInvrotTarget::SingleResidueInvrotTarget(
 SingleResidueInvrotTarget::~SingleResidueInvrotTarget()= default;
 
 void
-SingleResidueInvrotTarget::generate_representative_target_res_for_geom_cst( Size const num_geom_cst )
+SingleResidueInvrotTarget::generate_representative_target_res_for_geom_cst( core::Size const num_geom_cst )
 {
 	utility::vector1< core::conformation::ResidueCOP > representative_res;
-	for ( Size i =1; i <= num_geom_cst; ++i ) representative_res.push_back( (*this->all_target_res().begin()) );
+	for ( core::Size i =1; i <= num_geom_cst; ++i ) representative_res.push_back( (*this->all_target_res().begin()) );
 	this->set_representative_target_res_for_geom_cst( representative_res );
 }
 

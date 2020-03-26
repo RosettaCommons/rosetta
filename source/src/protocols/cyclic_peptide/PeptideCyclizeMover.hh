@@ -95,8 +95,8 @@ private:
 	utility::vector1<core::Size> res2_angle_;
 	utility::vector1<std::string> atom2_angle_;
 	utility::vector1<std::string> atom2_angle2_;
-	utility::vector1<Size> res_center_;
-	utility::vector1<Size> res_center2_;
+	utility::vector1<core::Size> res_center_;
+	utility::vector1<core::Size> res_center2_;
 	utility::vector1<std::string> atom_center_;
 	utility::vector1<std::string> atom_center2_;
 	utility::vector1<std::string> cst_func_angle_;

@@ -25,7 +25,7 @@
 #include <protocols/match/output/MatchScoreWriter.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 
 // C++ headers

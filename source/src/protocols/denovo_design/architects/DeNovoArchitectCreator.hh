@@ -19,7 +19,7 @@
 #include <protocols/denovo_design/architects/DeNovoArchitect.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // C++ headers
 #include <string>
@@ -28,7 +28,7 @@ namespace protocols {
 namespace denovo_design {
 namespace architects {
 
-class DeNovoArchitectCreator : public utility::pointer::ReferenceCount {
+class DeNovoArchitectCreator : public utility::VirtualBase {
 public:
 	/// @brief Instantiate a particular DeNovoArchitect
 	virtual DeNovoArchitectOP

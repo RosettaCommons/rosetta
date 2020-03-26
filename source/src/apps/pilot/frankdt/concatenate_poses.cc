@@ -58,7 +58,7 @@ namespace pilot {
 namespace frankdt {
 
 concatenate_poses::concatenate_poses():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 
 }

@@ -45,6 +45,8 @@ namespace simple_filters {
 
 static basic::Tracer tr( "protocols.simple_filters.HolesFilter" );
 
+using core::Size;
+
 // @brief default constructor
 HolesFilter::HolesFilter():
 	Filter( "Holes" ),
@@ -88,7 +90,7 @@ HolesFilter::compute( Pose const & pose ) const
 	using core::scoring::packing::HolesParams;
 	using core::scoring::packing::compute_holes_score;
 
-	Size MAX_RES = 5000;
+	core::Size MAX_RES = 5000;
 	runtime_assert( pose.size() <= MAX_RES );
 
 	if ( residue_selector_ ) { ///// sboyken 17/08/26 adding residue selector option
@@ -108,15 +110,15 @@ HolesFilter::compute( Pose const & pose ) const
 
 		core::select::residue_selector::ResidueSubset rs( residue_selector_->apply( pose ) );
 
-		Size total_res(0);
-		Size total_atoms(0);
+		core::Size total_res(0);
+		core::Size total_atoms(0);
 		core::Real total_holes_score(0.0);
-		for ( Size r = 1; r <= rs.size(); ++r ) {
+		for ( core::Size r = 1; r <= rs.size(); ++r ) {
 			if ( rs[ r ] ) {
 				core::Real residue_holes_score(0.0);
 
-				//for ( Size at_r = 1; at_r <= pose.residue( r ).natoms(); ++at_r ) {
-				for ( Size at_r = 1; at_r <= per_atom_holes_scores.n_atom( r ); ++at_r ) {
+				//for ( core::Size at_r = 1; at_r <= pose.residue( r ).natoms(); ++at_r ) {
+				for ( core::Size at_r = 1; at_r <= per_atom_holes_scores.n_atom( r ); ++at_r ) {
 					// skip backbone atoms if desired
 					if ( exclude_bb_atoms_ && pose.residue(r).atom_is_backbone( at_r ) ) continue;
 					core::id::AtomID const atom_id( at_r, r );

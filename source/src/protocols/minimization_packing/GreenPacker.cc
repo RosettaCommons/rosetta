@@ -79,11 +79,11 @@ MinimalRotamer::has_ideal_geometry(
 	core::conformation::Residue const & res
 ) const
 {
-	for ( Size ii = res.type().first_sidechain_atom(); ii <= res.type().nheavyatoms(); ++ii ) {
+	for ( core::Size ii = res.type().first_sidechain_atom(); ii <= res.type().nheavyatoms(); ++ii ) {
 		if ( ! atom_is_ideal( res, ii ) ) {
 			return false;
 		}
-		for ( Size jj = res.type().attached_H_begin( ii );
+		for ( core::Size jj = res.type().attached_H_begin( ii );
 				jj <= res.type().attached_H_end( ii ); ++jj ) {
 			if ( ! atom_is_ideal( res, jj ) ) {
 				return false;
@@ -98,13 +98,13 @@ MinimalRotamer::has_ideal_geometry(
 bool
 MinimalRotamer::atom_is_ideal(
 	core::conformation::Residue const & res,
-	Size const atom_id
+	core::Size const atom_id
 ) const
 {
 	core::chemical::AtomICoor const & atom_icoor( res.type().icoor( atom_id ) );
-	Size st1 = atom_icoor.stub_atom1().atomno();
-	Size st2 = atom_icoor.stub_atom2().atomno();
-	Size st3 = atom_icoor.stub_atom2().atomno();
+	core::Size st1 = atom_icoor.stub_atom1().atomno();
+	core::Size st2 = atom_icoor.stub_atom2().atomno();
+	core::Size st3 = atom_icoor.stub_atom2().atomno();
 
 	Real const ideal_d = atom_icoor.d();
 	if ( std::abs( res.xyz( atom_id ).distance( res.xyz( st1 ) ) - ideal_d ) > 1e-8 ) {
@@ -133,7 +133,7 @@ MinimalRotamer::atom_is_ideal(
 	}
 
 	bool atom_is_last_for_some_chi = false;
-	for ( Size ii = 1; ii <= res.type().nchi(); ++ii ) {
+	for ( core::Size ii = 1; ii <= res.type().nchi(); ++ii ) {
 		if ( res.type().chi_atoms( ii )[ 4 ] == atom_id ) {
 			atom_is_last_for_some_chi = true;
 			break;
@@ -162,7 +162,7 @@ void
 MinimalRotamer::record_chi( core::conformation::Residue const & res )
 {
 	chi_.resize( res.type().nchi() );
-	for ( Size ii = 1; ii <= chi_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= chi_.size(); ++ii ) {
 		debug_assert( chi_matches_coords( res, ii ));
 		chi_[ ii ] = res.chi( ii );
 	}
@@ -173,9 +173,9 @@ void
 MinimalRotamer::record_internal_geometry( core::conformation::Residue const & res )
 {
 	internal_geometry_.resize( res.natoms(), Vector(0,0,0) );
-	for ( Size ii = res.type().first_sidechain_atom(); ii <= res.type().nheavyatoms(); ++ii ) {
+	for ( core::Size ii = res.type().first_sidechain_atom(); ii <= res.type().nheavyatoms(); ++ii ) {
 		record_internal_geometry( res, ii );
-		for ( Size jj = res.type().attached_H_begin( ii );
+		for ( core::Size jj = res.type().attached_H_begin( ii );
 				jj <= res.type().attached_H_end( ii ); ++jj ) {
 			record_internal_geometry( res, jj );
 		}
@@ -185,13 +185,13 @@ MinimalRotamer::record_internal_geometry( core::conformation::Residue const & re
 void
 MinimalRotamer::record_internal_geometry(
 	core::conformation::Residue const & res,
-	Size const atom_id
+	core::Size const atom_id
 )
 {
 	core::chemical::AtomICoor const & atom_icoor( res.type().icoor( atom_id ) );
-	Size st1 = atom_icoor.stub_atom1().atomno();
-	Size st2 = atom_icoor.stub_atom2().atomno();
-	Size st3 = atom_icoor.stub_atom2().atomno();
+	core::Size st1 = atom_icoor.stub_atom1().atomno();
+	core::Size st2 = atom_icoor.stub_atom2().atomno();
+	core::Size st3 = atom_icoor.stub_atom2().atomno();
 
 	Real actual_d = res.xyz( atom_id ).distance( res.xyz( st1 ) );
 	internal_geometry_[ atom_id ][ d ] = actual_d;
@@ -214,7 +214,7 @@ MinimalRotamer::record_internal_geometry(
 }
 
 bool
-MinimalRotamer::chi_matches_coords( core::conformation::Residue const & res, Size chi_index ) const
+MinimalRotamer::chi_matches_coords( core::conformation::Residue const & res, core::Size chi_index ) const
 {
 	core::chemical::AtomIndices const & chi_atoms( res.type().chi_atoms( chi_index ) );
 	debug_assert( chi_atoms.size() == 4 );
@@ -255,7 +255,7 @@ MinimalRotamer::same_chi( MinimalRotamer const & other ) const
 {
 	debug_assert( ideal_geometry_ && other.ideal_geometry_ );
 	debug_assert( chi_.size() == other.chi_.size() );
-	for ( Size ii = 1; ii <= chi_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= chi_.size(); ++ii ) {
 		if ( std::abs( basic::periodic_range( chi_[ ii ] - other.chi_[ ii ], 180 ) ) > 1e-8 ) {
 			//TR << "same chi failed: " << residue_type_.name() << " " << other.residue_type_.name() << " " << ii << " " << chi_[ ii ] << " " << other.chi_[ ii ] << " " << basic::periodic_range( chi_[ ii ] - other.chi_[ ii ], 180 ) << std::endl;
 			return false;
@@ -271,7 +271,7 @@ MinimalRotamer::same_nonideal_geometry( MinimalRotamer const & other ) const
 {
 	debug_assert( !ideal_geometry_ && !other.ideal_geometry_ );
 	debug_assert( internal_geometry_.size() == other.internal_geometry_.size() );
-	for ( Size ii = 1; ii <= internal_geometry_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= internal_geometry_.size(); ++ii ) {
 		if ( std::abs(  internal_geometry_[ ii ][ d ] - other.internal_geometry_[ ii ][ d ] ) > 1e-8 ) {
 			//TR << "same nonideal geometry d failed: " << residue_type_.name() << " " << other.residue_type_.name() << " " << ii << " " << internal_geometry_[ ii ][ d ] << " " << other.internal_geometry_[ ii ][ d ]  << " " << internal_geometry_[ ii ][ d ] - other.internal_geometry_[ ii ][ d ] << std::endl;
 			return false;
@@ -321,7 +321,7 @@ GroupDiscriminatorOP ChainGroupDiscriminator::clone() const
 }
 
 core::Size
-ChainGroupDiscriminator::group_id( Pose const & pose, Size seqpos ) const
+ChainGroupDiscriminator::group_id( Pose const & pose, core::Size seqpos ) const
 {
 	return pose.residue( seqpos ).chain();
 }
@@ -336,7 +336,7 @@ GroupDiscriminatorOP UserDefinedGroupDiscriminator::clone() const
 }
 
 core::Size
-UserDefinedGroupDiscriminator::group_id( Pose const & , Size seqpos ) const {
+UserDefinedGroupDiscriminator::group_id( Pose const & , core::Size seqpos ) const {
 	return group_ids_[ seqpos ];
 }
 
@@ -396,7 +396,7 @@ GreenPacker::set_weights_for_sfxn(
 	EnergyMap const & weights
 ) const
 {
-	for ( Size ii = 1; ii <= scoretypes.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= scoretypes.size(); ++ii ) {
 		sfxn.set_weight( scoretypes[ ii ], weights[ scoretypes[ ii ] ] );
 	}
 }
@@ -458,12 +458,12 @@ GreenPacker::split_pose_into_groups(
 )
 {
 	group_ids_.resize( pose.size() );
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		group_ids_[ ii ] = group_discriminator_->group_id( pose, ii );
 	}
-	Size max_group_id = utility::max( group_ids_ );
+	core::Size max_group_id = utility::max( group_ids_ );
 	group_members_.resize( max_group_id + 1 );
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		group_members_[ group_ids_[ ii ] ].push_back( ii );
 	}
 }
@@ -516,15 +516,15 @@ GreenPacker::create_reference_rotamers(
 	reference_resid_2_moltenres_.resize( pose.size() );
 	std::fill( reference_resid_2_moltenres_.begin(), reference_resid_2_moltenres_.end(), 0 );
 
-	for ( Size ii = 1; ii <= reference_rotamer_sets_->nmoltenres(); ++ii ) {
-		Size const ii_resid = reference_rotamer_sets_->moltenres_2_resid( ii );
-		Size const ii_nrots = reference_rotamer_sets_->rotamer_set_for_moltenresidue( ii )->num_rotamers();
+	for ( core::Size ii = 1; ii <= reference_rotamer_sets_->nmoltenres(); ++ii ) {
+		core::Size const ii_resid = reference_rotamer_sets_->moltenres_2_resid( ii );
+		core::Size const ii_nrots = reference_rotamer_sets_->rotamer_set_for_moltenresidue( ii )->num_rotamers();
 		original_rotamers_[ ii_resid ].reserve( ii_nrots );
 
 		reference_moltenres_2_resid_[ ii ] = ii_resid;
 		reference_resid_2_moltenres_[ ii_resid ] = ii;
 
-		for ( Size jj = 1; jj <= ii_nrots; ++jj ) {
+		for ( core::Size jj = 1; jj <= ii_nrots; ++jj ) {
 			original_rotamers_[ ii_resid ].push_back(
 				utility::pointer::make_shared< MinimalRotamer >(
 				*reference_rotamer_sets_->rotamer_set_for_moltenresidue( ii )->rotamer( jj ) ) );
@@ -610,8 +610,8 @@ GreenPacker::drop_inter_group_edges(
 	utility::graph::GraphOP packer_neighbor_graph
 ) const
 {
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		Size const ii_grp = group_ids_[ ii ];
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+		core::Size const ii_grp = group_ids_[ ii ];
 		for ( Graph::EdgeListIter
 				iru  = packer_neighbor_graph->get_node(ii)->upper_edge_list_begin(),
 				irue = packer_neighbor_graph->get_node(ii)->upper_edge_list_end();
@@ -634,8 +634,8 @@ GreenPacker::drop_intra_group_edges(
 	utility::graph::GraphOP packer_neighbor_graph
 ) const
 {
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		Size const ii_grp = group_ids_[ ii ];
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+		core::Size const ii_grp = group_ids_[ ii ];
 		for ( Graph::EdgeListIter
 				iru  = packer_neighbor_graph->get_node(ii)->upper_edge_list_begin(),
 				irue = packer_neighbor_graph->get_node(ii)->upper_edge_list_end();
@@ -666,12 +666,12 @@ GreenPacker::create_fresh_rotamers(
 	/// Now create images of the internal geometry for each of the rotamers created.
 	current_rotamers_.resize( pose.size() );
 
-	for ( Size ii = 1; ii <= current_rotamer_sets_->nmoltenres(); ++ii ) {
-		Size const ii_resid = current_rotamer_sets_->moltenres_2_resid( ii );
-		Size const ii_nrots = current_rotamer_sets_->rotamer_set_for_moltenresidue( ii )->num_rotamers();
+	for ( core::Size ii = 1; ii <= current_rotamer_sets_->nmoltenres(); ++ii ) {
+		core::Size const ii_resid = current_rotamer_sets_->moltenres_2_resid( ii );
+		core::Size const ii_nrots = current_rotamer_sets_->rotamer_set_for_moltenresidue( ii )->num_rotamers();
 		current_rotamers_[ ii_resid ].reserve( ii_nrots );
 
-		for ( Size jj = 1; jj <= ii_nrots; ++jj ) {
+		for ( core::Size jj = 1; jj <= ii_nrots; ++jj ) {
 			current_rotamers_[ ii_resid ].push_back(
 				utility::pointer::make_shared< MinimalRotamer >(
 				*current_rotamer_sets_->rotamer_set_for_moltenresidue( ii )->rotamer( jj ) ) );
@@ -691,22 +691,22 @@ GreenPacker::find_reference_and_current_rotamer_correspondence(
 	/// then if rotamers i+1 and rotamers j+1 do not match and i and i+1 have the same amino acid type,
 	/// then i+1 will not match any rotamer in the current rotamer set.
 	/// O(N) algorithm.  Optimal for O(NlgN) with a sort.
-	Size correspondences_found( 0 );
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		Size const ii_moltenresid = current_rotamer_sets_->resid_2_moltenres( ii );
+	core::Size correspondences_found( 0 );
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+		core::Size const ii_moltenresid = current_rotamer_sets_->resid_2_moltenres( ii );
 		//TR << "find correspondences for residue " << ii << " " << ii_moltenresid << std::endl;
 		if ( ii_moltenresid == 0 ) continue;
 
 		RotamerSetCOP iirotset = current_rotamer_sets_->rotamer_set_for_residue( ii );
 
-		Size const ii_orig_nrots = orig_rot_2_curr_rot_[ ii ].size();
-		Size const ii_curr_nrots = curr_rot_2_orig_rot_[ ii ].size();
+		core::Size const ii_orig_nrots = orig_rot_2_curr_rot_[ ii ].size();
+		core::Size const ii_curr_nrots = curr_rot_2_orig_rot_[ ii ].size();
 
 		//TR << "#orig rots: " << ii_orig_nrots << " #curr_rots: " << ii_curr_nrots << std::endl;
 
-		Size orig_id( 1 ), curr_id( 1 );
+		core::Size orig_id( 1 ), curr_id( 1 );
 		bool orig_prev_restype_match( false );
-		Size ii_correspondences_found( 0 );
+		core::Size ii_correspondences_found( 0 );
 		while ( orig_id <= ii_orig_nrots && curr_id <= ii_curr_nrots ) {
 			protocols::minimization_packing::MinimalRotamerOP orig_rot = original_rotamers_[ ii ][ orig_id ];
 			protocols::minimization_packing::MinimalRotamerOP curr_rot = current_rotamers_[ ii ][ curr_id ];
@@ -757,7 +757,7 @@ GreenPacker::find_reference_and_current_rotamer_correspondence(
 		correspondences_found += ii_correspondences_found;
 		curr_rotamers_with_correspondence_[ ii ].reserve( ii_correspondences_found );
 		curr_rotamers_without_correspondence_[ ii ].reserve( ii_curr_nrots - ii_correspondences_found );
-		for ( Size jj = 1; jj <= ii_curr_nrots; ++jj ) {
+		for ( core::Size jj = 1; jj <= ii_curr_nrots; ++jj ) {
 			if ( curr_rot_2_orig_rot_[ ii ][ jj ] != 0 ) {
 				curr_rotamers_with_correspondence_[ ii ].push_back( jj );
 			} else {
@@ -782,8 +782,8 @@ GreenPacker::initialize_internal_correspondence_data(
 	curr_rotamers_with_correspondence_.resize( pose.size() );
 	curr_rotamers_without_correspondence_.resize( pose.size() );
 
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		Size const ii_moltenresid = current_rotamer_sets_->resid_2_moltenres( ii );
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+		core::Size const ii_moltenresid = current_rotamer_sets_->resid_2_moltenres( ii );
 		if ( ii_moltenresid != 0 ) {
 			orig_rot_2_curr_rot_[ ii ].resize( original_rotamers_[ ii ].size() );
 			std::fill( orig_rot_2_curr_rot_[ ii ].begin(), orig_rot_2_curr_rot_[ ii ].end(), 0 );
@@ -876,9 +876,9 @@ GreenPacker::add_precomputed_energies(
 {
 	using namespace core::pack;
 	using namespace core::pack::interaction_graph;
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		Size const ii_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( ii );
-		Size const ii_moltenres_orig = reference_resid_2_moltenres_[ ii ];
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+		core::Size const ii_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( ii );
+		core::Size const ii_moltenres_orig = reference_resid_2_moltenres_[ ii ];
 
 		if ( ii_moltenres_curr == 0 || ii_moltenres_orig == 0 ) continue;
 
@@ -887,11 +887,11 @@ GreenPacker::add_precomputed_energies(
 				ci_rpes_->increment_edge_list_iterator() ) {
 			EdgeBase const & edge( ci_rpes_->get_edge() );
 
-			Size const jj_moltenres_orig = edge.get_other_ind( ii_moltenres_orig );
+			core::Size const jj_moltenres_orig = edge.get_other_ind( ii_moltenres_orig );
 			if ( jj_moltenres_orig < ii_moltenres_orig ) continue; // only deal with upper edges
 
-			Size const jj = reference_moltenres_2_resid_[ jj_moltenres_orig ];
-			Size const jj_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( jj );
+			core::Size const jj = reference_moltenres_2_resid_[ jj_moltenres_orig ];
+			core::Size const jj_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( jj );
 			if ( jj_moltenres_curr == 0 ) continue;
 
 			debug_assert( dynamic_cast< PrecomputedPairEnergiesEdge const * > ( & edge ) );
@@ -906,22 +906,22 @@ GreenPacker::add_precomputed_energies(
 			/// iterate across rotamer pairs with a correspondence.
 
 			/// rename a few variables for brevity
-			utility::vector1< Size > const & ii_corr_rots( curr_rotamers_with_correspondence_[ ii ]);
-			utility::vector1< Size > const & jj_corr_rots( curr_rotamers_with_correspondence_[ jj ]);
-			utility::vector1< Size > const & ii_curr_2_orig( curr_rot_2_orig_rot_[ ii ] );
-			utility::vector1< Size > const & jj_curr_2_orig( curr_rot_2_orig_rot_[ jj ] );
-			Size ii_ncorr_rots = ii_corr_rots.size();
-			Size jj_ncorr_rots = jj_corr_rots.size();
+			utility::vector1< core::Size > const & ii_corr_rots( curr_rotamers_with_correspondence_[ ii ]);
+			utility::vector1< core::Size > const & jj_corr_rots( curr_rotamers_with_correspondence_[ jj ]);
+			utility::vector1< core::Size > const & ii_curr_2_orig( curr_rot_2_orig_rot_[ ii ] );
+			utility::vector1< core::Size > const & jj_curr_2_orig( curr_rot_2_orig_rot_[ jj ] );
+			core::Size ii_ncorr_rots = ii_corr_rots.size();
+			core::Size jj_ncorr_rots = jj_corr_rots.size();
 
 			if ( ii_ncorr_rots == 0 || jj_ncorr_rots == 0 ) continue;
 
-			for ( Size kk = 1; kk <= ii_ncorr_rots; ++kk ) {
-				Size const kk_curr_rot = ii_corr_rots[ kk ];
-				Size const kk_orig_rot = ii_curr_2_orig[ kk_curr_rot ];
+			for ( core::Size kk = 1; kk <= ii_ncorr_rots; ++kk ) {
+				core::Size const kk_curr_rot = ii_corr_rots[ kk ];
+				core::Size const kk_orig_rot = ii_curr_2_orig[ kk_curr_rot ];
 
-				for ( Size ll = 1; ll <= jj_corr_rots.size(); ++ll ) {
-					Size const ll_curr_rot = jj_corr_rots[ ll ];
-					Size const ll_orig_rot = jj_curr_2_orig[ ll_curr_rot ];
+				for ( core::Size ll = 1; ll <= jj_corr_rots.size(); ++ll ) {
+					core::Size const ll_curr_rot = jj_corr_rots[ ll ];
+					core::Size const ll_orig_rot = jj_curr_2_orig[ ll_curr_rot ];
 					core::PackerEnergy const kkll_energy = precomp_edge.get_two_body_energy( kk_orig_rot, ll_orig_rot );
 					pig->add_to_two_body_energies_for_edge(
 						ii_moltenres_curr, jj_moltenres_curr,
@@ -947,21 +947,21 @@ GreenPacker::compute_absent_energies(
 	using namespace core::scoring;
 
 	/// 1.  Absent short ranged context independent two body energies
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		Size const ii_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( ii );
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+		core::Size const ii_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( ii );
 		if ( ii_moltenres_curr == 0 ) continue;
 
-		Size const ii_nnew_rots = curr_rotamers_without_correspondence_[ ii ].size();
+		core::Size const ii_nnew_rots = curr_rotamers_without_correspondence_[ ii ].size();
 		for ( Graph::EdgeListIter
 				iru  = current_intra_group_packer_neighbor_graph_->get_node(ii)->upper_edge_list_begin(),
 				irue = current_intra_group_packer_neighbor_graph_->get_node(ii)->upper_edge_list_end();
 				iru != irue; ++iru ) {
 
-			Size const jj = (*iru)->get_second_node_ind();
-			Size const jj_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( jj );
+			core::Size const jj = (*iru)->get_second_node_ind();
+			core::Size const jj_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( jj );
 			if ( jj_moltenres_curr == 0 ) continue;
 
-			Size const jj_nnew_rots = curr_rotamers_without_correspondence_[ jj ].size();
+			core::Size const jj_nnew_rots = curr_rotamers_without_correspondence_[ jj ].size();
 
 			if ( ii_nnew_rots == 0 && jj_nnew_rots == 0 ) continue; // AWESOME, no work to be done.
 
@@ -983,20 +983,20 @@ GreenPacker::compute_absent_energies(
 		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 		// Potentially O(N^2) operation...
 
-		for ( Size ii = 1; ii <= pose.size(); ++ ii ) {
-			Size const ii_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( ii );
+		for ( core::Size ii = 1; ii <= pose.size(); ++ ii ) {
+			core::Size const ii_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( ii );
 			if ( ii_moltenres_curr == 0 ) continue;
-			Size const ii_nnew_rots = curr_rotamers_without_correspondence_[ ii ].size();
+			core::Size const ii_nnew_rots = curr_rotamers_without_correspondence_[ ii ].size();
 
 			for ( ResidueNeighborConstIteratorOP
 					rni = lrec->const_upper_neighbor_iterator_begin( ii ),
 					rniend = lrec->const_upper_neighbor_iterator_end( ii );
 					(*rni) != (*rniend); ++(*rni) ) {
-				Size const jj = rni->upper_neighbor_id();
+				core::Size const jj = rni->upper_neighbor_id();
 
-				Size const jj_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( jj );
+				core::Size const jj_moltenres_curr = current_rotamer_sets_->resid_2_moltenres( jj );
 				if ( jj_moltenres_curr == 0 ) continue;
-				Size const jj_nnew_rots = curr_rotamers_without_correspondence_[ jj ].size();
+				core::Size const jj_nnew_rots = curr_rotamers_without_correspondence_[ jj ].size();
 
 				if ( ii_nnew_rots == 0 && jj_nnew_rots == 0 ) continue; // AWESOME, no work to be done.
 
@@ -1015,30 +1015,30 @@ void
 GreenPacker::compute_absent_srci_energies_for_residue_pair(
 	core::pose::Pose & pose,
 	PrecomputedPairEnergiesInteractionGraphOP pig,
-	Size lower_res,
-	Size upper_res
+	core::Size lower_res,
+	core::Size upper_res
 )
 {
 	using namespace core::conformation;
 	using namespace core::scoring;
 
-	Size const lower_res_moltenresid = current_rotamer_sets_->resid_2_moltenres( lower_res );
+	core::Size const lower_res_moltenresid = current_rotamer_sets_->resid_2_moltenres( lower_res );
 	debug_assert( lower_res_moltenresid );
 
-	Size const upper_res_moltenresid = current_rotamer_sets_->resid_2_moltenres( upper_res );
+	core::Size const upper_res_moltenresid = current_rotamer_sets_->resid_2_moltenres( upper_res );
 	debug_assert( upper_res_moltenresid );
 
-	Size const lower_res_nrots = current_rotamer_sets_->nrotamers_for_moltenres( lower_res_moltenresid );
-	Size const lower_res_nnew_rots = curr_rotamers_without_correspondence_[ lower_res ].size();
+	core::Size const lower_res_nrots = current_rotamer_sets_->nrotamers_for_moltenres( lower_res_moltenresid );
+	core::Size const lower_res_nnew_rots = curr_rotamers_without_correspondence_[ lower_res ].size();
 
-	Size const upper_res_nrots = current_rotamer_sets_->nrotamers_for_moltenres( upper_res_moltenresid );
-	Size const upper_res_nnew_rots = curr_rotamers_without_correspondence_[ upper_res ].size();
+	core::Size const upper_res_nrots = current_rotamer_sets_->nrotamers_for_moltenres( upper_res_moltenresid );
+	core::Size const upper_res_nnew_rots = curr_rotamers_without_correspondence_[ upper_res ].size();
 
 	if ( lower_res_nnew_rots > 0 ) {
-		for ( Size ii = 1; ii <= lower_res_nnew_rots; ++ii ) {
-			Size ii_rot_index = curr_rotamers_without_correspondence_[ lower_res ][ ii ];
+		for ( core::Size ii = 1; ii <= lower_res_nnew_rots; ++ii ) {
+			core::Size ii_rot_index = curr_rotamers_without_correspondence_[ lower_res ][ ii ];
 			ResidueCOP ii_rot = current_rotamer_sets_->rotamer_set_for_residue( lower_res )->rotamer( ii_rot_index );
-			for ( Size jj = 1; jj <= upper_res_nrots; ++jj ) {
+			for ( core::Size jj = 1; jj <= upper_res_nrots; ++jj ) {
 				EnergyMap emap;
 				ResidueCOP jj_rot = current_rotamer_sets_->rotamer_set_for_residue( upper_res )->rotamer( jj );
 				ci_sfxn_->eval_ci_2b( *ii_rot, *jj_rot, pose, emap );
@@ -1051,15 +1051,15 @@ GreenPacker::compute_absent_srci_energies_for_residue_pair(
 	}
 
 	if ( upper_res_nnew_rots > 0 ) {
-		for ( Size ii = 1; ii <= lower_res_nrots; ++ii ) {
+		for ( core::Size ii = 1; ii <= lower_res_nrots; ++ii ) {
 
 			// Avoid double counting pair interactions by skipping the new rotamers of the lower residue,
 			// since their interaction energies with the upper residue's rotamers have already been calculated
 			if ( curr_rot_2_orig_rot_[ lower_res ][ ii ] == 0 ) continue;
 
 			ResidueCOP ii_rot = current_rotamer_sets_->rotamer_set_for_residue( lower_res )->rotamer( ii );
-			for ( Size jj = 1; jj <= upper_res_nnew_rots; ++jj ) {
-				Size const jj_rot_index = curr_rotamers_without_correspondence_[ upper_res ][ jj ];
+			for ( core::Size jj = 1; jj <= upper_res_nnew_rots; ++jj ) {
+				core::Size const jj_rot_index = curr_rotamers_without_correspondence_[ upper_res ][ jj ];
 				EnergyMap emap;
 				ResidueCOP jj_rot = current_rotamer_sets_->rotamer_set_for_residue( upper_res )->rotamer( jj_rot_index );
 				ci_sfxn_->eval_ci_2b( *ii_rot, *jj_rot, pose, emap );
@@ -1078,30 +1078,30 @@ GreenPacker::compute_absent_lrci_energies_for_residue_pair(
 	core::pose::Pose & pose,
 	core::scoring::methods::LongRangeTwoBodyEnergy const & lre,
 	PrecomputedPairEnergiesInteractionGraphOP pig,
-	Size lower_res,
-	Size upper_res
+	core::Size lower_res,
+	core::Size upper_res
 )
 {
 	using namespace core::conformation;
 	using namespace core::scoring;
 
-	Size const lower_res_moltenresid = current_rotamer_sets_->resid_2_moltenres( lower_res );
+	core::Size const lower_res_moltenresid = current_rotamer_sets_->resid_2_moltenres( lower_res );
 	debug_assert( lower_res_moltenresid );
 
-	Size const upper_res_moltenresid = current_rotamer_sets_->resid_2_moltenres( upper_res );
+	core::Size const upper_res_moltenresid = current_rotamer_sets_->resid_2_moltenres( upper_res );
 	debug_assert( upper_res_moltenresid );
 
-	Size const lower_res_nrots = current_rotamer_sets_->nrotamers_for_moltenres( lower_res_moltenresid );
-	Size const lower_res_nnew_rots = curr_rotamers_without_correspondence_[ lower_res ].size();
+	core::Size const lower_res_nrots = current_rotamer_sets_->nrotamers_for_moltenres( lower_res_moltenresid );
+	core::Size const lower_res_nnew_rots = curr_rotamers_without_correspondence_[ lower_res ].size();
 
-	Size const upper_res_nrots = current_rotamer_sets_->nrotamers_for_moltenres( upper_res_moltenresid );
-	Size const upper_res_nnew_rots = curr_rotamers_without_correspondence_[ upper_res ].size();
+	core::Size const upper_res_nrots = current_rotamer_sets_->nrotamers_for_moltenres( upper_res_moltenresid );
+	core::Size const upper_res_nnew_rots = curr_rotamers_without_correspondence_[ upper_res ].size();
 
 	if ( lower_res_nnew_rots > 0 ) {
-		for ( Size ii = 1; ii <= lower_res_nnew_rots; ++ii ) {
-			Size ii_rot_index = curr_rotamers_without_correspondence_[ lower_res ][ ii ];
+		for ( core::Size ii = 1; ii <= lower_res_nnew_rots; ++ii ) {
+			core::Size ii_rot_index = curr_rotamers_without_correspondence_[ lower_res ][ ii ];
 			ResidueCOP ii_rot = current_rotamer_sets_->rotamer_set_for_residue( lower_res )->rotamer( ii_rot_index );
-			for ( Size jj = 1; jj <= upper_res_nrots; ++jj ) {
+			for ( core::Size jj = 1; jj <= upper_res_nrots; ++jj ) {
 				EnergyMap emap;
 				ResidueCOP jj_rot = current_rotamer_sets_->rotamer_set_for_residue( upper_res )->rotamer( jj );
 				lre.residue_pair_energy( *ii_rot, *jj_rot, pose, *ci_sfxn_, emap );
@@ -1114,15 +1114,15 @@ GreenPacker::compute_absent_lrci_energies_for_residue_pair(
 	}
 
 	if ( upper_res_nnew_rots > 0 ) {
-		for ( Size ii = 1; ii <= lower_res_nrots; ++ii ) {
+		for ( core::Size ii = 1; ii <= lower_res_nrots; ++ii ) {
 
 			// Avoid double counting pair interactions by skipping the new rotamers of the lower residue,
 			// since their interaction energies with the upper residue's rotamers have already been calculated
 			if ( curr_rot_2_orig_rot_[ lower_res ][ ii ] == 0 ) continue;
 
 			ResidueCOP ii_rot = current_rotamer_sets_->rotamer_set_for_residue( lower_res )->rotamer( ii );
-			for ( Size jj = 1; jj <= upper_res_nnew_rots; ++jj ) {
-				Size const jj_rot_index = curr_rotamers_without_correspondence_[ upper_res ][ jj ];
+			for ( core::Size jj = 1; jj <= upper_res_nnew_rots; ++jj ) {
+				core::Size const jj_rot_index = curr_rotamers_without_correspondence_[ upper_res ][ jj ];
 				EnergyMap emap;
 				ResidueCOP jj_rot = current_rotamer_sets_->rotamer_set_for_residue( upper_res )->rotamer( jj_rot_index );
 				lre.residue_pair_energy( *ii_rot, *jj_rot, pose, *ci_sfxn_, emap );
@@ -1170,7 +1170,7 @@ void GreenPacker::store_reference_pose_geometry( Pose & pose )
 {
 	orig_bb_tors_.resize( pose.size() );
 	original_bb_rep_coords_.resize( pose.size() );
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		orig_bb_tors_[ ii ] = pose.residue( ii ).mainchain_torsions();
 		original_bb_rep_coords_[ ii ] = pose.residue( ii ).xyz( 1 );
 	}
@@ -1179,8 +1179,8 @@ void GreenPacker::store_reference_pose_geometry( Pose & pose )
 void GreenPacker::compare_input_pose_geometry_to_reference( Pose & pose )
 {
 	debug_assert( pose.size() == orig_bb_tors_.size());
-	for ( Size ii = 1; ii <= orig_bb_tors_.size(); ++ii ) {
-		for ( Size jj = 1; jj <= orig_bb_tors_[ ii ].size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= orig_bb_tors_.size(); ++ii ) {
+		for ( core::Size jj = 1; jj <= orig_bb_tors_[ ii ].size(); ++jj ) {
 			if ( std::abs( basic::periodic_range(
 					orig_bb_tors_[ ii ][ jj ] - pose.residue( ii ).mainchain_torsions()[ jj ],
 					180 ) ) > 1e-8 ) {

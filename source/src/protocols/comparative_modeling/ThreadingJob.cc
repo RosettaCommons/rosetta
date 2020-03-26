@@ -97,8 +97,8 @@ protocols::loops::Loops ThreadingJob::loops( core::Size nres ) const {
 	Loops valid_loops;
 	for ( auto const & it : *loops ) {
 		bool valid(true);
-		for ( Size ii = 1; ii <= extra_residues_to_steal_.size(); ++ii ) {
-			Size const extra_res( extra_residues_to_steal_[ii] );
+		for ( core::Size ii = 1; ii <= extra_residues_to_steal_.size(); ++ii ) {
+			core::Size const extra_res( extra_residues_to_steal_[ii] );
 			if ( it.start() <= extra_res && extra_res <= it.stop() ) {
 				valid = false;
 			}

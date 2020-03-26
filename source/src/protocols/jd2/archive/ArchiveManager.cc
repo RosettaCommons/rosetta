@@ -286,7 +286,7 @@ ArchiveManager::ArchiveManager( core::Size archive_rank, core::Size jd_master_ra
 }
 
 core::Size ArchiveManager::unfinished_batches() const {
-	Size unfinished_batches( 0 );
+	core::Size unfinished_batches( 0 );
 	for ( auto const & it : batches() ) {
 		if ( !it.has_finished() && !it.is_cancelled() && it.valid() ) ++unfinished_batches;
 	}
@@ -374,28 +374,28 @@ ArchiveManager::go( ArchiveBaseOP archive )
 			}
 			print_status = true;
 			// here if we got a message
-			Size const msg_tag( buf[ 0 ]);
+			core::Size const msg_tag( buf[ 0 ]);
 			tr.Debug << "received message in ArchiveManager " << msg_tag << std::endl;
 
 			switch( msg_tag ) {
 			case JOB_COMPLETION : {
-				Size const batch_id( buf[ 1 ] );
+				core::Size const batch_id( buf[ 1 ] );
 				bool const final( buf[ 2 ] == 1 );
-				Size const bad( buf[ 3 ] );
-				Size const good( buf[ 4 ] );
-				Size const total( buf[ 5 ] ); //total nr of jobs
+				core::Size const bad( buf[ 3 ] );
+				core::Size const good( buf[ 4 ] );
+				core::Size const total( buf[ 5 ] ); //total nr of jobs
 				basic::show_time( tr,  "ArchiveManager receveid job-completion..." );
 				tr.Debug << "ArchiveManager received JOB_COMPLETION " << batch_id << " " << bad << " " << good << " " << total << std::endl;
 				jobs_completed_[ batch_id ] = CompletionMessage( batch_id, final, bad, good, total );
 				break; //switch
 			}
 			case QUEUE_EMPTY : {
-				Size const batch_id( buf[ 1 ] );
+				core::Size const batch_id( buf[ 1 ] );
 
 				//we ignore QUEUE_EMPTY if we know that a new batch has been submitted after issuing of this signal (i.e., the batch-number
 				// coming with the message would be smaller than the currently highest batch number... however, there might be invalid batches...
 				// find last valid and unfinished batch in list:
-				Size max_working_batch_id( batches_.size() );
+				core::Size max_working_batch_id( batches_.size() );
 				if ( batches_.size() ) {
 					while ( max_working_batch_id > 0
 							&& ( !batches_[ max_working_batch_id ].valid() || batches_[ max_working_batch_id ].has_finished() ) )
@@ -421,7 +421,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 				if ( !the_archive().finished() ) {
 					//if !finished Archive should always generate a batch...
 					//but let's make sure by monitoring, since it would be bad if we hang in the communication...
-					Size ct( batches_.size() );//monitor number of batches
+					core::Size ct( batches_.size() );//monitor number of batches
 					if ( !stop ) the_archive().generate_batch();
 					if ( ct == batches_.size() ) { //if generate_batch didn't create anything --- we still owe Jobdistributor a signal
 						send_stop_to_jobdistributor(); //send stop
@@ -460,7 +460,7 @@ ArchiveManager::idle() {
 	{ //save archive
 		static time_t last_save( time(nullptr) );
 		time_t now( time( nullptr ) );
-		Size const elapsedtime( now - last_save );
+		core::Size const elapsedtime( now - last_save );
 		if ( elapsedtime > save_archive_time_interval_ ) {
 			save_archive();
 			last_save = now;
@@ -502,7 +502,7 @@ void BaseArchiveManager::read_returning_decoys( Batch& batch, bool final ) {
 
 	auto iter = tags_in_file.begin();
 	std::string unread_tag = "none";
-	for ( Size ct = 1;
+	for ( core::Size ct = 1;
 			iter != tags_in_file.end() && ct <= batch.decoys_returned();
 			++iter, ++ct ) {
 		unread_tag = *iter;
@@ -565,10 +565,10 @@ ArchiveManager::jobs_completed() {// core::Size batch_id, bool final, core::Size
 	runtime_assert( jobs_completed_.begin() != jobs_completed_.end() );
 	CompletionMessage msg = jobs_completed_.begin()->second;
 	jobs_completed_.erase( jobs_completed_.begin() );
-	Size batch_id( msg.batch_id );
+	core::Size batch_id( msg.batch_id );
 	bool final( msg.final );
-	Size bad( msg.bad );
-	Size good_decoys( msg.good );
+	core::Size bad( msg.bad );
+	core::Size good_decoys( msg.good );
 	Batch& batch( batches_[ batch_id ] );
 
 	// here if in integration-test mode, jump out if not final
@@ -631,7 +631,7 @@ void
 ArchiveManager::queue_batch( Batch const& batch ) {
 	tr.Debug << "queue new batch into MPIArchiveJobDistributor " << batch.flag_file() << std::endl;
 #ifdef USEMPI
-	Size const size( 3 );
+	core::Size const size( 3 );
 	int buf[ size ];
 	buf[ 0 ] = ADD_BATCH;
 	buf[ 1 ] = batch.id();
@@ -675,7 +675,7 @@ ArchiveManager::cancel_batch( Batch& batch, bool allow_reading_of_decoys ) {
 	}
 	tr.Debug << "cancel batch  " << batch.flag_file() << std::endl;
 #ifdef USEMPI
-	Size const size( 3 );
+	core::Size const size( 3 );
 	int buf[ size ];
 	buf[ 0 ] = CANCEL_BATCH;
 	buf[ 1 ] = batch.id();

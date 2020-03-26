@@ -40,7 +40,7 @@ namespace core {
 namespace scoring {
 
 /// default constructor -- fill this in
-ScoreFunctionInfo::ScoreFunctionInfo() : utility::pointer::ReferenceCount(),
+ScoreFunctionInfo::ScoreFunctionInfo() : utility::VirtualBase(),
 	max_atomic_interaction_distance_( 0.0 ),
 	max_context_neighbor_cutoff_( 0.0 ),
 	context_graphs_required_( num_context_graph_types, false ),
@@ -50,7 +50,7 @@ ScoreFunctionInfo::ScoreFunctionInfo() : utility::pointer::ReferenceCount(),
 /// @details Make sure to make a copy of the EMOpts, instead of just copying the pointer;
 /// we don't want SFIs to share pointers to the same objects or the object could change
 /// underneath the SFI.
-ScoreFunctionInfo::ScoreFunctionInfo( ScoreFunctionInfo const & src ) : utility::pointer::ReferenceCount(),
+ScoreFunctionInfo::ScoreFunctionInfo( ScoreFunctionInfo const & src ) : utility::VirtualBase(),
 	max_atomic_interaction_distance_( src.max_atomic_interaction_distance_ ),
 	max_context_neighbor_cutoff_( src.max_context_neighbor_cutoff_ ),
 	context_graphs_required_( src.context_graphs_required_ ),

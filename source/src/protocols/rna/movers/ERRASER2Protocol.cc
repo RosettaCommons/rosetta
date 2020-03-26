@@ -114,18 +114,18 @@ ERRASER2Protocol::~ERRASER2Protocol(){}
 static basic::Tracer TR( "apps.public.rna.erraser.erraser2" );
 
 
-utility::vector1< Size >
+utility::vector1< core::Size >
 all_pose_residues( core::pose::Pose const & pose ) {
-	utility::vector1< Size > foo;
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) foo.emplace_back( ii );
+	utility::vector1< core::Size > foo;
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) foo.emplace_back( ii );
 	return foo;
 }
 
-void show_accuracy_report( pose::Pose const & start_pose, std::string const & tag, Size const round ) {
+void show_accuracy_report( pose::Pose const & start_pose, std::string const & tag, core::Size const round ) {
 	RNA_SuiteName suite_namer;
 
-	utility::vector1< Size > bad_suites;
-	for ( Size ii = 1; ii <= start_pose.size(); ++ii ) {
+	utility::vector1< core::Size > bad_suites;
+	for ( core::Size ii = 1; ii <= start_pose.size(); ++ii ) {
 		// This should pick up bad suites
 		auto suite_assignment = suite_namer.assign( start_pose, ii );
 		if ( suite_assignment.name == "!!" ) bad_suites.push_back( ii );
@@ -139,14 +139,14 @@ void show_accuracy_report( pose::Pose const & start_pose, std::string const & ta
 
 
 
-bool atoms_have_bond_to_bonded_atoms( pose::Pose const & pose, Size const ai, Size const ii, Size const aj, Size const jj ) {
+bool atoms_have_bond_to_bonded_atoms( pose::Pose const & pose, core::Size const ai, core::Size const ii, core::Size const aj, core::Size const jj ) {
 	// Loop through atoms in both residues
 	// Accumulate set of atom IDs bonded to each atom.
 	// Check if there are bonds between any pairs.
 
 	utility::vector1< core::id::AtomID > bonded_to_ai, bonded_to_aj;
 
-	for ( Size ak = 1; ak <= pose.residue( ii ).natoms(); ++ak ) {
+	for ( core::Size ak = 1; ak <= pose.residue( ii ).natoms(); ++ak ) {
 		if ( pose.conformation().atoms_are_bonded( core::id::AtomID( ai, ii ), core::id::AtomID( ak, ii ) ) ) {
 			bonded_to_ai.emplace_back( ak, ii );
 		}
@@ -154,7 +154,7 @@ bool atoms_have_bond_to_bonded_atoms( pose::Pose const & pose, Size const ai, Si
 			bonded_to_aj.emplace_back( ak, ii );
 		}
 	}
-	for ( Size ak = 1; ak <= pose.residue( jj ).natoms(); ++ak ) {
+	for ( core::Size ak = 1; ak <= pose.residue( jj ).natoms(); ++ak ) {
 		if ( pose.conformation().atoms_are_bonded( core::id::AtomID( ai, ii ), core::id::AtomID( ak, jj ) ) ) {
 			bonded_to_ai.emplace_back( ak, jj );
 		}
@@ -178,14 +178,14 @@ bool atoms_have_bond_to_bonded_atoms( pose::Pose const & pose, Size const ai, Si
 
 
 
-bool atoms_have_mutual_bond_to_atom( pose::Pose const & pose, Size const ai, Size const ii, Size const aj, Size const jj ) {
+bool atoms_have_mutual_bond_to_atom( pose::Pose const & pose, core::Size const ai, core::Size const ii, core::Size const aj, core::Size const jj ) {
 	// Loop through atoms in both residues
 	// Assumes no 1-atom polymeric residues. That's ok.
-	for ( Size ak = 1; ak <= pose.residue( ii ).natoms(); ++ak ) {
+	for ( core::Size ak = 1; ak <= pose.residue( ii ).natoms(); ++ak ) {
 		if ( pose.conformation().atoms_are_bonded( core::id::AtomID( ai, ii ), core::id::AtomID( ak, ii ) )
 				&& pose.conformation().atoms_are_bonded( core::id::AtomID( aj, jj ), core::id::AtomID( ak, ii ) ) ) return true;
 	}
-	for ( Size ak = 1; ak <= pose.residue( jj ).natoms(); ++ak ) {
+	for ( core::Size ak = 1; ak <= pose.residue( jj ).natoms(); ++ak ) {
 		if ( pose.conformation().atoms_are_bonded( core::id::AtomID( ai, ii ), core::id::AtomID( ak, jj ) )
 				&& pose.conformation().atoms_are_bonded( core::id::AtomID( aj, jj ), core::id::AtomID( ak, jj ) ) ) return true;
 	}
@@ -194,8 +194,8 @@ bool atoms_have_mutual_bond_to_atom( pose::Pose const & pose, Size const ai, Siz
 }
 
 bool
-bump_check( pose::Pose const & pose, Size const ii ) {
-	for ( Size jj = 1; jj <= pose.size(); ++jj ) {
+bump_check( pose::Pose const & pose, core::Size const ii ) {
+	for ( core::Size jj = 1; jj <= pose.size(); ++jj ) {
 		if ( jj == ii ) continue;
 		if ( jj == ii + 1 ) continue;
 		if ( jj == ii - 1 ) continue;
@@ -203,8 +203,8 @@ bump_check( pose::Pose const & pose, Size const ii ) {
 		// If first atoms are more than 10A apart no clashes
 		if ( pose.residue( ii ).xyz( 1 ).distance_squared( pose.residue( jj ).xyz( 1 ) ) > 100 ) continue;
 
-		for ( Size ai = 1; ai <= pose.residue( ii ).natoms(); ++ai ) {
-			for ( Size aj = 1; aj <= pose.residue( jj ).natoms(); ++aj ) {
+		for ( core::Size ai = 1; ai <= pose.residue( ii ).natoms(); ++ai ) {
+			for ( core::Size aj = 1; aj <= pose.residue( jj ).natoms(); ++aj ) {
 				// If the two atoms are bonded ignore.
 				if ( pose.conformation().atoms_are_bonded( core::id::AtomID( ai, ii ), core::id::AtomID( aj, jj ) ) ) continue;
 				if ( atoms_have_mutual_bond_to_atom( pose, ai, ii, aj, jj ) ) continue;
@@ -227,9 +227,9 @@ bump_check( pose::Pose const & pose, Size const ii ) {
 }
 
 
-utility::vector1< Size >
+utility::vector1< core::Size >
 determine_residues_to_rebuild(
-	utility::vector1< Size > const & consider_rebuild_res, pose::Pose const & start_pose
+	utility::vector1< core::Size > const & consider_rebuild_res, pose::Pose const & start_pose
 ) {
 	/*if ( utility::file::file_exists( residue_rebuild_log_namer( resample_round, nstruct ) ) ) {
 	// process it
@@ -237,12 +237,12 @@ determine_residues_to_rebuild(
 	}*/
 
 	RNA_SuiteName suite_namer;
-	utility::vector1< Size > residues_to_rebuild;
+	utility::vector1< core::Size > residues_to_rebuild;
 
 	using namespace basic::options;
 	using namespace core::pose::full_model_info;
 
-	for ( Size ii = 1; ii <= start_pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= start_pose.size(); ++ii ) {
 		// Skip any residues that aren't even under consideration
 		if ( ! consider_rebuild_res.contains( ii ) ) continue;
 
@@ -303,8 +303,8 @@ determine_residues_to_rebuild(
 	}
 
 	// Shuffle for this nstruct. This is your only chance!
-	auto tmpset = std::set< Size >( residues_to_rebuild.begin(), residues_to_rebuild.end() );
-	residues_to_rebuild = utility::vector1< Size >( tmpset.begin(), tmpset.end() );
+	auto tmpset = std::set< core::Size >( residues_to_rebuild.begin(), residues_to_rebuild.end() );
+	residues_to_rebuild = utility::vector1< core::Size >( tmpset.begin(), tmpset.end() );
 	numeric::random::random_permutation( residues_to_rebuild, numeric::random::rg() );
 	TR << "Total to resample this round: " << residues_to_rebuild << std::endl;
 
@@ -331,13 +331,13 @@ ERRASER2Protocol::configure_master_mover( Pose const & start_pose ) {
 }
 
 void
-ERRASER2Protocol::resample_full_model( Size const resample_round, pose::Pose & start_pose,
-	utility::vector1< Size > const & consider_rebuild_res, Size const nstruct
+ERRASER2Protocol::resample_full_model( core::Size const resample_round, pose::Pose & start_pose,
+	utility::vector1< core::Size > const & consider_rebuild_res, core::Size const nstruct
 ) {
 
 	// Determine residues to rebuild -- shuffled order, but who knows the checkpointing situation.
 	// TODO: if this is slow, figure out a way to skip it if there's a checkpoint file.
-	utility::vector1< Size > residues_to_rebuild = determine_residues_to_rebuild( consider_rebuild_res, start_pose );
+	utility::vector1< core::Size > residues_to_rebuild = determine_residues_to_rebuild( consider_rebuild_res, start_pose );
 
 	// OK, what residues might these be? What might be connected?
 	for ( auto const elem : residues_to_rebuild ) {
@@ -404,8 +404,8 @@ ERRASER2Protocol::apply( core::pose::Pose & start_pose ) {
 	// Get rebuild res by applying the residue selector to the pose.
 	auto selection = rebuild_residue_selector_ ? rebuild_residue_selector_->apply( start_pose ) : utility::vector1< bool >( start_pose.size(), true );
 
-	utility::vector1< Size > consider_rebuild_res;
-	for ( Size ii = 1; ii <= selection.size(); ++ii ) {
+	utility::vector1< core::Size > consider_rebuild_res;
+	for ( core::Size ii = 1; ii <= selection.size(); ++ii ) {
 		if ( selection[ ii ] ) consider_rebuild_res.push_back( ii );
 	}
 
@@ -427,7 +427,7 @@ ERRASER2Protocol::apply( core::pose::Pose & start_pose ) {
 	erraser_minimizer.constrain_phosphate( true );
 	erraser_minimizer.apply( start_pose );
 
-	for ( Size ii = 1; ii <= n_rounds_; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_rounds_; ++ii ) {
 		erraser_minimizer.constrain_phosphate( false );
 		erraser_minimizer.apply( start_pose );
 		show_accuracy_report( start_pose, "Minimized", ii/*, TR*/ );
@@ -474,7 +474,7 @@ ERRASER2Protocol::parse_my_tag(
 
 	// AMW TODO: customize the whole structure of the protocol -- let the user
 	// 'min, resample, min, min, resample, resample' if they want
-	n_rounds( tag->getOption< Size >( "n_rounds", true ) );
+	n_rounds( tag->getOption< core::Size >( "n_rounds", true ) );
 
 	// To be rebuilt, residues must be malformed AND in rebuild_res_selector
 	if ( tag->hasOption("rebuild_res_selector") ) {

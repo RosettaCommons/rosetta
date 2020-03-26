@@ -132,11 +132,11 @@ RNA_CSA_JobDistributor::has_another_job() {
 Size
 RNA_CSA_JobDistributor::get_updates( core::io::silent::SilentStructCOP s ) const {
 	runtime_assert( s->has_energy( "updates" ) );
-	return static_cast< Size >( s->get_energy( "updates" ) );
+	return static_cast< core::Size >( s->get_energy( "updates" ) );
 }
 
 void
-RNA_CSA_JobDistributor::set_updates( core::io::silent::SilentStructOP s, Size const updates ) const {
+RNA_CSA_JobDistributor::set_updates( core::io::silent::SilentStructOP s, core::Size const updates ) const {
 	s->add_string_value( "updates", utility::to_string( updates ) );
 	s->set_decoy_tag( "S_" +  ObjexxFCL::lead_zero_string_of( updates, 6 ) ); // redundant with updates column.
 }
@@ -219,11 +219,11 @@ RNA_CSA_JobDistributor::average_pairwise_distance() const {
 
 	// Oh, don't be dumb. It's "just" 99 * 200. Upper triangle.
 	Real distance = 0;
-	Size num = 0;
-	for ( Size ii = 1; ii <= struct_list.size(); ++ii ) {
+	core::Size num = 0;
+	for ( core::Size ii = 1; ii <= struct_list.size(); ++ii ) {
 		core::pose::PoseOP ii_pose( new Pose );
 		struct_list[ ii ]->fill_pose( *ii_pose );
-		for ( Size jj = ii + 1; jj <= struct_list.size(); ++jj ) {
+		for ( core::Size jj = ii + 1; jj <= struct_list.size(); ++jj ) {
 			core::pose::PoseOP jj_pose( new Pose );
 			struct_list[ jj ]->fill_pose( *jj_pose );
 
@@ -265,8 +265,8 @@ RNA_CSA_JobDistributor::update_bank( core::pose::Pose & pose ) {
 			full_model_pose = stepwise::monte_carlo::build_full_model( pose ); // makes a full model with all residues.
 
 			//  If within X RMSD of a model, replace it.
-			Size kick_out_idx( struct_list.size() );
-			for ( Size n = 1; n <= struct_list.size(); n++ ) {
+			core::Size kick_out_idx( struct_list.size() );
+			for ( core::Size n = 1; n <= struct_list.size(); n++ ) {
 				SilentStructOP s_test = struct_list[ n ];
 				Pose pose_test;
 				s_test->fill_pose( pose_test );
@@ -287,7 +287,7 @@ RNA_CSA_JobDistributor::update_bank( core::pose::Pose & pose ) {
 				runtime_assert( s == nullptr ); // s will be filled below.
 				SilentFileOptions opts;
 				SilentFileDataOP sfd_new( new SilentFileData(opts) );
-				for ( Size n = 1; n <= struct_list.size(); n++ ) if ( n != kick_out_idx ) sfd_new->add_structure( struct_list[ n ] );
+				for ( core::Size n = 1; n <= struct_list.size(); n++ ) if ( n != kick_out_idx ) sfd_new->add_structure( struct_list[ n ] );
 				sfd_ = sfd_new;
 			}
 		}
@@ -320,7 +320,7 @@ RNA_CSA_JobDistributor::read_in_silent_file(){
 	sfd_->read_file( silent_file_ );
 	sfd_->order_by_energy();
 	utility::vector1< SilentStructOP > const & struct_list = sfd_->structure_list();
-	for ( Size n = 1; n <= struct_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= struct_list.size(); n++ ) {
 		SilentStructOP s = struct_list[ n ];
 		total_updates_so_far_ = std::max( total_updates_so_far_, get_updates( s ) );
 	}
@@ -346,7 +346,7 @@ void
 RNA_CSA_JobDistributor::write_out_round_silent_file(){
 	// keep track of stages along the way -- every time we do a multiple of csa_bank_size is a 'round'.
 	if ( ( total_updates_so_far_ % csa_bank_size_ ) == 0 ) {
-		Size const nrounds = total_updates_so_far_ / csa_bank_size_;
+		core::Size const nrounds = total_updates_so_far_ / csa_bank_size_;
 		std::string const round_silent_file = utility::replace_in( silent_file_, ".out",
 			".round" + ObjexxFCL::lead_zero_string_of( nrounds, 3 ) + ".out" );
 		write_out_silent_file( round_silent_file );
@@ -357,8 +357,8 @@ RNA_CSA_JobDistributor::write_out_round_silent_file(){
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_CSA_JobDistributor::put_lock_on_silent_file() {
-	Size ntries( 0 );
-	Size const MAX_TRIES( 1000 );
+	core::Size ntries( 0 );
+	core::Size const MAX_TRIES( 1000 );
 	while ( utility::file::file_exists( lock_file ) && ++ntries <= MAX_TRIES ) {
 		TR << lock_file << " exists. Will try again in one second." << std::endl;
 		utility::rand_sleep();

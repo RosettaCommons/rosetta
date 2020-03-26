@@ -45,9 +45,9 @@ class FlexPepDockingProtocol : public moves::Mover
 public:
 
 	/// constructor
-	FlexPepDockingProtocol(Size const rb_jump_in = 1);
+	FlexPepDockingProtocol(core::Size const rb_jump_in = 1);
 
-	FlexPepDockingProtocol(Size const rb_jump_in, bool const fullatom, bool const view=false );
+	FlexPepDockingProtocol(core::Size const rb_jump_in, bool const fullatom, bool const view=false );
 
 	// empty destructor - needed for proper inclusion of OP clasesses
 	~FlexPepDockingProtocol() override;
@@ -176,7 +176,7 @@ private:
 	// @param native_interface_residues[out]
 	//      An array of positions - set to true for interface residues
 	// @param distance
-	//  Size - the atom pair distance under which the pair is considered in contact
+	//  core::Size - the atom pair distance under which the pair is considered in contact
 	///////////////////////////////////////////////////////////////////////////////////
 	void markInterfaceBySideChainContacts
 	( ObjexxFCL::FArray1D_bool & native_interface_residues, core::Size distance) const;
@@ -235,7 +235,7 @@ private:
 	/// information about the mode
 	bool fullatom_;
 	/// the jump number across which to do rigid_body transformations
-	Size rb_jump_;
+	core::Size rb_jump_;
 	/// whether or not to initialize the viewer (for opengl)
 	bool view_;
 

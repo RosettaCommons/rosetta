@@ -42,7 +42,7 @@
 
 // Utility Headers
 #include <utility/file/file_sys_util.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 
 // utility

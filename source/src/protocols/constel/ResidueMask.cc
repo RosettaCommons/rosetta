@@ -69,8 +69,8 @@ ResidueMask::ResidueMask(Pose& ps, std::string const &fname) :
 ///
 void ResidueMask::print(std::ostream& os) const {
 
-	Size const SIZ = mask.size();
-	for ( Size i=1; i<=SIZ; ++i ) {
+	core::Size const SIZ = mask.size();
+	for ( core::Size i=1; i<=SIZ; ++i ) {
 		os << (mask[i] ? "1" : "0");
 	}
 }
@@ -82,7 +82,7 @@ void ResidueMask::print(std::ostream& os) const {
 ///
 /// @return value of the mask at that index
 ///
-bool ResidueMask::operator[] (Size const i) {return mask[i];}
+bool ResidueMask::operator[] (core::Size const i) {return mask[i];}
 
 
 } // constel

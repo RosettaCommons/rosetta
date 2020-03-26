@@ -20,14 +20,14 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace basic {
 namespace citation_manager {
 
 /// @brief A class for keeping track of a collection of citations for a particular Rosetta module.
-class CitationCollection : public utility::pointer::ReferenceCount {
+class CitationCollection : public utility::VirtualBase {
 
 public:
 

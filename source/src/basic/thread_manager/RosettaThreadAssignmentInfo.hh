@@ -21,7 +21,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/thread/ReadWriteMutex.hh>
 
@@ -37,7 +37,7 @@ namespace basic {
 namespace thread_manager {
 
 /// @brief A class for storing information about the threads to which a function has been assigned by the RosettaThreadManager.
-class RosettaThreadAssignmentInfo : public utility::pointer::ReferenceCount {
+class RosettaThreadAssignmentInfo : public utility::VirtualBase {
 
 public:
 
@@ -134,13 +134,13 @@ private: //Data
 #else //Not MULTI_THREADED
 
 #include <basic/thread_manager/RosettaThreadAssignmentInfo.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace basic {
 namespace thread_manager {
 
 // Define empty class for non-multi-threaded build:
-class RosettaThreadAssignmentInfo : public utility::pointer::ReferenceCount {
+class RosettaThreadAssignmentInfo : public utility::VirtualBase {
 public:
 	RosettaThreadAssignmentInfo() = delete;
 	RosettaThreadAssignmentInfo( RosettaThreadRequestOriginatingLevel const ) {}

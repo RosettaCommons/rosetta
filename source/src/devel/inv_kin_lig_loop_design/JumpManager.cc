@@ -55,9 +55,9 @@ bool JumpManager::is_allowable_jump_atom( core::pose::Pose& pose, int seqpos, in
 			return !pose.residue(seqpos).atom_is_hydrogen(atom);
 		} else {
 			// protein sidechain atom => only atoms defining chi angles can be jump atoms
-			for ( Size k = 1; k <= pose.residue(seqpos).nchi(); ++k ) {
+			for ( core::Size k = 1; k <= pose.residue(seqpos).nchi(); ++k ) {
 				core::chemical::AtomIndices const& atom_indices = pose.residue(seqpos).chi_atoms(k);
-				for ( Size l = 1; l <= atom_indices.size(); ++l ) {
+				for ( core::Size l = 1; l <= atom_indices.size(); ++l ) {
 					if ( atom == static_cast<int>(atom_indices[l]) ) {
 						return true;
 					}

@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_qsar_qsarMap_hh
 
 #include <map>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/qsar/qsarMap.fwd.hh>
 //#include <protocols/qsar/qsarTypeManager.fwd.hh>
 
@@ -27,10 +27,10 @@
 namespace protocols {
 namespace qsar {
 
-class qsarPoint : public utility::pointer::ReferenceCount
+class qsarPoint : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~qsarPoint() override;
 	qsarPoint(std::string const & type, core::Real value, std::string const & name, core::conformation::ResidueOP residue );
 	/// @brief set the value of the qsar point
@@ -57,10 +57,10 @@ private:
 };
 
 
-class qsarMap : public utility::pointer::ReferenceCount
+class qsarMap : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~qsarMap() override;
 	qsarMap(std::string map_name, core::conformation::ResidueOP residue);
 

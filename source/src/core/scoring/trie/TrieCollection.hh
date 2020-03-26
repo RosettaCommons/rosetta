@@ -19,6 +19,7 @@
 
 // Package Headers
 #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
+#include <core/types.hh>
 
 // Project Headers
 #include <basic/datacache/CacheableData.hh>

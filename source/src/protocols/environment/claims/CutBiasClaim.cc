@@ -59,7 +59,7 @@ CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
 	range.first = tag->getOption< core::Size >( "region_start" );
 	range.second = tag->getOption< core::Size >( "region_end" );
 
-	for ( Size i = range.first; i <= range.second; ++i ) {
+	for ( core::Size i = range.first; i <= range.second; ++i ) {
 		biases_[ LocalPosition( label_, i ) ] = bias;
 	}
 
@@ -76,7 +76,7 @@ CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
 {
 	ObjexxFCL::FArray1D_float const& loop_frac = ss_in.loop_fraction();
 
-	for ( Size i = 1; i <= ss_in.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= ss_in.total_residue(); ++i ) {
 		biases_[ LocalPosition( label_, i ) ] = loop_frac( (int) i );
 	}
 
@@ -97,7 +97,7 @@ CutBiasClaim::CutBiasClaim( ClientMoverOP owner,
 	Parent( owner ),
 	label_( label )
 {
-	for ( Size i = range.first; i <= range.second; ++i ) {
+	for ( core::Size i = range.first; i <= range.second; ++i ) {
 		biases_[ LocalPosition( label_, i ) ] = bias;
 	}
 }

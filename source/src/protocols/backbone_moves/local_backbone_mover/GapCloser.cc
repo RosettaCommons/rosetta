@@ -36,14 +36,17 @@ namespace backbone_moves {
 namespace local_backbone_mover {
 
 GapCloser::GapCloser():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	set_solution_picker(utility::pointer::make_shared< gap_solution_pickers::RandomGapSolutionPicker >());
 }
 
 GapCloser::~GapCloser()= default;
 
-GapCloser::GapCloser( GapCloser const & ) {
+GapCloser::GapCloser( GapCloser const & src ):
+	VirtualBase( src )
+	// The fact we don't copy anything else here is very, very concerning.
+{
 
 }
 
@@ -54,8 +57,8 @@ GapCloser::clone() const {
 
 void
 GapCloser::solve_gaps(FreePeptide &free_peptide){
-	Size pivot1 = free_peptide.pivot1();
-	Size pivot2 = free_peptide.pivot2();
+	core::Size pivot1 = free_peptide.pivot1();
+	core::Size pivot2 = free_peptide.pivot2();
 
 	gap_solved_ = solve_a_gap(free_peptide, pivot1, pivot_torsions1_);
 
@@ -71,8 +74,8 @@ GapCloser::apply_closure(core::pose::Pose &pose, FreePeptide &free_peptide){
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
-	Size pivot1 = free_peptide.pivot1();
-	Size pivot2 = free_peptide.pivot2();
+	core::Size pivot1 = free_peptide.pivot1();
+	core::Size pivot2 = free_peptide.pivot2();
 
 	// Temporarily change the fold tree such that numerical errors
 	// don't propogate
@@ -92,7 +95,7 @@ GapCloser::apply_closure(core::pose::Pose &pose, FreePeptide &free_peptide){
 
 	// Pick solutions
 
-	Size sol1, sol2;
+	core::Size sol1, sol2;
 	pick_solutions(sol1, sol2, pose, free_peptide);
 
 	// Apply the torsions at gaps
@@ -117,7 +120,7 @@ GapCloser::apply_closure(core::pose::Pose &pose, FreePeptide &free_peptide){
 }
 
 bool
-GapCloser::solve_a_gap(FreePeptide &free_peptide, Size pivot, vector1<vector1<Real> > &pivot_torsions){
+GapCloser::solve_a_gap(FreePeptide &free_peptide, core::Size pivot, vector1<vector1<Real> > &pivot_torsions){
 
 	using numeric::conversions::degrees;
 	using utility::fixedsizearray1;
@@ -163,7 +166,7 @@ GapCloser::solve_a_gap(FreePeptide &free_peptide, Size pivot, vector1<vector1<Re
 }
 
 void
-GapCloser::pick_solutions(Size &index1, Size &index2, core::pose::Pose &pose, FreePeptide &free_peptide){
+GapCloser::pick_solutions(core::Size &index1, core::Size &index2, core::pose::Pose &pose, FreePeptide &free_peptide){
 	index1 = solution_picker_->pick(pose, free_peptide, pivot_torsions1_, free_peptide.pivot1());
 	index2 = solution_picker_->pick(pose, free_peptide, pivot_torsions2_, free_peptide.pivot2());
 }

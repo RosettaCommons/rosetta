@@ -69,7 +69,7 @@ ResiduesInInterfaceFilter::~ResiduesInInterfaceFilter() = default;
 /// @details a utility for docking_filter
 core::Size ResiduesInInterfaceFilter::compute( core::pose::Pose const & pose ) const
 {
-	Size interface_counter( 0 );
+	core::Size interface_counter( 0 );
 
 	runtime_assert( rb_jump_ <= pose.num_jump() );
 
@@ -81,7 +81,7 @@ core::Size ResiduesInInterfaceFilter::compute( core::pose::Pose const & pose ) c
 	protocols::scoring::Interface interface(rb_jump_);
 	interface.calculate( temp_pose );
 
-	for ( Size i = 1; i <= temp_pose.size(); i++ ) {
+	for ( core::Size i = 1; i <= temp_pose.size(); i++ ) {
 		if ( !temp_pose.residue(i).is_protein() ) continue;
 		if ( interface.is_interface( i ) ) interface_counter++;
 	}

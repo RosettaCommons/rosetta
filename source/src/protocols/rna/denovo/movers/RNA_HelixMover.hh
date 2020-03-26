@@ -42,7 +42,7 @@ namespace movers {
 class RNA_HelixMover: public protocols::moves::Mover {
 public:
 	/// @brief Construct the mover object
-	RNA_HelixMover( utility::vector1< utility::vector1< Size > > const & helix_regions,
+	RNA_HelixMover( utility::vector1< utility::vector1< core::Size > > const & helix_regions,
 		core::import_pose::RNA_BasePairHandlerCOP rna_base_pair_handler,
 		bool const & move_first_rigid_body );
 
@@ -79,13 +79,13 @@ private:
 		core::Size const & res ) const;
 
 	//data
-	utility::vector1< utility::vector1< Size > > helix_regions_;
-	utility::vector1< utility::vector1< Size > > helix_regions_with_jumps_and_ends_;
-	utility::vector1< Size > helix_regions_jumps_;
-	utility::vector1< Size > helix_regions_jumps_final_;
+	utility::vector1< utility::vector1< core::Size > > helix_regions_;
+	utility::vector1< utility::vector1< core::Size > > helix_regions_with_jumps_and_ends_;
+	utility::vector1< core::Size > helix_regions_jumps_;
+	utility::vector1< core::Size > helix_regions_jumps_final_;
 	core::import_pose::RNA_BasePairHandlerCOP rna_base_pair_handler_;
-	utility::vector1< std::pair< std::pair< Size, Size>, std::pair< Size, Size > > > helix_ends_;
-	utility::vector1< std::pair< std::pair< Size, Size>, std::pair< Size, Size > > > helix_ends_final_;
+	utility::vector1< std::pair< std::pair< core::Size, core::Size>, std::pair< core::Size, core::Size > > > helix_ends_;
+	utility::vector1< std::pair< std::pair< core::Size, core::Size>, std::pair< core::Size, core::Size > > > helix_ends_final_;
 	core::kinematics::FoldTree pose_fold_tree_;
 	bool pose_is_set_;
 	bool move_first_rigid_body_;

@@ -22,7 +22,7 @@
 //project headers
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 
 //C++ headers

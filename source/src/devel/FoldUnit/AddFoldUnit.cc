@@ -49,10 +49,10 @@ using namespace std;
 using utility::vector1;
 
 /// @brief return a subset of entries that match all of the selection criteria
-vector1< Size >
+vector1< core::Size >
 FoldUnitUtils::entry_subset() const{
-	typedef boost::unordered_multimap< Size, Size > UM;
-	utility::vector1< Size > bb_dof_entries;
+	typedef boost::unordered_multimap< core::Size, core::Size > UM;
+	utility::vector1< core::Size > bb_dof_entries;
 	bb_dof_entries.clear();
 	pair< UM::const_iterator, UM::const_iterator > n_entries( entry_pairs_quick_access_N_C_.cbegin(), entry_pairs_quick_access_N_C_.cbegin() );
 	pair< UM::const_iterator, UM::const_iterator > c_entries( entry_pairs_quick_access_C_N_.cbegin(), entry_pairs_quick_access_C_N_.cbegin()  );
@@ -108,15 +108,15 @@ FoldUnitUtils::entry_subset() const{
 
 
 /// @brief return a subset of entries that match all of the selection criteria
-vector1< Size >
+vector1< core::Size >
 FoldUnitUtils::entry_subset_slow() const{
-	utility::vector1< Size > bb_dof_entries;
+	utility::vector1< core::Size > bb_dof_entries;
 	bb_dof_entries.clear();
-	for ( Size bb_dof_entry = 1; bb_dof_entry <= bbdofs().size(); ++bb_dof_entry ) {
+	for ( core::Size bb_dof_entry = 1; bb_dof_entry <= bbdofs().size(); ++bb_dof_entry ) {
 		if ( legal_bbdofs_[ bb_dof_entry ] &&
 				bbdofs()[ bb_dof_entry ].size() <= max_length() ) {
-			vector1< pair< Size, Size > >::const_iterator it;
-			Size entry_pairs_idx( 0 );
+			vector1< pair< core::Size, core::Size > >::const_iterator it;
+			core::Size entry_pairs_idx( 0 );
 			if ( n_term_entry() ) {
 				if ( !fragment_compatibility_check( n_term_entry(), bb_dof_entry, it ) ) {
 					continue;
@@ -154,7 +154,7 @@ FoldUnitUtils::read_dbase(){
 		}
 		istringstream line_stream(line);
 		string pdb, dssp, sequence;
-		Size from_res, to_res, entry/*dummy variable needed for external scripts but not in Rosetta since all of the entries are in vectors*/;
+		core::Size from_res, to_res, entry/*dummy variable needed for external scripts but not in Rosetta since all of the entries are in vectors*/;
 		line_stream >> entry >> pdb >> from_res >> to_res >> dssp >> sequence;
 		//TR<<"entry: "<<entry<<" pdb: "<<pdb<<" from_res: "<<from_res<<" to_res: "<<to_res<<" dssp: "<<dssp<< " sequence: "<<sequence<<std::endl;
 		ResidueBBDofs bbdof;
@@ -169,7 +169,7 @@ FoldUnitUtils::read_dbase(){
 			bbdof.dssp( dssp );
 			bbdof.aa_sequence( sequence );
 
-			Size count = 0;
+			core::Size count = 0;
 			while ( !line_stream.eof() ) {
 				Real phi, psi, omega;
 				line_stream >> phi >> psi >> omega;
@@ -182,7 +182,7 @@ FoldUnitUtils::read_dbase(){
 	}
 	data.close();
 	TR<<"Read "<<bbdofs_.size()<<" torsion dbase entries"<<std::endl;
-	Size count_illegal( 0 );
+	core::Size count_illegal( 0 );
 	TR<<"Illegal entries: ";
 	for ( vector1< bool >::const_iterator b = legal_bbdofs_.begin(); b != legal_bbdofs_.end(); ++b ) {
 		if ( !*b ) {
@@ -195,17 +195,17 @@ FoldUnitUtils::read_dbase(){
 	/// read the junctions database specifying which pairs can be combined and how to combine them
 	utility::io::izstream pairs( pair_dbase_ );
 	runtime_assert( pairs );
-	Size count( 0 );
+	core::Size count( 0 );
 	while ( getline( pairs, line ) ) {
 		istringstream line_stream(line);
-		Size fragi, fragj, overlap_length;
+		core::Size fragi, fragj, overlap_length;
 		Real overlap_rmsd;
 		line_stream >> fragi >> fragj >> overlap_length >> overlap_rmsd;
 		// SJF 19Oct14: entry_pairs_ is no longer used since it's slow. It is more efficient with memory though, so if needed, the next line should be reactivated.
-		// entry_pairs_.push_back( pair< Size, Size >( fragi, fragj ) );
+		// entry_pairs_.push_back( pair< core::Size, core::Size >( fragi, fragj ) );
 		if ( overlap_length >= min_overlap() && overlap_rmsd <= max_rmsd() ) { // the quick_access multimaps precompute conditions
-			entry_pairs_quick_access_N_C_.insert( pair< Size, Size >( fragi, fragj ));
-			entry_pairs_quick_access_C_N_.insert( pair< Size, Size >( fragj, fragi ));
+			entry_pairs_quick_access_N_C_.insert( pair< core::Size, core::Size >( fragi, fragj ));
+			entry_pairs_quick_access_C_N_.insert( pair< core::Size, core::Size >( fragj, fragi ));
 			count++;
 		}
 		overlap_length_.push_back( overlap_length );
@@ -216,8 +216,8 @@ FoldUnitUtils::read_dbase(){
 	TR<<"count: "<<count<<std::endl;
 	/// remove from considerations entries that are not within the pairs list.
 	// the following is unnecessary with the new quick_access multimaps 16Oct14
-	//  for( Size i = 1; i <= bbdofs_.size(); ++i ){
-	//   vector1< pair< Size, Size > >::const_iterator it;
+	//  for( core::Size i = 1; i <= bbdofs_.size(); ++i ){
+	//   vector1< pair< core::Size, core::Size > >::const_iterator it;
 	//   bool found = false;
 	//   for( it = entry_pairs_.begin(); it != entry_pairs_.end() && found == false; ++it ){
 	//    if( it->first == i || it->second == i )
@@ -230,14 +230,14 @@ FoldUnitUtils::read_dbase(){
 }
 
 bool
-FoldUnitUtils::fragment_compatibility_check( core::Size const i, core::Size const j, vector1< pair< Size, Size > >::const_iterator & it, Real const max_rmsd/*=10.0*/ ) const{
+FoldUnitUtils::fragment_compatibility_check( core::Size const i, core::Size const j, vector1< pair< core::Size, core::Size > >::const_iterator & it, Real const max_rmsd/*=10.0*/ ) const{
 	if ( i == 0 || j == 0 ) {
 		return true;
 	}
 	// the following shouldn't happen. Let's not test it
 	// if( !legal_bbdofs_[ i ] || !legal_bbdofs_[ j ] )
 	//  return false;
-	it = find( entry_pairs_.begin(), entry_pairs_.end(), pair< Size, Size >( i, j ));
+	it = find( entry_pairs_.begin(), entry_pairs_.end(), pair< core::Size, core::Size >( i, j ));
 	if ( it == entry_pairs_.end() ) {
 		return false;
 	}
@@ -250,14 +250,14 @@ FoldUnitUtils::fragment_compatibility_check( core::Size const i, core::Size cons
 /// add_fragment_to_pose and replace_fragment_in_pose simply set the entry in the correct segment and call pose_from_fragment_info
 void
 FoldUnitUtils::add_fragment_to_pose( core::pose::Pose & pose, PoseFragmentInfo & fragment_info, core::Size const entry, bool const c_term ) const {
-	Size const pose_fragments = fragment_info.size();
+	core::Size const pose_fragments = fragment_info.size();
 
 	if ( c_term ) {
 		fragment_info.add_pair( pose_fragments + 1, entry );
 	} else { //n_term: insert the new entry at the top and shift the others down by one
 		PoseFragmentInfo new_frag_info;
 		new_frag_info[ 1 ] = entry;
-		for ( Size seg = 1; seg <= fragment_info.size(); ++seg ) {
+		for ( core::Size seg = 1; seg <= fragment_info.size(); ++seg ) {
 			new_frag_info.add_pair( seg + 1, fragment_info[ seg ] );
 		}
 		fragment_info = new_frag_info;
@@ -282,9 +282,9 @@ FoldUnitUtils::pose_from_fragment_info( core::pose::Pose & pose, PoseFragmentInf
 	for ( core::Size i = 1; i <= pose_fragment_info.size(); ++i ) {
 		core::Size const dbase_entry = pose_fragment_info[ i ];
 		ResidueBBDofs dofs = bbdofs_[ dbase_entry ];
-		Size overlap( 0 );
+		core::Size overlap( 0 );
 		if ( i < pose_fragment_info.size() ) {
-			Size const p_idx = pair_index( pose_fragment_info[ i ], pose_fragment_info[ i + 1 ] );
+			core::Size const p_idx = pair_index( pose_fragment_info[ i ], pose_fragment_info[ i + 1 ] );
 			overlap = overlap_length()[ p_idx ];
 		}
 
@@ -295,15 +295,15 @@ FoldUnitUtils::pose_from_fragment_info( core::pose::Pose & pose, PoseFragmentInf
 	ResidueTypeSetCOP residue_set( pose.size() ? pose.residue_type_set_for_pose() : ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
 	core::pose::make_pose_from_sequence( pose, seq, *residue_set );
 	/// set bb dofs
-	Size start( 1 );
+	core::Size start( 1 );
 	for ( core::Size i = 1; i <= pose_fragment_info.size(); ++i ) {
 		core::Size const dbase_entry = pose_fragment_info[ i ];
 		if ( i > 1 ) {
-			Size const p_idx = pair_index( pose_fragment_info[ i - 1 ], pose_fragment_info[ i ] );
+			core::Size const p_idx = pair_index( pose_fragment_info[ i - 1 ], pose_fragment_info[ i ] );
 			start -= overlap_length()[ p_idx ];
 		}
 		ResidueBBDofs dofs = bbdofs_[ dbase_entry ];
-		for ( Size resi = start; resi <= start + dofs.size() - 1; ++resi ) {
+		for ( core::Size resi = start; resi <= start + dofs.size() - 1; ++resi ) {
 			pose.set_phi(   resi, dofs[ resi - start + 1 ].phi() );
 			pose.set_psi(   resi, dofs[ resi - start + 1 ].psi() );
 			pose.set_omega( resi, dofs[ resi - start + 1 ].omega() );
@@ -350,7 +350,7 @@ AddFoldUnitMover::apply( Pose & pose ){
 	PoseFragmentInfo pfi;
 	pfi.load_fragment_info_from_pose( pose );
 	TR<<"Pose size: "<<pose.size()<<std::endl;
-	Size last_segment_entry( 0 ), first_segment_entry( 0 );
+	core::Size last_segment_entry( 0 ), first_segment_entry( 0 );
 	if ( !replace_fragment() && pfi.size() >= max_segments() ) {
 		TR<<"Added maximum number of segments. Not adding any more."<<std::endl;
 		return;
@@ -393,12 +393,12 @@ AddFoldUnitMover::apply( Pose & pose ){
 			fold_unit_utils_->c_term_entry( first_segment_entry );
 		}
 	}
-	utility::vector1< Size > const entries( fold_unit_utils_->entry_subset() );
+	utility::vector1< core::Size > const entries( fold_unit_utils_->entry_subset() );
 	if ( entries.size() == 0 ) {
 		TR<<"Found no entry that matches all selection criteria; failing."<<std::endl;
 		return;
 	}
-	Size const rand_entry = entries[ (Size) ( numeric::random::rg().uniform() * (double) entries.size()) + 1 ];
+	core::Size const rand_entry = entries[ (core::Size) ( numeric::random::rg().uniform() * (double) entries.size()) + 1 ];
 
 	if ( replace_fragment() ) {
 		fold_unit_utils_->replace_fragment_in_pose( pose, pfi, rand_entry, segment_to_replace );
@@ -434,9 +434,9 @@ AddFoldUnitMover::parse_my_tag(
 {
 	fragment_dbase( tag->getOption< string >( "fragment_dbase", "in/fold_from_frags.db" ));
 	pair_dbase( tag->getOption< string >( "pair_dbase", "in/junctions.db" ));
-	max_length( tag->getOption< Size >( "max_length", 40 ));
-	max_segments( tag->getOption< Size > ("max_segments", 5 ) );
-	min_overlap( tag->getOption< Size >( "min_overlap", 5 ) );
+	max_length( tag->getOption< core::Size >( "max_length", 40 ));
+	max_segments( tag->getOption< core::Size > ("max_segments", 5 ) );
+	min_overlap( tag->getOption< core::Size >( "min_overlap", 5 ) );
 	max_rmsd( tag->getOption< Real > ( "max_rmsd", 10.0 ) );
 	if ( !fold_unit_utils_ ) {
 		fold_unit_utils_ = utility::pointer::make_shared< FoldUnitUtils >();
@@ -452,21 +452,21 @@ AddFoldUnitMover::parse_my_tag(
 	TR<<"fold_unit_utils dbase read status: "<<success<<std::endl;
 	runtime_assert( success );
 	replace_fragment( tag->getOption< bool >( "replace_fragment", false ) );
-	replace_fragment_segment_number( tag->getOption< Size >( "replace_fragment_segment_number", 0 ) );
+	replace_fragment_segment_number( tag->getOption< core::Size >( "replace_fragment_segment_number", 0 ) );
 	TR<<"fragment_dbase: "<<fragment_dbase()<<" max_length: "<<max_length()<<" max_segments: "<<max_segments()<<" terminus: "<<terminus_<<" min_overlap: "<<min_overlap()<<" max_rmsd: "<<max_rmsd()<<" replace_fragment: "<<replace_fragment()<<" replace_fragment_segment_number: "<<replace_fragment_segment_number()<<std::endl;
 }
 
 void
 PoseFragmentInfo::load_fragment_info_from_pose( core::pose::Pose const & pose ){
 	map<std::string, std::string> comments = core::pose::get_all_comments(pose);
-	Size count = 0;
+	core::Size count = 0;
 	fragment_map_.clear();
 	for ( map< string, string >::const_iterator com = comments.begin(); com != comments.end(); ++com ) {
 		if ( com->first.substr(0, 19 ) != "fragment_definition" ) {
 			continue;
 		}
 		++count;
-		fragment_map_[ count ] = utility::from_string< Size >(com->second, Size() );
+		fragment_map_[ count ] = utility::from_string< core::Size >(com->second, core::Size() );
 	}
 	TR<<"loaded "<<count<<" fragment definitions from pose"<<std::endl;
 }
@@ -482,7 +482,7 @@ PoseFragmentInfo::set_fragment_info_in_pose( core::pose::Pose & pose )const{
 		}
 	}
 
-	Size count( 1 );
+	core::Size count( 1 );
 	for ( auto const & frag : fragment_map_ ) {
 		core::pose::add_comment( pose, "fragment_definition" + utility::to_string(count), utility::to_string( frag.second ) ); // fragment_definition# 1_14
 		++count;
@@ -491,12 +491,12 @@ PoseFragmentInfo::set_fragment_info_in_pose( core::pose::Pose & pose )const{
 }
 
 /// @brief find the index within the entry_pairs_ array of pair i,j
-Size
-FoldUnitUtils::pair_index( Size const i, Size const j ) const{
+core::Size
+FoldUnitUtils::pair_index( core::Size const i, core::Size const j ) const{
 	if ( i == 0 || j == 0 ) {
 		return 0;
 	}
-	auto it = find( entry_pairs_.begin(), entry_pairs_.end(), pair< Size, Size >( i, j ) );
+	auto it = find( entry_pairs_.begin(), entry_pairs_.end(), pair< core::Size, core::Size >( i, j ) );
 	return it - entry_pairs_.begin() + 1;
 }
 
@@ -505,11 +505,11 @@ void
 PoseFragmentInfo::fragment_start_end( FoldUnitUtils const fuu, core::Size const fragment, core::Size & start, core::Size & end ){
 	runtime_assert( fragment_map_.size() >= fragment );
 	start = 0; end = 0;
-	Size prev_frag( 0 );
-	Size overlap = 0;
-	for ( Size frag = 1; frag <= fragment; ++frag ) {
+	core::Size prev_frag( 0 );
+	core::Size overlap = 0;
+	for ( core::Size frag = 1; frag <= fragment; ++frag ) {
 		start = end + 1;
-		Size const curr_frag = fragment_map_[ frag ];
+		core::Size const curr_frag = fragment_map_[ frag ];
 		if ( prev_frag ) {
 			overlap += fuu.overlap_length()[ fuu.pair_index( prev_frag, curr_frag ) ];
 		}
@@ -533,7 +533,7 @@ PoseFragmentInfo::operator[]( core::Size const s ) {
 core::Size
 PoseFragmentInfo::operator[] ( core::Size const s ) const {
 	if ( fragment_map_.size() < s ) {
-		return (Size) 0;
+		return (core::Size) 0;
 	}
 	return fragment_map_.at( s );
 }

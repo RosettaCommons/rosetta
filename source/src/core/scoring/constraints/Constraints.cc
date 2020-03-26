@@ -50,7 +50,7 @@ Constraints::Constraints():
 {}
 
 Constraints::Constraints( Constraints const & other ) :
-	ReferenceCount()
+	VirtualBase()
 {
 	copy_from( other );
 }

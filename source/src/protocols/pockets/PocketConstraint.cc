@@ -180,7 +180,7 @@ PocketConstraint::PocketConstraint( const PocketConstraint& old ):
 PocketConstraint::~PocketConstraint() = default;
 
 
-void PocketConstraint::set_target_res( core::pose::Pose const & pose, Size new_seqpos ){
+void PocketConstraint::set_target_res( core::pose::Pose const & pose, core::Size new_seqpos ){
 	if ( new_seqpos>pose.size() ) {
 		std::cout << "ERROR!! Invalid residue to backrub around" << std::endl;
 		exit(1);

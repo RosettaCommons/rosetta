@@ -219,7 +219,7 @@ BackrubMover::apply(
 	runtime_assert(segments_.size());
 
 	// pick a random segment
-	Size segment_id;
+	core::Size segment_id;
 	if ( next_segment_id_ ) {
 		segment_id = next_segment_id_;
 		next_segment_id_ = 0;
@@ -348,7 +348,7 @@ BackrubMover::add_segment(
 	}
 
 	// check for duplicates
-	if ( Size segid = segment_id(start_atomid, end_atomid) ) {
+	if ( core::Size segid = segment_id(start_atomid, end_atomid) ) {
 		TR.Warning << "Backrub segment " << start_atomid << " to " << end_atomid << " already exists, ignoring"
 			<< std::endl;
 		return segid;
@@ -393,7 +393,7 @@ BackrubMover::add_segment(
 
 	segments_.push_back(BackrubSegment(start_atomid, start_atomid1, start_atomid2, end_atomid, tdist+1, max_angle_disp));
 
-	Size segment_id = segments_.size();
+	core::Size segment_id = segments_.size();
 
 	bond_angle_map_[segments_[segment_id].start_bond_angle_key(*input_pose)] = bond_angle_map_.size() + 1;
 	bond_angle_map_[segments_[segment_id].end_bond_angle_key(*input_pose)] = bond_angle_map_.size() + 1;
@@ -412,10 +412,10 @@ connected_mainchain_atomids(
 	atomids.clear();
 
 	// make sure that atomid is a mainchain atom
-	Size mainchain_index(0);
+	core::Size mainchain_index(0);
 	{
 		chemical::AtomIndices const & mainchain_atoms(pose.residue_type(atomid.rsd()).mainchain_atoms());
-		for ( Size i = 1; i <= mainchain_atoms.size(); ++i ) {
+		for ( core::Size i = 1; i <= mainchain_atoms.size(); ++i ) {
 			if ( mainchain_atoms[i] == atomid.atomno() ) {
 				mainchain_index = i;
 				break;
@@ -426,7 +426,7 @@ connected_mainchain_atomids(
 	if ( ! mainchain_index ) return 0;
 
 	// rewind to the beginning of the chain
-	Size resnum(atomid.rsd());
+	core::Size resnum(atomid.rsd());
 	while ( true ) {
 		conformation::Residue const & residue(pose.residue(resnum));
 		chemical::AtomIndices const & mainchain_atoms(residue.mainchain_atoms());
@@ -434,14 +434,14 @@ connected_mainchain_atomids(
 		if ( !mainchain_atoms.size() ) break;
 
 		// loop over all residue connections in the current residue
-		for ( Size i = 1; i <= residue.n_possible_residue_connections(); ++i ) {
+		for ( core::Size i = 1; i <= residue.n_possible_residue_connections(); ++i ) {
 
 			// check to see if the connection is to the first mainchain atom
 			if ( residue.residue_connect_atom_index(i) == mainchain_atoms.front() && !residue.connection_incomplete(i) ) {
 
 				// check to see if the atom it is connected to is the last mainchain atom of the corresponding residue
 				chemical::ResConnID resconid(residue.actual_residue_connection(i));
-				Size connected_atomno(pose.residue(resconid.resid()).residue_connect_atom_index(resconid.connid()));
+				core::Size connected_atomno(pose.residue(resconid.resid()).residue_connect_atom_index(resconid.connid()));
 				chemical::AtomIndices const & mainchain_atoms2(pose.residue(resconid.resid()).mainchain_atoms());
 				if ( ! mainchain_atoms2.empty() && mainchain_atoms2.back() == connected_atomno ) {
 					// success, set the new residue number
@@ -463,7 +463,7 @@ connected_mainchain_atomids(
 		// set the loop to exit by default
 		resnum = 0;
 
-		for ( Size i = 1; i <= mainchain_atoms.size(); i++ ) {
+		for ( core::Size i = 1; i <= mainchain_atoms.size(); i++ ) {
 			atomids.push_back(id::AtomID(mainchain_atoms[i], residue.seqpos()));
 			if ( atomids.back() == atomid ) {
 				mainchain_index = atomids.size();
@@ -471,14 +471,14 @@ connected_mainchain_atomids(
 		}
 
 		// loop over all residue connections in the current residue
-		for ( Size i = 1; i <= residue.n_possible_residue_connections(); ++i ) {
+		for ( core::Size i = 1; i <= residue.n_possible_residue_connections(); ++i ) {
 
 			// check to see if the connection is to the last mainchain atom
 			if ( residue.residue_connect_atom_index(i) == mainchain_atoms.back() && !residue.connection_incomplete(i) ) {
 
 				// check to see if the atom it is connected to is the first mainchain atom of the corresponding residue
 				chemical::ResConnID resconid(residue.actual_residue_connection(i));
-				Size connected_atomno(pose.residue(resconid.resid()).residue_connect_atom_index(resconid.connid()));
+				core::Size connected_atomno(pose.residue(resconid.resid()).residue_connect_atom_index(resconid.connid()));
 				chemical::AtomIndices const & mainchain_atoms2(pose.residue(resconid.resid()).mainchain_atoms());
 				if ( ! mainchain_atoms2.empty() && mainchain_atoms2.front() == connected_atomno ) {
 					// success, set the new residue number
@@ -504,7 +504,7 @@ BackrubMover::add_mainchain_segments(
 	runtime_assert(min_atoms >= 3 && max_atoms >= min_atoms);
 
 	std::set<id::AtomID> atomid_set(atomids.begin(), atomids.end());
-	Size nsegments(0);
+	core::Size nsegments(0);
 
 	// AMW: cppcheck flags this as possibly inefficient
 	while ( !atomid_set.empty() ) {// size()) {
@@ -517,7 +517,7 @@ BackrubMover::add_mainchain_segments(
 		}
 
 		// iterate over all atoms in the chain
-		for ( Size i = 1; i <= mainchain_atomids.size(); ++i ) {
+		for ( core::Size i = 1; i <= mainchain_atomids.size(); ++i ) {
 
 			// check to see if the atom is in our set
 			if ( atomid_set.count(mainchain_atomids[i]) ) {
@@ -532,7 +532,7 @@ BackrubMover::add_mainchain_segments(
 				}
 
 				// add any segments for atomids in the set
-				for ( Size j = i+min_atoms-1; j <= i+max_atoms-1 && j <= mainchain_atomids.size(); ++j ) {
+				for ( core::Size j = i+min_atoms-1; j <= i+max_atoms-1 && j <= mainchain_atomids.size(); ++j ) {
 					if ( atomid_set.count(mainchain_atomids[j]) ) {
 						// exclude proline N/CA atoms
 						if ( input_pose->residue(mainchain_atomids[j].rsd()).aa() == chemical::aa_pro &&
@@ -561,7 +561,7 @@ BackrubMover::add_mainchain_segments(
 	PoseCOP input_pose(get_input_pose());
 
 	runtime_assert(min_atoms >= 3 && max_atoms >= min_atoms);
-	Size nsegments(0);
+	core::Size nsegments(0);
 
 	std::sort(resnums.begin(), resnums.end());
 	auto new_end(std::unique(resnums.begin(), resnums.end()));
@@ -901,7 +901,7 @@ BackrubMover::dof_id_ranges(
 Real
 BackrubMover::random_angle(
 	Pose & pose,
-	Size segment_id,
+	core::Size segment_id,
 	utility::vector0<Real> & start_constants,
 	utility::vector0<Real> & end_constants
 )
@@ -984,7 +984,7 @@ BackrubMover::random_angle(
 	Real angle(0);
 	numeric::IntervalSet<Real> tau_intervals_rotation_angle_p;
 	Real const threshold(numeric::random::rg().uniform());
-	for ( Size i = 0; i < 100000; i++ ) {
+	for ( core::Size i = 0; i < 100000; i++ ) {
 
 		angle = tau_intervals.random_point(numeric::random::rg());
 
@@ -1013,7 +1013,7 @@ BackrubMover::random_angle(
 void
 BackrubMover::rotate_segment(
 	Pose & pose,
-	Size segment_id,
+	core::Size segment_id,
 	Real angle,
 	utility::vector0<Real> & start_constants,
 	utility::vector0<Real> & end_constants

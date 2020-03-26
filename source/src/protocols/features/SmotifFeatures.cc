@@ -226,7 +226,7 @@ SmotifFeatures::report_features(
 		basic::database::safely_prepare_statement(smotif_insert_string, db_session);
 
 	if ( ss_segments.size()>2 ) {
-		for ( Size i=1; i<=ss_segments.size()-2; ++i ) {
+		for ( core::Size i=1; i<=ss_segments.size()-2; ++i ) {
 			SecondaryStructureSegment ss1=ss_segments[i];
 			SecondaryStructureSegment loop=ss_segments[i+1];
 			SecondaryStructureSegment ss2=ss_segments[i+2];
@@ -291,7 +291,7 @@ SmotifFeatures::get_ss_segments(
 	utility::vector1<SecondaryStructureSegment> ss_segments;
 	while ( res.next() ) {
 
-		Size segment_id, residue_begin, residue_end;
+		core::Size segment_id, residue_begin, residue_end;
 		std::string dssp;
 		res >> segment_id >> residue_begin >> residue_end >> dssp;
 

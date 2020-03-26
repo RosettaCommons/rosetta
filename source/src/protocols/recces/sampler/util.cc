@@ -113,9 +113,9 @@ get_recces_turner_sampler_from_secstruct( pose::Pose const & pose,
 	core::pose::rna::RNA_SecStruct const & rna_secstruct )
 {
 	MC_CombOP sampler( new MC_Comb );
-	Size n_rsd( pose.size() );
+	core::Size n_rsd( pose.size() );
 	/// Chi & sugar samplers. Use MC_RNA_Suite due to its useful 'aform_range' helper functions.
-	for ( Size i = 1; i <= n_rsd; ++ i ) {
+	for ( core::Size i = 1; i <= n_rsd; ++ i ) {
 		if ( pose.residue( i ).has_variant_type( chemical::VIRTUAL_RIBOSE ) ) continue;
 		MC_RNA_SuiteOP suite_sampler( new MC_RNA_Suite( i ) );
 		suite_sampler->set_sample_bb( false );
@@ -127,7 +127,7 @@ get_recces_turner_sampler_from_secstruct( pose::Pose const & pose,
 	}
 
 	/// Suite samplers. Use MC_RNA_Suite due to its useful 'aform_range' helper functions.
-	for ( Size i = 1; i < n_rsd; ++ i ) {
+	for ( core::Size i = 1; i < n_rsd; ++ i ) {
 		if ( pose.fold_tree().is_cutpoint( i ) ) continue;
 		MC_RNA_SuiteOP suite_sampler( new MC_RNA_Suite( i ) );
 		suite_sampler->set_sample_bb( true ); // 5 backbone torsions between i and i+1.
@@ -199,11 +199,11 @@ get_recces_turner_sampler_legacy( pose::Pose const & pose,
 	params::RECCES_Parameters const & params )
 {
 	MC_RNA_MultiSuiteOP sampler( new MC_RNA_MultiSuite );
-	Size total_len( pose.size() );
+	core::Size total_len( pose.size() );
 	runtime_assert( total_len == params.bp_res().size() + params.dangling_res().size() );
-	Size len1( 1 );
+	core::Size len1( 1 );
 	while ( !pose.fold_tree().is_cutpoint( len1 ) && len1 < total_len ) len1++; // length of first strand.
-	for ( Size i = 1; i <= total_len; ++i ) {
+	for ( core::Size i = 1; i <= total_len; ++i ) {
 		bool const sample_near_a_form( params.bp_res().has_value( i ) );
 		if ( i == 1 || ( i > len1 && i != total_len ) ) {
 			MC_RNA_SuiteOP suite_sampler( new MC_RNA_Suite( i ) );
@@ -251,15 +251,15 @@ initialize_thermal_sampler( pose::Pose const & pose,
 	using namespace sampler::rna;
 	using namespace core::id;
 
-	utility::vector1< Size > const & sample_res( options.sample_residues() );
-	utility::vector1< Size > const & free_res( options.free_residues() );
+	utility::vector1< core::Size > const & sample_res( options.sample_residues() );
+	utility::vector1< core::Size > const & free_res( options.free_residues() );
 	std::cout << "Sample residues: " << sample_res << std::endl;
 
 	PoseCOP pose_cop( pose.get_self_ptr() ); // oh please mercy mercy
 
 	//Set up the internal move samplers
 	MC_AnyOP internal_bb_sampler( new MC_Any );
-	for ( Size i = 1; i<= sample_res.size(); ++i ) {
+	for ( core::Size i = 1; i<= sample_res.size(); ++i ) {
 		if ( sample_res[ i ] == 1 ) continue;
 		if ( pose.fold_tree().is_cutpoint( sample_res[ i ] - 1 ) ) continue;
 		if ( pose.fold_tree().is_cutpoint( sample_res[ i ] ) ) continue; // already a cutpoint there
@@ -280,7 +280,7 @@ initialize_thermal_sampler( pose::Pose const & pose,
 	MC_AnyOP chi_sampler( new MC_Any );
 	core::Real init_torsion;
 	utility::vector1<TorsionID> chi_torsion_ids;
-	for ( Size i = 1; i<= sample_res.size(); ++i ) {
+	for ( core::Size i = 1; i<= sample_res.size(); ++i ) {
 		if ( pose.residue( sample_res[i] ).has_variant_type( chemical::VIRTUAL_RIBOSE ) ) continue;
 		TorsionID chi_ID (TorsionID( sample_res[i] , id::CHI, 1));
 		chi_torsion_ids.push_back( chi_ID );
@@ -303,7 +303,7 @@ initialize_thermal_sampler( pose::Pose const & pose,
 	//Set up the regular torsion samplers, necessary for free energy comparisons
 	//Don't sample chi torsions here because there is a separate chi sampler
 	MC_RNA_MultiSuiteOP standard_bb_sampler( new MC_RNA_MultiSuite );
-	for ( Size i = 1; i <= sample_res.size(); ++i ) {
+	for ( core::Size i = 1; i <= sample_res.size(); ++i ) {
 		if ( sample_res[i] > 1 && ( i == 1 || ( i > 1 && sample_res[i] != sample_res[i-1]+1 ) ) ) {
 			// make sure we create sampler for [i]-1, i.e. "takeoff" for any loop
 			MC_RNA_SuiteOP suite_sampler_1( new MC_RNA_Suite( sample_res[i] - 1 ) );
@@ -346,7 +346,7 @@ initialize_thermal_sampler( pose::Pose const & pose,
 	if ( options.sample_jump() ) {
 		TR << TR.Green << pose.fold_tree() << std::endl;
 		jump_sampler = utility::pointer::make_shared< MC_Any >();
-		for ( Size n = 1; n <= pose.num_jump(); n++ ) {
+		for ( core::Size n = 1; n <= pose.num_jump(); n++ ) {
 			MC_RNA_OneJumpOP one_jump_sampler;
 			one_jump_sampler = initialize_jump_sampler( pose, n, options );
 			jump_sampler->add_rotamer( one_jump_sampler );
@@ -356,7 +356,7 @@ initialize_thermal_sampler( pose::Pose const & pose,
 	}
 
 	MC_LoopOP loop_sampler( new MC_Loop );
-	for ( Size n = 1; n <= 10; n++ ) {
+	for ( core::Size n = 1; n <= 10; n++ ) {
 		if ( (n % 10) == 0 ) {
 			loop_sampler->add_rotamer( standard_bb_sampler );
 		} else if ( (n % 2) == 0 ) {

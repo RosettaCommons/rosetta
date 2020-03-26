@@ -107,7 +107,7 @@ DockingHighRes::DockingHighRes(
 }
 
 DockingHighRes::DockingHighRes( DockingHighRes const & old_instance ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Mover( old_instance )
 {
 	sc_min_ = old_instance.sc_min_;

@@ -19,14 +19,14 @@
 #include <core/types.hh>
 #include <protocols/stepwise/sampler/rigid_body/EulerAngles.fwd.hh>
 #include <numeric/xyzMatrix.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace stepwise {
 namespace sampler {
 namespace rigid_body {
 
-class EulerAngles: public utility::pointer::ReferenceCount {
+class EulerAngles: public utility::VirtualBase {
 
 public:
 

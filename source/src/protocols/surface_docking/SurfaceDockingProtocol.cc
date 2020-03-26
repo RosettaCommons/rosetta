@@ -104,7 +104,7 @@ void SurfaceDockingProtocol::show(std::ostream & output) const
 void SurfaceDockingProtocol::apply(pose::Pose & pose)
 {
 	TR<<"Starting Surface Docking Protocol..."<<std::endl;
-	Size const first_protein_residue( pose.num_jump() + 1 );
+	core::Size const first_protein_residue( pose.num_jump() + 1 );
 
 	initialize_surface_energies( pose, first_protein_residue );
 	set_surface_parameters( pose );
@@ -200,7 +200,7 @@ void SurfaceDockingProtocol::calc_secondary_structure(core::pose::Pose & pose)
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.insert_ss_into_pose( pose );
 
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		sec_struct_+=pose.secstruct(ii);
 	}
 }
@@ -215,15 +215,15 @@ void SurfaceDockingProtocol::calc_secondary_structure_with_surface(core::pose::P
 	singlechain_poses = pose_tmp.split_by_chain();
 	core::scoring::dssp::Dssp dssp( *singlechain_poses[2] );
 	dssp.insert_ss_into_pose( *singlechain_poses[2] );
-	for ( Size ii = 1; ii <= singlechain_poses[2]->size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= singlechain_poses[2]->size(); ++ii ) {
 		sec_struct_+=singlechain_poses[2]->secstruct(ii);
 	}
 }
 
 void SurfaceDockingProtocol::set_secondary_structure(core::pose::Pose & pose)
 {
-	Size index=0;
-	for ( Size ii = pose.num_jump()+1; ii <= pose.size(); ++ii ) {
+	core::Size index=0;
+	for ( core::Size ii = pose.num_jump()+1; ii <= pose.size(); ++ii ) {
 		if ( index >= sec_struct_.size() ) {
 			TR.Warning << "Attempted to set the secondary structure for " << pose.size()-pose.num_jump() << " residues from a secondary structure string of length " << sec_struct_.size() << " -- skipping missing residues." << std::endl;
 			break; // Should this get converted to a hard error?
@@ -233,7 +233,7 @@ void SurfaceDockingProtocol::set_secondary_structure(core::pose::Pose & pose)
 	}
 }
 
-void SurfaceDockingProtocol::initialize_surface_energies(core::pose::Pose & pose, Size first_protein_residue)
+void SurfaceDockingProtocol::initialize_surface_energies(core::pose::Pose & pose, core::Size first_protein_residue)
 {
 	// Initialize the SurfaceEnergies object; this protocol assumes that the block of residues from num_jump to total_residue
 	// represents the single range of non-surface residues
@@ -258,7 +258,7 @@ void SurfaceDockingProtocol::set_surface_parameters ( core::pose::Pose &)
 
 }
 
-void SurfaceDockingProtocol::setup_movers ( core::pose::Pose const & pose, Size const first_protein_residue )
+void SurfaceDockingProtocol::setup_movers ( core::pose::Pose const & pose, core::Size const first_protein_residue )
 {
 
 	to_centroid_ = utility::pointer::make_shared< simple_moves::SwitchResidueTypeSetMover >("centroid");
@@ -320,7 +320,7 @@ void SurfaceDockingProtocol::setup_abinitio()
 void SurfaceDockingProtocol::setup_slide_movers( core::pose::Pose const & pose )
 {
 	Vector protein_centroid, surf_centroid;
-	Size const rb_jump=pose.num_jump();
+	core::Size const rb_jump=pose.num_jump();
 
 	Vector const slide_axis = surface_parameters_->slide_axis();
 	Vector slide_into, slide_away;
@@ -374,13 +374,13 @@ void SurfaceDockingProtocol::merge_protein_surface_poses(core::pose::Pose & pose
 }
 
 core::pack::task::PackerTaskOP
-SurfaceDockingProtocol::create_surface_packer_task ( core::pose::Pose const & pose, Size const first_protein_residue )
+SurfaceDockingProtocol::create_surface_packer_task ( core::pose::Pose const & pose, core::Size const first_protein_residue )
 {
 	pack::task::PackerTaskOP my_task_fullatom
 		( pack::task::TaskFactory::create_packer_task( pose ));
 
 	// allow repacking for only the protein side chains!
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( ii < first_protein_residue ) {
 			my_task_fullatom->nonconst_residue_task( ii ).prevent_repacking();
 		} else {

@@ -17,7 +17,7 @@
 #include <protocols/genetic_algorithm/EntityRandomizer.hh>
 #include <protocols/genetic_algorithm/FitnessFunction.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -38,6 +38,7 @@
 
 #include <utility/exit.hh>
 
+using core::Size;
 
 namespace protocols {
 namespace genetic_algorithm {
@@ -45,7 +46,7 @@ namespace genetic_algorithm {
 static basic::Tracer TR( "protocols.genetic_algorithm" );
 
 GeneticAlgorithmBase::GeneticAlgorithmBase() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	entity_randomizer_(/* 0 */),
 	entity_template_(/* 0 */),
 	current_generation_(1),
@@ -183,7 +184,7 @@ core::Real
 GeneticAlgorithmBase::best_fitness_from_current_generation() const
 {
 	core::Real best( 0.0 ); bool first_found = false;
-	for ( Size ii = 1; ii <= generations_[ current_generation_].size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= generations_[ current_generation_].size(); ++ii ) {
 		if ( generations_[ current_generation_ ][ ii ] ) {
 			if ( ! first_found || best > generations_[ current_generation_ ][ ii ]->fitness() ) {
 				best = generations_[ current_generation_ ][ ii ]->fitness();
@@ -353,8 +354,8 @@ GeneticAlgorithmBase::tournament_select(
 ) const
 {
 	using numeric::random::uniform;
-	Entity const & e1( *pvec[ static_cast<Size>( uniform() * pvec.size() ) + 1 ] );
-	Entity const & e2( *pvec[ static_cast<Size>( uniform() * pvec.size() ) + 1 ] );
+	Entity const & e1( *pvec[ static_cast<core::Size>( uniform() * pvec.size() ) + 1 ] );
+	Entity const & e2( *pvec[ static_cast<core::Size>( uniform() * pvec.size() ) + 1 ] );
 	return ( e1.fitness() < e2.fitness() ? e1 : e2 );
 }
 

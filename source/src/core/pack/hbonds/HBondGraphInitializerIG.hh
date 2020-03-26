@@ -23,7 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/hbonds/graph/HBondGraph.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <boost/functional/hash.hpp>
 

@@ -145,7 +145,7 @@ private:
 	core::pack::task::PackerTaskOP get_packer_task( core::pose::Pose const & pose );
 
 	void increase_chainbreak_weight_and_update_monte_carlo(
-		Size iteration_number,
+		core::Size iteration_number,
 		core::scoring::ScoreFunctionOP local_scorefxn,
 		protocols::moves::MonteCarlo & mc,
 		core::pose::Pose & pose

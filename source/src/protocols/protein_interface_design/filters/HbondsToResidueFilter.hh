@@ -57,8 +57,8 @@ public :
 	/// @brief Constructor
 	///
 	HbondsToResidueFilter(
-		Size const resnum,
-		Size const partners,
+		core::Size const resnum,
+		core::Size const partners,
 		Real const &energy_cutoff=-0.5,
 		bool const backbone=false,
 		bool const sidechain=true,
@@ -198,7 +198,7 @@ private:
 
 	/// @brief The minimum number of H-bond partners that this residue must have for the filter to pass.
 	///
-	Size partners_;
+	core::Size partners_;
 
 	/// @brief The threshold for the hbond score term at which two residues are counted as being hydrogen bonded.
 	///

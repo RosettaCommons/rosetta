@@ -64,7 +64,7 @@
 #include <core/conformation/ConformationTests.fwd.hh> //Forward declaration of unit test class needed for friendship
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/signals/BufferedSignalHub.fwd.hh>
 #include <utility/signals/Link.fwd.hh>
 #include <utility/signals/PausableSignalHub.hh>
@@ -83,7 +83,7 @@ namespace conformation {
 
 
 /// @brief A container of Residues and the kinematics to manage them
-class Conformation : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Conformation >
+class Conformation : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< Conformation >
 {
 	friend class ::ConformationTests; //Needed to allow the ConformationTests to test private member functions of the Conformation class.
 

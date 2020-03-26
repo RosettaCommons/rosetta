@@ -30,7 +30,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/io/FileContentsMap.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -510,7 +510,7 @@ public:
 	DynamicAggregateFunction();
 	~DynamicAggregateFunction() override;
 
-	void set_num_entity_elements( Size setting );
+	void set_num_entity_elements( core::Size setting );
 	void set_score_function( core::scoring::ScoreFunction const & sfxn );
 
 	core::Size num_states() const;
@@ -535,7 +535,7 @@ public:
 	/// as provided.  Useful for testing purposes.
 	void add_file_contents( std::string const & fname, std::string const & contents );
 
-	std::string state_name( Size state_index ) const;
+	std::string state_name( core::Size state_index ) const;
 
 	StructureFileNames const &
 	file_inputs_for_job( int job_index ) const;
@@ -544,10 +544,10 @@ public:
 	/// remote nodes
 	void read_all_variables_from_input_file( std::istream & input );
 
-	std::list< std::pair< Size, std::string > >::const_iterator
+	std::list< std::pair< core::Size, std::string > >::const_iterator
 	npd_variable_indices_for_state_begin( core::Size state_id ) const;
 
-	std::list< std::pair< Size, std::string > >::const_iterator
+	std::list< std::pair< core::Size, std::string > >::const_iterator
 	npd_variable_indices_for_state_end( core::Size state_id ) const;
 
 private:
@@ -558,14 +558,14 @@ private:
 	void
 	process_STATE_line(
 		std::string const & line,
-		Size line_number,
+		core::Size line_number,
 		std::istream & input_line
 	);
 
 	void
 	process_STATE_VECTOR_line(
 		std::string const & line,
-		Size line_number,
+		core::Size line_number,
 		std::istream & input_line,
 		utility::vector1< std::pair< std::string, std::string > > & strucvec_filenames
 	);
@@ -573,14 +573,14 @@ private:
 	void
 	process_POSE_ENERGY_line(
 		std::string const & line,
-		Size line_number,
+		core::Size line_number,
 		std::istream & input_line
 	);
 
 	void
 	process_POSE_ENERGY_VECTOR_line(
 		std::string const & line,
-		Size line_number,
+		core::Size line_number,
 		std::istream & input_line
 	);
 
@@ -588,14 +588,14 @@ private:
 	void
 	process_NPD_PROPERTY_line(
 		std::string const & line,
-		Size line_number,
+		core::Size line_number,
 		std::istream & input_line
 	);
 
 	void
 	process_VECTOR_VARIABLE_line(
 		std::string const & line,
-		Size line_number,
+		core::Size line_number,
 		std::istream & input_line,
 		std::map< std::string, std::list< std::string > > & vector_variables
 	);
@@ -604,7 +604,7 @@ private:
 	void
 	process_SCALAR_EXPRESSION_line(
 		std::string const & line,
-		Size line_number,
+		core::Size line_number,
 		std::istream & input_line,
 		std::map< std::string, ArithmeticASTExpressionOP > & scalar_expression_asts
 	);
@@ -612,7 +612,7 @@ private:
 	void
 	process_VECTOR_EXPRESSION_line(
 		std::string const & line,
-		Size line_number,
+		core::Size line_number,
 		std::istream & input_line,
 		std::map< std::string, std::pair< std::map< std::string, std::string >, ArithmeticASTExpressionOP > > & vector_expression_list
 	);
@@ -620,14 +620,14 @@ private:
 	void
 	process_ENTITY_FUNCTION_line(
 		std::string const & line,
-		Size line_number,
+		core::Size line_number,
 		std::istream & input_line
 	);
 
 	void
 	process_FITNESS_line(
 		std::string const & line,
-		Size line_number,
+		core::Size line_number,
 		std::istream & input_line,
 		ArithmeticASTExpressionOP & fitness_expression_ast
 	);
@@ -642,28 +642,28 @@ private:
 	read_state_vector_file(
 		std::string const & vec_varname,
 		std::string const & fname,
-		Size & n_vector_states
+		core::Size & n_vector_states
 	);
 
 	void
 	create_state_variable_expressions(
-		Size & count_state,
-		Size & count_npd_index,
-		Size & count_variable_index
+		core::Size & count_state,
+		core::Size & count_npd_index,
+		core::Size & count_variable_index
 	);
 
 	void
 	create_variable_vector_expressions(
-		Size & count_state,
-		Size & count_npd_index,
-		Size & count_variable_index
+		core::Size & count_state,
+		core::Size & count_npd_index,
+		core::Size & count_variable_index
 	);
 
 	void
 	create_scalar_and_vector_expression_variable_expressions(
 		std::map< std::string, ArithmeticASTExpressionOP > const & scalar_expression_asts,
 		std::map< std::string, std::list< std::string > > const & vector_variables,
-		Size & count_state
+		core::Size & count_state
 	);
 
 	void
@@ -677,7 +677,7 @@ private:
 	verify_vector_arguments(
 		std::string const & fname,
 		utility::vector1< ExpressionCOP > const & args,
-		Size expected_nargs
+		core::Size expected_nargs
 	) const;
 
 	void
@@ -685,7 +685,7 @@ private:
 		std::string const & vname,
 		std::string const & command_name,
 		std::string const & line,
-		Size line_number
+		core::Size line_number
 	);
 
 
@@ -699,7 +699,7 @@ private:
 
 	/// @brief used to determine the number of requested NPD properties that will be
 	/// calculated; used to size the variable_expressions_for_npd_properties_ array.
-	Size count_num_npd_properties() const;
+	core::Size count_num_npd_properties() const;
 
 protected:
 
@@ -713,12 +713,12 @@ protected:
 
 private:
 
-	Size num_entity_elements_;
+	core::Size num_entity_elements_;
 	core::scoring::ScoreFunctionOP sfxn_;
 
 	ExpressionCOP fitness_exp_;
 	utility::vector1< VariableExpressionOP > variable_expressions_for_states_;
-	utility::vector1< std::list< std::pair< Size, std::string > > > npd_variable_indices_for_states_;
+	utility::vector1< std::list< std::pair< core::Size, std::string > > > npd_variable_indices_for_states_;
 	utility::vector1< VariableExpressionOP > variable_expressions_for_npd_properties_;
 	//utility::vector1< utility::vector1< VariableExpressionOP > > npd_properties_for_states_;
 	utility::vector1< VariableExpressionOP > variable_expressions_;
@@ -726,9 +726,9 @@ private:
 	numeric::expression_parser::ArithmeticScannerOP scanner_;
 
 	std::list< VectorFunctionOP > vfuncs_;
-	std::list< std::pair< Size, std::string > > expression_evaluation_order_by_name_; // first == 1 for scalar, 2 for vector, second = name
-	utility::vector1< std::pair< Size, ExpressionCOP > > scalar_expressions_;
-	std::map< Size, SurrogateVariableExpressionOP > surrogate_expression_map_;
+	std::list< std::pair< core::Size, std::string > > expression_evaluation_order_by_name_; // first == 1 for scalar, 2 for vector, second = name
+	utility::vector1< std::pair< core::Size, ExpressionCOP > > scalar_expressions_;
+	std::map< core::Size, SurrogateVariableExpressionOP > surrogate_expression_map_;
 	std::map< std::string, VariableExpressionCOP > scalar_expression_map_;
 	std::map< std::string, VectorExpressionCOP > vector_expression_map_;
 
@@ -752,23 +752,23 @@ private:
 	std::set< std::string > illegal_variable_names_;
 
 	//// The following variables hold variable names and the lines on which they were declared.
-	std::map< std::string, Size > variable_names_dec_line_;
-	std::map< std::string, Size > scalar_variable_names_dec_line_;
-	std::map< std::string, Size > vector_variable_names_dec_line_;
+	std::map< std::string, core::Size > variable_names_dec_line_;
+	std::map< std::string, core::Size > scalar_variable_names_dec_line_;
+	std::map< std::string, core::Size > vector_variable_names_dec_line_;
 
 	std::map< std::string, std::pair< EntityFuncOP, VariableExpressionOP > > entity_funcs_;
-	std::map< std::string, Size > entity_funcs_dec_line_;
+	std::map< std::string, core::Size > entity_funcs_dec_line_;
 
 	/// Keep track for each varible name (or scalar expression name) its index in the ?? vector
-	std::map< std::string, Size > variable_name_2_variable_exp_index_;
+	std::map< std::string, core::Size > variable_name_2_variable_exp_index_;
 	/// Keep track for each state-variable name its state's index
-	std::map< std::string, Size > state_variable_name_2_state_index_;
+	std::map< std::string, core::Size > state_variable_name_2_state_index_;
 
 	std::map< std::string, StructureFileNames > named_state_data_file_names_;
 	std::map< std::string, utility::vector1< StructureFileNames > > state_vector_data_file_names_;
 
 	utility::vector1< StructureFileNames > files_for_state_;
-	std::map< std::string, utility::vector1< Size > > state_indices_for_state_vector_;
+	std::map< std::string, utility::vector1< core::Size > > state_indices_for_state_vector_;
 
 	IterativeVectorExpressionOP focused_iterative_vector_expression_;
 
@@ -835,10 +835,10 @@ private:
 };
 
 
-class EntityFunc : public utility::pointer::ReferenceCount
+class EntityFunc : public utility::VirtualBase
 {
 public:
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 
 	typedef protocols::genetic_algorithm::Entity           Entity;
 
@@ -858,7 +858,7 @@ public:
 	EntityFunc();
 	~EntityFunc() override;
 
-	void set_num_entity_elements( Size num_ee );
+	void set_num_entity_elements( core::Size num_ee );
 
 	void initialize_from_input_file( std::istream & input );
 
@@ -881,21 +881,21 @@ private:
 	void
 	process_AA_SET_line(
 		std::string const & line,
-		Size line_number,
+		core::Size line_number,
 		std::istream & input_line
 	);
 
 	void
 	process_SET_CONDITION_line(
 		std::string const & line,
-		Size line_number,
+		core::Size line_number,
 		std::istream & input_line
 	);
 
 	void
 	process_SUB_EXPRESSION_line(
 		std::string const & line,
-		Size line_number,
+		core::Size line_number,
 		std::istream & input_line,
 		std::map< std::string, ArithmeticASTExpressionOP > & expression_asts
 	);
@@ -903,7 +903,7 @@ private:
 	void
 	process_SCORE_line(
 		std::string const & line,
-		Size line_number,
+		core::Size line_number,
 		std::istream & input_line,
 		ArithmeticASTExpressionOP & score_expression_ast
 	);
@@ -917,15 +917,15 @@ private:
 	void assign_entity_sequence_to_variables( Entity const & entity );
 
 private:
-	Size num_entity_elements_;
+	core::Size num_entity_elements_;
 
 	utility::vector1< VariableExpressionOP > entity_aas_;
 
 	std::map< std::string, utility::vector1< core::Real > > aa_sets_name_map_;
-	std::map< std::string, Size > aa_sets_dec_line_;
+	std::map< std::string, core::Size > aa_sets_dec_line_;
 
 	std::map< std::string, ExpressionCOP > subexpression_name_map_;
-	std::map< std::string, Size > subexpression_name_dec_line_;
+	std::map< std::string, core::Size > subexpression_name_dec_line_;
 
 	std::map< std::string, VariableExpressionOP > variable_expression_map_;
 

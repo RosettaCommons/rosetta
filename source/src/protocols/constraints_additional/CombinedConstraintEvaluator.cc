@@ -50,10 +50,10 @@ using namespace scoring;
 using namespace constraints;
 
 
-CombinedConstraintEvaluator::CombinedConstraintEvaluator( std::string tag, std::string file_name, Size combine_ratio, Size repeat )
+CombinedConstraintEvaluator::CombinedConstraintEvaluator( std::string tag, std::string file_name, core::Size combine_ratio, core::Size repeat )
 : name_( tag )
 {
-	for ( Size i = 1; i <= repeat; ++i ) {
+	for ( core::Size i = 1; i <= repeat; ++i ) {
 		cst_lib_.push_back( ConstraintEvaluator( tag, file_name ) );
 		cst_lib_.back().set_combine_ratio( combine_ratio );
 	}
@@ -61,8 +61,8 @@ CombinedConstraintEvaluator::CombinedConstraintEvaluator( std::string tag, std::
 
 Real CombinedConstraintEvaluator::apply( core::pose::Pose& pose_in ) const {
 	Real sum( 0.0 );
-	Size N( cst_lib_.size() );
-	for ( Size i = 1; i <= N; ++i ) {
+	core::Size N( cst_lib_.size() );
+	for ( core::Size i = 1; i <= N; ++i ) {
 		sum += cst_lib_[ i ].apply(pose_in);
 	}
 	return sum / N;
@@ -78,8 +78,8 @@ std::string CombinedConstraintEvaluator::name( core::Size i ) const {
 void CombinedConstraintEvaluator::apply( core::pose::Pose& pose_in, std::string, core::io::silent::SilentStruct &pss ) const {
 	Real sum( 0.0 );
 	Real std( 0.0 );
-	Size N( cst_lib_.size() );
-	for ( Size i = 1; i <= N; ++i ) {
+	core::Size N( cst_lib_.size() );
+	for ( core::Size i = 1; i <= N; ++i ) {
 		Real val= cst_lib_[ i ].apply(pose_in);
 		sum+=val;
 		std+=val*val;

@@ -25,7 +25,7 @@
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <string>
 #include <cmath>
@@ -33,7 +33,7 @@
 namespace protocols {
 namespace frag_picker {
 
-class Contact: public utility::pointer::ReferenceCount {
+class Contact: public utility::VirtualBase {
 public:
 
 	Contact( core::Size i, core::Size j, core::Real dist_squared, ContactType type ) {

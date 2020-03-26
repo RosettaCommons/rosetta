@@ -20,7 +20,7 @@
 // utility headers
 #include <core/types.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 #include <utility/vector1.hh>
@@ -31,7 +31,7 @@ namespace scoring {
 namespace saxs {
 
 /// @brief
-class DistanceHistogram: public utility::pointer::ReferenceCount {
+class DistanceHistogram: public utility::VirtualBase {
 public:
 
 	/// @brief  Create a histogram that collects distances between two predefined atom types

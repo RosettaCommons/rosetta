@@ -347,8 +347,8 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 	core::Real fa_intra_rep_x4_wt = sfxn->get_weight( core::scoring::fa_intra_rep_xover4 );
 	core::Real fa_intra_sol_x4_wt = sfxn->get_weight( core::scoring::fa_intra_sol_xover4 );
 
-	Size ires = atmid.rsd();
-	Size iatm = atmid.atomno();
+	core::Size ires = atmid.rsd();
+	core::Size iatm = atmid.atomno();
 	core::conformation::Residue const & rsd1( pose.residue(ires) );
 
 	// needed for electrostatic calcs
@@ -363,7 +363,7 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 				irue = energy_graph.get_node(ires)->const_edge_list_end();
 				iru != irue; ++iru ) {
 			auto const * edge( static_cast< EnergyEdge const *> (*iru) );
-			Size jres=edge->get_other_ind(ires);
+			core::Size jres=edge->get_other_ind(ires);
 			core::conformation::Residue const &rsd2( pose.residue(jres) );
 
 			if ( ires == jres ) continue;
@@ -371,7 +371,7 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 			// count pair - assume 4 for now (actually 3 for ligands/RNA or if rama is off)
 			CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
-			for ( Size jatm=1; jatm<= rsd2.natoms(); ++jatm ) {
+			for ( core::Size jatm=1; jatm<= rsd2.natoms(); ++jatm ) {
 				core::Real weight=1.0;
 				core::Size path_dist;
 				core::Real d_faatr=0, d_farep=0, d_fasol=0, d_faelec=0, invD; //, dummy;
@@ -407,7 +407,7 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 	if ( fa_intra_atr_wt>0 || fa_intra_rep_wt>0 || fa_intra_sol_wt>0 ) {
 		CountPairFunctionOP cpfxn =
 			CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );
-		for ( Size jatm=1; jatm<= rsd1.natoms(); ++jatm ) {
+		for ( core::Size jatm=1; jatm<= rsd1.natoms(); ++jatm ) {
 			core::Real weight=1.0;
 			core::Size path_dist;
 			core::Real d_faatr, d_farep, d_fasol, invD;
@@ -426,7 +426,7 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 	if ( fa_intra_atr_x4_wt>0 || fa_intra_rep_x4_wt>0 || fa_intra_sol_x4_wt>0 ) {
 		CountPairFunctionOP cpfxn =
 			CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_4 );
-		for ( Size jatm=1; jatm<= rsd1.natoms(); ++jatm ) {
+		for ( core::Size jatm=1; jatm<= rsd1.natoms(); ++jatm ) {
 			core::Real weight=1.0;
 			core::Size path_dist;
 			core::Real d_faatr, d_farep, d_fasol, invD;
@@ -553,7 +553,7 @@ void SetCrystWeightMover::parse_my_tag(
 			mmf_->all_jumps( true );
 		} else {
 			for ( std::vector<std::string>::const_iterator it = jumps.begin(); it != jumps.end(); ++it ) {
-				Size const value = std::atoi( it->c_str() ); // convert to C string, then convert to integer, then set a Size (phew!)
+				core::Size const value = std::atoi( it->c_str() ); // convert to C string, then convert to integer, then set a core::Size (phew!)
 				core::select::jump_selector::JumpIndexSelectorOP jumpselect( new core::select::jump_selector::JumpIndexSelector( value ) );
 				mmf_->add_jump_action( core::select::movemap::mm_enable, jumpselect );
 			}
@@ -850,7 +850,7 @@ void FitBfactorsMover::parse_my_tag(
 	runtime_assert( adp_strat=="individual" || adp_strat=="group" || adp_strat=="randomize" );
 
 	if ( adp_strat=="group" ) {
-		auto group_adp_strat = tag->getOption<Size>("group_adp_mode", 1);
+		auto group_adp_strat = tag->getOption<core::Size>("group_adp_mode", 1);
 		runtime_assert( group_adp_strat==1 || group_adp_strat==2 );
 		if ( group_adp_strat==1 ) {
 			adp_strategy_ = "group1";
@@ -1025,16 +1025,16 @@ void get_corresponding_CAs(
 
 	core::Size natoms = 0;
 	for ( core::Size ii = 1; ii <= model.size(); ++ii ) {
-		Size const native_ii( mapping[ii] );
+		core::Size const native_ii( mapping[ii] );
 		if ( native_ii != 0 && native_ii <= native.size() && model.residue(ii).is_protein() ) {
 			natoms++;
 		}
 	}
 	p1a.dimension(3,natoms); p2a.dimension(3,natoms);
 
-	Size n_gap(0);
+	core::Size n_gap(0);
 	for ( core::Size ii = 1; ii <= model.size(); ++ii ) {
-		Size const native_ii(mapping[ii]);
+		core::Size const native_ii(mapping[ii]);
 		if ( native_ii != 0 && native_ii <= native.size() && model.residue(ii).is_protein() ) {
 			numeric::xyzVector< core::Real > model_xyz ( model.residue(ii).xyz("CA") );
 			numeric::xyzVector< core::Real > native_xyz( native.residue(native_ii).xyz("CA") );

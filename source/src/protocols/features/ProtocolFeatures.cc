@@ -64,7 +64,7 @@ using basic::database::insert_statement_generator::RowDataBaseOP;
 
 ProtocolFeatures::ProtocolFeatures()= default;
 
-ProtocolFeatures::ProtocolFeatures( ProtocolFeatures const & ) : utility::pointer::ReferenceCount() {}
+ProtocolFeatures::ProtocolFeatures( ProtocolFeatures const & ) : utility::VirtualBase() {}
 
 ProtocolFeatures::~ProtocolFeatures()= default;
 
@@ -116,7 +116,7 @@ ProtocolFeatures::indices() const {
 
 Size
 ProtocolFeatures::report_features(
-	Size protocol_id,
+	core::Size protocol_id,
 	sessionOP db_session
 ){
 

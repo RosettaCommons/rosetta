@@ -34,7 +34,7 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/numeric.functions.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -73,7 +73,7 @@ Derived classes that overload this function should also call Parent::register_op
 */
 
 Size seq_sep_stage( core::Size total_res, Real factor ) {
-	return static_cast< Size >( std::min( factor, 1.0 ) * total_res );
+	return static_cast< core::Size >( std::min( factor, 1.0 ) * total_res );
 }
 
 void protocols::abinitio::ConstraintFragmentSampler::register_options() {
@@ -197,7 +197,7 @@ void ConstraintFragmentSampler::replace_scorefxn(core::pose::Pose& pose,
 
 //otherwise stage2 cycles remain as in the classic protocol
 Size ConstraintFragmentSampler::total_res( core::pose::Pose const& pose ) const {
-	return static_cast< Size >(
+	return static_cast< core::Size >(
 		std::min( 1.0*pose.size(), constraints_->largest_possible_sequence_sep( pose ) * max_seq_sep_fudge_ )
 	);
 }
@@ -321,12 +321,12 @@ void ConstraintFragmentSampler::do_stage1_cycles( pose::Pose& pose ) {
 
 	if ( pose.constraint_set()->has_residue_pair_constraints() ) {
 		// Now ramp up the seq_sep of the constraints... still on score0
-		for ( Size jk = 3; jk <= seq_sep_stage( total_res( pose ), seq_sep_stage1_); jk += 2 ) {
+		for ( core::Size jk = 3; jk <= seq_sep_stage( total_res( pose ), seq_sep_stage1_); jk += 2 ) {
 			set_max_seq_sep( pose, jk);
 			if ( tr.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
 			if ( std::abs( old_constraint_score - evaluate_constraint_energy ( pose, mc().score_function() ) ) < 0.01 ) continue;
-			for ( Size j = 1; j <= stage1_cycles(); ++j ) {
-				if ( numeric::mod( j, (Size) 10 ) == 0 && bSkipOnNoViolation_ && pose.constraint_set()->show_violations( tr, pose, 0 ) == 0 ) break;
+			for ( core::Size j = 1; j <= stage1_cycles(); ++j ) {
+				if ( numeric::mod( j, (core::Size) 10 ) == 0 && bSkipOnNoViolation_ && pose.constraint_set()->show_violations( tr, pose, 0 ) == 0 ) break;
 				trial->apply( pose );
 			}
 			old_constraint_score = evaluate_constraint_energy ( pose, mc().score_function() );
@@ -348,13 +348,13 @@ ConstraintFragmentSampler::prepare_stage2( core::pose::Pose& pose ) {
 }
 
 void
-ConstraintFragmentSampler::prepare_loop_in_stage3( core::pose::Pose &pose, Size loop_iteration, Size total_iterations ) {
+ConstraintFragmentSampler::prepare_loop_in_stage3( core::pose::Pose &pose, core::Size loop_iteration, core::Size total_iterations ) {
 	Parent::prepare_loop_in_stage3( pose, loop_iteration, total_iterations );
 	if ( tr.Info.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
 }
 
 void
-ConstraintFragmentSampler::prepare_loop_in_stage4( core::pose::Pose &pose, Size loop_iteration, Size total_iterations ) {
+ConstraintFragmentSampler::prepare_loop_in_stage4( core::pose::Pose &pose, core::Size loop_iteration, core::Size total_iterations ) {
 	Parent::prepare_loop_in_stage4( pose, loop_iteration, total_iterations );
 	if ( tr.Info.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
 }

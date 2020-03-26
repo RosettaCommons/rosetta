@@ -43,7 +43,7 @@ public:
 	Loop pick(Pose const & pose, Loop const & loop) override;
 
 private:
-	Size counter_;
+	core::Size counter_;
 
 };
 

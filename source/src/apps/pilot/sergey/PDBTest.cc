@@ -120,7 +120,7 @@ std::string readFile(std::string fname)
 #include <core/import_pose/import_pose.hh>
 
 
-class PosePyObserver : public utility::pointer::ReferenceCount
+class PosePyObserver : public utility::VirtualBase
 {
 public:
 	PosePyObserver() {};

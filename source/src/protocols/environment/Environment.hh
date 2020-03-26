@@ -36,7 +36,7 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <string>

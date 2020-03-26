@@ -30,7 +30,7 @@
 #include <utility>
 #include <utility/exit.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //C++ headers
 #include <string>
@@ -44,7 +44,7 @@ namespace jd2 {
 
 /// @details this is a implementation of Buffer for silent-file-based output.
 
-class SingleFileBuffer : public utility::pointer::ReferenceCount {
+class SingleFileBuffer : public utility::VirtualBase {
 protected:
 	typedef utility::vector1< std::string > LineBuffer;
 	typedef std::map< int, LineBuffer> BufferMap;

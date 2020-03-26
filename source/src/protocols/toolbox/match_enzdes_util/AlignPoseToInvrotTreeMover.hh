@@ -32,7 +32,7 @@
 //#include <core/scoring/constraints/Constraint.fwd.hh>
 
 // Utility headers
-//#include <utility/pointer/ReferenceCount.hh>
+//#include <utility/VirtualBase.hh>
 
 // C++ headers
 
@@ -80,8 +80,8 @@ public:
 	void
 	setup_foldtree_around_anchor_invrot(
 		core::pose::Pose & pose,
-		Size const anchor_seqpos,
-		Size const first_target_seqpos ) const;
+		core::Size const anchor_seqpos,
+		core::Size const first_target_seqpos ) const;
 
 	/// @brief silly helper function to get the equivalent
 	/// of a certain residue in a new residue type set

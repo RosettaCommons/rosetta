@@ -205,7 +205,7 @@ private:
 	HelixPairingSetOP hpairset_;
 
 	/// @brief HelixPairing id for output
-	Size output_id_;
+	core::Size output_id_;
 
 	/// @brief output type, dist or angle
 	String output_type_;

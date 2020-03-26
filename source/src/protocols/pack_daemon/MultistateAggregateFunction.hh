@@ -24,15 +24,15 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace pack_daemon {
 
-class MultistateAggregateFunction : public utility::pointer::ReferenceCount
+class MultistateAggregateFunction : public utility::VirtualBase
 {
 public:
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 	typedef utility::vector1< core::Real > StateEnergies;
 	typedef utility::vector1< core::Size > StateIndices;
 

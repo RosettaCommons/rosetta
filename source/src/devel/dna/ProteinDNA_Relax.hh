@@ -60,7 +60,7 @@ public:
 	apply( core::pose::Pose & pose ) override;
 	std::string get_name() const override;
 
-	Size
+	core::Size
 	moved_jump() const
 	{
 		return moved_jump_;
@@ -71,7 +71,7 @@ private:
 	Real const trans_mag_;
 	Real const rot_mag_;
 
-	Size moved_jump_;
+	core::Size moved_jump_;
 };
 
 typedef utility::pointer::shared_ptr< RB_Mover > RB_MoverOP;
@@ -103,9 +103,9 @@ public:
 
 public:
 
-	ProteinDNA_Relax( ScoreFunction const & scorefxn_in, Size const moving_jump_in );
+	ProteinDNA_Relax( ScoreFunction const & scorefxn_in, core::Size const moving_jump_in );
 
-	ProteinDNA_Relax( ScoreFunction const & scorefxn_in, utility::vector1< Size > const & moving_jumps );
+	ProteinDNA_Relax( ScoreFunction const & scorefxn_in, utility::vector1< core::Size > const & moving_jumps );
 
 	void
 	apply_default_settings()
@@ -142,7 +142,7 @@ public:
 private:
 	ScoreFunctionOP scorefxn_;
 
-	utility::vector1< Size > moving_jumps_;
+	utility::vector1< core::Size > moving_jumps_;
 
 	Real   min_tol_; // minimization tolerance: smaller --> longer minimization
 	Real trans_mag_; // controls magnitude of translation in random rigid-body perturbations
@@ -151,9 +151,9 @@ private:
 
 	Real ramping_initial_weight_;
 
-	Size inner_cycles_;
-	Size outer_cycles_;
-	Size ramping_cycles_; // this many cycles at lower weight
+	core::Size inner_cycles_;
+	core::Size outer_cycles_;
+	core::Size ramping_cycles_; // this many cycles at lower weight
 
 };
 

@@ -58,15 +58,15 @@ public:
 
 
 private:
-	Size res1_;
+	core::Size res1_;
 	std::string atom1_;
-	Size res2_;
+	core::Size res2_;
 	std::string atom2_;
 
 	bool add_termini_;
 	bool run_kic_;
-	Size kic_res1_;
-	Size kic_res2_;
+	core::Size kic_res1_;
+	core::Size kic_res2_;
 
 
 	/// @brief Should the foldtree be rebuilt?

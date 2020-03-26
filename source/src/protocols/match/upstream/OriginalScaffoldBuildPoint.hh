@@ -28,7 +28,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
@@ -49,7 +49,7 @@ public:
 	typedef ScaffoldBuildPoint parent;
 public:
 	ProteinBackboneBuildPoint();
-	ProteinBackboneBuildPoint( Size index );
+	ProteinBackboneBuildPoint( core::Size index );
 	~ProteinBackboneBuildPoint() override;
 
 	Real phi() const { return phi_; }
@@ -95,10 +95,10 @@ public:
 	typedef ProteinBackboneBuildPoint parent;
 
 public:
-	OriginalBackboneBuildPoint( Size index );
+	OriginalBackboneBuildPoint( core::Size index );
 	~OriginalBackboneBuildPoint() override;
 	OriginalBackboneBuildPoint( core::conformation::Residue const & res );
-	OriginalBackboneBuildPoint( core::conformation::Residue const & res, Size index);
+	OriginalBackboneBuildPoint( core::conformation::Residue const & res, core::Size index);
 
 	void
 	initialize_from_residue(
@@ -111,19 +111,19 @@ public:
 	bool
 	compatible( OriginalBackboneBuildPoint const & other, bool first_dispatch = true ) const override;
 
-	Size
+	core::Size
 	original_insertion_point() const override;
 
 	void
 	insert(
-		Size seqpos_to_insert_at,
+		core::Size seqpos_to_insert_at,
 		Hit const & hit,
 		UpstreamBuilderCOP builder,
 		core::pose::Pose & pose
 	) const override;
 
-	Size original_resid() const { return original_resid_; }
-	//void original_resid( Size setting ) const;
+	core::Size original_resid() const { return original_resid_; }
+	//void original_resid( core::Size setting ) const;
 
 	core::conformation::Residue const &
 	input_conformation() const {
@@ -132,7 +132,7 @@ public:
 
 private:
 
-	Size original_resid_;
+	core::Size original_resid_;
 
 	core::conformation::ResidueOP input_conformation_;
 

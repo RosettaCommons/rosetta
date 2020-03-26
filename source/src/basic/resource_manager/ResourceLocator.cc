@@ -33,7 +33,7 @@ ResourceLocator::ResourceLocator(
 ResourceLocator::ResourceLocator(
 	ResourceLocator const & src
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	locator_tag_( src.locator_tag() )
 {}
 

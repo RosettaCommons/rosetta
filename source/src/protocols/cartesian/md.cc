@@ -88,11 +88,11 @@ void MolecularDynamics::createCartesianArray( )
 {
 	using namespace core;
 
-	Size const nres( pose->size() );
+	core::Size const nres( pose->size() );
 	cartom.clear();
-	for ( Size ir = 1; ir <= nres; ++ir ) {
+	for ( core::Size ir = 1; ir <= nres; ++ir ) {
 		conformation::Residue const & rsd( pose->residue( ir ) );
-		for ( Size i = 1; i <= rsd.natoms(); i++ ) {
+		for ( core::Size i = 1; i <= rsd.natoms(); i++ ) {
 			id::AtomID atom_id(  i, ir );
 			CartesianAtom atom;
 			atom.index = i;
@@ -118,7 +118,7 @@ void MolecularDynamics::setCartesianPositionsFromPose( )
 {
 	using namespace core;
 
-	for ( Size i = 1; i <= cartom.size(); i ++ ) {
+	for ( core::Size i = 1; i <= cartom.size(); i ++ ) {
 		cartom[i].position = pose->xyz( cartom[i].atom_id );
 	}
 }
@@ -128,7 +128,7 @@ void MolecularDynamics::setPosePositionsFromCartesian( )
 {
 	using namespace core;
 
-	for ( Size i = 1; i <= cartom.size(); i ++ ) {
+	for ( core::Size i = 1; i <= cartom.size(); i ++ ) {
 		pose->set_xyz( cartom[i].atom_id,  cartom[i].position );
 	}
 }
@@ -138,7 +138,7 @@ void MolecularDynamics::zeroForces( )
 {
 	using namespace core;
 
-	for ( Size i = 1; i <= cartom.size(); i ++ ) {
+	for ( core::Size i = 1; i <= cartom.size(); i ++ ) {
 		cartom[i].force = core::Vector( 0,0,0 );
 	}
 }
@@ -166,12 +166,12 @@ void MolecularDynamics::getCartesianDerivatives(
 	using namespace core;
 
 	using namespace core::optimization;
-	Size const nres( pose->size() );
+	core::Size const nres( pose->size() );
 	scorefxn.setup_for_derivatives( *pose);
 	int count = 1;
-	for ( Size ir = 1; ir <= nres; ++ir ) {
+	for ( core::Size ir = 1; ir <= nres; ++ir ) {
 		conformation::Residue const & rsd( pose->residue( ir ) );
-		for ( Size i = 1; i <= rsd.natoms(); i++ ) {
+		for ( core::Size i = 1; i <= rsd.natoms(); i++ ) {
 			id::AtomID atom_id(  i, ir );
 			core::Vector F1(0,0,0),F2(0,0,0);
 			scorefxn.eval_npd_atom_derivative( atom_id, *pose, min_map.domain_map(), F1, F2 );
@@ -231,7 +231,7 @@ void MolecularDynamics::getCartesianDerivatives(
 		// std::cout << " " << id1.atomno() << "  " << id2.atomno() << "  " << id3.atomno() << "  " << id4.atomno() << "  -- ";
 
 		// work out the inices in the cartom array !
-		//Size i;
+		//core::Size i;
 		int no1= findCartomAtom( id1 ); if ( no1 < 0 ) std::cerr << "ERROR ERROR ERROR id1 \n";
 		int no2= findCartomAtom( id2 ); if ( no2 < 0 ) std::cerr << "ERROR ERROR ERROR id2 \n";
 		int no3= findCartomAtom( id3 ); if ( no3 < 0 ) std::cerr << "ERROR ERROR ERROR id3 \n";
@@ -337,14 +337,14 @@ void MolecularDynamics::createBondList( )
 {
 	using namespace core;
 
-	Size const nres( pose->size() );
+	core::Size const nres( pose->size() );
 	bondlist.clear();
 
-	for ( Size i = 1; i <= cartom.size(); i ++ ) {
+	for ( core::Size i = 1; i <= cartom.size(); i ++ ) {
 		// for each atom get neighbours within the residue;
 		conformation::Residue const & rsd( pose->residue( cartom[i].atom_id.rsd() ) );
 		core::chemical::AtomIndices indices = rsd.bonded_neighbor( cartom[i].atom_id.atomno() );
-		for ( Size j = 1; j <= indices.size(); j++ ) {
+		for ( core::Size j = 1; j <= indices.size(); j++ ) {
 			if ( int(indices[j]) < int(cartom[i].atom_id.atomno()) ) continue;
 			//std::cout << indices[j] << "  ";
 			MD_Bond newbond;
@@ -359,7 +359,7 @@ void MolecularDynamics::createBondList( )
 	}
 
 	// add residue bonds!
-	for ( Size ir = 1; ir < nres; ++ir ) {
+	for ( core::Size ir = 1; ir < nres; ++ir ) {
 		conformation::Residue const & rsd1( pose->residue( ir ) );
 		conformation::Residue const & rsd2( pose->residue( ir+1 ) );
 
@@ -382,10 +382,10 @@ void MolecularDynamics::createBondList( )
 
 	// post process the list
 	// find all the indices
-	for ( Size i = 1; i <= bondlist.size(); i ++ ) {
+	for ( core::Size i = 1; i <= bondlist.size(); i ++ ) {
 		bondlist[i].index1 = -1;
 		bondlist[i].index2 = -1;
-		for ( Size j = 1; j <= cartom.size(); j ++ ) {
+		for ( core::Size j = 1; j <= cartom.size(); j ++ ) {
 			if ( bondlist[i].atom_id_1 == cartom[j].atom_id ) bondlist[i].index1 = j;
 			if ( bondlist[i].atom_id_2 == cartom[j].atom_id ) bondlist[i].index2 = j;
 		}
@@ -414,11 +414,11 @@ void MolecularDynamics::createAngleList( )
 {
 	using namespace core;
 
-	//Size const nres( pose->size() );
+	//core::Size const nres( pose->size() );
 	anglelist.clear();
 
-	for ( Size i = 1; i <= bondlist.size(); i ++ ) {
-		for ( Size j = 1; j <= bondlist.size(); j ++ ) {
+	for ( core::Size i = 1; i <= bondlist.size(); i ++ ) {
+		for ( core::Size j = 1; j <= bondlist.size(); j ++ ) {
 			if ( i == j ) continue;
 
 			MD_Angle newangle;
@@ -774,7 +774,7 @@ void MolecularDynamics::createDihedralList(  )
 
 void MolecularDynamics::setDihedralDerivatives( ){
 	using namespace core;
-	for ( Size i = 1; i <= dihedrallist.size(); i ++ ) {
+	for ( core::Size i = 1; i <= dihedrallist.size(); i ++ ) {
 
 		// work out which atoms are involved !
 		int no1 = dihedrallist[i].index1;
@@ -842,7 +842,7 @@ void MolecularDynamics::doBondDerivatives( float &totalepot )
 	using namespace core;
 
 	float k = 600;
-	for ( Size i = 1; i <= bondlist.size(); i ++ ) {
+	for ( core::Size i = 1; i <= bondlist.size(); i ++ ) {
 
 		core::Vector f2 = pose->xyz( bondlist[i].atom_id_1 )   -    pose->xyz( bondlist[i].atom_id_2 );
 		float length =  pose->xyz( bondlist[i].atom_id_1 ).distance( pose->xyz( bondlist[i].atom_id_2 ) );
@@ -863,7 +863,7 @@ void MolecularDynamics::doAngleDerivatives( float &totalepot ) {
 	using namespace core;
 
 	float k = 600;
-	for ( Size i = 1; i <= anglelist.size(); i ++ ) {
+	for ( core::Size i = 1; i <= anglelist.size(); i ++ ) {
 
 		core::Vector f2 = pose->xyz( anglelist[i].atom_id_1 )   -    pose->xyz( anglelist[i].atom_id_3 );
 		float length =  pose->xyz( anglelist[i].atom_id_1 ).distance( pose->xyz( anglelist[i].atom_id_3 ) );
@@ -886,7 +886,7 @@ void MolecularDynamics::doDihedralDerivatives( float & totalepot ) {
 	//  float totene_b4 = totalepot;
 
 	float k = 200;
-	for ( Size i = 1; i <= dihedrallist.size(); i ++ ) {
+	for ( core::Size i = 1; i <= dihedrallist.size(); i ++ ) {
 
 		// work out which atoms are involved !
 
@@ -976,18 +976,18 @@ void MolecularDynamics::createCartesianDerivatives( core::scoring::ScoreFunction
 {
 	using namespace core;
 	//std::cout << "setup_for_scoring" << std::endl;
-	Size const nres( pose->size() );
+	core::Size const nres( pose->size() );
 
 	scorefxn.setup_for_derivatives( *pose);
 	cartom.clear();
-	for ( Size ir = 1; ir <= nres; ++ir ) {
+	for ( core::Size ir = 1; ir <= nres; ++ir ) {
 		// get the appropriate residue from the pose->
 		conformation::Residue const & rsd( pose->residue( ir ) );
 
 		//std::cout << "Res: " << ir << "  " <<  rsd.natoms() << std::endl;
 
 		// iterate across neighbors within 12 angstroms
-		for ( Size i = 1; i <= rsd.natoms(); i++ ) {
+		for ( core::Size i = 1; i <= rsd.natoms(); i++ ) {
 			id::AtomID atom_id(  i, ir );
 
 			CartesianAtom atom;
@@ -1016,7 +1016,7 @@ void MolecularDynamics::setInitialSpeeds(core::Real tgtTemp )
 	//core::Real sigma;
 	//int natom = cartom.size();
 
-	for ( Size i = 1; i <= cartom.size(); i ++ ) {
+	for ( core::Size i = 1; i <= cartom.size(); i ++ ) {
 		core::Real sigma = sqrt( 1.38065E-23 * tgtTemp / (cartom[i].mass * 1.66053878E-27) );
 		cartom[i].velocity.x() = numeric::random::gaussian() * sigma;
 		cartom[i].velocity.y() = numeric::random::gaussian() * sigma;
@@ -1032,7 +1032,7 @@ void MolecularDynamics::calcKineticEnergy(
 	using namespace core;
 	ekin = 0;
 
-	for ( Size i = 1; i <= cartom.size(); i ++ ) {
+	for ( core::Size i = 1; i <= cartom.size(); i ++ ) {
 		ekin += (0.5 * cartom[i].mass *  1.66053878E-27 *  inner_product(cartom[i].velocity,cartom[i].velocity));
 	}
 
@@ -1057,7 +1057,7 @@ void MolecularDynamics::applyForces_BeeMan(
 
 	float forcemul =  -( 1E10 / 6.0221418E23 * 4184.0);
 
-	for ( Size i = 1; i <= cartom.size(); i ++ ) {
+	for ( core::Size i = 1; i <= cartom.size(); i ++ ) {
 		tinvmass = t / (6.0 * (cartom[i].mass *  1.66053878E-27   ) ); // t div 6m
 
 		// finish change in velocity using a(n+1)
@@ -1072,7 +1072,7 @@ void MolecularDynamics::applyForces_BeeMan(
 	//applyThermostat();   //adjust velocities according to Thermostat
 
 	// predict new positions
-	for ( Size i = 1; i <= cartom.size(); i ++ ) {
+	for ( core::Size i = 1; i <= cartom.size(); i ++ ) {
 		tinvmass = t / (6.0 * cartom[i].mass *  1.66053878E-27 ); // t div 6m
 
 		// change in position
@@ -1158,7 +1158,7 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 			1429487.0 * gt6 / 13212057600.0);
 	}
 
-	for ( Size i = 1; i <= cartom.size(); i ++ ) {
+	for ( core::Size i = 1; i <= cartom.size(); i ++ ) {
 		tinvmass = t / (cartom[i].mass  *  1.66053878E-27); // t div m
 
 		// finish change in velocity using a(n+1)
@@ -1174,7 +1174,7 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 	calcKineticEnergy( kin, temp);
 	kin *= 6.0221418E23 /  4184.0;
 
-	for ( Size i = 1; i <= cartom.size(); i ++ ) {
+	for ( core::Size i = 1; i <= cartom.size(); i ++ ) {
 		tinvmass = t / (cartom[i].mass  *  1.66053878E-27); // t div m
 
 		core::Real kTdivm =  1.38065E-23 * T / (cartom[i].mass  * 1.66053878E-27);
@@ -1229,7 +1229,7 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 			//std::cout << "ENERGY_IMPROVEMENT\n";
 			fmagold = 0;
 			fmagnew = 0;
-			for ( Size i = 1; i <= cartom.size(); i ++ ) {   // calculate the inner dots of the current force
+			for ( core::Size i = 1; i <= cartom.size(); i ++ ) {   // calculate the inner dots of the current force
 				fmagold += cartom[i].old_force.dot( cartom[i].old_force );
 				core::Vector ftemp =  cartom[i].old_force - cartom[i].force;
 				fmagnew += ftemp.dot( cartom[i].force );
@@ -1247,7 +1247,7 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 			std::cout << "gamma: " << gamma << std::endl;
 
 			//gamma = 0;
-			for ( Size i = 1; i <= cartom.size(); i ++ ) {   // save positions & forces
+			for ( core::Size i = 1; i <= cartom.size(); i ++ ) {   // save positions & forces
 				cartom[i].velocity    = cartom[i].old_velocity; // set to old direction
 				cartom[i].velocity   *= gamma;                 // multiply the old direction with gamma
 				cartom[i].velocity   -= cartom[i].force * forcemul;      // and add current force to make current direction
@@ -1266,7 +1266,7 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 			//std::cout << "ENERGY_UP\n" << current_energy << "   " << m_OldEnergy << "  ";
 
 			m_StepMultiplier *= 0.5 / 1.2;
-			for ( Size i = 1; i <= cartom.size(); i ++ ) {
+			for ( core::Size i = 1; i <= cartom.size(); i ++ ) {
 				cartom[i].position = cartom[i].old_position; // restore old position
 				//cartom[i].force    = cartom[i].old_force / forcemul;   // restore old forces
 			}
@@ -1277,7 +1277,7 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 
 		}
 	} else { // this block is for Step == 0 - its just a standard SD Step
-		for ( Size i = 1; i < cartom.size(); i++ ) {
+		for ( core::Size i = 1; i < cartom.size(); i++ ) {
 			cartom[i].old_position    =  cartom[i].position; // save position (old position = current position)
 			cartom[i].old_force       =  cartom[i].force * forcemul; // save old forces
 			cartom[i].old_velocity    =  -cartom[i].force * forcemul; // save old directions, equal to old force
@@ -1286,7 +1286,7 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 		m_OldEnergy = current_energy;
 	}
 
-	for ( Size i = 1; i <= cartom.size(); i ++ ) {
+	for ( core::Size i = 1; i <= cartom.size(); i ++ ) {
 		f = cartom[i].velocity;
 		f *= StepSize * m_StepMultiplier;
 		//if(  sqr(f.x()) + sqr(f.y()) + sqr (f.z())  > 0.2 )
@@ -1444,14 +1444,14 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 	scorefxn.show(std::cout, *pose);
 
 	//std::cout << "setup_for_scoring" << std::endl;
-	Size const nres( pose->size() );
+	core::Size const nres( pose->size() );
 
-	for ( Size ir = 1; ir <= nres; ++ir ) {
+	for ( core::Size ir = 1; ir <= nres; ++ir ) {
 		// get the appropriate residue from the pose->
 		conformation::Residue const & rsd( pose->residue( ir ) );
 		std::cout << "IR: " << ir << std::endl;
 		// iterate across neighbors within 12 angstroms
-		for ( Size i = 1; i <= rsd.natoms(); i++ ) {
+		for ( core::Size i = 1; i <= rsd.natoms(); i++ ) {
 			id::AtomID atom_id( i, ir );
 
 			pose->energies().clear();
@@ -1485,7 +1485,7 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 	}
 
 
-	for ( Size i = 1; i < cartom.size(); i++ ) {
+	for ( core::Size i = 1; i < cartom.size(); i++ ) {
 
 		if (  ( fabs( cartom[i].force.x()  -  numeriv[i].x()     ) > 0.1 ) ||
 				( fabs( cartom[i].force.y()  -  numeriv[i].y()     ) > 0.1 ) ||

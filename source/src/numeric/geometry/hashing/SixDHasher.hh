@@ -26,7 +26,7 @@
 #include <numeric/geometry/BoundingBox.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 /// Boost headers
 #include <boost/unordered_map.hpp>
@@ -89,10 +89,10 @@ private:
 /// frame at orientation atom 3.  The binner is responsible for maintaining the lower corner
 /// of the 6-d space -- the first two Euler angles  wrap at 360; the third Euler
 /// angle, theta, does not wrap in the same way.  See the comments for the bin6 method.
-class SixDCoordinateBinner : public utility::pointer::ReferenceCount
+class SixDCoordinateBinner : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~SixDCoordinateBinner() override;
 	typedef numeric::Real                               Real;
 	typedef numeric::Size                               Size;

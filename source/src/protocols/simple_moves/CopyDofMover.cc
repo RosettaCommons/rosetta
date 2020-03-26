@@ -43,7 +43,7 @@ namespace simple_moves {
 using namespace core;
 
 //Constructor
-CopyDofMover::CopyDofMover( pose::Pose const & template_pose, std::map< Size, Size > const & res_map ):
+CopyDofMover::CopyDofMover( pose::Pose const & template_pose, std::map< core::Size, core::Size > const & res_map ):
 	template_pose_( template_pose ),
 	template_mini_pose_( template_pose ),
 	res_map_( res_map ),
@@ -84,10 +84,10 @@ CopyDofMover::apply( core::pose::Pose & pose )
 std::string
 CopyDofMover::pose_string(
 	pose::Pose const & pose,
-	utility::vector1< Size > const & res_list ) const
+	utility::vector1< core::Size > const & res_list ) const
 {
 	std::string pose_string = "";
-	for ( Size n = 1; n <= res_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= res_list.size(); n++ ) {
 		pose_string += pose.residue( res_list[ n ] ).name();
 	}
 	pose_string += pose.fold_tree().to_string();
@@ -100,7 +100,7 @@ CopyDofMover::pose_string(
 	pose::Pose const & pose
 ) const
 {
-	utility::vector1< Size > res_list;
+	utility::vector1< core::Size > res_list;
 	for ( auto const & it : res_map_ ) {
 		res_list.push_back( it.first );
 	}

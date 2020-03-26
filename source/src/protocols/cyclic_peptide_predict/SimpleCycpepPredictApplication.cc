@@ -423,6 +423,7 @@ SimpleCycpepPredictApplication::~SimpleCycpepPredictApplication() = default;
 /// @brief Explicit copy constructor.
 ///
 SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPredictApplication const &src ) :
+	VirtualBase( src ),
 	my_rank_(src.my_rank_),
 	already_completed_job_count_( src.already_completed_job_count_ ),
 	cyclization_type_( src.cyclization_type_ ),

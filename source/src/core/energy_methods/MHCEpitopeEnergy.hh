@@ -47,7 +47,7 @@ namespace mhc_epitope_energy {
 /// to enable efficient updating of only those scores affected by a substitution during annealing.
 /// @details This is separated out into a class to parallel the MHCEpitopeEnergySetup helpers,
 /// as each such instance will affect the score separately.
-class ScoreCache : public utility::pointer::ReferenceCount {
+class ScoreCache : public utility::VirtualBase {
 public:
 	/// @brief Construct a cache for the given number of residues in a pose
 	/// (residues will be maintained and passed by the ResidueArrayAnnealableEnergy machinery)

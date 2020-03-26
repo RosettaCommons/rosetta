@@ -19,7 +19,7 @@
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
 
@@ -31,7 +31,7 @@ typedef utility::vector1<CDRSetOptionsOP> AntibodyCDRSetOptions;
 
 /// @brief Class that holds instructions for a single CDR for loading from the antibody database.
 /// Default is instructions to load all CDRs from the database
-class CDRSetOptions : public utility::pointer::ReferenceCount {
+class CDRSetOptions : public utility::VirtualBase {
 
 public:
 

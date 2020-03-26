@@ -191,35 +191,35 @@ SSMotifFinder::apply( core::pose::Pose const & pose ) const {
 
 
 	// xpressive::match_results< std::string::const_iterator > regex_results;
-	// vector1< pair< Size/*start*/, Size/*length*/ > > submatches;
+	// vector1< pair< core::Size/*start*/, core::Size/*length*/ > > submatches;
 	// submatches.clear();
 	// TR<<"Found following submatches: ";
 	// while( regex_search( sec_struct.begin(), sec_struct.end(), regex_results, motif_ ) ){
-	//  Size const start( regex_results.position() );
-	//  Size const length( regex_results.length() );
-	//  submatches.push_back( pair< Size, Size >( start, length ) );
+	//  core::Size const start( regex_results.position() );
+	//  core::Size const length( regex_results.length() );
+	//  submatches.push_back( pair< core::Size, core::Size >( start, length ) );
 
 	//  TR<<start<<": "<<sec_struct.substr( start, length )<<'\n';
 	// }
 	// TR<<std::endl;
 
-	vector1< pair< Size/*stem1*/, Size/*stem2*/ > > stems;
+	vector1< pair< core::Size/*stem1*/, core::Size/*stem2*/ > > stems;
 	stems.clear();
-	for ( Size stem1 = 2; stem1 <= pose.size() - from_res() - 1 ; ++stem1 ) { //changed this line from for(Size stem1 = 1; stem1 <= pose.size() - from_res() ; ++stem1 )
+	for ( core::Size stem1 = 2; stem1 <= pose.size() - from_res() - 1 ; ++stem1 ) { //changed this line from for(core::Size stem1 = 1; stem1 <= pose.size() - from_res() ; ++stem1 )
 		if ( sec_struct[ stem1 - 1 ] != template_sec_struct[ template_stem1() - 1 ] ||
 				!pose.conformation().residue( stem1 ).is_protein() ) {
 			continue;
 		}
-		for ( Size stem2 = stem1 + from_res(); stem2 <= stem1 + to_res() && stem2 <= pose.size() - 1; ++stem2 ) { //changed this line from for( Size stem2 = stem1 + from_res(); stem2 <= stem1 + to_res() && stem2 <= pose.size() ; ++stem2 )
+		for ( core::Size stem2 = stem1 + from_res(); stem2 <= stem1 + to_res() && stem2 <= pose.size() - 1; ++stem2 ) { //changed this line from for( core::Size stem2 = stem1 + from_res(); stem2 <= stem1 + to_res() && stem2 <= pose.size() ; ++stem2 )
 			if ( sec_struct[ stem2 - 1 ] != template_sec_struct[ template_stem2() - 1 ] ||
 					!pose.conformation().residue( stem2 ).is_protein() ) {
 				continue;
 			}
-			stems.push_back( pair< Size, Size >( stem1, stem2 ) );
+			stems.push_back( pair< core::Size, core::Size >( stem1, stem2 ) );
 		}
 	}
 	// sort( stems.begin(), stems.end() );
-	// vector1< pair< Size, Size > >::iterator it = unique( stems.begin(), stems.end() );
+	// vector1< pair< core::Size, core::Size > >::iterator it = unique( stems.begin(), stems.end() );
 	// stems.resize( std::distance( stems.begin(), it ) );
 	TR<<"List of potential pairs: ";
 	for ( auto const & stem : stems ) {
@@ -228,7 +228,7 @@ SSMotifFinder::apply( core::pose::Pose const & pose ) const {
 	TR<<std::endl;
 
 	for ( auto const & stem : stems ) {
-		Size const stem1( stem.first ), stem2( stem.second );
+		core::Size const stem1( stem.first ), stem2( stem.second );
 		TR<<"Testing stems: "<<stem1<<' '<<stem2<<std::endl;
 		//core::conformation::Residue const res_stem2( pose.conformation().residue( stem2 ) );
 		core::pose::Pose copy_pose( pose );
@@ -237,7 +237,7 @@ SSMotifFinder::apply( core::pose::Pose const & pose ) const {
 		//copy_pose.set_jump( copy_pose.num_jump(), jump() );
 		superimpose_pose_on_template( *template_pose_, copy_pose, stem1, stem2);
 
-		vector1< Size > pose_res_for_rmsd, template_res_for_rmsd;
+		vector1< core::Size > pose_res_for_rmsd, template_res_for_rmsd;
 		pose_res_for_rmsd.clear(); template_res_for_rmsd.clear();
 		pose_res_for_rmsd.push_back( stem1 - 1 );
 		pose_res_for_rmsd.push_back( stem1 );

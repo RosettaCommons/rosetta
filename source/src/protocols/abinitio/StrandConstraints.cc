@@ -66,16 +66,16 @@ StrandConstraints::~StrandConstraints() = default;
 Size register_cutoff( 5 );
 Size residue_cutoff( 5 );
 
-using SizeList = utility::vector1<Size>;
+using SizeList = utility::vector1<core::Size>;
 bool AlternativePairings::compatible( core::scoring::dssp::StrandPairing const& strand_pairing ) const {
 	if ( pairings_.size() == 0 ) return true;
 	if ( strand_pairing.antiparallel() != antiparallel() ) return false;
-	Size const new_reg ( strand_pairing.get_register() );
+	core::Size const new_reg ( strand_pairing.get_register() );
 
 	//get list of pairs for all pairings that roughly match the register of the new strand_pairing
 	for ( auto const & pairing : pairings_ ) {
 		//check register
-		Size const reg ( pairing.pairing().get_register() );
+		core::Size const reg ( pairing.pairing().get_register() );
 		if ( std::abs( (int)new_reg  - (int)reg ) > (int)register_cutoff ) return false;
 		//good register... get residues
 		if ( (int) strand_pairing.end1() <  ( (int) pairing.pairing().begin1() - (int) residue_cutoff ) ) return false; //really no overlap
@@ -150,12 +150,12 @@ void AlternativePairings::build_constraints( pose::Pose const& pose, scoring::co
 	//    different registers: going from reg N -> N+1 requires change of pleating for one residue.
 	//   the N-O group has to come around fro//      m the other side of the strand... that might be bad.
 	//find frequency of start residues
-	std::map< Size, Real > freq; //it will count the score values
+	std::map< core::Size, Real > freq; //it will count the score values
 	Real max_freq( 0 );
 	for ( auto const & pairing : pairings_ ) {
-		Size const start( pairing.pairing().begin1() );
-		Size const end( pairing.pairing().end1() );
-		for ( Size pos = start; pos <= end; pos++ ) {
+		core::Size const start( pairing.pairing().begin1() );
+		core::Size const end( pairing.pairing().end1() );
+		for ( core::Size pos = start; pos <= end; pos++ ) {
 			if ( ! pairing.pairing().is_bulge( pos ) ) freq[ pos ] += pairing.weight();
 			if ( max_freq < freq[ pos ] ) max_freq = freq[ pos ];
 		}
@@ -166,7 +166,7 @@ void AlternativePairings::build_constraints( pose::Pose const& pose, scoring::co
 
 
 	//for each start position
-	for ( std::map< Size, Real>::const_iterator it = freq.begin(), eit = freq.end();
+	for ( std::map< core::Size, Real>::const_iterator it = freq.begin(), eit = freq.end();
 			it != eit; ++it ) {
 
 		// is frequency == max_freq ?
@@ -174,16 +174,16 @@ void AlternativePairings::build_constraints( pose::Pose const& pose, scoring::co
 			//yes: a pairing that we want to enforce
 
 			// start-atom
-			Size pos( it->first );
+			core::Size pos( it->first );
 			NamedAtomID atom1( "CA", pos );
 
 			//make ambigous constraint with one distance constraint for each pairing
 			ConstraintCOPs constraints;
-			std::map< Size, bool > done;
+			std::map< core::Size, bool > done;
 
 			//for all end-atoms:
 			for ( auto const & pairing : pairings_ ) {
-				Size pair( pairing.pairing().get_pair( pos ) );
+				core::Size pair( pairing.pairing().get_pair( pos ) );
 				if ( pair ) { //we have a pairing make a constraint for this guy
 					if ( !done[ pair ] ) {
 						done[ pair ] = true;

@@ -72,22 +72,22 @@ static basic::Tracer TR( "devel.dna.util" );
 void
 detect_interface_residues(
 	pose::Pose const & pose,
-	utility::vector1< Size > const & pos_list,
+	utility::vector1< core::Size > const & pos_list,
 	Real const contact_threshold,
 	utility::vector1< bool > & interface
 )
 {
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 
 	interface.resize( nres, false );
 
-	for ( Size j=1; j<= nres; ++j ) {
+	for ( core::Size j=1; j<= nres; ++j ) {
 		interface[j] = false;
 
 		conformation::Residue const & rsd2( pose.residue( j ) );
 		if ( !rsd2.is_protein() ) continue;
 
-		for ( Size n=1; n<= pos_list.size(); ++n ) {
+		for ( core::Size n=1; n<= pos_list.size(); ++n ) {
 			conformation::Residue const & rsd1( pose.residue( pos_list[n] ) );
 			debug_assert( rsd1.is_DNA() );
 
@@ -106,18 +106,18 @@ detect_interface_by_nbrs(
 	utility::vector1< bool > & interface
 )
 {
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 
 	interface.clear();
 	interface.resize( nres, false );
 
-	for ( Size j=1; j<= nres; ++j ) {
+	for ( core::Size j=1; j<= nres; ++j ) {
 		interface[j] = false;
 
 		conformation::Residue const & rsd2( pose.residue( j ) );
 		if ( !rsd2.is_protein() ) continue;
 
-		for ( Size i=1; i<= nres; ++i ) {
+		for ( core::Size i=1; i<= nres; ++i ) {
 			conformation::Residue const & rsd1( pose.residue( i ) );
 			if ( !rsd1.is_DNA() ) continue;
 
@@ -133,27 +133,27 @@ detect_interface_by_nbrs(
 void
 detect_allatom_interface_residues(
 	pose::Pose const & pose,
-	utility::vector1< Size > const & pos_list,
+	utility::vector1< core::Size > const & pos_list,
 	Real const contact_threshold,
 	utility::vector1< bool > & interface
 )
 {
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 
 	interface.resize( nres, false );
 
-	for ( Size j=1; j<= nres; ++j ) {
+	for ( core::Size j=1; j<= nres; ++j ) {
 		interface[j] = false;
 
 		conformation::Residue const & rsd2( pose.residue( j ) );
 		if ( !rsd2.is_protein() ) continue;
 
-		for ( Size n=1; n<= pos_list.size(); ++n ) {
+		for ( core::Size n=1; n<= pos_list.size(); ++n ) {
 			conformation::Residue const & rsd1( pose.residue( pos_list[n] ) );
 			debug_assert( rsd1.is_DNA() );
 
-			for ( Size ii=1; ii<= rsd1.natoms(); ++ii ) {
-				for ( Size jj=1; jj<= rsd2.natoms(); ++jj ) {
+			for ( core::Size ii=1; ii<= rsd1.natoms(); ++ii ) {
+				for ( core::Size jj=1; jj<= rsd2.natoms(); ++jj ) {
 
 					if ( rsd1.xyz(ii).distance( rsd2.xyz(jj) ) <= contact_threshold ) {
 						interface[ j ] = true;
@@ -175,11 +175,11 @@ calc_protein_DNA_rmsd(
 	Real & interface_allatom_rmsd
 )
 {
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 
 	utility::vector1< int > pos_list;
 	utility::vector1< bool > interface;
-	for ( Size i=1; i<= nres; ++i ) {
+	for ( core::Size i=1; i<= nres; ++i ) {
 		if ( pose.residue(i).is_DNA() ) pos_list.push_back(i);
 	}
 
@@ -190,7 +190,7 @@ calc_protein_DNA_rmsd(
 	interface_allatom_rmsd = 0.0;
 
 	int protres(0), intres(0), intatoms(0);
-	for ( Size i=1; i<= nres; ++i ) {
+	for ( core::Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) ), ref_rsd( reference_pose.residue(i) );
 		if ( !rsd.is_protein() ) continue;
 
@@ -200,7 +200,7 @@ calc_protein_DNA_rmsd(
 		if ( interface[i] ) {
 			++intres;
 			interface_ca_rmsd += ca_dis2;
-			for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
+			for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
 				++intatoms;
 				interface_allatom_rmsd += rsd.xyz(j).distance( ref_rsd.xyz( rsd.atom_name(j) ) );
 			}
@@ -220,16 +220,16 @@ calc_DNA_bb_rmsd(
 	Real & dna_bb_rmsd
 )
 {
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 
 	dna_bb_rmsd = 0.0;
 
 	int dna_bb_atoms(0);
-	for ( Size i=1; i<= nres; ++i ) {
+	for ( core::Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) ), ref_rsd( reference_pose.residue(i) );
 		if ( !rsd.is_DNA() ) continue;
 
-		for ( Size j=1; j<= rsd.natoms(); ++j ) {
+		for ( core::Size j=1; j<= rsd.natoms(); ++j ) {
 			if ( rsd.atom_is_backbone( j ) ) {
 				dna_bb_rmsd += rsd.xyz(j).distance( ref_rsd.xyz( rsd.atom_name(j) ) );
 				++dna_bb_atoms;
@@ -321,7 +321,7 @@ analyze_interface_sasa(
 
 	core::pose::initialize_atomid_map( total_hbond_energy, pose, 0.0 );
 
-	for ( Size i=1; i<= Size(hbond_set.nhbonds()); ++i ) {
+	for ( core::Size i=1; i<= core::Size(hbond_set.nhbonds()); ++i ) {
 		if ( hbond_set.allow_hbond(i) ) {
 			scoring::hbonds::HBond const & hb( hbond_set.hbond(i) );
 			id::AtomID const hatm( hb.don_hatm(), hb.don_res() );
@@ -335,7 +335,7 @@ analyze_interface_sasa(
 	buried_unsatisfied_donors.clear();
 	buried_unsatisfied_acceptors.clear();
 
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 
 		// donors
@@ -371,7 +371,7 @@ analyze_interface_sasa(
 void
 make_base_pair_mutation(
 	pose::Pose & pose,
-	Size const seqpos,
+	core::Size const seqpos,
 	chemical::AA const & na
 )
 {
@@ -383,7 +383,7 @@ make_base_pair_mutation(
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 
 	for ( int r=1; r<= 2; ++r ) {
-		Size const pos( r == 1 ? seqpos : partner[seqpos] );
+		core::Size const pos( r == 1 ? seqpos : partner[seqpos] );
 		if ( pos == 0 ) continue; // unpaired
 		AA const aa( r == 1 ? na : dna_base_partner( na ) );
 
@@ -408,13 +408,13 @@ make_base_pair_mutation(
 void
 randomize_motif_sequence(
 	pose::Pose & pose,
-	Size const motif_begin,
-	Size const motif_size
+	core::Size const motif_begin,
+	core::Size const motif_size
 )
 {
 	using namespace chemical;
 
-	for ( Size i=motif_begin; i< motif_begin+motif_size; ++i ) {
+	for ( core::Size i=motif_begin; i< motif_begin+motif_size; ++i ) {
 		auto const random_na( AA( first_DNA_aa + static_cast< int >( numeric::random::uniform() * 4 ) ) );
 		debug_assert( random_na >= first_DNA_aa && random_na <= last_DNA_aa );
 

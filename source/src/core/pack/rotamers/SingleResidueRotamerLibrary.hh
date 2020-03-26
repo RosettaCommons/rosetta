@@ -33,7 +33,7 @@
 #include <core/pack/dunbrack/ChiSet.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/ozstream.fwd.hh>
 #include <utility/io/izstream.fwd.hh>
 
@@ -45,7 +45,7 @@ namespace pack {
 namespace rotamers {
 
 /// @brief  SingleResidueRotamerLibrary pure virtual base class
-class SingleResidueRotamerLibrary : public utility::pointer::ReferenceCount
+class SingleResidueRotamerLibrary : public utility::VirtualBase
 {
 	SingleResidueRotamerLibrary& operator=(SingleResidueRotamerLibrary const & other) = delete;
 	SingleResidueRotamerLibrary ( SingleResidueRotamerLibrary const & ) = delete;

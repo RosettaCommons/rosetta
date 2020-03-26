@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_ligand_docking_rdf_RDFBase_hh
 #define INCLUDED_protocols_ligand_docking_rdf_RDFBase_hh
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <protocols/ligand_docking/rdf/RDFBase.fwd.hh>
 
@@ -76,7 +76,7 @@ struct AtomPairData
 	core::chemical::AtomType ligand_atom_type;
 };
 
-class RDFBase : public utility::pointer::ReferenceCount
+class RDFBase : public utility::VirtualBase
 {
 public:
 

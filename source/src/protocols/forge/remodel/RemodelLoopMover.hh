@@ -169,26 +169,26 @@ public: // accessors
 	/// @brief the allowed number of overall closure attempts before apply() exits
 	///  (default 3)
 	inline
-	Size allowed_closure_attempts() const {
+	core::Size allowed_closure_attempts() const {
 		return allowed_closure_attempts_;
 	}
 
 	/// @brief the number of loophash closure cycles to perform (default 8)
 	inline
-	Size loophash_cycles() const {
+	core::Size loophash_cycles() const {
 		return loophash_cycles_;
 	}
 
 	/// @brief the number of simultaneous closure cycles to perform (default 2)
 	inline
-	Size simultaneous_cycles() const {
+	core::Size simultaneous_cycles() const {
 		return simultaneous_cycles_;
 	}
 
 
 	/// @brief the number of independent closure cycles to perform (default 8)
 	inline
-	Size independent_cycles() const {
+	core::Size independent_cycles() const {
 		return independent_cycles_;
 	}
 
@@ -196,7 +196,7 @@ public: // accessors
 	/// @brief the maximum number of possible lockdown closure cycles to perform
 	///  (default 30)
 	inline
-	Size boost_closure_cycles() const {
+	core::Size boost_closure_cycles() const {
 		return boost_closure_cycles_;
 	}
 
@@ -204,7 +204,7 @@ public: // accessors
 	/// @brief the total number of "standard" (equal to simul + independent)
 	///  to perform
 	inline
-	Size total_standard_cycles() const {
+	core::Size total_standard_cycles() const {
 		return simultaneous_cycles_ + independent_cycles_ + loophash_cycles_;
 	}
 
@@ -228,7 +228,7 @@ public: // mutators
 
 
 	// @brief for updating repeat angles from a monomeric copy
-	void repeat_propagation( Pose & pose, Pose & repeat_pose, Size repeat_number);
+	void repeat_propagation( Pose & pose, Pose & repeat_pose, core::Size repeat_number);
 
 
 	/// @brief the ScoreFunction to use during modeling
@@ -263,26 +263,26 @@ public: // mutators
 
 	/// @brief the allowed number of overall closure attempts before apply() exits
 	inline
-	void allowed_closure_attempts( Size const attempts ) {
+	void allowed_closure_attempts( core::Size const attempts ) {
 		allowed_closure_attempts_ = attempts;
 	}
 
 	/// @brief the number of loophash closure cycles to perform
 	inline
-	void loophash_cycles( Size const cycles ) {
+	void loophash_cycles( core::Size const cycles ) {
 		loophash_cycles_ = cycles;
 	}
 
 	/// @brief the number of simultaneous closure cycles to perform
 	inline
-	void simultaneous_cycles( Size const cycles ) {
+	void simultaneous_cycles( core::Size const cycles ) {
 		simultaneous_cycles_ = cycles;
 	}
 
 
 	/// @brief the number of independent closure cycles to perform
 	inline
-	void independent_cycles( Size const cycles ) {
+	void independent_cycles( core::Size const cycles ) {
 		independent_cycles_ = cycles;
 	}
 
@@ -290,13 +290,13 @@ public: // mutators
 	set_user_provided_movers( utility::vector1< moves::MoverOP > const & movers );
 
 	inline
-	void user_provided_movers_apply_cycle( Size const cycle ) {
+	void user_provided_movers_apply_cycle( core::Size const cycle ) {
 		user_provided_movers_apply_cycle_ = cycle; }
 
 
 	/// @brief the maximum number of possible lockdown closure cycles to perform
 	inline
-	void boost_closure_cycles( Size const cycles ) {
+	void boost_closure_cycles( core::Size const cycles ) {
 		boost_closure_cycles_ = cycles;
 	}
 
@@ -308,7 +308,7 @@ public: // mutators
 
 	inline
 	void
-	set_repeat_tail_length( Size const length ) {
+	set_repeat_tail_length( core::Size const length ) {
 		repeat_tail_length_ = length;
 	}
 
@@ -400,12 +400,12 @@ protected: // loop modeling stages
 	/// @brief abinitioo stage: better control of fragments. No loop closure tried
 	void abinitio_stage(
 		Pose & pose,
-		Size const fragmentSize,
+		core::Size const fragmentSize,
 		MoveMap const movemap,
 		ScoreFunctionOP sfxOP,
-		Size const max_outer_cycles,
-		Size const max_inner_cycles,
-		std::set<Size> const & disallowedPos,
+		core::Size const max_outer_cycles,
+		core::Size const max_inner_cycles,
+		std::set<core::Size> const & disallowedPos,
 		bool const recover_low,
 		std::string stage_name,
 		bool const smoothMoves,
@@ -424,8 +424,8 @@ protected: // loop modeling stages
 		Pose & pose,
 		MoveMap const movemap,
 		ScoreFunctionOP sfxOP,
-		Size const max_outer_cycles,
-		Size const max_inner_cycles,
+		core::Size const max_outer_cycles,
+		core::Size const max_inner_cycles,
 		bool const recover_low,
 		Real const h_range,
 		Real const e_range,
@@ -486,13 +486,13 @@ protected: // fragments
 	///  size is this number.  If zero, uses all fragment sets.
 	FragmentMoverOPs create_fragment_movers(
 		MoveMap const & movemap,
-		Size const largest_frag_size = 0
+		core::Size const largest_frag_size = 0
 	);
 	/// @brief same as create_fragment_movers except with set size
 	FragmentMoverOPs create_fragment_movers_limit_size(
 		MoveMap const & movemap,
-		Size const frag_size,
-		std::set<Size> const & disallowedPos,
+		core::Size const frag_size,
+		std::set<core::Size> const & disallowedPos,
 		bool const smoothMoves,
 		ScoreFunctionOP const scorefxnOP,
 		Real const fragScoreThreshold = 999.0
@@ -507,7 +507,7 @@ protected: // fragments
 	void create_fragment_movers(
 		MoveMap const & movemap,
 		FragmentMoverOPs & frag_movers,
-		Size const largest_frag_size = 0
+		core::Size const largest_frag_size = 0
 	);
 
 	/// @brief create per-loop fragment movers: 1 fragment mover for each loop (uses
@@ -517,7 +517,7 @@ protected: // fragments
 	///  size is this number.  If zero, uses all fragment sets.
 	FragmentMoverOPs create_per_loop_fragment_movers(
 		loops::LoopsOP const loops,
-		Size const largest_frag_size = 0
+		core::Size const largest_frag_size = 0
 	);
 
 
@@ -556,10 +556,10 @@ protected: // movemap
 
 	/// @brief count number of residues with moveable backbone torsions in the
 	///  given range [left, right]
-	Size count_moveable_residues(
+	core::Size count_moveable_residues(
 		MoveMap const & movemap,
-		Size const left,
-		Size const right
+		core::Size const left,
+		core::Size const right
 	);
 private:
 	/// @brief initializes pose with starting pose
@@ -572,7 +572,7 @@ private:
 	void set_ideal_helices(Pose & pose);
 
 	/// @setup allowed positions per stage
-	std::set<core::Size> generate_residues_to_sample(bool chooseSubsetResidues, Pose & pose, Size fragmentSize);
+	std::set<core::Size> generate_residues_to_sample(bool chooseSubsetResidues, Pose & pose, core::Size fragmentSize);
 
 private: // data
 
@@ -602,22 +602,22 @@ private: // data
 	/// @brief randomize loops prior to running main protocol? (default true)
 	bool randomize_loops_;
 
-	Size repeat_tail_length_;
+	core::Size repeat_tail_length_;
 
 
 	/// @brief the allowed number of overall closure attempts before apply() exits
 	///  (default 3)
-	Size allowed_closure_attempts_;
+	core::Size allowed_closure_attempts_;
 
 	/// @brief the number of loophash closure cycles to perform (default 8)
-	Size loophash_cycles_;
+	core::Size loophash_cycles_;
 
 	/// @brief the number of simultaneous closure cycles to perform (default 2)
-	Size simultaneous_cycles_;
+	core::Size simultaneous_cycles_;
 
 
 	/// @brief the number of independent closure cycles to perform (default 8)
-	Size independent_cycles_;
+	core::Size independent_cycles_;
 
 	/// @brief collection of movers that mess with the pose
 	/// every n fragment/ccd steps during inneriterations of simultaneous,
@@ -628,11 +628,11 @@ private: // data
 
 	/// @brief determines how often the above movers get called
 	/// during fragment insertion/ccd steps (default 3 )
-	Size user_provided_movers_apply_cycle_;
+	core::Size user_provided_movers_apply_cycle_;
 
 	/// @brief the maximum number of possible boost closure cycles to perform
 	///  (default 30)
-	Size boost_closure_cycles_;
+	core::Size boost_closure_cycles_;
 
 	/// @brief temperature for mc
 	Real temperature_;
@@ -645,8 +645,8 @@ private: // data
 	Pose repeat_pose_;
 
 	/// @brief use this for repeat construction in conjunction with symmetry
-	Size unit_length_;
-	Size repeat_length_;
+	core::Size unit_length_;
+	core::Size repeat_length_;
 
 
 	/// @brief RemodelGlobalFrame for helical definitions

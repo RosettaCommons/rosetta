@@ -287,7 +287,7 @@ LayerDesignOperation::pos2select( utility::vector1< core::Size > const & pos ) c
 	} else {
 		str = boost::lexical_cast< std::string >( pos[1] );
 	}
-	for ( Size i = 2; i <= pos.size(); i++ ) {
+	for ( core::Size i = 2; i <= pos.size(); i++ ) {
 		str += "+" + boost::lexical_cast< std::string >( pos[i] );
 	}
 	return str;
@@ -297,7 +297,7 @@ void
 LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, core::select::util::SelectResiduesByLayerOP srbl, std::map< std::string, utility::vector1<bool> > const & layer_specification, bool has_ligand, std::string const & filename ) const
 {
 	using utility::io::ozstream;
-	using VecSize = utility::vector1<Size>;
+	using VecSize = utility::vector1<core::Size>;
 	TR << "Writing pymol script with the layer information to "<< filename << std::endl;
 	ozstream pymol( filename );
 	TR << "Dumping pose for the script as layer_design_input.pdb" << std::endl;
@@ -327,10 +327,10 @@ LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, core::s
 	colors.push_back( "purpleblue" );
 	colors.push_back( "hotpink" );
 	colors.push_back( "olive" );
-	Size layer = 0;
+	core::Size layer = 0;
 	for ( auto const & it : layer_specification ) {
-		utility::vector1< Size > pos;
-		for ( Size i = 1; i <= pose.size(); i++ ) {
+		utility::vector1< core::Size > pos;
+		for ( core::Size i = 1; i <= pose.size(); i++ ) {
 			if ( it.second[ i ] ) {
 				pos.push_back( i );
 			}
@@ -624,7 +624,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 		utility::vector1< bool > packable_residues( layer_task.repacking_residues() );
 		utility::vector1< bool > fixed_residues;
 		runtime_assert( designable_residues.size() == packable_residues.size() );
-		for ( Size i = 1; i <= designable_residues.size(); i++ ) {
+		for ( core::Size i = 1; i <= designable_residues.size(); i++ ) {
 			bool fixed( false );
 			if ( designable_residues[i] ) {
 				if ( TR.visible() ) TR << "\t- residue " << i << " is designable" << std::endl;
@@ -671,11 +671,11 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	}
 
 	// we need to add a SS identifier for the ligand if there is one
-	utility::vector1<Size> ligands = protocols::flxbb::find_ligands( pose );
+	utility::vector1<core::Size> ligands = protocols::flxbb::find_ligands( pose );
 	bool has_ligand = false;
 	std::replace( secstruct.begin(), secstruct.end(), ' ', 'L'); // replace all ' ' to 'L'
 	if ( TR.visible() ) TR << "secstruct is:" << secstruct << std::endl;
-	for ( Size i=1; i <= ligands.size(); i++ ) {
+	for ( core::Size i=1; i <= ligands.size(); i++ ) {
 		has_ligand = true;
 	}
 
@@ -692,7 +692,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	bool flag( false );
 	utility::vector1< bool > helix_capping( pose.size(), false );
 	utility::vector1< bool > initial_helix( pose.size(), false );
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		// if this residue is not a protein residue, we shouldn't process it further
 		if ( ! pose.residue( i ).is_protein() ) continue;
 		char ss( secstruct[i-1] );
@@ -712,7 +712,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	//task.nonconst_residue_task( pose.size() ).restrict_absent_canonical_aas( restrict_to_aa );
 
 	TR << "---------------------------------------" << std::endl;
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		// if the residue is not a protein, we should continue on to the next one, but make the non-protein residue repackable only
 		// Removed by VKM -- the user can decide whether to apply design to non-protein residues or not.
 		if ( ! pose.residue( i ).is_protein() ) { /*task.nonconst_residue_task( i ).restrict_to_repacking();*/ continue; }

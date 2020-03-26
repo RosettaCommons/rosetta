@@ -152,7 +152,7 @@ core::Real TaskAwareSASAFilter::compute( Pose const & p, bool const verbose ) co
 			if ( sc_only() ) {
 				// Use CA as the side chain for Glys
 				if ( pose.residue(resi).name3()=="GLY" ) resi_sasa[resi] += atom_sasa[core::id::AtomID(2,resi)];
-				for ( Size j=5; j <= pose.residue(resi).nheavyatoms(); j++ ) {
+				for ( core::Size j=5; j <= pose.residue(resi).nheavyatoms(); j++ ) {
 					resi_sasa[resi] += atom_sasa[core::id::AtomID(j,resi)];
 				}
 			} else {

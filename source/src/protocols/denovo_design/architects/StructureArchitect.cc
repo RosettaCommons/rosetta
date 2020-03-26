@@ -37,7 +37,7 @@ namespace architects {
 StructureArchitect::~StructureArchitect() = default;
 
 StructureArchitect::StructureArchitect( std::string const & id ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	id_( id )
 {}
 

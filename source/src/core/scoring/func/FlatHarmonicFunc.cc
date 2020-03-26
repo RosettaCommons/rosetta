@@ -17,7 +17,7 @@
 #include <core/types.hh>
 #include <cmath>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 #include <sstream>

@@ -55,19 +55,19 @@ public:
 		scorefxn_( init.scorefxn_->clone() )
 	{}
 	void calculate( Pose const & pose1, Pose const & pose2 );
-	std::map< Size, Real> const * get_res_energy( Size const num ) const {
+	std::map< core::Size, Real> const * get_res_energy( core::Size const num ) const {
 		runtime_assert(num==1 || num==2);
 		return( num==1 ? &res_energy1_ : &res_energy2_ );
 	}
 	void report( std::ostream & out ) const;
-	std::map< Size, std::string > const & res_name1() const { return res_name1_; }
-	std::map< Size, std::string > const & res_name2() const { return res_name2_; }
+	std::map< core::Size, std::string > const & res_name1() const { return res_name1_; }
+	std::map< core::Size, std::string > const & res_name2() const { return res_name2_; }
 	virtual ~ReportSequenceDifferences() = default;
 private:
-	std::map< Size, Real > res_energy1_;
-	std::map< Size, Real > res_energy2_;
-	std::map< Size, std::string > res_name1_;
-	std::map< Size, std::string > res_name2_;
+	std::map< core::Size, Real > res_energy1_;
+	std::map< core::Size, Real > res_energy2_;
+	std::map< core::Size, std::string > res_name1_;
+	std::map< core::Size, std::string > res_name2_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 };
 

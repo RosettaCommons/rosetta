@@ -86,7 +86,7 @@ StructAvrgMover::apply( pose::Pose &pose )
 
 	utility::vector1< utility::vector1< Real > > deviation;
 	deviation.resize( ref_pose.size() );
-	for ( Size i_pose = 1; i_pose <= poses_.size(); ++i_pose ) {
+	for ( core::Size i_pose = 1; i_pose <= poses_.size(); ++i_pose ) {
 		add_deviations( ref_pose, poses_[i_pose], deviation );
 	}
 
@@ -102,7 +102,7 @@ StructAvrgMover::apply( pose::Pose &pose )
 	}
 }
 
-utility::vector1< std::pair< Size, Size > >
+utility::vector1< std::pair< core::Size, core::Size > >
 StructAvrgMover::predict_region( utility::vector1< core::Real > const CAvar,
 	utility::vector1< bool > &is_region,
 	core::Real const min_fluc,
@@ -111,16 +111,16 @@ StructAvrgMover::predict_region( utility::vector1< core::Real > const CAvar,
 
 	// First export to std::vector to measurely sort
 	std::vector< core::Real > CAvar_sortable;
-	for ( Size i = 1; i <= CAvar.size(); ++i ) {
+	for ( core::Size i = 1; i <= CAvar.size(); ++i ) {
 		CAvar_sortable.push_back( CAvar[i] );
 	}
 
 	// Sort and get baseline for overall fluctuation
 	std::sort( CAvar_sortable.begin(), CAvar_sortable.end() );
-	Size imax_base = (Size)(frac_base*CAvar.size()) - 1;
+	core::Size imax_base = (core::Size)(frac_base*CAvar.size()) - 1;
 
 	core::Real fluc = 0.0;
-	for ( Size i = 0; i < imax_base; ++i ) fluc += CAvar_sortable[i];
+	for ( core::Size i = 0; i < imax_base; ++i ) fluc += CAvar_sortable[i];
 
 	fluc /= (core::Real)(imax_base);
 	core::Real const fluc_cut = mulfactor_*fluc;
@@ -130,16 +130,16 @@ StructAvrgMover::predict_region( utility::vector1< core::Real > const CAvar,
 	// Scan over residue, and set as variable region
 	// if satisfy both condition CArmsd > fluc*mulfactor and CArmsd > min_fluc
 	is_region.resize( CAvar.size(), false );
-	for ( Size ires = 1; ires <= CAvar.size(); ++ires ) {
+	for ( core::Size ires = 1; ires <= CAvar.size(); ++ires ) {
 		if ( CAvar[ires] > min_fluc && CAvar[ires] > fluc_cut ) is_region[ires] = true;
 	}
 
-	utility::vector1< std::pair< Size, Size > > var_region;
+	utility::vector1< std::pair< core::Size, core::Size > > var_region;
 
 	// 1. Sandwich gap and then Remove outlier peak
 	{
 		utility::vector1< bool > is_region_org( is_region );
-		for ( Size ires = 2; ires <= CAvar.size()-1; ++ires ) {
+		for ( core::Size ires = 2; ires <= CAvar.size()-1; ++ires ) {
 			if ( !is_region_org[ires] && is_region_org[ires-1] && is_region_org[ires+1] ) {
 				is_region[ires] = true;
 			}
@@ -148,7 +148,7 @@ StructAvrgMover::predict_region( utility::vector1< core::Real > const CAvar,
 
 	{
 		utility::vector1< bool > is_region_org( is_region );
-		for ( Size ires = 2; ires <= CAvar.size()-1; ++ires ) {
+		for ( core::Size ires = 2; ires <= CAvar.size()-1; ++ires ) {
 			if ( is_region_org[ires] && !is_region_org[ires-1] && !is_region_org[ires] ) {
 				is_region[ires] = false;
 			}
@@ -157,7 +157,7 @@ StructAvrgMover::predict_region( utility::vector1< core::Real > const CAvar,
 
 	//2. Extend by 2res
 	utility::vector1< bool > is_region_org( is_region );
-	for ( Size ires = 3; ires <= CAvar.size()-2; ++ires ) {
+	for ( core::Size ires = 3; ires <= CAvar.size()-2; ++ires ) {
 		if ( is_region_org[ires] ) {
 			is_region[ires-2] = true; is_region[ires-1] = true;
 			is_region[ires+1] = true; is_region[ires+2] = true;
@@ -165,13 +165,13 @@ StructAvrgMover::predict_region( utility::vector1< core::Real > const CAvar,
 	}
 
 	//3.Split into region
-	Size var_last = -1;
-	for ( Size ires = 1; ires <= CAvar.size(); ++ires ) {
+	core::Size var_last = -1;
+	for ( core::Size ires = 1; ires <= CAvar.size(); ++ires ) {
 		if ( !is_region[ires] ) continue;
 
-		Size i_seg = var_region.size();
+		core::Size i_seg = var_region.size();
 		if ( ires - var_last > 1 ) { // Start over with a new piece
-			var_region.push_back( std::pair< Size, Size > (ires, ires) );
+			var_region.push_back( std::pair< core::Size, core::Size > (ires, ires) );
 		} else { // Extension
 			var_region[i_seg].second = ires;
 		}
@@ -179,9 +179,9 @@ StructAvrgMover::predict_region( utility::vector1< core::Real > const CAvar,
 	}
 
 	// 4. update
-	for ( Size ires = 1; ires <= CAvar.size(); ++ires ) is_region[ires] = false;
-	for ( Size ireg = 1; ireg <= var_region.size(); ++ireg ) {
-		for ( Size ires = var_region[ireg].first; ires <= var_region[ireg].second; ++ires ) {
+	for ( core::Size ires = 1; ires <= CAvar.size(); ++ires ) is_region[ires] = false;
+	for ( core::Size ireg = 1; ireg <= var_region.size(); ++ireg ) {
+		for ( core::Size ires = var_region[ireg].first; ires <= var_region[ireg].second; ++ires ) {
 			is_region[ires] = true;
 		}
 	}
@@ -198,15 +198,15 @@ StructAvrgMover::report_dev( core::pose::Pose const & ref_pose ) const
 	//bool report_native( false );
 	//if( native_given_ ) report_native = true;
 	utility::vector1< bool > is_region;
-	utility::vector1< std::pair< Size, Size > > var_region = predict_region( CAvar_, is_region );
+	utility::vector1< std::pair< core::Size, core::Size > > var_region = predict_region( CAvar_, is_region );
 
 	// report region
 	core::Size nres_region( 0 );
 	TR << "RMSF: Variable region: ";
 	for ( core::Size ireg = 1; ireg <= var_region.size(); ++ireg ) {
-		Size startres = ref_pose.pdb_info()->number( var_region[ireg].first );
-		Size endres = ref_pose.pdb_info()->number( var_region[ireg].second );
-		Size dres = var_region[ireg].second - var_region[ireg].first;
+		core::Size startres = ref_pose.pdb_info()->number( var_region[ireg].first );
+		core::Size endres = ref_pose.pdb_info()->number( var_region[ireg].second );
+		core::Size dres = var_region[ireg].second - var_region[ireg].first;
 		// prevent from weird Cterms...
 		if ( var_region[ireg].second == ref_pose.size() && endres == 1 ) {
 			endres = ref_pose.pdb_info()->number( var_region[ireg].second - 1 );
@@ -224,8 +224,8 @@ StructAvrgMover::report_dev( core::pose::Pose const & ref_pose ) const
 	TR << "RMSF: " << std::setw(4) << "Res" << std::setw(4) << "PDB";
 	TR << std::setw(4) << "Var" << std::setw(9) << "Fluc";
 	TR << std::endl;
-	for ( Size ires = 1; ires <= CAvar_.size(); ++ires ) {
-		Size resno = ref_pose.pdb_info()->number( ires );
+	for ( core::Size ires = 1; ires <= CAvar_.size(); ++ires ) {
+		core::Size resno = ref_pose.pdb_info()->number( ires );
 		// sometimes weird thing can happend at Cterm...
 		if ( ires == ref_pose.size() && resno == 1 ) continue;
 		std::string is_reg; is_region[ires] ? is_reg = "1" : is_reg = "0";
@@ -240,13 +240,13 @@ utility::vector1< core::Real >
 StructAvrgMover::calculate_variations( utility::vector1< utility::vector1< core::Real > > const deviation ){
 	utility::vector1< core::Real > CAvars( deviation.size(), 0.0 );
 
-	for ( Size ires = 1; ires <= deviation.size(); ++ires ) {
+	for ( core::Size ires = 1; ires <= deviation.size(); ++ires ) {
 		utility::vector1< core::Real > const &dev_res = deviation[ires];
 
 		if ( dev_res.size() == 0 ) continue;
 
 		core::Real rmsd( 0.0 );
-		for ( Size i = 1; i <= dev_res.size(); ++i ) {
+		for ( core::Size i = 1; i <= dev_res.size(); ++i ) {
 			rmsd += dev_res[i]*dev_res[i];
 		}
 
@@ -258,11 +258,11 @@ StructAvrgMover::calculate_variations( utility::vector1< utility::vector1< core:
 
 	// Smoothen
 	core::Size const winsize( 9 );
-	Size const pos_shift( (winsize - 1)/2 );
+	core::Size const pos_shift( (winsize - 1)/2 );
 	utility::vector1< core::Real > const CAvars0( CAvars );
 
 	utility::vector1< core::Real > w( winsize );
-	for ( Size i_pos = 1; i_pos <= pos_shift+1; ++i_pos ) {
+	for ( core::Size i_pos = 1; i_pos <= pos_shift+1; ++i_pos ) {
 		w[winsize-i_pos] = i_pos*0.1;
 		w[i_pos] = i_pos*0.1;
 	}
@@ -270,11 +270,11 @@ StructAvrgMover::calculate_variations( utility::vector1< utility::vector1< core:
 	//Clean
 	CAvars.resize( CAvars0.size(), 0.0 );
 
-	for ( Size i_res = 1; i_res <= CAvars.size(); ++i_res ) {
+	for ( core::Size i_res = 1; i_res <= CAvars.size(); ++i_res ) {
 		core::Real valsum( 0.0 );
 		core::Real wsum( 0.0 );
-		for ( Size i_w = 1; i_w <= winsize; ++i_w ) {
-			Size const resno( i_res+i_w-pos_shift-1);
+		for ( core::Size i_w = 1; i_w <= winsize; ++i_w ) {
+			core::Size const resno( i_res+i_w-pos_shift-1);
 			if ( resno < 1 || resno > CAvars.size() ) continue;
 
 			core::Real wval = w[i_w]*CAvars0[resno];
@@ -296,7 +296,7 @@ StructAvrgMover::add_deviations( pose::Pose ref_pose,
 	// First superimpose
 	scoring::calpha_superimpose_pose( pose, ref_pose );
 
-	for ( Size ires = 1; ires <= ref_pose.size(); ++ ires ) {
+	for ( core::Size ires = 1; ires <= ref_pose.size(); ++ ires ) {
 		if ( !ref_pose.residue( ires ).has(" CA ") ) continue;
 
 		Vector const &xyz1 = ref_pose.residue(ires).xyz( "CA" );
@@ -333,9 +333,9 @@ StructAvrgMover::weighted_average( utility::vector1< pose::Pose > &poses,
 
 	//First get atomIDs available
 	utility::vector1< id::AtomID > ids;
-	for ( Size ires = 1; ires <= pose_ref.size(); ++ires ) {
+	for ( core::Size ires = 1; ires <= pose_ref.size(); ++ires ) {
 		conformation::Residue const &rsd = pose_avrg.residue(ires);
-		for ( Size iatm = 1; iatm <= atoms_copy.size(); ++iatm ) {
+		for ( core::Size iatm = 1; iatm <= atoms_copy.size(); ++iatm ) {
 			if ( rsd.has( atoms_copy[iatm] ) ) {
 				id::AtomID id( rsd.atom_index(atoms_copy[iatm]), ires );
 				ids.push_back( id );
@@ -349,7 +349,7 @@ StructAvrgMover::weighted_average( utility::vector1< pose::Pose > &poses,
 		// get min/max E
 		std::vector< Real > scores;
 		utility::vector1< Real > scores_cp;
-		for ( Size ipose = 1; ipose <= poses.size(); ++ipose ) {
+		for ( core::Size ipose = 1; ipose <= poses.size(); ++ipose ) {
 			Real score = sfxn->score( poses[ipose] );
 			scores.push_back( score );
 			scores_cp.push_back( score );
@@ -362,7 +362,7 @@ StructAvrgMover::weighted_average( utility::vector1< pose::Pose > &poses,
 
 		// Then get normalized weight
 		Real prob_sum( 0.0 );
-		for ( Size ipose = 1; ipose <= scores_cp.size(); ++ipose ) {
+		for ( core::Size ipose = 1; ipose <= scores_cp.size(); ++ipose ) {
 			Real const Ess = scores_cp[ipose];
 
 			Real const normalizedE( -(Ess - Emin)/denominator ); // Emin = 0, Emax = -1
@@ -371,7 +371,7 @@ StructAvrgMover::weighted_average( utility::vector1< pose::Pose > &poses,
 			weights[ipose] = prob;
 		}
 
-		for ( Size i = 1; i <= weights.size(); ++ i ) {
+		for ( core::Size i = 1; i <= weights.size(); ++ i ) {
 			weights[i] /= prob_sum;
 			TR.Debug << "Set pose " << std::setw(4) << i << " with score ";
 			TR.Debug << std::setw(8) << scores_cp[i] << " weight as: ";
@@ -380,13 +380,13 @@ StructAvrgMover::weighted_average( utility::vector1< pose::Pose > &poses,
 	}
 
 	// Finally
-	for ( Size ipose = 1; ipose <= poses.size(); ++ipose ) {
+	for ( core::Size ipose = 1; ipose <= poses.size(); ++ipose ) {
 		pose::Pose &pose_tmp = poses[ipose];
 
 		// Superimpose to ref
 		scoring::calpha_superimpose_pose( pose_tmp, pose_ref );
 
-		for ( Size i_id = 1; i_id <= ids.size(); ++i_id ) {
+		for ( core::Size i_id = 1; i_id <= ids.size(); ++i_id ) {
 			id::AtomID const &id = ids[i_id];
 			// H
 			//std::string atmname = pose_tmp.residue( id.rsd() ).atom_name( id.atomno() );
@@ -397,7 +397,7 @@ StructAvrgMover::weighted_average( utility::vector1< pose::Pose > &poses,
 	}
 
 	// Export into pose_avrg
-	for ( Size i_id = 1; i_id <= ids.size(); ++ i_id ) {
+	for ( core::Size i_id = 1; i_id <= ids.size(); ++ i_id ) {
 		id::AtomID const &id = ids[i_id];
 		pose_avrg.set_xyz( id, avrg_crd[id] );
 	}
@@ -407,7 +407,7 @@ StructAvrgMover::weighted_average( utility::vector1< pose::Pose > &poses,
 	utility::vector0< Real > rmsds;
 	utility::vector1< Real > rmsds_cp;
 
-	for ( Size i_pose = 1; i_pose <= poses.size(); ++i_pose ) {
+	for ( core::Size i_pose = 1; i_pose <= poses.size(); ++i_pose ) {
 		Real const rmsd = scoring::CA_rmsd( poses[i_pose], pose_avrg );
 		rmsds.push_back( rmsd );
 		rmsds_cp.push_back( rmsd );
@@ -415,10 +415,10 @@ StructAvrgMover::weighted_average( utility::vector1< pose::Pose > &poses,
 
 	// Sort to get rmsd cut
 	std::sort( rmsds.begin(), rmsds.end() );
-	Size closest( 1 );
+	core::Size closest( 1 );
 
 	// just doing explicitly because below breaks due to crazy NULL definition...
-	//Size closest = (core::Size)(rmsds_cp.index_of( rmsds[0] ));
+	//core::Size closest = (core::Size)(rmsds_cp.index_of( rmsds[0] ));
 	for ( core::Size i = 1; i <= rmsds_cp.size(); ++i ) {
 		if ( rmsds_cp[i]-rmsds[0] < 1.0e6 ) {
 			closest = i;
@@ -428,9 +428,9 @@ StructAvrgMover::weighted_average( utility::vector1< pose::Pose > &poses,
 	pose::Pose &pose_close = poses[closest];
 
 	// Copy
-	for ( Size ires = 1; ires <= pose_avrg.size(); ++ires ) {
-		Size start = pose_avrg.residue(ires).type().first_sidechain_atom();
-		for ( Size iatm = start; iatm <= pose_avrg.residue(ires).natoms(); ++iatm ) {
+	for ( core::Size ires = 1; ires <= pose_avrg.size(); ++ires ) {
+		core::Size start = pose_avrg.residue(ires).type().first_sidechain_atom();
+		for ( core::Size iatm = start; iatm <= pose_avrg.residue(ires).natoms(); ++iatm ) {
 			id::AtomID id( iatm, ires );
 			pose_avrg.set_xyz( id, pose_close.residue( ires ).xyz( iatm ) );
 		}
@@ -465,7 +465,7 @@ StructAvrgMover::shave_poses( utility::vector1< pose::Pose > &poses,
 	std::vector< Real > rmsds;
 	utility::vector1< Real > rmsds_cp;
 
-	for ( Size i_pose = 1; i_pose <= poses.size(); ++i_pose ) {
+	for ( core::Size i_pose = 1; i_pose <= poses.size(); ++i_pose ) {
 		Real const rmsd = scoring::CA_rmsd( poses[i_pose], avrg_pose );
 		rmsds.push_back( rmsd );
 		rmsds_cp.push_back( rmsd );
@@ -473,11 +473,11 @@ StructAvrgMover::shave_poses( utility::vector1< pose::Pose > &poses,
 
 	// Sort to get rmsd cut
 	std::sort( rmsds.begin(), rmsds.end() );
-	auto const icut = (Size)( (1.0 - frac)*rmsds.size() );
+	auto const icut = (core::Size)( (1.0 - frac)*rmsds.size() );
 	Real const rmsdcut = rmsds[icut];
 
 	utility::vector1< pose::Pose > poses_shaved;
-	for ( Size i_pose = 1; i_pose <= poses.size(); ++i_pose ) {
+	for ( core::Size i_pose = 1; i_pose <= poses.size(); ++i_pose ) {
 		if ( rmsds_cp[i_pose] < rmsdcut ) {
 			poses_shaved.push_back( poses[i_pose] );
 		}

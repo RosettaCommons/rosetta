@@ -44,15 +44,15 @@ DownstreamRMSEvaluator::set_downstream_pose( core::pose::PoseCOP dspose )
 
 	/// TEMP!
 	/// Compare all heavy atoms on all residues
-	Size count_atoms = 0;
-	for ( Size ii = 1; ii <= dspose_->size(); ++ii ) {
+	core::Size count_atoms = 0;
+	for ( core::Size ii = 1; ii <= dspose_->size(); ++ii ) {
 		count_atoms += dspose_->residue(ii).nheavyatoms();
 	}
 
 	atoms_to_compare_.resize( count_atoms );
 	count_atoms = 1;
-	for ( Size ii = 1; ii <= dspose_->size(); ++ii ) {
-		for ( Size jj = 1; jj <= dspose_->residue(ii).nheavyatoms(); ++jj ) {
+	for ( core::Size ii = 1; ii <= dspose_->size(); ++ii ) {
+		for ( core::Size jj = 1; jj <= dspose_->residue(ii).nheavyatoms(); ++jj ) {
 			atoms_to_compare_[ count_atoms ] = core::id::AtomID( jj, ii );
 			++count_atoms;
 		}
@@ -60,7 +60,7 @@ DownstreamRMSEvaluator::set_downstream_pose( core::pose::PoseCOP dspose )
 }
 
 void
-DownstreamRMSEvaluator::set_n_geometric_constraints( Size setting )
+DownstreamRMSEvaluator::set_n_geometric_constraints( core::Size setting )
 {
 	n_geometric_constraints_ = setting;
 	ds_builders_.resize( n_geometric_constraints_ );
@@ -71,7 +71,7 @@ DownstreamRMSEvaluator::set_n_geometric_constraints( Size setting )
 /// null;
 void
 DownstreamRMSEvaluator::set_downstream_builder(
-	Size which_geom_cst,
+	core::Size which_geom_cst,
 	downstream::DownstreamBuilderCOP ds_builder
 )
 {
@@ -83,25 +83,25 @@ DownstreamRMSEvaluator::Real
 DownstreamRMSEvaluator::score( match const & m ) const
 {
 	utility::vector1< utility::vector1< Vector > > ds_coords( n_geometric_constraints_ );
-	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		ds_coords[ ii ].resize( atoms_to_compare_.size() );
 	}
 
-	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		if ( ds_builders_[ ii ] ) {
 			ds_builders_[ ii ]->coordinates_from_hit( m[ ii ], atoms_to_compare_, ds_coords[ ii ] );
 		}
 	}
 
 	Real rms_sum = 0.0;
-	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		if ( ! ds_builders_[ ii ] ) continue;
-		for ( Size jj = ii+1; jj <= n_geometric_constraints_; ++jj ) {
+		for ( core::Size jj = ii+1; jj <= n_geometric_constraints_; ++jj ) {
 			if ( ! ds_builders_[ jj ] ) continue;
 
 			Real iijj_rms = 0.0;
-			Size num_atoms_to_compare=atoms_to_compare_.size();
-			for ( Size kk = 1; kk <= num_atoms_to_compare; ++kk ) {
+			core::Size num_atoms_to_compare=atoms_to_compare_.size();
+			for ( core::Size kk = 1; kk <= num_atoms_to_compare; ++kk ) {
 				iijj_rms += ds_coords[ ii ][ kk ].distance_squared( ds_coords[ jj ][ kk ] );
 			}
 			rms_sum += std::sqrt( iijj_rms/num_atoms_to_compare );

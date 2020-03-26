@@ -300,8 +300,8 @@ GreedyOptMutationMover::parallel() const{
 //utility funxns for comparing values in sort
 bool
 cmp_pair_by_second(
-	pair< Size, Real > const pair1,
-	pair< Size, Real > const pair2 )
+	pair< core::Size, Real > const pair1,
+	pair< core::Size, Real > const pair2 )
 {
 	return pair1.second < pair2.second;
 }
@@ -316,8 +316,8 @@ cmp_pair_by_first_vec_val(
 
 bool
 cmp_pair_vec_by_first_vec_val(
-	pair< Size, vector1< pair< AA, vector1< Real > > > > const pair1,
-	pair< Size, vector1< pair< AA, vector1< Real > > > > const pair2 )
+	pair< core::Size, vector1< pair< AA, vector1< Real > > > > const pair1,
+	pair< core::Size, vector1< pair< AA, vector1< Real > > > > const pair2 )
 {
 	return pair1.second[ 1 ].second[ 1 ] < pair2.second[ 1 ].second[ 1 ];
 }
@@ -328,7 +328,7 @@ GreedyOptMutationMover::downsample_pfront_poses(){
 	using namespace basic::options::OptionKeys;
 
 	//sample nstruct numbers from *poses_.size() member data vectors and reassign
-	Size nstruct( 1 );
+	core::Size nstruct( 1 );
 	if ( option[ run::shuffle ]() ) {
 		nstruct = option[ out::shuffle_nstruct ]();
 	} else {
@@ -336,14 +336,14 @@ GreedyOptMutationMover::downsample_pfront_poses(){
 	}
 	// skip if want more structs than exist poses
 	if ( nstruct < pfront_poses_.size() ) {
-		vector1< Size > ds_idxs;
-		for ( Size i=1; i <= pfront_poses_.size(); ++i ) ds_idxs.push_back( i );
+		vector1< core::Size > ds_idxs;
+		for ( core::Size i=1; i <= pfront_poses_.size(); ++i ) ds_idxs.push_back( i );
 		numeric::random::random_permutation( ds_idxs, numeric::random::rg() );
 		ds_idxs.resize( nstruct );
 		vector1< pose::Pose > ds_poses;
 		vector1< vector1< core::Real > > ds_filter_vals;
-		for ( Size i = 1; i <= ds_idxs.size(); ++i ) {
-			Size ds_idx( ds_idxs[ i ] );
+		for ( core::Size i = 1; i <= ds_idxs.size(); ++i ) {
+			core::Size ds_idx( ds_idxs[ i ] );
 			ds_poses.push_back( pfront_poses_[ ds_idx ] );
 			ds_filter_vals.push_back( pfront_poses_filter_vals_[ ds_idx ] );
 		}
@@ -370,13 +370,13 @@ GreedyOptMutationMover::pose_coords_are_same(
 	//first check for all restype match, also checks same number res
 	if ( !pose1.conformation().sequence_matches( pose2.conformation() ) ) return false;
 	//then check for all coords identical
-	for ( Size i = 1; i <= pose1.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose1.size(); ++i ) {
 		core::conformation::Residue const & rsd1( pose1.residue( i ) );
 		core::conformation::Residue const & rsd2( pose2.residue( i ) );
 		//check same n atoms
 		if ( rsd1.natoms() != rsd2.natoms() ) return false;
 		//and coords
-		for ( Size ii = 1; ii <= rsd1.natoms(); ++ii ) {
+		for ( core::Size ii = 1; ii <= rsd1.natoms(); ++ii ) {
 			if ( rsd1.xyz( ii ).x() != rsd2.xyz( ii ).x() ) return false;
 			if ( rsd1.xyz( ii ).y() != rsd2.xyz( ii ).y() ) return false;
 			if ( rsd1.xyz( ii ).z() != rsd2.xyz( ii ).z() ) return false;
@@ -388,20 +388,20 @@ GreedyOptMutationMover::pose_coords_are_same(
 void
 GreedyOptMutationMover::calc_pfront_poses_filter_ranks(){
 	//(re)init ranks w/ bogus zero data
-	pfront_poses_filter_ranks_ = vector1< vector1< Size > >( pfront_poses_filter_vals_.size(),
-		vector1< Size >( pfront_poses_filter_vals_[ 1 ].size(), Size( 0 ) ) );
+	pfront_poses_filter_ranks_ = vector1< vector1< core::Size > >( pfront_poses_filter_vals_.size(),
+		vector1< core::Size >( pfront_poses_filter_vals_[ 1 ].size(), core::Size( 0 ) ) );
 	//for each filter type
-	for ( Size ifilt = 1; ifilt <= pfront_poses_filter_vals_[ 1 ].size(); ++ifilt ) {
+	for ( core::Size ifilt = 1; ifilt <= pfront_poses_filter_vals_[ 1 ].size(); ++ifilt ) {
 		//copy all this filter vals into a vector of pair< index, val >
-		vector1< pair< Size, Real > > filter_index_vals;
-		for ( Size ipose = 1; ipose <= pfront_poses_filter_vals_.size(); ++ipose ) {
-			filter_index_vals.push_back( pair< Size, Real >( ipose, pfront_poses_filter_vals_[ ipose ][ ifilt ] ) );
+		vector1< pair< core::Size, Real > > filter_index_vals;
+		for ( core::Size ipose = 1; ipose <= pfront_poses_filter_vals_.size(); ++ipose ) {
+			filter_index_vals.push_back( pair< core::Size, Real >( ipose, pfront_poses_filter_vals_[ ipose ][ ifilt ] ) );
 		}
 		//and sort by value
 		std::sort( filter_index_vals.begin(), filter_index_vals.end(), cmp_pair_by_second );
 		//now can get rank and index
-		for ( Size rank = 1; rank <= filter_index_vals.size(); ++rank ) {
-			Size ipose( filter_index_vals[ rank ].first );
+		for ( core::Size rank = 1; rank <= filter_index_vals.size(); ++rank ) {
+			core::Size ipose( filter_index_vals[ rank ].first );
 			pfront_poses_filter_ranks_[ ipose ][ ifilt ] = rank;
 		}
 	}
@@ -416,24 +416,24 @@ calc_pareto_front_nbrs(
 ){
 	debug_assert( coords.size() == is_pfront.size() );
 	//n coords, d dimensions
-	Size n( coords.size() );
-	Size d( coords[ 1 ].size() );
+	core::Size n( coords.size() );
+	core::Size d( coords[ 1 ].size() );
 	debug_assert( nbr_dist.size() == d );
 	//for non pfront points
-	for ( Size inp = 1; inp <= n; ++inp ) {
+	for ( core::Size inp = 1; inp <= n; ++inp ) {
 		//init possible nbr to false
 		is_pfront_nbr[ inp ] = false;
 		//skip front pts
 		if ( is_pfront[ inp ] ) continue;
 		//over pfront pts
-		for ( Size ip = 1; ip <= n; ++ip ) {
+		for ( core::Size ip = 1; ip <= n; ++ip ) {
 			if ( ip == inp ) continue;
 			//skip non-front pts
 			if ( !is_pfront[ ip ] ) continue;
 			//now see if ip pfront pt is in inp's nbr box
 			//init true, reset to false if fails any dimension
 			bool this_is_nbr( true );
-			for ( Size k = 1; k <= d; ++k ) {
+			for ( core::Size k = 1; k <= d; ++k ) {
 				if ( std::abs( coords[ ip ][ k ] - coords[ inp ][ k ] ) > nbr_dist[ k ] ) {
 					this_is_nbr = false;
 					break;
@@ -468,26 +468,26 @@ calc_pareto_front(
 ){
 	debug_assert( coords.size() == is_pfront.size() );
 	//n coords, d dimensions
-	Size n( coords.size() );
-	Size d( coords[ 1 ].size() );
+	core::Size n( coords.size() );
+	core::Size d( coords[ 1 ].size() );
 	debug_assert( coord_perts.size() == d );
 	//randomly offset values by jiggle-factors defined in filter_deltas?
 	if ( div ) {
-		for ( Size i = 1; i <= n; ++i ) {
-			for ( Size k = 1; k <= d; ++k ) {
+		for ( core::Size i = 1; i <= n; ++i ) {
+			for ( core::Size k = 1; k <= d; ++k ) {
 				coords[ i ][ k ] += ( ( numeric::random::rg().uniform() - 0.5 ) * coord_perts[ k ] );
 			}
 		}
 	}
 	//for each point
-	for ( Size i = 1; i <= n; ++i ) {
+	for ( core::Size i = 1; i <= n; ++i ) {
 		bool is_dom( false );
 		//check if strictly dominated by another point
-		for ( Size j = 1; j <= n; ++j ) {
+		for ( core::Size j = 1; j <= n; ++j ) {
 			if ( j == i ) continue;
 			is_dom = true;
 			bool is_equal = true;
-			for ( Size k = 1; k <= d; ++k ) {
+			for ( core::Size k = 1; k <= d; ++k ) {
 				//check for same coords
 				is_equal = is_equal && ( coords[ i ][ k ] == coords[ j ][ k ] );
 				//i not dominated by j if less in any dimension
@@ -507,7 +507,7 @@ calc_pareto_front(
 		vector1< bool > is_pfront_nbr( is_pfront.size(), false );
 		calc_pareto_front_nbrs( coords, is_pfront, is_pfront_nbr, coord_perts );
 		//reset is_pfront to incl nbrs
-		for ( Size ip = 1; ip <= is_pfront.size(); ip++ ) {
+		for ( core::Size ip = 1; ip <= is_pfront.size(); ip++ ) {
 			if ( !is_pfront[ ip ] && is_pfront_nbr[ ip ] ) is_pfront[ ip ]  = true;
 		}
 	}
@@ -516,18 +516,18 @@ calc_pareto_front(
 //removes seqpos aa/vals from set that are not pareto optimal
 void
 GreedyOptMutationMover::filter_seqpos_pareto_opt_ptmuts(){
-	for ( Size iseq = 1; iseq <= seqpos_aa_vals_vec_.size(); ++iseq ) {
+	for ( core::Size iseq = 1; iseq <= seqpos_aa_vals_vec_.size(); ++iseq ) {
 		vector1< bool > is_pfront( seqpos_aa_vals_vec_[ iseq ].second.size(), false );
 		vector1< vector1< Real > > vals;
 		//get a vec of vecs from the data
-		for ( Size i = 1; i <= seqpos_aa_vals_vec_[ iseq ].second.size(); ++i ) {
+		for ( core::Size i = 1; i <= seqpos_aa_vals_vec_[ iseq ].second.size(); ++i ) {
 			vals.push_back( seqpos_aa_vals_vec_[ iseq ].second[ i ].second );
 		}
 		//get is_pareto bool vec
 		calc_pareto_front( vals, is_pfront, filter_deltas_, diversify_, incl_nonopt_ );
 		//replace aa/vals vector with pareto opt only
 		vector1< pair< AA, vector1< Real > > > pfront_aa_vals;
-		for ( Size iaa = 1; iaa <= seqpos_aa_vals_vec_[ iseq ].second.size(); ++iaa ) {
+		for ( core::Size iaa = 1; iaa <= seqpos_aa_vals_vec_[ iseq ].second.size(); ++iaa ) {
 			if ( is_pfront[ iaa ] ) pfront_aa_vals.push_back( seqpos_aa_vals_vec_[ iseq ].second[ iaa ] );
 			//   else if( is_pfront_nbr[ iaa ] ) pfront_aa_vals.push_back( seqpos_aa_vals_vec_[ iseq ].second[ iaa ] );
 		}
@@ -547,7 +547,7 @@ GreedyOptMutationMover::filter_pareto_opt_poses(){
 	//remove entries that are not pareto
 	vector1< pose::Pose > new_pfront_poses;
 	vector1< vector1< Real > > new_pfront_poses_filter_vals;
-	for ( Size ipose = 1; ipose <= pfront_poses_.size(); ++ipose ) {
+	for ( core::Size ipose = 1; ipose <= pfront_poses_.size(); ++ipose ) {
 		if ( is_pfront[ ipose ] ) {
 			new_pfront_poses.push_back( pfront_poses_[ ipose ] );
 			new_pfront_poses_filter_vals.push_back( pfront_poses_filter_vals_[ ipose ] );
@@ -619,7 +619,7 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 		}
 		//this part sorts the seqpos/aa/val data so that we init with something good (1st)
 		//first over each seqpos by aa val, then over all seqpos by best aa val
-		for ( Size ivec = 1; ivec <= seqpos_aa_vals_vec_.size(); ++ivec ) {
+		for ( core::Size ivec = 1; ivec <= seqpos_aa_vals_vec_.size(); ++ivec ) {
 			//skip if aa/vals vector is empty
 			if ( seqpos_aa_vals_vec_[ ivec ].second.empty() ) continue;
 			//sort aa/vals in incr val order
@@ -652,10 +652,10 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 
 		//init pareto opt poses with first mutations for now
 		//TODO: is there a better way to init?
-		Size iseq_init( 1 );
+		core::Size iseq_init( 1 );
 		//the resi index is the first part of the pair
-		Size resi_init( seqpos_aa_vals_vec_[ iseq_init ].first );
-		for ( Size iaa = 1; iaa <= seqpos_aa_vals_vec_[ iseq_init ].second.size(); ++iaa ) {
+		core::Size resi_init( seqpos_aa_vals_vec_[ iseq_init ].first );
+		for ( core::Size iaa = 1; iaa <= seqpos_aa_vals_vec_[ iseq_init ].second.size(); ++iaa ) {
 			AA target_aa( seqpos_aa_vals_vec_[ iseq_init ].second[ iaa ].first );
 			pose::Pose new_pose( start_pose );
 			ptmut_calc->mutate_and_relax( new_pose, resi_init, target_aa );
@@ -668,18 +668,18 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 		}
 
 		//now try to combine pareto opt mutations
-		for ( Size iseq = 2; iseq <= seqpos_aa_vals_vec_.size(); ++iseq ) {
+		for ( core::Size iseq = 2; iseq <= seqpos_aa_vals_vec_.size(); ++iseq ) {
 			//create new pose vec to hold all combinations
 			vector1< pose::Pose > new_poses;
 			vector1< vector1< Real > > new_poses_filter_vals;
 			//the resi index is the first part of the pair
-			Size seqpos( seqpos_aa_vals_vec_[ iseq ].first );
+			core::Size seqpos( seqpos_aa_vals_vec_[ iseq ].first );
 			TR << "Combining " << pfront_poses_.size() << " structures with mutations at residue " << seqpos << std::endl;
 			//over each current pfront pose
 			//pfront_poses_ contains all the current poses
-			for ( Size ipose = 1; ipose <= pfront_poses_.size(); ++ipose ) {
+			for ( core::Size ipose = 1; ipose <= pfront_poses_.size(); ++ipose ) {
 				//over all aa's at seqpos
-				for ( Size iaa = 1; iaa <= seqpos_aa_vals_vec_[ iseq ].second.size(); ++iaa ) {
+				for ( core::Size iaa = 1; iaa <= seqpos_aa_vals_vec_[ iseq ].second.size(); ++iaa ) {
 					//inside this double loop, all pfront_poses_ are combined with all muts at this position
 					AA target_aa( seqpos_aa_vals_vec_[ iseq ].second[ iaa ].first );
 					pose::Pose new_pose( pfront_poses_[ ipose ] );
@@ -708,7 +708,7 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 
 			//end optimization if *any* of the new pareto poses trips the stopping_condition
 			bool stop( false );
-			for ( Size ipose = 1; ipose <= new_poses.size(); ++ipose ) {
+			for ( core::Size ipose = 1; ipose <= new_poses.size(); ++ipose ) {
 				pose::Pose new_pose( new_poses[ ipose ] );
 				if ( stopping_condition() && stopping_condition()->apply( new_pose ) ) {
 					stop = true;
@@ -730,7 +730,7 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 				pfront_poses_filter_vals_ = new_poses_filter_vals;
 			} else {
 				//default: add the new poses to the pose cache then pareto filter
-				for ( Size ipose = 1; ipose <= new_poses.size(); ++ipose ) {
+				for ( core::Size ipose = 1; ipose <= new_poses.size(); ++ipose ) {
 					pfront_poses_.push_back( new_poses[ ipose ] );
 					pfront_poses_filter_vals_.push_back( new_poses_filter_vals[ ipose ] );
 				}
@@ -762,17 +762,17 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 		calc_pfront_poses_filter_ranks();
 	}
 	//assign the apply pose to the next pfront_pose
-	Size pfront_pose_iter( ( nstruct_iter_ - 1 ) % pfront_poses_.size() + 1 );
+	core::Size pfront_pose_iter( ( nstruct_iter_ - 1 ) % pfront_poses_.size() + 1 );
 	pose = pfront_poses_[ pfront_pose_iter ];
 	//print out filter vals for this pose
 	TR << "Structure " << nstruct_iter_ << " filter values: ";
-	for ( Size ival = 1; ival <= pfront_poses_filter_vals_[ pfront_pose_iter ].size(); ++ival ) {
+	for ( core::Size ival = 1; ival <= pfront_poses_filter_vals_[ pfront_pose_iter ].size(); ++ival ) {
 		TR << " " << filters()[ ival ]->get_user_defined_name() << ": "
 			<< pfront_poses_filter_vals_[ pfront_pose_iter ][ ival ];
 	}
 	TR << std::endl;
 	TR << "Structure " << nstruct_iter_ << " filter ranks: ";
-	for ( Size ival = 1; ival <= pfront_poses_filter_ranks_[ pfront_pose_iter ].size(); ++ival ) {
+	for ( core::Size ival = 1; ival <= pfront_poses_filter_ranks_[ pfront_pose_iter ].size(); ++ival ) {
 		TR << " " << filters()[ ival ]->get_user_defined_name() << ": "
 			<< pfront_poses_filter_ranks_[ pfront_pose_iter ][ ival ];
 	}

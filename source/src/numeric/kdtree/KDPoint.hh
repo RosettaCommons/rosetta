@@ -18,15 +18,15 @@
 #include <numeric/kdtree/KDPoint.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace numeric {
 namespace kdtree {
 
-class KDPoint : public utility::pointer::ReferenceCount {
+class KDPoint : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~KDPoint() override;
 	KDPoint();
 
@@ -36,7 +36,7 @@ public:
 
 	KDPoint(
 		utility::vector1< numeric::Real > location,
-		utility::pointer::ReferenceCountOP data
+		utility::VirtualBaseOP data
 	);
 
 	KDPoint(
@@ -46,7 +46,7 @@ public:
 
 	KDPoint(
 		utility::vector1< numeric::Real > location,
-		utility::pointer::ReferenceCountOP data,
+		utility::VirtualBaseOP data,
 		numeric::Real distance
 	);
 
@@ -65,7 +65,7 @@ public:
 	utility::vector1< numeric::Real > location() const;
 
 	/// @brief Returns the data associated with this class.
-	utility::pointer::ReferenceCountOP data() const;
+	utility::VirtualBaseOP data() const;
 
 	/// @brief getter for distance() from this point to an arbitrary point
 	/// in kd-space.
@@ -98,7 +98,7 @@ private:
 	utility::vector1< numeric::Real > location_;
 
 	// data associated with this point
-	utility::pointer::ReferenceCountOP data_;
+	utility::VirtualBaseOP data_;
 
 	// distance to an arbitrary point, intended for use in nearest-neighbor
 	// search.

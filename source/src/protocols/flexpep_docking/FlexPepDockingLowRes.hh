@@ -54,7 +54,7 @@ public:
 		FlexPepDockingFlags const & flags_in,
 		core::scoring::ScoreFunctionOP scorefxn_in,
 		core::kinematics::MoveMapOP movemap_in,
-		Size const rb_jump_in = 1
+		core::Size const rb_jump_in = 1
 	);
 
 	// empty destructor - for good inclusion of OP clasesses
@@ -114,7 +114,7 @@ private:
 	core::kinematics::MoveMapOP movemap_;
 
 	/// the jump number across which to do rigid_body transformations
-	Size rb_jump_;
+	core::Size rb_jump_;
 
 	/// whether or not to initialize the viewer (for opengl)
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11

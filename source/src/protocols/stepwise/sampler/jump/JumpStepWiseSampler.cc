@@ -43,7 +43,7 @@ JumpStepWiseSampler::JumpStepWiseSampler():
 }
 
 //Constructor
-JumpStepWiseSampler::JumpStepWiseSampler( Size const which_jump,
+JumpStepWiseSampler::JumpStepWiseSampler( core::Size const which_jump,
 	utility::vector1< core::kinematics::Jump > const & jumps,
 	bool const choose_random /* = false */ ):
 	which_jump_( which_jump ),
@@ -57,7 +57,7 @@ JumpStepWiseSampler::~JumpStepWiseSampler() = default;
 
 //////////////////////////////////////////////////////////////////////////
 void
-JumpStepWiseSampler::apply( core::pose::Pose & pose, Size const id )
+JumpStepWiseSampler::apply( core::pose::Pose & pose, core::Size const id )
 {
 	runtime_assert( id <= size() );
 	pose.set_jump( which_jump_, jumps_[ id ] );

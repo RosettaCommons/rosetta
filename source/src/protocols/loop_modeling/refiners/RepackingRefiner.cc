@@ -39,7 +39,7 @@ using core::scoring::ScoreFunctionOP;
 
 
 
-RepackingRefiner::RepackingRefiner(Size repack_period)
+RepackingRefiner::RepackingRefiner(core::Size repack_period)
 : repack_period_(repack_period),
 	iteration_counter_(0) {}
 
@@ -53,7 +53,7 @@ void RepackingRefiner::parse_my_tag(
 	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
 	utilities::set_task_factory_from_tag(*this, tag, data);
-	repack_period_ = tag->getOption<Size>("once_every", repack_period_);
+	repack_period_ = tag->getOption<core::Size>("once_every", repack_period_);
 }
 
 bool RepackingRefiner::do_apply(Pose & pose) {
@@ -88,7 +88,7 @@ Size RepackingRefiner::get_repack_period() const {
 	return repack_period_;
 }
 
-void RepackingRefiner::set_repack_period(Size period) {
+void RepackingRefiner::set_repack_period(core::Size period) {
 	repack_period_ = period;
 }
 

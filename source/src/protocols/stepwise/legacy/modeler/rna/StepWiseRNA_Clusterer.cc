@@ -267,7 +267,7 @@ StepWiseRNA_Clusterer::initialize_max_memory_pose_num(){
 	pose::Pose first_pose;
 	pose::Pose first_pose_before_slicing;
 
-	Size num_silent_struct = 0;
+	core::Size num_silent_struct = 0;
 	bool found_valid_struct = false;
 
 	input_->reset(); //reset the silentfile stream to the beginning..
@@ -299,8 +299,8 @@ StepWiseRNA_Clusterer::initialize_max_memory_pose_num(){
 
 	input_->reset(); //reset the silentfile stream to the beginning..
 
-	Size const total_res_before_slicing = first_pose_before_slicing.size();
-	Size const total_res = first_pose.size();
+	core::Size const total_res_before_slicing = first_pose_before_slicing.size();
+	core::Size const total_res = first_pose.size();
 
 	//OK, one example of crash due to insufficient memory:
 	//Building region 11_4 of J5/J5a hinge 2r8s
@@ -399,7 +399,7 @@ StepWiseRNA_Clusterer::initialize_quick_alignment_pose(){
 	utility::vector1< core::Size > const working_best_alignment = working_parameters_->working_best_alignment();
 	utility::vector1< core::Size > const working_fixed_res = working_parameters_->working_fixed_res();
 
-	for ( Size const seq_num : working_best_alignment ) {
+	for ( core::Size const seq_num : working_best_alignment ) {
 		if ( working_fixed_res.has_value( seq_num ) ) continue;
 
 		output_seq_num_list( "working_best_alignment = ", working_best_alignment, TR, 30 );
@@ -523,7 +523,7 @@ StepWiseRNA_Clusterer::create_large_cluster_centers_member_list(){
 	std::map< core::Size, core::Size > const & full_to_sub = get_act_full_to_sub();
 	std::map< core::Size, bool > const & is_prepend_map = get_act_is_prepend_map();
 
-	Size input_ID = 0;
+	core::Size input_ID = 0;
 
 	Real last_cluster_center_score( 0.0 ); //does slicing the pose change the score?
 	getPoseExtraScore( *( large_cluster_pose_list_[large_cluster_pose_list_.size()] ), "score", last_cluster_center_score );
@@ -560,7 +560,7 @@ StepWiseRNA_Clusterer::create_large_cluster_centers_member_list(){
 
 		if ( score > ( last_cluster_center_score + 0.001 ) ) break; //Exclude bad score poses that will never to be part of the final output_pose_list.
 
-		for ( Size n = 1; n <= large_cluster_pose_list_.size(); n++ ) {
+		for ( core::Size n = 1; n <= large_cluster_pose_list_.size(); n++ ) {
 
 			pose::Pose const & cluster_center_pose = *( large_cluster_pose_list_[n] );
 
@@ -579,7 +579,7 @@ StepWiseRNA_Clusterer::create_large_cluster_centers_member_list(){
 	}
 
 	TR << "check large_cluster_pose_list_ member size " << std::endl;
-	for ( Size n = 1; n <= large_cluster_pose_list_.size(); n++ ) {
+	for ( core::Size n = 1; n <= large_cluster_pose_list_.size(); n++ ) {
 		TR << "cluster center " << n << " has " << cluster_centers_neighbor_list_[n].size() << " members " << std::endl;
 	}
 }
@@ -618,7 +618,7 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 		TR << "min_num_south_sugar_filter_ = " << min_num_south_sugar_filter_ << std::endl;
 	}
 
-	Size input_ID = 0;
+	core::Size input_ID = 0;
 
 	bool filter_verbose = true;
 
@@ -667,7 +667,7 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 				utility::vector1< core::Size > const & force_syn_chi_res_list = working_parameters_->working_force_syn_chi_res_list();
 				utility::vector1< core::Size > const & force_anti_chi_res_list = working_parameters_->working_force_anti_chi_res_list();
 
-				for ( Size const seq_num : force_north_sugar_list ) {
+				for ( core::Size const seq_num : force_north_sugar_list ) {
 					if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::BULGE ) ) {
 						continue;
 					}
@@ -683,7 +683,7 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 					}
 				}
 
-				for ( Size const seq_num : force_south_sugar_list ) {
+				for ( core::Size const seq_num : force_south_sugar_list ) {
 					if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::BULGE ) ) {
 						continue;
 					}
@@ -699,7 +699,7 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 					}
 				}
 
-				for ( Size const seq_num : force_syn_chi_res_list ) {
+				for ( core::Size const seq_num : force_syn_chi_res_list ) {
 					if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::BULGE ) ) {
 						continue;
 					}
@@ -715,7 +715,7 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 					}
 				}
 
-				for ( Size const seq_num : force_anti_chi_res_list ) {
+				for ( core::Size const seq_num : force_anti_chi_res_list ) {
 					if ( (*pose_op).residue( seq_num ).has_variant_type( core::chemical::BULGE ) ) {
 						continue;
 					}
@@ -731,7 +731,7 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 					}
 				}
 
-				for ( Size const seq_num : working_filter_virtual_res_list ) {
+				for ( core::Size const seq_num : working_filter_virtual_res_list ) {
 					if ( ! (*pose_op).residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 						pass_filter = false;
 						if ( filter_verbose ) TR << "pose = " << tag << " doesn't have virtual_rna_residue variant_type at seq_num = " << seq_num << std::endl;
@@ -739,8 +739,8 @@ StepWiseRNA_Clusterer::create_silent_file_and_tag_list(){
 				}
 
 				if ( min_num_south_sugar_filter_ != 0 ) {
-					Size num_south_sugar = 0;
-					for ( Size const seq_num : working_global_sample_res_list ) {
+					core::Size num_south_sugar = 0;
+					for ( core::Size const seq_num : working_global_sample_res_list ) {
 						if ( core::pose::rna::get_residue_pucker_state( (*pose_op), seq_num ) == SOUTH ) {
 							num_south_sugar += 1;
 						}
@@ -801,8 +801,8 @@ StepWiseRNA_Clusterer::do_some_clustering() {
 	bool score_min_defined = false;
 	Real score_min = 0.0;
 
-	Size num_pose_clustered = 0;
-	Size input_ID = 0; //this count messed up pose where as num_pose_clustered doesn't
+	core::Size num_pose_clustered = 0;
+	core::Size input_ID = 0; //this count messed up pose where as num_pose_clustered doesn't
 	while ( input_->has_another_pose() ) {
 
 		input_ID++; //count messed up poses as well
@@ -904,13 +904,13 @@ StepWiseRNA_Clusterer::is_old_individual_suite_cluster( pose::Pose const & curre
 	utility::vector1< Real > rmsd_list( calc_rms_res.size(), 9999.99 );
 	utility::vector1< bool > same_sugar_pucker_list( calc_rms_res.size(), false );
 
-	for ( Size i = 1; i <= calc_rms_res.size(); ++i ) {
-		Size const full_seq_num = calc_rms_res[ i ];
+	for ( core::Size i = 1; i <= calc_rms_res.size(); ++i ) {
+		core::Size const full_seq_num = calc_rms_res[ i ];
 
 		if ( full_to_sub.find( full_seq_num ) == full_to_sub.end() ) utility_exit_with_message( "full_to_sub.find( full_seq_num ) == full_to_sub.end()!" );
 		if ( is_prepend_map.find( full_seq_num ) == is_prepend_map.end() ) utility_exit_with_message( "is_prepend_map.find( full_seq_num ) == is_prepend_map.end()!" );
 
-		Size const seq_num = full_to_sub.find( full_seq_num )->second;
+		core::Size const seq_num = full_to_sub.find( full_seq_num )->second;
 		bool is_prepend = is_prepend_map.find( full_seq_num )->second;
 
 		//Important only if both pose are real
@@ -968,9 +968,9 @@ StepWiseRNA_Clusterer::is_old_individual_suite_cluster( pose::Pose const & curre
 	}
 
 	if ( verbose_ ) {
-		for ( Size i = 1; i <= calc_rms_res.size(); ++i ) {
-			Size const full_seq_num = calc_rms_res[ i ];
-			Size const seq_num = full_to_sub.find( full_seq_num )->second;
+		for ( core::Size i = 1; i <= calc_rms_res.size(); ++i ) {
+			core::Size const full_seq_num = calc_rms_res[ i ];
+			core::Size const seq_num = full_to_sub.find( full_seq_num )->second;
 			bool is_prepend = is_prepend_map.find( full_seq_num )->second;
 			bool both_pose_res_is_virtual = false;
 			if ( current_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) &&
@@ -1005,7 +1005,7 @@ StepWiseRNA_Clusterer::is_old_individual_suite_cluster( pose::Pose const & curre
 
 //////////////////////////////////////////////////////////////////
 core::pose::PoseOP
-StepWiseRNA_Clusterer::get_poseOP( Size const n ){
+StepWiseRNA_Clusterer::get_poseOP( core::Size const n ){
 
 	using namespace core::pose;
 	using namespace ObjexxFCL;
@@ -1045,8 +1045,8 @@ StepWiseRNA_Clusterer::setup_fail_triangle_inequailty_list( pose::Pose & current
 	std::map< core::Size, core::Size > const & full_to_sub = get_act_full_to_sub();
 	std::map< core::Size, bool > const & is_prepend_map = get_act_is_prepend_map();
 
-	Size num_fail_triangle_inequality = 0;
-	Size num_cluster_center_used = 0;
+	core::Size num_fail_triangle_inequality = 0;
+	core::Size num_cluster_center_used = 0;
 
 	Real current_score( 0.0 );
 
@@ -1054,7 +1054,7 @@ StepWiseRNA_Clusterer::setup_fail_triangle_inequailty_list( pose::Pose & current
 
 	fail_triangle_inequality_list.assign( silent_struct_output_list_.size(), false );
 
-	for ( Size n = 1; n <= large_cluster_pose_list_.size(); n++ ) { //lowest score cluster center at the beginning of the list
+	for ( core::Size n = 1; n <= large_cluster_pose_list_.size(); n++ ) { //lowest score cluster center at the beginning of the list
 
 		Real cluster_center_score( 0.0 );
 		pose::Pose & cluster_center_pose = *( large_cluster_pose_list_[n] );
@@ -1083,7 +1083,7 @@ StepWiseRNA_Clusterer::setup_fail_triangle_inequailty_list( pose::Pose & current
 				utility_exit_with_message( "member.ID ( " + string_of( member.ID )  + " ) > all_pose_to_output_pose_ID_map_.size() ( " +  string_of( all_pose_to_output_pose_ID_map_.size() ) + " ) " );
 			}
 
-			Size const output_pose_ID = all_pose_to_output_pose_ID_map_[member.ID];
+			core::Size const output_pose_ID = all_pose_to_output_pose_ID_map_[member.ID];
 			if ( output_pose_ID == 0 ) continue; //member is not a output_pose..
 
 			if ( ( output_pose_ID > silent_struct_output_list_.size() ) || ( output_pose_ID < 1 ) ) {
@@ -1121,7 +1121,7 @@ StepWiseRNA_Clusterer::is_new_cluster_center_with_working_parameters( core::pose
 
 	if ( use_triangle_inequality_ ) setup_fail_triangle_inequailty_list( current_pose, tag, fail_triangle_inequality_list );
 
-	for ( Size n = silent_struct_output_list_.size(); n >= 1; n-- ) {
+	for ( core::Size n = silent_struct_output_list_.size(); n >= 1; n-- ) {
 
 		if ( use_triangle_inequality_ && ( fail_triangle_inequality_list[n] == true ) ) continue;
 
@@ -1170,7 +1170,7 @@ StepWiseRNA_Clusterer::check_for_closeness_without_working_parameters( core::pos
 
 	// go through the list backwards, because poses may be grouped by similarity --
 	// the newest pose is probably closer to poses at the end of the list.
-	for ( Size n = silent_struct_output_list_.size(); n >= 1; n-- ) {
+	for ( core::Size n = silent_struct_output_list_.size(); n >= 1; n-- ) {
 
 		Real rmsd = all_atom_rmsd( *( get_poseOP( n ) ), *pose_op );
 
@@ -1204,7 +1204,7 @@ StepWiseRNA_Clusterer::output_silent_file( std::string const & silent_file ){
 
 	SilentFileOptions opts;
 	SilentFileData silent_file_data( opts );
-	for ( Size n = 1; n <= silent_struct_output_list_.size(); ++n ) {
+	for ( core::Size n = 1; n <= silent_struct_output_list_.size(); ++n ) {
 		SilentStructOP & s = silent_struct_output_list_[ n ];
 		if ( rename_tags_ ) {
 			s->add_comment( "PARENT_TAG", s->decoy_tag() );
@@ -1273,7 +1273,7 @@ StepWiseRNA_Clusterer::recalculate_rmsd_and_output_silent_file( std::string cons
 
 	bool is_valid_first_struct = true;
 
-	for ( Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
+	for ( core::Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
 
 		std::string tag = tag_output_list_[n];
 		SilentStructOP s( silent_struct_output_list_[ n ] );
@@ -1399,7 +1399,7 @@ StepWiseRNA_Clusterer::get_best_neighboring_shift_RMSD_and_output_silent_file( s
 
 	bool is_valid_first_struct = true;
 
-	for ( Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
+	for ( core::Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
 
 		std::string tag = tag_output_list_[n];
 		SilentStructOP s( silent_struct_output_list_[ n ] );
@@ -1435,7 +1435,7 @@ StepWiseRNA_Clusterer::get_best_neighboring_shift_RMSD_and_output_silent_file( s
 		Real best_shift_score = start_shift_score;
 		std::string best_shift_tag = tag;
 
-		for ( Size other_pose_ID = 1 ; other_pose_ID  <= silent_struct_output_list_.size(); other_pose_ID ++ ) {
+		for ( core::Size other_pose_ID = 1 ; other_pose_ID  <= silent_struct_output_list_.size(); other_pose_ID ++ ) {
 
 			std::string const & other_tag = tag_output_list_[ other_pose_ID ];
 
@@ -1661,7 +1661,7 @@ SlicedPoseWorkingParameters::setup( protocols::stepwise::modeler::working_parame
 
 	is_setup_ = true;
 
-	Size const nres = core::pose::rna::remove_bracketed( working_parameters->working_sequence() ).size();
+	core::Size const nres = core::pose::rna::remove_bracketed( working_parameters->working_sequence() ).size();
 	utility::vector1< core::Size > const & working_best_alignment( working_parameters->working_best_alignment() );
 	utility::vector1< core::Size > const & calc_rms_res = working_parameters->calc_rms_res();
 	std::map< core::Size, bool > const & is_prepend_map = working_parameters->is_prepend_map();
@@ -1669,8 +1669,8 @@ SlicedPoseWorkingParameters::setup( protocols::stepwise::modeler::working_parame
 
 	utility::vector1< core::Size > working_calc_rms_res = apply_full_to_sub_mapping( calc_rms_res, working_parameters );
 
-	Size sliced_seq_num = 1;
-	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
+	core::Size sliced_seq_num = 1;
+	for ( core::Size seq_num = 1; seq_num <= nres; seq_num++ ) {
 		bool keep_res = false;
 
 		if ( working_best_alignment.has_value( seq_num ) ) {
@@ -1706,7 +1706,7 @@ SlicedPoseWorkingParameters::setup( protocols::stepwise::modeler::working_parame
 	}
 
 	TR << "------------Before slice to After slice seq_num------------" << std::endl;
-	for ( Size seq_num = 1; seq_num <= working_to_sliced_res_map_.size(); seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= working_to_sliced_res_map_.size(); seq_num++ ) {
 		TR << seq_num << "----> " << working_to_sliced_res_map_[seq_num] << std::endl;
 
 		if ( working_best_alignment.has_value( seq_num ) ) sliced_pose_best_alignment.push_back( working_to_sliced_res_map_[seq_num] ) ;
@@ -1717,12 +1717,12 @@ SlicedPoseWorkingParameters::setup( protocols::stepwise::modeler::working_parame
 	output_is_prepend_map( " is_prepend_map = ",  is_prepend_map, working_parameters->full_sequence().size(), TR ) ;
 
 	TR << "------------After slice to Before slice seq_num------------" << std::endl;
-	for ( Size seq_num = 1; seq_num <= sliced_to_working_res_map_.size(); seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= sliced_to_working_res_map_.size(); seq_num++ ) {
 		TR << seq_num << "----> " << sliced_to_working_res_map_[seq_num] << std::endl;
 		sliced_pose_full_to_sub[seq_num] = seq_num; //identity
 
-		Size const working_seq_num = sliced_to_working_res_map_[seq_num];
-		Size const full_seq_num = sub_to_full.find( working_seq_num )->second;
+		core::Size const working_seq_num = sliced_to_working_res_map_[seq_num];
+		core::Size const full_seq_num = sub_to_full.find( working_seq_num )->second;
 		if ( is_prepend_map.find( full_seq_num ) != is_prepend_map.end() ) {
 			bool const is_prepend = is_prepend_map.find( full_seq_num )->second;
 			sliced_pose_is_prepend_map[seq_num] = ( is_prepend );
@@ -1733,10 +1733,10 @@ SlicedPoseWorkingParameters::setup( protocols::stepwise::modeler::working_parame
 	//////////////////////////////////////////////
 	bool in_delete_range = false;
 
-	Size range_end = 0;
-	Size range_begin = 0;
+	core::Size range_end = 0;
+	core::Size range_begin = 0;
 
-	for ( Size seq_num = 1; seq_num <= is_sliced_res_.size() + 1; seq_num++ ) { //optimization for using delete_residue_range_slow instead of delete_residue_slow
+	for ( core::Size seq_num = 1; seq_num <= is_sliced_res_.size() + 1; seq_num++ ) { //optimization for using delete_residue_range_slow instead of delete_residue_slow
 
 		if ( ! in_delete_range ) {
 
@@ -1786,7 +1786,7 @@ SlicedPoseWorkingParameters::create_sliced_pose( core::pose::Pose const & workin
 		utility_exit_with_message( "is_sliced_res.size() ( " + string_of( is_sliced_res_.size() ) + " ) != working_pose.size() ( " + string_of( working_pose.size() ) + " )" );
 	}
 
-	for ( Size n = delete_res_range_list_.size(); n >= 1; n-- ) {
+	for ( core::Size n = delete_res_range_list_.size(); n >= 1; n-- ) {
 		sliced_pose.conformation().delete_residue_range_slow( delete_res_range_list_[n].first, delete_res_range_list_[n].second );
 	}
 

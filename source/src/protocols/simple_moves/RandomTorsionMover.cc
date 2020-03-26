@@ -101,10 +101,10 @@ RandomTorsionMover::apply( core::pose::Pose & pose )
 	// empty move maps have zero torsions
 	if ( torsion_id_list_.size() ) {
 
-		for ( Size i(1); i <= num_moves_; ++i ) {
+		for ( core::Size i(1); i <= num_moves_; ++i ) {
 
 			// randomly select a free torsion
-			Size tor_num( numeric::random::rg().random_range( 1, torsion_id_list_.size() ) );
+			core::Size tor_num( numeric::random::rg().random_range( 1, torsion_id_list_.size() ) );
 
 			// calc randomly purturbed value
 			Real old_tor( pose.conformation().torsion( torsion_id_list_[ tor_num ] ) );
@@ -132,7 +132,7 @@ RandomTorsionMover::setup_torsion_list( core::pose::Pose & pose )
 
 	core::kinematics::MoveMapCOP move_map( movemap( pose ) );
 	// make list
-	for ( Size i( 1 ); i <= pose.size(); ++i ) {
+	for ( core::Size i( 1 ); i <= pose.size(); ++i ) {
 
 		// check to see if peptoid or protein
 		if ( pose.residue( i ).type().is_protein() || pose.residue( i ).type().is_peptoid() ) {
@@ -297,7 +297,7 @@ RandomTorsionMover::setup_torsion_list( core::pose::Pose & pose )
 	}
 
 	// DEBUG
-	//for ( Size i(1); i <= torsion_id_list_.size(); ++i ) {
+	//for ( core::Size i(1); i <= torsion_id_list_.size(); ++i ) {
 	// TR << "DEBUG torsion list" << torsion_id_list_[i].rsd() << " " << torsion_id_list_[i].type() << " " << torsion_id_list_[i].torsion() << std::endl;
 	//}
 }

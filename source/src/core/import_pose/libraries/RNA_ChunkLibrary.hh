@@ -23,7 +23,7 @@
 #include <core/pose/MiniPose.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
 
@@ -61,7 +61,7 @@ extern core::Size const ROSETTA_LIBRARY_DOMAIN;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
-class RNA_ChunkLibrary : public utility::pointer::ReferenceCount  {
+class RNA_ChunkLibrary : public utility::VirtualBase  {
 public:
 
 	RNA_ChunkLibrary();

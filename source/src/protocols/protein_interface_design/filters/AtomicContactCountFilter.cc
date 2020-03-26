@@ -153,12 +153,12 @@ void AtomicContactCountFilter::parse_my_tag(
 	core::pack::task::TaskFactoryOP task_factoryB( new core::pack::task::TaskFactory );
 	if ( tag->hasOption( "taskA" ) ) {
 		utility::vector1< std::string > taskA_names = utility::string_split( tag->getOption< std::string >( "taskA" ), ',' );
-		for ( Size i = 1; i <= taskA_names.size(); i++ ) {
+		for ( core::Size i = 1; i <= taskA_names.size(); i++ ) {
 			task_factoryA->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", taskA_names[i] ) );
 		}
 		if ( tag->hasOption( "taskB" ) ) {
 			utility::vector1< std::string > taskB_names = utility::string_split( tag->getOption< std::string >( "taskB" ), ',' );
-			for ( Size i = 1; i <= taskB_names.size(); i++ ) {
+			for ( core::Size i = 1; i <= taskB_names.size(); i++ ) {
 				task_factoryB->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", taskB_names[i] ) );
 			}
 		} else {
@@ -302,8 +302,8 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 			target_jumps.push_back( jump_ );
 		} else {
 			// all slidable jumps
-			Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
-			for ( Size j = 1; j <= nslidedofs; j++ ) {
+			core::Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
+			for ( core::Size j = 1; j <= nslidedofs; j++ ) {
 				target_jumps.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
 			}
 		}

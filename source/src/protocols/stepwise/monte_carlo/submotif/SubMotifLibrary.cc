@@ -120,7 +120,7 @@ SubMotifLibrary::initialize_from_directory( std::string const & directory ){
 		}
 	}
 
-	for ( Size n = 1; n <= filenames.size(); n++ ) {
+	for ( core::Size n = 1; n <= filenames.size(); n++ ) {
 		PoseTag const & tag = filenames[ n ];
 		if ( exclude_submotif_list_.has_value( tag ) ) continue;
 		if ( tag.substr(  tag.size()-4, 4 ) != ".pdb" ) continue;
@@ -144,7 +144,7 @@ SubMotifLibrary::save_pose_as_submotif( pose::PoseOP pose, std::string const & t
 	submotif_sequence_sets_.insert( submotif_sequence_set );
 	utility::vector1< SequenceMapping > matches = get_matches_for_one_submotif_sequence_set( submotif_sequence_set, *pose, false /*use_full_model_info*/ );
 	runtime_assert( matches.size() > 0 );
-	for ( Size n = 1; n <= matches.size(); n++ ) {
+	for ( core::Size n = 1; n <= matches.size(); n++ ) {
 		if ( n > 1 ) continue; // hmm. trying to avoid redundancy -- all threadings will be enumerated in target full_model in get_matches_for_one_submotif_sequence_set later.
 		submotif_mappings_by_sequence_set_[ submotif_sequence_set ].push_back( std::make_pair( tag, matches[ n ] ) );
 	}
@@ -157,17 +157,17 @@ SubMotifLibrary::initialize_from_jump_library()
 	using namespace protocols::rna::denovo;
 	using namespace core::import_pose::libraries;
 	RNA_JumpLibraryCOP rna_jump_library( RNA_LibraryManager::get_instance()->rna_jump_library_cop() );
-	for ( Size i = 0; i <= 3; i++ ) {
-		for ( Size j = 0; j <= 3; j++ ) {
-			for ( Size e1 = 1; e1 <= 3; e1++ ) {
-				for ( Size e2 = 1; e2 <= 3; e2++ ) {
-					for ( Size o = 1; o <= 2; o++ ) {
+	for ( core::Size i = 0; i <= 3; i++ ) {
+		for ( core::Size j = 0; j <= 3; j++ ) {
+			for ( core::Size e1 = 1; e1 <= 3; e1++ ) {
+				for ( core::Size e2 = 1; e2 <= 3; e2++ ) {
+					for ( core::Size o = 1; o <= 2; o++ ) {
 						BasePairType const base_pair_type( rna_nts[ i ], rna_nts[ j ], BaseEdge( e1 ), BaseEdge( e2 ), BaseDoubletOrientation( o ) );
 						if ( !rna_jump_library->has_template( base_pair_type ) ) continue;
 						TR << "filling out submotifs for: " << base_pair_type.tag() << std::endl;
 						RNA_PairingTemplateList const & templates( rna_jump_library->rna_pairing_template_map( base_pair_type ) );
-						Size const num_templates = use_first_jump_for_submotif_ ? 1 : templates.size();
-						for ( Size n = 1; n <= num_templates; n++ ) {
+						core::Size const num_templates = use_first_jump_for_submotif_ ? 1 : templates.size();
+						for ( core::Size n = 1; n <= num_templates; n++ ) {
 
 							PoseOP pose( new Pose );
 							std::string sequence;
@@ -202,7 +202,7 @@ SubMotifLibrary::get_submotif_sequence_set( pose::Pose const & pose, bool sort_s
 
 	utility::vector1< std::string > submotif_sequence_set;
 	std::string chain_sequence( "" );
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		chain_sequence += pose.sequence()[ n - 1 ];
 		if ( pose.fold_tree().is_cutpoint( n ) ) {
 			submotif_sequence_set.push_back( chain_sequence );
@@ -235,12 +235,12 @@ SubMotifLibrary::get_submotif_moves( pose::Pose const & pose ) const {
 			// need to combine this mapping from submotif_sequence_set --> pose
 			// with stored          mapping from submotif_sequence_set --> submotif_pose
 			utility::vector1< std::pair< PoseTag, SequenceMapping > > const & submotif_tags_with_mapping = submotif_mappings_by_sequence_set_.find( submotif_sequence_set )->second;
-			for ( Size q = 1; q <= submotif_tags_with_mapping.size(); q++ ) {
+			for ( core::Size q = 1; q <= submotif_tags_with_mapping.size(); q++ ) {
 
 				std::string const & submotif_tag = submotif_tags_with_mapping[ q ].first;
 				SequenceMapping const & mapping_to_submotif_pose = submotif_tags_with_mapping[ q ].second;
-				utility::vector1< Size > moving_res;
-				for ( Size k = 1; k <= mapping_to_submotif_pose.size(); k++ ) {
+				utility::vector1< core::Size > moving_res;
+				for ( core::Size k = 1; k <= mapping_to_submotif_pose.size(); k++ ) {
 					moving_res.push_back( mapping_to_pose[ mapping_to_submotif_pose.index( k ) ] );
 				}
 
@@ -261,8 +261,8 @@ SubMotifLibrary::get_matches_for_one_submotif_sequence_set( SubMotifSequenceSet 
 
 	// a little precomputation...
 
-	Size submotif_length = 0;
-	vector1< Size > submotif_cutpoints;
+	core::Size submotif_length = 0;
+	vector1< core::Size > submotif_cutpoints;
 	std::string submotif_full_sequence;
 	for ( std::string const & submotif_sequence : submotif_sequence_set ) {
 		submotif_length += submotif_sequence.size();
@@ -271,27 +271,27 @@ SubMotifLibrary::get_matches_for_one_submotif_sequence_set( SubMotifSequenceSet 
 	}
 
 	std::string pose_full_sequence = pose.sequence();
-	utility::vector1< Size > pose_cutpoints;
-	for ( Size n = 1; n < pose.size(); n++ ) {
+	utility::vector1< core::Size > pose_cutpoints;
+	for ( core::Size n = 1; n < pose.size(); n++ ) {
 		if ( pose.fold_tree().is_cutpoint( n ) ) pose_cutpoints.push_back( n );
 	}
-	utility::vector1< Size > pose_domain_map( pose_full_sequence.size(), 0 );
+	utility::vector1< core::Size > pose_domain_map( pose_full_sequence.size(), 0 );
 
 	if ( use_full_model_info ) {
 		runtime_assert( full_model_info_defined( pose ) );
 		pose_full_sequence   = const_full_model_info( pose ).full_sequence();
 		pose_cutpoints  = const_full_model_info( pose ).cutpoint_open_in_full_model();
 		pose_domain_map = figure_out_pose_domain_map_const( pose );
-		utility::vector1< Size > const & sample_res( const_full_model_info( pose ).sample_res() );
-		utility::vector1< Size > const & bulge_res( const_full_model_info( pose ).rna_bulge_res() );
-		for ( Size n = 1; n <= pose_domain_map.size(); n++ ) {
+		utility::vector1< core::Size > const & sample_res( const_full_model_info( pose ).sample_res() );
+		utility::vector1< core::Size > const & bulge_res( const_full_model_info( pose ).rna_bulge_res() );
+		for ( core::Size n = 1; n <= pose_domain_map.size(); n++ ) {
 			if ( ( !sample_res.has_value( n ) || bulge_res.has_value( n ) )  &&
 					pose_domain_map[ n ] == 0 ) pose_domain_map[ n ] = 999; // disallow match unless sample_res.
 		}
 	}
 
 	// do via a recursive search.
-	utility::vector1< utility::vector1< Size > > all_matches;
+	utility::vector1< utility::vector1< core::Size > > all_matches;
 	SequenceMapping matching_residues;
 	get_matches( all_matches,
 		matching_residues,
@@ -309,10 +309,10 @@ void
 SubMotifLibrary::get_matches( utility::vector1< SequenceMapping > & all_matches /* stores matches */,
 	SequenceMapping const & matching_residues /* working mapping */,
 	std::string const & submotif_full_sequence,
-	utility::vector1< Size > const & submotif_cutpoints,
+	utility::vector1< core::Size > const & submotif_cutpoints,
 	std::string const & pose_full_sequence,
-	utility::vector1< Size > const & pose_cutpoints,
-	utility::vector1< Size > const & pose_domain_map ) const
+	utility::vector1< core::Size > const & pose_cutpoints,
+	utility::vector1< core::Size > const & pose_domain_map ) const
 {
 
 	if ( matching_residues.size() == submotif_full_sequence.size() ) { // done!
@@ -321,12 +321,12 @@ SubMotifLibrary::get_matches( utility::vector1< SequenceMapping > & all_matches 
 	}
 
 	// if not done, look for next match.
-	utility::vector1< Size > possible_next_res;
-	Size const i_submotif = matching_residues.size() + 1;
-	Size const nfull = pose_full_sequence.size();
+	utility::vector1< core::Size > possible_next_res;
+	core::Size const i_submotif = matching_residues.size() + 1;
+	core::Size const nfull = pose_full_sequence.size();
 	if ( i_submotif == 1 || submotif_cutpoints.has_value( i_submotif - 1 ) ) {
 		// starting a new chain -- only constraint is that it should *not* be the very next residue.
-		for ( Size i_full = 1; i_full <= nfull; i_full++ ) {
+		for ( core::Size i_full = 1; i_full <= nfull; i_full++ ) {
 			if ( i_submotif == 1 || i_full == 1 || pose_cutpoints.has_value( i_full - 1 ) ||
 					( i_full != matching_residues[ i_submotif - 1 ] && i_full != matching_residues[ i_submotif - 1 ] + 1 ) ) {
 				possible_next_res.push_back( i_full );
@@ -335,7 +335,7 @@ SubMotifLibrary::get_matches( utility::vector1< SequenceMapping > & all_matches 
 	} else {
 		// must be contiguous
 		runtime_assert( matching_residues.size() >= 1 );
-		Size const i_full = matching_residues[ i_submotif - 1 ] + 1;
+		core::Size const i_full = matching_residues[ i_submotif - 1 ] + 1;
 		if ( !pose_cutpoints.has_value( i_full - 1 ) ) {
 			possible_next_res.push_back( i_full );
 		}
@@ -354,7 +354,7 @@ SubMotifLibrary::get_matches( utility::vector1< SequenceMapping > & all_matches 
 	///  is set separately.
 	//
 	////////////////////////////////////////////////////////////////////////////
-	for ( Size const i_full : possible_next_res ) {
+	for ( core::Size const i_full : possible_next_res ) {
 
 		// Note: this indexing will fail (submotif_full_sequence will have to be met by
 		// submotif_nc_res_map) for any submotifs containing noncanonicals
@@ -409,7 +409,7 @@ SubMotifLibrary::create_new_submotif( SequenceMapping const & move_element,
 
 	// AMW: add code to ensure that D/L match as well. Also noncanonicals in general should break from this.
 	std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
-	for ( Size n = 1; n <= move_element.size(); n++ ) {
+	for ( core::Size n = 1; n <= move_element.size(); n++ ) {
 		runtime_assert( full_sequence[ move_element[ n ]-1 ] == new_pose->sequence()[ n - 1 ] );
 		if ( const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map().find( move_element[ n ] ) != const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map().end() ) {
 			// Have to flip the new pose.

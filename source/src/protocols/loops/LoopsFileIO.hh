@@ -28,7 +28,7 @@
 
 // Utility headers
 #include <utility/json_spirit/json_spirit_reader.h>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C/C++ headers
@@ -104,10 +104,10 @@ private:
 	bool prohibit_single_residue_loops_;
 };
 
-class LoopsFileData : public utility::pointer::ReferenceCount
+class LoopsFileData : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~LoopsFileData() override;
 
 	LoopsOP resolve_loops( core::pose::Pose const & pose ) const;
@@ -127,7 +127,7 @@ private:
 /// forms of loop modeling is correctly initialized from a Pose.  If the residues specified
 /// from a loops file have not been resolved into the residue indices for a Pose, then
 /// this class will die with an assertion failure.
-class GuardedLoopsFromFile : public utility::pointer::ReferenceCount
+class GuardedLoopsFromFile : public utility::VirtualBase
 {
 public:
 	/// @brief default ctor; sets the object in an "in charge" state.
@@ -208,7 +208,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////
 // a class for reading a loops file where the format of that file might
 // be one of many formats
-class LoopsFileIO : public utility::pointer::ReferenceCount {
+class LoopsFileIO : public utility::VirtualBase {
 
 public:
 

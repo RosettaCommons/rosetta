@@ -134,9 +134,9 @@ StepWiseMinimizer::apply( core::pose::Pose & pose ) {
 
 }
 
-Real add_these( Size const final_idx, utility::vector1< Real > const & factors ) {
+Real add_these( core::Size const final_idx, utility::vector1< Real > const & factors ) {
 	Real val = 0;
-	for ( Size ii = 1; ii <= final_idx; ++ii ) {
+	for ( core::Size ii = 1; ii <= final_idx; ++ii ) {
 		val += factors[ ii ];
 	}
 	return val;
@@ -160,7 +160,7 @@ StepWiseMinimizer::do_clustering( pose::Pose & pose ){
 	// If the options dictate it, make a Boltzmann-weighted choice from among pose_list_ options.
 	if ( options_->boltzmann_choice_post_enumerated_minimize() ) {
 		Real sum = 0;
-		//utility::vector1< std::pair< Size, Real > > factors;
+		//utility::vector1< std::pair< core::Size, Real > > factors;
 
 		utility::vector1< Real > energies;
 		utility::vector1< Real > factors;
@@ -199,7 +199,7 @@ StepWiseMinimizer::do_clustering( pose::Pose & pose ){
 		runtime_assert( add_these( factors.size(), factors ) <= 1.01 ); // rounding
 		auto chosen_point = numeric::random::uniform();
 		// Run through factors.
-		for ( Size ii = 1; ii <= factors.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= factors.size(); ++ii ) {
 			if ( chosen_point < add_these( ii, factors ) ) {
 				pose = *pose_list_[ ii ];
 				TR << "Solution selection:" << std::endl <<
@@ -221,9 +221,9 @@ StepWiseMinimizer::do_full_minimizing( pose::Pose & pose ){
 
 	kinematics::MoveMap mm;
 	utility::vector1< pose::PoseOP > output_pose_list;
-	if ( pose_list_.size() > 0 && num_pose_minimize_ > 1 ) TR << "Will minimize "  << std::min<Size>( pose_list_.size(), num_pose_minimize_ )  << " poses." << std::endl;
+	if ( pose_list_.size() > 0 && num_pose_minimize_ > 1 ) TR << "Will minimize "  << std::min<core::Size>( pose_list_.size(), num_pose_minimize_ )  << " poses." << std::endl;
 
-	for ( Size n = 1; n <= pose_list_.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose_list_.size(); n++ ) {
 
 		if ( num_pose_minimize_ > 0 && n > num_pose_minimize_ ) break;
 
@@ -284,8 +284,8 @@ StepWiseMinimizer::setup_scorefxns( pose::Pose const & pose ) {
 void
 freeze_waters( core::pose::Pose const & pose, core::kinematics::MoveMap & mm )
 {
-	utility::vector1< Size> const water_res = magnesium::get_water_res( pose );
-	for ( Size n = 1; n <= water_res.size(); n++ ) {
+	utility::vector1< core::Size> const water_res = magnesium::get_water_res( pose );
+	for ( core::Size n = 1; n <= water_res.size(); n++ ) {
 		mm.set_jump( pose.fold_tree().get_jump_that_builds_residue( water_res[ n ] ), false );
 	}
 }
@@ -331,14 +331,14 @@ StepWiseMinimizer::do_minimize( pose::Pose & pose, kinematics::MoveMap & mm ){
 void
 StepWiseMinimizer::close_chainbreaks( pose::Pose & pose, kinematics::MoveMap & mm ){
 
-	utility::vector1< Size > const moving_chainbreaks = figure_out_moving_cutpoints_closed_from_moving_res( pose, working_moving_res_ ); // would be better to use moving_res.
+	utility::vector1< core::Size > const moving_chainbreaks = figure_out_moving_cutpoints_closed_from_moving_res( pose, working_moving_res_ ); // would be better to use moving_res.
 	if ( moving_chainbreaks.size() == 0 ) return;
 
 	protocols::rna::movers::RNA_LoopCloser rna_loop_closer;
 	rna_loop_closer.apply( pose, rna::just_rna( moving_chainbreaks, pose ) ); // only handles RNA chainbreaks for now...
 
-	utility::vector1< Size > const protein_cutpoints_closed = protein::just_protein( moving_chainbreaks, pose );
-	for ( Size n = 1; n <= protein_cutpoints_closed.size(); n++ ) {
+	utility::vector1< core::Size > const protein_cutpoints_closed = protein::just_protein( moving_chainbreaks, pose );
+	for ( core::Size n = 1; n <= protein_cutpoints_closed.size(); n++ ) {
 		protein_ccd_closer_->set_ccd_close_res( protein_cutpoints_closed[ n ] );
 		protein_ccd_closer_->init( pose );
 		protein_ccd_closer_->apply( pose );
@@ -372,7 +372,7 @@ StepWiseMinimizer::let_neighboring_side_chains_minimize( core::kinematics::MoveM
 	if ( working_pack_res_.size() == 0 ) {
 		working_pack_res_ = packer::figure_out_working_interface_res( pose, working_moving_res_, options_->pack_protein_side_chains() );
 	}
-	for ( Size n = 1; n <= working_pack_res_.size(); n++ ) {
+	for ( core::Size n = 1; n <= working_pack_res_.size(); n++ ) {
 		move_side_chain( mm, pose, working_pack_res_[n] );
 	}
 }
@@ -381,7 +381,7 @@ StepWiseMinimizer::let_neighboring_side_chains_minimize( core::kinematics::MoveM
 void
 StepWiseMinimizer::move_side_chain( core::kinematics::MoveMap & mm,
 	pose::Pose const & pose,
-	Size const j ){
+	core::Size const j ){
 	if ( mm.get_chi( j ) ) return;
 	if ( pose.residue(j).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) return;
 	if ( pose.residue(j).is_protein() ) {
@@ -392,15 +392,15 @@ StepWiseMinimizer::move_side_chain( core::kinematics::MoveMap & mm,
 		mm.set( id::TorsionID( j, id::CHI, 4), true ); // 2'-OH.
 		if ( pose.residue_type(j).nchi() > 4 ) {
 			// Some kind of chemically modified base
-			for ( Size ii = 5; ii <= pose.residue_type(j).nchi(); ++ii ) {
+			for ( core::Size ii = 5; ii <= pose.residue_type(j).nchi(); ++ii ) {
 				mm.set( id::TorsionID( j, id::CHI, ii), true );
 			}
 		}
 	}
 	// how about terminal phosphates?
 	if ( options_->vary_polar_hydrogen_geometry() ) {
-		utility::vector1< Size > const & Hpos_polar = pose.residue( j ).Hpos_polar();
-		for ( Size q = 1; q <= Hpos_polar.size(); q++ ) atom_level_domain_map_->set( id::AtomID( Hpos_polar[q], j ), true );
+		utility::vector1< core::Size > const & Hpos_polar = pose.residue( j ).Hpos_polar();
+		for ( core::Size q = 1; q <= Hpos_polar.size(); q++ ) atom_level_domain_map_->set( id::AtomID( Hpos_polar[q], j ), true );
 	}
 }
 
@@ -467,7 +467,7 @@ StepWiseMinimizer::output_minimized_pose_list() const{
 
 		// copied from StepWiseRNA_VirtualSugarSamplerFromStringList -- trying to be consistent with that crazy old thing.
 		//    output_data( silent_file_out_, pose_tag, false, pose, working_parameters_->working_native_pose(), working_parameters_ );
-		for ( Size n = 1; n <= pose_list_.size(); n++ ) {
+		for ( core::Size n = 1; n <= pose_list_.size(); n++ ) {
 			Pose & pose = ( *pose_list_[n] ); //set viewer_pose;
 			std::string const tag = "S_"+ ObjexxFCL::string_of( n-1 /* start with zero */);
 			stepwise::modeler::rna::output_data( options_->silent_file(),
@@ -479,7 +479,7 @@ StepWiseMinimizer::output_minimized_pose_list() const{
 				true /*NAT_rmsd*/  );
 		}
 	} else if ( !protein::contains_protein( *pose_list_[1] ) ) {
-		for ( Size n = 1; n <= pose_list_.size(); n++ ) {
+		for ( core::Size n = 1; n <= pose_list_.size(); n++ ) {
 			Pose & pose = ( *pose_list_[n] ); //set viewer_pose;
 			std::string const tag = "S_"+ ObjexxFCL::string_of( n-1 /* start with zero */);
 			stepwise::monte_carlo::output_to_silent_file( tag,
@@ -506,7 +506,7 @@ StepWiseMinimizer::figure_out_working_minimize_res( core::pose::Pose const & pos
 	FullModelInfo const & full_model_info( const_full_model_info( pose ) );
 	utility::vector1< core::Size > const working_extra_minimize_res( full_model_info.full_to_sub( full_model_info.extra_minimize_res() ) );
 
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue_type( n ).name3() == "HOH" ) continue; // allowing waters to vary in different poses (Mg hydration)
 		if ( !working_fixed_res_.has_value( n ) ||
 				working_extra_minimize_res.has_value( n ) ) {

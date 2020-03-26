@@ -94,13 +94,13 @@ public:
 	/// @brief get the segment ID for a given starting and ending atom
 	/// @details
 	/// if the segment ID does not exist, 0 is returned
-	Size
+	core::Size
 	segment_id(
 		core::id::AtomID start_atomid,
 		core::id::AtomID end_atomid
 	)
 	{
-		for ( Size i = 1; i <= segments_.size(); ++i ) {
+		for ( core::Size i = 1; i <= segments_.size(); ++i ) {
 			if ( segments_[i].start_atomid() == start_atomid && segments_[i].end_atomid() == end_atomid ) return i;
 		}
 
@@ -141,7 +141,7 @@ public:
 	}
 
 	/// @brief add a segment to the mover
-	Size
+	core::Size
 	add_segment(
 		core::id::AtomID start_atomid,
 		core::id::AtomID end_atomid,
@@ -311,7 +311,7 @@ public:
 	void
 	rotate_segment(
 		Pose & pose,
-		Size segment_id,
+		core::Size segment_id,
 		core::Real angle,
 		utility::vector0<core::Real> & start_constants,
 		utility::vector0<core::Real> & end_constants
@@ -321,7 +321,7 @@ public:
 	core::Real
 	random_angle(
 		Pose & pose,
-		Size segment_id,
+		core::Size segment_id,
 		utility::vector0<core::Real> & start_constants,
 		utility::vector0<core::Real> & end_constants
 	);

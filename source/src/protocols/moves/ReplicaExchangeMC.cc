@@ -118,11 +118,11 @@ void ReplicaExchangeMC::init()
 
 	//debug
 	TR << "Building exchange schedule 1" << std::endl;
-	for ( Size i=1; i<=exchange_schedule[1].size(); i++ ) {
+	for ( core::Size i=1; i<=exchange_schedule[1].size(); i++ ) {
 		TR << exchange_schedule[1][i].first << "<-->" << exchange_schedule[1][i].second << std::endl;
 	}
 	TR << "Building exchange schedule 2" << std::endl;
-	for ( Size i=1; i<=exchange_schedule[2].size(); i++ ) {
+	for ( core::Size i=1; i<=exchange_schedule[2].size(); i++ ) {
 		TR << exchange_schedule[2][i].first << "<-->" << exchange_schedule[2][i].second << std::endl;
 	}
 }
@@ -140,9 +140,9 @@ void ReplicaExchangeMC::build_temperature_list(const core::Real *elist)
 	int nlist=(3+flag)/2; // 1 or 2, switch
 
 	TR << "Building " << nlist << std::endl;
-	for ( Size i=1; i<=exchange_schedule[nlist].size(); i++ ) {
-		Size node1=T_rev[exchange_schedule[nlist][i].first];
-		Size node2=T_rev[exchange_schedule[nlist][i].second];
+	for ( core::Size i=1; i<=exchange_schedule[nlist].size(); i++ ) {
+		core::Size node1=T_rev[exchange_schedule[nlist][i].first];
+		core::Size node2=T_rev[exchange_schedule[nlist][i].second];
 
 		//TR << node1 << "<==>" << node2 << std::endl;
 		//TR << "proc" << node1 << ": e=" << elist[node1] <<" T=" << Tlist_[T_tag[node1]+1] << std::endl;
@@ -162,7 +162,7 @@ void ReplicaExchangeMC::build_temperature_list(const core::Real *elist)
 		if ( numeric::random::rg().uniform()<probability ) {
 			TR << "Switch:" << Tlist_[exchange_schedule[nlist][i].first+1] << "<==>" << Tlist_[exchange_schedule[nlist][i].second+1] << std::endl;
 			//switch
-			Size tmp=T_tag[node1];
+			core::Size tmp=T_tag[node1];
 			T_tag[node1]=T_tag[node2];
 			T_tag[node2]=tmp;
 			tmp=T_rev[exchange_schedule[nlist][i].first];

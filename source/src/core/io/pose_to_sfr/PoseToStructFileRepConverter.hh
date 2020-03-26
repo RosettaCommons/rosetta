@@ -39,7 +39,7 @@
 #include <core/pose/PDBInfo.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -56,7 +56,7 @@ namespace pose_to_sfr {
 /// Protein Databank file formats (PDB and mmCIF) and Rosetta objects (poses).  This was implemented
 /// at the 2016 Chemical XRW (eXtreme Rosetta Workshop), at which this class was popularly referred
 /// to as the "pose unbuilder".
-class PoseToStructFileRepConverter : public utility::pointer::ReferenceCount
+class PoseToStructFileRepConverter : public utility::VirtualBase
 {
 
 	friend class ::PoseToStructFileRepConverterTests; //Needed to allow the unit tests to access private member functions.

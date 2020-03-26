@@ -507,14 +507,14 @@ EnzdesRemodelMover::remodel_pose(
 	if ( keep_existing_aa_identities_ ) {
 
 		bool oddlength ( init_aa_.size() % 2 == 0 ? false : true );
-		Size num_aa_each_side_to_replace( init_aa_.size()/2 );
+		core::Size num_aa_each_side_to_replace( init_aa_.size()/2 );
 		if ( flex_region_->length() < init_aa_.size() ) {
 			num_aa_each_side_to_replace = flex_region_->length() / 2;
 			if ( flex_region_->length() % 2 == 0 ) oddlength = false;
 			else oddlength = true;
 		}
-		std::set< Size > res_to_repack;
-		for ( Size i = 0; i < num_aa_each_side_to_replace; ++i ) {
+		std::set< core::Size > res_to_repack;
+		for ( core::Size i = 0; i < num_aa_each_side_to_replace; ++i ) {
 			pose.replace_residue( flex_region_->start() + i, core::conformation::Residue( *(init_aa_[i+1].lock()), true), true);
 
 			pose.replace_residue( flex_region_->stop() - i, core::conformation::Residue( *(init_aa_[init_aa_.size()-i].lock()), true), true);
@@ -527,7 +527,7 @@ EnzdesRemodelMover::remodel_pose(
 		}
 		core::pack::task::PackerTaskOP task( new core::pack::task::PackerTask_( pose ) );
 		task->initialize_from_command_line();
-		for ( Size i = 1; i <= task->total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= task->total_residue(); ++i ) {
 			if ( res_to_repack.find( i ) != res_to_repack.end() ) task->nonconst_residue_task( i ).restrict_to_repacking();
 			else task->nonconst_residue_task( i ).prevent_repacking();
 		}
@@ -639,7 +639,7 @@ EnzdesRemodelMover::examine_initial_conformation(
 
 	if ( keep_existing_aa_identities_ ) {
 		init_aa_.clear();
-		for ( Size i = flex_region_->start(); i <= flex_region_->stop(); ++i ) init_aa_.push_back( pose.residue_type_ptr( i ) );
+		for ( core::Size i = flex_region_->start(); i <= flex_region_->stop(); ++i ) init_aa_.push_back( pose.residue_type_ptr( i ) );
 	}
 
 
@@ -1167,7 +1167,7 @@ EnzdesRemodelMover::setup_rcgs(
 		//loop over all positions that the targ residue is at
 		//note: usually this will be one
 		//old
-		//for( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator pos_it = targ_template->respos_map_begin();
+		//for( std::map< core::Size, EnzCstTemplateResAtomsOP >::const_iterator pos_it = targ_template->respos_map_begin();
 		//  pos_it != targ_template->respos_map_end(); ++pos_it ){
 		for ( auto pos_it = targ_template_cache->seqpos_map_begin();
 				pos_it != targ_template_cache->seqpos_map_end(); ++pos_it ) {

@@ -34,7 +34,7 @@
 #include <core/chemical/ResidueProperty.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/options/keys/OptionKey.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>

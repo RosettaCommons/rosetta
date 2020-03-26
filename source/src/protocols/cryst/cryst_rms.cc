@@ -319,7 +319,7 @@ crystRMS (core::pose::Pose &pose_native, core::pose::Pose &pose_decoy,
 	core::Real sumdist = 0.0;
 	for ( core::Size j=2; j<=nsubunits_decoy; ++j ) {
 		Real mindist = 1e6;
-		Size minidx = 0;
+		core::Size minidx = 0;
 		Vector decoy_j_off = coms_decoy[j]-coms_decoy[1];
 		for ( core::Size k=2; k<=nsubunits_native; ++k ) {
 			Vector native_k_off = coms_native[k]-coms_native[1];

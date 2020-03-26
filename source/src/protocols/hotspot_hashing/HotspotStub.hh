@@ -22,7 +22,7 @@
 
 // Utility Headers
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <utility/vector1.hh>
@@ -36,7 +36,7 @@ enum StubStatus {
 	unchecked // stub has not been checked yet
 };
 
-class HotspotStub : public utility::pointer::ReferenceCount {
+class HotspotStub : public utility::VirtualBase {
 public:
 	/// @brief no-argument constructor REQUIRED FOR WINDOWS
 	HotspotStub() {}

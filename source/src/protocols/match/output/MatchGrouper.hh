@@ -25,7 +25,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -34,7 +34,7 @@ namespace protocols {
 namespace match {
 namespace output {
 
-class MatchGrouper : public utility::pointer::ReferenceCount {
+class MatchGrouper : public utility::VirtualBase {
 public:
 	typedef core::Real Real;
 
@@ -44,13 +44,13 @@ public:
 	~MatchGrouper() override;
 
 	virtual
-	Size
+	core::Size
 	assign_group_for_match(
 		match const & m
 	) = 0;
 
 	virtual
-	Size
+	core::Size
 	assign_group_for_match(
 		match_dspos1 const & m
 	) = 0;

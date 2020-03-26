@@ -37,8 +37,8 @@ void StealSideChainsMover::apply( core::pose::Pose & pose ) {
 	using core::Size;
 	using std::string;
 
-	for ( Size ii = 1; ii <= map_.size1(); ++ii ) {
-		Size const source_ii( map_[ii] );
+	for ( core::Size ii = 1; ii <= map_.size1(); ++ii ) {
+		core::Size const source_ii( map_[ii] );
 		if ( source_ii == 0 ) continue;
 		if ( source_ii > source_.size() ) continue;
 

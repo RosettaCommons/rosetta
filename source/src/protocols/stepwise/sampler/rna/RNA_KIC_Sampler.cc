@@ -87,7 +87,7 @@ void RNA_KIC_Sampler::init() {
 	//default: center +- 20 deg
 	//extra_epsilon: center +- 60 deg
 	TorsionList epsilon_torsions;
-	Size const pucker1( assign_pucker( *ref_pose_, moving_suite_ ) );
+	core::Size const pucker1( assign_pucker( *ref_pose_, moving_suite_ ) );
 	Real center = ( pucker1 == NORTH ) ? torsion_info.epsilon_north() :
 		torsion_info.epsilon_south();
 	Real max_range = 20;
@@ -159,7 +159,7 @@ void RNA_KIC_Sampler::operator++() {
 	runtime_assert( not_end() );
 	if ( random() ) {
 		random_chain_closed_ = false;
-		for ( Size i = 1; i <= max_tries_; ++i ) {
+		for ( core::Size i = 1; i <= max_tries_; ++i ) {
 			++( *bb_rotamer_ );
 			bb_rotamer_->apply( *ref_pose_ );
 

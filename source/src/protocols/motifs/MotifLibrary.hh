@@ -25,7 +25,7 @@
 
 // Utility Headers
 #include <utility/file/FileName.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -35,7 +35,7 @@
 namespace protocols {
 namespace motifs {
 
-class MotifLibrary : public utility::pointer::ReferenceCount
+class MotifLibrary : public utility::VirtualBase
 {
 
 public:

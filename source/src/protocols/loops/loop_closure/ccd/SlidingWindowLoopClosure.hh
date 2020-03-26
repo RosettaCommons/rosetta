@@ -45,7 +45,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
@@ -162,7 +162,7 @@ public:
 
 protected:
 	typedef std::list< std::pair< core::Real, Loop > > WindowList;
-	void generate_window_list( Size loop_size, WindowList& window_list ) const;
+	void generate_window_list( core::Size loop_size, WindowList& window_list ) const;
 
 
 	void set_defaults();
@@ -173,7 +173,7 @@ protected:
 
 	/// @brief process fragments for loop-closing prowess, keep track of best_fragment
 	///  return nr_of new good_loops ( vdw criterion )
-	Size
+	core::Size
 	process_fragments(
 		core::fragment::FrameList& frame_in,
 		core::pose::Pose const& more_cut,

@@ -129,7 +129,7 @@ RRProtocolRTMin::run(
 
 	// For each residue in the packer task,
 	// rtmin residue -> and measure recovery
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( !packer_task.pack_residue(ii) ) continue;
 
 		one_res_task->temporarily_set_pack_residue( ii, true );

@@ -199,7 +199,7 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 
 /// copy constructor
 EnergyMethodOptions::EnergyMethodOptions(EnergyMethodOptions const & src)
-: ReferenceCount( src )
+: VirtualBase( src )
 {
 	*this = src;
 }

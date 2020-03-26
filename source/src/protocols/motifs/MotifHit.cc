@@ -35,7 +35,7 @@ namespace motifs {
 
 MotifHit::MotifHit(
 	Motif const & motif,
-	Size const & vbpos,
+	core::Size const & vbpos,
 	bool const passed_automorphism
 ) : motifcop_( motif.clone() ),
 	vbpos_( vbpos ),
@@ -47,7 +47,7 @@ MotifHit::MotifHit(
 MotifHit::~MotifHit() = default;
 
 MotifHit::MotifHit( MotifHit const & src ) :
-	utility::pointer::ReferenceCount( src ),
+	utility::VirtualBase( src ),
 	motifcop_( src.motifcop()->clone() ),
 	vbpos_( src.vbpos_ ),
 	passed_automorphism_( src.passed_automorphism_ ),

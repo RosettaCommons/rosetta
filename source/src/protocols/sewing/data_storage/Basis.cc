@@ -33,7 +33,7 @@ namespace sewing {
 namespace data_storage {
 
 Basis::Basis():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	segment_id_(0),
 	resnum_(0)
 {}
@@ -45,10 +45,7 @@ Basis::Basis( core::Size segment_id, core::Size resnum ){
 
 Basis::~Basis(){}
 
-Basis::Basis( Basis const & src ) {
-	segment_id_ = src.segment_id_;
-	resnum_  = src.resnum_;
-}
+Basis::Basis( Basis const & ) = default;
 
 BasisOP
 Basis::clone() const {

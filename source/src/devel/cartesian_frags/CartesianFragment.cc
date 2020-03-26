@@ -60,8 +60,8 @@ CartesianFragment::add_atom( SafeAtomID const & id, Stub const & instub, Vector 
 /// Private.
 int
 CartesianFragment::get_seqpos_offset_for_new_component(
-	Size const component_root_seqpos,
-	Size const component_index
+	core::Size const component_root_seqpos,
+	core::Size const component_index
 ) const
 {
 	return component_root_seqpos - ( component_index - 1 ) * BIG_OFFSET_;
@@ -121,7 +121,7 @@ CartesianFragment::get_seqpos_offset_for_torsion_stub(
 
 /// @details  Insert myself into a conformation (this version only works for single-component fragments)
 void
-CartesianFragment::insert( Conformation & conf, Size const offset ) const
+CartesianFragment::insert( Conformation & conf, core::Size const offset ) const
 {
 	insert( conf, ComponentOffsets( 1, offset ) );
 }
@@ -140,7 +140,7 @@ CartesianFragment::insert( Conformation & conf, ComponentOffsets const & offsets
 
 
 	// frag atom xyz's
-	for ( Size i=1; i<= natoms(); ++i ) {
+	for ( core::Size i=1; i<= natoms(); ++i ) {
 		SafeAtomID id( atom_ids_[i] );
 		if ( id.name.substr(0,6) == "instub" || id.name.substr(0,7) == "outstub" ) continue;
 		id.seqpos = get_seqpos_for_fragment_insertion( id.seqpos, offsets );
@@ -168,7 +168,7 @@ CartesianFragment::insert( Conformation & conf, ComponentOffsets const & offsets
 	}
 
 	// stub transforms
-	for ( Size i=1; i<= outgoing_.size(); ++i ) {
+	for ( core::Size i=1; i<= outgoing_.size(); ++i ) {
 		tt << "Frag::insert outstub_id= " << outgoing_stub_ids_[i] << std::endl;
 
 		// check if the torsionstubid matches
@@ -226,11 +226,11 @@ CartesianFragment::add_stub_atoms(
 		SafeAtomID const atom2( atom_name_prefix + "atom2", 0 );
 		SafeAtomID const atom3( atom_name_prefix + "atom3", 0 );
 
-		Size const atom1_index( atom_index( atom1 ) );
-		Size const atom2_index( add_atom( atom2, instub, stub.build_fake_xyz(2) ) );
+		core::Size const atom1_index( atom_index( atom1 ) );
+		core::Size const atom2_index( add_atom( atom2, instub, stub.build_fake_xyz(2) ) );
 		links_[ atom1_index ].insert( links_[ atom1_index ].begin(), atom2_index );
 
-		Size const atom3_index( add_atom( atom3, instub, stub.build_fake_xyz(3) ) );
+		core::Size const atom3_index( add_atom( atom3, instub, stub.build_fake_xyz(3) ) );
 		links_[ atom2_index ].push_back( atom3_index );
 
 	} else {
@@ -241,8 +241,8 @@ CartesianFragment::add_stub_atoms(
 		SafeAtomID const atom2( bond_atom2 );
 		SafeAtomID const atom1( atom_name_prefix + "atom1", 0 );
 
-		Size const atom2_index( atom_index( atom2 ) );
-		Size const atom1_index( add_atom( atom1, instub, stub.build_fake_xyz(1) ) );
+		core::Size const atom2_index( atom_index( atom2 ) );
+		core::Size const atom1_index( add_atom( atom1, instub, stub.build_fake_xyz(1) ) );
 		links_[ atom2_index ].insert( links_[ atom2_index ].begin(), atom1_index );
 	}
 }
@@ -268,7 +268,7 @@ CartesianFragment::initialize(
 
 	// convert new bonds to BondID's for this conformation
 	vector1< id::BondID > new_bonds;
-	for ( Size i=1; i<= new_bonds_in.size(); ++i ) {
+	for ( core::Size i=1; i<= new_bonds_in.size(); ++i ) {
 		new_bonds.push_back( new_bonds_in[i].id( conf ) );
 	}
 
@@ -276,7 +276,7 @@ CartesianFragment::initialize(
 	// and setup list of bonds not to cross
 	vector1< id::BondID > cuts;
 	cuts.push_back( torsion_bond( incoming, conf ) );
-	for ( Size i=1; i<= outgoing.size(); ++i ) {
+	for ( core::Size i=1; i<= outgoing.size(); ++i ) {
 		// store the transform from incoming stub to this outgoing stub
 		Stub const outstub( torsion_stub( outgoing[i], conf ) );
 		stub_transforms_.push_back( RT( instub, outstub ) );
@@ -301,7 +301,7 @@ CartesianFragment::initialize(
 
 	//nreal_atoms_ = xyz_.size();
 	add_stub_atoms( incoming, instub, conf, seqpos_offset_map, "instub_" );
-	for ( Size i=1; i<= outgoing.size(); ++i ) {
+	for ( core::Size i=1; i<= outgoing.size(); ++i ) {
 		string const prefix( "outstub"+string_of(i)+"_" );
 		add_stub_atoms( outgoing[i], instub, conf, seqpos_offset_map, prefix );
 	}
@@ -314,7 +314,7 @@ CartesianFragment::initialize(
 	incoming_.id.rsd() -= incoming_seqpos_offset;
 
 	outgoing_ = outgoing;
-	for ( Size i=1; i<= outgoing.size(); ++i ) {
+	for ( core::Size i=1; i<= outgoing.size(); ++i ) {
 		int const outgoing_seqpos_offset( get_seqpos_offset_for_torsion_stub( outgoing[i], conf, seqpos_offset_map ) );
 		outgoing_[i].id.rsd() -= outgoing_seqpos_offset;
 		outgoing_stub_ids_.push_back( SafeStubID( outgoing[i], conf, outgoing_seqpos_offset ) );
@@ -328,7 +328,7 @@ CartesianFragment::initialize(
 ///   of bonds to cut and extra connections to jump across.
 /// returns atomindex of new atom
 
-Size
+core::Size
 CartesianFragment::add_frag_atom(
 	id::AtomID const & id,
 	SeqposOffsetMap & seqpos_offset_map,
@@ -349,20 +349,20 @@ CartesianFragment::add_frag_atom(
 	added[ id ] = true;
 
 	// some local variables
-	Size const seqpos( id.rsd() );
-	Size const atomno( id.atomno() );
+	core::Size const seqpos( id.rsd() );
+	core::Size const atomno( id.atomno() );
 	Residue const & rsd( conf.residue( seqpos ) );
 	ResidueType const & rsd_type( rsd.type() );
 
 	// store the coordinates, using a local atomid
-	Size const my_atom_index( add_atom( SafeAtomID( id, conf, seqpos_offset_map[id]), instub, rsd.xyz( atomno ) ) );
+	core::Size const my_atom_index( add_atom( SafeAtomID( id, conf, seqpos_offset_map[id]), instub, rsd.xyz( atomno ) ) );
 
 
 	//// now recursively add neighbors:
 
 	// first any new bonds, ie jumps for example, or nonpolymeric chemical bonds like disulfides
 	//
-	for ( Size i=1; i<= new_bonds.size(); ++i ) {
+	for ( core::Size i=1; i<= new_bonds.size(); ++i ) {
 		if ( new_bonds[i].has( id ) ) {
 			AtomID const & other_id( new_bonds[i].other_atom( id ) );
 			if ( added[ other_id ] ) continue;
@@ -376,8 +376,8 @@ CartesianFragment::add_frag_atom(
 
 	// first the inter-residue nbrs: //////////////////////////
 	{
-		Size const ncon( rsd.n_possible_residue_connections() );
-		for ( Size connid=1; connid <= ncon; ++connid ) {
+		core::Size const ncon( rsd.n_possible_residue_connections() );
+		for ( core::Size connid=1; connid <= ncon; ++connid ) {
 			if ( rsd.residue_connect_atom_index( connid ) != atomno ) continue;
 			// we don't cross non-polymeric connections, since the sequence numbers on the other
 			// side would not necessarily be conserved when we insert. So we require user to add such a connection
@@ -385,9 +385,9 @@ CartesianFragment::add_frag_atom(
 			//
 			if ( !rsd_type.residue_connection_is_polymeric( connid ) ) continue;
 			ResConnID const & resconnid( rsd.actual_residue_connection( connid ) );
-			Size const other_seqpos( resconnid. resid() );
-			Size const other_connid( resconnid.connid() );
-			Size const other_atomno( conf.residue( other_seqpos ).residue_connect_atom_index( other_connid ) );
+			core::Size const other_seqpos( resconnid. resid() );
+			core::Size const other_connid( resconnid.connid() );
+			core::Size const other_atomno( conf.residue( other_seqpos ).residue_connect_atom_index( other_connid ) );
 			AtomID const other_id( other_atomno, other_seqpos );
 			if ( added[ other_id ] ) continue;
 			if ( skip_bond( id, other_id, cuts ) ) continue;
@@ -400,7 +400,7 @@ CartesianFragment::add_frag_atom(
 	// now the intra-residue nbrs: ////////////////////////
 	{
 		AtomIndices const & nbrs( rsd_type.nbrs( atomno ) );
-		for ( Size i=1; i<= nbrs.size(); ++i ) {
+		for ( core::Size i=1; i<= nbrs.size(); ++i ) {
 			AtomID const nbr_id( nbrs[i], seqpos );
 			if ( added[ nbr_id ] ) continue;
 			if ( skip_bond( id, nbr_id, cuts ) ) continue;
@@ -417,7 +417,7 @@ CartesianFragment::add_frag_atom(
 
 /// @details  Get the atomindex for the atom with the desired safeatomid
 ///
-Size
+core::Size
 CartesianFragment::atom_index( SafeAtomID id ) const
 {
 	auto it( std::find( atom_ids_.begin(), atom_ids_.end(), id ) );
@@ -489,12 +489,12 @@ void
 CartesianFragment::update_xyz_from_tree()
 {
 
-	for ( Size i=1; i<= natoms(); ++i ) {
+	for ( core::Size i=1; i<= natoms(); ++i ) {
 		xyz_[i] = tree_.xyz( AtomID( i,1 ) );
 	}
 
 	// now have to update the outgoing stub transforms
-	for ( Size i=1; i<= n_outgoing(); ++i ) {
+	for ( core::Size i=1; i<= n_outgoing(); ++i ) {
 		std::string const prefix( "outstub"+string_of(i)+"_atom" );
 		Stub const outstub( xyz( SafeAtomID( prefix+string_of(1), 0 ) ),
 			xyz( SafeAtomID( prefix+string_of(2), 0 ) ),
@@ -519,7 +519,7 @@ CartesianFragment::setup_atom_tree()
 	kinematics::add_atom( root_atom, seqpos, links_, atom_pointer[1], true );
 
 	// set coords
-	for ( Size i=1; i<= natoms(); ++i ) {
+	for ( core::Size i=1; i<= natoms(); ++i ) {
 		atom_pointer[1][i]->xyz( xyz_[i] );
 	}
 

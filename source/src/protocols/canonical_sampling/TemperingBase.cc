@@ -106,7 +106,7 @@ TemperingBase::temperature() const {
 }
 
 core::Real
-TemperingBase::temperature( Size level ) const {
+TemperingBase::temperature( core::Size level ) const {
 	return temperatures_[ level ];
 }
 
@@ -134,14 +134,14 @@ TemperingBase::parse_my_tag(
 	if ( !success ) {
 		auto temp_low = tag->getOption< Real >( "temp_low", 0.6 );
 		auto temp_high = tag->getOption< Real >( "temp_high", 3.0 );
-		auto temp_levels = tag->getOption< Size >( "temp_levels", 10 );
+		auto temp_levels = tag->getOption< core::Size >( "temp_levels", 10 );
 		InterpolationType temp_interpolation = interpolation_type_string_to_enum(tag->getOption< std::string >( "temp_interpolation", "linear" ));
 		generate_temp_range( temp_low, temp_high, temp_levels, temp_interpolation );
 	}
 
 	//simple options
-	temperature_stride_ = tag->getOption< Size >( "temp_stride", 100 );
-	io_stride_ = tag->getOption< Size >("io_stride", 10000 );
+	temperature_stride_ = tag->getOption< core::Size >( "temp_stride", 100 );
+	io_stride_ = tag->getOption< core::Size >("io_stride", 10000 );
 	trust_current_temp_ = tag->getOption< bool >( "trust_crurrent_temp", true );
 	stats_line_output_ = tag->getOption< bool >( "stats_line_output", false );
 	stats_silent_output_ = tag->getOption< bool >( "stats_silent_output", false );
@@ -281,7 +281,7 @@ void TemperingBase::init_from_options() {
 			temp_low=option[ tempering::temp::low ]();
 			temp_high=option[ tempering::temp::high ]();
 		}
-		Size const n_levels( option[ tempering::temp::levels ]() );
+		core::Size const n_levels( option[ tempering::temp::levels ]() );
 		generate_temp_range( temp_low, temp_high, n_levels );
 	}
 	stats_file_ = option[ tempering::stats::file ]();
@@ -291,20 +291,20 @@ void TemperingBase::init_from_options() {
 	instance_initialized_ = true;
 }
 
-void TemperingBase::generate_temp_range( Real temp_low, Real temp_high, Size n_levels, InterpolationType interpolation /*= linear*/ ) {
+void TemperingBase::generate_temp_range( Real temp_low, Real temp_high, core::Size n_levels, InterpolationType interpolation /*= linear*/ ) {
 	temperatures_.clear();
 	runtime_assert( n_levels >= 2 );
 	tr.Info << "initializing temperatures from " << temp_low << " to " << temp_high << " with " << n_levels << " levels using "
 		<< interpolation_type_enum_to_string(interpolation) << " interpolation." << std::endl;
 	if ( interpolation == linear ) {
 		Real const temp_step ( (temp_high-temp_low)/(n_levels-1) );
-		for ( Size ct=0; ct<n_levels; ++ct ) {
+		for ( core::Size ct=0; ct<n_levels; ++ct ) {
 			temperatures_.push_back( temp_low+ct*temp_step );
 		}
 	} else if ( interpolation == exponential ) {
 		Real next_temp( temp_low );
 		Real temp_factor( pow(temp_high/temp_low, 1/Real(n_levels-1)) );
-		for ( Size ct=1; ct<n_levels; ++ct ) {
+		for ( core::Size ct=1; ct<n_levels; ++ct ) {
 			temperatures_.push_back( next_temp );
 			next_temp *= temp_factor;
 		}
@@ -324,7 +324,7 @@ bool TemperingBase::initialize_from_file( std::string const& filename ) {
 	getline( in, line );
 	std::istringstream line_stream( line );
 	std::string tag;
-	Size n_levels( 0 );
+	core::Size n_levels( 0 );
 
 	line_stream >> tag >> n_levels;
 
@@ -347,7 +347,7 @@ bool TemperingBase::initialize_from_file( std::string const& filename ) {
 
 	if ( line_format ) {
 		Real temp;
-		for ( Size ct=1; ct <= n_levels; ++ct ) {
+		for ( core::Size ct=1; ct <= n_levels; ++ct ) {
 			line_stream >> temp;
 			temperatures_.push_back( temp );
 		}
@@ -391,14 +391,14 @@ void TemperingBase::write_to_file( std::string const& file_in, std::string const
 	//write
 	if ( stats_line_output_ ) { //line format
 		out << "TEMPERING " << n_temp_levels();
-		for ( Size i=1; i <= n_temp_levels(); ++i ) {
+		for ( core::Size i=1; i <= n_temp_levels(); ++i ) {
 			out << " " << temperatures_[ i ];
 		}
 		out << " " << output_name << std::endl;
 	} else { //table format
 		out << std::setw( 10 );
 		out << "TEMPERING_TABLE " << n_temp_levels() << " " << output_name << std::endl;
-		for ( Size i=1; i <= n_temp_levels(); ++i ) {
+		for ( core::Size i=1; i <= n_temp_levels(); ++i ) {
 			out << temperatures_[ i ] << std::endl;
 		}
 	}
@@ -410,7 +410,7 @@ void TemperingBase::set_temperatures( utility::vector1< Real > const& temps ) {
 }
 
 
-void TemperingBase::set_current_temp( Size new_temp ) {
+void TemperingBase::set_current_temp( core::Size new_temp ) {
 	current_temp_ = new_temp;
 	Real real_temp = temperatures_[ current_temp_ ];
 	if ( monte_carlo() ) {

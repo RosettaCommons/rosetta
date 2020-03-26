@@ -60,7 +60,7 @@ private:
 	PoseConditionOP p_cond_;
 };
 
-class PoseCondition : public utility::pointer::ReferenceCount {
+class PoseCondition : public utility::VirtualBase {
 public:
 	PoseCondition() {};
 	~PoseCondition() override;

@@ -60,6 +60,7 @@ namespace protocols {
 namespace canonical_sampling {
 
 
+using core::Size;
 
 
 MetricRecorder::MetricRecorder() :

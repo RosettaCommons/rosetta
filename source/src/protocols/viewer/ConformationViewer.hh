@@ -30,7 +30,7 @@
 // Project headers
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/signals/Link.hh>
 
 #include <protocols/viewer/GraphicsState.hh>
@@ -49,11 +49,11 @@ namespace protocols {
 namespace viewer {
 
 /// @brief observer that attaches to a Conformation and displays graphics
-class ConformationViewer : public utility::pointer::ReferenceCount {
+class ConformationViewer : public utility::VirtualBase {
 
 private: // typedefs
 
-	typedef utility::pointer::ReferenceCount Super;
+	typedef utility::VirtualBase Super;
 
 public: // typedefs
 
@@ -200,4 +200,4 @@ private:
 
 #endif
 
-#endif 
+#endif

@@ -53,6 +53,8 @@ static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.VDW_CachedRepSc
 namespace protocols {
 namespace scoring {
 
+using core::Size;
+
 // @brief Constructor
 VDW_CachedRepScreenInfo::VDW_CachedRepScreenInfo() :
 	CacheableData(),
@@ -143,7 +145,7 @@ VDW_CachedRepScreenInfo::read_in_VDW_rep_screen_pose_from_options( utility::opti
 		align_res_specified = ( str.find(".pdb", str.size()-4) == std::string::npos );
 	}
 
-	for ( Size n = 1; n <= All_VDW_rep_screen_pose_info.size(); n++ ) {
+	for ( core::Size n = 1; n <= All_VDW_rep_screen_pose_info.size(); n++ ) {
 
 		if ( All_VDW_rep_screen_pose_info[n].find(".pdb", All_VDW_rep_screen_pose_info[n].size()-4) == std::string::npos ) continue; // must have '.pdb'
 
@@ -157,11 +159,11 @@ VDW_CachedRepScreenInfo::read_in_VDW_rep_screen_pose_from_options( utility::opti
 		if ( align_res_specified ) {
 			VDW_align_res_string = core::pose::rna::tokenize( All_VDW_rep_screen_pose_info[n + 1], "-");
 			working_align_res_string = core::pose::rna::tokenize( All_VDW_rep_screen_pose_info[n + 2], "-");
-			for ( Size i = 1; i <= VDW_align_res_string.size(); ++i ) {
+			for ( core::Size i = 1; i <= VDW_align_res_string.size(); ++i ) {
 				//VDW_rep_screen_info.VDW_align_res.push_back( protocols::stepwise::modeler::rna::string_to_int( VDW_align_res_string[i] ) );
 				VDW_rep_screen_info.VDW_align_res.push_back( core::pose::rna::string_to_int( VDW_align_res_string[i] ) );
 			}
-			for ( Size i = 1; i <= working_align_res_string.size(); ++i ) {
+			for ( core::Size i = 1; i <= working_align_res_string.size(); ++i ) {
 				VDW_rep_screen_info.working_align_res.push_back( core::pose::rna::string_to_int( working_align_res_string[i] ) );
 			}
 		}

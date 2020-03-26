@@ -41,7 +41,7 @@ class StepWiseProteinMinimizer: public protocols::moves::Mover {
 public:
 
 	StepWiseProteinMinimizer( utility::vector1< core::pose::PoseOP > const & pose_list,
-		utility::vector1< Size > const & moving_residues );
+		utility::vector1< core::Size > const & moving_residues );
 
 	//destructor -- necessary?
 	~StepWiseProteinMinimizer() override;
@@ -110,7 +110,7 @@ private:
 	std::string min_type_;
 	core::Real min_tolerance_;
 	bool use_coordinate_constraints_;
-	Size num_pose_minimize_;
+	core::Size num_pose_minimize_;
 };
 
 } //protein

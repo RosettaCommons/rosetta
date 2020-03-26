@@ -44,7 +44,7 @@ SSFeature::values_from_pose( core::pose::Pose & pose ) const {
 
 	//protocols::jumping::assign_ss_dssp( pose );
 	string const & secstruct( pose.secstruct() );
-	for ( Size ii = 1; ii <= secstruct.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= secstruct.size(); ++ii ) {
 		features.push_back(
 			utility::pointer::make_shared< SSFeature >( char2ss_type(secstruct.at(ii)) )
 		);

@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_rna_data_RNA_DMS_LowResolutionPotential_HH
 #define INCLUDED_core_scoring_rna_data_RNA_DMS_LowResolutionPotential_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.fwd.hh>
 #include <core/pose/rna/RNA_DataInfo.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -32,7 +32,7 @@ namespace scoring {
 namespace rna {
 namespace data {
 
-class RNA_DMS_LowResolutionPotential: public utility::pointer::ReferenceCount {
+class RNA_DMS_LowResolutionPotential: public utility::VirtualBase {
 
 public:
 

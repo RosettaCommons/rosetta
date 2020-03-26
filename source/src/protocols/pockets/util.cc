@@ -29,23 +29,23 @@ namespace pockets {
 
 using namespace core;
 
-void min_values_versus_cluster( Size & x, Size & y, Size & z, PCluster const & c2 ) {
+void min_values_versus_cluster( core::Size & x, core::Size & y, core::Size & z, PCluster const & c2 ) {
 	x = std::min( x, c2.get_minX() );
 	y = std::min( y, c2.get_minY() );
 	z = std::min( z, c2.get_minZ() );
 }
-void max_values_versus_cluster( Size & x, Size & y, Size & z, PCluster const & c2 ) {
+void max_values_versus_cluster( core::Size & x, core::Size & y, core::Size & z, PCluster const & c2 ) {
 	x = std::max( x, c2.get_maxX() );
 	y = std::max( y, c2.get_maxY() );
 	z = std::max( z, c2.get_maxZ() );
 }
 
-void min_values_versus_cluster( Size & x, Size & y, Size & z, CCluster const & c2 ) {
+void min_values_versus_cluster( core::Size & x, core::Size & y, core::Size & z, CCluster const & c2 ) {
 	x = std::min( x, c2.get_minX() );
 	y = std::min( y, c2.get_minY() );
 	z = std::min( z, c2.get_minZ() );
 }
-void max_values_versus_cluster( Size & x, Size & y, Size & z, CCluster const & c2 ) {
+void max_values_versus_cluster( core::Size & x, core::Size & y, core::Size & z, CCluster const & c2 ) {
 	x = std::max( x, c2.get_maxX() );
 	y = std::max( y, c2.get_maxY() );
 	z = std::max( z, c2.get_maxZ() );

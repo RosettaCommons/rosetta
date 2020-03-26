@@ -34,7 +34,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //Auto Headers
 #include <core/scoring/constraints/Constraint.hh>

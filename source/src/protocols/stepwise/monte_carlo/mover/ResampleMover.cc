@@ -186,12 +186,12 @@ ResampleMover::apply( pose::Pose & pose,
 	std::transform(move_type.begin(), move_type.end(), move_type.begin(), ::tolower); // this is why we love C
 
 	// What needs to be set in StepwiseModeler:
-	Size remodel_res( 0 ), remodel_suite( 0 ), cutpoint_suite( 0 );
+	core::Size remodel_res( 0 ), remodel_suite( 0 ), cutpoint_suite( 0 );
 
-	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
-	Size const num_attachments = swa_move.attachments().size();
+	utility::vector1< core::Size > const & res_list = get_res_list_from_full_model_info( pose );
+	core::Size const num_attachments = swa_move.attachments().size();
 	bool const is_single_attachment = ( num_attachments == 1 );
-	Size const move_element_size = swa_move.move_element().size();
+	core::Size const move_element_size = swa_move.move_element().size();
 
 	if ( is_single_attachment ) {
 		remodel_res = get_remodel_res( swa_move, pose );
@@ -205,8 +205,8 @@ ResampleMover::apply( pose::Pose & pose,
 			remodel_suite = remodel_res - 1;
 			cutpoint_suite  = res_list.index( swa_move.moving_res() );
 		} else { // fixed move_element
-			Size const attached_res_prev = swa_move.attachments()[1].attached_res();
-			Size const attached_res_next = swa_move.attachments()[2].attached_res();
+			core::Size const attached_res_prev = swa_move.attachments()[1].attached_res();
+			core::Size const attached_res_next = swa_move.attachments()[2].attached_res();
 			remodel_res   = res_list.index( attached_res_prev ); // this is now the *suite*
 			remodel_suite = remodel_res;
 			cutpoint_suite  = res_list.index( attached_res_next ) - 1;
@@ -227,10 +227,10 @@ ResampleMover::apply( pose::Pose & pose,
 		stepwise_modeler_->set_moving_res_and_reset( remodel_res );
 		stepwise_modeler_->set_figure_out_prepack_res( true );
 	}
-	utility::vector1< Size > moving_res = get_moving_res_from_full_model_info( pose );
+	utility::vector1< core::Size > moving_res = get_moving_res_from_full_model_info( pose );
 	if ( moving_res.empty() && options_->force_moving_res_for_erraser() ) {
-		if ( is_single_attachment ) moving_res = utility::vector1< Size >( 1, remodel_res + 1 );
-		else moving_res = utility::vector1< Size >( 1, remodel_res );
+		if ( is_single_attachment ) moving_res = utility::vector1< core::Size >( 1, remodel_res + 1 );
+		else moving_res = utility::vector1< core::Size >( 1, remodel_res );
 	}
 	if ( ! minimize_single_res_ ) stepwise_modeler_->set_working_minimize_res( moving_res );
 
@@ -265,11 +265,11 @@ ResampleMover::get_remodel_res( StepWiseMove const & swa_move, pose::Pose const 
 	runtime_assert( swa_move.attachments().size() == 1 );
 
 	// remodel res will be the first residue in the moving element that is immediatly downstream of the attachment residue.
-	Size remodel_res( 0 );
+	core::Size remodel_res( 0 );
 	MoveElement const & move_element = swa_move.move_element();
-	for ( Size n = 1; n <= move_element.size(); n++ ) {
-		Size const moving_res = full_to_sub( move_element[ n ], pose );
-		Size const parent_res = pose.fold_tree().get_parent_residue( moving_res );
+	for ( core::Size n = 1; n <= move_element.size(); n++ ) {
+		core::Size const moving_res = full_to_sub( move_element[ n ], pose );
+		core::Size const parent_res = pose.fold_tree().get_parent_residue( moving_res );
 		TR.Trace << "This moving res (move_element[" << n << "] == " << move_element[n] << ") " << moving_res << " has parent " << parent_res << std::endl;
 		if ( parent_res > 0 && sub_to_full( parent_res, pose ) == swa_move.attached_res() ) {
 			remodel_res = moving_res; break;
@@ -279,7 +279,7 @@ ResampleMover::get_remodel_res( StepWiseMove const & swa_move, pose::Pose const 
 	// we may have to reroot pose -- the attachment point might be 'downstream' of the moving element.
 	// the rerooting will actually occur later in the Modeler.
 	if ( remodel_res == 0 ) {
-		Size const moving_res = full_to_sub( swa_move.attached_res(), pose );
+		core::Size const moving_res = full_to_sub( swa_move.attached_res(), pose );
 		TR.Trace << "Maybe the moving res " << moving_res  << " ( " << swa_move.attached_res() << " ) will work " << sub_to_full( pose.fold_tree().get_parent_residue( moving_res ), pose ) << std::endl;
 		if ( move_element.has_value( sub_to_full( pose.fold_tree().get_parent_residue( moving_res ), pose ) ) ) {
 			remodel_res = moving_res;
@@ -293,15 +293,15 @@ ResampleMover::get_remodel_res( StepWiseMove const & swa_move, pose::Pose const 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 filter_for_proximity( pose::Pose const & pose,
-	utility::vector1< Size > & partition_res,
-	Size const center_res ) {
+	utility::vector1< core::Size > & partition_res,
+	core::Size const center_res ) {
 	using namespace core::chemical::rna;
 	runtime_assert( partition_res.has_value( center_res ) );
 	static Distance const proximity_cutoff( 8.0 );
-	utility::vector1< Size > filtered_partition_res;
+	utility::vector1< core::Size > filtered_partition_res;
 	Vector const & center_xyz = pose.residue( center_res ).xyz( default_jump_atom( pose.residue_type( center_res ) ) );
-	for ( Size n = 1; n <= partition_res.size(); n++ ) {
-		Size const new_res = partition_res[ n ];
+	for ( core::Size n = 1; n <= partition_res.size(); n++ ) {
+		core::Size const new_res = partition_res[ n ];
 		Vector const & new_xyz =  pose.residue( new_res ).xyz( default_jump_atom( pose.residue_type( new_res ) ) );
 		if ( ( new_xyz - center_xyz ).length() < proximity_cutoff ) filtered_partition_res.push_back( new_res );
 	}
@@ -311,24 +311,24 @@ filter_for_proximity( pose::Pose const & pose,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-ResampleMover::slide_jump_randomly( pose::Pose & pose, Size & remodel_res ) const {
+ResampleMover::slide_jump_randomly( pose::Pose & pose, core::Size & remodel_res ) const {
 
 	using namespace core::kinematics;
 	using namespace core::chemical::rna;
 
 	FoldTree f = pose.fold_tree();
-	Size const jump_nr = f.get_jump_that_builds_residue( remodel_res );
-	Size const reference_res = f.upstream_jump_residue( jump_nr );
+	core::Size const jump_nr = f.get_jump_that_builds_residue( remodel_res );
+	core::Size const reference_res = f.upstream_jump_residue( jump_nr );
 
 	// check if user-inputted jump. Then can't move.
-	utility::vector1< Size > const & jump_res_map = const_full_model_info( pose ).jump_res_map();
-	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+	utility::vector1< core::Size > const & jump_res_map = const_full_model_info( pose ).jump_res_map();
+	utility::vector1< core::Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 	if ( jump_res_map[ res_list[ remodel_res ]  ] > 0 &&
 			jump_res_map[ res_list[ reference_res ] ] > 0 ) {
 		runtime_assert( jump_res_map[ res_list[ remodel_res ] ] == jump_res_map[ res_list[ reference_res ] ] );
 		return;
 	}
-	utility::vector1< Size > root_partition_res, moving_partition_res;
+	utility::vector1< core::Size > root_partition_res, moving_partition_res;
 	figure_out_root_and_moving_partition_res( pose, remodel_res, root_partition_res, moving_partition_res );
 
 	if ( options_->local_redock_only() ) {
@@ -337,18 +337,18 @@ ResampleMover::slide_jump_randomly( pose::Pose & pose, Size & remodel_res ) cons
 	}
 
 	// need to make sure JUMP_DOCK remain in different chains!
-	utility::vector1< Size > dock_domain_map = figure_out_dock_domain_map_from_full_model_info_const( pose );
-	utility::vector1< std::pair< Size, Size > > possible_jump_pairs;
-	for ( Size i = 1; i <= root_partition_res.size(); i++ ) {
-		Size const & root_res = root_partition_res[ i ];
-		for ( Size j = 1; j <= moving_partition_res.size(); j++ ) {
-			Size const & move_res = moving_partition_res[ j ];
+	utility::vector1< core::Size > dock_domain_map = figure_out_dock_domain_map_from_full_model_info_const( pose );
+	utility::vector1< std::pair< core::Size, core::Size > > possible_jump_pairs;
+	for ( core::Size i = 1; i <= root_partition_res.size(); i++ ) {
+		core::Size const & root_res = root_partition_res[ i ];
+		for ( core::Size j = 1; j <= moving_partition_res.size(); j++ ) {
+			core::Size const & move_res = moving_partition_res[ j ];
 			if ( dock_domain_map[ root_res ] != dock_domain_map[ move_res ] ) possible_jump_pairs.push_back( std::make_pair( root_res, move_res ) );
 		}
 	}
-	std::pair< Size, Size > const new_jump_pair = numeric::random::rg().random_element( possible_jump_pairs );
-	Size const new_reference_res = new_jump_pair.first;
-	Size const new_remodel_res   = new_jump_pair.second;
+	std::pair< core::Size, core::Size > const new_jump_pair = numeric::random::rg().random_element( possible_jump_pairs );
+	core::Size const new_reference_res = new_jump_pair.first;
+	core::Size const new_remodel_res   = new_jump_pair.second;
 
 	f.slide_jump( jump_nr, new_reference_res, new_remodel_res );
 	f.set_jump_atoms( jump_nr, default_jump_atom( pose.residue_type( new_reference_res ) ),

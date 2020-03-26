@@ -77,7 +77,7 @@ MPIArchiveJobDistributor::MPIArchiveJobDistributor() :
 
 	//if we are testing we want to send JOB_COMPLETION more often
 	if ( option[ OptionKeys::run::test_cycles ] || option[ OptionKeys::run::dry_run ] ) {
-		nr_notify_ = std::min( nr_notify_, Size(10) );
+		nr_notify_ = std::min( nr_notify_, core::Size(10) );
 	}
 }
 
@@ -131,15 +131,15 @@ MPIArchiveJobDistributor::go( protocols::moves::MoverOP mover )
 
 /// @detail receive a new batch from ArchiveManager -- interpret batch_nr == 0 as STOP
 bool
-MPIArchiveJobDistributor::receive_batch( Size MPI_ONLY( source_rank ) ) {
+MPIArchiveJobDistributor::receive_batch( core::Size MPI_ONLY( source_rank ) ) {
 	basic::prof_show();
 #ifdef USEMPI
 	MPI_Status status;
 	int buf[ 2 ];
 	//receive size of string
 	MPI_Recv( buf, 2, MPI_INT, source_rank, MPI_JOB_DIST_TAG, MPI_COMM_WORLD, &status );
-	Size size( buf[ 0 ]);
-	Size id( buf[ 1 ] );
+	core::Size size( buf[ 0 ]);
+	core::Size id( buf[ 1 ] );
 	//receive string
 	std::string new_batch;
 	char *cbuf = new char[ size+1 ];
@@ -165,7 +165,7 @@ MPIArchiveJobDistributor::receive_batch( Size MPI_ONLY( source_rank ) ) {
 /// @detail sync batches with worker nodes.. this is called if they get a job for a batch they don't know yet...
 /// this method will send ALL batches they don't have yet.
 void
-MPIArchiveJobDistributor::sync_batches( Size MPI_ONLY( slave_rank ) ) {
+MPIArchiveJobDistributor::sync_batches( core::Size MPI_ONLY( slave_rank ) ) {
 	PROF_START( basic::ARCHIVE_SYNC_BATCHES );
 #ifdef USEMPI
 	tr.Trace << "Node " << rank() << " sync batches with " << slave_rank << std::endl;
@@ -174,8 +174,8 @@ MPIArchiveJobDistributor::sync_batches( Size MPI_ONLY( slave_rank ) ) {
 	MPI_Status status;
 
 	///send last known batch from SLAVE --> MASTER
-	Size slave_batch_size( nr_batches() );
-	Size nr_to_have;
+	core::Size slave_batch_size( nr_batches() );
+	core::Size nr_to_have;
 	if ( rank() != master_rank() ) { //SLAVE -- SEND
 		buf[ 0 ] = slave_batch_size;
 		MPI_Send( &buf, 1, MPI_INT, master_rank(), MPI_JOB_DIST_TAG, MPI_COMM_WORLD );
@@ -198,7 +198,7 @@ MPIArchiveJobDistributor::sync_batches( Size MPI_ONLY( slave_rank ) ) {
 	tr.Trace << "Node " << rank() << " master_batch_size " << nr_to_have << std::endl;
 
 	//MASTER --> SLAVE now send the individual batches
-	for ( Size send_id = slave_batch_size + 1; send_id <= nr_to_have; ++send_id ) {
+	for ( core::Size send_id = slave_batch_size + 1; send_id <= nr_to_have; ++send_id ) {
 		if ( rank() != master_rank() ) { //SLAVE
 			receive_batch( master_rank() );
 			tr.Trace << "nr_batches() " << nr_batches() << " send_id " << send_id << std::endl;
@@ -219,11 +219,11 @@ MPIArchiveJobDistributor::sync_batches( Size MPI_ONLY( slave_rank ) ) {
 /// @detail send message to ArchiveManager .. eg. QueueEmpty
 /// always send current_batch_id with the message ... used to determine if QueueEmpty is outdated
 void
-MPIArchiveJobDistributor::master_to_archive( Size MPI_ONLY(tag) ) {
+MPIArchiveJobDistributor::master_to_archive( core::Size MPI_ONLY(tag) ) {
 #ifdef USEMPI
 	runtime_assert( rank() == master_rank() );
 	runtime_assert( rank() != archive_rank() );
-	Size const mpi_size( 6 );
+	core::Size const mpi_size( 6 );
 	int mpi_buf[ mpi_size ];
 	mpi_buf[ 0 ] = tag;
 	mpi_buf[ 1 ] = current_batch_id();

@@ -27,7 +27,7 @@
 #include <numeric/xyzVector.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -48,10 +48,10 @@ namespace upstream {
 /// stored coordinate frame is multiplied
 /// by the coordinate frame at the third atom after that coordinate frame
 /// has been multipled by the chi-angle-z-axis rotation HT.
-class UpstreamResTypeGeometry : public utility::pointer::ReferenceCount
+class UpstreamResTypeGeometry : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~UpstreamResTypeGeometry() override;
 	typedef core::Size                            Size;
 	typedef core::Real                            Real;
@@ -72,38 +72,38 @@ public:
 	}
 
 	/// @brief the number of atoms in this residue type
-	Size natoms() const {
+	core::Size natoms() const {
 		return controlling_chi_for_atom_.size();
 	}
 
-	Size nchi() const {
+	core::Size nchi() const {
 		return chitip_atoms_.size();
 	}
 
-	bool atom_controlled_by_any_chi( Size atomno ) const {
+	bool atom_controlled_by_any_chi( core::Size atomno ) const {
 		return controlling_chi_for_atom_[ atomno ] != 0;
 	}
 
-	bool atom_is_chitip( Size atomno ) const {
+	bool atom_is_chitip( core::Size atomno ) const {
 		return controlling_chi_for_atom_[ atomno ] != 0 && which_point_for_atom_[ atomno ] == 0;
 	}
 
-	utility::vector1< Size > const &
+	utility::vector1< core::Size > const &
 	controlling_chi_for_atom() const { return controlling_chi_for_atom_; }
 
-	utility::vector1< Size > const &
+	utility::vector1< core::Size > const &
 	which_point_for_atom() const { return which_point_for_atom_; }
 
-	utility::vector1< Size > const &
+	utility::vector1< core::Size > const &
 	chitip_atoms() const { return chitip_atoms_; }
 
-	Size
-	chitip_atom( Size chi ) const {
+	core::Size
+	chitip_atom( core::Size chi ) const {
 		return chitip_atoms_[ chi ];
 	}
 
 	HTReal const &
-	pre_chitip_transform( Size chi ) const {
+	pre_chitip_transform( core::Size chi ) const {
 		return pre_chitip_transforms_[ chi ];
 	}
 
@@ -111,20 +111,20 @@ public:
 	ht_for_chitip_atoms() const { return ht_for_chitip_atoms_; }
 
 	HTReal const &
-	ht_for_chitip_atom( Size chi ) const {
+	ht_for_chitip_atom( core::Size chi ) const {
 		return ht_for_chitip_atoms_[ chi ];
 	}
 
-	Size
-	n_nonchitip_atoms_for_chi( Size chi ) const {
+	core::Size
+	n_nonchitip_atoms_for_chi( core::Size chi ) const {
 		return nonchitip_atoms_[ chi ].size();
 	}
 
-	utility::vector1< utility::vector1< Size > > const &
+	utility::vector1< utility::vector1< core::Size > > const &
 	nonchitip_atoms() const { return nonchitip_atoms_; }
 
-	Size
-	nonchitip_atom( Size chi, Size which_nonchitip_atom_for_chi ) const {
+	core::Size
+	nonchitip_atom( core::Size chi, core::Size which_nonchitip_atom_for_chi ) const {
 		return nonchitip_atoms_[ chi ][ which_nonchitip_atom_for_chi ];
 	}
 
@@ -132,7 +132,7 @@ public:
 	points_for_nonchitip_atoms() const { return points_for_nonchitip_atoms_; }
 
 	utility::vector1< Vector > const &
-	points_for_nonchitip_atoms( Size chi ) const {
+	points_for_nonchitip_atoms( core::Size chi ) const {
 		return points_for_nonchitip_atoms_[ chi ];
 	}
 
@@ -140,20 +140,20 @@ public:
 	/// for a particular atom.  The atom must be a non-chitip atom that is
 	/// not part of the backbone (it must be controlled by a chi angle).
 	Vector const &
-	point_for_nonchitip_atom( Size atom ) {
+	point_for_nonchitip_atom( core::Size atom ) {
 		debug_assert( atom_controlled_by_any_chi( atom ) && !atom_is_chitip( atom ) );
 		return points_for_nonchitip_atoms_[ controlling_chi_for_atom_[ atom ] ]
 			[ which_point_for_atom_[ atom ] ];
 	}
 
 
-	Size N_atom_id() const { return N_atom_id_; }
-	Size CA_atom_id() const { return CA_atom_id_; }
-	Size C_atom_id() const { return C_atom_id_; }
-	Size O_atom_id() const { return O_atom_id_; }
-	Size CB_atom_id() const { return CB_atom_id_; }
-	Size H_atom_id() const  { return H_atom_id_; }
-	Size HA_atom_id() const  { return HA_atom_id_; }
+	core::Size N_atom_id() const { return N_atom_id_; }
+	core::Size CA_atom_id() const { return CA_atom_id_; }
+	core::Size C_atom_id() const { return C_atom_id_; }
+	core::Size O_atom_id() const { return O_atom_id_; }
+	core::Size CB_atom_id() const { return CB_atom_id_; }
+	core::Size H_atom_id() const  { return H_atom_id_; }
+	core::Size HA_atom_id() const  { return HA_atom_id_; }
 
 
 	bool has_N_atom() const { return N_atom_id_ != 0; }
@@ -165,10 +165,10 @@ public:
 	bool has_HA_atom() const  { return HA_atom_id_ != 0; }
 
 	bool
-	atom_has_nonchi_coordinate( Size restype_atomid ) const;
+	atom_has_nonchi_coordinate( core::Size restype_atomid ) const;
 
 	Vector const &
-	coordinate_for_nonchi_atom_in_ideal_frame( Size restype_atomid ) const;
+	coordinate_for_nonchi_atom_in_ideal_frame( core::Size restype_atomid ) const;
 
 
 private:
@@ -176,15 +176,15 @@ private:
 
 	std::string restype_name_;
 
-	utility::vector1< Size >   controlling_chi_for_atom_;
-	utility::vector1< Size >   which_point_for_atom_;
+	utility::vector1< core::Size >   controlling_chi_for_atom_;
+	utility::vector1< core::Size >   which_point_for_atom_;
 
-	utility::vector1< Size >   chitip_atoms_;
+	utility::vector1< core::Size >   chitip_atoms_;
 	utility::vector1< HTReal > pre_chitip_transforms_;
 	utility::vector1< HTReal > ht_for_chitip_atoms_;
 
 
-	utility::vector1< utility::vector1< Size > >   nonchitip_atoms_;
+	utility::vector1< utility::vector1< core::Size > >   nonchitip_atoms_;
 	utility::vector1< utility::vector1< Vector > > points_for_nonchitip_atoms_;
 
 	/// The ideal frame is defined at Calpha with the half point between N and C
@@ -193,17 +193,17 @@ private:
 	/// Non-chi dependendent atoms are measured from the ideal coordinate in this frame.
 	/// This includes Cbeta and the Halphas.  It also includes O and H, but since their
 	/// geometry depends on phi and psi, this data would be inappropriate for them.
-	utility::vector1< Size   > restype_atom_id_2_nonchi_atom_id_;
-	utility::vector1< Size   > nonchi_atom_id_2_restype_atom_id_;
+	utility::vector1< core::Size   > restype_atom_id_2_nonchi_atom_id_;
+	utility::vector1< core::Size   > nonchi_atom_id_2_restype_atom_id_;
 	utility::vector1< Vector > nonchi_atoms_in_ideal_frame_;
 
-	Size N_atom_id_;
-	Size CA_atom_id_;
-	Size C_atom_id_;
-	Size O_atom_id_;
-	Size CB_atom_id_;
-	Size H_atom_id_;
-	Size HA_atom_id_;
+	core::Size N_atom_id_;
+	core::Size CA_atom_id_;
+	core::Size C_atom_id_;
+	core::Size O_atom_id_;
+	core::Size CB_atom_id_;
+	core::Size H_atom_id_;
+	core::Size HA_atom_id_;
 
 };
 

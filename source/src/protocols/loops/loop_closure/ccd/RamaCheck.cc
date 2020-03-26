@@ -47,7 +47,7 @@ static basic::Tracer TR( "protocols.loops.loop_closure.ccd.RamaCheck" );
 core::Real const RamaCheckBase::BAD_SCORE = 500.0;
 
 // Empty constructor
-/// @details  Initialize the ReferenceCount and the private data
+/// @details  Initialize the VirtualBase and the private data
 RamaCheckBase::RamaCheckBase() : Parent()
 {
 	init();

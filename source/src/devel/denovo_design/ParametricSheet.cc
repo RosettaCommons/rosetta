@@ -89,7 +89,7 @@ std::string const ParametricSheet::default_orientation_ = "P";
 
 /// @brief default constructor
 ParametricSheet::ParametricSheet() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	strand_dist_( 4.5 ),
 	c_dist_( 3.4 ),
 	twist_( 0.0 ),

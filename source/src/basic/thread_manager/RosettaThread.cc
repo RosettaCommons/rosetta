@@ -29,7 +29,7 @@ RosettaThread::RosettaThread(
 	platform::Size const thread_index,
 	RosettaThreadInstantiationKey const &
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	thread_index_( thread_index )
 {
 	hold_thread_ = false;

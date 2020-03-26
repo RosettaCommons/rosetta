@@ -344,7 +344,7 @@ HelixPairingFilter::parse_my_tag(
 	cross_angle_ = tag->getOption<Real>( "cross", cross_angle_ );
 	align_angle_ = tag->getOption<Real>( "align", align_angle_ );
 
-	output_id_ = tag->getOption<Size>( "output_id", output_id_ );
+	output_id_ = tag->getOption<core::Size>( "output_id", output_id_ );
 	output_type_ = tag->getOption<String>( "output_type", output_type_ );
 
 	if ( output_type_ != "dist" && output_type_ != "cross" && output_type_ != "align" ) {

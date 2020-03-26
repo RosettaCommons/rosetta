@@ -36,7 +36,7 @@ namespace protocols {
 namespace constraint_generator {
 
 ConstraintGenerator::ConstraintGenerator( std::string const & class_name ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	class_name_( class_name ),
 	id_( "unnamed_constraint_generator" )
 {}

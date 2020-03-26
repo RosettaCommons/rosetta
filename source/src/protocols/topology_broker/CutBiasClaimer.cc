@@ -55,7 +55,7 @@ CutBiasClaimer::CutBiasClaimer( core::fragment::SecondaryStructure const& ss )
 {
 	cut_bias_.reserve( ss.total_residue() );
 	ObjexxFCL::FArray1D_float const& lf = ss.loop_fraction();
-	for ( Size i = 1; i <= ss.total_residue(); i ++ ) {
+	for ( core::Size i = 1; i <= ss.total_residue(); i ++ ) {
 		cut_bias_.push_back( lf( i ) );
 	}
 }
@@ -64,7 +64,7 @@ CutBiasClaimer::CutBiasClaimer( core::fragment::SecondaryStructure const& ss, st
 {
 	cut_bias_.reserve( ss.total_residue() );
 	ObjexxFCL::FArray1D_float const& lf = ss.loop_fraction();
-	for ( Size i = 1; i <= ss.total_residue(); i ++ ) {
+	for ( core::Size i = 1; i <= ss.total_residue(); i ++ ) {
 		cut_bias_.push_back( lf( i ) );
 	}
 	set_label( label );
@@ -92,7 +92,7 @@ CutBiasClaimer::manipulate_cut_bias( utility::vector1< core::Real >& tot_cut_bia
 		tr.Debug << "Set cut_bias values in range [" << (1+offset) << "," <<  ( cut_bias_.size() + offset ) << "]" <<std::endl;
 	}
 
-	/*for ( Size i = 1; i<=cut_bias_.size() && i<=tot_cut_bias.size(); i++ ) {
+	/*for ( core::Size i = 1; i<=cut_bias_.size() && i<=tot_cut_bias.size(); i++ ) {
 	tot_cut_bias[ i ] *= cut_bias_[ i ];
 	}*/
 }

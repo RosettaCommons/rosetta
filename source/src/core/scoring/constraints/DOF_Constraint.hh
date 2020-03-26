@@ -21,7 +21,7 @@
 #include <core/id/DOF_ID.hh>
 
 //Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -44,7 +44,7 @@ namespace constraints {
 ///
 /// DOF_Constraints are currently unsupported -- they are never evaluated if you
 /// put them into a Pose.
-class DOF_Constraint : public utility::pointer::ReferenceCount {
+class DOF_Constraint : public utility::VirtualBase {
 
 public:
 	DOF_Constraint(

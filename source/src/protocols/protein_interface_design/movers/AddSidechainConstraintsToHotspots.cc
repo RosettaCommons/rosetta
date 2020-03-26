@@ -64,7 +64,7 @@ AddSidechainConstraintsToHotspots::apply( Pose & pose )
 	core::Size const begin( pose.conformation().chain_begin( chain() ) );
 	core::Size const end( pose.conformation().chain_end( chain() ) );
 
-	Size const num_cutpoints( pose.fold_tree().num_cutpoint() );
+	core::Size const num_cutpoints( pose.fold_tree().num_cutpoint() );
 	std::set< core::Size > residues; // We use set such that it's ordered
 	if ( residues_ ) {
 		utility::vector1< core::Size > res_vec( core::select::get_residues_from_subset( residues_->apply( pose ) ) );
@@ -74,7 +74,7 @@ AddSidechainConstraintsToHotspots::apply( Pose & pose )
 		TR<<"Not enough cutpoints in pose and no residues defined by user. Doing nothing"<<std::endl;
 		return;
 	}
-	for ( Size i=2; i<=pose.fold_tree().num_cutpoint(); ++i ) {
+	for ( core::Size i=2; i<=pose.fold_tree().num_cutpoint(); ++i ) {
 		core::Size const cutpoint = pose.fold_tree().cutpoint( i );
 		core::Size const cutpoint_i_1 = pose.fold_tree().cutpoint( i - 1 );
 		if ( cutpoint - 1 != cutpoint_i_1 ) continue;//only mark residues that are cut on both ends

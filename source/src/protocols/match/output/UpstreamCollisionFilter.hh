@@ -31,7 +31,7 @@
 
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -155,9 +155,9 @@ public:
 		core::conformation::Residue const & resB
 	) const
 	{
-		for ( Size ii = resA.first_sidechain_atom(); ii <= resA.nheavyatoms(); ++ii ) {
+		for ( core::Size ii = resA.first_sidechain_atom(); ii <= resA.nheavyatoms(); ++ii ) {
 			ProbeRadius ii_rad = probe_radius_for_atom_type( resA.atom_type_index( ii ) );
-			for ( Size jj = resB.first_sidechain_atom(); jj <= resB.nheavyatoms(); ++jj ) {
+			for ( core::Size jj = resB.first_sidechain_atom(); jj <= resB.nheavyatoms(); ++jj ) {
 				ProbeRadius jj_rad = probe_radius_for_atom_type( resB.atom_type_index( jj ) );
 				Real minsep = bump_grid()->required_separation_distance( ii_rad, jj_rad );
 				if ( resA.xyz( ii ).distance_squared( resB.xyz( jj )) < minsep * minsep ) {

@@ -38,15 +38,15 @@
 #include <utility/vector1.hh>
 
 /// Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace minimization_packing {
 
-class MinimalRotamer : public utility::pointer::ReferenceCount
+class MinimalRotamer : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~MinimalRotamer() override;
 	typedef core::chemical::AA          AA;
 	typedef core::chemical::ResidueType ResidueType;
@@ -77,7 +77,7 @@ private:
 	bool
 	atom_is_ideal(
 		core::conformation::Residue const & res,
-		Size const atom_id
+		core::Size const atom_id
 	) const;
 
 	void
@@ -89,11 +89,11 @@ private:
 	void
 	record_internal_geometry(
 		core::conformation::Residue const & res,
-		Size const atom_id
+		core::Size const atom_id
 	);
 
 	bool
-	chi_matches_coords( core::conformation::Residue const & res, Size chi_index ) const;
+	chi_matches_coords( core::conformation::Residue const & res, core::Size chi_index ) const;
 
 	bool
 	same_chi( MinimalRotamer const & other ) const;
@@ -113,9 +113,9 @@ private:
 	// x = 0 = d, y = 1 = theta, z = 2 = phi
 	utility::vector1< Vector > internal_geometry_;
 
-	static Size const d = 0;
-	static Size const theta = 1;
-	static Size const phi = 2;
+	static core::Size const d = 0;
+	static core::Size const theta = 1;
+	static core::Size const phi = 2;
 
 	/// No default constructor or assignment operator
 	/// copy c-tor is fine
@@ -130,7 +130,7 @@ private:
 /// residues upstream of jump 1 define group 1, and those downstream of jump 1 define group 2.
 /// In loop modelling, the static background is group 1, and the loop itself is group 0, since
 /// loop residues will have their bb dofs change regularly between repackings.
-class GroupDiscriminator : public utility::pointer::ReferenceCount
+class GroupDiscriminator : public utility::VirtualBase
 {
 public:
 	typedef core::pose::Pose Pose;
@@ -143,8 +143,8 @@ public:
 	protocols::minimization_packing::GroupDiscriminatorOP clone() const = 0;
 
 	virtual
-	Size
-	group_id( Pose const & pose, Size seqpos ) const = 0;
+	core::Size
+	group_id( Pose const & pose, core::Size seqpos ) const = 0;
 
 };
 
@@ -161,15 +161,15 @@ public:
 	protocols::minimization_packing::GroupDiscriminatorOP clone() const override;
 
 
-	Size
-	group_id( Pose const & pose, Size seqpos ) const override;
+	core::Size
+	group_id( Pose const & pose, core::Size seqpos ) const override;
 
 	void
-	set_group_ids( utility::vector1<Size > const & group_ids_input );
+	set_group_ids( utility::vector1<core::Size > const & group_ids_input );
 
 private:
 
-	utility::vector1< Size > group_ids_;
+	utility::vector1< core::Size > group_ids_;
 
 };
 
@@ -183,8 +183,8 @@ public:
 	protocols::minimization_packing::GroupDiscriminatorOP clone() const override;
 
 
-	Size
-	group_id( Pose const & pose, Size seqpos ) const override;
+	core::Size
+	group_id( Pose const & pose, core::Size seqpos ) const override;
 };
 
 class GreenPacker : public protocols::moves::Mover
@@ -269,8 +269,8 @@ private:
 	compute_absent_srci_energies_for_residue_pair(
 		Pose & pose,
 		PrecomputedPairEnergiesInteractionGraphOP pig,
-		Size lower_res,
-		Size upper_res
+		core::Size lower_res,
+		core::Size upper_res
 	);
 
 	void
@@ -278,8 +278,8 @@ private:
 		Pose & pose,
 		LongRangeTwoBodyEnergy const & lre,
 		PrecomputedPairEnergiesInteractionGraphOP pig,
-		Size lower_res,
-		Size upper_res
+		core::Size lower_res,
+		core::Size upper_res
 	);
 
 	void drop_inter_group_edges( Pose & pose, GraphOP packer_neighbor_graph ) const;
@@ -298,8 +298,8 @@ private:
 	bool create_reference_data_;
 
 	protocols::minimization_packing::GroupDiscriminatorOP group_discriminator_;
-	utility::vector1< Size > group_ids_;
-	std::vector< utility::vector1< Size > > group_members_; // index by zero to represent group 0
+	utility::vector1< core::Size > group_ids_;
+	std::vector< utility::vector1< core::Size > > group_members_; // index by zero to represent group 0
 
 	TaskFactoryOP reference_task_factory_;
 	TaskFactoryOP task_factory_;
@@ -313,8 +313,8 @@ private:
 
 	/// @brief rotamer sets created by the reference task
 	RotamerSetsOP reference_rotamer_sets_;
-	utility::vector1< Size > reference_resid_2_moltenres_;
-	utility::vector1< Size > reference_moltenres_2_resid_;
+	utility::vector1< core::Size > reference_resid_2_moltenres_;
+	utility::vector1< core::Size > reference_moltenres_2_resid_;
 
 	/// @brief the stored intra-group RPEs from the context independent components of the
 	/// score function
@@ -346,10 +346,10 @@ private:
 	GraphOP current_intra_group_packer_neighbor_graph_;
 
 	/// correspondence between current rotamer set and original rotamer set.
-	utility::vector1< utility::vector1< Size > > orig_rot_2_curr_rot_;
-	utility::vector1< utility::vector1< Size > > curr_rot_2_orig_rot_;
-	utility::vector1< utility::vector1< Size > > curr_rotamers_with_correspondence_;
-	utility::vector1< utility::vector1< Size > > curr_rotamers_without_correspondence_;
+	utility::vector1< utility::vector1< core::Size > > orig_rot_2_curr_rot_;
+	utility::vector1< utility::vector1< core::Size > > curr_rot_2_orig_rot_;
+	utility::vector1< utility::vector1< core::Size > > curr_rotamers_with_correspondence_;
+	utility::vector1< utility::vector1< core::Size > > curr_rotamers_without_correspondence_;
 
 };
 

@@ -19,7 +19,7 @@
 #include <basic/datacache/CacheableData.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <platform/types.hh>
 #include <utility/down_cast.hh>
@@ -35,7 +35,7 @@ namespace basic {
 namespace datacache {
 
 /// @brief base class for data storable within a DataCache
-class CacheableData : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< CacheableData >
+class CacheableData : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< CacheableData >
 {
 public:
 	/// self pointers

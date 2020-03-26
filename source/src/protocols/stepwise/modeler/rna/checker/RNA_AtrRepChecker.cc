@@ -64,9 +64,9 @@ RNA_AtrRepChecker::RNA_AtrRepChecker( pose::Pose const & pose,
 
 //Constructor
 RNA_AtrRepChecker::RNA_AtrRepChecker( pose::Pose const & pose,
-	Size const moving_res,
-	Size const reference_res,
-	Size const gap_size,
+	core::Size const moving_res,
+	core::Size const reference_res,
+	core::Size const gap_size,
 	scoring::methods::EnergyMethodOptionsCOP energy_method_options /* = 0 */
 ):
 	moving_res_( moving_res    ),
@@ -123,8 +123,8 @@ RNA_AtrRepChecker::get_base_atr_rep_score( core::pose::Pose const & pose ){
 	base_pose_screen.remove_constraints(); // floating point errors if coordinate constraints are in there.
 	if ( output_pdb_ )  base_pose_screen.dump_pdb( "base_atr_rep_before.pdb" );
 
-	Size jump_at_moving_suite = base_pose_screen.fold_tree().jump_nr( moving_res_, reference_res_ );
-	Size moving_suite( 0 );
+	core::Size jump_at_moving_suite = base_pose_screen.fold_tree().jump_nr( moving_res_, reference_res_ );
+	core::Size moving_suite( 0 );
 	if ( jump_at_moving_suite == 0 ) {
 		runtime_assert( ( moving_res_ == reference_res_ + 1 ) || ( moving_res_ == reference_res_ - 1 ) );
 		moving_suite = ( moving_res_ < reference_res_ ) ? moving_res_ : reference_res_;
@@ -252,10 +252,10 @@ RNA_AtrRepChecker::output_rep( pose::Pose const & pose, std::string const tag ){
 	core::scoring::methods::EnergyMethodOptions options(atr_rep_screening_scorefxn_->energy_method_options());
 	core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options ));
 	core::scoring::etable::AnalyticEtableEvaluator eval(*etable);
-	for ( Size i = 1; i <= pose.size(); i++ ) {
-		for ( Size ii = 1; ii <= pose.residue( i ).natoms(); ii++ ) {
-			for ( Size j = i+1; j <= pose.size(); j++ ) {
-				for ( Size jj = 1; jj <= pose.residue( j ).natoms(); jj++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
+		for ( core::Size ii = 1; ii <= pose.residue( i ).natoms(); ii++ ) {
+			for ( core::Size j = i+1; j <= pose.size(); j++ ) {
+				for ( core::Size jj = 1; jj <= pose.residue( j ).natoms(); jj++ ) {
 					Real atrE, repE, solE, d2;
 					eval.atom_pair_energy_v( pose.residue( i ).atom( ii ),
 						pose.residue( j ).atom( jj ),

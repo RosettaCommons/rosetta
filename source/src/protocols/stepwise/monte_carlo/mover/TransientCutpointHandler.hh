@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_TransientCutpointHandler_HH
 #define INCLUDED_protocols_stepwise_TransientCutpointHandler_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/monte_carlo/mover/TransientCutpointHandler.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -27,7 +27,7 @@ namespace stepwise {
 namespace monte_carlo {
 namespace mover {
 
-class TransientCutpointHandler: public utility::pointer::ReferenceCount {
+class TransientCutpointHandler: public utility::VirtualBase {
 
 public:
 
@@ -46,7 +46,7 @@ public:
 
 	void take_out_cutpoints( core::pose::Pose & pose );
 
-	void set_minimize_res( utility::vector1< Size > const & setting ){ minimize_res_ = setting; }
+	void set_minimize_res( utility::vector1< core::Size > const & setting ){ minimize_res_ = setting; }
 
 	void set_move_jump_points_away( bool const & setting ){ move_jump_points_away_ = setting; }
 	bool move_jump_points_away() const{ return move_jump_points_away_; }

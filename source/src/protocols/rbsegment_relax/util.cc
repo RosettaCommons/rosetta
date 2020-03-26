@@ -196,8 +196,8 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 
 	FoldTree const &f_in = core::conformation::symmetry::get_asymm_unit_fold_tree( pose.conformation() );
 	// nres points to last protein residue;
-	Size totres = f_in.nres();
-	Size nres = totres - 1;
+	core::Size totres = f_in.nres();
+	core::Size nres = totres - 1;
 	core::Size vrtid = nres+1;
 	core::Size nrbsegs( rbsegs.size() );
 
@@ -235,15 +235,15 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 		}
 	}
 
-	ObjexxFCL::FArray2D< Size > fjumps( 2, jumps.size() );
-	ObjexxFCL::FArray1D< Size > fcuts ( cuts.size() );
-	for ( Size i=1; i<=jumps.size(); ++i ) {
+	ObjexxFCL::FArray2D< core::Size > fjumps( 2, jumps.size() );
+	ObjexxFCL::FArray1D< core::Size > fcuts ( cuts.size() );
+	for ( core::Size i=1; i<=jumps.size(); ++i ) {
 		fjumps(1,i) = std::min( jumps[i].first , jumps[i].second );
 		fjumps(2,i) = std::max( jumps[i].first , jumps[i].second );
 		// DEBUG -- PRINT JUMPS AND CUTS
 		TR.Error << " jump " << i << " : " << fjumps(1,i) << " , " << fjumps(2,i) << std::endl;
 	}
-	for ( Size i = 1; i<=cuts.size(); ++i ) {
+	for ( core::Size i = 1; i<=cuts.size(); ++i ) {
 		fcuts(i) = cuts[i];
 		TR.Error << " cut " << i << " : " << fcuts(i) << std::endl;
 	}
@@ -276,7 +276,7 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 
 	// cb variants
 	for ( auto const & loop : loops ) {
-		Size const loop_cut(loop.cut());
+		core::Size const loop_cut(loop.cut());
 		if ( !pose.residue(loop_cut).is_lower_terminus() && !pose.residue(loop_cut).is_upper_terminus() ) {
 			if ( ! pose.residue(loop_cut).has_variant_type(core::chemical::CUTPOINT_LOWER) ) {
 				core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_LOWER, loop_cut );
@@ -289,10 +289,10 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 
 	// copy back B factors
 	if ( pdbinfo_old ) {
-		for ( Size resid = 1; resid <= nres; ++resid ) {
+		for ( core::Size resid = 1; resid <= nres; ++resid ) {
 			core::conformation::Residue const &rsd_i = pose.residue(resid);
-			Size natoms_old = pdbinfo_old->natoms( resid ), natoms_new = rsd_i.natoms();
-			for ( Size atmid = 1; atmid <= natoms_new; ++atmid ) {
+			core::Size natoms_old = pdbinfo_old->natoms( resid ), natoms_new = rsd_i.natoms();
+			for ( core::Size atmid = 1; atmid <= natoms_new; ++atmid ) {
 				Real B = pdbinfo_old->temperature( resid, std::min(atmid,natoms_old) );
 				pose.pdb_info()->temperature( resid, atmid, B );
 			}
@@ -330,8 +330,8 @@ setup_disconnected( core::pose::Pose & pose ) {
 
 	FoldTree const &f_in = core::conformation::symmetry::get_asymm_unit_fold_tree( pose.conformation() );
 	// nres points to last protein residue;
-	Size totres = f_in.nres();
-	Size nres = totres - 1;
+	core::Size totres = f_in.nres();
+	core::Size nres = totres - 1;
 	core::Size vrtid = nres+1;
 
 	// "star" topology fold tree
@@ -353,13 +353,13 @@ setup_disconnected( core::pose::Pose & pose ) {
 		}
 	}
 
-	ObjexxFCL::FArray2D< Size > fjumps( 2, jumps.size() );
-	ObjexxFCL::FArray1D< Size > fcuts ( cuts.size() );
-	for ( Size i=1; i<=jumps.size(); ++i ) {
+	ObjexxFCL::FArray2D< core::Size > fjumps( 2, jumps.size() );
+	ObjexxFCL::FArray1D< core::Size > fcuts ( cuts.size() );
+	for ( core::Size i=1; i<=jumps.size(); ++i ) {
 		fjumps(1,i) = std::min( jumps[i].first , jumps[i].second );
 		fjumps(2,i) = std::max( jumps[i].first , jumps[i].second );
 	}
-	for ( Size i = 1; i<=cuts.size(); ++i ) {
+	for ( core::Size i = 1; i<=cuts.size(); ++i ) {
 		fcuts(i) = cuts[i];
 	}
 
@@ -390,10 +390,10 @@ setup_disconnected( core::pose::Pose & pose ) {
 
 	// copy back B factors
 	if ( pdbinfo_old ) {
-		for ( Size resid = 1; resid <= nres; ++resid ) {
+		for ( core::Size resid = 1; resid <= nres; ++resid ) {
 			core::conformation::Residue const &rsd_i = pose.residue(resid);
-			Size natoms_old = pdbinfo_old->natoms( resid ), natoms_new = rsd_i.natoms();
-			for ( Size atmid = 1; atmid <= natoms_new; ++atmid ) {
+			core::Size natoms_old = pdbinfo_old->natoms( resid ), natoms_new = rsd_i.natoms();
+			for ( core::Size atmid = 1; atmid <= natoms_new; ++atmid ) {
 				Real B = pdbinfo_old->temperature( resid, std::min(atmid,natoms_old) );
 				pose.pdb_info()->temperature( resid, atmid, B );
 			}
@@ -687,9 +687,9 @@ void guess_rbsegs_from_pose(
 	// split loops on cutpoints from original pose
 	utility::vector1< int > cuts_in = pose.fold_tree().cutpoints();
 	std::sort( cuts_in.begin(), cuts_in.end() );
-	for ( Size i=1; i<=loops.size(); ++i ) {
-		for ( Size j=1; j<=cuts_in.size(); ++j ) {
-			if ( loops[i].start() <= Size(cuts_in[j]) && loops[i].stop() > Size(cuts_in[j]) ) {
+	for ( core::Size i=1; i<=loops.size(); ++i ) {
+		for ( core::Size j=1; j<=cuts_in.size(); ++j ) {
+			if ( loops[i].start() <= core::Size(cuts_in[j]) && loops[i].stop() > core::Size(cuts_in[j]) ) {
 				TR << "splitting [" << loops[i].start() << " , " << loops[i].stop() << "] at " << cuts_in[j] << std::endl;
 				core::Size new_start = cuts_in[j]+1, new_stop = loops[i].stop();
 				loops[i].set_stop(cuts_in[j]);

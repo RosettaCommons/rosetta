@@ -366,7 +366,7 @@ ProteinBondGeometryFeatures::report_intrares_angles(
 
 	Real energy_angle = 0;
 
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
 		Residue const & rsd = pose.residue(i);
@@ -379,11 +379,11 @@ ProteinBondGeometryFeatures::report_intrares_angles(
 		core::chemical::ResidueType const & rsd_type = rsd.type();
 
 		// for each angle in the residue
-		for ( Size bondang = 1; bondang <= rsd_type.num_bondangles(); ++bondang ) {
+		for ( core::Size bondang = 1; bondang <= rsd_type.num_bondangles(); ++bondang ) {
 			// get ResidueType ints
-			Size rt1 = ( rsd_type.bondangle( bondang ) ).key1();
-			Size rt2 = ( rsd_type.bondangle( bondang ) ).key2();
-			Size rt3 = ( rsd_type.bondangle( bondang ) ).key3();
+			core::Size rt1 = ( rsd_type.bondangle( bondang ) ).key1();
+			core::Size rt2 = ( rsd_type.bondangle( bondang ) ).key2();
+			core::Size rt3 = ( rsd_type.bondangle( bondang ) ).key3();
 
 			// check for vrt
 			//if ( rsd_type.atom_type(rt1).is_virtual()
@@ -447,11 +447,11 @@ ProteinBondGeometryFeatures::report_interres_angles(
 	std::string statement_string ="INSERT INTO bond_interres_angles (struct_id, cenresNum, connResNum, cenAtmNum, outAtmCenNum, outAtmConnNum, cenAtmName, outAtmCenName, outAtmConnName, ideal, observed, difference, energy) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		Residue const & rsd1 = pose.residue(i);
 		if ( !rsd1.is_protein() ) continue;
 
-		for ( Size j = i+1; j <= pose.size(); ++j ) {
+		for ( core::Size j = i+1; j <= pose.size(); ++j ) {
 			if ( !check_relevant_residues(relevant_residues, i, j) ) continue;
 			Residue const & rsd2 = pose.residue(j);
 			if ( !rsd2.is_protein() ) continue;
@@ -470,23 +470,23 @@ ProteinBondGeometryFeatures::report_interres_angles(
 			core::chemical::ResidueType const & rsd1_type = rsd1.type();
 			core::chemical::ResidueType const & rsd2_type = rsd2.type();
 
-			utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
+			utility::vector1< core::Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
 
-			for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
+			for ( core::Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
 
-				Size const resconn_id1( r1_resconn_ids[ii] );
-				Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
+				core::Size const resconn_id1( r1_resconn_ids[ii] );
+				core::Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
 
-				Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
-				Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
+				core::Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
+				core::Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
 
 				/// compute the bond-angle energies from pairs of atoms within-1 bond on rsd1 with
 				/// the the connection atom on rsd2.
 				utility::vector1< core::chemical::two_atom_set > const & rsd1_atoms_wi1_bond_of_ii(
 					rsd1_type.atoms_within_one_bond_of_a_residue_connection( resconn_id1 ));
-				for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
+				for ( core::Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
 					debug_assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
-					Size const res1_lower_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
+					core::Size const res1_lower_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
 
 					Real const angle = numeric::angle_radians(
 						rsd1.atom( res1_lower_atomno ).xyz(),
@@ -528,9 +528,9 @@ ProteinBondGeometryFeatures::report_interres_angles(
 				/// the the connection atom on rsd1.
 				utility::vector1< core::chemical::two_atom_set > const & rsd2_atoms_wi1_bond_of_ii(
 					rsd2_type.atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
-				for ( Size jj = 1; jj <= rsd2_atoms_wi1_bond_of_ii.size(); ++jj ) {
+				for ( core::Size jj = 1; jj <= rsd2_atoms_wi1_bond_of_ii.size(); ++jj ) {
 					debug_assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
-					Size const res2_lower_atomno = rsd2_atoms_wi1_bond_of_ii[ jj ].key2();
+					core::Size const res2_lower_atomno = rsd2_atoms_wi1_bond_of_ii[ jj ].key2();
 
 					// lookup Ktheta and theta0
 					Real Ktheta, theta0;
@@ -581,7 +581,7 @@ ProteinBondGeometryFeatures::report_intrares_lengths(
 	std::string statement_string ="INSERT INTO bond_intrares_lengths (struct_id, resNum, atm1Num, atm2Num, atm1Name, atm2Name, ideal, observed, difference, energy) VALUES (?,?,?,?,?,?,?,?,?,?)";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
 		Residue const & rsd = pose.residue(i);
@@ -594,10 +594,10 @@ ProteinBondGeometryFeatures::report_intrares_lengths(
 
 		// for each bond in the residue
 		// for each bonded atom
-		for ( Size atm_i=1; atm_i<=rsd_type.natoms(); ++atm_i ) {
+		for ( core::Size atm_i=1; atm_i<=rsd_type.natoms(); ++atm_i ) {
 			core::chemical::AtomIndices atm_nbrs = rsd_type.nbrs( atm_i );
-			for ( Size j=1; j<=atm_nbrs.size(); ++j ) {
-				Size atm_j = atm_nbrs[j];
+			for ( core::Size j=1; j<=atm_nbrs.size(); ++j ) {
+				core::Size atm_j = atm_nbrs[j];
 				if ( atm_i<atm_j ) { // only score each bond once -- use restype index to define ordering
 					// check for vrt
 					//if ( rsd_type.atom_type(atm_i).is_virtual() || rsd_type.atom_type(atm_j).is_virtual() )
@@ -649,11 +649,11 @@ ProteinBondGeometryFeatures::report_interres_lengths(
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		Residue const & rsd1 = pose.residue(i);
 		if ( !rsd1.is_protein() ) continue;
 
-		for ( Size j = i+1; j <= pose.size(); ++j ) {
+		for ( core::Size j = i+1; j <= pose.size(); ++j ) {
 			if ( !check_relevant_residues(relevant_residues, i, j) ) continue;
 			Residue const & rsd2 = pose.residue(j);
 			if ( !rsd2.is_protein() ) continue;
@@ -668,15 +668,15 @@ ProteinBondGeometryFeatures::report_interres_lengths(
 			//fpd check for chainbreaks
 			if ( pose.fold_tree().is_cutpoint( std::min( rsd1.seqpos(), rsd2.seqpos() ) ) ) continue;
 
-			utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
+			utility::vector1< core::Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
 
-			for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
+			for ( core::Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
 
-				Size const resconn_id1( r1_resconn_ids[ii] );
-				Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
+				core::Size const resconn_id1( r1_resconn_ids[ii] );
+				core::Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
 
-				Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
-				Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
+				core::Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
+				core::Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
 
 
 				/// finally, compute the bondlength across the interface
@@ -723,7 +723,7 @@ ProteinBondGeometryFeatures::report_intrares_torsions(
 	std::string statement_string ="INSERT INTO bond_intrares_torsions (struct_id, resNum, atm1Num, atm2Num, atm3Num, atm4Num, atm1Name, atm2Name, atm3Name, atm4Name, ideal, observed, difference, energy) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
 		Residue const & rsd = pose.residue(i);
@@ -735,7 +735,7 @@ ProteinBondGeometryFeatures::report_intrares_torsions(
 		core::chemical::ResidueType const & rsd_type = rsd.type();
 
 		// for each torsion _that doesn't correspond to a DOF_ID in the pose_
-		for ( Size dihe = 1; dihe <= rsd_type.ndihe(); ++dihe ) {
+		for ( core::Size dihe = 1; dihe <= rsd_type.ndihe(); ++dihe ) {
 			// get ResidueType ints
 			int rt1 = ( rsd_type.dihedral( dihe ) ).key1();
 			int rt2 = ( rsd_type.dihedral( dihe ) ).key2();

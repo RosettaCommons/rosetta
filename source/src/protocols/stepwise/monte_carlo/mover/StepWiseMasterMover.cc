@@ -216,7 +216,7 @@ StepWiseMasterMover::test_all_moves_recursively( pose::Pose & pose ) {
 
 	success_ = stepwise_move_selector_->figure_out_all_possible_moves( pose, true /*verbose*/ );
 	utility::vector1< StepWiseMove > const stepwise_moves = stepwise_move_selector_->swa_moves();
-	for ( Size n = 1; n <= stepwise_moves.size(); n++ ) {
+	for ( core::Size n = 1; n <= stepwise_moves.size(); n++ ) {
 		StepWiseMove const & stepwise_move = stepwise_moves[ n ];
 		pose::Pose pose_test = pose_save;
 		TR << TR.Blue << "move " << n << " out of " << stepwise_moves.size() << " for " << get_all_res_list( pose_test ) << ". Total moves so far: " << ++num_tested_moves_ << TR.Reset << std::endl;
@@ -348,7 +348,7 @@ StepWiseMasterMover::preminimize_pose( pose::Pose & pose ) {
 	stepwise_modeler_->set_working_minimize_res( get_moving_res_from_full_model_info( pose ) );
 	stepwise_modeler_->apply( pose );
 	utility::vector1< pose::PoseOP > const & other_pose_list = nonconst_full_model_info( pose ).other_pose_list();
-	for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= other_pose_list.size(); n++ ) {
 		preminimize_pose( *( other_pose_list[ n ] ) );
 	}
 }
@@ -393,7 +393,7 @@ name_from_move( StepWiseMove const & stepwise_move, Pose const & start_pose ) {
 
 // TODO: header
 std::string
-residue_rebuild_log_namer( Size const resample_round, Size const nstruct ) {
+residue_rebuild_log_namer( core::Size const resample_round, core::Size const nstruct ) {
 	std::stringstream minimized_name;
 	minimized_name << option[ in::file::s ]()[1] << "_resample_checkpoint_" << resample_round << "_" <<
 		ObjexxFCL::lead_zero_string_of( nstruct, 4 )
@@ -402,7 +402,7 @@ residue_rebuild_log_namer( Size const resample_round, Size const nstruct ) {
 }
 
 std::string
-residue_rebuild_checkpoint_namer( Size const resample_round, Size const nstruct ) {
+residue_rebuild_checkpoint_namer( core::Size const resample_round, core::Size const nstruct ) {
 	std::stringstream minimized_name;
 	minimized_name << option[ in::file::s ]()[1] << "_resample_checkpoint_" << resample_round << "_" <<
 		ObjexxFCL::lead_zero_string_of( nstruct, 4 )
@@ -413,8 +413,8 @@ residue_rebuild_checkpoint_namer( Size const resample_round, Size const nstruct 
 /////////////////////////////////////////////////////////
 void
 StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::Pose & output_pose, bool const checkpointing_breadcrumbs ) {
-	utility::vector1< Size > residues_to_rebuild;
-	for ( Size ii = 1; ii <= start_pose.size(); ++ii ) {
+	utility::vector1< core::Size > residues_to_rebuild;
+	for ( core::Size ii = 1; ii <= start_pose.size(); ++ii ) {
 		residues_to_rebuild.push_back( ii );
 	}
 	resample_full_model( start_pose, output_pose, checkpointing_breadcrumbs, residues_to_rebuild, 1, 1 );
@@ -422,8 +422,8 @@ StepWiseMasterMover::resample_full_model( pose::Pose const & start_pose, pose::P
 
 // Gives you the moves directly, and the start index.
 void
-read_checkpoint_log( utility::vector1< StepWiseMove > & stepwise_moves, Size & start_idx,
-	Size const resample_round, Size const nstruct, Pose const & start_pose ) {
+read_checkpoint_log( utility::vector1< StepWiseMove > & stepwise_moves, core::Size & start_idx,
+	core::Size const resample_round, core::Size const nstruct, Pose const & start_pose ) {
 
 	// Read lines from
 	utility::io::izstream logstream( residue_rebuild_log_namer( resample_round, nstruct ) );
@@ -448,7 +448,7 @@ read_checkpoint_log( utility::vector1< StepWiseMove > & stepwise_moves, Size & s
 
 void
 write_checkpoint( utility::vector1< StepWiseMove > const & stepwise_moves,
-	Size const start_idx, Size const resample_round, Size const nstruct, Pose const & output_pose ) {
+	core::Size const start_idx, core::Size const resample_round, core::Size const nstruct, Pose const & output_pose ) {
 	// Output file describing what to do.
 
 	utility::file::file_delete( residue_rebuild_log_namer( resample_round, nstruct ) );
@@ -456,7 +456,7 @@ write_checkpoint( utility::vector1< StepWiseMove > const & stepwise_moves,
 	//utility::io::ozstream
 
 	std::ofstream logstream( residue_rebuild_log_namer( resample_round, nstruct ) );
-	Size ii = 1;
+	core::Size ii = 1;
 	for ( auto const & stepwise_move : stepwise_moves ) {
 		logstream << stepwise_move << " " << std::endl;// << std::endl;
 
@@ -480,14 +480,14 @@ write_checkpoint( utility::vector1< StepWiseMove > const & stepwise_moves,
 utility::vector1< StepWiseMove >
 StepWiseMasterMover::moves_for_pose(
 	pose::Pose const & start_pose,
-	utility::vector1< Size > const & residues_to_rebuild
+	utility::vector1< core::Size > const & residues_to_rebuild
 ) {
 	utility::vector1< StepWiseMove > stepwise_moves;
 
 	// Oh my god: iterate directly through residues_to_rebuild.
-	//for ( Size ii = 1; ii <= start_pose.size(); ++ii ) {
+	//for ( core::Size ii = 1; ii <= start_pose.size(); ++ii ) {
 	//if ( !residues_to_rebuild.contains( ii ) ) continue;
-	for ( Size const ii : residues_to_rebuild ) {
+	for ( core::Size const ii : residues_to_rebuild ) {
 		if ( start_pose.residue( ii ).is_virtual_residue() ) continue;
 
 		if ( !start_pose.residue( ii ).is_polymer() ) {
@@ -501,13 +501,13 @@ StepWiseMasterMover::moves_for_pose(
 			bool connected_by_jump = false;
 
 			// Somehow parent might not be. Might need to look for child?
-			auto attached_res = Size( start_pose.fold_tree().get_parent_residue( ii, connected_by_jump ) );
+			auto attached_res = core::Size( start_pose.fold_tree().get_parent_residue( ii, connected_by_jump ) );
 
 			TR.Debug << "Found an attached res POSSIBLY connected by a jump: " << attached_res << std::endl;
 			if ( !connected_by_jump ) {
-				for ( Size jj = 1; jj <= start_pose.size(); ++jj ) {
+				for ( core::Size jj = 1; jj <= start_pose.size(); ++jj ) {
 					bool connected_by_jump2 = false;
-					auto const possibly_ii = Size( start_pose.fold_tree().get_parent_residue( jj, connected_by_jump2 ) );
+					auto const possibly_ii = core::Size( start_pose.fold_tree().get_parent_residue( jj, connected_by_jump2 ) );
 					if ( ii == possibly_ii ) {
 						connected_by_jump = connected_by_jump2;
 						attached_res = jj;
@@ -618,7 +618,7 @@ void ensure_appropriate_foldtree_for_move( StepWiseMove const & stepwise_move, P
 		// }
 		//}
 		//bool switched_root_horror = false;
-		//for ( Size const seqpos : stepwise_move.move_element() ) {
+		//for ( core::Size const seqpos : stepwise_move.move_element() ) {
 		// for ( auto const & e : g.get_outgoing_edges( seqpos ) ) {
 		//  if ( g.root() == e.start() ) switched_root_horror = true;
 		//  g.replace_edge( e, core::kinematics::Edge( e.stop(), e.start(), e.label() ) );
@@ -626,7 +626,7 @@ void ensure_appropriate_foldtree_for_move( StepWiseMove const & stepwise_move, P
 		//}
 		//TR << "Edge replaced: " << g << std::endl;
 		//if ( switched_root_horror ) g.reorder( output_pose.size() );
-		//for ( Size const seqpos : stepwise_move.move_element() ) {
+		//for ( core::Size const seqpos : stepwise_move.move_element() ) {
 		// g.reorder( seqpos );
 		//}
 		//g.reorder( output_pose.size() );
@@ -642,7 +642,7 @@ void ensure_appropriate_foldtree_for_move( StepWiseMove const & stepwise_move, P
 
 
 	// First FoldTree magic: move root away from the residue being resampled!!!
-	Size restore_root = 0;
+	core::Size restore_root = 0;
 	if ( output_pose.fold_tree().root() == stepwise_move.move_element()[ 1 ]
 			|| ( stepwise_move.attachments().size() == 2 && output_pose.fold_tree().root() == stepwise_move.move_element()[ 1 ] + 1 ) ) {
 		auto f = output_pose.fold_tree();
@@ -662,8 +662,8 @@ void ensure_appropriate_foldtree_for_move( StepWiseMove const & stepwise_move, P
 	if ( stepwise_move.attachments().size() == 2 ) {
 		bool connected_by_jump( false );
 
-		Size current_moving = stepwise_move.move_element()[ 1 ];
-		/*Size reference_res = */output_pose.fold_tree().get_parent_residue( current_moving, connected_by_jump );
+		core::Size current_moving = stepwise_move.move_element()[ 1 ];
+		/*core::Size reference_res = */output_pose.fold_tree().get_parent_residue( current_moving, connected_by_jump );
 
 		/*if ( connected_by_jump ) {
 		// can't resample the residues that make up the jump between chains.
@@ -678,7 +678,7 @@ void ensure_appropriate_foldtree_for_move( StepWiseMove const & stepwise_move, P
 			// if it's < 0 we have succeeded
 			if ( jump_nr < 0 ) break;
 
-			Size ref = f.upstream_jump_residue( jump_nr );
+			core::Size ref = f.upstream_jump_residue( jump_nr );
 			// Just try to offset by a residue?
 			// For very odd organizations of chains this can fail.
 			if ( current_moving > 3 + output_pose.chain_begin( current_moving ) ) {
@@ -688,14 +688,14 @@ void ensure_appropriate_foldtree_for_move( StepWiseMove const & stepwise_move, P
 			}
 			output_pose.fold_tree( f );
 			TR << "III -- FT now: " << f << std::endl;
-			/*Size reference_res = */output_pose.fold_tree().get_parent_residue( current_moving, connected_by_jump );
+			/*core::Size reference_res = */output_pose.fold_tree().get_parent_residue( current_moving, connected_by_jump );
 		}
 
 
 
 
 		if ( current_moving > 1 && output_pose.fold_tree().root() != current_moving - 1 ) {
-			/*Size reference_res = */output_pose.fold_tree().get_parent_residue( current_moving - 1, connected_by_jump );
+			/*core::Size reference_res = */output_pose.fold_tree().get_parent_residue( current_moving - 1, connected_by_jump );
 
 			/*if ( connected_by_jump ) {
 			// can't resample the residues that make up the jump between chains.
@@ -710,7 +710,7 @@ void ensure_appropriate_foldtree_for_move( StepWiseMove const & stepwise_move, P
 				// if it's < 0 we have succeeded
 				if ( jump_nr < 0 ) break;
 
-				Size ref = f.upstream_jump_residue( jump_nr );
+				core::Size ref = f.upstream_jump_residue( jump_nr );
 				// Just try to offset by a residue?
 				// For very odd organizations of chains this can fail.
 				if ( current_moving > 3 ) {
@@ -720,7 +720,7 @@ void ensure_appropriate_foldtree_for_move( StepWiseMove const & stepwise_move, P
 				}
 				output_pose.fold_tree( f );
 				TR << "I-1 -- FT now: " << f << std::endl;
-				/*Size reference_res = */output_pose.fold_tree().get_parent_residue( current_moving - 1, connected_by_jump );
+				/*core::Size reference_res = */output_pose.fold_tree().get_parent_residue( current_moving - 1, connected_by_jump );
 			}
 		}
 		// If we had to move root, put it back
@@ -733,15 +733,15 @@ void ensure_appropriate_foldtree_for_move( StepWiseMove const & stepwise_move, P
 }
 
 #ifdef MULTI_THREADED
-std::map< Size, std::set< Size > >
+std::map< core::Size, std::set< core::Size > >
 rebuild_edges(
 	pose::Pose const & start_pose,
-	utility::vector1< Size > const & residues_to_rebuild
+	utility::vector1< core::Size > const & residues_to_rebuild
 ) {
-	std::map< Size, std::set< Size > > ss;
-	for ( Size const res1 : residues_to_rebuild ) {
-		std::set< Size > s;
-		for ( Size const res2 : residues_to_rebuild ) {
+	std::map< core::Size, std::set< core::Size > > ss;
+	for ( core::Size const res1 : residues_to_rebuild ) {
+		std::set< core::Size > s;
+		for ( core::Size const res2 : residues_to_rebuild ) {
 			if ( start_pose.residue( res1 ).xyz( 1 ).distance_squared( start_pose.residue( res2 ).xyz( 1 ) ) < 225 ) {
 				// connected
 				s.insert( res2 );
@@ -754,19 +754,19 @@ rebuild_edges(
 
 Size
 allocate_residue(
-	utility::vector1< Size > const & residues_to_rebuild,
-	std::map< Size, boolOP > const & currently_rebuilding,
-	std::map< Size, std::set< Size > > const & edge_map,
-	std::set< Size > const & completed_res
+	utility::vector1< core::Size > const & residues_to_rebuild,
+	std::map< core::Size, boolOP > const & currently_rebuilding,
+	std::map< core::Size, std::set< core::Size > > const & edge_map,
+	std::set< core::Size > const & completed_res
 ) {
 	// What's the next residue we can pass out?
-	for ( Size const res1 : residues_to_rebuild ) {
+	for ( core::Size const res1 : residues_to_rebuild ) {
 		if ( currently_rebuilding.count( res1 ) != 0 )  continue;
 		if ( completed_res.find( res1 ) != completed_res.end() )  continue;
 		bool too_near_a_current = false;
-		//for ( Size const cur : currently_rebuilding ) {
+		//for ( core::Size const cur : currently_rebuilding ) {
 		for ( auto const & cr : currently_rebuilding ) {
-			Size const cur = cr.first;
+			core::Size const cur = cr.first;
 			if ( edge_map.at( cur ).find( res1 ) != edge_map.at( cur ).end() ) {
 				too_near_a_current = true;
 				break;
@@ -836,9 +836,9 @@ StepWiseMasterMover::resample_full_model(
 	pose::Pose const & start_pose,
 	pose::Pose & output_pose,
 	bool const ,//checkpointing_breadcrumbs,
-	utility::vector1< Size > const & residues_to_rebuild,
-	Size const resample_round,
-	Size const nstruct
+	utility::vector1< core::Size > const & residues_to_rebuild,
+	core::Size const resample_round,
+	core::Size const nstruct
 ) {
 
 	if ( ! basic::options::option[ basic::options::OptionKeys::jd3::nthreads ].active() ) {
@@ -849,7 +849,7 @@ StepWiseMasterMover::resample_full_model(
 		throw CREATE_EXCEPTION(utility::excn::Exception,  "negative or zero value passed in for jd3::nthreads" );
 	}
 
-	Size nthreads_ = basic::options::option[ basic::options::OptionKeys::jd3::nthreads ]();
+	core::Size nthreads_ = basic::options::option[ basic::options::OptionKeys::jd3::nthreads ]();
 	//std::shared_ptr< ctpl::thread_pool > =  thread_pool_.reset( new ctpl::thread_pool( nthreads_ ) );
 	auto thread_pool_ = utility::pointer::make_shared< ctpl::thread_pool >( nthreads_ );
 
@@ -864,29 +864,29 @@ StepWiseMasterMover::resample_full_model(
 	initialize();
 
 	utility::vector1< StepWiseMove > stepwise_moves = moves_for_pose( output_pose, residues_to_rebuild );
-	//Size start_idx = 1;
+	//core::Size start_idx = 1;
 
 	TR << "Moves for pose determined." << std::endl;
 
 	// Here we make the simplifying assumption: each stepwise move actually has
 	// a single residue move element.
-	utility::vector1< Size > residues;
-	//std::map< Size, StepWiseMove > res_to_move;
-	std::map< Size, StepWiseMoveOP > res_to_move;
-	std::map< Size, PoseOP > res_to_pose;
+	utility::vector1< core::Size > residues;
+	//std::map< core::Size, StepWiseMove > res_to_move;
+	std::map< core::Size, StepWiseMoveOP > res_to_move;
+	std::map< core::Size, PoseOP > res_to_pose;
 	for ( StepWiseMove const & stepwise_move : stepwise_moves ) {
 		residues.push_back( stepwise_move.move_element()[ 1 ] );
 		res_to_move[ stepwise_move.move_element()[ 1 ] ] = stepwise_move.clone();
 	}
 	auto res_connections = rebuild_edges( start_pose, residues );
 
-	Size queued = 0;
+	core::Size queued = 0;
 	// the bool* get passed to the thread where they can be set to indicate job finished
-	std::map< Size, boolOP > currently_rebuilding;
-	std::set< Size > completed_moves;
+	std::map< core::Size, boolOP > currently_rebuilding;
+	std::set< core::Size > completed_moves;
 	while ( queued < nthreads_ && queued < residues.size() ) {
 		// queue a job
-		Size next_res = allocate_residue( residues, currently_rebuilding, res_connections, completed_moves );
+		core::Size next_res = allocate_residue( residues, currently_rebuilding, res_connections, completed_moves );
 		if ( next_res == 0 ) {
 			// no additional jobs can be allocated for now
 			break;
@@ -910,7 +910,7 @@ StepWiseMasterMover::resample_full_model(
 	while ( completed_moves.size() < stepwise_moves.size() ) {
 
 		while ( currently_rebuilding.size() <= 2*nthreads_ ) {
-			Size next_res = allocate_residue( residues, currently_rebuilding, res_connections, completed_moves );
+			core::Size next_res = allocate_residue( residues, currently_rebuilding, res_connections, completed_moves );
 			if ( next_res == 0 ) {
 				// no additional jobs can be allocated for now! we must wait for some jobs to complete.
 				/*
@@ -954,21 +954,21 @@ StepWiseMasterMover::resample_full_model(
 				using namespace core::id;
 				utility::vector1< AtomID > atom_ids;
 				utility::vector1< PointPosition > point_positions;
-				for ( Size const resi : res_to_move[ it->first ]->move_element() ) {
+				for ( core::Size const resi : res_to_move[ it->first ]->move_element() ) {
 					if ( resi > 0 ) {
-						for ( Size ai = 1; ai <= output_pose.residue( resi-1 ).natoms(); ++ai ) {
+						for ( core::Size ai = 1; ai <= output_pose.residue( resi-1 ).natoms(); ++ai ) {
 							//output_pose.set_xyz( AtomID( ai, resi-1 ), res_to_pose[ it->first ]->residue( resi-1 ).xyz( ai ) );
 							atom_ids.emplace_back( ai, resi-1 );
 							point_positions.emplace_back( res_to_pose[ it->first ]->residue( resi-1 ).xyz( ai ) );
 						}
 					}
-					for ( Size ai = 1; ai <= output_pose.residue( resi ).natoms(); ++ai ) {
+					for ( core::Size ai = 1; ai <= output_pose.residue( resi ).natoms(); ++ai ) {
 						//output_pose.set_xyz( AtomID( ai, resi ), res_to_pose[ it->first ]->residue( resi ).xyz( ai ) );
 						atom_ids.emplace_back( ai, resi );
 						point_positions.emplace_back( res_to_pose[ it->first ]->residue( resi ).xyz( ai ) );
 					}
 					if ( resi < output_pose.size() ) {
-						for ( Size ai = 1; ai <= output_pose.residue( resi+1 ).natoms(); ++ai ) {
+						for ( core::Size ai = 1; ai <= output_pose.residue( resi+1 ).natoms(); ++ai ) {
 							//output_pose.set_xyz( AtomID( ai, resi+1 ), res_to_pose[ it->first ]->residue( resi+1 ).xyz( ai ) );
 							atom_ids.emplace_back( ai, resi+1 );
 							point_positions.emplace_back( res_to_pose[ it->first ]->residue( resi+1 ).xyz( ai ) );
@@ -1010,9 +1010,9 @@ StepWiseMasterMover::resample_full_model(
 	pose::Pose const & start_pose,
 	pose::Pose & output_pose,
 	bool const checkpointing_breadcrumbs,
-	utility::vector1< Size > const & residues_to_rebuild,
-	Size const resample_round,
-	Size const nstruct
+	utility::vector1< core::Size > const & residues_to_rebuild,
+	core::Size const resample_round,
+	core::Size const nstruct
 ) {
 	using namespace options;
 	output_pose = start_pose;
@@ -1031,7 +1031,7 @@ StepWiseMasterMover::resample_full_model(
 	}
 
 	utility::vector1< StepWiseMove > stepwise_moves;
-	Size start_idx = 1;
+	core::Size start_idx = 1;
 	if ( utility::file::file_exists( residue_rebuild_log_namer( resample_round, nstruct ) ) ) {
 		read_checkpoint_log( stepwise_moves, start_idx, resample_round, nstruct, start_pose );
 		TR << "Restored list of " << stepwise_moves.size() << " moves; starting at idx " << start_idx << std::endl;
@@ -1056,7 +1056,7 @@ StepWiseMasterMover::resample_full_model(
 
 
 	// do moves in serial
-	Size ii = 1;
+	core::Size ii = 1;
 	for ( StepWiseMove const & stepwise_move : stepwise_moves ) {
 		if ( ii < start_idx ) {
 			++ii; continue;
@@ -1119,11 +1119,11 @@ StepWiseMasterMover::build_full_model( pose::Pose const & start_pose, pose::Pose
 	}
 
 	// check that everything was indeed built.
-	utility::vector1< Size > const & working_res = const_full_model_info( full_model_pose ).working_res();
-	utility::vector1< Size > const & res_list    = const_full_model_info( full_model_pose ).res_list();
-	utility::vector1< Size > const & bulge_res   = const_full_model_info( full_model_pose ).rna_bulge_res();
+	utility::vector1< core::Size > const & working_res = const_full_model_info( full_model_pose ).working_res();
+	utility::vector1< core::Size > const & res_list    = const_full_model_info( full_model_pose ).res_list();
+	utility::vector1< core::Size > const & bulge_res   = const_full_model_info( full_model_pose ).rna_bulge_res();
 
-	for ( Size n = 1; n <= working_res.size(); n++ ) {
+	for ( core::Size n = 1; n <= working_res.size(); n++ ) {
 		if ( !stepwise_addable_residue( working_res[ n ],
 				const_full_model_info( start_pose ).full_model_parameters()->non_standard_residue_map() ) ) continue;
 		if ( !res_list.has_value( working_res[ n ] ) && !bulge_res.has_value( working_res[ n ] ) ) {

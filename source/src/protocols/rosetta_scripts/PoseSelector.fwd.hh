@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_rosetta_scripts_PoseSelector_fwd_hh
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace rosetta_scripts {

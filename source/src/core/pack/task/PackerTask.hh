@@ -36,7 +36,7 @@
 #include <core/id/SequenceMapping.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 
@@ -59,7 +59,7 @@ namespace task {
 
 
 /// @brief  Task class that gives instructions to the packer
-class PackerTask : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< PackerTask >
+class PackerTask : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< PackerTask >
 {
 public:
 	typedef chemical::AA AA;

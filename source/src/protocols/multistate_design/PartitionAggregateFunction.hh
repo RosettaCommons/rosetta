@@ -20,7 +20,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <protocols/multistate_design/MultiStateAggregateFunction.hh>
 #include <utility/vector1.hh>

@@ -73,7 +73,7 @@ static basic::Tracer TR( "protocols.ligand_docking.StartFrom" );
 
 /// @brief
 StartFrom::StartFrom():
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Mover("StartFrom"),
 	chains_(),
 	use_nbr_(false),

@@ -59,13 +59,13 @@ enum FoldTreeRequest {
 /// @brief Implement the bitwise `or` operator for fold tree requests.
 inline FoldTreeRequest operator | (FoldTreeRequest a, FoldTreeRequest b) {
 	return static_cast<FoldTreeRequest>(
-		static_cast<Size>(a) | static_cast<Size>(b));
+		static_cast<core::Size>(a) | static_cast<core::Size>(b));
 }
 
 /// @brief Implement the bitwise `and` operator for fold tree requests.
 inline FoldTreeRequest operator & (FoldTreeRequest a, FoldTreeRequest b) {
 	return static_cast<FoldTreeRequest>(
-		static_cast<Size>(a) & static_cast<Size>(b));
+		static_cast<core::Size>(a) & static_cast<core::Size>(b));
 }
 
 /// @brief Key names for data shared between loop movers.
@@ -146,7 +146,7 @@ public:
 	LoopsCOP get_loops() const;
 
 	/// @brief Return the specified loop.
-	Loop const & get_loop(Size index) const;
+	Loop const & get_loop(core::Size index) const;
 
 	/// @brief Set the loops to be sampled on the next call to apply().
 	void set_loops(LoopsOP loops);
@@ -261,7 +261,7 @@ protected:
 	/// @brief Return the number of children this mover has.
 	/// @see LoopMover::add_child()
 	/// @see LoopMover::get_children()
-	Size count_children() const;
+	core::Size count_children() const;
 
 	friend class ::LoopModelerTests;
 

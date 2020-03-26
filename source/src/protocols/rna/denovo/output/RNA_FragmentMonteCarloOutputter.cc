@@ -99,12 +99,12 @@ RNA_FragmentMonteCarloOutputter::initialize( core::pose::PoseCOP align_pose ) {
 			jump_histogram_min_        = make_vector1( -bxs, -bxs, -bxs, -180.0, -180.0, -180.0 );
 			jump_histogram_max_        = make_vector1( +bxs, +bxs, +bxs, +180.0, +180.0, +180.0 );
 			jump_histogram_bin_width_  = make_vector1(   bw,   bw,   bw,   bwr,    bwr,   bwr );
-			vector1< Size > jump_n_bins;
-			for ( Size n = 1; n <= 6; n++ ) jump_n_bins.push_back( static_cast<Size>( (jump_histogram_max_[n] - jump_histogram_min_[n]) / jump_histogram_bin_width_[n] + 1.0 ) );
+			vector1< core::Size > jump_n_bins;
+			for ( core::Size n = 1; n <= 6; n++ ) jump_n_bins.push_back( static_cast<core::Size>( (jump_histogram_max_[n] - jump_histogram_min_[n]) / jump_histogram_bin_width_[n] + 1.0 ) );
 			if ( jump_histogram_ == nullptr ) {
-				jump_histogram_ = MathNTensorOP< Size, 6>( new MathNTensor< Size, 6>( jump_n_bins, 0 ) );
+				jump_histogram_ = MathNTensorOP< core::Size, 6>( new MathNTensor< core::Size, 6>( jump_n_bins, 0 ) );
 			} else {
-				for ( Size n = 1; n <= 6; n++ ) runtime_assert( jump_histogram_->n_bins( n ) == jump_n_bins[ n ] );
+				for ( core::Size n = 1; n <= 6; n++ ) runtime_assert( jump_histogram_->n_bins( n ) == jump_n_bins[ n ] );
 			}
 		}
 	}
@@ -114,8 +114,8 @@ RNA_FragmentMonteCarloOutputter::initialize( core::pose::PoseCOP align_pose ) {
 //////////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMonteCarloOutputter::output_running_info(
-	Size const & r,
-	Size const & i,
+	core::Size const & r,
+	core::Size const & i,
 	pose::Pose & pose,
 	core::scoring::ScoreFunctionCOP working_denovo_scorefxn )
 {
@@ -186,12 +186,12 @@ RNA_FragmentMonteCarloOutputter::output_jump_information( pose::Pose const & pos
 	}
 
 	if ( options_->save_jump_histogram() ) {
-		vector1< Size > outbins;
-		for ( Size n = 1; n <= 6; n++ ) {
+		vector1< core::Size > outbins;
+		for ( core::Size n = 1; n <= 6; n++ ) {
 			// round to *closest* bin  by adding 0.5 before conversion to int.
 			int outbin = std::lround( ( outvals[ n ] - jump_histogram_min_[ n ] ) / jump_histogram_bin_width_[ n ] );
 			outbin = std::min( std::max( 0, outbin ), int(jump_histogram_->n_bins( n )) - 1 ); // zero-indexed
-			outbins.push_back( Size( outbin ) );
+			outbins.push_back( core::Size( outbin ) );
 		}
 		(*jump_histogram_)( outbins )++;
 	}

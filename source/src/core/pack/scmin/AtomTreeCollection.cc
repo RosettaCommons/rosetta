@@ -54,7 +54,7 @@ ResidueAtomTreeCollectionMomento::~ResidueAtomTreeCollectionMomento()= default;
 ResidueAtomTreeCollectionMomento::ResidueAtomTreeCollectionMomento(
 	ResidueAtomTreeCollectionMomento const & src
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	restype_index_( src.restype_index_ ),
 	natoms_( src.natoms_ ),
 	coords_( src.coords_ )

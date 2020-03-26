@@ -102,7 +102,7 @@ MetropolisHastingsMover::MetropolisHastingsMover() :
 MetropolisHastingsMover::MetropolisHastingsMover(
 	MetropolisHastingsMover const & metropolis_hastings_mover
 ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Mover(metropolis_hastings_mover),
 	monte_carlo_( metropolis_hastings_mover.monte_carlo_->clone() ),
 	ntrials_(metropolis_hastings_mover.ntrials_),
@@ -151,7 +151,7 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	using namespace core;
 	bool restart = false;
 	core::Size cycle_number = 0;
-	Size temp_level = 0;
+	core::Size temp_level = 0;
 	Real temperature = -1.0;
 	//  for (core::Size i = 1; i <= observers_.size() && !restart; ++i) {
 	//   tr.Info<< "Attempting restart using " << observers_[i]->get_name() << std::endl;
@@ -217,7 +217,7 @@ void
 MetropolisHastingsMover::apply( core::pose::Pose& pose ) {
 	output_name_from_job_distributor_ = false;
 
-	Size start_cycle = prepare_simulation( pose );
+	core::Size start_cycle = prepare_simulation( pose );
 
 	for ( current_trial_ = start_cycle+1; !tempering_->finished_simulation( current_trial_, ntrials() ); ++current_trial_ ) {
 		write_checkpoint( pose );

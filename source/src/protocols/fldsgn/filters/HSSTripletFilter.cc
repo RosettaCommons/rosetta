@@ -93,7 +93,7 @@ HSSTripletFilter::HSSTripletFilter( String const & hss3s ):
 
 /// @brief copy constructor -- required because we clone the hss3set_ pointer
 HSSTripletFilter::HSSTripletFilter( HSSTripletFilter const & rval ):
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Super( rval ),
 	hss3set_(),
 	secstruct_( rval.secstruct_ ),
@@ -159,7 +159,7 @@ HSSTripletFilter::filter_max_angle( Real const r )
 
 /// @brief maximum angle for filtering
 void
-HSSTripletFilter::output_id( Size const i )
+HSSTripletFilter::output_id( core::Size const i )
 {
 	output_id_ = i;
 }
@@ -202,7 +202,7 @@ HSSTripletFilter::apply( Pose const & pose ) const
 
 	// check conformation hsstriplets
 	bool filter( true );
-	Size current_id( 0 );
+	core::Size current_id( 0 );
 	for ( auto const & hss3 : hss3s ) {
 		current_id ++;
 		HSSTriplet hss = *hss3;
@@ -273,7 +273,7 @@ HSSTripletFilter::compute( Pose const & pose ) const
 	SS_Info2_COP const ss_info( utility::pointer::make_shared< SS_Info2 >( pose, secstruct ) );
 
 	// check conformation hsstriplets
-	Size current_id( 0 );
+	core::Size current_id( 0 );
 	for ( auto const & hss3 : hss3s ) {
 		++current_id;
 		if ( current_id != output_id_ ) continue;
@@ -335,7 +335,7 @@ HSSTripletFilter::parse_my_tag(
 
 	ignore_helix_direction_ = tag->getOption<bool>( "ignore_helix_direction", ignore_helix_direction_ );
 	use_dssp_ = tag->getOption<bool>( "use_dssp", use_dssp_ );
-	output_id_ = tag->getOption<Size>( "output_id", output_id_ );
+	output_id_ = tag->getOption<core::Size>( "output_id", output_id_ );
 	output_type_ = tag->getOption<String>( "output_type", output_type_ );
 
 	if ( output_type_ != "dist" && output_type_ != "angle" ) {

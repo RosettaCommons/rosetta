@@ -26,7 +26,7 @@
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -70,7 +70,7 @@ enum ParameterType {
 
 /// @brief  Parameter class, used to store a single parameter for parametric backbone generation.
 ///
-class Parameter : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Parameter >
+class Parameter : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< Parameter >
 {
 public:
 

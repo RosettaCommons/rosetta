@@ -59,7 +59,7 @@ ParametersSet::ParametersSet() :
 /// @brief Copy constructor.
 ///
 ParametersSet::ParametersSet( ParametersSet const & src ) :
-	utility::pointer::ReferenceCount(src),
+	utility::VirtualBase(src),
 	utility::pointer::enable_shared_from_this< ParametersSet >(src)
 {
 	parameters_.clear();

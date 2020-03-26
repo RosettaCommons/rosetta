@@ -264,7 +264,7 @@ private:
 private:
 
 	/// @brief utility function to transform a vector of position into a pymol selection command
-	std::string pos2select( utility::vector1< Size > const & pos ) const;
+	std::string pos2select( utility::vector1< core::Size > const & pos ) const;
 
 	/// @brief write a pymol command with the different layers as selections
 	void write_pymol_script(

@@ -23,7 +23,7 @@
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <utility/assert.hh>
@@ -35,7 +35,7 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
-class BetaAlphaBetaMotif : public utility::pointer::ReferenceCount {
+class BetaAlphaBetaMotif : public utility::VirtualBase {
 public:
 
 
@@ -54,10 +54,10 @@ public:// construct/destruct
 
 	/// @brief value constructor
 	BetaAlphaBetaMotif(
-		Size const strand1,
-		Size const strand2,
-		Size const helix,
-		Size const cross_over );
+		core::Size const strand1,
+		core::Size const strand2,
+		core::Size const helix,
+		core::Size const cross_over );
 
 	/// @brief copy constructor
 	BetaAlphaBetaMotif( BetaAlphaBetaMotif const & s );
@@ -78,13 +78,13 @@ public:// accessor
 
 	String name() const;
 
-	inline Size helix() const { return helix_; }
+	inline core::Size helix() const { return helix_; }
 
-	inline Size strand1() const { return strand1_; }
+	inline core::Size strand1() const { return strand1_; }
 
-	inline Size strand2() const { return strand2_; }
+	inline core::Size strand2() const { return strand2_; }
 
-	inline Size cross_over() const { return cross_over_; }
+	inline core::Size cross_over() const { return cross_over_; }
 
 	inline bool is_lefthanded() const { return left_handed_; }
 
@@ -98,7 +98,7 @@ public:// accessor
 
 	inline Real hsheet_elev_angle() const { return hsheet_elev_angle_; }
 
-	inline utility::vector1< Size > helix_cycle() const { return helix_cycle_; }
+	inline utility::vector1< core::Size > helix_cycle() const { return helix_cycle_; }
 
 	String helix_cycle_as_string() const;
 
@@ -112,7 +112,7 @@ private:// mutator
 public:
 
 
-	Size calc_inout( SS_Info2_COP const ssinfo, Size const resi ) const;
+	core::Size calc_inout( SS_Info2_COP const ssinfo, core::Size const resi ) const;
 
 	void calc_geometry( SS_Info2_COP const ssinfo,  SheetSetCOP const sheet_set );
 
@@ -120,16 +120,16 @@ public:
 private: /// data
 
 	/// @brief id of strand
-	Size strand1_;
+	core::Size strand1_;
 
 	/// @brief id of strand
-	Size strand2_;
+	core::Size strand2_;
 
 	/// @brief id of helix
-	Size helix_;
+	core::Size helix_;
 
 	/// @brief number of strands crossed over by bab-motif
-	Size cross_over_;
+	core::Size cross_over_;
 
 	/// @brief is this left handed ?
 	bool left_handed_;
@@ -156,7 +156,7 @@ private: /// data
 	Real hsheet_elev_angle_;
 
 	/// @brief cylce of helix against sheet
-	utility::vector1< Size > helix_cycle_;
+	utility::vector1< core::Size > helix_cycle_;
 
 	bool geometry_is_initialized_;
 
@@ -164,7 +164,7 @@ private: /// data
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class BetaAlphaBetaMotifSet : public utility::pointer::ReferenceCount {
+class BetaAlphaBetaMotifSet : public utility::VirtualBase {
 public:
 
 
@@ -203,7 +203,7 @@ public://
 	void clear();
 
 	/// @brief
-	Size size() const { return bab_motifs_.size(); }
+	core::Size size() const { return bab_motifs_.size(); }
 
 
 public:// accessor
@@ -213,7 +213,7 @@ public:// accessor
 	BetaAlphaBetaMotifs const & bab_motifs() const;
 
 	/// @brief
-	BetaAlphaBetaMotifOP bab_motif( Size const & i ) const;
+	BetaAlphaBetaMotifOP bab_motif( core::Size const & i ) const;
 
 	/// @brief
 	friend std::ostream & operator<<( std::ostream & out, const BetaAlphaBetaMotifSet & s );

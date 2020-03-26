@@ -40,18 +40,18 @@ public:
 
 	//constructor
 	ResidueAlternativeStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
-		std::map< Size, Size > const & res_map,
-		Size const representative_seqpos,
+		std::map< core::Size, core::Size > const & res_map,
+		core::Size const representative_seqpos,
 		core::pose::Pose const & starting_pose );
 
 	//constructor
 	ResidueAlternativeStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
-		std::map< Size, Size > const & res_map,
-		Size const representative_seqpos );
+		std::map< core::Size, core::Size > const & res_map,
+		core::Size const representative_seqpos );
 
 	//constructor
 	ResidueAlternativeStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
-		Size const seqpos );
+		core::Size const seqpos );
 
 	~ResidueAlternativeStepWiseSampler() override;
 
@@ -69,12 +69,12 @@ public:
 	/// @brief Type of class (see enum in toolbox::SamplerPlusPlusTypes.hh)
 	toolbox::SamplerPlusPlusType type() const override { return toolbox::RESIDUE_ALTERNATIVE; }
 
-	Size representative_seqpos() const { return representative_seqpos_; }
+	core::Size representative_seqpos() const { return representative_seqpos_; }
 
 private:
 
-	std::map< Size, Size >
-	simple_res_map( Size const i );
+	std::map< core::Size, core::Size >
+	simple_res_map( core::Size const i );
 
 	void
 	initialize_residues();
@@ -84,7 +84,7 @@ private:
 
 private:
 
-	Size const representative_seqpos_;
+	core::Size const representative_seqpos_;
 	std::map< std::string, utility::vector1< core::conformation::ResidueOP > > residues_for_each_type_;
 	std::string original_type_;
 

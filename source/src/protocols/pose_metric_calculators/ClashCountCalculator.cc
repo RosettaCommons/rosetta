@@ -61,7 +61,7 @@ void ClashCountCalculator::lookup( std::string const & key, basic::MetricValueBa
 		basic::check_cast( valptr, &total_clashes_, "total_clashes expects to return a Real" );
 		( static_cast< basic::MetricValue<core::Size> *>(valptr))->set( total_clashes_ );
 	} else if ( key == "bb" ) {
-		basic::check_cast( valptr, &bb_clashes_, "bb_clashes expects to return a Size" );
+		basic::check_cast( valptr, &bb_clashes_, "bb_clashes expects to return a core::Size" );
 		( static_cast< basic::MetricValue<core::Size> *>(valptr))->set( bb_clashes_ );
 	} else {
 		basic::Error() << "This Calculator cannot compute metric " << key << std::endl;
@@ -103,16 +103,16 @@ void ClashCountCalculator::recompute( Pose const& pose ) {
 	core::scoring::AtomVDW const& atom_vdw( core::scoring::ScoringManager::get_instance()->get_AtomVDW( atom_type_set_name ));
 	total_clashes_ = 0;
 	bb_clashes_ = 0;
-	for ( Size ipos = 1; ipos <= pose.size(); ipos++ ) {
-		for ( Size jpos = ipos+2; jpos <= pose.size(); jpos++ ) {
+	for ( core::Size ipos = 1; ipos <= pose.size(); ipos++ ) {
+		for ( core::Size jpos = ipos+2; jpos <= pose.size(); jpos++ ) {
 			conformation::Residue const & rsd1( pose.residue( ipos ) );
 			conformation::Residue const & rsd2( pose.residue( jpos ) );
 			if ( !( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) ) {
-				for ( Size i = 1, i_end = rsd1.natoms(); i <= i_end; ++i ) {
+				for ( core::Size i = 1, i_end = rsd1.natoms(); i <= i_end; ++i ) {
 					Vector const & i_xyz( rsd1.xyz(i) );
-					Size const i_type( rsd1.atom_type_index(i) );
+					core::Size const i_type( rsd1.atom_type_index(i) );
 					utility::vector1< Real > const & i_atom_vdw( atom_vdw( i_type ) );
-					for ( Size j = 1, j_end = rsd2.natoms(); j <= j_end; ++j ) {
+					for ( core::Size j = 1, j_end = rsd2.natoms(); j <= j_end; ++j ) {
 						Real const bump_dsq( i_atom_vdw[ rsd2.atom_type_index(j) ] );
 						Real const clash( bump_dsq - i_xyz.distance_squared( rsd2.xyz(j) ) );
 						if ( clash > 0.0 ) {

@@ -30,7 +30,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 //Auto Headers
@@ -43,10 +43,10 @@ namespace rotamer_recovery {
 /// Besides implementing the interface given in the base class
 /// RRProtocol each RRProtocol should have an entry in the convenience
 /// RotamerRecovery constructor so its use can be indicated by name.
-class RRProtocol : public utility::pointer::ReferenceCount {
+class RRProtocol : public utility::VirtualBase {
 
 public: // constructors destructors
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~RRProtocol() override;
 
 	// RRProtocol();

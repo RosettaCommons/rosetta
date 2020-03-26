@@ -27,12 +27,12 @@ using core::Size;
 /// @param[in] ps pose containing the constellation
 /// @param[in] cnl pose indexes of the residues forming the constellation
 ///
-bool at_interface(Pose const& ps, utility::vector1<Size> const& cnl) {
+bool at_interface(Pose const& ps, utility::vector1<core::Size> const& cnl) {
 
 	char const CID1 = ps.pdb_info()->chain(cnl[1]);
-	Size N = cnl.size();
+	core::Size N = cnl.size();
 
-	for ( Size i=2; i<=N; ++i ) {
+	for ( core::Size i=2; i<=N; ++i ) {
 		if ( CID1 != ps.pdb_info()->chain(cnl[i]) ) {
 			return true;
 		}

@@ -25,7 +25,7 @@ namespace stepwise {
 namespace screener {
 
 //Constructor
-FastForwardToNextResidueAlternative::FastForwardToNextResidueAlternative( Size const moving_res ):
+FastForwardToNextResidueAlternative::FastForwardToNextResidueAlternative( core::Size const moving_res ):
 	moving_res_( moving_res )
 {}
 

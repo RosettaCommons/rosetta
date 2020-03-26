@@ -24,7 +24,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 
@@ -36,7 +36,7 @@ namespace core {
 namespace scoring {
 namespace carbon_hbonds {
 
-class CarbonHBondPotential : public utility::pointer::ReferenceCount {
+class CarbonHBondPotential : public utility::VirtualBase {
 
 public:
 

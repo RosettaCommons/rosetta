@@ -77,6 +77,7 @@ SubMotifInfo::SubMotifInfo(
 //////////////////////////////////////////////////////////////////////////////
 // @brief Copy Constructor
 SubMotifInfo::SubMotifInfo( SubMotifInfo const & src ) :
+	VirtualBase( src ),
 	res_list_( src.res_list_ ),
 	tag_( src.tag_ ),
 	seed_( src.seed_ )

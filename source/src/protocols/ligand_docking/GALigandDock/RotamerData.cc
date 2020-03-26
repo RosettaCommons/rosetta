@@ -14,7 +14,7 @@
 
 #include <protocols/ligand_docking/GALigandDock/RotamerData.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/lkball/LK_BallInfo.hh>

@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_frag_picker_quota_QuotaCollector_hh
 
 // type headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // package headers
 #include <protocols/frag_picker/quota/QuotaCollector.fwd.hh>

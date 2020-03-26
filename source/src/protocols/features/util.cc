@@ -81,7 +81,7 @@ using cppdb::result;
 // Static data for the serial case
 Size static_protocol_id_ = 0;
 bool protocol_table_initialized_ = false;
-map<string, Size> static_batch_id_map_;
+map<string, core::Size> static_batch_id_map_;
 
 static Tracer TR("protocols.features.util");
 // End static data
@@ -117,7 +117,7 @@ set_protocol_and_batch_id(
 ///yet exist. For MPI protocols, only allow the head node to create
 ///protocol or batch ids and have the other nodes ask the head node
 ///for the info.
-pair<Size, Size>
+pair<core::Size, core::Size>
 get_protocol_and_batch_id(
 	string const & batch_name,
 	string const & batch_description,
@@ -157,7 +157,7 @@ get_protocol_and_batch_id(
 	}
 
 	//deserialize data into protocol_id and batch_id
-	pair<Size, Size> ids = deserialize_db_listener_data(listener_data);
+	pair<core::Size, core::Size> ids = deserialize_db_listener_data(listener_data);
 	protocol_id = ids.first;
 	batch_id = ids.second;
 	TR << "Received protocol_id='" << protocol_id << "' and batch_id='" << batch_id << "'" << std::endl;
@@ -224,7 +224,7 @@ get_protocol_and_batch_id(
 	}
 	TR << "Done with protocol and batch id generation." <<std::endl;
 
-	return pair<Size, Size>(protocol_id, batch_id);
+	return pair<core::Size, core::Size>(protocol_id, batch_id);
 }
 
 /// @detail The 'features_reporters' table lists the type_names of the
@@ -313,7 +313,7 @@ write_batch_reports_table(
 	}
 }
 
-pair<Size, Size>
+pair<core::Size, core::Size>
 deserialize_db_listener_data(
 	string data
 ){
@@ -323,14 +323,14 @@ deserialize_db_listener_data(
 	}
 	int protocol_id=utility::string2int(tokens[1]);
 	int batch_id=utility::string2int(tokens[2]);
-	return pair<Size, Size>(protocol_id, batch_id);
+	return pair<core::Size, core::Size>(protocol_id, batch_id);
 }
 
 string
 serialize_ids(
 	int protocol_id,
 	string batch_name,
-	Size batch_id
+	core::Size batch_id
 ){
 	return
 		utility::to_string(protocol_id) + " " +
@@ -360,7 +360,7 @@ get_batch_id(
 			<< struct_id << "'";
 		utility_exit_with_message(err_msg.str());
 	}
-	Size batch_id;
+	core::Size batch_id;
 	res >> batch_id;
 	return batch_id;
 }

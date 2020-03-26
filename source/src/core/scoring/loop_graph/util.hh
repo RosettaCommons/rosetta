@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_loop_graph_util_HH
 #define INCLUDED_core_scoring_loop_graph_util_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/scoring/loop_graph/util.fwd.hh>
 #include <core/scoring/loop_graph/LoopCycle.fwd.hh>
 #include <core/id/AtomID.fwd.hh>

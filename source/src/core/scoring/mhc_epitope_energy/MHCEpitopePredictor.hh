@@ -20,7 +20,7 @@
 #include <utility/vector1.hh>
 #include <core/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -31,7 +31,7 @@ namespace core {
 namespace scoring {
 namespace mhc_epitope_energy {
 
-class MHCEpitopePredictor: public utility::pointer::ReferenceCount {
+class MHCEpitopePredictor: public utility::VirtualBase {
 
 public:
 	MHCEpitopePredictor() {}

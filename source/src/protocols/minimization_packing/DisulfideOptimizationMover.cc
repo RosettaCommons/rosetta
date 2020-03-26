@@ -49,6 +49,8 @@ static basic::Tracer TR( "protocols.minimization_packing.DisulfideOptimizationMo
 namespace protocols {
 namespace minimization_packing {
 
+using core::Size;
+
 /////////////////////
 /// Constructors  ///
 /////////////////////
@@ -82,7 +84,7 @@ DisulfideOptimizationMover::~DisulfideOptimizationMover(){}
 
 
 void
-DisulfideOptimizationMover::break_repack_reform( Pose & pose, utility::vector1< Size > const & cys_pos ) {
+DisulfideOptimizationMover::break_repack_reform( Pose & pose, utility::vector1< core::Size > const & cys_pos ) {
 	// Mutate both residues to their corresponding thiol type.
 	// In the future here we could be careful to remove the HG,
 	// but they can easily be optimized away.
@@ -118,8 +120,8 @@ DisulfideOptimizationMover::apply( core::pose::Pose & pose ) {
 
 	// Take the disulfide indicated by the residue selector
 	auto disulfide_cys = selector_->apply( pose );
-	utility::vector1< Size > cys_pos;
-	for ( Size ii = 1; ii <= disulfide_cys.size(); ++ii ) {
+	utility::vector1< core::Size > cys_pos;
+	for ( core::Size ii = 1; ii <= disulfide_cys.size(); ++ii ) {
 		if ( disulfide_cys[ ii ] ) cys_pos.push_back( ii );
 	}
 
@@ -156,7 +158,7 @@ DisulfideOptimizationMover::apply( core::pose::Pose & pose ) {
 		protocols::minimization_packing::MinMover minmover( movemap, sfxn_, "lbfgs_armijo_nonmonotone", 0.0001, true );
 
 		minmover.apply( pose );
-		for ( Size ii = 1; ii <= final_optimization_n_iter_; ++ii ) {
+		for ( core::Size ii = 1; ii <= final_optimization_n_iter_; ++ii ) {
 			break_repack_reform( pose, cys_pos );
 			minmover.apply( pose );
 		}
@@ -201,7 +203,7 @@ DisulfideOptimizationMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption("final_optimization_n_iter") ) {
-		set_final_optimization_n_iter( tag->getOption< Size >( "final_optimization_n_iter", 0 ) );
+		set_final_optimization_n_iter( tag->getOption< core::Size >( "final_optimization_n_iter", 0 ) );
 	}
 }
 

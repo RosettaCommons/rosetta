@@ -26,7 +26,7 @@
 
 // Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/VirtualBase.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 

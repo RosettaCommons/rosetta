@@ -21,7 +21,7 @@
 #include <core/types.hh>
 
 //// Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -34,7 +34,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-class LigandArea: public utility::pointer::ReferenceCount
+class LigandArea: public utility::VirtualBase
 {
 public:
 	~LigandArea() override;

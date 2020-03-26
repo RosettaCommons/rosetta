@@ -82,7 +82,7 @@ void
 repack_base_pair_neighbors(
 	pose::Pose & pose,
 	scoring::ScoreFunction const & scorefxn,
-	Size const seqpos,
+	core::Size const seqpos,
 	bool const include_current,
 	bool const repack_dna
 )
@@ -90,14 +90,14 @@ repack_base_pair_neighbors(
 	using namespace scoring;
 	using namespace scoring::dna;
 
-	Size const nloop( 25 );
+	core::Size const nloop( 25 );
 
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
-	Size const seqpos_partner( partner[ seqpos ] );
+	core::Size const seqpos_partner( partner[ seqpos ] );
 
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	utility::vector1< bool > is_base_pair_neighbor( nres, false );
-	for ( Size i=1; i<= nres; ++i ) {
+	for ( core::Size i=1; i<= nres; ++i ) {
 		if ( scorefxn.are_they_neighbors( pose, i, seqpos ) ||
 				( seqpos_partner > 0 && scorefxn.are_they_neighbors( pose, i, seqpos_partner ) ) ) {
 			is_base_pair_neighbor[i] = true;
@@ -115,7 +115,7 @@ repack_base_pair_neighbors(
 	if ( include_current ) task->or_include_current( true );
 	else                   task->or_include_current( false );
 
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue(i).is_protein() ) {
 			if ( is_base_pair_neighbor[i] ) {
 				task->nonconst_residue_task( i ).restrict_to_repacking();
@@ -143,9 +143,9 @@ void
 packing_specificity_test_fast(
 	pose::Pose const & start_pose,
 	scoring::ScoreFunction const & scorefxn,
-	Size const motif_begin,
-	Size const motif_size,
-	Size const nloop,
+	core::Size const motif_begin,
+	core::Size const motif_size,
+	core::Size const nloop,
 	std::string const & min_type,
 	Real const min_tol,
 	bool const postmin,
@@ -154,8 +154,8 @@ packing_specificity_test_fast(
 	bool const dump_pdbs // = true
 )
 {
-	vector1< Size > motif_positions;
-	for ( Size i=motif_begin; i< motif_begin+motif_size; ++i ) {
+	vector1< core::Size > motif_positions;
+	for ( core::Size i=motif_begin; i< motif_begin+motif_size; ++i ) {
 		motif_positions.push_back(i);
 	}
 	packing_specificity_test_fast( start_pose, scorefxn, motif_positions, nloop, min_type, min_tol, postmin, output_tag, add_extra_rotamers, dump_pdbs );
@@ -169,8 +169,8 @@ void
 packing_specificity_test_fast(
 	pose::Pose const & start_pose,
 	scoring::ScoreFunction const & scorefxn,
-	vector1< Size > const & motif_positions,
-	Size const nloop,
+	vector1< core::Size > const & motif_positions,
+	core::Size const nloop,
 	std::string const & min_type,
 	Real const min_tol,
 	bool const postmin,
@@ -191,15 +191,15 @@ packing_specificity_test_fast(
 	tt << "packing_specificity_test::  nmotif_positions= " << motif_positions.size() <<
 		" min_type= " << min_type << " scorefxn: " << scorefxn << std::endl;
 
-	Size const nres( start_pose.size() );
+	core::Size const nres( start_pose.size() );
 	BasePartner const & partner( retrieve_base_partner_from_pose( start_pose ) );
 
 	// setup the positions
-	vector1< Size > pos_list;
+	vector1< core::Size > pos_list;
 	std::string nat_seq;
 	{
-		for ( Size ii=1; ii<= motif_positions.size(); ++ii ) {
-			Size const i( motif_positions[ii] );
+		for ( core::Size ii=1; ii<= motif_positions.size(); ++ii ) {
+			core::Size const i( motif_positions[ii] );
 			debug_assert( start_pose.residue(i).is_DNA() && partner[i] );
 			pos_list.push_back( i );
 			pos_list.push_back( partner[ i ] );
@@ -215,16 +215,16 @@ packing_specificity_test_fast(
 		// figure out which protein positions are within contact distance of the DNA
 		Real const dis2_cutoff( 18 * 18 );
 		vector1< bool > allow_repack( nres, false );
-		for ( Size i=1; i<= nres; ++i ) {
+		for ( core::Size i=1; i<= nres; ++i ) {
 			Residue const & i_rsd( pose.residue(i) );
 			if ( !i_rsd.is_protein() ) continue;
 			bool contact( false );
-			for ( Size j=1; j<= nres && !contact; ++j ) {
+			for ( core::Size j=1; j<= nres && !contact; ++j ) {
 				Residue const & j_rsd( pose.residue(j) );
 				if ( !j_rsd.is_DNA() ) continue;
 
-				for ( Size ii=1; ii<= i_rsd.natoms() && !contact; ++ii ) {
-					for ( Size jj=1; jj<= j_rsd.natoms() && !contact; ++jj ) {
+				for ( core::Size ii=1; ii<= i_rsd.natoms() && !contact; ++ii ) {
+					for ( core::Size jj=1; jj<= j_rsd.natoms() && !contact; ++jj ) {
 						if ( i_rsd.xyz(ii).distance_squared( j_rsd.xyz(jj) ) < dis2_cutoff ) contact = true;
 					}
 				}
@@ -238,7 +238,7 @@ packing_specificity_test_fast(
 		tt << "packloop: " << pose.sequence() << " START" << std::endl;
 
 		kinematics::MoveMap mm;
-		for ( Size ii = 1; ii <= nres; ++ii ) {
+		for ( core::Size ii = 1; ii <= nres; ++ii ) {
 			if ( pose.residue(ii).is_protein() ) {
 				if ( allow_repack[ii] ) {
 					task->nonconst_residue_task( ii ).restrict_to_repacking();
@@ -269,7 +269,7 @@ packing_specificity_test_fast(
 			using namespace pack::rotamer_set;
 			RotamerCouplingsOP couplings( new RotamerCouplings() );
 			couplings->resize( nres );
-			for ( Size i=1; i<= nres; ++i ) {
+			for ( core::Size i=1; i<= nres; ++i ) {
 				if ( partner[i] ) {
 					(*couplings)[i].first = partner[i];
 					(*couplings)[i].second = utility::pointer::make_shared< conformation::WatsonCrickResidueMatcher >();
@@ -290,7 +290,7 @@ packing_specificity_test_fast(
 
 		{ // test for mismatches
 			WatsonCrickResidueMatcher m;
-			for ( Size i=1; i<= nres; ++i ) {
+			for ( core::Size i=1; i<= nres; ++i ) {
 				if ( partner[i]>i ) {
 					debug_assert( m( pose.residue(i), pose.residue(partner[i])));
 				}
@@ -299,7 +299,7 @@ packing_specificity_test_fast(
 
 		// what's the sequence?
 		std::string packed_seq;
-		for ( Size i=1; i<= motif_positions.size(); ++i ) {
+		for ( core::Size i=1; i<= motif_positions.size(); ++i ) {
 			packed_seq += pose.residue( motif_positions[i] ).name1();
 		}
 
@@ -307,9 +307,9 @@ packing_specificity_test_fast(
 
 		// calculate frequency correct at each position
 		Real total_correct(0.0);
-		for ( Size i=1; i<= motif_positions.size(); ++i ) {
+		for ( core::Size i=1; i<= motif_positions.size(); ++i ) {
 			Real correct(0.0);
-			for ( Size n=1; n<= results.size(); ++n ) {
+			for ( core::Size n=1; n<= results.size(); ++n ) {
 				correct += ( results[n].second[ motif_positions[i]-1 ] == nat_seq[i-1] );
 			}
 			correct /= results.size();
@@ -343,8 +343,8 @@ void
 packing_specificity_test(
 	pose::Pose const & start_pose,
 	scoring::ScoreFunction const & scorefxn,
-	Size const motif_begin,
-	Size const motif_size,
+	core::Size const motif_begin,
+	core::Size const motif_size,
 	std::string const & min_type,
 	Real const min_tol,
 	bool const postmin,
@@ -364,14 +364,14 @@ packing_specificity_test(
 	tt << "packing_specificity_test::  motif_begin= " << motif_begin << " motif_size= " << motif_size <<
 		" min_type= " << min_type << " min_tol= " << min_tol << " scorefxn: " << scorefxn << std::endl;
 
-	Size const nres( start_pose.size() );
+	core::Size const nres( start_pose.size() );
 	BasePartner const & partner( retrieve_base_partner_from_pose( start_pose ) );
 
 	// setup the positions
-	vector1< Size > pos_list;
+	vector1< core::Size > pos_list;
 	std::string nat_seq;
 	{
-		for ( Size i=motif_begin; i< motif_begin+motif_size; ++i ) {
+		for ( core::Size i=motif_begin; i< motif_begin+motif_size; ++i ) {
 			debug_assert( start_pose.residue(i).is_DNA() && partner[i] );
 			pos_list.push_back( i );
 			pos_list.push_back( partner[ i ] );
@@ -382,7 +382,7 @@ packing_specificity_test(
 	// setup a movemap for protein sidechain minimization
 	kinematics::MoveMap mm;
 
-	for ( Size ii = 1; ii <= nres; ++ii ) {
+	for ( core::Size ii = 1; ii <= nres; ++ii ) {
 		if ( start_pose.residue(ii).is_protein() ) mm.set_chi( ii, true );
 	}
 
@@ -407,7 +407,7 @@ packing_specificity_test(
 			( pack::task::TaskFactory::create_packer_task( pose ));
 
 		task->initialize_from_command_line();
-		for ( Size ii = 1; ii <= nres; ++ii ) {
+		for ( core::Size ii = 1; ii <= nres; ++ii ) {
 			if ( pose.residue(ii).is_protein() ) {
 				task->nonconst_residue_task( ii ).restrict_to_repacking();
 				debug_assert( task->pack_residue(ii) );
@@ -434,7 +434,7 @@ packing_specificity_test(
 		while ( aa_combinations[1].size() < pos_list.size() ) {
 
 			vector1< vector1< AA > > new_combinations;
-			for ( Size i=1; i<= aa_combinations.size(); ++i ) {
+			for ( core::Size i=1; i<= aa_combinations.size(); ++i ) {
 				for ( int j = first_DNA_aa; j<= last_DNA_aa; ++j ) {
 					new_combinations.push_back( aa_combinations[i] );
 					vector1< AA > & l( new_combinations[ new_combinations.size() ] );
@@ -451,7 +451,7 @@ packing_specificity_test(
 	tt << "Motif size = " << motif_size << ". Trying " << aa_combinations.size() << " different motif sequences" <<
 		std::endl;
 
-	for ( Size ncombo=1; ncombo<= aa_combinations.size(); ++ncombo ) {
+	for ( core::Size ncombo=1; ncombo<= aa_combinations.size(); ++ncombo ) {
 
 		Pose pose;
 		pose = start_pose;
@@ -460,7 +460,7 @@ packing_specificity_test(
 		std::string combo_tag, nat_seq;
 
 		// apply the sequence modifications
-		for ( Size i=1; i<= pos_list.size(); ++i ) {
+		for ( core::Size i=1; i<= pos_list.size(); ++i ) {
 			AA const & aa( combo[i] );
 			int const seqpos( pos_list[i] );
 
@@ -492,7 +492,7 @@ packing_specificity_test(
 		task->set_bump_check( true );
 
 		task->initialize_from_command_line();
-		for ( Size ii = 1; ii <= nres; ++ii ) {
+		for ( core::Size ii = 1; ii <= nres; ++ii ) {
 			if ( pose.residue(ii).is_protein() ) {
 				task->nonconst_residue_task( ii ).restrict_to_repacking();
 				task->nonconst_residue_task( ii ).restrict_to_repacking();
@@ -512,7 +512,7 @@ packing_specificity_test(
 		// dont include current
 		task->or_include_current( false );
 
-		Size const nloop( 50 );
+		core::Size const nloop( 50 );
 		utility::vector1< std::pair< Real, std::string > > results;
 		pack::pack_rotamers_loop( pose, scorefxn, task, nloop, results );
 		//   pack::pack_rotamers( pose, scorefxn, task);
@@ -529,7 +529,7 @@ packing_specificity_test(
 
 		{ // test for mismatches -- unnecessary for packing but debugs pose setup
 			WatsonCrickResidueMatcher m;
-			for ( Size i=1; i<= nres; ++i ) {
+			for ( core::Size i=1; i<= nres; ++i ) {
 				if ( partner[i]>i ) {
 					debug_assert( m( pose.residue(i), pose.residue(partner[i])));
 				}

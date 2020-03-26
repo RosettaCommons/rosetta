@@ -24,7 +24,7 @@ namespace multistate_design {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 SingleState::SingleState()
-: utility::pointer::ReferenceCount(),
+: utility::VirtualBase(),
 	pose_p_(/* 0 */), is_positive_state_(false), best_score_(0.), fitness_function_(nullptr)
 {
 	fitness_function_ = utility::pointer::make_shared< SingleStateFitnessFunction >();
@@ -33,7 +33,7 @@ SingleState::SingleState()
 SingleState::~SingleState()= default;
 
 SingleState::SingleState( core::pose::Pose const & pose, bool is_positive )
-: utility::pointer::ReferenceCount(),
+: utility::VirtualBase(),
 	pose_p_(/* 0 */), is_positive_state_( is_positive ), best_score_(0.), fitness_function_(nullptr)
 {
 	pose_p_ = utility::pointer::make_shared< core::pose::Pose >();
@@ -42,7 +42,7 @@ SingleState::SingleState( core::pose::Pose const & pose, bool is_positive )
 }
 
 SingleState::SingleState( SingleState const & other )
-: utility::pointer::ReferenceCount(), pose_p_(/* 0 */), is_positive_state_(false), best_score_(0.), fitness_function_(nullptr)
+: utility::VirtualBase(), pose_p_(/* 0 */), is_positive_state_(false), best_score_(0.), fitness_function_(nullptr)
 {
 	pose_p_ = utility::pointer::make_shared< core::pose::Pose >();
 	*pose_p_ = other.pose();

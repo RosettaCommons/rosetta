@@ -29,7 +29,7 @@
 
 // Utility Headers
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 #include <utility/exit.hh>
 
@@ -48,9 +48,8 @@
 
 namespace protocols {
 namespace hotspot_hashing {
-typedef platform::Size Size;
 
-class HotspotStubSet : public utility::pointer::ReferenceCount {
+class HotspotStubSet : public utility::VirtualBase {
 public:
 	typedef std::multimap< core::Real, HotspotStubOP > Hotspots;
 	typedef std::map< std::string, Hotspots > Hs_map;
@@ -96,8 +95,8 @@ public:
 	inline HotspotStubSet::iterator end(){ return stub_set_vec_.end(); }
 
 	/// @brief set length of hotspot peptide used for finding stubs. Default=1, Hotspot stored in set will always be only 1 residue
-	Size hotspot_length( ) const;
-	void hotspot_length( Size const length );
+	core::Size hotspot_length( ) const;
+	void hotspot_length( core::Size const length );
 
 	/// @brief returns a new stub_set with stub scores recalculated by colony energy (Xiang, Soto, and Honig PNAS 2002)
 	HotspotStubSetOP colonyE( );
@@ -133,17 +132,17 @@ public:
 	//void read( std::string const filename );
 
 	/// @brief fill the stub set with n_stubs by Rosetta residue name
-	void fill( core::pose::Pose const & reference_pose, core::scoring::ScoreFunctionCOP scorefxn_in, std::string const & residue_name3, Size const n_stubs );
+	void fill( core::pose::Pose const & reference_pose, core::scoring::ScoreFunctionCOP scorefxn_in, std::string const & residue_name3, core::Size const n_stubs );
 	/// @brief only keep stubs within a certain distance of a residue on the target pose.
-	void fill( core::pose::Pose const & reference_pose, core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const target, core::Real const distance, std::string const & residue_name3, Size const n_stubs );
+	void fill( core::pose::Pose const & reference_pose, core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const target, core::Real const distance, std::string const & residue_name3, core::Size const n_stubs );
 
 	/// @brief rescore all stubs in this set based on current flags (eg - sc_only() )
 	HotspotStubSetOP rescore( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn );
 
 
 	/// @brief fill the stub set with n_stubs each of A, R, N, D, E, Q, H, I, L, K, M, P, F, S, T, W, Y, and V
-	void autofill ( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, Size const n_stubs );
-	void autofill( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, core::Size const target, core::Real const distance, Size const n_stubs );
+	void autofill ( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, core::Size const n_stubs );
+	void autofill( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, core::Size const target, core::Real const distance, core::Size const n_stubs );
 
 	/// @brief only accept stubs that score better than this threshold (default is -1.0)
 	void score_threshold( core::Real const threshold );
@@ -254,7 +253,7 @@ private:
 	core::pose::PoseCOP pose_;
 	core::Real score_threshold_; // only accept stubs with this score or better
 	protocols::filters::FilterCOP filter_;
-	Size hotspot_length_; // length of peptide to use for hotspot searching (polyAla, except for central hotspot). only hotspot itself is scored/stored in the set.
+	core::Size hotspot_length_; // length of peptide to use for hotspot searching (polyAla, except for central hotspot). only hotspot itself is scored/stored in the set.
 
 
 	/// @brief clears stub_set_vec_ and inserts all the elements in stub_set_ to it.
@@ -275,13 +274,13 @@ private:
 	*/
 	// Stub creation methods
 	//void dock_residue_lowres_ ( core::pose::Pose & pose, platform::Size const jump_number ) ;
-	//void dock_residue_highres_ ( core::pose::Pose & pose, core::scoring::ScoreFunctionOP scorefxn, Size const jump_number ) ;
+	//void dock_residue_highres_ ( core::pose::Pose & pose, core::scoring::ScoreFunctionOP scorefxn, core::Size const jump_number ) ;
 	void create_hotspot_after_pose ( core::pose::Pose & pose, std::string const & resname ) ;
 	void setup_hotspot_foldtree_ ( core::pose::Pose & pose ) ;
 	/// @brief utility function to find distance of stub from the end of the pose.
 	core::Size stub_offset();
 
-	core::Real get_residue_score_ ( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, Size const seqpos) ;
+	core::Real get_residue_score_ ( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, core::Size const seqpos) ;
 
 	core::Real evaluate_stub_bumps_(
 		core::conformation::Residue const & placed_stub_residue,

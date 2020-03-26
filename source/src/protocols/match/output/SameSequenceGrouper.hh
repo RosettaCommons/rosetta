@@ -53,20 +53,20 @@ class SameSequenceGrouper : public MatchGrouper {
 public:
 	typedef core::Real Real;
 	typedef core::Size Size;
-	typedef std::map< utility::OrderedTuple< utility::vector1< Size > >, Size > SequenceMap;
+	typedef std::map< utility::OrderedTuple< utility::vector1< core::Size > >, core::Size > SequenceMap;
 
 public:
 	SameSequenceGrouper();
-	SameSequenceGrouper( Size ncst );
+	SameSequenceGrouper( core::Size ncst );
 
 	~SameSequenceGrouper() override;
 
-	Size
+	core::Size
 	assign_group_for_match(
 		match const & m
 	) override;
 
-	Size
+	core::Size
 	assign_group_for_match(
 		match_dspos1 const & m
 	) override;
@@ -76,14 +76,14 @@ public:
 
 	virtual
 	void
-	set_n_geometric_constraints( Size n_csts );
+	set_n_geometric_constraints( core::Size n_csts );
 
 	void
 	set_hit_cacher( UpstreamHitCacherOP cacher );
 
 private:
 
-	Size n_geometric_constraints_;
+	core::Size n_geometric_constraints_;
 	UpstreamHitCacherOP hit_cacher_;
 	SequenceMap sequence_indexer_;
 
@@ -96,22 +96,22 @@ private:
 class SameSequenceAndDSPositionGrouper : public SameSequenceGrouper {
 
 public:
-	typedef std::map< std::pair< Size, Size >, Size > SequenceLigPosMap;
+	typedef std::map< std::pair< core::Size, core::Size >, core::Size > SequenceLigPosMap;
 	typedef core::Vector Vector;
 	typedef SameSequenceGrouper parent;
 
 	SameSequenceAndDSPositionGrouper();
-	SameSequenceAndDSPositionGrouper( Size ncst );
+	SameSequenceAndDSPositionGrouper( core::Size ncst );
 
 	~SameSequenceAndDSPositionGrouper() override;
 
 	//virtual
-	//Size
+	//core::Size
 	//assign_group_for_match(
 	// match const & m
 	//);
 
-	Size
+	core::Size
 	assign_group_for_match(
 		match_dspos1 const & m
 	) override;
@@ -120,14 +120,14 @@ public:
 	reset() override;
 
 	void
-	set_n_geometric_constraints( Size n_csts ) override;
+	set_n_geometric_constraints( core::Size n_csts ) override;
 
 	void
 	set_rms_group_cutoff( Real cutoff );
 
 	void
 	set_downstream_builder(
-		Size geomcst_id,
+		core::Size geomcst_id,
 		downstream::DownstreamBuilderCOP dsbuilder
 	);
 
@@ -138,7 +138,7 @@ public:
 
 private:
 
-	Size
+	core::Size
 	assign_downstream_position_group_for_match(
 		match_dspos1 const & m
 	);

@@ -25,7 +25,7 @@
 #include <numeric/xyzVector.hh>
 
 #include <utility/graph/Graph.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/types.hh>
@@ -46,7 +46,7 @@ namespace graph {
 /// @details A "donor group" can be a single atom or a collection of related atoms (e.g. the pair of NH2 protons in
 /// an aspartate side-chain).  This allows us to impose a little bit of prior knowledge: sometimes, you're satisfied if
 /// one of the protons in a group is making a hydrogen bond.
-class BuriedUnsatPenaltyGraphHbond : public utility::pointer::ReferenceCount {
+class BuriedUnsatPenaltyGraphHbond : public utility::VirtualBase {
 
 	friend class ::BuriedUnsatPenaltyGraphTests; //To allow unit tests to interrogate inner workings of this class.
 	friend class ::BuriedUnsatPenaltyGraphSymmetricTests; //To allow unit tests to interrogate inner workings of this class.
@@ -126,7 +126,7 @@ private:
 /// @details An "acceptor group" is (usually) just an acceptor atom (with the exception noted below).  A "donor group" is a donor proton and its
 /// parent heavyatom, plus any other protons on that parent.
 /// @note In rare cases (e.g. a hydroxyl), a group can be both donor and acceptor.
-class BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup : public utility::pointer::ReferenceCount {
+class BuriedUnsatPenaltyGraphHbondDonorAcceptorGroup : public utility::VirtualBase {
 
 	friend class ::BuriedUnsatPenaltyGraphTests; //To allow unit tests to interrogate inner workings of this class.
 	friend class ::BuriedUnsatPenaltyGraphSymmetricTests; //To allow unit tests to interrogate inner workings of this class.
@@ -214,7 +214,7 @@ private:
 /// @brief Data stored inside a BuriedUnsatPenaltyNode.
 /// @details This is a separate class so that nodes can rapidly be "copied", just by changing the stored pointer
 /// to the data object.
-class BuriedUnsatPenaltyNodeData : public utility::pointer::ReferenceCount {
+class BuriedUnsatPenaltyNodeData : public utility::VirtualBase {
 
 	friend class ::BuriedUnsatPenaltyGraphTests; //To allow unit tests to interrogate inner workings of this class.
 	friend class ::BuriedUnsatPenaltyGraphSymmetricTests; //To allow unit tests to interrogate inner workings of this class.
@@ -463,7 +463,7 @@ private:
 }; //BuriedUnsatPenaltyNode
 
 
-class BuriedUnsatPenaltyEdgeData : public utility::pointer::ReferenceCount {
+class BuriedUnsatPenaltyEdgeData : public utility::VirtualBase {
 
 	friend class ::BuriedUnsatPenaltyGraphTests; //To allow unit tests to interrogate inner workings of this class.
 	friend class ::BuriedUnsatPenaltyGraphSymmetricTests; //To allow unit tests to interrogate inner workings of this class.

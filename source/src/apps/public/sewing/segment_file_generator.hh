@@ -20,7 +20,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 
@@ -29,7 +29,7 @@ namespace pilot {
 namespace frankdt {
 
 ///@brief a generator of smart sewing segment files
-class segment_file_generator : public utility::pointer::ReferenceCount {
+class segment_file_generator : public utility::VirtualBase {
 
 public:
 

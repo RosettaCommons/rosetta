@@ -40,7 +40,7 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/py/PyAssert.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #include <numeric/xyzVector.hh>
@@ -116,13 +116,13 @@ public:
 ///  but this is ok because they are typically called sparingly.  Accessors
 ///  and mutators have overloaded method convention, while special mutators
 ///  use .set_* convention.
-class PDBInfo : public utility::pointer::ReferenceCount {
+class PDBInfo : public utility::VirtualBase {
 
 
 public: // typedefs
 
 
-	typedef utility::pointer::ReferenceCount Super;
+	typedef utility::VirtualBase Super;
 
 	typedef core::Size Size;
 	typedef core::Real Real;

@@ -67,12 +67,12 @@ void RollMover::apply( core::pose::Pose & pose ) {
 	core::Size const nres( pose.size() );
 	coords.resize( nres );
 
-	for ( Size i=1; i<= nres; ++i ) {
+	for ( core::Size i=1; i<= nres; ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		core::Size const number_atoms_this_residue( rsd.natoms() );
 		if ( number_atoms_this_residue ) {
 			coords[i].resize( number_atoms_this_residue );
-			for ( Size j=1; j <= number_atoms_this_residue; ++j ) {
+			for ( core::Size j=1; j <= number_atoms_this_residue; ++j ) {
 				coords[i][j] = rsd.atom( j ).xyz();
 			}
 		}

@@ -28,12 +28,12 @@ namespace dna {
 using namespace ObjexxFCL::format;
 using namespace core;
 
-DnaChains::DnaChains() : utility::pointer::ReferenceCount() {}
+DnaChains::DnaChains() : utility::VirtualBase() {}
 
 DnaChains::~DnaChains()= default;
 
 DnaChains::DnaChains( DnaChains const & other )
-: utility::pointer::ReferenceCount()
+: utility::VirtualBase()
 {
 	positions_ = other.positions();
 }
@@ -44,7 +44,7 @@ DnaChainsOP DnaChains::clone() const
 }
 
 bool
-DnaChains::contains( Size index ) const
+DnaChains::contains( core::Size index ) const
 {
 	if ( is_top(index) ) {
 		runtime_assert( (*this)[ index ].top() == index );
@@ -66,7 +66,7 @@ DnaChains::print(
 	os << "There are " << positions_.size() << " dna positions:" << '\n';
 	for ( auto const & position : positions_ ) {
 
-		Size const top_i( position.first );
+		core::Size const top_i( position.first );
 		DnaPosition const & pos( position.second );
 		runtime_assert( top_i == pos.top() );
 		os << I( 4, top_i );
@@ -76,7 +76,7 @@ DnaChains::print(
 		}
 		os << pose.residue_type( top_i ).name3();
 		if ( pos.paired() ) {
-			Size const bot_i( pos.bottom() );
+			core::Size const bot_i( pos.bottom() );
 			os << "  <=>" << pose.residue_type( bot_i ).name3() << "  " << I( 4, bot_i );
 			if ( pose.pdb_info() ) {
 				os << " (pdb " << pose.pdb_info()->chain( bot_i ) << " "

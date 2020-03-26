@@ -53,21 +53,21 @@ static const Real EXT_OMG = +180;
 void generate_extended_pose(Pose* extended_pose, const std::string& sequence) {
 	core::pose::make_pose_from_sequence(*extended_pose, sequence, core::chemical::CENTROID );
 
-	for ( Size i = 1; i <= extended_pose->size(); ++i ) {
+	for ( core::Size i = 1; i <= extended_pose->size(); ++i ) {
 		extended_pose->set_phi(i, EXT_PHI);
 		extended_pose->set_psi(i, EXT_PSI);
 		extended_pose->set_omega(i, EXT_OMG);
 	}
 }
 
-void copy_residues(const Pose& src, Size start, Size stop, Pose* dst) {
+void copy_residues(const Pose& src, core::Size start, core::Size stop, Pose* dst) {
 	using core::id::AtomID;
 	using core::conformation::Residue;
 
-	for ( Size i = start; i <= stop; ++i ) {
+	for ( core::Size i = start; i <= stop; ++i ) {
 		const Residue& r = src.conformation().residue(i);
 
-		for ( Size j = 1; j <= r.natoms(); ++j ) {
+		for ( core::Size j = 1; j <= r.natoms(); ++j ) {
 			AtomID id(j, i);
 			dst->set_xyz(id, src.xyz(id));
 		}

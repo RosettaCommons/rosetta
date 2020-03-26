@@ -63,7 +63,7 @@ void StepWiseSamplerComb::operator++() {
 			++( *rotamer );
 		}
 	} else {
-		for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
+		for ( core::Size i = 1; i <= rotamer_list_.size(); ++i ) {
 			++( *rotamer_list_[i] );
 			if ( rotamer_list_[i]->not_end() ) {
 				break;
@@ -99,10 +99,10 @@ void StepWiseSamplerComb::set_random( bool const setting ) {
 	}
 }
 ///////////////////////////////////////////////////////////////////////////
-void StepWiseSamplerComb::show( std::ostream & out, Size const indent ) const {
+void StepWiseSamplerComb::show( std::ostream & out, core::Size const indent ) const {
 	StepWiseSampler::show( out, indent );
 	// reverse direction so that 'inner loop' is last.
-	for ( Size k = rotamer_list_.size(); k >= 1; k-- ) rotamer_list_[k]->show( out, indent + 1 );
+	for ( core::Size k = rotamer_list_.size(); k >= 1; k-- ) rotamer_list_[k]->show( out, indent + 1 );
 }
 
 

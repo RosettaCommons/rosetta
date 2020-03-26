@@ -36,7 +36,7 @@ bool RandomSolutions::pick_and_apply(
 
 	if ( solutions.empty() ) return false;
 
-	Size index = random_range(1, solutions.size());
+	core::Size index = random_range(1, solutions.size());
 	solutions[index]->apply(pose);
 	return true;
 }

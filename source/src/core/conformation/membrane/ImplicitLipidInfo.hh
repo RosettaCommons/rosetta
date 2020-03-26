@@ -38,7 +38,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -51,7 +51,7 @@ namespace conformation {
 namespace membrane {
 
 ///@brief Definition of an implicit membrane with parameters for different lipid compositions
-class ImplicitLipidInfo : public utility::pointer::ReferenceCount {
+class ImplicitLipidInfo : public utility::VirtualBase {
 
 	typedef utility::vector1< numeric::CubicPolynomial > piecewise_poly;
 

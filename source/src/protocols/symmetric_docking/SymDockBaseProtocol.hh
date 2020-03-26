@@ -18,7 +18,7 @@
 
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/exit.hh>

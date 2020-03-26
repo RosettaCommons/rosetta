@@ -30,7 +30,7 @@
 #include <devel/enzdes/EnzdesRemodelProtocol.hh>
 
 // Utility headers
-//#include <utility/pointer/ReferenceCount.hh>
+//#include <utility/VirtualBase.hh>
 
 // C++ headers
 
@@ -89,13 +89,13 @@ public:
 	core::pack::task::PackerTaskCOP
 	make_insert_task(
 		core::pose::Pose const & pose,
-		Size insert_pos )
+		core::Size insert_pos )
 	const;
 
 	devel::enzdes::EnzdesRemodelMoverOP
 	make_enzremodel_mover(
 		core::pose::Pose & pose,
-		Size insert_pos
+		core::Size insert_pos
 	) const;
 
 	/// @brief returns false if remodel mover didn't work
@@ -151,11 +151,11 @@ private:
 
 	core::scoring::ScoreFunctionOP sfxn_;
 	core::select::residue_selector::ResidueSelectorOP insert_test_pos_;
-	Size flex_window_; //how many res up- and downstream of the insert pos to move
+	core::Size flex_window_; //how many res up- and downstream of the insert pos to move
 
 	std::string test_insert_ss_;
 	Real insert_allowed_score_increase_, insert_attempt_sasa_cutoff_;
-	Size length_of_insert_, num_repeats_;
+	core::Size length_of_insert_, num_repeats_;
 	bool pdb_numbering_;
 
 	//actual insertion handled by enzdes machinery

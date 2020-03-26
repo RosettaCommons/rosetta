@@ -62,7 +62,7 @@ using core::pose::Pose;
 /// code that has been specifically written to solve a closure problem.
 
 ClosureSolution::ClosureSolution(
-	ClosureProblem const * problem, Size const index,
+	ClosureProblem const * problem, core::Size const index,
 	ParameterList const & torsion_angles,
 	ParameterList const & bond_angles,
 	ParameterList const & bond_lengths)
@@ -139,8 +139,8 @@ bool ClosureSolution::check_rama( // {{{1
 	Ramachandran const & rama =
 		ScoringManager::get_instance()->get_Ramachandran();
 
-	for ( Size i = 1; i <= 3; i++ ) {
-		Size ca = problem_->pivot_atoms()[i];
+	for ( core::Size i = 1; i <= 3; i++ ) {
+		core::Size ca = problem_->pivot_atoms()[i];
 		AA type = pose.aa(problem_->pivot_residues()[i]);
 
 		Real new_phi = degrees(torsion_angles_[ca - 1]);
@@ -176,16 +176,16 @@ bool ClosureSolution::check_overlap(
 	using core::Vector;
 	using core::conformation::Residue;
 
-	Size first_residue = problem_->first_residue();
-	Size last_residue = problem_->last_residue();
+	core::Size first_residue = problem_->first_residue();
+	core::Size last_residue = problem_->last_residue();
 
 	// Iterate over loop residues.
-	for ( Size i = first_residue; i <= last_residue; i++ ) {
+	for ( core::Size i = first_residue; i <= last_residue; i++ ) {
 		Residue const & residue_i = pose.residue(i);
 		Vector const & vector_i = residue_i.xyz(residue_i.nbr_atom());
 
 		// Iterate over all other residues in the protein.
-		for ( Size j = 1; j <= pose.size(); j++ ) {
+		for ( core::Size j = 1; j <= pose.size(); j++ ) {
 
 			// Don't do adjacent residues.
 			if ( (j == i) || (j == i+1) || (j == i-1) ) continue;
@@ -205,13 +205,13 @@ bool ClosureSolution::check_overlap(
 
 			// Check for clashes between the N, CA, C, O, and CB (except for glycine)
 			// atoms of the two residues.
-			Size num_atoms_i = min<Size>(5, residue_i.nheavyatoms());
+			core::Size num_atoms_i = min<core::Size>(5, residue_i.nheavyatoms());
 
-			for ( Size m = 1; m <= num_atoms_i; m++ ) {
-				Size num_atoms_j = residue_j.is_protein() ?
-					min<Size>(5, residue_j.nheavyatoms()) : residue_j.nheavyatoms();
+			for ( core::Size m = 1; m <= num_atoms_i; m++ ) {
+				core::Size num_atoms_j = residue_j.is_protein() ?
+					min<core::Size>(5, residue_j.nheavyatoms()) : residue_j.nheavyatoms();
 
-				for ( Size n = 1; n <= num_atoms_j; n++ ) {
+				for ( core::Size n = 1; n <= num_atoms_j; n++ ) {
 					Vector const & atom_i = residue_i.xyz(m);
 					Vector const & atom_j = residue_j.xyz(n);
 
@@ -266,9 +266,9 @@ Real ClosureSolution::get_jacobian() const {
 			torsion_angles_,
 			atom_xyzs);
 
-		for ( Size i = 1; i <= 3; i++ ) {
-			Size pivot = problem_->pivot_atoms()[i];
-			Size j = 2 * (i - 1);
+		for ( core::Size i = 1; i <= 3; i++ ) {
+			core::Size pivot = problem_->pivot_atoms()[i];
+			core::Size j = 2 * (i - 1);
 
 			r1(j, 0) = atom_xyzs[pivot-1][1];
 			r1(j, 1) = atom_xyzs[pivot-1][2];
@@ -290,14 +290,14 @@ Real ClosureSolution::get_jacobian() const {
 		// Calculate the jacobian following the method outlined by Nilmeier, Hua,
 		// Coutsias, and Jacobson in their 2011 JCTC paper.
 
-		for ( Size i = 0; i < 6; i++ ) {
+		for ( core::Size i = 0; i < 6; i++ ) {
 			delta = r2.row(i) - r1.row(i);
 			gamma.row(i) = delta.normalized();
 		}
 
 		cross_45 = gamma.row(4).cross(gamma.row(5));
 
-		for ( Size i = 0; i < 4; i++ ) {
+		for ( core::Size i = 0; i < 4; i++ ) {
 			cross_i = gamma.row(i).cross(r1.row(5) - r1.row(i));
 			Real dot_i = gamma.row(i).dot(cross_45);
 
@@ -320,7 +320,7 @@ Real ClosureSolution::get_jacobian() const {
 Real ClosureSolution::get_distance(ClosureProblem const * problem) const {
 	Real distance = 0;
 
-	for ( Size i = 1; i <= problem->num_atoms(); i++ ) {
+	for ( core::Size i = 1; i <= problem->num_atoms(); i++ ) {
 		distance += pow(
 			(bond_lengths_[i] - problem->unperturbed_lengths_[i]) / 1.48, 2);
 		distance += 0.5 - 0.5 * cos(

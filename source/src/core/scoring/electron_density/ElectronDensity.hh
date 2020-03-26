@@ -39,7 +39,7 @@
 
 #include <core/kinematics/RT.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 namespace core {
@@ -52,9 +52,9 @@ int pos_mod(int x,int y);
 float pos_mod(float x,float y);
 core::Real pos_mod(core::Real x,core::Real y);
 
-class ElectronDensity : public utility::pointer::ReferenceCount {
+class ElectronDensity : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ElectronDensity() override;
 
 	/// @brief default constructor

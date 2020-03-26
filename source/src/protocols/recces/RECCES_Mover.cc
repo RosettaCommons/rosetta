@@ -106,16 +106,16 @@ RECCES_Mover::run_sampler( pose::Pose & pose )
 	set_sampler_gaussian_stdev( tempering.temperature(), pose );
 
 	// Setup for data saving for output
-	Size curr_counts( 1 );
+	core::Size curr_counts( 1 );
 	utility::vector1< float > scores;
 	utility::vector1< ScoreType > const score_types = options_->blank_score_terms() ?  vector1< ScoreType>() : get_scoretypes();
 	update_scores( scores, pose, scorefxn_, score_types );
 
 	// Useful counters and variables during the loop
-	Size n_accept_total( 0 ), n_t_jumps_accept( 0 );
-	Size const t_jump_interval( 10 );
-	Size const n_t_jumps( options_->n_cycle() / t_jump_interval );
-	Size temp_id( tempering.temp_id() );
+	core::Size n_accept_total( 0 ), n_t_jumps_accept( 0 );
+	core::Size const t_jump_interval( 10 );
+	core::Size const n_t_jumps( options_->n_cycle() / t_jump_interval );
+	core::Size temp_id( tempering.temp_id() );
 
 	// Min-score pose. And stored_pose, in use in loop mode to restore pose. Not quick.
 	Pose min_pose( pose ), stored_pose( pose );
@@ -124,12 +124,12 @@ RECCES_Mover::run_sampler( pose::Pose & pose )
 	TR << "Start the main sampling loop." << std::endl;
 	if ( options_->dump_pdb() ) pose.dump_pdb( output_pdb_name( "init" ) );
 
-	Size curr_dump = 1;
+	core::Size curr_dump = 1;
 
 	// Main sampling cycle
-	Size pct = 0;
-	std::map< std::string, Size > num_accepts, num_tries;
-	for ( Size n = 1; n <= options_->n_cycle(); ++n ) {
+	core::Size pct = 0;
+	std::map< std::string, core::Size > num_accepts, num_tries;
+	for ( core::Size n = 1; n <= options_->n_cycle(); ++n ) {
 
 		if ( options_->n_cycle() > 100 && n % ( options_->n_cycle()/100 ) == 0 ) TR << ++pct << "% complete." << std::endl;
 
@@ -202,7 +202,7 @@ void
 RECCES_Mover::initialize() {
 	runtime_assert( options_ );
 
-	Size const num_temperatures = options_->temperatures().size();
+	core::Size const num_temperatures = options_->temperatures().size();
 	runtime_assert( num_temperatures != 0 );
 
 	weights_.clear();
@@ -232,9 +232,9 @@ RECCES_Mover::set_sampler_gaussian_stdev( Real const & temperature, pose::Pose c
 /// @details curr_counts is a running count of number of times the pose has been the same.
 void
 RECCES_Mover::save_history(
-	Size const & curr_counts,
+	core::Size const & curr_counts,
 	vector1< float > const & scores,
-	Size const & temp_id )
+	core::Size const & temp_id )
 {
 	runtime_assert( options_ );
 
@@ -244,8 +244,8 @@ RECCES_Mover::save_history(
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
-RECCES_Mover::increment_accepts( Size & n_accept_total,
-	std::map< std::string, Size > & num_accepts,
+RECCES_Mover::increment_accepts( core::Size & n_accept_total,
+	std::map< std::string, core::Size > & num_accepts,
 	sampler::MC_LoopCOP loop_sampler ) const
 {
 	++n_accept_total;
@@ -265,12 +265,12 @@ RECCES_Mover::output_pdb_name( std::string const & tag ) const {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RECCES_Mover::dump_stuff(
-	Size const & n,
+	core::Size const & n,
 	pose::Pose const & pose,
 	utility::vector1< Real > const & scores,
 	pose::Pose & min_pose,
 	Real & min_score,
-	Size & curr_dump ) const
+	core::Size & curr_dump ) const
 {
 	runtime_assert( options_ );
 
@@ -290,13 +290,13 @@ RECCES_Mover::dump_stuff(
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RECCES_Mover::more_dump_stuff( pose::Pose const & pose,
-	Size const & n,
+	core::Size const & n,
 	Real const & current_temperature ) const
 {
 	runtime_assert( options_ );
 
 	using namespace core::io::silent;
-	Size const & dump_interval( options_->dump_freq() );
+	core::Size const & dump_interval( options_->dump_freq() );
 	if ( (n % dump_interval) == 0 && options_->dump_pdb() ) {
 		std::stringstream str;
 		str << options_->out_prefix() << "_" << n << ".pdb";
@@ -343,19 +343,19 @@ RECCES_Mover::save_data_to_disk() const
 	// this is ridiculous -- need to fix external code to just look at score type names written to a file.
 	utility::vector1< core::scoring::ScoreType > const score_types = options_->blank_score_terms() ? vector1< core::scoring::ScoreType>() : get_scoretypes();
 
-	for ( Size i = 1; i <= options_->temperatures().size(); ++i ) {
+	for ( core::Size i = 1; i <= options_->temperatures().size(); ++i ) {
 		if ( options_->save_scores() ) {
 			std::ostringstream oss;
 			oss << options_->out_prefix() << '_' << std::fixed << std::setprecision( 2 )
 				<< options_->temperatures()[ i ] << ".bin.gz";
-			Size const data_dim2( data_dim( score_types ) );
-			Size const data_dim1( data_[ i ].size() / data_dim2 );
+			core::Size const data_dim2( data_dim( score_types ) );
+			core::Size const data_dim1( data_[ i ].size() / data_dim2 );
 			vector2disk_in2d( oss.str(), data_dim1, data_dim2, data_[ i ] );
 		}
 		std::ostringstream oss;
 		oss << options_->out_prefix() << '_' << std::fixed << std::setprecision( 2 )
 			<< options_->temperatures()[ i ] << ".hist.gz";
-		utility::vector1< Size > const & hist( hist_list_[ i ].get_hist() );
+		utility::vector1< core::Size > const & hist( hist_list_[ i ].get_hist() );
 		utility::vector1< Real > const & scores( hist_list_[ i ].get_scores() );
 		vector2disk_in1d( oss.str(), hist );
 
@@ -375,19 +375,19 @@ RECCES_Mover::save_data_to_disk() const
 		str2 << options_->out_prefix() << "_hist.txt";
 		str3 << options_->out_prefix() << "_scores.txt";
 		std::ofstream datafile ( (str.str()).c_str() );
-		for ( Size i = 1; i <= data_[1].size(); i+=2 ) {
+		for ( core::Size i = 1; i <= data_[1].size(); i+=2 ) {
 			datafile << data_[1][i] << "   " << data_[1][i+1] << "\n";
 		}
 		datafile.close();
 		std::ofstream histfile ( (str2.str()).c_str() );
-		utility::vector1<Size> const & hist( hist_list_[1].get_hist() );
-		for ( Size i = 1; i<=hist.size(); i++ ) {
+		utility::vector1<core::Size> const & hist( hist_list_[1].get_hist() );
+		for ( core::Size i = 1; i<=hist.size(); i++ ) {
 			histfile<< hist[i] << "\n";
 		}
 		histfile.close();
 		utility::vector1<Real> const & escores( hist_list_[1].get_scores() );
 		std::ofstream scorefile ( (str3.str()).c_str() );
-		for ( Size i = 1; i<=escores.size(); i++ ) {
+		for ( core::Size i = 1; i<=escores.size(); i++ ) {
 			scorefile<< escores[i] << "\n";
 		}
 		scorefile.close();
@@ -405,11 +405,11 @@ RECCES_Mover::prepare_output_torsion_ids()
 	runtime_assert( options_ );
 	//Make a list of all the backbone torsion IDs that are sampled (This is only complete if all the residues are consecutive)
 	// REPLACE this with sampler.find(), looking over all torsions!
-	utility::vector1< Size > const & residues( options_->sample_residues() );
+	utility::vector1< core::Size > const & residues( options_->sample_residues() );
 	bb_torsion_ids_.clear();
 	bb_torsion_ids_.emplace_back( residues[1]-1, id::BB, EPSILON );
 	bb_torsion_ids_.emplace_back( residues[1]-1, id::BB, ZETA );
-	for ( Size const residue : residues ) {
+	for ( core::Size const residue : residues ) {
 		bb_torsion_ids_.emplace_back( residue, id::BB, ALPHA );
 		bb_torsion_ids_.emplace_back( residue, id::BB, BETA );
 		bb_torsion_ids_.emplace_back( residue, id::BB, GAMMA );
@@ -421,7 +421,7 @@ RECCES_Mover::prepare_output_torsion_ids()
 	bb_torsion_ids_.emplace_back( residues.back()+1, id::BB, GAMMA );
 
 	chi_torsion_ids_.clear();
-	for ( Size const residue : residues ) {
+	for ( core::Size const residue : residues ) {
 		chi_torsion_ids_.emplace_back( residue , id::CHI, 1 );
 	}
 
@@ -434,7 +434,7 @@ RECCES_Mover::prepare_output_torsion_ids()
 
 /////////////////////////////////////////////////////////////////////////////
 void
-RECCES_Mover::output_torsions( core::pose::Pose const & pose, Size const & curr_counts ) const
+RECCES_Mover::output_torsions( core::pose::Pose const & pose, core::Size const & curr_counts ) const
 {
 	utility::vector1< Real > const bb_torsions = get_torsions(bb_torsion_ids_, pose);
 	utility::vector1< Real > const chi_torsions = get_torsions(chi_torsion_ids_, pose);

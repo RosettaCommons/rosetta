@@ -62,7 +62,7 @@ public:
 public:// constructor/destructor
 
 	// @brief constructor w variables
-	SSElementBisectddGFilter(core::scoring::ScoreFunctionOP scorefxn,Real threshold,bool report_avg,Size ignore_terminal_SS,bool only_n_term,bool only_c_term,bool skip_ss_element,bool report_sasa_instead,bool convert_charged_res_to_ala,protocols::moves::MoverOP relax_mover);
+	SSElementBisectddGFilter(core::scoring::ScoreFunctionOP scorefxn,Real threshold,bool report_avg,core::Size ignore_terminal_SS,bool only_n_term,bool only_c_term,bool skip_ss_element,bool report_sasa_instead,bool convert_charged_res_to_ala,protocols::moves::MoverOP relax_mover);
 
 	// @brief default constructor
 	SSElementBisectddGFilter();
@@ -92,7 +92,7 @@ public:// virtual main operation
 	Real report_sm(const Pose & pose ) const override;
 	void report( std::ostream & out,const Pose & pose ) const override;
 	protocols::loops::Loops get_ss_elements(const Pose & pose) const;
-	Real get_ddg_bisect_score(Size element,protocols::loops::Loops ssElements, const Pose & pose) const;
+	Real get_ddg_bisect_score(core::Size element,protocols::loops::Loops ssElements, const Pose & pose) const;
 	Real compute( const Pose & orig_pose ) const;
 	bool apply(const Pose & pose ) const override;
 
@@ -120,7 +120,7 @@ public:// parser
 
 private:
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL
-	Size ignore_terminal_SS_;
+	core::Size ignore_terminal_SS_;
 	bool only_n_term_;
 	bool only_c_term_;
 	Real threshold_;

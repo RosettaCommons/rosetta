@@ -327,7 +327,7 @@ private:  // Private data /////////////////////////////////////////////////////
 	utility::vector1< core::Real > starting_rama_scores_;
 	core::Real average_change_in_rama_score_;
 
-	Size actual_cycles_;
+	core::Size actual_cycles_;
 	bool verbose_;
 
 private:  // Constants ////////////////////////////////////////////////////////

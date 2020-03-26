@@ -43,7 +43,7 @@
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++
@@ -82,7 +82,7 @@ private:
 ///      All other query data must be loaded directly to the relevant scoring methods
 ///    - provide slots for 'plugable' parts of the machinery, like chunk filters, scoring methods and so on.
 ///    - pick fragments
-class FragmentPicker: public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< FragmentPicker >
+class FragmentPicker: public utility::VirtualBase, public utility::pointer::enable_shared_from_this< FragmentPicker >
 {
 public:
 

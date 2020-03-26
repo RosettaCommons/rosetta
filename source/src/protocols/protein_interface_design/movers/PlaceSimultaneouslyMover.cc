@@ -373,7 +373,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 		std::multimap< core::Real, std::pair< core::Size, StubsetStubPair > > saved_auction = auction_->auction_results();
 		std::multimap< core::Real, std::pair< core::Size, StubsetStubPair > > new_auction;
 
-		utility::vector1< Size > scanned_position;
+		utility::vector1< core::Size > scanned_position;
 		core::pose::Pose saved_pose=pose;
 
 		for ( auto & each_auction_result : saved_auction ) {
@@ -384,7 +384,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 			PackerTaskOP task = create_task_for_allhotspot_packing( saved_pose );
 			//TR << "test loop through saved_auction: " << auction_->auction_results().size() << " , " << new_auction.size() << std::endl;
 
-			//Size residue= each_auction_result->second.first;  // unused ~Labonte
+			//core::Size residue= each_auction_result->second.first;  // unused ~Labonte
 			residue_level_tasks_for_placed_hotspots_->clear();
 			core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = residue_level_tasks_for_placed_hotspots_->clone();
 			pack_around_placed_hotspots_->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
@@ -434,7 +434,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 			if ( new_auction.empty() ) { //size()==0) {
 				new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result.second.first, std::make_pair( each_auction_result.second.second.first, each_auction_result.second.second.second) ) ) );
 			} else {
-				Size status=0;
+				core::Size status=0;
 				// Modifying a container you're iterating over is perilous, as iterators may become invalid.
 				// Luckily for a multimap only the iterator being deleted is invalidated. We can make a copy and increment the main iterator before we delete the copy.
 				for ( auto selected_auction_iterator = new_auction.begin(); selected_auction_iterator != new_auction.end(); /*intentionally left blank*/ ) {

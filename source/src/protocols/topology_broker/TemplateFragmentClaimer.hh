@@ -36,7 +36,7 @@
 //#include <basic/Tracer.hh>
 //#include <basic/options/option.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <protocols/abinitio/Templates.hh>
 #include <utility/vector1.hh>

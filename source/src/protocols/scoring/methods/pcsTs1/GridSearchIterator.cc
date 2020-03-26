@@ -76,7 +76,7 @@ GridSearchIterator_Ts1::GridSearchIterator_Ts1():
 GridSearchIterator_Ts1::~GridSearchIterator_Ts1()= default;
 
 GridSearchIterator_Ts1::GridSearchIterator_Ts1(GridSearchIterator_Ts1 const & other):
-	ReferenceCount(),
+	VirtualBase(),
 	x_center_(other.x_center_),
 	y_center_(other.y_center_),
 	z_center_(other.z_center_),

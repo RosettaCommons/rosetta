@@ -34,7 +34,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 
 //Numeric headers
@@ -47,7 +47,7 @@ namespace protocols {
 namespace energy_based_clustering {
 
 ///@brief Performs the work done by the energy_based_clustering app.  Uses an energy-biased cookie-cutter approach to cluster a large number of structures without generating an all-by-all RMSD matrix.
-class EnergyBasedClusteringProtocol : public utility::pointer::ReferenceCount {
+class EnergyBasedClusteringProtocol : public utility::VirtualBase {
 
 	friend class ::EnergyBasedClusteringTests;
 

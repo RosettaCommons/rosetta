@@ -40,7 +40,7 @@ RosettaThreadPool::RosettaThreadPool(
 	platform::Size const total_threads,
 	RosettaThreadPoolInstantiationKey const &
 ) :
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	runtime_assert_string_msg( total_threads > 0, "Error in RosettaThreadPool constructor: The number of threads must be greater than or equal to 1." );
 	threads_.reserve( total_threads - 1 );
@@ -74,7 +74,7 @@ RosettaThreadPool::~RosettaThreadPool(){
 void
 RosettaThreadPool::run_function_in_threads(
 	RosettaThreadFunction * function_to_execute,
-	Size const requested_thread_count,
+	platform::Size const requested_thread_count,
 	RosettaThreadAssignmentInfo & thread_assignment
 ) {
 	runtime_assert_string_msg( function_to_execute != nullptr, "Error in RosettaThreadPool::run_function_in_threads():  A null pointer was passed to this function!" );

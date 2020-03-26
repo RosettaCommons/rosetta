@@ -13,7 +13,7 @@
 #ifndef INCLUDED_protocols_docking_RigidBodyInfo_hh
 #define INCLUDED_protocols_docking_RigidBodyInfo_hh
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 
@@ -21,7 +21,7 @@
 namespace protocols {
 namespace docking {
 
-class RigidBodyInfo : public utility::pointer::ReferenceCount
+class RigidBodyInfo : public utility::VirtualBase
 {
 public:
 

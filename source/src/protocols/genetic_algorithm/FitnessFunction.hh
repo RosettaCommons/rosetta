@@ -14,7 +14,7 @@
 #ifndef INCLUDED_protocols_genetic_algorithm_FitnessFunction_hh
 #define INCLUDED_protocols_genetic_algorithm_FitnessFunction_hh
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <protocols/genetic_algorithm/Entity.fwd.hh>
 
@@ -23,7 +23,7 @@
 namespace protocols {
 namespace genetic_algorithm {
 
-class FitnessFunction : public utility::pointer::ReferenceCount {
+class FitnessFunction : public utility::VirtualBase {
 public:
 	typedef utility::pointer::shared_ptr< FitnessFunction > OP;
 	typedef utility::pointer::shared_ptr< FitnessFunction const > COP;

@@ -50,6 +50,7 @@ namespace flexpack {
 static basic::Tracer tr( "protocols.flexpack.FlexPacker" );
 
 using PackerEnergy = core::PackerEnergy;
+using core::Size;
 
 
 FlexPacker::FlexPacker(
@@ -114,11 +115,11 @@ FlexPacker::apply(
 	FArray1D_int bestrotamer_at_seqpos( pose.size(), 0 );
 	FArray1D< PackerEnergy > rot_freq( flex_rotsets->nrotamers() );
 	FArray1D_int current_rot_index( pose.size(), 1 );
-	//for ( Size ii = 1; ii <= flex_rotsets->nmoltenres(); ++ii ) {
+	//for ( core::Size ii = 1; ii <= flex_rotsets->nmoltenres(); ++ii ) {
 	// current_rot_index( flex_rotsets->moltenres_2_resid( ii ) ) = 1 + flex_rotsets->nrotamer_offset_for_moltenres( ii );
 	//}
 	tr << "Current rot index: ";
-	for ( Size ii = 1; ii <= flex_rotsets->nmoltenres(); ++ii ) {
+	for ( core::Size ii = 1; ii <= flex_rotsets->nmoltenres(); ++ii ) {
 		tr << current_rot_index( ii ) << " ";
 	}
 	tr << std::endl;
@@ -132,7 +133,7 @@ FlexPacker::apply(
 	OtherContextScoreFunction oc_sfxn( pose );
 	using namespace core::scoring;
 	oc_sfxn.set_energy_method_options( scorefxn_->energy_method_options() );
-	for ( Size ii = 1; ii <= n_score_types; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 		auto iist = (ScoreType) ii;
 		if ( scorefxn_->weights()[ iist ] != 0.0 ) {
 			oc_sfxn.set_weight( iist, scorefxn_->weights()[ iist ] );
@@ -159,8 +160,8 @@ FlexPacker::apply(
 	annealer->run();
 
 	tr << "Final energy: " << bestE << std::endl;
-	for ( Size ii = 1; ii <= flex_rotsets->nmoltenres(); ++ii ) {
-		Size iiresid =flex_rotsets->moltenres_2_resid( ii );
+	for ( core::Size ii = 1; ii <= flex_rotsets->nmoltenres(); ++ii ) {
+		core::Size iiresid =flex_rotsets->moltenres_2_resid( ii );
 		//tr << "Replacing residue " << iiresid << " mres: " << ii << std::endl;
 		pose.replace_residue(
 			iiresid,
@@ -170,10 +171,10 @@ FlexPacker::apply(
 	}
 
 	tr << "The final assigned backbone fragments are: ";
-	for ( Size jj = 1; jj<= flex_rotsets->nflexible_segments(); ++jj ) {
-		Size representative_seqpos = flex_rotsets->flexsegment_start_resid( jj );
-		Size representative_moltenres = flex_rotsets->resid_2_moltenres( representative_seqpos );
-		Size rep_rotamer = bestrotamer_at_seqpos( representative_seqpos ) - flex_rotsets->nrotamer_offset_for_moltenres( representative_moltenres );
+	for ( core::Size jj = 1; jj<= flex_rotsets->nflexible_segments(); ++jj ) {
+		core::Size representative_seqpos = flex_rotsets->flexsegment_start_resid( jj );
+		core::Size representative_moltenres = flex_rotsets->resid_2_moltenres( representative_seqpos );
+		core::Size rep_rotamer = bestrotamer_at_seqpos( representative_seqpos ) - flex_rotsets->nrotamer_offset_for_moltenres( representative_moltenres );
 
 		tr << "for segment " << jj << " is " << flex_ig->get_bb_for_state( representative_moltenres , rep_rotamer ) ;
 		tr << "; ";

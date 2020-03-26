@@ -233,12 +233,12 @@ BackboneMover::apply( core::pose::Pose & pose )
 	}
 
 	// how many moves to make
-	Size const num_iterations = std::max< Size >( Size( 1 ), std::min< Size >( nmoves_, move_pos_list_.size() ) );
-	set< Size > already_moved;
-	Size tries( 0 );
+	core::Size const num_iterations = std::max< core::Size >( core::Size( 1 ), std::min< core::Size >( nmoves_, move_pos_list_.size() ) );
+	set< core::Size > already_moved;
+	core::Size tries( 0 );
 
 	// Now loop.
-	for ( Size k = 1; k <= num_iterations; ++k ) {
+	for ( core::Size k = 1; k <= num_iterations; ++k ) {
 		while ( true ) {
 			++tries;
 
@@ -711,7 +711,7 @@ ShearMover::setup_list( core::pose::Pose & pose )
 	core::select::residue_selector::ResidueSubset const subset( compute_selected_residues( pose ) );
 	core::kinematics::MoveMapCOP mm = movemap(pose);
 
-	Size const n_rsd( pose.size() );
+	core::Size const n_rsd( pose.size() );
 	for ( core::uint i = 2; i <= n_rsd; ++i ) {
 		if ( ! subset[ i ] ) { continue; }
 

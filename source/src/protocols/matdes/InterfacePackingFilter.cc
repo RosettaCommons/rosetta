@@ -144,8 +144,8 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 	utility::vector1<std::string> sym_dof_name_list;
 
 	// Partition pose according to specified jump and symmetry information
-	Size nsubposes=1;
-	utility::vector1<Size> sym_aware_jump_ids;
+	core::Size nsubposes=1;
+	utility::vector1<core::Size> sym_aware_jump_ids;
 	if ( multicomp_ ) {
 		runtime_assert( sym_dof_names_ != "" );
 		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
@@ -154,19 +154,19 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 	} else if ( sym_dof_names_ != "" ) {
 		// expand system along provided DOFs
 		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
-		for ( Size j = 1; j <= sym_dof_name_list.size(); j++ ) {
+		for ( core::Size j = 1; j <= sym_dof_name_list.size(); j++ ) {
 			sym_aware_jump_ids.push_back( core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[j] ) );
 		}
 	} else {
 		// if we're symmetric and not multicomponent, expand along all slide DOFs
-		Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
+		core::Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
 		TR.Debug << "#slidable jumps: " << nslidedofs << std::endl;
-		for ( Size j = 1; j <= nslidedofs; j++ ) {
+		for ( core::Size j = 1; j <= nslidedofs; j++ ) {
 			sym_aware_jump_ids.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
 		}
 	}
 
-	for ( Size i = 1; i <= nsubposes; i++ ) {
+	for ( core::Size i = 1; i <= nsubposes; i++ ) {
 		ObjexxFCL::FArray1D_bool is_upstream ( pose.size(), false );
 		if ( multicomp_ ) {
 			TR.Debug << "computing neighbors for sym_dof_name " << sym_dof_name_list[i] << std::endl;
@@ -182,9 +182,9 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 			core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
 			TR << "computed_holes" << std::endl;
 
-			Size nres_monomer = 0;
+			core::Size nres_monomer = 0;
 			bool start = true;
-			for ( Size j=1; j<=symm_info->num_independent_residues(); ++j ) {
+			for ( core::Size j=1; j<=symm_info->num_independent_residues(); ++j ) {
 				if ( is_upstream(j) ) continue;
 				if ( start ) monomer_lower_bound = j;
 				start = false;
@@ -192,7 +192,7 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 			}
 			TR << "nres_monomer: " << nres_monomer << " for sym_dof_name: " << sym_dof_name_list[i] << std::endl;
 
-			for ( Size r=1; r<=sub_pose_resis.size(); r++ ) {
+			for ( core::Size r=1; r<=sub_pose_resis.size(); r++ ) {
 				if ( monomer_lower_bound == sub_pose_resis[r] ) {
 					base = r;
 					break;
@@ -228,8 +228,8 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 			} // ir
 		} else {
 			core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
-			utility::vector1<Size> intra_subs;
-			Size nres_monomer = symm_info->num_independent_residues();
+			utility::vector1<core::Size> intra_subs;
+			core::Size nres_monomer = symm_info->num_independent_residues();
 			for ( core::Size i=1; i<=symm_info->subunits(); ++i ) {
 				if ( !is_upstream( (i-1)*nres_monomer + 1 ) ) intra_subs.push_back(i);
 			}

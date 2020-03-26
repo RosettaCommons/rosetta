@@ -20,7 +20,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace backbone_moves {
@@ -32,7 +32,7 @@ class ShearFreePeptideMover : public FreePeptideMover {
 
 public:
 
-	ShearFreePeptideMover(Size seqpos, Real torsion_degree, bool random = false);
+	ShearFreePeptideMover(core::Size seqpos, Real torsion_degree, bool random = false);
 
 	~ShearFreePeptideMover() override;
 
@@ -41,7 +41,7 @@ public:
 private:
 
 	bool random_ = false;
-	Size seqpos_ = 0;
+	core::Size seqpos_ = 0;
 	Real torsion_degree_ = 0;
 };
 

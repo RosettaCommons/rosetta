@@ -64,7 +64,7 @@ public:
 		input_sequence_type_( "" ),
 		scorefxn_( nullptr ),
 		target_sequence_( "" ),
-		working_res_( utility::vector1< Size >() ),
+		working_res_( utility::vector1< core::Size >() ),
 		mutation_list_( "" ),
 		insertion_list_( "" )
 	{}
@@ -80,7 +80,7 @@ public:
 
 public:
 
-	void accomodate_length_change( Pose & pose, Size const insertion_begin, Size const seqpos );
+	void accomodate_length_change( Pose & pose, core::Size const insertion_begin, core::Size const seqpos );
 	void process_insertions( core::pose::Pose & pose );
 	void process_deletions( core::pose::Pose & pose );
 
@@ -95,14 +95,14 @@ public:
 	void
 	mutate_all_at_once( core::pose::Pose & pose );
 
-	core::kinematics::MoveMapOP mm_from_residues( core::pose::Pose const & pose, utility::vector1< Size > const & changed_pos, bool add_nearby=false );
+	core::kinematics::MoveMapOP mm_from_residues( core::pose::Pose const & pose, utility::vector1< core::Size > const & changed_pos, bool add_nearby=false );
 
 	////////////////////////////////////////////////////////////////////////////
 	void
-	setup_alignment_map( std::map< Size, Size > & mapping,
+	setup_alignment_map( std::map< core::Size, core::Size > & mapping,
 		std::string const & sequence_from_alignment ){
-		Size count( 0 );
-		for ( Size i = 1; i <= sequence_from_alignment.size(); i++ ) {
+		core::Size count( 0 );
+		for ( core::Size i = 1; i <= sequence_from_alignment.size(); i++ ) {
 			if ( sequence_from_alignment[ i-1 ] != '-' ) {
 				count++;
 				mapping[ i ] = count;
@@ -162,7 +162,7 @@ private:
 	std::string  target_sequence_;
 
 	// Manages mapping seqpos
-	utility::vector1< Size > working_res_;
+	utility::vector1< core::Size > working_res_;
 
 	// Target vector of residue types
 	core::chemical::ResidueTypeCOPs rtypes_;

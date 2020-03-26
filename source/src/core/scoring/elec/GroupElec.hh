@@ -29,7 +29,7 @@
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 
@@ -53,7 +53,7 @@ struct ElecGroup
 typedef utility::vector1< ElecGroup > ResElecGroup;
 //typedef utility::pointer::shared_ptr< ResElecGroup const > ResElecGroupCOP;
 
-class GroupElec : public utility::pointer::ReferenceCount
+class GroupElec : public utility::VirtualBase
 {
 public:
 

@@ -183,8 +183,8 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 	PackerTaskOP ptask = task_factory()->create_task_and_apply_taskoperations( pose );
 
 	// figure out design positions/choices from PackerTask
-	vector1< Size > design_positions;
-	for ( Size i(1), end( ptask->total_residue() ); i <= end; ++i ) {
+	vector1< core::Size > design_positions;
+	for ( core::Size i(1), end( ptask->total_residue() ); i <= end; ++i ) {
 		// ignore DNA positions
 		if ( !pose.residue_type(i).is_protein() ) continue;
 		ResidueLevelTask const & rtask( ptask->residue_task(i) );
@@ -244,7 +244,7 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 		for ( SingleStateCOPs::const_iterator s( states.begin() ), end( states.end() );
 				s != end; ++s ) {
 			EntityElements traits;
-			for ( vector1< Size >::const_iterator i( design_positions.begin() ),
+			for ( vector1< core::Size >::const_iterator i( design_positions.begin() ),
 					end( design_positions.end() ); i != end; ++i ) {
 				PosTypeOP pt( new PosType( *i, (*s)->pose().residue_type(*i).aa() ) );
 				traits.push_back( pt );
@@ -298,7 +298,7 @@ DnaInterfaceMultiStateDesign::output_results( Pose & pose )
 
 	TR(t_info) << "Evaluated " << sortable.size() << " sequences.\nBest sequences:\n";
 	// list and output top solutions
-	Size counter(0);
+	core::Size counter(0);
 
 	for ( vector1< EntityOP >::const_iterator it( sortable.begin() ),
 			end( sortable.end() ); it != end; ++it ) {
@@ -348,11 +348,11 @@ void DnaInterfaceMultiStateDesign::parse_my_tag(
 )
 {
 	// flags/parameters (override options settings)
-	if ( tag->hasOption("generations") ) generations_ = tag->getOption<Size>("generations");
-	if ( tag->hasOption("pop_size") ) pop_size_ = tag->getOption<Size>("pop_size");
-	if ( tag->hasOption("num_packs") ) num_packs_ = tag->getOption<Size>("num_packs");
-	if ( tag->hasOption("pop_from_ss") ) pop_from_ss_ = tag->getOption<Size>("pop_from_ss");
-	if ( tag->hasOption("numresults") ) numresults_ = tag->getOption<Size>("numresults");
+	if ( tag->hasOption("generations") ) generations_ = tag->getOption<core::Size>("generations");
+	if ( tag->hasOption("pop_size") ) pop_size_ = tag->getOption<core::Size>("pop_size");
+	if ( tag->hasOption("num_packs") ) num_packs_ = tag->getOption<core::Size>("num_packs");
+	if ( tag->hasOption("pop_from_ss") ) pop_from_ss_ = tag->getOption<core::Size>("pop_from_ss");
+	if ( tag->hasOption("numresults") ) numresults_ = tag->getOption<core::Size>("numresults");
 	if ( tag->hasOption("fraction_by_recombination") ) {
 		fraction_by_recombination_ = tag->getOption<Real>("fraction_by_recombination");
 	}
@@ -364,7 +364,7 @@ void DnaInterfaceMultiStateDesign::parse_my_tag(
 		checkpoint_prefix_ = tag->getOption<std::string>("checkpoint_prefix");
 	}
 	if ( tag->hasOption("checkpoint_interval") ) {
-		checkpoint_interval_ = tag->getOption<Size>("checkpoint_interval");
+		checkpoint_interval_ = tag->getOption<core::Size>("checkpoint_interval");
 	}
 	if ( tag->hasOption("checkpoint_gz") ) checkpoint_gz_ = tag->getOption<bool>("checkpoint_gz");
 	if ( tag->hasOption("checkpoint_rename") ) {
@@ -412,7 +412,7 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 			itr != dna_chains_->end(); ++itr ) {
 		// limit to dna design positions
 		DnaPosition const & pos( itr->second );
-		Size const index( pos.top() );
+		core::Size const index( pos.top() );
 		runtime_assert( index == itr->first );
 		// resfile key "TARGET" indicates positions at which multistate design will be targeted
 		if ( !ptask->has_behavior("TARGET",index) ) continue;
@@ -460,7 +460,7 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 			itr != dna_chains_->end(); ++itr ) {
 		// limit to dna design positions
 		DnaPosition const & pos( itr->second );
-		Size const index( pos.top() );
+		core::Size const index( pos.top() );
 		debug_assert( index == itr->first );
 		if ( !ptask->has_behavior("TARGET",index) ) continue;
 		if ( pose.pdb_info() ) {

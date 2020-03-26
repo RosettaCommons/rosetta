@@ -75,12 +75,12 @@ numeric::xyzVector< Real > RBSegmentMover::getCoM( core::pose::Pose const & pose
 	numeric::xyzVector< Real > CoM( 0, 0, 0 );
 	int N = 0;
 
-	for ( Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
+	for ( core::Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
 		// apply to transformation to every atom in this segment
-		Size i_start = std::max(segment_[i].start(), (Size)1);
-		Size i_end   = std::min(segment_[i].end(),  pose.size());
+		core::Size i_start = std::max(segment_[i].start(), (core::Size)1);
+		core::Size i_end   = std::min(segment_[i].end(),  pose.size());
 
-		for ( Size j = i_start; j <= i_end; ++j ) {
+		for ( core::Size j = i_start; j <= i_end; ++j ) {
 			CoM += pose.residue(j).xyz("CA");
 			N++;
 		}
@@ -104,13 +104,13 @@ void  RBSegmentMover::applyRotation( core::pose::Pose & pose, numeric::xyzMatrix
 	utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
 
 	numeric::xyzVector< Real > localX, localRX, globalRX;
-	for ( Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
+	for ( core::Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
 		// apply to transformation to every atom in this segment
-		Size i_start = std::max(segment_[i].start(), (Size)1);
-		Size i_end   = std::min(segment_[i].end() , pose.size());
+		core::Size i_start = std::max(segment_[i].start(), (core::Size)1);
+		core::Size i_end   = std::min(segment_[i].end() , pose.size());
 
-		for ( Size j = i_start; j <= i_end; ++j ) {
-			for ( Size k = 1; k <= pose.residue(j).natoms(); ++k ) {
+		for ( core::Size j = i_start; j <= i_end; ++j ) {
+			for ( core::Size k = 1; k <= pose.residue(j).natoms(); ++k ) {
 				id::AtomID id( k, j );
 				localX = global2local * ( pose.xyz(id) - origin );
 				localRX = rotation * localX;
@@ -137,13 +137,13 @@ void  RBSegmentMover::applyTranslation( core::pose::Pose & pose, numeric::xyzVec
 	utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
 
 	numeric::xyzVector< Real > localX, localRX, globalRX;
-	for ( Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
+	for ( core::Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
 		// apply to transformation to every atom in this segment
-		Size i_start = std::max(segment_[i].start(), (Size)1);
-		Size i_end   = std::min(segment_[i].end(), pose.size());
+		core::Size i_start = std::max(segment_[i].start(), (core::Size)1);
+		core::Size i_end   = std::min(segment_[i].end(), pose.size());
 
-		for ( Size j = i_start; j <= i_end; ++j ) {
-			for ( Size k = 1; k <= pose.residue(j).natoms(); ++k ) {
+		for ( core::Size j = i_start; j <= i_end; ++j ) {
+			for ( core::Size k = 1; k <= pose.residue(j).natoms(); ++k ) {
 				id::AtomID id( k, j );
 				globalRX = pose.xyz(id) + local2global * translation;
 
@@ -169,13 +169,13 @@ void  RBSegmentMover::applyTransformation( core::pose::Pose & pose, numeric::xyz
 	utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
 
 	numeric::xyzVector< Real > localX, localRX, globalRX;
-	for ( Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
+	for ( core::Size i=1; i<=segment_.nContinuousSegments(); ++i ) {
 		// apply to transformation to every atom in this segment
-		Size i_start = std::max(segment_[i].start(), (Size)1);
-		Size i_end   = std::min(segment_[i].end(), pose.size());
+		core::Size i_start = std::max(segment_[i].start(), (core::Size)1);
+		core::Size i_end   = std::min(segment_[i].end(), pose.size());
 
-		for ( Size j = i_start; j <= i_end; ++j ) {
-			for ( Size k = 1; k <= pose.residue(j).natoms(); ++k ) {
+		for ( core::Size j = i_start; j <= i_end; ++j ) {
+			for ( core::Size k = 1; k <= pose.residue(j).natoms(); ++k ) {
 				id::AtomID id( k, j );
 				localX = global2local * ( pose.xyz(id) - origin );
 				localRX = rotation * localX + translation;
@@ -256,7 +256,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose ) {
 
 void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 	int dir = (shift>0) ? 1 : -1;
-	Size mag = std::abs(shift);
+	core::Size mag = std::abs(shift);
 
 	core::Size nres = hybridization::get_num_residues_nonvirt( pose );
 	while ( !pose.residue(nres).is_protein() ) nres--;
@@ -275,20 +275,20 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 	utility::vector1< id::AtomID > atm_ids;
 	utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
 
-	for ( Size ii=1; ii<=segment_.nContinuousSegments(); ++ii ) {
+	for ( core::Size ii=1; ii<=segment_.nContinuousSegments(); ++ii ) {
 		// apply to transformation to every atom in this segment
-		core::uint i_start = std::max(segment_[ii].start(), (Size)1);
+		core::uint i_start = std::max(segment_[ii].start(), (core::Size)1);
 		core::uint i_end   = std::min(segment_[ii].end(), nres);
 
-		Size nres_seg  = i_end - i_start + 1;
+		core::Size nres_seg  = i_end - i_start + 1;
 
 		numeric::xyzVector< Real > C1,N1,C2,N2;
 		numeric::xyzMatrix< Real > R( 0 ), R1( 0 );
 
 		for ( core::uint i = 0; i < nres_seg - mag; ++i ) {
 			// "transform" r_i to r_j
-			Size r_i = (dir == 1) ? i_start + i : i_end - i;
-			Size r_j = r_i + dir * mag;
+			core::Size r_i = (dir == 1) ? i_start + i : i_end - i;
+			core::Size r_j = r_i + dir * mag;
 
 			numeric::xyzVector< Real > CA1 = pose.residue(r_i).atom("CA").xyz();
 			C1 = pose.residue(r_i).atom("C").xyz() - CA1;  // offset from CA
@@ -301,7 +301,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 			R = numeric::alignVectorSets( C1,N1, C2,N2 );
 
 			// apply transformation to every atom in this res
-			for ( Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
+			for ( core::Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
 				id::AtomID id( a_i, r_i );
 				numeric::xyzVector< Real > newX = R * (pose.xyz(id) - CA1) + CA2;
 
@@ -346,7 +346,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 				if ( verbose_ ) { TR << "align " << r_i << "->" << r_j << "using template" << std::endl; }
 
 				// apply transformation to every atom in this res
-				for ( Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
+				for ( core::Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
 					id::AtomID id( a_i, r_i );
 					numeric::xyzVector< Real > newX = R1 * (pose.xyz(id) - CA1) + CA2;
 
@@ -356,7 +356,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 				}
 			} else {
 				if ( verbose_ ) { TR << "align " << r_i << "->" << r_j << "using prev xform" << std::endl; }
-				for ( Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
+				for ( core::Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
 					id::AtomID id( a_i, r_i );
 					numeric::xyzVector< Real > newX = R * (pose.xyz(id) - CA1) + CA2;
 					atm_ids.push_back( id );

@@ -750,7 +750,7 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 				pred_2nd_shift = 0.0; //may not good for the last residue, for which the neighoring residue effect is not considered.
 			} else {
 				pred_2nd_shift = 0.0;
-				if ( ANN_CS_OUTPUT_FULL[atomName].size() >= static_cast< Size > (i) ) {
+				if ( ANN_CS_OUTPUT_FULL[atomName].size() >= static_cast< core::Size > (i) ) {
 					pred_2nd_shift = ANN_CS_OUTPUT_FULL[atomName][i][0];
 				}
 
@@ -841,7 +841,7 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 
 //   tr.Info << inNames << endl;
 
-//  for ( Size i = 0; i < temp.size(); i++) {
+//  for ( core::Size i = 0; i < temp.size(); i++) {
 //   inName = temp[i];
 //   //tr.Info << "Reading PDB Coordinates from " << inName << endl;
 //   inPDB.loadPDB(inName);
@@ -907,7 +907,7 @@ void Sparta::SpartaLib::init_PredErrorSurface()
 		string atomName = itN.second;
 		if ( atomName == "H" ) atomName="HN";
 
-		for ( Size i=0; i<AAlist.length(); i++ ) {
+		for ( core::Size i=0; i<AAlist.length(); i++ ) {
 			string AA = AAlist.substr(i,1);
 			if ( AA == " " ) continue;
 

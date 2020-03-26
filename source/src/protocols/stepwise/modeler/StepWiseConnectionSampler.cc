@@ -227,7 +227,7 @@ StepWiseConnectionSampler::apply( core::pose::Pose & pose ){
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseConnectionSampler::initialize_useful_info( pose::Pose const & pose ){
-	Size reference_res = toolbox::rigid_body::figure_out_reference_res_for_jump( pose, moving_res_ );
+	core::Size reference_res = toolbox::rigid_body::figure_out_reference_res_for_jump( pose, moving_res_ );
 	// Complicate the rigid body modeler logic. This works iff the moving_res is NOT bonded to its connections
 	// (i.e. JUMP_DOCK) but we need to manage to ignore cases where this is in fact the reference res for a ligand
 	// or vrt but the edge is 'written backwards'
@@ -299,7 +299,7 @@ StepWiseConnectionSampler::initialize_residue_level_screeners( pose::Pose & pose
 	tag_definition_ = utility::pointer::make_shared< TagDefinition >( pose, screeners_[ screeners_.size() ] );
 	screeners_.push_back( tag_definition_ );
 
-	for ( Size n = 1; n <= rna_five_prime_chain_breaks_.size(); n++ ) {
+	for ( core::Size n = 1; n <= rna_five_prime_chain_breaks_.size(); n++ ) {
 		screeners_.push_back( utility::pointer::make_shared< RNA_ChainClosableGeometryResidueBasedScreener >( rna_chain_closable_geometry_checkers_[ n ] ) );
 	}
 
@@ -382,9 +382,9 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	}
 
 	screeners_.push_back( utility::pointer::make_shared< SampleApplier >( *screening_pose_, true /*apply_residue_alternative_sampler*/ ) );
-	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) screeners_.push_back( utility::pointer::make_shared< RNA_ChainClosableGeometryScreener >( rna_chain_closable_geometry_checkers_[ n ], screening_pose_ ) );
+	for ( core::Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) screeners_.push_back( utility::pointer::make_shared< RNA_ChainClosableGeometryScreener >( rna_chain_closable_geometry_checkers_[ n ], screening_pose_ ) );
 
-	for ( Size n = 1; n <= rna_five_prime_chain_breaks_.size(); n++ ) {
+	for ( core::Size n = 1; n <= rna_five_prime_chain_breaks_.size(); n++ ) {
 		bool strict = rigid_body_modeler_ && rna_cutpoints_closed_.has_value( rna_five_prime_chain_breaks_[n] ) && (rna_cutpoints_closed_.size() < 3);
 		// if strict == false, no need to create a redundant screener, and its confusing. Remove?
 		screeners_.push_back( utility::pointer::make_shared< RNA_ChainClosableGeometryScreener >( rna_chain_closable_geometry_checkers_[ n ], screening_pose_, strict  /*strict*/ ) );
@@ -404,14 +404,14 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 		screeners_.push_back( atr_rep_screener );
 	}
 
-	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {
+	for ( core::Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {
 		if ( kic_modeler_ && n == 1 ) continue; // if KIC, first one is screened above, actually.
 		if ( screening_pose_->residue_type( rna_cutpoints_closed_[n] ).is_NA() && screening_pose_->residue_type( rna_cutpoints_closed_[n] + 1 ).is_NA() ) {
 			screeners_.push_back( utility::pointer::make_shared< RNA_ChainClosureScreener >( rna_chain_closure_checkers_[ n ] ) );
 		}
 	}
 
-	for ( Size n = 1; n <= protein_ccd_closers_.size(); n++ )  screeners_.push_back( utility::pointer::make_shared< ProteinCCD_ClosureScreener >( protein_ccd_closers_[n], *protein_ccd_poses_[n] ) );
+	for ( core::Size n = 1; n <= protein_ccd_closers_.size(); n++ )  screeners_.push_back( utility::pointer::make_shared< ProteinCCD_ClosureScreener >( protein_ccd_closers_[n], *protein_ccd_poses_[n] ) );
 
 	// phosphate screener, o2prime screener, should be here.
 	if ( !options_->lores() ) {
@@ -469,13 +469,13 @@ StepWiseConnectionSampler::initialize_pose( pose::Pose & pose  ){
 	// connection_sampler cannot handle waters - but might be better to handle this by virtualizing in screening pose,
 	//  and then allowing StepWisePacker to do Mg(2+) hydration -- currently that's happening later in StepWiseMinimizer.
 	// magnesium::remove_mg_bound_waters( pose, magnesium::get_mg_res( pose ), false /*leave other waters*/ );
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue_type( n ).aa() == core::chemical::aa_h2o ) add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_RESIDUE_VARIANT, n );
 	}
 
 	// note that constraint addition must happen after all variant changes (or the atom numbering will be off).
 	// AMW: why is this not being handled by chainbreak scoreterm alone, if applicable??
-	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) rna::add_harmonic_chain_break_constraint( pose, rna_cutpoints_closed_[ n ] );
+	for ( core::Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) rna::add_harmonic_chain_break_constraint( pose, rna_cutpoints_closed_[ n ] );
 
 	return true;
 }
@@ -506,7 +506,7 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 		core::pose::rna::add_virtual_O2Prime_hydrogen( *screening_pose_ );
 	}
 	if ( options_->virtualize_packable_moieties_in_screening_pose() ) phosphate::remove_terminal_phosphates( *screening_pose_ );
-	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {
+	for ( core::Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {
 		if ( screening_pose_->residue_type( rna_cutpoints_closed_[n] + 1 ).is_NA() ) {
 			add_variant_type_to_pose_residue( *screening_pose_, core::chemical::VIRTUAL_PHOSPHATE,
 				rna_cutpoints_closed_[n] + 1 ); // PS May 31, 2010 -- updated to all cutpoints by rhiju, feb. 2014
@@ -532,7 +532,7 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	virt_sugar_screening_pose_ = screening_pose_->clone(); //Hard copy. Used for trying out sugar at moving residue.
 	// virtual sugars even at residues that have instantiated sugars -- we can quickly screen this pose,
 	// and it provides the appropriate baseline atr/rep for checking contacts and clashes.
-	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ) {
+	for ( core::Size n = 1; n <= residue_alternative_sets_.size(); n++ ) {
 		if ( residue_alternative_sets_[ n ].size() > 1 ) {
 			pose::add_variant_type_to_pose_residue( *virt_sugar_screening_pose_,
 				core::chemical::VIRTUAL_RIBOSE, residue_alternative_sets_[ n ].representative_seqpos() );
@@ -549,20 +549,20 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	}
 
 	// we will be checking clashes of even virtual sugars compared to no-sugar baseline.
-	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ) {
+	for ( core::Size n = 1; n <= residue_alternative_sets_.size(); n++ ) {
 		if ( residue_alternative_sets_[ n ].size() > 1 ) {
 			pose::remove_variant_type_from_pose_residue( *screening_pose_,
 				core::chemical::VIRTUAL_RIBOSE, residue_alternative_sets_[ n ].representative_seqpos() );
 		}
 	}
 
-	for ( Size n = 1; n <= rna_five_prime_chain_breaks_.size(); n++ ) {
+	for ( core::Size n = 1; n <= rna_five_prime_chain_breaks_.size(); n++ ) {
 		rna_chain_closable_geometry_checkers_.push_back( utility::pointer::make_shared< RNA_ChainClosableGeometryChecker >(
 			rna_five_prime_chain_breaks_[n], rna_three_prime_chain_breaks_[n], rna_chain_break_gap_sizes_[n] ) );
 	}
 
 	screening_pose_->remove_constraints(); // chain closure actually assumes no constraints in pose -- it sets up its own constraints.
-	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {
+	for ( core::Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {
 		// AMW TODO: I am not sure if this condition is safe to the rare case that we're looking at a cyclic cutpoint, in which case
 		// instead of looking at rna_cutpoints_closed_[n] + 1 we either need to go into cyclize_res or we need to find the
 		// similarly indexed rna_three_prime_chain_breaks_ for every rna_five_prime_chain_breaks_ or something.
@@ -575,13 +575,13 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	// AMW TODO: carbohydrate loop closers?
 
 	// protein loop closers
-	utility::vector1< Size > all_moving_res = get_moving_res_including_domain_boundaries( pose, moving_res_list_ );
+	utility::vector1< core::Size > all_moving_res = get_moving_res_including_domain_boundaries( pose, moving_res_list_ );
 	protein_cutpoints_closed_ = protein::just_protein( figure_out_moving_cutpoints_closed_from_moving_res( pose, all_moving_res ), pose );
 	if ( !options_->kic_modeler_if_relevant() ) {
 		// CCD closure -- heuristic closer but will accept fewer than 6 torsions (and does not require
 		//  the torsions to be triaxial like kinematic closer).
 		// Involves up to 5 residues: takeoff - bridge_res1 - bridge_res2 -bridge_res3 - landing
-		for ( Size n = 1; n <= protein_cutpoints_closed_.size(); n++ ) {
+		for ( core::Size n = 1; n <= protein_cutpoints_closed_.size(); n++ ) {
 			protein::loop_close::StepWiseProteinCCD_CloserOP protein_ccd_closer( new protein::loop_close::StepWiseProteinCCD_Closer( working_parameters_ ) );
 			protein_ccd_closer->set_ccd_close_res( protein_cutpoints_closed_[ n ] );
 			protein_ccd_closer->set_working_moving_res_list( moving_res_list_ );
@@ -607,7 +607,7 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 /////////////////////////////////////////////////////////////////////////////////
 Size
 StepWiseConnectionSampler::get_max_ntries() {
-	Size max_ntries( 0 );
+	core::Size max_ntries( 0 );
 	if ( rigid_body_modeler_ ) {
 		max_ntries = std::max( 100000, 1000 * int( options_->num_random_samples() ) );
 		if ( options_->rmsd_screen() && !options_->integration_test_mode() ) max_ntries *= 10;
@@ -626,7 +626,7 @@ StepWiseConnectionSampler::get_max_ntries() {
 /////////////////////////////////////////////////////////////////////////////////
 Size
 StepWiseConnectionSampler::get_num_pose_kept() {
-	Size num_pose_kept( 108 );
+	core::Size num_pose_kept( 108 );
 	if ( options_->sampler_num_pose_kept() > 0 ) num_pose_kept = options_->sampler_num_pose_kept();
 	if ( !rigid_body_modeler_ && working_parameters_ && working_parameters_->sample_both_sugar_base_rotamer() ) num_pose_kept *= 4; //12;
 	if ( rigid_body_modeler_ && base_centroid_checker_->allow_base_pair_only_screen() ) num_pose_kept *= 4;
@@ -636,8 +636,8 @@ StepWiseConnectionSampler::get_num_pose_kept() {
 /////////////////////////////////////////////////////////////////////////////////////
 Size
 StepWiseConnectionSampler::which_residue_alternative_set_is_moving_residue() const {
-	Size which_set_is_moving_res( 0 );
-	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ) {
+	core::Size which_set_is_moving_res( 0 );
+	for ( core::Size n = 1; n <= residue_alternative_sets_.size(); n++ ) {
 		if ( residue_alternative_sets_[n].representative_seqpos() == moving_res_ ) which_set_is_moving_res = n;
 	}
 	return which_set_is_moving_res;
@@ -702,7 +702,7 @@ StepWiseConnectionSampler::initialize_xyz_grid_parameters(){
 
 //////////////////////////////////////////////////////////////////////
 // used in setting max_distance -- can use a tighter tether if moving res is covalently connected to the reference (anchor) residue.
-Size  // Size instead of bool for historical reasons.
+Size  // core::Size instead of bool for historical reasons.
 StepWiseConnectionSampler::truly_floating_base() {
 	runtime_assert( reference_res_ > 0 ); // don't be in this function unless there is a jump from reference to moving!
 	if ( rna_cutpoints_closed_.has_value( moving_res_    ) && reference_res_ == moving_res_+1 ) return 0;
@@ -718,11 +718,11 @@ StepWiseConnectionSampler::truly_floating_base() {
 utility::vector1< core::conformation::ResidueOP >
 StepWiseConnectionSampler::get_moving_rsd_list() const {
 	runtime_assert( rigid_body_modeler_ );
-	Size const n = which_residue_alternative_set_is_moving_residue();
+	core::Size const n = which_residue_alternative_set_is_moving_residue();
 	runtime_assert( n > 0 );
 	utility::vector1< core::conformation::ResidueOP > moving_rsd_list;
 	sampler::copy_dofs::ResidueAlternativeSet const & moving_res_modeling = residue_alternative_sets_[ n ];
-	for ( Size n = 1; n <= moving_res_modeling.pose_list().size(); n++ ) {
+	for ( core::Size n = 1; n <= moving_res_modeling.pose_list().size(); n++ ) {
 		moving_rsd_list.push_back( moving_res_modeling.pose( n )->residue( moving_res_ ).clone() );
 	}
 	return moving_rsd_list;
@@ -836,7 +836,7 @@ StepWiseConnectionSampler::initialize_generic_polymer_bond_sampler( pose::Pose c
 	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
 	TR << "Setting up bonded polymer sampler for " << pose.residue_type( moving_res_ ).name() << std::endl;
 	// AMW: be very careful here because it's not clear all of these will be very useful.
-	for ( Size ii = 1; ii <= pose.residue_type( moving_res_ ).mainchain_atoms().size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.residue_type( moving_res_ ).mainchain_atoms().size(); ++ii ) {
 		// skip if lower connect not there. Might be bad if it exists but is unfulfilled?
 		// ideally skip if it's there but unfulfilled
 		//if ( !pose.residue_type( moving_res_ ).lower_connect_id() && ii == 1 ) continue;
@@ -845,7 +845,7 @@ StepWiseConnectionSampler::initialize_generic_polymer_bond_sampler( pose::Pose c
 
 		sampler->add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( core::id::TorsionID( moving_res_, id::BB, ii ), allowed_values ) );
 	}
-	for ( Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
 		sampler->add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( core::id::TorsionID( moving_res_, id::CHI, ii ), allowed_values ) );
 	}
 	sampler->init();
@@ -862,7 +862,7 @@ StepWiseConnectionSampler::initialize_ligand_bond_sampler( pose::Pose const & po
 	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
 	TR << "Setting up ligand sampler for " << pose.residue_type( moving_res_ ).name() << std::endl;
 	TR << "\t" << pose.residue_type( moving_res_ ) << std::endl;
-	for ( Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
 		StepWiseSamplerOneTorsionOP foo( new StepWiseSamplerOneTorsion( core::id::TorsionID( moving_res_, id::CHI, ii ), allowed_values ) );
 		sampler->add_external_loop_rotamer( foo );
 	}
@@ -879,19 +879,19 @@ StepWiseConnectionSampler::initialize_carbohydrate_bond_sampler( pose::Pose cons
 
 	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
 	// Really should be sampling ring conformations or something. We'd need a special class for that.
-	for ( Size ii = 1; ii <= pose.residue_type( moving_res_ ).n_ring_conformer_sets(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.residue_type( moving_res_ ).n_ring_conformer_sets(); ++ii ) {
 		StepWiseSamplerRingConformerOP rc( new StepWiseSamplerRingConformer( ii, moving_res_, pose.residue_type( moving_res_ ).ring_conformer_set( ii ) ) );
 		sampler->add_external_loop_rotamer( rc );
 	}
 
-	//for ( Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
+	//for ( core::Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
 	utility::vector1< Real > allowed_values{ -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 };
 	// Chi 1 is also the connection to lower. As a pseudo-MC torsion, it should be sampled more finely
 	StepWiseSamplerOneTorsionOP foo( new StepWiseSamplerOneTorsion( core::id::TorsionID( moving_res_, id::CHI, 1 ), allowed_values ) );
 	sampler->add_external_loop_rotamer( foo );
 
 	utility::vector1< Real > sp3_rots{ -60, 60, 180 };
-	for ( Size ii = 2; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
+	for ( core::Size ii = 2; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
 		// There will (usually?) be one chi that is the hydroxyl that is "really a mainchain torsion" in the connected form.
 		// that isn't necessarily cause not to sample it, but be aware: if chi atom 3 is final mainchain atom, be wary.
 		StepWiseSamplerOneTorsionOP foo( new StepWiseSamplerOneTorsion( core::id::TorsionID( moving_res_, id::CHI, ii ), sp3_rots ) );
@@ -972,7 +972,7 @@ StepWiseConnectionSampler::presample_virtual_sugars( pose::Pose & pose ){
 	virtual_sugar_just_in_time_instantiator->instantiate_sugars_at_cutpoint_closed( pose );
 
 	// in backwards order to match some old runs.
-	for ( Size n = virtual_sugar_just_in_time_instantiator->num_sets(); n >= 1; n-- ) {
+	for ( core::Size n = virtual_sugar_just_in_time_instantiator->num_sets(); n >= 1; n-- ) {
 		add_residue_alternative_set( virtual_sugar_just_in_time_instantiator->residue_alternative_set( n ) );
 	}
 

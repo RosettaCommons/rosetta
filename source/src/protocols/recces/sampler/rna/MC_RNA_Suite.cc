@@ -36,7 +36,7 @@ namespace sampler {
 namespace rna {
 
 ///////////////////////////////////////////////////////////////////////////
-MC_RNA_Suite::MC_RNA_Suite( Size const rsd_id ):
+MC_RNA_Suite::MC_RNA_Suite( core::Size const rsd_id ):
 	MC_Comb(),
 	rsd_id_( rsd_id ),
 	skip_same_pucker_( true ),
@@ -82,7 +82,7 @@ void MC_RNA_Suite::init() {
 		init_pucker_ = NORTH;
 	}
 
-	for ( Size i = 1; i <= 5; ++i ) {
+	for ( core::Size i = 1; i <= 5; ++i ) {
 		MC_OneTorsionOP sampler( new MC_OneTorsion( torsion_ids_[i], init_torsions_[i] ) );
 		sampler->set_gaussian_stdev( gaussian_stdev_ );
 		if ( sample_near_a_form_ ) {
@@ -97,7 +97,7 @@ void MC_RNA_Suite::init() {
 		bb_samplers_.push_back( sampler );
 	}
 
-	for ( Size i = 1; i <= 2; ++i ) {
+	for ( core::Size i = 1; i <= 2; ++i ) {
 		MC_OneTorsionOP chi_sampler( new MC_OneTorsion(
 			torsion_ids_[5 + i], init_torsions_[5 + i] ) );
 		chi_sampler->set_gaussian_stdev( gaussian_stdev_ );
@@ -119,7 +119,7 @@ void MC_RNA_Suite::init() {
 	}
 
 	if ( sample_bb_ ) {
-		for ( Size i = 1; i <= bb_samplers_.size(); ++ i ) {
+		for ( core::Size i = 1; i <= bb_samplers_.size(); ++ i ) {
 			add_rotamer( bb_samplers_[i] );
 		}
 	}
@@ -139,7 +139,7 @@ void MC_RNA_Suite::init() {
 }
 ///////////////////////////////////////////////////////////////////////////
 void MC_RNA_Suite::set_init_from_pose( pose::Pose const & pose ) {
-	for ( Size i = 1; i <= init_torsions_.size(); ++i ) {
+	for ( core::Size i = 1; i <= init_torsions_.size(); ++i ) {
 		init_torsions_[i] = pose.torsion( torsion_ids_[i] );
 	}
 	init_pucker_ = assign_pucker( pose, rsd_id_ );
@@ -161,7 +161,7 @@ void MC_RNA_Suite::set_angle_range_from_init( Real const setting ) {
 			init_torsions_[6] + angle_range_ );
 		chi_samplers_[2]->set_angle_range( init_torsions_[7] - angle_range_,
 			init_torsions_[7] + angle_range_ );
-		for ( Size i = 1; i<= bb_samplers_.size(); ++i ) {
+		for ( core::Size i = 1; i<= bb_samplers_.size(); ++i ) {
 			bb_samplers_[i]->set_angle_range( init_torsions_[i] - angle_range_,
 				init_torsions_[i] + angle_range_ );
 		}
@@ -171,7 +171,7 @@ void MC_RNA_Suite::set_angle_range_from_init( Real const setting ) {
 void MC_RNA_Suite::set_angle( pose::Pose const & pose ) {
 	chi_samplers_[1]->set_angle( pose.torsion(torsion_ids_[6]) );
 	chi_samplers_[2]->set_angle( pose.torsion(torsion_ids_[7]) );
-	for ( Size i =1; i <= bb_samplers_.size(); ++i ) {
+	for ( core::Size i =1; i <= bb_samplers_.size(); ++i ) {
 		bb_samplers_[i]->set_angle( pose.torsion(torsion_ids_[i]) );
 	}
 }
@@ -181,7 +181,7 @@ void MC_RNA_Suite::set_gaussian_stdev( Real const setting ) {
 	if ( is_init() ) {
 		chi_samplers_[1]->set_gaussian_stdev( setting );
 		chi_samplers_[2]->set_gaussian_stdev( setting );
-		for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
+		for ( core::Size i = 1; i <= bb_samplers_.size(); ++i ) {
 			bb_samplers_[i]->set_gaussian_stdev( gaussian_stdev_ );
 		}
 	}

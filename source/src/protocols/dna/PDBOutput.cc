@@ -167,11 +167,11 @@ void PDBOutput::score_function( ScoreFunction const & sf )
 ScoreFunctionCOP PDBOutput::score_function() const { return score_function_; }
 
 void PDBOutput::designed_residue(
-	Size index,
+	core::Size index,
 	bool value /* = true */
 )
 {
-	Size const s( designed_residues_.size() );
+	core::Size const s( designed_residues_.size() );
 	int const ext( index - s );
 	// not sure this auto-expansion is working...
 	if ( ext > 0 ) designed_residues_.insert( designed_residues_.end(), ext, false );
@@ -183,7 +183,7 @@ void PDBOutput::designed_residue(
 void
 PDBOutput::note_designed_residues( PackerTaskCOP ptask )
 {
-	for ( Size index(1), end( ptask->total_residue() ); index < end; ++index ) {
+	for ( core::Size index(1), end( ptask->total_residue() ); index < end; ++index ) {
 		if ( ptask->design_residue(index) ||
 				ptask->residue_task(index).has_behavior("TARGET") ) {
 			designed_residue(index);
@@ -273,11 +273,11 @@ PDBOutput::get_residue_indices_to_output()
 {
 	res_indices_to_output_.clear();
 	if ( !reference_pose_ || !option[ OptionKeys::dna::design::sparse_pdb_output ]() ) {
-		for ( Size i(1), end( pose_copy_->size() ); i <= end; ++i ) {
+		for ( core::Size i(1), end( pose_copy_->size() ); i <= end; ++i ) {
 			res_indices_to_output_.push_back(i);
 		}
 	} else {
-		for ( Size i(1), endpose( pose_copy_->size() ),
+		for ( core::Size i(1), endpose( pose_copy_->size() ),
 				endref( reference_pose_->size() ); i <= endpose; ++i ) {
 			if ( i <= endref &&
 					!residues_are_different( pose_copy_->residue(i), reference_pose_->residue(i) ) ) continue;
@@ -308,7 +308,7 @@ PDBOutput::output_design_tags( ozstream & pdbout ) const
 
 	std::list< std::string > moved, moved_DNA, mutated, mutated_DNA;
 
-	for ( Size index(1), nres( pose_copy_->size() ); index <= nres; ++index ) {
+	for ( core::Size index(1), nres( pose_copy_->size() ); index <= nres; ++index ) {
 		std::ostringstream os;
 		if ( pose_copy_->pdb_info() ) {
 			os << pose_copy_->pdb_info()->number( index ) << " "
@@ -364,7 +364,7 @@ PDBOutput::output_score_info( ozstream & pdbout )
 		pdbout << '\n';
 		// end header
 		// residues
-		for ( vector1< Size >::const_iterator pos( res_indices_to_output_.begin() ),
+		for ( vector1< core::Size >::const_iterator pos( res_indices_to_output_.begin() ),
 				end( res_indices_to_output_.end() ); pos != end; ++pos ) {
 			pdbout << "REMARK ";
 			if ( pose_copy_->pdb_info() ) {
@@ -430,15 +430,15 @@ PDBOutput::output_hbond_info( ozstream & pdbout )
 
 	// expand list of residues to consider into nres bool vector for simple lookup
 	vector1< bool > relevant_residue( pose_copy_->size(), false );
-	for ( vector1< Size >::const_iterator index( res_indices_to_output_.begin() ),
+	for ( vector1< core::Size >::const_iterator index( res_indices_to_output_.begin() ),
 			end( res_indices_to_output_.end() ); index != end; ++index ) {
 		relevant_residue[ *index ] = true;
 	}
 
-	for ( Size i(1); i <= hbond_set.nhbonds(); ++i ) {
+	for ( core::Size i(1); i <= hbond_set.nhbonds(); ++i ) {
 
 		HBond const & hb( hbond_set.hbond(i) );
-		Size const don_res_i( hb.don_res() ), acc_res_i( hb.acc_res() );
+		core::Size const don_res_i( hb.don_res() ), acc_res_i( hb.acc_res() );
 		Residue const & don_rsd( pose_copy_->residue( don_res_i ) ),
 			acc_rsd( pose_copy_->residue( acc_res_i ) );
 		// skip NA-NA
@@ -455,7 +455,7 @@ PDBOutput::output_hbond_info( ozstream & pdbout )
 			continue;
 		}
 
-		Size const donH_i( hb.don_hatm() ), acc_i( hb.acc_atm() );
+		core::Size const donH_i( hb.don_hatm() ), acc_i( hb.acc_atm() );
 		std::string const don_hatm_name( don_rsd.atom_name( donH_i ) ),
 			acc_atm_name( acc_rsd.atom_name( acc_i ) );
 
@@ -480,7 +480,7 @@ PDBOutput::output_hbond_info( ozstream & pdbout )
 		if ( category == "dna_base" || category == "dna_wat" ) hb_spec += weighted_E;
 
 		// assume donH_i indexes a hydrogen whose only bonded neighbor is the donor heavy
-		Size const don_i( don_rsd.bonded_neighbor( donH_i ).front() );
+		core::Size const don_i( don_rsd.bonded_neighbor( donH_i ).front() );
 
 		// output information
 		numeric::xyzVector< Real > const Hxyz( don_rsd.atom( donH_i ).xyz() ),
@@ -539,9 +539,9 @@ PDBOutput::output_buried_unsatisfied_hbonds( ozstream & pdbout )
 
 	basic::MetricValue< AtomID_Map< bool > > map;
 	bu_calc.get( "atom_bur_unsat", map, *pose_copy_ );
-	for ( vector1< Size >::const_iterator pos( res_indices_to_output_.begin() ),
+	for ( vector1< core::Size >::const_iterator pos( res_indices_to_output_.begin() ),
 			end( res_indices_to_output_.end() ); pos != end; ++pos ) {
-		for ( Size atomi(1); atomi <= map.value().n_atom(*pos); ++atomi ) {
+		for ( core::Size atomi(1); atomi <= map.value().n_atom(*pos); ++atomi ) {
 			if ( map.value()(*pos,atomi) ) {
 				ResidueType const & rt( pose_copy_->residue_type(*pos) );
 				std::string name3( rt.name3() );
@@ -562,9 +562,9 @@ PDBOutput::output_buried_unsatisfied_hbonds( ozstream & pdbout )
 	// instantiation of BuriedUnsatisfiedPolarsCalculator looks up (or creates) instantiations of NumberHBondsCalculator and SasaCalculatorLegacy -- output of info from these too while we're at it
 	// somehow pose has become aware of these calculators and will not recompute them(?)
 
-	//  basic::MetricValue< id::AtomID_Map< Size > > atom_hbonds;
+	//  basic::MetricValue< id::AtomID_Map< core::Size > > atom_hbonds;
 	//  pose_copy_->metric( bu_calc.name_of_hbond_calc(), "atom_Hbonds", atom_hbonds );
-	basic::MetricValue< Size > nhbonds;
+	basic::MetricValue< core::Size > nhbonds;
 	pose_copy_->metric( bu_calc.name_of_hbond_calc(), "all_Hbonds", nhbonds );
 
 	TR(t_info) << "pdb nhbonds " << nhbonds.value() << std::endl;

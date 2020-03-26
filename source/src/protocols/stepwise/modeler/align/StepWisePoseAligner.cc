@@ -98,7 +98,7 @@ StepWisePoseAligner::apply( pose::Pose & pose ){
 Real
 StepWisePoseAligner::get_rmsd_over_all_poses( pose::Pose & pose ){
 	Real rmsd_over_all( 0.0 );
-	Size natoms_over_all( 0 );
+	core::Size natoms_over_all( 0 );
 	superimpose_recursively( pose, rmsd_over_all, natoms_over_all );
 	return rmsd_over_all;
 }
@@ -107,14 +107,14 @@ StepWisePoseAligner::get_rmsd_over_all_poses( pose::Pose & pose ){
 // calculate rmsd for pose and any 'other poses', and add up in quadrature.
 void
 StepWisePoseAligner::superimpose_recursively( pose::Pose & pose,
-	Real & rmsd_over_all, Size & natoms_over_all ){
+	Real & rmsd_over_all, core::Size & natoms_over_all ){
 
 	using namespace core::pose;
 	using namespace core::pose::full_model_info;
 
 	apply( pose ); // does superposition, fills rmsd, etc.
 	Real rmsd_pose   = rmsd();
-	Size natoms_pose = natoms_rmsd();
+	core::Size natoms_pose = natoms_rmsd();
 	if ( natoms_pose  == 0 ) { // happens in rna_score -- superimpose over everything, rmsd computed over nothing.
 		rmsd_pose   = superimpose_rmsd();
 		natoms_pose = natoms_superimpose_rmsd();
@@ -214,8 +214,8 @@ match_up_to_rna_dna( char const nt1, char const nt2 ) {
 void
 StepWisePoseAligner::update_reference_pose_local( pose::Pose const & pose ){
 
-	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-	utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
+	utility::vector1< core::Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+	utility::vector1< core::Size > const res_list_in_reference = get_res_list_in_reference( pose );
 	std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
 	std::string const full_sequence_stripped = core::pose::rna::remove_bracketed( full_sequence );
 	std::string const & pose_sequence = pose.sequence();
@@ -225,7 +225,7 @@ StepWisePoseAligner::update_reference_pose_local( pose::Pose const & pose ){
 	//TR << "     Sequence " << pose.sequence() << std::endl;
 	//TR << "full Sequence " << full_sequence   << std::endl;
 
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		//char const pose_nt = pose.sequence()[ n-1 ];
 		char const pose_nt = pose_sequence[ n - 1 ];
 		if ( res_list_in_reference[n] == 0 ) continue;
@@ -263,24 +263,24 @@ StepWisePoseAligner::update_reference_pose_local( pose::Pose const & pose ){
 //
 // Could also use PDBInfo for this.
 //
-utility::vector1< Size >
+utility::vector1< core::Size >
 StepWisePoseAligner::get_res_list_in_reference( pose::Pose const & pose ) const {
 
-	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-	utility::vector1< Size > const & reference_pose_res_list = get_res_list_const( reference_pose_ );
+	utility::vector1< core::Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+	utility::vector1< core::Size > const & reference_pose_res_list = get_res_list_const( reference_pose_ );
 	FullModelParameters const & full_model_parameters =  *(const_full_model_info( pose ).full_model_parameters());
 	FullModelParameters const & reference_full_model_parameters =  *(const_full_model_info( reference_pose_ ).full_model_parameters());
 
-	utility::vector1< Size > res_list_in_reference;
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	utility::vector1< core::Size > res_list_in_reference;
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 
 		bool found_it( false );
 		std::tuple< int, char, std::string > const resnum_and_chain = full_model_parameters.full_to_conventional_resnum_and_chain_and_segid( res_list[ n ] );
-		Size const resnum( std::get< 0 >( resnum_and_chain ) );
+		core::Size const resnum( std::get< 0 >( resnum_and_chain ) );
 		char const chain( std::get< 1 >( resnum_and_chain ) );
 		std::string const & segid( std::get< 2 >( resnum_and_chain ) );
 		if ( reference_full_model_parameters.has_conventional_residue( resnum, chain, segid ) ) {
-			Size const reference_resnum = reference_full_model_parameters.conventional_to_full( resnum, chain, segid );
+			core::Size const reference_resnum = reference_full_model_parameters.conventional_to_full( resnum, chain, segid );
 			if ( reference_pose_res_list.has_value( reference_resnum ) ) {
 				found_it = true;
 				res_list_in_reference.push_back( reference_pose_res_list.index( reference_resnum ) );
@@ -300,11 +300,11 @@ StepWisePoseAligner::update_calc_rms_atom_id_map( pose::Pose const & pose ) {
 	// first need to slice up reference_pose to match residues in actual pose.
 	// define atoms over which to compute RMSD, using rmsd_res.
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
-	utility::vector1< Size > const & res_list = full_model_info.res_list();
+	utility::vector1< core::Size > const & res_list = full_model_info.res_list();
 	if ( res_list.size() == 0 ) return; // special case -- blank pose.
 
-	utility::vector1< Size > calc_rms_res;
-	for ( Size const n : rmsd_res_in_pose_ ) {
+	utility::vector1< core::Size > calc_rms_res;
+	for ( core::Size const n : rmsd_res_in_pose_ ) {
 		if ( user_defined_calc_rms_res_.size() > 0 && !user_defined_calc_rms_res_.has_value( n ) ) continue;
 		calc_rms_res.push_back( n );
 	}
@@ -319,18 +319,18 @@ StepWisePoseAligner::update_calc_rms_atom_id_map( pose::Pose const & pose ) {
 void
 StepWisePoseAligner::get_calc_rms_atom_id_map( std::map< id::AtomID, id::AtomID > & calc_rms_atom_id_map,
 	core::pose::Pose const & pose,
-	utility::vector1 < Size > const & calc_rms_res ) const {
+	utility::vector1 < core::Size > const & calc_rms_res ) const {
 
 	using namespace core::chemical;
 
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
-	utility::vector1< Size > const & res_list = full_model_info.res_list();
-	utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
-	utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
+	utility::vector1< core::Size > const & res_list = full_model_info.res_list();
+	utility::vector1< core::Size > const res_list_in_reference = get_res_list_in_reference( pose );
+	utility::vector1< core::Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
 
 	calc_rms_atom_id_map.clear();
-	for ( Size const n : calc_rms_res ) {
-		for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ) {
+	for ( core::Size const n : calc_rms_res ) {
+		for ( core::Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ) {
 			if ( mod_reference_pose_local_ ) {
 				add_to_atom_id_map_after_checks( calc_rms_atom_id_map,
 					pose.residue_type( n ).atom_name( q ),
@@ -346,8 +346,8 @@ StepWisePoseAligner::get_calc_rms_atom_id_map( std::map< id::AtomID, id::AtomID 
 	}
 
 	// additional RNA & protein 'suites' (connections from i to i+1) over which to calculate RMSD
-	utility::vector1< Size > calc_rms_suites;
-	for ( Size n = 1; n < pose.size(); n++ ) {
+	utility::vector1< core::Size > calc_rms_suites;
+	for ( core::Size n = 1; n < pose.size(); n++ ) {
 
 		if ( ( pose.residue_type( n ).is_RNA()     && pose.residue_type( n + 1 ).is_RNA() ) ||
 				( pose.residue_type( n ).is_protein() && pose.residue_type( n + 1 ).is_protein() ) ||
@@ -368,7 +368,7 @@ StepWisePoseAligner::get_calc_rms_atom_id_map( std::map< id::AtomID, id::AtomID 
 		}
 	}
 
-	for ( Size const n : calc_rms_suites ) {
+	for ( core::Size const n : calc_rms_suites ) {
 		if ( mod_reference_pose_local_ ) {
 			for ( auto const & extra_suite_atom_upper : extra_suite_atoms_upper ) {
 				add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atom_upper,
@@ -404,15 +404,15 @@ StepWisePoseAligner::get_calc_rms_atom_id_map( std::map< id::AtomID, id::AtomID 
 void
 StepWisePoseAligner::update_superimpose_atom_id_map( pose::Pose const & pose ) {
 	using namespace core::id;
-	utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
+	utility::vector1< core::Size > const res_list_in_reference = get_res_list_in_reference( pose );
 
 	// everything that can move.
 	get_calc_rms_atom_id_map( complete_moving_atom_id_map_, pose, rmsd_res_in_pose_ );
 	superimpose_atom_id_map_.clear();
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( !superimpose_res_in_pose_.has_value( n ) ) continue;
 		bool const sample_sugar = check_sample_sugar_in_full_model_info( pose, n );
-		for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ) {
+		for ( core::Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ) {
 			if ( complete_moving_atom_id_map_.find( AtomID( q, n ) ) != complete_moving_atom_id_map_.end() ) continue;
 			std::string const atom_name = pose.residue_type( n ).atom_name( q );
 			if ( extra_suite_atoms_upper.find( atom_name ) != extra_suite_atoms_upper.end() ) continue; // never use phosphates to superimpose
@@ -483,13 +483,13 @@ StepWisePoseAligner::do_superimposition( pose::Pose & pose ) {
 Size
 StepWisePoseAligner::get_rmsd_res_and_superimpose_res_in_pose( pose::Pose const & pose ) {
 
-	utility::vector1< Size > domain_map = get_fixed_domain_from_full_model_info_const( pose );
+	utility::vector1< core::Size > domain_map = get_fixed_domain_from_full_model_info_const( pose );
 
 	if ( user_defined_calc_rms_res_.size() > 0 ) {
-		for ( Size n = 1; n <= user_defined_calc_rms_res_.size(); n++ )  domain_map[ user_defined_calc_rms_res_[n] ] = 0;
+		for ( core::Size n = 1; n <= user_defined_calc_rms_res_.size(); n++ )  domain_map[ user_defined_calc_rms_res_[n] ] = 0;
 	}
 
-	Size d_primary = 0;
+	core::Size d_primary = 0;
 
 	// True, top-priority choice for primary domain is the domain encompassing
 	// -alignment_anchor_res (if provided, in which case superimpose_over_all_instantiated
@@ -512,10 +512,10 @@ StepWisePoseAligner::get_rmsd_res_and_superimpose_res_in_pose( pose::Pose const 
 	} else {
 		// Next strategy, figure out 'primary' domain number. Smallest number that is not zero.
 		// must be drawn from root_partition (if that partition is defined)
-		for ( Size n = 1; n <= pose.size(); n++ ) {
+		for ( core::Size n = 1; n <= pose.size(); n++ ) {
 			if ( root_partition_res_.size() > 0 && !root_partition_res_.has_value( n ) ) continue;
 			if ( !pose.residue_type( n ).is_polymer() ) continue;
-			Size const d = domain_map[ n ];
+			core::Size const d = domain_map[ n ];
 			if ( d > 0 && ( d_primary == 0 || d < d_primary ) ) d_primary = d;
 		}
 	}
@@ -523,12 +523,12 @@ StepWisePoseAligner::get_rmsd_res_and_superimpose_res_in_pose( pose::Pose const 
 	rmsd_res_in_pose_.clear();
 	superimpose_res_in_pose_.clear();
 	if ( d_primary == 0 ) { // superimpose on everything.
-		for ( Size n = 1; n <= pose.size(); n++ ) {
+		for ( core::Size n = 1; n <= pose.size(); n++ ) {
 			rmsd_res_in_pose_.push_back( n );
 			if ( root_partition_res_.size() == 0 || root_partition_res_.has_value( n ) ) superimpose_res_in_pose_.push_back( n );
 		}
 	} else { // superimpose on primary domain, calculate rmsd over rest.
-		for ( Size n = 1; n <= pose.size(); n++ ) {
+		for ( core::Size n = 1; n <= pose.size(); n++ ) {
 			if ( superimpose_over_all_instantiated_ ) { // for final RMSDs, superimpose over everything, calc RMS over everything (?)
 				superimpose_res_in_pose_.push_back( n );
 				rmsd_res_in_pose_.push_back( n );
@@ -554,7 +554,7 @@ StepWisePoseAligner::add_coordinate_constraints_from_map( pose::Pose & pose, pos
 	using namespace core::scoring::func;
 	using namespace core::scoring::constraints;
 
-	Size const my_anchor( pose.fold_tree().root() ); //Change to use the root of the current foldtree as done by Rocco in AtomCoordinateCstMover - JAB.
+	core::Size const my_anchor( pose.fold_tree().root() ); //Change to use the root of the current foldtree as done by Rocco in AtomCoordinateCstMover - JAB.
 
 	ConstraintSetOP cst_set = pose.constraint_set()->clone();
 	FuncOP constraint_func( new FlatHarmonicFunc( constraint_x0, constraint_tol, constraint_tol ) );
@@ -573,9 +573,9 @@ StepWisePoseAligner::add_coordinate_constraints_from_map( pose::Pose & pose, pos
 std::map< id::AtomID, id::AtomID>
 StepWisePoseAligner::create_coordinate_constraint_atom_id_map( pose::Pose const & pose ) {
 	std::map< id::AtomID, id::AtomID> coordinate_constraint_atom_id_map;
-	utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
-	for ( Size n = 1; n <= pose.size(); n++ ) {
-		for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ) {
+	utility::vector1< core::Size > const res_list_in_reference = get_res_list_in_reference( pose );
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
+		for ( core::Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ) {
 			if ( mod_reference_pose_local_ ) {
 				add_to_atom_id_map_after_checks( coordinate_constraint_atom_id_map,
 					pose.residue_type( n ).atom_name( q ),
@@ -617,9 +617,9 @@ StepWisePoseAligner::create_coordinate_constraints( pose::Pose & pose,
 //     all-heavy-atom for RNA -- no terminal phosphates.
 //     just backbone-atoms for proteins.
 bool
-StepWisePoseAligner::do_checks( std::string const & atom_name, Size const n, pose::Pose const & pose ) const {
+StepWisePoseAligner::do_checks( std::string const & atom_name, core::Size const n, pose::Pose const & pose ) const {
 	if ( ! pose.residue_type( n ).has( atom_name ) ) return false;
-	Size const idx = pose.residue_type( n ).atom_index( atom_name );
+	core::Size const idx = pose.residue_type( n ).atom_index( atom_name );
 	if ( pose.residue_type( n ).is_virtual( idx ) ) return false;
 
 	if ( pose.residue_type( n ).is_protein() ) {
@@ -657,7 +657,7 @@ StepWisePoseAligner::do_checks( std::string const & atom_name, Size const n, pos
 bool
 StepWisePoseAligner::add_to_atom_id_map_after_checks( std::map< id::AtomID, id::AtomID> & atom_id_map,
 	std::string const & atom_name,
-	Size const n1, Size const n2,
+	core::Size const n1, core::Size const n2,
 	pose::Pose const & pose1, pose::Pose const & pose2,
 	bool const do_the_checks /* = true */ ) const {
 
@@ -682,8 +682,8 @@ StepWisePoseAligner::add_to_atom_id_map_after_checks( std::map< id::AtomID, id::
 		if ( !do_checks( atom_name, n2, pose2 ) ) return false;
 	}
 
-	Size const idx1 = pose1.residue_type( n1 ).atom_index( atom_name );
-	Size const idx2 = pose2.residue_type( n2 ).atom_index( atom_name );
+	core::Size const idx1 = pose1.residue_type( n1 ).atom_index( atom_name );
+	core::Size const idx2 = pose2.residue_type( n2 ).atom_index( atom_name );
 #ifdef BLUEGENECLANG
 	atom_id_map[ AtomID( idx1, n1 ) ] = AtomID( idx2, n2 );
 #else
@@ -717,8 +717,8 @@ StepWisePoseAligner::output_atom_id_map( std::map< id::AtomID, id::AtomID > cons
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::map< id::AtomID, id::AtomID >
 StepWisePoseAligner::get_root_triad_atom_id_map( pose::Pose const & pose ) const {
-	Size const root_res = pose.fold_tree().root();
-	Size const root_atomno = get_root_residue_root_atomno( pose.residue( root_res ), pose.fold_tree() );
+	core::Size const root_res = pose.fold_tree().root();
+	core::Size const root_atomno = get_root_residue_root_atomno( pose.residue( root_res ), pose.fold_tree() );
 	core::kinematics::tree::AtomCOP root_atom ( pose.atom_tree().atom_dont_do_update( id::AtomID( root_atomno, root_res ) ).get_self_ptr() );
 	utility::vector1< core::kinematics::tree::AtomCOP > stub_atoms =
 		make_vector1( root_atom->stub_atom1(),
@@ -726,11 +726,11 @@ StepWisePoseAligner::get_root_triad_atom_id_map( pose::Pose const & pose ) const
 		root_atom->stub_atom3() );
 
 	std::map< id::AtomID, id::AtomID > root_triad_atom_id_map;
-	//utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-	utility::vector1< Size > const res_list_in_reference = get_res_list_in_reference( pose );
-	for ( Size i = 1; i <= 3; i++ ) {
-		Size const n = stub_atoms[i]->id().rsd();
-		Size const q = stub_atoms[i]->id().atomno();
+	//utility::vector1< core::Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+	utility::vector1< core::Size > const res_list_in_reference = get_res_list_in_reference( pose );
+	for ( core::Size i = 1; i <= 3; i++ ) {
+		core::Size const n = stub_atoms[i]->id().rsd();
+		core::Size const q = stub_atoms[i]->id().atomno();
 		if ( mod_reference_pose_local_ ) {
 			add_to_atom_id_map_after_checks( root_triad_atom_id_map,
 				pose.residue_type( n ).atom_name( q ),

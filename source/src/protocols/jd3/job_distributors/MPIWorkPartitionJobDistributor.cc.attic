@@ -110,7 +110,7 @@ MPIWorkPartitionJobDistributor::~MPIWorkPartitionJobDistributor()
 void
 MPIWorkPartitionJobDistributor::determine_job_ids_to_run()
 {
-	Size total_njobs( njobs_for_round() );
+	core::Size total_njobs( njobs_for_round() );
 
 	core::Size num_jobs( 0 );
 	core::Size jobs_mod_procs( total_njobs % npes_ );

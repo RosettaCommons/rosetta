@@ -78,7 +78,7 @@ void factory_register( RRReporterCreatorCOP creator );
 */
 
 void
-RotamerRecoveryFactory::factory_register( utility::pointer::ReferenceCountOP creator ) {
+RotamerRecoveryFactory::factory_register( utility::VirtualBaseOP creator ) {
 
 	{
 		RRProtocolCreatorCOP p( utility::pointer::dynamic_pointer_cast< RRProtocolCreator const >( creator ) );

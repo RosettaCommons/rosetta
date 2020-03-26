@@ -116,7 +116,7 @@ namespace datacache {
 /// example) and protocols::loop_modeling::utilites::TaskFactoryMixin (the
 /// mixin class).
 
-class HierarchicalDataMap : public utility::pointer::ReferenceCount {
+class HierarchicalDataMap : public utility::VirtualBase {
 
 public:
 

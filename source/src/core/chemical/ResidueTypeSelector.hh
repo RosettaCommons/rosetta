@@ -60,9 +60,9 @@ namespace chemical {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  A base class for defining a ResidueTypeSelector by a single criterion
-class ResidueTypeSelectorSingle : public utility::pointer::ReferenceCount {
+class ResidueTypeSelectorSingle : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ResidueTypeSelectorSingle() override;
 
 	// constructor
@@ -526,9 +526,9 @@ residue_selector_single_from_line( std::string const & line );
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief A class picking out a subset of ResidueType by multiple criteria
-class ResidueTypeSelector : public utility::pointer::ReferenceCount {
+class ResidueTypeSelector : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ResidueTypeSelector() override;
 
 	// [] operator: selector[ResidueType] => yes or no

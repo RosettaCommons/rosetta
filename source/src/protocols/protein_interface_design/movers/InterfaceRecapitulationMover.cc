@@ -114,7 +114,7 @@ InterfaceRecapitulationMover::apply( core::pose::Pose & pose ){
 		task = design_mover2_->task();
 	}
 	core::Size designable_positions( 0 );
-	for ( Size i( 1 ); i<= pose.size(); ++i ) {
+	for ( core::Size i( 1 ); i<= pose.size(); ++i ) {
 		if ( task->being_designed( i ) ) ++designable_positions;
 	}
 

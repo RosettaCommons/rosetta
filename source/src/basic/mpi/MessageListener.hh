@@ -17,14 +17,14 @@
 #define INCLUDED_basic_mpi_MessageListener_HH
 
 #include <basic/mpi/MessageListener.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <string>
 
 namespace basic {
 namespace mpi {
 
-class MessageListener : public utility::pointer::ReferenceCount
+class MessageListener : public utility::VirtualBase
 {
 
 public:

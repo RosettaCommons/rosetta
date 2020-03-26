@@ -21,7 +21,7 @@
 // Project headers
 #include <cxxtest/TestSuite.h>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 // --- set up some helper classes/functions for these tests
@@ -30,7 +30,7 @@
 namespace owning_ptr_test {
 
 class Atom_ :
-	public utility::pointer::ReferenceCount
+	public utility::VirtualBase
 {
 public:
 
@@ -59,12 +59,12 @@ typedef  std::set< AtomP_ >  Atoms_;
 
 
 class Molecule_ :
-	public utility::pointer::ReferenceCount
+	public utility::VirtualBase
 {
 public:
 
-//	typedef  utility::pointer::owning_ptr< Atom_ >  AtomP_;
-//	typedef  std::set< AtomP_ >  Atoms_;
+	// typedef  utility::pointer::owning_ptr< Atom_ >  AtomP_;
+	// typedef  std::set< AtomP_ >  Atoms_;
 
 	inline
 	Molecule_()
@@ -110,7 +110,7 @@ using namespace owning_ptr_test;
 
 class OwningPtrTests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	/// @brief Explicit owning pointer
 	void test_shared_ptr_explicit() {

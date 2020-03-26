@@ -20,8 +20,8 @@
 #include <numeric/kdtree/HyperRectangle.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/VirtualBase.hh>
+#include <utility/VirtualBase.fwd.hh>
 
 #include <cmath>
 #include <string>
@@ -133,14 +133,14 @@ utility::vector1< KDPointOP > make_points(
 
 utility::vector1< KDPointOP > make_points(
 	utility::vector1< utility::vector1< numeric::Real > > const & points,
-	utility::vector1< utility::pointer::ReferenceCountOP > const & data
+	utility::vector1< utility::VirtualBaseOP > const & data
 ) {
 
 	assert( points.size() == data.size() );
 
 	using numeric::Real;
 	using utility::vector1;
-	using utility::pointer::ReferenceCountOP;
+	using utility::VirtualBaseOP;
 
 	vector1< KDPointOP > new_data;
 	auto d_it = data.begin(), d_end = data.end();

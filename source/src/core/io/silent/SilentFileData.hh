@@ -26,7 +26,7 @@
 #include <core/io/silent/SharedSilentData.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <string>
@@ -57,7 +57,7 @@ enum SilentFileHeaderLine {
 /// @brief Abstract base class for classes that read and write different types of
 /// silent-files. Silent-files can contain SilentStruct objects which are expected,
 /// to be uniquely identified by some sort of string-based tag inside the file.
-class SilentFileData : public utility::pointer::ReferenceCount {
+class SilentFileData : public utility::VirtualBase {
 
 private:
 	///

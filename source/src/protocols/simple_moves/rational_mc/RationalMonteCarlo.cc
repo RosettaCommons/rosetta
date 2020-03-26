@@ -49,7 +49,7 @@ using protocols::moves::MoverOP;
 
 static basic::Tracer TR( "protocols.simple_moves.RationalMonteCarlo" );
 
-RationalMonteCarlo::RationalMonteCarlo(MoverOP mover, ScoreFunctionCOP score, Size num_trials, Real temperature, bool recover_low)
+RationalMonteCarlo::RationalMonteCarlo(MoverOP mover, ScoreFunctionCOP score, core::Size num_trials, Real temperature, bool recover_low)
 : Mover("RationalMonteCarlo"), mover_(std::move(mover)), num_trials_(num_trials), recover_low_(recover_low), next_trigger_id_(0) {
 	mc_ = utility::pointer::make_shared< protocols::moves::MonteCarlo >(*score, temperature);
 	protocols::viewer::add_monte_carlo_viewer(*mc_, "RationalMonteCarlo");
@@ -59,7 +59,7 @@ void RationalMonteCarlo::apply(Pose& pose) {
 	mc_->reset(pose);
 	mc_->reset_counters();
 
-	for ( Size i = 1; i <= num_trials(); ++i ) {
+	for ( core::Size i = 1; i <= num_trials(); ++i ) {
 		mover_->apply(pose);
 
 		if ( mc_->boltzmann(pose) ) {  // accept
@@ -90,12 +90,12 @@ std::string RationalMonteCarlo::get_name() const {
 }
 
 Size RationalMonteCarlo::add_trigger(const RationalMonteCarloTrigger& trigger) {
-	Size tid = ++next_trigger_id_;
+	core::Size tid = ++next_trigger_id_;
 	triggers_[tid] = trigger;
 	return tid;
 }
 
-void RationalMonteCarlo::remove_trigger(Size trigger_id) {
+void RationalMonteCarlo::remove_trigger(core::Size trigger_id) {
 	Triggers::const_iterator i = triggers_.find(trigger_id);
 	if ( i == triggers_.end() ) {
 		TR.Warning << "Attempt to remove invalid trigger_id => " << trigger_id << std::endl;
@@ -141,7 +141,7 @@ const Pose& RationalMonteCarlo::last_accepted_pose() const {
 }
 
 // -- Mutators -- //
-void RationalMonteCarlo::set_num_trials(Size num_trials) {
+void RationalMonteCarlo::set_num_trials(core::Size num_trials) {
 	num_trials_ = num_trials;
 }
 

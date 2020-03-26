@@ -39,7 +39,7 @@
 namespace protocols {
 namespace constraint_generator {
 
-class HydrogenBondingAtom : public utility::pointer::ReferenceCount {
+class HydrogenBondingAtom : public utility::VirtualBase {
 
 public:
 	typedef std::list< core::Real > Dihedrals;

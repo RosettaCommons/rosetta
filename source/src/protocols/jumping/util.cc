@@ -95,7 +95,7 @@ close_chainbreaks(
 	//some sanity checks
 	runtime_assert( closure_protocol != nullptr );
 	//runtime_assert  that all cut-points in final_fold_tree are also contained the actual fold_tree
-	for ( Size ncut = 1; ncut <= (Size)final_fold_tree.num_cutpoint(); ncut++ ) {
+	for ( core::Size ncut = 1; ncut <= (core::Size)final_fold_tree.num_cutpoint(); ncut++ ) {
 		if ( !open_pose.fold_tree().is_cutpoint( final_fold_tree.cutpoint( ncut ) ) ) {
 			throw ( CREATE_EXCEPTION(loops::EXCN_Loop_not_closed,  "Foldtree mismatch." ) );
 		}
@@ -109,19 +109,19 @@ close_chainbreaks(
 	//do this until all cuts that are not in final_fold_tree are removed
 	Pose pose = open_pose;
 
-	Size close_count = 0;
+	core::Size close_count = 0;
 	while ( pose.fold_tree().num_cutpoint() > final_fold_tree.num_cutpoint() ) {
 		close_count++;
 		//make list of all cutpoints that need removal, list of std::pairs: first: max-loop-size; second: cutpoint
-		std::list< std::pair< Size, Size > > cuts;
-		for ( Size ncut = 1; ncut <= (Size) pose.fold_tree().num_cutpoint(); ncut++ ) {
-			Size cutpoint = pose.fold_tree().cutpoint( ncut );
+		std::list< std::pair< core::Size, core::Size > > cuts;
+		for ( core::Size ncut = 1; ncut <= (core::Size) pose.fold_tree().num_cutpoint(); ncut++ ) {
+			core::Size cutpoint = pose.fold_tree().cutpoint( ncut );
 			if ( !final_fold_tree.is_cutpoint( cutpoint  ) ) {
 
 				// compute  max_loop_size...
 				// extend loop from cutpoint away until either a jump-residue or an unmovable bb-torsion is found
-				Size min_loop_begin ( cutpoint + 1 );
-				Size max_loop_end  ( cutpoint );
+				core::Size min_loop_begin ( cutpoint + 1 );
+				core::Size max_loop_end  ( cutpoint );
 				while (
 						min_loop_begin > 1
 						&& !pose.fold_tree().is_jump_point( min_loop_begin - 1 )
@@ -148,7 +148,7 @@ close_chainbreaks(
 			throw ( CREATE_EXCEPTION(loops::EXCN_Loop_not_closed,  "no moveable piece to close loop" ) );
 		}
 
-		Size const cutpoint( cuts.back().second ); //largest is last... so take last element
+		core::Size const cutpoint( cuts.back().second ); //largest is last... so take last element
 		tr.Info << "close chainbreak at position " << cutpoint << "..." << std::endl;
 
 		// TODO need to also save foldtree here ! Use binary silent file format!
@@ -184,7 +184,7 @@ close_chainbreaks(
 }
 
 bool
-remove_cut( Size cutpoint, Pose& pose, FoldTree const& final_fold_tree /*default empty fold-tree */) {
+remove_cut( core::Size cutpoint, Pose& pose, FoldTree const& final_fold_tree /*default empty fold-tree */) {
 	FoldTree new_fold_tree = pose.fold_tree();
 	bool success( remove_cut( cutpoint, new_fold_tree, final_fold_tree ) );
 	if ( success ) {
@@ -199,7 +199,7 @@ remove_cut( Size cutpoint, Pose& pose, FoldTree const& final_fold_tree /*default
 }
 
 bool
-remove_cut( Size cutpoint, FoldTree &new_fold_tree, FoldTree const& final_fold_tree /*default empty fold-tree */ )
+remove_cut( core::Size cutpoint, FoldTree &new_fold_tree, FoldTree const& final_fold_tree /*default empty fold-tree */ )
 {
 	tr.Info << "close-loops: remove cuts until fold-tree is : " << final_fold_tree << std::endl;
 	// construct the new tree formed when we glue this cutpoint and
@@ -209,8 +209,8 @@ remove_cut( Size cutpoint, FoldTree &new_fold_tree, FoldTree const& final_fold_t
 	runtime_assert( f.is_cutpoint( cutpoint ) );
 
 	//find enclosing jump points
-	Size jump_pos1( cutpoint );
-	Size jump_pos2( cutpoint + 1 );
+	core::Size jump_pos1( cutpoint );
+	core::Size jump_pos2( cutpoint + 1 );
 	while ( jump_pos1 > 1 && !f.is_jump_point( jump_pos1 ) )
 			--jump_pos1;
 	while ( jump_pos2 < f.nres() && !f.is_jump_point( jump_pos2 ) )
@@ -231,10 +231,10 @@ remove_cut( Size cutpoint, FoldTree &new_fold_tree, FoldTree const& final_fold_t
 	new_fold_tree.add_edge( jump_pos1, jump_pos2, -1 );
 	// I think there may be more than one jump which
 	// we could delete. This just chooses the first one
-	for ( Size i=1; i<= f.num_jump(); ++i ) {
+	for ( core::Size i=1; i<= f.num_jump(); ++i ) {
 		// mark as "deleted" for the purposes of connectivity checking
 		bool in_final( false );
-		for ( Size nf = 1; !in_final && nf<= final_fold_tree.num_jump(); nf ++ ) {
+		for ( core::Size nf = 1; !in_final && nf<= final_fold_tree.num_jump(); nf ++ ) {
 			in_final =  ( final_fold_tree.jump_point(1, nf) == f.jump_point(1,i) && final_fold_tree.jump_point(2, nf) == f.jump_point(2,i) )
 				|| ( final_fold_tree.jump_point(1, nf) == f.jump_point(2,i) && final_fold_tree.jump_point(2, nf) == f.jump_point(1,i) );
 		}
@@ -262,7 +262,7 @@ remove_cut( Size cutpoint, FoldTree &new_fold_tree, FoldTree const& final_fold_t
 		new_fold_tree.reorder( 1 );
 		tr.Debug << "new_fold_tree reordered to 1 " << new_fold_tree << std::endl;
 		// fold_tree = new_fold_tree;
-		Size new_root = 1;
+		core::Size new_root = 1;
 		if ( new_fold_tree.num_jump() > 0 ) {
 			new_root = new_fold_tree.jump_point( 1, 1 );
 		}
@@ -277,15 +277,15 @@ remove_cut( Size cutpoint, FoldTree &new_fold_tree, FoldTree const& final_fold_t
 void safe_secstruct( pose::Pose& pose ) {
 	kinematics::FoldTree const& fold_tree( pose.fold_tree() );
 
-	Size const num_jump ( fold_tree.num_jump() );
-	Size const nres( pose.size() );
+	core::Size const num_jump ( fold_tree.num_jump() );
+	core::Size const nres( pose.size() );
 
-	for ( Size i = 1; i <= num_jump; ++i ) {
-		for ( Size j = 1; j <= 2; ++j ) {
-			Size const pos ( j==1 ? fold_tree.jump_edge( i ).start() : fold_tree.jump_edge( i ).stop() );
+	for ( core::Size i = 1; i <= num_jump; ++i ) {
+		for ( core::Size j = 1; j <= 2; ++j ) {
+			core::Size const pos ( j==1 ? fold_tree.jump_edge( i ).start() : fold_tree.jump_edge( i ).stop() );
 			char const ss( pose.secstruct( pos ) );
 			if ( ss != 'L' ) {
-				for ( Size k = std::max( (Size) 1, pos-2 ), ke = std::min( nres, pos+2 );
+				for ( core::Size k = std::max( (core::Size) 1, pos-2 ), ke = std::min( nres, pos+2 );
 						k <= ke; ++k ) {
 					if ( pose.secstruct(k) != ss ) {
 						pose.set_secstruct( k, ss );
@@ -296,11 +296,11 @@ void safe_secstruct( pose::Pose& pose ) {
 	}
 }
 
-core::fragment::JumpingFrameOP generate_empty_jump_frame( Size startpos, Size endpos, Size length ) {
+core::fragment::JumpingFrameOP generate_empty_jump_frame( core::Size startpos, core::Size endpos, core::Size length ) {
 	using namespace core::fragment;
 	JumpingFrameOP frame( new JumpingFrame( startpos, endpos, length ) );
 	if ( length <= 1 || length > 4 ) utility_exit_with_message("called generate_jump_frame with inappropriate length argument");
-	Size pos = 1;
+	core::Size pos = 1;
 	if ( length == 4 ) frame->set_pos( pos++, startpos );
 	frame->set_pos( pos++, startpos );
 	frame->set_pos( pos++, endpos );
@@ -308,7 +308,7 @@ core::fragment::JumpingFrameOP generate_empty_jump_frame( Size startpos, Size en
 	return frame;
 }
 
-core::fragment::JumpingFrameOP generate_jump_frame( Size startpos, Size endpos, bool bWithTorsion ) {
+core::fragment::JumpingFrameOP generate_jump_frame( core::Size startpos, core::Size endpos, bool bWithTorsion ) {
 	using namespace core::fragment;
 	FragDataOP frag_data( new FragData );
 	if ( bWithTorsion ) {
@@ -359,8 +359,8 @@ get_CA_vectors(
 void
 get_pairing_geometry(
 	pose::Pose const& pose,
-	Size const res1,
-	Size const res2,
+	core::Size const res1,
+	core::Size const res2,
 	Real& orientation,
 	Real& pleating1,
 	Real& pleating2
@@ -419,10 +419,10 @@ get_pairing_geometry(
 void
 get_pleating(
 	pose::Pose const& pose,
-	Size const pos1,
-	Size const pos2,
-	Size &orientation,
-	Size &pleating
+	core::Size const pos1,
+	core::Size const pos2,
+	core::Size &orientation,
+	core::Size &pleating
 )
 {
 

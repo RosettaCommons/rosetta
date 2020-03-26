@@ -21,7 +21,7 @@
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <istream>
 
@@ -29,7 +29,7 @@ namespace core {
 namespace chemical {
 namespace sdf {
 
-class MolFileIOReader : public utility::pointer::ReferenceCount
+class MolFileIOReader : public utility::VirtualBase
 {
 public:
 	MolFileIOReader();

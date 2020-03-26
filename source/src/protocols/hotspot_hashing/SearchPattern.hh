@@ -18,7 +18,7 @@
 
 #include <utility>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/exit.hh>
 
@@ -122,7 +122,7 @@ operator >>( std::istream & stream, VectorPair & pair )
 	return stream;
 }
 
-class SearchPattern : public utility::pointer::ReferenceCount
+class SearchPattern : public utility::VirtualBase
 {
 public:
 	virtual utility::vector1<core::kinematics::Stub> Searchpoints() = 0;

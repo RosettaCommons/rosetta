@@ -52,80 +52,80 @@ const core::Size JUMP_END = 7;
 class ToyMover : public protocols::environment::ClientMover {
 protected:
 
-  ToyMover( bool claim, bool move ):
-    claim_( claim ),
-    move_( move )
-  {}
+	ToyMover( bool claim, bool move ):
+		claim_( claim ),
+		move_( move )
+	{}
 
-  //Yes I know this is against the law
-  bool claim_;
-  bool move_;
+	//Yes I know this is against the law
+	bool claim_;
+	bool move_;
 };
 
 class TorsionMover : public ToyMover {
 public:
-  TorsionMover( bool claim, bool move,
-    claims::ControlStrength c_str = claims::MUST_CONTROL,
-    claims::ControlStrength i_str = claims::DOES_NOT_CONTROL ):
-    ToyMover( claim, move ),
-    resnum_( CLAIMED_RESID ),
-    control_str_( c_str ),
-    init_str_( i_str )
-  {}
+	TorsionMover( bool claim, bool move,
+		claims::ControlStrength c_str = claims::MUST_CONTROL,
+		claims::ControlStrength i_str = claims::DOES_NOT_CONTROL ):
+		ToyMover( claim, move ),
+		resnum_( CLAIMED_RESID ),
+		control_str_( c_str ),
+		init_str_( i_str )
+	{}
 
 	using ToyMover::apply;
-  void apply( Pose& pose, Size resid ){
-    DofUnlock activation( pose.conformation(), passport() );
-    if( move_ ) {
-      pose.set_phi( resid, NEW_PHI );
-    }
-  }
+	void apply( Pose& pose, core::Size resid ){
+		DofUnlock activation( pose.conformation(), passport() );
+		if ( move_ ) {
+			pose.set_phi( resid, NEW_PHI );
+		}
+	}
 
-  virtual void apply( Pose& pose ){
-    apply( pose, resnum_ );
-  }
+	virtual void apply( Pose& pose ){
+		apply( pose, resnum_ );
+	}
 
-  virtual void missing_unlock_apply( Pose& pose ){
-    if( move_ ){
-      pose.set_phi( resnum_, NEW_PHI );
-    }
-  }
+	virtual void missing_unlock_apply( Pose& pose ){
+		if ( move_ ) {
+			pose.set_phi( resnum_, NEW_PHI );
+		}
+	}
 
-  virtual std::string get_name() const{
-    return "TorsionMover";
-  }
+	virtual std::string get_name() const{
+		return "TorsionMover";
+	}
 
-  virtual claims::EnvClaims yield_claims( core::pose::Pose const&,
-            basic::datacache::WriteableCacheableMapOP ){
-    using core::environment::LocalPosition;
-    claims::EnvClaims claims;
+	virtual claims::EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP ){
+		using core::environment::LocalPosition;
+		claims::EnvClaims claims;
 
-    if( claim_ ){
-      claims::TorsionClaimOP new_claim( new claims::TorsionClaim(
-		utility::pointer::dynamic_pointer_cast< protocols::environment::ClientMover >(get_self_ptr()),
-		LocalPosition( "BASE", resnum_ ) ) );
-      new_claim->strength( control_str_, init_str_ );
-      claims.push_back( new_claim );
-    }
+		if ( claim_ ) {
+			claims::TorsionClaimOP new_claim( new claims::TorsionClaim(
+				utility::pointer::dynamic_pointer_cast< protocols::environment::ClientMover >(get_self_ptr()),
+				LocalPosition( "BASE", resnum_ ) ) );
+			new_claim->strength( control_str_, init_str_ );
+			claims.push_back( new_claim );
+		}
 
-    return claims;
-  }
+		return claims;
+	}
 
-  virtual void initialize( core::pose::Pose& pose ){
-    DofUnlock activation( pose.conformation(), passport() );
-    if( move_ ){
-      pose.set_phi( resnum_, NEW_PHI );
-    }
-  }
+	virtual void initialize( core::pose::Pose& pose ){
+		DofUnlock activation( pose.conformation(), passport() );
+		if ( move_ ) {
+			pose.set_phi( resnum_, NEW_PHI );
+		}
+	}
 
-  Size resnum() {
-    return resnum_;
-  }
+	core::Size resnum() {
+		return resnum_;
+	}
 
 private:
-  Size resnum_;
-  claims::ControlStrength control_str_;
-  claims::ControlStrength init_str_;
+	core::Size resnum_;
+	claims::ControlStrength control_str_;
+	claims::ControlStrength init_str_;
 };
 
 typedef utility::pointer::shared_ptr< TorsionMover > TorsionMoverOP;

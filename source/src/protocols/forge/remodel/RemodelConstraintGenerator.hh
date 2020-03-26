@@ -33,7 +33,7 @@
 
 //utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -47,7 +47,7 @@ namespace remodel {
 class RemodelConstraintGenerator : public protocols::moves::Mover
 {
 public: // typedefs
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~RemodelConstraintGenerator() override;
 
 	/// @brief generates constraints and adds them to the pose

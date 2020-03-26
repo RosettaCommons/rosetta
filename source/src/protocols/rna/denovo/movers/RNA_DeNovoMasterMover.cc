@@ -109,7 +109,7 @@ RNA_DeNovoMasterMover::apply( core::pose::Pose & pose ) {
 
 void
 RNA_DeNovoMasterMover::apply( core::pose::Pose & pose,
-	Size const & cycle_number )
+	core::Size const & cycle_number )
 {
 	do_move_trial( cycle_number, pose );
 }
@@ -121,7 +121,7 @@ RNA_DeNovoMasterMover::apply( core::pose::Pose & pose,
 ///    Every 10th iteration, try a RNA/protein docking move (K. Kappel)
 ///
 void
-RNA_DeNovoMasterMover::do_move_trial( Size const & i, pose::Pose & pose )
+RNA_DeNovoMasterMover::do_move_trial( core::Size const & i, pose::Pose & pose )
 {
 
 	move_type_ = ""; // if left blank, no move was done.
@@ -338,7 +338,7 @@ RNA_DeNovoMasterMover::setup_dock_into_density_mover( pose::Pose const & pose,
 	//Figure out the jump that we want to sample
 	// Fold tree better already be set up properly!!!
 	for ( core::Size i=1; i<=pose.fold_tree().num_jump(); ++i ) {
-		Size upstream_res = pose.fold_tree().upstream_jump_residue( i );
+		core::Size upstream_res = pose.fold_tree().upstream_jump_residue( i );
 		if ( pose.residue( upstream_res ).aa() == core::chemical::aa_vrt ) {
 			// this is the jump from the virtual residue
 			movemap.set_jump( i, true );
@@ -369,8 +369,8 @@ RNA_DeNovoMasterMover::setup_rna_protein_docking_mover( pose::Pose const & pose,
 
 	for ( core::Size i =1; i<=rnp_docking_ft_.num_jump(); ++i ) {
 		// Double check that there's RNA on one side and protein on the other
-		Size up_res = rnp_docking_ft_.upstream_jump_residue( i );
-		Size down_res = rnp_docking_ft_.downstream_jump_residue( i );
+		core::Size up_res = rnp_docking_ft_.upstream_jump_residue( i );
+		core::Size down_res = rnp_docking_ft_.downstream_jump_residue( i );
 		if ( (pose.residue( up_res ).is_RNA() && pose.residue( down_res ).is_protein() ) ||
 				(pose.residue( up_res ).is_protein() && pose.residue( down_res ).is_RNA()) ) {
 			movemap.set_jump( i, true );
@@ -386,7 +386,7 @@ RNA_DeNovoMasterMover::setup_rna_protein_docking_mover( pose::Pose const & pose,
 ///  fragment insertions, jumps, chunks, etc. with no energy function checks.
 void
 RNA_DeNovoMasterMover::do_random_moves( core::pose::Pose & pose,
-	Size const & monte_carlo_cycles,
+	core::Size const & monte_carlo_cycles,
 	bool const & check_num_rna_res /* = false*/ ) {
 
 	rna_chunk_library_->check_fold_tree_OK( pose );
@@ -396,10 +396,10 @@ RNA_DeNovoMasterMover::do_random_moves( core::pose::Pose & pose,
 
 	translate_virtual_anchor_to_first_rigid_body( pose ); //useful for graphics viewing & final output
 
-	Size nres( 0 );
+	core::Size nres( 0 );
 	if ( check_num_rna_res ) {
-		Size num_RNA_res = 0;
-		for ( Size i = 1; i <= pose.size(); ++i ) {
+		core::Size num_RNA_res = 0;
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.residue( i ).is_RNA() ) num_RNA_res += 1;
 		}
 		nres = num_RNA_res;
@@ -408,10 +408,10 @@ RNA_DeNovoMasterMover::do_random_moves( core::pose::Pose & pose,
 	}
 
 
-	Size const heat_cycles = std::min( 3 * nres, monte_carlo_cycles );
+	core::Size const heat_cycles = std::min( 3 * nres, monte_carlo_cycles );
 	TR << "Heating up... " << heat_cycles << " cycles." << std::endl;
 
-	for ( Size i = 1; i <= heat_cycles; i++ ) {
+	for ( core::Size i = 1; i <= heat_cycles; i++ ) {
 		rna_fragment_mover_->random_fragment_insertion( pose, 1 /*frag_size*/, true /*heating*/ );
 	}
 
@@ -433,15 +433,15 @@ RNA_DeNovoMasterMover::randomize_rigid_body_orientations( pose::Pose & pose ){
 	using namespace protocols::rna::denovo;
 	using namespace kinematics;
 
-	vector1< Size > const rigid_body_jumps = get_rigid_body_jumps( pose );
-	Size const found_jumps = rigid_body_jumps.size();
+	vector1< core::Size > const rigid_body_jumps = get_rigid_body_jumps( pose );
+	core::Size const found_jumps = rigid_body_jumps.size();
 	if ( found_jumps <= 1 )  return; // nothing to rotate/translate relative to another object.
 
 	// translation to first, fixed rigid body.
 	Vector first_rigid_body_position = pose.jump( rigid_body_jumps[ 1 ] ).get_translation();
 
-	for ( Size n = 2; n <= rigid_body_jumps.size(); n++ ) {
-		Size const i = rigid_body_jumps[ n ];
+	for ( core::Size n = 2; n <= rigid_body_jumps.size(); n++ ) {
+		core::Size const i = rigid_body_jumps[ n ];
 
 		// randomize orientation.
 		RigidBodyRandomizeMover rigid_body_randomize_mover( pose, i, partner_upstream );
@@ -492,10 +492,10 @@ RNA_DeNovoMasterMover::search_rigid_body_orientation( pose::Pose & pose ){
 	// make rigid body mover
 	if ( rnp_docking_ft_.num_jump() < 1 ) return;
 
-	utility::vector1< Size > docking_jumps;
-	for ( Size i = 1; i <= rnp_docking_ft_.num_jump(); ++i ) {
-		Size up_res = rnp_docking_ft_.upstream_jump_residue( i );
-		Size down_res = rnp_docking_ft_.downstream_jump_residue( i );
+	utility::vector1< core::Size > docking_jumps;
+	for ( core::Size i = 1; i <= rnp_docking_ft_.num_jump(); ++i ) {
+		core::Size up_res = rnp_docking_ft_.upstream_jump_residue( i );
+		core::Size down_res = rnp_docking_ft_.downstream_jump_residue( i );
 		if ( ! ((pose.residue( up_res ).is_RNA() && pose.residue( down_res ).is_protein() ) ||
 				(pose.residue( up_res ).is_protein() && pose.residue( down_res ).is_RNA())) ) {
 			continue;
@@ -508,8 +508,8 @@ RNA_DeNovoMasterMover::search_rigid_body_orientation( pose::Pose & pose ){
 
 	// do a bunch of random rigid body moves
 	// this only works for systems with one RNP jump, it's set up only for the legacy rnp fold tree stuff
-	for ( Size jump_index = 1; jump_index <= docking_jumps.size(); ++jump_index ) {
-		Size jump = docking_jumps[ jump_index ];
+	for ( core::Size jump_index = 1; jump_index <= docking_jumps.size(); ++jump_index ) {
+		core::Size jump = docking_jumps[ jump_index ];
 
 		// randomize the orientation
 		RigidBodyRandomizeMover rigid_body_randomize_mover( pose, jump, partner_upstream );
@@ -520,7 +520,7 @@ RNA_DeNovoMasterMover::search_rigid_body_orientation( pose::Pose & pose ){
 		RigidBodyPerturbMoverOP random_perturb_mover = utility::pointer::make_shared< RigidBodyPerturbMover >( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_downstream );
 
 		core::pose::Pose start_pose = pose;
-		for ( Size i = 1; i <= 200; ++i ) {
+		for ( core::Size i = 1; i <= 200; ++i ) {
 			pose = start_pose;
 			pose.fold_tree( rnp_docking_ft_ );
 
@@ -558,11 +558,11 @@ RNA_DeNovoMasterMover::randomize_rnp_rigid_body_orientations( pose::Pose & pose 
 
 	if ( rnp_docking_ft_.num_jump() < 1 ) return;
 
-	for ( Size i = 1; i <= rnp_docking_ft_.num_jump(); ++i ) {
+	for ( core::Size i = 1; i <= rnp_docking_ft_.num_jump(); ++i ) {
 		// check that upstream and downstream are rna and protein
 		// if we are doing density modeling, this shouldn't be true for the last jump
-		Size up_res = rnp_docking_ft_.upstream_jump_residue( i );
-		Size down_res = rnp_docking_ft_.downstream_jump_residue( i );
+		core::Size up_res = rnp_docking_ft_.upstream_jump_residue( i );
+		core::Size down_res = rnp_docking_ft_.downstream_jump_residue( i );
 		if ( ! ((pose.residue( up_res ).is_RNA() && pose.residue( down_res ).is_protein() ) ||
 				(pose.residue( up_res ).is_protein() && pose.residue( down_res ).is_RNA())) ) {
 			continue;

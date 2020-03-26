@@ -21,7 +21,7 @@
 
 #include <platform/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <protocols/indexed_structure_store/FragmentStoreProvider.hh>
 #include <protocols/indexed_structure_store/BinaryFragmentStoreBackend.fwd.hh>

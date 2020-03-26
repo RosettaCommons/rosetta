@@ -21,7 +21,7 @@
 #include <protocols/multistate_design/SingleStateFitnessFunction.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -33,7 +33,7 @@
 namespace protocols {
 namespace multistate_design {
 
-class SingleState : public utility::pointer::ReferenceCount {
+class SingleState : public utility::VirtualBase {
 
 public:
 	SingleState();

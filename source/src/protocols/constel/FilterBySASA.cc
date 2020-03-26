@@ -107,19 +107,19 @@ void FilterBySASA::init( Real const smax, Pose const& ps ) {
 ///     to function init().
 ///
 bool FilterBySASA::has_low_per_atom_sasa(Pose const& ps,
-	utility::vector1<Size> const& cnl) {
+	utility::vector1<core::Size> const& cnl) {
 
-	for ( Size i=1; i <= cnl.size(); ++i ) {
+	for ( core::Size i=1; i <= cnl.size(); ++i ) {
 
 		// get residue info
-		Size const ri = cnl[i];
+		core::Size const ri = cnl[i];
 		core::conformation::Residue const & rsd( ps.residue(ri) );
 		char const aat = core::chemical::oneletter_code_from_aa( ps.aa(ri) );
 		utility::vector1<std::string> const atoms = aa_sasa_atoms[ aat ];
 
 		// look for atoms with too high a sasa
 		if ( atoms[1] == "All" ) {
-			for ( Size j=1; j<=rsd.nheavyatoms(); ++j ) {
+			for ( core::Size j=1; j<=rsd.nheavyatoms(); ++j ) {
 				if ( ps.pdb_info()->occupancy( ri, j ) ) {
 					core::id::AtomID aid(j, ri);
 					if ( atom_sasa[aid] > MAX_ATOM_SASA ) {
@@ -128,8 +128,8 @@ bool FilterBySASA::has_low_per_atom_sasa(Pose const& ps,
 				}
 			}
 		} else {
-			for ( Size j=1; j<=atoms.size(); ++j ) {
-				Size ai = rsd.atom_index( atoms[j] );
+			for ( core::Size j=1; j<=atoms.size(); ++j ) {
+				core::Size ai = rsd.atom_index( atoms[j] );
 				if ( ps.pdb_info()->occupancy( ri, ai ) ) {
 					core::id::AtomID aid(ai, ri);
 					if ( atom_sasa[aid] > MAX_ATOM_SASA ) {

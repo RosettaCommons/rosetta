@@ -80,7 +80,7 @@ has_element( T const & t, utility::vector1< T > const & v )
 TorsionFragment::~TorsionFragment() = default;
 
 TorsionFragment::TorsionFragment( TorsionFragment const & src ):
-	ReferenceCount(),
+	VirtualBase(),
 	torsions_( src.torsions_ ),
 	secstruct_( src.secstruct_ ),
 	sequence_ ( src.sequence_ )
@@ -97,12 +97,12 @@ TorsionFragment::clone() const
 ///call pose.set_torsion which maps TorsionID to DOF_ID, so it is safe
 ///to use even if the folding direction is not standard as N to C.
 void
-TorsionFragment::insert( pose::Pose & pose, Size const begin ) const
+TorsionFragment::insert( pose::Pose & pose, core::Size const begin ) const
 {
-	for ( Size i=1; i<= size(); ++i ) {
+	for ( core::Size i=1; i<= size(); ++i ) {
 		utility::vector1< Real > const & bb( torsions_[i] );
-		Size const seqpos( begin + i - 1 );
-		for ( Size j=1; j<= bb.size(); ++j ) {
+		core::Size const seqpos( begin + i - 1 );
+		for ( core::Size j=1; j<= bb.size(); ++j ) {
 			pose.set_torsion( id::TorsionID( seqpos, id::BB, j ), bb[j] );
 		}
 		{ // pbhacking
@@ -128,7 +128,7 @@ TorsionFragment::insert( pose::Pose & pose, Size const begin ) const
 void
 SingleResidueTorsionFragmentLibrary::copy_fragments( SingleResidueTorsionFragmentLibrary const & src )
 {
-	for ( Size i=1; i<= src.size(); ++i ) {
+	for ( core::Size i=1; i<= src.size(); ++i ) {
 		append_fragment( src[i].clone() );
 	}
 }
@@ -144,8 +144,8 @@ SingleResidueTorsionFragmentLibrary::copy_fragments( SingleResidueTorsionFragmen
 bool
 TorsionFragmentLibrary::read_file(
 	std::string const & filename,
-	Size const frag_size,
-	Size const nbb
+	core::Size const frag_size,
+	core::Size const nbb
 )
 {
 	utility::io::izstream data ( filename );
@@ -156,7 +156,7 @@ TorsionFragmentLibrary::read_file(
 	std::string line;
 	while ( getline( data, line ) ) {
 		std::string tag1, tag2;
-		Size position, neighbors;
+		core::Size position, neighbors;
 		{
 			std::istringstream line_stream( line );
 			line_stream >> tag1 >> position >> tag2 >> neighbors;
@@ -169,14 +169,14 @@ TorsionFragmentLibrary::read_file(
 		resize( position );
 		getline(data, line); // skip blank line
 		SingleResidueTorsionFragmentLibrary & current_position_library( (*this)[position] );
-		for ( Size i=1; i<=neighbors; ++i ) {
+		for ( core::Size i=1; i<=neighbors; ++i ) {
 			TorsionFragmentOP fragment( new TorsionFragment( frag_size, nbb ) );
 			// read lines within each fragment
-			std::string last_pdb; char last_chain('0'); Size last_seqpos(0);
-			for ( Size j=1; j<=frag_size; ++j ) {
+			std::string last_pdb; char last_chain('0'); core::Size last_seqpos(0);
+			for ( core::Size j=1; j<=frag_size; ++j ) {
 				getline(data, line);
 				std::istringstream line_stream( line );
-				std::string pdb; char chain, aa, secstruct; Size seqpos;
+				std::string pdb; char chain, aa, secstruct; core::Size seqpos;
 				line_stream >> pdb >> chain >> seqpos >> aa >> secstruct;
 				if ( j == 1 ) {
 					last_pdb = pdb;
@@ -197,7 +197,7 @@ TorsionFragmentLibrary::read_file(
 				}
 				fragment->set_secstruct(j,secstruct);
 				fragment->set_sequence (j,aa); // NEW
-				for ( Size k=1; k<=nbb; ++k ) {
+				for ( core::Size k=1; k<=nbb; ++k ) {
 					Real torsion;
 					line_stream >> torsion;
 					fragment->set_torsion(j,k,torsion);
@@ -222,7 +222,7 @@ TorsionFragmentLibrary::shift( int const current2desired_offset )
 {
 	utility::vector1< SingleResidueTorsionFragmentLibraryOP > new_fragments;
 
-	Size const oldsize( fragments_.size() ), newsize( oldsize + current2desired_offset );
+	core::Size const oldsize( fragments_.size() ), newsize( oldsize + current2desired_offset );
 	new_fragments.resize( newsize );
 
 	for ( int i=1; i<= int( newsize ); ++i ) {
@@ -237,17 +237,17 @@ TorsionFragmentLibrary::shift( int const current2desired_offset )
 }
 
 void
-TorsionFragmentLibrary::delete_residue( Size const seqpos )
+TorsionFragmentLibrary::delete_residue( core::Size const seqpos )
 {
-	Size const old_size( fragments_.size() );
+	core::Size const old_size( fragments_.size() );
 
 	TR.Trace << "TorsionFragmentLibrary::delete_residue: " << seqpos << " old_size: " << old_size << std::endl;
 
-	for ( Size i=1; i< seqpos; ++i ) {
+	for ( core::Size i=1; i< seqpos; ++i ) {
 		/// check to see if the fragments at this position overlap the deleted position
 		/// if so, clear them
 		if ( fragments_[i] && ( fragments_[i]->size() > 0 ) ) {
-			Size const fragsize( (*fragments_[i])[1].size() );
+			core::Size const fragsize( (*fragments_[i])[1].size() );
 			if ( i + fragsize - 1 >= seqpos ) {
 				TR.Trace << "TorsionFragmentLibrary::delete_residue: erasing " << fragments_[i]->size() <<
 					" fragments of size " << fragsize << " at position: " << i << std::endl;
@@ -256,7 +256,7 @@ TorsionFragmentLibrary::delete_residue( Size const seqpos )
 		}
 	}
 
-	for ( Size i=seqpos; i< old_size; ++i ) {
+	for ( core::Size i=seqpos; i< old_size; ++i ) {
 		fragments_[i] = fragments_[i+1]; // these are just (owning) pointers... some may be null.
 	}
 
@@ -269,7 +269,7 @@ TorsionFragmentLibrary::copy_fragments( TorsionFragmentLibrary const & src )
 {
 	if ( size() < src.size() ) resize( src.size() );
 
-	for ( Size i=1; i<= src.size(); ++i ) {
+	for ( core::Size i=1; i<= src.size(); ++i ) {
 		fragments_[i]->copy_fragments( src[i] );
 	}
 }
@@ -287,19 +287,19 @@ TorsionFragmentLibrary::copy_fragments( TorsionFragmentLibrary const & src )
 /// is aligned in the center of larger fragment to have data extracted.
 bool
 TorsionFragmentLibrary::derive_from_src_lib(
-	Size my_size,
-	Size src_size,
+	core::Size my_size,
+	core::Size src_size,
 	TorsionFragmentLibrary const & src_lib
 )
 {
 	// can only go from larger size to smaller size
 	runtime_assert( my_size < src_size );
 	// get continuous segment in src_lib_op
-	std::map< Size, Size > seg_map;
-	Size prev_nbrs(0);
-	Size seg_start(0);
-	for ( Size i = 1; i <= src_lib.size(); ++i ) {
-		Size current_nbrs( src_lib[i].size() );
+	std::map< core::Size, core::Size > seg_map;
+	core::Size prev_nbrs(0);
+	core::Size seg_start(0);
+	for ( core::Size i = 1; i <= src_lib.size(); ++i ) {
+		core::Size current_nbrs( src_lib[i].size() );
 		if ( !prev_nbrs && current_nbrs ) {
 			runtime_assert( !seg_start );
 			seg_start = i;
@@ -322,18 +322,18 @@ TorsionFragmentLibrary::derive_from_src_lib(
 	}
 
 	// resize myself lib to correct size
-	Size const size_diff(src_size - my_size);
+	core::Size const size_diff(src_size - my_size);
 	resize( src_lib.size() + size_diff );
 	// find offset by which shorter frag is aligned to longer frag
-	Size const offset( size_diff%2 == 0 ? size_diff/2 : (size_diff-1)/2 );
+	core::Size const offset( size_diff%2 == 0 ? size_diff/2 : (size_diff-1)/2 );
 
 	// loop through each segment and derive fragments
-	for ( std::map<Size, Size>::const_iterator it = seg_map.begin(),
+	for ( std::map<core::Size, core::Size>::const_iterator it = seg_map.begin(),
 			it_end = seg_map.end(); it != it_end; ++it ) {
-		Size const seg_begin(it->first);
-		Size const seg_end(it->second);
-		Size lib_index, copy_start;
-		for ( Size my_index = seg_begin, my_end = seg_end+size_diff; my_index <= my_end; my_index++ ) {
+		core::Size const seg_begin(it->first);
+		core::Size const seg_end(it->second);
+		core::Size lib_index, copy_start;
+		for ( core::Size my_index = seg_begin, my_end = seg_end+size_diff; my_index <= my_end; my_index++ ) {
 			// get hold of current residue frag lib
 			SingleResidueTorsionFragmentLibraryOP my_residue_lib( fragments_[my_index] );
 			// figure out which subset of fragment data we should copy
@@ -349,12 +349,12 @@ TorsionFragmentLibrary::derive_from_src_lib(
 			}
 			// do actual copying from src residue_fragment_library
 			SingleResidueTorsionFragmentLibrary const & src_residue_lib( src_lib[lib_index] );
-			for ( Size i = 1; i <= src_residue_lib.size(); ++i ) {
+			for ( core::Size i = 1; i <= src_residue_lib.size(); ++i ) {
 				TorsionFragment const & src_fragment( src_residue_lib[i] );
-				Size const nbb( src_fragment.nbb() );
+				core::Size const nbb( src_fragment.nbb() );
 				TorsionFragmentOP my_fragment( new TorsionFragment( my_size, nbb ) );
-				for ( Size j = 1, jj = copy_start; j <= my_size; ++j, ++jj ) {
-					for ( Size k = 1; k <= nbb; ++k ) {
+				for ( core::Size j = 1, jj = copy_start; j <= my_size; ++j, ++jj ) {
+					for ( core::Size k = 1; k <= nbb; ++k ) {
 						my_fragment->set_torsion( j, k, src_fragment.get_torsion(jj, k) );
 					} // each torsion
 					my_fragment->set_secstruct( j, src_fragment.get_secstruct(jj) );
@@ -370,8 +370,8 @@ TorsionFragmentLibrary::derive_from_src_lib(
 }
 bool
 TorsionFragmentLibrary::derive_from_src_lib(
-	Size my_size,
-	Size src_size,
+	core::Size my_size,
+	core::Size src_size,
 	TorsionFragmentLibraryCOP src_lib_op
 )
 {
@@ -379,7 +379,7 @@ TorsionFragmentLibrary::derive_from_src_lib(
 }
 
 void
-FragLib::delete_residue( Size const seqpos )
+FragLib::delete_residue( core::Size const seqpos )
 {
 	for ( auto & it : frag_map_ ) {
 		it.second->delete_residue( seqpos );
@@ -404,7 +404,7 @@ FragLib::shift( int const current2desired_offset )
 }
 
 TorsionFragmentLibrary const &
-FragLib::library( Size const size ) const
+FragLib::library( core::Size const size ) const
 {
 	if ( frag_map_.count( size ) == 0 ) {
 		utility_exit_with_message( "No frag lib for that size! "+ObjexxFCL::string_of( size ) );
@@ -413,7 +413,7 @@ FragLib::library( Size const size ) const
 }
 
 TorsionFragmentLibrary &
-FragLib::library( Size const size )
+FragLib::library( core::Size const size )
 {
 	if ( frag_map_.count( size ) == 0 ) {
 		TR.Info << "Creating new fragment library for frag_size " << size << endl;
@@ -422,10 +422,10 @@ FragLib::library( Size const size )
 	return *( frag_map_.find( size )->second );
 }
 
-utility::vector1< Size >
+utility::vector1< core::Size >
 FragLib::frag_sizes() const
 {
-	utility::vector1< Size > sizes;
+	utility::vector1< core::Size > sizes;
 	for ( auto const & it : frag_map_ ) {
 		sizes.push_back( it.first );
 	}
@@ -444,25 +444,25 @@ ss_length_check(
 
 	bool passed( true );
 
-	for ( Size i=0; i< ss.size(); ++i ) {
+	for ( core::Size i=0; i< ss.size(); ++i ) {
 
 		if ( ss[i] == 'H' && ( i+1 == ss.size() || ss[i+1] != 'H' ) ) {
 			// at the last residue of helix
 			// figure out where this helix starts
-			Size j(i);
+			core::Size j(i);
 			while ( j>0 && ss[j-1] == 'H' ) --j;
 			runtime_assert( ss[j] == 'H' && ( j==0 || ss[j-1] != 'H' ) );
-			Size const len( i-j+1 );
+			core::Size const len( i-j+1 );
 			if ( len < min_len_helix ) passed = false;
 		}
 
 		if ( ss[i] == 'E' && ( i+1 == ss.size() || ss[i+1] != 'E' ) ) {
 			// at the last residue of strand
 			// figure out where this strand starts
-			Size j(i);
+			core::Size j(i);
 			while ( j>0 && ss[j-1] == 'E' ) --j;
 			runtime_assert( ss[j] == 'E' && ( j==0 || ss[j-1] != 'E' ) );
-			Size const len( i-j+1 );
+			core::Size const len( i-j+1 );
 			if ( len < min_len_strand ) passed = false;
 		}
 	}
@@ -484,11 +484,11 @@ TorsionFragmentMover::apply( pose::Pose & pose )
 	TorsionFragmentLibrary const & lib( fraglib_->library( frag_size_ ) );
 
 	// figure out where we can insert
-	utility::vector1< Size > windows;
+	utility::vector1< core::Size > windows;
 
-	for ( Size i=1; i<= pose.size() - frag_size_ + 1; ++i ) {
+	for ( core::Size i=1; i<= pose.size() - frag_size_ + 1; ++i ) {
 		bool allowed( true );
-		for ( Size j=0; j< frag_size_; ++j ) {
+		for ( core::Size j=0; j< frag_size_; ++j ) {
 			// not sure if this movemap call should be allowed
 			if ( !mm_->get_bb( i + j ) || !pose.residue( i+j ).is_protein() ) {
 				allowed = false;
@@ -510,15 +510,15 @@ TorsionFragmentMover::apply( pose::Pose & pose )
 			std::endl;
 	}
 
-	Size ntries(0);
+	core::Size ntries(0);
 	Pose save_pose;
 	if ( check_ss_lengths_this_time ) save_pose = pose;
 	while ( ntries < 1000 ) {
 		++ntries;
-		Size const window( numeric::random::rg().random_element( windows ) );
-		Size const nfrags = lib[ window ].size();
+		core::Size const window( numeric::random::rg().random_element( windows ) );
+		core::Size const nfrags = lib[ window ].size();
 		if ( nfrags <= 0 ) continue;
-		Size const nn( static_cast< int > ( numeric::random::uniform() * nfrags ) + 1 );
+		core::Size const nn( static_cast< int > ( numeric::random::uniform() * nfrags ) + 1 );
 
 		// insert fragment
 		lib[ window ][ nn ].insert( pose, window );
@@ -537,28 +537,28 @@ TorsionFragmentMover::apply( pose::Pose & pose )
 
 } // apply
 
-utility::vector1< Size > const empty_size_list;
+utility::vector1< core::Size > const empty_size_list;
 //std::string const empty_string;
 
 
 void
 add_vall_fragments(
 	utility::vector1< core::Size > const & frag_sizes,
-	Size const nfrags,
+	core::Size const nfrags,
 	pose::Pose const & pose,
 	core::kinematics::MoveMap const & mm,
 	std::string const & secstruct,
 	Real const seq_weight,
 	Real const ss_weight,
 	FragLib & frag_lib,
-	utility::vector1< Size > const & homs_to_exclude, // = empty_size_list
+	utility::vector1< core::Size > const & homs_to_exclude, // = empty_size_list
 	Real const bb_weight, // = 0
 	std::string const & bigbins, // = empty string
 	std::string const & inputseq // = empty string
 )
 {
 
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	string seq( inputseq );
 	if ( seq.empty() ) seq = pose.sequence();
 	//string const seq( pose.sequence() );
@@ -566,9 +566,9 @@ add_vall_fragments(
 	for ( core::Size frag_size : frag_sizes ) {
 		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		lib.resize( nres - frag_size + 1 );
-		for ( Size i = 1; i<= nres - frag_size+1; ++i ) {
+		for ( core::Size i = 1; i<= nres - frag_size+1; ++i ) {
 			bool allowed( true );
-			for ( Size j=i; j<i+frag_size; ++j ) {
+			for ( core::Size j=i; j<i+frag_size; ++j ) {
 				Residue const & jrsd( pose.residue(j) );
 				if ( ( j > i             && jrsd.is_lower_terminus() ) ||
 						( j < i+frag_size-1 && jrsd.is_upper_terminus() ) ||
@@ -592,21 +592,21 @@ add_vall_fragments(
 void
 add_vall_fragments(
 	utility::vector1< core::Size > const & frag_sizes,
-	Size const nfrags,
+	core::Size const nfrags,
 	pose::Pose const & pose,
 	core::kinematics::MoveMap const & mm,
 	utility::vector1< std::map< char, core::Real > > const & target_ss,
 	Real const seq_weight,
 	Real const ss_weight,
 	FragLib & frag_lib,
-	utility::vector1< Size > const & homs_to_exclude, // = empty_size_list
+	utility::vector1< core::Size > const & homs_to_exclude, // = empty_size_list
 	Real const bb_weight, // = 0
 	std::string const & bigbins, // = empty string
 	std::string const & inputseq // = empty string
 )
 {
 
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	string seq( inputseq );
 	if ( seq.empty() ) seq = pose.sequence();
 	//string const seq( pose.sequence() );
@@ -614,10 +614,10 @@ add_vall_fragments(
 	for ( core::Size frag_size : frag_sizes ) {
 		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		lib.resize( nres - frag_size + 1 );
-		for ( Size i = 1; i<= nres - frag_size+1; ++i ) {
+		for ( core::Size i = 1; i<= nres - frag_size+1; ++i ) {
 			bool allowed( true );
 			utility::vector1< std::map< char, core::Real > > frag_ss;
-			for ( Size j=i; j<i+frag_size; ++j ) {
+			for ( core::Size j=i; j<i+frag_size; ++j ) {
 				Residue const & jrsd( pose.residue(j) );
 				if ( ( j > i             && jrsd.is_lower_terminus() ) ||
 						( j < i+frag_size-1 && jrsd.is_upper_terminus() ) ||
@@ -643,13 +643,13 @@ add_vall_fragments(
 FragLibOP
 setup_vall_fragments(
 	utility::vector1< core::Size > const & frag_sizes,
-	Size const nfrags,
+	core::Size const nfrags,
 	pose::Pose const & pose,
 	core::kinematics::MoveMap const & mm,
 	std::string const & secstruct,
 	Real const seq_weight,
 	Real const ss_weight,
-	utility::vector1< Size > const & homs_to_exclude // = empty_size_list
+	utility::vector1< core::Size > const & homs_to_exclude // = empty_size_list
 )
 {
 	FragLibOP frag_lib( new FragLib() );
@@ -661,7 +661,7 @@ setup_vall_fragments(
 void
 add_vall_cheating_fragments(
 	utility::vector1< core::Size > const & frag_sizes,
-	Size const nfrags,
+	core::Size const nfrags,
 	pose::Pose const & pose,
 	core::kinematics::MoveMap const & mm,
 	std::string const & secstruct,
@@ -671,20 +671,20 @@ add_vall_cheating_fragments(
 	Real const min_torsion_dev,
 	Real const max_torsion_dev,
 	FragLib & frag_lib,
-	utility::vector1< Size > const & homs_to_exclude // = empty_size_list
+	utility::vector1< core::Size > const & homs_to_exclude // = empty_size_list
 )
 {
 	//FragLibOP frag_lib( new FragLib() );
 
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	string const seq( pose.sequence() );
 
 	for ( core::Size frag_size : frag_sizes ) {
 		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
 		lib.resize( nres - frag_size + 1 );
-		for ( Size i = 1; i<= nres - frag_size+1; ++i ) {
+		for ( core::Size i = 1; i<= nres - frag_size+1; ++i ) {
 			bool allowed( true );
-			for ( Size j=i; j<i+frag_size; ++j ) {
+			for ( core::Size j=i; j<i+frag_size; ++j ) {
 				Residue const & jrsd( pose.residue(j) );
 				if ( ( j > i             && jrsd.is_lower_terminus() ) ||
 						( j < i+frag_size-1 && jrsd.is_upper_terminus() ) ||
@@ -698,7 +698,7 @@ add_vall_cheating_fragments(
 			std::string const frag_seq( seq.substr(i-1,frag_size) );
 			std::string const frag_ss( secstruct.substr(i-1,frag_size ) );
 			utility::vector1< Real > frag_phi, frag_psi, frag_omega;
-			for ( Size j=i; j<i+frag_size; ++j ) {
+			for ( core::Size j=i; j<i+frag_size; ++j ) {
 				frag_phi.push_back( pose.phi(j) );
 				frag_psi.push_back( pose.psi(j) );
 				frag_omega.push_back( pose.omega(j) );
@@ -727,7 +727,7 @@ add_vall_cheating_fragments(
 FragLibOP
 setup_vall_cheating_fragments(
 	utility::vector1< core::Size > const & frag_sizes,
-	Size const nfrags,
+	core::Size const nfrags,
 	pose::Pose const & pose,
 	core::kinematics::MoveMap const & mm,
 	std::string const & secstruct,
@@ -736,7 +736,7 @@ setup_vall_cheating_fragments(
 	Real const torsion_weight,
 	Real const min_torsion_dev,
 	Real const max_torsion_dev,
-	utility::vector1< Size > const & homs_to_exclude // = empty_size_list
+	utility::vector1< core::Size > const & homs_to_exclude // = empty_size_list
 )
 {
 	FragLibOP frag_lib( new FragLib() );
@@ -750,13 +750,13 @@ setup_vall_cheating_fragments(
 /// @note  Does not change the size of any of the individual fragment libraries
 void
 fill_in_gaps(
-	Size const nfrags,
+	core::Size const nfrags,
 	pose::Pose const & pose,
 	std::string const & secstruct,
 	Real const seq_weight,
 	Real const ss_weight,
 	FragLib & frag_lib,
-	utility::vector1< Size > const & homs_to_exclude, // = empty_size_list
+	utility::vector1< core::Size > const & homs_to_exclude, // = empty_size_list
 	bool const allow_uninitialized_secstruct // = false
 )
 {
@@ -769,10 +769,10 @@ fill_in_gaps(
 	Sizes const frag_sizes( frag_lib.frag_sizes() );
 	for ( core::Size frag_size : frag_sizes ) {
 		TorsionFragmentLibrary & lib( frag_lib.library( frag_size ) );
-		for ( Size i = 1; i<= lib.size(); ++i ) {
+		for ( core::Size i = 1; i<= lib.size(); ++i ) {
 			if ( lib[i].size() > 0 ) continue; // skip windows with at least one fragment
 			bool allowed( true );
-			for ( Size j=i; j<i+frag_size; ++j ) {
+			for ( core::Size j=i; j<i+frag_size; ++j ) {
 				if ( j > pose.size() || !pose.residue(j).is_protein() ) {
 					allowed = false;
 					break;
@@ -793,7 +793,7 @@ void
 TorsionFragmentLibrary::print( std::ostream & os ) const
 {
 	os << "TorsionFragmentLibrary:: size= " << size() << std::endl;
-	for ( Size i=1; i<= size(); ++i ) {
+	for ( core::Size i=1; i<= size(); ++i ) {
 		os << "window: " << i << " depth: " << fragments_[i]->size() << std::endl;
 	}
 }
@@ -869,10 +869,10 @@ std::ostream &
 operator << ( std::ostream & out, TorsionFragment const & f )
 {
 	out << "TorsionFragment " << f.size() << ' '<< f.nbb();
-	for ( Size i=1; i<= f.size(); ++i ) {
+	for ( core::Size i=1; i<= f.size(); ++i ) {
 		out << ' ' << f.get_secstruct(i);
 		out << ' ' << f.get_sequence (i); // adding SEQ
-		for ( Size j=1; j<= f.nbb(); ++j ) {
+		for ( core::Size j=1; j<= f.nbb(); ++j ) {
 			out << ObjexxFCL::format::F(9,3,f.get_torsion( i, j ) );
 		}
 	}
@@ -884,19 +884,19 @@ std::istream &
 operator >> ( std::istream & data, TorsionFragment & f )
 {
 	string tag;
-	Size size, nbb;
+	core::Size size, nbb;
 	data >> tag >> size >> nbb;
 	if ( tag != "TorsionFragment" ) {
 		data.setstate( std::ios_base::failbit );
 		return data;
 	}
 	f.set_size_and_nbb( size, nbb );
-	for ( Size i=1; i<= size; ++i ) {
+	for ( core::Size i=1; i<= size; ++i ) {
 		char ss,aa;
 		data >> ss >> aa;
 		f.set_secstruct( i, ss );
 		f.set_sequence ( i, aa );
-		for ( Size j=1; j<= nbb; ++j ) {
+		for ( core::Size j=1; j<= nbb; ++j ) {
 			Real torsion;
 			data >> torsion;
 			f.set_torsion( i, j, torsion );
@@ -909,7 +909,7 @@ std::ostream &
 operator << ( std::ostream & out, SingleResidueTorsionFragmentLibrary const & lib )
 {
 	out << "SingleResidueTorsionFragmentLibrary " << lib.size() << '\n';
-	for ( Size i=1; i<= lib.size(); ++i ) {
+	for ( core::Size i=1; i<= lib.size(); ++i ) {
 		out << lib[i] << '\n';
 	}
 	return out;
@@ -921,14 +921,14 @@ operator >> ( std::istream & data, SingleResidueTorsionFragmentLibrary & lib )
 	lib.clear();
 
 	string tag;
-	Size size;
+	core::Size size;
 	data >> tag >> size;
 	if ( tag != "SingleResidueTorsionFragmentLibrary" ) {
 		data.setstate( std::ios_base::failbit );
 		return data;
 	}
 
-	for ( Size i=1; i<= size; ++i ) {
+	for ( core::Size i=1; i<= size; ++i ) {
 		TorsionFragmentOP f( new TorsionFragment() );
 		data >> (*f);
 		lib.append_fragment( f );
@@ -941,7 +941,7 @@ std::ostream &
 operator << ( std::ostream & out, TorsionFragmentLibrary const & lib )
 {
 	out << "TorsionFragmentLibrary " << lib.size() << '\n';
-	for ( Size i=1; i<= lib.size(); ++i ) {
+	for ( core::Size i=1; i<= lib.size(); ++i ) {
 		out << lib[i];
 	}
 	return out;
@@ -953,7 +953,7 @@ operator >> ( std::istream & data, TorsionFragmentLibrary & lib )
 	lib.clear();
 
 	string tag;
-	Size size;
+	core::Size size;
 	data >> tag >> size;
 	if ( data.fail() || tag != "TorsionFragmentLibrary" ) {
 		data.setstate( std::ios_base::failbit );
@@ -962,7 +962,7 @@ operator >> ( std::istream & data, TorsionFragmentLibrary & lib )
 
 	lib.resize( size );
 
-	for ( Size i=1; i<= size; ++i ) data >> lib[i];
+	for ( core::Size i=1; i<= size; ++i ) data >> lib[i];
 
 	return data;
 }
@@ -985,15 +985,15 @@ operator >> ( std::istream & data, FragLib & lib )
 	lib.clear();
 
 	string tag;
-	Size size;
+	core::Size size;
 	data >> tag >> size;
 	if ( tag != "FragLib" ) {
 		data.setstate( std::ios_base::failbit );
 		return data;
 	}
 
-	for ( Size i=1; i<= size; ++i ) {
-		Size fragsize;
+	for ( core::Size i=1; i<= size; ++i ) {
+		core::Size fragsize;
 		data >> tag >> fragsize;
 		if ( tag != "frag_size" ) {
 			data.setstate( std::ios_base::failbit );
@@ -1010,8 +1010,8 @@ get_min_and_max_contigs( Sizes const & seg_in, core::Size & min_seg, core::Size 
 {
 	Sizes seg( seg_in );
 	std::sort( seg.begin(), seg.end() );
-	Size last_pos( 0 ), seg_begin( 0 );
-	utility::vector1< Size > sizes;
+	core::Size last_pos( 0 ), seg_begin( 0 );
+	utility::vector1< core::Size > sizes;
 	for ( Sizes::const_iterator pos= seg.begin(); pos != seg.end(); ++pos ) {
 		if ( !seg_begin ) {
 			seg_begin = *pos;
@@ -1036,23 +1036,23 @@ insert_random_fragments_in_flexible_protein_regions(
 	pose::Pose & pose
 )
 {
-	Size const nres( pose.size() );
-	vector1< Size > frag_sizes( frag_lib.frag_sizes() );
-	Size min_seg, max_seg;
+	core::Size const nres( pose.size() );
+	vector1< core::Size > frag_sizes( frag_lib.frag_sizes() );
+	core::Size min_seg, max_seg;
 	get_min_and_max_contigs( flex_protein, min_seg, max_seg );
 	if ( min_seg < utility::min( frag_sizes ) ) utility_exit_with_message("no frag small enough to match smallest contiguous regn");
 	/// insert fragments from smallest to largest...
 	std::sort( frag_sizes.begin(), frag_sizes.end() );
-	Sizes all_positions; for ( Size i=1; i<= nres; ++i ) all_positions.push_back(i);
-	for ( vector1< Size >::const_iterator size= frag_sizes.begin(); size!= frag_sizes.end(); ++size ) {
-		Size const frag_size( *size );
+	Sizes all_positions; for ( core::Size i=1; i<= nres; ++i ) all_positions.push_back(i);
+	for ( vector1< core::Size >::const_iterator size= frag_sizes.begin(); size!= frag_sizes.end(); ++size ) {
+		core::Size const frag_size( *size );
 		protocols::frags::TorsionFragmentLibrary const & lib( frag_lib.library( frag_size ) );
 		numeric::random::random_permutation( all_positions, numeric::random::rg() );
 		for ( Sizes::const_iterator pos = all_positions.begin(); pos != all_positions.end(); ++pos ) {
-			Size const i( *pos );
+			core::Size const i( *pos );
 			if ( i+frag_size-1 > nres ) continue;
 			bool allowed( true );
-			for ( Size k=0; k< frag_size; ++k ) {
+			for ( core::Size k=0; k< frag_size; ++k ) {
 				if ( ( k >           0 && pose.residue(i+k).is_lower_terminus() ) ||
 						( k < frag_size-1 && pose.residue(i+k).is_upper_terminus() ) ||
 						!has_element( flex_protein, i+k ) ) allowed = false;

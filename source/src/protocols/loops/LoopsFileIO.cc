@@ -159,7 +159,7 @@ LoopsFileData::resolve_as_serialized_loops(
 ) const
 {
 	SerializedLoopList sloops; sloops.reserve( size() );
-	for ( Size ii = 1; ii <= size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= size(); ++ii ) {
 		sloops.push_back( (*this)[ ii ].resolve_as_serialized_loop_from_pose( pose ) );
 	}
 	return sloops;
@@ -362,12 +362,12 @@ GuardedLoopsFromFile::loops_definer() const
 }
 
 
-LoopsFileIO::LoopsFileIO() : utility::pointer::ReferenceCount()
+LoopsFileIO::LoopsFileIO() : utility::VirtualBase()
 {
 
 }
 
-LoopsFileIO::LoopsFileIO( const LoopsFileIO & ) : utility::pointer::ReferenceCount()
+LoopsFileIO::LoopsFileIO( const LoopsFileIO & ) : utility::VirtualBase()
 {
 }
 

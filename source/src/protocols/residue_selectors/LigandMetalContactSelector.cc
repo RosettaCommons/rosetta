@@ -52,6 +52,8 @@ static basic::Tracer TR( "protocols.residue_selectors.LigandMetalContactSelector
 namespace protocols {
 namespace residue_selectors {
 
+using core::Size;
+
 /// @brief Constructor.
 ///
 LigandMetalContactSelector::LigandMetalContactSelector():
@@ -74,7 +76,7 @@ LigandMetalContactSelector::ResidueSubset
 LigandMetalContactSelector::apply(core::pose::Pose const & pose) const {
 
 	ResidueSubset subset(pose.total_residue(), false);
-	std::set<Size> input_set_tmp;
+	std::set<core::Size> input_set_tmp;
 	calculate_ligand_resnums(pose, input_set_tmp);
 
 	for ( unsigned long it : input_set_tmp ) {
@@ -203,19 +205,19 @@ LigandMetalContactSelectorCreator::provide_xml_schema(
 }
 
 void
-LigandMetalContactSelector::calculate_ligand_resnums(core::pose::Pose const & pose, std::set<Size> & input_set) const{
+LigandMetalContactSelector::calculate_ligand_resnums(core::pose::Pose const & pose, std::set<core::Size> & input_set) const{
 	ResidueSubset local_subset(pose.total_residue(), false);
 
 	if ( input_set_selector_ && using_a_resselect_ ) {
 		local_subset = input_set_selector_->apply(pose);
 
-		for ( Size ii = 1; ii <= local_subset.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= local_subset.size(); ++ii ) {
 			if ( local_subset[ii] ) {
 				input_set.insert(ii);
 			}
 		}
 	} else {
-		std::set<Size> const res_vec( core::pose::get_resnum_list( resnum_string_, pose));
+		std::set<core::Size> const res_vec( core::pose::get_resnum_list( resnum_string_, pose));
 		input_set.insert(res_vec.begin(), res_vec.end());
 		for ( unsigned long it : input_set ) {
 			if ( it == 0 || it > local_subset.size() ) {

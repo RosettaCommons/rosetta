@@ -51,7 +51,7 @@ public:
 public:
 
 	// constructor with arguments
-	DME_FilterMover( protocols::moves::MoverOP my_mover, Real const dme_threshold, Size const max_tries ):
+	DME_FilterMover( protocols::moves::MoverOP my_mover, Real const dme_threshold, core::Size const max_tries ):
 		protocols::moves::Mover( my_mover->type()+"DME_Filter" ),
 		my_mover_( my_mover ),
 		dme_threshold_( dme_threshold ),
@@ -68,7 +68,7 @@ private:
 
 	protocols::moves::MoverOP my_mover_;
 	Real const dme_threshold_;
-	Size const max_tries_;
+	core::Size const max_tries_;
 
 };
 

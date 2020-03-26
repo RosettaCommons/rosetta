@@ -99,7 +99,7 @@ SetAACompositionPotential::set_parameters( String const & file )
 	}
 
 	String line;
-	Size linecount( 0 );
+	core::Size linecount( 0 );
 	while ( getline( data, line ) ) {
 
 		linecount++;

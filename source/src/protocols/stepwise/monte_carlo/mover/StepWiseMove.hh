@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_monte_carlo_StepWiseMove_HH
 #define INCLUDED_protocols_stepwise_monte_carlo_StepWiseMove_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
@@ -65,14 +65,14 @@ AttachmentType
 attachment_type_from_string( std::string const & name );
 
 /////////////////////////////////////////////////////////////////////
-class Attachment: public utility::pointer::ReferenceCount {
+class Attachment: public utility::VirtualBase {
 
 public:
 
 	//constructor
 	Attachment();
 
-	Attachment( Size const attachment_res,
+	Attachment( core::Size const attachment_res,
 		AttachmentType const attachment_type );
 
 	friend
@@ -81,21 +81,21 @@ public:
 
 public:
 
-	void set_attached_res( Size const setting ){ attached_res_ = setting; }
-	Size attached_res() const { return attached_res_; }
+	void set_attached_res( core::Size const setting ){ attached_res_ = setting; }
+	core::Size attached_res() const { return attached_res_; }
 
 	void set_attachment_type( AttachmentType const & setting ){ attachment_type_ = setting; }
 	AttachmentType attachment_type() const{ return attachment_type_; }
 
 private:
 
-	Size attached_res_;
+	core::Size attached_res_;
 	AttachmentType attachment_type_;
 
 };
 
 /////////////////////////////////////////////////////////////////////
-class StepWiseMove: public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< StepWiseMove > {
+class StepWiseMove: public utility::VirtualBase, public utility::pointer::enable_shared_from_this< StepWiseMove > {
 
 public:
 
@@ -118,11 +118,11 @@ public:
 		Attachment const & attachment,
 		MoveType const & move_type );
 
-	StepWiseMove( Size const moving_res,
+	StepWiseMove( core::Size const moving_res,
 		Attachments const & attachments,
 		MoveType const & move_type );
 
-	StepWiseMove( Size const moving_res,
+	StepWiseMove( core::Size const moving_res,
 		Attachment const & attachment,
 		MoveType const & move_type );
 
@@ -149,9 +149,9 @@ public:
 	void set_move_element( MoveElement const & setting ){ move_element_ = setting; }
 	MoveElement move_element() const{ return move_element_; }
 
-	Size moving_res() const;
+	core::Size moving_res() const;
 
-	Size attached_res() const;
+	core::Size attached_res() const;
 
 	AttachmentType attachment_type() const;
 

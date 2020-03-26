@@ -31,17 +31,17 @@ class CompleteConnectionsFilter : public protocols::filters::Filter
 {
 public:
 	CompleteConnectionsFilter() :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "CompleteConnections" ) {}
 
 	CompleteConnectionsFilter(std::string const & chain) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "CompleteConnections" ),
 		chain_(chain)
 	{}
 
 	CompleteConnectionsFilter( CompleteConnectionsFilter const & init ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( init ),
 		chain_(init.chain_)
 	{};

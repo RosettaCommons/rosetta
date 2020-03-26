@@ -14,7 +14,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/types.hh>
 #include <core/chemical/rna/util.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 // C++ Headers
 #include <string>
@@ -75,10 +75,10 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////
-class RNA_PairingTemplate : public utility::pointer::ReferenceCount {
+class RNA_PairingTemplate : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~RNA_PairingTemplate() override;
 
 	RNA_PairingTemplate( core::kinematics::Jump const & j, std::string const & atom_name1, std::string const & atom_name2 );
@@ -115,10 +115,10 @@ typedef utility::vector1< RNA_PairingTemplateOP > RNA_PairingTemplateList;
 typedef std::map< BasePairType, RNA_PairingTemplateList > RNA_PairingTemplateMap;
 
 ///////////////////////////////////////////////////////////////////////////////////
-class RNA_JumpLibrary : public utility::pointer::ReferenceCount {
+class RNA_JumpLibrary : public utility::VirtualBase {
 public:
 
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~RNA_JumpLibrary() override;
 
 	RNA_JumpLibrary( std::string const & filename );

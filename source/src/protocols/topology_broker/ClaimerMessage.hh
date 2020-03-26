@@ -57,7 +57,7 @@ namespace protocols {
 namespace topology_broker {
 
 
-class ClaimerMessage { //: public utility::pointer::ReferenceCount {
+class ClaimerMessage { //: public utility::VirtualBase {
 	typedef utility::vector1< TopologyClaimerCAP > TopologyClaimerCAPs;
 public:
 	ClaimerMessage();

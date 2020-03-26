@@ -74,7 +74,7 @@ FastGapMover::FastGapMover() :
 {
 	// initialize lhlibrary
 	utility::vector1 < core::Size > loop_sizes;
-	for ( Size i = min_loop_size_; i<= max_loop_size_; i++ ) {
+	for ( core::Size i = min_loop_size_; i<= max_loop_size_; i++ ) {
 		loop_sizes.push_back(i);
 	}
 
@@ -93,14 +93,14 @@ FastGapMover::apply( pose::Pose & pose ) {
 
 	// copy pose
 	PoseOP working_pose( new Pose(pose) );
-	//Size idx = 1;
+	//core::Size idx = 1;
 
 	// convert pose to centroid pose:
 	if ( working_pose->is_fullatom() ) {
 		core::util::switch_to_residue_type_set( *working_pose, core::chemical::CENTROID_t );
 	}
 	// Now go through each gap and try increasingly larger lh until something is returned
-	Size next_gap = 0;
+	core::Size next_gap = 0;
 	Real gap_dist;
 	find_next_gap( *working_pose, next_gap, gap_dist );
 	while ( next_gap != 0 ) {
@@ -109,8 +109,8 @@ FastGapMover::apply( pose::Pose & pose ) {
 
 		// gogo loophash
 		// increase loophash size until we get anything returned
-		//Size loop_size = std::max((Size)(gap_dist/3.5), min_loop_size_); // no point in trying anything that cant reach across the gap
-		Size loop_size = min_loop_size_; // no point in trying anything that cant reach across the gap
+		//core::Size loop_size = std::max((core::Size)(gap_dist/3.5), min_loop_size_); // no point in trying anything that cant reach across the gap
+		core::Size loop_size = min_loop_size_; // no point in trying anything that cant reach across the gap
 		while ( lib_structs.size() == 0 && loop_size < max_loop_size_ ) {
 			TR << "Trying loopsize " << ++loop_size << std::endl;
 			lhsampler_->set_start_res( next_gap + 3 < loop_size ? 0 : next_gap + 3 - loop_size );
@@ -129,16 +129,16 @@ FastGapMover::apply( pose::Pose & pose ) {
 
 // lifted straight from protocols/idealize/idealize.cc
 void
-FastGapMover::find_next_gap( Pose & pose, Size & idx, Real & gap_distance ) {
+FastGapMover::find_next_gap( Pose & pose, core::Size & idx, Real & gap_distance ) {
 	// squared distance at which bond is considered discontinuous
 	Real const chain_break_cutoff = { 4.0 };
-	Size const nres ( pose.size() );
+	core::Size const nres ( pose.size() );
 
 	// find chain breaks to add to gaplist
 	kinematics::FoldTree f( pose.fold_tree() );
-	for ( Size i = idx + 1; i < nres; ++i ) {
+	for ( core::Size i = idx + 1; i < nres; ++i ) {
 		//bool chain_break = false;
-		Size j = i+1;
+		core::Size j = i+1;
 		conformation::Residue const & rsd = pose.residue(i);
 		conformation::Residue const & next_rsd = pose.residue(j);
 		if ( rsd.is_polymer() && next_rsd.is_polymer() ) {

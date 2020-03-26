@@ -182,12 +182,12 @@ SilentTrajectoryRecorder::restart_simulation(
 
 		std::string decoy_tag=matched_tags_in_file.front();
 		tr.Info << "decoy_tag matched: " << decoy_tag << std::endl;
-		Size ind=decoy_tag.find_last_of( '_' );
+		core::Size ind=decoy_tag.find_last_of( '_' );
 		//  cycle = utility::string2int(decoy_tag.substr( ind+1 ) )*stride();
 		cycle = utility::string2int( decoy_tag.substr( ind+1 )); // the actual trial_number is stored in the decoy tag of the checkpoint file
 		tr.Info << "cycle number got from the decoy_tag: " << cycle << std::endl;
 		if ( sfd.begin()->has_energy( "temp_level" ) ) {
-			temp_level = (Size) sfd.begin()->get_energy( "temp_level" );
+			temp_level = (core::Size) sfd.begin()->get_energy( "temp_level" );
 		}
 		if ( sfd.begin()->has_energy( "temperature" ) ) {
 			temperature = sfd.begin()->get_energy( "temperature" );

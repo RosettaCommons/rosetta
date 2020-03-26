@@ -70,7 +70,7 @@ CircularPermutation::CircularPermutation() :
 
 /// @Brief copy constructor
 CircularPermutation::CircularPermutation( CircularPermutation const & rval ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Super( rval ),
 	new_terminal_pos_( rval.new_terminal_pos_ ),
 	split_( rval.split_ )
@@ -99,7 +99,7 @@ CircularPermutation::fresh_instance() const
 
 /// @brief new N- & C- terminal position
 void
-CircularPermutation::new_terminal_pos( Size const s )
+CircularPermutation::new_terminal_pos( core::Size const s )
 {
 	new_terminal_pos_ = s;
 }
@@ -114,12 +114,12 @@ CircularPermutation::new_terminal_pos() const
 
 /// @brief total number of cycles
 CircularPermutation::Size
-CircularPermutation::which_chain( Size const pos, Pose const & pose ) const
+CircularPermutation::which_chain( core::Size const pos, Pose const & pose ) const
 {
-	for ( Size i=1; i<=pose.conformation().num_chains(); i++ ) {
+	for ( core::Size i=1; i<=pose.conformation().num_chains(); i++ ) {
 
-		Size chain_begin( pose.conformation().chain_begin( i ) );
-		Size chain_end( pose.conformation().chain_end( i ) );
+		core::Size chain_begin( pose.conformation().chain_begin( i ) );
+		core::Size chain_end( pose.conformation().chain_end( i ) );
 
 		if ( chain_begin <= pos && chain_end >= pos ) {
 			return i;
@@ -133,7 +133,7 @@ CircularPermutation::which_chain( Size const pos, Pose const & pose ) const
 
 /// @brief
 void
-CircularPermutation::split_chains( Pose & pose, utility::vector1< Size > const & pos )
+CircularPermutation::split_chains( Pose & pose, utility::vector1< core::Size > const & pos )
 {
 
 	using core::kinematics::FoldTree;
@@ -145,16 +145,16 @@ CircularPermutation::split_chains( Pose & pose, utility::vector1< Size > const &
 	FoldTree ft = fold_tree_from_pose( pose, pose.fold_tree().root(), MoveMap() );
 
 	// insert chain endings
-	for ( Size i=1; i<=pos.size(); i++ ) {
-		Size position = pos[ i ];
+	for ( core::Size i=1; i<=pos.size(); i++ ) {
+		core::Size position = pos[ i ];
 		runtime_assert( position >= 1 && position <= pose.size() );
 		pose.conformation().insert_chain_ending( position );
 	}
 
 	// add terminals
-	for ( Size i=1; i<=pose.conformation().num_chains(); i++ ) {
-		Size begin = pose.conformation().chain_begin( i );
-		Size end = pose.conformation().chain_end( i );
+	for ( core::Size i=1; i<=pose.conformation().num_chains(); i++ ) {
+		core::Size begin = pose.conformation().chain_begin( i );
+		core::Size end = pose.conformation().chain_end( i );
 		if ( pose.residue( begin ).is_protein() && !pose.residue( begin ).is_lower_terminus() ) {
 			core::pose::add_lower_terminus_type_to_pose_residue( pose, begin );
 		}
@@ -164,9 +164,9 @@ CircularPermutation::split_chains( Pose & pose, utility::vector1< Size > const &
 	}
 
 	// add jumps
-	for ( Size i=2; i<=pose.conformation().num_chains(); i++ ) {
-		Size begin = pose.conformation().chain_begin( i );
-		Size end = pose.conformation().chain_end( i-1 );
+	for ( core::Size i=2; i<=pose.conformation().num_chains(); i++ ) {
+		core::Size begin = pose.conformation().chain_begin( i );
+		core::Size end = pose.conformation().chain_end( i-1 );
 		ft.new_jump( end, begin, end );
 	}
 
@@ -208,13 +208,13 @@ void CircularPermutation::apply( Pose & pose )
 	Pose swap_in( pose );
 
 	// determine begin and end positions of chain to be swapped
-	Size chain_begin;
-	Size chain( 0 );
+	core::Size chain_begin;
+	core::Size chain( 0 );
 	if ( ignore_chain_ ) {
 
 		chain_begin = 1;
 		// find final chains
-		for ( Size i=1; i<=pose.size(); i++ ) {
+		for ( core::Size i=1; i<=pose.size(); i++ ) {
 			if ( pose.residue( i ).is_protein() &&  chain < pose.chain( i ) ) {
 				chain = pose.chain( i );
 			}
@@ -225,12 +225,12 @@ void CircularPermutation::apply( Pose & pose )
 		chain = which_chain( new_terminal_pos_, pose );
 		chain_begin = pose.conformation().chain_begin( chain );
 	}
-	Size chain_end = pose.conformation().chain_end( chain );
+	core::Size chain_end = pose.conformation().chain_end( chain );
 
 	// add 4 residues at the end of chain
 	ResidueOP ala( ResidueFactory::create_residue( *core::pose::get_restype_for_pose( pose, "ALA" ) ) );
-	for ( Size i=1; i<=4; i++ ) {
-		Size pos = pose.conformation().chain_end( chain );
+	for ( core::Size i=1; i<=4; i++ ) {
+		core::Size pos = pose.conformation().chain_end( chain );
 		pose.conformation().safely_append_polymer_residue_after_seqpos( *ala, pos, true );
 	}
 
@@ -246,7 +246,7 @@ void CircularPermutation::apply( Pose & pose )
 
 	// swap_in swapped into the 3 residues added at the terminal of the chain
 	MoveMap movemap;
-	Size nt = chain_end - ( new_terminal_pos_ - chain_begin ) + 1;
+	core::Size nt = chain_end - ( new_terminal_pos_ - chain_begin ) + 1;
 	BuildManager manager;
 	manager.add( utility::pointer::make_shared< SegmentSwap >( Interval( nt, nt+2 ), movemap, swap_in ) );
 	manager.modify( pose );
@@ -267,7 +267,7 @@ void CircularPermutation::apply( Pose & pose )
 	TR << "FoldTree after circular permutation: " << pose.fold_tree() << std::endl;
 
 	if ( split_ != 0 ) {
-		utility::vector1< Size > positions;
+		utility::vector1< core::Size > positions;
 		positions.push_back( split_ );
 		pose.conformation().reset_chain_endings();
 		split_chains( pose, positions );
@@ -289,13 +289,13 @@ CircularPermutation::parse_my_tag(
 {
 
 	// set positions of new N- and C- terminal
-	new_terminal_pos_ = ( tag->getOption<Size>( "pos", 0 ) );
+	new_terminal_pos_ = ( tag->getOption<core::Size>( "pos", 0 ) );
 
 	// ignore chain
 	ignore_chain_ = ( tag->getOption<bool>( "ignore_chain", false ) );
 
 	// split chain
-	split_ = ( tag->getOption<Size>( "split_chain", 0 ) );
+	split_ = ( tag->getOption<core::Size>( "split_chain", 0 ) );
 
 }
 

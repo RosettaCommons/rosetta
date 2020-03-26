@@ -42,10 +42,10 @@ void ExcludedFilter::init(Pose& ps, std::string const& ex_fname) {
 ///  constellation
 ///
 bool ExcludedFilter::hasnt_excluded(Pose const&,
-	utility::vector1<Size> const& cnl) {
+	utility::vector1<core::Size> const& cnl) {
 
-	Size const N = cnl.size();
-	for ( Size i=1; i<=N; ++i ) {
+	core::Size const N = cnl.size();
+	for ( core::Size i=1; i<=N; ++i ) {
 		if ( (*excluded)[cnl[i]] ) {
 			return false;
 		}

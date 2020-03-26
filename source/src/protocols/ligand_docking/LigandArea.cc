@@ -35,7 +35,7 @@ namespace ligand_docking {
 static basic::Tracer ligand_area_tracer( "protocols.ligand_docking.ligand_options.LigandArea", basic::t_debug );
 
 LigandArea::LigandArea():
-	ReferenceCount(),
+	VirtualBase(),
 	chain_('?'),
 	cutoff_(0),
 	Calpha_restraints_(0),

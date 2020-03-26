@@ -88,7 +88,7 @@ public:
 	void
 	set_options( protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsCOP options ){ options_ = options; }
 
-	Size
+	core::Size
 	get_remodel_res( StepWiseMove const & swa_move, core::pose::Pose const & pose ) const;
 
 	void

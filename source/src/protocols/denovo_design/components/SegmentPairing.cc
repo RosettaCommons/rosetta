@@ -62,13 +62,13 @@ SegmentPairing::create( std::string const & type_name )
 }
 
 SegmentPairing::SegmentPairing():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	segments_()
 {
 }
 
 SegmentPairing::SegmentPairing( SegmentNames const & segment_names ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	segments_( segment_names )
 {
 }

@@ -14,7 +14,7 @@
 #include <core/io/ddg/PositionDdGInfo.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <fstream>
 
@@ -36,7 +36,7 @@ namespace PositionDdGInfo {
 /// @brief small helper class  that stores the ddGs for mutations
 /// at a given position. camel case gets weird when trying to write
 /// words containing ddG...
-class PositionDdGInfo : public utility::pointer::ReferenceCount {
+class PositionDdGInfo : public utility::VirtualBase {
 
 public:
 

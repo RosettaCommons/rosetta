@@ -189,10 +189,10 @@ SetSecStructEnergies::symmetric_secstruct( SymmetryInfoCOP const syminfo, String
 	runtime_assert( ss.length() == syminfo->num_independent_residues() );
 
 	String secstruct("");
-	for ( Size i=1; i<= syminfo->subunits(); i++ ) {
+	for ( core::Size i=1; i<= syminfo->subunits(); i++ ) {
 		secstruct += ss;
 	}
-	for ( Size i=1; i<=syminfo->num_virtuals(); i++ ) {
+	for ( core::Size i=1; i<=syminfo->num_virtuals(); i++ ) {
 		secstruct += "L";
 	}
 

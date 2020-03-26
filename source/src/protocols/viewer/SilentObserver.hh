@@ -25,7 +25,7 @@
 #include <core/pose/signals/EnergyEvent.fwd.hh>
 
 // Project headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/signals/Link.hh>
 
@@ -37,11 +37,11 @@ namespace protocols {
 namespace viewer {
 
 // base class
-class SilentObserver : public utility::pointer::ReferenceCount {
+class SilentObserver : public utility::VirtualBase {
 
 private:
 
-	typedef utility::pointer::ReferenceCount Super;
+	typedef utility::VirtualBase Super;
 
 public:
 

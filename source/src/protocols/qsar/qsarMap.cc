@@ -95,7 +95,7 @@ void qsarMap::fill_with_value(core::Size value,utility::vector1<std::string> gri
 //{
 // //the mol data line has type qsar_map.  it is a collection of lines like this:
 // //atomno\tqsar_type\tqsar_weight
-// //atomno is a Size, qsar_type is a string, qsar_weight is a float
+// //atomno is a core::Size, qsar_type is a string, qsar_weight is a float
 // this->clear();
 // utility::vector1<std::string> data_lines(mol_data.get_mol_data_string_vector("qsar_map", '\n'));
 // if(data_lines.size() == 0)

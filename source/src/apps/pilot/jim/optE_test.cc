@@ -65,7 +65,7 @@
 //#include <utility/file/file_sys_util.hh>
 //#include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>

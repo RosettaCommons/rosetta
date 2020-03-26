@@ -22,7 +22,7 @@
 
 
 #include <utility/vector1_bool.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
@@ -33,7 +33,7 @@ namespace scoring {
 
 ////////////////////////
 // fpd helper class holds some # of gaussians
-class CenHBPotential : public utility::pointer::ReferenceCount {
+class CenHBPotential : public utility::VirtualBase {
 public:
 	CenHBPotential();
 

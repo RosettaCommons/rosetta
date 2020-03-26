@@ -22,7 +22,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
@@ -89,10 +89,10 @@ namespace hbonds {
 ///     and g'(x) = 6z(z-1)*z'(x)
 ///
 ////////////////////////////
-class FadeInterval : public utility::pointer::ReferenceCount {
+class FadeInterval : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~FadeInterval() override;
 	/// Constructor
 

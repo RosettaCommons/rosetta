@@ -32,7 +32,7 @@
 
 #include <core/scoring/SS_Info.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 namespace core {
@@ -40,7 +40,7 @@ namespace scoring {
 
 
 /// @brief secondary structure scoring cut from classic rosetta structure.h/structure.cc
-class SecondaryStructurePotential : public utility::pointer::ReferenceCount {
+class SecondaryStructurePotential : public utility::VirtualBase {
 
 public:
 

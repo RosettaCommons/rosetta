@@ -47,7 +47,7 @@ using namespace core;
 //v typedef utility::vector1< protocols::Loop >::const_iterator LoopsConsIt;
 
 //////////////////////////////////////////////////////////////////////////
-/*Size LoopManager::NumSingleLoops()
+/*core::Size LoopManager::NumSingleLoops()
 {
 return LoopList_.size();
 }
@@ -190,8 +190,8 @@ Loop LoopManager::VaryStems(
 {
 
 	int window_size = 5;//Not sure if this is the right size.
-	Size stem_vary_window_n = 0;
-	Size stem_vary_window_c = 0;
+	core::Size stem_vary_window_n = 0;
+	core::Size stem_vary_window_c = 0;
 	if ( !IsFirstLoop( ThisLoop ) && !IsLastLoop( ThisLoop ) ) {
 
 		stem_vary_window_n = std::min( window_size, int( ThisLoop.loop_begin() -
@@ -225,8 +225,8 @@ Loop LoopManager::VaryStems(
 	}
 
 
-	Size loop_begin = ThisLoop.loop_begin() - Size( stem_vary_window_n*loopmanager_RG.uniform() );
-	Size loop_end = ThisLoop.loop_end() + Size( stem_vary_window_c*loopmanager_RG.uniform() );
+	core::Size loop_begin = ThisLoop.loop_begin() - core::Size( stem_vary_window_n*loopmanager_RG.uniform() );
+	core::Size loop_end = ThisLoop.loop_end() + core::Size( stem_vary_window_c*loopmanager_RG.uniform() );
 
 	TR << "Loop in LoopManager " << loop_begin << " " << loop_end << " " << ThisLoop.cutpoint() << " " << ThisLoop.skip_rate() << "\n";
 	std::cout << "Loop in LoopManager " << loop_begin << " " << loop_end << " " << ThisLoop.cutpoint() << " " << ThisLoop.skip_rate() << std::endl;
@@ -240,26 +240,26 @@ Loop LoopManager::VaryCutpoint(
 {
 	if ( ThisLoop.cutpoint() != 0 ) return ThisLoop;
 
-	Size const loop_size( ThisLoop.loop_end() - ThisLoop.loop_begin() );
-	Size const n_cutpoints( loop_size - 1 );
+	core::Size const loop_size( ThisLoop.loop_end() - ThisLoop.loop_begin() );
+	core::Size const n_cutpoints( loop_size - 1 );
 	std::vector< Real > cut_weight;
 	Real total_cut_weight( 0.0 );
 
-	for ( Size i = 1; i <= n_cutpoints; ++i ) {
+	for ( core::Size i = 1; i <= n_cutpoints; ++i ) {
 		Real const weight( std::max( i, n_cutpoints - i + 1 ) );
 		total_cut_weight += weight;
 		cut_weight.push_back( total_cut_weight );
 	}
 
 
-	Size cutpoint( 0 );
+	core::Size cutpoint( 0 );
 	if ( ThisLoop.loop_begin() > 1 && ThisLoop.loop_end() < pose_.size() ) {
 
-		Size nfail( 0 );
+		core::Size nfail( 0 );
 		do {
 			nfail++;
 			Real const weight( total_cut_weight*loopmanager_RG.uniform() );
-			for ( Size i = 1; i <= n_cutpoints; ++i ) {
+			for ( core::Size i = 1; i <= n_cutpoints; ++i ) {
 				if ( weight <= cut_weight.at( i - 1 ) ) {
 					cutpoint = ThisLoop.loop_begin() + i - 1;
 					break;

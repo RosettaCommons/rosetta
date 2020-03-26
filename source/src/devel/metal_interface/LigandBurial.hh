@@ -15,7 +15,7 @@
 #define INCLUDED_devel_metal_interface_LigandBurial_HH
 
 #include <devel/metal_interface/LigandBurial.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 //#include <core/pose/Pose.fwd.hh>
@@ -29,25 +29,25 @@ namespace metal_interface {
 
 
 /// @details
-class LigandBurial : public utility::pointer::ReferenceCount {
+class LigandBurial : public utility::VirtualBase {
 
 public:
 
 	typedef core::pose::Pose Pose;
 	//typedef std::set< core::Size > SetSize;
 
-  /// @brief
-  LigandBurial( Pose const & pose, std::string ligand_3_letter_code );
+	/// @brief
+	LigandBurial( Pose const & pose, std::string ligand_3_letter_code );
 
-  ~LigandBurial() override;
+	~LigandBurial() override;
 
-  virtual core::Size find_ligand();
-  virtual void register_calculators();
+	virtual core::Size find_ligand();
+	virtual void register_calculators();
 
 	virtual basic::MetricValue< std::set<core::Size> > get_ligand_neighbors();
 	virtual core::Real get_ligand_sasa();
 
-  virtual void calculate_ligand_neighbors();
+	virtual void calculate_ligand_neighbors();
 	virtual void calculate_ligand_sasa();
 
 private:

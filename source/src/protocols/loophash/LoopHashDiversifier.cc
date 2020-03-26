@@ -253,10 +253,10 @@ LoopHashDiversifier::apply( Pose & pose )
 
 
 			std::vector< SilentStructOP > lib_structs;
-			Size starttime = time( nullptr );
+			core::Size starttime = time( nullptr );
 			lsampler.build_structures( pose, lib_structs );
-			Size endtime = time( nullptr );
-			Size nstructs = lib_structs.size();
+			core::Size endtime = time( nullptr );
+			core::Size nstructs = lib_structs.size();
 			TR << "Found " << nstructs << " alternative states in time: " << endtime - starttime << std::endl;
 
 			//Shuffle the loophash structures
@@ -343,8 +343,8 @@ LoopHashDiversifier::parse_my_tag(
 	Movers_map const & /*movers*/,
 	Pose const &
 ){
-	num_iterations_ = tag->getOption< Size >( "num_iterations", 100 );
-	num_try_div_ = tag->getOption< Size >( "num_try_div", 100 );
+	num_iterations_ = tag->getOption< core::Size >( "num_iterations", 100 );
+	num_try_div_ = tag->getOption< core::Size >( "num_try_div", 100 );
 
 	diversify_loop_only_ = tag->getOption< bool >( "diversify_loop_only", false ); // specify in xml 'diversify_loop_only=1/0'
 
@@ -357,9 +357,9 @@ LoopHashDiversifier::parse_my_tag(
 	min_rms_ = tag->getOption< Real >( "min_rms",   0.0 );
 	max_rms_ = tag->getOption< Real >( "max_rms",   100.0 );
 
-	max_radius_ = tag->getOption< Size >( "max_radius", 4 );
+	max_radius_ = tag->getOption< core::Size >( "max_radius", 4 );
 
-	max_struct_ = tag->getOption< Size >( "max_struct", 10 );
+	max_struct_ = tag->getOption< core::Size >( "max_struct", 10 );
 
 	ideal_ = tag->getOption< bool >( "ideal",  false );  // by default, assume structure is nonideal
 	filter_by_phipsi_ = tag->getOption< bool >( "filter_by_phipsi", false );
@@ -367,7 +367,7 @@ LoopHashDiversifier::parse_my_tag(
 	start_res_ = core::pose::get_resnum_string( tag, "start_", start_res_ );
 	stop_res_ = core::pose::get_resnum_string( tag, "stop_", "" );
 
-	window_size_ = tag->getOption< Size >( "window_size", 4 );
+	window_size_ = tag->getOption< core::Size >( "window_size", 4 );
 
 	if ( tag->hasOption("scorefxn_cen_cst") ) {
 		std::string scorefxn_name = tag->getOption<string>( "scorefxn_cen_cst" );
@@ -459,13 +459,13 @@ LoopHashDiversifier::max_intra_ss_bbrms( Real const max_intra_ss_bbrms ){
 
 //Number of iterations
 Size LoopHashDiversifier::num_iterations() const { return num_iterations_; }
-void LoopHashDiversifier::num_iterations( Size const num_iterations ){
+void LoopHashDiversifier::num_iterations( core::Size const num_iterations ){
 	num_iterations_ = num_iterations;
 }
 
 //Number of trys in each iteration
 Size LoopHashDiversifier::num_try_div() const { return num_try_div_; }
-void LoopHashDiversifier::num_try_div( Size const num_try_div ){
+void LoopHashDiversifier::num_try_div( core::Size const num_try_div ){
 	num_try_div_ = num_try_div;
 }
 
@@ -475,13 +475,13 @@ LoopHashDiversifier::cenfilter( protocols::filters::FilterOP cenfilter ) {
 }
 
 
-utility::vector1< Size >
+utility::vector1< core::Size >
 LoopHashDiversifier::loop_sizes() const{
 	return loop_sizes_;
 }
 
 void
-LoopHashDiversifier::add_loop_size( Size const loop_size ){
+LoopHashDiversifier::add_loop_size( core::Size const loop_size ){
 	loop_sizes_.push_back( loop_size );
 }
 

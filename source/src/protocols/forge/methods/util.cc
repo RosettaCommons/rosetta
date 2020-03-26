@@ -100,7 +100,7 @@ union_interval(
 	debug_assert( left <= uf.n_nodes() );
 	debug_assert( right <= uf.n_nodes() );
 
-	for ( Size i = left; i <= right; ++i ) {
+	for ( core::Size i = left; i <= right; ++i ) {
 		uf.ds_union( root, i );
 	}
 }
@@ -122,7 +122,7 @@ find_cutpoint(
 
 	FoldTree const & ft = pose.fold_tree();
 
-	for ( Size i = left; i <= right; ++i ) {
+	for ( core::Size i = left; i <= right; ++i ) {
 		if ( ft.is_cutpoint( i ) && i < pose.size() &&
 				!pose.residue( i ).is_lower_terminus() &&
 				!pose.residue( i ).is_upper_terminus()
@@ -149,10 +149,10 @@ count_cutpoints(
 	using core::Size;
 	using core::kinematics::FoldTree;
 
-	Size n = 0;
+	core::Size n = 0;
 	FoldTree const & ft = pose.fold_tree();
 
-	for ( Size i = left; i <= right; ++i ) {
+	for ( core::Size i = left; i <= right; ++i ) {
 		if ( ft.is_cutpoint( i ) && i < pose.size() &&
 				!pose.residue( i ).is_lower_terminus() &&
 				!pose.residue( i ).is_upper_terminus()
@@ -175,7 +175,7 @@ trans_omega(
 {
 	using core::Size;
 
-	for ( Size i = left; i <= right; ++i ) {
+	for ( core::Size i = left; i <= right; ++i ) {
 		pose.set_omega( i, 180.0 );
 	}
 }
@@ -189,7 +189,7 @@ interval_to_loop( protocols::forge::build::Interval const & interval ) {
 
 	// pick a cutpoint fully inside the loop so that there is always
 	// at least one moveable residue on each side
-	Size const cut = numeric::random::rg().random_range( interval.left, interval.right - 1 );
+	core::Size const cut = numeric::random::rg().random_range( interval.left, interval.right - 1 );
 
 	return Loop( interval.left, interval.right, cut );
 }
@@ -220,15 +220,15 @@ fold_tree_from_loops(
 	// Generate initial fold tree from pose.  If existing root is a virtual
 	// residue use it, otherwise use the existing root if non-moveable,
 	// otherwise use a random non-moveable residue.
-	Size root;
+	core::Size root;
 	if ( pose.residue( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
 		root = pose.fold_tree().root();
 	} else if ( !mm.get_bb( pose.fold_tree().root() ) ) {
 		root = pose.fold_tree().root();
 	} else { // need to pick a random non-moveable residue
 
-		utility::vector1< Size > fixed_bb;
-		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
+		utility::vector1< core::Size > fixed_bb;
+		for ( core::Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			if ( !mm.get_bb( i ) ) {
 				fixed_bb.push_back( i );
 			}
@@ -244,9 +244,9 @@ fold_tree_from_loops(
 	FoldTree ft = fold_tree_from_pose( pose, root, mm );
 
 	// track chain termini to distinguish internal vs terminal loops
-	std::set< Size > lower_termini;
-	std::set< Size > upper_termini;
-	for ( Size i = 1, ie = pose.conformation().num_chains(); i <= ie; ++i ) {
+	std::set< core::Size > lower_termini;
+	std::set< core::Size > upper_termini;
+	for ( core::Size i = 1, ie = pose.conformation().num_chains(); i <= ie; ++i ) {
 		lower_termini.insert( pose.conformation().chain_begin( i ) );
 		upper_termini.insert( pose.conformation().chain_end( i ) );
 	}
@@ -299,7 +299,7 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 
 	utility::vector1< bool > non_default_lines( the_task.total_residue(), false );
 	utility::vector1< std::string > default_tokens;
-	utility::vector1< Size > origin_lines_of_default_tokens;
+	utility::vector1< core::Size > origin_lines_of_default_tokens;
 
 	core::uint lineno = 0;
 	while ( resfile ) {
@@ -310,18 +310,18 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 		/*
 		// for debug
 		std::cout << "line->";
-		for ( Size i=1; i <= tokens.size(); i++ ) {
+		for ( core::Size i=1; i <= tokens.size(); i++ ) {
 		std::cout << tokens[ i ] << ", ";
 		}
 		std::cout << std::endl;
 		*/
 
-		Size ntokens( tokens.size() );
+		core::Size ntokens( tokens.size() );
 		if ( ntokens == 0 ) continue;
 		if ( comment_begin( tokens, 1 ) ) continue; // ignore the rest of this line
 
 		if ( have_read_start_token ) {
-			Size which_token = 1;
+			core::Size which_token = 1;
 
 			// expected format: <residue identifier> <chain identifier> <commands*>
 			//( the res/chain combo is used to get the pose's resid)
@@ -346,7 +346,7 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 			if ( chain == '_' ) chain = ' ';
 			++which_token;
 
-			Size resid(0);
+			core::Size resid(0);
 			if ( pose.pdb_info() ) {
 				resid = pose.pdb_info()->pdb2pose().find( chain, PDBnum, icode );
 			} else {
@@ -389,7 +389,7 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 			if ( get_token( 1, tokens) == "START" ) {
 				have_read_start_token = true;
 			} else {
-				for ( Size ii = 1; ii <= ntokens; ++ii ) {
+				for ( core::Size ii = 1; ii <= ntokens; ++ii ) {
 					if ( comment_begin( tokens, ii ) ) break; // ignore the rest of this line
 					default_tokens.push_back( get_token( ii, tokens ) );
 					origin_lines_of_default_tokens.push_back( lineno );
@@ -408,9 +408,9 @@ parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack
 
 	// now process default behaviors
 	/*
-	for ( Size ii = 1; ii <= non_default_lines.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= non_default_lines.size(); ++ii ) {
 	if ( ! non_default_lines[ ii ] ) {
-	Size which_token = 1, ntokens = default_tokens.size();
+	core::Size which_token = 1, ntokens = default_tokens.size();
 
 	while( which_token <= ntokens ){
 	if ( command_map.find( get_token( which_token, default_tokens ) ) == command_map.end() ) {

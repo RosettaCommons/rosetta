@@ -121,7 +121,7 @@ PerturbChiSidechainMover::make_chi_move(
 	ChiVector& new_chi
 ) {
 	new_chi.resize( old_chi.size() );
-	for ( Size i = 1; i <= old_chi.size(); i++ ) {
+	for ( core::Size i = 1; i <= old_chi.size(); i++ ) {
 		if ( !gaussian_ ) {
 			Real rand = numeric::random::rg().uniform();
 			new_chi[ i ] = basic::periodic_range( (( 2.0*rand-1.0 )*magnitude_ + old_chi[ i ]) , 360.0 );

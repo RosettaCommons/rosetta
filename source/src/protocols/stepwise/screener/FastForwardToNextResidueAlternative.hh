@@ -28,7 +28,7 @@ class FastForwardToNextResidueAlternative: public StepWiseScreener {
 public:
 
 	//constructor
-	FastForwardToNextResidueAlternative( Size const moving_res );
+	FastForwardToNextResidueAlternative( core::Size const moving_res );
 
 	//destructor
 	~FastForwardToNextResidueAlternative() override;
@@ -54,7 +54,7 @@ public:
 
 private:
 
-	Size const moving_res_;
+	core::Size const moving_res_;
 
 };
 

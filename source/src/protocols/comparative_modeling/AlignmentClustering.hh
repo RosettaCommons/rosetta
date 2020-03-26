@@ -19,7 +19,7 @@
 
 #include <core/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <map>
 
@@ -35,7 +35,7 @@
 namespace protocols {
 namespace comparative_modeling {
 
-class AlignmentCluster : public utility::pointer::ReferenceCount {
+class AlignmentCluster : public utility::VirtualBase {
 private:
 	utility::vector1<core::sequence::SequenceAlignment> alns;
 public:
@@ -49,7 +49,7 @@ public:
 	void merge(AlignmentClusterOP cluster_in);
 	core::Real overlap(AlignmentClusterOP cluster_in);
 };
-class AlignmentClustering : public utility::pointer::ReferenceCount {
+class AlignmentClustering : public utility::VirtualBase {
 public:
 	AlignmentClustering();
 	~AlignmentClustering() override;

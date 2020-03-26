@@ -88,9 +88,9 @@ void TrajectoryLogger::init(LoopsCOP loops, ScoreFunctionCOP scorefxn) {
 void TrajectoryLogger::record_move(
 	basic::Tracer & tr,
 	Pose & pose,
-	Size const i,
-	Size const j,
-	Size const k,
+	core::Size const i,
+	core::Size const j,
+	core::Size const k,
 	bool const proposed,
 	bool const accepted) const {
 
@@ -115,7 +115,7 @@ void TrajectoryLogger::record_move(
 void TrajectoryLogger::record_move(
 	basic::Tracer & tr,
 	Pose & pose,
-	Size const i,
+	core::Size const i,
 	bool const proposed,
 	bool const accepted) const {
 
@@ -248,7 +248,7 @@ Real TrajectoryLogger::calc_rmsd_to_native(Pose & pose) const {
 	debug_assert(have_native_pose_);
 
 	ObjexxFCL::FArray1D<bool> loop_residues (pose.size(), false);
-	for ( Size i = 1; i <= pose.size(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		loop_residues[i-1] = loops_->is_loop_residue(i);
 	}
 

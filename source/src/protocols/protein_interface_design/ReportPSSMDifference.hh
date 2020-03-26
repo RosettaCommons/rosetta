@@ -45,7 +45,7 @@ public:
 	{}
 	core::Real calculate( Pose const & pose1, Pose const & pose2, core::pack::task::PackerTaskCOP const & task );
 
-	std::map< Size, std::string > const & res_name1() const { return res_name1_; }
+	std::map< core::Size, std::string > const & res_name1() const { return res_name1_; }
 
 	utility::vector1< std::pair< core::chemical::AA, utility::vector1< Real > > > const & pssm_() const { return pssm_data_; }
 
@@ -53,7 +53,7 @@ public:
 
 	virtual ~ReportPSSMDifferences() = default;
 private:
-	std::map< Size, std::string > res_name1_;
+	std::map< core::Size, std::string > res_name1_;
 	utility::vector1< std::pair< core::chemical::AA, utility::vector1< Real > > > pssm_data_;
 };
 

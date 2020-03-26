@@ -37,7 +37,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 //#include <utility/fixedsizearray1.hh>
@@ -248,10 +248,10 @@ private:
 };
 
 
-class FindZnCoordinatingResidues : public utility::pointer::ReferenceCount
+class FindZnCoordinatingResidues : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~FindZnCoordinatingResidues() override;
 	FindZnCoordinatingResidues();
 	void fail_on_absent_coordinators( bool setting );
@@ -333,7 +333,7 @@ public:
 	static std::string keyname() { return "DisableZnCoordinationResiduesTaskOp"; }
 
 private:
-	utility::vector1< Size > resids_to_fix_;
+	utility::vector1< core::Size > resids_to_fix_;
 };
 
 class ZnCoordNumHbondCalculator : public core::pose::metrics::EnergyDependentCalculator {

@@ -131,7 +131,7 @@ SolutionList ClosureProblem::solve() const { // {{{1
 
 	SolutionList solutions(num_solutions);
 
-	for ( Size index = 1; index <= (Size) num_solutions; index++ ) {
+	for ( core::Size index = 1; index <= (core::Size) num_solutions; index++ ) {
 		solutions[index] = protocols::kinematic_closure::ClosureSolutionOP( new ClosureSolution(
 			this, index,
 			solution_torsions[index],
@@ -157,59 +157,59 @@ void ClosureProblem::restore(Pose & pose) const {
 // }}}1
 
 void ClosureProblem::perturb_phi( // {{{1
-	Size residue, Real value, AngleUnit unit) {
+	core::Size residue, Real value, AngleUnit unit) {
 
-	Size loop_residue = residue - first_residue() + 1;
+	core::Size loop_residue = residue - first_residue() + 1;
 	perturbed_torsions_[3 * loop_residue + 1] = radians(value, unit);
 }
 
 void ClosureProblem::perturb_psi( // {{{1
-	Size residue, Real value, AngleUnit unit) {
+	core::Size residue, Real value, AngleUnit unit) {
 
-	Size loop_residue = residue - first_residue() + 1;
+	core::Size loop_residue = residue - first_residue() + 1;
 	perturbed_torsions_[3 * loop_residue + 2] = radians(value, unit);
 }
 
 void ClosureProblem::perturb_omega( // {{{1
-	Size residue, Real value, AngleUnit unit) {
+	core::Size residue, Real value, AngleUnit unit) {
 
-	Size loop_residue = residue - first_residue() + 1;
+	core::Size loop_residue = residue - first_residue() + 1;
 	perturbed_torsions_[3 * loop_residue + 0] = radians(value, unit);
 }
 
 void ClosureProblem::perturb_n_ca_c( // {{{1
-	Size residue, Real value, AngleUnit unit) {
+	core::Size residue, Real value, AngleUnit unit) {
 
-	Size loop_residue = residue - first_residue() + 1;
+	core::Size loop_residue = residue - first_residue() + 1;
 	perturbed_angles_[3 * loop_residue + 2] = radians(value, unit);
 }
 
 void ClosureProblem::perturb_ca_c_n( // {{{1
-	Size residue, Real value, AngleUnit unit) {
+	core::Size residue, Real value, AngleUnit unit) {
 
-	Size loop_residue = residue - first_residue() + 1;
+	core::Size loop_residue = residue - first_residue() + 1;
 	perturbed_angles_[3 * loop_residue + 0] = radians(value, unit);
 }
 
 void ClosureProblem::perturb_c_n_ca( // {{{1
-	Size residue, Real value, AngleUnit unit) {
+	core::Size residue, Real value, AngleUnit unit) {
 
-	Size loop_residue = residue - first_residue() + 1;
+	core::Size loop_residue = residue - first_residue() + 1;
 	perturbed_angles_[3 * loop_residue + 1] = radians(value, unit);
 }
 
-void ClosureProblem::perturb_n_ca(Size residue, Real value) { // {{{1
-	Size loop_residue = residue - first_residue() + 1;
+void ClosureProblem::perturb_n_ca(core::Size residue, Real value) { // {{{1
+	core::Size loop_residue = residue - first_residue() + 1;
 	perturbed_lengths_[3 * loop_residue + 1] = value;
 }
 
-void ClosureProblem::perturb_ca_c(Size residue, Real value) { // {{{1
-	Size loop_residue = residue - first_residue() + 1;
+void ClosureProblem::perturb_ca_c(core::Size residue, Real value) { // {{{1
+	core::Size loop_residue = residue - first_residue() + 1;
 	perturbed_lengths_[3 * loop_residue + 2] = value;
 }
 
-void ClosureProblem::perturb_c_n(Size residue, Real value) { // {{{1
-	Size loop_residue = residue - first_residue() + 1;
+void ClosureProblem::perturb_c_n(core::Size residue, Real value) { // {{{1
+	core::Size loop_residue = residue - first_residue() + 1;
 	perturbed_lengths_[3 * loop_residue + 0] = value;
 }
 
@@ -265,58 +265,58 @@ Size ClosureProblem::num_atoms() const { // {{{1
 	return 3 * (num_residues() + 2);
 }
 
-Real ClosureProblem::phi(Size residue, AngleUnit unit) const { // {{{1
-	Size loop_residue = residue - first_residue() + 1;
+Real ClosureProblem::phi(core::Size residue, AngleUnit unit) const { // {{{1
+	core::Size loop_residue = residue - first_residue() + 1;
 	return from_radians(perturbed_torsions_[3 * loop_residue + 1], unit);
 }
 
-Real ClosureProblem::psi(Size residue, AngleUnit unit) const { // {{{1
-	Size loop_residue = residue - first_residue() + 1;
+Real ClosureProblem::psi(core::Size residue, AngleUnit unit) const { // {{{1
+	core::Size loop_residue = residue - first_residue() + 1;
 	return from_radians(perturbed_torsions_[3 * loop_residue + 2], unit);
 }
 
-Real ClosureProblem::omega(Size residue, AngleUnit unit) const { // {{{1
-	Size loop_residue = residue - first_residue() + 1;
+Real ClosureProblem::omega(core::Size residue, AngleUnit unit) const { // {{{1
+	core::Size loop_residue = residue - first_residue() + 1;
 	return from_radians(perturbed_torsions_[3 * loop_residue + 0], unit);
 }
 
-Real ClosureProblem::n_ca_c(Size residue, AngleUnit unit) const { // {{{1
-	Size loop_residue = residue - first_residue() + 1;
+Real ClosureProblem::n_ca_c(core::Size residue, AngleUnit unit) const { // {{{1
+	core::Size loop_residue = residue - first_residue() + 1;
 	return from_radians(perturbed_angles_[3 * loop_residue + 2], unit);
 }
 
-Real ClosureProblem::ca_c_n(Size residue, AngleUnit unit) const { // {{{1
-	Size loop_residue = residue - first_residue() + 1;
+Real ClosureProblem::ca_c_n(core::Size residue, AngleUnit unit) const { // {{{1
+	core::Size loop_residue = residue - first_residue() + 1;
 	return from_radians(perturbed_angles_[3 * loop_residue + 0], unit);
 }
 
-Real ClosureProblem::c_n_ca(Size residue, AngleUnit unit) const { // {{{1
-	Size loop_residue = residue - first_residue() + 1;
+Real ClosureProblem::c_n_ca(core::Size residue, AngleUnit unit) const { // {{{1
+	core::Size loop_residue = residue - first_residue() + 1;
 	return from_radians(perturbed_angles_[3 * loop_residue + 1], unit);
 }
 
-Real ClosureProblem::n_ca(Size residue) const { // {{{1
-	Size loop_residue = residue - first_residue() + 1;
+Real ClosureProblem::n_ca(core::Size residue) const { // {{{1
+	core::Size loop_residue = residue - first_residue() + 1;
 	return perturbed_lengths_[3 * loop_residue + 1];
 }
 
-Real ClosureProblem::ca_c(Size residue) const { // {{{1
-	Size loop_residue = residue - first_residue() + 1;
+Real ClosureProblem::ca_c(core::Size residue) const { // {{{1
+	core::Size loop_residue = residue - first_residue() + 1;
 	return perturbed_lengths_[3 * loop_residue + 2];
 }
 
-Real ClosureProblem::c_n(Size residue) const { // {{{1
-	Size loop_residue = residue - first_residue() + 1;
+Real ClosureProblem::c_n(core::Size residue) const { // {{{1
+	core::Size loop_residue = residue - first_residue() + 1;
 	return perturbed_lengths_[3 * loop_residue + 0];
 }
 
-bool ClosureProblem::is_pivot_residue(Size residue) const { // {{{1
+bool ClosureProblem::is_pivot_residue(core::Size residue) const { // {{{1
 	return residue == first_residue() ||
 		residue == cut_residue() ||
 		residue == last_residue();
 }
 
-bool ClosureProblem::is_nonpivot_residue(Size residue) const { // {{{1
+bool ClosureProblem::is_nonpivot_residue(core::Size residue) const { // {{{1
 	return ! is_pivot_residue(residue);
 }
 
@@ -327,7 +327,7 @@ Loop ClosureProblem::pivot_loop() const { // {{{1
 IndexList ClosureProblem::residues() const { // {{{1
 	IndexList residues;
 
-	for ( Size i = first_residue(); i <= last_residue(); i++ ) {
+	for ( core::Size i = first_residue(); i <= last_residue(); i++ ) {
 		residues.push_back(i);
 	}
 
@@ -347,7 +347,7 @@ IndexList ClosureProblem::pivot_residues() const { // {{{1
 IndexList ClosureProblem::nonpivot_residues() const { // {{{1
 	IndexList nonpivot_residues;
 
-	for ( Size i = first_residue() + 1; i < last_residue(); i++ ) {
+	for ( core::Size i = first_residue() + 1; i < last_residue(); i++ ) {
 		if ( i == cut_residue() ) continue;
 		nonpivot_residues.push_back(i);
 	}
@@ -358,8 +358,8 @@ IndexList ClosureProblem::nonpivot_residues() const { // {{{1
 IndexList ClosureProblem::pivot_atoms() const { // {{{1
 	IndexList pivot_atoms(3);
 
-	Size cut_offset = cut_residue() - first_residue();
-	Size end_offset = last_residue() - first_residue();
+	core::Size cut_offset = cut_residue() - first_residue();
+	core::Size end_offset = last_residue() - first_residue();
 
 	pivot_atoms[1] = 5;
 	pivot_atoms[2] = 5 + (3 * cut_offset);
@@ -411,9 +411,9 @@ void ClosureProblem::extract_cartesian_coordinates (
 	// into the given matrix structure.  The copying starts with the 4th position
 	// in the matrix, to prevent overwriting the work done above.
 
-	Size index = 4;
+	core::Size index = 4;
 
-	for ( Size i = first_residue(); i <= last_residue(); i++ ) {
+	for ( core::Size i = first_residue(); i <= last_residue(); i++ ) {
 		core::conformation::Residue const &residue = pose.residue(i);
 
 		// This inner loop assumes that atoms 1, 2, & 3 are the backbone atoms.
@@ -421,7 +421,7 @@ void ClosureProblem::extract_cartesian_coordinates (
 		// Metal ions only have one atom, so attempts to access the second and
 		// third ones will crash the program.
 
-		for ( Size j = 1; j <= 3; j++ ) {
+		for ( core::Size j = 1; j <= 3; j++ ) {
 			atom_xyzs[index][1] = residue.xyz(j).x();
 			atom_xyzs[index][2] = residue.xyz(j).y();
 			atom_xyzs[index][3] = residue.xyz(j).z();
@@ -444,15 +444,15 @@ void ClosureProblem::extract_internal_coordinates( // {{{1
 	bond_angles = ParameterList(num_atoms(), 0);
 	torsion_angles = ParameterList(num_atoms(), 0);
 
-	Size num_bond_lengths = num_atoms() - 1;
-	Size num_bond_angles = num_atoms() - 2;
-	Size num_torsion_angles = num_atoms() - 3;
+	core::Size num_bond_lengths = num_atoms() - 1;
+	core::Size num_bond_angles = num_atoms() - 2;
+	core::Size num_torsion_angles = num_atoms() - 3;
 
 	xyzVector<Real> vecs[4];
 
 	// Bond Lengths
 
-	for ( Size index = 1; index <= num_bond_lengths; index++ ) {
+	for ( core::Size index = 1; index <= num_bond_lengths; index++ ) {
 		vecs[0] << atom_xyzs[index + 0];
 		vecs[1] << atom_xyzs[index + 1];
 
@@ -461,7 +461,7 @@ void ClosureProblem::extract_internal_coordinates( // {{{1
 
 	// Bond Angles
 
-	for ( Size index = 1; index <= num_bond_angles; index++ ) {
+	for ( core::Size index = 1; index <= num_bond_angles; index++ ) {
 		vecs[0] << atom_xyzs[index + 0];
 		vecs[1] << atom_xyzs[index + 1];
 		vecs[2] << atom_xyzs[index + 2];
@@ -472,7 +472,7 @@ void ClosureProblem::extract_internal_coordinates( // {{{1
 
 	// Torsion Angles
 
-	for ( Size index = 1; index <= num_torsion_angles; index++ ) {
+	for ( core::Size index = 1; index <= num_torsion_angles; index++ ) {
 		vecs[0] << atom_xyzs[index + 0];
 		vecs[1] << atom_xyzs[index + 1];
 		vecs[2] << atom_xyzs[index + 2];
@@ -523,7 +523,7 @@ void ClosureProblem::apply_internal_coordinates( // {{{1
 	// Set the bond lengths in the solution pose.  Note that in bond_lengths,
 	// index x refers to the distance between atoms x and x+1.
 
-	for ( Size index = 5; index <= num_atoms() - 3; index++ ) {
+	for ( core::Size index = 5; index <= num_atoms() - 3; index++ ) {
 		ids[0] = id_from_index(index + 0);
 		ids[1] = id_from_index(index + 1);
 
@@ -534,7 +534,7 @@ void ClosureProblem::apply_internal_coordinates( // {{{1
 	// Set the bond angles in the solution pose.  Note that in bond_angles, index
 	// x refers to the angle between atoms x-1 and x+1.
 
-	for ( Size index = 5; index <= num_atoms() - 3; index++ ) {
+	for ( core::Size index = 5; index <= num_atoms() - 3; index++ ) {
 		ids[0] = id_from_index(index - 1);
 		ids[1] = id_from_index(index + 0);
 		ids[2] = id_from_index(index + 1);
@@ -547,7 +547,7 @@ void ClosureProblem::apply_internal_coordinates( // {{{1
 	// index x refers to the angle between atoms x-1 and x+2.
 
 	using numeric::conversions::degrees;
-	for ( Size index = 4, cur_res = first_residue(); cur_res <= last_residue(); ++cur_res ) {
+	for ( core::Size index = 4, cur_res = first_residue(); cur_res <= last_residue(); ++cur_res ) {
 		pose.set_phi(cur_res, degrees(torsion_angles[index++]));
 		pose.set_psi(cur_res, degrees(torsion_angles[index++]));
 		if ( cur_res < last_residue() ) pose.set_omega(cur_res, degrees(torsion_angles[index++]));
@@ -609,7 +609,7 @@ void ClosureProblem::frame_lower_pivot( // {{{1
 	// kinematic closure algorithm to consider.  The coordinates are added in the
 	// order: N, CA, C.
 
-	for ( Size i = 1; i <= 3; i++ ) {
+	for ( core::Size i = 1; i <= 3; i++ ) {
 		atom_xyzs[i][1] = frame_residue->xyz(i).x();
 		atom_xyzs[i][2] = frame_residue->xyz(i).y();
 		atom_xyzs[i][3] = frame_residue->xyz(i).z();
@@ -669,9 +669,9 @@ void ClosureProblem::frame_upper_pivot( // {{{1
 	// kinematic closure algorithm to consider.  The coordinates are added in the
 	// order: N, CA, C.
 
-	Size offset = atom_xyzs.size() - 3;
+	core::Size offset = atom_xyzs.size() - 3;
 
-	for ( Size i = 1; i <= 3; i++ ) {
+	for ( core::Size i = 1; i <= 3; i++ ) {
 		atom_xyzs[i + offset][1] = frame_residue->xyz(i).x();
 		atom_xyzs[i + offset][2] = frame_residue->xyz(i).y();
 		atom_xyzs[i + offset][3] = frame_residue->xyz(i).z();
@@ -687,7 +687,7 @@ bool ClosureProblem::ids_span_cut(AtomID left, AtomID right) const { // {{{1
 /// backbone nitrogen of the residue preceding the first pivot.  Thus the index
 /// of the first pivot is 5 (pivots must be alpha carbons).
 
-AtomID ClosureProblem::id_from_index(Size index) const {
+AtomID ClosureProblem::id_from_index(core::Size index) const {
 	return AtomID(
 		((index - 1) % 3) + 1,
 		((index - 1) / 3) + first_residue() - 1);

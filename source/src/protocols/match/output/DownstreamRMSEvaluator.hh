@@ -59,11 +59,11 @@ public:
 	set_downstream_pose( core::pose::PoseCOP dspose );
 
 	void
-	set_n_geometric_constraints( Size setting );
+	set_n_geometric_constraints( core::Size setting );
 
 	void
 	set_downstream_builder(
-		Size which_geom_cst,
+		core::Size which_geom_cst,
 		downstream::DownstreamBuilderCOP ds_builder
 	);
 
@@ -78,7 +78,7 @@ public:
 private:
 	core::pose::PoseCOP dspose_;
 
-	Size n_geometric_constraints_;
+	core::Size n_geometric_constraints_;
 
 	utility::vector1< AtomID > atoms_to_compare_;
 	utility::vector1< downstream::DownstreamBuilderCOP > ds_builders_;

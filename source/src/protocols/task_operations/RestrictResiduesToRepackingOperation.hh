@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   protocols/task_operations/RestrictResiduesToRepackingOperation.hh
-/// @brief  TaskOperation class that restricts a vector of Size defined residues to repacking
+/// @brief  TaskOperation class that restricts a vector of core::Size defined residues to repacking
 ///   when parsed, it takes in a string and splits by ","
 /// @author Eva-Maria Strauch (evas01@uw.edu)
 

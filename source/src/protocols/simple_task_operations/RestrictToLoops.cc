@@ -133,7 +133,7 @@ void RestrictToLoops::apply_helper(
 	}
 
 	// Update the packer task.
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( ! is_designable[ i ] ) {
 			turn_off_design.include_residue( i );
 		}

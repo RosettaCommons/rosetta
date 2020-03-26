@@ -29,9 +29,7 @@ namespace scoring {
 namespace trie {
 
 /// @brief Default constructor.
-TrieVsTrieCachedDataContainerBase::TrieVsTrieCachedDataContainerBase():
-	utility::pointer::ReferenceCount()
-{}
+TrieVsTrieCachedDataContainerBase::TrieVsTrieCachedDataContainerBase() = default;
 
 /// @brief Copy constructor.  Keep default unless deep copying is needed (and in that case,
 /// consider using DeepCopyOPs.)

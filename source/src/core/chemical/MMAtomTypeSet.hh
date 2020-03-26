@@ -22,14 +22,14 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
 
 #include <core/chemical/MMAtomType.fwd.hh>
 #include <utility/vector1.hh>
-
+#include <core/types.hh>
 
 #ifdef    SERIALIZATION
 #include <utility/serialization/serialization.hh>
@@ -47,7 +47,7 @@ namespace chemical {
 /// MMAtomType and the vector index is looked up by an atom_name string
 /// in a map.
 ///
-class MMAtomTypeSet : public utility::pointer::ReferenceCount {
+class MMAtomTypeSet : public utility::VirtualBase {
 
 public:
 	MMAtomTypeSet( std::string const & name = "" );
@@ -58,7 +58,7 @@ public:
 	name() const { return name_; }
 
 	/// @brief Number of MM atom types in the set
-	Size
+	core::Size
 	n_atomtypes() const
 	{
 		return atoms_.size();
@@ -90,7 +90,7 @@ public:
 
 	/// @brief Lookup an MMAtomType by 1-based indexing
 	MMAtomType const &
-	operator[] ( Size const index ) const
+	operator[] ( core::Size const index ) const
 	{
 		return *( atoms_[ index ] );
 	}

@@ -22,7 +22,7 @@
 //#include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
-//#include <utility/pointer/ReferenceCount.hh>
+//#include <utility/VirtualBase.hh>
 //#include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 

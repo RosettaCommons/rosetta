@@ -83,6 +83,8 @@ namespace simple_moves {
 
 static basic::Tracer TR("protocols.moves.ExplicitWaterMover");
 
+using core::Size;
+
 
 WaterRotsDB ExplicitWaterMover::water_rots_db_;
 
@@ -403,7 +405,7 @@ ExplicitWaterMover::setup_pack( core::pose::Pose & pose ) {
 	} else if ( task_ == nullptr ) {
 		TR << "No packer task defined!  Generating waters on fixed pose only!" << std::endl;
 		core::pack::task::PackerTaskOP task_new = core::pack::task::TaskFactory::create_packer_task( pose );
-		for ( Size i(1); i <= pose.total_residue(); ++i ) {
+		for ( core::Size i(1); i <= pose.total_residue(); ++i ) {
 			task_new->nonconst_residue_task(i).prevent_repacking();
 		}
 		task_ = task_new;
@@ -411,7 +413,7 @@ ExplicitWaterMover::setup_pack( core::pose::Pose & pose ) {
 	} else {
 		bool task_valid = true;
 		if ( task_->total_residue() != pose.total_residue() ) task_valid=false;
-		for ( Size i(1); i <= pose.total_residue(); ++i ) {
+		for ( core::Size i(1); i <= pose.total_residue(); ++i ) {
 			core::chemical::ResidueTypeCOP r = pose.residue_type(i).get_self_ptr();
 			if ( ! task_->residue_task(i).is_original_type( r ) ) task_valid=false;
 		}
@@ -548,7 +550,7 @@ ExplicitWaterMover::build_backbone_rotamer_clouds(
 				if ( datm_base == hatm ) {
 					datm_base = 0;
 					core::chemical::AtomIndices const & datm_nbrs( res_i.type().nbrs( datm ) );
-					for ( Size ii=1; ii<= datm_nbrs.size(); ++ii ) {
+					for ( core::Size ii=1; ii<= datm_nbrs.size(); ++ii ) {
 						if ( datm_nbrs[ii] == hatm ) continue;
 						else datm_base = datm_nbrs[ii];
 					}
@@ -634,7 +636,7 @@ ExplicitWaterMover::build_lkboverlap_rotamer_clouds(
 	//core::Real neighbrad = 10.0;
 	//core::Size neighbcountcut = 16;
 	//AtomHash allprotein( neighbrad+0.5 );
-	// for ( Size i=1; i <= pose.total_residue(); ++i ) {
+	// for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
 	//  if (!pose.residue(i).is_water()) {
 	//   allprotein.add_point( i, pose.residue(i).xyz( pose.residue(i).nbr_atom() ) );
 	//  }
@@ -645,7 +647,7 @@ ExplicitWaterMover::build_lkboverlap_rotamer_clouds(
 
 	core::Size nflex=0, nfixed=0, nrots=0;
 
-	for ( Size i=1; i <= task_->total_residue(); ++i ) {
+	for ( core::Size i=1; i <= task_->total_residue(); ++i ) {
 		// fd: this may be desirable (building, say, second shell waters)
 		//     but I think more often it is not
 		// maybe make it an option?
@@ -658,7 +660,7 @@ ExplicitWaterMover::build_lkboverlap_rotamer_clouds(
 			nflex++;
 			nrots+=res_rotset->num_rotamers();
 
-			for ( Size ii=1; ii <= res_rotset->num_rotamers(); ++ii ) {
+			for ( core::Size ii=1; ii <= res_rotset->num_rotamers(); ++ii ) {
 				core::conformation::Residue res_rot = *res_rotset->rotamer( ii );
 				core::scoring::lkball::LKB_ResidueInfoOP lkb_resinfo( new core::scoring::lkball::LKB_ResidueInfo( res_rot ) );
 
@@ -666,9 +668,9 @@ ExplicitWaterMover::build_lkboverlap_rotamer_clouds(
 				utility::vector1< core::Size > const & rsdiwater_offset = lkb_resinfo->water_offset_for_atom();
 				core::scoring::lkball::WaterCoords const & rsdiwaters = lkb_resinfo->waters();
 
-				for ( Size j=1; j <= rsdin_waters.size(); ++j ) {
-					for ( Size k=1; k <= rsdin_waters[j]; ++k ) {
-						Size k_wat_ind = k + rsdiwater_offset[j];
+				for ( core::Size j=1; j <= rsdin_waters.size(); ++j ) {
+					for ( core::Size k=1; k <= rsdin_waters[j]; ++k ) {
+						core::Size k_wat_ind = k + rsdiwater_offset[j];
 						// "exposure" check
 						//if ( allprotein.get_neighborcount( rsdiwaters[j][k], neighbrad ) > neighbcountcut) {
 						allwaters.add_point( i, rsdiwaters[k_wat_ind] );
@@ -687,8 +689,8 @@ ExplicitWaterMover::build_lkboverlap_rotamer_clouds(
 				utility::vector1< core::Size > const & rsdin_waters = lkb_resinfo->n_attached_waters();
 				utility::vector1< utility::fixedsizearray1< core::Vector, 4 > > const & rsdiwaters = lkb_resinfo->waters();
 
-				for ( Size j=1; j <= rsdiwaters.size(); ++j ) {
-					for ( Size k=1; k <= rsdin_waters[j]; ++k ) {
+				for ( core::Size j=1; j <= rsdiwaters.size(); ++j ) {
+					for ( core::Size k=1; k <= rsdin_waters[j]; ++k ) {
 						// "exposure" check
 						//if ( allprotein.get_neighborcount( rsdiwaters[j][k], neighbrad ) > neighbcountcut) {
 						allwaters.add_point( i, rsdiwaters[j][k] );
@@ -847,8 +849,8 @@ ExplicitWaterMover::update_packer_task(
 	core::pack::task::PackerTaskCOP & packer_task
 ) {
 	utility::vector1< bool > residues_allowed_to_be_packed;
-	Size nres = pose.total_residue();
-	for ( Size i=1; i <= nres; ++i ) {
+	core::Size nres = pose.total_residue();
+	for ( core::Size i=1; i <= nres; ++i ) {
 		std::string resname = pose.residue(i).name();
 		if ( resname == "PWAT" || resname == "PWAT_V" || resname == "HOH" || resname == "HOH_V" ) {
 			residues_allowed_to_be_packed.push_back(true);
@@ -865,7 +867,7 @@ ExplicitWaterMover::update_packer_task(
 	updated_task->initialize_from_command_line();
 
 	// copy extra_chi information from original task to new task
-	for ( Size i=1; i <= packer_task->total_residue(); ++i ) {
+	for ( core::Size i=1; i <= packer_task->total_residue(); ++i ) {
 		if ( i > nres ) continue; // protection in case of smaller pose than what entered the WaterDdg mover
 		updated_task->nonconst_residue_task( i ).or_ex1( packer_task->residue_task( i ).ex1() );
 		updated_task->nonconst_residue_task( i ).or_ex2( packer_task->residue_task( i ).ex2() );
@@ -902,9 +904,9 @@ ExplicitWaterMover::cluster_rotset( utility::vector1< core::pack::annealer::Poin
 	// pass 1: rough cluster assignment
 	//   - first member added to a cluster is starting point
 	//   - "soft" membership: points may belong to multiple clusters
-	for ( Size i = 2; i <= rotset.size(); ++i ) {
+	for ( core::Size i = 2; i <= rotset.size(); ++i ) {
 		bool unique = true;
-		for ( Size j = 1; j <= cluster_centers.size(); ++j ) {
+		for ( core::Size j = 1; j <= cluster_centers.size(); ++j ) {
 			core::Vector const &clust_cent = cluster_centers[j].xyz;
 			if ( (clust_cent - rotset[i].xyz).length_squared() <= clust_radius_*clust_radius_ ) {
 				new_cluster_centers[j].dwell += rotset[i].dwell;
@@ -919,7 +921,7 @@ ExplicitWaterMover::cluster_rotset( utility::vector1< core::pack::annealer::Poin
 			new_cluster_centers.push_back(center_i);
 		}
 	}
-	for ( Size j = 1; j <= cluster_centers.size(); ++j ) {
+	for ( core::Size j = 1; j <= cluster_centers.size(); ++j ) {
 		new_cluster_centers[j].xyz /= new_cluster_centers[j].dwell;
 	}
 
@@ -931,15 +933,15 @@ ExplicitWaterMover::cluster_rotset( utility::vector1< core::pack::annealer::Poin
 		done = true;
 		cluster_centers = new_cluster_centers;
 
-		for ( Size j = 1; j <= cluster_centers.size(); ++j ) {
+		for ( core::Size j = 1; j <= cluster_centers.size(); ++j ) {
 			new_cluster_centers[j].dwell = 0;
 			new_cluster_centers[j].xyz = 0;
 		}
 
-		for ( Size i = 1; i <= rotset.size(); ++i ) {
+		for ( core::Size i = 1; i <= rotset.size(); ++i ) {
 			core::Real mindist = 1e6;
 			core::Size minclust = 1;
-			for ( Size j = 1; j <= cluster_centers.size(); ++j ) {
+			for ( core::Size j = 1; j <= cluster_centers.size(); ++j ) {
 				core::Real dist2 = (cluster_centers[j].xyz - rotset[i].xyz).length_squared();
 				if ( dist2 < mindist ) {
 					mindist = dist2;
@@ -960,7 +962,7 @@ ExplicitWaterMover::cluster_rotset( utility::vector1< core::pack::annealer::Poin
 		}
 
 		// check if changed
-		for ( Size j = 1; j <= cluster_centers.size(); ++j ) {
+		for ( core::Size j = 1; j <= cluster_centers.size(); ++j ) {
 			if ( std::fabs( new_cluster_centers[j].dwell - cluster_centers[j].dwell ) > 1e-6 ) {
 				done = false;
 			}
@@ -975,7 +977,7 @@ ExplicitWaterMover::cluster_rotset( utility::vector1< core::pack::annealer::Poin
 			}
 		}
 
-		for ( Size j = 1; j <= new_cluster_centers.size(); ++j ) {
+		for ( core::Size j = 1; j <= new_cluster_centers.size(); ++j ) {
 			new_cluster_centers[j].xyz /= new_cluster_centers[j].dwell;
 		}
 	}
@@ -984,7 +986,7 @@ ExplicitWaterMover::cluster_rotset( utility::vector1< core::pack::annealer::Poin
 
 	// filter on clusters that don't meet cumulative dwell time cutoff
 	rotset.clear();
-	for ( Size i = 1; i <= cluster_centers.size(); ++i ) {
+	for ( core::Size i = 1; i <= cluster_centers.size(); ++i ) {
 		if ( cluster_centers[i].dwell >= clust_cutoff_ ) {
 			rotset.push_back(cluster_centers[i]);
 		}
@@ -1090,7 +1092,7 @@ ExplicitWaterMover::apply( Pose & pose ) {
 
 	// truncate rotamer list to those with dwell times within the defined cutoff
 	utility::vector1< core::pack::annealer::PointDwell > kept_rots;
-	for ( Size x = 1; x <= all_rot.size(); ++x ) {
+	for ( core::Size x = 1; x <= all_rot.size(); ++x ) {
 		if ( all_rot[x].dwell >= dwell_cutoff_ ) {
 			kept_rots.push_back(all_rot[x]);
 		}
@@ -1100,7 +1102,7 @@ ExplicitWaterMover::apply( Pose & pose ) {
 		[](core::pack::annealer::PointDwell const &a, core::pack::annealer::PointDwell const &b) {return a.dwell > b.dwell;});
 
 	TR.Debug << "Rotamers with dwell time > " << dwell_cutoff_ << " = " << kept_rots.size() << std::endl;
-	for ( Size x = 1; x <= kept_rots.size(); ++x ) {
+	for ( core::Size x = 1; x <= kept_rots.size(); ++x ) {
 		TR.Debug << "   " << x << " " << kept_rots[x].xyz.to_string() << " " << kept_rots[x].dwell << std::endl;
 	}
 
@@ -1120,7 +1122,7 @@ ExplicitWaterMover::apply( Pose & pose ) {
 
 	// all that work to go back to original pose
 	//   but now we add centroids as rotatable waters
-	for ( Size x = 1; x <= nkeep; ++x ) {
+	for ( core::Size x = 1; x <= nkeep; ++x ) {
 		TR.Debug << "  centroid #" << x << ": " << kept_rots[x].xyz.to_string() << " with cumulative dwell time of " << kept_rots[x].dwell << std::endl;
 
 		ResidueOP vrt_wat = ResidueFactory::create_residue( rsd_set->name_map("HOH_V") );

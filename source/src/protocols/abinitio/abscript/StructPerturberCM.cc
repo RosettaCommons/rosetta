@@ -95,13 +95,13 @@ void StructPerturberCM::apply( core::pose::Pose& pose ){
 		DofUnlock unlock( pose.conformation(), passport() );
 		core::kinematics::MoveMapOP mm = passport()->render_movemap();
 
-		for ( Size i = 1; i <= pose.size(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			for ( auto const & it : *passport() ) {
 				pose.set_dof( it, pose.dof( it) + ( numeric::random::rg().gaussian() * magnitude_ ) );
 			}
 		}
 	} else {
-		for ( Size i = 1; i <= pose.size(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			pose.set_phi( i, pose.phi( i ) + numeric::random::rg().gaussian() * magnitude_ );
 			pose.set_psi( i, pose.psi( i ) + numeric::random::rg().gaussian() * magnitude_ );
 		}

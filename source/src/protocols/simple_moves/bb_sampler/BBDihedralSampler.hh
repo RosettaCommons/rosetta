@@ -43,9 +43,9 @@ enum BBSampleType {
 ///
 ///    Feel free to implement more types. See the SugarBBSampler and RangedBBSampler as examples.
 ///
-///   Technically - with now storing the torsion_types as Size (due to waay too many in sugars) - we can now remove the 'BB' part of this whole thing.
+///   Technically - with now storing the torsion_types as core::Size (due to waay too many in sugars) - we can now remove the 'BB' part of this whole thing.
 ///
-class BBDihedralSamplerBase : public utility::pointer::ReferenceCount {
+class BBDihedralSamplerBase : public utility::VirtualBase {
 
 public:
 

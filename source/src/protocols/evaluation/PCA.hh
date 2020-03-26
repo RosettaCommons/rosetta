@@ -36,7 +36,7 @@
 #include <ObjexxFCL/FArray3D.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -46,14 +46,14 @@
 namespace protocols {
 namespace evaluation {
 
-class PCA : public utility::pointer::ReferenceCount {
+class PCA : public utility::VirtualBase {
 	typedef ObjexxFCL::FArray2D< core::Real > CoordVector;
 	typedef utility::vector1< core::id::AtomID > IndexVector;
 	// this code is stolen from GROMACS. Hence some unfamiliar definitions
 	typedef core::Real matrix[3][3];
 	typedef core::Real rvec[3];
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~PCA() override;
 	typedef utility::vector1< core::Real > ProjectionVector;
 
@@ -63,7 +63,7 @@ public:
 private:
 	void read_structure ( std::istream& data, core::pose::Pose const& pose, IndexVector& ind, CoordVector& x, std::string endtag );
 	void fill_coordinates( core::pose::Pose const& pose, IndexVector const& ind, CoordVector & x );
-	void reset_x( Size n, CoordVector& x, rvec trans );
+	void reset_x( core::Size n, CoordVector& x, rvec trans );
 	void jacobi(core::Real a[6][6],core::Real d[],core::Real v[6][6],int *nrot);
 	void calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R);
 	void rotate_vec(int natoms,rvec *x,matrix R);
@@ -74,7 +74,7 @@ private:
 	IndexVector ifit_;
 	IndexVector ipca_;
 	ObjexxFCL::FArray3D< core::Real > eigvec_;
-	Size nfit_, npca_, nvec_;
+	core::Size nfit_, npca_, nvec_;
 };
 
 }

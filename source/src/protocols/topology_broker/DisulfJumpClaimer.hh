@@ -42,7 +42,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/VirtualBase.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
 //C++ Headers

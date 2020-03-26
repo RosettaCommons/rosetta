@@ -32,7 +32,7 @@
 namespace protocols {
 namespace match {
 
-class LoopGrid : public utility::pointer::ReferenceCount
+class LoopGrid : public utility::VirtualBase
 {
 public:
 	typedef numeric::geometry::BoundingBox< core::Vector > BoundingBox;
@@ -60,11 +60,11 @@ public:
 	//the whole protein
 	bool occupied( Pose const &pose ) const;
 	//part of the protein, contain loop
-	bool occupied( Pose const &pose, Size start ) const;
+	bool occupied( Pose const &pose, core::Size start ) const;
 	//part of the loop
-	bool occupied( Pose const &pose, Size start, Size stop ) const;
+	bool occupied( Pose const &pose, core::Size start, core::Size stop ) const;
 	//residue
-	bool occupied( Residue const &res, Size nres ) const;
+	bool occupied( Residue const &res, core::Size nres ) const;
 
 	~LoopGrid() override;
 
@@ -73,7 +73,7 @@ private:
 	Real bin_width_; //bin width
 	Pose pose_; //bump scaffold, exclude the loop
 	Loop loop_; //loop
-	static const Size MAX_LENTH = 60; //normally, we can not deal with len>12, but i statistic to 60
+	static const core::Size MAX_LENTH = 60; //normally, we can not deal with len>12, but i statistic to 60
 	static const Real loop_length_cutoff[MAX_LENTH+1]; //length cutoff that contain 99% loop
 
 	/// @brief create the bump grid for specify res, the two centers are the roots of the loop
@@ -82,7 +82,7 @@ private:
 		Vector center1, Real r1, Vector center2, Real r2 );
 
 	/// @brief output the grid of ndx th res, just for debug
-	void write_grids_file(const char *fn, Size ndx);
+	void write_grids_file(const char *fn, core::Size ndx);
 
 	//CornerPoints overlap_boundary_2d_spheres( xyVector center1, Real r1, xyVector center2, Real r2 );
 };//class

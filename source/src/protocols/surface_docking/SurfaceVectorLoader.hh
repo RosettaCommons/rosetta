@@ -25,7 +25,7 @@
 #include <basic/resource_manager/types.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++ headers
@@ -45,7 +45,7 @@ public:
 	/// @brief Returns a SurfaceParametersOP which is constructed from the given input
 	/// stream (istream).
 
-	utility::pointer::ReferenceCountCOP
+	utility::VirtualBaseCOP
 	create_resource(
 		basic::resource_manager::ResourceManager & resource_manager,
 		utility::tag::TagCOP resource_tag,

@@ -96,7 +96,7 @@ public:
 	//  void read_RDC_file();
 
 	// do you need accessor for individual Tensors... do it like this
-	//Tensor tensor_of_segment( Size i );
+	//Tensor tensor_of_segment( core::Size i );
 
 	void show(std::ostream&) const;
 
@@ -106,8 +106,8 @@ private:
 	RDC_lines read_RDCs_from_cmdline() const;
 	void read_RDC_segment_file_from_cmdline();
 	void read_RDC_segment_file(std::string const& );
-	Size find_segid_from_RDC_line(core::scoring::RDC const& line) const;
-	Size find_effective_plane(core::scoring::RDC const& line) const;
+	core::Size find_segid_from_RDC_line(core::scoring::RDC const& line) const;
+	core::Size find_effective_plane(core::scoring::RDC const& line) const;
 
 private:
 	RDC_Segments rdc_segments_;

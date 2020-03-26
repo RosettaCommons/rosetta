@@ -15,7 +15,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <cmath>
 #include <numeric/NumericTraits.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -35,7 +35,7 @@ using namespace protocols::antibody;
 CDRCluster::CDRCluster(core::pose::Pose const & pose, CDRNameEnum const cdr, core::Size const cdr_length,
 	CDRClusterEnum const cluster, core::Size const start, core::Real const distance,
 	bool cis_trans_match /*true*/):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	cdr_(cdr),
 	cluster_(cluster),
 	distance_(distance),

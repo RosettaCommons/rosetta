@@ -166,11 +166,11 @@ ResiduePairJumpSetup::generate_jump_frags( JumpSample const& jumps, kinematics::
 	OrderedFragSetOP frags( new OrderedFragSet );
 	FrameList jump_geometries;
 	//runtime_assert( jumps.total_residue() == total_residue() );
-	ObjexxFCL::FArray2D< Size > const & in_jumps ( jumps.jumps() );
-	Size ct = 1;
+	ObjexxFCL::FArray2D< core::Size > const & in_jumps ( jumps.jumps() );
+	core::Size ct = 1;
 	for ( auto it=begin(), eit=end(); it!=eit; ++it, ct++ ) {
-		Size jump_number = 0;
-		for ( Size i = 1; i <= jumps.size(); ++i ) {
+		core::Size jump_number = 0;
+		for ( core::Size i = 1; i <= jumps.size(); ++i ) {
 			if  ( ( in_jumps( 1, i ) == it->jump_.start_ ) && ( in_jumps( 2, i ) == it->jump_.end_ ) ) {
 				jump_number = i;
 				break;
@@ -206,12 +206,12 @@ ResiduePairJumpSetup::create_jump_sample() const
 	ObjexxFCL::FArray2D<std::string> jump_atoms(2, jumps_.size(),"");
 
 	int ct = 1;
-	Size total_residue = total_residue_;
+	core::Size total_residue = total_residue_;
 	for ( auto it=begin(), eit=end(); it!=eit; ++it, ct++ ) {
 		jumps( 1, ct ) = it->jump_.start_;
 		jumps( 2, ct ) = it->jump_.end_;
-		Size const crs ( it->cut_reg_.start_ );
-		Size const cre ( it->cut_reg_.end_ );
+		core::Size const crs ( it->cut_reg_.start_ );
+		core::Size const cre ( it->cut_reg_.end_ );
 		if ( crs > total_residue ) total_residue = crs;
 		if ( cre > total_residue ) total_residue = cre;
 		if ( it->jump_.end_ > total_residue ) total_residue = it->jump_.end_;

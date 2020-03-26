@@ -24,7 +24,7 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
@@ -38,7 +38,7 @@ namespace sequence {
 
 
 /// @brief manager for abego
-class SSManager : public utility::pointer::ReferenceCount {
+class SSManager : public utility::VirtualBase {
 public: // typedef
 	typedef core::Size Size;
 	typedef std::string String;

@@ -72,7 +72,6 @@ static basic::Tracer TR( "protocols.protein_interface_design.design_utils" );
 using namespace core;
 
 using Real = core::Real;
-using Size = core::Size;
 using Pose = core::pose::Pose;
 
 // it is assumed that the pose is scored prior to calling this function

@@ -120,7 +120,7 @@ bool ShortLoopClosure::apply( Pose const& pose ) {
 	mc_->set_update_boinc(false); // Dont send poses to observer cos they're truncated and the energies are meaningless.
 	//copy loop segment into special purpose short_pose
 	Pose short_pose;
-	Size const short_size(  orig_loop_.size() + 2 );
+	core::Size const short_size(  orig_loop_.size() + 2 );
 	std::string sequence = pose.sequence();
 	core::pose::make_pose_from_sequence(
 		short_pose,

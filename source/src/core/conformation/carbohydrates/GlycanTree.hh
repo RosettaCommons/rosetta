@@ -20,7 +20,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <core/conformation/carbohydrates/GlycanNode.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
@@ -51,7 +51,7 @@ namespace carbohydrates {
 
 
 ///@brief Class to store info a glycan tree
-class GlycanTree : public utility::pointer::ReferenceCount {
+class GlycanTree : public utility::VirtualBase {
 
 public:
 

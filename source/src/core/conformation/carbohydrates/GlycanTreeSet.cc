@@ -60,20 +60,20 @@ namespace carbohydrates {
 
 
 GlycanTreeSet::GlycanTreeSet():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 
 }
 
 /// @brief Standard constructor
-GlycanTreeSet::GlycanTreeSet( conformation::Conformation const & conf ): utility::pointer::ReferenceCount()
+GlycanTreeSet::GlycanTreeSet( conformation::Conformation const & conf ): utility::VirtualBase()
 {
 	setup_glycan_trees( conf );
 }
 
 
 GlycanTreeSet::GlycanTreeSet( GlycanTreeSet const & src ):
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	glycan_tree_set_.clear();
 	for ( auto const & kv: src.glycan_tree_set_ ) {

@@ -64,23 +64,23 @@ namespace modeler {
 namespace protein {
 
 //////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< Size > const
-convert_to_working_res( utility::vector1< Size > const & res_vector,
-	utility::vector1< Size > const & working_res
+utility::vector1< core::Size > const
+convert_to_working_res( utility::vector1< core::Size > const & res_vector,
+	utility::vector1< core::Size > const & working_res
 ) {
 
 	if ( res_vector.size() == 0 ) return res_vector;
 
 	if ( working_res.size() == 0 ) return res_vector;
 
-	std::map< Size, Size > full_to_sub;
-	for ( Size i = 1; i <= working_res.size(); i++ ) {
+	std::map< core::Size, core::Size > full_to_sub;
+	for ( core::Size i = 1; i <= working_res.size(); i++ ) {
 		full_to_sub[ working_res[ i ] ] = i;
 	}
 
-	utility::vector1< Size > convert_res_vector;
+	utility::vector1< core::Size > convert_res_vector;
 
-	for ( Size i = 1; i <= res_vector.size(); i++ ) {
+	for ( core::Size i = 1; i <= res_vector.size(); i++ ) {
 		if ( full_to_sub.find( res_vector[ i ] ) == full_to_sub.end() ) continue;
 		convert_res_vector.push_back( full_to_sub[ res_vector[ i ] ] );
 	}
@@ -94,14 +94,14 @@ void
 output_pose_list( utility::vector1< core::pose::PoseOP > pose_list,
 	core::pose::PoseCOP native_pose,
 	std::string const & silent_file,
-	utility::vector1< Size > const & working_calc_rms_res,
+	utility::vector1< core::Size > const & working_calc_rms_res,
 	bool const overwrite /* = true */ ){
 
 	core::io::silent::SilentFileOptions opts;
 	core::io::silent::SilentFileDataOP sfd( new core::io::silent::SilentFileData( opts ) );
 	if ( overwrite ) core::io::silent::remove_silent_file_if_it_exists( silent_file );
 
-	for ( Size n = 1; n <= pose_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose_list.size(); n++ ) {
 		Pose & pose = *pose_list[ n ];
 		std::string const tag = "S_"+ ObjexxFCL::string_of( n-1 /* start with zero */);
 		output_silent_struct( pose, native_pose,
@@ -171,7 +171,7 @@ output_silent_struct( core::pose::Pose const & pose, core::pose::PoseCOP const &
 
 ///////////////////////////////////////////////////////////////////
 // sigh. bookkeeping to keep junctions inherited properly...
-Real get_pretend_psi_explicit( core::pose::Pose const & pose, Size const & res )
+Real get_pretend_psi_explicit( core::pose::Pose const & pose, core::Size const & res )
 {
 	// Psi may not be defined in pose properly because there's no "next residue".
 	// But... we kind of know phi anyway, because the carbonyl oxygen is in the
@@ -190,7 +190,7 @@ Real get_pretend_psi_explicit( core::pose::Pose const & pose, Size const & res )
 
 ///////////////////////////////////////////////////////////////////
 // sigh. bookkeeping to keep junctions inherited properly...
-Real get_pretend_phi_explicit( core::pose::Pose const & pose, Size const & res )
+Real get_pretend_phi_explicit( core::pose::Pose const & pose, core::Size const & res )
 {
 	// Psi may not be defined in pose properly because there's no "next residue".
 	// But... we kind of know phi anyway, because the carbonyl oxygen is in the
@@ -221,7 +221,7 @@ Real get_pretend_phi_explicit( core::pose::Pose const & pose, Size const & res )
 ///////////////////////////////////////////////////////////////////////////////////////
 bool
 is_close_chain_break(core::pose::Pose const & pose){
-	for ( Size seq_num = 1; seq_num < pose.size(); seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num < pose.size(); seq_num++ ) {
 		if ( is_cutpoint_closed( pose, seq_num ) ) return true;
 	}
 	return false;

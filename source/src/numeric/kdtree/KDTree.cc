@@ -22,7 +22,7 @@
 #include <numeric/kdtree/HyperRectangle.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace numeric {
 namespace kdtree {
@@ -46,7 +46,7 @@ KDTree::KDTree( utility::vector1< utility::vector1< numeric::Real > > & pts ) {
 
 KDTree::KDTree(
 	utility::vector1< utility::vector1< numeric::Real > > & pts,
-	utility::vector1< utility::pointer::ReferenceCountOP > & data
+	utility::vector1< utility::VirtualBaseOP > & data
 ) {
 	assert( pts.size() == data.size() );
 	utility::vector1< KDPointOP > kd_pts( make_points( pts, data ) );

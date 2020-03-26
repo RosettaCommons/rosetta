@@ -25,13 +25,13 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace match {
 namespace output {
 
-class MatchEvaluator : public utility::pointer::ReferenceCount
+class MatchEvaluator : public utility::VirtualBase
 {
 public:
 	typedef core::Real Real;

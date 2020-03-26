@@ -63,7 +63,7 @@ bool
 InvrotTreeNode::initialize_from_enzcst_io(
 	core::conformation::Residue const & target_residue,
 	EnzConstraintIOCOP enzcst_io,
-	Size invrot_geomcst,
+	core::Size invrot_geomcst,
 	core::pose::PoseCOP pose
 )
 {
@@ -86,9 +86,9 @@ InvrotTreeNode::initialize_from_enzcst_io(
 		//2. do clash check against all parent residues
 		//if all get removed, this means this is a dead end
 		//and we return false
-		Size num_rots_total( all_invrots.size() );
+		core::Size num_rots_total( all_invrots.size() );
 		this->remove_invrots_clashing_with_parent_res( all_invrots, enzcst_io->mcfi_list(invrot_geomcst)->mcfi(1)->is_covalent() );
-		Size num_invrots_clashing( num_rots_total - all_invrots.size() );
+		core::Size num_invrots_clashing( num_rots_total - all_invrots.size() );
 		tr << "When initializing a node for geomcst " <<invrot_geomcst << ", " << num_invrots_clashing << " of a total of " << num_rots_total << " inverse rotamers were found to clash with something." << std::endl;
 		if ( all_invrots.empty() ) { //size() == 0 ){
 			return false;
@@ -102,7 +102,7 @@ bool
 InvrotTreeNode::initialize_from_enzcst_io_and_invrots(
 	std::list< core::conformation::ResidueCOP > const & all_invrots,
 	EnzConstraintIOCOP enzcst_io,
-	Size invrot_geomcst,
+	core::Size invrot_geomcst,
 	core::pose::PoseCOP pose
 )
 {
@@ -113,9 +113,9 @@ InvrotTreeNode::initialize_from_enzcst_io_and_invrots(
 	//downstream_res in a later mcfi
 	//i.e. do we need to build inverse rotamers against
 	//the inverse rotamers of this node?
-	utility::vector1< Size > dependent_mcfi;
-	for ( Size i = geom_cst_ +1; i <= enzcst_io->num_mcfi_lists(); ++i ) {
-		std::pair< Size, Size> const & target_res( enzcst_io->target_downstream_res()[i] );
+	utility::vector1< core::Size > dependent_mcfi;
+	for ( core::Size i = geom_cst_ +1; i <= enzcst_io->num_mcfi_lists(); ++i ) {
+		std::pair< core::Size, core::Size> const & target_res( enzcst_io->target_downstream_res()[i] );
 		if ( (target_res.first == geom_cst_) && (target_res.second == 2 ) ) dependent_mcfi.push_back( i );
 	}
 
@@ -156,7 +156,7 @@ InvrotTreeNode::initialize_from_enzcst_io_and_invrots(
 			//of the dependent mcfi whether the two rotamers are redundant
 			core::conformation::Residue const & cur_rot(**invrot_it1), test_rot( **(invrots_and_next_nodes_[i].first.begin()) );
 			bool these_two_redundant(true);
-			for ( Size j = 1; j <= dependent_mcfi.size(); ++j ) {
+			for ( core::Size j = 1; j <= dependent_mcfi.size(); ++j ) {
 
 				if ( !enzcst_io->mcfi_list( dependent_mcfi[j])->mcfi(1)->enz_cst_template_res( enzcst_io->mcfi_list( dependent_mcfi[j])->mcfi(1)->downstream_res() )->residue_conformations_redundant( cur_rot, test_rot ) ) {
 					these_two_redundant = false;
@@ -186,7 +186,7 @@ InvrotTreeNode::initialize_from_enzcst_io_and_invrots(
 
 		core::conformation::Residue const & this_target( **(pair_it->first.begin()) );
 		bool all_initialization_successful(true);
-		for ( Size j = 1; j <= dependent_mcfi.size(); ++j ) {
+		for ( core::Size j = 1; j <= dependent_mcfi.size(); ++j ) {
 			InvrotTreeNodeOP child( new InvrotTreeNode( get_self_weak_ptr() ) );
 			pair_it->second.push_back( child );
 			if ( ! child->initialize_from_enzcst_io( this_target, enzcst_io, dependent_mcfi[j], pose ) ) {
@@ -202,7 +202,7 @@ InvrotTreeNode::initialize_from_enzcst_io_and_invrots(
 	//I guess we have to set the locations in this node in the child nodes
 
 	tr << "Node initialization for geomcst " << geom_cst_ << ". After child node initialization, " << invrots_and_next_nodes_.size() << " non-redundant sets of inverse rotamers exist." << std::endl;
-	for ( Size i =1; i <= invrots_and_next_nodes_.size(); ++i ) {
+	for ( core::Size i =1; i <= invrots_and_next_nodes_.size(); ++i ) {
 		tr << invrots_and_next_nodes_[i].first.size() << " inverse rotamers for non-redundant set " << i << std::endl;
 		for ( auto child_it( invrots_and_next_nodes_[i].second.begin() ); child_it != invrots_and_next_nodes_[i].second.end(); ++child_it ) {
 			(*child_it)->set_location_in_parent_node( i );
@@ -271,9 +271,9 @@ InvrotTreeNode::get_fixed_pt( core::pose::Pose const & pose ) const
 	std::string target_name3( (*parent_res[1].begin())->name3() );
 	core::Vector const & xyz_to_find( (*parent_res[1].begin())->nbr_atom_xyz() );
 
-	for ( Size i = 1; i<= pose.size(); ++i ) {
+	for ( core::Size i = 1; i<= pose.size(); ++i ) {
 		if ( pose.residue_type(i).name3() == target_name3 ) {
-			for ( Size j =1; j<= pose.residue(i).atoms().size(); ++j ) {
+			for ( core::Size j =1; j<= pose.residue(i).atoms().size(); ++j ) {
 				if ( xyz_to_find.distance_squared( pose.residue(i).atom(j).xyz() ) < 0.1 ) {
 					return core::id::AtomID( j, i );
 				}
@@ -298,8 +298,8 @@ InvrotTreeNode::all_target_residues( InvrotTreeNodeBaseCAP child_node ) const
 	//2. add the target residues from this node
 	//corresponding to the asking child node
 	bool child_found(false);
-	for ( Size i =1; i <= invrots_and_next_nodes_.size(); ++i ) {
-		for ( Size j =1; j <= invrots_and_next_nodes_[i].second.size(); ++j ) {
+	for ( core::Size i =1; i <= invrots_and_next_nodes_.size(); ++i ) {
+		for ( core::Size j =1; j <= invrots_and_next_nodes_[i].second.size(); ++j ) {
 			if ( utility::pointer::equal(child_node, invrots_and_next_nodes_[i].second[j]) ) {
 				to_return.push_back( invrots_and_next_nodes_[i].first );
 				child_found = true;
@@ -346,7 +346,7 @@ InvrotTreeNode::remove_invrots_clashing_with_parent_res(
 	for ( auto invrot_it( invrots.begin() ); invrot_it != invrots.end(); /*increment in loop*/ ) {
 		bool cur_invrot_clashes(false);
 
-		for ( Size i =1; i <= all_targets.size(); ++i ) {
+		for ( core::Size i =1; i <= all_targets.size(); ++i ) {
 
 			//safety: if for some reason this list is empty, we continue
 			if ( all_targets[i].size() == 0 ) continue;
@@ -360,19 +360,19 @@ InvrotTreeNode::remove_invrots_clashing_with_parent_res(
 				bool these_two_clash(false);
 				core::Real cutoff_sq = 2.5 * 2.5;
 				core::conformation::Residue const & res1(**invrot_it), res2(**target_rot_it);
-				for ( Size res1at = 1; res1at <= res1.nheavyatoms(); ++res1at ) {
+				for ( core::Size res1at = 1; res1at <= res1.nheavyatoms(); ++res1at ) {
 					if ( res1.type().is_virtual( res1at ) ) continue;
-					for ( Size res2at = 1; res2at <= res2.nheavyatoms(); ++res2at ) {
+					for ( core::Size res2at = 1; res2at <= res2.nheavyatoms(); ++res2at ) {
 						if ( res2.type().is_virtual( res2at ) ) continue;
 						if ( res1.atom( res1at ).xyz().distance_squared( res2.atom( res2at ).xyz() ) < cutoff_sq ) {
 							these_two_clash = true;
 
 							/* //debug
-							static Size clashrescount(0);
+							static core::Size clashrescount(0);
 							clashrescount++;
 							tr << "ACKACK clash num " << clashrescount << " between res1 atom " << res1.type().atom_name( res1at ) << " and res2 atom " << res2.type().atom_name( res2at ) << " which are sqrt(" << res1.atom( res1at ).xyz().distance_squared( res2.atom( res2at ).xyz() ) << " apart." << std::endl;
 							std::ofstream file_out( ("clashno_"+utility::to_string( clashrescount )+".pdb").c_str() );
-							Size atomcounter(0);
+							core::Size atomcounter(0);
 							core::io::pdb::dump_pdb_residue( res1, atomcounter, file_out );
 							core::io::pdb::dump_pdb_residue( res2, atomcounter, file_out );
 							file_out.close();
@@ -409,11 +409,11 @@ InvrotTreeNode::collect_all_inverse_rotamers(
 	runtime_assert( invrots_and_next_nodes_.size() != 0 );
 	//1. find all invrot collectors that have stuff from this node's parent
 	//and location in them
-	utility::vector1< Size > empty_parent_collectors;
-	utility::vector1< Size > filled_parent_collectors;
+	utility::vector1< core::Size > empty_parent_collectors;
+	utility::vector1< core::Size > filled_parent_collectors;
 
-	for ( Size i =1; i <= invrot_collectors.size(); ++i ) {
-		std::map< InvrotTreeNodeBaseCOP, Size > const & collector_map( invrot_collectors[i]->owner_nodes_and_locations() );
+	for ( core::Size i =1; i <= invrot_collectors.size(); ++i ) {
+		std::map< InvrotTreeNodeBaseCOP, core::Size > const & collector_map( invrot_collectors[i]->owner_nodes_and_locations() );
 		//safety
 		if ( collector_map.find( get_self_ptr() ) != collector_map.end() ) utility_exit_with_message("InvrotTreeNode being asked to fill a collector that it apparently already previously filled.");
 
@@ -429,32 +429,32 @@ InvrotTreeNode::collect_all_inverse_rotamers(
 	tr << "Collecting inverse rotamers for a node from geomcst " << geom_cst_ << ". " << empty_parent_collectors.size() << " empty parent collectors and " << filled_parent_collectors.size() << " filled parent collectors were found." << std::endl;
 
 	//1.b make sure we found at least one parent
-	Size total_parents( empty_parent_collectors.size() + filled_parent_collectors.size() );
+	core::Size total_parents( empty_parent_collectors.size() + filled_parent_collectors.size() );
 	runtime_assert( total_parents != 0);
 
 	//2a for every parent, we need to add rotamers for every definiton
-	utility::vector1< Size > collectors_to_fill( empty_parent_collectors );
-	for ( Size i =1; i <= filled_parent_collectors.size(); ++ i ) {
+	utility::vector1< core::Size > collectors_to_fill( empty_parent_collectors );
+	for ( core::Size i =1; i <= filled_parent_collectors.size(); ++ i ) {
 		invrot_collectors.push_back( invrot_collectors[ filled_parent_collectors[i] ]->clone() );
 		collectors_to_fill.push_back( invrot_collectors.size() );
 	}
 
 	//2b. fill 'er up
-	for ( Size i = 1; i <= collectors_to_fill.size(); ++i ) {
-		Size overflow_start( invrot_collectors.size());
-		for ( Size j = 2; j <= invrots_and_next_nodes_.size(); ++j ) {
+	for ( core::Size i = 1; i <= collectors_to_fill.size(); ++i ) {
+		core::Size overflow_start( invrot_collectors.size());
+		for ( core::Size j = 2; j <= invrots_and_next_nodes_.size(); ++j ) {
 			invrot_collectors.push_back( invrot_collectors[ collectors_to_fill[i] ]->clone() );
 		}
 
 		invrot_collectors[ collectors_to_fill[ i ] ]->set_invrots_for_listnum( geom_cst_, invrots_and_next_nodes_[1].first, get_self_ptr(), 1 );
 
-		for ( Size j =2; j <= invrots_and_next_nodes_.size(); ++j ) {
+		for ( core::Size j =2; j <= invrots_and_next_nodes_.size(); ++j ) {
 			invrot_collectors[ overflow_start + j - 1 ]->set_invrots_for_listnum( geom_cst_, invrots_and_next_nodes_[j].first, get_self_ptr(), j );
 		}
 	}
 
 	//3. call this shit on all daughter nodes
-	for ( Size i = 1; i <= invrots_and_next_nodes_.size(); ++i ) {
+	for ( core::Size i = 1; i <= invrots_and_next_nodes_.size(); ++i ) {
 		for ( auto const & child_it : invrots_and_next_nodes_[i].second ) {
 			child_it->collect_all_inverse_rotamers( invrot_collectors );
 		}

@@ -26,7 +26,7 @@ namespace sequence {
 
 
 /// @brief default constructor
-SSManager::SSManager() : utility::pointer::ReferenceCount()
+SSManager::SSManager() : utility::VirtualBase()
 {
 }
 // @brief Auto-generated virtual destructor

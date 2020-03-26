@@ -145,7 +145,7 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 
 
 	//Print out what we've got in msr_ as a check
-	for ( Size ii(1); ii <=msr_.size(); ii++ ) {
+	for ( core::Size ii(1); ii <=msr_.size(); ii++ ) {
 		TR << "msr_" << ii << " " << msr_[ii]->get_seqpos() << " " << msr_[ii]->get_ligand_atom_xyz() << " " << msr_[ii]->get_ligand_atom_name() << std::endl;
 	}
 
@@ -156,7 +156,7 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 	atom_ids.push_back( zinc_id );
 	pre_atom_ids.push_back( zinc_id );  // not needed, just to keep numbering consistent
 
-	for ( Size ii(2); ii <=msr_.size(); ii++ ) { //start with 2 because zinc is 1
+	for ( core::Size ii(2); ii <=msr_.size(); ii++ ) { //start with 2 because zinc is 1
 
 		atom_ids.push_back( msr_[ii]->get_ligand_atom_id() );
 		TR << "Ligand " << ii << " atom_id: " << msr_[ii]->get_ligand_atom_id() << std::endl;
@@ -321,7 +321,7 @@ AddZincSiteConstraints::evaluate_constraints( core::pose::Pose const & pose ) {
 	Real tetrahedral_total_score( 0.0 );
 
 	//Distances
-	for ( Size i(1); i <= distance_constraints_.size(); ++i ) {
+	for ( core::Size i(1); i <= distance_constraints_.size(); ++i ) {
 		AtomID lig_atom_id( distance_constraints_[i]->atom(1) );
 		//AtomID zinc_id    ( distance_constraints_[i]->atom(2) );
 
@@ -336,7 +336,7 @@ AddZincSiteConstraints::evaluate_constraints( core::pose::Pose const & pose ) {
 	}
 
 	//Angles
-	for ( Size i(1); i <= angle_constraints_.size(); ++i ) {
+	for ( core::Size i(1); i <= angle_constraints_.size(); ++i ) {
 		AtomID pre_lig_atom_id( angle_constraints_[i]->atom(1) );
 		AtomID lig_atom_id    ( angle_constraints_[i]->atom(2) );
 		AtomID zinc_id        ( angle_constraints_[i]->atom(3) );
@@ -359,7 +359,7 @@ AddZincSiteConstraints::evaluate_constraints( core::pose::Pose const & pose ) {
 	}
 
 	//Dihedrals
-	for ( Size i(1); i <= dihedral_constraints_.size(); ++i ) {
+	for ( core::Size i(1); i <= dihedral_constraints_.size(); ++i ) {
 
 		AtomID pre_pre_lig_atom_id( dihedral_constraints_[i]->atom(1) );
 		AtomID pre_lig_atom_id    ( dihedral_constraints_[i]->atom(2) );
@@ -387,7 +387,7 @@ AddZincSiteConstraints::evaluate_constraints( core::pose::Pose const & pose ) {
 
 
 	//Tetrahedral
-	for ( Size i(1); i <= tetrahedral_constraints_.size(); ++i ) {
+	for ( core::Size i(1); i <= tetrahedral_constraints_.size(); ++i ) {
 
 		AtomID lig_atom_id_1( tetrahedral_constraints_[i]->atom(1) );
 		AtomID       zinc_id( tetrahedral_constraints_[i]->atom(2) );
@@ -434,7 +434,7 @@ AddZincSiteConstraints::view_constraints_in_pymol( core::pose::Pose const & pose
 	}
 
 	//Distances
-	for ( Size i(1); i <= distance_constraints_.size(); ++i ) {
+	for ( core::Size i(1); i <= distance_constraints_.size(); ++i ) {
 		AtomID lig_atom_id( distance_constraints_[i]->atom(1) );
 		AtomID zinc_id    ( distance_constraints_[i]->atom(2) );
 		std::stringstream ss;
@@ -445,7 +445,7 @@ AddZincSiteConstraints::view_constraints_in_pymol( core::pose::Pose const & pose
 	}
 
 	//Angles
-	for ( Size i(1); i <= angle_constraints_.size(); ++i ) {
+	for ( core::Size i(1); i <= angle_constraints_.size(); ++i ) {
 		AtomID pre_lig_atom_id( angle_constraints_[i]->atom(1) );
 		AtomID lig_atom_id    ( angle_constraints_[i]->atom(2) );
 		AtomID zinc_id        ( angle_constraints_[i]->atom(3) );
@@ -459,7 +459,7 @@ AddZincSiteConstraints::view_constraints_in_pymol( core::pose::Pose const & pose
 	}
 
 	//Dihedrals
-	for ( Size i(1); i <= dihedral_constraints_.size(); ++i ) {
+	for ( core::Size i(1); i <= dihedral_constraints_.size(); ++i ) {
 		AtomID pre_pre_lig_atom_id( dihedral_constraints_[i]->atom(1) );
 		AtomID pre_lig_atom_id    ( dihedral_constraints_[i]->atom(2) );
 		AtomID lig_atom_id        ( dihedral_constraints_[i]->atom(3) );
@@ -475,7 +475,7 @@ AddZincSiteConstraints::view_constraints_in_pymol( core::pose::Pose const & pose
 
 
 	//Tetrahedral
-	for ( Size i(1); i <= tetrahedral_constraints_.size(); ++i ) {
+	for ( core::Size i(1); i <= tetrahedral_constraints_.size(); ++i ) {
 		AtomID lig_atom_id_1( tetrahedral_constraints_[i]->atom(1) );
 		AtomID       zinc_id( tetrahedral_constraints_[i]->atom(2) );
 		AtomID lig_atom_id_2( tetrahedral_constraints_[i]->atom(3) );
@@ -509,7 +509,7 @@ AddZincSiteConstraints::output_constraints_file( core::pose::Pose const & pose )
 	TR << "Zinc constraints will be written to a file called " << zinc_cst_file_name << std::endl;
 
 	//Distances
-	for ( Size i(1); i <= distance_constraints_.size(); ++i ) {
+	for ( core::Size i(1); i <= distance_constraints_.size(); ++i ) {
 		AtomID lig_atom_id( distance_constraints_[i]->atom(1) );
 		AtomID zinc_id    ( distance_constraints_[i]->atom(2) );
 		const auto & dist_func = dynamic_cast< const scoring::func::HarmonicFunc& >( distance_constraints_[i]->get_func() );
@@ -521,7 +521,7 @@ AddZincSiteConstraints::output_constraints_file( core::pose::Pose const & pose )
 	}
 
 	//Angles
-	for ( Size i(1); i <= angle_constraints_.size(); ++i ) {
+	for ( core::Size i(1); i <= angle_constraints_.size(); ++i ) {
 		AtomID pre_lig_atom_id( angle_constraints_[i]->atom(1) );
 		AtomID lig_atom_id    ( angle_constraints_[i]->atom(2) );
 		AtomID zinc_id        ( angle_constraints_[i]->atom(3) );
@@ -535,7 +535,7 @@ AddZincSiteConstraints::output_constraints_file( core::pose::Pose const & pose )
 	}
 
 	//Dihedrals
-	for ( Size i(1); i <= dihedral_constraints_.size(); ++i ) {
+	for ( core::Size i(1); i <= dihedral_constraints_.size(); ++i ) {
 		AtomID pre_pre_lig_atom_id( dihedral_constraints_[i]->atom(1) );
 		AtomID pre_lig_atom_id    ( dihedral_constraints_[i]->atom(2) );
 		AtomID lig_atom_id        ( dihedral_constraints_[i]->atom(3) );
@@ -551,7 +551,7 @@ AddZincSiteConstraints::output_constraints_file( core::pose::Pose const & pose )
 
 
 	//Tetrahedral
-	for ( Size i(1); i <= tetrahedral_constraints_.size(); ++i ) {
+	for ( core::Size i(1); i <= tetrahedral_constraints_.size(); ++i ) {
 		AtomID lig_atom_id_1( tetrahedral_constraints_[i]->atom(1) );
 		AtomID       zinc_id( tetrahedral_constraints_[i]->atom(2) );
 		AtomID lig_atom_id_2( tetrahedral_constraints_[i]->atom(3) );

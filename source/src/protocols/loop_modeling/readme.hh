@@ -34,7 +34,7 @@
 /// @code
 /// LoopProtocolOP protocol = new LoopProtocol;
 ///
-/// Size repack_period = 20;
+/// core::Size repack_period = 20;
 /// if (option[OptionKeys::loops::repack_period].user()) {
 ///   repack_period = option[OptionKeys::loops::repack_period]();
 /// }
@@ -44,14 +44,14 @@
 /// protocol->add_mover(new RotamerTrialsRefiner);
 /// protocol->add_mover(new FullatomMinimizationRefiner);
 ///
-/// Size outer_cycles = 3;
-/// Size inner_cycles = 10 * loops->loop_size();
+/// core::Size outer_cycles = 3;
+/// core::Size inner_cycles = 10 * loops->loop_size();
 ///
 /// if (option[OptionKeys::loops::outer_cycles].user()) {
 ///   outer_cycles = option[ OptionKeys::loops::outer_cycles ]();
 /// }
 /// if (option[OptionKeys::loops::max_inner_cycles].user()) {
-///   Size max_cycles = option[OptionKeys::loops::max_inner_cycles]();
+///   core::Size max_cycles = option[OptionKeys::loops::max_inner_cycles]();
 ///   inner_cycles = std::max(inner_cycles, max_cycles);
 /// }
 /// if (option[OptionKeys::loops::fast]) {

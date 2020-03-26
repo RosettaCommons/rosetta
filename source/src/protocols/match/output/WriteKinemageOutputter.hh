@@ -27,7 +27,7 @@
 #include <protocols/match/output/MatchScoreWriter.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1_bool.hh>
 
@@ -53,13 +53,13 @@ public:
 	set_coordinate_cacher( UpstreamHitCacherOP );
 
 	void
-	set_n_geomcst( Size n_geomcst );
+	set_n_geomcst( core::Size n_geomcst );
 
 	void
 	set_kin_writer( WriteUpstreamHitKinemageOP us_writer );
 
 	void
-	set_downstream_writer( Size geomcst_id, DownstreamCoordinateKinemageWriterOP ds_writer );
+	set_downstream_writer( core::Size geomcst_id, DownstreamCoordinateKinemageWriterOP ds_writer );
 
 private:
 

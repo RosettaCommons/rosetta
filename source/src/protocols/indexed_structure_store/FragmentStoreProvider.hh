@@ -17,7 +17,7 @@
 // Utility Headers
 #include <platform/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <protocols/indexed_structure_store/FragmentStoreProvider.fwd.hh>
 #include <protocols/indexed_structure_store/FragmentStore.hh>
@@ -30,7 +30,7 @@ namespace protocols
 namespace indexed_structure_store
 {
 
-class FragmentStoreProvider : public utility::pointer::ReferenceCount
+class FragmentStoreProvider : public utility::VirtualBase
 {
 public:
 

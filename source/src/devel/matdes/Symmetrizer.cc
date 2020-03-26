@@ -121,10 +121,10 @@ Symmetrizer::apply(Pose & pose) {
 	TR << "mode: " << sampling_mode_ << std::endl;
 	core::pose::symmetry::make_symmetric_pose(pose, symm_file_);
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
-	std::map<Size,SymDof> dofs = sym_info->get_dofs();
+	std::map<core::Size,SymDof> dofs = sym_info->get_dofs();
 	int sym_jump = 0;
 	for ( auto & dof : dofs ) {
-		Size jump_num = dof.first;
+		core::Size jump_num = dof.first;
 		if ( sym_jump == 0 ) {
 			sym_jump = jump_num;
 		} else {

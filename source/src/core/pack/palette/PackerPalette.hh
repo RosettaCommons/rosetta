@@ -41,7 +41,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/thread/mutable_cache.hh>
@@ -94,7 +94,7 @@ enum SpecialPackerPaletteBehaviour {
 
 /// @brief A small utility class which allows you to do a map-like addition of name/ResidueType pairs,
 /// but keeps things in the added order.
-class BaseTypeList : public utility::pointer::ReferenceCount
+class BaseTypeList : public utility::VirtualBase
 {
 private:
 
@@ -118,7 +118,7 @@ public:
 /// @brief  The PackerPalette class gives instructions to the packer about
 /// the set of ResidueTypes and VariantTypes to use by default, in the
 /// absence of any TaskOperations that prune the list.
-class PackerPalette : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< PackerPalette >
+class PackerPalette : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< PackerPalette >
 {
 
 public:

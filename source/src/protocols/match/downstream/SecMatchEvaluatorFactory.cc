@@ -40,7 +40,7 @@ SecMatchEvaluatorFactory::create_SecMatchResiduePairEvaluatorOP(
 	std::string SecMatchStr,
 	core::pose::Pose const & upstream_pose
 ){
-	Size found = SecMatchStr.find("SCORING_SECMATCH");
+	core::Size found = SecMatchStr.find("SCORING_SECMATCH");
 	if ( found!=std::string::npos ) {
 		ScoringSecMatchRPEOP ssmOP( new ScoringSecMatchRPE ( SecMatchStr, upstream_pose ) );
 		return ssmOP;

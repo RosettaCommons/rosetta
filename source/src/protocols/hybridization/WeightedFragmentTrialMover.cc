@@ -40,9 +40,9 @@ WeightedFragmentTrialMover::WeightedFragmentTrialMover(
 void WeightedFragmentTrialMover::update_sampler_weights( utility::vector1< core::Real > const residue_weights )
 {
 	total_frames_ = 0;
-	for ( Size i_frag_set = 1; i_frag_set<=frag_libs_.size(); ++i_frag_set ) {
+	for ( core::Size i_frag_set = 1; i_frag_set<=frag_libs_.size(); ++i_frag_set ) {
 		utility::vector1< core::Real > frame_weights(frag_libs_[i_frag_set]->nr_frames(), 0.0);
-		for ( Size i_frame = 1; i_frame <= frag_libs_[i_frag_set]->nr_frames(); ++i_frame ) {
+		for ( core::Size i_frame = 1; i_frame <= frag_libs_[i_frag_set]->nr_frames(); ++i_frame ) {
 			core::fragment::ConstFrameIterator frame_it = frag_libs_[i_frag_set]->begin(); // first frame of the fragment library
 			advance(frame_it, i_frame-1);  // point frame_it to the i_frame of the library
 			core::Size seqpos_start = (*frame_it)->start();  // find starting and ending residue seqpos of the inserted fragment
@@ -50,12 +50,12 @@ void WeightedFragmentTrialMover::update_sampler_weights( utility::vector1< core:
 
 			// disallow insertion across anchors
 			bool cross_anchor = false;
-			for ( Size i_anchor = 1; i_anchor <= anchor_reses_.size() && !cross_anchor; ++i_anchor ) {
+			for ( core::Size i_anchor = 1; i_anchor <= anchor_reses_.size() && !cross_anchor; ++i_anchor ) {
 				if ( anchor_reses_[i_anchor]>=seqpos_start && anchor_reses_[i_anchor]<=seqpos_end ) cross_anchor = true;
 			}
 			if ( cross_anchor ) continue;
 
-			for ( Size seqpos = seqpos_start; seqpos <= seqpos_end; ++seqpos ) { // accumulate the weights of all residues in the fragment
+			for ( core::Size seqpos = seqpos_start; seqpos <= seqpos_end; ++seqpos ) { // accumulate the weights of all residues in the fragment
 				if ( seqpos < 1 || seqpos > residue_weights.size() ) {
 					std::cerr << "seqpos = " << seqpos << " not in [1," << residue_weights.size() << "]" << std::endl;
 					utility_exit_with_message("FATAL. Fragment library size doesn't match with the size of protein.");
@@ -71,15 +71,15 @@ void WeightedFragmentTrialMover::update_sampler_weights( utility::vector1< core:
 void WeightedFragmentTrialMover::apply(core::pose::Pose & pose)
 {
 	// pick fragment set
-	Size i_frag_set = numeric::random::rg().random_range(1, frag_libs_.size());
+	core::Size i_frag_set = numeric::random::rg().random_range(1, frag_libs_.size());
 	// pick insertion position
-	Size insert_pos = weighted_sampler_[i_frag_set].random_sample(numeric::random::rg());
+	core::Size insert_pos = weighted_sampler_[i_frag_set].random_sample(numeric::random::rg());
 
 	core::fragment::ConstFrameIterator frame_it = frag_libs_[i_frag_set]->begin();
 	advance(frame_it, insert_pos-1);
 	core::Size nr_frags = frame_it->nr_frags();
 	if ( nr_frags_ && nr_frags_ < nr_frags ) nr_frags = nr_frags_;
-	Size i_frag = numeric::random::rg().random_range(1, nr_frags);
+	core::Size i_frag = numeric::random::rg().random_range(1, nr_frags);
 
 	frame_it->apply( i_frag, pose );
 }

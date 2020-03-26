@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_import_pose_libraries_ChunkSet_HH
 #define INCLUDED_core_import_pose_libraries_ChunkSet_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/import_pose/libraries/ChunkSet.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
@@ -34,7 +34,7 @@ namespace core {
 namespace import_pose {
 namespace libraries {
 
-class ChunkSet : public utility::pointer::ReferenceCount  {
+class ChunkSet : public utility::VirtualBase  {
 public:
 
 	//constructor!

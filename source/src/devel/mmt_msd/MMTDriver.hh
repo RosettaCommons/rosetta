@@ -37,7 +37,7 @@
 #include <protocols/pack_daemon/MultistateFitnessFunction.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/FileContentsMap.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -91,7 +91,7 @@ public:
 	core::Size curr_n_running_threads_;
 };
 
-class OneGenerationJobInfo : public utility::pointer::ReferenceCount
+class OneGenerationJobInfo : public utility::VirtualBase
 {
 public:
 	typedef std::pair< core::Size, core::Size > SeqAndStateInds;
@@ -134,7 +134,7 @@ private:
 	std::set< JobID > work_outstanding_;
 };
 
-class JobsForSequence : public utility::pointer::ReferenceCount
+class JobsForSequence : public utility::VirtualBase
 {
 public:
 	JobsForSequence( core::Size n_states, core::Size n_npd_properties );
@@ -158,7 +158,7 @@ private:
 	utility::vector1< core::Real > npd_properties_;
 };
 
-class MMTDriver : public utility::pointer::ReferenceCount
+class MMTDriver : public utility::VirtualBase
 {
 public:
 	typedef utility::vector1< JobsForSequenceOP > JobsForGeneration;

@@ -46,7 +46,7 @@ public:
 
 	AlignmentEnergy(
 		core::scoring::methods::EnergyMethodOptions const & options //core::pose::PoseOP const & align_pose,
-		//utility::vector1< Size > const & moving_res_list
+		//utility::vector1< core::Size > const & moving_res_list
 	);
 
 	// copy constructor (not needed unless you need deep copies)
@@ -93,7 +93,7 @@ public:
 private:
 
 	core::pose::PoseOP align_pose_;
-	utility::vector1< Size > moving_res_list_;
+	utility::vector1< core::Size > moving_res_list_;
 	core::scoring::func::FuncOP func_;
 	protocols::stepwise::modeler::align::StepWisePoseAlignerOP pose_aligner_;
 	core::Real rmsd_screen_;

@@ -231,7 +231,7 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 		}
 
 		pack::task::PackerTaskOP to_Ala_task( pack::task::TaskFactory::create_packer_task( pose ));
-		for ( Size i=1; i<=pose.size(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( potential_hbond_partners.find( i ) == potential_hbond_partners.end() ) {
 				to_Ala_task->nonconst_residue_task(i).prevent_repacking();
 				continue;

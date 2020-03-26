@@ -124,7 +124,7 @@ void SingResCnlCrea::zero_occ_bb_h(Pose& ps, core::Size seqpos) {
 	core::conformation::Residue const & rsd( ps.residue(seqpos) );
 
 	// we never need to print backbone atoms or hydrogens
-	for ( Size i=1; i <= rsd.natoms(); ++i ) {
+	for ( core::Size i=1; i <= rsd.natoms(); ++i ) {
 		ps.pdb_info()->occupancy( seqpos, i, 1 ); // to overwrite (rare) zero occ.
 		if ( rsd.atom_is_hydrogen(i) || rsd.atom_is_backbone(i) ) {
 			ps.pdb_info()->occupancy( seqpos, i, 0 );
@@ -165,8 +165,8 @@ void SingResCnlCrea::zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 
 	// I-->V: suppress everything other than CD1
 	if ( ( starting_aa == 'I' ) && ( target_aa == 'V' ) ) {
-		Size atom_inx_to_keep = rsd.atom_index("CD1");
-		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+		core::Size atom_inx_to_keep = rsd.atom_index("CD1");
+		for ( core::Size i=1; i<= rsd.natoms(); ++i ) {
 			if ( i != atom_inx_to_keep ) {
 				pose.pdb_info()->occupancy( seqpos, i, 0. );
 			}
@@ -176,8 +176,8 @@ void SingResCnlCrea::zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 
 	// T-->S: suppress everything other than CG2
 	if ( ( starting_aa == 'T' ) && ( target_aa == 'S' ) ) {
-		Size atom_inx_to_keep = rsd.atom_index("CG2");
-		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+		core::Size atom_inx_to_keep = rsd.atom_index("CG2");
+		for ( core::Size i=1; i<= rsd.natoms(); ++i ) {
 			if ( i != atom_inx_to_keep ) {
 				pose.pdb_info()->occupancy( seqpos, i, 0. );
 			}
@@ -187,8 +187,8 @@ void SingResCnlCrea::zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 
 	// Y-->F: suppress everything other than OH
 	if ( ( starting_aa == 'Y' ) && ( target_aa == 'F' ) ) {
-		Size atom_inx_to_keep = rsd.atom_index("OH");
-		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+		core::Size atom_inx_to_keep = rsd.atom_index("OH");
+		for ( core::Size i=1; i<= rsd.natoms(); ++i ) {
 			if ( i != atom_inx_to_keep ) {
 				pose.pdb_info()->occupancy( seqpos, i, 0. );
 			}
@@ -198,11 +198,11 @@ void SingResCnlCrea::zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 
 	// Y-->L: suppress everything other than OH, CE1, CE2, CZ
 	if ( ( starting_aa == 'Y' ) && ( target_aa == 'L' ) ) {
-		Size inx1 = rsd.atom_index("OH");
-		Size inx2 = rsd.atom_index("CE1");
-		Size inx3 = rsd.atom_index("CE2");
-		Size inx4 = rsd.atom_index("CZ");
-		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+		core::Size inx1 = rsd.atom_index("OH");
+		core::Size inx2 = rsd.atom_index("CE1");
+		core::Size inx3 = rsd.atom_index("CE2");
+		core::Size inx4 = rsd.atom_index("CZ");
+		for ( core::Size i=1; i<= rsd.natoms(); ++i ) {
 			if ( (i != inx1) && (i != inx2) && (i != inx3) && (i !=inx4) ) {
 				pose.pdb_info()->occupancy( seqpos, i, 0. );
 			}
@@ -212,10 +212,10 @@ void SingResCnlCrea::zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 
 	// F-->L: suppress everything other than CE1, CE2, CZ
 	if ( ( starting_aa == 'F' ) && ( target_aa == 'L' ) ) {
-		Size inx1 = rsd.atom_index("CE1");
-		Size inx2 = rsd.atom_index("CE2");
-		Size inx3 = rsd.atom_index("CZ");
-		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+		core::Size inx1 = rsd.atom_index("CE1");
+		core::Size inx2 = rsd.atom_index("CE2");
+		core::Size inx3 = rsd.atom_index("CZ");
+		for ( core::Size i=1; i<= rsd.natoms(); ++i ) {
 			if ( (i != inx1) && (i != inx2) && (i != inx3) ) {
 				pose.pdb_info()->occupancy( seqpos, i, 0. );
 			}
@@ -225,13 +225,13 @@ void SingResCnlCrea::zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 
 	// W-->L: suppress everything other than NE1, CE2, CE3, CZ2, CZ3, CH2
 	if ( ( starting_aa == 'W' ) && ( target_aa == 'L' ) ) {
-		Size inx1 = rsd.atom_index("NE1");
-		Size inx2 = rsd.atom_index("CE2");
-		Size inx3 = rsd.atom_index("CE3");
-		Size inx4 = rsd.atom_index("CZ2");
-		Size inx5 = rsd.atom_index("CZ3");
-		Size inx6 = rsd.atom_index("CH2");
-		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+		core::Size inx1 = rsd.atom_index("NE1");
+		core::Size inx2 = rsd.atom_index("CE2");
+		core::Size inx3 = rsd.atom_index("CE3");
+		core::Size inx4 = rsd.atom_index("CZ2");
+		core::Size inx5 = rsd.atom_index("CZ3");
+		core::Size inx6 = rsd.atom_index("CH2");
+		for ( core::Size i=1; i<= rsd.natoms(); ++i ) {
 			if ( (i != inx1) && (i != inx2) && (i != inx3) && (i != inx4) && (i != inx5) && (i != inx6) ) {
 				pose.pdb_info()->occupancy( seqpos, i, 0. );
 			}

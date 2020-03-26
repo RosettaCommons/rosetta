@@ -139,10 +139,10 @@ VDW_GridEnergy::finalize_total_energy(
 	// Count up the number of the clashes the aligned pose (nonconst_pose) has with the grid
 	numeric::xyzVector< core::Real > ref_xyz = vdw_screen_bin->get_ref_xyz(); // This will be 0 if it wasn't explicitly set
 	// Loop through all the residues in the pose
-	for ( Size nres = 1; nres <= pose.size(); ++nres ) {
+	for ( core::Size nres = 1; nres <= pose.size(); ++nres ) {
 		core::conformation::Residue const & rsd = pose.residue( nres );
 		// Loop through all the atoms in the residue
-		for ( Size i = 1; i <= rsd.natoms(); ++i ) {
+		for ( core::Size i = 1; i <= rsd.natoms(); ++i ) {
 			if ( rsd.is_virtual( i ) ) continue;
 			Atom_Bin const atom_pos_bin = get_atom_bin( rsd.xyz( i ), ref_xyz, vdw_screen_bin->get_atom_bin_size(), vdw_screen_bin->get_bin_offset() );
 

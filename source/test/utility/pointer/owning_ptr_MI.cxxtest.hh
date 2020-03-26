@@ -30,7 +30,7 @@
 namespace owning_ptr_MI_test {
 
 class Atom :
-	virtual public utility::pointer::ReferenceCountMI
+	virtual public utility::VirtualBaseMI
 {
 public:
 
@@ -52,7 +52,7 @@ int Atom::nAtoms = 0;
 
 class Atom_ :
 	public Atom,
-	public utility::pointer::ReferenceCountMI_
+	public utility::VirtualBaseMI_
 {
 public:
 
@@ -80,7 +80,7 @@ using namespace owning_ptr_MI_test;
 
 class OwningPtrMITests : public CxxTest::TestSuite {
 
-	public:
+public:
 
 	/// @brief Explicit owning pointer
 	void test_shared_ptr_MI_explicit() {

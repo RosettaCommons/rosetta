@@ -640,7 +640,7 @@ protected:
 // worker node goes to serialize it, serialization should
 // fail. The JobDistributor should gracefully exit when this
 // happens.
-class Unserializable : public utility::pointer::ReferenceCount
+class Unserializable : public utility::VirtualBase
 {
 public:
 	Unserializable() : myint_( 5 ) {}
@@ -656,7 +656,7 @@ private:
 
 typedef utility::pointer::shared_ptr< Unserializable > UnserializableOP;
 
-class Undeserializable : public utility::pointer::ReferenceCount
+class Undeserializable : public utility::VirtualBase
 {
 public:
 	Undeserializable() : myint_( 5 ) {}

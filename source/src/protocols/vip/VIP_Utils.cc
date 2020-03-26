@@ -94,8 +94,8 @@ core::Real output_packstat( core::pose::Pose & pose ) {
 	for( core::Size i = 1; i <= pd.centers.size(); ++i ) {
 	// std::cout << i << " ";
 	PackingScoreResDataCOP dat( compute_surrounding_sasa( pd.centers[i], pd.spheres, result, opts ) );
-	for( Size i =1; i <= dat->nrad(); ++i ) {
-	for( Size j =1; j <= dat->npr(); ++j ) {
+	for( core::Size i =1; i <= dat->nrad(); ++i ) {
+	for( core::Size j =1; j <= dat->npr(); ++j ) {
 	}}
 	}}
 	*/

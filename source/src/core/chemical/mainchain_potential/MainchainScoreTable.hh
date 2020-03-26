@@ -23,7 +23,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/deep_copy.hh>
@@ -42,7 +42,7 @@ namespace core {
 namespace chemical {
 namespace mainchain_potential {
 
-class MainchainScoreTable : public utility::pointer::ReferenceCount
+class MainchainScoreTable : public utility::VirtualBase
 {
 
 public:

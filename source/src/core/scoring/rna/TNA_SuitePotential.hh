@@ -25,7 +25,7 @@
 #include <core/id/TorsionID.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 
@@ -37,7 +37,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-class TNA_SuitePotential : public utility::pointer::ReferenceCount {
+class TNA_SuitePotential : public utility::VirtualBase {
 
 public:
 

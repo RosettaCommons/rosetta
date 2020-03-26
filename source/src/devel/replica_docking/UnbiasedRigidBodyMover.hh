@@ -27,7 +27,7 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 namespace devel {

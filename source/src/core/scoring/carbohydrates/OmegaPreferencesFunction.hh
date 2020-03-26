@@ -24,7 +24,7 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <map>
 
 namespace core {
@@ -43,7 +43,7 @@ struct OmegaPreferenceSamplingData {
 
 
 /// @details  TBD
-class OmegaPreferencesFunction : public utility::pointer::ReferenceCount {
+class OmegaPreferencesFunction : public utility::VirtualBase {
 
 public:  // Standard Methods //////////////////////////////////////////////////
 

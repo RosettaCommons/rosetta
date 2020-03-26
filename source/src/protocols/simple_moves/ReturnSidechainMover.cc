@@ -48,6 +48,8 @@ static basic::Tracer TR( "protocols.simple_moves.ReturnSidechainMover" );
 namespace protocols {
 namespace simple_moves {
 
+using core::Size;
+
 /// @details this code was copied from protocols/loops/loops_main.cc:187-204, revision 21282
 void
 ReturnSidechainMover::apply( core::pose::Pose & pose )
@@ -67,7 +69,7 @@ ReturnSidechainMover::apply( core::pose::Pose & pose )
 		utility_exit_with_message("ReturnSidechainMover used with poses of different length; aborting");
 	}
 
-	for ( Size i=start_res_, j=1; i<= end_res_; ++i, ++j ) {
+	for ( core::Size i=start_res_, j=1; i<= end_res_; ++i, ++j ) {
 		bool copy_this_residue( false );
 
 		if ( copy_all_chi_ || allow_chi_copy_[i] ) {

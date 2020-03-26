@@ -17,7 +17,7 @@
 
 #include <core/io/Remarks.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <iostream>
 #include <string>
@@ -57,7 +57,7 @@ public:
 
 };
 
-class Remarks : public std::vector< RemarkInfo >, public utility::pointer::ReferenceCount
+class Remarks : public std::vector< RemarkInfo >, public utility::VirtualBase
 {
 #ifdef    SERIALIZATION
 public:

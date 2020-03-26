@@ -99,21 +99,21 @@ void FromScratchMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 //////////////////////////////////////////////////////////////////////
 void
 FromScratchMover::apply( core::pose::Pose & pose,
-	utility::vector1< Size > const & residues_to_instantiate_in_full_model_numbering ) const
+	utility::vector1< core::Size > const & residues_to_instantiate_in_full_model_numbering ) const
 {
 	using namespace core::chemical;
 	using namespace core::pose;
 	using namespace core::pose::full_model_info;
 
-	utility::vector1< Size > resnum = residues_to_instantiate_in_full_model_numbering;
+	utility::vector1< core::Size > resnum = residues_to_instantiate_in_full_model_numbering;
 
 	// only do dinucleotides for now.
 	runtime_assert( resnum.size() == 2 );
 
 	std::string new_sequence;
 	std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
-	std::map< Size, std::string > const & nc_res_map = const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map();
-	for ( Size const res : resnum ) {
+	std::map< core::Size, std::string > const & nc_res_map = const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map();
+	for ( core::Size const res : resnum ) {
 		char newrestype = full_sequence[ res - 1 ];
 		modeler::rna::choose_random_if_unspecified_nucleotide( newrestype );
 		new_sequence += newrestype;
@@ -142,7 +142,7 @@ FromScratchMover::apply( core::pose::Pose & pose,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-FromScratchMover::update_full_model_info_and_switch_focus_to_new_pose( pose::Pose & pose, pose::Pose & new_pose, utility::vector1< Size > const & resnum ) const {
+FromScratchMover::update_full_model_info_and_switch_focus_to_new_pose( pose::Pose & pose, pose::Pose & new_pose, utility::vector1< core::Size > const & resnum ) const {
 	// prepare full_model_info for this new pose
 	FullModelInfoOP new_full_model_info = nonconst_full_model_info( pose ).clone_info();
 	FullModelInfoOP full_model_info = nonconst_full_model_info( pose ).clone_info();
@@ -164,7 +164,7 @@ FromScratchMover::update_full_model_info_and_switch_focus_to_new_pose( pose::Pos
 
 //////////////////////////////////////////////////////////////////////////////
 void
-FromScratchMover::sample_by_swa( pose::Pose & pose, Size const sample_res ) const {
+FromScratchMover::sample_by_swa( pose::Pose & pose, core::Size const sample_res ) const {
 	if ( stepwise_modeler_ == nullptr ) return;
 	stepwise_modeler_->set_moving_res_and_reset( sample_res );
 	stepwise_modeler_->set_working_minimize_res( get_moving_res_from_full_model_info( pose ) );

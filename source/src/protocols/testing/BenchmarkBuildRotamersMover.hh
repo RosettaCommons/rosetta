@@ -61,7 +61,7 @@ public:
 	///
 	/// ScoreFunction  scorefxn   /function to minimize while changine rotamers
 	/// PackerTask     task       /object specifying what to design/pack
-	/// Size (int)     nloop      /number of rounds to run packing
+	/// core::Size (int)     nloop      /number of rounds to run packing
 	BenchmarkBuildRotamersMover(
 		core::scoring::ScoreFunctionCOP scorefxn,
 		core::pack::task::PackerTaskCOP task = nullptr,

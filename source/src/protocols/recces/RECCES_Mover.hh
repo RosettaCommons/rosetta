@@ -60,8 +60,8 @@ private:
 	run_sampler( core::pose::Pose & pose );
 
 	void
-	increment_accepts( Size & n_accept_total,
-		std::map< std::string, Size > & num_accepts,
+	increment_accepts( core::Size & n_accept_total,
+		std::map< std::string, core::Size > & num_accepts,
 		sampler::MC_LoopCOP loop_sampler ) const;
 
 	void
@@ -80,7 +80,7 @@ private:
 
 
 	void
-	more_dump_stuff( core::pose::Pose const & pose, Size const & n, core::Real const & temperature ) const;
+	more_dump_stuff( core::pose::Pose const & pose, core::Size const & n, core::Real const & temperature ) const;
 
 	void
 	final_dump_stuff( core::pose::Pose & pose,

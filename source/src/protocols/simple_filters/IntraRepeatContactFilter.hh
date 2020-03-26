@@ -45,6 +45,7 @@ public:
 	typedef protocols::filters::Filter Super;
 	typedef protocols::filters::Filter Filter;
 	typedef protocols::filters::FilterOP FilterOP;
+	typedef core::Size Size;
 	typedef core::Real Real;
 	typedef core::pose::Pose Pose;
 	typedef std::string String;
@@ -135,8 +136,8 @@ public:// virtual main operation
 private:
 
 	Real filtered_value_;
-	Size numbRepeats_;
-	Size sequenceSep_;
+	core::Size numbRepeats_;
+	core::Size sequenceSep_;
 	Real distThresh_;
 };
 

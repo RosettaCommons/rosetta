@@ -41,8 +41,8 @@ namespace relax {
 class RepeatProteinRelax : public RelaxProtocolBase {
 public:
 	RepeatProteinRelax();
-	Size get_midpoint_longest_loop(core::pose::Pose const & pose,Size const repeat_length);
-	void setup_repeat_symminfo(Size const repeatlen, Size const nrepeat, Size const base_repeat, bool const with_jumping, core::conformation::symmetry::SymmetryInfo & symminfo);
+	core::Size get_midpoint_longest_loop(core::pose::Pose const & pose,core::Size const repeat_length);
+	void setup_repeat_symminfo(core::Size const repeatlen, core::Size const nrepeat, core::Size const base_repeat, bool const with_jumping, core::conformation::symmetry::SymmetryInfo & symminfo);
 	void setup_repeat_pose(core::pose::Pose & pose);
 	void setup_repeat_pose_jumping(core::pose::Pose & pose);
 	void minimize_pose(core::pose::Pose & pose);
@@ -57,10 +57,10 @@ public:
 	static std::string mover_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 private:
-	Size numb_repeats_;
+	core::Size numb_repeats_;
 	bool minimize_;
 	bool loop_cutpoint_mode_;
-	Size relax_iterations_;
+	core::Size relax_iterations_;
 	bool cartesian_;
 	bool ramp_down_constraints_;
 	bool remove_symm_;

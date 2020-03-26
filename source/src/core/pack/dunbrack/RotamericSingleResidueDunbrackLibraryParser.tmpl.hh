@@ -28,7 +28,7 @@
 // Utility headers
 #include <utility/fixedsizearray1.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 
 namespace core {

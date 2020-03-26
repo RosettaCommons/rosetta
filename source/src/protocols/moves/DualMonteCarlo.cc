@@ -246,7 +246,7 @@ DualMonteCarlo::MC() const
 // /// @detail return number of trials since last reset
 // core::Size
 // DualMonteCarlo::total_trials() const {
-//  Size ntrials( 0 );
+//  core::Size ntrials( 0 );
 //  for ( std::map< std::string, int >::const_iterator
 //      it=trial_counter.begin(); it != trial_counter.end(); ++it ) {
 //   ntrials += it->second;

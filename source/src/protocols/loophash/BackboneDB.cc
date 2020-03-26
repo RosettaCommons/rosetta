@@ -69,11 +69,11 @@ BackboneSegment::apply_to_pose( core::pose::Pose &pose, core::Size ir, bool cut 
 		while ( !pose.residue_type(nres).is_polymer() ) nres--;
 
 		// get current cutpoints; don't try to connect these
-		utility::vector1< Size > cuts_in = pose.fold_tree().cutpoints();
+		utility::vector1< core::Size > cuts_in = pose.fold_tree().cutpoints();
 		std::sort( cuts_in.begin(), cuts_in.end() );
 
 		// bail if (ir,jr) crosses a cut
-		for ( Size i=1; i<=cuts_in.size(); ++i ) {
+		for ( core::Size i=1; i<=cuts_in.size(); ++i ) {
 			if ( cuts_in[i]<=jr && cuts_in[i]>=ir ) {
 				TR.Error << "residue range crosses cut    IR: " << ir << "  JR: " << jr << "  CUT: " << cuts_in[i] << std::endl;
 				return;
@@ -89,8 +89,8 @@ BackboneSegment::apply_to_pose( core::pose::Pose &pose, core::Size ir, bool cut 
 		//fpd handle multiple chains/chainbreaks
 		FoldTree f;
 		core::Size last_cut=0, jump_num=2;
-		Size cutpoint= jr-1;
-		for ( Size i=1; i<=cuts_in.size(); ++i ) {
+		core::Size cutpoint= jr-1;
+		for ( core::Size i=1; i<=cuts_in.size(); ++i ) {
 			if ( cuts_in[i] >= nres ) break;
 			if ( cutpoint > last_cut && cutpoint < cuts_in[i] ) {
 				f.add_edge( last_cut+1, ir, Edge::PEPTIDE );

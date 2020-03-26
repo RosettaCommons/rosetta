@@ -19,7 +19,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Protocol headers
 #include <core/id/AtomID.hh>
@@ -35,7 +35,7 @@ namespace jacobian {
 /// DoFs that can be organized as three sets of two torsion angles with intersecting axes.
 /// @author teunhoevenaars (teunhoevenaars@gmail.com)
 
-class ModuleType1 : public utility::pointer::ReferenceCount {
+class ModuleType1 : public utility::VirtualBase {
 
 public: // TYPEDEFS
 

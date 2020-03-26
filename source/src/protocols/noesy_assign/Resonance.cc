@@ -32,7 +32,7 @@
 // #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 // #include <utility/vector1.fwd.hh>
-// #include <utility/pointer/ReferenceCount.hh>
+// #include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -103,7 +103,7 @@ void Resonance::combine( std::deque< ResonanceOP >& last_resonances, bool drain=
 	//is this a HB1, HG1 or a 1HG2 type of name ?
 	bool single_char ( name().size() == 3 );
 	std::string combine_name;
-	Size str_cmp_length( 1 );
+	core::Size str_cmp_length( 1 );
 
 	std::string pseudo_letter( "Q" ); //default, single methyl group, proton
 	if ( name().substr(0,1)=="C" ) pseudo_letter = "C"; //not default, we don't have a proton
@@ -126,7 +126,7 @@ void Resonance::combine( std::deque< ResonanceOP >& last_resonances, bool drain=
 	}
 
 	//now figure out, how many atoms can be combined...
-	Size limit( drain ? 0 : 1 ); //should we go to the very end, or leave last atom behind...
+	core::Size limit( drain ? 0 : 1 ); //should we go to the very end, or leave last atom behind...
 	while ( last_resonances.size() > limit ) {//check others
 		if ( name().substr( 1, str_cmp_length ) == last_resonances.front()->name().substr( 1, str_cmp_length ) ) {
 			intensity_sum+=last_resonances.front()->intensity();

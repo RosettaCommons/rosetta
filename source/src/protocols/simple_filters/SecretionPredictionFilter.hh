@@ -59,7 +59,7 @@ public:
 
 	struct mutt
 	{
-		Size resnum; //residue number
+		core::Size resnum; //residue number
 		std::string aa; //amino acid it's mutated to
 		Real ddG_ins; //change in dG_ins that the mutation causes
 		Real dscore; //change in score that the mutation causes
@@ -71,7 +71,7 @@ public:
 
 	struct tm_region //each region of interest within a protein
 	{
-		Size index; //where the region begins
+		core::Size index; //where the region begins
 		std::string sequence; //the sequence of that region
 		core::Real dG_ins; //the dG_ins of that region
 		bool operator< (const tm_region & a) const
@@ -143,7 +143,7 @@ public:// parser
 
 private:
 	Real threshold_;
-	Size window_size_;
+	core::Size window_size_;
 	Real dG_ins_threshold_;
 	std::string keep_;
 };

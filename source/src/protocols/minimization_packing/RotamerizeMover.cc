@@ -103,7 +103,7 @@ RotamerizeMover::apply( Pose & pose )
 
 	for ( auto const & itr : *rotamer_sets_ ) {
 
-		Size this_resid( itr->resid() );
+		core::Size this_resid( itr->resid() );
 
 		if ( pose.residue_type( this_resid ).is_NA() ) continue;
 
@@ -126,7 +126,7 @@ RotamerizeMover::apply( Pose & pose )
 
 			// Loop over heavy atoms and get the rmsd
 			Real rmsd_sum( 0.0 );
-			for ( Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
+			for ( core::Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
 				rmsd_sum += pose.residue( this_resid ).xyz( iatom ).distance_squared( rotamer->xyz( iatom ) );
 			}
 			rmsd_sum = std::sqrt( rmsd_sum / (1.0 * rotamer->nheavyatoms() ) );
@@ -141,12 +141,12 @@ RotamerizeMover::apply( Pose & pose )
 			if ( rotamer->type().aa() == aa_arg ) {
 
 				Real flip_rmsd_sum( 0.0 );
-				for ( Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
+				for ( core::Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
 					if ( pose.residue( this_resid ).atom_name( iatom ) == "NH1" ) {
-						Size other_atom( rotamer->atom_index( "NH2" ) );
+						core::Size other_atom( rotamer->atom_index( "NH2" ) );
 						flip_rmsd_sum += pose.residue( this_resid ).xyz( iatom ).distance_squared( rotamer->xyz( other_atom ) );
 					} else if ( pose.residue( this_resid ).atom_name( iatom ) == "NH2" ) {
-						Size other_atom( rotamer->atom_index( "NH1" ) );
+						core::Size other_atom( rotamer->atom_index( "NH1" ) );
 						flip_rmsd_sum += pose.residue( this_resid ).xyz( iatom ).distance_squared( rotamer->xyz( other_atom ) );
 					} else {
 						flip_rmsd_sum += pose.residue( this_resid ).xyz( iatom ).distance_squared( rotamer->xyz( iatom ) );
@@ -170,7 +170,7 @@ RotamerizeMover::apply( Pose & pose )
 				mut_res.set_chi( 3, mut_res.chi()[3] - 180.0 );
 
 				Real flip_rmsd_sum( 0.0 );
-				for ( Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
+				for ( core::Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
 					flip_rmsd_sum += pose.residue( this_resid ).xyz( iatom ).distance_squared( mut_res.xyz( iatom ) );
 				}
 				flip_rmsd_sum = std::sqrt( rmsd_sum / (1.0 * rotamer->nheavyatoms() ) );
@@ -191,7 +191,7 @@ RotamerizeMover::apply( Pose & pose )
 				mut_res.set_chi( 2, mut_res.chi()[2] - 180.0 );
 
 				Real flip_rmsd_sum( 0.0 );
-				for ( Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
+				for ( core::Size iatom = 1 ; iatom <= rotamer->nheavyatoms() ; ++iatom ) {
 					flip_rmsd_sum += pose.residue( this_resid ).xyz( iatom ).distance_squared( mut_res.xyz( iatom ) );
 				}
 				flip_rmsd_sum = std::sqrt( rmsd_sum / (1.0 * rotamer->nheavyatoms() ) );
@@ -228,7 +228,7 @@ bool
 RotamerizeMover::task_is_valid( Pose const & pose ) const
 {
 	if ( task_->total_residue() != pose.size() ) return false;
-	for ( Size i(1); i <= pose.size(); ++i ) {
+	for ( core::Size i(1); i <= pose.size(); ++i ) {
 		chemical::ResidueTypeCOP r( pose.residue_type_ptr(i) );
 		if ( ! task_->residue_task(i).is_original_type( r ) ) return false;
 	}

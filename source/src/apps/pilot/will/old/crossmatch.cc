@@ -122,7 +122,7 @@ using utility::io::izstream;
 using utility::io::ozstream;
 using utility::pointer::owning_ptr;
 using utility::pointer::access_ptr;
-using utility::pointer::ReferenceCount;
+using utility::VirtualBase;
 using utility::vector1;
 using std::endl;
 using core::import_pose::pose_from_file;
@@ -569,7 +569,7 @@ void setup_favor_native(core::pose::Pose & pose, core::pose::Pose const & native
 	pose.add_constraints( favor_native_constraints );
 }
 
-struct MatchAligner : public utility::pointer::ReferenceCount {
+struct MatchAligner : public utility::VirtualBase {
 	virtual MatchAlignInfo align_info(Pose const & lig ) = 0;
 	virtual vector1<Stub> align_rot( MatchAlignInfo const & mi1, MatchAlignInfo const & mi2 ) = 0;
 	virtual bool checkalign( Pose const & a, Pose const & b, numeric::xyzVector<Real> & c ) = 0;
@@ -717,7 +717,7 @@ struct Tet4HMatchAligner : public MatchAligner {
 
 };
 
-struct MatchBase : public utility::pointer::ReferenceCount {
+struct MatchBase : public utility::VirtualBase {
 	Pose pose;
 	// utility::vector1< core::id::AtomID > bb_bur_uns;
 	MatchBase() {}
@@ -744,7 +744,7 @@ struct MatchBase : public utility::pointer::ReferenceCount {
 typedef utility::pointer::owning_ptr<MatchBase> MatchBaseOP;
 typedef utility::pointer::owning_ptr<const MatchBase> MatchBaseCOP;
 
-struct MatchLig : public utility::pointer::ReferenceCount {
+struct MatchLig : public utility::VirtualBase {
 	Pose pose;
 	Size rsd1,rsd2;
 	string aa1,aa2,tag;

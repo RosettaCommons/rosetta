@@ -72,10 +72,10 @@ chis_from_pose(
 	using utility::vector1;
 
 	vector1< vector1< Real > > chis;
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		vector1< Real > chi_vec;
 		core::Size const n_chi( pose.residue_type(ii).nchi() );
-		for ( Size jj = 1; jj <= n_chi; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_chi; ++jj ) {
 			chi_vec.push_back( pose.chi(jj,ii) );
 		}
 		chis.push_back( chi_vec );
@@ -98,14 +98,14 @@ Align_RotamerEvaluator::apply(
 	SequenceMapping mapping( get_alignment(pose)->sequence_mapping(1,2) );
 
 	tr.flush_all_channels();
-	static Size const MAX_N_CHI (4); // hacky
-	vector1< Size > n_rots_equiv( MAX_N_CHI, 0 );
-	vector1< Size > n_chis_equiv( MAX_N_CHI, 0 );
+	static core::Size const MAX_N_CHI (4); // hacky
+	vector1< core::Size > n_rots_equiv( MAX_N_CHI, 0 );
+	vector1< core::Size > n_chis_equiv( MAX_N_CHI, 0 );
 
-	Size n_ali(0);
+	core::Size n_ali(0);
 	Real const max_dev( chi_dev() );
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		Size const native_ii( mapping[ii] );
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+		core::Size const native_ii( mapping[ii] );
 		bool skip(
 			native_ii == 0 ||
 			native_ii > native_pose()->size()
@@ -116,7 +116,7 @@ Align_RotamerEvaluator::apply(
 			rotamer_from_chi( pose.residue(ii), model_rots );
 			rotamer_from_chi( native_pose()->residue(native_ii), native_rots );
 			if ( model_rots.size() == native_rots.size() ) {
-				for ( Size chi_idx = 1; chi_idx <= model_rots.size(); ++chi_idx ) {
+				for ( core::Size chi_idx = 1; chi_idx <= model_rots.size(); ++chi_idx ) {
 					// rotamer equivalence
 					if ( model_rots[chi_idx] == native_rots[chi_idx] ) {
 						n_rots_equiv[chi_idx]++;
@@ -139,8 +139,8 @@ Align_RotamerEvaluator::apply(
 	Real const coverage(
 		(Real) (n_ali) / (Real) (native_pose()->size())
 	);
-	Size const native_nres( native_pose()->size() );
-	for ( Size ii = 1; ii <= n_chis_equiv.size(); ++ii ) {
+	core::Size const native_nres( native_pose()->size() );
+	for ( core::Size ii = 1; ii <= n_chis_equiv.size(); ++ii ) {
 		using std::string;
 		using ObjexxFCL::string_of;
 

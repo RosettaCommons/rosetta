@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_pose_rna_VDW_RepScreenInfo_HH
 #define INCLUDED_core_pose_rna_VDW_RepScreenInfo_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/rna/VDW_RepScreenInfo.fwd.hh>
 #include <core/pose/Pose.hh> // Full header inclusion needed for PyRosetta?
 #include <utility/vector1.hh>
@@ -34,7 +34,7 @@ namespace core {
 namespace pose {
 namespace rna {
 
-class VDW_RepScreenInfo : public utility::pointer::ReferenceCount{
+class VDW_RepScreenInfo : public utility::VirtualBase{
 
 public:
 

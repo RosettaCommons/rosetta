@@ -31,7 +31,7 @@
 #include <string>
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.fwd.hh>
 namespace protocols {
@@ -39,7 +39,7 @@ namespace sewing {
 namespace hashing {
 
 ///@brief Class used to generate and load in edge files for use with SEWING protocols.
-class EdgeMapGenerator : public utility::pointer::ReferenceCount {
+class EdgeMapGenerator : public utility::VirtualBase {
 
 public:
 

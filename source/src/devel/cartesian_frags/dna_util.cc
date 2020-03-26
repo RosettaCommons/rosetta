@@ -107,15 +107,15 @@ optimize_suite(
 	frag_atoms.push_back( SafeAtomID( "outstub1_atom3", 0 ) );
 	///// setup my atom ids ///////////////////////////////////////
 	vector1< AtomID > my_atoms;
-	for ( Size i=1; i<=3; ++i ) my_atoms.push_back( AtomID( i, 1   ) );
-	for ( Size i=1; i<=2; ++i ) my_atoms.push_back( AtomID( 1, i+1 ) );
-	for ( Size i=1; i<=3; ++i ) my_atoms.push_back( AtomID( i, 4   ) );
+	for ( core::Size i=1; i<=3; ++i ) my_atoms.push_back( AtomID( i, 1   ) );
+	for ( core::Size i=1; i<=2; ++i ) my_atoms.push_back( AtomID( 1, i+1 ) );
+	for ( core::Size i=1; i<=3; ++i ) my_atoms.push_back( AtomID( i, 4   ) );
 	//// sanity checks
 	debug_assert( frag.xyz( frag_atoms[3] ).length()    < 1e-3 ); // 1st atom should be at origin
 	// last atom should be at rt translation (outgoing stub origin)
 	debug_assert( frag.xyz( frag_atoms[6] ).distance(rt.get_translation()) < 1e-3 );
 	//// copy frag coords to pose:
-	for ( Size i=1; i<= my_atoms.size(); ++i ) pose.set_xyz( my_atoms[i], frag.xyz( frag_atoms[ i ] ) );
+	for ( core::Size i=1; i<= my_atoms.size(); ++i ) pose.set_xyz( my_atoms[i], frag.xyz( frag_atoms[ i ] ) );
 	pose::Pose start_pose;
 	start_pose = pose;
 
@@ -138,24 +138,24 @@ optimize_suite(
 	angles.push_back( DOF_ID( AtomID( 1, 4 ), THETA ) );
 	angles.push_back( DOF_ID( AtomID( 2, 4 ), THETA ) );
 
-	for ( Size i=1; i<= torsions.size(); ++i ) mm.set( torsions[i], true );
-	for ( Size i=1; i<=   angles.size(); ++i ) mm.set(   angles[i], true );
+	for ( core::Size i=1; i<= torsions.size(); ++i ) mm.set( torsions[i], true );
+	for ( core::Size i=1; i<=   angles.size(); ++i ) mm.set(   angles[i], true );
 	//// setup constraints for outgoing stub + to tether angles to starting values
 	ConstraintSetOP cst_set( new ConstraintSet() );
 	core::scoring::func::FuncOP coord_cst_func( new core::scoring::func::HarmonicFunc( 0.0, 0.1 ) );
-	for ( Size i=1; i<= 3; ++i ) {
+	for ( core::Size i=1; i<= 3; ++i ) {
 		cst_set->add_constraint( ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >( AtomID(i,4), AtomID(1,1), target_stub.build_fake_xyz(i),
 			coord_cst_func ) ) );
 	}
 
-	for ( Size i=1; i<= torsions.size(); ++i ) {
+	for ( core::Size i=1; i<= torsions.size(); ++i ) {
 		Real const target( pose.dof( torsions[i] ) );
 		Real const sdev( numeric::conversions::radians( torsion_constraint_sdev_degrees ) );
 		Real const weight( torsion_constraint_weight );
 		cst_set->add_dof_constraint( torsions[i], utility::pointer::make_shared< core::scoring::func::CircularPowerFunc >( target, sdev, torsion_constraint_power, weight ));
 	}
 
-	for ( Size i=1; i<= angles.size(); ++i ) {
+	for ( core::Size i=1; i<= angles.size(); ++i ) {
 		Real const target( pose.dof( angles[i] ) );
 		Real const sdev( numeric::conversions::radians( angle_constraint_sdev_degrees ) );
 		Real const weight( angle_constraint_weight );
@@ -174,17 +174,17 @@ optimize_suite(
 
 	//// now update the coords in frag, the outgoing frag
 
-	for ( Size i=1; i<= torsions.size(); ++i ) {
+	for ( core::Size i=1; i<= torsions.size(); ++i ) {
 		frag.set_torsion_angle( frag_atoms[i], frag_atoms[i+1], frag_atoms[i+2], frag_atoms[i+3],
 			pose.dof( torsions[i] ) );
 	}
 
-	for ( Size i=1; i<= angles.size(); ++i ) {
+	for ( core::Size i=1; i<= angles.size(); ++i ) {
 		frag.set_bond_angle( frag_atoms[i+1], frag_atoms[i+2], frag_atoms[i+3],
 			numeric::constants::d::pi - pose.dof( angles[i] ) );
 	}
 
-	for ( Size i=1; i<= my_atoms.size(); ++i ) {
+	for ( core::Size i=1; i<= my_atoms.size(); ++i ) {
 		debug_assert( pose.xyz( my_atoms[i] ).distance( frag.xyz( frag_atoms[i] ) ) < 1e-2 );
 	}
 
@@ -213,7 +213,7 @@ find_sugar_and_suite_frags(
 	Real best_summed_dev( 999.9 );
 
 	PROF_START( basic::FIND_SUGAR_AND_SUITE_FRAGS_I );
-	for ( Size ii=1; ii<= lib.sugars.size(); ++ii ) {
+	for ( core::Size ii=1; ii<= lib.sugars.size(); ++ii ) {
 		RT const & s1( lib.sugars[ii].stub_transform(2) ); //  forward to epsilon
 		RT const & s2( lib.sugars[ii].stub_transform(1) ); // backward to gamma
 
@@ -221,11 +221,11 @@ find_sugar_and_suite_frags(
 		RT const fwd_suite_target( s1, fwd_target );
 		RT const bwd_suite_target( s2, bwd_target );
 
-		vector1< Size > best_index( 2, 0 );
+		vector1< core::Size > best_index( 2, 0 );
 		vector1< Real > best_dev( 2, 999.9 );
 
 		debug_assert( lib.forward_suites.size() == lib.backward_suites.size() );
-		for ( Size jj=1; jj<= lib.forward_suites.size(); ++jj ) {
+		for ( core::Size jj=1; jj<= lib.forward_suites.size(); ++jj ) {
 			for ( int r=1; r<=2; ++r ) {
 				if ( ( upper_terminus && r == 1 ) || ( lower_terminus && r == 2 ) ) continue;
 				CartesianFragment const & frag( r == 1 ? lib.forward_suites[jj] : lib.backward_suites[jj] );
@@ -281,7 +281,7 @@ find_sugar_and_suite_frags(
 //
 Real
 patch_up_backbone(
-	Size const i,
+	core::Size const i,
 	DNA_FragLib const & lib,
 	conformation::Conformation & conf
 )
@@ -321,7 +321,7 @@ patch_up_backbone(
 //
 void
 patch_up_backbone_link(
-	Size const i,
+	core::Size const i,
 	DNA_FragLib const & lib,
 	scoring::ScoreFunction const &, // scorefxn,
 	pose::Pose & pose_inout

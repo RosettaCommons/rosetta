@@ -21,7 +21,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 
 //c++ heades
@@ -34,12 +34,12 @@ namespace match_enzdes_util {
 /// each geom cst is allowd to be at
 /// not sure about the ideal home of this class yet, the matcher task
 /// could use it too
-class AllowedSeqposForGeomCst : public utility::pointer::ReferenceCount {
+class AllowedSeqposForGeomCst : public utility::VirtualBase {
 
 public:
 	typedef core::Size Size;
 
-	AllowedSeqposForGeomCst( utility::vector1< utility::vector1< Size > > const & seqpos_for_geomcst );
+	AllowedSeqposForGeomCst( utility::vector1< utility::vector1< core::Size > > const & seqpos_for_geomcst );
 
 	AllowedSeqposForGeomCst();
 
@@ -49,8 +49,8 @@ public:
 	num_seqpos_lists() const {
 		return seqpos_for_geomcst_.size(); }
 
-	utility::vector1< Size > const &
-	seqpos_for_geomcst( Size geomcst ) const;
+	utility::vector1< core::Size > const &
+	seqpos_for_geomcst( core::Size geomcst ) const;
 
 	/// @brief this function used to live in the matcher task
 	/// pose can be passed in optionally to support the ALL tag
@@ -60,7 +60,7 @@ public:
 
 private:
 	//dimension of this vector is num_geomcst
-	utility::vector1< utility::vector1< Size > > seqpos_for_geomcst_;
+	utility::vector1< utility::vector1< core::Size > > seqpos_for_geomcst_;
 };
 
 

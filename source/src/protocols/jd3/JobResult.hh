@@ -21,7 +21,7 @@
 #include <protocols/jd3/Job.fwd.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 
 //C++ headers
@@ -43,7 +43,7 @@ namespace jd3 {
 /// of its execution.  The %JobResult is handed by the JobQueen to the JobOutputWriter
 /// objects, each of which have the opportunity to pull data out of the JobResult
 /// class.
-class JobResult : public utility::pointer::ReferenceCount
+class JobResult : public utility::VirtualBase
 {
 public:
 

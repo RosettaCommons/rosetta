@@ -33,7 +33,7 @@ public:
 
 	//constructor
 	SimpleRMSD_Screener( core::pose::Pose const & pose,
-		utility::vector1< Size > const & calc_rms_res,
+		utility::vector1< core::Size > const & calc_rms_res,
 		core::pose::PoseCOP native_pose,
 		core::Real const rmsd_cutoff,
 		bool const force_align = false );
@@ -61,7 +61,7 @@ private:
 
 	core::pose::Pose const & pose_;
 
-	utility::vector1< Size > calc_rms_res_;
+	utility::vector1< core::Size > calc_rms_res_;
 	core::pose::PoseCOP native_pose_;
 	core::Real const rmsd_cutoff_;
 	bool const force_align_;

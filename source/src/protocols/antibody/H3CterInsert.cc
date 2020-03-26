@@ -98,7 +98,7 @@ void H3CterInsert::apply(pose::Pose & pose) {
 	init( pose );
 	TR <<  "Inserting CDR H3 C-ter Fragments" << std::endl;
 
-	Size loop_begin(0), loop_end(0), cutpoint(0);
+	core::Size loop_begin(0), loop_end(0), cutpoint(0);
 
 
 	loop_begin = ab_info_->get_CDR_loop(h3).start()-1;  //JQX: to match R2_Antibody
@@ -112,7 +112,7 @@ void H3CterInsert::apply(pose::Pose & pose) {
 	while ( success == false ) {
 
 		fragment::FragData f;
-		Size random_H3_ter(0);
+		core::Size random_H3_ter(0);
 		random_H3_ter = numeric::random::rg().random_range( 1, H3_base_library_.size() );
 		f = H3_base_library_[ random_H3_ter ];
 		//    TR<<H3_base_library_.size()<<std::endl;
@@ -126,7 +126,7 @@ void H3CterInsert::apply(pose::Pose & pose) {
 		//TR<<f<<std::endl;
 
 		//inserting base dihedrals
-		Size cter_insertion_pos( ab_info_->is_camelid() ? 4 : 2 ); // not sure why 4 for camelid
+		core::Size cter_insertion_pos( ab_info_->is_camelid() ? 4 : 2 ); // not sure why 4 for camelid
 
 
 		if ( (ab_info_->get_CDR_loop(h3).stop()-cter_insertion_pos) <= ab_info_->get_CDR_loop(h3).start() ) {
@@ -175,7 +175,7 @@ void H3CterInsert::read_H3_cter_fragment( core::pose::Pose const & pose ) {
 	// extract single letter aa codes for the chopped loop residues
 	TR<< ab_info_->get_CDR_loop(h3)<<std::endl;
 
-	Size cdr_h3_size = (     ab_info_->get_CDR_loop(h3).stop() - ab_info_->get_CDR_loop(h3).start()  ) + 1;
+	core::Size cdr_h3_size = (     ab_info_->get_CDR_loop(h3).stop() - ab_info_->get_CDR_loop(h3).start()  ) + 1;
 
 	TR<<"cdr_h3_size="<<cdr_h3_size<<std::endl;
 	std::string aa_1name = ab_info_->get_CDR_sequence_with_stem(h3,pose, 2,2);
@@ -221,12 +221,12 @@ void H3CterInsert::read_H3_cter_fragment( core::pose::Pose const & pose ) {
 	Real phi(0.0);
 	Real psi(0.0);
 	Real omega(0.0);
-	Size H3_length(0);
+	core::Size H3_length(0);
 	Real resolution(0.0);
 	std::string base_type;
 
-	Size pdb_H3_length = cdr_h3_size;
-	Size h3_base_frag_size( ab_info_->is_camelid() ? 6 : 4 );
+	core::Size pdb_H3_length = cdr_h3_size;
+	core::Size h3_base_frag_size( ab_info_->is_camelid() ? 6 : 4 );
 
 	bool end_not_reached(true);
 	while ( end_not_reached ) {
@@ -236,7 +236,7 @@ void H3CterInsert::read_H3_cter_fragment( core::pose::Pose const & pose ) {
 		FragData f;
 		f.set_valid( true );
 
-		for ( Size i = 1; i <= h3_base_frag_size; ++i ) {
+		for ( core::Size i = 1; i <= h3_base_frag_size; ++i ) {
 			H3_ter_library_stream >> pdb_name  >> res_no     >> res_name
 				>> omega     >> phi        >> psi
 				>> H3_length >> resolution >> base_type

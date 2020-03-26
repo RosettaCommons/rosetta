@@ -18,7 +18,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -36,9 +36,9 @@ namespace rna {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-class RNA_DataReader : public utility::pointer::ReferenceCount {
+class RNA_DataReader : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~RNA_DataReader() override;
 
 	//constructor

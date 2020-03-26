@@ -46,7 +46,7 @@ namespace etable {
 //////////////////// Evaluators ///////////////////////////////
 
 
-class EtableEvaluator : public utility::pointer::ReferenceCount {
+class EtableEvaluator : public utility::VirtualBase {
 
 public:
 	EtableEvaluator( Etable const & etable );

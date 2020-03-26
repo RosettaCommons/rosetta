@@ -24,7 +24,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 
 #include <core/chemical/AA.hh>
@@ -42,7 +42,7 @@
 namespace core {
 namespace scoring {
 
-class RamaPrePro : public utility::pointer::ReferenceCount
+class RamaPrePro : public utility::VirtualBase
 {
 public:
 	typedef pose::Pose Pose;

@@ -21,7 +21,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <string>
@@ -44,9 +44,9 @@ private:
 	core::Real value_;
 };
 
-class SilentStructStore : public utility::pointer::ReferenceCount  {
+class SilentStructStore : public utility::VirtualBase  {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~SilentStructStore() override;
 	SilentStructStore()
 	{

@@ -23,14 +23,14 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
 namespace mainchain_potential {
 
 /// @brief Options container for the generator for mainchain potentials.
-class GenerateMainchainPotentialOptions : public utility::pointer::ReferenceCount {
+class GenerateMainchainPotentialOptions : public utility::VirtualBase {
 
 	friend class ::GenerateMainchainPotentialTests; //Needed to allow the unit tests for this class access internal data members.
 

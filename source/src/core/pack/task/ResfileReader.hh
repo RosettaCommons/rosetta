@@ -32,7 +32,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/excn/Exceptions.hh>
 
 // STL Headers
@@ -61,7 +61,7 @@ public:
 
 };
 
-class ResfileContents : public utility::pointer::ReferenceCount
+class ResfileContents : public utility::VirtualBase
 {
 public:
 
@@ -150,10 +150,10 @@ private:
 
 
 /// @brief abstract/interface class for Resfile reader command objects
-class ResfileCommand : public utility::pointer::ReferenceCount
+class ResfileCommand : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ResfileCommand() override;
 	virtual ResfileCommandOP clone() const = 0;
 

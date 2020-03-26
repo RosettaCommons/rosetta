@@ -95,7 +95,7 @@ AntibodyInfo::AntibodyInfo( pose::Pose const & pose,
 	AntibodyNumberingSchemeEnum const & numbering_scheme,
 	CDRDefinitionEnum const cdr_definition,
 	bool const cdr_pdb_numbered):
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	enum_manager_ = utility::pointer::make_shared< AntibodyEnumManager >();
 	set_default();
@@ -109,7 +109,7 @@ AntibodyInfo::AntibodyInfo( pose::Pose const & pose,
 }
 
 AntibodyInfo::AntibodyInfo(const pose::Pose& pose, const bool cdr_pdb_numbered):
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 
 	enum_manager_ = utility::pointer::make_shared< AntibodyEnumManager >();
@@ -123,7 +123,7 @@ AntibodyInfo::AntibodyInfo(const pose::Pose& pose, const bool cdr_pdb_numbered):
 AntibodyInfo::AntibodyInfo(const pose::Pose & pose,
 	CDRDefinitionEnum const cdr_definition,
 	bool const cdr_pdb_numbered):
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	enum_manager_ = utility::pointer::make_shared< AntibodyEnumManager >();
 	set_default();
@@ -138,7 +138,7 @@ AntibodyInfo::AntibodyInfo(const pose::Pose & pose,
 AntibodyInfo::~AntibodyInfo() = default;
 
 AntibodyInfo::AntibodyInfo(const AntibodyInfo& src):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	is_camelid_(src.is_camelid_),
 	has_antigen_(src.has_antigen_),
 	cdr_pdb_numbered_(src.cdr_pdb_numbered_),
@@ -519,10 +519,10 @@ AntibodyInfo::set_light_chain_type( LightChainTypeEnum light_chain ){
 void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 
 	chains_for_cdrs_.clear();
-	for ( Size i=1; i<=3; ++i ) {
+	for ( core::Size i=1; i<=3; ++i ) {
 		chains_for_cdrs_.push_back('H');    // HEAVY chain first
 	}
-	for ( Size i=1; i<=3; ++i ) {
+	for ( core::Size i=1; i<=3; ++i ) {
 		chains_for_cdrs_.push_back('L');    // light
 	}
 
@@ -533,7 +533,7 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 	int loop_start_in_pose, loop_stop_in_pose, cut_position ;
 	loopsop_having_allcdrs_ = utility::pointer::make_shared< loops::Loops >();
 
-	for ( Size i=start_cdr_loop; i<= core::Size(total_cdr_loops_); ++i ) {
+	for ( core::Size i=start_cdr_loop; i<= core::Size(total_cdr_loops_); ++i ) {
 
 		auto cdr = static_cast<CDRNameEnum>(i);
 		loop_start_in_pose = pose.pdb_info()->pdb2pose( chains_for_cdrs_[i], numbering_info_.cdr_numbering[i][cdr_start]->resnum());
@@ -756,12 +756,12 @@ void AntibodyInfo::setup_VL_VH_packing_angle( pose::Pose const & pose ) {
 	Chain_IDs_for_packing_angle[VH_sheet_1] = 'H';
 	Chain_IDs_for_packing_angle[VH_sheet_2] = 'H';
 
-	Size packing_angle_start_in_pose, packing_angle_stop_in_pose;
+	core::Size packing_angle_start_in_pose, packing_angle_stop_in_pose;
 
-	for ( Size i=1; i<=PackingAngleEnum_total; ++i ) {
+	for ( core::Size i=1; i<=PackingAngleEnum_total; ++i ) {
 		packing_angle_start_in_pose = get_landmark_resnum(pose, Chothia_Scheme, Chain_IDs_for_packing_angle[i], packing_angle_numbering_[i][1]);
 		packing_angle_stop_in_pose = get_landmark_resnum(pose, Chothia_Scheme, Chain_IDs_for_packing_angle[i], packing_angle_numbering_[i][2]);
-		for ( Size j=packing_angle_start_in_pose; j<=packing_angle_stop_in_pose; j++ ) {
+		for ( core::Size j=packing_angle_start_in_pose; j<=packing_angle_stop_in_pose; j++ ) {
 			packing_angle_residues_.push_back( j );
 		}
 	}
@@ -868,7 +868,7 @@ void AntibodyInfo::detect_and_set_camelid_CDR_H3_stem_type(pose::Pose const & po
 
 	// extract single letter aa codes for the chopped loop residues
 	vector1< char > cdr_h3_sequence;
-	for ( Size ii = get_CDR_loop(h3, pose, Aroop).start() - 2; ii <= get_CDR_loop(h3, pose, Aroop).stop(); ++ii ) {
+	for ( core::Size ii = get_CDR_loop(h3, pose, Aroop).start() - 2; ii <= get_CDR_loop(h3, pose, Aroop).stop(); ++ii ) {
 		cdr_h3_sequence.push_back( pose.sequence()[ii-1] );
 	}
 
@@ -914,7 +914,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( pose::Pose const & p
 
 	// extract single letter aa codes for the chopped loop residues
 	vector1< char > cdr_h3_sequence;
-	for ( Size ii = get_CDR_loop(h3, pose, Aroop).start() - 2; ii <= get_CDR_loop(h3, pose, Aroop).stop()+1 ; ++ii ) {
+	for ( core::Size ii = get_CDR_loop(h3, pose, Aroop).start() - 2; ii <= get_CDR_loop(h3, pose, Aroop).stop()+1 ; ++ii ) {
 		cdr_h3_sequence.push_back( pose.sequence()[ii-1] );
 	}
 
@@ -935,7 +935,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( pose::Pose const & p
 	if ( !is_H3 ) {
 		// Rule 1b extension for special kinked form
 		bool is_basic( false ); // Special basic residue exception flag
-		for ( Size ii = 3; ii <= Size(cdr_h3_sequence.size() - 4); ++ii ) {
+		for ( core::Size ii = 3; ii <= core::Size(cdr_h3_sequence.size() - 4); ++ii ) {
 			if ( cdr_h3_sequence[ii] == 'R' || cdr_h3_sequence[ii] == 'K' ) {
 				is_basic = true;
 				break;
@@ -943,7 +943,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( pose::Pose const & p
 		}
 
 		if ( !is_basic ) {
-			Size L49_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 49);
+			core::Size L49_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 49);
 			char aa_code_L49 = pose.residue( L49_pose_number ).name1();
 			if ( aa_code_L49 == 'R' || aa_code_L49 == 'K' ) {
 				is_basic = true;
@@ -965,7 +965,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( pose::Pose const & p
 		is_H3 = true;
 		if ( !is_H3 ) {
 			bool is_basic( false ); // Special basic residue exception flag
-			Size L46_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 46);
+			core::Size L46_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 46);
 			char aa_code_L46 = pose.residue( L46_pose_number ).name1();
 			if ( aa_code_L46 == 'R' || aa_code_L46 == 'K' ) {
 				is_basic = true;
@@ -1012,12 +1012,12 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 	//core::Size start = get_CDR_loop(h3, pose, Aroop).start() - 2;
 
 	//TR << "Start: "<<start<<"End:"<<get_CDR_loop(h3, pose, Aroop).stop() << std::endl;
-	for ( Size ii = get_CDR_loop(h3, pose, Aroop).start() - 2; ii <= get_CDR_loop(h3, pose, Aroop).stop() + 1; ++ii ) {
+	for ( core::Size ii = get_CDR_loop(h3, pose, Aroop).start() - 2; ii <= get_CDR_loop(h3, pose, Aroop).stop() + 1; ++ii ) {
 		//TR<< utility::to_string(pose.sequence()[ii-1])<< std::endl;
 		seq = seq+utility::to_string(pose.sequence()[ii-1]);
 		cdr_h3_sequence.push_back( pose.sequence()[ii-1] );
 	}
-	for ( Size i=1; i<=cdr_h3_sequence.size(); ++i ) {    TR<<cdr_h3_sequence[i];} TR<<std::endl;
+	for ( core::Size i=1; i<=cdr_h3_sequence.size(); ++i ) {    TR<<cdr_h3_sequence[i];} TR<<std::endl;
 
 	/// @author: Daisuke Kuroda (dkuroda1981@gmail.com) 06/18/2012
 	///
@@ -1032,7 +1032,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 	// This is only for rule 1b
 	bool is_basic( false ); // Special basic residue exception flag
 	if ( !is_basic ) {
-		Size L49_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 49);
+		core::Size L49_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 49);
 		char aa_code_L49 = pose.residue( L49_pose_number ).name1();
 		if ( aa_code_L49 == 'R' || aa_code_L49 == 'K' ) {
 			is_basic = true;
@@ -1050,11 +1050,11 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 			( ( cdr_h3_sequence[ 1 ] != 'K') && ( cdr_h3_sequence[ 1 ] != 'R') ) ) {
 		// Rule 1c for kinked form with salt bridge with/without Notable signal (L46)
 		// Special basic residue exception flag
-		Size L46_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 46);
+		core::Size L46_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 46);
 		char aa_code_L46 = pose.residue( L46_pose_number ).name1();
 
 		// Special Tyr residue exception flag
-		Size L36_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 36);
+		core::Size L36_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 36);
 		char aa_code_L36 = pose.residue( L36_pose_number ).name1();
 
 		if ( ( aa_code_L46 == 'R' || aa_code_L46 == 'K') && aa_code_L36 != 'Y' ) {
@@ -1307,7 +1307,7 @@ loops::LoopsOP
 AntibodyInfo::get_CDR_loops(pose::Pose const & pose, core::Size overhang) const {
 
 	protocols::loops::LoopsOP cdr_loops( new loops::Loops );
-	for ( Size i = 1; i <= Size(total_cdr_loops_); ++i ) {
+	for ( core::Size i = 1; i <= core::Size(total_cdr_loops_); ++i ) {
 		auto cdr = static_cast<CDRNameEnum>(i);
 		protocols::loops::Loop cdr_loop =get_CDR_loop(cdr, pose, overhang);
 		cdr_loops->add_loop(cdr_loop);
@@ -1320,7 +1320,7 @@ AntibodyInfo::get_CDR_loops(const pose::Pose& pose, const vector1<bool> & cdrs, 
 	debug_assert(cdrs.size() <= CDRNameEnum_proto_total);
 
 	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops );
-	for ( Size i = 1; i <= cdrs.size(); ++i ) {
+	for ( core::Size i = 1; i <= cdrs.size(); ++i ) {
 		if ( cdrs[i] ) {
 			auto cdr = static_cast<CDRNameEnum>(i);
 			protocols::loops::Loop cdr_loop = get_CDR_loop(cdr, pose, overhang);
@@ -1348,7 +1348,7 @@ AntibodyInfo::get_AllCDRs_in_loopsop() const {
 
 std::vector<Vector>
 AntibodyInfo::kink_anion_atoms(const core::pose::Pose & pose) const {
-	Size resi = get_CDR_loop(h3, pose, Aroop).stop() - 1;
+	core::Size resi = get_CDR_loop(h3, pose, Aroop).stop() - 1;
 	core::conformation::Residue res = pose.residue(resi);
 	//print "H3_N-1 (%i): %s" % (resi,res.name3())
 	std::vector<Vector> atoms;
@@ -1368,7 +1368,7 @@ AntibodyInfo::kink_anion_atoms(const core::pose::Pose & pose) const {
 /// @brief return side chain cation atoms (typically Lys/His nitrogens) in the kink bulge HBond
 std::vector<Vector>
 AntibodyInfo::kink_cation_atoms(const core::pose::Pose & pose) const {
-	Size resi = get_CDR_loop(h3, pose, Aroop).start() - 1;
+	core::Size resi = get_CDR_loop(h3, pose, Aroop).start() - 1;
 	core::conformation::Residue res = pose.residue(resi);
 	//print "H3_0   (%i): %s" % (resi,res.name3())
 	std::vector<Vector> atoms;
@@ -1475,7 +1475,7 @@ AntibodyInfo::get_CDR_name_enum(std::string const & cdr_name) const {
 Size
 AntibodyInfo::get_CDR_length(CDRNameEnum const cdr_name) const {
 	loops::Loop cdr_loop = get_CDR_loop(cdr_name);
-	Size len = cdr_loop.stop()-cdr_loop.start()+1;
+	core::Size len = cdr_loop.stop()-cdr_loop.start()+1;
 	return len;
 }
 
@@ -1487,7 +1487,7 @@ AntibodyInfo::get_CDR_length(CDRNameEnum const cdr_name, core::pose::Pose const 
 Size
 AntibodyInfo::get_CDR_length(CDRNameEnum const cdr_name, core::pose::Pose const & pose, CDRDefinitionEnum const transform) const {
 	loops::Loop cdr_loop = get_CDR_loop(cdr_name, pose, transform);
-	Size len = cdr_loop.stop()-cdr_loop.start()+1;
+	core::Size len = cdr_loop.stop()-cdr_loop.start()+1;
 	return len;
 }
 
@@ -1523,9 +1523,9 @@ AntibodyInfo::get_cluster_length(CDRClusterEnum const cluster) const {
 ////////////////////////////////////////////////////////////////////////////////
 
 kinematics::FoldTreeCOP AntibodyInfo::setup_simple_fold_tree(
-	Size const & jumppoint1,
-	Size const & cutpoint,
-	Size const & jumppoint2,
+	core::Size const & jumppoint1,
+	core::Size const & cutpoint,
+	core::Size const & jumppoint2,
 	pose::Pose const & pose ) const {
 	using namespace kinematics;
 
@@ -1567,9 +1567,9 @@ AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
 	// NOTE: This class assumes the first chain is the light chain,
 	// the second chain is the heavy chain and any other chains are
 	// the antigen.
-	Size end_of_light_chain = pose.conformation().chain_end(1);
-	Size light_chain_COM = core::pose::residue_center_of_mass(pose, 1, end_of_light_chain);
-	Size heavy_chain_COM = core::pose::residue_center_of_mass(pose, end_of_light_chain + 1, pose.size());
+	core::Size end_of_light_chain = pose.conformation().chain_end(1);
+	core::Size light_chain_COM = core::pose::residue_center_of_mass(pose, 1, end_of_light_chain);
+	core::Size heavy_chain_COM = core::pose::residue_center_of_mass(pose, end_of_light_chain + 1, pose.size());
 
 	// Adjust the FoldTree that is produced by fold_tree_from_loops to have no edges that span the light and heavy chains..
 	// Specifically, this will:
@@ -1639,15 +1639,15 @@ AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
 	using namespace core;
 	using namespace kinematics;
 
-	Size nres = pose.size();
+	core::Size nres = pose.size();
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	char second_chain = 'H';
-	Size cutpoint = 0;
+	core::Size cutpoint = 0;
 
 	kinematics::FoldTree LH_A_foldtree;
 
 	//TODO JAB - requiring PDB ordered LHA is not desired
-	for ( Size i = 1; i <= nres; ++i ) {
+	for ( core::Size i = 1; i <= nres; ++i ) {
 		if ( pdb_info->chain(1) != 'L' ) {
 			throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 			//break;
@@ -1664,15 +1664,15 @@ AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
 		}
 	}
 
-	Size jump_pos1 ( core::pose::residue_center_of_mass( pose, 1, cutpoint ) );
-	Size jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.size() ) );
+	core::Size jump_pos1 ( core::pose::residue_center_of_mass( pose, 1, cutpoint ) );
+	core::Size jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.size() ) );
 
 	//setup fold tree based on cutpoints and jump points
 	LH_A_foldtree.clear();
 	LH_A_foldtree.simple_tree( pose.size() );
 	LH_A_foldtree.new_jump( jump_pos1, jump_pos2, cutpoint);
 
-	Size chain_begin(0), chain_end(0);
+	core::Size chain_begin(0), chain_end(0);
 
 	//rebuild jumps between antibody light and heavy chains
 	chain_end = cutpoint;
@@ -1716,15 +1716,15 @@ AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
 	using namespace core;
 	using namespace kinematics;
 
-	Size nres = pose.size();
+	core::Size nres = pose.size();
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	char second_chain = 'H';
-	Size cutpoint = 0;
+	core::Size cutpoint = 0;
 
 	kinematics::FoldTree L_HA_foldtree;
 
 	//TODO JAB - requiring PDB ordered LHA is not desired
-	for ( Size i = 1; i <= nres; ++i ) {
+	for ( core::Size i = 1; i <= nres; ++i ) {
 		if ( pdb_info->chain(1) != 'L' ) {
 			throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 			//break;
@@ -1741,15 +1741,15 @@ AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
 		}
 	}
 
-	Size jump_pos1 ( core::pose::residue_center_of_mass( pose, 1, cutpoint ) );
-	Size jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.conformation().chain_end( pose.chain(cutpoint+1) ) ) );
+	core::Size jump_pos1 ( core::pose::residue_center_of_mass( pose, 1, cutpoint ) );
+	core::Size jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.conformation().chain_end( pose.chain(cutpoint+1) ) ) );
 
 	//setup fold tree based on cutpoints and jump points
 	L_HA_foldtree.clear();
 	L_HA_foldtree.simple_tree( pose.size() );
 	L_HA_foldtree.new_jump( jump_pos1, jump_pos2, cutpoint);
 
-	Size chain_begin(0), chain_end(0);
+	core::Size chain_begin(0), chain_end(0);
 
 	//rebuild jumps between heavy chain and antigen chains
 	chain_begin = cutpoint+1;
@@ -1784,16 +1784,16 @@ AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
 	using namespace core;
 	using namespace kinematics;
 
-	Size nres = pose.size();
+	core::Size nres = pose.size();
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	char second_chain = 'H';
-	Size cutpoint = 0;
+	core::Size cutpoint = 0;
 	bool lchain_jump = false;
 
 	kinematics::FoldTree LA_H_foldtree ;
 
 	//TODO JAB - requiring PDB ordered LHA is not desired
-	for ( Size i = 1; i <= nres; ++i ) {
+	for ( core::Size i = 1; i <= nres; ++i ) {
 		if ( pdb_info->chain(1) != 'L' ) {
 			throw CREATE_EXCEPTION(excn::Exception, "Chains are not named correctly or are not in the expected order");
 			//break;
@@ -1810,15 +1810,15 @@ AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
 		}
 	}
 
-	Size jump_pos1 ( core::pose::residue_center_of_mass( pose, 1, cutpoint ) );
-	Size jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.conformation().chain_end( pose.chain(cutpoint+1) ) ) );
+	core::Size jump_pos1 ( core::pose::residue_center_of_mass( pose, 1, cutpoint ) );
+	core::Size jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.conformation().chain_end( pose.chain(cutpoint+1) ) ) );
 
 	//setup fold tree based on cutpoints and jump points
 	LA_H_foldtree.clear();
 	LA_H_foldtree.simple_tree( pose.size() );
 	LA_H_foldtree.new_jump( jump_pos1, jump_pos2, cutpoint);
 
-	Size chain_begin(0), chain_end(0);
+	core::Size chain_begin(0), chain_end(0);
 
 	//rebuild jumps between the light chain and antigen chains
 	chain_begin = cutpoint+1;
@@ -1862,7 +1862,7 @@ AntibodyInfo::get_MoveMap_for_Loops(pose::Pose const & pose,
 		select_loop_residues( pose, the_loops, include_nb_sc/*include_neighbors*/, sc_is_flexible, nb_dist);
 		move_map.set_chi( sc_is_flexible );
 	}
-	for ( Size ii = 1; ii <= the_loops.num_loop(); ++ii ) {
+	for ( core::Size ii = 1; ii <= the_loops.num_loop(); ++ii ) {
 		move_map.set_jump( ii, false );
 	}
 
@@ -1884,7 +1884,7 @@ AntibodyInfo::get_MoveMap_for_AllCDRsSideChains_and_H3backbone(pose::Pose const 
 
 	//TR<<"start: "<<get_CDR_start(h3, pose)<<std::endl;
 	//TR<<"end  : "<<get_CDR_end(h3, pose)<<std::endl;
-	for ( Size ii=get_CDR_start(h3, pose); ii<=get_CDR_end(h3, pose); ii++ ) {
+	for ( core::Size ii=get_CDR_start(h3, pose); ii<=get_CDR_end(h3, pose); ii++ ) {
 		bb_is_flexible[ii] = true;
 		TR<<"Setting Residue "<< ii<<" to be true"<<std::endl;
 	}
@@ -1893,7 +1893,7 @@ AntibodyInfo::get_MoveMap_for_AllCDRsSideChains_and_H3backbone(pose::Pose const 
 	select_loop_residues( pose, *(get_AllCDRs_in_loopsop()), include_nb_sc, sc_is_flexible, nb_dist);
 	move_map.set_chi( sc_is_flexible );
 
-	for ( Size ii = 1; ii <= (get_AllCDRs_in_loopsop())->num_loop(); ++ii ) {
+	for ( core::Size ii = 1; ii <= (get_AllCDRs_in_loopsop())->num_loop(); ++ii ) {
 		move_map.set_jump( ii, false );
 	}
 
@@ -1936,7 +1936,7 @@ AntibodyInfo::get_MoveMap_for_LoopsandDock(pose::Pose const & pose,
 	kinematics::MoveMap move_map = get_MoveMap_for_Loops(pose, the_loops, bb_only, include_nb_sc, nb_dist);
 
 	move_map.set_jump( 1, true );
-	for ( Size ii = 2; ii <= the_loops.num_loop() +1 ; ++ii ) {
+	for ( core::Size ii = 2; ii <= the_loops.num_loop() +1 ; ++ii ) {
 		move_map.set_jump( ii, false );
 	}
 
@@ -1955,7 +1955,7 @@ AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose & pose)  const {
 	using namespace pack::task::operation;
 	// selecting movable c-terminal residues
 	ObjexxFCL::FArray1D_bool loop_residues( pose.size(), false );
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		loop_residues(i) = sc_is_packable[i];
 	} // check mapping
 
@@ -2299,12 +2299,12 @@ AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain) {
 
 std::string
 AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const cdr_name,
-	Size left_stem ,
-	Size right_stem ) const {
+	core::Size left_stem ,
+	core::Size right_stem ) const {
 	vector1<char> sequence;
 	loops::Loop the_loop = get_CDR_loop(cdr_name);
 
-	for ( Size i=the_loop.start()-left_stem; i<=the_loop.stop()+right_stem; ++i ) {
+	for ( core::Size i=the_loop.start()-left_stem; i<=the_loop.stop()+right_stem; ++i ) {
 		auto iter(sequence_map_.find(i)); //To keep const
 		sequence.push_back(iter->second);
 	}
@@ -2313,14 +2313,14 @@ AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const cdr_name,
 }
 
 std::string
-AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const cdr_name, core::pose::Pose const & pose, Size left_stem , Size right_stem) const {
+AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const cdr_name, core::pose::Pose const & pose, core::Size left_stem , core::Size right_stem) const {
 
 	return get_CDR_sequence_with_stem(cdr_name, pose, left_stem, right_stem, numbering_info_.cdr_definition);
 
 }
 
 std::string
-AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const cdr_name, core::pose::Pose const & pose, Size left_stem , Size right_stem, CDRDefinitionEnum const & transform) const {
+AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const cdr_name, core::pose::Pose const & pose, core::Size left_stem , core::Size right_stem, CDRDefinitionEnum const & transform) const {
 
 	return pose.sequence(get_CDR_start(cdr_name, pose, transform) - left_stem, get_CDR_end(cdr_name, pose, transform) + right_stem);
 

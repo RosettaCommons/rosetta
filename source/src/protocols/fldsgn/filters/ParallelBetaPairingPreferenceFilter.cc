@@ -66,15 +66,15 @@ ParallelBetaPairingPreferenceFilter::ParallelBetaPairingPreferenceFilter():
 		utility::vector1< String > tokens ( utility::string_split( line, '\t' ) );
 		runtime_assert( tokens.size() == 21 );
 		AA aa = core::chemical::aa_from_oneletter_code( tokens[ 1 ][ 0 ] );
-		score_pairmatrix_[ Size ( aa ) ].resize( 20 );
-		for ( Size ii=1; ii<=20; ii++ ) {
+		score_pairmatrix_[ core::Size ( aa ) ].resize( 20 );
+		for ( core::Size ii=1; ii<=20; ii++ ) {
 			Real value;
 			if ( aa == core::chemical::aa_pro ) {
 				value = 0.01;
 			} else {
 				value = boost::lexical_cast<Real>( tokens[ ii+1 ] );
 			}
-			score_pairmatrix_[ Size( aa ) ][ ii ] = -std::log( value );
+			score_pairmatrix_[ core::Size( aa ) ][ ii ] = -std::log( value );
 			// TR << tokens[ 0 ][ 0 ] << " " << ii << " " << tokens[ ii ] << std::endl;
 		}
 	}
@@ -128,7 +128,7 @@ ParallelBetaPairingPreferenceFilter::apply( Pose const & pose ) const
 ParallelBetaPairingPreferenceFilter::Real
 ParallelBetaPairingPreferenceFilter::score_pairmatrix( AA aa1, AA aa2 ) const
 {
-	return score_pairmatrix_[ Size( aa1 ) ][ Size( aa2 ) ];
+	return score_pairmatrix_[ core::Size( aa1 ) ][ core::Size( aa2 ) ];
 }
 
 
@@ -150,16 +150,16 @@ ParallelBetaPairingPreferenceFilter::compute( Pose const & pose ) const
 	SS_Info2_OP ssinfo( new SS_Info2( pose, dssp.get_dssp_secstruct() ) );
 	StrandPairingSet spairset = calc_strand_pairing_set( pose, ssinfo );
 
-	Size num_pair( 0 );
+	core::Size num_pair( 0 );
 	Real score( 0.0 );
 	for ( auto const & it : spairset ) {
 		StrandPairing spair( *it );
 
 		if ( spair.orient() == 'A' ) continue;
 
-		for ( Size ires=spair.begin1(); ires<=spair.end1(); ires++ ) {
+		for ( core::Size ires=spair.begin1(); ires<=spair.end1(); ires++ ) {
 
-			Size jres( spair.residue_pair( ires ) );
+			core::Size jres( spair.residue_pair( ires ) );
 			float score1 = dssp.bb_pair_score( ires, jres );
 			float score2( 0.0 );
 			if ( jres <= pose.size() ) {

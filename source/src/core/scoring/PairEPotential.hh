@@ -22,12 +22,12 @@
 
 #include <core/conformation/Residue.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace core {
 namespace scoring {
 
-class PairEPotential : public utility::pointer::ReferenceCount
+class PairEPotential : public utility::VirtualBase
 {
 public:
 	PairEPotential();

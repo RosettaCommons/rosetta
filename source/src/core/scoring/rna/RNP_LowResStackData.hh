@@ -46,7 +46,7 @@ namespace rna {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef utility::pointer::shared_ptr< RNP_LowResStackData > RNP_LowResStackDataOP;
-class RNP_LowResStackData : public utility::pointer::ReferenceCount {
+class RNP_LowResStackData : public utility::VirtualBase {
 
 public:
 	RNP_LowResStackData();

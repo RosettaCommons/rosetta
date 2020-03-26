@@ -300,7 +300,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::JobsCo
 	tr.Debug << "DatabaseJobInputter::fill_jobs" << std::endl;
 	jobs.clear(); //should already be empty anyway
 
-	Size const nstruct(get_nstruct());
+	core::Size const nstruct(get_nstruct());
 
 	if ( !tag_structures_.size() ) {
 
@@ -347,7 +347,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::JobsCo
 	//jobs.reserve(inner_jobs.size() * nstruct);
 
 	tr.Debug << "fill job list with... " << endl;
-	for ( Size index = 1; index <= nstruct; ++index ) {
+	for ( core::Size index = 1; index <= nstruct; ++index ) {
 		for ( protocols::jd2::InnerJobOP ijob : inner_jobs ) {
 			jobs.push_back(utility::pointer::make_shared< protocols::jd2::Job >(ijob, index));
 			tr.Trace

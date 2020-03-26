@@ -40,7 +40,7 @@
 #include <core/id/DOF_ID_Mask.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -85,7 +85,7 @@ namespace kinematics {
 ///    minimization given a MoveMap object).
 ///
 /// See @ref atomtree_overview "AtomTree overview and concepts" for details.
-class AtomTree : public utility::pointer::ReferenceCount
+class AtomTree : public utility::VirtualBase
 {
 public: // Types
 	// ids

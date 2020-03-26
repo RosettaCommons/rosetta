@@ -69,7 +69,7 @@ public:
 
 	/// @brief Limit to a subset of residue positions, already set to designable.
 	void
-	limit_to_positions( utility::vector1< Size > const & positions );
+	limit_to_positions( utility::vector1< core::Size > const & positions );
 
 	void
 	include_residue( core::Size resnum );

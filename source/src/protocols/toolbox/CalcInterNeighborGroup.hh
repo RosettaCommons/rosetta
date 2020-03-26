@@ -32,7 +32,7 @@
 //C++ headers
 #include <set>
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // option key includes
 #include <utility/vector1.hh>
@@ -54,7 +54,7 @@ namespace toolbox {
 @li "neighbors" returns a std::set<core::Size> of the neighbors calculated between the group pairs.
 @li "num_neighbors" returns the size of the neighbors set.
 **/
-class CalcInterNeighborGroup : public utility::pointer::ReferenceCount {
+class CalcInterNeighborGroup : public utility::VirtualBase {
 
 public:
 	typedef std::set< core::Size > one_group;

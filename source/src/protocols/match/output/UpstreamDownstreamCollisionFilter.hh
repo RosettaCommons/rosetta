@@ -32,7 +32,7 @@
 
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -63,15 +63,15 @@ public:
 	set_downstream_pose( core::pose::Pose const & downstream_pose );
 
 	void
-	set_num_geometric_constraints( Size n_geomcst );
+	set_num_geometric_constraints( core::Size n_geomcst );
 
 	/// @brief Do not perform any collision detection between an upstream residue and the downstream
 	/// pose if there is a chemical bond between them
 	void
-	set_chemical_bond_from_upstream_to_downstream( Size geomcst_id );
+	set_chemical_bond_from_upstream_to_downstream( core::Size geomcst_id );
 
 	void
-	set_downstream_builder( Size geomcst_id, downstream::DownstreamBuilderCOP builder );
+	set_downstream_builder( core::Size geomcst_id, downstream::DownstreamBuilderCOP builder );
 
 	void set_tolerated_overlap( Real setting ) override;
 
@@ -107,8 +107,8 @@ public:
 	) const
 	{
 		core::conformation::ResidueCOP iires = cacher_->upstream_conformation_for_hit( geomcst, upstream_hit );
-		Size ii_first_sc = iires->first_sidechain_atom();
-		for ( Size jj = 1; jj <= downstream_pose_->size(); ++jj ) {
+		core::Size ii_first_sc = iires->first_sidechain_atom();
+		for ( core::Size jj = 1; jj <= downstream_pose_->size(); ++jj ) {
 			core::conformation::Residue const & jjres = downstream_pose_->residue( jj );
 			Real intxn_dis = iires->nbr_radius() + jjres.nbr_radius() + max_overlap_dis_;
 			if ( iires->xyz( iires->nbr_atom() ).distance_squared(
@@ -117,9 +117,9 @@ public:
 				continue;
 			}
 
-			for ( Size kk = ii_first_sc; kk <= iires->nheavyatoms(); ++kk ) {
+			for ( core::Size kk = ii_first_sc; kk <= iires->nheavyatoms(); ++kk ) {
 				ProbeRadius kk_rad = probe_radius_for_atom_type( iires->atom_type_index( kk ) );
-				for ( Size ll = 1; ll <= jjres.nheavyatoms(); ++ll ) {
+				for ( core::Size ll = 1; ll <= jjres.nheavyatoms(); ++ll ) {
 					ProbeRadius ll_rad = probe_radius_for_atom_type( jjres.atom_type_index( ll ) );
 					Real minsep = bump_grid()->required_separation_distance( kk_rad, ll_rad );
 					if ( iires->xyz( kk ).distance_squared( coords[ per_res_atom_ind_[ jj ][ ll ]]) < minsep * minsep ) {
@@ -146,7 +146,7 @@ private:
 	mutable core::pose::PoseOP downstream_pose_;
 	mutable utility::vector1< core::Vector > coords_;
 	utility::vector1< core::id::AtomID > downstream_atoms_;
-	utility::vector1< utility::vector1< Size > > per_res_atom_ind_;
+	utility::vector1< utility::vector1< core::Size > > per_res_atom_ind_;
 };
 
 

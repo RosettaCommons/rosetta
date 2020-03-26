@@ -32,7 +32,7 @@ namespace pilot {
 namespace frankdt {
 
 SmartSEWINGTester::SmartSEWINGTester():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 
 }

@@ -27,7 +27,7 @@
 
 // Utility headers
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <map>
@@ -51,7 +51,7 @@ namespace pose {
 /// @warning danpf@uw.edu  -- In order to avoid breaking workflows I added a secondary map
 ///  that tracks the map<ResidueKey, Size> without the segmentID field being checked. This is
 ///  sort of a strange if you use segmentIDs, but if you don't you won't notice any differences.
-class PDBPoseMap : public utility::pointer::ReferenceCount {
+class PDBPoseMap : public utility::VirtualBase {
 
 
 public: // typedefs
@@ -66,7 +66,7 @@ private: // forward declarations
 
 private: // typedefs
 
-	typedef utility::pointer::ReferenceCount Super;
+	typedef utility::VirtualBase Super;
 
 
 private: // structs

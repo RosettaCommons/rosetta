@@ -27,7 +27,7 @@ namespace copy_dofs {
 
 //Constructor
 CopyDofStepWiseSampler::CopyDofStepWiseSampler(utility::vector1< core::pose::PoseOP > const & pose_list,
-	std::map< Size, Size > const & res_map,
+	std::map< core::Size, core::Size > const & res_map,
 	core::pose::Pose const & starting_pose )
 {
 	for ( auto const & poseop : pose_list ) {
@@ -41,7 +41,7 @@ CopyDofStepWiseSampler::CopyDofStepWiseSampler(utility::vector1< core::pose::Pos
 
 //Constructor
 CopyDofStepWiseSampler::CopyDofStepWiseSampler(utility::vector1< core::pose::PoseOP > const & pose_list,
-	std::map< Size, Size > const & res_map ):
+	std::map< core::Size, core::Size > const & res_map ):
 	pose_list_( pose_list )
 {
 	for ( auto const & poseop : pose_list ) copy_dof_movers_.push_back( utility::pointer::make_shared< simple_moves::CopyDofMover >( *poseop, res_map ) );

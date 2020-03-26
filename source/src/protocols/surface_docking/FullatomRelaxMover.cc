@@ -113,7 +113,7 @@ void FullatomRelaxMover::setup_defaults()
 void FullatomRelaxMover::setup_movers( const core::pose::Pose & pose )
 {
 	// Setting Common Parameters for movers
-	Size const first_protein_residue = pose.num_jump() + 1;
+	core::Size const first_protein_residue = pose.num_jump() + 1;
 
 	move_map_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
 	move_map_->set_bb_true_range(first_protein_residue , pose.size());
@@ -147,7 +147,7 @@ void FullatomRelaxMover::setup_movers( const core::pose::Pose & pose )
 	dock_mcm_ = utility::pointer::make_shared< docking::DockMCMProtocol >(pose.num_jump());
 }
 
-void FullatomRelaxMover::set_smallmovesize(Size scale){
+void FullatomRelaxMover::set_smallmovesize(core::Size scale){
 	small_mover_->angle_max('H',scale/3.0);
 	small_mover_->angle_max('E',scale/2.0);
 	small_mover_->angle_max('L',scale);
@@ -157,7 +157,7 @@ void FullatomRelaxMover::set_ljrepulsion_weight(Real weight_scale){
 	score_high_res_->set_weight(core::scoring::fa_rep,weight_scale);
 }
 
-void FullatomRelaxMover::set_ecounter(Size ecount){
+void FullatomRelaxMover::set_ecounter(core::Size ecount){
 	encounter_=ecount;
 }
 
@@ -206,7 +206,7 @@ void FullatomRelaxMover::reorient_and_slide_into_surface( core::pose::Pose & pos
 	// Random Orient the Partner (make sure this is the peptide)
 	TR<<"Preparing to dock protein to surface"<<std::endl;
 	TR<<"Randomizing orientation..."<<std::endl;
-	Size rb_jump_=pose.num_jump(); //default value
+	core::Size rb_jump_=pose.num_jump(); //default value
 	rigid::RigidBodyRandomizeMover rmover( pose, rb_jump_, rigid::partner_upstream );
 	rmover.apply( pose );
 	//Axis Spin
@@ -244,7 +244,7 @@ void FullatomRelaxMover::outer_loop_refinement_solution(core::pose::Pose & pose)
 	small_trial_min_mover_->apply(pose); // dfpmin
 	set_secondary_struct(pose);
 	shear_trial_min_mover_->apply(pose);  //dfpmin
-	for ( Size k = 1; k <= inner_loop_cycles_; ++k ) {
+	for ( core::Size k = 1; k <= inner_loop_cycles_; ++k ) {
 		inner_loop_refinement( pose );
 	}
 
@@ -263,7 +263,7 @@ void FullatomRelaxMover::reposition_above_surface(core::pose::Pose & pose)
 {
 	Vector protein_centroid, surf_centroid;
 	Vector slide_into, slide_away;
-	Size const rb_jump=pose.num_jump();
+	core::Size const rb_jump=pose.num_jump();
 	protocols::geometry::centroids_by_jump (pose, rb_jump, surf_centroid, protein_centroid);
 
 	slide_away = surface_parameters_->slide_axis().negated();
@@ -284,7 +284,7 @@ void FullatomRelaxMover::refinement_cycle(pose::Pose & pose)
 	TR<<"Fullatom refinement cycle: "<<encounter_<<std::endl;
 	TR<<"Adsoprtion occuring after: "<<encounter_cycle_<<" cycles"<<std::endl;
 	// object for slide into contact
-	for ( Size j = 1; j <=outer_loop_cycles_; ++j ) {
+	for ( core::Size j = 1; j <=outer_loop_cycles_; ++j ) {
 		if ( encounter_ <= encounter_cycle_ ) {
 			outer_loop_refinement_solution(pose);
 		} else {
@@ -311,7 +311,7 @@ void FullatomRelaxMover::apply(core::pose::Pose & pose)
 		total_cycles = 2;
 	}
 	core::Real lj_increment = ( .44 - 0.02 )/ (lj_ramp_cycle-1);
-	for ( Size i=1; i<=total_cycles; ++i ) {
+	for ( core::Size i=1; i<=total_cycles; ++i ) {
 		set_smallmovesize(30/i);
 		if ( i<=5 ) {
 			set_ljrepulsion_weight((0.02+(i-1)*lj_increment));
@@ -345,8 +345,8 @@ void FullatomRelaxMover::calc_secondary_struct(core::pose::Pose & pose){
 	utility::vector1< pose::PoseOP > singlechain_poses;
 	singlechain_poses = pose_tmp.split_by_chain();
 	core::scoring::dssp::Dssp dssp( *singlechain_poses[2] );
-	Size const last_surface_residue( pose.num_jump());
-	for ( Size ii = 1; ii <= singlechain_poses[2]->size(); ++ii ) {
+	core::Size const last_surface_residue( pose.num_jump());
+	for ( core::Size ii = 1; ii <= singlechain_poses[2]->size(); ++ii ) {
 		if ( dssp.get_dssp_secstruct(ii) == ' ' ) {
 			pose.set_secstruct(last_surface_residue + ii, 'L');
 
@@ -359,8 +359,8 @@ void FullatomRelaxMover::calc_secondary_struct(core::pose::Pose & pose){
 
 void FullatomRelaxMover::set_secondary_struct(core::pose::Pose & pose)
 {
-	Size const last_surface_residue( pose.num_jump());
-	for ( Size ii = 1; ii <= sec_struct_.length(); ++ii ) {
+	core::Size const last_surface_residue( pose.num_jump());
+	for ( core::Size ii = 1; ii <= sec_struct_.length(); ++ii ) {
 		if ( sec_struct_[ii] == ' ' ) {
 			pose.set_secstruct(last_surface_residue + ii, 'L');
 

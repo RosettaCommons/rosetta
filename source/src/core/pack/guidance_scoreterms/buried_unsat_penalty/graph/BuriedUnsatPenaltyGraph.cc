@@ -88,6 +88,7 @@ BuriedUnsatPenaltyGraphHbond::BuriedUnsatPenaltyGraphHbond(
 
 /// @brief Copy constructor.
 BuriedUnsatPenaltyGraphHbond::BuriedUnsatPenaltyGraphHbond( BuriedUnsatPenaltyGraphHbond const &src ) :
+	VirtualBase( src ),
 	first_node_is_the_acceptor_(src.first_node_is_the_acceptor_),
 	donor_group_index_(src.donor_group_index_),
 	acceptor_group_index_(src.acceptor_group_index_),
@@ -189,7 +190,7 @@ class BuriedUnsatPenaltyNodeData
 
 /// @brief Default constructor.
 BuriedUnsatPenaltyNodeData::BuriedUnsatPenaltyNodeData():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	residue_position_(0),
 	rotamer_index_(0),
 	donor_acceptor_groups_(),
@@ -696,7 +697,7 @@ class BuriedUnsatPenaltyEdgeData
 
 /// @brief Constructor.
 BuriedUnsatPenaltyEdgeData::BuriedUnsatPenaltyEdgeData() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	hbonds_list_()
 {}
 

@@ -220,7 +220,7 @@ ResiduePairJump::generate_frame()
 
 	diversify_dof_conformers();
 
-	for ( Size i = 1; i <= dof_conformers_.size(); ++i ) {
+	for ( core::Size i = 1; i <= dof_conformers_.size(); ++i ) {
 		apply_dof_conformer( dof_conformers_[i] );
 		//miniPose_->dump_pdb("chutmp_div"+right_string_of(i,4, '0') + ".pdb");
 		ResiduePairJumpFrame->steal( *miniPose_ );
@@ -243,15 +243,15 @@ ResiduePairJump::init_mini_pose()
 	//  Real init_theta = numeric::conversions::radians(60.0);
 	//  Real init_d = 2.0;
 	//  // connection numbers for new connections added to these residues
-	//  Size anchor_connection, root_connection;
+	//  core::Size anchor_connection, root_connection;
 	// operation for each of the two residues created and added
-	for ( Size i = 1; i <= 2; ++i ) {
+	for ( core::Size i = 1; i <= 2; ++i ) {
 		ResiduePairJumpSingleOP rsd = residues_[i];
 		//  // create atomIcoord
 		//   chemical::AtomICoor icoor( init_phi, init_theta, init_d,
 		//    rsd->cstAtoms(1), rsd->cstAtoms(2), rsd->cstAtoms(3), *(rsd->residueType()) );
 		//   // add a residue connection
-		//   Size connection = rsd->residueType()->add_residue_connection( rsd->cstAtoms(1) );
+		//   core::Size connection = rsd->residueType()->add_residue_connection( rsd->cstAtoms(1) );
 		//   rsd->residueType()->residue_connection(connection).icoor( icoor );
 		conformation::ResidueOP new_residue( conformation::ResidueFactory::create_residue( *( rsd->residueType() ) ) );
 
@@ -450,21 +450,21 @@ ResiduePairJump::build_cst_conformer_jumps()
 
 	// set up atoms to define the jump transform, from cstAtoms
 	utility::vector1< Vector > atoms_xyz;
-	for ( Size i = 1; i <= 2; ++i ) {
-		for ( Size j = 1; j <= 3 ; ++j ) {
+	for ( core::Size i = 1; i <= 2; ++i ) {
+		for ( core::Size j = 1; j <= 3 ; ++j ) {
 			atoms_xyz.push_back( miniPose_->xyz( core::id::NamedAtomID( jumpAtoms(i)[j], i ) ) );
 		}
 	}
 	// for each cst conformer conmbination, generate a jump transform
-	for ( Size i = 1; i <= cst_conformers_.size(); ++i ) {
+	for ( core::Size i = 1; i <= cst_conformers_.size(); ++i ) {
 		std::map< cstType, core::Size > const & conformer( cst_conformers_[i] );
 		utility::vector1< core::Real > cst_values(6);
 		for ( auto const & it : conformer ) {
 			cstType type = it.first;
-			Size index = it.second;
+			core::Size index = it.second;
 			core::Real value = cstInfoMap_.find(type)->second[index];
 			if ( type != disAB ) value = numeric::conversions::radians(value);
-			cst_values[Size(type)] = value;
+			cst_values[core::Size(type)] = value;
 		}
 		core::kinematics::Jump jump;
 		jump.from_bond_cst( atoms_xyz, cst_values );

@@ -30,7 +30,7 @@
 #include <core/scoring/ScoreType.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -68,7 +68,7 @@ namespace moves {
 ///     MonteCarlo.score_function
 ///     MonteCarlo.set_temperature
 ///     MonteCarlo.temperature
-class MonteCarlo : public utility::pointer::ReferenceCount {
+class MonteCarlo : public utility::VirtualBase {
 public:
 	typedef core::scoring::ScoreFunction ScoreFunction;
 	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
@@ -77,6 +77,7 @@ public:
 	typedef core::pose::PoseOP PoseOP;
 	typedef core::pose::PoseCOP PoseCOP;
 	typedef core::Real Real;
+	typedef core::Size Size;
 
 
 public:
@@ -527,7 +528,7 @@ public:
 	///     MonteCarlo.last_accept
 	///     MonteCarlo.show_counters
 	///     MonteCarlo.show_state
-	Size total_trials() const;
+	core::Size total_trials() const;
 
 	/// @brief Manually record that a move was attempted.
 	/// @details This is intended for moves that are made outside to context of
@@ -653,7 +654,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 public:
-	Size
+	core::Size
 	check_frequency() const {
 		return check_frequency_;
 	}
@@ -752,11 +753,11 @@ private:
 	Real last_score_;
 	Real lowest_score_;
 
-	Size heat_after_cycles_;
+	core::Size heat_after_cycles_;
 
 	utility::vector1< moves::MonteCarloExceptionConvergeOP > convergence_checks_;
-	Size last_check_;
-	Size check_frequency_;
+	core::Size last_check_;
+	core::Size check_frequency_;
 };
 
 // for Python bindings

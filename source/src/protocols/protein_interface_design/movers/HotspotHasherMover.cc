@@ -152,13 +152,13 @@ void HotspotHasherMover::apply( core::pose::Pose & pose ) {
 		}
 
 		// do hashing in 10-stub cycles to minimize file i/o
-		Size n_per(10);
+		core::Size n_per(10);
 
-		Size n_cycles = n_stubs_ / n_per;
+		core::Size n_cycles = n_stubs_ / n_per;
 		// make sure we do at least one cycle
 		if ( n_cycles <= 0 ) n_cycles = 1;
 		// PERFORM HASHING
-		for ( Size i = 1; i <= n_cycles; ++i ) {
+		for ( core::Size i = 1; i <= n_cycles; ++i ) {
 			stubset.clear();
 			stubset.score_threshold( score_threshold_ );
 			TR << "Finding " << n_per*i << "/" << n_stubs_ << " " << resname << " stubs" ;

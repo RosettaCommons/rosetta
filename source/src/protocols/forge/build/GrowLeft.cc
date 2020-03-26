@@ -50,7 +50,7 @@ GrowLeft::GrowLeft() :
 /// @param[in] rts the residue type set to use, default FA_STANDARD
 /// @remarks length of the *one-letter* aa must equal the length of ss
 GrowLeft::GrowLeft(
-	Size const pos,
+	core::Size const pos,
 	String const & ss,
 	String const & aa,
 	ResidueTypeSetCAP rts
@@ -238,7 +238,7 @@ void GrowLeft::modify_impl( Pose & pose ) {
 	// changes in the Pose
 
 	// grow extension
-	Size left_endpoint = grow_left_rtype( pose, pos_, r_types.rbegin(), r_types.rend() );
+	core::Size left_endpoint = grow_left_rtype( pose, pos_, r_types.rbegin(), r_types.rend() );
 	debug_assert( left_endpoint == pos_ - ss_.length() );
 
 	// END POS SHIFT: after this point, pos_ has stabilized
@@ -248,7 +248,7 @@ void GrowLeft::modify_impl( Pose & pose ) {
 	trans_omega( new_region.left, new_region.right, pose );
 
 	// set the desired secondary structure
-	for ( Size r = left_endpoint, i = 0; r <= pos_ - 1; ++r, ++i ) {
+	for ( core::Size r = left_endpoint, i = 0; r <= pos_ - 1; ++r, ++i ) {
 		pose.set_secstruct( r, ss_.at( i ) );
 	}
 }

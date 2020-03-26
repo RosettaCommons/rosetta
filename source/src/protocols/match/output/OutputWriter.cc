@@ -61,8 +61,8 @@ OutputWriter::determine_redundant_upstream_matchres(
 	using namespace toolbox::match_enzdes_util;
 
 	redundant_upstream_res.clear();
-	std::map< Size, Size > seen_scafpos_to_geom_cst;
-	std::map< Size, Size > bb_scafpos_to_geom_cst;
+	std::map< core::Size, core::Size > seen_scafpos_to_geom_cst;
+	std::map< core::Size, core::Size > bb_scafpos_to_geom_cst;
 
 	for ( core::Size i = 1; i <= m.upstream_hits.size(); ++i ) {
 		core::Size this_scafpos = m.upstream_hits[i].scaffold_build_id();

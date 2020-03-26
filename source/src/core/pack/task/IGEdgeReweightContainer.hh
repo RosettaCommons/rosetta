@@ -27,7 +27,7 @@
 //#include <core/id/AtomID.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -46,7 +46,7 @@ namespace task {
 
 
 /// @brief helper class for IGEdgeReweightContainer
-class IGEdgeReweighter : public utility::pointer::ReferenceCount {
+class IGEdgeReweighter : public utility::VirtualBase {
 
 public:
 	IGEdgeReweighter() : default_weight_(1.0) {}
@@ -77,7 +77,7 @@ public:
 
 /// @brief class that interfaces to containers holding IGedge weights between individual residues of the task
 /// @brief note: this class only knows about the pose numbering, not about the numbers in the IG
-class IGEdgeReweightContainer : public utility::pointer::ReferenceCount {
+class IGEdgeReweightContainer : public utility::VirtualBase {
 
 public:
 

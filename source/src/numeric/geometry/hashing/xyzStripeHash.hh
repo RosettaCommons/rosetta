@@ -15,7 +15,7 @@
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzTransform.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <map>
 
@@ -51,7 +51,7 @@ struct Counter {
 	void visit( numeric::xyzVector<float> const &, numeric::xyzVector<float> const & ){ ++count; }
 };
 
-class xyzStripeHash : public utility::pointer::ReferenceCount {
+class xyzStripeHash : public utility::VirtualBase {
 	short  short_min( short const a,  short const b) { return (a < b) ? a : b; }
 	short  short_max( short const a,  short const b) { return (a > b) ? a : b; }
 	short ushort_min(unsigned short const a, unsigned short const b) { return (a < b) ? a : b; }

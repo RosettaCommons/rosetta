@@ -100,7 +100,7 @@ public:
 	void set_angle_range_from_init_torsions( core::Real const range );
 
 	/// @brief output summary of class
-	void show( std::ostream & out, Size const indent = 0 ) const override;
+	void show( std::ostream & out, core::Size const indent = 0 ) const override;
 
 	/// @brief return OP to the subsampler that controls exactly this torsion_id (assume only one).
 	MC_SamplerOP
@@ -133,7 +133,7 @@ private:
 	MC_CombOP chi_rotamer_;
 	utility::vector1<MC_RNA_SugarOP> sugar_samplers_;
 	utility::vector1< core::Real > stored_jacobians_, current_jacobians_;
-	Size solution_;
+	core::Size solution_;
 	numeric::random::WeightedSampler jacobian_sampler_;
 	utility::vector1<core::Real> all_jacobians_, copy_stored_jacobians_, initial_torsions_,
 		angle_min_, angle_max_;

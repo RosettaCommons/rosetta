@@ -197,7 +197,7 @@ SymDockProtocol::clone() const {
 //set functions
 void SymDockProtocol::set_dock_rtmin( bool dock_rtmin_in ) { rtmin_=dock_rtmin_in; }
 void SymDockProtocol::set_sc_min( bool sc_min_in ) { sc_min_=sc_min_in; }
-void SymDockProtocol::set_max_repeats( Size const max_repeats_in ) { max_repeats_=max_repeats_in; }
+void SymDockProtocol::set_max_repeats( core::Size const max_repeats_in ) { max_repeats_=max_repeats_in; }
 void SymDockProtocol::set_dock_ppk( bool dock_ppk_in ) { dock_ppk_=dock_ppk_in; }
 void SymDockProtocol::set_view( bool view_in ) { view_=view_in; }
 
@@ -400,7 +400,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 	core::Size const max_repeats( option[ OptionKeys::docking::max_repeats ]() );
 
 	//start loop of decoy creation until filters are all passed
-	for ( Size r = 1; r <= max_repeats; r++ ) {
+	for ( core::Size r = 1; r <= max_repeats; r++ ) {
 		pose = starting_pose;
 
 		//MonteCarloOP mc;
@@ -712,7 +712,7 @@ SymDockProtocol::calc_interaction_energy( core::pose::Pose & pose ){
 	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
-	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
+	std::map< core::Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 	rigid::RigidBodyDofSeqTransMoverOP translate_away( new rigid::RigidBodyDofSeqTransMover( dofs ) );
 	translate_away->step_size( trans_magnitude );
 
@@ -747,7 +747,7 @@ SymDockProtocol::calc_rms( core::pose::Pose & pose ){
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	FArray1D_bool superpos ( pose.size(), false );
-	for ( Size res=1; res <= symm_info->num_total_residues_without_pseudo(); ++res ) {
+	for ( core::Size res=1; res <= symm_info->num_total_residues_without_pseudo(); ++res ) {
 		superpos(res) = true;
 	}
 	if ( get_native_pose() ) {
@@ -1201,7 +1201,7 @@ SymDockProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 	}
 
 
-	//void set_max_repeats( Size const max_repeats_in );
+	//void set_max_repeats( core::Size const max_repeats_in );
 	if ( tag->hasOption("max_repeats" ) ) {
 		bool const max_repeats( tag->getOption<bool>( "max_repeats" ) );
 		set_max_repeats(max_repeats);

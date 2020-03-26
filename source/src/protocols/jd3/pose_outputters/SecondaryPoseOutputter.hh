@@ -30,7 +30,7 @@
 // utility headers
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKey.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

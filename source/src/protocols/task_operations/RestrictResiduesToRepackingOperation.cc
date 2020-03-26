@@ -142,7 +142,7 @@ RestrictResiduesToRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 		residues_.clear();
 
 		for ( std::string const & key : res_keys ) {
-			Size res( utility::string2int( key ) );
+			core::Size res( utility::string2int( key ) );
 			if ( reference_pdb_id_ != "" ) {
 				res = core::pose::parse_resnum( key, reference_pose );
 			}

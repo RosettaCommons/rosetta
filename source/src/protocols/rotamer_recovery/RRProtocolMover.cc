@@ -95,7 +95,7 @@ RRProtocolMover::run(
 
 	mover_->apply(working_pose);
 
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( !packer_task.pack_residue(ii) ) continue;
 		measure_rotamer_recovery(
 			comparer, reporter,

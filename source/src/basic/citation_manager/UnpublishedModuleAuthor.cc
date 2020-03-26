@@ -32,7 +32,7 @@ UnpublishedModuleAuthor::UnpublishedModuleAuthor(
 	std::string const & affiliation,
 	std::string const & email_address
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	author_name_( author_name ),
 	affiliation_( affiliation ),
 	email_address_( email_address )
@@ -47,7 +47,7 @@ UnpublishedModuleAuthor::UnpublishedModuleAuthor(
 	std::string const & email_address,
 	std::string const & notes
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	author_name_( author_name ),
 	affiliation_( affiliation ),
 	email_address_( email_address ),

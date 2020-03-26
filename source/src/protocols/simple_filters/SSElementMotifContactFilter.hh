@@ -48,6 +48,7 @@ public:
 	typedef protocols::filters::Filter Super;
 	typedef protocols::filters::Filter Filter;
 	typedef protocols::filters::FilterOP FilterOP;
+	typedef core::Size Size;
 	typedef core::Real Real;
 	typedef core::pose::Pose Pose;
 	typedef std::string String;
@@ -98,9 +99,9 @@ public:// virtual main operation
 	Real report_sm(const Pose & pose ) const override;
 	void report( std::ostream & out,const Pose & pose ) const override;
 	protocols::loops::Loops get_ss_elements(const Pose & pose) const;
-	Size which_ssElement(Size res,protocols::loops::Loops ssElements) const;
-	Size get_SSelements_in_contact(Size element,protocols::loops::Loops ssElements, const Pose & pose) const;
-	Size get_ssElements_in_contact_w_threshold(std::multiset<Size> ssElements_in_contact) const;
+	core::Size which_ssElement(core::Size res,protocols::loops::Loops ssElements) const;
+	core::Size get_SSelements_in_contact(core::Size element,protocols::loops::Loops ssElements, const Pose & pose) const;
+	core::Size get_ssElements_in_contact_w_threshold(std::multiset<core::Size> ssElements_in_contact) const;
 	Real compute( const Pose & pose ) const;
 	bool apply(const Pose & pose ) const override;
 
@@ -129,12 +130,12 @@ public:// parser
 private:
 
 	Real filtered_value_;
-	Size ignore_n_terminal_SS_;
-	Size ignore_c_terminal_SS_;
+	core::Size ignore_n_terminal_SS_;
+	core::Size ignore_c_terminal_SS_;
 	bool only_n_term_;
 	bool only_c_term_;
 	Real threshold_;
-	Size contacts_between_ssElement_threshold_;
+	core::Size contacts_between_ssElement_threshold_;
 	bool report_avg_;
 	bool use_atomic_contact_filter_; //normally use motifs
 	core::scoring::motif::MotifHashManager *mman_;

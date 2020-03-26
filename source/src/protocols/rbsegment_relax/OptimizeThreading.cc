@@ -189,7 +189,7 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 		///
 		/// greedy
 		///
-		Size steps_eff = nsteps_; //std::ceil( nsteps_ / (2.0*max_shift_*segments.size()));
+		core::Size steps_eff = nsteps_; //std::ceil( nsteps_ / (2.0*max_shift_*segments.size()));
 		TR << "Greedy search for " << steps_eff << " steps" << std::endl;
 		for ( int i=1; i<=(int)steps_eff; ++i ) {
 			acc_pose = pose;
@@ -362,7 +362,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 		for ( auto it=loops_->v_begin(), it_end=loops_->v_end(); it!=it_end; ++it ) {
 			// if loop crosses a cut maintain that cut
 			bool crosses_cut=false;
-			Size i = 0;
+			core::Size i = 0;
 			for ( i=it->start(); i<=it->stop() && !crosses_cut; ++i ) {
 				crosses_cut |= f_in.is_cutpoint(i);
 			}
@@ -383,7 +383,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 		// set movemap
 		core::kinematics::MoveMapOP mm_loop( new core::kinematics::MoveMap() );
 		for ( auto const & it : *loops_ ) {
-			for ( Size i=it.start(); i<=it.stop(); ++i ) {
+			for ( core::Size i=it.start(); i<=it.stop(); ++i ) {
 				mm_loop->set_bb(i, true);
 				mm_loop->set_chi(i, true);
 			}
@@ -396,7 +396,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 		std::string tgt_seq = pose.sequence();
 		core::fragment::FragSetOP frags3( new core::fragment::ConstantLengthFragSet( 3 ) );
 		for ( auto const & it : *loops_ ) {
-			for ( Size i=it.start(); i+2<=it.stop(); ++i ) {
+			for ( core::Size i=it.start(); i+2<=it.stop(); ++i ) {
 				core::fragment::FrameOP frame( new core::fragment::Frame( i, 3 ) );
 				frame->add_fragment(
 					core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( "DDD", tgt_seq.substr( i-1, 3 ), 25, true, core::fragment::IndependentBBTorsionSRFD() ) );
@@ -421,7 +421,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 			(*scorefxn_sampling_)(pose);
 			protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *scorefxn_sampling_, 2.0 ) );
 
-			for ( Size n=1; n<=ninnerCyc; ++n ) {
+			for ( core::Size n=1; n<=ninnerCyc; ++n ) {
 				utility::vector1< core::fragment::FrameOP > & working_frames = (n%2)?frames3:frames1;
 
 				//frag3mover->apply( pose );
@@ -435,7 +435,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 				if ( ncs ) {
 					for ( core::uint j = 1; j <= ncs->ngroups(); ++j ) {
 						bool all_are_mapped = true;
-						for ( Size k=frame_i->start(); k<=frame_i->stop() && all_are_mapped; ++k ) {
+						for ( core::Size k=frame_i->start(); k<=frame_i->stop() && all_are_mapped; ++k ) {
 							all_are_mapped &= (ncs->get_equiv( j,k )!=0 && loops_->is_loop_residue(ncs->get_equiv( j,k )) );
 						}
 						if ( !all_are_mapped ) continue;
@@ -457,7 +457,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 					//std::cerr << "out " << i << "_" << n << ": " << frame_i->start() << std::endl;
 					//for (int j=1; j<=ncs->ngroups(); ++j ) {
 					// bool all_are_mapped = true;
-					// for ( Size k=frame_i->start(); k<=frame_i->stop() && all_are_mapped; ++k ) all_are_mapped &= (ncs->get_equiv( j,k )!=0);
+					// for ( core::Size k=frame_i->start(); k<=frame_i->stop() && all_are_mapped; ++k ) all_are_mapped &= (ncs->get_equiv( j,k )!=0);
 					// if (!all_are_mapped) continue;
 					// core::Size remap_start = ncs->get_equiv( j, frame_i->start() );
 					// std::cerr << "  ---> " << remap_start << std::endl;

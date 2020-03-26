@@ -23,13 +23,13 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
 namespace toolbox {
 
-class ScoreRmsPoint : public utility::pointer::ReferenceCount {
+class ScoreRmsPoint : public utility::VirtualBase {
 public:
 	ScoreRmsPoint( core::Real const score_val, core::Real rms_val );
 	core::Real score() const;
@@ -53,7 +53,7 @@ private:
 };
 
 ///@brief Evaluates a set of score/rms points
-class EnergyLandscapeEvaluator : public utility::pointer::ReferenceCount {
+class EnergyLandscapeEvaluator : public utility::VirtualBase {
 public:
 	EnergyLandscapeEvaluator();
 	~EnergyLandscapeEvaluator() override;

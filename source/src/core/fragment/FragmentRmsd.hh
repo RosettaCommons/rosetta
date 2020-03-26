@@ -20,7 +20,7 @@
 #include <boost/unordered/unordered_map.hpp>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -32,11 +32,11 @@
 namespace core {
 namespace fragment {
 
-class FragmentRmsd : public utility::pointer::ReferenceCount {
+class FragmentRmsd : public utility::VirtualBase {
 	typedef boost::unordered_map<core::Size, FrameCOP > FrameMap;
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~FragmentRmsd() override;
 	FragmentRmsd(FragSetCOP fragments);
 

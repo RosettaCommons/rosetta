@@ -98,7 +98,7 @@ bool WobbleMover::ccd_closure(
 /// @detail NEEDS MORE WORK IF MULTIPLE CHAINS OR JUMPS ARE USED: total_residue!=end of chain
 bool WobbleMover::apply_fragment (
 	Frame const& frame,
-	Size frag_num,
+	core::Size frag_num,
 	kinematics::MoveMap const& movemap,
 	pose::Pose &pose ) const
 {

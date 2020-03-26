@@ -18,14 +18,14 @@
 #include <basic/database/insert_statement_generator/RowData.fwd.hh>
 #include <platform/types.hh>
 #include <cppdb/frontend.h>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <string>
 
 namespace basic {
 namespace database {
 namespace insert_statement_generator {
 
-class RowDataBase : public utility::pointer::ReferenceCount {
+class RowDataBase : public utility::VirtualBase {
 public:
 
 	RowDataBase(std::string const & column_name);

@@ -61,7 +61,7 @@ DesignTask::DesignTask():
 
 /// @brief value constructor
 DesignTask::DesignTask(
-	Size const ncycle,
+	core::Size const ncycle,
 	ScoreFunctionOP const sfxn,
 	MoverOP const mover,
 	FilterStructsOP const filter_structs,
@@ -80,7 +80,7 @@ DesignTask::DesignTask(
 
 /// @brief value constructor
 DesignTask::DesignTask( DesignTask const & rval ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	ncycle_( rval.ncycle_ ),
 	scorefxn_( rval.scorefxn_ ),
 	mover_( rval.mover_ ),
@@ -136,7 +136,7 @@ DesignTask::resfile() const
 
 /// @brief the number of cycles of fixbb design and mover
 void
-DesignTask::set_ncycle( Size const & ncycle )
+DesignTask::set_ncycle( core::Size const & ncycle )
 {
 	ncycle_  = ncycle;
 }
@@ -208,7 +208,7 @@ DesignTask_Layer::DesignTask_Layer(
 	bool dsgn_boundary,
 	bool dsgn_surface,
 	bool use_original_seq,
-	Size ncycle,
+	core::Size ncycle,
 	ScoreFunctionOP sfxn,
 	MoverOP mover,
 	FilterStructsOP filter_structs
@@ -266,7 +266,7 @@ DesignTask_Normal::DesignTask_Normal() = default;
 
 /// @brief value constructor
 DesignTask_Normal::DesignTask_Normal(
-	Size ncycle,
+	core::Size ncycle,
 	scoring::ScoreFunctionOP sfxn,
 	MoverOP mover,
 	FilterStructsOP filter_structs

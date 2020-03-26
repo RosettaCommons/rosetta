@@ -41,7 +41,7 @@ To get the most out of this class, call:
 #ifndef INCLUDED_protocols_jd3_dag_node_managers_NodeManager_HH
 #define INCLUDED_protocols_jd3_dag_node_managers_NodeManager_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/jd3/dag_node_managers/NodeManager.fwd.hh>
 #include <protocols/jd3/dag_node_managers/NodeManagerStorageMatrix.hh>
 
@@ -62,7 +62,7 @@ namespace jd3 {
 namespace dag_node_managers {
 
 
-class NodeManager : public utility::pointer::ReferenceCount {
+class NodeManager : public utility::VirtualBase {
 
 public:
 

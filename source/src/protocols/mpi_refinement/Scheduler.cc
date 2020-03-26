@@ -278,8 +278,8 @@ Scheduler::read_cmd( std::string const & cmdfile,
 		params.irun = 0;
 
 		// Token 5
-		// Score type is defined by Size, not by its name
-		// because WUM is communicating with Master via Size type only
+		// Score type is defined by core::Size, not by its name
+		// because WUM is communicating with Master via core::Size type only
 		if ( tokens[5] == "talaris2013" ) {
 			params.score_type = 0;
 		} else if ( tokens[5] == "scorefacts" ) {

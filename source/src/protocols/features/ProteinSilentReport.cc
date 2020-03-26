@@ -224,7 +224,7 @@ ProteinSilentReport::write_protocol_report(
 	utility::sql_database::sessionOP db_session
 ){
 	//initialize protocol and batch id
-	std::pair<Size, Size> ids = get_protocol_and_batch_id("db_job_outputter", "", features_reporters_, db_session);
+	std::pair<core::Size, core::Size> ids = get_protocol_and_batch_id("db_job_outputter", "", features_reporters_, db_session);
 	protocol_id_=ids.first;
 	batch_id_=ids.second;
 

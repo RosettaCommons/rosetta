@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_cluster_APCluster_hh
 
 #include <protocols/cluster/APCluster.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 
@@ -33,7 +33,7 @@ namespace cluster {
 /// @details There will be one instance of this class for each (finite) similarity between two input points,
 /// up to a maximum of N*N instances if the similarity matrix is fully populated.
 ///
-class Exemplar //: public utility::pointer::ReferenceCount
+class Exemplar //: public utility::VirtualBase
 {
 public:
 
@@ -63,7 +63,7 @@ public:
 /// @details There should be one instance of this class for each input point.
 /// Fields are public because it's a glorified struct -- clients shouldn't use this directly.
 ///
-class DataPoint //: public utility::pointer::ReferenceCount
+class DataPoint //: public utility::VirtualBase
 {
 public:
 
@@ -129,7 +129,7 @@ public:
 /// I follow the conventions of the original paper, where "i" is the index of some generic data point,
 /// and "k" is the index of a data point being considered as an exemplar (cluster center).
 ///
-class APCluster : public utility::pointer::ReferenceCount
+class APCluster : public utility::VirtualBase
 {
 public:
 

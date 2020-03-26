@@ -79,14 +79,14 @@ InterRepeatContactFilter::Real
 InterRepeatContactFilter::compute( Pose const & pose ) const
 {
 	using numeric::xyzVector;
-	Size repeatLength = pose.size()/numbRepeats_;
-	Size region1Start = 1;
-	Size region1End = repeatLength;
-	Size region2Start = repeatLength+1;
-	Size region2End = repeatLength*2;
-	Size contactCt = 0;
-	for ( Size ii=region1Start; ii<=region1End; ++ii ) {
-		for ( Size jj=region2Start; jj<=region2End; ++jj ) {
+	core::Size repeatLength = pose.size()/numbRepeats_;
+	core::Size region1Start = 1;
+	core::Size region1End = repeatLength;
+	core::Size region2Start = repeatLength+1;
+	core::Size region2End = repeatLength*2;
+	core::Size contactCt = 0;
+	for ( core::Size ii=region1Start; ii<=region1End; ++ii ) {
+		for ( core::Size jj=region2Start; jj<=region2End; ++jj ) {
 			if ( (jj-ii)>sequenceSep_ ) {
 				xyzVector<core::Real> a = pose.xyz(core::id::NamedAtomID("CA", ii));
 				xyzVector<core::Real> b = pose.xyz(core::id::NamedAtomID("CA", jj));
@@ -124,8 +124,8 @@ InterRepeatContactFilter::parse_my_tag(
 {
 	// set threshold
 	filtered_value_ = tag->getOption<Real>( "threshold", -1.0 );
-	numbRepeats_ = tag->getOption<Size>("numb_repeats",4);
-	sequenceSep_ = tag->getOption<Size>("sequenceSeperation",6);
+	numbRepeats_ = tag->getOption<core::Size>("numb_repeats",4);
+	sequenceSep_ = tag->getOption<core::Size>("sequenceSeperation",6);
 	distThresh_ = tag->getOption<Real>("distanceThreshold",10.0);
 	tr << "Structures which have InterRepeatContacts less than " << filtered_value_ << " will be filtered." << std::endl;
 }

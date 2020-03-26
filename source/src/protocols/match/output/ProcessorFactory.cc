@@ -54,7 +54,7 @@
 //#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
@@ -141,7 +141,7 @@ ProcessorFactory::create_grouper(
 		SameSequenceAndDSPositionGrouperOP seq_ds_grouper( new SameSequenceAndDSPositionGrouper );
 		seq_ds_grouper->set_n_geometric_constraints( matcher->n_geometric_constraints() );
 		seq_ds_grouper->set_hit_cacher( cacher );
-		for ( Size ii = 1; ii <= matcher->n_geometric_constraints() ; ++ii ) {
+		for ( core::Size ii = 1; ii <= matcher->n_geometric_constraints() ; ++ii ) {
 			seq_ds_grouper->set_downstream_builder( ii, matcher->downstream_builder( ii ) );
 		}
 		seq_ds_grouper->set_relevant_atom_ids( mtask->relevant_downstream_atoms()  );
@@ -168,7 +168,7 @@ ProcessorFactory::create_evaluator(
 	if ( mtask->evaluator_name() == "DownstreamRMSEvaluator" ) {
 		DownstreamRMSEvaluatorOP rms_eval( new DownstreamRMSEvaluator );
 		rms_eval->set_n_geometric_constraints( matcher->n_geometric_constraints() );
-		for ( Size ii = 1; ii <= matcher->n_geometric_constraints(); ++ii ) {
+		for ( core::Size ii = 1; ii <= matcher->n_geometric_constraints(); ++ii ) {
 			/// HACK -- all RigidLigandBuilders are equivalent -- FIX THIS!
 			rms_eval->set_downstream_builder( ii, matcher->downstream_builder( ii ) );
 		}
@@ -224,7 +224,7 @@ ProcessorFactory::create_filters(
 		}
 		collfilt->set_downstream_pose( * matcher->downstream_pose() );
 		collfilt->set_num_geometric_constraints( matcher->n_geometric_constraints() );
-		for ( Size ii = 1; ii <= matcher->n_geometric_constraints(); ++ii ) {
+		for ( core::Size ii = 1; ii <= matcher->n_geometric_constraints(); ++ii ) {
 			collfilt->set_downstream_builder( ii, matcher->downstream_builder( ii ) );
 			if ( mtask->enz_input_data()->mcfi_list( ii )->mcfi(1)->is_covalent() ) {
 				collfilt->set_chemical_bond_from_upstream_to_downstream( ii );
@@ -256,7 +256,7 @@ ProcessorFactory::create_output_writer(
 		kin_match_writer->set_n_geomcst( matcher->n_geometric_constraints() );
 		kin_match_writer->set_kin_writer( kin_hit_writer );
 
-		for ( Size ii = 1; ii <= matcher->n_geometric_constraints() ; ++ii ) {
+		for ( core::Size ii = 1; ii <= matcher->n_geometric_constraints() ; ++ii ) {
 			/// DIRTY ASSUMPTION -- SINGLE RESIDUE IN DOWNSTREAM PARTNER
 			if ( matcher->downstream_builder( ii ) ) {
 				SingleDownstreamResidueWriterOP downstream_writer( new SingleDownstreamResidueWriter );
@@ -289,7 +289,7 @@ ProcessorFactory::create_output_writer(
 		}
 
 		runtime_assert( matcher->downstream_builder( 1 /* wrong */ ) != nullptr );
-		for ( Size ii = 1; ii <= matcher->n_geometric_constraints() ; ++ii ) {
+		for ( core::Size ii = 1; ii <= matcher->n_geometric_constraints() ; ++ii ) {
 			pdb_writer->set_downstream_builder( ii, matcher->downstream_builder( ii ) );
 		}
 		return pdb_writer;

@@ -83,7 +83,7 @@ BaseTypeList::add( std::string const & name, core::chemical::ResidueTypeCOP rest
 
 /// @brief Default constructor
 PackerPalette::PackerPalette() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	utility::pointer::enable_shared_from_this< PackerPalette >(),
 	restore_pre_talaris_behaviour_(false),
 	icoor_05_2009_(false),

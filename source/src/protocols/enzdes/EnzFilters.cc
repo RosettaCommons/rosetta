@@ -320,7 +320,7 @@ LigInterfaceEnergyFilter::LigInterfaceEnergyFilter( core::scoring::ScoreFunction
 }
 
 LigInterfaceEnergyFilter::LigInterfaceEnergyFilter( LigInterfaceEnergyFilter const &init ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Filter( init ), threshold_( init.threshold_ ),
 	include_cstE_ (init.include_cstE_), rb_jump_ (init.rb_jump_), interface_distance_cutoff_ ( init.interface_distance_cutoff_){
 	using namespace core::scoring;
@@ -479,7 +479,7 @@ EnzScoreFilter::EnzScoreFilter( std::string const & resnum, std::string const & 
 }
 
 EnzScoreFilter::EnzScoreFilter( EnzScoreFilter const &init ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Filter( init ), resnum_( init.resnum_ ), cstid_( init.cstid_ ),score_type_( init.score_type_ ), threshold_( init.threshold_ ),
 	whole_pose_ (init.whole_pose_), is_cstE_ ( init.is_cstE_ ) {
 	using namespace core::scoring;
@@ -793,7 +793,7 @@ EnzdesScorefileFilter::EnzdesScorefileFilter()
 }
 
 EnzdesScorefileFilter::EnzdesScorefileFilter( EnzdesScorefileFilter const & other )
-: /*utility::pointer::ReferenceCount(),*/ Filter( other ),
+: /*utility::VirtualBase(),*/ Filter( other ),
 	no_packstat_calc_( other.no_packstat_calc_ ),
 	native_comparison_(other.native_comparison_ ),
 	repack_no_lig_( other.repack_no_lig_),
@@ -908,7 +908,7 @@ EnzdesScorefileFilter::examine_pose(
 
 	}
 	//pose metric calculators for pose total
-	std::map< Size, utility::vector1< std::pair< std::string, std::string > > >::const_iterator totcalc_it = residue_calculators_.find( 0 );
+	std::map< core::Size, utility::vector1< std::pair< std::string, std::string > > >::const_iterator totcalc_it = residue_calculators_.find( 0 );
 	if ( totcalc_it != residue_calculators_.end() ) {
 
 		utility::vector1< std::pair< std::string, std::string > > const & tot_calculators = totcalc_it->second;
@@ -944,10 +944,10 @@ EnzdesScorefileFilter::examine_pose(
 	}
 
 	//then write out the relevant scoreterms (and potentially pose metrics) for each of the special residues
-	Size spec_res_counter(0);
-	utility::vector1< Size > special_res = enzutil::catalytic_res( pose );
+	core::Size spec_res_counter(0);
+	utility::vector1< core::Size > special_res = enzutil::catalytic_res( pose );
 
-	for ( utility::vector1<Size>::const_iterator res_it = special_res.begin(), end = special_res.end(); res_it != end; ++res_it ) {
+	for ( utility::vector1<core::Size>::const_iterator res_it = special_res.begin(), end = special_res.end(); res_it != end; ++res_it ) {
 
 		spec_res_counter++;
 		//for convenience, the sequence number of the residue will be written out
@@ -1076,7 +1076,7 @@ EnzdesScorefileFilter::compute_metrics_for_residue_subset(
 
 	//if there are calculators that need to be evaluated for this residue, let's do that now
 	//note: section still under development, right now only calculators that return reals are supported
-	std::map< Size, utility::vector1< std::pair< std::string, std::string > > >::const_iterator res_calc_it = residue_calculators_.find( res_subset[1] );
+	std::map< core::Size, utility::vector1< std::pair< std::string, std::string > > >::const_iterator res_calc_it = residue_calculators_.find( res_subset[1] );
 	if ( res_calc_it != residue_calculators_.end() ) {
 
 		utility::vector1< std::pair< std::string, std::string > > calculators_this_res = res_calc_it->second;
@@ -1194,7 +1194,7 @@ EnzdesScorefileFilter::setup_pose_metric_calculators( core::pose::Pose const & p
 	total_pose_calculators.push_back( std::pair< std::string, std::string > (charge_calc_name, "total_neg_charges") );
 	total_pose_calculators.push_back( std::pair< std::string, std::string > ( "seq_recovery", "seq_recovery") );
 
-	residue_calculators_.insert( std::pair< Size, utility::vector1< std::pair< std::string, std::string > > > ( 0, total_pose_calculators ) );
+	residue_calculators_.insert( std::pair< core::Size, utility::vector1< std::pair< std::string, std::string > > > ( 0, total_pose_calculators ) );
 
 	//if native compare is requested
 	if ( native_comparison_ ) {
@@ -1238,7 +1238,7 @@ EnzdesScorefileFilter::setup_pose_metric_calculators( core::pose::Pose const & p
 
 		//first a couple of ligand specific calculators ( interface SASA and interface energetics)
 		if ( pose.residue_type( *vecit ).is_ligand() ) {
-			Size lig_chain = pose.chain( *vecit );
+			core::Size lig_chain = pose.chain( *vecit );
 			std::string lig_ch_string = utility::to_string( lig_chain );
 			for ( core::Size prot_chain : protein_chains ) {
 				std::string prot_ch_string = utility::to_string( prot_chain );
@@ -1295,7 +1295,7 @@ EnzdesScorefileFilter::setup_pose_metric_calculators( core::pose::Pose const & p
 		//}
 		//debug over
 
-		residue_calculators_.insert( std::pair< Size, utility::vector1< std::pair< std::string, std::string > > > ( *vecit, calculators_this_res ) );
+		residue_calculators_.insert( std::pair< core::Size, utility::vector1< std::pair< std::string, std::string > > > ( *vecit, calculators_this_res ) );
 
 	} // loop over all (catalytic) residues
 } //setup_pose_metric_calculators

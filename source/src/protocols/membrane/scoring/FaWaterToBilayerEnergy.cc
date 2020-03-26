@@ -141,7 +141,7 @@ FaWaterToBilayerEnergy::residue_energy(
 	using namespace core::scoring;
 
 	if ( rsd.name3() == "MEM" || !rsd.is_protein() ) return;
-	for ( Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end; ++i ) {
 		MEnvAtomParamsCOP menv_params = get_menv_params_for_residue( pose, rsd, i );
 		emap[ core::scoring::fa_water_to_bilayer ] += eval_fa_wtbe( *menv_params );
 	}
@@ -182,8 +182,8 @@ FaWaterToBilayerEnergy::eval_atom_derivative(
 	using namespace core::scoring;
 
 	// Grab residue and atom numbers
-	Size const i( atom_id.rsd() );
-	Size const m( atom_id.atomno() );
+	core::Size const i( atom_id.rsd() );
+	core::Size const m( atom_id.atomno() );
 
 	// Get the actual residue and atom
 	conformation::Residue const & rsd1( pose.residue( i ) );

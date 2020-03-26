@@ -21,7 +21,7 @@
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // c++ headers
 #include <string>
@@ -31,7 +31,7 @@ namespace evaluation {
 
 /// @brief The Creator class is responsible for creating a particular
 /// mover class.
-class EvaluatorCreator : public utility::pointer::ReferenceCount
+class EvaluatorCreator : public utility::VirtualBase
 {
 public:
 	EvaluatorCreator() {}

@@ -46,7 +46,7 @@ class BB_Pos {
 public:
 
 	void
-	resize( Size const nres );
+	resize( core::Size const nres );
 
 	void
 	clear();
@@ -56,21 +56,21 @@ public:
 
 	/// @details accessor for N's coordinate on residue i, requires take_coordinates_from_pose have been recently called.
 	Vector const &
-	N( Size const i ) const
+	N( core::Size const i ) const
 	{
 		return N_[i];
 	}
 
 	/// @details accessor for CA's coordinate on residue i, requires take_coordinates_from_pose have been recently called.
 	Vector const &
-	CA( Size const i ) const
+	CA( core::Size const i ) const
 	{
 		return CA_[i];
 	}
 
 	/// @details accessor for CB's coordinate on residue i, requires take_coordinates_from_pose have been recently called.
 	Vector const &
-	CB( Size const i ) const
+	CB( core::Size const i ) const
 	{
 		return CB_[i];
 	}
@@ -78,20 +78,20 @@ public:
 
 	/// @details accessor for C's coordinate on residue i, requires take_coordinates_from_pose have been recently called.
 	Vector const &
-	C( Size const i ) const
+	C( core::Size const i ) const
 	{
 		return C_[i];
 	}
 
 	/// @details accessor for O's coordinate on residue i, requires take_coordinates_from_pose have been recently called.
 	Vector const &
-	O( Size const i ) const
+	O( core::Size const i ) const
 	{
 		return O_[i];
 	}
 
 	/// @
-	Size size() const
+	core::Size size() const
 	{
 		return residue_types_.size();
 	}
@@ -112,11 +112,11 @@ private: // DATA
 	/// Residue types must match those of the pose for the indices
 	/// to match.
 	utility::vector1< core::chemical::ResidueTypeCOP > residue_types_;
-	utility::vector1< Size > N_index_;
-	utility::vector1< Size > CA_index_;
-	utility::vector1< Size > CB_index_;
-	utility::vector1< Size > C_index_;
-	utility::vector1< Size > O_index_;
+	utility::vector1< core::Size > N_index_;
+	utility::vector1< core::Size > CA_index_;
+	utility::vector1< core::Size > CB_index_;
+	utility::vector1< core::Size > C_index_;
+	utility::vector1< core::Size > O_index_;
 
 #ifdef    SERIALIZATION
 public:

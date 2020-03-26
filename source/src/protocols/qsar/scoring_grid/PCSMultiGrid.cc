@@ -131,7 +131,7 @@ PCSMultiGrid::PCSMultiGrid(PCSMultiGrid const & other) :
 	pcs_data_initialized_(other.pcs_data_initialized_)
 {
 	pcs_grid_vector_.clear();
-	for ( Size i = 1, i_end = other.pcs_grid_vector_.size(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = other.pcs_grid_vector_.size(); i <= i_end; ++i ) {
 		pcs_grid_vector_.push_back( utility::pointer::dynamic_pointer_cast< SingleGrid >( (other.pcs_grid_vector_[i])->clone() ) );
 	}
 }
@@ -144,7 +144,7 @@ PCSMultiGrid::operator=(PCSMultiGrid const & rhs) {
 		type_ = rhs.type_;
 		pcs_input_file_ = rhs.pcs_input_file_;
 		pcs_grid_vector_.clear();
-		for ( Size i = 1, i_end = rhs.pcs_grid_vector_.size(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = rhs.pcs_grid_vector_.size(); i <= i_end; ++i ) {
 			pcs_grid_vector_.push_back( utility::pointer::dynamic_pointer_cast< SingleGrid >( (rhs.pcs_grid_vector_[i])->clone() ) );
 		}
 		weight_ = rhs.weight_;
@@ -171,7 +171,7 @@ PCSMultiGrid::get_type() const {
 /// @brief set the chain the grid applies to
 void
 PCSMultiGrid::set_chain(char chain) {
-	for ( Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
 		pcs_grid_vector_[i]->set_chain(chain);
 	}
 }
@@ -179,7 +179,7 @@ PCSMultiGrid::set_chain(char chain) {
 /// @brief determine if all residue atoms are in a grid
 bool
 PCSMultiGrid::is_in_grid(UltraLightResidue const & residue) const {
-	for ( Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
 		if ( !(pcs_grid_vector_[i]->is_in_grid(residue)) ) {
 			return false;
 		}
@@ -190,7 +190,7 @@ PCSMultiGrid::is_in_grid(UltraLightResidue const & residue) const {
 /// @brief determine if all residue atoms are in a grid
 bool
 PCSMultiGrid::is_in_grid(Residue const & residue) const {
-	for ( Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
 		if ( !(pcs_grid_vector_[i]->is_in_grid(residue)) ) {
 			return false;
 		}
@@ -219,7 +219,7 @@ PCSMultiGrid::serialize() const {
 	Pair type_record("type", Value(type_));
 	Pair file_record("pcs_input_file", Value(pcs_input_file_));
 	std::vector<Value> pcs_grid_vector;
-	for ( Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
 		pcs_grid_vector.push_back(pcs_grid_vector_[i]->serialize());
 	}
 	Pair grid_vector_record("pcs_grids", pcs_grid_vector);
@@ -235,7 +235,7 @@ PCSMultiGrid::deserialize(utility::json_spirit::mObject data) {
 	pcs_input_file_ = data["pcs_input_file"].get_str();
 	utility::json_spirit::mArray grid_data(data["pcs_grids"].get_array());
 	pcs_grid_vector_.resize(grid_data.size());
-	Size i(1);
+	core::Size i(1);
 	for ( utility::json_spirit::mArray::iterator it = grid_data.begin(); it != grid_data.end(); ++it ) {
 		SingleGridOP grid( new PCSSingleGrid() );
 		grid->deserialize(it->get_obj());
@@ -272,7 +272,7 @@ PCSMultiGrid::initialize(
 		initialize_pcs_data_from_input_file(pcs_input_file_);
 		pcs_data_initialized_=true;
 	}
-	for ( Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
 		pcs_grid_vector_[i]->initialize(center, width, resolution);
 	}
 }
@@ -284,7 +284,7 @@ PCSMultiGrid::refresh(
 	Vector const & center
 )
 {
-	for ( Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
 		pcs_grid_vector_[i]->refresh(pose, center);
 	}
 }
@@ -294,7 +294,7 @@ void
 PCSMultiGrid::refresh(
 	Pose const & pose,
 	Vector const & center,
-	Size const & /*ligand_chain_id_to_exclude*/
+	core::Size const & /*ligand_chain_id_to_exclude*/
 )
 {
 	refresh(pose, center);
@@ -305,7 +305,7 @@ void
 PCSMultiGrid::refresh(
 	Pose const & pose,
 	Vector const & center,
-	utility::vector1<Size> /*ligand_chain_ids_to_exclude*/
+	utility::vector1<core::Size> /*ligand_chain_ids_to_exclude*/
 )
 {
 	refresh(pose, center);
@@ -320,7 +320,7 @@ PCSMultiGrid::score(
 ) const
 {
 	Real total_score(0.0);
-	for ( Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
 		total_score += pcs_grid_vector_[i]->score(residue, max_score, qsar_map);
 	}
 	return total_score * weight_;
@@ -330,12 +330,12 @@ PCSMultiGrid::score(
 core::Real
 PCSMultiGrid::atom_score(
 	UltraLightResidue const & residue,
-	Size atomno,
+	core::Size atomno,
 	qsarMapCOP qsar_map
 ) const
 {
 	Real total_score(0.0);
-	for ( Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
 		total_score += pcs_grid_vector_[i]->atom_score(residue, atomno, qsar_map);
 	}
 	return total_score * weight_;
@@ -350,7 +350,7 @@ PCSMultiGrid::score(
 ) const
 {
 	Real total_score(0.0);
-	for ( Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
 		total_score += pcs_grid_vector_[i]->score(residue, max_score, qsar_map);
 	}
 	return total_score * weight_;
@@ -360,12 +360,12 @@ PCSMultiGrid::score(
 core::Real
 PCSMultiGrid::atom_score(
 	Residue const & residue,
-	Size atomno,
+	core::Size atomno,
 	qsarMapCOP qsar_map
 ) const
 {
 	Real total_score(0.0);
-	for ( Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pcs_grid_vector_.size(); i <= i_end; ++i ) {
 		total_score += pcs_grid_vector_[i]->atom_score(residue, atomno, qsar_map);
 	}
 	return total_score * weight_;
@@ -381,7 +381,7 @@ PCSMultiGrid::initialize_pcs_data_from_input_file(std::string const & filename) 
 
 	std::ifstream infile;
 	std::string line;
-	Size line_number(0);
+	core::Size line_number(0);
 
 	infile.open(filename.c_str(), std::ios::in);
 	if ( !infile.is_open() ) {
@@ -399,8 +399,8 @@ PCSMultiGrid::initialize_pcs_data_from_input_file(std::string const & filename) 
 			continue;
 		} else if ( line.find("dataset") != std::string::npos ) {
 			// Read parameter of one PCS dataset
-			Size idx_key = line.find("dataset");
-			Size idx_equal_sign = line.find("=", idx_key + 7);
+			core::Size idx_key = line.find("dataset");
+			core::Size idx_equal_sign = line.find("=", idx_key + 7);
 			if ( idx_equal_sign == std::string::npos ) {
 				utility_exit_with_message("ERROR: No equal sign found after parameter \"dataset\" in PCS input file. Please provide input parameter \" key = value \".");
 			} else {

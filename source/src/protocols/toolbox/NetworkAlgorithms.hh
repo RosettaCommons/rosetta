@@ -22,7 +22,7 @@
 
 // Utility headers
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 //// C++ headers
@@ -38,7 +38,7 @@ namespace protocols {
 namespace toolbox {
 
 /// @brief residuenetwork base class
-class ResidueNetwork : public utility::pointer::ReferenceCount
+class ResidueNetwork : public utility::VirtualBase
 {
 public:
 	/// @brief default constructor
@@ -111,7 +111,7 @@ bool
 Contains( std::list< NodeOP > const & nodes, NodeCOP node );
 
 // Nodes (and edges) for network algorithms
-struct Node : public utility::pointer::ReferenceCount
+struct Node : public utility::VirtualBase
 {
 	Node(
 		std::string ID,

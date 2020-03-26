@@ -39,6 +39,7 @@
 namespace protocols {
 namespace task_operations {
 
+using core::Size;
 using namespace core::pack::task::operation;
 using namespace utility::tag;
 
@@ -78,7 +79,7 @@ LimitAromaChi2_RotamerSetOperation::alter_rotamer_set(
 
 	utility::vector1< bool > rotamers_to_delete;
 	rotamers_to_delete.resize( rotamer_set.num_rotamers() );
-	Size irot( 0 ), num_to_delete(0);
+	core::Size irot( 0 ), num_to_delete(0);
 	for ( auto rop : rotamer_set ) {
 
 		irot ++;

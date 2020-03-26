@@ -72,14 +72,14 @@ RepeatProteinRelax::RepeatProteinRelax(){
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// gets the midpoint of the longest loop
 ///
-Size RepeatProteinRelax::get_midpoint_longest_loop(core::pose::Pose const & pose, Size const repeat_length){
+Size RepeatProteinRelax::get_midpoint_longest_loop(core::pose::Pose const & pose, core::Size const repeat_length){
 	protocols::loops::Loops pose_loops;
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
 	std::string dssp_string = dssp.get_dssp_secstruct();
 	string lastSecStruct = dssp_string.substr(0,1);
-	Size startLoop = 0;
-	Size endLoop = 0;
+	core::Size startLoop = 0;
+	core::Size endLoop = 0;
 	if ( dssp_string.substr(0,1) == "L" ) {
 		startLoop = 1;
 	}
@@ -95,16 +95,16 @@ Size RepeatProteinRelax::get_midpoint_longest_loop(core::pose::Pose const & pose
 		}
 		lastSecStruct = dssp_string.substr(ii-1,1);
 	}
-	Size max_loop_size=0;
-	Size max_loop_position=0;
-	for ( Size ii=1; ii<=pose_loops.size(); ii++ ) {
-		Size loop_size =pose_loops[ii].stop()-pose_loops[ii].start();
+	core::Size max_loop_size=0;
+	core::Size max_loop_position=0;
+	for ( core::Size ii=1; ii<=pose_loops.size(); ii++ ) {
+		core::Size loop_size =pose_loops[ii].stop()-pose_loops[ii].start();
 		if ( loop_size>max_loop_size ) {
 			max_loop_size=loop_size;
 			max_loop_position=ii;
 		}
 	}
-	Size mid_point_longest_loop = (pose_loops[max_loop_position].stop()-pose_loops[max_loop_position].start())/2+pose_loops[max_loop_position].start();
+	core::Size mid_point_longest_loop = (pose_loops[max_loop_position].stop()-pose_loops[max_loop_position].start())/2+pose_loops[max_loop_position].start();
 	if ( mid_point_longest_loop>repeat_length ) {
 		mid_point_longest_loop=mid_point_longest_loop-repeat_length;
 	}
@@ -116,20 +116,20 @@ Size RepeatProteinRelax::get_midpoint_longest_loop(core::pose::Pose const & pose
 ///
 void
 RepeatProteinRelax::setup_repeat_symminfo(
-	Size const repeatlen,
-	Size const nrepeat,
-	Size const base_repeat,
+	core::Size const repeatlen,
+	core::Size const nrepeat,
+	core::Size const base_repeat,
 	bool const with_jumping,
 	conformation::symmetry::SymmetryInfo & symminfo
 )
 {
 
-	Size const base_offset( (base_repeat-1)*repeatlen );
+	core::Size const base_offset( (base_repeat-1)*repeatlen );
 
-	for ( Size i=1; i<= nrepeat; ++i ) {
+	for ( core::Size i=1; i<= nrepeat; ++i ) {
 		if ( i == base_repeat ) continue;
-		Size const offset( (i-1)*repeatlen );
-		for ( Size j=1; j<= repeatlen; ++j ) {
+		core::Size const offset( (i-1)*repeatlen );
+		for ( core::Size j=1; j<= repeatlen; ++j ) {
 			symminfo.add_bb_clone ( base_offset+j, offset+j );
 			symminfo.add_chi_clone( base_offset+j, offset+j );
 		}
@@ -143,9 +143,9 @@ RepeatProteinRelax::setup_repeat_symminfo(
 	}
 
 	/// repeats prior to base_repeat have score_multiply ==> 0
-	for ( Size i=1; i<base_repeat; ++i ) {
-		Size const offset( (i-1)*repeatlen );
-		for ( Size j=1; j<= repeatlen; ++j ) symminfo.set_score_multiply( offset+j, 0 );
+	for ( core::Size i=1; i<base_repeat; ++i ) {
+		core::Size const offset( (i-1)*repeatlen );
+		for ( core::Size j=1; j<= repeatlen; ++j ) symminfo.set_score_multiply( offset+j, 0 );
 	}
 
 	symminfo.update_score_multiply_factor();
@@ -161,9 +161,9 @@ RepeatProteinRelax::setup_repeat_pose(
 )
 {
 	runtime_assert( !pose::symmetry::is_symmetric( pose ) ); // not to begin with...
-	Size repeatlen = pose.size()/numb_repeats_;
-	Size nrepeat = numb_repeats_;
-	Size base_repeat = 2;
+	core::Size repeatlen = pose.size()/numb_repeats_;
+	core::Size nrepeat = numb_repeats_;
+	core::Size base_repeat = 2;
 
 	runtime_assert( nrepeat * repeatlen == pose.size() );
 
@@ -172,7 +172,7 @@ RepeatProteinRelax::setup_repeat_pose(
 	// assume that monomer 1 is the independent monomer. These should gradually be fixed. Let me (PB) know if you run into
 	// trouble.
 
-	Size const nres_protein( nrepeat * repeatlen );
+	core::Size const nres_protein( nrepeat * repeatlen );
 	remove_upper_terminus_type_from_pose_residue( pose, pose.size() );
 	ResidueOP vrtrsd
 		( conformation::ResidueFactory::create_residue( *core::pose::get_restype_for_pose( pose, "VRTBB" ) ) );
@@ -196,16 +196,16 @@ RepeatProteinRelax::setup_repeat_pose(
 
 	//TJ adding these to Phil's function
 	TR.Trace << "symmetrize backbone pose" << endl;
-	Size const base_offset( (base_repeat-1)*repeatlen );
-	for ( Size i=1; i<= repeatlen; ++i ) {
-		Size const pos( i+base_offset );
+	core::Size const base_offset( (base_repeat-1)*repeatlen );
+	for ( core::Size i=1; i<= repeatlen; ++i ) {
+		core::Size const pos( i+base_offset );
 		pose.set_phi  ( pos, pose.phi  (pos) );
 		pose.set_psi  ( pos, pose.psi  (pos) );
 		pose.set_omega( pos, pose.omega(pos) );
 	}
 
-	for ( Size i=1; i<= repeatlen; ++i ) {
-		Size const pos( i+base_offset );
+	for ( core::Size i=1; i<= repeatlen; ++i ) {
+		core::Size const pos( i+base_offset );
 		ResidueOP oldrsd( pose.residue(pos).clone() );
 		pose.replace_residue( pos, *oldrsd, false );
 	}
@@ -222,12 +222,12 @@ RepeatProteinRelax::setup_repeat_pose_jumping(
 )
 {
 	runtime_assert( !pose::symmetry::is_symmetric( pose ) ); // not to begin with...
-	Size repeatlen = pose.size()/numb_repeats_;
-	Size nrepeat = numb_repeats_;
-	Size base_repeat = 2;
-	Size anchor1 = 2;
-	Size anchor2 = repeatlen-2;
-	Size cutpoint = get_midpoint_longest_loop(pose,repeatlen);
+	core::Size repeatlen = pose.size()/numb_repeats_;
+	core::Size nrepeat = numb_repeats_;
+	core::Size base_repeat = 2;
+	core::Size anchor1 = 2;
+	core::Size anchor2 = repeatlen-2;
+	core::Size cutpoint = get_midpoint_longest_loop(pose,repeatlen);
 	runtime_assert( nrepeat * repeatlen == pose.size() );
 
 	runtime_assert( base_repeat > 1 ); // why? well, the base repeat should get the right context info from nbring repeats
@@ -235,11 +235,11 @@ RepeatProteinRelax::setup_repeat_pose_jumping(
 	// assume that monomer 1 is the independent monomer. These should gradually be fixed. Let me (PB) know if you run into
 	// trouble.
 
-	Size const nres_protein( nrepeat * repeatlen );
+	core::Size const nres_protein( nrepeat * repeatlen );
 	remove_upper_terminus_type_from_pose_residue( pose, pose.size() );
 
-	for ( Size i=1; i<= nrepeat; ++i ) {
-		Size const offset( (i-1)*repeatlen);
+	for ( core::Size i=1; i<= nrepeat; ++i ) {
+		core::Size const offset( (i-1)*repeatlen);
 
 		ResidueOP vrtrsd
 			( conformation::ResidueFactory::create_residue( *core::pose::get_restype_for_pose( pose, "VRT" ) ) );
@@ -262,9 +262,9 @@ RepeatProteinRelax::setup_repeat_pose_jumping(
 
 	kinematics::FoldTree f( pose.size() );
 
-	for ( Size i=1; i<= nrepeat; ++i ) {
-		Size const my_virtual( nres_protein + i );
-		Size const offset( (i-1)*repeatlen);
+	for ( core::Size i=1; i<= nrepeat; ++i ) {
+		core::Size const my_virtual( nres_protein + i );
+		core::Size const offset( (i-1)*repeatlen);
 		f.new_jump( offset+anchor1, my_virtual, offset+cutpoint );
 		f.new_jump( offset+anchor2, my_virtual, offset+repeatlen );
 		//add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, offset+cutpoint );
@@ -289,16 +289,16 @@ RepeatProteinRelax::setup_repeat_pose_jumping(
 
 	//TJ adding these to Phil's function
 	TR.Trace << "symmetrize backbone pose" << endl;
-	Size const base_offset( (base_repeat-1)*repeatlen );
-	for ( Size i=1; i<= repeatlen; ++i ) {
-		Size const pos( i+base_offset );
+	core::Size const base_offset( (base_repeat-1)*repeatlen );
+	for ( core::Size i=1; i<= repeatlen; ++i ) {
+		core::Size const pos( i+base_offset );
 		pose.set_phi  ( pos, pose.phi  (pos) );
 		pose.set_psi  ( pos, pose.psi  (pos) );
 		pose.set_omega( pos, pose.omega(pos) );
 	}
 
-	for ( Size i=1; i<= repeatlen; ++i ) {
-		Size const pos( i+base_offset );
+	for ( core::Size i=1; i<= repeatlen; ++i ) {
+		core::Size const pos( i+base_offset );
 		ResidueOP oldrsd( pose.residue(pos).clone() );
 		pose.replace_residue( pos, *oldrsd, false );
 	}
@@ -363,7 +363,7 @@ void RepeatProteinRelax::seal_jumps(
 			pose.conformation().delete_residue_slow(i);
 		}
 	}
-	for ( Size ii=1; ii<=pose.size()-1; ++ii ) {
+	for ( core::Size ii=1; ii<=pose.size()-1; ++ii ) {
 		if ( pose.residue( ii ).has_variant_type( chemical::CUTPOINT_LOWER ) && pose.residue( ii+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 			remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_LOWER, ii );
 			remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_UPPER, ii+1 );
@@ -379,7 +379,7 @@ void RepeatProteinRelax::add_residue_labels_back(core::pose::Pose & pose, std::m
 	std::map<core::Size, vector1<std::string> >::iterator res_label_map_itr;
 	vector1<std::string>::iterator res_label_itr;
 	for ( res_label_map_itr=res_label_map.begin(); res_label_map_itr!=res_label_map.end(); ++res_label_map_itr ) {
-		Size resid = res_label_map_itr->first+symmetry_resid_offset;
+		core::Size resid = res_label_map_itr->first+symmetry_resid_offset;
 		vector1<std::string> tmp_labels = res_label_map_itr->second;
 		for ( res_label_itr=tmp_labels.begin(); res_label_itr!=tmp_labels.end(); ++res_label_itr ) {
 			pose.pdb_info()->add_reslabel(resid, *res_label_itr);
@@ -390,10 +390,10 @@ void RepeatProteinRelax::add_residue_labels_back(core::pose::Pose & pose, std::m
 
 void RepeatProteinRelax::apply(core::pose::Pose & pose) {
 	std::map<core::Size, vector1<std::string> > res_label_map;
-	Size tmp_pose_size=pose.size();
+	core::Size tmp_pose_size=pose.size();
 	for ( core::Size ii = 1; ii <=tmp_pose_size; ++ii ) {
 		vector1<std::string> tmp_labels = pose.pdb_info()->get_reslabels(ii);
-		res_label_map.insert(std::pair<Size,vector1<std::string> >(ii,tmp_labels));
+		res_label_map.insert(std::pair<core::Size,vector1<std::string> >(ii,tmp_labels));
 	}
 	if ( modify_symmetry_and_exit_ && remove_symm_ ) {
 		pose::symmetry::make_asymmetric_pose(pose);
@@ -434,10 +434,10 @@ void RepeatProteinRelax::parse_my_tag( utility::tag::TagCOP tag,
 	core::pose::Pose const &
 )
 {
-	numb_repeats_ = tag->getOption<Size>("numb_repeats");
+	numb_repeats_ = tag->getOption<core::Size>("numb_repeats");
 	loop_cutpoint_mode_ = tag->getOption<bool>("loop_cutpoint_mode",false);
 
-	relax_iterations_ = tag->getOption<Size>("relax_iterations",5);
+	relax_iterations_ = tag->getOption<core::Size>("relax_iterations",5);
 	minimize_ = tag->getOption<bool>("minimize",false);
 
 	//relax options

@@ -38,7 +38,7 @@
 
 #include <utility/vector1.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace antibody {

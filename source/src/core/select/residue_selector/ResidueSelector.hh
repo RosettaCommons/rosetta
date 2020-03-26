@@ -26,7 +26,7 @@
 #include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -42,7 +42,7 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
-class ResidueSelector : public utility::pointer::ReferenceCount {
+class ResidueSelector : public utility::VirtualBase {
 public:
 
 	/// @brief Constructor.

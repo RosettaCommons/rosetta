@@ -19,7 +19,7 @@
 
 #include <core/conformation/ResidueMatcher.hh>
 
-
+#include <core/types.hh>
 #include <utility/vector1_bool.hh>
 
 // utility headers
@@ -33,7 +33,7 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-class RotamerCouplings : public utility::pointer::ReferenceCount {
+class RotamerCouplings : public utility::VirtualBase {
 public:
 	typedef conformation::ResidueMatcherCOP ResidueMatcherCOP;
 

@@ -111,7 +111,7 @@ public:
 	/// @brief miniimum angle for filtering
 	void secstruct( String const & ss );
 
-	void bend_level( Size const r );
+	void bend_level( core::Size const r );
 
 	/// @brief miniimum angle for filtering
 	void filter_min_bend( Real const r );
@@ -119,7 +119,7 @@ public:
 	/// @brief maximum angle for filtering
 	void filter_max_bend( Real const r );
 
-	void twist_level( Size const r );
+	void twist_level( core::Size const r );
 
 	/// @brief miniimum twist for filtering
 	void filter_min_twist( Real const r );
@@ -128,7 +128,7 @@ public:
 	void filter_max_twist( Real const r );
 
 	/// @brief miniimum angle for filtering
-	void strand_id( Size const r );
+	void strand_id( core::Size const r );
 
 	/// @brief set output type
 	void output_type( String const & s );
@@ -149,7 +149,7 @@ private:
 	/// @brief if value is empty, dssp will run for ss definition ( default is emptry )
 	mutable String secstruct_;
 
-	Size bend_level_;
+	core::Size bend_level_;
 
 	/// @brief filtered min angle between helix and sheet
 	Real filter_min_bend_;
@@ -157,7 +157,7 @@ private:
 	/// @brief filtered max angle between helix and sheet
 	Real filter_max_bend_;
 
-	Size twist_level_;
+	core::Size twist_level_;
 
 	/// @brief filtered min twist between helix and sheet
 	Real filter_min_twist_;
@@ -165,7 +165,7 @@ private:
 	Real filter_max_twist_;
 
 	/// @brief strand id
-	Size strand_id_;
+	core::Size strand_id_;
 
 	/// @brief output_type
 	String output_type_;

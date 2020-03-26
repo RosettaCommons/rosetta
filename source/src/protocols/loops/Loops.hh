@@ -35,7 +35,7 @@
 
 // Utility headers
 #include <numeric/xyzVector.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 
 // C/C++ headers
@@ -52,7 +52,7 @@ namespace loops {
 
 ///////////////////////////////////////////////////////////////////////////
 // a list of loops
-class Loops : public utility::pointer::ReferenceCount {
+class Loops : public utility::VirtualBase {
 
 public:
 	typedef utility::vector1< Loop > LoopList;
@@ -277,7 +277,7 @@ public:
 	void transfer_to_residue_vector( utility::vector1< T >&, T val ) const;
 
 	/// @brief add all residues within this loop definition into selection
-	void get_residues( utility::vector1< Size>& selection ) const;
+	void get_residues( utility::vector1< core::Size>& selection ) const;
 
 	// i know this encourages old style for-loops (i.e. without iterators) but so much of the code
 	// already used such loops, i opted for safety.

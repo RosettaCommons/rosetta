@@ -47,7 +47,7 @@ static basic::Tracer add_hydrogens_tracer( "protocols.ligand_docking.LigandDesig
 
 
 AddHydrogens::AddHydrogens():
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Mover("AddHydrogens"),
 	chain_("X")
 {

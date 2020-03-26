@@ -138,7 +138,7 @@ using utility::excn::Exception;
 //
 // I could have the factory have a method that takes a name and returns the
 // type as an enum.  Then the KicMover can drop into a switch and request the
-// type it wants.  Or the factory could return a ReferenceCount object (i.e.
+// type it wants.  Or the factory could return a VirtualBaseOP (i.e.
 // base class) and an enum type, and KicMover could drop into a switch to cast.
 //
 // I could have the factory just build up lists of perturbers etc.  But then I

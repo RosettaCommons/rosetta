@@ -50,7 +50,7 @@ GrowRight::GrowRight() :
 /// @param[in] rts the residue type set to use, default FA_STANDARD
 /// @remarks length of the *one-letter* aa must equal the length of ss
 GrowRight::GrowRight(
-	Size const pos,
+	core::Size const pos,
 	String const & ss,
 	String const & aa,
 	ResidueTypeSetCAP rts
@@ -238,18 +238,18 @@ void GrowRight::modify_impl( Pose & pose ) {
 	// changes in the Pose
 
 	// grow extension
-	Size right_endpoint = grow_right_rtype( pose, pos_, r_types.begin(), r_types.end() );
+	core::Size right_endpoint = grow_right_rtype( pose, pos_, r_types.begin(), r_types.end() );
 	debug_assert( right_endpoint == pos_ + ss_.length() );
 
 	// END POS SHIFT: after this point, pos_ has stabilized
 
 	// assume proper omega
 	Interval new_region = interval();
-	Size const omega_left = ( new_region.left == 1 ) ? new_region.left : new_region.left - 1;
+	core::Size const omega_left = ( new_region.left == 1 ) ? new_region.left : new_region.left - 1;
 	trans_omega( omega_left, new_region.right, pose );
 
 	// set the desired secondary structure
-	for ( Size r = pos_ + 1, i = 0; r <= right_endpoint; ++r, ++i ) {
+	for ( core::Size r = pos_ + 1, i = 0; r <= right_endpoint; ++r, ++i ) {
 		pose.set_secstruct( r, ss_.at( i ) );
 	}
 }

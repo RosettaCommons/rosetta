@@ -340,9 +340,9 @@ bool decide_on_beta_jumping_from_frags() {
 	using namespace core::fragment;
 	FragSetOP frags_s = FragmentIO( option[ OptionKeys::abinitio::number_3mer_frags ]() ).read_data( option[ in::file::frag3 ] );
 	core::fragment::SecondaryStructure ss_def( *frags_s, true /*no JustUseCentralResidue */ );
-	Size ct_E( 0 );
-	Size ct_H( 0 );
-	for ( Size i=1; i<=ss_def.total_residue(); ++i ) {
+	core::Size ct_E( 0 );
+	core::Size ct_H( 0 );
+	for ( core::Size i=1; i<=ss_def.total_residue(); ++i ) {
 		if ( ss_def.strand_fraction( i ) > 0.7 ) ++ct_E;
 		if ( ss_def.helix_fraction( i ) > 0.7 ) ++ct_H;
 	}
@@ -813,7 +813,7 @@ void IterativeBase::generate_batch() {
 	basic::show_time( tr,  "generate_batch" );
 	//initialize batch
 	mem_tr << "IterativeBase::start_new_batch " << std::endl;
-	Size repeat=1;
+	core::Size repeat=1;
 	while ( repeat ) {
 		jd2::archive::Batch& batch( manager().start_new_batch() );
 		if ( basic::options::option[ basic::options::OptionKeys::iterative::nolazy_noesy_reassign ]() ) {
@@ -1004,8 +1004,8 @@ void IterativeBase::gen_diversity_pool( jd2::archive::Batch& batch, bool ) {
 	//exclude residues from RMSD that are flexible anyhow
 	if ( basic::options::option[ basic::options::OptionKeys::in::replonly_residues ].user() ) {
 		flags << "-mc:excluded_residues_from_rmsd ";
-		utility::vector1<Size> replonly_rsd = basic::options::option[ basic::options::OptionKeys::in::replonly_residues ]();
-		for ( utility::vector1<Size>::const_iterator it = replonly_rsd.begin(); it != replonly_rsd.end(); ++it ) {
+		utility::vector1<core::Size> replonly_rsd = basic::options::option[ basic::options::OptionKeys::in::replonly_residues ]();
+		for ( utility::vector1<core::Size>::const_iterator it = replonly_rsd.begin(); it != replonly_rsd.end(); ++it ) {
 			flags << " "<< *it;
 		}
 		flags << std::endl;
@@ -1125,7 +1125,7 @@ void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
 
 	//  SourceFiles sources;
 	//  AlternativeDecoys alternative_decoys;
-	//  Size ct_in( 0 );
+	//  core::Size ct_in( 0 );
 
 	//  //to find the stage2 structures collect first all tags for a specific file
 	//  for ( const_decoy_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
@@ -1141,7 +1141,7 @@ void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
 	//  }
 
 	//  //read selected structures from each file
-	//  Size ct_read( 0 );
+	//  core::Size ct_read( 0 );
 	//  io::silent::SilentStructOPs start_decoys;
 	//  for ( SourceFiles::const_iterator it = sources.begin(); it != sources.end(); ++it ) {
 	//   /// it->first is filename, it->second are all tags collected for this file
@@ -1211,8 +1211,8 @@ void IterativeBase::gen_resample_fragments( jd2::archive::Batch& batch ) {
 	ConstantLengthFragSet frags_3mer( 3 ); //steal good old 9mers
 	mem_tr << "IterativeBase::gen_resample_fragments start" << std::endl;
 
-	Size ct( 1 );
-	Size const max_frags( 500 );
+	core::Size ct( 1 );
+	core::Size const max_frags( 500 );
 	if ( option[ iterative::mix_frags ]() ) {
 		FragSetOP frags_l = FragmentIO(
 			option[ OptionKeys::abinitio::number_9mer_frags ]()
@@ -1282,7 +1282,7 @@ void IterativeBase::gen_noe_assignments( jd2::archive::Batch& batch ) {
 	// the current_noesy_sampling_file_ are not set .. go through backward through past batches and take first (i.e., youngest) file.
 	if ( batch.id() > 1 && stage() > CEN2FULLATOM && first_noesy_cst_file_ == "n/a"  ) {
 	tr.Info << "Figure out current NOESY CST File by going backwards from " << batch.id() << std::endl;
-	for ( Size back = batch.id() - 1; back >= 1; --back ) {
+	for ( core::Size back = batch.id() - 1; back >= 1; --back ) {
 	Batch last_batch( back );
 	runtime_assert( last_batch.id() < batch.id() );
 	current_noesy_sampling_file_ = last_batch.dir()+"/"+NOESY_CST_FILE_NAME;
@@ -1421,7 +1421,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 	using namespace core::io::silent;
 
 	//count total decoys
-	Size total( 0 );
+	core::Size total( 0 );
 	for ( auto const & it : manager().batches() ) {
 		if ( it.id() >= first_fullatom_batch_ ) break;
 		if ( !it.has_silent_in() ) continue;
@@ -1440,7 +1440,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 		SilentFileOptions opts;
 		SilentFileData sfd( opts );
 		std::list< std::pair< core::Real, SilentStructOP > > score_cut_decoys;
-		Size ct( 0 );
+		core::Size ct( 0 );
 		tr.Debug << "read and score decoys in " << it.silent_out() << "..." << std::endl;
 		sfd.read_file( it.silent_out() );
 		for ( SilentFileData::iterator sit=sfd.begin(), esit=sfd.end(); sit!=esit; ++sit ) {
@@ -1462,7 +1462,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 		basic::show_time( tr,  "generate safety_hatch: collected decoys batch "+it.batch() );
 		// if we have less structures below score cut than what we want to harvest,.... take them all
 		while ( score_cut_per_batch < percentage_per_batch ) {
-			auto ind_max( static_cast< Size > ( score_cut_decoys.size()*score_cut_per_batch ) );
+			auto ind_max( static_cast< core::Size > ( score_cut_decoys.size()*score_cut_per_batch ) );
 			for ( std::list< std::pair< core::Real, core::io::silent::SilentStructOP > >::const_iterator sit = score_cut_decoys.begin();
 					sit != score_cut_decoys.end(); ++sit ) {
 				start_decoys.push_back( sit->second );
@@ -1473,7 +1473,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 		basic::show_time( tr,  "generate safety_hatch: generated start_decoys batch "+it.batch());
 		// for the remaining structures we want to harvest, they clearly will be less than what the score-cut yields... choose randomly...
 		if ( percentage_per_batch > 0.01 ) {
-			auto ind_max( static_cast< Size > ( score_cut_decoys.size()*score_cut_per_batch ) );
+			auto ind_max( static_cast< core::Size > ( score_cut_decoys.size()*score_cut_per_batch ) );
 			for ( std::list< std::pair< core::Real, core::io::silent::SilentStructOP > >::const_iterator sit = score_cut_decoys.begin();
 					sit != score_cut_decoys.end(); ++sit ) {
 				if ( numeric::random::rg().uniform() < ( percentage_per_batch / score_cut_per_batch ) ) {
@@ -1518,7 +1518,7 @@ void IterativeBase::gen_cen2fullatom_non_pool_decoys( jd2::archive::Batch& batch
 		batch.set_has_silent_in();
 		core::io::silent::SilentFileOptions opts;
 		core::io::silent::SilentFileData sfd(opts);
-		Size ct( 0 );
+		core::Size ct( 0 );
 		for ( core::io::silent::SilentStructOPs::const_iterator
 				it = start_decoys.begin(); it != start_decoys.end(); ++it ) {
 			if ( ++ct > batch.nstruct() ) break;
@@ -1537,7 +1537,7 @@ void IterativeBase::gen_cen2fullatom_non_pool_decoys( jd2::archive::Batch& batch
 
 void IterativeBase::reassign_noesy_data( jd2::archive::Batch& batch ) {
 	if ( !noesy_assign::NoesyModule::cmdline_options_activated() ) return;
-	Size const n_decoys( option[ iterative::limit_decoys_for_noe_assign ] );
+	core::Size const n_decoys( option[ iterative::limit_decoys_for_noe_assign ] );
 	if ( batch.id() == 1 || ( total_proposed() < delay_noesy_reassign_ && stage() < CEN2FULLATOM )
 			|| ( stage() >= CEN2FULLATOM && total_proposed() < 2*n_decoys ) ) return; //don't do this at very beginning
 	//this takes a while... make sure that backedup version of archive is up-to-date
@@ -1555,7 +1555,7 @@ void IterativeBase::reassign_noesy_data( jd2::archive::Batch& batch ) {
 		calibration_decoys = decoys();
 		hash_string << "ONLY "<< decoys().size() << std::endl;
 	} else {
-		Size ct2 ( 1 );
+		core::Size ct2 ( 1 );
 		for ( SilentStructs::const_iterator it = decoys().begin(); it != decoys().end() && ct2 <= n_decoys; ++ct2, ++it ) {
 			calibration_decoys.push_back( *it );
 			hash_string << (*it)->decoy_tag() << std::endl; //create hash-string out of decoy tags
@@ -1736,10 +1736,10 @@ void IterativeBase::guess_pairings_from_secondary_structure(
 
 	//create pairings between all possible strand pairings
 	utility::io::ozstream os(out_pairings_file);
-	for ( Size i1 = 1; i1 <= strands.size(); i1++ ) {
-		for ( Size i2 = i1+1; i2 <= strands.size(); i2++ ) {
-			for ( Size pos1=strands[i1].start(); pos1<=strands[i1].stop(); pos1++ ) {
-				for ( Size pos2=strands[i2].start(); pos2<=strands[i2].stop(); pos2++ ) {
+	for ( core::Size i1 = 1; i1 <= strands.size(); i1++ ) {
+		for ( core::Size i2 = i1+1; i2 <= strands.size(); i2++ ) {
+			for ( core::Size pos1=strands[i1].start(); pos1<=strands[i1].stop(); pos1++ ) {
+				for ( core::Size pos2=strands[i2].start(); pos2<=strands[i2].stop(); pos2++ ) {
 					if ( pos2-pos1 > 25 ) {
 						os << pos1 << " " << pos2 << " A 1" << std::endl;
 						os << pos1 << " " << pos2 << " A 2" << std::endl;
@@ -1935,7 +1935,7 @@ void get_core( toolbox::DecoySetEvaluation& eval, core::Real cutoff, loops::Loop
 	eval.rmsf( result );
 
 	rigid.clear();
-	for ( Size i=1; i<=result.size(); ++i ) {
+	for ( core::Size i=1; i<=result.size(); ++i ) {
 		if ( result[ i ] < cutoff ) rigid.add_loop( loops::Loop(  i, i ), 5 );
 	}
 	tr.Debug << "make rigid with cutoff " << cutoff << "  " << std::endl << rigid << std::endl;
@@ -1951,8 +1951,8 @@ void IterativeBase::compute_cores() {
 	if ( nstruct==0 ) return;
 	toolbox::DecoySetEvaluation eval;
 	eval.reserve( nstruct );
-	//Size nres( (*decoys().begin())->nres() );
-	// Size ct( 1 );
+	//core::Size nres( (*decoys().begin())->nres() );
+	// core::Size ct( 1 );
 	//for ( const_decoy_iterator iss = decoys().begin(); iss != decoys().end(); ++iss, ++ct ) {
 	//  if ( ct > nstruct ) break;
 	//  pose::Pose pose;
@@ -1981,7 +1981,7 @@ void IterativeBase::compute_cores() {
 }
 
 void IterativeBase::add_core_evaluator( loops::Loops const& core, std::string const& core_tag ) {
-	utility::vector1< Size> selection;
+	utility::vector1< core::Size> selection;
 	core.get_residues( selection );
 	if ( reference_pose_ ) add_evaluation( utility::pointer::make_shared< simple_filters::SelectRmsdEvaluator >( reference_pose_, selection, core_tag ) );
 	core.write_loops_to_file( name()+"/"+core_tag+".gen.rigid", "RIGID" ); //so we have them for other evaluations
@@ -2118,7 +2118,7 @@ void IterativeBase::cluster() {
 	//  );
 
 	//  //how many were removed ?
-	//  Size n_removed = decoys().size() - kept_decoys.size();
+	//  core::Size n_removed = decoys().size() - kept_decoys.size();
 	//  tr.Info << "removed " << n_removed << " structures.   " << kept_decoys.size() << " structures remaining after clustering " << std::endl;
 	//  decoys()=kept_decoys;
 	//  count_removed_structures( n_removed );

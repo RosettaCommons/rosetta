@@ -148,7 +148,7 @@ InterlockAroma::apply( Pose & pose )
 
 	// set search residue types to packer task
 	InterlockingAromaFilter ilfilter;
-	for ( Size ii=1; ii<=polyala_pose.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=polyala_pose.size(); ++ii ) {
 
 		// skip residues of strands
 		if ( ss.at( ii-1 ) != 'L' && ss.at( ii-1 ) != 'H' ) continue;
@@ -164,7 +164,7 @@ InterlockAroma::apply( Pose & pose )
 		rotset->set_resid( ii );
 		rotset->build_rotamers( polyala_pose, *scorefxn_, *ptask, utility::pointer::make_shared< utility::graph::Graph >( polyala_pose.size() ), false );
 
-		Size rotnum( 0 );
+		core::Size rotnum( 0 );
 		for ( auto const & rotamer : *rotset ) {
 
 			rotnum++;

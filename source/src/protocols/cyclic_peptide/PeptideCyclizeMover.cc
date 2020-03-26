@@ -349,7 +349,7 @@ void PeptideCyclizeMover::get_all(core::select::residue_selector::ResidueSubset 
 	if ( !bond_assigned_ ) {
 		core::Size starter=0;
 		core::Size counter=0;
-		for ( Size i=1; i<= nres; ++i ) {
+		for ( core::Size i=1; i<= nres; ++i ) {
 			if ( subset[i] ) {
 				counter=i;
 				starter+=1;
@@ -369,7 +369,7 @@ void PeptideCyclizeMover::get_all(core::select::residue_selector::ResidueSubset 
 	if ( !distance_assigned_ ) {
 		core::Size starter=0;
 		core::Size counter=0;
-		for ( Size i=1; i<= nres; ++i ) {
+		for ( core::Size i=1; i<= nres; ++i ) {
 			if ( subset[i] ) {
 				counter=i;
 				starter+=1;
@@ -392,7 +392,7 @@ void PeptideCyclizeMover::get_all(core::select::residue_selector::ResidueSubset 
 	if ( !angle_assigned_ ) {
 		core::Size starter=0;
 		core::Size counter=0;
-		for ( Size i=1; i<= nres; ++i ) {
+		for ( core::Size i=1; i<= nres; ++i ) {
 			if ( subset[i] ) {
 				counter=i;
 				starter+=1;
@@ -425,7 +425,7 @@ void PeptideCyclizeMover::get_all(core::select::residue_selector::ResidueSubset 
 	if ( !torsion_assigned_ ) {
 		core::Size starter=0;
 		core::Size counter=0;
-		for ( Size i=1; i<= nres; ++i ) {
+		for ( core::Size i=1; i<= nres; ++i ) {
 			if ( subset[i] ) {
 				counter=i;
 				starter+=1;

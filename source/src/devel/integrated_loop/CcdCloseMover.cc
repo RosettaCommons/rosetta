@@ -38,9 +38,9 @@ void CcdCloseMover::apply(
 	Real forward_deviation, backward_deviation; // actually loop closure msd, both dirs
 	Real torsion_delta, rama_delta; // actually torsion and rama score changes, averaged by loop
 
-	Size loop_begin( ThisLoop_.loop_begin() );
-	Size loop_end( ThisLoop_.loop_end() );
-	Size cutpoint( ThisLoop_.cutpoint() );
+	core::Size loop_begin( ThisLoop_.loop_begin() );
+	core::Size loop_end( ThisLoop_.loop_end() );
+	core::Size cutpoint( ThisLoop_.cutpoint() );
 
 	// ccd close this loop
 	protocols::loops::fast_ccd_loop_closure( pose_, movemap_, loop_begin, loop_end, cutpoint,

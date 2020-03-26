@@ -40,7 +40,7 @@
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/id/types.hh>
 #include <utility/vector0_bool.hh>
@@ -58,7 +58,7 @@ namespace kinematics {
 namespace tree {
 
 /// Kinematics Atom interface class
-class Atom : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Atom >
+class Atom : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< Atom >
 {
 
 public: // Types

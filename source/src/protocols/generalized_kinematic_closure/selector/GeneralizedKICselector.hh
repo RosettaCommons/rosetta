@@ -70,7 +70,7 @@ enum selector_type {
 //   GENERALIZED KIC SELECTOR CLASS                                  //
 ///////////////////////////////////////////////////////////////////////
 
-class GeneralizedKICselector : public utility::pointer::ReferenceCount
+class GeneralizedKICselector : public utility::VirtualBase
 {
 public:
 	GeneralizedKICselector();

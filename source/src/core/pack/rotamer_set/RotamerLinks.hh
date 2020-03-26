@@ -21,7 +21,7 @@
 #include <core/types.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #ifdef    SERIALIZATION
@@ -33,7 +33,7 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-class RotamerLinks : public utility::pointer::ReferenceCount {
+class RotamerLinks : public utility::VirtualBase {
 
 public:
 

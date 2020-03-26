@@ -37,7 +37,7 @@
 //#include <core/id/AtomID.fwd.hh>
 
 // Utility Headers
-//#include <utility/pointer/ReferenceCount.hh>
+//#include <utility/VirtualBase.hh>
 #ifdef WIN32
 #include <string>
 #endif

@@ -61,7 +61,7 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/numeric.functions.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -177,7 +177,7 @@ MembraneAbinitio::MembraneAbinitio(
 	bml  = new LoggedFragmentMover( fragset_large, movemap );
 	sms  = new SmoothFragmentMover( fragset_small, movemap, new GunnCost );
 	} else if ( option[ OptionKeys::abinitio::symmetry_residue_2 ].user() ) {
-	Size const sr (  option[ OptionKeys::abinitio::symmetry_residue_2 ] );
+	core::Size const sr (  option[ OptionKeys::abinitio::symmetry_residue_2 ] );
 	bms = new SymmetricFragmentMover( fragset_small, movemap, sr );
 	bml = new SymmetricFragmentMover( fragset_large, movemap, sr );
 	sms = new SmoothSymmetricFragmentMover( fragset_small, movemap, new GunnCost, sr );
@@ -250,7 +250,7 @@ void MembraneAbinitio::apply( pose::Pose & pose ) {
 			//std::cout << "MOVABLE JUMP " << movemap_->get_jump(1);
 			//std::cout << "\n";
 			/*
-			for(Size i=1;i<=pose.size();++i) {
+			for(core::Size i=1;i<=pose.size();++i) {
 			pose.set_phi(i,-60);
 			pose.set_psi(i,-40);
 			if(movemap_->get_bb(i)){
@@ -293,8 +293,8 @@ void MembraneAbinitio::apply( pose::Pose & pose ) {
 
 		core::scoring::MembraneTopology const & topology(MembraneTopology_from_pose( pose ));
 		nonconst_MembraneTopology_from_pose(pose).reset_allowed_scoring();
-		Size total_tmhelix(topology.tmhelix());
-		Size tmh_inserted(0);
+		core::Size total_tmhelix(topology.tmhelix());
+		core::Size tmh_inserted(0);
 
 
 		//ADD
@@ -665,22 +665,22 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 
 	//bool exist;
 	//bool none_selected = true;
-	Size new_membrane_region=0;
+	core::Size new_membrane_region=0;
 	bool done=false;
-	Size TMHs=0;
-	//Size membrane_jump_counter=1;
-	Size const num_cutpoints(pose.fold_tree().num_cutpoint());
-	Size const num_jumps(pose.num_jump());
+	core::Size TMHs=0;
+	//core::Size membrane_jump_counter=1;
+	core::Size const num_cutpoints(pose.fold_tree().num_cutpoint());
+	core::Size const num_jumps(pose.num_jump());
 	core::scoring::MembraneTopology & topology( nonconst_MembraneTopology_from_pose(pose) );
-	Size const total_tmhelix=topology.tmhelix();
-	Size const total_residue=pose.size();
+	core::Size const total_tmhelix=topology.tmhelix();
+	core::Size const total_residue=pose.size();
 
 
 	tr.Info << "Adding region tmh:" << total_tmhelix << " tmh_inserted: " << topology.tmh_inserted() << " nres: " << total_residue << " num_jumps: " << num_jumps << std::endl;
 
 	//FArray2D_int const & jump_point( pose.fold_tree().get_jump_point() );
 
-	utility::vector1< Size > const & cuts( pose.fold_tree().cutpoints() ); //( num_cutpoints ));
+	utility::vector1< core::Size > const & cuts( pose.fold_tree().cutpoints() ); //( num_cutpoints ));
 
 	//bw just define this vector to interface with the r++ code might change later...
 	FArray2D_int jump_point(num_cutpoints,2);
@@ -690,12 +690,12 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 	FArray1D_bool inserted_regions(total_residue,false);
 
 	//Assigns a vector with the helices numbered.
-	FArray1D<Size> res_TMH_mapping(pose.size()); //should perhaps be global..
+	FArray1D<core::Size> res_TMH_mapping(pose.size()); //should perhaps be global..
 	FArray2D_bool nb_tmh_list(total_tmhelix,total_tmhelix,false);
 
 	//check all helices that are connect by a jump.
 	FArray2D_bool tmh_jump(total_tmhelix,total_tmhelix,false);
-	for ( Size j = 1; j <= pose.size(); ++j ) {
+	for ( core::Size j = 1; j <= pose.size(); ++j ) {
 		new_region(j) = false;
 		inserted_regions(j) = false;
 
@@ -705,7 +705,7 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 		} else if ( j>topology.span_end(total_tmhelix) ) {
 			res_TMH_mapping(j)=total_tmhelix;
 		} else {
-			for ( Size reg = 2; reg <= total_tmhelix; ++reg ) {
+			for ( core::Size reg = 2; reg <= total_tmhelix; ++reg ) {
 				if ( j>topology.span_end(reg-1) && j<=topology.span_end(reg) ) { //membrane_helix( reg-1, 2 ) && j<=membrane_helix(reg,2))
 					res_TMH_mapping(j)=reg;
 				}
@@ -715,11 +715,11 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 	}
 
 	//mark tmh as neighbours if they are consecutive and no cut is between them
-	for ( Size reg = 1; reg < total_tmhelix; ++reg ) {
+	for ( core::Size reg = 1; reg < total_tmhelix; ++reg ) {
 		// check cuts.
 		bool no_cut=true;
-		for ( Size i=topology.span_end(reg); i<topology.span_begin(reg+1); ++i ) { // (int i=membrane_helix(reg,2);i<membrane_helix(reg+1,2)??? no cut in tmh so it should be the same as check to begin;++i){
-			for ( Size j=1; j<=num_cutpoints; ++j ) {
+		for ( core::Size i=topology.span_end(reg); i<topology.span_begin(reg+1); ++i ) { // (int i=membrane_helix(reg,2);i<membrane_helix(reg+1,2)??? no cut in tmh so it should be the same as check to begin;++i){
+			for ( core::Size j=1; j<=num_cutpoints; ++j ) {
 				if ( cuts[j]==i ) {
 					no_cut=false;
 				}
@@ -735,9 +735,9 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 
 	//check all helices that are connect by a jump.
 	//diagonal elements are true if the helix is involved in a jump.
-	for ( Size i=1; i<=num_jumps; ++i ) {
-		Size d=pose.fold_tree().downstream_jump_residue(i);
-		Size u=pose.fold_tree().upstream_jump_residue(i);
+	for ( core::Size i=1; i<=num_jumps; ++i ) {
+		core::Size d=pose.fold_tree().downstream_jump_residue(i);
+		core::Size u=pose.fold_tree().upstream_jump_residue(i);
 		tmh_jump(res_TMH_mapping(d),res_TMH_mapping(u))=true;
 		tmh_jump(res_TMH_mapping(d),res_TMH_mapping(d))=true;
 		tmh_jump(res_TMH_mapping(u),res_TMH_mapping(d))=true;
@@ -755,10 +755,10 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 
 	// When the fold tree gets complicted adjecent helices might not be in contact.
 
-	FArray1D<Size> insertable_region(total_tmhelix);
-	Size k=0;
+	FArray1D<core::Size> insertable_region(total_tmhelix);
+	core::Size k=0;
 	if ( topology.tmh_inserted()==0 ) {
-		for ( Size i = 1; i <= total_tmhelix; ++i ) {
+		for ( core::Size i = 1; i <= total_tmhelix; ++i ) {
 			if ( tmh_jump(i,i) && !topology.allow_tmh_scoring(i) ) { //!TMH_done(i))
 				++k;
 				insertable_region(k)=i;
@@ -769,15 +769,15 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 	if ( k==0 ) { // if no jumps are available
 		//non jump helices
 		if ( topology.tmh_inserted()==0 ) { //first pass?
-			for ( Size j = 1; j <= total_tmhelix; ++j ) {
+			for ( core::Size j = 1; j <= total_tmhelix; ++j ) {
 				++k;
 				insertable_region(k)=j;
 				tr.Info << "INSERTABLE REGION FIRST PASS: " << j << std::endl;
 			}
 		} else {
-			for ( Size i = 1; i <= total_tmhelix; ++i ) {
+			for ( core::Size i = 1; i <= total_tmhelix; ++i ) {
 				if ( topology.allow_tmh_scoring(i) ) {
-					for ( Size j = 1; j <= total_tmhelix; ++j ) {
+					for ( core::Size j = 1; j <= total_tmhelix; ++j ) {
 						if ( !topology.allow_tmh_scoring(j) && nb_tmh_list(i,j) ) { // neigbor in fold tree
 							++k;
 							insertable_region(k)=j;
@@ -789,22 +789,22 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 		}
 	}
 	if ( k>0 ) { // any more regions to insert?
-		Size index=1 + static_cast< int >( numeric::random::uniform()*k);
+		core::Size index=1 + static_cast< int >( numeric::random::uniform()*k);
 		FArray1D_bool new_membrane_regions(total_tmhelix,false);  //need an array to handle the case when more than helix is inserted at the time.
 		new_membrane_region=insertable_region(index);
 		new_membrane_regions(new_membrane_region)=true;
 		if ( tmh_jump(new_membrane_region,new_membrane_region) ) { // a "jump helix"
 			//insert all helices that are connected through jumps
 			// could in principle be a whole network of jumps..
-			for ( Size i=1; i<=total_tmhelix; ++i ) {
+			for ( core::Size i=1; i<=total_tmhelix; ++i ) {
 				new_membrane_regions(i)=tmh_jump(new_membrane_region,i);
 				if ( new_membrane_regions(i) ) {
-					for ( Size j=1; j<=total_tmhelix; ++j ) {
+					for ( core::Size j=1; j<=total_tmhelix; ++j ) {
 						new_membrane_regions(j)=tmh_jump(i,j);
 					}
 				}
 			}
-			for ( Size i=1; i<=total_tmhelix; ++i ) {
+			for ( core::Size i=1; i<=total_tmhelix; ++i ) {
 				if ( new_membrane_regions(i) ) {
 					topology.set_allow_tmh_scoring(i,true);
 					tr.Info << "NEW JUMP REGION: index " << i << std::endl;
@@ -813,7 +813,7 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 		} else {
 
 			if ( topology.tmh_inserted()==0 ) { // FIRST PASS
-				Size new_membrane_region2;
+				core::Size new_membrane_region2;
 				if ( new_membrane_region==1 ) {
 					new_membrane_region2=new_membrane_region+1;
 				} else if ( new_membrane_region==total_tmhelix ) {
@@ -845,9 +845,9 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 		}
 
 		//Mark up which residues that are allowed to scored based on the TMH_done.
-		Size start,end;
+		core::Size start,end;
 		TMHs=0;
-		for ( Size i = 1; i <= total_tmhelix; ++i ) {
+		for ( core::Size i = 1; i <= total_tmhelix; ++i ) {
 			if ( topology.allow_tmh_scoring(i) ) { //TMH_done(i)){
 				if ( i==1 ) {
 					start=1;
@@ -859,7 +859,7 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 				} else {
 					end=topology.span_begin(i+1); //membrane_helix( i+1, 1 ); //from old code
 				}
-				for ( Size j=1; j<=num_cutpoints; ++j ) {
+				for ( core::Size j=1; j<=num_cutpoints; ++j ) {
 					if ( cuts[j] >= start &&  cuts[j] <= end ) {
 						if ( cuts[j]-start >= end-cuts[j] ) {
 							end=cuts[j]; //the residue is cut off so do not include it in scoring.
@@ -868,7 +868,7 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 						}
 					}
 				}
-				for ( Size j=start; j<=end; ++j ) {
+				for ( core::Size j=start; j<=end; ++j ) {
 					inserted_regions(j)=true;
 					if ( new_membrane_regions(i) ) {
 						new_region(j)=true;
@@ -880,7 +880,7 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 		done=false;
 	} else {
 		done=true;
-		for ( Size j = 1; j <= total_residue; ++j ) {
+		for ( core::Size j = 1; j <= total_residue; ++j ) {
 			inserted_regions(j) = true;
 		}
 		TMHs=total_tmhelix;
@@ -889,11 +889,11 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 	kinematics::MoveMapOP new_mm( new kinematics::MoveMap( *movemap() ) );
 	if ( done ) {
 		new_mm->set_bb( true );
-		for ( Size i = 1; i <= total_residue; ++i ) {
+		for ( core::Size i = 1; i <= total_residue; ++i ) {
 			topology.set_allow_scoring(i,true);
 		}
 	} else {
-		for ( Size i = 1; i <= total_residue; ++i ) {
+		for ( core::Size i = 1; i <= total_residue; ++i ) {
 			if ( inserted_regions(i) ) {
 				topology.set_allow_scoring(i,true);
 			} else {
@@ -970,7 +970,7 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 void MembraneAbinitio::move_all_inserted( core::pose::Pose & pose) {
 	core::scoring::MembraneTopology & topology( nonconst_MembraneTopology_from_pose( pose ));
 	kinematics::MoveMapOP new_mm( new kinematics::MoveMap( *movemap() ) );
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( topology.allow_scoring(i) ) {
 			new_mm->set_bb(i,true);
 		} else {
@@ -986,11 +986,11 @@ void MembraneAbinitio::print_debug(core::pose::Pose & pose)
 	//  if(!option[basic::options::OptionKeys::abinitio::membrane_print])
 	//   return;
 	core::scoring::MembraneTopology const & topology( MembraneTopology_from_pose( pose ));
-	Size total_tmhelix=topology.tmhelix();
+	core::Size total_tmhelix=topology.tmhelix();
 	FArray1D_int res_TMH_mapping(pose.size()); //should perhaps be global..
-	for ( Size j = 1; j <= pose.size(); ++j ) {
-		Size tmh=0;
-		for ( Size reg = 1; reg <= total_tmhelix; ++reg ) {
+	for ( core::Size j = 1; j <= pose.size(); ++j ) {
+		core::Size tmh=0;
+		for ( core::Size reg = 1; reg <= total_tmhelix; ++reg ) {
 			if ( j>=topology.span_begin(reg) && j<=topology.span_end(reg) ) { //membrane_helix( reg-1, 2 ) && j<=membrane_helix(reg,2))
 				tmh=reg;
 
@@ -1005,12 +1005,12 @@ void MembraneAbinitio::print_debug(core::pose::Pose & pose)
 	std::cout << "TMH     : ";
 
 
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		std::cout << res_TMH_mapping(i);
 	}
 	std::cout <<"\n";
 	std::cout << "SCORING : ";
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( topology.allow_scoring(i) ) {
 			std::cout << 1;
 		} else {
@@ -1019,7 +1019,7 @@ void MembraneAbinitio::print_debug(core::pose::Pose & pose)
 	}
 	std::cout <<"\n";
 	std::cout << "MOVEMAP : ";
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( movemap_->get_bb(i) ) {
 			std::cout << 1;
 		} else {
@@ -1124,7 +1124,7 @@ return true;
 assert( trials_ );
 tr.Trace << "TrialCounter in MonteCarloExceptionConverge: " << trials_->num_accepts() << std::endl;
 if ( numeric::mod(trials_->num_accepts(),100) != 0 ) return true;
-if ( (Size) trials_->num_accepts() <= last_move_ ) return true;
+if ( (core::Size) trials_->num_accepts() <= last_move_ ) return true;
 last_move_ = trials_->num_accepts();
 // change this later to this: (after we compared with rosetta++ and are happy)
 // if ( numeric::mod(++ct_, 1000) != 0 ) return false; //assumes an approx acceptance rate of 0.1
@@ -1144,7 +1144,7 @@ return false;
 */
 int MembraneAbinitio::do_stage1_cycles( pose::Pose &pose ) {
 	AllResiduesChanged done( pose, brute_move_large()->insert_map() );
-	Size j;
+	core::Size j;
 	for ( j = 1; j <= stage1_cycles(); ++j ) {
 		// std::cout << j << " " << pose.energies() << "\n";
 
@@ -1177,9 +1177,9 @@ int MembraneAbinitio::do_stage2_cycles( pose::Pose &pose ) {
 	//if ( short_insert_region_ ) cycle->add_mover( trial_small_->mover() );
 
 	/*
-	Size j;
-	Size cycles=stage2_cycles();
-	//Size tmh_inserted=get_tmh_inserted(pose);
+	core::Size j;
+	core::Size cycles=stage2_cycles();
+	//core::Size tmh_inserted=get_tmh_inserted(pose);
 	// if(get_tmh_inserted(pose)==1) {
 	//  cycles*=;
 	// }
@@ -1230,7 +1230,7 @@ int MembraneAbinitio::do_stage2_cycles( pose::Pose &pose ) {
 	cycle->add_mover( trial_small_top25_->mover() );
 	cycle->add_mover( trial_small_top25_->mover() );
 
-	Size nr_cycles = stage2_cycles(); // ( short_insert_region ? 2 : 1 );
+	core::Size nr_cycles = stage2_cycles(); // ( short_insert_region ? 2 : 1 );
 	moves::TrialMoverOP trials( new moves::TrialMover( cycle, mc_ptr() ) );
 	moves::RepeatMover( trials, nr_cycles ).apply(pose);
 	// clock_t stop = clock();
@@ -1275,7 +1275,7 @@ start each iteration with the lowest_score_pose. ( mc->recover_low() -- called i
 	convergence_checker = new MonteCarloExceptionConverge;
 	}
 	*/
-	Size cycles=stage3_cycles();
+	core::Size cycles=stage3_cycles();
 	//  if(get_tmh_inserted(pose)==1) {
 	//   cycles*=0.01;
 	//  }
@@ -1316,7 +1316,7 @@ start each iteration with the lowest_score_pose. ( mc->recover_low() -- called i
 				//moves::RepeatMover( trials, stage3_cycles() ).apply( pose );
 
 
-				//     for(Size j=1;j<=cycles;++j) {
+				//     for(core::Size j=1;j<=cycles;++j) {
 				//        trials->apply(pose);
 				/*
 				if(option[basic::options::OptionKeys::abinitio::membrane_print] && j%100 == 0) {
@@ -1353,7 +1353,7 @@ int MembraneAbinitio::do_stage3b_cycles( pose::Pose &pose ) {
 	if ( !option[ basic::options::OptionKeys::abinitio::skip_convergence_check ] ) {
 	convergence_checker = new MonteCarloExceptionConverge;
 	}
-	*/Size cycles=stage3_cycles();
+	*/core::Size cycles=stage3_cycles();
 	//if(get_tmh_inserted(pose)==1) {
 	// cycles*=0.01;
 	//}
@@ -1393,7 +1393,7 @@ int MembraneAbinitio::do_stage3b_cycles( pose::Pose &pose ) {
 				moves::RepeatMover( stage3_mover( pose, lct1, lct2, trials ), stage3_cycles() ).apply( pose );
 				//moves::RepeatMover( trials, stage3_cycles() ).apply( pose );
 
-				//for(Size j=1;j<=cycles;++j) {
+				//for(core::Size j=1;j<=cycles;++j) {
 				// trials->apply(pose);
 				/*
 				if(option[basic::options::OptionKeys::abinitio::membrane_print] && j%100 == 0) {
@@ -1444,9 +1444,9 @@ start each iteration with the lowest_score_pose. ( mc->recover_low()  in prepare
 
 */
 int MembraneAbinitio::do_stage4_cycles( pose::Pose &pose ) {
-	Size nloop_stage4 = 3;
+	core::Size nloop_stage4 = 3;
 
-	for ( Size kk = 1; kk <= nloop_stage4; ++kk ) {
+	for ( core::Size kk = 1; kk <= nloop_stage4; ++kk ) {
 		if ( !recover_checkpoint( pose, "stage4_kk_" + ObjexxFCL::string_of(kk)) ) {
 			//  if ( kk == 2 ) choose_frag_set_top_N_frags(number3merfrags);
 			moves::TrialMoverOP trials;
@@ -1539,12 +1539,12 @@ void MembraneAbinitio::prepare_stage4( core::pose::Pose &pose ) {
 	*/
 }
 
-void MembraneAbinitio::prepare_loop_in_stage3( core::pose::Pose &/*pose*/, Size, Size ){
+void MembraneAbinitio::prepare_loop_in_stage3( core::pose::Pose &/*pose*/, core::Size, core::Size ){
 	//  mc_->recover_low( pose );
 	mc_->set_temperature( temperature_ );
 }
 
-void MembraneAbinitio::prepare_loop_in_stage4( core::pose::Pose &/*pose*/, Size, Size ){
+void MembraneAbinitio::prepare_loop_in_stage4( core::pose::Pose &/*pose*/, core::Size, core::Size ){
 	// mc_->recover_low( pose );
 	mc_->set_temperature( temperature_ );
 }

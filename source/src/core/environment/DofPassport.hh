@@ -27,7 +27,7 @@
 
 #include <core/conformation/Conformation.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //#include <core/id/TorsionID.hh>
 //#include <core/id/AtomID.hh>
@@ -46,7 +46,7 @@ namespace core {
 namespace environment {
 
 
-class DofPassport : public utility::pointer::ReferenceCount {
+class DofPassport : public utility::VirtualBase {
 
 	//make EnvCore a friend so that we can call the constructor of DofPassport
 	friend class core::environment::EnvCore;

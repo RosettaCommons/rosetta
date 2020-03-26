@@ -25,7 +25,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 
@@ -34,7 +34,7 @@ namespace protocols {
 namespace match {
 namespace upstream {
 
-class ProteinSCSampler : public utility::pointer::ReferenceCount {
+class ProteinSCSampler : public utility::VirtualBase {
 public:
 	typedef core::pack::dunbrack::DunbrackRotamerSampleData DunbrackRotamerSampleData;
 	typedef utility::vector1< DunbrackRotamerSampleData >      DunbrackRotamerSampleDataVector;

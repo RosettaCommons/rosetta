@@ -92,7 +92,7 @@ FragmentMover::FragmentMover(
 	FragmentMover::set_movemap( movemap ); // Virtual dispatch doesn't work fully in constructor
 }
 
-bool FragmentMover::apply( pose::Pose & pose, Size pos ) const {
+bool FragmentMover::apply( pose::Pose & pose, core::Size pos ) const {
 	FrameList frames;
 	if ( !fragset_->frames( pos, frames ) ) return false;
 	return apply_frames( pose, frames );
@@ -104,7 +104,7 @@ FragmentMover::get_name() const {
 }
 
 Size FragmentMover::apply_at_all_positions( core::pose::Pose& pose ) const {
-	Size ct( 0 );
+	core::Size ct( 0 );
 	for ( core::Size it : insert_map() ) {
 		FrameList frames;
 		if ( !fragset_->frames( it, frames ) ) continue;
@@ -127,7 +127,7 @@ core::fragment::FragSetCOP FragmentMover::fragments() const {
 void
 FragmentMover::set_fragments( core::fragment::FragSetCOP new_frags_ ) {
 	fragset_ = new_frags_;
-	Size size_of_frags = fragset_->max_pos() - fragset_->min_pos() + 1;
+	core::Size size_of_frags = fragset_->max_pos() - fragset_->min_pos() + 1;
 	tr.Debug << " got new fragments with size " << size_of_frags << std::endl;
 	on_new_fragments();
 }
@@ -250,16 +250,16 @@ ClassicFragmentMover::fresh_instance() const
 bool ClassicFragmentMover::choose_fragment(
 	FrameList const& frames,
 	pose::Pose const&,
-	Size& frame_num,
-	Size& frag_num
+	core::Size& frame_num,
+	core::Size& frag_num
 ) const {
 	// classically: choose randomly
 	runtime_assert( frames.size() );
-	for ( Size nfail = 1; nfail <= 100; nfail ++ ) {
+	for ( core::Size nfail = 1; nfail <= 100; nfail ++ ) {
 
 		//choose frame
 		frame_num = static_cast< int >( numeric::random::rg().uniform() * frames.size() ) + 1;
-		Size N ( frames[ frame_num ]->nr_frags() );
+		core::Size N ( frames[ frame_num ]->nr_frags() );
 
 		//choose frag_num in frame
 		if ( N >= 1 ) { // nr_frags is indexed starting at 1
@@ -290,14 +290,14 @@ ClassicFragmentMover::set_defaults() {
 // the center of the protein
 //  if ( total_insert+frag_length != pose.size() ||  r <= std::exp( -( end_dist / end_bias ) ) ) {
 // the question of total_insert+frag_length == pose.size() doesn't make sense if different frag_lengths are involved
-bool ClassicFragmentMover::end_bias_check( core::pose::Pose const& pose, Size begin ) const {
+bool ClassicFragmentMover::end_bias_check( core::pose::Pose const& pose, core::Size begin ) const {
 	Real r = numeric::random::rg().uniform();
 	// classic bias
 	// Real const end_bias ( 60.0 );
 	// Real end_dist = std::abs( begin - ( pose.size() / 2.0 ) );
 	// return r <= std::exp( -( end_dist / end_bias ) );
 	runtime_assert( begin > 0 && begin <= insert_size_.size() );
-	Size size = insert_size_[ begin ];
+	core::Size size = insert_size_[ begin ];
 
 	// the following assertion can happen if non-continuous (eg. Jump) fragments are inserted with bias-check, switch it off!
 
@@ -309,11 +309,11 @@ bool ClassicFragmentMover::end_bias_check( core::pose::Pose const& pose, Size be
 	}
 
 
-	Size min_fixed_residues;
+	core::Size min_fixed_residues;
 
 
 	// THIS HAS TO TAKE MOVEMAP INTO ACCOUNT: if the core around jumps is fixed... basically no moves are accepted...
-	Size const fixed_residues =
+	core::Size const fixed_residues =
 		pose.fold_tree().count_fixed_residues( begin, size, min_fixed_residues );
 
 	//if symmetric, we just consider a single subunit;
@@ -329,22 +329,22 @@ bool ClassicFragmentMover::end_bias_check( core::pose::Pose const& pose, Size be
 }
 
 void
-ClassicFragmentMover::define_start_window( Size window_start ) {
+ClassicFragmentMover::define_start_window( core::Size window_start ) {
 	use_predefined_window_start_ = true;
 	predefined_window_start_ = window_start;
 	return;
 }
 
-bool ClassicFragmentMover::choose_window_start( pose::Pose const& pose, Size, Size &begin ) const {
+bool ClassicFragmentMover::choose_window_start( pose::Pose const& pose, core::Size, core::Size &begin ) const {
 
-	Size const total_insert ( insert_map_.size() );
+	core::Size const total_insert ( insert_map_.size() );
 
-	for ( Size i = 1; i<=total_insert; i++ ) tr.Trace << " " << insert_map_[ i ];
+	for ( core::Size i = 1; i<=total_insert; i++ ) tr.Trace << " " << insert_map_[ i ];
 
 	if ( tr.Trace.visible() ) {
 		tr.Trace << "size of insertmap: " << total_insert << " -- ";
 		tr.Trace << "insert_size: ";
-		if ( total_insert ) for ( Size i = 1; i<=insert_map_[ total_insert ]; i++ ) tr.Trace << " " << insert_size_[ i ];
+		if ( total_insert ) for ( core::Size i = 1; i<=insert_map_[ total_insert ]; i++ ) tr.Trace << " " << insert_size_[ i ];
 		tr.Trace << std::endl;
 	}
 
@@ -353,7 +353,7 @@ bool ClassicFragmentMover::choose_window_start( pose::Pose const& pose, Size, Si
 		return false;
 	}
 
-	Size nfail ( 0 );
+	core::Size nfail ( 0 );
 	while ( nfail < 100 ) {
 
 		begin = insert_map_[ static_cast< int >( numeric::random::rg().uniform() * total_insert  ) + 1 ];
@@ -372,7 +372,7 @@ bool ClassicFragmentMover::choose_window_start( pose::Pose const& pose, Size, Si
 
 bool ClassicFragmentMover::apply_fragment(
 	Frame const & frame,
-	Size frag_num,
+	core::Size frag_num,
 	kinematics::MoveMap const & movemap,
 	pose::Pose & pose
 ) const {
@@ -385,9 +385,9 @@ bool ClassicFragmentMover::apply_fragment(
 /// incorrect behavior
 bool ClassicFragmentMover::valid_ss( std::string const & new_ss ) const {
 	bool valid = true;
-	Size helix_len = 0;
-	Size strand_len = 0;
-	for ( Size i = 1; i < new_ss.size(); ++i ) {
+	core::Size helix_len = 0;
+	core::Size strand_len = 0;
+	for ( core::Size i = 1; i < new_ss.size(); ++i ) {
 		if ( new_ss[i-1] == 'H' ) ++helix_len;
 		if ( new_ss[i-1] == 'E' ) ++strand_len;
 		if ( new_ss[i-1] != new_ss[i] ) {
@@ -404,7 +404,7 @@ bool ClassicFragmentMover::valid_ss( std::string const & new_ss ) const {
 			helix_len = 0;
 			strand_len = 0;
 		} // if ( new_ss[i] != new_ss[i+1] )
-	} // for ( Size i = 1; i < new_ss.length(); ++i )
+	} // for ( core::Size i = 1; i < new_ss.length(); ++i )
 	return valid;
 }
 
@@ -427,10 +427,10 @@ void ClassicFragmentMover::apply( core::pose::Pose & pose ) {
 	// this means the insertmap has to be regenerated... do this at most once
 	bool insert_map_definitely_right( false );
 
-	Size nfail = 0;
+	core::Size nfail = 0;
 	while ( !success && ( nfail < 100 ) ) {
-		Size frag_begin;
-		Size window_length;
+		core::Size frag_begin;
+		core::Size window_length;
 		FrameList frames;
 		while ( nfail < 100 && frames.size() == 0 ) {
 			// choose a fragment length
@@ -482,8 +482,8 @@ void ClassicFragmentMover::apply( core::pose::Pose & pose ) {
 } // apply
 
 bool ClassicFragmentMover::apply_frames( pose::Pose &pose, FrameList const& frames ) const {
-	Size frame_num;
-	Size frag_num;
+	core::Size frame_num;
+	core::Size frag_num;
 	bool success( false );
 	if ( !choose_fragment( frames, pose, frame_num /*output*/, frag_num /*output*/ ) ) return false;
 	if ( tr.Trace.visible() ) {
@@ -546,7 +546,7 @@ LoggedFragmentMover::get_name() const {
 bool
 LoggedFragmentMover::apply_fragment(
 	core::fragment::Frame const& frame,
-	Size frag_num,
+	core::Size frag_num,
 	core::kinematics::MoveMap const& movemap,
 	core::pose::Pose &pose
 ) const {

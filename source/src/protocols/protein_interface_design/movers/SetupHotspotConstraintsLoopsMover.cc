@@ -196,7 +196,7 @@ SetupHotspotConstraintsLoopsMover::SetupHotspotConstraintsLoopsMover(
 }
 
 SetupHotspotConstraintsLoopsMover::SetupHotspotConstraintsLoopsMover( SetupHotspotConstraintsLoopsMover const & init ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	protocols::moves::Mover( init ),
 	chain_to_design_( init.chain_to_design_),
 	CB_force_constant_(init.CB_force_constant_),
@@ -252,8 +252,8 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 	}
 
 	tr.Info << "Making hotspot constraints..." << std::endl;
-	//Size scaffold_seqpos(0);
-	Size ct_cst( 0 );
+	//core::Size scaffold_seqpos(0);
+	core::Size ct_cst( 0 );
 	for ( core::Size resnum=loop_start_; resnum <= loop_stop_; ++resnum ) {
 		tr.Debug << "make constraints for position " << resnum << " ..." << std::endl;
 		// Check that this position is allowed to be used for stub constraints
@@ -324,7 +324,7 @@ void
 SetupHotspotConstraintsLoopsMover::apply( core::pose::Pose & pose ) {
 	if ( std::abs(CB_force_constant_) > 1E-9 ) {
 		core::scoring::constraints::ConstraintCOPs constraints;
-		Size ct_cst = generate_csts( pose, constraints );
+		core::Size ct_cst = generate_csts( pose, constraints );
 		constraints = pose.add_constraints( constraints );
 		tr.Info << "Applied " << ct_cst << " hotspots in " << constraints.size() << " constraints to the pose." << std::endl;
 	} else { //CB_force is <1e-19
@@ -339,7 +339,7 @@ void
 SetupHotspotConstraintsLoopsMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	using core::Real;
-	chain_to_design_ = tag->getOption<Size>( "redesign_chain", 2 );
+	chain_to_design_ = tag->getOption<core::Size>( "redesign_chain", 2 );
 	resfile_ = tag->getOption<std::string>("resfile","NONE");
 
 	CB_force_constant_ = tag->getOption<Real>( "cb_force", 0.5 );
@@ -349,8 +349,8 @@ SetupHotspotConstraintsLoopsMover::parse_my_tag( TagCOP const tag, basic::dataca
 	bump_cutoff_ = tag->getOption<Real>( "apply_stub_bump_cutoff", 10. );
 	apply_ambiguous_constraints_ = tag->getOption<bool>( "pick_best_energy_constraint", true );
 	// core::Real const bb_stub_cst_weight( tag->getOption< core::Real >( "backbone_stub_constraint_weight", 1.0 ) );  // Unused variable causes warning.
-	loop_start_ = tag->getOption<Size>("start", 0 );
-	loop_stop_ = tag->getOption<Size>("stop", 0 );
+	loop_start_ = tag->getOption<core::Size>("start", 0 );
+	loop_stop_ = tag->getOption<core::Size>("stop", 0 );
 	if ( loop_start_ <= 0 ) {
 		utility_exit_with_message( "please provide loop-start with 'start' option" );
 	}

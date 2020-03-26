@@ -17,7 +17,7 @@
 #include <protocols/tcr/TCRmodel.fwd.hh>
 #include <protocols/tcr/TCRseqInfo.fwd.hh>
 #include <protocols/tcr/TCRseqInfo.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
@@ -43,7 +43,7 @@ namespace tcr {
 /// currently extended cdr2 segment is used (cdr2 extended upto hv4 loop)
 /// see also: TCRmodel documentation and publication
 /// see also: tcr/TCRseqInfo
-class TCRmodel : public utility::pointer::ReferenceCount {
+class TCRmodel : public utility::VirtualBase {
 
 public:
 

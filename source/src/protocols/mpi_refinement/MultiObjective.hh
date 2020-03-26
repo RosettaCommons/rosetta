@@ -26,14 +26,14 @@
 #include <string>
 #include <vector>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/kinematics/Jump.hh>
 
 namespace protocols {
 namespace mpi_refinement {
 
-class MultiObjective : public utility::pointer::ReferenceCount {
+class MultiObjective : public utility::VirtualBase {
 
 public:
 	MultiObjective();

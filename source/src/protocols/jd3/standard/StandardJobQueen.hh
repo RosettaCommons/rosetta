@@ -43,7 +43,7 @@
 //utility headers
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
@@ -135,7 +135,7 @@ public:
 	///  However, if you do override this - especially for more complicated protocols - be sure to call similar functions here
 	///
 	LarvalJobs
-	determine_job_list( JobDAGNodeID job_dag_node_index, Size max_njobs ) override;
+	determine_job_list( JobDAGNodeID job_dag_node_index, core::Size max_njobs ) override;
 
 	///@brief Mature the LarvalJob into a full Job that will be run on a processor.
 	/// Calls complete_larval_job_maturation, which you will need to override.
@@ -156,7 +156,7 @@ public:
 	///@details
 	///  If you override this method, call the SJQs version first for PJN tracking and output.
 	void
-	note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults ) override;
+	note_job_completed( LarvalJobCOP job, JobStatus status, core::Size nresults ) override;
 
 	///@brief As each job completes, this function is called for each result coming from a LarvalJob.
 	///
@@ -284,7 +284,7 @@ protected:
 	/// Override this function to create LarvalJobs for nodes other than preliminary job nodes.
 	virtual
 	LarvalJobs
-	next_batch_of_larval_jobs_for_job_node( JobDAGNodeID job_dag_node_index, Size max_njobs );
+	next_batch_of_larval_jobs_for_job_node( JobDAGNodeID job_dag_node_index, core::Size max_njobs );
 
 	///@brief Get the current larval job index from the JobTracker.
 	GlobalJobID
@@ -530,7 +530,7 @@ protected:
 	build_output_index(
 		protocols::jd3::LarvalJobCOP larval_job,
 		ResultIndex result_index_for_job,
-		Size n_results_for_job
+		core::Size n_results_for_job
 	);
 
 	/// @brief The derived job queen may assign her own numbering to output Poses if she chooses.
@@ -550,7 +550,7 @@ protected:
 	assign_output_index(
 		protocols::jd3::LarvalJobCOP larval_job,
 		ResultIndex result_index_for_job,
-		Size n_results_for_job,
+		core::Size n_results_for_job,
 		JobOutputIndex & output_index
 	);
 
@@ -854,8 +854,8 @@ private:
 	PreliminaryLarvalJobTrackerOP prelim_job_tracker_;
 
 	InnerLarvalJobs inner_larval_jobs_for_curr_prelim_job_;
-	Size curr_inner_larval_job_index_;
-	Size njobs_made_for_curr_inner_larval_job_;
+	core::Size curr_inner_larval_job_index_;
+	core::Size njobs_made_for_curr_inner_larval_job_;
 
 	// The jobs that have completed, but have not yet been output, and the instructions for how
 	// to output them.

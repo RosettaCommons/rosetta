@@ -43,19 +43,19 @@ namespace core {
 namespace environment {
 
 LocalPosition::LocalPosition():
-	ReferenceCount(),
+	VirtualBase(),
 	label_( "" ),
 	position_( 0 )
 {}
 
 LocalPosition::LocalPosition( std::string const & label, core::Size const position ):
-	ReferenceCount(),
+	VirtualBase(),
 	label_( label ),
 	position_( position )
 {}
 
 LocalPosition::LocalPosition( std::string const& comma_deliniated ):
-	ReferenceCount()
+	VirtualBase()
 {
 	using core::Size;
 

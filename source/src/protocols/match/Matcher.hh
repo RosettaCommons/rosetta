@@ -46,7 +46,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/LexicographicalIterator.fwd.hh>
 #include <utility/vector1_bool.hh>
 
@@ -161,7 +161,7 @@ namespace match {
 ///
 /// find_hits() is the main worker function.  After the matcher finishes find_hits(),
 /// the matches can be read by a MatchProcessor in a call to process_matches.
-class Matcher : public utility::pointer::ReferenceCount {
+class Matcher : public utility::VirtualBase {
 public:
 	typedef core::Real                               Real;
 	typedef core::Size                               Size;
@@ -186,71 +186,71 @@ public:
 		utility::vector1< core::id::AtomID > orientation_atoms
 	);
 
-	void set_original_scaffold_build_points( utility::vector1< Size > const & resids );
+	void set_original_scaffold_build_points( utility::vector1< core::Size > const & resids );
 
 	void set_original_scaffold_build_points_for_constraint(
-		Size cst_id,
-		utility::vector1< Size > const & resids
+		core::Size cst_id,
+		utility::vector1< core::Size > const & resids
 	);
 
-	void set_n_geometric_constraints( Size n_constraints );
+	void set_n_geometric_constraints( core::Size n_constraints );
 
-	Size n_geometric_constraints() const {
+	core::Size n_geometric_constraints() const {
 		return n_geometric_constraints_;
 	}
 
 
 	void add_upstream_restype_for_constraint(
-		Size cst_id,
+		core::Size cst_id,
 		core::chemical::ResidueTypeCOP restype
 	);
 
-	void desymmeterize_upstream_restype_for_constraint( Size cst_id );
+	void desymmeterize_upstream_restype_for_constraint( core::Size cst_id );
 
 	void set_sample_startegy_for_constraint(
-		Size cst_id,
+		core::Size cst_id,
 		core::chemical::ResidueTypeCOP restype,
-		Size chi,
+		core::Size chi,
 		upstream::SampleStrategyData const & strat
 	);
 
 	void
 	set_fa_dun_cutoff_for_constraint(
-		Size cst_id,
+		core::Size cst_id,
 		core::chemical::ResidueTypeCOP restype,
 		core::Real fa_dun_cutoff
 	);
 
 	void add_external_geometry_samples_for_constraint(
-		Size cst_id,
+		core::Size cst_id,
 		core::chemical::ResidueTypeCOP restype,
 		utility::vector1< std::string >  const & upstream_launch_atoms,
 		utility::vector1< core::id::AtomID > const & downstream_3atoms,
 		utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > const & exgeom_list,
-		Size const exgeom_id,
+		core::Size const exgeom_id,
 		bool enumerate_ligand_rotamers = false,
 		bool catalytic_bond = false,
 		bool build_round1_hits_twice = false
 	);
 
 	void add_secondary_upstream_match_geometry_for_constraint(
-		Size geom_cst_id,
-		Size target_geom_cst_id,
+		core::Size geom_cst_id,
+		core::Size target_geom_cst_id,
 		core::chemical::ResidueTypeCOP candidate_restype,
 		core::chemical::ResidueTypeCOP target_restype,
-		utility::vector1< Size > const & candidate_atids,
-		utility::vector1< Size > const & target_atids,
+		utility::vector1< core::Size > const & candidate_atids,
+		utility::vector1< core::Size > const & target_atids,
 		toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi,
 		std::string SecMatchStr,
 		core::pose::Pose const & upstream_pose
 	);
 
 	void add_secondary_downstream_match_geometry_for_constraint(
-		Size geom_cst_id,
+		core::Size geom_cst_id,
 		core::chemical::ResidueTypeCOP candidate_restype,
 		core::chemical::ResidueTypeCOP downstream_restype,
-		utility::vector1< Size > const & candidate_atids,
-		utility::vector1< Size > const & target_atids,
+		utility::vector1< core::Size > const & candidate_atids,
+		utility::vector1< core::Size > const & target_atids,
 		toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi,
 		std::string SecMatchStr,
 		core::pose::Pose const & upstream_pose,
@@ -299,15 +299,15 @@ public:
 	downstream_pose() const;
 
 	upstream::ScaffoldBuildPointCOP
-	build_point( Size index ) const;
+	build_point( core::Size index ) const;
 
 	upstream::UpstreamBuilderCOP
-	upstream_builder( Size cst_id ) const;
+	upstream_builder( core::Size cst_id ) const;
 
 	//Author: Kui Chan
 	//access function to pose_build_resids_
 	//Reason: Use to update the SecondaryMatcherToUpstreamResidue hit.second()
-	utility::vector1< Size > const &
+	utility::vector1< core::Size > const &
 	get_pose_build_resids() const;
 
 	/// @brief Return const access to a representative downstream builder for a particular
@@ -316,30 +316,30 @@ public:
 	/// partner from a hit; therefore, a single representative is sufficient to recover
 	/// hit coordinates for any hit from a particular geometric constraint.
 	downstream::DownstreamBuilderCOP
-	downstream_builder( Size cst_id ) const;
+	downstream_builder( core::Size cst_id ) const;
 
 	std::list< downstream::DownstreamAlgorithmCOP >
-	downstream_algorithms( Size cst_id ) const;
+	downstream_algorithms( core::Size cst_id ) const;
 
 	downstream::DownstreamAlgorithmCOP
-	representative_downstream_algorithm( Size cst_id ) const;
+	representative_downstream_algorithm( core::Size cst_id ) const;
 
 	HitList const &
-	hits( Size cst_id ) const;
+	hits( core::Size cst_id ) const;
 
 	OccupiedSpaceHashCOP
 	occ_space_hash() const;
 
 	utility::vector1< upstream::ScaffoldBuildPointCOP > const &
-	per_constraint_build_points( Size cst_id ) const;
+	per_constraint_build_points( core::Size cst_id ) const;
 
 	/// Non-const access
 
 	upstream::ScaffoldBuildPointOP
-	build_point( Size index );
+	build_point( core::Size index );
 
 	upstream::UpstreamBuilderOP
-	upstream_builder( Size cst_id );
+	upstream_builder( core::Size cst_id );
 
 	bool
 	has_upstream_only_geomcsts() const;
@@ -347,19 +347,19 @@ public:
 	/// @brief Return non-const access to a representative downstream builder
 	/// for a particular geometric constraint
 	downstream::DownstreamBuilderOP
-	downstream_builder( Size );
+	downstream_builder( core::Size );
 
 	/// @brief Return non-const access to all of the downstream builders
 	/// for a particular geometric constraint
 	std::list< downstream::DownstreamBuilderOP > const &
-	downstream_builders( Size cst_id ) const;
+	downstream_builders( core::Size cst_id ) const;
 
 
 	/// @brief Non-const access to the set of downstream algorithms for a
 	/// particular geometric constraint -- note that the list containing
 	/// these algorithms is itself const.
 	std::list< downstream::DownstreamAlgorithmOP > const &
-	nonconst_downstream_algorithms( Size cst_id );
+	nonconst_downstream_algorithms( core::Size cst_id );
 
 	OccupiedSpaceHashOP
 	occ_space_hash();
@@ -371,12 +371,12 @@ public:
 	/// Actual deletion requires invoking the method Matcher::erase_hit().
 	/// This non-const access is not intended for any other class.
 	HitListIterator
-	hit_list_begin( Size geom_cst_id );
+	hit_list_begin( core::Size geom_cst_id );
 
 	/// @brief Return a non-constant iterator to the end position for a
 	/// HitList for a particular geometric constraint. See comments for hit_list_begin()
 	HitListIterator
-	hit_list_end( Size geom_cst_id );
+	hit_list_end( core::Size geom_cst_id );
 
 	/// @brief To be invoked by a downstream algorithm.  Downstream algorithms may prune their
 	/// old, inviable hits, through this method -- they should pass themselves in as an argument
@@ -386,16 +386,16 @@ public:
 	/// geometric constraints in a primary/peripheral pattern.
 	void erase_hit(
 		downstream::DownstreamAlgorithm const & dsalg,
-		Size geom_cst_id_for_hit,
+		core::Size geom_cst_id_for_hit,
 		HitListIterator const & iter
 	);
 
 private:
 	bool generate_hits();
-	void prepare_for_hit_generation_for_constraint( Size cst_id );
-	void generate_hits_for_constraint( Size cst_id );
+	void prepare_for_hit_generation_for_constraint( core::Size cst_id );
+	void generate_hits_for_constraint( core::Size cst_id );
 	void regenerate_round1_hits();
-	bool finish_hit_generation_for_constraint( Size cst_id );
+	bool finish_hit_generation_for_constraint( core::Size cst_id );
 
 	bool initialize_scaffold_build_points();
 	void initialize_bump_grids();
@@ -405,7 +405,7 @@ private:
 
 	downstream::DownstreamBuilderOP
 	create_ds_builder(
-		Size const cst_id,
+		core::Size const cst_id,
 		core::chemical::ResidueTypeCOP restype,
 		utility::vector1< std::string >  const & upstream_launch_atoms,
 		utility::vector1< core::id::AtomID > const & downstream_3atoms,
@@ -418,8 +418,8 @@ private:
 	void
 	select_hit_representatives(
 		utility::vector1< utility::vector1< Hit const * > > const & hit_vectors,
-		utility::vector1< Size > & n_hits_per_geomcst,
-		utility::vector1< utility::vector1< Size > > & reps
+		utility::vector1< core::Size > & n_hits_per_geomcst,
+		utility::vector1< utility::vector1< core::Size > > & reps
 	) const;
 
 	bool
@@ -441,7 +441,7 @@ private:
 		match const & m,
 		utility::vector1< HitPtrListCOP > const & upstream_only_hits,
 		utility::vector1< std::list< Hit const * >::const_iterator > & upstream_only_hit_iterators,
-		Size & last_upstream_only_geomcst_advanced,
+		core::Size & last_upstream_only_geomcst_advanced,
 		output::MatchProcessor const & processor
 	) const;
 
@@ -450,16 +450,16 @@ private:
 		match_dspos1 const & m1,
 		utility::vector1< HitPtrListCOP > const & upstream_only_hits,
 		utility::vector1< std::list< Hit const * >::const_iterator > & upstream_only_hit_iterators,
-		Size & last_upstream_only_geomcst_advanced,
+		core::Size & last_upstream_only_geomcst_advanced,
 		output::MatchProcessor const & processor
 	) const;
 
 	bool
 	increment_upstream_only_hit_combination(
 		utility::vector1< HitPtrListCOP > const & upstream_only_hits,
-		Size starting_point,
+		core::Size starting_point,
 		utility::vector1< std::list< Hit const * >::const_iterator > & upstream_only_hit_iterators,
-		Size & last_upstream_only_geomcst_advanced
+		core::Size & last_upstream_only_geomcst_advanced
 	) const;
 
 	void process_matches_main_loop_enumerating_all_hit_combos( output::MatchProcessor & processor ) const;
@@ -479,12 +479,12 @@ private:
 	) const;
 
 
-	Size
+	core::Size
 	estimate_n_matches_for_hit_subsets(
 		Vector const & euclidean_bin_widths,
 		Vector const & euler_bin_widths,
 		utility::vector1< std::list< Hit const * > > const & neighbor_hits,
-		Size accuracy_threshold
+		core::Size accuracy_threshold
 	) const;
 
 	MatcherOutputStats
@@ -500,7 +500,7 @@ private:
 
 	/// @brief Note that a change has occurred for a particular hit list
 	void
-	note_primary_change_to_geom_csts_hitlist( Size geom_cst_id );
+	note_primary_change_to_geom_csts_hitlist( core::Size geom_cst_id );
 
 private:
 	/// uncopyable -- unimplemented
@@ -515,19 +515,19 @@ private:
 	utility::vector1< core::id::AtomID > downstream_orientation_atoms_;
 
 	bool same_build_resids_for_all_csts_;
-	utility::vector1< Size > pose_build_resids_;
-	utility::vector1< utility::vector1< Size > > per_cst_build_resids_;
+	utility::vector1< core::Size > pose_build_resids_;
+	utility::vector1< utility::vector1< core::Size > > per_cst_build_resids_;
 
 	utility::vector1< upstream::ScaffoldBuildPointOP > all_build_points_;
 	utility::vector1< utility::vector1< upstream::ScaffoldBuildPointCOP > > per_constraint_build_points_;
 
 
-	Size n_geometric_constraints_;
+	core::Size n_geometric_constraints_;
 
 	utility::vector1< HitList > hits_;
 
 	utility::vector1< upstream::UpstreamBuilderOP >                    upstream_builders_;
-	utility::vector1< std::map< std::string, Size > >                  build_set_id_for_restype_;
+	utility::vector1< std::map< std::string, core::Size > >                  build_set_id_for_restype_;
 	utility::vector1< downstream::DownstreamAlgorithmOP >              representative_downstream_algorithm_;
 	utility::vector1< std::list< downstream::DownstreamAlgorithmOP > > downstream_algorithms_;
 
@@ -535,7 +535,7 @@ private:
 	/// be hashed?
 	utility::vector1< bool > geomcst_is_upstream_only_;
 
-	std::list< Size > geom_csts_with_primary_hitlist_modificiations_;
+	std::list< core::Size > geom_csts_with_primary_hitlist_modificiations_;
 	utility::vector1< bool > geom_cst_has_primary_modification_;
 
 	utility::vector1< std::list< downstream::DownstreamBuilderOP > > downstream_builders_;
@@ -554,7 +554,7 @@ private:
 
 	bool read_gridlig_file_;
 	std::string gridlig_fname_;
-	std::list< std::pair< Size, Real > > upstream_resids_and_radii_defining_active_site_;
+	std::list< std::pair< core::Size, Real > > upstream_resids_and_radii_defining_active_site_;
 	std::list< core::id::AtomID > downstream_atoms_required_inside_active_site_;
 	utility::vector1< core::id::AtomID > relevant_downstream_atoms_;
 

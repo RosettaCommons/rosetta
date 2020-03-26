@@ -20,7 +20,7 @@
 #include <numeric/xyzTriple.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <platform/types.hh>
 
@@ -31,10 +31,10 @@
 namespace protocols {
 namespace scoring {
 
-class ImplicitFastClashCheck : public utility::pointer::ReferenceCount {
+class ImplicitFastClashCheck : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ImplicitFastClashCheck() override;
 
 	ImplicitFastClashCheck(
@@ -92,7 +92,7 @@ public:
 	bool
 	clash_check_trimer(
 		core::pose::Pose const & pose,
-		Size refrsd
+		core::Size refrsd
 	) const;
 
 	void

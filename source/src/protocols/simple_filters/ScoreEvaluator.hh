@@ -68,7 +68,7 @@ public:
 private:
 	core::scoring::ResidueSelectionVector selection_;
 	mutable core::scoring::ResidueSelectionVector exclude_list_;
-	mutable Size nres_;
+	mutable core::Size nres_;
 	SelectRDC_EvaluatorOP rdcs_;
 };
 

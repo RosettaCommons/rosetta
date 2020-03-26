@@ -56,7 +56,7 @@ bool
 SecStructMinimizeMultiFunc::uniq_refers_to_beta (
 	char const uniq
 ) const {
-	for ( Size i = 1; i <= dihedral_pattern_.length(); ++i ) {
+	for ( core::Size i = 1; i <= dihedral_pattern_.length(); ++i ) {
 		if ( dihedral_pattern_[i] == uniq ) {
 			if ( alpha_beta_pattern_[i] == 'A' || alpha_beta_pattern_[i] == 'P' ) return false;
 			else return true;
@@ -85,17 +85,17 @@ SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
 	setup_minimization_graph( pose_, scorefxn_, min_map_ );
 
 	utility::vector1< char > uniqs;
-	Size num;
+	core::Size num;
 	count_uniq_char( dihedral_pattern_, num, uniqs );
-	utility::vector1< Size > starters( uniqs.size() );
+	utility::vector1< core::Size > starters( uniqs.size() );
 
 	starters[ 1 ] = 1;
-	for ( Size i = 2; i <= uniqs.size(); ++i ) {
+	for ( core::Size i = 2; i <= uniqs.size(); ++i ) {
 		starters[ i ] = starters[ i-1 ] + ( uniq_refers_to_beta( uniqs[ i-1 ] ) ? 3 : 2 );
 	}
 
 	nvar_ = 0;
-	for ( Size i = 1; i <= uniqs.size(); ++i ) {
+	for ( core::Size i = 1; i <= uniqs.size(); ++i ) {
 		if ( uniq_refers_to_beta( uniqs[i] ) ) {
 			nvar_ += 3;
 		} else {
@@ -104,8 +104,8 @@ SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
 	}
 	TR.Trace << "nvar_ = " << nvar_ << std::endl;
 
-	for ( Size i = 1; i <= uniqs.size(); ++i ) {
-		for ( Size j = 1; j <= dihedral_pattern_.size(); ++j ) {
+	for ( core::Size i = 1; i <= uniqs.size(); ++i ) {
+		for ( core::Size j = 1; j <= dihedral_pattern_.size(); ++j ) {
 			if ( dihedral_pattern_[ j-1 ] != uniqs[ i ] ) continue;
 
 			//if ( j > 1 ) {
@@ -154,7 +154,7 @@ SecStructMinimizeMultiFunc::setup_minimization_graph(
 	scoring::MinimizationGraphOP mingraph( new scoring::MinimizationGraph( pose.size() ) );
 
 	scoring::EnergyMap dummy;
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		sfxn.setup_for_minimizing_for_node( * mingraph->get_minimization_node( ii ),
 			pose.residue( ii ), pose.residue_data( ii ), min_map, pose, false, dummy );
 	}
@@ -162,8 +162,8 @@ SecStructMinimizeMultiFunc::setup_minimization_graph(
 	for ( utility::graph::Graph::EdgeListIter
 			eiter = mingraph->edge_list_begin(), eiter_end = mingraph->edge_list_end();
 			eiter != eiter_end; ++eiter ) {
-		Size const node1 = (*eiter)->get_first_node_ind();
-		Size const node2 = (*eiter)->get_second_node_ind();
+		core::Size const node1 = (*eiter)->get_first_node_ind();
+		core::Size const node2 = (*eiter)->get_second_node_ind();
 
 		auto & minedge( static_cast< scoring::MinimizationEdge & > (**eiter) );
 
@@ -174,7 +174,7 @@ SecStructMinimizeMultiFunc::setup_minimization_graph(
 	}
 
 	/// Now initialize the long-range edges
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		for ( auto
 				iter = sfxn.long_range_energies_begin(),
 				iter_end = sfxn.long_range_energies_end();
@@ -190,9 +190,9 @@ SecStructMinimizeMultiFunc::setup_minimization_graph(
 					rni = lrec->const_neighbor_iterator_begin( ii ), // traverse both upper and lower neighbors
 					rniend = lrec->const_neighbor_iterator_end( ii );
 					(*rni) != (*rniend); ++(*rni) ) {
-				Size const r1 = rni->lower_neighbor_id();
-				Size const r2 = rni->upper_neighbor_id();
-				Size const jj = ( r1 == ii ? r2 : r1 );
+				core::Size const r1 = rni->lower_neighbor_id();
+				core::Size const r2 = rni->upper_neighbor_id();
+				core::Size const jj = ( r1 == ii ? r2 : r1 );
 				bool const res_moving_wrt_eachother( true );
 
 				if ( jj < ii ) continue; // only setup each edge once.
@@ -237,13 +237,13 @@ SecStructMinimizeMultiFunc::vars_to_dofs( Multivec const & vars ) const {
 
 	Multivec dofs( dofs_for_pose0_ );
 
-	for ( Size i_var = 1; i_var <= vars.size(); ++i_var ) {
+	for ( core::Size i_var = 1; i_var <= vars.size(); ++i_var ) {
 		auto dofs_for_this_var = map_BB_to_DOF_.find( i_var );
 		if ( dofs_for_this_var == map_BB_to_DOF_.end() ) continue;
 
-		utility::vector1< Size > const i_dofs( dofs_for_this_var->second );
+		utility::vector1< core::Size > const i_dofs( dofs_for_this_var->second );
 		// impose vars on dofs.
-		for ( Size const dof : i_dofs ) {
+		for ( core::Size const dof : i_dofs ) {
 			dofs[ dof ] = vars[ i_var ];
 		}
 	}
@@ -257,13 +257,13 @@ SecStructMinimizeMultiFunc::dofs_to_vars( Multivec const & dofs ) const
 	// Next, iter over vars to convert dofs info to vars info
 	Multivec vars( nvar_, 0.0 );
 
-	for ( Size i_var = 1; i_var <= nvar_; ++i_var ) {
+	for ( core::Size i_var = 1; i_var <= nvar_; ++i_var ) {
 		auto dofs_for_this_var = map_BB_to_DOF_.find( i_var );
 		if ( dofs_for_this_var == map_BB_to_DOF_.end() ) continue;
 
-		utility::vector1< Size > const i_dofs( dofs_for_this_var->second );
+		utility::vector1< core::Size > const i_dofs( dofs_for_this_var->second );
 
-		for ( Size const dof : i_dofs ) {
+		for ( core::Size const dof : i_dofs ) {
 			vars[ i_var ] += dofs[ dof ];
 		}
 		vars[ i_var ] /= i_dofs.size();
@@ -280,13 +280,13 @@ SecStructMinimizeMultiFunc::dEddofs_to_dEdvars( Multivec const & dEddofs ) const
 	// i_var: index in reduced coordinate set
 	// obtain dofs corresponding
 	// derivative d var is average derivative d correpsonding dofs.
-	for ( Size i_var = 1; i_var <= nvar_; ++i_var ) {
+	for ( core::Size i_var = 1; i_var <= nvar_; ++i_var ) {
 		auto dofs_for_this_var = map_BB_to_DOF_.find( i_var );
 		if ( dofs_for_this_var == map_BB_to_DOF_.end() ) continue;
-		utility::vector1< Size > const i_dofs( dofs_for_this_var->second );
+		utility::vector1< core::Size > const i_dofs( dofs_for_this_var->second );
 
 		// average!
-		for ( Size const dof : i_dofs ) {
+		for ( core::Size const dof : i_dofs ) {
 			dEdvars[ i_var ] += dEddofs[ dof ];
 		}
 		//dEdvars[ i_var ] /= i_dofs.size();
@@ -304,17 +304,17 @@ SecStructMinimizeMultiFunc::get_dofs_map()
 	map_BB_to_DOF_.clear();
 	map_DOF_to_BB_.clear();
 
-	Size imap = 1;
+	core::Size imap = 1;
 
 	for ( auto const & elem : dof_nodes ) {
 		id::TorsionID const tor_id( elem->torsion_id() );
 
-		for ( Size i = 1; i <= nvar_; ++i ) {
+		for ( core::Size i = 1; i <= nvar_; ++i ) {
 			TR.Trace << "Initializing mapped DOFs for " << i << std::endl;
 
 			utility::vector1< id::TorsionID > torsions = vars_index_to_torsion_id_[ i ];
 			TR.Trace << "Grabbed " << torsions.size() << " torsions " << std::endl;
-			for ( Size j = 1; j <= torsions.size(); ++j ) {
+			for ( core::Size j = 1; j <= torsions.size(); ++j ) {
 				id::TorsionID id = torsions[ j ];
 
 				if ( id == tor_id ) {

@@ -1113,7 +1113,7 @@ RosettaScriptsParser::substitute_variables_in_stream( std::istream & instream, u
 	//Parse variable substitutions
 	map<string,string> var_map;
 	for ( std::string const & s : script_vars ) {
-		Size eq_pos(s.find('='));
+		core::Size eq_pos(s.find('='));
 		if ( eq_pos != string::npos ) { //ignore ones without a '='
 			var_map[ s.substr(0,eq_pos) ] = s.substr(eq_pos+1);
 		}
@@ -1129,7 +1129,7 @@ RosettaScriptsParser::substitute_variables_in_stream( std::istream & instream, u
 	TR << "Substituted script:" << "\n";
 	string line;
 	while ( getline( instream, line ) ) {
-		Size pos, end, last(0);
+		core::Size pos, end, last(0);
 		string outline; // empty string
 		while ( ( pos = line.find("%%", last) ) != string::npos ) {
 			end = line.find("%%", pos+2);
@@ -1166,7 +1166,7 @@ RosettaScriptsParser::register_factory_prototypes()
 	//using namespace core::scoring::constraints;
 	//ConstraintFactory & cstf( ConstraintIO::get_cst_factory() );
 	//cstf.add_type( new core::scoring::constraints::SequenceProfileConstraint(
-	// Size(), utility::vector1< id::AtomID >(), NULL ) );
+	// core::Size(), utility::vector1< id::AtomID >(), NULL ) );
 
 	// register calculators
 	core::Size const chain1( 1 ), chain2( 2 );

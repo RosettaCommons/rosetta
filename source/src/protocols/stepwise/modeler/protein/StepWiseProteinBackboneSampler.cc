@@ -114,8 +114,8 @@ StepWiseProteinBackboneSampler::get_name() const {
 void
 StepWiseProteinBackboneSampler::apply( core::pose::Pose & pose )
 {
-	Size which_res( 1 );
-	Size count( 1 );
+	core::Size which_res( 1 );
+	core::Size count( 1 );
 
 	clock_t const time_start( clock() );
 
@@ -152,8 +152,8 @@ StepWiseProteinBackboneSampler::define_moving_res( pose::Pose const & pose ) {
 	// expand_loop_takeoff makes protein modeler similar to RNA -- sample psi, omega, *and* phi
 	// at CA-to-CA connections going into and out of moving residues, just like in RNA,
 	// we sample epsilon, zeta, alpha, beta, and gamma in each sugar-to-sugar connection.
-	for ( Size const moving_res : moving_residues_input_ ) {
-		Size const takeoff_res = pose.fold_tree().get_parent_residue( moving_res );
+	for ( core::Size const moving_res : moving_residues_input_ ) {
+		core::Size const takeoff_res = pose.fold_tree().get_parent_residue( moving_res );
 		if ( takeoff_res == 0 ) continue;
 		if ( pose.fold_tree().jump_nr( moving_res, takeoff_res ) > 0 ) continue; // jump
 		runtime_assert( (moving_res == takeoff_res + 1) || (moving_res == takeoff_res - 1 ) );
@@ -174,9 +174,9 @@ void
 StepWiseProteinBackboneSampler::setup_torsion_sets( core::pose::Pose const & pose ) {
 
 	main_chain_torsion_set_for_moving_residues_.clear();
-	for ( Size const moving_res : moving_residues_ ) {
+	for ( core::Size const moving_res : moving_residues_ ) {
 		//
-		//}Size n = 1; n <= moving_residues_.size(); n++ )  {
+		//}core::Size n = 1; n <= moving_residues_.size(); n++ )  {
 		// Preserve alpha behavior rather than trying to unify.
 		if ( pose.residue_type( moving_res ).is_alpha_aa() ) {
 			main_chain_torsion_set_for_moving_residues_.emplace_back( 0.0, 0.0, 0.0 );
@@ -194,8 +194,8 @@ StepWiseProteinBackboneSampler::setup_torsion_sets( core::pose::Pose const & pos
 ////////////////////////////////////////////////////////////////////////////
 void
 StepWiseProteinBackboneSampler::sample_residues_recursively(
-	Size const which_res,
-	Size & count,
+	core::Size const which_res,
+	core::Size & count,
 	core::pose::Pose & pose )
 {
 
@@ -204,7 +204,7 @@ StepWiseProteinBackboneSampler::sample_residues_recursively(
 
 	if ( moving_residues_.size() < 1 ) return; //nothing to do.
 
-	Size const n = moving_residues_[ which_res ];
+	core::Size const n = moving_residues_[ which_res ];
 
 	// todo: make a vec of vecs of Real.
 	MainChainTorsionSetList main_chain_torsion_set_list;
@@ -220,8 +220,8 @@ StepWiseProteinBackboneSampler::sample_residues_recursively(
 		} else if ( pose.residue_type( n ).is_beta_aa() ) {
 			// change to loop over MC torsion index for rsd n
 			// Ugh these could be unequal.
-			//for ( Size ii = 1; ii <= pose.residue( n ).mainchain_torsions(); ++ii ) {
-			for ( Size ii = 1; ii <= main_chain_torsion_set.mainchain_dihedral_values().size(); ++ii ) {
+			//for ( core::Size ii = 1; ii <= pose.residue( n ).mainchain_torsions(); ++ii ) {
+			for ( core::Size ii = 1; ii <= main_chain_torsion_set.mainchain_dihedral_values().size(); ++ii ) {
 				pose.set_torsion( core::id::TorsionID( n, id::BB, ii ), main_chain_torsion_set.mainchain_dihedral_values()[ ii ] );
 			}
 		}
@@ -245,12 +245,12 @@ StepWiseProteinBackboneSampler::sample_residues_recursively(
 // This could even be its own class...
 void
 StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list(
-	Size const n,
+	core::Size const n,
 	pose::Pose const & pose,
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
 	using namespace core::chemical;
-	utility::vector1< Size > const fixed_domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
+	utility::vector1< core::Size > const fixed_domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
 	main_chain_torsion_set_list.clear();
 
 	// following is totally hacky... would be much better to
@@ -327,7 +327,7 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list(
 /////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_coarse(
-	Size const n,
+	core::Size const n,
 	pose::Pose const & pose,
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
@@ -395,9 +395,9 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_full(
 	//TR << "get_main_chain_torsion_set_list_full rsd " << n << " (" << pose.residue_type( n ).name() << ")" << std::endl;
 	//generic -- a residue in the middle of the loop
 	if ( pose.residue_type( n ).is_alpha_aa() ) {
-		for ( Size i = 1; i <= n_sample_; i++ ) {
+		for ( core::Size i = 1; i <= n_sample_; i++ ) {
 			Real const phi = get_rotamer_angle( i, n_sample_ );
-			for ( Size j = 1; j <= n_sample_; j++ ) {
+			for ( core::Size j = 1; j <= n_sample_; j++ ) {
 				Real const psi = get_rotamer_angle( j, n_sample_ );
 
 				if ( rama_energy( n, pose, { phi, psi } ) > best_energy_cutoff ) continue;
@@ -407,11 +407,11 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_full(
 		}
 	} else if ( pose.residue_type( n ).is_beta_aa() ) {
 		// AMW TODO: eventually, just loop over ALL MAINCHAIN INDICES, unifying these two loops. But, rama care.
-		for ( Size i = 1; i <= n_sample_beta_; i++ ) {
+		for ( core::Size i = 1; i <= n_sample_beta_; i++ ) {
 			Real const phi = get_rotamer_angle( i, n_sample_beta_ );//n_sample_ );
-			for ( Size j = 1; j <= n_sample_beta_; j++ ) {
+			for ( core::Size j = 1; j <= n_sample_beta_; j++ ) {
 				Real const tht = get_rotamer_angle( j, n_sample_beta_ );//n_sample_ );
-				for ( Size k = 1; k <= n_sample_beta_; k++ ) {
+				for ( core::Size k = 1; k <= n_sample_beta_; k++ ) {
 					Real const psi = get_rotamer_angle( k, n_sample_beta_ );//n_sample_ );
 
 					if ( rama_energy( n, pose, { phi, tht, psi } ) > best_energy_cutoff ) continue;
@@ -430,11 +430,11 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_n_terminus( core
 {
 	debug_assert( n == 1);
 	if ( pose.residue_type( n ).is_alpha_aa() ) {
-		for ( Size j = 1; j <= n_sample_; j++ ) {
+		for ( core::Size j = 1; j <= n_sample_; j++ ) {
 			Real const psi = get_rotamer_angle( j, n_sample_ );
 			Real best_phi = 0.0;
 			Real best_energy = 999999.9999;
-			for ( Size i = 1; i <= n_sample_; i++ ) {
+			for ( core::Size i = 1; i <= n_sample_; i++ ) {
 				Real const phi = get_rotamer_angle( i, n_sample_ );
 				Real const temp_rama = rama_energy( n, pose, { phi, psi } );
 				if ( temp_rama < best_energy ) {
@@ -447,14 +447,14 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_n_terminus( core
 			}
 		}
 	} else if ( pose.residue_type( n ).is_beta_aa() ) {
-		for ( Size j = 1; j <= n_sample_beta_; j++ ) {
+		for ( core::Size j = 1; j <= n_sample_beta_; j++ ) {
 			Real const tht = get_rotamer_angle( j, n_sample_beta_ );
-			for ( Size k = 1; k <= n_sample_beta_; k++ ) {
+			for ( core::Size k = 1; k <= n_sample_beta_; k++ ) {
 				Real const psi = get_rotamer_angle( k, n_sample_beta_ );
 
 				Real best_phi = 0.0;
 				Real best_energy = 999999.9999;
-				for ( Size i = 1; i <= n_sample_; i++ ) {
+				for ( core::Size i = 1; i <= n_sample_; i++ ) {
 					Real const phi = get_rotamer_angle( i, n_sample_ );
 					Real temp_rama = rama_energy( n, pose, { phi, tht, psi } );
 					if ( temp_rama  < best_energy ) {
@@ -476,12 +476,12 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_c_terminus( core
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
 	if ( pose.residue_type( n ).is_alpha_aa() ) {
-		for ( Size i = 1; i <= n_sample_; i++ ) {
+		for ( core::Size i = 1; i <= n_sample_; i++ ) {
 			Real const phi = get_rotamer_angle( i, n_sample_ );
 
 			Real best_psi = 0.0;
 			Real best_energy = 999999.9999;
-			for ( Size j = 1; j <= n_sample_; j++ ) {
+			for ( core::Size j = 1; j <= n_sample_; j++ ) {
 				Real const psi = get_rotamer_angle( j, n_sample_ );
 				Real const temp_rama = rama_energy( n, pose, { phi, psi } );
 				if ( temp_rama < best_energy ) {
@@ -494,15 +494,15 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_c_terminus( core
 			}
 		}
 	} else if ( pose.residue_type( n ).is_beta_aa() ) {
-		for ( Size i = 1; i <= n_sample_beta_; i++ ) {
+		for ( core::Size i = 1; i <= n_sample_beta_; i++ ) {
 			Real const phi = get_rotamer_angle( i, n_sample_beta_ );
-			for ( Size j = 1; j <= n_sample_beta_; j++ ) {
+			for ( core::Size j = 1; j <= n_sample_beta_; j++ ) {
 				Real const tht = get_rotamer_angle( j, n_sample_beta_ );
 
 				// Without rama can't do this. Guess!
 				Real best_psi = -0.0;
 				Real best_energy = 999999.9999;
-				for ( Size j = 1; j <= n_sample_; j++ ) {
+				for ( core::Size j = 1; j <= n_sample_; j++ ) {
 					Real const psi = get_rotamer_angle( j, n_sample_ );
 					Real const temp_rama = rama_energy( n, pose, { phi, tht, psi } );
 					if ( temp_rama  < best_energy ) {
@@ -535,7 +535,7 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_sample_phi_only(
 		Real best_rama_energy( 99999.999 ), best_phi( 0.0 );
 		Real const psi = pose.psi( n );
 		Real const omega = pose.omega( n );
-		for ( Size i = 1; i <= n_sample_; i++ ) {
+		for ( core::Size i = 1; i <= n_sample_; i++ ) {
 			Real const phi = get_rotamer_angle( i, n_sample_ );
 			Real const temp_rama_energy = rama_energy( n, pose, { phi, psi } );
 			if ( temp_rama_energy < best_rama_energy || i == 1 ) {
@@ -554,7 +554,7 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_sample_phi_only(
 		Real const psi = pose.psi( n );
 		Real const tht = pose.theta( n );
 		Real const omega = pose.omega( n );
-		for ( Size i = 1; i <= n_sample_beta_; i++ ) {
+		for ( core::Size i = 1; i <= n_sample_beta_; i++ ) {
 			Real const phi = get_rotamer_angle( i, n_sample_beta_ );
 			Real const temp_rama_energy = rama_energy( n, pose, { phi, tht, psi } );
 			if ( temp_rama_energy < best_rama_energy || i == 1 ) {
@@ -586,7 +586,7 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_sample_psi_only(
 		// we are appending and this is the junction residue. sample psi only!
 		Real best_rama_energy( 99999.999 ), best_psi( 0.0 );
 		Real const phi = pose.phi( n );
-		for ( Size j = 1; j <= n_sample_; j++ ) {
+		for ( core::Size j = 1; j <= n_sample_; j++ ) {
 			Real const psi = get_rotamer_angle( j, n_sample_ );
 			Real const temp_rama_energy = rama_energy( n, pose, { phi, psi } );
 			if ( temp_rama_energy < best_rama_energy || j == 1 ) {
@@ -606,7 +606,7 @@ StepWiseProteinBackboneSampler::get_main_chain_torsion_set_list_sample_psi_only(
 		Real best_rama_energy( 99999.999 ), best_psi( 0.0 );
 		Real const phi = pose.phi( n );
 		Real const tht = pose.theta( n );
-		for ( Size j = 1; j <= n_sample_beta_; j++ ) {
+		for ( core::Size j = 1; j <= n_sample_beta_; j++ ) {
 			Real const psi = get_rotamer_angle( j, n_sample_beta_ );
 			Real const temp_rama_energy = rama_energy( n, pose, { phi, tht, psi } );
 			if ( temp_rama_energy < best_rama_energy || j == 1 ) {
@@ -646,7 +646,7 @@ StepWiseProteinBackboneSampler::get_big_bin( Real const phi, Real const psi ) co
 ///////////////////////////////////////////////////////////////
 void
 StepWiseProteinBackboneSampler::filter_native_BIG_BINS(
-	Size const n,
+	core::Size const n,
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
 	if ( get_native_pose() == nullptr ) {
@@ -659,7 +659,7 @@ StepWiseProteinBackboneSampler::filter_native_BIG_BINS(
 	if ( n == 1 ) return;
 	if ( n == native_pose.size() ) return;
 
-	Size const big_bin =  get_big_bin( native_pose.phi(n), native_pose.psi(n) );
+	core::Size const big_bin =  get_big_bin( native_pose.phi(n), native_pose.psi(n) );
 	if ( big_bin == 3 ) return; // If loop, no constraints.
 
 	filter_big_bin( big_bin, main_chain_torsion_set_list );
@@ -672,7 +672,7 @@ StepWiseProteinBackboneSampler::filter_based_on_desired_secstruct(
 	MainChainTorsionSetList & main_chain_torsion_set_list )
 {
 
-	Size big_bin( 3 );
+	core::Size big_bin( 3 );
 	if ( secstruct == 'H' ) big_bin = 1;
 	if ( secstruct == 'E' ) big_bin = 2;
 
@@ -684,7 +684,7 @@ StepWiseProteinBackboneSampler::filter_based_on_desired_secstruct(
 
 //////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::filter_big_bin( Size const big_bin,
+StepWiseProteinBackboneSampler::filter_big_bin( core::Size const big_bin,
 	MainChainTorsionSetList & main_chain_torsion_set_list ) {
 
 	MainChainTorsionSetList main_chain_torsion_set_list_new;
@@ -708,15 +708,15 @@ StepWiseProteinBackboneSampler::filter_big_bin( Size const big_bin,
 void
 StepWiseProteinBackboneSampler::filter_main_chain_torsion_sets(){
 
-	std::list< std::pair< Real, Size > > energy_index_list;
-	for ( Size n = 1; n <= centroid_scores_.size(); n++ ) {
+	std::list< std::pair< Real, core::Size > > energy_index_list;
+	for ( core::Size n = 1; n <= centroid_scores_.size(); n++ ) {
 		energy_index_list.emplace_back( centroid_scores_[n], n ) ;
 	}
 	energy_index_list.sort();
 
 	utility::vector1< MainChainTorsionSetList > main_chain_torsion_sets_for_moving_residues_new;
 
-	for ( Size n = 1; n <= centroid_scores_.size(); n++ ) {
+	for ( core::Size n = 1; n <= centroid_scores_.size(); n++ ) {
 		if ( n > nstruct_centroid_ ) break;
 		main_chain_torsion_sets_for_moving_residues_new.push_back(
 			main_chain_torsion_sets_for_moving_residues_[ n ] );
@@ -832,7 +832,7 @@ StepWiseProteinBackboneSampler::main_chain_torsion_set_lists_real( Pose const & 
 	for ( auto const & main_chain_torsion_set_list : main_chain_torsion_sets_for_moving_residues_ ) {
 
 		utility::vector1< core::Real > output;
-		Size moving_res_index = 1;
+		core::Size moving_res_index = 1;
 		for ( auto const & main_chain_torsion_set : main_chain_torsion_set_list ) {
 
 			if ( sampler_pose.residue_type( moving_residues_[ moving_res_index++ ] ).is_beta_aa() ) {
@@ -856,8 +856,8 @@ StepWiseProteinBackboneSampler::which_torsions( Pose const & sampler_pose )
 {
 	using namespace core::id;
 	utility::vector1< id::TorsionID > which_torsions;
-	for ( Size const moving_res : moving_residues_ ) {
-		for ( Size n = 1; n <= sampler_pose.residue( moving_res ).mainchain_torsions().size(); ++n ) {
+	for ( core::Size const moving_res : moving_residues_ ) {
+		for ( core::Size n = 1; n <= sampler_pose.residue( moving_res ).mainchain_torsions().size(); ++n ) {
 			which_torsions.push_back( TorsionID( moving_res, BB, n ) );
 		}
 	}
@@ -873,19 +873,19 @@ StepWiseProteinBackboneSampler::initialize_is_fixed_res(){
 
 /////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::set_moving_residues( utility::vector1< Size > const & moving_res ){
+StepWiseProteinBackboneSampler::set_moving_residues( utility::vector1< core::Size > const & moving_res ){
 	moving_residues_ = moving_res;
 }
 
 /////////////////////////////////////////////////////////////////////////
 void
-StepWiseProteinBackboneSampler::set_fixed_residues( utility::vector1< Size > const & fixed_res ) {
+StepWiseProteinBackboneSampler::set_fixed_residues( utility::vector1< core::Size > const & fixed_res ) {
 	is_fixed_res_input_.clear();
-	Size const nres = core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size();
-	for ( Size n = 1; n <= nres; ++n ) {
+	core::Size const nres = core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size();
+	for ( core::Size n = 1; n <= nres; ++n ) {
 		is_fixed_res_input_.push_back( false );
 	}
-	for ( Size const res : fixed_res ) {
+	for ( core::Size const res : fixed_res ) {
 		is_fixed_res_input_[ res ] = true;
 	}
 }
@@ -900,10 +900,10 @@ StepWiseProteinBackboneSampler::copy_coords( pose::Pose & pose, pose::Pose const
 	template_pose.residue( 1 ); // force a refold.
 
 	for ( auto const & elem : ghost_map ) {
-		Size const res( elem.first );
-		Size const template_res( elem.second );
+		core::Size const res( elem.first );
+		core::Size const template_res( elem.second );
 
-		for ( Size j = 1; j <= pose.residue_type( res ).natoms(); j++ ) {
+		for ( core::Size j = 1; j <= pose.residue_type( res ).natoms(); j++ ) {
 			if ( pose.residue_type( res ).atom_name( j ) !=
 					template_pose.residue_type( template_res ).atom_name( j ) ) {
 				TR << "PROBLEM! " << res << " " << pose.residue( res ).atom_name( j ) <<  "  !=  " <<
@@ -922,12 +922,12 @@ StepWiseProteinBackboneSampler::copy_coords( pose::Pose & pose, pose::Pose const
 core::kinematics::FoldTree
 StepWiseProteinBackboneSampler::figure_out_fold_tree( ResMap const & ghost_map ) const {
 
-	Size prev_res( 0 ), total_res( 0 );
-	utility::vector1< Size > cutpoints;
+	core::Size prev_res( 0 ), total_res( 0 );
+	utility::vector1< core::Size > cutpoints;
 
 	for ( auto const & elem : ghost_map ) {
-		Size const res( elem.first );
-		Size const template_res( elem.second );
+		core::Size const res( elem.first );
+		core::Size const template_res( elem.second );
 
 		TR << "MAPPING " << res << " --> " << template_res << std::endl;
 
@@ -939,7 +939,7 @@ StepWiseProteinBackboneSampler::figure_out_fold_tree( ResMap const & ghost_map )
 
 	core::kinematics::FoldTree f( total_res );
 
-	for ( Size const cut : cutpoints ) {
+	for ( core::Size const cut : cutpoints ) {
 		TR << "Adding jump across: " << cut << std::endl;
 		f.new_jump( cut, cut + 1, cut );
 	}
@@ -951,7 +951,7 @@ void
 StepWiseProteinBackboneSampler::setup_centroid_screen(
 	Real const centroid_score_diff_cut,
 	std::string const & centroid_weights,
-	Size const nstruct_centroid,
+	core::Size const nstruct_centroid,
 	bool const ghost_loops) {
 
 	using namespace core::scoring;
@@ -989,12 +989,12 @@ StepWiseProteinBackboneSampler::prepare_ghost_pose( core::pose::Pose const & pos
 	// Figure out sequence of a pose without the loops (i.e., the "moving residues" );
 	std::string const full_sequence = pose.sequence();
 	ObjexxFCL::FArray1D<bool> moving_array( full_sequence.size(), false );
-	for ( Size n = 1; n <= moving_residues_.size(); n++ ) moving_array( moving_residues_[n] ) = true;
+	for ( core::Size n = 1; n <= moving_residues_.size(); n++ ) moving_array( moving_residues_[n] ) = true;
 
 	ghost_map_.clear();
-	Size count( 0 );
+	core::Size count( 0 );
 	std::string desired_sequence  = "";
-	for ( Size n = 1; n <= full_sequence.size(); n++ ) {
+	for ( core::Size n = 1; n <= full_sequence.size(); n++ ) {
 		if ( moving_array(n) ) continue;
 		count++;
 		desired_sequence += full_sequence[n-1];
@@ -1018,7 +1018,7 @@ StepWiseProteinBackboneSampler::prepare_ghost_pose( core::pose::Pose const & pos
 
 	// Also need to figure out reference energy.
 	Pose ghost_pose_blowup = *ghost_pose_;
-	for ( Size n = 1; n <= ghost_pose_blowup.num_jump(); n++ ) {
+	for ( core::Size n = 1; n <= ghost_pose_blowup.num_jump(); n++ ) {
 		Jump jump( ghost_pose_blowup.jump( n ) );
 		jump.set_translation( Vector( 100.0, 0.0, 0.0 ) ); //This is a little dangerous.
 		ghost_pose_blowup.set_jump( n, jump );

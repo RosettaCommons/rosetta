@@ -71,7 +71,7 @@ namespace mainchain_potential {
 /// @details "True" indicates that we should initialize from the global options system.  "False" by default,
 /// meaning that all options are set to default values.
 GenerateMainchainPotentialOptions::GenerateMainchainPotentialOptions( bool const initialize_from_globals /* = false */ ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	residue_name_( "ALA" ),
 	scorefxn_filename_(""), //Empty string means use default.
 	make_pre_proline_potential_(false),

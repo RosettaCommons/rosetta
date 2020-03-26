@@ -15,7 +15,7 @@
 #ifndef INCLUDED_protocols_ligand_docking_GALigandDock_LigandConformer_hh
 #define INCLUDED_protocols_ligand_docking_GALigandDock_LigandConformer_hh
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
@@ -36,7 +36,7 @@ namespace ga_ligand_dock {
 /// Also has functions to tranform back and forth to pose object
 /// Uses friend functions to perform mutation / crossovers with others within gene representation
 
-class LigandConformer : public utility::pointer::ReferenceCount {
+class LigandConformer : public utility::VirtualBase {
 public:
 	friend LigandConformer
 	mutate(LigandConformer const &l );

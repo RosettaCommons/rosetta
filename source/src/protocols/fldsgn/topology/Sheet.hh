@@ -24,7 +24,7 @@
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -37,7 +37,7 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
-class Sheet : public utility::pointer::ReferenceCount {
+class Sheet : public utility::VirtualBase {
 public:
 
 
@@ -45,7 +45,7 @@ public:
 	typedef core::Real Real;
 	typedef core::Vector Vector;
 	typedef core::pose::Pose Pose;
-	typedef utility::vector1< Size > VecSize;
+	typedef utility::vector1< core::Size > VecSize;
 	typedef utility::vector1< int > VecInt;
 	typedef utility::vector1< Real > VecReal;
 	typedef protocols::fldsgn::topology::SS_Info2_COP SS_Info2_COP;
@@ -87,24 +87,24 @@ public: //accessors
 
 
 	/// @brief the number strands inclued in
-	Size num_strands() const { return num_strands_; }
+	core::Size num_strands() const { return num_strands_; }
 
 	/// @brief is this barrel ?
 	bool is_barrel() const { return is_barrel_; }
 
 	VecSize order_strands() const { return order_strands_; }
 
-	Size order_strand( Size const s ) const { return order_strands_[ s ]; }
+	core::Size order_strand( core::Size const s ) const { return order_strands_[ s ]; }
 
 	VecInt orient_strands() const { return orient_strands_; }
 
-	int orient_strand( Size const s ) const { return orient_strands_[ s ]; }
+	int orient_strand( core::Size const s ) const { return orient_strands_[ s ]; }
 
-	Size strand_order( Size const s ) { return strand_order_[ s ]; }
+	core::Size strand_order( core::Size const s ) { return strand_order_[ s ]; }
 
 	VecInt ca_cb_orients() const { return ca_cb_orients_; }
 
-	int ca_cb_orient( Size const s ) const { return ca_cb_orients_[ s ]; }
+	int ca_cb_orient( core::Size const s ) const { return ca_cb_orients_[ s ]; }
 
 
 public:
@@ -124,12 +124,12 @@ public:
 
 public: //
 
-	bool is_member( Size const s );
+	bool is_member( core::Size const s );
 
 private:  // data
 
 	/// @brief
-	Size num_strands_;
+	core::Size num_strands_;
 
 	/// @brief
 	bool is_barrel_;
@@ -141,7 +141,7 @@ private:  // data
 	VecInt orient_strands_;
 
 	/// @brief id of strand -> order of strand in sheet
-	std::map< Size, Size > strand_order_;
+	std::map< core::Size, core::Size > strand_order_;
 
 	/// @brief vector defining sheet plane
 	Vector sheet_plane_;
@@ -157,16 +157,16 @@ private:  // data
 };
 
 
-class SheetSet : public utility::pointer::ReferenceCount {
+class SheetSet : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~SheetSet() override;
 
 
 	typedef core::Size Size;
 	typedef core::Real Real;
 	typedef utility::vector1< int > VecInt;
-	typedef utility::vector1< Size > VecSize;
+	typedef utility::vector1< core::Size > VecSize;
 	typedef utility::vector1< Real > VecReal;
 	typedef protocols::fldsgn::topology::StrandPairingSet StrandPairingSet;
 	typedef protocols::fldsgn::topology::StrandPairingSetCOP StrandPairingSetCOP;
@@ -213,19 +213,19 @@ public: // accessors
 
 
 	/// @brief
-	SheetOP sheet( Size const s ) const;
+	SheetOP sheet( core::Size const s ) const;
 
 	/// @brief
 	inline Sheets sheets() const { return sheets_; }
 
 	/// @brief return number of sheets
-	inline Size num_sheets() const { return sheets_.size(); }
+	inline core::Size num_sheets() const { return sheets_.size(); }
 
 	/// @brief return number of sheets
-	inline Size size() const { return sheets_.size(); }
+	inline core::Size size() const { return sheets_.size(); }
 
 	/// @brief return the id of sheet that a given strand belongs to.
-	Size which_sheet( Size const s ) const;
+	core::Size which_sheet( core::Size const s ) const;
 
 	/// @brief return strand pairing set
 	StrandPairingSet spairset() const;
@@ -248,7 +248,7 @@ private:  // data
 
 
 	/// @brief sheet number given a strand
-	mutable std::map< Size, Size > sheet_number_;
+	mutable std::map< core::Size, core::Size > sheet_number_;
 
 	/// @brief
 	Sheets sheets_;

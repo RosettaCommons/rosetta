@@ -87,7 +87,7 @@ public:
 	toolbox::SamplerPlusPlusType type() const override { return toolbox::MC_RNA_ONE_JUMP; }
 
 	/// @brief output summary of class
-	void show( std::ostream & out, Size const indent) const override;
+	void show( std::ostream & out, core::Size const indent) const override;
 
 	/// @brief return OP to the subsampler that controls exactly this torsion_id (assume only one).
 	MC_SamplerOP
@@ -97,7 +97,7 @@ private:
 
 	bool check_jump_in_range();
 
-	Size const jump_num_;
+	core::Size const jump_num_;
 
 	core::kinematics::Jump stored_jump_, active_jump_;
 

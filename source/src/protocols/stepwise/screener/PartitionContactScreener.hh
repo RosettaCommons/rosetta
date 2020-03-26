@@ -61,7 +61,7 @@ private:
 	initialize_evaluator( core::scoring::methods::EnergyMethodOptions const & options );
 
 	void
-	check_screen( Size const moving_res, bool & atr_ok, bool & rep_ok ) const;
+	check_screen( core::Size const moving_res, bool & atr_ok, bool & rep_ok ) const;
 
 private:
 

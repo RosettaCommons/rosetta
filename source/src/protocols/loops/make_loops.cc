@@ -41,8 +41,8 @@ using basic::t_trace;
 static basic::Tracer TR( "protocols.loops.make_loops", t_info );
 
 void add_loop(
-	Size seg_begin,
-	Size seg_end,
+	core::Size seg_begin,
+	core::Size seg_end,
 	pose::Pose const & pose,
 	loops::Loops & loops
 )
@@ -63,12 +63,12 @@ void add_loop(
 		}
 		return;
 	}
-	Size const length( seg_end - seg_begin );
+	core::Size const length( seg_end - seg_begin );
 	// random cutpoint - needs to be "seg_start < cut < seg_end"
-	Size cut(0), safety(0);
+	core::Size cut(0), safety(0);
 	// ensure (cutpoint+1) is not a proline, as this will cause problems (?)
 	while ( safety < 100 && ( cut == 0 || pose.residue_type( cut+1 ).aa() == aa_pro ) ) {
-		cut = seg_begin + static_cast< Size >( numeric::random::uniform() * ( length ) );
+		cut = seg_begin + static_cast< core::Size >( numeric::random::uniform() * ( length ) );
 		++safety;
 	}
 	runtime_assert( pose.residue_type( cut+1 ).aa() != aa_pro );
@@ -91,9 +91,9 @@ void add_loop(
 void loops_around_residues(
 	loops::Loops & loops,
 	pose::Pose const & pose,
-	vector1< Size > const & residue_indices,
-	Size gapsize /* = 6 */,
-	Size extend /* = 2 */
+	vector1< core::Size > const & residue_indices,
+	core::Size gapsize /* = 6 */,
+	core::Size extend /* = 2 */
 )
 {
 	if ( residue_indices.empty() ) {
@@ -105,22 +105,22 @@ void loops_around_residues(
 	// loop ends should be extended by at least 1 residue on each end
 	runtime_assert( extend >= 1 );
 	core::conformation::Conformation const & conf( pose.conformation() );
-	Size seg_begin( residue_indices.front() ), seg_end( residue_indices.front() );
+	core::Size seg_begin( residue_indices.front() ), seg_end( residue_indices.front() );
 	int last_chain( pose.chain( residue_indices.front() ) );
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	for ( auto index( residue_indices.begin() ); index != residue_indices.end(); ++index ) {
 		runtime_assert( *index > 0 );
 		runtime_assert( *index <= nres );
 		int const chain( pose.chain(*index) );
-		Size const chain_begin( chain > 0 ? conf.chain_begin( chain ) : 1 ),
+		core::Size const chain_begin( chain > 0 ? conf.chain_begin( chain ) : 1 ),
 			chain_end( chain > 0 ? conf.chain_end( chain ) : nres );
 		// subtracting from unsigned ints is dangerous!
-		Size begin(*index);
-		for ( Size i(1); i <= extend; ++i ) {
+		core::Size begin(*index);
+		for ( core::Size i(1); i <= extend; ++i ) {
 			if ( begin == chain_begin ) break;
 			begin -= 1;
 		}
-		Size const end( std::min( chain_end, *index + extend ) );
+		core::Size const end( std::min( chain_end, *index + extend ) );
 		TR(t_trace) << *index << " ch " << chain << " chbgn " << chain_begin << " chend " << chain_end << " bgn " << begin << " end " << end << std::endl;
 		// first residue always opens a segment
 		if ( index == residue_indices.begin() ) {

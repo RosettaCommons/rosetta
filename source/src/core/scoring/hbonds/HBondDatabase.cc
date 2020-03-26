@@ -142,7 +142,7 @@ HBondDatabase::HBondDatabase(
 HBondDatabase::HBondDatabase(
 	const HBondDatabase & src
 ) :
-	ReferenceCount( src ),
+	VirtualBase( src ),
 	initialized_(src.initialized_),
 	//hb_options_( src.hb_options_ ),
 	params_database_tag_( src.params_database_tag_ ),

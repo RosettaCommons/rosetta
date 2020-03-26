@@ -91,7 +91,7 @@ private:
 
 	void setup_movers( const core::pose::Pose & pose );
 
-	void set_smallmovesize(Size scale);
+	void set_smallmovesize(core::Size scale);
 
 	void set_ljrepulsion_weight(core::Real weight_scale);
 

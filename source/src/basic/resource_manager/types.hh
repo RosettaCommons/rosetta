@@ -15,7 +15,7 @@
 #define INCLUDED_basic_resource_manager_types_hh
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <string>
@@ -30,8 +30,8 @@ namespace resource_manager {
 // depends on a Pose. That is fine: the Pose should also be a
 // resource and should be requested from the ResourceManager
 // during the construction of the object.
-typedef utility::pointer::ReferenceCount Resource;
-typedef utility::pointer::ReferenceCountCOP ResourceCOP;
+typedef utility::VirtualBase Resource;
+typedef utility::VirtualBaseCOP ResourceCOP;
 
 } // namespace
 } // namespace

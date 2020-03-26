@@ -39,7 +39,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #include <utility/file/FileName.hh>
@@ -96,7 +96,7 @@ void ExtraScoreEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 		if ( extra_scores.size() != extra_score_names.size() ) {
 			utility_exit_with_message("-extra_score: you need to provide as much extra_score_names as extra_scores! ");
 		}
-		for ( Size ct = 1; ct <= extra_scores.size(); ct ++ ) {
+		for ( core::Size ct = 1; ct <= extra_scores.size(); ct ++ ) {
 			std::string const& tag = extra_score_names[ ct ];
 			std::string patch( "NOPATCH" );
 			if ( option[ OptionKeys::evaluation::extra_score_patch ].user() ) {
@@ -144,7 +144,7 @@ void ExtraScoreEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 				loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( is, select_string, false /*no strict checking */ );
 				loops::Loops core( loops );
 
-				utility::vector1< Size> selection;
+				utility::vector1< core::Size> selection;
 				core.get_residues( selection );
 				eval.add_evaluation( utility::pointer::make_shared< simple_filters::TruncatedScoreEvaluator >( tag, selection, scfxn ) );
 			} else {

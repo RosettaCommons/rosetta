@@ -20,7 +20,7 @@
 
 #include <basic/Tracer.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <map>
 #include <sstream>
 
@@ -66,7 +66,7 @@ namespace jobdist {
 /// So, each Job represents a unique input,
 /// and each tuple of (Job, struct_n) represents a unique output.
 ///
-class BasicJob : public utility::pointer::ReferenceCount
+class BasicJob : public utility::VirtualBase
 {
 public:
 

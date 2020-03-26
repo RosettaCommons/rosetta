@@ -187,9 +187,9 @@ void ArchiveBase::read_structures(
 	using namespace io::silent;
 
 	tr.Debug << "read structures returned for " << batch.batch() << std::endl;
-	Size ct( batch.decoys_returned()-sfd.size() );
+	core::Size ct( batch.decoys_returned()-sfd.size() );
 	tr.Debug << "first count for new decoys : " << ct << " in batch " << batch.id() << std::endl;
-	Size accepted_ct( 0 );
+	core::Size accepted_ct( 0 );
 	for ( SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
 		std::string tag = it->decoy_tag();
 		it->set_decoy_tag( batch.batch()+"_"+ObjexxFCL::lead_zero_string_of( ++ct, 6 ) );
@@ -341,8 +341,8 @@ void ArchiveBase::save_status( std::ostream& os ) const {
 		<< RJ( 14, total_accepts_+accepts_since_last_batch_ ) << RJ( 25, accepts_since_last_batch_ )
 		<< RJ( 15, total_proposed_+proposed_since_last_batch_ ) << RJ( 30, proposed_since_last_batch_) << std::endl;
 	os << "acceptance_history: " << floating_acceptance_ratio_ << "\nAH: ";
-	Size const cols( 50 );
-	Size ct( cols );
+	core::Size const cols( 50 );
+	core::Size ct( cols );
 	for ( auto it = acceptance_history_.begin(); it != acceptance_history_.end(); ++it, --ct ) {
 		os << *it << " ";
 		if ( ct <= 1 ) { os << "\nAH: "; ct = cols; }

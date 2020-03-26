@@ -24,7 +24,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -35,7 +35,7 @@ namespace core {
 namespace select {
 namespace jump_selector {
 
-class JumpSelector : public utility::pointer::ReferenceCount {
+class JumpSelector : public utility::VirtualBase {
 public:
 
 	/// @brief Constructor.

@@ -27,7 +27,7 @@
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -50,7 +50,7 @@ using namespace core;
 
 // Public methods //////////////////////////////////////////////////////////////
 // Standard methods ////////////////////////////////////////////////////////////
-FlexBBDesignMeanField::FlexBBDesignMeanField( Size option,
+FlexBBDesignMeanField::FlexBBDesignMeanField( core::Size option,
 	pose::PoseOPs & poses,
 	utility::vector1 < core::pack::task::PackerTaskOP > tasks,
 	scoring::ScoreFunctionOP scfxn
@@ -61,7 +61,7 @@ FlexBBDesignMeanField::FlexBBDesignMeanField( Size option,
 	aa_matrices_.resize( poses.size() );
 }
 
-FlexBBDesignMeanField::FlexBBDesignMeanField( Size option,
+FlexBBDesignMeanField::FlexBBDesignMeanField( core::Size option,
 	pose::PoseOPs & poses,
 	utility::vector1 < core::pack::task::PackerTaskOP > tasks,
 	scoring::ScoreFunctionOP scfxn,
@@ -99,7 +99,7 @@ FlexBBDesignMeanField::process()
 	//calculates rot_matrices, bb_boltz_probs, and exp_rot_matrix
 	FlexBBMeanField::process();
 
-	for ( Size bb = 1; bb <= num_poses(); ++bb ) {
+	for ( core::Size bb = 1; bb <= num_poses(); ++bb ) {
 		aa_matrices_[ bb ] = AAMatrix ( rot_matrices()[ bb ], energy_matrices()[ bb ], temperature() );
 	}
 	calc_exp_value_aa_matrix();
@@ -108,7 +108,7 @@ FlexBBDesignMeanField::process()
 /// @details resizes the aa_matrices_ vector to allow for the deleted pose
 /// @remarks called before aa_matrices_ has been fully assigned so simply truncating it is okay
 void
-FlexBBDesignMeanField::delete_pose( Size pose_ind )
+FlexBBDesignMeanField::delete_pose( core::Size pose_ind )
 {
 
 	FlexBBMeanField::delete_pose( pose_ind );
@@ -124,7 +124,7 @@ FlexBBDesignMeanField::calc_bb_boltz_probs()
 	FlexBBMeanField::calc_bb_boltz_probs();
 	utility::vector1 < bool > is_designed = rot_matrices()[ 1 ].is_designed();
 
-	for ( Size pos = 0; pos < is_designed.size(); ++pos ) {
+	for ( core::Size pos = 0; pos < is_designed.size(); ++pos ) {
 		if ( ! is_designed[ pos+1 ] ) {
 			bb_boltz_probs().erase( bb_boltz_probs().begin() + pos );
 			//Added per_aa
@@ -156,11 +156,11 @@ FlexBBDesignMeanField::calc_exp_value_aa_matrix()
 	//no need for following line unless bb boltz per aa
 
 	utility::vector1 < Real > totals( aa_matrices_[1].size(), Real( 0.0 ) );
-	for ( Size pos = 1; pos <= aa_matrices_[1].size(); ++pos ) {
+	for ( core::Size pos = 1; pos <= aa_matrices_[1].size(); ++pos ) {
 		exp_aa_matrix_->push_back( utility::vector1 < AAProb> ( aa_matrices_[1][ pos ].size() ) );
 
-		for ( Size bb = 1; bb <= aa_matrices_.size(); ++bb ) {
-			for ( Size aa = 1; aa <= aa_matrices_[ bb ][ pos ].size(); ++aa ) {
+		for ( core::Size bb = 1; bb <= aa_matrices_.size(); ++bb ) {
+			for ( core::Size aa = 1; aa <= aa_matrices_[ bb ][ pos ].size(); ++aa ) {
 				//Added per_aa
 				//This AAProb wasn't yet initialized so initialize it to value of current RotProb multiplied by the bb probability
 				if ( (*exp_aa_matrix_)[ pos ][ aa ].nrot() == 0 ) {

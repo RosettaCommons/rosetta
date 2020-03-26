@@ -27,7 +27,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <ObjexxFCL/FArray4D.hh>
 #include <ObjexxFCL/FArray3D.hh>
@@ -42,7 +42,7 @@ namespace scoring {
 namespace rna {
 
 
-class RNA_AtomVDW : public utility::pointer::ReferenceCount {
+class RNA_AtomVDW : public utility::VirtualBase {
 
 public:
 

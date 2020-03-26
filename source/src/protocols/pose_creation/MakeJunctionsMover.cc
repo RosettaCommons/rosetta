@@ -137,7 +137,7 @@ MakeJunctionsMover::Design MakeJunctionsMover::line_to_design(std::string line){
 	bool in_c_term=false;
 	utility::vector1<std::string> name_plus_junk = utility::string_split(jobs[1],' ',std::string());
 	std::string name =  name_plus_junk[1];
-	for ( Size ii=2; ii<=jobs.size(); ++ii ) {
+	for ( core::Size ii=2; ii<=jobs.size(); ++ii ) {
 		if ( jobs[ii].substr(0,4)=="True" ) {
 			start_struct = jobs[ii].substr(0,jobs[ii].size());
 			in_c_term = true;
@@ -170,7 +170,7 @@ std::queue<MakeJunctionsMover::Design> MakeJunctionsMover::read_in_designs(){
 	return(designs);
 }
 
-void MakeJunctionsMover::parse_attach_description(std::string attach_description,std::string & pdb_location,char & chain, Size & n_term_trim, Size & c_term_trim, Size & n_repeats,Size &n_term_attach_length, Size &c_term_attach_length,std::string & n_term_seq, std::string & c_term_seq){
+void MakeJunctionsMover::parse_attach_description(std::string attach_description,std::string & pdb_location,char & chain, core::Size & n_term_trim, core::Size & c_term_trim, core::Size & n_repeats,core::Size &n_term_attach_length, core::Size &c_term_attach_length,std::string & n_term_seq, std::string & c_term_seq){
 	//TR << "attach_description" << attach_description << std::endl;
 	utility::vector1<std::string> command = utility::string_split(attach_description,',');
 	pdb_location = command[2];
@@ -201,7 +201,7 @@ void MakeJunctionsMover::parse_attach_description(std::string attach_description
 
 
 void MakeJunctionsMover::generate_start_pose(core::pose::Pose & pose, core::pose::Pose & background_pose, std::string attach_description){
-	Size n_term_trim,c_term_trim,n_term_attach_length,c_term_attach_length,n_repeats;
+	core::Size n_term_trim,c_term_trim,n_term_attach_length,c_term_attach_length,n_repeats;
 	std::string pdb_location,n_term_seq,c_term_seq;
 	parse_attach_description(attach_description,pdb_location,chain_,n_term_trim,c_term_trim,n_repeats,n_term_attach_length,c_term_attach_length,n_term_seq,c_term_seq);
 	core::pose::Pose start_pose = get_and_cache_pdb(pdb_location);
@@ -211,7 +211,7 @@ void MakeJunctionsMover::generate_start_pose(core::pose::Pose & pose, core::pose
 		err << "\nCan't find chain name" << chain_ << "in pdb"  << attach_description << std::endl;
 		throw CREATE_EXCEPTION(utility::excn::BadInput,err.str());
 	}
-	Size chain_id =  get_chain_id_from_chain(chain_,start_pose);
+	core::Size chain_id =  get_chain_id_from_chain(chain_,start_pose);
 	core::pose::PoseOP desired_chain = start_pose.split_by_chain(chain_id);
 	pose = *desired_chain;
 	if ( pose.size() == start_pose.size() ) {
@@ -232,7 +232,7 @@ void MakeJunctionsMover::generate_start_pose(core::pose::Pose & pose, core::pose
 
 
 bool MakeJunctionsMover::attach_next_part(core::pose::Pose & pose, std::string attach_termini, std::string attach_description){
-	Size n_term_trim,c_term_trim,n_term_attach_length,c_term_attach_length,n_repeats;
+	core::Size n_term_trim,c_term_trim,n_term_attach_length,c_term_attach_length,n_repeats;
 	std::string pdb_location,n_term_seq,c_term_seq;
 	char attach_chain;
 	parse_attach_description(attach_description,pdb_location,attach_chain,n_term_trim,c_term_trim,n_repeats,n_term_attach_length,c_term_attach_length,n_term_seq,c_term_seq);
@@ -255,7 +255,7 @@ bool MakeJunctionsMover::attach_next_part(core::pose::Pose & pose, std::string a
 	std::cout << "score after assigning seq " << attach_score << std::endl;
 	core::scoring::ScoreFunctionOP tmp_sfxn = sfxn_->clone();
 	MergePDBatOverlapMoverOP mergePDBOP(utility::pointer::make_shared<MergePDBatOverlapMover>(tmp_sfxn));
-	Size attachment_length=0;
+	core::Size attachment_length=0;
 	if ( attach_termini=="n_term" ) {
 		attachment_length=c_term_attach_length;
 	} else {
@@ -270,19 +270,19 @@ bool MakeJunctionsMover::attach_next_part(core::pose::Pose & pose, std::string a
 	return(success);
 }
 
-void MakeJunctionsMover::trim_pose(core::pose::Pose & pose, Size n_term_trim,Size c_term_trim){
+void MakeJunctionsMover::trim_pose(core::pose::Pose & pose, core::Size n_term_trim,core::Size c_term_trim){
 
 	if ( n_term_trim>0 ) {
 		//trim residues from n_term
-		Size start_location = 1;
-		Size end_location = n_term_trim;
+		core::Size start_location = 1;
+		core::Size end_location = n_term_trim;
 		pose.conformation().delete_residue_range_slow(start_location,end_location);
 		renumber_pdbinfo_based_on_conf_chains(pose,true,false,false,false);
 	}
 	if ( c_term_trim>0 ) {
 		//delete c_term
-		Size start_location = pose.size()-c_term_trim+1;
-		Size end_location = pose.size();
+		core::Size start_location = pose.size()-c_term_trim+1;
+		core::Size end_location = pose.size();
 		pose.conformation().delete_residue_range_slow(start_location,end_location);
 		renumber_pdbinfo_based_on_conf_chains(pose,true,false,false,false);
 	}
@@ -298,7 +298,7 @@ void MakeJunctionsMover::assign_seq(core::pose::Pose & pose, std::string n_term_
 		std::string current_n_term_seq = pose_seq.substr(0,n_term_seq.size());
 		if ( n_term_seq != current_n_term_seq ) {
 			simple_moves::MutateResidueOP mutation_mover;
-			for ( Size ii=1; ii<=n_term_seq.size(); ii++ ) {
+			for ( core::Size ii=1; ii<=n_term_seq.size(); ii++ ) {
 				AA my_aa =aa_from_oneletter_code(n_term_seq.at(ii-1));
 				mutation_mover = simple_moves::MutateResidueOP ( utility::pointer::make_shared<simple_moves::MutateResidue> (
 					ii, //position
@@ -314,7 +314,7 @@ void MakeJunctionsMover::assign_seq(core::pose::Pose & pose, std::string n_term_
 		std::string current_c_term_seq = pose_seq.substr(pose.size()-c_term_seq.size(),c_term_seq.size());
 		if ( c_term_seq != current_c_term_seq ) {
 			simple_moves::MutateResidueOP mutation_mover;
-			for ( Size ii=1; ii<=c_term_seq.size(); ii++ ) {
+			for ( core::Size ii=1; ii<=c_term_seq.size(); ii++ ) {
 				AA my_aa =aa_from_oneletter_code(c_term_seq.at(ii-1));
 				mutation_mover = simple_moves::MutateResidueOP ( utility::pointer::make_shared<simple_moves::MutateResidue> (
 					pose.size()-c_term_seq.size()+ii, //position
@@ -331,7 +331,7 @@ void MakeJunctionsMover::assign_seq(core::pose::Pose & pose, std::string n_term_
 	using namespace core::scoring;
 	using namespace core::optimization;
 	if ( residue_mutated ) {
-		Size packing_range = 5;
+		core::Size packing_range = 5;
 		core::select::fill_neighbor_residues(pose, overlap_and_neighbors, packing_range);
 		optimization::MinimizerOptions minopt( "lbfgs_armijo_nonmonotone", 0.02, true, false, false );
 		kinematics::MoveMap mm_loc;
@@ -464,7 +464,7 @@ void MakeJunctionsMover::parse_my_tag(
 	core::pose::Pose const & ){
 	designs_fn_ = tag->getOption< std::string >( "designs" ,"designs.txt" );
 	pdb_cache_bool_ = tag->getOption< bool >( "pdb_cache" ,true);
-	pdb_cache_max_size_ = tag->getOption< Size> ("pdb_size_size",2000);
+	pdb_cache_max_size_ = tag->getOption< core::Size> ("pdb_size_size",2000);
 	junction_rmsd_thresh_ = tag->getOption<Real>("junction_rmsd_thresh", 1.5);
 	//relax_during_build_ = tag->getOption<bool>("relax_during_build",true);
 	if ( tag->hasOption("scorefxn") ) {

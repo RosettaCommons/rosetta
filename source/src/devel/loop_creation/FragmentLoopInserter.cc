@@ -94,8 +94,8 @@ FragmentLoopInserter::FragmentLoopInserter():
 	//  utility_exit_with_message( "You must specify as many fragment sizes as fragment file names " );
 	// }
 
-	for ( Size i = 1; i <= frag_files.size(); ++i ) {
-		//  Size const frag_size = Size(frag_sizes[i]);
+	for ( core::Size i = 1; i <= frag_files.size(); ++i ) {
+		//  core::Size const frag_size = core::Size(frag_sizes[i]);
 
 		//  FragSetOP frag_lib_op ( new ConstantLengthFragSet( frag_size ) );
 		//  frag_lib_op = (FragmentIO().read_data( frag_files[i] ));
@@ -154,10 +154,10 @@ FragmentLoopInserter::find_loop_fragments(
 		get_pose_coords_to_match(pose);
 
 	utility::vector1< numeric::xyzVector<Real> > frag_coords_to_match(num_flanking_residues_to_match_*2);
-	for ( Size frag_sets_index=1; frag_sets_index<=frag_sets_.size(); ++frag_sets_index ) {
+	for ( core::Size frag_sets_index=1; frag_sets_index<=frag_sets_.size(); ++frag_sets_index ) {
 		fragment::FragSetOP cur_frag_set=frag_sets_[frag_sets_index];
 		for ( fragment::ConstFrameIterator it = cur_frag_set->begin(); it!=cur_frag_set->end(); ++it ) {
-			for ( Size i = 1; i<=it->nr_frags(); ++i ) {
+			for ( core::Size i = 1; i<=it->nr_frags(); ++i ) {
 				fragment::AnnotatedFragData const & cur_frag =
 					dynamic_cast< const fragment::AnnotatedFragData & > (it->fragment(i));
 
@@ -170,8 +170,8 @@ FragmentLoopInserter::find_loop_fragments(
 
 
 				//get coordinates for the helical residues on the beginning of the bridge fragment
-				for ( Size j=1; j<=num_flanking_residues_to_match_; j++ ) {
-					Size cur_resnum = j;
+				for ( core::Size j=1; j<=num_flanking_residues_to_match_; j++ ) {
+					core::Size cur_resnum = j;
 					fragment::BBTorsionSRFDCOP fragment_residue =
 						utility::pointer::dynamic_pointer_cast< fragment::BBTorsionSRFD const > ( cur_frag.get_residue(cur_resnum) );
 
@@ -180,8 +180,8 @@ FragmentLoopInserter::find_loop_fragments(
 				}
 
 				//get coordinates for the helical residues on the end of the bridge fragment
-				for ( Size j=1; j<=num_flanking_residues_to_match_; j++ ) {
-					Size cur_resnum = cur_frag.size()-(num_flanking_residues_to_match_-j);
+				for ( core::Size j=1; j<=num_flanking_residues_to_match_; j++ ) {
+					core::Size cur_resnum = cur_frag.size()-(num_flanking_residues_to_match_-j);
 					fragment::BBTorsionSRFDCOP fragment_residue =
 						utility::pointer::dynamic_pointer_cast< fragment::BBTorsionSRFD const > ( cur_frag.get_residue(cur_resnum) );
 
@@ -212,7 +212,7 @@ FragmentLoopInserter::find_loop_fragments(
 					//     TR << "RMSD" << rms << std::endl;
 
 					//     TR << "Fragment coords: " << std::endl;
-					//     for(Size k=1; k<=frag_coords_to_match.size(); ++k)
+					//     for(core::Size k=1; k<=frag_coords_to_match.size(); ++k)
 					//      TR << frag_coords_to_match[k] << std::endl;
 				}
 			}
@@ -233,22 +233,22 @@ FragmentLoopInserter::build_fragment_loop(
 ){
 	using namespace core;
 
-	Size loop_size = fragment->size() - (num_flanking_residues_to_match_*2);
+	core::Size loop_size = fragment->size() - (num_flanking_residues_to_match_*2);
 
-	Size fragment_begin = loop_anchor()-num_flanking_residues_to_match_+1;
-	Size fragment_end = loop_anchor()+num_flanking_residues_to_match_;
+	core::Size fragment_begin = loop_anchor()-num_flanking_residues_to_match_+1;
+	core::Size fragment_end = loop_anchor()+num_flanking_residues_to_match_;
 
-	Size n_term_append_size=numeric::random::random_range(1, loop_size-1);
-	Size c_term_append_size=loop_size-n_term_append_size;
+	core::Size n_term_append_size=numeric::random::random_range(1, loop_size-1);
+	core::Size c_term_append_size=loop_size-n_term_append_size;
 	TR.Debug << "Attaching " << n_term_append_size << " residues to N-termini and "
 		<< c_term_append_size << " residues to C-termini" << std::endl;
 
 	//append idealized residues to the pose
 	//TODO: use the rotamer id from the backbone db extra data
 	chemical::ResidueTypeSetCOP restype_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
-	for ( Size i=0; i<n_term_append_size; ++i ) {
+	for ( core::Size i=0; i<n_term_append_size; ++i ) {
 
-		Size append_seqpos = loop_anchor()+i;
+		core::Size append_seqpos = loop_anchor()+i;
 
 		char aa_char = fragment->sequence(i+num_flanking_residues_to_match_+1);
 		chemical::AA aa = chemical::aa_from_oneletter_code(aa_char);
@@ -267,8 +267,8 @@ FragmentLoopInserter::build_fragment_loop(
 		//  pose.dump_pdb(filename.str());
 	}
 
-	Size prepend_seqpos = loop_anchor()+loop_size-c_term_append_size+1;
-	for ( Size i=loop_size-1; i>=loop_size-c_term_append_size; --i ) {
+	core::Size prepend_seqpos = loop_anchor()+loop_size-c_term_append_size+1;
+	for ( core::Size i=loop_size-1; i>=loop_size-c_term_append_size; --i ) {
 
 		char aa_char = fragment->sequence(i+num_flanking_residues_to_match_+1);
 		chemical::AA aa = chemical::aa_from_oneletter_code(aa_char);
@@ -285,7 +285,7 @@ FragmentLoopInserter::build_fragment_loop(
 	// std::exit(1);
 	// pose.dump_pdb("before_torsion_apply.pdb");
 
-	for ( Size i=1; i<=fragment->size(); ++i ) {
+	for ( core::Size i=1; i<=fragment->size(); ++i ) {
 		TR << "Fragment residue " << i << ":" << std::endl;
 		fragment->get_residue(i)->show(TR);
 		TR << std::endl;

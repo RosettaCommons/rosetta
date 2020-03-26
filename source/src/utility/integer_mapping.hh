@@ -17,7 +17,7 @@
 #include <utility/integer_mapping.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <platform/types.hh>
 
@@ -30,9 +30,9 @@ namespace utility {
 /// are represented by the value 0.  Both enumerations should
 /// count from 1.  Once the class has been initialized, this class
 /// offers O(1) mapping between elements in the enumerations.
-class subset_mapping : public utility::pointer::ReferenceCount {
+class subset_mapping : public utility::VirtualBase {
 public:
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 	static platform::Size const UNMAPPED;
 
 public:

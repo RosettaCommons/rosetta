@@ -94,7 +94,7 @@ get_basic_protein_sampler(
 	StepWiseSamplerSizedOP sampler;
 	if ( options->frag_files().size() > 0 ) {
 		std::string const frag_file  = options->frag_files()[ 1 ];
-		utility::vector1< Size > const & slice_res = working_parameters->working_res_list();
+		utility::vector1< core::Size > const & slice_res = working_parameters->working_res_list();
 		sampler = utility::pointer::make_shared< ProteinFragmentStepWiseSampler >( frag_file, slice_res, moving_res_list );
 		if ( input_streams.size() == 1 ) {
 			StepWiseSamplerSizedOP sampler_identity( new InputStreamStepWiseSampler( input_streams[1] ) );
@@ -153,7 +153,7 @@ get_basic_protein_sampler(
 
 /////////////////////////////////////////////////////////////////////////
 void
-do_set_xyz( pose::Pose const & pose, Size const i, pose::Pose & scratch_pose, Size const i_scratch, core::kinematics::Stub const & stub ) {
+do_set_xyz( pose::Pose const & pose, core::Size const i, pose::Pose & scratch_pose, core::Size const i_scratch, core::kinematics::Stub const & stub ) {
 
 	using namespace core::id;
 	using namespace core::chemical;
@@ -227,7 +227,7 @@ generate_beta_database_test() {
 	SilentFileDataOP silent_file_data( new SilentFileData(opts) );
 	std::string const silent_file( option[ out::file::silent ]() );
 
-	Size count( 0 );
+	core::Size count( 0 );
 	for ( std::string const & in_file : in_files ) {
 
 		std::cout << "-------- " << in_file << "----------" << std::endl;
@@ -241,24 +241,24 @@ generate_beta_database_test() {
 
 		fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
 
-		std::map< std::pair< Size, Size >, bool > donor_to_acceptor_bb_hb;
+		std::map< std::pair< core::Size, core::Size >, bool > donor_to_acceptor_bb_hb;
 
 		// In antiparallel HB, there are two hbonds between the residue backbones:
 		//   C=O ... HN  and a NH ... O=C
 
-		for ( Size i = 1; i <= hbond_set->nhbonds(); i++ ) {
+		for ( core::Size i = 1; i <= hbond_set->nhbonds(); i++ ) {
 			hbonds::HBond const & hbond( hbond_set->hbond( i ) );
 
-			Size const don_res_num = hbond.don_res();
-			Size const acc_res_num = hbond.acc_res();
+			core::Size const don_res_num = hbond.don_res();
+			core::Size const acc_res_num = hbond.acc_res();
 
 			if ( hbond.don_hatm_is_protein_backbone() && hbond.acc_atm_is_protein_backbone() ) {
 				donor_to_acceptor_bb_hb[ std::make_pair( don_res_num, acc_res_num ) ] = true;
 			}
 		}
 
-		for ( Size i = 1; i <= pose.size(); i++ ) {
-			for ( Size j = 1; j <= pose.size(); j++ ) {
+		for ( core::Size i = 1; i <= pose.size(); i++ ) {
+			for ( core::Size j = 1; j <= pose.size(); j++ ) {
 				if ( donor_to_acceptor_bb_hb[ std::make_pair( i, j ) ] &&
 						donor_to_acceptor_bb_hb[ std::make_pair( j, i ) ] ) {
 					//Create a coordinate system at residue i,
@@ -291,7 +291,7 @@ generate_beta_database_test() {
 	/////////////////////////////////////////////////////////////////////
 	// probably could convert following to StepWiseLegacyClusterer [pose based]
 	protocols::stepwise::modeler::align::StepWiseLegacyClustererSilentBased stepwise_clusterer( silent_file_data );
-	Size max_decoys( 400 );
+	core::Size max_decoys( 400 );
 	if ( option[ out::nstruct].user() )  max_decoys =  option[ out::nstruct ];
 	stepwise_clusterer.set_max_decoys( max_decoys );
 	//  stepwise_clusterer.set_cluster_by_all_atom_rmsd( option[ cluster_by_all_atom_rmsd ] ); // false by default
@@ -299,7 +299,7 @@ generate_beta_database_test() {
 	stepwise_clusterer.set_score_diff_cut( 10.0 );
 
 	// Do not superimpose inside the clusterer -- trust our superposition over residue 1.
-	utility::vector1< Size > calc_rms_residues;
+	utility::vector1< core::Size > calc_rms_residues;
 	calc_rms_residues.push_back( 1 );
 	calc_rms_residues.push_back( 2 );
 	stepwise_clusterer.set_calc_rms_res( calc_rms_residues );

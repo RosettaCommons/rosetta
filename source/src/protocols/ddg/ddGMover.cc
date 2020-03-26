@@ -1322,7 +1322,7 @@ ddGMover::neighborhood_of_mutations(
 	Real nrad2 = nbr_cutoff_ * nbr_cutoff_;
 
 	for ( core::Size  ii = 1; ii <= mutations.size(); ++ii ) {
-		Size iiresid = mutations[ ii ];
+		core::Size iiresid = mutations[ ii ];
 		core::Vector ii_pos;
 		// The neighbor atom is CA in Gly, CB in other amino acids, and *defined* for everything
 		ii_pos = pose.residue(iiresid).xyz( pose.residue(iiresid).nbr_atom() );

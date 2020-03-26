@@ -111,7 +111,7 @@ AddOrDeleteMover::apply( core::pose::Pose & pose, StepWiseMove const & swa_move 
 bool
 AddOrDeleteMover::apply( core::pose::Pose & pose, std::string & move_type_string /* just used by monte carlo*/ )
 {
-	utility::vector1< Size > const moving_res_list = core::pose::full_model_info::get_moving_res_from_full_model_info( pose );
+	utility::vector1< core::Size > const moving_res_list = core::pose::full_model_info::get_moving_res_from_full_model_info( pose );
 
 	bool disallow_delete  = disallow_deletion_of_last_residue_ && ( moving_res_list.size() <= 1 );
 	if ( options_->skip_deletions() ||  options_->rebuild_bulge_mode() ) disallow_delete = true;

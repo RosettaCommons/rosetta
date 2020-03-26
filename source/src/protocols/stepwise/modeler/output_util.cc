@@ -61,7 +61,7 @@ output_boolean( bool boolean, std::ostream & outstream /* = std::cout */ ){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-output_rna_movemap_header( Size const & spacing, std::ostream & outstream  ){
+output_rna_movemap_header( core::Size const & spacing, std::ostream & outstream  ){
 	using namespace ObjexxFCL::format;
 	outstream << A( spacing, "res_num" ) << A( spacing, " alpha  " ) << A( spacing, "  beta  " ) << A( spacing, " gamma  " );
 	outstream << A( spacing, " delta  " ) << A( spacing, "epsilon " ) << A( spacing, "  zeta  " ) << A( spacing, " chi_1  " );
@@ -70,7 +70,7 @@ output_rna_movemap_header( Size const & spacing, std::ostream & outstream  ){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-output_protein_movemap_header( Size const & spacing, std::ostream & outstream  ){
+output_protein_movemap_header( core::Size const & spacing, std::ostream & outstream  ){
 	using namespace ObjexxFCL::format;
 	outstream << A( spacing, "res_num" ) << A( spacing, " phi    " ) << A( spacing, "  psi   " ) << A( spacing, " omega   " );
 	outstream << A( spacing, " chi_1 " ) << A( spacing, "  chi_2 " ) << A( spacing, " chi_3  " ) << A( spacing, " chi_4  " ) << std::endl;
@@ -83,14 +83,14 @@ output_movemap( kinematics::MoveMap const & mm, core::pose::Pose const & pose, s
 	using namespace core::id;
 	using namespace core::kinematics;
 
-	Size const total_residue = pose.size();
+	core::Size const total_residue = pose.size();
 
-	Size spacing = 10;
+	core::Size spacing = 10;
 
 	outstream << "--------------------------------------------------------------------------------------" << std::endl;
 	outstream << "Movemap ( in term of partial_pose seq_num ): " << std::endl;
 	bool is_protein( false ), is_rna( false );
-	for ( Size n = 1; n <= total_residue; n++ ) {
+	for ( core::Size n = 1; n <= total_residue; n++ ) {
 		if ( !is_protein && pose.residue_type( n ).is_protein() ) {
 			output_protein_movemap_header( spacing, outstream ); is_rna = false; is_protein = true;
 		} else  if ( !is_rna && pose.residue_type( n ).is_RNA() ) {
@@ -98,20 +98,20 @@ output_movemap( kinematics::MoveMap const & mm, core::pose::Pose const & pose, s
 		}
 		if ( is_rna ) {
 			outstream << I( spacing, 3, n );
-			for ( Size k = 1; k <= 6; k++ ) {
+			for ( core::Size k = 1; k <= 6; k++ ) {
 				outstream << A(  - 1 + ( spacing - 4 )/2, "" ); output_boolean( mm.get( TorsionID( n, id::BB,  k ) ), outstream ); outstream << A( 1 + ( spacing - 4 )/2, "" );
 			}
-			for ( Size k = 1; k <= 4; k++ ) {
+			for ( core::Size k = 1; k <= 4; k++ ) {
 				outstream << A(  - 1 + ( spacing - 4 )/2, "" ); output_boolean( mm.get( TorsionID( n, id::CHI, k ) ), outstream ); outstream << A( 1 + ( spacing - 4 )/2, "" );
 			}
 			outstream << std::endl;
 		}
 		if ( is_protein ) {
 			outstream << I( spacing, 3, n );
-			for ( Size k = 1; k <= 3; k++ ) {
+			for ( core::Size k = 1; k <= 3; k++ ) {
 				outstream << A(  - 1 + ( spacing - 4 )/2, "" ); output_boolean( mm.get( TorsionID( n, id::BB,  k ) ), outstream ); outstream << A( 1 + ( spacing - 4 )/2, "" );
 			}
-			for ( Size k = 1; k <= pose.residue_type( n ).nchi(); k++ ) {
+			for ( core::Size k = 1; k <= pose.residue_type( n ).nchi(); k++ ) {
 				outstream << A(  - 1 + ( spacing - 4 )/2, "" ); output_boolean( mm.get( TorsionID( n, id::CHI, k ) ), outstream ); outstream << A( 1 + ( spacing - 4 )/2, "" );
 			}
 			outstream << std::endl;
@@ -120,9 +120,9 @@ output_movemap( kinematics::MoveMap const & mm, core::pose::Pose const & pose, s
 	outstream << "--------------------------------------------------------------------------------------" << std::endl;
 
 	outstream << "print movemap jump_points [explicit method]: " << std::endl;
-	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {
-		Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
-		Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
+	for ( core::Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {
+		core::Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
+		core::Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
 
 		outstream << "n = " << n << " | jump_pos1 = " << jump_pos1 << " | jump_pos2 = " << jump_pos2;
 		outstream << " | mm.get_jump( n ) = "; output_boolean( mm.get_jump( n ), outstream );

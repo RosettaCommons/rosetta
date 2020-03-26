@@ -19,6 +19,7 @@
 #include <basic/datacache/CacheableData.hh>
 #include <core/pack/rotamer_set/WaterAnchorInfo.fwd.hh>
 #include <core/pack/rotamer_set/WaterPackingInfo.fwd.hh>
+#include <core/types.hh>
 
 // utility headers
 

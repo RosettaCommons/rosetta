@@ -25,7 +25,7 @@
 // Utility headers
 #include <utility>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 namespace core {
@@ -79,9 +79,9 @@ private:
 	Real       dof_val_;
 };
 
-class SimpleDerivCheckResult : public utility::pointer::ReferenceCount {
+class SimpleDerivCheckResult : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~SimpleDerivCheckResult() override;
 	SimpleDerivCheckResult( Size const nangles, Size const nsteps ) :
 		step_data_( nangles ),
@@ -221,9 +221,9 @@ private:
 
 };
 
-class NumericalDerivCheckResult : public utility::pointer::ReferenceCount {
+class NumericalDerivCheckResult : public utility::VirtualBase {
 public:
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 
 public:
 	NumericalDerivCheckResult();

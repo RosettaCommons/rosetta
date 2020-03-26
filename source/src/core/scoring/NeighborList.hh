@@ -33,7 +33,7 @@
 
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/kinematics/DomainMap.fwd.hh>
 #include <utility/vector1.hh>
@@ -180,7 +180,7 @@ public:
 typedef utility::vector1< AtomNeighbor > AtomNeighbors;
 
 ///////////////////////////////////////////////////////////////////////////////
-class NeighborList : public utility::pointer::ReferenceCount
+class NeighborList : public utility::VirtualBase
 {
 public:
 	NeighborList(

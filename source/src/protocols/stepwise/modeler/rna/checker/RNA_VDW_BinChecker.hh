@@ -53,7 +53,7 @@ namespace checker {
 // Atom_Bin is now declared in VDW_Grid.hh
 // struct Atom_Bin{ int x; int y; int z; };
 
-class RNA_VDW_BinChecker: public utility::pointer::ReferenceCount {
+class RNA_VDW_BinChecker: public utility::VirtualBase {
 
 public:
 
@@ -259,7 +259,7 @@ private:
 	bool align_pose_;
 	bool include_side_chains_;
 	bool vdw_align_res_set_;
-	utility::vector1< Size > vdw_align_res_;
+	utility::vector1< core::Size > vdw_align_res_;
 	core::id::AtomID_Map < core::id::AtomID > stored_align_working_atom_id_map_;
 	bool optimize_memory_usage_;
 	bool optimize_speed_;

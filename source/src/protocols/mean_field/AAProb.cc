@@ -53,15 +53,15 @@ using namespace core;
 AAProb::AAProb() :
 	probability_( Real( 0.0 ) ),
 	aa_ind_( core::chemical::num_aa_types ),
-	pos_( Size( 0 ) ),
-	nrot_( Size( 0 ) )
+	pos_( core::Size( 0 ) ),
+	nrot_( core::Size( 0 ) )
 {}
 
 /// @param [in] prob - probability of Amino Acid occurring at the site
 /// @param [in] aa_ind - AA enum of identity
 /// @param [in] pos - position of the site in pose numbering
 /// @param [in] nrot - number of rotamers corresponding to this amino acid at that site
-AAProb::AAProb( Real prob, core::chemical::AA aa_ind, Size pos, Size nrot ) :
+AAProb::AAProb( Real prob, core::chemical::AA aa_ind, core::Size pos, core::Size nrot ) :
 	probability_( prob ),
 	aa_ind_( aa_ind ),
 	pos_( pos ),
@@ -73,7 +73,7 @@ AAProb::AAProb( RotProb const & rp ) :
 	probability_( rp.probability() ),
 	aa_ind_( rp.res()->aa() ),
 	pos_( rp.pos() ),
-	nrot_( Size( 1 ) )
+	nrot_( core::Size( 1 ) )
 {}
 
 /// @details Copy constructor uses private member function

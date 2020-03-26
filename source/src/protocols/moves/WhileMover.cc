@@ -54,7 +54,7 @@ WhileMover::~WhileMover() = default;
 void
 WhileMover::apply( core::pose::Pose & pose ) {
 	PoseCondition &cond_( *p_cond_ );
-	for ( Size i=0; ( i<nmoves_ ) && cond_( pose ); ++i ) {
+	for ( core::Size i=0; ( i<nmoves_ ) && cond_( pose ); ++i ) {
 		mover_->apply( pose );
 	}
 }

@@ -20,14 +20,14 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/UltraLightResidue.fwd.hh>
 #include <utility/json_spirit/json_spirit_value.h>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-class GridBase:  public utility::pointer::ReferenceCount
+class GridBase:  public utility::VirtualBase
 {
 public:
 	GridBase() {}

@@ -23,7 +23,7 @@
 
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 // ObjexxFCL Headers
@@ -127,7 +127,7 @@ std::ostream & operator<<(std::ostream & out, StrandPairing const& sp);
 // participates in any of them, and in what capacity.
 //
 //////////////////////////////////////////////////////////////////
-class StrandPairingSet : public utility::pointer::ReferenceCount {
+class StrandPairingSet : public utility::VirtualBase {
 	typedef utility::vector1< StrandPairing > StrandPairings;
 	typedef StrandPairings::iterator iterator;
 public:

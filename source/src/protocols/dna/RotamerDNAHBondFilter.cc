@@ -80,7 +80,7 @@ RotamerDNAHBondFilter::operator() (
 	using Reals = utility::vector1<Real>;
 	Reals const & ex_chi_steps( chi_set->ex_chi_steps );
 
-	Size const nchi( ex_chi_steps.size() );
+	core::Size const nchi( ex_chi_steps.size() );
 	if ( ( nchi > 0 && rtask.operate_on_ex1() && ex_chi_steps[1] != 0. ) ||
 			( nchi > 1 && rtask.operate_on_ex2() && ex_chi_steps[2] != 0. ) ||
 			( nchi > 2 && rtask.operate_on_ex3() && ex_chi_steps[3] != 0. ) ||
@@ -89,17 +89,17 @@ RotamerDNAHBondFilter::operator() (
 	if ( !filter ) return true;
 	++nfiltered_;
 
-	for ( Size pos(1); pos <= pose.size(); ++pos ) {
+	for ( core::Size pos(1); pos <= pose.size(); ++pos ) {
 		Residue const & dnares( pose.residue( pos ) );
 		if ( !dnares.is_DNA() ) continue;
 		if ( !close_to_dna( *rotamer, dnares, 10*10, base_only_ ) ) continue;
 
 		Real hbE_total(0.0);
-		for ( Size ratom_i( rotamer->first_sidechain_atom() ), ratom_end( rotamer->natoms() );
+		for ( core::Size ratom_i( rotamer->first_sidechain_atom() ), ratom_end( rotamer->natoms() );
 				ratom_i <= ratom_end; ++ratom_i ) {
 			Atom const & ratom( rotamer->atom( ratom_i ) );
-			Size const datom_start( base_only_ ? dnares.first_sidechain_atom() : 1 );
-			for ( Size datom_i( datom_start ), datom_end( dnares.natoms() );
+			core::Size const datom_start( base_only_ ? dnares.first_sidechain_atom() : 1 );
+			for ( core::Size datom_i( datom_start ), datom_end( dnares.natoms() );
 					datom_i <= datom_end; ++datom_i ) {
 				Atom const & datom( dnares.atom( datom_i ) );
 

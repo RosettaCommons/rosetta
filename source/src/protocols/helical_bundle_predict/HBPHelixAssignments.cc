@@ -53,7 +53,7 @@ namespace helical_bundle_predict {
 
 /// @brief Default constructor.
 HBPHelixParameters::HBPHelixParameters() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	r0_range_( std::make_pair( 0.0, 0.0 ) ),
 	omega0_range_( std::make_pair( 0.0, 0.0 ) ),
 	delta_omega1_range_( std::make_pair( 0.0, 0.0 ) ),
@@ -64,6 +64,7 @@ HBPHelixParameters::HBPHelixParameters() :
 HBPHelixParameters::HBPHelixParameters(
 	HBPHelixParameters const & src
 ) :
+	VirtualBase( src ),
 	r0_range_( src.r0_range_ ),
 	omega0_range_( src.omega0_range_ ),
 	delta_omega1_range_( src.delta_omega1_range_ ),
@@ -126,7 +127,7 @@ HBPHelixParameters::create_calculator_from_file(
 
 /// @brief Default constructor.
 HBPHelix::HBPHelix() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	start_position_(0),
 	end_position_(0),
 	nucleation_prob_( 0.01 ),
@@ -141,6 +142,7 @@ HBPHelix::HBPHelix() :
 HBPHelix::HBPHelix(
 	HBPHelix const & src
 ) :
+	VirtualBase( src ),
 	start_position_(src.start_position_),
 	end_position_(src.end_position_),
 	nucleation_prob_(src.nucleation_prob_),
@@ -315,7 +317,7 @@ HBPHelix::set_crick_params_filename(
 
 /// @brief Default constructor.
 HBPHelixAssignments::HBPHelixAssignments() :
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	clear(); //Initializes everything.
 }
@@ -323,6 +325,7 @@ HBPHelixAssignments::HBPHelixAssignments() :
 /// @brief Copy constructor.
 /// @details Note explicit deep-copy.
 HBPHelixAssignments::HBPHelixAssignments( HBPHelixAssignments const & src ) :
+	VirtualBase( src ),
 	helices_() /*Deep-copied below.*/ ,
 	global_bundle_calculator_( utility::pointer::dynamic_pointer_cast< protocols::helical_bundle::BundleParametrizationCalculator>( src.global_bundle_calculator_->clone() ) ),
 	common_r0_(src.common_r0_),

@@ -128,14 +128,14 @@ core::Size ResidueGridScoresFeatures::report_features(
 	grid_insert.add_column("score");
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
-	for ( Size i: chain_residues ) {
+	for ( core::Size i: chain_residues ) {
 
 		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
 		RowDataBaseOP seqpos_data( new RowData<core::Size>("seqpos",i) );
 
 		core::conformation::Residue const & residue(pose.residue(i));
-		for ( Size atomno = 1; atomno <= residue.natoms(); ++atomno ) {
+		for ( core::Size atomno = 1; atomno <= residue.natoms(); ++atomno ) {
 			RowDataBaseOP atomno_data( new RowData<core::Size>("atomno",atomno) );
 			std::map<std::string,core::Real> atom_map = grid_set->atom_score(pose,residue,atomno);
 			for ( std::map<std::string,core::Real>::const_iterator score_it = atom_map.begin(); score_it != atom_map.end(); ++score_it ) {

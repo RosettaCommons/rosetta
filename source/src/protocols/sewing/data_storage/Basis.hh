@@ -19,7 +19,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 
@@ -29,7 +29,7 @@ namespace data_storage {
 
 
 ///@brief Class for storing residue information needed to generate alignments
-class Basis : public utility::pointer::ReferenceCount {
+class Basis : public utility::VirtualBase {
 
 public:
 

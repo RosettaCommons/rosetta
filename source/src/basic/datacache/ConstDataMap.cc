@@ -24,12 +24,12 @@
 #include <map>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <basic/Tracer.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
-#include <utility/pointer/ReferenceCount.srlz.hh>
+#include <utility/VirtualBase.srlz.hh>
 #include <utility/serialization/serialization.hh>
 
 // Cereal headers
@@ -45,7 +45,7 @@ namespace datacache {
 static basic::Tracer TR( "basic.datacache.ConstDataMap" );
 
 ConstDataMap::ConstDataMap() = default;
-ConstDataMap::ConstDataMap( ConstDataMap const & src ) : data_map_( src.data_map_ ) {}
+ConstDataMap::ConstDataMap( ConstDataMap const & ) = default;
 
 ConstDataMap::~ConstDataMap() = default;
 
@@ -172,7 +172,7 @@ ConstDataMap::const_iterator
 ConstDataMap::end() const { return data_map_.end(); }
 
 void
-ConstDataMap::add( std::string const & type, std::string const & name, utility::pointer::ReferenceCountCOP const op ){
+ConstDataMap::add( std::string const & type, std::string const & name, utility::VirtualBaseCOP const op ){
 	data_map_[ type ][ name ] = op;
 }
 
@@ -224,7 +224,7 @@ basic::datacache::ConstDataMap::save( Archive & arc ) const {
 template< class Archive >
 void
 basic::datacache::ConstDataMap::load( Archive & arc ) {
-	typedef std::map< std::string, utility::pointer::ReferenceCountOP > NamedObjectMap;
+	typedef std::map< std::string, utility::VirtualBaseOP > NamedObjectMap;
 	typedef std::map< std::string, NamedObjectMap > CategorizedObjectMap;
 
 	CategorizedObjectMap local_data_map;

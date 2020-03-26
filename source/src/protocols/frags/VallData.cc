@@ -130,7 +130,7 @@ VallData::read_file(
 
 void
 VallData::get_frags(
-	Size const nfrags,
+	core::Size const nfrags,
 	std::string const & target_seq,
 	std::string const & target_ss,
 	Real const seq_weight,
@@ -138,13 +138,13 @@ VallData::get_frags(
 	bool const exclude_gly,
 	bool const exclude_pro,
 	bool const exclude_cis_peptides, // at non-pre-Pro positions
-	utility::vector1< Size > const & homs_to_exclude,
+	utility::vector1< core::Size > const & homs_to_exclude,
 	SingleResidueTorsionFragmentLibrary & library,
 	Real const bb_weight, // = 0.0
 	std::string const & target_bb // = ""
 ) const
 {
-	Size const frag_size( target_seq.size() );
+	core::Size const frag_size( target_seq.size() );
 	runtime_assert( frag_size == target_ss.size() && ss_weight >= 0.0 && seq_weight >= 0.0 );
 
 	bool const score_bb_matches( !target_bb.empty() );
@@ -159,14 +159,14 @@ VallData::get_frags(
 	ObjexxFCL::FArray1D_float coheap( nfrags + 2 );
 	protocols::frags::heap_init( heap, coheap, nfrags );
 
-	Size const my_size( size() );
+	core::Size const my_size( size() );
 	utility::vector1< bool > exclude_chain( chain_.back(), false );
 	for ( core::Size it : homs_to_exclude ) {
 		TR.Trace << "Excluding chain " << it << " from fragment picking" << std::endl;
 		exclude_chain[ it ] = true;
 	}
 
-	for ( Size vall_pos=2; vall_pos <= my_size - frag_size; ++vall_pos ) { // skip 1st and last windows
+	for ( core::Size vall_pos=2; vall_pos <= my_size - frag_size; ++vall_pos ) { // skip 1st and last windows
 		// score this position: fragment runs from vall_pos ... vall_pos + frag_size - 1
 
 		if ( chain_[ vall_pos-1 ] != chain_[ vall_pos + frag_size ] ) continue; // frag contains a terminus
@@ -176,7 +176,7 @@ VallData::get_frags(
 
 		Real score(0.0); // bigger is worse
 
-		for ( Size k=0; k< frag_size; ++k ) {
+		for ( core::Size k=0; k< frag_size; ++k ) {
 			Real const phi  ( phi_      [ vall_pos+k ] );
 			Real const psi  ( psi_      [ vall_pos+k ] );
 			Real const omega( omega_    [ vall_pos+k ] );
@@ -209,10 +209,10 @@ VallData::get_frags(
 
 	// now extract top nfrags matches, copy Sizeo frag array
 	// fragments come out of the heap from worst to best
-	Size exact_matches(0);
+	core::Size exact_matches(0);
 	Real worst_score(999), best_score(999);
 
-	for ( Size nn= nfrags; nn >=1; --nn ) {
+	for ( core::Size nn= nfrags; nn >=1; --nn ) {
 		bool err;
 		int vall_pos;
 		float score;// heaps use float!!!
@@ -226,7 +226,7 @@ VallData::get_frags(
 
 
 		TorsionFragmentOP fragment( new TorsionFragment( frag_size, 3 /* #bb torsions */ ) );
-		for ( Size k=0; k< frag_size; ++k ) {
+		for ( core::Size k=0; k< frag_size; ++k ) {
 			fragment->set_torsion  ( k+1, 1, phi_   [ vall_pos + k ] );
 			fragment->set_torsion  ( k+1, 2, psi_   [ vall_pos + k ] );
 			fragment->set_torsion  ( k+1, 3, omega_ [ vall_pos + k ] );
@@ -251,7 +251,7 @@ VallData::get_frags(
 
 void
 VallData::get_frags(
-	Size const nfrags,
+	core::Size const nfrags,
 	std::string const & target_seq,
 	utility::vector1< std::map< char, core::Real > > const & target_ss, // HEL
 	Real const seq_weight,
@@ -259,17 +259,17 @@ VallData::get_frags(
 	bool const exclude_gly,
 	bool const exclude_pro,
 	bool const exclude_cis_peptides, // at non-pre-Pro positions
-	utility::vector1< Size > const & homs_to_exclude,
+	utility::vector1< core::Size > const & homs_to_exclude,
 	SingleResidueTorsionFragmentLibrary & library,
 	Real const bb_weight, // = 0.0
 	std::string const & target_bb // = ""
 ) const
 {
-	Size const frag_size( target_seq.size() );
+	core::Size const frag_size( target_seq.size() );
 	runtime_assert( frag_size == target_ss.size() && ss_weight >= 0.0 && seq_weight >= 0.0 );
 
 	std::string target_ss_string;
-	for ( Size i=1; i<= frag_size; ++i ) {
+	for ( core::Size i=1; i<= frag_size; ++i ) {
 		runtime_assert( target_ss[i].size() == 3 );
 		runtime_assert( target_ss[i].find('H') != target_ss[i].end() );
 		runtime_assert( target_ss[i].find('E') != target_ss[i].end() );
@@ -309,14 +309,14 @@ VallData::get_frags(
 	ObjexxFCL::FArray1D_float coheap( nfrags + 2 );
 	protocols::frags::heap_init( heap, coheap, nfrags );
 
-	Size const my_size( size() );
+	core::Size const my_size( size() );
 	utility::vector1< bool > exclude_chain( chain_.back(), false );
 	for ( core::Size it : homs_to_exclude ) {
 		TR.Trace << "Excluding chain " << it << " from fragment picking" << std::endl;
 		exclude_chain[ it ] = true;
 	}
 
-	for ( Size vall_pos=2; vall_pos <= my_size - frag_size; ++vall_pos ) { // skip 1st and last windows
+	for ( core::Size vall_pos=2; vall_pos <= my_size - frag_size; ++vall_pos ) { // skip 1st and last windows
 		// score this position: fragment runs from vall_pos ... vall_pos + frag_size - 1
 
 		if ( chain_[ vall_pos-1 ] != chain_[ vall_pos + frag_size ] ) continue; // frag contains a terminus
@@ -326,7 +326,7 @@ VallData::get_frags(
 
 		Real score(0.0); // bigger is worse
 
-		for ( Size k=0; k< frag_size; ++k ) {
+		for ( core::Size k=0; k< frag_size; ++k ) {
 			//Real const phi  ( phi_      [ vall_pos+k ] );
 			//Real const psi  ( psi_      [ vall_pos+k ] );
 			Real const omega( omega_    [ vall_pos+k ] );
@@ -357,10 +357,10 @@ VallData::get_frags(
 
 	// now extract top nfrags matches, copy Sizeo frag array
 	// fragments come out of the heap from worst to best
-	Size exact_matches(0);
+	core::Size exact_matches(0);
 	Real worst_score(999), best_score(999);
 
-	for ( Size nn= nfrags; nn >=1; --nn ) {
+	for ( core::Size nn= nfrags; nn >=1; --nn ) {
 		bool err;
 		int vall_pos;
 		float score;// heaps use float!!!
@@ -374,7 +374,7 @@ VallData::get_frags(
 
 
 		TorsionFragmentOP fragment( new TorsionFragment( frag_size, 3 /* #bb torsions */ ) );
-		for ( Size k=0; k< frag_size; ++k ) {
+		for ( core::Size k=0; k< frag_size; ++k ) {
 			fragment->set_torsion  ( k+1, 1, phi_   [ vall_pos + k ] );
 			fragment->set_torsion  ( k+1, 2, psi_   [ vall_pos + k ] );
 			fragment->set_torsion  ( k+1, 3, omega_ [ vall_pos + k ] );
@@ -416,7 +416,7 @@ torsion_dev_score(
 
 void
 VallData::get_cheating_frags(
-	Size const nfrags,
+	core::Size const nfrags,
 	std::string const & target_seq,
 	std::string const & target_ss,
 	utility::vector1< Real > const & target_phi,
@@ -427,11 +427,11 @@ VallData::get_cheating_frags(
 	Real const torsion_weight,
 	Real const min_torsion_dev,
 	Real const max_torsion_dev,
-	utility::vector1< Size > const & homs_to_exclude,
+	utility::vector1< core::Size > const & homs_to_exclude,
 	SingleResidueTorsionFragmentLibrary & library
 ) const
 {
-	Size const frag_size( target_seq.size() );
+	core::Size const frag_size( target_seq.size() );
 	bool const skip_exact_matches( frag_size > 5 ); // simple way to skip self frags (and a few others!)
 	runtime_assert( frag_size == target_ss.size() && ss_weight >= 0.0 && seq_weight >= 0.0 );
 
@@ -446,14 +446,14 @@ VallData::get_cheating_frags(
 	ObjexxFCL::FArray1D_float coheap( nfrags + 2 );
 	protocols::frags::heap_init( heap, coheap, nfrags );
 
-	Size const my_size( size() );
+	core::Size const my_size( size() );
 	utility::vector1< bool > exclude_chain( chain_.back(), false );
 	for ( core::Size it : homs_to_exclude ) {
 		TR.Trace << "Excluding chain " << it << " from fragment picking" << std::endl;
 		exclude_chain[ it ] = true;
 	}
 
-	for ( Size vall_pos=2; vall_pos <= my_size - frag_size; ++vall_pos ) { // skip 1st and last windows
+	for ( core::Size vall_pos=2; vall_pos <= my_size - frag_size; ++vall_pos ) { // skip 1st and last windows
 		// score this position: fragment runs from vall_pos ... vall_pos + frag_size - 1
 
 		if ( chain_[ vall_pos-1 ] != chain_[ vall_pos + frag_size ] ) continue; // frag contains a terminus
@@ -462,8 +462,8 @@ VallData::get_cheating_frags(
 		bool bad_frag( false );
 
 		Real score(0.0); // bigger is worse
-		Size n_seq_mismatches(0);
-		for ( Size k=0; k< frag_size; ++k ) {
+		core::Size n_seq_mismatches(0);
+		for ( core::Size k=0; k< frag_size; ++k ) {
 			Real const phi  ( phi_      [ vall_pos+k ] );
 			Real const psi  ( psi_      [ vall_pos+k ] );
 			Real const omega( omega_    [ vall_pos+k ] );
@@ -497,10 +497,10 @@ VallData::get_cheating_frags(
 
 	// now extract top nfrags matches, copy Sizeo frag array
 	// fragments come out of the heap from worst to best
-	Size exact_matches(0);
+	core::Size exact_matches(0);
 	Real worst_score(999), best_score(999);
 
-	for ( Size nn= nfrags; nn >=1; --nn ) {
+	for ( core::Size nn= nfrags; nn >=1; --nn ) {
 		bool err;
 		int vall_pos;
 		float score;// heaps use float!!!
@@ -514,7 +514,7 @@ VallData::get_cheating_frags(
 
 
 		TorsionFragmentOP fragment( new TorsionFragment( frag_size, 3 /* #bb torsions */ ) );
-		for ( Size k=0; k< frag_size; ++k ) {
+		for ( core::Size k=0; k< frag_size; ++k ) {
 			fragment->set_torsion  ( k+1, 1, phi_   [ vall_pos + k ] );
 			fragment->set_torsion  ( k+1, 2, psi_   [ vall_pos + k ] );
 			fragment->set_torsion  ( k+1, 3, omega_ [ vall_pos + k ] );
@@ -539,7 +539,7 @@ VallData::get_cheating_frags(
 /// @details  Handles loading default vall, then calls above routine
 void
 get_frags(
-	Size const nfrags,
+	core::Size const nfrags,
 	std::string const & target_seq,
 	std::string const & target_ss,
 	Real const seq_weight,
@@ -547,7 +547,7 @@ get_frags(
 	bool const exclude_gly,
 	bool const exclude_pro,
 	bool const exclude_cis_peptides,
-	utility::vector1< Size > const & homs_to_exclude,
+	utility::vector1< core::Size > const & homs_to_exclude,
 	SingleResidueTorsionFragmentLibrary & library,
 	Real const bb_weight, // = 0.0
 	std::string const & target_bb // = ""
@@ -568,7 +568,7 @@ get_frags(
 /// @details  Handles loading default vall, then calls above routine
 void
 get_frags(
-	Size const nfrags,
+	core::Size const nfrags,
 	std::string const & target_seq,
 	utility::vector1< std::map< char, core::Real > > const & target_ss, // HEL
 	Real const seq_weight,
@@ -576,7 +576,7 @@ get_frags(
 	bool const exclude_gly,
 	bool const exclude_pro,
 	bool const exclude_cis_peptides,
-	utility::vector1< Size > const & homs_to_exclude,
+	utility::vector1< core::Size > const & homs_to_exclude,
 	SingleResidueTorsionFragmentLibrary & library,
 	Real const bb_weight, // = 0.0
 	std::string const & target_bb // = ""
@@ -597,7 +597,7 @@ get_frags(
 
 void
 get_cheating_frags(
-	Size const nfrags,
+	core::Size const nfrags,
 	std::string const & target_seq,
 	std::string const & target_ss,
 	utility::vector1< Real > const & target_phi,
@@ -608,7 +608,7 @@ get_cheating_frags(
 	Real const torsion_weight,
 	Real const min_torsion_dev,
 	Real const max_torsion_dev,
-	utility::vector1< Size > const & homs_to_exclude,
+	utility::vector1< core::Size > const & homs_to_exclude,
 	SingleResidueTorsionFragmentLibrary & library
 )
 {
@@ -634,22 +634,22 @@ dump_vall_fasta( std::string const & fasta_filename )
 	//  utility::vector1< Real > const & vall_psi  ( vall.psi  () );
 	//  utility::vector1< Real > const & vall_omega( vall.omega() );
 
-	utility::vector1< Size > const & vall_chain( vall.chain() );
+	utility::vector1< core::Size > const & vall_chain( vall.chain() );
 
 
 	std::ofstream out( fasta_filename.c_str() );
-	Size chain_begin( 1 );
-	Size const vall_size( vall_sequence.size() );
+	core::Size chain_begin( 1 );
+	core::Size const vall_size( vall_sequence.size() );
 	//if ( !is_lower_terminus( chain_begin ) || !is_upper_terminus( vall_size ) ) utility_exit_with_message("bad vall");
-	//Size chain_counter(0);
+	//core::Size chain_counter(0);
 	while ( chain_begin <= vall_size ) {
 		//runtime_assert( is_lower_terminus( chain_begin ) );
-		Size const chain( vall_chain[ chain_begin ] );
+		core::Size const chain( vall_chain[ chain_begin ] );
 		runtime_assert( chain_begin == 1 || chain == vall_chain[ chain_begin-1 ] + 1 );
 
 		// get the sequence
 		std::string seq;
-		Size pos( chain_begin );
+		core::Size pos( chain_begin );
 		while ( true ) {
 			seq.push_back( vall_sequence[ pos ] );
 			if ( pos == vall_size || vall_chain[pos+1] != chain ) break;

@@ -56,8 +56,8 @@ public:
 		String const & complete_aa,
 		utility::vector1< String > const & complete_abego,
 		Interval const & interval,
-		Size const frag_length,
-		Size const n_frags
+		core::Size const frag_length,
+		core::Size const n_frags
 	) { return pick_fragments( complete_ss, complete_aa, complete_abego, interval, frag_length, n_frags ); }
 
 };

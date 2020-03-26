@@ -77,8 +77,8 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
 	using loops::loop_closure::ccd::CCDLoopClosureMover;
 	using loops::loop_closure::ccd::CCDLoopClosureMoverOP;
 
-	Size const N ( 1 ); // N atom
-	Size const C ( 3 ); // C atom
+	core::Size const N ( 1 ); // N atom
+	core::Size const C ( 3 ); // C atom
 
 	// Coordinates of the C and N atoms at stem
 	numeric::xyzVector_float peptide_C, peptide_N;
@@ -106,7 +106,7 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
 
 	// setup movemap to only loop residues
 	utility::vector1< bool> allow_bb_move( pose_in.size(), false );
-	for ( Size i=loop_start_; i<= loop_end_; ++i ) {
+	for ( core::Size i=loop_start_; i<= loop_end_; ++i ) {
 		allow_bb_move[ i ] = true;
 	}
 	movemap_->set_bb( allow_bb_move );
@@ -128,13 +128,13 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
 	}
 
 	Real separation = 0.00;
-	for ( Size ii = loop_start_; ii <= loop_end_; ii++ ) {
+	for ( core::Size ii = loop_start_; ii <= loop_end_; ii++ ) {
 		peptide_C = pose_in.residue( ii ).xyz( C );
 		peptide_N = pose_in.residue( ii + 1 ).xyz( N );
 		separation=peptide_C.distance(peptide_N);
 		//  separation=distance(peptide_C, peptide_N);
 		if ( separation > allowed_separation_ ) {
-			Size cutpoint = ii;
+			core::Size cutpoint = ii;
 			loops::Loop one_loop( loop_start_, loop_end_, cutpoint, 0, false );
 			CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( one_loop, movemap_ ) );
 			ccd_moves->apply( pose_in );

@@ -42,7 +42,7 @@ void RamaPerturber::perturb_subset(
 	Ramachandran const & rama =
 		ScoringManager::get_instance()->get_Ramachandran();
 
-	for ( Size const residue : residues ) {
+	for ( core::Size const residue : residues ) {
 		rama.random_phipsi_from_rama(pose.aa(residue), phi, psi);
 		if ( pose.residue( residue ).has_property( "D_AA" ) ) {
 			phi *= -1.0;
@@ -65,7 +65,7 @@ void RamaPerturber::perturb_subset_with_balance(
 	Ramachandran const & rama =
 		ScoringManager::get_instance()->get_Ramachandran();
 
-	for ( Size const residue : residues ) {
+	for ( core::Size const residue : residues ) {
 		rama.uniform_phipsi_from_allowed_rama(pose.aa(residue), phi, psi);
 		problem->perturb_phi(residue, phi, DEGREES);
 		problem->perturb_psi(residue, psi, DEGREES);

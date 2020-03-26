@@ -78,7 +78,7 @@ public:
 	//  true           true             false    false  (counterintuitive)
 
 	DockingProtocol(
-		Size const rb_jump_in,
+		core::Size const rb_jump_in,
 		bool const low_res_protocol_only = false, // if true: skip high resolution docking
 		bool const docking_local_refine = false, // if true: skip low resolution docking
 		bool const autofoldtree = true,

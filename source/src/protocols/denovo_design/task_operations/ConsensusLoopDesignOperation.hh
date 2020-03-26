@@ -59,7 +59,7 @@ struct SurroundingSS {
 	operator<<( std::ostream & os, SurroundingSS const & ss );
 };
 
-class AAFrequency : public utility::pointer::ReferenceCount {
+class AAFrequency : public utility::VirtualBase {
 public:
 	AAFrequency( core::Real const frequency, core::Real const enrichment );
 
@@ -80,7 +80,7 @@ private:
 typedef utility::pointer::shared_ptr< AAFrequency const > AAFrequencyOP;
 typedef utility::pointer::shared_ptr< AAFrequency const > AAFrequencyCOP;
 
-class AAFrequencies : public utility::pointer::ReferenceCount {
+class AAFrequencies : public utility::VirtualBase {
 public:
 	typedef std::map< char, AAFrequencyCOP > AAFrequencyMap;
 

@@ -26,7 +26,7 @@
 
 // Utility headers
 #include <numeric/xyzVector.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 //// C++ headers

@@ -144,8 +144,8 @@ LoopHashLoopClosureMover::tokenize( const std::string& in_str,
 	}
 
 	std::string token = "";
-	Size n = in_str.size();
-	for ( Size i=0; i<n; i++ ) {
+	core::Size n = in_str.size();
+	for ( core::Size i=0; i<n; i++ ) {
 		if ( delim_lookup.find( in_str[i] ) != delim_lookup.end() ) {
 			if ( token != "" ) {
 				tokens.push_back(token);
@@ -169,7 +169,7 @@ LoopHashLoopClosureMover::make_loops(const std::string & in_str) const {
 	using namespace std;
 
 	std::vector<std::string> tuples = tokenize(in_str, " ,");
-	for ( Size i=0; i<tuples.size(); i++ ) {
+	for ( core::Size i=0; i<tuples.size(); i++ ) {
 		TR << "tuple[" << i << "] = " << tuples[i] << endl;
 	}
 	// iterate over tuples and create a Loop object for each
@@ -245,7 +245,7 @@ LoopHashLoopClosureMover::make_blueprint( const core::pose::Pose& pose,
 	// Make a fast lookup table by staring res number.
 	// Validate the start and end res numbers relationship at the same time.
 	// As of Mar 6, 2013, this system cannot build a loop between non-adjacent residues.
-	std::map<Size, MyLoop> lookup_by_r1;
+	std::map<core::Size, MyLoop> lookup_by_r1;
 	for ( auto const & loop : loops ) {
 		lookup_by_r1[loop.r1_] = loop;
 	}
@@ -267,7 +267,7 @@ LoopHashLoopClosureMover::make_blueprint( const core::pose::Pose& pose,
 		}
 		bp << i << " A L" << std::endl;
 		// replace the following residues upto the loop terminal with Ls
-		for ( Size j=0; j<loop.minn_; ++j ) {
+		for ( core::Size j=0; j<loop.minn_; ++j ) {
 			bp << "0 x L" << std::endl;
 		}
 		bp << loop.r2_ << " A L" << std::endl;
@@ -350,14 +350,14 @@ void LoopHashLoopClosureMover::parse_my_tag( utility::tag::TagCOP tag,
 	TR << "remodel::RemodelLoopMover::use_loop_hash = true" << std::endl;
 
 	// loop extension limit
-	auto loophash_ex_limit = tag->getOption<Size>( "loophash_ex_limit", 4 );
+	auto loophash_ex_limit = tag->getOption<core::Size>( "loophash_ex_limit", 4 );
 	option[ remodel::lh_ex_limit ]( loophash_ex_limit );
 	TR << "remodel::lh_ex_limit = " << loophash_ex_limit << std::endl;
 
 	// Max radius.  This should be >= lh_ex_limit.  Default is hard-coded somewhere to 5.
-	Size max_radius = loophash_ex_limit + 2;
+	core::Size max_radius = loophash_ex_limit + 2;
 	if ( option[ lh::max_radius ].user() ) {
-		if ( static_cast<Size>(option[ lh::max_radius ]) <= loophash_ex_limit ) {
+		if ( static_cast<core::Size>(option[ lh::max_radius ]) <= loophash_ex_limit ) {
 			TR << "lh::max_radius must be >= loophash_ex_limit.  Adjust to +2: " << max_radius << std::endl;
 			option[ lh::max_radius ]( max_radius );
 		}
@@ -432,7 +432,7 @@ void LoopHashLoopClosureMover::parse_my_tag( utility::tag::TagCOP tag,
 
 	// How many times should the structure be repeated?
 	if ( tag->hasOption("repeat_structure") ) {
-		Size repeat_structure = tag->getOption<int>("repeat_structure");
+		core::Size repeat_structure = tag->getOption<int>("repeat_structure");
 		option[ remodel::repeat_structure ] (repeat_structure);
 		TR << "remodel::repeat_structure = " << repeat_structure << std::endl;
 	}
@@ -460,12 +460,12 @@ void LoopHashLoopClosureMover::parse_my_tag( utility::tag::TagCOP tag,
 	TR << "packing::use_input_sc = " << (option[packing::use_input_sc].value()? "true" : "false") << std::endl;
 
 	// number of trajectories
-	auto num_trajectory = tag->getOption<Size>("num_trajectory", 1);
+	auto num_trajectory = tag->getOption<core::Size>("num_trajectory", 1);
 	option[ remodel::num_trajectory ]( num_trajectory );
 	TR << "remodel::num_trajectory = " << num_trajectory << std::endl;
 
 	// keep the top n scores
-	auto num_save_top = tag->getOption<Size>("save_top", 1);
+	auto num_save_top = tag->getOption<core::Size>("save_top", 1);
 	option[ remodel::save_top ](num_save_top);
 	TR << "remodel::save_top = " << num_save_top << std::endl;
 

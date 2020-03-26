@@ -68,7 +68,7 @@ DnaInterfaceMinMover::DnaInterfaceMinMover()
 }
 
 DnaInterfaceMinMover::DnaInterfaceMinMover( DnaInterfaceMinMover const & src ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	protocols::minimization_packing::MinMover( src )
 {
 	*this = src;

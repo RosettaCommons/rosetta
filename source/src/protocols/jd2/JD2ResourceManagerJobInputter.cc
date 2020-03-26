@@ -34,7 +34,7 @@
 // Utility Headers
 #include <utility/io/izstream.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/file/FileName.hh>
 #include <utility/options/keys/BooleanOptionKey.hh>
@@ -413,7 +413,7 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
-	Size row_number(0);
+	core::Size row_number(0);
 	string previous_job_name("");
 	string input_tag;
 	std::map< string, string > resources_for_job(generic_resources_for_job);
@@ -502,18 +502,18 @@ JD2ResourceManagerJobInputter::record_job(
 
 	//If not, then add them
 	if ( n_jobs==0 ) {
-		Size nstruct(1);
+		core::Size nstruct(1);
 		if ( job_options->has_option(OptionKeys::out::nstruct) ) {
 			nstruct = job_options->get_option(OptionKeys::out::nstruct);
 		}
 
 		InnerJobOP inner_job( new InnerJob( job_name, nstruct ) );
-		for ( Size ii = 1; ii <= nstruct; ++ii ) {
+		for ( core::Size ii = 1; ii <= nstruct; ++ii ) {
 			jobs.push_back( utility::pointer::make_shared< Job >( inner_job, ii ));
 		}
 	} else {
 		if ( job_options->has_option(OptionKeys::out::nstruct) ) {
-			Size requested_nstruct = job_options->get_option(OptionKeys::out::nstruct);
+			core::Size requested_nstruct = job_options->get_option(OptionKeys::out::nstruct);
 			if ( requested_nstruct != n_jobs ) {
 				std::stringstream err_msg;
 				err_msg
@@ -719,7 +719,7 @@ JD2ResourceManagerJobInputter::read_BooleanVectorOption_subtag_for_job(
 )
 {
 	utility::vector1< bool > boolvect( vals.size() );
-	for ( Size ii = 1; ii <= vals.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= vals.size(); ++ii ) {
 		bool boolval;
 		try {
 			boolval = boost::lexical_cast< bool >( vals[ii] );
@@ -759,7 +759,7 @@ JD2ResourceManagerJobInputter::read_IntegerVectorOption_subtag_for_job(
 )
 {
 	utility::vector1< int > intvect( vals.size() );
-	for ( Size ii = 1; ii <= vals.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= vals.size(); ++ii ) {
 		bool intval;
 		try {
 			intval = boost::lexical_cast< int >( vals[ii] );
@@ -798,7 +798,7 @@ JD2ResourceManagerJobInputter::read_RealVectorOption_subtag_for_job(
 )
 {
 	utility::vector1< core::Real > realvect( vals.size() );
-	for ( Size ii = 1; ii <= vals.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= vals.size(); ++ii ) {
 		core::Real realval;
 		try {
 			realval = boost::lexical_cast< core::Real >( vals[ii] );

@@ -106,7 +106,7 @@ void
 RigidBodyStepWiseSamplerValueRange::set_euler_z_values( Real const centroid_euler_z_min, Real const centroid_euler_z_max, Real const centroid_euler_z_bin ){
 	set_sampler_values( centroid_euler_z_min, centroid_euler_z_max, centroid_euler_z_bin, euler_z_values_ );
 	// need to really get these in bounds...
-	for ( Size n = 1; n <= euler_z_values_.size(); n++ ) {
+	for ( core::Size n = 1; n <= euler_z_values_.size(); n++ ) {
 		euler_z_values_[n] = std::max( euler_z_values_[n], -1.0 );
 		euler_z_values_[n] = std::min( euler_z_values_[n], +1.0 );
 	}

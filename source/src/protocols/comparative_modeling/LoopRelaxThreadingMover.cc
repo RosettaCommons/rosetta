@@ -122,7 +122,7 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 	lr_mover->apply( pose );
 
 	// more loop rebuilding (if necessary!)
-	Size const min_loop_size( option [ OptionKeys::cm::min_loop_size ]() );
+	core::Size const min_loop_size( option [ OptionKeys::cm::min_loop_size ]() );
 	if ( option[ OptionKeys::cm::loop_close_level ]() == 2 ) {
 		// if loops aren't closed here, try to figure out the loops again
 		using namespace protocols::comparative_modeling;
@@ -131,9 +131,9 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 		lr_mover->apply( pose );
 	} else if ( option[ OptionKeys::cm::loop_close_level ]() == 3 ) {
 		using namespace protocols::comparative_modeling;
-		Size const max_tries( 10 ); // make this an option?
+		core::Size const max_tries( 10 ); // make this an option?
 		bool loops_closed( false );
-		for ( Size ii = 1; (ii <= max_tries) && !loops_closed; ++ii ) {
+		for ( core::Size ii = 1; (ii <= max_tries) && !loops_closed; ++ii ) {
 			LoopsOP temp_loops = pick_loops_chainbreak( pose, min_loop_size );
 			loops_closed = ( temp_loops->size() == 0 );
 			if ( !loops_closed ) {

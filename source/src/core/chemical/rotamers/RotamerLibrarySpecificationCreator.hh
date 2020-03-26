@@ -21,7 +21,7 @@
 // Program header
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
@@ -31,7 +31,7 @@ namespace core {
 namespace chemical {
 namespace rotamers {
 
-class RotamerLibrarySpecificationCreator : public utility::pointer::ReferenceCount {
+class RotamerLibrarySpecificationCreator : public utility::VirtualBase {
 public:
 	virtual RotamerLibrarySpecificationOP
 	create() const = 0;

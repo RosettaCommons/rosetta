@@ -17,7 +17,7 @@
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 #include <platform/types.hh>
@@ -33,7 +33,7 @@ namespace protocols {
 namespace multistage_rosetta_scripts {
 namespace cluster {
 
-class ClusterMetric : public utility::pointer::ReferenceCount
+class ClusterMetric : public utility::VirtualBase
 {
 public:
 	ClusterMetric();

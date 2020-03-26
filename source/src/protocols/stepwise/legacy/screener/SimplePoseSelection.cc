@@ -31,7 +31,7 @@ namespace screener {
 
 //Constructor
 SimplePoseSelection::SimplePoseSelection( pose::Pose const & pose,
-	utility::vector1< Size > const & moving_res_list,
+	utility::vector1< core::Size > const & moving_res_list,
 	modeler::options::StepWiseModelerOptionsCOP options,
 	bool const full_optimize ):
 	pose_( pose ),

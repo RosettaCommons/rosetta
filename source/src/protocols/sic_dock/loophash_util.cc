@@ -24,25 +24,23 @@ static basic::Tracer TR( "protocols.sic_dock.loophash_util" );
 namespace protocols {
 namespace sic_dock {
 
-using core::Size;
 using core::Real;
 using std::endl;
 using Real = core::Real;
-using Size = core::Size;
 using Pose = core::pose::Pose;
 using Xform = Xform;
 using Vec = numeric::xyzVector<Real>;
 using Mat = numeric::xyzMatrix<Real>;
 using Vecs = utility::vector1<Vec>;
 using Reals = utility::vector1<Real>;
-using Sizes = utility::vector1<Size>;
+using Sizes = utility::vector1<core::Size>;
 using Xforms = numeric::Xforms;
 using Scores = utility::vector1<RigidScoreCOP>;
 
 Vec3
 get_leap_lower_stub(
 	core::pose::Pose const & pose,
-	Size ir
+	core::Size ir
 ){
 	Vec3 lower;
 	lower.a = pose.residue(ir  ).xyz("CA");
@@ -54,7 +52,7 @@ get_leap_lower_stub(
 Vec3
 get_leap_upper_stub(
 	core::pose::Pose const & pose,
-	Size ir
+	core::Size ir
 ){
 	Vec3 upper;
 	upper.a = pose.residue(ir+1).xyz("CA");
@@ -74,7 +72,7 @@ Xform vec3_to_stub(Xform const & xform, Vec3 const & v3){
 void
 get_termini_from_pose(
 	core::pose::Pose const & pose,
-	Size ir,
+	core::Size ir,
 	TermInfo & lowers,
 	TermInfo & uppers
 ){
@@ -105,7 +103,7 @@ get_termini_from_pose(
 	TermInfo & lowers,
 	TermInfo & uppers
 ){
-	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
+	for ( core::Size ir = 1; ir <= pose.size(); ++ir ) {
 		get_termini_from_pose(pose,ir,uppers,lowers);
 	}
 }
@@ -128,7 +126,7 @@ get_leap_6dof(
 	return rt_6;
 }
 
-Size
+core::Size
 count_linkers(
 	Xform const & lower,
 	Xform const & upper,
@@ -143,7 +141,7 @@ count_linkers(
 
 	numeric::geometry::hashing::Real6 rt_6 = get_leap_6dof(lower,upper);
 
-	Size count0=0;
+	core::Size count0=0;
 	for ( core::Size loopsize : loopsizes ) {
 		if ( dist2 < (10.0*Real(loopsize)*Real(loopsize)) ) {
 			count0 += loop_hash_library->gethash(loopsize).radial_count(radius,rt_6);
@@ -160,7 +158,7 @@ dump_loophash_linkers(
 	// core::pose::Pose const & pose2,
 	protocols::loophash::LoopHashLibraryCOP loop_hash_library,
 	Sizes const & loopsizes,
-	Size radius,
+	core::Size radius,
 	std::string const & outtag
 ){
 	// std::cout << "dump_loophash_linkers" << std::endl;
@@ -190,7 +188,7 @@ dump_loophash_linkers(
 		Pose tmp;
 		{
 			core::chemical::ResidueTypeSetCOP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-			for ( Size i = 1; i <= loopsize+1; ++i ) {
+			for ( core::Size i = 1; i <= loopsize+1; ++i ) {
 				core::conformation::ResidueOP new_rsd( nullptr );
 				new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map("ALA") );
 				// cout << "apending residue " << new_rsd->name() << std::endl;
@@ -208,9 +206,9 @@ dump_loophash_linkers(
 			std::vector<core::Real> phi   = i->phi();
 			std::vector<core::Real> psi   = i->psi();
 			std::vector<core::Real> omega = i->omega();
-			Size seg_length = (*i).length();
-			for ( Size i = 0; i < seg_length; i++ ) {
-				Size ires = 2+i;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
+			core::Size seg_length = (*i).length();
+			for ( core::Size i = 0; i < seg_length; i++ ) {
+				core::Size ires = 2+i;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
 				if ( ires > tmp.size() ) break;
 				tmp.set_phi  ( ires, phi[i]  );
 				tmp.set_psi  ( ires, psi[i]  );
@@ -228,7 +226,7 @@ dump_loophash_linkers(
 }
 
 
-Real linker_count2score(Size count){
+Real linker_count2score(core::Size count){
 	return 0.8*sqrt((Real)count)+0.2*(Real)count;
 }
 

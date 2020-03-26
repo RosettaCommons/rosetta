@@ -35,7 +35,7 @@
 #include <core/pack/dunbrack/ChiSet.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 #include <map>
@@ -50,7 +50,7 @@ typedef utility::vector1 <utility::vector1< core::conformation::ResidueOP > > re
 //typedef utility::vector1 <utility::vector1< ROT > > rot_matrix;
 
 //@brief used for checking backbone segment compatibilty
-class RotLibdb : public utility::pointer::ReferenceCount
+class RotLibdb : public utility::VirtualBase
 {
 
 public:

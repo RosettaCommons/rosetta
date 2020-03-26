@@ -34,7 +34,7 @@
 #include <core/id/AtomID.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -50,9 +50,9 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-class Constraints : public utility::pointer::ReferenceCount {
+class Constraints : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Constraints() override;
 	typedef id::AtomID AtomID;
 	typedef conformation::Residue Residue;

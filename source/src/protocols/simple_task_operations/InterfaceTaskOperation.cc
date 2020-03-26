@@ -46,7 +46,7 @@ InterfaceTaskOperation::InterfaceTaskOperation() : parent()
 	movable_chains_ = utility::vector1_int();
 }
 InterfaceTaskOperation::InterfaceTaskOperation( InterfaceTaskOperation const & old_instance ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	parent( old_instance )
 {
 	movable_jumps_ = old_instance.movable_jumps_;

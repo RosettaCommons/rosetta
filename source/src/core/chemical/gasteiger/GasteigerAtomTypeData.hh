@@ -23,7 +23,7 @@
 
 #include <core/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <set>
 #include <vector>
@@ -51,7 +51,7 @@ namespace gasteiger {
 //!
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class GasteigerAtomTypeData : public utility::pointer::ReferenceCount
+class GasteigerAtomTypeData : public utility::VirtualBase
 {
 	//#      friend class AtomTypes;
 	//#      friend class BondLengths;

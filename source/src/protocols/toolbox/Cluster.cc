@@ -43,8 +43,8 @@ ClusterOptions::ClusterOptions( bool assign_new_cluster_tag_in )
 { }
 
 void ClusterBase::print_cluster_assignment( std::ostream & out ) const {
-	for ( Size i=1; i <= clusterlist_.size(); i++ ) {
-		for ( Size j=1; j<= clusterlist_[i].size(); j++ ) {
+	for ( core::Size i=1; i <= clusterlist_.size(); i++ ) {
+		for ( core::Size j=1; j<= clusterlist_[i].size(); j++ ) {
 			out << RJ( 3,clusterlist_[i] [ j-1 ]) << " " << RJ( 5,i) << RJ(5, j)
 				<< std::endl;
 		}
@@ -61,7 +61,7 @@ std::ostream & operator<< (
 	std::ostream & out,
 	ClusterBase::ClusterList const & cl
 ) {
-	Size ncl( 1 );
+	core::Size ncl( 1 );
 	for ( auto const & it : cl ) {
 		out << "CLUSTER " << RJ(3, ncl++ ) << " " << RJ(4, it.size()) << " ";
 		for ( core::Size cit : it ) {
@@ -81,7 +81,7 @@ std::istream & operator>>( std::istream & in, ClusterBase::ClusterList & cl ) {
 	cl.clear();
 	while ( in ) {
 		std::string tag;
-		Size size,nr;
+		core::Size size,nr;
 		in >> tag >> nr >> size;
 		if ( !in.good() ) break;
 		if ( tag != "CLUSTER" ) {
@@ -89,8 +89,8 @@ std::istream & operator>>( std::istream & in, ClusterBase::ClusterList & cl ) {
 			break;
 		}
 		ClusterBase::Cluster new_clust;
-		for ( Size i = 1; i<=size && in.good(); i++ ) {
-			Size new_elem;
+		for ( core::Size i = 1; i<=size && in.good(); i++ ) {
+			core::Size new_elem;
 			in >> new_elem;
 			if ( in.good() ) new_clust.push_back( new_elem );
 		}
@@ -114,11 +114,11 @@ void ClusterBase::print_summary( utility::vector1< std::string > tags, utility::
 
 	int count = 0;
 
-	for ( Size i = 1; i <= clusterlist_.size(); i++ ) {
+	for ( core::Size i = 1; i <= clusterlist_.size(); i++ ) {
 		tr.Info << "Cluster:  " << i << "  N: " << clusterlist_[i].size() << "   c." << i << ".*.pdb " ;
 		tr.Info << std::endl;
 		count += clusterlist_[i].size();
-		for ( Size j=1; j <= clusterlist_[i].size(); j++ ) {
+		for ( core::Size j=1; j <= clusterlist_[i].size(); j++ ) {
 			tr.Info << tags[ clusterlist_[i][j-1] ] << "    " << all_energies[ clusterlist_[i][j-1] ]
 				<< " " << dist( clusterlist_[i][j-1], clusterlist_[i][0] )
 				<< std::endl;
@@ -132,33 +132,33 @@ void ClusterBase::print_summary( utility::vector1< std::string > tags, utility::
 }
 
 void ClusterPhilStyle::compute() {
-	utility::vector1< Size > neighbors ( dim(), 0 );
-	utility::vector1< Size > clusternr ( dim(), 0 );
-	utility::vector1< Size > clustercenter;
-	Size    mostneighbors;
-	Size    nclusters = 0;
+	utility::vector1< core::Size > neighbors ( dim(), 0 );
+	utility::vector1< core::Size > clusternr ( dim(), 0 );
+	utility::vector1< core::Size > clustercenter;
+	core::Size    mostneighbors;
+	core::Size    nclusters = 0;
 
-	Size listsize = dim();
+	core::Size listsize = dim();
 
-	utility::vector1<Size> clustercentre;
+	utility::vector1<core::Size> clustercentre;
 	// now assign groupings
 	while ( true ) {
 		// count each's neighbors
-		for ( Size i=1; i <= listsize; i++ ) {
+		for ( core::Size i=1; i <= listsize; i++ ) {
 			neighbors[i] = 0;
 			if ( clusternr[i] > 0 ) continue; // ignore ones already taken
-			for ( Size j=1; j <= listsize; j++ ) {
+			for ( core::Size j=1; j <= listsize; j++ ) {
 				if ( clusternr[j] > 0 ) continue; // ignore ones already taken
 				if ( dist( i, j ) < cluster_radius_ ) neighbors[i]++;
 			}
 		}
 
 		mostneighbors = 1;
-		for ( Size i=1; i <= listsize; i++ ) {
+		for ( core::Size i=1; i <= listsize; i++ ) {
 			if ( neighbors[i] > neighbors[mostneighbors] ) mostneighbors=i;
 		}
 		if ( neighbors[ mostneighbors ] == 0 ) break;  // finished!
-		for ( Size i=1; i <= listsize; i++ ) {
+		for ( core::Size i=1; i <= listsize; i++ ) {
 			if ( clusternr[i] > 0 ) continue; // ignore ones already taken
 			if ( dist( i, mostneighbors ) < cluster_radius_ ) {
 				clusternr[i] = mostneighbors;
@@ -172,9 +172,9 @@ void ClusterPhilStyle::compute() {
 	}
 
 
-	for ( Size i=1; i <= clustercentre.size(); i++ ) {
-		std::deque< Size > newlist;
-		for ( Size j=1; j <=listsize; j++ ) {
+	for ( core::Size i=1; i <= clustercentre.size(); i++ ) {
+		std::deque< core::Size > newlist;
+		for ( core::Size j=1; j <=listsize; j++ ) {
 			// if that struture belongs to a given cluster
 			if ( clusternr[j] == clustercentre[i] ) {
 				//add it
@@ -189,11 +189,11 @@ void ClusterPhilStyle::compute() {
 	}
 
 	// redistribute groups - i.e. take each structure, calculate the rms to each cluster centre.
-	for ( Size i = 1; i <= clusterlist_.size(); i++ ) {
-		for ( Size j = 1; j <= clusterlist_[i].size(); j++ ) {
-			Size lowrmsi=i;
+	for ( core::Size i = 1; i <= clusterlist_.size(); i++ ) {
+		for ( core::Size j = 1; j <= clusterlist_[i].size(); j++ ) {
+			core::Size lowrmsi=i;
 			Real lowrms=10000.0;
-			for ( Size m=1; m <= clusterlist_.size(); m++ ) {
+			for ( core::Size m=1; m <= clusterlist_.size(); m++ ) {
 				Real rms;
 				rms = dist( clusterlist_[i][j - 1],  // current structure
 					clusterlist_[m][0]); // clustercentre m
@@ -223,27 +223,27 @@ bool compareIndexEnergyPair(
 
 
 void ClusterBase::sort_each_group_by_energy( utility::vector1< core::Real > all_energies, bool keep_center ) {
-	Size const offset( keep_center ? 1 : 0 );
-	for ( Size i=1; i<= clusterlist_.size(); i++ ) {
+	core::Size const offset( keep_center ? 1 : 0 );
+	for ( core::Size i=1; i<= clusterlist_.size(); i++ ) {
 		utility::vector1< std::pair< int, float > > cluster_energies;
-		for ( Size j=1; j<= clusterlist_[i].size(); j++ ) {
+		for ( core::Size j=1; j<= clusterlist_[i].size(); j++ ) {
 			Real score = all_energies[ clusterlist_[i][j-1] ];
 			cluster_energies.push_back( std::pair< int, Real > ( clusterlist_[i][j-1], score ) );
 		}
 		// dont sort in the first member (the cluster center!!)
 		std::sort( cluster_energies.begin() + offset, cluster_energies.end(), compareIndexEnergyPair );
 		clusterlist_[i].clear();
-		for ( Size j=1; j <= cluster_energies.size(); j++ ) clusterlist_[i].push_back( cluster_energies[j].first );
+		for ( core::Size j=1; j <= cluster_energies.size(); j++ ) clusterlist_[i].push_back( cluster_energies[j].first );
 	}
 }
 
 // take first 'limit' from each cluster
-void ClusterBase::limit_groupsize( Size limit ) {
+void ClusterBase::limit_groupsize( core::Size limit ) {
 	if ( limit == 0 ) clusterlist_.clear();
-	for ( Size i=1; i <= clusterlist_.size(); i++ ) {
+	for ( core::Size i=1; i <= clusterlist_.size(); i++ ) {
 		Cluster temp = clusterlist_[i];
 		clusterlist_[i].clear();
-		for ( Size j=1; ( j<= temp.size() ) && ( j<=limit ); j++ ) {
+		for ( core::Size j=1; ( j<= temp.size() ) && ( j<=limit ); j++ ) {
 			clusterlist_[i].push_back( temp[j-1] );
 		}
 	}

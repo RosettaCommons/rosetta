@@ -64,7 +64,7 @@ ResidueTypeConstraintMover::~ResidueTypeConstraintMover()= default;
 void
 ResidueTypeConstraintMover::apply( Pose & pose )
 {
-	for ( Size resnum=1; resnum<=pose.size(); ++resnum ) {
+	for ( core::Size resnum=1; resnum<=pose.size(); ++resnum ) {
 		for ( auto const & favored_res : AA_name3s_ ) {
 			ResidueTypeConstraintOP res_favor( new core::scoring::constraints::ResidueTypeConstraint(pose, resnum, favored_res, favor_bonus_) );
 			pose.add_constraint(res_favor);

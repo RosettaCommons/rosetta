@@ -24,7 +24,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 
 #include <core/chemical/AA.hh>
@@ -47,7 +47,7 @@ struct tableID {
 	chemical::AA aa;
 };
 
-class PointWaterPotential : public utility::pointer::ReferenceCount
+class PointWaterPotential : public utility::VirtualBase
 {
 public:
 	typedef pose::Pose Pose;

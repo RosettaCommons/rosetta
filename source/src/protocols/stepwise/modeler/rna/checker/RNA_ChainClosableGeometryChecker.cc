@@ -33,7 +33,7 @@ namespace checker {
 using namespace core;
 
 //Constructor
-RNA_ChainClosableGeometryChecker::RNA_ChainClosableGeometryChecker( Size const five_prime_chain_break_res, Size const gap_size ):
+RNA_ChainClosableGeometryChecker::RNA_ChainClosableGeometryChecker( core::Size const five_prime_chain_break_res, core::Size const gap_size ):
 	five_prime_chain_break_res_( five_prime_chain_break_res ),
 	three_prime_chain_break_res_( five_prime_chain_break_res + 1 ),
 	gap_size_( gap_size )
@@ -41,9 +41,9 @@ RNA_ChainClosableGeometryChecker::RNA_ChainClosableGeometryChecker( Size const f
 	initialize_distance_range();
 }
 
-RNA_ChainClosableGeometryChecker::RNA_ChainClosableGeometryChecker( Size const five_prime_chain_break_res,
-	Size const three_prime_chain_break_res,
-	Size const gap_size ):
+RNA_ChainClosableGeometryChecker::RNA_ChainClosableGeometryChecker( core::Size const five_prime_chain_break_res,
+	core::Size const three_prime_chain_break_res,
+	core::Size const gap_size ):
 	five_prime_chain_break_res_( five_prime_chain_break_res ),
 	three_prime_chain_break_res_( three_prime_chain_break_res ),
 	gap_size_( gap_size )
@@ -89,7 +89,7 @@ bool
 RNA_ChainClosableGeometryChecker::check_screen(  utility::vector1< core::pose::PoseOP > const & pose_data_list,
 	utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list,
 	core::kinematics::Stub const & moving_res_base_stub,
-	Size const & reference_res ) const {
+	core::Size const & reference_res ) const {
 
 	for ( auto const & poseop : pose_data_list ) {
 		if ( check_screen( *poseop, rsd_at_origin_list, moving_res_base_stub, reference_res ) ) return true;
@@ -102,7 +102,7 @@ bool
 RNA_ChainClosableGeometryChecker::check_screen(  pose::Pose const & pose,
 	utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list,
 	core::kinematics::Stub const & moving_res_base_stub,
-	Size const & reference_res ) const {
+	core::Size const & reference_res ) const {
 	//  std::cout << reference_res  << " " << five_prime_chain_break_res_ << std::endl;
 	runtime_assert( reference_res >= five_prime_chain_break_res_ );
 	bool const is_prepend = ( reference_res > five_prime_chain_break_res_ );

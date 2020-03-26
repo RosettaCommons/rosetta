@@ -21,7 +21,7 @@
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 
 #include <platform/types.hh>
@@ -45,7 +45,7 @@ namespace sql_database {
 
 
 //@brief cppdb::session subclass containing connection data, only pass via reference.
-class session : public cppdb::session, public utility::pointer::ReferenceCount {
+class session : public cppdb::session, public utility::VirtualBase {
 
 public:
 	session() :
@@ -153,7 +153,7 @@ private:
 };
 
 //@brief cppdb::transaction subclass for smart pointers.
-class transaction : public cppdb::transaction, public utility::pointer::ReferenceCount {
+class transaction : public cppdb::transaction, public utility::VirtualBase {
 
 public:
 

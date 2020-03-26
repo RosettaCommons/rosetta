@@ -151,7 +151,7 @@ ResidueSetChainEnergyFilter::compute(
 	EnergyGraph & energy_graph( in_pose.energies().energy_graph() );
 	core::Real score( 0. );
 	for ( core::Size i_res_vec = 1; i_res_vec <= res_set_vec.size(); ++i_res_vec ) {
-		Size iseq1( res_set_vec[ i_res_vec ] );
+		core::Size iseq1( res_set_vec[ i_res_vec ] );
 		debug_assert( iseq1 <= in_pose.size() );
 		//TR<< "Summing energies: seqpos: " << iseq1 << std::endl;
 		//search over energy edges

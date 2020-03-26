@@ -24,7 +24,7 @@
 #endif
 
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <fstream>
 #include <map>
@@ -63,7 +63,7 @@ typedef std::map<std::string, Size> TagScoreMap;
 /// @details Only works with uncompressed files, because we have to be able to
 /// to random access (seekg) to pull out single structures in random order.
 ///
-class AtomTreeDiff : public utility::pointer::ReferenceCount
+class AtomTreeDiff : public utility::VirtualBase
 {
 public:
 

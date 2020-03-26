@@ -101,7 +101,7 @@ SampleStrategyData::set_sd_range(  Real setting ) {
 }
 
 void
-SampleStrategyData::set_n_samples_wi_sd_range( Size setting )
+SampleStrategyData::set_n_samples_wi_sd_range( core::Size setting )
 {
 	debug_assert( strategy_ == rotameric_chi_partition_sd_range );
 	n_samples_wi_sd_range_ = setting;
@@ -118,7 +118,7 @@ SampleStrategyData::set_nrchi_prob_minimum_for_extra_samples( Real setting )
 }
 
 void
-SampleStrategyData::set_n_samples_per_side_of_nrchi_bin( Size setting ) {
+SampleStrategyData::set_n_samples_per_side_of_nrchi_bin( core::Size setting ) {
 	debug_assert(
 		strategy_ == nonrotameric_chi_sample_wi_nrchi_bin ||
 		strategy_ == nonrotameric_chi_sample_wi_nrchi_bin_to_lower_boundary );
@@ -234,13 +234,13 @@ void BuildSet::set_residue_type(
 	nbonds_from_bb_atom_.resize( restype_->natoms() );
 	atom_radii_.resize( restype_->natoms() );
 
-	for ( Size ii = 1; ii <= nbonds_from_bb_atom_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= nbonds_from_bb_atom_.size(); ++ii ) {
 		if ( restype_->atom_is_backbone( ii ) ) {
 			nbonds_from_bb_atom_[ ii ] = 0;
 		} else {
-			Size min_path_dist = 6; /// assume that we only care about bond distances less than 6; anything greater than 5 is "infinite"
-			for ( Size jj = 1; jj <= nbonds_from_bb_atom_.size(); ++jj ) {
-				if ( restype_->atom_is_backbone( jj ) && (Size) restype_->path_distance( ii, jj ) < min_path_dist ) {
+			core::Size min_path_dist = 6; /// assume that we only care about bond distances less than 6; anything greater than 5 is "infinite"
+			for ( core::Size jj = 1; jj <= nbonds_from_bb_atom_.size(); ++jj ) {
+				if ( restype_->atom_is_backbone( jj ) && (core::Size) restype_->path_distance( ii, jj ) < min_path_dist ) {
 					min_path_dist = restype_->path_distance( ii, jj );
 				}
 			}
@@ -248,13 +248,13 @@ void BuildSet::set_residue_type(
 		}
 	}
 
-	for ( Size ii = 1; ii <= atom_radii_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= atom_radii_.size(); ++ii ) {
 		atom_radii_[ ii ] = probe_radius_for_atom_type( restype_->atom_type_index( ii ) );
 	}
 }
 
 void BuildSet::set_sample_strategy_for_chi(
-	Size chi,
+	core::Size chi,
 	SampleStrategyData const & data
 )
 {
@@ -287,7 +287,7 @@ FullChiSampleSet::FullChiSampleSet(
 	dry_run_( dry_run ),
 	num_chi_samples_total_( 1 )
 {
-	Size nchi = build_set.restype().nchi();
+	core::Size nchi = build_set.restype().nchi();
 	if ( ! dry_run ) {
 		if ( nchi == 0 ) {
 			n_samples_per_chi_.resize( 1, 1 ); /// pretend we have one sample and one chi
@@ -299,7 +299,7 @@ FullChiSampleSet::FullChiSampleSet(
 		}
 	}
 
-	for ( Size ii = 1; ii <= nchi; ++ii ) {
+	for ( core::Size ii = 1; ii <= nchi; ++ii ) {
 
 		if ( ii > sample.nchi() ) {
 			expand_non_dunbrack_chi( ii, build_set );
@@ -353,15 +353,15 @@ FullChiSampleSet::FullChiSampleSet(
 }
 
 void
-FullChiSampleSet::expand_non_dunbrack_chi( Size chi, BuildSet const & build_set )
+FullChiSampleSet::expand_non_dunbrack_chi( core::Size chi, BuildSet const & build_set )
 {
 	using namespace core::pack::task;
 
 	if ( build_set.restype().is_proton_chi( chi )  ) {
-		Size const proton_chi = build_set.restype().chi_2_proton_chi( chi );
+		core::Size const proton_chi = build_set.restype().chi_2_proton_chi( chi );
 		bool extra_proton_chi( ex_level_from_flags( chi ) > NO_EXTRA_CHI_SAMPLES );
 
-		Size nsamples( 1 );
+		core::Size nsamples( 1 );
 
 		if ( build_set.sample_strategy_for_chi( chi ).strategy() == no_samples ) {
 			/// noop
@@ -378,16 +378,16 @@ FullChiSampleSet::expand_non_dunbrack_chi( Size chi, BuildSet const & build_set 
 			if ( build_set.sample_strategy_for_chi( chi ).strategy() == no_samples ) {
 				chi_samples_[ chi ].push_back( build_set.restype().proton_chi_samples( proton_chi )[ 1 ] );
 			} else {
-				for ( Size ii = 1; ii <= build_set.restype().proton_chi_samples( proton_chi ).size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= build_set.restype().proton_chi_samples( proton_chi ).size(); ++ii ) {
 					if ( extra_proton_chi ) {
-						for ( Size jj = 1; jj <= build_set.restype().proton_chi_extra_samples( proton_chi ).size(); ++jj ) {
+						for ( core::Size jj = 1; jj <= build_set.restype().proton_chi_extra_samples( proton_chi ).size(); ++jj ) {
 							chi_samples_[ chi ].push_back( build_set.restype().proton_chi_samples( proton_chi )[ ii ] -
 								build_set.restype().proton_chi_extra_samples( proton_chi )[ jj ] );
 						}
 					}
 					chi_samples_[ chi ].push_back( build_set.restype().proton_chi_samples( proton_chi )[ ii ] );
 					if ( extra_proton_chi ) {
-						for ( Size jj = 1; jj <= build_set.restype().proton_chi_extra_samples( proton_chi ).size(); ++jj ) {
+						for ( core::Size jj = 1; jj <= build_set.restype().proton_chi_extra_samples( proton_chi ).size(); ++jj ) {
 							chi_samples_[ chi ].push_back( build_set.restype().proton_chi_samples( proton_chi )[ ii ] +
 								build_set.restype().proton_chi_extra_samples( proton_chi )[ jj ] );
 						}
@@ -405,14 +405,14 @@ FullChiSampleSet::expand_non_dunbrack_chi( Size chi, BuildSet const & build_set 
 
 void
 FullChiSampleSet::expand_samples_by_ex_behavior(
-	Size chi,
+	core::Size chi,
 	ExtraRotSample behavior,
 	core::pack::dunbrack::DunbrackRotamerSampleData const & sample
 )
 {
 	using namespace core::pack::task;
 
-	Size nsamps( 1 );
+	core::Size nsamps( 1 );
 
 	if ( sample.chi_is_nonrotameric( chi ) ) {
 		if ( behavior != NO_EXTRA_CHI_SAMPLES ) {
@@ -545,27 +545,27 @@ FullChiSampleSet::expand_samples_by_ex_behavior(
 
 void
 FullChiSampleSet::expand_samples_by_steps_wi_sdrange(
-	Size chi,
+	core::Size chi,
 	SampleStrategyData const & stratdat,
 	core::pack::dunbrack::DunbrackRotamerSampleData const & sample
 )
 {
-	Size nsamps( 1 );
+	core::Size nsamps( 1 );
 
 	runtime_assert( stratdat.strategy() == rotameric_chi_step_wi_sd_range );
 	runtime_assert( stratdat.sd_range()  > 0 );
 	runtime_assert( stratdat.step_size() > 0 );
-	Size nsteps = static_cast< int > ( (sample.chi_sd()[ chi ] *  stratdat.sd_range()) / stratdat.step_size() );
+	core::Size nsteps = static_cast< int > ( (sample.chi_sd()[ chi ] *  stratdat.sd_range()) / stratdat.step_size() );
 	nsamps = 1 + 2 * nsteps;
 
 	if ( ! dry_run_ ) {
 		n_samples_per_chi_[ chi ] = nsamps;
 		chi_samples_[ chi ].reserve( nsamps );
-		for ( Size ii = nsteps; ii >= 1; --ii ) {
+		for ( core::Size ii = nsteps; ii >= 1; --ii ) {
 			chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] - ii * stratdat.step_size() );
 		}
 		chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] );
-		for ( Size ii = 1; ii <= nsteps; ++ii ) {
+		for ( core::Size ii = 1; ii <= nsteps; ++ii ) {
 			chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + ii * stratdat.step_size() );
 		}
 	}
@@ -575,12 +575,12 @@ FullChiSampleSet::expand_samples_by_steps_wi_sdrange(
 
 void
 FullChiSampleSet::expand_samples_for_nrchi_wi_nrchi_bin(
-	Size chi,
+	core::Size chi,
 	SampleStrategyData const & stratdat,
 	core::pack::dunbrack::DunbrackRotamerSampleData const & sample
 )
 {
-	Size nsamps( 1 );
+	core::Size nsamps( 1 );
 	if ( sample.chi_is_nonrotameric( chi ) ) {
 		if ( sample.probability() > stratdat.nrchi_prob_minimum_for_extra_samples() ) {
 			/// expand!
@@ -592,7 +592,7 @@ FullChiSampleSet::expand_samples_for_nrchi_wi_nrchi_bin(
 				{// lower
 					Real lower_edge = sample.nrchi_lower_boundary();
 					Real step = ( sample.chi_mean()[ chi ] - lower_edge ) / stratdat.n_samples_per_side_of_nrchi_bin();
-					for ( Size ii = 0; ii < stratdat.n_samples_per_side_of_nrchi_bin(); ++ii ) {
+					for ( core::Size ii = 0; ii < stratdat.n_samples_per_side_of_nrchi_bin(); ++ii ) {
 						chi_samples_[ chi ].push_back( lower_edge + ii * step  );
 					}
 				}
@@ -600,7 +600,7 @@ FullChiSampleSet::expand_samples_for_nrchi_wi_nrchi_bin(
 				{// upper
 					Real upper_edge = sample.nrchi_upper_boundary();
 					Real step = ( upper_edge - sample.chi_mean()[ chi ] ) / stratdat.n_samples_per_side_of_nrchi_bin();
-					for ( Size ii = 1; ii < stratdat.n_samples_per_side_of_nrchi_bin(); ++ii ) {
+					for ( core::Size ii = 1; ii < stratdat.n_samples_per_side_of_nrchi_bin(); ++ii ) {
 						chi_samples_[ chi ].push_back( sample.chi_mean()[ chi ] + ii * step  );
 					}
 				}
@@ -622,20 +622,20 @@ FullChiSampleSet::expand_samples_for_nrchi_wi_nrchi_bin(
 
 
 void
-FullChiSampleSet::create_hts_for_chi( Size chi )
+FullChiSampleSet::create_hts_for_chi( core::Size chi )
 {
 	debug_assert( ! dry_run_ );
-	Size const nsamples = chi_samples_[ chi ].size();
+	core::Size const nsamples = chi_samples_[ chi ].size();
 	runtime_assert( nsamples == n_samples_per_chi_[ chi ] );
 	frames_[ chi ].resize( nsamples );
-	for ( Size ii = 1; ii <= nsamples; ++ii ) {
+	for ( core::Size ii = 1; ii <= nsamples; ++ii ) {
 		frames_[ chi ][ ii ].set_zaxis_rotation_deg( chi_samples_[ chi ][ ii ] );
 	}
 }
 
 
 FullChiSampleSet::ExtraRotSample
-FullChiSampleSet::ex_level_from_flags( Size chi )
+FullChiSampleSet::ex_level_from_flags( core::Size chi )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys::packing;
@@ -715,9 +715,9 @@ ProteinUpstreamBuilder::build(
 
 	std::list< Hit > local_hit_list;
 
-	Size upstream_state = 1;
-	Size n_possible_hits = 0;
-	for ( Size ii = 1; ii <= build_sets_.size(); ++ii ) {
+	core::Size upstream_state = 1;
+	core::Size n_possible_hits = 0;
+	for ( core::Size ii = 1; ii <= build_sets_.size(); ++ii ) {
 
 		using namespace core::pack::dunbrack;
 		using namespace core::pack::rotamers;
@@ -737,7 +737,7 @@ ProteinUpstreamBuilder::build(
 			rescoords.mainchain_torsions()[2] = bb.psi();
 		}
 
-		Size const ii_nchi = build_sets_[ ii ].restype().nchi(); // may be different from the number of chi that the Dunbrack library defines
+		core::Size const ii_nchi = build_sets_[ ii ].restype().nchi(); // may be different from the number of chi that the Dunbrack library defines
 		UpstreamResTypeGeometry const & geom( build_sets_[ ii ].restype_geometry() );
 
 		vector0< HTReal > chitip_frames( ii_nchi + 1 );
@@ -754,9 +754,9 @@ ProteinUpstreamBuilder::build(
 			ii, rescoords, build_sets_[ ii ].restype_geometry().CB_atom_id() );
 
 
-		Size ii_nrotamers( 0 );
+		core::Size ii_nrotamers( 0 );
 
-		for ( Size jj = 1; jj <= rotamer_samples.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= rotamer_samples.size(); ++jj ) {
 
 			/// Compute the set of extra samples to take for this rotamer.
 			/// The rules for building extra samples are not known to the upstream builder,
@@ -779,7 +779,7 @@ ProteinUpstreamBuilder::build(
 
 				/// Iterate across all combinations of chi dihedrals for this rotamer.
 
-				Size n_chi_needing_update = ii_nchi;
+				core::Size n_chi_needing_update = ii_nchi;
 				while ( ! lex.at_end() ) {
 					debug_assert( ( n_chi_needing_update >= 1 || ii_nchi == 0 ) && n_chi_needing_update <= ii_nchi );
 					/// Some rotamer placements may be skipped because they either collide with the
@@ -792,7 +792,7 @@ ProteinUpstreamBuilder::build(
 					/// from the chi which last changed: all coordinate frames before that last chi
 					/// are still valid since (by construction) the chi upstream has not changed from the
 					/// previous iteration.
-					for ( Size kk = ii_nchi - n_chi_needing_update + 1; kk <= ii_nchi; ++kk ) {
+					for ( core::Size kk = ii_nchi - n_chi_needing_update + 1; kk <= ii_nchi; ++kk ) {
 						chitip_frames[ kk ] =
 							chitip_frames[ kk - 1 ] *
 							geom.pre_chitip_transform( kk ) *
@@ -806,8 +806,8 @@ ProteinUpstreamBuilder::build(
 						if ( rotamer_acceptable ) {
 							// if the chitip atom is unacceptible, then don't bother computing the coordinates
 							// for the other atoms controlled by this chi.
-							for ( Size ll = 1; ll <= geom.n_nonchitip_atoms_for_chi( kk ); ++ll ) {
-								Size const ll_atno = geom.nonchitip_atom( kk, ll );
+							for ( core::Size ll = 1; ll <= geom.n_nonchitip_atoms_for_chi( kk ); ++ll ) {
+								core::Size const ll_atno = geom.nonchitip_atom( kk, ll );
 								// matrix * vector
 								rescoords.set_xyz( ll_atno, chitip_frames[ kk ] * geom.points_for_nonchitip_atoms( kk )[ ll ]);
 								if ( atom_coordinate_unacceptable( ii, rescoords, ll_atno ) ) {
@@ -844,8 +844,8 @@ ProteinUpstreamBuilder::build(
 							/// for chi kk, then chi kk - 1 will be advanced (or kk - 2 if kk - 1 is at it's last
 							/// chi sample, etc.).  The coordinates for everything downstream of
 							/// ii_nchi - n_chi_needing_update + 1 will need updating in the next round (if there is one).
-							Size n_skipped = 1;
-							for ( Size ll = kk+1; ll <= ii_nchi; ++ll ) {
+							core::Size n_skipped = 1;
+							for ( core::Size ll = kk+1; ll <= ii_nchi; ++ll ) {
 								n_skipped *= lex.dimsize( ll );
 							}
 							upstream_state += n_skipped;
@@ -857,7 +857,7 @@ ProteinUpstreamBuilder::build(
 					if ( ! rotamer_acceptable ) continue; // lex iter has already been updated, and upstream_state already advanced.
 
 					//std::cout << "ScaffID: " << build_point.index() << " built rotamer # " << upstream_state << " " << rescoords.name();
-					//for ( Size chi = 1; chi <= ii_nchi; ++chi ) std::cout << " " << additional_chi_samples.chi_sample( chi, lex[ chi ] ); std::cout << std::endl;
+					//for ( core::Size chi = 1; chi <= ii_nchi; ++chi ) std::cout << " " << additional_chi_samples.chi_sample( chi, lex[ chi ] ); std::cout << std::endl;
 
 					/// Excellent!  We've arrived at a conformation for this rotamer that's acceptible (collision free).
 					/// Hand off work to the downstream hit construction algorithm.
@@ -953,15 +953,15 @@ ProteinUpstreamBuilder::recover_hits(
 	//Hit hit = *hit_iter;
 	//std::cout << "ProteinUpstreamBuilder::recover hit " << hit.first()[ 1 ] << " " << hit.first()[ 2 ] << std::endl;
 	/// 1. Figure out which amino acid it is that we're inserting.
-	Size upstream_state = 1;
-	for ( Size ii = 1; ii <= build_sets_.size(); ++ii ) {
-		Size const ii_nchi = build_sets_[ ii ].restype().nchi(); // may be different from the number of chi that the Dunbrack library defines
+	core::Size upstream_state = 1;
+	for ( core::Size ii = 1; ii <= build_sets_.size(); ++ii ) {
+		core::Size const ii_nchi = build_sets_[ ii ].restype().nchi(); // may be different from the number of chi that the Dunbrack library defines
 		Real accumulated_probability( 0.0 );
 
 		/// Query the rotamer sampler for the list of samples to take
 		DunbrackRotamerSampleDataVector rotamer_samples = sampler_->samples( build_point, build_sets_[ ii ].restype() );
 
-		for ( Size jj = 1; jj <= rotamer_samples.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= rotamer_samples.size(); ++jj ) {
 
 			/// Determine how many extra samples to take for this rotamer using the "dry_run" flag of the FullChiSampleSet
 			FullChiSampleSet dry_samples(
@@ -996,7 +996,7 @@ ProteinUpstreamBuilder::recover_hits(
 					core::conformation::Residue rescoords( build_sets_[ ii ].restype(), false );
 					chitip_frames[ 0 ] = initialize_rescoords( ii, rescoords, build_point );
 
-					for ( Size kk = 1; kk <= ii_nchi; ++kk ) {
+					for ( core::Size kk = 1; kk <= ii_nchi; ++kk ) {
 						chitip_frames[ kk ] =
 							chitip_frames[ kk - 1 ] *
 							geom.pre_chitip_transform( kk ) *
@@ -1004,15 +1004,15 @@ ProteinUpstreamBuilder::recover_hits(
 							geom.ht_for_chitip_atom( kk ); // matrix * matrix * matrix
 						rescoords.set_xyz( geom.chitip_atom( kk ), chitip_frames[ kk ].point());
 						rescoords.chi()[ kk ] = additional_chi_samples.chi_sample( kk, lex[ kk ] );
-						for ( Size ll = 1; ll <= geom.n_nonchitip_atoms_for_chi( kk ); ++ll ) {
-							Size const ll_atno = geom.nonchitip_atom( kk, ll );
+						for ( core::Size ll = 1; ll <= geom.n_nonchitip_atoms_for_chi( kk ); ++ll ) {
+							core::Size const ll_atno = geom.nonchitip_atom( kk, ll );
 							// matrix * vector
 							rescoords.set_xyz( ll_atno, chitip_frames[ kk ] * geom.points_for_nonchitip_atoms( kk )[ ll ]);
 						}
 					}
 
 					//std::cout << "ScaffID: " << build_point.index() << " recover rotamer # " << hit_iter->first()[ 2 ] << " " << rescoords.name();
-					//for ( Size chi = 1; chi <= ii_nchi; ++chi ) std::cout << " " << additional_chi_samples.chi_sample( chi, lex[ chi ] ); std::cout << std::endl;
+					//for ( core::Size chi = 1; chi <= ii_nchi; ++chi ) std::cout << " " << additional_chi_samples.chi_sample( chi, lex[ chi ] ); std::cout << std::endl;
 
 					/// Hand off the coordinates of the Residue to the UpstreamResidueProcessor
 					/// Maybe this writes a kinemage file, or inserts the residue into a Pose.
@@ -1069,7 +1069,7 @@ ProteinUpstreamBuilder::n_restypes_to_build() const
 }
 
 core::chemical::ResidueTypeCOP
-ProteinUpstreamBuilder::restype( Size which_restype ) const
+ProteinUpstreamBuilder::restype( core::Size which_restype ) const
 {
 	return build_sets_[ which_restype ].restype().get_self_ptr();
 }
@@ -1123,7 +1123,7 @@ ProteinUpstreamBuilder::add_build_set(
 		//build_sets_.push_front( build_set );
 		runtime_assert( build_sets_.size() == 0 || ! build_sets_[ 1 ].backbone_only() ); /// only one backbone-only build set allowed
 		build_sets_.resize( build_sets_.size() + 1 );
-		for ( Size ii = build_sets_.size(); ii > 1; --ii ) {
+		for ( core::Size ii = build_sets_.size(); ii > 1; --ii ) {
 			build_sets_[ ii ] = build_sets_[ ii - 1 ];
 		}
 		build_sets_[ 1 ] = build_set;
@@ -1141,7 +1141,7 @@ ProteinUpstreamBuilder::build_set( core::chemical::ResidueTypeCOP restype ) cons
 BuildSet &
 ProteinUpstreamBuilder::build_set( core::chemical::ResidueTypeCOP restype )
 {
-	for ( Size ii = 1; ii <= build_sets_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= build_sets_.size(); ++ii ) {
 		if ( &build_sets_[ ii ].restype() == &(*restype) ) {
 			return build_sets_[ ii ];
 		}
@@ -1173,7 +1173,7 @@ void ProteinUpstreamBuilder::set_use_input_sidechain( bool setting )
 /// rescoords object, and return the CBeta frame.
 ProteinUpstreamBuilder::HTReal
 ProteinUpstreamBuilder::initialize_rescoords(
-	Size build_set_id,
+	core::Size build_set_id,
 	core::conformation::Residue & rescoords,
 	ScaffoldBuildPoint const & build_point
 ) const
@@ -1208,7 +1208,7 @@ ProteinUpstreamBuilder::initialize_rescoords(
 		/// GLYCINE
 		HTReal input_frame( bb.N_pos(), 0.5 * ( bb.N_pos() + bb.C_pos() ), bb.CA_pos() );
 		runtime_assert( build_sets_[ build_set_id ].restype().has( "1HA" ) );
-		Size oneHA_index( build_sets_[ build_set_id ].restype().atom_index( "1HA" ));
+		core::Size oneHA_index( build_sets_[ build_set_id ].restype().atom_index( "1HA" ));
 		rescoords.set_xyz( oneHA_index,
 			input_frame * geom.coordinate_for_nonchi_atom_in_ideal_frame( oneHA_index ));
 		return input_frame;
@@ -1222,13 +1222,13 @@ ProteinUpstreamBuilder::initialize_rescoords(
 /// core/conformation/Residue.cc::orient_onto_position()
 ProteinUpstreamBuilder::HTReal
 ProteinUpstreamBuilder::compute_cb_frame(
-	Size build_set_id,
+	core::Size build_set_id,
 	ProteinBackboneBuildPoint const & build_point
 ) const
 {
 	UpstreamResTypeGeometry const & geom( build_sets_[ build_set_id ].restype_geometry()  );
 
-	Size CB_no = geom.CB_atom_id();
+	core::Size CB_no = geom.CB_atom_id();
 	runtime_assert( CB_no != 0 ); // there's no reason that we should be building the CBeta frame if there's no cbeta.
 
 	Vector halfpoint_input = 0.5 * ( build_point.N_pos() + build_point.C_pos() );
@@ -1242,9 +1242,9 @@ ProteinUpstreamBuilder::compute_cb_frame(
 /// is tricky for atoms near the backbone
 bool
 ProteinUpstreamBuilder::atom_coordinate_unacceptable(
-	Size build_set_id,
+	core::Size build_set_id,
 	core::conformation::Residue const & rescoords,
-	Size atomno
+	core::Size atomno
 ) const
 {
 	/// do not run bump-grid collision detection on any atom that's within
@@ -1254,7 +1254,7 @@ ProteinUpstreamBuilder::atom_coordinate_unacceptable(
 	if ( atomno == 0 ) return false; // glycine CBeta
 
 
-	Size const MIN_CHEMBOND_SEP_FROM_CA = 4;
+	core::Size const MIN_CHEMBOND_SEP_FROM_CA = 4;
 	if ( build_sets_[ build_set_id ].nbonds_from_bb_atom( atomno ) > MIN_CHEMBOND_SEP_FROM_CA ) {
 		return bbgrid().occupied( build_sets_[ build_set_id ].atom_radius( atomno ), rescoords.xyz( atomno ));
 	} else if ( build_sets_[ build_set_id ].nbonds_from_bb_atom( atomno ) == MIN_CHEMBOND_SEP_FROM_CA ) {
@@ -1269,7 +1269,7 @@ ProteinUpstreamBuilder::atom_coordinate_unacceptable(
 		///   CD3-CG3  <--- CD3 is 4 bonds from N.  From my above assumption, I would incorrectly dismiss.
 		///                 some conformations where CD3 collided with N
 
-		Size capos = build_sets_[ build_set_id ].restype_geometry().CA_atom_id();
+		core::Size capos = build_sets_[ build_set_id ].restype_geometry().CA_atom_id();
 		Real const min_d = bbgrid().required_separation_distance(
 			build_sets_[ build_set_id ].atom_radius( capos ),
 			build_sets_[ build_set_id ].atom_radius( atomno ) );

@@ -93,7 +93,7 @@ using namespace core::pose;
 /// @brief at least in the helix-strand case, will successfully distinguish a bad bond length
 /// from actual breaks
 Size find_likely_first_chain_ending( Pose const & pose ) {
-	for ( Size ii = 1; ii <= pose.size() - 1; ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size() - 1; ++ii ) {
 		// Where is the bond length from ii to ii+1 too long?
 		if ( pose.residue( ii ).xyz( "O3'" ).distance_squared( pose.residue( ii + 1 ) .xyz( "P" ) ) > 4 ) {
 			return ii;
@@ -189,7 +189,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	// do it
 	scorefxn->show( pose );
 
-	Size const total_len( pose.size() );
+	core::Size const total_len( pose.size() );
 	bool const sample_near_a_form( false );
 
 	//Setting up the internal move sampler
@@ -200,7 +200,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	TR << "Sample residues: " << residues_ <<std::endl;
 
 	//Assign "free" residues (get bigger gaussian stdev)
-	for ( Size i = 1; i <= residues_.size(); ++i ) {
+	for ( core::Size i = 1; i <= residues_.size(); ++i ) {
 		if ( std::find( free_rsd_.begin(), free_rsd_.end(), residues_[i] ) != free_rsd_.end() ) {
 			is_free.push_back( true );
 		} else is_free.push_back( false );
@@ -208,7 +208,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 
 	//Assign "loop" residues (get bigger bb torsion range)
 	utility::vector1<bool> is_loop;
-	for ( Size i = 1; i <= residues_.size(); ++i ) {
+	for ( core::Size i = 1; i <= residues_.size(); ++i ) {
 		if ( std::find( loop_rsd_.begin(), loop_rsd_.end(), residues_[i] ) != loop_rsd_.end() ) {
 			is_loop.push_back( true );
 		} else is_loop.push_back( false );
@@ -219,8 +219,8 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	utility::vector1<core::id::TorsionID> chi_torsion_ids;
 	if ( !recces_turner_mode_ ) {
 		//Set up the internal move samplers
-		for ( Size i = 1; i <= residues_.size(); ++i ) {
-			Size const seqpos = residues_[ i ];
+		for ( core::Size i = 1; i <= residues_.size(); ++i ) {
+			core::Size const seqpos = residues_[ i ];
 			// AMW TODO: make it so the MC_KIC_Sampler can handle terminal residue?
 			if ( seqpos == pose.size() ) continue; // we need one torsion from i+1
 			if ( seqpos == 1 ) continue; // no seqpos - 1
@@ -233,7 +233,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 
 		//Set up the chi samplers
 		core::Real init_torsion;
-		for ( Size const seqpos : residues_ ) {
+		for ( core::Size const seqpos : residues_ ) {
 			// skip if movemap exists but dof off
 			if ( mm_ && !mm_->get_chi( seqpos ) ) continue;
 
@@ -255,8 +255,8 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 
 	// Preserve recces_turner mode until we can figure out how best to unify it.
 	if ( recces_turner_mode_ ) {
-		Size const len1 = find_likely_first_chain_ending( pose );
-		for ( Size i = 1; i <= pose.size(); ++i ) {
+		core::Size const len1 = find_likely_first_chain_ending( pose );
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			//bool const sample_near_a_form( bp_rsd.has_value( i ) );
 			// bp_rsd == ! free_rsd in the recces_turner case, so...
 			bool const sample_near_a_form( ! free_rsd_.has_value( i ) );
@@ -283,7 +283,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 			}
 		}
 	} else {
-		for ( Size i = 1; i <= residues_.size(); ++i ) {
+		for ( core::Size i = 1; i <= residues_.size(); ++i ) {
 			if ( residues_[i] != 1 && ( i == 1 || residues_[i] != residues_[i-1]+1 ) ) {
 				//create samplers for [i]-1 and [i]
 
@@ -327,7 +327,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	// the data-dumping functionality anyway (minimizer replacement mode)
 	utility::vector1<core::id::TorsionID> bb_torsion_ids;
 
-	for ( Size i = 1; i <= residues_.size(); ++i ) {
+	for ( core::Size i = 1; i <= residues_.size(); ++i ) {
 		if ( i == 1 || residues_[ i - 1 ] != residues_[ i ] - 1 ) {
 			bb_torsion_ids.push_back( core::id::TorsionID( residues_[1]-1, id::BB, EPSILON ) );
 			bb_torsion_ids.push_back( core::id::TorsionID( residues_[1]-1, id::BB, ZETA ) );
@@ -346,7 +346,7 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 
 	bool const is_save_scores( true );
 
-	Size curr_counts( 1 );
+	core::Size curr_counts( 1 );
 	utility::vector1<float> scores;
 	update_scores( scores, pose, scorefxn );
 	utility::vector1<float> const null_arr_;
@@ -362,13 +362,13 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 
 	SimulatedTempering tempering( pose, scorefxn, temps_, st_weights_ );
 	MonteCarlo mc(pose, *scorefxn, 1. );
-	Size n_accept_total( 0 ), n_accept_backbone( 0 );
-	Size n_accept_chi( 0 ), n_accept_standard( 0 ), n_t_jumps_accept( 0 );
-	Size const t_jump_interval( 10 );
+	core::Size n_accept_total( 0 ), n_accept_backbone( 0 );
+	core::Size n_accept_chi( 0 ), n_accept_standard( 0 ), n_t_jumps_accept( 0 );
+	core::Size const t_jump_interval( 10 );
 	int const dump_interval( option[dump_freq]() );
 	bool did_move;
 	int index;
-	Size temp_id( 1 );
+	core::Size temp_id( 1 );
 
 	std::stringstream name, name2;
 	name << option[out_prefix]() << "_bb_torsions.txt";
@@ -393,8 +393,8 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	// Main sampling cycle
 	// AMW: Had to change the structure of the main loop so that all conditional
 	// references to "index" were together
-	Size pct = 0;
-	for ( Size n = 1; n <= n_cycle_; ++n ) {
+	core::Size pct = 0;
+	for ( core::Size n = 1; n <= n_cycle_; ++n ) {
 
 		if ( n % ( n_cycle_ / 100 ) == 0 ) {
 			++pct;
@@ -534,19 +534,19 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 	// If we're being called from an app that wants to dump data after sampling
 	// like recces_turner or thermal_sampler
 	if ( dumping_app_ ) {
-		for ( Size i = 1; i <= temps_.size(); ++i ) {
+		for ( core::Size i = 1; i <= temps_.size(); ++i ) {
 			if ( is_save_scores ) {
 				std::ostringstream oss;
 				oss << option[out_prefix]() << '_' << std::fixed << std::setprecision(2)
 					<< temps_[i] << ".bin.gz";
-				Size const data_dim2( get_scoretypes().size() + 2 );
-				Size const data_dim1( data[i].size() / data_dim2 );
+				core::Size const data_dim2( get_scoretypes().size() + 2 );
+				core::Size const data_dim1( data[i].size() / data_dim2 );
 				vector2disk_in2d( oss.str(), data_dim1, data_dim2, data[i] );
 			}
 			std::ostringstream oss;
 			oss << option[out_prefix]() << '_' << std::fixed << std::setprecision(2)
 				<< temps_[i] << ".hist.gz";
-			utility::vector1<Size> const & hist( hist_list[i].get_hist() );
+			utility::vector1<core::Size> const & hist( hist_list[i].get_hist() );
 			utility::vector1<Real> const & scores( hist_list[i].get_scores() );
 			vector2disk_in1d( oss.str(), hist );
 
@@ -565,19 +565,19 @@ ThermalSamplingMover::apply( core::pose::Pose & pose ) {
 		str3 << option[out_prefix]() << "_scores.txt";
 		std::ofstream datafile ( (str.str()).c_str() );
 		// In rare circumstances, I guess data[1] has odd parity -- saw a bounds issue
-		for ( Size i = 1; i <= data[1].size() - 1; i+=2 ) {
+		for ( core::Size i = 1; i <= data[1].size() - 1; i+=2 ) {
 			datafile << data[1][i] << "\t " << data[1][i+1] << "\n";
 		}
 		datafile.close();
 		std::ofstream histfile ( (str2.str()).c_str() );
-		utility::vector1<Size> const & hist( hist_list[1].get_hist() );
-		for ( Size i = 1; i<=hist.size(); i++ ) {
+		utility::vector1<core::Size> const & hist( hist_list[1].get_hist() );
+		for ( core::Size i = 1; i<=hist.size(); i++ ) {
 			histfile<< hist[i] << "\n";
 		}
 		histfile.close();
 		utility::vector1<Real> const & escores( hist_list[1].get_scores() );
 		std::ofstream scorefile ( (str3.str()).c_str() );
-		for ( Size i = 1; i<=escores.size(); i++ ) {
+		for ( core::Size i = 1; i<=escores.size(); i++ ) {
 			scorefile<< escores[i] << "\n";
 		}
 		scorefile.close();
@@ -603,7 +603,7 @@ ThermalSamplingMover::set_residue_sampling_from_pose_and_movemap(
 	residues_.clear();
 	free_rsd_.clear();
 
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( mm.get( core::id::TorsionID( ii, id::BB, BETA ) ) && mm.get( core::id::TorsionID( ii, id::BB, GAMMA ) ) ) {
 			residues_.push_back( ii );
 			if ( mm.get( core::id::TorsionID( ii, id::BB, DELTA ) ) && mm.get( core::id::TorsionID( ii, id::BB, EPSILON ) ) ) {

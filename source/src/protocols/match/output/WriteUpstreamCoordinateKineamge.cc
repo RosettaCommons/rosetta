@@ -25,7 +25,7 @@
 
 // Utility headers
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
 
 // C++ headers
@@ -112,8 +112,8 @@ ResidueKinemageWriter::ResidueKinemageWriter() :
 void
 ResidueKinemageWriter::write_rsd_coords(
 	std::ostream & ostr,
-	Size const scaffold_build_point_id,
-	Size const upstream_conf_id,
+	core::Size const scaffold_build_point_id,
+	core::Size const upstream_conf_id,
 	core::conformation::Residue const & rsd,
 	bool is_instance /* = false */
 ) const
@@ -233,8 +233,8 @@ WriteUpstreamCoordinateKinemage::clone() const
 /// builder would use).
 std::list< Hit >
 WriteUpstreamCoordinateKinemage::build(
-	Size const scaffold_build_point_id,
-	Size const upstream_conf_id,
+	core::Size const scaffold_build_point_id,
+	core::Size const upstream_conf_id,
 	core::conformation::Residue const & rsd
 ) const
 {
@@ -363,7 +363,7 @@ WriteUpstreamCoordinateKinemage::set_downstream_writer( DownstreamCoordinateKine
 }
 
 void
-WriteUpstreamCoordinateKinemage::set_n_downstream_to_output( Size n_downstream_to_output )
+WriteUpstreamCoordinateKinemage::set_n_downstream_to_output( core::Size n_downstream_to_output )
 {
 	n_downstream_to_output_ = n_downstream_to_output;
 }
@@ -488,7 +488,7 @@ WriteUpstreamHitKinemage::set_dswriter( DownstreamCoordinateKinemageWriterOP dsw
 	dswriter_ = dswriter;
 }
 
-void WriteUpstreamHitKinemage::geom_id( Size setting )
+void WriteUpstreamHitKinemage::geom_id( core::Size setting )
 {
 	geom_id_ = setting;
 	if ( dswriter_ ) {
@@ -554,7 +554,7 @@ SingleDownstreamResidueWriter::write_downstream_coordinates(
 ) const
 {
 	//std::cout << "outputting hit: ";
-	//for ( Size ii = 1; ii <= 6; ++ii ) {
+	//for ( core::Size ii = 1; ii <= 6; ++ii ) {
 	// std::cout << hit.second[ ii ] << " ";
 	//}
 	//std::cout << std::endl;
@@ -607,7 +607,7 @@ SingleDownstreamResidueWriter::set_restype( core::chemical::ResidueTypeCOP resty
 {
 	restype_ = restype;
 	all_atom_inds_.resize( restype_->natoms() );
-	for ( Size ii = 1; ii <= all_atom_inds_.size(); ++ii ) all_atom_inds_[ ii ] = core::id::AtomID( ii, 1 );
+	for ( core::Size ii = 1; ii <= all_atom_inds_.size(); ++ii ) all_atom_inds_[ ii ] = core::id::AtomID( ii, 1 );
 }
 
 void

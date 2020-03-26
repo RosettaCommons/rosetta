@@ -21,7 +21,7 @@
 #include <core/pack/palette/PackerPalette.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <string>
@@ -37,7 +37,7 @@ namespace palette {
 /// at load time (before main() begins) so that the PackerPaletteFactory is ready
 /// to start creating PackerPalettes by the time any protocol
 /// requests one.
-class PackerPaletteCreator : public utility::pointer::ReferenceCount
+class PackerPaletteCreator : public utility::VirtualBase
 {
 public:
 	~PackerPaletteCreator() override {}

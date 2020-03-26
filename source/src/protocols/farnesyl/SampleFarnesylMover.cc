@@ -88,7 +88,7 @@ SampleFarnesylMover::~SampleFarnesylMover(){}
 /// use that every time. Why not! The fixed library subset paradigm can be used later. So now
 /// we do all this sampling and then take the best conformation forward.
 void
-SampleFarnesylMover::sample_farnesyl( core::pose::Pose & pose, Size const cys_idx, Size const dma_one_idx, Size const dma_two_idx, Size const dma_three_idx ) {
+SampleFarnesylMover::sample_farnesyl( core::pose::Pose & pose, core::Size const cys_idx, core::Size const dma_one_idx, core::Size const dma_two_idx, core::Size const dma_three_idx ) {
 	if ( !sfxn_ ) sfxn_ = core::scoring::get_score_function();
 
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
@@ -135,8 +135,8 @@ SampleFarnesylMover::sample_farnesyl( core::pose::Pose & pose, Size const cys_id
 	Real first_cutoff = 5000;
 	Pose best_pose;
 	Real best_score = first_cutoff + 100; // greater than first_cutoff so guaranteed irrelevant
-	Size ii = 0;
-	Size const limit = 500;
+	core::Size ii = 0;
+	core::Size const limit = 500;
 	while ( ( comb.not_end() && enumerate_ ) || ( ii < limit && !enumerate_ ) ) {
 		// We need a local pose so we don't just keep minning the same pose.
 		// In theory, we could just copy before minning if this ends up super slow.
@@ -173,7 +173,7 @@ SampleFarnesylMover::sample_farnesyl( core::pose::Pose & pose, Size const cys_id
 /// Then... you've found farnesyl cysteine; go to the sampling function.
 void
 SampleFarnesylMover::apply( core::pose::Pose & pose ){
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( pose.residue_type( ii ).aa() != core::chemical::aa_cys ) continue;
 		if ( !pose.residue( ii ).has_variant_type( core::chemical::SC_BRANCH_POINT ) ) continue;
 
@@ -182,7 +182,7 @@ SampleFarnesylMover::apply( core::pose::Pose & pose ){
 			pose.residue_type( ii ).atom_index( "SG" ) ) << std::endl;
 		TR << " SG conn res" << pose.residue( ii ).connected_residue_at_resconn( pose.residue_type( ii ).residue_connection_id_for_atom(
 			pose.residue_type( ii ).atom_index( "SG" ) ) ) << std::endl;
-		Size jj = pose.residue( ii ).connected_residue_at_resconn(
+		core::Size jj = pose.residue( ii ).connected_residue_at_resconn(
 			pose.residue_type( ii ).residue_connection_id_for_atom(
 			pose.residue_type( ii ).atom_index( "SG" ) ) );
 		if ( jj == 0 || jj > pose.size() || pose.residue_type( jj ).name3() != "DMA" ) continue;
@@ -191,11 +191,11 @@ SampleFarnesylMover::apply( core::pose::Pose & pose ){
 		// (even if there come to be permissable connection-modifying variants, they will
 		// create bigger connection numbers. And if 1 behaves differently we are
 		// ok excluding this 'weird farnesyl')
-		Size kk = pose.residue( jj ).connected_residue_at_resconn( 1 );
+		core::Size kk = pose.residue( jj ).connected_residue_at_resconn( 1 );
 		if ( kk == 0 || kk > pose.size() || pose.residue_type( kk ).name3() != "DMA" ) continue;
 
 		// Same situation as above.
-		Size ll = pose.residue( kk ).connected_residue_at_resconn( 1 );
+		core::Size ll = pose.residue( kk ).connected_residue_at_resconn( 1 );
 		if ( ll == 0 || ll > pose.size() || pose.residue_type( ll ).name3() != "DMA" ) continue;
 
 		TR << "Determined seqposes: " << ii << ", " << jj << ", " << kk << ", " << ll << std::endl;

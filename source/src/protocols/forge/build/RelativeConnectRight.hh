@@ -74,7 +74,7 @@ public: // construct/destruct
 	///  modify( pose_left ) is called
 	RelativeConnectRight(
 		RelativeSequencePositionOP const & rp,
-		Size const right_position,
+		core::Size const right_position,
 		Pose const & pose_right
 	);
 

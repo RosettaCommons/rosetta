@@ -100,7 +100,7 @@ public:
 private:
 	core::Size min_loop_length( utility::vector1< bool > const & relevant_residue ) const;
 	core::Size max_loop_length( utility::vector1< bool > const & relevant_residue ) const;
-	core::Size determine_correct_length( utility::vector1< bool > const & relevant_residue, Size default_length ) const;
+	core::Size determine_correct_length( utility::vector1< bool > const & relevant_residue, core::Size default_length ) const;
 
 	numeric::HomogeneousTransform<core::Real> const
 	frame_for_residue(core::conformation::Residue const & residue) const;

@@ -20,7 +20,7 @@
 #include <core/scoring/func/GaussianChainGeneralFunc.hh>
 #include <core/types.hh>
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 

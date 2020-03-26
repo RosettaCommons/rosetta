@@ -68,7 +68,7 @@ ReferencePoseSet::ReferencePoseSet() :
 /// @brief Copy constructor.
 ///
 ReferencePoseSet::ReferencePoseSet( ReferencePoseSet const & src ) :
-	utility::pointer::ReferenceCount(src),
+	utility::VirtualBase(src),
 	utility::pointer::enable_shared_from_this< ReferencePoseSet >(src),
 	reference_pose_map_()
 {

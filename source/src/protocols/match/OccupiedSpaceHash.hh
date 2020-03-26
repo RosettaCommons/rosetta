@@ -30,7 +30,7 @@
 #include <numeric/geometry/hashing/SixDHasher.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/fixedsizearray1.hh>
 
 
@@ -71,7 +71,7 @@ namespace match {
 /// during the "building" stage. However, the functions note_hit_geometry and
 /// drop_unsatisfied_voxels should be called by single thread only, and no other thread
 /// should try to access the ActiveVoxelHashes object at that time.
-class OccupiedSpaceHash : public utility::pointer::ReferenceCount {
+class OccupiedSpaceHash : public utility::VirtualBase {
 public:
 	typedef core::Real                               Real;
 	typedef core::Size                               Size;
@@ -132,7 +132,7 @@ public:
 
 	void write_3Dprojection_kinemage( std::string const & kin_file_name );
 
-	Size
+	core::Size
 	revision_id() const;
 
 private:
@@ -141,7 +141,7 @@ private:
 	project_point_to_3d( Real6 const & geom );
 
 	boost::uint64_t
-	bitmask_for_position( Size pos ) const;
+	bitmask_for_position( core::Size pos ) const;
 
 	boost::uint64_t
 	calc_bin_index( numeric::geometry::hashing::Bin6D const & bin ) const;
@@ -168,7 +168,7 @@ private:
 
 	Bool3DGridOP threeD_projection_;
 
-	Size revision_id_;
+	core::Size revision_id_;
 
 };
 

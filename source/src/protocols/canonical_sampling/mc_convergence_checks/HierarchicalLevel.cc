@@ -1156,7 +1156,7 @@ std::string HierarchicalLevel::lib_full_path( utility::vector1< core::Size > & a
 	//std::string rootpath = utility::file::FileName(option[mc::hierarchical_pool]()).path();
 	std::string defaultpath = utility::file::FileName(option[mc::hierarchical_pool]()).base() + rootpath_suffix + s;
 
-	//Size n = address.size();
+	//core::Size n = address.size();
 
 
 	std::ostringstream fnstream;
@@ -1177,7 +1177,7 @@ std::string HierarchicalLevel::lib_full_path( utility::vector1< core::Size > & a
 	fnstream << "c_" << setfill ('0') << setw (5) << address[last_num_not_zero] << ".out";
 	std::string fn(fnstream.str());
 	//TR.Debug << "silent file we're lookin for: " << fnstream.str() << std::endl;
-	for ( Size i=last_num_not_zero; i >= 1; i-- ) {
+	for ( core::Size i=last_num_not_zero; i >= 1; i-- ) {
 		ostringstream pathstream1;
 		ostringstream pathstream2;
 
@@ -1220,7 +1220,7 @@ std::string tag = tag_origin + ".0000";
 
 Size pos=1;
 Size len=tag.length();
-utility::vector1<Size> address;
+utility::vector1<core::Size> address;
 while (pos<len)
 {
 Size newpos = tag.find(".", pos+1);

@@ -30,7 +30,7 @@ namespace match {
 namespace upstream {
 
 ScaffoldBuildPoint::ScaffoldBuildPoint() : index_( 0 ) {}
-ScaffoldBuildPoint::ScaffoldBuildPoint( Size index ) : index_( index ) {}
+ScaffoldBuildPoint::ScaffoldBuildPoint( core::Size index ) : index_( index ) {}
 ScaffoldBuildPoint::~ScaffoldBuildPoint() = default;
 
 bool ScaffoldBuildPoint::compatible( ScaffoldBuildPoint const & other, bool first_dispatch ) const
@@ -51,7 +51,7 @@ bool ScaffoldBuildPoint::compatible( OriginalBackboneBuildPoint const & other, b
 
 
 void
-ScaffoldBuildPoint::index( Size setting ) {
+ScaffoldBuildPoint::index( core::Size setting ) {
 	index_ = setting;
 }
 

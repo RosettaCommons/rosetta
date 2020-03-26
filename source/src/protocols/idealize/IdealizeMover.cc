@@ -92,8 +92,8 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 	Real const coord_sdev( 0.1 );
 
 
-	Size const nres( pose.size() );
-	Size total_atompairs( 0 );
+	core::Size const nres( pose.size() );
+	core::Size total_atompairs( 0 );
 
 	//fpd symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
@@ -109,12 +109,12 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 		if ( ignore_residues_in_csts_ != nullptr ) {
 			ignore_residues_in_csts = core::select::get_residues_from_subset( ignore_residues_in_csts_->apply( pose ) );
 		}
-		for ( Size i=1; i<= nres-1; ++i ) {
+		for ( core::Size i=1; i<= nres-1; ++i ) {
 			if ( std::find( ignore_residues_in_csts.begin(), ignore_residues_in_csts.end(), i ) != ignore_residues_in_csts.end() ) continue;
 			Residue const & i_rsd( pose.residue(i) );
 			if ( i_rsd.aa() == core::chemical::aa_vrt ) continue;
 
-			for ( Size j=i+1; j<= nres-1; ++j ) {
+			for ( core::Size j=i+1; j<= nres-1; ++j ) {
 				if ( std::find( ignore_residues_in_csts.begin(), ignore_residues_in_csts.end(), j ) != ignore_residues_in_csts.end() ) continue;
 				Residue const & j_rsd( pose.residue(j) );
 				if ( j_rsd.aa() == core::chemical::aa_vrt ) continue;
@@ -128,10 +128,10 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 					continue;
 				}
 
-				for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
+				for ( core::Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
 					chemical::AtomType const & it( i_rsd.atom_type( ii ) );
 
-					for ( Size jj = 1; jj<= j_rsd.natoms(); ++jj ) {
+					for ( core::Size jj = 1; jj<= j_rsd.natoms(); ++jj ) {
 						chemical::AtomType const & jt( j_rsd.atom_type( jj ) );
 
 						Real const dis2( i_rsd.xyz( ii ).distance_squared( j_rsd.xyz( jj ) ) );
@@ -154,14 +154,14 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 	if ( coordinate_constraint_weight_ != 0.0 ) {
 		// should already have setup for using coordinate constraints
 		runtime_assert( pose.residue( nres ).aa() == core::chemical::aa_vrt );
-		for ( Size i=1; i<= nres-1; ++i ) {
+		for ( core::Size i=1; i<= nres-1; ++i ) {
 			// only put coord csts on master
 			if ( symm_info &&
 					( !symm_info->bb_is_independent( i ) || pose.residue(i).aa() == core::chemical::aa_vrt) ) {
 				continue;
 			}
 			Residue const & i_rsd( pose.residue(i) );
-			for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
+			for ( core::Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
 				pose.add_constraint( utility::pointer::make_shared< CoordinateConstraint >( AtomID(ii,i), AtomID(1,nres), i_rsd.xyz( ii ), utility::pointer::make_shared< HarmonicFunc >( 0.0, coord_sdev ) ) );
 			}
 		}
@@ -184,16 +184,16 @@ IdealizeMover::apply( pose::Pose & pose ) {
 		pose.constraint_set( nullptr );
 	}
 	// add virtual residue at the end
-	//Size const old_root( pose.fold_tree().root() );
+	//core::Size const old_root( pose.fold_tree().root() );
 	if ( pose.residue( pose.size() ).aa() != core::chemical::aa_vrt ) {
 		/// bugfix for single-residue pose: don't append residue by jump from residue 0
-		Size const midpoint( pose.size() == 1 ? 1 : pose.size() / 2 );
+		core::Size const midpoint( pose.size() == 1 ? 1 : pose.size() / 2 );
 		pose.append_residue_by_jump(
 			*conformation::ResidueFactory::create_residue( *core::pose::virtual_type_for_pose( pose ) ),
 			midpoint
 		);
 
-		Size const nres( pose.size() ); // includes pseudo-rsd
+		core::Size const nres( pose.size() ); // includes pseudo-rsd
 
 		kinematics::FoldTree f( pose.fold_tree() );
 		f.reorder( nres );
@@ -237,7 +237,7 @@ IdealizeMover::apply( pose::Pose & pose ) {
 	// by default idealize everything
 	//fpd  ... unless symmetric, then only idealize master
 	if ( pos_list_.size() == 0 ) {
-		for ( Size i = 1; i <= pose.size()-1; ++i ) {
+		for ( core::Size i = 1; i <= pose.size()-1; ++i ) {
 			if ( symm_info &&
 					(!symm_info->bb_is_independent( i ) || pose.residue(i).aa() == core::chemical::aa_vrt ) ) {
 				continue;
@@ -256,13 +256,13 @@ IdealizeMover::apply( pose::Pose & pose ) {
 
 	if ( symm_info ) {
 		// special case for symmetry .. replace VRTs first
-		for ( Size ii = unmodified_pose.size(); ii>=1; --ii ) {
+		for ( core::Size ii = unmodified_pose.size(); ii>=1; --ii ) {
 			if ( symm_info->bb_is_independent(ii) ) {
 				final_pose.replace_residue( ii, pose.residue( ii ), false );
 			}
 		}
 	} else {
-		for ( Size ii = 1; ii <= unmodified_pose.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= unmodified_pose.size(); ++ii ) {
 			final_pose.replace_residue( ii, pose.residue( ii ), false );
 		}
 	}

@@ -68,8 +68,8 @@ void ImplicitFastClashCheck::init_clash_check(utility::vector1<Pose> const & pos
 	using numeric::min;
 	using numeric::max;
 	using numeric::square;
-	using CubeDim = numeric::xyzTriple<Size>; // Cube dimensions
-	using CubeKey = numeric::xyzTriple<Size>; // Cube index-triple key
+	using CubeDim = numeric::xyzTriple<core::Size>; // Cube dimensions
+	using CubeKey = numeric::xyzTriple<core::Size>; // Cube index-triple key
 
 	neighbor_cutoff_ = neighbor_cutoff;
 	neighbor_cutoff_sq_ = ( neighbor_cutoff*neighbor_cutoff);
@@ -77,11 +77,11 @@ void ImplicitFastClashCheck::init_clash_check(utility::vector1<Pose> const & pos
 	// resno_ .reserve((pose_->n_residue()-ignore.size())*5);
 	// atomno_.reserve((pose_->n_residue()-ignore.size())*5);
 	for ( auto const & pose : poses ) {
-		for ( Size i = 0; i < pose.size(); ++i ) {
+		for ( core::Size i = 0; i < pose.size(); ++i ) {
 			if ( std::find(ignore.begin(),ignore.end(),i+1) != ignore.end() ) continue;
-			//Size const natom = min(5ul,pi->residue(i+1).nheavyatoms());
-			Size const natom = pose.residue(i+1).nheavyatoms();
-			for ( Size j = 1; j <= natom; ++j ) {
+			//core::Size const natom = min(5ul,pi->residue(i+1).nheavyatoms());
+			core::Size const natom = pose.residue(i+1).nheavyatoms();
+			for ( core::Size j = 1; j <= natom; ++j ) {
 				// TODO could check for point redundance here
 				points_.push_back( pose.xyz(AtomID(j,i+1)) );
 				resno_ .push_back( i+1 );
@@ -92,43 +92,43 @@ void ImplicitFastClashCheck::init_clash_check(utility::vector1<Pose> const & pos
 
 	Vec bbu( points_[ 1 ] ); // Lower and upper corners of bounding box
 	bbl_ = bbu;
-	for ( Size ii = 2; ii <= points_.size(); ++ii ) { bbl_.min( points_[ ii ] ); bbu.max( points_[ ii ] ); }
+	for ( core::Size ii = 2; ii <= points_.size(); ++ii ) { bbl_.min( points_[ ii ] ); bbu.max( points_[ ii ] ); }
 	bbl_ -= 10 * std::numeric_limits< Real >::epsilon();
 	bbu += 10 * std::numeric_limits< Real >::epsilon();
 	Real const side( neighbor_cutoff );
 	debug_assert( side > Real( 0 ) );
 	side_inv_ = ( Real( 1 ) / side );
 	cube_dim_ = CubeDim( // Cube dimensions
-		Size( std::ceil( ( bbu.x() - bbl_.x() ) * side_inv_ ) ),             // Test that ceil values == Size values
-		Size( std::ceil( ( bbu.y() - bbl_.y() ) * side_inv_ ) ),
-		Size( std::ceil( ( bbu.z() - bbl_.z() ) * side_inv_ ) )
+		core::Size( std::ceil( ( bbu.x() - bbl_.x() ) * side_inv_ ) ),             // Test that ceil values == core::Size values
+		core::Size( std::ceil( ( bbu.y() - bbl_.y() ) * side_inv_ ) ),
+		core::Size( std::ceil( ( bbu.z() - bbl_.z() ) * side_inv_ ) )
 	);
 
 	cubes_.dimension( cube_dim_.x(), cube_dim_.y(), cube_dim_.z() );
 
-	for ( Size i = 1; i <= points_.size(); ++i ) {
+	for ( core::Size i = 1; i <= points_.size(); ++i ) {
 		Vec const pp( points_[ i ]);
 		CubeKey const cube_key(
-			Size( ( pp.x() - bbl_.x() ) * side_inv_ ) + 1,
-			Size( ( pp.y() - bbl_.y() ) * side_inv_ ) + 1,
-			Size( ( pp.z() - bbl_.z() ) * side_inv_ ) + 1
+			core::Size( ( pp.x() - bbl_.x() ) * side_inv_ ) + 1,
+			core::Size( ( pp.y() - bbl_.y() ) * side_inv_ ) + 1,
+			core::Size( ( pp.z() - bbl_.z() ) * side_inv_ ) + 1
 		);
 		debug_assert( cube_key.x() <= cube_dim_.x() );
 		debug_assert( cube_key.y() <= cube_dim_.y() );
 		debug_assert( cube_key.z() <= cube_dim_.z() );
-		Size i_index = cubes_.index( cube_key.x(), cube_key.y(), cube_key.z() );
+		core::Size i_index = cubes_.index( cube_key.x(), cube_key.y(), cube_key.z() );
 		cubes_[ i_index ].push_back( i );
 	}
 }
 
 bool ImplicitFastClashCheck::clash_check(Vec const & pp ) const {
-	Size const icx( Size( ( pp.x() - bbl_.x() ) * side_inv_ ) + 1 );
-	Size const icy( Size( ( pp.y() - bbl_.y() ) * side_inv_ ) + 1 );
-	Size const icz( Size( ( pp.z() - bbl_.z() ) * side_inv_ ) + 1 );
-	for ( Size ix = max( icx, Size( 2 ) ) - 1,  ixe = min( icx + 1, cube_dim_.x() ); ix <= ixe; ++ix ) {
-		for ( Size iy = max( icy, Size( 2 ) ) - 1, iye = min( icy + 1, cube_dim_.y() ); iy <= iye; ++iy ) {
-			for ( Size iz = max( icz, Size( 2 ) ) - 1, ize = min( icz + 1, cube_dim_.z() ); iz <= ize; ++iz ) {
-				Size cube_index = cubes_.index( ix, iy, iz );
+	core::Size const icx( core::Size( ( pp.x() - bbl_.x() ) * side_inv_ ) + 1 );
+	core::Size const icy( core::Size( ( pp.y() - bbl_.y() ) * side_inv_ ) + 1 );
+	core::Size const icz( core::Size( ( pp.z() - bbl_.z() ) * side_inv_ ) + 1 );
+	for ( core::Size ix = max( icx, core::Size( 2 ) ) - 1,  ixe = min( icx + 1, cube_dim_.x() ); ix <= ixe; ++ix ) {
+		for ( core::Size iy = max( icy, core::Size( 2 ) ) - 1, iye = min( icy + 1, cube_dim_.y() ); iy <= iye; ++iy ) {
+			for ( core::Size iz = max( icz, core::Size( 2 ) ) - 1, ize = min( icz + 1, cube_dim_.z() ); iz <= ize; ++iz ) {
+				core::Size cube_index = cubes_.index( ix, iy, iz );
 				if ( cubes_[ cube_index ].size() != 0 ) { // Cube exists
 					for ( unsigned int ia : cubes_[ cube_index ] ) {
 						Vec const j( points_[ia] );
@@ -147,13 +147,13 @@ bool ImplicitFastClashCheck::clash_check(Vec const & pp ) const {
 
 platform::uint ImplicitFastClashCheck::clash_count(Vec const & pp ) const {
 	platform::uint count = 0;
-	Size const icx( Size( ( pp.x() - bbl_.x() ) * side_inv_ ) + 1 );
-	Size const icy( Size( ( pp.y() - bbl_.y() ) * side_inv_ ) + 1 );
-	Size const icz( Size( ( pp.z() - bbl_.z() ) * side_inv_ ) + 1 );
-	for ( Size ix = max( icx, Size( 2 ) ) - 1,  ixe = min( icx + 1, cube_dim_.x() ); ix <= ixe; ++ix ) {
-		for ( Size iy = max( icy, Size( 2 ) ) - 1, iye = min( icy + 1, cube_dim_.y() ); iy <= iye; ++iy ) {
-			for ( Size iz = max( icz, Size( 2 ) ) - 1, ize = min( icz + 1, cube_dim_.z() ); iz <= ize; ++iz ) {
-				Size cube_index = cubes_.index( ix, iy, iz );
+	core::Size const icx( core::Size( ( pp.x() - bbl_.x() ) * side_inv_ ) + 1 );
+	core::Size const icy( core::Size( ( pp.y() - bbl_.y() ) * side_inv_ ) + 1 );
+	core::Size const icz( core::Size( ( pp.z() - bbl_.z() ) * side_inv_ ) + 1 );
+	for ( core::Size ix = max( icx, core::Size( 2 ) ) - 1,  ixe = min( icx + 1, cube_dim_.x() ); ix <= ixe; ++ix ) {
+		for ( core::Size iy = max( icy, core::Size( 2 ) ) - 1, iye = min( icy + 1, cube_dim_.y() ); iy <= iye; ++iy ) {
+			for ( core::Size iz = max( icz, core::Size( 2 ) ) - 1, ize = min( icz + 1, cube_dim_.z() ); iz <= ize; ++iz ) {
+				core::Size cube_index = cubes_.index( ix, iy, iz );
 				if ( cubes_[ cube_index ].size() != 0 ) { // Cube exists
 					for ( unsigned int ia : cubes_[ cube_index ] ) {
 						Vec const j( points_[ia] );
@@ -169,14 +169,14 @@ platform::uint ImplicitFastClashCheck::clash_count(Vec const & pp ) const {
 	return count;
 }
 
-bool ImplicitFastClashCheck::clash_check(Vec const & pp, Size resno ) const {
-	Size const icx( Size( ( pp.x() - bbl_.x() ) * side_inv_ ) + 1 );
-	Size const icy( Size( ( pp.y() - bbl_.y() ) * side_inv_ ) + 1 );
-	Size const icz( Size( ( pp.z() - bbl_.z() ) * side_inv_ ) + 1 );
-	for ( Size ix = max( icx, Size( 2 ) ) - 1,  ixe = min( icx + 1, cube_dim_.x() ); ix <= ixe; ++ix ) {
-		for ( Size iy = max( icy, Size( 2 ) ) - 1, iye = min( icy + 1, cube_dim_.y() ); iy <= iye; ++iy ) {
-			for ( Size iz = max( icz, Size( 2 ) ) - 1, ize = min( icz + 1, cube_dim_.z() ); iz <= ize; ++iz ) {
-				Size cube_index = cubes_.index( ix, iy, iz );
+bool ImplicitFastClashCheck::clash_check(Vec const & pp, core::Size resno ) const {
+	core::Size const icx( core::Size( ( pp.x() - bbl_.x() ) * side_inv_ ) + 1 );
+	core::Size const icy( core::Size( ( pp.y() - bbl_.y() ) * side_inv_ ) + 1 );
+	core::Size const icz( core::Size( ( pp.z() - bbl_.z() ) * side_inv_ ) + 1 );
+	for ( core::Size ix = max( icx, core::Size( 2 ) ) - 1,  ixe = min( icx + 1, cube_dim_.x() ); ix <= ixe; ++ix ) {
+		for ( core::Size iy = max( icy, core::Size( 2 ) ) - 1, iye = min( icy + 1, cube_dim_.y() ); iy <= iye; ++iy ) {
+			for ( core::Size iz = max( icz, core::Size( 2 ) ) - 1, ize = min( icz + 1, cube_dim_.z() ); iz <= ize; ++iz ) {
+				core::Size cube_index = cubes_.index( ix, iy, iz );
 				if ( cubes_[ cube_index ].size() != 0 ) { // Cube exists
 					for ( unsigned int ia : cubes_[ cube_index ] ) {
 						Vec const j( points_[ia] );
@@ -206,10 +206,10 @@ bool ImplicitFastClashCheck::clash_check(Vec const & pp, Size resno ) const {
 	return true;
 }
 
-// bool ImplicitFastClashCheck::clash_check(Pose const & pose, Size refrsd) const {
+// bool ImplicitFastClashCheck::clash_check(Pose const & pose, core::Size refrsd) const {
 //  Stub stubl(pose_->xyz(AtomID(2,1)),pose_->xyz(AtomID(2,2)),pose_->xyz(AtomID(2,3)));
 //  Stub stub1(pose  .xyz(AtomID(2,1)),pose  .xyz(AtomID(2,2)),pose  .xyz(AtomID(2,3)));
-//  for(Size i = 9; i <= pose.residue(refrsd).nheavyatoms(); ++i) {
+//  for(core::Size i = 9; i <= pose.residue(refrsd).nheavyatoms(); ++i) {
 //   if( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+0*pose_->size())))) ) ) return false;
 //  }
 //  return true;
@@ -221,10 +221,10 @@ bool ImplicitFastClashCheck::clash_check(Vec const & pp, Size resno ) const {
 //  return clash_check( stub.local2global(pos) );
 // }
 
-bool ImplicitFastClashCheck::clash_check_trimer(Pose const & pose, Size refrsd) const {
+bool ImplicitFastClashCheck::clash_check_trimer(Pose const & pose, core::Size refrsd) const {
 	Stub stubl(pose_->xyz(AtomID(2,1)),pose_->xyz(AtomID(2,2)),pose_->xyz(AtomID(2,3)));
 	Stub stub1(pose  .xyz(AtomID(2,1)),pose  .xyz(AtomID(2,2)),pose  .xyz(AtomID(2,3)));
-	for ( Size i = 1; i <= pose.residue(refrsd).nheavyatoms(); ++i ) {
+	for ( core::Size i = 1; i <= pose.residue(refrsd).nheavyatoms(); ++i ) {
 		if ( i > 9 ) if ( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+0*pose_->size())))) ) ) return false;
 		if ( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+1*pose_->size())))) ) ) return false;
 		if ( ! clash_check( stubl.local2global(stub1.global2local(pose.xyz(AtomID(i,refrsd+2*pose_->size())))) ) ) return false;
@@ -241,7 +241,7 @@ bool ImplicitFastClashCheck::clash_check_trimer(Pose const & pose, Size refrsd) 
 
 void ImplicitFastClashCheck::dump_debug_pdb( utility::io::ozstream & out, core::kinematics::Stub const & stub, char chain ) const {
 	using namespace ObjexxFCL::format;
-	for ( Size i = 1; i <= points_.size(); ++i ) {
+	for ( core::Size i = 1; i <= points_.size(); ++i ) {
 		numeric::xyzVector<Real> p = stub.global2local(points_[i]);
 		std::string rname = pose_->residue(resno_[i]).name3();
 		std::string aname = pose_->residue(resno_[i]).atom_name(atomno_[i]);

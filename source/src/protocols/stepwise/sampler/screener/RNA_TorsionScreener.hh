@@ -24,14 +24,14 @@
 #include <core/pose/rna/RNA_SuiteName.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace stepwise {
 namespace sampler {
 namespace screener {
 
-class RNA_TorsionScreener : public utility::pointer::ReferenceCount {
+class RNA_TorsionScreener : public utility::VirtualBase {
 public:
 	RNA_TorsionScreener();
 

@@ -23,14 +23,14 @@
 #include <core/types.hh>
 #include <numeric/xyzMatrix.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 
 namespace core {
 namespace conformation {
 
-class UltraLightResidue : public utility::pointer::ReferenceCount {
+class UltraLightResidue : public utility::VirtualBase {
 
 public:
 	UltraLightResidue(ResidueCOP residue);

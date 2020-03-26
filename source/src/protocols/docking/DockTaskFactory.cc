@@ -58,14 +58,14 @@ namespace protocols {
 namespace docking {
 
 // default constructor
-DockTaskFactory::DockTaskFactory() : utility::pointer::ReferenceCount()
+DockTaskFactory::DockTaskFactory() : utility::VirtualBase()
 {
 	set_default();
 	register_options();
 	init_from_options();
 }
 
-DockTaskFactory::DockTaskFactory( DockTaskFactory const & old_instance ) : utility::pointer::ReferenceCount( old_instance )
+DockTaskFactory::DockTaskFactory( DockTaskFactory const & old_instance ) : utility::VirtualBase( old_instance )
 {
 	resfile_ = old_instance.resfile_;
 	norepack1_ = old_instance.norepack1_;

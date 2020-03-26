@@ -33,7 +33,7 @@ public:
 	MgWaterHydrogenPacker();
 
 	//constructor
-	MgWaterHydrogenPacker( utility::vector1< Size > const & mg_res_list );
+	MgWaterHydrogenPacker( utility::vector1< core::Size > const & mg_res_list );
 
 	//destructor
 	~MgWaterHydrogenPacker() override;

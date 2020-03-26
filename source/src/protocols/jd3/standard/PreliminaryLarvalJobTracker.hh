@@ -26,7 +26,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <map>
 #include <set>
@@ -42,7 +42,7 @@ namespace standard {
 
 ///@brief A class for tracking the progress of all PreliminaryLarvalJobs.
 /// This tracking is partially responsible for deallocation of the input poses.
-class PreliminaryLarvalJobTracker : public utility::pointer::ReferenceCount {
+class PreliminaryLarvalJobTracker : public utility::VirtualBase {
 
 public:
 

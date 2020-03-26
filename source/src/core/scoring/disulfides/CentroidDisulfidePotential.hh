@@ -17,7 +17,7 @@
 
 //Unit headers
 #include <core/scoring/disulfides/CentroidDisulfidePotential.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //Project headers
 #include <core/types.hh>
@@ -45,7 +45,7 @@ namespace disulfides {
 *
 * The energy functions are derived from those present in Rosetta++
 */
-class CentroidDisulfidePotential : public utility::pointer::ReferenceCount {
+class CentroidDisulfidePotential : public utility::VirtualBase {
 public:
 	CentroidDisulfidePotential();
 	~CentroidDisulfidePotential() override;

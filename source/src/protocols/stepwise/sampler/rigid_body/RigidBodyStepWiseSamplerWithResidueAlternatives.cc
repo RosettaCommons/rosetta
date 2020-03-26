@@ -57,12 +57,12 @@ RigidBodyStepWiseSamplerWithResidueAlternatives::fast_forward_to_next_rigid_body
 }
 
 void
-RigidBodyStepWiseSamplerWithResidueAlternatives::fast_forward_to_next_residue_pair( Size const i, Size const j) {
+RigidBodyStepWiseSamplerWithResidueAlternatives::fast_forward_to_next_residue_pair( core::Size const i, core::Size const j) {
 	residue_alternatives_rotamer_->fast_forward_to_next_residue_pair( i, j );
 }
 
 void
-RigidBodyStepWiseSamplerWithResidueAlternatives::fast_forward_to_next_residue( Size const i ) {
+RigidBodyStepWiseSamplerWithResidueAlternatives::fast_forward_to_next_residue( core::Size const i ) {
 	residue_alternatives_rotamer_->fast_forward_to_next_residue( i );
 }
 
@@ -99,7 +99,7 @@ RigidBodyStepWiseSamplerWithResidueAlternatives::get_stub() {
 
 // used by ChainClosableScreener.
 conformation::ResidueCOP
-RigidBodyStepWiseSamplerWithResidueAlternatives::get_residue( Size const seqpos ) {
+RigidBodyStepWiseSamplerWithResidueAlternatives::get_residue( core::Size const seqpos ) {
 	transformed_residues[ seqpos ] = get_residue_at_origin( seqpos ).clone();
 	rigid_body_rotamer_->apply( *transformed_residues[seqpos] ); // will apply rotation if in moving partition.
 	return transformed_residues[seqpos];
@@ -107,7 +107,7 @@ RigidBodyStepWiseSamplerWithResidueAlternatives::get_residue( Size const seqpos 
 
 // used by ChainClosableScreener.
 Vector
-RigidBodyStepWiseSamplerWithResidueAlternatives::get_xyz( Size const seqpos, std::string const & atom_name ) {
+RigidBodyStepWiseSamplerWithResidueAlternatives::get_xyz( core::Size const seqpos, std::string const & atom_name ) {
 	// transformed_residues[ seqpos ] = get_residue_at_origin( seqpos ).clone();
 	Vector xyz = get_residue_at_origin( seqpos ).xyz( atom_name );
 	rigid_body_rotamer_->apply( xyz, seqpos ); // will apply rotation if in moving partition.
@@ -122,7 +122,7 @@ RigidBodyStepWiseSamplerWithResidueAlternatives::get_residue_at_origin() {
 
 // from residue list rotamer
 core::conformation::Residue const &
-RigidBodyStepWiseSamplerWithResidueAlternatives::get_residue_at_origin( Size const seqpos ) {
+RigidBodyStepWiseSamplerWithResidueAlternatives::get_residue_at_origin( core::Size const seqpos ) {
 	if ( residue_alternatives_rotamer_->has_resnum( seqpos ) ) {
 		return residue_alternatives_rotamer_->get_residue_at_origin( seqpos );
 	} else {

@@ -21,7 +21,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/pose/PDBInfo.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
@@ -59,7 +59,7 @@ namespace topology = protocols::fldsgn::topology;
 static basic::Tracer TR( "domain_test" );
 
 
-class Domain : public utility::pointer::ReferenceCount {
+class Domain : public utility::VirtualBase {
 public:
 	Domain();
 	Domain(const std::string& name, const PoseOP & pose, Size start, Size end) :
@@ -79,7 +79,7 @@ private:
 typedef utility::pointer::owning_ptr< Domain > DomainOP;
 
 typedef boost::tuple<Size, Size> DomainMatch;
-class DomainDescription : public utility::pointer::ReferenceCount {
+class DomainDescription : public utility::VirtualBase {
 
 	// the three vectors on the tuple represent strand pairs of the sheet ordered from
 	// one edge of the sheet to the oposite edge.
@@ -246,7 +246,7 @@ private:
 
 typedef utility::pointer::owning_ptr< DomainDescription > DomainDescriptionOP;
 
-class DomainFinder : public utility::pointer::ReferenceCount {
+class DomainFinder : public utility::VirtualBase {
 public:
 	DomainFinder();
 	void add_domain(const DomainDescription& domain);

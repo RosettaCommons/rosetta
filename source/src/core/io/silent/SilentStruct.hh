@@ -33,7 +33,7 @@
 #include <core/sequence/AnnotatedSequence.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // ObjexxFCL headers
 
@@ -52,7 +52,7 @@ namespace silent {
 
 //////////////////////////////////////////////////////////////////////
 // holds all the data for a silent-structure
-class SilentStruct : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< SilentStruct >
+class SilentStruct : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< SilentStruct >
 {
 	typedef std::string string;
 

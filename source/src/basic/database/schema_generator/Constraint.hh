@@ -20,17 +20,17 @@
 #include <iosfwd>                                              // for string
 #include <platform/types.hh>                                   // for Real
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>  // for sessionOP
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <basic/database/schema_generator/Column.fwd.hh>
 
 namespace basic {
 namespace database {
 namespace schema_generator {
 
-class Constraint : public utility::pointer::ReferenceCount
+class Constraint : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Constraint() override;
 
 	Constraint(Column const & column);

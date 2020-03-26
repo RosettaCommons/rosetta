@@ -76,8 +76,8 @@ public:
 	void go();
 
 private:
-	Size num_outer_iterations() const;
-	Size num_inner_iterations() const;
+	core::Size num_outer_iterations() const;
+	core::Size num_inner_iterations() const;
 
 	void read_tagfile_to_taskfactory(std::string tagfile_name, core::pack::task::TaskFactoryOP task_factory);
 	void load_pose( core::pose::Pose & pose, std::string const & filename, bool ignore_centroid_input_flag );
@@ -89,7 +89,7 @@ private:
 	void collect_rotamer_energies();
 	void compute_rotamer_energies_for_assigned_pdbs();
 	void collect_rotamer_energies_from_slave_cpus();
-	void collect_rotamer_energies_from_slave_cpu( Size const which_cpu );
+	void collect_rotamer_energies_from_slave_cpu( core::Size const which_cpu );
 	void send_rotamer_energies_to_master_cpu();
 
 	void optimize_weights();
@@ -99,13 +99,13 @@ private:
 
 	void test_sequence_recovery();
 	void collect_sequence_recovery_data_from_slave_cpus();
-	void collect_sequence_recovery_data_from_slave_cpu( Size const which_cpu );
+	void collect_sequence_recovery_data_from_slave_cpu( core::Size const which_cpu );
 	void run_design_on_assigned_pdbs();
 	void send_sequence_recovery_data_to_master_cpu();
 
 	void repack_assigned_pdbs();
 	void collect_rotamer_recovery_data_from_slave_cpus();
-	void collect_rotamer_recovery_data_from_slave_cpu( Size const which_cpu );
+	void collect_rotamer_recovery_data_from_slave_cpu( core::Size const which_cpu );
 	void send_rotamer_recovery_data_to_master_cpu();
 
 	bool decide_if_sequence_recovery_improved();
@@ -129,8 +129,8 @@ private:
 		utility::vector1< std::string > const & native_pdb_names,
 		utility::vector1< std::string > const & names_for_output_pdbs,
 		core::scoring::ScoreFunctionOP sfxn,
-		Size & npos,
-		Size & nrecovered
+		core::Size & npos,
+		core::Size & nrecovered
 	);
 
 	Real
@@ -138,14 +138,14 @@ private:
 		utility::vector1< std::string > const & native_pdb_names,
 		utility::vector1< std::string > const & names_for_output_pdbs,
 		core::scoring::ScoreFunctionOP sfxn,
-		Size & npos,
-		Size & nrecovered
+		core::Size & npos,
+		core::Size & nrecovered
 	);
 
 	Real
 	opte_weight_mixing_factor(
-		Size outer_loop_counter,
-		Size inner_loop_counter
+		core::Size outer_loop_counter,
+		core::Size inner_loop_counter
 	);
 
 
@@ -166,7 +166,7 @@ private:
 
 	void
 	setup_pdbnames_next_round(
-		Size const outer_loop_counter,
+		core::Size const outer_loop_counter,
 		utility::vector1< std::string  > & pdbs_next_round,
 		utility::vector1< std::string > const & native_pdb_names
 	);
@@ -214,7 +214,7 @@ private:
 	bool
 	residue_has_unacceptably_bad_dunbrack_energy(
 		core::pose::Pose const & pose,
-		Size const resid
+		core::Size const resid
 	) const;
 
 	/// @brief True/False: a particular residue be skipped for inclusion
@@ -223,7 +223,7 @@ private:
 	bool
 	residue_has_bad_bfactor(
 		core::pose::Pose const & pose,
-		Size const resid
+		core::Size const resid
 	) const;
 
 
@@ -297,7 +297,7 @@ private:
 	collect_ddG_of_binding_data();
 
 	void
-	load_pssm_data( std::string const & native_filename, Size const which_protein );
+	load_pssm_data( std::string const & native_filename, core::Size const which_protein );
 
 	core::pack::task::PackerTaskOP
 	copy_native_packertask_logic(core::pose::Pose native_pose,
@@ -389,9 +389,9 @@ private:
 
 	/// These get updated from the above two
 	EnergyMap include_terms_;
-	Size include_count_;
-	Size fixed_count_;
-	Size free_count_;
+	core::Size include_count_;
+	core::Size fixed_count_;
+	core::Size free_count_;
 	ScoreTypes free_score_list_;
 	ScoreTypes fixed_score_list_;
 	utility::vector1< Real > component_weights_;
@@ -405,22 +405,22 @@ private:
 	int tag_;
 #endif
 
-	Size MPI_rank_;
-	Size MPI_nprocs_;
+	core::Size MPI_rank_;
+	core::Size MPI_nprocs_;
 
-	Size outer_loop_counter_;
-	Size inner_loop_counter_;
+	core::Size outer_loop_counter_;
+	core::Size inner_loop_counter_;
 	OptEDataOP optE_data_;
 
-	Size total_positions_;
-	Size count_recovered_;
-	utility::vector1< Size > aa_obs_; /// the counts for each amino acid from the previous round of design (observed)
-	utility::vector1< Size > aa_exp_; /// the counts for each amino acid in the input data set (expected)
+	core::Size total_positions_;
+	core::Size count_recovered_;
+	utility::vector1< core::Size > aa_obs_; /// the counts for each amino acid from the previous round of design (observed)
+	utility::vector1< core::Size > aa_exp_; /// the counts for each amino acid in the input data set (expected)
 	utility::vector1< Real > aa_freq_obs_; /// the frequency for each amino acid from the previous round of design
 	utility::vector1< Real > aa_freq_exp_; /// the frequency for each amino acid in the input data set
 
-	Size total_rotamer_positions_;
-	Size count_rotamers_recovered_;
+	core::Size total_rotamer_positions_;
+	core::Size count_rotamers_recovered_;
 
 	/// Hold the result of minimization -- interpolate between the
 	/// before and after weight sets during iterative sequence recovery.

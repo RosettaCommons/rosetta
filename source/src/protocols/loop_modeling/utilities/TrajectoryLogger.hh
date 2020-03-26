@@ -87,9 +87,9 @@ public:
 	void record_move(
 		basic::Tracer & tr,
 		Pose & pose,
-		Size const i,
-		Size const j,
-		Size const k,
+		core::Size const i,
+		core::Size const j,
+		core::Size const k,
 		bool const proposed,
 		bool const accepted) const;
 
@@ -107,7 +107,7 @@ public:
 	void record_move(
 		basic::Tracer & tr,
 		Pose & pose,
-		Size const iteration,
+		core::Size const iteration,
 		bool const proposed,
 		bool const accepted) const;
 

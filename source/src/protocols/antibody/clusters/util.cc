@@ -86,7 +86,7 @@ core::Real
 calculate_dihedral_distance(vector1< Real > cluster_phis, vector1< Real> pose_phis, vector1< Real > cluster_psis, vector1< Real > pose_psis){
 	Real k_distance_to_cluster = 0.0;
 	Real PI = numeric::NumericTraits<Real>::pi();
-	for ( Size i=1; i<=cluster_phis.size(); ++i ) {
+	for ( core::Size i=1; i<=cluster_phis.size(); ++i ) {
 
 		Real phi_d = (2 * (1- cos ((pose_phis[i]-cluster_phis[i])*PI/180)));
 		Real psi_d = (2 * (1- cos ((pose_psis[i]-cluster_psis[i])*PI/180)));

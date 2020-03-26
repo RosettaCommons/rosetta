@@ -31,14 +31,14 @@
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {
 namespace constraint_generator {
 
 /// @brief pure virtual base class
-class ConstraintGenerator : public utility::pointer::ReferenceCount {
+class ConstraintGenerator : public utility::VirtualBase {
 
 public: // constructors / destructors
 	ConstraintGenerator( std::string const & class_name ); // move-constructed

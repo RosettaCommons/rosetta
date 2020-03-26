@@ -146,7 +146,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	output_parameters();
 	clock_t const time_start( clock() );
 
-	Size const gap_size(  working_parameters_->gap_size() );
+	core::Size const gap_size(  working_parameters_->gap_size() );
 	bool const close_chainbreak = gap_size == 0 && ( working_parameters_->moving_res() > 0 );
 	RNA_LoopCloser rna_loop_closer;
 	SilentFileData silent_file_data;
@@ -166,9 +166,9 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	}
 
 	pose::Pose dummy_pose = ( *pose_list_[1] );
-	Size const nres =  dummy_pose.size();
+	core::Size const nres =  dummy_pose.size();
 	bool o2prime_pack_verbose( options_->verbose() );
-	utility::vector1< Size > const working_moving_res = get_working_moving_res( nres ); // will be used for o2prime packing.
+	utility::vector1< core::Size > const working_moving_res = get_working_moving_res( nres ); // will be used for o2prime packing.
 
 	//Check scorefxn
 	TR.Debug << "check scorefxn" << std::endl;
@@ -185,7 +185,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 
 	minimized_pose_list_.clear();
 
-	for ( Size pose_ID = 1; pose_ID <= pose_list_.size(); pose_ID++ ) {
+	for ( core::Size pose_ID = 1; pose_ID <= pose_list_.size(); pose_ID++ ) {
 
 		if ( options_->num_pose_minimize() > 0 &&
 				minimized_pose_list_.size() >= options_->num_pose_minimize() ) {
@@ -199,7 +199,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 		pose = ( *pose_list_[pose_ID] ); //This actually creates a hard copy.....need this to get the graphic working..
 
 		if ( options_->rm_virt_phosphate() ) { //Fang's electron density code
-			for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+			for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 				pose::remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, ii );
 			}
 		}
@@ -212,7 +212,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 
 		if ( options_->verbose() && !options_->minimizer_output_before_o2prime_pack() ) output_pose_wrapper( tag, 'B', pose, silent_file_data, silent_file_ + "_before_minimize" );
 
-		utility::vector1< Size > moving_chainbreaks = figure_out_moving_chain_break_res( pose, *move_map_ );
+		utility::vector1< core::Size > moving_chainbreaks = figure_out_moving_chain_break_res( pose, *move_map_ );
 
 		///////Minimization/////////////////////////////////////////////////////////////////////////////
 		if ( close_chainbreak ) {
@@ -334,13 +334,13 @@ StepWiseRNA_Minimizer::output_empty_minimizer_silent_file() const {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_Minimizer::freeze_sugar_torsions( core::kinematics::MoveMap & mm, Size const nres ) const {
+StepWiseRNA_Minimizer::freeze_sugar_torsions( core::kinematics::MoveMap & mm, core::Size const nres ) const {
 
 	using namespace core::id;
 
 	TR.Debug << "Freeze pose sugar torsions, nres = " << nres << std::endl;
 
-	for ( Size i = 1; i <= nres; i++ ) {
+	for ( core::Size i = 1; i <= nres; i++ ) {
 
 		mm.set( TorsionID( i , id::BB,  4 ), false ); //delta_i
 		mm.set( TorsionID( i , id::CHI, 2 ), false ); //nu2_i
@@ -360,16 +360,16 @@ StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::stri
 	using namespace core::io::silent;
 	using namespace core::optimization;
 
-	Size const gap_size( working_parameters_->gap_size() ); /* If this is zero or one, need to screen or closable chain break */
+	core::Size const gap_size( working_parameters_->gap_size() ); /* If this is zero or one, need to screen or closable chain break */
 
 	bool pass_screen = true;
 
 	//March 03, 2012. Don't need this for post-process analysis. For full_length_job_params, is_prepend, moving_res and five_prime_chain_break_res are not well defined.
 	if ( working_parameters_->is_simple_full_length_job_params() == false ) {
 
-		Size const five_prime_chain_break_res = working_parameters_->five_prime_chain_break_res();
+		core::Size const five_prime_chain_break_res = working_parameters_->five_prime_chain_break_res();
 		bool const is_prepend(  working_parameters_->is_prepend() );
-		Size const moving_res(  working_parameters_->working_moving_res() );
+		core::Size const moving_res(  working_parameters_->working_moving_res() );
 
 		if ( gap_size == 0 && five_prime_chain_break_res > 0 ) {
 			//Sept 19, 2010 screen for weird delta/sugar conformation. Sometime at the chain closure step, minimization will severely screw up the pose sugar
@@ -434,7 +434,7 @@ StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::stri
 		//setup native score screening
 		pose::Pose native_pose = *( working_parameters_->working_native_pose() ); //Hard copy!
 
-		for ( Size i = 1; i <= native_pose.size(); ++i ) {
+		for ( core::Size i = 1; i <= native_pose.size(); ++i ) {
 			pose::remove_variant_type_from_pose_residue( native_pose, chemical::VIRTUAL_PHOSPHATE, i );
 		}
 		/////////////////////////////////////////////////////////
@@ -499,12 +499,12 @@ StepWiseRNA_Minimizer::native_edensity_score_checker( pose::Pose & pose, pose::P
 
 ////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1 < core::Size >
-StepWiseRNA_Minimizer::get_working_moving_res( Size const & nres ) const {
+StepWiseRNA_Minimizer::get_working_moving_res( core::Size const & nres ) const {
 	utility::vector1 < core::Size > working_moving_res;
 
 	utility::vector1 < core::Size > const & working_fixed_res = working_parameters_->working_fixed_res();
 	utility::vector1 < core::Size > const & working_moving_partition_res = working_parameters_->working_moving_partition_res();
-	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= nres; seq_num++ ) {
 		if ( !working_fixed_res.has_value( seq_num ) || working_moving_partition_res.has_value( seq_num ) ) {
 			working_moving_res.push_back( seq_num );
 		}
@@ -527,7 +527,7 @@ StepWiseRNA_Minimizer::output_minimized_pose_list(){
 
 	io::silent::SilentFileData silent_file_data;
 
-	for ( Size pose_ID = 1; pose_ID <= minimized_pose_list_.size(); pose_ID++ ) {
+	for ( core::Size pose_ID = 1; pose_ID <= minimized_pose_list_.size(); pose_ID++ ) {
 		pose::Pose & pose = *(minimized_pose_list_[pose_ID]);
 		std::string tag;
 		if ( options_->minimizer_rename_tag() ) {

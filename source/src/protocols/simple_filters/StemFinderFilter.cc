@@ -211,13 +211,13 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 
 
 	vector1< Real > distances( pose.size(), 0.0 );
-	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
+	for ( core::Size pos = 1; pos <= pose.size(); ++pos ) {
 		if ( pos <= start_res || pos >= stop_res || template_dssp[ pos - 1 ] == 'L' ) { // position is not in secondary structure element
 			distances[ pos ] = 99999999999.9;
 			continue;
 		}
-		for ( Size pose_idx = 1; pose_idx <= poses.size(); ++pose_idx ) {
-			Size position_on_target( 0 );
+		for ( core::Size pose_idx = 1; pose_idx <= poses.size(); ++pose_idx ) {
+			core::Size position_on_target( 0 );
 			Real dist( 0.0 );
 			protocols::rosetta_scripts::find_nearest_res( *poses[ pose_idx ], pose, pos, position_on_target, dist );
 			bool sec_struct_agreement( true );
@@ -241,11 +241,11 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 	}
 	TR<<"Candidate positions on template:\n";
 	if ( stems_are_neighbors() ) { //find positions that are at most a cutoff distance from other positions
-		vector1< Size > neighbor_idxs;
+		vector1< core::Size > neighbor_idxs;
 		neighbor_idxs.clear();
-		for ( Size dist_idx = 1; dist_idx < distances.size() - neighbor_separation() + 1; ++dist_idx ) {
+		for ( core::Size dist_idx = 1; dist_idx < distances.size() - neighbor_separation() + 1; ++dist_idx ) {
 			if ( distances[ dist_idx ] <= 999999.9 ) {
-				for ( Size j = dist_idx + neighbor_separation() - 1; j <= distances.size(); ++j ) {
+				for ( core::Size j = dist_idx + neighbor_separation() - 1; j <= distances.size(); ++j ) {
 					if ( std::find( neighbor_idxs.begin(), neighbor_idxs.end(), dist_idx ) != neighbor_idxs.end() &&
 							std::find( neighbor_idxs.begin(), neighbor_idxs.end(), j )        != neighbor_idxs.end() ) {
 						continue;
@@ -263,7 +263,7 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 		std::sort( neighbor_idxs.begin(), neighbor_idxs.end() );
 		auto it = std::unique( neighbor_idxs.begin(), neighbor_idxs.end() );
 		neighbor_idxs.resize( std::distance( neighbor_idxs.begin(), it ) );
-		for ( Size const n : neighbor_idxs ) {
+		for ( core::Size const n : neighbor_idxs ) {
 			TR<<conf.residue( n ).name1()<<n<<' '<<distances[ n ]<<'\n';
 		}
 		TR<<std::endl;
@@ -272,10 +272,10 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 			return false;
 		}
 		//Find nearby pairs: A->B that cover large segments
-		std::map< Size/*start stem*/, Size/*end stem*/ > stem_pairs;
+		std::map< core::Size/*start stem*/, core::Size/*end stem*/ > stem_pairs;
 		stem_pairs.clear();
-		for ( Size i = 1; i <= neighbor_idxs.size() - 1; ++i ) {
-			for ( Size j = i + 1; j <= neighbor_idxs.size(); ++j ) {
+		for ( core::Size i = 1; i <= neighbor_idxs.size() - 1; ++i ) {
+			for ( core::Size j = i + 1; j <= neighbor_idxs.size(); ++j ) {
 				if ( neighbor_idxs[ i ] + neighbor_separation() > neighbor_idxs[ j ] ) {
 					continue;
 				}
@@ -297,7 +297,7 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 		}
 		TR<<std::endl;
 	} else {
-		for ( Size dist_idx = 1; dist_idx <= distances.size(); ++dist_idx ) {
+		for ( core::Size dist_idx = 1; dist_idx <= distances.size(); ++dist_idx ) {
 			if ( distances[ dist_idx ] <= 999999.9 ) {
 				TR<<conf.residue( dist_idx ).name1()<<dist_idx<<' '<<distances[ dist_idx ]<<'\n';
 			}

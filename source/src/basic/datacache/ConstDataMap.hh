@@ -26,7 +26,7 @@
 #include <map>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 //#include <utility/exit.hh>
@@ -49,9 +49,9 @@ namespace datacache {
 /// object.  The guarantee with the ConstDataMap is that if an object is put
 /// into the map, it may be read from, but it will not be changed underneath
 /// you.  Data stored in the ConstDataMap can safely be shared between threads.
-class ConstDataMap : public utility::pointer::ReferenceCount {
+class ConstDataMap : public utility::VirtualBase {
 public:
-	typedef std::map< std::string, utility::pointer::ReferenceCountCOP > NamedConstObjectMap;
+	typedef std::map< std::string, utility::VirtualBaseCOP > NamedConstObjectMap;
 	typedef std::map< std::string, NamedConstObjectMap > CategorizedConstObjectMap;
 	typedef CategorizedConstObjectMap::iterator iterator;
 	typedef CategorizedConstObjectMap::const_iterator const_iterator;
@@ -79,7 +79,7 @@ public:
 	void add(
 		std::string const & type,
 		std::string const & name,
-		utility::pointer::ReferenceCountCOP const op
+		utility::VirtualBaseCOP const op
 	);
 
 	/// @brief are there any objects in the outer map with the given category?
@@ -116,7 +116,7 @@ public:
 };
 
 /// @details a template utility function to grab any type of object from the
-/// Data_map. Downcasts the ReferenceCount object in map to the template data
+/// Data_map. Downcasts the VirtualBase object in map to the template data
 /// type using dynamic_cast to ensure type-correctness
 /// @throws Throws a utility::excn::EXCN_Msg_Exception in the event that
 /// the requested object cannot be found in the ConstDataMap.

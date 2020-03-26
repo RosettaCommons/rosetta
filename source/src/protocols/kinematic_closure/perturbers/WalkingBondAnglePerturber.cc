@@ -32,7 +32,7 @@ void WalkingBondAnglePerturber::perturb_subset(Pose const &, IndexList const & r
 	using numeric::random::gaussian;
 	using numeric::conversions::DEGREES;
 
-	for ( Size const residue : residues ) {
+	for ( core::Size const residue : residues ) {
 		Real angle = problem->n_ca_c(residue, DEGREES) + magnitude_ * gaussian();
 		problem->perturb_n_ca_c(residue, angle, DEGREES);
 	}

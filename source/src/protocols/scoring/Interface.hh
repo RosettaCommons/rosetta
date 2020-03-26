@@ -30,7 +30,7 @@
 
 // Utility headers
 #include <ObjexxFCL/FArray1D.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -44,7 +44,7 @@ namespace protocols {
 namespace scoring {
 
 class
-	Interface : public utility::pointer::ReferenceCount {
+	Interface : public utility::VirtualBase {
 public:
 
 	typedef core::pack::task::PackerTaskOP PackerTaskOP;
@@ -60,7 +60,7 @@ public:
 
 	// constructor with arguments
 	Interface(
-		Size const jump_number_in
+		core::Size const jump_number_in
 	) : jump_number_( jump_number_in )
 	{
 		// set the default distance to 8 Angstrom (for cendist)
@@ -80,7 +80,7 @@ public:
 		use_input_partners_ = true;
 	}
 
-	void jump( Size const jump_number);
+	void jump( core::Size const jump_number);
 
 	core::Size jump_id() const {
 		return jump_number_;
@@ -101,11 +101,11 @@ public:
 
 	bool is_interface( core::conformation::Residue const & rsd ) const;// { return is_interface_( rsd.seqpos() ); }
 
-	bool is_interface( Size const position ) const;// { return is_interface_(position); }
+	bool is_interface( core::Size const position ) const;// { return is_interface_(position); }
 
 	/// @brief returns the total number of residues on both sides of the interface for
 	/// a given jump
-	Size interface_nres();
+	core::Size interface_nres();
 
 	/// @brief returns whether the rsd1 and rsd2 are considered a contact pair
 	/// based on contact_list_ array
@@ -128,7 +128,7 @@ public:
 	/// Both lists are sorted by residue number, so the indices of one list have
 	/// no relationship to the other list.
 	/// @todo rename this to something more logical & give it a better return type
-	/// @todo make a function that returns a vector1<pair<Size,Size> > containing
+	/// @todo make a function that returns a vector1<pair<core::Size,Size> > containing
 	/// all interacting pairs. This would be easy to implement.
 	utility::vector1 < utility::vector1_int > pair_list() { return pair_list_; }
 
@@ -140,7 +140,7 @@ public:
 	utility::vector1 < utility::vector1_size > contact_list() { return contact_list_; }
 
 private:
-	Size jump_number_;
+	core::Size jump_number_;
 	Real distance_squared_;
 	ObjexxFCL::FArray1D_bool partner_;
 	ObjexxFCL::FArray1D_bool is_interface_;

@@ -166,7 +166,7 @@ MPIFileBufJobDistributor::go( protocols::moves::MoverOP mover ) {
 ///the NSDL if a slave node finished its allocated job after the head node had finished handing out all of the jobs and
 ///exiting (a very likely scenario), it would wait indefinitely for a response from the head node when requesting a new
 ///job id.
-void MPIFileBufJobDistributor::send_job_to_slave( Size MPI_ONLY(slave_rank) ) {
+void MPIFileBufJobDistributor::send_job_to_slave( core::Size MPI_ONLY(slave_rank) ) {
 #ifdef USEMPI
 	int buf[ 2 ];
 	if ( rank_ == master_rank_ ) {
@@ -188,7 +188,7 @@ void MPIFileBufJobDistributor::send_job_to_slave( Size MPI_ONLY(slave_rank) ) {
 /// @details messages are received constantly by Master JobDistributor and then the virtual process_message() method
 /// is used to assign some action to each message ... this allows child-classes to answer to more messages or change behaviour of already known messages
 bool
-MPIFileBufJobDistributor::process_message( Size msg_tag, Size slave_rank, Size slave_job_id, Size slave_batch_id, core::Real runtime ) {
+MPIFileBufJobDistributor::process_message( core::Size msg_tag, core::Size slave_rank, core::Size slave_job_id, core::Size slave_batch_id, core::Real runtime ) {
 	switch ( msg_tag ) {
 	case NEW_JOB_ID :  //slave requested a new job id ... send new job or spin-down signal
 		tr.Debug << "Master Node: Sending new job id " << current_job_id() << " " << "job: " << current_job()->input_tag() << " to node " << slave_rank << std::endl;
@@ -242,18 +242,18 @@ void MPIFileBufJobDistributor::mark_job_as_bad( core::Size job_id, core::Size ba
 
 /// @brief receive message of certain type -- and ignore it ... sometimes needed in communication protocol
 void
-MPIFileBufJobDistributor::eat_signal( Size msg_tag_in, int MPI_ONLY( source ) ) {
+MPIFileBufJobDistributor::eat_signal( core::Size msg_tag_in, int MPI_ONLY( source ) ) {
 #ifdef USEMPI
-	Size const mpi_size( 4 );
+	core::Size const mpi_size( 4 );
 	int mpi_buf[ mpi_size ];
 	while( true )  {
 		MPI_Status status;
 		MPI_Recv( &mpi_buf, mpi_size, MPI_INT, source, MPI_JOB_DIST_TAG, MPI_COMM_WORLD, &status);
-		Size slave_rank( status.MPI_SOURCE );
-		Size const msg_tag ( mpi_buf[ 0 ] );
-		Size const slave_job_id( mpi_buf[ 1 ] );
-		Size const slave_batch_id( mpi_buf[ 2 ]);
-		Size const runtime( mpi_buf[ 3 ] );
+		core::Size slave_rank( status.MPI_SOURCE );
+		core::Size const msg_tag ( mpi_buf[ 0 ] );
+		core::Size const slave_job_id( mpi_buf[ 1 ] );
+		core::Size const slave_batch_id( mpi_buf[ 2 ]);
+		core::Size const runtime( mpi_buf[ 3 ] );
 		if ( msg_tag_in != msg_tag ) {
 			tr.Debug <<" when trying to eat signal " << msg_tag_in <<" I received " << msg_tag << " going to process this now" << std::endl;
 			process_message( msg_tag, slave_rank, slave_job_id, slave_batch_id, runtime );
@@ -262,7 +262,7 @@ MPIFileBufJobDistributor::eat_signal( Size msg_tag_in, int MPI_ONLY( source ) ) 
 		}
 	}
 #else
-	//Size const msg_tag ( 0 );
+	//core::Size const msg_tag ( 0 );
 #endif
 
 	tr.Debug << "eating expected signal " << msg_tag_in << std::endl;
@@ -276,7 +276,7 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 #ifdef USEMPI
 	runtime_assert( rank_ == master_rank_ );
 
-	Size const mpi_size( 4 );
+	core::Size const mpi_size( 4 );
 	int mpi_buf[ mpi_size ];
 
 	MPI_Status status;
@@ -318,10 +318,10 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 			utility_exit_with_message("quick exit from job-distributor due to flag jd2::mpi_nowait_for_remaining_jobs and timeout of "+
 				utility::to_string( MPI_Wtime()-timeout )+" seconds\n"+"increase time-out by using -jd2:mpi_timeout_factor" );
 		}
-		Size slave_rank( status.MPI_SOURCE );
-		Size const msg_tag ( mpi_buf[ 0 ] );
-		Size const slave_job_id( mpi_buf[ 1 ] );
-		Size const slave_batch_id( mpi_buf[ 2 ]);
+		core::Size slave_rank( status.MPI_SOURCE );
+		core::Size const msg_tag ( mpi_buf[ 0 ] );
+		core::Size const slave_job_id( mpi_buf[ 1 ] );
+		core::Size const slave_batch_id( mpi_buf[ 2 ]);
 		Real const runtime( mpi_buf[ 3 ]);
 		tr.Debug << "Master Node: Received message from  " << slave_rank << " with tag "
 						 << msg_tag << " slave_jobid " << slave_job_id << " slave batchid " << slave_batch_id << std::endl;
@@ -478,10 +478,10 @@ MPIFileBufJobDistributor::master_remove_bad_inputs_from_job_list()
 }
 
 void
-MPIFileBufJobDistributor::slave_to_master( Size MPI_ONLY(tag) ) {
+MPIFileBufJobDistributor::slave_to_master( core::Size MPI_ONLY(tag) ) {
 #ifdef USEMPI
 	runtime_assert( rank_ != master_rank_ );
-	Size const mpi_size( 4 );
+	core::Size const mpi_size( 4 );
 	int mpi_buf[ mpi_size ];
 	mpi_buf[ 0 ] = tag;
 	mpi_buf[ 1 ] = slave_current_job_id_;

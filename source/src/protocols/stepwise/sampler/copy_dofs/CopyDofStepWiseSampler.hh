@@ -36,12 +36,12 @@ public:
 
 	//constructor
 	CopyDofStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
-		std::map< Size, Size > const & res_map,
+		std::map< core::Size, core::Size > const & res_map,
 		core::pose::Pose const & starting_pose );
 
 	//constructor
 	CopyDofStepWiseSampler( utility::vector1< core::pose::PoseOP > const & pose_list,
-		std::map< Size, Size > const & res_map );
+		std::map< core::Size, core::Size > const & res_map );
 
 
 public:

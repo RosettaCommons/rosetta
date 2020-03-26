@@ -64,7 +64,7 @@ PoseMetricContainer::PoseMetricContainer() :
 /// @brief copy constructor
 /// @warning observation of subject Pose in src not duplicated
 PoseMetricContainer::PoseMetricContainer( PoseMetricContainer const & src ) :
-	ReferenceCount(),
+	VirtualBase(),
 	pose_ptr_( nullptr ), // this is correct behavior
 	structure_is_outdated_( src.structure_is_outdated_ ),
 	energies_are_outdated_( src.energies_are_outdated_ )

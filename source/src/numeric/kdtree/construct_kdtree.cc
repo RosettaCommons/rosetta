@@ -19,8 +19,8 @@
 #include <numeric/kdtree/HyperRectangle.hh>
 #include <numeric/kdtree/HyperRectangle.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/VirtualBase.hh>
+#include <utility/VirtualBase.fwd.hh>
 
 #include <algorithm>
 

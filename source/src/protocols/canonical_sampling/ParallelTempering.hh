@@ -124,7 +124,7 @@ protected:
 private:
 	void deallocate_buffers();
 	void allocate_buffers( core::Size );
-	void setup_exchange_schedule( Size nlevels );
+	void setup_exchange_schedule( core::Size nlevels );
 	void shuffle_temperatures( const core::Real *energies );
 
 private:

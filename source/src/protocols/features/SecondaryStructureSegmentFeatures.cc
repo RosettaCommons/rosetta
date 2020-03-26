@@ -177,7 +177,7 @@ SecondaryStructureSegmentFeatures::report_features(
 	core::Size segment_end;
 
 	// used to determine if segement should be reported based on relevant_residues
-	utility::vector1<Size> current_residues;
+	utility::vector1<core::Size> current_residues;
 
 	core::Size prev_resNum(0);
 	core::Size resNum(0);

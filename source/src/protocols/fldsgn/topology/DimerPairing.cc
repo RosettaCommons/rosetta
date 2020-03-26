@@ -29,15 +29,15 @@ DimerPairing::~DimerPairing() = default;
 
 /// @brief
 DimerPairing::DimerPairing(
-	Size const res1,
-	Size const res2,
+	core::Size const res1,
+	core::Size const res2,
 	Real const dist,
 	Real const phi,
 	Real const theta,
 	Real const sigma,
 	Real const dp,
-	Size const sign1,
-	Size const sign2,
+	core::Size const sign1,
+	core::Size const sign2,
 	Real const score
 ): res1_( res1 ),
 	res2_( res2 ),
@@ -111,15 +111,15 @@ DimerPairings::finalize( SS_Info2 const & ss_info )
 		DimerPairing const & pairing( **it );
 		if ( !pairing.valid() ) continue;
 
-		Size const res1( pairing.res1() );
-		Size const res2( pairing.res2() );
+		core::Size const res1( pairing.res1() );
+		core::Size const res2( pairing.res2() );
 		runtime_assert( res2 > res1 );
 
-		Size const sign1( pairing.sign1() );
-		Size const sign2( pairing.sign2() );
+		core::Size const sign1( pairing.sign1() );
+		core::Size const sign2( pairing.sign2() );
 
-		Size const strand1( ss_info.strand_id( pairing.res1() ) );
-		Size const strand2( ss_info.strand_id( pairing.res2() ) );
+		core::Size const strand1( ss_info.strand_id( pairing.res1() ) );
+		core::Size const strand2( ss_info.strand_id( pairing.res2() ) );
 		runtime_assert( strand2 > strand1 );
 
 		auto it2( it );
@@ -129,8 +129,8 @@ DimerPairings::finalize( SS_Info2 const & ss_info )
 			DimerPairing & other( **it2 );
 			if ( !other.valid() ) continue;
 
-			Size const other_strand1( ss_info.strand_id( other.res1() ) );
-			Size const other_strand2( ss_info.strand_id( other.res2() ) );
+			core::Size const other_strand1( ss_info.strand_id( other.res1() ) );
+			core::Size const other_strand2( ss_info.strand_id( other.res2() ) );
 
 			//car if dimer1 and ss2 interact favorably and ss2 and dimer2 are in different strands
 			//car and ss2 is on the same side of dimer1 as dimer2 is... then mark this pair as dissallowed

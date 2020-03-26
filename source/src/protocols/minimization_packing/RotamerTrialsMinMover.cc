@@ -290,7 +290,7 @@ EnergyCutRotamerTrialsMinMover::setup_energycut_task(
 	using namespace core;
 	using core::scoring::total_score;
 
-	//Size count_fixed( 0 ), count_repacked( 0 );
+	//core::Size count_fixed( 0 ), count_repacked( 0 );
 
 	task_in.restrict_to_repacking();
 

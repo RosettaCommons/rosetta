@@ -128,20 +128,20 @@ FragQualCalculator::ratio_cutoff( Real const & val )
 
 /// @brief
 void
-FragQualCalculator::set_region( Size const val1, Size const val2 )
+FragQualCalculator::set_region( core::Size const val1, core::Size const val2 )
 {
 	begin_ = core::pose::make_rid_posenum( val1 );
 	end_ = core::pose::make_rid_posenum( val2 );
 }
 
 void
-FragQualCalculator::begin( Size const begin )
+FragQualCalculator::begin( core::Size const begin )
 {
 	begin_ = core::pose::make_rid_posenum( begin );
 }
 
 void
-FragQualCalculator::end( Size const end )
+FragQualCalculator::end( core::Size const end )
 {
 	end_ = core::pose::make_rid_posenum( end );
 }
@@ -201,7 +201,7 @@ FragQualCalculator::recompute( Pose const & pose )
 	coverage_ = 0;
 
 	goodfrags_.resize( pose.size() );
-	for ( Size i=1; i<=pose.size(); i++ ) {
+	for ( core::Size i=1; i<=pose.size(); i++ ) {
 		goodfrags_[ i ] = 0;
 	}
 	utility::vector1< bool > frag_region( pose.size(), false );
@@ -213,13 +213,13 @@ FragQualCalculator::recompute( Pose const & pose )
 
 	for ( ConstFrameIterator frame = frag_->begin(); frame != frag_->end(); ++frame ) {
 
-		Size const start ( frame->start() );
+		core::Size const start ( frame->start() );
 		runtime_assert( start <= pose.size() );
 
 		if ( begin > start || end < start ) continue;
 		frag_region[ start ] = true;
 
-		for ( Size i=1; i<=frame->nr_frags(); i++ ) {
+		for ( core::Size i=1; i<=frame->nr_frags(); i++ ) {
 			// insert fragment
 			frame->apply( i, test_pose );
 			// calc rmsd
@@ -238,8 +238,8 @@ FragQualCalculator::recompute( Pose const & pose )
 	} // ConstFrameIterator
 
 	// calc coverage
-	Size count( 0 );
-	for ( Size i=1; i<=pose.size(); i++ ) {
+	core::Size count( 0 );
+	for ( core::Size i=1; i<=pose.size(); i++ ) {
 
 		if ( frag_region[ i ] ) {
 			count ++;
@@ -301,7 +301,7 @@ protocols::pose_metric_calculators::FragQualCalculator::save( Archive & arc ) co
 	arc( CEREAL_NVP( ratio_cutoff_goodfrag_ ) ); // Real
 	arc( CEREAL_NVP( total_goodfrags_ ) ); // Real
 	arc( CEREAL_NVP( coverage_ ) ); // Real
-	arc( CEREAL_NVP( goodfrags_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( goodfrags_ ) ); // utility::vector1<core::Size>
 	arc( CEREAL_NVP( frag_ ) ); // FragSetOP
 	arc( CEREAL_NVP( begin_ ) ); // ResidueIndexDescriptionCOP
 	arc( CEREAL_NVP( end_ ) ); // ResidueIndexDescriptionCOP
@@ -317,12 +317,12 @@ protocols::pose_metric_calculators::FragQualCalculator::load( Archive & arc ) {
 	arc( ratio_cutoff_goodfrag_ ); // Real
 	arc( total_goodfrags_ ); // Real
 	arc( coverage_ ); // Real
-	arc( goodfrags_ ); // utility::vector1<Size>
+	arc( goodfrags_ ); // utility::vector1<core::Size>
 	arc( frag_ ); // FragSetOP
 	core::pose::ResidueIndexDescriptionOP begin, end;
-	arc( begin ); // Size
+	arc( begin ); // core::Size
 	begin_ = begin;
-	arc( end ); // Size
+	arc( end ); // core::Size
 	end_ = end;
 	arc( verbose_ ); // _Bool
 }

@@ -44,7 +44,7 @@ namespace protein {
 //Constructor
 ProteinBetaAntiParallelStepWiseSampler::ProteinBetaAntiParallelStepWiseSampler(
 	core::pose::Pose const & pose,
-	Size const moving_residue ):
+	core::Size const moving_residue ):
 	JumpStepWiseSampler() //generic
 {
 	which_jump_ = get_antiparallel_beta_jumps( pose, moving_residue );
@@ -55,19 +55,19 @@ ProteinBetaAntiParallelStepWiseSampler::~ProteinBetaAntiParallelStepWiseSampler(
 
 /////////////////////////////////////////////////////////////////////////////////////
 Size
-ProteinBetaAntiParallelStepWiseSampler::get_antiparallel_beta_jumps( pose::Pose const & pose, Size const sample_res ){
+ProteinBetaAntiParallelStepWiseSampler::get_antiparallel_beta_jumps( pose::Pose const & pose, core::Size const sample_res ){
 
 	using namespace core::kinematics;
 	using ObjexxFCL::strip_whitespace;
 
-	Size which_jump = 0;
+	core::Size which_jump = 0;
 	jumps_.clear();
 
 	// Which jump connects into the new residue ("sample_res")? We're going to figure out nice beta-pairing jumps to it.
 	bool downstream( false );
 	FoldTree const & f( pose.fold_tree() );
 
-	for ( Size i = 1; i <= f.num_jump(); i++ ) {
+	for ( core::Size i = 1; i <= f.num_jump(); i++ ) {
 		if ( f.upstream_jump_residue( i )   ==  sample_res  ) {
 			downstream = true;
 			which_jump = i;  break;

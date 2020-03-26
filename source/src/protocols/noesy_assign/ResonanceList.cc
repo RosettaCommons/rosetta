@@ -39,7 +39,7 @@
 // #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 // #include <utility/vector1.fwd.hh>
-// #include <utility/pointer/ReferenceCount.hh>
+// #include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -334,9 +334,9 @@ void ResonanceList::write_talos_format( std::ostream& os, bool backbone_only ) c
 	}
 
 	//write sequence section
-	Size const TALOS_SEQ_LINE_LEN( 50 );
-	Size const TALOS_SEQ_BLCK_SIZE( 10 );
-	for ( Size ct=0; ct<sequence_.size(); ct++ ) {
+	core::Size const TALOS_SEQ_LINE_LEN( 50 );
+	core::Size const TALOS_SEQ_BLCK_SIZE( 10 );
+	for ( core::Size ct=0; ct<sequence_.size(); ct++ ) {
 		if ( ct % TALOS_SEQ_LINE_LEN == 0 && ct > 1 ) os <<"\n";
 		if ( ct % TALOS_SEQ_LINE_LEN == 0 ) os << "DATA SEQUENCE";
 		if ( ct % TALOS_SEQ_BLCK_SIZE == 0 ) os << " ";
@@ -479,7 +479,7 @@ std::string label_atom_name( std::string const& proton_name, core::chemical::AA 
 	if ( proton_name.substr(0,2) == "HA" ) return "CA";
 	if ( proton_name.substr(0,2) == "HB" ) return "CB";
 	if ( aa != aa_asn ) { //don't make HD21 -> CD substition for ASN
-		Size len=proton_name.size()-2;
+		core::Size len=proton_name.size()-2;
 		if ( proton_name.substr(0,2) == "HG" || proton_name.substr(0,2)=="HD" || proton_name.substr(0,2)=="HE" ) return "C"+proton_name.substr(1,len < 1 ? 1 : len );
 	}
 	if ( tr.Trace.visible() ) {
@@ -497,7 +497,7 @@ void ResonanceList::update_bond_connections() {
 	for ( auto it = begin(); it != end(); ++it ) {
 		if ( !it->second->is_proton() ) continue; //do this from the proton
 		ResonanceOP proton( it->second );
-		Size resid( it->second->atom().rsd() );
+		core::Size resid( it->second->atom().rsd() );
 		try {
 			id::NamedAtomID atomID( label_atom_name( ObjexxFCL::stripped_whitespace(proton->atom().atom()), aa_from_resid( resid ) ), resid );
 			Resonance const& label_reso( (*this)[ atomID ] ); //use this operator to have full-checking

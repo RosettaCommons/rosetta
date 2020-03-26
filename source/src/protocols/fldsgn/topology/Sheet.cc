@@ -75,7 +75,7 @@ Sheet::Sheet( VecSize const & order_strands, VecInt const & orient_strands, bool
 
 /// @brief copy constructor
 Sheet::Sheet( Sheet const & s ):
-	ReferenceCount(),
+	VirtualBase(),
 	num_strands_( s.num_strands_ ),
 	is_barrel_( s.is_barrel_ ),
 	order_strands_( s.order_strands_ ),
@@ -92,8 +92,8 @@ void
 Sheet::initialize()
 {
 	num_strands_ = order_strands_.size();
-	for ( Size i=1; i<=order_strands_.size(); i++ ) {
-		strand_order_.insert( std::map< Size, Size >::value_type( order_strands_[i], i ) );
+	for ( core::Size i=1; i<=order_strands_.size(); i++ ) {
+		strand_order_.insert( std::map< core::Size, core::Size >::value_type( order_strands_[i], i ) );
 	}
 }
 
@@ -104,10 +104,10 @@ Sheet::~Sheet()= default;
 /// @brief return strand pairing
 std::ostream & operator<<( std::ostream & out, const Sheet &s )
 {
-	utility::vector1<Size> const order( s.order_strands() );
+	utility::vector1<core::Size> const order( s.order_strands() );
 	utility::vector1<Real> const orient( s.orient_strands() );
 
-	for ( Size i=1; i<= order.size(); i++ ) {
+	for ( core::Size i=1; i<= order.size(); i++ ) {
 		out << "#Strand " << i << ": " << order[ i ] << "," << orient[ i ] << std::endl;;
 	}
 	return out;
@@ -115,9 +115,9 @@ std::ostream & operator<<( std::ostream & out, const Sheet &s )
 
 /// @brief whether the given strand number belongs to this sheet or not
 bool
-Sheet::is_member( Size const s )
+Sheet::is_member( core::Size const s )
 {
-	for ( utility::vector1< Size >::const_iterator iter = order_strands_.begin(),
+	for ( utility::vector1< core::Size >::const_iterator iter = order_strands_.begin(),
 			iter_end = order_strands_.end(); iter != iter_end; ++iter ) {
 		if ( s == *iter ) {
 			return true;
@@ -138,17 +138,17 @@ Sheet::calc_sasa_bothsides( Pose const & pose, SS_Info2_COP const ssinfo, Real p
 	core::id::AtomID_Map< bool > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, false );
 	protocols::fldsgn::topology::Strands const strands( ssinfo->strands() );
-	for ( Size ii=1; ii<=order_strands_.size(); ++ii ) {
-		Size const st( order_strands_[ ii ] );
+	for ( core::Size ii=1; ii<=order_strands_.size(); ++ii ) {
+		core::Size const st( order_strands_[ ii ] );
 
-		Size begin( strands[ st ]->begin() );
-		Size end( strands[ st ]->end() );
+		core::Size begin( strands[ st ]->begin() );
+		core::Size end( strands[ st ]->end() );
 
 		if ( begin == 1 ) begin = 2;
 		if ( end == pose.size() ) end = pose.size() - 1;
 
-		for ( Size ir=begin-1; ir<=end+1; ir++ ) {
-			for ( Size j = 1; j<=5; ++j ) {
+		for ( core::Size ir=begin-1; ir<=end+1; ir++ ) {
+			for ( core::Size j = 1; j<=5; ++j ) {
 				core::id::AtomID atom( j, ir );
 				atom_map.set( atom, true );
 			}
@@ -160,7 +160,7 @@ Sheet::calc_sasa_bothsides( Pose const & pose, SS_Info2_COP const ssinfo, Real p
 	utility::vector1< Real > rsd_sasa;
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, pore_radius, false, atom_map );
 
-	for ( Size iaa=2; iaa<=pose.size()-1; iaa++ ) {
+	for ( core::Size iaa=2; iaa<=pose.size()-1; iaa++ ) {
 
 		if ( ca_cb_orient( iaa ) == 1 ) {
 			surfaces[ 1 ] += rsd_sasa[ iaa ];
@@ -191,7 +191,7 @@ Sheet::calc_geometry( SS_Info2_COP const ssinfo )
 
 
 	Vector v2( strands[ order_strands_[ 1 ] ]->orient() );
-	for ( Size ii=2; ii<=num_strands_; ii++ ) {
+	for ( core::Size ii=2; ii<=num_strands_; ii++ ) {
 		Real sign( 1.0 );
 		if ( orient_strands_[ 1 ] != orient_strands_[ ii ] ) {
 			sign = - 1.0;
@@ -202,31 +202,31 @@ Sheet::calc_geometry( SS_Info2_COP const ssinfo )
 	sheet_plane_ = v1.cross( v2.normalized() );
 
 	sheet_center_.clear();
-	for ( Size ii=1; ii<=num_strands_; ii++ ) {
+	for ( core::Size ii=1; ii<=num_strands_; ii++ ) {
 		sheet_center_ += strands[ ii ]->mid_pos();
 	}
 	sheet_center_ = sheet_center_/Real( num_strands_ );
 
 	protocols::fldsgn::topology::BB_Pos const bb_pos( ssinfo->bb_pos() );
 	ca_cb_orients_.resize( bb_pos.size() );
-	for ( Size ii=1; ii<=bb_pos.size(); ii++ ) {
+	for ( core::Size ii=1; ii<=bb_pos.size(); ii++ ) {
 		ca_cb_orients_[ ii ] = 0;
 	}
 
 	Real half_pi = numeric::NumericTraits<Real>::pi()/2.0;
-	utility::vector1< Size > anchor;
+	utility::vector1< core::Size > anchor;
 	anchor.resize( strands.size(), 0 );
-	for ( Size ii=1; ii<=order_strands_.size(); ii++ ) {
+	for ( core::Size ii=1; ii<=order_strands_.size(); ii++ ) {
 
-		Size const st( order_strands_[ ii ] );
-		Size const begin( strands[ st ]->begin() );
-		Size const end( strands[ st ]->end() );
+		core::Size const st( order_strands_[ ii ] );
+		core::Size const begin( strands[ st ]->begin() );
+		core::Size const end( strands[ st ]->end() );
 		anchor[ st ] = begin;
 
 		Vector cacb = bb_pos.CB( begin ) - bb_pos.CA( begin );
 		Real max_angle = fabs( half_pi - angle_of( sheet_plane_, cacb ) );
 
-		for ( Size jj=begin+1; jj<=end; jj++ ) {
+		for ( core::Size jj=begin+1; jj<=end; jj++ ) {
 			cacb = bb_pos.CB( jj ) - bb_pos.CA( jj );
 			Real angle = fabs( half_pi - angle_of( sheet_plane_, cacb ) );
 			if ( max_angle < angle ) {
@@ -237,11 +237,11 @@ Sheet::calc_geometry( SS_Info2_COP const ssinfo )
 	}
 
 
-	for ( Size ii=1; ii<=order_strands_.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=order_strands_.size(); ++ii ) {
 
-		Size const st( order_strands_[ ii ] );
-		Size const begin( strands[ st ]->begin() );
-		Size const end( strands[ st ]->end() );
+		core::Size const st( order_strands_[ ii ] );
+		core::Size const begin( strands[ st ]->begin() );
+		core::Size const end( strands[ st ]->end() );
 
 		Vector const cacb = bb_pos.CB( anchor[ st ] ) - bb_pos.CA( anchor[ st ] );
 		if ( cacb.dot( sheet_plane_ ) > 0 ) {
@@ -250,7 +250,7 @@ Sheet::calc_geometry( SS_Info2_COP const ssinfo )
 			ca_cb_orients_[ anchor[ st ] ] = -1;
 		}
 
-		for ( Size jj=anchor[ st ]; jj>=begin+1; --jj ) {
+		for ( core::Size jj=anchor[ st ]; jj>=begin+1; --jj ) {
 			Real dot = ( bb_pos.CB( jj ) - bb_pos.CA( jj ) ).dot( bb_pos.CB( jj-1 ) - bb_pos.CA( jj-1 ) );
 			if ( dot > 0 ) {
 				ca_cb_orients_[ jj-1 ] = ca_cb_orients_[ jj ];
@@ -259,7 +259,7 @@ Sheet::calc_geometry( SS_Info2_COP const ssinfo )
 			}
 		}
 
-		for ( Size jj=anchor[ st ]; jj<=end-1; ++jj ) {
+		for ( core::Size jj=anchor[ st ]; jj<=end-1; ++jj ) {
 			Real dot = ( bb_pos.CB( jj ) - bb_pos.CA( jj ) ).dot( bb_pos.CB( jj+1 ) - bb_pos.CA( jj+1 ) );
 			if ( dot > 0 ) {
 				ca_cb_orients_[ jj+1 ] = ca_cb_orients_[ jj ];
@@ -271,11 +271,11 @@ Sheet::calc_geometry( SS_Info2_COP const ssinfo )
 	}
 
 	// for debug
-	// for( Size ii=1; ii<=order_strands_.size(); ++ii ) {
-	// Size const st( order_strands_[ ii ] );
-	// Size const begin( strands[ st ]->begin() );
-	// Size const end( strands[ st ]->end() );
-	// for( Size jj=begin; jj<=end; jj++ ) {
+	// for( core::Size ii=1; ii<=order_strands_.size(); ++ii ) {
+	// core::Size const st( order_strands_[ ii ] );
+	// core::Size const begin( strands[ st ]->begin() );
+	// core::Size const end( strands[ st ]->end() );
+	// for( core::Size jj=begin; jj<=end; jj++ ) {
 	//  std::cout << jj << " " << ca_cb_orients_[ jj ] << std::endl;
 	// }
 	//}
@@ -313,7 +313,7 @@ SheetSet::SheetSet( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spairse
 
 /// @brief copy constructor
 SheetSet::SheetSet( SheetSet const & s ) :
-	ReferenceCount(),
+	VirtualBase(),
 	sheets_( s.sheets_ )
 {}
 
@@ -321,7 +321,7 @@ SheetSet::SheetSet( SheetSet const & s ) :
 std::ostream & operator<<( std::ostream & out, const SheetSet &s )
 {
 	out << "#### Sheet Info " << std::endl;
-	for ( Size i=1; i<=s.num_sheets() ; i++ ) {
+	for ( core::Size i=1; i<=s.num_sheets() ; i++ ) {
 		SheetCOP sop ( s.sheet( i ) );
 		if ( sop->is_barrel() ) {
 			out << "## Barrel " << i << ":" << std::endl;
@@ -348,7 +348,7 @@ void SheetSet::clear()
 
 /// @brief
 SheetOP
-SheetSet::sheet( Size const s ) const
+SheetSet::sheet( core::Size const s ) const
 {
 	runtime_assert( s <= sheets_.size() );
 	return sheets_[ s ];
@@ -356,7 +356,7 @@ SheetSet::sheet( Size const s ) const
 
 /// @brief return a sheet number given a strand number
 Size
-SheetSet::which_sheet( Size const s ) const
+SheetSet::which_sheet( core::Size const s ) const
 {
 
 	if ( s == 0 ) return 0;
@@ -374,7 +374,7 @@ SheetSet::spairset() const
 void
 SheetSet::set_sheet_number() const
 {
-	for ( Size i=1; i<=sheets_.size(); i++ ) {
+	for ( core::Size i=1; i<=sheets_.size(); i++ ) {
 		SheetCOP const sheet ( sheets_[ i ] );
 		VecSize const & order ( sheet->order_strands() );
 		for ( unsigned long it : order ) {
@@ -387,7 +387,7 @@ SheetSet::set_sheet_number() const
 void
 SheetSet::calc_geometry( SS_Info2_COP const ssinfo )
 {
-	for ( Size i=1; i<=sheets_.size(); i++ ) {
+	for ( core::Size i=1; i<=sheets_.size(); i++ ) {
 		sheets_[ i ]->calc_geometry( ssinfo );
 	}
 }
@@ -401,8 +401,8 @@ SheetSet::initialize( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spair
 	using protocols::fldsgn::topology::StrandPairingCOP;
 
 	// initialize sheet_number_
-	for ( Size i=1; i<=ssinfo->strands().size(); i++ ) {
-		sheet_number_.insert( std::map< Size, Size >::value_type( i, 0 ) );
+	for ( core::Size i=1; i<=ssinfo->strands().size(); i++ ) {
+		sheet_number_.insert( std::map< core::Size, core::Size >::value_type( i, 0 ) );
 	}
 
 	// do nothing if strand pairs < 2
@@ -419,7 +419,7 @@ SheetSet::initialize( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spair
 	StrandPairings spairs = spairset_.strand_pairings();
 
 	// number of strands included in spairset
-	// Size num_strands = spairset.num_strands();
+	// core::Size num_strands = spairset.num_strands();
 
 	// set neighbor strands and sheet_set
 	DisjointSets sheet_set( ssinfo->strands().size() );
@@ -429,7 +429,7 @@ SheetSet::initialize( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spair
 	}
 
 	// calc order of strands
-	std::map< Size, VecSize > sset =  sheet_set.sets();
+	std::map< core::Size, VecSize > sset =  sheet_set.sets();
 	auto it = sset.begin(), end = sset.end();
 	while ( it != end ) {
 
@@ -443,7 +443,7 @@ SheetSet::initialize( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spair
 		}
 
 		for ( VecSize::const_iterator itt = list_strands.begin(); itt != list_strands.end(); ++itt ) {
-			Size s( *itt );
+			core::Size s( *itt );
 			if ( spairset_.neighbor_strands( s ).size() == 1 ) {
 				order_strands.push_back( s );
 				ibarrel = false;
@@ -473,11 +473,11 @@ SheetSet::initialize( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spair
 		}
 
 
-		for ( Size i=2; i<= list_strands.size()-1; i++ ) {
-			Size s1 = order_strands[ i ];
+		for ( core::Size i=2; i<= list_strands.size()-1; i++ ) {
+			core::Size s1 = order_strands[ i ];
 			VecSize const & neighbor( spairset_.neighbor_strands( s1 ) );
 
-			for ( Size j=1; j<=neighbor.size(); j++ ) {
+			for ( core::Size j=1; j<=neighbor.size(); j++ ) {
 				if ( neighbor[ j ] != order_strands[ i-1 ] ) {
 					order_strands.insert( order_strands.begin() + i, neighbor[j] );
 				}
@@ -487,9 +487,9 @@ SheetSet::initialize( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spair
 		// set orient of strands in sheet
 		VecInt orient_strands; // Sergey: was declared as 'VecReal' seems to be a typo, converting to VecInt to fix wanrning
 		orient_strands.push_back( 1 );
-		for ( Size i=1; i<=order_strands.size()-1; i++ ) {
-			Size s1( order_strands[ i ] );
-			Size s2( order_strands[ i+1 ] );
+		for ( core::Size i=1; i<=order_strands.size()-1; i++ ) {
+			core::Size s1( order_strands[ i ] );
+			core::Size s2( order_strands[ i+1 ] );
 			StrandPairingCOP const spairop( spairset_.strand_pairing( s1, s2 ) );
 
 			if ( spairop->orient() == 'P' ) {

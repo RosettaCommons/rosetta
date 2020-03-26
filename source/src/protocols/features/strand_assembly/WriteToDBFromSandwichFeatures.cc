@@ -38,9 +38,9 @@ change_sheet_id_if_possible( // combine_sheets_if_possible
 	Real max_CA_CA_dis_,
 	Real min_C_O_N_angle_) {
 	bool sheet_id_changed = false; // don't repeat change_sheet_id_if_possible
-	Size max_sheet_id = get_max_sheet_id(struct_id, db_session);
-	for ( Size i=1; i<=max_sheet_id-1; ++i ) {
-		for ( Size j=i+1; j<=max_sheet_id; ++j ) {
+	core::Size max_sheet_id = get_max_sheet_id(struct_id, db_session);
+	for ( core::Size i=1; i<=max_sheet_id-1; ++i ) {
+		for ( core::Size j=i+1; j<=max_sheet_id; ++j ) {
 			bool sheets_can_be_combined = see_whether_sheets_can_be_combined(
 				struct_id,
 				db_session,
@@ -78,7 +78,7 @@ Size
 delete_this_sw_can_by_sh_id_from_sw_by_comp(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	TR << "delete_this_sw_can_by_sh_id_from_sw_by_comp with sheet_id: " << sw_can_by_sh_id << endl;
 	string select_string =
@@ -175,7 +175,7 @@ prepare_WriteToDB_sandwich(
 	utility::vector1<SandwichFragment> all_strands;
 	while ( res.next() )
 			{
-		Size sw_can_by_sh_id, sheet_id, sandwich_bs_id, residue_begin, residue_end;
+		core::Size sw_can_by_sh_id, sheet_id, sandwich_bs_id, residue_begin, residue_end;
 		res >> sw_can_by_sh_id >> sheet_id >> sandwich_bs_id >> residue_begin >> residue_end;
 		all_strands.push_back(SandwichFragment(sw_can_by_sh_id, sheet_id, sandwich_bs_id, residue_begin, residue_end));
 	}
@@ -189,12 +189,12 @@ WriteToDB_AA_to_terminal_loops (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	Size sandwich_PK_id_counter,
-	Size sw_can_by_sh_id,
+	core::Size sandwich_PK_id_counter,
+	core::Size sw_can_by_sh_id,
 	string const & tag,
 	bool starting_loop,
-	Size residue_begin,
-	Size residue_end)
+	core::Size residue_begin,
+	core::Size residue_end)
 {
 	string loop_kind;
 
@@ -212,12 +212,12 @@ WriteToDB_AA_to_terminal_loops (
 	insert_stmt.bind(3, tag);
 	insert_stmt.bind(4, sw_can_by_sh_id);
 	insert_stmt.bind(5, loop_kind);
-	Size loop_size = residue_end - residue_begin + 1;
+	core::Size loop_size = residue_end - residue_begin + 1;
 	insert_stmt.bind(6, loop_size);
 	insert_stmt.bind(7, residue_begin);
 	insert_stmt.bind(8, residue_end);
 
-	vector<Size> AA_vector = count_AA_wo_direction(dssp_pose, residue_begin, residue_end);
+	vector<core::Size> AA_vector = count_AA_wo_direction(dssp_pose, residue_begin, residue_end);
 	insert_stmt.bind(9, AA_vector[0]); //R_num
 	insert_stmt.bind(10, AA_vector[1]); //H_num
 	insert_stmt.bind(11, AA_vector[2]); //K_num
@@ -251,10 +251,10 @@ WriteToDB_ending_loop (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	Size sandwich_PK_id_counter,
-	Size sw_can_by_sh_id,
+	core::Size sandwich_PK_id_counter,
+	core::Size sw_can_by_sh_id,
 	string const & tag,
-	Size max_starting_loop_size_)
+	core::Size max_starting_loop_size_)
 {
 	string select_string =
 		"SELECT\n"
@@ -270,19 +270,19 @@ WriteToDB_ending_loop (
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size ending_res_of_any_strand(0);
+	core::Size ending_res_of_any_strand(0);
 	while ( res.next() )
 			{
 		res >> ending_res_of_any_strand;
 	}
 
-	Size starting_res_of_ending_loop = 0 ;  // initial value=0 just to avoid build warning at rosetta trunk
-	Size ending_res_of_ending_loop = 0;  // initial value=0 just to avoid build warning at rosetta trunk
+	core::Size starting_res_of_ending_loop = 0 ;  // initial value=0 just to avoid build warning at rosetta trunk
+	core::Size ending_res_of_ending_loop = 0;  // initial value=0 just to avoid build warning at rosetta trunk
 
 	bool there_is_an_ending_loop = false;
 
-	for ( auto ii = static_cast<Size>(ending_res_of_any_strand+1) ; ii <= dssp_pose.size() && ii <= static_cast<Size>((static_cast<Size>(ending_res_of_any_strand) + static_cast<Size>(max_starting_loop_size_))); ii++ ) {
-		//for( Size ii = (ending_res_of_any_strand+1) ; ii <= dssp_pose.size() && ii <= (ending_res_of_any_strand + max_starting_loop_size_); ii++ )
+	for ( auto ii = static_cast<core::Size>(ending_res_of_any_strand+1) ; ii <= dssp_pose.size() && ii <= static_cast<core::Size>((static_cast<core::Size>(ending_res_of_any_strand) + static_cast<core::Size>(max_starting_loop_size_))); ii++ ) {
+		//for( core::Size ii = (ending_res_of_any_strand+1) ; ii <= dssp_pose.size() && ii <= (ending_res_of_any_strand + max_starting_loop_size_); ii++ )
 		char res_ss( dssp_pose.secstruct( ii ) ) ;
 
 		if ( res_ss == 'L' ) {
@@ -317,7 +317,7 @@ Size
 WriteToDB_long_strand_id_in_each_sw (
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -336,15 +336,15 @@ WriteToDB_long_strand_id_in_each_sw (
 	select_statement.bind(2, struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	utility::vector1<Size> vec_residue_begin_of_long_strand;
+	utility::vector1<core::Size> vec_residue_begin_of_long_strand;
 	while ( res.next() )
 			{
-		Size residue_begin_of_long_strand;
+		core::Size residue_begin_of_long_strand;
 		res >> residue_begin_of_long_strand;
 		vec_residue_begin_of_long_strand.push_back(residue_begin_of_long_strand);
 	}
 
-	for ( Size i=1; i<=vec_residue_begin_of_long_strand.size(); i++ ) {
+	for ( core::Size i=1; i<=vec_residue_begin_of_long_strand.size(); i++ ) {
 		string update =
 			"UPDATE sandwich set long_strand_id = ?\t"
 			"WHERE\n"
@@ -372,7 +372,7 @@ WriteToDB_avg_b_factor_CB_at_each_component (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	//// <begin> retrieve residue_begin, residue_end at each component
 	string select_string =
@@ -389,12 +389,12 @@ WriteToDB_avg_b_factor_CB_at_each_component (
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	utility::vector1<Size> vector_of_residue_begin;
-	utility::vector1<Size> vector_of_residue_end;
+	utility::vector1<core::Size> vector_of_residue_begin;
+	utility::vector1<core::Size> vector_of_residue_end;
 
 	while ( res.next() )
 			{
-		Size residue_begin, residue_end;
+		core::Size residue_begin, residue_end;
 		res >> residue_begin >> residue_end;
 		vector_of_residue_begin.push_back(residue_begin);
 		vector_of_residue_end.push_back(residue_end);
@@ -404,14 +404,14 @@ WriteToDB_avg_b_factor_CB_at_each_component (
 
 	pose::PDBInfoCOP info = pose.pdb_info();
 	if ( info ) {
-		for ( Size i=1; i<=vector_of_residue_begin.size(); i++ ) {
+		for ( core::Size i=1; i<=vector_of_residue_begin.size(); i++ ) {
 			Real sum_of_b_factor_CB_at_each_component = 0;
-			Size count_atoms = 0;
-			for ( Size resid=vector_of_residue_begin[i]; resid<=vector_of_residue_end[i]; resid++ ) {
+			core::Size count_atoms = 0;
+			for ( core::Size resid=vector_of_residue_begin[i]; resid<=vector_of_residue_end[i]; resid++ ) {
 				Real B_factor_of_CB = info->temperature( resid, 5 ); // '5' atom will be 'H' for Gly
 				sum_of_b_factor_CB_at_each_component = sum_of_b_factor_CB_at_each_component + B_factor_of_CB;
 				count_atoms++;
-				//for ( Size ii = 1; ii <= info->natoms( resid ); ++ii )
+				//for ( core::Size ii = 1; ii <= info->natoms( resid ); ++ii )
 				//{
 				// std::cout << "Temperature on " << resid << " " << ii << " " << info->temperature( resid, ii ) << std::endl;
 				//}
@@ -450,20 +450,20 @@ WriteToDB_dihedral_angle_between_core_strands_across_facing_sheets (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	//// <begin> report average dihedral angles between core strands between facing sheets
-	utility::vector1<Size> vec_sheet_id =  get_vec_distinct_sheet_id(struct_id, db_session, sw_can_by_sh_id);
+	utility::vector1<core::Size> vec_sheet_id =  get_vec_distinct_sheet_id(struct_id, db_session, sw_can_by_sh_id);
 
 	utility::vector1<SandwichFragment> all_strands_in_sheet_i = get_all_strands_in_sheet_i(struct_id, db_session, vec_sheet_id[1]);
 	utility::vector1<SandwichFragment> all_strands_in_sheet_j = get_all_strands_in_sheet_i(struct_id, db_session, vec_sheet_id[2]);
 	Real total_dihedral_angle_between_core_strands_across_facing_sheets = 0;
-	Size count_dihedral_angle_between_core_strands_across_facing_sheets = 0;
+	core::Size count_dihedral_angle_between_core_strands_across_facing_sheets = 0;
 
-	for ( Size i=1; i<=all_strands_in_sheet_i.size(); i++ ) {
+	for ( core::Size i=1; i<=all_strands_in_sheet_i.size(); i++ ) {
 		string edge = is_this_strand_at_edge_by_looking_db (struct_id, db_session, all_strands_in_sheet_i[i].get_start());
 		if ( edge == "core" && all_strands_in_sheet_i[i].get_size() > 3 ) {
-			for ( Size j=1; j<=all_strands_in_sheet_j.size(); j++ ) {
+			for ( core::Size j=1; j<=all_strands_in_sheet_j.size(); j++ ) {
 				edge = is_this_strand_at_edge_by_looking_db (struct_id, db_session, all_strands_in_sheet_j[j].get_start());
 				if ( edge == "core" && all_strands_in_sheet_j[j].get_size() > 3 ) {
 					Real dihedral = calculate_dihedral_w_4_resnums(pose, all_strands_in_sheet_i[i].get_start(), all_strands_in_sheet_i[i].get_end(),  all_strands_in_sheet_j[j].get_start(),  all_strands_in_sheet_j[j].get_end());
@@ -513,13 +513,13 @@ WriteToDB_dssp_ratio_in_sw (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
-	Size H_num = 0;
-	Size E_num = 0;
-	Size L_num = 0;
+	core::Size H_num = 0;
+	core::Size E_num = 0;
+	core::Size L_num = 0;
 
-	for ( Size ii=1; ii<=dssp_pose.size(); ii++ ) {
+	for ( core::Size ii=1; ii<=dssp_pose.size(); ii++ ) {
 		char res_ss( dssp_pose.secstruct( ii ) ) ;
 		if ( res_ss == 'H' )  {   H_num += 1;  }
 		if ( res_ss == 'E' )  {   E_num += 1;  }
@@ -559,7 +559,7 @@ Size
 WriteToDB_hydrophobic_ratio_net_charge (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 
 	// <begin> sum number_of_AA
@@ -615,7 +615,7 @@ WriteToDB_hydrophobic_ratio_net_charge (
 	insert_stmt.bind(4, ratio_hydrophobic_philic_of_sw_in_percent);
 	insert_stmt.bind(5, number_of_RK_in_sw);
 	insert_stmt.bind(6, number_of_DE_in_sw);
-	int net_charge_int = number_of_RK_in_sw - number_of_DE_in_sw; // Size net_charge may return like '18446744073709551612', so I don't use Size here
+	int net_charge_int = number_of_RK_in_sw - number_of_DE_in_sw; // core::Size net_charge may return like '18446744073709551612', so I don't use core::Size here
 	// TR << "net_charge_int: " << net_charge_int << endl;
 	insert_stmt.bind(7, net_charge_int); // Net charge of His at pH 7.4 is just '+0.11' according to http://www.bmolchem.wisc.edu/courses/spring503/503-sec1/503-1a.htm
 	insert_stmt.bind(8, sw_can_by_sh_id);
@@ -635,10 +635,10 @@ Size
 WriteToDB_min_avg_dis_between_sheets_by_cen_res (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size sw_can_by_sh_id,
+	core::Size sw_can_by_sh_id,
 	Pose & dssp_pose,
-	utility::vector1<Size> const & all_distinct_sheet_ids,
-	Size min_num_strands_in_sheet_)
+	utility::vector1<core::Size> const & all_distinct_sheet_ids,
+	core::Size min_num_strands_in_sheet_)
 {
 
 	//// <begin> calculate minimum distance between sheets
@@ -681,9 +681,9 @@ Size
 WriteToDB_min_dis_between_sheets_by_all_res (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size sw_can_by_sh_id,
+	core::Size sw_can_by_sh_id,
 	Pose & dssp_pose,
-	utility::vector1<Size> const & all_distinct_sheet_ids)
+	utility::vector1<core::Size> const & all_distinct_sheet_ids)
 {
 
 	//// <begin> calculate minimum distance between sheets
@@ -717,7 +717,7 @@ Size
 WriteToDB_number_of_edge_strands_in_each_sw (
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -734,7 +734,7 @@ WriteToDB_number_of_edge_strands_in_each_sw (
 	select_statement.bind(2, struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size num_edge_strands_in_each_sw(0);
+	core::Size num_edge_strands_in_each_sw(0);
 	while ( res.next() )
 			{
 		res >> num_edge_strands_in_each_sw;
@@ -765,11 +765,11 @@ WriteToDB_number_of_AAs_in_a_pair_of_edge_strands (
 	sessionOP db_session,
 	core::pose::Pose const & pose,
 	utility::vector1<SandwichFragment> const & bs_of_sw_can_by_sh,
-	Size max_num_sw_per_pdb_,
+	core::Size max_num_sw_per_pdb_,
 	Real min_CA_CA_dis_,
 	Real max_CA_CA_dis_)
 {
-	for ( Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii ) {
 		// check_whether_sw_by_sh_id_still_alive is refactored
 		bool sw_by_sh_id_still_alive = check_whether_sw_by_sh_id_still_alive (struct_id, db_session, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id());
 		if ( !sw_by_sh_id_still_alive ) {
@@ -792,9 +792,9 @@ WriteToDB_number_of_AAs_in_a_pair_of_edge_strands (
 			max_CA_CA_dis_);
 		if ( strand_is_at_edge == "edge" ) {
 			//get_current_bs_id_and_closest_edge_bs_id_in_different_sheet is refactored
-			std::pair<Size, Size> current_bs_id_and_closest_edge_bs_id_in_different_sheet = get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (struct_id, db_session, pose, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), bs_of_sw_can_by_sh[ii].get_sheet_id(), bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
-			Size current_bs_id = current_bs_id_and_closest_edge_bs_id_in_different_sheet.first;
-			Size closest_bs_id = current_bs_id_and_closest_edge_bs_id_in_different_sheet.second;
+			std::pair<core::Size, core::Size> current_bs_id_and_closest_edge_bs_id_in_different_sheet = get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (struct_id, db_session, pose, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), bs_of_sw_can_by_sh[ii].get_sheet_id(), bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
+			core::Size current_bs_id = current_bs_id_and_closest_edge_bs_id_in_different_sheet.first;
+			core::Size closest_bs_id = current_bs_id_and_closest_edge_bs_id_in_different_sheet.second;
 
 			WriteToDB_number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands (struct_id, db_session, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), current_bs_id, closest_bs_id);
 			WriteToDB_number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands (struct_id, db_session, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), current_bs_id, closest_bs_id);
@@ -808,7 +808,7 @@ Size
 WriteToDB_number_of_core_heading_LWY_in_core_strands_in_sw (
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -825,9 +825,9 @@ WriteToDB_number_of_core_heading_LWY_in_core_strands_in_sw (
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_core_heading_L_in_core_strands_in_sw(0);
-	Size number_of_core_heading_W_in_core_strands_in_sw(0);
-	Size number_of_core_heading_Y_in_core_strands_in_sw(0);
+	core::Size number_of_core_heading_L_in_core_strands_in_sw(0);
+	core::Size number_of_core_heading_W_in_core_strands_in_sw(0);
+	core::Size number_of_core_heading_Y_in_core_strands_in_sw(0);
 	while ( res.next() )
 			{
 		res >> number_of_core_heading_L_in_core_strands_in_sw >> number_of_core_heading_W_in_core_strands_in_sw >> number_of_core_heading_Y_in_core_strands_in_sw;
@@ -859,7 +859,7 @@ void
 WriteToDB_number_of_core_heading_FWY_in_sw (
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -875,7 +875,7 @@ WriteToDB_number_of_core_heading_FWY_in_sw (
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_core_heading_FWY_in_sw(0);
+	core::Size number_of_core_heading_FWY_in_sw(0);
 	while ( res.next() )
 			{
 		res >> number_of_core_heading_FWY_in_sw;
@@ -902,7 +902,7 @@ void
 WriteToDB_number_of_core_heading_W_in_sw (
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -918,7 +918,7 @@ WriteToDB_number_of_core_heading_W_in_sw (
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_core_heading_W_in_sw(0);
+	core::Size number_of_core_heading_W_in_sw(0);
 	while ( res.next() )
 			{
 		res >> number_of_core_heading_W_in_sw;
@@ -945,9 +945,9 @@ Size
 WriteToDB_number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size sw_can_by_sh_id,
-	Size current_bs_id,
-	Size closest_bs_id)
+	core::Size sw_can_by_sh_id,
+	core::Size current_bs_id,
+	core::Size closest_bs_id)
 {
 	// <begin> sum numbers of inward-pointing-AAs in current_bs_id and closest_bs_id
 	string select_string =
@@ -967,7 +967,7 @@ WriteToDB_number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands (
 	select_statement.bind(4, closest_bs_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands(0);
+	core::Size number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands(0);
 	while ( res.next() )
 			{
 		res >> number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands ;
@@ -1003,9 +1003,9 @@ Size
 WriteToDB_number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size sw_can_by_sh_id,
-	Size current_bs_id,
-	Size closest_bs_id)
+	core::Size sw_can_by_sh_id,
+	core::Size current_bs_id,
+	core::Size closest_bs_id)
 {
 	// <begin> sum numbers of inward-pointing-aro_AAs in current_bs_id and closest_bs_id
 	string select_string =
@@ -1025,7 +1025,7 @@ WriteToDB_number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands (
 	select_statement.bind(4,closest_bs_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands(0);
+	core::Size number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands(0);
 	while ( res.next() )
 			{
 		res >> number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands ;
@@ -1061,8 +1061,8 @@ Size
 WriteToDB_number_of_sheets_that_surround_this_sheet(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sheet_id,
-	Size num_of_sheets_that_surround_this_sheet)
+	core::Size sheet_id,
+	core::Size num_of_sheets_that_surround_this_sheet)
 {
 	string select_string =
 		"UPDATE sheet set num_of_sheets_that_surround_this_sheet = ?\t"
@@ -1086,7 +1086,7 @@ Size
 WriteToDB_number_strands_in_each_sw // it includes even 'short_edge_strands'
 (StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -1103,7 +1103,7 @@ WriteToDB_number_strands_in_each_sw // it includes even 'short_edge_strands'
 	select_statement.bind(2, struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size num_strands_in_each_sw(0);
+	core::Size num_strands_in_each_sw(0);
 	while ( res.next() )
 			{
 		res >> num_strands_in_each_sw;
@@ -1133,7 +1133,7 @@ Size
 WriteToDB_prolines_that_seem_to_prevent_aggregation (
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id,
+	core::Size sw_can_by_sh_id,
 	Real wt_for_pro_in_starting_loop_,
 	Real wt_for_pro_in_1st_inter_sheet_loop_,
 	Real wt_for_pro_in_3rd_inter_sheet_loop_)
@@ -1154,7 +1154,7 @@ WriteToDB_prolines_that_seem_to_prevent_aggregation (
 	select_statement.bind(3, "starting_loop");
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_pro_in_starting_loop(0);
+	core::Size number_of_pro_in_starting_loop(0);
 	while ( res.next() )
 			{
 		res >> number_of_pro_in_starting_loop;
@@ -1178,7 +1178,7 @@ WriteToDB_prolines_that_seem_to_prevent_aggregation (
 	select_statement_pro2.bind(3, "loop_connecting_two_sheets");
 	result res_pro2(basic::database::safely_read_from_database(select_statement_pro2));
 
-	Size number_of_pro_in_1st_inter_sheet_loop(0);
+	core::Size number_of_pro_in_1st_inter_sheet_loop(0);
 	while ( res_pro2.next() )
 			{
 		res_pro2 >> number_of_pro_in_1st_inter_sheet_loop;
@@ -1202,15 +1202,15 @@ WriteToDB_prolines_that_seem_to_prevent_aggregation (
 	select_statement_pro3.bind(3, "loop_connecting_two_sheets");
 	result res_pro3(basic::database::safely_read_from_database(select_statement_pro3));
 
-	utility::vector1<Size> vec_can_number_of_pro_in_3rd_inter_sheet_loop;
+	utility::vector1<core::Size> vec_can_number_of_pro_in_3rd_inter_sheet_loop;
 	while ( res_pro3.next() )
 			{
-		Size num_PRO_in_inter_sheet_loop;
+		core::Size num_PRO_in_inter_sheet_loop;
 		res_pro3 >> num_PRO_in_inter_sheet_loop;
 		vec_can_number_of_pro_in_3rd_inter_sheet_loop.push_back(num_PRO_in_inter_sheet_loop);
 	}
 
-	Size number_of_pro_in_3rd_inter_sheet_loop = vec_can_number_of_pro_in_3rd_inter_sheet_loop[3];
+	core::Size number_of_pro_in_3rd_inter_sheet_loop = vec_can_number_of_pro_in_3rd_inter_sheet_loop[3];
 
 
 	string update =
@@ -1245,7 +1245,7 @@ Size
 WriteToDB_ratio_of_core_heading_FWY_in_sw (
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id,
+	core::Size sw_can_by_sh_id,
 	Pose const & pose)
 {
 	string select_string =
@@ -1262,7 +1262,7 @@ WriteToDB_ratio_of_core_heading_FWY_in_sw (
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_core_heading_FWY_in_sw(0);
+	core::Size number_of_core_heading_FWY_in_sw(0);
 	while ( res.next() )
 			{
 		res >> number_of_core_heading_FWY_in_sw;
@@ -1293,9 +1293,9 @@ Size
 WriteToDB_rkde(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size rkde_PK_id_counter,
+	core::Size rkde_PK_id_counter,
 	string const & tag,
-	Size residue_number,
+	core::Size residue_number,
 	string const & residue_type)
 {
 	string insert = "INSERT INTO rkde (struct_id, rkde_PK_id, tag, residue_number, residue_type)  VALUES (?,?,?,\t?,?);";
@@ -1318,10 +1318,10 @@ Size
 WriteToDB_rkde_in_strands(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size rkde_in_strands_PK_id_counter,
+	core::Size rkde_in_strands_PK_id_counter,
 	string const & tag,
-	Size sw_can_by_sh_id,
-	Size residue_number,
+	core::Size sw_can_by_sh_id,
+	core::Size residue_number,
 	string const & residue_type,
 	string const & heading_direction) {
 	string insert = "INSERT INTO rkde_in_strands (struct_id, rkde_in_strands_PK_id, tag, sw_can_by_sh_id, residue_number, residue_type,\theading_direction)  VALUES (?,?,?,?,\t?,?,?);";
@@ -1344,9 +1344,9 @@ Size
 WriteToDB_sheet (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size sheet_PK_id_counter,
-	Size sheet_id,
-	Size segment_id) {
+	core::Size sheet_PK_id_counter,
+	core::Size sheet_id,
+	core::Size segment_id) {
 	string sheet_insert_i =
 		"INSERT INTO sheet (sheet_PK_id, sheet_id, struct_id, segment_id)  VALUES (?,?,?,?);";
 	statement sheet_insert_i_stmt(basic::database::safely_prepare_statement(sheet_insert_i,db_session));
@@ -1364,7 +1364,7 @@ Size
 WriteToDB_sheet_antiparallel(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sheet_id,
+	core::Size sheet_id,
 	string const & antiparallel)
 {
 	string select_string =
@@ -1388,8 +1388,8 @@ Size
 WriteToDB_sheet_id(
 	StructureID struct_id,
 	sessionOP db_session,
-	Size new_sheet_id,
-	Size old_sheet_id)
+	core::Size new_sheet_id,
+	core::Size old_sheet_id)
 {
 	string select_string =
 		"UPDATE sheet set sheet_id = ?\t"
@@ -1413,12 +1413,12 @@ WriteToDB_sheet_connectivity(
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose const & pose,
-	Size sandwich_PK_id_counter,
+	core::Size sandwich_PK_id_counter,
 	string const & tag,
-	Size sw_can_by_sh_id,
+	core::Size sw_can_by_sh_id,
 	string const & loop_kind,
-	Size intra_sheet_con_id,
-	Size inter_sheet_con_id,
+	core::Size intra_sheet_con_id,
+	core::Size inter_sheet_con_id,
 	string const & LR,
 	string const & canonical_LR,
 	string const & PA_by_preceding_E,
@@ -1427,13 +1427,13 @@ WriteToDB_sheet_connectivity(
 	string const & heading_direction,
 	string const & parallel_EE,
 	string const & cano_parallel_EE,
-	Size loop_size,
-	Size start_res,
-	Size end_res)
+	core::Size loop_size,
+	core::Size start_res,
+	core::Size end_res)
 {
 	string insert;
-	Size con_id;
-	Size sheet_id = 0;
+	core::Size con_id;
+	core::Size sheet_id = 0;
 
 	if ( loop_kind == "inter_sheet" ) { // this loop connects by a inter_sheet way
 		insert =
@@ -1471,7 +1471,7 @@ WriteToDB_sheet_connectivity(
 	insert_stmt.bind(17, loop_kind);
 	insert_stmt.bind(18, con_id);
 
-	vector<Size> AA_vector = count_AA_wo_direction(pose, start_res, end_res);
+	vector<core::Size> AA_vector = count_AA_wo_direction(pose, start_res, end_res);
 	insert_stmt.bind(19, AA_vector[0]); //R_num
 	insert_stmt.bind(20, AA_vector[1]); //H_num
 	insert_stmt.bind(21, AA_vector[2]); //K_num
@@ -1508,11 +1508,11 @@ Real
 WriteToDB_shortest_dis_between_facing_aro_in_sw (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size sw_can_by_sh_id,
+	core::Size sw_can_by_sh_id,
 	Pose const & pose,
 	// Pose & dssp_pose,
-	utility::vector1<Size> const & all_distinct_sheet_ids,
-	Size min_num_strands_in_sheet_)
+	utility::vector1<core::Size> const & all_distinct_sheet_ids,
+	core::Size min_num_strands_in_sheet_)
 {
 
 	//// <begin> calculate minimum distance between sheets
@@ -1556,10 +1556,10 @@ WriteToDB_starting_loop (
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
-	Size sandwich_PK_id_counter,
-	Size sw_can_by_sh_id,
+	core::Size sandwich_PK_id_counter,
+	core::Size sw_can_by_sh_id,
 	string const & tag,
-	Size max_starting_loop_size_)
+	core::Size max_starting_loop_size_)
 {
 	string select_string =
 		"SELECT\n"
@@ -1581,12 +1581,12 @@ WriteToDB_starting_loop (
 		res >> starting_res_of_any_strand;
 	}
 
-	Size starting_res_of_starting_loop = 0; // initial value=0 just to avoid build warning at rosetta trunk
-	Size ending_res_of_starting_loop = 0 ;  // initial value=0 just to avoid build warning at rosetta trunk
+	core::Size starting_res_of_starting_loop = 0; // initial value=0 just to avoid build warning at rosetta trunk
+	core::Size ending_res_of_starting_loop = 0 ;  // initial value=0 just to avoid build warning at rosetta trunk
 
 	bool there_is_a_starting_loop = false;
 
-	// I used to use Size type for i, starting_res_of_any_strand and static_cast<Size> for max_starting_loop_size_, but as of 05/02/2013, simple math like 'static_cast<Size>(starting_res_of_any_strand) - static_cast<Size>(max_starting_loop_size_)' doesn't work, so I change to use int
+	// I used to use core::Size type for i, starting_res_of_any_strand and static_cast<core::Size> for max_starting_loop_size_, but as of 05/02/2013, simple math like 'static_cast<core::Size>(starting_res_of_any_strand) - static_cast<core::Size>(max_starting_loop_size_)' doesn't work, so I change to use int
 	for ( int ii = starting_res_of_any_strand-1;
 			(ii >= 1) && (ii >= (starting_res_of_any_strand) - (static_cast<int>(max_starting_loop_size_) ));
 			ii-- ) {
@@ -1622,7 +1622,7 @@ Size
 WriteToDB_sw_res_size (
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	string select_string =
 		"SELECT\n"
@@ -1638,13 +1638,13 @@ WriteToDB_sw_res_size (
 	select_statement.bind(2, sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size starting_res_of_sw(0);
-	Size ending_res_of_sw(0);
+	core::Size starting_res_of_sw(0);
+	core::Size ending_res_of_sw(0);
 	while ( res.next() )
 			{
 		res >> starting_res_of_sw >> ending_res_of_sw;
 	}
-	Size sw_res_size = ending_res_of_sw - starting_res_of_sw + 1;
+	core::Size sw_res_size = ending_res_of_sw - starting_res_of_sw + 1;
 
 	string update =
 		"UPDATE sandwich set sw_res_size = ?\t"
@@ -1671,15 +1671,15 @@ Run_WriteToDB_sandwich(
 	string const & tag,
 	Pose & dssp_pose,
 	utility::vector1<SandwichFragment> const & bs_of_sw_can_by_sh,
-	Size max_num_sw_per_pdb_,
+	core::Size max_num_sw_per_pdb_,
 	StructureID struct_id, // needed argument
 	sessionOP db_session,
 	Real min_CA_CA_dis_,
 	Real max_CA_CA_dis_,
-	Size sandwich_PK_id_counter
+	core::Size sandwich_PK_id_counter
 )
 {
-	for ( Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii ) {
 		if ( bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id() > max_num_sw_per_pdb_ ) {
 			break;
 		}
@@ -1695,7 +1695,7 @@ Run_WriteToDB_sandwich(
 			min_CA_CA_dis_,
 			max_CA_CA_dis_);
 
-		Size component_size = bs_of_sw_can_by_sh[ii].get_size();
+		core::Size component_size = bs_of_sw_can_by_sh[ii].get_size();
 		WriteToDB_sandwich (struct_id,
 			db_session,
 			dssp_pose,
@@ -1721,16 +1721,16 @@ WriteToDB_sandwich (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
-	Size sandwich_PK_id_counter,
+	core::Size sandwich_PK_id_counter,
 	string const & tag,
-	Size sw_can_by_sh_id,
-	Size sheet_id,
+	core::Size sw_can_by_sh_id,
+	core::Size sheet_id,
 	string const & sheet_antiparallel,
-	Size sandwich_bs_id,
+	core::Size sandwich_bs_id,
 	string const & strand_is_at_edge,
-	Size component_size,
-	Size residue_begin,
-	Size residue_end)
+	core::Size component_size,
+	core::Size residue_begin,
+	core::Size residue_end)
 {
 	string insert =
 		"INSERT INTO sandwich (struct_id, sandwich_PK_id, tag, sw_can_by_sh_id, sheet_id, sheet_antiparallel, sandwich_bs_id, strand_edge, component_size, residue_begin, residue_end, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,\t?,?,?,?,?,\t?,\t?,?,?,\t?,?,\t?,?,?,?,\t?,?,?,\t?,?,?,?,?,?,?,?);";
@@ -1748,7 +1748,7 @@ WriteToDB_sandwich (
 	insert_stmt.bind(9, component_size);
 	insert_stmt.bind(10, residue_begin);
 	insert_stmt.bind(11, residue_end);
-	vector<Size> AA_vector = count_AA_wo_direction(pose,  residue_begin, residue_end);
+	vector<core::Size> AA_vector = count_AA_wo_direction(pose,  residue_begin, residue_end);
 	insert_stmt.bind(12, AA_vector[0]); //R_num
 	insert_stmt.bind(13, AA_vector[1]); //H_num
 	insert_stmt.bind(14, AA_vector[2]); //K_num
@@ -1784,10 +1784,10 @@ WriteToDB_sandwich_by_AA_w_direction (
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
 	Pose const & pose_w_center_000,
-	Size sw_can_by_sh_id,
-	Size sheet_id,
-	Size residue_begin,
-	Size residue_end)
+	core::Size sw_can_by_sh_id,
+	core::Size sheet_id,
+	core::Size residue_begin,
+	core::Size residue_end)
 {
 	string insert =
 		"UPDATE sandwich set \n"
@@ -1837,7 +1837,7 @@ WriteToDB_sandwich_by_AA_w_direction (
 
 	statement insert_stmt(basic::database::safely_prepare_statement(insert, db_session));
 
-	vector<Size> AA_vector = count_AA_w_direction(struct_id, db_session, pose, pose_w_center_000, sw_can_by_sh_id, sheet_id, residue_begin, residue_end);
+	vector<core::Size> AA_vector = count_AA_w_direction(struct_id, db_session, pose, pose_w_center_000, sw_can_by_sh_id, sheet_id, residue_begin, residue_end);
 
 	insert_stmt.bind(1, AA_vector[0]); // R_core_heading
 	insert_stmt.bind(2, AA_vector[1]); // R_surface_heading
@@ -1896,11 +1896,11 @@ Size
 WriteToDB_sw_can_by_sh (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size sw_can_by_sh_PK_id_counter,
+	core::Size sw_can_by_sh_PK_id_counter,
 	string const & tag,
-	Size sw_can_by_sh_id_counter,
-	Size sheet_id,
-	Size num_strands_from_sheet)
+	core::Size sw_can_by_sh_id_counter,
+	core::Size sheet_id,
+	core::Size num_strands_from_sheet)
 {
 	string sw_can_by_sh_insert =
 		"INSERT INTO sw_can_by_sh (struct_id, sw_can_by_sh_PK_id, tag, sw_can_by_sh_id, sheet_id, strand_num)  VALUES (?,?,?,?,?,?);";
@@ -1922,7 +1922,7 @@ Size
 WriteToDB_topology_candidate (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
 	// Warning: this is NOT a strict fnIII topology determinator, this function is useful only to identify fnIII topology beta-sandwich from so many beta-sandwiches.
 	// So final human inspection is required to confirm fnIII eventually after this function. So column name is 'topology_candidate' instead of 'topology'
@@ -2008,7 +2008,7 @@ WriteToDB_topology_candidate (
 
 	while ( res_sheet.next() )
 			{
-		Size num_P_or_mix;
+		core::Size num_P_or_mix;
 		res_sheet >> num_P_or_mix;
 		if ( num_P_or_mix != 0 ) {
 			topology_candidate = "not_fnIII";
@@ -2243,8 +2243,8 @@ WriteToDB_topology_candidate (
 void
 WriteToDB_turn_AA(
 	Pose const & pose,
-	Size sw_can_by_sh_id,
-	Size i,
+	core::Size sw_can_by_sh_id,
+	core::Size i,
 	StructureID struct_id,
 	sessionOP db_session,
 	string const & turn_type)
@@ -2394,9 +2394,9 @@ WriteToDB_turn_AA(
 string
 WriteToDB_turn_type(
 	Pose const & pose,
-	Size sw_can_by_sh_id,
-	Size first_res,
-	Size second_res,
+	core::Size sw_can_by_sh_id,
+	core::Size first_res,
+	core::Size second_res,
 	StructureID struct_id,
 	sessionOP db_session,
 	Real allowed_deviation_for_turn_type_id_)
@@ -2479,7 +2479,7 @@ Size
 WriteToDB_whether_sw_is_not_connected_with_continuous_atoms (
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id,
+	core::Size sw_can_by_sh_id,
 	string const & sw_is_not_connected_with_continuous_atoms)
 {
 	string update =

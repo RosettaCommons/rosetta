@@ -54,7 +54,7 @@ RotamericSingleResidueDunbrackLibraryParser::RotamericSingleResidueDunbrackLibra
 	bool const correct_rotamer_well_order_on_read,
 	bool const symmetrize_rotamer_library
 ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	read_file_was_called_(false),
 	num_mainchain_torsions_(num_mainchain_torsions),
 	max_possible_chis_(max_possible_chis),
@@ -77,7 +77,7 @@ RotamericSingleResidueDunbrackLibraryParser::RotamericSingleResidueDunbrackLibra
 RotamericSingleResidueDunbrackLibraryParser::~RotamericSingleResidueDunbrackLibraryParser(){}
 
 RotamericSingleResidueDunbrackLibraryParser::RotamericSingleResidueDunbrackLibraryParser( RotamericSingleResidueDunbrackLibraryParser const &src ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	read_file_was_called_(src.read_file_was_called_),
 	num_mainchain_torsions_(src.num_mainchain_torsions_),
 	max_possible_chis_(src.max_possible_chis_),

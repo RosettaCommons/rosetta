@@ -49,7 +49,7 @@ public:
 	SymmetricFragmentMover(
 		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap,
-		Size symmetric_residue
+		core::Size symmetric_residue
 	) : ClassicFragmentMover( fragset, movemap, "SymmetricFragmentMover" ),
 		image_start_( symmetric_residue )
 	{};
@@ -60,7 +60,7 @@ public:
 	bool
 	apply_fragment(
 		core::fragment::Frame const& frame,
-		Size frag_num,
+		core::Size frag_num,
 		core::kinematics::MoveMap const& movemap,
 		core::pose::Pose &pose
 	) const override;
@@ -73,7 +73,7 @@ protected:
 	SymmetricFragmentMover(
 		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap,
-		Size symmetric_residue,
+		core::Size symmetric_residue,
 		std::string type
 	) :
 		ClassicFragmentMover( fragset, movemap, type ),
@@ -81,7 +81,7 @@ protected:
 	{}
 
 private:
-	Size image_start_;
+	core::Size image_start_;
 };
 
 
@@ -93,7 +93,7 @@ public:
 		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap,
 		FragmentCostOP cost,
-		Size symmetric_residue
+		core::Size symmetric_residue
 	) :
 		ClassicFragmentMover( fragset, movemap, "SmoothSymmetricFragmentMover" ),
 		SymmetricFragmentMover( fragset, movemap, symmetric_residue, "SmoothSymmetricFragmentMover" ),
@@ -111,7 +111,7 @@ protected:
 		core::kinematics::MoveMapCOP movemap,
 		FragmentCostOP cost,
 		std::string type,
-		Size symmetric_residue
+		core::Size symmetric_residue
 	) :
 		ClassicFragmentMover( fragset, movemap, type ), //virtual base class needs to be initialized explicitly
 		SymmetricFragmentMover( fragset, movemap, symmetric_residue, type ),
@@ -123,15 +123,15 @@ protected:
 	choose_fragment(
 		core::fragment::FrameList const& fl,
 		core::pose::Pose const& p,
-		Size &frame_num,
-		Size &frag_num) const override {
+		core::Size &frame_num,
+		core::Size &frag_num) const override {
 		return SmoothFragmentMover::choose_fragment(fl, p, frame_num, frag_num);
 	}
 
 
 private:
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-	// Size image_start_;
+	// core::Size image_start_;
 };
 
 

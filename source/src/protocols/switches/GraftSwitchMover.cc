@@ -133,7 +133,7 @@ GraftSwitchMover::GraftSwitchMover() :
 GraftSwitchMover::~GraftSwitchMover() = default;
 
 GraftSwitchMover::GraftSwitchMover( GraftSwitchMover const & other ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	protocols::moves::Mover( other )
 {
 	scorefxn_ = other.scorefxn_;

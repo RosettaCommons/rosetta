@@ -23,7 +23,7 @@
 #include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
 

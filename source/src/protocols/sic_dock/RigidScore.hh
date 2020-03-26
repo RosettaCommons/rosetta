@@ -21,7 +21,7 @@
 #include <core/types.hh>
 #include <protocols/sic_dock/types.hh>
 #include <protocols/sic_dock/xyzStripeHashPoseWithMeta.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -30,7 +30,7 @@ namespace protocols {
 namespace sic_dock {
 
 
-class RigidScore : public utility::pointer::ReferenceCount {
+class RigidScore : public utility::VirtualBase {
 protected:
 	typedef core::Real Real;
 	typedef core::Size Size;
@@ -39,7 +39,7 @@ protected:
 	typedef numeric::xyzMatrix<Real> Mat;
 	typedef utility::vector1<Vec> Vecs;
 	typedef utility::vector1<Real> Reals;
-	typedef utility::vector1<Size> Sizes;
+	typedef utility::vector1<core::Size> Sizes;
 	typedef numeric::Xforms Xforms;
 	typedef utility::vector1<RigidScoreCOP> Scores;
 public:
@@ -102,8 +102,8 @@ public:
 	LinkerScore(
 		Pose const & pose1,
 		Pose const & pose2,
-		Size max_loop_len,
-		Size lookup_radius,
+		core::Size max_loop_len,
+		core::Size lookup_radius,
 		std::string const & outtag
 	);
 	~LinkerScore() override= default;

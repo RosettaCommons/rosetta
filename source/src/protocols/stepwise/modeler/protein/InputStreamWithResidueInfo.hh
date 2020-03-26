@@ -23,7 +23,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/options/StringVectorOption.fwd.hh>
 #include <map>
 
@@ -52,7 +52,7 @@ setup_pose_input_stream(
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
-class InputStreamWithResidueInfo:public utility::pointer::ReferenceCount {
+class InputStreamWithResidueInfo:public utility::VirtualBase {
 public:
 
 	InputStreamWithResidueInfo( core::import_pose::pose_stream::PoseInputStreamOP pose_input_stream,

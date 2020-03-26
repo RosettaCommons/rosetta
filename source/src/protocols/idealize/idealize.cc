@@ -86,9 +86,9 @@ dihedral_distance(
 	avg_chi_angle_dev = 0.0;
 	max_chi_angle_dev = 0.0;
 
-	Size nchi_dihedrals(0), nbb_dihedrals(0);
+	core::Size nchi_dihedrals(0), nbb_dihedrals(0);
 
-	for ( Size pos = 1; pos <= pose1.size(); ++pos ) {
+	for ( core::Size pos = 1; pos <= pose1.size(); ++pos ) {
 		if ( ! use_pos[ pos ] ) continue;
 
 		conformation::Residue const & rsd1( pose1.residue( pos ) );
@@ -96,12 +96,12 @@ dihedral_distance(
 
 		if ( !rsd1.is_polymer() ) continue;
 
-		Size const nbb ( rsd1.n_mainchain_atoms() );
-		Size const nchi( rsd1.nchi() );
+		core::Size const nbb ( rsd1.n_mainchain_atoms() );
+		core::Size const nchi( rsd1.nchi() );
 		runtime_assert( rsd2.is_polymer() && rsd2.nchi() ==  nchi && rsd2.n_mainchain_atoms() == nbb );
 
 		// first the bb dev's
-		for ( Size i=1; i<= nbb; ++i ) {
+		for ( core::Size i=1; i<= nbb; ++i ) {
 			if ( ( i ==     1 && rsd1.is_lower_terminus() ) ||
 					( i >= nbb-1 && rsd1.is_upper_terminus() ) ) {
 				continue;
@@ -114,7 +114,7 @@ dihedral_distance(
 			max_bb_angle_dev = std::max( max_bb_angle_dev, dev );
 		}
 
-		for ( Size i=1; i<= nchi; ++i ) {
+		for ( core::Size i=1; i<= nchi; ++i ) {
 			Real const dev( std::abs( subtract_degree_angles( rsd1.chi( i ), rsd2.chi( i ) ) ) );
 			avg_chi_angle_dev += dev;
 			++nchi_dihedrals;
@@ -131,7 +131,7 @@ dihedral_distance(
 void
 basic_idealize(
 	pose::Pose & pose,
-	utility::vector1< Size > pos_list, // local copy
+	utility::vector1< core::Size > pos_list, // local copy
 	scoring::ScoreFunction const & scorefxn,
 	bool const fast,
 	bool const chainbreaks,
@@ -143,11 +143,11 @@ basic_idealize(
 	using namespace ObjexxFCL::format;
 	using scoring::all_atom_rmsd;
 
-	Size const window_width( 3 ); // window:  from pos-window_width to pos+window_width
+	core::Size const window_width( 3 ); // window:  from pos-window_width to pos+window_width
 
 
 	pose::Pose const start_pose( pose );
-	Size const nres ( pose.size() );
+	core::Size const nres ( pose.size() );
 
 	// keep chainbreaks if they exist
 	if ( chainbreaks ) {
@@ -159,10 +159,10 @@ basic_idealize(
 		bool new_cutpoint = false;
 		pose::PDBInfoCOP pdbinfo = pose.pdb_info();
 		kinematics::FoldTree f( pose.fold_tree() );
-		for ( Size i = 1; i < nres; ++i ) {
+		for ( core::Size i = 1; i < nres; ++i ) {
 			if ( f.is_cutpoint(i) ) continue;
 			bool chain_break = false;
-			Size j = i+1;
+			core::Size j = i+1;
 			if ( pdbinfo->number(i)+1 != pdbinfo->number(j) ) {
 				TR.Info << "non-sequential at res nums " << i << '-' << j << std::endl;
 				TR.Info << "non-sequential pdb res nums " << pdbinfo->number(i) << pdbinfo->chain(i) <<
@@ -198,7 +198,7 @@ basic_idealize(
 		if ( new_cutpoint ) pose.fold_tree( f );
 	}
 
-	Size const njump( pose.num_jump() );
+	core::Size const njump( pose.num_jump() );
 
 	// setup the minimizer options
 	MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
@@ -223,12 +223,12 @@ basic_idealize(
 	}
 
 	while ( !pos_list.empty() ) {
-		Size const seqpos( pos_list[ static_cast< Size >( numeric::random::rg().uniform() * pos_list.size() + 1 ) ] );
+		core::Size const seqpos( pos_list[ static_cast< core::Size >( numeric::random::rg().uniform() * pos_list.size() + 1 ) ] );
 		pos_list.erase( std::find( pos_list.begin(), pos_list.end(), seqpos ) );
 
 		// idealize the mainchain + sidechain
 		//pose.dump_pdb( "pre_idl_"+right_string_of(seqpos,4,'0')+".pdb" );
-		if ( seqpos > (Size)pose.conformation().size() ) { continue; }
+		if ( seqpos > (core::Size)pose.conformation().size() ) { continue; }
 		conformation::idealize_position( seqpos, pose.conformation() );
 		//pose.dump_pdb( "post_idl_"+right_string_of(seqpos,4,'0')+".pdb" );
 		idealized[ seqpos ] = true;
@@ -242,12 +242,12 @@ basic_idealize(
 		}
 
 		// setup the window of positions to minimize, also records flexible positions for the final minimize
-		utility::vector1< Size > window;
-		for ( Size i=seqpos; i >= seqpos-window_width; --i ) {
+		utility::vector1< core::Size > window;
+		for ( core::Size i=seqpos; i >= seqpos-window_width; --i ) {
 			window.push_back( i );
 			if ( i == 1 || pose.residue(i).is_lower_terminus() ) break;
 		}
-		for ( Size i=seqpos; i <= seqpos+window_width; ++i ) {
+		for ( core::Size i=seqpos; i <= seqpos+window_width; ++i ) {
 			window.push_back( i );
 			if ( i == nres || pose.residue(i).is_upper_terminus() ) break;
 		}
@@ -256,8 +256,8 @@ basic_idealize(
 		kinematics::MoveMap local_mm;
 		local_mm.set_chi( seqpos, true );
 		final_mm.set_chi( seqpos, true );
-		for ( Size ii=1; ii<= window.size(); ++ii ) {
-			Size const i( window[ ii ] );
+		for ( core::Size ii=1; ii<= window.size(); ++ii ) {
+			core::Size const i( window[ ii ] );
 			local_mm.set_bb( i, true );
 			final_mm.set_bb( i, true );
 			// disallow proline PHI

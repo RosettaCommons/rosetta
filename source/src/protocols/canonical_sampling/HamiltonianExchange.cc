@@ -107,7 +107,7 @@ HamiltonianExchange::HamiltonianExchange( HamiltonianExchange const & other ) :
 	max_coord_( other.max_coord_ ),
 	bias_energy_( other.bias_energy_ )
 {
-	Size const nlevels( n_temp_levels() );
+	core::Size const nlevels( n_temp_levels() );
 	runtime_assert( nlevels == hamiltonians_.size() );
 }
 
@@ -122,7 +122,7 @@ HamiltonianExchange& HamiltonianExchange::operator=( HamiltonianExchange const& 
 	successfully_initialized_ = other.successfully_initialized_;
 	max_coord_ = other.max_coord_;
 	bias_energy_ = other.bias_energy_;
-	Size const nlevels( n_temp_levels() );
+	core::Size const nlevels( n_temp_levels() );
 	runtime_assert( nlevels == hamiltonians_.size() );
 	return *this;
 }
@@ -194,7 +194,7 @@ HamiltonianExchange::initialize_simulation(
 ) {
 	show( tr.Info );
 	Parent::initialize_simulation( pose, metropolis_hastings_mover, cycle );
-	// Size const nlevels( n_temp_levels() );
+	// core::Size const nlevels( n_temp_levels() );
 	set_current_temp( rank()+1 );
 	current_exchange_schedule_ = 0;
 	next_exchange_schedule();
@@ -217,11 +217,11 @@ HamiltonianExchange::initialize_simulation(
 }
 
 Size
-HamiltonianExchange::coord2key( GridCoord const& coord, GridCoord const& max_coord, Size exclude_dim ) {
-	Size const n_dim( coord.size() );
-	Size key( 0 );
-	Size stride( 1 );
-	for ( Size d=1; d<=n_dim; ++d ) {
+HamiltonianExchange::coord2key( GridCoord const& coord, GridCoord const& max_coord, core::Size exclude_dim ) {
+	core::Size const n_dim( coord.size() );
+	core::Size key( 0 );
+	core::Size stride( 1 );
+	for ( core::Size d=1; d<=n_dim; ++d ) {
 		if ( d == exclude_dim ) continue;
 		key += (coord[ d ] - 1) * stride;
 		stride *= max_coord[d];
@@ -247,7 +247,7 @@ void HamiltonianExchange::setup_exchange_schedule() {
 	GridCoord max_coord( n_dim, 0 );
 	for ( Grid::const_iterator it=exchange_grid_.begin(); it!=exchange_grid_.end(); ++it ) {
 		GridCoord const& coord( *it );
-		for ( Size dim=1; (int)dim<=n_dim; ++dim ) {
+		for ( core::Size dim=1; (int)dim<=n_dim; ++dim ) {
 			if ( coord[ dim ] > max_coord[ dim ] ) max_coord[ dim ] = coord[ dim ];
 		}
 	}
@@ -255,14 +255,14 @@ void HamiltonianExchange::setup_exchange_schedule() {
 
 	if ( ! initialize_exchange_schedule_from_file( exchange_schedule_file_ ) ) { // if not initialize from file, do the next
 
-		for ( Size dim=1; (int)dim<=n_dim; ++dim ) {
+		for ( core::Size dim=1; (int)dim<=n_dim; ++dim ) {
 			//make list of uniqe groups: if dim==2 (1,1,1), (1,2,1), (1,3,1), ... (1, N, 1) should be one group
 			typedef std::list< std::pair< core::Size, core::Size > > Level2GridpointList;
 			typedef std::map< core::Size, Level2GridpointList > Groups;
 			Groups groups;
-			for ( Size i=1; i<=exchange_grid_.size(); ++i ) {
+			for ( core::Size i=1; i<=exchange_grid_.size(); ++i ) {
 				GridCoord const& coord( exchange_grid_[ i ] );
-				Size key( coord2key( coord, max_coord, dim ) );
+				core::Size key( coord2key( coord, max_coord, dim ) );
 				groups[ key ].push_back( std::make_pair( coord[ dim ], i ) );
 			}
 
@@ -271,7 +271,7 @@ void HamiltonianExchange::setup_exchange_schedule() {
 				group.second.sort();
 			}
 
-			for ( Size phase = 1; phase <= 2; ++phase ) {
+			for ( core::Size phase = 1; phase <= 2; ++phase ) {
 				//PHASE 2  2<->3, 4<->5...
 				list.clear();
 				for ( Groups::const_iterator git = groups.begin(); git != groups.end(); ++git ) {
@@ -297,7 +297,7 @@ HamiltonianExchange::next_exchange_level() const {
 	ExchangeSchedule const& ex( exchange_schedules_[ current_exchange_schedule_ ] );
 	int self( current_temp() );
 	int other( 0 );
-	for ( Size i=1; i<=ex.size() && !other; i++ ) {
+	for ( core::Size i=1; i<=ex.size() && !other; i++ ) {
 		if ( ex[ i ].first == self ) other = ex[ i ].second;
 		if ( ex[ i ].second == self ) other = ex[ i ].first;
 	}
@@ -326,7 +326,7 @@ HamiltonianExchange::temperature_move( pose::Pose& MPI_ONLY( pose ) ) {
 	int const mpi_SCORE_INFORM = 2;
 	int const mpi_LEVEL_DECISION = 3;
 
-	//Size const nlevels( n_temp_levels() );
+	//core::Size const nlevels( n_temp_levels() );
 	int exchange_partner;
 	bool is_master;
 	find_exchange_partner( exchange_partner, is_master );
@@ -476,8 +476,8 @@ bool HamiltonianExchange::initialize_exchange_schedule_from_file( std::string co
 	while ( getline( in, line ) ) {
 		list.clear();
 		std::istringstream line_stream( line );
-		Size grid1;
-		Size grid2;
+		core::Size grid1;
+		core::Size grid2;
 		line_stream >> grid1 >> grid2;
 		std::pair<int, int> elem( grid1, grid2);
 		list.push_back( elem );
@@ -509,7 +509,7 @@ bool HamiltonianExchange::initialize_from_file( std::string const& filename ) {
 
 	std::string line;
 
-	Size n_dim( 1 );
+	core::Size n_dim( 1 );
 	exchange_grid_dimension_ = 0;
 	// table format
 	tr.Info << " reading Hamiltonian configuration file " << filename << "..." << std::endl;
@@ -569,7 +569,7 @@ bool HamiltonianExchange::initialize_from_file( std::string const& filename ) {
 		std::string score_name;
 		std::string patch_name;
 		GridCoord coord( n_dim );
-		for ( Size d = 1; d<=n_dim; ++d ) {
+		for ( core::Size d = 1; d<=n_dim; ++d ) {
 			line_stream >> coord[ d ];
 		}
 		if ( !line_stream.good() ) {
@@ -655,9 +655,9 @@ void HamiltonianExchange::show( std::ostream& os ) const {
 	os << line_marker << A( 20, "Hamiltonian Cells: " ) << I( 5, n_temp_levels() )
 		<< A( 40, "Hamiltonian Grid Dimension: " ) << I( 5, exchange_grid_dimension_ ) << space( 4 ) << line_marker << std::endl;
 	os << line_marker << repeat( 74, '-' ) << line_marker << std::endl;
-	for ( Size level=1; level<= n_temp_levels(); ++level ) {
+	for ( core::Size level=1; level<= n_temp_levels(); ++level ) {
 		os << line_marker << A( 20, "Grid Cell: " );
-		for ( Size d=1; d<=exchange_grid_dimension_; d++ ) {
+		for ( core::Size d=1; d<=exchange_grid_dimension_; d++ ) {
 			os << I( 2, exchange_grid_[ level ][ d ] );
 		}
 		os << A( 15, " Temperature: " ) << F( 5, 3, temperature( level ) )
@@ -674,13 +674,13 @@ void HamiltonianExchange::show( std::ostream& os ) const {
 		for ( auto const & it : ex ) {
 			GridCoord const& coord1( exchange_grid_[ it.first ] );
 			GridCoord const& coord2( exchange_grid_[ it.second ] );
-			Size const n_dim( exchange_grid_dimension_ );
+			core::Size const n_dim( exchange_grid_dimension_ );
 			os << line_marker << A( 20, "( ");
-			for ( Size d=1; d<=n_dim; ++d ) {
+			for ( core::Size d=1; d<=n_dim; ++d ) {
 				os << I( 2, coord1[ d ] ) << (d != n_dim ? ", " : " )  " );
 			}
 			os << A( 10, " <-->   ( ");
-			for ( Size d=1; d<=n_dim; ++d ) {
+			for ( core::Size d=1; d<=n_dim; ++d ) {
 				os << I( 2, coord2[ d ] ) << (d != n_dim ? ", " : " )  " );
 			}
 			os << space( 74-( 20+2+4*n_dim+2+10+8+4*n_dim+2 ) ) << line_marker << std::endl;

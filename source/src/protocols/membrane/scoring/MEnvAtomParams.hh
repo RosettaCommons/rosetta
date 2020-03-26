@@ -22,14 +22,14 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace membrane {
 namespace scoring {
 
 /// @brief A container for storing memrbane environemnt parameters and derivatives
-class MEnvAtomParams : public utility::pointer::ReferenceCount {
+class MEnvAtomParams : public utility::VirtualBase {
 
 public:
 

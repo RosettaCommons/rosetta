@@ -103,7 +103,7 @@ private:
 	void
 	output_mg_into_one_PDB( core::pose::Pose const & pose );
 
-	Size
+	core::Size
 	get_unique_mg_res( core::pose::Pose const & mg_pose );
 
 	core::pose::PoseOP

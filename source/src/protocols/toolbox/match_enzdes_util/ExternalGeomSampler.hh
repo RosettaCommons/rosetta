@@ -25,7 +25,7 @@
 #include <numeric/HomogeneousTransform.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -143,9 +143,9 @@ namespace match_enzdes_util {
 /// distance between atoms D2 and D3.  The ExternalGeomSampler
 /// pre-multiplies these matrices.
 
-class ExternalGeomSampler : public utility::pointer::ReferenceCount {
+class ExternalGeomSampler : public utility::VirtualBase {
 public:
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 	typedef core::Size Size;
 	typedef core::Real Real;
 	typedef numeric::HomogeneousTransform< Real > HTReal;
@@ -200,12 +200,12 @@ public:
 public:
 	/// Accessors
 
-	Size n_tor_U3D1_samples() const { return tor_U3D1_samples_.size(); }
-	Size n_dis_U1D1_samples() const { return dis_U1D1_samples_.size(); }
-	Size n_ang_U2D1_samples() const { return ang_U2D1_samples_.size(); }
-	Size n_ang_U1D2_samples() const { return ang_U1D2_samples_.size(); }
-	Size n_tor_U2D2_samples() const { return tor_U2D2_samples_.size(); }
-	Size n_tor_U1D3_samples() const { return tor_U1D3_samples_.size(); }
+	core::Size n_tor_U3D1_samples() const { return tor_U3D1_samples_.size(); }
+	core::Size n_dis_U1D1_samples() const { return dis_U1D1_samples_.size(); }
+	core::Size n_ang_U2D1_samples() const { return ang_U2D1_samples_.size(); }
+	core::Size n_ang_U1D2_samples() const { return ang_U1D2_samples_.size(); }
+	core::Size n_tor_U2D2_samples() const { return tor_U2D2_samples_.size(); }
+	core::Size n_tor_U1D3_samples() const { return tor_U1D3_samples_.size(); }
 
 	utility::vector1< Real > const & tor_U3D1_samples() const { return tor_U3D1_samples_; }
 	utility::vector1< Real > const & dis_U1D1_samples() const { return dis_U1D1_samples_; }
@@ -219,7 +219,7 @@ public:
 
 
 	HTReal const &
-	transform( ExternalTransform id, Size which_state ) const {
+	transform( ExternalTransform id, core::Size which_state ) const {
 		debug_assert( transforms_uptodate_ );
 		return transforms_[ id ][ which_state ];
 	}

@@ -260,7 +260,7 @@ void minimize(Pose & pose, Size nres, Size , ScoreFunctionOP sf, int bb=0) {
 
 }
 
-struct Hit : public utility::pointer::ReferenceCount {
+struct Hit : public utility::VirtualBase {
 	Size ihis,jhis,khis,lhis;
 };
 typedef utility::pointer::owning_ptr<Hit> HitOP;

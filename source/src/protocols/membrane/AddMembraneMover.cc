@@ -342,7 +342,7 @@ AddMembraneMover::apply( Pose & pose ) {
 
 			std::pair< utility::vector1< core::Real >, utility::vector1< core::Size > > pose_info( get_chain_and_z( pose ) );
 			utility::vector1< core::Real > z_coord = pose_info.first;
-			utility::vector1< Size > chainID = pose_info.second;
+			utility::vector1< core::Size > chainID = pose_info.second;
 			utility::vector1< char > secstruct( get_secstruct( pose ) );
 
 			topology_->fill_from_structure( z_coord, chainID, secstruct, thickness_ );

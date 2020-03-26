@@ -145,7 +145,7 @@ MethylNames::AtomList const& MethylNames::rosetta2methyl( std::string const& pro
 }
 
 core::Size MethylNames::proton_index( std::string const& proton ) const {
-	Size ct( 1 );
+	core::Size ct( 1 );
 	for ( auto it = begin(); it != end(); ++it, ++ct ) {
 		if ( it->first == proton ) return ct;
 	}

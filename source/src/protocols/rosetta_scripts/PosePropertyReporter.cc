@@ -19,7 +19,7 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ Headers

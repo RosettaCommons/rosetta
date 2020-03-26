@@ -51,7 +51,7 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Apply the i-th rotamer to pose
-	void apply( core::pose::Pose & pose, Size const id ) override;
+	void apply( core::pose::Pose & pose, core::Size const id ) override;
 
 	/// @brief Get the total number of rotamers in sampler
 	core::Size size() const override {
@@ -86,7 +86,7 @@ public:
 	using StepWiseSamplerSized::fast_forward; // fast forward to very end.
 
 	/// @brief Move sampler to end.
-	void fast_forward( Size const sampler_number );
+	void fast_forward( core::Size const sampler_number );
 
 	/// @brief Name of the class
 	std::string get_name() const override { return "StepWiseSamplerSizedComb"; }
@@ -98,7 +98,7 @@ public:
 	void set_random( bool const setting ) override;
 
 	/// @brief output summary of class
-	void show( std::ostream & out, Size const indent = 0 ) const override;
+	void show( std::ostream & out, core::Size const indent = 0 ) const override;
 
 private:
 

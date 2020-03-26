@@ -123,7 +123,7 @@ FlexBBMeanField::process()
 		}
 	}
 
-	if ( num_poses() == Size( 0 ) ) {
+	if ( num_poses() == core::Size( 0 ) ) {
 		std::stringstream error_message;
 		error_message
 			<< "No poses reached convergence." << std::endl;
@@ -174,15 +174,15 @@ FlexBBMeanField::renumber_rotamers()
 {
 
 	//iterates over the positions in the RotMatrix
-	for ( Size pos = 1; pos <= rot_matrices_[1].size(); ++pos ) {
+	for ( core::Size pos = 1; pos <= rot_matrices_[1].size(); ++pos ) {
 
 		ResHashMap rothash;
 
 		//iterates over all backbones
-		for ( Size bb = 1; bb <= rot_matrices_.size(); ++bb ) {
+		for ( core::Size bb = 1; bb <= rot_matrices_.size(); ++bb ) {
 
 			//iterates over all rots for pos in bb
-			for ( Size rot = 1; rot <= rot_matrices_[ bb ][ pos ].size(); ++rot ) {
+			for ( core::Size rot = 1; rot <= rot_matrices_[ bb ][ pos ].size(); ++rot ) {
 				SSize rot_ind = rothash.attempt_insert( rot_matrices_[ bb ][ pos ][ rot ].res() );
 
 				rot_matrices_[ bb ][ pos ][ rot ].rot_ind( rot_ind );
@@ -208,17 +208,17 @@ FlexBBMeanField::calc_bb_boltz_probs()
 	vector1 < Real > total_bb_boltz_prob( rot_matrices_[1].size(), Real( 0.0 ) );
 
 	// necessary for nrot normalization of bb_boltz_probs_per_aa
-	jagged_array < Size > nrot_per_aa_per_pos( rot_matrices_[1].size(),
-		vector1< Size > ( chemical::num_canonical_aas, Size( 0 ) ) );
+	jagged_array < core::Size > nrot_per_aa_per_pos( rot_matrices_[1].size(),
+		vector1< core::Size > ( chemical::num_canonical_aas, core::Size( 0 ) ) );
 	jagged_array < Real > total_bb_boltz_prob_per_aa( rot_matrices_[1].size(),
 		vector1< Real > ( chemical::num_canonical_aas, Real( 0.0 ) ) );
 
 	//loops through backbones
-	for ( Size bb = 1; bb <= rot_matrices_.size(); ++bb ) {
+	for ( core::Size bb = 1; bb <= rot_matrices_.size(); ++bb ) {
 		//loops through positions
-		for ( Size pos = 1; pos <= energy_matrices_[ bb ].size() ; ++pos ) {
+		for ( core::Size pos = 1; pos <= energy_matrices_[ bb ].size() ; ++pos ) {
 			//loops through rotamers
-			for ( Size rot = 1; rot <= energy_matrices_[ bb ][ pos ].size(); ++rot ) {
+			for ( core::Size rot = 1; rot <= energy_matrices_[ bb ][ pos ].size(); ++rot ) {
 
 				core::chemical::AA aa = rot_matrices_[bb][pos][rot].aa_ind();
 
@@ -284,15 +284,15 @@ FlexBBMeanField::calc_exp_value_rot_matrix()
 	//added 6/26/15
 	exp_rot_matrix_->is_designed( rot_matrices_[1].is_designed() );
 
-	for ( Size pos = 1; pos <= rot_matrices_[1].size(); ++pos ) {
+	for ( core::Size pos = 1; pos <= rot_matrices_[1].size(); ++pos ) {
 		exp_rot_matrix_->push_back( vector1 < RotProb> ( nrot_per_pos_[ pos ] ) );
 		//added 6/23/15
 		exp_energy_matrix_.push_back( vector1 < Real > ( nrot_per_pos_[ pos ], Real( 0.0 ) ) );
 		total_bb_boltz_wt_per_rot.push_back( vector1 < Real> ( nrot_per_pos_[ pos ], Real( 0.0 ) ) );
 
-		for ( Size bb = 1; bb <= rot_matrices_.size(); ++bb ) {
-			for ( Size rot = 1; rot <= rot_matrices_[ bb ][ pos ].size(); ++rot ) {
-				Size rot_ind = rot_matrices_[ bb ][ pos ][ rot ].rot_ind();
+		for ( core::Size bb = 1; bb <= rot_matrices_.size(); ++bb ) {
+			for ( core::Size rot = 1; rot <= rot_matrices_[ bb ][ pos ].size(); ++rot ) {
+				core::Size rot_ind = rot_matrices_[ bb ][ pos ][ rot ].rot_ind();
 
 				//This RotProb wasn't yet initialized so initialize it to value of current RotProb multiplied by the bb probability
 				if ( ! (*exp_rot_matrix_)[ pos ][ rot_ind ].res() ) {

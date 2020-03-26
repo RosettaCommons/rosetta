@@ -61,10 +61,10 @@ public:
 
 	void sample_farnesyl(
 		core::pose::Pose & pose,
-		Size const cys_idx,
-		Size const dma_one_idx,
-		Size const dma_two_idx,
-		Size const dma_three_idx );
+		core::Size const cys_idx,
+		core::Size const dma_one_idx,
+		core::Size const dma_two_idx,
+		core::Size const dma_three_idx );
 
 	void
 	show( std::ostream & output = std::cout ) const override;

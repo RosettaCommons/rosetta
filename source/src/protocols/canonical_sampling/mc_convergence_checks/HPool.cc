@@ -68,23 +68,23 @@ std::string lib_full_path(std::string const & tag_orign)
 
 	string tag = tag_orign + ".0000";
 
-	Size pos=1;
-	Size len=tag.length();
-	utility::vector1<Size> id_stack;
+	core::Size pos=1;
+	core::Size len=tag.length();
+	utility::vector1<core::Size> id_stack;
 	while ( pos<len )
 			{
-		Size newpos = tag.find(".", pos+1);
+		core::Size newpos = tag.find(".", pos+1);
 		id_stack.push_back(atoi(tag.substr(pos+1,newpos-pos-1).c_str()));
 		pos = newpos;
 	}
 
-	Size n = id_stack.size();
+	core::Size n = id_stack.size();
 	if ( n == 1 ) return option[out::file::silent]();
 	ostringstream fnstream;
 	fnstream << "c_" << setfill ('0') << setw (5) << id_stack[n-1] << ".out";
 	string fn(fnstream.str());
 
-	for ( Size i=n-1; i>=1; i-- ) {
+	for ( core::Size i=n-1; i>=1; i-- ) {
 		ostringstream pathstream1;
 		ostringstream pathstream2;
 
@@ -168,7 +168,7 @@ core::Real HPool_RMSD::dist_square(ObjexxFCL::FArray2_double &conf1, ObjexxFCL::
 
 	//cal dist
 	core::Real sum=0.0;
-	for ( Size i=1; i<=natom(); i++ ) {
+	for ( core::Size i=1; i<=natom(); i++ ) {
 		for ( core::Size d=1; d<=3; d++ ) {
 			core::Real dx = conf1(d,i) - conf2(d,i);
 			sum += dx*dx;

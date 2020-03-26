@@ -42,7 +42,7 @@
 #include <utility/file/FileName.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #ifdef USEMPI
 #include <utility/string_util.hh>
 #endif
@@ -92,7 +92,7 @@ BaseJobDistributor::BaseJobDistributor(JobVector const & jobs):
 }
 
 BaseJobDistributor::BaseJobDistributor( BaseJobDistributor const & src ) :
-	ReferenceCount(),
+	VirtualBase(),
 	overwrite_( src.overwrite_ ),
 	jobs_( src.jobs_ ),
 	current_job_( src.current_job_ ),
@@ -424,7 +424,7 @@ void BaseJobDistributor::master_node_distribute_jobs()
 
 		JobDistributorTracer << "Master Node --available job? " << available_job_found << std::endl;
 
-		Size job_index = ( available_job_found ? current_job_ : 0 );
+		core::Size job_index = ( available_job_found ? current_job_ : 0 );
 		int struct_n  = ( available_job_found ? current_nstruct_ : 0 );
 		if ( ! available_job_found ) {
 			JobDistributorTracer << "Master Node -- Spinning down node " << node_requesting_job << std::endl;
@@ -440,13 +440,13 @@ void BaseJobDistributor::master_node_distribute_jobs()
 
 	// we've just told one node to spin down, and
 	// we don't have to spin ourselves down.
-	Size nodes_left_to_spin_down( mpi_nprocs() - 1 - 1);
+	core::Size nodes_left_to_spin_down( mpi_nprocs() - 1 - 1);
 
 	while ( nodes_left_to_spin_down > 0 ) {
 		int node_requesting_job( 0 );
 		int recieve_from_any( MPI_ANY_SOURCE );
 		MPI_Recv( & node_requesting_job, 1, MPI_INT, recieve_from_any, tag_, MPI_COMM_WORLD, & stat_ );
-		Size job_index( 0 ); // No job left.
+		core::Size job_index( 0 ); // No job left.
 		MPI_Send( & job_index, 1, MPI_UNSIGNED_LONG, node_requesting_job, tag_, MPI_COMM_WORLD );
 		JobDistributorTracer << "Master Node -- Spinning down node " << node_requesting_job << " with " << nodes_left_to_spin_down << " remaining nodes."  << std::endl;
 		--nodes_left_to_spin_down;

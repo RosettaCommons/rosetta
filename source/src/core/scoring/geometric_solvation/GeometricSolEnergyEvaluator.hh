@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_geometric_solvation_GeometricSolEnergyEvaluator_HH
 #define INCLUDED_core_scoring_geometric_solvation_GeometricSolEnergyEvaluator_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/scoring/geometric_solvation/GeometricSolEnergyEvaluator.fwd.hh>
 #include <core/scoring/MinimizationData.fwd.hh>
@@ -41,7 +41,7 @@ namespace core {
 namespace scoring {
 namespace geometric_solvation {
 
-class GeometricSolEnergyEvaluator: public utility::pointer::ReferenceCount {
+class GeometricSolEnergyEvaluator: public utility::VirtualBase {
 
 public:
 

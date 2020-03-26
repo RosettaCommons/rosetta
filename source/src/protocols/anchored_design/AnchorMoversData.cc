@@ -93,7 +93,7 @@ std::string const NEIGHBORHOOD_CALC("AnchoredDesign_NeighborhoodByDistanceCalcul
 
 /// @brief empty, useless ctor.  You'll need to manually set all the data later.  Why did you make me waste my time writing this ctor?
 protocols::anchored_design::AnchorMoversData::AnchorMoversData() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	anchor_( /* 0 */ ),
 	anchor_loop_index_( 0 ),
 	movemap_fa_all_( utility::pointer::make_shared< core::kinematics::MoveMap >() ),
@@ -129,7 +129,7 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData(
 	protocols::anchored_design::AnchorCOP anchor,
 	protocols::loops::Loops const & loops,
 	bool const options) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	anchor_(anchor), //redundant, given that set_loops_and_anchor takes care of it
 	anchor_loop_index_( 0 ),
 	movemap_fa_all_( utility::pointer::make_shared< core::kinematics::MoveMap >() ),
@@ -174,7 +174,7 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData(
 
 /// @details use pose and option system to set up loops and create anchor, then call set_loops_and_anchor and set_unset_defaults to set up internal data to reasonable defaults, with or without option system help
 protocols::anchored_design::AnchorMoversData::AnchorMoversData( core::pose::Pose const & pose ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	anchor_( /* 0 */ ),
 	anchor_loop_index_( 0 ),
 	movemap_fa_all_( utility::pointer::make_shared< core::kinematics::MoveMap >() ),
@@ -234,7 +234,7 @@ protocols::anchored_design::AnchorMoversData::~AnchorMoversData()= default;
 
 /// @brief copy ctor
 AnchorMoversData::AnchorMoversData( AnchorMoversData const & rhs ) :
-	utility::pointer::ReferenceCount(rhs),
+	utility::VirtualBase(rhs),
 	interface_calc_( INTERFACE_CALC ), //const; must be initialized here
 	neighborhood_calc_( NEIGHBORHOOD_CALC )//const; must be initialized here
 {

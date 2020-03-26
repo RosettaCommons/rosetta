@@ -68,7 +68,7 @@ PackRotamersMoverLazy::parse_my_tag(
 )
 {
 	if ( tag->hasOption("nloop") ) {
-		nloop(tag->getOption<Size>("nloop",1));
+		nloop(tag->getOption<core::Size>("nloop",1));
 		runtime_assert( nloop() > 0 );
 	}
 	parse_score_function( tag, datamap, filters, movers, pose );
@@ -97,7 +97,7 @@ PackRotamersMoverLazy::apply_to_rotpack( Pose & pose , utility::vector0< int > r
 	core::PackerEnergy best_energy(0.);
 	Pose best_pose;
 	best_pose = pose;
-	for ( Size run(1); run <= nloop(); ++run ) {
+	for ( core::Size run(1); run <= nloop(); ++run ) {
 		// run SimAnnealer
 		core::PackerEnergy packer_energy( this->run( pose, rot_to_pack) );
 		//  Real const score( scorefxn_( pose ) ); another option for deciding which is the 'best' result

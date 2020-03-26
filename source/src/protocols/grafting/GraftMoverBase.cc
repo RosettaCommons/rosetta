@@ -75,7 +75,7 @@ GraftMoverBase::GraftMoverBase(std::string mover_name):
 
 }
 
-GraftMoverBase::GraftMoverBase(Size start, Size end, std::string mover_name):
+GraftMoverBase::GraftMoverBase(core::Size start, core::Size end, std::string mover_name):
 	moves::Mover(mover_name),
 	start_(start),
 	end_(end),
@@ -88,7 +88,7 @@ GraftMoverBase::GraftMoverBase(Size start, Size end, std::string mover_name):
 
 }
 
-GraftMoverBase::GraftMoverBase(const Size start, const Size end, std::string mover_name, core::pose::Pose const & piece, Size Nter_overhang_length, Size Cter_overhang_length) :
+GraftMoverBase::GraftMoverBase(const core::Size start, const core::Size end, std::string mover_name, core::pose::Pose const & piece, core::Size Nter_overhang_length, core::Size Cter_overhang_length) :
 	moves::Mover(mover_name),
 	start_(start),
 	end_(end),
@@ -103,7 +103,7 @@ GraftMoverBase::GraftMoverBase(const Size start, const Size end, std::string mov
 
 
 void
-GraftMoverBase::set_piece(Pose const & piece, Size Nter_overhang_length, Size Cter_overhang_length){
+GraftMoverBase::set_piece(Pose const & piece, core::Size Nter_overhang_length, core::Size Cter_overhang_length){
 	piece_ = utility::pointer::make_shared< core::pose::Pose >(piece);
 	Nter_overhang_length_ = Nter_overhang_length;
 	Cter_overhang_length_=Cter_overhang_length;
@@ -146,7 +146,7 @@ GraftMoverBase::get_name() const
 }
 
 void
-GraftMoverBase::set_insert_region(const Size start, const Size end){
+GraftMoverBase::set_insert_region(const core::Size start, const core::Size end){
 	start_ = start;
 	end_ = end;
 	original_end_=end;
@@ -160,13 +160,13 @@ GraftMoverBase::copy_pdbinfo(bool copy_pdbinfo){
 ///////Accessors and Mutators of private data for derived classes
 
 void
-GraftMoverBase::original_end(Size original_end){
+GraftMoverBase::original_end(core::Size original_end){
 	original_end_ = original_end;
 }
 
 Size GraftMoverBase::original_end(){return original_end_;}
 
-void GraftMoverBase::insertion_length(Size insertion_length){
+void GraftMoverBase::insertion_length(core::Size insertion_length){
 	insertion_length_ = insertion_length;
 }
 

@@ -176,7 +176,7 @@ void SampleRotamersFromPDB_RotamerSetOperation::initialize_from_command_line() {
 	if ( !option[OptionKeys::packing::unboundrot].active() ) {
 		return;
 	}
-	for ( Size i = 1; i <= option[OptionKeys::packing::unboundrot]().size(); ++i ) {
+	for ( core::Size i = 1; i <= option[OptionKeys::packing::unboundrot]().size(); ++i ) {
 		std::string filename = option[OptionKeys::packing::unboundrot]()[i].name();
 		TR << "Adding rotamers from " << filename << std::endl;
 		core::pose::PoseOP pose(new core::pose::Pose());
@@ -254,7 +254,7 @@ void SampleRotamersFromPDB_RotamerSetOperation::alter_rotamer_set_from_db(core::
 	using namespace core;
 
 	//TR<<"Size of SampleAtAlignedpositions_ is: "<<SampleAtAlignedpositions_.size()<<std::endl;
-	Size const seqnum = (Size) rotamer_set.resid();  //seqnum holds the the position of the current rotamer vector
+	core::Size const seqnum = (core::Size) rotamer_set.resid();  //seqnum holds the the position of the current rotamer vector
 	if ( pose.residue(seqnum).chain() > 1 ) {
 		return; //I can only apply this to chain 1
 	}
@@ -276,7 +276,7 @@ void SampleRotamersFromPDB_RotamerSetOperation::alter_rotamer_set_from_db(core::
 	TR<<std::endl;
 	TR << "Original size of Rosetta calc. rotamer vector " << rotamer_set.num_rotamers() << std::endl;
 	//of the rotmer vector of the specific position
-	Size irot(0), num_to_delete(0);
+	core::Size irot(0), num_to_delete(0);
 
 	TR << "Size of rotamer vector from db file: " << resi_vec_[seqnum].size() << std::endl;
 
@@ -284,7 +284,7 @@ void SampleRotamersFromPDB_RotamerSetOperation::alter_rotamer_set_from_db(core::
 
 	runtime_assert(pose.split_by_chain(1)->total_residue() == resi_vec_.size());//assume we only applying to chain 1
 	utility::vector1< core::conformation::ResidueOP > temp_res_vec;
-	for ( Size i = 1; i <= resi_vec_[seqnum].size(); ++i ) {    //go over all rotamers in DB rotamer vector
+	for ( core::Size i = 1; i <= resi_vec_[seqnum].size(); ++i ) {    //go over all rotamers in DB rotamer vector
 		core::conformation::ResidueOP cur_rot = ROT2res(resi_vec_[seqnum][i],pose);    //rotamer from db
 		//if residue is not allowed skip iteration
 		if ( !(is_residue_allowed(cur_rot->type(),rtask)) ) {
@@ -357,7 +357,7 @@ void SampleRotamersFromPDB_RotamerSetOperation::alter_rotamer_set_from_db(core::
 		add_rotamer_to_rotamer_set( pose, rotamer_set, rot );
 	}
 	utility::vector1<bool> rotamers_to_delete2( rotamer_set.num_rotamers(), true ); //by default I am deleting all the rotamer
-	for ( Size i = 1; i <= resi_vec_[seqnum].size(); ++i ) {    //go over all rotamers in DB rotamer vector
+	for ( core::Size i = 1; i <= resi_vec_[seqnum].size(); ++i ) {    //go over all rotamers in DB rotamer vector
 		core::conformation::ResidueOP cur_rot = ROT2res(resi_vec_[seqnum][i],pose);    //rotamer from db
 		//if residue is not allowed skip iteration
 		if ( !(is_residue_allowed(cur_rot->type(),rtask)) ) {
@@ -375,7 +375,7 @@ void SampleRotamersFromPDB_RotamerSetOperation::alter_rotamer_set_from_db(core::
 			}
 		}
 	} //for resi_vec_
-	Size num_to_delete2( std::count(rotamers_to_delete2.begin(), rotamers_to_delete2.end(), true));
+	core::Size num_to_delete2( std::count(rotamers_to_delete2.begin(), rotamers_to_delete2.end(), true));
 	TR<<"rotamers_to_delete size:"<<num_to_delete2<<std::endl;
 	TR<<"rotamer_set size:"<<rotamer_set.num_rotamers()<<std::endl;
 	if ( (rotamer_set.num_rotamers() ==  num_to_delete2) ) {
@@ -389,7 +389,7 @@ void SampleRotamersFromPDB_RotamerSetOperation::alter_rotamer_set_from_pdb(core:
 	using namespace core;
 
 	//TR<<"Size of SampleAtAlignedpositions_ is: "<<SampleAtAlignedpositions_.size()<<std::endl;
-	Size const seqnum = (Size) rotamer_set.resid();  //seqnum holds the the position of the current rotamer vector
+	core::Size const seqnum = (core::Size) rotamer_set.resid();  //seqnum holds the the position of the current rotamer vector
 	if ( pose.residue(seqnum).chain() > 1 ) {
 		return; //I can only apply this to chain 1
 	}
@@ -408,9 +408,9 @@ void SampleRotamersFromPDB_RotamerSetOperation::alter_rotamer_set_from_pdb(core:
 	}
 	core::pack::task::ResidueLevelTask const & rtask = ptask.residue_task(seqnum);
 	//of the rotmer vector of the specific position
-	Size irot(0), num_to_delete(0);
+	core::Size irot(0), num_to_delete(0);
 
-	for ( Size i = 1; i <= poses_.size(); ++i ) {
+	for ( core::Size i = 1; i <= poses_.size(); ++i ) {
 		core::pose::Pose const & ubr_pose = *(poses_[i]);
 		//check the aligned positions on the pose compared to the refrence
 		core::Size nearest_on_pose=0;
@@ -473,7 +473,7 @@ void SampleRotamersFromPDB_RotamerSetOperation::alter_rotamer_set_from_pdb(core:
 		} else { //fi type_is_allowed
 			TR << "Residue is not allowed" << std::endl;
 		}
-	} //for(Size i = 1; i <= poses_.size(); ++i)
+	} //for(core::Size i = 1; i <= poses_.size(); ++i)
 	num_to_delete = std::count(rotamers_to_delete.begin(), rotamers_to_delete.end(), true);
 	TR << "number of rotamers for current res before deletion:" << rotamer_set.num_rotamers() << std::endl;
 	TR << "number of rotamers to delete is :" << num_to_delete << std::endl;

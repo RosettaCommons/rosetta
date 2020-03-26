@@ -116,10 +116,10 @@ compute_frag_bias(
 	// for each fragment size, smooth over the fragment window
 	//   - handle mapping from frame->seqpos
 	//   - don't allow any insertions that cross cuts
-	for ( Size i_frag_set = 1; i_frag_set<=fragment_sets.size(); ++i_frag_set ) {
+	for ( core::Size i_frag_set = 1; i_frag_set<=fragment_sets.size(); ++i_frag_set ) {
 		utility::vector1< core::Real > frame_weights( pose.size(), 0.0 );
 
-		for ( Size i_frame = 1; i_frame <= fragment_sets[i_frag_set]->nr_frames(); ++i_frame ) {
+		for ( core::Size i_frame = 1; i_frame <= fragment_sets[i_frag_set]->nr_frames(); ++i_frame ) {
 			core::fragment::ConstFrameIterator frame_it = fragment_sets[i_frag_set]->begin(); // first frame of the fragment library
 			std::advance(frame_it, i_frame-1);  // point frame_it to the i_frame of the library
 			core::Size seqpos_start = (*frame_it)->start();  // find starting and ending residue seqpos of the inserted fragment
@@ -146,7 +146,7 @@ compute_frag_bias(
 		//////////////////////////////////////////////
 		/////////////// for debug only ///////////////
 		// report the probability for each frame in a fragment set
-		for ( Size i_frame = 1; i_frame <= fragment_sets[i_frag_set]->nr_frames(); ++i_frame ) {
+		for ( core::Size i_frame = 1; i_frame <= fragment_sets[i_frag_set]->nr_frames(); ++i_frame ) {
 			core::fragment::ConstFrameIterator frame_it = fragment_sets[i_frag_set]->begin(); // first frame of the fragment library
 			std::advance(frame_it, i_frame-1);  // point frame_it to the i_frame of the library
 			core::Size seqpos_start = (*frame_it)->start();  // find starting and ending residue seqpos of the inserted fragment
@@ -207,7 +207,7 @@ assign_prob_with_rsd_wdw(
 	int start_rsn = rsn-offset;
 	if ( start_rsn < 1 ) start_rsn = 1;
 
-	Size end_rsn = rsn+offset;
+	core::Size end_rsn = rsn+offset;
 	if ( end_rsn > nres_ ) end_rsn = nres_;
 
 	for ( int i=start_rsn; i<=(int)end_rsn; ++i ) {
@@ -231,9 +231,9 @@ automode(
 	// based on parameter scanning to predict regions to refine:
 	// 0.45 0.05 0.15 0.35
 	// density:9, density_nbrzscore:1, rama:3, geometry:7
-	//std::map< Size, Real > per_rsd_dens, per_rsd_nbrdens, per_rsd_rama, per_rsd_geometry;
-	std::map< Size, Real > zscore_dens, zscore_nbrdens, zscore_rama, zscore_geometry;
-	std::map< Size, Real > scores;
+	//std::map< core::Size, Real > per_rsd_dens, per_rsd_nbrdens, per_rsd_rama, per_rsd_geometry;
+	std::map< core::Size, Real > zscore_dens, zscore_nbrdens, zscore_rama, zscore_geometry;
+	std::map< core::Size, Real > scores;
 
 	density_nbr( pose ); // perrsd_dens_ and perrsd_densnbr_
 	rama( pose ); // perrsd_rama_
@@ -265,13 +265,13 @@ void
 FragmentBiasAssigner::
 automode_scores(
 	pose::Pose &pose,
-	std::map< Size, Real > & scores
+	std::map< core::Size, Real > & scores
 ){
 	// based on parameter scanning to predict regions to refine:
 	// 0.45 0.05 0.15 0.35
 	// density:9, density_nbrzscore:1, rama:3, geometry:7
-	//std::map< Size, Real > per_rsd_dens, per_rsd_nbrdens, per_rsd_rama, per_rsd_geometry;
-	std::map< Size, Real > zscore_dens, zscore_nbrdens, zscore_rama, zscore_geometry;
+	//std::map< core::Size, Real > per_rsd_dens, per_rsd_nbrdens, per_rsd_rama, per_rsd_geometry;
+	std::map< core::Size, Real > zscore_dens, zscore_nbrdens, zscore_rama, zscore_geometry;
 
 	density_nbr( pose ); // perrsd_dens_ and perrsd_densnbr_
 	rama( pose ); // perrsd_rama_
@@ -390,7 +390,7 @@ density_nbr(
 	// clean and init the containers
 	perrsd_dens_.clear();
 	perrsd_nbrdens_.clear();
-	for ( Size i= 1; i <=nres_; ++i ) {
+	for ( core::Size i= 1; i <=nres_; ++i ) {
 		perrsd_dens_[i] = 0.0;
 		perrsd_nbrdens_[i] = 0.0;
 	}
@@ -442,7 +442,7 @@ density(
 	(*myscore)(pose);
 
 	perrsd_dens_.clear();
-	for ( Size i= 1; i <=nres_; ++i ) {
+	for ( core::Size i= 1; i <=nres_; ++i ) {
 		perrsd_dens_[i] = 0.0;
 	}
 
@@ -482,7 +482,7 @@ geometry(
 
 	// clean the container
 	perrsd_geometry_.clear();
-	for ( Size i= 1; i <=nres_; ++i ) perrsd_geometry_[i] = 0.0;
+	for ( core::Size i= 1; i <=nres_; ++i ) perrsd_geometry_[i] = 0.0;
 
 	calculate_geometry( pose, perrsd_geometry_, n_symm_subunit_, weight);
 
@@ -501,7 +501,7 @@ rama(
 
 	// clean the container
 	perrsd_rama_.clear();
-	for ( Size i= 1; i <=nres_; ++i ) perrsd_rama_[i] = 0.0;
+	for ( core::Size i= 1; i <=nres_; ++i ) perrsd_rama_[i] = 0.0;
 
 	calculate_rama( pose, perrsd_rama_, n_symm_subunit_, weight);
 

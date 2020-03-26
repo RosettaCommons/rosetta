@@ -22,7 +22,7 @@
 #include <protocols/frag_picker/VallChunk.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace frag_picker {
@@ -31,7 +31,7 @@ namespace frag_picker {
 /// @details Chunk filtering is used to screen chunks before any fragment is evaluated
 /// Therefore it is the fastest way to excluded unwanted proteins
 /// @see AllowPdbIdFilter and DenyPdbIdFilter for implementations
-class VallChunkFilter: public utility::pointer::ReferenceCount {
+class VallChunkFilter: public utility::VirtualBase {
 public:
 	~VallChunkFilter() override = default;
 	/// @brief if a chunk seems to be interesting, return true. Otherwise say false

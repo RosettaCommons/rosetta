@@ -23,7 +23,7 @@
 
 #include <core/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector0.hh>
 
 #include <iostream>
@@ -45,7 +45,7 @@ namespace chemical {
 //!
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class Element : public utility::pointer::ReferenceCount
+class Element : public utility::VirtualBase
 {
 
 public:

@@ -34,7 +34,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -43,7 +43,7 @@ namespace protocols {
 namespace match {
 namespace output {
 
-class ProcessorFactory : public utility::pointer::ReferenceCount {
+class ProcessorFactory : public utility::VirtualBase {
 public:
 	typedef core::Real Real;
 	typedef core::Size Size;

@@ -16,14 +16,14 @@
 #ifndef INCLUDED_protocols_stepwise_StepWiseScreener_HH
 #define INCLUDED_protocols_stepwise_StepWiseScreener_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/screener/StepWiseScreener.fwd.hh>
 #include <protocols/stepwise/screener/StepWiseScreenerType.hh>
 #include <protocols/stepwise/sampler/StepWiseSampler.fwd.hh>
 #include <protocols/moves/CompositionMover.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
+#include <core/types.hh>
 #include <string>
-
 
 #ifdef WIN32
 #include <protocols/stepwise/sampler/StepWiseSampler.hh>
@@ -35,7 +35,7 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-class StepWiseScreener: public utility::pointer::ReferenceCount {
+class StepWiseScreener: public utility::VirtualBase {
 
 public:
 
@@ -53,7 +53,7 @@ public:
 
 	virtual
 	void
-	apply_mover( moves::CompositionMoverOP, Size const, Size const ){}
+	apply_mover( moves::CompositionMoverOP, core::Size const, core::Size const ){}
 
 	virtual
 	void
@@ -75,7 +75,7 @@ public:
 	void
 	fast_forward( sampler::StepWiseSamplerOP ) {}
 
-	Size const &
+	core::Size const &
 	count() const { return count_; }
 
 	void
@@ -89,7 +89,7 @@ public:
 
 private:
 
-	Size count_;
+	core::Size count_;
 	bool ok_to_increment_;
 };
 

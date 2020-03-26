@@ -115,7 +115,7 @@ vector1<Size> read_res_list(string fn) {
 }
 
 
-struct Hit : public utility::pointer::ReferenceCount {
+struct Hit : public utility::VirtualBase {
 	Size ihis,jcys;
 	Real c11,c12,c21,c22;
 	bool idmr;

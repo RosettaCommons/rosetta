@@ -84,10 +84,10 @@ InstallFarnesylMover::~InstallFarnesylMover(){}
 /////////////////////
 
 void
-InstallFarnesylMover::sample_first( core::pose::Pose & pose, Size const cys_idx ) {
+InstallFarnesylMover::sample_first( core::pose::Pose & pose, core::Size const cys_idx ) {
 	auto sfxn_ = core::scoring::get_score_function();
 
-	Size const dma_one_idx = pose.size();
+	core::Size const dma_one_idx = pose.size();
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb( cys_idx, true );
 	movemap->set_chi( cys_idx, true );
@@ -122,7 +122,7 @@ InstallFarnesylMover::sample_first( core::pose::Pose & pose, Size const cys_idx 
 	Real first_cutoff = 5000;
 	Pose best_pose;
 	Real best_score = first_cutoff + 100; // greater than first_cutoff so guaranteed irrelevant
-	Size ii = 0;
+	core::Size ii = 0;
 	while ( comb.not_end() ) {
 		// We need a local pose so we don't just keep minning the same pose.
 		// In theory, we could just copy before minning if this ends up super slow.
@@ -149,8 +149,8 @@ void
 InstallFarnesylMover::sample_second( core::pose::Pose & pose ) {
 	auto sfxn_ = core::scoring::get_score_function();
 
-	Size const dma_one_idx = pose.size() - 1;
-	Size const dma_two_idx = pose.size();
+	core::Size const dma_one_idx = pose.size() - 1;
+	core::Size const dma_two_idx = pose.size();
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb( dma_one_idx, true );
 	movemap->set_chi( dma_one_idx, true );
@@ -186,7 +186,7 @@ InstallFarnesylMover::sample_second( core::pose::Pose & pose ) {
 	Real first_cutoff = 5000;
 	Pose best_pose;
 	Real best_score = first_cutoff + 100; // greater than first_cutoff so guaranteed irrelevant
-	Size ii = 0;
+	core::Size ii = 0;
 	while ( comb.not_end() ) {
 		// We need a local pose so we don't just keep minning the same pose.
 		// In theory, we could just copy before minning if this ends up super slow.
@@ -213,8 +213,8 @@ void
 InstallFarnesylMover::sample_third( core::pose::Pose & pose ) {
 	auto sfxn_ = core::scoring::get_score_function();
 
-	Size const dma_two_idx = pose.size() - 1;
-	Size const dma_three_idx = pose.size();
+	core::Size const dma_two_idx = pose.size() - 1;
+	core::Size const dma_three_idx = pose.size();
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb( dma_two_idx, true );
 	movemap->set_chi( dma_two_idx, true );
@@ -252,7 +252,7 @@ InstallFarnesylMover::sample_third( core::pose::Pose & pose ) {
 	Real first_cutoff = 5000;
 	Pose best_pose;
 	Real best_score = first_cutoff + 100; // greater than first_cutoff so guaranteed irrelevant
-	Size ii = 0;
+	core::Size ii = 0;
 	while ( comb.not_end() ) {
 		// We need a local pose so we don't just keep minning the same pose.
 		// In theory, we could just copy before minning if this ends up super slow.
@@ -282,12 +282,12 @@ InstallFarnesylMover::apply( core::pose::Pose & pose ) {
 	using namespace core::id;
 
 	auto cys_subset = selector_->apply( pose );
-	utility::vector1< Size > cys_pos;
-	for ( Size ii = 1; ii <= cys_subset.size(); ++ii ) {
+	utility::vector1< core::Size > cys_pos;
+	for ( core::Size ii = 1; ii <= cys_subset.size(); ++ii ) {
 		if ( cys_subset[ ii ] ) cys_pos.push_back( ii );
 	}
 
-	for ( Size const cys_seqpos : cys_pos ) {
+	for ( core::Size const cys_seqpos : cys_pos ) {
 		runtime_assert( pose.residue_type( cys_seqpos ).aa() == core::chemical::aa_cys );
 
 		auto chm = core::chemical::ChemicalManager::get_instance();

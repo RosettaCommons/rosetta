@@ -23,7 +23,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace core {
 namespace pack {
@@ -31,7 +31,7 @@ namespace scmin {
 
 /// @brief A simple class for tracking a network state and its energy where
 /// each sidechain's state is described by a series of chi angles.
-class SidechainStateAssignment : public utility::pointer::ReferenceCount {
+class SidechainStateAssignment : public utility::VirtualBase {
 public:
 	SidechainStateAssignment( Size nmoltenres );
 	SidechainStateAssignment( SidechainStateAssignment const & );

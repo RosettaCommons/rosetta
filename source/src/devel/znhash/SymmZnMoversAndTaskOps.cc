@@ -287,9 +287,9 @@ void ZNCoordinationConstraintReporterMover::apply( core::pose::Pose & p )
 	//SymmetricConformation const & SymmConf (
 	// dynamic_cast<SymmetricConformation const &> ( p.conformation()) );
 	//SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
-	//Size nsubunits = symm_info->subunits();
-	//Size nres_asu = symm_info->num_independent_residues();
-	//Size nres_monomer = symm_info->num_independent_residues() - 1;
+	//core::Size nsubunits = symm_info->subunits();
+	//core::Size nres_asu = symm_info->num_independent_residues();
+	//core::Size nres_monomer = symm_info->num_independent_residues() - 1;
 
 
 	TR << "Best zn coordination: score = " << zn_score->score( p ) << std::endl;
@@ -505,7 +505,7 @@ void ZNCoordinationConstraintPlacerMover::mutate_the_interface_to_alanine( core:
 	mutate_interface_residues_to_alanine_task_ = core::pack::task::TaskFactory::create_packer_task( p );
 	core::pack::make_symmetric_PackerTask_by_truncation( p, mutate_interface_residues_to_alanine_task_ );
 	protocols::simple_task_operations::RestrictToInterface rti_taskop;
-	for ( Size ii = 1; ii <= p.fold_tree().num_jump(); ++ii ) { rti_taskop.add_jump( ii ); }
+	for ( core::Size ii = 1; ii <= p.fold_tree().num_jump(); ++ii ) { rti_taskop.add_jump( ii ); }
 	rti_taskop.distance( 12 );
 	rti_taskop.apply( p, *mutate_interface_residues_to_alanine_task_ );
 	core::pack::task::operation::RestrictAbsentCanonicalAAS make_ala;
@@ -534,7 +534,7 @@ void ZNCoordinationConstraintPlacerMover::insert_zn_residues_into_pose( core::po
 
 	HTReal match_frame(  m1_.res1conf().xyz(1), m1_.res1conf().xyz(2), m1_.res1conf().xyz(3) );
 
-	//utility::vector1< Size > new_zn_resids(4, 0);
+	//utility::vector1< core::Size > new_zn_resids(4, 0);
 	// after Frank's fix, should only need one append_residue_by_jump call.
 	for ( core::Size ii = 1; ii <= 1; ++ii ) {
 
@@ -561,7 +561,7 @@ void ZNCoordinationConstraintPlacerMover::insert_zn_residues_into_pose( core::po
 	core::pose::PDBInfoOP newinfo( new core::pose::PDBInfo( p ) ); // fake new info
 	p.pdb_info( newinfo );
 
-	//for ( Size ii = 1; ii <= p.size(); ++ii ) {
+	//for ( core::Size ii = 1; ii <= p.size(); ++ii ) {
 	// std::cout << "Residue " << ii << " chain: " << p.residue(ii).chain() << " ";
 	// std::cout << p.residue(ii).name() << std::endl;
 	//}
@@ -590,9 +590,9 @@ ZNCoordinationConstraintPlacerMover::add_matcher_remark_lines_for_zn_coordinatio
 	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( p.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
-	Size nsubunits = symm_info->subunits();
-	Size nres_asu = symm_info->num_independent_residues();
-	// Size nres_monomer = symm_info->num_independent_residues() - 1; // Unused variable causes warning.
+	core::Size nsubunits = symm_info->subunits();
+	core::Size nres_asu = symm_info->num_independent_residues();
+	// core::Size nres_monomer = symm_info->num_independent_residues() - 1; // Unused variable causes warning.
 
 	symdes_znx_coordination_data coordination_data;
 	// Read in the original remark lines from the m1 match constraint file and translate them
@@ -602,7 +602,7 @@ ZNCoordinationConstraintPlacerMover::add_matcher_remark_lines_for_zn_coordinatio
 
 	coordination_data.zinc_data_[ 1 ].chain_ = 'B';
 	coordination_data.zinc_data_[ 1 ].resind_ = nres_asu;
-	for ( Size ii = 1; ii <= 2; ++ii ) {
+	for ( core::Size ii = 1; ii <= 2; ++ii ) {
 		std::string match_line;
 		std::getline( m1matchfile, match_line );
 		std::cout << "original line: " << match_line << std::endl;
@@ -649,13 +649,13 @@ ZNCoordinationConstraintPlacerMover::add_matcher_remark_lines_for_zn_coordinatio
 	coordination_data.zinc_data_[ 3 ].chain_ = char( int('A') + 2*nsubunits - 1 );
 	coordination_data.zinc_data_[ 3 ].resind_ = nres_asu*nsubunits;
 
-	for ( Size ii = 1; ii <= 2; ++ii ) {
+	for ( core::Size ii = 1; ii <= 2; ++ii ) {
 		std::string match_line;
 		std::getline( m2matchfile, match_line );
 		std::cout << "original line: " << match_line << std::endl;
 		std::istringstream matchline_stream( match_line );
 
-		Size const which_cst = ( v3v4 == (ii==1) ) ? 3 : 4;
+		core::Size const which_cst = ( v3v4 == (ii==1) ) ? 3 : 4;
 
 		matchfile_header header = read_match_header_line_from_pdb( m2_.match_pdb_file(), ii, matchline_stream );
 
@@ -805,9 +805,9 @@ ZNCoordinationConstraintPlacerMover::restore_alanine_interface_residues_to_wtcon
 	auto const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( p.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
-	Size nres_asu = symm_info->num_independent_residues();
+	core::Size nres_asu = symm_info->num_independent_residues();
 
-	for ( Size ii = 1; ii <= nres_asu - 1; ++ii ) {
+	for ( core::Size ii = 1; ii <= nres_asu - 1; ++ii ) {
 		if ( ii == m1_.res1() || ii == m1_.res2() || ii == m2_.res1() || ii == m2_.res2() ) continue;
 		if ( ! mutate_interface_residues_to_alanine_task_->being_packed( ii ) ) continue;
 		p.replace_residue( ii, pose_w_scs.residue(ii), true );
@@ -872,8 +872,8 @@ void FindZnCoordinatingResidues::find_coordinating_residues(
 	utility::vector1< std::string > glu_coordinating_atoms; glu_coordinating_atoms.push_back("OE1"); glu_coordinating_atoms.push_back("OE2");
 
 	// ok -- look at residues in the vacinity of the 1st znx residue
-	for ( Size ii = 1; ii <= 4; ++ii ) {
-		Size znxind = ii < 3 ? nres_asu : nsubunits*nres_asu;
+	for ( core::Size ii = 1; ii <= 4; ++ii ) {
+		core::Size znxind = ii < 3 ? nres_asu : nsubunits*nres_asu;
 		debug_assert( copy_pose.residue(znxind).name() == "ZNX" );
 
 
@@ -975,9 +975,9 @@ void InsertZincCoordinationRemarkLines::apply( core::pose::Pose & p )
 		dynamic_cast<SymmetricConformation const &> ( p.conformation()) );
 
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
-	Size nsubunits = symm_info->subunits();
-	Size nres_asu = symm_info->num_independent_residues();
-	// Size nres_monomer = symm_info->num_independent_residues() - 1; // Unused variable causes warning.
+	core::Size nsubunits = symm_info->subunits();
+	core::Size nres_asu = symm_info->num_independent_residues();
+	// core::Size nres_monomer = symm_info->num_independent_residues() - 1; // Unused variable causes warning.
 
 	FindZnCoordinatingResidues finder;
 	finder.find_coordinating_residues( p );
@@ -990,7 +990,7 @@ void InsertZincCoordinationRemarkLines::apply( core::pose::Pose & p )
 	coordination_data.zinc_data_[ 2 ].resind_ = nres_asu;
 	coordination_data.zinc_data_[ 3 ].chain_ = char( int('A') + 2*nsubunits - 1 );
 	coordination_data.zinc_data_[ 3 ].resind_ = nres_asu*nsubunits;
-	for ( Size ii = 1; ii <= 6; ++ii ) {
+	for ( core::Size ii = 1; ii <= 6; ++ii ) {
 
 		if ( ii <= 2 ) {
 			coordination_data.protein_data_[ ii ].chain_ = 'A';
@@ -1092,7 +1092,7 @@ void DisableZnCoordinationResiduesTaskOp::apply(
 {
 	//FindZnCoordinatingResidues finder;
 	//finder.find_coordinating_residues( pose );
-	//for ( Size ii = 1; ii <= 4; ++ii ) {
+	//for ( core::Size ii = 1; ii <= 4; ++ii ) {
 	// task.nonconst_residue_task( finder.resinds()[ ii ] ).prevent_repacking();
 	//}
 
@@ -1106,9 +1106,9 @@ void DisableZnCoordinationResiduesTaskOp::apply(
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
-	Size nsubunits = symm_info->subunits();
-	Size nres_asu = symm_info->num_independent_residues();
-	// Size nres_monomer = symm_info->num_independent_residues() - 1; // Unused varaible causes warning.
+	core::Size nsubunits = symm_info->subunits();
+	core::Size nres_asu = symm_info->num_independent_residues();
+	// core::Size nres_monomer = symm_info->num_independent_residues() - 1; // Unused varaible causes warning.
 
 	task.nonconst_residue_task( nres_asu ).prevent_repacking();
 
@@ -1171,16 +1171,16 @@ void ZnCoordNumHbondCalculator::notify_energy_change() {
 void ZnCoordNumHbondCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const
 {
 	if ( key == "all_Hbonds" ) {
-		basic::check_cast( valptr, &all_Hbonds_, "all_Hbonds expects to return a Size" );
+		basic::check_cast( valptr, &all_Hbonds_, "all_Hbonds expects to return a core::Size" );
 		(static_cast< basic::MetricValue< core::Size > * >(valptr))->set( all_Hbonds_ );
 
 	} else if ( key == "atom_Hbonds" ) {
-		basic::check_cast( valptr, &atom_Hbonds_, "atom_Hbonds expects to return a id::AtomID_Map< Size >" );
-		(static_cast< basic::MetricValue< core::id::AtomID_Map< Size > > * >(valptr))->set( atom_Hbonds_ );
+		basic::check_cast( valptr, &atom_Hbonds_, "atom_Hbonds expects to return a id::AtomID_Map< core::Size >" );
+		(static_cast< basic::MetricValue< core::id::AtomID_Map< core::Size > > * >(valptr))->set( atom_Hbonds_ );
 
 	} else if ( key == "residue_Hbonds" ) {
-		basic::check_cast( valptr, &residue_Hbonds_, "residue_Hbonds expects to return a utility::vector1< Size >" );
-		(static_cast<basic::MetricValue<utility::vector1< Size > > * >(valptr))->set( residue_Hbonds_ );
+		basic::check_cast( valptr, &residue_Hbonds_, "residue_Hbonds expects to return a utility::vector1< core::Size >" );
+		(static_cast<basic::MetricValue<utility::vector1< core::Size > > * >(valptr))->set( residue_Hbonds_ );
 
 	} else {
 		basic::Error() << "NumberHbondsCalculator cannot compute the requested metric " << key << std::endl;
@@ -1195,7 +1195,7 @@ ZnCoordNumHbondCalculator::print( std::string const & key ) const
 	if ( key == "all_Hbonds" ) {
 		return utility::to_string( all_Hbonds_ );
 	} else if ( key == "atom_Hbonds" ) {
-		basic::Error() << "id::AtomID_Map< Size > has no output operator, for metric " << key << std::endl;
+		basic::Error() << "id::AtomID_Map< core::Size > has no output operator, for metric " << key << std::endl;
 		utility_exit();
 	} else if ( key == "residue_Hbonds" ) {
 		return utility::to_string( residue_Hbonds_ );
@@ -1224,7 +1224,7 @@ ZnCoordNumHbondCalculator::recompute( core::pose::Pose const & this_pose )
 	residue_Hbonds_ = mv_residue_Hbonds.value();
 
 	finder_.find_coordinating_residues( this_pose );
-	for ( Size ii = 1; ii <= finder_.atomids().size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= finder_.atomids().size(); ++ii ) {
 		TR << "Incrementing hbonds for " << finder_.atomids()[ ii ].rsd() << " atom " << this_pose.residue(finder_.atomids()[ ii ].rsd() ).atom_name( finder_.atomids()[ ii ].atomno() ) << std::endl;
 		atom_Hbonds_[ finder_.atomids()[ ii ] ] += 1; // add one hydrogen bond to every atom coordinating zinc
 		residue_Hbonds_[ finder_.resinds()[ ii ] ] += 1; // add one hydrogen bond to every residue coordinating zinc

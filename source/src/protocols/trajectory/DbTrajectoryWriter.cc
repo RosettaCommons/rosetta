@@ -60,7 +60,7 @@ static basic::Tracer TR( "protocols.trajectory.DbTrajectoryWriter" );
 // }}}1
 
 DbTrajectoryWriter::DbTrajectoryWriter( // {{{1
-	Size job_id, Pose const & pose, Size frequency, Size cache_limit) {
+	core::Size job_id, Pose const & pose, core::Size frequency, core::Size cache_limit) {
 
 	job_id_ = job_id;
 	iteration_ = 0;
@@ -71,11 +71,11 @@ DbTrajectoryWriter::DbTrajectoryWriter( // {{{1
 	update(pose);
 }
 
-void DbTrajectoryWriter::set_frequency(Size setting) { // {{{1
+void DbTrajectoryWriter::set_frequency(core::Size setting) { // {{{1
 	frequency_ = setting;
 }
 
-void DbTrajectoryWriter::set_cache_limit(Size setting) { // {{{1
+void DbTrajectoryWriter::set_cache_limit(core::Size setting) { // {{{1
 	cache_limit_ = setting;
 }
 
@@ -136,7 +136,7 @@ void DbTrajectoryWriter::write_cache_to_db() const { // {{{1
 	trajectory_insert.add_column("score");
 	trajectory_insert.add_column("silent_pose");
 
-	RowDataBaseOP job( new RowData<Size>("job_id", job_id_) );
+	RowDataBaseOP job( new RowData<core::Size>("job_id", job_id_) );
 
 	for ( Frame const & frame : frame_cache_ ) {
 		stringstream string_stream;
@@ -145,7 +145,7 @@ void DbTrajectoryWriter::write_cache_to_db() const { // {{{1
 		SilentStructOP silent_data( new BinarySilentStruct(opts, frame.pose, "db") );
 		silent_file._write_silent_struct(*silent_data, string_stream);
 
-		RowDataBaseOP iteration( new RowData<Size>(
+		RowDataBaseOP iteration( new RowData<core::Size>(
 			"iteration", frame.iteration) );
 		RowDataBaseOP score( new RowData<Real>(
 			"score", frame.pose.energies().total_energy()) );

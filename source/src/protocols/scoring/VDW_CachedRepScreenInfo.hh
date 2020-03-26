@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_scoring_VDW_CachedRepScreenInfo_HH
 #define INCLUDED_protocols_scoring_VDW_CachedRepScreenInfo_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <basic/datacache/CacheableData.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.fwd.hh>
 #include <core/pose/rna/VDW_RepScreenInfo.hh>

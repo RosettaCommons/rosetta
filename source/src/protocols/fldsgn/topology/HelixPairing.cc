@@ -61,8 +61,8 @@ HelixPairing::HelixPairing():
 
 /// @brief value constructor
 HelixPairing::HelixPairing(
-	Size const h1,
-	Size const h2,
+	core::Size const h1,
+	core::Size const h2,
 	char const o
 ):
 	h1_( h1 ),
@@ -88,8 +88,8 @@ HelixPairing::HelixPairing( String const & hp ):
 	runtime_assert( parts.size() == 2 );
 
 	utility::vector1< String > helices( utility::string_split( parts[1], '-' ) );
-	h1_ = boost::lexical_cast<Size>( helices[1] );
-	h2_ = boost::lexical_cast<Size>( helices[2] );
+	h1_ = boost::lexical_cast<core::Size>( helices[1] );
+	h2_ = boost::lexical_cast<core::Size>( helices[2] );
 	runtime_assert( h1_ < h2_ );
 
 	char para = parts[2][0];
@@ -108,7 +108,7 @@ void HelixPairing::initialize()
 
 /// @brief copy constructor
 HelixPairing::HelixPairing( HelixPairing const & hp ) :
-	ReferenceCount(),
+	VirtualBase(),
 	h1_( hp.h1_ ),
 	h2_( hp.h2_ ),
 	orient_( hp.orient_ ),
@@ -175,8 +175,8 @@ HelixPairing::calc_geometry( SS_Info2_COP const ss_info )
 	int r2 = int( hx2.begin() ) - int( loop_length_ );
 	if ( r1 < 1 || r2 < 1 ) return;
 
-	Size const s1 = ss_info->strand_id( Size( r1 ) );
-	Size const s2 = ss_info->strand_id( Size( r2 ) );
+	core::Size const s1 = ss_info->strand_id( core::Size( r1 ) );
+	core::Size const s2 = ss_info->strand_id( core::Size( r2 ) );
 	if ( s1 == 0 || s2 == 0 ) return;
 
 	// check the strand pairing of s1 and s2 is parallel, otherwise skip this calculation
@@ -247,7 +247,7 @@ HelixPairingSet::HelixPairingSet( HelixPairings const & helix_pairings ):
 
 /// @brief copy constructor
 HelixPairingSet::HelixPairingSet( HelixPairingSet const & s ):
-	ReferenceCount(),
+	VirtualBase(),
 	helix_pairings_( s.helix_pairings_ ),
 	hpairset_name_( s.hpairset_name_ ),
 	num_helices_( s.num_helices_ ),
@@ -303,7 +303,7 @@ HelixPairingSet::clear()
 
 /// @brief return one of the stand_pairings give a number
 HelixPairingOP
-HelixPairingSet::helix_pairing( Size const s ) const
+HelixPairingSet::helix_pairing( core::Size const s ) const
 {
 	runtime_assert( s <= helix_pairings_.size() );
 	return helix_pairings_[ s ];
@@ -311,7 +311,7 @@ HelixPairingSet::helix_pairing( Size const s ) const
 
 /// @brief
 HelixPairingOP
-HelixPairingSet::helix_pairing( Size const h1, Size const h2 )
+HelixPairingSet::helix_pairing( core::Size const h1, core::Size const h2 )
 {
 	if ( ! initialize_map_helix_pairings_ ) {
 		create_map_helix_pairings();
@@ -366,9 +366,9 @@ void HelixPairingSet::create_map_helix_pairings()
 		}
 	}
 	map_helix_pairings_.resize( num_helices_ );
-	for ( Size i=1; i<=num_helices_; i++ ) {
+	for ( core::Size i=1; i<=num_helices_; i++ ) {
 		map_helix_pairings_[i].resize( num_helices_ );
-		for ( Size j=1; j<=num_helices_; j++ ) {
+		for ( core::Size j=1; j<=num_helices_; j++ ) {
 			map_helix_pairings_[i][j] = nullptr;
 		}
 	}

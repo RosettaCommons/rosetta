@@ -49,7 +49,7 @@
 #include <utility/keys/VariantKey.hh>
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/XMLSchemaValidation.hh>
@@ -454,7 +454,7 @@ void ChunkLibraryJobQueen::update_job_dag( JobDigraphUpdater & ) {}
 /// the TagOP objects for each preliminary LarvalJob to the derived class through the
 /// refine_job_list method.
 LarvalJobs
-ChunkLibraryJobQueen::determine_job_list( JobDAGNodeID job_dag_node_index, Size max_njobs )
+ChunkLibraryJobQueen::determine_job_list( JobDAGNodeID job_dag_node_index, core::Size max_njobs )
 {
 	// ok -- we're going to look for a job definition file, and failing that, fall back on
 	// the ChunkLibraryInputterFactory to determine where the input sources are coming from.
@@ -523,9 +523,9 @@ ChunkLibraryJobQueen::mature_larval_job(
 
 /// @details Prepare this job for output by building an OutputSpecification for it and
 /// storing this specification in the list of recent successes.
-void ChunkLibraryJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults )
+void ChunkLibraryJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, core::Size nresults )
 {
-	//Size const job_id( job->job_index() );
+	//core::Size const job_id( job->job_index() );
 	if ( status == jd3_job_status_success ) {
 		ChunkLibraryInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< ChunkLibraryInnerLarvalJob const > ( job->inner_job() );
 		if ( ! inner_job ) { throw bad_inner_job_exception(); }
@@ -567,7 +567,7 @@ ChunkLibraryJobQueen::result_outputter(
 	debug_assert( dynamic_cast< MOS const * > ( &spec ) );
 	auto const & mo_spec( static_cast< MOS const & > (spec) );
 	MOOP outputters( new MO );
-	for ( Size ii = 1; ii <= mo_spec.output_specifications().size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= mo_spec.output_specifications().size(); ++ii ) {
 		output::OutputSpecification const & ii_spec( *mo_spec.output_specifications()[ ii ] );
 		debug_assert( dynamic_cast< POS const * > (&ii_spec) );
 		auto const & ii_pos( static_cast< POS const & > (ii_spec) );
@@ -607,7 +607,7 @@ ChunkLibraryJobQueen::result_outputter(
 //  }
 // }
 //
-// Size const n_results_for_job = results_processed_for_job_[ job->job_index() ].n_results;
+// core::Size const n_results_for_job = results_processed_for_job_[ job->job_index() ].n_results;
 // JobOutputIndex output_index;
 // output_index.primary_output_index   = job->nstruct_index();
 // output_index.n_primary_outputs      = job->nstruct_max();
@@ -981,12 +981,12 @@ JobOutputIndex
 ChunkLibraryJobQueen::build_output_index(
 	protocols::jd3::LarvalJobCOP job,
 	ResultIndex result_index,
-	Size n_results_for_job
+	core::Size n_results_for_job
 )
 {
 	JobOutputIndex output_index;
 	output_index.primary_output_index   = job->nstruct_index();
-	output_index.n_primary_outputs      = std::max( job->nstruct_max(), (Size) 1000 );
+	output_index.n_primary_outputs      = std::max( job->nstruct_max(), (core::Size) 1000 );
 	output_index.secondary_output_index = result_index;
 	output_index.n_secondary_outputs    = n_results_for_job;
 
@@ -999,7 +999,7 @@ void
 ChunkLibraryJobQueen::assign_output_index(
 	protocols::jd3::LarvalJobCOP,
 	ResultIndex,
-	Size,
+	core::Size,
 	JobOutputIndex &
 )
 {}
@@ -1506,7 +1506,7 @@ ChunkLibraryJobQueen::determine_preliminary_job_list_from_command_line()
 	core::Size count_prelim_nodes( 0 );
 	for ( auto const & input_pose : input_poses ) {
 		ChunkLibraryPreliminaryLarvalJob prelim_job;
-		Size nstruct = nstruct_for_job( nullptr );
+		core::Size nstruct = nstruct_for_job( nullptr );
 		ChunkLibraryInnerLarvalJobOP inner_job( new ChunkLibraryInnerLarvalJob( nstruct, ++count_prelim_nodes ) );
 		inner_job->input_source( input_pose.first );
 		inner_job->outputter( outputter->class_key() );

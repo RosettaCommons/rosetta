@@ -189,7 +189,7 @@ public: // accessors
 
 	/// @brief the number of design-refine cycles to perform, default 3
 	inline
-	Size dr_cycles() const {
+	core::Size dr_cycles() const {
 	return dr_cycles_;
 	}
 	*/
@@ -274,7 +274,7 @@ public: // mutators
 	/// @brief set the number of design-refine cycles to perform
 	/// @remarks set this to 0 to skip design-refine
 	inline
-	void dr_cycles( Size const cycles ) {
+	void dr_cycles( core::Size const cycles ) {
 		dr_cycles_ = cycles;
 	}
 
@@ -457,7 +457,7 @@ private: // data
 
 
 	/// @brief the number of design-refine cycles to perform, default 3
-	Size dr_cycles_;
+	core::Size dr_cycles_;
 
 
 	/// @brief the centroid scorefunction to use, default "remodel_cen"
@@ -478,11 +478,11 @@ private: // data
 	bool rosetta_scripts_fast_disulfide_ ;
 	bool rosetta_scripts_bypass_fragments_ ;
 	core::Real rosetta_scripts_match_rt_limit_ ;
-	Size rosetta_scripts_min_disulfides_ ;
-	Size rosetta_scripts_max_disulfides_ ;
+	core::Size rosetta_scripts_min_disulfides_ ;
+	core::Size rosetta_scripts_max_disulfides_ ;
 	bool rosetta_scripts_include_current_ds_ ;
 	bool rosetta_scripts_keep_current_ds_ ;
-	Size rosetta_scripts_min_loop_ ;
+	core::Size rosetta_scripts_min_loop_ ;
 	bool rosetta_scripts_ ;
 	//for saving results from multiple runs
 	core::pose::PoseOP last_input_pose_;
@@ -495,9 +495,9 @@ private: // data
 
 
 	struct instruction_flags {
-		Size num_trajectory;
-		Size num_report ;
-		Size num_frag_moves;
+		core::Size num_trajectory;
+		core::Size num_report ;
+		core::Size num_frag_moves;
 		bool nojumps_;
 		bool automatic_;
 		bool use_bp_seq_; // use blueprint sequence for fragment picking

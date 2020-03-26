@@ -85,7 +85,7 @@ PcsDataCenter::operator=( PcsDataCenter const &other )
 }
 
 PcsDataCenter::PcsDataCenter(PcsDataCenter const &other):
-	ReferenceCount()
+	VirtualBase()
 {
 	// TR_PcsDataCenter << " () called" << std::endl;
 	n_lanthanides_ = other.n_lanthanides_;

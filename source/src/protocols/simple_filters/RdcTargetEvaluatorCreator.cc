@@ -28,7 +28,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 
@@ -81,7 +81,7 @@ void RdcTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & 
 		*/
 		utility::vector1< std::string > const& rdc_target( option[ OptionKeys::evaluation::rdc_target ]() );
 		utility::vector1< std::string > const& rdc_col_name( option[ OptionKeys::evaluation::rdc_column ]() );
-		for ( Size ct = 1; ct <= rdc_target.size(); ct ++ ) {
+		for ( core::Size ct = 1; ct <= rdc_target.size(); ct ++ ) {
 			pose::PoseOP rdc_pose( new pose::Pose );
 			core::import_pose::pose_from_file( *rdc_pose, rdc_target[ ct ] , core::import_pose::PDB_file);
 			std::string tag( ObjexxFCL::string_of( ct ) );

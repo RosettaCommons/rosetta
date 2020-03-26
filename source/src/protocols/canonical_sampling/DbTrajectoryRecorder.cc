@@ -88,7 +88,7 @@ DbTrajectoryRecorder::DbTrajectoryRecorder() // {{{1
 : TrajectoryRecorder(),
 	job_id_(-1) {}
 
-DbTrajectoryRecorder::DbTrajectoryRecorder(Size job_id) // {{{1
+DbTrajectoryRecorder::DbTrajectoryRecorder(core::Size job_id) // {{{1
 : TrajectoryRecorder(),
 	job_id_(job_id) {}
 
@@ -178,7 +178,7 @@ void DbTrajectoryRecorder::write_cache_to_db() const { // {{{1
 	trajectory_insert.add_column("score");
 	trajectory_insert.add_column("silent_pose");
 
-	RowDataBaseOP job( new RowData<Size>("job_id", job_id_) );
+	RowDataBaseOP job( new RowData<core::Size>("job_id", job_id_) );
 
 	for ( Frame const & frame : frame_cache_ ) {
 		stringstream string_stream;
@@ -187,7 +187,7 @@ void DbTrajectoryRecorder::write_cache_to_db() const { // {{{1
 		SilentStructOP silent_data( new BinarySilentStruct(opts, frame.pose, "db") );
 		silent_file._write_silent_struct(*silent_data, string_stream);
 
-		RowDataBaseOP iteration( new RowData<Size>(
+		RowDataBaseOP iteration( new RowData<core::Size>(
 			"iteration", frame.iteration) );
 		RowDataBaseOP score( new RowData<Real>(
 			"score", frame.pose.energies().total_energy()) );

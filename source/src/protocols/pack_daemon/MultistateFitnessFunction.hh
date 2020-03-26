@@ -38,7 +38,7 @@ namespace protocols {
 namespace pack_daemon {
 
 
-class TopEntitySet : public utility::pointer::ReferenceCount
+class TopEntitySet : public utility::VirtualBase
 {
 public:
 	typedef protocols::genetic_algorithm::Entity          Entity;
@@ -76,8 +76,8 @@ public:
 	EntityAndScore pop();
 
 private:
-	Size          desired_entity_history_size_;
-	Size          n_tied_for_worst_;
+	core::Size          desired_entity_history_size_;
+	core::Size          n_tied_for_worst_;
 	EntityHistory top_entities_;
 };
 
@@ -116,7 +116,7 @@ public:
 	void set_history_size( core::Size history_size );
 	void clear_history();
 
-	std::list< std::pair< Size, PoseOP > >
+	std::list< std::pair< core::Size, PoseOP > >
 	recover_relevant_poses_for_entity( Entity const & );
 
 protected:
@@ -127,7 +127,7 @@ protected:
 	virtual void instruct_daemons_to_drop_entity( Entity const & entity );
 
 	virtual
-	std::list< std::pair< Size, PoseOP > >
+	std::list< std::pair< core::Size, PoseOP > >
 	recover_poses_from_states(
 		Entity const &,
 		utility::vector1< core::Size > const & which_states
@@ -140,7 +140,7 @@ protected:
 	DaemonSetOP daemon_set();
 	MultistateAggregateFunctionOP aggregate_function();
 
-	Size which_top_entity( Entity const & ent ) const;
+	core::Size which_top_entity( Entity const & ent ) const;
 
 	void update_entity_history( Entity const & ent );
 
@@ -163,11 +163,11 @@ public:
 
 	/// @brief Inform this MPIMultistateFitnessFunction how many PackDaemons
 	/// are running on all nodes (counting this one) which it may be unaware of.
-	void set_num_pack_daemons( Size n_daemons );
+	void set_num_pack_daemons( core::Size n_daemons );
 
 	/// @brief Inform this MPIMultistateFitnessFunction how many non-pairwise decomposable
 	/// properties will be computed for all states
-	void set_num_npd_properties( Size n_npd_properties );
+	void set_num_npd_properties( core::Size n_npd_properties );
 
 
 	/// @brief Spin down the other nodes.  No entity evaluation may follow
@@ -199,7 +199,7 @@ protected:
 	/// a set of poses that are important.  The entity had better still live
 	/// on the distant nodes.
 
-	std::list< std::pair< Size, PoseOP > >
+	std::list< std::pair< core::Size, PoseOP > >
 	recover_poses_from_states(
 		Entity const &,
 		utility::vector1< core::Size > const & which_states
@@ -210,7 +210,7 @@ private:
 	void broadcast_entity_string( Entity const & entity );
 
 private:
-	Size MPI_nprocs_;
+	core::Size MPI_nprocs_;
 
 #ifdef APL_MEASURE_MSD_LOAD_BALANCE
 	utility::vector0< std::list< core::Real > > utilization_by_node_;

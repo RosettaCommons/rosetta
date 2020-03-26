@@ -19,7 +19,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // protocol headers
@@ -36,7 +36,7 @@ namespace jacobian {
 /// @brief The JacobianStructure class is the upper-level wrapper of the Jacobian analysis of a protein's kinematics relations.
 /// @author teunhoevenaars (teunhoevenaars@gmail.com)
 
-class JacobianStructure : public utility::pointer::ReferenceCount {
+class JacobianStructure : public utility::VirtualBase {
 
 public:
 

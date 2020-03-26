@@ -105,7 +105,7 @@ bool LoopJumpFoldCst::parse_jump_def( KinematicControlOP current_kinematics, kin
 	if ( jump_def_ ) {
 		movemap->set_jump( true ); //careful that these don't get minimized!
 		// initialize jumping
-		Size attempts( 10 );
+		core::Size attempts( 10 );
 		do {
 			current_jumps = jump_def_->create_jump_sample();
 		} while ( !current_jumps.is_valid() && attempts-- );
@@ -239,24 +239,24 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 	jumping::JumpList flex_jumps;
 
 	// go thru existing jumps and fill them into the rigid_jump/flex_jump lists. Moreover, figure out which rigid regions are already connected by jumps
-	utility::vector1< Size > visited( rigid.size(), 0 );
-	for ( Size jump_nr = 1; jump_nr <= f.num_jump(); jump_nr++ ) {
-		Size const up( f.upstream_jump_residue( jump_nr ) );
-		Size const down( f.downstream_jump_residue( jump_nr ));
-		Size up_loop;
-		Size down_loop;
+	utility::vector1< core::Size > visited( rigid.size(), 0 );
+	for ( core::Size jump_nr = 1; jump_nr <= f.num_jump(); jump_nr++ ) {
+		core::Size const up( f.upstream_jump_residue( jump_nr ) );
+		core::Size const down( f.downstream_jump_residue( jump_nr ));
+		core::Size up_loop;
+		core::Size down_loop;
 		if ( (up_loop = rigid.loop_index_of_residue( up )) && (down_loop = rigid.loop_index_of_residue( down ) ) ) {
 			if ( up_loop != down_loop
 					&& ( !visited[ up_loop ] || !visited[ down_loop ] || ( visited[ up_loop ] != visited[ down_loop ] ) ) ) {
 				rigid_jumps.push_back( jumping::Interval( up, down ) ); //good jump  --- keep it
 				// decide upon 3 cases: both nodes unvisited, 1 node visited, both nodes visited
 				// case0 : both new tag with new jump_nr
-				Size visit_nr = jump_nr;
+				core::Size visit_nr = jump_nr;
 				// case1 : both visited--> replace all higher visit_nr by lower visit_nr
 				if ( visited[ up_loop ] && visited[ down_loop ] ) {
-					Size old_visit_nr = visited[ down_loop ]; //arbitrary choice
+					core::Size old_visit_nr = visited[ down_loop ]; //arbitrary choice
 					visit_nr = visited[ up_loop ];
-					for ( Size i=1; i<=visited.size(); i++ ) {
+					for ( core::Size i=1; i<=visited.size(); i++ ) {
 						if ( visited[ i ] == old_visit_nr ) visited[ i ] = visit_nr;
 					}
 				} else if ( visited[ up_loop ] || visited[ down_loop ] ) {
@@ -273,8 +273,8 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 
 	//now we have a connection pattern based on the jumps already present.
 	//a visited region and make it the root-reg
-	Size root_reg = 0;
-	for ( Size region = 1; region <= visited.size(); region++ ) {
+	core::Size root_reg = 0;
+	for ( core::Size region = 1; region <= visited.size(); region++ ) {
 		if ( visited[ region ] ) {
 			root_reg = region;
 			break;
@@ -292,15 +292,15 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 	tr.Debug << "now add more fix-jumps " << std::endl;
 
 	loops::Loops::LoopList rigid_loops = rigid.loops(); // loops in sequence that correspond to the regions
-	Size const anchor( static_cast< Size >( 0.5*(rigid_loops[ root_reg ].stop() - rigid_loops[ root_reg ].start()) ) + rigid_loops[ root_reg ].start() );
-	for ( Size region = 1; region <= visited.size(); region++ ) {
-		Size old_visited = visited[ region ];
+	core::Size const anchor( static_cast< core::Size >( 0.5*(rigid_loops[ root_reg ].stop() - rigid_loops[ root_reg ].start()) ) + rigid_loops[ root_reg ].start() );
+	for ( core::Size region = 1; region <= visited.size(); region++ ) {
+		core::Size old_visited = visited[ region ];
 		if ( visited[ region ] != visited[ root_reg ] ) {
 			rigid_jumps.push_back ( jumping::Interval( anchor,
-				rigid_loops[ region ].start() + static_cast< Size >( 0.5*( rigid_loops[ region ].stop()-rigid_loops[ region ].start() ) ) ) );
+				rigid_loops[ region ].start() + static_cast< core::Size >( 0.5*( rigid_loops[ region ].stop()-rigid_loops[ region ].start() ) ) ) );
 			visited[ region ] = visited[ root_reg ];
 			if ( old_visited ) { //if we connected a cluster make sure to update all its nodes
-				for ( Size i=1; i<=visited.size(); i++ ) {
+				for ( core::Size i=1; i<=visited.size(); i++ ) {
 					if ( visited[ i ] == old_visited ) visited[ i ] = visited[ root_reg ];
 				}
 			}
@@ -310,14 +310,14 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 
 	ObjexxFCL::FArray1D_float new_cut_prob( cut_probability );
 	for ( auto const & it : rigid ) {
-		for ( Size pos = it.start(); pos <= it.stop(); pos++ ) {
+		for ( core::Size pos = it.start(); pos <= it.stop(); pos++ ) {
 			new_cut_prob( pos ) = 0;
 		}
 	}
 
-	Size total_njump( rigid_jumps.size() + flex_jumps.size() );
-	ObjexxFCL::FArray2D< Size > jumps( 2, total_njump );
-	Size ct = 1;
+	core::Size total_njump( rigid_jumps.size() + flex_jumps.size() );
+	ObjexxFCL::FArray2D< core::Size > jumps( 2, total_njump );
+	core::Size ct = 1;
 	for ( auto it = rigid_jumps.begin(), eit = rigid_jumps.end(); it !=eit; ++it, ++ct ) {
 		jumps( 1, ct ) = it->start_;
 		jumps( 2, ct ) = it->end_;
@@ -328,7 +328,7 @@ LoopJumpFoldCst::add_rigidity_jumps( loops::Loops const& rigid, KinematicControl
 		jumps( 2, ct ) = it->end_;
 		tr.Debug << "Flex_jumps: " << it->start_<< " " << it->end_ << std::endl;
 	}
-	for ( Size i = 1; i<= current_kinematics->sampling_fold_tree().nres(); i++ ) {
+	for ( core::Size i = 1; i<= current_kinematics->sampling_fold_tree().nres(); i++ ) {
 		tr.Trace << "cut_prob: " << i << " " << new_cut_prob( i ) << std::endl;
 	}
 	kinematics::FoldTree new_fold_tree;

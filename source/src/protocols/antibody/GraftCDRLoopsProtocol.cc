@@ -337,11 +337,11 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
 	}
 
 
-	Size nres = frame_pose.size();
+	core::Size nres = frame_pose.size();
 
 	// Storing secondary structure
 	utility::vector1<char> secondary_struct_storage;
-	for ( Size i = 1; i <= nres; i++ ) {
+	for ( core::Size i = 1; i <= nres; i++ ) {
 		secondary_struct_storage.push_back( frame_pose.secstruct( i ) );
 		//        TR<<"JQX:   residue: "<<i<<"       secstruct: "<<frame_pose.secstruct(i)<<std::endl;
 	}
@@ -363,7 +363,7 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
 
 
 	// Recover secondary structures
-	for ( Size i = 1; i <= nres; i++ ) frame_pose.set_secstruct( i, secondary_struct_storage[ i ] );
+	for ( core::Size i = 1; i <= nres; i++ ) frame_pose.set_secstruct( i, secondary_struct_storage[ i ] );
 
 	// align pose to native pose
 	pose::Pose native_pose;
@@ -389,7 +389,7 @@ std::string GraftCDRLoopsProtocol::get_name() const {
 void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose ) {
 	// Detecting di-sulfide bond
 
-	Size H1_Cys(0), H3_Cys(0);
+	core::Size H1_Cys(0), H3_Cys(0);
 
 	if (      pose.residue( pose.pdb_info()->pdb2pose('H',32 ) ).name3() == "CYS" ) {
 		H1_Cys = pose.pdb_info()->pdb2pose( 'H', 32 );
@@ -397,7 +397,7 @@ void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose
 		H1_Cys = pose.pdb_info()->pdb2pose( 'H', 33 );
 	}
 
-	for ( Size ii = ab_info_->get_CDR_loop(h3).start(); ii <= ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
+	for ( core::Size ii = ab_info_->get_CDR_loop(h3).start(); ii <= ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
 
 		if ( pose.residue(ii).name3() == "CYS" ) H3_Cys = ii;
 	}
@@ -409,7 +409,7 @@ void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose
 
 	// Specifying extended kink
 
-	Size hfr_46(0), h3_closest(0);
+	core::Size hfr_46(0), h3_closest(0);
 	hfr_46 = pose.pdb_info()->pdb2pose( 'H', 46 );
 	if ( ab_info_->get_H3_kink_type() == Extended ) h3_closest = ab_info_->get_CDR_loop(h3).stop() - 5;
 	if ( h3_closest != 0 ) {

@@ -148,8 +148,8 @@ StepWiseProteinKIC_LoopBridger::KIC_loop_close_with_perturbations( core::pose::P
 		return;
 	}
 
-	Size const pre_loop_res  = working_bridge_res_[1] - 1;
-	Size const post_loop_res = working_bridge_res_[3] + 1 ;
+	core::Size const pre_loop_res  = working_bridge_res_[1] - 1;
+	core::Size const post_loop_res = working_bridge_res_[3] + 1 ;
 	Real const psi_start = pose.psi( pre_loop_res  );
 	Real const phi_start = pose.phi( post_loop_res );
 
@@ -182,7 +182,7 @@ StepWiseProteinKIC_LoopBridger::figure_out_loop( core::pose::Pose const & pose )
 	using namespace protocols::loops;
 	using namespace core::chemical;
 
-	Size const & middle_bridge_res = working_bridge_res_[ 2 ];
+	core::Size const & middle_bridge_res = working_bridge_res_[ 2 ];
 	debug_assert( working_bridge_res_[ 1 ] == middle_bridge_res - 1 );
 	debug_assert( working_bridge_res_[ 3 ] == middle_bridge_res + 1 );
 
@@ -195,9 +195,9 @@ StepWiseProteinKIC_LoopBridger::figure_out_loop( core::pose::Pose const & pose )
 	std::cout << "Found bridge residue: " << middle_bridge_res << std::endl;
 	std::cout << pose.fold_tree() << std::endl;
 	std::cout << pose.annotated_sequence( true ) << std::endl;
-	Size cutpoint_ = 0;
+	core::Size cutpoint_ = 0;
 	for ( int offset = -2; offset < 1; offset++ ) {
-		Size const test_res = static_cast<int>( middle_bridge_res ) + offset;
+		core::Size const test_res = static_cast<int>( middle_bridge_res ) + offset;
 		if ( test_res < 1 && test_res > pose.total_residue() ) continue;
 		if ( !pose.fold_tree().is_cutpoint( test_res ) ) continue;
 
@@ -221,16 +221,16 @@ StepWiseProteinKIC_LoopBridger::setup_torsions( pose::Pose const & pose ){
 	// Need to fill torsions for moving and bridge residues.
 	using namespace core::id;
 	which_torsions_.clear();
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( !is_fixed_res_[ n ] ) {
 			// loop residues.
-			for ( Size k = 1; k <= 3; k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
+			for ( core::Size k = 1; k <= 3; k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
 		} else if ( n < pose.size() && !is_fixed_res_[ n+1 ] ) {
 			// psi,omega of 'takeoff' residues
-			for ( Size k = 1; k <= 3; k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
+			for ( core::Size k = 1; k <= 3; k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
 		} else if ( n > 1 && !is_fixed_res_[ n-1 ] ) {
 			// phi of 'landing' residues
-			for ( Size k = 1; k <= 3; k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
+			for ( core::Size k = 1; k <= 3; k++ ) which_torsions_.push_back( TorsionID( n, BB, k ) );
 		}
 	}
 }
@@ -241,7 +241,7 @@ void
 StepWiseProteinKIC_LoopBridger::grab_main_chain_torsion_set_list( pose::Pose const & pose ){
 
 	utility::vector1< Real > main_chain_torsion_set_for_moving_residues;
-	for ( Size n = 1; n <= which_torsions_.size(); n++ )  {
+	for ( core::Size n = 1; n <= which_torsions_.size(); n++ )  {
 		main_chain_torsion_set_for_moving_residues.push_back(  pose.torsion( which_torsions_[ n ] ) );
 		std::cout << ' ' << pose.torsion( which_torsions_[ n ] );
 	}
@@ -272,16 +272,16 @@ StepWiseProteinKIC_LoopBridger::output_chainTORS( utility::vector1< core::Real >
 	utility::vector1< core::Real > const & db_len ) const {
 
 	std::cout << "------  chainTORS output ---- " << std::endl;
-	for ( Size i = 1; i <= ( dt_ang.size()/3) ; i++ ) {
+	for ( core::Size i = 1; i <= ( dt_ang.size()/3) ; i++ ) {
 
 		std::cout << "TORSIONS: ";
-		for ( Size j = 1; j <= 3; j++ ) std::cout << ObjexxFCL::format::F(8,3,dt_ang[ 3*(i-1)+ j ]) << " ";
+		for ( core::Size j = 1; j <= 3; j++ ) std::cout << ObjexxFCL::format::F(8,3,dt_ang[ 3*(i-1)+ j ]) << " ";
 
 		std::cout << "   BOND_ANGLES: ";
-		for ( Size j = 1; j <= 3; j++ ) std::cout << ObjexxFCL::format::F(8,3,db_ang[ 3*(i-1)+ j ]) << " ";
+		for ( core::Size j = 1; j <= 3; j++ ) std::cout << ObjexxFCL::format::F(8,3,db_ang[ 3*(i-1)+ j ]) << " ";
 
 		std::cout << "   BOND_LENGTHS: ";
-		for ( Size j = 1; j <= 3; j++ ) std::cout << ObjexxFCL::format::F(8,3,db_len[ 3*(i-1)+ j ]) << " ";
+		for ( core::Size j = 1; j <= 3; j++ ) std::cout << ObjexxFCL::format::F(8,3,db_len[ 3*(i-1)+ j ]) << " ";
 
 		std::cout << std::endl;
 	}
@@ -295,17 +295,17 @@ StepWiseProteinKIC_LoopBridger::fill_chainTORS_info( pose::Pose const & pose,
 	utility::vector1<Real> & dt_ang,
 	utility::vector1<Real> & db_ang,
 	utility::vector1<Real> & db_len,
-	Size const & start_res_ ,
-	Size const & end_res_ ) const {
+	core::Size const & start_res_ ,
+	core::Size const & end_res_ ) const {
 
 	using namespace numeric::kinematic_closure;
 
 	if ( verbose_ ) std::cout << "About to run chainTORS" << std::endl;
-	Size ind = 1;
-	for ( Size i =  start_res_ - 1;  i <= end_res_ + 1;   i++ ) {
+	core::Size ind = 1;
+	for ( core::Size i =  start_res_ - 1;  i <= end_res_ + 1;   i++ ) {
 		if ( verbose_ ) std::cout << "Filling residue " << i << std::endl;
 		conformation::Residue res = pose.residue(i);
-		for ( Size j=1; j<=3; j++ ) { // DJM: just keeping N, CA, C atoms. We assume these are always the first 3.  BAD -- PROTEIN ONLY ASSUMPTION -- How about metal ions with only 1 atom?
+		for ( core::Size j=1; j<=3; j++ ) { // DJM: just keeping N, CA, C atoms. We assume these are always the first 3.  BAD -- PROTEIN ONLY ASSUMPTION -- How about metal ions with only 1 atom?
 			atoms[ind][1] = static_cast<Real> (res.xyz(j).x());
 			atoms[ind][2] = static_cast<Real> (res.xyz(j).y());
 			atoms[ind][3] = static_cast<Real> (res.xyz(j).z());
@@ -333,7 +333,7 @@ StepWiseProteinKIC_LoopBridger::KIC_loop_close( pose::Pose & pose ){
 	// Following copied from, e.g., KinematicMover.cc.  Need to elaborate for terminal residues!
 	// inputs to loop closure
 	utility::vector1<utility::fixedsizearray1<Real,3> > atoms;
-	utility::vector1<Size> pivots (3), order (3);
+	utility::vector1<core::Size> pivots (3), order (3);
 	// for eliminating identical solutions
 	utility::vector1<Real> dt_ang, db_len, db_ang, save_t_ang, save_b_len, save_b_ang;
 	utility::vector1<Real> dummy_t_ang, dummy_b_ang, dummy_b_len;
@@ -353,22 +353,22 @@ StepWiseProteinKIC_LoopBridger::KIC_loop_close( pose::Pose & pose ){
 	order[3]=3;
 
 	// Set the pivot atoms
-	Size pvatom1=5; // second C-alpha
-	Size pvatom2=5 + (3 * middle_offset_); // middle res C-alpha
-	Size pvatom3=(3 * (seg_len_+1)) - 1; // second-to-last C-alpha
+	core::Size pvatom1=5; // second C-alpha
+	core::Size pvatom2=5 + (3 * middle_offset_); // middle res C-alpha
+	core::Size pvatom3=(3 * (seg_len_+1)) - 1; // second-to-last C-alpha
 	pivots[1]=pvatom1;
 	pivots[2]=pvatom2;
 	pivots[3]=pvatom3;
 
 	// Need to fix bond lengths and angles at cutpoint
-	Size const cut_offset_ = loop_.cut() - start_res_;
+	core::Size const cut_offset_ = loop_.cut() - start_res_;
 	dt_ang[ 3 + 3*cut_offset_ + 3 ] = OMEGA_MEAN_;
 	db_len[ 3 + 3*cut_offset_ + 3 ] = idl_C_N_;
 	db_ang[ 3 + 3*cut_offset_ + 3 ] = idl_CA_C_N_;
 	db_ang[ 3 + 3*cut_offset_ + 4 ] = idl_C_N_CA_;
 
 	if ( use_icoor_geometry_ ) {
-		Size cutpoint = loop_.cut();
+		core::Size cutpoint = loop_.cut();
 		Real const bond_angle1( pose.residue( cutpoint ).upper_connect().icoor().theta() );// CA-C=N bond angle
 		Real const bond_angle2( pose.residue( cutpoint+1 ).lower_connect().icoor().theta() ); // C=N-CA bond angle
 		Real const bond_length( pose.residue( cutpoint+1 ).lower_connect().icoor().d() ); // C=N distance
@@ -404,8 +404,8 @@ StepWiseProteinKIC_LoopBridger::sample_omega_recursively(
 	utility::vector1<Real> & dt_ang,
 	utility::vector1<Real> & db_ang,
 	utility::vector1<Real> & db_len,
-	utility::vector1< Size > const & pivots,
-	utility::vector1< Size > const & order ){
+	utility::vector1< core::Size > const & pivots,
+	utility::vector1< core::Size > const & order ){
 
 	using namespace numeric::kinematic_closure;
 	if ( offset == 2 ) {
@@ -418,10 +418,10 @@ StepWiseProteinKIC_LoopBridger::sample_omega_recursively(
 		bridgeObjects(atoms, dt_ang, db_ang, db_len, pivots, order, t_ang, b_ang, b_len, nsol);
 		if ( verbose_ ) std::cout << "Finished bridgeObjects" << std::endl;
 
-		Size const num_solutions =  t_ang.size();
+		core::Size const num_solutions =  t_ang.size();
 		std::cout << "Kinematic loop closure found this many solutions: " << num_solutions << std::endl;
 
-		for ( Size i = 1; i <= num_solutions; i++ ) {
+		for ( core::Size i = 1; i <= num_solutions; i++ ) {
 
 			for ( core::Size res = 0; res < seg_len_; res++ ) {
 				pose.set_phi ( start_res_ + res, t_ang[ i ][ (3*(res+1)) + 1 ] );
@@ -455,12 +455,12 @@ void
 StepWiseProteinKIC_LoopBridger::initialize_is_fixed_res( utility::vector1< core::Size > const & fixed_res, std::string const & working_sequence ){
 
 	is_fixed_res_.clear();
-	Size const nres = core::pose::rna::remove_bracketed( working_sequence ).size();
-	for ( Size n = 1; n <= nres; ++n ) {
+	core::Size const nres = core::pose::rna::remove_bracketed( working_sequence ).size();
+	for ( core::Size n = 1; n <= nres; ++n ) {
 		is_fixed_res_.push_back( false );
 	}
 
-	for ( Size i = 1; i <= fixed_res.size(); i++ ) {
+	for ( core::Size i = 1; i <= fixed_res.size(); i++ ) {
 		is_fixed_res_[ fixed_res[i] ] = true;
 	}
 }

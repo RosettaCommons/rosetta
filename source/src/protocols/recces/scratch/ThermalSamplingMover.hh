@@ -94,18 +94,18 @@ public:
 	protocols::moves::MoverOP
 	clone() const override;
 
-	void set_residues( utility::vector1< Size > const & residues ) { residues_ = residues; }
-	utility::vector1< Size > residues() const { return residues_; }
-	void set_free_rsd( utility::vector1< Size > const & free_rsd ) { free_rsd_ = free_rsd; }
-	utility::vector1< Size > free_rsd() const { return free_rsd_; }
+	void set_residues( utility::vector1< core::Size > const & residues ) { residues_ = residues; }
+	utility::vector1< core::Size > residues() const { return residues_; }
+	void set_free_rsd( utility::vector1< core::Size > const & free_rsd ) { free_rsd_ = free_rsd; }
+	utility::vector1< core::Size > free_rsd() const { return free_rsd_; }
 
 	void set_recces_turner_mode( bool const setting ) { recces_turner_mode_ = setting; }
 	void set_dumping_app( bool const setting ) { dumping_app_ = setting; }
-	void set_n_cycle( Size const setting ) { n_cycle_ = setting; }
+	void set_n_cycle( core::Size const setting ) { n_cycle_ = setting; }
 	void set_dump_silent( bool const setting ) { dump_pdb_ = setting; }
 	void set_dump_pdb( bool const setting ) { dump_silent_ = setting; }
-	void set_temps( utility::vector1< Size > const & temps ) { temps_ = temps; }
-	void set_weights( utility::vector1< Size > const & weights ) { st_weights_ = weights; }
+	void set_temps( utility::vector1< core::Size > const & temps ) { temps_ = temps; }
+	void set_weights( utility::vector1< core::Size > const & weights ) { st_weights_ = weights; }
 
 	void set_residue_sampling_from_pose_and_movemap( core::pose::Pose const & pose, core::kinematics::MoveMap const & mm );
 
@@ -124,13 +124,13 @@ public:
 private: // methods
 
 private: // data
-	utility::vector1< Size > residues_;
-	Size total_sampled_;
-	utility::vector1< Size > free_rsd_;
-	utility::vector1< Size > loop_rsd_;
+	utility::vector1< core::Size > residues_;
+	core::Size total_sampled_;
+	utility::vector1< core::Size > free_rsd_;
+	utility::vector1< core::Size > loop_rsd_;
 	bool recces_turner_mode_ = false;
 	bool dumping_app_ = false;
-	Size n_cycle_;
+	core::Size n_cycle_;
 	bool dump_pdb_ = false;
 	bool dump_silent_ = false;
 	Real angle_range_chi_ = 180;

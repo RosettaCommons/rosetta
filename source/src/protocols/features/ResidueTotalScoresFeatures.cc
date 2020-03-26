@@ -185,14 +185,14 @@ ResidueTotalScoresFeatures::insert_residue_total_scores_rows(
 	Pose temp_pose = pose;
 	(*scfxn_)(temp_pose);
 
-	//Size const batch_id(get_batch_id(struct_id, db_session));
+	//core::Size const batch_id(get_batch_id(struct_id, db_session));
 
 	string const stmt_string("INSERT INTO residue_total_scores (struct_id, resNum, score_value ) VALUES (?,?,?);");
 
 	statement stmt(
 		basic::database::safely_prepare_statement(stmt_string, db_session));
 
-	for ( Size resNum=1; resNum <= temp_pose.size(); ++resNum ) {
+	for ( core::Size resNum=1; resNum <= temp_pose.size(); ++resNum ) {
 		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 
 		Real const score_value(temp_pose.energies().residue_total_energy(resNum));

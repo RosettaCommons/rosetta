@@ -28,7 +28,7 @@
 #include <basic/MetricValue.fwd.hh>
 
 //Utilitiy Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
 
@@ -50,7 +50,7 @@ namespace protocols {
 namespace vardist_solaccess {
 
 /// @brief Handles sphere-sphere overlap calculations
-class VarSolDRotamerDots : public utility::pointer::ReferenceCount {
+class VarSolDRotamerDots : public utility::VirtualBase {
 
 public:
 	/*
@@ -206,8 +206,8 @@ public:
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const override;
 
-	void set_element_radii(std::string atype_name, core::Real coll_radius, core::Real int_radius, Size nshells);
-	void set_atom_type_radii(std::string atype_name, core::Real coll_radius, core::Real int_radius, Size nshells);
+	void set_element_radii(std::string atype_name, core::Real coll_radius, core::Real int_radius, core::Size nshells);
+	void set_atom_type_radii(std::string atype_name, core::Real coll_radius, core::Real int_radius, core::Size nshells);
 
 	core::id::AtomID_Map< core::Real > calculate(const core::pose::Pose& pose);
 protected:

@@ -92,7 +92,7 @@ protected:
 	/// for a ligand, it's simply that ligand
 	virtual
 	void
-	generate_representative_target_res_for_geom_cst( Size const num_geom_cst ) = 0;
+	generate_representative_target_res_for_geom_cst( core::Size const num_geom_cst ) = 0;
 
 	void
 	set_all_target_res( std::list< core::conformation::ResidueCOP > const & all_target_res );
@@ -124,7 +124,7 @@ public:
 private:
 
 	void
-	generate_representative_target_res_for_geom_cst( Size const num_geom_cst ) override;
+	generate_representative_target_res_for_geom_cst( core::Size const num_geom_cst ) override;
 
 
 };

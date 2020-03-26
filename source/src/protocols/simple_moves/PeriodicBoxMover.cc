@@ -194,13 +194,13 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 	Pose pose_asu, pose_periodic;
 
 	// get com of input pose
-	Size nres = pose.size();
+	core::Size nres = pose.size();
 	mweight=0;
 	Vector com(0,0,0);
-	for ( Size i=1; i<= nres; ++i ) {
+	for ( core::Size i=1; i<= nres; ++i ) {
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 
-		for ( Size j=1; j<= pose.residue(i).natoms(); ++j ) {
+		for ( core::Size j=1; j<= pose.residue(i).natoms(); ++j ) {
 			std::string elt = pose.residue(i).atom_type(j).element();
 			core::Real wt = 0.0;
 			if ( elt=="H" ) wt = 1.008;
@@ -247,7 +247,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 
 						runtime_assert( pose_central.size() == 1 );
 						core::conformation::Residue rsd_new = pose_central.residue(1);
-						for ( Size z=1; z<= rsd_new.natoms(); ++z ) {
+						for ( core::Size z=1; z<= rsd_new.natoms(); ++z ) {
 							rsd_new.set_xyz( z, rsd_new.xyz(z) + center );
 						}
 						pose_asu.append_residue_by_jump( rsd_new, 1 );
@@ -257,7 +257,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 
 					} else {
 						core::conformation::Residue rsd_new = pose.residue(1);
-						for ( Size z=1; z<= rsd_new.natoms(); ++z ) {
+						for ( core::Size z=1; z<= rsd_new.natoms(); ++z ) {
 							rsd_new.set_xyz( z, rsd_new.xyz(z) + center );
 						}
 						pose_asu.append_residue_by_jump( rsd_new, 1 );
@@ -296,7 +296,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 	vrtY.dimension(3,3,1); vrtY=0;
 	vrtZ.dimension(3,3,3); vrtZ=0;
 
-	utility::vector1<Size> Ajumps, Bjumps, Cjumps, SUBjumps;
+	utility::vector1<core::Size> Ajumps, Bjumps, Cjumps, SUBjumps;
 
 	origin_ = -0.5*sidelen;
 
@@ -345,7 +345,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 		}
 	}
 
-	Size nvirtuals = pose_periodic.size();
+	core::Size nvirtuals = pose_periodic.size();
 
 	// add subunits
 	core::Size nres_monomer = pose_asu.size();
@@ -372,21 +372,21 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 	conformation::symmetry::SymmetryInfo symminfo;
 	core::Size njumps_monomer = SUBjumps.size();
 	for ( int i=2; i<=3*3*3; ++i ) {
-		for ( Size j=1; j<= nres_monomer; ++j ) {
+		for ( core::Size j=1; j<= nres_monomer; ++j ) {
 			symminfo.add_bb_clone ( j, (i-1)*nres_monomer+j );
 			symminfo.add_chi_clone( j, (i-1)*nres_monomer+j );
 		}
-		for ( Size j=1; j<=njumps_monomer; ++j ) {
+		for ( core::Size j=1; j<=njumps_monomer; ++j ) {
 			symminfo.add_jump_clone( SUBjumps[j], (i-1)*njumps_monomer+SUBjumps[j], 0.0 );
 		}
 	}
 
-	Size cellMaster=Ajumps[1];
-	for ( Size i=2; i<=Ajumps.size(); ++i ) symminfo.add_jump_clone( cellMaster, Ajumps[i], 0.0 );
-	for ( Size i=1; i<=Bjumps.size(); ++i ) symminfo.add_jump_clone( cellMaster, Bjumps[i], 0.0 );
-	for ( Size i=1; i<=Cjumps.size(); ++i ) symminfo.add_jump_clone( cellMaster, Cjumps[i], 0.0 );
+	core::Size cellMaster=Ajumps[1];
+	for ( core::Size i=2; i<=Ajumps.size(); ++i ) symminfo.add_jump_clone( cellMaster, Ajumps[i], 0.0 );
+	for ( core::Size i=1; i<=Bjumps.size(); ++i ) symminfo.add_jump_clone( cellMaster, Bjumps[i], 0.0 );
+	for ( core::Size i=1; i<=Cjumps.size(); ++i ) symminfo.add_jump_clone( cellMaster, Cjumps[i], 0.0 );
 
-	std::map< Size, SymDof > symdofs;
+	std::map< core::Size, SymDof > symdofs;
 	SymDof symdof_a;
 	symdof_a.read( "x" );
 	symdofs[ Ajumps[1] ] = symdof_a;
@@ -394,7 +394,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 
 	// jump names
 	TR << "Initializing " << pose_periodic.num_jump() << " jumps." << std::endl;
-	for ( Size v=1; v<=pose.num_jump(); ++v ) symminfo.set_jump_name(v, "v_"+utility::to_string(v));
+	for ( core::Size v=1; v<=pose.num_jump(); ++v ) symminfo.set_jump_name(v, "v_"+utility::to_string(v));
 	symminfo.set_jump_name(Ajumps[1], "A");
 
 	symminfo.num_virtuals( nvirtuals );
@@ -402,7 +402,7 @@ PeriodicBoxMover::setup_pose( Pose & pose, core::Real &mweight, core::Size &latt
 	symminfo.set_nres_subunit( nres_monomer );
 
 	symminfo.set_flat_score_multiply( pose_periodic.size(), 0 );
-	for ( Size i=1; i<= nres_protein; ++i ) {
+	for ( core::Size i=1; i<= nres_protein; ++i ) {
 		if ( symminfo.bb_is_independent( i ) ) symminfo.set_score_multiply( i, 2 );
 		else symminfo.set_score_multiply( i, 1 );
 	}
@@ -508,7 +508,7 @@ PeriodicBoxMover::report_thermodynamics( Pose & pose, core::Size lattice_jump )
 	for ( core::Size ires = 1; ires <= nmol_side_*nmol_side_*nmol_side_; ++ires ) { // mol1
 		if ( pose.residue(ires).aa() == core::chemical::aa_vrt ) continue;
 
-		for ( Size j=1; j<= pose.residue(ires).natoms(); ++j ) {
+		for ( core::Size j=1; j<= pose.residue(ires).natoms(); ++j ) {
 			std::string elt = pose.residue(ires).atom_type(j).element();
 			core::Real wt = 0.0;
 			if ( elt=="H" ) wt = 1.008;
@@ -796,7 +796,7 @@ RDF_eq_ << std::endl;
 core::scoring::hbonds::HBondSet hbond_set;
 core::scoring::hbonds::fill_hbond_set( pose, false, hbond_set );
 Size nhbond_tot( 0 );
-for ( Size ihb = 1; ihb <= Size(hbond_set.nhbonds()); ++ihb ) {
+for ( core::Size ihb = 1; ihb <= core::Size(hbond_set.nhbonds()); ++ihb ) {
 core::scoring::hbonds::HBond const & hb( hbond_set.hbond(ihb) );
 if ((hb.don_res() <= nres) && (hb.acc_res() <= nres)) {
 nhbond_tot += 2;

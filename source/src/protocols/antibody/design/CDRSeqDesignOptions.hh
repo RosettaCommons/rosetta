@@ -24,7 +24,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -34,7 +34,7 @@ namespace design {
 
 typedef utility::vector1<CDRSeqDesignOptionsOP> AntibodyCDRSeqDesignOptions;
 
-class CDRSeqDesignOptions : public utility::pointer::ReferenceCount {
+class CDRSeqDesignOptions : public utility::VirtualBase {
 public:
 
 	CDRSeqDesignOptions();
@@ -113,7 +113,7 @@ private:
 
 
 
-class CDRSeqDesignOptionsParser : public utility::pointer::ReferenceCount {
+class CDRSeqDesignOptionsParser : public utility::VirtualBase {
 public:
 
 	CDRSeqDesignOptionsParser();

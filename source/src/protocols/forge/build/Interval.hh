@@ -47,8 +47,8 @@ struct Interval {
 	/// @brief value constructor
 	inline
 	Interval(
-		Size const l,
-		Size const r
+		core::Size const l,
+		core::Size const r
 	) :
 		left( l ),
 		right( r )
@@ -101,7 +101,7 @@ struct Interval {
 
 	/// @brief length of the interval
 	inline
-	Size length() const {
+	core::Size length() const {
 		return right - left + 1;
 	}
 
@@ -115,17 +115,17 @@ struct Interval {
 
 	/// @brief is a point contained in this interval?
 	inline
-	bool contains( Size const point ) const {
+	bool contains( core::Size const point ) const {
 		return ( left <= point && point <= right );
 	}
 
 
 	/// @brief left endpoint
-	Size left;
+	core::Size left;
 
 
 	/// @brief right endpoint
-	Size right;
+	core::Size right;
 
 
 };

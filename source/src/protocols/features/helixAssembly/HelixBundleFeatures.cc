@@ -179,7 +179,7 @@ utility::vector1<HelicalFragmentOP> HelixBundleFeatures::get_helices(StructureID
 	core::Size prev_residue_end = 0;
 	while ( res.next() )
 			{
-		Size residue_begin, residue_end;
+		core::Size residue_begin, residue_end;
 		res >> residue_begin >> residue_end;
 
 		if ( residue_begin - prev_residue_end == 2 && all_helices.size() > 0 ) {

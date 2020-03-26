@@ -31,7 +31,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -58,7 +58,7 @@ public:
 	typedef numeric::HomogeneousTransform< Real > HTReal;
 
 public:
-	ClassicMatchAlgorithm( Size geom_cst_id );
+	ClassicMatchAlgorithm( core::Size geom_cst_id );
 	~ClassicMatchAlgorithm() override;
 
 	DownstreamAlgorithmOP
@@ -88,7 +88,7 @@ public:
 	/// @brief Reset the occupied space grid for the matcher so that only those
 	/// regions which contain hits from this geometric constraint are marked as occupied.
 	void
-	respond_to_primary_hitlist_change( Matcher & matcher, Size round_just_completed ) override;
+	respond_to_primary_hitlist_change( Matcher & matcher, core::Size round_just_completed ) override;
 
 	/// @brief Delete hits for this geometric constraint if they fall into
 	/// now-empty regions of 6D.  This step can be avoided if the occupied-space-grid's
@@ -100,8 +100,8 @@ public:
 	/// of the downstream partner from the coordinates of the upstream partner.
 	std::list< Hit >
 	build(
-		Size const scaffold_build_point_id,
-		Size const upstream_conf_id,
+		core::Size const scaffold_build_point_id,
+		core::Size const upstream_conf_id,
 		core::conformation::Residue const & upstream_residue
 	) const override;
 
@@ -122,7 +122,7 @@ public:
 	HitPtrListCOP
 	hits_to_include_with_partial_match( match_dspos1 const & m ) const override;
 
-	Size
+	core::Size
 	n_possible_hits_per_upstream_conformation() const override;
 
 
@@ -131,9 +131,9 @@ public:
 	/// non-colliding or, generally, pass any filter the upstream builder would use).
 	std::list< Hit >
 	build_from_three_coords(
-		Size const which_external_sampler,
-		Size const scaffold_build_point_id,
-		Size const upstream_conf_id,
+		core::Size const which_external_sampler,
+		core::Size const scaffold_build_point_id,
+		core::Size const upstream_conf_id,
 		core::conformation::Residue const & upstream_residue
 	) const;
 
@@ -143,7 +143,7 @@ public:
 
 	void add_external_geom_sampler(
 		utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > const & sampler,
-		Size const exgeom_id,
+		core::Size const exgeom_id,
 		std::string const & atom1,
 		std::string const & atom2,
 		std::string const & atom3,
@@ -161,17 +161,17 @@ public:
 	}
 
 	utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > const &
-	external_sampler( Size external_geom_id ) const
+	external_sampler( core::Size external_geom_id ) const
 	{
 		return external_samplers_[ external_geom_id ];
 	}
 
-	Size
-	launch_atom( Size external_geom_id, Size which_point ) const {
+	core::Size
+	launch_atom( core::Size external_geom_id, core::Size which_point ) const {
 		return launch_points_[ external_geom_id ][ which_point ];
 	}
 
-	Size
+	core::Size
 	n_external_samplers() const {
 		return external_samplers_.size();
 	}
@@ -181,11 +181,11 @@ private:
 
 	// each elelment of the vector is a list of closely-related ExternalGeomSamplers for the same residue
 	utility::vector1< utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > > external_samplers_;
-	utility::vector1< utility::fixedsizearray1< Size, 3 > > launch_points_;
+	utility::vector1< utility::fixedsizearray1< core::Size, 3 > > launch_points_;
 	utility::vector1< DownstreamBuilderCOP > dsbuilders_;
-	utility::vector1< Size > exgeom_ids_;
+	utility::vector1< core::Size > exgeom_ids_;
 
-	Size occspace_rev_id_at_last_update_;
+	core::Size occspace_rev_id_at_last_update_;
 
 	/// @brief control whether this algorithm expects to rebuild round 1 hits
 	/// after round 2 completes.  Only used if the geom_cst_id() for this instance

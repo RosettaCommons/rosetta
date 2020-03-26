@@ -117,10 +117,10 @@ public:
 	}
 
 	/// @brief Set the free peptide
-	void set_free_peptide(core::pose::Pose &pose, Size pivot1, Size pivot2);
+	void set_free_peptide(core::pose::Pose &pose, core::Size pivot1, core::Size pivot2);
 
 	/// @brief Set the maximum number of move trials
-	void set_max_trial_num(Size max_trial_num){
+	void set_max_trial_num(core::Size max_trial_num){
 		max_trial_num_ = max_trial_num;
 	}
 
@@ -133,10 +133,10 @@ private: // data
 
 	FreePeptideOP free_peptide_;
 
-	Size max_trial_num_ = 0;
+	core::Size max_trial_num_ = 0;
 
-	Size pivot1_ = 0;
-	Size pivot2_ = 0;
+	core::Size pivot1_ = 0;
+	core::Size pivot2_ = 0;
 };
 
 std::ostream &

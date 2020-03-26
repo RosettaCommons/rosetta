@@ -27,7 +27,7 @@
 
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ enum atomitem{ oshi = 1, xdir, ydir, zdir, csca, suga, rcl1, rcl2, rcl3, maca, m
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class RNA_CS_residue_parameters : public utility::pointer::ReferenceCount {
+class RNA_CS_residue_parameters : public utility::VirtualBase {
 
 
 public:
@@ -137,7 +137,7 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class RNA_CS_parameters : public utility::pointer::ReferenceCount {
+class RNA_CS_parameters : public utility::VirtualBase {
 
 
 	//COMM RNA data set without charge

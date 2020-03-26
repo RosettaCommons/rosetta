@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_dna_DnaDesignDef_hh
 
 #include <protocols/dna/DnaDesignDef.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.fwd.hh>
 
@@ -27,7 +27,7 @@ namespace dna {
 
 /// @brief command-line dna_defs are of the format "C.501.ADE"
 /// they are parsed here into this little class for convenience
-class DnaDesignDef : public utility::pointer::ReferenceCount {
+class DnaDesignDef : public utility::VirtualBase {
 public:
 	char chain;
 	int pdbpos; // store pdb position (can be negative), convert to rosetta index later

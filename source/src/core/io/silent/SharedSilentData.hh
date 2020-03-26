@@ -16,7 +16,7 @@
 #define INCLUDED_core_io_silent_SharedSilentData_hh
 
 // mini headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <string>
@@ -35,7 +35,7 @@ enum SharedSilentDataType {
 	simplesequencedata
 };
 
-class SharedSilentData : public utility::pointer::ReferenceCount {
+class SharedSilentData : public utility::VirtualBase {
 
 public:
 	SharedSilentData() {}

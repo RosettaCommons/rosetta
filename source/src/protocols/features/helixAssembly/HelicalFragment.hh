@@ -24,7 +24,7 @@
 
 //Utility
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //Devel
 //#include <devel/helixAssembly/NativeResidue.hh>
@@ -41,7 +41,7 @@ namespace protocols {
 namespace features {
 namespace helixAssembly {
 
-class HelicalFragment : public utility::pointer::ReferenceCount{
+class HelicalFragment : public utility::VirtualBase{
 
 public:
 

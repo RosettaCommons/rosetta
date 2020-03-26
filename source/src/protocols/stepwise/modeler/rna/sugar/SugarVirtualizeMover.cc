@@ -33,7 +33,7 @@ namespace sugar {
 
 
 //Constructor
-SugarVirtualizeMover::SugarVirtualizeMover( Size const moving_res ):
+SugarVirtualizeMover::SugarVirtualizeMover( core::Size const moving_res ):
 	moving_res_( moving_res )
 {}
 

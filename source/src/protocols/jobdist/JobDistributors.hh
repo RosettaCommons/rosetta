@@ -39,7 +39,7 @@
 
 #include <utility/file/FileName.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // ObjexxFCL headers
 
@@ -89,7 +89,7 @@ namespace jobdist {
 /// BasicJob has been provided already, but you can subclass it if you need
 /// to carry around additional information about the inputs.
 ///
-class BaseJobDistributor : public utility::pointer::ReferenceCount
+class BaseJobDistributor : public utility::VirtualBase
 {
 protected:
 
@@ -212,9 +212,9 @@ private:
 
 	//for simple distribution  without communication
 	//this Jobdistributor will only process job-nr if ( job_nr mod nprocs_ == proc_id )
-	Size nproc_;
-	Size proc_id_;
-	Size curr_jobid_; //running number
+	core::Size nproc_;
+	core::Size proc_id_;
+	core::Size curr_jobid_; //running number
 
 
 #ifdef USEMPI

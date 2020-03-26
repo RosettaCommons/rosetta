@@ -24,7 +24,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 // C++ headers
@@ -37,7 +37,7 @@ namespace downstream {
 /// @brief base for class used by secondary matcher
 /// to determine whether a given residue to be matched
 /// interacts satisfactorily with a target residue
-class SecMatchResiduePairEvaluator : public utility::pointer::ReferenceCount
+class SecMatchResiduePairEvaluator : public utility::VirtualBase
 {
 public:
 	typedef core::Size Size;
@@ -70,14 +70,14 @@ public:
 	/// evaluator requires.
 	virtual
 	bool
-	require_target_atom_coordinate( Size target_atom_id ) const = 0;
+	require_target_atom_coordinate( core::Size target_atom_id ) const = 0;
 
 	/// @brief Are there atoms of the candidate residue that must be within
 	/// some cutoff distance of a given atom on the target residue?  Base
 	/// class implementation returns false.
 	virtual
 	bool
-	require_candidate_residue_atoms_to_lie_near_target_atom( Size target_atom_id ) const;
+	require_candidate_residue_atoms_to_lie_near_target_atom( core::Size target_atom_id ) const;
 
 	/// @brief Return a list of atom indices on the candidate residue; if all atoms
 	/// in this list are further than max_separation_dist_to_target_atom() away
@@ -88,9 +88,9 @@ public:
 	/// conformations of the candidate_residue from consideration.  The base class implements
 	/// a noop -- it returns an empty list.
 	virtual
-	utility::vector1< Size >
+	utility::vector1< core::Size >
 	candidate_res_atoms_reqd_near_target_atom(
-		Size target_atom_id
+		core::Size target_atom_id
 	) const;
 
 	/// @brief Return the maximum separation distance that any of the match-residue
@@ -100,7 +100,7 @@ public:
 	/// target atom.  The base class implementation returns -1.0.
 	virtual
 	Real
-	max_separation_dist_to_target_atom( Size target_atom_id ) const;
+	max_separation_dist_to_target_atom( core::Size target_atom_id ) const;
 
 };
 

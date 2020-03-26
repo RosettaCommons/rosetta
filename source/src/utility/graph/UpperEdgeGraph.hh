@@ -21,7 +21,7 @@
 #include <platform/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.fwd.hh>
 #include <utility/assert.hh>
@@ -55,7 +55,7 @@ namespace graph {
 // for only those edges that actually exist.  (With reserve(), vertices allocate space for edges that do not exist).
 
 template < class V, class E >
-class UEVertex : public utility::pointer::ReferenceCount
+class UEVertex : public utility::VirtualBase
 {
 public:
 	typedef UEVertex< V, E >                VertexClass;
@@ -371,7 +371,7 @@ private:
 // Copy ctor and operator = not yet implemented
 // do not use!
 template < class V, class E >
-class UpperEdgeGraph : public utility::pointer::ReferenceCount
+class UpperEdgeGraph : public utility::VirtualBase
 {
 public:
 	typedef UEVertex< V, E >                         VertexClass;
@@ -390,7 +390,7 @@ public:
 	}
 
 	UpperEdgeGraph( UpperEdgeGraph< V, E > const & other ) :
-		utility::pointer::ReferenceCount()
+		utility::VirtualBase()
 	{
 		copy_from( other );
 	}

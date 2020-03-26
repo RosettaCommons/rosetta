@@ -79,8 +79,8 @@ public: // boiler plate / virtuals
 
 public:
 	void debug(); //Enables debug of the mover components of Snugdock - switches the random mover to sequence mover.
-	Size number_of_high_resolution_cycles() const;
-	void number_of_high_resolution_cycles( Size const number_of_high_resolution_cycles );
+	core::Size number_of_high_resolution_cycles() const;
+	void number_of_high_resolution_cycles( core::Size const number_of_high_resolution_cycles );
 	void set_antibody_info( AntibodyInfoOP antibody_info );
 	void set_CDR_loops( std::map<protocols::antibody::CDRNameEnum,loops::Loop> cdr_loops );
 	void set_ab_has_light_chain( bool ab_has_light_chain );
@@ -137,7 +137,7 @@ private: // data
 	bool high_res_kink_constraint_;
 
 private:
-	Size number_of_high_resolution_cycles_;
+	core::Size number_of_high_resolution_cycles_;
 
 }; // class SnugDock
 

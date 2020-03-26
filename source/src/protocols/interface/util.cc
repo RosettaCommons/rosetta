@@ -39,7 +39,7 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 	using namespace core::pose::metrics;
 	using namespace protocols::toolbox;
 
-	using one_group = std::set<Size>;
+	using one_group = std::set<core::Size>;
 	typedef std::pair< one_group, one_group > group_pair;
 	using group_set = utility::vector1<group_pair>;
 
@@ -68,9 +68,9 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 	debug_assert (!side1_chains.empty()/*size() >= 1*/);
 	debug_assert (!side2_chains.empty()/*size() >= 1*/);
 
-	std::set<Size> side1_residues, side2_residues;
+	std::set<core::Size> side1_residues, side2_residues;
 
-	for ( Size ii = 1; ii<= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii<= pose.size(); ++ii ) {
 
 		if ( side1_chains.count( pose.chain( ii ) ) ) {
 			side1_residues.insert( ii );
@@ -80,7 +80,7 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 	}
 
 	//prep a vector of a pair of these residue sets for Steven's calculator
-	std::pair< std::set<Size>, std::set<Size> > side_pairs;
+	std::pair< std::set<core::Size>, std::set<core::Size> > side_pairs;
 	side_pairs.first = side1_residues;
 	side_pairs.second = side2_residues;
 	group_set chain_groups;
@@ -92,8 +92,8 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 	CalculatorFactory::Instance().register_calculator(  calc, utility::pointer::make_shared< InterGroupNeighborsCalculator >(chain_groups, interface_distance ) );
 	}
 
-	//std::set<Size> multichain_interface;
-	basic::MetricValue< std::set<Size> > mv_interface_set;
+	//std::set<core::Size> multichain_interface;
+	basic::MetricValue< std::set<core::Size> > mv_interface_set;
 	pose.metric(  calc, "neighbors", mv_interface_set);
 	//set_interface_set( mv_interface_set.value() );
 
@@ -101,10 +101,10 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 
 	CalcInterNeighborGroup calc = CalcInterNeighborGroup(chain_groups, interface_distance);
 	calc.compute(pose);
-	std::set<Size> interface_residues = calc.neighbors();
+	std::set<core::Size> interface_residues = calc.neighbors();
 
 	vector1<bool> residues(pose.size(), false);
-	std::set<Size>::const_iterator it, end ;
+	std::set<core::Size>::const_iterator it, end ;
 	for ( it = interface_residues.begin(), end = interface_residues.end(); it != end; ++it ) {
 		residues[*it] = true;
 	}

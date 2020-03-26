@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_rna_RNA_EnergyMethodOptions_HH
 #define INCLUDED_core_scoring_rna_RNA_EnergyMethodOptions_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/scoring/rna/RNA_EnergyMethodOptions.fwd.hh>
 #include <core/types.hh>
 #include <string>
@@ -31,7 +31,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-class RNA_EnergyMethodOptions: public utility::pointer::ReferenceCount {
+class RNA_EnergyMethodOptions: public utility::VirtualBase {
 
 public:
 

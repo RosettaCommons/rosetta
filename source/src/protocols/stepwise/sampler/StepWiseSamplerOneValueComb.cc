@@ -31,7 +31,7 @@ StepWiseSamplerOneValueComb::~StepWiseSamplerOneValueComb()= default;
 
 ///////////////////////////////////////////////////////////////////////////
 ValueList const &
-StepWiseSamplerOneValueComb::get_value_list( utility::vector1< Size > const & id_list ){
+StepWiseSamplerOneValueComb::get_value_list( utility::vector1< core::Size > const & id_list ){
 
 	if ( id_list_cached_.size() != id_list.size() ) {
 		id_list_cached_.assign( id_list.size(), 0 );
@@ -40,7 +40,7 @@ StepWiseSamplerOneValueComb::get_value_list( utility::vector1< Size > const & id
 	runtime_assert( id_list.size() == rotamer_list_.size() );
 	runtime_assert( id_list.size() == id_list_cached_.size() );
 
-	for ( Size n = 1; n <= id_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= id_list.size(); n++ ) {
 		if ( id_list[n] == id_list_cached_[n] ) continue;
 		auto * rotamer_one_value = static_cast< StepWiseSamplerOneValue * >( rotamer_list_[n].get() );
 		value_list_cached_[n] = rotamer_one_value->value( id_list[n] );
@@ -51,8 +51,8 @@ StepWiseSamplerOneValueComb::get_value_list( utility::vector1< Size > const & id
 
 ///////////////////////////////////////////////////////////////////////////
 ValueList const &
-StepWiseSamplerOneValueComb::get_value_list( Size const id ){
-	utility::vector1 <Size> id_list = id2list( id );
+StepWiseSamplerOneValueComb::get_value_list( core::Size const id ){
+	utility::vector1 <core::Size> id_list = id2list( id );
 	return get_value_list( id_list );
 }
 

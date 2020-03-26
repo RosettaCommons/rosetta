@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_pose_rna_RNA_SecStruct_HH
 #define INCLUDED_core_pose_rna_RNA_SecStruct_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/rna/RNA_SecStruct.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -27,7 +27,7 @@ namespace core {
 namespace pose {
 namespace rna {
 
-class RNA_SecStruct: public utility::pointer::ReferenceCount {
+class RNA_SecStruct: public utility::VirtualBase {
 
 public:
 

@@ -77,7 +77,7 @@ void read_pairing_list( std::string disulf_pairing_file, DisulfPairingsList& dis
 
 void read_disulf_pairing_list( std::istream& disulf_pairing_stream, DisulfPairingsList& disulf_pairings) {
 	std::string line;
-	Size a,b,c,d;
+	core::Size a,b,c,d;
 	while ( getline( disulf_pairing_stream, line ) ) {
 		std::istringstream line_stream( line );
 		// a=i, b=j, c=orientation(1 or 2), d=pleating(1 or 2)

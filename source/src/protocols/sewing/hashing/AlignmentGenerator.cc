@@ -25,14 +25,14 @@ namespace sewing {
 namespace hashing {
 
 AlignmentGenerator::AlignmentGenerator():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	//We won't initialize from options because the HasherSettings
 	//must come from the edge file we read in
 }
 
 AlignmentGenerator::AlignmentGenerator(HasherSettings const  & hasher_settings, SegmentVectorCOP segs  ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	hasher_settings_( hasher_settings ),
 	segment_vector_( segs )
 {
@@ -40,7 +40,7 @@ AlignmentGenerator::AlignmentGenerator(HasherSettings const  & hasher_settings, 
 
 
 AlignmentGenerator::AlignmentGenerator(HasherSettings const & hasher_settings, SegmentVectorCOP segs, std::map< core::Size, data_storage::SmartSegmentOP > pdbsegs  ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	hasher_settings_( hasher_settings ),
 	segment_vector_( segs ),
 	pdb_segments_( pdbsegs )
@@ -51,6 +51,7 @@ AlignmentGenerator::AlignmentGenerator(HasherSettings const & hasher_settings, S
 AlignmentGenerator::~AlignmentGenerator(){}
 
 AlignmentGenerator::AlignmentGenerator( AlignmentGenerator const & other ):
+	VirtualBase( other ),
 	hasher_settings_( other.hasher_settings_ ),
 	segment_vector_( other.segment_vector_ ),
 	pdb_segments_( other.const_pdb_segments() )

@@ -17,7 +17,7 @@
 // Utility Headers
 #include <platform/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <protocols/indexed_structure_store/StructureStore.fwd.hh>
 #include <protocols/indexed_structure_store/Datatypes.hh>
@@ -31,7 +31,7 @@ namespace indexed_structure_store
 {
 
 // @brief Core database handle.
-class StructureStore : public utility::pointer::ReferenceCount
+class StructureStore : public utility::VirtualBase
 {
 public:
 	// @brief Basic structure store, holds a collection of structure and associated residue entries.

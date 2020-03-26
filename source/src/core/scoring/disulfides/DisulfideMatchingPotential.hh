@@ -18,7 +18,7 @@
 //Unit headers
 #include <core/scoring/disulfides/DisulfideMatchingPotential.fwd.hh>
 #include <core/scoring/disulfides/DisulfideMatchingDatabase.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //Project headers
 #include <core/types.hh>
@@ -41,7 +41,7 @@ namespace disulfides {
 *
 * The energy functions are derived from those present in Rosetta++
 */
-class DisulfideMatchingPotential : public utility::pointer::ReferenceCount {
+class DisulfideMatchingPotential : public utility::VirtualBase {
 public:
 	DisulfideMatchingPotential();
 	~DisulfideMatchingPotential() override;

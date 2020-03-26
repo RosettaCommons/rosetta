@@ -23,7 +23,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // STL Headers
 #include <iosfwd>
@@ -42,16 +42,16 @@ typedef utility::pointer::shared_ptr< DomainAssemblyCommand const > DomainAssemb
 //pares_domain_file will need to take vector of domain objects
 //reaader function needs to pass one member of vector function to reader at a time
 ///////////////////////////////////////////////////
-class DomainAssemblyCommand : public utility::pointer::ReferenceCount
+class DomainAssemblyCommand : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~DomainAssemblyCommand() override;
 	//@brief domain_action is the activity code for the option
 	virtual
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
-		Size & which_token,
+		core::Size & which_token,
 		DomainInfo & domain
 	) const = 0;
 
@@ -66,7 +66,7 @@ public:
 
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
-		Size & which_token,
+		core::Size & which_token,
 		DomainInfo & domain
 	) const override;
 
@@ -82,7 +82,7 @@ public:
 
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
-		Size & which_token,
+		core::Size & which_token,
 		DomainInfo & domain
 	) const override;
 
@@ -98,7 +98,7 @@ public:
 
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
-		Size & which_token,
+		core::Size & which_token,
 		DomainInfo & domain
 	) const override;
 
@@ -114,7 +114,7 @@ public:
 
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
-		Size & which_token,
+		core::Size & which_token,
 		DomainInfo & domain
 	) const override;
 
@@ -130,7 +130,7 @@ public:
 
 	void domain_action(
 		utility::vector1< std::string > const & tokens,
-		Size & which_token,
+		core::Size & which_token,
 		DomainInfo & domain
 	) const override;
 

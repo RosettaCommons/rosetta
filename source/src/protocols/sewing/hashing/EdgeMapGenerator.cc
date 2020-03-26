@@ -38,7 +38,7 @@ namespace sewing {
 namespace hashing {
 
 EdgeMapGenerator::EdgeMapGenerator():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	edge_file_name_(""),
 	is_edge_file_loaded_( false )
 {
@@ -68,6 +68,7 @@ EdgeMapGenerator::EdgeMapGenerator(std::string model_file_name, core::Size boxes
 }
 
 EdgeMapGenerator::EdgeMapGenerator( EdgeMapGenerator const & other ):
+	VirtualBase( other ),
 	hasher_settings_( other.hasher_settings_ ),
 	version_(other.version_ ),
 	edges_( other.edges_ ),

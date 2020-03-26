@@ -241,7 +241,7 @@ void ubi_e2c_modeler::compute_trim_CSPs() {
 
 	TR << "UBI Assigning Trimmed CSPs" << std::endl;
 
-	for ( Size i = 1; i <= CSP_.size(); i++ ) {
+	for ( core::Size i = 1; i <= CSP_.size(); i++ ) {
 		if ( CSP_[i] <= ( k48r_end_ - ( flex_cter_ + 1)) ) {
 			CSP_trim_.push_back( CSP_[i] );
 		} else if ( CSP_[i] <= ( e2_end_ - ( flex_cter_ + 1)) ) {
@@ -249,7 +249,7 @@ void ubi_e2c_modeler::compute_trim_CSPs() {
 		}
 	}
 
-	for ( Size i = 1; i <= non_CSP_.size(); i++ ) {
+	for ( core::Size i = 1; i <= non_CSP_.size(); i++ ) {
 		if ( non_CSP_[i] <= ( k48r_end_ - ( flex_cter_ + 1)) ) {
 			non_CSP_trim_.push_back( non_CSP_[i] );
 		} else if ( non_CSP_[i] <= ( e2_end_ - ( flex_cter_ + 1)) ) {
@@ -266,9 +266,9 @@ void ubi_e2c_modeler::compute_swap_trim_CSPs() {
 
 	TR << "UBI Assigning Swap Trimmed CSPs" << std::endl;
 
-	Size ub_trim = d77_trim_end_ - k48r_trim_end_;
+	core::Size ub_trim = d77_trim_end_ - k48r_trim_end_;
 
-	for ( Size i = 1; i <= CSP_.size(); i++ ) {
+	for ( core::Size i = 1; i <= CSP_.size(); i++ ) {
 		if ( CSP_[i] <= e2_end_ ) {
 			CSP_swap_trim_.push_back( CSP_[i] );
 		} else if ( CSP_[i] <= k48r_end_ - (flex_cter_ + 1 ) ) {
@@ -278,7 +278,7 @@ void ubi_e2c_modeler::compute_swap_trim_CSPs() {
 		}
 	}
 
-	for ( Size i = 1; i <= non_CSP_.size(); i++ ) {
+	for ( core::Size i = 1; i <= non_CSP_.size(); i++ ) {
 		if ( non_CSP_[i] <= e2_end_ ) {
 			non_CSP_swap_trim_.push_back( non_CSP_[i] );
 		} else if ( non_CSP_[i] <= k48r_end_ - (flex_cter_ + 1 ) ) {
@@ -652,11 +652,11 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 	// centroid mode
 	// Filter distance for K48-Cterminal
 	Real ubi_cov_bond_dist( 100.00 );
-	Size tries = 0;
+	core::Size tries = 0;
 
 	if ( !cov_bond_only_flag_ ) {
 		//start loop of decoy creation until filters are all passed
-		for ( Size r = 1; r <= max_repeats_; r++ ) {
+		for ( core::Size r = 1; r <= max_repeats_; r++ ) {
 			tries = r;
 			pose_in = start_pose;
 
@@ -759,8 +759,8 @@ ubi_e2c_modeler::setup_key_residues(
 
 	//char chain = '_';
 	char old_chain = '_';
-	Size next_chain( 0 );
-	for ( Size i = 1; i <= d77_end_; i++ ) {
+	core::Size next_chain( 0 );
+	for ( core::Size i = 1; i <= d77_end_; i++ ) {
 		char chain = pdb_info->chain( i );
 
 		// if initial condition
@@ -851,7 +851,7 @@ ubi_e2c_modeler::setup_move_maps() {
 	flex_cter_map_->set_bb( bb );
 	flex_cter_map_->set_jump( e2_k48r_jump_, false );
 	flex_cter_map_->set_jump( e2_d77_jump_, false );
-	for ( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( core::Size i = 0; i <= flex_cter_; i++ ) {
 		flex_cter_map_->set_bb( k48r_end_ - i, true );
 		flex_cter_map_->set_bb( d77_end_ - i, true );
 	}
@@ -868,7 +868,7 @@ ubi_e2c_modeler::setup_move_maps() {
 	all_dof_map_->set_bb( bb );
 	all_dof_map_->set_jump( e2_k48r_jump_, true );
 	all_dof_map_->set_jump( e2_d77_jump_, true );
-	for ( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( core::Size i = 0; i <= flex_cter_; i++ ) {
 		all_dof_map_->set_bb( k48r_end_ - i, true );
 		all_dof_map_->set_bb( d77_end_ - i, true );
 	}
@@ -895,12 +895,12 @@ ubi_e2c_modeler::setup_complex_fold_tree(
 
 	FoldTree f;
 	f.clear();
-	Size nres = d77_end_;
-	Size jumppoint1 = e2_ctr_of_mass_;
-	Size jumppoint2 = k48r_ctr_of_mass_;
-	Size jumppoint3 = d77_ctr_of_mass_;
-	Size cutpoint1 = e2_end_;
-	Size cutpoint2 = k48r_end_;
+	core::Size nres = d77_end_;
+	core::Size jumppoint1 = e2_ctr_of_mass_;
+	core::Size jumppoint2 = k48r_ctr_of_mass_;
+	core::Size jumppoint3 = d77_ctr_of_mass_;
+	core::Size cutpoint1 = e2_end_;
+	core::Size cutpoint2 = k48r_end_;
 
 	if ( trim ) {
 		nres = d77_end_ - ( 2 * ( flex_cter_ + 1 ));
@@ -937,7 +937,7 @@ ubi_e2c_modeler::initial_cter_perturbation(
 	setup_complex_fold_tree( pose_in );
 
 	// idealize c-terminals
-	for ( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( core::Size i = 0; i <= flex_cter_; i++ ) {
 		conformation::idealize_position( k48r_end_ - ( flex_cter_ - i ),
 			pose_in.conformation());
 		conformation::idealize_position( d77_end_ - ( flex_cter_ - i),
@@ -951,7 +951,7 @@ ubi_e2c_modeler::initial_cter_perturbation(
 	Real const init_psi  (  150.0 );
 	Real const init_omega(  180.0 );
 
-	for ( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( core::Size i = 0; i <= flex_cter_; i++ ) {
 		if ( i != flex_cter_ ) {
 			pose_in.set_phi( k48r_end_ - i, init_phi );
 			pose_in.set_phi( d77_end_ - i, init_phi );
@@ -973,7 +973,7 @@ ubi_e2c_modeler::initial_cter_perturbation(
 	ub_cter_map->clear();
 	ub_cter_map->set_chi( true );
 	ub_cter_map->set_bb( false );
-	for ( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( core::Size i = 0; i <= flex_cter_; i++ ) {
 		ub_cter_map->set_bb( k48r_end_ - i, true );
 		ub_cter_map->set_bb( d77_end_ - i, true );
 	}
@@ -1010,10 +1010,10 @@ ubi_e2c_modeler::initial_cter_perturbation(
 
 void
 ubi_e2c_modeler::setup_simple_fold_tree(
-	Size jumppoint1,
-	Size cutpoint,
-	Size jumppoint2,
-	Size nres,
+	core::Size jumppoint1,
+	core::Size cutpoint,
+	core::Size jumppoint2,
+	core::Size nres,
 	pose::Pose & pose_in ) {
 
 	using namespace kinematics;
@@ -1042,11 +1042,11 @@ ubi_e2c_modeler::trim_cter(
 
 	TR << "UBI Trimming C-terminal" << std::endl;
 
-	for ( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( core::Size i = 0; i <= flex_cter_; i++ ) {
 		pose_in.delete_polymer_residue( d77_end_ - i );
 	}
 
-	for ( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( core::Size i = 0; i <= flex_cter_; i++ ) {
 		pose_in.delete_polymer_residue( k48r_end_ - i );
 	}
 
@@ -1067,12 +1067,12 @@ ubi_e2c_modeler::restore_cter(
 	TR << "UBI Restoring C-terminal" << std::endl;
 
 	setup_complex_fold_tree( pose_in );
-	Size ub_trim_size = d77_trim_end_ - k48r_trim_end_;
-	Size ub_size = d77_end_ - k48r_end_;
+	core::Size ub_trim_size = d77_trim_end_ - k48r_trim_end_;
+	core::Size ub_size = d77_end_ - k48r_end_;
 	pose::Pose k48r( without_cter, e2_end_ + 1, k48r_trim_end_ );
 	pose::Pose d77( without_cter, k48r_trim_end_ + 1, d77_trim_end_ );
 
-	for ( Size i = 0, j = 0; i <= flex_cter_; i++, j++ ) {
+	for ( core::Size i = 0, j = 0; i <= flex_cter_; i++, j++ ) {
 		k48r.conformation().safely_append_polymer_residue_after_seqpos(
 			pose_in.residue( k48r_end_  - (flex_cter_ - i ) ), ub_trim_size +
 			j, true);
@@ -1107,12 +1107,12 @@ ubi_e2c_modeler::init_k48r_perturbation(
 
 	pose::Pose e2_k48r( pose_in, 1, k48r_trim_end_ );
 
-	Size ub_trim_size = d77_trim_end_ - k48r_trim_end_;
+	core::Size ub_trim_size = d77_trim_end_ - k48r_trim_end_;
 
-	Size jumppoint1 = e2_ctr_of_mass_;
-	Size cutpoint = e2_end_;
-	Size jumppoint2 = k48r_ctr_of_mass_;
-	Size nres = k48r_trim_end_;
+	core::Size jumppoint1 = e2_ctr_of_mass_;
+	core::Size cutpoint = e2_end_;
+	core::Size jumppoint2 = k48r_ctr_of_mass_;
+	core::Size nres = k48r_trim_end_;
 	setup_simple_fold_tree( jumppoint1, cutpoint, jumppoint2, nres, e2_k48r);
 
 	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
@@ -1144,7 +1144,7 @@ ubi_e2c_modeler::init_k48r_perturbation(
 		mc = utility::pointer::make_shared< moves::MonteCarlo >( e2_k48r, *dock_lowres_scorefxn_,
 			temperature_ );
 		TrialMoverOP dock_trial( new TrialMover( dock_e2_mono_ub, mc ) );
-		Size const cycles( 50 );
+		core::Size const cycles( 50 );
 		RepeatMoverOP rbp_cycle( new RepeatMover( dock_trial, cycles ) );
 		rbp_cycle->apply( e2_k48r );
 		mc->recover_low( e2_k48r );
@@ -1152,7 +1152,7 @@ ubi_e2c_modeler::init_k48r_perturbation(
 	pose_in.copy_segment( ub_trim_size, e2_k48r, e2_end_ + 1, e2_end_ + 1 );
 	to_centroid.apply( pose_in );
 
-	Size e2_k48r_ctr_of_mass = core::pose::residue_center_of_mass( pose_in,
+	core::Size e2_k48r_ctr_of_mass = core::pose::residue_center_of_mass( pose_in,
 		1, k48r_trim_end_ );
 	// pose_in.dump_pdb( "mid.pdb" );
 
@@ -1202,7 +1202,7 @@ ubi_e2c_modeler::init_k48r_perturbation(
 		pose::Pose best_CSP_pose( pose_in );
 		pose::Pose lowest_CSP_score_pose( pose_in );
 
-		for ( Size i = 1; i <= 50 ; i++ ) {
+		for ( core::Size i = 1; i <= 50 ; i++ ) {
 			dock_e2_mono_ub->apply( pose_in );
 			( *dock_lowres_scorefxn_ )( pose_in );
 			setup_complex_fold_tree( pose_in, true );
@@ -1254,7 +1254,7 @@ ubi_e2c_modeler::init_d77_perturbation(
 
 	pose::Pose e2_k48r( pose_in, 1, k48r_trim_end_ );
 	pose::Pose e2_d77( e2_k48r );
-	Size ub_trim_size = d77_trim_end_ - k48r_trim_end_;
+	core::Size ub_trim_size = d77_trim_end_ - k48r_trim_end_;
 	e2_d77.copy_segment( ub_trim_size, pose_in, e2_end_ + 1,
 		k48r_trim_end_ + 1 );
 
@@ -1379,7 +1379,7 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 	Real max_di_ubi_dist =  1.25 * max_k48_cter_dist_;
 	Real current_ubi_cov_bond_dist( 100.00 );
 
-	Size init_trials(0);
+	core::Size init_trials(0);
 	while ( current_ubi_cov_bond_dist > max_di_ubi_dist ) {
 		init_trials++;
 		pose_in = start_pose;
@@ -1446,7 +1446,7 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 	//
 	//TrialMoverOP dock_pert_trial = new TrialMover( dock_n_perturb, mc );
 	//
-	//Size const cycles( 50 );
+	//core::Size const cycles( 50 );
 	//RepeatMoverOP rbp_cycle = new RepeatMover( dock_pert_trial, cycles );
 
 	//rbp_cycle->apply( pose_in );
@@ -1460,7 +1460,7 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 	pose::Pose best_CSP_pose( pose_in );
 	pose::Pose lowest_CSP_score_pose( pose_in );
 
-	for ( Size i = 1; i <= 50 ; i++ ) {
+	for ( core::Size i = 1; i <= 50 ; i++ ) {
 		docker->apply( pose_in );
 		score = ( *dock_lowres_cst_scorefxn_ )( pose_in );
 		Real current_CSP_fraction = CSP_fraction( pose_in );
@@ -1598,7 +1598,7 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 	min_n_repack->add_mover( pack_interface_repack );
 
 	//CycleMoverOP mover_min_trial  = new CycleMover;
-	//for ( Size i=1; i < 8; ++i )
+	//for ( core::Size i=1; i < 8; ++i )
 	// mover_min_trial->add_mover( mover_trial );
 	//mover_min_trial->add_mover( min_n_repack );
 
@@ -1612,7 +1612,7 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 	pose::Pose best_CSP_pose( pose_in );
 	pose::Pose lowest_CSP_score_pose( pose_in );
 
-	for ( Size i = 1; i <= 100 ; i++ ) {
+	for ( core::Size i = 1; i <= 100 ; i++ ) {
 		if ( i == 1 ) {
 			perturb_min_cter->apply( pose_in ); // **REAL** FIRST MIN CTER
 		} else if ( i%8 == 0 ) {
@@ -1750,7 +1750,7 @@ ubi_e2c_modeler::restrict_to_interfacial_loop_packing(
 
 	// selecting movable c-terminal residues
 	ObjexxFCL::FArray1D_bool loop_residues( pose_in.size(), false );
-	for ( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( core::Size i = 0; i <= flex_cter_; i++ ) {
 		loop_residues( k48r_end_ - i) = true;
 		loop_residues( d77_end_ - i) = true;
 	}
@@ -1775,12 +1775,12 @@ ubi_e2c_modeler::set_e2g2_diubi_fold_tree(
 
 	FoldTree f;
 	f.clear();
-	Size nres = d77_end_;
-	Size jumppoint1 = e2_ctr_of_mass_;
-	Size diubi_center_of_mass = core::pose::residue_center_of_mass( pose_in,
+	core::Size nres = d77_end_;
+	core::Size jumppoint1 = e2_ctr_of_mass_;
+	core::Size diubi_center_of_mass = core::pose::residue_center_of_mass( pose_in,
 		e2_end_ + 1, nres );
-	Size jumppoint2 = diubi_center_of_mass;
-	Size cutpoint = e2_end_;
+	core::Size jumppoint2 = diubi_center_of_mass;
+	core::Size cutpoint = e2_end_;
 
 	f.add_edge( 1, jumppoint1, Edge::PEPTIDE );
 	f.add_edge( jumppoint1, cutpoint, Edge::PEPTIDE );
@@ -1866,7 +1866,7 @@ ubi_e2c_modeler::CSP_fraction(
 	TR << "UBI Calculating Centroid CSP Fraction" << std::endl;
 	*/
 
-	utility::vector1<Size> current_CSP;
+	utility::vector1<core::Size> current_CSP;
 	if ( !non_CSP ) {
 		if ( trim ) {
 			if ( swap ) {
@@ -1889,28 +1889,28 @@ ubi_e2c_modeler::CSP_fraction(
 		}
 	}
 
-	Size total_CSPs = current_CSP.size();
+	core::Size total_CSPs = current_CSP.size();
 
-	Size nres = pose_in.size();
+	core::Size nres = pose_in.size();
 	utility::vector1<bool> is_interface( nres, false );
 
-	Size num_jump = 2;
-	for ( Size jj = 1; jj <= num_jump; jj++ ) {
+	core::Size num_jump = 2;
+	for ( core::Size jj = 1; jj <= num_jump; jj++ ) {
 		// "interface" is a reserved c++ keyword (on VC++ )
 		protocols::scoring::Interface _interface( jj );
 		// distance decided by inspection of PDB 2FUH
 		_interface.distance( 8.0 );
 		_interface.calculate( pose_in );
 
-		for ( Size ii=1; ii <= nres; ++ii ) {
+		for ( core::Size ii=1; ii <= nres; ++ii ) {
 			if ( _interface.is_interface(ii) ) {
 				is_interface[ii] = true;
 			}
 		}
 	}
 
-	Size satisfied_CSPs = 0;
-	for ( Size ii = 1; ii <= total_CSPs; ++ii ) {
+	core::Size satisfied_CSPs = 0;
+	for ( core::Size ii = 1; ii <= total_CSPs; ++ii ) {
 		if ( is_interface[ current_CSP[ii] ] ) {
 			satisfied_CSPs++;
 		}
@@ -2100,13 +2100,13 @@ core::Real
 ubi_e2c_modeler::calc_Lrmsd (
 	const pose::Pose & pose_in,
 	const pose::Pose & native_pose,
-	Size ubiquitin ) {
+	core::Size ubiquitin ) {
 
 	using namespace core::scoring;
 
 	ObjexxFCL::FArray1D_bool superpos_partner ( pose_in.size(), false );
 
-	Size compute_rmsd_start(0), compute_rmsd_end(0);
+	core::Size compute_rmsd_start(0), compute_rmsd_end(0);
 
 	if ( ubiquitin == e2_k48r_jump_ ) {
 		compute_rmsd_start = e2_end_ + 1;
@@ -2119,7 +2119,7 @@ ubi_e2c_modeler::calc_Lrmsd (
 		compute_rmsd_end = k48r_end_;
 	}
 
-	for ( Size i = compute_rmsd_start; i <= compute_rmsd_end; ++i ) {
+	for ( core::Size i = compute_rmsd_start; i <= compute_rmsd_end; ++i ) {
 		superpos_partner(i) = true;
 	}
 
@@ -2281,7 +2281,7 @@ ubi_e2c_modeler::optimize_cov_bond(
 	pose::Pose best_CSP_pose( pose_in );
 	pose::Pose lowest_CSP_score_pose( pose_in );
 
-	for ( Size i = 1; i <= 100 ; i++ ) {
+	for ( core::Size i = 1; i <= 100 ; i++ ) {
 		if ( i%8 == 0 ) {
 			packer->apply( pose_in );
 		} else {
@@ -2323,8 +2323,8 @@ ubi_e2c_modeler::optimize_cov_bond(
 
 	score_map_[ "AD_k48_CA_CA" ] = ubi_cov_bond_dist;
 
-	Size const NZ_atom (9);
-	Size const O_atom (4);
+	core::Size const NZ_atom (9);
+	core::Size const O_atom (4);
 
 	numeric::xyzVector_float d77_lys_NZ(
 		pose_in.residue( d77_48_lys_ ).xyz( NZ_atom ) ),
@@ -2455,10 +2455,10 @@ void ubi_e2c_modeler::monoub_apply( pose::Pose & pose_in ) {
 	protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose);
 
 	// centroid mode
-	Size tries = 0;
+	core::Size tries = 0;
 
 	//start loop of decoy creation until filters are all passed
-	for ( Size r = 1; r <= max_repeats_; r++ ) {
+	for ( core::Size r = 1; r <= max_repeats_; r++ ) {
 		tries = r;
 		pose_in = start_pose;
 
@@ -2528,7 +2528,7 @@ ubi_e2c_modeler::monoub_setup_key_residues(
 
 	//char chain = '_';
 	char old_chain = '_';
-	for ( Size i = 1; i <= monoub_end_; i++ ) {
+	for ( core::Size i = 1; i <= monoub_end_; i++ ) {
 		char chain = pdb_info->chain( i );
 
 		// if initial condition
@@ -2583,7 +2583,7 @@ ubi_e2c_modeler::monoub_setup_move_maps() {
 	monoub_flex_cter_map_->set_chi( chi );
 	monoub_flex_cter_map_->set_bb( bb );
 	monoub_flex_cter_map_->set_jump( 1, false );
-	for ( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( core::Size i = 0; i <= flex_cter_; i++ ) {
 		monoub_flex_cter_map_->set_bb( monoub_end_ - i, true );
 	}
 
@@ -2592,7 +2592,7 @@ ubi_e2c_modeler::monoub_setup_move_maps() {
 	monoub_all_dof_map_->set_chi( chi );
 	monoub_all_dof_map_->set_bb( bb );
 	monoub_all_dof_map_->set_jump( 1, true );
-	for ( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( core::Size i = 0; i <= flex_cter_; i++ ) {
 		monoub_all_dof_map_->set_bb( monoub_end_ - i, true );
 	}
 
@@ -2615,10 +2615,10 @@ ubi_e2c_modeler::monoub_fold_tree(
 
 	FoldTree f;
 	f.clear();
-	Size nres = monoub_end_;
-	Size jumppoint1 = e2_ctr_of_mass_;
-	Size jumppoint2 = monoub_ctr_of_mass_;
-	Size cutpoint1 = e2_end_;
+	core::Size nres = monoub_end_;
+	core::Size jumppoint1 = e2_ctr_of_mass_;
+	core::Size jumppoint2 = monoub_ctr_of_mass_;
+	core::Size cutpoint1 = e2_end_;
 
 	f.add_edge( 1, jumppoint1, Edge::PEPTIDE );
 	f.add_edge( jumppoint1, cutpoint1, Edge::PEPTIDE );
@@ -2641,7 +2641,7 @@ ubi_e2c_modeler::monoub_initial_cter_perturbation(
 	TR << "UBI Mono Ubi Initial C-Terminal Perturbation" << std::endl;
 
 	// idealize c-terminals
-	for ( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( core::Size i = 0; i <= flex_cter_; i++ ) {
 		conformation::idealize_position( monoub_end_ - ( flex_cter_ - i ),
 			pose_in.conformation());
 	}
@@ -2653,7 +2653,7 @@ ubi_e2c_modeler::monoub_initial_cter_perturbation(
 	Real const init_psi  (  150.0 );
 	Real const init_omega(  180.0 );
 
-	for ( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( core::Size i = 0; i <= flex_cter_; i++ ) {
 		if ( i != flex_cter_ ) {
 			pose_in.set_phi( monoub_end_ - i, init_phi );
 		}
@@ -2672,7 +2672,7 @@ ubi_e2c_modeler::monoub_initial_cter_perturbation(
 	ub_cter_map->clear();
 	ub_cter_map->set_chi( true );
 	ub_cter_map->set_bb( false );
-	for ( Size i = 0; i <= flex_cter_; i++ ) {
+	for ( core::Size i = 0; i <= flex_cter_; i++ ) {
 		ub_cter_map->set_bb( monoub_end_ - i, true );
 	}
 
@@ -2739,7 +2739,7 @@ ubi_e2c_modeler::monoub_first_perturbation(
 	pose::Pose best_CSP_pose( pose_in );
 	pose::Pose lowest_CSP_score_pose( pose_in );
 
-	for ( Size i = 1; i <= 50 ; i++ ) {
+	for ( core::Size i = 1; i <= 50 ; i++ ) {
 		dock_e2_mono_ub->apply( pose_in );
 		( *dock_lowres_scorefxn_ )( pose_in );
 		score = ( *dock_lowres_scorefxn_ )( pose_in );
@@ -2857,7 +2857,7 @@ ubi_e2c_modeler::monoub_centroid_mode_perturbation(
 	pose::Pose best_CSP_pose( pose_in );
 	pose::Pose lowest_CSP_score_pose( pose_in );
 
-	for ( Size i = 1; i <= 50 ; i++ ) {
+	for ( core::Size i = 1; i <= 50 ; i++ ) {
 		docker->apply( pose_in );
 		score = ( *dock_lowres_cst_scorefxn_ )( pose_in );
 		Real current_CSP_fraction = monoub_CSP_fraction( pose_in );
@@ -2973,7 +2973,7 @@ ubi_e2c_modeler::monoub_fullatom_mode_perturbation(
 	pose::Pose best_CSP_pose( pose_in );
 	pose::Pose lowest_CSP_score_pose( pose_in );
 
-	for ( Size i = 1; i <= 100 ; i++ ) {
+	for ( core::Size i = 1; i <= 100 ; i++ ) {
 		if ( i == 1 ) {
 			perturb_min_cter->apply( pose_in ); // **REAL** FIRST MIN CTER
 		} else if ( i%8 == 0 ) {
@@ -3059,11 +3059,11 @@ ubi_e2c_modeler::monoub_CSP_fraction(
 	return( 0.00 );
 	*/
 
-	utility::vector1<Size> current_CSP;
+	utility::vector1<core::Size> current_CSP;
 	current_CSP = CSP_;
-	Size total_CSPs = current_CSP.size();
+	core::Size total_CSPs = current_CSP.size();
 
-	Size nres = pose_in.size();
+	core::Size nres = pose_in.size();
 	utility::vector1<bool> is_interface( nres, false );
 
 	protocols::scoring::Interface _interface( 1 );
@@ -3071,14 +3071,14 @@ ubi_e2c_modeler::monoub_CSP_fraction(
 	_interface.distance( 8.0 );
 	_interface.calculate( pose_in );
 
-	for ( Size ii=1; ii <= nres; ++ii ) {
+	for ( core::Size ii=1; ii <= nres; ++ii ) {
 		if ( _interface.is_interface(ii) ) {
 			is_interface[ii] = true;
 		}
 	}
 
-	Size satisfied_CSPs = 0;
-	for ( Size ii = 1; ii <= total_CSPs; ++ii ) {
+	core::Size satisfied_CSPs = 0;
+	for ( core::Size ii = 1; ii <= total_CSPs; ++ii ) {
 		if ( is_interface[ current_CSP[ii] ] ) {
 			satisfied_CSPs++;
 		}
@@ -3222,11 +3222,11 @@ ubi_e2c_modeler::monoub_calc_Lrmsd (
 
 	ObjexxFCL::FArray1D_bool superpos_partner ( monoub_end_, false );
 
-	Size compute_rmsd_start(0), compute_rmsd_end(0);
+	core::Size compute_rmsd_start(0), compute_rmsd_end(0);
 
 	compute_rmsd_start = e2_end_ + 1;
 	compute_rmsd_end = monoub_end_;
-	for ( Size i = compute_rmsd_start; i <= compute_rmsd_end; ++i ) {
+	for ( core::Size i = compute_rmsd_start; i <= compute_rmsd_end; ++i ) {
 		superpos_partner(i) = true;
 	}
 

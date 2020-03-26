@@ -93,7 +93,7 @@ void PackDaemon::set_pose_and_task( Pose const & pose, PackerTask const & task )
 {
 	pose_ = utility::pointer::make_shared< Pose >( pose );
 	task_ = task.clone();
-	for ( Size ii = 1; ii <= task.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= task.total_residue(); ++ii ) {
 		task_->nonconst_residue_task( ii ).and_extrachi_cutoff( 1 );
 	}
 	task_->or_double_lazy_ig( true );
@@ -122,7 +122,7 @@ void PackDaemon::set_entity_correspondence( EntityCorrespondence const &  ec )
 	correspondence_->set_pose( pose_ ); // discard the pose that's already being pointed to by the ec
 }
 
-void PackDaemon::set_dlig_nmeg_limit( Size setting )
+void PackDaemon::set_dlig_nmeg_limit( core::Size setting )
 {
 	TR << "Setting dlig nmeg limit" << std::endl;
 	task_->decrease_double_lazy_ig_memlimit( 1024 * 1024 * setting );
@@ -293,17 +293,17 @@ PackDaemon::select_rotamer_subset( Entity const & entity ) const
 	using namespace core::pack::rotamer_set;
 	using namespace protocols::multistate_design;
 
-	utility::vector0< Size > rotamer_subset;
-	for ( Size ii = 1; ii <= rot_sets_->nmoltenres(); ++ii ) {
-		Size ii_resid = rot_sets_->moltenres_2_resid( ii );
-		Size ii_entity_id = correspondence_->entity_for_residue( ii_resid );
-		Size ii_offset = rot_sets_->nrotamer_offset_for_moltenres( ii );
+	utility::vector0< core::Size > rotamer_subset;
+	for ( core::Size ii = 1; ii <= rot_sets_->nmoltenres(); ++ii ) {
+		core::Size ii_resid = rot_sets_->moltenres_2_resid( ii );
+		core::Size ii_entity_id = correspondence_->entity_for_residue( ii_resid );
+		core::Size ii_offset = rot_sets_->nrotamer_offset_for_moltenres( ii );
 		RotamerSetCOP ii_rotamers = rot_sets_->rotamer_set_for_moltenresidue( ii );
 		//std::cout << "Entity id for " << ii_resid << " " << ii_entity_id << std::endl;
-		Size ii_rotamers_appended( 0 );
+		core::Size ii_rotamers_appended( 0 );
 		if (  ii_entity_id == 0 ) {
 			// include all the rotamers for this residue
-			for ( Size jj = 1, ii_nrots = ii_rotamers->num_rotamers(); jj <= ii_nrots; ++jj ) {
+			for ( core::Size jj = 1, ii_nrots = ii_rotamers->num_rotamers(); jj <= ii_nrots; ++jj ) {
 				rotamer_subset.push_back( ii_offset + jj );
 				++ii_rotamers_appended;
 			}
@@ -320,7 +320,7 @@ PackDaemon::select_rotamer_subset( Entity const & entity ) const
 			}
 			core::chemical::AA entity_aa( pt_ptr->type() );
 			// include only the rotamers from the amino acid specified in this residue's entity element
-			for ( Size jj = 1, ii_nrots = ii_rotamers->num_rotamers(); jj <= ii_nrots; ++jj ) {
+			for ( core::Size jj = 1, ii_nrots = ii_rotamers->num_rotamers(); jj <= ii_nrots; ++jj ) {
 				if ( ii_rotamers->rotamer( jj )->aa() == entity_aa ) {
 					rotamer_subset.push_back( ii_offset + jj );
 					++ii_rotamers_appended;
@@ -342,7 +342,7 @@ void PackDaemon::mark_last_entity_as_important()
 {
 
 	EntityElements traits_copy( last_entity_->traits().size() );
-	for ( Size ii = 1; ii <= traits_copy.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= traits_copy.size(); ++ii ) {
 		traits_copy[ ii ] = last_entity_->traits()[ ii ]->clone();
 	}
 
@@ -381,9 +381,9 @@ PackDaemon::PoseOP PackDaemon::recreate_pose_for_entity( Entity const & ent ) co
 	}
 	RotamerAssignmentAndEnergy const & rotamer_assignment( iter->second );
 	PoseOP return_pose( new Pose( *pose_ ) );
-	for ( Size ii = 1; ii <= rot_sets_->nmoltenres(); ++ii ) {
-		Size iiresid = rot_sets_->moltenres_2_resid( ii );
-		Size iibestrot = rot_sets_->rotid_on_moltenresidue( rotamer_assignment.first[ ii ] );
+	for ( core::Size ii = 1; ii <= rot_sets_->nmoltenres(); ++ii ) {
+		core::Size iiresid = rot_sets_->moltenres_2_resid( ii );
+		core::Size iibestrot = rot_sets_->rotid_on_moltenresidue( rotamer_assignment.first[ ii ] );
 
 		return_pose->replace_residue(
 			iiresid,
@@ -396,9 +396,9 @@ PackDaemon::PoseOP PackDaemon::recreate_pose_for_entity( Entity const & ent ) co
 
 void PackDaemon::assign_last_rotamers_to_pose( Pose & pose ) const
 {
-	for ( Size ii = 1; ii <= rot_sets_->nmoltenres(); ++ii ) {
-		Size iiresid = rot_sets_->moltenres_2_resid( ii );
-		Size iibestrot = rot_sets_->rotid_on_moltenresidue( last_assignment_.first[ ii ] );
+	for ( core::Size ii = 1; ii <= rot_sets_->nmoltenres(); ++ii ) {
+		core::Size iiresid = rot_sets_->moltenres_2_resid( ii );
+		core::Size iibestrot = rot_sets_->rotid_on_moltenresidue( last_assignment_.first[ ii ] );
 
 		pose.replace_residue(
 			iiresid,
@@ -415,11 +415,11 @@ void PackDaemon::print_entity_history() const
 	TR << "Entity History:\n";
 	for ( auto const & hashiter : prev_state_hash_ ) {
 		TR << "Stored state:";
-		for ( Size ii = 1; ii <= hashiter.first.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= hashiter.first.size(); ++ii ) {
 			TR << " " << hashiter.first[ ii ]->to_string();
 		}
 		TR << " fitness: " << hashiter.second.second << " rotamers: ";
-		for ( Size ii = 1; ii <= hashiter.second.first.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= hashiter.second.first.size(); ++ii ) {
 			TR << " " << hashiter.second.first[ ii ];
 		}
 		TR << "\n";
@@ -436,7 +436,7 @@ void PackDaemon::calculate_background_energies()
 	background_energies_ = 0;
 	Energies const & energies( pose_->energies() );
 	EnergyGraph const & energy_graph( energies.energy_graph() );
-	for ( Size ii = 1; ii <= pose_->size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose_->size(); ++ii ) {
 		if ( task_->being_packed( ii ) ) continue;
 		background_energies_ += energies.onebody_energies( ii ).dot( score_function_->weights() );
 		for ( Graph::EdgeListConstIter
@@ -444,7 +444,7 @@ void PackDaemon::calculate_background_energies()
 				irue = energy_graph.get_node(ii)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
 			auto const & edge( static_cast< EnergyEdge const & > (**iru) );
-			Size const jj = edge.get_second_node_ind();
+			core::Size const jj = edge.get_second_node_ind();
 			if ( task_->being_packed( jj ) ) continue;
 			EnergyMap emap = edge.fill_energy_map();
 			background_energies_ += score_function_->weights().dot( emap );
@@ -509,7 +509,7 @@ void DaemonSet::set_include_background_energies( bool setting )
 	include_background_energies_ = setting;
 }
 
-void DaemonSet::set_dlig_nmeg_limit( Size setting )
+void DaemonSet::set_dlig_nmeg_limit( core::Size setting )
 {
 	if ( setting != 0 ) {
 		limit_dlig_mem_usage_ = true;
@@ -531,7 +531,7 @@ void DaemonSet::add_npdpro_calculator_creator(
 /// some master list somewhere.  The DaemonSet is responsible for keeping this index.
 void
 DaemonSet::add_pack_daemon(
-	Size daemon_index,
+	core::Size daemon_index,
 	std::string const & pdb_name,
 	std::string const & correspondence_file_name,
 	std::string const & secondary_resfile_name
@@ -557,7 +557,7 @@ DaemonSet::add_pack_daemon(
 
 void
 DaemonSet::add_pack_daemon(
-	Size daemon_index,
+	core::Size daemon_index,
 	std::string const & pose_file_name,
 	Pose const & pose,
 	std::string const & correspondence_file_filename,
@@ -600,8 +600,8 @@ DaemonSet::add_pack_daemon(
 	/// entity packer task.  If there is a discrepancy, then the program should
 	/// be halted now.
 	std::string error_message;
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		Size ii_entity_id = ec->entity_for_residue( ii );
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+		core::Size ii_entity_id = ec->entity_for_residue( ii );
 		if ( ii_entity_id == 0 ) {
 			continue;
 		}
@@ -638,7 +638,7 @@ DaemonSet::add_pack_daemon(
 		}
 
 		if ( ! bad ) {
-			for ( Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
+			for ( core::Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
 				if ( entity_aas[ ii ] != final_aas[ ii ] ) {
 					bad = true;
 					break;
@@ -695,9 +695,9 @@ DaemonSet::add_pack_daemon(
 
 void
 DaemonSet::add_npd_property_calculator_for_state(
-	Size daemon_index,
+	core::Size daemon_index,
 	std::string const & npd_property,
-	Size npd_index
+	core::Size npd_index
 )
 {
 	if ( npd_calculator_creators_.find( npd_property ) == npd_calculator_creators_.end() ) {
@@ -718,8 +718,8 @@ DaemonSet::add_npd_property_calculator_for_state(
 		throw CREATE_EXCEPTION(utility::excn::Exception,  msg );
 	}
 
-	Size which_daemon = 0;
-	for ( Size ii = 1; ii <= daemons_.size(); ++ii ) {
+	core::Size which_daemon = 0;
+	for ( core::Size ii = 1; ii <= daemons_.size(); ++ii ) {
 		if ( daemons_[ ii ].first == daemon_index ) {
 			which_daemon = ii;
 			break;
@@ -770,7 +770,7 @@ DaemonSet::compute_energy_for_assignment( Entity const & entity )
 #endif
 	SizeRealPairs npd_properties;
 	if ( n_npd_properties_ != 0 ) {
-		for ( Size ii = 1; ii <= npd_calcs_for_poses_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= npd_calcs_for_poses_.size(); ++ii ) {
 			if ( npd_calcs_for_poses_[ ii ].empty() ) continue;
 			daemons_[ ii ].second->assign_last_rotamers_to_pose( *daemon_poses_[ ii ] );
 			for ( std::list< NPDIndAndCalc >::const_iterator
@@ -825,7 +825,7 @@ DaemonSet::retrieve_relevant_poses_for_entity(
 	DaemonIndices const & daemon_indices
 ) const
 {
-	std::list< std::pair< Size, PoseOP > > return_list;
+	std::list< std::pair< core::Size, PoseOP > > return_list;
 	for ( auto const & daemon : daemons_ ) {
 		bool generate_pose_for_daemon( false );
 		for ( core::Size daemon_indice : daemon_indices ) {
@@ -911,7 +911,7 @@ void DaemonSet::process_add_daemon_message()
 	utility::vector1< std::string > secondary_resfile_names( n_daemons );
 	utility::vector1< std::string > secondary_resfiles( n_daemons );
 
-	utility::vector1< std::list< std::pair< Size, std::string > > > npd_properties( n_daemons );
+	utility::vector1< std::list< std::pair< core::Size, std::string > > > npd_properties( n_daemons );
 
 	for ( int ii = 1; ii <= n_daemons; ++ii ) {
 		daemon_indices[ ii ]            = utility::receive_integer_from_node( 0 );
@@ -923,7 +923,7 @@ void DaemonSet::process_add_daemon_message()
 		secondary_resfiles[ ii ]        = utility::receive_string_from_node( 0 );
 		int n_npd_properties_for_state  = utility::receive_integer_from_node( 0 );
 		for ( int jj = 1; jj <= n_npd_properties_for_state; ++jj ) {
-			Size npd_property_id         = utility::receive_integer_from_node( 0 );
+			core::Size npd_property_id         = utility::receive_integer_from_node( 0 );
 			std::string property         = utility::receive_string_from_node( 0 );
 			npd_properties[ ii ].push_back( std::make_pair( npd_property_id, property ) );
 		}
@@ -940,7 +940,7 @@ void DaemonSet::process_add_daemon_message()
 				pdb_names[ ii ], pose,
 				correspondence_file_names[ ii ], correspondence_file,
 				secondary_resfile_names[ ii ], secondary_resfile );
-			for ( std::list< std::pair< Size, std::string > >::const_iterator
+			for ( std::list< std::pair< core::Size, std::string > >::const_iterator
 					npditer     = npd_properties[ ii ].begin(),
 					npditer_end = npd_properties[ ii ].end();
 					npditer != npditer_end; ++npditer ) {
@@ -1039,9 +1039,9 @@ void DaemonSet::process_pose_request_for_entity()
 	EntityOP entity = recieve_entity();
 	DaemonIndices indices = recieve_daemon_inds_requiring_pose_creation();
 
-	std::list< std::pair< Size, PoseOP > > poses = retrieve_relevant_poses_for_entity( *entity, indices );
+	std::list< std::pair< core::Size, PoseOP > > poses = retrieve_relevant_poses_for_entity( *entity, indices );
 	utility::send_integer_to_node( 0, poses.size() );
-	for ( std::list< std::pair< Size, PoseOP > >::const_iterator
+	for ( std::list< std::pair< core::Size, PoseOP > >::const_iterator
 			iter = poses.begin(), iter_end = poses.end(); iter != iter_end; ++iter ) {
 		std::ostringstream oss;
 		core::io::pdb::dump_pdb( *( iter->second ), oss );
@@ -1145,7 +1145,7 @@ BasicSimAnnealerRepacker::repack( utility::vector0< int > const & rot_to_pack )
 	RotamerAssignmentAndEnergy result;
 	result.first.resize( rot_sets()->nmoltenres() );
 
-	for ( Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
 		result.first[ ii ] = rotamer_assignment( rot_sets()->moltenres_2_resid( ii ) );
 	}
 	result.second = rotamer_energy;
@@ -1205,7 +1205,7 @@ DenseIGRepacker::repack( utility::vector0< int > const & rot_to_pack )
 
 	utility::subset_mapping rotamer_subset_map( rot_sets()->nrotamers() );
 	rotamer_subset_map.reserve_destination_size( local_rot_to_pack.size() );
-	for ( Size ii = 0; ii < local_rot_to_pack.size(); ++ii ) {
+	for ( core::Size ii = 0; ii < local_rot_to_pack.size(); ++ii ) {
 		rotamer_subset_map.set_next_correspondence( local_rot_to_pack[ ii ] );
 	}
 
@@ -1217,7 +1217,7 @@ DenseIGRepacker::repack( utility::vector0< int > const & rot_to_pack )
 	ObjexxFCL::FArray1D< int > rotamer_assignment( pose()->size() );
 	core::PackerEnergy   rotamer_energy;
 	utility::vector0< int > all_rots( local_rot_to_pack.size() );
-	for ( Size ii = 0; ii < all_rots.size(); ++ii ) all_rots[ ii ] = ii+1;
+	for ( core::Size ii = 0; ii < all_rots.size(); ++ii ) all_rots[ ii ] = ii+1;
 
 	core::pack::pack_rotamers_run(
 		*pose(), task(), rsubset, dense_ig, all_rots,
@@ -1226,12 +1226,12 @@ DenseIGRepacker::repack( utility::vector0< int > const & rot_to_pack )
 	RotamerAssignmentAndEnergy result;
 	result.first.resize( rot_sets()->nmoltenres() );
 
-	for ( Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
 		result.first[ ii ] = rotamer_subset_map.d2s( rotamer_assignment( rot_sets()->moltenres_2_resid( ii ) ));
 	}
 
 	/*TR << "Assignment:";
-	for ( Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
 	TR << " " << rotamer_assignment( rot_sets()->moltenres_2_resid( ii ));
 	}
 	TR << std::endl;*/
@@ -1257,10 +1257,10 @@ DenseIGRepacker::create_dense_pdig_from_rot_to_pack(
 	/// function; otherwise, we have to fall back on the old
 	utility::vector1< int > aaind_for_moltres( nmoltenres, -1 );
 
-	for ( Size ii = 1; ii <= rot_to_pack.size(); ++ii ) {
-		Size const ii_moltenres = rot_subsets->moltenres_for_rotamer( ii );
-		Size const ii_local_id  = rot_subsets->rotid_on_moltenresidue( ii );
-		Size const ii_old_rotid = rot_sets()->rotid_on_moltenresidue(rot_to_pack[ ii - 1 ]);
+	for ( core::Size ii = 1; ii <= rot_to_pack.size(); ++ii ) {
+		core::Size const ii_moltenres = rot_subsets->moltenres_for_rotamer( ii );
+		core::Size const ii_local_id  = rot_subsets->rotid_on_moltenresidue( ii );
+		core::Size const ii_old_rotid = rot_sets()->rotid_on_moltenresidue(rot_to_pack[ ii - 1 ]);
 
 		if ( aaind_for_moltres[ ii_moltenres ] == -1 ) {
 			aaind_for_moltres[ ii_moltenres ] = ig()->aatype_for_node_state( ii_moltenres, ii_old_rotid );
@@ -1279,8 +1279,8 @@ DenseIGRepacker::create_dense_pdig_from_rot_to_pack(
 		//std::cout << ig()->get_one_body_energy_for_node_state( ii_moltenres, ii_old_rotid) << std::endl;
 	}
 
-	for ( Size ii = 1; ii <= nmoltenres; ++ii ) {
-		for ( Size jj = ii+1; jj <= nmoltenres; ++jj ) {
+	for ( core::Size ii = 1; ii <= nmoltenres; ++ii ) {
+		for ( core::Size jj = ii+1; jj <= nmoltenres; ++jj ) {
 			if ( ig()->get_edge_exists( ii, jj ) ) {
 				if ( aaind_for_moltres[ ii ] > 0 && aaind_for_moltres[ jj ] > 0 ) {
 					if ( ! ig()->get_sparse_aa_info_for_edge( ii, jj,aaind_for_moltres[ ii ], aaind_for_moltres[ jj ] ) ) {
@@ -1307,11 +1307,11 @@ DenseIGRepacker::create_dense_pdig_from_rot_to_pack(
 				}
 
 				if ( ! fast_edge_energy_transfer_successfull ) {
-					for ( Size kk = 1, kk_end = rot_subsets->nrotamers_for_moltenres( ii ); kk <= kk_end; ++kk ) {
-						Size const kk_old = rot_sets()->rotid_on_moltenresidue(
+					for ( core::Size kk = 1, kk_end = rot_subsets->nrotamers_for_moltenres( ii ); kk <= kk_end; ++kk ) {
+						core::Size const kk_old = rot_sets()->rotid_on_moltenresidue(
 							rot_to_pack[ rot_subsets->moltenres_rotid_2_rotid( ii, kk ) - 1 ] );
-						for ( Size ll = 1, ll_end = rot_subsets->nrotamers_for_moltenres( jj ); ll <= ll_end; ++ll ) {
-							Size const ll_old = rot_sets()->rotid_on_moltenresidue(
+						for ( core::Size ll = 1, ll_end = rot_subsets->nrotamers_for_moltenres( jj ); ll <= ll_end; ++ll ) {
+							core::Size const ll_old = rot_sets()->rotid_on_moltenresidue(
 								rot_to_pack[ rot_subsets->moltenres_rotid_2_rotid( jj, ll ) - 1 ] );
 							dense_ig->set_two_body_energy_for_edge( ii, jj, kk, ll,
 								ig()->get_two_body_energy_for_edge( ii, jj, kk_old, ll_old ) );
@@ -1355,7 +1355,7 @@ DoubleDenseIGRepacker::repack( utility::vector0< int > const & rot_to_pack )
 
 	utility::subset_mapping rotamer_subset_map( rot_sets()->nrotamers() );
 	rotamer_subset_map.reserve_destination_size( local_rot_to_pack.size() );
-	for ( Size ii = 0; ii < local_rot_to_pack.size(); ++ii ) {
+	for ( core::Size ii = 0; ii < local_rot_to_pack.size(); ++ii ) {
 		rotamer_subset_map.set_next_correspondence( local_rot_to_pack[ ii ] );
 	}
 
@@ -1367,7 +1367,7 @@ DoubleDenseIGRepacker::repack( utility::vector0< int > const & rot_to_pack )
 	ObjexxFCL::FArray1D< int > rotamer_assignment( pose()->size() );
 	core::PackerEnergy   rotamer_energy;
 	utility::vector0< int > all_rots( local_rot_to_pack.size() );
-	for ( Size ii = 0; ii < all_rots.size(); ++ii ) all_rots[ ii ] = ii+1;
+	for ( core::Size ii = 0; ii < all_rots.size(); ++ii ) all_rots[ ii ] = ii+1;
 
 	core::pack::pack_rotamers_run(
 		*pose(), task(), rsubset, dense_ig, all_rots,
@@ -1376,12 +1376,12 @@ DoubleDenseIGRepacker::repack( utility::vector0< int > const & rot_to_pack )
 	RotamerAssignmentAndEnergy result;
 	result.first.resize( rot_sets()->nmoltenres() );
 
-	for ( Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
 		result.first[ ii ] = rotamer_subset_map.d2s( rotamer_assignment( rot_sets()->moltenres_2_resid( ii ) ));
 	}
 
 	/*TR << "Assignment:";
-	for ( Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
 	TR << " " << rotamer_assignment( rot_sets()->moltenres_2_resid( ii ));
 	}
 	TR << std::endl;*/
@@ -1401,10 +1401,10 @@ DoubleDenseIGRepacker::create_dense_pdig_from_rot_to_pack(
 	core::Size nmoltenres = rot_sets()->nmoltenres();
 	DoubleDensePDInteractionGraphOP dense_ig( new DoubleDensePDInteractionGraph( nmoltenres ) );
 	dense_ig->initialize( *rot_subsets );
-	for ( Size ii = 1; ii <= rot_to_pack.size(); ++ii ) {
-		Size const ii_moltenres = rot_subsets->moltenres_for_rotamer( ii );
-		Size const ii_local_id  = rot_subsets->rotid_on_moltenresidue( ii );
-		Size const ii_old_rotid = rot_sets()->rotid_on_moltenresidue(rot_to_pack[ ii - 1 ]);
+	for ( core::Size ii = 1; ii <= rot_to_pack.size(); ++ii ) {
+		core::Size const ii_moltenres = rot_subsets->moltenres_for_rotamer( ii );
+		core::Size const ii_local_id  = rot_subsets->rotid_on_moltenresidue( ii );
+		core::Size const ii_old_rotid = rot_sets()->rotid_on_moltenresidue(rot_to_pack[ ii - 1 ]);
 		dense_ig->add_to_nodes_one_body_energy(
 			ii_moltenres,
 			ii_local_id,
@@ -1414,15 +1414,15 @@ DoubleDenseIGRepacker::create_dense_pdig_from_rot_to_pack(
 		//std::cout << ig()->get_one_body_energy_for_node_state( ii_moltenres, ii_old_rotid) << std::endl;
 	}
 
-	for ( Size ii = 1; ii <= nmoltenres; ++ii ) {
-		for ( Size jj = ii+1; jj <= nmoltenres; ++jj ) {
+	for ( core::Size ii = 1; ii <= nmoltenres; ++ii ) {
+		for ( core::Size jj = ii+1; jj <= nmoltenres; ++jj ) {
 			if ( ig()->get_edge_exists( ii, jj ) ) {
 				dense_ig->add_edge( ii, jj );
-				for ( Size kk = 1, kk_end = rot_subsets->nrotamers_for_moltenres( ii ); kk <= kk_end; ++kk ) {
-					Size const kk_old = rot_sets()->rotid_on_moltenresidue(
+				for ( core::Size kk = 1, kk_end = rot_subsets->nrotamers_for_moltenres( ii ); kk <= kk_end; ++kk ) {
+					core::Size const kk_old = rot_sets()->rotid_on_moltenresidue(
 						rot_to_pack[ rot_subsets->moltenres_rotid_2_rotid( ii, kk ) - 1 ] );
-					for ( Size ll = 1, ll_end = rot_subsets->nrotamers_for_moltenres( jj ); ll <= ll_end; ++ll ) {
-						Size const ll_old = rot_sets()->rotid_on_moltenresidue(
+					for ( core::Size ll = 1, ll_end = rot_subsets->nrotamers_for_moltenres( jj ); ll <= ll_end; ++ll ) {
+						core::Size const ll_old = rot_sets()->rotid_on_moltenresidue(
 							rot_to_pack[ rot_subsets->moltenres_rotid_2_rotid( jj, ll ) - 1 ] );
 						dense_ig->set_two_body_energy_for_edge( ii, jj, kk, ll,
 							ig()->get_two_body_energy_for_edge( ii, jj, kk_old, ll_old ) );
@@ -1465,7 +1465,7 @@ FASTER_IG_Repacker::repack( utility::vector0< int > const & rot_to_pack )
 
 	utility::subset_mapping rotamer_subset_map( rot_sets()->nrotamers() );
 	rotamer_subset_map.reserve_destination_size( local_rot_to_pack.size() );
-	for ( Size ii = 0; ii < local_rot_to_pack.size(); ++ii ) {
+	for ( core::Size ii = 0; ii < local_rot_to_pack.size(); ++ii ) {
 		rotamer_subset_map.set_next_correspondence( local_rot_to_pack[ ii ] );
 	}
 
@@ -1477,7 +1477,7 @@ FASTER_IG_Repacker::repack( utility::vector0< int > const & rot_to_pack )
 	ObjexxFCL::FArray1D< int > rotamer_assignment( pose()->size() );
 	core::PackerEnergy   rotamer_energy;
 	utility::vector0< int > all_rots( local_rot_to_pack.size() );
-	for ( Size ii = 0; ii < all_rots.size(); ++ii ) all_rots[ ii ] = ii+1;
+	for ( core::Size ii = 0; ii < all_rots.size(); ++ii ) all_rots[ ii ] = ii+1;
 
 	{ // scope
 		using namespace ObjexxFCL;
@@ -1503,12 +1503,12 @@ FASTER_IG_Repacker::repack( utility::vector0< int > const & rot_to_pack )
 	RotamerAssignmentAndEnergy result;
 	result.first.resize( rot_sets()->nmoltenres() );
 
-	for ( Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
 		result.first[ ii ] = rotamer_subset_map.d2s( rotamer_assignment( rot_sets()->moltenres_2_resid( ii ) ));
 	}
 
 	/*TR << "Assignment:";
-	for ( Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rot_sets()->nmoltenres(); ++ii ) {
 	TR << " " << rotamer_assignment( rot_sets()->moltenres_2_resid( ii ));
 	}
 	TR << std::endl;*/
@@ -1536,10 +1536,10 @@ FASTER_IG_Repacker::create_faster_ig_from_rot_to_pack(
 	/// function; otherwise, we have to fall back on the old
 	utility::vector1< int > aaind_for_moltres( nmoltenres, -1 );
 
-	for ( Size ii = 1; ii <= rot_to_pack.size(); ++ii ) {
-		Size const ii_moltenres = rot_subsets->moltenres_for_rotamer( ii );
-		Size const ii_local_id  = rot_subsets->rotid_on_moltenresidue( ii );
-		Size const ii_old_rotid = rot_sets()->rotid_on_moltenresidue(rot_to_pack[ ii - 1 ]);
+	for ( core::Size ii = 1; ii <= rot_to_pack.size(); ++ii ) {
+		core::Size const ii_moltenres = rot_subsets->moltenres_for_rotamer( ii );
+		core::Size const ii_local_id  = rot_subsets->rotid_on_moltenresidue( ii );
+		core::Size const ii_old_rotid = rot_sets()->rotid_on_moltenresidue(rot_to_pack[ ii - 1 ]);
 
 		if ( aaind_for_moltres[ ii_moltenres ] == -1 ) {
 			aaind_for_moltres[ ii_moltenres ] = ig()->aatype_for_node_state( ii_moltenres, ii_old_rotid );
@@ -1558,8 +1558,8 @@ FASTER_IG_Repacker::create_faster_ig_from_rot_to_pack(
 		//std::cout << ig()->get_one_body_energy_for_node_state( ii_moltenres, ii_old_rotid) << std::endl;
 	}
 
-	for ( Size ii = 1; ii <= nmoltenres; ++ii ) {
-		for ( Size jj = ii+1; jj <= nmoltenres; ++jj ) {
+	for ( core::Size ii = 1; ii <= nmoltenres; ++ii ) {
+		for ( core::Size jj = ii+1; jj <= nmoltenres; ++jj ) {
 			if ( ig()->get_edge_exists( ii, jj ) ) {
 				if ( aaind_for_moltres[ ii ] > 0 && aaind_for_moltres[ jj ] > 0 ) {
 					if ( ! ig()->get_sparse_aa_info_for_edge( ii, jj, aaind_for_moltres[ ii ], aaind_for_moltres[ jj ] ) ) {
@@ -1586,11 +1586,11 @@ FASTER_IG_Repacker::create_faster_ig_from_rot_to_pack(
 				}
 
 				if ( ! fast_edge_energy_transfer_successfull ) {
-					for ( Size kk = 1, kk_end = rot_subsets->nrotamers_for_moltenres( ii ); kk <= kk_end; ++kk ) {
-						Size const kk_old = rot_sets()->rotid_on_moltenresidue(
+					for ( core::Size kk = 1, kk_end = rot_subsets->nrotamers_for_moltenres( ii ); kk <= kk_end; ++kk ) {
+						core::Size const kk_old = rot_sets()->rotid_on_moltenresidue(
 							rot_to_pack[ rot_subsets->moltenres_rotid_2_rotid( ii, kk ) - 1 ] );
-						for ( Size ll = 1, ll_end = rot_subsets->nrotamers_for_moltenres( jj ); ll <= ll_end; ++ll ) {
-							Size const ll_old = rot_sets()->rotid_on_moltenresidue(
+						for ( core::Size ll = 1, ll_end = rot_subsets->nrotamers_for_moltenres( jj ); ll <= ll_end; ++ll ) {
+							core::Size const ll_old = rot_sets()->rotid_on_moltenresidue(
 								rot_to_pack[ rot_subsets->moltenres_rotid_2_rotid( jj, ll ) - 1 ] );
 							faster_ig->set_two_body_energy_for_edge( ii, jj, kk, ll,
 								ig()->get_two_body_energy_for_edge( ii, jj, kk_old, ll_old ) );

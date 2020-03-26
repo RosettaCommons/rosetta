@@ -76,7 +76,7 @@ bool
 is_part( utility::vector1<core::Size> & cut_points,
 	core::Size & residue){
 	bool res_cut = false;
-	for ( Size i = 1; i <= cut_points.size(); ++i ) {
+	for ( core::Size i = 1; i <= cut_points.size(); ++i ) {
 		if ( cut_points[i] == residue ) {
 			res_cut = true;
 		}
@@ -115,24 +115,24 @@ void add_dist_constraints(
 	TR.Debug << "seeds: " << seeds << std::endl;
 	TR.Debug << "clear_area " << clear_area << std::endl;
 
-	for ( Size i=1; i<=cut_points.size(); i++ ) {
+	for ( core::Size i=1; i<=cut_points.size(); i++ ) {
 		TR <<"cutpoints: " << cut_points[i] << std::endl;
 	}
 
 	//adjust cutpoints first to relevant numbering
-	for ( Size i = 1 ; i <= cut_points.size(); ++i ) {
+	for ( core::Size i = 1 ; i <= cut_points.size(); ++i ) {
 		TR.Debug <<"rosetta numbering: cutpoint: "<< cut_points[i] <<std::endl;
 		cut_points[i] = cut_points[i] - (start_relevant_chain -1);
 		TR.Debug <<"adjusted cutpoint: "<< cut_points[i] <<std::endl;
 	}
 
-	for ( Size i=1; i<=cut_points.size(); i++ ) {
+	for ( core::Size i=1; i<=cut_points.size(); i++ ) {
 		TR <<"cutpoints: " << cut_points[i] << std::endl;
 	}
 
 
-	for ( Size pos = 1; pos <= pose_of_int->size(); pos++ ) {
-		for ( Size pos_2 = 1; pos_2 <=pose_of_int->size(); pos_2++   ) {
+	for ( core::Size pos = 1; pos <= pose_of_int->size(); pos++ ) {
+		for ( core::Size pos_2 = 1; pos_2 <=pose_of_int->size(); pos_2++   ) {
 
 			bool res_is_loop = false;
 			bool res2_is_loop = false;
@@ -170,7 +170,7 @@ void add_dist_constraints(
 			}
 
 			//avoiding doubling of constraints
-			Size seq_sep = 0;
+			core::Size seq_sep = 0;
 
 			if ( pos > pos_2 ) {
 				seq_sep = pos - pos_2;
@@ -211,16 +211,16 @@ CAcstGenerator::apply( pose::Pose & pose ){
 
 	using namespace core;
 
-	utility::vector1< Size > cutpoints = pose.fold_tree().cutpoints();
+	utility::vector1< core::Size > cutpoints = pose.fold_tree().cutpoints();
 
-	for ( Size i=1; i<=cutpoints.size(); i++ ) {
+	for ( core::Size i=1; i<=cutpoints.size(); i++ ) {
 		TR.Debug <<"cutpoints: " << cutpoints[i] << std::endl;
 	}
 
 	TR.Debug << "foldtree: " << pose.fold_tree();
 
 	pose::PoseOP donor_poseOP;
-	Size start_recipient_chain = 0;
+	core::Size start_recipient_chain = 0;
 	ca_cst_ = utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >();
 
 	//this all has to be checked during run time since parse time input will be inaccurate if the pose has been grown before
@@ -317,7 +317,7 @@ CAcstGenerator::parse_my_tag( TagCOP const tag,
 		std::string residues_string = tag->getOption< std::string > ("add_seed_residues" );
 		utility::vector1< std::string > const residue_keys( utility::string_split( residues_string, ',' ) );
 		for ( std::string const & key : residue_keys ) {
-			Size const res( utility::string2int( key ) );
+			core::Size const res( utility::string2int( key ) );
 			TR  << "add constraints to residues  within seed, residue: "<< key <<std::endl;
 			seed_exceptions_.push_back( res );
 		}

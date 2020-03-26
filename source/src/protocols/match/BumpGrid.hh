@@ -27,7 +27,7 @@
 
 // Utility headers
 #include <utility/fixedsizearray1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
@@ -45,9 +45,10 @@
 namespace protocols {
 namespace match {
 
-class Bool3DGrid : public utility::pointer::ReferenceCount
+class Bool3DGrid : public utility::VirtualBase
 {
 public:
+	typedef core::Size   Size;
 	typedef core::Real   Real;
 	typedef core::Vector Vector;
 	typedef numeric::geometry::BoundingBox< core::Vector > BoundingBox;
@@ -159,12 +160,12 @@ private:
 	reset_grid();
 
 	unsigned char
-	mask_from_offsets( Size xmod2, Size ymod2, Size zmod2 ) const;
+	mask_from_offsets( core::Size xmod2, core::Size ymod2, core::Size zmod2 ) const;
 
 	unsigned char
-	negmask_from_offsets( Size xmod2, Size ymod2, Size zmod2 ) const;
+	negmask_from_offsets( core::Size xmod2, core::Size ymod2, core::Size zmod2 ) const;
 
-	Size
+	core::Size
 	byte_index_from_doublebin( Bin3D const & halfbin ) const;
 
 
@@ -188,7 +189,7 @@ private:
 	/// though this size should not have a very large effect for caches of larger or smaller size.
 	/// The main point of the super voxel is to allow data locality as it's very often the same
 	/// region of space that's being queried repeatedly during rotamer building.
-	static const Size n_doublebins_per_supervoxel = 4;
+	static const core::Size n_doublebins_per_supervoxel = 4;
 
 	/// Each byte represents the boolean "covered" status for 8 voxels
 	/// in a double-voxel.  The double voxel
@@ -196,7 +197,7 @@ private:
 
 };
 
-class BumpGrid : public utility::pointer::ReferenceCount
+class BumpGrid : public utility::VirtualBase
 {
 public:
 	typedef Bool3DGrid::BoundingBox          BoundingBox;
@@ -204,7 +205,7 @@ public:
 	typedef Bool3DGrid::Vector               Vector;
 	typedef std::pair< Vector, core::Real >  Sphere;
 	typedef core::Real                       Real;
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 
 public:
 	BumpGrid();

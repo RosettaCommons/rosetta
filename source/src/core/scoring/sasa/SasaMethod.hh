@@ -16,7 +16,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/sasa/SasaMethod.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -66,7 +66,7 @@ enum SasaRadii {
 /// @brief Abstract base class for SasaMethods.  Feel free to edit as needed.
 ///  Virt atms are skipped as radii=0
 ///
-class SasaMethod : public utility::pointer::ReferenceCount {
+class SasaMethod : public utility::VirtualBase {
 
 
 public:

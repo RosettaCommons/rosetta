@@ -27,7 +27,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 
@@ -79,7 +79,7 @@ void ConstraintEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 		*/
 		utility::vector1< std::string > const& cst_target( option[ OptionKeys::evaluation::constraints ]() );
 		utility::vector1< std::string > const& cst_col_name( option[ OptionKeys::evaluation::constraints_column ]() );
-		for ( Size ct = 1; ct <= cst_target.size(); ct ++ ) {
+		for ( core::Size ct = 1; ct <= cst_target.size(); ct ++ ) {
 			std::string tag( ObjexxFCL::string_of( ct ) );
 			if ( cst_col_name.size() >= ct ) tag = cst_col_name[ ct ];
 			eval.add_evaluation( utility::pointer::make_shared< ConstraintEvaluator >( tag, cst_target[ ct ] ) );

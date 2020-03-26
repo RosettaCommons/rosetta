@@ -45,8 +45,8 @@ public:
 		basic::resource_manager::ResourceManager rm;
 		utility::tag::TagCOP tag;
 
-		utility::pointer::ReferenceCountCOP resource = loader.create_resource( rm, tag, "unit_test", lstream );
-		utility::pointer::ReferenceCountCOP resource2 = loader.create_resource( rm, tag, "unit_test", lstream2 );
+		utility::VirtualBaseCOP resource = loader.create_resource( rm, tag, "unit_test", lstream );
+		utility::VirtualBaseCOP resource2 = loader.create_resource( rm, tag, "unit_test", lstream2 );
 
 		TS_ASSERT( resource ); // make sure a resource was returned
 

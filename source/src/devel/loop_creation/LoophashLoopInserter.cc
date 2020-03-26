@@ -188,7 +188,7 @@ LoophashLoopInserter::get_random_fragment(
 	}
 	//Get the vector of retreival indexes corresponding to this random key
 	core::Size lh_fragment_size = it->first;
-	std::vector<Size> filtered_leap_index_bucket = it->second;
+	std::vector<core::Size> filtered_leap_index_bucket = it->second;
 
 	//pick a random retrieval index (fragment) from the filtered list
 	core::Size bucket_index = numeric::random::random_range(0, filtered_leap_index_bucket.size()-1);
@@ -366,7 +366,7 @@ LoophashLoopInserter::build_loop(
 		++lh_fragment_end;
 	}
 
-	//Prevent Size wrap around
+	//Prevent core::Size wrap around
 	core::Size prepend_seqpos = loop_anchor()+loop_size-c_term_append_size+1;
 	if ( loop_size-c_term_append_size > 0 ) {
 		for ( core::Size i=loop_size-1; i>=loop_size-c_term_append_size; --i ) {

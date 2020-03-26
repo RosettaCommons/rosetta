@@ -45,6 +45,8 @@ static basic::Tracer tr( "protocols.simple_filters.ContactMolecularSurfaceFilter
 namespace protocols {
 namespace simple_filters {
 
+using core::Size;
+
 // @brief default constructor
 ContactMolecularSurfaceFilter::ContactMolecularSurfaceFilter():
 	Filter( "ContactMolecularSurface" ),
@@ -59,7 +61,7 @@ ContactMolecularSurfaceFilter::ContactMolecularSurfaceFilter():
 
 // @brief constructor with arguments
 ContactMolecularSurfaceFilter::ContactMolecularSurfaceFilter( Real const & filtered_area, Real const & distance_weight,
-	Size const & quick, Size const & verbose ):
+	core::Size const & quick, core::Size const & verbose ):
 	Filter( "ContactMolecularSurface" ),
 	filtered_area_( filtered_area ),
 	distance_weight_( distance_weight ),
@@ -69,8 +71,8 @@ ContactMolecularSurfaceFilter::ContactMolecularSurfaceFilter( Real const & filte
 	selector2_()
 {}
 
-void ContactMolecularSurfaceFilter::quick( Size const & quick ) { quick_ = quick; }
-void ContactMolecularSurfaceFilter::verbose( Size const & verbose ) { verbose_ = verbose; }
+void ContactMolecularSurfaceFilter::quick( core::Size const & quick ) { quick_ = quick; }
+void ContactMolecularSurfaceFilter::verbose( core::Size const & verbose ) { verbose_ = verbose; }
 
 filters::FilterOP
 ContactMolecularSurfaceFilter::clone() const {
@@ -170,8 +172,8 @@ ContactMolecularSurfaceFilter::parse_my_tag(
 {
 	filtered_area_ = tag->getOption<Real>( "min_interface", 1.0 );
 	distance_weight_ = tag->getOption<Real>( "distance_weight", 1.0 );
-	verbose_ = tag->getOption<Size>( "verbose", false );
-	quick_ = tag->getOption<Size>( "quick", false );
+	verbose_ = tag->getOption<core::Size>( "verbose", false );
+	quick_ = tag->getOption<core::Size>( "quick", false );
 
 	std::string const selector1name = tag->getOption< std::string >( "target_selector", "" );
 	if ( !selector1name.empty() ) selector1_ = core::select::residue_selector::get_residue_selector( selector1name, data );

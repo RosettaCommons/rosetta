@@ -114,7 +114,7 @@ SymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
-	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
+	std::map< core::Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
 	TR.Debug << "Rb move applied..." << std::endl;
 
@@ -133,7 +133,7 @@ SymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 		core::pose::symmetry::rotate_anchor_to_x_axis( pose );
 	}
 
-	for ( Size i = 1; i <= rigid_body_cycles_; ++i ) {
+	for ( core::Size i = 1; i <= rigid_body_cycles_; ++i ) {
 		rb_perturb.apply( pose );
 		if ( mc_filter_ ) monteCarlo_->boltzmann( pose );
 	}

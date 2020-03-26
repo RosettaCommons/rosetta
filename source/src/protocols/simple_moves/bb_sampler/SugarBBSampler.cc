@@ -53,6 +53,7 @@ using namespace core::conformation::carbohydrates;
 using core::Angle;
 using core::Probability;
 using core::conformation::Residue;
+using core::Size;
 
 SugarBBSampler::SugarBBSampler():
 	BBDihedralSampler(core::id::phi_dihedral, probability)
@@ -79,7 +80,7 @@ SugarBBSampler::clone() const {
 
 
 core::Real
-SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
+SugarBBSampler::get_torsion(Pose const & pose, core::Size resnum ) const
 {
 
 
@@ -91,7 +92,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 
 	Angle new_dihedral = 0.0;
 
-	if ( TR.Debug.visible() ) { TR.Debug << "Optimizing resnum " << resnum << " dihedral " << Size(torsion_type_ ) << std::endl; }
+	if ( TR.Debug.visible() ) { TR.Debug << "Optimizing resnum " << resnum << " dihedral " << core::Size(torsion_type_ ) << std::endl; }
 
 	if ( torsion_type_ == core::id::phi_dihedral || torsion_type_ == core::id::psi_dihedral ) {
 		CHIEnergyFunction const & sugar_bb =
@@ -113,7 +114,7 @@ SugarBBSampler::get_torsion(Pose const & pose, Size resnum ) const
 		}
 		CHIDihedralSamplingData const & sampling_data = sugar_bb.get_sampling_data( linkage_type );
 
-		if ( TR.Debug.visible() ) { TR.Debug << "Optimizing resnum " << resnum << " dihedral " << Size(torsion_type_ ) << std::endl; }
+		if ( TR.Debug.visible() ) { TR.Debug << "Optimizing resnum " << resnum << " dihedral " << core::Size(torsion_type_ ) << std::endl; }
 
 		//Sample Dihedral
 

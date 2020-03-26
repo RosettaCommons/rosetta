@@ -31,8 +31,8 @@ class IndelOptimizationMover : public moves::Mover {
 public:
 
 	//default ctor
-	IndelOptimizationMover( Size start_res, Size end_res, Size loop_length,
-		std::string const & remodel, std::string const & intermedrelax, std::string const & refine, std::string const & relax, bool frag_files, Size num_to_dock, bool dump_initial_results ):
+	IndelOptimizationMover( core::Size start_res, core::Size end_res, core::Size loop_length,
+		std::string const & remodel, std::string const & intermedrelax, std::string const & refine, std::string const & relax, bool frag_files, core::Size num_to_dock, bool dump_initial_results ):
 		Mover("IndelOptimizationMover"),
 		start_res_( start_res ),
 		end_res_( end_res ),
@@ -54,13 +54,13 @@ public:
 	std::string get_name() const override { return "IndelOptimizationMover"; }
 
 	// getters
-	Size start_res() {
+	core::Size start_res() {
 		return start_res_;
 	}
-	Size end_res() {
+	core::Size end_res() {
 		return end_res_;
 	}
-	Size loop_length() {
+	core::Size loop_length() {
 		return loop_length_;
 	}
 	std::string remodel() {
@@ -78,7 +78,7 @@ public:
 	bool frag_files() {
 		return frag_files_;
 	}
-	Size num_to_dock() {
+	core::Size num_to_dock() {
 		return num_to_dock_;
 	}
 	bool dump_initial_results() {
@@ -86,13 +86,13 @@ public:
 	}
 
 	// setters
-	void start_res( Size i ) {
+	void start_res( core::Size i ) {
 		start_res_ = i;
 	}
-	void end_res( Size i ) {
+	void end_res( core::Size i ) {
 		end_res_ = i;
 	}
-	void loop_length( Size i ) {
+	void loop_length( core::Size i ) {
 		loop_length_ = i;
 	}
 	void remodel( std::string i ) {
@@ -110,7 +110,7 @@ public:
 	void frag_files( bool i ) {
 		frag_files_ = i;
 	}
-	void num_to_dock( Size i ) {
+	void num_to_dock( core::Size i ) {
 		num_to_dock_ = i;
 	}
 	void dump_initial_results( bool i ) {
@@ -119,15 +119,15 @@ public:
 
 private:
 
-	Size start_res_;
-	Size end_res_;
-	Size loop_length_;
+	core::Size start_res_;
+	core::Size end_res_;
+	core::Size loop_length_;
 	std::string remodel_;
 	std::string intermedrelax_;
 	std::string refine_;
 	std::string relax_;
 	bool frag_files_;
-	Size num_to_dock_;
+	core::Size num_to_dock_;
 	bool dump_initial_results_;
 
 };

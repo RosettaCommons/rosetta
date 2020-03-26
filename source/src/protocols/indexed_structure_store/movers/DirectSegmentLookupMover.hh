@@ -17,7 +17,7 @@
 
 // Utility Headers
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
@@ -64,11 +64,11 @@ public:
 	std::string output_lookup_length() { return output_lookup_length_; }
 	void output_lookup_length(std::string name) {  output_lookup_length_ = name; }
 
-	Size from_chain() { return from_chain_; }
-	void from_chain(Size chain) { from_chain_ = chain; }
+	core::Size from_chain() { return from_chain_; }
+	void from_chain(core::Size chain) { from_chain_ = chain; }
 
-	Size to_chain() { return to_chain_; }
-	void to_chain(Size chain) { to_chain_ = chain; }
+	core::Size to_chain() { return to_chain_; }
+	void to_chain(core::Size chain) { to_chain_ = chain; }
 
 	StructureStoreOP
 	structure_store();
@@ -115,16 +115,16 @@ private:
 	std::string output_lookup_count_;
 	std::string output_lookup_length_;
 
-	Size from_chain_ = 1;
-	Size to_chain_ = 2;
+	core::Size from_chain_ = 1;
+	core::Size to_chain_ = 2;
 
 	StructureStoreOP structure_store_;
 	search::StructureDatabaseOP structure_database_;
 
 	core::pose::PoseOP source_pose_;
 	std::vector<DirectSegmentLookupResult> lookup_results_;
-	Size lookup_result_index_ = 0;
-	Size max_num_results_ = 0;
+	core::Size lookup_result_index_ = 0;
+	core::Size max_num_results_ = 0;
 };
 
 

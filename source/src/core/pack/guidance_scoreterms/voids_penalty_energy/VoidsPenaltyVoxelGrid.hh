@@ -28,7 +28,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 
@@ -50,7 +50,7 @@ namespace guidance_scoreterms {
 namespace voids_penalty_energy {
 
 ///@brief A 3D boolean array used for identifying core voxels in the VoidsPenaltyEnergy.
-class VoidsPenaltyVoxelGrid : public utility::pointer::ReferenceCount {
+class VoidsPenaltyVoxelGrid : public utility::VirtualBase {
 
 	friend class ::VoidsPenaltyVoxelGridTests;
 	friend class ::VoidsPenaltyVoxelGridTests_rotamer_setup;

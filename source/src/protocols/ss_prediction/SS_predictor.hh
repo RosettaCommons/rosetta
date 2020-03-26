@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_ss_prediction_SS_predictor_hh
 
 //// utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
@@ -30,7 +30,7 @@
 namespace protocols {
 namespace ss_prediction {
 
-class SS_predictor : public utility::pointer::ReferenceCount {
+class SS_predictor : public utility::VirtualBase {
 public:
 	/// @brief Reads in models for SS prediction etc.
 	SS_predictor(std::string type);
@@ -47,7 +47,7 @@ private:
 	utility::vector1 <core::Real> predict_pos_rd2(utility::vector1< utility::vector1 <core::Real> > rd1_preds, core::SSize position, std::string fasta);
 	utility::vector1< utility::vector1<core::Real> > predict_rd1(std::string fasta);
 	utility::vector1< utility::vector1<core::Real> > predict_rd2(utility::vector1< utility::vector1<core::Real> > rd1_preds, std::string fasta);
-	static const Size WINDOW_SIZE = 15;
+	static const core::Size WINDOW_SIZE = 15;
 }; // class SS_predictor
 
 // helper functions

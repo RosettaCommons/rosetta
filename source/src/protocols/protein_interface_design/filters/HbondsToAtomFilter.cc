@@ -141,18 +141,18 @@ HbondsToAtomFilter::compute( Pose const & pose ) const {
 	(*scorefxn)(temp_pose);
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( temp_pose );
 
-	Size const chain2begin( temp_pose.conformation().chain_begin( 2 ) );
-	Size partner_begin, partner_end;
-	Size resnum( core::pose::parse_resnum( resnum_, pose ) );
+	core::Size const chain2begin( temp_pose.conformation().chain_begin( 2 ) );
+	core::Size partner_begin, partner_end;
+	core::Size resnum( core::pose::parse_resnum( resnum_, pose ) );
 	if ( resnum >= chain2begin ) {
 		partner_begin = 1; partner_end = chain2begin-1;
 	} else {
 		partner_begin = chain2begin; partner_end = temp_pose.size();
 	}
-	std::set<Size> binders;
-	for ( Size i=partner_begin; i<=partner_end; ++i ) binders.insert( i );
+	std::set<core::Size> binders;
+	for ( core::Size i=partner_begin; i<=partner_end; ++i ) binders.insert( i );
 
-	std::list< Size> hbonded_res( hbonded_atom ( temp_pose, resnum, atomdesg_,  binders, backbone_, sidechain_, energy_cutoff_, bb_bb_) );
+	std::list< core::Size> hbonded_res( hbonded_atom ( temp_pose, resnum, atomdesg_,  binders, backbone_, sidechain_, energy_cutoff_, bb_bb_) );
 
 	return( hbonded_res.size() );
 }

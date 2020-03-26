@@ -32,9 +32,11 @@
 namespace protocols {
 namespace motifs {
 
+using core::Size;
+
 BuildPosition::BuildPosition(
-	Size const seqpos,
-	utility::vector1< Size > const & target_positions
+	core::Size const seqpos,
+	utility::vector1< core::Size > const & target_positions
 ) : seqpos_( seqpos ),
 	target_positions_( target_positions ),
 	allowed_types_(),
@@ -45,8 +47,8 @@ BuildPosition::BuildPosition(
 
 
 BuildPosition::BuildPosition(
-	Size const seqpos,
-	utility::vector1< Size > const & target_positions,
+	core::Size const seqpos,
+	utility::vector1< core::Size > const & target_positions,
 	std::set< std::string > const & allowed_types
 ) : seqpos_( seqpos ),
 	target_positions_( target_positions ),
@@ -59,7 +61,7 @@ BuildPosition::BuildPosition(
 BuildPosition::~BuildPosition() = default;
 
 BuildPosition::BuildPosition( BuildPosition const & src ) :
-	utility::pointer::ReferenceCount( src ),
+	utility::VirtualBase( src ),
 	seqpos_( src.seqpos() ),
 	target_positions_( src.target_positions() ),
 	allowed_types_( src.allowed_types() ),

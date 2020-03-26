@@ -187,7 +187,7 @@ TaskOperationFeatures::parse_my_tag(
 	}
 
 	// Fill task_factories_, one TaskFactoryCOP per TaskOperator
-	Size taskop_id(0);
+	core::Size taskop_id(0);
 	std::string taskop_list = tag->getOption< std::string >("task_operations");
 	utility::vector0< std::string > const taskop_keys( utility::string_split( taskop_list, ',' ) );
 	for ( auto const & taskop_key : taskop_keys ) {
@@ -243,19 +243,19 @@ TaskOperationFeatures::report_features(
 	for ( vector1<Taskop_id_name_factory_>::const_iterator
 			top = taskops_.begin(),
 			top_end = taskops_.end(); top != top_end; ++top ) {
-		//Size taskop_id = top->id;
+		//core::Size taskop_id = top->id;
 		tasks[top->id] = (top->tf)->create_task_and_apply_taskoperations( pose );
 	}
 
 	TR << "Inserting task_operation_residue_effects rows" << std::endl;
 	// task_operation_residue_effects rows
-	for ( Size resNum = 1; resNum <= pose.size(); ++resNum ) {
+	for ( core::Size resNum = 1; resNum <= pose.size(); ++resNum ) {
 		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 
 		for ( auto & task : tasks ) {
 			bool const pack = (task.second)->pack_residue(resNum);
 			bool const design = (task.second)->design_residue(resNum);
-			Size taskop_id = task.first;
+			core::Size taskop_id = task.first;
 			insert_task_operation_residue_effects_row(struct_id, resNum,
 				taskop_id, pack, design, db_session);
 		}
@@ -266,7 +266,7 @@ TaskOperationFeatures::report_features(
 
 void
 TaskOperationFeatures::insert_task_operations_row(
-	Size const taskop_id,
+	core::Size const taskop_id,
 	std::string const & taskop_name,
 	sessionOP db_session
 ){
@@ -299,8 +299,8 @@ TaskOperationFeatures::insert_task_operations_row(
 void
 TaskOperationFeatures::insert_task_operation_residue_effects_row(
 	StructureID const struct_id,
-	Size const resNum,
-	Size const taskop_id,
+	core::Size const resNum,
+	core::Size const taskop_id,
 	bool pack,
 	bool design,
 	sessionOP db_session

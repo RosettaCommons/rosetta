@@ -340,7 +340,7 @@ void PseudocontactShiftEnergyController_Ts1::add_mover(
 	using namespace protocols::scoring::methods::pcsTs1;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	//utility::vector1< Size > vec_exclude;
+	//utility::vector1< core::Size > vec_exclude;
 	//if ( option[ in::file::native_exclude_res].user() ) {
 	// vec_exclude = option[ in::file::native_exclude_res ]();
 	// PCS_Energy_parameters_manager_Ts1::get_instance()->set_vector_exclude_residues(vec_exclude);
@@ -442,7 +442,7 @@ PseudocontactShiftEnergyController_Ts1::init_after_reading(){
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	//utility::vector1< Size > vec_exclude;
+	//utility::vector1< core::Size > vec_exclude;
 	//if ( option[ in::file::native_exclude_res ].user() ) {
 	// vec_exclude = option[ in::file::native_exclude_res ]();
 	//PCS_Energy_parameters_manager_Ts1::get_instance()->set_vector_exclude_residues(vec_exclude);

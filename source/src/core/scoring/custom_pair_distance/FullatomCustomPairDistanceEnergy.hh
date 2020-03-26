@@ -68,7 +68,7 @@ struct resatom_and_func_struct
 };
 
 
-class AtomPairFuncList : public utility::pointer::ReferenceCount
+class AtomPairFuncList : public utility::VirtualBase
 {
 public:
 	AtomPairFuncList();

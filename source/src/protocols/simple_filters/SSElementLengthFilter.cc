@@ -114,16 +114,16 @@ protocols::loops::Loops SSElementLengthFilter::get_ss_elements(const Pose & pose
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
 	char lastSecStruct = dssp.get_dssp_secstruct( 1 );
-	Size startSS = 0;
-	Size endSS = 0;
+	core::Size startSS = 0;
+	core::Size endSS = 0;
 
-	Size first_residue = 1;
-	Size last_residue = pose.size();
+	core::Size first_residue = 1;
+	core::Size last_residue = pose.size();
 	core::select::residue_selector::ResidueSubset residues( pose.total_residue(), false );
 	residues = selector_->apply( pose );
 	bool first_found =false;
 	bool last_found=false;
-	for ( Size ii=1; ii<=residues.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=residues.size(); ++ii ) {
 		if ( residues[ii]==true && first_found==false ) {
 			first_residue=ii;
 			first_found=true;
@@ -161,13 +161,13 @@ SSElementLengthFilter::compute( const Pose & pose ) const
 {
 	using protocols::loops::Loop;
 	protocols::loops::Loops ss_elements = get_ss_elements(pose);
-	Size startElement = 1;
-	Size endElement = ss_elements.size();
-	Size shortest_tmp= 999;
-	Size longest_tmp=0;
-	Size total_length_tmp=0;
-	for ( Size ii=startElement; ii<=endElement; ++ii ) {
-		Size length_tmp = ss_elements[ii].stop()-ss_elements[ii].start()+1;
+	core::Size startElement = 1;
+	core::Size endElement = ss_elements.size();
+	core::Size shortest_tmp= 999;
+	core::Size longest_tmp=0;
+	core::Size total_length_tmp=0;
+	for ( core::Size ii=startElement; ii<=endElement; ++ii ) {
+		core::Size length_tmp = ss_elements[ii].stop()-ss_elements[ii].start()+1;
 		total_length_tmp+=length_tmp;
 		if ( length_tmp<shortest_tmp ) {
 			shortest_tmp=length_tmp;

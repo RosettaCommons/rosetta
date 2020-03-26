@@ -51,7 +51,7 @@ struct FrameWork {
 /// @brief This class is used to get all relevant information you would need when dealing with an antibody.
 ///  @details It mainly holds numbering information, but passes out a variety of Rosetta specific objects like movemaps, Loops, taskfactories, etc.
 ///  as well as other information such as CDR cluster type, camelid, H3 types, etc.
-class AntibodyInfo : public utility::pointer::ReferenceCount {
+class AntibodyInfo : public utility::VirtualBase {
 
 public:
 

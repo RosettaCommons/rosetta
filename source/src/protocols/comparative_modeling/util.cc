@@ -173,13 +173,13 @@ void bounded_loops_from_alignment(
 	using protocols::loops::Loops;
 	debug_assert(unaligned_regions);
 
-	const Size query_idx = 1;
-	const Size templ_idx = 2;
+	const core::Size query_idx = 1;
+	const core::Size templ_idx = 2;
 	SequenceMapping mapping(alignment.sequence_mapping(query_idx, templ_idx));
 
-	vector1<Size> unaligned_residues;
-	for ( Size resi = 1; resi <= num_residues; resi++ ) {
-		Size t_resi = mapping[resi];
+	vector1<core::Size> unaligned_residues;
+	for ( core::Size resi = 1; resi <= num_residues; resi++ ) {
+		core::Size t_resi = mapping[resi];
 
 		bool const gap_exists(
 			t_resi == 0 || // query residue maps to a gap
@@ -196,23 +196,23 @@ void bounded_loops_from_alignment(
 	// Ensure the aligned regions meet size constraints.
 	unaligned_residues.clear();
 	for ( auto const & loop : *unaligned_ok ) {
-		for ( Size j = loop.start(); j <= loop.stop(); ++j ) {
+		for ( core::Size j = loop.start(); j <= loop.stop(); ++j ) {
 			unaligned_residues.push_back(j);
 		}
 	}
 
-	vector1<Size> bounded_unaligned_residues(unaligned_residues);
-	for ( Size i = 2; i <= unaligned_residues.size(); ++i ) {
-		Size prev_residue = unaligned_residues[i - 1];
-		Size curr_residue = unaligned_residues[i];
+	vector1<core::Size> bounded_unaligned_residues(unaligned_residues);
+	for ( core::Size i = 2; i <= unaligned_residues.size(); ++i ) {
+		core::Size prev_residue = unaligned_residues[i - 1];
+		core::Size curr_residue = unaligned_residues[i];
 
 		// Length of the unaligned region is (curr - 1) - (prev + 1) + 1,
-		Size delta = curr_residue - prev_residue - 1;
+		core::Size delta = curr_residue - prev_residue - 1;
 		if ( delta == 0 || delta >= min_size ) {
 			continue;
 		}
 
-		for ( Size j = (prev_residue + 1); j <= (curr_residue - 1); ++j ) {
+		for ( core::Size j = (prev_residue + 1); j <= (curr_residue - 1); ++j ) {
 			bounded_unaligned_residues.push_back(j);
 		}
 	}
@@ -229,8 +229,8 @@ protocols::loops::LoopsOP loops_from_alignment(
 ) {
 	using core::Size;
 
-	Size const query_idx( 1 );
-	Size const templ_idx( 2 );
+	core::Size const query_idx( 1 );
+	core::Size const templ_idx( 2 );
 	core::id::SequenceMapping mapping_(
 		aln.sequence_mapping( query_idx, templ_idx )
 	);
@@ -240,8 +240,8 @@ protocols::loops::LoopsOP loops_from_alignment(
 	tr.Debug << min_loop_size << std::endl;
 	mapping_.show( tr.Debug );
 	vector1< core::Size > unaligned_residues;
-	for ( Size resi = 1; resi <= nres; resi++ ) {
-		Size t_resi = mapping_[ resi ];
+	for ( core::Size resi = 1; resi <= nres; resi++ ) {
+		core::Size t_resi = mapping_[ resi ];
 
 		// gap checks
 		bool const gap_exists(
@@ -272,8 +272,8 @@ protocols::loops::LoopsOP loops_from_transitive_alignments(
 ) {
 	using core::Size;
 
-	Size const query_idx( 1 );
-	Size const templ_idx( 2 );
+	core::Size const query_idx( 1 );
+	core::Size const templ_idx( 2 );
 	core::id::SequenceMapping mapping1_( aln1.sequence_mapping( query_idx, templ_idx ) );
 	core::id::SequenceMapping mapping2_( aln2.sequence_mapping( query_idx, templ_idx ) );
 	tr.Debug << "called loops_from_multiple_alignments with arguments:" << std::endl;
@@ -285,8 +285,8 @@ protocols::loops::LoopsOP loops_from_transitive_alignments(
 	mapping1_.show( tr.Debug );
 	mapping2_.show( tr.Debug );
 	vector1< core::Size > unaligned_residues;
-	for ( Size resi = 1; resi <= nres1; resi++ ) {
-		Size t_resi1 = mapping1_[ resi ];
+	for ( core::Size resi = 1; resi <= nres1; resi++ ) {
+		core::Size t_resi1 = mapping1_[ resi ];
 
 		// gap checks
 		//fpd  First check to see if there is a gap in the alignment
@@ -298,7 +298,7 @@ protocols::loops::LoopsOP loops_from_transitive_alignments(
 		//fpd Now check if there is this maps to a part of the template sequence
 		//fpd  that is missing in the input template PDB
 		if ( !gap_exists ) {
-			Size t_resi2 = mapping2_[ t_resi1 ];
+			core::Size t_resi2 = mapping2_[ t_resi1 ];
 			gap_exists = t_resi2 == 0 || // query residue maps to a gap (aln2)
 				( t_resi1 > 1    && mapping2_[ t_resi1 - 1 ] != t_resi2 - 1 ) || // last residue was gapped
 				( t_resi1 < nres2 && mapping2_[ t_resi1 + 1 ] != t_resi2 + 1 ); // next residue is gapped
@@ -323,15 +323,13 @@ protocols::loops::LoopsOP pick_loops_unaligned(
 	utility::vector1< core::Size > const & unaligned_residues,
 	core::Size min_loop_size
 ) {
-	using Size = core::Size;
-
 	protocols::loops::LoopsOP query_loops( new protocols::loops::Loops() );
 	if ( unaligned_residues.size() == 0 ) {
 		tr.Warning << "No unaligned residues, no loops found." << std::endl;
 		return query_loops;
 	}
 
-	Size loop_start( *unaligned_residues.begin() );
+	core::Size loop_start( *unaligned_residues.begin() );
 
 	for ( auto it = unaligned_residues.begin(),
 			next = it + 1,
@@ -341,7 +339,7 @@ protocols::loops::LoopsOP pick_loops_unaligned(
 		tr.Debug << "residue " << *it << " is unaligned." << std::endl;
 		if ( *next - *it > 1 ) {
 			// add loop
-			Size loop_stop = *it;
+			core::Size loop_stop = *it;
 			while ( (loop_stop - loop_start + 1) < min_loop_size ) {
 				if ( loop_stop < nres ) {
 					++loop_stop;
@@ -359,7 +357,7 @@ protocols::loops::LoopsOP pick_loops_unaligned(
 		}
 	}
 
-	Size loop_stop = ( *(unaligned_residues.end() - 1) );
+	core::Size loop_stop = ( *(unaligned_residues.end() - 1) );
 
 	while ( (loop_stop - loop_start + 1) < min_loop_size ) {
 		if ( loop_stop < nres ) ++loop_stop;
@@ -379,8 +377,6 @@ protocols::loops::LoopsOP pick_loops_chainbreak(
 	core::pose::Pose & query_pose,
 	core::Size min_loop_size
 ) {
-	using Size = core::Size;
-
 	core::Real const chainbreak_cutoff( 4.0 );
 	core::Size nres = query_pose.size();
 
@@ -392,8 +388,8 @@ protocols::loops::LoopsOP pick_loops_chainbreak(
 		nres = symm_info->num_independent_residues();
 	}
 
-	vector1< Size > residues_near_chainbreak;
-	for ( Size i = 1; i <= nres - 1; ++i ) {
+	vector1< core::Size > residues_near_chainbreak;
+	for ( core::Size i = 1; i <= nres - 1; ++i ) {
 		if ( query_pose.residue_type(i).is_protein() &&  query_pose.residue_type(i+1).is_protein() ) {
 			core::Real dist = query_pose.residue(i).xyz("CA").distance(
 				query_pose.residue(i+1).xyz("CA")
@@ -403,7 +399,7 @@ protocols::loops::LoopsOP pick_loops_chainbreak(
 				residues_near_chainbreak.push_back( i );
 			}
 		}
-	} // for ( Size i )
+	} // for ( core::Size i )
 
 	if ( residues_near_chainbreak.size() == 0 ) {
 		tr.Warning << "No chainbreaks found, so not picking any loops!"
@@ -511,7 +507,7 @@ void steal_ligands(
 	tr.Debug << "adding ligand residues to fold-tree" << std::endl;
 
 	// add edges from anchor to ligand residues
-	for ( Size jj = 1; jj <= ligand_indices.size(); ++jj ) {
+	for ( core::Size jj = 1; jj <= ligand_indices.size(); ++jj ) {
 		tr.Error << "adding " << jj << std::endl;
 		core::kinematics::Edge out_edge(
 			anchor_atom_source.rsd(), // start
@@ -530,7 +526,7 @@ void steal_ligands(
 
 	// copy the residues from the source_pose into the dest_pose
 	// using the jump geometry defined above.
-	for ( Size jj = 1; jj <= ligand_indices.size(); ++jj ) {
+	for ( core::Size jj = 1; jj <= ligand_indices.size(); ++jj ) {
 		dest_pose.append_residue_by_jump(
 			source_pose.residue( ligand_indices[jj].rsd() ),
 			anchor_atom_dest.rsd(),
@@ -673,8 +669,8 @@ void randomize_selected_atoms(
 	core::id::AtomID_Mask const & selected
 ) {
 	using core::Size;
-	for ( Size pos = 1; pos <= query_pose.size(); ++pos ) {
-		Size atomj( 1 );
+	for ( core::Size pos = 1; pos <= query_pose.size(); ++pos ) {
+		core::Size atomj( 1 );
 		for ( auto
 				it = selected[ pos ].begin(), eit = selected[ pos ].end(); it != eit;
 				++it, ++atomj
@@ -689,7 +685,7 @@ void randomize_selected_atoms(
 				);
 				query_pose.set_xyz( core::id::AtomID( atomj, pos ), ai );
 				//now randomize also attached hydrogens
-				for ( Size atom_nr = query_pose.residue( pos ).attached_H_begin( atomj );
+				for ( core::Size atom_nr = query_pose.residue( pos ).attached_H_begin( atomj );
 						atom_nr <= query_pose.residue( pos ).attached_H_end( atomj ); ++atom_nr ) {
 					core::Vector ai(
 						900.000 + numeric::random::rg().uniform()*100.000,

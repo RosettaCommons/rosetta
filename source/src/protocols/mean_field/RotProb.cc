@@ -53,8 +53,8 @@ using namespace core;
 /// @details initialized to nonsense values
 RotProb::RotProb() :
 	probability_( Real( 0.0 ) ),
-	rot_ind_( Size( 0 ) ),
-	pos_( Size ( 0 ) ),
+	rot_ind_( core::Size( 0 ) ),
+	pos_( core::Size ( 0 ) ),
 	res_( /* 0 */ )
 {}
 
@@ -63,7 +63,7 @@ RotProb::RotProb() :
 /// @param [in] rot_ind - used to uniquely identify rotamer across backbones
 /// @param [in] pos - position of the site in pose numbering
 /// @param [in] res - COP to current residue at site (useful for AA identity)
-RotProb::RotProb( Real prob, Size rot_ind, Size pos, core::conformation::ResidueCOP res ) :
+RotProb::RotProb( Real prob, core::Size rot_ind, core::Size pos, core::conformation::ResidueCOP res ) :
 	probability_( prob ),
 	rot_ind_( rot_ind ),
 	pos_( pos ),

@@ -50,11 +50,11 @@ public:
 	using Parent::apply;
 
 	/// @brief apply a fragment at pos to movemable dofs
-	virtual bool apply( core::pose::Pose&, Size pos ) const; // apply fragment at seqpos ( if possible )
+	virtual bool apply( core::pose::Pose&, core::Size pos ) const; // apply fragment at seqpos ( if possible )
 	std::string get_name() const override;
 
 	/// @brief apply at all movemable positions --- honors movemap
-	virtual Size apply_at_all_positions( core::pose::Pose& ) const; //apply one fragment at each insertable position
+	virtual core::Size apply_at_all_positions( core::pose::Pose& ) const; //apply one fragment at each insertable position
 
 	/// @brief accessor to the fragment set
 	core::fragment::FragSetCOP fragments() const;
@@ -160,7 +160,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	// Not defined, commenting out to make Python binding compile
-	//bool apply( core::pose::Pose &, Size pos );
+	//bool apply( core::pose::Pose &, core::Size pos );
 
 	/// @brief check_ss controls whether fragment insertions are rejected that create short helices (<3) or strands (<2)
 	void set_check_ss( bool setting ) {
@@ -189,12 +189,12 @@ public:
 	}
 
 	/// @brief min_overlap controls the behaviour  fragset->region()
-	void set_min_overlap( Size setting ) {
+	void set_min_overlap( core::Size setting ) {
 		min_overlap_ = setting;
 	}
 
 	/// @brief min_frag_length controls the behaviour  fragset->region()
-	void set_min_frag_length( Size setting ) {
+	void set_min_frag_length( core::Size setting ) {
 		min_frag_length_ = setting;
 	}
 
@@ -222,7 +222,7 @@ public: //this is actually protected: but need public for some unit-testing
 	bool
 	apply_fragment(
 		core::fragment::Frame const& frame,
-		Size frag_num,
+		core::Size frag_num,
 		core::kinematics::MoveMap const& movemap,
 		core::pose::Pose &pose
 	) const;
@@ -238,20 +238,20 @@ public: //this is actually protected: but need public for some unit-testing
 	bool choose_fragment(
 		core::fragment::FrameList const&,
 		core::pose::Pose const&,
-		Size &frame_num,
-		Size &frag_num
+		core::Size &frame_num,
+		core::Size &frag_num
 	) const;
 
 	/// @brief apply fragment at predefined position
-	void define_start_window( Size window_start );
+	void define_start_window( core::Size window_start );
 
 	/// @brief yields a start position (window_start) for fragment window to sample from
 	/// ( return false, if nothing suitable is found )
-	virtual bool choose_window_start( core::pose::Pose const&, Size window_length, Size &window_start ) const;
+	virtual bool choose_window_start( core::pose::Pose const&, core::Size window_length, core::Size &window_start ) const;
 
 	/// @brief yields a length (window_length) of the fragment window to sample from
 	/// ( return false, if no suitable length is found )
-	virtual bool choose_window_length( core::pose::Pose const&, Size &window_length) const {
+	virtual bool choose_window_length( core::pose::Pose const&, core::Size &window_length) const {
 		window_length = 1 ; //traditionally a constant value
 		return true;
 	}
@@ -260,7 +260,7 @@ public: //this is actually protected: but need public for some unit-testing
 	void on_new_fragments() override {
 	}
 
-	virtual bool end_bias_check( core::pose::Pose const&, Size window_start ) const;
+	virtual bool end_bias_check( core::pose::Pose const&, core::Size window_start ) const;
 
 	/// @brief returns true if the ss string is acceptable
 	virtual bool
@@ -274,8 +274,8 @@ private:
 private:
 	// these parameters seem to be more like constant options and therefore I didn't
 	// wrap them in virtual function calls... but of course one may change that...
-	Size min_overlap_;
-	Size min_frag_length_;
+	core::Size min_overlap_;
+	core::Size min_frag_length_;
 	bool check_ss_;
 	core::Real end_bias_;
 
@@ -283,7 +283,7 @@ private:
 	// IN JUMPING MODE THIS SHOULD PROBABLY BE MADE RELATIVE TO DIST TO CHAINBREAK ?
 	bool bApplyEndBias_;
 	bool use_predefined_window_start_;
-	Size predefined_window_start_;
+	core::Size predefined_window_start_;
 };  // class ClassicFragmentMover
 
 std::ostream &operator<< ( std::ostream &os, ClassicFragmentMover const &cfmover );
@@ -292,9 +292,9 @@ std::ostream &operator<< ( std::ostream &os, ClassicFragmentMover const &cfmover
 class LoggedFragmentMover : public ClassicFragmentMover {
 	typedef ClassicFragmentMover Parent;
 	struct Item {
-		Item( Size a, Size b) : frame_pos( a), frag_num( b) {}
-		Size frame_pos;
-		Size frag_num;
+		Item( core::Size a, core::Size b) : frame_pos( a), frag_num( b) {}
+		core::Size frame_pos;
+		core::Size frag_num;
 	};
 
 public:
@@ -311,7 +311,7 @@ public:
 	bool
 	apply_fragment(
 		core::fragment::Frame const& frame,
-		Size frag_num,
+		core::Size frag_num,
 		core::kinematics::MoveMap const& movemap,
 		core::pose::Pose &pose
 	) const override;

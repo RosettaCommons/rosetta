@@ -40,7 +40,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
@@ -200,7 +200,7 @@ public:
 	virtual void set_cycles( core::Real increase_cycles = 1.0 );
 
 	//@brief
-	Size total_trials() const {
+	core::Size total_trials() const {
 		return total_trials_;
 	}
 
@@ -311,15 +311,15 @@ protected:
 	//@brief called in each iteration of inner loop in stage3 before stage3_cycles_ of trials commence
 	virtual bool prepare_loop_in_stage3(
 		core::pose::Pose&,
-		Size, /* loop_iteration*/
-		Size  /* total_iterations */
+		core::Size, /* loop_iteration*/
+		core::Size  /* total_iterations */
 	);
 
 	//@brief called in each iteration of the loop in stage4 before the stage4_cycles_ of trials commence
 	virtual bool prepare_loop_in_stage4(
 		core::pose::Pose&,
-		Size, /* loop_iteration*/
-		Size  /* total_iterations */
+		core::Size, /* loop_iteration*/
+		core::Size  /* total_iterations */
 	);
 
 
@@ -332,37 +332,37 @@ public:
 
 	//@brief Accessor for number of stage1 cycles
 	inline
-	Size stage1_cycles() const {
+	core::Size stage1_cycles() const {
 		return stage1_cycles_;
 	}
 
 	//@brief Accessor for number of stage2
 	inline
-	Size stage2_cycles() const {
+	core::Size stage2_cycles() const {
 		return stage2_cycles_;
 	}
 
 	//@brief Accessor for number of stage3 cycles
 	inline
-	Size stage3_cycles() const {
+	core::Size stage3_cycles() const {
 		return stage3_cycles_;
 	}
 
 	//@brief Setter for number of stage4 cycles
 	inline
-	void set_stage4_cycles(Size stage4_cycles_new) {
+	void set_stage4_cycles(core::Size stage4_cycles_new) {
 		stage4_cycles_ = stage4_cycles_new;
 	}
 
 	//@brief Accessor for number of stage4 cycles
 	inline
-	Size stage4_cycles() const {
+	core::Size stage4_cycles() const {
 		return stage4_cycles_;
 	}
 
 	//@brief Accessor for number of stage5 cycles  //vats
 	inline
-	Size stage5_cycles() const {
+	core::Size stage5_cycles() const {
 		return stage5_cycles_;
 	}
 
@@ -388,11 +388,11 @@ protected:
 
 protected:
 	//@brief  cycles_numbers  -- modified by set_cycles(), set_default_options()
-	Size stage1_cycles_; //score0
-	Size stage2_cycles_; //score1
-	Size stage3_cycles_; //score25
-	Size stage4_cycles_; //score3
-	Size stage5_cycles_; //score3
+	core::Size stage1_cycles_; //score0
+	core::Size stage2_cycles_; //score1
+	core::Size stage3_cycles_; //score25
+	core::Size stage4_cycles_; //score3
+	core::Size stage5_cycles_; //score3
 
 	core::Real stage4_cycles_pack_rate_;
 
@@ -442,7 +442,7 @@ private:
 	// Cenrot Sidechain Mover
 	minimization_packing::PackRotamersMoverOP pack_rotamers_;
 
-	Size total_trials_;
+	core::Size total_trials_;
 
 public:
 	bool bSkipStage1_;

@@ -18,7 +18,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
 #include <ObjexxFCL/FArray3D.hh>
@@ -29,9 +29,9 @@ namespace scoring {
 namespace dna {
 
 
-class DNA_BasePotential : public utility::pointer::ReferenceCount {
+class DNA_BasePotential : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~DNA_BasePotential() override;
 	typedef numeric::xyzMatrix< Real > Matrix;
 	typedef utility::vector1< Real > Params;

@@ -130,7 +130,7 @@ void LHRepulsiveRamp::apply( pose::Pose & pose ) {
 	core::Real rep_ramp_step = (rep_weight_max - 0.02) / core::Real(rep_ramp_cycles_-1);
 	core::scoring::ScoreFunctionOP temp_dock_scorefxn = dock_scorefxn_->clone();
 
-	for ( Size i = 1; i <= rep_ramp_cycles_; i++ ) {
+	for ( core::Size i = 1; i <= rep_ramp_cycles_; i++ ) {
 		core::Real rep_weight = 0.02 + rep_ramp_step * Real(i-1);
 		TR<<"   repulsive ramp cycle "<<i<<":     rep_weight = "<<rep_weight<<std::endl;
 		temp_dock_scorefxn->set_weight( core::scoring::fa_rep, rep_weight );
@@ -148,7 +148,7 @@ void LHRepulsiveRamp::apply( pose::Pose & pose ) {
 			dockmcm_cyclemover->set_scmin(true);
 		}
 
-		for ( Size j=1; j<=num_repeats_; j++ ) {
+		for ( core::Size j=1; j<=num_repeats_; j++ ) {
 			dockmcm_cyclemover -> apply(pose);
 			TR<<"       doing rb_mover_min_trial in the DockMCMCycle  ...   "<<j<<std::endl;
 		}

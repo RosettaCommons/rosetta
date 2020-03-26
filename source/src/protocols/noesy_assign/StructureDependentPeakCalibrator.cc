@@ -66,11 +66,11 @@ void StructureDependentPeakCalibrator::generate_constraints() {
 }
 
 void StructureDependentPeakCalibrator::collect_upperbound_statistics( core::Size peak, TypeCumulator const& types ) {
-	Size violated( 0 );
+	core::Size violated( 0 );
 	Real inv_n_struct( 1.0 / structures_.size() );
 	runtime_assert( peak <= peaks().size() );
 	runtime_assert( constraints_.size() == peaks().size() );
-	Size pose_ct( 1 );
+	core::Size pose_ct( 1 );
 	Real stddev( 0.0);
 	Real mean( 0.0 );
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
@@ -101,7 +101,7 @@ void StructureDependentPeakCalibrator::collect_upperbound_statistics( core::Size
 void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 
-	Size ct( 1 );
+	core::Size ct( 1 );
 
 	using RealVector = utility::vector1<Real>;
 	RealVector distance_deltas( structures_.size(), 0.0 );
@@ -109,8 +109,8 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 
 	for ( auto it = peaks().begin(); it != peaks().end(); ++it, ++ct ) {
 		if ( !constraints_[ ct ] ) continue;
-		Size violated( 0 );
-		Size pose_ct( 1 );
+		core::Size violated( 0 );
+		core::Size pose_ct( 1 );
 
 		for ( PoseVector::const_iterator pose_it = structures_.begin(); pose_it != structures_.end(); ++pose_it, ++pose_ct ) {
 			Real delta( constraints_[ ct ]->dist( **pose_it ) - peaks()[ ct ]->distance_bound() );
@@ -122,17 +122,17 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 			tr.Trace << "Check peak " << (*it)->peak_id() << " for nudging... "<< std::endl;
 			Real const CORRECTION_STEP( 0.1 );
 			Real const max_correction( peaks()[ ct ]->distance_bound()*( params.calibration_max_nudging_ - 1) );
-			Size const old_violated( violated );
+			core::Size const old_violated( violated );
 			for ( Real correction = 0.1; correction <= max_correction; correction += CORRECTION_STEP ) {
 				violated = 0;
-				Size pose_ct( 1 );
+				core::Size pose_ct( 1 );
 				for ( PoseVector::const_iterator pose_it = structures_.begin(); pose_it != structures_.end(); ++pose_it, ++pose_ct ) {
 					Real delta( distance_deltas[ pose_ct ] - correction );
 					violated += delta > params.dcut_;
 				}
 				if ( violated <= params.calibration_stop_nudging_*structures_.size() ) {
 					peaks()[ ct ]->nudge_distance_bound( correction );
-					Size pose_ct( 1 );
+					core::Size pose_ct( 1 );
 					for ( PoseVector::const_iterator pose_it = structures_.begin(); pose_it != structures_.end(); ++pose_it, ++pose_ct ) {
 						distance_deltas[ pose_ct ] -= correction;
 					}
@@ -163,8 +163,8 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 
 			//find smallest interval that fits 99% of the deltas
 			//with default setting of 99% this is basically the length difference between shortest and longest distance
-			Size const num_element_cluster( (core::Size)(utility::round( 1.0*distance_deltas.size() * params.local_distviol_range_  )) );
-			Size const low_quartil_pos( (core::Size)(utility::round( 1.0*distance_deltas.size()*0.25 )) );
+			core::Size const num_element_cluster( (core::Size)(utility::round( 1.0*distance_deltas.size() * params.local_distviol_range_  )) );
+			core::Size const low_quartil_pos( (core::Size)(utility::round( 1.0*distance_deltas.size()*0.25 )) );
 			Real const low_quartil_dist( distance_deltas[ low_quartil_pos ]+(*it)->distance_bound() );
 			tr.Debug << "peak: " << (*it)->peak_id() << " " << (*it)->filename() << " check " << num_element_cluster << " of a total " << distance_deltas.size() << " distances for max-extension " << std::endl;
 			Real max_extension( 1000 );
@@ -175,22 +175,22 @@ void StructureDependentPeakCalibrator::eliminate_violated_constraints() {
 				elim_msg << "Q1 dist to high: " << low_quartil_dist;
 				(*it)->set_elimination_comment( elim_msg.str() );
 			} else {
-				for ( Size start_cluster = 1; start_cluster+num_element_cluster-1 <= distance_deltas.size(); start_cluster++ ) {
+				for ( core::Size start_cluster = 1; start_cluster+num_element_cluster-1 <= distance_deltas.size(); start_cluster++ ) {
 					Real ext = distance_deltas[ start_cluster+num_element_cluster-1 ] - distance_deltas[ start_cluster ];
 					if ( max_extension > ext ) max_extension = ext;
 				}
 
 				tr.Debug << num_element_cluster << " distances are in an interval of only " << max_extension << " with a Q1 dist of " << low_quartil_dist << std::endl;
 				//get extension between high and low.
-				//   Size const ind_low_5( 1+utility::round( params.local_distviol_range_*distance_deltas.size() ) );   //lower 5% -
-				//   Size const ind_high_5( utility::round( 1.0*distance_deltas.size()*(1-params.local_distviol_range_) ) ); //upper 5%
+				//   core::Size const ind_low_5( 1+utility::round( params.local_distviol_range_*distance_deltas.size() ) );   //lower 5% -
+				//   core::Size const ind_high_5( utility::round( 1.0*distance_deltas.size()*(1-params.local_distviol_range_) ) ); //upper 5%
 				//   Real max_extension( distance_deltas[ ind_high_5 ] - distance_deltas[ ind_low_5 ] );
 
 				//   tr.Debug << "ind_low_5 " << ind_low_5 << " ind_high_5 " << ind_high_5 << " min_delta: "
 				//        << distance_deltas[ 1 ] << " max_delta "
 				//<< distance_deltas.back() << std::endl;
 
-				Size viol_count( 0 );
+				core::Size viol_count( 0 );
 				tr.Trace << " dist: " << (*it)->distance_bound() << "| " ;
 				core::Real violation_cutoff( max_extension * params.local_distviol_global_factor_ + params.local_distviol_global_buffer_ );
 				for ( RealVector::const_iterator delta_it = distance_deltas.begin(); delta_it != distance_deltas.end(); ++delta_it ) {

@@ -29,7 +29,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #include <core/chemical/ResidueType.fwd.hh>
@@ -41,10 +41,10 @@ namespace pack {
 namespace rotamer_set {
 
 
-class ContinuousRotamerSet : public utility::pointer::ReferenceCount
+class ContinuousRotamerSet : public utility::VirtualBase
 {
 private: // typedefs
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 	typedef utility::vector1< dunbrack::DunbrackRotamerSampleData >  RotamersForAA;
 
 public:
@@ -131,10 +131,10 @@ private:
 
 };
 
-class ContinuousRotamerSets : public utility::pointer::ReferenceCount
+class ContinuousRotamerSets : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ContinuousRotamerSets() override;
 	ContinuousRotamerSets(
 		pose::Pose const & pose,

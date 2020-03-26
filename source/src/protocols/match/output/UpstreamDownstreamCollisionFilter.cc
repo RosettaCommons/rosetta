@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <iostream>
@@ -57,28 +57,28 @@ void
 UpstreamDownstreamCollisionFilter::set_downstream_pose( core::pose::Pose const & downstream_pose )
 {
 	downstream_pose_ = utility::pointer::make_shared< core::pose::Pose >( downstream_pose );
-	Size count_atoms( 0 );
+	core::Size count_atoms( 0 );
 	per_res_atom_ind_.resize( downstream_pose.size() );
-	for ( Size ii = 1; ii <= downstream_pose.size(); ++ii ) {
-		Size const ii_natoms = downstream_pose.residue( ii ).natoms();
+	for ( core::Size ii = 1; ii <= downstream_pose.size(); ++ii ) {
+		core::Size const ii_natoms = downstream_pose.residue( ii ).natoms();
 		per_res_atom_ind_[ ii ].resize( ii_natoms );
-		for ( Size jj = 1; jj <= ii_natoms; ++jj ) {
+		for ( core::Size jj = 1; jj <= ii_natoms; ++jj ) {
 			per_res_atom_ind_[ ii ][ jj ] = ++count_atoms;
 		}
 	}
 	downstream_atoms_.resize( count_atoms );
 	coords_.resize( count_atoms );
 	count_atoms = 0;
-	for ( Size ii = 1; ii <= downstream_pose.size(); ++ii ) {
-		Size const ii_natoms = downstream_pose.residue( ii ).natoms();
-		for ( Size jj = 1; jj <= ii_natoms; ++jj ) {
+	for ( core::Size ii = 1; ii <= downstream_pose.size(); ++ii ) {
+		core::Size const ii_natoms = downstream_pose.residue( ii ).natoms();
+		for ( core::Size jj = 1; jj <= ii_natoms; ++jj ) {
 			downstream_atoms_[ ++count_atoms ] = core::id::AtomID( jj, ii );
 		}
 	}
 }
 
 void
-UpstreamDownstreamCollisionFilter::set_num_geometric_constraints( Size n_geomcst )
+UpstreamDownstreamCollisionFilter::set_num_geometric_constraints( core::Size n_geomcst )
 {
 	dsbuilders_.resize( n_geomcst );
 	us_ds_chemical_bond_.resize( n_geomcst );
@@ -86,7 +86,7 @@ UpstreamDownstreamCollisionFilter::set_num_geometric_constraints( Size n_geomcst
 }
 
 void
-UpstreamDownstreamCollisionFilter::set_chemical_bond_from_upstream_to_downstream( Size geomcst_id )
+UpstreamDownstreamCollisionFilter::set_chemical_bond_from_upstream_to_downstream( core::Size geomcst_id )
 {
 	us_ds_chemical_bond_[ geomcst_id ] = true;
 }
@@ -94,7 +94,7 @@ UpstreamDownstreamCollisionFilter::set_chemical_bond_from_upstream_to_downstream
 
 void
 UpstreamDownstreamCollisionFilter::set_downstream_builder(
-	Size geomcst_id,
+	core::Size geomcst_id,
 	downstream::DownstreamBuilderCOP builder
 )
 {
@@ -108,7 +108,7 @@ UpstreamDownstreamCollisionFilter::passes_filter(
 	match const & m
 ) const
 {
-	for ( Size ii = 1; ii <= m.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= m.size(); ++ii ) {
 		if ( ! dsbuilders_[ ii ] ) continue;
 		if ( passes_filter( match_dspos1( m, ii ) ) ) return true;
 	}
@@ -131,8 +131,8 @@ void UpstreamDownstreamCollisionFilter::set_tolerated_overlap( Real setting )
 {
 	parent::set_tolerated_overlap( setting );
 	max_overlap_dis_ = 0;
-	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
-		for ( Size jj = ii; jj <= n_probe_radii; ++jj ) {
+	for ( core::Size ii = 1; ii <= n_probe_radii; ++ii ) {
+		for ( core::Size jj = ii; jj <= n_probe_radii; ++jj ) {
 			if ( bump_grid()->required_separation_distance(
 					ProbeRadius( ii ), ProbeRadius( jj ) ) > max_overlap_dis_ ) {
 				max_overlap_dis_ = bump_grid()->required_separation_distance( ProbeRadius( ii ), ProbeRadius( jj ) );
@@ -151,16 +151,16 @@ bool UpstreamDownstreamCollisionFilter::passes_etable_filter( match_dspos1 const
 	runtime_assert( dsbuilders_[ m.originating_geom_cst_for_dspos ] != nullptr );
 	dsbuilders_[ m.originating_geom_cst_for_dspos ]->coordinates_from_hit(
 		full_hit( m ), downstream_atoms_, coords_ );
-	for ( Size ii = 1; ii <= downstream_atoms_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= downstream_atoms_.size(); ++ii ) {
 		downstream_pose_->set_xyz( downstream_atoms_[ ii ], coords_[ ii ] );
 	}
 
 	using namespace core::scoring;
 	EnergyMap emap;
-	for ( Size ii = 1; ii < m.upstream_hits.size(); ++ii ) {
+	for ( core::Size ii = 1; ii < m.upstream_hits.size(); ++ii ) {
 		if ( ii == m.originating_geom_cst_for_dspos ) continue; // don't collision check since we've presumably done so already
 		if ( us_ds_chemical_bond_[ ii ] ) continue;
-		for ( Size jj = 1; jj <= downstream_pose_->size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= downstream_pose_->size(); ++jj ) {
 			emap[ fa_atr ] = 0; emap[ fa_rep ] = 0; emap[ fa_sol ] = 0;
 			etable_energy()->residue_pair_energy(
 				*( cacher_->upstream_conformation_for_hit( ii, fake_hit( m.upstream_hits[ ii ] )) ),
@@ -181,7 +181,7 @@ bool UpstreamDownstreamCollisionFilter::passes_hardsphere_filter( match_dspos1 c
 	dsbuilders_[ m.originating_geom_cst_for_dspos ]->coordinates_from_hit(
 		full_hit( m ), downstream_atoms_, coords_ );
 
-	for ( Size ii = 1; ii <= m.upstream_hits.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= m.upstream_hits.size(); ++ii ) {
 		if ( ii == m.originating_geom_cst_for_dspos ) continue;
 		if ( us_ds_chemical_bond_[ ii ] ) continue;
 

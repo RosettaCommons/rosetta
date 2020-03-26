@@ -7,31 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   utility/pointer/ReferenceCount.fwd.hh
-/// @brief  utility::pointer::ReferenceCount forward declarations
-/// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
+/// @file   utility/VirtualBase.fwd.hh
+/// @brief  A Base class for virtual inheritance hierarchies
+/// @author Rocco Moretti (rmorettase@gmail.com)
 
 
-#ifndef INCLUDED_utility_pointer_std_ReferenceCount_fwd_hh
-#define INCLUDED_utility_pointer_std_ReferenceCount_fwd_hh
-
-#ifdef PTR_STD
+#ifndef INCLUDED_utility_VirtualBase_fwd_hh
+#define INCLUDED_utility_VirtualBase_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace utility {
-namespace pointer {
-
 
 // Forward
-class ReferenceCount;
+class VirtualBase;
 
-typedef shared_ptr< ReferenceCount > ReferenceCountOP;
-typedef shared_ptr< ReferenceCount const > ReferenceCountCOP;
+typedef utility::pointer::shared_ptr< VirtualBase > VirtualBaseOP;
+typedef utility::pointer::shared_ptr< VirtualBase const > VirtualBaseCOP;
 
-} // namespace pointer
 } // namespace utility
 
-#endif // PTR_STD
 
-#endif // INCLUDED_utility_pointer_std_ReferenceCount_FWD_HH
+#endif // INCLUDED_utility_VirtualBase_fwd_hh

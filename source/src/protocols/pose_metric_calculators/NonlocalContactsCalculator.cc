@@ -131,32 +131,32 @@ NonlocalContactsCalculator::lookup(
 {
 
 	if ( key == "total_nlcontacts" ) {
-		basic::check_cast( valptr, &total_nlcontacts_, "total_nlcontacts expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( total_nlcontacts_ );
+		basic::check_cast( valptr, &total_nlcontacts_, "total_nlcontacts expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( total_nlcontacts_ );
 
 	} else if ( (key == "special_region_nlcontacts") || (key == "special_region1_nlcontacts") ) {
-		basic::check_cast( valptr, &special_region1_nlcontacts_, "special_region_nlcontacts expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( special_region1_nlcontacts_ );
+		basic::check_cast( valptr, &special_region1_nlcontacts_, "special_region_nlcontacts expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( special_region1_nlcontacts_ );
 
 	} else if ( key == "special_region2_nlcontacts_" ) {
-		basic::check_cast( valptr, &special_region2_nlcontacts_, "special_region2_nlcontacts expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( special_region2_nlcontacts_ );
+		basic::check_cast( valptr, &special_region2_nlcontacts_, "special_region2_nlcontacts expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( special_region2_nlcontacts_ );
 
 	} else if ( key == "special_region1_intra_nlcontacts_" ) {
-		basic::check_cast( valptr, &special_region1_intra_nlcontacts_, "special_region1_intra_nlcontacts expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( special_region1_intra_nlcontacts_ );
+		basic::check_cast( valptr, &special_region1_intra_nlcontacts_, "special_region1_intra_nlcontacts expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( special_region1_intra_nlcontacts_ );
 
 	} else if ( key == "special_region1_to_other_nlcontacts_" ) {
-		basic::check_cast( valptr, &special_region1_to_other_nlcontacts_, "special_region1_to_other_nlcontacts expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( special_region1_to_other_nlcontacts_ );
+		basic::check_cast( valptr, &special_region1_to_other_nlcontacts_, "special_region1_to_other_nlcontacts expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( special_region1_to_other_nlcontacts_ );
 
 	} else if ( key == "region1_region2_nlcontacts_" ) {
-		basic::check_cast( valptr, &region1_region2_nlcontacts_, "regio1_region2_nlcontacts expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( region1_region2_nlcontacts_ );
+		basic::check_cast( valptr, &region1_region2_nlcontacts_, "regio1_region2_nlcontacts expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( region1_region2_nlcontacts_ );
 
 	} else if ( key == "residue_nlcontacts" ) {
-		basic::check_cast( valptr, &residue_nlcontacts_, "residue_nlcontacts expects to return a utility::vector1< Size >" );
-		(static_cast<basic::MetricValue<utility::vector1< Size > > *>(valptr))->set( residue_nlcontacts_ );
+		basic::check_cast( valptr, &residue_nlcontacts_, "residue_nlcontacts expects to return a utility::vector1< core::Size >" );
+		(static_cast<basic::MetricValue<utility::vector1< core::Size > > *>(valptr))->set( residue_nlcontacts_ );
 
 	} else if ( key == "residue_nlscore" ) {
 		basic::check_cast( valptr, &residue_nlscore_, "residue_nlscore expects to return a utility::vector1< Real >" );

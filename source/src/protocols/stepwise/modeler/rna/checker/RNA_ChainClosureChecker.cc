@@ -41,7 +41,7 @@ namespace rna {
 namespace checker {
 
 //Constructor
-RNA_ChainClosureChecker::RNA_ChainClosureChecker( pose::Pose const & pose, Size const five_prime_res ):
+RNA_ChainClosureChecker::RNA_ChainClosureChecker( pose::Pose const & pose, core::Size const five_prime_res ):
 	chain_break_screening_pose_( pose ),
 	five_prime_res_( five_prime_res ),
 	reinitialize_CCD_torsions_( false ),
@@ -64,7 +64,7 @@ RNA_ChainClosureChecker::copy_CCD_torsions( pose::Pose & pose ) const {
 	using namespace core::conformation;
 	using namespace core::id;
 
-	Size const three_prime_res = five_prime_res_ + 1;
+	core::Size const three_prime_res = five_prime_res_ + 1;
 	//Even through there is the chain_break, alpha of 3' and epl and gamma of 5' should be defined due to the existence of the upper and lower variant type atoms.
 	copy_CCD_torsions_general( pose, five_prime_res_, three_prime_res );
 }
@@ -72,7 +72,7 @@ RNA_ChainClosureChecker::copy_CCD_torsions( pose::Pose & pose ) const {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_ChainClosureChecker::copy_CCD_torsions_general( pose::Pose & pose, Size const five_prime_res, Size const three_prime_res ) const {
+RNA_ChainClosureChecker::copy_CCD_torsions_general( pose::Pose & pose, core::Size const five_prime_res, core::Size const three_prime_res ) const {
 
 	using namespace core::chemical;
 	using namespace core::conformation;
@@ -83,11 +83,11 @@ RNA_ChainClosureChecker::copy_CCD_torsions_general( pose::Pose & pose, Size cons
 	conformation::Residue const & lower_res = chain_break_screening_pose_.residue( five_prime_res );
 	conformation::Residue const & upper_res = chain_break_screening_pose_.residue( three_prime_res );
 
-	for ( Size n = 1; n <= 3; n++ ) { //alpha, beta, gamma of 3' res
+	for ( core::Size n = 1; n <= 3; n++ ) { //alpha, beta, gamma of 3' res
 		pose.set_torsion( TorsionID( three_prime_res, id::BB,  n ), upper_res.mainchain_torsion( n ) );
 	}
 
-	for ( Size n = 5; n <= 6; n++ ) { //epsilon and zeta of 5' res
+	for ( core::Size n = 5; n <= 6; n++ ) { //epsilon and zeta of 5' res
 		pose.set_torsion( TorsionID( five_prime_res, id::BB,  n ), lower_res.mainchain_torsion( n ) );
 	}
 }
@@ -103,7 +103,7 @@ RNA_ChainClosureChecker::check_loop_closed( pose::Pose const & pose ){
 bool
 RNA_ChainClosureChecker::chain_break_screening_general( pose::Pose & chain_break_screening_pose,
 	core::scoring::ScoreFunctionOP const & chain_break_scorefxn,
-	Size const five_prime_res ){
+	core::Size const five_prime_res ){
 
 	using namespace core::scoring;
 

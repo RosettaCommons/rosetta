@@ -25,7 +25,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <protocols/loops/Loops.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/topology_broker/ClaimerMessage.hh>
 
 #include <utility/vector1.hh>
@@ -48,7 +48,7 @@ public:
 	class CM_SuggestFixResidue : public ClaimerMessage {
 	public:
 		CM_SuggestFixResidue( std::string to ) : ClaimerMessage( to ) {};
-		Size good_fix_pos_;
+		core::Size good_fix_pos_;
 	};
 
 public:
@@ -166,7 +166,7 @@ private:
 
 
 	/// @brief helper class -- computes if we have all jupms needed to rigidify the chosen chunk and generate more jumps if needed.
-	class JumpCalculator : public utility::pointer::ReferenceCount { //helper class do we like this jump, do we need more ?
+	class JumpCalculator : public utility::VirtualBase { //helper class do we like this jump, do we need more ?
 	public:
 		JumpCalculator( loops::Loops const& rigid_, bool bAllowAdjacentJumps );
 
@@ -187,10 +187,10 @@ private:
 		loops::Loops rigid_;
 
 		/// @brief which residues have already been connected via jumps
-		utility::vector1< Size > visited_;
+		utility::vector1< core::Size > visited_;
 
 		/// @brief how many new jumps
-		Size new_nr_;
+		core::Size new_nr_;
 
 		/// @brief use loop-definition from alignment in ThreadingJob
 		// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11

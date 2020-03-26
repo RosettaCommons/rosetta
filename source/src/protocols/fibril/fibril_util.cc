@@ -91,8 +91,8 @@ reorient_extended_fibril(
 	using namespace id;
 
 	kinematics::FoldTree f( src_conformation.fold_tree() );
-	Size anchor ( utility::string2int(symmdata.get_anchor_residue()) );
-	Size next_anchor ( anchor <= src_conformation.size() - 2 ? anchor + 2 : anchor - 2 );
+	core::Size anchor ( utility::string2int(symmdata.get_anchor_residue()) );
+	core::Size next_anchor ( anchor <= src_conformation.size() - 2 ? anchor + 2 : anchor - 2 );
 	chemical::ResidueType const& rt1 ( src_conformation.residue_type ( anchor ) );
 	chemical::ResidueType const& rt2 ( src_conformation.residue_type ( next_anchor ) );
 	AtomID a1( rt1.atom_index ("C") , anchor );
@@ -108,8 +108,8 @@ reorient_extended_fibril(
 	Stub const rot_stub ( origin, x, z );
 	Stub const src_stub ( Vector(0,0,0), Vector(1,0,0), Vector(0,0,1) );
 
-	for ( Size i = 1; i <= src_conformation.size(); ++i ) {
-		for ( Size j = 1; j <= src_conformation.residue_type(i).natoms(); ++j ) {
+	for ( core::Size i = 1; i <= src_conformation.size(); ++i ) {
+		for ( core::Size j = 1; j <= src_conformation.residue_type(i).natoms(); ++j ) {
 			AtomID id( j, i );
 			Vector const old_xyz( src_conformation.xyz(id) );
 			Vector const new_xyz( src_stub.local2global( rot_stub.global2local( old_xyz ) ) );

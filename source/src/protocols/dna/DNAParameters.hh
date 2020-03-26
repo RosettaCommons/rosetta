@@ -21,7 +21,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <iosfwd>
 #include <map>
@@ -137,7 +137,7 @@ private:
 };
 
 
-class DNAParameters : public utility::pointer::ReferenceCount {
+class DNAParameters : public utility::VirtualBase {
 public: // constructors
 	DNAParameters(){};
 	DNAParameters( core::pose::Pose const & pose ) { calculate( pose ); }

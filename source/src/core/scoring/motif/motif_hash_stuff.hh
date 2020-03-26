@@ -55,7 +55,7 @@ static const numeric::Xforms XsI = numeric::Xforms(1,numeric::Xform::identity())
 
 
 // XformScore
-class XformScore  : public utility::pointer::ReferenceCount {
+class XformScore  : public utility::VirtualBase {
 public:
 	typedef uint32_t Key;
 	typedef float    Score;
@@ -460,7 +460,7 @@ struct XformSummary {
 	ResPairMotif best_motif;
 	utility::vector1<Real> num_by_cut;
 };
-class MotifHash : public utility::pointer::ReferenceCount {
+class MotifHash : public utility::VirtualBase {
 public:
 	typedef ResPairMotif Motif;
 	typedef boost::uint64_t Key;

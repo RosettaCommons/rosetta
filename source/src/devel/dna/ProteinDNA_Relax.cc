@@ -96,7 +96,7 @@ RB_Mover::get_name() const {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-ProteinDNA_Relax::ProteinDNA_Relax( ScoreFunction const & scorefxn_in, Size const moving_jump_in ):
+ProteinDNA_Relax::ProteinDNA_Relax( ScoreFunction const & scorefxn_in, core::Size const moving_jump_in ):
 	protocols::moves::Mover( "ProteinDNA_Relax" ),
 	scorefxn_( scorefxn_in.clone() ),
 	moving_jumps_( 1, moving_jump_in )
@@ -104,7 +104,7 @@ ProteinDNA_Relax::ProteinDNA_Relax( ScoreFunction const & scorefxn_in, Size cons
 	apply_default_settings();
 }
 
-ProteinDNA_Relax::ProteinDNA_Relax( ScoreFunction const & scorefxn_in, utility::vector1< Size > const & moving_jumps ):
+ProteinDNA_Relax::ProteinDNA_Relax( ScoreFunction const & scorefxn_in, utility::vector1< core::Size > const & moving_jumps ):
 	protocols::moves::Mover( "ProteinDNA_Relax" ),
 	scorefxn_( scorefxn_in.clone() ),
 	moving_jumps_( moving_jumps )
@@ -117,14 +117,14 @@ ProteinDNA_Relax::apply( pose::Pose & pose )
 {
 	using namespace protocols::moves;
 
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 
 	// setup task and move maps
 	kinematics::MoveMapOP mm( new kinematics::MoveMap ); // default state is DOF FIXED
 	pack::task::PackerTaskOP pack_task( pack::task::TaskFactory::create_packer_task( pose ));
 
 	pack_task->initialize_from_command_line();
-	for ( Size i = 1; i <= nres; ++i ) {
+	for ( core::Size i = 1; i <= nres; ++i ) {
 		if ( pose.residue(i).is_protein() ) {
 			pack_task->nonconst_residue_task( i ).restrict_to_repacking();
 			mm->set_chi( i, true );
@@ -137,14 +137,14 @@ ProteinDNA_Relax::apply( pose::Pose & pose )
 	}
 	pack_task->or_include_current( true );
 
-	for ( Size i=1; i<= moving_jumps_.size(); ++i ) {
+	for ( core::Size i=1; i<= moving_jumps_.size(); ++i ) {
 		mm->set_jump( moving_jumps_[i], true );
 	}
 
 	// use more rotamers for rotamer trials, since its faster
 	pack::task::PackerTaskOP rottrial_task( pack_task->clone() );
 
-	for ( Size i = 1; i <= nres; ++i ) {
+	for ( core::Size i = 1; i <= nres; ++i ) {
 		if ( pose.residue(i).is_protein() ) {
 			rottrial_task->nonconst_residue_task(i).or_ex1( true );
 			rottrial_task->nonconst_residue_task(i).or_ex2( true );
@@ -192,7 +192,7 @@ ProteinDNA_Relax::apply( pose::Pose & pose )
 	core::Real ramping_weight_factor( ramping_initial_weight_ / ramping_multiplier );
 	core::Real const final_fa_rep_weight( (*scorefxn_)[ scoring::fa_rep ] );
 
-	for ( Size m1=1; m1<= outer_cycles_; ++m1 ) {
+	for ( core::Size m1=1; m1<= outer_cycles_; ++m1 ) {
 
 		if ( ramping_cycles_ && m1 <= ramping_cycles_+1 ) {
 			// ramp the weights

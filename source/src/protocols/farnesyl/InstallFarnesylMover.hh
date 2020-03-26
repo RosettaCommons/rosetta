@@ -60,7 +60,7 @@ public:
 	apply( core::pose::Pose & pose ) override;
 
 	void
-	sample_first( core::pose::Pose & pose, Size const cyspos );
+	sample_first( core::pose::Pose & pose, core::Size const cyspos );
 
 	void
 	sample_second( core::pose::Pose & pose );

@@ -509,7 +509,7 @@ private:
 	/// @brief Creates a single pose that is separated structurally at the interface
 	/// @details Moves the moving_chains in cartesian space a distance according to step_size (A) in the Z axis
 	virtual core::pose::Pose
-	make_separated_pose( core::pose::Pose & pose, std::set< Size > const & moving_chains, core::Size step_size = 1000 );
+	make_separated_pose( core::pose::Pose & pose, std::set< core::Size > const & moving_chains, core::Size step_size = 1000 );
 
 	/// @brief reorder the fold tree to allow multichain interfaces to be evaluated
 	///       returns the jump number to use to define the interface

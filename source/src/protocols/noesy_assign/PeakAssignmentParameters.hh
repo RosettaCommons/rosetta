@@ -42,7 +42,7 @@ namespace protocols {
 namespace noesy_assign {
 
 // THIS SHOULD NOT BE A SINGLETON! ACCESS TO THIS CLASS IS *HIGHLY* NON-THREADSAFE
-class PeakAssignmentParameters { //: public utility::pointer::ReferenceCount {
+class PeakAssignmentParameters { //: public utility::VirtualBase {
 
 private:
 	static bool options_registered_;

@@ -44,17 +44,17 @@ public:
 
 	Real get_score(
 		Multivec const & component_weights,
-		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
+		Multivec const & vars, Multivec & dE_dvars, core::Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
 		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const override;
 
 	void print_score(
 		std::ostream & ostr, Multivec const & component_weights,
-		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
+		Multivec const & vars, Multivec & dE_dvars, core::Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
 		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const override;
 
 	Real process_score(
 		std::ostream & ostr, bool print, Multivec const & component_weights,
-		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
+		Multivec const & vars, Multivec & dE_dvars, core::Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
 		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const;
 
 	OptEPositionDataType type() const override;
@@ -75,16 +75,16 @@ public:
 	// Use the base class implementation for these methods
 
 	//virtual void range( ScoreTypes const & free_score_list, ScoreTypes const & fixed_score_list, EnergyMap & lower_bound, EnergyMap & upper_bound ) const;
-	//virtual Size size() const { return data_.size(); }
+	//virtual core::Size size() const { return data_.size(); }
 
-	//void set_position( Size pos_in ) { position_ = pos_in; }
-	//Size position() const { return position_; }
+	//void set_position( core::Size pos_in ) { position_ = pos_in; }
+	//core::Size position() const { return position_; }
 
 	//void set_native_aa( AA nat_in ) { native_aa_ = nat_in; }
 	//AA native_aa() const { return native_aa_; }
 
-	//void set_neighbor_count( Size nb_in ) { neighbor_count_ = nb_in; }
-	//Size neighbor_count() const { return neighbor_count_; }
+	//void set_neighbor_count( core::Size nb_in ) { neighbor_count_ = nb_in; }
+	//core::Size neighbor_count() const { return neighbor_count_; }
 
 	//void add_rotamer_line_data( PNatAAOptERotamerDataOP rot_in ) { data_.push_back( rot_in ); }
 
@@ -94,21 +94,21 @@ public:
 	//PNatAAOptERotamerDataOPs::const_iterator rotamer_data_begin() const { return data_.begin(); }
 	//PNatAAOptERotamerDataOPs::const_iterator rotamer_data_end() const { return data_.end(); }
 
-	Size memory_use() const override;
+	core::Size memory_use() const override;
 
 protected:
 	/// @brief used by derived class as well -- finds the energies for the best rotamer for each amino acid
 	//void
-	//process_rotamers( Multivec const & vars, Size const num_energy_dofs, EnergyMap const & fixed_terms,
-	// ScoreTypes const & score_list, ScoreTypes const & fixed_score_list, Size const aa_range,
+	//process_rotamers( Multivec const & vars, core::Size const num_energy_dofs, EnergyMap const & fixed_terms,
+	// ScoreTypes const & score_list, ScoreTypes const & fixed_score_list, core::Size const aa_range,
 	// utility::vector1< Real > const & dummy_set, utility::vector1< Real > & best_energy_by_aa,
 	// utility::vector1< utility::vector1< Real > > & unweighted_E_dof, Multivec & ref_deriv_weight
 	//) const;
 
 private:
-	//Size position_;
+	//core::Size position_;
 	//AA native_aa_;
-	//Size neighbor_count_;
+	//core::Size neighbor_count_;
 	//PNatAAOptERotamerDataOPs data_;
 
 	utility::vector1< EnergyMap > unfolded_energy_emap_vector_;
@@ -127,17 +127,17 @@ public:
 
 	Real get_score(
 		Multivec const & component_weights,
-		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
+		Multivec const & vars, Multivec & dE_dvars, core::Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
 		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const override;
 
 	void print_score(
 		std::ostream & ostr, Multivec const & component_weights,
-		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
+		Multivec const & vars, Multivec & dE_dvars, core::Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
 		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const override;
 
 	Real process_score(
 		std::ostream & ostr, bool print, Multivec const & component_weights,
-		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
+		Multivec const & vars, Multivec & dE_dvars, core::Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
 		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const;
 
 	OptEPositionDataType type() const override;
@@ -145,14 +145,14 @@ public:
 	// Use the base class implementation for these methods. (The read/write methods are all empty anyway.)
 
 	//virtual void range( ScoreTypes const & free_score_list, ScoreTypes const & fixed_score_list, EnergyMap & lower_bound, EnergyMap & upper_bound ) const;
-	//virtual Size size() const;
+	//virtual core::Size size() const;
 
 	//virtual void write_to_file( std::ofstream & outfile ) const;
 	//virtual void read_from_file( std::ifstream & infile );
 	//virtual void write_to_binary_file( std::ofstream & outfile ) const;
 	//virtual void read_from_binary_file( std::ifstream & infile );
 
-	Size memory_use() const override;
+	core::Size memory_use() const override;
 
 #ifdef USEMPI
 	virtual void send_to_node( int const destination_node, int const tag ) const override;

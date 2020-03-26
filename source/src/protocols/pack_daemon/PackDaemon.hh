@@ -39,7 +39,7 @@
 
 // Utility headers
 #include <utility/vector0.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // ObjexxFCL headers
 
@@ -59,7 +59,7 @@
 namespace protocols {
 namespace pack_daemon {
 
-class PackDaemon : public utility::pointer::ReferenceCount {
+class PackDaemon : public utility::VirtualBase {
 public:
 	typedef core::Real Real;
 	typedef core::Size Size;
@@ -106,7 +106,7 @@ public:
 	void set_include_background_energies( bool setting );
 	/// @brief restrict the amount of memory spent on storing Rotamer Pair Energies in the
 	/// DoubleLazyInteractionGraph;
-	void set_dlig_nmeg_limit( Size setting );
+	void set_dlig_nmeg_limit( core::Size setting );
 
 	void setup(); // must be called before compute_energy_for_assignment;
 
@@ -191,7 +191,7 @@ enum DaemonSetMessage {
 	n_daemon_set_messages
 };
 
-class DaemonSet : public utility::pointer::ReferenceCount
+class DaemonSet : public utility::VirtualBase
 {
 public:
 	typedef core::pose::Pose                       Pose;
@@ -229,14 +229,14 @@ public:
 
 	/// @brief restrict the amount of memory spent on storing Rotamer Pair Energies in the
 	/// DoubleLazyInteractionGraph;
-	void set_dlig_nmeg_limit( Size setting );
+	void set_dlig_nmeg_limit( core::Size setting );
 
 	void add_npdpro_calculator_creator( NPDPropCalculatorCreatorOP );
 
 	/// @brief Each daemon is associated with an index representing its position in
 	/// some master list somewhere.  The DaemonSet is responsible for keeping this index.
 	void add_pack_daemon(
-		Size daemon_index,
+		core::Size daemon_index,
 		std::string const & pdb_name,
 		std::string const & correspondence_file_name,
 		std::string const & secondary_resfile
@@ -244,7 +244,7 @@ public:
 
 	void
 	add_pack_daemon(
-		Size daemon_index,
+		core::Size daemon_index,
 		std::string const & pose_file_name,
 		Pose const & pose,
 		std::string const & correspondence_file_filename,
@@ -255,9 +255,9 @@ public:
 
 	void
 	add_npd_property_calculator_for_state(
-		Size daemon_index,
+		core::Size daemon_index,
 		std::string const & npd_property,
-		Size npd_index
+		core::Size npd_index
 	);
 
 	/// @brief call daemon->setup() on all daemons, which will trigger the
@@ -277,7 +277,7 @@ public:
 	void mark_last_entity_as_important();
 	void mark_entity_as_unimportant( Entity const & );
 
-	std::list< std::pair< Size, PoseOP > >
+	std::list< std::pair< core::Size, PoseOP > >
 	retrieve_relevant_poses_for_entity( Entity const &, DaemonIndices const & ) const;
 
 	core::pack::task::PackerTaskOP       entity_task() const;
@@ -340,7 +340,7 @@ private:
 	bool                                                 include_background_energies_;
 
 	bool                                                 limit_dlig_mem_usage_;
-	Size                                                 dlig_nmeg_limit_;
+	core::Size                                                 dlig_nmeg_limit_;
 
 
 	core::pack::task::PackerTaskOP                       entity_task_;
@@ -353,7 +353,7 @@ private:
 	utility::vector1< PoseOP >                           daemon_poses_;
 	utility::vector1< core::pack::task::PackerTaskOP >   daemon_tasks_;
 	utility::vector1< std::list< NPDIndAndCalc > >       npd_calcs_for_poses_;
-	Size                                                 n_npd_properties_;
+	core::Size                                                 n_npd_properties_;
 
 #ifdef APL_MEASURE_MSD_LOAD_BALANCE
 	core::Real packing_runtime_;
@@ -367,7 +367,7 @@ private:
 ////////////////////////////////////////////////
 
 
-class NPDPropCalculator : public utility::pointer::ReferenceCount
+class NPDPropCalculator : public utility::VirtualBase
 {
 public:
 	NPDPropCalculator();
@@ -386,7 +386,7 @@ public:
 	calculate( core::pose::Pose const & p ) = 0;
 };
 
-class NPDPropCalculatorCreator : public utility::pointer::ReferenceCount
+class NPDPropCalculatorCreator : public utility::VirtualBase
 {
 public:
 	NPDPropCalculatorCreator();
@@ -405,10 +405,10 @@ public:
 /////////       QuickRepacker         //////////
 ////////////////////////////////////////////////
 
-class QuickRepacker : public utility::pointer::ReferenceCount
+class QuickRepacker : public utility::VirtualBase
 {
 public:
-	typedef utility::pointer::ReferenceCount                         parent;
+	typedef utility::VirtualBase                         parent;
 	typedef PackDaemon::RotamerAssignmentAndEnergy                   RotamerAssignmentAndEnergy;
 	typedef core::pose::PoseOP                                       PoseOP;
 	typedef core::pack::task::PackerTaskOP                           PackerTaskOP;

@@ -17,7 +17,7 @@
 
 //Unit headers
 #include <protocols/legacy_sewing/scoring/LegacyAssemblyScorer.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //Package headers
 #include <protocols/legacy_sewing/conformation/Assembly.hh>
@@ -29,7 +29,7 @@ namespace protocols {
 namespace legacy_sewing  {
 namespace scoring {
 
-class LegacyAssemblyScorer : public utility::pointer::ReferenceCount {
+class LegacyAssemblyScorer : public utility::VirtualBase {
 
 public:
 
@@ -48,7 +48,7 @@ private:
 
 };
 
-class LegacyAssemblyScoreFunction : public utility::pointer::ReferenceCount {
+class LegacyAssemblyScoreFunction : public utility::VirtualBase {
 
 public:
 

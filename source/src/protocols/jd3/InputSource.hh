@@ -21,7 +21,7 @@
 //project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -48,7 +48,7 @@ namespace jd3 {
 /// data in the InputSource, though, the string-string map ought to
 /// provide considerable flexibility in storing data without deriving
 /// new subclasses.
-class InputSource : public utility::pointer::ReferenceCount
+class InputSource : public utility::VirtualBase
 {
 public:
 	InputSource();

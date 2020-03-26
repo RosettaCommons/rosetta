@@ -30,7 +30,7 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -56,7 +56,7 @@ struct SecStructInfo {
 };
 
 /// @brief Designs topologies
-class StructureArchitect : public utility::pointer::ReferenceCount  {
+class StructureArchitect : public utility::VirtualBase  {
 public: // Creation
 
 	StructureArchitect( std::string const & id );

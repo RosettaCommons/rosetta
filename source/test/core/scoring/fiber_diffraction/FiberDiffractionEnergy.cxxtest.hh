@@ -36,7 +36,7 @@
 
 #include <sstream>
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/excn/Exceptions.hh>
 

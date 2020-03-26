@@ -33,7 +33,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 
@@ -101,7 +101,7 @@ void AlignRmsdTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvalua
 		// evaluation::gdtmm will conflict, but lets override
 		bool gdt_by_TM( option[ OptionKeys::evaluation::gdttm ]() );
 
-		for ( Size ii = 1; ii <= align_rmsd_target.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= align_rmsd_target.size(); ++ii ) {
 			pose::PoseOP rmsd_pose( new pose::Pose );
 			core::import_pose::pose_from_file( *rmsd_pose, align_rmsd_target[ii] , core::import_pose::PDB_file);
 			//string const tag( align_rmsd_target[ii] );

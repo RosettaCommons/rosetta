@@ -18,7 +18,7 @@
 #include <core/types.hh>
 
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 // ObjexxFCL Headers
@@ -37,7 +37,7 @@ namespace scoring {
 
 /// @brief  Holds weights and flags for configuring a SecondaryStructureEnergy evaluation
 
-class SecondaryStructureWeights : public utility::pointer::ReferenceCount {
+class SecondaryStructureWeights : public utility::VirtualBase {
 
 public: // construct/destruct
 
@@ -52,7 +52,7 @@ public: // construct/destruct
 	inline
 	SecondaryStructureWeights(
 		SecondaryStructureWeights const & s
-	) : ReferenceCount(),
+	) : VirtualBase(),
 		parallel_weight_( s.parallel_weight_ ),
 		antiparallel_weight_( s.antiparallel_weight_ ),
 

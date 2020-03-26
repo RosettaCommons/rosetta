@@ -35,7 +35,7 @@
 
 
 // a very lightweight class ( only two memory cells )
-// copy by value, don't use OPs -- not derived from ReferenceCount.
+// copy by value, don't use OPs -- not derived from VirtualBase.
 // FragID identifies a physical fragment by its Frame and intra_frame reference number.
 
 namespace core {

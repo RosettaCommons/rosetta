@@ -27,7 +27,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
@@ -44,7 +44,7 @@ namespace pose {
 
 /// @brief A class to hold information about where a ResidueIndexDescriptor comes from,
 /// to allow for better error messages
-class RID_Source : public utility::pointer::ReferenceCount
+class RID_Source : public utility::VirtualBase
 {
 public:
 	virtual std::string source_string() const;
@@ -96,7 +96,7 @@ public:
 /// particular residue in a pose, and can, when given a pose, find its index.
 /// The object should be constructed with all its needed parameters, but, one
 /// instance may be copied from another.
-class ResidueIndexDescription : public utility::pointer::ReferenceCount
+class ResidueIndexDescription : public utility::VirtualBase
 {
 public:
 	ResidueIndexDescription(): source_(nullptr) {}

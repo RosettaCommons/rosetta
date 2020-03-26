@@ -1278,9 +1278,9 @@ AntibodyDesignMover::check_for_top_designs(core::pose::Pose & pose){
 }
 
 /// @brief Gets a list of vectors whose indexes correspond to CDRNameEnum, and whose values correspond to the cdr_set index.  If the value is 0, it means no cdr in set.
-vector1< vector1 < Size > >
+vector1< vector1 < core::Size > >
 AntibodyDesignMover::get_cdr_set_index_list(){
-	vector1< vector1< Size > > index_list;
+	vector1< vector1< core::Size > > index_list;
 	vector1<core::Size> cdr_set_totals(6, 0);
 
 	for ( core::SSize i=CDRNameEnum_start; i<=CDRNameEnum_total; ++i ) {
@@ -1288,7 +1288,7 @@ AntibodyDesignMover::get_cdr_set_index_list(){
 		cdr_set_totals[i] = cdr_set_[cdr].size();
 	}
 
-	vector1< vector1< Size > > empty_vector;
+	vector1< vector1< core::Size > > empty_vector;
 	get_all_graft_permutations(empty_vector, cdr_set_totals, 1);
 	return index_list;
 

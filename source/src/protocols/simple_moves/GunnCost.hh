@@ -34,7 +34,7 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -46,7 +46,7 @@ namespace protocols {
 namespace simple_moves {
 
 
-struct GunnTuple : public utility::pointer::ReferenceCount {
+struct GunnTuple : public utility::VirtualBase {
 public:
 	GunnTuple() {
 		q1 = 0;

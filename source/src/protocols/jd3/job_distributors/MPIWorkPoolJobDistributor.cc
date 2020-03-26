@@ -430,7 +430,7 @@ MPIWorkPoolJobDistributor::decide_restore_from_checkpoint()
 		}
 		return false;
 	}
-	utility::vector1< Size > candidates;
+	utility::vector1< core::Size > candidates;
 	for ( auto const & fname : fnames ) {
 		// Let's break fname by _s
 		utility::vector1< std::string > cols = utility::string_split_simple(fname, '_');
@@ -440,9 +440,9 @@ MPIWorkPoolJobDistributor::decide_restore_from_checkpoint()
 		candidates.push_back(utility::string2Size(cols[2]));
 	}
 	std::sort(candidates.begin(), candidates.end());
-	Size chosen(0);
-	for ( Size ii = candidates.size(); ii > 0; --ii ) {
-		Size cand = candidates[ii];
+	core::Size chosen(0);
+	for ( core::Size ii = candidates.size(); ii > 0; --ii ) {
+		core::Size cand = candidates[ii];
 		bool all_found = true;
 		for ( int jj = 1; jj <= n_archives_; ++jj ) {
 			std::string fname = checkpoint_file_name_for_node(
@@ -868,8 +868,8 @@ MPIWorkPoolJobDistributor::restore_from_checkpoint_master(core::Size checkpoint_
 	// Now we inform the archives what job results they ought to be holding;
 	// the archives are responsible for discarding the results that they do
 	// not need
-	utility::vector1< utility::vector1<Size> > results_first_for_archive(n_archives_);
-	utility::vector1< utility::vector1<Size> > results_second_for_archive(n_archives_);
+	utility::vector1< utility::vector1<core::Size> > results_first_for_archive(n_archives_);
+	utility::vector1< utility::vector1<core::Size> > results_second_for_archive(n_archives_);
 	for ( auto const & result_iter: job_result_location_map_ ) {
 		if ( result_iter.second > 0 ) {
 			results_first_for_archive[result_iter.second].push_back(result_iter.first.first);
@@ -912,8 +912,8 @@ MPIWorkPoolJobDistributor::restore_from_checkpoint_archive()
 	// OK, node 0 has just asked us to restore from a checkpoint file
 	std::string checkpoint_prefix = utility::receive_string_from_node(0);
 
-	utility::vector1<Size> results_to_keep_first = utility::receive_sizes_from_node(0);
-	utility::vector1<Size> results_to_keep_second = utility::receive_sizes_from_node(0);
+	utility::vector1<core::Size> results_to_keep_first = utility::receive_sizes_from_node(0);
+	utility::vector1<core::Size> results_to_keep_second = utility::receive_sizes_from_node(0);
 
 	std::string fname = checkpoint_file_name_for_node(checkpoint_prefix, mpi_rank_);
 	TR << "Attempting to restore from checkpoint file " << fname << std::endl;
@@ -942,7 +942,7 @@ MPIWorkPoolJobDistributor::restore_from_checkpoint_archive()
 		return;
 	}
 
-	for ( Size ii = 1; ii <= results_to_keep_first.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= results_to_keep_first.size(); ++ii ) {
 		JobResultID id{results_to_keep_first[ii], results_to_keep_second[ii]};
 		auto iter = temp_job_results.find(id);
 		if ( iter == temp_job_results.end() ) {
@@ -999,7 +999,7 @@ MPIWorkPoolJobDistributor::process_job_request_from_node( int worker_node )
 void
 MPIWorkPoolJobDistributor::process_job_failed_w_message_from_node( int worker_node )
 {
-	Size job_id = utility::receive_size_from_node( worker_node );
+	core::Size job_id = utility::receive_size_from_node( worker_node );
 	std::string error_message = utility::receive_string_from_node( worker_node );
 	LarvalJobOP failed_job = job_extractor_->running_job( job_id );
 	TR.Error << "Job " << job_id << " named " << failed_job <<
@@ -1012,7 +1012,7 @@ MPIWorkPoolJobDistributor::process_job_failed_w_message_from_node( int worker_no
 void
 MPIWorkPoolJobDistributor::process_job_failed_do_not_retry( int worker_node )
 {
-	Size job_id = utility::receive_size_from_node( worker_node );
+	core::Size job_id = utility::receive_size_from_node( worker_node );
 	LarvalJobOP failed_job = job_extractor_->running_job( job_id );
 	job_queen_->note_job_completed_and_track( failed_job, jd3_job_status_failed_do_not_retry, 1 /*dummy*/ );
 	note_job_no_longer_running( job_id );
@@ -1021,7 +1021,7 @@ MPIWorkPoolJobDistributor::process_job_failed_do_not_retry( int worker_node )
 void
 MPIWorkPoolJobDistributor::process_job_failed_bad_input( int worker_node )
 {
-	Size job_id = utility::receive_size_from_node( worker_node );
+	core::Size job_id = utility::receive_size_from_node( worker_node );
 	LarvalJobOP failed_job = job_extractor_->running_job( job_id );
 	job_queen_->note_job_completed_and_track( failed_job, jd3_job_status_inputs_were_bad, 1 /*dummy*/ );
 
@@ -1032,7 +1032,7 @@ MPIWorkPoolJobDistributor::process_job_failed_bad_input( int worker_node )
 void
 MPIWorkPoolJobDistributor::process_job_failed_retry_limit_exceeded( int worker_node )
 {
-	Size job_id = utility::receive_size_from_node( worker_node );
+	core::Size job_id = utility::receive_size_from_node( worker_node );
 	LarvalJobOP failed_job = job_extractor_->running_job( job_id );
 	job_queen_->note_job_completed_and_track( failed_job, jd3_job_status_failed_max_retries, 1 /*dummy*/ );
 
@@ -1044,20 +1044,20 @@ void
 MPIWorkPoolJobDistributor::process_job_succeeded( int worker_node )
 {
 
-	Size job_id = utility::receive_size_from_node( worker_node );
-	Size nresults = utility::receive_size_from_node( worker_node );
+	core::Size job_id = utility::receive_size_from_node( worker_node );
+	core::Size nresults = utility::receive_size_from_node( worker_node );
 	TR << "Nresults from job " << job_id << ": " << nresults << std::endl;
 
 	// Now pick a node to archive the job result on, perhaps storing the
 	// job result on this node.
 	utility::vector1< int > archival_nodes_for_results( nresults );
-	for ( Size ii = 1; ii <= nresults; ++ii ) {
+	for ( core::Size ii = 1; ii <= nresults; ++ii ) {
 		archival_nodes_for_results[ ii ] = pick_archival_node();
 	}
 	// tell the worker node where to send the job result
 	utility::send_integers_to_node( worker_node, archival_nodes_for_results );
 
-	for ( Size ii = 1; ii <= nresults; ++ii ) {
+	for ( core::Size ii = 1; ii <= nresults; ++ii ) {
 		JobResultID result_id = std::make_pair( job_id, ii );
 		job_result_location_map_[ result_id ] = archival_nodes_for_results[ ii ];
 	}
@@ -1106,7 +1106,7 @@ MPIWorkPoolJobDistributor::process_archival_complete_message( int worker_node )
 
 	// We keep the larval jobs that are in flight, and will stop keeping them
 	// at the end of this function
-	Size job_id = utility::receive_size_from_node( worker_node );
+	core::Size job_id = utility::receive_size_from_node( worker_node );
 
 	auto larval_job_iter = in_flight_larval_jobs_.find( job_id );
 	debug_assert( larval_job_iter != in_flight_larval_jobs_.end() );
@@ -1146,7 +1146,7 @@ MPIWorkPoolJobDistributor::process_archival_complete_message( int worker_node )
 	// wrote down it would be stored. Otherwise, jobs could be launched that
 	// would produce a race condition by asking for JobResults as inputs that
 	// either had or had not yet completed the archival process.
-	Size const nsummaries = job_summaries.size();
+	core::Size const nsummaries = job_summaries.size();
 	job_queen_->note_job_completed_and_track( larval_job, status, nsummaries );
 	for ( ResultIndex ii( 1 ); ii <= nsummaries; ++ii ) {
 		job_queen_->completed_job_summary( larval_job, ii, job_summaries[ ii ] );
@@ -1199,8 +1199,8 @@ void
 MPIWorkPoolJobDistributor::process_retrieve_job_result_request( int worker_node )
 {
 	using namespace utility;
-	Size job_id = receive_size_from_node( worker_node );
-	Size result_index = receive_size_from_node( worker_node );
+	core::Size job_id = receive_size_from_node( worker_node );
+	core::Size result_index = receive_size_from_node( worker_node );
 	JobResultID result_id = { job_id, result_index };
 
 	auto send_to_worker = [&](std::string const & str ) {
@@ -1346,7 +1346,7 @@ void
 MPIWorkPoolJobDistributor::process_retrieve_result_from_archive_and_output_request()
 {
 	// remote node should be node 0
-	Size const remote_node( 0 );
+	core::Size const remote_node( 0 );
 	int const archive_node = utility::receive_integer_from_node( remote_node );
 	std::string output_spec_string = utility::receive_string_from_node( remote_node );
 	output::OutputSpecificationOP spec;
@@ -1414,8 +1414,8 @@ MPIWorkPoolJobDistributor::process_failed_to_retrieve_job_result_request( int ar
 	// the node making the job-result request, which the archival node was
 	// unable to fullfil
 	int worker_node = utility::receive_integer_from_node( archival_node );
-	Size job_id = utility::receive_size_from_node( archival_node );
-	Size result_index = utility::receive_size_from_node( archival_node );
+	core::Size job_id = utility::receive_size_from_node( archival_node );
+	core::Size result_index = utility::receive_size_from_node( archival_node );
 	throw_after_failed_to_retrieve_job_result( worker_node, job_id, result_index, archival_node );
 }
 
@@ -1426,8 +1426,8 @@ void
 MPIWorkPoolJobDistributor::process_retrieve_and_discard_job_result_request( int worker_node )
 {
 	using namespace utility;
-	Size job_id = receive_size_from_node( worker_node );
-	Size result_index = receive_size_from_node( worker_node );
+	core::Size job_id = receive_size_from_node( worker_node );
+	core::Size result_index = receive_size_from_node( worker_node );
 
 	JobResultID job_result_id = { job_id, result_index };
 
@@ -1456,8 +1456,8 @@ void
 MPIWorkPoolJobDistributor::process_discard_job_result_request( int remote_node )
 {
 	using namespace utility;
-	Size job_id = receive_size_from_node( remote_node ); // node 0
-	Size result_index = receive_size_from_node( remote_node );
+	core::Size job_id = receive_size_from_node( remote_node ); // node 0
+	core::Size result_index = receive_size_from_node( remote_node );
 
 	JobResultID job_result_id = { job_id, result_index };
 	delete_job_result(job_result_id);
@@ -1467,8 +1467,8 @@ void
 MPIWorkPoolJobDistributor::process_archive_job_result_request( int remote_node )
 {
 	using namespace utility;
-	Size job_id = receive_size_from_node( remote_node );
-	Size result_index = receive_size_from_node( remote_node );
+	core::Size job_id = receive_size_from_node( remote_node );
+	core::Size result_index = receive_size_from_node( remote_node );
 	JobResultID result_id = { job_id, result_index };
 	auto serialized_larval_job_and_result = std::make_shared< std::string >( receive_string_from_node( remote_node ));
 
@@ -1640,7 +1640,7 @@ MPIWorkPoolJobDistributor::send_deallocation_messages_to_node( int worker_node )
 }
 
 void
-MPIWorkPoolJobDistributor::note_job_no_longer_running( Size job_id )
+MPIWorkPoolJobDistributor::note_job_no_longer_running( core::Size job_id )
 {
 	// ok, now remove the completed/failed job from the maps keeping track of
 	// outstanding jobs
@@ -1690,7 +1690,7 @@ MPIWorkPoolJobDistributor::potentially_output_some_job_results()
 		// and then erase its location from the map; this will merely require that we
 		// keep track of which node is outputting which job. For now, mark the job as having
 		// been erased.
-		Size node_housing_result = location_map_iter->second;
+		core::Size node_housing_result = location_map_iter->second;
 		job_result_location_map_.erase( location_map_iter );
 
 		if ( node_housing_result == 0 ) {
@@ -1768,7 +1768,7 @@ MPIWorkPoolJobDistributor::potentially_discard_some_job_results()
 				" output or discarded?" );
 		}
 
-		Size node_housing_result = job_result_location_map_[ result_id ];
+		core::Size node_housing_result = job_result_location_map_[ result_id ];
 		n_discarded_jobs[ node_housing_result ] += 1;
 		LarvalJobAndResult job_and_result;
 		if ( node_housing_result == 0 ) {
@@ -1804,7 +1804,7 @@ MPIWorkPoolJobDistributor::potentially_discard_some_job_results()
 
 void
 MPIWorkPoolJobDistributor::send_output_spec_and_job_result_to_remote(
-	Size node_id,
+	core::Size node_id,
 	output::OutputSpecificationOP spec
 )
 {
@@ -1840,7 +1840,7 @@ MPIWorkPoolJobDistributor::send_output_spec_and_job_result_to_remote(
 	//}
 
 	auto send_result_and_spec_to_node = [&](std::string const & serialized_job_and_result ) {
-		if ( node_id <= (Size) n_archives_ ) {
+		if ( node_id <= (core::Size) n_archives_ ) {
 			utility::send_integer_to_node( node_id, 0 ); // say "I need to talk to you"
 		} // else, worker node is already expecting a message from node 0
 
@@ -1861,7 +1861,7 @@ MPIWorkPoolJobDistributor::send_output_spec_and_job_result_to_remote(
 
 void
 MPIWorkPoolJobDistributor::send_output_spec_to_remote(
-	Size node_id,
+	core::Size node_id,
 	output::OutputSpecificationOP spec
 )
 {
@@ -1880,8 +1880,8 @@ MPIWorkPoolJobDistributor::send_output_spec_to_remote(
 
 void
 MPIWorkPoolJobDistributor::send_output_spec_and_retrieval_instruction_to_remote(
-	Size node_id, // node that will perform the output
-	Size archive_node, // node where the job lives
+	core::Size node_id, // node that will perform the output
+	core::Size archive_node, // node where the job lives
 	output::OutputSpecificationOP spec
 )
 {
@@ -1893,7 +1893,7 @@ MPIWorkPoolJobDistributor::send_output_spec_and_retrieval_instruction_to_remote(
 	// debug_assert( new_result_count >= 0 );
 	// n_results_per_archive_.heap_replace( archive_node, new_result_count );
 
-	if ( node_id <= (Size) n_archives_ ) {
+	if ( node_id <= (core::Size) n_archives_ ) {
 		utility::send_integer_to_node( node_id, 0 ); // say "I need to talk to you"
 	}
 	// otherwise, we're talking to a worker node who is already waiting for
@@ -1948,7 +1948,7 @@ MPIWorkPoolJobDistributor::update_output_list_empty_bool()
 //
 // // iterate across all nodes in the job_digraph, and note every
 // // node with an indegree of 0
-// for ( Size ii = 1; ii <= job_dag_->num_nodes(); ++ii ) {
+// for ( core::Size ii = 1; ii <= job_dag_->num_nodes(); ++ii ) {
 //  if ( job_dag_->get_node(ii)->indegree() == 0 ) {
 //   digraph_nodes_ready_to_be_run_.push_back( ii );
 //  }
@@ -2045,7 +2045,7 @@ void
 MPIWorkPoolJobDistributor::assign_jobs_to_idling_nodes()
 {
 	while ( ! worker_nodes_waiting_for_jobs_.empty() && ! job_extractor_->job_queue_empty() ) {
-		Size worker_node = worker_nodes_waiting_for_jobs_.front();
+		core::Size worker_node = worker_nodes_waiting_for_jobs_.front();
 		worker_nodes_waiting_for_jobs_.pop_front();
 		bool job_sent = send_next_job_to_node( worker_node );
 		if ( ! job_sent ) {
@@ -2064,8 +2064,8 @@ MPIWorkPoolJobDistributor::assign_output_tasks_to_idling_nodes()
 		if ( output_list_empty_ ) break;
 		auto iter_next = iter;
 		++iter_next;
-		Size worker = *iter;
-		if ( worker <= (Size) max_n_outputters_ ) {
+		core::Size worker = *iter;
+		if ( worker <= (core::Size) max_n_outputters_ ) {
 			send_output_instruction_to_node( worker );
 			worker_nodes_waiting_for_jobs_.erase( iter );
 		}
@@ -2094,8 +2094,8 @@ MPIWorkPoolJobDistributor::store_deallocation_messages( std::list< deallocation:
 void
 MPIWorkPoolJobDistributor::throw_after_failed_to_retrieve_job_result(
 	int worker_node,
-	Size job_id,
-	Size result_index,
+	core::Size job_id,
+	core::Size result_index,
 	int archival_node
 )
 {
@@ -2153,7 +2153,7 @@ MPIWorkPoolJobDistributor::retrieve_job_and_run()
 
 		bool communicated_w_master = false;
 		// if the job's status as it exits is "fail retry", then we'll retry it.
-		Size num_retries = larval_job->defines_retry_limit() ? larval_job->retry_limit() : default_retry_limit_;
+		core::Size num_retries = larval_job->defines_retry_limit() ? larval_job->retry_limit() : default_retry_limit_;
 		for ( core::Size ii = 1; ii <= num_retries; ++ii ) {
 
 			JobOP job = job_queen_->mature_larval_job( larval_job, job_results );
@@ -2347,10 +2347,10 @@ MPIWorkPoolJobDistributor::worker_send_job_result_to_master_and_archive(
 	CompletedJobOutput job_output
 )
 {
-	Size const nresults = job_output.job_results.size();
+	core::Size const nresults = job_output.job_results.size();
 	utility::vector1< std::string > serialized_larval_job_and_results( nresults );
 	try {
-		for ( Size ii = 1; ii <= job_output.job_results.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= job_output.job_results.size(); ++ii ) {
 			serialized_larval_job_and_results[ ii ] = serialize_larval_job_and_result(
 				std::make_pair( larval_job, job_output.job_results[ ii ].second ));
 		}
@@ -2390,7 +2390,7 @@ MPIWorkPoolJobDistributor::worker_send_job_result_to_master_and_archive(
 	utility::send_size_to_node( 0, larval_job->job_index() );
 	utility::send_size_to_node( 0, nresults );
 	utility::vector1< int > archival_nodes = utility::receive_integers_from_node( 0 );
-	for ( Size ii = 1; ii <= nresults; ++ii ) {
+	for ( core::Size ii = 1; ii <= nresults; ++ii ) {
 		int archival_node = archival_nodes[ ii ];
 		TR << "Archiving result " << ii << " of " << nresults << " on node " << archival_node << std::endl;
 		utility::send_integer_to_node( archival_node, mpi_rank_ );
@@ -2602,15 +2602,15 @@ MPIWorkPoolJobDistributor::serialize_output_specification( output::OutputSpecifi
 	return spec_oss.str();
 }
 
-std::string MPIWorkPoolJobDistributor::get_string_from_disk( Size job_id, Size result_index ) const {
+std::string MPIWorkPoolJobDistributor::get_string_from_disk( core::Size job_id, core::Size result_index ) const {
 	return utility::file_contents( filename_for_archive( job_id, result_index ) );
 }
 
-std::string MPIWorkPoolJobDistributor::filename_for_archive( Size job_id, Size result_index ) const {
+std::string MPIWorkPoolJobDistributor::filename_for_archive( core::Size job_id, core::Size result_index ) const {
 	return archive_dir_name_ + "/archive." + std::to_string( job_id ) + "." + std::to_string( result_index );
 }
 
-std::string MPIWorkPoolJobDistributor::checkpoint_file_prefix( Size checkpoint_counter ) const
+std::string MPIWorkPoolJobDistributor::checkpoint_file_prefix( core::Size checkpoint_counter ) const
 {
 	return checkpoint_directory_ + "/chkpt_" + utility::to_string(checkpoint_counter);
 }
@@ -2623,7 +2623,7 @@ std::string MPIWorkPoolJobDistributor::checkpoint_file_name_for_node(
 	return prefix + "_" + utility::to_string(node_index) + ".bin";
 }
 
-void MPIWorkPoolJobDistributor::set_checkpoint_period( Size period_seconds )
+void MPIWorkPoolJobDistributor::set_checkpoint_period( core::Size period_seconds )
 {
 	checkpoint_period_ = period_seconds;
 }
@@ -2663,7 +2663,7 @@ bool MPIWorkPoolJobDistributor::checkpoint_sanity_check() const
 }
 
 void
-MPIWorkPoolJobDistributor::delete_checkpoint( Size checkpoint_index ) const {
+MPIWorkPoolJobDistributor::delete_checkpoint( core::Size checkpoint_index ) const {
 	if ( checkpoint_index > 0 &&
 			! basic::options::option[ basic::options::OptionKeys::jd3::keep_all_checkpoints ] &&
 			( ! basic::options::option[ basic::options::OptionKeys::jd3::keep_checkpoint ].user() ||

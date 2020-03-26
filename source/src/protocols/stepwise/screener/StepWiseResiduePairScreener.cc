@@ -25,7 +25,7 @@ namespace stepwise {
 namespace screener {
 
 //Constructor
-StepWiseResiduePairScreener::StepWiseResiduePairScreener( Size const res1, Size const res2 ):
+StepWiseResiduePairScreener::StepWiseResiduePairScreener( core::Size const res1, core::Size const res2 ):
 	res1_( res1 ),
 	res2_( res2 )
 {}

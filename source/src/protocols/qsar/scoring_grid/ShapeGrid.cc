@@ -103,7 +103,7 @@ void ShapeGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 	core::Size chain_id = core::pose::get_chain_id_from_chain(get_chain(),pose);
 
 	utility::vector1<utility::vector1<core::Real> > coord_list;
-	utility::vector1<utility::pointer::ReferenceCountOP> data_list;
+	utility::vector1<utility::VirtualBaseOP> data_list;
 	for ( core::Size residue_index = 1; residue_index <= pose.size(); ++residue_index ) {
 		core::conformation::ResidueOP residue( new core::conformation::Residue(pose.residue(residue_index)) );
 		if ( residue->chain() == chain_id ) {
@@ -117,7 +117,7 @@ void ShapeGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 		xyz_vector[3] = coords.z();
 
 		coord_list.push_back(xyz_vector);
-		data_list.push_back(static_cast<utility::pointer::ReferenceCountOP>(residue));
+		data_list.push_back(static_cast<utility::VirtualBaseOP>(residue));
 	}
 
 	numeric::kdtree::KDTree residue_tree(coord_list,data_list);
@@ -223,7 +223,7 @@ core::Real ShapeGrid::get_point_score(numeric::kdtree::KDPointList const & neare
 
 	for ( auto kd_point : nearest_residues ) {
 		//This is a bit dangerous
-		utility::pointer::ReferenceCountOP data_pointer(kd_point->data());
+		utility::VirtualBaseOP data_pointer(kd_point->data());
 		core::conformation::ResidueOP residue(utility::pointer::dynamic_pointer_cast< core::conformation::Residue > ( data_pointer ));
 		core::chemical::ResidueType const & restype( residue->type() );
 

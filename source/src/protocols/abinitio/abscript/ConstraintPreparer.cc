@@ -142,7 +142,7 @@ void ConstraintPreparer::parse_my_tag( utility::tag::TagCOP tag,
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ConstraintPreparer " + this->get_name() +
 				"skip_redundant conflict" );
 		} else if ( option[ constraints::skip_redundant_width ].user() &&
-				(Size) option[ constraints::skip_redundant_width ] != skip_redundant_width() ) {
+				(core::Size) option[ constraints::skip_redundant_width ] != skip_redundant_width() ) {
 			tr.Error << "Command line option constraints::skip_redundant_width conflicts "
 				<< "with RosettaScripts initialization of ConstraintPreparer "
 				<< tag->getOption< std::string >( "name", "null" ) << std::endl;

@@ -16,7 +16,7 @@
 
 #include <core/types.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1_bool.hh>
 
@@ -36,7 +36,7 @@ enum AlignMove {
 // for holding onto CellOPs
 class Cell;
 typedef utility::pointer::shared_ptr< Cell > CellOP;
-class Cell : public utility::pointer::ReferenceCount {
+class Cell : public utility::VirtualBase {
 
 public:
 	Cell() :
@@ -108,7 +108,7 @@ private:
 	utility::vector1< Size > coords_;
 }; // class Cell
 
-class DP_Matrix : public utility::pointer::ReferenceCount {
+class DP_Matrix : public utility::VirtualBase {
 
 	typedef utility::pointer::shared_ptr< Cell > CellOP;
 	typedef utility::vector1< CellOP > Row;

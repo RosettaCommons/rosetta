@@ -27,7 +27,7 @@
 #include <core/scoring/ScoreType.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 
@@ -91,7 +91,7 @@ public:
 	require_all_target_residue_atom_coordinates() const override;
 
 	bool
-	require_target_atom_coordinate( Size target_atom_id ) const override;
+	require_target_atom_coordinate( core::Size target_atom_id ) const override;
 
 	virtual
 	bool

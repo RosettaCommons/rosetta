@@ -151,7 +151,7 @@ VarLengthBuild::VarLengthBuild( BuildManager const & manager, RemodelData const 
 
 /// @brief copy constructor
 VarLengthBuild::VarLengthBuild( VarLengthBuild const & rval ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Super( rval ),
 	manager_( rval.manager_ ),
 	sfx_( rval.sfx_->clone() ),
@@ -351,7 +351,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 	}
 	if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {
 
-		Size len_start = remodel_data_.sequence.length();
+		core::Size len_start = remodel_data_.sequence.length();
 
 		// length should honor the blueprint length, and subsequently if the input
 		// pose is longer than blueprint, allow copying of phi-psi beyond the last
@@ -359,14 +359,14 @@ void VarLengthBuild::apply( Pose & pose ) {
 		//cache the phi psi angles
 		//if (len_start < pose.size() && len_start * (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure]) == pose.size() ){
 		if ( len_start < pose.size() ) {
-			for ( Size i = len_start+1; i <= pose.size(); i++ ) {
+			for ( core::Size i = len_start+1; i <= pose.size(); i++ ) {
 				cached_phi.push_back( pose.phi( i ) );
 				cached_psi.push_back( pose.psi( i ) );
 				cached_omega.push_back( pose.omega( i ));
 			}
 			//std::cout << "HERE1-1" << std::endl;
 
-			Size max_pdb_index = remodel_data_.blueprint.size()*2;
+			core::Size max_pdb_index = remodel_data_.blueprint.size()*2;
 			//std::cout << "max_pdb index" << max_pdb_index <<  std::endl;
 
 			while ( pose.size() > max_pdb_index ) {
@@ -387,9 +387,9 @@ void VarLengthBuild::apply( Pose & pose ) {
 		// adding a tail to the starter monomer pose
 		if ( pose.size() < (remodel_data_.sequence.length()*2) ) {
 
-			Size len_diff = (2*remodel_data_.sequence.length()) - pose.size();
+			core::Size len_diff = (2*remodel_data_.sequence.length()) - pose.size();
 			// append a tail of the same length
-			for ( Size i = 1; i<= len_diff; i++ ) {
+			for ( core::Size i = 1; i<= len_diff; i++ ) {
 				//core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(2).residue_type_set());
 				core::chemical::ResidueTypeSetCOP const & rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map("VAL") ) );
@@ -407,9 +407,9 @@ void VarLengthBuild::apply( Pose & pose ) {
 		// adding a tail to the starter monomer pose
 		if ( archive_pose.size() < (remodel_data_.sequence.length()*2) ) {
 
-			Size len_diff = (2*remodel_data_.sequence.length()) - archive_pose.size();
+			core::Size len_diff = (2*remodel_data_.sequence.length()) - archive_pose.size();
 			// append a tail of the same length
-			for ( Size i = 1; i<= len_diff; i++ ) {
+			for ( core::Size i = 1; i<= len_diff; i++ ) {
 				//core::chemical::ResidueTypeSet const & rsd_set = (archive_pose.residue(2).residue_type_set());
 				core::chemical::ResidueTypeSetCOP const & rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map("VAL") ) );
@@ -432,7 +432,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 		repeat_tail_length_ = remodel_data_.sequence.length();
 
 		//update the new lengthened pose with pose angles.
-		for ( Size i = remodel_data_.sequence.length()+1, j=1; i<= pose.size(); i++,j++ ) {
+		for ( core::Size i = remodel_data_.sequence.length()+1, j=1; i<= pose.size(); i++,j++ ) {
 			if ( cached_phi.size() != 0 ) {
 				pose.set_phi(i, cached_phi[j]);
 				pose.set_psi(i, cached_psi[j]);
@@ -499,10 +499,10 @@ void VarLengthBuild::apply( Pose & pose ) {
 			//remove the added residue
 			//pose.conformation().delete_residue_slow(pose.size());
 			//need to extend the archive pose, otherwise the connectivity is wrong
-			for ( Size ii = 1; ii<=remodel_data_.sequence.length(); ++ii ) {
+			for ( core::Size ii = 1; ii<=remodel_data_.sequence.length(); ++ii ) {
 				ResidueType const & rsd_type(pose.residue_type(ii));
-				Size res1 = ii;
-				Size res2 = ii+remodel_data_.sequence.length();
+				core::Size res1 = ii;
+				core::Size res2 = ii+remodel_data_.sequence.length();
 				replace_pose_residue_copying_existing_coordinates(archive_pose,res1,rsd_type);
 				replace_pose_residue_copying_existing_coordinates(archive_pose,res2,rsd_type);
 			}
@@ -669,8 +669,8 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		//buildManager at some point
 
 		//find insertion
-		Size insertStartIndex = remodel_data_.dssp_updated_ss.find_first_of("I");
-		Size insertEndIndex = remodel_data_.dssp_updated_ss.find_last_of("I");
+		core::Size insertStartIndex = remodel_data_.dssp_updated_ss.find_first_of("I");
+		core::Size insertEndIndex = remodel_data_.dssp_updated_ss.find_last_of("I");
 
 		//loop over the interval set to find insertion and split it into two sections
 		for ( auto i = loop_intervals.begin(), ie = loop_intervals.end(); i != ie; ++i ) {
@@ -711,7 +711,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 	loop_intervals = manager_.intervals_containing_undefined_positions();
 
 	for ( auto interval : loop_intervals ) {
-		Size n_cuts = count_cutpoints( pose, interval.left, interval.right );
+		core::Size n_cuts = count_cutpoints( pose, interval.left, interval.right );
 
 		if ( basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user() ) {
 			//if (interval.right == pose.size()){
@@ -728,7 +728,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 		// setup regions
 		// setup regions
 		if ( interval.left != 1 && interval.right != pose.size() ) { //internal loop
-			Size cutpoint = find_cutpoint( pose, interval.left, interval.right );
+			core::Size cutpoint = find_cutpoint( pose, interval.left, interval.right );
 			loops::LoopOP tempLoop( new Loop( interval.left, interval.right, cutpoint, 0.0, true ) );
 			if ( cutpoint == 0 ) {
 				tempLoop->choose_cutpoint( pose );
@@ -923,7 +923,7 @@ void VarLengthBuild::pick_all_fragments(
 	String const & complete_aa,
 	utility::vector1< String > const & complete_abego,
 	Interval const & interval,
-	Size const n_frags
+	core::Size const n_frags
 )
 {
 	using core::fragment::ConstantLengthFragSet;
@@ -984,8 +984,8 @@ VarLengthBuild::FrameList VarLengthBuild::pick_fragments(
 	String const & complete_aa,
 	utility::vector1< String > const & complete_abego,
 	Interval const & interval,
-	Size const frag_length,
-	Size const n_frags
+	core::Size const frag_length,
+	core::Size const n_frags
 )
 {
 	using core::fragment::Frame;
@@ -998,7 +998,7 @@ VarLengthBuild::FrameList VarLengthBuild::pick_fragments(
 
 	FrameList frames;
 
-	for ( Size j = 0, je = interval.length(); j < je; ++j ) {
+	for ( core::Size j = 0, je = interval.length(); j < je; ++j ) {
 		TR << "picking " << n_frags << " " << frag_length << "-mers for position " << ( interval.left + j ) << std::endl;
 
 		String ss_sub = complete_ss.substr( interval.left + j - 1, frag_length );
@@ -1020,9 +1020,9 @@ VarLengthBuild::FrameList VarLengthBuild::pick_fragments(
 		if ( complete_abego.size() > 0 ) {
 			//runtime_assert( complete_ss.length() == complete_abego.size() );
 			//causing issues with symmetry
-			Size pos( 1 );
+			core::Size pos( 1 );
 			abego_sub.resize( frag_length );
-			for ( Size ii = interval.left + j; ii <= interval.left + j + frag_length - 1; ++ii, ++pos ) {
+			for ( core::Size ii = interval.left + j; ii <= interval.left + j + frag_length - 1; ++ii, ++pos ) {
 				if ( ii > complete_abego.size() ) {
 					abego_sub[ pos ] = "X";
 				} else {
@@ -1062,14 +1062,14 @@ void VarLengthBuild::set_starting_non_canonical(Pose & pose){
 	std::string const & non_canonical_str =option[OptionKeys::remodel::staged_sampling::starting_non_canonical];
 	utility::vector1< std::string > set_starting_residue_v( utility::string_split( non_canonical_str , ',' ) );
 	std::string aa_type = set_starting_residue_v[1];
-	Size pos;
+	core::Size pos;
 	std::stringstream(set_starting_residue_v[2]) >> pos;
 	ResidueTypeSetCOP rsd_type_set(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID ));
 	ResidueTypeCOPs allowed_types = core::chemical::ResidueTypeFinder( *rsd_type_set ).name3( aa_type ).get_all_possible_residue_types();
 	ResidueType const & rsd_type = *allowed_types[1];
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 		replace_pose_residue_copying_existing_coordinates(pose,pos,rsd_type);//pose has two coppies. This is the first
-		Size repeat_length = pose.total_residue()/2;
+		core::Size repeat_length = pose.total_residue()/2;
 		replace_pose_residue_copying_existing_coordinates(pose,pos+repeat_length,rsd_type);
 	} else {
 		replace_pose_residue_copying_existing_coordinates(pose,pos,rsd_type);

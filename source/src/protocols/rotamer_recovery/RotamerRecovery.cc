@@ -79,7 +79,7 @@ RotamerRecovery::~RotamerRecovery() = default;
 RotamerRecovery::RotamerRecovery(
 	RotamerRecovery const & src
 ) :
-	ReferenceCount(),
+	VirtualBase(),
 	protocol_( src.protocol_ ),
 	comparer_( src.comparer_ ),
 	reporter_( src.reporter_ )

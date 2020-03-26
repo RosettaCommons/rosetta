@@ -56,7 +56,7 @@ namespace design {
 
 //Sampling weights not currently implemented
 //struct SamplingWeights {
-// std::map< Size,  Real > types; //Used to sample more of one type then others.  Sample most in type1, but use a bit of type2/3.
+// std::map< core::Size,  Real > types; //Used to sample more of one type then others.  Sample most in type1, but use a bit of type2/3.
 // Real native_cluster; //May be used to weight the sampling of native clusters vs others.
 // Real cdr; //Used to sample more of one or particular CDRs rather then others (H3)
 // Real center; //Used to sample more of cluster centers then other CDRs.

@@ -37,7 +37,7 @@ namespace clusters {
 
 /// @brief Class that can determine a CDR Cluster, hold that information, and give it out when asked.
 ///
-class CDRClusterSet : public utility::pointer::ReferenceCount {
+class CDRClusterSet : public utility::VirtualBase {
 public:
 
 	/// @brief Constructor should only be used within AntibodyInfo, as it requires and is part of AbInfo.

@@ -86,7 +86,7 @@ NMRDummySpinlabelConformer::NMRDummySpinlabelConformer(
 	Real const freq,
 	conformation::Residue const & residue
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	id_(id),
 	nobs_(nobs),
 	frequency_(freq),
@@ -109,7 +109,7 @@ NMRDummySpinlabelConformer::NMRDummySpinlabelConformer(
 	utility::vector1< std::string > const & names,
 	utility::vector1< Vector > const & coords
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	id_(id),
 	nobs_(nobs),
 	frequency_(freq),
@@ -146,7 +146,7 @@ NMRDummySpinlabelConformer::NMRDummySpinlabelConformer(
 	chemical::ResidueType const & restype,
 	AtomNamePosMap const & names_coords
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	id_(id),
 	nobs_(nobs),
 	frequency_(freq),
@@ -175,7 +175,7 @@ NMRDummySpinlabelConformer::NMRDummySpinlabelConformer(
 
 /// @brief copy constructor
 NMRDummySpinlabelConformer::NMRDummySpinlabelConformer(NMRDummySpinlabelConformer const & other) :
-	utility::pointer::ReferenceCount( other ),
+	utility::VirtualBase( other ),
 	id_(other.id_),
 	nobs_(other.nobs_),
 	frequency_(other.frequency_),
@@ -218,7 +218,7 @@ NMRDummySpinlabelConformer::~NMRDummySpinlabelConformer() { }
 
 /// @brief Construct from database file
 NMRDummySpinlabelEnsemble::NMRDummySpinlabelEnsemble(std::string const & database_file, chemical::ResidueType const & restype) :  /* throw(utility::excn::FileNotFound, utility::excn::Exception) */
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	grid_(nullptr),
 	elaborate_clash_check_(false)
 {
@@ -566,7 +566,7 @@ NMRDummySpinlabelEnsemble::clash_check(
 
 /// @brief copy constructor
 NMRDummySpinlabelEnsemble::NMRDummySpinlabelEnsemble(NMRDummySpinlabelEnsemble const & other) :
-	utility::pointer::ReferenceCount( other ),
+	utility::VirtualBase( other ),
 	ensemble_size_(other.ensemble_size_),
 	ensemble_origin_(other.ensemble_origin_),
 	rmsd_mat_(other.rmsd_mat_),

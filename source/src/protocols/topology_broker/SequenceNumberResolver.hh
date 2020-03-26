@@ -18,7 +18,7 @@
 #include <protocols/topology_broker/SequenceNumberResolver.fwd.hh>
 
 // Package Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/topology_broker/Exceptions.hh>
 
 
@@ -33,7 +33,7 @@
 namespace protocols {
 namespace topology_broker {
 
-class SequenceNumberResolver : public utility::pointer::ReferenceCount {
+class SequenceNumberResolver : public utility::VirtualBase {
 
 public:
 	SequenceNumberResolver() {}

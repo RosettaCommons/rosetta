@@ -27,7 +27,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #include <map>
@@ -45,14 +45,14 @@ namespace align {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
-class StepWiseLegacyClusterer: public utility::pointer::ReferenceCount {
+class StepWiseLegacyClusterer: public utility::VirtualBase {
 public:
 
 	//constructor!
 	StepWiseLegacyClusterer( utility::vector1< core::pose::PoseOP > const & pose_list );
 
 	StepWiseLegacyClusterer( utility::vector1< core::pose::PoseOP > const & pose_list,
-		utility::vector1< Size > const & moving_res_list,
+		utility::vector1< core::Size > const & moving_res_list,
 		options::StepWiseModelerOptionsCOP options,
 		bool const force_align );
 
@@ -97,7 +97,7 @@ private:
 	void
 	do_some_clustering();
 
-	Size
+	core::Size
 	check_for_closeness( core::pose::PoseOP rms_pose );
 
 	void
@@ -110,11 +110,11 @@ private:
 	initialize_auto_tune_cluster_rmsds();
 
 	core::io::silent::SilentStructOP
-	setup_silent_struct( Size const n );
+	setup_silent_struct( core::Size const n );
 
 private:
 
-	Size max_decoys_;
+	core::Size max_decoys_;
 	core::Real cluster_radius_;
 	bool cluster_by_all_atom_rmsd_;
 	core::Real score_diff_cut_;
@@ -132,7 +132,7 @@ private:
 
 	utility::vector1< core::Real > cluster_rmsds_to_try_with_auto_tune_;
 
-	Size input_pose_counter_;
+	core::Size input_pose_counter_;
 	bool hit_score_cutoff_;
 	bool initialized_atom_id_map_for_rmsd_;
 	utility::vector1< core::Size > calc_rms_res_;

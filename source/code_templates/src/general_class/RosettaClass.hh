@@ -19,13 +19,13 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 --namespace--
 
 /// @brief --brief--
 /// @author --name-- (--email--)
-class --class-- : public utility::pointer::ReferenceCount {
+class --class-- : public utility::VirtualBase {
 
 public:
 

@@ -149,10 +149,10 @@ RDCEnergy::calcualate_total_score_and_tensors(Pose & pose) const {
 
 	// Some basic setup
 	Real total_score(0);
-	Size number_media(rdc_data_all.get_number_alignment_media());
+	core::Size number_media(rdc_data_all.get_number_alignment_media());
 	utility::vector1< RDCMultiSetOP > & rdc_multiset_vec = rdc_data_all.get_rdc_multiset_vec();
 
-	for ( Size i = 1; i <= number_media; ++i ) {
+	for ( core::Size i = 1; i <= number_media; ++i ) {
 		rdc_multiset_vec[i]->update_spin_coordinates( pose );
 		Real multiset_score(0);
 
@@ -205,25 +205,25 @@ RDCEnergy::setup_for_minimizing(
 	atom_id_to_rdc_xyz_deriv_map_.fill_with(fij_spinA);
 
 	utility::vector1< RDCMultiSetOP > & multiset_vec = rdc_data_all.get_rdc_multiset_vec();
-	Size number_media(rdc_data_all.get_number_alignment_media());
+	core::Size number_media(rdc_data_all.get_number_alignment_media());
 	utility::vector1<RDCSingle>::const_iterator iter;
 
-	for ( Size i = 1; i <= number_media; ++i ) {
+	for ( core::Size i = 1; i <= number_media; ++i ) {
 		utility::vector1< RDCSingleSetOP > const & singleset_vec = multiset_vec[i]->get_rdc_singleset_vec();
-		Size number_experiments(multiset_vec[i]->get_number_experiments());
+		core::Size number_experiments(multiset_vec[i]->get_number_experiments());
 		core::conformation::symmetry::SymmetryInfoCOP syminfo_ptr;
 		if ( multiset_vec[i]->symmetric_rdc_calc() && core::pose::symmetry::is_symmetric(pose) ) {
 			syminfo_ptr = core::pose::symmetry::symmetry_info( pose );
 		}
 
-		for ( Size j = 1; j <= number_experiments; ++j ) {
+		for ( core::Size j = 1; j <= number_experiments; ++j ) {
 			utility::vector1<RDCSingle> const & single_rdc_vec = singleset_vec[j]->get_single_rdc_vec();
 
 			for ( iter = single_rdc_vec.begin(); iter != single_rdc_vec.end(); ++iter ) {
 				utility::vector1< std::pair< core::id::AtomID, core::id::AtomID > > const & spinsAB = iter->get_spinsAB();
 				utility::vector1< std::pair< Vector, Vector > > const & atom_derivatives = iter->get_atom_derivatives();
 				runtime_assert_msg(spinsAB.size() == atom_derivatives.size(), "ERROR in setup of atom tree minimization from RDC derivatives. Vector of AtomIDs and of derivatives have unequal length.");
-				for ( Size k = 1; k <= spinsAB.size(); ++k ) {
+				for ( core::Size k = 1; k <= spinsAB.size(); ++k ) {
 					fij_spinA = atom_id_to_rdc_xyz_deriv_map_.get(spinsAB[k].first);  // returns (0,0,0) if atom is not present in map, otherwise the corresponding derivative
 					fij_spinB = atom_id_to_rdc_xyz_deriv_map_.get(spinsAB[k].second);
 					fij_spinA += atom_derivatives[k].first;                    // accumulates the derivative for that particular atom (for all rdc data)
@@ -233,12 +233,12 @@ RDCEnergy::setup_for_minimizing(
 				}
 				// Do another pass to set RDC derivatives for symmetric residues
 				if ( syminfo_ptr ) {
-					for ( Size k = 1; k <= spinsAB.size(); ++k ) {
-						utility::vector1< Size >spinA_symm_rsd = syminfo_ptr->bb_clones(spinsAB[k].first.rsd());
-						utility::vector1< Size >spinB_symm_rsd = syminfo_ptr->bb_clones(spinsAB[k].second.rsd());
+					for ( core::Size k = 1; k <= spinsAB.size(); ++k ) {
+						utility::vector1< core::Size >spinA_symm_rsd = syminfo_ptr->bb_clones(spinsAB[k].first.rsd());
+						utility::vector1< core::Size >spinB_symm_rsd = syminfo_ptr->bb_clones(spinsAB[k].second.rsd());
 						runtime_assert(spinA_symm_rsd.size() == spinB_symm_rsd.size());
 
-						for ( Size l = 1, l_end = spinA_symm_rsd.size(); l <= l_end; ++l ) {
+						for ( core::Size l = 1, l_end = spinA_symm_rsd.size(); l <= l_end; ++l ) {
 							core::id::AtomID spinA_symm(spinsAB[k].first.atomno(), spinA_symm_rsd[l]);
 							core::id::AtomID spinB_symm(spinsAB[k].second.atomno(), spinB_symm_rsd[l]);
 
@@ -329,7 +329,7 @@ RDCEnergy::show_additional_info(
 	// Some basic setup
 	RDCData & rdc_data_all = get_rdc_data_from_pose(pose);
 	Real rdc_score = calcualate_total_score_and_tensors(pose);
-	Size number_media(rdc_data_all.get_number_alignment_media());
+	core::Size number_media(rdc_data_all.get_number_alignment_media());
 	utility::vector1< Real > scores_all_media(number_media, 0.0); // set all scores to zero because we are going to use +=
 	utility::vector1< RDCMultiSetOP > & multiset_vec = rdc_data_all.get_rdc_multiset_vec();
 
@@ -342,12 +342,12 @@ RDCEnergy::show_additional_info(
 	// Loop over RDCMultiSets
 	Real sum_all_dev_square(0);
 	Real sum_all_exp_square(0);
-	Size total_number_rdcs(0);
-	Size total_number_experiments(0);
-	for ( Size i = 1; i <= number_media; ++i ) {
+	core::Size total_number_rdcs(0);
+	core::Size total_number_experiments(0);
+	for ( core::Size i = 1; i <= number_media; ++i ) {
 		Real sum_dev_square(0);
 		Real sum_exp_square(0);
-		Size number_experiments(multiset_vec[i]->get_number_experiments());
+		core::Size number_experiments(multiset_vec[i]->get_number_experiments());
 		utility::vector1< RDCSingleSetOP > const & singleset_vec = multiset_vec[i]->get_rdc_singleset_vec();
 
 		// Tensor is for all experiments the same
@@ -368,8 +368,8 @@ RDCEnergy::show_additional_info(
 		utility::vector1< utility::vector1< RDCMultiSet::SpinPairCoordinates > > const & spin_coordinates = multiset_vec[i]->get_spin_coordinates();
 		ObjexxFCL::FArray1D<Real> const & rdc_values = multiset_vec[i]->get_rdc_values();
 		ObjexxFCL::FArray1D<Real> const & rdc_single_weights = multiset_vec[i]->get_rdc_single_weights();
-		Size number_rdcs_per_medium(multiset_vec[i]->get_total_number_rdc());
-		Size num_subunits(1);
+		core::Size number_rdcs_per_medium(multiset_vec[i]->get_total_number_rdc());
+		core::Size num_subunits(1);
 		if ( multiset_vec[i]->symmetric_rdc_calc() && core::pose::symmetry::is_symmetric(pose) ) {
 			core::conformation::symmetry::SymmetryInfoCOP syminfo_ptr = core::pose::symmetry::symmetry_info( pose );
 			num_subunits = syminfo_ptr->subunits();
@@ -392,13 +392,13 @@ RDCEnergy::show_additional_info(
 		Real A_zz = (4.0 * Da) / (3.0 * Dmax_);
 		Real A_xx = Da/Dmax_ * (-2.0/3.0 + R);
 		Real A_yy = Da/Dmax_ * (-2.0/3.0 - R);
-		Size index_offset(0);
+		core::Size index_offset(0);
 		Real Dmax;
 
 		// Loop over single RDC experiments per alignment medium
-		for ( Size j = 1; j <= number_experiments; ++j ) {
+		for ( core::Size j = 1; j <= number_experiments; ++j ) {
 			Real score_single_experiment(0);
-			Size number_rdcs_per_experiment(singleset_vec[j]->get_number_rdc());
+			core::Size number_rdcs_per_experiment(singleset_vec[j]->get_number_rdc());
 			// RDC prefactor
 			Dmax = rdc_D_max(singleset_vec[j]->get_rdc_type(), correct_sign);
 
@@ -417,15 +417,15 @@ RDCEnergy::show_additional_info(
 				tracer << " --------------------------------------------------------------------------------------------------------------------------------- " << std::endl;
 			}
 			// loop over no subunits
-			for ( Size su = 1; su <= num_subunits; ++su ) {
+			for ( core::Size su = 1; su <= num_subunits; ++su ) {
 
 				// Calculate all RDCs for this experiment
-				for ( Size k = 1, no_rdcs = number_rdcs_per_experiment; k <= no_rdcs; ++k ) {
+				for ( core::Size k = 1, no_rdcs = number_rdcs_per_experiment; k <= no_rdcs; ++k ) {
 					Real calc_rdc(0);
-					Size n_eq_spins(spin_coordinates[index_offset + no_rdcs*(su-1) + k].size());
+					core::Size n_eq_spins(spin_coordinates[index_offset + no_rdcs*(su-1) + k].size());
 
 					// loop over equivalent spins
-					for ( Size m = 1; m <= n_eq_spins; ++m ) {
+					for ( core::Size m = 1; m <= n_eq_spins; ++m ) {
 
 						// vector between spins A and B
 						Real x(spin_coordinates[index_offset + no_rdcs*(su-1) + k][m].second.x()

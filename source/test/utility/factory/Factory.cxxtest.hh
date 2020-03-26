@@ -20,14 +20,14 @@
 
 // Project headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
 
 
 /// @brief Product interface class
-class Product : public utility::pointer::ReferenceCount {
+class Product : public utility::VirtualBase {
 
 public: // Types
 

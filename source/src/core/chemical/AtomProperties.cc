@@ -15,11 +15,13 @@
 #include <core/chemical/AtomProperties.hh>
 #include <core/chemical/AtomPropertiesManager.hh>
 
+#include <core/types.hh>
+
 // Basic headers
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -46,14 +48,14 @@ namespace chemical {
 // Public methods /////////////////////////////////////////////////////////////
 // Standard methods ///////////////////////////////////////////////////////////
 // Default constructor
-AtomProperties::AtomProperties() : utility::pointer::ReferenceCount()
+AtomProperties::AtomProperties() : utility::VirtualBase()
 {
 	init();
 }
 
 // Copy constructor
 AtomProperties::AtomProperties( AtomProperties const & object_to_copy ) :
-	utility::pointer::ReferenceCount( object_to_copy )
+	utility::VirtualBase( object_to_copy )
 {
 	copy_data( *this, object_to_copy );
 }
@@ -93,7 +95,7 @@ AtomProperties::show( std::ostream & output ) const
 
 	output << "   Properties:";
 	utility::vector1< string > const & properties( get_list_of_properties() );
-	Size const n_properties( properties.size() );
+	core::Size const n_properties( properties.size() );
 	for ( platform::uint i( 1 ); i <= n_properties; ++i ) {
 		output << ' ' << properties[ i ];
 	}

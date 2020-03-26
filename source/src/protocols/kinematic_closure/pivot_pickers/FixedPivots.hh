@@ -28,7 +28,7 @@ class FixedPivots : public PivotPicker {
 
 public:
 	/// @brief Constructor which specifies the fixed pivots.
-	FixedPivots(Size start, Size stop, Size cut);
+	FixedPivots(core::Size start, core::Size stop, core::Size cut);
 
 public:
 	/// @copydoc PivotPicker::get_name
@@ -38,7 +38,7 @@ public:
 	Loop pick(Pose const & pose, Loop const & loop) override;
 
 private:
-	Size start_, stop_, cut_;
+	core::Size start_, stop_, cut_;
 
 };
 

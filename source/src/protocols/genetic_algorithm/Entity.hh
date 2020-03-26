@@ -24,7 +24,7 @@
 #include <utility/vector1.hh>
 #include <utility/factory/WidgetFactory.hh>
 #include <utility/factory/WidgetRegistrator.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 
@@ -41,14 +41,14 @@ namespace genetic_algorithm {
 
 /// Entity element
 
-class EntityElement : public utility::pointer::ReferenceCount {
+class EntityElement : public utility::VirtualBase {
 public:
 	typedef core::Size Size;
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 
 public:
 	EntityElement();
-	EntityElement( Size index );
+	EntityElement( core::Size index );
 	EntityElement( std::string & word ); // This constructor nibbles away at the input string
 	EntityElement( EntityElement const & ) = default;
 	// Need virtual operator= to avoid slicing with respect to subtype assignments
@@ -58,9 +58,9 @@ public:
 	virtual EntityElementOP clone() = 0;
 	virtual EntityElementOP fresh_instance() = 0;
 
-	Size index() const;
-	void index( Size index );
-	virtual Size hash() const = 0;
+	core::Size index() const;
+	void index( core::Size index );
+	virtual core::Size hash() const = 0;
 
 	virtual bool operator <  ( EntityElement const & rhs ) const;
 	virtual bool operator == ( EntityElement const & rhs ) const;
@@ -69,12 +69,12 @@ public:
 	virtual std::string name() const = 0; // Each entity element must have a distinct name
 
 private:
-	Size index_;
+	core::Size index_;
 };
 
 /// Entity element creator
 
-class EntityElementCreator : public utility::pointer::ReferenceCount {
+class EntityElementCreator : public utility::VirtualBase {
 public:
 	~EntityElementCreator() override;
 	virtual std::string widget_name() const = 0;
@@ -114,7 +114,7 @@ public:
 /// Entity: a vector of EntityElements used to describe the state for a system
 /// under optimization.
 
-class Entity : public utility::pointer::ReferenceCount {
+class Entity : public utility::VirtualBase {
 
 public:
 	typedef utility::pointer::shared_ptr< Entity > OP;

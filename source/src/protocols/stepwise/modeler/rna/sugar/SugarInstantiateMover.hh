@@ -30,7 +30,7 @@ class SugarInstantiateMover: public protocols::moves::Mover {
 public:
 
 	//constructor
-	SugarInstantiateMover( Size const moving_res );
+	SugarInstantiateMover( core::Size const moving_res );
 
 	//destructor
 	~SugarInstantiateMover() override;
@@ -42,7 +42,7 @@ public:
 
 private:
 
-	Size const moving_res_;
+	core::Size const moving_res_;
 
 };
 

@@ -29,7 +29,7 @@
 #include <numeric/geometry/BoundingBox.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 
@@ -37,9 +37,9 @@ namespace protocols {
 namespace match {
 namespace downstream {
 
-class ActiveSiteGrid : public utility::pointer::ReferenceCount {
+class ActiveSiteGrid : public utility::VirtualBase {
 public:
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 	typedef core::Size Size;
 	typedef core::Real Real;
 	typedef core::Vector Vector;

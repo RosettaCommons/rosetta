@@ -35,7 +35,7 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 #include <string>
@@ -205,9 +205,9 @@ void FragInsertAndAlignMover::apply( core::pose::Pose & pose, int idx, bool idea
 	// x_i' <- = R*x_i + com1;
 
 
-	for ( Size i = 0; i < len; ++i ) {
+	for ( core::Size i = 0; i < len; ++i ) {
 		//std::cout << i << " " << j << "  " << pose.xyz(id) << "   " << R * ( pose.xyz(id) - com2) + com1
-		for ( Size j = 1; j <= pose.residue_type(start+i).natoms(); ++j ) {
+		for ( core::Size j = 1; j <= pose.residue_type(start+i).natoms(); ++j ) {
 			id::AtomID id( j, start+i );
 			pose.set_xyz( id, R * ( pose.xyz(id) - com2) + com1 );
 		}

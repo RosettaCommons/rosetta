@@ -58,7 +58,7 @@ UnfoldedStateEnergyCalculatorMover::~UnfoldedStateEnergyCalculatorMover() = defa
 
 /// @brief cctor
 UnfoldedStateEnergyCalculatorMover::UnfoldedStateEnergyCalculatorMover( UnfoldedStateEnergyCalculatorMover const & usecm ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Mover( "UnfoldedStateEnergyCalculatorMover" ),
 	job_dist_( usecm.job_dist_ ),
 	pack_scrfxn_( usecm.pack_scrfxn_ ),
@@ -86,7 +86,7 @@ UnfoldedStateEnergyCalculatorMover::UnfoldedStateEnergyCalculatorMover(
 	bool repack_fragments,
 	bool native_sequence,
 	std::string const & sequence_match_sequence,
-	Size sequence_match_position,
+	core::Size sequence_match_position,
 	bool sequence_matched_fragments
 ):
 	Mover( "UnfoldedStateEnergyCalculatorMover" ),
@@ -112,15 +112,15 @@ void
 UnfoldedStateEnergyCalculatorMover::create_random_fragments( Pose & pose, vector1< Pose > & fragments )
 {
 	// get number of protein residues
-	Size num_protein_res( 0 );
-	for ( Size i = 1; i < pose.size(); ++i ) {
+	core::Size num_protein_res( 0 );
+	for ( core::Size i = 1; i < pose.size(); ++i ) {
 		if ( pose.residue( i ).type().is_protein() ) {
 			num_protein_res++;
 		}
 	}
 
 	// get number of fragments
-	Size frag_number( num_protein_res / frag_length_ ); // this seems to give a reasonable number of fragments
+	core::Size frag_number( num_protein_res / frag_length_ ); // this seems to give a reasonable number of fragments
 
 	// check frag number
 	if ( frag_number == 0 ) {
@@ -131,7 +131,7 @@ UnfoldedStateEnergyCalculatorMover::create_random_fragments( Pose & pose, vector
 	do {
 
 		// generate a random start location within this structure; use a random number whose range does not include the termini.
-		Size frag_start( numeric::random::random_range( 1,  num_protein_res - frag_length_ + 1 ) );
+		core::Size frag_start( numeric::random::random_range( 1,  num_protein_res - frag_length_ + 1 ) );
 
 		// if the fragment is bad
 		if ( !fragment_check( pose, frag_start ) ) continue;
@@ -141,7 +141,7 @@ UnfoldedStateEnergyCalculatorMover::create_random_fragments( Pose & pose, vector
 		// create fragment pose
 		Pose frag_temp;
 		frag_temp.append_residue_by_jump( pose.residue( frag_start ), 1 );
-		for ( Size i(frag_start + 1); i < frag_start + frag_length_; ++i ) {
+		for ( core::Size i(frag_start + 1); i < frag_start + frag_length_; ++i ) {
 			frag_temp.append_residue_by_bond( pose.residue( i ) );
 		}
 
@@ -156,8 +156,8 @@ UnfoldedStateEnergyCalculatorMover::create_sequence_match_fragments( Pose & pose
 {
 
 	// find all the places in the sequence that match our input sequence match
-	utility::vector1< Size > match_start_pos;
-	Size temp( std::string::npos );
+	utility::vector1< core::Size > match_start_pos;
+	core::Size temp( std::string::npos );
 	temp = pose.sequence().find( sequence_match_sequence_ );
 	while ( temp != std::string::npos ) {
 		match_start_pos.push_back( temp );
@@ -165,10 +165,10 @@ UnfoldedStateEnergyCalculatorMover::create_sequence_match_fragments( Pose & pose
 	}
 
 	// use frag length and central residue number to determine if fragment is good
-	for ( Size i( 1 ); i <= match_start_pos.size(); ++i ) {
+	for ( core::Size i( 1 ); i <= match_start_pos.size(); ++i ) {
 
 		// calculate start position
-		Size frag_start( match_start_pos[ i ] + sequence_match_position_ - frag_length_ / 2 );
+		core::Size frag_start( match_start_pos[ i ] + sequence_match_position_ - frag_length_ / 2 );
 
 		// if the fragment is bad
 		if ( !fragment_check( pose, frag_start) ) continue;
@@ -178,7 +178,7 @@ UnfoldedStateEnergyCalculatorMover::create_sequence_match_fragments( Pose & pose
 		// create fragment pose
 		Pose frag_temp;
 		frag_temp.append_residue_by_jump( pose.residue( frag_start ), 1 );
-		for ( Size i(frag_start + 1); i < frag_start + frag_length_; ++i ) {
+		for ( core::Size i(frag_start + 1); i < frag_start + frag_length_; ++i ) {
 			frag_temp.append_residue_by_bond( pose.residue( i ) );
 		}
 
@@ -189,24 +189,24 @@ UnfoldedStateEnergyCalculatorMover::create_sequence_match_fragments( Pose & pose
 
 /// @brief Check fragment residues should be polymeric and on same chain
 bool
-UnfoldedStateEnergyCalculatorMover::fragment_check( Pose & pose, Size frag_start )
+UnfoldedStateEnergyCalculatorMover::fragment_check( Pose & pose, core::Size frag_start )
 {
 	// do not go past the begining or end of the pose
 	if ( frag_start <= 0 ) return false;
 	if ( frag_start + frag_length_ > pose.size() ) return false;
 
 	// all residues should be on the same chain
-	for ( Size i( frag_start ); i <= frag_start + frag_length_; ++i ) {
+	for ( core::Size i( frag_start ); i <= frag_start + frag_length_; ++i ) {
 		if ( pose.chain( frag_start ) != pose.chain( i ) ) return false;
 	}
 
 	// all residues should be polymeric
-	for ( Size i( frag_start ); i <= frag_start + frag_length_; ++i ) {
+	for ( core::Size i( frag_start ); i <= frag_start + frag_length_; ++i ) {
 		if ( !pose.residue( i ).type().is_polymer() ) return false;
 	}
 
 	// all residues should not be nucleic acid
-	for ( Size i( frag_start ); i <= frag_start + frag_length_; ++i ) {
+	for ( core::Size i( frag_start ); i <= frag_start + frag_length_; ++i ) {
 		if ( pose.residue( i ).type().is_NA() ) return false;
 	}
 
@@ -221,7 +221,7 @@ UnfoldedStateEnergyCalculatorMover::apply( Pose & pose )
 	vector1< Pose > fragments;
 
 	// get central residue size
-	Size frag_cent_res_number( ( frag_length_ / 2 ) + 1 );
+	core::Size frag_cent_res_number( ( frag_length_ / 2 ) + 1 );
 
 	// create sequence matched frgments or random fragments
 	if ( sequence_matched_fragments_ ) {
@@ -232,7 +232,7 @@ UnfoldedStateEnergyCalculatorMover::apply( Pose & pose )
 
 	// mutate central residue if native_sequence flag is false
 	if ( !native_sequence_ ) {
-		for ( Size i( 1 ); i <= fragments.size(); ++i ) {
+		for ( core::Size i( 1 ); i <= fragments.size(); ++i ) {
 			protocols::simple_moves::MutateResidueOP mut_res_mvr( new protocols::simple_moves::MutateResidue( frag_cent_res_number, mut_aa_ ) );
 			mut_res_mvr->apply( fragments[i] );
 		}
@@ -240,14 +240,14 @@ UnfoldedStateEnergyCalculatorMover::apply( Pose & pose )
 
 	// check repack fragment central residues
 	if ( repack_fragments_ ) {
-		for ( Size i(1); i <= fragments.size(); ++i ) {
+		for ( core::Size i(1); i <= fragments.size(); ++i ) {
 
 			// create packer task
 			pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( fragments[ i ] ) );
 			task->initialize_from_command_line();
 
 			// set all residues in fragment to only repack
-			for ( Size j(1); j <= frag_length_; ++j ) {
+			for ( core::Size j(1); j <= frag_length_; ++j ) {
 				task->nonconst_residue_task( j ).restrict_to_repacking();
 			}
 
@@ -258,10 +258,10 @@ UnfoldedStateEnergyCalculatorMover::apply( Pose & pose )
 
 	/*
 	// DEBUG output pdbs of fragments
-	for ( Size i( 1 ); i <= fragments.size(); ++i ) {
+	for ( core::Size i( 1 ); i <= fragments.size(); ++i ) {
 	std::stringstream outputfilename;
 	outputfilename << "pack_frag_" << i;
-	for ( Size j( 1 ); j <= frag_length_; ++j ) {
+	for ( core::Size j( 1 ); j <= frag_length_; ++j ) {
 	outputfilename << "_" << fragments[ i ].residue( j ).type().name3();
 	}
 	outputfilename << ".pdb";
@@ -270,7 +270,7 @@ UnfoldedStateEnergyCalculatorMover::apply( Pose & pose )
 	*/
 
 	// check fragment scores
-	for ( Size i(1); i <= fragments.size(); ++i ) {
+	for ( core::Size i(1); i <= fragments.size(); ++i ) {
 
 		// clear energies
 		( fragments[ i ] ).energies().clear();

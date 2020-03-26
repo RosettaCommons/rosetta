@@ -224,7 +224,7 @@ void Translate::uniform_translate_ligand(
 	}
 
 	translate_tracer.Debug << "time to cycle: " << translate_info_.cycles << std::endl;
-	for ( Size cycle = 0; cycle < translate_info_.cycles; ++cycle ) {
+	for ( core::Size cycle = 0; cycle < translate_info_.cycles; ++cycle ) {
 		mover.apply(pose);
 		core::Vector c = protocols::geometry::downstream_centroid_by_jump(pose, jump_id);
 		// did our nbr_atom land in an empty space on the grid?
@@ -280,7 +280,7 @@ void Translate::gaussian_translate_ligand(
 	int best_score=100000;
 
 	translate_tracer.Debug << "time to cycle: " << translate_info_.cycles << std::endl;
-	for ( Size cycle = 0; cycle < translate_info_.cycles; ++cycle ) {
+	for ( core::Size cycle = 0; cycle < translate_info_.cycles; ++cycle ) {
 		mover.apply(pose);
 		core::Vector c = protocols::geometry::downstream_centroid_by_jump(pose, jump_id);
 		// did our nbr_atom land in an empty space on the grid?
@@ -343,7 +343,7 @@ void Translate::translate_ligand(qsar::scoring_grid::GridSetCOP grid_set, core::
 	translate_tracer.Debug << "time to cycle: " << translate_info_.cycles << std::endl;
 	core::Real best_score = 1000000;
 
-	for ( Size cycle = 0; cycle < translate_info_.cycles; ++cycle ) {
+	for ( core::Size cycle = 0; cycle < translate_info_.cycles; ++cycle ) {
 
 		translate_tracer.Trace <<"Doing a translate move" <<std::endl;
 		translate_mover->apply(pose);

@@ -39,12 +39,12 @@ SideChainCopier::SideChainCopier( core::pose::Pose const & reference_pose,
 	reference_pose_( reference_pose ),
 	copy_o2prime_hydrogens_( copy_o2prime_hydrogens )
 {
-	for ( Size n = 1; n <= reference_pose_.size(); n++ ) copy_res_.push_back( n );
+	for ( core::Size n = 1; n <= reference_pose_.size(); n++ ) copy_res_.push_back( n );
 }
 
 //Constructor
 SideChainCopier::SideChainCopier( core::pose::Pose const & reference_pose,
-	utility::vector1< Size > const & copy_res,
+	utility::vector1< core::Size > const & copy_res,
 	bool const copy_o2prime_hydrogens /* = false */ ):
 	reference_pose_( reference_pose ),
 	copy_res_( copy_res ),
@@ -71,7 +71,7 @@ SideChainCopier::apply(
 	Real const ho2prime_tolerance( 1.0e-3 );
 	Real const orient_backbone_tolerance( 1.0e-3 );
 
-	for ( Size const n : copy_res_ ) {
+	for ( core::Size const n : copy_res_ ) {
 		if ( pose.residue_type( n ).is_RNA() ) {
 			if ( !copy_o2prime_hydrogens_ ) continue;
 			make_variants_match( pose, reference_pose_, n, core::chemical::VIRTUAL_O2PRIME_HYDROGEN );
@@ -86,10 +86,10 @@ SideChainCopier::apply(
 			if ( orient_backbone ) rsd->place( pose.residue( n ), pose.conformation() );
 
 			// before putting into new pose, need to move backbone atoms back, so that only side chain atoms are changed.
-			for ( Size k = 1; k <= rsd->type().last_backbone_atom(); k++ ) {
+			for ( core::Size k = 1; k <= rsd->type().last_backbone_atom(); k++ ) {
 				rsd->set_xyz( k, pose.residue( n ).xyz( rsd->atom_name( k ) ) );
 			}
-			for ( Size k = rsd->type().nheavyatoms() + 1; k < rsd->type().first_sidechain_hydrogen(); k++ ) {
+			for ( core::Size k = rsd->type().nheavyatoms() + 1; k < rsd->type().first_sidechain_hydrogen(); k++ ) {
 				rsd->set_xyz( k, pose.residue( n ).xyz( rsd->atom_name( k ) ) );
 			}
 

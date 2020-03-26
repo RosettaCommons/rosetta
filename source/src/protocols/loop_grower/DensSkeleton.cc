@@ -118,7 +118,7 @@ DensSkeleton::breadth_first_connect(numeric::xyzVector< int >const & start_point
 		std::map< core::Size, numeric::xyzVector< int > > neighbors = assign_neighbors(current_point);
 		//clean points
 		utility::vector1< numeric::xyzVector< int > > clean_path;
-		for ( Size i=1; i<=path.size(); i++ ) {
+		for ( core::Size i=1; i<=path.size(); i++ ) {
 			numeric::xyzVector< int > c_point = path[i];
 			if ( !breaks_skeleton(path,neighbors) ) {
 				TR << " breaks skeleton " << std::endl;
@@ -129,7 +129,7 @@ DensSkeleton::breadth_first_connect(numeric::xyzVector< int >const & start_point
 		}
 		path = clean_path;
 		core::Size total_neighbors = 27;
-		for ( Size i=1; i<=total_neighbors; i++ ) {
+		for ( core::Size i=1; i<=total_neighbors; i++ ) {
 			//skip values already in the path. Including the current point
 			if ( path.has_value(neighbors[i]) ) continue;
 			if ( densdata(neighbors[i][0],neighbors[i][1],neighbors[i][2] ) > 1e-10 ) {
@@ -166,9 +166,9 @@ DensSkeleton::breadth_first_connect(numeric::xyzVector< int >const & start_point
 core::Real
 DensSkeleton::shortest_path(utility::vector1< utility::vector1< numeric::xyzVector< int > > > paths ){
 	core::Real shortest_path = 0;
-	for ( Size i=1; i<=paths.size(); i++ ) {
+	for ( core::Size i=1; i<=paths.size(); i++ ) {
 		core::Real length = 0;
-		for ( Size point=1; point<=paths[i].size()-1; point++ ) {
+		for ( core::Size point=1; point<=paths[i].size()-1; point++ ) {
 			numeric::xyzVector< core::Real > coord1;
 			numeric::xyzVector< core::Real > coord2;
 			density_.idx2cart(paths[i][point],coord1);
@@ -263,7 +263,7 @@ DensSkeleton::breaks_skeleton( utility::vector1< numeric::xyzVector< int > > acc
 
 	core::Size total_neighbors = 27;
 	utility::vector1< numeric::xyzVector< int > > connected_neighbors;
-	for ( Size i=1; i<=total_neighbors; i++ ) {
+	for ( core::Size i=1; i<=total_neighbors; i++ ) {
 		if ( !accepted_points.has_value(neighbors[i]) or i == 14 ) {
 			continue;
 		}
@@ -272,7 +272,7 @@ DensSkeleton::breaks_skeleton( utility::vector1< numeric::xyzVector< int > > acc
 		core::Size checked_points = 1;
 		while ( checked_points != connected_neighbors.size() && checked_points == 0 ) {
 			std::map< core::Size, numeric::xyzVector< int > > new_neighbors = assign_neighbors(connected_neighbors[checked_points]);
-			for ( Size ii=1; ii<=total_neighbors; ii++ ) {
+			for ( core::Size ii=1; ii<=total_neighbors; ii++ ) {
 				if ( accepted_points.has_value(new_neighbors[ii]) ) connected_neighbors.push_back(new_neighbors[i]);
 			}
 			checked_points+=1;
@@ -292,7 +292,7 @@ core::Real
 DensSkeleton::path_length(utility::vector1< numeric::xyzVector< int > > path, numeric::xyzVector< int > end_point ){
 
 	core::Real distance = 0;
-	for ( Size i=1; i<=path.size()-1; i++ ) {
+	for ( core::Size i=1; i<=path.size()-1; i++ ) {
 		numeric::xyzVector< core::Real > coord1;
 		numeric::xyzVector< core::Real > coord2;
 		core::scoring::electron_density::getDensityMap().idx2cart(path[i],coord1);

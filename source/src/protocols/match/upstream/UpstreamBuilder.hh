@@ -28,7 +28,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -40,7 +40,7 @@ namespace protocols {
 namespace match {
 namespace upstream {
 
-class UpstreamBuilder : public utility::pointer::ReferenceCount {
+class UpstreamBuilder : public utility::VirtualBase {
 public:
 	typedef core::Size   Size;
 	typedef core::Vector Vector;
@@ -84,12 +84,12 @@ public:
 	) const = 0;
 
 	virtual
-	Size
+	core::Size
 	n_restypes_to_build() const = 0;
 
 	virtual
 	core::chemical::ResidueTypeCOP
-	restype( Size which_restype ) const = 0;
+	restype( core::Size which_restype ) const = 0;
 
 	virtual bool compatible(
 		Hit const & my_hit,
@@ -126,7 +126,7 @@ private:
 
 };
 
-class UpstreamResidueProcessor : public utility::pointer::ReferenceCount
+class UpstreamResidueProcessor : public utility::VirtualBase
 {
 public:
 	~UpstreamResidueProcessor() override;

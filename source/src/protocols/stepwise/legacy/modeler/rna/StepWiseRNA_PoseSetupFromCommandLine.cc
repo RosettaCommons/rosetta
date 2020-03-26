@@ -175,9 +175,9 @@ void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose )
 	using namespace core::chemical;
 	using namespace core::chemical::rna;
 
-	Size const nres = pose.size();
+	core::Size const nres = pose.size();
 	ConstraintSetOP cst_set( new ConstraintSet );
-	for ( Size i = 1; i <= nres; ++i ) {
+	for ( core::Size i = 1; i <= nres; ++i ) {
 		ResidueType const & res = pose.residue_type( i );
 		if ( res.is_RNA() && res.is_purine() ) {
 			Real const chi = numeric::conversions::radians( ref_pose.torsion( TorsionID( i, id::CHI, 1 ) ) );
@@ -215,13 +215,13 @@ get_working_directory() {
 utility::vector1< core::Size >
 get_fixed_res( core::Size const nres ) {
 
-	utility::vector1< Size > blank_size_vector;
+	utility::vector1< core::Size > blank_size_vector;
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::stepwise::modeler::rna;
 
-	utility::vector1< Size > actual_fixed_res_list;
+	utility::vector1< core::Size > actual_fixed_res_list;
 	actual_fixed_res_list.clear();
 
 	utility::vector1< core::Size > const fixed_res_list    = option[ OptionKeys::stepwise::fixed_res ]();
@@ -234,7 +234,7 @@ get_fixed_res( core::Size const nres ) {
 	if ( fixed_res_list.size() != 0  ) {
 		actual_fixed_res_list = fixed_res_list;
 	} else if ( minimize_res_list.size() != 0 ) {
-		for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
+		for ( core::Size seq_num = 1; seq_num <= nres; seq_num++ ) {
 			if ( minimize_res_list.has_value( seq_num ) ) continue;
 			actual_fixed_res_list.push_back( seq_num );
 		}
@@ -316,7 +316,7 @@ get_input_res( core::Size const nres, std::string const & pose_num ){
 	if ( input_res_list.size() != 0 ) {
 		actual_input_res_list = input_res_list;
 	} else if ( missing_res_list.size() != 0 ) {
-		for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
+		for ( core::Size seq_num = 1; seq_num <= nres; seq_num++ ) {
 			if ( missing_res_list.has_value( seq_num ) ) continue;
 			actual_input_res_list.push_back( seq_num );
 		}
@@ -422,7 +422,7 @@ create_scorefxn() {
 
 	std::string score_weight_file;
 
-	Size num_score_weight_file = 0;
+	core::Size num_score_weight_file = 0;
 
 	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
 		score_weight_file = option[ basic::options::OptionKeys::score::weights ]();
@@ -529,10 +529,10 @@ setup_simple_full_length_rna_working_parameters(){
 	std::map< core::Size, core::Size > full_to_sub;
 	std::map< core::Size, bool > is_prepend_map;
 
-	utility::vector1< Size > input_res;
-	utility::vector1< Size > input_res2;
+	utility::vector1< core::Size > input_res;
+	utility::vector1< core::Size > input_res2;
 
-	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= nres; seq_num++ ) {
 		input_res.push_back( seq_num );
 		full_to_sub[ seq_num ] = seq_num;
 		is_prepend_map[seq_num] = false; //all append..arbitrary choice
@@ -542,13 +542,13 @@ setup_simple_full_length_rna_working_parameters(){
 	working_parameters->set_is_prepend_map( is_prepend_map );
 	working_parameters->set_is_prepend( is_prepend_map[working_parameters->actually_moving_res()] );
 
-	utility::vector1< utility::vector1< Size > > input_res_vectors;
+	utility::vector1< utility::vector1< core::Size > > input_res_vectors;
 	input_res_vectors.push_back( input_res );
 	input_res_vectors.push_back( input_res2 );
 	working_parameters->set_input_res_vectors( input_res_vectors );
 
 	/////////////////////////////////////////////////////
-	utility::vector1< Size > working_moving_res_list;
+	utility::vector1< core::Size > working_moving_res_list;
 	working_moving_res_list.push_back( nres ); //full_sequence.size() ); //arbitrary choice, choose residue of pose
 
 	working_parameters->set_working_moving_res_list( working_moving_res_list ); //This sets actually_moving_res()
@@ -557,12 +557,12 @@ setup_simple_full_length_rna_working_parameters(){
 	utility::vector1< std::string > alignment_res_string_list = option[ OptionKeys::stepwise::rna::alignment_res ]();
 	utility::vector1< core::Size > best_alignment_list;
 
-	for ( Size n = 1; n <= alignment_res_string_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= alignment_res_string_list.size(); n++ ) {
 
 		utility::vector1< std::string > alignments_res_string = tokenize( alignment_res_string_list[n], "-" );
 		utility::vector1< core::Size >  alignment_list;
 
-		for ( Size ii = 1; ii <= alignments_res_string.size(); ii++ ) {
+		for ( core::Size ii = 1; ii <= alignments_res_string.size(); ii++ ) {
 			alignment_list.push_back( string_to_int( alignments_res_string[ii] ) );
 		}
 
@@ -589,7 +589,7 @@ setup_simple_full_length_rna_working_parameters(){
 
 		utility::vector1< core::Size > const native_virtual_res_list = option[ OptionKeys::stepwise::rna::native_virtual_res]();
 
-		for ( Size n = 1; n <= native_virtual_res_list.size(); n++ ) {
+		for ( core::Size n = 1; n <= native_virtual_res_list.size(); n++ ) {
 			core::pose::rna::apply_virtual_rna_residue_variant_type( ( *native_pose_OP ), native_virtual_res_list[n], false /*apply_check*/ );
 		}
 
@@ -708,7 +708,7 @@ setup_rna_working_parameters( bool check_for_previously_closed_cutpoint_with_inp
 	if ( !option[ OptionKeys::full_model::sample_res ].user() ) utility_exit_with_message( "Must supply sample_res!" );
 
 	/////////////////////////////////////////////////////
-	Size const cutpoint_closed_ = option[ OptionKeys::full_model::cutpoint_closed ].user() ? option[ OptionKeys::full_model::cutpoint_closed ]()[1] : 0;
+	core::Size const cutpoint_closed_ = option[ OptionKeys::full_model::cutpoint_closed ].user() ? option[ OptionKeys::full_model::cutpoint_closed ]()[1] : 0;
 	StepWiseWorkingParametersSetup stepwise_rna_working_parameters_setup(
 		option[ OptionKeys::full_model::sample_res ](), /*the first element of moving_res_list is the modeler_res*/
 		full_sequence,
@@ -806,7 +806,7 @@ setup_copy_DOF_input( StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup ){
 	if ( option[ in::file::s ].user() ) {
 		// Then any pdbs that need to be read in from disk.
 		utility::vector1< std::string > const pdb_tags_from_disk( option[ in::file::s ]() );
-		for ( Size n = 1; n <= pdb_tags_from_disk.size(); n++ ) {
+		for ( core::Size n = 1; n <= pdb_tags_from_disk.size(); n++ ) {
 			input_tags.push_back( pdb_tags_from_disk[ n ] );
 		}
 	}
@@ -816,7 +816,7 @@ setup_copy_DOF_input( StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup ){
 	}
 
 	TR << "Input structures for COPY DOF" << std::endl;
-	for ( Size n = 1; n <= input_tags.size(); n++ ) {
+	for ( core::Size n = 1; n <= input_tags.size(); n++ ) {
 		if ( n <= silent_files_in.size() ) {
 			TR << "silent_file tag = " << input_tags[n] << " silent_file = " << silent_files_in[n] << std::endl;
 		} else {
@@ -883,7 +883,7 @@ setup_pose_setup_class( stepwise::modeler::working_parameters::StepWiseWorkingPa
 bool
 get_tag_and_silent_file_for_struct( std::string & swa_silent_file,
 	std::string & out_tag,
-	Size const & n,
+	core::Size const & n,
 	bool const & multiple_shots,
 	std::string const & silent_file ){
 

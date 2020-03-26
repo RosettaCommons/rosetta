@@ -52,7 +52,7 @@ public:
 
 	BuriedUnsatisfiedPolarsCalculator2(
 		std::string const & weak_bunsat_calc,
-		std::set< Size > const & special_region
+		std::set< core::Size > const & special_region
 	);
 
 	core::pose::metrics::PoseMetricCalculatorOP clone()
@@ -149,8 +149,8 @@ private:
 		core::id::AtomID const & bunsat_candidate_atom_id,
 		core::conformation::Residue const & bunsat_rsd,
 		numeric::xyzVector< core::Real > const & bunsat_xyz,
-		Size const test_resi,
-		Size & num_hbonds
+		core::Size const test_resi,
+		core::Size & num_hbonds
 	);
 
 	virtual
@@ -160,8 +160,8 @@ private:
 		core::id::AtomID const & bunsat_candidate_atom_id,
 		core::conformation::Residue const & bunsat_rsd,
 		numeric::xyzVector< core::Real > const & bunsat_xyz,
-		Size const & test_resi,
-		Size & num_hbonds
+		core::Size const & test_resi,
+		core::Size & num_hbonds
 	);
 
 	bool
@@ -173,9 +173,9 @@ private:
 
 	bool
 	adjacent_bbbb_check(
-		Size const & bunsat_resi,
+		core::Size const & bunsat_resi,
 		std::string const & bunsat_atom_name,
-		Size const & test_resi,
+		core::Size const & test_resi,
 		std::string const & test_atom_name
 	) const;
 
@@ -183,16 +183,16 @@ private:
 	self_scsc(
 		core::conformation::Residue const & bunsat_rsd,
 		core::Size const & bunsat_resi,
-		Size const & bunsat_atom_num,
+		core::Size const & bunsat_atom_num,
 		core::conformation::Residue const & test_rsd,
-		Size const & test_resi,
-		Size const & test_atom_num
+		core::Size const & test_resi,
+		core::Size const & test_atom_num
 	) const;
 
 	bool
 	sulphur_bond_check(
 		core::conformation::Residue const & test_rsd,
-		Size const & test_atom_num,
+		core::Size const & test_atom_num,
 		numeric::xyzVector< core::Real > const & bunsat_xyz,
 		numeric::xyzVector< core::Real > const & test_xyz
 	) const;
@@ -201,7 +201,7 @@ private:
 	don_geom_check(
 		core::pose::Pose const & pose,
 		core::conformation::Residue const & bunsat_rsd,
-		Size const & bunsat_atom_num,
+		core::Size const & bunsat_atom_num,
 		numeric::xyzVector< core::Real > const & bunsat_xyz,
 		numeric::xyzVector< core::Real > const & test_xyz
 	) const;
@@ -211,7 +211,7 @@ private:
 		core::pose::Pose const & pose,
 		numeric::xyzVector< core::Real > const & bunsat_xyz,
 		core::conformation::Residue const & test_rsd,
-		Size const & test_atom_num,
+		core::Size const & test_atom_num,
 		numeric::xyzVector< core::Real > const & test_xyz
 	) const;
 
@@ -222,16 +222,16 @@ private:
 	void
 	show();
 
-	Size all_bur_unsat_polars_;
-	Size special_region_bur_unsat_polars_;
+	core::Size all_bur_unsat_polars_;
+	core::Size special_region_bur_unsat_polars_;
 	core::id::AtomID_Map< bool > atom_bur_unsat_;
-	utility::vector1< Size > residue_bur_unsat_polars_;
+	utility::vector1< core::Size > residue_bur_unsat_polars_;
 
 private:
 	static
 	core::Size satisfaction_cutoff( std::string atom_type );
 	std::string name_of_weak_bunsat_calc_;
-	std::set< Size > special_region_;
+	std::set< core::Size > special_region_;
 	bool layered_sasa_;
 	bool generous_hbonds_;
 	core::Real sasa_burial_cutoff_;

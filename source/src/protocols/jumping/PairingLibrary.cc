@@ -152,7 +152,7 @@ RT RT_from_epos( FArray2A_float Epos1, FArray2A_float Epos2)
 	/// tranlsation vector, written in stub1 frame
 	RT::Vector translation( 0.0 ); // 3
 
-	Size const MAX_POS( 5 ); // param::MAX_POS
+	core::Size const MAX_POS( 5 ); // param::MAX_POS
 	Epos1.dimension(3,MAX_POS);
 	Epos2.dimension(3,MAX_POS);
 
@@ -256,7 +256,7 @@ PairingLibrary::read_from_file( std::string const& fn)
 	int pos1,pos2;
 	float o,p1,p2,mn_dist,mx_dist,
 		phi1,psi1,omega1,phi2,psi2,omega2;
-	Size const MAX_POS( 5 ); // param::MAX_POS
+	core::Size const MAX_POS( 5 ); // param::MAX_POS
 	FArray2D_float Epos1(3,MAX_POS), Epos2(3,MAX_POS);
 	utility::io::izstream data( fn ); //or from database file
 
@@ -334,7 +334,7 @@ PairingLibrary::read_from_file_no_filters( std::string const& fn)
 	int pos1,pos2;
 	float o,p1,p2,mn_dist,mx_dist,
 		phi1,psi1,omega1,phi2,psi2,omega2;
-	Size const MAX_POS( 5 ); // param::MAX_POS
+	core::Size const MAX_POS( 5 ); // param::MAX_POS
 	FArray2D_float Epos1(3,MAX_POS), Epos2(3,MAX_POS);
 	utility::io::izstream data( fn ); //or from database file
 	std::ofstream template_infofile("jump_TMH_templates.dat.info");
@@ -602,13 +602,13 @@ PairingLibrary::generate_jump_frags(
 
 	// find out how many different kind of fragments are we interested in:
 	// max of four: A 1 , A 2, P 1, P 2
-	using JumpList = utility::vector1<Size>;
-	typedef std::map< std::pair< Size, Size >, JumpList > JumpOrientations;
+	using JumpList = utility::vector1<core::Size>;
+	typedef std::map< std::pair< core::Size, core::Size >, JumpList > JumpOrientations;
 	JumpOrientations jump_kind;
-	Size jump_nr ( 1 );
+	core::Size jump_nr ( 1 );
 	for ( auto const & pairing : pairings ) {
-		Size o_key ( pairing.Orientation() ); // < 0 ? 1 : 2 );
-		Size p_key ( pairing.Pleating() ); // < 0 ? 1 : 2 );
+		core::Size o_key ( pairing.Orientation() ); // < 0 ? 1 : 2 );
+		core::Size p_key ( pairing.Pleating() ); // < 0 ? 1 : 2 );
 		jump_kind[ std::make_pair( o_key, p_key ) ].push_back( jump_nr++ );
 	}
 
@@ -616,8 +616,8 @@ PairingLibrary::generate_jump_frags(
 	for ( JumpOrientations::const_iterator it=jump_kind.begin(), eit=jump_kind.end();
 			it!=eit;
 			++it ) {
-		Size o_key( it->first.first ); //orientation
-		Size p_key( it->first.second ); //pleating ... believe me or not, it is in first.second
+		core::Size o_key( it->first.first ); //orientation
+		core::Size p_key( it->first.second ); //pleating ... believe me or not, it is in first.second
 		fragment::FragDataOPs frag_data;
 		create_jump_fragments( o_key, p_key, bWithTorsion, frag_data );
 		for ( int jump_nr : it->second ) {
@@ -625,7 +625,7 @@ PairingLibrary::generate_jump_frags(
 			int const endpos( pairings[ jump_nr ].Pos2() );
 
 			if ( mm.get_bb( startpos ) && mm.get_bb( endpos ) ) {
-				Size const length( bWithTorsion ? 4 : 2 );
+				core::Size const length( bWithTorsion ? 4 : 2 );
 				runtime_assert( length == frag_data.front()->size() );
 				fragment::JumpingFrameOP frame = generate_empty_jump_frame( startpos, endpos, length );
 				frame->add_fragment( frag_data );

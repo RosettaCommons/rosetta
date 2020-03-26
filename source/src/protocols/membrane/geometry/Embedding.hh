@@ -33,7 +33,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -45,7 +45,7 @@ namespace protocols {
 namespace membrane {
 namespace geometry {
 
-class Embedding : public utility::pointer::ReferenceCount {
+class Embedding : public utility::VirtualBase {
 
 public: // constructors
 

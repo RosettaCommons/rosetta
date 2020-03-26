@@ -42,7 +42,7 @@
 #include <core/io/silent/SilentStruct.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // Basic Headers
@@ -92,7 +92,7 @@ enum HIERARCHICAL_HYBRID_JD_MPI_TAG_TYPE {
 /// On 29 Oct 2018, this code was moved to the HierarchicalHybridJDApplication base class, from which both the SimpleCycpepPredictApplication_MPI and
 /// HelicalBundlePredictApplication_MPI classes derive.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-class HierarchicalHybridJDApplication : public utility::pointer::ReferenceCount
+class HierarchicalHybridJDApplication : public utility::VirtualBase
 {
 public:
 	/// @brief Constructor

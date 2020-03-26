@@ -24,7 +24,7 @@
 #include <basic/resource_manager/ResourceLoader.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -34,7 +34,7 @@
 namespace core {
 namespace import_pose {
 
-class PoseResource : public utility::pointer::ReferenceCount
+class PoseResource : public utility::VirtualBase
 {
 public:
 	PoseResource( core::pose::PoseCOP pose );

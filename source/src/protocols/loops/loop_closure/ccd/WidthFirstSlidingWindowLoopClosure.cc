@@ -144,8 +144,8 @@ WidthFirstSlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut
 
 
 	tr.Debug << "Trying loop-sizes: " << loop_ << std::endl;
-	Size const actual_max_loop_size( loop_.size() );
-	Size min_breakout_good_loops( std::max( min_breakout_good_loops_, min_good_loops_ ) );
+	core::Size const actual_max_loop_size( loop_.size() );
+	core::Size min_breakout_good_loops( std::max( min_breakout_good_loops_, min_good_loops_ ) );
 	tr.Info << "breakout good loops " << min_breakout_good_loops_ << " min_good_loops_ " << min_good_loops_
 		<< "breakout fast loops " << min_breakout_fast_loops_ << " min_fast_loops_ " << min_fast_loops_ << std::endl;
 	tr.Debug << "Trying loop-sizes: "
@@ -157,9 +157,9 @@ WidthFirstSlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut
 
 	tr.Debug << "LOOP: " << loop_ << std::endl;
 
-	Size fast_loop_count( 0 );
-	Size good_loop_count( 0 );
-	Size scored_frags_attempted( 0 );
+	core::Size fast_loop_count( 0 );
+	core::Size good_loop_count( 0 );
+	core::Size scored_frags_attempted( 0 );
 
 	//we need to move this into Base class ... right now it has effect to set scorefxn_ as well...
 	scoring::ScoreFunctionOP frag_scorefxn = setup_frag_scorefxn();
@@ -208,7 +208,7 @@ WidthFirstSlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut
 
 	// try different loop sizes
 	WindowList windows;
-	for ( Size loop_size = std::min( actual_max_loop_size, min_loop_size_ );
+	for ( core::Size loop_size = std::min( actual_max_loop_size, min_loop_size_ );
 			loop_size <= std::min( actual_max_loop_size, max_loop_size_ ); ++loop_size ) {
 		tr.Debug << "loop-size: " << loop_size << std::endl;
 		// try different sliding windows, sorted by loop_fraction in window
@@ -235,7 +235,7 @@ WidthFirstSlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut
 		fast_closure.ramp_chainbreak();
 		if ( fast_closure.apply( more_cut ) ) {
 			closure_frames.push_back( fast_closure.closure_fragments() );
-			Size new_loops = process_fragments( closure_frames, more_cut, less_cut );
+			core::Size new_loops = process_fragments( closure_frames, more_cut, less_cut );
 			if ( 1.0*new_loops > ( window_acceptance_ratio_ * fast_closure.nr_fragments() ) ) {
 				tr.Info << "good window keep this for scored sampling stage" << std::endl;
 				probable_windows.push_back( *it );
@@ -251,7 +251,7 @@ WidthFirstSlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut
 
 	tr.Info << "finished unscored sampling: loops found: " << fast_loop_count << " (needs " << min_fast_loops_
 		<< " ) good windows: " << probable_windows.size() << " min_breakout_good_loops " << min_breakout_good_loops << std::endl;
-	for ( Size attempt_count = 0; attempt_count < nr_scored_sampling_passes_; attempt_count++ ) {
+	for ( core::Size attempt_count = 0; attempt_count < nr_scored_sampling_passes_; attempt_count++ ) {
 		if ( good_loop_count >= min_breakout_good_loops ) break;
 		if ( scored_frags_attempted > give_up_ && good_loop_count == 0 ) break;
 

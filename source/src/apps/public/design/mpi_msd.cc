@@ -249,7 +249,7 @@ public:
 	) override{
 		chains_ = pose.split_by_chain();
 		task_ = task.clone();
-		Size last_chain( 1 ), first_residue_for_chain( 1 );
+		core::Size last_chain( 1 ), first_residue_for_chain( 1 );
 		resid_2_chain_and_resid_.resize( pose.size() );
 		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue( ii ).chain() != last_chain ) {
@@ -272,7 +272,7 @@ public:
 		}
 
 		core::Real hpatch_sum = 0;
-		for ( Size ii = 1; ii <= chains_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= chains_.size(); ++ii ) {
 			hpatch_sum += core::pack::interaction_graph::SurfacePotential::get_instance()->compute_pose_hpatch_score( *chains_[ ii ] );
 		}
 		return hpatch_sum;

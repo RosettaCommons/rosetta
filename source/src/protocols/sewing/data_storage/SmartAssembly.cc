@@ -46,14 +46,14 @@ namespace protocols {
 namespace sewing {
 namespace data_storage {
 SmartAssembly::SmartAssembly():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	//pre-allocate all_basis_pairs_
 	all_basis_pairs_ = utility::vector1< std::pair< core::Size, core::Size > >( 10000, std::make_pair( 0, 0 ) );
 }
 
 SmartAssembly::SmartAssembly(hashing::SegmentVectorCOP segment_vector, core::Size window_width):
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	modifiable_terminus_ = 'B';
 	start_node_vital_segments_ = "all";
@@ -135,7 +135,9 @@ SmartAssembly::~SmartAssembly(){
 	//last_sampled_ligand_, first_segment_, etc. should have been already deleted b/c they were in local_segments_ and local_ligands_
 }
 
-SmartAssembly::SmartAssembly( SmartAssembly const & other) {
+SmartAssembly::SmartAssembly( SmartAssembly const & other):
+	VirtualBase( other )
+{
 	segment_vector_ = other.get_segment_vector();
 	pdb_segments( other.const_pdb_segments() );
 	window_width_ = 1;

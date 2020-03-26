@@ -61,7 +61,7 @@ SampleApplier::get_update( sampler::StepWiseSamplerOP sampler ){
 }
 
 void
-SampleApplier::apply_mover( moves::CompositionMoverOP mover, Size const i, Size const j ){
+SampleApplier::apply_mover( moves::CompositionMoverOP mover, core::Size const i, core::Size const j ){
 	mover->apply( pose_, i, j );
 }
 

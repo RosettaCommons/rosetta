@@ -49,14 +49,14 @@ void FragmentPerturber::perturb_subset(Pose const &, IndexList const & residues,
 	//init variables
 	Real phi, psi, omega;
 	bool success (false);
-	Size nfail = 0;
-	const Size max_nfail = 100;//limit number of sampling attempts
-	const Size num_frag_libs = frag_libs_.size();
-	Size frag_lib_index;
+	core::Size nfail = 0;
+	const core::Size max_nfail = 100;//limit number of sampling attempts
+	const core::Size num_frag_libs = frag_libs_.size();
+	core::Size frag_lib_index;
 	core::fragment::FragSetCOP frag_lib;
 	core::fragment::FrameList overlapping_frames;
-	const Size region_start=residues.front();
-	const Size region_end=residues.back();
+	const core::Size region_start=residues.front();
+	const core::Size region_end=residues.back();
 	static basic::Tracer TR( "protocols.looprelax.FragmentPerturber" );
 	//TR << endl << "residues to sample: " << region_start << " to " << region_end << endl;//debug
 	core::kinematics::MoveMap move_map;
@@ -64,15 +64,15 @@ void FragmentPerturber::perturb_subset(Pose const &, IndexList const & residues,
 	move_map.set_bb(true);
 	move_map.set_chi(true);
 	move_map.set_jump(true);
-	const Size min_overlap = 1;
-	const Size min_length = 1;
-	Size num_overlapping_frames;
-	Size overlapping_frame_index;
+	const core::Size min_overlap = 1;
+	const core::Size min_length = 1;
+	core::Size num_overlapping_frames;
+	core::Size overlapping_frame_index;
 	core::fragment::FrameCOP overlapping_frame;
-	Size num_fragments;
-	Size fragment_number;
+	core::Size num_fragments;
+	core::Size fragment_number;
 	core::fragment::FragDataCOP fragment;
-	Size frag_pos;
+	core::Size frag_pos;
 	core::fragment::SingleResidueFragDataCOP fragment_residue;
 	core::fragment::BBTorsionSRFDCOP fragment_data;
 
@@ -92,7 +92,7 @@ void FragmentPerturber::perturb_subset(Pose const &, IndexList const & residues,
 		}
 		num_overlapping_frames = overlapping_frames.size();
 		/*//start debug
-		for (Size i=1; i<=num_overlapping_frames; ++i) {
+		for (core::Size i=1; i<=num_overlapping_frames; ++i) {
 		TR << overlapping_frames[i]->type() << " " << overlapping_frames[i]->length() << " " << overlapping_frames[i]->nr_frags() << endl;
 		//overlapping_frames[i]->show(std::cout);
 		}
@@ -105,7 +105,7 @@ void FragmentPerturber::perturb_subset(Pose const &, IndexList const & residues,
 		num_fragments = overlapping_frame->nr_frags();
 		//TR << "chose random overlapping frame #" << overlapping_frame_index << ", going from residue " << overlapping_frame->start() << " to " << overlapping_frame->end() << endl;//debug
 		/*//start debug
-		for (Size i=1; i<=num_fragments; ++i) {
+		for (core::Size i=1; i<=num_fragments; ++i) {
 		TR << i << " " << (overlapping_frame->fragment_ptr(i))->sequence() << " " << (overlapping_frame->fragment_ptr(i))->secstruct() << " " << (overlapping_frame->fragment_ptr(i))->score() << endl;
 		}
 		//end debug */
@@ -122,7 +122,7 @@ void FragmentPerturber::perturb_subset(Pose const &, IndexList const & residues,
 		return;
 	}
 
-	for ( Size const residue : residues ) {
+	for ( core::Size const residue : residues ) {
 		//check if residue is part of the given frame
 		if ( overlapping_frame->contains_seqpos(residue) ) {
 			//convert sequence position to internal fragment position

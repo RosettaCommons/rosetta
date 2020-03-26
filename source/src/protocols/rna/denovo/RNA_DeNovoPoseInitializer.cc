@@ -155,19 +155,19 @@ RNA_DeNovoPoseInitializer::append_virtual_anchor( pose::Pose & pose )
 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 	pose.append_residue_by_jump( *new_res, rna_params_.virtual_anchor_attachment_points()[1] );
 
-	Size const virt_res = pose.size();
+	core::Size const virt_res = pose.size();
 
 	// Info on pairings and cutpoints.
 	rna_params_.add_cutpoint_open( virt_res - 1 );
 
-	for ( Size n = 1; n <= rna_params_.virtual_anchor_attachment_points().size(); n++ ) {
+	for ( core::Size n = 1; n <= rna_params_.virtual_anchor_attachment_points().size(); n++ ) {
 
 		core::pose::rna::BasePair p;
 		p.set_res1( rna_params_.virtual_anchor_attachment_points()[ n ] );
 		p.set_res2( virt_res );
 		rna_params_.add_rna_pairing( p );
 
-		utility::vector1< Size > obligate_pairing_set;
+		utility::vector1< core::Size > obligate_pairing_set;
 		obligate_pairing_set.push_back( rna_params_.rna_pairing_list().size() );
 		rna_params_.add_obligate_pairing_set( obligate_pairing_set );
 
@@ -190,7 +190,7 @@ RNA_DeNovoPoseInitializer::initialize_secstruct( core::pose::Pose & pose  )
 			rna_secstruct_legacy = std::string( pose.size(), 'L' );
 		}
 
-		for ( Size n = 1; n <= rna_params_.rna_pairing_list().size(); n++ ) {
+		for ( core::Size n = 1; n <= rna_params_.rna_pairing_list().size(); n++ ) {
 			core::pose::rna::BasePair const & rna_pairing( rna_params_.rna_pairing_list()[ n ] );
 			if (  rna_pairing.edge1() == WATSON_CRICK &&
 					rna_pairing.edge2() == WATSON_CRICK &&
@@ -213,14 +213,14 @@ void
 RNA_DeNovoPoseInitializer::insert_base_pair_jumps( pose::Pose & pose, RNA_JumpMover const & jump_mover,  bool & success ) const
 {
 
-	Size const num_jump( pose.num_jump() );
+	core::Size const num_jump( pose.num_jump() );
 
 	for ( core::Size i = 1; i <= num_jump; i++ ) {
 
 		// Check that we can actually insert here. At least one of the jump partners
 		// should allow moves. (I guess the other one can stay fixed).
-		Size const jump_pos1( pose.fold_tree().upstream_jump_residue( i ) );
-		Size const jump_pos2( pose.fold_tree().downstream_jump_residue( i ) );
+		core::Size const jump_pos1( pose.fold_tree().upstream_jump_residue( i ) );
+		core::Size const jump_pos2( pose.fold_tree().downstream_jump_residue( i ) );
 
 		// check that they're both RNA?
 		if ( !( pose.residue( jump_pos1 ).is_RNA() && pose.residue( jump_pos2 ).is_RNA()) ) {
@@ -286,7 +286,7 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose,
 	//////
 	using namespace core::pose::rna;
 
-	Size const nres = pose.size();
+	core::Size const nres = pose.size();
 	kinematics::FoldTree f( nres );
 
 
@@ -313,9 +313,9 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose,
 		f.reorder( pose.size() ); //reroot so that virtual residue is fixed.
 
 		if ( root_at_first_rigid_body_ ) {
-			utility::vector1< Size > rigid_body_jumps = get_rigid_body_jumps( pose );
+			utility::vector1< core::Size > rigid_body_jumps = get_rigid_body_jumps( pose );
 			runtime_assert( rigid_body_jumps.size() > 0 );
-			Size const anchor_rsd = pose.fold_tree().upstream_jump_residue( rigid_body_jumps[1] );
+			core::Size const anchor_rsd = pose.fold_tree().upstream_jump_residue( rigid_body_jumps[1] );
 			TR << "ROOTING AT RSD" << anchor_rsd << std::endl;
 			f.reorder( anchor_rsd ); //reroot so that partner of virtual residue is fixed
 		}
@@ -328,8 +328,8 @@ RNA_DeNovoPoseInitializer::setup_jumps( pose::Pose & pose,
 	} else { // I don't think we want to do this if we have protein
 
 		// also useful -- if user has an input pdb, put the root in there, if possible.
-		//  for (Size n = pose.size(); n >= 1; n-- ){ // not sure why I did this backwards...
-		for ( Size n = 1; n <= pose.size(); n++ ) {
+		//  for (core::Size n = pose.size(); n >= 1; n-- ){ // not sure why I did this backwards...
+		for ( core::Size n = 1; n <= pose.size(); n++ ) {
 			if ( pose.residue(n).is_RNA() &&
 					rna_jump_mover.atom_level_domain_map()->get_domain( named_atom_id_to_atom_id( id::NamedAtomID( " C1'", n ), pose ) ) == 1 /*1 means the first inputted pose*/ &&
 					f.possible_root(n) ) {
@@ -369,19 +369,19 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_legacy( pose::Pose & pose,
 
 	using namespace core::pose::rna;
 
-	Size const nres = pose.size();
+	core::Size const nres = pose.size();
 	kinematics::FoldTree f( nres );
 
-	Size const num_cuts_closed( rna_params_.cutpoints_closed().size() );
-	Size const num_cuts_open  ( rna_params_.cutpoints_open().size() );
-	Size const num_cuts_total ( num_cuts_closed + num_cuts_open );
+	core::Size const num_cuts_closed( rna_params_.cutpoints_closed().size() );
+	core::Size const num_cuts_open  ( rna_params_.cutpoints_open().size() );
+	core::Size const num_cuts_total ( num_cuts_closed + num_cuts_open );
 
 	////////////////////////////////////////////////////////////////////////
-	utility::vector1< utility::vector1< Size > > obligate_pairing_sets,  stem_pairing_sets;
+	utility::vector1< utility::vector1< core::Size > > obligate_pairing_sets,  stem_pairing_sets;
 	obligate_pairing_sets = rna_params_.obligate_pairing_sets();
 	if ( bps_moves_ ) { // supplement obligate_pairing_sets with stems in freely moving regions.
 		for ( auto const & stem_pairing_set : rna_params_.stem_pairing_sets() ) {
-			for ( Size const idx : stem_pairing_set ) {
+			for ( core::Size const idx : stem_pairing_set ) {
 				BasePair const & base_pair = rna_params_.rna_pairing_list()[ idx ] ;
 				if ( rna_params_.check_in_pairing_sets( obligate_pairing_sets, base_pair ) ) continue;
 				if ( !base_pair_moving( base_pair, rna_jump_mover.atom_level_domain_map(), pose ) ) continue;
@@ -392,18 +392,18 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_legacy( pose::Pose & pose,
 		stem_pairing_sets = rna_params_.stem_pairing_sets();
 	}
 
-	Size const num_pairings( rna_params_.rna_pairing_list().size() );
-	Size const num_obligate_pairing_sets( obligate_pairing_sets.size() );
-	Size const num_stem_pairing_sets( stem_pairing_sets.size() );
-	Size const num_chain_connections( rna_params_.chain_connections().size() );
+	core::Size const num_pairings( rna_params_.rna_pairing_list().size() );
+	core::Size const num_obligate_pairing_sets( obligate_pairing_sets.size() );
+	core::Size const num_stem_pairing_sets( stem_pairing_sets.size() );
+	core::Size const num_chain_connections( rna_params_.chain_connections().size() );
 	runtime_assert( num_stem_pairing_sets + num_obligate_pairing_sets <= num_pairings );
 
 	//////////////////////////////////////////////////////////////////////
 	// Cuts.
 	//////////////////////////////////////////////////////////////////////
-	utility::vector1< Size > obligate_cut_points;
-	for ( Size n = 1; n<= num_cuts_closed; n++ )   obligate_cut_points.push_back( rna_params_.cutpoints_closed()[ n ] );
-	for ( Size n = 1; n<= num_cuts_open  ; n++ )   obligate_cut_points.push_back( rna_params_.cutpoints_open()[n] );
+	utility::vector1< core::Size > obligate_cut_points;
+	for ( core::Size n = 1; n<= num_cuts_closed; n++ )   obligate_cut_points.push_back( rna_params_.cutpoints_closed()[ n ] );
+	for ( core::Size n = 1; n<= num_cuts_open  ; n++ )   obligate_cut_points.push_back( rna_params_.cutpoints_open()[n] );
 
 	//////////////////////////////////////////////////////////////////////
 	// base pair steps are a special kind of chunk, created "on-the-fly"
@@ -411,7 +411,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_legacy( pose::Pose & pose,
 	//  (see above get_pairings_from_line ), and we can define cutpoints
 	//  ahead of time.
 	//////////////////////////////////////////////////////////////////////
-	utility::vector1< Size > base_pair_step_starts;
+	utility::vector1< core::Size > base_pair_step_starts;
 	if ( bps_moves_ ) {
 		RNA_BasePairHandler const rna_base_pair_handler( rna_params_ ); // has get_base_pair_steps() function.
 		utility::vector1< BasePairStep > base_pair_steps = rna_base_pair_handler.get_base_pair_steps( false /* just canonical */ );
@@ -447,21 +447,21 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_legacy( pose::Pose & pose,
 	// Two possibilities for desired fold tree topology:
 	//   Jumps dominate, or cuts dominate.
 	// this sort of works with density -- but should really use -new_fold_tree_initializer if working with density!!
-	Size num_density_cuts = 0;
+	core::Size num_density_cuts = 0;
 	if ( model_with_density_ ) num_density_cuts = 1;
-	Size const num_pairings_to_force = std::max( num_obligate_pairing_sets + num_chain_connections + num_density_cuts,
+	core::Size const num_pairings_to_force = std::max( num_obligate_pairing_sets + num_chain_connections + num_density_cuts,
 		num_cuts_total );
 
 	////////////////////////////////////////////////////////////////////////
-	ObjexxFCL::FArray2D< Size > jump_points( 2, num_pairings_to_force );
-	ObjexxFCL::FArray1D< Size > cuts( num_pairings_to_force );
+	ObjexxFCL::FArray2D< core::Size > jump_points( 2, num_pairings_to_force );
+	ObjexxFCL::FArray1D< core::Size > cuts( num_pairings_to_force );
 
 	//////////////////////////////////////////////////////////////////////
 	// If a cut needs to be randomly chosen, will generally try to
 	// place it in a loopy region.
 	FArray1D_float cut_bias( nres, 1.0 );
 	std::string const & rna_secstruct_legacy( get_rna_secstruct_legacy( pose ) );
-	for ( Size i = 1; i < nres; i++ ) {
+	for ( core::Size i = 1; i < nres; i++ ) {
 		// no cuts outside RNA
 		if ( !pose.residue(i+1).is_RNA() ) {
 			cut_bias(i) = 0.0;
@@ -472,7 +472,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_legacy( pose::Pose & pose,
 			cut_bias( i )   = 0.1;
 		}
 		// No cuts inside user_input domains.
-		Size domain( rna_jump_mover.atom_level_domain_map()->get_domain( core::id::AtomID( named_atom_id_to_atom_id( core::id::NamedAtomID( " P  ", i+1 ), pose )  ) ) );
+		core::Size domain( rna_jump_mover.atom_level_domain_map()->get_domain( core::id::AtomID( named_atom_id_to_atom_id( core::id::NamedAtomID( " P  ", i+1 ), pose )  ) ) );
 		if ( domain > 0 ) {
 			if ( bps_moves_ && base_pair_step_starts.has_value( i ) ) {
 				cut_bias( i ) = 0.01;
@@ -482,25 +482,25 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_legacy( pose::Pose & pose,
 		}
 	}
 
-	// for ( Size i = 1; i < nres; i++ ) {
+	// for ( core::Size i = 1; i < nres; i++ ) {
 	//   TR  << TR.Blue << "CUT_BIAS " << i << " " << cut_bias( i ) << std::endl;
 	// }
 
 	//////////////////////////////////////////////////////////////////////
 	// Jump residues.
 	//////////////////////////////////////////////////////////////////////
-	Size ntries( 0 );
-	Size const MAX_TRIES( 1000 );
+	core::Size ntries( 0 );
+	core::Size const MAX_TRIES( 1000 );
 	bool success( false );
 
 	while ( !success && ++ntries < MAX_TRIES ) {
 
 		// First, put in a jump from each obligate pairing set.
-		Size count( 0 );
+		core::Size count( 0 );
 
-		for ( Size n = 1; n <= num_obligate_pairing_sets ; n++ ) {
-			Size const pairing_index_in_stem( static_cast<Size>( numeric::random::rg().uniform() * obligate_pairing_sets[n].size() )  + 1 );
-			Size const which_pairing = obligate_pairing_sets[n][pairing_index_in_stem];
+		for ( core::Size n = 1; n <= num_obligate_pairing_sets ; n++ ) {
+			core::Size const pairing_index_in_stem( static_cast<core::Size>( numeric::random::rg().uniform() * obligate_pairing_sets[n].size() )  + 1 );
+			core::Size const which_pairing = obligate_pairing_sets[n][pairing_index_in_stem];
 			count++;
 			jump_points(1, count) = rna_params_.rna_pairing_list()[which_pairing].res1();
 			jump_points(2, count) = rna_params_.rna_pairing_list()[which_pairing].res2();
@@ -509,11 +509,11 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_legacy( pose::Pose & pose,
 
 		// "Chain connections" provide less information about specific residues to pair --
 		//  but they're assumed to be obligatory.
-		for ( Size n = 1; n <= num_chain_connections ; n++ ) {
-			utility::vector1 < Size > const & res_list1( rna_params_.chain_connections()[n].first );
-			utility::vector1 < Size > const & res_list2( rna_params_.chain_connections()[n].second);
-			Size jump_pos1 = numeric::random::rg().random_element( res_list1 );
-			Size jump_pos2 = numeric::random::rg().random_element( res_list2 );
+		for ( core::Size n = 1; n <= num_chain_connections ; n++ ) {
+			utility::vector1 < core::Size > const & res_list1( rna_params_.chain_connections()[n].first );
+			utility::vector1 < core::Size > const & res_list2( rna_params_.chain_connections()[n].second);
+			core::Size jump_pos1 = numeric::random::rg().random_element( res_list1 );
+			core::Size jump_pos2 = numeric::random::rg().random_element( res_list2 );
 			count++;
 			jump_points(1, count) =  std::min( jump_pos1, jump_pos2 );
 			jump_points(2, count) =  std::max( jump_pos1, jump_pos2 );
@@ -540,13 +540,13 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_legacy( pose::Pose & pose,
 		//  based on fold_tree build up that has been worked out in stepwise monte carlo.
 		//
 		FArray1D < bool > used_set( num_stem_pairing_sets, false );
-		Size num_sets_left( num_stem_pairing_sets );
+		core::Size num_sets_left( num_stem_pairing_sets );
 
 		while ( count < num_pairings_to_force ) {
 
 			// Find a random pairing among what's remaining.
-			Size const set_index( static_cast<Size>( numeric::random::rg().uniform() * num_sets_left )  + 1 );
-			Size m( 0 ), set_count( 0 );
+			core::Size const set_index( static_cast<core::Size>( numeric::random::rg().uniform() * num_sets_left )  + 1 );
+			core::Size m( 0 ), set_count( 0 );
 			for ( m = 1; m <= num_stem_pairing_sets; m++ ) {
 				if ( !used_set( m ) ) {
 					set_count++;
@@ -558,8 +558,8 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_legacy( pose::Pose & pose,
 				utility_exit_with_message( "Could not find a stem_pairing. Number of stem_pairing_sets: "+I(3,num_stem_pairing_sets)+". Did you specify a secondary structure or obligate pair?" );
 			}
 
-			Size const pairing_index_in_set( static_cast<Size>( numeric::random::rg().uniform() * stem_pairing_sets[m].size() )  + 1 );
-			Size const which_pairing = stem_pairing_sets[m][pairing_index_in_set];
+			core::Size const pairing_index_in_set( static_cast<core::Size>( numeric::random::rg().uniform() * stem_pairing_sets[m].size() )  + 1 );
+			core::Size const which_pairing = stem_pairing_sets[m][pairing_index_in_set];
 
 			count++;
 			jump_points(1, count) = rna_params_.rna_pairing_list()[which_pairing].res1();
@@ -572,14 +572,14 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_legacy( pose::Pose & pose,
 		////////////////////////////////////////////////////////////////////////////////
 		// Do it, get the fold tree. and set up the pose.
 		////////////////////////////////////////////////////////////////////////////////
-		std::vector< Size > obligate_cut_points_reformat;
-		for ( Size q = 1; q <= obligate_cut_points.size(); q++ ) obligate_cut_points_reformat.push_back( obligate_cut_points[q] );
+		std::vector< core::Size > obligate_cut_points_reformat;
+		for ( core::Size q = 1; q <= obligate_cut_points.size(); q++ ) obligate_cut_points_reformat.push_back( obligate_cut_points[q] );
 
 		// TR << TR.Cyan << "Making attempt " << ntries << std::endl;
 		// TR << TR.Cyan << "obligate_cutpoints " << std::endl;
-		// for ( Size q: obligate_cut_points_reformat ) TR << TR.Cyan << " " << pose.pdb_info()->chain( q ) << ":" << pose.pdb_info()->number( q ) << std::endl;
-		// for (Size n = 1; n <= count; n++ ){
-		// //for (Size n = 1; n <= num_pairings_to_force; n++ ){
+		// for ( core::Size q: obligate_cut_points_reformat ) TR << TR.Cyan << " " << pose.pdb_info()->chain( q ) << ":" << pose.pdb_info()->number( q ) << std::endl;
+		// for (core::Size n = 1; n <= count; n++ ){
+		// //for (core::Size n = 1; n <= num_pairings_to_force; n++ ){
 		//   TR << TR.Cyan << "JUMPS" <<
 		//   " " << pose.pdb_info()->chain( jump_points(1, n) ) << ":" << pose.pdb_info()->number( jump_points( 1, n ) ) <<
 		//   " " << pose.pdb_info()->chain( jump_points(2, n) ) << ":" << pose.pdb_info()->number( jump_points( 2, n ) ) <<
@@ -624,11 +624,11 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 	//////////////////////////////
 	// Set up pose chunks (for input structures (-in:file:s, -in:file:silent))
 	//////////////////////////////
-	utility::vector1< utility::vector1< Size > > all_res_lists;
+	utility::vector1< utility::vector1< core::Size > > all_res_lists;
 
 	// Create little pose chunks that correspond to each domain 1, 2, 3, ... N in the atom_level_domain_map as separate poses with reasonable fold trees.
 	for ( auto chunk_set : chunk_library.chunk_sets() ) {
-		utility::vector1< Size > res_list;
+		utility::vector1< core::Size > res_list;
 		for ( auto const & elem : chunk_set->res_map() ) res_list.push_back( elem.first );
 		all_res_lists.push_back( res_list );
 		// ChunkSet stores miniposes, not poses.
@@ -653,7 +653,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		// copy over coordinate from mini-pose to pose? that would allow a sanity check
 		// make a resmap
 		pose::ResMap resmap;
-		for ( Size i = 1; i<=res_list.size(); ++i ) {
+		for ( core::Size i = 1; i<=res_list.size(); ++i ) {
 			resmap[i] = i;
 		}
 		core::pose::copydofs::copy_dofs( *chunk_pose, *mini_pose, resmap );
@@ -685,7 +685,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		// get a list of all the chains
 		utility::vector1< char > chains = full_model_params_input_pose->conventional_chains();
 		utility::vector1< char > chains_covered;
-		for ( Size n=1; n<=chunk_poses.size(); ++n ) {
+		for ( core::Size n=1; n<=chunk_poses.size(); ++n ) {
 			for ( auto const i : const_full_model_info(*chunk_poses[n]).res_list() ) {
 				char c = chains[i];
 				chains_covered.push_back( c );
@@ -695,7 +695,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		// loop through the full list of chains, check whether they're represented in chains_covered
 		// if not, make a little one residue pose for the first residue in that chain
 		if ( !center_jumps_in_single_stranded_ ) {
-			for ( Size i=1; i<=chains.size(); ++i ) {
+			for ( core::Size i=1; i<=chains.size(); ++i ) {
 				// If chain has already been covered, move on.
 				if ( std::find( chains_covered.begin(), chains_covered.end(), chains[i] ) != chains_covered.end() ) continue;
 
@@ -708,7 +708,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 				pose::add_variant_type_to_pose_residue( *little_pose, chemical::LOWER_TERMINUS_VARIANT, 1 );
 
 				// add full model info
-				utility::vector1< Size > res_list;
+				utility::vector1< core::Size > res_list;
 				res_list.push_back( i );
 				FullModelInfoOP full_model_info( new FullModelInfo( full_model_params_input_pose ) );
 				full_model_info->set_res_list( res_list );
@@ -723,16 +723,16 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 			// add the middle residue in the chain, rather than the first residue in the chain
 			std::string const & rna_secstruct_legacy( rna_params_.rna_secstruct_legacy() );
 
-			for ( Size i=1; i<=chains.size(); ++i ) {
+			for ( core::Size i=1; i<=chains.size(); ++i ) {
 				// If chain has already been covered, move on.
 				if ( std::find( chains_covered.begin(), chains_covered.end(), chains[i] ) != chains_covered.end() ) continue;
 
 				// it's not covered, make a 1 residue pose for the chain
 				// this is the start of the chain then
-				Size chain_start = i;
-				Size chain_stop = i;
+				core::Size chain_start = i;
+				core::Size chain_stop = i;
 				// find the end of the chain
-				for ( Size j=i; j<=chains.size(); ++j ) {
+				for ( core::Size j=i; j<=chains.size(); ++j ) {
 					if ( chains[j] != chains[i] ) {
 						chain_stop = j-1;
 						break;
@@ -743,7 +743,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 				// figure out whether there's any secondary structure in this region
 				// if not, add the middle residue
 				std::string secstruct_chain = rna_secstruct_legacy.substr( chain_start -1, chain_stop-chain_start +1 );
-				Size resid_to_add = i;
+				core::Size resid_to_add = i;
 				if ( std::find( secstruct_chain.begin(), secstruct_chain.end(), 'H' ) == secstruct_chain.end() ) {
 					resid_to_add = i + (( chain_stop - chain_start ) / 2);
 				}
@@ -761,7 +761,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 				}
 
 				// add full model info
-				utility::vector1< Size > res_list;
+				utility::vector1< core::Size > res_list;
 				res_list.push_back( resid_to_add );
 				FullModelInfoOP full_model_info( new FullModelInfo( full_model_params_input_pose ) );
 				full_model_info->set_res_list( res_list );
@@ -813,7 +813,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		}
 
 		// loop through the remaining chunks
-		for ( Size n = 2; n<= chunk_poses.size(); ++n ) {
+		for ( core::Size n = 2; n<= chunk_poses.size(); ++n ) {
 			// if we already have a chunk from this chain, then we don't want to add this chunk
 			// unless we specified dock_each_chunk_per_chain
 			// add it to a new list of chunk poses
@@ -848,7 +848,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 
 		// for testing, go ack to merging all chunks
 		if ( dock_each_chunk_per_chain_ ) {
-			for ( Size n =1; n<=chunks_to_merge.size(); ++n ) {
+			for ( core::Size n =1; n<=chunks_to_merge.size(); ++n ) {
 				chunks_to_merge[n] = true;
 			}
 		}
@@ -856,12 +856,12 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 
 
 		// chunk_poses[1] better have a virtual residue at the end
-		Size vrt_resnum = start_pose.size();
-		Size final_vrt_resnum = pose.size(); // full pose numbering!
+		core::Size vrt_resnum = start_pose.size();
+		core::Size final_vrt_resnum = pose.size(); // full pose numbering!
 
-		utility::vector1< Size > res_list_all_chunks_for_mapping;
-		std::map< Size, std::pair< Size, Size> > full_number_to_chunk_num_and_resid; // full pose number: (chunk pose number, resid)
-		for ( Size n = 1; n<= chunk_poses.size(); ++n ) {
+		utility::vector1< core::Size > res_list_all_chunks_for_mapping;
+		std::map< core::Size, std::pair< core::Size, core::Size> > full_number_to_chunk_num_and_resid; // full pose number: (chunk pose number, resid)
+		for ( core::Size n = 1; n<= chunk_poses.size(); ++n ) {
 			if ( !chunks_to_merge[n] ) continue;
 			for ( core::Size j =1; j<=const_full_model_info( *chunk_poses[n] ).res_list().size(); ++j ) {
 				res_list_all_chunks_for_mapping.push_back( const_full_model_info( *chunk_poses[n] ).res_list()[j] );
@@ -871,15 +871,15 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		// reorder it
 		std::sort( res_list_all_chunks_for_mapping.begin(), res_list_all_chunks_for_mapping.end() );
 		pose::ResMap resmap_from_full_to_merged_chunks; /// full merged chunk number: (chunk_pose number, resid)
-		std::map< Size, std::pair< Size, Size > > map_merged_chunk_res_to_chunk_poses;
-		for ( Size i = 1; i<=res_list_all_chunks_for_mapping.size(); ++i ) {
+		std::map< core::Size, std::pair< core::Size, core::Size > > map_merged_chunk_res_to_chunk_poses;
+		for ( core::Size i = 1; i<=res_list_all_chunks_for_mapping.size(); ++i ) {
 			resmap_from_full_to_merged_chunks[ res_list_all_chunks_for_mapping[i] ] = i;
 			map_merged_chunk_res_to_chunk_poses[ i ] = full_number_to_chunk_num_and_resid[ res_list_all_chunks_for_mapping[i] ];
 		}
 
 		// Set up the initial fold tree
 		kinematics::FoldTree new_fold_tree;
-		utility::vector1< Size > const res_list_start = const_full_model_info( start_pose ).res_list();
+		utility::vector1< core::Size > const res_list_start = const_full_model_info( start_pose ).res_list();
 		// add the edges from the start_pose
 		auto it( start_pose.fold_tree().begin() );
 		for ( auto it_end = start_pose.fold_tree().end(); it != it_end; ++it ) {
@@ -902,20 +902,20 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 			}
 		}
 		//// set the jump atoms
-		//for ( Size n = 1; n<=start_pose.fold_tree().num_jump(); ++n ) {
+		//for ( core::Size n = 1; n<=start_pose.fold_tree().num_jump(); ++n ) {
 		// new_fold_tree.set_jump_atoms( n, start_pose.fold_tree().upstream_atom( n ), start_pose.fold_tree().downstream_atom( n ), false );
 		//}
 		//fill_in_default_jump_atoms( new_fold_tree, start_pose );
 
 
 		///// CHECK jump atoms
-		//for ( Size n=1; n<=start_pose.fold_tree().num_jump(); ++n ) {
+		//for ( core::Size n=1; n<=start_pose.fold_tree().num_jump(); ++n ) {
 		// std::cout << "f.upstream_atom(" << n << ") " <<  start_pose.fold_tree().upstream_atom(n) << std::endl;
 		// std::cout << "f.downstream_atom(" << n << ") "<< start_pose.fold_tree().downstream_atom(n) << std::endl;
 		//}
 		//std::cout << "And check the new fold tree as well" << std::endl;
 		//new_fold_tree.show( std::cout );
-		//for ( Size n=1; n<=new_fold_tree.num_jump(); ++n ) {
+		//for ( core::Size n=1; n<=new_fold_tree.num_jump(); ++n ) {
 		// std::cout << "new_fold_tree.upstream_atom(" << n << ") " <<  new_fold_tree.upstream_atom(n) << std::endl;
 		// std::cout << "new_fold_tree.downstream_atom(" << n << ") "<< new_fold_tree.downstream_atom(n) << std::endl;
 		//}
@@ -923,16 +923,16 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 
 
 		// Merge in the rest of the chunk poses
-		for ( Size n = 2; n<= chunk_poses.size(); ++n ) {
+		for ( core::Size n = 2; n<= chunk_poses.size(); ++n ) {
 
 			if ( !chunks_to_merge[n] ) {
 				continue;
 			}
 
-			utility::vector1< Size > const & res_list_chunk = const_full_model_info( *chunk_poses[n] ).res_list();
+			utility::vector1< core::Size > const & res_list_chunk = const_full_model_info( *chunk_poses[n] ).res_list();
 
-			Size root_resnum = resmap_from_full_to_merged_chunks[ res_list_chunk[ chunk_poses[n]->fold_tree().root() ] ];
-			//Size init_size = start_pose.size() -1; // don't include virtual residue
+			core::Size root_resnum = resmap_from_full_to_merged_chunks[ res_list_chunk[ chunk_poses[n]->fold_tree().root() ] ];
+			//core::Size init_size = start_pose.size() -1; // don't include virtual residue
 
 			// add everything to the new fold tree
 			// figure out where in the pose this chunk actually belongs
@@ -941,7 +941,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 			auto it ( chunk_poses[n]->fold_tree().begin() );
 			for ( auto it_end = chunk_poses[n]->fold_tree().end(); it != it_end; ++it ) {
 				// figure out where this edge belongs (i.e. get correct start and stop residues)
-				Size edge_label = -1;
+				core::Size edge_label = -1;
 				if ( it->label() != -1 ) {
 					edge_label = new_fold_tree.num_jump()+1;
 				}
@@ -969,8 +969,8 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		// map_merged_chunk_res_to_chunk_poses
 		pose::Pose new_start_pose;
 		// let's add the first residue
-		Size chunk_num_first = map_merged_chunk_res_to_chunk_poses[ 1 ].first;
-		Size resid_first = map_merged_chunk_res_to_chunk_poses[ 1 ].second;
+		core::Size chunk_num_first = map_merged_chunk_res_to_chunk_poses[ 1 ].first;
+		core::Size resid_first = map_merged_chunk_res_to_chunk_poses[ 1 ].second;
 		new_start_pose.append_residue_by_jump( chunk_poses[ chunk_num_first ]->residue( resid_first ), 1 );
 		// then add the virtual residue -- always on chunk # 1
 		new_start_pose.append_residue_by_jump( chunk_poses[ 1 ]->residue( chunk_poses[1]->size() ), 1 );
@@ -980,11 +980,11 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 
 		// now actually merge the poses
 		// we really need the root_resnum to be 1
-		utility::vector1< Size > residues_added; // in merged chunk numbering
-		//Size merged_chunks_final_vrt_resnum = res_list_all_chunks_for_mapping.size();
+		utility::vector1< core::Size > residues_added; // in merged chunk numbering
+		//core::Size merged_chunks_final_vrt_resnum = res_list_all_chunks_for_mapping.size();
 
 		// insert_residue_by_jump( residue, desired_seq_pos, anchor in current numbering)
-		utility::vector1< Size > jump_residues;
+		utility::vector1< core::Size > jump_residues;
 		kinematics::FoldTree const & nft = new_fold_tree;
 		auto it_ft ( nft.begin() );
 		for ( auto it_end_ft = nft.end(); it_ft != it_end_ft; ++it_ft ) {
@@ -999,9 +999,9 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		}
 
 		// let's go through the residues in the full merged chunk numbering ( i.e. 1 to size of full merged chunk )
-		for ( Size i=2; i<=map_merged_chunk_res_to_chunk_poses.size()-1; ++i ) { // already added virtual
-			Size chunk_num = map_merged_chunk_res_to_chunk_poses[ i ].first;
-			Size resid = map_merged_chunk_res_to_chunk_poses[ i ].second;
+		for ( core::Size i=2; i<=map_merged_chunk_res_to_chunk_poses.size()-1; ++i ) { // already added virtual
+			core::Size chunk_num = map_merged_chunk_res_to_chunk_poses[ i ].first;
+			core::Size resid = map_merged_chunk_res_to_chunk_poses[ i ].second;
 
 			// if it's a jump residue, insert it by a jump
 			if ( std::find( jump_residues.begin(), jump_residues.end(), i)!=jump_residues.end() ) {
@@ -1028,7 +1028,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 
 		// and now we need to add the remaining chunk poses as "other poses" (chunks that don't need to be docked individually into density)
 		utility::vector1< pose::PoseOP > other_poses;
-		for ( Size n = 1; n<=remaining_chunk_poses.size(); ++n ) {
+		for ( core::Size n = 1; n<=remaining_chunk_poses.size(); ++n ) {
 			other_poses.push_back( remaining_chunk_poses[n] );
 		}
 		nonconst_full_model_info( start_pose ).set_other_pose_list( other_poses );
@@ -1036,10 +1036,10 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		// We need to set up the dock domain map
 		//
 		std::string const clean_desired_seq = core::pose::rna::remove_bracketed( const_full_model_info( start_pose ).full_sequence() );
-		Size const desired_nres = clean_desired_seq.size();
+		core::Size const desired_nres = clean_desired_seq.size();
 
-		utility::vector1< Size > nonconst_cutpoints_who_fucking_cares = nonconst_full_model_info( start_pose ).cutpoint_open_in_full_model();
-		utility::vector1< Size > const dock_domain_map = core::import_pose::figure_out_dock_domain_map( nonconst_cutpoints_who_fucking_cares,
+		utility::vector1< core::Size > nonconst_cutpoints_who_fucking_cares = nonconst_full_model_info( start_pose ).cutpoint_open_in_full_model();
+		utility::vector1< core::Size > const dock_domain_map = core::import_pose::figure_out_dock_domain_map( nonconst_cutpoints_who_fucking_cares,
 			all_res_lists,
 			const_full_model_info( start_pose ).working_res(),
 			const_full_model_info( start_pose ).sample_res(),
@@ -1052,7 +1052,7 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 		// make poses 2, 3, ... "other poses" in pose 1.
 		start_pose = *chunk_poses[ 1 ];
 		utility::vector1< pose::PoseOP > other_poses;
-		for ( Size n = 2; n <= chunk_poses.size(); ++n ) {
+		for ( core::Size n = 2; n <= chunk_poses.size(); ++n ) {
 			other_poses.push_back( chunk_poses[n] );
 		}
 		// and now make these the other poses
@@ -1061,15 +1061,15 @@ RNA_DeNovoPoseInitializer::setup_fold_tree_through_build_full_model_info(
 
 
 		std::string const clean_desired_seq = core::pose::rna::remove_bracketed( const_full_model_info( start_pose ).full_sequence() );
-		Size const desired_nres = clean_desired_seq.size();
+		core::Size const desired_nres = clean_desired_seq.size();
 
-		utility::vector1< utility::vector1< Size > > all_res_lists;
+		utility::vector1< utility::vector1< core::Size > > all_res_lists;
 		all_res_lists.push_back( const_full_model_info( start_pose ).res_list() );
-		/*for ( Size n = 1; n<=remaining_chunk_poses.size(); ++n ) {
+		/*for ( core::Size n = 1; n<=remaining_chunk_poses.size(); ++n ) {
 		all_res_lists.push_back( remaining_chunk_poses[n] );
 		}*/
-		utility::vector1< Size > nonconst_cutpoints_who_fucking_cares = nonconst_full_model_info( start_pose ).cutpoint_open_in_full_model();
-		utility::vector1< Size > const dock_domain_map = core::import_pose::figure_out_dock_domain_map( nonconst_cutpoints_who_fucking_cares,
+		utility::vector1< core::Size > nonconst_cutpoints_who_fucking_cares = nonconst_full_model_info( start_pose ).cutpoint_open_in_full_model();
+		utility::vector1< core::Size > const dock_domain_map = core::import_pose::figure_out_dock_domain_map( nonconst_cutpoints_who_fucking_cares,
 			all_res_lists,
 			const_full_model_info( start_pose ).working_res(),
 			const_full_model_info( start_pose ).sample_res(),
@@ -1103,10 +1103,10 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 	core::pose::toolbox::AtomLevelDomainMapOP atom_level_domain_map ) const
 {
 	pose::Pose pose_copy = pose;
-	utility::vector1< Size > const & cutpoints_open( rna_params_.cutpoints_open() );
+	utility::vector1< core::Size > const & cutpoints_open( rna_params_.cutpoints_open() );
 
 	// Create cutpoint variants to force chainbreak score computation.
-	for ( Size cutpos = 1; cutpos < pose.size(); cutpos++ ) {
+	for ( core::Size cutpos = 1; cutpos < pose.size(); cutpos++ ) {
 
 		if ( ! pose.fold_tree().is_cutpoint( cutpos ) ) continue;
 
@@ -1119,17 +1119,17 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 
 		core::pose::correctly_add_cutpoint_variants( pose, cutpos );
 
-		for ( Size i = cutpos; i <= cutpos + 1; i++ ) {
-			for ( Size j = 1; j <= pose.residue( i ).mainchain_torsions().size(); j++ ) {
+		for ( core::Size i = cutpos; i <= cutpos + 1; i++ ) {
+			for ( core::Size j = 1; j <= pose.residue( i ).mainchain_torsions().size(); j++ ) {
 				id::TorsionID torsion_id( i, id::BB, j );
 				pose.set_torsion( torsion_id, pose_copy.torsion( torsion_id ) ) ;
 			} // j
 		} // i
 	}
 
-	for ( Size const n : rna_params_.cutpoints_cyclize() ) {
+	for ( core::Size const n : rna_params_.cutpoints_cyclize() ) {
 		// Need to track partner -- move back along chain until we see open cutpoint.
-		Size m;
+		core::Size m;
 		for ( m = n; m > 1; m-- ) {
 			if ( cutpoints_open.has_value( m - 1 ) ) break;
 		}
@@ -1137,9 +1137,9 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 		core::pose::correctly_add_cutpoint_variants( pose, n, true, m );
 	}
 
-	for ( Size const n : rna_params_.twoprime() ) {
+	for ( core::Size const n : rna_params_.twoprime() ) {
 		// Need to track partner -- move back along chain until we see open cutpoint.
-		Size m = 1;
+		core::Size m = 1;
 		for ( m = n; m > 1; m-- ) {
 			if ( cutpoints_open.has_value( m - 1 ) ) break;
 		}
@@ -1149,11 +1149,11 @@ RNA_DeNovoPoseInitializer::setup_chainbreak_variants( pose::Pose & pose,
 
 	// Oh, this is a bummer. If this is empty, we have to separately check --
 	// since uint(0-1) > 1
-	for ( Size i = 1; !rna_params_.fiveprime_cap().empty() && i <= rna_params_.fiveprime_cap().size() - 1; i += 2 ) {
+	for ( core::Size i = 1; !rna_params_.fiveprime_cap().empty() && i <= rna_params_.fiveprime_cap().size() - 1; i += 2 ) {
 
 		// Add 5PrimeCap to first, assert second is 7MG, add cutpoint lower to it.
-		Size const capped = rna_params_.fiveprime_cap()[i];
-		Size const methylg = rna_params_.fiveprime_cap()[i+1];
+		core::Size const capped = rna_params_.fiveprime_cap()[i];
+		core::Size const methylg = rna_params_.fiveprime_cap()[i+1];
 		runtime_assert( pose.residue_type( methylg ).base_name() == "7MG" );
 
 		core::pose::remove_variant_type_from_pose_residue( pose, core::chemical::THREE_PRIME_PHOSPHATE, capped );
@@ -1202,10 +1202,10 @@ RNA_DeNovoPoseInitializer::setup_virtual_phosphate_variants( pose::Pose & pose )
 	// Special exception for FIVEPRIME_CAP use in rna_denovo
 	if ( pose.residue( 1 ).is_RNA() && !pose.residue_type( 1 ).has_variant_type( FIVEPRIME_CAP ) ) pose::add_variant_type_to_pose_residue( pose, VIRTUAL_PHOSPHATE, 1  );
 
-	utility::vector1< Size > const & cutpoints_open( rna_params_.cutpoints_open() );
-	for ( Size i = 1; i <= cutpoints_open.size(); i++ ) {
+	utility::vector1< core::Size > const & cutpoints_open( rna_params_.cutpoints_open() );
+	for ( core::Size i = 1; i <= cutpoints_open.size(); i++ ) {
 
-		Size n = cutpoints_open[ i ];
+		core::Size n = cutpoints_open[ i ];
 
 		if ( n == pose.size() ) {
 			utility_exit_with_message( "Do not specify cutpoint_open at last residue of model" );

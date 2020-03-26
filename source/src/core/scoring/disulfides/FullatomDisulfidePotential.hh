@@ -29,7 +29,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/interpolation/Histogram.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -96,10 +96,10 @@ struct FullatomDisulfideParams13 {
 };
 
 
-class FullatomDisulfidePotential : public utility::pointer::ReferenceCount
+class FullatomDisulfidePotential : public utility::VirtualBase
 {
 public:
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 
 public:
 	FullatomDisulfidePotential();

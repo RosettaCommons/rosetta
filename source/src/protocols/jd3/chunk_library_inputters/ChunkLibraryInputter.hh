@@ -25,7 +25,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -48,7 +48,7 @@ namespace chunk_library_inputters {
 /// static methods that will be invoked by its corresponding ChunkLibraryInputterCreator:
 /// - static std::string keyname();
 /// - static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-class ChunkLibraryInputter : public utility::pointer::ReferenceCount
+class ChunkLibraryInputter : public utility::VirtualBase
 {
 public:
 

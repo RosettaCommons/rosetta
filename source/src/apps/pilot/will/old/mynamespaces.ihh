@@ -41,5 +41,5 @@ using utility::io::izstream;
 using utility::io::ozstream;
 using utility::pointer::weak_ptr;
 using utility::pointer::shared_ptr;
-using utility::pointer::ReferenceCount;
+using utility::VirtualBase;
 using utility::vector1;

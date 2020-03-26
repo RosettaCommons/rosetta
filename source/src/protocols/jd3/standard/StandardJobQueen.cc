@@ -53,7 +53,7 @@
 #include <utility/keys/VariantKey.hh>
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -365,7 +365,7 @@ void StandardJobQueen::update_job_dag( JobDigraphUpdater & ) {}
 /// the TagOP objects for each preliminary LarvalJob to the derived class through the
 /// refine_job_list method.
 LarvalJobs
-StandardJobQueen::determine_job_list( JobDAGNodeID job_dag_node_index, Size max_njobs )
+StandardJobQueen::determine_job_list( JobDAGNodeID job_dag_node_index, core::Size max_njobs )
 {
 	// ok -- we're going to look for a job definition file, and failing that, fall back on
 	// the PoseInputterFactory to determine where the input sources are coming from.
@@ -518,7 +518,7 @@ StandardJobQueen::mature_larval_job(
 /// Note that tracking of completion of jobs from preliminary job nodes can only occur if
 /// the DerivedJobQueen invoked the SJQ's version of next_batch_of_larval_jobs_from_prelim
 /// in its determine_job_list method.
-void StandardJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults )
+void StandardJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, core::Size nresults )
 {
 	prelim_job_tracker_->track_job_completed(job);
 
@@ -567,7 +567,7 @@ StandardJobQueen::result_outputter(
 	debug_assert( dynamic_cast< MOS const * > ( &spec ) );
 	auto const & mo_spec( static_cast< MOS const & > (spec) );
 	MOOP outputters = make_shared< MO > ();
-	for ( Size ii = 1; ii <= mo_spec.output_specifications().size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= mo_spec.output_specifications().size(); ++ii ) {
 		output::OutputSpecification const & ii_spec( *mo_spec.output_specifications()[ ii ] );
 		debug_assert( dynamic_cast< POS const * > (&ii_spec) );
 		auto const & ii_pos( static_cast< POS const & > (ii_spec) );
@@ -607,7 +607,7 @@ StandardJobQueen::result_outputter(
 //  }
 // }
 //
-// Size const n_results_for_job = results_processed_for_job_[ job->job_index() ].n_results;
+// core::Size const n_results_for_job = results_processed_for_job_[ job->job_index() ].n_results;
 // JobOutputIndex output_index;
 // output_index.primary_output_index   = job->nstruct_index();
 // output_index.n_primary_outputs      = job->nstruct_max();
@@ -1014,12 +1014,12 @@ JobOutputIndex
 StandardJobQueen::build_output_index(
 	protocols::jd3::LarvalJobCOP job,
 	ResultIndex result_index,
-	Size n_results_for_job
+	core::Size n_results_for_job
 )
 {
 	JobOutputIndex output_index;
 	output_index.primary_output_index   = job->nstruct_index();
-	output_index.n_primary_outputs      = std::max( job->nstruct_max(), (Size) 1000 );
+	output_index.n_primary_outputs      = std::max( job->nstruct_max(), (core::Size) 1000 );
 	output_index.secondary_output_index = result_index;
 	output_index.n_secondary_outputs    = n_results_for_job;
 
@@ -1032,7 +1032,7 @@ void
 StandardJobQueen::assign_output_index(
 	protocols::jd3::LarvalJobCOP,
 	ResultIndex,
-	Size,
+	core::Size,
 	JobOutputIndex &
 )
 {}
@@ -1497,7 +1497,7 @@ StandardJobQueen::determine_preliminary_job_list_from_command_line()
 	core::Size count_prelim_nodes( 0 );
 	for ( auto const & pose_source_and_inputter : input_poses_and_inputters ) {
 		PreliminaryLarvalJob prelim_job;
-		Size nstruct = nstruct_for_job( nullptr );
+		core::Size nstruct = nstruct_for_job( nullptr );
 		InnerLarvalJobOP inner_job = make_shared< InnerLarvalJob >( nstruct, ++count_prelim_nodes );
 		inner_job->input_source( pose_source_and_inputter.first );
 		inner_job->outputter( outputter->class_key() );
@@ -1724,8 +1724,8 @@ protocols::jd3::standard::StandardJobQueen::save( Archive & arc ) const {
 	arc( CEREAL_NVP( preliminary_larval_jobs_ ) ); // utility::vector1<PreliminaryLarvalJob>
 	arc( CEREAL_NVP( prelim_job_tracker_ ) ); // PreliminaryLarvalJobTrackerOP
 	arc( CEREAL_NVP( inner_larval_jobs_for_curr_prelim_job_ ) ); // InnerLarvalJobs
-	arc( CEREAL_NVP( curr_inner_larval_job_index_ ) ); // Size
-	arc( CEREAL_NVP( njobs_made_for_curr_inner_larval_job_ ) ); // Size
+	arc( CEREAL_NVP( curr_inner_larval_job_index_ ) ); // core::Size
+	arc( CEREAL_NVP( njobs_made_for_curr_inner_larval_job_ ) ); // core::Size
 	arc( CEREAL_NVP( recent_successes_ ) ); // std::list<output::OutputSpecificationOP>
 	arc( CEREAL_NVP( representative_pose_outputter_map_ ) ); // RepresentativeOutputterMap
 	arc( CEREAL_NVP( representative_secondary_outputter_map_ ) ); // SecondaryRepresentativeOutputterMap
@@ -1784,8 +1784,8 @@ protocols::jd3::standard::StandardJobQueen::load( Archive & arc ) {
 	arc( preliminary_larval_jobs_ ); // utility::vector1<PreliminaryLarvalJob>
 	arc( prelim_job_tracker_ ); // PreliminaryLarvalJobTrackerOP
 	arc( inner_larval_jobs_for_curr_prelim_job_ ); // InnerLarvalJobs
-	arc( curr_inner_larval_job_index_ ); // Size
-	arc( njobs_made_for_curr_inner_larval_job_ ); // Size
+	arc( curr_inner_larval_job_index_ ); // core::Size
+	arc( njobs_made_for_curr_inner_larval_job_ ); // core::Size
 	arc( recent_successes_ ); // std::list<output::OutputSpecificationOP>
 	arc( representative_pose_outputter_map_ ); // RepresentativeOutputterMap
 	arc( representative_secondary_outputter_map_ ); // SecondaryRepresentativeOutputterMap

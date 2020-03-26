@@ -18,7 +18,7 @@
 #include <core/pose/Pose.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <boost/noncopyable.hpp>
@@ -30,7 +30,7 @@ namespace protocols {
 namespace trajectory {
 
 class DbTrajectoryReader
-	: public utility::pointer::ReferenceCount, private boost::noncopyable {
+	: public utility::VirtualBase, private boost::noncopyable {
 
 public:
 

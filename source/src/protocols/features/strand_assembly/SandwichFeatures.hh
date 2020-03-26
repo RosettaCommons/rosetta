@@ -76,7 +76,7 @@ public:
 	features_reporter_dependencies() const override;
 
 	/// @brief collect all the feature data for the pose
-	Size
+	core::Size
 	report_features(
 		core::pose::Pose const & pose, //core::pose::Pose & pose, // dropped 'const' for dssp info addition
 		utility::vector1<bool> const & relevant_residues,
@@ -172,13 +172,13 @@ private:
 	core::Real
 		max_CA_CA_dis_;
 
-	Size
+	core::Size
 		min_num_strands_to_deal_;
 
-	Size
+	core::Size
 		max_num_strands_to_deal_;
 
-	Size
+	core::Size
 		min_res_in_strand_;
 
 	core::Real
@@ -205,7 +205,7 @@ private:
 	core::Real
 		max_sheet_torsion_cen_res_;
 
-	Size
+	core::Size
 		min_num_strands_in_sheet_; //  definition: a sheet with < 3 strands will be ignored
 
 	core::Real
@@ -215,10 +215,10 @@ private:
 		max_inter_sheet_dis_CA_CA_;
 
 
-	Size
+	core::Size
 		max_H_in_extracted_sw_loop_; // definition: maximum allowable number of helix residues in extracted sandwich loop
 
-	Size
+	core::Size
 		max_E_in_extracted_sw_loop_; // definition: maximum allowable number of E residues in extracted sandwich loop
 
 	core::Real
@@ -227,13 +227,13 @@ private:
 	core::Real
 		max_inter_strand_angle_to_not_be_same_direction_strands_;
 
-	Size
+	core::Size
 		max_starting_loop_size_;
 
-	Size
+	core::Size
 		max_ending_loop_size_;
 
-	Size
+	core::Size
 		max_num_sw_per_pdb_;
 
 	core::Real
@@ -242,7 +242,7 @@ private:
 	core::Real
 		min_N_H_O_angle_between_two_sheets_;
 
-	Size
+	core::Size
 		min_primary_seq_distance_diff_for_electrostatic_interactions_;
 
 	bool

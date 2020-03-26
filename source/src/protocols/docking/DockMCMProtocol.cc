@@ -230,7 +230,7 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 	// filter_->set_score_margin( 10.0 );
 	// if ( filter_->apply( pose ) )
 	// {
-	for ( Size i=1; i<=num_of_first_cycle_; ++i ) {
+	for ( core::Size i=1; i<=num_of_first_cycle_; ++i ) {
 		dock_mcm_->apply( pose );
 		jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::format::I(1, i ) );
 	}
@@ -242,7 +242,7 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 
 	//  if ( filter_->apply( pose ) )
 	//  {
-	for ( Size i=1; i<=num_of_second_cycle_; ++i ) {
+	for ( core::Size i=1; i<=num_of_second_cycle_; ++i ) {
 		dock_mcm_->apply( pose );
 		jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::format::I(1, i+4 ) );
 	}
@@ -268,10 +268,10 @@ void DockMCMProtocol::set_move_map(core::kinematics::MoveMapOP movemap){
 	movemap_ = movemap;
 }
 
-void DockMCMProtocol::set_first_cycle(Size const & num){
+void DockMCMProtocol::set_first_cycle(core::Size const & num){
 	num_of_first_cycle_ = num;
 }
-void DockMCMProtocol::set_second_cycle(Size const & num){
+void DockMCMProtocol::set_second_cycle(core::Size const & num){
 	num_of_second_cycle_ = num;
 }
 

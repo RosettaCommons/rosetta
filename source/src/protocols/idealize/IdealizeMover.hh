@@ -110,7 +110,7 @@ public:
 
 
 	/// @brief Sets the list of residue positions to idealize.
-	void set_pos_list( utility::vector1< Size > pos_list ) {
+	void set_pos_list( utility::vector1< core::Size > pos_list ) {
 		pos_list_ = pos_list;
 	}
 
@@ -141,7 +141,7 @@ private:
 
 private:
 	// data
-	utility::vector1< Size > pos_list_;
+	utility::vector1< core::Size > pos_list_;
 
 	Real atom_pair_constraint_weight_;
 	Real coordinate_constraint_weight_;

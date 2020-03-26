@@ -173,7 +173,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 
 	if ( randomize_loop_ ) {
 		// insert random fragment as many times as the loop is long (not quite the exact same as the old code)
-		for ( Size i = loop.start(); i <= loop.stop(); ++i ) {
+		for ( core::Size i = loop.start(); i <= loop.stop(); ++i ) {
 			for ( std::vector< FragmentMoverOP >::const_iterator
 					it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 				(*it)->apply( pose );

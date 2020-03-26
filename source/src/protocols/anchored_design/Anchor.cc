@@ -85,7 +85,7 @@ protocols::anchored_design::Anchor::~Anchor()= default;
 
 /// @brief copy ctor
 Anchor::Anchor( Anchor const & rhs ) :
-	utility::pointer::ReferenceCount(rhs)
+	utility::VirtualBase(rhs)
 {
 	*this = rhs;
 }

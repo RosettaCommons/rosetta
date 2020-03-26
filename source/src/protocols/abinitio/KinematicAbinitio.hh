@@ -87,7 +87,7 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 	std::string get_name() const override;
-	void set_max_seq_sep( core::pose::Pose& pose, Size setting ) override;
+	void set_max_seq_sep( core::pose::Pose& pose, core::Size setting ) override;
 
 	// @brief overload to do start extra-round of jump_cycles()
 	bool prepare_stage1( core::pose::Pose &pose ) override;
@@ -97,15 +97,15 @@ public:
 	//@brief called in each iteration of inner loop in stage3 before stage3_cycles_ of trials commence
 	bool prepare_loop_in_stage3(
 		core::pose::Pose&,
-		Size, /* loop_iteration*/
-		Size  /* total_iterations */
+		core::Size, /* loop_iteration*/
+		core::Size  /* total_iterations */
 	) override;
 
 	//@brief called in each iteration of the loop in stage4 before the stage4_cycles_ of trials commence
 	bool prepare_loop_in_stage4(
 		core::pose::Pose&,
-		Size, /* loop_iteration*/
-		Size  /* total_iterations */
+		core::Size, /* loop_iteration*/
+		core::Size  /* total_iterations */
 	) override;
 
 	//@brief returns the Mover that is applied inside the stage3 double loop

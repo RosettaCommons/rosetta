@@ -178,8 +178,8 @@ PoseConformationFeatures::report_features(
 	StructureID struct_id,
 	sessionOP db_session
 ){
-	vector1< Size > residue_indices;
-	for ( Size i = 1; i <= relevant_residues.size(); ++i ) {
+	vector1< core::Size > residue_indices;
+	for ( core::Size i = 1; i <= relevant_residues.size(); ++i ) {
 		if ( relevant_residues[i] ) residue_indices.push_back(i);
 	}
 
@@ -248,7 +248,7 @@ PoseConformationFeatures::report_features_implementation(
 	jump_insert.add_column("y");
 	jump_insert.add_column("z");
 
-	for ( Size nr = 1; nr <= fold_tree.num_jump(); nr++ ) {
+	for ( core::Size nr = 1; nr <= fold_tree.num_jump(); nr++ ) {
 		Jump const & jump(pose.jump(nr));
 		xyzMatrix< Real > const & r(jump.get_rotation());
 		Real xx(r.xx()), xy(r.xy()), xz(r.xz());
@@ -257,7 +257,7 @@ PoseConformationFeatures::report_features_implementation(
 		Vector const & t(jump.get_translation());
 		Real x(t.x()), y(t.y()), z(t.z());
 
-		RowDataBaseOP jump_id_data( new RowData<Size>("jump_id",nr) );
+		RowDataBaseOP jump_id_data( new RowData<core::Size>("jump_id",nr) );
 		RowDataBaseOP xx_data( new RowData<Real>("xx",xx) );
 		RowDataBaseOP xy_data( new RowData<Real>("xy",xy) );
 		RowDataBaseOP xz_data( new RowData<Real>("xz",xz) );
@@ -278,8 +278,8 @@ PoseConformationFeatures::report_features_implementation(
 	InsertGenerator chain_ending_insert("chain_endings");
 	chain_ending_insert.add_column("struct_id");
 	chain_ending_insert.add_column("end_pos");
-	for ( Size const end_pos : pose.conformation().chain_endings() ) {
-		RowDataBaseOP end_pos_data( new RowData<Size>("end_pos",end_pos) );
+	for ( core::Size const end_pos : pose.conformation().chain_endings() ) {
+		RowDataBaseOP end_pos_data( new RowData<core::Size>("end_pos",end_pos) );
 
 		chain_ending_insert.add_row(
 			utility::tools::make_vector(struct_id_data,end_pos_data));
@@ -297,7 +297,7 @@ PoseConformationFeatures::report_features_implementation(
 	pose_conformation_insert.add_column("ideal");
 
 	RowDataBaseOP annotated_sequence_data( new RowData<string>("annotated_sequence",annotated_sequence) );
-	RowDataBaseOP total_residue_data( new RowData<Size>("total_residue",pose.size()) );
+	RowDataBaseOP total_residue_data( new RowData<core::Size>("total_residue",pose.size()) );
 	RowDataBaseOP fullatom_data( new RowData<bool>("fullatom",pose.is_fullatom()) );
 
 	// KAB -
@@ -380,7 +380,7 @@ PoseConformationFeatures::load_sequence(
 
 
 	string annotated_sequence;
-	Size total_residue, fullatom, ideal;
+	core::Size total_residue, fullatom, ideal;
 	{
 		std::string statement_string =
 			"SELECT\n"
@@ -526,7 +526,7 @@ PoseConformationFeatures::load_jumps(
 	stmt.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(stmt));
 	while ( res.next() ) {
-		Size jump_id;
+		core::Size jump_id;
 		Real xx, xy, xz, yx, yy, yz, zx, zy, zz, x, y, z;
 		res >> jump_id;
 		res >> xx >> xy >> xz >> yx >> yy >> yz >> zx >> zy >> zz >> x >> y >> z;
@@ -567,9 +567,9 @@ PoseConformationFeatures::load_chain_endings(
 
 	result res(basic::database::safely_read_from_database(stmt));
 
-	vector1< Size > chain_endings;
+	vector1< core::Size > chain_endings;
 	while ( res.next() ) {
-		Size end_pos;
+		core::Size end_pos;
 		res >> end_pos;
 		chain_endings.push_back(end_pos);
 	}

@@ -109,7 +109,7 @@ adjust_mm_to_length( core::pose::Pose const & pose, core::kinematics::MoveMapOP 
 	utility::vector1< core::conformation::signals::LengthEvent > const & events( lencollect->events() );
 	utility::vector1< core::id::SequenceMapping > smaps;
 
-	for ( Size i =1; i <= events.size(); ++i ) {
+	for ( core::Size i =1; i <= events.size(); ++i ) {
 		smaps.push_back( core::id::SequenceMapping( events[i] ) );
 	}
 	core::id::SequenceMappingOP fullsmap( core::id::combine_sequence_mappings( smaps ) );
@@ -123,8 +123,8 @@ adjust_mm_to_length( core::pose::Pose const & pose, core::kinematics::MoveMapOP 
 	new_mm->set_chi( false );
 	//  new_mm->set_jump( false );
 
-	for ( Size resi = 1; resi <= pose.size(); ++resi ) {
-		Size previous_pos ( (*fullsmap)[resi] );
+	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
+		core::Size previous_pos ( (*fullsmap)[resi] );
 		TR.Debug<<"previous position "<<previous_pos <<", current residue: " << resi << std::endl;
 
 		//if the residue didnt exist before
@@ -150,7 +150,7 @@ parse_seeds( core::pose::Pose const & pose, utility::vector1 < std::pair < std::
 
 	protocols::loops::Loops tmpseed;
 
-	for ( Size iter = 1 ; iter <= seed_vector.size() ; ++ iter ) {
+	for ( core::Size iter = 1 ; iter <= seed_vector.size() ; ++ iter ) {
 		TR.Debug<<"sanity check, seed_vector[iter].first " <<seed_vector[iter].first <<std::endl; ////////////
 		core::Size const begin = core::pose::parse_resnum( seed_vector[iter].first, pose ) ;
 		core::Size const end   = core::pose::parse_resnum( seed_vector[iter].second, pose );
@@ -203,7 +203,7 @@ dump_pymol( std::string fn ) const {
 utility::io::ozstream out( fn );
 if ( out ) {
 out << "from pymol import cmd\n";
-for ( Size i=1; i<=size(); i++ ) {
+for ( core::Size i=1; i<=size(); i++ ) {
 out << "cmd.select( \"jumps"<<i<<"\", \"resi "<<jumps_(1,i)<<"+"<<jumps_(2,i)<<"\");" << std::endl;
 out << "cmd.show( \"sticks\", \"jumps"<<i<<"\");\n";
 out << "cmd.select( \"cut"<<i<<"\", \"resi " <<cuts_(i)<<"\");\n";

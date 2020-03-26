@@ -214,7 +214,7 @@ public:
 	virtual void nb_list( bool nb_list_in );
 	virtual void deriv_check( bool deriv_check_in );
 
-	virtual void max_iter( Size max_iter_in );
+	virtual void max_iter( core::Size max_iter_in );
 
 	Real tolerance() const;
 	std::string min_type() const;

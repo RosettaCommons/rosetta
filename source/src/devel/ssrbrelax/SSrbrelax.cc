@@ -148,7 +148,7 @@ void RbRelax::rbrelax_main(
 
 
 	//Initialzing fragments for loop building
-	std::map< Size, protocols::frags::TorsionFragmentLibraryOP > frag_libs;
+	std::map< core::Size, protocols::frags::TorsionFragmentLibraryOP > frag_libs;
 	initialize_fragments( frag_libs );
 	segment_rb_move( pose, rbsegments, frag_libs );
 
@@ -159,7 +159,7 @@ void RbRelax::rbrelax_main(
 void RbRelax::segment_rb_move(
 	core::pose::Pose & pose,
 	protocols::ssrbrelax::RbSegments & rbsegments,
-	std::map< Size, devel::frags::TorsionFragmentLibraryOP > & frag_libs
+	std::map< core::Size, devel::frags::TorsionFragmentLibraryOP > & frag_libs
 )
 {
 	using namespace kinematics;
@@ -189,7 +189,7 @@ void RbRelax::perturb_segment_and_close_loops(
 	core::pose::Pose & pose,
 	devel::ssrbrelax::RbSegments & rbsegments,
 	devel::ssrbrelax::RbSegments & this_segment,
-	std::map< Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
+	std::map< core::Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
 )
 {
 
@@ -375,7 +375,7 @@ void RbRelax::set_rbrelax_allow_move_map(
 ///////////////////////////////////////////////////////////////////////
 
 void RbRelax::initialize_fragments(
-	std::map< Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
+	std::map< core::Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
 )
 
 {
@@ -387,20 +387,20 @@ void RbRelax::initialize_fragments(
 	FileVectorOption frag_files( option[OptionKeys::SSrbrelax::frag_files] );
 	debug_assert( frag_sizes.size() == frag_files.size() );
 
-	std::map< Size, bool > frag_libs_init;
-	for ( Size i = 1; i <= frag_sizes.size(); ++i ) {
-		Size const frag_size = Size(frag_sizes[i]);
+	std::map< core::Size, bool > frag_libs_init;
+	for ( core::Size i = 1; i <= frag_sizes.size(); ++i ) {
+		core::Size const frag_size = core::Size(frag_sizes[i]);
 		protocols::frags::TorsionFragmentLibraryOP frag_lib_op( new protocols::frags::TorsionFragmentLibrary );
 		std::cout << "Frag libraries debug " << frag_files[i] << " " << frag_size << std::endl;
 		frag_libs_init.insert( std::make_pair(frag_size, frag_lib_op->read_file( frag_files[i], frag_size, 3 ) ) );
 		frag_libs.insert( std::make_pair(frag_size, frag_lib_op) );
 	}
 
-	Size prev_size(10000);
+	core::Size prev_size(10000);
 	protocols::frags::TorsionFragmentLibraryOP prev_lib_op(0);
-	for ( std::map<Size, bool>::const_reverse_iterator it = frag_libs_init.rbegin(),
+	for ( std::map<core::Size, bool>::const_reverse_iterator it = frag_libs_init.rbegin(),
 			it_end = frag_libs_init.rend(); it != it_end; ++it ) {
-		Size const frag_size( it->first );
+		core::Size const frag_size( it->first );
 		bool const frag_lib_init( it->second );
 		debug_assert( frag_size < prev_size );
 		if ( (!frag_lib_init) && prev_lib_op ) {
@@ -420,7 +420,7 @@ void RbRelax::initialize_fragments(
 void RbRelax::close_both_loops(
 	core::pose::Pose & pose,
 	devel::ssrbrelax::RbSegments & this_segment,
-	std::map< Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
+	std::map< core::Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
 )
 {
 
@@ -519,7 +519,7 @@ void RbRelax::refine_segment(
 	MinimizerOptions options( "linmin", dummy_tol, use_nblist, deriv_check );
 
 	// small/shear move parameters
-	Size const nmoves = { 1 };
+	core::Size const nmoves = { 1 };
 	std::map< char, Real > angle_max;
 	angle_max.insert( std::make_pair('H', 0.0) );
 	angle_max.insert( std::make_pair('E', 5.0) );

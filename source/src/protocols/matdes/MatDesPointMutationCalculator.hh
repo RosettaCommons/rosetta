@@ -40,7 +40,7 @@
 namespace protocols {
 namespace matdes {
 
-class MatDesPointMutationCalculator : public utility::pointer::ReferenceCount
+class MatDesPointMutationCalculator : public utility::VirtualBase
 {
 public:
 	typedef core::pose::Pose Pose;

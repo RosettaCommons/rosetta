@@ -17,7 +17,7 @@
 
 //Unit headers
 #include <protocols/legacy_sewing/sampling/SewGraph.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //Package headers
 #include <protocols/legacy_sewing/hashing/Hasher.hh>
@@ -140,26 +140,26 @@ public:
 
 	/// @brief Factory method for node creation
 	utility::graph::Node*
-	create_new_node( Size index ) override;
+	create_new_node( core::Size index ) override;
 
 	/// @brief Factory method for edge creation
 	utility::graph::Edge*
-	create_new_edge( Size index1, Size index2 ) override;
+	create_new_edge( core::Size index1, core::Size index2 ) override;
 
 	void
 	delete_edge( utility::graph::Edge * edge ) override;
 
 	HashEdge *
-	find_hash_edge(Size n1, Size n2);
+	find_hash_edge(core::Size n1, core::Size n2);
 
 	HashEdge const *
-	find_hash_edge(Size n1, Size n2) const;
+	find_hash_edge(core::Size n1, core::Size n2) const;
 
 	std::set<core::Size>
 	get_node_indices_from_model_id(int model_id) const;
 
 	ModelNode const *
-	get_model_node(Size n) const;
+	get_model_node(core::Size n) const;
 
 	ModelNode const *
 	get_model_node(

@@ -67,7 +67,7 @@ set_gaussian_stdevs_recces_turner_from_secstruct(
 	using namespace core::pose::rna;
 	using namespace protocols::recces::sampler;
 
-	Size const n_rsd( pose.total_residue() );
+	core::Size const n_rsd( pose.total_residue() );
 	Real stdev( 0.0 );
 	runtime_assert( n_rsd == rna_secstruct.size() );
 	Real const bp_stdev(       gaussian_stdev( n_rsd, temperature, true ) );
@@ -76,7 +76,7 @@ set_gaussian_stdevs_recces_turner_from_secstruct(
 	////////////////////////////////////////////////
 	// update gaussian stdev for all chi's.
 	////////////////////////////////////////////////
-	for ( Size i = 1; i <= n_rsd; ++ i ) {
+	for ( core::Size i = 1; i <= n_rsd; ++ i ) {
 		if ( rna_secstruct.in_helix( i ) )            stdev = bp_stdev;
 		else  stdev = dangling_stdev;
 		MC_SamplerOP torsion_sampler = sampler->find( TorsionID( i, TorsionType::CHI, 1 ) );
@@ -91,7 +91,7 @@ set_gaussian_stdevs_recces_turner_from_secstruct(
 	////////////////////////////////////////////////
 	// update gaussian stdev for all suites
 	////////////////////////////////////////////////
-	for ( Size i = 1; i < n_rsd; ++ i ) { // watch out: may need to get last residue if we cyclize
+	for ( core::Size i = 1; i < n_rsd; ++ i ) { // watch out: may need to get last residue if we cyclize
 		if ( pose.fold_tree().is_cutpoint( i ) ) continue; // watch out: later generalize to cutpoint_closed
 		if ( rna_secstruct.in_same_helix(i, i+1) )  stdev = bp_stdev;
 		else stdev = dangling_stdev;
@@ -125,7 +125,7 @@ set_gaussian_stdevs_recces_turner_legacy(
 	using namespace core::pose::rna;
 	using namespace protocols::recces::sampler;
 
-	Size const n_rsd( pose.total_residue() );
+	core::Size const n_rsd( pose.total_residue() );
 	Real const bp_stdev(       gaussian_stdev( n_rsd, temperature, true ) );
 	Real const dangling_stdev( gaussian_stdev( n_rsd, temperature, false ) );
 	Real stdev( 0.0 );
@@ -137,7 +137,7 @@ set_gaussian_stdevs_recces_turner_legacy(
 	////////////////////////////////////////////////
 	// update gaussian stdev for all chi's.
 	////////////////////////////////////////////////
-	for ( Size i = 1; i <= n_rsd; ++ i ) {
+	for ( core::Size i = 1; i <= n_rsd; ++ i ) {
 		if ( bp_res.has_value(i) )            stdev = bp_stdev;
 		else  stdev = dangling_stdev;
 		MC_SamplerOP torsion_sampler = sampler->find( TorsionID( i, TorsionType::CHI, 1 ) );
@@ -152,7 +152,7 @@ set_gaussian_stdevs_recces_turner_legacy(
 	////////////////////////////////////////////////
 	// update gaussian stdev for all suites
 	////////////////////////////////////////////////
-	for ( Size i = 1; i < n_rsd; ++ i ) { // watch out: may need to get last residue if we cyclize
+	for ( core::Size i = 1; i < n_rsd; ++ i ) { // watch out: may need to get last residue if we cyclize
 		if ( pose.fold_tree().is_cutpoint( i ) ) continue; // watch out: later generalize to cutpoint_closed
 		if ( bp_res.has_value(i) && bp_res.has_value( i + 1) )  stdev = bp_stdev;
 		else stdev = dangling_stdev;
@@ -204,8 +204,8 @@ void set_gaussian_stdevs_thermal_sampler(
 	protocols::recces::sampler::MC_CombOP chi_sampler,
 	protocols::recces::sampler::rna::MC_RNA_MultiSuiteOP standard_bb_sampler,
 	Real const & temp,
-	Size const & total_rsd,
-	Size const & sampled_rsd,
+	core::Size const & total_rsd,
+	core::Size const & sampled_rsd,
 	utility::vector1<bool> const & is_free )
 {
 	using namespace protocols::recces::sampler;
@@ -221,13 +221,13 @@ void set_gaussian_stdevs_thermal_sampler(
 		standard_bb_stdev = -1 ;
 	}
 	if ( internal_bb_sampler != nullptr ) {
-		for ( Size i = 1; i <= internal_bb_sampler->num_rotamers(); ++i ) {
+		for ( core::Size i = 1; i <= internal_bb_sampler->num_rotamers(); ++i ) {
 			runtime_assert(  (*internal_bb_sampler)[i]->type() == toolbox::MC_RNA_KIC );
 			utility::pointer::dynamic_pointer_cast< MC_RNA_KIC_Sampler >( (*internal_bb_sampler)[i] )->set_gaussian_stdev( internal_bb_stdev );
 		}
 	}
 	if ( chi_sampler != nullptr ) {
-		for ( Size i = 1; i <= chi_sampler->num_rotamers(); ++i ) {
+		for ( core::Size i = 1; i <= chi_sampler->num_rotamers(); ++i ) {
 			runtime_assert(  (*chi_sampler)[i]->type() == toolbox::MC_ONE_TORSION );
 			if ( is_free[i] ) {
 				utility::pointer::dynamic_pointer_cast< MC_OneTorsion >( (*chi_sampler)[i] )->set_gaussian_stdev( free_chi_stdev );

@@ -173,11 +173,11 @@ void CDRH3Modeler::apply( pose::Pose & pose_in ) {
 		c_ter_stem_ = 0;
 	}
 
-	Size framework_loop_begin( antibody_in_.cdrh_[3][1] );
-	Size frmrk_loop_end_plus_one( antibody_in_.cdrh_[3][2] + 1 );
-	//Size framework_loop_size = ( frmrk_loop_end_plus_one -
+	core::Size framework_loop_begin( antibody_in_.cdrh_[3][1] );
+	core::Size frmrk_loop_end_plus_one( antibody_in_.cdrh_[3][2] + 1 );
+	//core::Size framework_loop_size = ( frmrk_loop_end_plus_one -
 	//              framework_loop_begin ) + 1;
-	Size cutpoint = framework_loop_begin + 1;
+	core::Size cutpoint = framework_loop_begin + 1;
 	loops::Loop cdr_h3( framework_loop_begin, frmrk_loop_end_plus_one,
 		cutpoint, 0, true );
 	simple_one_loop_fold_tree( antibody_in_.Fv, cdr_h3 );
@@ -198,7 +198,7 @@ void CDRH3Modeler::apply( pose::Pose & pose_in ) {
 
 		utility::vector1<bool> allow_chi_copy( antibody_in_.Fv.size(),
 			true );
-		for ( Size ii = antibody_in_.cdrh_[3][1];
+		for ( core::Size ii = antibody_in_.cdrh_[3][1];
 				ii <= ( antibody_in_.cdrh_[3][2] + 1 ); ii++ ) {
 			allow_chi_copy[ii] = false;
 		}
@@ -217,7 +217,7 @@ void CDRH3Modeler::apply( pose::Pose & pose_in ) {
 	if ( apply_fullatom_mode_ ) {
 		build_fullatom_loop();
 		if ( !benchmark_ ) {
-			Size repack_cycles(1);
+			core::Size repack_cycles(1);
 			if ( antibody_refine_ && !snug_fit_ ) {
 				repack_cycles = 3;
 			}
@@ -276,10 +276,10 @@ void CDRH3Modeler::build_centroid_loop() {
 
 	TR <<  "H3M Modeling Centroid CDR H3 loop" << std::endl;
 
-	Size frmrk_loop_end_plus_one( antibody_in_.cdrh_[3][2] + 1 );
-	Size framework_loop_size = ( frmrk_loop_end_plus_one -
+	core::Size frmrk_loop_end_plus_one( antibody_in_.cdrh_[3][2] + 1 );
+	core::Size framework_loop_size = ( frmrk_loop_end_plus_one -
 		antibody_in_.cdrh_[3][1] ) + 1;
-	Size cutpoint = antibody_in_.cdrh_[3][1] + 1;
+	core::Size cutpoint = antibody_in_.cdrh_[3][1] + 1;
 	loops::Loop cdr_h3( antibody_in_.cdrh_[3][1], frmrk_loop_end_plus_one,
 		cutpoint, 0, true );
 	simple_one_loop_fold_tree( antibody_in_.Fv, cdr_h3 );
@@ -293,7 +293,7 @@ void CDRH3Modeler::build_centroid_loop() {
 	my_loop_move->apply( antibody_in_.Fv );
 	*/
 
-	Size unaligned_cdr_loop_begin(0)/*, unaligned_cdr_loop_end(0)*/;
+	core::Size unaligned_cdr_loop_begin(0)/*, unaligned_cdr_loop_end(0)*/;
 	core::import_pose::pose_from_file( template_pose_, "hfr.pdb" , core::import_pose::PDB_file);
 	std::string template_name = "h3";
 	Antibody hfr_template( template_pose_, template_name );
@@ -305,7 +305,7 @@ void CDRH3Modeler::build_centroid_loop() {
 	antibody_in_.Fv.set_omega(antibody_in_.cdrh_[3][1] - 1,
 		template_pose_.omega( unaligned_cdr_loop_begin - 1 ) );
 
-	Size modified_framework_loop_end = frmrk_loop_end_plus_one - c_ter_stem_;
+	core::Size modified_framework_loop_end = frmrk_loop_end_plus_one - c_ter_stem_;
 	loops::Loop trimmed_cdr_h3( antibody_in_.cdrh_[3][1],
 		modified_framework_loop_end, cutpoint, 0, true );
 
@@ -320,7 +320,7 @@ void CDRH3Modeler::build_centroid_loop() {
 		}
 		scored_frag_close( antibody_in_.Fv, trimmed_cdr_h3 );
 		if ( trimmed_cdr_h3.size() > cutoff_9_  ) { // aroop_temp default cutoff_9_
-			Size saved_cutoff_9 = cutoff_9_;
+			core::Size saved_cutoff_9 = cutoff_9_;
 			cutoff_9_ = 100; // never going to reach
 			scored_frag_close( antibody_in_.Fv, trimmed_cdr_h3 );
 			cutoff_9_ = saved_cutoff_9; // restoring
@@ -379,9 +379,9 @@ void simple_one_loop_fold_tree(
 	//setup fold tree for this loop
 	FoldTree f;
 	f.clear();
-	Size nres = pose_in.size();
-	Size jumppoint1 = loop.start() - 1;
-	Size jumppoint2 = loop.stop() + 1;
+	core::Size nres = pose_in.size();
+	core::Size jumppoint1 = loop.start() - 1;
+	core::Size jumppoint2 = loop.stop() + 1;
 
 	if ( jumppoint1 < 1 )   jumppoint1 = 1;
 	if ( jumppoint2 > nres ) jumppoint2 = nres;
@@ -402,9 +402,9 @@ void simple_one_loop_fold_tree(
 
 void simple_fold_tree(
 	pose::Pose & pose_in,
-	Size jumppoint1,
-	Size cutpoint,
-	Size jumppoint2
+	core::Size jumppoint1,
+	core::Size cutpoint,
+	core::Size jumppoint2
 ) {
 	using namespace kinematics;
 
@@ -413,7 +413,7 @@ void simple_fold_tree(
 	//setup fold tree for this loop
 	FoldTree f;
 	f.clear();
-	Size nres = pose_in.size();
+	core::Size nres = pose_in.size();
 
 	if ( jumppoint1 < 1 )   jumppoint1 = 1;
 	if ( jumppoint2 > nres ) jumppoint2 = nres;
@@ -445,10 +445,10 @@ void read_H3_cter_fragment(
 	bool is_extended( antibody_in.extended_ );
 
 	// extract single letter aa codes for the chopped loop residues
-	Size cdr_h3_size = ( antibody_in.cdrh_[3][2] -
+	core::Size cdr_h3_size = ( antibody_in.cdrh_[3][2] -
 		antibody_in.cdrh_[3][1] ) + 1;
 	utility::vector1< char > aa_1name;
-	for ( Size ii = antibody_in.cdrh_[3][1] - 2;
+	for ( core::Size ii = antibody_in.cdrh_[3][1] - 2;
 			ii <= ( antibody_in.cdrh_[3][1] - 2 ) + cdr_h3_size + 3; ++ii ) {
 		aa_1name.push_back( antibody_in.Fv_sequence_[ii] );
 	}
@@ -495,12 +495,12 @@ void read_H3_cter_fragment(
 	Real phi(0.0);
 	Real psi(0.0);
 	Real omega(0.0);
-	Size H3_length(0);
+	core::Size H3_length(0);
 	Real resolution(0.0);
 	std::string base_type;
 
-	Size pdb_H3_length = cdr_h3_size;
-	Size h3_base_frag_size( is_camelid ? 6 : 4 ); // changed from 4:6
+	core::Size pdb_H3_length = cdr_h3_size;
+	core::Size h3_base_frag_size( is_camelid ? 6 : 4 ); // changed from 4:6
 	bool end_not_reached(true);
 	while ( end_not_reached ) {
 		bool seq_match( true );
@@ -509,7 +509,7 @@ void read_H3_cter_fragment(
 		FragData f;
 		f.set_valid( true );
 
-		for ( Size i = 1; i <= h3_base_frag_size; ++i ) {
+		for ( core::Size i = 1; i <= h3_base_frag_size; ++i ) {
 			H3_ter_library_stream >> pdb_name
 				>> res_no
 				>> res_name
@@ -593,7 +593,7 @@ void CDRH3Modeler::antibody_modeling_insert_ter() {
 	// Storing initial fold tree
 	kinematics::FoldTree const input_tree( antibody_in_.Fv.fold_tree() );
 
-	Size loop_begin(0), loop_end(0), cutpoint(0), random_H3_ter(0);
+	core::Size loop_begin(0), loop_end(0), cutpoint(0), random_H3_ter(0);
 	//utility::vector1< fragment::FragData >::const_iterator H3_ter;
 	fragment::FragData f;
 
@@ -613,7 +613,7 @@ void CDRH3Modeler::antibody_modeling_insert_ter() {
 
 	pose::Pose start_pose = antibody_in_.Fv;
 	//inserting base dihedrals
-	Size cter_insertion_pos( is_camelid_ ? 4 : 2 );
+	core::Size cter_insertion_pos( is_camelid_ ? 4 : 2 );
 	if ( (antibody_in_.cdrh_[3][2] - cter_insertion_pos) <=
 			antibody_in_.cdrh_[3][1] ) {
 		TR << "H3 LOOP IS TOO SHORT: CAN NOT USE N-TERM INFORMATION" << std::endl;
@@ -636,7 +636,7 @@ bool CDRH3Modeler::cutpoints_separation() {
 	bool closed_cutpoints = true;
 
 	for ( auto const & elem : antibody_in_.all_cdr_loops ) {
-		Size cutpoint   = elem.cut();
+		core::Size cutpoint   = elem.cut();
 		//Real separation = 10.00; // an unlikely high number
 		Real separation = cutpoint_separation( antibody_in_.Fv, cutpoint );
 
@@ -650,10 +650,10 @@ bool CDRH3Modeler::cutpoints_separation() {
 
 Real CDRH3Modeler::cutpoint_separation(
 	pose::Pose & pose_in,
-	Size cutpoint ) {
+	core::Size cutpoint ) {
 
-	Size const N ( 1 ); // N atom
-	Size const C ( 3 ); // C atom
+	core::Size const N ( 1 ); // N atom
+	core::Size const C ( 3 ); // C atom
 
 	// Coordinates of the C atom of cutpoint res and N atom of res cutpoint+1
 	numeric::xyzVector_float peptide_C(pose_in.residue( cutpoint ).xyz( C )),
@@ -729,19 +729,19 @@ void CDRH3Modeler::scored_frag_close (
 	}
 
 
-	Size cycles1(10);
+	core::Size cycles1(10);
 	// aroop_temp default 25 * loop size
-	Size cycles2(25 * trimmed_cdr_h3.size() );
+	core::Size cycles2(25 * trimmed_cdr_h3.size() );
 
 	// params
 	Real const ccd_threshold( 0.1);
-	Size h3_attempts(0);
+	core::Size h3_attempts(0);
 	Real h3_fraction = 0.75; // 75% of loops are required to be H3's
 	Real current_h3_prob = numeric::random::rg().uniform();
 	bool H3_found_ever(false);
 	bool loop_found(false);
-	Size total_cycles(0);
-	Size frag_size(0);
+	core::Size total_cycles(0);
+	core::Size frag_size(0);
 	FragSetOP frags_to_use;
 	{
 		if ( trimmed_cdr_h3.size() > cutoff_9_ ) {
@@ -766,7 +766,7 @@ void CDRH3Modeler::scored_frag_close (
 	cdrh3_map->clear();
 	cdrh3_map->set_chi( true );
 	cdrh3_map->set_bb( false );
-	for ( Size ii = trimmed_cdr_h3.start(); ii<=trimmed_cdr_h3.stop(); ii++ ) {
+	for ( core::Size ii = trimmed_cdr_h3.start(); ii<=trimmed_cdr_h3.stop(); ii++ ) {
 		cdrh3_map->set_bb( ii, true );
 	}
 	cdrh3_map->set_jump( 1, false );
@@ -776,10 +776,10 @@ void CDRH3Modeler::scored_frag_close (
 	MonteCarloOP mc, outer_mc;
 	mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *lowres_scorefxn_, temp );
 	outer_mc = utility::pointer::make_shared< moves::MonteCarlo >( pose_in, *lowres_scorefxn_, temp );
-	Size buffer( (is_camelid_ && antibody_in_.extended_) ? 2 : 0 );
+	core::Size buffer( (is_camelid_ && antibody_in_.extended_) ? 2 : 0 );
 	while ( !loop_found && ( total_cycles++ < cycles1) ) {
 		// insert random fragments over the whole loop
-		for ( Size ii = trimmed_cdr_h3.start(); ii<=trimmed_cdr_h3.stop()
+		for ( core::Size ii = trimmed_cdr_h3.start(); ii<=trimmed_cdr_h3.stop()
 				- ( buffer + (frag_size - 1 ) ); ii++ ) {
 			ClassicFragmentMoverOP cfm( new ClassicFragmentMover( frags_to_use,
 				cdrh3_map) );
@@ -792,8 +792,8 @@ void CDRH3Modeler::scored_frag_close (
 			mc->reset( pose_in );
 		}
 
-		Size local_h3_attempts(0);
-		for ( Size c2 = 1; c2 <= cycles2; ++c2 ) {
+		core::Size local_h3_attempts(0);
+		for ( core::Size c2 = 1; c2 <= cycles2; ++c2 ) {
 			// apply a random fragment
 			ClassicFragmentMoverOP cfm( new ClassicFragmentMover( frags_to_use,
 				cdrh3_map) );
@@ -906,8 +906,8 @@ void CDRH3Modeler::scored_frag_close (
 ///
 ///////////////////////////////////////////////////////////////////////////
 bool CDRH3Modeler::CDR_H3_filter( const pose::Pose & pose_in,
-	Size const loop_begin,
-	Size const size,
+	core::Size const loop_begin,
+	core::Size const size,
 	char const light_chain )
 {
 	TR <<  "H3M Checking Kink/Extended CDR H3 Base Angle" << std::endl;
@@ -937,11 +937,11 @@ bool CDRH3Modeler::CDR_H3_filter( const pose::Pose & pose_in,
 
 	// extract 3 letter residue codes for the chopped loop
 	std::vector <std::string> aa_name; // loop residue 3 letter codes
-	for ( Size ii = 1; ii <= size + 3; ii++ ) {
+	for ( core::Size ii = 1; ii <= size + 3; ii++ ) {
 		aa_name.push_back( h3_loop.residue(ii).name3() );
 	}
 
-	Size const CA(2);   // CA atom position in full_coord array
+	core::Size const CA(2);   // CA atom position in full_coord array
 	// base dihedral angle to determine kinked/extended conformation
 	Real base_dihedral( numeric::dihedral_degrees(
 		h3_loop.residue( aa_name.size() ).xyz( CA ),
@@ -982,7 +982,7 @@ bool CDRH3Modeler::CDR_H3_filter( const pose::Pose & pose_in,
 		if ( !is_H3 ) {
 			// Rule 1b extension for special kinked form
 			bool is_basic(false); // Special basic residue exception flag
-			for ( Size ii = 2; ii <= Size(aa_name.size() - 5); ii++ ) {
+			for ( core::Size ii = 2; ii <= core::Size(aa_name.size() - 5); ii++ ) {
 				if ( aa_name[ii] == "ARG" || aa_name[ii] == "LYS" ) {
 					is_basic = true;
 					break;
@@ -990,7 +990,7 @@ bool CDRH3Modeler::CDR_H3_filter( const pose::Pose & pose_in,
 			}
 
 			if ( !is_basic ) {
-				Size rosetta_number_of_L49 = pose_in.pdb_info()->pdb2pose(
+				core::Size rosetta_number_of_L49 = pose_in.pdb_info()->pdb2pose(
 					light_chain, 49 );
 				std::string let3_code_L49 =
 					pose_in.residue( rosetta_number_of_L49 ).name3();
@@ -1022,7 +1022,7 @@ bool CDRH3Modeler::CDR_H3_filter( const pose::Pose & pose_in,
 		}
 		if ( !is_H3 ) {
 			bool is_basic(false); // Special basic residue exception flag
-			Size rosetta_number_of_L46 = pose_in.pdb_info()->pdb2pose(
+			core::Size rosetta_number_of_L46 = pose_in.pdb_info()->pdb2pose(
 				light_chain, 46 );
 			std::string let3_code_L46 =
 				pose_in.residue( rosetta_number_of_L46 ).name3();
@@ -1081,7 +1081,7 @@ bool CDRH3Modeler::CDR_H3_filter( const pose::Pose & pose_in,
 /// @author Aroop 02/04/2010
 ///
 ///////////////////////////////////////////////////////////////////////////
-void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, Size const loop_end )
+void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, core::Size const loop_begin, core::Size const loop_end )
 {
 	using namespace protocols;
 	using namespace protocols::simple_moves;
@@ -1106,7 +1106,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	cdrh3_map->set_chi( false );
 	cdrh3_map->set_bb( false );
 	utility::vector1< bool> allow_bb_move( pose_in.size(), false );
-	for ( Size ii = loop_begin; ii <= loop_end; ii++ ) {
+	for ( core::Size ii = loop_begin; ii <= loop_end; ii++ ) {
 		allow_bb_move[ ii ] = true;
 	}
 	cdrh3_map->set_bb( allow_bb_move );
@@ -1115,8 +1115,8 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 
 	// minimize_set_local_min( false, 0 );// all non-move-list rsds minimized
 
-	Size loop_size = ( loop_end - loop_begin ) + 1;
-	Size cutpoint = loop_begin + int(loop_size/2);
+	core::Size loop_size = ( loop_end - loop_begin ) + 1;
+	core::Size cutpoint = loop_begin + int(loop_size/2);
 	if ( current_loop_is_H3_ ) {
 		if ( (antibody_build_ || antibody_refine_ ) &&
 				!min_base_relax_ && !h3_random_cut_ &&
@@ -1126,7 +1126,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 		//else if( h3_random_cut_ )
 		// cutpoint = dle_choose_random_cutpoint(loop_begin, loop_end);
 	} else {
-		cutpoint = loop_begin + Size( loop_size / 2);
+		cutpoint = loop_begin + core::Size( loop_size / 2);
 	}
 	/*
 	if( snug_fit_ && loops_flag_ && docking_local_refine_ &&
@@ -1163,7 +1163,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 		simple_fold_tree( pose_in, loop_begin - h3_flank_ - 1, cutpoint,
 			loop_end + h3_flank_ + 1 );
 		with_flank_fold_tree = utility::pointer::make_shared< ChangeFoldTreeMover >( pose_in.fold_tree() );
-		for ( Size i = 1; i <= pose_in.size(); i++ ) {
+		for ( core::Size i = 1; i <= pose_in.size(); i++ ) {
 			if ( (i >= (loop_begin - h3_flank_)) && (i <= (loop_end + h3_flank_)) ) {
 				flank_allow_bb_move[i] = true;
 			}
@@ -1209,9 +1209,9 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 		highres_scorefxn_, min_type, min_tolerance, nb_list ) );
 
 	// more params
-	Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
-	Size inner_cycles( loop_size );
-	Size outer_cycles( 1 );
+	core::Size n_small_moves ( numeric::max(core::Size(5), core::Size(loop_size/2)) );
+	core::Size inner_cycles( loop_size );
+	core::Size outer_cycles( 1 );
 	if ( antibody_refine_ || refine_input_loop_ ) {
 		outer_cycles = 5;
 	}
@@ -1294,12 +1294,12 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	}
 
 	// outer cycle
-	for ( Size i = 1; i <= outer_cycles; i++ ) {
+	for ( core::Size i = 1; i <= outer_cycles; i++ ) {
 		mc->recover_low( pose_in );
-		Size h3_attempts(0); // number of H3 checks after refinement
+		core::Size h3_attempts(0); // number of H3 checks after refinement
 
 		// inner cycle
-		for ( Size j = 1; j <= inner_cycles; j++ ) {
+		for ( core::Size j = 1; j <= inner_cycles; j++ ) {
 			temperature *= gamma;
 			mc->set_temperature( temperature );
 			wiggle_cdr_h3->apply( pose_in );
@@ -1359,7 +1359,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 				}
 			}
 
-			if ( numeric::mod(j,Size(20))==0 || j==inner_cycles ) {
+			if ( numeric::mod(j,core::Size(20))==0 || j==inner_cycles ) {
 				// repack trial
 				loop_repack = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( highres_scorefxn_ );
 				setup_packer_task( start_pose_ );
@@ -1411,7 +1411,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 ///
 ///////////////////////////////////////////////////////////////////////////
 void
-CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, Size const loop_end )
+CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, core::Size const loop_begin, core::Size const loop_end )
 {
 	using namespace protocols;
 	using namespace protocols::simple_moves;
@@ -1435,15 +1435,15 @@ CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, 
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
 	utility::vector1< bool> allow_bb_move( pose_in.size(), false );
-	for ( Size ii = loop_begin; ii <= loop_end; ii++ ) {
+	for ( core::Size ii = loop_begin; ii <= loop_end; ii++ ) {
 		allow_bb_move[ ii ] = true;
 	}
 	loop_map->set_bb( allow_bb_move );
 	loop_map->set_jump( 1, false );
 
 
-	Size loop_size = ( loop_end - loop_begin ) + 1;
-	Size cutpoint = loop_begin + Size(loop_size/2);
+	core::Size loop_size = ( loop_end - loop_begin ) + 1;
+	core::Size cutpoint = loop_begin + core::Size(loop_size/2);
 
 	loops::Loop one_loop( loop_begin, loop_end, cutpoint, 0, false );
 	simple_one_loop_fold_tree( pose_in, one_loop );
@@ -1473,9 +1473,9 @@ CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, 
 		lowres_scorefxn_, min_type, min_tolerance, nb_list ) );
 
 	// more params
-	Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
-	Size inner_cycles( loop_size );
-	Size outer_cycles( 1 );
+	core::Size n_small_moves ( numeric::max(core::Size(5), core::Size(loop_size/2)) );
+	core::Size inner_cycles( loop_size );
+	core::Size outer_cycles( 1 );
 	if ( antibody_refine_ || refine_input_loop_ ) {
 		outer_cycles = 5;
 	}
@@ -1525,11 +1525,11 @@ CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, 
 	mc->reset( pose_in ); // monte carlo reset
 
 	// outer cycle
-	for ( Size i = 1; i <= outer_cycles; i++ ) {
+	for ( core::Size i = 1; i <= outer_cycles; i++ ) {
 		mc->recover_low( pose_in );
 
 		// inner cycle
-		for ( Size j = 1; j <= inner_cycles; j++ ) {
+		for ( core::Size j = 1; j <= inner_cycles; j++ ) {
 			temperature *= gamma;
 			mc->set_temperature( temperature );
 			wiggle_cdr_h3->apply( pose_in );

@@ -37,7 +37,7 @@ struct AntibodyNumbering {
 
 
 /// @brief Class responsible for reading database Numbering Scheme definitions and their transforms from the database.
-class AntibodyNumberingParser : public utility::pointer::ReferenceCount {
+class AntibodyNumberingParser : public utility::VirtualBase {
 
 public:
 
@@ -109,7 +109,7 @@ private:
 
 
 /// @brief Class that was once a struct; Used for matching pdb information between numbering schemes and cdr definitions.
-class PDBLandmark : public utility::pointer::ReferenceCount {
+class PDBLandmark : public utility::VirtualBase {
 
 public:
 	PDBLandmark(char chain, core::Size resnum,  char insertion_code);

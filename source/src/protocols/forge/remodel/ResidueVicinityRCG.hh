@@ -44,7 +44,7 @@ typedef utility::pointer::shared_ptr< ResidueVicinityInfo const > ResidueVicinit
 
 /// @brief small helper class for the ResidueVicinityRCG
 class
-	ResidueVicinityInfo : public utility::pointer::ReferenceCount
+	ResidueVicinityInfo : public utility::VirtualBase
 {
 
 public:

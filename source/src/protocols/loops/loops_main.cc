@@ -102,8 +102,8 @@ void read_loop_fragments(
 		utility_exit_with_message( "You must specify as many fragment sizes as fragment file names " );
 	}
 
-	for ( Size i = 1; i <= frag_sizes.size(); ++i ) {
-		auto const frag_size = Size(frag_sizes[i]);
+	for ( core::Size i = 1; i <= frag_sizes.size(); ++i ) {
+		auto const frag_size = core::Size(frag_sizes[i]);
 
 		FragSetOP frag_lib_op( new ConstantLengthFragSet( frag_size ) );
 		//protocols::frags::TorsionFragmentLibraryOP frag_lib_op( new protocols::frags::TorsionFragmentLibrary );
@@ -116,7 +116,7 @@ void read_loop_fragments(
 		frag_libs.push_back(frag_lib_op);
 	}
 
-	Size prev_size(10000);
+	core::Size prev_size(10000);
 	FragSetOP prev_lib_op(nullptr);
 
 	// Loop over the temporary map to generate missing/noninitialized fragment
@@ -126,8 +126,8 @@ void read_loop_fragments(
 			it_end = frag_libs.end();
 			it != it_end; ++it
 			) {
-		Size const frag_size( (*it)->max_frag_length() );
-		Size const n_frags( (*it)->size() );
+		core::Size const frag_size( (*it)->max_frag_length() );
+		core::Size const n_frags( (*it)->size() );
 
 		if ( frag_size > prev_size ) {
 			//std::cerr << frag_size << "  " << prev_size << std::endl;
@@ -180,8 +180,8 @@ void read_loop_fragments(
 			it_end = frag_libs.rend();
 			it != it_end; ++it ) {
 
-		Size const frag_size( (*it)->max_frag_length() );
-		Size const n_frags( (*it)->size() );
+		core::Size const frag_size( (*it)->max_frag_length() );
+		core::Size const n_frags( (*it)->size() );
 		tt.Info << "Fragment libraries: " << frag_size << "   " << n_frags
 			<< std::endl;
 	}
@@ -197,7 +197,7 @@ void read_loop_fragments(
 	std::vector< core::fragment::FragSetOP > temp_libs;
 	read_loop_fragments( temp_libs );
 	frag_libs.resize( temp_libs.size() );
-	for ( Size i = 1; i <= temp_libs.size(); ++i ) {
+	for ( core::Size i = 1; i <= temp_libs.size(); ++i ) {
 		frag_libs[i] = temp_libs[i-1];
 	}
 }
@@ -224,8 +224,8 @@ fold_tree_from_loops(
 	FoldTree const &f_in = core::conformation::symmetry::get_asymm_unit_fold_tree( pose.conformation() );
 
 	// nres points to last protein residue;
-	Size totres = f_in.nres();
-	Size nres = totres;
+	core::Size totres = f_in.nres();
+	core::Size nres = totres;
 	if ( nres != pose.size() ) nres--;   // only true if pose is symm. ...  asymm foldtree is then rooted on VRT
 
 	// following residues (e.g. ligands) will be attached by jumps
@@ -236,8 +236,8 @@ fold_tree_from_loops(
 	Loops tmp_loops = loops;
 	tmp_loops.sequential_order();
 
-	Size jump_num = 0;
-	Size prev_interchain_jump = 0;
+	core::Size jump_num = 0;
+	core::Size prev_interchain_jump = 0;
 	for ( Loops::const_iterator it=tmp_loops.begin(), it_end=tmp_loops.end(), it_next; it != it_end; ++it ) {
 		it_next = it;
 		it_next++;
@@ -245,15 +245,15 @@ fold_tree_from_loops(
 		bool is_lower_term = pose.residue( it->start() ).is_lower_terminus();
 		bool is_upper_term = pose.residue( it->stop() ).is_upper_terminus();
 
-		Size jump_start = it->start()-1;
-		Size jump_stop  = it->stop()+1;
-		Size const jump_cut   = it->cut();
+		core::Size jump_start = it->start()-1;
+		core::Size jump_stop  = it->stop()+1;
+		core::Size const jump_cut   = it->cut();
 
 		if ( jump_cut == 0 ) {
 			utility_exit_with_message("Can't build a fold tree from a loop with an unspecified cut point.");
 		}
 
-		Size const jump_next_start = ( it_next == it_end ) ? nres : it_next->start() - 1;
+		core::Size const jump_next_start = ( it_next == it_end ) ? nres : it_next->start() - 1;
 
 		if ( jump_stop <= nres && jump_stop < jump_next_start ) f.add_edge(jump_stop, jump_next_start, Edge::PEPTIDE);
 
@@ -301,12 +301,12 @@ fold_tree_from_loops(
 
 	// This is kind of dumb -- why don't we bail way eariler if there are no loops?
 	if ( tmp_loops.size() > 0 ) {
-		Size first_start = tmp_loops.begin()->start();
+		core::Size first_start = tmp_loops.begin()->start();
 		first_start = (first_start == 1) ? first_start : first_start - 1;
 		f.add_edge( 1, first_start, Edge::PEPTIDE );
 
 		// reorder
-		Size root;
+		core::Size root;
 		if ( tmp_loops.begin()->start() == 1 && tmp_loops.begin()->stop() != nres ) {
 			root = tmp_loops.begin()->stop()+1;
 		} else {
@@ -320,7 +320,7 @@ fold_tree_from_loops(
 	}
 
 	// Attach remaining (non-protein) residues by jumps to the tree root.
-	Size jump_anchor = f.root();
+	core::Size jump_anchor = f.root();
 	while ( nres < totres ) {
 		nres += 1;
 		f.add_edge( jump_anchor, nres, f.num_jump()+1 );
@@ -364,10 +364,10 @@ void set_single_loop_fold_tree(
 /// @note  Updates CUTPOINT_UPPER and CUTPOINT_LOWER variant status of residues in loop to match new cutpoint location
 void
 set_loop_cutpoint_in_pose_fold_tree(
-	Size const new_cutpoint,
+	core::Size const new_cutpoint,
 	pose::Pose & pose,
-	Size const loop_begin,
-	Size const loop_end
+	core::Size const loop_begin,
+	core::Size const loop_end
 )
 {
 	using namespace chemical;
@@ -375,8 +375,8 @@ set_loop_cutpoint_in_pose_fold_tree(
 	if ( f.is_cutpoint( new_cutpoint ) ) return;
 
 	// find the current cutpoint
-	Size cut(0);
-	for ( Size i=loop_begin-1; i<= loop_end; ++i ) {
+	core::Size cut(0);
+	for ( core::Size i=loop_begin-1; i<= loop_end; ++i ) {
 		if ( f.is_cutpoint( i ) ) {
 			if ( cut ) utility_exit_with_message( "multiple cutpoints in single loop!" );
 			cut = i;
@@ -425,8 +425,8 @@ void remove_cutpoint_variants(
 		}
 	} else {
 
-		for ( Size i=1; i<=pose.fold_tree().num_cutpoint() ; ++i ) {
-			Size cutpoint = pose.fold_tree().cutpoint(i);
+		for ( core::Size i=1; i<=pose.fold_tree().num_cutpoint() ; ++i ) {
+			core::Size cutpoint = pose.fold_tree().cutpoint(i);
 			if ( pose.residue(cutpoint).has_variant_type(CUTPOINT_LOWER) ) {
 				pose_changed = true;
 				core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint );
@@ -467,7 +467,7 @@ void remove_cutpoint_variants(
 void
 add_cutpoint_variants( core::pose::Pose & pose )
 {
-	for ( Size i = 1; i <= pose.fold_tree().num_cutpoint() ; ++i ) {
+	for ( core::Size i = 1; i <= pose.fold_tree().num_cutpoint() ; ++i ) {
 		core::uint cutpoint = pose.fold_tree().cutpoint( i );
 		add_single_cutpoint_variant( pose, cutpoint );
 	}
@@ -606,7 +606,7 @@ loops_set_move_map(
 	// allow phi/psi in loops to move
 	for ( auto const & loop : loops ) {
 
-		for ( Size i=loop.start(); i<=loop.stop(); ++i ) {
+		for ( core::Size i=loop.start(); i<=loop.stop(); ++i ) {
 			mm.set_bb(i, true);
 			if ( !allow_omega_move ) mm.set(TorsionID(i,BB,3), false); // omega is fixed by default
 			mm.set_chi(i, true); // chi of loop residues
@@ -620,14 +620,14 @@ loops_set_move_map(
 
 	}
 	// set chi move map based on the input allow_sc array, which is filled based on fix_natsc info
-	for ( Size i = 1; i <= allow_sc_move.size(); ++i ) {
+	for ( core::Size i = 1; i <= allow_sc_move.size(); ++i ) {
 		mm.set_chi(i, allow_sc_move[i] );
 	}
 	// chu in case we have ligand attached in fold tree and they need to move. Assuming that
 	// loop jumps come first followed by lig jumps.
 	if ( basic::options::option[ OptionKeys::loops::allow_lig_move ]() ) {
 		mm.set_jump( true );
-		for ( Size i = 1; i <= loops.num_loop(); ++i ) {
+		for ( core::Size i = 1; i <= loops.num_loop(); ++i ) {
 			mm.set_jump( i, false );
 		}
 	}
@@ -706,7 +706,7 @@ set_move_map_for_centroid_loop(
 	mm.set_chi( false );
 	mm.set_jump( false );
 	// allow phi/psi in loops to move
-	for ( Size i=loop.start(); i<=loop.stop(); ++i ) {
+	for ( core::Size i=loop.start(); i<=loop.stop(); ++i ) {
 		mm.set_bb(i, true);
 		if ( !allow_omega_move ) mm.set( TorsionID( i, BB, 3 ), false ); // omega is fixed
 		mm.set_chi(i, true); // chi of loop residues
@@ -743,11 +743,11 @@ add_loop_flank_residues_bb_to_movemap(
 
 	for ( auto const & loop : loops ) {
 
-		for ( Size i=(loop.start()-flank_size); i<=(loop.start()-1); i++ ) {
+		for ( core::Size i=(loop.start()-flank_size); i<=(loop.start()-1); i++ ) {
 			mm.set_bb(i, true);
 		}
 
-		for ( Size i=(loop.stop()+1); i<=(loop.stop()+flank_size); i++ ) {
+		for ( core::Size i=(loop.stop()+1); i<=(loop.stop()+flank_size); i++ ) {
 			mm.set_bb(i, true);
 		}
 
@@ -790,7 +790,7 @@ void select_loop_residues(
 )
 {
 	for ( auto const & loop : loops ) {
-		for ( Size i=loop.start(); i<=loop.stop(); ++i ) {
+		for ( core::Size i=loop.start(); i<=loop.stop(); ++i ) {
 			if ( pose.residue(i).type().is_disulfide_bonded() ) {
 				map[i] = false;
 			} else {
@@ -883,7 +883,7 @@ void filter_loop_neighbors_by_distance(
 	utility::vector1< bool > loop_selection(pose.size(), false);
 
 	for ( auto const & loop : loops ) {
-		for ( Size j=loop.start(); j<=loop.stop(); ++j ) {
+		for ( core::Size j=loop.start(); j<=loop.stop(); ++j ) {
 			loop_selection[ j ] = true;
 		}
 	}
@@ -917,10 +917,10 @@ extend_sequence_mapping(
 			tt << "src_seq:  " << source_seq << std::endl << "pose_seq: " << pose_seq << std::endl;
 			utility_exit_with_message( "alignfile source sequence not contained in pose sequence" );
 		}
-		Size const offset( pose_seq.find( source_seq ) );
+		core::Size const offset( pose_seq.find( source_seq ) );
 
 		std::string source_nterm_seq, target_nterm_seq;
-		for ( Size i=1; i<= offset; ++i ) {
+		for ( core::Size i=1; i<= offset; ++i ) {
 			// this is a residue in the input pdb that's not accounted for in the alignment
 			// if its protein, unalign it
 			// if its dna, align it
@@ -933,7 +933,7 @@ extend_sequence_mapping(
 
 			if ( align_this_residue ) {
 				target_nterm_seq += rsd.name1();
-				Size const target_pos( target_nterm_seq.size() );
+				core::Size const target_pos( target_nterm_seq.size() );
 				mapping.insert_target_residue( target_pos );
 				mapping[i] = target_pos;
 			}
@@ -947,7 +947,7 @@ extend_sequence_mapping(
 		while ( source_seq.size() < pose_seq.size() ) {
 			runtime_assert( mapping.size1() == source_seq.size() && mapping.size2() == target_seq.size());
 
-			Size const pos( source_seq.size() + 1 );
+			core::Size const pos( source_seq.size() + 1 );
 			Residue const & rsd( pose.residue( pos ) );
 
 			char const n1( rsd.name1() );
@@ -987,12 +987,12 @@ apply_sequence_mapping(
 
 	// try skipping this hacky rebuild of a new tree
 	if ( false && pose.num_jump() ) { // check the current fold_tree
-		Size const num_jump( pose.num_jump() );
-		Size const nres( pose.size() );
+		core::Size const num_jump( pose.num_jump() );
+		core::Size const nres( pose.size() );
 
-		Size segment(1);
-		utility::vector1< Size > seg_anchor( num_jump+1, 0 ), seg_end;
-		for ( Size i=1; i<= nres; ++i ) {
+		core::Size segment(1);
+		utility::vector1< core::Size > seg_anchor( num_jump+1, 0 ), seg_end;
+		for ( core::Size i=1; i<= nres; ++i ) {
 			if ( mapping[i] ) {
 				if ( seg_anchor[ segment ] == 0 ) {
 					seg_anchor[ segment ] = i;
@@ -1004,9 +1004,9 @@ apply_sequence_mapping(
 			}
 		}
 
-		FArray2D< Size > jumps( 2, num_jump );
-		FArray1D< Size > cuts ( num_jump );
-		for ( Size i=1; i<= num_jump; ++i ) {
+		FArray2D< core::Size > jumps( 2, num_jump );
+		FArray1D< core::Size > cuts ( num_jump );
+		for ( core::Size i=1; i<= num_jump; ++i ) {
 			jumps(1,i) = seg_anchor[1];
 			jumps(2,i) = seg_anchor[i+1];
 			cuts(i) = seg_end[i];
@@ -1030,7 +1030,7 @@ apply_sequence_mapping(
 
 	// first delete all unaligned residues
 	while ( !mapping.all_aligned() ) {
-		for ( Size i=1; i<= mapping.size1(); ++i ) {
+		for ( core::Size i=1; i<= mapping.size1(); ++i ) {
 			if ( !mapping[i] ) {
 				pose.conformation().delete_residue_slow( i );
 				//pose.conformation().delete_polymer_residue( i );
@@ -1043,7 +1043,7 @@ apply_sequence_mapping(
 	// now convert sequence of aligned positions
 	ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose() );
 	{
-		for ( Size i=1; i<= mapping.size1(); ++i ) {
+		for ( core::Size i=1; i<= mapping.size1(); ++i ) {
 			char const new_seq( target_seq[ mapping[i]-1 ] ); // strings are 0-indexed
 			if ( new_seq != pose.residue(i).name1() ) {
 				// will fail if get_representative_type can't find one
@@ -1058,7 +1058,7 @@ apply_sequence_mapping(
 	{
 		runtime_assert( pose.size() == mapping.size1() );
 		kinematics::FoldTree f( pose.fold_tree() );
-		for ( Size i=1; i< pose.size(); ++i ) {
+		for ( core::Size i=1; i< pose.size(); ++i ) {
 			runtime_assert( mapping[i] );
 			if ( mapping[i+1] != mapping[i]+1 && !f.is_cutpoint(i) ) {
 				f.new_jump( i, i+1, i );
@@ -1100,9 +1100,9 @@ apply_sequence_mapping(
 
 	// now fill in the breaks
 	{
-		for ( Size cut=1; cut<= Size(pose.fold_tree().num_cutpoint()); ++cut ) {
-			while ( mapping[ pose.fold_tree().cutpoint( cut )+1] != Size(pose.fold_tree().cutpoint( cut )+1 ) ) {
-				Size const cutpoint( pose.fold_tree().cutpoint( cut ) );
+		for ( core::Size cut=1; cut<= core::Size(pose.fold_tree().num_cutpoint()); ++cut ) {
+			while ( mapping[ pose.fold_tree().cutpoint( cut )+1] != core::Size(pose.fold_tree().cutpoint( cut )+1 ) ) {
+				core::Size const cutpoint( pose.fold_tree().cutpoint( cut ) );
 				runtime_assert( mapping[cutpoint] == cutpoint ); // we've fixed everything up til here
 
 				if ( pose.chain( cutpoint ) != pose.chain( cutpoint+1 ) &&
@@ -1157,29 +1157,29 @@ trim_back_sequence_mapping(
 	id::SequenceMapping & mapping,
 	std::string const & source_seq,
 	std::string const & target_seq,
-	Size const min_loop_size
+	core::Size const min_loop_size
 )
 {
-	//Size const min_loop_size( 5 );
+	//core::Size const min_loop_size( 5 );
 
 	std::string s1( source_seq ), s2( target_seq );
 
-	for ( Size r=1; r<= 2; ++r ) {
+	for ( core::Size r=1; r<= 2; ++r ) {
 		runtime_assert( s1.size() == mapping.size1() && s2.size() == mapping.size2() );
 
 		// look for insertions that are going to be hard to close
-		for ( Size i=2; i<= mapping.size1(); ++i ) {
+		for ( core::Size i=2; i<= mapping.size1(); ++i ) {
 			if ( mapping[i-1] && !mapping[i] ) {
 				// i is the 1st unaligned residue
 				// j is the next aligned residue
-				Size j(i+1);
+				core::Size j(i+1);
 				for ( ; j<= mapping.size1() && !mapping[j]; ++j ) {};
 				//if ( j > mapping.size1() ) break; // done scanning
 				if ( j > mapping.size1() ) {
 					// terminal loop
 					runtime_assert( j == mapping.size1()+1 );
-					Size loop_begin( i );
-					Size loop_size( mapping.size1() - i + 1 );
+					core::Size loop_begin( i );
+					core::Size loop_size( mapping.size1() - i + 1 );
 					while ( mapping[ loop_begin-2 ] && loop_size < min_loop_size ) {
 						runtime_assert( !mapping[ loop_begin   ] );
 						runtime_assert(  mapping[ loop_begin-1 ] );
@@ -1191,13 +1191,13 @@ trim_back_sequence_mapping(
 					break;
 				}
 
-				Size loop_begin( i ), loop_end( j-1 );
+				core::Size loop_begin( i ), loop_end( j-1 );
 				while ( true ) {
 					runtime_assert( !mapping[ loop_begin   ] && !mapping[ loop_end     ] );
 					runtime_assert(  mapping[ loop_begin-1 ] &&  mapping[ loop_end + 1 ] );
-					Size const size1( loop_end - loop_begin + 1 );
-					Size const size2( mapping[ loop_end+1 ] - mapping[ loop_begin-1 ] - 1 );
-					Size const min_size( std::min( size1, size2 ) );
+					core::Size const size1( loop_end - loop_begin + 1 );
+					core::Size const size2( mapping[ loop_end+1 ] - mapping[ loop_begin-1 ] - 1 );
+					core::Size const min_size( std::min( size1, size2 ) );
 					//Real const size_difference( std::abs( int(size1) - int(size2) ) );
 					tt.Trace << "loopseq: " << s1.substr(loop_begin-1,size1) << std::endl;
 					if ( min_size >= min_loop_size /* && size_difference / min_size <= 1.001 */ ) break;
@@ -1258,7 +1258,7 @@ set_secstruct_from_psipred_ss2(
 		return false;
 	}
 	tt << "set_secstruct for pose: ";
-	for ( Size i = 1, iend=secstructs.size(); i <= iend; ++i ) {
+	for ( core::Size i = 1, iend=secstructs.size(); i <= iend; ++i ) {
 		pose.set_secstruct( i, secstructs[i] );
 		tt << pose.secstruct(i);
 	}
@@ -1302,7 +1302,7 @@ set_secstruct_from_dssp(
 		if ( dummy == '#' )  break; //yippeeee!
 	}
 
-	Size count(0);
+	core::Size count(0);
 	while ( getline( data, line ) ) {
 		std::istringstream line_stream( line );
 		//int dummy_int;
@@ -1340,7 +1340,7 @@ set_secstruct_from_dssp(
 
 	runtime_assert( secstructs.size() == pose.size() );
 	tt.Trace << "set_secstruct for pose: ";
-	for ( Size i = 1, iend=secstructs.size(); i <= iend; ++i ) {
+	for ( core::Size i = 1, iend=secstructs.size(); i <= iend; ++i ) {
 		pose.set_secstruct( i, secstructs[i] );
 		tt.Trace << pose.secstruct(i);
 	}
@@ -1359,7 +1359,7 @@ void idealize_loop(
 	Loop const & loop
 )
 {
-	for ( Size i = (Size)std::max((int)1,(int)loop.start()); i <= loop.stop(); ++i ) {
+	for ( core::Size i = (core::Size)std::max((int)1,(int)loop.start()); i <= loop.stop(); ++i ) {
 		core::conformation::idealize_position(i, pose.conformation());
 	}
 }
@@ -1384,9 +1384,9 @@ void set_extended_torsions(
 
 	idealize_loop(pose, loop );
 
-	Size start_extended = std::max((Size)1,loop.start());
-	Size end_extended   = std::min(pose.size(),loop.stop());
-	for ( Size i = start_extended; i <= end_extended; ++i ) {
+	core::Size start_extended = std::max((core::Size)1,loop.start());
+	core::Size end_extended   = std::min(pose.size(),loop.stop());
+	for ( core::Size i = start_extended; i <= end_extended; ++i ) {
 		if ( i != start_extended ) pose.set_phi( i, init_phi );
 		if ( i != end_extended ) pose.set_psi( i, init_psi );
 		if ( ( i != start_extended ) && ( i != end_extended ) ) pose.set_omega( i, init_omega );
@@ -1403,7 +1403,7 @@ void remove_missing_density(
 	Loop const & loop
 )
 {
-	//Size cutpoint = loop.cut();
+	//core::Size cutpoint = loop.cut();
 	//if ( cutpoint== 0 ) cutpoint =  (loop.start() + loop.stop()) / 2;
 	set_single_loop_fold_tree( pose, loop );
 	set_extended_torsions( pose, loop );
@@ -1532,7 +1532,7 @@ loop_rmsd(
 	Real rms = 0.0;
 	int atom_count(0);
 	for ( auto const & loop : loops ) {
-		for ( Size i = loop.start(); i<=loop.stop(); ++i ) {
+		for ( core::Size i = loop.start(); i<=loop.stop(); ++i ) {
 			if ( i > pose1.size() ) {
 				tt.Warning <<  "Pose1: Loop residue " << i << "exceeds pose1 size " << pose1.total_residue() << std::endl;
 				continue;
@@ -1541,13 +1541,13 @@ loop_rmsd(
 				tt.Warning <<  "Pose1: Loop residue " << i << "exceeds pose2 size " << pose2.size() << std::endl;
 				continue;
 			}
-			Size start = 1;
-			Size end = bb_only ? 4 : pose1.residue(i).atoms().size();
+			core::Size start = 1;
+			core::Size end = bb_only ? 4 : pose1.residue(i).atoms().size();
 			if ( CA_only ) { // Only include CA atoms
 				start = 2;
 				end = 2;
 			}
-			for ( Size j = start; j <= end; ++j ) {
+			for ( core::Size j = start; j <= end; ++j ) {
 				atom_count++;
 				if ( j >  pose1.residue(i).atoms().size()  ) {
 					tt.Warning <<  "Pose1: Atom " << j << " missing from residue " << i << std::endl;
@@ -1592,8 +1592,8 @@ loop_local_rmsd(
 		FArray2D< core::Real > p2a(3, natoms);
 
 		int atom_count(0);
-		for ( Size i = loop.start(); i<=loop.stop(); ++i ) {
-			for ( Size j = 1; j <= 4; ++j ) {
+		for ( core::Size i = loop.start(); i<=loop.stop(); ++i ) {
+			for ( core::Size j = 1; j <= 4; ++j ) {
 				const numeric::xyzVector< Real > & vec1( pose1.residue(i).xyz( j ) );
 				const numeric::xyzVector< Real > & vec2( pose2.residue(i).xyz( j ) );
 				atom_count++;

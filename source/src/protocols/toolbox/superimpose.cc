@@ -166,8 +166,8 @@ void apply_superposition_transform(
 	Vector to_init_center,
 	Vector to_fit_center)
 {
-	for ( Size r = 1; r <= pose.size(); r++ ) {
-		for ( Size a = 1; a <= pose.residue_type(r).natoms(); a++ ) {
+	for ( core::Size r = 1; r <= pose.size(); r++ ) {
+		for ( core::Size a = 1; a <= pose.residue_type(r).natoms(); a++ ) {
 			core::id::AtomID id(a, r);
 			pose.set_xyz( id, ( rotation * ( pose.xyz(id) + to_init_center) ) - to_fit_center );
 		}
@@ -179,7 +179,7 @@ void fill_CA_coords( core::pose::Pose const& pose, FArray2_double& coords ) {  /
 }
 
 //coords needs to be a 3 x total_residues array
-void fill_CA_coords( core::pose::Pose const& pose, Size n_atoms, FArray2_double& coords ) {  // fill coords
+void fill_CA_coords( core::pose::Pose const& pose, core::Size n_atoms, FArray2_double& coords ) {  // fill coords
 	for ( core::Size i = 1; i <= n_atoms; i++ ) {
 		id::NamedAtomID idCA( "CA", i );
 		PointPosition const& xyz = pose.xyz( idCA );
@@ -191,12 +191,12 @@ void fill_CA_coords( core::pose::Pose const& pose, Size n_atoms, FArray2_double&
 
 void CA_superimpose( FArray1_double const& weights, core::pose::Pose const&  ref_pose, core::pose::Pose& fit_pose ) {
 	//count residues with CA
-	Size nres=0;
+	core::Size nres=0;
 	for ( core::Size i = 1; i <= fit_pose.size(); i++ ) {
 		if ( !fit_pose.residue_type( i ).is_protein() ) break;
 		++nres;
 	}
-	Size const natoms( nres );
+	core::Size const natoms( nres );
 
 	FArray2D_double coords( 3, natoms, 0.0 );
 	FArray2D_double ref_coords( 3, natoms, 0.0 );
@@ -221,10 +221,10 @@ void CA_superimpose( FArray1_double const& weights, core::pose::Pose const&  ref
 	Vector toCenter( transvec( 1 ), transvec( 2 ), transvec( 3 ));
 	Vector toFitCenter( ref_transvec( 1 ), ref_transvec( 2 ), ref_transvec( 3 ));
 	{ // translate xx2 by COM and fill in the new ref_pose coordinates
-		Size atomno(0);
+		core::Size atomno(0);
 		Vector x2;
-		for ( Size i=1; i<= fit_pose.size(); ++i ) {
-			for ( Size j=1; j<= fit_pose.residue_type(i).natoms(); ++j ) { // use residue_type to prevent internal coord update
+		for ( core::Size i=1; i<= fit_pose.size(); ++i ) {
+			for ( core::Size j=1; j<= fit_pose.residue_type(i).natoms(); ++j ) { // use residue_type to prevent internal coord update
 				++atomno;
 				fit_pose.set_xyz( id::AtomID( j,i), R * ( fit_pose.xyz( id::AtomID( j, i) ) + toCenter ) - toFitCenter );
 			}
@@ -234,10 +234,10 @@ void CA_superimpose( FArray1_double const& weights, core::pose::Pose const&  ref
 	if ( tr.Trace.visible() ) {
 		FArray2D_double pose_coords( 3, natoms );
 		fill_CA_coords( fit_pose, natoms, pose_coords );
-		for ( Size pos = 1; pos <= natoms; ++pos ) {
+		for ( core::Size pos = 1; pos <= natoms; ++pos ) {
 			tr.Trace << " fit_coords vs pose_coords: ";
-			for ( Size d = 1; d <= 3; ++d )  tr.Trace << coords( d, pos ) << " ";
-			for ( Size d = 1; d <= 3; ++d )  tr.Trace << pose_coords( d, pos ) << " ";
+			for ( core::Size d = 1; d <= 3; ++d )  tr.Trace << coords( d, pos ) << " ";
+			for ( core::Size d = 1; d <= 3; ++d )  tr.Trace << pose_coords( d, pos ) << " ";
 			tr.Trace << std::endl;
 		}
 	}
@@ -280,7 +280,7 @@ void superposition_transform(
 
 
 /// @brief compute projections for given pose
-void superimpose( Size natoms, FArray1_double const& weights, FArray2_double& ref_coords, FArray2_double& coords ) {
+void superimpose( core::Size natoms, FArray1_double const& weights, FArray2_double& ref_coords, FArray2_double& coords ) {
 	//fill Farray for fit
 
 	FArray1D_double transvec( 3 );
@@ -291,7 +291,7 @@ void superimpose( Size natoms, FArray1_double const& weights, FArray2_double& re
 }
 
 /// @brief compute projections for given pose
-void superimpose( Size natoms, FArray1_double const& weights, FArray2_double& ref_coords, FArray2_double& coords, Matrix &R ) {
+void superimpose( core::Size natoms, FArray1_double const& weights, FArray2_double& ref_coords, FArray2_double& coords, Matrix &R ) {
 	//fill Farray for fit
 	FArray1D_double transvec( 3 );
 	reset_x( natoms, ref_coords, weights, transvec );
@@ -310,12 +310,12 @@ void calc_fit_R(int natoms, Real const* weights, rvec const* xp,rvec const*x, ma
 void jacobi(core::Real a[6][6],core::Real d[],core::Real v[6][6],int *nrot);
 
 /// @brief A function (not a macro) that will not print a square matrix to tr.Debug
-template< class T > void dump_matrix( Size, T const &, basic::Tracer & ) {}
+template< class T > void dump_matrix( core::Size, T const &, basic::Tracer & ) {}
 
 /// @brief A function (not a macro) that will print a square matrix to tr.Debug
-template< class T > void dump_matrix_no( Size nr, T const & a, basic::Tracer & tracer)
+template< class T > void dump_matrix_no( core::Size nr, T const & a, basic::Tracer & tracer)
 {
-	Size i,k;
+	core::Size i,k;
 	for ( i =0 ; i<nr; ++i ) {
 		for ( k =0 ; k<nr; ++k ) {
 			tracer.Debug << a[i][k] << " ";
@@ -354,32 +354,32 @@ void add_vec( int natoms, rvec *x, const rvec transvec ) {
 	}
 }
 
-void reset_x( Size n, FArray2_double& x, FArray1_double const& wts, FArray1_double& transvec ) {
-	Size const dim( 3 );
+void reset_x( core::Size n, FArray2_double& x, FArray1_double const& wts, FArray1_double& transvec ) {
+	core::Size const dim( 3 );
 	Real mass( 0.0 );
 	transvec = FArray1D_double( 3, 0.0 );
 
-	for ( Size j = 1; j <= n; ++j ) {
+	for ( core::Size j = 1; j <= n; ++j ) {
 		mass += wts( j );
 		// align center of mass to origin
-		for ( Size d = 1; d <= dim; ++d ) {
+		for ( core::Size d = 1; d <= dim; ++d ) {
 			transvec( d ) += x( d, j )*wts( j );
 		}
 	}
-	for ( Size d = 1; d <= dim; ++d ) {
+	for ( core::Size d = 1; d <= dim; ++d ) {
 		transvec( d ) = -transvec( d )/mass;
 	}
-	for ( Size j = 1; j <= n; ++j ) {
-		for ( Size d = 1; d<= dim; ++d ) {
+	for ( core::Size j = 1; j <= n; ++j ) {
+		for ( core::Size d = 1; d<= dim; ++d ) {
 			x( d, j ) += transvec( d );
 		}
 	}
 }
 
 
-void dump_as_pdb( std::string filename, Size n, FArray2_double& x,  FArray1D_double transvec ) {
+void dump_as_pdb( std::string filename, core::Size n, FArray2_double& x,  FArray1D_double transvec ) {
 	utility::io::ozstream out( filename );
-	for ( Size i = 1; i <= n; ++i ) {
+	for ( core::Size i = 1; i <= n; ++i ) {
 		char buf[400];
 		sprintf(buf, "ATOM  %5d  %-4s%-3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f", (int) i, "CA", "ALA", (int) i,
 			x( 1, i ) + transvec( 1 ),
@@ -391,7 +391,7 @@ void dump_as_pdb( std::string filename, Size n, FArray2_double& x,  FArray1D_dou
 }
 
 
-void fit_centered_coords( Size natoms, FArray1_double const& weights, FArray2_double const& ref_coords, FArray2_double& coords, Matrix &R ) {
+void fit_centered_coords( core::Size natoms, FArray1_double const& weights, FArray2_double const& ref_coords, FArray2_double& coords, Matrix &R ) {
 	rvec* xgmx;
 	rvec* xrefgmx;
 	Real* weights_gmx;
@@ -402,9 +402,9 @@ void fit_centered_coords( Size natoms, FArray1_double const& weights, FArray2_do
 	matrix Rot;
 
 	//transfer into C-style arrays
-	for ( Size i = 1; i<=natoms ; i++ ) {
+	for ( core::Size i = 1; i<=natoms ; i++ ) {
 		weights_gmx[i-1] = weights( i );
-		for ( Size d = 1; d<=3; d++ ) {
+		for ( core::Size d = 1; d<=3; d++ ) {
 			xgmx[i-1][d-1]= coords(d, i);
 			xrefgmx[i-1][d-1]=ref_coords(d,i);
 		}
@@ -417,7 +417,7 @@ void fit_centered_coords( Size natoms, FArray1_double const& weights, FArray2_do
 	R.row_y( Vector( Rot[ 1 ][ 0 ], Rot[ 1 ][ 1 ], Rot[ 1 ][ 2 ] ) );
 	R.row_z( Vector( Rot[ 2 ][ 0 ], Rot[ 2 ][ 1 ], Rot[ 2 ][ 2 ] ) );
 
-	for ( Size i = 1; i<=natoms ; i++ ) {
+	for ( core::Size i = 1; i<=natoms ; i++ ) {
 		Vector x( coords( 1, i ), coords( 2, i), coords( 3, i ) );
 		x = R * x;
 		coords( 1, i ) = x( 1 );

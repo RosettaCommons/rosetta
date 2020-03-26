@@ -56,7 +56,7 @@ namespace multistage_rosetta_scripts {
 bool NoFailDataMap::add(
 	std::string const & type,
 	std::string const & name,
-	utility::pointer::ReferenceCountOP const op
+	utility::VirtualBaseOP const op
 ) {
 	if ( ! has( type, name ) ) { //redundant but avoids TR output that might worry users
 		DataMap::add( type, name, op );

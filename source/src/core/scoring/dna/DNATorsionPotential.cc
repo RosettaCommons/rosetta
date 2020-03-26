@@ -39,7 +39,7 @@
 #include <numeric/interpolation/periodic_range/half/interpolation.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 
 // ObjexxFCL Headers

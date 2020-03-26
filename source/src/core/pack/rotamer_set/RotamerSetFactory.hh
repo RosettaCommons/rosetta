@@ -25,7 +25,7 @@
 
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -34,7 +34,7 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-class RotamerSetFactory : public utility::pointer::ReferenceCount
+class RotamerSetFactory : public utility::VirtualBase
 {
 public:
 	~RotamerSetFactory() override;

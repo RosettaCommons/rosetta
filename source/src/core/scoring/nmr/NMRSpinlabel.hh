@@ -37,7 +37,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
@@ -50,7 +50,7 @@ namespace core {
 namespace scoring {
 namespace nmr {
 
-class NMRSpinlabel : public utility::pointer::ReferenceCount {
+class NMRSpinlabel : public utility::VirtualBase {
 
 public: // Types
 

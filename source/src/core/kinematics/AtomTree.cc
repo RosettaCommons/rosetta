@@ -105,7 +105,7 @@ AtomTree::~AtomTree()
 /////////////////////////////////////////////////////////////////////////////
 /// @details copy ctor, uses operator=
 AtomTree::AtomTree( AtomTree const & src ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	this_weak_ptr_( /* 0 */ ),
 	root_( /* 0 */ ), /// without this initialization, the destruction of this
 	/// uninitialized pointer might have disasterous consequences

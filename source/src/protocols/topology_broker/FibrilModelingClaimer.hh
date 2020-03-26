@@ -29,7 +29,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <protocols/loops/Loops.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 

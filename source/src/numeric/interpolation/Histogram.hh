@@ -17,13 +17,14 @@
 
 // Unit Headers
 #include <numeric/interpolation/Histogram.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Project Headers
 #include <numeric/interpolation/interpolation.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/NumericTraits.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
+#include <numeric/types.hh>
 
 // Utility Headers
 #include <utility/io/izstream.hh>
@@ -93,7 +94,7 @@ namespace interpolation {
 *           of real types.
 */
 template<typename X, typename Y>
-class Histogram : public utility::pointer::ReferenceCount {
+class Histogram : public utility::VirtualBase {
 public:
 	enum BinPlacement {
 		left,
@@ -115,6 +116,8 @@ public:
 		if ( interpolator == spline ) return "spline";
 		return "unrecognized";
 	}
+
+	using size_type = numeric::Size;
 
 protected:
 	/**
@@ -341,7 +344,7 @@ public:
 
 	/// @brief Copy Constructor
 	inline Histogram( Histogram const& h) :
-		ReferenceCount(h),
+		VirtualBase(h),
 		densities_(h.densities_),
 		min_(h.min_),
 		step_(h.step_),
@@ -479,7 +482,7 @@ public:
 	}
 
 	/// @brief The number of bins
-	inline size_type nbins() const{
+	inline Size nbins() const{
 		return densities_.size();
 	}
 

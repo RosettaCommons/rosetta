@@ -113,11 +113,11 @@ core::fragment::FragSetOP read_frags( std::istream& is, core::fragment::Fragment
 			continue;
 		}
 		if ( file == "NTOP" ) {
-			Size ntop;
+			core::Size ntop;
 			is >> ntop;
 			io.set_top_frag_num( ntop );
 		} else if ( file == "NCOPY" ) {
-			Size ncopy;
+			core::Size ncopy;
 			is >> ncopy;
 			io.set_ncopies( ncopy );
 		} else if ( file == "ANNOTATE" ) {
@@ -230,7 +230,7 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 
 	if ( option[ OptionKeys::broker::setup ].user() ) {
 		FileVectorOption& files( option[ OptionKeys::broker::setup ] );
-		for ( Size i = 1; i<= files.size(); ++i ) {
+		for ( core::Size i = 1; i<= files.size(); ++i ) {
 			add_claims_from_file( broker, files[ i ], cmdline_data, input_fragments );
 		}
 	}

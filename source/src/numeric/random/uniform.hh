@@ -21,7 +21,7 @@
 #include <numeric/random/uniform.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <iostream>
@@ -35,7 +35,7 @@ namespace random {
 
 
 /// @brief Uniform random number generator
-class uniform_RG : public utility::pointer::ReferenceCount
+class uniform_RG : public utility::VirtualBase
 {
 public:
 	uniform_RG() {}

@@ -31,7 +31,7 @@
 #include <ObjexxFCL/FArray4D.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -42,7 +42,7 @@ namespace potentials {
 namespace sspot {
 
 /// @brief secondary structure scoring cut from classic rosetta structure.h/structure.cc
-class SSPairPotential : public utility::pointer::ReferenceCount {
+class SSPairPotential : public utility::VirtualBase {
 public:
 
 
@@ -92,13 +92,13 @@ private: // methods
 	/// @brief to determine which direction the CO groups point
 	void
 	pair_dp(
-		Size const & ss1,
-		Size const & ss2,
+		core::Size const & ss1,
+		core::Size const & ss2,
 		BB_Pos const & bb_pos,
 		Real & dp,
 		Vector const & mid_vector,
-		Size & sign1,
-		Size & sign2
+		core::Size & sign1,
+		core::Size & sign2
 	) const;
 
 
@@ -106,13 +106,13 @@ private:
 
 
 	// @brief
-	Real calc_phithetascore( Size const strand_seqsep, Real const phi, Real const theta ) const;
+	Real calc_phithetascore( core::Size const strand_seqsep, Real const phi, Real const theta ) const;
 
 	// @brief
 	Real calc_dotscore( Real const dpall ) const;
 
 	/// @brief
-	Real calc_rsigmascore( Real sig, Real dist, Size const sign1, Size const sign2 ) const;
+	Real calc_rsigmascore( Real sig, Real dist, core::Size const sign1, core::Size const sign2 ) const;
 
 	/// @brief
 	static void rsigma_dot_initializer( FArray4D_real & rsigma_dot );
@@ -134,9 +134,9 @@ private: // secondary structure data
 	/// @brief
 	Real strand_dist_cutoff_;
 	/// @brief
-	Size dimer_seqsep_cutoff_;
+	core::Size dimer_seqsep_cutoff_;
 	/// @brief
-	Size lowstrand_;
+	core::Size lowstrand_;
 	/// @brief
 	FArray4D_real phithetascore_;
 	/// @brief

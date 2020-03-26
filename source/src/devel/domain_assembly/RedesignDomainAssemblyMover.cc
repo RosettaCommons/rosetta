@@ -207,7 +207,7 @@ RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	protocols::moves::RepeatMoverOP stage1_inner_loop( new protocols::moves::RepeatMover( stage1_trial, 25 /*100 cycles*/ ) );
 
 	std::cout << "   Current  Low " << std::endl;
-	for ( Size i = 1; i <= 20; ++i ) {
+	for ( core::Size i = 1; i <= 20; ++i ) {
 		stage1_inner_loop -> apply( pose );
 		std::cout << i << "  " << mc->last_accepted_score() << "  " << mc->lowest_score() << std::endl;
 		core::pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
@@ -227,7 +227,7 @@ RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	protocols::moves::RepeatMoverOP stage2_inner_loop( new protocols::moves::RepeatMover( stage2_trial, 50 /*cycles*/ ) );
 
 	std::cout << "   Current  Low " << std::endl;
-	for ( Size i = 1; i <= 20; ++i ) {
+	for ( core::Size i = 1; i <= 20; ++i ) {
 		stage2_inner_loop -> apply( pose );
 		std::cout << i << "  " << mc->last_accepted_score() << "  " << mc->lowest_score() << std::endl;
 		core::pack::task::PackerTaskOP this_packer_task( base_packer_task->clone() );
@@ -305,8 +305,8 @@ void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) 
 	core::Size inner_iterations = 10;
 	core::Real final_fa_rep = 0.44;
 
-	for ( Size i_outer = 1; i_outer <= outer_iterations; ++i_outer ) {
-		for ( Size i_inner = 1; i_inner <= inner_iterations; ++i_inner ) {
+	for ( core::Size i_outer = 1; i_outer <= outer_iterations; ++i_outer ) {
+		for ( core::Size i_inner = 1; i_inner <= inner_iterations; ++i_inner ) {
 			core::Real fa_rep_weight = ( 0.1 + 0.9/(inner_iterations-1) * (i_inner-1) ) * final_fa_rep;
 			scorefxn->set_weight( core::scoring::fa_rep , fa_rep_weight );
 			to_repack = interface_or_linker_rs->apply( pose );

@@ -162,12 +162,12 @@ void RNA_Minimizer::apply( core::pose::Pose & pose )
 	if ( options_->minimizer_use_coordinate_constraints() ) core::scoring::constraints::add_coordinate_constraints( pose, coord_sdev_ );
 	scoring::constraints::ConstraintSetOP pose_constraints_with_coordinate_tethers = pose.constraint_set()->clone();
 
-	utility::vector1< Size > moving_chainbreaks = stepwise::modeler::figure_out_moving_chain_break_res( pose, mm );
+	utility::vector1< core::Size > moving_chainbreaks = stepwise::modeler::figure_out_moving_chain_break_res( pose, mm );
 	protocols::rna::movers::RNA_LoopCloser rna_loop_closer;
 
 	Real const fa_rep_final( scorefxn_->get_weight( fa_rep ) );
 
-	for ( Size r = 1; r <= options_->minimize_rounds(); r++ ) {
+	for ( core::Size r = 1; r <= options_->minimize_rounds(); r++ ) {
 
 		ScoreFunctionOP minimize_scorefxn_ = scorefxn_->clone();
 
@@ -300,7 +300,7 @@ RNA_Minimizer::o2prime_trials(
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	//task->initialize_from_command_line(); //Jan 20, 2012 Testing.
 
-	for ( Size i = 1; i <= pose.size(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		// if it's not RNA, then let's prevent repacking
 		// (default behavior is different for other residue types)
 		if ( !pose.residue_type(i).is_RNA() ) {
@@ -339,7 +339,7 @@ RNA_Minimizer::packing_trials(
 {
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		// Check whether this is in the list of residues to pack
 		if ( std::find(residues_to_pack.begin(), residues_to_pack.end(), i ) != residues_to_pack.end() ) {
 			// if it's RNA
@@ -366,7 +366,7 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	using namespace core::id;
 	using namespace core::chemical::rna;
 
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 
 	mm.set_bb( false );
 	mm.set_chi( false );
@@ -378,10 +378,10 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	}
 
 	// torsions
-	for ( Size i = 1; i <= nres; i++ )  {
+	for ( core::Size i = 1; i <= nres; i++ )  {
 		if ( !pose.residue_type(i).is_RNA() ) continue;
 
-		for ( Size j = 1; j <= ( NUM_RNA_MAINCHAIN_TORSIONS + pose.residue(i).type().nchi() ); j++ ) {
+		for ( core::Size j = 1; j <= ( NUM_RNA_MAINCHAIN_TORSIONS + pose.residue(i).type().nchi() ); j++ ) {
 
 			id::TorsionID rna_torsion_id( i, id::BB, j );
 			if ( j > NUM_RNA_MAINCHAIN_TORSIONS ) rna_torsion_id = id::TorsionID( i, id::CHI, j - NUM_RNA_MAINCHAIN_TORSIONS );
@@ -402,13 +402,13 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	}
 
 	// jumps
-	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {
-		Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
+	for ( core::Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {
+		core::Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
 		std::string const jump_atom1( pose.fold_tree().upstream_atom( n ) );
 		AtomID jump_atom_id1( 1, jump_pos1 );
 		if ( jump_atom1.size() > 0 ) jump_atom_id1 = named_atom_id_to_atom_id( NamedAtomID( jump_atom1, jump_pos1 ), pose );
 
-		Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
+		core::Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
 		std::string const jump_atom2( pose.fold_tree().downstream_atom( n ) );
 		AtomID jump_atom_id2( 1, jump_pos2 );
 		if ( jump_atom2.size() > 0 ) jump_atom_id2 = named_atom_id_to_atom_id( NamedAtomID( jump_atom2, jump_pos2 ), pose );
@@ -430,7 +430,7 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	// check whether we want to relax the protein residues
 	if ( options_->minimize_all_protein() || options_->minimize_protein_sc() ) {
 		// go through all the protein residues and turn them on
-		for ( Size i = 1; i<=nres; ++i ) {
+		for ( core::Size i = 1; i<=nres; ++i ) {
 			if ( !pose.residue(i).is_protein() ) continue;
 			if ( options_->minimize_all_protein() ) {
 				mm.set_bb( i, true );
@@ -440,9 +440,9 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 		// check for jumps between protein residues, allow these to move as well
 		// (only if we're minimizing all of the protein
 		if ( options_->minimize_all_protein() ) {
-			for ( Size n = 1; n<=pose.fold_tree().num_jump(); n++ ) {
-				Size const jump_r1( pose.fold_tree().upstream_jump_residue( n ));
-				Size const jump_r2( pose.fold_tree().downstream_jump_residue( n ));
+			for ( core::Size n = 1; n<=pose.fold_tree().num_jump(); n++ ) {
+				core::Size const jump_r1( pose.fold_tree().upstream_jump_residue( n ));
+				core::Size const jump_r2( pose.fold_tree().downstream_jump_residue( n ));
 				if ( pose.residue( jump_r1 ).is_protein() && pose.residue( jump_r2 ).is_protein() ) {
 					mm.set_jump( n, true );
 				}
@@ -453,7 +453,7 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	// revise density jumps
 	if ( options_->model_with_density() && !options_->dock_into_density() ) { // default
 		// get the rigid body jumps
-		utility::vector1< Size > rigid_body_jumps = get_rigid_body_jumps( pose );
+		utility::vector1< core::Size > rigid_body_jumps = get_rigid_body_jumps( pose );
 		// set the first one to false
 		if ( rigid_body_jumps.size() > 0 ) {
 			mm.set_jump( rigid_body_jumps[ 1 ], false );
@@ -463,7 +463,7 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	// allow rigid body movements... check for virtual residue at end and at least two chunks with jumps to it.
 	protocols::rna::denovo::let_rigid_body_jumps_move( mm, pose, options_->move_first_rigid_body() );
 
-	for ( Size n = 1; n <= options_->extra_minimize_chi_res().size(); n++ ) mm.set( id::TorsionID( options_->extra_minimize_chi_res()[n], id::CHI, 1 ), true );
+	for ( core::Size n = 1; n <= options_->extra_minimize_chi_res().size(); n++ ) mm.set( id::TorsionID( options_->extra_minimize_chi_res()[n], id::CHI, 1 ), true );
 
 	// vary bond geometry
 	//if ( options_->vary_bond_geometry() ) simple_moves::setup_vary_rna_bond_geometry( mm, pose, atom_level_domain_map_ );
@@ -487,10 +487,10 @@ RNA_Minimizer::update_atom_level_domain_map_with_extra_minimize_res( pose::Pose 
 
 	utility::vector1< id::AtomID > atom_ids_to_move;
 
-	for ( Size const i : options_->extra_minimize_res() ) {
+	for ( core::Size const i : options_->extra_minimize_res() ) {
 		runtime_assert( pose.residue( i ).is_RNA() );
 
-		for ( Size j = 1; j <= pose.residue(i).natoms(); j++ ) {
+		for ( core::Size j = 1; j <= pose.residue(i).natoms(); j++ ) {
 			if ( pose.residue_type(i).is_virtual( j ) ) continue;
 			atom_ids_to_move.push_back( id::AtomID( j, i ) );
 		}

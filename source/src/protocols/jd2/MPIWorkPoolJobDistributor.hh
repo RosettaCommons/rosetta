@@ -44,8 +44,8 @@
 #include <utility/vectorL.hh>
 #include <utility/vectorL_Selector.hh>
 #include <utility/vectorL_bool.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.fwd.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/access_ptr.fwd.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.functions.hh>

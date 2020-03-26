@@ -99,8 +99,8 @@ AAMatrix::cosine_distance( AAMatrix const & obj ) const
 	AAMatrix pruned_curr;
 	AAMatrix pruned_obj;
 
-	for ( Size col_curr = 1; col_curr <= size(); ++col_curr ) {
-		for ( Size col_obj = 1; col_obj <= obj.size(); ++col_obj ) {
+	for ( core::Size col_curr = 1; col_curr <= size(); ++col_curr ) {
+		for ( core::Size col_obj = 1; col_obj <= obj.size(); ++col_obj ) {
 			if ( ( *this )[ col_curr ][ 1 ].pos() == obj[ col_obj ][ 1 ].pos() ) {
 				pruned_curr.push_back( ( *this )[ col_curr ] );
 				pruned_obj.push_back( ( obj )[ col_obj ] );
@@ -122,7 +122,7 @@ AAMatrix::cosine_distance( AAMatrix const & obj ) const
 
 	utility::vector1 < Real > results( pruned_curr.size() + 1 );
 
-	for ( Size ii = 1; ii <= results.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= results.size(); ++ii ) {
 		Real dot_p = mult_aa_matrix_totals[ ii ].probability();
 		Real magn = sqrt( curr_sq_aa_matrix_totals[ ii ].probability() ) * sqrt ( obj_sq_aa_matrix_totals[ ii ].probability() );
 		results[ ii ] = dot_p / magn;
@@ -141,8 +141,8 @@ AAMatrix::frob_distance ( AAMatrix const & obj ) const
 	AAMatrix pruned_curr;
 	AAMatrix pruned_obj;
 
-	for ( Size col_curr = 1; col_curr <= size(); ++col_curr ) {
-		for ( Size col_obj = 1; col_obj <= obj.size(); ++col_obj ) {
+	for ( core::Size col_curr = 1; col_curr <= size(); ++col_curr ) {
+		for ( core::Size col_obj = 1; col_obj <= obj.size(); ++col_obj ) {
 			if ( ( *this )[ col_curr ][ 1 ].pos() == obj[ col_obj ][ 1 ].pos() ) {
 				pruned_curr.push_back( ( *this )[ col_curr ] );
 				pruned_obj.push_back( ( obj )[ col_obj ] );
@@ -153,12 +153,12 @@ AAMatrix::frob_distance ( AAMatrix const & obj ) const
 	utility::vector1 < Real > results;
 
 	if ( ! pruned_curr.empty() ) {
-		Size res_size = pruned_curr.size() + 1;
+		core::Size res_size = pruned_curr.size() + 1;
 
 		results.assign( pruned_curr.size() + 1, Real ( 0.0 ) );
 
-		for ( Size pos = 1; pos <= pruned_curr.size(); ++pos ) {
-			for ( Size aa = 1; aa <= pruned_curr[ pos ].size(); ++aa ) {
+		for ( core::Size pos = 1; pos <= pruned_curr.size(); ++pos ) {
+			for ( core::Size aa = 1; aa <= pruned_curr[ pos ].size(); ++aa ) {
 				Real val = pow ( ( pruned_curr[ pos ][ aa ].probability() -
 					pruned_obj[ pos ][ aa ].probability() ), 2.0 );
 				results[ pos ] += val;
@@ -166,7 +166,7 @@ AAMatrix::frob_distance ( AAMatrix const & obj ) const
 			}
 		}
 
-		for ( Size ii = 1; ii <= results.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= results.size(); ++ii ) {
 			results[ ii ] = sqrt( results[ ii ] );
 		}
 	}
@@ -183,8 +183,8 @@ AAMatrix::ave_abs_diff ( AAMatrix const & obj ) const
 	AAMatrix pruned_curr;
 	AAMatrix pruned_obj;
 
-	for ( Size col_curr = 1; col_curr <= size(); ++col_curr ) {
-		for ( Size col_obj = 1; col_obj <= obj.size(); ++col_obj ) {
+	for ( core::Size col_curr = 1; col_curr <= size(); ++col_curr ) {
+		for ( core::Size col_obj = 1; col_obj <= obj.size(); ++col_obj ) {
 			if ( ( *this )[ col_curr ][ 1 ].pos() == obj[ col_obj ][ 1 ].pos() ) {
 				pruned_curr.push_back( ( *this )[ col_curr ] );
 				pruned_obj.push_back( ( obj )[ col_obj ] );
@@ -195,14 +195,14 @@ AAMatrix::ave_abs_diff ( AAMatrix const & obj ) const
 	utility::vector1 < Real > results;
 
 	if ( ! pruned_curr.empty() ) {
-		Size res_size = pruned_curr.size() + 1;
+		core::Size res_size = pruned_curr.size() + 1;
 
 		results.assign( res_size, Real( 0.0 ) );
 
-		Size num_elem = num_elements( pruned_curr );
+		core::Size num_elem = num_elements( pruned_curr );
 
-		for ( Size pos = 1; pos <= pruned_curr.size(); ++pos ) {
-			for ( Size aa = 1; aa <= pruned_curr[ pos ].size(); ++aa ) {
+		for ( core::Size pos = 1; pos <= pruned_curr.size(); ++pos ) {
+			for ( core::Size aa = 1; aa <= pruned_curr[ pos ].size(); ++aa ) {
 				Real val = std::abs ( pruned_curr[ pos ][ aa ].probability() -
 					pruned_obj[ pos ][ aa ].probability() );
 				results[ pos ] += val / pruned_curr[ pos ].size();
@@ -231,7 +231,7 @@ AAMatrix::show( std::ostream & output ) const
 
 	bool printed_header = false;
 	for ( utility::vector1< AAProb >::const_iterator iter = curr_aa_p.begin(); iter != curr_aa_p.end(); ++iter ) {
-		if ( iter->pos() != Size( 0 ) ) {
+		if ( iter->pos() != core::Size( 0 ) ) {
 			if ( ! printed_header ) {
 				output << "Curr Amino Acid Probability------------------------------" << std::endl;
 				printed_header = true;
@@ -260,15 +260,15 @@ AAMatrix::dump_transfac( std::string const & filename ) const
 	output << "PO";
 
 	//assumes that all vectors are same size, valid assumption because they should all be size of AA:num_canonical_aas
-	for ( Size aa = 1; aa <= ( *this )[ 1 ].size(); ++aa ) {
+	for ( core::Size aa = 1; aa <= ( *this )[ 1 ].size(); ++aa ) {
 		output << "\t" << core::chemical::oneletter_code_from_aa( ( *this )[ 1 ][ aa ].aa_ind() );
 	}
 
-	for ( Size res = 1; res <= size(); ++res ) {
+	for ( core::Size res = 1; res <= size(); ++res ) {
 		output << std::endl;
 		output << ( *this )[ res ][ 1 ].pos();
 
-		for ( Size aa = 1; aa <= ( *this )[ res ].size(); ++aa ) {
+		for ( core::Size aa = 1; aa <= ( *this )[ res ].size(); ++aa ) {
 			output << "\t" << ( *this )[ res ][ aa ].probability();
 		}
 	}
@@ -295,7 +295,7 @@ utility::vector1 < AAProb >
 AAMatrix::curr_aa_prob() const
 {
 	utility::vector1 < AAProb > ap ( size() );
-	for ( Size pos = 1; pos <= curr_aa_.size(); ++pos ) {
+	for ( core::Size pos = 1; pos <= curr_aa_.size(); ++pos ) {
 		ap[ pos ] = ( *this )[ pos ][ curr_aa_[ pos ] ];
 	}
 	return ap;
@@ -311,7 +311,7 @@ AAMatrix::curr_aa_prob() const
 void
 AAMatrix::init( RotMatrix const & rm, protocols::mean_field::jagged_array< core::Real > em, Real temp )
 {
-	utility::vector1< Size > curr_rot = rm.curr_rot();
+	utility::vector1< core::Size > curr_rot = rm.curr_rot();
 
 	//clears variables in order to reinitialize
 	//TODO: AR: it appears that there is a method - not strictly necessary at this point, as there is no method build_aa_matrix, so that a AAMatrix cannot be reinitialized currently
@@ -325,7 +325,7 @@ AAMatrix::init( RotMatrix const & rm, protocols::mean_field::jagged_array< core:
 	//used to normalize post rot_norm step
 	utility::vector1 < Real > totals( rm.n_designed(), Real ( 0.0 ) );
 
-	for ( Size pos = 1; pos <= rm.size(); ++pos ) {
+	for ( core::Size pos = 1; pos <= rm.size(); ++pos ) {
 		//only initialize vector in AAMatrix for designable positions
 		if ( rm.is_designed( pos ) ) {
 			//push back vector the size of num_canonical_aas - if there is no probability of certain aa's at some positions
@@ -334,7 +334,7 @@ AAMatrix::init( RotMatrix const & rm, protocols::mean_field::jagged_array< core:
 
 			//position that pointing at in AAMatrix
 			//may be different than pos in RotMatrix, which includes undesigned positions (only repacked)
-			Size aa_matrix_pos = size();
+			core::Size aa_matrix_pos = size();
 
 			//if current rotamer is set
 			if ( curr_aa_.size() != 0 ) {
@@ -342,7 +342,7 @@ AAMatrix::init( RotMatrix const & rm, protocols::mean_field::jagged_array< core:
 			}
 
 			//iterates through all rotamers for pos in RotMatrix, adding them to corresponding positions in AAMatrix
-			for ( Size rot = 1; rot <= rm[ pos ].size(); ++rot ) {
+			for ( core::Size rot = 1; rot <= rm[ pos ].size(); ++rot ) {
 				core::chemical::AA ind = rm[ pos ][ rot ].aa_ind();
 
 				//hasn't been initialized to correct amino acid yet
@@ -358,14 +358,14 @@ AAMatrix::init( RotMatrix const & rm, protocols::mean_field::jagged_array< core:
 			}
 
 			//normalize for number of rotamers by dividing orig_prob/(nrot ^ rot_norm_weight)
-			for ( Size aa = 1; aa <= core::chemical::num_canonical_aas; ++aa ) {
+			for ( core::Size aa = 1; aa <= core::chemical::num_canonical_aas; ++aa ) {
 				//if AAProb wasn't set yet (i.e. AA is not allowed) set nrot, pos, and aa_ind
 				if ( ( *this )[ aa_matrix_pos ][ aa ].pos() == 0 ) {
 					( *this )[ aa_matrix_pos ][ aa ].pos( rm[ pos ][ 1 ].pos() );
 					( *this )[ aa_matrix_pos ][ aa ].nrot( 1 ); //set to 1 to avoid division by 0
 					( *this )[ aa_matrix_pos ][ aa ].aa_ind( static_cast<core::chemical::AA>( aa ) );
 				}
-				Size nrot = ( *this )[ aa_matrix_pos ][ aa ].nrot();
+				core::Size nrot = ( *this )[ aa_matrix_pos ][ aa ].nrot();
 				//    nrot = nrot == 0 ? 1 : nrot; //set to 1 if this is set to 0 to avoid division by 0
 				//this line is only necessary for P/nrot^RNW
 				( *this )[ aa_matrix_pos ][ aa ].probability( ( *this )[ aa_matrix_pos ][ aa ].probability() / pow( nrot,
@@ -405,7 +405,7 @@ AAMatrix::init( std::istream & aa_matrix_file )
 	curr_aa_.clear();
 
 	utility::vector1 < core::chemical::AA > aa_names( core::chemical::num_canonical_aas );
-	Size lineno = 1; //first line of transfac file is ID
+	core::Size lineno = 1; //first line of transfac file is ID
 	utility::vector1 < std::string > tokens( core::pack::task::tokenize_line ( aa_matrix_file) );
 
 	while ( !tokens.empty() ) {
@@ -430,7 +430,7 @@ AAMatrix::parse_aa_matrix_line( utility::vector1 < std::string > const & tokens,
 {
 
 	std::istringstream token_s;
-	Size pos;
+	core::Size pos;
 	token_s.str(tokens[1]);
 
 	if ( ! ( token_s >> pos ) ) {
@@ -443,7 +443,7 @@ AAMatrix::parse_aa_matrix_line( utility::vector1 < std::string > const & tokens,
 	utility::vector1 < AAProb > probs( core::chemical::num_canonical_aas );
 
 	//tokens begins with positional index
-	for ( Size which_token = 2; which_token <= tokens.size(); ++which_token ) {
+	for ( core::Size which_token = 2; which_token <= tokens.size(); ++which_token ) {
 		std::istringstream token_s2( tokens[ which_token ] );
 		Real prob;
 
@@ -467,7 +467,7 @@ AAMatrix::parse_aa_matrix_line( utility::vector1 < std::string > const & tokens,
 void
 AAMatrix::parse_aa_line( utility::vector1< std::string > const & tokens, utility::vector1< core::chemical::AA > & aa_names )
 {
-	for ( Size which_token = 2; which_token <= tokens.size(); ++which_token ) {
+	for ( core::Size which_token = 2; which_token <= tokens.size(); ++which_token ) {
 		aa_names[ which_token - 1 ] = core::chemical::aa_from_oneletter_code( tokens[ which_token ].at( 0 ) );
 	}
 }
@@ -480,7 +480,7 @@ AAMatrix::copy_data(
 	AAMatrix const & object_to_copy_from)
 {
 	object_to_copy_to.clear();
-	for ( Size i = 1; i <= object_to_copy_from.size(); ++i ) {
+	for ( core::Size i = 1; i <= object_to_copy_from.size(); ++i ) {
 		object_to_copy_to.push_back ( object_to_copy_from[i] );
 	}
 	object_to_copy_to.curr_aa_ = object_to_copy_from.curr_aa_;

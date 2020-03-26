@@ -142,11 +142,11 @@ void CentroidRelaxMover::apply(pose::Pose & pose)
 {
 	setup_movers(pose);
 
-	for ( Size outer_loop = 1; outer_loop <= outer_loop_cycles_; ++outer_loop ) {
+	for ( core::Size outer_loop = 1; outer_loop <= outer_loop_cycles_; ++outer_loop ) {
 		TR << "CentroidRelax OuterLoop Execution Number:"<< outer_loop << std::endl;
 		monte_carlo_->recover_low(pose);
 		shear_trial_min_mover_->apply(pose);
-		for ( Size inner_loop = 1; inner_loop <=inner_loop_cycles_; ++inner_loop ) {
+		for ( core::Size inner_loop = 1; inner_loop <=inner_loop_cycles_; ++inner_loop ) {
 			TR << "CentroidRelax InnerLoop Execution Number:"<< inner_loop << std::endl;
 			small_trial_min_mover_->apply(pose);
 		}

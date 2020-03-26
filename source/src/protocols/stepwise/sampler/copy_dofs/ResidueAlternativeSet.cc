@@ -27,8 +27,8 @@ namespace copy_dofs {
 
 //Constructor
 ResidueAlternativeSet::ResidueAlternativeSet(  utility::vector1< core::pose::PoseOP > const & pose_list,
-	std::map< Size, Size > const & res_map,
-	Size const representative_seqpos):
+	std::map< core::Size, core::Size > const & res_map,
+	core::Size const representative_seqpos):
 	pose_list_( pose_list ),
 	res_map_( res_map ),
 	representative_seqpos_( representative_seqpos )
@@ -36,7 +36,7 @@ ResidueAlternativeSet::ResidueAlternativeSet(  utility::vector1< core::pose::Pos
 
 //Constructor
 ResidueAlternativeSet::ResidueAlternativeSet(  utility::vector1< core::pose::PoseOP > const & pose_list,
-	Size const representative_seqpos):
+	core::Size const representative_seqpos):
 	pose_list_( pose_list ),
 	representative_seqpos_( representative_seqpos )
 {
@@ -53,7 +53,7 @@ ResidueAlternativeSet::pose_list() const
 }
 
 core::pose::PoseOP
-ResidueAlternativeSet::pose( Size const n ) const
+ResidueAlternativeSet::pose( core::Size const n ) const
 {
 	return pose_list_[ n ];
 }

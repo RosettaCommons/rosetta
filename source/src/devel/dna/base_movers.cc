@@ -70,15 +70,15 @@ setup_dme_point_graph( pose::Pose const & ref_pose, Real const threshold )
 Real
 point_graph_dme( conformation::PointGraph const & pg, pose::Pose const & pose )
 {
-	Size total(0);
+	core::Size total(0);
 	Real dme(0.0);
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & i_rsd( pose.residue(i) );
 		for ( auto
 				i_iter     = pg.get_vertex( i ).const_upper_edge_list_begin(),
 				i_end_iter = pg.get_vertex( i ).const_upper_edge_list_end();
 				i_iter != i_end_iter; ++i_iter ) {
-			Size const j = i_iter->upper_vertex();
+			core::Size const j = i_iter->upper_vertex();
 			Real const reference_distance( std::sqrt( i_iter->data().dsq() ) );
 			Real const pose_distance( i_rsd.nbr_atom_xyz().distance( pose.residue(j).nbr_atom_xyz() ) );
 			dme += ( reference_distance - pose_distance ) * ( reference_distance - pose_distance );
@@ -96,10 +96,10 @@ point_graph_dme( conformation::PointGraph const & pg, pose::Pose const & pose )
 
 void
 make_base_pair_move(
-	Size const seqpos,
+	core::Size const seqpos,
 	DNA_FragLib const & lib,
 	Real const frag_dev_threshold,
-	Size const max_tries,
+	core::Size const max_tries,
 	Real const max_score_increase,
 	scoring::ScoreFunction const & scorefxn,
 	pose::Pose & pose_inout
@@ -121,39 +121,39 @@ make_base_pair_move(
 
 	Real const start_score( scorefxn( pose ) );
 
-	Size const seqpos_partner( retrieve_base_partner_from_pose( pose )[ seqpos ] );
+	core::Size const seqpos_partner( retrieve_base_partner_from_pose( pose )[ seqpos ] );
 	chemical::ResidueType const &  rsd_type( pose.residue_type( seqpos         ) );
 	chemical::ResidueType const & prsd_type( pose.residue_type( seqpos_partner ) );
 	std::string const bp( std::string() + rsd_type.name1() + prsd_type.name1() );
 	vector1< CartesianFragment > const & bps( lib.base_pairs(bp) );
-	vector1< std::pair< Real, Size > > frag_devs;
+	vector1< std::pair< Real, core::Size > > frag_devs;
 
-	Size top_nn( 0 );
+	core::Size top_nn( 0 );
 	{ // compute deviations from current for all frags
 		Stub const chi  ( torsion_stub( TorsionID( seqpos        , CHI, 1 ), Backward, pose.conformation() ) );
 		Stub const chi_p( torsion_stub( TorsionID( seqpos_partner, CHI, 1 ), Backward, pose.conformation() ) );
 		RT const current( RT( chi, chi_p ) );
-		for ( Size i=1; i<= bps.size(); ++i ) {
+		for ( core::Size i=1; i<= bps.size(); ++i ) {
 			frag_devs.push_back( std::make_pair( current.distance_squared( bps[i].rt(1) ), i ) );
 		}
 		std::sort( frag_devs.begin(), frag_devs.end() );
 		td << "bp_move: frag_devs: " << frag_devs[1].first << ' ' << frag_devs[2].first << std::endl;
-		top_nn = std::min( Size(5), frag_devs.size() );
+		top_nn = std::min( core::Size(5), frag_devs.size() );
 		while ( top_nn < frag_devs.size() && frag_devs[ top_nn ].first < frag_dev_threshold ) ++top_nn;
 	}
 
 	// need these for making the fragment insertion
-	vector1< Size > offsets;
+	vector1< core::Size > offsets;
 	offsets.push_back( seqpos );
 	offsets.push_back( seqpos_partner );
 
-	Size ntries( 0 );
+	core::Size ntries( 0 );
 	Real best_score( 999.9 ), dme(0.0), rmsd(0.0), frag_dev(0.0);
 	while ( ntries < max_tries ) { // keep looping until we like the move
 		++ntries;
 
 		// make a random basepair fragment insertion
-		Size const nn( static_cast< int >( top_nn * numeric::random::rg().uniform() ) + 1 );
+		core::Size const nn( static_cast< int >( top_nn * numeric::random::rg().uniform() ) + 1 );
 		bps[ frag_devs[ nn ].second ].insert( pose.conformation(), offsets );
 
 
@@ -212,10 +212,10 @@ make_base_pair_move(
 
 void
 make_base_step_move(
-	Size const seqpos,
+	core::Size const seqpos,
 	DNA_FragLib const & lib,
 	Real const frag_dev_threshold,
-	Size const max_tries,
+	core::Size const max_tries,
 	Real const max_score_increase,
 	scoring::ScoreFunction const & scorefxn,
 	pose::Pose & pose_inout
@@ -238,42 +238,42 @@ make_base_step_move(
 
 	Real const start_score( scorefxn( pose ) );
 
-	Size const seqpos_partner( retrieve_base_partner_from_pose( pose )[ seqpos ] );
+	core::Size const seqpos_partner( retrieve_base_partner_from_pose( pose )[ seqpos ] );
 	chemical::ResidueType const &      rsd_type( pose.residue_type( seqpos   ) );
 	chemical::ResidueType const & next_rsd_type( pose.residue_type( seqpos+1 ) );
 	//Conformation & conf( pose.conformation() );
 
 	std::string const bs( std::string() + rsd_type.name1() + next_rsd_type.name1() );
 	vector1< CartesianFragment > const & bss( lib.base_steps( bs ) );
-	vector1< std::pair< Real, Size > > frag_devs;
+	vector1< std::pair< Real, core::Size > > frag_devs;
 
-	Size top_nn( 0 );
+	core::Size top_nn( 0 );
 	{ // compute deviations from current for all frags
 		Stub const chi  ( torsion_stub( TorsionID( seqpos  , CHI, 1 ), Backward, pose.conformation() ) );
 		Stub const chi_p( torsion_stub( TorsionID( seqpos+1, CHI, 1 ), Backward, pose.conformation() ) );
 		RT const current( RT( chi, chi_p ) );
-		for ( Size i=1; i<= bss.size(); ++i ) {
+		for ( core::Size i=1; i<= bss.size(); ++i ) {
 			frag_devs.push_back( std::make_pair( current.distance_squared( bss[i].rt(1) ), i ) );
 		}
 		std::sort( frag_devs.begin(), frag_devs.end() );
 		tt << "bs_move: frag_devs: " << frag_devs[1].first << ' ' << frag_devs[2].first << std::endl;
-		top_nn = std::min( Size(5), frag_devs.size() );
+		top_nn = std::min( core::Size(5), frag_devs.size() );
 		while ( top_nn < frag_devs.size() && frag_devs[ top_nn ].first < frag_dev_threshold ) ++top_nn;
 	}
 
 	// need these for making the fragment insertion
-	vector1< Size > offsets;
+	vector1< core::Size > offsets;
 	offsets.push_back( seqpos   );
 	offsets.push_back( seqpos+1 );
 
-	Size ntries( 0 );
+	core::Size ntries( 0 );
 	Real best_score( 999.9 ), dme(0.0), rmsd(0.0), frag_dev(0.0);
 
 	while ( ntries < max_tries ) { // keep looping until we like the move
 		++ntries;
 
 		// make a random basepair fragment insertion
-		Size const nn( static_cast< int >( top_nn * numeric::random::rg().uniform() ) + 1 );
+		core::Size const nn( static_cast< int >( top_nn * numeric::random::rg().uniform() ) + 1 );
 		bss[ frag_devs[ nn ].second ].insert( pose.conformation(), offsets );
 
 

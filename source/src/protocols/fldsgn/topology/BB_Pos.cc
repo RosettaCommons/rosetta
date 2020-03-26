@@ -40,9 +40,9 @@ namespace topology {
 /// @details.  After a change in size, the residue types and the integer indices are all wrong.
 /// Erase the old information.
 void
-BB_Pos::resize( Size const nres )
+BB_Pos::resize( core::Size const nres )
 {
-	if ( N_.size() == (Size) nres ) return;
+	if ( N_.size() == (core::Size) nres ) return;
 	Vector NullVector( 0.0 );
 	N_.resize( nres, NullVector );
 	CA_.resize( nres, NullVector );
@@ -86,7 +86,7 @@ BB_Pos::take_coordinates_from_pose( Pose const & pose )
 		update_indices( pose );
 	}
 
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.is_protein() ) {
 			debug_assert( N_index_[ i ]  );
@@ -119,7 +119,7 @@ BB_Pos::bbindices_up_to_date( Pose const & pose ) const
 {
 	if ( N_.size() != pose.size() ) return false;
 
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( residue_types_[ ii ].get() != & ( pose.residue_type( ii ) ) ) return false;
 	}
 	return true;
@@ -136,7 +136,7 @@ BB_Pos::update_indices( Pose const & pose )
 	static std::string const bbO("O");
 	static std::string const scCB("CB");
 
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		residue_types_[ i ] = rsd.type_ptr();
 		if ( rsd.is_protein() ) {
@@ -180,11 +180,11 @@ protocols::fldsgn::topology::BB_Pos::save( Archive & arc ) const {
 	arc( CEREAL_NVP( C_ ) ); // utility::vector1<Vector>
 	arc( CEREAL_NVP( O_ ) ); // utility::vector1<Vector>
 	arc( CEREAL_NVP( residue_types_ ) );
-	arc( CEREAL_NVP( N_index_ ) ); // utility::vector1<Size>
-	arc( CEREAL_NVP( CA_index_ ) ); // utility::vector1<Size>
-	arc( CEREAL_NVP( CB_index_ ) ); // utility::vector1<Size>
-	arc( CEREAL_NVP( C_index_ ) ); // utility::vector1<Size>
-	arc( CEREAL_NVP( O_index_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( N_index_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( CA_index_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( CB_index_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( C_index_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( O_index_ ) ); // utility::vector1<core::Size>
 }
 
 /// @brief Automatically generated deserialization method
@@ -198,11 +198,11 @@ protocols::fldsgn::topology::BB_Pos::load( Archive & arc )
 	arc( C_ ); // utility::vector1<Vector>
 	arc( O_ ); // utility::vector1<Vector>
 	arc( CEREAL_NVP( residue_types_ ) );
-	arc( N_index_ ); // utility::vector1<Size>
-	arc( CA_index_ ); // utility::vector1<Size>
-	arc( CB_index_ ); // utility::vector1<Size>
-	arc( C_index_ ); // utility::vector1<Size>
-	arc( O_index_ ); // utility::vector1<Size>
+	arc( N_index_ ); // utility::vector1<core::Size>
+	arc( CA_index_ ); // utility::vector1<core::Size>
+	arc( CB_index_ ); // utility::vector1<core::Size>
+	arc( C_index_ ); // utility::vector1<core::Size>
+	arc( O_index_ ); // utility::vector1<core::Size>
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::fldsgn::topology::BB_Pos );

@@ -60,8 +60,8 @@ FoldUnitsFilter::~FoldUnitsFilter() = default;
 void
 FoldUnitsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
-	minimal_length( tag->getOption< Size >( "minimal_length", 20 ) );
-	maximal_length( tag->getOption< Size >( "maximal_length", 40 ) );
+	minimal_length( tag->getOption< core::Size >( "minimal_length", 20 ) );
+	maximal_length( tag->getOption< core::Size >( "maximal_length", 40 ) );
 	ends_distance( tag->getOption< Real >( "ends_distance", 4.5 ) );
 	filename_ = tag->getOption< string >("filename", "FoldUnits.out" );
 
@@ -87,7 +87,7 @@ std::string
 aa_sequence( pose::Pose const & pose ){
 	std::string seq( "" );
 
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( !pose.conformation().residue( i ).is_protein() ) {
 			continue;
 		}
@@ -110,7 +110,7 @@ FoldUnitsFilter::write_to_file( std::string const pdb, core::Size const from_res
 	data.open( filename_.c_str(), std::ios::app );
 	runtime_assert( data.good() );
 	data<<pdb<<' '<<from_res<<' '<<to_res<<' '<<dssp<<' '<<sequence<<' ';
-	for ( Size resi = from_res; resi <= to_res; ++resi ) {
+	for ( core::Size resi = from_res; resi <= to_res; ++resi ) {
 		Real const phi = pose.phi( resi );
 		Real const psi = pose.psi( resi );
 		Real const omega  = pose.omega( resi );
@@ -130,7 +130,7 @@ atom_distance( core::pose::Pose const & p1, core::Size const r1, std::string con
 
 bool
 find_cut_in_segment( core::pose::Pose const & pose, core::Size const from_res, core::Size const to_res ){
-	for ( Size resi = from_res; resi < to_res; ++resi ) {
+	for ( core::Size resi = from_res; resi < to_res; ++resi ) {
 		if ( atom_distance( pose, resi, "C", pose, resi + 1, "N" ) >= 1.5 ) {
 			return true;
 		}
@@ -151,7 +151,7 @@ FoldUnitsFilter::compute(
 	pose::PDBInfoCOP pdb_info( pose.pdb_info() );
 	TR<<"secstruct: "<<sec_struct<<'\n'<<"sequence: "<<aa_seq<<std::endl;
 
-	for ( Size resi = 2; resi <= pose.size(); ++resi ) {
+	for ( core::Size resi = 2; resi <= pose.size(); ++resi ) {
 		TR<<"resi: "<<resi<<' ';
 		if ( !pose.conformation().residue( resi ).is_protein() ) {
 			continue;
@@ -159,7 +159,7 @@ FoldUnitsFilter::compute(
 		if ( !(sec_struct[ resi - 1 ] != 'L' && sec_struct[ resi - 2 ] == 'L' ) ) {
 			continue;
 		}
-		for ( Size resj = resi + minimal_length(); resj <= resi + maximal_length() && resj < pose.size(); ++resj ) {
+		for ( core::Size resj = resi + minimal_length(); resj <= resi + maximal_length() && resj < pose.size(); ++resj ) {
 			if ( !pose.conformation().residue( resj ).is_protein() ) {
 				continue;
 			}

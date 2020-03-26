@@ -371,7 +371,7 @@ WorkUnit_MD::run()
 	MD.apply( pose_work );
 	utility::vector1< core::pose::Pose > poses_out = MD.dump_poses( pose );
 
-	for ( Size i = 1+neqstep; i <= poses_out.size(); ++i ) {
+	for ( core::Size i = 1+neqstep; i <= poses_out.size(); ++i ) {
 		core::pose::Pose pose_out( poses_out[i] );
 		if ( pose_out.is_centroid() ) tofa->apply( pose_out );
 

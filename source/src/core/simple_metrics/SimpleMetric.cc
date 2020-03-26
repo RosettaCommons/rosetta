@@ -36,7 +36,7 @@ namespace simple_metrics {
 
 
 SimpleMetric::SimpleMetric( std::string const & simple_metric_type_name ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	simple_metric_type_( simple_metric_type_name )
 
 {
@@ -46,7 +46,7 @@ SimpleMetric::SimpleMetric( std::string const & simple_metric_type_name ):
 SimpleMetric::~SimpleMetric(){}
 
 SimpleMetric::SimpleMetric( SimpleMetric const & src ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	simple_metric_type_(src.simple_metric_type_)
 {
 

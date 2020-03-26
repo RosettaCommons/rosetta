@@ -116,11 +116,10 @@ using ObjexxFCL::lead_zero_string_of;
 
 namespace protocols {
 namespace hotspot_hashing {
-using Size = platform::Size;
 static basic::Tracer TR( "protocols.hotspot_hashing" );
 
 HotspotStubSet::HotspotStubSet() :
-	ReferenceCount(),
+	VirtualBase(),
 	sc_only_(true),
 	target_resnum_(0),
 	target_distance_(15.0),
@@ -130,7 +129,7 @@ HotspotStubSet::HotspotStubSet() :
 { set_chain_to_design(); }
 
 HotspotStubSet::HotspotStubSet( HotspotStubSet const & init ) :
-	ReferenceCount( init ),
+	VirtualBase( init ),
 	stub_set_( init.stub_set_ ),
 	stub_set_vec_( init.stub_set_vec_ ),
 	sc_only_( init.sc_only_ ),
@@ -149,7 +148,7 @@ void HotspotStubSet::clear() {
 	handshake_stub_sets();
 }
 
-Size HotspotStubSet::hotspot_length( ) const { return hotspot_length_; }
+core::Size HotspotStubSet::hotspot_length( ) const { return hotspot_length_; }
 void HotspotStubSet::hotspot_length( core::Size const length ) {
 	runtime_assert( length > 0 );
 	hotspot_length_ = length;
@@ -381,10 +380,10 @@ HotspotStubSetOP HotspotStubSet::subset( std::string const & residue_name3, core
 	//HotspotStub scorecut_stub( all_stubs.begin()->residue(), scorecut );
 
 	if ( ( scorecut > 0 ) && ( scorecut <=1 ) ) {
-		Size n_return = std::lround( all_stubs.size() * scorecut );
+		core::Size n_return = std::lround( all_stubs.size() * scorecut );
 		if ( n_return < 1 ) n_return = 1;
 		TR << "Finding the top " << n_return << " stubs." << std::endl;
-		Size i = 1;
+		core::Size i = 1;
 		for ( Hotspots::const_iterator stub_iter = all_stubs.begin(); stub_iter != all_stubs.end() ; ++stub_iter ) {
 			if ( i <= n_return ) {
 				//core::pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_BB", pose.size() );
@@ -415,10 +414,10 @@ HotspotStubSetOP HotspotStubSet::subset( core::Real const scorecut ) const {
 	for ( auto const & ss_iter : stub_set_ ) {
 
 		if ( ( scorecut > 0) && ( scorecut <= 1 ) ) {
-			Size n_return = std::lround( ss_iter.second.size() * scorecut );
+			core::Size n_return = std::lround( ss_iter.second.size() * scorecut );
 			TR << "Finding the top " << n_return << " stubs." << std::endl;
 			if ( n_return < 1 ) n_return = 1;
-			Size i = 1;
+			core::Size i = 1;
 			for ( const auto & stub_iter : ss_iter.second ) {
 				if ( i <= n_return ) {
 					new_set->add_stub_( stub_iter.second );
@@ -625,7 +624,7 @@ void HotspotStubSet::remove_random_stubs_from_set( int const num_to_remove ){
 	TR<<"Removed stubs from set. Current number "<<size()<<std::endl;
 }
 
-void HotspotStubSet::autofill( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, Size const n_stubs )
+void HotspotStubSet::autofill( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, core::Size const n_stubs )
 {
 	utility::vector1< std::string > amino_acids;
 	amino_acids.emplace_back( "ALA" );
@@ -651,7 +650,7 @@ void HotspotStubSet::autofill( core::pose::Pose const & pose, core::scoring::Sco
 	return;
 }
 
-void HotspotStubSet::autofill( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, core::Size const target, core::Real const distance, Size const n_stubs )
+void HotspotStubSet::autofill( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, core::Size const target, core::Real const distance, core::Size const n_stubs )
 {
 	if ( ( target <= pose.size() ) &&  ( distance > 0 ) ) {
 		target_resnum_ = target;
@@ -667,7 +666,7 @@ void HotspotStubSet::autofill( core::pose::Pose const & pose, core::scoring::Sco
 }
 
 // convenience fillers
-void HotspotStubSet::fill( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const target, core::Real const distance, std::string const & residue_name3, Size const n_stubs )
+void HotspotStubSet::fill( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const target, core::Real const distance, std::string const & residue_name3, core::Size const n_stubs )
 {
 	if ( ( target <= pose.size() ) &&  ( distance > 0 ) ) {
 		target_resnum_ = target;
@@ -682,7 +681,7 @@ void HotspotStubSet::fill( core::pose::Pose const & pose, core::scoring::ScoreFu
 }
 
 // MAIN FILLING MACHINERY HERE
-void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scoring::ScoreFunctionCOP scorefxn_in, std::string const & residue_name3, Size const n_stubs )
+void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scoring::ScoreFunctionCOP scorefxn_in, std::string const & residue_name3, core::Size const n_stubs )
 {
 
 	// set up scorefxn's. DISABLE environment-dependent H-bonds
@@ -702,7 +701,7 @@ void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scorin
 
 	core::pose::Pose pose = reference_pose;
 
-	for ( Size i = 1; i <= n_stubs; ++i ) {
+	for ( core::Size i = 1; i <= n_stubs; ++i ) {
 		core::Real score = 0;
 		// some counting for output
 		std::stringstream index;
@@ -725,8 +724,8 @@ void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scorin
 			TR.Debug << "Hotspot fold tree: " << pose.fold_tree() << std::endl;
 
 			// placed_seqpos = position of the hotspot residue of peptide
-			Size const placed_seqpos = pose.size() - stub_offset(); //(hotspot_length()/2.0 == 0.0) ? pose.size() - (hotspot_length()/2) + 1 : pose.size() - (hotspot_length()/2);
-			Size const jump_number = pose.num_jump();
+			core::Size const placed_seqpos = pose.size() - stub_offset(); //(hotspot_length()/2.0 == 0.0) ? pose.size() - (hotspot_length()/2) + 1 : pose.size() - (hotspot_length()/2);
+			core::Size const jump_number = pose.num_jump();
 			core::kinematics::FoldTree old_tree = pose.fold_tree(); // need the old tree to reset after docking
 			core::pose::PoseOP nonconstpose( new core::pose::Pose( pose ) ); // dummy for making stubs and as a pseudo-native for docking
 
@@ -844,7 +843,7 @@ HotspotStubSet::rescore( core::pose::Pose const & pose, core::scoring::ScoreFunc
 
 			// append the residue
 			working_pose.append_residue_by_jump( *residue, working_pose.size(), "", "", true );
-			Size const placed_seqpos = working_pose.size();
+			core::Size const placed_seqpos = working_pose.size();
 
 			// option to use make backbone invisible
 			if ( new_set->sc_only() ) {
@@ -865,7 +864,7 @@ void HotspotStubSet::write_all( std::string const & filename ) const
 	utility::io::ozstream outstream;
 	outstream.open( filename.c_str(), std::ios::app );
 	// convenience number. would be better to read the last atom number prior to appending the new residue.
-	Size i = 0;
+	core::Size i = 0;
 	std::string tag( "" );
 	for ( auto const & it : stub_set_ ) {
 		for ( const auto & stub_it : it.second ) {
@@ -882,7 +881,7 @@ void HotspotStubSet::write_all( std::string const & filename ) const
 void HotspotStubSet::write_stub( utility::io::ozstream & outstream, HotspotStubCOP stub, std::string const & tag ) const
 {
 	// convenience number. would be better to read the last atom number prior to appending the new residue.
-	Size atom_number = 10000;
+	core::Size atom_number = 10000;
 
 	outstream << "MODEL " << tag << "\n";
 	outstream << "REMARK 221 " << stub->bonus_value() << " \n";
@@ -1059,7 +1058,7 @@ void HotspotStubSet::create_hotspot_after_pose(core::pose::Pose & pose, std::str
 
 	//(*scorefxn)(pose);
 	core::pack::task::PackerTaskOP packer_task = core::pack::task::TaskFactory::create_packer_task( pose );
-	for ( Size ii=1; ii <= pose.size() - hotspot_length(); ++ii ) {
+	for ( core::Size ii=1; ii <= pose.size() - hotspot_length(); ++ii ) {
 		packer_task->nonconst_residue_task( ii ).prevent_repacking();
 	}
 	//make sure our appended aa has the correct identity and has realistic coordinates
@@ -1115,7 +1114,7 @@ core::Size HotspotStubSet::stub_offset() {
 }
 
 /// @brief utility function to calculate interaction energy for a single residue
-core::Real HotspotStubSet::get_residue_score_ ( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, Size const seqpos) {
+core::Real HotspotStubSet::get_residue_score_ ( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, core::Size const seqpos) {
 	protocols::simple_ddg::DdgFilter const ddg( 100/*ddg_threshold*/, scorefxn, 1 /*jump__number*/, 3 /*repeats*/ );
 	/*(*scorefxn)(pose);
 	core::Real weighted_fa_atr = pose.energies().residue_total_energies( placed_seqpos )[core::scoring::fa_atr] * scorefxn->weights()[core::scoring::fa_atr];
@@ -1294,7 +1293,7 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 
 	TR << "Making hotspot constraints..." << std::endl;
 	//TR << pose.size() << " residues" << std::endl;
-	//Size scaffold_seqpos(0);  // unused ~Labonte
+	//core::Size scaffold_seqpos(0);  // unused ~Labonte
 	for ( core::Size resnum=1; resnum <= pose.size(); ++resnum ) {
 
 		// Check that this position is allowed to be used for stub constraints
@@ -1468,7 +1467,7 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 	TR << "Making hotspot constraints..." << std::endl;
 	//TR<< pose.size() << " residues" << std::endl;
 	utility::vector1< core::scoring::constraints::ConstraintCOP > ambig_csts;
-	//Size scaffold_seqpos(0);
+	//core::Size scaffold_seqpos(0);
 	for ( core::Size resnum=1; resnum <= pose.size(); ++resnum ) {
 
 		// Check that this position is allowed to be used for stub constraints
@@ -1583,7 +1582,7 @@ HotspotStubSet::evaluate_stub_bumps_(
 			iter = unbound_neighbor_graph.get_node( resnum )->const_edge_list_begin(),
 			iter_end = unbound_neighbor_graph.get_node( resnum )->const_edge_list_end();
 			iter != iter_end; ++iter ) {
-		Size const neighbor_resnum( (*iter)->get_other_ind( resnum ) );
+		core::Size const neighbor_resnum( (*iter)->get_other_ind( resnum ) );
 		emap.clear();
 		bump_scorefxn->bump_check_backbone( placed_stub_residue, unbound_pose.residue(neighbor_resnum), unbound_pose, emap );
 		bump_energy += emap[ core::scoring::fa_rep ];
@@ -1618,7 +1617,7 @@ HotspotStubSet::evaluate_stub_self_energy_(
 			iter = unbound_neighbor_graph.get_node( resnum )->const_edge_list_begin(),
 			iter_end = unbound_neighbor_graph.get_node( resnum )->const_edge_list_end();
 			iter != iter_end; ++iter ) {
-		Size const neighbor_resnum( (*iter)->get_other_ind( resnum ) );
+		core::Size const neighbor_resnum( (*iter)->get_other_ind( resnum ) );
 
 		// how well the sidechain of the stub fits into the pose
 		core::scoring::EnergyMap emap_2b;
@@ -1680,7 +1679,7 @@ HotspotStubSet::prepare_hashing_packer_task_(
 
 void HotspotStubSet::generate_unbound_pose_( core::pose::Pose & pose ) {
 	core::Real const unbound_dist = 40.;
-	Size const rb_jump = 1; // use the first jump as the one between partners
+	core::Size const rb_jump = 1; // use the first jump as the one between partners
 	protocols::rigid::RigidBodyTransMover trans_mover( pose, rb_jump );
 	trans_mover.trans_axis( trans_mover.trans_axis() );
 	trans_mover.step_size(unbound_dist);

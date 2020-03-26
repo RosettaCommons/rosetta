@@ -41,12 +41,12 @@ using core::Size;
 ///   residues forming the constellation had their indexes previously passed
 ///   as arguments to function "SingResCnlCrea::zero_occ_for_deleted_atoms()".
 ///
-bool has_aromatic(Pose const& ps, utility::vector1<Size> const& cnl) {
+bool has_aromatic(Pose const& ps, utility::vector1<core::Size> const& cnl) {
 
-	Size const N = cnl.size();
-	for ( Size i=1; i<=N; ++i ) {
+	core::Size const N = cnl.size();
+	for ( core::Size i=1; i<=N; ++i ) {
 
-		Size const ri = cnl[i];
+		core::Size const ri = cnl[i];
 		Residue const& res = ps.residue(ri);
 
 		if ( res.aa() == aa_his ) {
@@ -54,7 +54,7 @@ bool has_aromatic(Pose const& ps, utility::vector1<Size> const& cnl) {
 		}
 
 		if ( res.is_aromatic() ) {
-			Size const cgi = res.atom_index("CG");
+			core::Size const cgi = res.atom_index("CG");
 			if ( ps.pdb_info()->occupancy( ri, cgi) ) {
 				return true;
 			}

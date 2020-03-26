@@ -78,7 +78,7 @@ enum BTSB_SUBBIN_TYPE {
 	BTSB_END_OF_LIST //Keep last
 };
 
-class BinTransitionData : public utility::pointer::ReferenceCount {
+class BinTransitionData : public utility::VirtualBase {
 public: //Constructors and destructors:
 	/// @brief Default constructor for BinTransitionData
 	///

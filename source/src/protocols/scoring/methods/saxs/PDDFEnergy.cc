@@ -212,7 +212,7 @@ void PDDFEnergy::read_pddf(std::string file_name) {
 
 	//   trPDDFEnergy.Debug << "Changing reference PDDF normalisation from: "<<norm<<" to "<<norm_<<std::endl;
 	//   norm = norm_ / norm;
-	// for(Size i=1;i<=reference_pddf_.size();i++)
+	// for(core::Size i=1;i<=reference_pddf_.size();i++)
 	//     reference_pddf_[i] *= norm;
 }
 

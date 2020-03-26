@@ -31,7 +31,7 @@
 #include <string>
 #include <map>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 namespace protocols {
@@ -120,7 +120,7 @@ typedef std::map< core::chemical::AA, core::Real > AAProbabilities;
 
 
 /// @brief Class responsible for loading information from the AntibodyDatabase.
-class AntibodyDatabaseManager : public utility::pointer::ReferenceCount{
+class AntibodyDatabaseManager : public utility::VirtualBase{
 public:
 
 	AntibodyDatabaseManager(AntibodyInfoCOP ab_info, bool force_north_paper_db = false);

@@ -19,7 +19,7 @@
 
 #include <basic/datacache/CacheableData.hh>
 #include <core/pose/Pose.fwd.hh>
-
+#include <core/types.hh>
 
 #include <utility/vector1.hh>
 

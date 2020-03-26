@@ -22,7 +22,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -34,7 +34,7 @@ namespace core {
 namespace fragment {
 namespace rna {
 
-class RNA_Fragments : public utility::pointer::ReferenceCount {
+class RNA_Fragments : public utility::VirtualBase {
 public:
 
 	//Constructor -- needs vall_torsions_file to get started.

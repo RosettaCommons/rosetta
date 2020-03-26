@@ -107,7 +107,7 @@ private:
 	/// @brief for calculating centroid disulfide energies
 	static const core::scoring::disulfides::CentroidDisulfidePotential potential_;
 	/// @brief Which jump defines the interface where the targets lie?
-	Size rb_jump_;
+	core::Size rb_jump_;
 };
 
 } // filters

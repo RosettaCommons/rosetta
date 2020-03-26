@@ -19,7 +19,7 @@
 #include <protocols/metal_interface/MetalSiteResidue.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 typedef numeric::xyzVector<core::Real> point;
@@ -28,7 +28,7 @@ namespace protocols {
 namespace metal_interface {
 
 
-class MetalSiteResidue : public utility::pointer::ReferenceCount {
+class MetalSiteResidue : public utility::VirtualBase {
 
 public:
 

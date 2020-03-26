@@ -25,7 +25,7 @@
 #include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKey.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -41,7 +41,7 @@ namespace core {
 namespace io {
 namespace silent {
 
-class SilentFileOptions : public utility::pointer::ReferenceCount
+class SilentFileOptions : public utility::VirtualBase
 {
 public:
 	SilentFileOptions();

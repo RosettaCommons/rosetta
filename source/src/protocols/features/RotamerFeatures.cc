@@ -212,7 +212,7 @@ RotamerFeatures::report_features(
 	RotamerLibraryScratchSpace scratch;
 
 	for (
-			Size residue_number=1;
+			core::Size residue_number=1;
 			residue_number <= pose.size();
 			++residue_number ) {
 
@@ -235,15 +235,15 @@ RotamerFeatures::report_features(
 		}
 
 
-		Size rotamer_bin(0);
+		core::Size rotamer_bin(0);
 		bool recognized_residue_type;
 
 		ChiVector const & chis(residue.chi());
 
 		bool semi_rotameric(true);
-		Size nchi = 0;
-		Size n_bb = 0;
-		for ( Size ii=1; ii <= dps.rotameric_amino_acids.size(); ++ii ) {
+		core::Size nchi = 0;
+		core::Size n_bb = 0;
+		for ( core::Size ii=1; ii <= dps.rotameric_amino_acids.size(); ++ii ) {
 			if ( dps.rotameric_amino_acids[ii] == residue.aa() ) {
 				semi_rotameric = false;
 				nchi = dps.rotameric_n_chi[ ii ];
@@ -253,7 +253,7 @@ RotamerFeatures::report_features(
 		}
 
 		if ( semi_rotameric ) {
-			for ( Size ii=1; ii <= dps.sraa.size(); ++ii ) {
+			for ( core::Size ii=1; ii <= dps.sraa.size(); ++ii ) {
 				if ( dps.sraa[ii] == residue.aa() ) {
 					nchi = dps.srnchi[ii];
 					n_bb = dps.srnbb[ ii ];
@@ -325,7 +325,7 @@ RotamerFeatures::report_features(
 
 		vector1< Real > chi_deviations(0, 4);
 
-		for ( Size chi = 1; chi <= nchi; ++chi ) {
+		for ( core::Size chi = 1; chi <= nchi; ++chi ) {
 			if ( library_name == "dun02" ) {
 				chi_deviations.push_back(
 					subtract_chi_angles(
@@ -342,7 +342,7 @@ RotamerFeatures::report_features(
 		insert_stmt.bind(4, nchi);
 		insert_stmt.bind(5, semi_rotameric);
 
-		for ( Size chi = 1; chi <= 4; ++chi ) {
+		for ( core::Size chi = 1; chi <= 4; ++chi ) {
 			if ( chi <= nchi ) {
 				insert_stmt.bind(5+chi, scratch.chimean()[chi]);
 				insert_stmt.bind(9+chi, scratch.chisd()[chi]);

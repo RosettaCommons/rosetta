@@ -50,20 +50,20 @@ using std::string;
 using utility::vector1;
 
 CDRSeqDesignOptions::CDRSeqDesignOptions():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 
 }
 
 CDRSeqDesignOptions::CDRSeqDesignOptions(CDRNameEnum cdr):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	cdr_(cdr)
 {
 	set_defaults();
 }
 
 CDRSeqDesignOptions::CDRSeqDesignOptions(CDRSeqDesignOptions const & src):
-	utility::pointer::ReferenceCount(src),
+	utility::VirtualBase(src),
 	cdr_(src.cdr_),
 	design_(src.design_),
 	design_strategy_(src.design_strategy_),
@@ -126,7 +126,7 @@ CDRSeqDesignOptions::disallow_aa(utility::vector1<core::chemical::AA> const & di
 ////////////////////////////////////////////////////////////////////////////////
 
 CDRSeqDesignOptionsParser::CDRSeqDesignOptionsParser():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	default_and_user_(false)
 {
 	ab_manager_ = utility::pointer::make_shared< AntibodyEnumManager >();
@@ -136,7 +136,7 @@ CDRSeqDesignOptionsParser::CDRSeqDesignOptionsParser():
 CDRSeqDesignOptionsParser::~CDRSeqDesignOptionsParser() = default;
 
 CDRSeqDesignOptionsParser::CDRSeqDesignOptionsParser( CDRSeqDesignOptionsParser const & src ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	instructions_path_( src.instructions_path_ ),
 	default_and_user_( src.default_and_user_)
 {
@@ -153,7 +153,7 @@ CDRSeqDesignOptionsParser::clone() const {
 utility::vector1<CDRSeqDesignOptionsOP>
 CDRSeqDesignOptionsParser::parse_default_and_user_options(std::string const & filename) {
 	utility::vector1<CDRSeqDesignOptionsOP> antibody_options;
-	for ( Size i = 1; i <= 6; ++i ) {
+	for ( core::Size i = 1; i <= 6; ++i ) {
 		auto cdr = static_cast<CDRNameEnum>( i );
 		antibody_options.push_back( parse_default_and_user_options( cdr, filename ) );
 	}

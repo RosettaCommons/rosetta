@@ -20,7 +20,7 @@
 // Package headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector1.hh>
@@ -31,7 +31,7 @@ namespace pack {
 namespace dunbrack {
 
 
-class RotamerLibraryScratchSpace : public utility::pointer::ReferenceCount
+class RotamerLibraryScratchSpace : public utility::VirtualBase
 {
 public:
 	static Size const AA_OMG_INDEX = 3;

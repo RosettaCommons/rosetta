@@ -145,7 +145,7 @@ private:
 	core::Size coord2key(
 		GridCoord const& coord,
 		GridCoord const& max_coord,
-		Size exclude_dim = 0
+		core::Size exclude_dim = 0
 	);
 	/// ------------------ register cmdline options ---------------------------
 

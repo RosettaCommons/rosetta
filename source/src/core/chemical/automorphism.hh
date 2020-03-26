@@ -58,7 +58,7 @@ typedef utility::pointer::shared_ptr< AutomorphismIterator const > AutomorphismI
 ///
 /// See also:  OpenEye's OEChem library and its OERMSD() function.
 ///
-class AutomorphismIterator : public utility::pointer::ReferenceCount
+class AutomorphismIterator : public utility::VirtualBase
 {
 public:
 

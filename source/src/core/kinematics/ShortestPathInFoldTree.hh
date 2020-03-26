@@ -26,7 +26,7 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2D.hh>
@@ -35,7 +35,7 @@
 #include <map>
 
 #include <core/kinematics/Edge.fwd.hh>
-
+#include <core/types.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -52,7 +52,7 @@ namespace kinematics {
 class ShortestPathInFoldTree;
 typedef utility::pointer::shared_ptr< ShortestPathInFoldTree > ShortestPathInFoldTreeOP;
 
-class ShortestPathInFoldTree : public utility::pointer::ReferenceCount {
+class ShortestPathInFoldTree : public utility::VirtualBase {
 public:
 	// types
 	typedef utility::vector1< Edge > EdgeList;
@@ -65,12 +65,12 @@ public:
 	/// @brief copy constructor
 	ShortestPathInFoldTree( ShortestPathInFoldTree const & src );
 
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ShortestPathInFoldTree() override;
 
 
 	/// @brief returns the shortest distance of two residues going along Fold-Tree edges.
-	Size dist( Size pos1, Size pos2 ) const;
+	core::Size dist( Size pos1, Size pos2 ) const;
 
 	/// @brief returns the shortest distance for the two residues that are furthest apart
 	Size max_dist() const {

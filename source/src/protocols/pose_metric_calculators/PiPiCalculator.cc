@@ -78,7 +78,7 @@ PiPiCalculator::PiPiCalculator(core::Real dist_cutoff) :
 
 void PiPiCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const{
 	if ( key == "pi_pi" ) {
-		basic::check_cast( valptr, &pi_pi_total_, "pi_pi expects to return a Size" );
+		basic::check_cast( valptr, &pi_pi_total_, "pi_pi expects to return a core::Size" );
 		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( pi_pi_total_ );
 
 	} else {

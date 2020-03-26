@@ -105,7 +105,7 @@ void MetalloClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 	tr.Trace << "Cut Interval: " << cut_interval_low << " " << cut_interval_high << std::endl;
 
-	//Size cut_position = my_claim->offset() +
+	//core::Size cut_position = my_claim->offset() +
 
 	core::Size jump_start;
 	core::Size jump_end;

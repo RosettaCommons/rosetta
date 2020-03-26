@@ -19,7 +19,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
@@ -55,7 +55,7 @@ using namespace core;
 // Standard methods ///////////////////////////////////////////////////////////
 
 ResidueProperties::ResidueProperties() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	general_property_status_( N_PROPERTIES, false ),
 	variant_type_status_( N_VARIANTS, false )
 {}
@@ -63,7 +63,7 @@ ResidueProperties::ResidueProperties() :
 
 // Constructor with owning ResidueType
 ResidueProperties::ResidueProperties( ResidueTypeBase const & residue_type ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	parent_residue_type_( residue_type.name() ),
 	general_property_status_( N_PROPERTIES, false ),
 	variant_type_status_( N_VARIANTS, false )

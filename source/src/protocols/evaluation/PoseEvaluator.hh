@@ -32,7 +32,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 //// C++ headers
 
 // due to template function
@@ -44,7 +44,7 @@
 namespace protocols {
 namespace evaluation {
 
-class PoseEvaluator : public utility::pointer::ReferenceCount {
+class PoseEvaluator : public utility::VirtualBase {
 public:
 	PoseEvaluator() {};
 	~PoseEvaluator() override = default;
@@ -127,8 +127,8 @@ public:
 		return *this;
 	}
 
-	Size size() const override {
-		Size s( 0 );
+	core::Size size() const override {
+		core::Size s( 0 );
 		for ( auto const & evaluator : evaluators_ ) {
 			s += evaluator->size();
 		}

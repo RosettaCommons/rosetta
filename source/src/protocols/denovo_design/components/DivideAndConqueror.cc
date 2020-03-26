@@ -49,7 +49,7 @@ operator<<( std::ostream & os, SegmentPairSet const & pairs )
 }
 
 DivideAndConqueror::DivideAndConqueror():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	start_segments_(),
 	stop_segments_()
 {

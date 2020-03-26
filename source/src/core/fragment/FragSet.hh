@@ -29,7 +29,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/fragment/FrameIterator.fwd.hh>
 #include <core/fragment/FrameList.fwd.hh>
@@ -64,7 +64,7 @@ what might be useful: a map from position to all fragments that overlap with tha
 */
 
 
-class FragSet : public utility::pointer::ReferenceCount {
+class FragSet : public utility::VirtualBase {
 
 	//how to iterate over fragments that fit certain search criteria ?
 public:

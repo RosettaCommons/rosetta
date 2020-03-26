@@ -42,8 +42,8 @@ public:
 
 	std::string get_name() const override{ return "MgMinimizer"; }
 
-	void set_mg_res( utility::vector1<Size> const & setting ){ mg_res_ = setting; }
-	utility::vector1<Size> mg_res() const { return mg_res_; }
+	void set_mg_res( utility::vector1<core::Size> const & setting ){ mg_res_ = setting; }
+	utility::vector1<core::Size> mg_res() const { return mg_res_; }
 
 	void set_minimize_scorefxn( core::scoring::ScoreFunctionCOP const & setting ){ minimize_scorefxn_ = setting; }
 	core::scoring::ScoreFunctionCOP minimize_scorefxn() const { return minimize_scorefxn_; }
@@ -55,11 +55,11 @@ private:
 
 	core::kinematics::MoveMap
 	get_mg_hoh_minimize_move_map( core::pose::Pose const & pose,
-		utility::vector1< Size > const & mg_res ) const;
+		utility::vector1< core::Size > const & mg_res ) const;
 
 private:
 
-	utility::vector1< Size > mg_res_; // use post numbering
+	utility::vector1< core::Size > mg_res_; // use post numbering
 	core::scoring::ScoreFunctionCOP minimize_scorefxn_;
 	core::Distance mg_coord_cst_dist_;
 

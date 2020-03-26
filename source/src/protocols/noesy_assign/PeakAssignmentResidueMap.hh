@@ -28,7 +28,7 @@
 // Utility headers
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <core/util/prof.hh>
 //#include <core/util/Tracer.hh>
@@ -50,7 +50,7 @@ namespace noesy_assign {
 
 
 /// @brief fast access to assignments by residue number
-class PeakAssignmentResidueMap : public utility::pointer::ReferenceCount {
+class PeakAssignmentResidueMap : public utility::VirtualBase {
 public:
 	typedef std::list< PeakAssignmentOP > PeakAssignments;
 	typedef std::map< core::Size, PeakAssignments > PeakAssignmentMap;
@@ -80,7 +80,7 @@ public:
 	//commented out 9/10/12 because the only relevant action within the subroutine is commented out already
 	//void invalidate_competitors_to_sequential_NOE( CrossPeakList& );
 
-	void network_analysis( Size n_total_assignments );
+	void network_analysis( core::Size n_total_assignments );
 	void network_analysis2(); // ResonanceList const& resonances );
 	/// @brief get list of PeakAssignments for pair of residues --- throws Exception
 	PeakAssignments const& assignments( core::Size resi, core::Size resj ) const;
@@ -115,7 +115,7 @@ private:
 	) const;
 
 	/// @brief subroutine to collect putative gammas that need to be queried due to covalent structure
-	void fill_covalent_gammas( Size, std::map< core::id::NamedAtomID, bool >& collector ) const;
+	void fill_covalent_gammas( core::Size, std::map< core::id::NamedAtomID, bool >& collector ) const;
 
 
 	//find out if we have an initial assignment to gamma

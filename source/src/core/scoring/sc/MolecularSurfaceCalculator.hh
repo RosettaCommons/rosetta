@@ -33,7 +33,7 @@
 #include <numeric/xyzVector.hh>
 
 /// utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <vector>
@@ -178,7 +178,7 @@ public:
 // Molecular Surface Calculator class definition
 ////////////////////////////////////////////////////////////
 
-class MolecularSurfaceCalculator : public utility::pointer::ReferenceCount {
+class MolecularSurfaceCalculator : public utility::VirtualBase {
 
 public:
 #ifdef SC_PRECISION_REAL

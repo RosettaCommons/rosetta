@@ -373,12 +373,12 @@ EnzdesFlexBBProtocol::get_tenA_neighbor_residues(
 {
 	//make a local copy first because we will change content in residue_positions
 	core::scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
-	for ( Size i=1; i <= pose.size(); ++i ) {
+	for ( core::Size i=1; i <= pose.size(); ++i ) {
 		if ( !is_remodelable(i) && !is_flexible(i) ) continue;
 		utility::graph::Node const * current_node( tenA_neighbor_graph.get_node(i)); // find neighbors for this node
 		for ( utility::graph::Node::EdgeListConstIter it = current_node->const_edge_list_begin();
 				it != current_node->const_edge_list_end(); ++it ) {
-			Size pos = (*it)->get_other_ind(i);
+			core::Size pos = (*it)->get_other_ind(i);
 			if ( pose.residue(pos).type().is_disulfide_bonded() ) continue;
 			residue_positions[ pos ] = true;
 			//  tr << "residue pos TenAGraph " << pos << std::endl;
@@ -683,12 +683,12 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 
 	if ( minimize_cats_ ) setup_catalytic_residue_minimization_for_region( pose, region );
 
-	Size const region_size( flex_regions_[region]->positions().size() );
+	core::Size const region_size( flex_regions_[region]->positions().size() );
 
-	Size const rbegin( flex_regions_[region]->positions()[ 1 ] );
-	Size const rend( flex_regions_[region]->positions()[ flex_regions_[region]->positions().size()] );
-	Size const region_middle( (region_size + 1) / 2 );
-	Size rmid( flex_regions_[region]->positions()[ region_middle ] );
+	core::Size const rbegin( flex_regions_[region]->positions()[ 1 ] );
+	core::Size const rend( flex_regions_[region]->positions()[ flex_regions_[region]->positions().size()] );
+	core::Size const region_middle( (region_size + 1) / 2 );
+	core::Size rmid( flex_regions_[region]->positions()[ region_middle ] );
 
 	/// NOTE: proline and pre-proline residues have a very sensitive Rama distribution; try to avoid
 	/// them as pivot residues.
@@ -839,7 +839,7 @@ EnzdesFlexBBProtocol::generate_alc_ensemble_for_region(
 	protocols::moves::MonteCarlo mc( local_pose, *reduced_scorefxn(), mc_temp );
 
 
-	static Size count_output = 1;
+	static core::Size count_output = 1;
 	core::Real kinmover_successrate(0.0);
 	core::Size kinmover_successes(0), kintrials( loopgen_trials_ );
 
@@ -968,8 +968,8 @@ EnzdesFlexBBProtocol::generate_alc_ensemble_for_region(
 
 	mc.show_counters();
 
-	Size count( 0 );
-	Size const count_limit( basic::options::option[basic::options::OptionKeys::enzdes::max_bb_deviation ].user() ? 4: 2 );
+	core::Size count( 0 );
+	core::Size const count_limit( basic::options::option[basic::options::OptionKeys::enzdes::max_bb_deviation ].user() ? 4: 2 );
 
 	if ( flex_regions_[region]->nr_frags() < loop_ensemble_size_ ) {
 		tr << "Not enough fragments after monte carlo (" << flex_regions_[region]->nr_frags() << " so far) , going through all stored configurations to find more." << std::endl;
@@ -1116,7 +1116,7 @@ EnzdesFlexBBProtocol::generate_backrub_ensemble_for_region(
 
 	} //outerloop
 
-	//for ( Size ii = 2; ii <= flex_regions_[ region ]->nr_frags(); ++ii ) {
+	//for ( core::Size ii = 2; ii <= flex_regions_[ region ]->nr_frags(); ++ii ) {
 	// core::pose::Pose copy_pose( pose );
 	// flex_regions_[region]->apply( ii, copy_pose );
 	// copy_pose.dump_pdb("fullpose_loopreg_" + utility::to_string( region ) + "_" + utility::to_string( ii ) + ".pdb" );
@@ -1757,7 +1757,7 @@ EnzdesFlexibleRegion::extract_lig_designability_score(
 
 
 	//then, get the interaction energy of this stretch with itself and neighboring packing residues
-	std::set< Size > interacting_neighbors;
+	std::set< core::Size > interacting_neighbors;
 
 	for ( core::Size i = this->start(); i <= this->end(); ++i ) {
 
@@ -1826,8 +1826,8 @@ EnzdesFlexibleRegion::examine_new_loopconf(
 	utility::vector1< core::Real > &  rmsd_to_native
 )
 {
-	//static Size count_examined( 0 );
-	//Size const sought_loop_id = 5;
+	//static core::Size count_examined( 0 );
+	//core::Size const sought_loop_id = 5;
 
 	runtime_assert( compare_poses.size() > 0 );
 	runtime_assert( template_pose.size() == this->length() + 1);
@@ -1867,7 +1867,7 @@ EnzdesFlexibleRegion::examine_new_loopconf(
 
 
 	//std::cerr << "gotta compare against " << compare_poses.size() << "unique poses " << std::endl;
-	Size count( 0 );
+	core::Size count( 0 );
 	for ( utility::vector1< core::pose::PoseOP >::const_iterator pose_it = compare_poses.begin(); pose_it != compare_poses.end(); ++pose_it ) {
 
 		count++;
@@ -1884,7 +1884,7 @@ EnzdesFlexibleRegion::examine_new_loopconf(
 		// Find the smallest maximum deviation the template pose has to all other accepted poses.
 		core::Real smallest_max_dist = core::scoring::biggest_residue_deviation_no_super(
 			*compare_poses[1], template_pose, core::scoring::is_protein_backbone );
-		for ( Size ii = 2; ii <= compare_poses.size(); ++ii ) {
+		for ( core::Size ii = 2; ii <= compare_poses.size(); ++ii ) {
 			core::Real ii_super = core::scoring::biggest_residue_deviation_no_super(
 				*compare_poses[ii], template_pose, core::scoring::is_protein_backbone );
 			if ( ii_super < smallest_max_dist ) {

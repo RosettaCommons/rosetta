@@ -53,7 +53,7 @@ std::map< std::string, utility::vector1< core::Size > > read_extra_residues(
 ) {
 	std::map< std::string, utility::vector1< core::Size > > extra_residues;
 	using core::Size;
-	for ( Size ii = 1; ii <= fns.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= fns.size(); ++ii ) {
 		utility::io::izstream input( fns[ii] );
 		if ( !input.good() ) {
 			std::string const & msg( "Error reading file " + (std::string)fns[ii] );
@@ -99,11 +99,11 @@ ThreadingJobInputter::ThreadingJobInputter() :
 
 	/// read alignments from command-line
 	utility::vector1< std::string > const & aln_fns( option[ in::file::alignment ]() );
-	for ( Size ii = 1; ii <= aln_fns.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= aln_fns.size(); ++ii ) {
 		utility::vector1< core::sequence::SequenceAlignment > alns(
 			sequence::read_aln( option[ cm::aln_format ](), aln_fns[ii] )
 		);
-		for ( Size jj = 1; jj <= alns.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= alns.size(); ++jj ) {
 			alignments_.push_back( alns[jj] );
 		}
 	}
@@ -236,7 +236,7 @@ void ThreadingJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs ) {
 	jobs.clear(); //should already be empty anyway
 
 	//read command line
-	Size const nstruct( get_nstruct() );
+	core::Size const nstruct( get_nstruct() );
 	Real filter_threshold = -1;
 
 	if ( option[ cm::aln_length_filter_quantile ].user() ) {
@@ -298,7 +298,7 @@ void ThreadingJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs ) {
 				}
 
 				// make nstruct outer jobs
-				for ( Size index = 1; index <= nstruct; ++index ) {
+				for ( core::Size index = 1; index <= nstruct; ++index ) {
 					jobs.push_back( utility::pointer::make_shared< protocols::jd2::Job >( ijob, index ) );
 					jobs.back()->add_string_string_pair( "aln_id", alignment_id );
 				} // loop over nstruct

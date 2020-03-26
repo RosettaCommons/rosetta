@@ -364,14 +364,14 @@ SewGraph::add_special_edges(){
 
 /// @brief Factory method for node creation
 utility::graph::Node*
-SewGraph::create_new_node( Size index )
+SewGraph::create_new_node( core::Size index )
 {
 	return new ModelNode( this, index );
 }
 
 /// @brief Factory method for edge creation
 utility::graph::Edge*
-SewGraph::create_new_edge( Size index1, Size index2 )
+SewGraph::create_new_edge( core::Size index1, core::Size index2 )
 {
 	return hash_edge_pool_->construct( this, index1, index2 );
 }
@@ -385,8 +385,8 @@ void SewGraph::delete_edge( utility::graph::Edge * edge )
 
 HashEdge *
 SewGraph::find_hash_edge(
-	Size n1,
-	Size n2
+	core::Size n1,
+	core::Size n2
 ){
 	utility::graph::Edge * edge( find_edge( n1, n2 ) );
 	if ( edge ) {
@@ -398,8 +398,8 @@ SewGraph::find_hash_edge(
 
 HashEdge const *
 SewGraph::find_hash_edge(
-	Size n1,
-	Size n2
+	core::Size n1,
+	core::Size n2
 ) const {
 	utility::graph::Edge const * edge( find_edge( n1, n2 ) );
 	if ( edge ) {
@@ -412,7 +412,7 @@ SewGraph::find_hash_edge(
 // possible example of usage, SewGraph.cc:line 791, ModelNode const * const node = get_model_node(node_id);
 ModelNode const *
 SewGraph::get_model_node(
-	Size n
+	core::Size n
 ) const {
 	utility::graph::Node const * node( get_node(n) );
 	if ( node ) {

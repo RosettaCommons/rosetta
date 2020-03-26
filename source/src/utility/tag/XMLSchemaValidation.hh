@@ -18,7 +18,7 @@
 #include <utility/tag/XMLSchemaValidation.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // LibXML headers

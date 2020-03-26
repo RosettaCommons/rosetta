@@ -33,7 +33,7 @@ namespace protocols {
 namespace boinc {
 
 // base class
-class BoincCurrentPoseObserver : public utility::pointer::ReferenceCount {
+class BoincCurrentPoseObserver : public utility::VirtualBase {
 
 public: // typedefs
 

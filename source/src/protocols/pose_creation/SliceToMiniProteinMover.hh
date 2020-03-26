@@ -34,27 +34,27 @@ namespace pose_creation {
 class SliceToMiniProteinMover : public moves::Mover {
 public:
 	struct SSElement{
-		Size start_res;
-		Size end_res;
+		core::Size start_res;
+		core::Size end_res;
 		std::string type;
-		SSElement(Size start_res_i, Size end_res_i, std::string const & type_res_i):
+		SSElement(core::Size start_res_i, core::Size end_res_i, std::string const & type_res_i):
 			start_res(start_res_i),
 			end_res(end_res_i),
 			type(type_res_i)
 		{}
-		SSElement(Size start_res_i, Size end_res_i, char type_res_i):
+		SSElement(core::Size start_res_i, core::Size end_res_i, char type_res_i):
 			start_res(start_res_i),
 			end_res(end_res_i),
-			type(1,type_res_i) // Size 1 string with the single char
+			type(1,type_res_i) // core::Size 1 string with the single char
 		{}
 	};
 	struct Chunk{
 		core::pose::Pose pose;
-		Size start_res;
-		Size end_res;
+		core::Size start_res;
+		core::Size end_res;
 		core::Real ddg;
 		bool outputed;
-		Chunk(core::pose::Pose pose_i, Size start_res_i, Size end_res_i){
+		Chunk(core::pose::Pose pose_i, core::Size start_res_i, core::Size end_res_i){
 			pose=pose_i;
 			start_res=start_res_i;
 			end_res=end_res_i;

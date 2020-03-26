@@ -30,7 +30,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/ConstDataMap.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 // #include <basic/options/keys/fold_from_loops.OptionKeys.gen.hh>

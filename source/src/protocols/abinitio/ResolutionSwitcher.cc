@@ -86,7 +86,7 @@ bool copy_side_chains(
 		// check this my making sure that no SC atom is more than 20A (?) away from CA
 		//needToRepack[i] = true;
 		numeric::xyzVector< core::Real> ca_pos = fa_input_pose.residue(i).atom("CA").xyz();
-		for ( Size j=1; j<=fa_input_pose.residue(i).natoms(); ++j ) {
+		for ( core::Size j=1; j<=fa_input_pose.residue(i).natoms(); ++j ) {
 			if ( (ca_pos - fa_input_pose.residue(i).atom(j).xyz()).length() > 20 ) {
 				tr.Debug << "-" << i << " ";
 				needToRepack[ i ] = true;
@@ -152,11 +152,11 @@ void ResolutionSwitcher::apply( pose::Pose &pose ) {
 	}
 
 	if ( init_fa_ ) { //find residues that have moved --- test for missing density is in copy_side_chains!
-		for ( Size i=1; i<=pose.size(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( std::abs(init_pose_.phi( i ) - pose.phi( i ) ) > 10
 					|| std::abs(init_pose_.psi( i ) - pose.psi( i ) ) > 10 ) {
 				tr.Trace << "residue " << i << " has moved " << std::endl;
-				for ( Size j = std::max( 1, (int)i-(int) repack_buffer_); j <= pose.size() && j <= i + repack_buffer_; j++ ) {
+				for ( core::Size j = std::max( 1, (int)i-(int) repack_buffer_); j <= pose.size() && j <= i + repack_buffer_; j++ ) {
 					needToRepack[ j ] = true;
 				} //saftey buffer for repacking: 1 residues on each side of moved stuff
 			}

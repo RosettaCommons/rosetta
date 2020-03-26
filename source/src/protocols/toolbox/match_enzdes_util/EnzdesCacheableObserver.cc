@@ -309,7 +309,7 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
 
 		// register SequenceProfileConstraint with the ConstraintFactory so that it can be constructed from a constraint file
 		//ConstraintIO::get_cst_factory().add_type(
-		//new core::scoring::constraints::SequenceProfileConstraint( Size(), utility::vector1< id::AtomID >(), NULL ) );
+		//new core::scoring::constraints::SequenceProfileConstraint( core::Size(), utility::vector1< id::AtomID >(), NULL ) );
 
 		// add constraints to bias design toward a sequence profile
 		SequenceProfileOP profile( new SequenceProfile );
@@ -320,7 +320,7 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
 
 		tr << *profile << std::endl;
 
-		for ( Size seqpos(1), end( pose.size() ); seqpos <= end; ++seqpos ) {
+		for ( core::Size seqpos(1), end( pose.size() ); seqpos <= end; ++seqpos ) {
 			// add individual profile constraint for each residue position
 			// because of the underlying constraint implementation, this enures that the constraint is
 			// a context-independent 1-body energy, or (intra)residue constraint

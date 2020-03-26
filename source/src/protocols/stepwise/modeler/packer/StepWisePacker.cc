@@ -81,7 +81,7 @@ namespace packer {
 
 //////////////////////////////////////////////////////////////////////////
 //constructor!
-StepWisePacker::StepWisePacker( utility::vector1< Size > const & working_moving_res_list ):
+StepWisePacker::StepWisePacker( utility::vector1< core::Size > const & working_moving_res_list ):
 	working_moving_res_list_( working_moving_res_list ),
 	use_packer_instead_of_rotamer_trials_( false ),
 	allow_virtual_side_chains_( false ),
@@ -159,7 +159,7 @@ StepWisePacker::setup_pack_task( pose::Pose const & pose ) {
 	pack_task_ = pack::task::TaskFactory::create_packer_task( pose ); // create form scratch?
 	pack_task_->restrict_to_repacking();
 
-	for ( Size i = 1; i <= pose.size(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 
 		if ( !working_pack_res_.has_value( i ) )  {
 			pack_task_->nonconst_residue_task(i).prevent_repacking();

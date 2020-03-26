@@ -146,7 +146,7 @@ void FoldandDockClaimer::initialize_dofs(
 void FoldandDockClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	// Set all cuts to real cuts. We don't want to close any of them...
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
-	for ( Size i = 1; i <= cuts.size(); ++i ) {
+	for ( core::Size i = 1; i <= cuts.size(); ++i ) {
 		new_claims.push_back( utility::pointer::make_shared< claims::CutClaim >( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
 			claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) );
 	}

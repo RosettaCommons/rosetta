@@ -128,8 +128,8 @@ DockingNoRepack1::apply(
 ) const
 {
 	using namespace core;
-	Size cutpoint ( pose.fold_tree().cutpoint_by_jump( rb_jump_ ) );
-	for ( Size ii = 1 ; ii <= cutpoint; ++ii ) {
+	core::Size cutpoint ( pose.fold_tree().cutpoint_by_jump( rb_jump_ ) );
+	for ( core::Size ii = 1 ; ii <= cutpoint; ++ii ) {
 		task.nonconst_residue_task( ii ).prevent_repacking();
 	}
 }
@@ -166,8 +166,8 @@ DockingNoRepack2::apply(
 	core::pack::task::PackerTask & task
 ) const
 {
-	Size cutpoint ( pose.fold_tree().cutpoint_by_jump( rb_jump_ ) );
-	for ( Size ii = cutpoint+1 ; ii <= pose.size(); ++ii ) {
+	core::Size cutpoint ( pose.fold_tree().cutpoint_by_jump( rb_jump_ ) );
+	for ( core::Size ii = cutpoint+1 ; ii <= pose.size(); ++ii ) {
 		task.nonconst_residue_task( ii ).prevent_repacking();
 	}
 }
@@ -227,7 +227,7 @@ RestrictToInterface::apply(
 	}
 
 	core::Size num_jump_ = jumps.size();
-	for ( Size jj=1; jj<=num_jump_; jj++ ) {
+	for ( core::Size jj=1; jj<=num_jump_; jj++ ) {
 		//fd prior logic was very problematic:
 		// * it uses only the stored energy graph, which may be computed with less distance than distance_
 		// * it depends on interaction radius of last scorefunction used, which may vary, giving diff results
@@ -235,20 +235,20 @@ RestrictToInterface::apply(
 		ObjexxFCL::FArray1D_bool partition( pose.size(),false );
 		pose.fold_tree().partition_by_jump( jumps[jj], partition );
 
-		for ( Size ires=1; ires<=pose.size(); ++ires ) {
+		for ( core::Size ires=1; ires<=pose.size(); ++ires ) {
 			if ( pose.residue_type(ires).is_water() ) continue;
 			bool i_is_lig = pose.residue_type(ires).is_ligand();
 			core::Size niatm = i_is_lig ? pose.residue_type(ires).nheavyatoms() : 1;
-			for ( Size iatm=1; iatm<=niatm; ++iatm ) {
+			for ( core::Size iatm=1; iatm<=niatm; ++iatm ) {
 				core::Vector xyz_i = i_is_lig ?
 					pose.residue(ires).xyz( iatm ) : pose.residue(ires).xyz( pose.residue(ires).nbr_atom() );
 
-				for ( Size jres=ires+1; jres<=pose.size(); ++jres ) {
+				for ( core::Size jres=ires+1; jres<=pose.size(); ++jres ) {
 					if ( partition(ires) == partition(jres) ) continue;
 					if ( pose.residue_type(jres).is_water() ) continue;
 					bool j_is_lig = pose.residue_type(jres).is_ligand();
 					core::Size njatm = j_is_lig ? pose.residue_type(jres).nheavyatoms() : 1;
-					for ( Size jatm=1; jatm<=njatm; ++jatm ) {
+					for ( core::Size jatm=1; jatm<=njatm; ++jatm ) {
 						core::Vector xyz_j = j_is_lig ?
 							pose.residue(jres).xyz( jatm ) : pose.residue(jres).xyz( pose.residue(jres).nbr_atom() );
 
@@ -263,7 +263,7 @@ RestrictToInterface::apply(
 	}
 
 	if ( loopy_interface_ ) {
-		for ( Size ii=1; ii<=pose.size(); ++ii ) {
+		for ( core::Size ii=1; ii<=pose.size(); ++ii ) {
 			if ( loop_residues_(ii) ) {
 				is_interface[ii] = true;
 			}
@@ -272,14 +272,14 @@ RestrictToInterface::apply(
 
 	// set all waters to part of the interface
 	if ( include_all_water_ ) {
-		for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+		for ( core::Size ii=1; ii<=pose.total_residue(); ++ii ) {
 			if ( pose.residue(ii).is_water() ) {
 				is_interface[ii] = true;
 			}
 		}
 	}
 
-	for ( Size ii=1; ii<=pose.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=pose.size(); ++ii ) {
 		if ( !is_interface[ii] ) { //|| pose.residue(ii).is_ligand() )
 			task.nonconst_residue_task( ii ).prevent_repacking();
 		}
@@ -296,7 +296,7 @@ void RestrictToInterface::symmetric_task(
 	auto const & SymmConf (
 		dynamic_cast< SymmetricConformation const &> ( pose.conformation()) );
 
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( !SymmConf.Symmetry_Info()->chi_is_independent(i) ) {
 			task.nonconst_residue_task( i ).prevent_repacking();
 		}

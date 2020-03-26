@@ -137,22 +137,22 @@ MakeLayerMover::apply( core::pose::Pose & pose ) {
 
 	wg_.set_parameters(ci.A(),ci.B(), angle);
 
-	Size rootres = place_near_origin( pose );
+	core::Size rootres = place_near_origin( pose );
 
 	core::pose::Pose posebase;
-	utility::vector1<Size> Ajumps, Bjumps, monomer_jumps, monomer_anchors;
+	utility::vector1<core::Size> Ajumps, Bjumps, monomer_jumps, monomer_anchors;
 
-	Size base_monomer = -1; // Obviously bogus value - build_layer_of_virtuals() should set
+	core::Size base_monomer = -1; // Obviously bogus value - build_layer_of_virtuals() should set
 	build_layer_of_virtuals( posebase, Ajumps, Bjumps, monomer_anchors, base_monomer);
 	debug_assert( base_monomer != core::Size(-1) );
 
-	Size nvrt = posebase.size();
-	Size nres_monomer = pose.size();
+	core::Size nvrt = posebase.size();
+	core::Size nres_monomer = pose.size();
 
 	detect_connecting_subunits( pose, posebase, monomer_anchors, base_monomer );
 	add_monomers_to_layer( pose, posebase, monomer_anchors, monomer_jumps, rootres );
 
-	Size nsubunits = monomer_anchors.size();
+	core::Size nsubunits = monomer_anchors.size();
 
 	core::pose::PDBInfoOP pdbinfo_old=pose.pdb_info(), pdbinfo_new;
 	pose = posebase;
@@ -199,18 +199,18 @@ Size
 MakeLayerMover::place_near_origin (
 	Pose & pose
 ) {
-	Size rootpos=0;
-	Size nres = pose.size();
+	core::Size rootpos=0;
+	core::Size nres = pose.size();
 
 	Vector com(0,0,0);
-	for ( Size i=1; i<= nres; ++i ) {
+	for ( core::Size i=1; i<= nres; ++i ) {
 		com += pose.residue(i).xyz("CA");
 		if ( pose.residue(i).is_upper_terminus() ) break;
 	}
 	com /= nres;
 
 	Real mindis2(1e6);
-	for ( Size i=1; i<= nres; ++i ) {
+	for ( core::Size i=1; i<= nres; ++i ) {
 		Real const dis2( com.distance_squared(  pose.residue(i).xyz("CA") ) );
 		if ( dis2 < mindis2 ) {
 			mindis2 = dis2;
@@ -219,12 +219,12 @@ MakeLayerMover::place_near_origin (
 		if ( pose.residue(i).is_upper_terminus() ) break;
 	}
 
-	Size nsymm = wg_.nsymmops();
-	Size bestxform=0;
+	core::Size nsymm = wg_.nsymmops();
+	core::Size bestxform=0;
 	Vector bestoffset(0,0,0);
 	mindis2=1e6;
 	com = wg_.c2f()*com;
-	for ( Size i=1; i<=nsymm; ++i ) {
+	for ( core::Size i=1; i<=nsymm; ++i ) {
 		Vector foffset = wg_.symmop(i).get_rotation()*com + wg_.symmop(i).get_translation(), rfoffset;
 		rfoffset[0] = pos_mod( foffset[0], 1.0 );
 		rfoffset[1] = pos_mod( foffset[1], 1.0 );
@@ -248,14 +248,14 @@ void
 MakeLayerMover::detect_connecting_subunits(
 	Pose const & monomer_pose,
 	Pose const & pose,
-	utility::vector1<Size> & monomer_anchors,
-	Size &basesubunit
+	utility::vector1<core::Size> & monomer_anchors,
+	core::Size &basesubunit
 ) {
-	utility::vector1<Size> new_monomer_anchors;
-	Size new_basesubunit=0;
+	utility::vector1<core::Size> new_monomer_anchors;
+	core::Size new_basesubunit=0;
 
 	// get pose radius
-	Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.size () );
+	core::Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.size () );
 
 	Vector com(0,0,0);
 	Real radius = 0;
@@ -264,7 +264,7 @@ MakeLayerMover::detect_connecting_subunits(
 	Vector T0 = pose.residue(monomer_anchors[basesubunit]).xyz("ORIG");
 	runtime_assert( T0.length() < 1e-6);
 
-	for ( Size i=1; i<= nres_monomer; ++i ) {
+	for ( core::Size i=1; i<= nres_monomer; ++i ) {
 		Vector ca_i = monomer_pose.residue(i).xyz("CA");
 		monomer_cas[i] = ca_i;
 		radius = std::max( (ca_i).length_squared() , radius );
@@ -275,7 +275,7 @@ MakeLayerMover::detect_connecting_subunits(
 	new_monomer_anchors.push_back(monomer_anchors[basesubunit]);
 	new_basesubunit = 1;
 
-	for ( Size i=1; i<=num_monomers; ++i ) {
+	for ( core::Size i=1; i<=num_monomers; ++i ) {
 		if ( i==basesubunit ) continue;
 
 		// pass 1 check vrt-vrt dist to throw out very distant things
@@ -291,9 +291,9 @@ MakeLayerMover::detect_connecting_subunits(
 		numeric::xyzMatrix<core::Real> R = numeric::xyzMatrix<core::Real>::cols(X,Y,Z);
 
 		bool contact=false;
-		for ( Size j=1; j<= nres_monomer && !contact; ++j ) {
+		for ( core::Size j=1; j<= nres_monomer && !contact; ++j ) {
 			Vector Ri = R*monomer_cas[j] + T;
-			for ( Size k=1; k<= nres_monomer && !contact; ++k ) {
+			for ( core::Size k=1; k<= nres_monomer && !contact; ++k ) {
 				contact = ((Ri-monomer_cas[k]).length_squared() < contact_dist_*contact_dist_);
 			}
 		}
@@ -310,25 +310,25 @@ void
 MakeLayerMover::add_monomers_to_layer(
 	Pose const & monomer_pose,
 	Pose & pose,
-	utility::vector1<Size> const & monomer_anchors,
-	utility::vector1<Size> & monomer_jumps,
-	Size rootpos
+	utility::vector1<core::Size> const & monomer_anchors,
+	utility::vector1<core::Size> & monomer_jumps,
+	core::Size rootpos
 ) {
-	Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.size () );
+	core::Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.size () );
 
 	monomer_jumps.clear();
-	Size n_framework_jumps = pose.fold_tree().num_jump();
+	core::Size n_framework_jumps = pose.fold_tree().num_jump();
 
-	Size nres_protein(0);
-	for ( Size i=1; i<= num_monomers; ++i ) {
+	core::Size nres_protein(0);
+	for ( core::Size i=1; i<= num_monomers; ++i ) {
 		//std::cerr << "inserting " << i << " of " << num_monomers << std::endl;
-		Size const anchor( monomer_anchors[i] + nres_protein ); // since we've already done some insertions
-		Size const old_nres_protein( nres_protein );
+		core::Size const anchor( monomer_anchors[i] + nres_protein ); // since we've already done some insertions
+		core::Size const old_nres_protein( nres_protein );
 		pose.insert_residue_by_jump( monomer_pose.residue(rootpos), old_nres_protein+1, anchor ); ++nres_protein;
-		for ( Size j=rootpos-1; j>=1; --j ) {
+		for ( core::Size j=rootpos-1; j>=1; --j ) {
 			pose.prepend_polymer_residue_before_seqpos( monomer_pose.residue(j), old_nres_protein+1, false ); ++nres_protein;
 		}
-		for ( Size j=rootpos+1; j<= monomer_pose.size(); ++j ) {
+		for ( core::Size j=rootpos+1; j<= monomer_pose.size(); ++j ) {
 			if ( monomer_pose.residue(j).is_lower_terminus() ) {
 				pose.insert_residue_by_jump( monomer_pose.residue(j), nres_protein+1, nres_protein ); ++nres_protein;
 			} else {
@@ -337,7 +337,7 @@ MakeLayerMover::add_monomers_to_layer(
 		}
 		monomer_jumps.push_back( n_framework_jumps+i );
 	}
-	for ( Size i=1; i<= num_monomers; ++i ) {
+	for ( core::Size i=1; i<= num_monomers; ++i ) {
 		pose.conformation().insert_chain_ending( nres_monomer*i );
 	}
 
@@ -350,18 +350,18 @@ MakeLayerMover::add_monomers_to_layer(
 void
 MakeLayerMover::build_layer_of_virtuals(
 	core::pose::Pose & posebase,
-	utility::vector1<Size> &Ajumps,
-	utility::vector1<Size> &Bjumps,
-	utility::vector1<Size> &subunit_anchors,
-	Size &basesubunit
+	utility::vector1<core::Size> &Ajumps,
+	utility::vector1<core::Size> &Bjumps,
+	utility::vector1<core::Size> &subunit_anchors,
+	core::Size &basesubunit
 ) {
-	numeric::xyzVector<Size> EXTEND((Size)2,(Size)2,(Size)0);
+	numeric::xyzVector<core::Size> EXTEND((core::Size)2,(core::Size)2,(core::Size)0);
 	numeric::xyzVector<int> nvrts_dim(2*EXTEND[0]+1, 2*EXTEND[1]+1, 1);
 	posebase.clear();
 
 	// get gridspace in each dimension
-	numeric::xyzVector< Size > grid = wg_.get_nsubdivisions();
-	//numeric::xyzVector< Size > trans_dofs = wg_.get_trans_dofs();
+	numeric::xyzVector< core::Size > grid = wg_.get_nsubdivisions();
+	//numeric::xyzVector< core::Size > trans_dofs = wg_.get_trans_dofs();
 
 	Vector O, Ax, Bx, Cx, Ay, By, Cy;
 	if ( wg_.setting() == wgHEXAGONAL ) {
@@ -454,20 +454,20 @@ MakeLayerMover::build_layer_of_virtuals(
 void
 MakeLayerMover::setup_xtal_symminfo(
 	Pose const & pose,
-	Size const num_monomers,
-	Size const num_virtuals,
-	Size const base_monomer,
-	Size const nres_monomer,
-	utility::vector1<Size> const &Ajumps,
-	utility::vector1<Size> const &Bjumps,
-	utility::vector1<Size> const &monomer_jumps,
+	core::Size const num_monomers,
+	core::Size const num_virtuals,
+	core::Size const base_monomer,
+	core::Size const nres_monomer,
+	utility::vector1<core::Size> const &Ajumps,
+	utility::vector1<core::Size> const &Bjumps,
+	utility::vector1<core::Size> const &monomer_jumps,
 	conformation::symmetry::SymmetryInfo & symminfo
 ) {
 
-	for ( Size i=1; i<= num_monomers; ++i ) {
+	for ( core::Size i=1; i<= num_monomers; ++i ) {
 		if ( i != base_monomer ) {
-			Size const offset( (i-1)*nres_monomer ), base_offset( (base_monomer-1)*nres_monomer);
-			for ( Size j=1; j<= nres_monomer; ++j ) {
+			core::Size const offset( (i-1)*nres_monomer ), base_offset( (base_monomer-1)*nres_monomer);
+			for ( core::Size j=1; j<= nres_monomer; ++j ) {
 				symminfo.add_bb_clone ( base_offset+j, offset+j );
 				symminfo.add_chi_clone( base_offset+j, offset+j );
 			}
@@ -475,8 +475,8 @@ MakeLayerMover::setup_xtal_symminfo(
 	}
 
 	// subunit jump clones
-	Size const base_monomer_jump( monomer_jumps[ base_monomer ] );
-	for ( Size i=1; i<=monomer_jumps.size(); ++i ) {
+	core::Size const base_monomer_jump( monomer_jumps[ base_monomer ] );
+	for ( core::Size i=1; i<=monomer_jumps.size(); ++i ) {
 		if ( monomer_jumps[i]!= base_monomer_jump ) {
 			symminfo.add_jump_clone( base_monomer_jump, monomer_jumps[i], 0.0 );
 		}
@@ -485,16 +485,16 @@ MakeLayerMover::setup_xtal_symminfo(
 
 	// unit cell clones
 	using core::conformation::symmetry::SymDof;
-	std::map< Size, SymDof > symdofs;
+	std::map< core::Size, SymDof > symdofs;
 
-	Size Amaster=Ajumps[1], Bmaster=Bjumps[1];
+	core::Size Amaster=Ajumps[1], Bmaster=Bjumps[1];
 	numeric::xyzVector<core::Size> linked_dofs=wg_.get_trans_dofs();
 	if ( linked_dofs[1]==1 ) { Bmaster=Ajumps[1]; /*std::cerr << "clone B->A" << std::endl;*/ }
 
-	for ( Size i=2; i<=Ajumps.size(); ++i ) {
+	for ( core::Size i=2; i<=Ajumps.size(); ++i ) {
 		symminfo.add_jump_clone( Amaster, Ajumps[i], 0.0 );
 	}
-	for ( Size i=1; i<=Bjumps.size(); ++i ) {
+	for ( core::Size i=1; i<=Bjumps.size(); ++i ) {
 		if ( Bmaster!=Bjumps[i] ) {
 			symminfo.add_jump_clone( Bmaster, Bjumps[i], 0.0 );
 		}
@@ -519,7 +519,7 @@ MakeLayerMover::setup_xtal_symminfo(
 	}
 
 	// jump names
-	for ( Size v=1; v<=pose.num_jump(); ++v ) symminfo.set_jump_name(v, "v_"+utility::to_string(v));
+	for ( core::Size v=1; v<=pose.num_jump(); ++v ) symminfo.set_jump_name(v, "v_"+utility::to_string(v));
 
 	symminfo.set_jump_name(Ajumps[1], "A");
 	symminfo.set_jump_name(Bjumps[1], "B");
@@ -536,8 +536,8 @@ MakeLayerMover::setup_xtal_symminfo(
 	symminfo.set_flat_score_multiply( pose.size(), 0 );
 	symminfo.set_nres_subunit( nres_monomer );
 
-	Size const nres_protein( num_monomers * nres_monomer );
-	for ( Size i=1; i<= nres_protein; ++i ) {
+	core::Size const nres_protein( num_monomers * nres_monomer );
+	for ( core::Size i=1; i<= nres_protein; ++i ) {
 		if ( symminfo.bb_is_independent( i ) ) symminfo.set_score_multiply( i, 2 );
 		else symminfo.set_score_multiply( i, 1 );
 	}

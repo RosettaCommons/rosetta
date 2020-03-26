@@ -773,7 +773,7 @@ MPI_Refine_Master::create_WUs( const core::io::silent::SilentStructOP &start_str
 			return;
 		}
 
-		for ( Size i_gen = 1; i_gen <= params.nrun; ++i_gen ) {
+		for ( core::Size i_gen = 1; i_gen <= params.nrun; ++i_gen ) {
 			core::Size i_ss2;
 			while ( true ) {
 				i_ss2 = (core::Size)( numeric::random::rg().uniform()*library_ref().size() );
@@ -1101,7 +1101,7 @@ MPI_Refine_Master::load_sample_weight() {
 	} else {
 		TR << "Using default sample weight of 50 for every residue" << std::endl;
 		std::string t = "50";
-		for ( Size i = 0; i < (*(library_central().begin()))->nres() - 1; i++ ) {
+		for ( core::Size i = 0; i < (*(library_central().begin()))->nres() - 1; i++ ) {
 			t += " 50";
 		}
 		sample_weight_str_ = t;

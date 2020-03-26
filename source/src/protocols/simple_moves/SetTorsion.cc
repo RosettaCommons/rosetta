@@ -120,13 +120,13 @@ SetTorsion::angle(
 utility::vector1<core::Size> SetTorsion::residue_list(core::Size iset, core::pose::Pose const & pose) {
 	utility::vector1<core::Size> residue_numbers;
 	if ( residues_[iset] == "ALL" ) {
-		for ( Size ires=1; ires<=pose.size(); ++ires ) {
+		for ( core::Size ires=1; ires<=pose.size(); ++ires ) {
 			residue_numbers.push_back(ires);
 		}
 	} else if ( residues_[iset] == "pick_atoms" ) {
 		// shouldn't get here, do nothing
 	} else if ( residues_[iset] == "random" ) {
-		Size res_num = numeric::random::rg().random_range(1, pose.size());
+		core::Size res_num = numeric::random::rg().random_range(1, pose.size());
 		residue_numbers.push_back(res_num);
 		if ( extending_[iset] != 0 ) {
 			for ( int ishift = 1; ishift <= (int)extending_[iset]; ++ishift ) {
@@ -141,7 +141,7 @@ utility::vector1<core::Size> SetTorsion::residue_list(core::Size iset, core::pos
 	} else {
 		utility::vector1<std::string> buff = utility::string_split( residues_[iset], ',' );
 		for ( std::string const & field : buff ) {
-			Size const value = std::atoi( field.c_str() );
+			core::Size const value = std::atoi( field.c_str() );
 			residue_numbers.push_back(value);
 		}
 	}
@@ -187,7 +187,7 @@ void SetTorsion::apply( Pose & pose ) {
 	}
 
 	core::scoring::Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
-	Size picked_set(1);
+	core::Size picked_set(1);
 	if ( random_set_ ) {
 		picked_set = numeric::random::rg().random_range(1, n_torsion_sets());
 	}
@@ -213,7 +213,7 @@ void SetTorsion::apply( Pose & pose ) {
 			);
 		} else {
 			for ( core::Size ires=1; ires<=residue_list(iset, pose).size(); ++ires ) {
-				Size resnum = residue_list(iset, pose)[ires];
+				core::Size resnum = residue_list(iset, pose)[ires];
 
 				if ( torsion_name(iset) == "phi" ) {
 					if ( pose.residue(resnum).type().is_alpha_aa()
@@ -292,23 +292,23 @@ void SetTorsion::parse_my_tag( utility::tag::TagCOP tag,
 			residues_.push_back((*tag_it)->getOption< std::string >( "residue" ));
 			torsion_name_.push_back((*tag_it)->getOption< std::string >( "torsion_name", ""));
 			custom_rama_map_.push_back( (*tag_it)->getOption< std::string >("custom_rama_table", "") );
-			extending_.push_back((*tag_it)->getOption< Size >( "extending", 0 )); // expanding picked residue
+			extending_.push_back((*tag_it)->getOption< core::Size >( "extending", 0 )); // expanding picked residue
 
 			utility::vector1< utility::tag::TagCOP > const sub_branch_tags( (*tag_it)->getTags() );
 			utility::vector1< utility::tag::TagCOP >::const_iterator sub_tag_it;
 
 			for ( sub_tag_it = sub_branch_tags.begin(); sub_tag_it != sub_branch_tags.end(); ++sub_tag_it ) {
 				if ( (*sub_tag_it)->getName() == "Atom1" ) {
-					atoms[1] = id::NamedAtomID( (*sub_tag_it)->getOption< string >( "atom" ), (*sub_tag_it)->getOption< Size >( "residue" ) );
+					atoms[1] = id::NamedAtomID( (*sub_tag_it)->getOption< string >( "atom" ), (*sub_tag_it)->getOption< core::Size >( "residue" ) );
 				}
 				if ( (*sub_tag_it)->getName() == "Atom2" ) {
-					atoms[2] = id::NamedAtomID( (*sub_tag_it)->getOption< string >( "atom" ), (*sub_tag_it)->getOption< Size >( "residue" ) );
+					atoms[2] = id::NamedAtomID( (*sub_tag_it)->getOption< string >( "atom" ), (*sub_tag_it)->getOption< core::Size >( "residue" ) );
 				}
 				if ( (*sub_tag_it)->getName() == "Atom3" ) {
-					atoms[3] = id::NamedAtomID( (*sub_tag_it)->getOption< string >( "atom" ), (*sub_tag_it)->getOption< Size >( "residue" ) );
+					atoms[3] = id::NamedAtomID( (*sub_tag_it)->getOption< string >( "atom" ), (*sub_tag_it)->getOption< core::Size >( "residue" ) );
 				}
 				if ( (*sub_tag_it)->getName() == "Atom4" ) {
-					atoms[4] = id::NamedAtomID( (*sub_tag_it)->getOption< string >( "atom" ), (*sub_tag_it)->getOption< Size >( "residue" ) );
+					atoms[4] = id::NamedAtomID( (*sub_tag_it)->getOption< string >( "atom" ), (*sub_tag_it)->getOption< core::Size >( "residue" ) );
 				}
 			}
 			torsion_atoms_.push_back(atoms);

@@ -19,7 +19,7 @@
 #include <map>
 #include <limits>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <numeric/types.hh>
 #include <numeric/xyzVector.fwd.hh>
@@ -60,7 +60,7 @@ public:
 	numeric::Real match_rmsd_threshold;
 };
 
-class FragmentLookup : public utility::pointer::ReferenceCount
+class FragmentLookup : public utility::VirtualBase
 {
 public:
 	// @brief Basic structure store, holds a collection of structure and associated residue entries.
@@ -73,7 +73,7 @@ public:
 		// Lookup modifies coordinates in-place during lookup, copy input vector for query.
 		std::vector< numeric::xyzVector<numeric::Real> > query_coordinates(store_->fragment_specification.coordinates_per_fragment());
 
-		for ( Size i = 0; i < store_->fragment_specification.coordinates_per_fragment(); i++, input++ ) {
+		for ( core::Size i = 0; i < store_->fragment_specification.coordinates_per_fragment(); i++, input++ ) {
 			query_coordinates[i] = *input;
 		}
 
@@ -87,7 +87,7 @@ public:
 		// Lookup modifies coordinates in-place during lookup, copy input vector for query.
 		std::vector< numeric::xyzVector<numeric::Real> > query_coordinates(store_->fragment_specification.coordinates_per_fragment());
 
-		for ( Size i = 0; i < store_->fragment_specification.coordinates_per_fragment(); i++, input++ ) {
+		for ( core::Size i = 0; i < store_->fragment_specification.coordinates_per_fragment(); i++, input++ ) {
 			query_coordinates[i] = *input;
 		}
 
@@ -101,7 +101,7 @@ public:
 		// Lookup modifies coordinates in-place during lookup, copy input vector for query.
 		std::vector< numeric::xyzVector<numeric::Real> > query_coordinates(store_->fragment_specification.coordinates_per_fragment());
 
-		for ( Size i = 0; i < store_->fragment_specification.coordinates_per_fragment(); i++, input++ ) {
+		for ( core::Size i = 0; i < store_->fragment_specification.coordinates_per_fragment(); i++, input++ ) {
 			query_coordinates[i] = *input;
 		}
 
@@ -114,7 +114,7 @@ public:
 		// Lookup modifies coordinates in-place during lookup, copy input vector for query.
 		std::vector< numeric::xyzVector<numeric::Real> > query_coordinates(store_->fragment_specification.coordinates_per_fragment());
 
-		for ( Size i = 0; i < store_->fragment_specification.coordinates_per_fragment(); i++, input++ ) {
+		for ( core::Size i = 0; i < store_->fragment_specification.coordinates_per_fragment(); i++, input++ ) {
 			query_coordinates[i] = *input;
 		}
 
@@ -134,13 +134,13 @@ public:
 			}
 
 			std::vector< numeric::xyzVector<numeric::Real> > query_coordinates;
-			for ( Size i = residue_span.first; i < residue_span.second; i++ ) {
+			for ( core::Size i = residue_span.first; i < residue_span.second; i++ ) {
 				for ( std::string const & atom_name : store_->fragment_specification.fragment_atoms ) {
 					query_coordinates.push_back(pose.residue(i).xyz(atom_name));
 				}
 			}
 
-			for ( Size i = 0; residue_span.first + i + (store_->fragment_specification.fragment_length - 1) < residue_span.second; i++ ) {
+			for ( core::Size i = 0; residue_span.first + i + (store_->fragment_specification.fragment_length - 1) < residue_span.second; i++ ) {
 				*result_out = lookup_fragment(
 					&query_coordinates[i * store_->fragment_specification.fragment_atoms.size()]);
 				result_out++;
@@ -164,13 +164,13 @@ public:
 			}
 
 			std::vector< numeric::xyzVector<numeric::Real> > query_coordinates;
-			for ( Size i = residue_span.first; i < residue_span.second; i++ ) {
+			for ( core::Size i = residue_span.first; i < residue_span.second; i++ ) {
 				for ( std::string const & atom_name : store_->fragment_specification.fragment_atoms ) {
 					query_coordinates.push_back(pose.residue(i).xyz(atom_name));
 				}
 			}
 
-			for ( Size i = 0; residue_span.first + i + (store_->fragment_specification.fragment_length - 1) < residue_span.second; i++ ) {
+			for ( core::Size i = 0; residue_span.first + i + (store_->fragment_specification.fragment_length - 1) < residue_span.second; i++ ) {
 				*result_out = lookup_closest_fragment(
 					&query_coordinates[i * store_->fragment_specification.fragment_atoms.size()]);
 				result_out++;
@@ -187,7 +187,7 @@ public:
 
 protected:
 
-	typedef std::pair<Size, Size> ResidueSpan;
+	typedef std::pair<core::Size, core::Size> ResidueSpan;
 	// @brief Extract valid residue spans for the fragment lookup from the given source pose.
 	//
 	// Returns [start, end) residue number spans on the target pose for lookup. This handles

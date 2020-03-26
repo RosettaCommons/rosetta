@@ -193,7 +193,7 @@ BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 			unsat_hbonds = 0;
 		} else {
 			for ( core::Size const sr : selected_residues ) {
-				unsat_hbonds += std::max( (res_buns_bound.value()[ sr ]) - (res_buns_unbound.value()[ sr ]), Size(0) );
+				unsat_hbonds += std::max( (res_buns_bound.value()[ sr ]) - (res_buns_unbound.value()[ sr ]), core::Size(0) );
 				//TR << "running value for total_in_selected_residues = " << total_in_selected_residues << std::endl;
 			}
 		}

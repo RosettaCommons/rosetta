@@ -13,7 +13,7 @@
 #ifndef Incl_prot_neig_Neighborhood_hh
 #define Incl_prot_neig_Neighborhood_hh
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
@@ -28,7 +28,7 @@ typedef bool (*NGB_FUN_PTR)(core::conformation::Residue const& r1, core::conform
 
 /// @brief A class to determine the neighborhood of a set of residues within a
 ///  pose
-class Neighborhood : public utility::pointer::ReferenceCount {
+class Neighborhood : public utility::VirtualBase {
 
 	NGB_FUN_PTR is_ngb;
 
@@ -38,13 +38,13 @@ class Neighborhood : public utility::pointer::ReferenceCount {
 	utility::vector1<bool> ngb_mask;
 
 	// set of neighbors
-	utility::vector1<Size> ngbs;
+	utility::vector1<core::Size> ngbs;
 
 	void print_ngb_mask() const;
 
 public:
-	Neighborhood(utility::vector1<Size> const& set, core::pose::Pose const& ps, NGB_FUN_PTR ngb_fun);
-	utility::vector1<Size> const& get() const {return ngbs;}
+	Neighborhood(utility::vector1<core::Size> const& set, core::pose::Pose const& ps, NGB_FUN_PTR ngb_fun);
+	utility::vector1<core::Size> const& get() const {return ngbs;}
 };
 
 // pairwise neighborhood functions

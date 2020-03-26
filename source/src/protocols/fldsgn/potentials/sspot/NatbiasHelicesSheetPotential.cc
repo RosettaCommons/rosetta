@@ -61,7 +61,7 @@ NatbiasHelicesSheetPotential::NatbiasHelicesSheetPotential( HSSTripletSetOP cons
 
 /// @brief value constructor
 NatbiasHelicesSheetPotential::NatbiasHelicesSheetPotential( NatbiasHelicesSheetPotential const & src ):
-	ReferenceCount(),
+	VirtualBase(),
 	hss3set_( src.hss3set_ ),
 	hpairset_( src.hpairset_ ),
 	hs_dist_wts_( src.hs_dist_wts_ ),
@@ -199,7 +199,7 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 	// If true, the helix-pair score on sheet for the helix will be calculated
 	utility::vector1< bool > is_hs_close( ss_info->helices().size(), false );
 
-	Size num( 0 );
+	core::Size num( 0 );
 	hs_scores_.resize( hss3set_->size() );
 
 	// interaction between helix and sheet
@@ -286,7 +286,7 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 
 		hh_scores_.resize( hpairset_->size() );
 
-		Size num( 0 );
+		core::Size num( 0 );
 		HelixPairings const & hpairs = hpairset_->helix_pairings();
 		for ( const auto & it : hpairs ) {
 
@@ -312,8 +312,8 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 			// get helix-pair orientation
 			Real flip( 1.0 );
 
-			Size const s1 = hssop1->strand1();
-			Size const s2 = hssop2->strand2();
+			core::Size const s1 = hssop1->strand1();
+			core::Size const s2 = hssop2->strand2();
 
 			Real ag = numeric::conversions::degrees( angle_of( strands[ s1 ]->orient(), strands[ s2 ]->orient() ) );
 			if ( ag > 90.0 ) flip = -1.0;
@@ -344,7 +344,7 @@ NatbiasHelicesSheetPotential::score( SS_Info2_COP const ss_info, Real & hh_score
 }  // score
 
 NatbiasHelicesSheetPotential::HSSTripletOP
-NatbiasHelicesSheetPotential::get_hssop( Size const helix_id ) const
+NatbiasHelicesSheetPotential::get_hssop( core::Size const helix_id ) const
 {
 	using protocols::fldsgn::topology::HSSTriplets;
 	HSSTriplets const triplets = hss3set_->hss_triplets( helix_id );

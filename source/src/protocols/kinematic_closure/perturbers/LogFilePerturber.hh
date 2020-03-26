@@ -57,7 +57,7 @@ private:
 	ParameterMatrix torsion_angles_;
 	ParameterMatrix bond_angles_;
 	ParameterMatrix bond_lengths_;
-	Size iteration_;
+	core::Size iteration_;
 
 };
 

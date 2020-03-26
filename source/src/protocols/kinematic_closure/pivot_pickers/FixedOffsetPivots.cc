@@ -34,9 +34,9 @@ using namespace std;
 Loop FixedOffsetPivots::pick(Pose const &, Loop const & loop) {
 	using numeric::random::random_range;
 
-	Size pivot_1 = random_range(loop.start(), loop.stop() - offset_);
-	Size pivot_3 = pivot_1 + offset_;
-	Size pivot_2 = pivot_1 + offset_ / 2;
+	core::Size pivot_1 = random_range(loop.start(), loop.stop() - offset_);
+	core::Size pivot_3 = pivot_1 + offset_;
+	core::Size pivot_2 = pivot_1 + offset_ / 2;
 
 	return Loop(pivot_1, pivot_3, pivot_2);
 }

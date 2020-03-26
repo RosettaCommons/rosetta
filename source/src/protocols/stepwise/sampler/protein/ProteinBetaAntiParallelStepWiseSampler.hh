@@ -30,7 +30,7 @@ public:
 
 	//constructor
 	ProteinBetaAntiParallelStepWiseSampler( core::pose::Pose const & pose,
-		Size const moving_residue );
+		core::Size const moving_residue );
 
 	//destructor
 	~ProteinBetaAntiParallelStepWiseSampler() override;
@@ -45,8 +45,8 @@ public:
 
 private:
 
-	Size
-	get_antiparallel_beta_jumps( core::pose::Pose const & pose, Size const sample_res );
+	core::Size
+	get_antiparallel_beta_jumps( core::pose::Pose const & pose, core::Size const sample_res );
 
 };
 

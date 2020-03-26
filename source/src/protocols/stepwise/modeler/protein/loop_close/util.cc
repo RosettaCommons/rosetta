@@ -100,14 +100,14 @@ enable_sampling_of_loop_takeoff( sampler::StepWiseSamplerSizedOP & sampler,
 	StepWiseProteinBackboneSampler backbone_sampler( working_parameters_ );
 	backbone_sampler.set_n_sample( options_->n_sample() );
 
-	utility::vector1< Size > takeoff_res;
-	Size const pre_loop_res  =  working_parameters_->working_bridge_res()[1] - 1;
-	Size const post_loop_res =  working_parameters_->working_bridge_res()[3] + 1;
+	utility::vector1< core::Size > takeoff_res;
+	core::Size const pre_loop_res  =  working_parameters_->working_bridge_res()[1] - 1;
+	core::Size const post_loop_res =  working_parameters_->working_bridge_res()[3] + 1;
 	takeoff_res.push_back( pre_loop_res  );
 	takeoff_res.push_back( post_loop_res );
 	backbone_sampler.set_moving_residues( takeoff_res );
 
-	utility::vector1< Size > fixed_res_for_backbone_sampler = takeoff_res;
+	utility::vector1< core::Size > fixed_res_for_backbone_sampler = takeoff_res;
 	if ( pre_loop_res  > 1                    ) fixed_res_for_backbone_sampler.push_back( pre_loop_res  - 1 );
 	if ( post_loop_res < pose.size() ) fixed_res_for_backbone_sampler.push_back( post_loop_res + 1 );
 	backbone_sampler.set_fixed_residues( fixed_res_for_backbone_sampler );

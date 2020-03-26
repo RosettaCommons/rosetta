@@ -16,7 +16,7 @@
 
 #include <protocols/rpc/rpc.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
@@ -75,7 +75,7 @@ private:
 // the command, any parameters, etc etc. ). This information is received via some channel and then used to execute
 // the command. The results (another PDB or other data) is then sent back to the client.
 
-class JSON_RPC : public utility::pointer::ReferenceCount {
+class JSON_RPC : public utility::VirtualBase {
 public:
 
 	JSON_RPC(std::string const &msg, bool capture_tracer = true,  BasicInit *basic_init = nullptr );

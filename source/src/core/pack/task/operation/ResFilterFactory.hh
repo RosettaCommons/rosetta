@@ -23,7 +23,7 @@
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -43,7 +43,7 @@ class ResFilterFactory : public utility::SingletonBase< ResFilterFactory >
 public:
 	friend class utility::SingletonBase< ResFilterFactory >;
 
-	//typedef utility::pointer::ReferenceCount parent;
+	//typedef utility::VirtualBase parent;
 	typedef std::map< std::string, ResFilterCreatorOP > ResFilterCreatorMap;
 	typedef utility::tag::Tag Tag;
 	typedef utility::tag::TagOP TagOP;

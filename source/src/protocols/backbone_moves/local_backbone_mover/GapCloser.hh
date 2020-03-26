@@ -23,7 +23,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
@@ -33,7 +33,7 @@ namespace backbone_moves {
 namespace local_backbone_mover {
 
 ///@brief GapCloser closes the gaps after moving the free peptide.
-class GapCloser : public utility::pointer::ReferenceCount {
+class GapCloser : public utility::VirtualBase {
 
 	friend class ::LocalBackboneMoverTests;
 
@@ -65,10 +65,10 @@ public:
 private: // Member functions
 
 	/// @brief Solve a gap closing problem
-	bool solve_a_gap(FreePeptide &free_peptide, Size pivot, vector1<vector1<Real> > &pivot_torsions);
+	bool solve_a_gap(FreePeptide &free_peptide, core::Size pivot, vector1<vector1<Real> > &pivot_torsions);
 
 	/// @brief Pick a pair of solutions
-	void pick_solutions(Size &index1, Size &index2, core::pose::Pose &pose, FreePeptide &free_peptide);
+	void pick_solutions(core::Size &index1, core::Size &index2, core::pose::Pose &pose, FreePeptide &free_peptide);
 
 private: // Member data
 

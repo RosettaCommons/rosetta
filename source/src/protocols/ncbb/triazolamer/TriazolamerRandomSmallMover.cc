@@ -61,9 +61,9 @@ void TriazolamerRandomSmallMover::apply( core::pose::Pose & pose ){
 
 	TR<< "in TriazolamerRandomSmallMover::apply" << std::endl;
 	//kdrew: for all positions in triazolamer_seq_positions_, input assertion check
-	for ( Size i = 1; i <= triazolamer_seq_positions_.size(); i++ ) {
-		Size triazolamer_pre_pos = triazolamer_seq_positions_[i];
-		Size triazolamer_post_pos = triazolamer_pre_pos+1;
+	for ( core::Size i = 1; i <= triazolamer_seq_positions_.size(); i++ ) {
+		core::Size triazolamer_pre_pos = triazolamer_seq_positions_[i];
+		core::Size triazolamer_post_pos = triazolamer_pre_pos+1;
 		TR<< "triazolamer_pre_pos:" << triazolamer_pre_pos << " triazolamer_post_pos:" << triazolamer_post_pos << std::endl;
 
 		runtime_assert ( pose.residue(triazolamer_pre_pos).has_variant_type(chemical::TRIAZOLAMERC) == 1) ;

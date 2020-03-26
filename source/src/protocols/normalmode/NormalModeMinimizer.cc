@@ -198,7 +198,7 @@ void NormalModeMinimizer::parse_my_tag(
 			mmf->all_jumps( false );
 		} else {
 			for ( std::string const & jump : jumps ) {
-				Size const value = std::atoi( jump.c_str() );
+				core::Size const value = std::atoi( jump.c_str() );
 				core::select::jump_selector::JumpIndexSelectorOP jumpselect( new core::select::jump_selector::JumpIndexSelector( value ) );
 				mmf->add_jump_action( core::select::movemap::mm_enable, jumpselect );
 			}
@@ -237,7 +237,7 @@ NormalModeMinimizer::deriv_check_local( pose::Pose const &pose,
 		<< LJ(10,"dg") << " "
 		<< LJ(10,"dg/g_num") << std::endl;
 
-	for ( Size i_var = 1; i_var <= f.nvar(); ++i_var ) {
+	for ( core::Size i_var = 1; i_var <= f.nvar(); ++i_var ) {
 
 		Real f1, f2;
 		// +dvar

@@ -19,7 +19,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/CompositionMover.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <string>
 
@@ -43,11 +43,11 @@ public:
 
 	utility::vector1< MoverOP > get_movers();
 
-	void apply( core::pose::Pose & pose, Size const i, Size const j);
+	void apply( core::pose::Pose & pose, core::Size const i, core::Size const j);
 
 private:
 
-	void apply_mover_if_defined( core::pose::Pose & pose, Size const n );
+	void apply_mover_if_defined( core::pose::Pose & pose, core::Size const n );
 
 private:
 	utility::vector1< MoverOP > movers_;

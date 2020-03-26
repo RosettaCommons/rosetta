@@ -62,14 +62,14 @@ SecStructMinimizeMover::apply( core::pose::Pose & pose )
 {
 	using namespace core::optimization;
 
-	Size number_dihedral_sets;
+	core::Size number_dihedral_sets;
 	utility::vector1< char > uniqs;
 	count_uniq_char( dihedral_pattern_, number_dihedral_sets, uniqs );
-	Size number_dihedrals = get_number_dihedrals( uniqs, dihedral_pattern_, alpha_beta_pattern_ );
+	core::Size number_dihedrals = get_number_dihedrals( uniqs, dihedral_pattern_, alpha_beta_pattern_ );
 	dihedrals_.resize( number_dihedrals );
 
 	// Initialize dihedrals from pose.
-	for ( Size i = 1, d = 1, m = 1; i <= pose.size() && d <= number_dihedrals; ++d, ++m ) {
+	for ( core::Size i = 1, d = 1, m = 1; i <= pose.size() && d <= number_dihedrals; ++d, ++m ) {
 		TR.Trace << "Taking res " << i << " mc torsion " << m << " for dihedral " << d << "/" << number_dihedrals << std::endl;
 		dihedrals_[ d ] = pose.residue( i ).mainchain_torsions()[ m ];
 
@@ -94,7 +94,7 @@ SecStructMinimizeMover::apply( core::pose::Pose & pose )
 	}
 
 	TR.Trace << "Dihedrals values: " << std::endl;
-	for ( Size ii = 1; ii <= number_dihedrals; ++ii ) {
+	for ( core::Size ii = 1; ii <= number_dihedrals; ++ii ) {
 		TR.Trace << dihedrals_[ ii ] << "\t";
 	}
 	TR.Trace << std::endl;
@@ -116,7 +116,7 @@ SecStructMinimizeMover::apply( core::pose::Pose & pose )
 	Minimizer minimizer( ssmmf, minoptions );
 
 	utility::vector1< Real > dihedrals_for_minimization;
-	for ( Size index = 1; index <= dihedrals_.size() - 1; ++index ) {
+	for ( core::Size index = 1; index <= dihedrals_.size() - 1; ++index ) {
 		dihedrals_for_minimization.push_back( dihedrals_[ index ] );
 	}
 	minimizer.run( dihedrals_ );
@@ -127,21 +127,21 @@ SecStructMinimizeMover::apply( core::pose::Pose & pose )
 void
 SecStructMinimizeMover::add_dihedral_constraints_to_pose(
 	Pose & pose,
-	Size number_dihedral_sets,
+	core::Size number_dihedral_sets,
 	utility::vector1< char > uniqs
 ) {
 	using namespace core::scoring::constraints;
 	using namespace core::scoring::func;
 	using namespace numeric::conversions;
 
-	for ( Size resi = 1; resi <= pose.size(); ++resi ) {
+	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
 
-		Size vec_index = 1;
-		for ( Size i = 2; i <= number_dihedral_sets; ++i ) {
+		core::Size vec_index = 1;
+		for ( core::Size i = 2; i <= number_dihedral_sets; ++i ) {
 			if ( dihedral_pattern_[ resi-1 ] == uniqs[ i ] ) vec_index = i;
 		}
 
-		Size index = give_dihedral_index( vec_index, uniqs, dihedral_pattern_, alpha_beta_pattern_ );
+		core::Size index = give_dihedral_index( vec_index, uniqs, dihedral_pattern_, alpha_beta_pattern_ );
 
 		if ( pose.residue( resi ).type().is_beta_aa() ) {
 

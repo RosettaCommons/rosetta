@@ -61,8 +61,8 @@ public:
 
 private:
 
-	Size get_updates( core::io::silent::SilentStructCOP s ) const;
-	void set_updates( core::io::silent::SilentStructOP s, Size const updates ) const;
+	core::Size get_updates( core::io::silent::SilentStructCOP s ) const;
+	void set_updates( core::io::silent::SilentStructOP s, core::Size const updates ) const;
 
 	void
 	update_bank( core::pose::Pose & pose );

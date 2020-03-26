@@ -18,7 +18,7 @@
 #include <protocols/constraint_generator/ConstraintGenerator.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // C++ headers
 #include <string>
@@ -26,7 +26,7 @@
 namespace protocols {
 namespace constraint_generator {
 
-class ConstraintGeneratorCreator : public utility::pointer::ReferenceCount {
+class ConstraintGeneratorCreator : public utility::VirtualBase {
 public:
 	/// @brief Instantiate a particular ConstraintGenerator
 	virtual ConstraintGeneratorOP

@@ -91,7 +91,7 @@ MovePoseToMembraneCenterMover::estimate_membrane_center( core::pose::Pose & pose
 	Vector sum_membrane_anchor(0);
 	Vector center(0);
 
-	for ( Size i=1; i<=topology.tmhelix(); ++i ) {
+	for ( core::Size i=1; i<=topology.tmhelix(); ++i ) {
 		//using namespace ObjexxFCL::format;
 		//TR << "MovePoseToMembraneCenterMover: after moving center      " << I(4,i) << " " << topology.allow_tmh_scoring(i) << std::endl;
 
@@ -112,9 +112,9 @@ MovePoseToMembraneCenterMover::estimate_membrane_center( core::pose::Pose & pose
 			dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-		for ( Size i_clone = 1; i_clone <= symm_info->num_bb_clones(); ++i_clone ) {
+		for ( core::Size i_clone = 1; i_clone <= symm_info->num_bb_clones(); ++i_clone ) {
 
-			for ( Size i=1; i<=topology.tmhelix(); ++i ) {
+			for ( core::Size i=1; i<=topology.tmhelix(); ++i ) {
 				if ( !topology.allow_tmh_scoring(i) ) continue;
 
 				Vector const & start( pose.residue( symm_info->bb_clones( topology.span_begin(i) )[i_clone] ).atom( 2 ).xyz());
@@ -217,7 +217,7 @@ void WholeBodyTranslationMover::apply( core::pose::Pose & pose )
 
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		//utility::vector1 <kinematics::Jump> backup_jumps;
-		//for (Size i =1; i<= pose.num_jump(); ++i) {
+		//for (core::Size i =1; i<= pose.num_jump(); ++i) {
 		// backup_jumps.push_back(pose.jump(i));
 		//}
 
@@ -244,7 +244,7 @@ void WholeBodyTranslationMover::apply( core::pose::Pose & pose )
 		//TR << "Yifan debug: new_position      " << I(4, iatom) << F(8,3,new_position.x()) << F(8,3,new_position.y()) << F(8,3,new_position.z()) << std::endl;
 		}
 
-		for (Size i =1; i<= pose.num_jump(); ++i) {
+		for (core::Size i =1; i<= pose.num_jump(); ++i) {
 		using namespace core::conformation::symmetry;
 		SymmetricConformation const & symm_conf (
 		dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );

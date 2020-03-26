@@ -103,7 +103,7 @@ ResidueDecompositionCalculator::lookup(
 {
 	if ( key == "num_sets" ) {
 		core::Size dummy_size(0);
-		basic::check_cast( valptr, &dummy_size, "num_sets expects to return a Size" );
+		basic::check_cast( valptr, &dummy_size, "num_sets expects to return a core::Size" );
 		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( residue_decomposition_.size() );
 
 	} else if ( key == "residue_decomposition" ) {

@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_import_pose_RNA_DeNovoParameters_HH
 #define INCLUDED_core_import_pose_RNA_DeNovoParameters_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/import_pose/RNA_DeNovoParameters.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/rna/BasePair.hh>
@@ -24,7 +24,7 @@
 namespace core {
 namespace import_pose {
 
-class RNA_DeNovoParameters: public utility::pointer::ReferenceCount {
+class RNA_DeNovoParameters: public utility::VirtualBase {
 
 public:
 

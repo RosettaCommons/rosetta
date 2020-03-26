@@ -67,7 +67,7 @@ public:
 };
 typedef std::map< std::string, Alias > AliasMap;
 
-class BondInfo : public utility::pointer::ReferenceCount {
+class BondInfo : public utility::VirtualBase {
 public:
 	BondInfo(): seg1( "" ), seg2( "" ), res1( 0 ), res2( 0 ), atom1( "" ), atom2( "" ) {}
 

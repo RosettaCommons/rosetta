@@ -219,7 +219,7 @@ RemodelMover::RemodelMover() :
 /// Copy constructor.
 ///
 RemodelMover::RemodelMover( RemodelMover const & rval )
-: //utility::pointer::ReferenceCount(),
+: //utility::VirtualBase(),
 	Super( rval ),
 
 	//manager_( rval.manager_ ),
@@ -383,12 +383,12 @@ void RemodelMover::fullatom_scorefunction( ScoreFunctionOP const & sfx ) {
 }
 
 ///Function for recursively creating multiple disulfides
-utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_disulfide_former (
-	utility::vector1< std::pair<Size,Size> >  & disulfides_formed,
-	utility::vector1< std::pair<Size,Size> >  & disulfides_possible,
-	Size const & max_disulfides) {
+utility::vector1< utility::vector1< std::pair<core::Size,Size> > > recursive_multiple_disulfide_former (
+	utility::vector1< std::pair<core::Size,Size> >  & disulfides_formed,
+	utility::vector1< std::pair<core::Size,Size> >  & disulfides_possible,
+	core::Size const & max_disulfides) {
 
-	utility::vector1< utility::vector1< std::pair<Size,Size> > > final_configurations;
+	utility::vector1< utility::vector1< std::pair<core::Size,Size> > > final_configurations;
 
 	if ( disulfides_formed.size() < max_disulfides ) {
 
@@ -398,12 +398,12 @@ utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_
 				++new_disulfide ) {
 
 			//add the configuration with the new disulfide
-			utility::vector1< std::pair<Size,Size> > new_disulfides_formed = disulfides_formed;
+			utility::vector1< std::pair<core::Size,Size> > new_disulfides_formed = disulfides_formed;
 			new_disulfides_formed.push_back(*new_disulfide);
 			final_configurations.push_back(new_disulfides_formed);
 
 			//storage for possible disulfides which do not clash with the new one we have chosen
-			utility::vector1< std::pair<Size,Size> >  disulfides_to_be_added;
+			utility::vector1< std::pair<core::Size,Size> >  disulfides_to_be_added;
 
 			//identify new secondary disulfides which do not clash with the primary
 			auto potential_further_disulfide = new_disulfide;
@@ -422,7 +422,7 @@ utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_
 
 			if ( disulfides_to_be_added.size() > 0 ) { //Add new disulfides if new ones can be added
 
-				utility::vector1< utility::vector1< std::pair<Size,Size> > > new_disulfide_configurations =
+				utility::vector1< utility::vector1< std::pair<core::Size,Size> > > new_disulfide_configurations =
 					recursive_multiple_disulfide_former(new_disulfides_formed, disulfides_to_be_added, max_disulfides);
 
 				for ( auto & new_disulfide_configuration : new_disulfide_configurations ) {
@@ -513,7 +513,7 @@ void RemodelMover::apply( Pose & pose ) {
 		dssp.dssp_reduced(dsspSS);
 
 		TR << "apply(): input PDB dssp assignment: (based on start structure)" << std::endl;
-		for ( Size i = 1; i <= pose.size(); i++ ) {
+		for ( core::Size i = 1; i <= pose.size(); i++ ) {
 			TR << dsspSS(i);
 		}
 		TR << std::endl;
@@ -537,7 +537,7 @@ void RemodelMover::apply( Pose & pose ) {
 				TR << "Generating ad hoc blueprint" << std::endl;
 				std::stringstream ad_hoc_blueprint;
 				//ad_hoc_blueprint = "";
-				for ( Size i = 1; i <= pose.size(); ++i ) {
+				for ( core::Size i = 1; i <= pose.size(); ++i ) {
 					//number
 					ad_hoc_blueprint << i;
 					//residue
@@ -600,14 +600,14 @@ void RemodelMover::apply( Pose & pose ) {
 			//with extensions, the pose will go beyond the correct length.  need to fix
 			//that after modify. Residues beyond first copy+ jxn doesn't really matter
 			if ( pose.size() < 2*remodel_data.sequence.length() ) { //just making sure it's shorter before grow, input pose can be longer
-				Size len_diff = (2*remodel_data_.sequence.length()) - pose.size();
+				core::Size len_diff = (2*remodel_data_.sequence.length()) - pose.size();
 				// append a tail of the same length
 				String build_aa_type =option[OptionKeys::remodel::generic_aa]; //defaults to VAL
 				if ( build_aa_type.size() == 1 ) {
 					char build_aa_oneLetter= build_aa_type[0];
 					build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_oneLetter));
 				}
-				for ( Size i = 1; i<= len_diff; ++i ) {
+				for ( core::Size i = 1; i<= len_diff; ++i ) {
 					core::chemical::ResidueTypeCOP rsd_type( core::pose::get_restype_for_pose(pose, build_aa_type ) );
 					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 					pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.size(), true);
@@ -622,7 +622,7 @@ void RemodelMover::apply( Pose & pose ) {
 			pose.delete_residue_range_slow(chain1->total_residue()+1,pose.total_residue());
 			remove_upper_terminus_type_from_pose_residue(pose,pose.total_residue());
 			remove_lower_terminus_type_from_pose_residue(*chain2,1);
-			for ( Size res=1; res<=chain2->total_residue(); ++res ) {
+			for ( core::Size res=1; res<=chain2->total_residue(); ++res ) {
 				pose.append_residue_by_bond(chain2->residue(res),false/*ideal bonds*/);
 			}
 			String build_aa_type =option[OptionKeys::remodel::generic_aa]; //defaults to VAL
@@ -630,8 +630,8 @@ void RemodelMover::apply( Pose & pose ) {
 				char build_aa_oneLetter= build_aa_type[0];
 				build_aa_type = name_from_aa(aa_from_oneletter_code(build_aa_oneLetter));
 			}
-			Size len_diff = remodel_data_.sequence.length() - chain1->total_residue();
-			for ( Size i = 1; i<= len_diff*2; ++i ) { //all new residues are appended on the end.
+			core::Size len_diff = remodel_data_.sequence.length() - chain1->total_residue();
+			for ( core::Size i = 1; i<= len_diff*2; ++i ) { //all new residues are appended on the end.
 				core::chemical::ResidueTypeSetCOP rsd_set = pose.residue_type_set_for_pose();
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map(build_aa_type) ) );
 				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
@@ -666,15 +666,15 @@ void RemodelMover::apply( Pose & pose ) {
 		}
 		//finally recheck length to ensure blueprint compliance
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			Size max_pdb_index = remodel_data_.blueprint.size()*2;
+			core::Size max_pdb_index = remodel_data_.blueprint.size()*2;
 			while ( pose.size() > max_pdb_index ) {
 				pose.conformation().delete_residue_slow(pose.size());
 				pose.pdb_info()->obsolete(true); //note the previous line was having issues with the pymol observer. You may also want to add -show_simulation_in_pymol 0 to your flags.
 			}
 			if ( pose.size() < (remodel_data_.sequence.length()*2) ) {
-				Size len_diff = (2*remodel_data_.sequence.length()) - pose.size();
+				core::Size len_diff = (2*remodel_data_.sequence.length()) - pose.size();
 				// append a tail of the same length
-				for ( Size i = 1; i<= len_diff; ++i ) {
+				for ( core::Size i = 1; i<= len_diff; ++i ) {
 					core::chemical::ResidueTypeCOP rsd_type( core::pose::get_restype_for_pose(pose, "ALA" ) );
 					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 					pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.size(), true);
@@ -721,20 +721,20 @@ void RemodelMover::apply( Pose & pose ) {
 			pre_mover.apply( pose );
 			// Remodel assumes chain ID is ' '
 			//pose::PDBInfoOP pdb_info ( pose.pdb_info() );
-			//for ( Size i=1; i<= pdb_info->nres(); ++i ){
+			//for ( core::Size i=1; i<= pdb_info->nres(); ++i ){
 			// pdb_info->chain(i,' ');
 			//
 			//pose.pdb_info( pdb_info );
 		}
 
 
-		Size i =option[OptionKeys::remodel::num_trajectory];
+		core::Size i =option[OptionKeys::remodel::num_trajectory];
 		//if invoked from rosetta_scripts and num_trajectories not specified, change default to 1
 		if ( !option[OptionKeys::remodel::num_trajectory].user() && rosetta_scripts_ ) {
 			i = 1;
 		}
-		Size num_traj = i; // need this for checkpointing math
-		Size prev_checkpoint = 0;
+		core::Size num_traj = i; // need this for checkpointing math
+		core::Size prev_checkpoint = 0;
 
 		//accumulator_ is now owned by RemodelMover and not by apply()
 		//forge::remodel::RemodelAccumulator accumulator_( working_model );
@@ -778,12 +778,12 @@ void RemodelMover::apply( Pose & pose ) {
 		// initializes a RemodelDesignMover which will be used in the loop below
 		forge::remodel::RemodelDesignMover designMover( remodel_data, working_model, fullatom_sfx_ );
 
-		Size no_attempts_at_centroid_build = 0;
-		//Size no_attempts_to_make_at_centroid_build = 10;
+		core::Size no_attempts_at_centroid_build = 0;
+		//core::Size no_attempts_to_make_at_centroid_build = 10;
 
 		//bool quick_mode =option[OptionKeys::remodel::quick_and_dirty]();
 
-		Size repeat_number =option[OptionKeys::remodel::repeat_structure];
+		core::Size repeat_number =option[OptionKeys::remodel::repeat_structure];
 		//rerooting tree
 		if ( option[OptionKeys::remodel::repeat_structure].user() && pose.size() == remodel_data.blueprint.size()*repeat_number ) {
 			core::kinematics::FoldTree f = pose.fold_tree();
@@ -826,7 +826,7 @@ void RemodelMover::apply( Pose & pose ) {
 			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 				// should fold this pose to match just the first segment of a repeat, and that will be used for next round of building
 				add_lower_terminus_type_to_pose_residue(pose,1);
-				for ( Size res = 1; res <= cached_modified_pose.size(); res++ ) {
+				for ( core::Size res = 1; res <= cached_modified_pose.size(); res++ ) {
 					cached_modified_pose.set_phi( res, pose.phi(res) );
 					cached_modified_pose.set_psi( res, pose.psi(res) );
 					cached_modified_pose.set_omega( res, pose.omega(res) );
@@ -886,7 +886,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 			if ( option[OptionKeys::remodel::build_disulf]() || rosetta_scripts_build_disulfide_ || rosetta_scripts_fast_disulfide_ ) {
 
-				utility::vector1<std::pair <Size, Size> > disulf_partners;
+				utility::vector1<std::pair <core::Size, core::Size> > disulf_partners;
 				bool disulfPass = false;
 
 				core::Energy match_rt_limit = rosetta_scripts_match_rt_limit_;
@@ -902,8 +902,8 @@ void RemodelMover::apply( Pose & pose ) {
 				}
 
 				//Use the recursive multiple disulfide former
-				utility::vector1< std::pair<Size,Size> > empty_disulfide_list;
-				utility::vector1< utility::vector1< std::pair<Size,Size> > > disulfide_configurations =
+				utility::vector1< std::pair<core::Size,Size> > empty_disulfide_list;
+				utility::vector1< utility::vector1< std::pair<core::Size,Size> > > disulfide_configurations =
 					recursive_multiple_disulfide_former(empty_disulfide_list, disulf_partners, rosetta_scripts_max_disulfides_);
 
 				//iterate over disulfide configurations instead of over possible disulfides
@@ -969,7 +969,7 @@ void RemodelMover::apply( Pose & pose ) {
 					cmmop->import( remodel_data_.natro_movemap_ );
 					cmmop->import( manager_.movemap() );
 
-					for ( Size i = 1; i<= pose.size(); ++i ) {
+					for ( core::Size i = 1; i<= pose.size(); ++i ) {
 						std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
 					}
 
@@ -977,8 +977,8 @@ void RemodelMover::apply( Pose & pose ) {
 					// cmmop->set(core::id::THETA, true);
 					// cmmop->set(core::id::D, true);
 
-					for ( Size i = 1; i <= pose.size(); i++ ) {
-						for ( Size j = 1; j <= pose.residue(i).nheavyatoms(); j++ ) {
+					for ( core::Size i = 1; i <= pose.size(); i++ ) {
+						for ( core::Size j = 1; j <= pose.residue(i).nheavyatoms(); j++ ) {
 							if ( cmmop->get_bb(i) == 1 ) {
 								cmmop->set(core::id::DOF_ID(core::id::AtomID(j,i),core::id::THETA),true);
 								cmmop->set(core::id::DOF_ID(core::id::AtomID(j,i),core::id::D),true);
@@ -1000,11 +1000,11 @@ void RemodelMover::apply( Pose & pose ) {
 					if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 						//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
 
-						Size repeat_number =option[OptionKeys::remodel::repeat_structure];
-						Size segment_length = (pose.size())/repeat_number;
+						core::Size repeat_number =option[OptionKeys::remodel::repeat_structure];
+						core::Size segment_length = (pose.size())/repeat_number;
 
 
-						for ( Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
+						for ( core::Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
 							std::stringstream templateRangeSS;
 							templateRangeSS << "2-" << segment_length+1; // offset by one to work around the termini
 							std::stringstream targetSS;
@@ -1013,7 +1013,7 @@ void RemodelMover::apply( Pose & pose ) {
 							setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
 						}
 
-						for ( Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
+						for ( core::Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
 							std::stringstream templateRangeSS;
 							templateRangeSS << "3-" << segment_length+2; // offset by one to work around the termini
 							std::stringstream targetSS;
@@ -1150,7 +1150,7 @@ void RemodelMover::apply( Pose & pose ) {
 		accumulator_.clear();
 
 		// seriously refine the poses
-		Size filecount = 1;
+		core::Size filecount = 1;
 
 		TR << "clustered poses count: " << results.size() << std::endl;
 
@@ -1351,7 +1351,7 @@ void RemodelMover::apply( Pose & pose ) {
 		utility::pointer::make_shared< simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator >( "default", "default", manager_.union_of_intervals_containing_undefined_positions() )
 	);
 
-	basic::MetricValue< std::set< Size > > loops_neighborhood;
+	basic::MetricValue< std::set< core::Size > > loops_neighborhood;
 	pose.metric( neighborhood_calc_name(), "neighbors", loops_neighborhood );
 	pose::metrics::CalculatorFactory::Instance().register_calculator(
 		neighborhood_buns_polar_calc_name(),
@@ -1372,7 +1372,7 @@ forge::remodel::RemodelData RemodelMover::setup_remodel_data_for_loop_btw_parame
 	dssp.dssp_reduced(dsspSS);
 	parametric_blueprint << "1  x   " << dsspSS(2) << std::endl; //the first and last position get the wrong secondary structure
 	parametric_blueprint << "2  x   " << dsspSS(2) << std::endl;
-	for ( Size i = 3; i <= chain1->total_residue()-2; ++i ) {
+	for ( core::Size i = 3; i <= chain1->total_residue()-2; ++i ) {
 		//number
 		parametric_blueprint << i;
 		//residue
@@ -1507,9 +1507,9 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 	}
 	/*
 	// flip to poly-ala-gly-pro-disulf pose, only in the rebuilt segment
-	utility::vector1< Size > protein_residues;
-	for (std::set<Size>::iterator it=rebuild.begin(), end=rebuild.end(); it != end; it++){
-	//for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
+	utility::vector1< core::Size > protein_residues;
+	for (std::set<core::Size>::iterator it=rebuild.begin(), end=rebuild.end(); it != end; it++){
+	//for ( core::Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 	if ( pose.residue( *it ).is_protein() ) {
 	protein_residues.push_back( *it );
 	TR<< "turning these to ala: " << *it << std::endl;
@@ -1542,7 +1542,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 	vlb_->new_secondary_structure_override(working_model_.ss);
 	if ( option[OptionKeys::remodel::use_blueprint_sequence] ) {
 		if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-			Size copies =option[OptionKeys::remodel::repeat_structure];
+			core::Size copies =option[OptionKeys::remodel::repeat_structure];
 			String rep_seq = remodel_data_.sequence;
 			while ( copies > 1 ) {
 				rep_seq.append(remodel_data_.sequence);
@@ -1692,7 +1692,7 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 	cst_set_post_built = utility::pointer::make_shared< scoring::constraints::ConstraintSet >( *pose.constraint_set() );
 	//}
 
-	Size asym_length;
+	core::Size asym_length;
 	if ( is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		asym_length = symm_info->num_independent_residues();
@@ -1705,10 +1705,10 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 
 		// Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
-		Size repeat_number =option[OptionKeys::remodel::repeat_structure];
-		Size segment_length = asym_length/repeat_number;
+		core::Size repeat_number =option[OptionKeys::remodel::repeat_structure];
+		core::Size segment_length = asym_length/repeat_number;
 
-		for ( Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
+		for ( core::Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
 			std::stringstream templateRangeSS;
 			templateRangeSS << "2-" << segment_length+1; // offset by one to work around the termini
 			std::stringstream targetSS;
@@ -1717,7 +1717,7 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 			setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
 		}
 
-		for ( Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
+		for ( core::Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
 			std::stringstream templateRangeSS;
 			templateRangeSS << "3-" << segment_length+2; // offset by one to work around the termini
 			std::stringstream targetSS;
@@ -1737,7 +1737,7 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 	}
 
 	// run design-refine cycle
-	for ( Size i = 0; i < dr_cycles_; ++i ) {
+	for ( core::Size i = 0; i < dr_cycles_; ++i ) {
 
 		TR << "design_refine_seq_relax(): dr_cycle: " << i << std::endl;
 
@@ -1828,7 +1828,7 @@ bool RemodelMover::design_refine_cart_relax(
 	// safety, clear the energies object
 	pose.energies().clear();
 
-	Size asym_length;
+	core::Size asym_length;
 
 	//set simple tree
 	FoldTree minFT;
@@ -1862,7 +1862,7 @@ bool RemodelMover::design_refine_cart_relax(
 	//pose.dump_pdb("pretest.pdb");
 
 	if ( option[OptionKeys::remodel::free_relax]() ) {
-		for ( Size i = 1; i<= asym_length; ++i ) {
+		for ( core::Size i = 1; i<= asym_length; ++i ) {
 			cmmop->set_bb(i, true);
 			cmmop->set_chi(i, true);
 		}
@@ -1871,14 +1871,14 @@ bool RemodelMover::design_refine_cart_relax(
 		cmmop->import( manager_.movemap() );
 	}
 
-	for ( Size i = 1; i<= asym_length; ++i ) {
+	for ( core::Size i = 1; i<= asym_length; ++i ) {
 		// std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
 		// std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
 		cmmop->set_chi(i,true);
 		// std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
 	}
 
-	//for (Size i = 1; i<= asym_length; ++i){
+	//for (core::Size i = 1; i<= asym_length; ++i){
 	// std::cout << "bbM at " << i << " " << manager_.movemap().get_bb(i) << std::endl;
 	// std::cout << "chiM at " << i << " " << manager_.movemap().get_chi(i) << std::endl;
 	//}
@@ -1894,20 +1894,20 @@ bool RemodelMover::design_refine_cart_relax(
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {
 		//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
 
-		Size repeat_number =option[OptionKeys::remodel::repeat_structure];
-		Size segment_length = asym_length/repeat_number;
+		core::Size repeat_number =option[OptionKeys::remodel::repeat_structure];
+		core::Size segment_length = asym_length/repeat_number;
 
 
 		//handle movemap
-		for ( Size rep = 1; rep < repeat_number; rep++ ) { // from 1 since first segment don't need self-linking
-			for ( Size residue = 1; residue <= segment_length ; residue++ ) {
+		for ( core::Size rep = 1; rep < repeat_number; rep++ ) { // from 1 since first segment don't need self-linking
+			for ( core::Size residue = 1; residue <= segment_length ; residue++ ) {
 				if ( cmmop->get_bb(residue) ) {
 					cmmop->set_bb(residue+(segment_length*rep),true);
 				}
 			}
 		}
 
-		for ( Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
+		for ( core::Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
 			std::stringstream templateRangeSS;
 			templateRangeSS << "2-" << segment_length+1; // offset by one to work around the termini
 			std::stringstream targetSS;
@@ -1916,7 +1916,7 @@ bool RemodelMover::design_refine_cart_relax(
 			setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
 		}
 
-		for ( Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
+		for ( core::Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
 			std::stringstream templateRangeSS;
 			templateRangeSS << "3-" << segment_length+2; // offset by one to work around the termini
 			std::stringstream targetSS;
@@ -1936,7 +1936,7 @@ bool RemodelMover::design_refine_cart_relax(
 
 	}
 
-	for ( Size i = 1; i<= asym_length; ++i ) {
+	for ( core::Size i = 1; i<= asym_length; ++i ) {
 		std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
 		std::cout << "chi at " << i << " " << cmmop->get_chi(i) << std::endl;
 	}
@@ -1945,7 +1945,7 @@ bool RemodelMover::design_refine_cart_relax(
 	minMover->cartesian(true);
 
 	// run design-refine cycle
-	for ( Size i = 0; i < dr_cycles_; ++i ) {
+	for ( core::Size i = 0; i < dr_cycles_; ++i ) {
 
 
 		designMover.set_state("finish");
@@ -2030,7 +2030,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 	pose.energies().clear();
 
 	// run design-refine cycle
-	for ( Size i = 0; i < dr_cycles_; ++i ) {
+	for ( core::Size i = 0; i < dr_cycles_; ++i ) {
 
 		// design the new section
 		designMover.set_state("finish");
@@ -2045,7 +2045,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 			kinematics::MoveMapOP combined_mm( new kinematics::MoveMap() );
 
 			////// fix dna
-			for ( Size i=1; i<=pose.size() ; ++i ) {
+			for ( core::Size i=1; i<=pose.size() ; ++i ) {
 				if ( pose.residue(i).is_DNA() ) {
 					TR << "NATRO movemap setup: turning off DNA bb and chi move for refinement stage" << std::endl;
 					remodel_data_.natro_movemap_.set_bb( i, false );
@@ -2059,7 +2059,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 
 			//modify task to accept NATRO definition
 			utility::vector1<core::Size> natroPositions;
-			for ( Size i = 1; i<= pose.size(); i++ ) {
+			for ( core::Size i = 1; i<= pose.size(); i++ ) {
 				if ( remodel_data_.natro_movemap_.get_chi(i) == 0 ) {
 					natroPositions.push_back(i);
 				}
@@ -2172,7 +2172,7 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 		kinematics::MoveMapOP combined_mm( new kinematics::MoveMap() );
 
 		////// fix dna
-		for ( Size i=1; i<=pose.size() ; ++i ) {
+		for ( core::Size i=1; i<=pose.size() ; ++i ) {
 			if ( pose.residue_type( i ).is_DNA() ) {
 				TR << "NATRO movemap setup: turning off DNA bb and chi move for refinement stage" << std::endl;
 				remodel_data_.natro_movemap_.set_bb( i, false );
@@ -2204,10 +2204,10 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 	Real sum_sd = 0;
 	Real sum_sd_native = 0;
 	Real sum_sd_archive2native=0;
-	Size atom_count = 0;
+	core::Size atom_count = 0;
 
 	for ( auto it = confirmation_loops->v_begin(), end = confirmation_loops->v_end(); it!=end; ++it ) {
-		for ( Size i = it->start(); i <= it->stop(); ++i ) {
+		for ( core::Size i = it->start(); i <= it->stop(); ++i ) {
 			Real dist_squared = ( pose.residue(i).xyz( "CA" ) - archive_pose.residue(i).xyz( "CA" ) ).length_squared();
 			Real dist_squared_native = ( pose.residue(i).xyz( "CA" ) - native_pose_.residue(i).xyz( "CA" ) ).length_squared();
 			Real dist_squared_archive2native = ( archive_pose.residue(i).xyz( "CA" ) - native_pose_.residue(i).xyz( "CA" ) ).length_squared();
@@ -2289,8 +2289,8 @@ void RemodelMover::process_continuous_design_string( Interval const & original_i
 	using namespace core;
 	using core::pack::task::operation::TaskOperationCOP;
 
-	Size const offset = original2modified_interval_endpoints.find( original_interval.left )->second;
-	for ( Size i = 0, ie = design_str.length(); i < ie; ++i ) {
+	core::Size const offset = original2modified_interval_endpoints.find( original_interval.left )->second;
+	for ( core::Size i = 0, ie = design_str.length(); i < ie; ++i ) {
 		utility::vector1< bool > allowed_aa_types( 20, false );
 
 		switch ( design_str.at( i ) ) {
@@ -2326,10 +2326,10 @@ void RemodelMover::process_insert_design_string( Interval const & original_inter
 		original2modified_interval_endpoints.find( original_interval.right )->second
 	);
 
-	Size const insert_char_idx = design_str.find( insert_char );
-	Size const left_nres = insert_char_idx;
-	Size const right_nres = design_str.size() - left_nres - 1;
-	Size const insert_nres = interval.length() - left_nres - right_nres;
+	core::Size const insert_char_idx = design_str.find( insert_char );
+	core::Size const left_nres = insert_char_idx;
+	core::Size const right_nres = design_str.size() - left_nres - 1;
+	core::Size const insert_nres = interval.length() - left_nres - right_nres;
 
 	// Make setup easy by building a new design string to expand the
 	// insertion character into a series of the insertion character
@@ -2340,8 +2340,8 @@ void RemodelMover::process_insert_design_string( Interval const & original_inter
 	// setup TaskOperations
 	pack::task::operation::RestrictResidueToRepackingOP repack_op( new pack::task::operation::RestrictResidueToRepacking() );
 
-	Size const left_offset = interval.left;
-	for ( Size i = 0, ie = aa.size(); i < ie; ++i ) {
+	core::Size const left_offset = interval.left;
+	for ( core::Size i = 0, ie = aa.size(); i < ie; ++i ) {
 		utility::vector1< bool > allowed_aa_types( 20, false );
 
 		if ( aa.at( i ) == insert_char ) { // repack only

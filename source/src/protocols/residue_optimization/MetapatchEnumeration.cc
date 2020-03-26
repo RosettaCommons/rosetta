@@ -121,15 +121,15 @@ MetapatchEnumeration::tabooed(
 	utility::vector1< std::string > const & patch_names
 ) {
 	// Loop through tabooed_ and see if patch_names contains all of any element thereof.
-	for ( Size ii = 1; ii <= tabooed_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= tabooed_.size(); ++ii ) {
 		utility::vector1< std::string > taboo_set = tabooed_[ ii ];
 
 		if ( patch_names.size() < taboo_set.size() ) continue;
 		bool matched_whole_set = true;
-		for ( Size jj = 1; jj <= taboo_set.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= taboo_set.size(); ++jj ) {
 			// Is the jj-th element of the tabooed set present?
 			bool found = false;
-			for ( Size kk = 1; kk <= patch_names.size(); ++kk ) {
+			for ( core::Size kk = 1; kk <= patch_names.size(); ++kk ) {
 				if ( taboo_set[ jj ] == patch_names[ kk ] ) {
 					found = true;
 				}
@@ -149,8 +149,8 @@ MetapatchEnumeration::tabooed(
 
 void
 MetapatchEnumeration::generate_derived_types(
-	Size resi,
-	Size tp,
+	core::Size resi,
+	core::Size tp,
 	utility::vector1< std::string > & types_considered
 ) {
 	ResidueTypeSetCAP rts_cap = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
@@ -161,7 +161,7 @@ MetapatchEnumeration::generate_derived_types(
 	// If patch names contain a tabooed mutation set, move on.
 	if ( tabooed( get_patch_names( current_type ) ) ) return;
 
-	for ( Size mp = 1; mp <= metapatch_names_.size(); ++mp ) {
+	for ( core::Size mp = 1; mp <= metapatch_names_.size(); ++mp ) {
 		//// Temporary storage for types created in the process of metapatch application.
 		utility::vector1< std::string > newly_viable_types;
 
@@ -177,7 +177,7 @@ MetapatchEnumeration::generate_derived_types(
 			//// If, by some perversion, you can find current atom name in patch names, move on.
 			// If trimmed atom is less than any already present atom, move on
 			bool move_on = false;
-			for ( Size pn = 1; pn <= patch_names.size(); ++pn ) {
+			for ( core::Size pn = 1; pn <= patch_names.size(); ++pn ) {
 				utility::vector1< std::string > components = utility::string_split( patch_names[pn], '-' );
 				if ( components[1] != base_name )     continue;
 				if ( components[2] >= trimmed_atom )  move_on = true;
@@ -195,7 +195,7 @@ MetapatchEnumeration::generate_derived_types(
 
 			// Reassemble patch names plus base name into a name.
 			std::string full_name = base_name;
-			for ( Size pn = 1; pn <= patch_names.size(); ++pn ) {
+			for ( core::Size pn = 1; pn <= patch_names.size(); ++pn ) {
 				full_name += ":" + patch_names[ pn ];
 			}
 			ResidueType const & rt = rts->name_map( full_name );
@@ -237,19 +237,19 @@ MetapatchEnumeration::generate_derived_types(
 			}
 		}
 
-		for ( Size nvt = 1; nvt <= newly_viable_types.size(); ++nvt ) {
+		for ( core::Size nvt = 1; nvt <= newly_viable_types.size(); ++nvt ) {
 			types_considered.push_back( newly_viable_types[nvt] );
 		}
 	}
 }
 
 void
-MetapatchEnumeration::generate_metapatched_variants( Size resi ) {
+MetapatchEnumeration::generate_metapatched_variants( core::Size resi ) {
 	std::string starting_name = pose_.residue( resi ).type().name();
 	ResidueType const & starting_type = pose_.residue( resi ).type();
 
 	// Reset mm bb except for area near resi
-	for ( Size ii = 1; ii <= pose_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose_.size(); ++ii ) {
 		if ( ii >= resi - 2 || ii <= resi + 2  ) {
 			mm_->set_bb( ii, false );
 		} else  {
@@ -269,7 +269,7 @@ MetapatchEnumeration::generate_metapatched_variants( Size resi ) {
 	utility::vector1< std::string > types_considered;
 	types_considered.push_back( starting_type.name() );
 
-	for ( Size tp = 1; tp <= types_considered.size(); ++tp ) {
+	for ( core::Size tp = 1; tp <= types_considered.size(); ++tp ) {
 		TR << "Generating derived types at " << resi << ", number " << tp << " of " << types_considered.size() << "." << std::endl;
 		generate_derived_types( resi, tp, types_considered );
 	}
@@ -305,7 +305,7 @@ MetapatchEnumeration::initial_sampling(
 		protocols::minimization_packing::PackRotamersMoverOP pack( new protocols::minimization_packing::PackRotamersMover( sampling_score_fxn_, setup_pack ) );
 
 		Real score = 100000;
-		for ( Size pc = 1; pc <= 10; ++pc ) {
+		for ( core::Size pc = 1; pc <= 10; ++pc ) {
 			Pose packpose = pose;
 			pack->apply( packpose );
 			min->apply( packpose );
@@ -340,10 +340,10 @@ MetapatchEnumeration::initial_sampling(
 
 void MetapatchEnumeration::final_sampling(
 	Pose & mut_pose,
-	Size resi
+	core::Size resi
 ) {
 	kinematics::MoveMapOP mut_mm = mm_;
-	//for ( Size ii = 1; ii <= mut_pose.size(); ++ii ) {
+	//for ( core::Size ii = 1; ii <= mut_pose.size(); ++ii ) {
 	// mut_mm->set_bb(  ii, true );
 	// mut_mm->set_chi( ii, true );
 	//}
@@ -365,7 +365,7 @@ void MetapatchEnumeration::final_sampling(
 		protocols::minimization_packing::PackRotamersMoverOP pack_mut( new protocols::minimization_packing::PackRotamersMover( sampling_score_fxn_, mutant_pt ) );
 
 		Real score = 100000;
-		for ( Size pc = 1; pc <= 10; ++pc ) {
+		for ( core::Size pc = 1; pc <= 10; ++pc ) {
 			Pose packpose = mut_pose;
 			pack_mut->apply( packpose );
 			mut_min->apply( packpose );
@@ -392,7 +392,7 @@ void MetapatchEnumeration::final_sampling(
 		protocols::relax::delete_virtual_residues( mut_pose );
 
 		/*Real score = 100000;
-		for ( Size pc = 1; pc <= 3; ++pc ) {
+		for ( core::Size pc = 1; pc <= 3; ++pc ) {
 		Pose relaxpose = mut_pose;
 		fast_relax.apply( mut_pose );
 		Real newscore = ( *evaluation_score_fxn_ )( relaxpose );

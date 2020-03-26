@@ -31,7 +31,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -50,7 +50,7 @@ enum move_map_action {
 };
 
 
-class MoveMapFactory : public utility::pointer::ReferenceCount {
+class MoveMapFactory : public utility::VirtualBase {
 public:
 
 	/// @brief Constructor.

@@ -80,6 +80,8 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
+using core::Size;
+
 /// @ brief constructor for EnzConstraintIO class, builds up function types
 EnzConstraintIO::EnzConstraintIO (core::chemical::ResidueTypeSetCOP src_restype_set) {
 	restype_set_ = src_restype_set;
@@ -215,16 +217,16 @@ EnzConstraintIO::process_pdb_header(
 	core::pose::PDBPoseMap PDB_map( pose.pdb_info()->pdb2pose() );
 	EnzdesCstCacheOP cst_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache();
 
-	std::set< Size > found_cst_blocks;
+	std::set< core::Size > found_cst_blocks;
 
 	//std::istringstream line_stream;
-	//std::map< Size, std::pair< utility::vector1<Size >, utility::vector1< Size > > > cst_block_to_residues;
+	//std::map< core::Size, std::pair< utility::vector1<core::Size >, utility::vector1< core::Size > > > cst_block_to_residues;
 
 	//basic::datacache::BasicDataCache const & pose_cache = pose.data();
 	core::pose::PDBInfoCOP pose_pdbinfo = pose.pdb_info();
 	core::io::Remarks const & pose_remarks = pose_pdbinfo->remarks();
 	std::string /*line, */buffer(""), tag("");
-	Size cst_block(0), counted_blocks(0);
+	core::Size cst_block(0), counted_blocks(0);
 
 	//std::cerr << "There are " << pose_remarks->size() << " remark lines." << std::endl;
 	for ( auto const & pose_remark : pose_remarks ) {
@@ -238,7 +240,7 @@ EnzConstraintIO::process_pdb_header(
 		//line_stream >> buffer >> tag;
 		std::string remark_line( pose_remark.value), resA_type(""), resB_type("");
 		int resA_num(0), resB_num(0);
-		Size pose_resnumA(0), pose_resnumB(0), ex_geom_id(0);
+		core::Size pose_resnumA(0), pose_resnumB(0), ex_geom_id(0);
 		std::string resA_chain(""),resB_chain("");
 		//if( tag == "TEMPLATE"){
 		if ( split_up_remark_line( remark_line, resA_chain, resA_type, resA_num, resB_chain, resB_type, resB_num, cst_block, ex_geom_id ) ) {
@@ -250,7 +252,7 @@ EnzConstraintIO::process_pdb_header(
 			counted_blocks++;
 			cst_pairs_[ cst_block ]->set_mcfi( mcfi_lists_[ cst_block ]->mcfi( ex_geom_id ) );
 
-			//Size resA_pose_num(0), resB_pose_num(0);
+			//core::Size resA_pose_num(0), resB_pose_num(0);
 
 			//line_stream >> resA_chain >> resA_type >> resA_num;
 			//line_stream >> buffer >> buffer >> resB_chain >> resB_type >> resB_num >> cst_block;
@@ -312,7 +314,7 @@ EnzConstraintIO::process_pdb_header(
 				if ( resA_num != 0 ) resA_missing = false;
 				if ( resB_num != 0 ) resB_missing = false;
 
-				for ( Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
+				for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 					if ( resA_num == 0 && pose.residue(i).name3() == resA_type ) {
 						cst_cache->param_cache( cst_block )->template_res_cache( 1 )->add_position_in_pose( i );
 						resA_missing = false;
@@ -340,7 +342,7 @@ EnzConstraintIO::process_pdb_header(
 	//start to process missing blocks: try to find position of residues based on information in cst file
 	if ( counted_blocks != cst_pairs_.size() ) {
 
-		for ( Size i = 1; i <= cst_pairs_.size(); ++i ) {
+		for ( core::Size i = 1; i <= cst_pairs_.size(); ++i ) {
 
 			if ( found_cst_blocks.find( i ) == found_cst_blocks.end() ) {
 				//assuming it's mcfi 1 for now
@@ -799,7 +801,7 @@ tr << " Starting MSA design " << std::endl;
 
 // register SequenceProfileConstraint with the ConstraintFactory so that it can be constructed from a constraint file
 //ConstraintIO::get_cst_factory().add_type(
-//new core::scoring::constraints::SequenceProfileConstraint( Size(), utility::vector1< id::AtomID >(), NULL ) );
+//new core::scoring::constraints::SequenceProfileConstraint( core::Size(), utility::vector1< id::AtomID >(), NULL ) );
 
 // add constraints to bias design toward a sequence profile
 SequenceProfileOP profile = new SequenceProfile;
@@ -810,7 +812,7 @@ profile->convert_profile_to_probs( 1 ); // was previously implicit in read_from_
 
 tr << *profile << std::endl;
 
-for ( Size seqpos(1), end( pose.size() ); seqpos <= end; ++seqpos ) {
+for ( core::Size seqpos(1), end( pose.size() ); seqpos <= end; ++seqpos ) {
 // add individual profile constraint for each residue position
 // because of the underlying constraint implementation, this enures that the constraint is
 // a context-independent 1-body energy, or (intra)residue constraint
@@ -846,7 +848,7 @@ EnzConstraintIO::enz_cst_params_missing_in_pose( core::pose::Pose const & pose )
 {
 	utility::vector1< EnzConstraintParametersCOP > to_return;
 
-	for ( Size i = 1; i <= cst_pairs_.size(); ++i ) {
+	for ( core::Size i = 1; i <= cst_pairs_.size(); ++i ) {
 		if ( cst_pairs_[i]->missing_in_pose( pose ) ) {
 			to_return.push_back( cst_pairs_[i] );
 
@@ -862,19 +864,19 @@ utility::vector1< core::Size >
 EnzConstraintIO::ordered_constrained_positions( core::pose::Pose const & pose ) const
 {
 	using namespace core;
-	//utility::vector1< Size > found_protein_positions;
-	//utility::vector1< Size > found_lig_positions;
+	//utility::vector1< core::Size > found_protein_positions;
+	//utility::vector1< core::Size > found_lig_positions;
 	protocols::toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
-	if ( !enz_obs ) return utility::vector1< Size > (); // get_enzdes_observer() can return NULL for const pose
+	if ( !enz_obs ) return utility::vector1< core::Size > (); // get_enzdes_observer() can return NULL for const pose
 	EnzdesCstCacheCOP cst_cache( enz_obs->cst_cache() );
-	if ( !cst_cache ) return utility::vector1< Size > ();
+	if ( !cst_cache ) return utility::vector1< core::Size > ();
 
 	return cst_cache->ordered_constrained_positions( pose );
 
 	/*
 	for( core::Size i = 1; i <= cst_pairs_.size(); ++i ){
 
-	for(std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator resA_it = cst_cache->param_cache(i)->template_res_cache( 1 )->seqpos_map_begin(), resA_end = cst_cache->param_cache(i)->template_res_cache( 1 )->seqpos_map_end();
+	for(std::map< core::Size, EnzCstTemplateResAtomsOP >::const_iterator resA_it = cst_cache->param_cache(i)->template_res_cache( 1 )->seqpos_map_begin(), resA_end = cst_cache->param_cache(i)->template_res_cache( 1 )->seqpos_map_end();
 	resA_it !=  resA_end; ++resA_it ){
 	if( pose.residue_type( resA_it->first ).is_ligand() ) {
 	if( find( found_lig_positions.begin(), found_lig_positions.end(), resA_it->first ) == found_lig_positions.end() ) {
@@ -884,7 +886,7 @@ EnzConstraintIO::ordered_constrained_positions( core::pose::Pose const & pose ) 
 	else found_protein_positions.push_back( resA_it->first );
 	}
 
-	for(std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator resB_it = cst_cache->param_cache(i)->template_res_cache( 2 )->seqpos_map_begin(), resB_end = cst_cache->param_cache(i)->template_res_cache( 2 )->seqpos_map_end();
+	for(std::map< core::Size, EnzCstTemplateResAtomsOP >::const_iterator resB_it = cst_cache->param_cache(i)->template_res_cache( 2 )->seqpos_map_begin(), resB_end = cst_cache->param_cache(i)->template_res_cache( 2 )->seqpos_map_end();
 	resB_it !=  resB_end; ++resB_it ){
 	if( pose.residue_type( resB_it->first ).is_ligand() ) {
 	if( find( found_lig_positions.begin(), found_lig_positions.end(), resB_it->first ) == found_lig_positions.end() ) {
@@ -896,7 +898,7 @@ EnzConstraintIO::ordered_constrained_positions( core::pose::Pose const & pose ) 
 
 	}// loop over EnzConstraintParams
 
-	for(  utility::vector1< Size >::const_iterator lig_it = found_lig_positions.begin(); lig_it != found_lig_positions.end(); ++lig_it ){
+	for(  utility::vector1< core::Size >::const_iterator lig_it = found_lig_positions.begin(); lig_it != found_lig_positions.end(); ++lig_it ){
 	found_protein_positions.push_back( *lig_it );
 	}
 

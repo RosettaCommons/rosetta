@@ -24,7 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <numeric/MathNTensor.hh>
 #include <numeric/MathTensor.hh>
@@ -45,7 +45,7 @@ namespace scoring {
 namespace rna {
 namespace data {
 
-class RNA_DMS_Potential: public utility::pointer::ReferenceCount {
+class RNA_DMS_Potential: public utility::VirtualBase {
 
 public:
 

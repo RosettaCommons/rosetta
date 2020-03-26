@@ -85,7 +85,7 @@ AnchorSugarScreener::check_screen(){
 	// The point of this section is to look for *any* conformation of sugar in anchor residue that passes
 	// screens, going from the lowest energy option on up.
 	//Ok, since anchor_sugar_modeling_.pose_list is sorted by SCORE, the lower energy conformations are tried first!
-	for ( Size n = 1; n <= anchor_sugar_modeling_.pose_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= anchor_sugar_modeling_.pose_list.size(); n++ ) {
 		pose::Pose const & anchor_sugar_modeling_pose = *anchor_sugar_modeling_.pose_list[n];
 
 		// THIS WAS WORKING -- KEEP THIS IN
@@ -120,7 +120,7 @@ AnchorSugarScreener::add_mover( moves::CompositionMoverOP update_mover, moves::C
 	}
 
 	runtime_assert( anchor_sugar_solution_number_ > 0  );
-	Size const n = anchor_sugar_solution_number_;
+	core::Size const n = anchor_sugar_solution_number_;
 	pose::Pose const & anchor_sugar_modeling_pose = *anchor_sugar_modeling_.pose_list[n];
 
 	std::map< core::Size, core::Size > res_map;  //This is map from sub numbering to input_res numbering..

@@ -64,7 +64,7 @@ NatbiasHelixPairPotential::set_params()
 
 /// @brief copy constructor
 NatbiasHelixPairPotential::NatbiasHelixPairPotential( NatbiasHelixPairPotential const & src ):
-	ReferenceCount(),
+	VirtualBase(),
 	bend_angle_( src.bend_angle_ ),
 	dist_wts_( src.dist_wts_ ),
 	mid_dist_( src.mid_dist_ ),
@@ -121,14 +121,14 @@ NatbiasHelixPairPotential::show( Pose const & pose ) const
 		return;
 	}
 
-	Size nhpairs = hpairset_->helix_pairings().size();
+	core::Size nhpairs = hpairset_->helix_pairings().size();
 	SS_Info2_OP ssinfo( new SS_Info2( pose ) );
 	utility::vector1< Real > hh_scores( nhpairs, 0.0 );
 
 	Real hh_score( 0.0 );
 	score( ssinfo, hh_score );
 
-	Size num( 0 );
+	core::Size num( 0 );
 	HelixPairings const & hpairs = hpairset_->helix_pairings();
 	TR << "name distance cross_angle align_angle score " << std::endl;
 	for ( const auto & it : hpairs ) {
@@ -164,7 +164,7 @@ NatbiasHelixPairPotential::score( SS_Info2_COP const ss_info, Real & hh_score ) 
 	Real asigma = 2*angle_sigma2_;
 	Real dsigma = 2*dist_sigma2_;
 
-	Size num( 0 );
+	core::Size num( 0 );
 
 	hh_scores_.resize( hpairset_->helix_pairings().size() );
 	for ( const auto & it : hpairs ) {

@@ -399,7 +399,7 @@ SecondaryMatchProtocol::find_all_allowed_positions(
 			if ( ( pose.residue_type( i ).name3() == "GLY" )
 					|| ( pose.residue_type( i ).name3() == "PRO" ) ) continue;
 
-			//utility::vector1< Size >::iterator find_res = find( cat_res.begin(), cat_res.end(), i );
+			//utility::vector1< core::Size >::iterator find_res = find( cat_res.begin(), cat_res.end(), i );
 
 			//if( find_res == cat_res.end() ) trial_positions_.push_back( i );
 			if ( !is_catalytic_position( pose, i ) ) trial_positions_.push_back( i );
@@ -641,7 +641,7 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 
 		for ( auto pos_it = other_template_cache->seqpos_map_begin(), pos_end = other_template_cache->seqpos_map_end();
 				pos_it != pos_end; ++pos_it ) {
-			//for( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator pos_it = match_params[i]->get_missing_template_other_res( outpose )->respos_map_begin();
+			//for( std::map< core::Size, EnzCstTemplateResAtomsOP >::const_iterator pos_it = match_params[i]->get_missing_template_other_res( outpose )->respos_map_begin();
 			//pos_it != match_params[i]->get_missing_template_other_res( outpose )->respos_map_end(); ++pos_it ){
 			other_positions.push_back( pos_it->first );
 		}

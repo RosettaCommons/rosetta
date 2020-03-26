@@ -57,18 +57,18 @@ void CycPepMover::packRotamers(core::pose::Pose& workpose){
 	packer->apply(workpose);
 }
 
-void CycPepMover::rotateUntilCys(core::pose::Pose& workpose, Size untilCys){
+void CycPepMover::rotateUntilCys(core::pose::Pose& workpose, core::Size untilCys){
 	core::pose::remove_lower_terminus_type_from_pose_residue(workpose,workpose.size());
 	core::pose::remove_upper_terminus_type_from_pose_residue(workpose,1);
 
-	Size counter = 1;
+	core::Size counter = 1;
 	pose::Pose tempPose(workpose,untilCys,untilCys);
 	core::pose::remove_lower_terminus_type_from_pose_residue(tempPose,tempPose.size());
 	core::pose::remove_upper_terminus_type_from_pose_residue(tempPose,1);
-	for ( Size j=untilCys+1; j%workpose.size()!=untilCys; ++j ) {
+	for ( core::Size j=untilCys+1; j%workpose.size()!=untilCys; ++j ) {
 
 		//handle the case where j % n_residue == 0.. we actually want it to point to the last residue
-		Size resi = (j%workpose.size() == 0)?workpose.size():j%workpose.size();
+		core::Size resi = (j%workpose.size() == 0)?workpose.size():j%workpose.size();
 		tempPose.append_polymer_residue_after_seqpos(workpose.residue(resi),counter++,false);
 	}
 	workpose = tempPose;
@@ -76,15 +76,15 @@ void CycPepMover::rotateUntilCys(core::pose::Pose& workpose, Size untilCys){
 	core::pose::remove_upper_terminus_type_from_pose_residue(workpose,1);
 	workpose.conformation().declare_chemical_bond(1,"N",workpose.size(),"C");
 }
-void CycPepMover::updateSSAtoms(pose::Pose& workpose, Size upNum, utility::vector1_int& vec, Size pepsize) {
-	Size toAdd = pepsize+1-upNum;
-	utility::vector1<std::pair<Size,Size> > dss;
-	for ( Size i=1; i<=vec.size(); ++i ) {
+void CycPepMover::updateSSAtoms(pose::Pose& workpose, core::Size upNum, utility::vector1_int& vec, core::Size pepsize) {
+	core::Size toAdd = pepsize+1-upNum;
+	utility::vector1<std::pair<core::Size,Size> > dss;
+	for ( core::Size i=1; i<=vec.size(); ++i ) {
 		vec[i] = (vec[i] + toAdd) % pepsize;
 	}
 	std::sort(vec.begin(),vec.end());
-	for ( Size i=1; i<=vec.size(); i+=2 ) {
-		std::pair<Size,Size> p(vec[i],vec[i+1]);
+	for ( core::Size i=1; i<=vec.size(); i+=2 ) {
+		std::pair<core::Size,Size> p(vec[i],vec[i+1]);
 		dss.push_back(p);
 	}
 
@@ -118,9 +118,9 @@ Real CycPepMover::scoreNoConstraint(pose::Pose& workpose){
 	_scorefxn->set_weight(core::scoring::dihedral_constraint,1);
 	return sc;
 }
-void CycPepMover::modelSSLoop(Size startCys, Size endCys, pose::Pose& workpose){
-	utility::vector1< std::pair<Size, Size> > dss;
-	std::pair<Size,Size> bond(startCys,endCys);
+void CycPepMover::modelSSLoop(core::Size startCys, core::Size endCys, pose::Pose& workpose){
+	utility::vector1< std::pair<core::Size, core::Size> > dss;
+	std::pair<core::Size,Size> bond(startCys,endCys);
 	dss.push_back(bond);
 	workpose.conformation().fix_disulfides(dss);
 
@@ -132,7 +132,7 @@ void CycPepMover::modelSSLoop(Size startCys, Size endCys, pose::Pose& workpose){
 }
 
 void CycPepMover::printEnergies(pose::Pose& workpose) {
-	for ( Size i=1; i<=workpose.size(); ++i ) {
+	for ( core::Size i=1; i<=workpose.size(); ++i ) {
 		std::cout<<"=========Residue "<< i<<": "<< workpose.residue(i).name()<<"============"<<std::endl;
 		workpose.energies().residue_total_energies(i).print();
 	}
@@ -142,7 +142,7 @@ void CycPepMover::apply(pose::Pose& workpose) {
 	//remove terminal atoms
 	core::pose::remove_lower_terminus_type_from_pose_residue(workpose,1);
 	core::pose::remove_upper_terminus_type_from_pose_residue(workpose,workpose.size());
-	utility::vector1 < std::pair< Size, Size > > dss;
+	utility::vector1 < std::pair< core::Size, core::Size > > dss;
 	core::conformation::disulfide_bonds(workpose.conformation(),dss);
 	//declare a bond between N-C terminals
 	workpose.conformation().declare_chemical_bond(1,"N",workpose.size(),"C");
@@ -151,13 +151,13 @@ void CycPepMover::apply(pose::Pose& workpose) {
 
 	//vector of Cys atoms
 	utility::vector1_int ssAtoms;
-	for ( Size i=1; i<=dss.size(); ++i ) {
+	for ( core::Size i=1; i<=dss.size(); ++i ) {
 		ssAtoms.push_back(dss[i].first);
 		ssAtoms.push_back(dss[i].second);
 	}
 
 	std::sort(ssAtoms.begin(),ssAtoms.end());
-	for ( Size i=1; i<=ssAtoms.size(); ++i ) {
+	for ( core::Size i=1; i<=ssAtoms.size(); ++i ) {
 		rotateUntilCys(workpose,ssAtoms[i]);
 		updateSSAtoms(workpose,ssAtoms[i],ssAtoms,workpose.size());
 		core::scoring::constraints::ConstraintSetOP cst_set = createDihedralConstraint(workpose);
@@ -167,7 +167,7 @@ void CycPepMover::apply(pose::Pose& workpose) {
 		std::stringstream ss;
 		ss << "after_repack" << i <<".pdb";
 		workpose.dump_pdb(ss.str());
-		Size numCst = workpose.constraint_set()->get_all_constraints().vector().size();
+		core::Size numCst = workpose.constraint_set()->get_all_constraints().vector().size();
 		TR<<"Constraints: " << numCst<< std::endl;
 		minimize(workpose);
 		ss.str("");

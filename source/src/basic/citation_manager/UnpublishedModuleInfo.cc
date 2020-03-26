@@ -34,7 +34,7 @@ UnpublishedModuleInfo::UnpublishedModuleInfo(
 	std::string const & module_name,
 	CitedModuleType const & module_type
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	module_name_(module_name),
 	module_type_(module_type)
 {
@@ -47,7 +47,7 @@ UnpublishedModuleInfo::UnpublishedModuleInfo(
 	std::string const & module_name,
 	std::string const & module_type_name
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	module_name_(module_name),
 	module_type_(CitedModuleType::CustomType),
 	module_type_name_(module_type_name)
@@ -65,7 +65,7 @@ UnpublishedModuleInfo::UnpublishedModuleInfo(
 	std::string const & affiliation,
 	std::string const & email
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	authors_({ utility::pointer::make_shared< UnpublishedModuleAuthor >( author_name, affiliation, email ) }),
 	module_name_(module_name),
 	module_type_(module_type)
@@ -84,7 +84,7 @@ UnpublishedModuleInfo::UnpublishedModuleInfo(
 	std::string const & email,
 	std::string const & notes
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	authors_({ utility::pointer::make_shared< UnpublishedModuleAuthor >( author_name, affiliation, email, notes ) }),
 	module_name_(module_name),
 	module_type_(module_type)

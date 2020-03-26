@@ -18,15 +18,15 @@
 #include <core/fragment/rna/FullAtomRNA_Fragments.hh>
 #include <core/types.hh>
 #include <vector>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace core {
 namespace fragment {
 namespace rna {
 
-class FragmentLibrary : public utility::pointer::ReferenceCount  {
+class FragmentLibrary : public utility::VirtualBase  {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~FragmentLibrary() override;
 
 	core::Real get_fragment_torsion(

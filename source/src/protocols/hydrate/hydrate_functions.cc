@@ -133,7 +133,7 @@ read_hyfile(
 			std::istream_iterator<std::string> begin(ss);
 			std::istream_iterator<std::string> end;
 			std::vector<std::string> vstrings(begin, end);
-			Size rsd = atoi(vstrings[1].c_str());
+			core::Size rsd = atoi(vstrings[1].c_str());
 			enforced_V[rsd] = true;
 		}
 		if ( line.substr(0,3) == "HYD" ) {   // This comparison means it IS "HYD"
@@ -142,7 +142,7 @@ read_hyfile(
 			std::istream_iterator<std::string> begin(ss);
 			std::istream_iterator<std::string> end;
 			std::vector<std::string> vstrings(begin, end);
-			Size rsd = atoi(vstrings[1].c_str());
+			core::Size rsd = atoi(vstrings[1].c_str());
 			hydrate_V[rsd] = true;
 		}
 	}
@@ -158,7 +158,7 @@ is_inside(
 
 	const Real PI = numeric::NumericTraits<Real>::pi();
 
-	Size sec_resolution = 7; // This number determines in how many sections we will divide the solid angle around xyz
+	core::Size sec_resolution = 7; // This number determines in how many sections we will divide the solid angle around xyz
 	// to determine wether or not it is inside. (total_sections = 2*sec_resolution^2)
 	Real resolution = sec_resolution;
 	Real sec_size_cos_phi = 2/resolution;
@@ -166,8 +166,8 @@ is_inside(
 	utility::vector1 < bool > neighbor_sections ( 2*sec_resolution*sec_resolution + sec_resolution + 1 ); // due to neighbor_sections tripping up debug_assert of vectorL
 
 	Real max_section = 0;
-	for ( Size ii = 1; ii<=pose.total_residue(); ++ii ) {
-		for ( Size jj = 1; jj<=pose.residue(ii).nheavyatoms(); ++jj ) {
+	for ( core::Size ii = 1; ii<=pose.total_residue(); ++ii ) {
+		for ( core::Size jj = 1; jj<=pose.residue(ii).nheavyatoms(); ++jj ) {
 
 			Vector neighbor_xyz (pose.residue(ii).xyz(jj));
 			Real distance = neighbor_xyz.distance(xyz);
@@ -177,9 +177,9 @@ is_inside(
 				Vector direction = ( neighbor_xyz - xyz).normalized();
 				Real cos_phi = direction[2];
 				Real theta = atan2(direction[1],direction[0]);
-				Size sec_cos_phi = floor((cos_phi + 1)/sec_size_cos_phi);
-				Size sec_theta = floor((theta + PI)/sec_size_theta);
-				Size section = sec_cos_phi*2*sec_resolution + sec_theta +1;
+				core::Size sec_cos_phi = floor((cos_phi + 1)/sec_size_cos_phi);
+				core::Size sec_theta = floor((theta + PI)/sec_size_theta);
+				core::Size section = sec_cos_phi*2*sec_resolution + sec_theta +1;
 				if ( section == 0 ) section = 1;
 				neighbor_sections[ section ] = true;
 				if ( section > max_section ) {
@@ -190,7 +190,7 @@ is_inside(
 	}
 
 	Real total_sec (0);
-	for ( Size ii = 1; ii<= neighbor_sections.size(); ++ii ) {
+	for ( core::Size ii = 1; ii<= neighbor_sections.size(); ++ii ) {
 		total_sec += int( neighbor_sections[ii] );
 	}
 	Real ratio = float(total_sec/max_section);
@@ -207,7 +207,7 @@ is_inside(
 bool
 atom_is_hydratable(
 	pose::Pose const & pose,
-	Size const residue,
+	core::Size const residue,
 	std::string const & atom
 )
 {
@@ -235,8 +235,8 @@ atom_is_hydratable(
 				if ( !is_inside(pose, hyp_O) ) continue;
 
 				bool has_room (true);
-				for ( Size ii = 1; ii<=pose.total_residue(); ++ii ) {
-					for ( Size jj = 1; jj<=pose.residue(ii).nheavyatoms(); ++jj ) {    // Ignore H because they might not be well located
+				for ( core::Size ii = 1; ii<=pose.total_residue(); ++ii ) {
+					for ( core::Size jj = 1; jj<=pose.residue(ii).nheavyatoms(); ++jj ) {    // Ignore H because they might not be well located
 
 
 						if ( ii == residue && jj == pose.residue(ii).atom_index( atom ) ) continue;
@@ -269,8 +269,8 @@ atom_is_hydratable(
 bool
 atom_is_hydratable(
 	pose::Pose const & pose,
-	Size const residue,
-	Size const atom
+	core::Size const residue,
+	core::Size const atom
 )
 {
 	return atom_is_hydratable(pose, residue, pose.residue(residue).atom_name(atom));
@@ -294,7 +294,7 @@ hydrate_hyfile(
 	if ( resfile == "default" && option[ packing::resfile ].user() ) {
 		pack::task::parse_resfile(pose, *temp_task);
 	} else if ( resfile == "default" ) {
-		for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+		for ( core::Size ii=1; ii<=pose.total_residue(); ++ii ) {
 			temp_task->nonconst_residue_task(ii).restrict_to_repacking(); // all residues assumed packed, not designed
 		}
 	} else {
@@ -307,18 +307,18 @@ hydrate_hyfile(
 	pack::rotamer_set::WaterPackingInfoOP water_info ( new pack::rotamer_set::WaterPackingInfo (
 		static_cast< pack::rotamer_set::WaterPackingInfo & > ( pose.data().get( pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) ) );
 
-	for ( Size ii = 1; ii <= hydrate_V.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= hydrate_V.size(); ++ii ) {
 		if ( hydrate_V[ii] == true ) {
 
 			conformation::Residue const & rsd( pose.residue(ii) );
 			TR << "Hydrating residue " << rsd.name() << " " << ii << std::endl;
 
 			if ( temp_task->being_designed(ii) ) {
-				for ( Size jj=1; jj<=7; ++jj ) {  //  We add 7 design water molecules to each residue because that is
+				for ( core::Size jj=1; jj<=7; ++jj ) {  //  We add 7 design water molecules to each residue because that is
 					// the max number of polar atoms in any natural residue (ARG)
 					tp3->set_xyz( "O", rsd.xyz("CA") ); // for neighbor calculation
 					pose.append_residue_by_jump( *tp3, 1 );
-					Size const pos1( pose.total_residue() );
+					core::Size const pos1( pose.total_residue() );
 					TR << "Water for design: " << pos1 << " appended to residue: " << ii << std::endl;
 					(*water_info)[ pos1 ].anchor_residue( ii );
 					(*water_info)[ pos1 ].design_anchor_index( jj );
@@ -330,11 +330,11 @@ hydrate_hyfile(
 				}
 
 			} else {  // We only add atoms anchored to regular atoms
-				for ( Size jj=1; jj<= Size(rsd.natoms()); ++jj ) {
+				for ( core::Size jj=1; jj<= core::Size(rsd.natoms()); ++jj ) {
 					if ( rsd.atom_type(jj).is_acceptor() || rsd.atom_type(jj).is_polar_hydrogen() || ( rsd.name() == "NA" && !rsd.atom_type(jj).is_virtual() ) ) {
 
 						if ( !option[ OptionKeys::hydrate::attempt_all_polar ]() && !atom_is_hydratable(pose,ii,jj) ) continue;
-						Size anchor_atom = jj;
+						core::Size anchor_atom = jj;
 						// Hack to be able to use HIS_D
 						if ( rsd.type().aa() == chemical::aa_his ) {
 							if ( rsd.name() == "HIS_D" && anchor_atom == 15 ) anchor_atom = 7;
@@ -345,7 +345,7 @@ hydrate_hyfile(
 
 						tp3->set_xyz( "O", rsd.xyz(jj) ); // for neighbor calculation
 						pose.append_residue_by_jump( *tp3, 1 );
-						Size const pos1( pose.total_residue() );
+						core::Size const pos1( pose.total_residue() );
 						TR << "Water: " << pos1 << " appended to residue: " << ii << " atom: ";
 						TR << rsd.atom_name(anchor_atom) << std::endl;
 						(*water_info)[ pos1 ].anchor_residue( ii );
@@ -378,7 +378,7 @@ place_de_novo_wat_at_anchor(
 	numeric::xyzVector < Real > dis_H1(0.9572, 0, 0);
 	numeric::xyzVector < Real > dis_H2(-0.2399872, 0.92662721, 0);
 
-	for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+	for ( core::Size ii=1; ii<=pose.total_residue(); ++ii ) {
 		if ( pose.residue(ii).name() != "TP3" ) continue;
 		std::string anchor_atom = (*water_info)[ ii ].anchor_atom();
 		if ( anchor_atom != "DESIGN" && anchor_atom != "NONE" ) {
@@ -406,7 +406,7 @@ set_water_info_and_add_de_novo_water(
 	core::scoring::ScoreFunction const & scorefxn
 ){
 	(scorefxn)(pose);
-	Size const total_input_residues ( pose.total_residue() );
+	core::Size const total_input_residues ( pose.total_residue() );
 	utility::vector1< bool > enforced_V( total_input_residues, false );
 	utility::vector1< bool > hydrate_V( total_input_residues, false );
 
@@ -416,7 +416,7 @@ set_water_info_and_add_de_novo_water(
 		if ( option[ hyfile ].user() ) read_hyfile( option[ hyfile ](), enforced_V, hydrate_V);
 
 		pack::rotamer_set::WaterPackingInfoOP water_info( new pack::rotamer_set::WaterPackingInfo() );
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			if ( pose.residue(ii).name() == "TP3" ) {
 				(*water_info)[ ii ].anchor_atom( "NONE" );
 				(*water_info)[ ii ].rotamer_bonds( "NONE" );
@@ -448,14 +448,14 @@ hydrate_cavities(
 	hbond_set.clear();
 	Real const & hbond_threshold( option[ OptionKeys::hydrate::hbond_threshold ]() );
 	scoring::hbonds::fill_hbond_set( pose, false, hbond_set );
-	Size non_water_residues = pose.total_residue();
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	core::Size non_water_residues = pose.total_residue();
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( pose.residue(ii).name() == "TP3" ) {
 			non_water_residues = ii -1;
 			break;
 		}
 	}
-	Size old_pose_total_res = pose.total_residue();
+	core::Size old_pose_total_res = pose.total_residue();
 	core::conformation::ResidueOP tp3( core::conformation::ResidueFactory::create_residue(
 		core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( "TP3" ) ) );
 	pack::rotamer_set::WaterPackingInfoOP water_info ( new pack::rotamer_set::WaterPackingInfo (
@@ -463,15 +463,15 @@ hydrate_cavities(
 	numeric::xyzVector < Real > dis_H1(0.9572, 0, 0);
 	numeric::xyzVector < Real > dis_H2(-0.2399872, 0.92662721, 0);
 
-	for ( Size ii = 1; ii <= non_water_residues; ++ii ) {
+	for ( core::Size ii = 1; ii <= non_water_residues; ++ii ) {
 		conformation::Residue const & rsd( pose.residue(ii) );
-		for ( Size jj=1; jj<= Size(rsd.natoms()); ++jj ) {  // Go over all polar atoms
+		for ( core::Size jj=1; jj<= core::Size(rsd.natoms()); ++jj ) {  // Go over all polar atoms
 			bool hydrate_atm = false;
 
 			if ( rsd.atom_type(jj).is_acceptor() ) {
 				hydrate_atm = true;         // Check if it has the all hbs satisfied
-				Size bonds = 0;
-				for ( Size hb=1; hb<= Size(hbond_set.nhbonds()); ++hb ) {
+				core::Size bonds = 0;
+				for ( core::Size hb=1; hb<= core::Size(hbond_set.nhbonds()); ++hb ) {
 					//     if ( option[ OptionKeys::hydrate::ignore_hb_depth_on_hydration ]() ){
 					if ( hbond_set.hbond(hb).energy() < hbond_threshold
 							&& ii == hbond_set.hbond(hb).acc_res() && jj == hbond_set.hbond(hb).acc_atm() ) {
@@ -494,7 +494,7 @@ hydrate_cavities(
 			}
 			if ( rsd.atom_type(jj).is_polar_hydrogen() ) {
 				hydrate_atm = true;
-				for ( Size hb=1; hb<= Size(hbond_set.nhbonds()); ++hb ) {
+				for ( core::Size hb=1; hb<= core::Size(hbond_set.nhbonds()); ++hb ) {
 					if ( hbond_set.hbond(hb).energy() < hbond_threshold
 							&& ii == hbond_set.hbond(hb).don_res() && jj == hbond_set.hbond(hb).don_hatm() ) {
 						hydrate_atm = false;
@@ -502,7 +502,7 @@ hydrate_cavities(
 				}
 			}
 			// Check that the specific atom in not hydrated already
-			for ( Size kk = non_water_residues +1; kk <= old_pose_total_res; kk++ ) {
+			for ( core::Size kk = non_water_residues +1; kk <= old_pose_total_res; kk++ ) {
 				if ( (*water_info)[kk].anchor_residue() == ii && (*water_info)[kk].anchor_atom() == rsd.atom_name(jj) ) {
 					hydrate_atm = false;
 				}
@@ -516,9 +516,9 @@ hydrate_cavities(
 				tp3->set_xyz( "H1", O_xyz + dis_H1);
 				tp3->set_xyz( "H2", O_xyz + dis_H2);
 				pose.append_residue_by_jump( *tp3, 1 );
-				Size const pos1( pose.total_residue() );
+				core::Size const pos1( pose.total_residue() );
 
-				Size anchor_atom = jj;
+				core::Size anchor_atom = jj;
 				// Hack to be able to use HIS_D
 				if ( rsd.type().aa() == chemical::aa_his ) {
 					if ( rsd.name() == "HIS_D" && anchor_atom == 15 ) anchor_atom = 7;
@@ -562,7 +562,7 @@ set_dew_waters_not_to_be_included(
 	numeric::xyzVector < Real > awayH2 (-0.2399872,0.92662721,0);
 	numeric::xyzVector < Real > far_away(10000,10000,10000);
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( pose.residue(ii).name() != "TP3" ) continue;
 		if ( (*water_info)[ii].anchor_atom() == "NONE" ) continue;
 
@@ -582,14 +582,14 @@ set_dew_waters_not_to_be_included(
 bool
 residue_near_water(
 	pose::Pose const & pose,
-	Size const ii
+	core::Size const ii
 ){
 	Real near_water_threshold ( option[ OptionKeys::hydrate::near_water_threshold ]() );
-	for ( Size jj = 1; jj <= pose.total_residue(); ++jj ) {
+	for ( core::Size jj = 1; jj <= pose.total_residue(); ++jj ) {
 		if ( ii == jj ) continue;
 		if ( pose.residue(jj).name() == "TP3" ) {
 			Vector water_oxygen_xyz (pose.residue(jj).xyz(1));
-			for ( Size kk = 1; kk <= pose.residue(ii).nheavyatoms(); ++kk ) {
+			for ( core::Size kk = 1; kk <= pose.residue(ii).nheavyatoms(); ++kk ) {
 				Vector atom_heavy_xyz (pose.residue(ii).xyz(kk));
 				if ( atom_heavy_xyz.distance(water_oxygen_xyz) <= near_water_threshold ) {
 					return true;
@@ -615,7 +615,7 @@ set_task_and_movemap(
 
 	// First deal with water, which is independent of protein_flexibility
 	// All water near the protein will be packed at this stage
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		mm.set_bb(ii, false);         // first set all bb moves as false (not water specific)
 		if ( pose.residue(ii).name() != "TP3" ) continue;
 		if ( pose.residue(ii).xyz(1).x() > 10000 ) {    // It's away and should not be packed at this stage
@@ -627,14 +627,14 @@ set_task_and_movemap(
 	}
 	// All jumps connecting water will always be flexible
 	// For now, we don't expect any other jumps to be flexible
-	for ( Size jj = 1; jj <= f.num_jump() ; ++jj ) {
+	for ( core::Size jj = 1; jj <= f.num_jump() ; ++jj ) {
 		if ( pose.residue(f.downstream_jump_residue(jj)).name() == "TP3" ) {
 			mm.set_jump(jj, true);
 		}
 	}
 
 	if ( protein_flexibility == "not" ) {
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			if ( pose.residue(ii).name() == "TP3" ) continue;
 			task->nonconst_residue_task(ii).prevent_repacking();
 			mm.set_chi(ii,false);
@@ -642,7 +642,7 @@ set_task_and_movemap(
 	}
 
 	if ( protein_flexibility == "all" ) {
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			if ( pose.residue(ii).name() == "TP3" ) continue;
 			task->nonconst_residue_task(ii).restrict_to_repacking();
 			mm.set_chi(ii, true);
@@ -651,7 +651,7 @@ set_task_and_movemap(
 	}
 
 	if ( protein_flexibility == "near_water" ) {
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			if ( pose.residue(ii).name() == "TP3" ) continue;
 			if ( residue_near_water(pose, ii) ) {
 				task->nonconst_residue_task(ii).restrict_to_repacking();
@@ -668,7 +668,7 @@ set_task_and_movemap(
 	if ( protein_flexibility == "resfile" ) {
 		pack::task::PackerTaskOP temp_task( pack::task::TaskFactory::create_packer_task( pose ));
 		pack::task::parse_resfile(pose, *temp_task);    // Must be here to have water info in task
-		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			if ( temp_task->being_packed(ii) && pose.residue(ii).name() != "TP3" ) { // design residue
 
 				utility::vector1< bool > allowed_types( core::chemical::num_canonical_aas, false );
@@ -718,19 +718,19 @@ calculate_water_overcoordinated_hb_correction(
 	hbond_set.clear();
 	scoring::hbonds::fill_hbond_set( pose, false, hbond_set );
 
-	for ( Size ii= 1; ii <= pose.total_residue(); ++ii ) {  // We make sure we start from 0 for all residues
+	for ( core::Size ii= 1; ii <= pose.total_residue(); ++ii ) {  // We make sure we start from 0 for all residues
 		hb_correction[ii] = 0;
 	}
 
-	Size hb_count(0);
+	core::Size hb_count(0);
 	utility::vector1< Real > hb_energy(10);
-	utility::vector1< Size > hb_don_res(10); // we also keep track of the donor residue to calculate corrections
-	utility::vector1< Size > hb_acc_res(10); // we also keep track of the acceptr residue to calculate corrections
-	utility::vector1< Size > hb_involved(10);
+	utility::vector1< core::Size > hb_don_res(10); // we also keep track of the donor residue to calculate corrections
+	utility::vector1< core::Size > hb_acc_res(10); // we also keep track of the acceptr residue to calculate corrections
+	utility::vector1< core::Size > hb_involved(10);
 
 	// For simplicity, everything is with respect to the acceptors
-	for ( Size ii= 1; ii <= pose.total_residue(); ++ii ) {    // Go over all residues
-		for ( Size jj=1; jj<= pose.residue(ii).natoms(); ++jj ) {         // and all atoms
+	for ( core::Size ii= 1; ii <= pose.total_residue(); ++ii ) {    // Go over all residues
+		for ( core::Size jj=1; jj<= pose.residue(ii).natoms(); ++jj ) {         // and all atoms
 
 			if ( !pose.residue(ii).atom_type(jj).is_acceptor() ) continue; // if not acceptor, move on
 
@@ -738,7 +738,7 @@ calculate_water_overcoordinated_hb_correction(
 
 			// Go over all hydrogen bonds and find the ones where atom jj is involved in
 			// We only correct for hydrogen bonds involving water
-			for ( Size hb=1; hb<= Size(hbond_set.nhbonds()); ++hb ) {
+			for ( core::Size hb=1; hb<= core::Size(hbond_set.nhbonds()); ++hb ) {
 				if ( hbond_set.hbond(hb).acc_res() == ii && hbond_set.hbond(hb).acc_atm() == jj // atom of interest
 						&& ( pose.residue(hbond_set.hbond(hb).acc_res()).name() == "TP3"
 						|| pose.residue(hbond_set.hbond(hb).don_res()).name() == "TP3" )  // hb involves water
@@ -746,7 +746,7 @@ calculate_water_overcoordinated_hb_correction(
 						) {
 
 					// 'weight' is the sf weight, hbond_set.hbond(hb).weight() is the hb_enviroment (burial dependent) weight
-					Size weight = sc_weight;
+					core::Size weight = sc_weight;
 					if ( hbond_set.hbond(hb).acc_atm_is_protein_backbone() ||hbond_set.hbond(hb).don_hatm_is_protein_backbone() ) {
 						weight = bb_sc_weight;
 					}
@@ -784,7 +784,7 @@ calculate_water_overcoordinated_hb_correction(
 
 				// The acceptor is N and can have only one hb
 				if ( pose.residue(ii).atom_name(jj)[1] == 'N' ) {
-					for ( Size kk = 2; kk<=hb_count; ++kk ) {
+					for ( core::Size kk = 2; kk<=hb_count; ++kk ) {
 						hb_correction[ii] -= hb_energy[kk]/2.0;
 						hb_correction[hb_don_res[kk]] -= hb_energy[kk]/2.0;
 					}
@@ -797,7 +797,7 @@ calculate_water_overcoordinated_hb_correction(
 						hb_correction[ii] -= hb_energy[2]/2.0;
 						hb_correction[hb_don_res[2]] -= hb_energy[2]/2.0;
 					}
-					for ( Size kk = 3; kk<=hb_count; ++kk ) {
+					for ( core::Size kk = 3; kk<=hb_count; ++kk ) {
 						hb_correction[ii] -= hb_energy[kk]/2.0;
 						hb_correction[hb_don_res[kk]] -= hb_energy[kk]/2.0;
 					}
@@ -830,7 +830,7 @@ remove_high_energy_water_molecules(
 	utility::vector1 < Real > water_hb_correction (pose.total_residue(), 0 );
 	calculate_water_overcoordinated_hb_correction(pose, water_hb_correction);
 
-	for ( Size ii = 1; ii<= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii<= pose.total_residue(); ++ii ) {
 		if ( pose.residue(ii).name() != "TP3" ) continue;  // Make sure it's water
 		if ( (*water_info)[ii].enforced() ) {   // and it's not enforced
 			TR << "ENFORCED WATER MOLECULE " << ii << std::endl;
@@ -859,7 +859,7 @@ enforce_all_waters(
 	pack::rotamer_set::WaterPackingInfoOP water_info ( new pack::rotamer_set::WaterPackingInfo (
 		static_cast< pack::rotamer_set::WaterPackingInfo & > ( pose.data().get( pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) ) );
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( pose.residue(ii).name() == "TP3" ) {
 			(*water_info)[ ii ].enforced( true );
 		}
@@ -882,7 +882,7 @@ get_ready_for_sew_packing(
 	pack::rotamer_set::WaterPackingInfoOP water_info ( new pack::rotamer_set::WaterPackingInfo (
 		static_cast< pack::rotamer_set::WaterPackingInfo & > ( pose.data().get( pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) ) );
 
-	for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+	for ( core::Size ii=1; ii<=pose.total_residue(); ++ii ) {
 		if ( pose.residue(ii).name() == "TP3" && pose.energies().residue_total_energy(ii) == 0
 				&& (*water_info)[ii].anchor_atom() != "NONE" ) {
 			task->nonconst_residue_task( ii ).restrict_to_repacking();
@@ -906,7 +906,7 @@ remove_all_anchors_and_ENF(
 	pack::rotamer_set::WaterPackingInfoOP water_info ( new pack::rotamer_set::WaterPackingInfo (
 		static_cast< pack::rotamer_set::WaterPackingInfo & > ( pose.data().get( pose::datacache::CacheableDataType::WATER_PACKING_INFO ) ) ) );
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( pose.residue(ii).name() == "TP3" ) {
 			(*water_info)[ ii ].anchor_atom( "NONE" );
 			(*water_info)[ ii ].enforced( false );
@@ -919,7 +919,7 @@ remove_all_anchors_and_ENF(
 // Used when setting bb minimization
 void  // yumeng
 read_header(
-	Size const total_res,
+	core::Size const total_res,
 	std::string const & line,
 	kinematics::MoveMap & mm
 ){
@@ -928,7 +928,7 @@ read_header(
 		TR << "No backbone movement allowed" << std::endl;
 	}
 	if ( line == "ALL" ) {
-		for ( Size ii = 1; ii <= total_res; ++ii ) {
+		for ( core::Size ii = 1; ii <= total_res; ++ii ) {
 			mm.set_bb(ii, true);
 		}
 		TR << "Set backbone movement for all residues" << std::endl;
@@ -938,7 +938,7 @@ read_header(
 // Used when setting bb minimization
 void // yumeng
 read_body(
-	Size const total_res,
+	core::Size const total_res,
 	std::string const & line,
 	kinematics::MoveMap & mm
 ){
@@ -1003,7 +1003,7 @@ remove_non_buried_wat(
 	numeric::xyzVector < Real > far_away(1000,1000,1000);
 
 	utility::vector1 < bool > remove_wat ( pose.total_residue() );
-	for ( Size ii = 1; ii<=pose.total_residue() ; ++ii ) {
+	for ( core::Size ii = 1; ii<=pose.total_residue() ; ++ii ) {
 		remove_wat[ii] = false;
 		if ( pose.residue(ii).name() != "TP3" ) continue;
 		if ( is_inside( pose, pose.residue(ii).xyz("O") ) ) continue;
@@ -1011,7 +1011,7 @@ remove_non_buried_wat(
 		remove_wat[ii] = true;
 	}
 
-	for ( Size ii = pose.total_residue(); ii>=1 ; --ii ) {
+	for ( core::Size ii = pose.total_residue(); ii>=1 ; --ii ) {
 		if ( remove_wat[ii] ) {
 			TR << "Removing non buried water " << ii << std::endl;
 			conformation::ResidueOP temp_residue(pose.residue(ii).clone() );
@@ -1044,7 +1044,7 @@ add_water_overcoordinated_hb_score(
 
 	Real water_overcoor_hb (0);
 	TR << "Residue \t wat_overcoor_hb" << std::endl;
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		water_overcoor_hb += water_hb_correction[ii];
 		if ( water_hb_correction[ii] != 0 ) {
 			TR << ii << "_wat_corr\t" << water_hb_correction[ii] << std::endl;
@@ -1084,11 +1084,11 @@ show_water_hb_network(
 	hbond_set.clear();
 	hbonds::fill_hbond_set( pose, false, hbond_set );
 	TR << "Water_Hydrogen_Bond_list \t acc acc_atom \t don \t don_atom \t Energy \t HB_env_weight" << std::endl;
-	for ( Size hb=1; hb<= Size(hbond_set.nhbonds()); ++hb ) {
+	for ( core::Size hb=1; hb<= core::Size(hbond_set.nhbonds()); ++hb ) {
 		if ( pose.residue( hbond_set.hbond(hb).acc_res() ).name() == "TP3"
 				|| pose.residue( hbond_set.hbond(hb).don_res() ).name() == "TP3" ) {
 
-			Size weight = hb_sc_weight;
+			core::Size weight = hb_sc_weight;
 			if ( hbond_set.hbond(hb).acc_atm_is_protein_backbone() ||hbond_set.hbond(hb).don_hatm_is_protein_backbone() ) {
 				weight = hb_bb_sc_weight;
 			}
@@ -1134,7 +1134,7 @@ water_specific_hbond_energy( //output no_water hbond and water-specific hbond en
 	numeric::xyzVector < core::Real > awayH1 (0.9572,0,0);
 	numeric::xyzVector < core::Real > awayH2 (-0.2399872,0.92662721,0);
 	numeric::xyzVector < core::Real > far_away(1000,1000,1000);
-	for ( Size ii = 1; ii <= no_wat_pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= no_wat_pose.total_residue(); ++ii ) {
 		if ( no_wat_pose.residue(ii).name() == "TP3" ) {
 			conformation::ResidueOP temp_residue(no_wat_pose.residue(ii).clone() );
 			temp_residue->set_xyz("O", ii*far_away + awayO);
@@ -1182,7 +1182,7 @@ set_task_with_de_novo_water_using_resfile(
 
 	pack::task::PackerTaskOP temp_task( pack::task::TaskFactory::create_packer_task( pose ));
 	pack::task::parse_resfile(pose, *temp_task, resfile);       // Must be here to have water info in task
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( pose.residue(ii).name() == "TP3" ) {
 			task->nonconst_residue_task(ii).restrict_to_repacking();  // To avoid problems with design
 		} else if ( temp_task->being_packed(ii) && !temp_task->being_designed(ii) ) {
@@ -1203,10 +1203,10 @@ print_residues_near_water(
 	TR << "Residues near water:";
 
 	// vector to store all the hydratable residues
-	utility::vector1< Size > residues_near_water;
+	utility::vector1< core::Size > residues_near_water;
 
 	// check if any non-water residues are near water
-	for ( Size res_pos = 1; res_pos <= pose.total_residue(); ++res_pos ) {
+	for ( core::Size res_pos = 1; res_pos <= pose.total_residue(); ++res_pos ) {
 		if ( pose.residue( res_pos ).name() != "TP3" ) {
 			if ( residue_near_water( pose, res_pos ) ) {
 				// store this residue
@@ -1215,7 +1215,7 @@ print_residues_near_water(
 				//   // make sure no atoms are outside the pose
 				//   bool outside_pose = false;
 				//   conformation::Residue const & rsd( pose.residue(res_pos) );
-				//   for ( Size atom_idx = 1; atom_idx <= rsd.natoms(); ++atom_idx ) {
+				//   for ( core::Size atom_idx = 1; atom_idx <= rsd.natoms(); ++atom_idx ) {
 				//    if ( ! is_inside( pose, rsd.xyz( atom_idx ) ) ) {
 				//     outside_pose = true;
 				//     break;
@@ -1234,7 +1234,7 @@ print_residues_near_water(
 	if ( residues_near_water.size() > 0 ) {
 
 		// print out the residues near water
-		for ( Size idx = 1; idx <= residues_near_water.size(); idx++ ) {
+		for ( core::Size idx = 1; idx <= residues_near_water.size(); idx++ ) {
 			TR << " " << residues_near_water[ idx ];
 		}
 		TR << std::endl;

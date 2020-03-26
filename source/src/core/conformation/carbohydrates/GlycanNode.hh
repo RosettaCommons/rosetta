@@ -29,7 +29,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #ifdef    SERIALIZATION
@@ -42,7 +42,7 @@ namespace conformation {
 namespace carbohydrates {
 
 ///@brief Class to store info a node (residue) within a glycan tree
-class GlycanNode : public utility::pointer::ReferenceCount {
+class GlycanNode : public utility::VirtualBase {
 
 	///   Typedefs for storing connections
 	typedef Size upstream_atom;

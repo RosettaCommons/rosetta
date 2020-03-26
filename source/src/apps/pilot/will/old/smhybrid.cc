@@ -400,7 +400,7 @@ private:
 };
 
 
-struct PoseWrap : public ReferenceCount {
+struct PoseWrap : public VirtualBase {
 	string tag_;
 	core::pose::Pose pose,orig_pose,validate_reference_;
 	Size nsub,nres,primary_subsub,root_atomno_;

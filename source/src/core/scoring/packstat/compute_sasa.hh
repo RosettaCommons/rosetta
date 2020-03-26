@@ -24,7 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <numeric/constants.hh>
 #include <numeric/trig.functions.hh>
@@ -190,14 +190,14 @@ get_orientation(
 } // end namespace old
 
 
-struct SasaResult : public utility::pointer::ReferenceCount {
+struct SasaResult : public utility::VirtualBase {
 	SasaResult(std::size_t Nprobes, std::size_t Nspheres);
 	ObjexxFCL::FArray2D<PackstatReal> sphere_sasa;
 	CavBalls cavballs;
 	// utility::vector1<numeric::xyzVector<PackstatReal> > sasa_centers;
 };
 
-struct SasaOptions : public utility::pointer::ReferenceCount {
+struct SasaOptions : public utility::VirtualBase {
 	SasaOptions();
 	Floats probe_radii;
 	int   prune_max_iters;

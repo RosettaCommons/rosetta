@@ -22,7 +22,7 @@
 #include <protocols/match/Hit.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <iterator>
 #include <string>
@@ -31,7 +31,7 @@ namespace protocols {
 namespace match {
 namespace output {
 
-class MatchFilter : public utility::pointer::ReferenceCount {
+class MatchFilter : public utility::VirtualBase {
 public:
 
 	MatchFilter( std::string const & filter_name );

@@ -102,7 +102,7 @@ void update_pdb_info(
 
 		core::pose::PDBInfoOP new_info( new core::pose::PDBInfo( *input_pdb_info ) );
 
-		for ( Size i = 1; i <= new_vrts; ++i ) {
+		for ( core::Size i = 1; i <= new_vrts; ++i ) {
 			new_info->append_res( new_info->nres(), 3 );
 		}
 
@@ -111,7 +111,7 @@ void update_pdb_info(
 			<< new_info->nres() << std::endl;
 
 
-		for ( Size const cut : result.auto_cuts ) {
+		for ( core::Size const cut : result.auto_cuts ) {
 			new_info->replace_res( cut, pose.residue( cut ).natoms() );
 			new_info->replace_res( cut+1, pose.residue( cut+1 ).natoms() );
 			tr.Debug << "  Updating PDBInfo object to account updated numbers of atoms at " << cut << " and " << cut+1 << "." << std::endl;
@@ -204,7 +204,7 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
 
 	//set up bogus attachments for new VRTs
 	result_.closer_ft = utility::pointer::make_shared< core::kinematics::FoldTree >( conf.fold_tree() );
-	for ( Size i = 1; i <= result_.new_vrts.size(); ++i ) {
+	for ( core::Size i = 1; i <= result_.new_vrts.size(); ++i ) {
 		result_.closer_ft->insert_residue_by_jump( conf.size()+i, conf.size()+i-1 );
 	}
 
@@ -234,7 +234,7 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
 	conf.fold_tree( *ft );
 
 	//Swap out unphysical cut residues for chainbreak variants
-	for ( Size const cut : result().auto_cuts ) {
+	for ( core::Size const cut : result().auto_cuts ) {
 		add_chainbreak_variants( cut, conf );
 	}
 
@@ -247,7 +247,7 @@ core::Size find_implied_cut( utility::vector1< core::Size > const & cycle,
 
 	core::Real const CA_CA_CUTOFF = 4.0;
 
-	for ( Size i = 2; i <= conf.size(); ++i ) {
+	for ( core::Size i = 2; i <= conf.size(); ++i ) {
 		core::Real const dist = conf.residue( i ).xyz( "CA" ).distance( conf.residue( i - 1 ).xyz( "CA" ) );
 		if ( dist > CA_CA_CUTOFF ) {
 			cuts.push_back( i );
@@ -255,7 +255,7 @@ core::Size find_implied_cut( utility::vector1< core::Size > const & cycle,
 	}
 
 	tr.Debug << "  Looking for implied cuts from spatial information indicating cuts at: " << cuts << std::endl;
-	for ( Size i = 1; i <= cuts.size(); ++i ) {
+	for ( core::Size i = 1; i <= cuts.size(); ++i ) {
 		core::Size const & cut = cuts[i];
 		if ( std::find( cycle.begin(), cycle.end(), cut ) != cycle.end() ) {
 			tr.Debug << "  Inheriting implied cut at " << cut << " to close ft cycle." << std::endl;
@@ -274,8 +274,8 @@ utility::vector1< core::Size > introduce_datamap_cuts( FoldTreeSketch const & ft
 
 	// Calculate jump_points in prep for hash.
 	utility::vector1< std::string > jump_points;
-	for ( Size i = 1; i <= fts.nres(); ++i ) {
-		for ( Size j = i + 1; j <= fts.nres(); ++j ) {
+	for ( core::Size i = 1; i <= fts.nres(); ++i ) {
+		for ( core::Size j = i + 1; j <= fts.nres(); ++j ) {
 			if ( fts.has_jump( i, j ) ) {
 				jump_points.push_back( utility::to_string( i ) );
 				jump_points.push_back( utility::to_string( j ) );
@@ -322,7 +322,7 @@ utility::vector1< core::Size > introduce_datamap_cuts( FoldTreeSketch const & ft
 
 core::Size inherit_cuts( utility::vector1< core::Size > const & cycle,
 	core::kinematics::FoldTree const & input_ft ) {
-	for ( Size i = 1; i <= input_ft.num_cutpoint(); ++i ) {
+	for ( core::Size i = 1; i <= input_ft.num_cutpoint(); ++i ) {
 		if ( std::find( cycle.begin(), cycle.end(), input_ft.cutpoint( i ) ) != cycle.end() ) {
 			return input_ft.cutpoint( i );
 		} else {
@@ -342,13 +342,13 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 
 
 	utility::vector1< core::Size > const datamap_autocuts = introduce_datamap_cuts( fts, datacache );
-	for ( Size i = 1; i <= datamap_autocuts.size(); ++i ) {
+	for ( core::Size i = 1; i <= datamap_autocuts.size(); ++i ) {
 		core::Size const autocut = datamap_autocuts[ i ];
 		fts.insert_cut( autocut );
 		result_.auto_cuts.insert( autocut );
 	}
 
-	utility::vector1< Size > cycle = fts.cycle();
+	utility::vector1< core::Size > cycle = fts.cycle();
 
 	// this is ugly, but seems to allow me to access the contents of env_
 	// must some property of the new pointer system?
@@ -390,7 +390,7 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 			utility::vector1< core::Real > masked_bias( bias.size(), 0 );
 
 			core::Real bias_sum = 0.0;
-			for ( Size k = 1; k <= cycle.size(); ++k ) {
+			for ( core::Size k = 1; k <= cycle.size(); ++k ) {
 				core::Size seqpos = cycle[k];
 				// you could do the following with mod, but 1 indexing makes it suck too.
 				core::Size prev_seqpos = cycle[ ( k != 1 ) ? k-1 : cycle.size() ];
@@ -410,7 +410,7 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 			}
 
 			try {
-				Size const cut = fts.insert_cut( masked_bias );
+				core::Size const cut = fts.insert_cut( masked_bias );
 				debug_assert( masked_bias[cut] != 0 );
 				tr.Debug << "  Inserted automatic cut at " << cut << std::endl;
 				result_.auto_cuts.insert( cut );
@@ -418,7 +418,7 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 			} catch( utility::excn::Exception& e ){
 				std::ostringstream ss;
 				ss << "Automatic cut insertion failed with biases: [";
-				for ( Size k = 1; k <= cycle.size(); ++k ) {
+				for ( core::Size k = 1; k <= cycle.size(); ++k ) {
 					ss << cycle[k] << ":" << bias[cycle[k]] << ", ";
 				}
 				ss << "] Do you have a jump across a region that's zero cut-bias ("
@@ -469,7 +469,7 @@ void EnvClaimBroker::annotate_fold_tree( core::kinematics::FoldTreeOP ft,
 		std::string const & label = pair.first;
 		BrokeredJumpDataCOP jump_data = pair.second;
 
-		Size jump_id = ft->jump_nr( jump_data->pos.first, jump_data->pos.second );
+		core::Size jump_id = ft->jump_nr( jump_data->pos.first, jump_data->pos.second );
 
 		if ( jump_id != 0 ) { // The physical fold tree won't have some jumps, so we don't want to fail.
 			if ( ann ) { // Physical fold tree doesn't use the annotations.
@@ -777,9 +777,9 @@ void EnvClaimBroker::process_elements( JumpElemVect const & elems,
 		JumpElement const & element = pair.first;
 		ClientMoverCOP owner = pair.second;
 
-		Size abs_p1 = ann_->resolve_seq( element.p1 );
-		Size abs_p2 = ann_->resolve_seq( element.p2 );
-		std::pair< Size, Size > const pos_pair = std::make_pair( abs_p1, abs_p2 );
+		core::Size abs_p1 = ann_->resolve_seq( element.p1 );
+		core::Size abs_p2 = ann_->resolve_seq( element.p2 );
+		std::pair< core::Size, core::Size > const pos_pair = std::make_pair( abs_p1, abs_p2 );
 
 		// Build the JumpData -- we use this for jump overlap checks.
 		BrokeredJumpDataOP new_jump( new BrokeredJumpData( pos_pair,
@@ -829,7 +829,7 @@ void EnvClaimBroker::process_elements( CutElemVect const & elems,
 	for ( CutElemVect::Value const & pair : elems ) {
 		CutElement element = pair.first;
 
-		Size abs_p = ann_->resolve_seq( element.p );
+		core::Size abs_p = ann_->resolve_seq( element.p );
 		try {
 			fts.insert_cut( abs_p );
 		} catch ( core::environment::EXCN_FTSketchGraph& excn ){
@@ -848,7 +848,7 @@ void EnvClaimBroker::process_elements( CutBiasElemVect const & elems, BiasVector
 	for ( CutBiasElemVect::Value const & pair : elems ) {
 		CutBiasElement element = pair.first;
 
-		Size abs_p = ann_->resolve_seq( element.p );
+		core::Size abs_p = ann_->resolve_seq( element.p );
 		if ( element.bias > 1 || element.bias < 0 ) {
 			std::ostringstream ss;
 			ss << "Cut biases must be between 0 and 1. Cut was (" << element.p << "," << bias << ")";

@@ -41,7 +41,7 @@ public:
 		return utility::pointer::make_shared< ResiduesInInterfaceFilter >();
 	}
 	ResiduesInInterfaceFilter( ResiduesInInterfaceFilter const & init ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		Filter( init ) {
 		residues_in_interface_threshold_ = init.residues_in_interface_threshold_;
 		rb_jump_ = init.rb_jump_;

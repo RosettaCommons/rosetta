@@ -89,14 +89,14 @@ MultipleDomainMover::get_name() const {
 Size
 MultipleDomainMover::apply_and_return_jump( core::pose::Pose & pose )
 {
-	Size const n = static_cast<Size> ( numeric::random::rg().uniform() * num_domains_ ) + 1;
+	core::Size const n = static_cast<core::Size> ( numeric::random::rg().uniform() * num_domains_ ) + 1;
 	return apply_at_domain( pose, n );
 }
 
 
 ////////////////////////////////////////////////////////////////
 Size
-MultipleDomainMover::apply_at_domain( core::pose::Pose & pose, Size const & n )
+MultipleDomainMover::apply_at_domain( core::pose::Pose & pose, core::Size const & n )
 {
 	rb_movers_[ n ]->apply( pose );
 	slide_back_to_origin( pose );
@@ -128,9 +128,9 @@ Vector
 MultipleDomainMover::get_centroid( pose::Pose const & pose ){
 
 	Vector cen( 0.0, 0.0, 0.0 );
-	Size nres( 0 );
+	core::Size nres( 0 );
 	// Look at all residues except anchor (last residue).
-	for ( Size i = 1; i < pose.size(); i++ ) {
+	for ( core::Size i = 1; i < pose.size(); i++ ) {
 		if ( ok_for_centroid_calculation_[ i ] ) {
 			cen += pose.xyz( core::id::AtomID( 1, i ) );
 			nres += 1;
@@ -151,8 +151,8 @@ MultipleDomainMover::slide_back_to_origin( pose::Pose & pose ){
 	Vector cen = get_centroid( pose );
 	// std::cout << "CENTROID1: " << cen(1) << ' ' << cen(2) << ' ' << cen(3) << std::endl;
 
-	for ( Size n = 1; n <= num_domains_; n++ ) {
-		Size jumpno( jump_numbers_[ n ] );
+	for ( core::Size n = 1; n <= num_domains_; n++ ) {
+		core::Size jumpno( jump_numbers_[ n ] );
 		Jump j( pose.jump( jumpno ) );
 		Stub stub = pose.conformation().upstream_jump_stub( jumpno );
 		Vector new_translation = j.get_translation() - stub.M.transposed() * cen;
@@ -172,14 +172,14 @@ void MultipleDomainMover::setup_jump_numbers_and_partner( pose::Pose const & pos
 	using namespace protocols::moves;
 
 	// create rigid body mover for segment 1
-	Size const virt_res = pose.size();
+	core::Size const virt_res = pose.size();
 
 	jump_numbers_.clear();
 	partner_.clear();
 
-	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {
-		Size const i = pose.fold_tree().upstream_jump_residue( n );
-		Size const j = pose.fold_tree().downstream_jump_residue( n );
+	for ( core::Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {
+		core::Size const i = pose.fold_tree().upstream_jump_residue( n );
+		core::Size const j = pose.fold_tree().downstream_jump_residue( n );
 		if ( i == virt_res || j == virt_res ) {
 
 			jump_numbers_.push_back( n );
@@ -203,7 +203,7 @@ MultipleDomainMover::setup_ok_for_centroid_calculation( core::pose::toolbox::Ato
 	// Need to find jump number [Can try alternate constructor later]
 	ok_for_centroid_calculation_.clear();
 
-	for ( Size i = 1; i <= atom_level_domain_map->atom_id_mapper()->nres(); i++ ) {
+	for ( core::Size i = 1; i <= atom_level_domain_map->atom_id_mapper()->nres(); i++ ) {
 		ok_for_centroid_calculation_.push_back(  !atom_level_domain_map->get( core::id::AtomID( 2, i) ) );
 		if ( verbose_ ) std::cout <<  "OK " << i << " " << ok_for_centroid_calculation_[ i ] << std::endl;
 	}
@@ -216,7 +216,7 @@ MultipleDomainMover::randomize_orientations( pose::Pose & pose ) {
 
 	using namespace protocols::moves;
 
-	for ( Size n = 1; n<= num_domains_; n++ ) {
+	for ( core::Size n = 1; n<= num_domains_; n++ ) {
 		rigid::RigidBodyRandomizeMover rb( pose, jump_numbers_[ n ], partner_[ n ] );
 		rb.apply( pose );
 	}
@@ -235,16 +235,16 @@ void MultipleDomainMover::try_to_slide_into_contact( pose::Pose & pose ) {
 
 	utility::vector1< bool > slid_into_contact( pose.size(), false );
 
-	for ( Size n = 2; n <= num_domains_; n++ ) { // no need to move domain 1.
+	for ( core::Size n = 2; n <= num_domains_; n++ ) { // no need to move domain 1.
 
-		Size jumpno( jump_numbers_[ n ] );
+		core::Size jumpno( jump_numbers_[ n ] );
 
 		// find cutpoint_closed
 		rna_loop_closer_->apply_after_jump_change( pose, jumpno );
-		utility::vector1< Size > const & cutpos_list = rna_loop_closer_->cutpos_list();
+		utility::vector1< core::Size > const & cutpos_list = rna_loop_closer_->cutpos_list();
 
-		Size cutpoint_closed( 0 );
-		for ( Size i = 1; i <= cutpos_list.size() ; i++ ) {
+		core::Size cutpoint_closed( 0 );
+		for ( core::Size i = 1; i <= cutpos_list.size() ; i++ ) {
 			if ( !slid_into_contact[ cutpos_list[ i ] ]  ) {
 				cutpoint_closed = cutpos_list[ i ]; break;
 			}
@@ -286,7 +286,7 @@ void MultipleDomainMover::try_to_slide_into_contact( pose::Pose & pose ) {
 //////////////////////////////////////////////////////////////////////////////////
 void
 MultipleDomainMover::close_all_loops( pose::Pose & pose ) {
-	for ( Size n = 2; n <= num_domains_; n++ ) {
+	for ( core::Size n = 2; n <= num_domains_; n++ ) {
 		rna_loop_closer_->apply_after_jump_change( pose, n );
 	}
 	if ( verbose_ ) pose.dump_pdb( "closed.pdb" );
@@ -302,7 +302,7 @@ MultipleDomainMover::initialize_rigid_body_movers(){
 	rb_movers_.clear();
 
 	std::cout << "NUM_DOMAINS: " << num_domains_ << std::endl;
-	for ( Size n = 1; n <= num_domains_; n++ ) {
+	for ( core::Size n = 1; n <= num_domains_; n++ ) {
 		rb_movers_.push_back( utility::pointer::make_shared< rigid::RigidBodyPerturbMover >( jump_numbers_[ n ],
 			rot_mag_, trans_mag_,
 			partner_[ n ], ok_for_centroid_calculation_ ) );
@@ -315,7 +315,7 @@ void
 MultipleDomainMover::update_rot_trans_mag( Real const & rot_mag, Real const & trans_mag ){
 	rot_mag_ = rot_mag;
 	trans_mag_ = trans_mag;
-	for ( Size n = 1; n <= num_domains_; n++ ) {
+	for ( core::Size n = 1; n <= num_domains_; n++ ) {
 		rb_movers_[ n ]->rot_magnitude( rot_mag_ );
 		rb_movers_[ n ]->trans_magnitude( rot_mag_ );
 	}

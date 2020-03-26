@@ -47,7 +47,7 @@ static basic::Tracer TR( "protocols.topology.util" );
 
 using namespace core;
 using String = std::string;
-using VecSize = utility::vector1<Size>;
+using VecSize = utility::vector1<core::Size>;
 
 namespace protocols {
 namespace fldsgn {
@@ -69,28 +69,28 @@ calc_strand_pairing_set(
 	core::scoring::dssp::StrandPairingSet spairset;
 	spairset = dssp.strand_pairing_set();
 
-	for ( Size ispair=1; ispair<=spairset.size(); ispair++ ) {
+	for ( core::Size ispair=1; ispair<=spairset.size(); ispair++ ) {
 
 		core::scoring::dssp::StrandPairing sp;
 		sp = spairset.strand_pairing( ispair );
-		Size begin1 ( sp.begin1() );
-		Size end1 ( sp.end1() );
+		core::Size begin1 ( sp.begin1() );
+		core::Size end1 ( sp.end1() );
 
-		for ( Size iaa=begin1; iaa<=end1; ++iaa ) {
+		for ( core::Size iaa=begin1; iaa<=end1; ++iaa ) {
 
-			Size istrand ( ssinfo->strand_id( iaa ) );
+			core::Size istrand ( ssinfo->strand_id( iaa ) );
 			if ( istrand == 0 ) continue;
-			Size ist_begin ( ssinfo->strand( istrand )->begin() );
+			core::Size ist_begin ( ssinfo->strand( istrand )->begin() );
 
-			Size jaa ( sp.get_pair( iaa ) );
+			core::Size jaa ( sp.get_pair( iaa ) );
 			if ( jaa == 0 ) continue;
-			Size pleats ( sp.get_pleating( iaa ) );
-			Size jstrand ( ssinfo->strand_id( jaa ) );
+			core::Size pleats ( sp.get_pleating( iaa ) );
+			core::Size jstrand ( ssinfo->strand_id( jaa ) );
 			if ( jstrand == 0 ) continue;
 
-			Size jst_begin ( ssinfo->strand( jstrand )->begin() );
-			Size jst_end ( ssinfo->strand( jstrand )->end() );
-			Size jst_length ( jst_end - jst_begin );
+			core::Size jst_begin ( ssinfo->strand( jstrand )->begin() );
+			core::Size jst_end ( ssinfo->strand( jstrand )->end() );
+			core::Size jst_length ( jst_end - jst_begin );
 
 			if ( istrand == jstrand ) continue;
 
@@ -159,8 +159,8 @@ calc_delta_sasa(
 	// define atom_map for main-chain and CB
 	core::id::AtomID_Map< bool > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, false );
-	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
-		for ( Size j = 1; j<=5; ++j ) {
+	for ( core::Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( core::Size j = 1; j<=5; ++j ) {
 			core::id::AtomID atom( j, ir );
 			atom_map.set( atom, true );
 		}
@@ -181,11 +181,11 @@ calc_delta_sasa(
 	core::pose::initialize_atomid_map( atom_map_B, pose, false );
 
 	utility::vector1< bool > position_A( pose.size(), true );
-	for ( Size ii=1; ii<=intervals.size(); ii++ ) {
-		for ( Size jj=intervals[ ii ].left; jj<=intervals[ ii ].right; ++jj ) {
+	for ( core::Size ii=1; ii<=intervals.size(); ii++ ) {
+		for ( core::Size jj=intervals[ ii ].left; jj<=intervals[ ii ].right; ++jj ) {
 			position_A[ jj ] = false;
 		}
-		for ( Size j=1; j<=5; ++j ) {
+		for ( core::Size j=1; j<=5; ++j ) {
 			core::id::AtomID atom1( j, intervals[ ii ].left );
 			atom_map_A.set( atom1, true );
 
@@ -200,14 +200,14 @@ calc_delta_sasa(
 		}
 	}
 
-	for ( Size jj=1; jj<=pose.size(); jj++ ) {
+	for ( core::Size jj=1; jj<=pose.size(); jj++ ) {
 		if ( position_A[ jj ] ) {
-			for ( Size j=1; j<=5; ++j ) {
+			for ( core::Size j=1; j<=5; ++j ) {
 				core::id::AtomID atom( j, jj );
 				atom_map_A.set( atom, true );
 			}
 		} else {
-			for ( Size j=1; j<=5; ++j ) {
+			for ( core::Size j=1; j<=5; ++j ) {
 				core::id::AtomID atom( j, jj );
 				atom_map_B.set( atom, true );
 			}
@@ -218,7 +218,7 @@ calc_delta_sasa(
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa_B, pore_radius, false, atom_map_B );
 
 	Real tot_all( 0.0 ), tot_A( 0.0 ), tot_B( 0.0 );
-	for ( Size ii=2; ii<=pose.size()-1; ii++ ) {
+	for ( core::Size ii=2; ii<=pose.size()-1; ii++ ) {
 		tot_all += rsd_sasa[ ii ];
 		if ( position_A[ ii ] ) {
 			tot_A += rsd_sasa_A[ ii ];
@@ -227,7 +227,7 @@ calc_delta_sasa(
 		}
 	}
 
-	//   for( Size ii=1; ii<=pose.size(); ii++ ) {
+	//   for( core::Size ii=1; ii<=pose.size(); ii++ ) {
 	//  if( position_A[ ii ] ) {
 	//   std::cout << ii << " " << rsd_sasa[ ii ] << " " << rsd_sasa_A[ ii ] << " " << rsd_sasa_B[ ii ] << "*" <<std::endl;
 	//  } else {
@@ -255,8 +255,8 @@ check_kink_helix(
 	auto const & hbond_set( static_cast< HBondSet const & > ( copy_pose.energies().data().get( HBOND_SET )) );
 	//hbond_set.show( copy_pose );
 
-	Size num_broken_hbond( 0 );
-	for ( Size ii=begin; ii<=end; ++ii ) {
+	core::Size num_broken_hbond( 0 );
+	for ( core::Size ii=begin; ii<=end; ++ii ) {
 		if ( ! hbond_set.acc_bbg_in_bb_bb_hbond( ii ) ) {
 			TR << "hbonds of " << ii << " is broken. " << std::endl;
 			num_broken_hbond++;
@@ -283,8 +283,8 @@ check_internal_hbonds(
 
 	utility::vector1< HBond > hbonds;
 	for ( core::Size i=1; i<=(core::Size)hbond_set.nhbonds(); ++i ) {
-		Size don_pos = hbond_set.hbond((int)i).don_res();
-		Size acc_pos = hbond_set.hbond((int)i).acc_res();
+		core::Size don_pos = hbond_set.hbond((int)i).don_res();
+		core::Size acc_pos = hbond_set.hbond((int)i).acc_res();
 		if ( don_pos >= begin && don_pos <= end &&
 				acc_pos >= begin && acc_pos <= end ) {
 			hbonds.push_back( hbond_set.hbond((int)i) );
@@ -385,7 +385,7 @@ calc_strand_helix_angle(
 	//return theta;
 }
 // /// @brief
-// utility::vector1< Size >
+// utility::vector1< core::Size >
 // split_into_ss_chunk(
 // core::pose::Pose const & pose,
 // protocols::fldsgn::topology::SS_Info2_COP const ssinfo )

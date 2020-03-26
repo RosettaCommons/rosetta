@@ -43,13 +43,13 @@ using namespace core;
 // Standard methods ////////////////////////////////////////////////////////////
 // Default constructor
 /// @details  default is to not really do much of anything, unless filename output is set
-MatchScoreWriter::MatchScoreWriter() : utility::pointer::ReferenceCount()
+MatchScoreWriter::MatchScoreWriter() : utility::VirtualBase()
 {
 	init();
 }
 
 // Copy constructor
-MatchScoreWriter::MatchScoreWriter(MatchScoreWriter const & object_to_copy) : utility::pointer::ReferenceCount()
+MatchScoreWriter::MatchScoreWriter(MatchScoreWriter const & object_to_copy) : utility::VirtualBase()
 {
 	copy_data(*this, object_to_copy);
 }

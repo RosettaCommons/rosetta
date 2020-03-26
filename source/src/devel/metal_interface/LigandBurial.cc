@@ -59,7 +59,7 @@ LigandBurial::LigandBurial( core::pose::Pose const & pose, std::string ligand_3_
 
 LigandBurial::~LigandBurial() = default;
 
-basic::MetricValue< std::set<Size> >
+basic::MetricValue< std::set<core::Size> >
 LigandBurial::get_ligand_neighbors() {
 	return ligand_neighbors_;
 }
@@ -74,7 +74,7 @@ LigandBurial::find_ligand() {
 
 	//make this safe for ZN
 
-	for ( Size i(1); i <= pose_.size(); ++i ) {
+	for ( core::Size i(1); i <= pose_.size(); ++i ) {
 		//if ( pose_.residue(i).name3() == ligand_3_letter_code_ || pose_.residue(i).name3() == " ZN" ) {
 		if ( pose_.residue(i).name3() == ligand_3_letter_code_ ) {
 			ligand_resnum_ = i;
@@ -119,7 +119,7 @@ void
 LigandBurial::calculate_ligand_neighbors() {
 
 	//number of neighbors of ligand
-	basic::MetricValue< Size > num_n;
+	basic::MetricValue< core::Size > num_n;
 	pose_.metric( calcname_.str(), "num_neighbors", num_n);
 	TR << pose_.pdb_info()->name() << " " << ligand_3_letter_code_ << " ligand has " << num_n.value() << " neighbors." << std::endl;
 
@@ -153,8 +153,8 @@ LigandBurial::calculate_ligand_sasa() {
 	core::id::AtomID_Map<bool> atom_mask;
 	core::pose::initialize_atomid_map(atom_sasa,pose_,0.0);
 	core::pose::initialize_atomid_map(atom_mask,pose_,false);
-	for ( Size i = 1; i <= pose_.size(); i++ ) {
-		for ( Size j = 1; j <= pose_.residue(i).nheavyatoms(); j++ ) {
+	for ( core::Size i = 1; i <= pose_.size(); i++ ) {
+		for ( core::Size j = 1; j <= pose_.residue(i).nheavyatoms(); j++ ) {
 			atom_mask[AtomID(j,i)] = true;
 		}
 	}

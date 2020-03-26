@@ -29,7 +29,7 @@
 #include <core/pose/Pose.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 //// C++ headers

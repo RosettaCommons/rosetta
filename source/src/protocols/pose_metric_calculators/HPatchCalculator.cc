@@ -64,12 +64,12 @@ HPatchCalculator::lookup( std::string const & key, basic::MetricValueBase* valpt
 		(static_cast<basic::MetricValue<Real> *>(valptr))->set( total_hpatch_score_ );
 
 	} else if ( key == "patch_scores" ) {
-		basic::check_cast( valptr, &patch_scores_, "patch_scores expects to return a std::map< Size, Real >" );
-		(static_cast<basic::MetricValue<std::map< Size, std::pair< Real, Real > > > *>(valptr) )->set( patch_scores_ );
+		basic::check_cast( valptr, &patch_scores_, "patch_scores expects to return a std::map< core::Size, Real >" );
+		(static_cast<basic::MetricValue<std::map< core::Size, std::pair< Real, Real > > > *>(valptr) )->set( patch_scores_ );
 
 	} else if ( key == "atoms_in_patches" ) {
-		basic::check_cast( valptr, &atoms_in_patches_, "atoms_in_patches expects to return a std::map< Size, utility::vector1< id::AtomID > >" );
-		(static_cast<basic::MetricValue< std::map< Size, utility::vector1< id::AtomID > > > *>(valptr) )->set( atoms_in_patches_ );
+		basic::check_cast( valptr, &atoms_in_patches_, "atoms_in_patches expects to return a std::map< core::Size, utility::vector1< id::AtomID > >" );
+		(static_cast<basic::MetricValue< std::map< core::Size, utility::vector1< id::AtomID > > > *>(valptr) )->set( atoms_in_patches_ );
 
 	} else {
 		basic::Error() << "This Calculator cannot compute metric " << key << std::endl;
@@ -137,8 +137,8 @@ protocols::pose_metric_calculators::HPatchCalculator::save( Archive & arc ) cons
 	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
 	arc( CEREAL_NVP( total_hpatch_score_ ) ); // core::Real
 	arc( CEREAL_NVP( remove_nonprotein_res_ ) ); // _Bool
-	arc( CEREAL_NVP( patch_scores_ ) ); // std::map<Size, std::pair<core::Real, core::Real> >
-	arc( CEREAL_NVP( atoms_in_patches_ ) ); // std::map<Size, utility::vector1<core::id::AtomID> >
+	arc( CEREAL_NVP( patch_scores_ ) ); // std::map<core::Size, std::pair<core::Real, core::Real> >
+	arc( CEREAL_NVP( atoms_in_patches_ ) ); // std::map<core::Size, utility::vector1<core::id::AtomID> >
 }
 
 /// @brief Automatically generated deserialization method
@@ -148,8 +148,8 @@ protocols::pose_metric_calculators::HPatchCalculator::load( Archive & arc ) {
 	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
 	arc( total_hpatch_score_ ); // core::Real
 	arc( remove_nonprotein_res_ ); // _Bool
-	arc( patch_scores_ ); // std::map<Size, std::pair<core::Real, core::Real> >
-	arc( atoms_in_patches_ ); // std::map<Size, utility::vector1<core::id::AtomID> >
+	arc( patch_scores_ ); // std::map<core::Size, std::pair<core::Real, core::Real> >
+	arc( atoms_in_patches_ ); // std::map<core::Size, utility::vector1<core::id::AtomID> >
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::pose_metric_calculators::HPatchCalculator );

@@ -138,8 +138,8 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
 	// Partition pose according to specified jump and symmetry information
-	Size nsubposes=1;
-	utility::vector1<Size> sym_aware_jump_ids;
+	core::Size nsubposes=1;
+	utility::vector1<core::Size> sym_aware_jump_ids;
 	if ( multicomp_ ) {
 		runtime_assert( sym_dof_names_ != "" );
 		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
@@ -148,16 +148,16 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const
 	} else if ( sym_dof_names_ != "" ) {
 		// expand system along provided DOFs
 		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
-		for ( Size j = 1; j <= sym_dof_name_list.size(); j++ ) {
+		for ( core::Size j = 1; j <= sym_dof_name_list.size(); j++ ) {
 			sym_aware_jump_ids.push_back( core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[j] ) );
 		}
 	} else if ( jump_set_ ) {
 		sym_aware_jump_ids.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, jump_id_ ) );
 	} else {
 		// if we're symmetric and not multicomponent, expand along all slide DOFs
-		Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
+		core::Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
 		TR.Debug << "#slidable jumps: " << nslidedofs << std::endl;
-		for ( Size j = 1; j <= nslidedofs; j++ ) {
+		for ( core::Size j = 1; j <= nslidedofs; j++ ) {
 			sym_aware_jump_ids.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
 		}
 	}
@@ -165,7 +165,7 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const
 	core::Size count_residues( 0 );
 	core::Size count_neighbors( 0 );
 
-	for ( Size i = 1; i <= nsubposes; i++ ) {
+	for ( core::Size i = 1; i <= nsubposes; i++ ) {
 		ObjexxFCL::FArray1D_bool is_upstream ( pose.size(), false );
 		if ( multicomp_ ) {
 			TR.Debug << "computing neighbors for sym_dof_name " << sym_dof_name_list[i] << std::endl;

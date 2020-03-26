@@ -41,7 +41,7 @@ namespace ligand_docking {
 static basic::Tracer MinimizeLigand_tracer( "protocols.ligand_docking.MinimizeLigand", basic::t_debug );
 
 MinimizeLigand::MinimizeLigand():
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	protocols::moves::Mover("MinimizeLigand")
 {
 	ligand_torsion_restraints_.clear();
@@ -54,7 +54,7 @@ MinimizeLigand::MinimizeLigand(char chain, core::Real degrees):
 }
 
 MinimizeLigand::MinimizeLigand(MinimizeLigand const & that):
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	protocols::moves::Mover( that ),
 	chain_(that.chain_),
 	degrees_(that.degrees_)

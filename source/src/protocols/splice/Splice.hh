@@ -27,7 +27,7 @@
 #include <basic/datacache/DataMapObj.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <basic/datacache/DataMapObj.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
@@ -44,7 +44,7 @@ namespace splice {
 
 
 //@brief used for checking backbone segment compatibility
-class BBMatching : public utility::pointer::ReferenceCount
+class BBMatching : public utility::VirtualBase
 {
 public:
 	BBMatching();
@@ -61,7 +61,7 @@ private:
 	std::string pdb_names_;
 };
 
-/*class SpliceData : public utility::pointer::ReferenceCount
+/*class SpliceData : public utility::VirtualBase
 {
 public:
 SpliceData();

@@ -114,7 +114,7 @@ boost::assign::list_of
 ("AAABBAAA")("AAABGAAA")("AAAGBAAA")("AAABABAAA")("AAABAGAAA")("AAAGABAAA");
 
 IdealAbegoGenerator::IdealAbegoGenerator( std::string const & segment_name_val ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	segment_name_( segment_name_val ),
 	extend_ss_( true ),
 	match_ss_to_abego_( false )

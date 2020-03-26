@@ -29,7 +29,7 @@ namespace core {
 namespace conformation {
 
 PseudoBond::PseudoBond() :
-	ReferenceCount(),
+	VirtualBase(),
 	lr_conn_(),
 	ur_conn_(),
 	nbonds_( 0 )
@@ -38,7 +38,7 @@ PseudoBond::PseudoBond() :
 PseudoBond::~PseudoBond() = default;
 
 PseudoBond::PseudoBond( PseudoBond const & src ) :
-	ReferenceCount(),
+	VirtualBase(),
 	lr_conn_( src.lr_conn_ ),
 	ur_conn_( src.ur_conn_ ),
 	nbonds_( src.nbonds_ )

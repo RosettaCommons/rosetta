@@ -78,7 +78,7 @@ CatPiCalculator::CatPiCalculator(core::Real dist_cutoff) :
 
 void CatPiCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const{
 	if ( key == "cat_pi" ) {
-		basic::check_cast( valptr, &cat_pi_total_, "cat_pi expects to return a Size" );
+		basic::check_cast( valptr, &cat_pi_total_, "cat_pi expects to return a core::Size" );
 		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( cat_pi_total_ );
 
 	} else {

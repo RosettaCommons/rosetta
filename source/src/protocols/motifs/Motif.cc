@@ -93,12 +93,12 @@ Motif::Motif(
 
 Motif::Motif(
 	core::pose::Pose const & pose,
-	Size const residue_position_1,
+	core::Size const residue_position_1,
 	char const chain1,
 	std::string const & res1_atom1_name,
 	std::string const & res1_atom2_name,
 	std::string const & res1_atom3_name,
-	Size const residue_position_2,
+	core::Size const residue_position_2,
 	char const chain2,
 	std::string const & res2_atom1_name,
 	std::string const & res2_atom2_name,
@@ -137,11 +137,11 @@ Motif::Motif(
 
 Motif::Motif(
 	core::pose::Pose const & pose,
-	Size const residue_position_1,
+	core::Size const residue_position_1,
 	std::string const & res1_atom1_name,
 	std::string const & res1_atom2_name,
 	std::string const & res1_atom3_name,
-	Size const residue_position_2,
+	core::Size const residue_position_2,
 	std::string const & res2_atom1_name,
 	std::string const & res2_atom2_name,
 	std::string const & res2_atom3_name
@@ -182,7 +182,7 @@ Motif::Motif(
 Motif::Motif(
 	core::conformation::Residue const & res1,
 	core::conformation::Residue const & res2,
-	utility::vector1< Size > const & res2_atoms
+	utility::vector1< core::Size > const & res2_atoms
 ):
 	has_remark_( false ),
 	has_path_( false )
@@ -334,7 +334,7 @@ Motif::Motif(
 
 Motif::Motif(
 	Motif const & src
-) : utility::pointer::ReferenceCount(),
+) : utility::VirtualBase(),
 	restype_name1_( src.restype_name1_ ),
 	res1_atom1_name_( src.res1_atom1_name_ ),
 	res1_atom2_name_( src.res1_atom2_name_ ),
@@ -390,7 +390,7 @@ Motif::backward_check(
 bool
 Motif::apply_check(
 	core::pose::Pose const & pose,
-	Size const pos
+	core::Size const pos
 ) const
 {
 	if ( pose.residue(pos).is_DNA() ) {
@@ -436,9 +436,9 @@ mt << "Res1: " <<  res1_atom1_name_ << res1_atom2_name_ << res1_atom3_name_ << "
 
 // core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) ); // Unused variable causes warning
 // core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) ); // Unused variable causes warning
-// Size res1_atom1_index = rsd_type.atom_index( res1_atom1_name_ ); // Unused variable causes warning
-// Size res1_atom2_index = rsd_type.atom_index( res1_atom2_name_ ); // Unused variable causes warning
-// Size res1_atom3_index = rsd_type.atom_index( res1_atom3_name_ ); // Unused variable causes warning
+// core::Size res1_atom1_index = rsd_type.atom_index( res1_atom1_name_ ); // Unused variable causes warning
+// core::Size res1_atom2_index = rsd_type.atom_index( res1_atom2_name_ ); // Unused variable causes warning
+// core::Size res1_atom3_index = rsd_type.atom_index( res1_atom3_name_ ); // Unused variable causes warning
 
 // FIXME: these local variables have the same name as data members!
 // int res1_atom1_int_ = rsd_type.atom( res1_atom1_index).atom_type_index(); // Unused variable causes warning
@@ -475,8 +475,8 @@ Motif::store_path(
 core::pack::rotamer_set::RotamerSetOP
 Motif::build_rotamers(
 	core::pose::Pose & pose,
-	Size const rotamer_build_position,
-	Size const ex_,
+	core::Size const rotamer_build_position,
+	core::Size const ex_,
 	bool res2
 ) const
 {
@@ -537,9 +537,9 @@ Motif::build_rotamers(
 core::pack::rotamer_set::RotamerSetOP
 Motif::build_inverted_rotamers(
 	core::pose::Pose & pose,
-	Size const motif_anchor_position,
+	core::Size const motif_anchor_position,
 	bool & use_forward,
-	Size rotamer_build_position
+	core::Size rotamer_build_position
 ) const
 {
 	using namespace core::pack::rotamer_set;
@@ -548,11 +548,11 @@ Motif::build_inverted_rotamers(
 	using namespace core::pack;
 	using namespace core::pack::task;
 
-	Size extra_value( 0 );
+	core::Size extra_value( 0 );
 
 	// If no build position was passed, it will be the default value ( 0 ),
 	// and we need to find the closest bb position to the anchor residue
-	if ( rotamer_build_position == Size( 0 ) ) {
+	if ( rotamer_build_position == core::Size( 0 ) ) {
 		// Find closest
 		// *********** TO DO ************
 		mt << "Using nonsense build residue in build_motif_rotamer - default argument not yet supported" << std::endl;
@@ -572,7 +572,7 @@ Motif::build_inverted_rotamers(
 	rotset = build_rotamers( pose, rotamer_build_position, extra_value, use_forward );
 
 	// Invert the rotamer library as specified by the motif
-	for ( Size ir = 1 , end_ir = rotset->num_rotamers() ; ir <= end_ir ; ++ir ) {
+	for ( core::Size ir = 1 , end_ir = rotset->num_rotamers() ; ir <= end_ir ; ++ir ) {
 		place_residue( pose.residue( motif_anchor_position ), *(rotset->nonconst_rotamer( ir )) );
 	}
 
@@ -584,10 +584,10 @@ void
 Motif::place_atoms(
 	core::conformation::Residue const & fixed,
 	core::conformation::Residue & mobile,
-	utility::vector1< Size > const & atoms,
-	Size const & res2_atom1_index_in,
-	Size const & res2_atom2_index_in,
-	Size const & res2_atom3_index_in,
+	utility::vector1< core::Size > const & atoms,
+	core::Size const & res2_atom1_index_in,
+	core::Size const & res2_atom2_index_in,
+	core::Size const & res2_atom3_index_in,
 	bool one_three
 ) const
 {
@@ -619,11 +619,11 @@ Motif::place_atom(
 	core::conformation::Residue const & fixed,
 	core::conformation::Residue & mobile,
 	core::conformation::Atom & atm,
-	Size const & res2_atom1_index_in,
-	Size const & res2_atom2_index_in,
-	Size const & res2_atom3_index_in,
+	core::Size const & res2_atom1_index_in,
+	core::Size const & res2_atom2_index_in,
+	core::Size const & res2_atom3_index_in,
 	//std::string const & atomtype,
-	Size const & atomtype,
+	core::Size const & atomtype,
 	bool one_three
 ) const
 {
@@ -635,9 +635,9 @@ void
 Motif::place_residue(
 	core::conformation::Residue const & fixed,
 	core::conformation::Residue & mobile,
-	Size const & res2_atom1_index_in,
-	Size const & res2_atom2_index_in,
-	Size const & res2_atom3_index_in,
+	core::Size const & res2_atom1_index_in,
+	core::Size const & res2_atom2_index_in,
+	core::Size const & res2_atom3_index_in,
 	bool one_three
 ) const
 {
@@ -668,11 +668,11 @@ Motif::place_atom_(
 	core::conformation::Residue & mobile,
 	bool forward,
 	core::conformation::Atom & atm,
-	Size const & res2_atom1_index_in,
-	Size const & res2_atom2_index_in,
-	Size const & res2_atom3_index_in,
+	core::Size const & res2_atom1_index_in,
+	core::Size const & res2_atom2_index_in,
+	core::Size const & res2_atom3_index_in,
 	//std::string const & atomtype,
-	Size const & atomtype,
+	core::Size const & atomtype,
 	bool one_three
 ) const
 {
@@ -913,7 +913,7 @@ Motif::place_residue_(
 	place_residue_helper( end_stub, mobile_stub, fixed, mobile, forward, one_three );
 
 	// Apply to the mobile residue
-	for ( Size i(1), end_i = mobile.natoms() ; i <= end_i ; ++i ) {
+	for ( core::Size i(1), end_i = mobile.natoms() ; i <= end_i ; ++i ) {
 		mobile.set_xyz( i, end_stub.local2global( mobile_stub.global2local( mobile.xyz( i ) ) ) );
 	}
 
@@ -927,9 +927,9 @@ Motif::place_residue_helper(
 	core::conformation::Residue const & fixed,
 	core::conformation::Residue & mobile,
 	bool forward,
-	Size const & res2_atom1_index_in,
-	Size const & res2_atom2_index_in,
-	Size const & res2_atom3_index_in,
+	core::Size const & res2_atom1_index_in,
+	core::Size const & res2_atom2_index_in,
+	core::Size const & res2_atom3_index_in,
 	bool one_three
 ) const {
 	core::kinematics::Stub start_stub1;
@@ -998,9 +998,9 @@ Motif::place_residue_(
 	core::conformation::Residue const & fixed,
 	core::conformation::Residue & mobile,
 	bool forward,
-	Size const & res2_atom1_index_in,
-	Size const & res2_atom2_index_in,
-	Size const & res2_atom3_index_in,
+	core::Size const & res2_atom1_index_in,
+	core::Size const & res2_atom2_index_in,
+	core::Size const & res2_atom3_index_in,
 	bool one_three
 ) const
 {
@@ -1012,7 +1012,7 @@ Motif::place_residue_(
 		res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three );
 
 	// Apply to the mobile residue
-	for ( Size i(1), end_i = mobile.natoms() ; i <= end_i ; ++i ) {
+	for ( core::Size i(1), end_i = mobile.natoms() ; i <= end_i ; ++i ) {
 		mobile.set_xyz( i, end_stub.local2global( mobile_stub.global2local( mobile.xyz( i ) ) ) );
 	}
 	return;
@@ -1112,7 +1112,7 @@ Motif::place_atoms_(
 	place_residue_helper( end_stub, mobile_stub, fixed, mobile, forward, one_three );
 
 	// Apply to the mobile residue
-	for ( Size i(1), end_i = atoms.size() ; i <= end_i ; ++i ) {
+	for ( core::Size i(1), end_i = atoms.size() ; i <= end_i ; ++i ) {
 		mobile.set_xyz( atoms[i], end_stub.local2global( mobile_stub.global2local( mobile.xyz( atoms[i] ) ) ) );
 	}
 
@@ -1125,10 +1125,10 @@ Motif::place_atoms_(
 	core::conformation::Residue const & fixed,
 	core::conformation::Residue & mobile,
 	bool forward,
-	utility::vector1< Size > const & atoms,
-	Size const & res2_atom1_index_in,
-	Size const & res2_atom2_index_in,
-	Size const & res2_atom3_index_in,
+	utility::vector1< core::Size > const & atoms,
+	core::Size const & res2_atom1_index_in,
+	core::Size const & res2_atom2_index_in,
+	core::Size const & res2_atom3_index_in,
 	bool one_three
 ) const
 {
@@ -1140,7 +1140,7 @@ Motif::place_atoms_(
 		res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three );
 
 	// Apply to the mobile residue
-	for ( Size i(1), end_i = atoms.size() ; i <= end_i ; ++i ) {
+	for ( core::Size i(1), end_i = atoms.size() ; i <= end_i ; ++i ) {
 		mobile.set_xyz( atoms[i], end_stub.local2global( mobile_stub.global2local( mobile.xyz( atoms[i] ) ) ) );
 	}
 

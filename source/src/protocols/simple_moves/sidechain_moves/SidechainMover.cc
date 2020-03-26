@@ -114,7 +114,7 @@ SidechainMover::SidechainMover(
 SidechainMover::SidechainMover(
 	SidechainMover const & mover
 ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	protocols::canonical_sampling::ThermodynamicMover(mover),
 	rotamer_library_(mover.rotamer_library_),
 	packed_residues_(mover.packed_residues_),
@@ -299,9 +299,9 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue, core::po
 	// select a residue type
 	core::chemical::ResidueTypeCOP residue_type;
 	do {
-		Size const restypenum(numeric::random::rg().random_range(1, residue_types.size()));
+		core::Size const restypenum(numeric::random::rg().random_range(1, residue_types.size()));
 		auto iter(residue_types.begin());
-		for ( Size i = 1; i < restypenum; ++i ) ++iter;
+		for ( core::Size i = 1; i < restypenum; ++i ) ++iter;
 		residue_type = *iter;
 	}
 	while (residue_type->aa() == core::chemical::aa_pro); // temporary hack to exlcude sampling of proline sidechains
@@ -341,7 +341,7 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue, core::po
 
 		/* //add in option to sample rotamers above a certain threshold uniformly
 		utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > most_probable_rotamers;
-		Size itr_i = 1;
+		core::Size itr_i = 1;
 		core::Real const probability_threshold = 0.01;
 		debug_assert( rotamer_sample_data.size() > 0 );
 		if ( sample_rotwells_unif_  ){ //uniformly samples rotamer wells
@@ -376,7 +376,7 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue, core::po
 		if ( TR.visible( basic::t_debug ) ) {
 			TR.Debug << "making a uniform jump " << std::endl;
 		}
-		for ( Size ii = 1; ii <= last_nchi_; ++ii ) {
+		for ( core::Size ii = 1; ii <= last_nchi_; ++ii ) {
 			last_chi_angles_[ ii ] = numeric::random::rg().uniform() * 360.0 - 180.0;
 		}
 		last_uniform_ = true;
@@ -394,20 +394,20 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue, core::po
 	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "residue angles were previously: ";
 
-		for ( Size i = 1; i <= input_residue->nchi(); ++i ) {
+		for ( core::Size i = 1; i <= input_residue->nchi(); ++i ) {
 			TR.Debug << " " << input_residue->chi( i );;
 		}
 		TR.Debug << std::endl;
 	}
 
 	/// set the chi
-	for ( Size i = 1; i <= input_residue->nchi(); ++i ) {
+	for ( core::Size i = 1; i <= input_residue->nchi(); ++i ) {
 		input_residue->set_chi( i, last_chi_angles_[ i ] );
 	}
 
 	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "Set residue chi angles to:";
-		for ( Size i = 1; i <= input_residue->nchi(); ++i ) {
+		for ( core::Size i = 1; i <= input_residue->nchi(); ++i ) {
 			TR.Debug << " " << last_chi_angles_[ i ];
 			TR.Debug << " " << input_residue->chi( i );
 		}
@@ -429,7 +429,7 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue, core::po
 		if ( TR.visible( basic::t_debug ) ) {
 			TR.Debug << "type of new residue created " << new_residue->type().name() << std::endl;
 		}
-		for ( Size ii = 1; ii <= residue_type->nchi(); ii++ ) {
+		for ( core::Size ii = 1; ii <= residue_type->nchi(); ii++ ) {
 			if ( TR.visible( basic::t_debug ) ) {
 				TR.Debug << " setting chi of new residue " << last_chi_angles_[ ii ] << std::endl;
 			}
@@ -445,7 +445,7 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue, core::po
 	//pose_.replace_residue(resnum, *new_residue, false); //moved to outside apply
 
 	/// last_chi_angles_ holds radians after this code executes;
-	for ( Size ii = 1; ii <= residue_type->nchi(); ++ii ) {
+	for ( core::Size ii = 1; ii <= residue_type->nchi(); ++ii ) {
 		last_chi_angles_[ ii ] = numeric::principal_angle_degrees(last_chi_angles_[ ii ]);
 		//pose.set_chi( ii, resnum, last_chi_angles_[ ii ] );
 		last_chi_angles_[ ii ] = radians( last_chi_angles_[ ii ] );
@@ -472,7 +472,7 @@ SidechainMover::make_rotwell_jump(
 	utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > const & rotamer_sample_data
 )
 {
-	Size rotnum = 0;
+	core::Size rotnum = 0;
 	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "making a rot-well jump " << std::endl;
 	}
@@ -557,7 +557,7 @@ SidechainMover::perturb_rot_within_well(
 	utility::vector1<core::Real> const & previous_chi_angles
 )
 {
-	Size rotnum = 0;
+	core::Size rotnum = 0;
 	//ek added in new option to perturb current chi and evaluate according to dunbrack 3/30/10
 	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "making a within-rot-well jump " << std::endl;
@@ -603,7 +603,7 @@ SidechainMover::apply(
 	// select a residue to change
 	runtime_assert(packed_residues_.size() > 0);
 
-	Size resnum;
+	core::Size resnum;
 	if ( next_resnum_ ) {
 		resnum = next_resnum_;
 		next_resnum_ = 0;
@@ -613,14 +613,14 @@ SidechainMover::apply(
 	conformation::ResidueOP newresidue( new conformation::Residue( pose.residue( resnum ) ) );
 	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "old residue chi is : ";
-		for ( Size i = 1; i <= newresidue->nchi(); ++i ) TR.Debug << " " << newresidue->chi(i);
+		for ( core::Size i = 1; i <= newresidue->nchi(); ++i ) TR.Debug << " " << newresidue->chi(i);
 		TR.Debug << std::endl;
 	}
 
 	conformation::ResidueOP final = make_move( newresidue, pose );
 	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "new residue chi is : ";
-		for ( Size i = 1; i <= pose.residue(resnum).type().nchi(); ++i ) TR.Debug << " " << newresidue->chi(i);
+		for ( core::Size i = 1; i <= pose.residue(resnum).type().nchi(); ++i ) TR.Debug << " " << newresidue->chi(i);
 		TR.Debug << std::endl;
 	}
 
@@ -637,7 +637,7 @@ SidechainMover::apply(
 	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "pose replaced " << resnum << " " << pose.residue(resnum).type().name() << " has phi-psi " << pose.phi(resnum) << " " << pose.psi(resnum) << " and chi: ";
 
-		for ( Size i = 1; i <= pose.residue(resnum).type().nchi(); ++i ) TR.Debug << " " << (pose.residue(resnum).chi(i));
+		for ( core::Size i = 1; i <= pose.residue(resnum).type().nchi(); ++i ) TR.Debug << " " << (pose.residue(resnum).chi(i));
 		TR.Debug << std::endl;
 	}
 	PROF_STOP( basic::APPLY_SC_MOVE );
@@ -770,9 +770,9 @@ SidechainMover::idealize_sidechains(
 
 	init_task(pose);
 
-	for ( Size i = 1; i <= packed_residues_.size(); ++i ) {
+	for ( core::Size i = 1; i <= packed_residues_.size(); ++i ) {
 
-		Size const resnum(packed_residues_[i]);
+		core::Size const resnum(packed_residues_[i]);
 
 		// get the residue type and residue level task
 		chemical::ResidueType const & residue_type(pose.residue_type(resnum));
@@ -783,7 +783,7 @@ SidechainMover::idealize_sidechains(
 
 		// save original chi angles
 		if ( residue_type.nchi() > chi.size() ) chi.resize(residue_type.nchi());
-		for ( Size chinum = 1; chinum <= residue_type.nchi(); ++chinum ) {
+		for ( core::Size chinum = 1; chinum <= residue_type.nchi(); ++chinum ) {
 			chi[chinum] = pose.chi(chinum, resnum);
 		}
 
@@ -795,7 +795,7 @@ SidechainMover::idealize_sidechains(
 		pose.replace_residue(resnum, *new_residue, false);
 
 		// put original chi angles back
-		for ( Size chinum = 1; chinum <= residue_type.nchi(); ++chinum ) {
+		for ( core::Size chinum = 1; chinum <= residue_type.nchi(); ++chinum ) {
 			pose.set_chi(chinum, resnum, chi[chinum]);
 		}
 	}
@@ -839,7 +839,7 @@ SidechainMover::set_task(
 	// update the list of residues being packed
 	packed_residues_.clear();
 	residue_packed_.resize(task_->total_residue());
-	for ( Size i = 1; i <= task_->total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= task_->total_residue(); ++i ) {
 
 		// loop over all possible residue types and check if any have chi angles
 		residue_packed_[i] = false;
@@ -1092,19 +1092,19 @@ void SidechainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 /// The following block of comments was originally in make_move
 /// but have been moved here
 
-//Size chinum(1);
+//core::Size chinum(1);
 // use Dunbrack statistics to bias chi angle sampling
 //if (numeric::random::rg().uniform() > prob_uniform_ && residue_dunbrack_library) {
 //
 // // get indices of the phi and psi bins, plus extra information we don't need
-// Size phibin, psibin, phibin_next, psibin_next;
+// core::Size phibin, psibin, phibin_next, psibin_next;
 // Real phi_err, psi_err;
 // residue_dunbrack_library->get_phi_interpolate_bin(pose.phi(resnum), pose.psi(resnum), phibin, psibin,
 //  phibin_next, psibin_next, phi_err, psi_err);
 
 // // choose a random rotamer according to its probability
 // Real accprob = numeric::random::rg().uniform();
-// for (Size rotnum = 1; rotnum <= residue_dunbrack_library->nrots_per_bin(); rotnum++) {
+// for (core::Size rotnum = 1; rotnum <= residue_dunbrack_library->nrots_per_bin(); rotnum++) {
 //
 //  core::pack::dunbrack::DunbrackRotamer< core::pack::dunbrack::FOUR > rotamer(
 //   residue_dunbrack_library->retrieve_rotamer(phibin, psibin, rotnum)
@@ -1143,7 +1143,7 @@ void SidechainMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 
 
 // TR.Debug << "Set residue chi angles to:";
-// for (Size i = 1; i <= residue_type->nchi(); ++i) TR.Debug << " " << degrees(last_chi_angles_[i]);
+// for (core::Size i = 1; i <= residue_type->nchi(); ++i) TR.Debug << " " << degrees(last_chi_angles_[i]);
 // TR.Debug << std::endl;
 
 

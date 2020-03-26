@@ -91,8 +91,8 @@ namespace rna {
 
 RNA_KinematicCloser::RNA_KinematicCloser(
 	Pose const & init_pose,
-	Size const moving_suite,
-	Size const chainbreak_suite,
+	core::Size const moving_suite,
+	core::Size const chainbreak_suite,
 	bool const is_TNA
 ):
 	StepWiseSamplerSized(),
@@ -137,8 +137,8 @@ void RNA_KinematicCloser::init( pose::Pose const & pose_current /* has CUTPOINT 
 	nsol_ = 0;
 	all_jacobians_.clear();
 
-	utility::vector1< Size > pivots ( 3 ), order ( 3 );
-	for ( Size i = 1; i <= 3; i++ ) {
+	utility::vector1< core::Size > pivots ( 3 ), order ( 3 );
+	for ( core::Size i = 1; i <= 3; i++ ) {
 		order[i] = i;
 		pivots[i] = 3 * i + 2;
 	}
@@ -228,7 +228,7 @@ void RNA_KinematicCloser::init( pose::Pose const & pose_current /* has CUTPOINT 
 	//////////////////////////////////////////////
 	// Parameter at chainbreak.
 	// This looks a bit weird, because of a hack.
-	Size const cutpos = chainbreak_suite_;
+	core::Size const cutpos = chainbreak_suite_;
 
 	if ( use_pose_closed ) {
 		////////////////////////////////////////////////////////////////
@@ -364,14 +364,14 @@ void RNA_KinematicCloser::init( pose::Pose const & pose_current /* has CUTPOINT 
 	bridgeObjects( atoms_, dt_ang_, db_ang_, db_len_, pivots, order,
 		t_ang_, b_ang_, b_len_, nsol );
 	runtime_assert( nsol >= 0 ); //I think nsol should be >= 0
-	nsol_ = static_cast<Size>( nsol ); //Cast int to Size.
+	nsol_ = static_cast<core::Size>( nsol ); //Cast int to core::Size.
 	figure_out_dof_ids_and_offsets( pose_current );
 	set_init( true );
 
 	/// Calculate the Jacobian for each of the solutions ///
 	if ( calculate_jacobians_ ) {
 		Pose test_pose = pose_current;
-		for ( Size i = 1; i <= nsol_; i++ ) {
+		for ( core::Size i = 1; i <= nsol_; i++ ) {
 			apply( test_pose, i );
 			all_jacobians_.push_back( get_jacobian( test_pose ) );
 		}
@@ -529,7 +529,7 @@ RNA_KinematicCloser::fill_chainTORS( pose::Pose const & pose ) {
 	utility::fixedsizearray1< utility::fixedsizearray1< Real,3 >,3 > Q0;
 	utility::fixedsizearray1< Real,3 > R0;
 
-	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {
+	for ( core::Size i = 1; i <= atom_ids_.size(); i++ ) {
 		Vector atom_xyz( pose.xyz( atom_ids_[i] ) );
 		utility::fixedsizearray1< Real,3 > atom_xyzs;
 		atom_xyzs[ 1 ] = atom_xyz.x();
@@ -544,7 +544,7 @@ void
 RNA_KinematicCloser::output_chainTORS() const {
 	using namespace ObjexxFCL::format;
 	TR << "------  chainTORS output ---- " << std::endl;
-	for ( Size i = 1; i <= dt_ang_.size(); i++ ) {
+	for ( core::Size i = 1; i <= dt_ang_.size(); i++ ) {
 		TR << I( 3, i ) << " ";
 		TR << "TORSIONS: ";
 		TR << F( 8, 3, dt_ang_[i] ) << " ";
@@ -557,13 +557,13 @@ RNA_KinematicCloser::output_chainTORS() const {
 }
 ////////////////////////////////////////////////////////////////
 void
-RNA_KinematicCloser::apply( Pose & pose, Size const id ) {
+RNA_KinematicCloser::apply( Pose & pose, core::Size const id ) {
 	runtime_assert( is_init() );
 	runtime_assert( id > 0 );
 	runtime_assert( id <= nsol_ );
 
-	Size count ( 0 );
-	for ( Size i = 1; i <= 3; i++ ) {
+	core::Size count ( 0 );
+	for ( core::Size i = 1; i <= 3; i++ ) {
 		++count;
 		pose.set_dof( dof_ids_[count], principal_angle( radians (
 			t_ang_[id][3 * i + 1] ) + offset_save_[count] ) );
@@ -588,9 +588,9 @@ RNA_KinematicCloser::get_jacobian( Pose & pose ) const {
 	// origin and reference frame used in this conversion are unimportant.
 
 
-	for ( Size i = 1; i <= 3; i++ ) {
+	for ( core::Size i = 1; i <= 3; i++ ) {
 		//Pivot indices, there are 3
-		Size j = 2 * (i - 1);
+		core::Size j = 2 * (i - 1);
 
 		//x,y,z, coords of atom before pivot, pivot, and atom after pivot
 		r1(j, 0) = pose.xyz( pivot_ids_[3*i-2] ).x();
@@ -613,14 +613,14 @@ RNA_KinematicCloser::get_jacobian( Pose & pose ) const {
 	// Calculate the jacobian following the method outlined by Nilmeier, Hua,
 	// Coutsias, and Jacobson in their 2011 JCTC paper.
 
-	for ( Size i = 0; i < 6; i++ ) {
+	for ( core::Size i = 0; i < 6; i++ ) {
 		delta = r2.row(i) - r1.row(i);
 		gamma.row(i) = delta.normalized();
 	}
 
 	cross_45 = gamma.row(4).cross(gamma.row(5));
 
-	for ( Size i = 0; i < 4; i++ ) {
+	for ( core::Size i = 0; i < 4; i++ ) {
 		cross_i = gamma.row(i).cross(r1.row(5) - r1.row(i));
 		Real dot_i = gamma.row(i).dot(cross_45);
 

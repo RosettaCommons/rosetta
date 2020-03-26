@@ -38,7 +38,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/tag/XMLSchemaValidation.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 
@@ -80,7 +80,7 @@ namespace rosetta_scripts {
 /// xi:include statements can be placed anywhere to trigger read-in of another
 /// RosettaScripts XML file.  Contents of the file replace the xi:include
 /// statement.
-class RosettaScriptsParser : public utility::pointer::ReferenceCount
+class RosettaScriptsParser : public utility::VirtualBase
 {
 public:
 	typedef utility::vector0< utility::tag::TagCOP > TagCOPs;

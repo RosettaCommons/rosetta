@@ -30,7 +30,7 @@
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {
@@ -45,7 +45,7 @@ public:
 
 /// @brief Given a pose with all residues, and a StructureData object,
 ///        assign a 3D conformation to the pose
-class PoseFolder : public utility::pointer::ReferenceCount {
+class PoseFolder : public utility::VirtualBase {
 public: // Creation
 	/// @brief Default constructor
 	PoseFolder( std::string const & type );

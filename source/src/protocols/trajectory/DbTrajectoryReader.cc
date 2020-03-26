@@ -59,12 +59,12 @@ DbTrajectoryReader::DbTrajectoryReader() { // {{{1
 	job_id_ = (core::Size)-1; // bazzoli: added cast to silent warning
 }
 
-DbTrajectoryReader::DbTrajectoryReader(Size job_id) { // {{{1
+DbTrajectoryReader::DbTrajectoryReader(core::Size job_id) { // {{{1
 	db_session_ = basic::database::get_db_session();
 	job_id_ = job_id;
 }
 
-void DbTrajectoryReader::set_job_id(Size job_id) { // {{{1
+void DbTrajectoryReader::set_job_id(core::Size job_id) { // {{{1
 	job_id_ = job_id;
 }
 
@@ -72,12 +72,12 @@ Size DbTrajectoryReader::get_num_iterations() const { // {{{1
 	return get_iterations().back();
 }
 
-vector1<Size> DbTrajectoryReader::get_iterations() const { // {{{1
+vector1<core::Size> DbTrajectoryReader::get_iterations() const { // {{{1
 	if ( ! table_exists(db_session_, "trajectories") ) {
 		utility_exit_with_message("no 'trajectories' table in the database.");
 	}
 
-	vector1<Size> iterations;
+	vector1<core::Size> iterations;
 	string select_string =
 		"SELECT iteration "
 		"FROM trajectories "
@@ -95,7 +95,7 @@ vector1<Size> DbTrajectoryReader::get_iterations() const { // {{{1
 	}
 
 	while ( ! select_result.empty() ) {
-		Size iteration;
+		core::Size iteration;
 		select_result >> iteration;
 		select_result.next();
 		iterations.push_back(iteration);
@@ -109,7 +109,7 @@ vector1<Size> DbTrajectoryReader::get_iterations() const { // {{{1
 	return iterations;
 }
 
-Pose DbTrajectoryReader::get_pose(Size iteration) const { // {{{1
+Pose DbTrajectoryReader::get_pose(core::Size iteration) const { // {{{1
 	if ( ! table_exists(db_session_, "trajectories") ) {
 		utility_exit_with_message("no 'trajectories' table in this database.");
 	}
@@ -166,9 +166,9 @@ Pose DbTrajectoryReader::get_pose(Size iteration) const { // {{{1
 
 vector1<Pose> DbTrajectoryReader::get_poses() const { // {{{1
 	vector1<Pose> poses;
-	vector1<Size> iterations = get_iterations();
+	vector1<core::Size> iterations = get_iterations();
 
-	for ( Size const i : iterations ) {
+	for ( core::Size const i : iterations ) {
 		Pose pose = get_pose(i);
 		poses.push_back(pose);
 	}

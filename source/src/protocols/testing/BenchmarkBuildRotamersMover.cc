@@ -82,7 +82,7 @@ BenchmarkBuildRotamersMover::BenchmarkBuildRotamersMover( std::string const & ty
 BenchmarkBuildRotamersMover::BenchmarkBuildRotamersMover(
 	ScoreFunctionCOP scorefxn,
 	PackerTaskCOP task,
-	Size nloop
+	core::Size nloop
 ) :
 	minimization_packing::PackRotamersMover( scorefxn, task, nloop )
 {}

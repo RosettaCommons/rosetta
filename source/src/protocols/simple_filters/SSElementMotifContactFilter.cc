@@ -112,9 +112,9 @@ protocols::loops::Loops SSElementMotifContactFilter::get_ss_elements(const Pose 
 	core::scoring::dssp::Dssp dssp( pose );
 	std::string dssp_secstruct = dssp.get_dssp_plus_abego_L_def(pose);
 	char lastSecStruct = dssp_secstruct.at(0);
-	Size startSS = 0;
-	Size endSS = 0;
-	Size nres1 = pose.size();
+	core::Size startSS = 0;
+	core::Size endSS = 0;
+	core::Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_total_residues_without_pseudo();
 		if ( option[OptionKeys::score::motif_ignore_symmmetry]() ) {
@@ -140,8 +140,8 @@ protocols::loops::Loops SSElementMotifContactFilter::get_ss_elements(const Pose 
 	return(ss_elements);
 }
 
-Size SSElementMotifContactFilter::which_ssElement(Size res,protocols::loops::Loops ssElements) const{
-	for ( Size ii=1; ii<=ssElements.size(); ++ii ) {
+Size SSElementMotifContactFilter::which_ssElement(core::Size res,protocols::loops::Loops ssElements) const{
+	for ( core::Size ii=1; ii<=ssElements.size(); ++ii ) {
 		if ( res>= ssElements[ii].start() && res<=ssElements[ii].stop() ) {
 			return(ii);
 		}
@@ -149,15 +149,15 @@ Size SSElementMotifContactFilter::which_ssElement(Size res,protocols::loops::Loo
 	return(0);
 }
 
-Size SSElementMotifContactFilter::get_ssElements_in_contact_w_threshold(std::multiset<Size> ssElements_in_contact) const {
-	std::map<Size,Size> element_ct;
-	std::multiset<Size>::iterator itr;
-	std::map<Size,Size>::iterator map_itr;
+Size SSElementMotifContactFilter::get_ssElements_in_contact_w_threshold(std::multiset<core::Size> ssElements_in_contact) const {
+	std::map<core::Size,Size> element_ct;
+	std::multiset<core::Size>::iterator itr;
+	std::map<core::Size,Size>::iterator map_itr;
 	for ( itr = ssElements_in_contact.begin(); itr!=ssElements_in_contact.end(); ++itr ) {
-		Size counts = ssElements_in_contact.count(*itr);
-		element_ct.insert(std::pair<Size,Size>(*itr,counts));
+		core::Size counts = ssElements_in_contact.count(*itr);
+		element_ct.insert(std::pair<core::Size,Size>(*itr,counts));
 	}
-	Size above_threshold_ct =0;
+	core::Size above_threshold_ct =0;
 	for ( map_itr=element_ct.begin(); map_itr!=element_ct.end(); ++map_itr ) {
 		if ( map_itr->second>=contacts_between_ssElement_threshold_ ) {
 			above_threshold_ct++;
@@ -167,14 +167,14 @@ Size SSElementMotifContactFilter::get_ssElements_in_contact_w_threshold(std::mul
 }
 
 
-Size SSElementMotifContactFilter::get_SSelements_in_contact(Size element,protocols::loops::Loops ssElements, Pose const & pose) const{
+Size SSElementMotifContactFilter::get_SSelements_in_contact(core::Size element,protocols::loops::Loops ssElements, Pose const & pose) const{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using core::kinematics::FoldTree;
-	std::multiset<Size> ssElements_in_contact;
+	std::multiset<core::Size> ssElements_in_contact;
 	core::scoring::dssp::Dssp dssp( pose );
 	FoldTree const tree = pose.fold_tree();
-	Size nres1 = pose.size();
+	core::Size nres1 = pose.size();
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		nres1 = core::pose::symmetry::symmetry_info(pose)->num_total_residues_without_pseudo();
 		if ( option[OptionKeys::score::motif_ignore_symmmetry]() ) {
@@ -191,7 +191,7 @@ Size SSElementMotifContactFilter::get_SSelements_in_contact(Size element,protoco
 					protocols::simple_filters::AtomicContactFilter contact_filter(ir,jr,4.5,1,1,0 );
 					bool in_contact = contact_filter.apply(pose);
 					if ( in_contact ) {
-						Size resHit = which_ssElement(jr,ssElements);
+						core::Size resHit = which_ssElement(jr,ssElements);
 						if ( resHit != 0 && resHit !=element ) { //must be in SS element and not the current element
 							ssElements_in_contact.insert(resHit);
 						}
@@ -211,7 +211,7 @@ Size SSElementMotifContactFilter::get_SSelements_in_contact(Size element,protoco
 							tmpScore += xs_bb_fxn2->score_of_bin(Xbb.inverse());
 						}
 						if ( tmpScore>0 ) {
-							Size resHit = which_ssElement(jr,ssElements);
+							core::Size resHit = which_ssElement(jr,ssElements);
 							if ( resHit != 0 && resHit !=element ) { //must be in SS element and not the current element
 								ssElements_in_contact.insert(resHit);
 							}
@@ -231,8 +231,8 @@ SSElementMotifContactFilter::compute( const Pose & pose ) const
 {
 	using protocols::loops::Loop;
 	protocols::loops::Loops ss_elements = get_ss_elements(pose);
-	Size startElement = 1;
-	Size endElement = ss_elements.size();
+	core::Size startElement = 1;
+	core::Size endElement = ss_elements.size();
 	if ( ignore_n_terminal_SS_>0 ) {
 		startElement+=ignore_n_terminal_SS_;
 	}
@@ -242,7 +242,7 @@ SSElementMotifContactFilter::compute( const Pose & pose ) const
 	TR.Debug << "total_elements" << ss_elements.size() << "startElement:" << startElement << "endElement:" << endElement << std::endl;
 	//debug begin
 	TR.Debug << "ss element positions" << std::endl;
-	for ( Size ii=1; ii<=ss_elements.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=ss_elements.size(); ++ii ) {
 		TR.Debug << ii <<", " << ss_elements[ii].start() <<", " << ss_elements[ii].stop() << std::endl;
 	}
 	//end debug
@@ -255,8 +255,8 @@ SSElementMotifContactFilter::compute( const Pose & pose ) const
 	}
 	if ( report_avg_ ) {
 		Real tmpScore = 0;
-		Size ct = 0;
-		for ( Size ii=startElement; ii<=endElement; ++ii ) {
+		core::Size ct = 0;
+		for ( core::Size ii=startElement; ii<=endElement; ++ii ) {
 			tmpScore+=get_SSelements_in_contact(ii,ss_elements,pose);
 			ct+=1;
 		}
@@ -265,7 +265,7 @@ SSElementMotifContactFilter::compute( const Pose & pose ) const
 		}
 	} else {
 		Real tmpScore = 9999;
-		for ( Size ii=startElement; ii<=endElement; ++ii ) {
+		for ( core::Size ii=startElement; ii<=endElement; ++ii ) {
 			Real tmp=get_SSelements_in_contact(ii,ss_elements,pose);
 			if ( tmp<tmpScore ) {
 				tmpScore=tmp;
@@ -305,9 +305,9 @@ SSElementMotifContactFilter::parse_my_tag(
 	threshold_ = tag->getOption<Real>("threshold",0);
 	contacts_between_ssElement_threshold_ = tag->getOption<Real>("contacts_between_ssElement_threshold",3);
 	report_avg_ = tag->getOption<bool>( "report_avg", true );
-	ignore_n_terminal_SS_ = tag->getOption<Size>("ignore_n_terminal_ss",0);
-	ignore_c_terminal_SS_ = tag->getOption<Size>("ignore_c_terminal_ss",0);
-	Size ignore_terminal_SS = tag->getOption<Size>("ignore_terminal_ss",0);
+	ignore_n_terminal_SS_ = tag->getOption<core::Size>("ignore_n_terminal_ss",0);
+	ignore_c_terminal_SS_ = tag->getOption<core::Size>("ignore_c_terminal_ss",0);
+	core::Size ignore_terminal_SS = tag->getOption<core::Size>("ignore_terminal_ss",0);
 	if ( ignore_terminal_SS != 0 ) {
 		ignore_n_terminal_SS_ = ignore_terminal_SS;
 		ignore_c_terminal_SS_ = ignore_terminal_SS;

@@ -189,7 +189,7 @@ void NoesyModule::read_input_files() {
 	{ //scope
 		//read peak lists
 		crosspeaks_ = utility::pointer::make_shared< CrossPeakList >();
-		Size nfiles( option[ OptionKeys::noesy::in::peaks ]().size() );
+		core::Size nfiles( option[ OptionKeys::noesy::in::peaks ]().size() );
 
 		//loop-all files: read one file at a time
 		for ( core::Size ifile = 1; ifile <= nfiles; ++ifile ) {  //as many as there are files
@@ -212,7 +212,7 @@ void NoesyModule::read_input_files() {
 
 	//specific resonances for a given peak-file
 	if ( option[ OptionKeys::noesy::in::peak_resonance_pairs ].user() ) { //scope
-		Size n_pair_files(  option[ OptionKeys::noesy::in::peak_resonance_pairs ]().size() );
+		core::Size n_pair_files(  option[ OptionKeys::noesy::in::peak_resonance_pairs ]().size() );
 		if ( n_pair_files % 2 != 0 ) {
 			throw CREATE_EXCEPTION(utility::excn::BadInput,  "odd number of entries in option -noesy:in:peak_resonance_pairs, always provide pairs of files  <*.peaks> <*.prot>" );
 		}

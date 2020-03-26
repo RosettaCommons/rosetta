@@ -33,7 +33,7 @@
 
 #include <protocols/checkpoint/CheckPointer.fwd.hh>
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 // ObjexxFCL Headers
@@ -72,7 +72,7 @@ private:
 };
 
 
-class CheckPointer : public utility::pointer::ReferenceCount {
+class CheckPointer : public utility::VirtualBase {
 public:
 	CheckPointer( std::string const & type );
 

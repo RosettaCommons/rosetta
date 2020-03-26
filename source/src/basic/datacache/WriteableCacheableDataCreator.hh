@@ -18,7 +18,7 @@
 #include <basic/datacache/WriteableCacheableData.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // c++ headers
 #include <iosfwd>
@@ -32,7 +32,7 @@ namespace datacache {
 
 /// @brief Abstract base class for a Mover factory; the Creator class is responsible for
 /// creating a particular mover class.
-class WriteableCacheableDataCreator : public utility::pointer::ReferenceCount
+class WriteableCacheableDataCreator : public utility::VirtualBase
 {
 public:
 	WriteableCacheableDataCreator();

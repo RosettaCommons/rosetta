@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_pose_toolbox_AtomID_Mapper_HH
 #define INCLUDED_core_pose_toolbox_AtomID_Mapper_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/toolbox/AtomID_Mapper.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
@@ -30,7 +30,7 @@ namespace core {
 namespace pose {
 namespace toolbox {
 
-class AtomID_Mapper: public utility::pointer::ReferenceCount {
+class AtomID_Mapper: public utility::VirtualBase {
 
 public:
 

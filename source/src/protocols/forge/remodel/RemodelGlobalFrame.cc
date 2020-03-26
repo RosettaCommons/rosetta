@@ -103,8 +103,8 @@ RemodelGlobalFrame::RemodelGlobalFrame(RemodelData const & remodel_data,
 	left_handed_ = 0;
 	/*
 	if(option[OptionKeys::remodel::repeat_structure].user()){
-	Size repeatCount =option[OptionKeys::remodel::repeat_structure];
-	for (Size rep = 0; rep < repeatCount ; rep++){
+	core::Size repeatCount =option[OptionKeys::remodel::repeat_structure];
+	for (core::Size rep = 0; rep < repeatCount ; rep++){
 	for (std::set< core::Size >::iterator it = uup.begin(); it != uup.end(); ++it){
 	//DEBUG
 	// std::cout << *it + remodel_data.blueprint.size()*rep << std::endl;
@@ -125,7 +125,7 @@ RemodelGlobalFrame::RemodelGlobalFrame(RemodelData const & remodel_data,
 }
 
 //simpel constructor
-RemodelGlobalFrame::RemodelGlobalFrame(Size segment_size){
+RemodelGlobalFrame::RemodelGlobalFrame(core::Size segment_size){
 	seg_size = segment_size;
 	left_handed_ = 0;
 }
@@ -161,7 +161,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 	using namespace std;
 	using namespace basic::options;
 
-	//Size numRes = pose.size();  // unused ~Labonte
+	//core::Size numRes = pose.size();  // unused ~Labonte
 
 	// dumping information into PDB header
 	core::pose::PDBInfoOP temp_pdbinfo( new core::pose::PDBInfo(pose,true) );
@@ -177,13 +177,13 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 	}
 
 	// get the size of each repeating sector
-	//Size seg_size = remodel_data_.blueprint.size();
+	//core::Size seg_size = remodel_data_.blueprint.size();
 	//TR << "debug: seg_size = " << seg_size << std::endl;
 
 	MatrixXf A(3, seg_size);
 	MatrixXf B(3, seg_size);
 
-	for ( Size i = 1; i <= seg_size ; i++ ) {
+	for ( core::Size i = 1; i <= seg_size ; i++ ) {
 		core::Vector coord = pose.residue(i).xyz("CA");
 		A(0,i-1) = coord[0];
 		A(1,i-1) = coord[1];
@@ -191,7 +191,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 
 		//TR << "resA " << i << " has " << coord[0] << " " << coord[1]  << " " << coord[2] << std::endl;
 	}
-	for ( Size i = seg_size+1; i <= seg_size*2 ; i++ ) {
+	for ( core::Size i = seg_size+1; i <= seg_size*2 ; i++ ) {
 		core::Vector coord = pose.residue(i).xyz("CA");
 		B(0,i-1-seg_size) = coord[0];
 		B(1,i-1-seg_size) = coord[1];
@@ -227,7 +227,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 	Vector3f hN;
 	Real scalar = 0;
 	Real max_scalar = -10000000;
-	for ( Size i = 0; i<=2; i++ ) {
+	for ( core::Size i = 0; i<=2; i++ ) {
 		scalar = N.col(i).norm();
 		if ( scalar > max_scalar ) {
 			max_scalar = scalar;
@@ -321,7 +321,7 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 	}
 
 
-	//Size numRes = pose.size();  // unused ~Labonte
+	//core::Size numRes = pose.size();  // unused ~Labonte
 
 	if ( option[OptionKeys::remodel::repeat_structure].user() ) {}
 	else {
@@ -335,7 +335,7 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 
 	// get the size of each repeating sector
 	//moved this to constructor
-	//Size seg_size = remodel_data_.blueprint.size();
+	//core::Size seg_size = remodel_data_.blueprint.size();
 
 	TR.Debug << "align seg 2" << std::endl;
 	TR.Debug << "pose length" << pose.size() << std::endl;
@@ -344,14 +344,14 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 	MatrixXf A(3,seg_size);
 	MatrixXf B(3,seg_size);
 
-	for ( Size i = 1; i <= seg_size ; i++ ) {
+	for ( core::Size i = 1; i <= seg_size ; i++ ) {
 		core::Vector coord = pose.residue(i).xyz("CA");
 		A(0,i-1) = coord[0];
 		A(1,i-1) = coord[1];
 		A(2,i-1) = coord[2];
 
 	}
-	for ( Size i = seg_size+1; i <= seg_size*2 ; i++ ) {
+	for ( core::Size i = seg_size+1; i <= seg_size*2 ; i++ ) {
 		core::Vector coord = pose.residue(i).xyz("CA");
 		B(0,i-1-seg_size) = coord[0];
 		B(1,i-1-seg_size) = coord[1];
@@ -388,7 +388,7 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 	Vector3f hN;
 	Real scalar = 0;
 	Real max_scalar = -10000000;
-	for ( Size i = 0; i<=2; i++ ) {
+	for ( core::Size i = 0; i<=2; i++ ) {
 		scalar = N.col(i).norm();
 		if ( scalar > max_scalar ) {
 			max_scalar = scalar;
@@ -430,7 +430,7 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 
 	// make residue list, needed for rotational transformation
 	std::list <core::Size> residue_list;
-	for ( Size ires=1; ires<= pose.size(); ++ires ) {
+	for ( core::Size ires=1; ires<= pose.size(); ++ires ) {
 		if ( !pose.residue(ires).is_protein() ) continue;
 		residue_list.push_back(ires);
 	}
@@ -501,7 +501,7 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 	postT = xyzVector< core::Real >(0,0,0);
 	protocols::forge::methods::apply_transformation( pose, residue_list, xyzFull, preT, postT);
 
-	for ( Size i = 1; i <= seg_size ; i++ ) {
+	for ( core::Size i = 1; i <= seg_size ; i++ ) {
 		core::Vector coord = pose.residue(i).xyz("CA");
 		A(0,i-1) = coord[0];
 		A(1,i-1) = coord[1];
@@ -509,7 +509,7 @@ void RemodelGlobalFrame::align_segment( core::pose::Pose & pose ) {
 	}
 
 	/*  only need to update A, this B thing just for debugging.
-	for (Size i = seg_size+1; i <= 2*seg_size ; i++){
+	for (core::Size i = seg_size+1; i <= 2*seg_size ; i++){
 	core::Vector coord = pose.residue(i).xyz("CA");
 	B(0,i-1-seg_size) = coord[0];
 	B(1,i-1-seg_size) = coord[1];
@@ -557,7 +557,7 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 	// Extract the first segment from pose for generating the ideal decoy
 
 	utility::vector1< core::Size > residue_indices;
-	for ( Size i = 1; i <= seg_size; ++i ) {
+	for ( core::Size i = 1; i <= seg_size; ++i ) {
 		residue_indices.push_back(i);
 	}
 	PoseOP singleton_pose( new Pose );
@@ -569,7 +569,7 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 	// these's going to be an issue with connectivity....
 
 	// expand residue indices to core::Real
-	for ( Size i = seg_size+1; i <= 2*seg_size; ++i ) {
+	for ( core::Size i = seg_size+1; i <= 2*seg_size; ++i ) {
 		residue_indices.push_back(i);
 	}
 
@@ -582,15 +582,15 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 	std::list <core::Size> double_residue_list;
 	std::list <core::Size> fullpose_residue_list;
 
-	for ( Size ires=1; ires<= singleton_pose->size(); ++ires ) {
+	for ( core::Size ires=1; ires<= singleton_pose->size(); ++ires ) {
 		if ( !singleton_pose->residue(ires).is_protein() ) continue;
 		single_residue_list.push_back(ires);
 	}
-	for ( Size ires=1; ires<= double_pose->size(); ++ires ) {
+	for ( core::Size ires=1; ires<= double_pose->size(); ++ires ) {
 		if ( !double_pose->residue(ires).is_protein() ) continue;
 		double_residue_list.push_back(ires);
 	}
-	for ( Size ires=1; ires<= pose.size(); ++ires ) {
+	for ( core::Size ires=1; ires<= pose.size(); ++ires ) {
 		if ( !pose.residue(ires).is_protein() ) continue;
 		fullpose_residue_list.push_back(ires);
 	}
@@ -599,7 +599,7 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 	utility::vector1< AtomID > atms;
 
 	// we want to setup constraints for two copies, so make lists spanning the first two segments.
-	for ( Size i = 1; i <= 2*seg_size ; i++ ) {
+	for ( core::Size i = 1; i <= 2*seg_size ; i++ ) {
 		AtomID id = AtomID(double_pose->residue(i).atom_index("CA"), i);
 		atms.push_back(id);
 	}
@@ -647,9 +647,9 @@ RemodelGlobalFrame::setup_helical_constraint(Pose & pose){
 
 
 	TR.Debug << "setup RGF cst 4" << std::endl;
-	for ( Size i = 1; i <= seg_size; i++ ) {
-		Size natoms = double_pose->residue(i+seg_size).natoms(); // singleton may have more terminal atoms
-		for ( Size j = 1; j <= natoms ; j++ ) {
+	for ( core::Size i = 1; i <= seg_size; i++ ) {
+		core::Size natoms = double_pose->residue(i+seg_size).natoms(); // singleton may have more terminal atoms
+		for ( core::Size j = 1; j <= natoms ; j++ ) {
 			double_pose->set_xyz( AtomID( j, seg_size+i /* offset res number */ ), singleton_pose->residue(i).xyz(j));
 		}
 	}
@@ -691,11 +691,11 @@ RemodelGlobalFrame::setup_CM_helical_constraint(Pose & pose){
 	//duplicate the native_set and add the new ones to it.
 	input_pose_cst_set = utility::pointer::make_shared< ConstraintSet >(*native_cst_set);
 
-	Size repeat_number = option[OptionKeys::remodel::repeat_structure];
+	core::Size repeat_number = option[OptionKeys::remodel::repeat_structure];
 
 	MatrixXf COMs( 3, repeat_number );
 
-	for ( Size i = 0; i < repeat_number ; i++ ) {
+	for ( core::Size i = 0; i < repeat_number ; i++ ) {
 		xyzVector< Real > com1 = compute_center_of_mass( pose, i*seg_size+1, (i+1)*seg_size);
 		COMs.col(i) << com1[0], com1[1], com1[2];
 	}
@@ -727,7 +727,7 @@ RemodelGlobalFrame::setup_CM_helical_constraint(Pose & pose){
 
 	// build residue list for transformation
 	std::list <core::Size> fullpose_residue_list;
-	for ( Size ires=1; ires<= seg_size*repeat_number; ++ires ) {
+	for ( core::Size ires=1; ires<= seg_size*repeat_number; ++ires ) {
 		if ( !pose.residue(ires).is_protein() ) continue;
 		fullpose_residue_list.push_back(ires);
 	}
@@ -754,13 +754,13 @@ RemodelGlobalFrame::setup_CM_helical_constraint(Pose & pose){
 	//get_RMSD( newCOMs, COM_target);
 	*/
 
-	for ( Size i = 0; i < repeat_number ; i++ ) {
+	for ( core::Size i = 0; i < repeat_number ; i++ ) {
 
 		//get coordinates for the moving target
 		utility::vector1< id::AtomID > ID_1s; //pull on first segment
-		for ( Size ires = 1; ires <= seg_size; ++ires ) {
+		for ( core::Size ires = 1; ires <= seg_size; ++ires ) {
 			conformation::Residue const &rsd = pose.residue(ires + seg_size*i); // offset
-			for ( Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ) {
+			for ( core::Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ) {
 				//std::cout << ires << " " << atmno << std::endl;
 				ID_1s.push_back( id::AtomID(atmno, ires+ seg_size*i) ); // offset
 			}
@@ -842,7 +842,7 @@ xyzVector< Real >  postT (c_COM_target(0), c_COM_target(1), c_COM_target(2));   
 
 // build residue list for transformation
 std::list <core::Size> fullpose_residue_list;
-for ( Size ires=1; ires<= pose.size(); ++ires ) {
+for ( core::Size ires=1; ires<= pose.size(); ++ires ) {
 if ( !pose.residue(ires).is_protein() ) continue;
 fullpose_residue_list.push_back(ires);
 }
@@ -874,30 +874,30 @@ utility::vector1< id::AtomID > ID_3s; //pull on second segment
 utility::vector1< id::AtomID > ID_4s; //pull on second segment
 utility::vector1< id::AtomID > ID_5s; //pull on second segment
 utility::vector1< id::AtomID > ID_6s; //pull on second segment
-for( Size ires = 1; ires <= seg_size; ++ires){
+for( core::Size ires = 1; ires <= seg_size; ++ires){
 conformation::Residue const &rsd = pose.residue(ires);
-for(Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
+for(core::Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
 //std::cout << ires << " " << atmno << std::endl;
 ID_1s.push_back( id::AtomID(atmno, ires) );
 }
 }
-for( Size ires = 1; ires <= seg_size; ++ires){
+for( core::Size ires = 1; ires <= seg_size; ++ires){
 conformation::Residue const &rsd = pose.residue(ires+seg_size); // offset here
-for(Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
+for(core::Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
 //std::cout << ires << " " << atmno << std::endl;
 ID_2s.push_back( id::AtomID(atmno, ires+seg_size) ); //offset here
 }
 }
-for( Size ires = 1; ires <= seg_size; ++ires){
+for( core::Size ires = 1; ires <= seg_size; ++ires){
 conformation::Residue const &rsd = pose.residue(ires+2*seg_size); // offset here
-for(Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
+for(core::Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
 //std::cout << ires << " " << atmno << std::endl;
 ID_3s.push_back( id::AtomID(atmno, ires+2*seg_size) ); //offset here
 }
 }
-for( Size ires = 1; ires <= seg_size; ++ires){
+for( core::Size ires = 1; ires <= seg_size; ++ires){
 conformation::Residue const &rsd = pose.residue(ires+3*seg_size); // offset here
-for(Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
+for(core::Size atmno=1 ; atmno <= rsd.natoms(); ++atmno ){
 //std::cout << ires << " " << atmno << std::endl;
 ID_4s.push_back( id::AtomID(atmno, ires+3*seg_size) ); //offset here
 }
@@ -933,7 +933,7 @@ RemodelGlobalFrame::set_native_cst_set( Pose const & pose ){
 }
 
 void
-RemodelGlobalFrame::set_segment_size( Size segment_size ){
+RemodelGlobalFrame::set_segment_size( core::Size segment_size ){
 	seg_size = segment_size;
 }
 
@@ -972,9 +972,9 @@ compute_center_of_mass( core::pose::Pose const &  pose, core::Size range_start, 
 	Real sum_y = 0;
 	Real sum_z = 0;
 
-	Size span = range_stop-range_start+1;
+	core::Size span = range_stop-range_start+1;
 
-	for ( Size i = range_start; i <= range_stop ; i++ ) {
+	for ( core::Size i = range_start; i <= range_stop ; i++ ) {
 		core::Vector coord = pose.residue(i).xyz("CA");
 		sum_x = sum_x + coord[0];
 		sum_y = sum_y + coord[1];

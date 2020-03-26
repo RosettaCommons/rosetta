@@ -76,7 +76,7 @@ MHCEpitopeEnergySetup class:
 /// @brief Default constructor for MHCEpitopeEnergySetup.
 ///
 MHCEpitopeEnergySetup::MHCEpitopeEnergySetup() :
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {}
 
 

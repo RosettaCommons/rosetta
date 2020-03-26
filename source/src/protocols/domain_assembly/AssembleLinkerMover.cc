@@ -57,8 +57,8 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 
 	char const first_chain( pose.pdb_info()->chain(1) );
 	// rename second chain
-	Size breakpoint(0);
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	core::Size breakpoint(0);
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		char const chain_ii( pose.pdb_info()->chain(ii) );
 		if ( !breakpoint && chain_ii != first_chain ) {
 			breakpoint = ii;
@@ -77,8 +77,8 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 	// remodel loops
 	using namespace protocols::loops;
 	using namespace protocols::comparative_modeling;
-	Size const loop_start( breakpoint - min_loop_size_ );
-	Size const loop_stop ( breakpoint + min_loop_size_ );
+	core::Size const loop_start( breakpoint - min_loop_size_ );
+	core::Size const loop_stop ( breakpoint + min_loop_size_ );
 
 	core::util::switch_to_residue_type_set(
 		pose, core::chemical::CENTROID_t
@@ -90,13 +90,13 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 	loop_mover::LoopMoverOP loop_mover = LoopMoverFactory::get_instance()->create_loop_mover(
 		loop_mover_name_, loops
 	);
-	for ( Size ii = 1; ii <= frag_libs_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= frag_libs_.size(); ++ii ) {
 		loop_mover->add_fragments( frag_libs_[ii] );
 	}
 	loop_mover->apply(pose);
-	Size const max_tries( 10 ); // make this an option?
+	core::Size const max_tries( 10 ); // make this an option?
 	bool loops_closed( false );
-	for ( Size ii = 1; (ii <= max_tries) && !loops_closed; ++ii ) {
+	for ( core::Size ii = 1; (ii <= max_tries) && !loops_closed; ++ii ) {
 		LoopsOP loops = pick_loops_chainbreak( pose, min_loop_size_ );
 		loops_closed = ( loops->size() == 0 );
 		if ( loops_closed ) {

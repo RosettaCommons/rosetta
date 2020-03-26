@@ -39,7 +39,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <utility/vector1.hh>
@@ -57,12 +57,12 @@ namespace constraints_additional {
 
 class ConstraintEvaluator : public evaluation::PoseEvaluator {
 public:
-	ConstraintEvaluator( std::string const & tag, core::scoring::constraints::ConstraintSet const &, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
-	ConstraintEvaluator( std::string const & tag, core::scoring::constraints::ConstraintCOPs const &, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
+	ConstraintEvaluator( std::string const & tag, core::scoring::constraints::ConstraintSet const &, core::Size viol_level = 0, core::Real threshold = 1.0, core::Size max_seq_sep = 0 );
+	ConstraintEvaluator( std::string const & tag, core::scoring::constraints::ConstraintCOPs const &, core::Size viol_level = 0, core::Real threshold = 1.0, core::Size max_seq_sep = 0 );
 
 	//constructor for a late input of constraints --- in case pose is not known at construction
 	// ( will read only once with first pose that comes )
-	ConstraintEvaluator( std::string const & tag, std::string const & filename, Size viol_level = 0, core::Real threshold = 1.0, Size max_seq_sep = 0 );
+	ConstraintEvaluator( std::string const & tag, std::string const & filename, core::Size viol_level = 0, core::Real threshold = 1.0, core::Size max_seq_sep = 0 );
 
 	//sets xxx_cst and xxx_viol columns
 	void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const override;
@@ -93,11 +93,11 @@ private:
 	mutable bool tried_centroid_pose_;
 	std::string file_name_;
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-	// Size viol_level_;
+	// core::Size viol_level_;
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 	// core::Real threshold_;
-	Size max_seq_sep_;
-	Size constraints_combine_ratio_;
+	core::Size max_seq_sep_;
+	core::Size constraints_combine_ratio_;
 	std::string cst_source_;
 };
 

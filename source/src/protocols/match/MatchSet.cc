@@ -58,7 +58,7 @@ HitHasher::set_uniform_xyz_bin_width( Real bin_width )
 {
 	debug_assert( ! initialized_ );
 	debug_assert( bin_width > 0 );
-	for ( Size ii = 1; ii <= 3; ++ii ) { xyz_bin_widths_[ ii ] = bin_width; }
+	for ( core::Size ii = 1; ii <= 3; ++ii ) { xyz_bin_widths_[ ii ] = bin_width; }
 }
 
 void
@@ -66,14 +66,14 @@ HitHasher::set_uniform_euler_angle_bin_width( Real bin_width_degrees )
 {
 	debug_assert( ! initialized_ );
 	debug_assert( bin_width_degrees > 0 );
-	for ( Size ii = 1; ii <= 3; ++ii ) { euler_bin_widths_[ ii ] = bin_width_degrees; }
+	for ( core::Size ii = 1; ii <= 3; ++ii ) { euler_bin_widths_[ ii ] = bin_width_degrees; }
 }
 
 void
 HitHasher::set_xyz_bin_widths( Vector const & bin_widths )
 {
 	debug_assert( ! initialized_ );
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		debug_assert( bin_widths( ii ) > 0 );
 		xyz_bin_widths_[ ii ] = bin_widths( ii );
 	}
@@ -84,14 +84,14 @@ void
 HitHasher::set_euler_bin_widths( Vector const & euler_bin_widths )
 {
 	debug_assert( ! initialized_ );
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		debug_assert( euler_bin_widths( ii ) > 0 );
 		euler_bin_widths_[ ii ] = euler_bin_widths( ii );
 	}
 }
 
 void
-HitHasher::set_nhits_per_match( Size num_geometric_constraints )
+HitHasher::set_nhits_per_match( core::Size num_geometric_constraints )
 {
 	debug_assert( ! initialized_ );
 	n_geometric_constraints_per_match_ = num_geometric_constraints;
@@ -109,36 +109,36 @@ HitHasher::initialize()
 	/// Data for initializing the lower corner in xyz space
 	Vector xyz_lower;
 	Real3 half_xyzbin_widths = xyz_bin_widths_;
-	for ( Size ii = 1; ii <= 3; ++ii ) { half_xyzbin_widths[ ii ] *= 0.5; }
+	for ( core::Size ii = 1; ii <= 3; ++ii ) { half_xyzbin_widths[ ii ] *= 0.5; }
 
 	/// Data for initializing the lower corner in Euler space
 	Size3 euler_offsets;
-	utility::vector1< Size > six_twos( 6, 2 );
+	utility::vector1< core::Size > six_twos( 6, 2 );
 	utility::LexicographicalIterator lex( six_twos );
 
 	Real6 bin_widths;
 	bin_widths[ 1 ] = xyz_bin_widths_[ 1 ];   bin_widths[ 2 ] = xyz_bin_widths_[ 2 ];   bin_widths[ 3 ] = xyz_bin_widths_[ 3 ];
 	bin_widths[ 4 ] = euler_bin_widths_[ 1 ]; bin_widths[ 5 ] = euler_bin_widths_[ 2 ]; bin_widths[ 6 ] = euler_bin_widths_[ 3 ];
 
-	Size count = 1;
+	core::Size count = 1;
 
 	//std::cout << "HitHasher initialize:";
-	//for ( Size ii = 1; ii <= 6; ++ii ) std::cout << bin_widths[ ii ] << " "; std::cout << std::endl;
+	//for ( core::Size ii = 1; ii <= 6; ++ii ) std::cout << bin_widths[ ii ] << " "; std::cout << std::endl;
 
 	while ( ! lex.at_end() ) {
 
-		for ( Size ii = 1; ii <= 3; ++ii ) {
+		for ( core::Size ii = 1; ii <= 3; ++ii ) {
 			xyz_lower( ii ) = bb_.lower()( ii ) + ( lex[ ii ] - 1 ) * ( half_xyzbin_widths[ ii ] );
 		}
-		for ( Size ii = 1, iip3 = 4; ii <= 3; ++ii, ++iip3 ) {
+		for ( core::Size ii = 1, iip3 = 4; ii <= 3; ++ii, ++iip3 ) {
 			euler_offsets[ ii ] = ( lex[ iip3 ] - 1 ); // 1 or 0 for offset or not.
 		}
 
 		//std::cout << "bounding box " << count << " lower: ";
-		//for ( Size ii = 1; ii <= 3; ++ii ) std::cout << xyz_lower( ii ) << " ";
+		//for ( core::Size ii = 1; ii <= 3; ++ii ) std::cout << xyz_lower( ii ) << " ";
 		//std::cout << "upper: ";
-		//for ( Size ii = 1; ii <= 3; ++ii ) std::cout << bb_.upper()( ii ) << " ";
-		//for ( Size ii = 1; ii <= 3; ++ii ) std::cout << euler_offsets[ ii ] << " "; std::cout << std::endl;
+		//for ( core::Size ii = 1; ii <= 3; ++ii ) std::cout << bb_.upper()( ii ) << " ";
+		//for ( core::Size ii = 1; ii <= 3; ++ii ) std::cout << euler_offsets[ ii ] << " "; std::cout << std::endl;
 
 		BoundingBox bb( xyz_lower, bb_.upper() );
 
@@ -149,7 +149,7 @@ HitHasher::initialize()
 }
 
 void
-HitHasher::insert_hit( Size geometric_constraint_id, Hit const * hit )
+HitHasher::insert_hit( core::Size geometric_constraint_id, Hit const * hit )
 {
 	runtime_assert( initialized_ );
 	runtime_assert( hit );
@@ -159,7 +159,7 @@ HitHasher::insert_hit( Size geometric_constraint_id, Hit const * hit )
 		utility_exit_with_message( "ERROR: Attempted to insert hit into HitHasher outside of the HitHasher bounding box!" );
 	}
 
-	for ( Size ii = 1; ii <= N_HASH_MAPS; ++ii ) {
+	for ( core::Size ii = 1; ii <= N_HASH_MAPS; ++ii ) {
 		if ( hit_hashes_[ ii ].first->contains( geom ) ) {
 			boost::uint64_t bin_index = hit_hashes_[ ii ].first->bin_index( geom );
 			HitHash::iterator iter = hit_hashes_[ ii ].second.find( bin_index );
@@ -167,7 +167,7 @@ HitHasher::insert_hit( Size geometric_constraint_id, Hit const * hit )
 
 				/*if ( geometric_constraint_id != 1 ) {
 				std::cout << "Weird -- this bin index " << bin_index << " should already have been inserted to hash " << ii;
-				for ( Size jj = 1; jj <= 6; ++jj ) std::cout << " " << geom[ jj ]; std::cout << std::endl;
+				for ( core::Size jj = 1; jj <= 6; ++jj ) std::cout << " " << geom[ jj ]; std::cout << std::endl;
 				} else {
 				std::cout << "Inserting bin index: " << bin_index << " into hash " << ii << std::endl;
 				}*/
@@ -185,7 +185,7 @@ HitHasher::insert_hit( Size geometric_constraint_id, Hit const * hit )
 
 /// @brief Insert a hits into a particular hash maps
 void
-HitHasher::insert_hit( Size which_hash_map, Size geometric_constraint_id, Hit const * hit )
+HitHasher::insert_hit( core::Size which_hash_map, core::Size geometric_constraint_id, Hit const * hit )
 {
 	runtime_assert( initialized_ );
 	runtime_assert( hit );
@@ -207,7 +207,7 @@ HitHasher::insert_hit( Size which_hash_map, Size geometric_constraint_id, Hit co
 
 			/*if ( geometric_constraint_id != 1 ) {
 			std::cout << "Weird -- this bin index " << bin_index << " should already have been inserted to hash " << which_hash_map;
-			for ( Size jj = 1; jj <= 6; ++jj ) std::cout << " " << geom[ jj ]; std::cout << std::endl;
+			for ( core::Size jj = 1; jj <= 6; ++jj ) std::cout << " " << geom[ jj ]; std::cout << std::endl;
 			} else {
 			std::cout << "Inserting bin index: " << bin_index << " into hash " << which_hash_map << std::endl;
 			}*/
@@ -222,19 +222,19 @@ HitHasher::insert_hit( Size which_hash_map, Size geometric_constraint_id, Hit co
 }
 
 void
-HitHasher::clear_hash_map( Size which_hash_map )
+HitHasher::clear_hash_map( core::Size which_hash_map )
 {
 	hit_hashes_[ which_hash_map ].second.clear();
 }
 
 HitHasher::HitHash::const_iterator
-HitHasher::hit_hash_begin( Size which_hash_map ) const
+HitHasher::hit_hash_begin( core::Size which_hash_map ) const
 {
 	return hit_hashes_[ which_hash_map ].second.begin();
 }
 
 HitHasher::HitHash::const_iterator
-HitHasher::hit_hash_end( Size which_hash_map ) const
+HitHasher::hit_hash_end( core::Size which_hash_map ) const
 {
 	return hit_hashes_[ which_hash_map ].second.end();
 }
@@ -257,7 +257,7 @@ HitNeighborFinder::set_uniform_xyz_bin_width( Real bin_width )
 {
 	debug_assert( ! initialized_ );
 	debug_assert( bin_width > 0 );
-	for ( Size ii = 1; ii <= 3; ++ii ) { xyz_bin_widths_[ ii ] = bin_width; }
+	for ( core::Size ii = 1; ii <= 3; ++ii ) { xyz_bin_widths_[ ii ] = bin_width; }
 }
 
 void
@@ -265,14 +265,14 @@ HitNeighborFinder::set_uniform_euler_angle_bin_width( Real bin_width_degrees )
 {
 	debug_assert( ! initialized_ );
 	debug_assert( bin_width_degrees > 0 );
-	for ( Size ii = 1; ii <= 3; ++ii ) { euler_bin_widths_[ ii ] = bin_width_degrees; }
+	for ( core::Size ii = 1; ii <= 3; ++ii ) { euler_bin_widths_[ ii ] = bin_width_degrees; }
 }
 
 void
 HitNeighborFinder::set_xyz_bin_widths( Vector const & bin_widths )
 {
 	debug_assert( ! initialized_ );
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		debug_assert( bin_widths( ii ) > 0 );
 		xyz_bin_widths_[ ii ] = bin_widths( ii );
 	}
@@ -283,7 +283,7 @@ void
 HitNeighborFinder::set_euler_bin_widths( Vector const & euler_bin_widths )
 {
 	debug_assert( ! initialized_ );
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		debug_assert( euler_bin_widths( ii ) > 0 );
 		euler_bin_widths_[ ii ] = euler_bin_widths( ii );
 	}
@@ -294,7 +294,7 @@ void HitNeighborFinder::add_hits( std::list< Hit > const & hitlist )
 	debug_assert( all_hits_.empty() );
 	debug_assert( initialized_ );
 
-	Size count_hits = 0;
+	core::Size count_hits = 0;
 	for ( auto const & iter : hitlist ) {
 		++count_hits;
 		all_hits_.push_back( std::make_pair( count_hits, & iter ));
@@ -335,7 +335,7 @@ HitNeighborFinder::connected_components() const
 	Bin6D twos( 2 ); // numer of halfbin neighbors for each dimension
 	utility::FixedSizeLexicographicalIterator< 6 > halfbin_lex( twos );
 	Bin6D twopows( 1 );
-	for ( Size ii = 5; ii >= 1; --ii ) twopows[ ii ] = twopows[ ii + 1 ] * 2;
+	for ( core::Size ii = 5; ii >= 1; --ii ) twopows[ ii ] = twopows[ ii + 1 ] * 2;
 
 	//typedef fixedsizearray1< boost::uint64_t, 2 > halfbin_index_touple; // pos1 = bin index; pos2 = halfbin subindex
 	//typedef utility::OrderedTuple<
@@ -346,7 +346,7 @@ HitNeighborFinder::connected_components() const
 		HitIndexList const & hitlist = iter->second;
 		if ( hitlist.empty() ) continue;
 		std::fill( visited_halfbins.begin(), visited_halfbins.end(), false ); // mark all halfbins as not-yet visited.
-		Size first_hit_index = hitlist.begin()->first;
+		core::Size first_hit_index = hitlist.begin()->first;
 		// Hit const * first_hit = hitlist.begin()->second; // Unused variable causes a warning.
 		// Bin6D query_bin = binner_->bin6( first_hit->second() ); // Unused variable causes a warning.
 		//boost::uint64_t bin_index = binner_->bin_index( query_bin );
@@ -360,25 +360,25 @@ HitNeighborFinder::connected_components() const
 		/// 2. Iterate across all hits, and for each halfbin, take one hit and look for all
 		/// halfbin-neighbors of that hit.
 		for ( auto const & hitlist_iter : hitlist ) {
-			Size query_id = hitlist_iter.first;
+			core::Size query_id = hitlist_iter.first;
 			Hit const * query_hit = hitlist_iter.second;
 			Bin6D query_halfbin = binner_->halfbin6( query_hit->second() );
-			Size query_halfbin_index = 1;
-			for ( Size ii = 1; ii <= 6; ++ii ) if ( query_halfbin[ ii ] == 1 ) query_halfbin_index += twopows[ ii ];
+			core::Size query_halfbin_index = 1;
+			for ( core::Size ii = 1; ii <= 6; ++ii ) if ( query_halfbin[ ii ] == 1 ) query_halfbin_index += twopows[ ii ];
 
 			// only explore the neighbor halfbins
 			if ( visited_halfbins[ query_halfbin_index ] ) continue;
 			visited_halfbins[ query_halfbin_index ] = true;
 
 			Real6 halfsteps( binner_->halfbin_widths() );
-			for ( Size ii = 1; ii <= 6; ++ii ) {
+			for ( core::Size ii = 1; ii <= 6; ++ii ) {
 				if ( query_halfbin[ ii ] == 0 ) halfsteps[ ii ] *= -1;
 			}
 
 			halfbin_lex.begin();
 			while ( !halfbin_lex.at_end() ) {
 				Bin6D nbbin;
-				Size skip_pos = find_next_bin( query_hit->second(), halfsteps, halfbin_lex, nbbin );
+				core::Size skip_pos = find_next_bin( query_hit->second(), halfsteps, halfbin_lex, nbbin );
 				if ( skip_pos != 0 ) {
 					halfbin_lex.continue_at_dimension( skip_pos );
 					continue;
@@ -391,7 +391,7 @@ HitNeighborFinder::connected_components() const
 				if ( nbr_hits != hash_.end() ) {
 					// we have hits in the neighbor bin
 					for ( auto const & nbr_hits_iter : nbr_hits->second ) {
-						Size nbr_id = nbr_hits_iter.first;
+						core::Size nbr_id = nbr_hits_iter.first;
 						if ( ds.ds_find( query_id ) == ds.ds_find( nbr_id ) ) continue; // already neighbors
 						Bin6D nb_halfbin = binner_->halfbin6( nbr_hits_iter.second->second() );
 						if ( within_reach( query_halfbin, nb_halfbin, nbbin, halfbin_lex ) ) {
@@ -411,19 +411,19 @@ HitNeighborFinder::connected_components() const
 
 	/*for ( HitIndexList::const_iterator iter = all_hits_.begin(), iter_end = all_hits_.end();
 	iter != iter_end; ++iter ) {
-	Size query_id = iter->first;
+	core::Size query_id = iter->first;
 	Hit const * query_hit = iter->second;
 	Bin6D query_bin = binner_->bin6( query_hit->second() );
 	Bin6D query_halfbin = binner_->halfbin6( query_hit->second() );
 	Real6 halfsteps( binner_->halfbin_widths() );
-	for ( Size ii = 1; ii <= 6; ++ii ) {
+	for ( core::Size ii = 1; ii <= 6; ++ii ) {
 	if ( query_halfbin[ ii ] == 0 ) halfsteps[ ii ] *= -1;
 	}
 
 	halfbin_lex.begin();
 	while ( !halfbin_lex.at_end() ) {
 	Bin6D nbbin;
-	Size skip_pos = find_next_bin( query_hit->second(), halfsteps, halfbin_lex, nbbin );
+	core::Size skip_pos = find_next_bin( query_hit->second(), halfsteps, halfbin_lex, nbbin );
 	if ( skip_pos != 0 ) {
 	halfbin_lex.continue_at_dimension( skip_pos );
 	continue;
@@ -438,7 +438,7 @@ HitNeighborFinder::connected_components() const
 	for ( HitIndexList::const_iterator nbr_hits_iter = nbr_hits->second.begin(),
 	nbr_hits_iter_end = nbr_hits->second.end();
 	nbr_hits_iter != nbr_hits_iter_end; ++nbr_hits_iter ) {
-	Size nbr_id = nbr_hits_iter->first;
+	core::Size nbr_id = nbr_hits_iter->first;
 	if ( ds.ds_find( query_id ) == ds.ds_find( nbr_id ) ) continue; // already neighbors
 	Bin6D nb_halfbin = binner_->halfbin6( nbr_hits_iter->second->second() );
 	if ( within_reach( query_halfbin, nb_halfbin, nbbin, halfbin_lex )) {
@@ -454,10 +454,10 @@ HitNeighborFinder::connected_components() const
 	/// Iterate across all bins.  Then iterate across all halfbins, skipping over halfbins that have already been visited.
 
 	// OK: now how many sets do we have, and who are their representatives?
-	Size const nccs = ds.n_disjoint_sets(); // number of connected-components.
-	utility::vector1< Size > ds_representatives_to_setnos( ds.n_nodes(), 0 );
-	Size count_set = 0;
-	for ( Size ii = 1; ii <= ds.n_nodes(); ++ii ) {
+	core::Size const nccs = ds.n_disjoint_sets(); // number of connected-components.
+	utility::vector1< core::Size > ds_representatives_to_setnos( ds.n_nodes(), 0 );
+	core::Size count_set = 0;
+	for ( core::Size ii = 1; ii <= ds.n_nodes(); ++ii ) {
 		if ( ds.ds_find( ii ) == ii ) {
 			++count_set;
 			ds_representatives_to_setnos[ ii ] = count_set;
@@ -466,8 +466,8 @@ HitNeighborFinder::connected_components() const
 
 	utility::vector1< HitPtrList > hit_ccs( nccs );
 	for ( auto const & all_hit : all_hits_ ) {
-		Size iterrep = ds.ds_find( all_hit.first );
-		Size setid = ds_representatives_to_setnos[ iterrep ];
+		core::Size iterrep = ds.ds_find( all_hit.first );
+		core::Size setid = ds_representatives_to_setnos[ iterrep ];
 		debug_assert( setid != 0 );
 		hit_ccs[ setid ].push_back( all_hit.second );
 	}
@@ -481,7 +481,7 @@ HitNeighborFinder::HitPtrList
 HitNeighborFinder::neighbor_hits( HitPtrList const & queryhits ) const
 {
 	HitPtrList neighbors;
-	std::set< Size > neighbor_set;
+	std::set< core::Size > neighbor_set;
 	std::set< boost::uint64_t > exhausted_bins;
 	// we need to visit all 2^6=64 neighboring bins of the query halfbin; the lexicographical iterator
 	// ensures we visit them all.
@@ -489,18 +489,18 @@ HitNeighborFinder::neighbor_hits( HitPtrList const & queryhits ) const
 	utility::FixedSizeLexicographicalIterator< 6 > halfbin_lex( twos );
 
 	for ( auto query_hit : queryhits ) {
-		//Size query_id = iter->first;
+		//core::Size query_id = iter->first;
 		// Bin6D query_bin = binner_->bin6( query_hit->second() ); // Unused variable causes a warning.
 		Bin6D query_halfbin = binner_->halfbin6( query_hit->second() );
 		Real6 halfsteps( binner_->halfbin_widths() );
-		for ( Size ii = 1; ii <= 6; ++ii ) {
+		for ( core::Size ii = 1; ii <= 6; ++ii ) {
 			if ( query_halfbin[ ii ] == 0 ) halfsteps[ ii ] *= -1;
 		}
 
 		halfbin_lex.begin();
 		while ( !halfbin_lex.at_end() ) {
 			Bin6D nbbin;
-			Size skip_pos = find_next_bin( query_hit->second(), halfsteps, halfbin_lex, nbbin );
+			core::Size skip_pos = find_next_bin( query_hit->second(), halfsteps, halfbin_lex, nbbin );
 			if ( skip_pos != 0 ) {
 				halfbin_lex.continue_at_dimension( skip_pos );
 				continue;
@@ -516,7 +516,7 @@ HitNeighborFinder::neighbor_hits( HitPtrList const & queryhits ) const
 				// we have hits in the neighbor bin
 				bool all_inserted = true;
 				for ( auto const & nbr_hits_iter : nbr_hits->second ) {
-					Size nbr_id = nbr_hits_iter.first;
+					core::Size nbr_id = nbr_hits_iter.first;
 					if ( neighbor_set.find( nbr_id ) != neighbor_set.end() ) {
 						// already found this neighbor; note does not invalidate the "all_inserted" boolean
 						// since this hit need not be examined again in the future.
@@ -578,7 +578,7 @@ HitNeighborFinder::find_next_bin(
 ) const
 {
 	Real6 steps( 0.0 );
-	for ( Size ii = 1; ii <= 6; ++ii ) {
+	for ( core::Size ii = 1; ii <= 6; ++ii ) {
 		if ( halfbin_lex[ ii ] == 2 ) steps[ ii ] = offsets[ ii ];
 	}
 	return advance_to_neighbor_bin( orig_point, steps, *binner_, next_bin );
@@ -594,10 +594,10 @@ HitNeighborFinder::within_reach(
 	utility::FixedSizeLexicographicalIterator< 6 > const & halfbin_lex
 ) const
 {
-	Size const NEIGHBOR_BIN = 2; // 1 will denote "stay in the same bin; 2 will denote look in the neighbor bin"
+	core::Size const NEIGHBOR_BIN = 2; // 1 will denote "stay in the same bin; 2 will denote look in the neighbor bin"
 
 	// check everything but theta!
-	for ( Size ii = 1; ii <= 5; ++ii ) {
+	for ( core::Size ii = 1; ii <= 5; ++ii ) {
 		if ( halfbin_lex[ ii ] == NEIGHBOR_BIN && query_halfbin[ ii ] == nb_halfbin[ ii ] ) {
 			/// Then this neighbor hit is too far away from the query hit: we've spanned
 			/// the bin boundary to a neighboring bin, but the neighbor hit is on
@@ -639,7 +639,7 @@ MatchCounter::set_bounding_box(
 }
 
 void
-MatchCounter::set_n_geometric_constraints( Size ngeomcsts )
+MatchCounter::set_n_geometric_constraints( core::Size ngeomcsts )
 {
 	debug_assert( ! initialized_ );
 	debug_assert( n_geom_csts_ == 0 ); // this function should only be called once
@@ -651,7 +651,7 @@ MatchCounter::set_uniform_xyz_bin_width( Real bin_width )
 {
 	debug_assert( ! initialized_ );
 	debug_assert( bin_width > 0 );
-	for ( Size ii = 1; ii <= 3; ++ii ) { xyz_bin_widths_[ ii ] = bin_width; }
+	for ( core::Size ii = 1; ii <= 3; ++ii ) { xyz_bin_widths_[ ii ] = bin_width; }
 }
 
 void
@@ -659,14 +659,14 @@ MatchCounter::set_uniform_euler_angle_bin_width( Real bin_width_degrees )
 {
 	debug_assert( ! initialized_ );
 	debug_assert( bin_width_degrees > 0 );
-	for ( Size ii = 1; ii <= 3; ++ii ) { euler_bin_widths_[ ii ] = bin_width_degrees; }
+	for ( core::Size ii = 1; ii <= 3; ++ii ) { euler_bin_widths_[ ii ] = bin_width_degrees; }
 }
 
 void
 MatchCounter::set_xyz_bin_widths( Vector const & bin_widths )
 {
 	debug_assert( ! initialized_ );
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		debug_assert( bin_widths( ii ) > 0 );
 		xyz_bin_widths_[ ii ] = bin_widths( ii );
 	}
@@ -677,13 +677,13 @@ void
 MatchCounter::set_euler_bin_widths( Vector const & euler_bin_widths )
 {
 	debug_assert( ! initialized_ );
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		debug_assert( euler_bin_widths( ii ) > 0 );
 		euler_bin_widths_[ ii ] = euler_bin_widths( ii );
 	}
 }
 
-void MatchCounter::add_hits( Size geomcst_id, std::list< Hit > const & hitlist )
+void MatchCounter::add_hits( core::Size geomcst_id, std::list< Hit > const & hitlist )
 {
 	debug_assert( initialized_ );
 
@@ -701,7 +701,7 @@ void MatchCounter::add_hits( Size geomcst_id, std::list< Hit > const & hitlist )
 	}
 }
 
-void MatchCounter::add_hits( Size geomcst_id, std::list< Hit const * > const & hitlist )
+void MatchCounter::add_hits( core::Size geomcst_id, std::list< Hit const * > const & hitlist )
 {
 	debug_assert( initialized_ );
 
@@ -750,16 +750,16 @@ MatchCounter::Size
 MatchCounter::count_n_matches() const
 {
 	debug_assert( initialized_ );
-	Size const two_billion = 2000000000;
+	core::Size const two_billion = 2000000000;
 	Real const ln2e9 = 21.4; // e^21.4 ~ 2 billion
 
-	Size total = 0;
-	Size last_total = 0;
+	core::Size total = 0;
+	core::Size last_total = 0;
 	for ( HitHash::const_iterator iter = hash_.begin(), iter_end = hash_.end(); iter != iter_end; ++iter ) {
 		HitCounts const & hit_counts = iter->second;
-		Size counts_this_bin = 1;
+		core::Size counts_this_bin = 1;
 		Real log_counts_this_bin = 0;
-		for ( Size ii = 1; ii <= hit_counts.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= hit_counts.size(); ++ii ) {
 			counts_this_bin *= hit_counts[ii];
 			if ( hit_counts[ii] != 0 ) {
 				log_counts_this_bin += log((Real)hit_counts[ii]);
@@ -795,14 +795,14 @@ advance_to_neighbor_bin(
 	numeric::geometry::hashing::Real6 alt_point( orig_point );
 	numeric::geometry::hashing::Real3 orig_euler( 0.0 );
 	numeric::geometry::hashing::Real3 euler_offsets( 0.0 );
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		alt_point[ ii ] += steps[ ii ];
 		euler_offsets[ ii ] = steps[ ii + 3 ];
 		orig_euler[ ii ] = orig_point[ ii + 3 ];
 	}
 
 	/// are we in range? -- return out-of-range index for advancing the lex if so
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		if ( binner.bounding_box().lower()( ii ) > alt_point[ ii ] ||
 				binner.bounding_box().upper()( ii ) < alt_point[ ii ] ) {
 			return ii;
@@ -812,7 +812,7 @@ advance_to_neighbor_bin(
 
 	/// Complicated logic in advancing the euler angles; defer to another function
 	numeric::geometry::hashing::Real3 new_euler = advance_euler_angles( orig_euler, euler_offsets );
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		alt_point[ ii + 3 ] = new_euler[ ii ];
 	}
 
@@ -835,7 +835,7 @@ advance_euler_angles(
 	using core::Size;
 
 	numeric::geometry::hashing::Real3 new_euler_angles( orig_angles );
-	for ( Size ii = 1; ii <= 3; ++ii ) new_euler_angles[ ii ] += offsets[ ii ];
+	for ( core::Size ii = 1; ii <= 3; ++ii ) new_euler_angles[ ii ] += offsets[ ii ];
 
 	if ( new_euler_angles[ 3 ] < 0 || new_euler_angles[ 3 ] > 180 ) {
 		/// 1st handle theta wrapping.
@@ -846,7 +846,7 @@ advance_euler_angles(
 			new_euler_angles[ 3 ] = 360 - new_euler_angles[ 3 ]; // 182 wraps to 178...
 		}
 		/// wrap phi/psi
-		for ( Size ii = 1; ii <=2; ++ii ) {
+		for ( core::Size ii = 1; ii <=2; ++ii ) {
 			if ( new_euler_angles[ ii ] < 180 ) {
 				new_euler_angles[ ii ] += 180;
 			} else {
@@ -855,7 +855,7 @@ advance_euler_angles(
 		}
 	} else {
 		/// Theta doesn't wrap, so make sure phi and psi are in their proper ranges.
-		for ( Size ii = 1; ii <= 2; ++ii ) {
+		for ( core::Size ii = 1; ii <= 2; ++ii ) {
 			if ( new_euler_angles[ ii ] > 360 ) {
 				new_euler_angles[ ii ] -= 360;
 			} else if ( new_euler_angles[ ii ] < 0 ) {
@@ -864,9 +864,9 @@ advance_euler_angles(
 		}
 	}
 
-	//std::cout << "orig_angles:"; for ( Size ii = 1; ii <= 3; ++ii ) std::cout << " " << orig_angles[ ii ]; std::cout << std::endl;
-	//std::cout << "offsets:"; for ( Size ii = 1; ii <= 3; ++ii ) std::cout << " " << offsets[ ii ]; std::cout << std::endl;
-	//std::cout << "new_euler_angles:"; for ( Size ii = 1; ii <= 3; ++ii ) std::cout << " " << new_euler_angles[ ii ]; std::cout << std::endl;
+	//std::cout << "orig_angles:"; for ( core::Size ii = 1; ii <= 3; ++ii ) std::cout << " " << orig_angles[ ii ]; std::cout << std::endl;
+	//std::cout << "offsets:"; for ( core::Size ii = 1; ii <= 3; ++ii ) std::cout << " " << offsets[ ii ]; std::cout << std::endl;
+	//std::cout << "new_euler_angles:"; for ( core::Size ii = 1; ii <= 3; ++ii ) std::cout << " " << new_euler_angles[ ii ]; std::cout << std::endl;
 	return new_euler_angles;
 }
 

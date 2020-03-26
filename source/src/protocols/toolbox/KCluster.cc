@@ -110,13 +110,13 @@ string file_full_path(string tag)
 		pos = newpos;
 	}
 
-	Size n = id_stack.size();
+	core::Size n = id_stack.size();
 	if ( n == 1 ) return rootpath+defaultfile;
 	ostringstream fnstream;
 	fnstream << "c_" << setfill ('0') << setw (5) << id_stack[n-1] << ".out";
 	string fn(fnstream.str());
 
-	for ( Size i=n-1; i>=1; i-- ) {
+	for ( core::Size i=n-1; i>=1; i-- ) {
 		ostringstream pathstream1;
 		ostringstream pathstream2;
 
@@ -134,9 +134,9 @@ string fix_tag_suffix(string str)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	static Size nlevel = option[cluster::K_level];
-	Size n=count(str.begin(), str.end(), '.');
-	for ( Size i=n; i<nlevel; i++ ) str+=".1";
+	static core::Size nlevel = option[cluster::K_level];
+	core::Size n=count(str.begin(), str.end(), '.');
+	for ( core::Size i=n; i<nlevel; i++ ) str+=".1";
 
 	int pos; //a silly hack
 	while ( (pos = str.find('_'))>0 ) str.replace(pos,1,1,'.');
@@ -145,7 +145,7 @@ string fix_tag_suffix(string str)
 }
 
 /// @brief assign a data into a cluster
-void KClusterElement::assign_type_data(Size ndx_data, Size ndx_cluster, Real d)
+void KClusterElement::assign_type_data(core::Size ndx_data, core::Size ndx_cluster, Real d)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -214,8 +214,8 @@ Real KClusterData::dist_square(FA2d &conf1, FA2d &conf2)
 
 	//cal dist
 	Real sum=0.0;
-	for ( Size i=1; i<=natom_; i++ ) {
-		for ( Size d=1; d<=3; d++ ) {
+	for ( core::Size i=1; i<=natom_; i++ ) {
+		for ( core::Size d=1; d<=3; d++ ) {
 			Real dx = conf1(d,i) - conf2(d,i);
 			sum += dx*dx;
 		}
@@ -223,7 +223,7 @@ Real KClusterData::dist_square(FA2d &conf1, FA2d &conf2)
 	return sum/natom_;
 }
 
-Real KClusterData::dist_square(Size ndx1, Size ndx2)
+Real KClusterData::dist_square(core::Size ndx1, core::Size ndx2)
 {
 	FA2Pd conf1(dataset_.coords()(1,1,ndx1), 3, natom_);
 	FA2Pd conf2(dataset_.coords()(1,1,ndx2), 3, natom_);
@@ -238,11 +238,11 @@ void KClusterData::load_silent_files()
 	TR << "Reading Silent Files ..." << endl;
 
 	if ( option[in::file::silent].user() ) {
-		for ( Size i=1, e=option[in::file::silent]().size(); i<=e; i++ ) {
+		for ( core::Size i=1, e=option[in::file::silent]().size(); i<=e; i++ ) {
 			load_silent_file(option[in::file::silent]()[i], i);
 		}
 	} else if ( option[in::file::silent_list].user() ) {
-		for ( Size i=1, e=option[in::file::silent_list]().size(); i<=e; i++ ) {
+		for ( core::Size i=1, e=option[in::file::silent_list]().size(); i<=e; i++ ) {
 			load_silent_file(option[in::file::silent_list]()[i], i);
 		}
 	} else {
@@ -254,26 +254,26 @@ void KClusterData::load_silent_files()
 		//dataset_.superimpose(); //!!! maybe a new method that just reset_x is better
 		FA1Dd transvec( 3 );
 		FA1Dd weights(natom_, 1.0);
-		for ( Size i=1; i<=ndata_; i++ ) {
+		for ( core::Size i=1; i<=ndata_; i++ ) {
 			FA2Pd conf( dataset_.coords()(1,1,i), 3, natom_ );
 			reset_x( natom_, conf, weights, transvec );
 		}
 	}
 }
 
-void KClusterData::load_silent_file(string silent_file, Size nfile)
+void KClusterData::load_silent_file(string silent_file, core::Size nfile)
 {
 	io::silent::SilentFileOptions opts;
 	io::silent::SilentFileData sfd( opts );
 	sfd.read_file( silent_file );
 
-	Size extra=sfd.size();
+	core::Size extra=sfd.size();
 
 	if ( dataset_.n_decoys_max() < dataset_.n_decoys() + extra + 1 ) {
 		dataset_.reserve( dataset_.n_decoys() + extra );
 	}
 
-	Size ncoord=0;
+	core::Size ncoord=0;
 	for ( io::silent::SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
 		FA2Dd original_xyz(it->get_CA_xyz());
 		//check n_ca_atom_
@@ -331,9 +331,9 @@ void KClusterData::mark_tags(KClusterElementOP c, string t)
 {
 	//mark of the centers in this element
 	//if the subcluster's center_ndx_ is not empty, recursive
-	Size nc = c->get_cur_ncluster();
+	core::Size nc = c->get_cur_ncluster();
 	if ( nc==0 ) return;//makesure this element has been clustered
-	for ( Size i=1; i<=nc; i++ ) {
+	for ( core::Size i=1; i<=nc; i++ ) {
 		//for all center
 		ostringstream tag;
 		//tag << t << "." << setfill ('0') << setw (5) << i;
@@ -366,8 +366,8 @@ void KClusterData::save_all_in_one()
 	string const silent_outfile(option[out::file::silent]());
 
 	//read from file list
-	Size count=0;
-	for ( Size i=1; i<=nfile_; i++ ) {
+	core::Size count=0;
+	for ( core::Size i=1; i<=nfile_; i++ ) {
 		//sort the struct order
 		io::silent::SilentFileData sfd( opts );
 		sfd.read_file( fnlist[i] );
@@ -378,7 +378,7 @@ void KClusterData::save_all_in_one()
 			//get center that has been marked
 			//it->set_decoy_tag(tags_[count]);
 			//clusters.write_silent_struct(**it,silent_outfile);
-			for ( Size j=2, nt=tags_[count].size(); j<=nt; ++j ) {
+			for ( core::Size j=2, nt=tags_[count].size(); j<=nt; ++j ) {
 				//it->set_decoy_tag(tags_[count][i]);
 				it->add_string_value("cluster_id",tags_[count][j]);
 				clusters.write_silent_struct(**it,silent_outfile);
@@ -406,8 +406,8 @@ void KClusterData::save_cluster_tree()
 	io::silent::SilentFileData clusters( opts );
 
 	//read from file list
-	Size count=0;
-	for ( Size i=1; i<=nfile_; i++ ) {
+	core::Size count=0;
+	for ( core::Size i=1; i<=nfile_; i++ ) {
 		//sort the struct order
 		io::silent::SilentFileData sfd( opts );
 		sfd.read_file( fnlist[i] );
@@ -416,7 +416,7 @@ void KClusterData::save_cluster_tree()
 			count++;
 			//if (tags_[count].c_str()[0]=='d') continue; //skip data
 			//get center that has been marked
-			for ( Size j=2, nt=tags_[count].size(); j<=nt; ++j ) {
+			for ( core::Size j=2, nt=tags_[count].size(); j<=nt; ++j ) {
 				string filename(file_full_path(tags_[count][j]));
 				utility::file::create_directory_recursive(utility::file::FileName(filename).path());
 
@@ -467,7 +467,7 @@ KCluster::KCluster()
 
 KCluster::~KCluster()= default;
 
-void KCluster::cluster(KClusterElementOP c, KClusterData& d, Size first)
+void KCluster::cluster(KClusterElementOP c, KClusterData& d, core::Size first)
 {
 	TR << endl;
 	TR << "*********** Job ***********"  << endl;
@@ -529,18 +529,18 @@ bool KMedoid::whoami()
 	return false;
 }
 
-void KMedoid::init(KClusterElementOP c, Size first)
+void KMedoid::init(KClusterElementOP c, core::Size first)
 {
 	cur_ncluster_ = c->get_cur_ncluster();
-	Size nd = c->get_ndata();
+	core::Size nd = c->get_ndata();
 
 	if ( cur_ncluster_ == 0 ) {
 		cur_ncluster_ = min(n_cluster_, nd);
 		debug_assert(cur_ncluster_ > 0);
 		//randomly choose n center
 		TR << "Empty cluster, randomly choose center" << endl;
-		for ( Size i=1; i<=cur_ncluster_; i++ ) {
-			Size newcenter;
+		for ( core::Size i=1; i<=cur_ncluster_; i++ ) {
+			core::Size newcenter;
 			if ( i==1 && first>0 ) {
 				//specify the first one
 				newcenter = first;
@@ -548,8 +548,8 @@ void KMedoid::init(KClusterElementOP c, Size first)
 				newcenter = c->get_data_ndx(static_cast<int>( numeric::random::rg().uniform() * nd + 1 ));
 			}
 
-			Size flag = i;
-			for ( Size j=1; j<i; j++ ) {
+			core::Size flag = i;
+			for ( core::Size j=1; j<i; j++ ) {
 				//make sure there's no replica
 				if ( c->get_center_ndx(j) == newcenter ) {
 					i--;
@@ -564,10 +564,10 @@ void KMedoid::init(KClusterElementOP c, Size first)
 	}
 }
 
-void KMedoid::copy_coord(Size len, FA2d &src, FA2d &dst)
+void KMedoid::copy_coord(core::Size len, FA2d &src, FA2d &dst)
 {
-	for ( Size i=1; i<=len; i++ ) {
-		for ( Size j=1; j<=3; j++ ) {
+	for ( core::Size i=1; i<=len; i++ ) {
+		for ( core::Size j=1; j<=3; j++ ) {
 			dst(j,i) = src(j,i);
 		}
 	}
@@ -577,23 +577,23 @@ Real KMedoid::assign(KClusterElementOP c, KClusterData& d)
 {
 	//assign all data to the nearest center
 	//keep the coord that fit the nearest center
-	Size nd = c->get_ndata();
-	Size na = d.get_natom();
+	core::Size nd = c->get_ndata();
+	core::Size na = d.get_natom();
 	FA2Dd coord(3, na, 0.0);
 	//TR << "DEBUG: ncluster" << cur_ncluster_ << endl;
 	//DEBUG
 	//TR<<"center list:"<< endl;
-	//for (Size i=1; i<=cur_ncluster_; i++)
+	//for (core::Size i=1; i<=cur_ncluster_; i++)
 	//{
 	// TR <<c->get_center_ndx(i) << endl;
 	//}
 
-	for ( Size nc=1; nc<=cur_ncluster_; nc++ ) {
+	for ( core::Size nc=1; nc<=cur_ncluster_; nc++ ) {
 		//for each cluster center
 
 		//build the center dist list
 		ObjexxFCL::FArray1D_double center_dis_list(nc,0.0);
-		for ( Size i=1; i<nc; i++ ) {
+		for ( core::Size i=1; i<nc; i++ ) {
 			//TR << "Center list: c" << i <<":"<<c->get_center_ndx(i) << ", c" << nc <<":"<<c->get_center_ndx(nc)<< " d: ";
 			center_dis_list(i) = sqrt(d.dist_square(
 				c->get_center_ndx(i),
@@ -602,7 +602,7 @@ Real KMedoid::assign(KClusterElementOP c, KClusterData& d)
 		}
 
 		c->clear();
-		for ( Size i=1; i<=nd; i++ ) {
+		for ( core::Size i=1; i<=nd; i++ ) {
 			//assign the center to its cluster
 			if ( c->get_data_ndx(i)==c->get_center_ndx(nc) ) {
 				c->assign_type_data(i, nc, 0.0);
@@ -643,7 +643,7 @@ Real KMedoid::assign(KClusterElementOP c, KClusterData& d)
 
 	//calculate score
 	Real sum=0.0;
-	for ( Size i=1; i<=nd; i++ ) {
+	for ( core::Size i=1; i<=nd; i++ ) {
 		sum += c->get_distance(i);
 	}
 	return sum/nd;
@@ -653,16 +653,16 @@ void KMedoid::update(KClusterElementOP c, KClusterData& d)
 {
 	//TR << "Update..." << endl;
 	//find the coord most closed to the average of the cluster
-	Size na = d.get_natom();
-	for ( Size i=1; i<=cur_ncluster_; i++ ) {
+	core::Size na = d.get_natom();
+	for ( core::Size i=1; i<=cur_ncluster_; i++ ) {
 		//for each cluster
-		const utility::vector1<Size> &list(c->get_ndx_list(i));
-		Size nd = list.size();
+		const utility::vector1<core::Size> &list(c->get_ndx_list(i));
+		core::Size nd = list.size();
 		FA2Dd sum(3, na, 0.0);
-		for ( Size j=1; j<=nd; j++ ) {
+		for ( core::Size j=1; j<=nd; j++ ) {
 			FA2Pd coord(d.coords()(1,1,list[j]),3,na);
-			for ( Size m=1; m<=na; m++ ) {
-				for ( Size n=1; n<=3; n++ ) {
+			for ( core::Size m=1; m<=na; m++ ) {
+				for ( core::Size n=1; n<=3; n++ ) {
 					sum(n,m)+=coord(n,m);
 				}
 			}
@@ -670,23 +670,23 @@ void KMedoid::update(KClusterElementOP c, KClusterData& d)
 
 		/*/debug
 		TR << "Cluster: " << i << " -> ";
-		for (Size j=1; j<=nd; j++)
+		for (core::Size j=1; j<=nd; j++)
 		{
 		TR << list[j] << " ";
 		}
 		TR << endl;*/
 
 		//average
-		for ( Size m=1; m<=na; m++ ) {
-			for ( Size n=1; n<=3; n++ ) {
+		for ( core::Size m=1; m<=na; m++ ) {
+			for ( core::Size n=1; n<=3; n++ ) {
 				sum(n,m)/=nd;
 			}
 		}
 
 		//find the nearest
 		Real mindist2 = 999999;
-		Size nearest = 0;
-		for ( Size j=1; j<=nd; j++ ) {
+		core::Size nearest = 0;
+		for ( core::Size j=1; j<=nd; j++ ) {
 			//DEBUG
 			//TR << "U list: " << j << ":" << list[j];
 			FA2Pd coord(d.coords()(1,1,list[j]),3,na);
@@ -734,12 +734,12 @@ void GreedyKCenter::set_threshold(Real r)
 	radius_ = r;
 }
 
-void GreedyKCenter::init(KClusterElementOP c, Size first)
+void GreedyKCenter::init(KClusterElementOP c, core::Size first)
 {
 	//random select a center
 	TR << "Initializing ..." << endl;
 	debug_assert(c->get_cur_ncluster()==0);//only begin from an empty clusters
-	Size center;
+	core::Size center;
 	if ( first>0 ) {
 		center = first;
 	} else {
@@ -753,11 +753,11 @@ void GreedyKCenter::init(KClusterElementOP c, Size first)
 Real GreedyKCenter::assign(KClusterElementOP c, KClusterData& d)
 {
 	//assign all data to the nearest center
-	Size nc = c->get_cur_ncluster();
+	core::Size nc = c->get_cur_ncluster();
 
 	//save center dist
 	ObjexxFCL::FArray1D_double center_dis_list(nc,0.0);
-	for ( Size i=1; i<nc; i++ ) {
+	for ( core::Size i=1; i<nc; i++ ) {
 		center_dis_list(i) = sqrt(d.dist_square(
 			c->get_center_ndx(i),
 			c->get_center_ndx(nc) ));
@@ -765,8 +765,8 @@ Real GreedyKCenter::assign(KClusterElementOP c, KClusterData& d)
 	}
 
 	c->clear();
-	Size nd = c->get_ndata();
-	for ( Size i=1; i<=nd; i++ ) {
+	core::Size nd = c->get_ndata();
+	for ( core::Size i=1; i<=nd; i++ ) {
 		//for each data
 		Real d_old = c->get_distance(i);
 		if ( nc>1 ) {

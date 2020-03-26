@@ -22,7 +22,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -32,7 +32,7 @@ namespace loops {
 namespace loops_definers {
 
 /// @brief creator for the LoopsDefiner class
-class LoopsDefinerCreator : public utility::pointer::ReferenceCount {
+class LoopsDefinerCreator : public utility::VirtualBase {
 public:
 	LoopsDefinerCreator() {}
 	~LoopsDefinerCreator() override {}

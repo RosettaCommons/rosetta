@@ -55,7 +55,7 @@ private:
 
 /// @brief Holds data about a single distance constraint in the form AtomPairConstraintsScore needs
 /// @details This class is used by AtomPairConstraintsScore to store data obtained from file
-class AtomPairConstraintsData: public utility::pointer::ReferenceCount {
+class AtomPairConstraintsData: public utility::VirtualBase {
 public:
 
 	/// @brief makes a new object

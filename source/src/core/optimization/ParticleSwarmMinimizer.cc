@@ -50,7 +50,7 @@ bool cmp_particles(ParticleOP a, ParticleOP b)
 
 
 ParticleSwarmMinimizer::ParticleSwarmMinimizer(Multivec const & p_min, Multivec const & p_max):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	size_(p_min.size()),
 	C_inertia_start_(0.9),
 	C_inertia_end_(0.4),

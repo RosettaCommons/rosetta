@@ -161,7 +161,7 @@ private:
 	///
 	utility::vector1< std::string > custom_rama_map_;
 
-	utility::vector1< Size > extending_;
+	utility::vector1< core::Size > extending_;
 	utility::vector1< utility::vector1< core::id::NamedAtomID > > torsion_atoms_;
 
 	/// @brief The type of perturbation, if the "perturb" option is used.

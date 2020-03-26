@@ -30,7 +30,7 @@ class SugarVirtualizeMover: public protocols::moves::Mover {
 public:
 
 	//constructor
-	SugarVirtualizeMover( Size const moving_res );
+	SugarVirtualizeMover( core::Size const moving_res );
 
 	//destructor
 	~SugarVirtualizeMover() override;
@@ -42,7 +42,7 @@ public:
 
 private:
 
-	Size const moving_res_;
+	core::Size const moving_res_;
 
 };
 

@@ -561,7 +561,7 @@ void FastRelax::do_md(
 
 	protocols::md::CartesianMD MD_mover( pose, local_scorefxn, local_movemap );
 
-	MD_mover.set_nstep( (Size)(nstep) );
+	MD_mover.set_nstep( (core::Size)(nstep) );
 	MD_mover.set_temperature( temp0 );
 
 	MD_mover.apply( pose );
@@ -600,7 +600,7 @@ FastRelax::setup_local_tf(
 			if ( movemap_disables_packing_of_fixed_chi_positions_ ) {
 				bool at_least_one(false);
 				PreventRepackingOP turn_off_packing( utility::pointer::make_shared< PreventRepacking >() );
-				for ( Size pos = 1; pos <= pose.size(); ++pos ) {
+				for ( core::Size pos = 1; pos <= pose.size(); ++pos ) {
 					if ( ! local_movemap->get_chi(pos) ) {
 						at_least_one = true;
 						turn_off_packing->include_residue(pos);
@@ -720,7 +720,7 @@ FastRelax::inner_loop_ramp_repack_min_command(
 
 	// The fourth paramter is the minimization
 	if ( cmd.nparams >= 4 ) {
-		auto const iter_cmd = (Size)(cmd.param4);
+		auto const iter_cmd = (core::Size)(cmd.param4);
 		max_iter( iter_cmd );
 	}
 
@@ -1101,11 +1101,11 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	(*local_scorefxn)( pose );
 
 	if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) {
-		for ( Size j = 0; j < best_score_log.size(); j++ ) {
+		for ( core::Size j = 0; j < best_score_log.size(); j++ ) {
 			core::pose::setPoseExtraScore( pose, "B" + right_string_of(j,3,'0'), best_score_log[j]);
 		}
 
-		for ( Size j = 0; j < curr_score_log.size(); j ++ ) {
+		for ( core::Size j = 0; j < curr_score_log.size(); j ++ ) {
 			core::pose::setPoseExtraScore( pose, "S" + right_string_of(j,3,'0'), curr_score_log[j] );
 		}
 	}
@@ -1174,7 +1174,7 @@ void FastRelax::set_script_from_lines( std::vector< std::string > const & fileli
 		if ( tokens.size() > 20 ) { // large data; now used for reference weights storage only.
 			RelaxScriptCommand newcmd;
 			newcmd.command = tokens[1];
-			for ( Size ii = 2; ii <= tokens.size(); ++ii ) {
+			for ( core::Size ii = 2; ii <= tokens.size(); ++ii ) {
 				newcmd.params_vec.push_back( atof(tokens[ii].c_str()) );
 			}
 			newcmd.nparams = newcmd.params_vec.size();
@@ -1462,7 +1462,7 @@ void FastRelax::batch_apply(
 
 				// If the user has not set chi, setup according to local_movemap.
 				if ( !basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ) {
-					for ( Size pos = 1; pos <= pose.size(); pos++ ) {
+					for ( core::Size pos = 1; pos <= pose.size(); pos++ ) {
 						allow_repack[ pos ] = local_movemap->get_chi( pos );
 					}
 				}

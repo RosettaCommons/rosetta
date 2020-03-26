@@ -21,7 +21,7 @@
 #include <numeric/kdtree/KDPoint.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <iostream>
 
@@ -59,7 +59,7 @@ utility::vector1< numeric::Real > KDNode::location() const {
 	return pt_->location();
 }
 
-utility::pointer::ReferenceCountOP KDNode::data() const {
+utility::VirtualBaseOP KDNode::data() const {
 	return pt_->data();
 }
 

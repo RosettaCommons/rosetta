@@ -91,7 +91,7 @@ MotifSearch::MotifSearch()
 }
 
 MotifSearch::MotifSearch( MotifSearch const & src ) :
-	utility::pointer::ReferenceCount( src )
+	utility::VirtualBase( src )
 {
 	(*this) = src;
 }
@@ -131,7 +131,7 @@ MotifSearch::operator = ( MotifSearch const & src )
 void
 MotifSearch::run(
 	Pose & pose,
-	utility::vector1< Size > & input_BPs
+	utility::vector1< core::Size > & input_BPs
 )
 {
 	initialize( pose, input_BPs );
@@ -141,7 +141,7 @@ MotifSearch::run(
 void
 MotifSearch::initialize(
 	Pose & pose,
-	utility::vector1< Size > & input_BPs
+	utility::vector1< core::Size > & input_BPs
 )
 {
 
@@ -168,14 +168,14 @@ MotifSearch::initialize(
 	// I am worried that it is restrictive? change parameter?
 	if ( build_position_defs.empty() && target_positions_.empty() ) {
 		ms_tr << "No input build or target positions, will be doing a motif search using every protein position in the interface as a build position." << std::endl;
-		for ( utility::vector1< Size >::const_iterator it( dna_positions_.begin() ), end( dna_positions_.end() );
+		for ( utility::vector1< core::Size >::const_iterator it( dna_positions_.begin() ), end( dna_positions_.end() );
 				it != end; ++it ) {
 			std::set< std::string > names;
 			names.insert( protocols::dna::dna_full_name3( (pose.residue( (*it) ).name3() ) ) );
 			target_positions_[*it] = names;
 		}
 		if ( ! input_BPs.empty() ) {
-			for ( Size i(1); i <= input_BPs.size(); ++i ) {
+			for ( core::Size i(1); i <= input_BPs.size(); ++i ) {
 				BuildPosition_from_Size( pose, input_BPs[i] );
 			}
 		} else {
@@ -184,7 +184,7 @@ MotifSearch::initialize(
 	} else if ( build_position_defs.empty() ) {
 		ms_tr << "Identifying build positions based on input target positions (or they're from DnaInterfacePacker)." << std::endl;
 		if ( ! input_BPs.empty() ) {
-			for ( Size i(1); i <= input_BPs.size(); ++i ) {
+			for ( core::Size i(1); i <= input_BPs.size(); ++i ) {
 				BuildPosition_from_Size( pose, input_BPs[i] );
 			}
 		} else {
@@ -194,7 +194,7 @@ MotifSearch::initialize(
 		// If statement below (in search fxn itself) would be if( contains name3 of current motif || .empty );
 	} else if ( target_positions_.empty() ) {
 		ms_tr << "No target positions given, will be using closest position to placed motif." << std::endl;
-		for ( utility::vector1< Size >::const_iterator it( dna_positions_.begin() ), end( dna_positions_.end() );
+		for ( utility::vector1< core::Size >::const_iterator it( dna_positions_.begin() ), end( dna_positions_.end() );
 				it != end; ++it ) {
 			std::set< std::string > names;
 			names.insert( protocols::dna::dna_full_name3( (pose.residue( (*it) ).name3() ) ) );
@@ -260,7 +260,7 @@ MotifSearch::incorporate_motifs(
 		// Need to clear the best_rotamers and best_motifs before I collect new ones
 		(*ir)->clear_data();
 
-		Size seqpos( (*ir)->seqpos() );
+		core::Size seqpos( (*ir)->seqpos() );
 		std::stringstream firstline;
 		firstline << "POSITION " << seqpos;
 		if ( output_ ) {
@@ -283,17 +283,17 @@ MotifSearch::incorporate_motifs(
 
 		std::map< core::Size, core::pack::rotamer_set::RotamerSetOP > rotamer_sets;
 		if ( bp_best_rotamers.empty() ) {
-			for ( Size i(1); i <= core::chemical::num_canonical_aas; ++i ) {
+			for ( core::Size i(1); i <= core::chemical::num_canonical_aas; ++i ) {
 				utility::vector1< bool > aa_info( core::chemical::num_canonical_aas, false );
 				aa_info[i] = true;
 				core::pack::rotamer_set::RotamerSetOP rotset = build_rotamers_lite( posecopy, seqpos, aa_info, rot_level_, bump_check_ );
 				rotamer_sets[i] = rotset;
 			}
 		} else {
-			Size bp_rots( bp_best_rotamers.size() );
-			for ( Size i(1); i <= core::chemical::num_canonical_aas; ++i ) {
+			core::Size bp_rots( bp_best_rotamers.size() );
+			for ( core::Size i(1); i <= core::chemical::num_canonical_aas; ++i ) {
 				core::pack::rotamer_set::RotamerSetOP rotset = core::pack::rotamer_set::RotamerSetFactory::create_rotamer_set( posecopy );
-				for ( Size r(1); r <= bp_rots; ++r ) {
+				for ( core::Size r(1); r <= bp_rots; ++r ) {
 					if ( bp_best_rotamers[r]->name3() == core::chemical::name_from_aa(core::chemical::AA(i)) ) {
 						rotset->add_rotamer( *((bp_best_rotamers)[r]) );
 					}
@@ -402,10 +402,10 @@ MotifSearch::incorporate_motifs(
 			Real final(100);
 			std::pair< core::conformation::ResidueOP, core::conformation::ResidueOP > bestpair;
 			bool b_bestpair( false );
-			Size rs1( rotset->num_rotamers() );
+			core::Size rs1( rotset->num_rotamers() );
 
 			// For every rotamer in the rotamer set
-			for ( Size ir2(1); ir2 <= rs1; ++ir2 ) {
+			for ( core::Size ir2(1); ir2 <= rs1; ++ir2 ) {
 				Real ztest_ir2(0.0);
 				Real rmsdtest_ir2(100.0);
 
@@ -421,7 +421,7 @@ MotifSearch::incorporate_motifs(
 				// Important in case of the very strange situation where more than one
 				// target_position is close enough to pass the tests
 				bool tftest(false);
-				Size bestpos(0);
+				core::Size bestpos(0);
 				Real test(1000);
 
 				Sizes target_positions( (*ir)->target_positions() );
@@ -583,7 +583,7 @@ MotifSearch::incorporate_motifs(
 			core::pose::Pose pose_dump( pose );
 			for ( std::map< std::string, std::map< Real, MotifHitOP > >::const_iterator bh( best_mhits_all.begin() ),
 					end( best_mhits_all.end() ); bh != end; ++bh ) {
-				Size hits = 0;
+				core::Size hits = 0;
 				for ( auto const & bh2 : (bh->second) ) {
 					MotifHitOP motifhitop( bh2.second );
 					if ( ! minimize_ ) {
@@ -709,7 +709,7 @@ MotifSearch::incorporate_motifs(
 
 core::pack::rotamer_set::Rotamers
 MotifSearch::bp_rotamers(
-	Size const seqpos
+	core::Size const seqpos
 )
 {
 	core::pack::rotamer_set::Rotamers best_rotamers;
@@ -721,8 +721,8 @@ MotifSearch::bp_rotamers(
 			if ( allowedtypes.empty() ) {
 				best_rotamers = (*ir)->best_rotamers();
 			}
-			Size rs( ((*ir)->best_rotamers()).size() );
-			for ( Size r(1) ; r <= rs; ++r ) {
+			core::Size rs( ((*ir)->best_rotamers()).size() );
+			for ( core::Size r(1) ; r <= rs; ++r ) {
 				for ( auto const & allowedtype : allowedtypes ) {
 					if ( allowedtype == ((*ir)->best_rotamers()[r])->name3() ) {
 						best_rotamers.push_back( (*ir)->best_rotamers()[r] );
@@ -739,7 +739,7 @@ MotifSearch::bp_rotamers(
 
 protocols::motifs::MotifHitCOPs
 MotifSearch::bp_motifhits(
-	Size const seqpos
+	core::Size const seqpos
 )
 {
 	protocols::motifs::MotifHitCOPs motifhitcops;
@@ -747,8 +747,8 @@ MotifSearch::bp_motifhits(
 			ir != end_ir; ++ir ) {
 		if ( (*ir)->seqpos() != seqpos ) continue;
 		if ( ! ((*ir)->best_motifhits()).empty() ) {
-			Size rs( ((*ir)->best_motifhits()).size() );
-			for ( Size r(1) ; r <= rs; ++r ) {
+			core::Size rs( ((*ir)->best_motifhits()).size() );
+			for ( core::Size r(1) ; r <= rs; ++r ) {
 				motifhitcops.push_back( (*ir)->best_motifhits()[r] );
 			}
 		} else {
@@ -788,7 +788,7 @@ MotifSearch::position_vector_setup(
 	Pose const & pose
 )
 {
-	for ( Size i(1), end( pose.size() ); i <= end; ++i ) {
+	for ( core::Size i(1), end( pose.size() ); i <= end; ++i ) {
 		if ( pose.residue_type(i).is_protein() ) {
 			protein_positions_.push_back(i);
 		}
@@ -801,7 +801,7 @@ MotifSearch::position_vector_setup(
 void
 MotifSearch::identify_motif_build_positions(
 	Pose const & pose,
-	utility::vector1< Size > & build_positions
+	utility::vector1< core::Size > & build_positions
 )
 {
 	if ( protein_dna_motif() ) {
@@ -822,7 +822,7 @@ MotifSearch::identify_motif_BuildPositions(
 		protein_DNA_motif_build_positions_JA( pose, positions, target_positions );
 		for ( Sizes::const_iterator pos( positions.begin() ), end( positions.end() );
 				pos != end; ++pos ) {
-			Size seqpos(*pos);
+			core::Size seqpos(*pos);
 			Sizes short_target_positions( shorten_target_list( pose, seqpos, target_positions ) );
 			std::set< std::string > allowed_types; // this vector will remain empty in this sitatuation since there is no input Def to limit the types of amino acids allowed
 			if ( restrict_to_wt_ ) {
@@ -839,7 +839,7 @@ MotifSearch::identify_motif_BuildPositions(
 void
 MotifSearch::BuildPosition_from_Size(
 	Pose const & pose,
-	Size const input_BP
+	core::Size const input_BP
 )
 {
 	Sizes target_positions( map2keyvector( target_positions_ ) );
@@ -860,8 +860,8 @@ MotifSearch::defs2BuildPositions(
 {
 	if ( protein_dna_motif() ) {
 		Sizes full_tl( map2keyvector( target_positions_ ) );
-		std::map< Size, std::set< std::string > > mappositions( bpdefs2map( pose, defs ) );
-		for ( std::map<Size, std::set< std::string > >::const_iterator it( mappositions.begin() ),
+		std::map< core::Size, std::set< std::string > > mappositions( bpdefs2map( pose, defs ) );
+		for ( std::map<core::Size, std::set< std::string > >::const_iterator it( mappositions.begin() ),
 				end( mappositions.end() ); it != end; ++it ) {
 			BuildPositionOP build_position( new BuildPosition( it->first, full_tl, it->second ) );
 			build_positionOPs_.push_back( build_position );
@@ -879,10 +879,10 @@ MotifSearch::defs2BuildPositions_findts(
 {
 	if ( protein_dna_motif() ) {
 		Sizes full_tl( map2keyvector( target_positions_ ) );
-		std::map< Size, std::set< std::string > > mappositions( bpdefs2map( pose, defs ) );
-		for ( std::map<Size, std::set< std::string > >::const_iterator it( mappositions.begin() ),
+		std::map< core::Size, std::set< std::string > > mappositions( bpdefs2map( pose, defs ) );
+		for ( std::map<core::Size, std::set< std::string > >::const_iterator it( mappositions.begin() ),
 				end( mappositions.end() ); it != end; ++it ) {
-			Size test(it->first);
+			core::Size test(it->first);
 			Sizes short_tl( shorten_target_list( pose, test, full_tl ) );
 			BuildPositionOP build_position( new BuildPosition( it->first, short_tl, it->second ) );
 			build_positionOPs_.push_back( build_position );
@@ -894,11 +894,11 @@ MotifSearch::defs2BuildPositions_findts(
 
 utility::vector1< core::Size >
 MotifSearch::map2keyvector(
-	std::map< Size, std::set< std::string > > mappositions
+	std::map< core::Size, std::set< std::string > > mappositions
 )
 {
 	Sizes positions(0);
-	for ( std::map<Size, std::set< std::string > >::const_iterator it( mappositions.begin() ),
+	for ( std::map<core::Size, std::set< std::string > >::const_iterator it( mappositions.begin() ),
 			end( mappositions.end() ); it != end; ++it ) {
 		positions.push_back( it->first );
 	}
@@ -908,7 +908,7 @@ MotifSearch::map2keyvector(
 utility::vector1< core::Size >
 MotifSearch::shorten_target_list(
 	Pose const & pose,
-	Size const bp,
+	core::Size const bp,
 	Sizes & full_tl
 )
 {
@@ -972,7 +972,7 @@ MotifSearch::override_option_input(
 	Real const & r2,
 	Real const & z2,
 	Real const & d1,
-	Size const & rlevel,
+	core::Size const & rlevel,
 	bool const bpdata,
 	bool const bump_check
 )

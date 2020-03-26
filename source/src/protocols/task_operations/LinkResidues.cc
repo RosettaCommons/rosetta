@@ -75,36 +75,36 @@ void LinkResidues::remap_allowed_residues_to_template(core::pose::Pose const & p
 	using namespace core;
 	using namespace core::id;
 	SequenceMappingOP seqmap( utility::pointer::make_shared< core::id::SequenceMapping >() );
-	for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+	for ( core::Size ii=1; ii<=pose.total_residue(); ++ii ) {
 		links->set_template(ii,ii);
 	}
 	if ( template_group_!= "" ) {
-		vector1< Size > template_set = core::pose::get_resnum_list_ordered( template_group_, pose );
+		vector1< core::Size > template_set = core::pose::get_resnum_list_ordered( template_group_, pose );
 		//get positions
-		for ( Size ii=1; ii<=allGroups_.size(); ++ii ) {
+		for ( core::Size ii=1; ii<=allGroups_.size(); ++ii ) {
 			vector1< string > const grp_s( utility::string_split( allGroups_[ii] , ',' ) );
-			vector1< vector1< Size > > grp_i;
+			vector1< vector1< core::Size > > grp_i;
 			//get residues in number format into grp_res
-			for ( Size kk=1; kk<=grp_s.size(); ++kk ) {
-				vector1< Size > set_i = core::pose::get_resnum_list_ordered( grp_s[kk], pose );
+			for ( core::Size kk=1; kk<=grp_s.size(); ++kk ) {
+				vector1< core::Size > set_i = core::pose::get_resnum_list_ordered( grp_s[kk], pose );
 				grp_i.push_back(set_i);
 			}
 			//check that all sets in the group have the same number of residues
 			{
-				Size numResInSet = grp_i[1].size();
-				for ( Size kk=2; kk<=grp_i.size(); ++kk ) {
+				core::Size numResInSet = grp_i[1].size();
+				for ( core::Size kk=2; kk<=grp_i.size(); ++kk ) {
 					runtime_assert(grp_i[kk].size() == numResInSet);
 				}
 			}
 			//go through the sets and set them to be equal
-			for ( Size kk=1; kk<=grp_i.size(); ++kk ) {
-				Size numResInSet = grp_i[kk].size();
+			for ( core::Size kk=1; kk<=grp_i.size(); ++kk ) {
+				core::Size numResInSet = grp_i[kk].size();
 				if ( grp_i[kk].size() != template_set.size() ) {
 					utility_exit_with_message("template and groups must all be the same size. Can not continue");
 				}
-				for ( Size mm=1; mm<=numResInSet; ++mm ) {
-					Size source = template_set[mm];
-					Size target = grp_i[kk][mm];
+				for ( core::Size mm=1; mm<=numResInSet; ++mm ) {
+					core::Size source = template_set[mm];
+					core::Size target = grp_i[kk][mm];
 					links->set_template(target,source);
 				}
 			}
@@ -119,46 +119,46 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 	using namespace utility;
 	using namespace core;
 	core::pack::rotamer_set::RotamerLinksOP links( new core::pack::rotamer_set::RotamerLinks );
-	Size nres = pose.size();
+	core::Size nres = pose.size();
 	links->resize(nres);
 	remap_allowed_residues_to_template(pose,links);
-	utility::vector1< set < Size > > equiv_pos;
+	utility::vector1< set < core::Size > > equiv_pos;
 	//all positions are equivalent to themselves
-	for ( Size ii = 1; ii<= nres ; ++ii ) {
-		set<Size> tmp_set;
+	for ( core::Size ii = 1; ii<= nres ; ++ii ) {
+		set<core::Size> tmp_set;
 		tmp_set.insert(ii);
 		equiv_pos.push_back(tmp_set);
 	}
 	//add the groups in. Each group contains multiple sets of residues.
-	for ( Size ii=1; ii<=allGroups_.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=allGroups_.size(); ++ii ) {
 		vector1< string > const grp_s( utility::string_split( allGroups_[ii] , ',' ) );
-		vector1< vector1< Size > > grp_i;
+		vector1< vector1< core::Size > > grp_i;
 		//get residues in number format into grp_res
-		for ( Size kk=1; kk<=grp_s.size(); ++kk ) {
-			vector1< Size > set_i = core::pose::get_resnum_list_ordered( grp_s[kk], pose );
+		for ( core::Size kk=1; kk<=grp_s.size(); ++kk ) {
+			vector1< core::Size > set_i = core::pose::get_resnum_list_ordered( grp_s[kk], pose );
 			grp_i.push_back(set_i);
 		}
 		//check that all sets in the group have the same number of residues
 		{
-			Size numResInSet = grp_i[1].size();
-			for ( Size kk=2; kk<=grp_i.size(); ++kk ) {
+			core::Size numResInSet = grp_i[1].size();
+			for ( core::Size kk=2; kk<=grp_i.size(); ++kk ) {
 				runtime_assert(grp_i[kk].size() == numResInSet);
 			}
 		}
 		//go through the sets and set them to be equal
-		for ( Size kk=1; kk<=grp_i.size(); ++kk ) {
-			for ( Size ll=1; ll<=grp_i.size(); ++ll ) {
-				Size numResInSet = grp_i[kk].size();
-				for ( Size mm=1; mm<=numResInSet; ++mm ) {
-					Size source = grp_i[kk][mm];
-					Size target = grp_i[ll][mm];
+		for ( core::Size kk=1; kk<=grp_i.size(); ++kk ) {
+			for ( core::Size ll=1; ll<=grp_i.size(); ++ll ) {
+				core::Size numResInSet = grp_i[kk].size();
+				for ( core::Size mm=1; mm<=numResInSet; ++mm ) {
+					core::Size source = grp_i[kk][mm];
+					core::Size target = grp_i[ll][mm];
 					equiv_pos[source].insert(target);
 				}
 			}
 		}
 	}
 	//print out equivalent residues
-	for ( Size ii=1; ii<=equiv_pos.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=equiv_pos.size(); ++ii ) {
 		TR.Debug << ii <<" ";
 		for ( unsigned long equiv_pos_itr : equiv_pos[ii] ) {
 			TR.Debug << equiv_pos_itr <<",";
@@ -166,9 +166,9 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 		TR.Debug << std::endl;
 	}
 	//set up links
-	for ( Size ii=1; ii<=equiv_pos.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=equiv_pos.size(); ++ii ) {
 		if ( equiv_pos[ii].size()!= 0 ) {
-			utility::vector1< Size> equiv_pos_vector;
+			utility::vector1< core::Size> equiv_pos_vector;
 			equiv_pos_vector.assign(equiv_pos[ii].begin(),equiv_pos[ii].end());
 			links->set_equiv(ii,equiv_pos_vector);
 		}

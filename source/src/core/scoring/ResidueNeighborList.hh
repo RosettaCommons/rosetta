@@ -27,7 +27,7 @@
 #include <basic/datacache/CacheableData.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #include <map>

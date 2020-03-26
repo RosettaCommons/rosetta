@@ -43,7 +43,7 @@ MgWaterHydrogenPacker::MgWaterHydrogenPacker():
 {}
 
 //Constructor
-MgWaterHydrogenPacker::MgWaterHydrogenPacker( utility::vector1< Size > const & mg_res_list ):
+MgWaterHydrogenPacker::MgWaterHydrogenPacker( utility::vector1< core::Size > const & mg_res_list ):
 	mg_res_list_( mg_res_list ),
 	excise_mini_pose_( true ),
 	use_fast_heuristic_( true )
@@ -64,10 +64,10 @@ MgWaterHydrogenPacker::apply( pose::Pose & pose )
 	using namespace core::chemical::rna;
 
 	// go over all Mg(2+)-bound waters:
-	vector1< Size > mg_res_list( mg_res_list_ );
+	vector1< core::Size > mg_res_list( mg_res_list_ );
 	if ( mg_res_list.size() == 0 ) mg_res_list = get_mg_res( pose );
 	mg_water_pairs_ = get_mg_water_pairs( pose, mg_res_list );
-	for ( Size i = 1; i <= mg_water_pairs_.size(); i++ ) {
+	for ( core::Size i = 1; i <= mg_water_pairs_.size(); i++ ) {
 
 		clock_t start_time = clock();
 		apply( pose, mg_water_pairs_[ i ] );
@@ -82,7 +82,7 @@ MgWaterHydrogenPacker::apply( pose::Pose & pose )
 ///////////////////////////////////////////
 void
 MgWaterHydrogenPacker::apply( pose::Pose & pose,
-	std::pair< Size, Size > const & mg_water ) {
+	std::pair< core::Size, core::Size > const & mg_water ) {
 	using namespace core::id;
 	using namespace core::pose;
 
@@ -100,13 +100,13 @@ MgWaterHydrogenPacker::apply( pose::Pose & pose,
 
 		Pose pose_full = pose;
 
-		Size const mg_res_in_full    = mg_water.first;
-		Size const water_res_in_full = mg_water.second;
-		vector1< Size > slice_res = pdbslice( pose, water_res_in_full );
+		core::Size const mg_res_in_full    = mg_water.first;
+		core::Size const water_res_in_full = mg_water.second;
+		vector1< core::Size > slice_res = pdbslice( pose, water_res_in_full );
 		runtime_assert( slice_res.has_value( mg_res_in_full ) );
 
-		Size const mg_res_in_mini    = slice_res.index( mg_res_in_full );
-		Size const water_res_in_mini = slice_res.index( water_res_in_full );
+		core::Size const mg_res_in_mini    = slice_res.index( mg_res_in_full );
+		core::Size const water_res_in_mini = slice_res.index( water_res_in_full );
 		pack_mg_water_hydrogens_in_pose( pose, std::make_pair( mg_res_in_mini, water_res_in_mini ) );
 
 		pose_full.set_xyz( NamedAtomID( " H1 ", water_res_in_full ),
@@ -123,7 +123,7 @@ MgWaterHydrogenPacker::apply( pose::Pose & pose,
 ///////////////////////////////////////////////////////////
 void
 MgWaterHydrogenPacker::pack_mg_water_hydrogens_in_pose( pose::Pose & pose,
-	std::pair< Size, Size > const & mg_water_pair ) {
+	std::pair< core::Size, core::Size > const & mg_water_pair ) {
 	///////////////////////////////////////////
 	// Some of the following was copied from dimaio/waterstuff branch:
 	//
@@ -136,8 +136,8 @@ MgWaterHydrogenPacker::pack_mg_water_hydrogens_in_pose( pose::Pose & pose,
 	using namespace core::scoring;
 
 
-	Size const mg_res = mg_water_pair.first;
-	Size const water_res = mg_water_pair.second;
+	core::Size const mg_res = mg_water_pair.first;
+	core::Size const water_res = mg_water_pair.second;
 	TR.Debug << "Doing water ligand with PDB numbering " << pose.pdb_info()->number( water_res ) << " near Mg " << pose.pdb_info()->number( mg_res ) << std::endl;
 
 	core::Vector const MG( pose.residue( mg_res ).xyz("MG") );
@@ -203,9 +203,9 @@ MgWaterHydrogenPacker::get_heuristic_water_hydrogen_score( utility::vector1< Vec
 	Real score( 0.0 );
 
 	// try to point towards acceptors -- but allow acceptor to "H-bond" to only one OH
-	for ( Size j = 1; j <= acc_vecs.size(); j++ ) {
+	for ( core::Size j = 1; j <= acc_vecs.size(); j++ ) {
 		Real acc_score( 0.0 );
-		for ( Size i = 1; i <= OH_vecs.size(); i++ ) {
+		for ( core::Size i = 1; i <= OH_vecs.size(); i++ ) {
 			Real possible_acc_score = -1.0 * dot( OH_vecs[ i ], acc_vecs[ j ] );
 			if ( possible_acc_score < acc_score ) acc_score = possible_acc_score;
 		}
@@ -214,15 +214,15 @@ MgWaterHydrogenPacker::get_heuristic_water_hydrogen_score( utility::vector1< Vec
 
 	// weak preference to point away from non-acceptors
 	Real const rep_weight( 0.25 );
-	for ( Size j = 1; j <= rep_vecs.size(); j++ ) {
-		for ( Size i = 1; i <= OH_vecs.size(); i++ ) {
+	for ( core::Size j = 1; j <= rep_vecs.size(); j++ ) {
+		for ( core::Size i = 1; i <= OH_vecs.size(); i++ ) {
 			score += (  rep_weight ) * dot( OH_vecs[ i ], rep_vecs[ j ] );
 		}
 	}
 
 	// strong preference to point away from Mg2+;  any angle better than 120.0 is fine.
 	if ( mg_vec.length() > 0.0 ) {
-		for ( Size i = 1; i <= OH_vecs.size(); i++ ) {
+		for ( core::Size i = 1; i <= OH_vecs.size(); i++ ) {
 			score += (  1.0 ) * std::max( dot( OH_vecs[ i ], mg_vec ), -0.5 );
 		}
 	}
@@ -234,8 +234,8 @@ MgWaterHydrogenPacker::get_heuristic_water_hydrogen_score( utility::vector1< Vec
 // used for fast (heuristic) hydrogen packing.
 void
 MgWaterHydrogenPacker::find_water_neighbor_vecs( pose::Pose const & pose,
-	Size const water_res,
-	Size const mg_res,
+	core::Size const water_res,
+	core::Size const mg_res,
 	utility::vector1< Vector > & acc_vecs,
 	utility::vector1< Vector > & rep_vecs,
 	Vector & mg_vec ) const {
@@ -246,10 +246,10 @@ MgWaterHydrogenPacker::find_water_neighbor_vecs( pose::Pose const & pose,
 	Vector xyz_mg = pose.residue( mg_res ).xyz( "MG" );
 	acc_vecs.clear();
 	rep_vecs.clear();
-	for ( Size j = 1; j <= pose.size(); j++ ) {
+	for ( core::Size j = 1; j <= pose.size(); j++ ) {
 		Residue const & rsd_j = pose.residue( j );
 		if ( j == water_res ) continue;
-		for ( Size jj = 1; jj <= rsd_j.natoms(); jj++ ) {
+		for ( core::Size jj = 1; jj <= rsd_j.natoms(); jj++ ) {
 			Vector const & xyz_nbr = rsd_j.xyz( jj );
 			if ( rsd_j.is_virtual( jj ) ) continue;
 			// don't include other waters around mg2+
@@ -280,7 +280,7 @@ MgWaterHydrogenPacker::find_water_neighbor_vecs( pose::Pose const & pose,
 ///////////////////////////////////////////////////////////////////////////////
 bool
 MgWaterHydrogenPacker::rotate_water_away_from_magnesium( pose::Pose & pose,
-	Size const seqpos,
+	core::Size const seqpos,
 	Vector const & O,
 	Vector const & OH1c,
 	Vector const & OH2c,
@@ -309,7 +309,7 @@ MgWaterHydrogenPacker::rotate_water_away_from_magnesium( pose::Pose & pose,
 /////////////////////////////////////////////////////////////////////////////////////////////
 void
 MgWaterHydrogenPacker::remove_waters_except_mg_bound( pose::Pose & pose ) const {
-	vector1< std::pair< Size, Size > > mg_water_pairs = get_mg_water_pairs( pose );
+	vector1< std::pair< core::Size, core::Size > > mg_water_pairs = get_mg_water_pairs( pose );
 	protocols::magnesium::remove_waters_except_mg_bound( pose, mg_water_pairs /*except these*/ );
 }
 

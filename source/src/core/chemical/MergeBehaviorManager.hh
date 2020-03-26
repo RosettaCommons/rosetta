@@ -22,7 +22,7 @@
 
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <map>
 
 namespace core {

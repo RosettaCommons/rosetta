@@ -25,7 +25,7 @@
 #include <core/kinematics/FoldTree.hh>
 
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -49,7 +49,7 @@ public:
 	EXCN_FTSketchGraph(char const *file, int line, std::string const& message );
 };
 
-class FoldTreeSketch : public utility::pointer::ReferenceCount {
+class FoldTreeSketch : public utility::VirtualBase {
 
 	class Node;
 	typedef utility::pointer::shared_ptr< Node > NodeOP;
@@ -128,7 +128,7 @@ private:
 
 private:
 
-	class Node : public ReferenceCount {
+	class Node : public VirtualBase {
 	public:
 		typedef std::set< NodeCAP, utility::pointer::owner_less< NodeCAP > > EdgeList;
 

@@ -34,7 +34,7 @@
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
@@ -142,7 +142,7 @@ private:
 	loops::Loops region_;
 
 	/// @brief if non-empty this claimer operates only on the sequences with these labels...
-	/// create std::set< Size > with residue numbers by get_sequence_region();
+	/// create std::set< core::Size > with residue numbers by get_sequence_region();
 	utility::vector1< std::string > active_sequence_labels_;
 
 	/*

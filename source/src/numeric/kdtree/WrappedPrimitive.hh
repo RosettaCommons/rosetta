@@ -14,7 +14,7 @@
 #ifndef INCLUDED_numeric_kdtree_WrappedPrimitive_hh
 #define INCLUDED_numeric_kdtree_WrappedPrimitive_hh
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 namespace numeric {
@@ -22,7 +22,7 @@ namespace kdtree {
 
 // Requirements: Class T must have a default constructor and an assignment operator.
 template< typename T >
-class WrappedPrimitive : public utility::pointer::ReferenceCount {
+class WrappedPrimitive : public utility::VirtualBase {
 public:
 	WrappedPrimitive() : val_() {}
 	WrappedPrimitive( T const & val ) : val_( val ) {}

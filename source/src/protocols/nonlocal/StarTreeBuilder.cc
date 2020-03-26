@@ -66,7 +66,7 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
 	debug_assert(chunks.num_loop());
 
 	// Number of residues before addition of virtual residue
-	Size num_residues = pose->size();
+	core::Size num_residues = pose->size();
 
 	// Add a virtual residue at the center of mass (updates the fold tree)
 	numeric::xyzVector<Real> center;
@@ -79,11 +79,11 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
 	virtual_res_ = pose->size();
 
 	// Define jumps, cuts
-	vector1< Size > cuts;
-	vector1<std::pair<Size, Size> > jumps;
+	vector1< core::Size > cuts;
+	vector1<std::pair<core::Size, core::Size> > jumps;
 	for ( auto const & chunk : chunks ) {
-		const Size cut_point  = chunk.stop();
-		const Size jump_point = choose_anchor_position(chunk);
+		const core::Size cut_point  = chunk.stop();
+		const core::Size jump_point = choose_anchor_position(chunk);
 
 		cuts.push_back(cut_point);
 		jumps.push_back(std::make_pair(virtual_res_, jump_point));
@@ -93,14 +93,14 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
 	// (before the virtual residue)
 	cuts.push_back(num_residues);
 
-	ObjexxFCL::FArray2D< Size > ft_jumps(2, jumps.size());
-	for ( Size i = 1; i <= jumps.size(); ++i ) {
+	ObjexxFCL::FArray2D< core::Size > ft_jumps(2, jumps.size());
+	for ( core::Size i = 1; i <= jumps.size(); ++i ) {
 		ft_jumps(1, i) = std::min(jumps[i].first, jumps[i].second);
 		ft_jumps(2, i) = std::max(jumps[i].first, jumps[i].second);
 	}
 
-	ObjexxFCL::FArray1D< Size > ft_cuts(cuts.size());
-	for ( Size i = 1; i <= cuts.size(); ++i ) {
+	ObjexxFCL::FArray1D< core::Size > ft_cuts(cuts.size());
+	for ( core::Size i = 1; i <= cuts.size(); ++i ) {
 		ft_cuts(i) = cuts[i];
 	}
 
@@ -138,13 +138,13 @@ void StarTreeBuilder::do_compute_jump_rmsd(core::pose::Pose* model, const std::s
 	}
 
 	// Compute RMSD of jump residues (jump point +/- 1 residue)
-	unordered_map<Size, Real> rmsds;
+	unordered_map<core::Size, Real> rmsds;
 	Pose native = *core::import_pose::pose_from_file(option[OptionKeys::in::file::native](), core::import_pose::PDB_file);
 	core::scoring::compute_jump_rmsd(native, *model, rmsds);
 
 	// Write results to <model> as comments
-	for ( unordered_map<Size, Real>::const_iterator i = rmsds.begin(); i != rmsds.end(); ++i ) {
-		Size residue = i->first;
+	for ( unordered_map<core::Size, Real>::const_iterator i = rmsds.begin(); i != rmsds.end(); ++i ) {
+		core::Size residue = i->first;
 		Real rmsd = i->second;
 		core::pose::add_comment(*model,
 			(boost::format("%1% rmsd_jump_residue_%2%") % prefix % residue).str(),
@@ -176,8 +176,8 @@ core::Size StarTreeBuilder::choose_anchor_position(const protocols::loops::Loop&
 	DistributionSampler<normal> sampler(distribution);
 
 	// Clamp insertion position to closed interval [start, stop]
-	auto position = static_cast<Size>(sampler.sample());
-	return numeric::clamp<Size>(position, chunk.start(), chunk.stop());
+	auto position = static_cast<core::Size>(sampler.sample());
+	return numeric::clamp<core::Size>(position, chunk.start(), chunk.stop());
 }
 
 }  // namespace nonlocal

@@ -232,7 +232,7 @@ StructureScoresFeatures::compute_energies(
 	// use virtual residues to be compatible with the two-body scoring
 	// framework, include virtual residues with the relevant residues so
 	// these scores get computed.
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).aa() == aa_vrt ) {
 			relevant_and_virtual_residues[i] = true;
 		} else if ( relevant_and_virtual_residues[i] == false ) {
@@ -265,17 +265,17 @@ StructureScoresFeatures::insert_structure_score_rows(
 	compute_energies(pose_in, relevant_residues, emap);
 
 	core::Real total_score_value= 0.0;
-	Size const batch_id(get_batch_id(struct_id, db_session));
+	core::Size const batch_id(get_batch_id(struct_id, db_session));
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
-	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id",batch_id) );
+	RowDataBaseOP batch_id_data( new RowData<core::Size>("batch_id",batch_id) );
 
-	for ( Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id ) {
+	for ( core::Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id ) {
 		auto type(static_cast<ScoreType>(score_type_id));
 		Real const score_value( (*scfxn_)[type] * emap[type] );
 		if ( !score_value ) continue;
 		total_score_value += score_value;
 
-		RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id",score_type_id) );
+		RowDataBaseOP score_type_id_data( new RowData<core::Size>("score_type_id",score_type_id) );
 		RowDataBaseOP score_value_data( new RowData<Real>("score_value",score_value) );
 
 		structure_scores_insert.add_row(
@@ -284,7 +284,7 @@ StructureScoresFeatures::insert_structure_score_rows(
 	}
 
 	// add the total_score type
-	RowDataBaseOP total_id_data( new RowData<Size>("score_type_id",total_score) );
+	RowDataBaseOP total_id_data( new RowData<core::Size>("score_type_id",total_score) );
 	RowDataBaseOP total_score_data( new RowData<Real>("score_value",total_score_value) );
 
 	structure_scores_insert.add_row(

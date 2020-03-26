@@ -104,9 +104,9 @@ DockSetupMover::apply( pose::Pose & pose ) {
 		docking_interface);
 	// runtime_assert( rb_mover_ );
 	// rb_mover_->clear_jumps(); //this doesn't work because of cloning --- have to communicate via data-map !
-	// for ( Size i=1; i<=pose.num_jump(); ++i ) {
+	// for ( core::Size i=1; i<=pose.num_jump(); ++i ) {
 	// should honor movemap or movable_jumps_ here...
-	for ( Size i=1; i<=movable_jumps_.size(); ++i ) {
+	for ( core::Size i=1; i<=movable_jumps_.size(); ++i ) {
 		rigid_body_info_->add_jump( movable_jumps_[i] );
 		if ( rb_mover_ ) {
 			rb_mover_->add_jump( movable_jumps_[i] );

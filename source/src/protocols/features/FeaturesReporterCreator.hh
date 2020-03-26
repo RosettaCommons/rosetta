@@ -21,7 +21,7 @@
 #include <protocols/features/FeaturesReporter.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // c++ headers
@@ -32,7 +32,7 @@ namespace features {
 
 /// @brief The Creator class is responsible for creating a particular
 /// mover class.
-class FeaturesReporterCreator : public utility::pointer::ReferenceCount
+class FeaturesReporterCreator : public utility::VirtualBase
 {
 public:
 	FeaturesReporterCreator() {}

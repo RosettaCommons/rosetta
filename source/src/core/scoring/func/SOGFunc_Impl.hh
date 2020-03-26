@@ -15,7 +15,7 @@
 #define INCLUDED_core_scoring_func_SOGFunc_Impl_hh
 
 #include <core/scoring/func/SOGFunc_Impl.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 
 // C++ Headers
@@ -34,7 +34,7 @@ namespace func {
 
 /// @brief Derived class of class Func representing a SOG distribution with a user-specified
 /// mean and standard deviation.
-class SOGFunc_Impl : public utility::pointer::ReferenceCount {
+class SOGFunc_Impl : public utility::VirtualBase {
 public:
 
 	/*!

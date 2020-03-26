@@ -124,7 +124,7 @@ DeleteMover::apply( core::pose::Pose & pose )
 
 //////////////////////////////////////////////////////////////////////
 void
-DeleteMover::apply( core::pose::Pose & pose, Size const res_to_delete_in_full_model_numbering )
+DeleteMover::apply( core::pose::Pose & pose, core::Size const res_to_delete_in_full_model_numbering )
 {
 	apply( pose, utility::tools::make_vector1( res_to_delete_in_full_model_numbering ) );
 }
@@ -132,17 +132,17 @@ DeleteMover::apply( core::pose::Pose & pose, Size const res_to_delete_in_full_mo
 
 //////////////////////////////////////////////////////////////////////
 void
-DeleteMover::apply( core::pose::Pose & pose, utility::vector1< Size > const & residues_to_delete_in_full_model_numbering )
+DeleteMover::apply( core::pose::Pose & pose, utility::vector1< core::Size > const & residues_to_delete_in_full_model_numbering )
 {
 	using namespace core::pose;
 
 	// in case the deletion is supposed to occur on a pose on which we are not focused.
-	Size const idx = const_full_model_info( pose ).get_idx_for_other_pose_with_residue( residues_to_delete_in_full_model_numbering[ 1 ] );
+	core::Size const idx = const_full_model_info( pose ).get_idx_for_other_pose_with_residue( residues_to_delete_in_full_model_numbering[ 1 ] );
 	if ( idx > 0 ) switch_focus_to_other_pose( pose, idx );
 
 	// have at it!
 	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
-	utility::vector1< Size > const residues_to_delete = full_model_info.full_to_sub( residues_to_delete_in_full_model_numbering );
+	utility::vector1< core::Size > const residues_to_delete = full_model_info.full_to_sub( residues_to_delete_in_full_model_numbering );
 	interface_res_ = full_model_info.sub_to_full( packer::figure_out_working_interface_res( pose, get_unique_connection_res( pose, residues_to_delete ), options_->pack_protein_side_chains() ) );
 
 	// do the slice.
@@ -189,10 +189,10 @@ DeleteMover::remove_singletons_and_update_pose_focus( core::pose::Pose & pose,
 	// remainder pose is a single nucleotide. no need to keep track of it anymore.
 
 	runtime_assert( full_model_info.res_list().size() > 0 );
-	Size const res_in_remainder_pose = full_model_info.res_list()[ 1 ];
+	core::Size const res_in_remainder_pose = full_model_info.res_list()[ 1 ];
 	bool pose_is_alone( false );
 	if ( keep_sliced_out_pose ) { // go to the sliced out pose.
-		Size const sliced_out_pose_idx = full_model_info.get_idx_for_other_pose( *sliced_out_pose_op );
+		core::Size const sliced_out_pose_idx = full_model_info.get_idx_for_other_pose( *sliced_out_pose_op );
 		switch_focus_to_other_pose( pose, sliced_out_pose_idx );
 	} else if ( full_model_info.other_pose_list().size() > 0 ) { // switch focus randomly.
 		switch_focus_among_poses_randomly( pose, nullptr, true /*force_switch*/ );
@@ -222,7 +222,7 @@ DeleteMover::remove_singletons_and_update_pose_focus( core::pose::Pose & pose,
 		protocols::scoring::set_vdw_cached_rep_screen_info_from_pose( pose, *old_pose_cop );
 	} else {
 		FullModelInfo & new_full_model_info = nonconst_full_model_info( pose );
-		Size const remainder_pose_idx = new_full_model_info.get_idx_for_other_pose_with_residue( res_in_remainder_pose );
+		core::Size const remainder_pose_idx = new_full_model_info.get_idx_for_other_pose_with_residue( res_in_remainder_pose );
 		new_full_model_info.remove_other_pose_at_idx( remainder_pose_idx );
 		keep_remainder_pose = true; // will tell outside functions to clean up pose variants, etc.
 	}

@@ -20,14 +20,14 @@
 #include <utility/vector1.hh>
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/conformation/Atom.hh>
 namespace protocols {
 namespace sewing {
 namespace data_storage {
 
 ///@brief a minimal container for SEWING residues
-class SmartSewingResidue : public utility::pointer::ReferenceCount {
+class SmartSewingResidue : public utility::VirtualBase {
 
 public:
 

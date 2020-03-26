@@ -136,10 +136,10 @@ GenMeanFieldMover::report_aa_matrix() const
 			if ( TR.Debug.visible() ) {
 				TR.Debug << "Reporting BB Boltz Probs" << std::endl;
 
-				for ( Size bb = 1; bb <= sps.size(); ++bb ) {
+				for ( core::Size bb = 1; bb <= sps.size(); ++bb ) {
 					TR.Debug << "Backbone " << bb << " ------------" << std::endl;
 					TR.Debug << "Per position: " << " -------------" << std::endl;
-					for ( Size pos = 1; pos <= bb_boltz_probs.size(); ++pos ) {
+					for ( core::Size pos = 1; pos <= bb_boltz_probs.size(); ++pos ) {
 						TR.Debug << bb_boltz_probs[pos][bb] << "\t";
 					}
 
@@ -161,7 +161,7 @@ GenMeanFieldMover::report_aa_matrix() const
 			//if dump_transfac is active output bb_boltz_probs, AAMatrixs, and a list of the pdbs that converged to files
 			if ( basic::options::option[ basic::options::OptionKeys::mean_field::dump_transfac ].active() ) {
 				//output AAMatrices
-				for ( Size bb = 1; bb <= sps.size(); ++bb ) {
+				for ( core::Size bb = 1; bb <= sps.size(); ++bb ) {
 					std::string filename = basic::options::option[ basic::options::OptionKeys::mean_field::dump_transfac ];
 					filename += "_";
 					filename += boost::lexical_cast<std::string>(bb);
@@ -177,10 +177,10 @@ GenMeanFieldMover::report_aa_matrix() const
 				list_filename += "_list.txt";
 				std::ofstream list_output( list_filename.c_str() );
 
-				for ( Size ii = 1 ; ii <= bb_boltz_probs.max_size_col() ; ++ii ) {
+				for ( core::Size ii = 1 ; ii <= bb_boltz_probs.max_size_col() ; ++ii ) {
 					output << poses_[ii]->pdb_info()->name() << "\t";
 					list_output << poses_[ii]->pdb_info()->name() << std::endl;
-					for ( Size jj = 1 ; jj <= bb_boltz_probs.size() ; ++jj ) {
+					for ( core::Size jj = 1 ; jj <= bb_boltz_probs.size() ; ++jj ) {
 						if ( ii <= bb_boltz_probs[jj].size() ) {
 							output << bb_boltz_probs[jj][ii] << "\t";
 						} else {
@@ -405,7 +405,7 @@ GenMeanFieldMover::calc_mean_field()
 	//  protocols::mean_field::jagged_array< Real > subt_energy_matrix( bound_rot_matrix.size(), utility::vector1< Real >() );
 	//
 	//
-	//  for ( Size pos = 1; pos <= unbound_rot_matrix.size(); ++pos )
+	//  for ( core::Size pos = 1; pos <= unbound_rot_matrix.size(); ++pos )
 	//  {
 	//
 	//   subt_rot_matrix.push_back( utility::vector1< RotProb >() );
@@ -413,7 +413,7 @@ GenMeanFieldMover::calc_mean_field()
 	//      //insert unbound rotamers into ResHashMap, update unbound_rot_matrix rot_ind to correct numbers
 	//   ResHashMap unbound_rothash;
 	//
-	//   for ( Size unbound_rot = 1; unbound_rot <= unbound_rot_matrix[ pos ].size(); unbound_rot++ )
+	//   for ( core::Size unbound_rot = 1; unbound_rot <= unbound_rot_matrix[ pos ].size(); unbound_rot++ )
 	//   {
 	//    SSize rot_ind = unbound_rothash.attempt_insert( unbound_rot_matrix[ pos ][ unbound_rot ].res() );
 	//
@@ -422,7 +422,7 @@ GenMeanFieldMover::calc_mean_field()
 	//   }
 	//
 	//   //loop through bound rotamers
-	//   for ( Size bound_rot = 1; bound_rot <= bound_rot_matrix[ pos ].size(); bound_rot++ )
+	//   for ( core::Size bound_rot = 1; bound_rot <= bound_rot_matrix[ pos ].size(); bound_rot++ )
 	//   {
 	//    //get rot_ind of the bound_rotamer (to compare to unbound_rotamers)
 	//    SSize rot_ind = unbound_rothash.get_rot_ind( unbound_rot_matrix[ pos ][ bound_rot ].res() );
@@ -438,10 +438,10 @@ GenMeanFieldMover::calc_mean_field()
 	//
 	//     //loop through some of unbound rotamers to look for equivalent unbound rotamer (== rot_ind)
 	//     //begin at rot_ind because index will always be >= rot_ind (I think...)
-	//     for ( Size unbound_rot = rot_ind; unbound_rot <= unbound_rot_matrix[ pos ].size(); unbound_rot++ )
+	//     for ( core::Size unbound_rot = rot_ind; unbound_rot <= unbound_rot_matrix[ pos ].size(); unbound_rot++ )
 	//     {
 	//      //breaks once it finds the correct rotamer
-	//      if ( unbound_rot_matrix[ pos ][ unbound_rot ].rot_ind() == Size( rot_ind ) )
+	//      if ( unbound_rot_matrix[ pos ][ unbound_rot ].rot_ind() == core::Size( rot_ind ) )
 	//      {
 	//       subt_energy_matrix[ pos ][ bound_rot ] -= unbound_energy_matrix[ pos ][ unbound_rot ];
 	//       break;
@@ -456,9 +456,9 @@ GenMeanFieldMover::calc_mean_field()
 	//  //doesn't use jagged_array get_totals_columns because this is faster
 	//  utility::vector1 < Real > totals( subt_energy_matrix.size(), core::Real( 0.0 ) );
 	//
-	//  for ( Size pos = 1 ; pos <= subt_energy_matrix.size() ; ++pos )
+	//  for ( core::Size pos = 1 ; pos <= subt_energy_matrix.size() ; ++pos )
 	//  {
-	//   for ( Size rot = 1 ; rot <= subt_energy_matrix[ pos ].size() ; ++rot )
+	//   for ( core::Size rot = 1 ; rot <= subt_energy_matrix[ pos ].size() ; ++rot )
 	//   {
 	//    Real energy = subt_energy_matrix[ pos ][ rot ] < temperature() ? subt_energy_matrix[ pos ][ rot ] : threshold();
 	//
@@ -496,7 +496,7 @@ GenMeanFieldMover::parse_my_tag( tag::TagCOP tag,
 	lambda_memory( tag->getOption< Real >( "lambda_memory", 0.5 ) );
 	tolerance( tag->getOption< Real >( "tolerance", 0.0001 ) );
 	temperature( tag->getOption< Real >( "temperature", 0.6 ) );
-	init_option( tag->getOption< Size >( "init_option", 1 ) );
+	init_option( tag->getOption< core::Size >( "init_option", 1 ) );
 	threshold( tag->getOption< Real >( "threshold", 10.0 ) );
 	unbound( tag->getOption< bool >( "unbound", false ) );
 

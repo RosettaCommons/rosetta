@@ -103,7 +103,7 @@ CoarseRNA_Fragments::initialize_frag_source_pose(){
 
 		// Figure out correspondence: P,S,CEN,X,Y --> 1,2,3,4,5. Hopefully!
 		ResidueTypeCOP const & rsd_type = rsd_set->get_representative_type_aa( na_rad );
-		for ( Size i = 1; i <= rsd_type->natoms(); i++ ) {
+		for ( core::Size i = 1; i <= rsd_type->natoms(); i++ ) {
 			coarse_rna_name_to_num_[ rsd_type->atom_name( i ) ] = i;
 		}
 
@@ -145,21 +145,21 @@ CoarseRNA_Fragments::initialize_frag_source_pose(){
 void
 CoarseRNA_Fragments::insert_fragment(
 	core::pose::Pose & pose,
-	Size const & insert_res,
-	Size const & source_res,
-	Size const & frag_size,
+	core::Size const & insert_res,
+	core::Size const & source_res,
+	core::Size const & frag_size,
 	core::fragment::rna::RNA_FragmentHomologyExclusionCOP const & /*homology_exclusion*/,
 	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const
 {
 
 	using namespace core::id;
 
-	std::map< Size, Size > res_map;
+	std::map< core::Size, core::Size > res_map;
 
-	for ( Size offset = 0; offset < frag_size; offset ++ ) {
+	for ( core::Size offset = 0; offset < frag_size; offset ++ ) {
 
-		Size const insert_offset = insert_res + offset;
-		Size const source_offset = source_res + offset;
+		core::Size const insert_offset = insert_res + offset;
+		core::Size const source_offset = source_res + offset;
 
 		if ( (insert_offset) > pose.size() ) continue;
 		if ( (source_offset) > frag_source_pose_->size() ) continue;
@@ -186,7 +186,7 @@ CoarseRNA_Fragments::find_source_positions( SequenceSecStructPair const & key ) 
 	std::string const RNA_string = key.first;
 	std::string const RNA_secstruct_string = key.second;
 
-	Size const size = RNA_string.length();
+	core::Size const size = RNA_string.length();
 	static Distance const DIST_CUTOFF( 10.0 ); /*distance of S to next P*/
 
 	runtime_assert( RNA_string.length() == RNA_secstruct_string.length() );
@@ -198,11 +198,11 @@ CoarseRNA_Fragments::find_source_positions( SequenceSecStructPair const & key ) 
 	std::string const & source_secstruct( frag_source_secstruct_ );
 	std::string const & source_sequence( frag_source_pose_->sequence() );
 
-	for ( Size i = 1; i <= source_sequence.size() - size + 1; i++ ) {
+	for ( core::Size i = 1; i <= source_sequence.size() - size + 1; i++ ) {
 
 		bool match( true );
 
-		for ( Size offset = 0; offset < size; offset++ ) {
+		for ( core::Size offset = 0; offset < size; offset++ ) {
 			vall_current_sequence [offset] = source_sequence[ i - 1 + offset ];
 			vall_current_secstruct[offset] = source_secstruct[ i - 1 + offset ];
 
@@ -238,7 +238,7 @@ Size
 CoarseRNA_Fragments::pick_random_fragment(
 	std::string const & RNA_string,
 	std::string const & RNA_secstruct_string,
-	Size const type ) const
+	core::Size const type ) const
 {
 
 	std::string const RNA_string_local = convert_based_on_match_type( RNA_string, type );
@@ -251,7 +251,7 @@ CoarseRNA_Fragments::pick_random_fragment(
 
 	SourcePositionsOP source_positions = source_positions_map_[ key ];
 
-	Size const num_frags = source_positions->size();
+	core::Size const num_frags = source_positions->size();
 
 	if ( num_frags == 0 ) { //trouble.
 		TR << "Fragment Library: zero fragments found for " << RNA_string_local << std::endl;
@@ -259,7 +259,7 @@ CoarseRNA_Fragments::pick_random_fragment(
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	}
 
-	Size const which_frag = static_cast <Size> ( numeric::random::rg().uniform() * num_frags) + 1;
+	core::Size const which_frag = static_cast <core::Size> ( numeric::random::rg().uniform() * num_frags) + 1;
 
 	return (*source_positions)[ which_frag ];
 
@@ -270,9 +270,9 @@ CoarseRNA_Fragments::pick_random_fragment(
 Size
 CoarseRNA_Fragments::pick_random_fragment(
 	core::pose::Pose & pose,
-	Size const position,
-	Size const size,
-	Size const type ) const
+	core::Size const position,
+	core::Size const size,
+	core::Size const type ) const
 {
 
 	std::string const & RNA_sequence( pose.sequence() );
@@ -297,10 +297,10 @@ CoarseRNA_Fragments::apply_random_fragment(
 	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
 	core::Size const symm_hack_arity ) const
 {
-	Size const source_res = pick_random_fragment( pose, position, size, type );
+	core::Size const source_res = pick_random_fragment( pose, position, size, type );
 	//  std::cout << "applying to fragment position " << position << " from source position " << source_res << std::endl;
 	insert_fragment( pose, position, source_res, size, homology_exclusion, atom_level_domain_map );
-	for ( Size ii = 1; ii < symm_hack_arity; ++ii ) {
+	for ( core::Size ii = 1; ii < symm_hack_arity; ++ii ) {
 		// i-1 mod n  + 1 maps to 1..n (rather than i%n)
 		insert_fragment( pose, ( position + ii * pose.size() / symm_hack_arity - 1 ) % pose.size() + 1, source_res, size, homology_exclusion, atom_level_domain_map );
 	}

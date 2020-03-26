@@ -79,7 +79,7 @@ SameStrand::SameStrand( core::fragment::SecondaryStructureOP ss ) :
 
 // copy c'stor --
 SameStrand::SameStrand( SameStrand const& other )
-: ReferenceCount( other )
+: VirtualBase( other )
 {
 	total_residue_ = other.total_residue_;
 	secondary_structure_ = other.secondary_structure_;
@@ -91,7 +91,7 @@ SameStrand::SameStrand( SameStrand const& other )
 SameStrand::~SameStrand() = default;
 
 
-bool SameStrand::eval( Size i, Size j ) const {
+bool SameStrand::eval( core::Size i, core::Size j ) const {
 	runtime_assert ( i >= 1 && i <= total_residue_ );
 	runtime_assert ( j >= 1 && j <= total_residue_ );
 	return same_strand_( i, j );
@@ -123,8 +123,8 @@ SameStrand::do_same_strand( ) const {
 	//FArray1D_float strand_sum_( StaticIndexRange( 0, total_residue_ ) );
 	float loop, r;
 
-	for ( Size pos1 = 1; pos1 <= total_residue_; ++pos1 ) {
-		for ( Size pos2 = 1; pos2 <= total_residue_; ++pos2 ) {
+	for ( core::Size pos1 = 1; pos1 <= total_residue_; ++pos1 ) {
+		for ( core::Size pos2 = 1; pos2 <= total_residue_; ++pos2 ) {
 			strand1 = strand_sum_(pos1)-strand_sum_(pos1-1);
 			strand2 = strand_sum_(pos2)-strand_sum_(pos2-1);
 			strand_ceiling = std::max(0.2f, std::min(strand1,strand2));
@@ -160,7 +160,7 @@ SameStrand::do_strand_sum( core::fragment::SecondaryStructure const& ss ) const 
 	runtime_assert( total_residue_ == ss.total_residue() );
 	strand_sum_.dimension( StaticIndexRange( 0, total_residue_ ) );
 	strand_sum_(0) = 0.0;
-	for ( Size i = 1; i <= total_residue_; ++i ) {
+	for ( core::Size i = 1; i <= total_residue_; ++i ) {
 		strand_sum_(i) = strand_sum_(i-1) + ss.strand_fraction(i);
 		//  std::cout << "strandsum: " << SS(i) << SS(strand_sum_(i) ) << std::endl;
 	}
@@ -215,8 +215,8 @@ SameStrand::read_from_file( std::string fn ) {
 /// @detail write to stream ( opposite from read_from_file )
 void SameStrand::show( std::ostream& out ) const {
 	using namespace format;
-	for ( Size i = 1; i<=total_residue_; i++ ) {
-		for ( Size j = 1; j<=total_residue_; j++ ) {
+	for ( core::Size i = 1; i<=total_residue_; i++ ) {
+		for ( core::Size j = 1; j<=total_residue_; j++ ) {
 			out << ( eval(i,j) ? "E" : "." );
 		}
 		out << std::endl;

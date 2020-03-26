@@ -93,10 +93,10 @@ TopologyBrokerMover::apply( pose::Pose & pose )
 	//separate the two chains
 	core::pose::Pose pose1 = pose;
 	core::pose::Pose pose2 = pose;
-	Size chain1primet(pose.conformation().chain_begin( 1 ));
-	Size chain1end(pose.conformation().chain_end( 1 ) );
-	Size chain2primet(pose.conformation().chain_begin( 2 ));
-	Size chain2end(pose.conformation().chain_end( 2 ) );
+	core::Size chain1primet(pose.conformation().chain_begin( 1 ));
+	core::Size chain1end(pose.conformation().chain_end( 1 ) );
+	core::Size chain2primet(pose.conformation().chain_begin( 2 ));
+	core::Size chain2end(pose.conformation().chain_end( 2 ) );
 	pose1.conformation().delete_residue_range_slow( chain2primet, chain2end);
 	pose2.conformation().delete_residue_range_slow( chain1primet, chain1end);
 	core::pose::Pose ref_pose = pose2;

@@ -29,7 +29,7 @@
 #include <core/chemical/AA.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 //STL header
@@ -41,9 +41,9 @@ namespace core {
 namespace scoring {
 namespace nv {
 
-class NVlookup : public utility::pointer::ReferenceCount {
+class NVlookup : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~NVlookup() override;
 	NVlookup(std::string filename);
 

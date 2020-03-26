@@ -35,7 +35,7 @@ public:
 	MgHydrater();
 
 	//constructor
-	MgHydrater( utility::vector1< Size > const & mg_res_list );
+	MgHydrater( utility::vector1< core::Size > const & mg_res_list );
 
 	//destructor
 	~MgHydrater() override;

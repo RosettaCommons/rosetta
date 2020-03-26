@@ -34,7 +34,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <cstdlib>
@@ -49,22 +49,22 @@ public:
 	LibraryJumpSetup( Size , SecondaryStructureOP,core::pose::PoseOP,int ,int,int,int);
 	LibraryJumpSetup( Size , SecondaryStructureOP ,core::pose::PoseOP ,int ,int *,int*,int*,int*);
 
-  std::string type_name() const {
-    return "LibraryJumpSetup";
-  }
-        virtual
-        JumpSample
-        create_jump_sample( ) const;
+	std::string type_name() const {
+		return "LibraryJumpSetup";
+	}
+	virtual
+	JumpSample
+	create_jump_sample( ) const;
 
 private:
-        Size nres_;
-        int nJumps_;
-         SecondaryStructureOP ss_def_;
-         core::pose::PoseOP native_pose_;
-         int *iResid_;
-         int *jResid_;
-         int *orientation_;
-         int *pleating_;
+	Size nres_;
+	int nJumps_;
+	SecondaryStructureOP ss_def_;
+	core::pose::PoseOP native_pose_;
+	int *iResid_;
+	int *jResid_;
+	int *orientation_;
+	int *pleating_;
 };
 } }
 #endif /* LIBRARYJUMPSETUP_H_ */

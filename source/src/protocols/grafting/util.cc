@@ -74,9 +74,9 @@ using protocols::loops::Loops;
 using core::scoring::ScoreFunctionCOP;
 
 void
-delete_region(Pose & pose, Size const start, Size const end){
+delete_region(Pose & pose, core::Size const start, core::Size const end){
 	//Going to remove residues from pose. Resnum changes each time - so...
-	Size const num_residues(end-start+1);
+	core::Size const num_residues(end-start+1);
 	TR << "Deleting "<< num_residues << " residues from " << start << " to "<< end << std::endl;
 
 	if ( num_residues == 0 ) {
@@ -95,17 +95,17 @@ delete_region(Pose & pose, Size const start, Size const end){
 
 
 Pose
-return_region(Pose & pose, Size const start, Size const end){
+return_region(Pose & pose, core::Size const start, core::Size const end){
 
 	//Copy residues into a new pose.  Uses create_subpose.
 	Pose piece;
 	core::kinematics::FoldTree new_foldtree;
 	new_foldtree.clear();
-	Size const length = end - start+1;
+	core::Size const length = end - start+1;
 	TR << "Returning "<< length <<" residues from "<< start <<" to " << end <<std::endl;
 
 	//Get positions.
-	utility::vector1<Size> positions;
+	utility::vector1<core::Size> positions;
 	for ( core::Size resnum = start; resnum <= end; ++resnum ) {
 		positions.push_back(resnum);
 	}
@@ -132,9 +132,9 @@ Pose
 replace_region(
 	Pose const & from_pose,
 	Pose const & to_pose,
-	Size const from_pose_start_residue,
-	Size const to_pose_start_residue,
-	Size const insertion_length,
+	core::Size const from_pose_start_residue,
+	core::Size const to_pose_start_residue,
+	core::Size const insertion_length,
 	bool copy_pdbinfo /*false*/)
 {
 	Pose combined(to_pose);
@@ -301,7 +301,7 @@ repack_connection_and_residues_in_movemap_and_piece(
 	local->set_chi(start+1, true);
 	local->set_chi(end, true);
 	local->set_chi(end-1, true);
-	for ( Size i = start+2; i <= end-2; ++i ) {
+	for ( core::Size i = start+2; i <= end-2; ++i ) {
 		local->set_chi(i, true);
 	}
 
@@ -332,7 +332,7 @@ repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
 	local->set_chi(start+1, true);
 	local->set_chi(end, true);
 	local->set_chi(end-1, true);
-	for ( Size i = start+2; i <= end-2; ++i ) {
+	for ( core::Size i = start+2; i <= end-2; ++i ) {
 		local->set_chi(i, true);
 	}
 
@@ -351,7 +351,7 @@ repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
 }
 
 void
-superimpose_overhangs_heavy(Pose const & pose, Pose & piece, bool ca_only, Size start, Size end, Size Nter_overhang, Size Cter_overhang){
+superimpose_overhangs_heavy(Pose const & pose, Pose & piece, bool ca_only, core::Size start, core::Size end, core::Size Nter_overhang, core::Size Cter_overhang){
 
 	if ( Nter_overhang == 0 && Cter_overhang ==0 ) {
 		return;
@@ -403,7 +403,7 @@ superimpose_overhangs_heavy(Pose const & pose, Pose & piece, bool ca_only, Size 
 }
 
 void
-delete_overhang_residues(Pose & piece, Size Nter_overhang, Size Cter_overhang){
+delete_overhang_residues(Pose & piece, core::Size Nter_overhang, core::Size Cter_overhang){
 
 	//Nter
 	for ( core::Size i=1; i<=Nter_overhang; ++i ) {
@@ -424,14 +424,14 @@ delete_overhang_residues(Pose & piece, Size Nter_overhang, Size Cter_overhang){
 
 MoveMapOP
 combine_movemaps_post_insertion(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm,
-	Size start, Size original_end,
-	Size insertion_length, Size cter_overhang_start)
+	core::Size start, core::Size original_end,
+	core::Size insertion_length, core::Size cter_overhang_start)
 {
 	using namespace core::kinematics;
 	MoveMapOP mm( new MoveMap() );
 	TR<<"Combining movemaps"<<std::endl;
 	//typedef core::id::TorsionID TorsionID;
-	typedef std::pair< Size, core::id::TorsionType > MoveMapTorsionID;
+	typedef std::pair< core::Size, core::id::TorsionType > MoveMapTorsionID;
 
 	//Assert that a piece is set.
 
@@ -447,18 +447,18 @@ combine_movemaps_post_insertion(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm,
 	//Set insert residues
 	for ( auto it=insert_mm->movemap_torsion_id_begin(), it_end=insert_mm->movemap_torsion_id_end(); it !=it_end; ++it ) {
 		//Add from start_
-		Size new_resnum = start + it->first.first -  cter_overhang_start;
+		core::Size new_resnum = start + it->first.first -  cter_overhang_start;
 		MoveMapTorsionID new_id = MoveMapTorsionID(new_resnum, it->first.second);
 		mm->set(new_id, it->second);
 	}
 
 	//Set Cterminal residues after insert. We may have a deletion then an insertion that we need to change the numbers for.
-	Size deleted_residues = original_end-start-1;
+	core::Size deleted_residues = original_end-start-1;
 	for ( auto it=scaffold_mm->movemap_torsion_id_begin(), it_end=scaffold_mm->movemap_torsion_id_end(); it !=it_end; ++it ) {
 		//Check if residue exists in movemap.  Copy that info no matter what it is to the new movemap.
 		if ( it->first.first >=original_end ) {
 			//Add insertion length
-			Size new_resnum = it->first.first - deleted_residues+insertion_length;
+			core::Size new_resnum = it->first.first - deleted_residues+insertion_length;
 			MoveMapTorsionID new_id = MoveMapTorsionID(new_resnum, it->first.second);
 			mm->set(new_id, it->second);
 		}
@@ -506,7 +506,7 @@ remove_cutpoint_variants_for_ccd(Pose & pose, Loops const & loops){
 bool
 graft_closed(Pose & pose, Loops & loops){
 	for ( auto const & loop : loops ) {
-		std::pair<bool, Size> peptide_bond_issues = protocols::loops::has_severe_pep_bond_geom_issues(pose, loop.cut(), true, true, 1.5, 15, 15);
+		std::pair<bool, core::Size> peptide_bond_issues = protocols::loops::has_severe_pep_bond_geom_issues(pose, loop.cut(), true, true, 1.5, 15, 15);
 		if ( peptide_bond_issues.first == true ) {
 			return false;
 		}
@@ -516,7 +516,7 @@ graft_closed(Pose & pose, Loops & loops){
 }
 
 void
-idealize_combined_pose(Pose & combined, MoveMapOP movemap, Size start, Size insert_start, Size insert_end, Size Nter_loop_start, Size Cter_loop_end, bool idealize_insert /*false*/){
+idealize_combined_pose(Pose & combined, MoveMapOP movemap, core::Size start, core::Size insert_start, core::Size insert_end, core::Size Nter_loop_start, core::Size Cter_loop_end, bool idealize_insert /*false*/){
 	///////////////////////////////////////Idealize////////////////////////////////////////////////////////
 	//this code also resets conformation variables: omegas to 180, newly made connections phi or psi to reasonable
 	//edges of insert will be somewhat mobile inside minimization (small and CCD moves will ignore it)
@@ -580,11 +580,11 @@ idealize_combined_pose(Pose & combined, MoveMapOP movemap, Size start, Size inse
 /// @params lower_cutpoint for CCD and loops is Cter_loop_end-1
 ///
 void
-setup_single_loop_single_arm_remodeling_foldtree(Pose & pose, Size const Nter_loop_start, Size const Cter_loop_end, bool loop_modeling){
+setup_single_loop_single_arm_remodeling_foldtree(Pose & pose, core::Size const Nter_loop_start, core::Size const Cter_loop_end, bool loop_modeling){
 	using core::kinematics::Edge;
 
 	//Setup the offset so the anchor of the loop is correct for either CCD loop closure or vanilla loop modeling.
-	Size anchor_offset = 1;
+	core::Size anchor_offset = 1;
 	if ( loop_modeling ) { anchor_offset=2;}
 
 	core::Size const cutpoint_lower(Cter_loop_end-1); //cutpoint at the end of the loop
@@ -616,13 +616,13 @@ setup_single_loop_single_arm_remodeling_foldtree(Pose & pose, Size const Nter_lo
 /// @params lower_cutpoint for CCD and loops is end_-1
 ///
 void
-setup_single_loop_double_arm_remodeling_foldtree(Pose & pose, Size const Nter_loop_start, Size const Cter_loop_end, Size end, bool loop_modeling){
+setup_single_loop_double_arm_remodeling_foldtree(Pose & pose, core::Size const Nter_loop_start, core::Size const Cter_loop_end, core::Size end, bool loop_modeling){
 	//Note: Differs from single arm by moving the cutpoint.
 	TR <<"Setting up single loop, double arm remodeling foldtree"<<std::endl;
 	using core::kinematics::Edge;
 
 	//Setup the offset so the anchor of the loop is correct for either CCD loop closure or vanilla loop modeling.
-	Size anchor_offset = 1;
+	core::Size anchor_offset = 1;
 	if ( loop_modeling ) { anchor_offset=2;}
 
 	core::Size const cutpoint_lower(end-1);//Cutpoint is at the end of the insert

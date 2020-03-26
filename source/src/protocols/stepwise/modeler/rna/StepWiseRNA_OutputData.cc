@@ -109,7 +109,7 @@ output_data( core::io::silent::SilentFileData& silent_file_data, std::string con
 	std::map< core::Size, core::Size > const & full_to_sub = working_parameters_->const_full_to_sub();
 	std::map< core::Size, bool > const & is_prepend_map = working_parameters_->is_prepend_map();
 	bool const is_prepend(  working_parameters_->is_prepend() ); // if true, moving_suite+1 is fixed. Otherwise, moving_suite is fixed.
-	Size const moving_base_residue( working_parameters_->actually_moving_res() );
+	core::Size const moving_base_residue( working_parameters_->actually_moving_res() );
 
 	//  BinarySilentStruct s = get_binary_rna_silent_struct_safe_wrapper( pose, tag, silent_file, write_score_only );
 	SilentFileOptions opts;
@@ -236,14 +236,14 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 	static const ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance() ->
 		residue_type_set( core::chemical::FA_STANDARD ) );
 
-	Size NUM_trials = 10;
+	core::Size NUM_trials = 10;
 	Real const local_angle_bin_size = 20;
 	Real const local_z_bin_size = 0.05;
 
 	pose::Pose first_trial_pose_from_silent_file;
 	pose::Pose first_trial_pose;
 
-	for ( Size trial_num = 1; trial_num <= NUM_trials; trial_num++ ) { //Found that just rigid problem rotation of the pose solves the silent_file conversion problem
+	for ( core::Size trial_num = 1; trial_num <= NUM_trials; trial_num++ ) { //Found that just rigid problem rotation of the pose solves the silent_file conversion problem
 
 		pose::Pose pose = const_pose;
 
@@ -252,12 +252,12 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 			///////////////////////////get centroid of the structure/////////////////////////////
 
 			numeric::xyzVector< core::Real > centroid = Vector( 0.0, 0.0, 0.0 );
-			Size numatoms = 0;
+			core::Size numatoms = 0;
 
-			for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
+			for ( core::Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 				conformation::Residue const & rsd( pose.residue( seq_num ) );
-				for ( Size at = 1; at <= rsd.natoms(); at++ ) {
+				for ( core::Size at = 1; at <= rsd.natoms(); at++ ) {
 					if ( rsd.is_virtual( at ) ) continue;
 
 					centroid += rsd.xyz( at );
@@ -277,11 +277,11 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 			euler_angles.set_z( ( 0.25*trial_num )*local_z_bin_size ); //MAKE SURE THIS DOESN'T GET OUT OF BOUND!
 			euler_angles.convert_to_rotation_matrix( rotation_matrix );
 
-			for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
+			for ( core::Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 				conformation::Residue const & rsd( pose.residue( seq_num ) );
 
-				for ( Size at = 1; at <= rsd.natoms(); at++ ) {
+				for ( core::Size at = 1; at <= rsd.natoms(); at++ ) {
 					id::AtomID const id( at, seq_num );
 					pose.set_xyz( id, pose.xyz( id ) - centroid ); //This should minimize the error introduced by the rigid body rotation!
 					pose.set_xyz( id, rotation_matrix * pose.xyz( id ) );
@@ -303,7 +303,7 @@ get_binary_rna_silent_struct_safe( pose::Pose const & const_pose, std::string co
 		pose::Pose pose_from_silent_file;
 
 		bool found_tag = false;
-		Size num_struct = 0;
+		core::Size num_struct = 0;
 
 		for ( auto const & sfd : import_silent_file_data ) {
 			num_struct += 1;

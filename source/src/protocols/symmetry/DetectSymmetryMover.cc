@@ -47,6 +47,8 @@ namespace symmetry {
 
 static basic::Tracer TR( "protocols.simple_moves.symmetry.DetectSymmetry" );
 
+using core::Size;
+
 // creators
 
 
@@ -71,18 +73,18 @@ DetectSymmetry::DetectSymmetry(core::Real subunit_tolerance, core::Real plane_to
 
 void
 DetectSymmetry::apply(Pose & pose) {
-	Size n_jumps = pose.num_jump();
+	core::Size n_jumps = pose.num_jump();
 	if ( ignore_single_jump_ ) {
 		n_jumps --;
 		TR << "now n jumps is " << n_jumps << std::endl;
 	}
 	if ( n_jumps == 0 ) utility_exit_with_message("Only one chain! no posible symmetry.");
-	Size symmetric_type = n_jumps + 1;
+	core::Size symmetric_type = n_jumps + 1;
 	TR << symmetric_type << " number of subunits found" << std::endl;
 	//check that the chains have the same sequence
 	std::string seq1 = pose.chain_sequence(1);
 	const Pose ref_pose( pose, 1, seq1.size() );
-	for ( Size i = 1; i < symmetric_type; ++i ) {
+	for ( core::Size i = 1; i < symmetric_type; ++i ) {
 		if ( seq1 != pose.chain_sequence(i) ) utility_exit_with_message("subunits have different sequence! structure can't be symmetric");
 		Pose test_pose( pose, i*seq1.size()+1 , (i + 1)*seq1.size() );
 		core::Real rms = core::scoring::CA_rmsd(ref_pose, test_pose);
@@ -112,7 +114,7 @@ DetectSymmetry::apply(Pose & pose) {
 	debug_assert( cm_chain_A[0] > -1*plane_tolerance_ && cm_chain_A[0] < plane_tolerance_ && cm_chain_A[2] > -1*plane_tolerance_ && cm_chain_A[2] < plane_tolerance_);
 
 	//check that the com of all subunits is in the xy-plane
-	for ( Size i = 0; i < symmetric_type; i++ ) {
+	for ( core::Size i = 0; i < symmetric_type; i++ ) {
 		xyzVector cm_chain = core::pose::center_of_mass(pose, i*seq1.size()+1, i * seq1.size() + seq1.size());
 		runtime_assert_msg(cm_chain[2] > -1*plane_tolerance_ && cm_chain[2] < plane_tolerance_, "com of chain " + boost::lexical_cast< std::string >( i ) +  " is not properly aligned to the x-y plane");
 	}
@@ -128,7 +130,7 @@ DetectSymmetry::apply(Pose & pose) {
 		pose.apply_transform_Rx_plus_v(rot1, xyzVector(0,0,0));
 		vm = ( pose.residue( 1 ).xyz("CA") + pose.residue( seq1.size() + 1 ).xyz("CA") ) / 2;
 		debug_assert(vm[0] > -0.001 && vm[0] < 0.001 && vm[1] > -0.001 && vm[1] < 0.001 );
-		for ( Size i = 1, j = seq1.size()+1; i <= seq1.size(); i++,j++ ) {
+		for ( core::Size i = 1, j = seq1.size()+1; i <= seq1.size(); i++,j++ ) {
 			xyzVector v = ( pose.residue( i ).xyz("CA") + pose.residue( j ).xyz("CA") )/ 2;
 			runtime_assert_string_msg(v[0] < 0.001 && v[0] > -0.001 && v[1] < 0.001 && v[1] > -0.001, "rotation axis not properly aligned!");
 		}

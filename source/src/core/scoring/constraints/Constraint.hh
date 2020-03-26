@@ -35,7 +35,7 @@
 // #include <core/id/SequenceMapping.hh> Removing the SequenceMapping-as-default-NULL parameter to remove this #include
 
 // utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -72,7 +72,7 @@ namespace constraints {
 /// The steal() methods have been removed because it is
 /// incompatible with the idea of immutable constraints.
 
-class Constraint : public utility::pointer::ReferenceCount {
+class Constraint : public utility::VirtualBase {
 
 public:
 	typedef id::AtomID AtomID;

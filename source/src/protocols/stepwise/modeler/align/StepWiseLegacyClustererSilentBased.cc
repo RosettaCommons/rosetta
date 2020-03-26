@@ -105,7 +105,7 @@ StepWiseLegacyClustererSilentBased::StepWiseLegacyClustererSilentBased( core::io
 
 // convenience constructor, used in StepWiseProteinModeler. Maybe should go into a util.
 StepWiseLegacyClustererSilentBased::StepWiseLegacyClustererSilentBased( core::io::silent::SilentFileDataOP silent_file_data,
-	utility::vector1< Size > const & moving_res_list,
+	utility::vector1< core::Size > const & moving_res_list,
 	options::StepWiseModelerOptionsCOP options,
 	bool const force_align )
 {
@@ -227,7 +227,7 @@ StepWiseLegacyClustererSilentBased::do_some_clustering() {
 		// carve out subset of residues for rms calculation.
 		if ( calc_rms_res_.size() > 0 ) pdbslice( pose, calc_rms_res_ );
 
-		Size const found_close_cluster = check_for_closeness( pose_op );
+		core::Size const found_close_cluster = check_for_closeness( pose_op );
 
 		if ( found_close_cluster == 0 )  {
 			PoseOP pose_save = pose.clone();
@@ -266,7 +266,7 @@ StepWiseLegacyClustererSilentBased::initialize_cluster_list() {
 void
 StepWiseLegacyClustererSilentBased::cluster_with_auto_tune() {
 
-	for ( Size n = 1; n <= cluster_rmsds_to_try_with_auto_tune_.size(); n++ ) {
+	for ( core::Size n = 1; n <= cluster_rmsds_to_try_with_auto_tune_.size(); n++ ) {
 
 		cluster_radius_ = cluster_rmsds_to_try_with_auto_tune_[ n ];
 
@@ -301,11 +301,11 @@ StepWiseLegacyClustererSilentBased::recluster_current_pose_list() {
 	tag_output_list_.clear();
 	silent_struct_output_list_.clear();
 
-	for ( Size i = 1; i <= old_pose_output_list.size(); i++ ) {
+	for ( core::Size i = 1; i <= old_pose_output_list.size(); i++ ) {
 
 		core::pose::PoseOP pose_op = old_pose_output_list[ i ];
 
-		Size const found_close_cluster = check_for_closeness( pose_op );
+		core::Size const found_close_cluster = check_for_closeness( pose_op );
 		if ( found_close_cluster == 0 )  {
 			tag_output_list_.push_back(  old_tag_output_list[ i ] );
 			pose_output_list_.push_back(  old_pose_output_list[ i ] );
@@ -331,7 +331,7 @@ StepWiseLegacyClustererSilentBased::check_for_closeness( core::pose::PoseOP cons
 
 	// go through the list backwards, because poses may be grouped by similarity --
 	// the newest pose is probably closer to poses at the end of the list.
-	for ( Size n = pose_output_list_.size(); n >= 1; n-- ) {
+	for ( core::Size n = pose_output_list_.size(); n >= 1; n-- ) {
 
 		Real rmsd( 0.0 );
 
@@ -351,7 +351,7 @@ StepWiseLegacyClustererSilentBased::check_for_closeness( core::pose::PoseOP cons
 }
 
 core::io::silent::SilentStructOP
-StepWiseLegacyClustererSilentBased::setup_silent_struct( Size const n ) {
+StepWiseLegacyClustererSilentBased::setup_silent_struct( core::Size const n ) {
 	using namespace core::io::silent;
 	SilentStructOP & s( silent_struct_output_list_[ n ] );
 	s->add_string_value( "nclust", ObjexxFCL::format::I(8,num_pose_in_cluster_[ n ]) );
@@ -371,7 +371,7 @@ StepWiseLegacyClustererSilentBased::output_silent_file( std::string const & sile
 
 	SilentFileOptions opts;
 	SilentFileData silent_file_data(opts);
-	for ( Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
+	for ( core::Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
 		SilentStructOP s = setup_silent_struct( n );
 		silent_file_data.write_silent_struct( *s, silent_file, false /*write score only*/ );
 	}
@@ -384,7 +384,7 @@ StepWiseLegacyClustererSilentBased::silent_file_data(){
 
 	SilentFileOptions opts;
 	SilentFileDataOP silent_file_data( new SilentFileData(opts) );
-	for ( Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
+	for ( core::Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
 		silent_file_data->add_structure( silent_struct_output_list_[ n ] );
 	}
 	return silent_file_data;
@@ -396,7 +396,7 @@ StepWiseLegacyClustererSilentBased::clustered_pose_list(){
 
 	PoseList pose_list;
 
-	for ( Size n = 1 ; n <= pose_output_list_.size(); n++ ) {
+	for ( core::Size n = 1 ; n <= pose_output_list_.size(); n++ ) {
 		pose_list[ tag_output_list_[n] ] = pose_output_list_[ n ];
 	}
 
@@ -412,7 +412,7 @@ utility::vector1< PoseOP >
 StepWiseLegacyClustererSilentBased::get_pose_list() {
 	using namespace core::io::silent;
 	utility::vector1< PoseOP > pose_list;
-	for ( Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
+	for ( core::Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
 		SilentStructOP s = setup_silent_struct( n );
 		PoseOP pose( new Pose );
 		s->fill_pose( *pose );

@@ -168,10 +168,10 @@ HBNetStapleInterface::HBNetStapleInterface( std::string const name ) :
 //Constructor from code
 HBNetStapleInterface::HBNetStapleInterface(
 	core::scoring::ScoreFunctionCOP scorefxn,
-	Size max_unsat_Hpol,
-	Size min_network_size, /* 3 */
+	core::Size max_unsat_Hpol,
+	core::Size min_network_size, /* 3 */
 	Real hb_threshold, /* -0.75 */
-	Size max_network_size, /* 15 */
+	core::Size max_network_size, /* 15 */
 	std::string des_residues, /* "STRKHYWNQDE" */
 	bool find_native, /*false*/
 	bool only_native, /*false*/
@@ -229,12 +229,12 @@ HBNetStapleInterface::parse_my_tag(
 	// for all options that inherit from base class HBNet
 	HBNet::parse_my_tag( tag, data, fmap, mmap, pose);
 
-	max_networks_per_pose_ = tag->getOption<Size>("max_networks_per_pose",1);
-	min_networks_per_pose_ = tag->getOption<Size>("min_networks_per_pose",1);
-	combos_ = tag->getOption<Size>("combos",1);
-	min_intermolecular_hbonds_ = tag->getOption<Size>("min_intermolecular_hbonds",1);
-	min_helices_contacted_by_network_ = tag->getOption<Size>("min_helices_contacted_by_network",0);
-	min_asp_glu_hbonds_ = tag->getOption<Size>("min_asp_glu_hbonds",3);
+	max_networks_per_pose_ = tag->getOption<core::Size>("max_networks_per_pose",1);
+	min_networks_per_pose_ = tag->getOption<core::Size>("min_networks_per_pose",1);
+	combos_ = tag->getOption<core::Size>("combos",1);
+	min_intermolecular_hbonds_ = tag->getOption<core::Size>("min_intermolecular_hbonds",1);
+	min_helices_contacted_by_network_ = tag->getOption<core::Size>("min_helices_contacted_by_network",0);
+	min_asp_glu_hbonds_ = tag->getOption<core::Size>("min_asp_glu_hbonds",3);
 	span_all_helices_ = tag->getOption<bool>( "span_all_helices", false );
 	allow_onebody_networks_ = tag->getOption<bool>("allow_onebody_networks",false);
 	his_tyr_ = tag->getOption< bool >( "his_tyr", false);
@@ -280,9 +280,9 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 		min_intermolecular_hbonds_ = 0;
 	}
 
-	Size total_ind_res( ( symmetric() ) ? get_symm_info()->num_independent_residues() : pose.total_residue() );
+	core::Size total_ind_res( ( symmetric() ) ? get_symm_info()->num_independent_residues() : pose.total_residue() );
 
-	pair_lists_vec_.resize(total_ind_res,std::list<Size>(0));
+	pair_lists_vec_.resize(total_ind_res,std::list<core::Size>(0));
 
 	bool no_init_taskfactory(false);
 	if ( task_factory() == nullptr ) {
@@ -293,12 +293,12 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 	if ( jump_nums_.empty() ) {
 		if ( symmetric() && ( multi_component() || only_symm_interfaces_ ) ) {
 			utility::vector1<std::string> sym_dof_name_list = core::pose::symmetry::sym_dof_names( pose );
-			for ( Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
-				Size sym_aware_jump_id(core::pose::symmetry::sym_dof_jump_num(pose,sym_dof_name_list[i]));
+			for ( core::Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
+				core::Size sym_aware_jump_id(core::pose::symmetry::sym_dof_jump_num(pose,sym_dof_name_list[i]));
 				jump_nums_.push_back(sym_aware_jump_id);
 			}
 		} else {
-			for ( Size i=1; i <= pose.num_jump(); ++i ) {
+			for ( core::Size i=1; i <= pose.num_jump(); ++i ) {
 				jump_nums_.push_back(i);
 			}
 		}
@@ -322,16 +322,16 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 		core::scoring::dssp::Dssp new_ss(dssp_pose);
 		new_ss.insert_ss_into_pose(dssp_pose);
 		std::string ss = dssp_pose.secstruct();
-		Size start(1), end(0), h_count(1);
-		for ( Size pos = 1; pos <= dssp_pose.total_residue(); ++pos ) {
+		core::Size start(1), end(0), h_count(1);
+		for ( core::Size pos = 1; pos <= dssp_pose.total_residue(); ++pos ) {
 			char ss_pos = dssp_pose.secstruct(pos); //HSE
 			if ( (ss_pos == 'H' && (pos == dssp_pose.total_residue() || dssp_pose.secstruct(pos+1) != 'H')) ||
 					(pos < dssp_pose.total_residue() && ss_pos == 'H' && !(dssp_pose.residue(pos+1).is_bonded(dssp_pose.residue(pos)))) ) {
 				end = pos;
-				Size pos2(pos-1);
+				core::Size pos2(pos-1);
 				while ( pos2 > 1 && dssp_pose.secstruct(pos2-1) == 'H' && dssp_pose.residue(pos2).is_bonded(dssp_pose.residue(pos2-1)) ) --pos2;
 				start = pos2;
-				std::pair<Size,Size> boundary(start,end);
+				std::pair<core::Size,Size> boundary(start,end);
 				TR.Debug << "Helix #" << h_count << ": boundary = " << boundary.first << "," << boundary.second << std::endl;
 				helix_boundaries_.push_back(boundary);
 				h_count++;
@@ -350,18 +350,18 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 				interf->distance( interf_distance_ );
 				interf->calculate( pose ); //selects residues: sq dist of nbr atoms < interf_dist_sq (8^2)
 				if ( TR.visible() ) TR << " Storing interface residues for interface " << jump_num << ":" << std::endl;
-				for ( Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
+				for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
 					if ( !(pose.residue(resnum).is_protein()) ) {
 						continue;
 					}
-					for ( Size resnum2 = resnum+1; resnum2 <= pose.total_residue(); ++resnum2 ) {
+					for ( core::Size resnum2 = resnum+1; resnum2 <= pose.total_residue(); ++resnum2 ) {
 						if ( !(pose.residue(resnum2).is_protein()) ) {
 							continue;
 						}
 						if ( interf->is_pair(pose.residue(resnum), pose.residue(resnum2)) ) {
 							// need pair_lists_vec to keep track of interface residues in symmetric poses
 							//    at pose level, numbering is linear, but in other cases, numbering repeats for each symm subunit
-							Size res1_ind(resnum), res2_ind(resnum2);
+							core::Size res1_ind(resnum), res2_ind(resnum2);
 							if ( symmetric() ) {
 								//get_ind_res( pose, resnum, resnum2, res1_ind, res2_ind );
 								res1_ind = get_ind_res( pose, resnum);
@@ -370,15 +370,15 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 							if ( verbose() && TR.visible() ) {
 								TR << "res " << res1_ind << " and res " << res2_ind << " are pairs across the interface." << std::endl;
 							}
-							std::list< Size > templist1 = pair_lists_vec_[ res1_ind ];
+							std::list< core::Size > templist1 = pair_lists_vec_[ res1_ind ];
 							if ( std::find(templist1.begin(),templist1.end(),res2_ind) == templist1.end() ) {
 								pair_lists_vec_[ res1_ind ].push_back( res2_ind );
 							}
-							std::list< Size > templist2 = pair_lists_vec_[ res2_ind ];
+							std::list< core::Size > templist2 = pair_lists_vec_[ res2_ind ];
 							if ( std::find(templist2.begin(),templist2.end(),res1_ind) == templist2.end() ) {
 								pair_lists_vec_[ res2_ind ].push_back( res1_ind );
 							}
-							std::pair<Size,Size> key(res1_ind,res2_ind);
+							std::pair<core::Size,Size> key(res1_ind,res2_ind);
 							//interface_jump_map[key] = *jit;
 
 							add_start_res( res1_ind );
@@ -387,11 +387,11 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 				}
 			}
 			if ( all_helices_ && get_start_res_vec().empty() ) {
-				for ( Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
+				for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum ) {
 					if ( !(pose.residue(resnum).is_protein()) ) {
 						continue;
 					}
-					for ( Size resnum2 = resnum+1; resnum2 <= pose.total_residue(); ++resnum2 ) {
+					for ( core::Size resnum2 = resnum+1; resnum2 <= pose.total_residue(); ++resnum2 ) {
 						if ( !(pose.residue(resnum2).is_protein()) ) {
 							continue;
 						}
@@ -400,7 +400,7 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 							//TR << "TRUE: res1 = " << resnum << " and res2 = " << resnum2 << std::endl;
 							// need pair_lists_vec to keep track of interface residues in symmetric poses
 							//    at pose level, numbering is linear, but in other cases, numbering repeats for each symm subunit
-							Size res1_ind(resnum), res2_ind(resnum2);
+							core::Size res1_ind(resnum), res2_ind(resnum2);
 							if ( symmetric() ) {
 								//get_ind_res( pose, resnum, resnum2, res1_ind, res2_ind );
 								res1_ind = get_ind_res( pose, resnum);
@@ -409,15 +409,15 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 							if ( verbose() && TR.visible() ) {
 								TR << "res " << res1_ind << " and res " << res2_ind << " are pairs across an inter-helical interface." << std::endl;
 							}
-							std::list< Size > templist1 = pair_lists_vec_[ res1_ind ];
+							std::list< core::Size > templist1 = pair_lists_vec_[ res1_ind ];
 							if ( std::find(templist1.begin(),templist1.end(),res2_ind) == templist1.end() ) {
 								pair_lists_vec_[ res1_ind ].push_back( res2_ind );
 							}
-							std::list< Size > templist2 = pair_lists_vec_[ res2_ind ];
+							std::list< core::Size > templist2 = pair_lists_vec_[ res2_ind ];
 							if ( std::find(templist2.begin(),templist2.end(),res1_ind) == templist2.end() ) {
 								pair_lists_vec_[ res2_ind ].push_back( res1_ind );
 							}
-							std::pair<Size,Size> key(res1_ind,res2_ind);
+							std::pair<core::Size,Size> key(res1_ind,res2_ind);
 							//interface_jump_map[key] = jump_nums_.size() + 1;
 
 							add_start_res( res1_ind );
@@ -446,16 +446,16 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 				interf->calculate( pose ); //within 8 angstroms of Ala nbr residue
 				//interf->calculate( *ala_pose_ ); //within 8 angstroms of Ala nbr residue
 
-				//for ( std::set<Size>::iterator resnum = repack_and_des_residues_.begin(); resnum != repack_and_des_residues_.end(); ++resnum ){
-				for ( Size resnum = 1; resnum < pose.total_residue(); ++resnum ) {
-					for ( Size resnum2 = resnum+1; resnum2 <= pose.total_residue(); ++resnum2 ) {
+				//for ( std::set<core::Size>::iterator resnum = repack_and_des_residues_.begin(); resnum != repack_and_des_residues_.end(); ++resnum ){
+				for ( core::Size resnum = 1; resnum < pose.total_residue(); ++resnum ) {
+					for ( core::Size resnum2 = resnum+1; resnum2 <= pose.total_residue(); ++resnum2 ) {
 						if ( !(pose.residue(resnum2).is_protein()) ) {
 							continue;
 						}
 						if ( interf->is_pair(pose.residue(resnum),pose.residue(resnum2)) ) {
 							// need pair_lists_vec to keep track of interface residues in symmetric poses
 							//    at pose level, numbering is linear, but in other cases, numbering repeats for each symm subunit
-							Size res1_ind(resnum), res2_ind(resnum2);
+							core::Size res1_ind(resnum), res2_ind(resnum2);
 							if ( symmetric() ) {
 								//get_ind_res( pose, *resnum, resnum2, res1_ind, res2_ind );
 								res1_ind = get_ind_res( pose, resnum);
@@ -467,7 +467,7 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 							if ( std::find(pair_lists_vec_[ res2_ind ].begin(),pair_lists_vec_[ res2_ind ].end(),res1_ind) == pair_lists_vec_[ res2_ind ].end() ) {
 								pair_lists_vec_[ res2_ind ].push_back( res1_ind );
 							}
-							//std::pair<Size,Size> key(res1_ind,res2_ind);
+							//std::pair<core::Size,Size> key(res1_ind,res2_ind);
 							//interface_jump_map[key] = *jit;
 							if ( verbose() && TR.visible() ) {
 								TR << "res " << res1_ind << " and res " << res2_ind << " are pairs across the interface." << std::endl;
@@ -479,11 +479,11 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 			}
 		}
 		if ( all_helices_ && get_start_res_vec().empty() ) {
-			for ( Size resnum = 1; resnum < pose.total_residue(); ++resnum ) {
+			for ( core::Size resnum = 1; resnum < pose.total_residue(); ++resnum ) {
 				if ( !(pose.residue(resnum).is_protein()) ) {
 					continue;
 				}
-				for ( Size resnum2 = resnum+1; resnum2 <= pose.total_residue(); ++resnum2 ) {
+				for ( core::Size resnum2 = resnum+1; resnum2 <= pose.total_residue(); ++resnum2 ) {
 					if ( !(pose.residue(resnum2).is_protein()) ) {
 						continue;
 					}
@@ -491,7 +491,7 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 					if ( interhelical_contact(helix_boundaries_,resnum,resnum2,pose) ) {
 						// need pair_lists_vec to keep track of interface residues in symmetric poses
 						//    at pose level, numbering is linear, but in other cases, numbering repeats for each symm subunit
-						Size res1_ind(resnum), res2_ind(resnum2);
+						core::Size res1_ind(resnum), res2_ind(resnum2);
 						if ( symmetric() ) {
 							//get_ind_res( pose, *resnum, resnum2, res1_ind, res2_ind );
 							res1_ind = get_ind_res( pose, resnum);
@@ -500,11 +500,11 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 						if ( verbose() && TR.visible() ) {
 							TR << "res " << res1_ind << " and res " << res2_ind << " are pairs across an inter-helical interface." << std::endl;
 						}
-						std::list< Size > templist1 = pair_lists_vec_[ res1_ind ];
+						std::list< core::Size > templist1 = pair_lists_vec_[ res1_ind ];
 						if ( std::find(templist1.begin(),templist1.end(),res2_ind) == templist1.end() ) {
 							pair_lists_vec_[ res1_ind ].push_back( res2_ind );
 						}
-						std::list< Size > templist2 = pair_lists_vec_[ res2_ind ];
+						std::list< core::Size > templist2 = pair_lists_vec_[ res2_ind ];
 						if ( std::find(templist2.begin(),templist2.end(),res1_ind) == templist2.end() ) {
 							pair_lists_vec_[ res2_ind ].push_back( res1_ind );
 						}
@@ -518,10 +518,10 @@ HBNetStapleInterface::setup_packer_task_and_starting_residues( core::pose::Pose 
 
 //careful! only works if pose has not added or deleted residues; careful in symmetric bridging_waters case!
 bool
-HBNetStapleInterface::residues_are_interface_pairs( Size const res1, Size const res2 )
+HBNetStapleInterface::residues_are_interface_pairs( core::Size const res1, core::Size const res2 )
 {
-	Size const res1_ind( get_ind_res( get_orig_pose(), res1 ) );
-	Size const res2_ind( get_ind_res( get_orig_pose(), res2 ) );
+	core::Size const res1_ind( get_ind_res( get_orig_pose(), res1 ) );
+	core::Size const res2_ind( get_ind_res( get_orig_pose(), res2 ) );
 	if ( std::find(pair_lists_vec_[ res1_ind ].begin(),pair_lists_vec_[ res1_ind ].end(),res2_ind) != pair_lists_vec_[ res1_ind ].end()
 			|| std::find(pair_lists_vec_[ res2_ind ].begin(),pair_lists_vec_[ res2_ind ].end(),res1_ind) != pair_lists_vec_[ res2_ind ].end() ) {
 		return true;
@@ -538,11 +538,11 @@ HBNetStapleInterface::has_pH_His( core::pose::Pose const & pose, HBondNetStruct 
 	runtime_assert( !(i.hbond_vec.empty() ) );
 
 	bool found(false);
-	std::vector<Size> his_acceptors(0);
-	std::vector<Size> his_donors(0);
+	std::vector<core::Size> his_acceptors(0);
+	std::vector<core::Size> his_donors(0);
 	for ( utility::vector1<HBondCOP>::const_iterator h = i.hbond_vec.begin(); h != i.hbond_vec.end(); ++h ) {
-		Size arsd((*h)->acc_res());
-		Size drsd((*h)->don_res());
+		core::Size arsd((*h)->acc_res());
+		core::Size drsd((*h)->don_res());
 		char a_aa = pose.residue( arsd ).name1();
 		char d_aa = pose.residue( drsd ).name1();
 		if ( a_aa == 'H' && !((*h)->acc_atm_is_backbone()) ) {
@@ -565,12 +565,12 @@ HBNetStapleInterface::has_pH_His( core::pose::Pose const & pose, HBondNetStruct 
 	}
 	std::sort( his_acceptors.begin(), his_acceptors.end() );
 	std::sort( his_donors.begin(), his_donors.end() );
-	std::vector<Size> intersec(0);
+	std::vector<core::Size> intersec(0);
 	std::set_intersection( his_acceptors.begin(), his_acceptors.end(), his_donors.begin(), his_donors.end(), std::back_inserter(intersec) );
 	if ( intersec.size() > 0 ) {
 		found = true;
 		if ( TR.visible() ) TR << "FOUND PH SENSITIVE HIS AT: ";
-		for ( std::vector<Size>::const_iterator it = intersec.begin(); it != intersec.end(); ++it ) {
+		for ( std::vector<core::Size>::const_iterator it = intersec.begin(); it != intersec.end(); ++it ) {
 			if ( TR.visible() ) TR << *it << ", ";
 		}
 		if ( TR.visible() ) TR << std::endl;
@@ -637,13 +637,13 @@ HBNetStapleInterface::network_meets_final_criteria( Pose const & pose, HBondNetS
 		bool network_spans_entire_symm_interface(false);
 		for ( utility::vector1< HBondCOP >::const_iterator h = i.hbond_vec.begin(); h != i.hbond_vec.end(); ++h ) {
 			//i.show(in_pose, 1, TR);
-			Size drsd((*h)->don_res());
-			//Size don_hatm((*h)->don_hatm());
-			Size arsd((*h)->acc_res());
-			//Size aatm((*h)->acc_atm());
+			core::Size drsd((*h)->don_res());
+			//core::Size don_hatm((*h)->don_hatm());
+			core::Size arsd((*h)->acc_res());
+			//core::Size aatm((*h)->acc_atm());
 			//if ( arsd == get_ind_res( *orig_pose_, drsd) || drsd == get_ind_res( *orig_pose_, arsd) ) {
-			utility::vector1<Size> acc_clones( SymmConf.Symmetry_Info()->bb_clones( arsd ) );
-			utility::vector1<Size> don_clones( SymmConf.Symmetry_Info()->bb_clones( drsd ) );
+			utility::vector1<core::Size> acc_clones( SymmConf.Symmetry_Info()->bb_clones( arsd ) );
+			utility::vector1<core::Size> don_clones( SymmConf.Symmetry_Info()->bb_clones( drsd ) );
 			if ( std::find( acc_clones.begin(), acc_clones.end(), drsd) != acc_clones.end() || std::find( don_clones.begin(), don_clones.end(), arsd) != don_clones.end() ) {
 				network_spans_entire_symm_interface = true;
 				break;
@@ -656,8 +656,8 @@ HBNetStapleInterface::network_meets_final_criteria( Pose const & pose, HBondNetS
 				if ( find_HBondResStruct( i.asymm_residues, ir->resnum ) == i.asymm_residues.end() ) {
 					i.asymm_residues.push_back( ir );
 				}
-				utility::vector1< Size > resi_clones( SymmConf.Symmetry_Info()->bb_clones( ir->resnum ) );
-				for ( Size r : resi_clones ) {
+				utility::vector1< core::Size > resi_clones( SymmConf.Symmetry_Info()->bb_clones( ir->resnum ) );
+				for ( core::Size r : resi_clones ) {
 					if ( find_HBondResStruct( i.residues, r ) == i.residues.end() ) {
 						i.asymm_residues.push_back(
 							pointer::make_shared< HBondResStruct >(
@@ -694,7 +694,7 @@ HBNetStapleInterface::network_meets_final_criteria( Pose const & pose, HBondNetS
 } // network_meets_final_criteria
 
 bool
-HBNetStapleInterface::state_is_starting_aa_type( Size const res, Size const rot_id )
+HBNetStapleInterface::state_is_starting_aa_type( core::Size const res, core::Size const rot_id )
 {
 
 	//char const aa( rotamer_sets_->rotamer_set_for_residue( (platform::uint)(res) )->rotamer(rot_id)->name1() );
@@ -818,9 +818,9 @@ HBNetStapleInterface::prepare_output()
 			//if ( TR.visible() ) TR << std::endl << "combining networks " << (*netit)->id << " ";
 
 			HBondNetStructOP new_network = *netit;
-			std::set< Size > net_ids;
+			std::set< core::Size > net_ids;
 			net_ids.insert( new_network->id );
-			Size staple_count(1);
+			core::Size staple_count(1);
 
 			if ( get_keep_existing_networks() ) {
 				if ( (*netit)->is_extended ) {
@@ -911,10 +911,10 @@ HBNetStapleInterface::num_helices_w_hbond( HBondNetStruct const & i ) const
 Size
 HBNetStapleInterface::num_helices_w_hbond( utility::vector1< HBondResStructCOP > const & residues ) const
 {
-	Size num_helices(0);
+	core::Size num_helices(0);
 	utility::vector1< bool > helix_has_hbond_residue( helix_boundaries_.size(), false );
 	for ( auto const & residue : residues ) {
-		Size helix_id( get_helix_id( residue->resnum ) ); //returns 0 if residues is not part of a helix
+		core::Size helix_id( get_helix_id( residue->resnum ) ); //returns 0 if residues is not part of a helix
 		if ( helix_id > 0 ) {
 			helix_has_hbond_residue[ helix_id ] = true;
 		}
@@ -928,9 +928,9 @@ HBNetStapleInterface::num_helices_w_hbond( utility::vector1< HBondResStructCOP >
 }
 
 void
-HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, std::set< Size > net_ids, Size staple_count )
+HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_iterator netit, std::set< core::Size > net_ids, core::Size staple_count )
 {
-	Size combo_count(1);
+	core::Size combo_count(1);
 	auto next_netit(netit);
 	while ( combo_count <= combos_ && ++next_netit != get_net_vec().end() )
 			{ //number of combinations of multiple networks to try (default = 1)
@@ -947,11 +947,11 @@ HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_ite
 			}
 		}
 		if ( compatible ) {
-			//Size net_index1 = next_netit - get_net_vec().begin();
+			//core::Size net_index1 = next_netit - get_net_vec().begin();
 			//std::string network( (pdb_numbering() ) ? ( print_list_to_string( get_orig_pose(), **next_netit ) ) : (print_list_to_string( **next_netit ) ) );
 			//if ( TR.visible() ) TR << "; and " << (*next_netit)->id << ": " << network;
 			//if ( TR.visible() ) TR << " and " << (*next_netit)->id;
-			std::set< Size > new_net_ids( net_ids );
+			std::set< core::Size > new_net_ids( net_ids );
 			new_net_ids.insert( (*next_netit)->id );
 			staple_count++;
 
@@ -977,7 +977,7 @@ HBNetStapleInterface::rec_add_staple( std::vector< HBondNetStructOP >::const_ite
 }
 
 bool
-HBNetStapleInterface::same_helix( utility::vector1< std::pair<Size,Size> > const helix_boundaries, Size const r1, Size const r2)
+HBNetStapleInterface::same_helix( utility::vector1< std::pair<core::Size,Size> > const helix_boundaries, core::Size const r1, core::Size const r2)
 {
 	for ( auto const & helix_boundarie : helix_boundaries ) {
 		if ( (r1 >= helix_boundarie.first && r1 <= helix_boundarie.second) && (r2 >= helix_boundarie.first && r2 <= helix_boundarie.second) ) {
@@ -989,7 +989,7 @@ HBNetStapleInterface::same_helix( utility::vector1< std::pair<Size,Size> > const
 
 ///@details returns false if either of the residues are not Helix (H); returns true if residues contact eachother from different helices (interhelical contact)
 bool
-HBNetStapleInterface::interhelical_contact( utility::vector1< std::pair<Size,Size> > const helix_boundaries, Size const r1, Size const r2, Pose const & pose)
+HBNetStapleInterface::interhelical_contact( utility::vector1< std::pair<core::Size,Size> > const helix_boundaries, core::Size const r1, core::Size const r2, Pose const & pose)
 {
 	if ( pose.residue(r1).nbr_atom_xyz().distance_squared(pose.residue(r2).nbr_atom_xyz()) < (interf_distance_*interf_distance_) ) {
 		if ( !same_helix(helix_boundaries,r1,r2) ) {
@@ -1001,11 +1001,11 @@ HBNetStapleInterface::interhelical_contact( utility::vector1< std::pair<Size,Siz
 
 ///@details returns false if residues is not part of a helix
 Size
-HBNetStapleInterface::get_helix_id( Size r1 ) const
+HBNetStapleInterface::get_helix_id( core::Size r1 ) const
 {
 	runtime_assert( !(helix_boundaries_.empty()) );
-	//for (utility::vector1< std::pair<Size,Size> >::iterator h = helix_boundaries.begin(); h != helix_boundaries.end(); ++h){
-	for ( Size h = 1; h <= helix_boundaries_.size(); h++ ) {
+	//for (utility::vector1< std::pair<core::Size,Size> >::iterator h = helix_boundaries.begin(); h != helix_boundaries.end(); ++h){
+	for ( core::Size h = 1; h <= helix_boundaries_.size(); h++ ) {
 		if ( r1 >= helix_boundaries_[h].first && r1 <= helix_boundaries_[h].second ) {
 			return h;
 		}
@@ -1048,10 +1048,10 @@ HBNetStapleInterface::num_intermolecular_hbonds( HBondNetStruct & i, core::pose:
 
 	//return get_intermolecular_hbonds( i );
 
-	Size num_intermol_hbs(0);
+	core::Size num_intermol_hbs(0);
 	for ( utility::vector1<HBondCOP>::const_iterator h = i.hbond_vec.begin(); h != i.hbond_vec.end(); ++h ) {
-		Size arsd((*h)->acc_res());
-		Size drsd((*h)->don_res());
+		core::Size arsd((*h)->acc_res());
+		core::Size drsd((*h)->don_res());
 		//        if ( pose.chain(arsd) != pose.chain(drsd) && !( pose.residue(arsd).is_water() && pose.residue(drsd).is_water() ) ) {
 		if ( pose.chain(arsd) != pose.chain(drsd) && !( pose.residue(arsd).name1() == 'w' && pose.residue(drsd).name1() == 'w' ) ) {
 			//if ( pose.chain(arsd) != pose.chain(drsd) ) {

@@ -83,7 +83,7 @@ StepWiseSampleAndScreen::run()
 		TR << std::endl; sampler_->show( TR, 0 ); TR << std::endl;
 	}
 
-	Size n( 0 );
+	core::Size n( 0 );
 	CompositionMoverOP update_movers( new CompositionMover ), restore_movers( new CompositionMover );
 	reset();
 	for ( sampler_->reset(); sampler_->not_end(); ++( *sampler_ ) ) {
@@ -108,8 +108,8 @@ StepWiseSampleAndScreen::run()
 			}
 		} // check screens
 
-		Size const last_passed_screener = n - 1;
-		for ( Size m = 2; m <= last_passed_screener; m++ ) screeners_[ m ]->apply_mover( restore_movers, m - 1, 1 );
+		core::Size const last_passed_screener = n - 1;
+		for ( core::Size m = 2; m <= last_passed_screener; m++ ) screeners_[ m ]->apply_mover( restore_movers, m - 1, 1 );
 
 	} // sampler
 
@@ -120,14 +120,14 @@ StepWiseSampleAndScreen::run()
 //////////////////////////////////////////////////////////////////////
 void
 StepWiseSampleAndScreen::reset(){
-	for ( Size n = 1; n <= num_screeners(); n++ ) screeners_[ n ]->reset();
+	for ( core::Size n = 1; n <= num_screeners(); n++ ) screeners_[ n ]->reset();
 }
 
 //////////////////////////////////////////////////////////////////////
 void
 StepWiseSampleAndScreen::output_counts() const{
-	Size const num_digits = std::max( utility::get_num_digits( num_tries() ), Size(1) );
-	for ( Size n = 1; n <= num_screeners(); n++ ) {
+	core::Size const num_digits = std::max( utility::get_num_digits( num_tries() ), core::Size(1) );
+	for ( core::Size n = 1; n <= num_screeners(); n++ ) {
 		TR << ObjexxFCL::format::I( num_digits, screeners_[ n ]->count() ) << " " << screeners_[ n ]->name() << std::endl;
 	}
 }
@@ -174,14 +174,14 @@ StepWiseSampleAndScreen::set_ok_to_increment(){
 		ok_to_increment_screeners = ( rigid_body_rotamer_with_residue_alternatives.residue_alternatives_rotamer()->id() == 1 );
 	}
 	if ( ok_to_increment_screeners ) {
-		for ( Size n = 1; n <= num_screeners(); n++ ) screeners_[ n ]->set_ok_to_increment( true );
+		for ( core::Size n = 1; n <= num_screeners(); n++ ) screeners_[ n ]->set_ok_to_increment( true );
 	}
 }
 
 
 /////////////////////////////////////////////////////////////////
 void
-StepWiseSampleAndScreen::early_exit_check( Size const n ) {
+StepWiseSampleAndScreen::early_exit_check( core::Size const n ) {
 
 	return;
 
@@ -191,9 +191,9 @@ StepWiseSampleAndScreen::early_exit_check( Size const n ) {
 	if ( n < num_screeners() ) return;
 
 	bool early_exit( false );
-	Size anchor_sugar_solution_number( 0 );
+	core::Size anchor_sugar_solution_number( 0 );
 	using namespace screener;
-	for ( Size j = 1; j <= num_screeners(); j++ ) {
+	for ( core::Size j = 1; j <= num_screeners(); j++ ) {
 		screener::StepWiseScreenerOP screener = screeners_[ j ];
 		if ( screeners_[j]->type() == ANCHOR_SUGAR ) {
 			AnchorSugarScreener & anchor_sugar_screener = *( static_cast< AnchorSugarScreener * >( screener.get() ) );

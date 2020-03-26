@@ -92,7 +92,7 @@ public: // constructor/destructor
 	FlxbbDesign(
 		ScoreFunctionOP const sfxnd,
 		ScoreFunctionOP const sfxnr,
-		Size const ncycle = 3,
+		core::Size const ncycle = 3,
 		String const & layer_mode = "",
 		bool const use_origseq_for_not_dsgned_layer = true,
 		bool const no_relax = false );
@@ -124,7 +124,7 @@ public:
 	void read_options();
 
 	/// @brief initialize filter parameters
-	void initialize_filter( Size const filter_trial, String const & filter_type );
+	void initialize_filter( core::Size const filter_trial, String const & filter_type );
 
 	/// @brief register options
 	static void register_options();
@@ -147,7 +147,7 @@ public:// mutators
 	void set_scorefxn_relax( ScoreFunctionOP const scorefxn );
 
 	/// @brief the number of cycles of fixbb and relax
-	void set_ncycles( Size const ncycles );
+	void set_ncycles( core::Size const ncycles );
 
 	/// @brief set layer mode
 	void set_layer_mode( String const & layer_mode );
@@ -242,7 +242,7 @@ private:
 	ScoreFunctionOP scorefxn_relax_;
 
 	/// @brief the number of cycles of fixbb and relax
-	Size nflxbb_cycles_;
+	core::Size nflxbb_cycles_;
 
 	/// @brief perform fixbb in layer mode
 	String layer_mode_;

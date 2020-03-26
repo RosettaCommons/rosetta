@@ -292,8 +292,8 @@ void SegmentSwap::modify_impl( Pose & pose ) {
 	--interval_.left;
 
 	// Swap the entire swap_in_ Pose by jump.
-	Size append_pos = interval_.left + 1;
-	for ( Size i = 1, ie = swap_in_.size(); i <= ie; ++i ) {
+	core::Size append_pos = interval_.left + 1;
+	for ( core::Size i = 1, ie = swap_in_.size(); i <= ie; ++i ) {
 		// temporarily add via jump from interval_.left
 		pose.insert_residue_by_jump( swap_in_.residue( i ), append_pos, interval_.left, "", "" );
 		++append_pos;
@@ -319,7 +319,7 @@ void SegmentSwap::modify_impl( Pose & pose ) {
 	pose.fold_tree( new_ft );
 
 	// copy secstruct
-	for ( Size i = interval_.left, j = 1; i <= interval_.right; ++i, ++j ) {
+	for ( core::Size i = interval_.left, j = 1; i <= interval_.right; ++i, ++j ) {
 		pose.set_secstruct( i, swap_in_.secstruct( j ) );
 	}
 

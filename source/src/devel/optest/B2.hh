@@ -4,7 +4,7 @@
 #include <devel/optest/B2.fwd.hh>
 #include <devel/optest/A.hh>   /// <---- Try to replace A.hh with A.fwd.hh
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 /// GOAL:  Replace the instance of class A in this class
 /// with an owning pointer to class A, and remove A.hh from
@@ -46,9 +46,9 @@
 namespace devel {
 namespace optest {
 
-class B2 : public utility::pointer::ReferenceCount {
+class B2 : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~B2() override;
 
 	/* B2();

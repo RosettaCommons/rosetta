@@ -29,9 +29,9 @@ struct KDPoint_MinDist {
 
 /// @brief Class for keeping track of the closest N KDPoint
 /// objects by distance.
-class KDPointList : public utility::pointer::ReferenceCount {
+class KDPointList : public utility::VirtualBase {
 public: // iterators
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~KDPointList() override;
 
 	typedef utility::vector1< KDPointOP >::iterator iterator;

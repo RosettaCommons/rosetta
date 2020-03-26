@@ -73,8 +73,8 @@ private:
 	protocols::rna::movers::RNA_LoopCloserOP rna_loop_closer_;
 	core::import_pose::options::RNA_FragmentMonteCarloOptionsCOP options_;
 
-	Size const fragment_cycles_;
-	Size const frag_size_;
+	core::Size const fragment_cycles_;
+	core::Size const frag_size_;
 	core::Real protein_sc_pack_cutoff_;
 	bool is_init_;
 	core::kinematics::FoldTree rnp_docking_ft_;

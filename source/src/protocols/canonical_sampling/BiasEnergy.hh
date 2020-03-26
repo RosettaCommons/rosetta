@@ -35,7 +35,7 @@
 
 //for parse_my_tag
 #include <utility/tag/Tag.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 // Utility Headers
@@ -50,8 +50,8 @@ class BiasEnergy : public ThermodynamicObserver, public protocols::jd2::JobOutpu
 	class Histogram;
 
 	template< typename T>
-	class Histogram : public utility::pointer::ReferenceCount {
-		typedef utility::pointer::ReferenceCount Parent;
+	class Histogram : public utility::VirtualBase {
+		typedef utility::VirtualBase Parent;
 		typedef T ValueType;
 
 	public:

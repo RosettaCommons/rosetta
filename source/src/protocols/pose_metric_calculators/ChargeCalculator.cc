@@ -78,24 +78,24 @@ ChargeCalculator::lookup(
 		(static_cast<basic::MetricValue<Real> *>(valptr))->set( total_charge_ );
 
 	} else if ( key == "total_pos_charges" ) {
-		basic::check_cast( valptr, &total_pos_charges_, "total_pos_charges expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( total_pos_charges_ );
+		basic::check_cast( valptr, &total_pos_charges_, "total_pos_charges expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( total_pos_charges_ );
 
 	} else if ( key == "total_neg_charges" ) {
-		basic::check_cast( valptr, &total_neg_charges_, "total_neg_charges expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( total_neg_charges_ );
+		basic::check_cast( valptr, &total_neg_charges_, "total_neg_charges expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( total_neg_charges_ );
 
 	} else if ( key == "SR_total_charge" ) {
 		basic::check_cast( valptr, &SR_total_charge_, "SR_total_charge expects to return a Real" );
 		(static_cast<basic::MetricValue<Real> *>(valptr))->set( SR_total_charge_ );
 
 	} else if ( key == "SR_total_pos_charges" ) {
-		basic::check_cast( valptr, &SR_total_pos_charges_, "SR_total_pos_charges expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( SR_total_pos_charges_ );
+		basic::check_cast( valptr, &SR_total_pos_charges_, "SR_total_pos_charges expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( SR_total_pos_charges_ );
 
 	} else if ( key == "SR_total_neg_charges" ) {
-		basic::check_cast( valptr, &SR_total_neg_charges_, "SR_total_neg_charges expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( SR_total_neg_charges_ );
+		basic::check_cast( valptr, &SR_total_neg_charges_, "SR_total_neg_charges expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( SR_total_neg_charges_ );
 	} else {
 		basic::Error() << "ChargeCalculator cannot compute the requested metric " << key << std::endl;
 		utility_exit();

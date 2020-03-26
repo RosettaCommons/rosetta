@@ -141,7 +141,7 @@ PerNativeRRReporterHuman::set_native(
 		utility_exit();
 	}
 
-	for ( Size ii = 1; ii <= native_pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= native_pose.size(); ++ii ) {
 		Residue const & res( native_pose.residue(ii) );
 		nat_bb_bins_.push_back(
 			torsion2big_bin(
@@ -158,7 +158,7 @@ PerNativeRRReporterHuman::set_native(
 		//vector1< Real > chi_vec;
 		core::pack::dunbrack::RotVector chi_vec;
 
-		for ( Size jj = 1; jj <= res.nchi(); ++jj ) {
+		for ( core::Size jj = 1; jj <= res.nchi(); ++jj ) {
 			chi_vec.push_back( core::Size( native_pose.chi(jj,ii) ) );
 		}
 		nat_chis_.push_back( chi_vec );
@@ -195,12 +195,12 @@ PerNativeRRReporterHuman::initialized(
 void
 PerNativeRRReporterHuman::show(
 	ostream & out,
-	Size const column_width,
-	Size const precision
+	core::Size const column_width,
+	core::Size const precision
 ) const {
 	out << "#Structure: " << tag_from_pose( *native_pose_ ) << endl;
 
-	for ( Size ii=1; ii <= native_pose_->size(); ++ii ) {
+	for ( core::Size ii=1; ii <= native_pose_->size(); ++ii ) {
 		if ( res_scores_[ii].size() == 0 ) continue;
 
 		Real mean_score = mean(
@@ -211,7 +211,7 @@ PerNativeRRReporterHuman::show(
 
 		out << A(column_width,string_of(ii));
 		out << A(column_width,nat_bb_bins_[ii]);
-		for ( Size i=1; i <= 4; ++i ) {
+		for ( core::Size i=1; i <= 4; ++i ) {
 			if ( i <= nat_rots_[ii].size() ) {
 				out << F(column_width,
 					precision,

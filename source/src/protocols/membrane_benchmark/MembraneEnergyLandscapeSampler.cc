@@ -181,7 +181,7 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 	}
 
 	// get the membrane jump
-	Size membrane_jump( pose.conformation().membrane_info()->membrane_jump() );
+	core::Size membrane_jump( pose.conformation().membrane_info()->membrane_jump() );
 
 	// Apply an initial translation of the membrane center
 	Vector initial_move( 0, 0, -limit );

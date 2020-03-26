@@ -43,10 +43,10 @@ public:
 public:
 
 	core::conformation::Residue const &
-	get_residue_at_origin( Size const seqpos );
+	get_residue_at_origin( core::Size const seqpos );
 
 	core::conformation::Residue const &
-	get_residue_at_origin_with_matching_type( Size const seqpos, core::conformation::Residue const & rsd_in );
+	get_residue_at_origin_with_matching_type( core::Size const seqpos, core::conformation::Residue const & rsd_in );
 
 	void
 	add_residue_alternative_rotamer( ResidueAlternativeStepWiseSamplerOP const & rotamer );
@@ -59,25 +59,25 @@ public:
 
 
 	bool
-	has_resnum( Size const seqpos );
+	has_resnum( core::Size const seqpos );
 
-	Size
-	find_resnum( Size const seqpos );
+	core::Size
+	find_resnum( core::Size const seqpos );
 
-	Size
-	id_for_resnum( Size const seqpos );
-
-	void
-	fast_forward_to_next_residue_pair( Size const i, Size const j);
+	core::Size
+	id_for_resnum( core::Size const seqpos );
 
 	void
-	fast_forward_to_next_residue( Size const i );
+	fast_forward_to_next_residue_pair( core::Size const i, core::Size const j);
+
+	void
+	fast_forward_to_next_residue( core::Size const i );
 
 private:
 
 	using StepWiseSamplerSizedComb::add_external_loop_rotamer; // make it private.
 
-	std::map< Size, ResidueAlternativeStepWiseSamplerOP > residue_alternative_rotamer_map_;
+	std::map< core::Size, ResidueAlternativeStepWiseSamplerOP > residue_alternative_rotamer_map_;
 
 	// following is redundant with rotamer_list_ in parent class, but is useful since it retains ResidueAlternativeStepWiseSampler type.
 	utility::vector1< ResidueAlternativeStepWiseSamplerOP > residue_alternative_rotamer_list_;

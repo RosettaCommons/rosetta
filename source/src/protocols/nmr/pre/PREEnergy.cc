@@ -161,17 +161,17 @@ PREEnergy::calculate_total_score(Pose & pose) const {
 
 	// Some basic setup
 	Real total_score(0);
-	Size number_spinlabel_sites = pre_data_all.get_number_spinlabel_sites();
+	core::Size number_spinlabel_sites = pre_data_all.get_number_spinlabel_sites();
 	utility::vector1< PREMultiSetOP > multiset_vec = pre_data_all.get_pre_multiset_vec();
 	runtime_assert(number_spinlabel_sites == multiset_vec.size());
 
 	// Loop over the spinlabel sites (i.e. the PREMultiSets)
-	for ( Size i = 1; i<= number_spinlabel_sites; ++i ) {
+	for ( core::Size i = 1; i<= number_spinlabel_sites; ++i ) {
 
 		// Prepare PRE data
 		Real score_multiset(0);
 		multiset_vec[i]->update_spin_coordinates(pose);
-		Size spinlabel_position = multiset_vec[i]->get_spinlabel_site_rsd();
+		core::Size spinlabel_position = multiset_vec[i]->get_spinlabel_site_rsd();
 		// Vector of weights and radical atom xyz coordinates for N distinct spinlabel conformers
 		WeightCoordVector spinlabel_wghts_coords;
 
@@ -261,25 +261,25 @@ PREEnergy::setup_for_minimizing(
 	atom_id_to_pre_xyz_deriv_map_.fill_with(fij);
 
 	utility::vector1< PREMultiSetOP > & multiset_vec = pre_data_all.get_pre_multiset_vec();
-	Size number_spinlabel_sites(pre_data_all.get_number_spinlabel_sites());
+	core::Size number_spinlabel_sites(pre_data_all.get_number_spinlabel_sites());
 	utility::vector1<PRESingle>::const_iterator iter;
 
-	for ( Size i = 1; i <= number_spinlabel_sites; ++i ) {
+	for ( core::Size i = 1; i <= number_spinlabel_sites; ++i ) {
 		utility::vector1< PRESingleSetOP > const & singleset_vec = multiset_vec[i]->get_pre_singleset_vec();
-		Size number_experiments(multiset_vec[i]->get_number_experiments());
+		core::Size number_experiments(multiset_vec[i]->get_number_experiments());
 		core::conformation::symmetry::SymmetryInfoCOP syminfo_ptr;
 		if ( multiset_vec[i]->symmetric_pre_calc() && core::pose::symmetry::is_symmetric(pose) ) {
 			syminfo_ptr = core::pose::symmetry::symmetry_info( pose );
 		}
 
-		for ( Size j = 1; j <= number_experiments; ++j ) {
+		for ( core::Size j = 1; j <= number_experiments; ++j ) {
 			utility::vector1<PRESingle> const & single_pre_vec = singleset_vec[j]->get_pre_single_vec();
 
 			for ( iter = single_pre_vec.begin(); iter != single_pre_vec.end(); ++iter ) {
 				utility::vector1< core::id::AtomID > const & protein_spins = iter->get_protein_spins();
 				utility::vector1< Vector > const & atom_derivatives = iter->get_atom_derivatives();
 				runtime_assert_msg(protein_spins.size() == atom_derivatives.size(), "ERROR in setup of atom tree minimization from PRE derivatives. Vector of AtomIDs and of derivatives have unequal length.");
-				for ( Size k = 1, k_end = protein_spins.size(); k <= k_end; ++k ) {
+				for ( core::Size k = 1, k_end = protein_spins.size(); k <= k_end; ++k ) {
 					fij = atom_id_to_pre_xyz_deriv_map_.get( protein_spins[k] );  // returns (0,0,0) if atom is not present in map, otherwise the corresponding derivative
 					fij += atom_derivatives[k];                         // accumulates the derivative for that particular atom (for all pre data)
 					atom_id_to_pre_xyz_deriv_map_.set( protein_spins[k], fij);   // sets the accumulated derivative and resizes the map if necessary
@@ -287,10 +287,10 @@ PREEnergy::setup_for_minimizing(
 				}
 				// Do another pass to set PRE derivatives for symmetric residues
 				if ( syminfo_ptr ) {
-					for ( Size k = 1, k_end = protein_spins.size(); k <= k_end; ++k ) {
-						utility::vector1< Size >protein_spins_symm_rsd = syminfo_ptr->bb_clones(protein_spins[k].rsd());
+					for ( core::Size k = 1, k_end = protein_spins.size(); k <= k_end; ++k ) {
+						utility::vector1< core::Size >protein_spins_symm_rsd = syminfo_ptr->bb_clones(protein_spins[k].rsd());
 
-						for ( Size l = 1, l_end = protein_spins_symm_rsd.size(); l <= l_end; ++l ) {
+						for ( core::Size l = 1, l_end = protein_spins_symm_rsd.size(); l <= l_end; ++l ) {
 							core::id::AtomID symm_spin(protein_spins[k].atomno(), protein_spins_symm_rsd[l]);
 
 							// return the derivative of that atom, if not present in map, return the default value which is (0,0,0)
@@ -377,7 +377,7 @@ PREEnergy::show_additional_info(
 	// Some basic setup
 	PREData & pre_data_all = get_pre_data_from_pose(pose);
 	Real pre_score = calculate_total_score(pose);
-	Size number_spinlabel_sites = pre_data_all.get_number_spinlabel_sites();
+	core::Size number_spinlabel_sites = pre_data_all.get_number_spinlabel_sites();
 	utility::vector1< Real > scores_all_spinlabels(number_spinlabel_sites, 0.0);
 	utility::vector1< PREMultiSetOP > & multiset_vec = pre_data_all.get_pre_multiset_vec();
 	runtime_assert(number_spinlabel_sites == multiset_vec.size());
@@ -388,30 +388,30 @@ PREEnergy::show_additional_info(
 
 	Real sum_all_dev_square(0);
 	Real sum_all_exp_square(0);
-	Size total_number_pre(0);
-	Size total_number_experiments(0);
+	core::Size total_number_pre(0);
+	core::Size total_number_experiments(0);
 
 	// Loop over PREMultiSets
-	for ( Size i = 1; i <= number_spinlabel_sites; ++i ) {
+	for ( core::Size i = 1; i <= number_spinlabel_sites; ++i ) {
 		Real sum_dev_square(0);
 		Real sum_exp_square(0);
 
 		utility::vector1< PRESingleSetOP > & singleset_vec = multiset_vec[i]->get_pre_singleset_vec();
-		Size number_experiments(multiset_vec[i]->get_number_experiments());
+		core::Size number_experiments(multiset_vec[i]->get_number_experiments());
 		runtime_assert(number_experiments == singleset_vec.size());
-		Size number_pres_per_spinlabel(multiset_vec[i]->get_total_number_pre());
+		core::Size number_pres_per_spinlabel(multiset_vec[i]->get_total_number_pre());
 		utility::vector1<Real> const & pre_values = multiset_vec[i]->get_pre_values();
 		utility::vector1<Real> const & pre_single_weights = multiset_vec[i]->get_pre_single_weights();
 		runtime_assert_msg(number_pres_per_spinlabel == pre_values.size(), "ERROR in PREEnergy's show_additional_info() function. Number of PREs and length of PRE value vector are not the same");
 		runtime_assert_msg(number_pres_per_spinlabel == pre_single_weights.size(), "ERROR in PREEnergy's show_additional_info() function. Number of PREs and length of PRE weights vector are not the same");
 
-		Size index_offset(0);
+		core::Size index_offset(0);
 
 		// Loop over PRESingleSets
-		for ( Size j = 1; j <= number_experiments; ++j ) {
+		for ( core::Size j = 1; j <= number_experiments; ++j ) {
 
 			Real single_score(0);
-			Size number_pres_per_experiment(singleset_vec[j]->get_number_pre());
+			core::Size number_pres_per_experiment(singleset_vec[j]->get_number_pre());
 			utility::vector1< PRESingle > const & pre_single_vec = singleset_vec[j]->get_pre_single_vec();
 			runtime_assert(number_pres_per_experiment == pre_single_vec.size());
 			Real scal(1.0 / singleset_vec[j]->get_scaling_factor());
@@ -426,7 +426,7 @@ PREEnergy::show_additional_info(
 			}
 
 			// Loop over PRE values per experiment
-			for ( Size k = 1; k <= number_pres_per_experiment; ++k ) {
+			for ( core::Size k = 1; k <= number_pres_per_experiment; ++k ) {
 				Real calc_pre(pre_single_vec[k].get_pre_calc());
 				Real pre_dev(calc_pre - pre_values[ index_offset + k ]);
 				Real pre_abs_dev(std::abs(pre_dev));

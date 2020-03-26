@@ -97,8 +97,8 @@ SSs::add_ss( const SSs::iterator & it ) {
 //////////////////////////////////////////////////////////////////////////////
 void
 SSs::delete_ss(
-	Size const start,
-	Size const stop
+	core::Size const start,
+	core::Size const stop
 )
 {
 	runtime_assert( start < stop );
@@ -114,10 +114,10 @@ SSs::delete_ss(
 /////////////////////////////////////////////////////////////////////////////
 SSs::const_iterator
 SSs::one_random_ss_element() const {
-	Size const size = sss_.size();
+	core::Size const size = sss_.size();
 	runtime_assert( size > 0 );
-	Size index =0;
-	auto const end = static_cast< Size >( numeric::random::uniform()*size );
+	core::Size index =0;
+	auto const end = static_cast< core::Size >( numeric::random::uniform()*size );
 	auto it = sss_.begin();
 	while ( index != end ) { ++index; ++it; }
 	return it;
@@ -125,7 +125,7 @@ SSs::one_random_ss_element() const {
 }
 /////////////////////////////////////////////////////////////////////////////
 /*
-Size
+core::Size
 SSs::ss_size(
 Size const num
 ) const {
@@ -133,7 +133,7 @@ runtime_assert( num > 0 && num <= sss_.size() );
 return sss_[num-1].size();
 }
 /////////////////////////////////////////////////////////////////////////////
-Size
+core::Size
 SSs::ss_size() const {
 Size sssize = 0;
 for( const_iterator it=sss_.begin(), it_end=sss_.end();

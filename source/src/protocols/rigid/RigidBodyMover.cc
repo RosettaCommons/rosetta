@@ -203,7 +203,7 @@ RigidBodyPerturbMover::RigidBodyPerturbMover(
 	TRBM.Trace << "rot_mag " << rot_mag_ << std::endl;
 	TRBM.Trace << "trans_mag " << trans_mag_ << std::endl;
 	Mover::type( "RigidBodyPerturb" );
-	for ( Size i=1, i_end = pose_in.num_jump(); i<= i_end; ++i ) {
+	for ( core::Size i=1, i_end = pose_in.num_jump(); i<= i_end; ++i ) {
 		if ( mm.get_jump(i) ) {
 			movable_jumps_.push_back( i );
 		}
@@ -234,7 +234,7 @@ RigidBodyPerturbMover::RigidBodyPerturbMover(
 }
 
 RigidBodyPerturbMover::RigidBodyPerturbMover( RigidBodyPerturbMover const & src ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	parent( src ),
 	rot_mag_( src.rot_mag_ ),
 	trans_mag_( src.trans_mag_ ),
@@ -404,7 +404,7 @@ RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
 	TRBM.Debug << "rot_mag " << rot_mag_in << std::endl;
 	TRBM.Debug << "trans_mag " << trans_mag_in << std::endl;
 	moves::Mover::type( "RigidBodyPerturbNoCenter" );
-	for ( Size i=1, i_end = pose_in.num_jump(); i<= i_end; ++i ) {
+	for ( core::Size i=1, i_end = pose_in.num_jump(); i<= i_end; ++i ) {
 		if ( mm.get_jump(i) ) {
 			if ( std::find(movable_jumps_.begin(), movable_jumps_.end(), i) == movable_jumps_.end() ) { // if jump is not already in the list
 				movable_jumps_.push_back( i );
@@ -520,7 +520,7 @@ RigidBodyRandomizeMover::RigidBodyRandomizeMover(
 }
 
 RigidBodyRandomizeMover::RigidBodyRandomizeMover( RigidBodyRandomizeMover const & src ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	parent( src ),
 	partner_( src.partner_ ),
 	phi_angle_( src.phi_angle_ ),
@@ -1278,7 +1278,7 @@ RigidBodyDofSeqRandomizeMover::RigidBodyDofSeqRandomizeMover() :
 
 // constructor with arguments
 RigidBodyDofSeqRandomizeMover::RigidBodyDofSeqRandomizeMover(
-	std::map< Size, core::conformation::symmetry::SymDof > const & dofs
+	std::map< core::Size, core::conformation::symmetry::SymDof > const & dofs
 ):
 	parent()
 {
@@ -1296,7 +1296,7 @@ void RigidBodyDofSeqRandomizeMover::apply( core::pose::Pose & pose )
 {
 	using namespace core::conformation::symmetry;
 
-	std::map< Size, SymDof >::iterator it;
+	std::map< core::Size, SymDof >::iterator it;
 	auto it_begin = dofs_.begin();
 	auto it_end = dofs_.end();
 	for ( it = it_begin; it != it_end; ++it ) {
@@ -1360,7 +1360,7 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 
 // constructor with arguments
 RigidBodyDofTransMover::RigidBodyDofTransMover(
-	std::map< Size, core::conformation::symmetry::SymDof > dofs
+	std::map< core::Size, core::conformation::symmetry::SymDof > dofs
 ):
 	RigidBodyMover(),
 	last_slide_good_(false)
@@ -1373,7 +1373,7 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 	step_size_ = 0.5;
 
 	// Save jumps that are allowed to move and have a translation dof
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
+	std::map< core::Size, core::conformation::symmetry::SymDof >::iterator it;
 	auto it_begin = dofs.begin();
 	auto it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
@@ -1465,7 +1465,7 @@ RigidBodyDofSeqTransMover::RigidBodyDofSeqTransMover() : RigidBodyMover()
 // and apply a translation
 // constructor with arguments
 RigidBodyDofSeqTransMover::RigidBodyDofSeqTransMover(
-	std::map< Size, core::conformation::symmetry::SymDof > dofs
+	std::map< core::Size, core::conformation::symmetry::SymDof > dofs
 ):
 	RigidBodyMover()
 {
@@ -1476,7 +1476,7 @@ RigidBodyDofSeqTransMover::RigidBodyDofSeqTransMover(
 	step_size_ = 0.5;
 	trans_axis_ = Vector(1,0,0);
 	// Save jumps that are allowed to move and have a translation dof
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
+	std::map< core::Size, core::conformation::symmetry::SymDof >::iterator it;
 	auto it_begin = dofs.begin();
 	auto it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
@@ -1503,7 +1503,7 @@ RigidBodyDofSeqTransMover::~RigidBodyDofSeqTransMover() = default;
 void RigidBodyDofSeqTransMover::apply( core::pose::Pose & pose )
 {
 
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
+	std::map< core::Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
 	utility::vector1< int >::iterator start, end, it;
 	start = rb_jumps_.begin();
 	end = rb_jumps_.end();
@@ -1544,7 +1544,7 @@ RigidBodyDofRandomTransMover::RigidBodyDofRandomTransMover() : parent()
 
 // constructor with arguments
 RigidBodyDofRandomTransMover::RigidBodyDofRandomTransMover(
-	std::map< Size, core::conformation::symmetry::SymDof > dofs
+	std::map< core::Size, core::conformation::symmetry::SymDof > dofs
 ):
 	parent()
 {
@@ -1555,7 +1555,7 @@ RigidBodyDofRandomTransMover::RigidBodyDofRandomTransMover(
 	step_size_ = 0.5;
 	trans_axis_ = Vector(1,0,0);
 	// Save jumps that are allowed to move and have a translation dof
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
+	std::map< core::Size, core::conformation::symmetry::SymDof >::iterator it;
 	auto it_begin = dofs.begin();
 	auto it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
@@ -1582,7 +1582,7 @@ RigidBodyDofRandomTransMover::~RigidBodyDofRandomTransMover() = default;
 void RigidBodyDofRandomTransMover::apply( core::pose::Pose & pose )
 {
 
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
+	std::map< core::Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
 	utility::vector1< int >::iterator start, end;
 	start = rb_jumps_.begin();
 	end = rb_jumps_.end();
@@ -1640,7 +1640,7 @@ RigidBodyDofPerturbMover::RigidBodyDofPerturbMover(
 // Othervise use the trans and rot magnitudes from the constructor.
 // The jump is selected randomly from the allowed dofs
 RigidBodyDofPerturbMover::RigidBodyDofPerturbMover(
-	std::map< Size, core::conformation::symmetry::SymDof > dofs,
+	std::map< core::Size, core::conformation::symmetry::SymDof > dofs,
 	Real const rot_mag_in,
 	Real const trans_mag_in
 ):
@@ -1654,7 +1654,7 @@ RigidBodyDofPerturbMover::RigidBodyDofPerturbMover(
 	//  TRBM.Debug << "trans_mag " << trans_mag_in << std::endl;
 	moves::Mover::type( "RigidBodyDofPerturbMover" );
 
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
+	std::map< core::Size, core::conformation::symmetry::SymDof >::iterator it;
 	auto it_begin = dofs.begin();
 	auto it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
@@ -1686,7 +1686,7 @@ void RigidBodyDofPerturbMover::apply( core::pose::Pose & pose )
 
 	int c2n(-1);
 
-	for ( Size i = 1; i<= 3; ++i ) {
+	for ( core::Size i = 1; i<= 3; ++i ) {
 		if ( dof_.allow_dof(i) ) {
 			// the dat in the dof takes precedence
 			core::Real transmag;
@@ -1705,7 +1705,7 @@ void RigidBodyDofPerturbMover::apply( core::pose::Pose & pose )
 			}
 		}
 	}
-	for ( Size i = 4; i<= 6; ++i ) {
+	for ( core::Size i = 4; i<= 6; ++i ) {
 		if ( dof_.allow_dof(i) ) {
 			// the dat in the dof takes precedence
 			core::Real rotmag;
@@ -1726,7 +1726,7 @@ RigidBodyDofPerturbMover::get_name() const {
 
 // @details apply perturbations to all allowed dofs. Apply them in sequential order.
 RigidBodyDofSeqPerturbMover::RigidBodyDofSeqPerturbMover(
-	std::map< Size, core::conformation::symmetry::SymDof > dofs,
+	std::map< core::Size, core::conformation::symmetry::SymDof > dofs,
 	Real const rot_mag_in,
 	Real const trans_mag_in
 ):
@@ -1740,7 +1740,7 @@ RigidBodyDofSeqPerturbMover::RigidBodyDofSeqPerturbMover(
 	//  TRBM.Debug << "trans_mag " << trans_mag_in << std::endl;
 	moves::Mover::type( "RigidBodyDofSeqPerturbMover" );
 
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
+	std::map< core::Size, core::conformation::symmetry::SymDof >::iterator it;
 	auto it_begin = dofs.begin();
 	auto it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
@@ -1761,7 +1761,7 @@ RigidBodyDofSeqPerturbMover::~RigidBodyDofSeqPerturbMover() = default;
 
 void RigidBodyDofSeqPerturbMover::apply( core::pose::Pose & pose )
 {
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
+	std::map< core::Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
 	utility::vector1< int >::iterator start, end, it;
 	start = rb_jumps_.begin();
 	end = rb_jumps_.end();

@@ -39,7 +39,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Numeric headers
 
@@ -53,7 +53,7 @@ namespace scoring {
 namespace methods {
 namespace pcsTs2 {
 
-class GridSearchIterator_Ts2 : public utility::pointer::ReferenceCount {
+class GridSearchIterator_Ts2 : public utility::VirtualBase {
 public:
 	GridSearchIterator_Ts2();
 

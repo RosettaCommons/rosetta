@@ -20,7 +20,7 @@
 #include <ObjexxFCL/format.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <protocols/multistate_design/MultiStateFitnessFunction.hh>
 #include <protocols/multistate_design/SingleState.hh>

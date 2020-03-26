@@ -94,9 +94,9 @@ string SS_predictor::get_window_aa(string fasta,SSize position){
 vector1 <Real> SS_predictor::predict_pos_rd1(string window_aa){
 	string aa_order =  "ARNDCQEGHILKMFPSTWYVX";
 	vector1< Svm_node_rosettaOP > features;
-	for ( Size ii=0; ii<window_aa.size(); ++ii ) {
-		Size aa_pos_index = (aa_order.find(window_aa.at(ii))+1);
-		Size final_index = ii*21+aa_pos_index;
+	for ( core::Size ii=0; ii<window_aa.size(); ++ii ) {
+		core::Size aa_pos_index = (aa_order.find(window_aa.at(ii))+1);
+		core::Size final_index = ii*21+aa_pos_index;
 		Svm_node_rosettaOP tmpNode = utility::pointer::make_shared< Svm_node_rosetta >(final_index,1);
 		features.push_back(tmpNode);
 	}
@@ -114,22 +114,22 @@ vector1 <Real> SS_predictor::predict_pos_rd2( vector1<vector1<Real> > rd1_preds,
 	string ABEGO_RD2_OUT_ORDER ="EBAGO";
 	string HLE_RD2_OUT_ORDER = "LEH";
 	auto half_window_size = (SSize)floor((Real)WINDOW_SIZE/2.0);
-	Size lpCt = 0;
+	core::Size lpCt = 0;
 	vector1< Svm_node_rosettaOP > features;
 	for ( SSize ii=position-half_window_size; ii<=position+half_window_size; ++ii ) {
 		if ( ii<0 || ii>=SSize(fasta.size()) ) {
-			Size tmp_index = lpCt*(rd1_preds[1].size()+1)+(rd1_preds[1].size()+1);//For HLE position 4
+			core::Size tmp_index = lpCt*(rd1_preds[1].size()+1)+(rd1_preds[1].size()+1);//For HLE position 4
 			Svm_node_rosettaOP tmpNode = utility::pointer::make_shared< Svm_node_rosetta >(tmp_index,1);
 			features.push_back(tmpNode);
 		} else {
-			for ( Size jj=0; jj<rd1_preds[1].size(); ++jj ) {
-				Size rd1_pred_typeCorrection = 99999;
+			for ( core::Size jj=0; jj<rd1_preds[1].size(); ++jj ) {
+				core::Size rd1_pred_typeCorrection = 99999;
 				if ( ss_type == "HLE" ) {
 					rd1_pred_typeCorrection = HLE_RD1_OUT_ORDER.find(HLE_RD2_IN_ORDER.at(jj))+1;
 				} else {
 					rd1_pred_typeCorrection = ABEGO_RD1_OUT_ORDER.find(ABEGO_RD2_IN_ORDER.at(jj))+1;
 				}
-				Size tmp_index = lpCt*(rd1_preds[1].size()+1)+jj+1;
+				core::Size tmp_index = lpCt*(rd1_preds[1].size()+1)+jj+1;
 				Real tmp_value = rd1_preds[ii+1][rd1_pred_typeCorrection];
 				Svm_node_rosettaOP tmpNode= utility::pointer::make_shared< Svm_node_rosetta >(tmp_index,tmp_value);
 				features.push_back(tmpNode);
@@ -139,8 +139,8 @@ vector1 <Real> SS_predictor::predict_pos_rd2( vector1<vector1<Real> > rd1_preds,
 	}
 	vector1 <Real> prob_estimates = rd2_model->predict_probability(features);
 	vector1 <Real> probs_to_return;
-	for ( Size ii=0; ii<ss_type.size(); ++ii ) {
-		Size rd1_pred_typeCorrection = 99999;
+	for ( core::Size ii=0; ii<ss_type.size(); ++ii ) {
+		core::Size rd1_pred_typeCorrection = 99999;
 		if ( ss_type == "HLE" ) { //The order that the probabilities come out is not ABEGO HLE, this corrects.
 			rd1_pred_typeCorrection = HLE_RD2_OUT_ORDER.find(HLE_RD2_IN_ORDER.at(ii));
 		} else {
@@ -155,7 +155,7 @@ vector1 <Real> SS_predictor::predict_pos_rd2( vector1<vector1<Real> > rd1_preds,
 /////////////////////////////////////////////////////////////////////////////////
 vector1< vector1 <Real> > SS_predictor::predict_rd1(string fasta){
 	vector1< vector1 <Real> > probs;
-	for ( Size ii=0; ii<fasta.size(); ++ii ) {
+	for ( core::Size ii=0; ii<fasta.size(); ++ii ) {
 		string window_aa = get_window_aa(fasta,ii);
 		probs.push_back(predict_pos_rd1(window_aa));
 	}
@@ -166,11 +166,11 @@ vector1< vector1 <Real> > SS_predictor::predict_rd1(string fasta){
 /////////////////////////////////////////////////////////////////////////////////
 vector1< vector1 <Real> > SS_predictor::predict_rd2(vector1< vector1< Real > > rd1_preds, string fasta){
 	vector1< vector1 <Real> > probs;
-	Size correction = 0;
+	core::Size correction = 0;
 	if ( ss_type == "ABEGO" ) { //Note the last position in ABEGO is ALWAYS a O
 		correction = 1;
 	}
-	for ( Size ii=0; ii<fasta.size()-correction; ++ii ) {
+	for ( core::Size ii=0; ii<fasta.size()-correction; ++ii ) {
 		probs.push_back(predict_pos_rd2(rd1_preds,ii,fasta));
 	}
 	if ( correction == 1 ) {

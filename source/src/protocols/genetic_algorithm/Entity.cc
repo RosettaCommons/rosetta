@@ -16,7 +16,7 @@
 #include <core/types.hh>
 
 #include <utility/exit.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <boost/functional/hash.hpp> // hash_range
@@ -34,17 +34,19 @@ using namespace ObjexxFCL;
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+using core::Size;
+
 namespace protocols {
 namespace genetic_algorithm {
 
 EntityElement::EntityElement() : index_( 0 ) {}
-EntityElement::EntityElement( Size index ) : parent(), index_( index ) {}
+EntityElement::EntityElement( core::Size index ) : parent(), index_( index ) {}
 EntityElement::EntityElement( std::string & word ) : parent()
 {
 	if ( word == "" ) {
 		index_ = 0;
 	} else {
-		Size colon_pos = word.find( ":" );
+		core::Size colon_pos = word.find( ":" );
 		if ( colon_pos == std::string::npos ) {
 			std::cerr << "ERROR: Could not find colon (:) in input word while constructing EntityElement.  word='" << word << "'" << std::endl;
 			utility_exit_with_message( "EntityElement constructor failure" );
@@ -63,7 +65,7 @@ EntityElement::EntityElement( std::string & word ) : parent()
 
 EntityElement::~EntityElement() = default;
 
-void EntityElement::index( Size ind ) { index_ = ind; }
+void EntityElement::index( core::Size ind ) { index_ = ind; }
 EntityElement::Size EntityElement::index() const { return index_; }
 
 bool
@@ -132,7 +134,7 @@ EntityElementFactory::EntityElementFactory() = default;
 //////////// Entity ////////////
 
 Entity::Entity() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	fitness_(0.),
 	fitness_valid_(false)
 {}
@@ -144,12 +146,12 @@ Entity::Entity( std::string const & line )
 }
 
 Entity::Entity( Entity const & entity ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	traits_( entity.traits_.size() ),
 	fitness_( entity.fitness_ ),
 	fitness_valid_( entity.fitness_valid_ )
 {
-	for ( Size ii = 1; ii <= traits_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= traits_.size(); ++ii ) {
 		if ( entity.traits_[ ii ] ) {
 			traits_[ ii ] = entity.traits_[ ii ]->clone();
 		} else {
@@ -163,7 +165,7 @@ Entity &
 Entity::operator = ( Entity const & rhs ) {
 	if ( this != & rhs ) {
 		if ( traits_.size() == rhs.traits_.size() ) {
-			for ( Size ii = 1; ii <= traits_.size(); ++ii ) {
+			for ( core::Size ii = 1; ii <= traits_.size(); ++ii ) {
 				if ( rhs.traits_[ ii ] && traits_[ ii ] ) {
 					(*traits_[ ii ]) = (*rhs.traits_[ ii ] ); // polymorphic assignment operator; assumption: both traits are the same type!
 				} else {
@@ -172,7 +174,7 @@ Entity::operator = ( Entity const & rhs ) {
 			}
 		} else {
 			traits_.resize( rhs.traits_.size() );
-			for ( Size ii = 1; ii <= traits_.size(); ++ii ) {
+			for ( core::Size ii = 1; ii <= traits_.size(); ++ii ) {
 				if ( rhs.traits_[ ii ] ) {
 					traits_[ ii ] = rhs.traits_[ ii ]->clone();
 				} else {
@@ -196,7 +198,7 @@ void Entity::set_traits_size(
 {
 	traits_.resize(size);
 	/*
-	for ( Size ii = 1; ii <= size; ++ii ) {
+	for ( core::Size ii = 1; ii <= size; ++ii ) {
 	traits_[ ii ] = element->fresh_instance();
 	traits_[ ii ]->index( ii );
 	}*/
@@ -205,7 +207,7 @@ void Entity::set_traits_size(
 void Entity::set_traits( EntityElements const & traits )
 {
 	if ( traits_.size() == traits.size() ) {
-		for ( Size ii = 1; ii <= traits_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= traits_.size(); ++ii ) {
 			if ( traits_[ ii ] ) {
 				*traits_[ ii ] = *traits[ ii ]; /// Assumption: both traits are the same type.
 			} else {
@@ -214,7 +216,7 @@ void Entity::set_traits( EntityElements const & traits )
 		}
 	} else {
 		traits_.resize( traits.size() );
-		for ( Size ii = 1; ii <= traits_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= traits_.size(); ++ii ) {
 			traits_[ ii ] = traits[ ii ]->clone();
 		}
 	}
@@ -252,7 +254,7 @@ bool Entity::operator == ( Entity const & other ) const
 {
 	if ( traits_.size() != other.traits_.size() ) return false;
 
-	for ( Size ii = 1; ii <= traits_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= traits_.size(); ++ii ) {
 		if ( ! traits_[ ii ] && ! other.traits_[ ii ] ) {
 			continue; /// apl -- this really shouldn't happen
 		}

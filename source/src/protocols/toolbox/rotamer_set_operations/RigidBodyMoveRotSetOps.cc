@@ -37,6 +37,8 @@ namespace rotamer_set_operations {
 
 static basic::Tracer tr( "protocols.toolbox.RotamerSetOperations.RigidBodyMoveRotSetOps" );
 
+using core::Size;
+
 void
 RigidBodyMoveBaseRSO::alter_rotamer_set(
 	core::pose::Pose const & pose,
@@ -92,7 +94,7 @@ RigidBodyMoveBaseRSO::alter_rotamer_set(
 	bool buried( nneighbs >= int(ptask.residue_task( sequence_position ).extrachi_cutoff()) );
 	if ( cast_succesful ) {
 		auto & rotset ( static_cast< core::pack::rotamer_set::RotamerSet_ & > (rotamer_set) );
-		for ( Size ii = 1; ii <= concrete_residue->nchi(); ++ii ) {
+		for ( core::Size ii = 1; ii <= concrete_residue->nchi(); ++ii ) {
 			rotset.set_extra_samples( ptask, nneighbs, ii, concrete_residue, extra_chi_steps[ ii ] );
 		}
 	}
@@ -185,10 +187,10 @@ RigidBodyMoveBaseRSO::determine_largest_nbr_atom_distance(
 		runtime_assert( target_res.name3() == alternate_confs[1]->name3() );
 	}
 
-	Size nbr_atom( target_res.nbr_atom() );
+	core::Size nbr_atom( target_res.nbr_atom() );
 	core::PointPosition center_pos( target_res.xyz( nbr_atom ) );
 	core::Real max_sq_dist(0.0);
-	for ( Size i = 1; i <= alternate_confs.size(); ++i ) {
+	for ( core::Size i = 1; i <= alternate_confs.size(); ++i ) {
 		core::Vector dist_vect( center_pos - alternate_confs[i]->xyz( nbr_atom ) );
 		core::Real sq_dist( dist_vect.length_squared() );
 		if ( sq_dist > max_sq_dist ) max_sq_dist = sq_dist;

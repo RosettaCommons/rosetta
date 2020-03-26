@@ -101,7 +101,7 @@ StoreQuasiSymmetricTaskMover::apply( core::pose::Pose & pose )
 		TR << "Starting quasi-equivalent residue (ir)= " << ir <<std::endl;
 	}
 
-	//for (Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
+	//for (core::Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
 	while ( ir<=sym_info->num_total_residues_without_pseudo() ) {                //loop through all residues (without_pseudo = without pseudo-atoms; all residues in pose)
 		if ( indy_resis[ir] ) {                                  //if residue is a independent residue
 			num_indy_resis++;                                    //+1 total independent residue count (indy resi = residue in a master subunit)
@@ -129,7 +129,7 @@ StoreQuasiSymmetricTaskMover::apply( core::pose::Pose & pose )
 		core::Size pos_minus_Xsubunit= 0;
 		core::Size pos_plus_Xsubunit= 0;
 
-		for ( Size repeat_mult=1; repeat_mult < num_quasi_repeats(); repeat_mult++ ) {
+		for ( core::Size repeat_mult=1; repeat_mult < num_quasi_repeats(); repeat_mult++ ) {
 			pos_minus_Xsubunit = (int)*pos - ( repeat_mult * ( num_resis_quasi_subunits/num_quasi_repeats() ) );
 			pos_plus_Xsubunit = (int)*pos + ( repeat_mult * ( num_resis_quasi_subunits/num_quasi_repeats() ) );
 
@@ -195,7 +195,7 @@ StoreQuasiSymmetricTaskMover::apply( core::pose::Pose & pose )
 
 	TR << "num_total_residues_without_pseudo: " << sym_info->num_total_residues_without_pseudo() << std::endl;
 
-	for ( Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++ ) {         //loop through all residues
+	for ( core::Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++ ) {         //loop through all residues
 		if ( design_pos.find(ir) != design_pos.end() ) {                      //residue is found in design_pos (note: only master subunit resi)
 			output += ObjexxFCL::string_of(ir)+"+";  //appends design positions to output string
 			if ( pose.residue(ir).is_protein()                           //residue is a protein
@@ -220,7 +220,7 @@ StoreQuasiSymmetricTaskMover::apply( core::pose::Pose & pose )
 				//TR.Debug << "Residue: " << ir << " IS GETTING INTO THIS LOOP." << std::endl;
 
 				utility::vector1< core::Size > list; list.push_back( ir );                    //generate list for linking
-				for ( Size repeat_mult=1; repeat_mult < num_quasi_repeats(); repeat_mult++ ) {
+				for ( core::Size repeat_mult=1; repeat_mult < num_quasi_repeats(); repeat_mult++ ) {
 					ir_plus_Xsubunit = ir + ( repeat_mult * ( num_resis_quasi_subunits/num_quasi_repeats() ) );
 					if ( ( indy_resis[ir_plus_Xsubunit] )                             //ir_plus is a independent residue
 							&& ( get_component_of_residue(pose,ir_plus_Xsubunit) == quasi_symm_comp() ) ) {     //ir_plus is a quasi-residue
@@ -229,7 +229,7 @@ StoreQuasiSymmetricTaskMover::apply( core::pose::Pose & pose )
 				}
 
 				links->set_equiv( ir, list );                                   //link residues based on list
-				for ( Size repeat_mult=1; repeat_mult < num_quasi_repeats(); repeat_mult++ ) {
+				for ( core::Size repeat_mult=1; repeat_mult < num_quasi_repeats(); repeat_mult++ ) {
 					ir_plus_Xsubunit = ir + ( repeat_mult * ( num_resis_quasi_subunits/num_quasi_repeats() ) );
 					if ( ( indy_resis[ir_plus_Xsubunit] )                             //ir_plus is a independent residue
 							&& ( get_component_of_residue(pose,ir_plus_Xsubunit) == quasi_symm_comp() ) ) {     //ir_plus is a quasi-residue

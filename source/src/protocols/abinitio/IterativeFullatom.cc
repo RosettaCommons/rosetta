@@ -175,8 +175,8 @@ void IterativeFullatom::gen_resample_core( Batch& batch, bool flex ) {
 	sfd.write_all( batch.silent_in() );
 
 	//take rigid-core definition that has most individual loops --- most jumps
-	Size most_jumps( 0 ), nr_jumps( 0 );
-	for ( Size i = 2; i<=4; ++i ) {
+	core::Size most_jumps( 0 ), nr_jumps( 0 );
+	for ( core::Size i = 2; i<=4; ++i ) {
 		if ( core( i ).num_loop() > nr_jumps ) {
 			nr_jumps = core( i ).num_loop();
 			most_jumps = i;

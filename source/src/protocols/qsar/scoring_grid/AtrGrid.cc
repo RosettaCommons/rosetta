@@ -31,6 +31,8 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
+using core::Size;
+
 std::string AtrGridCreator::keyname()const
 {
 	return AtrGrid::grid_name();
@@ -170,7 +172,7 @@ void AtrGrid::refresh(
 	utility::vector1<core::Size> ligand_chain_ids_to_exclude
 ){
 	// Set neutral core around each sidechain heavy atom, as MOST of these stay put.
-	for ( Size r = 1, r_end = pose.size(); r <= r_end; ++r ) {
+	for ( core::Size r = 1, r_end = pose.size(); r <= r_end; ++r ) {
 		core::conformation::Residue const & rsd = pose.residue(r);
 		if ( rsd.is_protein() ) set_protein_rings(rsd);
 		else {

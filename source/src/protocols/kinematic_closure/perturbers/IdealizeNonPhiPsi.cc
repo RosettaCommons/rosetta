@@ -28,7 +28,7 @@ using numeric::conversions::DEGREES;
 void IdealizeNonPhiPsi::perturb_subset(
 	Pose const &, IndexList const & residues, ClosureProblemOP problem) {
 
-	for ( Size const residue : residues ) {
+	for ( core::Size const residue : residues ) {
 		problem->perturb_omega(residue, IdealParameters::omega_dihedral, DEGREES);
 		problem->perturb_c_n_ca(residue, IdealParameters::c_n_ca_angle, DEGREES);
 		problem->perturb_n_ca_c(residue, IdealParameters::n_ca_c_angle, DEGREES);

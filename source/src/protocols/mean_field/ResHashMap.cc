@@ -36,9 +36,9 @@ using namespace core;
 // Standard methods ////////////////////////////////////////////////////////////
 // Default constructor
 /// @details
-ResHashMap::ResHashMap() : utility::pointer::ReferenceCount(),
-	hash_( Size( 1000 ) ),
-	last_ind_assigned_( Size ( 0 ) )
+ResHashMap::ResHashMap() : utility::VirtualBase(),
+	hash_( core::Size( 1000 ) ),
+	last_ind_assigned_( core::Size ( 0 ) )
 {}
 
 // Destructor
@@ -71,7 +71,7 @@ ResHashMap::attempt_insert ( conformation::ResidueCOP res )
 protocols::mean_field::ResHashMap::RotamerIndex
 ResHashMap::get_rot_ind ( conformation::ResidueCOP res ) const
 {
-	RotamerIndex rot_ind = Size ( -1 );
+	RotamerIndex rot_ind = core::Size ( -1 );
 
 	ResHash::const_iterator result = hash_.find( res );
 

@@ -42,6 +42,7 @@ BBDihedralSamplerBase::BBDihedralSamplerBase( core::id::MainchainTorsionType tor
 BBDihedralSamplerBase::~BBDihedralSamplerBase()= default;
 
 BBDihedralSamplerBase::BBDihedralSamplerBase( BBDihedralSamplerBase const & src ):
+	VirtualBase( src ),
 	torsion_type_(src.torsion_type_),
 	sampling_type_(src.sampling_type_)
 {

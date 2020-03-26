@@ -40,7 +40,7 @@ RotMatrix::RotMatrix() : jagged_array< RotProb > ()
 /// @details standard constructor calls private member function
 /// @param [in] option - determines which numbers to initialize RotMatrix with
 /// @param [in] rs - RotamerSetsOP used to gather the rest of the information used to build the RotMatrix
-RotMatrix::RotMatrix( Size option, core::pack::rotamer_set::RotamerSetsOP rs ) : jagged_array < RotProb > ()
+RotMatrix::RotMatrix( core::Size option, core::pack::rotamer_set::RotamerSetsOP rs ) : jagged_array < RotProb > ()
 {
 	init(option, rs);
 }
@@ -89,7 +89,7 @@ RotMatrix::show( std::ostream & output ) const
 
 	for ( utility::vector1<RotProb>::const_iterator iter = curr_rot_p.begin(); iter != curr_rot_p.end(); ++iter ) {
 		//checks that RotProb is meaningful before outputting data
-		if ( iter->pos() != Size( 0 ) ) {
+		if ( iter->pos() != core::Size( 0 ) ) {
 			if ( ! printed_header ) {
 				output << "Curr Rotamer Probability------------------------------" << std::endl;
 				printed_header = true;
@@ -104,9 +104,9 @@ RotMatrix::show( std::ostream & output ) const
 Size
 RotMatrix::n_designed() const
 {
-	Size n_des( 0 );
+	core::Size n_des( 0 );
 
-	for ( Size n = 1; n <= is_designed_.size(); ++n ) {
+	for ( core::Size n = 1; n <= is_designed_.size(); ++n ) {
 		if ( is_designed_[ n ] ) ++n_des;
 	}
 
@@ -118,7 +118,7 @@ utility::vector1 < RotProb >
 RotMatrix::curr_rot_prob() const
 {
 	utility::vector1 < RotProb > rp ( curr_rot_.size() );
-	for ( Size pos = 1; pos <= curr_rot_.size(); ++pos ) {
+	for ( core::Size pos = 1; pos <= curr_rot_.size(); ++pos ) {
 		if ( curr_rot_[ pos ] != 0 ) {
 			rp[ pos ] = ( *this )[ pos ][ curr_rot_[ pos ] ];
 		}
@@ -140,7 +140,7 @@ RotMatrix::build_rot_matrix( core::Size const option, core::pack::rotamer_set::R
 /// @param [in] option - determines which numbers to initialize RotMatrix with
 /// @param [in] rs - RotamerSetsOP used to gather the rest of the information used to build the RotMatrix
 void
-RotMatrix::init( Size const option, core::pack::rotamer_set::RotamerSetsOP rs )
+RotMatrix::init( core::Size const option, core::pack::rotamer_set::RotamerSetsOP rs )
 {
 
 	//clears variables in order to reinitialize
@@ -157,17 +157,17 @@ RotMatrix::init( Size const option, core::pack::rotamer_set::RotamerSetsOP rs )
 	}
 
 	//iterates through molten residues to create a vector for each residue of RotProbs
-	for ( Size pos = 1; pos <= rs->nmoltenres(); ++pos ) {
+	for ( core::Size pos = 1; pos <= rs->nmoltenres(); ++pos ) {
 		//if ( rs->task()->design_residue( rs->moltenres_2_resid( pos ) ) )
 
-		Size nrot = rs->rotamer_set_for_moltenresidue( pos )->num_rotamers();
+		core::Size nrot = rs->rotamer_set_for_moltenresidue( pos )->num_rotamers();
 		utility::vector1 < RotProb > rps ( nrot );
 
 		push_back( rps );
 
 		//setup current rotamer vector
 		if ( curr_rot_.size() > 0 ) {
-			Size cr = rs->rotamer_set_for_moltenresidue( pos )->id_for_current_rotamer();
+			core::Size cr = rs->rotamer_set_for_moltenresidue( pos )->id_for_current_rotamer();
 			if ( cr == 0 ) {
 				curr_rot_.clear();
 			} else {
@@ -189,7 +189,7 @@ RotMatrix::init( Size const option, core::pack::rotamer_set::RotamerSetsOP rs )
 		//initializes RotProb and sets is_designed_ accordingly
 		core::chemical::AA aa = rs->rotamer_for_moltenres( pos, 1 )->type().aa();
 
-		for ( Size rot = 1; rot <= nrot ; ++rot ) {
+		for ( core::Size rot = 1; rot <= nrot ; ++rot ) {
 			( *this )[ pos ][ rot ] = RotProb( init_val, rot, rs->moltenres_2_resid( pos ), rs->rotamer_for_moltenres( pos, rot ) );
 			if ( aa != rs->rotamer_for_moltenres( pos, rot )->type().aa() ) {
 				is_designed_[ pos ] = true;
@@ -206,7 +206,7 @@ RotMatrix::copy_data(
 	RotMatrix const & object_to_copy_from)
 {
 	object_to_copy_to.clear();
-	for ( Size i = 1; i <= object_to_copy_from.size(); ++i ) {
+	for ( core::Size i = 1; i <= object_to_copy_from.size(); ++i ) {
 		object_to_copy_to.push_back ( object_to_copy_from[i] );
 	}
 	object_to_copy_to.curr_rot_ = object_to_copy_from.curr_rot_;

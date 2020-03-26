@@ -27,7 +27,7 @@
 #include <ObjexxFCL/FArray4D.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -39,7 +39,7 @@ namespace potentials {
 namespace sspot {
 
 /// @brief secondary structure scoring cut from classic rosetta structure.h/structure.cc
-class HSPairPotential : public utility::pointer::ReferenceCount {
+class HSPairPotential : public utility::VirtualBase {
 public:
 
 
@@ -80,10 +80,10 @@ private:
 
 
 	// @brief
-	Real calc_phithetascore( Size const strand_seqsep, Real const phi, Real const theta ) const;
+	Real calc_phithetascore( core::Size const strand_seqsep, Real const phi, Real const theta ) const;
 
 	/// @brief
-	void helix_end( Size const & pos1, BB_Pos const & bb_pos, Vector & p1, Vector & p2 ) const;
+	void helix_end( core::Size const & pos1, BB_Pos const & bb_pos, Vector & p1, Vector & p2 ) const;
 
 
 private: // initialization

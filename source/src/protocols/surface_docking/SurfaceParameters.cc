@@ -57,7 +57,7 @@ SurfaceParameters::SurfaceParameters(
 }
 
 SurfaceParameters::SurfaceParameters( SurfaceParameters const & src ):
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	SURFA0_=src.SURFA0_;
 	SURFA1_=src.SURFA1_;

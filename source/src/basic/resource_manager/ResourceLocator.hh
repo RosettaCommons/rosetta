@@ -15,7 +15,7 @@
 #define INCLUDED_basic_resource_manager_ResourceLocater_hh
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //unit headers
 #include <basic/resource_manager/ResourceLocator.fwd.hh>
@@ -34,7 +34,7 @@ namespace resource_manager {
 /// up a standard istream so that data that the ResourceLocator needs to
 /// deliver to a ResourceLoader can come from arbitrary sources (e.g.
 /// from either a file or from a database).
-class ResourceStream : public utility::pointer::ReferenceCount
+class ResourceStream : public utility::VirtualBase
 {
 public:
 
@@ -59,7 +59,7 @@ public:
 /// for example, for the FileSystemResourceLocator, the locator id
 /// is a file name; for the DatabaseResourceLocator, it would be
 /// a database query.
-class ResourceLocator : public utility::pointer::ReferenceCount
+class ResourceLocator : public utility::VirtualBase
 {
 public:
 	/// @brief Construct a %ResourceLocator and initialize its name

@@ -35,7 +35,7 @@
 
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -592,7 +592,7 @@ enum MultipoleAxisType {
 };
 
 
-class MultipoleParameter : public utility::pointer::ReferenceCount {
+class MultipoleParameter : public utility::VirtualBase {
 
 public:
 	typedef utility::pointer::shared_ptr< MultipoleParameter > MultipoleParameterOP;
@@ -662,7 +662,7 @@ public:
 
 
 
-class MultipoleElecPotential : public utility::pointer::ReferenceCount {
+class MultipoleElecPotential : public utility::VirtualBase {
 public:
 	typedef core::conformation::Residue Residue;
 

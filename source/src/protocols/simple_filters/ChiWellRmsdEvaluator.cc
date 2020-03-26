@@ -52,7 +52,7 @@ namespace simple_filters {
 using namespace core;
 
 
-ChiWellRmsdEvaluator::ChiWellRmsdEvaluator( core::pose::PoseCOP pose, core::Size nchi_max,  core::Real sasa_threshold, utility::vector1< Size> const& selection, std::string tag )
+ChiWellRmsdEvaluator::ChiWellRmsdEvaluator( core::pose::PoseCOP pose, core::Size nchi_max,  core::Real sasa_threshold, utility::vector1< core::Size> const& selection, std::string tag )
 : evaluation::SingleValuePoseEvaluator< Real >( tag ),
 	rmsd_pose_(std::move( pose )),
 	nchi_max_( nchi_max ),
@@ -104,9 +104,9 @@ ChiWellRmsdEvaluator::apply( core::pose::Pose& pose ) const {
 		pack::dunbrack::RotVector target_rot;
 		pack::dunbrack::rotamer_from_chi( target_rsd, target_rot );
 
-		Size nchi = rsd.chi().size();
+		core::Size nchi = rsd.chi().size();
 		bool good( true );
-		for ( Size i=1; i<= std::min( nchi, nchi_max_ ) && good; ++i ) {
+		for ( core::Size i=1; i<= std::min( nchi, nchi_max_ ) && good; ++i ) {
 			tr.Debug << "Chi " << i << " " << rot[ i ]  << " target: " << target_rot[ i ] << std::endl;
 			good = rot[ i ] == target_rot[ i ];
 		}

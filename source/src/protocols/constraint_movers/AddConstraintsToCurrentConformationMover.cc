@@ -137,15 +137,15 @@ AddConstraintsToCurrentConformationMover::generate_constraints( core::pose::Pose
 core::Size
 AddConstraintsToCurrentConformationMover::find_best_anchor( core::pose::Pose const & pose ) const
 {
-	Size const nres = pose.size();
+	core::Size const nres = pose.size();
 
 	// find anchor residue
 	numeric::xyzVector< core::Real > sum_xyz(0.0);
 	numeric::xyzVector< core::Real > anchor_xyz(0.0);
 	core::Real natom = 0.0;
-	for ( Size ires=1; ires<=nres; ++ires ) {
+	for ( core::Size ires=1; ires<=nres; ++ires ) {
 		if ( pose.residue_type(ires).has("CA") ) {
-			Size const iatom = pose.residue_type(ires).atom_index("CA");
+			core::Size const iatom = pose.residue_type(ires).atom_index("CA");
 			sum_xyz += pose.residue(ires).xyz(iatom);
 			natom += 1.;
 		}
@@ -154,10 +154,10 @@ AddConstraintsToCurrentConformationMover::find_best_anchor( core::pose::Pose con
 		}
 	}
 	core::Real min_dist2 = 1e9;
-	Size best_anchor = 0;
-	for ( Size ires=1; ires<=nres; ++ires ) {
+	core::Size best_anchor = 0;
+	for ( core::Size ires=1; ires<=nres; ++ires ) {
 		if ( pose.residue_type(ires).has("CA") ) {
-			Size const iatom = pose.residue_type(ires).atom_index("CA");
+			core::Size const iatom = pose.residue_type(ires).atom_index("CA");
 			core::Real const dist2 = pose.residue(ires).xyz(iatom).distance_squared(anchor_xyz);
 			if ( dist2 < min_dist2 ) {
 				min_dist2 = dist2;
@@ -182,14 +182,14 @@ AddConstraintsToCurrentConformationMover::generate_coordinate_constraints(
 		TR << "Best anchor resid == 0, not generating any constraints" << std::endl;
 		return core::scoring::constraints::ConstraintCOPs();
 	}
-	Size const best_anchor_atom = pose.residue_type( best_anchor_resid ).atom_index("CA");
+	core::Size const best_anchor_atom = pose.residue_type( best_anchor_resid ).atom_index("CA");
 	core::id::AtomID const best_anchor_id( best_anchor_atom, best_anchor_resid );
 
-	for ( Size ires=1; ires<=pose.size(); ++ires ) {
+	for ( core::Size ires=1; ires<=pose.size(); ++ires ) {
 		if ( !subset[ ires ] ) continue;
 
 		// find atom start, stop indices
-		Size iatom_start=1, iatom_stop=pose.residue(ires).nheavyatoms();
+		core::Size iatom_start=1, iatom_stop=pose.residue(ires).nheavyatoms();
 		if ( pose.residue_type(ires).is_DNA() ) {
 			iatom_stop = 0;
 		} else if ( pose.residue_type(ires).is_protein() ) {
@@ -212,7 +212,7 @@ AddConstraintsToCurrentConformationMover::generate_coordinate_constraints(
 		runtime_assert(cc_func);
 
 
-		for ( Size iatom=iatom_start; iatom<=iatom_stop; ++iatom ) {
+		for ( core::Size iatom=iatom_start; iatom<=iatom_stop; ++iatom ) {
 			csts.push_back( utility::pointer::make_shared< CoordinateConstraint >(
 				core::id::AtomID(iatom,ires), best_anchor_id, pose.residue(ires).xyz(iatom), cc_func ) );
 			TR.Debug << "coordinate constraint generated for residue " << ires << ", atom " << iatom << ", using func" << std::endl << *cc_func << std::endl;
@@ -228,10 +228,10 @@ AddConstraintsToCurrentConformationMover::generate_atom_pair_constraints(
 {
 	core::scoring::constraints::ConstraintCOPs csts;
 
-	Size const nres =
+	core::Size const nres =
 		protocols::constraint_generator::compute_nres_in_asymmetric_unit( pose );
 
-	for ( Size ires=1; ires<=nres; ++ires ) {
+	for ( core::Size ires=1; ires<=nres; ++ires ) {
 		if ( !subset[ ires ] ) continue;
 		if ( pose.residue(ires).aa() == core::chemical::aa_vrt ) continue;
 		utility::fixedsizearray1<core::Size,2> iatoms(0); // both are 0
@@ -244,7 +244,7 @@ AddConstraintsToCurrentConformationMover::generate_atom_pair_constraints(
 		///I think this fails across chains
 		///probably residues on different chains should always have sufficient
 		///sequence separation?? --- SML dec 21 16
-		for ( Size jres=ires+min_seq_sep_; jres<=pose.size(); ++jres ) {
+		for ( core::Size jres=ires+min_seq_sep_; jres<=pose.size(); ++jres ) {
 			if ( !subset[ jres ] ) continue;
 			if ( pose.residue(jres).aa() == core::chemical::aa_vrt ) continue;
 			if ( !inter_chain_ && pose.chain(ires)!=pose.chain(jres) ) continue;
@@ -258,7 +258,7 @@ AddConstraintsToCurrentConformationMover::generate_atom_pair_constraints(
 
 			for ( utility::fixedsizearray1<core::Size,2>::const_iterator iiatom=iatoms.begin(); iiatom!=iatoms.end(); ++iiatom ) {
 				for ( utility::fixedsizearray1<core::Size,2>::const_iterator jjatom=jatoms.begin(); jjatom!=jatoms.end(); ++jjatom ) {
-					Size const &iatom(*iiatom), &jatom(*jjatom);
+					core::Size const &iatom(*iiatom), &jatom(*jjatom);
 					if ( iatom==0 || jatom==0 ) continue;
 
 					core::Real const dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );

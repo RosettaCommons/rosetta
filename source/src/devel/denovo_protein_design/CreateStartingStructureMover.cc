@@ -145,13 +145,13 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 		if ( basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb ].user() ) {
 			core::scoring::dssp::Dssp dssp( template_pose );
 			dssp.insert_ss_into_pose(template_pose);
-			for ( Size ii = 1; ii<=template_pose.size(); ++ii ) {
+			for ( core::Size ii = 1; ii<=template_pose.size(); ++ii ) {
 				nucleated_pose.set_secstruct(ii, template_pose.secstruct(ii));
 			}
 		}
 
 		if ( basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure ].value() == true ) {
-			for ( Size ii =1; ii<=secstructs.size(); ++ii ) {
+			for ( core::Size ii =1; ii<=secstructs.size(); ++ii ) {
 				nucleated_pose.set_secstruct(ii, secstructs[ii]);
 			}
 		}
@@ -161,7 +161,7 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 
 		// set phi, psi, omega
 		if (  basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file ].user() ||  basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::use_template_topology ].value() == true ) {
-			for ( Size seqpos = 1; seqpos <= nucleated_pose.size(); ++seqpos ) {
+			for ( core::Size seqpos = 1; seqpos <= nucleated_pose.size(); ++seqpos ) {
 
 				if ( nucleated_pose.secstruct(seqpos) == 'H' ) {
 					Real helix_phi = rand() % (62 - 58 +1 ) + 58;

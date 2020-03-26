@@ -29,7 +29,7 @@
 #include <core/id/NamedAtomID.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //C++ headers
 #include <map>
@@ -38,7 +38,7 @@
 namespace protocols {
 namespace noesy_assign {
 
-class FragsToAtomDist : public utility::pointer::ReferenceCount {
+class FragsToAtomDist : public utility::VirtualBase {
 public:
 	class DistanceRecord {
 	public:
@@ -139,9 +139,9 @@ private:
 	void compute_average_distances( core::Size ,core::Size);
 
 	//fill vector with natoms() of each residue
-	// void initialize_atom_number_of_each_residue( Size, utility::vector1< core::Size >&, core::pose::Pose const& );
-	// void initialize_maps(Size, DistanceMap&, DistanceMap&, utility::vector1< core::Size >, core::pose::Pose const& );
-	// void initialize_atomid_all(Size, AtomIDMap&, utility::vector1< core::Size > );
+	// void initialize_atom_number_of_each_residue( core::Size, utility::vector1< core::Size >&, core::pose::Pose const& );
+	// void initialize_maps(core::Size, DistanceMap&, DistanceMap&, utility::vector1< core::Size >, core::pose::Pose const& );
+	// void initialize_atomid_all(core::Size, AtomIDMap&, utility::vector1< core::Size > );
 
 	// void average_distmap( DistanceMap&,DistanceMap );
 

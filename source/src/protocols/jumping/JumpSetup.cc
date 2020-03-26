@@ -145,7 +145,7 @@ JumpSelector::read_file( std::string fname ) {
 		Interval jump; Real weight;
 		in >> jump.start_ >> jump.end_ >> weight;
 		if ( jump.start_ > jump.end_ ) {
-			Size dum = jump.start_;
+			core::Size dum = jump.start_;
 			jump.start_ = jump.end_;
 			jump.end_ = dum;
 		};
@@ -156,9 +156,9 @@ JumpSelector::read_file( std::string fname ) {
 }
 
 void
-dump_tags_( FArray1D_int const& tags, Size nres, std::ostream& out ) {
+dump_tags_( FArray1D_int const& tags, core::Size nres, std::ostream& out ) {
 	out << "r_fold_cst: ";
-	for ( Size i = 1; i<=nres; i++ ) {
+	for ( core::Size i = 1; i<=nres; i++ ) {
 		if ( (i-1)%10 == 0 ) { out << i; continue; }
 		//large numbers take several characters... skip appropriate
 		if ( (i>=10) && (i-2)%10 == 0 ) { continue; }
@@ -167,7 +167,7 @@ dump_tags_( FArray1D_int const& tags, Size nres, std::ostream& out ) {
 		out << ".";
 	}
 	out << "\nr_fold_cst: ";
-	for ( Size i = 1; i<=nres; i++ ) {
+	for ( core::Size i = 1; i<=nres; i++ ) {
 		if ( tags( i ) <= -10 ) out << 'C'; //cuttable
 		if ( tags( i ) == -1 ) out << 'L'; //short loop
 		if ( tags( i ) == 0 ) out << '.';
@@ -177,8 +177,8 @@ dump_tags_( FArray1D_int const& tags, Size nres, std::ostream& out ) {
 }
 
 void
-fill_tags_( FArray1D_int& tags, Size fill_pos, int tag, Size nres ) {
-	Size pos = fill_pos;
+fill_tags_( FArray1D_int& tags, core::Size fill_pos, int tag, core::Size nres ) {
+	core::Size pos = fill_pos;
 	while ( tags( pos ) >= -1 ) {
 		tags( pos ) = tag;
 		if ( --pos  == 0 ) break;
@@ -209,13 +209,13 @@ JumpSelector::create_jump_sample( ) const {
 	// 0 for free regions
 	runtime_assert( min_loop_length_ > 0 );
 
-	Size nr_jumps = nr_jumps_min_ + static_cast< int >( numeric::random::rg().uniform() * (nr_jumps_max_-nr_jumps_min_) );
+	core::Size nr_jumps = nr_jumps_min_ + static_cast< int >( numeric::random::rg().uniform() * (nr_jumps_max_-nr_jumps_min_) );
 	tr.Info << "generate " << nr_jumps << "jumps for following secstruct:\n";
 	tr.Info << secstruct_ << std::endl;
 
-	Size nres = secstruct_.size();
+	core::Size nres = secstruct_.size();
 	FArray1D_int tags( nres , 0 );
-	for ( Size i = 0; i < nres; i++ ) {
+	for ( core::Size i = 0; i < nres; i++ ) {
 		if ( secstruct_[i] == 'L' ) {
 			for ( int ii=std::max((int)i-(int)loop_extension_,0); ii<= std::min( (int) i + (int)loop_extension_, (int) nres-1); ii++ ) {
 				tags(ii+1)= -10;
@@ -225,12 +225,12 @@ JumpSelector::create_jump_sample( ) const {
 	if ( tr.Trace.visible() ) dump_tags_( tags, nres, std::cout );
 
 	// detect loops that are too short for cut-points
-	for ( Size i = 1; i <= nres; i++ ) {
+	for ( core::Size i = 1; i <= nres; i++ ) {
 		if ( tags( i ) == -10 ) {
 			bool bShort = false;
 
 			// extend loops to each side
-			for ( Size j = i; j <= i+min_loop_length_ && j <= nres; j++ ) {
+			for ( core::Size j = i; j <= i+min_loop_length_ && j <= nres; j++ ) {
 				if ( tags( j ) > -10 ) {
 					bShort = true;
 					break;
@@ -245,13 +245,13 @@ JumpSelector::create_jump_sample( ) const {
 	}
 
 	// detect non-loop regions that are too small.
-	Size min_free_size_ = 1;
-	for ( Size i = 1; i<=nres; i++ ) {
+	core::Size min_free_size_ = 1;
+	for ( core::Size i = 1; i<=nres; i++ ) {
 		if ( tags( i ) == 0 ) {
-			Size ct = 0;
+			core::Size ct = 0;
 			while ( tags( i+ct ) == 0 ) { ct++; if ( ct+i > nres ) break; }
 			if ( ct <= min_free_size_ ) {
-				for ( Size jj=0; jj<ct; jj++ ) {
+				for ( core::Size jj=0; jj<ct; jj++ ) {
 					tags( i+jj ) = -1;
 				}
 			}
@@ -261,8 +261,8 @@ JumpSelector::create_jump_sample( ) const {
 
 	if ( tr.Trace.visible() ) dump_tags_( tags, nres, std::cout );
 
-	Size nr = 0;
-	Size attempts = 1;
+	core::Size nr = 0;
+	core::Size attempts = 1;
 	while ( nr < nr_jumps  && attempts < 1000 ) {
 		attempts += 1;
 		Interval aJump = select_random();
@@ -283,7 +283,7 @@ JumpSelector::create_jump_sample( ) const {
 		if ( new_tag == 0 ) new_tag = nr; //still zero: both start and stop are zero
 		if ( replace_tag > 0 ) { //both start/stop > 0 needs to retag
 			/// replace all < replace_tag > with < new_tag >
-			for ( Size i = 1; i <= nres; i++ ) {
+			for ( core::Size i = 1; i <= nres; i++ ) {
 				if ( tags( i ) == replace_tag ) tags(i) = new_tag;
 			}
 		}
@@ -305,7 +305,7 @@ JumpSelector::create_jump_sample( ) const {
 
 	MetaCutList all_cuts;
 	std::map< int, bool > tag_list; // store all observed tags, only cut if one of these is found in downstream region (towards C-term)
-	for ( Size pos=1; pos <= nres; pos ++ ) {
+	for ( core::Size pos=1; pos <= nres; pos ++ ) {
 		if ( tags( pos ) > 0 ) {
 			// add tag to tag_list
 			tag_list[ tags( pos ) ] = true; // boolean doesn't really matter
@@ -345,7 +345,7 @@ JumpSelector::create_jump_sample( ) const {
 			for ( std::map< int , bool>::const_iterator it = tag_list.begin(), eit = tag_list.end();
 					it!=eit && !bConnected;
 					++it ) {
-				for ( Size ii = pos; ii<=nres && !bConnected; ii++ )  {
+				for ( core::Size ii = pos; ii<=nres && !bConnected; ii++ )  {
 					if ( it->first == tags ( ii ) ) bConnected = true;
 					if ( bConnected ) tr.Trace << "add cuts since tag " << it->first << " has been found at pos " << ii << std::endl;
 				}
@@ -371,7 +371,7 @@ JumpSelector::create_jump_sample( ) const {
 Interval
 JumpSelector::select_random() const {
 	// FArray1D_int freq(size(),0);
-	// Size Nsample = 100000;
+	// core::Size Nsample = 100000;
 	// for ( int ii=1; ii < Nsample; ii++ ) {
 
 	Real ran = numeric::random::rg().uniform() * total_weight_;

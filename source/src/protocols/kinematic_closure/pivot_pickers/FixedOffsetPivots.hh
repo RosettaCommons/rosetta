@@ -24,7 +24,7 @@ class FixedOffsetPivots : public PivotPicker {
 
 public:
 	/// @brief Default constructor.
-	FixedOffsetPivots(Size offset=5) : offset_(offset) {}
+	FixedOffsetPivots(core::Size offset=5) : offset_(offset) {}
 
 public:
 	/// @copydoc PivotPicker::get_name
@@ -34,7 +34,7 @@ public:
 	Loop pick(Pose const & pose, Loop const & loop) override;
 
 private:
-	Size offset_;
+	core::Size offset_;
 
 };
 

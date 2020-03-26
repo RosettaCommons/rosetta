@@ -239,7 +239,7 @@ RingConformationMover::apply( Pose & input_pose )
 
 	TR << "Selected residue " << res_num << ": " << res.name() << endl;
 
-	Size const n_rings( res.type().n_rings() );
+	core::Size const n_rings( res.type().n_rings() );
 	for ( core::uint ring_num( 1 ); ring_num <= n_rings; ++ring_num ) {
 		rings::RingConformer conformer;
 		if ( sample_all_conformers_ ||
@@ -361,7 +361,7 @@ RingConformationMover::setup_residue_list( core::pose::Pose const & pose )
 	residue_list_.clear();
 
 	core::kinematics::MoveMapCOP my_movemap( movemap(pose) );
-	Size const last_res_num( pose.size() );
+	core::Size const last_res_num( pose.size() );
 	for ( core::uint res_num( 1 ); res_num <= last_res_num; ++res_num ) {
 		Residue const & residue( pose.residue( res_num ) );
 		if ( residue.type().is_cyclic() ) {

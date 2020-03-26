@@ -136,7 +136,7 @@ int not_universal_main(
 
 	MetaPoseInputStream input = streams_from_cmd_line();
 
-	Size const n_repeats( option[ run::repeat ]() );
+	core::Size const n_repeats( option[ run::repeat ]() );
 
 	SilentFileOptions opts;
 	SilentFileData sfd_out( opts );
@@ -149,7 +149,7 @@ int not_universal_main(
 			}
 		}
 
-		for ( Size ii = 1; ii <= n_repeats; ++ii ) {
+		for ( core::Size ii = 1; ii <= n_repeats; ++ii ) {
 			// only keep input scores if specified by the user.
 			if ( !option[ in::file::keep_input_scores ]() ) {
 				clearPoseExtraScores( current_pose );

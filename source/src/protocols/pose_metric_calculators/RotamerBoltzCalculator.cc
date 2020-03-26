@@ -72,6 +72,7 @@ static basic::Tracer TR( "protocols.toolbox.pose_metric_calculators.RotamerBoltz
 namespace protocols {
 namespace pose_metric_calculators {
 
+using core::Size;
 using namespace protocols::toolbox;
 
 RotamerBoltzCalculator::RotamerBoltzCalculator(
@@ -146,7 +147,7 @@ RotamerBoltzCalculator::computeAllBoltz( core::pose::Pose const & pose )
 	}
 }
 
-core::Real RotamerBoltzCalculator::computeBoltzWeight(core::pose::Pose& pose, Size resi){
+core::Real RotamerBoltzCalculator::computeBoltzWeight(core::pose::Pose& pose, core::Size resi){
 	core::pack::task::PackerTaskOP task = init_task(pose,resi);
 	protocols::minimization_packing::MinMoverOP  mm = init_minmover(pose, resi, true, task);
 	return computeBoltzWeight(pose, resi, mm, task);//assume unbound
@@ -220,7 +221,7 @@ RotamerBoltzCalculator::compute_boltz_weight_packrotamers(
 }
 
 
-core::Real RotamerBoltzCalculator::computeBoltzWeight_lazy(core::pose::Pose& pose, Size resi,  protocols::minimization_packing::MinMoverOP min_mover, core::pack::task::PackerTaskOP task){
+core::Real RotamerBoltzCalculator::computeBoltzWeight_lazy(core::pose::Pose& pose, core::Size resi,  protocols::minimization_packing::MinMoverOP min_mover, core::pack::task::PackerTaskOP task){
 	///user doesn't have movemap, so can't initialize min_mover himself right now.
 
 	//core::pose::Pose& pose = pose();
@@ -241,7 +242,7 @@ core::Real RotamerBoltzCalculator::computeBoltzWeight_lazy(core::pose::Pose& pos
 	core::Real const init_score( stf.compute( const_min_pose ) );
 
 	RotamerSetsCOP rotsets = pmover.rotamer_sets();
-	Size moltenResid = rotsets->resid_2_moltenres(resi);
+	core::Size moltenResid = rotsets->resid_2_moltenres(resi);
 	utility::vector1< core::Real > scores;
 	utility::vector0<int> rot_to_pack;
 
@@ -250,24 +251,24 @@ core::Real RotamerBoltzCalculator::computeBoltzWeight_lazy(core::pose::Pose& pos
 	std::cout<<" num rotamers acc to rotsets "<<rotsets->nrotamers_for_moltenres(moltenResid)<<std::endl;
 	std::cout<<" num rotamers acc to this "<<rotset_->num_rotamers()<<std::endl;
 	RotamerSetCOP rset = rotsets->rotamer_set_for_residue(resi);
-	for(Size i=1;i<=rotset_->num_rotamers(); i++){
+	for(core::Size i=1;i<=rotset_->num_rotamers(); i++){
 	ResidueCOP r = rotset_->rotamer(i);
 	//std::cout<<i<<"th rotamer acc to this "<<r->type()<<std::endl;
 	utility::vector1<core::Real> chi = r->chi();
-	for(Size j=1;j<=chi.size(); j++){
+	for(core::Size j=1;j<=chi.size(); j++){
 	std::cout<<j<<"th chi acc to "<<i<<"th rotamer is "<<chi.at(j)<<std::endl;
 	}
 	}
-	for(Size i=1;i<=rset->num_rotamers(); i++){
+	for(core::Size i=1;i<=rset->num_rotamers(); i++){
 	ResidueCOP r = rset->rotamer(i);
 	utility::vector1<core::Real> chi = r->chi();
-	for(Size j=1;j<=chi.size(); j++){
+	for(core::Size j=1;j<=chi.size(); j++){
 	std::cout<<j<<"th chi acc to "<<i<<"th rotamer is "<<chi.at(j)<<std::endl;
 	}
 	}
 	*/
 
-	for ( Size i=1; i<rotset_->num_rotamers(); i++ ) {
+	for ( core::Size i=1; i<rotset_->num_rotamers(); i++ ) {
 		core::pose::Pose pose2 = const_min_pose;
 		PROF_START(basic::TEST3);
 		rot_to_pack = init_rot_to_pack(rotsets, moltenResid, i);
@@ -413,8 +414,8 @@ void RotamerBoltzCalculator::recompute( core::pose::Pose const & this_pose )
 utility::vector0 <int> RotamerBoltzCalculator::init_rot_to_pack(core::pack::rotamer_set::RotamerSetsCOP rotamer_sets, core::Size moltenres, core::Size rot_to_fix){
 	utility::vector0 < int > rot_to_pack;
 	rot_to_pack.reserve( rotamer_sets->nrotamers() );
-	///for ( Size rot = 1; rot <= num_rots_to_pack(); ++rot ) {
-	for ( Size rot = 1; rot <= rotamer_sets->nrotamers(); ++rot ) {
+	///for ( core::Size rot = 1; rot <= num_rots_to_pack(); ++rot ) {
+	for ( core::Size rot = 1; rot <= rotamer_sets->nrotamers(); ++rot ) {
 		core::Size this_moltenres = rotamer_sets->moltenres_for_rotamer(rot);
 		core::Size this_rotid = rotamer_sets->rotid_on_moltenresidue(rot);
 		if ( this_moltenres ==moltenres && !(this_rotid==rot_to_fix) ) {

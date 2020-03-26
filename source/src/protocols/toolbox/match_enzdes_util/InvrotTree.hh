@@ -28,7 +28,7 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 
@@ -49,7 +49,7 @@ namespace match_enzdes_util {
 ///abstract base class for the inverse rotamer tree
 ///is abstract so that in the future inverse rots could
 ///be generated in different ways than throug the enz cst machinery
-class InvrotTree : public utility::pointer::ReferenceCount {
+class InvrotTree : public utility::VirtualBase {
 
 public:
 	typedef core::Size Size;
@@ -59,7 +59,7 @@ public:
 	~InvrotTree() override;
 
 	core::scoring::constraints::ConstraintCOP
-	get_constraint_for_target_state( Size target_state ) const;
+	get_constraint_for_target_state( core::Size target_state ) const;
 
 	/// @brief the main function, generate the constraints
 	void
@@ -105,7 +105,7 @@ public:
 	check_pose_tree_compatibility(
 		core::pose::Pose & pose ) const = 0;
 
-	Size
+	core::Size
 	num_target_states() const {
 		return invrot_targets_.size(); }
 

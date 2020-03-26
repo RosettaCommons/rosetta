@@ -55,7 +55,7 @@ LoopAnalyzerFilter::LoopAnalyzerFilter( protocols::loops::Loops const & loops, b
 LoopAnalyzerFilter::~LoopAnalyzerFilter() = default;
 
 LoopAnalyzerFilter::LoopAnalyzerFilter( LoopAnalyzerFilter const & rhs ) :
-	//utility::pointer::ReferenceCount(rhs),
+	//utility::VirtualBase(rhs),
 	Filter(rhs),
 	loops_(utility::pointer::make_shared< protocols::loops::Loops >(*(rhs.loops_)) ),
 	tracer_(rhs.tracer_)

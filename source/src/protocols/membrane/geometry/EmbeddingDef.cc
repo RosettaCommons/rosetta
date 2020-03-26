@@ -25,7 +25,7 @@
 #include <core/conformation/membrane/Exceptions.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
@@ -40,14 +40,14 @@ namespace geometry {
 
 /// @brief Default Constructor
 EmbeddingDef::EmbeddingDef() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	center_( 0, 0, 0 ),
 	normal_( 0, 0, 1 )
 {}
 
 /// @brief Standard Constructor
 EmbeddingDef::EmbeddingDef( core::Vector const center, core::Vector const normal ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	center_( center ),
 	normal_( normal )
 {}
@@ -58,7 +58,7 @@ EmbeddingDef::EmbeddingDef(
 	core::Size start,
 	core::Size end, \
 	bool pos_z
-) : utility::pointer::ReferenceCount(),
+) : utility::VirtualBase(),
 	center_( 0, 0, 0 ),
 	normal_( 0, 0, 1 )
 {
@@ -72,7 +72,7 @@ EmbeddingDef::EmbeddingDef(
 
 /// @brief Copy Constructor
 EmbeddingDef::EmbeddingDef( EmbeddingDef const & src ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	center_( src.center_ ),
 	normal_( src.normal_ )
 {}

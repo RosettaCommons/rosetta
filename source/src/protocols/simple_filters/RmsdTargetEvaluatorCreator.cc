@@ -36,7 +36,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #include <utility/file/FileName.hh>
@@ -112,7 +112,7 @@ void RmsdTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 				rmsd_col_name.push_back("_" + ObjexxFCL::string_of(j));
 			}
 		}
-		for ( Size ct = 1; ct <= rmsd_target.size(); ct ++ ) {
+		for ( core::Size ct = 1; ct <= rmsd_target.size(); ct ++ ) {
 			pose::PoseOP rmsd_pose( new pose::Pose );
 			core::import_pose::pose_from_file( *rmsd_pose, rmsd_target[ ct ] , core::import_pose::PDB_file);
 			std::string tag( ObjexxFCL::string_of( ct ) );

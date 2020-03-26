@@ -48,8 +48,8 @@ void StepWiseSamplerSizedAny::init() {
 
 	for ( auto const & rotamer : rotamer_list_ ) {
 		Real const curr_size = rotamer->size();
-		size_list_.push_back( (Size)curr_size );
-		size_ = Size(size_ + curr_size);
+		size_list_.push_back( (core::Size)curr_size );
+		size_ = core::Size(size_ + curr_size);
 		if ( curr_size == 0 ) TR << "Got a null rotamer sampler!" << std::endl;
 	}
 
@@ -87,18 +87,18 @@ void StepWiseSamplerSizedAny::apply( Pose & pose ) {
 	rotamer_list_[curr_state_.first]->apply( pose, curr_state_.second );
 }
 ///////////////////////////////////////////////////////////////////////////
-void StepWiseSamplerSizedAny::apply( core::pose::Pose & pose, Size const id ) {
+void StepWiseSamplerSizedAny::apply( core::pose::Pose & pose, core::Size const id ) {
 	runtime_assert( is_init() );
-	std::pair<Size, Size> const state = id2state( id );
+	std::pair<core::Size, core::Size> const state = id2state( id );
 	rotamer_list_[state.first]->apply( pose, state.second );
 }
 ///////////////////////////////////////////////////////////////////////////
-std::pair<Size, Size>
+std::pair<core::Size, core::Size>
 StepWiseSamplerSizedAny::id2state( core::Size const id ) const {
 	runtime_assert( is_init() );
 	runtime_assert( id <= size() );
 
-	Size rotamer, id_rotamer( id );
+	core::Size rotamer, id_rotamer( id );
 	for ( rotamer = 1; rotamer < size_list_.size(); ++rotamer ) {
 		if ( id_rotamer > size_list_[rotamer] ) {
 			id_rotamer -= size_list_[rotamer];
@@ -110,9 +110,9 @@ StepWiseSamplerSizedAny::id2state( core::Size const id ) const {
 	return std::make_pair( rotamer, id_rotamer );
 }
 ///////////////////////////////////////////////////////////////////////////
-void StepWiseSamplerSizedAny::show( std::ostream & out, Size const indent ) const {
+void StepWiseSamplerSizedAny::show( std::ostream & out, core::Size const indent ) const {
 	StepWiseSamplerSized::show( out, indent );
-	for ( Size n = 1; n <= indent+1; n++ ) out << ' ';
+	for ( core::Size n = 1; n <= indent+1; n++ ) out << ' ';
 	out << "Following in multiple copies [" << rotamer_list_.size() << ']' << std::endl;
 	rotamer_list_[1]->show( out, indent + 1 );
 }

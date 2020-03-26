@@ -26,7 +26,7 @@
 // Utility headers
 #include <utility/tag/AutoBool.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector0.hh>
 
 // Boost headers
@@ -44,10 +44,10 @@
 namespace utility {
 namespace tag {
 
-class Tag : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Tag >
+class Tag : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< Tag >
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Tag() override;
 
 	typedef std::map<std::string, std::string > options_t;

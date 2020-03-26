@@ -20,6 +20,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
+#include <core/types.hh>
 
 // C++ headers
 #include <string>

@@ -65,7 +65,7 @@ void TempInterpolator::interpolate() {
 
 	if ( curve_ == "linear" ) {
 		core::Real const step ( ( end_ - start_)/( n_levels_ - 1 ) );
-		for ( Size ct=0; ct<n_levels_; ++ct ) {
+		for ( core::Size ct=0; ct<n_levels_; ++ct ) {
 			interpolated_nums_.push_back( start_ + ct*step );
 		}
 		calculated_ = true;

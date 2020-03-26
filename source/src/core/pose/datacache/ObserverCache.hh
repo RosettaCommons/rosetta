@@ -22,6 +22,8 @@
 
 // project headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
+
 #include <basic/datacache/DataCache.hh>
 
 #include <core/pose/datacache/CacheableObserver.fwd.hh>
@@ -53,7 +55,7 @@ private: // typedefs
 public: // typedefs
 
 
-	typedef Super::Size Size;
+	typedef core::Size Size;
 
 
 protected: // typedefs

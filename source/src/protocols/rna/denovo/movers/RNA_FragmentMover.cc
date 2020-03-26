@@ -66,8 +66,8 @@ namespace movers {
 RNA_FragmentMover::RNA_FragmentMover(
 	RNA_Fragments const & rna_fragments,
 	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map,
-	Size const symm_hack_arity,
-	Size const exhaustive/* = 1*/,
+	core::Size const symm_hack_arity,
+	core::Size const exhaustive/* = 1*/,
 	core::scoring::ScoreFunctionOP sfxn/* = nullptr*/
 ) : Mover(),
 	rna_fragments_( rna_fragments ),
@@ -139,10 +139,10 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 
 	// If we are using hack-symmetry, we need to ensure
 	// i + n/nsymm is just as ok as i
-	Size symmetry_reduced_pose_size = pose.size() / symm_hack_arity_;
-	Size pose_size = pose.size();
+	core::Size symmetry_reduced_pose_size = pose.size() / symm_hack_arity_;
+	core::Size pose_size = pose.size();
 
-	for ( Size i = 1; i <= symmetry_reduced_pose_size - frag_size_ + 1; i++ ) {
+	for ( core::Size i = 1; i <= symmetry_reduced_pose_size - frag_size_ + 1; i++ ) {
 
 		// Look to see if frame has *any* insertable residues.
 		// This is different from the past. Now we have a atom-resolution
@@ -150,13 +150,13 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 		// avoid changing atom positions that should be fixed.
 
 		bool frame_ok = false;
-		for ( Size offset = 1; offset <= frag_size_; offset++ ) {
-			Size const n = i + offset - 1;
+		for ( core::Size offset = 1; offset <= frag_size_; offset++ ) {
+			core::Size const n = i + offset - 1;
 			bool subunit_ok = atom_level_domain_map_->get( n ) ||
 				( n < symmetry_reduced_pose_size &&  !pose.fold_tree().is_cutpoint( n ) &&
 				atom_level_domain_map_->get( id::AtomID( 1, n+1 ) ) /*torsions in this residue may move next one*/);
-			for ( Size cc = 1; cc < symm_hack_arity_; ++cc ) {
-				Size const pp = ( i+offset-1 + cc * symmetry_reduced_pose_size - 1 ) % pose_size + 1;
+			for ( core::Size cc = 1; cc < symm_hack_arity_; ++cc ) {
+				core::Size const pp = ( i+offset-1 + cc * symmetry_reduced_pose_size - 1 ) % pose_size + 1;
 				subunit_ok = subunit_ok && ( atom_level_domain_map_->get( pp ) ||
 					( pp < pose_size &&  !pose.fold_tree().is_cutpoint( pp ) &&
 					atom_level_domain_map_->get( id::AtomID( 1, pp+1 ) ) ) );
@@ -172,12 +172,12 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 
 		// Must make sure the whole frame is RNA, of course.
 
-		for ( Size offset = 1; offset <= frag_size_; offset++ ) {
+		for ( core::Size offset = 1; offset <= frag_size_; offset++ ) {
 			if ( !pose.residue_type( i + offset - 1 ).is_RNA() ) {
 				frame_ok = false; break;
 			}
-			for ( Size cc = 1; cc < symm_hack_arity_; ++cc ) {
-				Size const pp = ( i+offset-1 + cc * symmetry_reduced_pose_size - 1 ) % pose_size + 1;
+			for ( core::Size cc = 1; cc < symm_hack_arity_; ++cc ) {
+				core::Size const pp = ( i+offset-1 + cc * symmetry_reduced_pose_size - 1 ) % pose_size + 1;
 				if ( !pose.residue_type( pp ).is_RNA() ) {
 					frame_ok = false; break;
 				}
@@ -187,15 +187,15 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 		// Check for cutpoints that interrupt frame. Wait. why?
 		// rhiju, 2016: Putting this back in since fragment library
 		//  actually removes fragments with intervening cutpoints.
-		for ( Size offset = 1; offset <= frag_size_; offset++ ) {
+		for ( core::Size offset = 1; offset <= frag_size_; offset++ ) {
 			if ( offset < frag_size_ &&
 					pose.fold_tree().is_cutpoint( i + offset - 1) &&
 					!( pose.residue_type( i+offset-1).has_variant_type( chemical::CUTPOINT_LOWER ) &&
 					pose.residue_type( i+offset  ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
 				frame_ok = false; break;
 			}
-			for ( Size cc = 1; cc < symm_hack_arity_; ++cc ) {
-				Size const pp = ( i+offset-1 + cc * symmetry_reduced_pose_size - 1 ) % pose_size + 1;
+			for ( core::Size cc = 1; cc < symm_hack_arity_; ++cc ) {
+				core::Size const pp = ( i+offset-1 + cc * symmetry_reduced_pose_size - 1 ) % pose_size + 1;
 				if ( offset < frag_size_ &&
 						pose.fold_tree().is_cutpoint( pp ) &&
 						!( pose.residue_type( pp ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
@@ -219,19 +219,19 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 Size
 RNA_FragmentMover::random_fragment_insertion(
 	core::pose::Pose & pose,
-	Size const frag_size,
+	core::Size const frag_size,
 	bool const heating/* = false*/
 ) {
 	frag_size_ = frag_size;
 
-	//Size const type = MATCH_YR;
-	Size const type = MATCH_EXACT;
+	//core::Size const type = MATCH_YR;
+	core::Size const type = MATCH_EXACT;
 
 	// Make this insertion stuff a class before checking in?
 	update_insert_map( pose );
 	if ( num_insertable_residues_ == 0 ) return 0; // nothing to do
-	Size const position_index = static_cast <int> ( numeric::random::rg().uniform() * num_insertable_residues_ ) + 1;
-	Size const position = insert_map_[ position_index ];
+	core::Size const position_index = static_cast <int> ( numeric::random::rg().uniform() * num_insertable_residues_ ) + 1;
+	core::Size const position = insert_map_[ position_index ];
 
 	// std::cout << " --- Trying fragment! at " << position << std::endl;
 
@@ -248,7 +248,7 @@ RNA_FragmentMover::random_fragment_insertion(
 
 void
 RNA_FragmentMover::set_frag_size(
-	Size const fragment_size
+	core::Size const fragment_size
 )
 {
 	frag_size_ = fragment_size;

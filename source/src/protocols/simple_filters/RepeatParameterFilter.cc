@@ -165,20 +165,20 @@ void RepeatParameterFilter::calculate_helical_parameters_helper( core::pose::Pos
 	using namespace Eigen;
 	using namespace std;
 	//copy from RemodelGlobalFrame because A. lack of const correctness, #remodel is in protocols.b.5 and I wanted this code to live in simple filters which is in protocols.3
-	Size seg_size = pose.size()/numb_repeats_;
-	Size startResOffset = seg_size*(startAtRepeat_-1);
+	core::Size seg_size = pose.size()/numb_repeats_;
+	core::Size startResOffset = seg_size*(startAtRepeat_-1);
 	MatrixXf A(3, seg_size);
 	MatrixXf B(3, seg_size);
-	for ( Size i = 1; i <= seg_size; i++ ) {
-		Size offset =i+startResOffset;
+	for ( core::Size i = 1; i <= seg_size; i++ ) {
+		core::Size offset =i+startResOffset;
 		core::Vector coord = pose.residue(offset).xyz("CA");
 		A(0,i-1) = coord[0];
 		A(1,i-1) = coord[1];
 		A(2,i-1) = coord[2];
 
 	}
-	for ( Size i = seg_size+1; i <= seg_size*2 ; i++ ) {
-		Size offset =i+startResOffset;
+	for ( core::Size i = seg_size+1; i <= seg_size*2 ; i++ ) {
+		core::Size offset =i+startResOffset;
 		core::Vector coord = pose.residue(offset).xyz("CA");
 		B(0,i-1-seg_size) = coord[0];
 		B(1,i-1-seg_size) = coord[1];
@@ -216,7 +216,7 @@ void RepeatParameterFilter::calculate_helical_parameters_helper( core::pose::Pos
 	Vector3f hN(0,0,0);//initializiation for the testing server
 	Real scalar = 0;
 	Real max_scalar = -10000000;
-	for ( Size i = 0; i<=2; i++ ) {
+	for ( core::Size i = 0; i<=2; i++ ) {
 		scalar = N.col(i).norm();
 		if ( scalar > max_scalar ) {
 			max_scalar = scalar;
@@ -260,8 +260,8 @@ void RepeatParameterFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datac
 	if ( !tag->hasOption("numb_repeats") ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RepeatPrarameter filter requires the number of repeats be entered with numb_repeats tag");
 	}
-	numb_repeats_ = tag->getOption<Size>("numb_repeats");
-	startAtRepeat_ = tag->getOption<Size>("start_at_repeat",1);
+	numb_repeats_ = tag->getOption<core::Size>("numb_repeats");
+	startAtRepeat_ = tag->getOption<core::Size>("start_at_repeat",1);
 	if ( startAtRepeat_+1>numb_repeats_ ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "start_at_repeat must be atleast 1 smaller then the number of repeats ");
 	}

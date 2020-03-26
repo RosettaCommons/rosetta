@@ -67,7 +67,7 @@ namespace topology_broker {
 using namespace core;
 
 //helper function
-protocols::loops::Loops generate_rigid_from_alignment( pose::Pose query_pose, core::sequence::SequenceAlignment const& align, Size min_loop_size ) {
+protocols::loops::Loops generate_rigid_from_alignment( pose::Pose query_pose, core::sequence::SequenceAlignment const& align, core::Size min_loop_size ) {
 	using core::Size;
 	using namespace basic::options;
 
@@ -213,7 +213,7 @@ void RigidChunkClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 	// new_claims.push_back( new CutBiasClaim( *this ) ); we don't need this claim type --- always call manipulate_cut_bias
 	for ( auto const & loop_it : current_rigid_core_ ) {
-		for ( Size pos = loop_it.start(); pos <= loop_it.stop(); ++pos ) {
+		for ( core::Size pos = loop_it.start(); pos <= loop_it.stop(); ++pos ) {
 			new_claims.push_back( utility::pointer::make_shared< claims::BBClaim >( get_self_weak_ptr(),
 				std::make_pair( label(), pos ),
 				claims::DofClaim::EXCLUSIVE ) );
@@ -289,7 +289,7 @@ bool RigidChunkClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 			//TODO: ensure that the label setting code is correctly functioning in this claimer
 
 			claims::LocalPosition cut_position = cut_ptr->get_position();
-			Size absolute_cut_position = broker().sequence_number_resolver().find_global_pose_number( cut_position );
+			core::Size absolute_cut_position = broker().sequence_number_resolver().find_global_pose_number( cut_position );
 
 			if ( absolute_cut_position >= region.start() &&
 					absolute_cut_position < region.stop() ) { // cut claim can be at the chunk end
@@ -418,7 +418,7 @@ void copy_internal_coords( pose::Pose& pose, pose::Pose const& ref_pose, loops::
 	///fpd if there are post modifications to pose (not in ref_pose), we can't just copy ref_pose->pose
 	///fpd    instead ... make xyz copy in rigid regions
 	for ( auto const & region : core ) {
-		for ( Size i=region.start(); i<=region.stop(); ++i ) {
+		for ( core::Size i=region.start(); i<=region.stop(); ++i ) {
 			core::conformation::Residue const &rsd_i = ref_pose.residue(i);
 			pose.replace_residue ( i , rsd_i , false );
 		}
@@ -432,8 +432,8 @@ void copy_internal_coords( pose::Pose& pose, pose::Pose const& ref_pose, loops::
 	///fpd fix connections
 	///fpd this requires that the input pose have one flanking residue on each side of each region
 	for ( auto const & region : core ) {
-		Size loop_start = region.start();
-		Size loop_stop  = region.stop();
+		core::Size loop_start = region.start();
+		core::Size loop_stop  = region.stop();
 
 		bool lower_connect = ( loop_start > 1
 			&& !pose.residue(loop_start).is_lower_terminus()
@@ -497,7 +497,7 @@ void RigidChunkClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClai
 	bool missing_density( false );
 	//sanity check: no missing density in backbon in any of the rigid_core residues?
 	for ( auto const & it : current_rigid_core_ ) {
-		for ( Size pos = it.start(); pos <=it.stop(); ++pos ) {
+		for ( core::Size pos = it.start(); pos <=it.stop(); ++pos ) {
 			// Do we really have Sidechains ?
 			// check this my making sure that no SC atom is more than 20A (?) away from CA
 			numeric::xyzVector< core::Real> ca_pos = input_pose_.residue( pos ).atom("CA").xyz();
@@ -528,12 +528,12 @@ void RigidChunkClaimer::switch_to_fullatom( core::pose::Pose& pose , utility::ve
 	// copy sidechain torsions from input pose
 	tr.Debug << "copy side chains for residues with * / missing density residues with - ";
 	for ( auto const & it : region ) {
-		for ( Size pos = it.start(); pos <=it.stop(); ++pos ) {
+		for ( core::Size pos = it.start(); pos <=it.stop(); ++pos ) {
 			bNeedToRepack[ pos ] = false; //in principle our residues don't need a repack since we have a side-chains for them.
 			// Do we really have Sidechains ?
 			// check this my making sure that no SC atom is more than 20A (?) away from CA
 			numeric::xyzVector< core::Real> ca_pos = input_pose_.residue( pos ).atom("CA").xyz();
-			for ( Size j = 1; j<=input_pose_.residue( pos ).natoms(); ++j ) {
+			for ( core::Size j = 1; j<=input_pose_.residue( pos ).natoms(); ++j ) {
 				if ( ( ca_pos - input_pose_.residue( pos ).atom( j ).xyz()).length() > 20 ) {
 					tr.Debug << "-" << pos << " ";
 					bNeedToRepack[ pos ] = true;
@@ -565,27 +565,27 @@ RigidChunkClaimer::JumpCalculator::JumpCalculator( loops::Loops const& rigid, bo
 	new_nr_( 1 ),
 	bAllowAdjacentJumps_( bAllowAdjacentJumps ) {}
 
-bool is_not_neighbor_to_rigid( loops::Loops const& rigid, Size pos1, Size pos2 ) {
-	Size up1 = rigid.loop_index_of_residue( pos1-1 );
-	Size in1 = rigid.loop_index_of_residue( pos1 );
-	Size down1 = rigid.loop_index_of_residue( pos1+1 );
+bool is_not_neighbor_to_rigid( loops::Loops const& rigid, core::Size pos1, core::Size pos2 ) {
+	core::Size up1 = rigid.loop_index_of_residue( pos1-1 );
+	core::Size in1 = rigid.loop_index_of_residue( pos1 );
+	core::Size down1 = rigid.loop_index_of_residue( pos1+1 );
 
-	Size down2 = rigid.loop_index_of_residue( pos2+1 );
-	Size in2 = rigid.loop_index_of_residue( pos2 );
-	Size up2 = rigid.loop_index_of_residue( pos2-1 );
+	core::Size down2 = rigid.loop_index_of_residue( pos2+1 );
+	core::Size in2 = rigid.loop_index_of_residue( pos2 );
+	core::Size up2 = rigid.loop_index_of_residue( pos2-1 );
 	if ( !in1 && ( up1 && down1 ) ) return false;
 	if ( !in2 && ( up2 && down2 ) ) return false;
 	return true;
 }
 
-bool connects_rigid_regions( loops::Loops const& rigid, Size pos1, Size pos2 ) {
+bool connects_rigid_regions( loops::Loops const& rigid, core::Size pos1, core::Size pos2 ) {
 	//TODO: this is probably easier with label checks...
-	Size rigid1 = rigid.loop_index_of_residue( pos1 );
-	Size rigid2 = rigid.loop_index_of_residue( pos2 );
+	core::Size rigid1 = rigid.loop_index_of_residue( pos1 );
+	core::Size rigid2 = rigid.loop_index_of_residue( pos2 );
 	return rigid1 && rigid2;
 }
 
-bool RigidChunkClaimer::JumpCalculator::irrelevant_jump( Size global_start, Size global_end ) {
+bool RigidChunkClaimer::JumpCalculator::irrelevant_jump( core::Size global_start, core::Size global_end ) {
 	//TODO make better use of local positions
 	if ( tr.Trace.visible() ) {
 		tr.Trace << "Irrelevant_jump check for " << global_start << "->" << global_end << std::endl;
@@ -608,8 +608,8 @@ bool RigidChunkClaimer::JumpCalculator::irrelevant_jump( Size global_start, Size
 bool RigidChunkClaimer::JumpCalculator::good_jump( core::Size global_start, core::Size global_end ) {
 	//TODO make better use of local positions
 
-	Size up_loop( rigid_.loop_index_of_residue( global_start ) );
-	Size down_loop( rigid_.loop_index_of_residue( global_end ) );
+	core::Size up_loop( rigid_.loop_index_of_residue( global_start ) );
+	core::Size down_loop( rigid_.loop_index_of_residue( global_end ) );
 
 	//we arrive here only if jump is not irrelevant...
 	//if we don't allow adjacent jump that means this jump connects rigid regions or is a bad neighbor
@@ -629,12 +629,12 @@ bool RigidChunkClaimer::JumpCalculator::good_jump( core::Size global_start, core
 
 		// decide upon 3 cases: both nodes unvisited, 1 node visited, both nodes visited
 		// case0 : both new tag with new jump_nr
-		Size visit_nr = new_nr_++;
+		core::Size visit_nr = new_nr_++;
 		// case1 : both visited--> replace all higher visit_nr by lower visit_nr
 		if ( visited_[ up_loop ] && visited_[ down_loop ] ) {
-			Size old_visit_nr = visited_[ down_loop ]; //arbitrary choice
+			core::Size old_visit_nr = visited_[ down_loop ]; //arbitrary choice
 			visit_nr = visited_[ up_loop ];
-			for ( Size i=1; i<=visited_.size(); i++ ) {
+			for ( core::Size i=1; i<=visited_.size(); i++ ) {
 				if ( visited_[ i ] == old_visit_nr ) visited_[ i ] = visit_nr;
 			}
 		} else if ( visited_[ up_loop ] || visited_[ down_loop ] ) {
@@ -648,7 +648,7 @@ bool RigidChunkClaimer::JumpCalculator::good_jump( core::Size global_start, core
 	return false;
 }
 
-/// @detail generate a list of Jumps (Size tupels) that fix the remaining part of the chunk
+/// @detail generate a list of Jumps (core::Size tupels) that fix the remaining part of the chunk
 void
 RigidChunkClaimer::JumpCalculator::generate_rigidity_jumps( RigidChunkClaimer* parent_claimer, claims::DofClaims& extra_jumps, std::string label ) {
 	if ( visited_.size() == 0 ) { // No rigid chunks ??
@@ -657,8 +657,8 @@ RigidChunkClaimer::JumpCalculator::generate_rigidity_jumps( RigidChunkClaimer* p
 
 	//now we have a connection pattern based on the jumps already present.
 	//take a visited region and make it the root-reg
-	Size root_reg = 0;
-	for ( Size region = 1; region <= visited_.size(); region++ ) {
+	core::Size root_reg = 0;
+	for ( core::Size region = 1; region <= visited_.size(); region++ ) {
 		if ( visited_[ region ] ) {
 			root_reg = region;
 			break;
@@ -675,14 +675,14 @@ RigidChunkClaimer::JumpCalculator::generate_rigidity_jumps( RigidChunkClaimer* p
 	loops::Loops::LoopList rigid_loops = rigid_.loops(); // loops in sequence that correspond to the regions
 
 	// take middle of this loop piece. ... there might be better ways to make the extra jumps...
-	Size const anchor( static_cast< Size >( 0.5*(rigid_loops[ root_reg ].stop()
+	core::Size const anchor( static_cast< core::Size >( 0.5*(rigid_loops[ root_reg ].stop()
 		- rigid_loops[ root_reg ].start()) ) + rigid_loops[ root_reg ].start() );
 
-	for ( Size region = 1; region <= visited_.size(); region++ ) {
-		Size old_visited = visited_[ region ];
+	for ( core::Size region = 1; region <= visited_.size(); region++ ) {
+		core::Size old_visited = visited_[ region ];
 		if ( visited_[ region ] != visited_[ root_reg ] ) {
-			Size target_pos ( rigid_loops[ region ].start()
-				+ static_cast< Size >( 0.5*( rigid_loops[ region ].stop()-rigid_loops[ region ].start() ) ) );
+			core::Size target_pos ( rigid_loops[ region ].start()
+				+ static_cast< core::Size >( 0.5*( rigid_loops[ region ].stop()-rigid_loops[ region ].start() ) ) );
 
 			extra_jumps.push_back( utility::pointer::make_shared< claims::JumpClaim >( parent_claimer ? parent_claimer->get_self_weak_ptr() : TopologyClaimerAP(),
 				std::make_pair( label, anchor),
@@ -691,7 +691,7 @@ RigidChunkClaimer::JumpCalculator::generate_rigidity_jumps( RigidChunkClaimer* p
 			visited_[ region ] = visited_[ root_reg ];
 
 			if ( old_visited ) { //if we connected a cluster make sure to update all its nodes
-				for ( Size i=1; i<=visited_.size(); i++ ) {
+				for ( core::Size i=1; i<=visited_.size(); i++ ) {
 					if ( visited_[ i ] == old_visited ) visited_[ i ] = visited_[ root_reg ];
 				}
 			}

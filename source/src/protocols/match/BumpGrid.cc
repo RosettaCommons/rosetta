@@ -69,9 +69,9 @@ Bool3DGrid::create_grid_for_sphere( Vector const & center, Real radius ) const
 	debug_assert( low_corner.x() >= 0.0 && low_corner.y() >= 0.0 && low_corner.z() >= 0.0 );
 
 	Bin3D halfgrid_of_lowcorner;
-	halfgrid_of_lowcorner[ 1 ] = static_cast< Size > ( low_corner.x() / ( 2 * bin_width_ ) );
-	halfgrid_of_lowcorner[ 2 ] = static_cast< Size > ( low_corner.y() / ( 2 * bin_width_ ) );
-	halfgrid_of_lowcorner[ 3 ] = static_cast< Size > ( low_corner.z() / ( 2 * bin_width_ ) );
+	halfgrid_of_lowcorner[ 1 ] = static_cast< core::Size > ( low_corner.x() / ( 2 * bin_width_ ) );
+	halfgrid_of_lowcorner[ 2 ] = static_cast< core::Size > ( low_corner.y() / ( 2 * bin_width_ ) );
+	halfgrid_of_lowcorner[ 3 ] = static_cast< core::Size > ( low_corner.z() / ( 2 * bin_width_ ) );
 
 	Vector aligned_low_corner( bb_.lower() );
 	aligned_low_corner.x() += bin_width_2x_ * halfgrid_of_lowcorner[ 1 ];
@@ -94,9 +94,9 @@ Bool3DGrid::create_grid_for_bb( BoundingBox const & bb )
 	Vector local_center = bb.lower() - bb_.lower();
 
 	utility::fixedsizearray1< int, 3 > floored_lower;
-	floored_lower[ 1 ] = static_cast< Size > ( local_center.x() / bin_width_ );
-	floored_lower[ 2 ] = static_cast< Size > ( local_center.y() / bin_width_ );
-	floored_lower[ 3 ] = static_cast< Size > ( local_center.z() / bin_width_ );
+	floored_lower[ 1 ] = static_cast< core::Size > ( local_center.x() / bin_width_ );
+	floored_lower[ 2 ] = static_cast< core::Size > ( local_center.y() / bin_width_ );
+	floored_lower[ 3 ] = static_cast< core::Size > ( local_center.z() / bin_width_ );
 
 	Vector aligned_lower(
 		bb_.lower().x() + floored_lower[ 1 ] * bin_width_,
@@ -140,18 +140,18 @@ Bool3DGrid::or_by_sphere_conservative( Vector const & center, Real radius )
 	auto zlo( static_cast< SSize > ((relpos.z() - radius) / bin_width_ ));
 	SSize zhi( static_cast< SSize > ((relpos.z() + radius) / bin_width_ ) + 1);
 
-	Size uxlo = xlo < 0 ? 0 : xlo;
-	Size uxhi = xhi < 0 ? 0 : ( xhi > SSize( dimsizes_[ 1 ] ) ? dimsizes_[ 1 ] : xhi ) ;
-	Size uylo = ylo < 0 ? 0 : ylo;
-	Size uyhi = yhi < 0 ? 0 : ( yhi > SSize( dimsizes_[ 2 ] ) ? dimsizes_[ 2 ] : yhi ) ;
-	Size uzlo = zlo < 0 ? 0 : zlo;
-	Size uzhi = zhi < 0 ? 0 : ( zhi > SSize( dimsizes_[ 3 ] ) ? dimsizes_[ 3 ] : zhi ) ;
+	core::Size uxlo = xlo < 0 ? 0 : xlo;
+	core::Size uxhi = xhi < 0 ? 0 : ( xhi > SSize( dimsizes_[ 1 ] ) ? dimsizes_[ 1 ] : xhi ) ;
+	core::Size uylo = ylo < 0 ? 0 : ylo;
+	core::Size uyhi = yhi < 0 ? 0 : ( yhi > SSize( dimsizes_[ 2 ] ) ? dimsizes_[ 2 ] : yhi ) ;
+	core::Size uzlo = zlo < 0 ? 0 : zlo;
+	core::Size uzhi = zhi < 0 ? 0 : ( zhi > SSize( dimsizes_[ 3 ] ) ? dimsizes_[ 3 ] : zhi ) ;
 
-	for ( Size ii = uxlo; ii < uxhi; ++ii ) {
+	for ( core::Size ii = uxlo; ii < uxhi; ++ii ) {
 		bin[ 1 ] = ii;
-		for ( Size jj = uylo; jj < uyhi; ++jj ) {
+		for ( core::Size jj = uylo; jj < uyhi; ++jj ) {
 			bin[ 2 ] = jj;
-			for ( Size kk = uzlo; kk < uzhi; ++kk ) {
+			for ( core::Size kk = uzlo; kk < uzhi; ++kk ) {
 				bin[ 3 ] = kk;
 
 				Vector bin_center_point( bin_center( bin ));
@@ -161,7 +161,7 @@ Bool3DGrid::or_by_sphere_conservative( Vector const & center, Real radius )
 				bool all_contained( true );
 				if ( sphere_cent_to_voxel_cent2 > rad_minus_cendis2 ) { // Only look at all the corners if it's possible not all corners are covered by the sphere.
 					utility::fixedsizearray1< Vector, 8 > grid_corners = corners( bin );
-					for ( Size ll = 1; ll <= 8; ++ll ) {
+					for ( core::Size ll = 1; ll <= 8; ++ll ) {
 						Real d2 = center.distance_squared( grid_corners[ ll ] );
 						if ( d2 > rad2 ) { all_contained = false; break; }
 					}
@@ -184,15 +184,15 @@ Bool3DGrid::or_by_sphere_liberal( Vector const & center, Real radius )
 {
 	/* Real rad2 = radius * radius;
 	Bin3D bin;
-	for ( Size ii = 0; ii < dimsizes_[ 1 ]; ++ii ) {
+	for ( core::Size ii = 0; ii < dimsizes_[ 1 ]; ++ii ) {
 	bin[ 1 ] = ii;
-	for ( Size jj = 0; jj < dimsizes_[ 2 ]; ++jj ) {
+	for ( core::Size jj = 0; jj < dimsizes_[ 2 ]; ++jj ) {
 	bin[ 2 ] = jj;
-	for ( Size kk = 0; kk < dimsizes_[ 3 ]; ++kk ) {
+	for ( core::Size kk = 0; kk < dimsizes_[ 3 ]; ++kk ) {
 	bin[ 3 ] = kk;
 	utility::fixedsizearray1< Vector, 8 > grid_corners = corners( bin );
 	bool any_contained( false );
-	for ( Size ll = 1; ll <= 8; ++ll ) {
+	for ( core::Size ll = 1; ll <= 8; ++ll ) {
 	Real d2 = center.distance_squared( grid_corners[ ll ] );
 	if ( d2 <= rad2 ) { any_contained = true; break; }
 	}
@@ -222,18 +222,18 @@ Bool3DGrid::or_by_sphere_liberal( Vector const & center, Real radius )
 	auto zlo( static_cast< SSize > ((relpos.z() - radius) / bin_width_ ));
 	SSize zhi( static_cast< SSize > ((relpos.z() + radius) / bin_width_ ) + 1);
 
-	Size uxlo = xlo < 0 ? 0 : xlo;
-	Size uxhi = xhi < 0 ? 0 : ( xhi > SSize( dimsizes_[ 1 ] ) ? dimsizes_[ 1 ] : xhi ) ;
-	Size uylo = ylo < 0 ? 0 : ylo;
-	Size uyhi = yhi < 0 ? 0 : ( yhi > SSize( dimsizes_[ 2 ] ) ? dimsizes_[ 2 ] : yhi ) ;
-	Size uzlo = zlo < 0 ? 0 : zlo;
-	Size uzhi = zhi < 0 ? 0 : ( zhi > SSize( dimsizes_[ 3 ] ) ? dimsizes_[ 3 ] : zhi ) ;
+	core::Size uxlo = xlo < 0 ? 0 : xlo;
+	core::Size uxhi = xhi < 0 ? 0 : ( xhi > SSize( dimsizes_[ 1 ] ) ? dimsizes_[ 1 ] : xhi ) ;
+	core::Size uylo = ylo < 0 ? 0 : ylo;
+	core::Size uyhi = yhi < 0 ? 0 : ( yhi > SSize( dimsizes_[ 2 ] ) ? dimsizes_[ 2 ] : yhi ) ;
+	core::Size uzlo = zlo < 0 ? 0 : zlo;
+	core::Size uzhi = zhi < 0 ? 0 : ( zhi > SSize( dimsizes_[ 3 ] ) ? dimsizes_[ 3 ] : zhi ) ;
 
-	for ( Size ii = uxlo; ii < uxhi; ++ii ) {
+	for ( core::Size ii = uxlo; ii < uxhi; ++ii ) {
 		bin[ 1 ] = ii;
-		for ( Size jj = uylo; jj < uyhi; ++jj ) {
+		for ( core::Size jj = uylo; jj < uyhi; ++jj ) {
 			bin[ 2 ] = jj;
-			for ( Size kk = uzlo; kk < uzhi; ++kk ) {
+			for ( core::Size kk = uzlo; kk < uzhi; ++kk ) {
 				bin[ 3 ] = kk;
 
 				Vector bin_center_point( bin_center( bin ));
@@ -251,7 +251,7 @@ Bool3DGrid::or_by_sphere_liberal( Vector const & center, Real radius )
 				if ( !any_contained && sphere_cent_to_voxel_cent2 > rad_minus_cendis2 ) {
 					// Possible that some corners are covered by the sphere, but not guaranteed.
 					utility::fixedsizearray1< Vector, 8 > grid_corners = corners( bin );
-					for ( Size ll = 1; ll <= 8; ++ll ) {
+					for ( core::Size ll = 1; ll <= 8; ++ll ) {
 						Real d2 = center.distance_squared( grid_corners[ ll ] );
 						if ( d2 < rad2 ) { any_contained = true; break; }
 					}
@@ -261,12 +261,12 @@ Bool3DGrid::or_by_sphere_liberal( Vector const & center, Real radius )
 						bool x_in_range = ( center.x() >= grid_corners[ 1 ].x() && center.x() <= grid_corners[ 8 ].x() );
 						bool y_in_range = ( center.y() >= grid_corners[ 1 ].y() && center.y() <= grid_corners[ 8 ].y() );
 						bool z_in_range = ( center.z() >= grid_corners[ 1 ].z() && center.z() <= grid_corners[ 8 ].z() );
-						Size n_in_range = (Size) x_in_range + ( Size ) y_in_range + ( Size ) z_in_range;
+						core::Size n_in_range = (core::Size) x_in_range + ( core::Size ) y_in_range + ( core::Size ) z_in_range;
 
 						if ( n_in_range == 2 ) {
 							/// glancing contact possible.  Distance from sphere center to the voxel face is
 							/// the distance along the dimension that's not in range.
-							Size dim_out_of_range( 1 );
+							core::Size dim_out_of_range( 1 );
 							if ( ! x_in_range ) {
 								dim_out_of_range = 1;
 							} else if ( ! y_in_range ) {
@@ -307,17 +307,17 @@ Bool3DGrid::or_by_spheres_conservative(
 )
 {
 	Bin3D bin;
-	for ( Size ii = 0; ii < dimsizes_[ 1 ]; ++ii ) {
+	for ( core::Size ii = 0; ii < dimsizes_[ 1 ]; ++ii ) {
 		bin[ 1 ] = ii;
-		for ( Size jj = 0; jj < dimsizes_[ 2 ]; ++jj ) {
+		for ( core::Size jj = 0; jj < dimsizes_[ 2 ]; ++jj ) {
 			bin[ 2 ] = jj;
-			for ( Size kk = 0; kk < dimsizes_[ 3 ]; ++kk ) {
+			for ( core::Size kk = 0; kk < dimsizes_[ 3 ]; ++kk ) {
 				bin[ 3 ] = kk;
 				CornerPoints grid_corners = corners( bin );
 				bool all_corners_contained( true );
-				for ( Size ll = 1; ll <= 8; ++ll ) {
+				for ( core::Size ll = 1; ll <= 8; ++ll ) {
 					bool contained_anywhere( false );
-					for ( Size mm = 1; mm <= spheres.size(); ++mm ) {
+					for ( core::Size mm = 1; mm <= spheres.size(); ++mm ) {
 						Real d2 = spheres[ mm ].first.distance_squared( grid_corners[ ll ] );
 						if ( d2 <= spheres[ mm ].second ) { contained_anywhere = true; break; }
 					}
@@ -343,18 +343,18 @@ Bool3DGrid::or_by_box_liberal(
 )
 {
 	Vector clipped_lower( bb.lower() ), clipped_upper( bb.upper() );
-	for ( Size ii = 1; ii <= 3; ++ii ) if ( clipped_lower( ii ) < bb_.lower()( ii ) ) clipped_lower( ii ) = bb_.lower()( ii );
-	for ( Size ii = 1; ii <= 3; ++ii ) if ( clipped_upper( ii ) > bb_.upper()( ii ) ) clipped_upper( ii ) = bb_.upper()( ii );
+	for ( core::Size ii = 1; ii <= 3; ++ii ) if ( clipped_lower( ii ) < bb_.lower()( ii ) ) clipped_lower( ii ) = bb_.lower()( ii );
+	for ( core::Size ii = 1; ii <= 3; ++ii ) if ( clipped_upper( ii ) > bb_.upper()( ii ) ) clipped_upper( ii ) = bb_.upper()( ii );
 
 	Bin3D const bin_lo = bin_for_point( clipped_lower );
 	Bin3D const bin_hi = bin_for_point( clipped_upper );
 
 	Bin3D bin;
-	for ( Size ii = bin_lo[ 1 ]; ii <= bin_hi[ 1 ]; ++ii ) {
+	for ( core::Size ii = bin_lo[ 1 ]; ii <= bin_hi[ 1 ]; ++ii ) {
 		bin[ 1 ] = ii;
-		for ( Size jj = bin_lo[ 2 ]; jj <= bin_hi[ 2 ]; ++jj ) {
+		for ( core::Size jj = bin_lo[ 2 ]; jj <= bin_hi[ 2 ]; ++jj ) {
 			bin[ 2 ] = jj;
-			for ( Size kk = bin_lo[ 3 ]; kk <= bin_hi[ 3 ]; ++kk ) {
+			for ( core::Size kk = bin_lo[ 3 ]; kk <= bin_hi[ 3 ]; ++kk ) {
 				bin[ 3 ] = kk;
 				set_value_for_bin( bin, true );
 			}
@@ -444,7 +444,7 @@ bool Bool3DGrid::occupied( Vector const & point ) const
 
 bool Bool3DGrid::occupied( Bin3D const & bin ) const
 {
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		if ( bin[ ii ] >= dimsizes_[ ii ] ) return false;
 	}
 
@@ -460,11 +460,11 @@ void Bool3DGrid::set_value_for_bin( Bin3D const & bin, bool setting )
 	//std::cout << "setting value for bin " << bin[ 1 ] << " " << bin[ 2 ] << " " << bin[ 3 ] << " = " << setting << std::endl;
 
 	Bin3D halfbin;
-	halfbin[ 1 ] = bin[ 1 ] / 2; Size xmod2 = bin[ 1 ] % 2;
-	halfbin[ 2 ] = bin[ 2 ] / 2; Size ymod2 = bin[ 2 ] % 2;
-	halfbin[ 3 ] = bin[ 3 ] / 2; Size zmod2 = bin[ 3 ] % 2;
+	halfbin[ 1 ] = bin[ 1 ] / 2; core::Size xmod2 = bin[ 1 ] % 2;
+	halfbin[ 2 ] = bin[ 2 ] / 2; core::Size ymod2 = bin[ 2 ] % 2;
+	halfbin[ 3 ] = bin[ 3 ] / 2; core::Size zmod2 = bin[ 3 ] % 2;
 
-	Size index = byte_index_from_doublebin( halfbin );
+	core::Size index = byte_index_from_doublebin( halfbin );
 	unsigned char & voxel_bits( grid_[ index ] );
 
 	//unsigned char original_bits( grid_[ index ] ); /// for debugging -- commented out code below.
@@ -482,17 +482,17 @@ void Bool3DGrid::set_value_for_bin( Bin3D const & bin, bool setting )
 
 	/*std::cout << "Setting " << setting << " for bin " << bin[ 1 ] << " " << bin[ 2 ] << " " << bin[ 3 ] << " (index " << index << ")";
 	std::cout << " with offset " << xmod2 << " " << ymod2 << " " << zmod2 << " original: ";
-	for ( Size ii = 0; ii <= 1; ++ii ) {
-	for ( Size jj = 0; jj <= 1; ++jj ) {
-	for ( Size kk = 0; kk <= 1; ++kk ) {
+	for ( core::Size ii = 0; ii <= 1; ++ii ) {
+	for ( core::Size jj = 0; jj <= 1; ++jj ) {
+	for ( core::Size kk = 0; kk <= 1; ++kk ) {
 	std::cout << ( mask_from_offsets( ii, jj, kk ) & original_bits ? 1 : 0 );
 	}
 	}
 	}
 	std::cout << " becomes ";
-	for ( Size ii = 0; ii <= 1; ++ii ) {
-	for ( Size jj = 0; jj <= 1; ++jj ) {
-	for ( Size kk = 0; kk <= 1; ++kk ) {
+	for ( core::Size ii = 0; ii <= 1; ++ii ) {
+	for ( core::Size jj = 0; jj <= 1; ++jj ) {
+	for ( core::Size kk = 0; kk <= 1; ++kk ) {
 	std::cout << ( mask_from_offsets( ii, jj, kk ) & voxel_bits ? 1 : 0  );
 	}
 	}
@@ -533,30 +533,30 @@ void Bool3DGrid::or_with( Bool3DGrid const & other )
 	/// Iterate over the grid indices of this and other in the overlapping region.
 	Bin3D n_overlap;
 	Real const perturb = bin_width_ / 2;
-	n_overlap[ 1 ] = static_cast< Size > (( overlap_high.x() - overlap_low.x() + perturb  ) / bin_width_ );
-	n_overlap[ 2 ] = static_cast< Size > (( overlap_high.y() - overlap_low.y() + perturb  ) / bin_width_ );
-	n_overlap[ 3 ] = static_cast< Size > (( overlap_high.z() - overlap_low.z() + perturb  ) / bin_width_ );
+	n_overlap[ 1 ] = static_cast< core::Size > (( overlap_high.x() - overlap_low.x() + perturb  ) / bin_width_ );
+	n_overlap[ 2 ] = static_cast< core::Size > (( overlap_high.y() - overlap_low.y() + perturb  ) / bin_width_ );
+	n_overlap[ 3 ] = static_cast< core::Size > (( overlap_high.z() - overlap_low.z() + perturb  ) / bin_width_ );
 
 	Bin3D my_grid_start;
-	my_grid_start[ 1 ] = static_cast< Size > (( overlap_low.x() - bb_.lower().x() + perturb ) / bin_width_ );
-	my_grid_start[ 2 ] = static_cast< Size > (( overlap_low.y() - bb_.lower().y() + perturb ) / bin_width_ );
-	my_grid_start[ 3 ] = static_cast< Size > (( overlap_low.z() - bb_.lower().z() + perturb ) / bin_width_ );
+	my_grid_start[ 1 ] = static_cast< core::Size > (( overlap_low.x() - bb_.lower().x() + perturb ) / bin_width_ );
+	my_grid_start[ 2 ] = static_cast< core::Size > (( overlap_low.y() - bb_.lower().y() + perturb ) / bin_width_ );
+	my_grid_start[ 3 ] = static_cast< core::Size > (( overlap_low.z() - bb_.lower().z() + perturb ) / bin_width_ );
 
 	Bin3D other_grid_start;
-	other_grid_start[ 1 ] = static_cast< Size > (( overlap_low.x() - other.bb_.lower().x() + perturb ) / bin_width_ );
-	other_grid_start[ 2 ] = static_cast< Size > (( overlap_low.y() - other.bb_.lower().y() + perturb ) / bin_width_ );
-	other_grid_start[ 3 ] = static_cast< Size > (( overlap_low.z() - other.bb_.lower().z() + perturb ) / bin_width_ );
+	other_grid_start[ 1 ] = static_cast< core::Size > (( overlap_low.x() - other.bb_.lower().x() + perturb ) / bin_width_ );
+	other_grid_start[ 2 ] = static_cast< core::Size > (( overlap_low.y() - other.bb_.lower().y() + perturb ) / bin_width_ );
+	other_grid_start[ 3 ] = static_cast< core::Size > (( overlap_low.z() - other.bb_.lower().z() + perturb ) / bin_width_ );
 
 	Bin3D my_pos;
 	Bin3D other_pos;
 
-	for ( Size ii = 0; ii < n_overlap[ 1 ]; ++ii ) {
+	for ( core::Size ii = 0; ii < n_overlap[ 1 ]; ++ii ) {
 		my_pos[    1 ] = my_grid_start[    1 ] + ii;
 		other_pos[ 1 ] = other_grid_start[ 1 ] + ii;
-		for ( Size jj = 0; jj < n_overlap[ 2 ]; ++jj ) {
+		for ( core::Size jj = 0; jj < n_overlap[ 2 ]; ++jj ) {
 			my_pos[    2 ] = my_grid_start[    2 ] + jj;
 			other_pos[ 2 ] = other_grid_start[ 2 ] + jj;
-			for ( Size kk = 0; kk < n_overlap[ 3 ]; ++kk ) {
+			for ( core::Size kk = 0; kk < n_overlap[ 3 ]; ++kk ) {
 				my_pos[    3 ] = my_grid_start[    3 ] + kk;
 				other_pos[ 3 ] = other_grid_start[ 3 ] + kk;
 
@@ -605,30 +605,30 @@ void Bool3DGrid::and_with( Bool3DGrid const & other )
 	/// Iterate over the grid indices of this and other in the overlapping region.
 	Bin3D n_overlap;
 	Real const perturb = bin_width_ / 2;
-	n_overlap[ 1 ] = static_cast< Size > (( overlap_high.x() - overlap_low.x() + perturb  ) / bin_width_ );
-	n_overlap[ 2 ] = static_cast< Size > (( overlap_high.y() - overlap_low.y() + perturb  ) / bin_width_ );
-	n_overlap[ 3 ] = static_cast< Size > (( overlap_high.z() - overlap_low.z() + perturb  ) / bin_width_ );
+	n_overlap[ 1 ] = static_cast< core::Size > (( overlap_high.x() - overlap_low.x() + perturb  ) / bin_width_ );
+	n_overlap[ 2 ] = static_cast< core::Size > (( overlap_high.y() - overlap_low.y() + perturb  ) / bin_width_ );
+	n_overlap[ 3 ] = static_cast< core::Size > (( overlap_high.z() - overlap_low.z() + perturb  ) / bin_width_ );
 
 	Bin3D my_grid_start;
-	my_grid_start[ 1 ] = static_cast< Size > (( overlap_low.x() - bb_.lower().x() + perturb ) / bin_width_ );
-	my_grid_start[ 2 ] = static_cast< Size > (( overlap_low.y() - bb_.lower().y() + perturb ) / bin_width_ );
-	my_grid_start[ 3 ] = static_cast< Size > (( overlap_low.z() - bb_.lower().z() + perturb ) / bin_width_ );
+	my_grid_start[ 1 ] = static_cast< core::Size > (( overlap_low.x() - bb_.lower().x() + perturb ) / bin_width_ );
+	my_grid_start[ 2 ] = static_cast< core::Size > (( overlap_low.y() - bb_.lower().y() + perturb ) / bin_width_ );
+	my_grid_start[ 3 ] = static_cast< core::Size > (( overlap_low.z() - bb_.lower().z() + perturb ) / bin_width_ );
 
 	Bin3D other_grid_start;
-	other_grid_start[ 1 ] = static_cast< Size > (( overlap_low.x() - other.bb_.lower().x() + perturb ) / bin_width_ );
-	other_grid_start[ 2 ] = static_cast< Size > (( overlap_low.y() - other.bb_.lower().y() + perturb ) / bin_width_ );
-	other_grid_start[ 3 ] = static_cast< Size > (( overlap_low.z() - other.bb_.lower().z() + perturb ) / bin_width_ );
+	other_grid_start[ 1 ] = static_cast< core::Size > (( overlap_low.x() - other.bb_.lower().x() + perturb ) / bin_width_ );
+	other_grid_start[ 2 ] = static_cast< core::Size > (( overlap_low.y() - other.bb_.lower().y() + perturb ) / bin_width_ );
+	other_grid_start[ 3 ] = static_cast< core::Size > (( overlap_low.z() - other.bb_.lower().z() + perturb ) / bin_width_ );
 
 	Bin3D my_pos;
 	Bin3D other_pos;
 
-	for ( Size ii = 0; ii < n_overlap[ 1 ]; ++ii ) {
+	for ( core::Size ii = 0; ii < n_overlap[ 1 ]; ++ii ) {
 		my_pos[    1 ] = my_grid_start[    1 ] + ii;
 		other_pos[ 1 ] = other_grid_start[ 1 ] + ii;
-		for ( Size jj = 0; jj < n_overlap[ 2 ]; ++jj ) {
+		for ( core::Size jj = 0; jj < n_overlap[ 2 ]; ++jj ) {
 			my_pos[    2 ] = my_grid_start[    2 ] + jj;
 			other_pos[ 2 ] = other_grid_start[ 2 ] + jj;
-			for ( Size kk = 0; kk < n_overlap[ 3 ]; ++kk ) {
+			for ( core::Size kk = 0; kk < n_overlap[ 3 ]; ++kk ) {
 				my_pos[    3 ] = my_grid_start[    3 ] + kk;
 				other_pos[ 3 ] = other_grid_start[ 3 ] + kk;
 
@@ -679,30 +679,30 @@ void Bool3DGrid::subtract( Bool3DGrid const & other )
 	/// Iterate over the grid indices of this and other in the overlapping region.
 	Bin3D n_overlap;
 	Real const perturb = bin_width_ / 2;
-	n_overlap[ 1 ] = static_cast< Size > (( overlap_high.x() - overlap_low.x() + perturb  ) / bin_width_ );
-	n_overlap[ 2 ] = static_cast< Size > (( overlap_high.y() - overlap_low.y() + perturb  ) / bin_width_ );
-	n_overlap[ 3 ] = static_cast< Size > (( overlap_high.z() - overlap_low.z() + perturb  ) / bin_width_ );
+	n_overlap[ 1 ] = static_cast< core::Size > (( overlap_high.x() - overlap_low.x() + perturb  ) / bin_width_ );
+	n_overlap[ 2 ] = static_cast< core::Size > (( overlap_high.y() - overlap_low.y() + perturb  ) / bin_width_ );
+	n_overlap[ 3 ] = static_cast< core::Size > (( overlap_high.z() - overlap_low.z() + perturb  ) / bin_width_ );
 
 	Bin3D my_grid_start;
-	my_grid_start[ 1 ] = static_cast< Size > (( overlap_low.x() - bb_.lower().x() + perturb ) / bin_width_ );
-	my_grid_start[ 2 ] = static_cast< Size > (( overlap_low.y() - bb_.lower().y() + perturb ) / bin_width_ );
-	my_grid_start[ 3 ] = static_cast< Size > (( overlap_low.z() - bb_.lower().z() + perturb ) / bin_width_ );
+	my_grid_start[ 1 ] = static_cast< core::Size > (( overlap_low.x() - bb_.lower().x() + perturb ) / bin_width_ );
+	my_grid_start[ 2 ] = static_cast< core::Size > (( overlap_low.y() - bb_.lower().y() + perturb ) / bin_width_ );
+	my_grid_start[ 3 ] = static_cast< core::Size > (( overlap_low.z() - bb_.lower().z() + perturb ) / bin_width_ );
 
 	Bin3D other_grid_start;
-	other_grid_start[ 1 ] = static_cast< Size > (( overlap_low.x() - other.bb_.lower().x() + perturb ) / bin_width_ );
-	other_grid_start[ 2 ] = static_cast< Size > (( overlap_low.y() - other.bb_.lower().y() + perturb ) / bin_width_ );
-	other_grid_start[ 3 ] = static_cast< Size > (( overlap_low.z() - other.bb_.lower().z() + perturb ) / bin_width_ );
+	other_grid_start[ 1 ] = static_cast< core::Size > (( overlap_low.x() - other.bb_.lower().x() + perturb ) / bin_width_ );
+	other_grid_start[ 2 ] = static_cast< core::Size > (( overlap_low.y() - other.bb_.lower().y() + perturb ) / bin_width_ );
+	other_grid_start[ 3 ] = static_cast< core::Size > (( overlap_low.z() - other.bb_.lower().z() + perturb ) / bin_width_ );
 
 	Bin3D my_pos;
 	Bin3D other_pos;
 
-	for ( Size ii = 0; ii < n_overlap[ 1 ]; ++ii ) {
+	for ( core::Size ii = 0; ii < n_overlap[ 1 ]; ++ii ) {
 		my_pos[    1 ] = my_grid_start[    1 ] + ii;
 		other_pos[ 1 ] = other_grid_start[ 1 ] + ii;
-		for ( Size jj = 0; jj < n_overlap[ 2 ]; ++jj ) {
+		for ( core::Size jj = 0; jj < n_overlap[ 2 ]; ++jj ) {
 			my_pos[    2 ] = my_grid_start[    2 ] + jj;
 			other_pos[ 2 ] = other_grid_start[ 2 ] + jj;
-			for ( Size kk = 0; kk < n_overlap[ 3 ]; ++kk ) {
+			for ( core::Size kk = 0; kk < n_overlap[ 3 ]; ++kk ) {
 				my_pos[    3 ] = my_grid_start[    3 ] + kk;
 				other_pos[ 3 ] = other_grid_start[ 3 ] + kk;
 
@@ -724,7 +724,7 @@ void Bool3DGrid::subtract( Bool3DGrid const & other )
 
 void Bool3DGrid::clear()
 {
-	for ( Size ii = 0; ii < grid_.size(); ++ii ) {
+	for ( core::Size ii = 0; ii < grid_.size(); ++ii ) {
 		grid_[ ii ] = 0;
 	}
 }
@@ -735,12 +735,12 @@ Bool3DGrid::index_and_mask_for_point( Vector const & point ) const
 {
 	Vector local = point - bb_.lower();
 	Bin3D halfbin;
-	halfbin[ 1 ] = static_cast< Size > ( local.x() / bin_width_2x_ );
-	halfbin[ 2 ] = static_cast< Size > ( local.y() / bin_width_2x_ );
-	halfbin[ 3 ] = static_cast< Size > ( local.z() / bin_width_2x_ );
-	Size xmod2 = local.x() - halfbin[ 1 ] * bin_width_2x_ >= bin_width_ ? 1 : 0;
-	Size ymod2 = local.y() - halfbin[ 2 ] * bin_width_2x_ >= bin_width_ ? 1 : 0;
-	Size zmod2 = local.z() - halfbin[ 3 ] * bin_width_2x_ >= bin_width_ ? 1 : 0;
+	halfbin[ 1 ] = static_cast< core::Size > ( local.x() / bin_width_2x_ );
+	halfbin[ 2 ] = static_cast< core::Size > ( local.y() / bin_width_2x_ );
+	halfbin[ 3 ] = static_cast< core::Size > ( local.z() / bin_width_2x_ );
+	core::Size xmod2 = local.x() - halfbin[ 1 ] * bin_width_2x_ >= bin_width_ ? 1 : 0;
+	core::Size ymod2 = local.y() - halfbin[ 2 ] * bin_width_2x_ >= bin_width_ ? 1 : 0;
+	core::Size zmod2 = local.z() - halfbin[ 3 ] * bin_width_2x_ >= bin_width_ ? 1 : 0;
 
 	//std::cout << "index for point " << point.x() << " " << point.y() << " " << point.z() << " ";
 	//std::cout << "local point: " << local.x() << " " << local.y() << " " << local.z() << " ";
@@ -748,7 +748,7 @@ Bool3DGrid::index_and_mask_for_point( Vector const & point ) const
 	//std::cout << halfbin[ 1 ] << " " << halfbin[ 2 ] << " " << halfbin[ 3 ] << " halfdimprods:";
 	//std::cout << halfdimprods_[ 1 ] << " " << halfdimprods_[ 2 ] << " " << halfdimprods_[ 3 ] << " " << std::endl;
 
-	Size index = byte_index_from_doublebin( halfbin );
+	core::Size index = byte_index_from_doublebin( halfbin );
 	unsigned char mask = mask_from_offsets( xmod2, ymod2, zmod2 );
 
 	return std::make_pair( index, mask );
@@ -761,9 +761,9 @@ Bool3DGrid::index_and_mask_for_bin( Bin3D const & bin ) const
 	halfbin[ 1 ] = bin[ 1 ] / 2;
 	halfbin[ 2 ] = bin[ 2 ] / 2;
 	halfbin[ 3 ] = bin[ 3 ] / 2;
-	Size xmod2 = bin[ 1 ] % 2;
-	Size ymod2 = bin[ 2 ] % 2;
-	Size zmod2 = bin[ 3 ] % 2;
+	core::Size xmod2 = bin[ 1 ] % 2;
+	core::Size ymod2 = bin[ 2 ] % 2;
+	core::Size zmod2 = bin[ 3 ] % 2;
 
 	//std::cout << "index for point " << point.x() << " " << point.y() << " " << point.z() << " ";
 	//std::cout << "local point: " << local.x() << " " << local.y() << " " << local.z() << " ";
@@ -771,7 +771,7 @@ Bool3DGrid::index_and_mask_for_bin( Bin3D const & bin ) const
 	//std::cout << halfbin[ 1 ] << " " << halfbin[ 2 ] << " " << halfbin[ 3 ] << " halfdimprods:";
 	//std::cout << halfdimprods_[ 1 ] << " " << halfdimprods_[ 2 ] << " " << halfdimprods_[ 3 ] << " " << std::endl;
 
-	Size index = byte_index_from_doublebin( halfbin );
+	core::Size index = byte_index_from_doublebin( halfbin );
 	unsigned char mask = mask_from_offsets( xmod2, ymod2, zmod2 );
 
 	return std::make_pair( index, mask );
@@ -783,9 +783,9 @@ Bool3DGrid::bin_for_point( Vector const & point ) const
 	debug_assert( bb_.contains( point ) );
 	Vector local = point - bb_.lower();
 	Bin3D bin;
-	bin[ 1 ] = static_cast< Size > ( local.x() / bin_width_ );
-	bin[ 2 ] = static_cast< Size > ( local.y() / bin_width_ );
-	bin[ 3 ] = static_cast< Size > ( local.z() / bin_width_ );
+	bin[ 1 ] = static_cast< core::Size > ( local.x() / bin_width_ );
+	bin[ 2 ] = static_cast< core::Size > ( local.y() / bin_width_ );
+	bin[ 3 ] = static_cast< core::Size > ( local.z() / bin_width_ );
 	if ( bin[ 1 ] >= dimsizes_[ 1 ] ) bin[ 1 ] = dimsizes_[ 1 ] - 1;
 	if ( bin[ 2 ] >= dimsizes_[ 2 ] ) bin[ 2 ] = dimsizes_[ 2 ] - 1;
 	if ( bin[ 3 ] >= dimsizes_[ 3 ] ) bin[ 3 ] = dimsizes_[ 3 ] - 1;
@@ -797,15 +797,15 @@ Bool3DGrid::reset_grid() {
 	Vector local_upper_corner = bb_.upper() - bb_.lower();
 	Bin3D nbins;
 	Real const perturb( bin_width_ * 0.5 );
-	nbins[ 1 ] = static_cast< Size > ( (local_upper_corner.x() + perturb ) / bin_width_ );
-	nbins[ 2 ] = static_cast< Size > ( (local_upper_corner.y() + perturb ) / bin_width_ );
-	nbins[ 3 ] = static_cast< Size > ( (local_upper_corner.z() + perturb ) / bin_width_ );
+	nbins[ 1 ] = static_cast< core::Size > ( (local_upper_corner.x() + perturb ) / bin_width_ );
+	nbins[ 2 ] = static_cast< core::Size > ( (local_upper_corner.y() + perturb ) / bin_width_ );
+	nbins[ 3 ] = static_cast< core::Size > ( (local_upper_corner.z() + perturb ) / bin_width_ );
 
 	if ( nbins[ 1 ] * bin_width_ < local_upper_corner.x() ) ++nbins[ 1 ];
 	if ( nbins[ 2 ] * bin_width_ < local_upper_corner.y() ) ++nbins[ 2 ];
 	if ( nbins[ 3 ] * bin_width_ < local_upper_corner.z() ) ++nbins[ 3 ];
 
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		// make nbins a multiple of the number of bins per super voxel
 		// The number of double-bins per supervoxel may be any value, however,
 		// the number of bins per supervoxel must be even.
@@ -836,7 +836,7 @@ Bool3DGrid::reset_grid() {
 	halfdimprods_[ 1 ] = halfdimprods_[ 2 ] * halfdimsizes_[ 2 ];
 	supervoxel_dimprods_[ 1 ] = supervoxel_dimprods_[ 2 ] * supervoxel_dimsizes_[ 2 ];
 
-	Size nchar = halfdimprods_[ 1 ] * halfdimsizes_[ 1 ];
+	core::Size nchar = halfdimprods_[ 1 ] * halfdimsizes_[ 1 ];
 	grid_.resize( nchar );
 	std::fill( grid_.begin(), grid_.end(), (unsigned char) 0 );
 
@@ -855,13 +855,13 @@ Bool3DGrid::reset_grid() {
 
 
 unsigned char
-Bool3DGrid::mask_from_offsets( Size xmod2, Size ymod2, Size zmod2 ) const
+Bool3DGrid::mask_from_offsets( core::Size xmod2, core::Size ymod2, core::Size zmod2 ) const
 {
 	debug_assert( xmod2 == 0 || xmod2 == 1 );
 	debug_assert( ymod2 == 0 || ymod2 == 1 );
 	debug_assert( zmod2 == 0 || zmod2 == 1 );
 
-	Size offset = 4 * xmod2 + 2 * ymod2 + zmod2;
+	core::Size offset = 4 * xmod2 + 2 * ymod2 + zmod2;
 	switch ( offset ) {
 	case 0 : return 0x01;
 	case 1 : return 0x02;
@@ -877,13 +877,13 @@ Bool3DGrid::mask_from_offsets( Size xmod2, Size ymod2, Size zmod2 ) const
 }
 
 unsigned char
-Bool3DGrid::negmask_from_offsets( Size xmod2, Size ymod2, Size zmod2 ) const
+Bool3DGrid::negmask_from_offsets( core::Size xmod2, core::Size ymod2, core::Size zmod2 ) const
 {
 	debug_assert( xmod2 == 0 || xmod2 == 1 );
 	debug_assert( ymod2 == 0 || ymod2 == 1 );
 	debug_assert( zmod2 == 0 || zmod2 == 1 );
 
-	Size offset = 4 * xmod2 + 2 * ymod2 + zmod2;
+	core::Size offset = 4 * xmod2 + 2 * ymod2 + zmod2;
 	switch ( offset ) {
 	case 0 : return 0xFE;
 	case 1 : return 0xFD;
@@ -906,7 +906,7 @@ Bool3DGrid::byte_index_from_doublebin( Bin3D const & doublebin ) const {
 	debug_assert( doublebin[ 2 ] < halfdimsizes_[ 2 ] );
 	debug_assert( doublebin[ 3 ] < halfdimsizes_[ 3 ] );
 
-	Size index =
+	core::Size index =
 		supervoxel_dimprods_[ 1 ] * ( doublebin[ 1 ] / n_doublebins_per_supervoxel ) +
 		supervoxel_dimprods_[ 2 ] * ( doublebin[ 2 ] / n_doublebins_per_supervoxel ) +
 		( doublebin[ 3 ] / n_doublebins_per_supervoxel ); // supervoxel index;
@@ -928,7 +928,7 @@ BumpGrid::BumpGrid() :
 	pair_permit_overlap_( n_probe_radii ),
 	general_permit_overlap_( 0.0 )
 {
-	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_probe_radii; ++ii ) {
 		grids_[ ii ] = utility::pointer::make_shared< Bool3DGrid >();
 		pair_permit_overlap_[ ii ].resize( n_probe_radii );
 		std::fill ( pair_permit_overlap_[ ii ].begin(), pair_permit_overlap_[ ii ].end(), 0.0 );
@@ -945,8 +945,8 @@ BumpGrid::BumpGrid() :
 		{       0,     0,     0,     0,     0,     0,     0,     0 }, // C_ALA
 		{       0,     0,     0,     0,     0,     0,     0,     0 }};// SULPH
 
-	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
-		for ( Size jj = 1; jj <= n_probe_radii; ++jj ) {
+	for ( core::Size ii = 1; ii <= n_probe_radii; ++ii ) {
+		for ( core::Size jj = 1; jj <= n_probe_radii; ++jj ) {
 			pair_permit_overlap_[ ii ][ jj ] = permit_overlap[ ii ][ jj ];
 		}
 	}
@@ -959,7 +959,7 @@ BumpGrid::BumpGrid( BumpGrid const & rhs ) :
 	pair_permit_overlap_( rhs.pair_permit_overlap_ ),
 	general_permit_overlap_( rhs.general_permit_overlap_ )
 {
-	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_probe_radii; ++ii ) {
 		grids_[ ii ] = utility::pointer::make_shared< Bool3DGrid >( *rhs.grids_[ ii ] );
 	}
 }
@@ -968,7 +968,7 @@ BumpGrid::~BumpGrid() = default;
 
 BumpGrid & BumpGrid::operator = ( BumpGrid const & rhs )
 {
-	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_probe_radii; ++ii ) {
 		grids_[ ii ] = utility::pointer::make_shared< Bool3DGrid >( *rhs.grids_[ ii ] );
 	}
 	pair_permit_overlap_ = rhs.pair_permit_overlap_;
@@ -984,7 +984,7 @@ BumpGrid & BumpGrid::operator = ( BumpGrid const & rhs )
 // integer.
 void BumpGrid::set_bounding_box( BoundingBox const & bb )
 {
-	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_probe_radii; ++ii ) {
 		Vector lower = bb.lower() - probe_radius( (ProbeRadius) ii  );
 		lower.x() = static_cast< Real > ( static_cast< int > ( lower.x() ));
 		lower.y() = static_cast< Real > ( static_cast< int > ( lower.y() ));
@@ -1029,7 +1029,7 @@ BumpGrid::create_new_bump_grid_for_bb( BoundingBox const & bb ) const {
 
 void BumpGrid::or_with( BumpGrid const & other )
 {
-	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_probe_radii; ++ii ) {
 		if ( grids_[ ii ]->actual_bb().intersects( other.grids_[ ii ]->actual_bb() ) ) {
 			grids_[ ii ]->or_with( *other.grids_[ ii ] );
 		}
@@ -1037,7 +1037,7 @@ void BumpGrid::or_with( BumpGrid const & other )
 }
 void BumpGrid::and_with( BumpGrid const & other )
 {
-	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_probe_radii; ++ii ) {
 		if ( grids_[ ii ]->actual_bb().intersects( other.grids_[ ii ]->actual_bb() ) ) {
 			grids_[ ii ]->and_with( *other.grids_[ ii ] );
 		}
@@ -1048,7 +1048,7 @@ void BumpGrid::and_with( BumpGrid const & other )
 /// varying probe radii to create the varying configuration-space spheres.
 void BumpGrid::or_by_sphere( Sphere const & input )
 {
-	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_probe_radii; ++ii ) {
 		grids_[ ii ]->or_by_sphere_conservative( input.first, input.second + probe_radius( (ProbeRadius) ii )  );
 	}
 
@@ -1060,7 +1060,7 @@ void BumpGrid::or_by_sphere(
 {
 	if ( radius_type == ZERO ) return;
 
-	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_probe_radii; ++ii ) {
 		grids_[ ii ]->or_by_sphere_conservative( center,
 			required_separation_distance( ProbeRadius( ii ), radius_type ) );
 	}
@@ -1068,7 +1068,7 @@ void BumpGrid::or_by_sphere(
 
 bool BumpGrid::overlaps( BumpGrid const & other ) const {
 
-	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_probe_radii; ++ii ) {
 		if ( grids_[ ii ]->actual_bb().intersects( other.grids_[ ii ]->actual_bb() ) ) {
 			return true;
 		}
@@ -1117,7 +1117,7 @@ initialize_atomtype_2_probe_radius_map()
 
 	AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
 	utility::vector1< ProbeRadius > attype_2_radtype( atset->n_atomtypes(), ZERO );
-	for ( Size ii = 1; ii <= atset->n_atomtypes(); ++ii ) {
+	for ( core::Size ii = 1; ii <= atset->n_atomtypes(); ++ii ) {
 		ProbeRadius ii_probe_radius( ZERO );
 		AtomType const & iiat( (*atset)[ ii ] );
 		if ( iiat.element() == "H" ) {
@@ -1138,7 +1138,7 @@ initialize_atomtype_2_probe_radius_map()
 			/// find the next smallest probe radius -- this will produce a conservative set of collisions,
 			/// as some radii pairs tolerate some collision to describe hydrogen bonds.
 			Real radius_shrunk = 0.89 * iiat.lj_radius();
-			for ( Size jj = 1; jj <= n_probe_radii; ++jj ) {
+			for ( core::Size jj = 1; jj <= n_probe_radii; ++jj ) {
 				Real rad = BumpGrid::probe_radius( (ProbeRadius) jj );
 				if ( rad <= radius_shrunk ) {
 					ii_probe_radius = (ProbeRadius) jj;
@@ -1174,7 +1174,7 @@ bump_grid_to_enclose_pose( core::pose::Pose const & pose )
 		return utility::pointer::make_shared< BumpGrid >();
 	} else {
 		bool found_an_atom( false );
-		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue( ii ).natoms() > 0 ) {
 				first_xyz = pose.residue( ii ).xyz( 1 );
 				at1rad = probe_radius_for_atom_type( pose.residue( ii ).atom( 1 ).type() );
@@ -1189,8 +1189,8 @@ bump_grid_to_enclose_pose( core::pose::Pose const & pose )
 	}
 
 	Vector bbl( first_xyz - at1rad ), bbu( first_xyz + at1rad );
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		for ( Size jj = 1; jj <= pose.residue( ii ).natoms(); ++jj ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+		for ( core::Size jj = 1; jj <= pose.residue( ii ).natoms(); ++jj ) {
 			Real jjrad = BumpGrid::probe_radius( probe_radius_for_atom_type( pose.residue_type( ii ).atom_type_index( jj ) ));
 			bbl.min( pose.residue( ii ).xyz( jj ) - jjrad );
 			bbu.max( pose.residue( ii ).xyz( jj ) + jjrad );
@@ -1224,7 +1224,7 @@ BumpGridOP bump_grid_to_enclose_residue_backbone(
 	core::Vector bbl( first_xyz - at1rad ), bbu( first_xyz + at1rad );
 	//core::Vector bbl_strict( first_xyz ), bbu_strict( first_xyz );
 
-	for ( Size ii = 2; ii <= residue.last_backbone_atom(); ++ii ) {
+	for ( core::Size ii = 2; ii <= residue.last_backbone_atom(); ++ii ) {
 		Real iirad = BumpGrid::probe_radius( probe_radius_for_atom_type( residue.atom( ii ).type() ));
 		bbl.min( residue.xyz( ii ) - iirad );
 		bbu.max( residue.xyz( ii ) + iirad );
@@ -1254,7 +1254,7 @@ BumpGridOP bump_grid_to_enclose_residue(
 	core::Vector bbl( first_xyz - at1rad ), bbu( first_xyz + at1rad );
 	//core::Vector bbl_strict( first_xyz ), bbu_strict( first_xyz );
 
-	for ( Size ii = 2; ii <= residue.natoms(); ++ii ) {
+	for ( core::Size ii = 2; ii <= residue.natoms(); ++ii ) {
 		Real iirad = BumpGrid::probe_radius( probe_radius_for_atom_type( residue.atom( ii ).type() ));
 		bbl.min( residue.xyz( ii ) - iirad );
 		bbu.max( residue.xyz( ii ) + iirad );
@@ -1273,7 +1273,7 @@ fill_grid_with_residue_spheres(
 )
 {
 	using namespace core;
-	for ( Size ii = 1; ii <= residue.natoms(); ++ii ) {
+	for ( core::Size ii = 1; ii <= residue.natoms(); ++ii ) {
 		grid.or_by_sphere( residue.xyz( ii ), probe_radius_for_atom_type( residue.atom( ii ).type() ));
 	}
 }
@@ -1285,7 +1285,7 @@ fill_grid_with_residue_heavyatom_spheres(
 )
 {
 	using namespace core;
-	for ( Size ii = 1; ii <= residue.nheavyatoms(); ++ii ) {
+	for ( core::Size ii = 1; ii <= residue.nheavyatoms(); ++ii ) {
 		grid.or_by_sphere( residue.xyz( ii ), probe_radius_for_atom_type( residue.atom( ii ).type() ));
 	}
 }
@@ -1298,7 +1298,7 @@ fill_grid_with_backbone_heavyatom_spheres(
 )
 {
 	using namespace core;
-	for ( Size ii = 1; ii <= residue.last_backbone_atom(); ++ii ) {
+	for ( core::Size ii = 1; ii <= residue.last_backbone_atom(); ++ii ) {
 		grid.or_by_sphere( residue.xyz( ii ), probe_radius_for_atom_type( residue.atom( ii ).type() ));
 	}
 }
@@ -1355,7 +1355,7 @@ void Bool3DGridKinemageWriter::write_grid_to_kinemage(
 		shrink_factor_ * grid.bin_width() * Vector( -1, -1, -1 )
 		};
 
-	Size const A( 1 ), B( 5 ), C( 7 ), D( 3 ), E( 2 ), F( 6 ), G( 8 ), H( 4 );
+	core::Size const A( 1 ), B( 5 ), C( 7 ), D( 3 ), E( 2 ), F( 6 ), G( 8 ), H( 4 );
 
 	ostr << "@group {" << group_name << "} dominant\n";
 	ostr << "@vectorlist {} color= " << line_color_ << " width= 1\n";
@@ -1365,11 +1365,11 @@ void Bool3DGridKinemageWriter::write_grid_to_kinemage(
 
 	ostr.precision( 3 );
 
-	for ( Size ii = 0; ii < ndims[ 1 ]; ++ii ) {
+	for ( core::Size ii = 0; ii < ndims[ 1 ]; ++ii ) {
 		bin[ 1 ] = ii;
-		for ( Size jj = 0; jj < ndims[ 2 ]; ++jj ) {
+		for ( core::Size jj = 0; jj < ndims[ 2 ]; ++jj ) {
 			bin[ 2 ] = jj;
-			for ( Size kk = 0; kk < ndims[ 3 ]; ++kk ) {
+			for ( core::Size kk = 0; kk < ndims[ 3 ]; ++kk ) {
 				bin[ 3 ] = kk;
 
 				if ( ! grid.occupied( bin ) ) continue;
@@ -1381,11 +1381,11 @@ void Bool3DGridKinemageWriter::write_grid_to_kinemage(
 				}
 				if ( skip ) {
 					Bin3D neighb;
-					for ( Size ll = 0; ll <= 2; ++ll ) {
+					for ( core::Size ll = 0; ll <= 2; ++ll ) {
 						neighb[ 1 ] = bin[ 1 ] - 1 + ll;
-						for ( Size mm = 0; mm <= 2; ++mm ) {
+						for ( core::Size mm = 0; mm <= 2; ++mm ) {
 							neighb[ 2 ] = bin[ 2 ] - 1 + mm;
-							for ( Size nn = 0; nn <= 2; ++nn ) {
+							for ( core::Size nn = 0; nn <= 2; ++nn ) {
 								neighb[ 3 ] = bin[ 3 ] - 1 + nn;
 								if ( ll == 1 && mm == 1 && nn == 1 ) continue;
 								if ( ! grid.occupied( neighb ) ) {
@@ -1402,7 +1402,7 @@ void Bool3DGridKinemageWriter::write_grid_to_kinemage(
 				if ( skip ) continue;
 
 				Bool3DGrid::CornerPoints c = grid.corners( bin );
-				for ( Size ll = 1; ll <= 8; ++ll ) c[ ll ] += corner_offsets[ ll ];
+				for ( core::Size ll = 1; ll <= 8; ++ll ) c[ ll ] += corner_offsets[ ll ];
 
 				ostr << "{\"}P" << ( unselectable_ ? " U ": " " ) << c[A].x() << " " << c[A].y() << " " << c[A].z() << "\n";
 				ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[B].x() << " " << c[B].y() << " " << c[B].z() << "\n";
@@ -1427,16 +1427,16 @@ void Bool3DGridKinemageWriter::write_grid_to_kinemage(
 
 	if ( write_empty_voxels_ ) {
 		ostr << "@vectorlist {} color= " << empty_voxel_color_ << " master= {empty voxels} width= 1\n";
-		for ( Size ii = 0; ii < ndims[ 1 ]; ++ii ) {
+		for ( core::Size ii = 0; ii < ndims[ 1 ]; ++ii ) {
 			bin[ 1 ] = ii;
-			for ( Size jj = 0; jj < ndims[ 2 ]; ++jj ) {
+			for ( core::Size jj = 0; jj < ndims[ 2 ]; ++jj ) {
 				bin[ 2 ] = jj;
-				for ( Size kk = 0; kk < ndims[ 3 ]; ++kk ) {
+				for ( core::Size kk = 0; kk < ndims[ 3 ]; ++kk ) {
 					bin[ 3 ] = kk;
 					if ( grid.occupied( bin ) ) continue;
 
 					Bool3DGrid::CornerPoints c = grid.corners( bin );
-					for ( Size ll = 1; ll <= 8; ++ll ) c[ ll ] += corner_offsets[ ll ];
+					for ( core::Size ll = 1; ll <= 8; ++ll ) c[ ll ] += corner_offsets[ ll ];
 
 					ostr << "{\"}P" << ( unselectable_ ? " U ": " " ) << c[A].x() << " " << c[A].y() << " " << c[A].z() << "\n";
 					ostr << "{\"}"  << ( unselectable_ ? " U ": " " ) << c[B].x() << " " << c[B].y() << " " << c[B].z() << "\n";
@@ -1462,16 +1462,16 @@ void Bool3DGridKinemageWriter::write_grid_to_kinemage(
 
 	if ( write_facets_ ) {
 
-		for ( Size ii = 0; ii < ndims[ 1 ]; ++ii ) {
+		for ( core::Size ii = 0; ii < ndims[ 1 ]; ++ii ) {
 			bin[ 1 ] = ii;
-			for ( Size jj = 0; jj < ndims[ 2 ]; ++jj ) {
+			for ( core::Size jj = 0; jj < ndims[ 2 ]; ++jj ) {
 				bin[ 2 ] = jj;
-				for ( Size kk = 0; kk < ndims[ 3 ]; ++kk ) {
+				for ( core::Size kk = 0; kk < ndims[ 3 ]; ++kk ) {
 					bin[ 3 ] = kk;
 					if ( ! grid.occupied( bin ) ) continue;
 
 					Bool3DGrid::CornerPoints c = grid.corners( bin );
-					for ( Size ll = 1; ll <= 8; ++ll ) c[ ll ] += corner_offsets[ ll ];
+					for ( core::Size ll = 1; ll <= 8; ++ll ) c[ ll ] += corner_offsets[ ll ];
 					ostr << "@ribbonlist {} color= " << facet_color_ << " master= {" << facet_master_ << "} ";
 					if ( transparent_facets_ ) ostr << " alpha= " << facet_alpha_ << " ";
 					ostr << "\n";

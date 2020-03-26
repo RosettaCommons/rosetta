@@ -26,7 +26,7 @@
 #include <protocols/moves/Mover.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // STL Headers
 #include <iosfwd>

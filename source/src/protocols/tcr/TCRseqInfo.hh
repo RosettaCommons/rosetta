@@ -19,7 +19,7 @@
 #ifdef __ANTIBODY_GRAFTING__
 
 #include <protocols/tcr/TCRseqInfo.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/antibody/grafting/antibody_sequence.hh>
 #include <utility/vector1.hh>
 
@@ -31,7 +31,7 @@ namespace tcr {
 /// TCR segments are parsed by regular expressions / Aho numbering / ANARCI / user provided numbering
 /// TCR segments: Germline, Framework, CDR1, CDR2, CDR2HV4, CDR3
 /// Extended cdr2hv4 segment is used for cdr2. More details can be found in publication/documentation
-class TCRseqInfo : public utility::pointer::ReferenceCount {
+class TCRseqInfo : public utility::VirtualBase {
 public:
 
 	TCRseqInfo( std::string const &aseq, std::string const &bseq );

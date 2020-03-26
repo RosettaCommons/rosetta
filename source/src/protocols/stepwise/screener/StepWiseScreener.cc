@@ -25,7 +25,7 @@ namespace screener {
 
 //Constructor
 StepWiseScreener::StepWiseScreener():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	count_( 0 ),
 	ok_to_increment_( true ) // silly hack.
 {}

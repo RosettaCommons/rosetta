@@ -70,6 +70,7 @@ namespace evolution {
 using namespace std;
 using namespace core::scoring;
 using namespace core::kinematics;
+using core::Size;
 
 using bools = utility::vector1<bool>;
 
@@ -122,13 +123,13 @@ NucleotideMutation::find_neighbors(
 	bools & is_flexible,
 	core::Real const heavyatom_distance_threshold = 6.0 )
 {
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	is_flexible = is_mutated;
 
-	for ( Size i=1; i<= nres; ++i ) {
+	for ( core::Size i=1; i<= nres; ++i ) {
 		core::conformation::Residue const & rsd1( pose.residue(i) );
 		if ( rsd1.is_virtual_residue() ) continue;
-		for ( Size j=1; j<= nres; ++j ) {
+		for ( core::Size j=1; j<= nres; ++j ) {
 			if ( !is_mutated[j] ) continue;
 			if ( is_flexible[i] ) break;
 			core::conformation::Residue const & rsd2( pose.residue(j) );
@@ -147,7 +148,7 @@ NucleotideMutation::compute_folding_energies(
 	Pose & pose,
 	bools const & is_flexible,
 	bools const & is_mutpos,
-	Size bbnbrs=1,
+	core::Size bbnbrs=1,
 	bool flexbb=true)
 {
 	protocols::relax::FastRelax fastrelax( fa_scorefxn, 0 );
@@ -157,11 +158,11 @@ NucleotideMutation::compute_folding_energies(
 	movemap->set_chi( false );
 	movemap->set_jump( false );
 
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		if ( is_flexible[i] ) {
 			movemap->set_chi( i, true );
 			if ( flexbb > 0 ) {
-				for ( Size j=0; j<=bbnbrs; j++ ) {
+				for ( core::Size j=0; j<=bbnbrs; j++ ) {
 					if ( is_mutpos[i] || ( i+j <= pose.size() && is_mutpos[i+j] ) || ( j < i && is_mutpos[i-j] ) ) {
 						movemap->set_bb ( i, true );
 					}
@@ -445,7 +446,7 @@ NucleotideMutation::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &d
 	init_sequence( tag->getOption< std::string >( "init_sequence", "" ) );
 	continue_if_silent( tag->getOption< bool >( "continue_if_silent", false ) );
 	flexbb( tag->getOption< bool >("flexbb", true ) );
-	bbnbrs( tag->getOption< Size >("bbnbrs", 0 ) );
+	bbnbrs( tag->getOption< core::Size >("bbnbrs", 0 ) );
 	runtime_assert_string_msg( !(bbnbrs()>0 && flexbb()==false), "You have bbnbrs>0, but flexbb=false?! The bbnbrs sets which backbone neighbor residues that should be flexible" );
 
 	cache_task_ = tag->getOption< bool >( "cache_task", false );

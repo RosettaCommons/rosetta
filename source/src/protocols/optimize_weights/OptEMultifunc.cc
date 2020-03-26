@@ -38,7 +38,7 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/numbers.hh>
 
 /// ObjexxFCL headers
@@ -154,10 +154,10 @@ OptEMultifunc::operator()( Multivec const & vars ) const
 
 	Multivec local_vars( num_total_dofs_ );
 	if ( fix_reference_energies_ ) {
-		for ( Size ii = 1; ii <= vars.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= vars.size(); ++ii ) {
 			local_vars[ ii ] = vars[ ii ];
 		}
-		for ( Size ii = 1, iipnfree = num_energy_dofs_ + 1; ii <= starting_reference_energies_.size(); ++ii, ++iipnfree ) {
+		for ( core::Size ii = 1, iipnfree = num_energy_dofs_ + 1; ii <= starting_reference_energies_.size(); ++ii, ++iipnfree ) {
 			local_vars[ iipnfree ] = starting_reference_energies_[ ii ];
 		}
 	} else  {
@@ -181,14 +181,14 @@ OptEMultifunc::operator()( Multivec const & vars ) const
 		if ( bad ) {
 			if ( basic::options::option[ basic::options::OptionKeys::optE::limit_bad_scores ].user() &&
 					basic::options::option[ basic::options::OptionKeys::optE::limit_bad_scores ].value() ) {     //NaN and inf errors can accumulate into the gigabytes if optE is left unattended
-				static Size count = 0;
+				static core::Size count = 0;
 				++count;
 				if ( count > 100000 ) {
 					utility::exit(__FILE__,__LINE__, "Counted over 100,000 inf/NaN scores. Admitting defeat now.");
 				}
 			}
 			std::cerr << "vars: " << std::endl;
-			for ( Size ii = 1; ii <= local_vars.size(); ++ii ) {
+			for ( core::Size ii = 1; ii <= local_vars.size(); ++ii ) {
 				if ( ii != 1 ) std::cerr << ", ";
 				std::cerr << ii << " " << local_vars[ ii ];
 			}
@@ -204,12 +204,12 @@ OptEMultifunc::operator()( Multivec const & vars ) const
 	if ( TR.visible() && mpi_rank_ == 0 ) {
 		TR << "OptEMultifunc " << score << "\n";
 		TR << "Vars: ";
-		for ( Size ii = 1; ii <= local_vars.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= local_vars.size(); ++ii ) {
 			TR << " " << local_vars[ ii ];
 		}
 		TR << std::endl;
 		TR << "dVars: ";
-		for ( Size ii = 1; ii <= local_vars.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= local_vars.size(); ++ii ) {
 			TR << " " << dummy[ ii ];
 		}
 		TR << std::endl;
@@ -231,17 +231,17 @@ OptEMultifunc::dfunc( Multivec const & vars, Multivec & dE_dvars ) const
 	Multivec local_vars( num_total_dofs_ );
 	Multivec local_dE_dvars( num_total_dofs_, 0.0 );
 	if ( fix_reference_energies_ ) {
-		for ( Size ii = 1; ii <= vars.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= vars.size(); ++ii ) {
 			local_vars[ ii ] = vars[ ii ];
 		}
-		for ( Size ii = 1, iipnfree = num_energy_dofs_ + 1; ii <= starting_reference_energies_.size(); ++ii, ++iipnfree ) {
+		for ( core::Size ii = 1, iipnfree = num_energy_dofs_ + 1; ii <= starting_reference_energies_.size(); ++ii, ++iipnfree ) {
 			local_vars[ iipnfree ] = starting_reference_energies_[ ii ];
 		}
 	} else  {
 		local_vars = vars;
 	}
 
-	for ( Size ii(1); ii <= dE_dvars.size(); ++ii ) dE_dvars[ ii ] = 0.0;
+	for ( core::Size ii(1); ii <= dE_dvars.size(); ++ii ) dE_dvars[ ii ] = 0.0;
 
 	// over positions
 	Real score( 0.0 );
@@ -250,14 +250,14 @@ OptEMultifunc::dfunc( Multivec const & vars, Multivec & dE_dvars ) const
 		score += (*itr)->get_score( component_weights_, local_vars, local_dE_dvars,
 			num_energy_dofs_, num_ref_dofs_, num_total_dofs_,
 			fixed_terms_, score_list_, fixed_score_list_ );
-		for ( Size ii = 1 ; ii <= local_dE_dvars.size() ; ++ii ) {
+		for ( core::Size ii = 1 ; ii <= local_dE_dvars.size() ; ++ii ) {
 			if (      utility::isinf(local_dE_dvars[ ii ]) ) std::cerr << "Introduced INF deriv at " << ii << " with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl;
 			else if ( utility::isnan(local_dE_dvars[ ii ]) ) std::cerr << "Introduced NAN deriv at " << ii << " with " << OptEPositionDataFactory::optE_type_name( (*itr)->type() ) << " " << (*itr)->tag() << std::endl;
 		}
 	}
 
 	/// Only store the vars that are actually being optimized; local vars will contain the reference energies
-	for ( Size ii = 1; ii <= dE_dvars.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= dE_dvars.size(); ++ii ) {
 		dE_dvars[ ii ] = local_dE_dvars[ ii ];
 	}
 
@@ -269,10 +269,10 @@ OptEMultifunc::dfunc( Multivec const & vars, Multivec & dE_dvars ) const
 	if ( mpi_rank_ == 0 && TR.visible() ) { /// only the master node should output
 		TR << "score: " << F(9,5,score) << std::endl; /// deceptive when scoring across multiple nodes
 		TR << "dfuncs: ";
-		for ( Size ii = 1 ; ii <= dE_dvars.size() ; ++ii ) TR << " " << F(9,3,dE_dvars[ ii ]);
+		for ( core::Size ii = 1 ; ii <= dE_dvars.size() ; ++ii ) TR << " " << F(9,3,dE_dvars[ ii ]);
 		TR << std::endl;
 		TR << "vars: ";
-		for ( Size ii = 1; ii <= vars.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= vars.size(); ++ii ) {
 			TR << " " << F(9,3,vars[ ii ]);
 		}
 		TR << std::endl;
@@ -288,12 +288,12 @@ OptEMultifunc::get_dofs_from_energy_map( EnergyMap const & start_vals ) const
 {
 	Multivec dofs( fix_reference_energies_ ? num_energy_dofs_ : num_total_dofs_, 0.0 );
 
-	Size dof_index( 1 );
+	core::Size dof_index( 1 );
 	for ( auto itr : score_list_ ) {
 		dofs[ dof_index++ ] = start_vals[ itr ];
 	}
 	if ( ! fix_reference_energies_ ) {
-		for ( Size ii = 1; ii <= starting_reference_energies_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= starting_reference_energies_.size(); ++ii ) {
 			dofs[ dof_index++ ] = starting_reference_energies_[ ii ];
 		}
 	}
@@ -311,7 +311,7 @@ OptEMultifunc::get_energy_map_from_dofs( Multivec const & dofs) const
 	EnergyMap return_map( fixed_terms_ );
 
 	// This covers the variable weights
-	Size dof_index( 1 );
+	core::Size dof_index( 1 );
 	for ( auto itr : score_list_ ) {
 		return_map[ itr ] = dofs[ dof_index++ ];
 	}
@@ -365,7 +365,7 @@ OptEMultifunc::wait_for_remote_vars() const
 			std::fill( dE_dvars.begin(), dE_dvars.end(), 0.0 );
 			dfunc( vars, dE_dvars );
 			core::Real * dE_dvars_raw = new core::Real[ vars.size() ];
-			for ( Size ii = 1; ii <= vars.size(); ++ii ) { dE_dvars_raw[ ii - 1 ] = dE_dvars[ ii ]; }
+			for ( core::Size ii = 1; ii <= vars.size(); ++ii ) { dE_dvars_raw[ ii - 1 ] = dE_dvars[ ii ]; }
 			MPI_Send( dE_dvars_raw, vars.size(), MPI_DOUBLE, 0, 1, MPI_COMM_WORLD );
 		} else if ( message == END_OF_MINIMIZATION ) {
 			break;
@@ -508,7 +508,7 @@ OptEMultifunc::mpi_receive_dfunc(
 	core::Real * dE_dvars_raw = new core::Real[ dE_dvars.size() ];
 	for ( int ii = 1; ii < mpi_nprocs_; ++ii ) {
 		MPI_Recv( dE_dvars_raw, dE_dvars.size(), MPI_DOUBLE, ii, 1, MPI_COMM_WORLD, & stat );
-		for ( Size jj = 1; jj <= dE_dvars.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= dE_dvars.size(); ++jj ) {
 			dE_dvars[ jj ] += dE_dvars_raw[ jj - 1 ];
 		}
 	}
@@ -520,7 +520,7 @@ WrapperOptEMultifunc::WrapperOptEMultifunc() = default;
 
 void WrapperOptEMultifunc::init(
 	ScoreTypes const & free_score_list,
-	Size free_count,
+	core::Size free_count,
 	ScoreTypes const & fixed_score_list,
 	EnergyMap  const & fixed_scores,
 	OptEMultifuncOP optEfunc
@@ -550,7 +550,7 @@ void WrapperOptEMultifunc::init(
 
 	ArithmeticScanner as; // comes built-in with min, max and sqrt.
 
-	for ( Size ii = 1; ii <= free_score_list.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= free_score_list.size(); ++ii ) {
 		std::string iiname = ScoreTypeManager::name_from_score_type( free_score_list[ ii ] );
 		free_score_names_.insert( iiname );
 		valid_variable_names_.insert( iiname );
@@ -558,7 +558,7 @@ void WrapperOptEMultifunc::init(
 		as.add_variable( iiname );
 	}
 
-	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 		std::string iiname = ScoreTypeManager::name_from_score_type( fixed_score_list[ ii ] );
 		valid_variable_names_.insert( iiname );
 		as.add_variable( iiname );
@@ -620,7 +620,7 @@ void WrapperOptEMultifunc::init(
 			active_variables_this_dependent_dof_.clear();
 			numeric::expression_parser::ExpressionCOP derived_dof_expression = expression_creator.create_expression_tree( ast_expression );
 
-			Size derived_dof_index = optEmultifunc_dof_order_[ dof_name ];
+			core::Size derived_dof_index = optEmultifunc_dof_order_[ dof_name ];
 			optE_dof_expressions_[ derived_dof_index ] = derived_dof_expression;
 			active_variables_[ derived_dof_index ] = active_variables_this_dependent_dof_;
 			std::cout << "Created expression for " << dof_name << " index# " << derived_dof_index << std::endl;
@@ -630,7 +630,7 @@ void WrapperOptEMultifunc::init(
 
 	}
 
-	for ( Size ii = 1; ii <= optE_dof_expressions_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= optE_dof_expressions_.size(); ++ii ) {
 		if ( optE_dof_expressions_[ ii ] == nullptr ) {
 			/// Need to create a variable expression for this dof so that it may be updated
 			/// in each function evaluation
@@ -660,14 +660,14 @@ void WrapperOptEMultifunc::init(
 	}
 
 	n_real_dofs_ = dof_variables_.size();
-	Size count_real_dofs( 1 );
+	core::Size count_real_dofs( 1 );
 	for ( auto & dof_variable : dof_variables_ ) {
 		dof_variable.second->set_id( count_real_dofs );
 		++count_real_dofs;
 	}
 	real_dof_deriviative_expressions_.resize( n_real_dofs_ );
 
-	for ( Size ii = 1; ii <= optE_dof_expressions_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= optE_dof_expressions_.size(); ++ii ) {
 		numeric::expression_parser::ExpressionCOP iiexp = optE_dof_expressions_[ ii ];
 		for ( auto
 				variter = active_variables_[ ii ].begin(),
@@ -679,7 +679,7 @@ void WrapperOptEMultifunc::init(
 					name_from_score_type( free_score_list[ ii ] ) +
 					"' by variable '" + *variter + "'.  Null pointer returned." );
 			}
-			Size varindex = dof_variables_.find( *variter )->second->id();
+			core::Size varindex = dof_variables_.find( *variter )->second->id();
 			std::cout << "Adding dof derivative expression for " << *variter << " index#: " << varindex << " which appears in the expression for optEdof # " << ii << std::endl;
 			real_dof_deriviative_expressions_[ varindex ].push_back( std::make_pair( ii, iiexp_dvar ) );
 		}
@@ -700,7 +700,7 @@ WrapperOptEMultifunc::operator ()( Multivec const & vars ) const
 
 	TR << "WrapperOptEMultifunc func: " << F(7,2,score) << std::endl;
 	TR << "Vars: ";
-	for ( Size ii = 1; ii <= vars.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= vars.size(); ++ii ) {
 		TR << " " << vars[ ii ];
 	}
 	TR << std::endl;
@@ -719,7 +719,7 @@ WrapperOptEMultifunc::dfunc(
 	std::fill( dE_dvars.begin(), dE_dvars.end(), 0.0 );
 	multifunc_->dfunc( optEvars, dmultifunc_dvars );
 
-	for ( Size ii = 1; ii <= real_dof_deriviative_expressions_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= real_dof_deriviative_expressions_.size(); ++ii ) {
 		for ( auto
 				iter = real_dof_deriviative_expressions_[ ii ].begin(),
 				iter_end = real_dof_deriviative_expressions_[ ii ].end();
@@ -730,7 +730,7 @@ WrapperOptEMultifunc::dfunc(
 	}
 	if ( TR.visible() ) {
 		TR << "WrapperOptEMultifunc dfuncs:";
-		for ( Size ii = 1 ; ii <= dE_dvars.size() ; ++ii ) TR << " " << F(7,2,dE_dvars[ ii ]);
+		for ( core::Size ii = 1 ; ii <= dE_dvars.size() ; ++ii ) TR << " " << F(7,2,dE_dvars[ ii ]);
 		TR << std::endl;
 	}
 }
@@ -750,7 +750,7 @@ WrapperOptEMultifunc::derived_dofs( Multivec const & vars ) const
 		dof_variable.second->update_value_from_list( vars );
 		//std::cout << "variable: " << iter->first << " " << (*iter->second)() << "\n";
 	}
-	for ( Size ii = 1; ii <= optE_dof_expressions_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= optE_dof_expressions_.size(); ++ii ) {
 		optEvars[ ii ] = (*optE_dof_expressions_[ ii ])();
 		//std::cout << "optEvar " << ii << " = " << optEvars[ ii ] << "\n";
 	}

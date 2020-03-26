@@ -23,7 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -49,13 +49,13 @@ namespace datacache {
 /// @warning When deriving from this class remember that Links or pointers to
 ///  subjects stored in classes are *not* to be copied when copy
 ///  constructor/assignment is called.
-class CacheableObserver : public utility::pointer::ReferenceCount {
+class CacheableObserver : public utility::VirtualBase {
 
 
 private: // typedefs
 
 
-	typedef utility::pointer::ReferenceCount Super;
+	typedef utility::VirtualBase Super;
 
 
 public: // construct/destruct

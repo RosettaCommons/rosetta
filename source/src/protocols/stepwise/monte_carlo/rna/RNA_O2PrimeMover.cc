@@ -76,8 +76,8 @@ RNA_O2PrimeMover::apply( core::pose::Pose & pose, std::string & move_type )
 {
 	using namespace core::pose::full_model_info;
 
-	Size o2prime_res( 0 );
-	utility::vector1< Size > moving_res_list = get_moving_res_from_full_model_info( pose );
+	core::Size o2prime_res( 0 );
+	utility::vector1< core::Size > moving_res_list = get_moving_res_from_full_model_info( pose );
 
 	if ( sample_all_o2prime_ ) {
 		o2prime_res = get_random_o2prime_residue( pose );
@@ -111,7 +111,7 @@ RNA_O2PrimeMover::get_name() const {
 
 //////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_O2PrimeMover::sample_near_o2prime_torsion( pose::Pose & pose, Size const moving_res, Real const sample_range){
+RNA_O2PrimeMover::sample_near_o2prime_torsion( pose::Pose & pose, core::Size const moving_res, Real const sample_range){
 	id::TorsionID o2prime_torsion_id( moving_res, id::CHI, 4 );
 	Real o2prime_torsion = pose.torsion( o2prime_torsion_id ); //get
 	o2prime_torsion += numeric::random::rg().gaussian() * sample_range; //sample_near
@@ -122,14 +122,14 @@ RNA_O2PrimeMover::sample_near_o2prime_torsion( pose::Pose & pose, Size const mov
 Size
 RNA_O2PrimeMover::get_random_o2prime_residue( pose::Pose & pose ){
 	// pick at random from whole pose -- a quick initial stab.
-	Size const o2prime_num = int( pose.size() * numeric::random::rg().uniform() ) + 1;
+	core::Size const o2prime_num = int( pose.size() * numeric::random::rg().uniform() ) + 1;
 	return o2prime_num;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
 // This could be made smarter -- could go over nucleoside *and* suite.
 Size
-RNA_O2PrimeMover::get_random_o2prime_residue_near_moving_residue( pose::Pose & pose, utility::vector1< Size > const & moving_res_list ){
+RNA_O2PrimeMover::get_random_o2prime_residue_near_moving_residue( pose::Pose & pose, utility::vector1< core::Size > const & moving_res_list ){
 
 	// should be better -- actually look at o2prime's that might be engaged in interactions with moving nucleoside
 
@@ -140,19 +140,19 @@ RNA_O2PrimeMover::get_random_o2prime_residue_near_moving_residue( pose::Pose & p
 
 	Distance DIST_CUTOFF( 4.0 );
 
-	for ( Size k = 1; k <= moving_res_list.size(); k++ ) {
-		Size const i = moving_res_list[ k ];
+	for ( core::Size k = 1; k <= moving_res_list.size(); k++ ) {
+		core::Size const i = moving_res_list[ k ];
 
 		for ( utility::graph::Graph::EdgeListConstIter
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
 				iter != energy_graph.get_node( i )->const_edge_list_end();
 				++iter ) {
 
-			Size j( (*iter)->get_other_ind( i ) );
+			core::Size j( (*iter)->get_other_ind( i ) );
 
 			// check for potential interaction of o2* of this new residue and any atom in moving residue.
 			Vector const & o2prime_other = pose.residue( j ).xyz( " O2'" );
-			for ( Size n = 1; n <= pose.residue( i ).natoms(); n++ ) {
+			for ( core::Size n = 1; n <= pose.residue( i ).natoms(); n++ ) {
 				if ( ( pose.residue( i ).xyz( n ) - o2prime_other ).length() < DIST_CUTOFF ) {
 					residues_allowed_to_be_packed[ j ] = true;
 					break;
@@ -163,7 +163,7 @@ RNA_O2PrimeMover::get_random_o2prime_residue_near_moving_residue( pose::Pose & p
 			if ( residues_allowed_to_be_packed[ i ] ) continue;
 
 			Vector const & o2prime_i = pose.residue( i ).xyz( " O2'" );
-			for ( Size n = 1; n <= pose.residue( j ).natoms(); n++ ) {
+			for ( core::Size n = 1; n <= pose.residue( j ).natoms(); n++ ) {
 				if ( ( pose.residue( j ).xyz( n ) - o2prime_i ).length() < DIST_CUTOFF ) {
 					residues_allowed_to_be_packed[ i ] = true;
 					break;
@@ -172,16 +172,16 @@ RNA_O2PrimeMover::get_random_o2prime_residue_near_moving_residue( pose::Pose & p
 		}
 	}
 
-	utility::vector1< Size > res_list;
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	utility::vector1< core::Size > res_list;
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( residues_allowed_to_be_packed[ n ] ) {
 			res_list.push_back( n );
 		}
 	}
 	if ( res_list.size()==0 ) return 0; //nothing to move!
 
-	Size const o2prime_idx_within_res_list = int(  res_list.size() * numeric::random::rg().uniform() ) + 1;
-	Size const o2prime_num = res_list[ o2prime_idx_within_res_list ];
+	core::Size const o2prime_idx_within_res_list = int(  res_list.size() * numeric::random::rg().uniform() ) + 1;
+	core::Size const o2prime_num = res_list[ o2prime_idx_within_res_list ];
 	return o2prime_num;
 }
 

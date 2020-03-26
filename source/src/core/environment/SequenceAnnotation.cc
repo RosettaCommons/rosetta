@@ -49,7 +49,7 @@ private:
 };
 
 SequenceAnnotation::SequenceAnnotation( core::Size length ):
-	ReferenceCount(),
+	VirtualBase(),
 	length_( length ),
 	pose_to_local_numbers_( length )
 {

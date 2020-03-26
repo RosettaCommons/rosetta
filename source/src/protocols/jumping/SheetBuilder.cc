@@ -144,7 +144,7 @@ SheetBuilder::~SheetBuilder() = default;
 
 /// @brief simply random choice of pairing from pool
 void
-SheetBuilder::choose_next_pairing( FArray3D_int& sheet_pairing, Size pairing, Size sheet ) const {
+SheetBuilder::choose_next_pairing( FArray3D_int& sheet_pairing, core::Size pairing, core::Size sheet ) const {
 	int const p = static_cast< int >( numeric::random::rg().uniform() * pairings_.size() ) + 1;
 	// tr.Trace << "Picked pairing " << p << " out of " << pairings_.size() << std::endl;
 	runtime_assert( p>=1 && p<= (int) pairings_.size() );
@@ -260,9 +260,9 @@ SheetBuilder::check_two_pairings(
 }
 
 bool
-SheetBuilder::check_next_pairing( FArray3D_int& sheet_pairings, Size pairing, Size sheet ) const {
-	for ( Size ii = 1; ii<=2; ii++ ) { //check if both residues of the pairing make sense at all
-		Size pos = sheet_pairings( ii, pairing, sheet );
+SheetBuilder::check_next_pairing( FArray3D_int& sheet_pairings, core::Size pairing, core::Size sheet ) const {
+	for ( core::Size ii = 1; ii<=2; ii++ ) { //check if both residues of the pairing make sense at all
+		core::Size pos = sheet_pairings( ii, pairing, sheet );
 		if ( pos == 1 || pos >= total_residue_ ) return false;
 	}
 
@@ -325,8 +325,8 @@ JumpSample SheetBuilder::create_jump_sample() const{
 
 bool
 SheetBuilder::builder_loop( core::scoring::dssp::PairingsList& jump_pairings ) const {
-	Size const max_sheet_size( 40 );
-	Size const max_sheets( 40 ); // can we determine these from something ?
+	core::Size const max_sheet_size( 40 );
+	core::Size const max_sheets( 40 ); // can we determine these from something ?
 	int num_sheets( sheet_sizes_.size() );
 	//// fill the sheet_pairing array:
 	FArray3D_int sheet_pairing( 4, max_sheet_size, max_sheets );

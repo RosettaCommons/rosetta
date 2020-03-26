@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #ifdef PYROSETTA
@@ -42,7 +42,7 @@
 namespace protocols {
 namespace rotamer_recovery {
 
-class RotamerRecovery : public utility::pointer::ReferenceCount {
+class RotamerRecovery : public utility::VirtualBase {
 
 public: // constructors destructors
 

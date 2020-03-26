@@ -55,6 +55,8 @@ static basic::Tracer tr( "protocols.simple_filters.ShapeComplementarityFilter" )
 namespace protocols {
 namespace simple_filters {
 
+using core::Size;
+
 // @brief default constructor
 ShapeComplementarityFilter::ShapeComplementarityFilter():
 	Filter( "ShapeComplementarity" ),
@@ -74,7 +76,7 @@ ShapeComplementarityFilter::ShapeComplementarityFilter():
 
 // @brief constructor with arguments
 ShapeComplementarityFilter::ShapeComplementarityFilter( Real const & filtered_sc, Real const & filtered_area,
-	Size const & jump_id, Size const & quick, Size const & verbose, Real const & filtered_median_distance /*= 1000.0f*/):
+	core::Size const & jump_id, core::Size const & quick, core::Size const & verbose, Real const & filtered_median_distance /*= 1000.0f*/):
 	Filter( "ShapeComplementarity" ),
 	filtered_sc_( filtered_sc ),
 	filtered_area_( filtered_area ),
@@ -90,9 +92,9 @@ ShapeComplementarityFilter::ShapeComplementarityFilter( Real const & filtered_sc
 void ShapeComplementarityFilter::filtered_sc( Real const & filtered_sc ) { filtered_sc_ = filtered_sc; }
 void ShapeComplementarityFilter::filtered_area( Real const & filtered_area ) { filtered_area_ = filtered_area; }
 void ShapeComplementarityFilter::filtered_median_distance( Real const & filtered_median_distance ) { filtered_d_median_ = filtered_median_distance; }
-void ShapeComplementarityFilter::jump_id( Size const & jump_id ) { jump_id_ = jump_id; }
-void ShapeComplementarityFilter::quick( Size const & quick ) { quick_ = quick; }
-void ShapeComplementarityFilter::verbose( Size const & verbose ) { verbose_ = verbose; }
+void ShapeComplementarityFilter::jump_id( core::Size const & jump_id ) { jump_id_ = jump_id; }
+void ShapeComplementarityFilter::quick( core::Size const & quick ) { quick_ = quick; }
+void ShapeComplementarityFilter::verbose( core::Size const & verbose ) { verbose_ = verbose; }
 
 void ShapeComplementarityFilter::residues1( std::string const & res_string )
 {
@@ -187,20 +189,20 @@ ShapeComplementarityFilter::write_area( Pose const & pose, core::Real const area
 	// symmetric scalefactor
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		if ( multicomp_ ) {
-			utility::vector1<Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name() );
+			utility::vector1<core::Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name() );
 			int_area /= (Real) subs.size() ;
 		} else {
 			ObjexxFCL::FArray1D_bool is_upstream( pose.size(), false );
-			utility::vector1<Size> sym_aware_jump_ids;
+			utility::vector1<core::Size> sym_aware_jump_ids;
 			if ( sym_dof_name() != "" ) {
 				sym_aware_jump_ids.push_back( core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name() ) );
 			} else {
-				Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
-				for ( Size j = 1; j <= nslidedofs; j++ ) sym_aware_jump_ids.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
+				core::Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
+				for ( core::Size j = 1; j <= nslidedofs; j++ ) sym_aware_jump_ids.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
 			}
 			core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
-			Size ndownstream=0;
-			for ( Size i=1; i<=pose.size(); ++i ) {
+			core::Size ndownstream=0;
+			for ( core::Size i=1; i<=pose.size(); ++i ) {
 				if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 				if ( !is_upstream(i) ) ndownstream++;
 			}
@@ -296,9 +298,9 @@ ShapeComplementarityFilter::parse_my_tag(
 	filtered_sc_ = tag->getOption<Real>( "min_sc", 0.50 );
 	filtered_area_ = tag->getOption<Real>( "min_interface", 0 );
 	filtered_d_median_ = tag->getOption<Real>( "max_median_dist", 0 );
-	verbose_ = tag->getOption<Size>( "verbose", false );
-	quick_ = tag->getOption<Size>( "quick", false );
-	jump_id_ = tag->getOption<Size>( "jump", 1 );
+	verbose_ = tag->getOption<core::Size>( "verbose", false );
+	quick_ = tag->getOption<core::Size>( "quick", false );
+	jump_id_ = tag->getOption<core::Size>( "jump", 1 );
 	write_int_area_ = tag->getOption<bool>( "write_int_area", false );
 	write_d_median_ = tag->getOption<bool>( "write_median_dist", false );
 	sym_dof_name(tag->getOption<std::string>( "sym_dof_name", "" ));
@@ -387,10 +389,10 @@ ShapeComplementarityFilter::setup_multi_component_symm(
 	runtime_assert( sym_dof_name() != "" );
 	utility::vector1<std::string> sym_dof_name_list = utility::string_split( sym_dof_name() , ',' );
 
-	Size sym_dof_index = 1;
+	core::Size sym_dof_index = 1;
 
 	if ( sym_dof_name_list.size() > 1 ) {
-		Size intracontact_count = 0;
+		core::Size intracontact_count = 0;
 		for ( core::Size i=1; i<=sym_dof_name_list.size(); i++ ) {
 			if ( core::pose::symmetry::intracomponent_contact(pose, sym_dof_name_list[i], 12.0) ) {
 				intracontact_count++;
@@ -402,8 +404,8 @@ ShapeComplementarityFilter::setup_multi_component_symm(
 		}
 	}
 
-	utility::vector1<Size> full_intracomp_resis = core::pose::symmetry::get_full_intracomponent_resis(pose, sym_dof_name_list[sym_dof_index]);
-	utility::vector1<Size> full_intracomp_neighbor_resis = core::pose::symmetry::get_full_intracomponent_neighbor_resis(pose, sym_dof_name_list[sym_dof_index], 12.0 );
+	utility::vector1<core::Size> full_intracomp_resis = core::pose::symmetry::get_full_intracomponent_resis(pose, sym_dof_name_list[sym_dof_index]);
+	utility::vector1<core::Size> full_intracomp_neighbor_resis = core::pose::symmetry::get_full_intracomponent_neighbor_resis(pose, sym_dof_name_list[sym_dof_index], 12.0 );
 
 	//core::pose::Pose full_intracomp_subpose = core::pose::symmetry::get_full_intracomponent_subpose(pose, sym_dof_name_list[sym_dof_index]);
 	//core::pose::Pose full_intracomp_neighbor_subpose = core::pose::symmetry::get_full_intracomponent_neighbor_subpose(pose, sym_dof_name_list[sym_dof_index], 12.0);
@@ -416,7 +418,7 @@ ShapeComplementarityFilter::setup_multi_component_symm(
 	for ( core::Size i=1; i<=full_intracomp_neighbor_resis.size(); i++ ) {
 		scc.AddResidue(1,pose.residue(full_intracomp_neighbor_resis[i]));
 	}
-	utility::vector1<Size> const subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name_list[sym_dof_index] );
+	utility::vector1<core::Size> const subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name_list[sym_dof_index] );
 	nsubs_scalefactor = subs.size() ;
 }
 
@@ -431,21 +433,21 @@ ShapeComplementarityFilter::setup_single_component_symm(
 	core::Real & nsubs_scalefactor ) const
 {
 	ObjexxFCL::FArray1D_bool is_upstream ( pose.size(), false );
-	utility::vector1<Size> sym_aware_jump_ids;
+	utility::vector1<core::Size> sym_aware_jump_ids;
 
 	if ( sym_dof_name() != "" ) {
 		sym_aware_jump_ids.push_back( core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name() ) );
 	} else {
 		// all slidable jumps
-		Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
-		for ( Size j = 1; j <= nslidedofs; j++ ) {
+		core::Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
+		for ( core::Size j = 1; j <= nslidedofs; j++ ) {
 			sym_aware_jump_ids.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
 		}
 	}
 
 	// partition & fill residueX_ vectors
 	core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
-	Size ndownstream=0;
+	core::Size ndownstream=0;
 	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 		scc.AddResidue(is_upstream(i)?1:0, pose.residue(i));

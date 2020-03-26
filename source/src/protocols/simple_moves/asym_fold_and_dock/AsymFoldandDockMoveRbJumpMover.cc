@@ -49,6 +49,8 @@ namespace asym_fold_and_dock {
 
 static basic::Tracer TR( "protocols.simple_moves.asym_fold_and_dock.AsymFoldandDockMoveRbJumpMover" );
 
+using core::Size;
+
 AsymFoldandDockMoveRbJumpMover::AsymFoldandDockMoveRbJumpMover() : moves::Mover( "AsymFoldandDockMoveRbJumpMover" ),
 	chain_start_( 0 )
 {
@@ -81,12 +83,12 @@ AsymFoldandDockMoveRbJumpMover::find_new_jump_residue( core::pose::Pose & pose )
 
 	// find the anchor
 	FoldTree f( pose.fold_tree() );
-	Size anchor_start(0); //
+	core::Size anchor_start(0); //
 	int jump_number(1);
-	Size residue_that_builds_anchor(0);
-	for ( Size i=1; i<= f.num_jump(); ++i ) {
-		Size res( f.downstream_jump_residue( i ) );
-		Size res_start( f.upstream_jump_residue( i ) );
+	core::Size residue_that_builds_anchor(0);
+	for ( core::Size i=1; i<= f.num_jump(); ++i ) {
+		core::Size res( f.downstream_jump_residue( i ) );
+		core::Size res_start( f.upstream_jump_residue( i ) );
 		if ( res >= chain_start_ ) {
 			anchor_start = res;
 			residue_that_builds_anchor = res_start;
@@ -98,14 +100,14 @@ AsymFoldandDockMoveRbJumpMover::find_new_jump_residue( core::pose::Pose & pose )
 	TR << "The anchor residues are at residue " << residue_that_builds_anchor  << " : " << anchor_start << std::endl;
 
 	//Looking in central half of each segment -- pick a random point.
-	Size anchor_chain1 = static_cast<Size>( numeric::random::rg().uniform() * (chain_start_) ) + 1;
-	Size anchor_chain2 = static_cast<Size>( numeric::random::rg().uniform() * (nres_flexible_segment) ) +
+	core::Size anchor_chain1 = static_cast<core::Size>( numeric::random::rg().uniform() * (chain_start_) ) + 1;
+	core::Size anchor_chain2 = static_cast<core::Size>( numeric::random::rg().uniform() * (nres_flexible_segment) ) +
 		chain_start_ + 1;
 
 	if ( basic::options::option[ basic::options::OptionKeys::fold_and_dock::set_anchor_at_closest_point ] ) {
 		//Find Closest point of contact to the anchor of in the non-moving subunit. Really silly, should be the real minimal distance!!!
 		core::Real mindist = pose.residue(residue_that_builds_anchor).xyz("CEN").distance( pose.residue(anchor_chain2).xyz("CEN") );
-		for ( Size i = chain_start_; i <= nres; i++ ) {
+		for ( core::Size i = chain_start_; i <= nres; i++ ) {
 			core::Real dist = pose.residue(residue_that_builds_anchor).xyz("CEN").distance( pose.residue(i).xyz("CEN") );
 			if ( dist < mindist ) {
 				mindist = dist;
@@ -117,15 +119,15 @@ AsymFoldandDockMoveRbJumpMover::find_new_jump_residue( core::pose::Pose & pose )
 
 	TR << "The anchor residues are moved to residue " << anchor_chain1  << " : " << anchor_chain2 << std::endl;
 	// Setyp the lists of jumps and cuts
-	Size num_jumps( f.num_jump() );
-	Size num_cuts( f.num_cutpoint() );
+	core::Size num_jumps( f.num_jump() );
+	core::Size num_cuts( f.num_cutpoint() );
 
-	utility::vector1< Size > cuts_vector( f.cutpoints() );
-	ObjexxFCL::FArray1D< Size > cuts( num_cuts );
-	ObjexxFCL::FArray2D< Size > jumps( 2, num_jumps );
+	utility::vector1< core::Size > cuts_vector( f.cutpoints() );
+	ObjexxFCL::FArray1D< core::Size > cuts( num_cuts );
+	ObjexxFCL::FArray2D< core::Size > jumps( 2, num_jumps );
 
 	// Initialize jumps
-	for ( Size i = 1; i<= num_jumps; ++i ) {
+	for ( core::Size i = 1; i<= num_jumps; ++i ) {
 		int down ( f.downstream_jump_residue(i) );
 		int up ( f.upstream_jump_residue(i) );
 		if ( down < up ) {
@@ -137,7 +139,7 @@ AsymFoldandDockMoveRbJumpMover::find_new_jump_residue( core::pose::Pose & pose )
 		}
 	}
 
-	for ( Size i = 1; i<= num_cuts; ++i ) {
+	for ( core::Size i = 1; i<= num_cuts; ++i ) {
 		cuts(i) = cuts_vector[i];
 	}
 
@@ -148,12 +150,12 @@ AsymFoldandDockMoveRbJumpMover::find_new_jump_residue( core::pose::Pose & pose )
 
 	/* debug
 	std::cout<<"cuts ";
-	for ( Size i = 1; i<= num_cuts; ++i ) {
+	for ( core::Size i = 1; i<= num_cuts; ++i ) {
 	std::cout<< cuts(i) << ' ';
 	}
 	std::cout<<std::endl;
 	std::cout<<"jumps ";
-	for ( Size i = 1; i<= num_jumps; ++i ) {
+	for ( core::Size i = 1; i<= num_jumps; ++i ) {
 	std::cout<< " ( "<<jumps(1,i) << " , " << jumps(2,i) << " ) ";
 	}
 	std::cout<<std::endl; */

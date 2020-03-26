@@ -28,7 +28,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <iosfwd>
@@ -41,7 +41,7 @@
 namespace protocols {
 namespace motifs {
 
-class Motif : public utility::pointer::ReferenceCount
+class Motif : public utility::VirtualBase
 {
 
 	static std::map < std::string, utility::vector1 < std::string > > motifAtomIDs;
@@ -65,12 +65,12 @@ public:
 	// This constructor gets the jump for you - PDB numbering + chain id
 	Motif(
 		core::pose::Pose const & pose,
-		Size const pdb_residue_position_1,
+		core::Size const pdb_residue_position_1,
 		char const pdb_chain_id1,
 		std::string const & res1_atom1,
 		std::string const & res1_atom2,
 		std::string const & res1_atom3,
-		Size const pdb_residue_position_2,
+		core::Size const pdb_residue_position_2,
 		char const pdb_chain_id2,
 		std::string const & res2_atom1,
 		std::string const & res2_atom2,
@@ -80,11 +80,11 @@ public:
 	// This constructor gets the jump for you - Rosetta numbering
 	Motif(
 		core::pose::Pose const & pose,
-		Size const pdb_residue_position_1,
+		core::Size const pdb_residue_position_1,
 		std::string const & res1_atom1,
 		std::string const & res1_atom2,
 		std::string const & res1_atom3,
-		Size const pdb_residue_position_2,
+		core::Size const pdb_residue_position_2,
 		std::string const & res2_atom1,
 		std::string const & res2_atom2,
 		std::string const & res2_atom3
@@ -100,7 +100,7 @@ public:
 	Motif(
 		core::conformation::Residue const & res1,
 		core::conformation::Residue const & res2,
-		utility::vector1< Size >  const & res2_atoms
+		utility::vector1< core::Size >  const & res2_atoms
 	);
 
 	// Ligand motif search constructor: No residues, just atom names and a jump
@@ -143,7 +143,7 @@ public:
 	virtual bool
 	apply_check(
 		core::pose::Pose const & pose,
-		Size const pos
+		core::Size const pos
 	) const;
 
 	// Make atom integers for this motif, unused as of now, may want in future
@@ -153,8 +153,8 @@ public:
 	virtual core::pack::rotamer_set::RotamerSetOP
 	build_rotamers(
 		core::pose::Pose & pose,
-		Size const rotamer_build_position,
-		Size const ex_,
+		core::Size const rotamer_build_position,
+		core::Size const ex_,
 		bool res2 = false
 	) const;
 
@@ -164,9 +164,9 @@ public:
 	virtual core::pack::rotamer_set::RotamerSetOP
 	build_inverted_rotamers(
 		core::pose::Pose & pose,
-		Size const motif_anchor_position,
+		core::Size const motif_anchor_position,
 		bool & use_forward,
-		Size rotamer_build_position = 0
+		core::Size rotamer_build_position = 0
 	) const;
 
 	// The place_residue function moves the mobile residue based on motif geometry
@@ -226,9 +226,9 @@ public:
 	place_residue(
 		core::conformation::Residue const & fixed,
 		core::conformation::Residue & mobile,
-		Size const & res2_atom1_index_in,
-		Size const & res2_atom2_index_in,
-		Size const & res2_atom3_index_in,
+		core::Size const & res2_atom1_index_in,
+		core::Size const & res2_atom2_index_in,
+		core::Size const & res2_atom3_index_in,
 		bool one_three = true
 	) const;
 
@@ -237,10 +237,10 @@ public:
 	place_atoms(
 		core::conformation::Residue const & fixed,
 		core::conformation::Residue & mobile,
-		utility::vector1< Size > const & atoms,
-		Size const & res2_atom1_index_in,
-		Size const & res2_atom2_index_in,
-		Size const & res2_atom3_index_in,
+		utility::vector1< core::Size > const & atoms,
+		core::Size const & res2_atom1_index_in,
+		core::Size const & res2_atom2_index_in,
+		core::Size const & res2_atom3_index_in,
 		bool one_three = true
 	) const;
 
@@ -250,10 +250,10 @@ public:
 		core::conformation::Residue const & fixed,
 		core::conformation::Residue & mobile,
 		core::conformation::Atom & atm,
-		Size const & res2_atom1_index_in,
-		Size const & res2_atom2_index_in,
-		Size const & res2_atom3_index_in,
-		Size const & atomtype,
+		core::Size const & res2_atom1_index_in,
+		core::Size const & res2_atom2_index_in,
+		core::Size const & res2_atom3_index_in,
+		core::Size const & atomtype,
 		bool one_three = true
 	) const;
 
@@ -263,9 +263,9 @@ public:
 		core::conformation::Residue const & fixed,
 		core::conformation::Residue & mobile,
 		bool forward,
-		Size const & res2_atom1_index_in,
-		Size const & res2_atom2_index_in,
-		Size const & res2_atom3_index_in,
+		core::Size const & res2_atom1_index_in,
+		core::Size const & res2_atom2_index_in,
+		core::Size const & res2_atom3_index_in,
 		bool one_three = true
 	) const;
 
@@ -276,10 +276,10 @@ public:
 		core::conformation::Residue & mobile,
 		bool forward,
 		core::conformation::Atom & atm,
-		Size const & res2_atom1_index_in,
-		Size const & res2_atom2_index_in,
-		Size const & res2_atom3_index_in,
-		Size const & atomtype,
+		core::Size const & res2_atom1_index_in,
+		core::Size const & res2_atom2_index_in,
+		core::Size const & res2_atom3_index_in,
+		core::Size const & atomtype,
 		bool one_three = true
 	) const;
 
@@ -289,10 +289,10 @@ public:
 		core::conformation::Residue const & fixed,
 		core::conformation::Residue & mobile,
 		bool forward,
-		utility::vector1< Size > const & atoms,
-		Size const & res2_atom1_index_in,
-		Size const & res2_atom2_index_in,
-		Size const & res2_atom3_index_in,
+		utility::vector1< core::Size > const & atoms,
+		core::Size const & res2_atom1_index_in,
+		core::Size const & res2_atom2_index_in,
+		core::Size const & res2_atom3_index_in,
 		bool one_three = true
 	) const;
 
@@ -334,9 +334,9 @@ public:
 	int const & res1_atom1_int() const { return res1_atom1_int_; }
 	int const & res1_atom2_int() const { return res1_atom2_int_; }
 	int const & res1_atom3_int() const { return res1_atom3_int_; }
-	Size const & res1_atom1_index() const { return res1_atom1_index_; }
-	Size const & res1_atom2_index() const { return res1_atom2_index_; }
-	Size const & res1_atom3_index() const { return res1_atom3_index_; }
+	core::Size const & res1_atom1_index() const { return res1_atom1_index_; }
+	core::Size const & res1_atom2_index() const { return res1_atom2_index_; }
+	core::Size const & res1_atom3_index() const { return res1_atom3_index_; }
 	std::string const & restype_name2() const { return restype_name2_; }
 	std::string const & res2_atom1_name() const { return res2_atom1_name_; }
 	std::string const & res2_atom2_name() const { return res2_atom2_name_; }
@@ -346,9 +346,9 @@ public:
 	int const & res2_atom1_int() const { return res2_atom1_int_; }
 	int const & res2_atom2_int() const { return res2_atom2_int_; }
 	int const & res2_atom3_int() const { return res2_atom3_int_; }
-	Size const & res2_atom1_index() const { return res2_atom1_index_; }
-	Size const & res2_atom2_index() const { return res2_atom2_index_; }
-	Size const & res2_atom3_index() const { return res2_atom3_index_; }
+	core::Size const & res2_atom1_index() const { return res2_atom1_index_; }
+	core::Size const & res2_atom2_index() const { return res2_atom2_index_; }
+	core::Size const & res2_atom3_index() const { return res2_atom3_index_; }
 	core::kinematics::Jump const & forward_jump() const { return forward_jump_; }
 	core::kinematics::Jump const & backward_jump() const { return backward_jump_; }
 	bool has_remark() const { return has_remark_;}
@@ -372,9 +372,9 @@ private:
 	int res1_atom1_int_;
 	int res1_atom2_int_;
 	int res1_atom3_int_;
-	Size res1_atom1_index_;
-	Size res1_atom2_index_;
-	Size res1_atom3_index_;
+	core::Size res1_atom1_index_;
+	core::Size res1_atom2_index_;
+	core::Size res1_atom3_index_;
 	std::string restype_name2_;
 	std::string res2_atom1_name_;
 	std::string res2_atom2_name_;
@@ -382,9 +382,9 @@ private:
 	int res2_atom1_int_;
 	int res2_atom2_int_;
 	int res2_atom3_int_;
-	Size res2_atom1_index_;
-	Size res2_atom2_index_;
-	Size res2_atom3_index_;
+	core::Size res2_atom1_index_;
+	core::Size res2_atom2_index_;
+	core::Size res2_atom3_index_;
 	// Jumps associated with the motif
 	core::kinematics::Jump forward_jump_;
 	core::kinematics::Jump backward_jump_;
@@ -401,9 +401,9 @@ private:
 		core::conformation::Residue const & fixed,
 		core::conformation::Residue & mobile,
 		bool forward,
-		Size const & res2_atom1_index_in,
-		Size const & res2_atom2_index_in,
-		Size const & res2_atom3_index_in,
+		core::Size const & res2_atom1_index_in,
+		core::Size const & res2_atom2_index_in,
+		core::Size const & res2_atom3_index_in,
 		bool one_three
 	) const;
 

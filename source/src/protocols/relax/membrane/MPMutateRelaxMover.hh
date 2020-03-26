@@ -147,7 +147,7 @@ private: // data
 	/// @brief Pose residue numbers to mutate
 	/// @details Outer vector is different constructs, inner vector
 	///   is multiple residues per construct
-	utility::vector1< utility::vector1< Size > > resn_;
+	utility::vector1< utility::vector1< core::Size > > resn_;
 
 	/// @brief Residue identities to mutate into, three letter code
 	/// @details Outer vector is different constructs, inner vector

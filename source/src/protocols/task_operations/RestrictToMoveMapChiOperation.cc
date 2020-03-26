@@ -164,7 +164,7 @@ RestrictToMoveMapChiOperation::apply(Pose const & pose, core::pack::task::Packer
 	}
 
 	//Add the residues to the taskop + then apply.
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( is_packable[ i ] &&  ! is_designable[ i ] ) {
 			restrict_to_repacking.include_residue(i);
 		} else if ( ! is_packable[ i ] ) {

@@ -19,7 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #include <map>
@@ -29,9 +29,9 @@ namespace core {
 namespace io {
 namespace raw_data {
 
-class ScoreMap : public utility::pointer::ReferenceCount {
+class ScoreMap : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ScoreMap() override;
 	/// @brief full atom energies for output
 

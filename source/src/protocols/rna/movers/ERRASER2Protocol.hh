@@ -109,8 +109,8 @@ public:
 	void score_function( core::scoring::ScoreFunctionOP const & scorefxn_in ) { scorefxn_ = scorefxn_in; };
 	core::scoring::ScoreFunctionOP score_function() const { return scorefxn_; };
 
-	void n_rounds( Size const n_rounds ) { n_rounds_ = n_rounds; };
-	Size n_rounds() const { return n_rounds_; };
+	void n_rounds( core::Size const n_rounds ) { n_rounds_ = n_rounds; };
+	core::Size n_rounds() const { return n_rounds_; };
 
 	void rebuild_residue_selector( core::select::residue_selector::ResidueSelectorCOP const & residue_selector ) { rebuild_residue_selector_ = residue_selector; };
 	core::select::residue_selector::ResidueSelectorCOP rebuild_residue_selector() const { return rebuild_residue_selector_; };
@@ -121,13 +121,13 @@ private: // methods
 	configure_master_mover( Pose const & start_pose );
 
 	void
-	resample_full_model( Size const resample_round, core::pose::Pose & start_pose, utility::vector1< Size > const & definite_residues, Size const nstruct );
+	resample_full_model( core::Size const resample_round, core::pose::Pose & start_pose, utility::vector1< core::Size > const & definite_residues, core::Size const nstruct );
 
 private: // data
 
 	core::scoring::ScoreFunctionOP scorefxn_ = nullptr;
 	bool minimize_protein_ = false;
-	Size n_rounds_ = 3;
+	core::Size n_rounds_ = 3;
 	core::select::residue_selector::ResidueSelectorCOP rebuild_residue_selector_ = nullptr;
 };
 

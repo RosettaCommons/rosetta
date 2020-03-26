@@ -23,7 +23,7 @@
 
 // utility headers
 #include <utility/options/keys/OptionKeyList.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
@@ -38,7 +38,7 @@ namespace protocols {
 namespace jd3 {
 namespace pose_outputters {
 
-class PoseOutputterCreator : public utility::pointer::ReferenceCount
+class PoseOutputterCreator : public utility::VirtualBase
 {
 public:
 	virtual PoseOutputterOP create_outputter() const = 0;

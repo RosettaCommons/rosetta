@@ -475,7 +475,7 @@ private:
 	core::scoring::ScoreFunctionOP sfxn_;
 	toolbox::match_enzdes_util::EnzConstraintIOCOP enzcst_io_;
 
-	mutable std::map< Size, utility::vector1< std::pair< std::string, std::string > > > residue_calculators_;
+	mutable std::map< core::Size, utility::vector1< std::pair< std::string, std::string > > > residue_calculators_;
 	mutable utility::vector1< std::pair< std::string, std::string > > native_compare_calculators_;
 
 	DesignVsNativeComparisonOP native_comp_;

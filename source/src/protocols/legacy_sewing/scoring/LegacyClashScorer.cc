@@ -61,7 +61,7 @@ LegacyClashScorer::score(
 
 		//Get the xyz coordinates and the vanderwaals size for the current atom
 		numeric::xyzVector<core::Real> i_xyz ( it1.atom()->coords_ );
-		Size const i_type( it1.atom()->atomno_ );
+		core::Size const i_type( it1.atom()->atomno_ );
 
 
 		utility::vector1< core::Real > const & i_atom_vdw( atom_vdw( i_type ) );
@@ -113,7 +113,7 @@ LegacyClashScorer::score(
 
 			//Get the xyz coordinates and the vanderwaals size for the current atom
 			numeric::xyzVector<core::Real> j_xyz ( it2.atom()->coords_ );
-			Size const j_type( it2.atom()->atomno_ );
+			core::Size const j_type( it2.atom()->atomno_ );
 
 			//This bump distance seems weird, double check this...
 
@@ -213,7 +213,7 @@ LegacyClashScorer::score(
 
 			//Get the xyz coordinates and the vanderwaals size for the current atom
 			numeric::xyzVector<core::Real> i_xyz ( assembly_it.atom()->coords_ );
-			Size const i_type( assembly_it.atom()->atomno_ );
+			core::Size const i_type( assembly_it.atom()->atomno_ );
 			utility::vector1< core::Real > const & i_atom_vdw( atom_vdw( i_type ) );
 
 			for ( core::Size i=1; i<=partner_pose->size(); ++i ) {

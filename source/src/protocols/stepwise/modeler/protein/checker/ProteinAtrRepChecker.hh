@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_protein_checker_ProteinAtrRepChecker_HH
 #define INCLUDED_protocols_stepwise_protein_checker_ProteinAtrRepChecker_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/modeler/protein/checker/ProteinAtrRepChecker.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.hh>
@@ -27,7 +27,7 @@ namespace modeler {
 namespace protein {
 namespace checker {
 
-class ProteinAtrRepChecker: public utility::pointer::ReferenceCount {
+class ProteinAtrRepChecker: public utility::VirtualBase {
 
 public:
 

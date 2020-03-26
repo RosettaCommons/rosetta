@@ -297,7 +297,7 @@ HybridizeProtocol::HybridizeProtocol(
 
 	cen_cst_in_ = cen_cst_in;
 	fa_cst_in_ = fa_cst_in;
-	for ( Size i_template = 1; i_template <= templates_in.size(); ++i_template ) {
+	for ( core::Size i_template = 1; i_template <= templates_in.size(); ++i_template ) {
 		add_template(templates_in[i_template], "NONE", "", template_weights_in[i_template]);
 		// skip validate_template, for now
 	}
@@ -512,7 +512,7 @@ HybridizeProtocol::add_fragment_csts( core::pose::Pose &pose ) {
 	}
 
 	// 1 - collect fragment statistics
-	Size frag_nres = frags->max_pos();
+	core::Size frag_nres = frags->max_pos();
 	utility::vector1< utility::vector1< core::Real > > phi_distr( frag_nres, utility::vector1< core::Real >(36,0.0) );
 	utility::vector1< utility::vector1< core::Real > > psi_distr( frag_nres, utility::vector1< core::Real >(36,0.0) );
 	utility::vector1< int > N( frag_nres, 0 );
@@ -524,7 +524,7 @@ HybridizeProtocol::add_fragment_csts( core::pose::Pose &pose ) {
 			core::fragment::BBTorsionSRFDCOP res_i =
 				utility::pointer::dynamic_pointer_cast<const core::fragment::BBTorsionSRFD> (it->fragment().get_residue( fpos ) );
 
-			Size pos = it->frame().seqpos( fpos );
+			core::Size pos = it->frame().seqpos( fpos );
 			core::Real phi = std::fmod( res_i->torsion(1), 360.0 ); if ( phi<0 ) phi +=360.0;
 			core::Real psi = std::fmod( res_i->torsion(2), 360.0 ); if ( psi<0 ) psi +=360.0;
 
@@ -617,8 +617,8 @@ HybridizeProtocol::initialize_and_sample_loops(
 	using namespace basic::options::OptionKeys;
 
 	// xyz copy starting model
-	for ( Size i=1; i<=chosen_templ->size(); ++i ) {
-		for ( Size j=1; j<=chosen_templ->residue(i).natoms(); ++j ) {
+	for ( core::Size i=1; i<=chosen_templ->size(); ++i ) {
+		for ( core::Size j=1; j<=chosen_templ->residue(i).natoms(); ++j ) {
 			core::id::AtomID src(j,i), tgt(j, chosen_templ->pdb_info()->number(i));
 			pose.set_xyz( tgt, chosen_templ->xyz( src ) );
 		}
@@ -643,13 +643,13 @@ HybridizeProtocol::initialize_and_sample_loops(
 	protocols::loops::LoopsOP loops( utility::pointer::make_shared< protocols::loops::Loops >() );
 	utility::vector1< bool > templ_coverage(nres_tgt, false);
 
-	for ( Size i=1; i<=chosen_templ->size(); ++i ) {
+	for ( core::Size i=1; i<=chosen_templ->size(); ++i ) {
 		core::Size cres = chosen_templ->pdb_info()->number(i);
 		templ_coverage[cres] = true;
 	}
 
 	// remove 1-3 residue "segments"
-	for ( Size i=1; i<=nres_tgt-2; ++i ) {
+	for ( core::Size i=1; i<=nres_tgt-2; ++i ) {
 		if ( !templ_coverage[i] && templ_coverage[i+1] && !templ_coverage[i+2] ) {
 			templ_coverage[i+1]=false;
 		} else if ( i<=nres_tgt-3 && !templ_coverage[i] && templ_coverage[i+1] && templ_coverage[i+2] && !templ_coverage[i+3] ) {
@@ -665,7 +665,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 	// make loopfile
 	bool inloop=!templ_coverage[1];
 	core::Size loopstart=1, loopstop;
-	for ( Size i=2; i<=nres_tgt; ++i ) {
+	for ( core::Size i=2; i<=nres_tgt; ++i ) {
 		if ( templ_coverage[i] && inloop ) {
 			inloop = false;
 			loopstop = i;
@@ -700,7 +700,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 		// set movemap
 		core::kinematics::MoveMapOP mm_loop( utility::pointer::make_shared< core::kinematics::MoveMap >() );
 		for ( auto const & it : *loops ) {
-			for ( Size i=it.start(); i<=it.stop(); ++i ) {
+			for ( core::Size i=it.start(); i<=it.stop(); ++i ) {
 				mm_loop->set_bb(i, true);
 				mm_loop->set_chi(i, true); // chi of loop residues
 			}
@@ -729,7 +729,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 		protocols::moves::MonteCarloOP mc1( utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose, *scorefxn, 2.0 ) );
 
 		auto neffcycles = (core::Size)(1000*option[cm::hybridize::stage1_increase_cycles]());
-		for ( Size n=1; n<=neffcycles; ++n ) {
+		for ( core::Size n=1; n<=neffcycles; ++n ) {
 			frag9mover->apply( pose ); (*scorefxn)(pose); mc1->boltzmann( pose , "frag9" );
 			frag3mover->apply( pose ); (*scorefxn)(pose); mc1->boltzmann( pose , "frag3" );
 
@@ -743,7 +743,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 		scorefxn->set_weight( core::scoring::linear_chainbreak, 2.0 );
 		(*scorefxn)(pose);
 		protocols::moves::MonteCarloOP mc2( utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose, *scorefxn, 2.0 ) );
-		for ( Size n=1; n<=neffcycles; ++n ) {
+		for ( core::Size n=1; n<=neffcycles; ++n ) {
 			frag9mover->apply( pose ); (*scorefxn)(pose); mc2->boltzmann( pose , "frag9" );
 			frag3mover->apply( pose ); (*scorefxn)(pose); mc2->boltzmann( pose , "frag3" );
 
@@ -928,15 +928,15 @@ void HybridizeProtocol::validate_template(
 		core::Size ndel = 0;
 		core::Size counter = 1;
 		core::Size nres = template_pose->size();
-		for ( Size i=1; i<=nres; i++ ) {
+		for ( core::Size i=1; i<=nres; i++ ) {
 			if ( ! template_pose->residue(counter).is_protein() ) {
 				// will get fixed later
 				counter++;
 				continue;
 			}
 
-			Size pdbnumber = template_pose->pdb_info()->number(counter);
-			Size fastanumber = sequencemap[i];
+			core::Size pdbnumber = template_pose->pdb_info()->number(counter);
+			core::Size fastanumber = sequencemap[i];
 			if ( fastanumber == 0 ) { // extra residues in template
 				template_pose->delete_residue_range_slow( counter,counter );
 				ndel++;
@@ -973,7 +973,7 @@ void HybridizeProtocol::domain_parse_templates(core::Size nres) {
 	DDomainParse ddom(pcut_,hcut_,length_);
 
 	domains_all_templ_.resize( templates_.size() );
-	for ( Size i_template=1; i_template<=templates_.size(); ++i_template ) {
+	for ( core::Size i_template=1; i_template<=templates_.size(); ++i_template ) {
 		if ( templates_[i_template]->size() < 3 ) {
 			continue;  // ???
 		}
@@ -982,15 +982,15 @@ void HybridizeProtocol::domain_parse_templates(core::Size nres) {
 
 		// convert domain numbering to target pose numbering
 		protocols::loops::Loops all_domains;
-		for ( Size iloops=1; iloops<=domains_all_templ_[i_template].size(); ++iloops ) {
-			for ( Size iloop=1; iloop<=domains_all_templ_[i_template][iloops].num_loop(); ++iloop ) {
-				Size seqpos_start_pose = templates_[i_template]->pdb_info()->number(domains_all_templ_[i_template][iloops][iloop].start());
+		for ( core::Size iloops=1; iloops<=domains_all_templ_[i_template].size(); ++iloops ) {
+			for ( core::Size iloop=1; iloop<=domains_all_templ_[i_template][iloops].num_loop(); ++iloop ) {
+				core::Size seqpos_start_pose = templates_[i_template]->pdb_info()->number(domains_all_templ_[i_template][iloops][iloop].start());
 
 				if ( seqpos_start_pose > nres ) continue; // sometimes dna can do this
 
 				domains_all_templ_[i_template][iloops][iloop].set_start( seqpos_start_pose );
 
-				Size seqpos_stop_pose = templates_[i_template]->pdb_info()->number(domains_all_templ_[i_template][iloops][iloop].stop());
+				core::Size seqpos_stop_pose = templates_[i_template]->pdb_info()->number(domains_all_templ_[i_template][iloops][iloop].stop());
 				domains_all_templ_[i_template][iloops][iloop].set_stop( seqpos_stop_pose );
 
 				all_domains.add_loop( seqpos_start_pose, seqpos_stop_pose );
@@ -1005,24 +1005,24 @@ void HybridizeProtocol::domain_parse_templates(core::Size nres) {
 		std::map<core::Size,core::Size> remap_endpoints;
 		remap_endpoints [ all_domains[1].start() ] = 1;
 		remap_endpoints [ all_domains[all_domains.num_loop()].stop() ] = nres;
-		for ( Size iloops=2; iloops<=all_domains.size(); ++iloops ) {
+		for ( core::Size iloops=2; iloops<=all_domains.size(); ++iloops ) {
 			core::Size start_i = (all_domains[iloops-1].stop() + all_domains[iloops].start() + 1)/2;
 			remap_endpoints [ all_domains[iloops-1].stop() ] = start_i-1;
 			remap_endpoints [ all_domains[iloops].start() ] = start_i;
 		}
 
-		for ( Size iloops=1; iloops<=domains_all_templ_[i_template].size(); ++iloops ) {
-			for ( Size iloop=1; iloop<=domains_all_templ_[i_template][iloops].num_loop(); ++iloop ) {
-				Size seqpos_start_pose = remap_endpoints[ domains_all_templ_[i_template][iloops][iloop].start() ];
+		for ( core::Size iloops=1; iloops<=domains_all_templ_[i_template].size(); ++iloops ) {
+			for ( core::Size iloop=1; iloop<=domains_all_templ_[i_template][iloops].num_loop(); ++iloop ) {
+				core::Size seqpos_start_pose = remap_endpoints[ domains_all_templ_[i_template][iloops][iloop].start() ];
 				domains_all_templ_[i_template][iloops][iloop].set_start( seqpos_start_pose );
 
-				Size seqpos_stop_pose = remap_endpoints[ domains_all_templ_[i_template][iloops][iloop].stop() ];
+				core::Size seqpos_stop_pose = remap_endpoints[ domains_all_templ_[i_template][iloops][iloop].stop() ];
 				domains_all_templ_[i_template][iloops][iloop].set_stop( seqpos_stop_pose );
 			}
 		}
 
 		TR << "Found " << domains_all_templ_[i_template].size() << " domains using template " << template_fns_[i_template] << std::endl;
-		for ( Size i=1; i<=domains_all_templ_[i_template].size(); ++i ) {
+		for ( core::Size i=1; i<=domains_all_templ_[i_template].size(); ++i ) {
 			TR << "domain " << i << ": " << domains_all_templ_[i_template][i] << std::endl;
 		}
 	}
@@ -1294,7 +1294,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// (1) steal hetatms from template
 		utility::vector1< std::pair< core::Size,core::Size > > hetatms;
 		if ( add_hetatm_ ) {
-			for ( Size ires=1; ires <= templates_[initial_template_index]->size(); ++ires ) {
+			for ( core::Size ires=1; ires <= templates_[initial_template_index]->size(); ++ires ) {
 				if ( templates_[initial_template_index]->pdb_info()->number(ires) > (int)nres_tgt ) {
 					TR.Debug << "Insert hetero residue: " << templates_[initial_template_index]->residue(ires).name3() << std::endl;
 					if ( templates_[initial_template_index]->residue(ires).is_polymer()
@@ -1338,9 +1338,9 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 			// xyz copy hetatms (properly handle cases where scoring subunit is not the first)
 			if ( add_hetatm_ ) {
-				for ( Size ihet=1; ihet <= hetatms.size(); ++ihet ) {
+				for ( core::Size ihet=1; ihet <= hetatms.size(); ++ihet ) {
 					core::conformation::Residue const &res_in = templates_[initial_template_index]->residue(hetatms[ihet].first);
-					for ( Size iatm=1; iatm<=res_in.natoms(); ++iatm ) {
+					for ( core::Size iatm=1; iatm<=res_in.natoms(); ++iatm ) {
 						core::id::AtomID tgt(iatm,hetatms[ihet].second);
 						pose.set_xyz( tgt, res_in.xyz( iatm ) );
 					}
@@ -1541,10 +1541,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		history = utility::pointer::static_pointer_cast< TemplateHistory >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
 
 		TR << "History :";
-		for ( Size i=1; i<= history->size(); ++i ) { TR << I(4,i); }
+		for ( core::Size i=1; i<= history->size(); ++i ) { TR << I(4,i); }
 		TR << std::endl;
 		TR << "History :";
-		for ( Size i=1; i<= history->size(); ++i ) { TR << I(4, history->get(i)); }
+		for ( core::Size i=1; i<= history->size(); ++i ) { TR << I(4, history->get(i)); }
 		TR << std::endl;
 
 		core::kinematics::MoveMapOP mm( utility::pointer::make_shared< core::kinematics::MoveMap >() );
@@ -1571,7 +1571,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		if ( !option[cm::hybridize::skip_stage2]() ) {
 			core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 			core::optimization::CartesianMinimizer minimizer;
-			auto n_min_cycles =(Size) (200.*stage25_increase_cycles_);
+			auto n_min_cycles =(core::Size) (200.*stage25_increase_cycles_);
 			options_lbfgs.max_iter(n_min_cycles);
 			(*stage2_scorefxn_)(pose); minimizer.run( pose, *mm, *stage2_scorefxn_, options_lbfgs );
 		}
@@ -1711,12 +1711,12 @@ HybridizeProtocol::align_templates_by_domain(core::pose::PoseOP & ref_pose, util
 
 	// clone original poses -> copies for alignment
 	templates_aln_.clear();
-	for ( Size i_pose=1; i_pose <= templates_.size(); ++i_pose ) {
+	for ( core::Size i_pose=1; i_pose <= templates_.size(); ++i_pose ) {
 		templates_aln_.push_back(
 			utility::pointer::make_shared< core::pose::Pose >( *templates_[i_pose] ) );
 	}
 
-	for ( Size i_pose=1; i_pose <= templates_aln_.size(); ++i_pose ) {
+	for ( core::Size i_pose=1; i_pose <= templates_aln_.size(); ++i_pose ) {
 		if ( templates_aln_[i_pose] == ref_pose ) continue; // compare pointers
 		align_by_domain(*templates_aln_[i_pose], *working_pose, domains);
 		//std::string out_fn = template_fns_[i_pose] + "_realigned.pdb";
@@ -1759,12 +1759,12 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 	}
 
 
-	for ( Size i_domain = 1; i_domain <= domains.size() ; ++i_domain ) {
+	for ( core::Size i_domain = 1; i_domain <= domains.size() ; ++i_domain ) {
 		core::id::AtomID_Map< core::id::AtomID > atom_map;
 		core::pose::initialize_atomid_map( atom_map, pose, core::id::AtomID::BOGUS_ATOM_ID() );
 
 		// find all residues in moving pose corresponding to this domain
-		std::list <Size> residue_list;
+		std::list <core::Size> residue_list;
 		core::Size n_mapped_residues=0;
 		for ( core::Size ires=1; ires<=pose.size(); ++ires ) {
 			if ( !pose.residue_type(ires).is_protein() ) continue;
@@ -1776,7 +1776,7 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 		}
 
 		// find all residues in reference pose corresponding to this domain
-		std::list <Size> ref_residue_list;
+		std::list <core::Size> ref_residue_list;
 		for ( core::Size jres=1; jres<=ref_pose.size(); ++jres ) {
 			if ( !ref_pose.residue_type(jres).is_protein() ) continue;
 			int ref_pose_res = (ref_pose.pdb_info()) ? ref_pose.pdb_info()->number(jres) : jres;
@@ -1796,7 +1796,7 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 		tm_align.alignment2strings(seq_pose, seq_ref, aligned);
 
 		using namespace ObjexxFCL::format;
-		Size norm_length = residue_list.size() < ref_residue_list.size() ? residue_list.size():ref_residue_list.size();
+		core::Size norm_length = residue_list.size() < ref_residue_list.size() ? residue_list.size():ref_residue_list.size();
 		TR << "Align domain with TMscore of " << F(8,3,tm_align.TMscore(norm_length)) << std::endl;
 		TR << seq_pose << std::endl;
 		TR << aligned << std::endl;

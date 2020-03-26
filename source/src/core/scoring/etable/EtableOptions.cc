@@ -72,7 +72,7 @@ EtableOptions::EtableOptions( utility::options::OptionCollection const & options
 
 // Another constructor
 EtableOptions::EtableOptions( EtableOptions const & src ) :
-	ReferenceCount( src )
+	VirtualBase( src )
 {
 	*this = src;
 }

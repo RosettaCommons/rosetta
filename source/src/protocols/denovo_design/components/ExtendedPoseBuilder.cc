@@ -47,7 +47,7 @@ namespace denovo_design {
 namespace components {
 
 ExtendedPoseBuilder::ExtendedPoseBuilder():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 }
 

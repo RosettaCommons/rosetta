@@ -39,7 +39,6 @@
 
 using namespace std;
 using namespace core;
-using namespace boost;
 using namespace pose;
 
 static basic::Tracer TR_SR( "protocols.moves.StructureRestrictor" );
@@ -60,7 +59,7 @@ StructureRestrictor::StructureRestrictor( string const & name):
 {}
 
 StructureRestrictor::StructureRestrictor( StructureRestrictor const & src):
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Mover(src)
 {
 	chain_map_ = std::map< std::string, std::string>( src.chain_map_ );
@@ -114,7 +113,7 @@ StructureRestrictor::setup_relevant_chains(
 	getline(relevant_chains_file,line); // header
 	while ( getline( relevant_chains_file, line ) ) {
 		string tab("\t");
-		split(tokens, line, is_any_of(tab) );
+		boost::split(tokens, line, boost::is_any_of(tab) );
 		chain_map.insert(std::pair<string, string>(tokens[0], tokens[1]));
 	}
 	initialized_ = true;
@@ -152,8 +151,8 @@ StructureRestrictor::apply( Pose& pose ){
 	}
 	string chains = i->second;
 	TR_SR << "Restricting structure " << name << " to chains " << chains << "." << endl;
-	Size res_begin_delete = 1;
-	for ( Size j=1; j <= pose.size(); ++j ) {
+	core::Size res_begin_delete = 1;
+	for ( core::Size j=1; j <= pose.size(); ++j ) {
 		//INVARIANT: if we're in a stretch to delete then res_begin_delete
 		//indicates the first residue in this stretch to delete
 		if ( chains.find( pose.pdb_info()->chain(j), 0) != string::npos ) {

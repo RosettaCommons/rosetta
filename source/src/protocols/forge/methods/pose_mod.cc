@@ -79,7 +79,7 @@ add_cutpoint_variants(
 		op_performed = true;
 	}
 
-	Size const next_pos = pos + 1;
+	core::Size const next_pos = pos + 1;
 	if ( !pose.residue( next_pos ).has_variant_type( CUTPOINT_UPPER ) ) {
 		core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, next_pos );
 		op_performed = true;
@@ -121,7 +121,7 @@ remove_cutpoint_variants(
 		op_done = true;
 	}
 
-	Size const next_pos = pos + 1;
+	core::Size const next_pos = pos + 1;
 	if ( pose.residue( next_pos ).has_variant_type( CUTPOINT_UPPER ) ) {
 		core::pose::remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, next_pos );
 		op_done = true;
@@ -220,8 +220,8 @@ restore_residues(
 
 	debug_assert( archive_pose.size() == pose.size() );
 
-	std::map< Size, Size > old2new;
-	for ( Size i = 1, ie = archive_pose.size(); i <= ie; ++i ) {
+	std::map< core::Size, core::Size > old2new;
+	for ( core::Size i = 1, ie = archive_pose.size(); i <= ie; ++i ) {
 		old2new[ i ] = i;
 	}
 

@@ -41,20 +41,20 @@ class SameChiBinComboGrouper : public MatchGrouper {
 public:
 	typedef core::Real Real;
 	typedef core::Size Size;
-	typedef std::map< utility::OrderedTuple< utility::vector1< Size > >, Size > ChiBinComboCountMap;
+	typedef std::map< utility::OrderedTuple< utility::vector1< core::Size > >, core::Size > ChiBinComboCountMap;
 
 public:
 	SameChiBinComboGrouper();
-	SameChiBinComboGrouper( Size ncst );
+	SameChiBinComboGrouper( core::Size ncst );
 
 	~SameChiBinComboGrouper() override;
 
-	Size
+	core::Size
 	assign_group_for_match(
 		match const & m
 	) override;
 
-	Size
+	core::Size
 	assign_group_for_match(
 		match_dspos1 const & m
 	) override;
@@ -63,14 +63,14 @@ public:
 	reset() override;
 
 	void
-	set_n_geometric_constraints( Size n_csts );
+	set_n_geometric_constraints( core::Size n_csts );
 
 	void
 	set_hit_cacher( UpstreamHitCacherOP cacher );
 
 private:
 
-	Size n_geometric_constraints_;
+	core::Size n_geometric_constraints_;
 	UpstreamHitCacherOP hit_cacher_;
 	ChiBinComboCountMap chibin_combo_indexer_;
 

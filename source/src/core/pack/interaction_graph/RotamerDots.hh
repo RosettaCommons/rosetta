@@ -32,7 +32,7 @@
 
 //Utilitiy Headers
 #include <utility/SingletonBase.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
 #include <utility/thread/ReadWriteMutex.hh>
@@ -137,7 +137,7 @@ std::ostream & operator<< ( std::ostream & os, DotSphere const & ds );
 /// change is that this class is now only keeping track of SASA. RotamerDots objects will not be responsible for calculating
 /// a score.
 ///
-class RotamerDots : public utility::pointer::ReferenceCount {
+class RotamerDots : public utility::VirtualBase {
 
 public:
 	RotamerDots();
@@ -360,7 +360,7 @@ private:
 /// @brief
 /// Used to determine whether the overlap between two atoms is buried or exposed.
 ///
-class InvRotamerDots : public utility::pointer::ReferenceCount {
+class InvRotamerDots : public utility::VirtualBase {
 
 public:
 	InvRotamerDots();

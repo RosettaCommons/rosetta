@@ -32,7 +32,6 @@ namespace fldsgn {
 namespace potentials {
 namespace sspot {
 
-using Size = core::Size;
 using Real = core::Real;
 using Vector = core::Vector;
 using Pose = core::pose::Pose;
@@ -99,15 +98,15 @@ spherical(
 /// lin the old way to calculate the sequence separation takes an asumption of no-break chain
 /// lin when there is chain break between pos1 and pos2, we add a gap to make a correct calculation in ss energy
 Size
-get_foldtree_seqsep( Pose const & pose, Size pos1, Size pos2, Size gap_size )
+get_foldtree_seqsep( Pose const & pose, core::Size pos1, core::Size pos2, core::Size gap_size )
 {
 	if ( pose.fold_tree().is_simple_tree() ) return std::abs( int( pos1 ) - int( pos2 ) );
 
-	Size begin ( std::min(pos1,pos2) );
-	Size end   ( std::max(pos1,pos2) );
+	core::Size begin ( std::min(pos1,pos2) );
+	core::Size end   ( std::max(pos1,pos2) );
 	bool is_break ( false );
 
-	for ( Size i = begin; i < end; ++i ) {
+	for ( core::Size i = begin; i < end; ++i ) {
 		//if( pose.fold_tree().is_cutpoint(i) ) { is_break=true; break; }
 		if ( pose.residue_type(i).is_terminus() ) { is_break=true; break; }
 	}

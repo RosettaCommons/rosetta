@@ -92,7 +92,7 @@ SetupHotspotConstraintsMover::SetupHotspotConstraintsMover(
 }
 
 SetupHotspotConstraintsMover::SetupHotspotConstraintsMover( SetupHotspotConstraintsMover const & init ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	protocols::moves::Mover( init ),
 	chain_to_design_( init.chain_to_design_),
 	CB_force_constant_(init.CB_force_constant_),
@@ -132,7 +132,7 @@ void
 SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	using core::Real;
-	chain_to_design_ = tag->getOption<Size>( "redesign_chain", 2 );
+	chain_to_design_ = tag->getOption<core::Size>( "redesign_chain", 2 );
 
 	CB_force_constant_ = tag->getOption<Real>( "cb_force", 0.5 );
 	worst_allowed_stub_bonus_ = tag->getOption<Real>( "worst_allowed_stub_bonus", 0 );

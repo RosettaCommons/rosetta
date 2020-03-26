@@ -22,14 +22,14 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace helical_bundle_predict {
 
 /// @brief A base class to generate a temperature ramping scheme for a simulated annealing trajectory.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-class HBP_TemperatureScheduleGenerator : public utility::pointer::ReferenceCount {
+class HBP_TemperatureScheduleGenerator : public utility::VirtualBase {
 
 public:
 

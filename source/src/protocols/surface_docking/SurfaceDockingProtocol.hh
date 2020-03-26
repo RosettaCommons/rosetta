@@ -100,11 +100,11 @@ private:
 
 	void set_secondary_structure(core::pose::Pose & pose);
 
-	void initialize_surface_energies (core::pose::Pose & pose, Size first_protein_residue);
+	void initialize_surface_energies (core::pose::Pose & pose, core::Size first_protein_residue);
 
 	void set_surface_parameters ( core::pose::Pose & pose );
 
-	void setup_movers ( core::pose::Pose const & pose, Size const first_protein_residue );
+	void setup_movers ( core::pose::Pose const & pose, core::Size const first_protein_residue );
 
 	void setup_abinitio ();
 
@@ -114,7 +114,7 @@ private:
 
 	void merge_protein_surface_poses (core::pose::Pose & pose, core::pose::Pose const & surface, core::pose::Pose const & protein );
 
-	core::pack::task::PackerTaskOP create_surface_packer_task ( core::pose::Pose const & pose, Size const first_protein_residue );
+	core::pack::task::PackerTaskOP create_surface_packer_task ( core::pose::Pose const & pose, core::Size const first_protein_residue );
 
 	// Private data /////////////////////////////////////////////
 

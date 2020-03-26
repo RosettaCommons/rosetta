@@ -36,7 +36,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 
@@ -54,7 +54,7 @@ namespace nmr {
 namespace pcs {
 
 /// Two utility classes used by the PCSLigandTranformMover
-class AtomGridPoint : public utility::pointer::ReferenceCount {
+class AtomGridPoint : public utility::VirtualBase {
 
 public:
 
@@ -167,7 +167,7 @@ private:
 	public:
 
 		PCSData const * pcs_data_;
-		std::map<Size,Vector> const * atom_xyz_map_;
+		std::map<core::Size,Vector> const * atom_xyz_map_;
 		Vector const * xyz_start_;
 		Real xyz_delta_;
 
@@ -182,7 +182,7 @@ private:
 
 		LMMinPCSDataRef(
 			PCSData const * data,
-			std::map<Size,Vector> const * map,
+			std::map<core::Size,Vector> const * map,
 			Vector const * start,
 			Real delta
 
@@ -276,7 +276,7 @@ private: // Methods
 	/// @brief Build grid around protein and fill it with non-ligand atoms
 	///        Update the bounding box of the xyz grid search to span the
 	///        range: [ min_xyz atom_grid - nbr_radius, max_xyz atom_grid + nbr_radius ]
-	void reset_grid_and_bounding_box(Pose const & pose, Size const & ligand_resid);
+	void reset_grid_and_bounding_box(Pose const & pose, core::Size const & ligand_resid);
 
 	/// @brief The local frame of the ligand is located in the ligand's
 	///        center of mass and has unit basis
@@ -293,11 +293,11 @@ private: // Methods
 	Vector local_rotation(Matrix const & R, Vector const & ori, Vector const & v);
 
 	/// @brief Build map of atom index and xyz coordinates for ligand residue
-	std::map<Size,Vector> build_ligand_atom_xyz_table(Residue const & ligand);
+	std::map<core::Size,Vector> build_ligand_atom_xyz_table(Residue const & ligand);
 
 	/// @brief Find the best position and orientation for this residue according
 	///        to the PCS data using a grid search.
-	void find_best_ligand_pose_with_grid_search(Size const & resid, Residue const & ligand, Vector & position, Vector & orientation);
+	void find_best_ligand_pose_with_grid_search(core::Size const & resid, Residue const & ligand, Vector & position, Vector & orientation);
 
 	/// @brief Optimize the ligand position and orientation by NLS
 	void optimize_ligand_pose_with_nls(Residue const & ligand, Vector & position, Vector & orientation);
@@ -311,7 +311,7 @@ private: // Methods
 	/// @brief Move ligand residue closer to protein surface. To this end, the ligand
 	///        is simply moved along the jump with the protein in 0.1 Ang steps until
 	///        an increase in the fa_rep score is monitored.
-	void move_ligand_close_to_surface(Pose & pose, Size const & ligand_resid);
+	void move_ligand_close_to_surface(Pose & pose, core::Size const & ligand_resid);
 
 	/// @brief Calculate the damped resolution in the range [rmax, rmin] using the damping parameter
 	Real damped_resolution(Real rmax, Real rmin);

@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_modeler_rna_phosphate_PhosphateMove_HH
 #define INCLUDED_protocols_stepwise_modeler_rna_phosphate_PhosphateMove_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/modeler/rna/phosphate/PhosphateMove.fwd.hh>
 #include <core/types.hh>
 #include <string>
@@ -33,7 +33,7 @@ enum PhosphateTerminus { NONE, FIVE_PRIME_PHOSPHATE, THREE_PRIME_PHOSPHATE };
 std::string
 to_string( PhosphateTerminus const & phosphate_terminus );
 
-class PhosphateMove: public utility::pointer::ReferenceCount {
+class PhosphateMove: public utility::VirtualBase {
 
 public:
 

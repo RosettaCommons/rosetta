@@ -96,11 +96,11 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 
 	Antibody antibody_in( pose_in, camelid_ );
 	SequenceMoverOP graft_sequence( new SequenceMover() );
-	Size nres = pose_in.size();
+	core::Size nres = pose_in.size();
 
 	// Storing secondary structure
 	utility::vector1<char> secondary_struct_storage;
-	for ( Size i = 1; i <= nres; i++ ) {
+	for ( core::Size i = 1; i <= nres; i++ ) {
 		secondary_struct_storage.push_back( pose_in.secstruct( i ) );
 	}
 
@@ -148,9 +148,9 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 	if ( !graft_h3_ ) {
 		TR << "Extending CDR H3" << std::endl;
 
-		Size framework_loop_begin( antibody_in.cdrh_[3][1] - 1 );
-		Size frmrk_loop_end_plus_one( antibody_in.cdrh_[3][2] + 1 );
-		Size cutpoint = framework_loop_begin + 1;
+		core::Size framework_loop_begin( antibody_in.cdrh_[3][1] - 1 );
+		core::Size frmrk_loop_end_plus_one( antibody_in.cdrh_[3][2] + 1 );
+		core::Size cutpoint = framework_loop_begin + 1;
 		loops::Loop cdr_h3( framework_loop_begin, frmrk_loop_end_plus_one,
 			cutpoint, 0, false );
 		simple_one_loop_fold_tree( pose_in, cdr_h3);
@@ -168,7 +168,7 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 			graft_h1_ || graft_h2_ || graft_h3_ ) {
 		// disallowing bogus sidechains while repacking using include_current
 		utility::vector1<bool> allow_repack( nres, false );
-		for ( Size i = 1; i <= nres; i++ ) {
+		for ( core::Size i = 1; i <= nres; i++ ) {
 			if ( pose_in.secstruct(i) == 'X' ) {
 				allow_repack[i] = true;
 			}
@@ -183,7 +183,7 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 		}
 
 		// Recover secondary structures
-		for ( Size i = 1; i <= nres; i++ ) {
+		for ( core::Size i = 1; i <= nres; i++ ) {
 			pose_in.set_secstruct( i, secondary_struct_storage[ i ] );
 		}
 		// saving sidechains for use of include_current
@@ -210,13 +210,13 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 		// sidechians. For the residues which do not have any sidechain
 		// coordinates, grab them from a repacked version of the pose
 		// generated without using include_current
-		for ( Size i = 1; i <= nres; i++ ) {
+		for ( core::Size i = 1; i <= nres; i++ ) {
 			conformation::Residue const & original_rsd(
 				saved_sidechains.residue( i ) );
 			conformation::Residue const & packed_rsd(
 				pose_in.residue( i ) );
 			if ( !allow_repack[i] ) {
-				for ( Size j=1; j <= packed_rsd.natoms(); ++j ) {
+				for ( core::Size j=1; j <= packed_rsd.natoms(); ++j ) {
 					std::string const & atom_name( packed_rsd.atom_name(j) );
 					if ( original_rsd.type().has( atom_name ) ) {
 						pose_in.set_xyz( id::AtomID( packed_rsd.atom_index(
@@ -270,7 +270,7 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 		}
 		close_grafted_loops->apply(pose_in);
 
-		for ( Size i = 1; i <= nres; i++ ) {
+		for ( core::Size i = 1; i <= nres; i++ ) {
 			if ( pose_in.secstruct(i) == 'Y' ) {
 				allow_repack[i] = true;
 			}
@@ -288,13 +288,13 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 		// sidechians. For the residues which do not have any sidechain
 		// coordinates, grab them from a repacked version of the pose
 		// generated without using include_current
-		for ( Size i = 1; i <= nres; i++ ) {
+		for ( core::Size i = 1; i <= nres; i++ ) {
 			conformation::Residue const & original_rsd(
 				saved_sidechains.residue( i ) );
 			conformation::Residue const & packed_rsd(
 				pose_in.residue( i ) );
 			if ( !allow_repack[i] ) {
-				for ( Size j=1; j <= packed_rsd.natoms(); ++j ) {
+				for ( core::Size j=1; j <= packed_rsd.natoms(); ++j ) {
 					std::string const & atom_name( packed_rsd.atom_name(j) );
 					if ( original_rsd.type().has( atom_name ) ) {
 						pose_in.set_xyz( id::AtomID( packed_rsd.atom_index(
@@ -307,7 +307,7 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 		set_packer_default( pose_in, antibody_score, include_current );
 		packer_->apply( pose_in ); // packing to account for loop closure
 
-		for ( Size i = 1; i <= nres; i++ ) {
+		for ( core::Size i = 1; i <= nres; i++ ) {
 			allow_repack[i] = true;
 		}
 		include_current = true;
@@ -319,7 +319,7 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 
 
 		// Recover secondary structures
-		for ( Size i = 1; i <= nres; i++ ) {
+		for ( core::Size i = 1; i <= nres; i++ ) {
 			pose_in.set_secstruct( i, secondary_struct_storage[ i ] );
 		}
 
@@ -359,8 +359,8 @@ void GraftMover::set_packer_default(
 } // GraftMover set_packer_default
 
 GraftOneMover::GraftOneMover(
-	Size query_start,
-	Size query_end,
+	core::Size query_start,
+	core::Size query_end,
 	std::string template_name ) : Mover( "GraftOneMover" ) {
 	query_start_ = query_start;
 	query_end_ = query_end;
@@ -382,8 +382,8 @@ GraftOneMover::get_name() const {
 	return "GraftOneMover";
 }
 void GraftOneMover::apply( pose::Pose & pose_in ) {
-	Size const nres( pose_in.size() ); // Total residues
-	Size query_size = ( query_end_ - query_start_ ) + 1;
+	core::Size const nres( pose_in.size() ); // Total residues
+	core::Size query_size = ( query_end_ - query_start_ ) + 1;
 
 	pose::Pose truncated_pose;
 	truncated_pose = pose_in;
@@ -401,17 +401,17 @@ void GraftOneMover::apply( pose::Pose & pose_in ) {
 	core::pose::initialize_atomid_map( atom_map, template_pose_,
 		id::AtomID::BOGUS_ATOM_ID() );
 
-	Size flank = 2; // default 2
-	for ( Size start_stem = 4 - (flank-1); start_stem <= 4; start_stem++ ) {
-		for ( Size j=1; j <= 4; j++ ) {
+	core::Size flank = 2; // default 2
+	for ( core::Size start_stem = 4 - (flank-1); start_stem <= 4; start_stem++ ) {
+		for ( core::Size j=1; j <= 4; j++ ) {
 			id::AtomID const id1( j, start_stem );
 			id::AtomID const id2( j, start_stem );
 			atom_map[ id1 ] = id2;
 		}
 	}
-	for ( Size end_stem = 4 + query_size + 1; end_stem <= 4+query_size+flank;
+	for ( core::Size end_stem = 4 + query_size + 1; end_stem <= 4+query_size+flank;
 			end_stem++ ) {
-		for ( Size j=1; j <= 4; j++ ) {
+		for ( core::Size j=1; j <= 4; j++ ) {
 			id::AtomID const id1( j, end_stem );
 			id::AtomID const id2( j, end_stem - query_size );
 			atom_map[ id1 ] = id2;
@@ -422,7 +422,7 @@ void GraftOneMover::apply( pose::Pose & pose_in ) {
 
 
 	// copy coordinates of properly oriented template to framework
-	for ( Size i = query_start_; i <= query_end_; ++i ) {
+	for ( core::Size i = query_start_; i <= query_end_; ++i ) {
 		conformation::Residue const & orientable_rsd(pose_in.residue(i));
 		conformation::Residue const & template_rsd( template_pose_.
 			residue( i - (query_start_ - 5) ) );
@@ -430,7 +430,7 @@ void GraftOneMover::apply( pose::Pose & pose_in ) {
 		if ( template_rsd.name() != orientable_rsd.name() ) {
 			pose_in.set_secstruct( i, 'X' );
 		}
-		for ( Size j=1; j <= template_rsd.natoms(); ++j ) {
+		for ( core::Size j=1; j <= template_rsd.natoms(); ++j ) {
 			std::string const & atom_name( template_rsd.atom_name(j) );
 			if ( orientable_rsd.type().has( atom_name ) ) {
 				pose_in.set_xyz( id::AtomID( orientable_rsd.atom_index(
@@ -455,9 +455,9 @@ void GraftOneMover::apply( pose::Pose & pose_in ) {
 } // GraftOneMover::apply
 
 void GraftMover::relax_optimized_CDR_grafts( pose::Pose & pose_in ) {
-	Size loop_begin(0), loop_end(0);
+	core::Size loop_begin(0), loop_end(0);
 	bool detect_flag( false );
-	for ( Size ii = 1; ii <= pose_in.size(); ii++ ) {
+	for ( core::Size ii = 1; ii <= pose_in.size(); ii++ ) {
 		if ( (pose_in.secstruct(ii) == 'Y') && !detect_flag ) {
 			loop_begin = ii;
 			detect_flag = true;
@@ -478,8 +478,8 @@ void GraftMover::relax_optimized_CDR_grafts( pose::Pose & pose_in ) {
 
 
 CloseOneMover::CloseOneMover(
-	Size query_start,
-	Size query_end
+	core::Size query_start,
+	core::Size query_end
 )
 : Mover( "CloseOneMover" ) {
 	loop_start_ = query_start;
@@ -494,8 +494,8 @@ void CloseOneMover::set_default() {
 
 void CloseOneMover::apply( pose::Pose & pose_in ) {
 
-	Size const N ( 1 ); // N atom
-	Size const C ( 3 ); // C atom
+	core::Size const N ( 1 ); // N atom
+	core::Size const C ( 3 ); // C atom
 
 	// Coordinates of the C and N atoms at stem
 	numeric::xyzVector_float peptide_C, peptide_N;
@@ -536,13 +536,13 @@ void CloseOneMover::apply( pose::Pose & pose_in ) {
 	}
 
 	Real separation = 0.00;
-	for ( Size ii = loop_start_; ii <= loop_end_; ii++ ) {
+	for ( core::Size ii = loop_start_; ii <= loop_end_; ii++ ) {
 		peptide_C = pose_in.residue( ii ).xyz( C );
 		peptide_N = pose_in.residue( ii + 1 ).xyz( N );
 		separation=peptide_C.distance(peptide_N);
 		if ( separation > allowed_separation_ ) {
 			repack_flag = true;
-			Size cutpoint = ii;
+			core::Size cutpoint = ii;
 			close_one_loop_stem( pose_in, loop_start_, loop_end_, cutpoint );
 		}
 	} // for
@@ -562,7 +562,7 @@ CloseOneMover::get_name() const {
 
 void CloseOneMover::close_one_loop_stem (
 	pose::Pose & pose_in,
-	Size cutpoint_in,
+	core::Size cutpoint_in,
 	bool nter
 ) {
 	using namespace protocols;
@@ -575,7 +575,7 @@ void CloseOneMover::close_one_loop_stem (
 	// storing starting fold tree
 	//kinematics::FoldTree tree_in( pose_in.fold_tree() );
 
-	Size loop_flex_begin, loop_flex_end;
+	core::Size loop_flex_begin, loop_flex_end;
 	if ( nter ) {
 		loop_flex_begin = cutpoint_in;
 		loop_flex_end = cutpoint_in + ( flanking_residues_ - 1 );
@@ -591,14 +591,14 @@ void CloseOneMover::close_one_loop_stem (
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
 	utility::vector1< bool> allow_bb_move( pose_in.size(), false );
-	for ( Size ii = loop_flex_begin; ii <= loop_flex_end; ii++ ) {
+	for ( core::Size ii = loop_flex_begin; ii <= loop_flex_end; ii++ ) {
 		allow_bb_move[ ii ] = true;
 		pose_in.set_secstruct( ii, 'Y' );
 	}
 	loop_map->set_bb( allow_bb_move );
 	loop_map->set_jump( 1, false );
 
-	Size loop_begin, loop_end, cutpoint;
+	core::Size loop_begin, loop_end, cutpoint;
 	if ( nter ) {
 		loop_begin = loop_flex_begin - 2;
 		loop_end = loop_flex_end;
@@ -615,9 +615,9 @@ void CloseOneMover::close_one_loop_stem (
 
 void CloseOneMover::close_one_loop_stem (
 	pose::Pose & pose_in,
-	Size loop_begin,
-	Size loop_end,
-	Size cutpoint
+	core::Size loop_begin,
+	core::Size loop_end,
+	core::Size cutpoint
 ) {
 	using namespace protocols;
 	using namespace protocols::loops;
@@ -636,7 +636,7 @@ void CloseOneMover::close_one_loop_stem (
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
 	utility::vector1< bool> allow_bb_move( pose_in.size(), false );
-	for ( Size ii = loop_begin; ii <= loop_end; ii++ ) {
+	for ( core::Size ii = loop_begin; ii <= loop_end; ii++ ) {
 		allow_bb_move[ ii ] = true;
 		pose_in.set_secstruct( ii, 'Y' );
 	}
@@ -649,7 +649,7 @@ void CloseOneMover::close_one_loop_stem (
 
 void
 CloseOneMover::close_one_loop_stem_helper(
-	Size loop_begin, Size loop_end, Size cutpoint, Pose & pose_in, kinematics::MoveMapOP loop_map
+	core::Size loop_begin, core::Size loop_end, core::Size cutpoint, Pose & pose_in, kinematics::MoveMapOP loop_map
 ) {
 
 	using namespace protocols;
@@ -693,10 +693,10 @@ CloseOneMover::close_one_loop_stem_helper(
 		lowres_scorefxn, min_type, min_tolerance, nb_list ) );
 
 	// more params
-	Size loop_size = ( loop_end - loop_begin ) + 1;
-	Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
-	Size inner_cycles( loop_size );
-	Size outer_cycles( 2 );
+	core::Size loop_size = ( loop_end - loop_begin ) + 1;
+	core::Size n_small_moves ( numeric::max(core::Size(5), core::Size(loop_size/2)) );
+	core::Size inner_cycles( loop_size );
+	core::Size outer_cycles( 2 );
 	if ( benchmark_ ) {
 		n_small_moves = 1;
 		inner_cycles = 1;
@@ -742,11 +742,11 @@ CloseOneMover::close_one_loop_stem_helper(
 	mc->reset( pose_in ); // monte carlo reset
 
 	// outer cycle
-	for ( Size i = 1; i <= outer_cycles; i++ ) {
+	for ( core::Size i = 1; i <= outer_cycles; i++ ) {
 		mc->recover_low( pose_in );
 
 		// inner cycle
-		for ( Size j = 1; j <= inner_cycles; j++ ) {
+		for ( core::Size j = 1; j <= inner_cycles; j++ ) {
 			temperature *= gamma;
 			mc->set_temperature( temperature );
 			wiggle_cdr->apply( pose_in );
@@ -770,8 +770,8 @@ CloseOneMover::close_one_loop_stem_helper(
 }
 
 LoopRlxMover::LoopRlxMover(
-	Size query_start,
-	Size query_end
+	core::Size query_start,
+	core::Size query_end
 ) : Mover( "LoopRlxMover" ) {
 	loop_start_ = query_start;
 	loop_end_ = query_end;
@@ -831,15 +831,15 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
 	utility::vector1< bool> allow_bb_move( pose_in.size(), false );
-	for ( Size ii = loop_start_; ii <= loop_end_; ii++ ) {
+	for ( core::Size ii = loop_start_; ii <= loop_end_; ii++ ) {
 		allow_bb_move[ ii ] = true;
 	}
 	loop_map->set_bb( allow_bb_move );
 	loop_map->set_jump( 1, false );
 
 
-	Size loop_size = ( loop_end_ - loop_start_ ) + 1;
-	Size cutpoint = loop_start_ + int(loop_size/2);
+	core::Size loop_size = ( loop_end_ - loop_start_ ) + 1;
+	core::Size cutpoint = loop_start_ + int(loop_size/2);
 
 	loops::Loop one_loop( loop_start_, loop_end_, cutpoint, 0, false );
 	simple_one_loop_fold_tree( pose_in, one_loop );
@@ -884,9 +884,9 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 		highres_scorefxn_, min_type, min_tolerance, nb_list ) );
 
 	// more params
-	Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
-	Size inner_cycles( loop_size );
-	Size outer_cycles( 2 );
+	core::Size n_small_moves ( numeric::max(core::Size(5), core::Size(loop_size/2)) );
+	core::Size inner_cycles( loop_size );
+	core::Size outer_cycles( 2 );
 	if ( benchmark_ ) {
 		n_small_moves = 1;
 		inner_cycles = 1;
@@ -939,11 +939,11 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	mc->reset( pose_in ); // monte carlo reset
 
 	// outer cycle
-	for ( Size i = 1; i <= outer_cycles; i++ ) {
+	for ( core::Size i = 1; i <= outer_cycles; i++ ) {
 		mc->recover_low( pose_in );
 
 		// inner cycle
-		for ( Size j = 1; j <= inner_cycles; j++ ) {
+		for ( core::Size j = 1; j <= inner_cycles; j++ ) {
 			temperature *= gamma;
 			mc->set_temperature( temperature );
 			wiggle_loop->apply( pose_in );
@@ -963,7 +963,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 			mc->boltzmann( pose_in );
 
 
-			if ( numeric::mod(j,Size(20))==0 || j==inner_cycles ) {
+			if ( numeric::mod(j,core::Size(20))==0 || j==inner_cycles ) {
 				// repack trial
 				loop_repack = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >( highres_scorefxn_ );
 				setup_packer_task( pose_in );

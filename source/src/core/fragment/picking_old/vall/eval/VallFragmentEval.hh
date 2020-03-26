@@ -22,7 +22,7 @@
 #include <core/fragment/picking_old/vall/scores/VallFragmentScore.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/fragment/picking_old/concepts/Extent.fwd.hh>
 #include <core/fragment/picking_old/vall/VallLibrary.fwd.hh>
@@ -37,13 +37,13 @@ namespace eval {
 
 
 /// @brief  base class for Vall ExtentEvaluator
-class VallFragmentEval : public utility::pointer::ReferenceCount {
+class VallFragmentEval : public utility::VirtualBase {
 
 
 private: // typedefs
 
 
-	typedef utility::pointer::ReferenceCount Super;
+	typedef utility::VirtualBase Super;
 
 
 public: // typedefs

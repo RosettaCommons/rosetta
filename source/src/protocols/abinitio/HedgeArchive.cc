@@ -48,7 +48,7 @@ HedgeArchive::HedgeArchive( std::string name ) :
 	add_fuzzy_( 0.1 ) //0 for strictly score based, 1 for totally random
 {
 	set_name( name );
-	set_max_nstruct( static_cast<Size>(1e6) ); //more than this and we have clearly too much file system load.
+	set_max_nstruct( static_cast<core::Size>(1e6) ); //more than this and we have clearly too much file system load.
 	set_evaluate_local( false ); //never re-evaluate decoys in this Archive
 }
 
@@ -56,10 +56,10 @@ void HedgeArchive::incorporate_batch( core::Size batch_id ) {
 	tr.Debug << "batch " << batch_id << " has finished... incorporating into hedge archive " << std::endl;
 	SilentStructs& sorted_decoys( incoming_structures_[ batch_id ] );
 	sorted_decoys.sort();
-	auto ind_max( static_cast< Size > ( sorted_decoys.size()*score_cut_per_batch_ ) );
+	auto ind_max( static_cast< core::Size > ( sorted_decoys.size()*score_cut_per_batch_ ) );
 	for ( SilentStructs::const_iterator sit = sorted_decoys.begin(); sit != sorted_decoys.end() && ind_max>0; ++sit ) {
 		if ( numeric::random::rg().uniform() < (1-add_fuzzy_) ) {
-			set_max_nstruct( static_cast<Size>(1e6) );
+			set_max_nstruct( static_cast<core::Size>(1e6) );
 			tr.Debug << "add decoy from batch " << batch_id << std::endl;
 			add_structure_at_position( decoys().end(), sit->second, nullptr );
 			--ind_max;
@@ -157,7 +157,7 @@ void HedgeArchive::restore_status( std::istream& is ) {
 	runtime_assert( tag == "OPEN_BATCHES" );
 	while ( is >> tag ) {
 		if ( tag == "END_BATCHES" ) break;
-		Size batch_id = ObjexxFCL::int_of( tag );
+		core::Size batch_id = ObjexxFCL::int_of( tag );
 		std::string const& dirname( name() );
 		std::string const ffilename ( dirname + "/" + filename( batch_id ) );
 		//std::string const backup_filename ( ffilename+".backup" );

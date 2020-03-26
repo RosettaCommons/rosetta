@@ -64,7 +64,7 @@ MPIMultiCommJobDistributor::MPIMultiCommJobDistributor( core::Size sub_size ) {
 	setup_sub_communicators( sub_size );
 }
 
-void MPIMultiCommJobDistributor::setup_sub_communicators( Size sub_size ) {
+void MPIMultiCommJobDistributor::setup_sub_communicators( core::Size sub_size ) {
 	n_comm_ = ( n_rank()-min_client_rank() ) / sub_size;
 	tr.Debug << " can allocate " << n_comm_ << " communication groups " << std::endl;
 	tr.Debug << " n_rank: " << n_rank() << " sub_size: " << sub_size << std::endl;
@@ -78,12 +78,12 @@ void MPIMultiCommJobDistributor::setup_sub_communicators( Size sub_size ) {
 	MPI_Group world_group;
 	MPI_Comm_group(MPI_COMM_WORLD, &world_group );
 	communicator_handle_ = 0;
-	Size i_rank = min_client_rank();
+	core::Size i_rank = min_client_rank();
 	mpi_groups_.resize( n_comm_, MPI_GROUP_NULL );
 	mpi_communicators_.resize( n_comm_, MPI_COMM_NULL );
-	for ( Size i_comm = 1; i_comm <= n_comm_; ++i_comm ) {
+	for ( core::Size i_comm = 1; i_comm <= n_comm_; ++i_comm ) {
 		mpi_ranks_.push_back( new int[ sub_size ] ); //delete never called because singleton class
-		for ( Size i = 0; i < sub_size; ++i, ++i_rank ) {
+		for ( core::Size i = 0; i < sub_size; ++i, ++i_rank ) {
 			mpi_ranks_.back()[ i ] = i_rank;
 			if ( i_rank == rank() ) {
 				communicator_handle_ = i_comm;

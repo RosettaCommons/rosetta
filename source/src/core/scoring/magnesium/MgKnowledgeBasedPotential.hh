@@ -27,14 +27,14 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace scoring {
 namespace magnesium {
 
-class MgKnowledgeBasedPotential : public utility::pointer::ReferenceCount {
+class MgKnowledgeBasedPotential : public utility::VirtualBase {
 
 public:
 

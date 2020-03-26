@@ -40,7 +40,7 @@
 //utility headers
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
@@ -116,7 +116,7 @@ public:
 	/// will be later matured into actual jobs and run by the JobDistributor.  Classes derived
 	/// from the %ChunkLibraryJobQueen need answer a few virtual functions that the %ChunkLibraryJobQueen
 	/// will invoke during this process.
-	LarvalJobs determine_job_list( JobDAGNodeID job_dag_node_index, Size max_njobs ) override;
+	LarvalJobs determine_job_list( JobDAGNodeID job_dag_node_index, core::Size max_njobs ) override;
 
 	bool has_job_previously_been_output( protocols::jd3::LarvalJobCOP job ) override;
 
@@ -126,7 +126,7 @@ public:
 		utility::vector1< JobResultCOP > const & input_job_results
 	) override;
 
-	void note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults ) override;
+	void note_job_completed( LarvalJobCOP job, JobStatus status, core::Size nresults ) override;
 
 	/// @brief If the job result that is summarized here should be output, then the SJQ needs to
 	/// have access to the LarvalJob in order to do that.
@@ -375,7 +375,7 @@ protected:
 	build_output_index(
 		protocols::jd3::LarvalJobCOP larval_job,
 		ResultIndex result_index_for_job,
-		Size n_results_for_job
+		core::Size n_results_for_job
 	);
 
 	/// @brief The derived job queen may assign her own numbering to output Poses if she chooses.
@@ -395,7 +395,7 @@ protected:
 	assign_output_index(
 		protocols::jd3::LarvalJobCOP larval_job,
 		ResultIndex result_index_for_job,
-		Size n_results_for_job,
+		core::Size n_results_for_job,
 		JobOutputIndex & output_index
 	);
 
@@ -550,7 +550,7 @@ private:
 
 	// The index of the last larval job that we have created. Incremented within
 	// expand_job_list()
-	Size larval_job_counter_;
+	core::Size larval_job_counter_;
 
 	// For the first node in the JobDAG, the %ChunkLibraryJobQueen will spool out LarvalJobs
 	// slowly to the JobDistributor (in increments of the max_njobs parameter in the call
@@ -561,8 +561,8 @@ private:
 	bool preliminary_larval_jobs_determined_;
 	utility::vector1< ChunkLibraryPreliminaryLarvalJob > preliminary_larval_jobs_;
 	ChunkLibraryInnerLarvalJobs inner_larval_jobs_for_curr_prelim_job_;
-	Size curr_inner_larval_job_index_;
-	Size njobs_made_for_curr_inner_larval_job_;
+	core::Size curr_inner_larval_job_index_;
+	core::Size njobs_made_for_curr_inner_larval_job_;
 	utility::vector1< core::Size > preliminary_job_node_inds_;
 	utility::vector1< core::Size > pjn_job_ind_begin_;
 	utility::vector1< core::Size > pjn_job_ind_end_;

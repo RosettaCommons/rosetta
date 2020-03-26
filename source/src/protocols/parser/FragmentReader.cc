@@ -91,16 +91,16 @@ FragmentReader::parse_tag( TagCOP const & tag )
 	}
 
 	// length of fragments
-	frag_size_ = tag->getOption<Size>( "size", 0 );
+	frag_size_ = tag->getOption<core::Size>( "size", 0 );
 
 	// the begin of sequence positions where fragments are stealed and inserted
-	begin_ = tag->getOption<Size>( "begin", 0 );
+	begin_ = tag->getOption<core::Size>( "begin", 0 );
 
 	// the end of sequence positions where fragments are stealed and inserted
-	end_   = tag->getOption<Size>( "end", 0 );
+	end_   = tag->getOption<core::Size>( "end", 0 );
 
 	// number of fragments per position
-	nfrags_ = tag->getOption<Size>( "nfrags", 200 );
+	nfrags_ = tag->getOption<core::Size>( "nfrags", 200 );
 
 	if ( read_type_ == "vall" ) {
 
@@ -153,7 +153,7 @@ FragmentReader::parse_tag( TagCOP const & tag )
 		runtime_assert( frag_size_ != 0 );
 
 		/// number of stealing times
-		steal_times_ = tag->getOption<Size>( "steal_times", 1 );
+		steal_times_ = tag->getOption<core::Size>( "steal_times", 1 );
 
 		TR << "Picking Fragments from " << filename_ << " for poistions " << begin_ << "-" << end_ << std::endl;
 	}
@@ -232,7 +232,7 @@ FragmentReader::apply( FragSetOP & fragset )
 		ResidueTypeSetCOP residue_set = ChemicalManager::get_instance()->residue_type_set( CENTROID );
 		SilentFilePoseInputStreamOP silent_input( new SilentFilePoseInputStream( filename_ ) );
 
-		Size num( 0 );
+		core::Size num( 0 );
 		Pose pose_in;
 		while ( num++ <= nfrags_ && silent_input->has_another_pose() ) {
 			silent_input->fill_pose( pose_in, *residue_set );
@@ -248,7 +248,7 @@ FragmentReader::apply( FragSetOP & fragset )
 			String filename( *it );
 			core::import_pose::centroid_pose_from_pdb( pose_in, filename , core::import_pose::PDB_file);
 			runtime_assert( end_ <= pose_in.size() );
-			for ( Size c=0; c<steal_times_; c++ ) {
+			for ( core::Size c=0; c<steal_times_; c++ ) {
 				set_fragments( pose_in, fragset );
 			}
 		}
@@ -293,8 +293,8 @@ FragmentReader::apply( FragSetOP & fragset )
 		using core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa;
 
 		FrameList frames;
-		Size length = end_ - begin_ + 1;
-		for ( Size j = 0, je = length; j < je; ++j ) {
+		core::Size length = end_ - begin_ + 1;
+		for ( core::Size j = 0, je = length; j < je; ++j ) {
 
 			TR << "picking " << nfrags_ << " " << frag_size_ << "-mers for position " << ( begin_ + j ) << std::endl;
 			String ss_sub = ss_.substr( j, frag_size_ );
@@ -317,9 +317,9 @@ FragmentReader::apply( FragSetOP & fragset )
 			utility::vector1< String > abego_sub;
 			if ( use_abego_  ) {
 				runtime_assert( ss_.length() == blueprint_->abego().size() );
-				Size pos( 1 );
+				core::Size pos( 1 );
 				abego_sub.resize( frag_size_ );
-				for ( Size ii = j + 1 ; ii <= j + frag_size_; ++ii, ++pos ) {
+				for ( core::Size ii = j + 1 ; ii <= j + frag_size_; ++ii, ++pos ) {
 					if ( ii > blueprint_->abego().size() ) {
 						abego_sub[ pos ] = "X";
 					} else {

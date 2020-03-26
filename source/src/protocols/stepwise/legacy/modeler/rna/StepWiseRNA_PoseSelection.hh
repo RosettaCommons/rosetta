@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_PoseSelection_HH
 #define INCLUDED_protocols_stepwise_rna_StepWiseRNA_PoseSelection_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSelection.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
@@ -33,7 +33,7 @@ namespace rna {
 
 extern protocols::stepwise::modeler::rna::StepWiseRNA_CountStruct local_count_data;
 
-class StepWiseRNA_PoseSelection: public utility::pointer::ReferenceCount {
+class StepWiseRNA_PoseSelection: public utility::VirtualBase {
 
 public:
 

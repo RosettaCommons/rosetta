@@ -57,9 +57,8 @@ namespace fldsgn {
 
 class MyAtom {
 public:
-	using Size = core::Size;
 	MyAtom(){
-		for ( Size j=1; j<= 50 ; ++j ) {
+		for ( core::Size j=1; j<= 50 ; ++j ) {
 			atom_hydrophobic_.push_back(false);
 		}
 		atom_hydrophobic_[ 3 ] = true;  // CH1
@@ -68,7 +67,7 @@ public:
 		atom_hydrophobic_[ 6 ] = true;  // aroC
 		atom_hydrophobic_[ 19 ] = true; // CAbb
 	}
-	bool is_hydrophobic( Size const index ){
+	bool is_hydrophobic( core::Size const index ){
 		return atom_hydrophobic_[ index ];
 	}
 private:
@@ -88,7 +87,7 @@ NcontactsCalculator::NcontactsCalculator():
 /// @brief default constructor
 NcontactsCalculator::NcontactsCalculator(
 	Real const cdist,
-	Size const sep ):
+	core::Size const sep ):
 	condist_( cdist ),
 	isep_residue_( sep ),
 	ignore_loops_( false ),
@@ -163,36 +162,36 @@ NcontactsCalculator::recompute( Pose const & pose )
 	using protocols::fldsgn::topology::StrandPairingSetOP;
 
 	// intialize
-	Size nres( pose.size() );
+	core::Size nres( pose.size() );
 	Real condist2( numeric::square(condist_) );
-	Size nc_allatm( 0 );
-	Size nc_hpatm( 0 );
-	Size nc_hpres( 0 );
+	core::Size nc_allatm( 0 );
+	core::Size nc_hpatm( 0 );
+	core::Size nc_hpres( 0 );
 	topology::SS_Info2_OP ssinfo( new topology::SS_Info2( pose.secstruct() ) );
 
 	StrandPairingSetOP spairset( new StrandPairingSet( protocols::fldsgn::topology::calc_strand_pairing_set( pose, ssinfo ) ) );
 	SheetSetOP sheet_set( new SheetSet( ssinfo, spairset ) );
 	// std::cout << *sheet_set;
 
-	Size max_ssele = ssinfo->ss_element_id( nres );
-	utility::vector1< utility::vector1< Size > > ncon_sselements( max_ssele, (utility::vector1< Size >(max_ssele, 1)));
+	core::Size max_ssele = ssinfo->ss_element_id( nres );
+	utility::vector1< utility::vector1< core::Size > > ncon_sselements( max_ssele, (utility::vector1< core::Size >(max_ssele, 1)));
 	utility::vector1< utility::vector1< bool > > calc_sselements( max_ssele, (utility::vector1< bool >(max_ssele, false)));
 
 	// calc number of contacts
 	MyAtom myatom;
-	for ( Size iaa=1; iaa<=nres-isep_residue_; ++iaa ) {
+	for ( core::Size iaa=1; iaa<=nres-isep_residue_; ++iaa ) {
 
 		// skip calc if ss element is loop
 		if ( ignore_loops_ && ssinfo->secstruct( iaa ) == 'L' ) continue;
 
-		Size iaa_ssele( ssinfo->ss_element_id( iaa ) );
+		core::Size iaa_ssele( ssinfo->ss_element_id( iaa ) );
 
-		for ( Size jaa=iaa+isep_residue_; jaa<=nres; ++jaa ) {
+		for ( core::Size jaa=iaa+isep_residue_; jaa<=nres; ++jaa ) {
 
 			// skip calc if ss element is loop
 			if ( ignore_loops_ && ssinfo->secstruct( jaa ) == 'L' ) continue;
 
-			Size jaa_ssele( ssinfo->ss_element_id( jaa ) );
+			core::Size jaa_ssele( ssinfo->ss_element_id( jaa ) );
 
 			// skip calc pair if residues of pair belong to same ss elements
 			if ( ignore_same_sselement_ && iaa_ssele == jaa_ssele ) continue;
@@ -204,19 +203,19 @@ NcontactsCalculator::recompute( Pose const & pose )
 					sheet_set->which_sheet( ssinfo->strand_id( jaa ) ) ) continue;
 
 			Residue const & ires( pose.residue( iaa ) );
-			for ( Size iatm=1, iatm_end=ires.natoms(); iatm<=iatm_end; ++iatm ) {
+			for ( core::Size iatm=1, iatm_end=ires.natoms(); iatm<=iatm_end; ++iatm ) {
 
 				if ( ires.atom_type( int(iatm) ).is_heavyatom() ) {
 					Residue const & jres( pose.residue( jaa ) );
 
-					for ( Size jatm=1, jatm_end=jres.natoms(); jatm<=jatm_end; ++jatm ) {
+					for ( core::Size jatm=1, jatm_end=jres.natoms(); jatm<=jatm_end; ++jatm ) {
 
 						if ( jres.atom_type(int(jatm)).is_heavyatom() ) {
 
 							Atom const & iatom( ires.atom( iatm ) );
 							Atom const & jatom( jres.atom( jatm ) );
-							Size const iadex ( ires.atom_type_index( int(iatm) ) );
-							Size const jadex ( jres.atom_type_index( int(jatm) ) );
+							core::Size const iadex ( ires.atom_type_index( int(iatm) ) );
+							core::Size const jadex ( jres.atom_type_index( int(jatm) ) );
 
 							if ( (use_only_calpha_ &&
 									ires.atom_type( iatm ).name() != "CAbb") || jres.atom_type( jatm ).name() != "CAbb" ) continue;
@@ -258,17 +257,17 @@ NcontactsCalculator::recompute( Pose const & pose )
 	}// loop for iaa
 
 	// finalize
-	Size tot( 0 );
-	for ( Size i=1 ; i<=max_ssele; ++i ) {
-		for ( Size j=1 ; j<=max_ssele; ++j ) {
+	core::Size tot( 0 );
+	for ( core::Size i=1 ; i<=max_ssele; ++i ) {
+		for ( core::Size j=1 ; j<=max_ssele; ++j ) {
 			if ( calc_sselements[ i ][ j ] ) {
 				tot += ncon_sselements[i][j];
 			}
 		}
 	}
 	ss_entrpy_ = 0.0;
-	for ( Size i=1 ; i<=max_ssele; ++i ) {
-		for ( Size j=1 ; j<=max_ssele; ++j ) {
+	for ( core::Size i=1 ; i<=max_ssele; ++i ) {
+		for ( core::Size j=1 ; j<=max_ssele; ++j ) {
 			if ( calc_sselements[ i ][ j ] ) {
 				Real prob = Real(ncon_sselements[i][j])/Real(tot);
 				ss_entrpy_ += -prob*( std::log( prob )/std::log( 2.0 ) );
@@ -292,7 +291,7 @@ void
 protocols::fldsgn::NcontactsCalculator::save( Archive & arc ) const {
 	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
 	arc( CEREAL_NVP( condist_ ) ); // Real
-	arc( CEREAL_NVP( isep_residue_ ) ); // Size
+	arc( CEREAL_NVP( isep_residue_ ) ); // core::Size
 	arc( CEREAL_NVP( ignore_loops_ ) ); // _Bool
 	arc( CEREAL_NVP( ignore_same_sselement_ ) ); // _Bool
 	arc( CEREAL_NVP( ignore_same_sheet_ ) ); // _Bool
@@ -309,7 +308,7 @@ void
 protocols::fldsgn::NcontactsCalculator::load( Archive & arc ) {
 	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
 	arc( condist_ ); // Real
-	arc( isep_residue_ ); // Size
+	arc( isep_residue_ ); // core::Size
 	arc( ignore_loops_ ); // _Bool
 	arc( ignore_same_sselement_ ); // _Bool
 	arc( ignore_same_sheet_ ); // _Bool

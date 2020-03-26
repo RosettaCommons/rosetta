@@ -134,7 +134,7 @@ void LoopRebuild::apply( core::pose::Pose & pose ) {
 	}
 
 	//initialize fragments
-	//  std::map< Size, protocols::frags::TorsionFragmentLibraryOP > frag_libs;
+	//  std::map< core::Size, protocols::frags::TorsionFragmentLibraryOP > frag_libs;
 	//  initialize_fragments( frag_libs );
 
 	//  found_loops = read_loop_file( ori_loops_begin, ori_loops_end );

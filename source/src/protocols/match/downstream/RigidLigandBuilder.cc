@@ -66,7 +66,7 @@ RigidLigandBuilder::RigidLigandBuilder( RigidLigandBuilder const & other ) :
 	lig_conformers_( other.lig_conformers_.size() ),
 	min_sep_d2_from_upstream_atoms_( other.min_sep_d2_from_upstream_atoms_ )
 {
-	for ( Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
 		lig_conformers_[ ii ] = utility::pointer::make_shared< toolbox::match_enzdes_util::LigandConformer >( * other.lig_conformers_[ ii ] );
 	}
 }
@@ -81,7 +81,7 @@ RigidLigandBuilder::RigidLigandBuilder( RigidLigandBuilder const & other ) :
 //  non_collision_detection_atoms_reqd_in_active_site_( other.non_collision_detection_atoms_reqd_in_active_site_ ),
 //  lig_conformers_( other.lig_conformers_.size() )
 //{
-//  for ( Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
+//  for ( core::Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
 //    lig_conformers_[ ii ] = new LigandConformer( * other.lig_conformers_[ ii ] );
 //  //TR << "natoms " << lig_conformers_[ii]->n_collision_check_atoms() << std::endl;
 //  }
@@ -102,9 +102,9 @@ RigidLigandBuilder::clone() const
 std::list< Hit >
 RigidLigandBuilder::build(
 	HTReal const & atom3_frame,
-	Size const scaffold_build_point_id,
-	Size const upstream_conf_id,
-	Size const external_geometry_id,
+	core::Size const scaffold_build_point_id,
+	core::Size const upstream_conf_id,
+	core::Size const external_geometry_id,
 	core::conformation::Residue const & upstream_residue
 ) const
 {
@@ -116,14 +116,14 @@ RigidLigandBuilder::build(
 	std::list< Hit > hitlist;
 
 	//std::cout << "RigidLigandBuilder::build" << std::endl;
-	//for ( Size ii = 1; ii <= 3; ++ii ) {
+	//for ( core::Size ii = 1; ii <= 3; ++ii ) {
 	//Vector const iiloc = atom3_frame * ats123_in_atom3_frame_[ ii ];
 	//std::cout << "Atom D" << ii << " coordinate: " << iiloc.x() << " " << iiloc.y() << " " << iiloc.z() << std::endl;
 	//}
 
 	/// collision detection and active-site containment enforcement.
-	for ( Size ii = 1; ii <= lig_conformers_[1]->n_collision_check_atoms(); ++ii ) {
-		Size ii_restype_id = lig_conformers_[1]->collision_check_id_2_restype_id( ii );
+	for ( core::Size ii = 1; ii <= lig_conformers_[1]->n_collision_check_atoms(); ++ii ) {
+		core::Size ii_restype_id = lig_conformers_[1]->collision_check_id_2_restype_id( ii );
 
 		Vector const iiloc = lig_conformers_[1]->coordinate_in_D3_frame( ii_restype_id, atom3_frame );
 		//std::cout << "   " << downstream_restype_->atom_name( at3_frame_id_2_restype_id_[ ii ] ) << " ";
@@ -135,7 +135,7 @@ RigidLigandBuilder::build(
 			return hitlist;
 		}
 
-		for ( Size jj = 1; jj <= min_sep_d2_from_upstream_atoms_[ ii_restype_id ].size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= min_sep_d2_from_upstream_atoms_[ ii_restype_id ].size(); ++jj ) {
 			if ( iiloc.distance_squared( upstream_residue.xyz( min_sep_d2_from_upstream_atoms_[ ii_restype_id ][ jj ].first ))
 					< min_sep_d2_from_upstream_atoms_[ ii_restype_id ][ jj ].second ) {
 				//std::cout << "collision between " << downstream_restype_->atom_name( at3_frame_id_2_restype_id_[ ii ] );
@@ -148,8 +148,8 @@ RigidLigandBuilder::build(
 
 	/// Check the atoms we require to be in the active site, but which are not used in
 	/// collision detection
-	for ( Size ii = 1; ii <= non_collision_detection_atoms_reqd_in_active_site_.size(); ++ii ) {
-		Size ii_restype_id = non_collision_detection_atoms_reqd_in_active_site_[ ii ];
+	for ( core::Size ii = 1; ii <= non_collision_detection_atoms_reqd_in_active_site_.size(); ++ii ) {
+		core::Size ii_restype_id = non_collision_detection_atoms_reqd_in_active_site_[ ii ];
 		Vector const iiloc = lig_conformers_[1]->coordinate_in_D3_frame( ii_restype_id, atom3_frame );
 
 		if ( ! active_site_grid().occupied( iiloc ) ) {
@@ -163,7 +163,7 @@ RigidLigandBuilder::build(
 	/// bin in 6D is not empty.  If the bin is empty, then there is no way this
 	/// ligand placement could result in a match.  Do not return this orientation as a hit.
 	//std::cout << "global coordinate: ";
-	//for ( Size ii = 1; ii <= 6; ++ii ) { std::cout << global_coordinate[ ii ] << " ";}
+	//for ( core::Size ii = 1; ii <= 6; ++ii ) { std::cout << global_coordinate[ ii ] << " ";}
 	//std::cout << std::endl;
 
 	if ( occ_space_set() && ! occ_space().match_possible_for_hit_geometry( global_coordinate ) ) {
@@ -233,7 +233,7 @@ RigidLigandBuilder::require_atom_to_reside_in_active_site(
 		non_collision_detection_atoms_reqd_in_active_site_.push_back( id.atomno() );
 	} else {
 		atom_required_in_active_site_[ id.atomno() ] = true;
-		for ( Size ii = 1; ii <= 3; ++ii ) {
+		for ( core::Size ii = 1; ii <= 3; ++ii ) {
 			if ( atoms_123_[ ii ] == id.atomno() ) {
 				ats123_reqd_in_active_site_[ ii ] = true;
 				break;
@@ -318,7 +318,7 @@ RigidLigandBuilder::coordinates_from_hit(
 ) const
 {
 	/*HTReal global_frame = frame_from_global_orientation( hit.second() );
-	for ( Size ii = 1; ii <= atom_indices.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= atom_indices.size(); ++ii ) {
 	debug_assert( atom_indices[ ii ].rsd() == 1 );
 	atom_coords[ ii ] = global_frame * points_in_global_orintation_frame_[ atom_indices[ ii ].atomno() ];
 	}*/
@@ -335,7 +335,7 @@ RigidLigandBuilder::downstream_pose_from_hit(
 	core::conformation::Residue lig_res( *downstream_restype_, false );
 
 	HTReal global_frame = lig_conformers_[1]->frame_from_global_orientation( hit.second() );
-	for ( Size ii = 1; ii <= lig_res.natoms(); ++ii ) {
+	for ( core::Size ii = 1; ii <= lig_res.natoms(); ++ii ) {
 		lig_res.set_xyz( ii, lig_conformers_[1]->coordinate_in_global_frame( ii, global_frame ) );
 	}
 
@@ -351,7 +351,7 @@ RigidLigandBuilder::downstream_pose_from_hit(
 
 }
 
-RigidLigandBuilder::Size
+core::Size
 RigidLigandBuilder::n_possible_hits_per_at3frame() const
 {
 	return 1;
@@ -360,12 +360,12 @@ RigidLigandBuilder::n_possible_hits_per_at3frame() const
 
 void
 RigidLigandBuilder::initialize_from_residue(
-	Size atom1,
-	Size atom2,
-	Size atom3,
-	Size orientation_atom1,
-	Size orientation_atom2,
-	Size orientation_atom3,
+	core::Size atom1,
+	core::Size atom2,
+	core::Size atom3,
+	core::Size orientation_atom1,
+	core::Size orientation_atom2,
+	core::Size orientation_atom3,
 	core::conformation::Residue const & residue
 )
 {
@@ -377,7 +377,7 @@ RigidLigandBuilder::initialize_from_residue(
 	orientation_atoms_[ 2 ] = orientation_atom2;
 	orientation_atoms_[ 3 ] = orientation_atom3;
 
-	Size const natoms = residue.natoms();
+	core::Size const natoms = residue.natoms();
 	if ( natoms < 3 ) {
 		utility_exit_with_message( "ERROR in RigidLigandBuilder: cannot build a residue with fewer than three atoms" );
 	}
@@ -385,7 +385,7 @@ RigidLigandBuilder::initialize_from_residue(
 	atom_radii_.resize( natoms );
 	atom_required_in_active_site_.resize( natoms, false );
 
-	for ( Size ii = 1; ii <= natoms; ++ii ) {
+	for ( core::Size ii = 1; ii <= natoms; ++ii ) {
 		atom_radii_[ ii ] = probe_radius_for_atom_type( residue.atom( ii ).type() );
 	}
 
@@ -394,7 +394,7 @@ RigidLigandBuilder::initialize_from_residue(
 	lig_conformers_[1]->initialize_from_residue( atom1, atom2, atom3,
 		orientation_atom1, orientation_atom2, orientation_atom3, residue );
 
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		if ( ignore_h_collisions_ && residue.atom_type( atoms_123_[ ii ] ).element() == "H" ) {
 			radii_123_[ ii ] = ZERO;
 		} else {
@@ -414,19 +414,19 @@ RigidLigandBuilder::initialize_upstream_residue(
 
 	upstream_restype_ = upstream_res;
 
-	Size const natoms = downstream_restype_->natoms();
+	core::Size const natoms = downstream_restype_->natoms();
 
 	min_sep_d2_from_upstream_atoms_.clear();
 	min_sep_d2_from_upstream_atoms_.resize( natoms );
 
-	for ( Size ii = 1; ii <= lig_conformers_[1]->n_collision_check_atoms(); ++ii ) {
-		Size ii_restype_id = lig_conformers_[1]->collision_check_id_2_restype_id( ii );
+	for ( core::Size ii = 1; ii <= lig_conformers_[1]->n_collision_check_atoms(); ++ii ) {
+		core::Size ii_restype_id = lig_conformers_[1]->collision_check_id_2_restype_id( ii );
 
-		Size n_to_count( 0 );
-		for ( Size jj = upstream_restype_->first_sidechain_atom();
+		core::Size n_to_count( 0 );
+		for ( core::Size jj = upstream_restype_->first_sidechain_atom();
 				jj <= upstream_restype_->nheavyatoms(); ++jj ) {
 			Real weight( 1.0 );
-			Size path_dist( 0 );
+			core::Size path_dist( 0 );
 			if ( ! count_pair || ( count_pair->count( jj, ii_restype_id, weight, path_dist ) && weight == 1.0 ) ) {
 				++n_to_count;
 				//std::cout << "Bump check " << downstream_restype_->atom_name( ii_restype_id );
@@ -436,10 +436,10 @@ RigidLigandBuilder::initialize_upstream_residue(
 		}
 		/// Now make sure that if we're within count-pair striking distance of the backbone so that we don't
 		/// reject a conformation due to this atom as registering a collision in bump_grid.occupied()
-		for ( Size jj = 1; jj < upstream_restype_->first_sidechain_atom(); ++jj ) {
+		for ( core::Size jj = 1; jj < upstream_restype_->first_sidechain_atom(); ++jj ) {
 			if ( jj > upstream_restype_->natoms() ) break;
 			Real weight( 1.0 );
-			Size path_dist( 0 );
+			core::Size path_dist( 0 );
 			if ( count_pair && ( ! count_pair->count( jj, ii_restype_id, weight, path_dist ) || weight != 1.0 ) ) {
 				/// WITHIN STRIKING DISTANCE OF BACKBONE!  DO NOT COLLISON-CHECK THIS ATOM
 				atom_radii_[ ii_restype_id ] = ZERO;
@@ -447,10 +447,10 @@ RigidLigandBuilder::initialize_upstream_residue(
 		}
 		min_sep_d2_from_upstream_atoms_[ ii_restype_id ].resize( n_to_count );
 		n_to_count = 0;
-		for ( Size jj = upstream_restype_->first_sidechain_atom();
+		for ( core::Size jj = upstream_restype_->first_sidechain_atom();
 				jj <= upstream_restype_->nheavyatoms(); ++jj ) {
 			Real weight( 1.0 );
-			Size path_dist( 0 );
+			core::Size path_dist( 0 );
 			if ( ! count_pair || ( count_pair->count( jj, ii_restype_id, weight, path_dist ) && weight == 1.0 ) ) {
 				min_sep_d2_from_upstream_atoms_[ ii_restype_id ][ ++n_to_count ].first = jj;
 			}
@@ -459,12 +459,12 @@ RigidLigandBuilder::initialize_upstream_residue(
 
 	/// Now check atoms D1, D2, and D3 and makes sure they are not within striking distance of the backbone
 	/// If they are, then set their radii to ZERO
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		if ( count_pair ) {
-			Size ii_id = atoms_123_[ ii ];
-			for ( Size jj = 1; jj < upstream_restype_->first_sidechain_atom(); ++jj ) {
+			core::Size ii_id = atoms_123_[ ii ];
+			for ( core::Size jj = 1; jj < upstream_restype_->first_sidechain_atom(); ++jj ) {
 				Real weight( 1.0 );
-				Size path_dist( 0 );
+				core::Size path_dist( 0 );
 				if ( ! count_pair->count( jj, ii_id, weight, path_dist ) || weight != 1.0 ) {
 					radii_123_[ ii ] = ZERO;
 					break;
@@ -478,7 +478,7 @@ RigidLigandBuilder::initialize_upstream_residue(
 	}
 
 	//if ( count_pair ) {
-	// for ( Size ii = 1; ii <= upstream_restype_->n_
+	// for ( core::Size ii = 1; ii <= upstream_restype_->n_
 	//}
 }
 
@@ -496,7 +496,7 @@ HTReal global_frame = frame3 * oframe_in_at3frame_;
 //std::cout.precision( 6 );
 
 Vector euler_angles = global_frame.euler_angles_deg();
-for ( Size ii = 1; ii <= 3; ++ii ) if ( euler_angles( ii ) < 0 ) euler_angles( ii ) += 360.0;
+for ( core::Size ii = 1; ii <= 3; ++ii ) if ( euler_angles( ii ) < 0 ) euler_angles( ii ) += 360.0;
 Vector oat3_coords = global_frame.point(); //frame3 * points_in_at3_frame_[ restype_id_2_at3_frame_id_[ orientation_atoms_[ 3 ]]];
 
 Real6 global_coords;
@@ -520,10 +520,10 @@ std::cout << " 1: " << euler_angles( 1 ) << " vs " << euler_angles2( 1 ) << " ";
 std::cout << " 2: " << euler_angles( 2 ) << " vs " << euler_angles2( 2 ) << " ";
 std::cout << " 3: " << euler_angles( 3 ) << " vs " << euler_angles2( 3 ) << std::endl;
 
-for ( Size ii = 1; ii <= points_in_atom3_frame_.size(); ++ii ) {
+for ( core::Size ii = 1; ii <= points_in_atom3_frame_.size(); ++ii ) {
 Vector ii3loc = frame3 * points_in_atom3_frame_[ ii ];
 Vector iigloc = global_frame * points_in_global_orintation_frame_[ at3_frame_id_2_restype_id_[ ii ]];
-for ( Size jj = 1; jj <= 3; ++jj ) {
+for ( core::Size jj = 1; jj <= 3; ++jj ) {
 std::cout << ii << " " << jj << " " << ii3loc( jj ) << " " << iigloc( jj ) << std::endl;
 }
 }
@@ -587,12 +587,12 @@ void
 RigidLigandBuilder::initialize_upstream_nonbonded_min_separation_d2()
 {
 	debug_assert( bbgrid_set() );
-	for ( Size ii = 1; ii <= lig_conformers_[1]->n_collision_check_atoms(); ++ii ) {
-		Size ii_restype_id = lig_conformers_[1]->collision_check_id_2_restype_id( ii );
+	for ( core::Size ii = 1; ii <= lig_conformers_[1]->n_collision_check_atoms(); ++ii ) {
+		core::Size ii_restype_id = lig_conformers_[1]->collision_check_id_2_restype_id( ii );
 
 		ProbeRadius ii_rad = atom_radii_[ ii_restype_id ];
-		for ( Size jj = 1; jj <= min_sep_d2_from_upstream_atoms_[ ii_restype_id ].size(); ++jj ) {
-			Size upstream_atom_id = min_sep_d2_from_upstream_atoms_[ ii_restype_id ][ jj ].first;
+		for ( core::Size jj = 1; jj <= min_sep_d2_from_upstream_atoms_[ ii_restype_id ].size(); ++jj ) {
+			core::Size upstream_atom_id = min_sep_d2_from_upstream_atoms_[ ii_restype_id ][ jj ].first;
 			ProbeRadius jj_rad = probe_radius_for_atom_type( upstream_restype_->atom_type_index( upstream_atom_id ) );
 
 			Real dis = bbgrid().required_separation_distance( ii_rad, jj_rad );

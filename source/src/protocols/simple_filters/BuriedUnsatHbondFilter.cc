@@ -62,6 +62,8 @@ namespace simple_filters {
 
 static basic::Tracer buried_unsat_hbond_filter_tracer( "protocols.simple_filters.BuriedUnsatHbondFilter" );
 
+using core::Size;
+
 BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() :
 	Filter( "BuriedUnsatHbonds" ),
 	name_of_sasa_calc_( "default" ),
@@ -359,7 +361,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 	}
 	buried_unsat_hbond_filter_tracer << std::endl << "/////////////////////////////////////////////////////////////////////////////////////////" << std::endl << std::endl;
 
-	Size total_res( pose.size() );
+	core::Size total_res( pose.size() );
 
 	bool only_interface_local = only_interface_;
 
@@ -392,7 +394,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 	} else if ( residue_selector_ ) {
 		buried_unsat_hbond_filter_tracer << " LOOKING FOR UNSATS ONLY AT RESIDUES DEFINED BY YOUR residue_selector: " << std::endl;
 		core::select::residue_selector::ResidueSubset selection = residue_selector_->apply( pose );
-		for ( Size r = 1; r <= selection.size(); ++r ) {
+		for ( core::Size r = 1; r <= selection.size(); ++r ) {
 			if ( selection[ r ] ) {
 				region_to_calculate.insert(r);
 			}
@@ -407,12 +409,12 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		// if symmetric pose and only_interface=false, then will add up all unsats in ASU
 		if ( symmetric ) {
 			utility::vector1<std::string> sym_dof_name_list = core::pose::symmetry::sym_dof_names( pose );
-			for ( Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
-				Size sym_aware_jump_id(core::pose::symmetry::sym_dof_jump_num(pose,sym_dof_name_list[i]));
+			for ( core::Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
+				core::Size sym_aware_jump_id(core::pose::symmetry::sym_dof_jump_num(pose,sym_dof_name_list[i]));
 				jump_nums.push_back(sym_aware_jump_id);
 			}
 		} else {
-			for ( Size i=1; i <= pose.num_jump(); ++i ) {
+			for ( core::Size i=1; i <= pose.num_jump(); ++i ) {
 				jump_nums.push_back(i);
 			}
 		}
@@ -421,7 +423,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 			interf->distance( 8.0 );
 			interf->calculate( pose ); //selects residues: sq dist of nbr atoms < interf_dist_sq (8^2)
 
-			for ( Size resnum = 1; resnum <= total_res; resnum++ ) {
+			for ( core::Size resnum = 1; resnum <= total_res; resnum++ ) {
 				if ( interf->is_interface( resnum ) ) {
 					region_to_calculate.insert( resnum );
 				}
@@ -488,12 +490,12 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		core::pose::Pose unbound( pose );
 		core::Real const unbound_dist = 1000.0;
 
-		Size sym_aware_jump_id = 0;
+		core::Size sym_aware_jump_id = 0;
 		if ( symmetric ) {
 			if ( sym_dof_names() != "" ) {
 				utility::vector1<std::string> sym_dof_name_list;
 				sym_dof_name_list = utility::string_split( sym_dof_names() , ',' );
-				for ( Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
+				for ( core::Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
 					sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[i] );
 					protocols::rigid::RigidBodyTransMoverOP translate_unbound( new protocols::rigid::RigidBodyTransMover( unbound, sym_aware_jump_id ) );
 					translate_unbound->step_size( unbound_dist );

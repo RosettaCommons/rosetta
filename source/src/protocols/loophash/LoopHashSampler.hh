@@ -23,7 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <string>
 #include <vector>
 
@@ -36,7 +36,7 @@ namespace loophash {
 
 /// @brief Create candidate structures where some residues have been sampled by
 /// loophash.
-class LoopHashSampler : public utility::pointer::ReferenceCount  {
+class LoopHashSampler : public utility::VirtualBase  {
 public:
 
 	LoopHashSampler(

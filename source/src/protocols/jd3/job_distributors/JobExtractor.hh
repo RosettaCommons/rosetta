@@ -51,11 +51,11 @@ namespace jd3 {
 namespace job_distributors {
 
 
-class JobExtractor : public utility::pointer::ReferenceCount
+class JobExtractor : public utility::VirtualBase
 {
 public:
 	typedef std::list< core::Size > SizeList;
-	typedef std::map< Size, LarvalJobOP > JobMap;
+	typedef std::map< core::Size, LarvalJobOP > JobMap;
 	typedef utility::pointer::shared_ptr< JobMap > JobMapOP;
 	typedef std::set< core::Size > JobSet;
 	typedef utility::pointer::shared_ptr< JobSet > JobSetOP;
@@ -87,7 +87,7 @@ public:
 	void push_job_to_front_of_queue(LarvalJobOP job);
 
 	void
-	note_job_no_longer_running( Size job_id );
+	note_job_no_longer_running( core::Size job_id );
 
 	/// @brief Did we just declare a node complete? Returns true if so, and
 	/// sets the internal tracking variable to false.
@@ -113,7 +113,7 @@ private:
 	query_job_queen_for_more_jobs_for_current_node();
 
 	void
-	mark_node_as_complete( Size digraph_node );
+	mark_node_as_complete( core::Size digraph_node );
 
 	void
 	find_jobs_for_next_node();

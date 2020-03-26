@@ -45,13 +45,13 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <basic/Tracer.hh>
 
 namespace protocols {
 namespace hybridization {
 
-class FragmentBiasAssigner : public utility::pointer::ReferenceCount
+class FragmentBiasAssigner : public utility::VirtualBase
 {
 public:
 	// constructor

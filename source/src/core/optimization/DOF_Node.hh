@@ -29,7 +29,7 @@
 
 // Utility headers
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 
@@ -37,7 +37,7 @@ namespace core {
 namespace optimization {
 
 
-class DOF_Node : public utility::pointer::ReferenceCount
+class DOF_Node : public utility::VirtualBase
 {
 public:
 	//typedef numeric::xyzVector< Real > Vector;
@@ -168,7 +168,7 @@ public:
 		DOF_ID const & id_in,
 		DOF_NodeOP parent_in
 	):
-		utility::pointer::ReferenceCount(),
+		utility::VirtualBase(),
 		F1_(0.0),
 		F2_(0.0),
 		depth_(-1),

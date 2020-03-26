@@ -43,6 +43,7 @@ using std::string;
 using std::endl;
 using std::stringstream;
 using core::Real;
+using core::Size;
 using core::pose::Pose;
 using basic::datacache::DataMap;
 using utility::tag::TagCOP;
@@ -81,7 +82,7 @@ LoopsExplicitDefiner::parse_loop_tag(
 	SerializedLoop loop;
 
 	if ( tag->hasOption("start") ) {
-		loop.start = tag->getOption<Size>("start");
+		loop.start = tag->getOption<core::Size>("start");
 	} else {
 		stringstream err_msg;
 		err_msg
@@ -91,7 +92,7 @@ LoopsExplicitDefiner::parse_loop_tag(
 	}
 
 	if ( tag->hasOption("stop") ) {
-		loop.stop = tag->getOption<Size>("stop");
+		loop.stop = tag->getOption<core::Size>("stop");
 	} else {
 		stringstream err_msg;
 		err_msg
@@ -100,7 +101,7 @@ LoopsExplicitDefiner::parse_loop_tag(
 		utility_exit_with_message(err_msg.str());
 	}
 
-	loop.cut = tag->getOption<Size>("cut", 0);
+	loop.cut = tag->getOption<core::Size>("cut", 0);
 	loop.skip_rate = tag->getOption<Real>("skip_rate", 0.0);
 	loop.extended = tag->getOption<bool>("extended", false);
 

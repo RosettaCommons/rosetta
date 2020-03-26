@@ -28,7 +28,7 @@
 
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 
@@ -87,7 +87,7 @@ struct LigandCoordInfo {
 typedef boost::unordered_map< HashKey, std::set< LigandCoordInfo >, coord_hash, coord_equal_to > LigandHashMap;
 
 ///@details Given a ligand and an assembly, this class identifies the potential best mutations (with chi angles) to make to add a coordinating residue to the ligand. Another class will test the geometries and make the mutations.
-class LigandBindingResPlacer: public utility::pointer::ReferenceCount {
+class LigandBindingResPlacer: public utility::VirtualBase {
 
 public:
 

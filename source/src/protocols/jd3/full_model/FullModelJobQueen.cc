@@ -53,7 +53,7 @@
 #include <utility/keys/VariantKey.hh>
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/XMLSchemaValidation.hh>
@@ -459,7 +459,7 @@ void FullModelJobQueen::update_job_dag( JobDigraphUpdater & ) {}
 /// the TagOP objects for each preliminary LarvalJob to the derived class through the
 /// refine_job_list method.
 LarvalJobs
-FullModelJobQueen::determine_job_list( JobDAGNodeID job_dag_node_index, Size max_njobs )
+FullModelJobQueen::determine_job_list( JobDAGNodeID job_dag_node_index, core::Size max_njobs )
 {
 	// ok -- we're going to look for a job definition file, and failing that, fall back on
 	// the FullModelInputterFactory to determine where the input sources are coming from.
@@ -530,9 +530,9 @@ FullModelJobQueen::mature_larval_job(
 	return complete_larval_job_maturation( larval_job, job_options, input_results );
 }
 
-void FullModelJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults)
+void FullModelJobQueen::note_job_completed( LarvalJobCOP job, JobStatus status, core::Size nresults)
 {
-	//Size const job_id( job->job_index() );
+	//core::Size const job_id( job->job_index() );
 	if ( status == jd3_job_status_success ) {
 		FullModelInnerLarvalJobCOP inner_job = utility::pointer::dynamic_pointer_cast< FullModelInnerLarvalJob const > ( job->inner_job() );
 		if ( ! inner_job ) { throw bad_inner_job_exception(); }
@@ -573,7 +573,7 @@ FullModelJobQueen::result_outputter(
 	debug_assert( dynamic_cast< MOS const * > ( &spec ) );
 	auto const & mo_spec( static_cast< MOS const & > (spec) );
 	MOOP outputters( new MO );
-	for ( Size ii = 1; ii <= mo_spec.output_specifications().size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= mo_spec.output_specifications().size(); ++ii ) {
 		output::OutputSpecification const & ii_spec( *mo_spec.output_specifications()[ ii ] );
 		debug_assert( dynamic_cast< POS const * > (&ii_spec) );
 		auto const & ii_pos( static_cast< POS const & > (ii_spec) );
@@ -606,7 +606,7 @@ FullModelJobQueen::result_outputter(
 //  }
 // }
 //
-// Size const n_results_for_job = results_processed_for_job_[ job->job_index() ].n_results;
+// core::Size const n_results_for_job = results_processed_for_job_[ job->job_index() ].n_results;
 // JobOutputIndex output_index;
 // output_index.primary_output_index   = job->nstruct_index();
 // output_index.n_primary_outputs      = job->nstruct_max();
@@ -989,7 +989,7 @@ JobOutputIndex
 FullModelJobQueen::build_output_index(
 	protocols::jd3::LarvalJobCOP job,
 	ResultIndex result_index,
-	Size n_results_for_job
+	core::Size n_results_for_job
 )
 {
 	JobOutputIndex output_index;
@@ -1007,7 +1007,7 @@ void
 FullModelJobQueen::assign_output_index(
 	protocols::jd3::LarvalJobCOP,
 	ResultIndex,
-	Size,
+	core::Size,
 	JobOutputIndex &
 )
 {}
@@ -1496,7 +1496,7 @@ FullModelJobQueen::determine_preliminary_job_list_from_command_line()
 	core::Size count_prelim_nodes( 0 );
 	for ( auto const & input_pose : input_poses ) {
 		FullModelPreliminaryLarvalJob prelim_job;
-		Size nstruct = nstruct_for_job( nullptr );
+		core::Size nstruct = nstruct_for_job( nullptr );
 		FullModelInnerLarvalJobOP inner_job = FullModelInnerLarvalJobOP( new FullModelInnerLarvalJob( nstruct, ++count_prelim_nodes ) );
 		inner_job->input_source( input_pose.first );
 		inner_job->outputter( outputter->class_key() );

@@ -100,7 +100,7 @@ MPDockingMover::MPDockingMover( bool lowres, bool highres ) :
 
 /// @brief Default Constructor
 /// @details Docks two proteins with default normal=(0,0,1) and center=(0,0,0)
-MPDockingMover::MPDockingMover( Size jump_num, bool lowres, bool highres ) :
+MPDockingMover::MPDockingMover( core::Size jump_num, bool lowres, bool highres ) :
 	protocols::moves::Mover(),
 	add_membrane_mover_( new AddMembraneMover() ),
 	docking_protocol_( new DockingProtocol() ),
@@ -210,12 +210,12 @@ MPDockingMover::parse_my_tag(
 
 ////////////////////////////////////////////////////////////////////////////////
 // set inner cycles in DockingProtocol
-void MPDockingMover::set_cycles_inner( Size cycles_inner ) {
+void MPDockingMover::set_cycles_inner( core::Size cycles_inner ) {
 	docking_protocol_->set_inner_cycles( cycles_inner );
 }
 
 // set outer cycles in DockingProtocol
-void MPDockingMover::set_cycles_outer( Size cycles_outer ) {
+void MPDockingMover::set_cycles_outer( core::Size cycles_outer ) {
 	docking_protocol_->set_outer_cycles( cycles_outer );
 }
 

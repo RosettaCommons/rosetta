@@ -22,7 +22,7 @@
 #include <core/optimization/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -32,10 +32,10 @@ namespace optimization {
 
 
 /// @brief Multifunction interface class
-class Multifunc : public utility::pointer::ReferenceCount
+class Multifunc : public utility::VirtualBase
 {
 public:
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 
 protected: // Creation
 

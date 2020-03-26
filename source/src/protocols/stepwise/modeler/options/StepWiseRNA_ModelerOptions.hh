@@ -21,7 +21,7 @@
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.hh>
 
 namespace protocols {
@@ -30,7 +30,7 @@ namespace modeler {
 namespace options {
 
 // multiple inheritance -- bad form -- but will replace with composition later, perhaps.
-class StepWiseRNA_ModelerOptions: public virtual utility::pointer::ReferenceCount {
+class StepWiseRNA_ModelerOptions: public virtual utility::VirtualBase {
 
 public:
 

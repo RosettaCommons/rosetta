@@ -29,7 +29,7 @@
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -45,7 +45,7 @@ typedef std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> Candidate;
 
 /// @brief  represents a nonlocal fragment pair.
 /// @details NonlocalPair contains query start positions for each fragment of pair i and j, and their corresponding fragment candidate
-class NonlocalPair: public utility::pointer::ReferenceCount {
+class NonlocalPair: public utility::VirtualBase {
 public:
 	NonlocalPair( core::Size query_pos_i, core::Size query_pos_j, Candidate candidate_i, Candidate candidate_j,
 		core::Size candidate_i_rank, core::Size candidate_j_rank, utility::vector1<ContactOP> & contacts ) {

@@ -39,6 +39,8 @@ namespace protocols {
 namespace flexpack {
 namespace interaction_graph {
 
+using core::Size;
+
 OTFFlexbbNode::OTFFlexbbNode(
 	OTFFlexbbInteractionGraph * owner,
 	int node_id,
@@ -93,10 +95,10 @@ OTFFlexbbNode::declare_all_rotamers_initialized()
 			Real bounding_square_radius( 0.0 );
 			for ( int kk = 1; kk <= num_states_for_aa_for_bb()( jj, ii ); ++kk ) {
 				//std::cout << get_node_index() << " ii: " << ii << " jj: " << jj << " kk: " << kk <<  std::endl;
-				Size kkrotid = state_offsets_for_aa_for_bb()( jj, ii ) + kk;
+				core::Size kkrotid = state_offsets_for_aa_for_bb()( jj, ii ) + kk;
 				Residue const & kkrot = *rotamers_[ kkrotid ];
 				if ( kk == 1 ) { nbatm = kkrot.xyz( kkrot.nbr_atom() ); }
-				for ( Size ll = 1; ll <= kkrot.nheavyatoms(); ++ll ) {
+				for ( core::Size ll = 1; ll <= kkrot.nheavyatoms(); ++ll ) {
 					//std::cout << get_node_index() << " ii: " << ii << " jj: " << jj << " kk: " << kk << " ll: " << ll << std::endl;
 					DistanceSquared lldis2 = nbatm.distance_squared( kkrot.xyz( ll ) );
 					if ( bounding_square_radius < lldis2 ) {
@@ -566,11 +568,11 @@ OTFFlexbbEdge::prepare_for_simulated_annealing()
 
 	Real const sfxn_reach = sfxn_->info()->max_atomic_interaction_distance();
 
-	Size const naatypes = sr_aa_neighbors_.size1();
+	core::Size const naatypes = sr_aa_neighbors_.size1();
 	for ( int ii = 1; ii <= num_bb( 0 ); ++ii ) {
 		for ( int jj = 1, jje = compact_bbindex( num_bb( 1 ) ); jj <= jje; ++jj ) {
 			int const jjbb = get_nodes_from_same_flexseg() ? ii : jj;
-			for ( Size kk = 1; kk <= naatypes; ++kk ) {
+			for ( core::Size kk = 1; kk <= naatypes; ++kk ) {
 
 				if ( get_otfflexbb_node( 0 )->num_states_for_aa_for_bb()( kk, ii ) == 0 ) continue;
 				int kkoffset = get_otfflexbb_node( 0 )->state_offsets_for_aa_for_bb()( kk, ii );
@@ -579,7 +581,7 @@ OTFFlexbbEdge::prepare_for_simulated_annealing()
 				Vector const kkpos = kkrot.xyz( kkrot.nbr_atom() );
 				Real const kk_reach = get_otfflexbb_node( 0 )->bounding_radius_for_rotamers( kk, ii );
 
-				for ( Size ll = 1; ll <= naatypes; ++ll ) {
+				for ( core::Size ll = 1; ll <= naatypes; ++ll ) {
 					if ( get_otfflexbb_node( 1 )->num_states_for_aa_for_bb()( ll, jjbb ) == 0 ) continue;
 
 					int lloffset = get_otfflexbb_node( 1 )->state_offsets_for_aa_for_bb()( ll, jjbb );
@@ -770,7 +772,7 @@ OTFFlexbbInteractionGraph::set_scorefxn( ScoreFunction const & sfxn )
 	opts.decompose_bb_hb_into_pair_energies( true );
 	oc_sfxn_->set_energy_method_options( opts );
 
-	for ( Size ii = 1; ii <= n_score_types; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 		ScoreType iist = (ScoreType) ii;
 		if ( sfxn.weights()[ iist ] != 0.0 ) {
 			oc_sfxn_->set_weight( iist, sfxn.weights()[ iist ] );
@@ -851,21 +853,21 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 			<< " ocE: " << alternate_pose_energy_ << " realE " << alt_E_real << " delta: " << alternate_pose_energy_ - alt_E_real  <<  std::endl;
 		n_correct_since_last_problem = 0;
 		std::cout << "Changing nodes:";
-		for ( Size ii = 1; ii <= changing_seqpos_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= changing_seqpos_.size(); ++ii ) {
 			std::cout << " ( " << changing_seqpos_[ ii ] << " " << alt_rot_inds_[ ii ] << ")";
 		}
 		std::cout << std::endl;
-		for ( Size ii = 1; ii <= changing_seqpos_.size(); ++ii ) {
-			Size ii_resid = changing_seqpos_[ ii ];
-			Size ii_moltenresid = resid_2_moltenres_[ ii_resid ];
+		for ( core::Size ii = 1; ii <= changing_seqpos_.size(); ++ii ) {
+			core::Size ii_resid = changing_seqpos_[ ii ];
+			core::Size ii_moltenresid = resid_2_moltenres_[ ii_resid ];
 			//std::cout << "Real energies: " << ii_moltenresid;
 			Real ii_total( 0.0 );
 			for ( utility::graph::Graph::EdgeListIter
 					ir  = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_begin(),
 					ire = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_end();
 					ir != ire; ++ir ) {
-				Size jj_resid = (*ir)->get_other_ind( ii_resid );
-				Size jj_moltenresid = resid_2_moltenres_[ jj_resid ];
+				core::Size jj_resid = (*ir)->get_other_ind( ii_resid );
+				core::Size jj_moltenresid = resid_2_moltenres_[ jj_resid ];
 				if ( jj_moltenresid == 0 ) continue;
 
 				Real ii_jj_energy = (static_cast< core::scoring::EnergyEdge const *> (*ir))->dot( oc_sfxn_->weights() );
@@ -917,8 +919,8 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 					ir  = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_begin(),
 					ire = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_end();
 					ir != ire; ++ir ) {
-				Size jj_resid = (*ir)->get_other_ind( ii_resid );
-				Size jj_moltenresid = resid_2_moltenres_[ jj_resid ];
+				core::Size jj_resid = (*ir)->get_other_ind( ii_resid );
+				core::Size jj_moltenresid = resid_2_moltenres_[ jj_resid ];
 				if ( jj_moltenresid != 0 ) continue;
 				Real ii_jj_energy = (static_cast< core::scoring::EnergyEdge const *> (*ir))->dot(oc_sfxn_->weights());
 				ii_total += ii_jj_energy;
@@ -955,12 +957,12 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 				std::cout << "One body internal " << ii_one_body_energy << " ";
 				alternate_pose_->energies().onebody_energies( ii_resid ).show_weighted( std::cout, oc_sfxn_->weights() );
 				std::cout << std::endl;
-				/*for ( Size jj = 1; jj <= alt_rots_[ ii ]->mainchain_torsions().size(); ++jj ) {
+				/*for ( core::Size jj = 1; jj <= alt_rots_[ ii ]->mainchain_torsions().size(); ++jj ) {
 				std::cout << "bb angles: " << jj << " " <<
 				alternate_pose_->residue( ii_resid ).mainchain_torsions()[ jj ] << " vs " <<
 				alt_rots_[ ii ]->mainchain_torsions()[ jj ] << std::endl;
 				}
-				for ( Size jj = 1; jj <= alt_rots_[ ii ]->natoms(); ++jj ) {
+				for ( core::Size jj = 1; jj <= alt_rots_[ ii ]->natoms(); ++jj ) {
 				std::cout << "coords: " << jj << " (" << alternate_pose_->residue( ii_resid ).xyz( jj ).x()
 				<< " " << alternate_pose_->residue( ii_resid ).xyz( jj ).y()
 				<< " " << alternate_pose_->residue( ii_resid ).xyz( jj ).z() << ") vs ("
@@ -973,8 +975,8 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 						ir  = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_begin(),
 						ire = alternate_pose_->energies().energy_graph().get_node(ii_resid)->edge_list_end();
 						ir != ire; ++ir ) {
-					Size jj_resid = (*ir)->get_other_ind( ii_resid );
-					Size jj_moltenresid = resid_2_moltenres_[ jj_resid ];
+					core::Size jj_resid = (*ir)->get_other_ind( ii_resid );
+					core::Size jj_moltenresid = resid_2_moltenres_[ jj_resid ];
 					if ( jj_moltenresid != 0 ) continue;
 					Real ii_jj_energy = (static_cast< core::scoring::EnergyEdge const *> (*ir))->dot( oc_sfxn_->weights() );
 					std::cout << ii_resid << " " << jj_resid << " " << ii_jj_energy << std::endl;;
@@ -1002,7 +1004,7 @@ OTFFlexbbInteractionGraph::debug_note_projected_deltaE_of_considered_substitutio
 		}
 
 
-		//for ( Size ii = 1; ii <= moltenres_2_resid_.size(); ++ii ) {
+		//for ( core::Size ii = 1; ii <= moltenres_2_resid_.size(); ++ii ) {
 		//std::cout << "moltenres: " << ii << " " << moltenres_2_resid_[ ii ] << std::endl;
 		//}
 		static int count_bad( 0 );

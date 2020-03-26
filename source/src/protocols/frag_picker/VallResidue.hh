@@ -25,7 +25,7 @@
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // project headers
 #include <core/chemical/AA.hh>
@@ -43,7 +43,7 @@ namespace protocols {
 namespace frag_picker {
 
 /// @brief class for managing a line of the Vall fragment library
-class VallResidue: public utility::pointer::ReferenceCount {
+class VallResidue: public utility::VirtualBase {
 
 public:
 	// typedefs

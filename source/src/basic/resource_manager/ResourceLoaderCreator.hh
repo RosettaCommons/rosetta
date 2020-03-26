@@ -21,7 +21,7 @@
 #include <basic/resource_manager/ResourceLoader.fwd.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++ headers
@@ -35,7 +35,7 @@ namespace resource_manager {
 /// @brief Instantiates a ResourceLoader as part of the ResourceLoaderFactory scheme.
 /// Derived classes should be registered with the ResourceLoaderFactory in one of
 /// the library init.cc files with a ResourceLoaderRegistrator
-class ResourceLoaderCreator : public utility::pointer::ReferenceCount
+class ResourceLoaderCreator : public utility::VirtualBase
 {
 public:
 

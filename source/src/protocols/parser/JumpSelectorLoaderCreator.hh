@@ -18,7 +18,7 @@
 #include <protocols/parser/DataLoaderCreator.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace parser {

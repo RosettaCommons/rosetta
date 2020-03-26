@@ -51,8 +51,8 @@ void get_chain_terms(core::pose::Pose const &ps, utility::vector1<ChainTerm> &ch
 
 	// create vector of protein residues (protein[i] <-- ith protein residue in the pose,
 	// for i=1,...,TOTRES, where TOTRES is the number of protein residues in the pose)
-	utility::vector1<Size> protein;
-	for ( Size i=1; i<=ps.size(); ++i ) {
+	utility::vector1<core::Size> protein;
+	for ( core::Size i=1; i<=ps.size(); ++i ) {
 		if ( ps.residue(i).is_protein() ) {
 			protein.push_back(i);
 		}
@@ -66,18 +66,18 @@ void get_chain_terms(core::pose::Pose const &ps, utility::vector1<ChainTerm> &ch
 	// (i=1,...,N, where N is the number of such chains)
 	core::pose::Pose protein_pose;
 	core::io::pose_from_pose(protein_pose, ps, protein);
-	for ( Size i=1; i<=protein_pose.num_chains(); ++i ) {
+	for ( core::Size i=1; i<=protein_pose.num_chains(); ++i ) {
 
-		Size chain_begin = protein_pose.chain_begin(i);
+		core::Size chain_begin = protein_pose.chain_begin(i);
 		char beg_cid = protein_pose.pdb_info()->chain(chain_begin);
 		int beg_num = protein_pose.pdb_info()->number(chain_begin);
 		char beg_ico = protein_pose.pdb_info()->icode(chain_begin);
-		Size chain_begin_orig = ps.pdb_info()->pdb2pose(beg_cid, beg_num, beg_ico);
+		core::Size chain_begin_orig = ps.pdb_info()->pdb2pose(beg_cid, beg_num, beg_ico);
 
-		Size chain_end = protein_pose.chain_end(i);
+		core::Size chain_end = protein_pose.chain_end(i);
 		int end_num = protein_pose.pdb_info()->number(chain_end);
 		char end_ico = protein_pose.pdb_info()->icode(chain_end);
-		Size chain_end_orig = ps.pdb_info()->pdb2pose(beg_cid, end_num, end_ico);
+		core::Size chain_end_orig = ps.pdb_info()->pdb2pose(beg_cid, end_num, end_ico);
 
 		chains.push_back(ChainTerm(beg_cid, chain_begin_orig, chain_end_orig, beg_num, end_num));
 	}
@@ -98,7 +98,7 @@ void print_chains(utility::vector1<ChainTerm> const &chains, basic::Tracer &t) {
 	t << setw(4) << "cid_" << setw(8) << "n_ps_" << setw(8) << "c_ps_" <<
 		setw(8) << "n_pdb_" << setw(8) << "c_pdb_" << std::endl;
 
-	for ( Size i=1; i<=chains.size(); ++i ) {
+	for ( core::Size i=1; i<=chains.size(); ++i ) {
 		chains[i].print(t);
 	}
 }

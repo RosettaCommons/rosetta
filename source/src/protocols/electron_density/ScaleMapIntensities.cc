@@ -51,6 +51,7 @@ static basic::Tracer TR( "protocols.electron_density.ScaleMapIntensities" );
 namespace protocols {
 namespace electron_density {
 
+using core::Size;
 using core::scoring::electron_density::poseCoords;
 using core::scoring::electron_density::poseCoord;
 
@@ -146,7 +147,7 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		numeric::fourier::fft3(rhoC, Frho);
 		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 0.0, 0.0, mapI, bin_squared_ );
 
-		for ( Size i=1; i<=nresbins_; ++i ) {
+		for ( core::Size i=1; i<=nresbins_; ++i ) {
 			if ( mapI[i] > 0 ) {
 				rescale_factor[i] = sqrt(modelI[i] / mapI[i]);
 			}
@@ -159,7 +160,7 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().get_data(), Frho);
 		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 0.0, 0.0, mapI, bin_squared_);
 
-		for ( Size i=1; i<=nresbins_; ++i ) {
+		for ( core::Size i=1; i<=nresbins_; ++i ) {
 			rescale_factor[i] = std::sqrt( exp(-b_sharpen_*resobins[i]*resobins[i]/4.0) );
 		}
 	}
@@ -167,13 +168,13 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 	if ( b_sharpen_ == 0 ) {
 		TR << "SCALING MAP:" << std::endl;
 		TR << "resbin   model   map   rescale" << std::endl;
-		for ( Size i=1; i<=nresbins_; ++i ) {
+		for ( core::Size i=1; i<=nresbins_; ++i ) {
 			TR << resobins[i] << "  " << modelI[i] << " " << mapI[i] << " " << rescale_factor[i] << std::endl;
 		}
 	} else {
 		TR << "SCALING MAP:" << std::endl;
 		TR << "resbin    map   rescale" << std::endl;
-		for ( Size i=1; i<=nresbins_; ++i ) {
+		for ( core::Size i=1; i<=nresbins_; ++i ) {
 			TR << resobins[i] << "  " << mapI[i] << " " << rescale_factor[i] << std::endl;
 		}
 	}

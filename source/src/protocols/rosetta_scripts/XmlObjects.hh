@@ -60,7 +60,7 @@ namespace protocols {
 namespace rosetta_scripts {
 
 
-class XmlObjects : public utility::pointer::ReferenceCount {
+class XmlObjects : public utility::VirtualBase {
 public:
 
 	XmlObjects();

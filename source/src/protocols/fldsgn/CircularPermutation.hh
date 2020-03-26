@@ -106,24 +106,24 @@ public: // accessors
 
 
 	/// @brief
-	Size new_terminal_pos() const;
+	core::Size new_terminal_pos() const;
 
 
 public: // mutators
 
 
 	/// @brief
-	void new_terminal_pos( Size const s );
+	void new_terminal_pos( core::Size const s );
 
 
 public: // helper functions
 
 
 	/// @brief
-	Size which_chain( Size const s, Pose const & pose ) const;
+	core::Size which_chain( core::Size const s, Pose const & pose ) const;
 
 	/// @brief
-	void split_chains( Pose & pose, utility::vector1< Size > const & pos );
+	void split_chains( Pose & pose, utility::vector1< core::Size > const & pos );
 
 
 public: // virtual main methods
@@ -161,12 +161,12 @@ private: // data
 
 
 	/// @brief new N- & C- terminal position
-	Size new_terminal_pos_;
+	core::Size new_terminal_pos_;
 
 	/// @brief
 	bool ignore_chain_;
 
-	Size split_;
+	core::Size split_;
 
 
 };

@@ -16,7 +16,7 @@
 
 // type headers
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // package headers
 #include <protocols/frag_picker/FragmentPicker.fwd.hh>
@@ -31,7 +31,7 @@ namespace frag_picker {
 namespace scores {
 
 /// @brief  a fragment candidate score
-class FragmentScoringMethod: public utility::pointer::ReferenceCount {
+class FragmentScoringMethod: public utility::VirtualBase {
 public:
 
 	FragmentScoringMethod(core::Size priority, core::Real lowest_acceptable_value,
@@ -93,7 +93,7 @@ protected:
 };
 
 /// @brief  a fragment candidate
-class MakeFragmentScoringMethod: public utility::pointer::ReferenceCount {
+class MakeFragmentScoringMethod: public utility::VirtualBase {
 public:
 	MakeFragmentScoringMethod(std::string name) :
 		name_(name) {

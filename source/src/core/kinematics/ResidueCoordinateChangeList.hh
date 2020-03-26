@@ -22,7 +22,7 @@
 #include <core/id/AtomID.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 #ifdef    SERIALIZATION
@@ -39,7 +39,7 @@ namespace kinematics {
 /// (xyz) coordinate changes so that the Conformation may shuttle
 /// O(k) -- output sensitive -- data from the AtomTree to the
 /// Residue objects it manages.
-class ResidueCoordinateChangeList : public utility::pointer::ReferenceCount
+class ResidueCoordinateChangeList : public utility::VirtualBase
 {
 public:
 	ResidueCoordinateChangeList();

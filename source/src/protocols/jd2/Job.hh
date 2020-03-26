@@ -22,7 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 
 //C++ headers
@@ -43,7 +43,7 @@ namespace jd2 {
 /// data. The idea here is that your scores, etc are associated with the job,
 /// not with a particular pose within that running job.  Thus, the Job object is
 /// a better place to store them than the pose.
-class Job : public utility::pointer::ReferenceCount
+class Job : public utility::VirtualBase
 {
 public:
 

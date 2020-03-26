@@ -68,10 +68,10 @@ public:
 	std::string
 	get_name() const override;
 
-	Size start();
-	Size original_end();
-	Size end();
-	Size insertion_length();
+	core::Size start();
+	core::Size original_end();
+	core::Size end();
+	core::Size insertion_length();
 
 protected:
 

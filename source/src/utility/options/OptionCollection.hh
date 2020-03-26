@@ -57,7 +57,7 @@
 #include <utility/down_cast.hh>
 #include <utility/keys/SmallKeyVector.hh>
 #include <utility/exit.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -83,7 +83,7 @@ namespace options {
 
 
 /// @brief Program options collection
-class OptionCollection : public utility::pointer::ReferenceCount
+class OptionCollection : public utility::VirtualBase
 {
 
 

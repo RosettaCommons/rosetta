@@ -27,7 +27,6 @@ namespace sic_dock {
 namespace scores {
 
 
-using core::Size;
 using core::Real;
 using std::endl;
 using utility::vector1;
@@ -35,14 +34,13 @@ using namespace basic::options::OptionKeys;
 using ObjexxFCL::format::F;
 using ObjexxFCL::format::I;
 using Real = core::Real;
-using Size = core::Size;
 using Pose = core::pose::Pose;
 using Xform = Xform;
 using Vec = numeric::xyzVector<Real>;
 using Mat = numeric::xyzMatrix<Real>;
 using Vecs = utility::vector1<Vec>;
 using Reals = utility::vector1<Real>;
-using Sizes = utility::vector1<Size>;
+using Sizes = utility::vector1<core::Size>;
 using Xforms = numeric::Xforms;
 
 
@@ -106,19 +104,17 @@ void printbpy(std::ostream & out, Xform const & x,int resi=1000){
 	}
 }
 
-using core::Size;
 using core::Real;
 using utility::vector1;
 using namespace basic::options::OptionKeys;
 using Real = core::Real;
-using Size = core::Size;
 using Pose = core::pose::Pose;
 using Xform = Xform;
 using Vec = numeric::xyzVector<Real>;
 using Mat = numeric::xyzMatrix<Real>;
 using Vecs = utility::vector1<Vec>;
 using Reals = utility::vector1<Real>;
-using Sizes = utility::vector1<Size>;
+using Sizes = utility::vector1<core::Size>;
 using Xforms = numeric::Xforms;
 using Scores = utility::vector1<RigidScoreCOP>;
 
@@ -132,7 +128,7 @@ TrisBpyScore::TrisBpyScore(
 	tolerance_(tolerance),
 	min_bpy_contacts_(min_bpy_contacts)
 {
-	for ( Size ir = 1; ir <= pose_.size(); ++ir ) {
+	for ( core::Size ir = 1; ir <= pose_.size(); ++ir ) {
 		Vec  N = pose_.residue(ir).xyz(1);
 		Vec CA = pose_.residue(ir).xyz(2);
 		Vec  C = pose_.residue(ir).xyz(3);

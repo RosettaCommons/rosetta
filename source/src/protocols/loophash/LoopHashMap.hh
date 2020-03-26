@@ -20,7 +20,7 @@
 //#include <protocols/match/Hit.fwd.hh>
 //#include <protocols/match/SixDHasher.hh>
 #include <boost/unordered_map.hpp>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/loophash/BackboneDB.hh>
 
 #include <numeric/geometry/hashing/SixDHasher.hh>

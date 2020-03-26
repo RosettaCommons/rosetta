@@ -27,7 +27,7 @@
 // Utility header
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -38,10 +38,10 @@ namespace scoring {
 namespace mm {
 
 
-class MMBondLengthScore : public utility::pointer::ReferenceCount
+class MMBondLengthScore : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~MMBondLengthScore() override;
 
 	MMBondLengthScore();

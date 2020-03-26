@@ -16,7 +16,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #include <numeric/xyzVector.hh>
@@ -38,7 +38,7 @@ struct Transformation
 	numeric::xyzVector< Real > translation; // translation
 };
 
-class PatchdockReader : public utility::pointer::ReferenceCount
+class PatchdockReader : public utility::VirtualBase
 {
 public:
 	PatchdockReader();

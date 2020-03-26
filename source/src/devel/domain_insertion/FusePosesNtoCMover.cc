@@ -110,11 +110,11 @@ FusePosesNtoCMover::apply( core::pose::Pose & pose )
 
 	//1.
 	// remember: fuse pose will be new c-terminus
-	for ( Size i(1); i <= candidate_pdbpos_pose_.size(); ++i ) {
+	for ( core::Size i(1); i <= candidate_pdbpos_pose_.size(); ++i ) {
 
-		for ( Size j(1); j <= candidate_pdbpos_fuse_pose_.size(); ++j ) {
+		for ( core::Size j(1); j <= candidate_pdbpos_fuse_pose_.size(); ++j ) {
 
-			Size pose_pdbpos( candidate_pdbpos_pose_[i] ), fusepose_pdbpos( candidate_pdbpos_fuse_pose_[j] );
+			core::Size pose_pdbpos( candidate_pdbpos_pose_[i] ), fusepose_pdbpos( candidate_pdbpos_fuse_pose_[j] );
 
 			std::string combo_identifier(utility::to_string(pose_pdbpos)+"_"+utility::to_string(fusepose_pdbpos) );
 
@@ -128,7 +128,7 @@ FusePosesNtoCMover::apply( core::pose::Pose & pose )
 			core::pose::PoseOP trunc_pose( this->truncate_pose_at_fusion_site( pose, pose_pdbpos, false ) );
 			core::pose::PoseOP trunc_fusepose( this->truncate_pose_at_fusion_site( *fuse_pose_, fusepose_pdbpos, true ) );
 
-			Size num_hardsphere_clashes( this->count_hardsphere_clashes( *trunc_pose, *trunc_fusepose ) );
+			core::Size num_hardsphere_clashes( this->count_hardsphere_clashes( *trunc_pose, *trunc_fusepose ) );
 
 			if ( debugmode_ ) {
 				tr << "RMS for superposition on residues " << pose_pdbpos << " and " << fusepose_pdbpos << " is " << this_pair_rmsd << " and there are " << num_hardsphere_clashes << " hardsphere clashes." << std::endl;
@@ -212,16 +212,16 @@ FusePosesNtoCMover::parse_my_tag(
 	} else utility_exit_with_message("FusePosesNtoCMover needs to be supplied with an cterm_span, i.e. the candidate residues for the C-terminal partner.");
 
 	if ( tag->hasOption("superpose_window") ) {
-		superpose_window_ = tag->getOption<Size>( "superpose_window");
+		superpose_window_ = tag->getOption<core::Size>( "superpose_window");
 	}
 	if ( tag->hasOption("relax_window") ) {
-		relax_window_ = tag->getOption<Size>( "relax_window");
+		relax_window_ = tag->getOption<core::Size>( "relax_window");
 	}
 	if ( tag->hasOption("max_number_allowed_clashes") ) {
-		max_number_allowed_clashes_ = tag->getOption<Size>( "max_number_allowed_clashes");
+		max_number_allowed_clashes_ = tag->getOption<core::Size>( "max_number_allowed_clashes");
 	}
 	if ( tag->hasOption("hardsphere_clash_limit") ) {
-		hardsphere_clash_limit_ = tag->getOption<Size>( "hardsphere_clash_limit");
+		hardsphere_clash_limit_ = tag->getOption<core::Size>( "hardsphere_clash_limit");
 	}
 	if ( tag->hasOption("max_allowed_rms") ) {
 		max_allowed_rms_ = tag->getOption<Real>( "max_allowed_rms");
@@ -274,8 +274,8 @@ FusePosesNtoCMover::setup_relax_fold_tree(
 
 	core::kinematics::FoldTree const & old_fold_tree( pose.fold_tree() );
 	core::kinematics::FoldTree new_ft;
-	Size jump_count(old_fold_tree.num_jump() + 1);
-	Size chain1_span_end(0);
+	core::Size jump_count(old_fold_tree.num_jump() + 1);
+	core::Size chain1_span_end(0);
 	jumps_to_move_.clear();
 
 	if ( debugmode_ ) {
@@ -328,16 +328,16 @@ FusePosesNtoCMover::generate_default_relax_mover(
 {
 	using core::pack::task::operation::TaskOperationCOP;
 
-	Size repeats( debugmode_ ? 1 : 5 );
+	core::Size repeats( debugmode_ ? 1 : 5 );
 	protocols::relax::FastRelaxOP frelax( new protocols::relax::FastRelax( sfxn_, repeats ) );
 
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_chi(true);
 	mm->set_bb( false );
 	mm->set_jump( false );
-	for ( Size i = 1; i <= jumps_to_move_.size(); ++i ) mm->set_jump( jumps_to_move_[i], true );
-	for ( Size i = 1; i <= fusion_regions_.size(); ++i ) {
-		for ( Size j = fusion_regions_[i].first; j <= fusion_regions_[i].second; ++j ) mm->set_bb( j, true );
+	for ( core::Size i = 1; i <= jumps_to_move_.size(); ++i ) mm->set_jump( jumps_to_move_[i], true );
+	for ( core::Size i = 1; i <= fusion_regions_.size(); ++i ) {
+		for ( core::Size j = fusion_regions_[i].first; j <= fusion_regions_[i].second; ++j ) mm->set_bb( j, true );
 	}
 	frelax->set_movemap( mm );
 
@@ -352,7 +352,7 @@ FusePosesNtoCMover::generate_default_relax_mover(
 
 void
 FusePosesNtoCMover::setup_candidate_pdbpos(
-	utility::vector1< Size > & pdbpos,
+	utility::vector1< core::Size > & pdbpos,
 	std::string const tag_input
 ) const
 {
@@ -364,11 +364,11 @@ FusePosesNtoCMover::setup_candidate_pdbpos(
 		pdbpos.push_back(  core::Size( utility::string2int( resvec[1] ) ) );
 		return;
 	}
-	Size lower_res( core::Size( utility::string2int( resvec[1] )));
-	Size upper_res( core::Size( utility::string2int( resvec[2] )));
+	core::Size lower_res( core::Size( utility::string2int( resvec[1] )));
+	core::Size upper_res( core::Size( utility::string2int( resvec[2] )));
 	runtime_assert( lower_res <= upper_res );
 
-	for ( Size i = lower_res; i <= upper_res; ++i ) {
+	for ( core::Size i = lower_res; i <= upper_res; ++i ) {
 		pdbpos.push_back( i );
 	}
 }
@@ -378,8 +378,8 @@ core::id::AtomID_Map< core::id::AtomID >
 FusePosesNtoCMover::generate_superposition_map(
 	core::pose::Pose const & pose,
 	core::pose::Pose const & fuse_pose,
-	Size const pose_pdbpos,
-	Size const fuse_pose_pdbpos
+	core::Size const pose_pdbpos,
+	core::Size const fuse_pose_pdbpos
 ) const
 {
 
@@ -387,23 +387,23 @@ FusePosesNtoCMover::generate_superposition_map(
 	core::pose::initialize_atomid_map( atom_map, fuse_pose, core::id::AtomID::BOGUS_ATOM_ID() );
 
 	//remember: pose is nterminal half, fuse_pose cterminal half
-	for ( Size chain_it(1); chain_it <= chains_to_use_.size(); ++chain_it ) {
+	for ( core::Size chain_it(1); chain_it <= chains_to_use_.size(); ++chain_it ) {
 
 		char chain( chains_to_use_[ chain_it ] );
-		Size pose_seqpos( pose.pdb_info()->pdb2pose( chain, pose_pdbpos ) );
-		Size fuse_pose_seqpos( fuse_pose.pdb_info()->pdb2pose( chain, fuse_pose_pdbpos ) );
+		core::Size pose_seqpos( pose.pdb_info()->pdb2pose( chain, pose_pdbpos ) );
+		core::Size fuse_pose_seqpos( fuse_pose.pdb_info()->pdb2pose( chain, fuse_pose_pdbpos ) );
 
 		//we have to figure out what the number of the chain is in the
 		//internal numbering of the conformation objects, and what the
 		//respective first and last residues are
-		Size pose_chain_no( pose.chain( pose_seqpos) );
-		Size fuse_pose_chain_no( fuse_pose.chain( fuse_pose_seqpos) );
+		core::Size pose_chain_no( pose.chain( pose_seqpos) );
+		core::Size fuse_pose_chain_no( fuse_pose.chain( fuse_pose_seqpos) );
 
-		Size pose_chain_first_seqpos( pose.conformation().chain_begin( pose_chain_no ) );
-		Size pose_chain_last_seqpos( pose.conformation().chain_end( pose_chain_no ) );
+		core::Size pose_chain_first_seqpos( pose.conformation().chain_begin( pose_chain_no ) );
+		core::Size pose_chain_last_seqpos( pose.conformation().chain_end( pose_chain_no ) );
 
-		Size fuse_pose_chain_first_seqpos( fuse_pose.conformation().chain_begin( fuse_pose_chain_no ) );
-		Size fuse_pose_chain_last_seqpos( pose.conformation().chain_end( fuse_pose_chain_no ) );
+		core::Size fuse_pose_chain_first_seqpos( fuse_pose.conformation().chain_begin( fuse_pose_chain_no ) );
+		core::Size fuse_pose_chain_last_seqpos( pose.conformation().chain_end( fuse_pose_chain_no ) );
 		//chain numberings figured out
 
 		//necessary because we're doing the fusion through superposition
@@ -419,21 +419,21 @@ FusePosesNtoCMover::generate_superposition_map(
 
 		//and if a window is requested, also add these residues to the
 		//superposition
-		for ( Size i=1; i <= superpose_window_; ++i ) {
+		for ( core::Size i=1; i <= superpose_window_; ++i ) {
 			//the following two need to be integers because they can get negative..
 			int pose_up_pos( pose_seqpos - i);
 			int fuse_pose_up_pos( fuse_pose_seqpos - 1 - i);
 
 			//but make sure we don't reach past the ends of the pose
 			if ( (pose_up_pos >= (int) pose_chain_first_seqpos ) && (fuse_pose_up_pos >= (int) fuse_pose_chain_first_seqpos ) ) {
-				//in the below call, the two ints get silenty type-converted to Size,
+				//in the below call, the two ints get silenty type-converted to core::Size,
 				//but this should be fine, since in the above if clause we make sure
 				//that neither of them is negative
 				set_superpose_residues_in_atom_map( atom_map, fuse_pose, pose, fuse_pose_up_pos, pose_up_pos, debugmode_ );
 			}
 
-			Size pose_down_pos(pose_seqpos + i + 1);
-			Size fuse_pose_down_pos( fuse_pose_seqpos + i );
+			core::Size pose_down_pos(pose_seqpos + i + 1);
+			core::Size fuse_pose_down_pos( fuse_pose_seqpos + i );
 			if ( (pose_down_pos <= pose_chain_last_seqpos) && (fuse_pose_down_pos <= fuse_pose_chain_last_seqpos ) ) {
 				set_superpose_residues_in_atom_map( atom_map, fuse_pose, pose, fuse_pose_down_pos, pose_down_pos, debugmode_ );
 			}
@@ -464,13 +464,13 @@ FusePosesNtoCMover::fuse_poses(
 	core::pose::Pose const & fuse_pose
 )
 {
-	std::set< Size > fused_fusepose_chains;
+	std::set< core::Size > fused_fusepose_chains;
 	fuse_positions_.clear();
 	fusion_regions_.clear();
 
-	for ( Size i(1); i <= chain_mappings_.size(); ++i ) {
+	for ( core::Size i(1); i <= chain_mappings_.size(); ++i ) {
 
-		Size fusepose_chain( chain_mappings_[i].first ), pose_chain( chain_mappings_[i].second );
+		core::Size fusepose_chain( chain_mappings_[i].first ), pose_chain( chain_mappings_[i].second );
 		fused_fusepose_chains.insert( fusepose_chain);
 		tr << "About to fuse n-terminal residue " << pose.residue_type( pose.conformation().chain_end( pose_chain ) ).name() << " to c-terminal residue " << fuse_pose.residue_type( fuse_pose.conformation().chain_begin( fusepose_chain ) ).name() << std::endl;
 
@@ -478,7 +478,7 @@ FusePosesNtoCMover::fuse_poses(
 		//according to the chain ordering of the pose
 		fuse_positions_.push_back( pose.conformation().chain_end( pose_chain ) );
 
-		for ( Size insres( fuse_pose.conformation().chain_begin( fusepose_chain ) ), chain_end(fuse_pose.conformation().chain_end( fusepose_chain ) ); insres <= chain_end; ++insres ) {
+		for ( core::Size insres( fuse_pose.conformation().chain_begin( fusepose_chain ) ), chain_end(fuse_pose.conformation().chain_end( fusepose_chain ) ); insres <= chain_end; ++insres ) {
 
 			pose.append_polymer_residue_after_seqpos( fuse_pose.residue( insres ), pose.conformation().chain_end( pose_chain ), false );
 		}
@@ -487,21 +487,21 @@ FusePosesNtoCMover::fuse_poses(
 
 	//now we need to loop over additional fuse pose chains and copy them over
 	//random decision: append by jump to the end of the first fused chain
-	for ( Size i(1); i <= fuse_pose.conformation().num_chains(); ++i ) {
+	for ( core::Size i(1); i <= fuse_pose.conformation().num_chains(); ++i ) {
 		if ( fused_fusepose_chains.find( i ) != fused_fusepose_chains.end() ) continue;
 
-		Size anchor_res = pose.conformation().chain_end( chain_mappings_[1].second );
+		core::Size anchor_res = pose.conformation().chain_end( chain_mappings_[1].second );
 		pose.append_residue_by_jump(
 			fuse_pose.residue( fuse_pose.conformation().chain_begin( i ) ), anchor_res, "", "", true );
 
-		for ( Size rescounter( fuse_pose.conformation().chain_begin( i ) + 1), chain_end( fuse_pose.conformation().chain_end( i ) ); rescounter <= chain_end; ++rescounter ) {
+		for ( core::Size rescounter( fuse_pose.conformation().chain_begin( i ) + 1), chain_end( fuse_pose.conformation().chain_end( i ) ); rescounter <= chain_end; ++rescounter ) {
 			//no idea if this shit is going to work
 			pose.append_polymer_residue_after_seqpos( fuse_pose.residue( rescounter ), pose.size() /* hope this is correct */, false );
 		}
 	}
 	if ( debugmode_ ) {
 		tr << "The fused positions in pose numbering are: ";
-		for ( Size i =1; i <= fuse_positions_.size(); ++i ) tr << fuse_positions_[i] << ", ";
+		for ( core::Size i =1; i <= fuse_positions_.size(); ++i ) tr << fuse_positions_[i] << ", ";
 		tr << std::endl;
 	}
 
@@ -510,21 +510,21 @@ FusePosesNtoCMover::fuse_poses(
 	//ss_pose.insert_ss_into_pose( pose );
 	//the 4 is very arbitrary, but since the fused pose is not put together yet
 	//dssp is prolly not accurate at the actual fuseposition
-	Size offset(4);
+	core::Size offset(4);
 
-	for ( Size i = 1; i <= fuse_positions_.size(); ++i ) {
+	for ( core::Size i = 1; i <= fuse_positions_.size(); ++i ) {
 		char fuse_region_ss( ss_pose.get_dssp_secstruct( fuse_positions_[i] - offset ) );
-		int nterm_end(0); Size cterm_end(0), counter(1);
+		int nterm_end(0); core::Size cterm_end(0), counter(1);
 
 		while ( (nterm_end == 0 ) || (cterm_end == 0 ) ) {
 			if ( nterm_end == 0 ) {
-				Size nterm_check_pos = fuse_positions_[i] - offset - counter;
+				core::Size nterm_check_pos = fuse_positions_[i] - offset - counter;
 				if ( nterm_check_pos < 1 ) nterm_end = 1;
 				else if ( ss_pose.get_dssp_secstruct( nterm_check_pos ) != fuse_region_ss ) nterm_end = nterm_check_pos;
 			}
 
 			if ( cterm_end == 0 ) {
-				Size cterm_check_pos = fuse_positions_[i] + offset + counter;
+				core::Size cterm_check_pos = fuse_positions_[i] + offset + counter;
 				if ( cterm_check_pos > pose.conformation().chain_end( fuse_positions_[i] ) ) cterm_end = pose.conformation().chain_end( fuse_positions_[i] );
 				else if ( ss_pose.get_dssp_secstruct( cterm_check_pos ) != fuse_region_ss ) cterm_end = cterm_check_pos;
 			}
@@ -534,7 +534,7 @@ FusePosesNtoCMover::fuse_poses(
 			nterm_end - relax_window_ <= 0 ? nterm_end = 0 : nterm_end = nterm_end - relax_window_;
 			cterm_end + relax_window_ > pose.conformation().chain_end( fuse_positions_[i] ) ? cterm_end = pose.conformation().chain_end( fuse_positions_[i] ) : cterm_end = cterm_end + relax_window_;
 		}
-		fusion_regions_.push_back( std::pair< Size, Size >( nterm_end, cterm_end ) );
+		fusion_regions_.push_back( std::pair< core::Size, core::Size >( nterm_end, cterm_end ) );
 		if ( debugmode_ ) {
 			tr << "adding fusion region between " << nterm_end << " and " << cterm_end << std::endl;
 			tr << "The residue types at the fusion point are " << pose.residue_type( fuse_positions_[i]).name() << " and " << pose.residue_type( fuse_positions_[i] + 1).name() << std::endl;
@@ -550,19 +550,19 @@ FusePosesNtoCMover::fuse_poses(
 core::pose::PoseOP
 FusePosesNtoCMover::truncate_pose_at_fusion_site(
 	core::pose::Pose const & pose,
-	Size const fusion_pdbpos,
+	core::Size const fusion_pdbpos,
 	bool nterm_truncation
 ) const
 {
 
 	core::pose::PoseOP to_return( new core::pose::Pose( pose ) );
-	for ( Size chain_it(1); chain_it <= chains_to_use_.size(); ++chain_it ) {
+	for ( core::Size chain_it(1); chain_it <= chains_to_use_.size(); ++chain_it ) {
 
 		char chain( chains_to_use_[ chain_it ] );
-		Size fusion_seqpos( to_return->pdb_info()->pdb2pose( chain, fusion_pdbpos ) );
-		Size pose_chain_no( to_return->chain( fusion_seqpos) );
+		core::Size fusion_seqpos( to_return->pdb_info()->pdb2pose( chain, fusion_pdbpos ) );
+		core::Size pose_chain_no( to_return->chain( fusion_seqpos) );
 
-		Size last_truncate_pos( nterm_truncation ? to_return->conformation().chain_begin( pose_chain_no ) : to_return->conformation().chain_end( pose_chain_no ) );
+		core::Size last_truncate_pos( nterm_truncation ? to_return->conformation().chain_begin( pose_chain_no ) : to_return->conformation().chain_end( pose_chain_no ) );
 
 		if ( fusion_seqpos == last_truncate_pos ) {
 
@@ -582,7 +582,7 @@ FusePosesNtoCMover::truncate_pose_at_fusion_site(
 
 		if ( nterm_truncation ) {
 			to_return->conformation().delete_residue_range_slow( last_truncate_pos, fusion_seqpos - 1 );
-			Size newfirstpos( to_return->conformation().chain_begin( pose_chain_no ) );
+			core::Size newfirstpos( to_return->conformation().chain_begin( pose_chain_no ) );
 
 			if ( to_return->residue_type( newfirstpos ).has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ) {
 				core::conformation::remove_lower_terminus_type_from_conformation_residue( to_return->conformation(), newfirstpos );
@@ -590,7 +590,7 @@ FusePosesNtoCMover::truncate_pose_at_fusion_site(
 			add_variant_type_to_conformation_residue( to_return->conformation(), core::chemical::CUTPOINT_UPPER, newfirstpos );
 		} else {
 			to_return->conformation().delete_residue_range_slow( fusion_seqpos + 1, last_truncate_pos);
-			Size newlastpos( to_return->conformation().chain_end( pose_chain_no ) );
+			core::Size newlastpos( to_return->conformation().chain_end( pose_chain_no ) );
 
 			if ( to_return->residue_type( newlastpos ).has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) ) {
 				core::conformation::remove_upper_terminus_type_from_conformation_residue( to_return->conformation(), newlastpos );
@@ -628,9 +628,9 @@ FusePosesNtoCMover::analyze_fused_pose(
 	core::Real cb_fusion( (*sfxn_)(fusion_rlx) - score_no_cb_fusion );
 
 	//2.
-	std::list< Size > residues; //rms code wants a list
-	for ( Size i(1); i <= fusion_regions_.size(); ++i ) {
-		for ( Size j( fusion_regions_[i].first); j <= fusion_regions_[i].second; ++j ) residues.push_back( j );
+	std::list< core::Size > residues; //rms code wants a list
+	for ( core::Size i(1); i <= fusion_regions_.size(); ++i ) {
+		for ( core::Size j( fusion_regions_[i].first); j <= fusion_regions_[i].second; ++j ) residues.push_back( j );
 	}
 
 	core::Real rms( core::scoring::CA_rmsd( fusion_raw, fusion_rlx, residues ) );
@@ -641,18 +641,18 @@ FusePosesNtoCMover::analyze_fused_pose(
 	//ss_frlx.insert_ss_into_pose( fusion_rlx );
 	utility::vector1< std::string > fusion_region_abegos;
 	utility::vector1< std::string > fusion_region_dssp;
-	for ( Size i(1); i <= fusion_regions_.size(); ++i ) {
+	for ( core::Size i(1); i <= fusion_regions_.size(); ++i ) {
 		runtime_assert( fusion_regions_[i].first < fuse_positions_[i] );
 		runtime_assert( fuse_positions_[i] < fusion_regions_[i].second );
 		std::string this_reg_abego("");
 		std::string this_reg_dssp("");
-		for ( Size j( fusion_regions_[i].first); j <= fuse_positions_[i]; ++j ) {
+		for ( core::Size j( fusion_regions_[i].first); j <= fuse_positions_[i]; ++j ) {
 			this_reg_abego += complete_abegos[j];
 			this_reg_dssp += ss_frlx.get_dssp_secstruct( j );
 		}
 		this_reg_abego += "-"; //highlighting fusion
 		this_reg_dssp += "-";
-		for ( Size j( fuse_positions_[i] + 1); j <= fusion_regions_[i].second; ++j ) {
+		for ( core::Size j( fuse_positions_[i] + 1); j <= fusion_regions_[i].second; ++j ) {
 			this_reg_abego += complete_abegos[j];
 			this_reg_dssp += ss_frlx.get_dssp_secstruct( j );
 		}
@@ -661,8 +661,8 @@ FusePosesNtoCMover::analyze_fused_pose(
 	}
 
 	report_string += ( utility::to_string( scorediff ) + "   " + utility::to_string( cb_fusion ) + "   " + utility::to_string( rms ) + "   ");
-	for ( Size i(1); i <= fusion_regions_.size(); ++i ) report_string += (fusion_region_abegos[i] + "  ");
-	for ( Size i(1); i <= fusion_regions_.size(); ++i ) report_string += (fusion_region_dssp[i] + "  ");
+	for ( core::Size i(1); i <= fusion_regions_.size(); ++i ) report_string += (fusion_region_abegos[i] + "  ");
+	for ( core::Size i(1); i <= fusion_regions_.size(); ++i ) report_string += (fusion_region_dssp[i] + "  ");
 
 	std::cout << report_string << std::endl;
 }
@@ -672,16 +672,16 @@ FusePosesNtoCMover::setup_chain_mappings(
 	core::pose::Pose const & pose )
 {
 	chain_mappings_.clear();
-	for ( Size chain(1); chain <= chains_to_use_.size(); ++chain ) {
+	for ( core::Size chain(1); chain <= chains_to_use_.size(); ++chain ) {
 
-		for ( Size i = 1; i <= pose.conformation().num_chains() ; ++i ) {
+		for ( core::Size i = 1; i <= pose.conformation().num_chains() ; ++i ) {
 			char pdb_chain_code( pose.pdb_info()->chain( pose.conformation().chain_begin( i ) ) );
 
 			if ( pdb_chain_code == chains_to_use_[ chain ] ) {
-				for ( Size j =1; j <= fuse_pose_->conformation().num_chains() ; ++j ) {
+				for ( core::Size j =1; j <= fuse_pose_->conformation().num_chains() ; ++j ) {
 					char fusepdb_chain_code( fuse_pose_->pdb_info()->chain( fuse_pose_->conformation().chain_begin( j ) ) );
 					if ( fusepdb_chain_code == chains_to_use_[chain] ) {
-						chain_mappings_.push_back( std::pair<Size, Size>( j, i ) );
+						chain_mappings_.push_back( std::pair<core::Size, core::Size>( j, i ) );
 						break;
 					}
 				}//loop over fuse_pose chains
@@ -809,8 +809,8 @@ SetupCoiledCoilFoldTreeMover::apply( core::pose::Pose & pose )
 
 	//figure out what the pose numbers of the desired chains is
 	utility::vector1< core::Size > pose_chains;
-	for ( Size chain(1); chain <= coiled_coil_chains_.size(); ++chain ) {
-		for ( Size i = 1; i <= pose.conformation().num_chains(); ++i ) {
+	for ( core::Size chain(1); chain <= coiled_coil_chains_.size(); ++chain ) {
+		for ( core::Size i = 1; i <= pose.conformation().num_chains(); ++i ) {
 			char pdb_chain_code( pose.pdb_info()->chain( pose.conformation().chain_begin( i ) ) );
 			if ( pdb_chain_code == coiled_coil_chains_[ chain ] ) pose_chains.push_back( i );
 		} //loop over pose chains
@@ -819,7 +819,7 @@ SetupCoiledCoilFoldTreeMover::apply( core::pose::Pose & pose )
 
 	core::kinematics::FoldTree const & old_fold_tree( pose.fold_tree() );
 	core::kinematics::FoldTree new_ft;
-	Size jump_count(old_fold_tree.num_jump() + 1);
+	core::Size jump_count(old_fold_tree.num_jump() + 1);
 
 	tr << "CoiledCoilFoldTreeMover Incoming foldtree: " << std::endl << old_fold_tree << std::endl << " and cut_seqpos is " << cut_seqpos << std::endl;
 	tr.flush();

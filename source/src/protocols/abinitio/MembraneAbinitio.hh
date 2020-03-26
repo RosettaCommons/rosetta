@@ -199,12 +199,12 @@ public:
 	virtual void set_cycles( core::Real increase_cycles = 1.0 );
 
 	//@brief
-	Size total_trials() const {
+	core::Size total_trials() const {
 		return total_trials_;
 	}
 
 	//@brief override cycle setting for specific stage ( valid nr: 1,2,3,4)
-	// void set_cycles( Size stage, Size cycles );
+	// void set_cycles( core::Size stage, core::Size cycles );
 
 	// eventually replace with a polymorphic checkpointer class
 	// these functions are almost identical to the ones used for ClassicRelax
@@ -322,15 +322,15 @@ protected:
 	//@brief called in each iteration of inner loop in stage3 before stage3_cycles_ of trials commence
 	virtual void prepare_loop_in_stage3(
 		core::pose::Pose&,
-		Size, /* loop_iteration*/
-		Size  /* total_iterations */
+		core::Size, /* loop_iteration*/
+		core::Size  /* total_iterations */
 	);
 
 	//@brief called in each iteration of the loop in stage4 before the stage4_cycles_ of trials commence
 	virtual void prepare_loop_in_stage4(
 		core::pose::Pose&,
-		Size, /* loop_iteration*/
-		Size  /* total_iterations */
+		core::Size, /* loop_iteration*/
+		core::Size  /* total_iterations */
 	);
 
 public:
@@ -342,32 +342,32 @@ public:
 
 	//@brief Accessor for number of stage1 cycles
 	inline
-	Size stage1_cycles() const {
+	core::Size stage1_cycles() const {
 		return stage1_cycles_;
 	}
 
 	//@brief Accessor for number of stage2
 	inline
-	Size stage2_cycles() const {
+	core::Size stage2_cycles() const {
 		return stage2_cycles_;
 	}
 
 	//@brief Accessor for number of stage3 cycles
 	inline
-	Size stage3_cycles() const {
+	core::Size stage3_cycles() const {
 		return stage3_cycles_;
 	}
 
 	//@brief Setter for number of stage4 cycles
 	inline
-	void set_stage4_cycles(Size stage4_cycles_new) {
+	void set_stage4_cycles(core::Size stage4_cycles_new) {
 		stage4_cycles_ = stage4_cycles_new;
 	}
 
 
 	//@brief Accessor for number of stage4 cycles
 	inline
-	Size stage4_cycles() const {
+	core::Size stage4_cycles() const {
 		return stage4_cycles_;
 	}
 
@@ -387,10 +387,10 @@ protected:
 
 protected:
 	//@brief  cycles_numbers  -- modified by set_cycles(), set_default_options()
-	Size stage1_cycles_; //score0
-	Size stage2_cycles_; //score1
-	Size stage3_cycles_; //score25
-	Size stage4_cycles_; //score3
+	core::Size stage1_cycles_; //score0
+	core::Size stage2_cycles_; //score1
+	core::Size stage3_cycles_; //score25
+	core::Size stage4_cycles_; //score3
 
 public:
 
@@ -398,7 +398,7 @@ public:
 
 
 private:
-	Size get_tmh_inserted(core::pose::Pose const & pose) const;
+	core::Size get_tmh_inserted(core::pose::Pose const & pose) const;
 	core::scoring::MembraneEmbed const & MembraneEmbed_from_pose( core::pose::Pose const & ) const;
 	core::scoring::MembraneEmbed & nonconst_MembraneEmbed_from_pose( core::pose::Pose & ) const;
 	core::scoring::MembraneTopology const & MembraneTopology_from_pose( core::pose::Pose const & ) const;
@@ -442,7 +442,7 @@ private:
 
 	std::vector< std::string > checkpoint_ids_;
 
-	Size total_trials_;
+	core::Size total_trials_;
 
 	checkpoint::CheckPointer checkpoint_;
 };

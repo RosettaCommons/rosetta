@@ -21,6 +21,7 @@
 // Package Headers
 #include <core/conformation/AbstractRotamerTrie.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
+#include <core/types.hh>
 
 #ifdef WIN32
 #include <core/conformation/AbstractRotamerTrie.hh> // WIN32 INCLUDE
@@ -30,7 +31,7 @@
 #include <basic/datacache/BasicDataCache.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -40,10 +41,10 @@
 namespace core {
 namespace conformation {
 
-class RotamerSetBase : public utility::pointer::ReferenceCount
+class RotamerSetBase : public utility::VirtualBase
 {
 private: // typedefs
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 
 public: // typedefs
 	typedef basic::datacache::BasicDataCache   BasicDataCache;
@@ -54,7 +55,7 @@ public:
 	~RotamerSetBase() override;
 
 	virtual
-	Size
+	core::Size
 	get_n_residue_types() const = 0;
 
 	virtual

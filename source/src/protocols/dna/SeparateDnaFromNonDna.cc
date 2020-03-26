@@ -57,7 +57,7 @@ SeparateDnaFromNonDna::SeparateDnaFromNonDna( numeric::xyzVector< Real > const &
 {}
 
 SeparateDnaFromNonDna::SeparateDnaFromNonDna( SeparateDnaFromNonDna const & other ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Mover( other ),
 	translation_( other.translation() )
 {}
@@ -75,9 +75,9 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 	FoldTree fold_tree( pose.size() );
 
 	// collect non-DNA and DNA chain indices
-	vector1< Size > non_DNA_chain_indices, DNA_chain_indices;
+	vector1< core::Size > non_DNA_chain_indices, DNA_chain_indices;
 	Conformation const & conf( pose.conformation() );
-	for ( Size chain_index(1); chain_index <= conf.num_chains(); ++chain_index ) {
+	for ( core::Size chain_index(1); chain_index <= conf.num_chains(); ++chain_index ) {
 		if ( pose.residue_type( conf.chain_begin( chain_index ) ).is_DNA() ) {
 			DNA_chain_indices.push_back( chain_index );
 			TR << "chain " << chain_index << " is a DNA chain" << '\n';
@@ -91,11 +91,11 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 	}
 
 	// connect non-DNA chains
-	Size const first_nonDNA_chain( non_DNA_chain_indices.front() );
-	Size const nonDNA_anchor_index( conf.chain_begin( first_nonDNA_chain ) );
-	for ( vector1< Size >::const_iterator chain_iter( non_DNA_chain_indices.begin()+1 );
+	core::Size const first_nonDNA_chain( non_DNA_chain_indices.front() );
+	core::Size const nonDNA_anchor_index( conf.chain_begin( first_nonDNA_chain ) );
+	for ( vector1< core::Size >::const_iterator chain_iter( non_DNA_chain_indices.begin()+1 );
 			chain_iter != non_DNA_chain_indices.end(); ++chain_iter ) {
-		Size const chain_begin( conf.chain_begin( *chain_iter ) );
+		core::Size const chain_begin( conf.chain_begin( *chain_iter ) );
 
 		TR << "linking non-DNA chains " << first_nonDNA_chain << " and " << *chain_iter
 			<< " residues " << nonDNA_anchor_index << " (";
@@ -112,11 +112,11 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 	}
 
 	// connect DNA chains
-	Size const first_DNA_chain( DNA_chain_indices.front() );
-	Size const DNA_anchor_index( conf.chain_begin( first_DNA_chain ) );
-	for ( vector1< Size >::const_iterator chain_iter( DNA_chain_indices.begin()+1 );
+	core::Size const first_DNA_chain( DNA_chain_indices.front() );
+	core::Size const DNA_anchor_index( conf.chain_begin( first_DNA_chain ) );
+	for ( vector1< core::Size >::const_iterator chain_iter( DNA_chain_indices.begin()+1 );
 			chain_iter != DNA_chain_indices.end(); ++chain_iter ) {
-		Size const chain_begin( conf.chain_begin( *chain_iter ) );
+		core::Size const chain_begin( conf.chain_begin( *chain_iter ) );
 
 		TR << "linking DNA chains " << first_DNA_chain << " and " << *chain_iter << " residues " << DNA_anchor_index << " (";
 		if ( pose.pdb_info() ) {
@@ -143,7 +143,7 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 	TR << ")" << '\n';
 
 	// make sure that this jump goes in the 'forward' direction, in case the DNA chains came first
-	Size const jump_start( std::min( nonDNA_anchor_index, DNA_anchor_index ) ),
+	core::Size const jump_start( std::min( nonDNA_anchor_index, DNA_anchor_index ) ),
 		jump_end( std::max( nonDNA_anchor_index, DNA_anchor_index ) );
 	fold_tree.new_jump( jump_start, jump_end, jump_end-1 );
 
@@ -152,7 +152,7 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 	TR << "new fold tree:\n" << pose.fold_tree() << std::endl;
 
 	// lengthen the final jump to isolate non-DNA from DNA
-	Size const prot_DNA_jump_index( pose.num_jump() );
+	core::Size const prot_DNA_jump_index( pose.num_jump() );
 	Jump prot_DNA_jump( pose.jump( prot_DNA_jump_index ) );
 	prot_DNA_jump.set_translation( translation_ );
 	TR << std::fixed << std::setprecision(0);

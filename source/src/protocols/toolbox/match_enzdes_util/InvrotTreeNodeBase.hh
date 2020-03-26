@@ -27,7 +27,7 @@
 #include <core/types.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 
 //c++ heades
@@ -48,10 +48,10 @@ namespace match_enzdes_util {
 
 
 /// @ brief helper class for collecting all different definitions of invrots from a tree
-class InvrotCollector : public utility::pointer::ReferenceCount {
+class InvrotCollector : public utility::VirtualBase {
 
 public:
-	InvrotCollector( Size num_residue_lists );
+	InvrotCollector( core::Size num_residue_lists );
 
 	InvrotCollector( InvrotCollector const & other );
 
@@ -62,17 +62,17 @@ public:
 
 	void
 	set_invrots_for_listnum(
-		Size listnum,
+		core::Size listnum,
 		std::list<core::conformation::ResidueCOP> const & invrots,
 		InvrotTreeNodeBaseCOP tree_node,
-		Size location_in_node
+		core::Size location_in_node
 	);
 
 	std::vector< std::list<core::conformation::ResidueCOP> > const &
 	invrots() const {
 		return invrots_; }
 
-	std::map< InvrotTreeNodeBaseCOP, Size > const &
+	std::map< InvrotTreeNodeBaseCOP, core::Size > const &
 	owner_nodes_and_locations() const {
 		return owner_nodes_and_locations_; }
 
@@ -80,7 +80,7 @@ private:
 
 	//we're using standard vectors bc the targets put into 0th element
 	std::vector< std::list<core::conformation::ResidueCOP> > invrots_;
-	std::map< InvrotTreeNodeBaseCOP, Size > owner_nodes_and_locations_;
+	std::map< InvrotTreeNodeBaseCOP, core::Size > owner_nodes_and_locations_;
 };
 
 
@@ -90,7 +90,7 @@ private:
 /// This is necessary so that a node can point at its parent
 /// node in a tree without having to worry about whether that
 /// is a target or a regular node
-class InvrotTreeNodeBase : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< InvrotTreeNodeBase >
+class InvrotTreeNodeBase : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< InvrotTreeNodeBase >
 {
 public:
 
@@ -111,10 +111,10 @@ public:
 		return parent_node_; }
 
 	void
-	set_location_in_parent_node( Size location ) {
+	set_location_in_parent_node( core::Size location ) {
 		location_in_parent_node_ = location; }
 
-	Size location_in_parent_node() const {
+	core::Size location_in_parent_node() const {
 		return location_in_parent_node_; }
 
 	/// @brief nodes need to be able to generate constraints
@@ -161,7 +161,7 @@ public:
 private:
 
 	InvrotTreeNodeBaseCAP parent_node_; //pointer to parent node
-	Size location_in_parent_node_;
+	core::Size location_in_parent_node_;
 };
 
 

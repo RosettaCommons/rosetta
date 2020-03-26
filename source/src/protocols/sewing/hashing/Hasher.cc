@@ -60,14 +60,16 @@ Hasher::allocate_segments(){
 }
 
 Hasher::Hasher():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	all_basis_pairs_.clear();
 	//initialize_from_options();
 	allocate_segments();
 }
 
-Hasher::Hasher( Hasher const & other) {
+Hasher::Hasher( Hasher const & other):
+	VirtualBase( other )
+{
 	//Make a deep copy of the segment vector
 	/*
 	segment_vector_.clear();

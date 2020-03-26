@@ -18,6 +18,7 @@
 #include <core/pack/task/operation/EnableMultiCoolAnnealer.fwd.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
+#include <core/types.hh>
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>

@@ -106,8 +106,8 @@ void LoopProtocol::parse_my_tag(
 	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
 
-	sfxn_cycles_ = tag->getOption<Size>("sfxn_cycles", sfxn_cycles_);
-	mover_cycles_ = tag->getOption<Size>("mover_cycles", mover_cycles_);
+	sfxn_cycles_ = tag->getOption<core::Size>("sfxn_cycles", sfxn_cycles_);
+	mover_cycles_ = tag->getOption<core::Size>("mover_cycles", mover_cycles_);
 	ramp_sfxn_rama_ = tag->getOption<bool>("ramp_rama", ramp_sfxn_rama_);
 	ramp_sfxn_rep_ = tag->getOption<bool>("ramp_rep", ramp_sfxn_rep_);
 	ramp_sfxn_cst_ = tag->getOption<bool>("ramp_down_cst", ramp_sfxn_cst_);
@@ -130,7 +130,7 @@ void LoopProtocol::parse_my_tag(
 		smatch match;
 
 		if ( regex_match(cycles, match, regex) ) {
-			temp_cycles_ = boost::lexical_cast<Size>(std::string(match[1]));
+			temp_cycles_ = boost::lexical_cast<core::Size>(std::string(match[1]));
 			scale_temp_cycles_ = (match[2] == "x");
 		} else {
 			stringstream message;
@@ -255,17 +255,17 @@ LoopProtocol::complex_type_generator_for_loop_protocol( utility::tag::XMLSchemaD
 bool LoopProtocol::do_apply(Pose & pose) {
 	start_protocol(pose);
 
-	for ( Size i = 1; i <= get_sfxn_cycles(); i++ ) {
+	for ( core::Size i = 1; i <= get_sfxn_cycles(); i++ ) {
 		monte_carlo_->recover_low(pose);
 		logger_->record_new_pose(TR, pose);
 
 		ramp_score_function(i);
 		logger_->record_new_score_function(TR, pose);
 
-		for ( Size j = 1; j <= get_temp_cycles(); j++ ) {
+		for ( core::Size j = 1; j <= get_temp_cycles(); j++ ) {
 			ramp_temperature(j);
 
-			for ( Size k = 1; k <= get_mover_cycles(); k++ ) {
+			for ( core::Size k = 1; k <= get_mover_cycles(); k++ ) {
 				attempt_loop_move(pose, i, j, k);
 			}
 		}
@@ -341,7 +341,7 @@ void LoopProtocol::start_protocol(Pose & pose) {
 	logger_->init(this);
 }
 
-void LoopProtocol::ramp_score_function(Size iteration) {
+void LoopProtocol::ramp_score_function(core::Size iteration) {
 	using namespace core::scoring;
 
 	ScoreFunctionOP score_function = get_score_function();
@@ -399,7 +399,7 @@ void LoopProtocol::ramp_score_function(Size iteration) {
 	monte_carlo_->score_function(*score_function);
 }
 
-void LoopProtocol::ramp_temperature(Size /*iteration*/) {
+void LoopProtocol::ramp_temperature(core::Size /*iteration*/) {
 	if ( ramp_temp_ ) {
 		Real temperature = monte_carlo_->temperature();
 		Real ramp_factor = std::pow(
@@ -412,7 +412,7 @@ void LoopProtocol::ramp_temperature(Size /*iteration*/) {
 	}
 }
 
-void LoopProtocol::attempt_loop_move(Pose & pose, Size i, Size j, Size k) {
+void LoopProtocol::attempt_loop_move(Pose & pose, core::Size i, core::Size j, core::Size k) {
 	protocol_->apply(pose);
 
 	bool move_proposed = protocol_->was_successful();
@@ -488,16 +488,16 @@ Size LoopProtocol::get_mover_cycles() const {
 	return test_run_ ? 2 : mover_cycles_;
 }
 
-void LoopProtocol::set_sfxn_cycles(Size x) {
+void LoopProtocol::set_sfxn_cycles(core::Size x) {
 	sfxn_cycles_ = x;
 }
 
-void LoopProtocol::set_temp_cycles(Size x, bool times_loop_length) {
+void LoopProtocol::set_temp_cycles(core::Size x, bool times_loop_length) {
 	temp_cycles_ = x;
 	scale_temp_cycles_ = times_loop_length;
 }
 
-void LoopProtocol::set_mover_cycles(Size x) {
+void LoopProtocol::set_mover_cycles(core::Size x) {
 	mover_cycles_ = x;
 }
 

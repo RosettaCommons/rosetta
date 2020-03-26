@@ -47,9 +47,9 @@ spherical(
 Size
 get_foldtree_seqsep(
 	Pose const & pose,
-	Size pos1,
-	Size pos2,
-	Size gap_size=10
+	core::Size pos1,
+	core::Size pos2,
+	core::Size gap_size=10
 );
 
 

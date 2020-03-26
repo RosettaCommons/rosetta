@@ -31,7 +31,7 @@
 
 // utility headers
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 // #include "utility/sys_util.h"
 
 // C++ headers
@@ -59,7 +59,7 @@ class Pool_RMSD;
 typedef utility::pointer::shared_ptr< Pool_RMSD > Pool_RMSD_OP;
 
 
-class Pool_RMSD : public utility::pointer::ReferenceCount {
+class Pool_RMSD : public utility::VirtualBase {
 	typedef utility::vector1< std::string > Tags;
 public:
 	//c'stor supply file with structures and threshold (Angstroem RMSD)

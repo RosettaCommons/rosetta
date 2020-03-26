@@ -24,7 +24,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <core/types.hh>
@@ -52,7 +52,7 @@ struct ResidueDepthData
 	utility::vector1< core::Size > neigh_ress;
 };
 
-class ResidueDepthFrag : public utility::pointer::ReferenceCount
+class ResidueDepthFrag : public utility::VirtualBase
 {
 public:
 	ResidueDepthFrag();

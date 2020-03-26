@@ -103,7 +103,7 @@ namespace denovo {
 void
 create_rna_vall_torsions( pose::Pose & pose,
 	utility::io::ozstream & torsions_out,
-	utility::vector1 <Size> const & exclude_res_list )
+	utility::vector1 <core::Size> const & exclude_res_list )
 {
 
 	using namespace core::chemical;
@@ -112,7 +112,7 @@ create_rna_vall_torsions( pose::Pose & pose,
 	using namespace core::pose::rna;
 	using namespace protocols::rna::denovo;
 
-	Size const total_residue = pose.size();
+	core::Size const total_residue = pose.size();
 
 	core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
 
@@ -128,7 +128,7 @@ create_rna_vall_torsions( pose::Pose & pose,
 
 	// EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-	for ( Size i=1; i <= total_residue; ++i ) {
+	for ( core::Size i=1; i <= total_residue; ++i ) {
 		if ( is_num_in_list(i, exclude_res_list) ) continue;
 
 		torsions_out << pose.residue_type( i ).name1() << " " ;
@@ -138,7 +138,7 @@ create_rna_vall_torsions( pose::Pose & pose,
 			////////////////////////////////////////////////
 			// NEW: can we idealize this thing?
 			pose::Pose mini_pose;
-			Size offset = 1;
+			core::Size offset = 1;
 			if ( i > 1 ) {
 				mini_pose.append_residue_by_bond( pose.residue( i-1 ) );
 				offset = 2;
@@ -152,23 +152,23 @@ create_rna_vall_torsions( pose::Pose & pose,
 			idealizer.apply( mini_pose );
 			idealizer.apply( mini_pose );
 
-			for ( Size j=1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j ) {
+			for ( core::Size j=1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j ) {
 				id::TorsionID my_ID( offset, id::BB, j );
 				torsions_out << F( 12, 6, mini_pose.torsion( my_ID ) );
 			}
 
-			for ( Size j=1; j <= chemical::rna::NUM_RNA_CHI_TORSIONS; ++j ) {
+			for ( core::Size j=1; j <= chemical::rna::NUM_RNA_CHI_TORSIONS; ++j ) {
 				id::TorsionID my_ID( offset, id::CHI, j );
 				torsions_out << F( 12, 6, mini_pose.torsion( my_ID ) ) << " ";
 			}
 
 		} else {
-			for ( Size j=1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j ) {
+			for ( core::Size j=1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j ) {
 				id::TorsionID my_ID( i, id::BB, j );
 				torsions_out << F( 12, 6, pose.torsion( my_ID ) );
 			}
 
-			for ( Size j=1; j <= chemical::rna::NUM_RNA_CHI_TORSIONS; ++j ) {
+			for ( core::Size j=1; j <= chemical::rna::NUM_RNA_CHI_TORSIONS; ++j ) {
 				id::TorsionID my_ID( i, id::CHI, j );
 				torsions_out << F( 12, 6, pose.torsion( my_ID ) ) << " ";
 			}
@@ -181,7 +181,7 @@ create_rna_vall_torsions( pose::Pose & pose,
 			kinematics::Stub const input_stub( rsd.xyz( rna_type.c3prime_atom_index() ), rsd.xyz( rna_type.c3prime_atom_index() ), rsd.xyz( rna_type.c4prime_atom_index() ), rsd.xyz( rna_type.c5prime_atom_index() ) );
 
 			torsions_out << " S  " ;
-			for ( Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
+			for ( core::Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
 				Vector v = input_stub.global2local( rsd.xyz( non_main_chain_sugar_atoms[ n ] ) );
 				torsions_out << F( 12, 6, v.x() ) << " " ;
 				torsions_out << F( 12, 6, v.y() ) << " " ;
@@ -216,7 +216,7 @@ create_rna_vall_torsions( pose::Pose & pose,
 void
 create_rna_vall_torsions( pose::Pose & pose,
 	std::string const & outfile,
-	utility::vector1 <Size> const & exclude_res_list )
+	utility::vector1 <core::Size> const & exclude_res_list )
 {
 	utility::io::ozstream torsions_out ( outfile );
 	create_rna_vall_torsions( pose, torsions_out, exclude_res_list );
@@ -242,7 +242,7 @@ ensure_phosphate_nomenclature_matches_mini( pose::Pose & pose )
 	TR << " Warning ... flipping OP2 <--> OP1 to match mini convention  " << std::endl;
 	TR << "*************************************************************" << std::endl;
 
-	for ( Size i = 1; i <= pose.size(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 
 		conformation::Residue const & rsd( pose.residue(i) );
 		if ( !rsd.is_RNA() ) continue;
@@ -266,7 +266,7 @@ export_packer_results(  utility::vector1< std::pair< Real, std::string > > & res
 	bool const dump )
 {
 	utility::io::ozstream out( outfile );
-	for ( Size n = 1; n <= results.size() ; n++ ) {
+	for ( core::Size n = 1; n <= results.size() ; n++ ) {
 		out << F(8,3,results[n].first) << " " << results[n].second << std::endl;
 	}
 	out.close();
@@ -276,10 +276,10 @@ export_packer_results(  utility::vector1< std::pair< Real, std::string > > & res
 	SilentFileData silent_file_data( opts );
 
 	std::string silent_file( outfile );
-	Size pos( silent_file.find( ".txt" ) );
+	core::Size pos( silent_file.find( ".txt" ) );
 	silent_file.replace( pos, 4, ".out" );
 
-	for ( Size n = 1; n <= results.size() ; n++ ) {
+	for ( core::Size n = 1; n <= results.size() ; n++ ) {
 		pose::Pose & pose( *pose_list[n] );
 		(*scorefxn)( pose );
 		std::string const tag( "S_"+lead_zero_string_of( n, 4 ) );
@@ -307,7 +307,7 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
 	EnergyBasePairList const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	FArray1D_bool forms_noncanonical_base_pair( nres, false );
 	FArray1D_bool forms_canonical_base_pair( nres, false );
 	FArray1D_int  WC_base_pair_partner( nres, 0 );
@@ -316,8 +316,8 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 
 		BasePair const & base_pair = it.second;
 
-		Size const i = base_pair.res1();
-		Size const j = base_pair.res2();
+		core::Size const i = base_pair.res1();
+		core::Size const j = base_pair.res2();
 
 		Residue const & rsd_i( pose.residue( i ) );
 		Residue const & rsd_j( pose.residue( j ) );
@@ -347,7 +347,7 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 	}
 
 	struct_type.dimension( nres );
-	for ( Size i = 1; i <= nres; i++ ) {
+	for ( core::Size i = 1; i <= nres; i++ ) {
 		if ( !forms_noncanonical_base_pair(i) && !forms_canonical_base_pair(i) ) {
 			struct_type( i ) = 0;
 		} else if ( forms_canonical_base_pair(i) && !forms_noncanonical_base_pair( WC_base_pair_partner(i) )  ) {
@@ -363,7 +363,7 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 //  perhaps should set up something similar for regular RNA
 //  as an alternative to linear_chainbreak.
 void
-setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
+setup_coarse_chainbreak_constraints( pose::Pose & pose, core::Size const & n )
 {
 	using namespace core::scoring::constraints;
 	using namespace core::scoring::rna;
@@ -406,10 +406,10 @@ setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
 		P_P_distance_fade,
 		P_P_distance_bonus ) );
 
-	Size const atom_S1 = pose.residue_type( n ).atom_index( " S  " );
-	Size const atom_P1 = pose.residue_type( n ).atom_index( " P  " );
-	Size const atom_S2 = pose.residue_type( n+1 ).atom_index( " S  " );
-	Size const atom_P2 = pose.residue_type( n+1 ).atom_index( " P  " );
+	core::Size const atom_S1 = pose.residue_type( n ).atom_index( " S  " );
+	core::Size const atom_P1 = pose.residue_type( n ).atom_index( " P  " );
+	core::Size const atom_S2 = pose.residue_type( n+1 ).atom_index( " S  " );
+	core::Size const atom_P2 = pose.residue_type( n+1 ).atom_index( " P  " );
 
 	pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
 		id::AtomID(atom_S1, n),
@@ -440,14 +440,14 @@ print_internal_coords( core::pose::Pose const & pose ) {
 	using namespace core::id;
 	using numeric::conversions::degrees;
 
-	for ( Size i = 2;  i <= pose.size(); i++ ) {
+	for ( core::Size i = 2;  i <= pose.size(); i++ ) {
 
 		chemical::ResidueType const & rsd( pose.residue_type( i ) ) ;
 
 		TR << "----------------------------------------------------------------------" << std::endl;
 		TR << "RESIDUE: " << rsd.name3() << " " << i << std::endl;
 
-		for ( Size j = 1; j <= rsd.natoms(); j++ ) {
+		for ( core::Size j = 1; j <= rsd.natoms(); j++ ) {
 			core::kinematics::tree::AtomCOP current_atom( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
 			core::kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
 			core::kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
@@ -527,15 +527,15 @@ let_rigid_body_jumps_move( core::kinematics::MoveMap & movemap,
 	bool const & move_first_rigid_body /* = false */,
 	bool const & allow_single_rigid_body /* = false */ ){
 
-	utility::vector1< Size > const rigid_body_jumps = get_rigid_body_jumps( pose );
-	Size const found_jumps = rigid_body_jumps.size();
+	utility::vector1< core::Size > const rigid_body_jumps = get_rigid_body_jumps( pose );
+	core::Size const found_jumps = rigid_body_jumps.size();
 
 	if ( found_jumps < 1 ) return false; // didn't find any rigid body jumps
 	if ( !allow_single_rigid_body && found_jumps <= 1 ) return false; // nothing to rotate/translate relative to another object,
 	// and we don't care about absolute coords
 
-	Size start = ( move_first_rigid_body ) ? 1 : 2;
-	for ( Size n = start; n <= rigid_body_jumps.size(); n++ ) movemap.set_jump( rigid_body_jumps[n], true );
+	core::Size start = ( move_first_rigid_body ) ? 1 : 2;
+	for ( core::Size n = start; n <= rigid_body_jumps.size(); n++ ) movemap.set_jump( rigid_body_jumps[n], true );
 
 	return true;
 }
@@ -544,15 +544,15 @@ let_rigid_body_jumps_move( core::kinematics::MoveMap & movemap,
 void
 translate_virtual_anchor_to_first_rigid_body( pose::Pose & pose ){
 
-	Size anchor_rsd = get_anchor_rsd( pose );
+	core::Size anchor_rsd = get_anchor_rsd( pose );
 	if ( anchor_rsd == 0 ) return;
 
-	Size const nres = pose.size(); // This better be a virtual residue -- checked in get_rigid_body_jumps() above.
+	core::Size const nres = pose.size(); // This better be a virtual residue -- checked in get_rigid_body_jumps() above.
 	Vector anchor1 = pose.xyz( id::AtomID( 1, anchor_rsd ) );
 	Vector root1   = pose.xyz( id::AtomID( 1, nres ) );
 	Vector const offset = anchor1 - root1;
 
-	for ( Size j = 1; j <= pose.residue_type( nres ).natoms(); j++ ) {
+	for ( core::Size j = 1; j <= pose.residue_type( nres ).natoms(); j++ ) {
 		id::AtomID atom_id( j, nres );
 		pose.set_xyz( atom_id, pose.xyz( atom_id ) + offset );
 	}
@@ -564,7 +564,7 @@ involved_in_phosphate_torsion( std::string const & atomname )
 {
 	utility::vector1< std::string > const & atoms_involved = core::chemical::rna::atoms_involved_in_phosphate_torsion;
 
-	for ( Size n = 1; n <= atoms_involved.size(); n++ ) {
+	for ( core::Size n = 1; n <= atoms_involved.size(); n++ ) {
 		if (  atomname == atoms_involved[ n ] ) return true;
 	}
 	return false;
@@ -572,7 +572,7 @@ involved_in_phosphate_torsion( std::string const & atomname )
 
 //////////////////////////////////////////////////////////////////////////////////////
 void
-figure_out_base_pair_partner( pose::Pose & pose, std::map< Size, Size > & partner,
+figure_out_base_pair_partner( pose::Pose & pose, std::map< core::Size, core::Size > & partner,
 	bool const strict /* = true */ )
 {
 	using namespace core::scoring;
@@ -586,12 +586,12 @@ figure_out_base_pair_partner( pose::Pose & pose, std::map< Size, Size > & partne
 
 	utility::vector1< core::pose::rna::BasePair > base_pair_list = classify_base_pairs_lores( pose );
 
-	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= base_pair_list.size(); n++ ) {
 
 		BasePair const & base_pair = base_pair_list[ n ];
 
-		Size const i = base_pair.res1();
-		Size const j = base_pair.res2();
+		core::Size const i = base_pair.res1();
+		core::Size const j = base_pair.res2();
 
 		BaseEdge const & k = base_pair.edge1();
 		BaseEdge const & m = base_pair.edge2();
@@ -656,14 +656,14 @@ print_hbonds( pose::Pose & pose ){
 
 	hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
 
-	for ( Size i = 1; i <= hbond_set->nhbonds(); i++ ) {
+	for ( core::Size i = 1; i <= hbond_set->nhbonds(); i++ ) {
 		hbonds::HBond const & hbond( hbond_set->hbond( i ) );
 
-		Size const don_res_num = hbond.don_res();
-		Size const don_hatm = hbond.don_hatm();
+		core::Size const don_res_num = hbond.don_res();
+		core::Size const don_hatm = hbond.don_hatm();
 
-		Size const acc_res_num = hbond.acc_res();
-		Size const acc_atm = hbond.acc_atm();
+		core::Size const acc_res_num = hbond.acc_res();
+		core::Size const acc_atm = hbond.acc_atm();
 
 		TR << "HBOND: " << pose.residue_type( don_res_num ).name1() << don_res_num <<
 			" " << pose.residue_type( don_res_num ).atom_name( don_hatm ) << " --- " <<
@@ -688,7 +688,7 @@ get_default_allowed_bulge_res(
 		TR << "Getting default_allowed_bulge_res!" << std::endl;
 	}
 
-	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		//exclude edge residues:
 		if ( seq_num == 1 ) continue;
@@ -730,7 +730,7 @@ virtualize_bulges( core::pose::Pose & input_pose,
 	using namespace ObjexxFCL;
 
 
-	Size const total_res = input_pose.size();
+	core::Size const total_res = input_pose.size();
 
 	Real const rna_bulge_bonus = ( scorefxn->get_weight( rna_bulge ) )*10;
 
@@ -750,7 +750,7 @@ virtualize_bulges( core::pose::Pose & input_pose,
 		//Testing to see if checking in core::pose::rna::apply_virtual_rna_residue_variant_type can be violated!//////////
 		pose::Pose testing_pose = input_pose;
 
-		for ( Size seq_num = 1; seq_num <= total_res; seq_num++ ) {
+		for ( core::Size seq_num = 1; seq_num <= total_res; seq_num++ ) {
 			if ( !testing_pose.residue_type( seq_num ).is_RNA() ) continue; //Fang's electron density code
 			if ( allow_bulge_res_list.has_value( seq_num ) == false ) continue;
 			core::pose::rna::apply_virtual_rna_residue_variant_type( testing_pose, seq_num, true /*apply_check*/ );
@@ -760,7 +760,7 @@ virtualize_bulges( core::pose::Pose & input_pose,
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	if ( !allow_pre_virtualize ) {
-		for ( Size seq_num = 1; seq_num <= total_res; seq_num++ ) {
+		for ( core::Size seq_num = 1; seq_num <= total_res; seq_num++ ) {
 			if ( !input_pose.residue_type( seq_num ).is_RNA() ) continue; //Fang's electron density code
 			if ( input_pose.residue_type( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 				utility_exit_with_message( "allow_pre_virtualize == false but seq_num = " + string_of( seq_num ) +
@@ -773,8 +773,8 @@ virtualize_bulges( core::pose::Pose & input_pose,
 	Real const start_score = ( *scorefxn )( working_pose );
 
 
-	Size num_res_virtualized = 0;
-	Size round_num = 0;
+	core::Size num_res_virtualized = 0;
+	core::Size round_num = 0;
 
 	while ( true ) { //Need multiple round, since virtualizing a particular res will reduce the energy score of neighoring res and might effect wether neighoring res should be virtualized.
 		pose::Pose base_pose = input_pose;
@@ -782,9 +782,9 @@ virtualize_bulges( core::pose::Pose & input_pose,
 
 		round_num++;
 
-		Size num_res_virtualized_in_this_round = 0;
+		core::Size num_res_virtualized_in_this_round = 0;
 
-		for ( Size seq_num = 1; seq_num <= total_res; seq_num++ ) {
+		for ( core::Size seq_num = 1; seq_num <= total_res; seq_num++ ) {
 			if ( !input_pose.residue_type( seq_num ).is_RNA() ) continue; //Fang's electron density code
 			if ( !allow_bulge_res_list.has_value( seq_num ) ) continue;
 
@@ -869,13 +869,13 @@ get_rna_hires_scorefxn( bool const & include_protein_terms ) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< Size >
+utility::vector1< core::Size >
 get_moving_res( core::pose::Pose const & pose,
 	core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) {
 
-	utility::vector1< Size > moving_res;
+	utility::vector1< core::Size > moving_res;
 
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( atom_level_domain_map->get( n ) ) {
 			moving_res.push_back( n );
 		}

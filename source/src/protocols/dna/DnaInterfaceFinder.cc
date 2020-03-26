@@ -33,8 +33,8 @@ void
 DnaInterfaceFinder::determine_interface( pose::Pose const & pose )
 {
 	// Does both protein and DNA
-	vector1< Size > protein_positions, dna_positions;
-	for ( Size index(1), end( pose.size() ); index <= end; ++index ) {
+	vector1< core::Size > protein_positions, dna_positions;
+	for ( core::Size index(1), end( pose.size() ); index <= end; ++index ) {
 		if ( pose.residue_type( index ).is_protein() ) protein_positions.push_back( index );
 		else if ( pose.residue_type( index ).is_DNA() ) dna_positions.push_back( index );
 	}
@@ -47,8 +47,8 @@ DnaInterfaceFinder::determine_protein_interface( pose::Pose const & pose )
 {
 	// all protein positions against all DNA positions
 	// this is the slowest possible (intended) usage of DnaInterfaceFinder
-	vector1< Size > protein_positions, dna_positions;
-	for ( Size index(1), end( pose.size() ); index <= end; ++index ) {
+	vector1< core::Size > protein_positions, dna_positions;
+	for ( core::Size index(1), end( pose.size() ); index <= end; ++index ) {
 		if ( pose.residue_type( index ).is_protein() ) protein_positions.push_back( index );
 		else if ( pose.residue_type( index ).is_DNA() ) dna_positions.push_back( index );
 	}
@@ -58,8 +58,8 @@ DnaInterfaceFinder::determine_protein_interface( pose::Pose const & pose )
 void
 DnaInterfaceFinder::determine_interface(
 	pose::Pose const & pose,
-	vector1< Size > const & protein_positions,
-	vector1< Size > const & dna_positions
+	vector1< core::Size > const & protein_positions,
+	vector1< core::Size > const & dna_positions
 )
 {
 	determine_protein_interface( pose, protein_positions, dna_positions );
@@ -69,8 +69,8 @@ DnaInterfaceFinder::determine_interface(
 void
 DnaInterfaceFinder::determine_protein_interface(
 	pose::Pose const & pose,
-	vector1< Size > const & protein_positions,
-	vector1< Size > const & dna_positions
+	vector1< core::Size > const & protein_positions,
+	vector1< core::Size > const & dna_positions
 )
 {
 	for ( core::Size protein_position : protein_positions ) {
@@ -104,8 +104,8 @@ DnaInterfaceFinder::determine_protein_interface(
 void
 DnaInterfaceFinder::determine_dna_interface(
 	pose::Pose const & pose,
-	vector1< Size > const & protein_positions,
-	vector1< Size > const & dna_positions
+	vector1< core::Size > const & protein_positions,
+	vector1< core::Size > const & dna_positions
 )
 {
 	for ( core::Size dna_position : dna_positions ) {

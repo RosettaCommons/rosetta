@@ -75,7 +75,7 @@ RestrictToTerminiOperation::RestrictToTerminiOperation() :
 {}
 
 RestrictToTerminiOperation::RestrictToTerminiOperation(
-	Size const chain,
+	core::Size const chain,
 	bool const repack_n_terminus,
 	bool const repack_c_terminus) :
 	chain_(chain),
@@ -108,17 +108,17 @@ RestrictToTerminiOperation::apply(
 
 	// N-terminus
 	if ( repack_n_terminus_ ) {
-		Size const n_terminus(pose.conformation().chain_begin(chain_));
+		core::Size const n_terminus(pose.conformation().chain_begin(chain_));
 		repack_residues[n_terminus] = true;
 	}
 
 	// C-terminus
 	if ( repack_c_terminus_ ) {
-		Size const c_terminus(pose.conformation().chain_end(chain_));
+		core::Size const c_terminus(pose.conformation().chain_end(chain_));
 		repack_residues[c_terminus] = true;
 	}
 
-	for ( Size i = 1; i <= repack_residues.size(); ++i ) {
+	for ( core::Size i = 1; i <= repack_residues.size(); ++i ) {
 		if ( repack_residues[i] ) {
 			task.nonconst_residue_task(i).restrict_to_repacking();
 		} else {
@@ -131,7 +131,7 @@ RestrictToTerminiOperation::apply(
 void
 RestrictToTerminiOperation::parse_tag( TagCOP tag , DataMap & )
 {
-	chain_ = tag->getOption<Size>("chain", 1);
+	chain_ = tag->getOption<core::Size>("chain", 1);
 	repack_n_terminus_ = tag->getOption<bool>("repack_n_terminus", true);
 	repack_c_terminus_ = tag->getOption<bool>("repack_c_terminus", true);
 }

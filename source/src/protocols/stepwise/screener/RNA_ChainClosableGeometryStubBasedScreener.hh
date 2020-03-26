@@ -35,7 +35,7 @@ public:
 	RNA_ChainClosableGeometryStubBasedScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
 		utility::vector1< core::pose::PoseOP > screening_pose_list,
 		core::kinematics::Stub const & moving_res_base_stub,
-		Size const reference_res,
+		core::Size const reference_res,
 		utility::vector1< core::conformation::ResidueOP > const & moving_rsd_at_origin_list,
 		bool const using_predefined_moving_rsd_list = true );
 
@@ -44,7 +44,7 @@ public:
 	RNA_ChainClosableGeometryStubBasedScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
 		utility::vector1< core::pose::PoseOP > screening_pose_list,
 		core::kinematics::Stub const & moving_res_base_stub,
-		Size const chain_break_reference_res );
+		core::Size const chain_break_reference_res );
 
 	//destructor
 	~RNA_ChainClosableGeometryStubBasedScreener() override;
@@ -71,7 +71,7 @@ private:
 	core::conformation::ResidueOP moving_rsd_at_origin_;
 	utility::vector1< core::conformation::ResidueOP > moving_rsd_at_origin_list_;
 	core::kinematics::Stub const & moving_res_base_stub_;
-	Size const reference_res_;
+	core::Size const reference_res_;
 
 	bool const using_predefined_moving_rsd_list_;
 

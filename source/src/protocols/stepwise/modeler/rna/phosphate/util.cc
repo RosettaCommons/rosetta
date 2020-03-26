@@ -44,15 +44,15 @@ namespace phosphate {
 /////////////////////////////////////////////////////////////////
 void
 remove_terminal_phosphates( pose::Pose & pose ){
-	utility::vector1< Size > res_list;
-	for ( Size n = 1; n <= pose.size(); n++ ) res_list.push_back( n );
+	utility::vector1< core::Size > res_list;
+	for ( core::Size n = 1; n <= pose.size(); n++ ) res_list.push_back( n );
 	remove_terminal_phosphates( pose, res_list );
 }
 
 /////////////////////////////////////////////////////////////////
 void
-remove_terminal_phosphates( pose::Pose & pose, utility::vector1< Size > const & res_list ){
-	for ( Size const n : res_list ) {
+remove_terminal_phosphates( pose::Pose & pose, utility::vector1< core::Size > const & res_list ){
+	for ( core::Size const n : res_list ) {
 		if ( pose.residue(n).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) ) {
 			remove_variant_type_from_pose_residue( pose, core::chemical::FIVE_PRIME_PHOSPHATE, n );
 			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, n );
@@ -63,7 +63,7 @@ remove_terminal_phosphates( pose::Pose & pose, utility::vector1< Size > const & 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-position_five_prime_phosphate_SLOW( pose::Pose & pose, Size const res ) {
+position_five_prime_phosphate_SLOW( pose::Pose & pose, core::Size const res ) {
 	using namespace core::chemical;
 	ResidueTypeSetCOP rsd_set = pose.residue_type_set_for_pose( pose.residue_type( res ).mode() );
 	conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->get_representative_type_aa( aa_from_name( "RAD") ) ) ) ;
@@ -73,7 +73,7 @@ position_five_prime_phosphate_SLOW( pose::Pose & pose, Size const res ) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-position_five_prime_phosphate( pose::Pose & pose, Size const res ) {
+position_five_prime_phosphate( pose::Pose & pose, core::Size const res ) {
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::id;
@@ -113,7 +113,7 @@ copy_over_phosphate_variants( pose::Pose & pose_input,
 	runtime_assert( pose.size() == reference_pose.size() );
 
 	for ( PhosphateMove const & phosphate_move : phosphate_move_list ) {
-		Size const & n = phosphate_move.rsd();
+		core::Size const & n = phosphate_move.rsd();
 		PhosphateTerminus const & terminus = phosphate_move.terminus();
 
 		utility::vector1< TorsionID > torsion_ids;
@@ -165,10 +165,10 @@ copy_over_phosphate_variants( pose::Pose & pose_input,
 void
 copy_over_phosphate_variants( pose::Pose & pose_input,
 	pose::Pose const & reference_pose,
-	utility::vector1< Size > const & res_list ){
+	utility::vector1< core::Size > const & res_list ){
 
 	utility::vector1< PhosphateMove > phosphate_move_list;
-	for ( Size i = 1; i <= res_list.size(); i++ ) {
+	for ( core::Size i = 1; i <= res_list.size(); i++ ) {
 		phosphate_move_list.push_back( PhosphateMove( res_list[i], FIVE_PRIME_PHOSPHATE ) );
 		phosphate_move_list.push_back( PhosphateMove( res_list[i], THREE_PRIME_PHOSPHATE ) );
 	}
@@ -211,7 +211,7 @@ static Real const max_hbond_dist_cutoff2( 2.2 * 2.2 );
 static Real const max_hbond_base_dist_cutoff2( 3.2 * 3.2 );
 static Real const cos_angle_cutoff = -0.5;
 
-for ( Size i = 1; i <= donor_atom_xyz_list.size(); i++ ) {
+for ( core::Size i = 1; i <= donor_atom_xyz_list.size(); i++ ) {
 for ( auto const & op_xyz : op_xyz_list ) {
 Real const dist2 =  ( donor_atom_xyz_list[ i ] - op_xyz ).length_squared();
 if ( dist2 > max_hbond_dist_cutoff2 ) continue;
@@ -231,7 +231,7 @@ return false;
 
 //////////////////////////////////////////////////////////////////////
 bool
-check_phosphate_contacts_donor( pose::Pose const & pose, Size const n ){
+check_phosphate_contacts_donor( pose::Pose const & pose, core::Size const n ){
 utility::vector1< Vector > op_xyz_list;
 // Only the space-trimmed version will work for CCD residues
 op_xyz_list.push_back( pose.residue( n ).xyz( "OP1" ) );
@@ -239,7 +239,7 @@ op_xyz_list.push_back( pose.residue( n ).xyz( "OP2" ) );
 
 utility::vector1< Vector > donor_atom_xyz_list;
 utility::vector1< Vector > donor_base_atom_xyz_list;
-utility::vector1< Size > neighbor_copy_dofs; // dummy
+utility::vector1< core::Size > neighbor_copy_dofs; // dummy
 get_phosphate_atom_and_neighbor_list( pose, PhosphateMove( n, FIVE_PRIME_PHOSPHATE ), donor_atom_xyz_list, donor_base_atom_xyz_list, neighbor_copy_dofs );
 
 return check_phosphate_contacts_donor( op_xyz_list,
@@ -253,7 +253,7 @@ get_phosphate_atom_and_neighbor_list( core::pose::Pose const & pose,
 PhosphateMove const & phosphate_move_,
 utility::vector1< Vector > & donor_atom_xyz_list,
 utility::vector1< Vector > & donor_base_atom_xyz_list,
-utility::vector1< Size > & neighbor_copy_dofs ) {
+utility::vector1< core::Size > & neighbor_copy_dofs ) {
 
 static Real const  phosphate_takeoff_donor_distance_cutoff2( 8.0 * 8.0 );
 static Real const  phosphate_nbr_distance_cutoff2( 12.0 * 12.0 );
@@ -267,13 +267,13 @@ Vector const phosphate_takeoff_xyz = (phosphate_move_.terminus() == FIVE_PRIME_P
 pose.residue( n ).xyz( "C5'" ) :
 pose.residue( n ).xyz( "O3'" );
 
-for ( Size m = 1; m <= pose.size(); m++ ) {
+for ( core::Size m = 1; m <= pose.size(); m++ ) {
 
 if ( ( pose.residue( m ).nbr_atom_xyz()  - phosphate_takeoff_xyz ).length_squared() > phosphate_nbr_distance_cutoff2 ) continue;
 neighbor_copy_dofs.push_back( m );
 
 core::chemical::AtomIndices Hpos_polar = pose.residue_type( m ).Hpos_polar();
-for ( Size const q : Hpos_polar ) {
+for ( core::Size const q : Hpos_polar ) {
 Vector const & donor_atom_xyz = pose.residue( m ).xyz( q );
 if ( ( donor_atom_xyz - phosphate_takeoff_xyz ).length_squared() < phosphate_takeoff_donor_distance_cutoff2 ) {
 donor_atom_xyz_list.push_back( donor_atom_xyz );
@@ -290,7 +290,7 @@ donor_base_atom_xyz_list.push_back( donor_base_atom_xyz );
 utility::vector1< bool >
 detect_phosphate_contacts( pose::Pose const & pose ){
 utility::vector1< bool > phosphate_makes_contact( pose.size(), false );
-for ( Size i = 1; i <= pose.size(); i++ ) {
+for ( core::Size i = 1; i <= pose.size(); i++ ) {
 if ( !pose.residue_type( i ).is_RNA() ) continue;
 phosphate_makes_contact[ i ] = check_phosphate_contacts_donor( pose, i );
 }
@@ -300,7 +300,7 @@ return phosphate_makes_contact;
 
 //////////////////////////////////////////////////////////////////////
 void
-setup_three_prime_phosphate_based_on_next_residue( pose::Pose & pose, Size const n ) {
+setup_three_prime_phosphate_based_on_next_residue( pose::Pose & pose, core::Size const n ) {
 add_variant_type_to_pose_residue( pose, chemical::THREE_PRIME_PHOSPHATE, n );
 runtime_assert( n < pose.size() );
 runtime_assert( pose.residue_type( n+1 ).is_RNA() );

@@ -38,7 +38,7 @@
 
 // Utility headers
 #include <utility/SingletonBase.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/kinematics/RT.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
@@ -74,7 +74,7 @@ public:
 /// this is the inner product of the respective N-C vectors.
 //void compute_orientation_and_pleating( core::pose::Pose const&, core::Size res1, core::Size res2, core::Size &orientation, core::Size &pleating);
 
-class BasePairingLibrary : public utility::pointer::ReferenceCount {
+class BasePairingLibrary : public utility::VirtualBase {
 public:
 	~BasePairingLibrary() override;
 

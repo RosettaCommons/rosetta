@@ -18,7 +18,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // c++ headers
@@ -29,7 +29,7 @@ namespace filters {
 
 /// @brief Abstract base class for a Filter factory; the Creator class is responsible for
 /// creating a particular filter class.
-class FilterCreator : public utility::pointer::ReferenceCount
+class FilterCreator : public utility::VirtualBase
 {
 public:
 	FilterCreator();

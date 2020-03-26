@@ -24,7 +24,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <iosfwd>
@@ -43,7 +43,7 @@ void write_kinemage_header(
 	Vector const & ctr
 );
 
-class ResidueKinWriter : public utility::pointer::ReferenceCount
+class ResidueKinWriter : public utility::VirtualBase
 {
 public:
 	typedef core::Size   Size;
@@ -94,7 +94,7 @@ private:
 	bool write_virtual_atoms_;
 };
 
-class ConformationKinWriter : public utility::pointer::ReferenceCount
+class ConformationKinWriter : public utility::VirtualBase
 {
 public:
 

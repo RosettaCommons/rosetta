@@ -24,7 +24,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -73,7 +73,7 @@ private:
 };
 
 ///@brief Splits a denovo structure into pieces, and devises a strategy for folding the structure piece-by-piece
-class DivideAndConqueror : public utility::pointer::ReferenceCount {
+class DivideAndConqueror : public utility::VirtualBase {
 public:
 	DivideAndConqueror();
 

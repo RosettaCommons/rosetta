@@ -29,7 +29,7 @@
 // C++ headers
 
 #include <core/scoring/mm/MMLJLibrary.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 namespace core {
@@ -42,7 +42,7 @@ namespace mm {
 /// @details blah
 ///
 ///
-class MMLJScore : public utility::pointer::ReferenceCount
+class MMLJScore : public utility::VirtualBase
 {
 
 public:

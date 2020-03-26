@@ -169,7 +169,7 @@ Real TruncatedScoreEvaluator::apply( core::pose::Pose& pose ) const {
 	scorefxn->set_weight(  scoring::chainbreak, 0);
 
 	tr.Debug << "compute score without using these residues: ";
-	std::copy( exclude_list_.begin(), exclude_list_.end(), std::ostream_iterator< Size >( tr.Debug, " " ));
+	std::copy( exclude_list_.begin(), exclude_list_.end(), std::ostream_iterator< core::Size >( tr.Debug, " " ));
 	tr.Debug << std::endl;
 	(*scorefxn)( nochainbreak_pose );
 	core::Real val = scorefxn->get_sub_score_exclude_res( nochainbreak_pose, exclude_list_ );

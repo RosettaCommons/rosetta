@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_loop_graph_Loop_HH
 #define INCLUDED_core_scoring_loop_graph_Loop_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/scoring/loop_graph/Loop.fwd.hh>
 #include <core/scoring/types.hh>
 #include <iostream>
@@ -29,7 +29,7 @@ namespace loop_graph {
 ///  Records takeoff_pos & landing_pos (in full_model numbering).
 ///  Also records 'domain', i.e. if there are multiple poses in a collection,
 ///   which pose.
-class Loop: public utility::pointer::ReferenceCount {
+class Loop: public utility::VirtualBase {
 
 public:
 

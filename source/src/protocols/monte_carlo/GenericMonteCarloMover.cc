@@ -95,9 +95,9 @@ GenericMonteCarloMover::GenericMonteCarloMover():
 /// @brief value constructor without a score function
 
 GenericMonteCarloMover::GenericMonteCarloMover(
-	Size const maxtrials,
-	Size const max_accepted_trials,
-	Size const task_scaling,
+	core::Size const maxtrials,
+	core::Size const max_accepted_trials,
+	core::Size const task_scaling,
 	MoverOP const & mover,
 	Real const temperature,
 	String const & sample_type,
@@ -117,9 +117,9 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 
 /// @brief value constructor with a TaskFactory
 GenericMonteCarloMover::GenericMonteCarloMover(
-	Size const maxtrials,
-	Size const max_accepted_trials,
-	Size const task_scaling,
+	core::Size const maxtrials,
+	core::Size const max_accepted_trials,
+	core::Size const task_scaling,
 	MoverOP const & mover,
 	TaskFactoryOP factory_in,
 	Real const temperature,
@@ -239,21 +239,21 @@ GenericMonteCarloMover::mc_accpeted() const
 
 /// @brief set max trials of monte carlo iterations
 void
-GenericMonteCarloMover::set_maxtrials( Size const ntrial )
+GenericMonteCarloMover::set_maxtrials( core::Size const ntrial )
 {
 	maxtrials_ = ntrial;
 }
 
 /// @brief set the maximum number of trials that should be accepted
 void
-GenericMonteCarloMover::set_max_accepted_trials( Size const n_max_accepted_trials )
+GenericMonteCarloMover::set_max_accepted_trials( core::Size const n_max_accepted_trials )
 {
 	max_accepted_trials_ = n_max_accepted_trials;
 }
 
 /// @brief set task multiplier to calculate trials from task
 void
-GenericMonteCarloMover::set_task_scaling( Size const scaling )
+GenericMonteCarloMover::set_task_scaling( core::Size const scaling )
 {
 	task_scaling_ = scaling;
 }
@@ -417,7 +417,7 @@ GenericMonteCarloMover::reset( Pose & pose )
 		lowest_scores_.push_back( lowest_score_ );
 	} else {
 		core::Real ranking_score( 0.0 );
-		for ( Size index = 1; index <= filters_.size(); ++index ) {
+		for ( core::Size index = 1; index <= filters_.size(); ++index ) {
 			Real const flip( sample_types_[ index ] == "high" ? -1 : 1 );
 			Real score = flip * 99999999.99;
 			if ( pose.size() > 0 ) {
@@ -433,7 +433,7 @@ GenericMonteCarloMover::reset( Pose & pose )
 		}
 		if ( boltz_rank_ ) {
 			ranking_score = 0.0;
-			for ( Size index = 1; index <= filters_.size(); ++index ) {
+			for ( core::Size index = 1; index <= filters_.size(); ++index ) {
 				ranking_score += last_accepted_scores_[ index ] / temperatures_[ index ];
 			}
 		}
@@ -466,9 +466,9 @@ GenericMonteCarloMover::scoring( Pose & pose )
 GenericMonteCarloMover::Size
 GenericMonteCarloMover::num_designable( Pose & pose, PackerTaskOP & task )
 {
-	Size number_designable = 0;
+	core::Size number_designable = 0;
 	TR << "Designable Residues: ";
-	for ( Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 		if ( task->design_residue(i) ) {
 			++number_designable;
 			TR << i << ", ";
@@ -848,7 +848,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 		runtime_assert( mover_pp->mode() == "single_random" );
 		mover_accepts = utility::vector1< core::Size >( mover_pp->size(), 1 ); /// each mover gets a pseudocount of 1. This ensures that the running probability of each mover never goes to 0
 	}
-	for ( Size i=load_trial_number_from_checkpoint( pose ); i<=maxtrials_; i++ ) {
+	for ( core::Size i=load_trial_number_from_checkpoint( pose ); i<=maxtrials_; i++ ) {
 		TR<<"Trial number: "<<i<<std::endl;
 		if ( i > 1 && adaptive_movers() && i % adaptation_period() == 0 ) {
 			/// The probability for each mover within a single-random parsedprotocol is determined by the number of accepts it had during the previous adaptation period:
@@ -1094,12 +1094,12 @@ void GenericMonteCarloMover::parse_task_operations(
 
 
 void GenericMonteCarloMover::fire_all_triggers(
-	Size cycle,
-	Size num_cycles,
+	core::Size cycle,
+	core::Size num_cycles,
 	const Pose& pose,
 	ScoreFunctionOP scoring)
 {
-	boost::unordered_map<Size, GenericMonteCarloMoverTrigger>::iterator i;
+	boost::unordered_map<core::Size, GenericMonteCarloMoverTrigger>::iterator i;
 	for ( i = triggers_.begin(); i != triggers_.end(); ++i ) {
 		GenericMonteCarloMoverTrigger& t = i->second;
 		bool rescore = t(cycle, num_cycles, pose, scoring);
@@ -1112,13 +1112,13 @@ void GenericMonteCarloMover::fire_all_triggers(
 }
 
 Size GenericMonteCarloMover::add_trigger(const GenericMonteCarloMoverTrigger& trigger) {
-	Size tid = next_trigger_id_++;
+	core::Size tid = next_trigger_id_++;
 	triggers_[tid] = trigger;
 	return tid;
 }
 
-void GenericMonteCarloMover::remove_trigger(Size trigger_id) {
-	boost::unordered_map<Size, GenericMonteCarloMoverTrigger>::iterator i = triggers_.find(trigger_id);
+void GenericMonteCarloMover::remove_trigger(core::Size trigger_id) {
+	boost::unordered_map<core::Size, GenericMonteCarloMoverTrigger>::iterator i = triggers_.find(trigger_id);
 	if ( i == triggers_.end() ) {
 		TR.Warning << "Attempt to remove invalid trigger_id => " << trigger_id << std::endl;
 		return;

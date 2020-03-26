@@ -22,7 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -36,10 +36,10 @@ namespace rotamer_recovery {
 /// Besides implementing the interface given in the base class
 /// RRComparer each RRComparer should have an entry in the conevience
 /// RotamerRecovery constructor so its use can be indicated by name.
-class RRComparer : public utility::pointer::ReferenceCount {
+class RRComparer : public utility::VirtualBase {
 
 public: // constructors destructors
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~RRComparer() override;
 
 	// RRComparer();

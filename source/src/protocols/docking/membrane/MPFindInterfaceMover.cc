@@ -317,7 +317,7 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	}
 
 	// do this for a certain number of iterations
-	for ( Size i = 1; i <= 10; ++i ) {
+	for ( core::Size i = 1; i <= 10; ++i ) {
 
 		// SPIN MOVER
 		// get a random spin angle between 0 and 360 degrees
@@ -483,8 +483,8 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	// get start and end residue of downstream chain
 	utility::vector1< std::string > partners( utility::string_split( partners_, '_' ) );
 
-	Size start = chain_end_res( pose, get_chain_id_from_chain( partners[1], pose) ) + 1;
-	Size end = chain_end_res( pose, get_chain_id_from_chain( partners[2], pose) );
+	core::Size start = chain_end_res( pose, get_chain_id_from_chain( partners[1], pose) ) + 1;
+	core::Size end = chain_end_res( pose, get_chain_id_from_chain( partners[2], pose) );
 	TR << "chain " << partners[2] << " start " << start << " end " << end << std::endl;
 
 	// compute ligand RMSD
@@ -656,8 +656,8 @@ void MPFindInterfaceMover::superimpose_upstream_partner( Pose & pose ) {
 	utility::vector1< std::string > partner1( utility::split( partners[1] ) );
 
 	// get residue range for superposition: get start residue
-	Size start(0);
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	core::Size start(0);
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( start == 0 &&
 				partner1[1] == utility::to_string( pose.pdb_info()->chain( i ) ) ) {
 			start = i;
@@ -665,8 +665,8 @@ void MPFindInterfaceMover::superimpose_upstream_partner( Pose & pose ) {
 	}
 
 	// get end residue
-	Size end(0);
-	for ( Size j = pose.size(); j >= 1; --j ) {
+	core::Size end(0);
+	for ( core::Size j = pose.size(); j >= 1; --j ) {
 		if ( end == 0 &&
 				partner1[partner1.size()] == utility::to_string( pose.pdb_info()->chain( j ) ) ) {
 			end = j;
@@ -700,7 +700,7 @@ core::Real MPFindInterfaceMover::calculate_interface_SASA( Pose & pose, Interfac
 	core::Real interface_sasa(0);
 
 	// go through residues and add SASA of that residue to total SASA
-	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
+	for ( core::Size i = 1; i <= nres_protein( pose ); ++i ) {
 		interface_sasa += interface.is_interface( i ) * sasa[ i ];
 	}
 
@@ -723,7 +723,7 @@ std::pair< core::Real, core::Real > MPFindInterfaceMover::fractions_small_residu
 	core::Size small_nonintf_res( 0 );
 
 	// iterate over residues in protein
-	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
+	for ( core::Size i = 1; i <= nres_protein( pose ); ++i ) {
 
 		// check if residue is in interface
 		bool intf( false );

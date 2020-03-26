@@ -34,7 +34,7 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2A.fwd.hh>

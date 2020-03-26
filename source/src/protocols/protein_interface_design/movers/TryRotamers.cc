@@ -70,8 +70,8 @@ TryRotamers::TryRotamers() :
 TryRotamers::TryRotamers( std::string const & resnum,
 	ScoreFunction const & scorefxn,
 	protocols::filters::Filter const & final_filter,
-	Size explosion, // rotamer explosion
-	Size jump_num,
+	core::Size explosion, // rotamer explosion
+	core::Size jump_num,
 	bool clash_check,
 	bool solo_res,
 	bool include_current
@@ -90,8 +90,8 @@ TryRotamers::TryRotamers( std::string const & resnum,
 /// @note Pass everything through the final filter (True Filter)
 TryRotamers::TryRotamers( std::string const & resnum,
 	core::scoring::ScoreFunction const& scorefxn,
-	Size explosion, // rotamer explosion
-	Size jump_num,
+	core::Size explosion, // rotamer explosion
+	core::Size jump_num,
 	bool solo_res,
 	bool clash_check,
 	bool include_current

@@ -19,8 +19,8 @@
 #include <utility>
 #include <utility/vector1.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/VirtualBase.hh>
+#include <utility/VirtualBase.fwd.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
@@ -40,7 +40,7 @@ KDPoint::KDPoint(
 
 KDPoint::KDPoint(
 	utility::vector1< numeric::Real > location,
-	utility::pointer::ReferenceCountOP data
+	utility::VirtualBaseOP data
 ) :
 	location_(std::move( location )), data_(std::move( data )), distance_( 0.0 )
 {}
@@ -54,13 +54,13 @@ KDPoint::KDPoint(
 
 KDPoint::KDPoint(
 	utility::vector1< numeric::Real > location,
-	utility::pointer::ReferenceCountOP data,
+	utility::VirtualBaseOP data,
 	numeric::Real distance
 ) :
 	location_(std::move( location )), data_(std::move( data )), distance_( distance )
 {}
 
-KDPoint::KDPoint( KDPoint const & src ) : ReferenceCount() {
+KDPoint::KDPoint( KDPoint const & src ) : VirtualBase() {
 	// use assignment operator
 	*this = src;
 }
@@ -82,7 +82,7 @@ utility::vector1< numeric::Real > KDPoint::location() const {
 	return location_;
 }
 
-utility::pointer::ReferenceCountOP KDPoint::data() const {
+utility::VirtualBaseOP KDPoint::data() const {
 	return data_;
 }
 

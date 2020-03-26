@@ -92,7 +92,7 @@ public:
 	SequenceCouplingCOP sequence_coupling() const;
 
 	core::Size natoms() const override { return 0; };
-	AtomID const & atom( Size const ) const override {
+	AtomID const & atom( core::Size const ) const override {
 		utility_exit_with_message("SequenceCouplingConstraint is not atom-based!.");
 		return core::id::GLOBAL_BOGUS_ATOM_ID;  // required for compilation on Windows
 	}

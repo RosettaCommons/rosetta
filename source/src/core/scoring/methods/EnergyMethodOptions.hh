@@ -32,7 +32,7 @@
 #include <core/chemical/AA.hh>
 
 /// Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
@@ -57,7 +57,7 @@ namespace methods {
 /// right now this class should be pretty light-weight since a copy is held inside ScoreFunctionInfo
 
 
-class EnergyMethodOptions : public utility::pointer::ReferenceCount {
+class EnergyMethodOptions : public utility::VirtualBase {
 public:
 
 	/// @brief Default constructor, reads from the global options system

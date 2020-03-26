@@ -133,14 +133,14 @@ ResidueFeatures::insert_residue_rows(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	for ( Size resNum=1; resNum <= pose.size(); ++resNum ) {
+	for ( core::Size resNum=1; resNum <= pose.size(); ++resNum ) {
 		if ( !check_relevant_residues(relevant_residues, resNum) ) continue;
 		Residue res = pose.residue(resNum);
 
 		string const name3( res.name3() );
 		string const res_type( res.name() );
 
-		RowDataBaseOP resnum_data( new RowData<Size>("resNum",resNum) );
+		RowDataBaseOP resnum_data( new RowData<core::Size>("resNum",resNum) );
 		RowDataBaseOP name3_data( new RowData<string>("name3",name3) );
 		RowDataBaseOP res_type_data( new RowData<string>("res_type",res_type) );
 

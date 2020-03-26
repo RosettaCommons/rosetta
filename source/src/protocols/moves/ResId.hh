@@ -19,7 +19,7 @@
 #include <core/types.hh>
 #include <protocols/moves/ResId.fwd.hh>
 #include <core/pose/ResidueIndexDescription.fwd.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/VirtualBase.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
@@ -44,11 +44,11 @@ private:
 
 /// @brief Checks whether a referencecount object is a derived from ResId and if so, sets its resid
 void
-modify_ResId_based_object( utility::pointer::ReferenceCountOP const obj, core::Size const resid );
+modify_ResId_based_object( utility::VirtualBaseOP const obj, core::Size const resid );
 
 /// @brief Checks whether a referencecount object is a derived from ResId and if so, sets its resid
 void
-modify_ResId_based_object( utility::pointer::ReferenceCountOP const obj, core::pose::ResidueIndexDescriptionCOP r );
+modify_ResId_based_object( utility::VirtualBaseOP const obj, core::pose::ResidueIndexDescriptionCOP r );
 
 } // moves
 } // protocols

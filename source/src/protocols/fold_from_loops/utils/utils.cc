@@ -284,7 +284,7 @@ map_by_residue_subsets(
 		seqal.add_sequence( newseq );
 		seqmap = seqal.sequence_mapping( 1, 2 );
 	} else {
-		TR << "Global Size and disposition of template residues has not changed. Mapping is identity" << std::endl;
+		TR << "Global core::Size and disposition of template residues has not changed. Mapping is identity" << std::endl;
 		seqmap = core::id::SequenceMapping().identity( p2.size() );
 	}
 	TR << seqmap.to_string() << std::endl;

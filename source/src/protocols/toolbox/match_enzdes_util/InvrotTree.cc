@@ -50,7 +50,7 @@ static basic::Tracer tr( "protocols.toolbox.match_enzdes_util.InvrotTree" );
 
 
 InvrotTree::InvrotTree()
-: ReferenceCount()
+: VirtualBase()
 {
 	invrot_targets_.clear();
 	invrot_tree_constraints_.clear();
@@ -59,7 +59,7 @@ InvrotTree::InvrotTree()
 InvrotTree::~InvrotTree() = default;
 
 core::scoring::constraints::ConstraintCOP
-InvrotTree::get_constraint_for_target_state( Size target_state ) const {
+InvrotTree::get_constraint_for_target_state( core::Size target_state ) const {
 	return invrot_tree_constraints_[target_state];
 }
 
@@ -73,7 +73,7 @@ InvrotTree::generate_inverse_rotamer_constraints(
 
 	invrot_tree_constraints_.clear();
 
-	for ( Size i = 1; i <= invrot_targets_.size(); ++i ) {
+	for ( core::Size i = 1; i <= invrot_targets_.size(); ++i ) {
 		invrot_tree_constraints_.push_back( invrot_targets_[i]->generate_constraints( pose, geomcst_seqpos ) );
 	}
 
@@ -83,7 +83,7 @@ utility::vector1< InvrotCollectorCOP >
 InvrotTree::collect_all_inverse_rotamers( ) const
 {
 	utility::vector1< InvrotCollectorOP > invrot_collectors;
-	for ( Size i =1; i <= invrot_targets_.size(); ++i ) invrot_targets_[i]->collect_all_inverse_rotamers( invrot_collectors );
+	for ( core::Size i =1; i <= invrot_targets_.size(); ++i ) invrot_targets_[i]->collect_all_inverse_rotamers( invrot_collectors );
 	return invrot_collectors;
 }
 
@@ -99,17 +99,17 @@ InvrotTree::dump_invrots_tree_as_multimodel_pdbs( std::string filename_base) con
 	}
 
 	//2. write them
-	Size files_to_write( invrot_collectors.size() );
+	core::Size files_to_write( invrot_collectors.size() );
 	tr <<"A total of " << files_to_write << " unique definitions of the invrot tree exist." << std::endl;
 
-	for ( Size i =1; i <= files_to_write; ++i ) {
+	for ( core::Size i =1; i <= files_to_write; ++i ) {
 		std::string filename( filename_base + "_" + utility::to_string( i ) + ".pdb" );
 		std::vector< std::list< core::conformation::ResidueCOP > > const & invrot_lists( invrot_collectors[i]->invrots() );
-		Size num_rotamer_lists( invrot_lists.size() );
+		core::Size num_rotamer_lists( invrot_lists.size() );
 		std::vector< std::list< core::conformation::ResidueCOP >::const_iterator > res_iterators( num_rotamer_lists );
 
 		tr << "Writing definition " << i << " to file " << filename << "... " << std::endl;
-		for ( Size j =0; j < num_rotamer_lists; ++j ) {
+		for ( core::Size j =0; j < num_rotamer_lists; ++j ) {
 			res_iterators[ j ] = invrot_lists[j].begin();
 			tr << invrot_lists[j].size() << " invrots for list " << j << ", ";
 		}
@@ -199,7 +199,7 @@ TheozymeInvrotTree::generate_targets_and_inverse_rotamers()
 	conformer_groups.push_back( all_rots );
 
 	//but at afer this, we'll generate a bunch of ligand targets
-	for ( Size i =1; i <= conformer_groups.size(); ++i ) {
+	for ( core::Size i =1; i <= conformer_groups.size(); ++i ) {
 
 		SingleResidueInvrotTargetOP invtarg( new SingleResidueInvrotTarget( conformer_groups[i] ) );
 		if ( !invtarg->initialize_tree_nodes_from_enzcst_io( enzcst_io_ ) ) tr << "Target from conformer group " << i << " failed to initialize, cstfile geometry (clashes?) is bad somewhere." << std::endl;

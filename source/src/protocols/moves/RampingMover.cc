@@ -190,7 +190,7 @@ RampingMover::RampingMover(
 	inner_cycles_( inner_cycles_in ),
 	mc_(std::move( mc_in ))
 {
-	for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
+	for ( core::Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
 		auto iist = (core::scoring::ScoreType) ii;
 		if ( start_weights_[ iist ] != end_weights_[ iist ] ) {
 			ramping_funcs_for_weights_[ iist ] = utility::pointer::make_shared< LinearFunc >();
@@ -404,7 +404,7 @@ RampingMover::update_weights( int round )
 {
 	core::Real progress = ((core::Real) round) / outer_cycles_;
 	intermediate_weights_ = start_weights_;
-	for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
+	for ( core::Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
 		auto iist = (core::scoring::ScoreType) ii;
 		if ( ! ramping_funcs_for_weights_[ ii ] ) continue;
 		core::Real const alpha = ramping_funcs_for_weights_[ ii ]->func( progress );
@@ -418,7 +418,7 @@ RampingMover::update_weights( int round )
 void
 RampingMover::set_weights( core::scoring::EnergyMap const & emap )
 {
-	for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
+	for ( core::Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
 		auto iist = (core::scoring::ScoreType) ii;
 		scorefxn_->set_weight( iist, emap[ iist ] );
 		if ( emap[ iist ] == 0.0 ) continue;

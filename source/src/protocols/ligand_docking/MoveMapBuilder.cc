@@ -66,14 +66,14 @@ set_jumps(
 }
 
 MoveMapBuilder::MoveMapBuilder():
-	ReferenceCount(),
+	VirtualBase(),
 	sc_interface_builder_(/* NULL */),
 	bb_interface_builder_(/* NULL */),
 	minimize_water_(false)
 {}
 
 MoveMapBuilder::MoveMapBuilder(MoveMapBuilder const & that):
-	ReferenceCount(),
+	VirtualBase(),
 	sc_interface_builder_(that.sc_interface_builder_),
 	bb_interface_builder_(that.sc_interface_builder_),
 	minimize_water_(that.minimize_water_)
@@ -84,7 +84,7 @@ MoveMapBuilder::MoveMapBuilder(
 	InterfaceBuilderOP bb,
 	bool minimize_water
 ):
-	ReferenceCount(),
+	VirtualBase(),
 	sc_interface_builder_(std::move(sc)),
 	bb_interface_builder_(std::move(bb)),
 	minimize_water_(minimize_water)

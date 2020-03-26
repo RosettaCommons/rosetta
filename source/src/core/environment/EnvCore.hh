@@ -17,7 +17,7 @@
 
 // Unit Headers
 #include <core/environment/EnvCore.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Package headers
 #include <core/environment/DofPassport.fwd.hh>
@@ -33,7 +33,7 @@
 namespace core {
 namespace environment {
 
-class EnvCore : public utility::pointer::ReferenceCount {
+class EnvCore : public utility::VirtualBase {
 public:
 	EnvCore( std::string const & env_name );
 

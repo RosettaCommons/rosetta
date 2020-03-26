@@ -42,7 +42,7 @@ AntibodyInfoRMLoader::~AntibodyInfoRMLoader() {}
 /// @details Takes a locator id and istream, ensures that the correct number of points are present and performs error
 /// checking that points are of the correct type before using the points to construct SurfaceParameters
 /// @throws EXCN_Msg_Exception
-utility::pointer::ReferenceCountOP
+utility::VirtualBaseOP
 AntibodyInfoRMLoader::create_resource(
 	basic::resource_manager::ResourceOptions const &,
 	basic::resource_manager::LocatorID const & locator_id,

@@ -40,7 +40,7 @@
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
@@ -53,7 +53,7 @@ namespace protocols {
 namespace environment {
 namespace claims {
 
-class EnvClaim : public utility::pointer::ReferenceCount {
+class EnvClaim : public utility::VirtualBase {
 	typedef core::select::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
 	typedef core::environment::FoldTreeSketch FoldTreeSketch;
 	typedef std::map< std::string, ResidueSelectorCOP > AnnotatingSelectors;

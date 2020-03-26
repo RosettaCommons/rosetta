@@ -198,7 +198,7 @@ ChargeChargeFeatures::report_features(
 	hbond_stmt.bind(2,struct_id);
 
 	result res(basic::database::safely_read_from_database(hbond_stmt));
-	Size q1_site_id, q2_site_id;
+	core::Size q1_site_id, q2_site_id;
 	int q1_charge;
 	int q2_charge;
 	Length q1_x, q1_y, q1_z;

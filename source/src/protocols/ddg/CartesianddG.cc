@@ -225,7 +225,7 @@ find_neighbors_directional(
 
 	// make pose polyA
 	core::pose::Pose pose_working = pose;
-	utility::vector1< Size > protein_residues;
+	utility::vector1< core::Size > protein_residues;
 	for ( core::Size i=1; i<=pose.size(); i++ ) {
 		if ( pose.residue( i ).is_protein() ) {
 			protein_residues.push_back( i );
@@ -718,8 +718,8 @@ read_existing(
 {
 
 	//output file, mark if rerun
-	std::map< std::string, Size > before_jump_done_list;
-	std::map< std::string, Size > after_jump_done_list;
+	std::map< std::string, core::Size > before_jump_done_list;
+	std::map< std::string, core::Size > after_jump_done_list;
 	utility::io::ozstream ofp;
 	utility::file::FileName parsefn(filename);
 	std::string ofn = parsefn.base()+".ddg";
@@ -742,7 +742,7 @@ read_existing(
 			const size_t pos2 = rd.find(':');
 			if ( std::string::npos == pos1 || std::string::npos == pos2 ) continue;
 			//std::string nrdstr = rd.substr(pos1+5, pos2-5);
-			//Size nrd = std::atoi(nrdstr.c_str());
+			//core::Size nrd = std::atoi(nrdstr.c_str());
 
 			char delimiter = '_';
 			size_t pos = 0;
@@ -853,7 +853,7 @@ run(core::pose::Pose & pose){
 		cutoff = basic::options::option[ basic::options::OptionKeys::ddg::opt_radius ].value();
 	}
 	//Parse command line option
-	Size bbnbrs = basic::options::option[ basic::options::OptionKeys::ddg::bbnbrs ].value();
+	core::Size bbnbrs = basic::options::option[ basic::options::OptionKeys::ddg::bbnbrs ].value();
 	core::Size frag_nbrs = basic::options::option[ basic::options::OptionKeys::ddg::frag_nbrs ].value();
 	core::Size ncycles = basic::options::option[ basic::options::OptionKeys::ddg::ntrials ].value();
 	bool force_iterations = basic::options::option[ basic::options::OptionKeys::ddg::force_iterations ].value();
@@ -978,7 +978,7 @@ run(core::pose::Pose & pose){
 				local_pose.dump_pdb(dump_fn.str());
 			}
 			if ( interface_ddg > 0 ) {
-				Size rb_jump(interface_ddg);
+				core::Size rb_jump(interface_ddg);
 				protocols::rigid::RigidBodyTransMoverOP separate_partners( new protocols::rigid::RigidBodyTransMover( local_pose, rb_jump ) );
 				separate_partners->step_size(1000.0);
 				separate_partners->apply(local_pose);
@@ -989,7 +989,7 @@ run(core::pose::Pose & pose){
 		}
 		//interface mode, seperate and score
 		if ( interface_ddg > 0 ) {
-			Size rb_jump(interface_ddg);
+			core::Size rb_jump(interface_ddg);
 			protocols::rigid::RigidBodyTransMoverOP separate_partners( new protocols::rigid::RigidBodyTransMover( work_pose, rb_jump ) );
 			separate_partners->step_size(1000.0);
 			separate_partners->apply(work_pose);

@@ -183,7 +183,7 @@ void BuildManager::create_directed_dependency( BuildInstructionOP u, BuildInstru
 /// @brief clear all dependencies
 /// @return number of dependencies dropped
 BuildManager::Size BuildManager::clear_dependencies() {
-	Size const n = instruction_dependencies_.size();
+	core::Size const n = instruction_dependencies_.size();
 
 	// clear for each instruction
 	for ( auto & instruction : instructions_ ) {
@@ -220,8 +220,8 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 	//special case for two chain build -- danger, primitive at the moment, only
 	//works with non-N,C term extension.  Try placing in SegRebuld
 	if ( basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree].user() ) {
-		Size second_start = basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree];
-		Size nres( pose.size());
+		core::Size second_start = basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree];
+		core::Size nres( pose.size());
 
 		//FoldTree f(pose.fold_tree());
 		FoldTree f;
@@ -268,10 +268,10 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 	reset_accounting();
 
 	// store old nres for constructing SequenceMapping
-	Size const old_nres = pose.size();
+	core::Size const old_nres = pose.size();
 
 	// gather residues of original Pose for mapping purposes
-	Positions old_r = closed_range( Size( 1 ), pose.size() ); // old residues
+	Positions old_r = closed_range( core::Size( 1 ), pose.size() ); // old residues
 
 	// attach all instructions as length observers and set flag
 	// so detach does not occur after modify
@@ -282,8 +282,8 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 
 	// Now perform all instructions; note that modify() will automatically
 	// re-attach here but that's fine.
-	Size instructions_remaining = instructions_.size();
-	Size instructions_remaining_prior_loop = instructions_remaining; // safeguard against cycles in the dependency topology
+	core::Size instructions_remaining = instructions_.size();
+	core::Size instructions_remaining_prior_loop = instructions_remaining; // safeguard against cycles in the dependency topology
 	auto iii = instructions_.begin(), iiie = instructions_.end();
 
 	while ( instructions_remaining > 0 ) {
@@ -331,7 +331,7 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 	}
 
 	// gather residues of newly modified Pose for mapping purposes
-	Positions new_r = closed_range( Size( 1 ), pose.size() ); // new residues
+	Positions new_r = closed_range( core::Size( 1 ), pose.size() ); // new residues
 
 	// remove original deleted positions from original residues
 	for ( const auto & i : *this ) {
@@ -371,7 +371,7 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 	// create the new SequenceMapping consisting of oldnew() plus
 	// old2new_region_endpoints() information
 	seqmap_ = utility::pointer::make_shared< SequenceMapping >();
-	for ( Size r = 1; r <= old_nres; ++r ) {
+	for ( core::Size r = 1; r <= old_nres; ++r ) {
 		Original2Modified::const_iterator i = original2modified_.find( r );
 		if ( i != original2modified_.end() ) {
 			seqmap_->push_back( i->second );
@@ -394,7 +394,7 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 /// @return The final length of the modified Pose.
 /// @remarks Use this to do a fake run of modify() if you need any
 ///  position or mapping information prior to actually calling modify().
-BuildManager::Size BuildManager::dummy_modify( Size const nres ) {
+BuildManager::Size BuildManager::dummy_modify( core::Size const nres ) {
 	using core::pose::make_pose_from_sequence;
 
 	runtime_assert( !instructions_.empty() );
@@ -411,7 +411,7 @@ BuildManager::Size BuildManager::dummy_modify( Size const nres ) {
 		dummy_pose.set_secstruct( i, 'H' );
 	}
 
-	for ( Size i = 1, ie = dummy_pose.size(); i <= ie; ++i ) {
+	for ( core::Size i = 1, ie = dummy_pose.size(); i <= ie; ++i ) {
 		dummy_pose.set_phi( i, -60.0 );
 		dummy_pose.set_psi( i, -45.0 );
 		dummy_pose.set_omega( i, 180.0 );

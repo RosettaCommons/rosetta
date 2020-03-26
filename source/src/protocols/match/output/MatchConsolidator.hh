@@ -29,7 +29,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/heap.hh>
 
 // C++ headers
@@ -69,7 +69,7 @@ public:
 	end_processing() override;
 
 	void
-	set_n_to_output_per_group( Size setting );
+	set_n_to_output_per_group( core::Size setting );
 
 	void
 	set_grouper( MatchGrouperOP grouper );
@@ -85,21 +85,21 @@ private:
 
 	MatchGrouperOP   grouper_;
 
-	Size n_to_output_per_group_;
+	core::Size n_to_output_per_group_;
 
 	utility::vector1< BestMatchesCollectionOP > match_groups_;
 
 };
 
 
-class BestMatchesCollection : public utility::pointer::ReferenceCount
+class BestMatchesCollection : public utility::VirtualBase
 {
 public:
 	typedef core::Size Size;
 	typedef core::Real Real;
 
 public:
-	BestMatchesCollection( Size n_to_keep, bool dspos1_mode = false );
+	BestMatchesCollection( core::Size n_to_keep, bool dspos1_mode = false );
 	~BestMatchesCollection() override;
 
 	void
@@ -110,23 +110,23 @@ public:
 
 	bool dspos1_mode() const { return dspos1_mode_; }
 
-	Size
+	core::Size
 	n_kept_matches() const;
 
 	match const &
-	kept_match( Size which_match ) const;
+	kept_match( core::Size which_match ) const;
 
 	match_dspos1 const &
-	kept_match_dspos1( Size which_match ) const;
+	kept_match_dspos1( core::Size which_match ) const;
 
 private:
 
-	Size
+	core::Size
 	index_for_new_match( Real score );
 
 private:
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-	// Size const n_top_matches_to_keep_;
+	// core::Size const n_top_matches_to_keep_;
 	bool const dspos1_mode_; // store matches or match_dspos1s?
 
 

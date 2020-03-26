@@ -38,7 +38,7 @@ namespace minimization_packing {
 class SetReturningPackRotamersMover : public protocols::minimization_packing::PackRotamersMover {
 
 public:
-	SetReturningPackRotamersMover( Size ndruns );
+	SetReturningPackRotamersMover( core::Size ndruns );
 	// custom constructor
 	SetReturningPackRotamersMover( core::scoring::ScoreFunctionCOP scorefxn, core::pack::task::PackerTaskCOP task, core::Size ndruns );
 

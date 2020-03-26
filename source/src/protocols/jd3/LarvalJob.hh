@@ -24,7 +24,7 @@
 #include <protocols/jd3/strong_types.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 
@@ -51,7 +51,7 @@ namespace jd3 {
 /// the case in JD3.  Any data that should be output by a running job must be tucked
 /// by a Mover inside the JobOutputData to be eventually retrieved by the JobQueen
 /// or by a JobDataOutputter at the end of execution.
-class LarvalJob : public utility::pointer::ReferenceCount
+class LarvalJob : public utility::VirtualBase
 {
 public:
 

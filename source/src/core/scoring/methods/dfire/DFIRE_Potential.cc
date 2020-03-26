@@ -17,7 +17,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 

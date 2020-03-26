@@ -35,6 +35,7 @@ namespace protocols {
 namespace wum {
 
 using namespace std;
+using core::Size;
 
 DatabaseEntryWorkUnit::DatabaseEntryWorkUnit(utility::sql_database::sessionOP db_session):
 	db_session_(std::move(db_session))
@@ -81,7 +82,7 @@ DatabaseEntryWorkUnit::deserialize(){
 
 	TR << "Total columns: " << entries.size() << endl;
 
-	for ( Size i=0; i<entries.size(); ++i ) {
+	for ( core::Size i=0; i<entries.size(); ++i ) {
 		if ( !entries[i].empty() ) {
 			utility::vector1< std::string > key_values = utility::string_split(entries[i], ',');
 			if ( key_values.size() != 2 ) {

@@ -26,7 +26,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace helical_bundle_predict {
@@ -34,7 +34,7 @@ namespace helical_bundle_predict {
 /// @brief A base class for a module to generate ParsedProtocols for the next move in a Monte Carlo trajectory,
 /// based on the current state of the pose.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-class HBP_MoveGenerator : public utility::pointer::ReferenceCount {
+class HBP_MoveGenerator : public utility::VirtualBase {
 
 public:
 

@@ -57,12 +57,12 @@ SingleMotif::SingleMotif(
 
 SingleMotif::SingleMotif(
 	core::pose::Pose const & pose,
-	Size const residue_position_1,
+	core::Size const residue_position_1,
 	char const chain1,
 	std::string const & res1_atom1_name,
 	std::string const & res1_atom2_name,
 	std::string const & res1_atom3_name,
-	Size const residue_position_2,
+	core::Size const residue_position_2,
 	char const chain2,
 	std::string const & res2_atom1_name,
 	std::string const & res2_atom2_name,
@@ -84,11 +84,11 @@ SingleMotif::SingleMotif(
 
 SingleMotif::SingleMotif(
 	core::pose::Pose const & pose,
-	Size const residue_position_1,
+	core::Size const residue_position_1,
 	std::string const & res1_atom1_name,
 	std::string const & res1_atom2_name,
 	std::string const & res1_atom3_name,
-	Size const residue_position_2,
+	core::Size const residue_position_2,
 	std::string const & res2_atom1_name,
 	std::string const & res2_atom2_name,
 	std::string const & res2_atom3_name

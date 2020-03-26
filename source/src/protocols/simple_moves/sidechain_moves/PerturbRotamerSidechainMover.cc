@@ -126,10 +126,10 @@ PerturbRotamerSidechainMover::make_chi_move(
 
 	// find the rotamer that has the highest probability of proposing the previous chi angles
 	Real max_rot_prob = 0;
-	Size max_rot_num = 0;
+	core::Size max_rot_num = 0;
 	//Real rot_prob_normalize (0);
 
-	for ( Size ii = 1; ii <= rotamers.size() ; ++ii ) {
+	for ( core::Size ii = 1; ii <= rotamers.size() ; ++ii ) {
 		//TR << "rotamer.size is " << rotamers.size() << "  rotamer number is " << ii << std::endl;
 		Real rot_prob( rotamers[ii].chi_probability( old_chi, temperature_ )*rotamers[ ii ].probability());
 		//Real rot_prob( rotamers[ii].chi_probability( old_chi, temperature_ ));
@@ -149,7 +149,7 @@ PerturbRotamerSidechainMover::make_chi_move(
 ///all angles in degree
 Real PerturbRotamerSidechainMover::compute_proposal_density(
 	Residue const & new_residue,
-	Size const,
+	core::Size const,
 	chemical::ResidueType const &,
 	ChiVector const& old_chi /* in degree */
 ) const {
@@ -194,7 +194,7 @@ PerturbRotamerSidechainMover::build_rotamer_list(
 	Real const phi( residue_dunbrack_library->get_phi_from_rsd( residue ) );
 	Real const psi( residue_dunbrack_library->get_psi_from_rsd( residue ) );
 	utility::fixedsizearray1< Real, 5 > bbs;
-	//for ( Size i = 1; i <= residue.type().mainchain_torsions().size() - 1; ++i )
+	//for ( core::Size i = 1; i <= residue.type().mainchain_torsions().size() - 1; ++i )
 	bbs[ 1 ] = phi;
 	bbs[2] = psi;
 	//residue_dunbrack_library->get_IV_from_rsd( i, residue );
@@ -208,7 +208,7 @@ PerturbRotamerSidechainMover::build_rotamer_list(
 		utility::vector1< DunbrackRotamerSampleData > most_probable_rotamers;
 		most_probable_rotamers.reserve( rotamers.size() );
 		Real probability_threshold = 0.01;
-		Size i = 1;
+		core::Size i = 1;
 		while ( i <= rotamers.size() &&
 				rotamers[ i ].probability() > probability_threshold ) {
 			rotamers.push_back( rotamers[ i ] );
@@ -230,14 +230,14 @@ PerturbRotamerSidechainMover::compute_rotdensities(
 	Real norm_prob(0);
 	//Real const inv_nrot( 1.0 / rotamers.size() );
 
-	for ( Size jj=1; jj <= rotamers.size(); ++jj ) {
+	for ( core::Size jj=1; jj <= rotamers.size(); ++jj ) {
 		norm_prob+=rotamers[jj].probability();
 	}
 	//if ( std::abs( norm_prob - 1.0 ) > 0.00001 ) {
 	//TR.Warning << "ALARM: probs are not normalized correctly: " << norm_prob << std::endl;
 	//}
 
-	for ( Size ii = 1; ii <= rotamers.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rotamers.size(); ++ii ) {
 		//for each rotamer evaluate the density at our new chi angles
 		Real well_prob( rotamers[ii].probability() );
 		Real const new_rot_prob( rotamers[ii].chi_probability( new_chi, temperature() )*well_prob );

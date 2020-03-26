@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_features_FeaturesReporter_hh
 
 // Unit Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/features/FeaturesReporter.fwd.hh>
 
 // Project Headers
@@ -52,13 +52,13 @@ enum T {
 };
 }
 
-class FeaturesReporter : public utility::pointer::ReferenceCount {
+class FeaturesReporter : public utility::VirtualBase {
 public:
 	FeaturesReporter() :
 		relevant_residues_mode_(RelevantResiduesMode::Exclusive)
 	{}
 
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~FeaturesReporter() override;
 
 	virtual

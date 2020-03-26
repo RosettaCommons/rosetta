@@ -18,25 +18,25 @@ namespace cycles {
 using namespace core;
 
 class ReindexingMover : public protocols::moves::Mover {
-	
-	public:
-		/// Initialize the mover.
-		ReindexingMover(Size offset=0);
 
-		/// Clean up the mover.
-		~ReindexingMover() override;
+public:
+	/// Initialize the mover.
+	ReindexingMover(core::Size offset=0);
 
-		/// Cyclically reindex all of the residues in the given pose.
-		void apply(pose::Pose &pose) override;
+	/// Clean up the mover.
+	~ReindexingMover() override;
 
-		/// Return "ReindexingMover".
-		std::string get_name() const override { return "ReindexingMover"; }
+	/// Cyclically reindex all of the residues in the given pose.
+	void apply(pose::Pose &pose) override;
 
-		/// Specify how many residues to rotate on future apply() calls.
-		void set_offset(Size offset) { offset_ = offset; }
+	/// Return "ReindexingMover".
+	std::string get_name() const override { return "ReindexingMover"; }
 
-	private:
-		int offset_;
+	/// Specify how many residues to rotate on future apply() calls.
+	void set_offset(core::Size offset) { offset_ = offset; }
+
+private:
+	int offset_;
 };
 
 } // End 'cycles' namespace

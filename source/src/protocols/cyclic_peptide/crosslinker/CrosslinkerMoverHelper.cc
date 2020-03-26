@@ -55,6 +55,7 @@ CrosslinkerMoverHelper::CrosslinkerMoverHelper() :
 /// @brief Copy constructor
 ////////////////////////////////////////////////////////////////////////////////
 CrosslinkerMoverHelper::CrosslinkerMoverHelper( CrosslinkerMoverHelper const & src ) :
+	VirtualBase( src ),
 	symm_type_(src.symm_type_),
 	symm_count_(src.symm_count_)
 	//TODO copy data here

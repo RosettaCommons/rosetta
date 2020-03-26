@@ -41,7 +41,7 @@ struct ClusterData{
 
 /// @brief Simple class for identifying CDR clusters of an antibody or protein structure.
 /// @details Main interface is through CDRClusterSet/AntibodyInfo.  That is where AntibodyNumbering can be used to access specific CDRs and numbering scheme transformations.
-class CDRClusterMatcher: public utility::pointer::ReferenceCount {
+class CDRClusterMatcher: public utility::VirtualBase {
 public:
 	CDRClusterMatcher();
 

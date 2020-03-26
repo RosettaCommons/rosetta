@@ -107,7 +107,7 @@ LigandConformer::coordinates_from_orientation(
 	utility::vector1< Vector > & atom_coords
 ) const
 {
-	//for ( Size jj=1; jj != points_in_global_orintation_frame_.size(); ++jj ) {
+	//for ( core::Size jj=1; jj != points_in_global_orintation_frame_.size(); ++jj ) {
 	// std::cout << "atomno " << jj << " " << points_in_global_orintation_frame_[jj][0] << "  " << points_in_global_orintation_frame_[jj][1] << "  " << points_in_global_orintation_frame_[jj][2] << std::endl;
 	//}
 
@@ -118,7 +118,7 @@ LigandConformer::coordinates_from_orientation(
 	//std::cout << "points_in_global_orintation_frame_.size() " << points_in_global_orintation_frame_.size() << std::endl;
 
 	HTReal global_frame = frame_from_global_orientation( orientation );
-	for ( Size ii = 1; ii <= atom_indices.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= atom_indices.size(); ++ii ) {
 		//std::cout << "atom_indices[ ii ].atomno() " << ii << " " << atom_indices[ ii ].atomno() << std::endl;
 		debug_assert( atom_indices[ ii ].rsd() == 1 );
 		atom_coords[ ii ] = global_frame * points_in_global_orintation_frame_[ atom_indices[ ii ].atomno() ];
@@ -130,12 +130,12 @@ LigandConformer::coordinates_from_orientation(
 
 void
 LigandConformer::initialize_from_residue(
-	Size D1,
-	Size D2,
-	Size D3,
-	Size orientation_atom1,
-	Size orientation_atom2,
-	Size orientation_atom3,
+	core::Size D1,
+	core::Size D2,
+	core::Size D3,
+	core::Size orientation_atom1,
+	core::Size orientation_atom2,
+	core::Size orientation_atom3,
 	core::conformation::Residue const & residue
 )
 {
@@ -156,7 +156,7 @@ LigandConformer::initialize_from_residue(
 	orientation_atoms_[ 2 ] = orientation_atom2;
 	orientation_atoms_[ 3 ] = orientation_atom3;
 
-	Size const natoms = residue.natoms();
+	core::Size const natoms = residue.natoms();
 	if ( natoms < 3 ) {
 		utility_exit_with_message( "ERROR in LigandConformer: cannot build a residue with fewer than three atoms" );
 	}
@@ -170,7 +170,7 @@ LigandConformer::initialize_from_residue(
 	//std::cout << "APL DEBUG LigandConformer::initialize_from_residue natoms " << natoms << std::endl;
 	points_in_global_orintation_frame_.resize( natoms );
 	points_in_D3_frame_.resize( natoms );
-	for ( Size ii = 1; ii <= natoms; ++ii ) {
+	for ( core::Size ii = 1; ii <= natoms; ++ii ) {
 		points_in_global_orintation_frame_[ ii ] = oframe.to_local_coordinate( residue.xyz( ii ) );
 		points_in_D3_frame_[ ii ] = D3frame.to_local_coordinate( residue.xyz( ii ) );
 	}
@@ -183,10 +183,10 @@ LigandConformer::initialize_from_residue(
 	bool atom2_heavy = residue.atom_type( D2 ).element() != "H" && ! atom2_virtual;
 	bool atom3_heavy = residue.atom_type( D3 ).element() != "H" && ! atom3_virtual;
 
-	Size nvirt( 0 );
-	for ( Size ii = 1; ii <= natoms; ++ii ) if ( residue.atom_type( ii ).element() == "X" ) ++nvirt;
+	core::Size nvirt( 0 );
+	for ( core::Size ii = 1; ii <= natoms; ++ii ) if ( residue.atom_type( ii ).element() == "X" ) ++nvirt;
 
-	Size const n_atoms_for_collision_check( ignore_h_collisions_ ?
+	core::Size const n_atoms_for_collision_check( ignore_h_collisions_ ?
 		residue.nheavyatoms() - ( atom1_heavy ? 1 : 0 ) - ( atom2_heavy ? 1 : 0 ) - ( atom3_heavy ? 1 : 0 ) :
 		natoms - nvirt - ( atom1_virtual ? 0 : 1 ) - ( atom2_virtual ? 0 : 1 ) - ( atom3_virtual ? 0 : 1 ));
 
@@ -220,7 +220,7 @@ LigandConformer::global_orientation_from_frame3(
 	//std::cout.precision( 6 );
 
 	Vector euler_angles = global_frame.euler_angles_deg();
-	for ( Size ii = 1; ii <= 3; ++ii ) if ( euler_angles( ii ) < 0 ) euler_angles( ii ) += 360.0;
+	for ( core::Size ii = 1; ii <= 3; ++ii ) if ( euler_angles( ii ) < 0 ) euler_angles( ii ) += 360.0;
 	Vector oat3_coords = global_frame.point(); //frame3 * points_in_at3_frame_[ restype_id_2_at3_frame_id_[ orientation_atoms_[ 3 ]]];
 
 	Real6 global_coords;
@@ -244,10 +244,10 @@ LigandConformer::global_orientation_from_frame3(
 	std::cout << " 2: " << euler_angles( 2 ) << " vs " << euler_angles2( 2 ) << " ";
 	std::cout << " 3: " << euler_angles( 3 ) << " vs " << euler_angles2( 3 ) << std::endl;
 
-	for ( Size ii = 1; ii <= points_in_D3_frame_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= points_in_D3_frame_.size(); ++ii ) {
 	Vector ii3loc = frame3 * points_in_D3_frame_[ ii ];
 	Vector iigloc = global_frame * points_in_global_orintation_frame_[ at3_frame_id_2_restype_id_[ ii ]];
-	for ( Size jj = 1; jj <= 3; ++jj ) {
+	for ( core::Size jj = 1; jj <= 3; ++jj ) {
 	std::cout << ii << " " << jj << " " << ii3loc( jj ) << " " << iigloc( jj ) << std::endl;
 	}
 	}
@@ -307,13 +307,13 @@ LigandConformer::ignore_h_collisions( bool setting )
 
 void
 LigandConformer::move_atoms_to_collcheck_begin(
-	utility::vector1< Size > const & restype_atnos_to_move_early
+	utility::vector1< core::Size > const & restype_atnos_to_move_early
 )
 {
-	Size start_from( 1 );
+	core::Size start_from( 1 );
 	utility::vector1< bool > selected( points_in_D3_frame_.size() );
-	for ( Size ii = 1; ii <= restype_atnos_to_move_early.size(); ++ii ) {
-		Size iiatom = restype_atnos_to_move_early[ ii ];
+	for ( core::Size ii = 1; ii <= restype_atnos_to_move_early.size(); ++ii ) {
+		core::Size iiatom = restype_atnos_to_move_early[ ii ];
 		if ( restype_id_2_collision_check_id_[ iiatom ] == 0 ) continue;
 		selected[ iiatom ] = true;
 		++start_from;
@@ -322,7 +322,7 @@ LigandConformer::move_atoms_to_collcheck_begin(
 		restype_id_2_collision_check_id_[ iiatom ] = ii;
 
 	}
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		if ( selected[ atoms_123_[ ii ]] ) {
 			--start_from;
 		} else {
@@ -352,36 +352,36 @@ LigandConformer::get_global_coords_as_FArray2D(
 void
 LigandConformer::create_collcheck_ordering(
 	utility::vector1< bool > selected,
-	Size count_from
+	core::Size count_from
 )
 {
-	Size const natoms = ligand_restype_->natoms();
-	Size const n_atoms_for_collision_check = collision_check_id_2_restype_id_.size();
+	core::Size const natoms = ligand_restype_->natoms();
+	core::Size const n_atoms_for_collision_check = collision_check_id_2_restype_id_.size();
 
 	/// Order the other atoms by their distance from D3 and the atoms already selected.
 	ObjexxFCL::FArray2D< Real > atdists( natoms, natoms );
 	utility::vector1< Real >    atdist_sums( natoms, 0.0 );
 	utility::vector1< bool >    ignore( natoms, false );
-	for ( Size ii = 1; ii <= natoms; ++ii ) {
+	for ( core::Size ii = 1; ii <= natoms; ++ii ) {
 		if ( ignore_h_collisions_ && ligand_restype_->atom_type( ii ).element() == "H" ) ignore[ ii ] = true;
 		if ( ligand_restype_->atom_type( ii ).element() == "X" ) ignore[ ii ] = true;
 		if ( ignore[ ii ] ) continue;
 
-		for ( Size jj = ii + 1; jj <= natoms; ++jj ) {
+		for ( core::Size jj = ii + 1; jj <= natoms; ++jj ) {
 			atdists( ii, jj ) = atdists( jj, ii ) = points_in_D3_frame_[ ii ].distance( points_in_D3_frame_[ jj ] );
 		}
 	}
 
 	/// O( N^3 )... but a one-time cost and way fast.  The question is, though,
 	/// whether this shuffling of atoms yeilds a speedup and if so, how much?
-	for ( Size ii = count_from; ii <= n_atoms_for_collision_check; ++ii ) {
+	for ( core::Size ii = count_from; ii <= n_atoms_for_collision_check; ++ii ) {
 		/// set the atdist sums to zero.
 		std::fill( atdist_sums.begin(), atdist_sums.end(), 0.0);
-		for ( Size jj = 1; jj <= natoms; ++jj ) {
+		for ( core::Size jj = 1; jj <= natoms; ++jj ) {
 			if ( selected[ jj ] || ignore[ jj ] ) {
 				atdist_sums[ jj ] = -1.0; // make sure this atom is not the furthest atom.
 			} else {
-				for ( Size kk = 1; kk <= natoms; ++kk ) {
+				for ( core::Size kk = 1; kk <= natoms; ++kk ) {
 					if ( ignore[ kk ] ) continue;
 					if ( selected[ kk ] ) atdist_sums[ jj ] += atdists( kk, jj );
 				}
@@ -389,7 +389,7 @@ LigandConformer::create_collcheck_ordering(
 			//std::cout << ii << " " << jj << " " << atdist_sums[ jj ] << std::endl;
 		}
 
-		Size furthest = utility::arg_max( atdist_sums );
+		core::Size furthest = utility::arg_max( atdist_sums );
 		//std::cout << ii << " furthest: " << furthest << " " << ligand_restype_->atom_name( furthest ) << std::endl;
 		collision_check_id_2_restype_id_[ ii ] = furthest;
 		restype_id_2_collision_check_id_[ furthest ] = ii;

@@ -53,7 +53,6 @@ namespace pb_potential {
 
 using SetupPB = SetupPoissonBoltzmannPotential;
 using SetupPBCreator = SetupPoissonBoltzmannPotentialCreator;
-using Size = core::Size;
 
 static basic::Tracer TR( "protocols.pb_potential.SetupPoissonBoltzmannPotential" );
 
@@ -120,7 +119,7 @@ SetupPoissonBoltzmannPotential::parse_my_tag( utility::tag::TagCOP tag,
 #endif
 	basic::options::option[basic::options::OptionKeys::pb_potential::apbs_path](apbs_path);
 
-	utility::vector1<Size> charged_chains;
+	utility::vector1<core::Size> charged_chains;
 	if ( tag->hasOption( "charged_chains" ) ) {
 		// comma delimited list of residue numbers in string (e.g. "1,2" for chain 1 and chain 2).
 		utility::vector1<std::string> temp = utility::string_split( tag->getOption< std::string >( "charged_chains" ), ',');
@@ -133,7 +132,7 @@ SetupPoissonBoltzmannPotential::parse_my_tag( utility::tag::TagCOP tag,
 	}
 	basic::options::option[basic::options::OptionKeys::pb_potential::charged_chains](charged_chains);
 
-	utility::vector1<Size> revamp_near_chain;
+	utility::vector1<core::Size> revamp_near_chain;
 	if ( tag->hasOption("revamp_near_chain") ) {
 		utility::vector1<std::string> temp = utility::string_split( tag->getOption< std::string >( "revamp_near_chain" ), ',');
 		for ( core::Size i=1; i<=temp.size(); ++i ) {

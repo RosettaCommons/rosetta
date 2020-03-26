@@ -32,10 +32,10 @@
 struct Widget;
 typedef utility::pointer::shared_ptr< Widget > WidgetOP;
 
-struct Widget : public utility::pointer::ReferenceCount {
-	Widget(Size id=0) : id_(id) {}
+struct Widget : public utility::VirtualBase {
+	Widget(core::Size id=0) : id_(id) {}
 	bool operator == (WidgetOP other) { return id_ == other->id_; }
-	Size id_;
+	core::Size id_;
 };
 
 using namespace std;

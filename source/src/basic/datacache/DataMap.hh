@@ -24,7 +24,7 @@
 #include <utility/excn/Exceptions.hh>                 // for EXCN_Msg_Exception
 #include <utility>                                    // for pair
 #include <utility/pointer/owning_ptr.hh>              // for dynamic_pointer_cast
-#include <utility/pointer/ReferenceCount.hh>          // for ReferenceCount
+#include <utility/VirtualBase.hh>                     // for VirtualBase
 
 namespace basic {
 namespace datacache {
@@ -33,11 +33,11 @@ static basic::Tracer TR_hh( "basic.datacache.DataMap_hh" );
 
 /// @brief general-purpose store for any reference-count derived object
 
-class DataMap : public utility::pointer::ReferenceCount {
+class DataMap : public utility::VirtualBase {
 public:
-	typedef std::map< std::string, std::map< std::string, utility::pointer::ReferenceCountOP > >::iterator iterator;
-	typedef std::map< std::string, std::map< std::string, utility::pointer::ReferenceCountOP > >::const_iterator const_iterator;
-	typedef std::map< std::string, utility::pointer::ReferenceCountCOP >::const_iterator resource_const_iterator;
+	typedef std::map< std::string, std::map< std::string, utility::VirtualBaseOP > >::iterator iterator;
+	typedef std::map< std::string, std::map< std::string, utility::VirtualBaseOP > >::const_iterator const_iterator;
+	typedef std::map< std::string, utility::VirtualBaseCOP >::const_iterator resource_const_iterator;
 
 public:
 	DataMap();
@@ -57,14 +57,14 @@ public:
 	virtual bool add(
 		std::string const & type,
 		std::string const & name,
-		utility::pointer::ReferenceCountOP op
+		utility::VirtualBaseOP op
 	);
 
 	// @brief add a resource to the data map, returning false if a resource of that
 	// name already exists
 	bool add_resource(
 		std::string const & resource_name,
-		utility::pointer::ReferenceCountCOP op
+		utility::VirtualBaseCOP op
 	);
 
 
@@ -83,11 +83,11 @@ public:
 	template< class T > utility::pointer::shared_ptr< T > get_ptr( std::string const & type, std::string const & name ) const;
 	template< class T > utility::pointer::shared_ptr< T const > get_resource( std::string const & resource_name ) const;
 
-	std::map< std::string, utility::pointer::ReferenceCountOP > & operator [](
+	std::map< std::string, utility::VirtualBaseOP > & operator [](
 		std::string const & type
 	);
 
-	std::map< std::string, utility::pointer::ReferenceCountOP > const &
+	std::map< std::string, utility::VirtualBaseOP > const &
 	category_map(
 		std::string const & type
 	) const;
@@ -96,13 +96,13 @@ public:
 	platform::Size size() const;
 
 private:
-	std::map< std::string, std::map< std::string, utility::pointer::ReferenceCountOP > > data_map_;
-	std::map< std::string, utility::pointer::ReferenceCountCOP > resource_map_;
+	std::map< std::string, std::map< std::string, utility::VirtualBaseOP > > data_map_;
+	std::map< std::string, utility::VirtualBaseCOP > resource_map_;
 
 };
 
 /// @details a template utility function to grab any type of object from the
-/// Data_map. Downcasts the ReferenceCount object in map to the template data
+/// Data_map. Downcasts the VirtualBase object in map to the template data
 /// type using dynamic_cast to ensure type-correctness
 /// @throws Throws a utility::excn::EXCN_Msg_Exception in the event that
 /// the requested object cannot be found in the DataMap.
@@ -118,7 +118,7 @@ DataMap::get( std::string const & type, std::string const & name ) const {
 		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
 
-	std::map< std::string, utility::pointer::ReferenceCountOP > const & dm( data_map_.find( type )->second );
+	std::map< std::string, utility::VirtualBaseOP > const & dm( data_map_.find( type )->second );
 	auto iter = dm.find( name );
 
 	if ( iter != dm.end() ) {
@@ -153,7 +153,7 @@ DataMap::get_ptr( std::string const & type, std::string const & name ) const {
 		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
 
-	std::map< std::string, utility::pointer::ReferenceCountOP > const & dm( data_map_.find( type )->second );
+	std::map< std::string, utility::VirtualBaseOP > const & dm( data_map_.find( type )->second );
 	auto iter = dm.find( name );
 	if ( iter != dm.end() ) {
 		ret = utility::pointer::dynamic_pointer_cast< T >( iter->second );

@@ -69,7 +69,7 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 	}
 
 	/// 1. Resize arrays that depend on the number of atoms
-	Size const n_atoms = res.natoms();
+	core::Size const n_atoms = res.natoms();
 
 	controlling_chi_for_atom_ =  res.last_controlling_chi();
 	which_point_for_atom_.resize( n_atoms );
@@ -80,22 +80,22 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 	nonchi_atoms_in_ideal_frame_.resize( 0 );
 
 	/// 2. Resize arrays that depend on the number of chi
-	Size const n_chi = res.nchi();
+	core::Size const n_chi = res.nchi();
 
 	chitip_atoms_.resize( n_chi );
 	std::fill( chitip_atoms_.begin(), chitip_atoms_.end(), 0 );
 
 	pre_chitip_transforms_.resize( n_chi );
-	for ( Size ii = 1; ii <= n_chi; ++ii ) pre_chitip_transforms_[ ii ].set_identity();
+	for ( core::Size ii = 1; ii <= n_chi; ++ii ) pre_chitip_transforms_[ ii ].set_identity();
 
 	ht_for_chitip_atoms_.resize( n_chi );
-	for ( Size ii = 1; ii <= n_chi; ++ii ) ht_for_chitip_atoms_[ ii ].set_identity();
+	for ( core::Size ii = 1; ii <= n_chi; ++ii ) ht_for_chitip_atoms_[ ii ].set_identity();
 
 	nonchitip_atoms_.resize( res.nchi() );
-	for ( Size ii = 1; ii <= n_chi; ++ii ) nonchitip_atoms_[ ii ].clear();
+	for ( core::Size ii = 1; ii <= n_chi; ++ii ) nonchitip_atoms_[ ii ].clear();
 
 	points_for_nonchitip_atoms_.resize( res.nchi() );
-	for ( Size ii = 1; ii <= n_chi; ++ii ) points_for_nonchitip_atoms_[ ii ].clear();
+	for ( core::Size ii = 1; ii <= n_chi; ++ii ) points_for_nonchitip_atoms_[ ii ].clear();
 
 	/// Quick atom indexing
 
@@ -117,7 +117,7 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 		HTReal ideal_frame( res.ideal_xyz( N_atom_id_ ), halfpoint, res.ideal_xyz( CA_atom_id_ ) );
 
 		/// backbone atoms, besides the cannonical 3
-		for ( Size ii = 1; ii <= n_atoms; ++ii ) {
+		for ( core::Size ii = 1; ii <= n_atoms; ++ii ) {
 			if ( ii == N_atom_id_ || ii == CA_atom_id_ || ii == C_atom_id_ ) continue;
 			if ( res.last_controlling_chi( ii ) != 0 ) continue;
 			nonchi_atoms_in_ideal_frame_.push_back( ideal_frame.to_local_coordinate( res.ideal_xyz( ii ) ));
@@ -130,10 +130,10 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 	if ( nchi() == 0 ) return; // match from gly? can't see why you'd want to!
 
 
-	for ( Size ii = 1; ii <= n_chi; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_chi; ++ii ) {
 		debug_assert( res.chi_atoms( ii ).size() == 4 );
 
-		Size const
+		core::Size const
 			chiat1( res.chi_atoms( ii )[ 1 ] ),
 			chiat2( res.chi_atoms( ii )[ 2 ] ),
 			chiat3( res.chi_atoms( ii )[ 3 ] ),
@@ -145,7 +145,7 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 			// frame that transforms from a frame defined at the chitip(ii-1) atoms from
 			// atoms 2, 3, and 4 of chi(ii-1) to the frame at the third atom of chi(ii).
 
-			Size const prevchi_at2( res.chi_atoms(ii-1)[2] ),
+			core::Size const prevchi_at2( res.chi_atoms(ii-1)[2] ),
 				prevchi_at3( res.chi_atoms(ii-1)[3] ),
 				prevchi_at4( res.chi_atoms(ii-1)[4] );
 			HTReal launch_frame( res.ideal_xyz(prevchi_at2),
@@ -171,13 +171,13 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 			res.ideal_xyz( chiat3 ),
 			res.ideal_xyz( chiat4 ) );
 
-		Size const n_nontip_ats_for_chi = res.atoms_last_controlled_by_chi( ii ).size() - 1;
+		core::Size const n_nontip_ats_for_chi = res.atoms_last_controlled_by_chi( ii ).size() - 1;
 
 		nonchitip_atoms_[ ii ].reserve( n_nontip_ats_for_chi );
 		points_for_nonchitip_atoms_[ ii ].reserve( n_nontip_ats_for_chi );
 
-		for ( Size jj = 1; jj <= res.atoms_last_controlled_by_chi( ii ).size(); ++jj ) {
-			Size const jjatom = res.atoms_last_controlled_by_chi( ii )[ jj ];
+		for ( core::Size jj = 1; jj <= res.atoms_last_controlled_by_chi( ii ).size(); ++jj ) {
+			core::Size const jjatom = res.atoms_last_controlled_by_chi( ii )[ jj ];
 			if ( jjatom == chiat4 ) continue;
 
 			Vector jjloc_in_chitip_frame = chi_tip_frame.to_local_coordinate( res.ideal_xyz( jjatom ) );
@@ -190,13 +190,13 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 }
 
 bool
-UpstreamResTypeGeometry::atom_has_nonchi_coordinate( Size restype_atomid ) const
+UpstreamResTypeGeometry::atom_has_nonchi_coordinate( core::Size restype_atomid ) const
 {
 	return restype_atom_id_2_nonchi_atom_id_[ restype_atomid ] != 0;
 }
 
 UpstreamResTypeGeometry::Vector const &
-UpstreamResTypeGeometry::coordinate_for_nonchi_atom_in_ideal_frame( Size restype_atomid ) const
+UpstreamResTypeGeometry::coordinate_for_nonchi_atom_in_ideal_frame( core::Size restype_atomid ) const
 {
 	runtime_assert( restype_atom_id_2_nonchi_atom_id_[ restype_atomid ] != 0 );
 	return nonchi_atoms_in_ideal_frame_[ restype_atom_id_2_nonchi_atom_id_[ restype_atomid ] ];

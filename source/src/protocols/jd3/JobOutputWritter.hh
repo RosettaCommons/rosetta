@@ -21,7 +21,7 @@
 #include <protocols/jd3/InnerJobOutputWriter.fwd.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 
 //C++ headers
@@ -38,7 +38,7 @@ namespace jd3 {
 
 /// @brief %JobOutputWriter class is responsible for taking data out of the JobOutput
 /// object and writing it to some sort of output destination (a file, or a database).
-class JobOutputWriter : public utility::pointer::ReferenceCount
+class JobOutputWriter : public utility::VirtualBase
 {
 public:
 

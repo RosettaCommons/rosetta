@@ -20,7 +20,7 @@
 
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <utility/vector1_bool.hh>
@@ -74,7 +74,7 @@ typedef utility::vector1<Sphere> Spheres;
 typedef Spheres::iterator SphereIter;
 typedef Spheres::const_iterator SphereCIter;
 
-struct PosePackData : public utility::pointer::ReferenceCount {
+struct PosePackData : public utility::VirtualBase {
 	Spheres spheres;
 	XYZs centers;
 	utility::vector1<std::string> labels;

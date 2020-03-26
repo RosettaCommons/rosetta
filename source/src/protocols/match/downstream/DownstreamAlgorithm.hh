@@ -34,7 +34,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -48,14 +48,14 @@ namespace downstream {
 
 /// @brief A class for an algorithm.  Given a conformation of the upstream partner,
 /// the algorithm is responsible for producing a set of hits.
-class DownstreamAlgorithm : public utility::pointer::ReferenceCount
+class DownstreamAlgorithm : public utility::VirtualBase
 {
 public:
 	typedef core::Size   Size;
 	typedef core::Vector Vector;
 
 public:
-	DownstreamAlgorithm( Size geom_cst_id );
+	DownstreamAlgorithm( core::Size geom_cst_id );
 	DownstreamAlgorithm( DownstreamAlgorithm const & );
 	DownstreamAlgorithm const & operator = ( DownstreamAlgorithm const & );
 
@@ -87,7 +87,7 @@ public:
 	/// non-viable hits in subsequent calls to respond_to_peripheral_hitlist_change.
 	virtual
 	void
-	respond_to_primary_hitlist_change( Matcher & matcher, Size round_just_completed );
+	respond_to_primary_hitlist_change( Matcher & matcher, core::Size round_just_completed );
 
 	/// @brief Following the change in the number of hits of some other round -- either
 	/// from the conclusion of that round in which a new set of hits has been generated,
@@ -103,8 +103,8 @@ public:
 	virtual
 	std::list< Hit >
 	build(
-		Size const scaffold_build_point_id,
-		Size const upstream_conf_id,
+		core::Size const scaffold_build_point_id,
+		core::Size const upstream_conf_id,
 		core::conformation::Residue const & upstream_residue
 	) const = 0;
 
@@ -175,10 +175,10 @@ public:
 	);
 
 	virtual
-	Size
+	core::Size
 	n_possible_hits_per_upstream_conformation() const = 0;
 
-	Size
+	core::Size
 	geom_cst_id() const;
 
 	void
@@ -230,7 +230,7 @@ protected:
 
 
 private:
-	Size geom_cst_id_; // which geometric constraint is this a downstream-algorithm for?
+	core::Size geom_cst_id_; // which geometric constraint is this a downstream-algorithm for?
 	BumpGridCOP bbgrid_;
 	ActiveSiteGridCOP active_site_grid_;
 	DownstreamBuilderOP dsbuilder_;

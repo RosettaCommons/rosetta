@@ -35,7 +35,7 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 // C++ headers
@@ -65,7 +65,7 @@ namespace chemical {
 /// @details a vector of pointers each of which points to an AtomType
 /// and the vector index is looked up by an atom_name string in a map
 ///
-class AtomTypeSet : public utility::pointer::ReferenceCount {
+class AtomTypeSet : public utility::VirtualBase {
 
 public:
 	/// @brief c-tor from directory in the rosetta_database This will go

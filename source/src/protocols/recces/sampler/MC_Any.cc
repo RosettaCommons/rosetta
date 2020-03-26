@@ -61,10 +61,10 @@ void MC_Any::apply( Pose & pose ) {
 	found_move_ = rotamer_list_[ curr_id_ ]->found_move();
 }
 ///////////////////////////////////////////////////////////////////////////
-void MC_Any::show( std::ostream & out, Size const indent ) const {
+void MC_Any::show( std::ostream & out, core::Size const indent ) const {
 	SamplerPlusPlus::show( out, indent );
 	out << "Any of: " << std::endl;
-	for ( Size k = 1; k <= rotamer_list_.size(); k++ ) rotamer_list_[k]->show( out, indent + 1 );
+	for ( core::Size k = 1; k <= rotamer_list_.size(); k++ ) rotamer_list_[k]->show( out, indent + 1 );
 }
 
 } //sampler

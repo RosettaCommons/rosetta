@@ -218,8 +218,8 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 
 	// Junk
 	/*
-	Size tag = 0;
-	for( Size i = antibody_in_.cdrh_[3][2] - 4;
+	core::Size tag = 0;
+	for( core::Size i = antibody_in_.cdrh_[3][2] - 4;
 	i <= antibody_in_.cdrh_[3][2] + 1; i++ ) {
 
 	Real phi = pose_in.phi( i );
@@ -308,8 +308,8 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 	loops::remove_cutpoint_variants( pose_in, true );
 
 	// Define CDR H3 loop
-	Size frag_size = (antibody_in_.cdrh_[3][2]-antibody_in_.cdrh_[3][1]) + 3;
-	Size cutpoint =  antibody_in_.cdrh_[3][1] + int( frag_size / 2 );
+	core::Size frag_size = (antibody_in_.cdrh_[3][2]-antibody_in_.cdrh_[3][1]) + 3;
+	core::Size cutpoint =  antibody_in_.cdrh_[3][1] + int( frag_size / 2 );
 	loops::Loop cdr_h3( antibody_in_.cdrh_[3][1], antibody_in_.cdrh_[3][2],
 		cutpoint, 0, false );
 
@@ -373,8 +373,8 @@ AntibodyModeler::read_and_store_fragments() {
 
 	protocols::loops::read_loop_fragments( frag_libs );
 
-	Size frag_size = (antibody_in_.cdrh_[3][2]-antibody_in_.cdrh_[3][1]) + 3;
-	Size cutpoint =  antibody_in_.cdrh_[3][1] + int( frag_size / 2 );
+	core::Size frag_size = (antibody_in_.cdrh_[3][2]-antibody_in_.cdrh_[3][1]) + 3;
+	core::Size cutpoint =  antibody_in_.cdrh_[3][1] + int( frag_size / 2 );
 	setup_simple_fold_tree(  antibody_in_.cdrh_[3][1] - 1, cutpoint,
 		antibody_in_.cdrh_[3][2] + 1,
 		antibody_in_.Fv.size(),
@@ -384,7 +384,7 @@ AntibodyModeler::read_and_store_fragments() {
 	// a fragset of same type should be able to handle everything
 	offset_3mer_frags = frag_libs[2]->empty_clone();
 	FrameList loop_3mer_frames;
-	Size offset = 0;
+	core::Size offset = 0;
 	frag_libs[2]->region_simple( 1, frag_size, loop_3mer_frames );
 	for ( FrameList::const_iterator it = loop_3mer_frames.begin(),
 			eit = loop_3mer_frames.end(); it!=eit; ++it ) {
@@ -416,10 +416,10 @@ AntibodyModeler::read_and_store_fragments() {
 
 void
 AntibodyModeler::setup_simple_fold_tree(
-	Size jumppoint1,
-	Size cutpoint,
-	Size jumppoint2,
-	Size nres,
+	core::Size jumppoint1,
+	core::Size cutpoint,
+	core::Size jumppoint2,
+	core::Size nres,
 	pose::Pose & pose_in ) {
 
 	using namespace kinematics;
@@ -484,7 +484,7 @@ AntibodyModeler::relax_cdrs() {
 	// adding cutpoint variants for chainbreak score computation
 	loops::add_cutpoint_variants( antibody_in_.Fv );
 
-	Size const nres = antibody_in_.Fv.size();
+	core::Size const nres = antibody_in_.Fv.size();
 
 	//setting MoveMap
 	kinematics::MoveMapOP allcdr_map;
@@ -502,7 +502,7 @@ AntibodyModeler::relax_cdrs() {
 	select_loop_residues( antibody_in_.Fv, antibody_in_.all_cdr_loops,
 		include_neighbors, is_flexible );
 	allcdr_map->set_chi( is_flexible );
-	for ( Size ii = 1; ii <= antibody_in_.all_cdr_loops.num_loop(); ii++ ) {
+	for ( core::Size ii = 1; ii <= antibody_in_.all_cdr_loops.num_loop(); ii++ ) {
 		allcdr_map->set_jump( ii, false );
 	}
 
@@ -565,21 +565,21 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 
 	using namespace kinematics;
 
-	Size nres = pose_in.size();
+	core::Size nres = pose_in.size();
 	core::pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
 	char second_chain = 'H';
-	Size rb_cutpoint(0);
+	core::Size rb_cutpoint(0);
 
-	for ( Size i = 1; i <= nres; ++i ) {
+	for ( core::Size i = 1; i <= nres; ++i ) {
 		if ( pdb_info->chain( i ) == second_chain ) {
 			rb_cutpoint = i-1;
 			break;
 		}
 	}
 
-	Size jump_pos1 ( core::pose::residue_center_of_mass( pose_in, 1,
+	core::Size jump_pos1 ( core::pose::residue_center_of_mass( pose_in, 1,
 		rb_cutpoint ) );
-	Size jump_pos2 ( core::pose::residue_center_of_mass( pose_in,rb_cutpoint+1,
+	core::Size jump_pos2 ( core::pose::residue_center_of_mass( pose_in,rb_cutpoint+1,
 		nres ) );
 
 	// make sure rb jumps do not reside in the loop region
@@ -602,13 +602,13 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 	FoldTree f( pose_in.fold_tree() );
 
 	for ( auto const & it : loops_in ) {
-		Size const loop_start ( it.start() );
-		Size const loop_stop ( it.stop() );
-		Size const loop_cutpoint ( it.cut() );
-		Size edge_start(0), edge_stop(0);
+		core::Size const loop_start ( it.start() );
+		core::Size const loop_stop ( it.stop() );
+		core::Size const loop_cutpoint ( it.cut() );
+		core::Size edge_start(0), edge_stop(0);
 		//bool edge_found = false;
 		const FoldTree & f_const = f;
-		Size const num_jump = f_const.num_jump();
+		core::Size const num_jump = f_const.num_jump();
 		for ( auto const & it2 : f_const ) {
 			edge_start = std::min( it2.start(), it2.stop() );
 			edge_stop = std::max( it2.start(), it2.stop() );
@@ -667,7 +667,7 @@ AntibodyModeler::repulsive_ramp(
 	pose::Pose & pose_in,
 	loops::Loops loops_in ) {
 
-	Size nres = pose_in.size();
+	core::Size nres = pose_in.size();
 
 	//setting MoveMap
 	kinematics::MoveMapOP cdr_dock_map;
@@ -684,7 +684,7 @@ AntibodyModeler::repulsive_ramp(
 	select_loop_residues( pose_in, loops_in, include_neighbors, is_flexible);
 	cdr_dock_map->set_chi( is_flexible );
 	cdr_dock_map->set_jump( 1, true );
-	for ( Size ii = 2; ii <= loops_in.num_loop() + 1; ii++ ) {
+	for ( core::Size ii = 2; ii <= loops_in.num_loop() + 1; ii++ ) {
 		cdr_dock_map->set_jump( ii, false );
 	}
 
@@ -714,8 +714,8 @@ AntibodyModeler::repulsive_ramp(
 
 	// dampen fa_rep weight
 	Real rep_weight_max = scorefxn->get_weight( core::scoring::fa_rep );
-	Size rep_ramp_cycles(3);
-	Size cycles(4);
+	core::Size rep_ramp_cycles(3);
+	core::Size cycles(4);
 	Real minimization_threshold(15.0);
 	//Real func_tol(1.0);
 	//mjo commenting out 'nb_list' because it is unused and causes a warning
@@ -728,7 +728,7 @@ AntibodyModeler::repulsive_ramp(
 	}
 
 	Real rep_ramp_step = (rep_weight_max - 0.02) / Real(rep_ramp_cycles-1);
-	for ( Size i = 1; i <= rep_ramp_cycles; i++ ) {
+	for ( core::Size i = 1; i <= rep_ramp_cycles; i++ ) {
 		Real rep_weight = 0.02 + rep_ramp_step * Real(i-1);
 		scorefxn->set_weight( core::scoring::fa_rep, rep_weight );
 		snugfit_MC_min ( pose_in, cdr_dock_map, cycles, minimization_threshold,
@@ -742,7 +742,7 @@ void
 AntibodyModeler::snugfit_MC_min (
 	pose::Pose & pose_in,
 	kinematics::MoveMapOP cdr_dock_map,
-	Size cycles,
+	core::Size cycles,
 	Real minimization_threshold,
 	core::scoring::ScoreFunctionOP scorefxn,
 	core::scoring::ScoreFunctionOP pack_scorefxn,
@@ -750,7 +750,7 @@ AntibodyModeler::snugfit_MC_min (
 
 	using namespace moves;
 	bool nb_list = true;
-	Size nres = pose_in.size();
+	core::Size nres = pose_in.size();
 
 	protocols::minimization_packing::MinMoverOP min_mover( new protocols::minimization_packing::MinMover( cdr_dock_map, scorefxn,
 		"lbfgs_armijo_nonmonotone", minimization_threshold, nb_list ) );
@@ -767,7 +767,7 @@ AntibodyModeler::snugfit_MC_min (
 	using namespace core::pack::task::operation;
 	// selecting movable c-terminal residues
 	ObjexxFCL::FArray1D_bool loop_residues( nres, false );
-	for ( Size i = 1; i <= nres; i++ ) {
+	for ( core::Size i = 1; i <= nres; i++ ) {
 		loop_residues( i ) = is_flexible[ i ]; // check mapping
 	}
 	using namespace protocols::simple_task_operations;
@@ -799,7 +799,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 
 	using namespace moves;
 	bool nb_list = true;
-	Size nres = pose_in.size();
+	core::Size nres = pose_in.size();
 
 	//MC move
 	Real trans_mag ( 0.1 );
@@ -846,7 +846,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 	select_loop_residues( pose_in, loops_in, include_neighbors, is_flexible);
 	cdr_dock_map->set_chi( is_flexible );
 	cdr_dock_map->set_jump( 1, true );
-	for ( Size ii = 2; ii <= loops_in.num_loop() + 1; ii++ ) {
+	for ( core::Size ii = 2; ii <= loops_in.num_loop() + 1; ii++ ) {
 		cdr_dock_map->set_jump( ii, false );
 	}
 
@@ -867,7 +867,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 	using namespace core::pack::task::operation;
 	// selecting movable c-terminal residues
 	ObjexxFCL::FArray1D_bool loop_residues( nres, false );
-	for ( Size i = 1; i <= nres; i++ ) {
+	for ( core::Size i = 1; i <= nres; i++ ) {
 		loop_residues( i ) = is_flexible[ i ]; // check mapping
 	}
 	using namespace protocols::simple_task_operations;
@@ -905,7 +905,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 	repack_step->add_mover( scmin_trial );
 
 	CycleMoverOP rb_mover_min_trial_repack( new CycleMover );
-	for ( Size i=1; i < 8; ++i ) {
+	for ( core::Size i=1; i < 8; ++i ) {
 		rb_mover_min_trial_repack->add_mover( rb_mover_min_trial );
 	}
 	rb_mover_min_trial_repack->add_mover( repack_step );
@@ -921,7 +921,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 	//set up mcm cycles and mcm_repack cycles
 	RepeatMoverOP mcm_four_cycles( new RepeatMover( rb_mover_min_trial, 4 ) );
 
-	Size cycles = 3;
+	core::Size cycles = 3;
 	if ( benchmark_ ) {
 		cycles = 1;
 	}
@@ -986,8 +986,8 @@ AntibodyModeler::global_loop_rmsd (
 
 	using namespace scoring;
 
-	Size loop_start( 1 );
-	Size loop_end( antibody_in_.Fv.size() );
+	core::Size loop_start( 1 );
+	core::Size loop_end( antibody_in_.Fv.size() );
 	if ( cdr_type == "l1" ) {
 		loop_start = antibody_in_.cdrl_[1][1];
 		loop_end = antibody_in_.cdrl_[1][2];
@@ -1011,7 +1011,7 @@ AntibodyModeler::global_loop_rmsd (
 	using ObjexxFCL::FArray1D_bool;
 	FArray1D_bool superpos_partner ( pose_in.size(), false );
 
-	for ( Size i = loop_start; i <= loop_end; ++i ) {
+	for ( core::Size i = loop_start; i <= loop_end; ++i ) {
 		superpos_partner(i) = true;
 	}
 
@@ -1026,7 +1026,7 @@ AntibodyModeler::display_constraint_residues() {
 
 	// Detecting di-sulfide bond
 
-	Size H1_Cys(0), H3_Cys(0);
+	core::Size H1_Cys(0), H3_Cys(0);
 
 	if ( antibody_in_.Fv.residue( antibody_in_.Fv.pdb_info()->pdb2pose( 'H',
 			32 ) ).name3() == "CYS" ) {
@@ -1036,7 +1036,7 @@ AntibodyModeler::display_constraint_residues() {
 		H1_Cys = antibody_in_.Fv.pdb_info()->pdb2pose( 'H', 33 );
 	}
 
-	for ( Size ii = antibody_in_.cdrh_[3][1]; ii <= antibody_in_.cdrh_[3][2];
+	for ( core::Size ii = antibody_in_.cdrh_[3][1]; ii <= antibody_in_.cdrh_[3][2];
 			ii++ ) {
 		if ( antibody_in_.Fv.residue(ii).name3() == "CYS" ) {
 			H3_Cys = ii;
@@ -1051,7 +1051,7 @@ AntibodyModeler::display_constraint_residues() {
 
 	// Specifying extended kink
 
-	Size hfr_46(0), h3_closest(0);
+	core::Size hfr_46(0), h3_closest(0);
 	hfr_46 = antibody_in_.Fv.pdb_info()->pdb2pose( 'H', 46 );
 	if ( antibody_in_.extended_ ) {
 		h3_closest = antibody_in_.cdrh_[3][2] - 5;

@@ -58,11 +58,11 @@ public:
 	int  get_num_states_for_bb( int  bbconf ) const;
 	int  get_state_offset_for_bb( int  bbconf ) const;
 	void get_states_on_curr_bb(
-		utility::vector1< Size > & state_list,
+		utility::vector1< core::Size > & state_list,
 		int offset
 	) const;
 	void get_all_states(
-		utility::vector1< Size > & rotlist,
+		utility::vector1< core::Size > & rotlist,
 		int offset
 	) const;
 
@@ -215,7 +215,7 @@ protected:
 	void set_curr_state_one_body_energy( PackerEnergy setting ) { curr_state_one_body_energy_ = setting; }
 	void set_curr_state_total_energy( PackerEnergy setting ) { curr_state_total_energy_ = setting; }
 	void inc_curr_state_total_energy( PackerEnergy setting ) { curr_state_total_energy_ += setting; }
-	void set_curr_state_two_body_energies( Size index, PackerEnergy setting ) { curr_state_two_body_energies_[ index ] = setting; }
+	void set_curr_state_two_body_energies( core::Size index, PackerEnergy setting ) { curr_state_two_body_energies_[ index ] = setting; }
 
 	void set_alternate_state( int setting ) { alternate_state_ = setting; alternate_state_info_ = state_info_[ setting ]; }
 	void set_alternate_state_one_body_energy( PackerEnergy setting ) {
@@ -224,7 +224,7 @@ protected:
 	}
 	void set_alternate_state_total_energy( PackerEnergy setting ) { alternate_state_total_energy_ = setting; }
 	void inc_alternate_state_total_energy( PackerEnergy setting ) { alternate_state_total_energy_ += setting; }
-	void set_alternate_state_two_body_energies( Size index, PackerEnergy setting ) { alternate_state_two_body_energies_[ index ] = setting;; }
+	void set_alternate_state_two_body_energies( core::Size index, PackerEnergy setting ) { alternate_state_two_body_energies_[ index ] = setting;; }
 
 	void reset_all_rotamer_substitution_bookkeeping_data();
 
@@ -451,7 +451,7 @@ public:
 	int  get_num_aa_types() const { debug_assert( num_aa_types_ != 0 ); return num_aa_types_; }
 	//void set_representitive_node_for_flexseg( int flexseg, int node_index);
 	//int  get_flexseg_representative( int flexseg ) const { return flexseg_representative_[ flexseg ]; }
-	utility::vector1< Size > const &
+	utility::vector1< core::Size > const &
 	flexseg_members( int flexseg ) const {
 		return flexseg_members_[ flexseg ];
 	}
@@ -501,11 +501,11 @@ public:
 
 	void get_accessible_states(
 		Subsitution move_mode,
-		utility::vector1< Size > & rotlist
+		utility::vector1< core::Size > & rotlist
 	) const;
 
 	void get_backbone_list(
-		utility::vector1< Size > & bblist
+		utility::vector1< core::Size > & bblist
 	) const;
 
 	/// @brief Is the backbone conformation (in the global enumertion of backbone conformations) already
@@ -621,7 +621,7 @@ private:
 	int num_flexible_segments_;
 	int num_total_bb_;
 	//utility::vector1< int > flexseg_representative_;
-	utility::vector1< utility::vector1< Size > > flexseg_members_;
+	utility::vector1< utility::vector1< core::Size > > flexseg_members_;
 	utility::vector1< int > num_bb_alternatives_for_flexseg_;
 	utility::vector1< int > flexseg_for_bb_;
 	utility::vector1< int > flexseg_bb_offset_;

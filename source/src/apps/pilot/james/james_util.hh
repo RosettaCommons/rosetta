@@ -36,7 +36,7 @@
 #ifndef JAMES_UTIL
 #define JAMES_UTIL
 
-class DistancePrediction : public utility::pointer::ReferenceCount {
+class DistancePrediction : public utility::VirtualBase {
 public:
 	DistancePrediction(
 		core::id::AtomID atom_i,
@@ -71,7 +71,7 @@ private:
 	utility::vector1< core::Real > vars_;
 };
 
-class DistanceMatrix : public utility::pointer::ReferenceCount {
+class DistanceMatrix : public utility::VirtualBase {
 
 public:
 	DistanceMatrix(
@@ -88,8 +88,8 @@ public:
 		distances_.resize(
 			pose.size(), vector1< Real >( pose.size(), 0.0 ));
 
-		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-			for ( Size jj = ii + 1; jj <= pose.size(); ++jj ) {
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+			for ( core::Size jj = ii + 1; jj <= pose.size(); ++jj ) {
 				core::id::NamedAtomID atom_ii( atom_name(), ii );
 				core::id::NamedAtomID atom_jj( atom_name(), jj );
 
@@ -116,7 +116,7 @@ private:
 	utility::vector1< utility::vector1< core::Real > > distances_;
 };
 
-class TorsionList : public utility::pointer::ReferenceCount {
+class TorsionList : public utility::VirtualBase {
 
 public:
 	TorsionList(
@@ -129,7 +129,7 @@ public:
 		using utility::vector1;
 		torsions_.resize( pose.size() );
 
-		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			torsions_[ii] = pose.residue(ii).mainchain_torsions();
 		}
 	} // calculate_torsions
@@ -140,7 +140,7 @@ public:
 		return torsions_[residue][torsion_idx];
 	}
 
-	Size n_torsions() const {
+	core::Size n_torsions() const {
 		return torsions_.front().size();
 	}
 

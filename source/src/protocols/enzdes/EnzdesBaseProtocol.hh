@@ -47,9 +47,9 @@ public:
 	//toolbox::match_enzdes_util::EnzConstraintIOOP cst_io(){ return cst_io_; }
 
 	//catalytic res INCLUDING all ligands in pose numbering in a particular order
-	utility::vector1<Size> catalytic_res( core::pose::Pose const & pose) const;
+	utility::vector1<core::Size> catalytic_res( core::pose::Pose const & pose) const;
 
-	std::set< Size > const & design_targets( core::pose::Pose const & pose ) const;
+	std::set< core::Size > const & design_targets( core::pose::Pose const & pose ) const;
 	utility::vector1< core::Size > rb_min_jumps() const;
 	void rb_min_jumps( utility::vector1< core::Size > const );
 

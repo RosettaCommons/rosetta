@@ -157,8 +157,8 @@ GatherPosesMover::get_distance_measure(
 	}
 
 	if ( option[ OptionKeys::cluster::hotspot_hash ]() ) {
-		Size const resnum1 = pose1.size();
-		Size const resnum2 = pose2.size();
+		core::Size const resnum1 = pose1.size();
+		core::Size const resnum2 = pose2.size();
 		conformation::ResidueCOP res1( pose1.residue(resnum1).get_self_ptr() );
 		conformation::ResidueCOP res2( pose2.residue(resnum2).get_self_ptr() );
 		//return protocols::hotspot_hashing::residue_sc_rmsd_no_super( res1, res2 );
@@ -342,8 +342,8 @@ void ClusterBase::calculate_distance_matrix() {
 
 	std::vector<int> histcount(hist_size,0);
 
-	for ( Size i = 0; i < poselist.size(); i++ ) {
-		for ( Size j = i; j < poselist.size(); j++ ) {
+	for ( core::Size i = 0; i < poselist.size(); i++ ) {
+		for ( core::Size j = i; j < poselist.size(); j++ ) {
 			// only do comparisons once
 			if ( i < j ) {
 				// get the similarity between structure with index i and with index j
@@ -371,7 +371,7 @@ void ClusterBase::calculate_distance_matrix() {
 	tr.Info << "Histogram of pairwise similarity values for the initial clustering set" << std::endl;
 	int maxcount_count = 0;
 	int maxcount_i = 0;
-	for ( Size i = 0; i <(Size)hist_size; i++ ) {
+	for ( core::Size i = 0; i <(core::Size)hist_size; i++ ) {
 		tr.Info << "hist " <<  Real(i)*hist_resolution << "   " << histcount[i] << std::endl;
 		if ( histcount[i] > maxcount_count ) {
 			maxcount_count = histcount[i];
@@ -618,10 +618,10 @@ void ClusterBase::limit_total_structures( int limit) {
 void ClusterBase::clean_pose_store() {
 	tr.Info << "Cleaning Pose store to save memory ... " << std::endl;
 	// for each structure in the pose list
-	for ( Size index=0; index < poselist.size(); index ++ ) {
+	for ( core::Size index=0; index < poselist.size(); index ++ ) {
 		bool ispresent = false;
 		// try and find it in the cluster assigments
-		Size i,j;
+		core::Size i,j;
 		for ( i=0; i<clusterlist.size(); i++ ) {
 			for ( j=0; j<clusterlist[i].size(); j++ ) {
 				if ( (int)index == clusterlist[i][j] ) { ispresent = true; break; }
@@ -764,12 +764,12 @@ std::vector< core::pose::PoseOP >  ClusterBase::return_top_poses_in_clusters( co
 			templist.push_back(tempPointer);
 		} else if ( clusterlist[i].size() >= 2 &&
 				clusterlist[i].size() <= count+1 ) { //+1 because of cluster center
-			for ( Size j = 1; j < clusterlist[i].size(); j++ ) {
+			for ( core::Size j = 1; j < clusterlist[i].size(); j++ ) {
 				tempPointer = utility::pointer::make_shared< core::pose::Pose >(poselist[ clusterlist[i][j]]);
 				templist.push_back(tempPointer);
 			}
 		} else if ( clusterlist[i].size() > count+1 ) {
-			for ( Size j = 1; j <= count; j++ ) {
+			for ( core::Size j = 1; j <= count; j++ ) {
 				tempPointer = utility::pointer::make_shared< core::pose::Pose >(poselist[ clusterlist[i][j]]);
 				templist.push_back(tempPointer);
 			}
@@ -873,7 +873,7 @@ ClusterPhilStyle::get_name() const {
 	return "ClusterPhilStyle";
 }
 
-void ClusterPhilStyle::do_clustering( Size max_total_cluster ) {
+void ClusterPhilStyle::do_clustering( core::Size max_total_cluster ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -890,7 +890,7 @@ void ClusterPhilStyle::do_clustering( Size max_total_cluster ) {
 	std::vector < int > clusternr ( poselist.size(), -1 );
 	//std::vector < int > clustercenter;
 	int    mostneighbors;
-	Size    nclusters=0;
+	core::Size    nclusters=0;
 
 	if ( listsize == 0 ) {
 		utility_exit_with_message( "Error: no Poses to cluster! Try -in:file:s or -in:file:silent!" );

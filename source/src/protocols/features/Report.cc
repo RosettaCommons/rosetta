@@ -13,7 +13,7 @@
 
 // Unit Headers
 #include <protocols/features/Report.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <protocols/features/FeaturesReporter.hh>
 #include <utility/vector1.hh>
@@ -22,14 +22,14 @@
 namespace protocols {
 namespace features {
 
-using utility::pointer::ReferenceCount;
+using utility::VirtualBase;
 
 Report::Report() :
 	reporters_()
 {}
 
 Report::Report(Report const &) :
-	ReferenceCount(),
+	VirtualBase(),
 	reporters_()
 {}
 

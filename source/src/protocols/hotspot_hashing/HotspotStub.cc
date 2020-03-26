@@ -48,7 +48,7 @@ HotspotStub::HotspotStub(
 	core::Size chain_to_design,
 	protocols::filters::FilterCOP filter
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	residue_(utility::pointer::make_shared< core::conformation::Residue >(*residue)), // jk note: deep copy
 	bonus_value_(bonus_value),
 	pose_(std::move( pose )),
@@ -120,8 +120,8 @@ HotspotStub::pair_with_scaffold( core::pose::PoseOP pose, protocols::filters::Fi
 bool
 HotspotStub::scaffold_match( core::Size const seqpos )
 {
-	Size const host_chain_begin( pose_->conformation().chain_begin( chain_to_design_) );
-	Size const host_chain_end( pose_->conformation().chain_end( chain_to_design_) );
+	core::Size const host_chain_begin( pose_->conformation().chain_begin( chain_to_design_) );
+	core::Size const host_chain_end( pose_->conformation().chain_end( chain_to_design_) );
 	runtime_assert( seqpos <= host_chain_end );
 	runtime_assert( seqpos >= host_chain_begin );
 	core::Size const scaffold_position = seqpos - host_chain_begin;

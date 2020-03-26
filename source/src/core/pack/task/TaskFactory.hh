@@ -29,7 +29,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <list>
@@ -48,10 +48,10 @@ namespace pack {
 namespace task {
 
 /// @brief  Factory class for the creation and initialization of PackerTask objects
-class TaskFactory : public utility::pointer::ReferenceCount
+class TaskFactory : public utility::VirtualBase
 {
 public:
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 	typedef operation::TaskOperation TaskOperation;
 	typedef operation::TaskOperationOP TaskOperationOP;
 	typedef operation::TaskOperationCOP TaskOperationCOP;

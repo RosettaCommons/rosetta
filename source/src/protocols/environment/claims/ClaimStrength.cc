@@ -26,7 +26,7 @@ namespace protocols {
 namespace environment {
 namespace claims {
 
-ClaimStrength::ClaimStrength( PrioSubtype subtype, Size subprio ):
+ClaimStrength::ClaimStrength( PrioSubtype subtype, core::Size subprio ):
 	Parent(),
 	subtype_( subtype ),
 	subprio_( subprio )

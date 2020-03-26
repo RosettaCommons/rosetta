@@ -94,9 +94,9 @@ Align_RmsdEvaluator::apply(
 
 		// required for high-accuracy statistics
 		core::id::SequenceMapping mapping = get_alignment(pose)->sequence_mapping(1, 2);
-		std::map<Size, Size> residues;
-		for ( Size idx_mod = 1; idx_mod <= mapping.size1(); ++idx_mod ) {
-			Size idx_ref = mapping[idx_mod];
+		std::map<core::Size, core::Size> residues;
+		for ( core::Size idx_mod = 1; idx_mod <= mapping.size1(); ++idx_mod ) {
+			core::Size idx_ref = mapping[idx_mod];
 			if ( idx_ref > 0 ) {
 				residues[idx_ref] = idx_mod;
 			}

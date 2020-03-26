@@ -47,13 +47,13 @@ namespace ligand_docking {
 static basic::Tracer interface_builder_tracer( "protocols.ligand_docking.ligand_options.InterfaceBuilder", basic::t_debug );
 
 InterfaceBuilder::InterfaceBuilder():
-	ReferenceCount(),
+	VirtualBase(),
 	ligand_areas_(),
 	extension_window_(0)
 {}
 
 InterfaceBuilder::InterfaceBuilder(utility::vector1<LigandAreaOP> ligand_areas, core::Size extension_window):
-	ReferenceCount(),
+	VirtualBase(),
 	extension_window_(extension_window)
 {
 	for ( LigandAreaOP ligand_area : ligand_areas ) {
@@ -62,7 +62,7 @@ InterfaceBuilder::InterfaceBuilder(utility::vector1<LigandAreaOP> ligand_areas, 
 }
 
 InterfaceBuilder::InterfaceBuilder(InterfaceBuilder const & that):
-	ReferenceCount(),
+	VirtualBase(),
 	ligand_areas_(that.ligand_areas_),
 	extension_window_(that.extension_window_)
 {}

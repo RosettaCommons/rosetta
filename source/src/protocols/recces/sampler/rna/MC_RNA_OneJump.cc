@@ -118,8 +118,8 @@ MC_RNA_OneJump::update()
 core::Real
 calc_base_centroid_rmsd( core::conformation::Residue const & rsd1, core::conformation::Residue const & rsd2 )
 {
-	Real rmsd( 0.0 ); Size numatoms( 0 );
-	for ( Size i = rsd1.first_sidechain_atom() + 1; i <= rsd1.nheavyatoms(); ++i ) { //rsd.first_sidechain_atom()+1 to not include the O2prime oxygen.
+	Real rmsd( 0.0 ); core::Size numatoms( 0 );
+	for ( core::Size i = rsd1.first_sidechain_atom() + 1; i <= rsd1.nheavyatoms(); ++i ) { //rsd.first_sidechain_atom()+1 to not include the O2prime oxygen.
 		if ( rsd1.is_virtual( i ) ) continue;
 		if ( rsd1.is_repulsive( i ) ) continue;
 		Vector dist = ( rsd1.xyz(i) - rsd2.xyz(i) );
@@ -137,7 +137,7 @@ calc_base_centroid_rmsd( core::conformation::Residue const & rsd1, core::conform
 bool
 MC_RNA_OneJump::check_jump_in_range()
 {
-	Size const moving_rsd( 2 ); // always second residue in scratch poses
+	core::Size const moving_rsd( 2 ); // always second residue in scratch poses
 	scratch_pose_->set_jump( 1, active_jump_ );
 	Real rmsd( calc_base_centroid_rmsd( scratch_pose_->residue(moving_rsd),
 		ref_scratch_pose_->residue(moving_rsd) ) );
@@ -146,8 +146,8 @@ MC_RNA_OneJump::check_jump_in_range()
 
 ///////////////////////////////////////////////////////////////////////////
 void
-MC_RNA_OneJump::show( std::ostream & out, Size const indent ) const {
-	for ( Size n = 1; n <= indent; n++ ) out << ' ';
+MC_RNA_OneJump::show( std::ostream & out, core::Size const indent ) const {
+	for ( core::Size n = 1; n <= indent; n++ ) out << ' ';
 	out << get_name() << " jump_number:" << jump_num_ << std::endl;
 }
 

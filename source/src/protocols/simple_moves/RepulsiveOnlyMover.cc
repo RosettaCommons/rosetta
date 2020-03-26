@@ -72,7 +72,7 @@ RepulsiveOnlyMover::apply( core::pose::Pose & pose ) {
 		}
 	}
 	if ( basic::options::option[ basic::options::OptionKeys::in::replonly_residues ].user() ) {
-		utility::vector1<Size> replonly_rsd = basic::options::option[ basic::options::OptionKeys::in::replonly_residues ]();
+		utility::vector1<core::Size> replonly_rsd = basic::options::option[ basic::options::OptionKeys::in::replonly_residues ]();
 		//TR << "RepulsiveOnly protocols::moves::Mover has been called" << std::endl;
 		for ( core::Size i=1; i<=replonly_rsd.size(); i++ ) {
 			if ( mutate_to_glycine_ ) {

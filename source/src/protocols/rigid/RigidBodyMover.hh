@@ -37,7 +37,7 @@
 #include <numeric/xyzMatrix.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -614,7 +614,7 @@ public:
 
 	// constructor with arguments
 	RigidBodyDofSeqRandomizeMover(
-		std::map< Size, core::conformation::symmetry::SymDof > const & dofs
+		std::map< core::Size, core::conformation::symmetry::SymDof > const & dofs
 	);
 
 	RigidBodyDofSeqRandomizeMover( RigidBodyDofSeqRandomizeMover const & );
@@ -624,7 +624,7 @@ public:
 	std::string get_name() const override;
 
 private:
-	std::map< Size, core::conformation::symmetry::SymDof > dofs_;
+	std::map< core::Size, core::conformation::symmetry::SymDof > dofs_;
 
 };
 
@@ -648,7 +648,7 @@ public:
 
 	// constructor with arguments
 	RigidBodyDofTransMover(
-		std::map< Size, core::conformation::symmetry::SymDof > dofs
+		std::map< core::Size, core::conformation::symmetry::SymDof > dofs
 	);
 
 	RigidBodyDofTransMover( RigidBodyDofTransMover const & );
@@ -687,7 +687,7 @@ public:
 
 	// constructor with arguments
 	RigidBodyDofSeqTransMover(
-		std::map< Size, core::conformation::symmetry::SymDof > dofs
+		std::map< core::Size, core::conformation::symmetry::SymDof > dofs
 	);
 
 	RigidBodyDofSeqTransMover( RigidBodyDofSeqTransMover const & );
@@ -703,7 +703,7 @@ public:
 
 private:
 	// allowed dofs
-	std::map< Size, core::conformation::symmetry::SymDof > dofs_;
+	std::map< core::Size, core::conformation::symmetry::SymDof > dofs_;
 	// allowed jumps
 	utility::vector1 < int > rb_jumps_;
 	core::Real step_size_;
@@ -724,7 +724,7 @@ public:
 
 	// constructor with arguments
 	RigidBodyDofRandomTransMover(
-		std::map< Size, core::conformation::symmetry::SymDof > dofs
+		std::map< core::Size, core::conformation::symmetry::SymDof > dofs
 	);
 
 	RigidBodyDofRandomTransMover( RigidBodyDofRandomTransMover const & src );
@@ -740,7 +740,7 @@ public:
 
 private:
 	/// allowed dofs
-	std::map< Size, core::conformation::symmetry::SymDof > dofs_;
+	std::map< core::Size, core::conformation::symmetry::SymDof > dofs_;
 	// allowed jumps
 	utility::vector1 < int > rb_jumps_;
 	core::Real step_size_;
@@ -766,7 +766,7 @@ public:
 	// constructor with arguments (rb_jump not defined)
 	// movemap used instead
 	RigidBodyDofPerturbMover(
-		std::map< Size, core::conformation::symmetry::SymDof > dofs,
+		std::map< core::Size, core::conformation::symmetry::SymDof > dofs,
 		core::Real const rot_mag_in = 1.0,
 		core::Real const trans_mag_in = 3.0
 	);
@@ -808,7 +808,7 @@ public:
 	// constructor with arguments (rb_jump not defined)
 	// movemap used instead
 	RigidBodyDofSeqPerturbMover(
-		std::map< Size, core::conformation::symmetry::SymDof > dofs,
+		std::map< core::Size, core::conformation::symmetry::SymDof > dofs,
 		core::Real const rot_mag_in = 1.0,
 		core::Real const trans_mag_in = 3.0
 	);
@@ -820,11 +820,11 @@ public:
 
 	void rot_magnitude( core::Real const magnitude ) { rot_mag_ = magnitude; }
 	void trans_magnitude( core::Real const magnitude ) { trans_mag_ = magnitude; }
-	void dofs( std::map< Size, core::conformation::symmetry::SymDof > dofs ) { dofs_ = dofs; }
+	void dofs( std::map< core::Size, core::conformation::symmetry::SymDof > dofs ) { dofs_ = dofs; }
 
 private:
 	// allowed dofs
-	std::map< Size, core::conformation::symmetry::SymDof > dofs_;
+	std::map< core::Size, core::conformation::symmetry::SymDof > dofs_;
 	// allowed jumps
 	utility::vector1 < int > rb_jumps_;
 	/// perturbation magnitudes (rotational and translational)

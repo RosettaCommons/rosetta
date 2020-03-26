@@ -62,7 +62,7 @@ NMRSpinlabel::NMRSpinlabel(
 	std::string const & residue_type_set,
 	std::string const & residue_type
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	residue_type_( chemical::ChemicalManager::get_instance()->residue_type_set(residue_type_set)->get_representative_type_name3(residue_type) ),
 	radical_atom_(""),
 	distance_potential_histogram_file_(""),
@@ -93,7 +93,7 @@ NMRSpinlabel::NMRSpinlabel(
 	std::string const & radical_atom,
 	NMRDummySpinlabelEnsembleCOP dummy_ensemble
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	residue_type_( residue_type ),
 	radical_atom_(radical_atom),
 	distance_potential_histogram_file_(""),
@@ -110,7 +110,7 @@ NMRSpinlabel::NMRSpinlabel(
 
 /// @brief copy constructor
 NMRSpinlabel::NMRSpinlabel(NMRSpinlabel const & other) :
-	utility::pointer::ReferenceCount(other),
+	utility::VirtualBase(other),
 	residue_type_( other.residue_type_ ),
 	radical_atom_(other.radical_atom_),
 	distance_potential_histogram_file_(other.distance_potential_histogram_file_),

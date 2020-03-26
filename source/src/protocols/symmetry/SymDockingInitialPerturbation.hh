@@ -24,7 +24,7 @@
 #include <core/kinematics/Jump.hh>
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //utility
 #include <utility/vector1.hh>
@@ -80,7 +80,7 @@ public:
 
 	// constructor with arguments
 	SymDockingSlideIntoContact(
-		std::map< Size, core::conformation::symmetry::SymDof > const & dofs
+		std::map< core::Size, core::conformation::symmetry::SymDof > const & dofs
 	);
 	// destructor
 	~SymDockingSlideIntoContact() override;
@@ -91,7 +91,7 @@ public:
 
 private:
 	// dof to allow
-	std::map< Size, core::conformation::symmetry::SymDof > dofs_;
+	std::map< core::Size, core::conformation::symmetry::SymDof > dofs_;
 	// scorefxn to use
 	core::scoring::ScoreFunctionOP scorefxn_;
 };
@@ -108,7 +108,7 @@ class FaSymDockingSlideTogether : public moves::Mover
 {
 public:
 	FaSymDockingSlideTogether(
-		std::map< Size, core::conformation::symmetry::SymDof > const & dofs
+		std::map< core::Size, core::conformation::symmetry::SymDof > const & dofs
 	);
 
 	~FaSymDockingSlideTogether() override;
@@ -118,7 +118,7 @@ public:
 
 private:
 	// dof to allow
-	std::map< Size, core::conformation::symmetry::SymDof > dofs_;
+	std::map< core::Size, core::conformation::symmetry::SymDof > dofs_;
 	// scorefxn to use
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real tolerance_; ///< how accurate do you want to be?
@@ -129,7 +129,7 @@ class SymmetrySlider; // fwd declaration
 typedef utility::pointer::shared_ptr< SymmetrySlider > SymmetrySliderOP;
 typedef utility::pointer::shared_ptr< SymmetrySlider const > SymmetrySliderCOP;
 
-class SymmetrySlider : public utility::pointer::ReferenceCount
+class SymmetrySlider : public utility::VirtualBase
 {
 public:
 	SymmetrySlider(core::pose::Pose & pose);
@@ -173,7 +173,7 @@ public:
 	bool dofmover_compresses( core::pose::Pose & pose, protocols::rigid::RigidBodyDofTransMover & dofmover );
 
 private:
-	std::map< Size, core::conformation::symmetry::SymDof > dofs_;
+	std::map< core::Size, core::conformation::symmetry::SymDof > dofs_;
 	std::map< core::Size, bool > AllowSlideJumpMap_;
 	std::map< core::Size, core::kinematics::Jump > InitialJumps_;
 	std::map< core::Size, bool > InvertJump_;

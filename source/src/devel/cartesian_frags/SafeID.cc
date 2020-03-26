@@ -95,11 +95,11 @@ stub_id_from_torsion_stub_id(
 		}
 	} else if ( id.id.type() == BB ) {
 		// most likely spanning a cutpoint
-		Size const seqpos ( id.id.rsd() );
-		Size const torsion( id.id.torsion() );
+		core::Size const seqpos ( id.id.rsd() );
+		core::Size const torsion( id.id.torsion() );
 		conformation::Residue const & rsd( conf.residue( seqpos ) );
 		chemical::AtomIndices const & mainchain( rsd.mainchain_atoms() );
-		Size const nbb( mainchain.size() );
+		core::Size const nbb( mainchain.size() );
 		if ( torsion == 1 && conf.fold_tree().is_cutpoint( seqpos-1 ) && id.dir == Backward ) {
 			return StubID( AtomID( mainchain[1], seqpos ), AtomID( mainchain[2], seqpos ), AtomID( mainchain[3], seqpos ));
 		} else if ( torsion == nbb-1 && conf.fold_tree().is_cutpoint( seqpos ) && id.dir == Forward ) {

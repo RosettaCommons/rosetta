@@ -63,7 +63,7 @@ ResidueType const & get_chiral_residue_type( ResidueType const & rt, Chirality c
 	TR << "base_name: " << base_name /*<< " patch_name: " << patch_name */<< std::endl;
 
 	//kdrew: is residuetype patched?
-	//Size base_end_pos = rt.name().find("_p");
+	//core::Size base_end_pos = rt.name().find("_p");
 	//TR << "base_end_pos: " << base_end_pos << std::endl;
 	//if( base_end_pos != std::string::npos )
 	//{

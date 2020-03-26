@@ -18,14 +18,14 @@
 
 #include <core/scoring/loop_graph/LoopCycle.fwd.hh>
 #include <core/scoring/loop_graph/Loop.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {
 namespace loop_graph {
 
-class LoopCycle: public utility::pointer::ReferenceCount {
+class LoopCycle: public utility::VirtualBase {
 
 public:
 

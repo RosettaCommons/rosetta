@@ -59,11 +59,11 @@ StrandPairing::StrandPairing():
 
 /// @brief value constructor
 StrandPairing::StrandPairing(
-	Size const s1,
-	Size const s2,
-	Size const b1,
-	Size const b2,
-	Size const p,
+	core::Size const s1,
+	core::Size const s2,
+	core::Size const b1,
+	core::Size const b2,
+	core::Size const p,
 	Real const rs,
 	char const o
 ):
@@ -83,16 +83,16 @@ StrandPairing::StrandPairing(
 	runtime_assert( b1 < b2 );
 	pleats1_.push_back( p );
 	pleats2_.push_back( p );
-	residue_pair_.insert( std::map< Size, Size >::value_type( b1, b2 ) );
-	residue_pair_.insert( std::map< Size, Size >::value_type( b2, b1 ) );
+	residue_pair_.insert( std::map< core::Size, core::Size >::value_type( b1, b2 ) );
+	residue_pair_.insert( std::map< core::Size, core::Size >::value_type( b2, b1 ) );
 	initialize();
 }
 
 
 /// @brief value constructor
 StrandPairing::StrandPairing(
-	Size const s1,
-	Size const s2,
+	core::Size const s1,
+	core::Size const s2,
 	Real const rs,
 	char const o
 ):
@@ -127,8 +127,8 @@ StrandPairing::StrandPairing( String const & spair ):
 	runtime_assert( parts.size() == 3 );
 
 	utility::vector1< String > st( utility::string_split( parts[1], '-' ) );
-	s1_ = boost::lexical_cast<Size>( st[1] );
-	s2_ = boost::lexical_cast<Size>( st[2] );
+	s1_ = boost::lexical_cast<core::Size>( st[1] );
+	s2_ = boost::lexical_cast<core::Size>( st[2] );
 	runtime_assert( s1_ < s2_ );
 
 	orient_ = parts[2][0];
@@ -169,13 +169,13 @@ std::ostream & operator<<( std::ostream & out, const StrandPairing &sp )
 
 /// @brief
 bool
-StrandPairing::elongate( Size const r1, Size const r2, Size const p1, Size const p2 )
+StrandPairing::elongate( core::Size const r1, core::Size const r2, core::Size const p1, core::Size const p2 )
 {
 	runtime_assert( r2 > r1 );
 
 	// set residue pair
-	residue_pair_.insert( std::map< Size, Size >::value_type( r1, r2 ) );
-	residue_pair_.insert( std::map< Size, Size >::value_type( r2, r1 ) );
+	residue_pair_.insert( std::map< core::Size, core::Size >::value_type( r1, r2 ) );
+	residue_pair_.insert( std::map< core::Size, core::Size >::value_type( r2, r1 ) );
 
 	if ( begin1_ == 0 && begin2_ == 0 ) {
 		begin1_ = r1;
@@ -217,14 +217,14 @@ StrandPairing::elongate( Size const r1, Size const r2, Size const p1, Size const
 
 /// @brief
 bool
-StrandPairing::add_pair( Size const r1, Size const r2, char const orient, Real const rgstr )
+StrandPairing::add_pair( core::Size const r1, core::Size const r2, char const orient, Real const rgstr )
 {
 	runtime_assert( r2 > r1 );
 
 	if ( orient_ != orient ) return false;
 
-	residue_pair_.insert( std::map< Size, Size >::value_type( r1, r2 ) );
-	residue_pair_.insert( std::map< Size, Size >::value_type( r2, r1 ) );
+	residue_pair_.insert( std::map< core::Size, core::Size >::value_type( r1, r2 ) );
+	residue_pair_.insert( std::map< core::Size, core::Size >::value_type( r2, r1 ) );
 
 	if ( begin1_ == 0 && begin2_ == 0 ) {
 		begin1_ = r1;
@@ -293,7 +293,7 @@ StrandPairing::is_parallel() const {
 
 /// @brief whether input residue is included in this StrandPairinge or not
 bool
-StrandPairing::is_member( Size const res ) {
+StrandPairing::is_member( core::Size const res ) {
 
 	if ( begin1_ <= end1_ ) {
 		if ( begin1_ <= res && res <= end1_ ) return true;
@@ -313,14 +313,14 @@ StrandPairing::is_member( Size const res ) {
 
 /// @brief return residue pairing
 bool
-StrandPairing::has_paired_residue( Size const res ) const
+StrandPairing::has_paired_residue( core::Size const res ) const
 {
 	return ( residue_pair_.find( res ) != residue_pair_.end() );
 }
 
 /// @brief return residue pairing
 StrandPairing::Size
-StrandPairing::residue_pair( Size const res ) const
+StrandPairing::residue_pair( core::Size const res ) const
 {
 	//runtime_assert( (begin1_ <= res && res <= end1_) || (begin2_ <= res && res <= end2_) ||
 	//  (end1_ <= res && res <= begin1_) || (end2_ <= res && res <= begin2_) );
@@ -360,13 +360,13 @@ StrandPairing::redefine_begin_end( SS_Info2_COP const ss_info, utility::vector1<
 	bulges2_ = compute_bulges( ss_info->strand( s2_ )->begin(), ss_info->strand( s2_ )->end(), abego );
 	TR << "Bulges1: " << bulges1_ << " Bulges2: " << bulges2_ << std::endl;
 
-	Size const s1_begin = ss_info->strand( s1_ )->begin();
-	Size const s1_len = ss_info->strand( s1_ )->length() - bulges1_.size();
-	Size const s2_begin = ss_info->strand( s2_ )->begin();
-	Size const s2_end = ss_info->strand( s2_ )->end();
-	Size const s2_len = ss_info->strand( s2_ )->length() - bulges2_.size();
+	core::Size const s1_begin = ss_info->strand( s1_ )->begin();
+	core::Size const s1_len = ss_info->strand( s1_ )->length() - bulges1_.size();
+	core::Size const s2_begin = ss_info->strand( s2_ )->begin();
+	core::Size const s2_end = ss_info->strand( s2_ )->end();
+	core::Size const s2_len = ss_info->strand( s2_ )->length() - bulges2_.size();
 
-	Size s1_pair_start, s2_pair_start, len;
+	core::Size s1_pair_start, s2_pair_start, len;
 	int inc = 1;
 
 	if ( is_parallel() ) { // parallel
@@ -432,7 +432,7 @@ StrandPairing::redefine_begin_end( SS_Info2_COP const ss_info, utility::vector1<
 	} // if is_parallel ?
 
 
-	for ( Size i=1; i<=len; i++ ) {
+	for ( core::Size i=1; i<=len; i++ ) {
 		TR.Debug << "elongating to include " << s1_pair_start << " " << s2_pair_start << std::endl;
 		// if this residue is a bulge on strand 1, skip it
 		if ( bulges1_.find( s1_pair_start ) != bulges1_.end() ) {
@@ -600,7 +600,7 @@ StrandPairingSet::strand_pairings() const
 
 /// @brief return one of the stand_pairings given a number
 StrandPairingOP
-StrandPairingSet::strand_pairing( Size const s ) const
+StrandPairingSet::strand_pairing( core::Size const s ) const
 {
 	runtime_assert( s <= strand_pairings_.size() );
 	return strand_pairings_[ s ];
@@ -609,7 +609,7 @@ StrandPairingSet::strand_pairing( Size const s ) const
 
 /// @brief
 StrandPairingOP
-StrandPairingSet::strand_pairing( Size const s1, Size const s2 ) const
+StrandPairingSet::strand_pairing( core::Size const s1, core::Size const s2 ) const
 {
 	runtime_assert( finalized_ );
 	if ( s1 <= num_strands_ && s2 <= num_strands_ ) {
@@ -621,7 +621,7 @@ StrandPairingSet::strand_pairing( Size const s1, Size const s2 ) const
 
 /// @brief
 StrandPairingSet::VecSize const &
-StrandPairingSet::neighbor_strands( Size const s ) const
+StrandPairingSet::neighbor_strands( core::Size const s ) const
 {
 	runtime_assert( finalized_ );
 	runtime_assert( s <= num_strands_ );
@@ -661,7 +661,7 @@ bool pointer_sorter( StrandPairingCOP const a, StrandPairingCOP const b )
 void
 StrandPairingSet::finalize()
 {
-	using VecSize = utility::vector1<Size>;
+	using VecSize = utility::vector1<core::Size>;
 
 	finalized_ = true;
 
@@ -686,15 +686,15 @@ StrandPairingSet::finalize()
 	}
 
 	map_strand_pairings_.resize( num_strands_ );
-	for ( Size i=1; i<=num_strands_; i++ ) {
+	for ( core::Size i=1; i<=num_strands_; i++ ) {
 
 		// initialize neighbor_strands
 		VecSize vec;
-		neighbor_strands_.insert( std::map< Size, VecSize >::value_type( i, vec ) );
+		neighbor_strands_.insert( std::map< core::Size, VecSize >::value_type( i, vec ) );
 
 		// initialize map_strand_pairings_
 		map_strand_pairings_[i].resize( num_strands_ );
-		for ( Size j=1; j<=num_strands_; j++ ) {
+		for ( core::Size j=1; j<=num_strands_; j++ ) {
 			map_strand_pairings_[i][j] = empty_;
 		}
 	}
@@ -729,9 +729,9 @@ StrandPairingSet::drop_strand_pairs( StrandPairings const & drop_spairs )
 	runtime_assert( drop_spairs.size() <= strand_pairings_.size() );
 
 	StrandPairings new_spairs;
-	for ( Size jj=1; jj<=strand_pairings_.size(); jj++ ) {
+	for ( core::Size jj=1; jj<=strand_pairings_.size(); jj++ ) {
 		bool drop( false );
-		for ( Size ii=1; ii<=drop_spairs.size(); ii++ ) {
+		for ( core::Size ii=1; ii<=drop_spairs.size(); ii++ ) {
 			if ( strand_pairings_[ jj ]->name() == drop_spairs[ ii ]->name() ) {
 				drop = true;
 				break;
@@ -762,7 +762,7 @@ StrandPairingSet::make_strand_neighbor_two()
 
 	bool modified( false );
 	StrandPairings drop_spairs;
-	for ( Size ist=1; ist<=num_strands_; ist++ ) {
+	for ( core::Size ist=1; ist<=num_strands_; ist++ ) {
 
 		StrandPairings spairs;
 		if ( neighbor_strands( ist ).size() > 2 ) {
@@ -770,12 +770,12 @@ StrandPairingSet::make_strand_neighbor_two()
 			modified = true;
 			for ( auto
 					it=neighbor_strands( ist ).begin(), ite=neighbor_strands( ist ).end(); it != ite; ++it ) {
-				Size jst( *it );
+				core::Size jst( *it );
 				spairs.push_back( strand_pairing( ist, jst ) );
 			}
 			std::sort( spairs.begin(), spairs.end(), sort_by_length );
 
-			for ( Size i=3; i<=spairs.size(); i++ ) {
+			for ( core::Size i=3; i<=spairs.size(); i++ ) {
 				if ( pairmap[ spairs[ i ]->s1() ][ spairs[ i ]->s2() ] ) continue;
 				pairmap[ spairs[ i ]->s1() ][ spairs[ i ]->s2() ] = true;
 				pairmap[ spairs[ i ]->s2() ][ spairs[ i ]->s1() ] = true;
@@ -821,9 +821,9 @@ StrandPairingSet::initialize_by_dimer_pairs( SS_Info2 const & ssinfo, DimerPairi
 
 	// intialize map strand pairings
 	map_strand_pairings_.resize( num_strands_ );
-	for ( Size i=1; i<=num_strands_; i++ ) {
+	for ( core::Size i=1; i<=num_strands_; i++ ) {
 		map_strand_pairings_[i].resize( num_strands_ );
-		for ( Size j=1; j<=num_strands_; j++ ) {
+		for ( core::Size j=1; j<=num_strands_; j++ ) {
 			map_strand_pairings_[i][j] = empty_;
 		}
 	}
@@ -834,13 +834,13 @@ StrandPairingSet::initialize_by_dimer_pairs( SS_Info2 const & ssinfo, DimerPairi
 
 		if ( (dp.sign1() == 1 && dp.sign2() == 1) || (dp.sign1() == 2 && dp.sign2() == 2) ) continue;
 
-		Size iaa = dp.res1();
-		Size jaa = dp.res2();
-		Size istrand = ssinfo.strand_id( iaa );
-		Size jstrand = ssinfo.strand_id( jaa );
-		Size ist_begin = ssinfo.strand( istrand )->begin();
-		Size jst_begin = ssinfo.strand( jstrand )->begin();
-		Size jst_length = ssinfo.strand( jstrand )->length();
+		core::Size iaa = dp.res1();
+		core::Size jaa = dp.res2();
+		core::Size istrand = ssinfo.strand_id( iaa );
+		core::Size jstrand = ssinfo.strand_id( jaa );
+		core::Size ist_begin = ssinfo.strand( istrand )->begin();
+		core::Size jst_begin = ssinfo.strand( jstrand )->begin();
+		core::Size jst_length = ssinfo.strand( jstrand )->length();
 
 		StrandPairingOP & spop = map_strand_pairings_[ istrand ][ jstrand ];
 		if ( spop == nullptr ) {

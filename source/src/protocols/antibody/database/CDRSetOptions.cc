@@ -23,13 +23,13 @@ namespace antibody {
 using namespace protocols::antibody::clusters;
 
 CDRSetOptions::CDRSetOptions(bool load):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	load_(load)
 {
 	set_defaults();
 }
 CDRSetOptions::CDRSetOptions(CDRNameEnum cdr, bool load):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	cdr_(cdr),
 	load_(load)
 {
@@ -37,7 +37,7 @@ CDRSetOptions::CDRSetOptions(CDRNameEnum cdr, bool load):
 }
 
 CDRSetOptions::CDRSetOptions(const CDRSetOptions& src):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	cdr_(src.cdr_),
 	load_(src.load_),
 	only_current_cluster_(src.only_current_cluster_),

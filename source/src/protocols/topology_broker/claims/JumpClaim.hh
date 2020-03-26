@@ -34,7 +34,7 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 
@@ -167,7 +167,7 @@ public:
 		atom2_ = str;
 	}
 
-	std::string const& jump_atom( Size i ) const {
+	std::string const& jump_atom( core::Size i ) const {
 		runtime_assert( i <= 2 && i > 0 );
 		if ( i == 1 ) return jump_atom1();
 		else return jump_atom2();
@@ -181,8 +181,8 @@ public:
 
 private:
 	bool permanent_; //true if this jump should still be present after loop-closing
-	//  Size pos1_;
-	//  Size pos2_;
+	//  core::Size pos1_;
+	//  core::Size pos2_;
 	LocalPosition local_pos1_;
 	LocalPosition local_pos2_;
 	std::string atom1_;

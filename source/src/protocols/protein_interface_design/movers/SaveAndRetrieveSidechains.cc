@@ -102,7 +102,7 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 		first_apply_->obj = true;
 	}
 	TR << "Retrieving sidechains..."<<std::endl;
-	Size nres = pose.size();
+	core::Size nres = pose.size();
 	if ( nres != init_pose_->size() && core::pose::symmetry::is_symmetric(pose) ) {
 		auto & symm_conf (
 			dynamic_cast<conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );

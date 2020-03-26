@@ -112,27 +112,27 @@ DefineMovableLoops::find_loops(   pose::Pose & pose,
 
 	//bool use_seeds( seeds );
 	bool use_seeds = seeds.size() > 0;
-	Size end = offset + secstruct.length() - 1;//double check....
-	utility::vector1< Size > adjusted_cutpoints;
+	core::Size end = offset + secstruct.length() - 1;//double check....
+	utility::vector1< core::Size > adjusted_cutpoints;
 
 	//curate the cutpoint list from the cutpoints between the chain ends
 	if ( use_cutpoints() ) {
 		core::kinematics::FoldTreeOP ft( new kinematics::FoldTree( pose.fold_tree() ) );
-		utility::vector1< Size > cutpoints =  ft->cutpoints();
-		utility::vector1< Size > chain_ends = pose.conformation().chain_endings();
+		utility::vector1< core::Size > cutpoints =  ft->cutpoints();
+		utility::vector1< core::Size > chain_ends = pose.conformation().chain_endings();
 		//adding last chains' end too, since it isnt included in chain_endings( and to avoid seg fault beloew)
 		chain_ends.push_back( pose.size() );
 
 		//debug
-		for ( Size i = 1; i <= chain_ends.size(); ++i ) {
+		for ( core::Size i = 1; i <= chain_ends.size(); ++i ) {
 			TR.Debug<<"chain endings: " << chain_ends[i] <<std::endl;
 		}
 
 		//adding together relevant cutpoints
-		for ( Size cut_it = 1; cut_it <= cutpoints.size(); ++ cut_it ) {
+		for ( core::Size cut_it = 1; cut_it <= cutpoints.size(); ++ cut_it ) {
 			TR.Debug <<"cutpoints of current foldtree: "<< cutpoints[cut_it] <<std::endl;
 
-			for ( Size ends_it = 1; ends_it <= chain_ends.size(); ++ends_it ) {
+			for ( core::Size ends_it = 1; ends_it <= chain_ends.size(); ++ends_it ) {
 				if ( (cutpoints[cut_it] != chain_ends[ends_it])   &&  (cutpoints[cut_it] <= end )  &&  ( cutpoints[cut_it] >= offset) ) {
 					adjusted_cutpoints.push_back( cutpoints[cut_it] );
 					TR <<"adjusted cutpoint "<< cutpoints[cut_it]  << std::endl;
@@ -146,10 +146,10 @@ DefineMovableLoops::find_loops(   pose::Pose & pose,
 
 	TR.Debug <<"sec. strc: "<< secstruct <<std::endl;
 	//char ss;
-	utility::vector1 < Size > individual_loop;
-	Size cut = 0;
+	utility::vector1 < core::Size > individual_loop;
+	core::Size cut = 0;
 
-	for ( Size ss_i = 0; ss_i < secstruct.length() ; ++ss_i ) {
+	for ( core::Size ss_i = 0; ss_i < secstruct.length() ; ++ss_i ) {
 		char ss = secstruct[ss_i];
 
 		if ( ss == 'L' ) {
@@ -201,7 +201,7 @@ DefineMovableLoops::find_loops(   pose::Pose & pose,
 
 
 bool
-DefineMovableLoops::is_cut( utility::vector1<Size> & cut_points, Size residue){
+DefineMovableLoops::is_cut( utility::vector1<core::Size> & cut_points, core::Size residue){
 	bool res_cut = false;
 	for ( core::Size & cut_point : cut_points ) {
 		if ( cut_point == residue ) {
@@ -223,12 +223,12 @@ DefineMovableLoops::apply( core::pose::Pose & pose ){
 	utility::vector1< core::Size > chains_local = chains_;
 	if ( chains_local.empty() ) {
 		TR<<"no chains specified, defaulting to use all chains" << std::endl;
-		for ( Size chain = 1; chain <= pose.conformation().num_chains(); ++chain ) {
+		for ( core::Size chain = 1; chain <= pose.conformation().num_chains(); ++chain ) {
 			chains_local.push_back( chain );
 		}
 	}
 
-	Size residues = 0;
+	core::Size residues = 0;
 	//ensure that the residues specified are covered by the secondary structure input
 	for ( core::Size chain: chains_local ) {
 		residues += pose.split_by_chain( chain )->size();
@@ -243,9 +243,9 @@ DefineMovableLoops::apply( core::pose::Pose & pose ){
 	}
 
 	//define offset points, as in which residue to start searching loops
-	Size start_res = pose.conformation().chain_begin( chains_local[1] );
+	core::Size start_res = pose.conformation().chain_begin( chains_local[1] );
 	//end point, at the last chain
-	Size stop_res = pose.conformation().chain_end( chains_local[chains_local.size()] );
+	core::Size stop_res = pose.conformation().chain_end( chains_local[chains_local.size()] );
 
 	//for debugging
 	if ( secstructure_.length() != stop_res - start_res + 1 ) {
@@ -315,7 +315,7 @@ DefineMovableLoops::parse_my_tag(
 		std::string chain_val( tag->getOption< std::string >( "chain_num" ) );
 		utility::vector1< std::string > const chain_keys( utility::string_split( chain_val, ',' ) );
 		for ( std::string const & key : chain_keys ) {
-			Size n;
+			core::Size n;
 			std::istringstream ss( key );
 			ss >> n;
 			chains_.push_back( n );

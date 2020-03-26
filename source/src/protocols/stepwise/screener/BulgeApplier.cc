@@ -34,7 +34,7 @@ namespace screener {
 //Constructor
 BulgeApplier::BulgeApplier( RNA_AtrRepCheckerOP atr_rep_checker,
 	RNA_BaseCentroidCheckerOP base_centroid_checker,
-	Size const moving_res ):
+	core::Size const moving_res ):
 	atr_rep_checker_(std::move( atr_rep_checker )),
 	base_centroid_checker_(std::move( base_centroid_checker )),
 	bulge_apply_mover_( utility::pointer::make_shared< modeler::rna::bulge::BulgeApplyMover >( moving_res ) ),

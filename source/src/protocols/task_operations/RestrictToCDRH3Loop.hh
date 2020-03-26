@@ -21,6 +21,7 @@
 // Project headers
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
@@ -53,14 +54,14 @@ public:
 	static std::string keyname() { return "RestrictToCDRH3Loop"; }
 
 private:
-	bool residue_is_in_h3_loop( core::pose::Pose const & pose, Size residue_number ) const;
+	bool residue_is_in_h3_loop( core::pose::Pose const & pose, core::Size residue_number ) const;
 
 private:
 
 
 	// These definitions correspond to the Chothia numbering scheme.  This could be expanded to other numbering schemes in the future
-	static Size const pdb_numbered_h3_loop_start = 95; // 107;
-	static Size const pdb_numbered_h3_loop_end = 102;  // 138;
+	static core::Size const pdb_numbered_h3_loop_start = 95; // 107;
+	static core::Size const pdb_numbered_h3_loop_end = 102;  // 138;
 	static char const heavy_chain = 'H';
 
 };

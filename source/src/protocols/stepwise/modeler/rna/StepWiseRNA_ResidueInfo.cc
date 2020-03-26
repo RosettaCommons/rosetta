@@ -86,20 +86,20 @@ print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, cor
 }
 
 void
-output_res_map( std::map< core::Size, core::Size > const & my_map, Size const max_seq_num ){
+output_res_map( std::map< core::Size, core::Size > const & my_map, core::Size const max_seq_num ){
 
 	using namespace ObjexxFCL;
 	using namespace ObjexxFCL::format;
 	using namespace std;
-	Size spacing = 4;
+	core::Size spacing = 4;
 	TR << std::setw( 30 ) << "full_pose_seq_num:";
-	for ( Size seq_num = 1; seq_num <= max_seq_num; seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= max_seq_num; seq_num++ ) {
 		TR << std::setw( spacing ) << seq_num;
 	}
 	TR << std::endl;
 
 	TR << std::setw( 30 ) << "partial_pose_seq_num:";
-	for ( Size seq_num = 1; seq_num <= max_seq_num; seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= max_seq_num; seq_num++ ) {
 		if ( my_map.find( seq_num ) != my_map.end() ) {
 			TR << std::setw( spacing ) << my_map.find( seq_num )->second;
 		} else {
@@ -115,7 +115,7 @@ get_copy_dofs_from_fasta( std::string const & full_fasta_sequence ){
 
 	utility::vector1< Residue_info > full_copy_dofs;
 
-	for ( Size n = 0; n <= full_fasta_sequence.size() - 1; n++ ) {
+	for ( core::Size n = 0; n <= full_fasta_sequence.size() - 1; n++ ) {
 		std::string one_letter_name = string_of( full_fasta_sequence[n] );
 		Residue_info residue;
 		residue.seq_num = n + 1;
@@ -132,7 +132,7 @@ get_copy_dofs_from_fasta( std::string const & full_fasta_sequence ){
 
 
 bool
-contain_residue_at_seq_num( Size seq_num, utility::vector1 < Residue_info > const & copy_dofs ){
+contain_residue_at_seq_num( core::Size seq_num, utility::vector1 < Residue_info > const & copy_dofs ){
 
 	for ( auto const & copy_dof : copy_dofs ) {
 		if ( seq_num == copy_dof.seq_num ) {
@@ -151,20 +151,20 @@ create_strand_list( utility::vector1< Residue_info > const & copy_dofs ){
 	//Sort by seq_number, lowest sequence number at the top of the vector list.
 	sort_copy_dofs( Sorted_copy_dofs );
 
-	Size j = 1;
+	core::Size j = 1;
 	while ( j <= Sorted_copy_dofs.size() ) {
 
-		Size first_element = j;
+		core::Size first_element = j;
 
 		//Test if Sorted_copy_dofs[j] contain an adjacent residue at the three_prime_end
 		while ( ( j < Sorted_copy_dofs.size() ) && ( ( Sorted_copy_dofs[j].seq_num + 1 ) == Sorted_copy_dofs[j + 1].seq_num ) ) {
 			j++;
 		}
-		Size last_element = j;
+		core::Size last_element = j;
 
 		utility::vector1 < Residue_info > residue_group;
 
-		for ( Size element = first_element; element <= last_element; element++ ) {
+		for ( core::Size element = first_element; element <= last_element; element++ ) {
 			residue_group.push_back( Sorted_copy_dofs[element] );
 		}
 		residue_group_list.push_back( residue_group );

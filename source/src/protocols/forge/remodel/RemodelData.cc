@@ -314,7 +314,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 			// process repeats, pretty dangerous, as this only hacks the resfile string
 			// but not making duplicates in the blueprint held by RemodelData
 			if ( option[OptionKeys::remodel::repeat_structure].user() ) {
-				for ( Size rep = 1; rep <(Size)option[OptionKeys::remodel::repeat_structure]; rep++ ) {
+				for ( core::Size rep = 1; rep <(core::Size)option[OptionKeys::remodel::repeat_structure]; rep++ ) {
 					//chain defined by option, no chain by default
 					if ( option[OptionKeys::run::chain].user() ) {
 						std::string const chain(option[OptionKeys::run::chain]);
@@ -322,7 +322,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 					} else {
 						oss << line.index + length*rep << " _ " ;
 					}
-					for ( Size i = 3; i< split_info.size(); i++ ) {
+					for ( core::Size i = 3; i< split_info.size(); i++ ) {
 						if ( split_info[i].substr(0,3) != "CST" ) {
 							oss << split_info[i] << " " ;
 						}

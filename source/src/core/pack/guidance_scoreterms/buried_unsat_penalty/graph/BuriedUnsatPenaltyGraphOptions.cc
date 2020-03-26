@@ -32,7 +32,7 @@ BuriedUnsatPenaltyGraphOptions::BuriedUnsatPenaltyGraphOptions(
 	core::Real const burial_threshold,
 	core::Real const hbond_energy_threshold
 ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	angle_exponent_(angle_exponent),
 	angle_shift_factor_(angle_shift_factor),
 	dist_exponent_(dist_exponent),

@@ -163,8 +163,8 @@ public:
 	bool const & allow_virtual_side_chains() const { return allow_virtual_side_chains_; }
 	void set_allow_virtual_side_chains( bool const & setting ){ allow_virtual_side_chains_ = setting; }
 
-	Size const & n_sample() const { return n_sample_; }
-	void set_n_sample( Size const & setting ){ n_sample_ = setting; }
+	core::Size const & n_sample() const { return n_sample_; }
+	void set_n_sample( core::Size const & setting ){ n_sample_ = setting; }
 
 	bool const & protein_prepack() const { return protein_prepack_; }
 	void set_protein_prepack( bool const & setting ){ protein_prepack_ = setting; }
@@ -211,8 +211,8 @@ public:
 	bool checkpoint() const { return checkpoint_; }
 	void set_checkpoint( bool const setting ){ checkpoint_ = setting; }
 
-	Size checkpointing_frequency() const { return checkpointing_frequency_; }
-	void set_checkpointing_frequency( Size const setting ) { checkpointing_frequency_ = setting; }
+	core::Size checkpointing_frequency() const { return checkpointing_frequency_; }
+	void set_checkpointing_frequency( core::Size const setting ) { checkpointing_frequency_ = setting; }
 
 	bool continue_until_none_missing() const { return continue_until_none_missing_; }
 	void set_continue_until_none_missing( bool const setting ){ continue_until_none_missing_ = setting; }
@@ -259,7 +259,7 @@ private:
 	bool filter_native_big_bins_;
 	bool allow_virtual_o2prime_hydrogens_;
 	bool allow_virtual_side_chains_;
-	Size n_sample_;
+	core::Size n_sample_;
 	bool protein_prepack_;
 	bool o2prime_legacy_mode_;
 	bool recover_low_;

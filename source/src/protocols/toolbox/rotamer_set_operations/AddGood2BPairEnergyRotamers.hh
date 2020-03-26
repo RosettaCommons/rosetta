@@ -50,8 +50,8 @@ public:
 	typedef core::Size Size;
 
 	AddGood2BPairEnergyRotamers(
-		Size seqpos,
-		Size ex_level,
+		core::Size seqpos,
+		core::Size ex_level,
 		utility::vector1< core::Size > const & target_seqpos,
 		Real score_cutoff,
 		bool drop_rots_above_cutoff

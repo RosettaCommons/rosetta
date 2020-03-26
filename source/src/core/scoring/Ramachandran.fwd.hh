@@ -14,7 +14,7 @@
 #ifndef INCLUDED_core_scoring_Ramachandran_fwd_hh
 #define INCLUDED_core_scoring_Ramachandran_fwd_hh
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace core {
 namespace scoring {

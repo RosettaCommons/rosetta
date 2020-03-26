@@ -24,7 +24,7 @@
 #include <basic/basic.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 
 // ObjexxFCL Headers

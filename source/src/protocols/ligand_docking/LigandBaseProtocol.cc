@@ -294,9 +294,9 @@ void frac_atoms_within(
 
 		// Print out translation table for debugging
 		//std::cout << "[";
-		//for(Size i = 1; i <= old2new.size(); ++i) std::cout << " " << old2new[i];
+		//for(core::Size i = 1; i <= old2new.size(); ++i) std::cout << " " << old2new[i];
 		//std::cout << " ]\n";
-		//for(Size j = 1; j <= old2new.size(); ++j) std::cout << "  " << j << " --> " << old2new[j] << "  /  " << rsd1.type().atom_name(j) << " --> " << rsd1.type().atom_name(old2new[j]) << "\n";
+		//for(core::Size j = 1; j <= old2new.size(); ++j) std::cout << "  " << j << " --> " << old2new[j] << "  /  " << rsd1.type().atom_name(j) << " --> " << rsd1.type().atom_name(old2new[j]) << "\n";
 
 		// Each cutoff might find its maximum fraction from a different automorphism (?)
 		// I'm not sure what this means, if anything, for the validity of this measure...
@@ -682,16 +682,16 @@ LigandBaseProtocol::find_interface_backbone(
 		<< " residues (" << 100*(core::Real(num_in_interface) / core::Real(pose.size())) << "%)" << std::endl;
 
 	int const window = 3; // how many residues on either side of the truly mobile ones?
-	for ( Size i = 1, nres = pose.size(); i <= nres; ++i ) {
+	for ( core::Size i = 1, nres = pose.size(); i <= nres; ++i ) {
 		if ( pose.residue_type(i).is_polymer() ) {
 			// Track backwards
-			for ( Size j = i; j >= Size(std::max(1,int(i)-window)); --j ) {
+			for ( core::Size j = i; j >= core::Size(std::max(1,int(i)-window)); --j ) {
 				if ( !pose.residue_type(j).is_polymer() || pose.residue(j).is_upper_terminus() ) break;
 				is_around_interface[i] = is_around_interface[i] | is_interface[j];
 				if ( pose.residue(j).is_lower_terminus() ) break;
 			}
 			// Track forwards
-			for ( Size j = i; j <= std::min(nres,i+window); ++j ) {
+			for ( core::Size j = i; j <= std::min(nres,i+window); ++j ) {
 				if ( !pose.residue_type(j).is_polymer() || pose.residue(j).is_lower_terminus() ) break;
 				is_around_interface[i] = is_around_interface[i] | is_interface[j];
 				if ( pose.residue(j).is_upper_terminus() ) break;
@@ -850,7 +850,7 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 	// Attach ligand to nearest CA that is not mobile!
 	// This used to be activated by the -shorten_jump flag, but now is the default
 	if ( lig_id != 0 ) { //flo sept '12this function now can also  be used to modify fold trees for poses that contain new ligands
-		Size attach_pt = 1; // for now, attach ligand to residue 1
+		core::Size attach_pt = 1; // for now, attach ligand to residue 1
 		core::Real shortest_dist2 = 1e99;
 		core::Vector lig_nbr_atom = pose.residue(lig_id).nbr_atom_xyz();
 		for ( core::Size i = 1; i <= nres; ++i ) {
@@ -864,7 +864,7 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 				attach_pt = i;
 			}
 		}
-		Size old_nres = f.nres(), old_njump = f.num_jump();
+		core::Size old_nres = f.nres(), old_njump = f.num_jump();
 		// Deleting edges is a dicey proposition ... better to add them to a new foldtree
 		FoldTree f_new;
 		// Without the stupid cast-to-const, GCC tries to use the private, non-const version.
@@ -887,19 +887,19 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 		if ( !f.check_fold_tree() ) utility_exit_with_message("Fold tree did not pass check!");
 		if ( old_njump != f.num_jump() ) utility_exit_with_message("Number of jumps changed?!");
 		if ( old_nres != f.nres() ) utility_exit_with_message("Number of residues changed?!");
-		if ( lig_id != (Size) f.downstream_jump_residue(jump_id) ) utility_exit_with_message("Ligand no longer at end of last jump!");
+		if ( lig_id != (core::Size) f.downstream_jump_residue(jump_id) ) utility_exit_with_message("Ligand no longer at end of last jump!");
 	}
 
 	{
 		// Deleting edges is a dicey proposition ... better to add them to a new foldtree
-		//for(Size k = 1; k <= nres; ++k) std::cerr << k << ' ' << mobile_bb[k] << std::endl;
+		//for(core::Size k = 1; k <= nres; ++k) std::cerr << k << ' ' << mobile_bb[k] << std::endl;
 		FoldTree f_new;
 		int new_jump = f.num_jump();
 		// Without the stupid cast-to-const, GCC tries to use the private, non-const version.
 		FoldTree const & f_const = f;
 		for ( auto const & edge_itr : f_const ) {
-			Size const e_start = edge_itr.start();
-			Size const e_stop = edge_itr.stop();
+			core::Size const e_start = edge_itr.start();
+			core::Size const e_stop = edge_itr.stop();
 			if ( e_stop < e_start ) utility_exit_with_message("Not prepared to deal with backwards fold tree edges!");
 			//std::cout << "Considering edge from " << e_start << " to " << e_stop << ", label " << edge_itr->label() << std::endl;
 			if ( !edge_itr.is_polymer() ) {
@@ -910,20 +910,20 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 			using std::max; using std::min;
 			using namespace protocols::loops;
 			utility::vector1< Loop > loops;
-			for ( Size i = e_start; i <= e_stop; ++i ) {
+			for ( core::Size i = e_start; i <= e_stop; ++i ) {
 				while ( i <= e_stop && !mobile_bb[i] ) ++i; // find the start of a mobile region
 				if ( i > e_stop ) break; // no more mobile regions
-				Size const start = i; // first mobile residue
+				core::Size const start = i; // first mobile residue
 				//std::cout << "  Start from " << start << std::endl;
 				while ( i <= e_stop && mobile_bb[i] ) ++i; // find the end of the mobile region
 				if ( i > e_stop ) i = e_stop;
 				if ( !mobile_bb[i] ) --i; // back up one unless the end is flexible
-				Size const stop = i; // last mobile residue
+				core::Size const stop = i; // last mobile residue
 				//std::cout << "  Stop at " << stop << std::endl;
 
 				if ( (stop-start+1) < 4 ) {
 					// This kind of thing can come up at chain terminii, and should not cause a fatal error.
-					//for(Size k = 1; k <= nres; ++k) std::cerr << k << ' ' << mobile_bb[k] << std::endl;
+					//for(core::Size k = 1; k <= nres; ++k) std::cerr << k << ' ' << mobile_bb[k] << std::endl;
 					TR.Warning << "for backbone minimization to work properly, a stretch of at least 4 residues needs to be allowed to move. Stretch between " << start << " and " << stop << " is too short." << std::endl;
 					//utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 					// But it will probably break the cutpoint logic below, so we have to skip this group of residues.
@@ -932,10 +932,10 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 
 				// Cutpoint should fall between start and stop, but not if the rsd on either side is a terminus.
 				// Because this happens within one peptide edge, no "internal" residue should ever be a terminus.
-				Size const cut_start = ( pose.residue(start).is_terminus() ? start+1 : start );
-				Size const cut_end = ( pose.residue(stop).is_terminus() ? stop-2 : stop-1 );
+				core::Size const cut_start = ( pose.residue(start).is_terminus() ? start+1 : start );
+				core::Size const cut_end = ( pose.residue(stop).is_terminus() ? stop-2 : stop-1 );
 				runtime_assert( cut_start <= cut_end );
-				auto cutpt = Size( numeric::random::rg().random_range(cut_start, cut_end) ); // cut is made between cutpt and cutpt+1
+				auto cutpt = core::Size( numeric::random::rg().random_range(cut_start, cut_end) ); // cut is made between cutpt and cutpt+1
 				// Can't use this function while iterating -- invalidates the iterators!
 				//f.new_jump( max(e_start,start-1), min(e_stop,stop+1), cutpt );
 				//loops.push_back( Loop( max(e_start,start-1), min(e_stop,stop+1), cutpt ) );
@@ -945,7 +945,7 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 				core::pose::add_variant_type_to_pose_residue( pose, core::chemical::CUTPOINT_UPPER, cutpt+1 );
 			}
 			int last_rigid = e_start;
-			for ( Size i = 1; i <= loops.size(); ++i ) {
+			for ( core::Size i = 1; i <= loops.size(); ++i ) {
 				Loop const & l = loops[i];
 				int first = max(int(e_start), int(l.start()-1) );
 				int last = min(int(e_stop), int(l.stop()+1) );
@@ -968,7 +968,7 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 
 	f.delete_extra_vertices();
 	// Find the first non-mobile residue to be the root
-	for ( Size i = 1; i <= nres; ++i ) {
+	for ( core::Size i = 1; i <= nres; ++i ) {
 		if ( pose.residue(i).is_polymer() && !mobile_bb[i] ) {
 			f.reorder( i );
 			break;

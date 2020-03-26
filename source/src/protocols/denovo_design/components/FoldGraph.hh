@@ -31,7 +31,7 @@
 #include <core/types.hh>
 
 // Basic/Numeric/Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <map>
@@ -43,7 +43,7 @@ namespace denovo_design {
 namespace components {
 
 // Fold graph types
-class FoldGraph : public utility::pointer::ReferenceCount {
+class FoldGraph : public utility::VirtualBase {
 public:
 	typedef std::stack< core::Size > NodeStack;
 	typedef std::set< core::Size > NodeSet;

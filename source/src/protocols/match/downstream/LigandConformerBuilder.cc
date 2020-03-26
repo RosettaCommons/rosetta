@@ -85,7 +85,7 @@ LigandConformerBuilder::LigandConformerBuilder( LigandConformerBuilder const & o
 	lig_conformers_( other.lig_conformers_.size() ),
 	min_sep_d2_from_upstream_atoms_( other.min_sep_d2_from_upstream_atoms_ )
 {
-	for ( Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
 		lig_conformers_[ ii ] = utility::pointer::make_shared< toolbox::match_enzdes_util::LigandConformer >( * other.lig_conformers_[ ii ] );
 	}
 	//std::cout << "APL DEBUG LigandConformerBuilder copy ctor " << this << std::endl;
@@ -101,7 +101,7 @@ LigandConformerBuilder::LigandConformerBuilder( LigandConformerBuilder const & o
 //  non_collision_detection_atoms_reqd_in_active_site_( other.non_collision_detection_atoms_reqd_in_active_site_ ),
 //  lig_conformers_( other.lig_conformers_.size() )
 //{
-//  for ( Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
+//  for ( core::Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
 //    lig_conformers_[ ii ] = new LigandConformer( * other.lig_conformers_[ ii ] );
 //  //TR << "Nr of n_collision_check_atoms: " << lig_conformers_[ ii ]->n_collision_check_atoms()  << std::endl;
 //  runtime_assert(lig_conformers_[ ii ]);
@@ -123,14 +123,14 @@ LigandConformerBuilder::clone() const
 std::list< Hit >
 LigandConformerBuilder::build(
 	HTReal const & atom3_frame,
-	Size const scaffold_build_point_id,
-	Size const upstream_conf_id,
-	Size const external_geometry_id,
+	core::Size const scaffold_build_point_id,
+	core::Size const upstream_conf_id,
+	core::Size const external_geometry_id,
 	core::conformation::Residue const & upstream_residue
 ) const
 {
 	std::list< Hit > hitlist;
-	for ( Size ii = 1; ii <= conformer_group_indices_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= conformer_group_indices_.size(); ++ii ) {
 		std::list< Hit > ii_hits = build_conformer_group( ii, atom3_frame, scaffold_build_point_id,
 			upstream_conf_id, external_geometry_id, upstream_residue );
 		hitlist.splice( hitlist.end(), ii_hits );
@@ -143,21 +143,21 @@ LigandConformerBuilder::determine_redundant_conformer_groups(
 	utility::vector1< core::Size > const & relevant_atom_indices
 )
 {
-	Size num_relevant_atoms( relevant_atom_indices.size() );
+	core::Size num_relevant_atoms( relevant_atom_indices.size() );
 	conformer_group_indices_.clear();
-	conformer_group_indices_.push_back( utility::vector1< Size >() );
+	conformer_group_indices_.push_back( utility::vector1< core::Size >() );
 	conformer_group_indices_[1].push_back( 1 ); //first one is always unique
 	conformer_group_for_conformer_.clear();
 	conformer_group_for_conformer_.push_back( 1 ); //the conformer group for the first conformer is always 1
 	HTReal identity_ht;
 
-	for ( Size ii = 2; ii <= lig_conformers_.size(); ++ii ) {
+	for ( core::Size ii = 2; ii <= lig_conformers_.size(); ++ii ) {
 
 		ObjexxFCL::FArray2D< numeric::Real > queryconf_coord( 3, num_relevant_atoms );
 		lig_conformers_[ii]->get_global_coords_as_FArray2D( queryconf_coord, identity_ht, relevant_atom_indices );
 
 		bool conformer_unique(true);
-		for ( Size jj = 1; jj <= conformer_group_indices_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= conformer_group_indices_.size(); ++jj ) {
 
 			ObjexxFCL::FArray2D< numeric::Real > uniqueconf_coord( 3, num_relevant_atoms );
 			lig_conformers_[ conformer_group_indices_[jj][1] ]->get_global_coords_as_FArray2D( uniqueconf_coord, identity_ht, relevant_atom_indices );
@@ -173,7 +173,7 @@ LigandConformerBuilder::determine_redundant_conformer_groups(
 		} //loop over conformer groups
 
 		if ( conformer_unique ) {
-			conformer_group_indices_.push_back( utility::vector1< Size >() );
+			conformer_group_indices_.push_back( utility::vector1< core::Size >() );
 			conformer_group_indices_[ conformer_group_indices_.size() ].push_back( ii );
 			conformer_group_for_conformer_.push_back( conformer_group_indices_.size() );
 			//std::cerr << "lig conf " << ii << "detected to be unique" << std::endl;
@@ -207,7 +207,7 @@ LigandConformerBuilder::assign_conformer_group_to_residue(
 	core::Real low_rms = numeric::model_quality::rms_wrapper( num_relevant_atoms, queryconf_coord, uniqueconf_coord );
 	core::Size low_conf_group = 1;
 
-	for ( Size ii = 2; ii <= conformer_group_indices_.size(); ++ii ) {
+	for ( core::Size ii = 2; ii <= conformer_group_indices_.size(); ++ii ) {
 		lig_conformers_[ conformer_group_indices_[ii][1] ]->get_global_coords_as_FArray2D( uniqueconf_coord, identity_ht, relevant_atom_indices );
 		core::Real this_rms = numeric::model_quality::rms_wrapper( num_relevant_atoms, queryconf_coord, uniqueconf_coord );
 		if ( this_rms < low_rms ) {
@@ -273,7 +273,7 @@ LigandConformerBuilder::require_atom_to_reside_in_active_site(
 		non_collision_detection_atoms_reqd_in_active_site_.push_back( id.atomno() );
 	} else {
 		atom_required_in_active_site_[ id.atomno() ] = true;
-		for ( Size ii = 1; ii <= 3; ++ii ) {
+		for ( core::Size ii = 1; ii <= 3; ++ii ) {
 			if ( atoms_123_[ ii ] == id.atomno() ) {
 				ats123_reqd_in_active_site_[ ii ] = true;
 				break;
@@ -372,7 +372,7 @@ LigandConformerBuilder::downstream_pose_from_hit(
 	core::conformation::Residue lig_res( *downstream_restype_, false );
 
 	HTReal global_frame = lig_conformers_[ hit.downstream_conf_id() ]->frame_from_global_orientation( hit.second() );
-	for ( Size ii = 1; ii <= lig_res.natoms(); ++ii ) {
+	for ( core::Size ii = 1; ii <= lig_res.natoms(); ++ii ) {
 		lig_res.set_xyz( ii, lig_conformers_[ hit.downstream_conf_id() ]->
 			coordinate_in_global_frame( ii, global_frame ) );
 	}
@@ -389,7 +389,7 @@ LigandConformerBuilder::downstream_pose_from_hit(
 
 }
 
-LigandConformerBuilder::Size
+core::Size
 LigandConformerBuilder::n_possible_hits_per_at3frame() const
 {
 	return lig_conformers_.size();
@@ -398,12 +398,12 @@ LigandConformerBuilder::n_possible_hits_per_at3frame() const
 
 void
 LigandConformerBuilder::initialize_from_residue(
-	Size atom1,
-	Size atom2,
-	Size atom3,
-	Size orientation_atom1,
-	Size orientation_atom2,
-	Size orientation_atom3,
+	core::Size atom1,
+	core::Size atom2,
+	core::Size atom3,
+	core::Size orientation_atom1,
+	core::Size orientation_atom2,
+	core::Size orientation_atom3,
 	core::conformation::Residue const & residue
 )
 {
@@ -417,7 +417,7 @@ LigandConformerBuilder::initialize_from_residue(
 	orientation_atoms_[ 2 ] = orientation_atom2;
 	orientation_atoms_[ 3 ] = orientation_atom3;
 
-	Size const natoms = residue.natoms();
+	core::Size const natoms = residue.natoms();
 	if ( natoms < 3 ) {
 		utility_exit_with_message( "ERROR in LigandConformerBuilder: cannot build a residue with fewer than three atoms" );
 	}
@@ -425,13 +425,13 @@ LigandConformerBuilder::initialize_from_residue(
 	atom_radii_.resize( natoms );
 	atom_required_in_active_site_.resize( natoms, false );
 
-	for ( Size ii = 1; ii <= natoms; ++ii ) {
+	for ( core::Size ii = 1; ii <= natoms; ++ii ) {
 		atom_radii_[ ii ] = probe_radius_for_atom_type( residue.atom( ii ).type() );
 	}
 
 	initialize_conformers( residue );
 
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		if ( ignore_h_collisions_ && residue.atom_type( atoms_123_[ ii ] ).element() == "H" ) {
 			radii_123_[ ii ] = ZERO;
 		} else {
@@ -452,19 +452,19 @@ LigandConformerBuilder::initialize_upstream_residue(
 
 	upstream_restype_ = upstream_res;
 
-	Size const natoms = downstream_restype_->natoms();
+	core::Size const natoms = downstream_restype_->natoms();
 
 	min_sep_d2_from_upstream_atoms_.clear();
 	min_sep_d2_from_upstream_atoms_.resize( natoms );
 
-	for ( Size ii = 1; ii <= lig_conformers_[ 1 ]->n_collision_check_atoms(); ++ii ) {
-		Size ii_restype_id = lig_conformers_[ 1 ]->collision_check_id_2_restype_id( ii );
+	for ( core::Size ii = 1; ii <= lig_conformers_[ 1 ]->n_collision_check_atoms(); ++ii ) {
+		core::Size ii_restype_id = lig_conformers_[ 1 ]->collision_check_id_2_restype_id( ii );
 
-		Size n_to_count( 0 );
-		for ( Size jj = upstream_restype_->first_sidechain_atom();
+		core::Size n_to_count( 0 );
+		for ( core::Size jj = upstream_restype_->first_sidechain_atom();
 				jj <= upstream_restype_->nheavyatoms(); ++jj ) {
 			Real weight( 1.0 );
-			Size path_dist( 0 );
+			core::Size path_dist( 0 );
 			if ( ! count_pair || ( count_pair->count( jj, ii_restype_id, weight, path_dist ) && weight == 1.0 ) ) {
 				++n_to_count;
 				//std::cout << "Bump check " << downstream_restype_->atom_name( ii_restype_id );
@@ -474,10 +474,10 @@ LigandConformerBuilder::initialize_upstream_residue(
 		}
 		/// Now make sure that if we're within count-pair striking distance of the backbone so that we don't
 		/// reject a conformation due to this atom as registering a collision in bump_grid.occupied()
-		for ( Size jj = 1; jj < upstream_restype_->first_sidechain_atom(); ++jj ) {
+		for ( core::Size jj = 1; jj < upstream_restype_->first_sidechain_atom(); ++jj ) {
 			if ( jj > upstream_restype_->natoms() ) break;
 			Real weight( 1.0 );
-			Size path_dist( 0 );
+			core::Size path_dist( 0 );
 			if ( count_pair && ( ! count_pair->count( jj, ii_restype_id, weight, path_dist ) || weight != 1.0 ) ) {
 				/// WITHIN STRIKING DISTANCE OF BACKBONE!  DO NOT COLLISON-CHECK THIS ATOM
 				atom_radii_[ ii_restype_id ] = ZERO;
@@ -485,10 +485,10 @@ LigandConformerBuilder::initialize_upstream_residue(
 		}
 		min_sep_d2_from_upstream_atoms_[ ii_restype_id ].resize( n_to_count );
 		n_to_count = 0;
-		for ( Size jj = upstream_restype_->first_sidechain_atom();
+		for ( core::Size jj = upstream_restype_->first_sidechain_atom();
 				jj <= upstream_restype_->nheavyatoms(); ++jj ) {
 			Real weight( 1.0 );
-			Size path_dist( 0 );
+			core::Size path_dist( 0 );
 			if ( ! count_pair || ( count_pair->count( jj, ii_restype_id, weight, path_dist ) && weight == 1.0 ) ) {
 				min_sep_d2_from_upstream_atoms_[ ii_restype_id ][ ++n_to_count ].first = jj;
 			}
@@ -497,12 +497,12 @@ LigandConformerBuilder::initialize_upstream_residue(
 
 	/// Now check atoms D1, D2, and D3 and makes sure they are not within striking distance of the backbone
 	/// If they are, then set their radii to ZERO
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		if ( count_pair ) {
-			Size ii_id = atoms_123_[ ii ];
-			for ( Size jj = 1; jj < upstream_restype_->first_sidechain_atom(); ++jj ) {
+			core::Size ii_id = atoms_123_[ ii ];
+			for ( core::Size jj = 1; jj < upstream_restype_->first_sidechain_atom(); ++jj ) {
 				Real weight( 1.0 );
-				Size path_dist( 0 );
+				core::Size path_dist( 0 );
 				if ( ! count_pair->count( jj, ii_id, weight, path_dist ) || weight != 1.0 ) {
 					radii_123_[ ii ] = ZERO;
 					break;
@@ -541,11 +541,11 @@ LigandConformerBuilder::set_rmsd_unique_cutoff( core::Real setting )
 
 std::list< Hit >
 LigandConformerBuilder::build_conformer_group(
-	Size const confgrp_id,
+	core::Size const confgrp_id,
 	HTReal const & atom3_frame,
-	Size const scaffold_build_point_id,
-	Size const upstream_conf_id,
-	Size const external_geometry_id,
+	core::Size const scaffold_build_point_id,
+	core::Size const upstream_conf_id,
+	core::Size const external_geometry_id,
 	core::conformation::Residue const & upstream_residue
 ) const
 {
@@ -556,18 +556,18 @@ LigandConformerBuilder::build_conformer_group(
 
 	std::list< Hit > hitlist;
 
-	for ( Size ii = 1; ii <= conformer_group_indices_[ confgrp_id ].size(); ++ii ) {
-		Size ii_conf_id = conformer_group_indices_[ confgrp_id ][ ii ];
+	for ( core::Size ii = 1; ii <= conformer_group_indices_[ confgrp_id ].size(); ++ii ) {
+		core::Size ii_conf_id = conformer_group_indices_[ confgrp_id ][ ii ];
 		//std::cout << "LigandConformerBuilder::build" << std::endl;
-		//for ( Size jj = 1; jj <= 3; ++jj ) {
+		//for ( core::Size jj = 1; jj <= 3; ++jj ) {
 		//Vector const jjloc = atom3_frame * ats123_in_atom3_frame_[ jj ];
 		//std::cout << "Atom D" << jj << " coordinate: " << jjloc.x() << " " << jjloc.y() << " " << jjloc.z() << std::endl;
 		//}
 
 		/// collision detection and active-site containment enforcement.
 		bool ii_good( true );
-		for ( Size jj = 1; jj <= lig_conformers_[ ii_conf_id ]->n_collision_check_atoms(); ++jj ) {
-			Size jj_restype_id = lig_conformers_[ ii_conf_id ]->collision_check_id_2_restype_id( jj );
+		for ( core::Size jj = 1; jj <= lig_conformers_[ ii_conf_id ]->n_collision_check_atoms(); ++jj ) {
+			core::Size jj_restype_id = lig_conformers_[ ii_conf_id ]->collision_check_id_2_restype_id( jj );
 
 			Vector const jjloc = lig_conformers_[ ii_conf_id ]->coordinate_in_D3_frame( jj_restype_id, atom3_frame );
 			//std::cout << "   " << downstream_restype_->atom_name( at3_frame_id_2_restype_id_[ jj ] ) << " ";
@@ -581,7 +581,7 @@ LigandConformerBuilder::build_conformer_group(
 				break;
 			}
 
-			for ( Size kk = 1; kk <= min_sep_d2_from_upstream_atoms_[ jj_restype_id ].size(); ++kk ) {
+			for ( core::Size kk = 1; kk <= min_sep_d2_from_upstream_atoms_[ jj_restype_id ].size(); ++kk ) {
 				if ( jjloc.distance_squared( upstream_residue.xyz( min_sep_d2_from_upstream_atoms_[ jj_restype_id ][ kk ].first ))
 						< min_sep_d2_from_upstream_atoms_[ jj_restype_id ][ kk ].second ) {
 					//std::cout << "collision between " << downstream_restype_->atom_name( at3_frame_id_2_restype_id_[ jj ] );
@@ -597,8 +597,8 @@ LigandConformerBuilder::build_conformer_group(
 
 		/// Check the atoms we require to be in the active site, but which are not used in
 		/// collision detection
-		for ( Size jj = 1; jj <= non_collision_detection_atoms_reqd_in_active_site_.size(); ++jj ) {
-			Size jj_restype_id = non_collision_detection_atoms_reqd_in_active_site_[ jj ];
+		for ( core::Size jj = 1; jj <= non_collision_detection_atoms_reqd_in_active_site_.size(); ++jj ) {
+			core::Size jj_restype_id = non_collision_detection_atoms_reqd_in_active_site_[ jj ];
 			Vector const jjloc = lig_conformers_[ ii_conf_id ]->coordinate_in_D3_frame( jj_restype_id, atom3_frame );
 
 			if ( ! active_site_grid().occupied( jjloc ) ) {
@@ -615,7 +615,7 @@ LigandConformerBuilder::build_conformer_group(
 		/// bin in 6D is not empty.  If the bin is empty, then there is no way this
 		/// ligand placement could result in a match.  Do not return this orientation as a hit.
 		//std::cout << "global coordinate: ";
-		//for ( Size jj = 1; jj <= 6; ++jj ) { std::cout << global_coordinate[ jj ] << " ";}
+		//for ( core::Size jj = 1; jj <= 6; ++jj ) { std::cout << global_coordinate[ jj ] << " ";}
 		//std::cout << std::endl;
 
 		if ( occ_space_set() && ! occ_space().match_possible_for_hit_geometry( global_coordinate ) ) {
@@ -648,12 +648,12 @@ LigandConformerBuilder::initialize_upstream_nonbonded_min_separation_d2()
 	runtime_assert( bbgrid_set() );
 	runtime_assert( lig_conformers_[ 1 ] != nullptr );
 
-	for ( Size ii = 1; ii <= lig_conformers_[ 1 ]->n_collision_check_atoms(); ++ii ) {
-		Size ii_restype_id = lig_conformers_[ 1 ]->collision_check_id_2_restype_id( ii );
+	for ( core::Size ii = 1; ii <= lig_conformers_[ 1 ]->n_collision_check_atoms(); ++ii ) {
+		core::Size ii_restype_id = lig_conformers_[ 1 ]->collision_check_id_2_restype_id( ii );
 
 		ProbeRadius ii_rad = atom_radii_[ ii_restype_id ];
-		for ( Size jj = 1; jj <= min_sep_d2_from_upstream_atoms_[ ii_restype_id ].size(); ++jj ) {
-			Size upstream_atom_id = min_sep_d2_from_upstream_atoms_[ ii_restype_id ][ jj ].first;
+		for ( core::Size jj = 1; jj <= min_sep_d2_from_upstream_atoms_[ ii_restype_id ].size(); ++jj ) {
+			core::Size upstream_atom_id = min_sep_d2_from_upstream_atoms_[ ii_restype_id ][ jj ].first;
 			ProbeRadius jj_rad = probe_radius_for_atom_type( upstream_restype_->atom_type_index( upstream_atom_id ) );
 
 			Real dis = bbgrid().required_separation_distance( ii_rad, jj_rad );
@@ -691,7 +691,7 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 
 		RotamerVector rot_vector;
 		lig_rotlib->build_base_rotamers( residue.type(), rot_vector );
-		Size const nligrots = rot_vector.size();
+		core::Size const nligrots = rot_vector.size();
 		if ( nligrots == 0 ) {
 			utility_exit_with_message( "Ligand rotamer library for " + residue.name() + " has 0 rotamers." );
 		}
@@ -710,7 +710,7 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 			pose::Pose ligpose;
 			ligpose.append_residue_by_jump( residue, 1 );
 
-			for ( Size ii = 1; ii <= nligrots; ++ii ) {
+			for ( core::Size ii = 1; ii <= nligrots; ++ii ) {
 				conformer_group_indices_[ ii ].resize( 1 );
 				conformer_group_indices_[ ii ][ 1 ] = ii;
 				conformer_group_for_conformer_[ii] = ii;
@@ -723,7 +723,7 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 				idealizer.apply( ligpose );
 
 				Real rms( 0.0 );
-				for ( Size jj = 1; jj <= residue.nheavyatoms(); ++jj ) {
+				for ( core::Size jj = 1; jj <= residue.nheavyatoms(); ++jj ) {
 					rms += rot_vector[ ii ]->xyz(jj).distance_squared( ligpose.residue(1).xyz(jj) );
 				}
 				Real rms_this_rot( std::sqrt( rms ) / residue.nheavyatoms() );
@@ -740,7 +740,7 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 
 		} else {
 
-			for ( Size ii = 1; ii <= nligrots; ++ii ) {
+			for ( core::Size ii = 1; ii <= nligrots; ++ii ) {
 				conformer_group_indices_[ ii ].resize( 1 );
 				conformer_group_indices_[ ii ][ 1 ] = ii;
 				conformer_group_for_conformer_[ii] = ii;
@@ -778,7 +778,7 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 			Real const distance_tolerance = 2e-3;
 			Real const angle_tolerance = 1e-1;
 
-			for ( Size ii = 2; ii <= nligrots; ++ii ) {
+			for ( core::Size ii = 2; ii <= nligrots; ++ii ) {
 				if ( std::abs( lig_conformers_[ ii ]->atom1_atom2_distance() - conf1_d12 ) > distance_tolerance ) {
 					utility_exit_with_message( "Ligand rotamers disagree on distances between atoms "
 						+ utility::trim( residue.atom_name( atoms_123_[ 1 ] ) ) + " and "

@@ -71,14 +71,14 @@ namespace enzdes {
 static basic::Tracer mv_tr( "protocols.enzdes.PredesignPerturbMover" );
 //PredesignPerturbMoverCreator
 
-EnzdesConstraintReporter::EnzdesConstraintReporter() : utility::pointer::ReferenceCount(),
+EnzdesConstraintReporter::EnzdesConstraintReporter() : utility::VirtualBase(),
 	ligand_seqpos_( 0 )
 {}
 
 EnzdesConstraintReporter::~EnzdesConstraintReporter() = default;
 
 EnzdesConstraintReporter::EnzdesConstraintReporter( EnzdesConstraintReporter const & src ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	constrained_lig_atoms_( src.constrained_lig_atoms_ ),
 	constrained_nonligand_atoms_( src.constrained_nonligand_atoms_ ),
 	ligand_seqpos_( src.ligand_seqpos_ )
@@ -98,7 +98,7 @@ EnzdesConstraintReporter::find_constraints_to_ligand(
 	constraint_set=pose.constraint_set();
 
 	// Each residue constraint is a map container
-	// of Size and ConstraintsOP, defining a residue number
+	// of core::Size and ConstraintsOP, defining a residue number
 	//and constraints object respectively.
 	for ( auto
 			rpc_start = constraint_set->residue_pair_constraints_begin(ligand_seqpos_),

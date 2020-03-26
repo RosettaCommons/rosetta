@@ -47,7 +47,7 @@ namespace components {
 ///////////////////////////////////////////////////////////////////////////////
 
 FoldGraph::FoldGraph( StructureData const & perm ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	sd_( utility::pointer::make_shared< StructureData >( perm ) )
 {
 	TR.Debug << "Constructing foldgraph for " << sd().id() << " : " << sd()  << std::endl;

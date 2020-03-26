@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_MRSJob_HH
 #define INCLUDED_protocols_multistage_rosetta_scripts_MRSJob_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/multistage_rosetta_scripts/MRSJob.fwd.hh>
 #include <protocols/multistage_rosetta_scripts/TagManager.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>

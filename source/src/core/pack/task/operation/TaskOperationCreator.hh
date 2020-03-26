@@ -23,7 +23,7 @@
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <string>
@@ -40,7 +40,7 @@ namespace operation {
 /// at load time (before main() begins) so that the TaskOperationFactory is ready
 /// to start creating TaskOperations by the time any protocol
 /// requests one.
-class TaskOperationCreator : public utility::pointer::ReferenceCount
+class TaskOperationCreator : public utility::VirtualBase
 {
 public:
 	~TaskOperationCreator() override {}

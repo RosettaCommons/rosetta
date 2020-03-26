@@ -14,7 +14,7 @@
 
 #include <core/scoring/func/GaussianChainSingleFunc.hh>
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <numeric/constants.hh>
 

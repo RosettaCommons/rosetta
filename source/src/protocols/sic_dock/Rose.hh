@@ -26,7 +26,6 @@ namespace sic_dock {
 
 class Rose {
 public:
-	typedef platform::Size Size;
 	typedef platform::Real Real;
 	typedef core::id::AtomID AID;
 	typedef core::pose::Pose Pose;
@@ -60,7 +59,7 @@ public:
 
 	inline bool clashes (VCR point) const { return h->clash(~x*point); }
 	bool clashes (RCR other) const;
-	Size contacts(RCR other) const;
+	core::Size contacts(RCR other) const;
 
 	friend inline bool operator==( RCR a, RCR b ){ return ( a.p==b.p && a.h==b.h && a.x.distance_squared(b.x) <= 0.000001 ); }
 	friend inline bool operator!=( RCR a, RCR b ){ return ( a.p!=b.p || a.h!=b.h || a.x.distance_squared(b.x) >  0.000001 ); }
@@ -86,7 +85,7 @@ public:
 	// friend inline Rose operator /( RCR a, XCR b ){ return Rose( a, a.x/b   ); }
 	// friend inline Rose operator /( XCR a, RCR b ){ return Rose( b, a  /b.x ); }
 
-	inline XC res_anchor(Size const & ir) const { return x*X( p->xyz(AID(1,ir)), p->xyz(AID(2,ir)), p->xyz(AID(3,ir)) ); }
+	inline XC res_anchor(core::Size const & ir) const { return x*X( p->xyz(AID(1,ir)), p->xyz(AID(2,ir)), p->xyz(AID(3,ir)) ); }
 	inline XC   n_anchor() const { return res_anchor(      1       ); }
 	inline XC   c_anchor() const { return res_anchor(p->size()); }
 	inline void align_n(XCR a){ x = a * ~X( p->xyz(AID(1,       1      )), p->xyz(AID(2,       1      )), p->xyz(AID(3,       1      )) ); }
@@ -100,7 +99,7 @@ public:
 
 	//////////////// debug //////////////////
 	bool clashes_naive(RCR other) const;
-	Size contacts_naive(RCR other) const;
+	core::Size contacts_naive(RCR other) const;
 };
 
 

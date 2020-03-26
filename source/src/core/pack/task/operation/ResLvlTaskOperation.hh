@@ -27,7 +27,7 @@
 #include <basic/datacache/DataCache.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 // C++ Headers
@@ -43,7 +43,7 @@ namespace pack {
 namespace task {
 namespace operation {
 
-class ResLvlTaskOperation : public utility::pointer::ReferenceCount
+class ResLvlTaskOperation : public utility::VirtualBase
 {
 public:
 	typedef utility::tag::TagCOP TagCOP;

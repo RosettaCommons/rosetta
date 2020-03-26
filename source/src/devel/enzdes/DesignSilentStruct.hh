@@ -29,7 +29,7 @@
 #include <core/kinematics/Jump.hh>
 
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 // C++ Headers

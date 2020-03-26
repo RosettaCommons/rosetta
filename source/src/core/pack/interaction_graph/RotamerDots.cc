@@ -536,7 +536,7 @@ RotamerDots::~RotamerDots() {
 /// copy constructor
 ///
 RotamerDots::RotamerDots( RotamerDots const & rhs ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	rotamer_( rhs.rotamer_ ),
 	num_atoms_( rhs.num_atoms_ ),
 	atom_counts_( rhs.atom_counts_ ),
@@ -1681,7 +1681,7 @@ InvRotamerDots::InvRotamerDots() :
 
 
 InvRotamerDots::InvRotamerDots( InvRotamerDots const & src ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	rotamer_( src.rotamer_ ),
 	inv_dots_( src.inv_dots_ ),
 	radii_( src.radii_ )

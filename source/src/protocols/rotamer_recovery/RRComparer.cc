@@ -113,8 +113,8 @@ RRComparerRotBins::measure_rotamer_recovery(
 	rotamer_from_chi( res1, res1_rotbins );
 	rotamer_from_chi( res2, res2_rotbins );
 
-	Size chi_match(0);
-	for ( Size chi_index=1; chi_index <= res1_rotbins.size(); ++chi_index ) {
+	core::Size chi_match(0);
+	for ( core::Size chi_index=1; chi_index <= res1_rotbins.size(); ++chi_index ) {
 		if ( res1_rotbins[ chi_index ] == res2_rotbins[ chi_index ] ) {
 			chi_match++;
 		}
@@ -195,12 +195,12 @@ RRComparerChiDiff::measure_rotamer_recovery(
 
 	score = 0;
 	recovered=true;
-	Size max_chi = res1.nchi();
+	core::Size max_chi = res1.nchi();
 	if ( limit_chi_angles_ ) {
 		max_chi = std::min(max_chi, max_chi_considered_);
 	}
 
-	for ( Size chi_index=1; chi_index <= max_chi; ++chi_index ) {
+	for ( core::Size chi_index=1; chi_index <= max_chi; ++chi_index ) {
 		if ( res1.type().chi_2_proton_chi( chi_index ) == 0 ) { // ignore proton chi (tyr,ser,thr)
 			Real chidiff = std::abs( subtract_chi_angles( res1.chi(chi_index), res2.chi(chi_index), res1.aa(), chi_index ));
 			if ( score < chidiff ) { score = chidiff; }

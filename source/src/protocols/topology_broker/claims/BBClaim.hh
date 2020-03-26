@@ -35,7 +35,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //#include <basic/options/option_macros.hh>
 
@@ -54,7 +54,7 @@ namespace claims {
 
 class BBClaim : public DofClaim {
 public:
-	BBClaim( TopologyClaimerAP tc, Size pos, ClaimRight right = DofClaim::CAN_INIT ) :
+	BBClaim( TopologyClaimerAP tc, core::Size pos, ClaimRight right = DofClaim::CAN_INIT ) :
 		DofClaim( tc, right)
 	{
 		local_pos_ = std::make_pair( "DEFAULT", pos );
@@ -67,7 +67,7 @@ public:
 
 	DofClaimOP clone() const override { return utility::pointer::make_shared< BBClaim >( *this ); }
 
-	//  Size get_position() const {
+	//  core::Size get_position() const {
 	//   return pos_;
 	//  }
 

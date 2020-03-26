@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_pack_task_rna_RNA_ResidueLevelTask_HH
 #define INCLUDED_core_pack_task_rna_RNA_ResidueLevelTask_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pack/task/rna/RNA_ResidueLevelTask.fwd.hh>
 
 #ifdef    SERIALIZATION
@@ -29,7 +29,7 @@ namespace pack {
 namespace task {
 namespace rna {
 
-class RNA_ResidueLevelTask: public utility::pointer::ReferenceCount {
+class RNA_ResidueLevelTask: public utility::VirtualBase {
 
 public:
 

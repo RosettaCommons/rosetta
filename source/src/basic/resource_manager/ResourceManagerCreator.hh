@@ -21,7 +21,7 @@
 #include <basic/resource_manager/ResourceManager.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //C++ headers
 #include <string>
@@ -33,7 +33,7 @@ namespace resource_manager {
 /// of the various ResourceManagers should be instantiated.  The ResourceManager
 /// is a singleton, but, different ResourceManagers can be instantiated in different
 /// contexts.
-class ResourceManagerCreator : public utility::pointer::ReferenceCount {
+class ResourceManagerCreator : public utility::VirtualBase {
 public:
 	friend class ResourceManagerFactory;
 

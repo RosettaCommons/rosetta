@@ -176,21 +176,21 @@ ExternalGeomSampler::precompute_transforms()
 	transforms_[ HT_ang_U1D2 ].resize( ang_U1D2_samples_.size() );
 	transforms_[ HT_tor_U1D3 ].resize( tor_U1D3_samples_.size() );
 
-	for ( Size ii = 1; ii <= tor_U3D1_samples_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= tor_U3D1_samples_.size(); ++ii ) {
 		transforms_[ HT_tor_U3D1 ][ ii ].set_zaxis_rotation_deg( tor_U3D1_samples_[ ii ] );
 	}
 
-	for ( Size ii = 1; ii <= ang_U2D1_samples_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= ang_U2D1_samples_.size(); ++ii ) {
 		// negative rotation about the x axis of a magnitude 180 - angle 2-3-4
 		transforms_[ HT_ang_U2D1 ][ ii ].set_xaxis_rotation_deg( -1 * ( 180 - ang_U2D1_samples_[ ii ] ));
 	}
 
-	for ( Size ii = 1; ii <= tor_U2D2_samples_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= tor_U2D2_samples_.size(); ++ii ) {
 		transforms_[ HT_tor_U2D2 ][ ii ].set_zaxis_rotation_deg( tor_U2D2_samples_[ ii ] );
 	}
 
 
-	for ( Size ii = 1; ii <= ang_U1D2_samples_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= ang_U1D2_samples_.size(); ++ii ) {
 		// negative rotation about the x axis of a magnitude 180 - angle B
 		transforms_[ HT_ang_U1D2 ][ ii ].set_xaxis_rotation_deg( -1 * ( 180 - ang_U1D2_samples_[ ii ] ) );
 		// pre-multiply by the stride from atom 4 to atom 5.
@@ -199,7 +199,7 @@ ExternalGeomSampler::precompute_transforms()
 
 	HTReal ht_ang_d1d2d3;
 	ht_ang_d1d2d3.set_xaxis_rotation_deg( -1 * ( 180 - ang_D1D2D3_ ) );
-	for ( Size ii = 1; ii <= tor_U1D3_samples_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= tor_U1D3_samples_.size(); ++ii ) {
 		/// pre-multiply by the bond angle and the step along z.
 		HTReal ht_tor_U1D3_zrot;
 		ht_tor_U1D3_zrot.set_zaxis_rotation_deg( tor_U1D3_samples_[ ii ] );

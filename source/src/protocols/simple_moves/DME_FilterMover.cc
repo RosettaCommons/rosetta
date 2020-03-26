@@ -55,15 +55,15 @@ setup_dme_point_graph( pose::Pose const & ref_pose, Real const threshold )
 Real
 point_graph_dme( conformation::PointGraph const & pg, pose::Pose const & pose )
 {
-	Size total(0);
+	core::Size total(0);
 	Real dme(0.0);
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & i_rsd( pose.residue(i) );
 		for ( auto
 				i_iter     = pg.get_vertex( i ).const_upper_edge_list_begin(),
 				i_end_iter = pg.get_vertex( i ).const_upper_edge_list_end();
 				i_iter != i_end_iter; ++i_iter ) {
-			Size const j = i_iter->upper_vertex();
+			core::Size const j = i_iter->upper_vertex();
 			Real const reference_distance( std::sqrt( i_iter->data().dsq() ) );
 			Real const pose_distance( i_rsd.nbr_atom_xyz().distance( pose.residue(j).nbr_atom_xyz() ) );
 			dme += ( reference_distance - pose_distance ) * ( reference_distance - pose_distance );
@@ -87,7 +87,7 @@ DME_FilterMover::apply( pose::Pose & pose )
 	// for undoing moves with dme's that are too big
 	pose::Pose const start_pose( pose );
 
-	Size ntries( 0 );
+	core::Size ntries( 0 );
 	while ( true ) { // keep looping until we succeed
 		++ntries;
 

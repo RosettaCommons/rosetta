@@ -19,14 +19,14 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace apps {
 namespace pilot {
 namespace frankdt {
 
 ///@brief testing app for SEWING file IO
-class SmartSEWINGTester : public utility::pointer::ReferenceCount {
+class SmartSEWINGTester : public utility::VirtualBase {
 
 public:
 

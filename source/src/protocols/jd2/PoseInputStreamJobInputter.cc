@@ -78,8 +78,8 @@ void PoseInputStreamJobInputter::fill_jobs( JobsContainer & jobs ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	Size const nstruct( option[ out::nstruct ]() );
-	Size const shuffle_nstruct( option[ out::shuffle_nstruct ]() );
+	core::Size const nstruct( option[ out::nstruct ]() );
+	core::Size const shuffle_nstruct( option[ out::shuffle_nstruct ]() );
 	vector1< JobOP > inner_jobs;
 	rsd_set_ = core::chemical::ResidueTypeSetCOP( rsd_set_from_cmd_line() );
 

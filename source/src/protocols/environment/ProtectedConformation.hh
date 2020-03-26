@@ -82,16 +82,16 @@ public:
 
 	void set_jump( int const , core::kinematics::Jump const& ) override;
 
-	void set_secstruct( Size const seqpos, char const setting ) override;
+	void set_secstruct( core::Size const seqpos, char const setting ) override;
 
 	void replace_residue(
-		Size const seqpos,
+		core::Size const seqpos,
 		core::conformation::Residue const & new_rsd,
 		utility::vector1< std::pair< std::string, std::string > > const& atom_pairs
 	) override;
 
 	void replace_residue(
-		Size const seqpos,
+		core::Size const seqpos,
 		core::conformation::Residue const& new_rsd,
 		bool const orient_backbone
 	) override;
@@ -121,11 +121,11 @@ public:
 	// The parameters aren't named on purpose. You're not supposed to use these functions.
 	void fold_tree( FoldTree const& ) override;
 
-	void chain_endings( utility::vector1< Size > const& ) override;
+	void chain_endings( utility::vector1< core::Size > const& ) override;
 
-	void insert_chain_ending( Size const ) override;
+	void insert_chain_ending( core::Size const ) override;
 
-	void delete_chain_ending( Size const ) override;
+	void delete_chain_ending( core::Size const ) override;
 
 	void reset_chain_endings() override;
 
@@ -133,64 +133,64 @@ public:
 
 	void append_residue_by_jump(
 		core::conformation::Residue const &,
-		Size const,
+		core::Size const,
 		std::string const& = "",
 		std::string const& = "",
 		bool const _= false ) override;
 
 	void append_polymer_residue_after_seqpos(
 		core::conformation::Residue const&,
-		Size const,
+		core::Size const,
 		bool const) override;
 
 	void safely_append_polymer_residue_after_seqpos(
 		core::conformation::Residue const&,
-		Size const,
+		core::Size const,
 		bool const) override;
 
 	void prepend_polymer_residue_before_seqpos(
 		core::conformation::Residue const&,
-		Size const,
+		core::Size const,
 		bool const) override;
 
 	void safely_prepend_polymer_residue_before_seqpos(
 		core::conformation::Residue const&,
-		Size const,
+		core::Size const,
 		bool const) override;
 
-	void delete_polymer_residue( Size const ) override;
+	void delete_polymer_residue( core::Size const ) override;
 
-	void delete_residue_slow( Size const ) override;
+	void delete_residue_slow( core::Size const ) override;
 
-	void delete_residue_range_slow( Size const range_begin, Size const range_end ) override;
+	void delete_residue_range_slow( core::Size const range_begin, core::Size const range_end ) override;
 
 	void declare_chemical_bond(
-		Size const,
+		core::Size const,
 		std::string const&,
-		Size const,
+		core::Size const,
 		std::string const&
 	) override;
 
 	void insert_conformation_by_jump(
 		Conformation const&,
-		Size const,
-		Size const,
-		Size const,
-		Size const,
+		core::Size const,
+		core::Size const,
+		core::Size const,
+		core::Size const,
 		std::string const& = "",
 		std::string const& = ""
 	) override;
 
-	void rebuild_polymer_bond_dependent_atoms( Size const ) override;
+	void rebuild_polymer_bond_dependent_atoms( core::Size const ) override;
 
-	void insert_ideal_geometry_at_polymer_bond( Size const seqpos ) override;
+	void insert_ideal_geometry_at_polymer_bond( core::Size const seqpos ) override;
 
-	void insert_ideal_geometry_at_residue_connection( Size const pos1, Size const connid1 ) override;
+	void insert_ideal_geometry_at_residue_connection( core::Size const pos1, core::Size const connid1 ) override;
 
-	void set_polymeric_connection( Size, Size ) override;
+	void set_polymeric_connection( core::Size, core::Size ) override;
 
 	// TODO: decide what to do with disulfides
-	void fix_disulfides( utility::vector1< std::pair<Size, Size> > const & ) override;
+	void fix_disulfides( utility::vector1< std::pair<core::Size, core::Size> > const & ) override;
 
 	// TODO: this method can fail in fullatom
 	// This just uses the parent method anyway, and we need a default argument.
@@ -216,10 +216,10 @@ public:
 	// virtual in Conformation.hh
 
 	// virtual void update_actcoords();
-	// virtual void update_actcoord( Size resid );
-	// virtual void update_orbital_coords( Size resid );
+	// virtual void update_actcoord( core::Size resid );
+	// virtual void update_orbital_coords( core::Size resid );
 
-	// virtual void update_polymeric_connection( Size );
+	// virtual void update_polymeric_connection( core::Size );
 	// virtual void detect_bonds();
 	// virtual void detect_pseudobonds();
 
@@ -234,7 +234,7 @@ private:
 
 	inline bool verify_jump( core::id::AtomID const& );
 
-	inline bool verify_backbone( Size const& seqpos );
+	inline bool verify_backbone( core::Size const& seqpos );
 
 	//used to build a bogus DOF_ID, but can include sequence position
 	inline void fail_verification( std::string const& mod_type,
@@ -243,7 +243,7 @@ private:
 	inline void fail_verification( core::id::DOF_ID const& id,
 		std::string const& mod_type ) const;
 
-	void replace_residue_sandbox( Size seqpos, core::conformation::Residue const& new_rsd, bool );
+	void replace_residue_sandbox( core::Size seqpos, core::conformation::Residue const& new_rsd, bool );
 
 	// Passport Management:
 private:

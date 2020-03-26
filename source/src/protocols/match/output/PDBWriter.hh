@@ -29,7 +29,7 @@
 #include <protocols/match/output/UpstreamHitCacher.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -88,7 +88,7 @@ public:
 
 	void
 	set_downstream_builder(
-		Size geomcst_id,
+		core::Size geomcst_id,
 		downstream::DownstreamBuilderCOP dsbuilder
 	);
 

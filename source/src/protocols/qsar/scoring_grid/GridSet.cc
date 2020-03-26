@@ -40,6 +40,7 @@ GridSet::GridSet() = default;
 GridSet::~GridSet() = default;
 
 GridSet::GridSet( GridSet const & other) :
+	VirtualBase( other ),
 	grid_weights_( other.grid_weights_ ),
 	width_( other.width_ ),
 	resolution_( other.resolution_ ),

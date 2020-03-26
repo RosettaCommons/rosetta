@@ -23,13 +23,13 @@
 #include <utility/vector1.hh>
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/chemical/Atom.hh>
 namespace protocols {
 namespace sewing {
 namespace data_storage {
 ///@brief a neighbor-aware SewSegment version
-class SmartSegment : public utility::pointer::ReferenceCount {
+class SmartSegment : public utility::VirtualBase {
 
 public:
 

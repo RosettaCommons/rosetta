@@ -35,7 +35,7 @@ namespace rna {
 //////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
 RNA_ChiStepWiseSampler::RNA_ChiStepWiseSampler(
-	Size const rsd_id,
+	core::Size const rsd_id,
 	PuckerState const pucker_state,
 	ChiState const base_state
 ):

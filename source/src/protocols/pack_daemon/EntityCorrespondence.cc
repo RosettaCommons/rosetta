@@ -92,7 +92,7 @@ void EntityCorrespondence::set_pose( core::pose::PoseCOP pose )
 	}
 }
 
-void EntityCorrespondence::set_num_entities( Size num_entities )
+void EntityCorrespondence::set_num_entities( core::Size num_entities )
 {
 	entity_id_2_resids_.resize( num_entities );
 	std::fill( resid_2_entity_id_.begin(), resid_2_entity_id_.end(), 0 );
@@ -103,12 +103,12 @@ void EntityCorrespondence::set_num_entities( Size num_entities )
 void
 EntityCorrespondence::initialize_from_correspondence_file( std::istream & instream )
 {
-	Size count_correspondences( 0 );
-	Size line_count( 0 );
+	core::Size count_correspondences( 0 );
+	core::Size line_count( 0 );
 	int PDBnum = 0;
 	std::string PDBnum_string;
 	char chain = '_';
-	Size entity_id( 0 ), residue_index( 0 );
+	core::Size entity_id( 0 ), residue_index( 0 );
 	while ( instream ) {
 		char icode = ' ';
 		++line_count;
@@ -144,7 +144,7 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 #endif
 		if ( condition ) {
 			/// The last character is the insertion code.
-			for ( Size ch = 0; ch < PDBnum_string.length()-1; ++ch ) {
+			for ( core::Size ch = 0; ch < PDBnum_string.length()-1; ++ch ) {
 				if ( ! isdigit( PDBnum_string[ ch ] ) && ( ch != 0 || PDBnum_string[ ch ] != '-'  ) ) {
 					throw CREATE_EXCEPTION(utility::excn::Exception,
 						"Failed to read PDB residue id on line " + utility::to_string( line_count ) +
@@ -155,7 +155,7 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 			PDBnum = atoi( PDBnum_string.substr( 0, PDBnum_string.length() - 1 ).c_str() );
 			icode = *PDBnum_string.rbegin();
 		} else { // no insertion code
-			for ( Size ch = 0; ch < PDBnum_string.length(); ++ch ) {
+			for ( core::Size ch = 0; ch < PDBnum_string.length(); ++ch ) {
 				if ( ! isdigit( PDBnum_string[ ch ] ) && ( ch != 0 || PDBnum_string[ ch ] != '-'  ) ) {
 					throw CREATE_EXCEPTION(utility::excn::Exception,
 						"Failed to read PDB residue id on line " + utility::to_string( line_count ) +
@@ -191,8 +191,8 @@ EntityCorrespondence::initialize_from_correspondence_file( std::istream & instre
 
 void
 EntityCorrespondence::add_resid_to_entity_list(
-	Size EntityID,
-	Size ResID
+	core::Size EntityID,
+	core::Size ResID
 )
 {
 	bounds_check_residue( funcnames_[ func_add_resid_to_entity_list ], ResID );
@@ -220,21 +220,21 @@ EntityCorrespondence::num_residues() const
 }
 
 EntityCorrespondence::Size
-EntityCorrespondence::entity_for_residue( Size resid ) const
+EntityCorrespondence::entity_for_residue( core::Size resid ) const
 {
 	bounds_check_residue( funcnames_[ func_entity_for_residue ], resid );
 	return resid_2_entity_id_[ resid ];
 }
 
 EntityCorrespondence::Size
-EntityCorrespondence::n_residues_for_entity( Size entity_id ) const
+EntityCorrespondence::n_residues_for_entity( core::Size entity_id ) const
 {
 	bounds_check_entity( funcnames_[ func_n_residues_for_entity ], entity_id );
 	return entity_id_2_resids_[ entity_id ].size();
 }
 
 EntityCorrespondence::ResIDListConstIter
-EntityCorrespondence::residues_for_entity_begin( Size entity_id ) const
+EntityCorrespondence::residues_for_entity_begin( core::Size entity_id ) const
 {
 	bounds_check_entity( funcnames_[ func_residues_for_entity_begin ], entity_id );
 	return entity_id_2_resids_[ entity_id ].begin();
@@ -242,7 +242,7 @@ EntityCorrespondence::residues_for_entity_begin( Size entity_id ) const
 }
 
 EntityCorrespondence::ResIDListConstIter
-EntityCorrespondence::residues_for_entity_end( Size entity_id ) const
+EntityCorrespondence::residues_for_entity_end( core::Size entity_id ) const
 {
 	bounds_check_entity( funcnames_[ func_residues_for_entity_end ], entity_id );
 	return entity_id_2_resids_[ entity_id ].end();
@@ -251,7 +251,7 @@ EntityCorrespondence::residues_for_entity_end( Size entity_id ) const
 
 void EntityCorrespondence::bounds_check_entity(
 	std::string const & funcname,
-	Size entity_id
+	core::Size entity_id
 ) const
 {
 	if ( entity_id > num_entities() ) {
@@ -263,7 +263,7 @@ void EntityCorrespondence::bounds_check_entity(
 
 void EntityCorrespondence::bounds_check_residue(
 	std::string const & funcname,
-	Size resid
+	core::Size resid
 ) const
 {
 	if ( ! pose_ ) {

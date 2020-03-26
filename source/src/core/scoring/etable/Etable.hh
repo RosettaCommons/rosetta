@@ -55,7 +55,7 @@
 #include <ObjexxFCL/FArray3D.hh>
 
 #include <utility/assert.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <ObjexxFCL/FArray1.fwd.hh>
 #include <ObjexxFCL/FArray2.fwd.hh>
@@ -162,10 +162,10 @@ struct EtableParamsOnePair
 
 
 /// @brief Class definition for Etable
-class Etable : public utility::pointer::ReferenceCount {
+class Etable : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Etable() override;
 
 	///  constructor

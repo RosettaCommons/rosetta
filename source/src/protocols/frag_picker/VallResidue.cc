@@ -44,7 +44,7 @@ utility::vector1<core::chemical::AA> VallResidue::order_ = order_vector();
 
 /// @brief default constructor
 VallResidue::VallResidue() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	key_(0),
 	id_(""),
 	aa_(' '),
@@ -90,7 +90,7 @@ VallResidue::VallResidue(String const & line) {
 
 /// @brief copy constructor
 VallResidue::VallResidue(VallResidue const & rval) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	key_(rval.key_),
 	id_(rval.id_),
 	aa_(rval.aa_),

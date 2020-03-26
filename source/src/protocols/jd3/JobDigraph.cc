@@ -373,7 +373,7 @@ void JobDigraph::save( Archive & archive ) const
 	// JobDirectedNodes and edges will be freshly created when this graph is deserialized
 	// EXEMPT job_edge_pool_
 
-	for ( Size ii = 1; ii <= num_nodes(); ++ii ) {
+	for ( core::Size ii = 1; ii <= num_nodes(); ++ii ) {
 		get_job_node( ii )->save_to_archive( archive );
 	}
 	archive( num_edges() );
@@ -385,17 +385,17 @@ void JobDigraph::save( Archive & archive ) const
 template < class Archive >
 void JobDigraph::load( Archive & archive )
 {
-	Size num_nodes(0); archive( num_nodes );
+	core::Size num_nodes(0); archive( num_nodes );
 	set_num_nodes( num_nodes );
 	// EXEMPT job_edge_pool_
 
-	for ( Size ii = 1; ii <= num_nodes; ++ii ) {
+	for ( core::Size ii = 1; ii <= num_nodes; ++ii ) {
 		get_job_node( ii )->load_from_archive( archive );
 	}
 
-	Size num_edges(0); archive( num_edges );
-	for ( Size ii = 1; ii <= num_edges; ++ii ) {
-		Size tail_node(0), head_node(0); archive( tail_node, head_node );
+	core::Size num_edges(0); archive( num_edges );
+	for ( core::Size ii = 1; ii <= num_edges; ++ii ) {
+		core::Size tail_node(0), head_node(0); archive( tail_node, head_node );
 		add_edge( tail_node, head_node );
 	}
 }

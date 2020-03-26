@@ -117,7 +117,7 @@ private:
 	bool dump_snapshots_;
 	std::string snapshot_prefix_;
 	core::Size snapshot_interval_;
-	Size snapshot_counter_;
+	core::Size snapshot_counter_;
 
 	core::Size perturbed_res_;
 	protocols::minimization_packing::PackRotamersMoverOP pack_full_repack_;

@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_modeler_align_StepWisePoseAligner_HH
 #define INCLUDED_protocols_stepwise_modeler_align_StepWisePoseAligner_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/modeler/align/StepWisePoseAligner.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 // Need full header for map hash
@@ -31,7 +31,7 @@ namespace stepwise {
 namespace modeler {
 namespace align {
 
-class StepWisePoseAligner: public utility::pointer::ReferenceCount {
+class StepWisePoseAligner: public utility::VirtualBase {
 
 public:
 

@@ -37,7 +37,7 @@
 #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -66,7 +66,7 @@ void CrossPeakList::update_decoy_compatibility_score( DecoyIterator const& decoy
 
 	if ( decoys_begin == decoys_end ) return;
 
-	Size ct_structures( 0 );
+	core::Size ct_structures( 0 );
 	for ( DecoyIterator iss = decoys_begin; iss != decoys_end; ++iss ) {
 		++ct_structures;
 	}
@@ -126,7 +126,7 @@ void CrossPeakList::calibrate( DecoyIterator const& begin, DecoyIterator const& 
 			pose_cache.push_back( pose );
 		}
 
-		for ( Size cycles( params.calibration_cycles_ ); cycles >= 1; --cycles ) {
+		for ( core::Size cycles( params.calibration_cycles_ ); cycles >= 1; --cycles ) {
 			PeakCalibratorMap calibrators( *this, utility::pointer::make_shared< StructureDependentPeakCalibrator >( pose_cache, params.dcalibrate_ ) );
 			if ( !structure_independent_calibration ) {
 				tr.Info << "structure dependent calibration..."<<std::endl;

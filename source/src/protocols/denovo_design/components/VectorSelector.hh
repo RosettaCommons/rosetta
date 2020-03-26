@@ -77,7 +77,7 @@ public:
 	select() override
 	{
 		if ( count_ > this->size() ) reset();
-		std::cout << "Count is now " << count_ << " Size is " << this->size() << std::endl;
+		std::cout << "Count is now " << count_ << " core::Size is " << this->size() << std::endl;
 		T selected = (*this)[ count_ ];
 		++count_;
 		return selected;

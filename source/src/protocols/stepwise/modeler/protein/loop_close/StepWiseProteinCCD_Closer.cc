@@ -175,7 +175,7 @@ StepWiseProteinCCD_Closer::CCD_loop_close_sample_omega_recursively( core::pose::
 	restore_phi_psi_over_loop_residues( pose ); // don't restore omega, since we'll be switching it around.
 
 	//loop starts at position before cutpoint, ends after.
-	Size const omega_pos = loop_.start() + offset;
+	core::Size const omega_pos = loop_.start() + offset;
 
 	if ( omega_pos == loop_.stop() ) {
 		closed_loop_ = CCD_loop_close( pose );
@@ -199,16 +199,16 @@ StepWiseProteinCCD_Closer::figure_out_loop( core::pose::Pose const & pose ) {
 
 	using namespace protocols::loops;
 
-	Size cutpoint = ccd_close_res_; // could be user input
+	core::Size cutpoint = ccd_close_res_; // could be user input
 	if ( cutpoint == 0 ) cutpoint = check_for_unique_cutpoint_flanked_by_bridge_res( pose );
 	if ( cutpoint == 0 ) cutpoint = check_for_unique_cutpoint( pose );
 	runtime_assert( cutpoint != 0 );
 	runtime_assert( is_cutpoint_closed( pose, cutpoint ) );
 
-	Size loop_start( cutpoint );
+	core::Size loop_start( cutpoint );
 	while ( loop_start > 1 && working_bridge_res_.has_value( loop_start ) ) loop_start--;
 
-	Size loop_stop( cutpoint + 1 );
+	core::Size loop_stop( cutpoint + 1 );
 	while ( loop_stop < pose.size() && working_bridge_res_.has_value( loop_stop ) ) loop_stop++;
 
 	runtime_assert( ( int(loop_stop) - int(loop_start) - 1) < 4 ); // sanity check: can't have more than 3 bridge residues.
@@ -220,12 +220,12 @@ void
 StepWiseProteinCCD_Closer::figure_out_movemap( core::pose::Pose const & pose ) {
 	using namespace core::id;
 	mm_->clear();
-	for ( Size k = 2; k < pose.residue( loop_.start() ).mainchain_torsions().size(); k++ ) {
+	for ( core::Size k = 2; k < pose.residue( loop_.start() ).mainchain_torsions().size(); k++ ) {
 		mm_->set( TorsionID( loop_.start(), id::BB, k ),  true );
 	}
-	for ( Size n = loop_.start()+1; n <= loop_.stop()-1; n++ ) {
+	for ( core::Size n = loop_.start()+1; n <= loop_.stop()-1; n++ ) {
 		// Set non-omega true
-		for ( Size k = 1; k < pose.residue( n ).mainchain_torsions().size(); k++ ) {
+		for ( core::Size k = 1; k < pose.residue( n ).mainchain_torsions().size(); k++ ) {
 			mm_->set( TorsionID( n, id::BB, k ),  true );
 		}
 	}
@@ -240,11 +240,11 @@ StepWiseProteinCCD_Closer::setup_torsions( core::pose::Pose const & pose ) {
 	which_torsions_.clear();
 
 	//save psi,omega at 'takeoff' residue.
-	for ( Size k = 2; k <= pose.residue( loop_.start() ).mainchain_torsions().size(); k++ ) which_torsions_.emplace_back( loop_.start(), BB, k );
+	for ( core::Size k = 2; k <= pose.residue( loop_.start() ).mainchain_torsions().size(); k++ ) which_torsions_.emplace_back( loop_.start(), BB, k );
 
 	//save all mc torsions (for alphas, phi,psi,omega) inside loop
-	for ( Size n = loop_.start() + 1; n < loop_.stop(); n++ ) {
-		for ( Size k = 1; k <= pose.residue( loop_.start() ).mainchain_torsions().size(); k++ ) which_torsions_.emplace_back( n, BB, k );
+	for ( core::Size n = loop_.start() + 1; n < loop_.stop(); n++ ) {
+		for ( core::Size k = 1; k <= pose.residue( loop_.start() ).mainchain_torsions().size(); k++ ) which_torsions_.emplace_back( n, BB, k );
 	}
 
 	//save phi at 'landing' residue.
@@ -290,7 +290,7 @@ StepWiseProteinCCD_Closer::which_torsions() const
 void
 StepWiseProteinCCD_Closer::restore_phi_psi_omega_over_loop_residues( pose::Pose & pose )
 {
-	for ( Size n = 1; n <= which_torsions_.size(); n++ )  {
+	for ( core::Size n = 1; n <= which_torsions_.size(); n++ )  {
 		pose.set_torsion( which_torsions_[ n ], main_chain_torsion_set_save_[n] );
 	}
 }
@@ -299,7 +299,7 @@ StepWiseProteinCCD_Closer::restore_phi_psi_omega_over_loop_residues( pose::Pose 
 void
 StepWiseProteinCCD_Closer::restore_phi_psi_over_loop_residues( pose::Pose & pose )
 {
-	for ( Size n = 1; n <= which_torsions_.size(); n++ )  {
+	for ( core::Size n = 1; n <= which_torsions_.size(); n++ )  {
 		if ( which_torsions_[n].torsion() > 2 ) continue; // phi, psi, but not omega
 		pose.set_torsion( which_torsions_[ n ], main_chain_torsion_set_save_[n] );
 	}
@@ -327,9 +327,9 @@ StepWiseProteinCCD_Closer::fix_jump_atoms_at_loop_boundaries( pose::Pose & pose 
 //////////////////////////////////////////////////////////////////////////
 Size
 StepWiseProteinCCD_Closer::check_for_unique_cutpoint_flanked_by_bridge_res( pose::Pose const & pose ){
-	Size cutpoint( 0 );
-	Size nres( pose.size() );
-	for ( Size n = 1; n <= nres; n++ ) {
+	core::Size cutpoint( 0 );
+	core::Size nres( pose.size() );
+	for ( core::Size n = 1; n <= nres; n++ ) {
 		if ( ! is_cutpoint_closed( pose, n ) ) continue;
 
 		if ( ( n > 1    && working_bridge_res_.has_value( n-1 ) ) ||
@@ -344,9 +344,9 @@ StepWiseProteinCCD_Closer::check_for_unique_cutpoint_flanked_by_bridge_res( pose
 //////////////////////////////////////////////////////////////////////////
 Size
 StepWiseProteinCCD_Closer::check_for_unique_cutpoint( pose::Pose const & pose ){
-	Size cutpoint( 0 );
-	Size nres( pose.size() );
-	for ( Size n = 1; n <= nres; n++ ) {
+	core::Size cutpoint( 0 );
+	core::Size nres( pose.size() );
+	for ( core::Size n = 1; n <= nres; n++ ) {
 		if  ( !is_cutpoint_closed( pose, n ) ) continue;
 
 		runtime_assert( cutpoint == 0 ); // uniqueness check.

@@ -85,7 +85,7 @@ CDRClusterMatcher::load_center_data(){
 
 	utility::io::izstream clus_stream;
 	basic::database::open(clus_stream, center_cluster_db_path_);
-	Size line_count = 0;
+	core::Size line_count = 0;
 	while ( ! clus_stream.eof() ) {
 		++line_count;
 		clus_stream >> cdr_name >> length >> cluster >> type >> fullcluster_name >> cis_trans_conf >> phis >> psis >> omegas;
@@ -262,7 +262,7 @@ std::map< std::string, vector1< core::Real > >
 CDRClusterMatcher::get_pose_angles(core::pose::Pose const & pose, core::Size const start, core::Size const end) const {
 
 	std::map< std::string, vector1< core::Real > > pose_angles;
-	for ( Size resnum = start; resnum<=end; resnum++ ) {
+	for ( core::Size resnum = start; resnum<=end; resnum++ ) {
 		pose_angles["phi"].push_back(pose.phi(resnum));
 		pose_angles["psi"].push_back(pose.psi(resnum));
 	}

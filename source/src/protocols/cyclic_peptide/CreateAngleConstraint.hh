@@ -32,7 +32,7 @@ public:
 	moves::MoverOP fresh_instance() const override;
 
 	virtual void
-	set (utility::vector1<Size>,utility::vector1<std::string>,utility::vector1<Size>, utility::vector1<std::string>, utility::vector1<Size>,utility::vector1<std::string>, utility::vector1<std::string>);
+	set (utility::vector1<core::Size>,utility::vector1<std::string>,utility::vector1<core::Size>, utility::vector1<std::string>, utility::vector1<core::Size>,utility::vector1<std::string>, utility::vector1<std::string>);
 
 	void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, core::pose::Pose const & ) override;
@@ -50,11 +50,11 @@ public:
 
 
 private:
-	utility::vector1<Size> res_center_;
+	utility::vector1<core::Size> res_center_;
 	utility::vector1<std::string> atom_center_;
-	utility::vector1<Size> res1_;
+	utility::vector1<core::Size> res1_;
 	utility::vector1<std::string> atom1_;
-	utility::vector1<Size> res2_;
+	utility::vector1<core::Size> res2_;
 	utility::vector1<std::string> atom2_;
 	utility::vector1<std::string> cst_func_;
 };

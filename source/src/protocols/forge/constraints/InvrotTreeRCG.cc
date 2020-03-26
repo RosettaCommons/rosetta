@@ -133,7 +133,7 @@ InvrotTreeRCG::generate_remodel_constraints(
 
 	//for now
 	runtime_assert( invrot_tree_->num_target_states() == 1 );
-	Size target_state = 1;
+	core::Size target_state = 1;
 
 	tr << "generating inverse_rotamer_constraints" << std::endl;
 	invrot_tree_->generate_inverse_rotamer_constraints( pose, geomcst_seqpos_ );

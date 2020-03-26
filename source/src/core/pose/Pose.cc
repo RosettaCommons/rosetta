@@ -154,7 +154,7 @@ Pose::~Pose()
 
 /// @brief copy constructor
 Pose::Pose( Pose const & src ) :
-	ReferenceCount ( src ),
+	VirtualBase( src ),
 	utility::pointer::enable_shared_from_this< Pose >( src )
 {
 	*this = src;
@@ -2361,7 +2361,7 @@ Pose::residue_type_set_for_pose( core::chemical::TypeSetMode mode ) const {
 void Pose::store_const_data(
 	std::string const & category,
 	std::string const & name,
-	utility::pointer::ReferenceCountCOP ptr
+	utility::VirtualBaseCOP ptr
 )
 {
 	constant_cache_->add( category, name, ptr );

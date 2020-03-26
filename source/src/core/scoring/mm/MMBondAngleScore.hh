@@ -30,7 +30,7 @@
 // Utility header
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -44,11 +44,11 @@ namespace mm {
 /// @details
 ///
 ///
-class MMBondAngleScore : public utility::pointer::ReferenceCount
+class MMBondAngleScore : public utility::VirtualBase
 {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~MMBondAngleScore() override;
 
 	/// @brief Default ctor

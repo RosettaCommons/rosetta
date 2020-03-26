@@ -115,7 +115,7 @@ FeaturesReporter::report_features(
 	StructureID /*parent id*/,
 	sessionOP /*db_session*/
 ){
-	Size dummy_parent_id(0);
+	core::Size dummy_parent_id(0);
 	return dummy_parent_id;
 }
 
@@ -179,7 +179,7 @@ FeaturesReporter::get_relevant_residues_mode() const {
 bool
 FeaturesReporter::check_relevant_residues(
 	vector1<bool> const & relevant_residues,
-	Size res1
+	core::Size res1
 ) const {
 	switch(relevant_residues_mode_){
 	case RelevantResiduesMode::Exclusive :
@@ -195,8 +195,8 @@ FeaturesReporter::check_relevant_residues(
 bool
 FeaturesReporter::check_relevant_residues(
 	vector1<bool> const & relevant_residues,
-	Size res1,
-	Size res2
+	core::Size res1,
+	core::Size res2
 ) const {
 	switch(relevant_residues_mode_){
 	case RelevantResiduesMode::Exclusive :
@@ -212,12 +212,12 @@ FeaturesReporter::check_relevant_residues(
 bool
 FeaturesReporter::check_relevant_residues_range(
 	vector1<bool> const & relevant_residues,
-	Size begin,
-	Size end
+	core::Size begin,
+	core::Size end
 ) const {
 	switch(relevant_residues_mode_){
 	case RelevantResiduesMode::Exclusive : {
-		for ( Size ii=begin; ii != end; ++ii ) {
+		for ( core::Size ii=begin; ii != end; ++ii ) {
 			if ( !relevant_residues[ii] ) {
 				return false;
 			}
@@ -225,7 +225,7 @@ FeaturesReporter::check_relevant_residues_range(
 		return true;
 	}
 	case RelevantResiduesMode::Inclusive : {
-		for ( Size ii=begin; ii != end; ++ii ) {
+		for ( core::Size ii=begin; ii != end; ++ii ) {
 			if ( relevant_residues[ii] ) {
 				return true;
 			}
@@ -242,7 +242,7 @@ FeaturesReporter::check_relevant_residues_range(
 bool
 FeaturesReporter::check_relevant_residues(
 	vector1<bool> const & relevant_residues,
-	vector1< Size > const & residues
+	vector1< core::Size > const & residues
 ) const {
 	switch(relevant_residues_mode_){
 	case RelevantResiduesMode::Exclusive : {

@@ -647,7 +647,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 	core::Real rms_to_start;
 
 	std::string current_cluster_center="";
-	Size current_cluster_first_seen( 0 );
+	core::Size current_cluster_first_seen( 0 );
 
 	if ( constrain_structure ) {
 		setup_constraints( pose );

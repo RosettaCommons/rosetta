@@ -182,7 +182,7 @@ TemperedDocking::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 	fold_tree_ = pose.fold_tree();
 
 	rb_mover_->clear_jumps();
-	for ( Size i=1; i<=pose.num_jump(); ++i ) {
+	for ( core::Size i=1; i<=pose.num_jump(); ++i ) {
 		// should honor movemap or movable_jumps_ here...
 		rb_mover_->add_jump( i );
 	}

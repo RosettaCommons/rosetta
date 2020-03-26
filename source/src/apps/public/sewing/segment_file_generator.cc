@@ -60,16 +60,14 @@ namespace pilot {
 namespace frankdt {
 
 segment_file_generator::segment_file_generator():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 
 }
 
 segment_file_generator::~segment_file_generator(){}
 
-segment_file_generator::segment_file_generator( segment_file_generator const & ) {
-
-}
+segment_file_generator::segment_file_generator( segment_file_generator const & ) = default;
 
 
 

@@ -42,7 +42,7 @@ using core::Size;
 using core::Real;
 using utility::vector1;
 typedef std::map< core::chemical::AA, Real > AAProbabilities; //Map of an amino acid and it's probability.
-typedef std::map< Size, AAProbabilities > PerResidueAAProbSet; //Amino acid probabilities for a particular residue number.
+typedef std::map< core::Size, AAProbabilities > PerResidueAAProbSet; //Amino acid probabilities for a particular residue number.
 
 core::pack::task::operation::TaskOperationOP
 ResidueProbDesignOperationCreator::create_task_operation() const
@@ -115,7 +115,7 @@ ResidueProbDesignOperation::init_for_equal_operator_and_copy_constructor(Residue
 //
 
 void
-ResidueProbDesignOperation::set_aa_probabilities(const Size resnum, AAProbabilities aa_probs) {
+ResidueProbDesignOperation::set_aa_probabilities(const core::Size resnum, AAProbabilities aa_probs) {
 	prob_set_[resnum] = aa_probs;
 }
 
@@ -310,7 +310,7 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 
 			task.nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aminos);
 		} else {
-			for ( Size picks = 1; picks <= picking_rounds_; ++picks ) {
+			for ( core::Size picks = 1; picks <= picking_rounds_; ++picks ) {
 
 				core::Size aa_num = sampler.random_sample(numeric::random::rg());
 				allowed_aminos[aa_num] = true;

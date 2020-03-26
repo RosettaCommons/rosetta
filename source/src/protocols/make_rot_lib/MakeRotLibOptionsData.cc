@@ -64,7 +64,7 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 	options.close();
 
 	// first pass - get AA name, number of chi angles, number of centroids
-	for ( Size i( 1 ); i<= lines.size(); ++i ) {
+	for ( core::Size i( 1 ); i<= lines.size(); ++i ) {
 		std::string const & line( lines[i] );
 		std::istringstream l( line );
 		std::string tag;
@@ -99,7 +99,7 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 	bb_ranges_.resize( n_bb_ );
 
 	utility::vector1< utility::vector1< core::Real > > rotwells_for_chi;
-	Size const nrotchi = semirotameric_ ? n_chi_ - 1 : n_chi_;
+	core::Size const nrotchi = semirotameric_ ? n_chi_ - 1 : n_chi_;
 	rotwells_for_chi.resize( nrotchi );
 	bool rotwells_specified = false;
 
@@ -151,11 +151,11 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 			centroid_data_.push_back( temp_crnv );
 		} else if ( tag == "ROTWELLS" ) {
 			rotwells_specified = true;
-			Size chi_num, n_rotwells;
+			core::Size chi_num, n_rotwells;
 			l >> chi_num >> n_rotwells;
 			TR << chi_num << " " << n_rotwells << std::endl;
-			for ( Size ii = 1; ii <= n_rotwells; ++ii ) {
-				Size rotwell_angle;
+			for ( core::Size ii = 1; ii <= n_rotwells; ++ii ) {
+				core::Size rotwell_angle;
 				l >> rotwell_angle;
 				TR << rotwell_angle << " " << std::endl;
 				rotwells_for_chi[ chi_num ].push_back( rotwell_angle );
@@ -172,17 +172,17 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 		// Okay, we need to generate all combinations of rotamer wells.
 		// indices is a vector over all chi that says which rotwell we're working with
 		// for each chi...
-		utility::vector1< Size > indices;
+		utility::vector1< core::Size > indices;
 		indices.resize( nrotchi + 1, 1 );
 		indices[ nrotchi + 1 ] = 0;
 		rotwells_for_chi.push_back( utility::vector1< core::Real >( 1, 0 ) );
 
-		Size p = 1;
+		core::Size p = 1;
 		while ( indices[ nrotchi + 1 ] == 0 ) {
 			CentroidRotNumVec temp_crnv;
 			temp_crnv.resize( nrotchi );
 			TR << "Pushing back ";
-			for ( Size i( 1 ); i <= nrotchi; ++i ) {
+			for ( core::Size i( 1 ); i <= nrotchi; ++i ) {
 				temp_crnv[ i ].angle   = rotwells_for_chi[ i ][ indices[ i ] ];
 				temp_crnv[ i ].rot_num = indices[ i ];
 				TR << " " << temp_crnv[ i ].angle << " ";

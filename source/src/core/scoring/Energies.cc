@@ -86,7 +86,7 @@ namespace core {
 namespace scoring {
 
 Energies::Energies()
-: utility::pointer::ReferenceCount(),
+: utility::VirtualBase(),
 	size_(0),
 	owner_( nullptr ),
 	energy_graph_( utility::pointer::make_shared< EnergyGraph >() ),
@@ -113,7 +113,7 @@ Energies::Energies()
 
 /// copy ctor -- deep copy
 Energies::Energies( Energies const & other )
-: utility::pointer::ReferenceCount(),
+: utility::VirtualBase(),
 	size_( other.size_ ),
 	owner_( nullptr ),
 	energy_graph_( utility::pointer::make_shared< EnergyGraph >( *other.energy_graph_ ) ),

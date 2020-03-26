@@ -94,13 +94,13 @@ NatbiasStrandPairPotential::set_native_spairset( StrandPairingSetOP const spairs
 core::Real
 NatbiasStrandPairPotential::calc_phithetascore( Real const phi, Real const theta ) const
 {
-	auto iphi = static_cast< Size >( 1 + ( phi + 180.0 )/10 );
+	auto iphi = static_cast< core::Size >( 1 + ( phi + 180.0 )/10 );
 	if ( iphi > 36 ) {
 		iphi = 36;
 	} else if ( iphi < 1 ) {
 		iphi = 1;
 	}
-	auto itheta = static_cast< Size >( 1 + ( theta/5 ) );
+	auto itheta = static_cast< core::Size >( 1 + ( theta/5 ) );
 	if ( itheta > 36 ) {
 		itheta = 36;
 	} else if ( itheta < 1 ) {
@@ -134,20 +134,20 @@ NatbiasStrandPairPotential::calc_dotscore( Real const dpall ) const
 
 /// @brief return rsigma score
 core::Real
-NatbiasStrandPairPotential::calc_rsigmascore( Real sig, Real dist, Size const sign1, Size const sign2 ) const
+NatbiasStrandPairPotential::calc_rsigmascore( Real sig, Real dist, core::Size const sign1, core::Size const sign2 ) const
 {
 	if ( sig > 179.0 ) {
 		sig = 179.0;
 	} else if ( sig < 0.0 ) {
 		sig = 0.0;
 	}
-	Size isig = static_cast< Size >( sig / 10 ) + 1;
+	core::Size isig = static_cast< core::Size >( sig / 10 ) + 1;
 	if ( dist > 6.4 ) {
 		dist = 6.4;
 	} else if ( dist < 3.5 ) {
 		dist = 3.5;
 	}
-	Size idist = static_cast< Size >( ( dist - 3.5 ) / 0.25 ) + 1;
+	core::Size idist = static_cast< core::Size >( ( dist - 3.5 ) / 0.25 ) + 1;
 
 	// FIX THIS !!!!!!!!!!!!!!
 	// The definition of dimer signs (sign1,sign2) appears inverted (1 should be 2, vice versa).
@@ -168,13 +168,13 @@ NatbiasStrandPairPotential::calc_rsigmascore( Real sig, Real dist, Size const si
 /// @brief to determine which direction the CO groups point
 void
 NatbiasStrandPairPotential::pair_dp(
-	Size const & ss1,
-	Size const & ss2,
+	core::Size const & ss1,
+	core::Size const & ss2,
 	BB_Pos const & bb_pos,
 	Real & dp,
 	Vector const & mid_vector,
-	Size & sign1,
-	Size & sign2
+	core::Size & sign1,
+	core::Size & sign2
 ) const
 {
 	// length of C=O bond
@@ -186,7 +186,7 @@ NatbiasStrandPairPotential::pair_dp(
 
 	Real dp1( 0.0 );
 	Real sdp1( 0.0 );
-	for ( Size i=ss1; i<=ss1+1; ++i ) {
+	for ( core::Size i=ss1; i<=ss1+1; ++i ) {
 		Vector temp;
 		if ( i == ss1+1 ) {
 			temp = dist_co_inv * ( bb_pos.C(i) - bb_pos.O(i) );
@@ -202,7 +202,7 @@ NatbiasStrandPairPotential::pair_dp(
 
 	Real dp2( 0.0 );
 	Real sdp2( 0.0 );
-	for ( Size i=ss2; i<=ss2+1; ++i ) {
+	for ( core::Size i=ss2; i<=ss2+1; ++i ) {
 		Vector temp;
 		if ( i == ss2+1 ) {
 			temp = dist_co_inv * ( bb_pos.C(i) - bb_pos.O(i) );
@@ -258,16 +258,16 @@ NatbiasStrandPairPotential::score( Pose const & pose, SS_Info2 const & ss_info, 
 
 	EnergyGraph const & eg( pose.energies().energy_graph() );
 
-	for ( Size istrand=1; istrand<=strands.size(); istrand++ ) {
+	for ( core::Size istrand=1; istrand<=strands.size(); istrand++ ) {
 
 		StrandOP const strand( strands[ istrand ] );
-		for ( Size ss1=strand->begin(); ss1<strand->end(); ss1++ ) {
+		for ( core::Size ss1=strand->begin(); ss1<strand->end(); ss1++ ) {
 
 			for ( utility::graph::Graph::EdgeListConstIter iru =eg.get_node( ss1 )->const_upper_edge_list_begin(),
 					irue=eg.get_node( ss1 )->const_upper_edge_list_end(); iru != irue; ++iru ) {
 
-				Size const ss2( (*iru)->get_second_node_ind() );
-				Size jstrand = ss_info.strand_id( ss2 );
+				core::Size const ss2( (*iru)->get_second_node_ind() );
+				core::Size jstrand = ss_info.strand_id( ss2 );
 
 				if ( pose.residue_type( ss2 ).is_upper_terminus() ) continue;
 				if ( ss_info.strand_id( ss2+1 ) == 0 || istrand == jstrand || jstrand == 0 ) continue;
@@ -304,7 +304,7 @@ NatbiasStrandPairPotential::score( Pose const & pose, SS_Info2 const & ss_info, 
 				if ( dist_dimers < strand_dist_cutoff_ ) {
 
 					if ( ! spair->is_member( ss1 ) || ! spair->is_member( ss2 ) ) continue;
-					Size pairres = spair->residue_pair( ss1 );
+					core::Size pairres = spair->residue_pair( ss1 );
 
 					if ( spair->rgstr_shift() != 99 ) {
 						if ( spair->orient() == 'P' ) {
@@ -318,7 +318,7 @@ NatbiasStrandPairPotential::score( Pose const & pose, SS_Info2 const & ss_info, 
 					}
 
 					Real dpall;
-					Size sign1, sign2;
+					core::Size sign1, sign2;
 					pair_dp( ss1, ss2, bb_pos, dpall, mid_vector, sign1, sign2 );
 					if ( spair->rgstr_shift() != 99 ) {
 						// pairing wo/ register shift

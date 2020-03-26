@@ -209,7 +209,7 @@ public:
 	cluster_rotset( utility::vector1< core::pack::annealer::PointDwell > &rotset );
 
 	/// find closest protein residue
-	Size
+	core::Size
 	find_closest( Pose const & pose, core::Vector Ocoord );
 
 	// set the mode

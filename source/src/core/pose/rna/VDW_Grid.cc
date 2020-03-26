@@ -50,6 +50,7 @@ VDW_Grid::VDW_Grid():
 
 // Copy Constructor
 VDW_Grid::VDW_Grid( VDW_Grid const & src ):
+	VirtualBase( src ),
 	bins_( src.bins_ ),
 	is_occupied_( src.is_occupied_ ),
 	bin_max_( src.bin_max_ ),

@@ -36,12 +36,12 @@ namespace chemical {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief A class patching basic ResidueType to create variant types, containing multiple PatchCase
-class Metapatch : public utility::pointer::ReferenceCount {
+class Metapatch : public utility::VirtualBase {
 public:
 
 	Metapatch();
 
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Metapatch() override;
 	/// @brief constructor from file
 	void

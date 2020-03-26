@@ -39,7 +39,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Numeric headers
 #include <numeric/constants.hh>
@@ -58,7 +58,7 @@ namespace scoring {
 namespace methods {
 namespace pcs2 {
 
-class PcsDataCenter : public utility::pointer::ReferenceCount{
+class PcsDataCenter : public utility::VirtualBase{
 private:
 	core::Size n_lanthanides_;
 	core::Size n_pcs_spin_;

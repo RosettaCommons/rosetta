@@ -172,11 +172,11 @@ void ZnHash::build_hash()
 	for ( std::list< ZnCoord >::const_iterator iter = zn_coords_.begin(), iter_end = zn_coords_.end();
 			iter != iter_end; ++iter ) {
 		if ( iter == zn_coords_.begin() ) { bb_.set_lower((*iter)[1]); bb_.set_upper((*iter)[1]); }
-		for ( Size ii = 1; ii <= ZnCoord::natoms(); ++ii ) bb_.add( (*iter)[ii] );
+		for ( core::Size ii = 1; ii <= ZnCoord::natoms(); ++ii ) bb_.add( (*iter)[ii] );
 	}
 
 	core::Vector dim_ranges = bb_.upper() - bb_.lower();
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		ngrid_cells_[ ii ] = static_cast<core::Size>( std::ceil( dim_ranges(ii) / (grid_size_) ) );
 		if ( ngrid_cells_[ ii ] == 0 ) ngrid_cells_[ ii ] = 1; // imagine there's only one point
 	}
@@ -212,7 +212,7 @@ boost::uint64_t ZnHash::bin_for_point( Vector const & query_point ) const
 	debug_assert( bb_.contains( query_point ) );
 	Vector shifted = query_point - bb_.lower();
 	boost::uint64_t sum(0);
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		sum += static_cast< core::Size > (shifted(ii) * inv_grid_size_) * ndim_prods_[ii];
 	}
 	return sum;
@@ -234,7 +234,7 @@ ZnHash::ZnCoordinateHash::const_iterator ZnHash::hash_end() const
 	return zn_hash_.end();
 }
 
-ZnCoordinationScorer::ZnCoordinationScorer() : utility::pointer::ReferenceCount(),
+ZnCoordinationScorer::ZnCoordinationScorer() : utility::VirtualBase(),
 	well_depth_( 1.0 ),
 	idealize_input_virtual_atoms_( true ),
 	max_natoms_(0),
@@ -293,7 +293,7 @@ ZnCoordinationScorer::ZnCoordinationScorer() : utility::pointer::ReferenceCount(
 
 ZnCoordinationScorer::~ZnCoordinationScorer() = default;
 
-ZnCoordinationScorer::ZnCoordinationScorer( ZnCoordinationScorer const & src ) : utility::pointer::ReferenceCount(),
+ZnCoordinationScorer::ZnCoordinationScorer( ZnCoordinationScorer const & src ) : utility::VirtualBase(),
 	znx_ideal_coords_( src.znx_ideal_coords_ ),
 	ramp_to_zero_poly_( src.ramp_to_zero_poly_ ),
 	well_depth_( src.well_depth_ ),
@@ -321,32 +321,32 @@ ZnCoordinationScorer::ZnCoordinationScorer( ZnCoordinationScorer const & src ) :
 /// @brief set an individual atom ID to use for determining the refrence frame for the asymmetric unit
 /// There are three atoms total which are used to define the reference frame.  By default, these are
 /// initialized to atoms 1,2,&3 on reisude 1.  All asymm ids
-void ZnCoordinationScorer::set_asymm_atid( Size which_atid, core::id::AtomID atid )
+void ZnCoordinationScorer::set_asymm_atid( core::Size which_atid, core::id::AtomID atid )
 {
 	asymm_atids_[ which_atid ] = atid;
 }
 
 /// @brief set an individual atom ID to use for determining the reference frame for the symmetric clone.
-void ZnCoordinationScorer::set_symm_atid( Size which_atid, core::id::AtomID atid )
+void ZnCoordinationScorer::set_symm_atid( core::Size which_atid, core::id::AtomID atid )
 {
 	focused_clone_atids_[ which_atid ] = atid;
 }
 
 /// @brief set the residue on the asymmetric unit and use atoms 1,2,&3 on that residue to define the reference
 /// frame.
-void ZnCoordinationScorer::set_asymm_resid( Size resid )
+void ZnCoordinationScorer::set_asymm_resid( core::Size resid )
 {
-	for ( Size ii = 1; ii <= 3; ++ii ) asymm_atids_[ii] = core::id::AtomID( ii, resid );
+	for ( core::Size ii = 1; ii <= 3; ++ii ) asymm_atids_[ii] = core::id::AtomID( ii, resid );
 }
 
 /// @brief set the residue on the symmetric clone and use atoms 1,2,&3 on that residue to define the reference
 /// frame.
-void ZnCoordinationScorer::set_symm_resid( Size resid )
+void ZnCoordinationScorer::set_symm_resid( core::Size resid )
 {
-	for ( Size ii = 1; ii <= 3; ++ii ) focused_clone_atids_[ii] = core::id::AtomID( ii, resid );
+	for ( core::Size ii = 1; ii <= 3; ++ii ) focused_clone_atids_[ii] = core::id::AtomID( ii, resid );
 }
 
-void ZnCoordinationScorer::set_third_resid( Size resid ) {
+void ZnCoordinationScorer::set_third_resid( core::Size resid ) {
 	core::id::AtomID new_third_resid( 1, resid );
 	third_resid_ = new_third_resid;
 }
@@ -424,8 +424,8 @@ void ZnCoordinationScorer::add_match_from_file(
 	}
 
 
-	Size nhistadines( 0 );
-	for ( Size ii = 1; ii <= 2; ++ii ) {
+	core::Size nhistadines( 0 );
+	for ( core::Size ii = 1; ii <= 2; ++ii ) {
 		if ( match_pose.residue(ii).aa() == core::chemical::aa_his ) ++nhistadines;
 	}
 
@@ -448,7 +448,7 @@ void ZnCoordinationScorer::add_match_from_file(
 		reporter.ligand_resno( 3 );
 		reporter.find_constraints_to_ligand( match_pose );
 
-		Size const num_geom_csts = 2;
+		core::Size const num_geom_csts = 2;
 		utility::vector1< std::pair< core::id::AtomID, core::Real > > closest_atoms( num_geom_csts, std::make_pair( core::id::AtomID(), -1 ));
 
 		core::id::AtomID zn_atom_id( match_pose.residue(3).atom_index( "ZN" ), 3);
@@ -497,7 +497,7 @@ void ZnCoordinationScorer::add_match_from_file(
 
 		// also save the coordinates of the idealized virtual atoms
 		znres = match_pose.residue(3).clone();
-		for ( Size ii = 2; ii <= 5; ++ii ) {
+		for ( core::Size ii = 2; ii <= 5; ++ii ) {
 			znres->set_xyz( ii, actual_frame * znx_ideal_coords_[ ii ] );
 		}
 	} else {
@@ -507,7 +507,7 @@ void ZnCoordinationScorer::add_match_from_file(
 		// toward the zinc so that the magnitude of the distance between the
 		// virtual atoms and the zinc matches the desired length.
 		core::conformation::ResidueOP tmp_coords = match_pose.residue(3).clone();
-		for ( Size ii = 2; ii <= tmp_coords->natoms(); ++ii ) {
+		for ( core::Size ii = 2; ii <= tmp_coords->natoms(); ++ii ) {
 			core::Vector zn2vrt = tmp_coords->xyz(ii) - tmp_coords->xyz(1);
 			core::Vector zn2vrt_scaled = zn2vrt.normalize() *  orbital_dist_;
 			tmp_coords->set_xyz( ii, tmp_coords->xyz(1) + zn2vrt_scaled );
@@ -552,7 +552,7 @@ void ZnCoordinationScorer::finalize_after_all_matches_added()
 {
 	hash_ = utility::pointer::make_shared< ZnHash >();
 	hash_->set_uniform_bin_width( reach_ );
-	for ( Size ii = 1; ii <= zn_matches_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= zn_matches_.size(); ++ii ) {
 		hash_->add_zn_coordinate( zn_matches_[ ii ].zn_and_orbitals() );
 	}
 	hash_->build_hash();
@@ -689,7 +689,7 @@ ZnCoordinationScorer::score_and_index_for_best_match(
 	HTReal to_hash_frame_transform = chAframe.inverse() * chBframe;
 	HTReal clash_frame_transform   = reference_frame_ * chAframe.inverse() * chBframe *  inv_reference_frame_;
 
-	utility::fixedsizearray1< Size, 3 > threes(3);
+	utility::fixedsizearray1< core::Size, 3 > threes(3);
 	utility::FixedSizeLexicographicalIterator< 3 > lex( threes );
 	utility::fixedsizearray1< Real, 3 > step_sizes(0);
 	step_sizes[1] = -reach_;
@@ -706,7 +706,7 @@ ZnCoordinationScorer::score_and_index_for_best_match(
 			hash_iter = hash_->hash_begin(), hash_iter_end = hash_->hash_end();
 			hash_iter != hash_iter_end; ++hash_iter ) {
 		utility::vector1< ZnCoord > const & zncoords( hash_iter->second );
-		for ( Size ii = 1, iiend = zncoords.size(); ii <= iiend; ++ii ) {
+		for ( core::Size ii = 1, iiend = zncoords.size(); ii <= iiend; ++ii ) {
 			ZnCoord const & iicoord = zncoords[ ii ];
 			core::Vector ii_zn_local_coord = to_hash_frame_transform * iicoord[1];
 			if ( ! bb_ext.contains( ii_zn_local_coord ) ) continue;
@@ -721,12 +721,12 @@ ZnCoordinationScorer::score_and_index_for_best_match(
 			ZnMatchData const & ii_match_data = zn_matches_[ iicoord.index() ];
 			for ( lex.begin(); ! lex.at_end(); ++lex ) {
 				core::Vector query_coord;
-				for ( Size jj = 1; jj <= 3; ++jj ) query_coord(jj) = ii_zn_local_coord(jj)+step_sizes[lex[jj]];
+				for ( core::Size jj = 1; jj <= 3; ++jj ) query_coord(jj) = ii_zn_local_coord(jj)+step_sizes[lex[jj]];
 				if ( ! bb.contains( query_coord ) ) continue;
 				auto query_hits = hash_->query_hash( query_coord );
 				if ( query_hits == hash_iter_end ) continue;
 				utility::vector1< ZnCoord > const & query_hit_coords( query_hits->second );
-				for ( Size jj = 1, jjend = query_hit_coords.size(); jj <= jjend; ++jj ) {
+				for ( core::Size jj = 1, jjend = query_hit_coords.size(); jj <= jjend; ++jj ) {
 					ZnMatchData const & jj_match_data = zn_matches_[ query_hit_coords[ jj ].index() ];
 					if ( ii_match_data.res1() == jj_match_data.res1() ||
 							ii_match_data.res1() == jj_match_data.res2() ||
@@ -763,8 +763,8 @@ ZnCoordinationScorer::score_and_index_for_best_match(
 
 core::Real
 ZnCoordinationScorer::clash_score(
-	Size m1,
-	Size m2,
+	core::Size m1,
+	core::Size m2,
 	HTReal const & to_hash_frame_transform,
 	utility::vector1< core::Vector > & symmclone_coords_res1,
 	utility::vector1< core::Vector > & symmclone_coords_res2
@@ -782,20 +782,20 @@ ZnCoordinationScorer::clash_score(
 	debug_assert( symmclone_coords_res2.size() >= r2m2.natoms() );
 
 
-	/*for ( Size ii = 1; ii <= r1m1.natoms(); ++ii ) {
+	/*for ( core::Size ii = 1; ii <= r1m1.natoms(); ++ii ) {
 	std::cout << " r1m1 atom " << ii
 	<< " " << r1m1.xyz(ii).x()
 	<< " " << r1m1.xyz(ii).y()
 	<< " " << r1m1.xyz(ii).z() << std::endl;
 	}
-	for ( Size ii = 1; ii <= r2m1.natoms(); ++ii ) {
+	for ( core::Size ii = 1; ii <= r2m1.natoms(); ++ii ) {
 	std::cout << " r2m1 atom " << ii
 	<< " " << r1m1.xyz(ii).x()
 	<< " " << r1m1.xyz(ii).y()
 	<< " " << r1m1.xyz(ii).z() << std::endl;
 	}*/
 
-	for ( Size ii = 1; ii <= r1m2.natoms(); ++ii ) {
+	for ( core::Size ii = 1; ii <= r1m2.natoms(); ++ii ) {
 		symmclone_coords_res1[ ii ] = to_hash_frame_transform*r1m2.xyz(ii);
 		//std::cout << " r1m2 atom " << ii
 		// << " " << symmclone_coords_res1[ ii ].x()
@@ -803,7 +803,7 @@ ZnCoordinationScorer::clash_score(
 		// << " " << symmclone_coords_res1[ ii ].z() << std::endl;
 
 	}
-	for ( Size ii = 1; ii <= r2m2.natoms(); ++ii ) {
+	for ( core::Size ii = 1; ii <= r2m2.natoms(); ++ii ) {
 		symmclone_coords_res2[ ii ] = to_hash_frame_transform*r2m2.xyz(ii);
 		//std::cout << " r2m2 atom " << ii
 		// << " " << symmclone_coords_res2[ ii ].x()
@@ -830,8 +830,8 @@ ZnCoordinationScorer::clash_score_residue_pair(
 	Real const hvd2 = 2.8*2.8;
 	Real const hvhd2 = 2.4*2.4;
 	Real const hd2 = 2.0*2.0;
-	for ( Size ii = 1, iiend = r1.nheavyatoms(), jjend = r2.nheavyatoms(); ii <= iiend; ++ii ) {
-		for ( Size jj = 1; jj <= jjend; ++jj ) {
+	for ( core::Size ii = 1, iiend = r1.nheavyatoms(), jjend = r2.nheavyatoms(); ii <= iiend; ++ii ) {
+		for ( core::Size jj = 1; jj <= jjend; ++jj ) {
 			//Real d2 = r1.xyz(ii).distance_squared( r2coords[ jj ] );
 			//if ( d2 < 100 ) {
 			// std::cout << " d2 : " << ii << " " << jj << " " << d2 << std::endl;
@@ -843,8 +843,8 @@ ZnCoordinationScorer::clash_score_residue_pair(
 		}
 	}
 	// hydrogen / heavyatom collision
-	for ( Size ii = 1, iiend = r1.nheavyatoms(), jjstart = r2.nheavyatoms()+1, jjend = r2.natoms(); ii <= iiend; ++ii ) {
-		for ( Size jj = jjstart; jj <= jjend; ++jj ) {
+	for ( core::Size ii = 1, iiend = r1.nheavyatoms(), jjstart = r2.nheavyatoms()+1, jjend = r2.natoms(); ii <= iiend; ++ii ) {
+		for ( core::Size jj = jjstart; jj <= jjend; ++jj ) {
 			Real d2_minus_hvhd2 = r1.xyz(ii).distance_squared( r2coords[ jj ] ) - hvhd2;
 			if ( d2_minus_hvhd2 < 0 ) {
 				score += std::sqrt( -1 * d2_minus_hvhd2); // linear distance penalty
@@ -853,8 +853,8 @@ ZnCoordinationScorer::clash_score_residue_pair(
 	}
 
 	// hydrogen / heavyatom collision
-	for ( Size ii = r1.nheavyatoms()+1, iiend = r1.natoms(), jjstart = 1, jjend = r2.nheavyatoms(); ii <= iiend; ++ii ) {
-		for ( Size jj = jjstart; jj <= jjend; ++jj ) {
+	for ( core::Size ii = r1.nheavyatoms()+1, iiend = r1.natoms(), jjstart = 1, jjend = r2.nheavyatoms(); ii <= iiend; ++ii ) {
+		for ( core::Size jj = jjstart; jj <= jjend; ++jj ) {
 			Real d2_minus_hvhd2 = r1.xyz(ii).distance_squared( r2coords[ jj ] ) - hvhd2;
 			if ( d2_minus_hvhd2 < 0 ) {
 				score += std::sqrt( -1 * d2_minus_hvhd2); // linear distance penalty
@@ -862,8 +862,8 @@ ZnCoordinationScorer::clash_score_residue_pair(
 		}
 	}
 
-	for ( Size ii = r1.nheavyatoms()+1, iiend = r1.natoms(), jjstart = r2.nheavyatoms()+1, jjend = r2.natoms(); ii <= iiend; ++ii ) {
-		for ( Size jj = jjstart; jj <= jjend; ++jj ) {
+	for ( core::Size ii = r1.nheavyatoms()+1, iiend = r1.natoms(), jjstart = r2.nheavyatoms()+1, jjend = r2.natoms(); ii <= iiend; ++ii ) {
+		for ( core::Size jj = jjstart; jj <= jjend; ++jj ) {
 			Real d2_minus_hd2 = r1.xyz(ii).distance_squared( r2coords[ jj ] ) - hd2;
 			if ( d2_minus_hd2 < 0 ) {
 				score += std::sqrt( -1 * d2_minus_hd2); // linear distance penalty
@@ -876,19 +876,19 @@ ZnCoordinationScorer::clash_score_residue_pair(
 void
 ZnCoordinationScorer::insert_match_onto_pose(
 	core::pose::Pose & p, // <-- should be a symmetric pose if this match is to be applied to all clones
-	Size match_index,
-	Size chain_insertion_id // 1 for the asymm unit, 2 for the symm clone.
+	core::Size match_index,
+	core::Size chain_insertion_id // 1 for the asymm unit, 2 for the symm clone.
 ) const
 {
 	ZnMatchData const & match = zn_matches_[ match_index ];
 
-	utility::fixedsizearray1< Size, 2 > destresids;
+	utility::fixedsizearray1< core::Size, 2 > destresids;
 	destresids[1] = chain_insertion_id == 1 ? match.res1() : match.res1() + r2() - r1();
 	destresids[2] = chain_insertion_id == 1 ? match.res2() : match.res2() + r2() - r1();
 
 	core::chemical::ResidueTypeSetCOP restypeset( p.residue_type_set_for_pose( p.residue_type(r1()).mode() ) );
 
-	for ( Size ii = 1; ii <= 2; ++ii ) {
+	for ( core::Size ii = 1; ii <= 2; ++ii ) {
 		core::conformation::Residue const & matchres = ii == 1 ? match.res1conf() : match.res2conf();
 		core::conformation::Residue const & dstres = p.residue( destresids[ ii ] );
 		debug_assert( restypeset->mode() == dstres.type().mode() );
@@ -898,7 +898,7 @@ ZnCoordinationScorer::insert_match_onto_pose(
 		core::chemical::ResidueTypeCOP newrestype( matchres.type_ptr() );
 		utility::vector1< std::string > const & matchres_variants =
 			matchres.type().properties().get_list_of_variants();
-		for ( Size jj = 1; jj <= matchres_variants.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= matchres_variants.size(); ++jj ) {
 			if ( ! dstres.type().has_variant_type( matchres_variants[ jj ]  ) ) {
 				core::chemical::ResidueTypeCOP variantfree_newrestype;
 				// TODO: Refactor this to avoid working with strings.
@@ -918,7 +918,7 @@ ZnCoordinationScorer::insert_match_onto_pose(
 		}
 		utility::vector1< std::string > const & dstres_variants =
 			dstres.type().properties().get_list_of_variants();
-		for ( Size jj = 1; jj <= dstres_variants.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= dstres_variants.size(); ++jj ) {
 			if ( ! newrestype->has_variant_type( dstres_variants[ jj ]  ) ) {
 				core::chemical::ResidueTypeCOP variantful_newrestype;
 				// TODO: Refactor this to avoid working with strings.
@@ -941,11 +941,11 @@ ZnCoordinationScorer::insert_match_onto_pose(
 		if ( ! variants_match( *newrestype, dstres.type() ) ) {
 			std::cerr << "ERROR: could not get newrestype and dstres to agree on variant types.\n";
 			std::cerr << "Dstres (" << dstres.name() << ") variants:\n";
-			for ( Size jj = 1; jj <= dstres_variants.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= dstres_variants.size(); ++jj ) {
 				std::cerr << "  " << dstres_variants[ jj ] << "\n";
 			}
 			std::cerr << "Newrestype variants:\n" << std::endl;
-			for ( Size jj = 1; jj <= newrestype->properties().get_list_of_variants().size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= newrestype->properties().get_list_of_variants().size(); ++jj ) {
 				std::cerr << "  " << newrestype->properties().get_list_of_variants()[ jj ] << "\n";
 			}
 
@@ -962,16 +962,16 @@ ZnCoordinationScorer::insert_match_onto_pose(
 		HTReal matchframe( matchres.xyz(1), matchres.xyz(2), matchres.xyz(3));
 		HTReal transform = dstframe * matchframe.inverse();
 
-		utility::vector1< Size > newcoords_calculated( newres->natoms(), 0 );
-		for ( Size jj = 1; jj <= matchres.natoms(); ++jj ) {
+		utility::vector1< core::Size > newcoords_calculated( newres->natoms(), 0 );
+		for ( core::Size jj = 1; jj <= matchres.natoms(); ++jj ) {
 			if ( newres->has( matchres.atom_name( jj ) ) ) {
-				Size newres_atind = newres->atom_index( matchres.atom_name( jj ) );
+				core::Size newres_atind = newres->atom_index( matchres.atom_name( jj ) );
 				newcoords_calculated[ newres_atind ] = 1;
 				newres->set_xyz( newres_atind, transform * matchres.xyz(jj) );
 			}
 		}
 		// make sure we got everything -- probably shouldn't be an assert, but an actual if
-		for ( Size jj = 1; jj <= newcoords_calculated.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= newcoords_calculated.size(); ++jj ) {
 			debug_assert( newres->atom_is_backbone(jj) || newcoords_calculated[ jj ] == 1 );
 		}
 
@@ -1010,7 +1010,7 @@ ZnCoordinationScorer::query_frame_to_original_frame( core::pose::Pose const & p 
 
 ZnCoord
 ZnCoordinationScorer::original_frame_coordinate_for_match(
-	Size index,
+	core::Size index,
 	core::pose::Pose const & p
 ) const
 {
@@ -1092,7 +1092,7 @@ ZnCoordinationConstraint::natoms() const {
 
 /// @brief Returns the AtomID referred to by index.
 core::id::AtomID const &
-ZnCoordinationConstraint::atom( Size const index ) const
+ZnCoordinationConstraint::atom( core::Size const index ) const
 {
 	debug_assert( index <= natoms() );
 	if ( index <= 3 ) {
@@ -1194,9 +1194,9 @@ CEREAL_REGISTER_TYPE( devel::znhash::ZnHash )
 template< class Archive >
 void
 devel::znhash::ZnMatchData::save( Archive & arc ) const {
-	arc( CEREAL_NVP( index_ ) ); // Size
-	arc( CEREAL_NVP( res1_ ) ); // Size
-	arc( CEREAL_NVP( res2_ ) ); // Size
+	arc( CEREAL_NVP( index_ ) ); // core::Size
+	arc( CEREAL_NVP( res1_ ) ); // core::Size
+	arc( CEREAL_NVP( res2_ ) ); // core::Size
 	arc( CEREAL_NVP( zn_and_orbitals_ ) ); // class devel::znhash::ZnCoord
 	arc( CEREAL_NVP( match_pdb_file_ ) ); // std::string
 	arc( CEREAL_NVP( match_cst_file_ ) ); // std::string
@@ -1209,9 +1209,9 @@ devel::znhash::ZnMatchData::save( Archive & arc ) const {
 template< class Archive >
 void
 devel::znhash::ZnMatchData::load( Archive & arc ) {
-	arc( index_ ); // Size
-	arc( res1_ ); // Size
-	arc( res2_ ); // Size
+	arc( index_ ); // core::Size
+	arc( res1_ ); // core::Size
+	arc( res2_ ); // core::Size
 	arc( zn_and_orbitals_ ); // class devel::znhash::ZnCoord
 	arc( match_pdb_file_ ); // std::string
 	arc( match_cst_file_ ); // std::string
@@ -1242,15 +1242,15 @@ devel::znhash::ZnCoordinationScorer::save( Archive & arc ) const {
 	arc( CEREAL_NVP( inv_reference_frame_ ) ); // HTReal
 	arc( CEREAL_NVP( idealize_input_virtual_atoms_ ) ); // _Bool
 	arc( CEREAL_NVP( zn_matches_ ) ); // utility::vector1<ZnMatchData>
-	arc( CEREAL_NVP( max_natoms_ ) ); // Size
+	arc( CEREAL_NVP( max_natoms_ ) ); // core::Size
 	arc( CEREAL_NVP( clash_weight_ ) ); // Real
 	arc( CEREAL_NVP( require_3H_ ) ); // _Bool
 	arc( CEREAL_NVP( znreach_ ) ); // Real
 	arc( CEREAL_NVP( orbital_dist_ ) ); // Real
 	arc( CEREAL_NVP( orbital_reach_ ) ); // Real
 	arc( CEREAL_NVP( znwelldepth_ ) ); // Real
-	arc( CEREAL_NVP( asymm_chain_ ) ); // Size
-	arc( CEREAL_NVP( focsed_clone_chain_ ) ); // Size
+	arc( CEREAL_NVP( asymm_chain_ ) ); // core::Size
+	arc( CEREAL_NVP( focsed_clone_chain_ ) ); // core::Size
 	arc( CEREAL_NVP( asymm_atids_ ) ); // utility::fixedsizearray1<core::id::AtomID, 3>
 	arc( CEREAL_NVP( focused_clone_atids_ ) ); // utility::fixedsizearray1<core::id::AtomID, 3>
 	arc( CEREAL_NVP( third_resid_ ) ); // core::id::AtomID
@@ -1271,15 +1271,15 @@ devel::znhash::ZnCoordinationScorer::load( Archive & arc ) {
 	arc( inv_reference_frame_ ); // HTReal
 	arc( idealize_input_virtual_atoms_ ); // _Bool
 	arc( zn_matches_ ); // utility::vector1<ZnMatchData>
-	arc( max_natoms_ ); // Size
+	arc( max_natoms_ ); // core::Size
 	arc( clash_weight_ ); // Real
 	arc( require_3H_ ); // _Bool
 	arc( znreach_ ); // Real
 	arc( orbital_dist_ ); // Real
 	arc( orbital_reach_ ); // Real
 	arc( znwelldepth_ ); // Real
-	arc( asymm_chain_ ); // Size
-	arc( focsed_clone_chain_ ); // Size
+	arc( asymm_chain_ ); // core::Size
+	arc( focsed_clone_chain_ ); // core::Size
 	arc( asymm_atids_ ); // utility::fixedsizearray1<core::id::AtomID, 3>
 	arc( focused_clone_atids_ ); // utility::fixedsizearray1<core::id::AtomID, 3>
 	arc( third_resid_ ); // core::id::AtomID

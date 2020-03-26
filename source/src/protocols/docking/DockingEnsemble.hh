@@ -35,7 +35,7 @@
 #include <string>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -48,10 +48,10 @@ namespace docking {
 /// in a multi-model PDB file as an ensemble, and does swaps conformers by superpositioning
 /// over interface residues, and selects a conformer based on a partition function using
 /// a ScoreFunction.
-class DockingEnsemble : public utility::pointer::ReferenceCount {
+class DockingEnsemble : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~DockingEnsemble() override;
 
 	//default constructor
@@ -66,9 +66,9 @@ public:
 
 	//constructor with arguments
 	DockingEnsemble(
-		Size start_res,
-		Size end_res,
-		Size jump_id,
+		core::Size start_res,
+		core::Size end_res,
+		core::Size jump_id,
 		std::string const & ensemble_file_path,
 		std::string const & partner,
 		core::scoring::ScoreFunctionCOP scorefxn_low,
@@ -116,7 +116,7 @@ public:
 private:
 	void load_ensemble();
 
-	Size start_res_, end_res_, conf_size_, jump_id_, ensemble_size_, conf_num_;
+	core::Size start_res_, end_res_, conf_size_, jump_id_, ensemble_size_, conf_num_;
 	std::string ensemble_file_path_;
 	std::string partner_; // which partner is this a conformer for?
 	core::scoring::ScoreFunctionCOP scorefxn_low_, scorefxn_high_;

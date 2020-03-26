@@ -30,7 +30,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <unordered_map>
 #include <map>
@@ -44,7 +44,7 @@ namespace protocols {
 namespace jd3 {
 
 /// @brief A simple class for tracking job progress within JD3.
-class JobTracker : public utility::pointer::ReferenceCount {
+class JobTracker : public utility::VirtualBase {
 
 public:
 
@@ -135,7 +135,7 @@ private:
 
 	// The index of the last larval job that we have created. Incremented within
 	// expand_job_list().
-	Size current_global_job_index_ = 0;
+	core::Size current_global_job_index_ = 0;
 
 #ifdef    SERIALIZATION
 public:

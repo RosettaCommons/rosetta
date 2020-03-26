@@ -47,8 +47,8 @@ public:
 		utility::tag::TagCOP tag1 = utility::tag::Tag::create( "<LoopsFile name=\"blah\" prohibit_single_residue_loops=\"true\"/>\n" );
 		utility::tag::TagCOP tag2 = utility::tag::Tag::create( "<LoopsFile name=\"blah\" prohibit_single_residue_loops=\"false\"/>\n" );
 
-		utility::pointer::ReferenceCountCOP resource1 = loader.create_resource( rm, tag1, "unit_test", lstream1 );
-		utility::pointer::ReferenceCountCOP resource2 = loader.create_resource( rm, tag2, "unit_test", lstream2 );
+		utility::VirtualBaseCOP resource1 = loader.create_resource( rm, tag1, "unit_test", lstream1 );
+		utility::VirtualBaseCOP resource2 = loader.create_resource( rm, tag2, "unit_test", lstream2 );
 		TS_ASSERT( resource1 ); // make sure a resource was returned
 		TS_ASSERT( resource2 ); // make sure a resource was returned
 

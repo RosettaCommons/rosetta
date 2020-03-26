@@ -30,7 +30,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 // #include "utility/sys_util.h"
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
@@ -239,14 +239,14 @@ core::Size Pool_RMSD::evaluate( FArray2D_double& coords, std::string& best_decoy
 	//n_atoms is simply # CA atoms in each "pose"
 	Real invn( 1.0 / pool_.n_atoms() );
 	best_rmsd = 1000000;
-	Size best_index( 0 );
-	for ( Size i = index; i <= pool_.n_decoys(); i++ ) {
+	core::Size best_index( 0 );
+	for ( core::Size i = index; i <= pool_.n_decoys(); i++ ) {
 		toolbox::Matrix R;
 		ObjexxFCL::FArray2P_double xx2( pool_.coords( i ) );
 		toolbox::fit_centered_coords( pool_.n_atoms(), weights, xx2, coords, R );
 		Real rmsd( 0 );
-		for ( Size n = 1; n <= pool_.n_atoms(); n++ ) {
-			for ( Size d = 1; d<=3; ++d ) {
+		for ( core::Size n = 1; n <= pool_.n_atoms(); n++ ) {
+			for ( core::Size d = 1; d<=3; ++d ) {
 				rmsd += ( coords( d, n ) -  xx2( d, n ) ) * ( coords( d, n ) - xx2( d, n ) ) * invn;
 			}
 		}

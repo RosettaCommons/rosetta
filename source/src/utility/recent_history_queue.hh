@@ -23,7 +23,7 @@
 #include <utility/vector1.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace utility {
 
@@ -61,7 +61,7 @@ inline bool operator== (history_queue_struct const &a, history_queue_struct cons
 /// "recent_history_queue_" data member -- an array.  If an element is in the
 /// queue with index X, and then it is pushed to the front of the history queue,
 /// its index will still be X.
-class recent_history_queue : public utility::pointer::ReferenceCount {
+class recent_history_queue : public utility::VirtualBase {
 public:
 	recent_history_queue();
 	recent_history_queue( int num_elements, int history_size );

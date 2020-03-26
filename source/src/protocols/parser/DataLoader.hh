@@ -22,7 +22,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -31,7 +31,7 @@ namespace protocols {
 namespace parser {
 
 /// @brief A class for loading arbitrary data into the XML parser's basic::datacache::DataMap.
-class DataLoader : public utility::pointer::ReferenceCount
+class DataLoader : public utility::VirtualBase
 {
 public:
 	DataLoader();

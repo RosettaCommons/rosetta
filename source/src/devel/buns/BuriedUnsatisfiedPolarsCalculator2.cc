@@ -180,13 +180,13 @@ BuriedUnsatisfiedPolarsCalculator2::lookup(
 
 	if ( key == "all_bur_unsat_polars" ) {
 		basic::check_cast( valptr, &all_bur_unsat_polars_,
-			"all_bur_unsat_polars expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( all_bur_unsat_polars_ );
+			"all_bur_unsat_polars expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( all_bur_unsat_polars_ );
 
 	} else if ( key == "special_region_bur_unsat_polars" ) {
 		basic::check_cast( valptr, &special_region_bur_unsat_polars_,
-			"special_region_bur_unsat_polars expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( special_region_bur_unsat_polars_ );
+			"special_region_bur_unsat_polars expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( special_region_bur_unsat_polars_ );
 
 	} else if ( key == "atom_bur_unsat" ) {
 		basic::check_cast( valptr, &atom_bur_unsat_,
@@ -195,8 +195,8 @@ BuriedUnsatisfiedPolarsCalculator2::lookup(
 
 	} else if ( key == "residue_bur_unsat_polars" ) {
 		basic::check_cast( valptr, &residue_bur_unsat_polars_,
-			"residue_bur_unsat_polars expects to return a utility::vector1< Size >" );
-		(static_cast<basic::MetricValue<utility::vector1< Size > > *>(valptr))->set( residue_bur_unsat_polars_ );
+			"residue_bur_unsat_polars expects to return a utility::vector1< core::Size >" );
+		(static_cast<basic::MetricValue<utility::vector1< core::Size > > *>(valptr))->set( residue_bur_unsat_polars_ );
 
 	} else {
 		basic::Error() << "BuriedUnsatisfiedPolarsCalculator2 cannot compute the requested metric " << key << std::endl;
@@ -272,24 +272,24 @@ BuriedUnsatisfiedPolarsCalculator2::recompute( Pose const & pose )
 	//
 	//    id::AtomID_Map<Real> atom_sasa = vsasa_calc.calculate(pose);
 	//
-	//    Size nres = pose.size();
+	//    core::Size nres = pose.size();
 	//
 	//    scoring::hbonds::HBondSet hbond_set;
 	//
 	//    const scoring::hbonds::HBondDatabaseCOP hb_database = scoring::hbonds::HBondDatabase::get_database();
 	//    const scoring::TenANeighborGraph& tenA_neighbor_graph(pose.energies().tenA_neighbor_graph());
 	//
-	//    for (Size lowerResNum = 1; lowerResNum <= nres; ++lowerResNum ) {
+	//    for (core::Size lowerResNum = 1; lowerResNum <= nres; ++lowerResNum ) {
 	//        const conformation::Residue& lowerRes(pose.residue(lowerResNum));
-	//        const Size nbl = tenA_neighbor_graph.get_node(lowerResNum)->
+	//        const core::Size nbl = tenA_neighbor_graph.get_node(lowerResNum)->
 	//            num_neighbors_counting_self_static();
 	//        for (conformation::PointGraph::UpperEdgeListConstIter
 	//                ue  = pg->get_vertex(lowerResNum).const_upper_edge_list_begin(),
 	//                ue_end = pg->get_vertex(lowerResNum).const_upper_edge_list_end();
 	//                ue != ue_end; ++ue ) {
-	//            Size upperResNum = ue->upper_vertex();
+	//            core::Size upperResNum = ue->upper_vertex();
 	//            const conformation::Residue& upperRes(pose.residue(upperResNum));
-	//            const Size nbu = tenA_neighbor_graph.get_node(upperResNum)->
+	//            const core::Size nbu = tenA_neighbor_graph.get_node(upperResNum)->
 	//                num_neighbors_counting_self_static();
 	//            scoring::hbonds::identify_hbonds_1way_AHdist(*hb_database,
 	//                lowerRes, upperRes, nbl, nbu, AHdist_threshold, hbond_set);
@@ -298,12 +298,12 @@ BuriedUnsatisfiedPolarsCalculator2::recompute( Pose const & pose )
 	//        }
 	//    }
 	//
-	//    Size buns = 0;
+	//    core::Size buns = 0;
 	//    const pose::PDBInfo& pdb_info = *(pose.pdb_info());
-	//    for (Size resNum = 1; resNum <= nres; ++resNum) {
+	//    for (core::Size resNum = 1; resNum <= nres; ++resNum) {
 	//        const conformation::Residue& res = pose.residue(resNum);
 	//        const chemical::ResidueType& res_type = res.type();
-	//        for (Size atomNum = 1, natom = pose.residue(resNum).natoms(); atomNum <= natom; ++atomNum){
+	//        for (core::Size atomNum = 1, natom = pose.residue(resNum).natoms(); atomNum <= natom; ++atomNum){
 	//            if (!res.heavyatom_is_an_acceptor(atomNum) && !res.atom_is_polar_hydrogen(atomNum)) continue;
 	//            if (pdb_info.temperature(resNum, atomNum) > 30) continue;
 	//            if (pdb_info.occupancy(resNum, atomNum) < 1) continue;
@@ -353,11 +353,11 @@ BuriedUnsatisfiedPolarsCalculator2::bunsats_thorough_check(
 	id::AtomID_Map< bool > & bunsat_thorough_atomid_map
 )
 {
-	for ( Size res = 1; res <= bunsat_thorough_atomid_map.size(); ++res ) {
+	for ( core::Size res = 1; res <= bunsat_thorough_atomid_map.size(); ++res ) {
 
 		residue_bur_unsat_polars_[res] = 0;
 
-		for ( Size atm = 1; atm <= bunsat_thorough_atomid_map.n_atom(res); ++atm ) {
+		for ( core::Size atm = 1; atm <= bunsat_thorough_atomid_map.n_atom(res); ++atm ) {
 
 			//std::string res_debug = pose.pdb_info()->pose2pdb(res);
 			//std::string atm_debug = pose.residue(res).atom_name(static_cast< int >(atm));
@@ -392,17 +392,17 @@ BuriedUnsatisfiedPolarsCalculator2::single_bunsat_thorough_check(
 	id::AtomID const & bunsat_candidate_atom_id
 )
 {
-	Size const bunsat_resi = bunsat_candidate_atom_id.rsd();
+	core::Size const bunsat_resi = bunsat_candidate_atom_id.rsd();
 
 	TR << "Calculating neighbors for resi " << bunsat_resi << std::endl;
 
 	NeighborsByDistanceCalculator nbr_calc(bunsat_resi);
-	basic::MetricValue< std::set< Size > > neighbors;
+	basic::MetricValue< std::set< core::Size > > neighbors;
 	nbr_calc.get("neighbors", neighbors, pose);
 	//pose.metric(nbr_calc_name, "neighbors", neighbors);
 
 	Residue const & bunsat_rsd(pose.residue(bunsat_resi));
-	Size const bunsat_atom_num = bunsat_candidate_atom_id.atomno();
+	core::Size const bunsat_atom_num = bunsat_candidate_atom_id.atomno();
 
 	Vector bunsat_xyz = bunsat_rsd.atom(bunsat_atom_num).xyz();
 
@@ -412,7 +412,7 @@ BuriedUnsatisfiedPolarsCalculator2::single_bunsat_thorough_check(
 	bool bunsat_is_acceptor(bunsat_rsd.atom_type(
 		static_cast< int >(bunsat_atom_num)).is_acceptor());
 
-	Size num_hbonds = 0;
+	core::Size num_hbonds = 0;
 
 	if ( bunsat_is_donor ) {
 		for ( core::Size test_resi : neighbors.value() ) {
@@ -428,10 +428,10 @@ BuriedUnsatisfiedPolarsCalculator2::single_bunsat_thorough_check(
 		}
 	}
 
-	Size satisfac_cut = satisfaction_cutoff( bunsat_rsd.type().atom_type( bunsat_atom_num ).name() );
-	Size bonded_heavyatoms = bunsat_rsd.n_bonded_neighbor_all_res( bunsat_atom_num ) - bunsat_rsd.type().number_bonded_hydrogens( bunsat_atom_num );
+	core::Size satisfac_cut = satisfaction_cutoff( bunsat_rsd.type().atom_type( bunsat_atom_num ).name() );
+	core::Size bonded_heavyatoms = bunsat_rsd.n_bonded_neighbor_all_res( bunsat_atom_num ) - bunsat_rsd.type().number_bonded_hydrogens( bunsat_atom_num );
 	//all_bur_unsat_hbonds_ += (satisfac_cut - ( bonded_heavyatoms + num_hbonds));
-	Size nbonds = bonded_heavyatoms + num_hbonds;
+	core::Size nbonds = bonded_heavyatoms + num_hbonds;
 	TR << "Residue " << bunsat_resi << ", atom " << bunsat_atom_num << " has " << nbonds << " bonded heavy atoms." << std::endl;
 	if ( nbonds < satisfac_cut ) {
 		TR << "nbonds less than satisfac_cut of" << satisfac_cut << std::endl;
@@ -456,12 +456,12 @@ BuriedUnsatisfiedPolarsCalculator2::bunsat_donor_nbr_residue_check(
 	id::AtomID const & bunsat_candidate_atom_id,
 	Residue const & bunsat_rsd,
 	Vector const & bunsat_xyz,
-	Size const test_resi,
-	Size & num_hbonds
+	core::Size const test_resi,
+	core::Size & num_hbonds
 )
 {
-	Size const bunsat_resi = bunsat_candidate_atom_id.rsd();
-	Size const bunsat_atom_num = bunsat_candidate_atom_id.atomno();
+	core::Size const bunsat_resi = bunsat_candidate_atom_id.rsd();
+	core::Size const bunsat_atom_num = bunsat_candidate_atom_id.atomno();
 	std::string const bunsat_atom_name =
 		bunsat_rsd.atom_name(static_cast< int >(bunsat_atom_num));
 
@@ -470,7 +470,7 @@ BuriedUnsatisfiedPolarsCalculator2::bunsat_donor_nbr_residue_check(
 	AtomIndices const & test_accpt_pos = test_rsd.accpt_pos();
 	for ( auto test_atom_it = test_accpt_pos.begin();
 			test_atom_it < test_accpt_pos.end(); ++test_atom_it ) {
-		Size const test_atom_num = *test_atom_it;
+		core::Size const test_atom_num = *test_atom_it;
 
 		// exclude neighboring backbone-backbone
 		std::string const test_atom_name(
@@ -514,12 +514,12 @@ BuriedUnsatisfiedPolarsCalculator2::bunsat_acc_nbr_residue_check(
 	id::AtomID const & bunsat_candidate_atom_id,
 	Residue const & bunsat_rsd,
 	Vector const & bunsat_xyz,
-	Size const & test_resi,
-	Size & num_hbonds
+	core::Size const & test_resi,
+	core::Size & num_hbonds
 )
 {
-	Size const bunsat_resi = bunsat_candidate_atom_id.rsd();
-	Size const bunsat_atom_num = bunsat_candidate_atom_id.atomno();
+	core::Size const bunsat_resi = bunsat_candidate_atom_id.rsd();
+	core::Size const bunsat_atom_num = bunsat_candidate_atom_id.atomno();
 	std::string const bunsat_atom_name =
 		bunsat_rsd.atom_name(static_cast< int >(bunsat_atom_num));
 
@@ -528,7 +528,7 @@ BuriedUnsatisfiedPolarsCalculator2::bunsat_acc_nbr_residue_check(
 	AtomIndices const & test_hpos_polar = test_rsd.Hpos_polar();
 	for ( auto test_atom_it = test_hpos_polar.begin();
 			test_atom_it < test_hpos_polar.end(); ++test_atom_it ) {
-		Size const test_atom_num = *test_atom_it;
+		core::Size const test_atom_num = *test_atom_it;
 		// exclude neighboring backbone-backbone
 		std::string const test_atom_name(
 			test_rsd.atom_name(static_cast< int >(test_atom_num)));
@@ -584,9 +584,9 @@ are adjacent backbone atoms, otherwise false
 */
 bool
 BuriedUnsatisfiedPolarsCalculator2::adjacent_bbbb_check(
-	Size const & bunsat_resi,
+	core::Size const & bunsat_resi,
 	std::string const & bunsat_atom_name,
-	Size const & test_resi,
+	core::Size const & test_resi,
 	std::string const & test_atom_name
 ) const
 {
@@ -603,11 +603,11 @@ are both SC atoms in the same residue, otherwise false
 bool
 BuriedUnsatisfiedPolarsCalculator2::self_scsc(
 	Residue const & bunsat_rsd,
-	Size const & bunsat_resi,
-	Size const & bunsat_atom_num,
+	core::Size const & bunsat_resi,
+	core::Size const & bunsat_atom_num,
 	Residue const & test_rsd,
-	Size const & test_resi,
-	Size const & test_atom_num
+	core::Size const & test_resi,
+	core::Size const & test_atom_num
 ) const
 {
 	bool same_res = bunsat_resi == test_resi;
@@ -623,7 +623,7 @@ is a sulphur atom
 bool
 BuriedUnsatisfiedPolarsCalculator2::sulphur_bond_check(
 	Residue const & test_rsd,
-	Size const & test_atom_num,
+	core::Size const & test_atom_num,
 	Vector const & bunsat_xyz,
 	Vector const & test_xyz
 ) const
@@ -643,12 +643,12 @@ bool
 BuriedUnsatisfiedPolarsCalculator2::don_geom_check(
 	core::pose::Pose const &,
 	Residue const & bunsat_rsd,
-	Size const & bunsat_atom_num,
+	core::Size const & bunsat_atom_num,
 	Vector const & bunsat_xyz,
 	Vector const & test_xyz
 ) const
 {
-	for ( Size bunsat_H_atom_num = bunsat_rsd.attached_H_begin(static_cast< int >(bunsat_atom_num));
+	for ( core::Size bunsat_H_atom_num = bunsat_rsd.attached_H_begin(static_cast< int >(bunsat_atom_num));
 			bunsat_H_atom_num <= bunsat_rsd.attached_H_end(static_cast< int >(bunsat_atom_num));
 			++bunsat_H_atom_num ) {
 		//TR << "checking site attached H for donor geom" << std::endl;
@@ -683,7 +683,7 @@ BuriedUnsatisfiedPolarsCalculator2::acc_geom_check(
 	core::pose::Pose const &,
 	Vector const & bunsat_xyz,
 	Residue const & test_rsd,
-	Size const & test_atom_num,
+	core::Size const & test_atom_num,
 	Vector const & test_xyz
 ) const
 {
@@ -755,12 +755,12 @@ template< class Archive >
 void
 devel::buns::BuriedUnsatisfiedPolarsCalculator2::save( Archive & arc ) const {
 	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
-	arc( CEREAL_NVP( all_bur_unsat_polars_ ) ); // Size
-	arc( CEREAL_NVP( special_region_bur_unsat_polars_ ) ); // Size
+	arc( CEREAL_NVP( all_bur_unsat_polars_ ) ); // core::Size
+	arc( CEREAL_NVP( special_region_bur_unsat_polars_ ) ); // core::Size
 	arc( CEREAL_NVP( atom_bur_unsat_ ) ); // core::id::AtomID_Map<_Bool>
-	arc( CEREAL_NVP( residue_bur_unsat_polars_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( residue_bur_unsat_polars_ ) ); // utility::vector1<core::Size>
 	arc( CEREAL_NVP( name_of_weak_bunsat_calc_ ) ); // std::string
-	arc( CEREAL_NVP( special_region_ ) ); // std::set<Size>
+	arc( CEREAL_NVP( special_region_ ) ); // std::set<core::Size>
 	arc( CEREAL_NVP( layered_sasa_ ) ); // _Bool
 	arc( CEREAL_NVP( generous_hbonds_ ) ); // _Bool
 	arc( CEREAL_NVP( sasa_burial_cutoff_ ) ); // core::Real
@@ -776,12 +776,12 @@ template< class Archive >
 void
 devel::buns::BuriedUnsatisfiedPolarsCalculator2::load( Archive & arc ) {
 	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
-	arc( all_bur_unsat_polars_ ); // Size
-	arc( special_region_bur_unsat_polars_ ); // Size
+	arc( all_bur_unsat_polars_ ); // core::Size
+	arc( special_region_bur_unsat_polars_ ); // core::Size
 	arc( atom_bur_unsat_ ); // core::id::AtomID_Map<_Bool>
-	arc( residue_bur_unsat_polars_ ); // utility::vector1<Size>
+	arc( residue_bur_unsat_polars_ ); // utility::vector1<core::Size>
 	arc( name_of_weak_bunsat_calc_ ); // std::string
-	arc( special_region_ ); // std::set<Size>
+	arc( special_region_ ); // std::set<core::Size>
 	arc( layered_sasa_ ); // _Bool
 	arc( generous_hbonds_ ); // _Bool
 	arc( sasa_burial_cutoff_ ); // core::Real

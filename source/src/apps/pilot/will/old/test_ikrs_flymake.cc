@@ -104,7 +104,7 @@ vector1<Vec> vv2vecs(vector1<Reals> const & vv) {
 	return r;
 }
 
-struct Hit : utility::pointer::ReferenceCount {
+struct Hit : utility::VirtualBase {
 	Hit(core::conformation::Residue const & r1, core::conformation::Residue const & r2) : rsd1(r1),rsd2(r2) {}
 	core::conformation::Residue const rsd1,rsd2;
 	Vec cen,axs,ori;

@@ -255,11 +255,11 @@ BackrubDDMover::apply( Pose & pose )
 	}
 
 	if ( pose.conformation().num_chains() == 2 ) {
-		Size const rb_jump( 1 );
+		core::Size const rb_jump( 1 );
 
 		FArray1D_bool partner1( pose.size() );
 		pose.fold_tree().partition_by_jump( rb_jump, partner1 ); // partner1 is true for all residues in partner1; false o/w
-		Size const begin2( pose.conformation().chain_begin( 2 ) ); // the starting residue of partner2
+		core::Size const begin2( pose.conformation().chain_begin( 2 ) ); // the starting residue of partner2
 
 		protocols::scoring::Interface interface( rb_jump );
 		interface.distance( interface_distance_cutoff_ );
@@ -267,7 +267,7 @@ BackrubDDMover::apply( Pose & pose )
 		// list of residues to backrub
 		if ( resnums.empty() ) {
 			bool first( true ); bool last( false ); // mark all interface residues + 1 spanning residue on each side for backrub
-			for ( Size i = 1; i <= pose.size(); i++ ) {
+			for ( core::Size i = 1; i <= pose.size(); i++ ) {
 				if ( !pose.residue( i ).is_protein() ) continue;
 				if ( (( partner1( i ) && backrub_partner1_ ) || ( !partner1(i) && backrub_partner2_ )) &&
 						interface.is_interface( i ) && (!( i==begin2-1 || i==begin2) || (backrub_partner1_ && backrub_partner2_)) ) {
@@ -348,7 +348,7 @@ BackrubDDMover::apply( Pose & pose )
 
 	TR << "Running " << backrub_moves_ << " trials..." << std::endl;
 
-	for ( Size i = 1; i <= backrub_moves_; ++i ) {
+	for ( core::Size i = 1; i <= backrub_moves_; ++i ) {
 		std::string move_type;
 
 		// could use random mover for this...

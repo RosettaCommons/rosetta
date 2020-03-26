@@ -971,7 +971,7 @@ template< class Archive >
 void
 protocols::denovo_design::components::ResidueDihedrals::save( Archive & arc ) const
 {
-	//arc( cereal::base_class< utility::pointer::ReferenceCount >( this ) );
+	//arc( cereal::base_class< utility::VirtualBase >( this ) );
 	arc( CEREAL_NVP( lower_phi_ ) );
 	arc( CEREAL_NVP( psi_ ) );
 	arc( CEREAL_NVP( omega_ ) );
@@ -985,7 +985,7 @@ template< class Archive >
 void
 protocols::denovo_design::components::ResidueDihedrals::load( Archive & arc )
 {
-	//arc( cereal::base_class< utility::pointer::ReferenceCount >( this ) );
+	//arc( cereal::base_class< utility::VirtualBase >( this ) );
 	arc( lower_phi_ );
 	arc( psi_ );
 	arc( omega_ );

@@ -20,14 +20,14 @@ namespace cycles {
 
 using namespace core;
 
-/// A random offset will be chosen by picking a uniform integer between 0 and 
-/// the length of the given pose.  The pose should have been previously passed 
-/// through the SetupMover, otherwise this method may trigger some assertion 
+/// A random offset will be chosen by picking a uniform integer between 0 and
+/// the length of the given pose.  The pose should have been previously passed
+/// through the SetupMover, otherwise this method may trigger some assertion
 /// failures.
 
 void RandomReindexingMover::apply(pose::Pose &pose) {
-	Size cycle_length = pose.size() - 1;
-	Size offset = numeric::random::random_range(0, cycle_length);
+	core::Size cycle_length = pose.size() - 1;
+	core::Size offset = numeric::random::random_range(0, cycle_length);
 	ReindexingMover reindexer(offset);
 	reindexer.apply(pose);
 }

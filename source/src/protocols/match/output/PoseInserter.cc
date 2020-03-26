@@ -35,7 +35,7 @@ PoseInserter::PoseInserter( Pose & pose_to_modify ) :
 	resid_to_replace_( 0 )
 {}
 
-PoseInserter::PoseInserter( Pose & pose_to_modify, Size resid_to_replace ) :
+PoseInserter::PoseInserter( Pose & pose_to_modify, core::Size resid_to_replace ) :
 	pose_( pose_to_modify ),
 	resid_to_replace_( resid_to_replace )
 {}
@@ -57,7 +57,7 @@ PoseInserter::process_hit(
 }
 
 void
-PoseInserter::set_replacement_resid( Size seqpos )
+PoseInserter::set_replacement_resid( core::Size seqpos )
 {
 	resid_to_replace_ = seqpos;
 }

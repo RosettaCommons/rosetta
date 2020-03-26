@@ -91,7 +91,7 @@ public:
 	void
 	set_moving_lattice( bool val ) { moving_lattice_ = val; }
 
-	Size
+	core::Size
 	place_near_origin (
 		core::pose::Pose & pose
 	);
@@ -100,8 +100,8 @@ public:
 	add_monomers_to_layer(
 		core::pose::Pose const & monomer_pose,
 		core::pose::Pose & pose,
-		utility::vector1<Size> const & monomer_anchors,
-		utility::vector1<Size> & monomer_jumps,
+		utility::vector1<core::Size> const & monomer_anchors,
+		utility::vector1<core::Size> & monomer_jumps,
 		core::Size rootres
 	);
 
@@ -109,16 +109,16 @@ public:
 	detect_connecting_subunits(
 		core::pose::Pose const & monomer_pose,
 		core::pose::Pose const & pose,
-		utility::vector1<Size> & monomer_anchors,
+		utility::vector1<core::Size> & monomer_anchors,
 		core::Size &basesubunit
 	);
 
 	void
 	build_layer_of_virtuals(
 		core::pose::Pose & pose,
-		utility::vector1<Size> &Ajumps,
-		utility::vector1<Size> &Bjumps,
-		utility::vector1<Size> &subunit_anchors,
+		utility::vector1<core::Size> &Ajumps,
+		utility::vector1<core::Size> &Bjumps,
+		utility::vector1<core::Size> &subunit_anchors,
 		core::Size &basesubunit
 	);
 
@@ -129,9 +129,9 @@ public:
 		core::Size const num_virtuals,
 		core::Size const base_monomer,
 		core::Size const nres_monomer,
-		utility::vector1<Size> const &Ajumps,
-		utility::vector1<Size> const &Bjumps,
-		utility::vector1<Size> const &monomer_jumps,
+		utility::vector1<core::Size> const &Ajumps,
+		utility::vector1<core::Size> const &Bjumps,
+		utility::vector1<core::Size> const &monomer_jumps,
 		core::conformation::symmetry::SymmetryInfo & symminfo
 	);
 

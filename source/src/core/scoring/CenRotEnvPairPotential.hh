@@ -29,13 +29,13 @@
 #include <numeric/constants.hh>
 #include <numeric/types.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 namespace core {
 namespace scoring {
 
-class CenRotEnvPairPotential : public utility::pointer::ReferenceCount {
+class CenRotEnvPairPotential : public utility::VirtualBase {
 public:
 	CenRotEnvPairPotential();
 

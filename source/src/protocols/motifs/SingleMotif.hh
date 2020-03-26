@@ -52,12 +52,12 @@ public:
 	// This constructor gets the jump for you - PDB numbering + chain id
 	SingleMotif(
 		core::pose::Pose const & pose,
-		Size const pdb_residue_position_1,
+		core::Size const pdb_residue_position_1,
 		char const pdb_chain_id1,
 		std::string const & res1_atom1,
 		std::string const & res1_atom2,
 		std::string const & res1_atom3,
-		Size const pdb_residue_position_2,
+		core::Size const pdb_residue_position_2,
 		char const pdb_chain_id2,
 		std::string const & res2_atom1,
 		std::string const & res2_atom2,
@@ -79,11 +79,11 @@ public:
 	// This constructor gets the jump for you - Rosetta numbering
 	SingleMotif(
 		core::pose::Pose const & pose,
-		Size const pdb_residue_position_1,
+		core::Size const pdb_residue_position_1,
 		std::string const & res1_atom1,
 		std::string const & res1_atom2,
 		std::string const & res1_atom3,
-		Size const pdb_residue_position_2,
+		core::Size const pdb_residue_position_2,
 		std::string const & res2_atom1,
 		std::string const & res2_atom2,
 		std::string const & res2_atom3

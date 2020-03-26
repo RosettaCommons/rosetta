@@ -62,7 +62,7 @@ using namespace core;
 using namespace scoring;
 using namespace constraints;
 
-ConstraintEvaluator::ConstraintEvaluator( std::string const & tag, ConstraintSet const& cst, Size /*viol_level*/, Real /*threshold*/,  Size max_seq_sep )
+ConstraintEvaluator::ConstraintEvaluator( std::string const & tag, ConstraintSet const& cst, core::Size /*viol_level*/, Real /*threshold*/,  core::Size max_seq_sep )
 : name_( tag ),
 	constraints_( utility::pointer::make_shared< ConstraintSet >( cst ) ),
 	tried_fullatom_pose_( false ),
@@ -75,7 +75,7 @@ ConstraintEvaluator::ConstraintEvaluator( std::string const & tag, ConstraintSet
 	cst_source_( "n/a" )
 {}
 
-ConstraintEvaluator::ConstraintEvaluator( std::string const & tag, ConstraintCOPs const & csts, Size /*viol_level*/, Real /*threshold*/, Size max_seq_sep )
+ConstraintEvaluator::ConstraintEvaluator( std::string const & tag, ConstraintCOPs const & csts, core::Size /*viol_level*/, Real /*threshold*/, core::Size max_seq_sep )
 : name_( tag ),
 	constraints_( utility::pointer::make_shared< ConstraintSet >() ),
 	tried_fullatom_pose_( false ),
@@ -90,7 +90,7 @@ ConstraintEvaluator::ConstraintEvaluator( std::string const & tag, ConstraintCOP
 	constraints_->add_constraints( csts );
 }
 
-ConstraintEvaluator::ConstraintEvaluator( std::string const & tag, std::string const & file_name, Size /*viol_level*/, Real /*threshold*/, Size max_seq_sep )
+ConstraintEvaluator::ConstraintEvaluator( std::string const & tag, std::string const & file_name, core::Size /*viol_level*/, Real /*threshold*/, core::Size max_seq_sep )
 : name_( tag ),
 	constraints_( /* NULL */ ),
 	tried_fullatom_pose_( false ),

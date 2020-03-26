@@ -33,7 +33,7 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 
@@ -72,14 +72,14 @@ void ConnectChainsMover::parse_input(vector1<std::string> & individual_chains,ve
 	boost::replace_all(output_chains_,"[","");
 	boost::replace_all(output_chains_,"]","");
 	utility::vector1< std::string > output_strings( utility::string_split( output_chains_ , '|' ) );
-	for ( Size ii=1; ii<=output_strings.size(); ii++ ) {
+	for ( core::Size ii=1; ii<=output_strings.size(); ii++ ) {
 		utility::vector1< std::string > chains_in_pose(utility::string_split( output_strings[ii] , ',' ) );
 		chains_in_poses.push_back(chains_in_pose);
-		for ( Size jj=1; jj<=chains_in_pose.size(); ++jj ) {
+		for ( core::Size jj=1; jj<=chains_in_pose.size(); ++jj ) {
 			tmp_chains_set.insert(chains_in_pose[jj]);
 			//get individual chains
 			utility::vector1< std::string > single_residue_chains(utility::string_split( chains_in_pose[jj] , '+' ) );
-			for ( Size kk=1; kk<=single_residue_chains.size(); ++kk ) {
+			for ( core::Size kk=1; kk<=single_residue_chains.size(); ++kk ) {
 				tmp_chains_set.insert(single_residue_chains[kk]);
 			}
 		}
@@ -95,10 +95,10 @@ void ConnectChainsMover::parse_input(vector1<std::string> & individual_chains,ve
 
 map<std::string, Chain> ConnectChainsMover::generate_connected_chains(core::pose::Pose const pose,vector1<std::string> individual_chains){
 	map<std::string, Chain> connected_chains;
-	for ( Size ii=1; ii<=individual_chains.size(); ++ii ) {
-		Size chain_length = boost::count(individual_chains[ii],'+');
+	for ( core::Size ii=1; ii<=individual_chains.size(); ++ii ) {
+		core::Size chain_length = boost::count(individual_chains[ii],'+');
 		if ( chain_length ==0 ) {
-			Size chain_id =  get_chain_id_from_chain(individual_chains[ii],pose);
+			core::Size chain_id =  get_chain_id_from_chain(individual_chains[ii],pose);
 			core::pose::PoseOP chain = pose.split_by_chain(chain_id);
 			struct Chain chain_tmp(chain,0);
 			connected_chains.insert(std::pair<std::string, Chain>(individual_chains[ii],chain_tmp));
@@ -110,8 +110,8 @@ map<std::string, Chain> ConnectChainsMover::generate_connected_chains(core::pose
 }
 
 void ConnectChainsMover::assemble_missing_chain(map<std::string, Chain> & connected_chains,std::string chain_assembled,std::string chain_remainder){
-	Size chain_remainder_length = boost::count(chain_remainder,'+');
-	Size chain_assembled_length = boost::count(chain_assembled,'+');
+	core::Size chain_remainder_length = boost::count(chain_remainder,'+');
+	core::Size chain_assembled_length = boost::count(chain_assembled,'+');
 	if ( chain_remainder.size()!=0 ) {
 		chain_remainder_length++;
 	}
@@ -140,10 +140,10 @@ void ConnectChainsMover::assemble_missing_chain(map<std::string, Chain> & connec
 			append_pose_to_pose(*chainA_plus,*chainB,true);
 			renumber_pdbinfo_based_on_conf_chains(*chainA_plus,true,false,false,false);
 			utility::vector1< char > pdb_chains;
-			for ( Size ii=1; ii<=chainA->total_residue(); ++ii ) {
+			for ( core::Size ii=1; ii<=chainA->total_residue(); ++ii ) {
 				pdb_chains.push_back('A');
 			}
-			for ( Size ii=1; ii<=chainB->total_residue(); ++ii ) {
+			for ( core::Size ii=1; ii<=chainB->total_residue(); ++ii ) {
 				pdb_chains.push_back('B');
 			}
 			chainA_plus->pdb_info()->set_chains(pdb_chains);
@@ -168,7 +168,7 @@ void ConnectChainsMover::assemble_missing_chain(map<std::string, Chain> & connec
 		}
 		std::string next_remainder = "";
 		if ( chain_remainder_length>1 ) {
-			for ( Size ii=2; ii<chain_remainder_length; ii++ ) {
+			for ( core::Size ii=2; ii<chain_remainder_length; ii++ ) {
 				next_remainder+=chain_remainder_split[ii] + "+";
 			}
 			next_remainder+=chain_remainder_split[chain_remainder_length];
@@ -179,12 +179,12 @@ void ConnectChainsMover::assemble_missing_chain(map<std::string, Chain> & connec
 
 void ConnectChainsMover::generate_best_final_pose(core::pose::Pose & pose,vector1< vector1 <std::string> > chains_in_poses,map<std::string, Chain> connected_chains){
 	Real low_rmsd = 9999999;
-	Size low_rmsd_pose_index = 0;
+	core::Size low_rmsd_pose_index = 0;
 	std::string low_rmsd_chain_string = "";
-	for ( Size ii=1; ii<=chains_in_poses.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=chains_in_poses.size(); ++ii ) {
 		Real tmp_pose_rmsd = 0;
 		std::string tmp_chain_string = "";
-		for ( Size jj=1; jj<=chains_in_poses[ii].size(); ++jj ) {
+		for ( core::Size jj=1; jj<=chains_in_poses[ii].size(); ++jj ) {
 			Real tmp_chain_rmsd = connected_chains.at(chains_in_poses[ii][jj]).rmsd;
 			tmp_chain_string += chains_in_poses[ii][jj] + ",";
 			if ( tmp_pose_rmsd<tmp_chain_rmsd ) {
@@ -202,7 +202,7 @@ void ConnectChainsMover::generate_best_final_pose(core::pose::Pose & pose,vector
 	} else {
 		TR << "low rmsd to nine residue region in VALL: " << low_rmsd << " description of output chain:" << low_rmsd_chain_string << std::endl;
 		core::pose::PoseOP return_pose = connected_chains.at(chains_in_poses[low_rmsd_pose_index][1]).poseOP->clone();
-		for ( Size jj=2; jj<=chains_in_poses[low_rmsd_pose_index].size(); ++jj ) {
+		for ( core::Size jj=2; jj<=chains_in_poses[low_rmsd_pose_index].size(); ++jj ) {
 			core::pose::PoseOP append_pose = connected_chains.at(chains_in_poses[low_rmsd_pose_index][jj]).poseOP;
 			append_pose_to_pose(*return_pose,*append_pose,true);
 		}

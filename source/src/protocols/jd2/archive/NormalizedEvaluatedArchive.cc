@@ -181,7 +181,7 @@ bool NormalizedEvaluatedArchive::determine_score_variations() const {
 			if ( ndecoys >= min_decoys_for_statistics_ && activated_ ) {
 
 				std::string const& name( it.first );
-				Size ct( 1 );
+				core::Size ct( 1 );
 				core::Size half( ndecoys / 2 );
 				core::Size lowQ( half / 2 );
 				core::Size highQ( half + lowQ );

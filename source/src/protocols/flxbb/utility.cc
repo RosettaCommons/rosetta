@@ -50,7 +50,6 @@ namespace flxbb {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-using Size = core::Size;
 using Real = core::Real;
 using String = std::string;
 using Pose = core::pose::Pose;
@@ -88,7 +87,7 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 	core::scoring::func::FuncOP bb_angle_func( new BoundFunc(1.22,1.92, sqrt(1.0/42.0), "angle_bb") );
 
 	// set constraints to csts
-	Size nres( pose.size() );
+	core::Size nres( pose.size() );
 	//flo sep '12 in case we have ligands in the pose, don't count them
 	for ( core::Size i = nres; i != 0; i-- ) {
 		if ( pose.residue_type(i).is_ligand() ) nres--;
@@ -106,8 +105,8 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 	for ( utility::vector1< StrandPairingOP >::const_iterator it=spairs.begin(); it!=spairs.end(); ++it ) {
 
 		StrandPairing & spair=**it;
-		for ( Size iaa=spair.begin1(); iaa<=spair.end1(); iaa++ ) {
-			Size jaa( spair.residue_pair( iaa ) );
+		for ( core::Size iaa=spair.begin1(); iaa<=spair.end1(); iaa++ ) {
+			core::Size jaa( spair.residue_pair( iaa ) );
 			TR << iaa << ' ' << jaa << std::endl;
 			core::id::AtomID atom1( pose.residue_type( iaa ).atom_index( "CA" ), iaa );
 			core::id::AtomID atom2( pose.residue_type( jaa ).atom_index( "CA" ), jaa );
@@ -135,7 +134,7 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 				csts.push_back( utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >( resi_cb, atom1, atom2, resj_cb, cacb_dihedral_func ) );
 			}
 			// flo sep '12 over
-		} // for( Size i=1 )
+		} // for( core::Size i=1 )
 
 	} // StrandPairingOP
 
@@ -163,7 +162,7 @@ constraints_NtoC( Pose const & pose, Real const coef, Real const condist )
 	String tag( "constraint_between_N_&_C_terminal_Calpha" );
 	ScalarWeightedFuncOP cstfunc( new ScalarWeightedFunc( coef, utility::pointer::make_shared< BoundFunc >( lb, ub, sd, tag ) ) );
 
-	Size nres( pose.size() );
+	core::Size nres( pose.size() );
 	core::id::AtomID atom1( pose.residue_type( 1 ).atom_index( "CA" ), 1 );
 	core::id::AtomID atom2( pose.residue_type( nres ).atom_index( "CA" ), nres );
 	csts.push_back( utility::pointer::make_shared< AtomPairConstraint >( atom1, atom2, cstfunc ) );
@@ -199,12 +198,12 @@ constraints_sheet( Pose const & pose, Real const coef, Real const condist )
 	Dssp dssp( pose );
 
 	// set strands
-	Size nres( pose.size() );
+	core::Size nres( pose.size() );
 	bool flag( false );
-	Size istrand ( 0 );
+	core::Size istrand ( 0 );
 	Strands strands( nres );
 
-	for ( Size i=1; i<=nres; ++i ) {
+	for ( core::Size i=1; i<=nres; ++i ) {
 		char ss( dssp.get_dssp_secstruct( i ) );
 		if ( ss =='E' && flag == false ) {
 			istrand ++;
@@ -230,8 +229,8 @@ constraints_sheet( Pose const & pose, Real const coef, Real const condist )
 
 					core::conformation::Residue const & ires( pose.residue( iresid ) );
 					core::conformation::Residue const & jres( pose.residue( jresid ) );
-					Size ica = ires.atom_index( "CA" );
-					Size jca = jres.atom_index( "CA" );
+					core::Size ica = ires.atom_index( "CA" );
+					core::Size jca = jres.atom_index( "CA" );
 					Real const dsq( ires.xyz( ica ).distance_squared( jres.xyz( jca ) ));
 					if ( dsq<=condist2 ) {
 						TR << iresid << ' ' << jresid << std::endl;
@@ -252,12 +251,12 @@ constraints_sheet( Pose const & pose, Real const coef, Real const condist )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Looks for unknown amino acids in the pose and returns their indices
-utility::vector1<Size>
+utility::vector1<core::Size>
 find_ligands( Pose const & pose )
 {
-	utility::vector1<Size> retval;
+	utility::vector1<core::Size> retval;
 	// look at each amino acid to see if it is of unknown type
-	for ( Size i = 1; i <= pose.size(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		if ( ! pose.residue( i ).is_protein() ) {
 			TR << "Residue " << i << " (type=" << pose.residue(i).name3() << ") is probably a ligand" << std::endl;
 			retval.push_back( i );

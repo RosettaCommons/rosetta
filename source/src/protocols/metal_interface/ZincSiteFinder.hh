@@ -16,7 +16,7 @@
 
 #include <protocols/metal_interface/ZincSiteFinder.fwd.hh>
 #include <protocols/metal_interface/MetalSiteResidue.fwd.hh> // abbrev. msr
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -25,7 +25,7 @@
 namespace protocols {
 namespace metal_interface {
 
-class ZincSiteFinder : public utility::pointer::ReferenceCount {
+class ZincSiteFinder : public utility::VirtualBase {
 
 public:
 
@@ -36,7 +36,7 @@ public:
 
 	utility::vector1< protocols::metal_interface::MetalSiteResidueOP > find_zinc_site( core::pose::Pose const & pose );
 
-	virtual void set_expecting_n_ligands ( Size n );
+	virtual void set_expecting_n_ligands ( core::Size n );
 	virtual bool check_for_parse_error();
 
 private:

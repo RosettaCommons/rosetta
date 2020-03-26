@@ -33,7 +33,7 @@
 //#include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 //#include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <basic/prof.hh>
 //#include <basic/Tracer.hh>
@@ -56,9 +56,9 @@
 namespace protocols {
 namespace noesy_assign {
 
-class PeakCalibrator : public utility::pointer::ReferenceCount {
+class PeakCalibrator : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~PeakCalibrator() override;
 
 	typedef std::bitset< MAX_TYPE > TypeCumulator;
@@ -120,10 +120,10 @@ private:
 };
 
 
-class PeakCalibratorMap : public utility::pointer::ReferenceCount {
+class PeakCalibratorMap : public utility::VirtualBase {
 	typedef std::map < std::string, PeakCalibratorOP > CalibratorMap;
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~PeakCalibratorMap() override;
 	PeakCalibratorMap( CrossPeakList&, PeakCalibratorOP );
 	void set_new_upper_bounds();

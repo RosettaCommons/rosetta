@@ -81,8 +81,8 @@ regular_facet_containing_position(
 	for ( EdgeIterator e = begin; e != end; ++e ) {
 		if ( e->label() < 0 ) {
 
-			if ( ( static_cast< Size >( e->start() ) < pos && pos < static_cast< Size >( e->stop() ) ) ||
-					( static_cast< Size >( e->start() ) > pos && pos > static_cast< Size >( e->stop() ) ) ) {
+			if ( ( static_cast< core::Size >( e->start() ) < pos && pos < static_cast< core::Size >( e->stop() ) ) ||
+					( static_cast< core::Size >( e->start() ) > pos && pos > static_cast< core::Size >( e->stop() ) ) ) {
 				return e;
 			}
 
@@ -193,8 +193,8 @@ facet_containing_position(
 	for ( EdgeIterator e = begin; e != end; ++e ) {
 		if ( e->label() == label ) {
 
-			if ( ( static_cast< Size >( e->start() ) < pos && pos < static_cast< Size >( e->stop() ) ) ||
-					( static_cast< Size >( e->start() ) > pos && pos > static_cast< Size >( e->stop() ) ) ) {
+			if ( ( static_cast< core::Size >( e->start() ) < pos && pos < static_cast< core::Size >( e->stop() ) ) ||
+					( static_cast< core::Size >( e->start() ) > pos && pos > static_cast< core::Size >( e->stop() ) ) ) {
 				return e;
 			}
 
@@ -225,7 +225,7 @@ regular_edges_within_interval(
 			Edge tmp( *e );
 			order( tmp );
 
-			if ( !( right < static_cast< Size >( tmp.start() ) || static_cast< Size >( tmp.stop() ) < left ) ) {
+			if ( !( right < static_cast< core::Size >( tmp.start() ) || static_cast< core::Size >( tmp.stop() ) < left ) ) {
 				regular_edges.push_back( *e );
 			}
 
@@ -257,7 +257,7 @@ edges_within_interval(
 			Edge tmp( *e );
 			order( tmp );
 
-			if ( !( right < static_cast< Size >( tmp.start() ) || static_cast< Size >( tmp.stop() ) < left ) ) {
+			if ( !( right < static_cast< core::Size >( tmp.start() ) || static_cast< core::Size >( tmp.stop() ) < left ) ) {
 				collected_edges.push_back( *e );
 			}
 

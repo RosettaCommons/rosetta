@@ -28,7 +28,7 @@
 #include <utility/excn/Exceptions.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 static basic::Tracer TR( "core.conformation.membrane.Span" );
 
@@ -54,7 +54,7 @@ namespace membrane {
 /// @details Construct a default span object representing a span from 1-1
 /// this constructor should eventually be made private because it doesn't build a real thing
 Span::Span() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	start_(1),
 	end_(1),
 	orientation_( in )
@@ -63,7 +63,7 @@ Span::Span() :
 /// @brief Custom Constructor - Construct new span
 /// @details Constructor from start and end
 Span::Span( core::Size start, core::Size end, Orientation orient ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	start_( start ),
 	end_( end ),
 	orientation_( orient )
@@ -72,7 +72,7 @@ Span::Span( core::Size start, core::Size end, Orientation orient ) :
 /// @brief Copy Consturctor
 /// @details Make a deep copy of this object
 Span::Span( Span const & src ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	start_( src.start_ ),
 	end_( src.end_ ),
 	orientation_( src.orientation_ )

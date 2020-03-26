@@ -23,7 +23,7 @@
 #include <protocols/jd3/JobResult.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -35,7 +35,7 @@ namespace jd3 {
 namespace output {
 
 /// @brief The %ResultOutputter
-class ResultOutputter : public utility::pointer::ReferenceCount
+class ResultOutputter : public utility::VirtualBase
 {
 public:
 

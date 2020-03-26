@@ -61,7 +61,7 @@ public:
 	Real
 	operator()( Real const x ) const;
 
-	Size
+	core::Size
 	degree() const { return coeffs_.size() -1; }
 
 	friend
@@ -79,11 +79,11 @@ Poly::operator()( Real const x ) const
 {
 	runtime_assert( !coeffs_.empty() );
 
-	Size const degree( coeffs_.size() - 1 );
+	core::Size const degree( coeffs_.size() - 1 );
 
 	Real polyval(0.0);
 	Real x_raised( 1.0 );
-	for ( Size i=0; i<= degree; ++i ) {
+	for ( core::Size i=0; i<= degree; ++i ) {
 		polyval += coeffs_[ degree+1-i ] * x_raised;
 		x_raised *= x;
 	}
@@ -92,7 +92,7 @@ Poly::operator()( Real const x ) const
 
 std::istream & operator >>( std::istream & is, Poly & p )
 {
-	Size degree(0);
+	core::Size degree(0);
 	string tmp1,tmp2,tmp3;
 	is >> tmp1 >> tmp2 >> degree >> tmp3;
 	if ( is.fail() || tmp1 != "POLY" || tmp2 != "DEGREE" || tmp3 != "COEFFS_HI2LO" || degree > 10000 ) {
@@ -101,7 +101,7 @@ std::istream & operator >>( std::istream & is, Poly & p )
 		return is;
 	}
 	p.coeffs_.resize( degree+1 );
-	for ( Size i=1; i<=degree+1; ++i ) {
+	for ( core::Size i=1; i<=degree+1; ++i ) {
 		is >> p.coeffs_[i];
 	}
 	if ( is.fail() ) {
@@ -121,7 +121,7 @@ public:
 	friend
 	std::istream & operator >>( std::istream & is, PPoly & p );
 
-	Size
+	core::Size
 	max_degree() const;
 
 private:
@@ -134,7 +134,7 @@ private:
 Real
 PPoly::operator()( Real const x ) const
 {
-	for ( Size ii=1; ii<= xmins_.size(); ++ii ) {
+	for ( core::Size ii=1; ii<= xmins_.size(); ++ii ) {
 		if ( x >= xmins_[ii] && x <= xmaxs_[ii] ) return polys_[ii](x);
 	}
 	utility_exit_with_message("PPoly::operator() x out of range: "+ObjexxFCL::string_of(x)); // probably a nicer way to handle this...
@@ -144,8 +144,8 @@ PPoly::operator()( Real const x ) const
 Size
 PPoly::max_degree() const
 {
-	Size md(0);
-	for ( Size ii=1; ii<= polys_.size(); ++ii ) {
+	core::Size md(0);
+	for ( core::Size ii=1; ii<= polys_.size(); ++ii ) {
 		md = max( md, polys_[ii].degree() );
 	}
 	return md;
@@ -154,14 +154,14 @@ PPoly::max_degree() const
 std::istream & operator >>( std::istream & is, PPoly & pp )
 {
 	string tmp1,tmp2;
-	Size npoly;
+	core::Size npoly;
 	is >> tmp1 >> tmp2 >> npoly;
 	if ( is.fail() || tmp1 != "PPOLY" || tmp2 != "NPOLY" ) {
 		is.setstate( std::ios_base::failbit );
 		pp.polys_.clear();
 		return is;
 	}
-	for ( Size i=1; i<= npoly; ++i ) {
+	for ( core::Size i=1; i<= npoly; ++i ) {
 		Poly p;
 		Real xmin,xmax;
 		is >> tmp1 >> xmin >> tmp2 >> xmax >> p;
@@ -229,13 +229,13 @@ help_load_data(
 	//string const datafile( "scoring/sasa_scores/avge_datafile_score12prime_v1.txt" );// TO DO: make this an option
 	basic::database::open( data, datafile );
 
-	map< std::pair< AA, Size >, vector1< std::pair< Real, Real > > > all_polyvals;
+	map< std::pair< AA, core::Size >, vector1< std::pair< Real, Real > > > all_polyvals;
 
 	string line;
 	bool found_avg_sasa( false );
 	while ( getline( data,line ) ) {
 		string linetag, name1;
-		Size degree;
+		core::Size degree;
 		istringstream is(line );
 		is >> linetag;
 		if ( linetag == tag1 ) {
@@ -248,7 +248,7 @@ help_load_data(
 		} else if ( linetag == tag2 ) {
 			Real x,y;
 			is >> name1 >> degree >> x >> y;
-			std::pair< AA, Size > const p( make_pair( aa_from_oneletter_code( name1[0] ), degree ) );
+			std::pair< AA, core::Size > const p( make_pair( aa_from_oneletter_code( name1[0] ), degree ) );
 			all_polyvals[p].push_back( make_pair(x,y) );
 		} else if ( linetag == "AVG_SASA" ) {
 			Real mean;
@@ -261,16 +261,16 @@ help_load_data(
 	}
 	runtime_assert( found_avg_sasa );
 
-	for ( Size i=1; i<= 20; ++i ) {
+	for ( core::Size i=1; i<= 20; ++i ) {
 		auto const aa = AA(i);
 		PPoly const & p( polys[i] );
-		Size const degree( p.max_degree() );
+		core::Size const degree( p.max_degree() );
 		cout << function_name << ": using degree " << degree << " polynomial for " << aa <<
 			" datafile: " << datafile << endl; /// NOTE: cout
 		vector1< std::pair< Real, Real > > const polyvals( all_polyvals[ make_pair( aa, degree ) ] );
-		Size count(0);
+		core::Size count(0);
 		Real err( 0.0 );
-		for ( Size ii=1; ii<= polyvals.size(); ++ii ) {
+		for ( core::Size ii=1; ii<= polyvals.size(); ++ii ) {
 			Real const x( polyvals[ii].first ), expected_y( polyvals[ii].second ), recomputed_y( p( x ) );
 			err += ( expected_y - recomputed_y ) * ( expected_y - recomputed_y );
 			++count;
@@ -355,8 +355,8 @@ compute_avge_scores(
 
 	average_avge = average_normsasa = 0.0;
 
-	Size count(0);
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	core::Size count(0);
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		Residue const & rsd( pose.residue(i) );
 		if ( !rsd.is_protein() ) continue;
 		if ( rsd.is_lower_terminus() || rsd.is_upper_terminus() ) continue;
@@ -415,8 +415,8 @@ compute_sasapack_scores(
 
 	average_sasapack = average_normsasa = 0.0;
 
-	Size count(0);
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	core::Size count(0);
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		Residue const & rsd( pose.residue(i) );
 		if ( !rsd.is_protein() ) continue;
 		if ( rsd.is_lower_terminus() || rsd.is_upper_terminus() ) continue;

@@ -17,7 +17,7 @@
 #include <core/pose/Pose.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <string>
 #include <iostream>
@@ -25,11 +25,11 @@
 namespace protocols {
 namespace constel {
 
-class ResidueMask : public utility::pointer::ReferenceCount {
+class ResidueMask : public utility::VirtualBase {
 
 	utility::vector1<bool> mask;
 
-	public:
+public:
 	ResidueMask(core::pose::Pose& ps, std::string const& fname);
 	bool operator[](core::Size const i);
 	void print(std::ostream& os) const;

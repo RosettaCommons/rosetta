@@ -66,7 +66,7 @@
 #define INCLUDED_numeric_random_mt19937_hh
 
 #include <numeric/random/uniform.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <cstring>
 #include <iostream>
 

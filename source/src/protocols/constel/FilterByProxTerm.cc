@@ -45,7 +45,7 @@ std::map<char, bool> FilterByProxTerm::proxnc_;
 ///  proximal to one another..
 /// @param[in] number of residues forming either terminus of a chain.
 ///
-void FilterByProxTerm::init(Pose const &ps, Real max_ct_dist, Real max_tt_dist, Size nres) {
+void FilterByProxTerm::init(Pose const &ps, Real max_ct_dist, Real max_tt_dist, core::Size nres) {
 
 	nres_ = nres;
 	max_ct_dist2_ = max_ct_dist*max_ct_dist;
@@ -54,7 +54,7 @@ void FilterByProxTerm::init(Pose const &ps, Real max_ct_dist, Real max_tt_dist, 
 	nchains_ = chains_.size();
 
 	Real max_tt_dist2 = max_tt_dist*max_tt_dist;
-	for ( Size i=1; i<=nchains_; ++i ) {
+	for ( core::Size i=1; i<=nchains_; ++i ) {
 		if ( has_prox_termini(ps, chains_[i], nres_, max_tt_dist2) ) {
 			proxnc_[chains_[i].get_cid()] = true;
 		}
@@ -81,11 +81,11 @@ void FilterByProxTerm::init(Pose const &ps, Real max_ct_dist, Real max_tt_dist, 
 ///  based on the distance between the center of mass of the constellation
 ///  and the CA atom of the residue.
 ///
-bool FilterByProxTerm::is_satisfied(Pose const &ps, vector1<Size> const &cnl) {
+bool FilterByProxTerm::is_satisfied(Pose const &ps, vector1<core::Size> const &cnl) {
 
 	// identify set of chains spanned by constellation
 	std::map<char, bool> cspan;
-	for ( Size i=1; i<=cnl.size(); ++i ) {
+	for ( core::Size i=1; i<=cnl.size(); ++i ) {
 		char cid = ps.pdb_info()->chain(cnl[i]);
 		cspan[cid] = true;
 	}
@@ -98,27 +98,27 @@ bool FilterByProxTerm::is_satisfied(Pose const &ps, vector1<Size> const &cnl) {
 	for ( CI i=cspan.begin(); i!=cspan.end(); ++i ) {
 		char cid = i->first;
 		if ( proxnc_[cid] ) {
-			for ( Size j=1; j<=nchains_; ++j ) {
+			for ( core::Size j=1; j<=nchains_; ++j ) {
 				ChainTerm const &ctm = chains_[j];
 				if ( ctm.get_cid() == cid ) {
 
-					Size const NPS = ctm.get_nps();
-					Size const CPS = ctm.get_cps();
-					Size const ALL = CPS-NPS+1;
+					core::Size const NPS = ctm.get_nps();
+					core::Size const CPS = ctm.get_cps();
+					core::Size const ALL = CPS-NPS+1;
 
 					// try N-terminus
-					Size const NSTA = NPS;
-					Size const NEND = (nres_ <= ALL) ? NSTA + nres_ : CPS+1;
-					for ( Size k=NSTA; k<NEND; ++k ) {
+					core::Size const NSTA = NPS;
+					core::Size const NEND = (nres_ <= ALL) ? NSTA + nres_ : CPS+1;
+					for ( core::Size k=NSTA; k<NEND; ++k ) {
 						if ( com.distance_squared(ps.residue(k).xyz("CA")) <= max_ct_dist2_ ) {
 							return true;
 						}
 					}
 
 					// try C-terminus
-					Size const CSTA = CPS;
-					Size const CEND = (nres_ <= ALL) ? CSTA - nres_ : NPS-1;
-					for ( Size k=CSTA; k>CEND; --k ) {
+					core::Size const CSTA = CPS;
+					core::Size const CEND = (nres_ <= ALL) ? CSTA - nres_ : NPS-1;
+					for ( core::Size k=CSTA; k>CEND; --k ) {
 						if ( com.distance_squared(ps.residue(k).xyz("CA")) <= max_ct_dist2_ ) {
 							return true;
 						}
@@ -147,21 +147,21 @@ bool FilterByProxTerm::is_satisfied(Pose const &ps, vector1<Size> const &cnl) {
 ///  on one terminus is within the maximum distance of a residue on the other
 ///  terminus. Distance is computed on C-alpha atoms.
 ///
-bool has_prox_termini(Pose const &ps, ChainTerm const &chain, Size NRES,
+bool has_prox_termini(Pose const &ps, ChainTerm const &chain, core::Size NRES,
 	Real DMAX2) {
 
-	Size const NSTA = chain.get_nps();
-	Size const NEND = NSTA + NRES;
-	Size const CSTA = chain.get_cps();
-	Size const CEND = CSTA - NRES;
+	core::Size const NSTA = chain.get_nps();
+	core::Size const NEND = NSTA + NRES;
+	core::Size const CSTA = chain.get_cps();
+	core::Size const CEND = CSTA - NRES;
 
 	if ( (CSTA-NSTA) <= (2*NRES - 2) ) { // overlapping terminals
 		return true;
 	}
 
-	for ( Size j=NSTA; j<NEND; ++j ) {
+	for ( core::Size j=NSTA; j<NEND; ++j ) {
 		xyzVector<Real> const &nca = ps.residue(j).xyz("CA");
-		for ( Size k=CSTA; k>CEND; --k ) {
+		for ( core::Size k=CSTA; k>CEND; --k ) {
 			xyzVector<Real> const &cca = ps.residue(k).xyz("CA");
 			Real d2 = nca.distance_squared(cca);
 			if ( d2 <= DMAX2 ) {

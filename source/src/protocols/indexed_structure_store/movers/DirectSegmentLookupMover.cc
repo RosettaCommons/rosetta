@@ -237,8 +237,8 @@ DirectSegmentLookupMover::parse_my_tag(
 
 	max_num_results_ = tag->getOption<search::Index>( "max_num_results", 0 );
 
-	from_chain(tag->getOption<Size>("from_chain", 1));
-	to_chain(tag->getOption<Size>("to_chain", 2));
+	from_chain(tag->getOption<core::Size>("from_chain", 1));
+	to_chain(tag->getOption<core::Size>("to_chain", 2));
 
 	stored_subset_name_ = tag->getOption< std::string >( "stored_subset_name", "");
 	overwrite_stored_subset_ = tag->getOption< bool >( "overwrite_stored_subset", overwrite_stored_subset_ );

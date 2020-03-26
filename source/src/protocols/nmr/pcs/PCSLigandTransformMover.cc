@@ -235,7 +235,7 @@ PCSLigandTransformMover::apply(Pose & pose) {
 		pcs_data_ = utility::pointer::make_shared< PCSData >(pcs_data_file_, pose);
 	}
 
-	Size lig_resid = get_resnums_for_chain(pose, chain_)[1];
+	core::Size lig_resid = get_resnums_for_chain(pose, chain_)[1];
 	Residue const & lig = pose.residue(lig_resid);
 
 	// Create grid around protein and fill it with atoms
@@ -263,7 +263,7 @@ PCSLigandTransformMover::apply(Pose & pose) {
 	Matrix Rot = numeric::rotation_matrix_from_euler_angles_ZXZ(best_gs_abc);
 
 	// Update ligand residue coordinates in pose
-	for ( Size i(1); i <= lig.natoms(); ++i ) {
+	for ( core::Size i(1); i <= lig.natoms(); ++i ) {
 		Vector atom_xyz_transformed = local_rotation(Rot, lig_frame_ori, lig.xyz(i));
 		atom_xyz_transformed += vt;
 		pose.set_xyz(core::id::AtomID(i,lig_resid), atom_xyz_transformed);
@@ -276,7 +276,7 @@ PCSLigandTransformMover::apply(Pose & pose) {
 void
 PCSLigandTransformMover::reset_grid_and_bounding_box(
 	Pose const & pose,
-	Size const & ligand_resid
+	core::Size const & ligand_resid
 )
 {
 	using namespace core::pose;
@@ -289,11 +289,11 @@ PCSLigandTransformMover::reset_grid_and_bounding_box(
 	utility::vector1< AtomGridPoint > grid_points;
 	grid_points.reserve(pose.total_atoms());
 
-	for ( Size i(1); i <= pose.total_residue(); ++i ) {
+	for ( core::Size i(1); i <= pose.total_residue(); ++i ) {
 		if ( pose.residue(i).is_virtual_residue() || i == ligand_resid ) {
 			continue;
 		}
-		for ( Size j(1); j <= pose.residue(i).natoms(); ++j ) {
+		for ( core::Size j(1); j <= pose.residue(i).natoms(); ++j ) {
 			if ( !pose.residue(i).atom_is_hydrogen(j) ) {
 				AtomGridPoint pt(pose.residue(i).atom_name(j), i, pose.residue(i).xyz(j), pose.residue(i));
 				grid_points.push_back(pt);
@@ -377,8 +377,8 @@ PCSLigandTransformMover::local_rotation(
 std::map<core::Size,core::Vector>
 PCSLigandTransformMover::build_ligand_atom_xyz_table(Residue const & ligand)
 {
-	std::map<Size,Vector> table;
-	for ( Size i(1); i <= ligand.natoms(); ++i ) {
+	std::map<core::Size,Vector> table;
+	for ( core::Size i(1); i <= ligand.natoms(); ++i ) {
 		table[i] = ligand.xyz(i);
 	}
 	return table;
@@ -395,7 +395,7 @@ PCSLigandTransformMover::damped_resolution(
 
 void
 PCSLigandTransformMover::find_best_ligand_pose_with_grid_search(
-	Size const & resid,
+	core::Size const & resid,
 	Residue const & ligand,
 	Vector & position,
 	Vector & orientation
@@ -430,7 +430,7 @@ PCSLigandTransformMover::find_best_ligand_pose_with_grid_search(
 
 	// PCS data
 	utility::vector1<PCSMultiSetOP> const & pcs_multiset_vec = pcs_data_->get_pcs_multiset_vec();
-	Size n_pcs_tags = pcs_data_->get_number_tags();
+	core::Size n_pcs_tags = pcs_data_->get_number_tags();
 
 	Real best_score = std::numeric_limits< Real >::max(), current_score = std::numeric_limits< Real >::max();
 	Vector best_xyz = current_xyz, best_abc = current_abc;
@@ -454,17 +454,17 @@ PCSLigandTransformMover::find_best_ligand_pose_with_grid_search(
 				skip_data = false;
 
 				// Number of tags
-				for ( Size i(1); i <= n_pcs_tags; ++i ) {
+				for ( core::Size i(1); i <= n_pcs_tags; ++i ) {
 
 					if ( skip_data ) { // If current score is already higher than best score, we skip the next datasets
 						break;
 					}
 
-					Size n_metals = pcs_multiset_vec[i]->get_number_metal_ions();
+					core::Size n_metals = pcs_multiset_vec[i]->get_number_metal_ions();
 					utility::vector1<PCSSingleSetOP> const & pcs_singleset_vec = pcs_multiset_vec[i]->get_pcs_singleset_vec();
 
 					// Number of metals (i.e. PCS experiments) for this tag
-					for ( Size j(1); j <= n_metals; ++j ) {
+					for ( core::Size j(1); j <= n_metals; ++j ) {
 
 						Vector tensor_angles( pcs_singleset_vec[j]->get_tensor_const()->get_alpha(),
 							pcs_singleset_vec[j]->get_tensor_const()->get_beta(),
@@ -528,7 +528,7 @@ PCSLigandTransformMover::find_best_ligand_pose_with_grid_search(
 void
 PCSLigandTransformMover::move_ligand_close_to_surface(
 	Pose & pose,
-	Size const & ligand_resid
+	core::Size const & ligand_resid
 )
 {
 	using namespace core::pose;
@@ -539,7 +539,7 @@ PCSLigandTransformMover::move_ligand_close_to_surface(
 	runtime_assert_msg(ligand_resid <= chain_X_resid.size(), "Ligand residue ID outside of pose.total_residue()");
 	chain_X_resid[ligand_resid] = true;
 
-	Size jump_id = jump_which_partitions(pose.fold_tree(), chain_X_resid);
+	core::Size jump_id = jump_which_partitions(pose.fold_tree(), chain_X_resid);
 	if ( jump_id == 0 ) {
 		TR.Warning << "No jump ID for ligand residue found while trying to move ligand closer to protein surface. Trying to reset fold tree." << std::endl;
 		FoldTree new_fold_tree(get_foldtree_which_partitions(pose.fold_tree(), chain_X_resid));
@@ -687,11 +687,11 @@ PCSLigandTransformMover::optimize_ligand_pose_with_nls(
 	numeric::nls::lm_status_struct status;
 	Real bestnorm = std::numeric_limits< Real >::infinity();
 	int no_pcs = static_cast<int>(pcs_data_->get_total_number_pcs());
-	Size no_repeats(10);
-	std::map<Size,Vector> atom_xyz_table = build_ligand_atom_xyz_table(ligand);
+	core::Size no_repeats(10);
+	std::map<core::Size,Vector> atom_xyz_table = build_ligand_atom_xyz_table(ligand);
 	LMMinPCSDataRef mindata(pcs_data_.get(), &atom_xyz_table, &position, trans_step_);
 
-	for ( Size i(1); i <= no_repeats; ++i ) {
+	for ( core::Size i(1); i <= no_repeats; ++i ) {
 		numeric::nls::lmmin( 6, &fit_params[1], no_pcs, (const void*) &mindata, pcs_lmmin, &status, numeric::nls::lm_printout_std);
 		if ( status.fnorm < bestnorm ) {
 			bestnorm=status.fnorm;

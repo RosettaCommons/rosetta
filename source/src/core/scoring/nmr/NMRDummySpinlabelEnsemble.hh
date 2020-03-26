@@ -36,7 +36,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 // Numeric headers
@@ -67,7 +67,7 @@ typedef core::conformation::ResidueCOP ResidueCOP;
 /// @brief Class that stores information about one dummy spinlabel conformer (e.g. atom names and xyz
 ///        coordinates, and whether it clashes with neighboring amino acid residues or not). A vector of
 ///        NMRDummySpinlabelConformer objects is member of class NMRDummySpinlabelEnsemble.
-class NMRDummySpinlabelConformer : public utility::pointer::ReferenceCount {
+class NMRDummySpinlabelConformer : public utility::VirtualBase {
 
 private: //Methods
 
@@ -178,7 +178,7 @@ private: // Data
 ///        and data to score those based on atom clashes with the neighborhood of the ensemble.
 ///        To speed up the clash score calculation, this class holds also an object of type
 ///        NMRDummySpinlabelVoxelGrid which gets filled with constant pointers to NMRDummySpinlabelAtoms.
-class NMRDummySpinlabelEnsemble : public utility::pointer::ReferenceCount {
+class NMRDummySpinlabelEnsemble : public utility::VirtualBase {
 
 public: // typedefs
 

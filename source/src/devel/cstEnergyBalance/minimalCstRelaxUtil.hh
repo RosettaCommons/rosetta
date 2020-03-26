@@ -39,7 +39,7 @@ numeric::xyzVector< core::Real > get_centerOfMass(const core::pose::Pose& pose )
 core::scoring::constraints::ConstraintSetOP convert_caAtomsToConstrain_to_coordCsts(std::set< core::Size > caAtomsToConstrain,const core::pose::Pose& pose);
 
 /// @brief Generates a list of residues to constrain based on the center of the 3 residues clossest to the center of mass of contiguous regions
-std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviationThresh, Pose& relaxed_pose, const Pose& unmodified_pose);
+std::set<core::Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviationThresh, Pose& relaxed_pose, const Pose& unmodified_pose);
 
 /// @brief Generates a list of core residues to constrain. The residues chosen are the number of residues to constrain closest to the center of mass
 std::set<core::Size> get_coreResiduesToConstrain(core::Size numbResiduesToConstrain,const core::pose::Pose& pose);
@@ -57,7 +57,7 @@ std::set<core::Size> get_residuesToConstrain(core::pose::Pose& pose);
 void output_coordCsts(const std::set< core::Size > & caAtomsToConstrain,std::ostream & out, core::pose::Pose& pose);
 
 /// @brief Outputs coordinate contraints
-void output_coordCsts(const std::set< Size > & caAtomsToConstrain,std::ostream & out, Pose& pose, const SequenceAlignment aln,string query_sequence, bool only_res_out);
+void output_coordCsts(const std::set< core::Size > & caAtomsToConstrain,std::ostream & out, Pose& pose, const SequenceAlignment aln,string query_sequence, bool only_res_out);
 
 /// @brief input coordinate constraints from file in standard coordinate constraint format. I assume everything is CA constraints
 std::set< core::Size > input_coordCsts(const std::string inputFileName);
@@ -73,7 +73,7 @@ std::map< std::string,SequenceAlignment> input_alignmentsMapped(bool mapToPdbid)
 /// were in the alingment.filt file.
 utility::vector1<SequenceAlignment> input_alignments();
 /// @brief gets the first and last residues from an alignment ignoring residues that are gapped alnIdx can be 1 or 2 depending if you want the target or template.
-void get_terminal_aln_res(const SequenceAlignment aln, const Size alnIdx, Size & firstRes, Size & lastRes);
+void get_terminal_aln_res(const SequenceAlignment aln, const core::Size alnIdx, core::Size & firstRes, core::Size & lastRes);
 } //namespace cstEnergyBalance
 }//namespace devel
 #endif //MINIMAL_CST_RELAX_UTIL

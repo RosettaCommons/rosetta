@@ -50,6 +50,7 @@ namespace pack_daemon {
 static basic::Tracer TR( "protocols.pack_daemon.DynamicAggregateFunction" );
 
 using namespace numeric::expression_parser;
+using core::Size;
 
 ///// class VectorExpression : public Expression
 
@@ -91,7 +92,7 @@ VariableVectorExpression::~VariableVectorExpression() = default;
 VariableVectorExpression::values
 VariableVectorExpression::vector_values() const {
 	values vals( vars_.size() );
-	for ( Size ii = 1; ii <= vars_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= vars_.size(); ++ii ) {
 		vals[ ii ] = (*vars_[ ii ])();
 	}
 	return vals;
@@ -114,7 +115,7 @@ utility::vector1< std::list< std::string > >
 VariableVectorExpression::active_variables_vector() const
 {
 	utility::vector1< std::list< std::string > > active_vars_vector( size() );
-	for ( Size ii = 1; ii <= vars_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= vars_.size(); ++ii ) {
 		active_vars_vector[ ii ] = vars_[ ii ]->active_variables();
 		//for ( std::list< std::string >::const_iterator
 		//  iter = active_vars_vector[ ii ].begin(), iter_end = active_vars_vector[ ii ].end();
@@ -153,10 +154,10 @@ void IterativeVectorExpression::initialize(
 	VectorExpressionCreator & expression_creator // holds a reference to my owning DynamicAggregateFunction
 )
 {
-	Size s = vector_varnames.size();
+	core::Size s = vector_varnames.size();
 	input_vector_expressions_.resize( s );
 	local_variables_.resize( s );
-	Size count = 0;
+	core::Size count = 0;
 	for ( auto const & vector_varname : vector_varnames ) {
 		++count;
 		VariableExpressionOP varex( new VariableExpression( vector_varname.first, 0.0 ) );
@@ -164,7 +165,7 @@ void IterativeVectorExpression::initialize(
 		local_variables_[ count ] = varex;
 		local_variable_map_[ vector_varname.first ] = varex;
 	}
-	for ( Size ii = 2; ii <= s; ++ii ) {
+	for ( core::Size ii = 2; ii <= s; ++ii ) {
 		if ( input_vector_expressions_[ ii ]->size() != input_vector_expressions_[ ii - 1 ]->size() ) {
 			utility_exit_with_message( "IterativeVectorExpression " + name() + " initialized with vector-expressions of uneven sizes: "
 				+ input_vector_expressions_[ ii   ]->name() + " with size of " + utility::to_string( input_vector_expressions_[ ii   ]->size()) + ", and "
@@ -186,14 +187,14 @@ void IterativeVectorExpression::initialize(
 IterativeVectorExpression::values
 IterativeVectorExpression::vector_values() const
 {
-	Size const n_vals = size();
-	Size const n_inputs = input_vector_expressions_.size();
+	core::Size const n_vals = size();
+	core::Size const n_inputs = input_vector_expressions_.size();
 
 	if ( n_vals == 0 ) { values empty; return empty; }
 
 	utility::vector1< values > vec_of_values( n_inputs );
 
-	for ( Size ii = 1; ii <= n_inputs; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_inputs; ++ii ) {
 		vec_of_values[ ii ] = input_vector_expressions_[ ii ]->vector_values();
 		if ( ii != 1 ) {
 			if ( vec_of_values[ ii ].size() != vec_of_values[ ii - 1 ].size() ) {
@@ -204,8 +205,8 @@ IterativeVectorExpression::vector_values() const
 		}
 	}
 	values return_vals( n_vals, 0.0 );
-	for ( Size ii = 1; ii <= n_vals; ++ii ) {
-		for ( Size jj = 1; jj <= n_inputs; ++jj ) {
+	for ( core::Size ii = 1; ii <= n_vals; ++ii ) {
+		for ( core::Size jj = 1; jj <= n_inputs; ++jj ) {
 			local_variables_[ jj ]->set_value( vec_of_values[ jj ][ ii ] );
 		}
 		return_vals[ ii ] = (*expression_)();
@@ -248,9 +249,9 @@ IterativeVectorExpression::active_variables_vector() const
 {
 	core::Size const mysize = size();
 	utility::vector1< std::list< std::string > > active_varibles_vector( mysize );
-	for ( Size ii = 1; ii <= input_vector_expressions_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= input_vector_expressions_.size(); ++ii ) {
 		utility::vector1< std::list< std::string > > ii_active_varibles_vector = input_vector_expressions_[ ii ]->active_variables_vector();
-		for ( Size jj = 1; jj <= mysize; ++jj ) {
+		for ( core::Size jj = 1; jj <= mysize; ++jj ) {
 			active_varibles_vector[ jj ].splice( active_varibles_vector[ jj ].end(), ii_active_varibles_vector[ jj ] );
 		}
 	}
@@ -316,7 +317,7 @@ VMax::active_variables() const
 {
 	utility::vector1< std::list< std::string > > act_vars_vect = vec_ex()->active_variables_vector();
 	VectorExpression::values vals = vec_ex()->vector_values();
-	Size index = utility::arg_max( vals );
+	core::Size index = utility::arg_max( vals );
 	return act_vars_vect[ index ];
 }
 
@@ -345,7 +346,7 @@ VMin::active_variables() const
 {
 	utility::vector1< std::list< std::string > > act_vars_vect = vec_ex()->active_variables_vector();
 	VectorExpression::values vals = vec_ex()->vector_values();
-	Size index = utility::arg_min( vals );
+	core::Size index = utility::arg_min( vals );
 	//for ( std::list< std::string >::const_iterator iter = act_vars_vect[ index ].begin(),
 	//    iter_end = act_vars_vect[ index ].end(); iter != iter_end; ++iter ) {
 	// TR << "DEBUG Vmin active variables for index " << index << " " << *iter << std::endl;
@@ -365,7 +366,7 @@ VMaxBy::operator() () const
 	VectorExpression::values vals2 = vec_ex2()->vector_values();
 	debug_assert( vals2.size() == vals1.size() );
 
-	Size index = utility::arg_max( vals1 );
+	core::Size index = utility::arg_max( vals1 );
 	return vals2[ index ];
 }
 
@@ -383,7 +384,7 @@ VMaxBy::active_variables() const
 	utility::vector1< std::list< std::string > > act_vars_vect2 = vec_ex2()->active_variables_vector();
 	debug_assert( vals1.size() == act_vars_vect2.size() );
 
-	Size index = utility::arg_max( vals1 );
+	core::Size index = utility::arg_max( vals1 );
 	return act_vars_vect2[ index ];
 
 }
@@ -399,7 +400,7 @@ VMinBy::operator() () const
 	VectorExpression::values vals2 = vec_ex2()->vector_values();
 	debug_assert( vals1.size() == vals2.size() );
 
-	Size index = utility::arg_min( vals1 );
+	core::Size index = utility::arg_min( vals1 );
 	return vals2[ index ];
 }
 
@@ -417,7 +418,7 @@ VMinBy::active_variables() const
 	utility::vector1< std::list< std::string > > act_vars_vect2 = vec_ex2()->active_variables_vector();
 	debug_assert( vals1.size() == act_vars_vect2.size() );
 
-	Size index = utility::arg_min( vals1 );
+	core::Size index = utility::arg_min( vals1 );
 	return act_vars_vect2[ index ];
 
 }
@@ -490,7 +491,7 @@ core::Real
 InSetExpression::operator() () const
 {
 	core::Real val = (*ex())();
-	for ( Size ii = 1; ii <= value_set_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= value_set_.size(); ++ii ) {
 		if ( val == value_set_[ ii ] ) {
 			return 1.0;
 		}
@@ -588,7 +589,7 @@ DynamicAggregateFunction::DynamicAggregateFunction() :
 DynamicAggregateFunction::~DynamicAggregateFunction() = default;
 
 void
-DynamicAggregateFunction::set_num_entity_elements( Size setting ) {
+DynamicAggregateFunction::set_num_entity_elements( core::Size setting ) {
 	if ( setting == 0 ) {
 		throw CREATE_EXCEPTION(utility::excn::Exception,  "DynamicAggregateFunction::set_num_entity_elements may not be"
 			"passed a number of entity elements == 0" );
@@ -635,7 +636,7 @@ DynamicAggregateFunction::evaluate( StateEnergies const & state_energies, StateE
 	/// Assign all variables, evaluate scalar_expressions and vector expressions, then evaluate the final fitness expression
 	if ( TR.visible( basic::t_debug ) ) {
 		TR.Debug << "DAF::eval";
-		for ( Size ii = 1; ii <= state_energies.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= state_energies.size(); ++ii ) {
 			TR.Debug << " " << state_energies[ ii ];
 		}
 	}
@@ -846,7 +847,7 @@ void DynamicAggregateFunction::add_file_contents(
 }
 
 std::string
-DynamicAggregateFunction::state_name( Size state_index ) const
+DynamicAggregateFunction::state_name( core::Size state_index ) const
 {
 	return variable_expressions_for_states_[ state_index ]->name();
 }
@@ -896,7 +897,7 @@ void DynamicAggregateFunction::read_all_variables_from_input_file( std::istream 
 	named_state_data_file_names_.clear();
 	state_vector_data_file_names_.clear();
 
-	Size count_line( 0 );
+	core::Size count_line( 0 );
 	while ( input ) {
 		++count_line;
 		std::string line;
@@ -947,14 +948,14 @@ void DynamicAggregateFunction::read_all_variables_from_input_file( std::istream 
 	///    c. Create Expression trees for the scalar- and vector-expressions in the order they were defined.
 	///    d. Create the FITNESS expression.
 
-	Size n_vector_states( 0 );
-	for ( Size ii = 1; ii <= strucvec_filenames.size(); ++ii ) {
+	core::Size n_vector_states( 0 );
+	for ( core::Size ii = 1; ii <= strucvec_filenames.size(); ++ii ) {
 		read_state_vector_file( strucvec_filenames[ ii ].first, strucvec_filenames[ ii ].second, n_vector_states );
 	}
 
-	Size const n_states = named_state_data_file_names_.size() + n_vector_states;
-	Size const n_npd_properties = count_num_npd_properties();
-	Size const n_variables = n_states + n_npd_properties + scalar_expression_asts.size();
+	core::Size const n_states = named_state_data_file_names_.size() + n_vector_states;
+	core::Size const n_npd_properties = count_num_npd_properties();
+	core::Size const n_variables = n_states + n_npd_properties + scalar_expression_asts.size();
 
 	//state_names_.resize( n_states );
 	variable_expressions_for_states_.resize( n_states );
@@ -963,7 +964,7 @@ void DynamicAggregateFunction::read_all_variables_from_input_file( std::istream 
 	files_for_state_.resize( n_states );
 	variable_expressions_.resize( n_variables );
 
-	Size count_state( 0 ), count_npd_index( 0 ), count_variable_index( 0 );
+	core::Size count_state( 0 ), count_npd_index( 0 ), count_variable_index( 0 );
 	create_state_variable_expressions( count_state, count_npd_index, count_variable_index );
 	create_variable_vector_expressions( count_state, count_npd_index, count_variable_index );
 	create_scalar_and_vector_expression_variable_expressions( scalar_expression_asts, vector_variables, count_variable_index );
@@ -1027,7 +1028,7 @@ DynamicAggregateFunction::initialize_scanner()
 void
 DynamicAggregateFunction::process_STATE_line(
 	std::string const & line,
-	Size line_number,
+	core::Size line_number,
 	std::istream & input_line
 )
 {
@@ -1101,7 +1102,7 @@ DynamicAggregateFunction::process_STATE_line(
 void
 DynamicAggregateFunction::process_STATE_VECTOR_line(
 	std::string const & line,
-	Size line_number,
+	core::Size line_number,
 	std::istream & input_line,
 	utility::vector1< std::pair< std::string, std::string > > & strucvec_filenames
 )
@@ -1142,7 +1143,7 @@ DynamicAggregateFunction::process_STATE_VECTOR_line(
 void
 DynamicAggregateFunction::process_POSE_ENERGY_line(
 	std::string const & line,
-	Size line_number,
+	core::Size line_number,
 	std::istream & input_line
 )
 {
@@ -1198,7 +1199,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_line(
 void
 DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 	std::string const & line,
-	Size line_number,
+	core::Size line_number,
 	std::istream & input_line
 )
 {
@@ -1233,8 +1234,8 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 	}
 
 	std::list< std::string > pdb_names;
-	Size count_pdbs = 0;
-	Size pdbvec_linenum = 0;
+	core::Size count_pdbs = 0;
+	core::Size pdbvec_linenum = 0;
 	while ( pdbvec_file ) {
 		++pdbvec_linenum;
 		std::string line;
@@ -1290,7 +1291,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 void
 DynamicAggregateFunction::process_NPD_PROPERTY_line(
 	std::string const & line,
-	Size line_number,
+	core::Size line_number,
 	std::istream & input_line
 )
 {
@@ -1372,7 +1373,7 @@ DynamicAggregateFunction::process_NPD_PROPERTY_line(
 void
 DynamicAggregateFunction::process_VECTOR_VARIABLE_line(
 	std::string const & line,
-	Size line_number,
+	core::Size line_number,
 	std::istream & input_line,
 	std::map< std::string, std::list< std::string > > & vector_variables
 )
@@ -1438,7 +1439,7 @@ DynamicAggregateFunction::process_VECTOR_VARIABLE_line(
 void
 DynamicAggregateFunction::process_SCALAR_EXPRESSION_line(
 	std::string const & line,
-	Size line_number,
+	core::Size line_number,
 	std::istream & input_line,
 	std::map< std::string, ArithmeticASTExpressionOP > & scalar_expression_asts
 )
@@ -1486,7 +1487,7 @@ DynamicAggregateFunction::process_SCALAR_EXPRESSION_line(
 void
 DynamicAggregateFunction::process_VECTOR_EXPRESSION_line(
 	std::string const & line,
-	Size line_number,
+	core::Size line_number,
 	std::istream & input_line,
 	std::map< std::string, std::pair< std::map< std::string, std::string >, ArithmeticASTExpressionOP > > & vector_expression_asts
 )
@@ -1619,7 +1620,7 @@ DynamicAggregateFunction::process_VECTOR_EXPRESSION_line(
 void
 DynamicAggregateFunction::process_ENTITY_FUNCTION_line(
 	std::string const & line,
-	Size line_number,
+	core::Size line_number,
 	std::istream & input_line
 )
 {
@@ -1689,7 +1690,7 @@ DynamicAggregateFunction::process_ENTITY_FUNCTION_line(
 void
 DynamicAggregateFunction::process_FITNESS_line(
 	std::string const & line,
-	Size line_number,
+	core::Size line_number,
 	std::istream & input_line,
 	ArithmeticASTExpressionOP & fitness_expression_ast
 )
@@ -1744,7 +1745,7 @@ void
 DynamicAggregateFunction::read_state_vector_file(
 	std::string const & vec_varname,
 	std::string const & fname,
-	Size & n_vector_states
+	core::Size & n_vector_states
 )
 {
 	std::istringstream strucvec_file;
@@ -1754,7 +1755,7 @@ DynamicAggregateFunction::read_state_vector_file(
 	} catch ( utility::excn::Exception & e ) {
 		throw CREATE_EXCEPTION(utility::excn::Exception,  "Failed to open state vector file named '" + fname + "' which was listed on line " + utility::to_string( variable_names_dec_line_[ vec_varname ] ) );
 	}
-	Size svline_num( 0 );
+	core::Size svline_num( 0 );
 	utility::vector1< StructureFileNames > state_triples;
 	while ( strucvec_file ) {
 		++svline_num;
@@ -1811,9 +1812,9 @@ DynamicAggregateFunction::read_state_vector_file(
 /// in the variable_expressions_ vector.
 void
 DynamicAggregateFunction::create_state_variable_expressions(
-	Size & count_state,
-	Size & count_npd_index,
-	Size & count_variable_index
+	core::Size & count_state,
+	core::Size & count_npd_index,
+	core::Size & count_variable_index
 )
 {
 	for ( std::map< std::string, StructureFileNames >::const_iterator
@@ -1861,20 +1862,20 @@ DynamicAggregateFunction::create_state_variable_expressions(
 /// state_indices_for_state_vector_ map.
 void
 DynamicAggregateFunction::create_variable_vector_expressions(
-	Size & count_state,
-	Size & count_npd_index,
-	Size & count_variable_index
+	core::Size & count_state,
+	core::Size & count_npd_index,
+	core::Size & count_variable_index
 )
 {
 	for ( std::map< std::string, utility::vector1< StructureFileNames > >::const_iterator
 			iter = state_vector_data_file_names_.begin(), iter_end = state_vector_data_file_names_.end();
 			iter != iter_end; ++iter ) {
-		utility::vector1< Size > indices( iter->second.size() );
+		utility::vector1< core::Size > indices( iter->second.size() );
 		utility::vector1< VariableExpressionCOP > variables( iter->second.size() );
 		std::map< std::string, utility::vector1< VariableExpressionCOP > > npd_property_variables;
 		bool has_npd_properties = npd_properties_for_state_variables_.find( iter->first ) != npd_properties_for_state_variables_.end();
 
-		for ( Size ii = 1; ii <= iter->second.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= iter->second.size(); ++ii ) {
 			++count_state;
 			++count_variable_index;
 			std::string ii_varname( iter->first + "_" + utility::to_string( ii ) );
@@ -1926,7 +1927,7 @@ void
 DynamicAggregateFunction::create_scalar_and_vector_expression_variable_expressions(
 	std::map< std::string, ArithmeticASTExpressionOP > const & scalar_expression_asts,
 	std::map< std::string, std::list< std::string > > const & vector_variables,
-	Size & count_variable_index
+	core::Size & count_variable_index
 )
 {
 	for ( auto const & scalar_expression_ast : scalar_expression_asts ) {
@@ -1973,13 +1974,13 @@ DynamicAggregateFunction::turn_expression_ASTs_into_expressions(
 	VectorExpressionCreator expression_creator( *this );
 	// start counting from the number of states (states) -- the sub-expressions start indexing
 	// at num-states + 1.
-	//Size count_variable_index = num_states();
+	//core::Size count_variable_index = num_states();
 	scalar_expressions_.clear();
 
 	ASTPrinter printer;
 	//printer.pretty( false );
 
-	for ( std::list< std::pair< Size, std::string > >::const_iterator
+	for ( std::list< std::pair< core::Size, std::string > >::const_iterator
 			iter = expression_evaluation_order_by_name_.begin(), iter_end = expression_evaluation_order_by_name_.end();
 			iter != iter_end; ++iter ) {
 		if ( iter->first == 1 ) {
@@ -1991,7 +1992,7 @@ DynamicAggregateFunction::turn_expression_ASTs_into_expressions(
 			TR << "Creating expression from AST:\n" << printer.ast_string( *(ast_iter->second) ) << std::endl;
 
 			ExpressionCOP var_expr = expression_creator.create_expression_tree( *(ast_iter->second) );
-			Size const variable_index = variable_name_2_variable_exp_index_[ iter->second ];
+			core::Size const variable_index = variable_name_2_variable_exp_index_[ iter->second ];
 			//++count_variable_index;
 			scalar_expressions_.push_back( std::make_pair( variable_index, var_expr ));
 			surrogate_expression_map_[ variable_index ]->root_expression( var_expr );
@@ -2044,14 +2045,14 @@ utility::vector1< VectorExpressionCOP >
 DynamicAggregateFunction::verify_vector_arguments(
 	std::string const & fname,
 	utility::vector1< ExpressionCOP > const & args,
-	Size expected_nargs
+	core::Size expected_nargs
 ) const
 {
 	if ( args.size() != expected_nargs ) {
 		throw CREATE_EXCEPTION(utility::excn::Exception,  "vector function expression " + fname + " construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 	}
 	utility::vector1< VectorExpressionCOP > vector_expressions( expected_nargs );
-	for ( Size ii = 1; ii <= expected_nargs; ++ii ) {
+	for ( core::Size ii = 1; ii <= expected_nargs; ++ii ) {
 		VectorExpressionCOP vec_ptr = utility::pointer::dynamic_pointer_cast< protocols::pack_daemon::VectorExpression const > ( args[ ii ] );
 		if ( ! vec_ptr ) {
 			VariableExpressionCOP var_ptr = utility::pointer::dynamic_pointer_cast< VariableExpression const > ( args[ ii ] );
@@ -2072,7 +2073,7 @@ DynamicAggregateFunction::verify_variable_name_or_throw(
 	std::string const & vname,
 	std::string const & command_name,
 	std::string const & line,
-	Size line_number
+	core::Size line_number
 )
 {
 	if ( variable_names_dec_line_.find( vname ) != variable_names_dec_line_.end() ) {
@@ -2115,7 +2116,7 @@ DynamicAggregateFunction::count_file_reads()
 	for ( std::map< std::string, utility::vector1< StructureFileNames > >::const_iterator
 			iter = state_vector_data_file_names_.begin(), iter_end = state_vector_data_file_names_.end();
 			iter != iter_end; ++iter ) {
-		for ( Size ii = 1; ii <= iter->second.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= iter->second.size(); ++ii ) {
 			StructureFileNames const & sfn = iter->second[ ii ];
 			file_contents_->increment_nread_limit( sfn.pdb_name_ );
 			file_contents_->increment_nread_limit( sfn.correspondence_file_name_ );
@@ -2152,18 +2153,18 @@ DynamicAggregateFunction::assign_state_energies_to_variables_and_subexpressions(
 		}
 	}
 
-	for ( Size ii = 1; ii <= num_states(); ++ii ) {
+	for ( core::Size ii = 1; ii <= num_states(); ++ii ) {
 		if ( verbose ) {
 			TR << "Assigning value " << state_energies[ ii ] << " to VariableExpression " << ii << std::endl;
 		}
 		variable_expressions_for_states_[ ii ]->set_value( state_energies[ ii ] );
 	}
-	for ( Size ii = 1; ii <= npd_properties.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= npd_properties.size(); ++ii ) {
 		variable_expressions_for_npd_properties_[ ii ]->set_value( npd_properties[ ii ] );
 	}
 
 	//TR << "Finished variable expression assignment " << std::endl;
-	for ( Size ii = 1; ii <= scalar_expressions_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= scalar_expressions_.size(); ++ii ) {
 		//TR << "Sub expression index " << ii << std::endl;
 		//TR << "At " << scalar_expressions_[ ii ].second() << std::endl;
 		//TR << "Evaluating sub_expression " << scalar_expressions_[ ii ].second->name() << std::endl;
@@ -2179,7 +2180,7 @@ DynamicAggregateFunction::assign_state_energies_to_variables_and_subexpressions(
 core::Size
 DynamicAggregateFunction::count_num_npd_properties() const
 {
-	Size count( 0 );
+	core::Size count( 0 );
 	/// 1. count the npd properties for states declared with the STATE command
 	for ( auto const & named_state_data_file_name : named_state_data_file_names_ ) {
 		if ( npd_properties_for_state_variables_.find( named_state_data_file_name.first ) != npd_properties_for_state_variables_.end() ) {
@@ -2464,7 +2465,7 @@ EntityFunc::EntityFunc() :
 
 EntityFunc::~EntityFunc() = default;
 
-void EntityFunc::set_num_entity_elements( Size num_ees )
+void EntityFunc::set_num_entity_elements( core::Size num_ees )
 {
 	num_entity_elements_ = num_ees;
 }
@@ -2478,7 +2479,7 @@ void EntityFunc::initialize_from_input_file( std::istream & input )
 	initialize_scanner_and_function_names();
 	std::map< std::string, ArithmeticASTExpressionOP > expression_asts;
 	ArithmeticASTExpressionOP score_expression_ast( nullptr );
-	Size count_line( 0 );
+	core::Size count_line( 0 );
 
 	while ( input ) {
 		++count_line;
@@ -2514,7 +2515,7 @@ core::Real
 EntityFunc::evaluate( Entity const & entity, bool verbose )
 {
 	assign_entity_sequence_to_variables( entity );
-	for ( Size ii = 1; ii <= expression_evaluation_order_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= expression_evaluation_order_.size(); ++ii ) {
 		core::Real iival = (*expression_evaluation_order_[ ii ].first )();
 		expression_evaluation_order_[ ii ].second->set_value( iival );
 		if ( verbose ) {
@@ -2674,7 +2675,7 @@ EntityFunc::initialize_scanner_and_function_names()
 
 	// Add variable names for the entity elements
 	entity_aas_.resize( num_entity_elements_ );
-	for ( Size ii = 1; ii <= num_entity_elements_; ++ii ) {
+	for ( core::Size ii = 1; ii <= num_entity_elements_; ++ii ) {
 		std::string ii_name = "ee_" + utility::to_string( ii );
 		scanner_->add_variable( ii_name );
 		VariableExpressionOP ee_var_expression( new VariableExpression( ii_name, 0.0 ) );
@@ -2688,7 +2689,7 @@ EntityFunc::initialize_scanner_and_function_names()
 void
 EntityFunc::process_AA_SET_line(
 	std::string const & line,
-	Size line_number,
+	core::Size line_number,
 	std::istream & input_line
 )
 {
@@ -2821,7 +2822,7 @@ EntityFunc::process_AA_SET_line(
 void
 EntityFunc::process_SET_CONDITION_line(
 	std::string const & line,
-	Size line_number,
+	core::Size line_number,
 	std::istream & input_line
 )
 {
@@ -3010,7 +3011,7 @@ EntityFunc::process_SET_CONDITION_line(
 void
 EntityFunc::process_SUB_EXPRESSION_line(
 	std::string const & line,
-	Size line_number,
+	core::Size line_number,
 	std::istream & input_line,
 	std::map< std::string, ArithmeticASTExpressionOP > & expression_asts
 )
@@ -3098,7 +3099,7 @@ EntityFunc::process_SUB_EXPRESSION_line(
 void
 EntityFunc::process_SCORE_line(
 	std::string const & line,
-	Size line_number,
+	core::Size line_number,
 	std::istream & input_line,
 	ArithmeticASTExpressionOP & score_expression_ast
 )
@@ -3127,7 +3128,7 @@ EntityFunc::turn_expression_ASTs_into_expressions(
 )
 {
 	EntityFuncExpressionCreator expression_creator( *this );
-	for ( Size ii = 1; ii <= expression_evaluation_order_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= expression_evaluation_order_.size(); ++ii ) {
 		if ( expression_evaluation_order_[ ii ].first == nullptr ) {
 			std::string ii_name = expression_evaluation_order_[ ii ].second->name();
 			auto iter = expression_asts.find( ii_name );
@@ -3146,7 +3147,7 @@ void EntityFunc::assign_entity_sequence_to_variables( Entity const & entity )
 	using namespace protocols::multistate_design;
 
 	runtime_assert( entity.traits().size() == num_entity_elements_ );
-	for ( Size ii = 1; ii <= entity.traits().size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= entity.traits().size(); ++ii ) {
 		auto const & pt_ptr( dynamic_cast< PosType const & > ( * entity.traits()[ ii ] ));
 		core::chemical::AA entity_aa( pt_ptr.type() );
 		entity_aas_[ ii ]->set_value( entity_aa );

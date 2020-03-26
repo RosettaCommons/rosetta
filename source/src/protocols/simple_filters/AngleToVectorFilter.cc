@@ -58,7 +58,7 @@ AngleToVector::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap
 	max_angle( tag->getOption< Real >( "max_angle", 90.0 ) );
 	atm1( tag->getOption< string >( "atm1" ) );
 	atm2( tag->getOption< string >( "atm2" ) );
-	chain( tag->getOption< Size >( "chain", 2 ) );
+	chain( tag->getOption< core::Size >( "chain", 2 ) );
 	refx( tag->getOption< Real >( "refx" ) );
 	refy( tag->getOption< Real >( "refy" ) );
 	refz( tag->getOption< Real >( "refz" ) );

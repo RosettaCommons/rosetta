@@ -23,7 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 //// C++ headers
@@ -52,7 +52,7 @@ typedef utility::pointer::shared_ptr< Edge > EdgeOP;
 typedef utility::pointer::shared_ptr< Edge const > EdgeCOP;
 
 // Nodes and edges for dijkstra's algorithm
-class Node : public utility::pointer::ReferenceCount
+class Node : public utility::VirtualBase
 {
 public:
 	Node( std::string const & ID, core::Size const res) :

@@ -34,7 +34,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -66,7 +66,7 @@ namespace jd3 {
 /// she can compute aggregate statistics (e.g. averaging energies) or can look at the
 ///  results from that round of jobs and decide which to carry forward into the next
 /// round of execution.
-class JobQueen : public utility::pointer::ReferenceCount
+class JobQueen : public utility::VirtualBase
 {
 public:
 
@@ -88,14 +88,14 @@ public:
 	///@details Decorator to note_job_completed
 	///
 	void
-	note_job_completed_and_track( LarvalJobCOP job, JobStatus status, Size nresults);
+	note_job_completed_and_track( LarvalJobCOP job, JobStatus status, core::Size nresults);
 
 	///@brief Call determine_job_list in derived classes and track the jobs using the JobTracker.
 	///
 	///@details Decorator to determine_job_list
 	///
 	LarvalJobs
-	determine_job_list_and_track( JobDAGNodeID job_dag_node_index, Size max_njobs );
+	determine_job_list_and_track( JobDAGNodeID job_dag_node_index, core::Size max_njobs );
 
 public:
 	/// @brief All JobQueens must describe their job input XML format in the form of an XSD
@@ -127,7 +127,7 @@ public:
 	/// The JobDistributor will call this function repeatedly for a single node until the
 	/// %JobQueen returns an empty list, at which point, the JobDistributor will consider
 	/// the node's jobs exhausted.
-	virtual LarvalJobs determine_job_list( JobDAGNodeID job_dag_node_index, Size max_njobs ) = 0;
+	virtual LarvalJobs determine_job_list( JobDAGNodeID job_dag_node_index, core::Size max_njobs ) = 0;
 
 	/// @biref The JobQueen must be able to determine if a particular job has already
 	/// been output. The JobQueen returns "true"
@@ -155,7 +155,7 @@ public:
 	/// completed anywhere.  The JobStatus indicates whether the job completed or
 	/// whether it failed. The nresults count lists how many JobSummary/JobResult pairs
 	/// were produced by the completed job.
-	virtual void note_job_completed( LarvalJobCOP job, JobStatus status, Size nresults ) = 0;
+	virtual void note_job_completed( LarvalJobCOP job, JobStatus status, core::Size nresults ) = 0;
 
 	/// @brief The JobDistributor guarnatees that exactly one JobQueen will see every
 	/// JobSummary generated within a Job batch. This guarantee allows the JobQueen to

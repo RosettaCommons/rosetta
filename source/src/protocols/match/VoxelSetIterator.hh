@@ -66,7 +66,7 @@ public:
 
 	void operator ++ ();
 	bool at_end() const;
-	void get_bin_and_pos( Size6 & bin, Size & pos ) const;
+	void get_bin_and_pos( Size6 & bin, core::Size & pos ) const;
 
 private:
 	void calc_bin_and_pos();
@@ -88,12 +88,12 @@ private:
 	bool theta_near_0_;
 	bool theta_near_180_;
 
-	utility::fixedsizearray1< Size, 2 > wrapped_phipsi_bins_;
-	utility::fixedsizearray1< Size, 2 > wrapped_phipsi_halfbins_;
+	utility::fixedsizearray1< core::Size, 2 > wrapped_phipsi_bins_;
+	utility::fixedsizearray1< core::Size, 2 > wrapped_phipsi_halfbins_;
 
 	utility::FixedSizeLexicographicalIterator< 6 > iter64_;
 	Size6 curr_bin_; // The voxel for the
-	Size  curr_pos_; // which of the 64 different half-width voxels in the regular width voxel
+	core::Size  curr_pos_; // which of the 64 different half-width voxels in the regular width voxel
 };
 
 

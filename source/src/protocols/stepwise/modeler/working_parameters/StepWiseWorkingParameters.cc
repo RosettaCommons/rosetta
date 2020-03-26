@@ -56,12 +56,12 @@ StepWiseWorkingParameters::working_reference_res() const{ //the last static_resi
 
 	if ( floating_base_anchor_res_ ) return working_floating_base_anchor_res();
 
-	Size const num_nucleotides = working_moving_res_list_.size(); // this is number of working nucleotides
+	core::Size const num_nucleotides = working_moving_res_list_.size(); // this is number of working nucleotides
 	//check that moving_res_ and working_moving_res_list list are intialized (note this is not foolproof)
 	runtime_assert( num_nucleotides > 0 );
 	runtime_assert( working_moving_res_ > 0 );
 
-	Size const working_reference_res_ = ( is_prepend_ ) ? working_moving_res_ + num_nucleotides : working_moving_res_ - num_nucleotides;
+	core::Size const working_reference_res_ = ( is_prepend_ ) ? working_moving_res_ + num_nucleotides : working_moving_res_ - num_nucleotides;
 
 	return working_reference_res_;
 }
@@ -69,20 +69,20 @@ StepWiseWorkingParameters::working_reference_res() const{ //the last static_resi
 //////////////////////////////////////////////////////////////////////////////////////////
 Size
 StepWiseWorkingParameters::gap_size_to_anchor() const { //the last static residue that this attach to the moving residues -- total sequence distance.
-	Size const working_reference_res_ = working_reference_res();
+	core::Size const working_reference_res_ = working_reference_res();
 	runtime_assert( sub_to_full_.find( working_reference_res_ ) != sub_to_full_.end() );
-	Size const & reference_res = sub_to_full_.find( working_reference_res_ )->second;
+	core::Size const & reference_res = sub_to_full_.find( working_reference_res_ )->second;
 
 	// check if these are really separated by a user-defined chain break ('cutpoint open');
-	Size const check_cut_start = std::min( moving_res_, reference_res );
-	Size const check_cut_stop = std::max( moving_res_, reference_res )-1;
-	for ( Size i = check_cut_start; i <= check_cut_stop; i++ ) if ( cutpoint_open_list_.has_value( i ) ) return GAP_SIZE_DUMMY;
+	core::Size const check_cut_start = std::min( moving_res_, reference_res );
+	core::Size const check_cut_stop = std::max( moving_res_, reference_res )-1;
+	for ( core::Size i = check_cut_start; i <= check_cut_stop; i++ ) if ( cutpoint_open_list_.has_value( i ) ) return GAP_SIZE_DUMMY;
 
 	int separation = std::abs( int( reference_res ) - int( moving_res_ ) );
 	int gap_size_to_anchor = separation - 1;
 
 	runtime_assert( gap_size_to_anchor >= 0 );
-	return static_cast<Size>( gap_size_to_anchor );
+	return static_cast<core::Size>( gap_size_to_anchor );
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 core::kinematics::FoldTree const & StepWiseWorkingParameters::fold_tree() const{
@@ -140,7 +140,7 @@ StepWiseWorkingParameters::set_force_north_sugar_list( utility::vector1< core::S
 	force_north_sugar_list_ = setting;
 	working_force_north_sugar_list_ = apply_full_to_sub_mapping( force_north_sugar_list_ );
 
-	for ( Size n = 1; n <= force_north_sugar_list_.size(); n++ ) {
+	for ( core::Size n = 1; n <= force_north_sugar_list_.size(); n++ ) {
 		if ( force_south_sugar_list_.has_value( force_north_sugar_list_[n] ) ) {
 			utility_exit_with_message( "seq_num = " + ObjexxFCL::string_of( force_north_sugar_list_[n] ) + " is in both force_north_sugar_list_ and force_south_sugar_list_! " );
 		}
@@ -152,7 +152,7 @@ StepWiseWorkingParameters::set_force_south_sugar_list( utility::vector1< core::S
 	force_south_sugar_list_ = setting;
 	working_force_south_sugar_list_ = apply_full_to_sub_mapping( force_south_sugar_list_ );
 
-	for ( Size n = 1; n <= force_north_sugar_list_.size(); n++ ) {
+	for ( core::Size n = 1; n <= force_north_sugar_list_.size(); n++ ) {
 		if ( force_south_sugar_list_.has_value( force_north_sugar_list_[n] ) ) {
 			utility_exit_with_message( "seq_num = " + ObjexxFCL::string_of( force_north_sugar_list_[n] ) + " is in both force_north_sugar_list_ and force_south_sugar_list_! " );
 		}
@@ -178,12 +178,12 @@ Size StepWiseWorkingParameters::working_floating_base_anchor_res() const{
 utility::vector1< bool > const
 StepWiseWorkingParameters::is_pre_proline() const {
 	utility::vector1< bool > is_pre_proline;
-	utility::vector1< Size > const working_res( working_res_list() );
+	utility::vector1< core::Size > const working_res( working_res_list() );
 	// AMW: strip out noncanonicals; don't need the info anywhere
 	// In theory one might want to for proline-like NCAAs?
 	std::string const sequence( core::pose::rna::remove_bracketed( full_sequence() ) );
-	for ( Size i = 1; i <= working_res.size(); i++ ) {
-		Size const & full_seq_pos = working_res[ i ];
+	for ( core::Size i = 1; i <= working_res.size(); i++ ) {
+		core::Size const & full_seq_pos = working_res[ i ];
 		if ( full_seq_pos == sequence.size() ) {
 			is_pre_proline.push_back( false );
 		} else {

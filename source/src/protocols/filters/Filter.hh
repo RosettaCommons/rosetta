@@ -32,7 +32,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -47,7 +47,7 @@
 namespace protocols {
 namespace filters {
 
-class Filter : public utility::pointer::ReferenceCount {
+class Filter : public utility::VirtualBase {
 public:
 	Filter();
 	Filter( std::string const & );
@@ -125,7 +125,7 @@ protected:
 
 /// @brief Wrapper-class that contains a vector1 of Filters
 /// @brief apply function returns true if all member filters return true
-class FilterCollection : public utility::pointer::ReferenceCount {
+class FilterCollection : public utility::VirtualBase {
 public:
 
 	~FilterCollection() override;
@@ -151,7 +151,7 @@ public:
 	clear(){
 		filters_.clear(); }
 
-	Size
+	core::Size
 	size() { return filters_.size(); }
 
 private:

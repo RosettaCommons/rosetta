@@ -112,7 +112,7 @@ void CoordConstraintClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 		if ( ! msg.received() ) { throw CREATE_EXCEPTION(EXCN_Input,  "no fixed region (looked for "+root_from_label_+") found to use as reference for CoordinateConstraints"); }
 
-		Size new_root=msg.good_fix_pos_;
+		core::Size new_root=msg.good_fix_pos_;
 
 		if ( !constraints_ && bUseXYZ_in_cstfile_ ) {
 			//in this case we haven't been able to read the constraints file yet, since this is the first time a valid pose exists...
@@ -139,7 +139,7 @@ void CoordConstraintClaimer::read_cst_pose() {
 }
 
 void CoordConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
-	// Size new_root;
+	// core::Size new_root;
 
 	std::string const new_sequence ( pose.annotated_sequence( true ) );
 	bool fullatom( pose.is_fullatom() );
@@ -217,7 +217,7 @@ void CoordConstraintClaimer::generate_constraints( pose::Pose const& cst_pose ) 
 
 	//go thru regions and generate constraints
 	for ( auto const & it : rigid ) {
-		for ( Size pos = it.start(); pos <= it.stop(); ++pos ) {
+		for ( core::Size pos = it.start(); pos <= it.stop(); ++pos ) {
 
 			//generate constraint for ( CA, pos )
 			conformation::Residue const & rsd( cst_pose.residue( pos ) );
@@ -272,7 +272,7 @@ void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 	ObjexxFCL::FArray2D_double coords( 3, natoms, 0.0 );
 
 	if ( superimpose_regions_.size() ) {
-		for ( Size i = 1; i<=natoms; ++i ) {
+		for ( core::Size i = 1; i<=natoms; ++i ) {
 			if ( superimpose_regions_.is_loop_residue( i ) ) {
 				weights( i ) = 1.0;
 			} else {
@@ -281,7 +281,7 @@ void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 		}
 	}
 
-	Size n = 1;
+	core::Size n = 1;
 	if ( tr.Trace.visible() ) {
 		utility::io::ozstream dump_cst( label()+"_before_fit.cst" );
 		constraints_->show_definition( dump_cst, pose );
@@ -295,7 +295,7 @@ void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 		//n = ll_cst->atom( 1 ).rsd(); //uncomment for debugging
 		tr.Trace << "constraint for atom " << ll_cst->atom( 1 ) << std::endl;
 		Vector xyz_cst( ll_cst->xyz_target( pose ) );
-		for ( Size d=1; d<=3; ++d ) {
+		for ( core::Size d=1; d<=3; ++d ) {
 			ref_coords( d, n ) = xyz_ref( d );
 			coords( d, n ) = xyz_cst( d );
 		}
@@ -324,7 +324,7 @@ void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 		LocalCoordinateConstraintOP ll_cst = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::LocalCoordinateConstraint > ( new_cst );
 		Vector xyz_cst;
 		//  n = ll_cst->atom( 1 ).rsd();
-		for ( Size d=1; d<=3; ++d ) {
+		for ( core::Size d=1; d<=3; ++d ) {
 			xyz_cst( d ) = coords( d, n ) - ref_transvec( d );
 		}
 		ll_cst->set_xyz_target( xyz_cst, pose );

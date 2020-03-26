@@ -32,7 +32,7 @@
 // Utility headers
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <core/util/prof.hh>
 //#include <core/util/Tracer.hh>
@@ -51,7 +51,7 @@
 namespace protocols {
 namespace noesy_assign {
 
-class CrossPeakList : public utility::pointer::ReferenceCount {
+class CrossPeakList : public utility::VirtualBase {
 public:
 	typedef std::list< CrossPeakOP > CrossPeaks;
 	typedef CrossPeaks::const_iterator const_iterator;

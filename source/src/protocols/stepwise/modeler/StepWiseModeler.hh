@@ -37,7 +37,7 @@ class StepWiseModeler: public moves::Mover {
 public:
 
 	//Constructor
-	StepWiseModeler( Size const moving_res, core::scoring::ScoreFunctionCOP scorefxn );
+	StepWiseModeler( core::Size const moving_res, core::scoring::ScoreFunctionCOP scorefxn );
 
 	//constructor
 	StepWiseModeler( core::scoring::ScoreFunctionCOP scorefxn );
@@ -57,14 +57,14 @@ public:
 
 	std::string get_name() const override{ return "StepWiseModeler"; }
 
-	void set_moving_res_and_reset( Size const moving_res );
+	void set_moving_res_and_reset( core::Size const moving_res );
 
-	void set_working_prepack_res( utility::vector1< Size > const & setting ){
+	void set_working_prepack_res( utility::vector1< core::Size > const & setting ){
 		working_prepack_res_ = setting;
 		prepack_res_was_inputted_ = true;
 	}
 
-	void set_working_minimize_res( utility::vector1< Size > const & setting ){ working_minimize_res_ = setting; }
+	void set_working_minimize_res( utility::vector1< core::Size > const & setting ){ working_minimize_res_ = setting; }
 
 	void set_figure_out_prepack_res( bool const setting ){ figure_out_prepack_res_ = setting; }
 
@@ -79,13 +79,13 @@ public:
 
 	precomputed::PrecomputedLibraryMoverCOP precomputed_library_mover(){ return precomputed_library_mover_; }
 
-	Size
+	core::Size
 	get_num_sampled(){ return pose_list_.size(); }
 
 	void
 	set_input_streams( utility::vector1< protein::InputStreamWithResidueInfoOP > const & input_streams );
 
-	void set_moving_res_list( utility::vector1< Size > const & setting ){ moving_res_list_ = setting; }
+	void set_moving_res_list( utility::vector1< core::Size > const & setting ){ moving_res_list_ = setting; }
 
 	core::scoring::ScoreFunctionCOP scorefxn() { return scorefxn_; }
 
@@ -121,7 +121,7 @@ private:
 	void figure_out_moving_res_list( core::pose::Pose const & pose );
 
 	void
-	figure_out_moving_res_list_from_most_distal_res( core::pose::Pose const & pose, Size const moving_res );
+	figure_out_moving_res_list_from_most_distal_res( core::pose::Pose const & pose, core::Size const moving_res );
 
 	bool
 	sampling_successful();
@@ -131,10 +131,10 @@ private:
 
 private:
 
-	Size moving_res_;
-	utility::vector1< Size > moving_res_list_;
-	utility::vector1< Size > working_minimize_res_;
-	utility::vector1< Size > working_prepack_res_;
+	core::Size moving_res_;
+	utility::vector1< core::Size > moving_res_list_;
+	utility::vector1< core::Size > working_minimize_res_;
+	utility::vector1< core::Size > working_prepack_res_;
 
 	working_parameters::StepWiseWorkingParametersCOP working_parameters_;
 	options::StepWiseModelerOptionsCOP options_;

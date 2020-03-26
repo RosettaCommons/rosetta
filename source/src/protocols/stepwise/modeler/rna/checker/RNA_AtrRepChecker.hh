@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_rna_checker_RNA_AtrRepChecker_HH
 #define INCLUDED_protocols_stepwise_rna_checker_RNA_AtrRepChecker_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.fwd.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
@@ -30,7 +30,7 @@ namespace modeler {
 namespace rna {
 namespace checker {
 
-class RNA_AtrRepChecker: public utility::pointer::ReferenceCount {
+class RNA_AtrRepChecker: public utility::VirtualBase {
 
 public:
 

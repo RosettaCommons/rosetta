@@ -30,7 +30,7 @@ using namespace core;
 DnaDesignDef::~DnaDesignDef()= default;
 
 DnaDesignDef::DnaDesignDef( std::string const & strdef )
-: utility::pointer::ReferenceCount()
+: utility::VirtualBase()
 {
 	// command-line dna_defs are of the format "C.501.ADE"
 	// split on '.'

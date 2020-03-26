@@ -145,7 +145,7 @@ StructureFeatures::features_reporter_dependencies() const {
 //@details missing struct_id
 StructureID
 StructureFeatures::report_features(
-	Size batch_id,
+	core::Size batch_id,
 	sessionOP db_session,
 	string const & tag,
 	string const & input_tag
@@ -155,7 +155,7 @@ StructureFeatures::report_features(
 	structures_insert.add_column("tag");
 	structures_insert.add_column("input_tag");
 
-	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id",batch_id) );
+	RowDataBaseOP batch_id_data( new RowData<core::Size>("batch_id",batch_id) );
 	RowDataBaseOP tag_data( new RowData<string>("tag",tag) );
 	RowDataBaseOP input_tag_data( new RowData<string>("input_tag",input_tag) );
 
@@ -181,7 +181,7 @@ void StructureFeatures::mark_structure_as_sampled(
 	sampled_insert.add_column("tag");
 	sampled_insert.add_column("input_tag");
 
-	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id",batch_id) );
+	RowDataBaseOP batch_id_data( new RowData<core::Size>("batch_id",batch_id) );
 	RowDataBaseOP tag_data( new RowData<string>("tag",tag) );
 	RowDataBaseOP input_tag_data( new RowData<string>("input_tag",input_tag) );
 

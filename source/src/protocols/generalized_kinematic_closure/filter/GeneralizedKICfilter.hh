@@ -69,7 +69,7 @@ enum filter_type {
 //   GENERALIZED KIC FILTER CLASS                                    //
 ///////////////////////////////////////////////////////////////////////
 
-class GeneralizedKICfilter : public utility::pointer::ReferenceCount
+class GeneralizedKICfilter : public utility::VirtualBase
 {
 public:
 	GeneralizedKICfilter();

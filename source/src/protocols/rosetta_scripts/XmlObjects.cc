@@ -68,7 +68,9 @@ XmlObjects::XmlObjects()= default;
 
 XmlObjects::~XmlObjects()= default;
 
-XmlObjects::XmlObjects( XmlObjects const & src ) {
+XmlObjects::XmlObjects( XmlObjects const & src ) :
+	VirtualBase( src )
+{
 	*this = src;
 }
 

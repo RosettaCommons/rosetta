@@ -47,6 +47,8 @@ static basic::Tracer TR( "protocols.enzymatic_movers.EnzymaticMover" );
 namespace protocols {
 namespace enzymatic_movers {
 
+using core::Size;
+
 // Public methods /////////////////////////////////////////////////////////////
 // Standard methods ///////////////////////////////////////////////////////////
 // Default constructor
@@ -158,7 +160,7 @@ EnzymaticMover::apply( Pose & input_pose )
 
 	set_pose_reactive_sites( input_pose );
 
-	Size const n_sites( get_n_reactive_sites() );
+	core::Size const n_sites( get_n_reactive_sites() );
 
 	if ( ! n_sites ) {
 		set_last_move_status( moves::FAIL_DO_NOT_RETRY );
@@ -295,14 +297,14 @@ EnzymaticMover::set_pose_reactive_sites( core::pose::Pose const & pose )
 		enzyme_family_, species_name_, enzyme_name_ ) );
 	vector1< string > const & site_residues( consensus_residues[ site_residue_position ] );  // could be more than one
 
-	Size const n_consensus_residues( consensus_residues.size() );
-	Size const n_residues_left_of_site( site_residue_position - 1 );
-	Size const n_residues_right_of_site( n_consensus_residues - site_residue_position );
+	core::Size const n_consensus_residues( consensus_residues.size() );
+	core::Size const n_residues_left_of_site( site_residue_position - 1 );
+	core::Size const n_residues_right_of_site( n_consensus_residues - site_residue_position );
 	string const & site_atom( EnzymeManager::get_reactive_atom( enzyme_family_, species_name_, enzyme_name_ ) );
 
 	TR << "Searching for reactive sites within consensus sequence " << consensus << "..." << endl;
 
-	Size const n_residues( pose.size() );
+	core::Size const n_residues( pose.total_residue() );
 	core::uint start_res, stop_res;
 	if ( consensus.back() == '>' ) {
 		// A ">" at the end of the consensus sequence means that this sequon must come at the C-terminus.

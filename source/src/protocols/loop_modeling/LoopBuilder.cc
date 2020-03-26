@@ -114,7 +114,7 @@ void LoopBuilder::parse_my_tag(
 
 	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
-	max_attempts_ = tag->getOption<Size>("max_attempts", max_attempts_);
+	max_attempts_ = tag->getOption<core::Size>("max_attempts", max_attempts_);
 }
 
 void LoopBuilder::use_fragments(
@@ -170,7 +170,7 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) {
 	// Make a strong effort to rebuild the loop with KIC.
 
 	kic_mover_->was_successful(false);
-	for ( Size i = 1; i <= max_attempts_ && ! kic_mover_->was_successful(); i++ ) {
+	for ( core::Size i = 1; i <= max_attempts_ && ! kic_mover_->was_successful(); i++ ) {
 		kic_mover_->apply(pose);
 
 		bool success = kic_mover_->was_successful();
@@ -196,7 +196,7 @@ Size LoopBuilder::get_max_attempts() const {
 	return max_attempts_;
 }
 
-void LoopBuilder::set_max_attempts(Size attempts) {
+void LoopBuilder::set_max_attempts(core::Size attempts) {
 	max_attempts_ = attempts;
 }
 

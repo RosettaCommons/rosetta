@@ -93,7 +93,7 @@ DisulfideFilter::~DisulfideFilter() = default;
 /// @return Whether a disulfide bond is possible between any of the targets
 bool DisulfideFilter::apply(Pose const & pose ) const
 {
-	vector1< pair<Size,Size> > disulfides;
+	vector1< pair<core::Size,Size> > disulfides;
 	runtime_assert( targets_ );
 	vector1< core::Size > targets = core::select::get_residues_from_subset( targets_->apply( pose ) );
 	DisulfideMover::disulfide_list(pose, targets, rb_jump_, disulfides);
@@ -108,7 +108,7 @@ bool DisulfideFilter::apply(Pose const & pose ) const
 
 void DisulfideFilter::report( ostream & out, Pose const & pose ) const
 {
-	vector1< pair<Size,Size> > disulfides;
+	vector1< pair<core::Size,Size> > disulfides;
 	runtime_assert( targets_ );
 	vector1< core::Size > targets = core::select::get_residues_from_subset( targets_->apply( pose ) );
 	DisulfideMover::disulfide_list(pose, targets, rb_jump_, disulfides);
@@ -122,7 +122,7 @@ void DisulfideFilter::report( ostream & out, Pose const & pose ) const
 /// @return The number of disulfides possible
 Real DisulfideFilter::report_sm( Pose const & pose ) const
 {
-	vector1< pair<Size,Size> > disulfides;
+	vector1< pair<core::Size,Size> > disulfides;
 	runtime_assert( targets_ );
 	vector1< core::Size > targets = core::select::get_residues_from_subset( targets_->apply( pose ) );
 	DisulfideMover::disulfide_list(pose, targets, rb_jump_, disulfides);

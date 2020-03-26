@@ -26,7 +26,7 @@
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <platform/types.hh>
 #include <utility/down_cast.hh>
@@ -44,25 +44,25 @@ namespace basic {
 namespace datacache {
 
 
-/// @brief Indexed storage for objects derived from a ReferenceCountable
+/// @brief Indexed storage for objects derived from a VirtualBase-able
 ///  data type.
 /// @details Intended for use as a generic data cache by storing objects
-///  derived from a ReferenceCountable data type in a unique slot designated
+///  derived from a VirtualBase-able data type in a unique slot designated
 ///  by an integer id (enum, size index, etc.). The DataCache will only store
 ///  one object per slot/id.  For example, see the PoseDataCache used in
 ///  core::pose::Pose, which is indexed by the enum basic::pose::datacache:CacheableDataType.
 ///  Currently when data is set(), it is not cloned -- classes deriving from
 ///  DataCache should remember to overload set() if they need cloning behavior.
-/// @tparam Data Class derived from utility::pointer::ReferenceCount that
+/// @tparam Data Class derived from utility::VirtualBase that
 ///  defines a virtual clone() method.
 template< typename Data >
-class DataCache : public utility::pointer::ReferenceCount {
+class DataCache : public utility::VirtualBase {
 
 
 private: // typedefs
 
 
-	typedef utility::pointer::ReferenceCount Super;
+	typedef utility::VirtualBase Super;
 
 
 public: // typedefs

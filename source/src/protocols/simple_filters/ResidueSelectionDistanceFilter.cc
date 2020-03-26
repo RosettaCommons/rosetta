@@ -81,7 +81,7 @@ core::Real
 ResidueSelectionDistanceFilter::compute( core::pose::Pose const & pose ) const {
 	core::select::residue_selector::ResidueSubset subset;
 	subset =selector_->apply( pose );
-	utility::vector1<Size> valid_res;
+	utility::vector1<core::Size> valid_res;
 	for ( core::Size resid=1; resid<=pose.total_residue(); ++resid ) {
 		if ( subset[ resid ] ) {
 			valid_res.push_back( resid );

@@ -27,7 +27,7 @@
 #include <protocols/loophash/BackboneDB.hh>
 
 //Utility
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //C++
 #include <string>
@@ -42,10 +42,10 @@ namespace loophash {
 /// manner.
 /// @details This is a pure virtual superclass, and the intention is that
 /// different subclasses can use different methods to keep the insertion local.
-class LocalInserter : public utility::pointer::ReferenceCount {
+class LocalInserter : public utility::VirtualBase {
 public:
 
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~LocalInserter() override;
 
 	LocalInserter(){

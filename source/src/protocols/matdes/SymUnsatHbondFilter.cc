@@ -135,7 +135,7 @@ void SymUnsatHbondFilter::compare_to_ref( bool const compare_to_ref ) { compare_
 core::Real
 SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, bool const & write ) const
 {
-	Size nres_asymmetric_unit, ref_nres_asymmetric_unit;
+	core::Size nres_asymmetric_unit, ref_nres_asymmetric_unit;
 	if ( core::conformation::symmetry::is_symmetric( pose.conformation() ) ) {
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		nres_asymmetric_unit = symm_info->num_independent_residues();
@@ -165,7 +165,7 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 	if ( sym_dof_names() != "" ) {
 		utility::vector1<std::string> sym_dof_name_list;
 		sym_dof_name_list = utility::string_split( sym_dof_names() , ',' );
-		for ( Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
+		for ( core::Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
 			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[i] );
 			protocols::rigid::RigidBodyTransMoverOP translate_unbound( new protocols::rigid::RigidBodyTransMover( unbound, sym_aware_jump_id ) );
 			translate_unbound->step_size( 1000.0 );
@@ -207,17 +207,17 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 	core::id::AtomID_Map<bool> unbound_am = unbound_Amap.value();
 	core::id::AtomID_Map<bool> unbound_refp_am;
 	if ( compare_to_ref_ ) unbound_refp_am = unbound_refp_Amap.value();
-	Size uhb_bound_vs_unbound = 0;
-	Size uhb_unbound_design_vs_reference = 0;
-	Size uhb_unbound_mutated_sidechains = 0;
-	Size uhb_all = 0;
+	core::Size uhb_bound_vs_unbound = 0;
+	core::Size uhb_unbound_design_vs_reference = 0;
+	core::Size uhb_unbound_mutated_sidechains = 0;
+	core::Size uhb_all = 0;
 	std::string select_uhb_bound_vs_unbound("select uhb_bound_vs_unbound, (");
 	std::string select_uhb_unbound_design_vs_reference("select uhb_unbound_design_vs_reference, (");
 	std::string select_uhb_unbound_mutated_sidechains("select uhb_unbound_mutated_sidechains, (");
 	std::string select_uhb_all("select uhb_all, (");
-	for ( Size ir=1; ir<=nres_asymmetric_unit; ir++ ) {
+	for ( core::Size ir=1; ir<=nres_asymmetric_unit; ir++ ) {
 		core::Size output_resi;
-		for ( Size ia=1; ia<=bound.residue(ir).nheavyatoms(); ia++ ) {
+		for ( core::Size ia=1; ia<=bound.residue(ir).nheavyatoms(); ia++ ) {
 			if ( (mode_ == "all") || (mode_ == "bound_vs_unbound") ) {
 				if ( bound_am[core::id::AtomID(ia,ir)] && !unbound_am[core::id::AtomID(ia,ir)] ) {
 					uhb_all++;

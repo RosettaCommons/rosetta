@@ -27,7 +27,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -37,7 +37,7 @@ namespace fldsgn {
 namespace potentials {
 namespace sspot {
 
-class NatbiasHelicesSheetPotential : public utility::pointer::ReferenceCount {
+class NatbiasHelicesSheetPotential : public utility::VirtualBase {
 public: // typedef
 
 
@@ -144,7 +144,7 @@ private:
 	/// @brief Gets HSS Triplet containing helix helix_id.
 	/// @details  Currently exits with error if more than one HSS triplet contain the helix
 	HSSTripletOP
-	get_hssop( Size const helix_id ) const;
+	get_hssop( core::Size const helix_id ) const;
 
 private: // secondary structure data
 

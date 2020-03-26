@@ -190,7 +190,7 @@ HBondOptions::list_options_read( utility::options::OptionKeyList & option_list )
 
 /// copy constructor
 HBondOptions::HBondOptions( HBondOptions const & src ):
-	ReferenceCount( src )
+	VirtualBase( src )
 {
 	*this = src;
 }

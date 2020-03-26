@@ -76,8 +76,8 @@ void MC_OneTorsion::regularize_angle( Real & angle ) {
 	while ( angle >= 180 ) angle -= 360;
 }
 ///////////////////////////////////////////////////////////////////////////
-void MC_OneTorsion::show( std::ostream & out, Size const indent ) const {
-	for ( Size n = 1; n <= indent; n++ ) out << ' ';
+void MC_OneTorsion::show( std::ostream & out, core::Size const indent ) const {
+	for ( core::Size n = 1; n <= indent; n++ ) out << ' ';
 	out << get_name() << " " << torsion_id_ << ": " << angle_min_ << " to " << angle_max_ << std::endl;
 }
 ///////////////////////////////////////////////////////////////////////////

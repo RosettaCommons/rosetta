@@ -16,7 +16,7 @@
 #include <protocols/kinematic_closure/solution_pickers/SolutionPicker.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <boost/noncopyable.hpp>
 
 namespace protocols {
@@ -25,7 +25,7 @@ namespace solution_pickers {
 
 /// @brief Base class for all the solution picking algorithms.
 class SolutionPicker
-	: public utility::pointer::ReferenceCount, private boost::noncopyable {
+	: public utility::VirtualBase, private boost::noncopyable {
 
 public:
 	/// @brief Pick a solution from the given list, and if apply it to the given

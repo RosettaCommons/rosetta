@@ -20,7 +20,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Core headers
 #include <core/id/AtomID.hh>
@@ -37,11 +37,11 @@ namespace backbone_moves {
 namespace local_backbone_mover {
 
 ///@brief Residue is a helper class for FreePeptide
-class Residue : public utility::pointer::ReferenceCount {
+class Residue : public utility::VirtualBase {
 
 public:
 
-	Residue(Size seqpos,
+	Residue(core::Size seqpos,
 		Real n_ca_bond, Real ca_c_bond, Real c_n_bond,
 		Real n_ca_c_angle, Real ca_c_n_angle, Real c_n_ca_angle,
 		Real phi, Real psi, Real omega) :
@@ -52,16 +52,16 @@ public:
 	{}
 
 	// Constructor from pose
-	Residue(Size seqpos, core::pose::Pose const& pose);
+	Residue(core::Size seqpos, core::pose::Pose const& pose);
 
 	// Apply internal coordinates of this residue to the pose
 	void apply_to_pose(core::pose::Pose &pose);
 
-	void seqpos( Size seqpos ){
+	void seqpos( core::Size seqpos ){
 		seqpos_ = seqpos;
 	}
 
-	Size seqpos(){
+	core::Size seqpos(){
 		return seqpos_;
 	}
 
@@ -163,7 +163,7 @@ public:
 
 private:
 
-	Size seqpos_;
+	core::Size seqpos_;
 
 	Real n_ca_bond_;
 	Real ca_c_bond_;
@@ -184,13 +184,13 @@ private:
 
 
 ///@brief FreePeptide represents a free peptide
-class FreePeptide : public utility::pointer::ReferenceCount {
+class FreePeptide : public utility::VirtualBase {
 
 	friend class ::LocalBackboneMoverTests;
 
 public: // Functions from code template generator
 
-	FreePeptide(core::pose::Pose const& pose, Size pivot1, Size pivot2);
+	FreePeptide(core::pose::Pose const& pose, core::Size pivot1, core::Size pivot2);
 	FreePeptide(FreePeptide const &) = default;
 
 	~FreePeptide() override;
@@ -203,138 +203,138 @@ public:
 	/// @detail Only consider atoms in the free peptide,
 	/// The N of the first residue and C of the last residue
 	/// are excluded
-	Size number_of_atoms(){
+	core::Size number_of_atoms(){
 		return 3 * (pivot2_ - pivot1_ - 1) - 2;
 	}
 
 	/// @brief Total number of free peptide residues.
-	Size number_of_residues(){
+	core::Size number_of_residues(){
 		return pivot2_ - pivot1_ - 1;
 	}
 
 	/// @brief Getter of the first pivot
-	Size pivot1(){
+	core::Size pivot1(){
 		return pivot1_;
 	}
 
 	/// @brief Getter of the second pivot
-	Size pivot2(){
+	core::Size pivot2(){
 		return pivot2_;
 	}
 
 	/// @brief Getter of the n_ca_bond
-	Real n_ca_bond(Size seqpos){
+	Real n_ca_bond(core::Size seqpos){
 		return residues_[res_id(seqpos)].n_ca_bond();
 	}
 
 	/// @brief Setter of the n_ca_bond
-	void n_ca_bond(Size seqpos, Real value){
+	void n_ca_bond(core::Size seqpos, Real value){
 		residues_[res_id(seqpos)].n_ca_bond(value);
 		xyz_updated_ = false;
 	}
 
 	/// @brief Getter of the ca_c_bond
-	Real ca_c_bond(Size seqpos){
+	Real ca_c_bond(core::Size seqpos){
 		return residues_[res_id(seqpos)].ca_c_bond();
 	}
 
 	/// @brief Setter of the ca_c_bond
-	void ca_c_bond(Size seqpos, Real value){
+	void ca_c_bond(core::Size seqpos, Real value){
 		residues_[res_id(seqpos)].ca_c_bond(value);
 		xyz_updated_ = false;
 	}
 
 	/// @brief Getter of the c_n_bond
-	Real c_n_bond(Size seqpos){
+	Real c_n_bond(core::Size seqpos){
 		return residues_[res_id(seqpos)].c_n_bond();
 	}
 
 	/// @brief Setter of the c_n_bond
-	void c_n_bond(Size seqpos, Real value){
+	void c_n_bond(core::Size seqpos, Real value){
 		residues_[res_id(seqpos)].c_n_bond(value);
 		xyz_updated_ = false;
 	}
 
 	/// @brief Getter of the n_ca_c_angle
-	Real n_ca_c_angle(Size seqpos){
+	Real n_ca_c_angle(core::Size seqpos){
 		return residues_[res_id(seqpos)].n_ca_c_angle();
 	}
 
 	/// @brief Setter of the n_ca_c_angle
-	void n_ca_c_angle(Size seqpos, Real value){
+	void n_ca_c_angle(core::Size seqpos, Real value){
 		residues_[res_id(seqpos)].n_ca_c_angle(value);
 		xyz_updated_ = false;
 	}
 
 	/// @brief Getter of the ca_c_n_angle
-	Real ca_c_n_angle(Size seqpos){
+	Real ca_c_n_angle(core::Size seqpos){
 		return residues_[res_id(seqpos)].ca_c_n_angle();
 	}
 
 	/// @brief Setter of the ca_c_n_angle
-	void ca_c_n_angle(Size seqpos, Real value){
+	void ca_c_n_angle(core::Size seqpos, Real value){
 		residues_[res_id(seqpos)].ca_c_n_angle(value);
 		xyz_updated_ = false;
 	}
 
 	/// @brief Getter of the c_n_ca_angle
-	Real c_n_ca_angle(Size seqpos){
+	Real c_n_ca_angle(core::Size seqpos){
 		return residues_[res_id(seqpos)].c_n_ca_angle();
 	}
 
 	/// @brief Setter of the c_n_ca_angle
-	void c_n_ca_angle(Size seqpos, Real value){
+	void c_n_ca_angle(core::Size seqpos, Real value){
 		residues_[res_id(seqpos)].c_n_ca_angle(value);
 		xyz_updated_ = false;
 	}
 
 	/// @brief Getter of the phi
-	Real phi(Size seqpos){
+	Real phi(core::Size seqpos){
 		return residues_[res_id(seqpos)].phi();
 	}
 
 	/// @brief Setter of the phi
-	void phi(Size seqpos, Real value){
+	void phi(core::Size seqpos, Real value){
 		residues_[res_id(seqpos)].phi(value);
 		xyz_updated_ = false;
 	}
 
 	/// @brief Getter of the psi
-	Real psi(Size seqpos){
+	Real psi(core::Size seqpos){
 		return residues_[res_id(seqpos)].psi();
 	}
 
 	/// @brief Setter of the psi
-	void psi(Size seqpos, Real value){
+	void psi(core::Size seqpos, Real value){
 		residues_[res_id(seqpos)].psi(value);
 		xyz_updated_ = false;
 	}
 
 	/// @brief Getter of the omega
-	Real omega(Size seqpos){
+	Real omega(core::Size seqpos){
 		return residues_[res_id(seqpos)].omega();
 	}
 
 	/// @brief Setter of the omega
-	void omega(Size seqpos, Real value){
+	void omega(core::Size seqpos, Real value){
 		residues_[res_id(seqpos)].omega(value);
 		xyz_updated_ = false;
 	}
 
 	/// @brief Getter of the xyz coordinates of N
-	xyzVector <Real> n_xyz(Size seqpos){
+	xyzVector <Real> n_xyz(core::Size seqpos){
 		if ( !xyz_updated_ ) { update_xyz_coords(); }
 		return residues_[res_id(seqpos)].n_xyz();
 	}
 
 	/// @brief Getter of the xyz coordinates of CA
-	xyzVector <Real> ca_xyz(Size seqpos){
+	xyzVector <Real> ca_xyz(core::Size seqpos){
 		if ( !xyz_updated_ ) { update_xyz_coords(); }
 		return residues_[res_id(seqpos)].ca_xyz();
 	}
 
 	/// @brief Getter of the xyz coordinates of C
-	xyzVector <Real> c_xyz(Size seqpos){
+	xyzVector <Real> c_xyz(core::Size seqpos){
 		if ( !xyz_updated_ ) { update_xyz_coords(); }
 		return residues_[res_id(seqpos)].c_xyz();
 	}
@@ -362,21 +362,21 @@ public:
 private: // Methods
 
 	/// @brief Translate the seqpos to the id within the free peptide
-	Size res_id(Size seqpos){
+	core::Size res_id(core::Size seqpos){
 		debug_assert(seqpos > pivot1_ - 3 && seqpos < pivot2_ + 3);
 		return seqpos - pivot1_ + 3;
 	}
 
 	/// @brief Translate the id of a residue within the free peptide to its seqpos
-	Size seqpos(Size res_id){
+	core::Size seqpos(core::Size res_id){
 		debug_assert(res_id < pivot2_ - pivot1_ + 6);
 		return res_id + pivot1_ - 3;
 	}
 
 private: // Member data
 
-	Size pivot1_;
-	Size pivot2_;
+	core::Size pivot1_;
+	core::Size pivot2_;
 
 	// Residues from pivot1 - 2 to pivot2 + 2
 	// Those residues beyond pivots exist because they provide

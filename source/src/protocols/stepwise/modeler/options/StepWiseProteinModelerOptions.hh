@@ -21,7 +21,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 #if defined(WIN32) || defined(PYROSETTA)
@@ -35,7 +35,7 @@ namespace modeler {
 namespace options {
 
 // multiple inheritance -- bad form -- but will replace with composition later, perhaps.
-class StepWiseProteinModelerOptions: public virtual utility::pointer::ReferenceCount {
+class StepWiseProteinModelerOptions: public virtual utility::VirtualBase {
 
 public:
 

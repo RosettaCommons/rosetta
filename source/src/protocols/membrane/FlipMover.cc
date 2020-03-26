@@ -232,7 +232,7 @@ void FlipMover::apply( core::pose::Pose & pose ) {
 	core::kinematics::FoldTree orig_ft = pose.fold_tree();
 
 	// reorder foldtree
-	Size mem_rsd = pose.membrane_info()->membrane_rsd_num();
+	core::Size mem_rsd = pose.membrane_info()->membrane_rsd_num();
 	core::kinematics::FoldTree foldtree = pose.fold_tree();
 	foldtree.reorder( mem_rsd );
 	pose.fold_tree( foldtree );

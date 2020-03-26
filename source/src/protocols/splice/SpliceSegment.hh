@@ -16,7 +16,7 @@
 #include <protocols/splice/SpliceSegment.fwd.hh>
 #include <protocols/splice/Splice.fwd.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <map>
 #include <core/types.hh>
@@ -40,7 +40,7 @@ Each splice_segment is additionally associated with the sequence profiles mentio
 formatted as Rosetta-readable PSSM files*/
 
 /// @brief utility class and functions for dealing with sequence profiles for varying segments in Splice
-class SpliceSegment : public utility::pointer::ReferenceCount
+class SpliceSegment : public utility::VirtualBase
 {
 public:
 	SpliceSegment();

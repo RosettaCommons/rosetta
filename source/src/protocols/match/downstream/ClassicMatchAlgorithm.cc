@@ -29,7 +29,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -45,7 +45,7 @@ namespace downstream {
 
 static basic::Tracer TR( "protocols.match.downstream.ClassicMatchAlgorithm" );
 
-ClassicMatchAlgorithm::ClassicMatchAlgorithm( Size geom_cst_id ) :
+ClassicMatchAlgorithm::ClassicMatchAlgorithm( core::Size geom_cst_id ) :
 	parent( geom_cst_id ),
 	occspace_rev_id_at_last_update_( 0 ),
 	build_round1_hits_twice_( false ),
@@ -115,11 +115,11 @@ ClassicMatchAlgorithm::build_and_discard_first_round_hits_at_all_positions(
 
 	utility::vector1< upstream::ScaffoldBuildPointCOP > const & launch_points
 		( matcher.per_constraint_build_points( geom_cst_id() ) );
-	Size n_build_points = launch_points.size();
+	core::Size n_build_points = launch_points.size();
 
 	std::list< Hit > return_hits; // Only return a single hit from this function
 	OccupiedSpaceHashOP occspace = matcher.occ_space_hash();
-	for ( Size ii = 1; ii <= n_build_points; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_build_points; ++ii ) {
 		// generate hits for build point ii, and insert them into the occspace hash,
 		// but throw them out at the end of this iteration since usually there are too
 		// many that get generated
@@ -142,7 +142,7 @@ ClassicMatchAlgorithm::build_and_discard_first_round_hits_at_all_positions(
 void
 ClassicMatchAlgorithm::respond_to_primary_hitlist_change(
 	Matcher & matcher,
-	Size round_just_completed
+	core::Size round_just_completed
 )
 {
 	OccupiedSpaceHashOP occspace = matcher.occ_space_hash();
@@ -203,7 +203,7 @@ ClassicMatchAlgorithm::respond_to_peripheral_hitlist_change( Matcher & matcher )
 	auto iter = matcher.hit_list_begin(   geom_cst_id() );
 	auto iter_end = matcher.hit_list_end( geom_cst_id() );
 
-	Size drop_count( 0 );
+	core::Size drop_count( 0 );
 
 	while ( iter != iter_end  ) {
 		auto iter_next = iter;
@@ -225,8 +225,8 @@ ClassicMatchAlgorithm::respond_to_peripheral_hitlist_change( Matcher & matcher )
 
 std::list< Hit >
 ClassicMatchAlgorithm::build(
-	Size const scaffold_build_point_id,
-	Size const upstream_conf_id,
+	core::Size const scaffold_build_point_id,
+	core::Size const upstream_conf_id,
 	core::conformation::Residue const & upstream_residue
 ) const
 {
@@ -246,7 +246,7 @@ ClassicMatchAlgorithm::build(
 		}
 	}
 
-	for ( Size ii = 1; ii <= n_external_samplers(); ++ii ) {
+	for ( core::Size ii = 1; ii <= n_external_samplers(); ++ii ) {
 		std::list< Hit > hits = build_from_three_coords(
 			ii,
 			scaffold_build_point_id,
@@ -286,12 +286,12 @@ ClassicMatchAlgorithm::hits_to_include_with_partial_match( match_dspos1 const & 
 ClassicMatchAlgorithm::Size
 ClassicMatchAlgorithm::n_possible_hits_per_upstream_conformation() const
 {
-	Size total = 0;
-	for ( Size ii = 1; ii <= n_external_samplers(); ++ii ) {
-		Size iitotal = 1;
+	core::Size total = 0;
+	for ( core::Size ii = 1; ii <= n_external_samplers(); ++ii ) {
+		core::Size iitotal = 1;
 		utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > const & exsampler_list( external_samplers_[ ii ] );
 
-		// for ( Size jj = 1; jj <= exsampler.size(); ++jj ) {
+		// for ( core::Size jj = 1; jj <= exsampler.size(); ++jj ) {
 		for ( auto const & exsampler : exsampler_list ) {
 			iitotal *= exsampler.n_tor_U3D1_samples();
 			iitotal *= exsampler.n_ang_U2D1_samples();
@@ -311,9 +311,9 @@ ClassicMatchAlgorithm::n_possible_hits_per_upstream_conformation() const
 
 std::list< Hit >
 ClassicMatchAlgorithm::build_from_three_coords(
-	Size const which_external_sampler,
-	Size const scaffold_build_point_id,
-	Size const upstream_conf_id,
+	core::Size const which_external_sampler,
+	core::Size const scaffold_build_point_id,
+	core::Size const upstream_conf_id,
 	core::conformation::Residue const & upstream_residue
 ) const
 {
@@ -352,29 +352,29 @@ ClassicMatchAlgorithm::build_from_three_coords(
 		/// build the downstream target from the upstream conformation.  No transcendental function evaulations
 		/// necessary here, as the coordinate transformations have already been computed!  Just good old
 		/// addition and multiplication.
-		for ( Size ii = 1; ii <= exsampler.n_tor_U3D1_samples(); ++ii ) {
+		for ( core::Size ii = 1; ii <= exsampler.n_tor_U3D1_samples(); ++ii ) {
 			HTReal ht_ii = ht_start * exsampler.transform( HT_tor_U3D1, ii );
 
-			for ( Size jj = 1; jj <= exsampler.n_ang_U2D1_samples(); ++jj ) {
+			for ( core::Size jj = 1; jj <= exsampler.n_ang_U2D1_samples(); ++jj ) {
 				HTReal ht_jj = ht_ii * exsampler.transform( HT_ang_U2D1, jj );
 
-				for ( Size kk = 1; kk <= exsampler.n_dis_U1D1_samples(); ++kk ) {
+				for ( core::Size kk = 1; kk <= exsampler.n_dis_U1D1_samples(); ++kk ) {
 					HTReal ht_kk = ht_jj;
 					ht_kk.walk_along_z( exsampler.dis_U1D1_samples()[ kk ] );
 					Vector pD1 = ht_kk.point();
 					if ( radD1 > ZERO && bbgrid().occupied( radD1, pD1 ) ) continue; /// Collision check atom D1
 					if ( active_site_check_D1 && ! active_site_grid().occupied( pD1 ) ) continue;
 
-					for ( Size ll = 1; ll <= exsampler.n_tor_U2D2_samples(); ++ll ) {
+					for ( core::Size ll = 1; ll <= exsampler.n_tor_U2D2_samples(); ++ll ) {
 						HTReal ht_ll = ht_kk * exsampler.transform( HT_tor_U2D2, ll );
 
-						for ( Size mm = 1; mm <= exsampler.n_ang_U1D2_samples(); ++mm ) {
+						for ( core::Size mm = 1; mm <= exsampler.n_ang_U1D2_samples(); ++mm ) {
 							HTReal ht_mm = ht_ll * exsampler.transform( HT_ang_U1D2, mm );
 							Vector pD2 = ht_mm.point();
 							if ( radD2 > ZERO && bbgrid().occupied( radD2, pD2 ) ) continue; /// Collision check atom D2
 							if ( active_site_check_D2 && ! active_site_grid().occupied( pD2 ) ) continue;
 
-							for ( Size nn = 1; nn <= exsampler.n_tor_U1D3_samples(); ++nn ) {
+							for ( core::Size nn = 1; nn <= exsampler.n_tor_U1D3_samples(); ++nn ) {
 								HTReal ht_nn = ht_mm * exsampler.transform( HT_tor_U1D3, nn );
 								Vector pD3 = ht_nn.point();
 								if ( radD3 > ZERO && bbgrid().occupied( radD3, pD3 ) ) continue; /// Collision check atom D3
@@ -402,11 +402,11 @@ ClassicMatchAlgorithm::build_from_three_coords(
 /*
 std::cout << "Collision free placement of atoms 4 5 and 6: ";
 std::cout << "p4: ";
-for ( Size oo = 1; oo <= 3; ++oo ) std::cout << p4( oo ) << " ";
+for ( core::Size oo = 1; oo <= 3; ++oo ) std::cout << p4( oo ) << " ";
 std::cout << "p5: ";
-for ( Size oo = 1; oo <= 3; ++oo ) std::cout << p5( oo ) << " ";
+for ( core::Size oo = 1; oo <= 3; ++oo ) std::cout << p5( oo ) << " ";
 std::cout << "p6: ";
-for ( Size oo = 1; oo <= 3; ++oo ) std::cout << p6( oo ) << " ";
+for ( core::Size oo = 1; oo <= 3; ++oo ) std::cout << p6( oo ) << " ";
 std::cout << std::endl;
 
 std::cout << "tor_U3D1: expected: " << exsampler.tor_U3D1_samples()[ ii ] << " real: "
@@ -455,7 +455,7 @@ void ClassicMatchAlgorithm::set_residue_type( core::chemical::ResidueTypeCOP res
 /// so that the transforms are ready when build() is called.
 void ClassicMatchAlgorithm::add_external_geom_sampler(
 	utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > const & sampler,
-	Size const exgeom_id,
+	core::Size const exgeom_id,
 	std::string const & atom1,
 	std::string const & atom2,
 	std::string const & atom3,
@@ -463,9 +463,9 @@ void ClassicMatchAlgorithm::add_external_geom_sampler(
 )
 {
 
-	Size id1( restype().has( atom1 ) ? restype().atom_index( atom1 ) : 0 );
-	Size id2( restype().has( atom2 ) ? restype().atom_index( atom2 ) : 0 );
-	Size id3( restype().has( atom3 ) ? restype().atom_index( atom3 ) : 0 );
+	core::Size id1( restype().has( atom1 ) ? restype().atom_index( atom1 ) : 0 );
+	core::Size id2( restype().has( atom2 ) ? restype().atom_index( atom2 ) : 0 );
+	core::Size id3( restype().has( atom3 ) ? restype().atom_index( atom3 ) : 0 );
 
 	if ( id1 == 0 ) {
 		utility_exit_with_message( "ERROR in adding external geom sampler to ClassicMatchAlgorithm: " + restype().name() + " does not contain requested atom " + atom1 );
@@ -477,7 +477,7 @@ void ClassicMatchAlgorithm::add_external_geom_sampler(
 		utility_exit_with_message( "ERROR in adding external geom sampler to ClassicMatchAlgorithm: " + restype().name() + " does not contain requested atom " + atom3 );
 	}
 
-	utility::fixedsizearray1< Size, 3 > atids;
+	utility::fixedsizearray1< core::Size, 3 > atids;
 	atids[ 1 ] = id1;
 	atids[ 2 ] = id2;
 	atids[ 3 ] = id3;

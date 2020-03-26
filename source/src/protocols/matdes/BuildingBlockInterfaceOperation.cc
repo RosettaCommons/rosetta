@@ -93,7 +93,7 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 	using namespace core::pose::symmetry;
 	using namespace scoring;
 	using namespace utility;
-	using Sizes = vector1<Size>;
+	using Sizes = vector1<core::Size>;
 
 	utility::vector1<std::string> sym_dof_name_list;
 	if ( sym_dof_names_ == "" ) {
@@ -115,15 +115,15 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 	vector1<bool> indy_resis = sym_info->independent_residues();
 	Real const contact_dist_sq = contact_dist_ * contact_dist_;
 	Sizes design_pos;
-	std::set<Size> filtered_design_pos;
+	std::set<core::Size> filtered_design_pos;
 	Sizes comp_chains;
 	std::string select_interface_pos("select interface_pos, resi ");
 	std::string select_comp1_chains("select comp1_chains, chain ");
 	std::string select_comp2_chains("select comp2_chains, chain ");
-	for ( Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++ ) {
+	for ( core::Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++ ) {
 		if ( sym_info->subunit_index(ir) != 1 ) continue;
 		std::string atom_i = (pose.residue(ir).name3() == "GLY") ? "CA" : "CB";
-		for ( Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++ ) {
+		for ( core::Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++ ) {
 			std::string atom_j = (pose.residue(jr).name3() == "GLY") ? "CA" : "CB";
 
 			//If one component, then check for clashes between all residues in primary subunit and subunits with indices > nsub_bb
@@ -170,12 +170,12 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 	std::string select_filtered_interface_pos("select filtered_interface_pos, resi ");
 	bool contact;
 
-	for ( Size iip=1; iip<=design_pos.size(); iip++ ) {
-		Size ir = design_pos[iip];
+	for ( core::Size iip=1; iip<=design_pos.size(); iip++ ) {
+		core::Size ir = design_pos[iip];
 		if ( filter_intrabb_ ) {
 			TR.Debug << "Filtering: Checking resi: " << ir << std::endl;
 			contact = true;
-			for ( Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++ ) {
+			for ( core::Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++ ) {
 				if ( !multicomponent_ ) {
 					if ( sym_info->subunit_index(ir) > nsub_bblock_ || sym_info->subunit_index(jr) > nsub_bblock_ ) continue;
 				} else {
@@ -186,8 +186,8 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 
 				if ( sym_info->subunit_index(jr) == 1 ) continue;
 
-				for ( Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++ ) {
-					for ( Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++ ) {
+				for ( core::Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++ ) {
+					for ( core::Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++ ) {
 						if ( pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= bblock_dist_sq ) {
 							if ( intrabb_only_ ) { contact = false; break; }
 							else {
@@ -219,7 +219,7 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 	TR << select_filtered_interface_pos << std::endl;
 	// Now prevent_repacking at all positions that are not defined filtered design positions:
 	std::string output = "design_pos ";
-	for ( Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++ ) {
+	for ( core::Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++ ) {
 		if ( filtered_design_pos.find(ir) != filtered_design_pos.end() ) {
 			output += ObjexxFCL::string_of(ir)+"+";
 		} else {

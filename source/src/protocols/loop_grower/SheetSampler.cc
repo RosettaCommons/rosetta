@@ -117,7 +117,7 @@ SheetSampler::apply(core::pose::Pose & pose){
 	//get starting score
 	Real bestscore = (*sf_)(pose);
 	core::pose::Pose bestpose = pose;
-	Size total_residues = pose.total_residue();
+	core::Size total_residues = pose.total_residue();
 
 	// add residues
 	core::Size insert_baseL = start_ + (end_ - start_)/2;
@@ -147,20 +147,20 @@ SheetSampler::apply(core::pose::Pose & pose){
 	// strand(left)
 	if ( build_left ) {
 		pose.conformation().append_residue_by_jump(*newres, insert_baseL );
-		Size strand_start=pose.total_residue();
-		Size strand_ref = strand_start;
+		core::Size strand_start=pose.total_residue();
+		core::Size strand_ref = strand_start;
 
 		//this code assumes append residue by jump always appends the residue at the very end. This should be verified.
-		for ( Size i=end_; i>insert_baseL; i-- ) {
+		for ( core::Size i=end_; i>insert_baseL; i-- ) {
 			pose.conformation().safely_prepend_polymer_residue_before_seqpos(*newres, strand_start, true);
 			strand_ref++;
 		}
-		for ( Size i=insert_baseL-1; i>=start_; i-- ) {
+		for ( core::Size i=insert_baseL-1; i>=start_; i-- ) {
 			pose.conformation().safely_append_polymer_residue_after_seqpos(*newres, pose.total_residue(), true);
 		}
-		Size strand_stop=pose.total_residue();
+		core::Size strand_stop=pose.total_residue();
 
-		for ( Size j=strand_start; j<=strand_stop; j++ ) {
+		for ( core::Size j=strand_start; j<=strand_stop; j++ ) {
 			pose.set_phi( j, -140.0 );
 			pose.set_psi( j, 135.0 );
 			pose.set_omega( j, 180.0 );
@@ -168,7 +168,7 @@ SheetSampler::apply(core::pose::Pose & pose){
 
 		// align this to insert-base
 		if ( ideal_sheets_ ) {
-			Size sheet_size = strand_stop-strand_start+1;
+			core::Size sheet_size = strand_stop-strand_start+1;
 			alignStrand( pose, insert_baseL, strand_ref, strand_start, sheet_size);
 		}
 
@@ -178,35 +178,35 @@ SheetSampler::apply(core::pose::Pose & pose){
 	// strand(right)
 	if ( build_right ) {
 		pose.conformation().append_residue_by_jump(*newres, insert_baseR );
-		Size strand_start=pose.total_residue();
-		Size strand_ref = strand_start;
+		core::Size strand_start=pose.total_residue();
+		core::Size strand_ref = strand_start;
 
 		// align this to insert-base
 		alignPerfectCA( pose, pose.total_residue(), insert_baseR);
 
-		for ( Size i=end_; i>insert_baseR; i-- ) {
+		for ( core::Size i=end_; i>insert_baseR; i-- ) {
 			pose.conformation().safely_prepend_polymer_residue_before_seqpos(*newres, strand_start, true);
 			strand_ref++;
 		}
-		for ( Size i=insert_baseR-1; i>=start_; i-- ) {
+		for ( core::Size i=insert_baseR-1; i>=start_; i-- ) {
 			pose.conformation().safely_append_polymer_residue_after_seqpos(*newres, pose.total_residue(), true);
 		}
-		Size strand_stop=pose.total_residue();
+		core::Size strand_stop=pose.total_residue();
 
-		for ( Size j=strand_start; j<=strand_stop; j++ ) {
+		for ( core::Size j=strand_start; j<=strand_stop; j++ ) {
 			pose.set_phi( j, -140.0 );
 			pose.set_psi( j, 135.0 );
 			pose.set_omega( j, 180.0 );
 		}
 		// align this to insert-base
 		if ( ideal_sheets_ ) {
-			Size sheet_size = strand_stop-strand_start+1;
+			core::Size sheet_size = strand_stop-strand_start+1;
 			alignStrand( pose, insert_baseR, strand_ref, strand_start, sheet_size);
 		}
 	}
 	Real aftersecond = (*sf_)(pose);
 	//Delete strands that clash
-	Size totalnew = end_-start_+1;
+	core::Size totalnew = end_-start_+1;
 	bool keep_first = true;
 	bool keep_second = true;
 	if ( bestscore + clashtolerance_ < afterfirst ) keep_first = false;
@@ -224,7 +224,7 @@ SheetSampler::apply(core::pose::Pose & pose){
 }
 
 void
-SheetSampler::alignPerfectCA( core::pose::Pose & pose, Size moving, Size ref ) {
+SheetSampler::alignPerfectCA( core::pose::Pose & pose, core::Size moving, core::Size ref ) {
 	numeric::xyzMatrix< core::Real > R;
 	numeric::xyzVector< core::Real > preT(0,0,0), postT(0,0,0);
 
@@ -294,10 +294,10 @@ printxyz(numeric::xyzVector< core::Real > printvec ){
 }
 
 void
-SheetSampler::alignStrand( core::pose::Pose & pose, Size ref, Size moving, Size strand_start, Size strand_size ) {
+SheetSampler::alignStrand( core::pose::Pose & pose, core::Size ref, core::Size moving, core::Size strand_start, core::Size strand_size ) {
 
-	Size second_moving = moving-2;
-	Size second_ref = ref+2;
+	core::Size second_moving = moving-2;
+	core::Size second_ref = ref+2;
 	//TR << " ref second ref " << ref << " " << second_ref << std::endl << " moving second moving " << moving << " " << second_moving << std::endl;
 	numeric::xyzMatrix< core::Real > R;
 	numeric::xyzVector< core::Real > preT(0,0,0), postT(0,0,0);
@@ -403,7 +403,7 @@ SheetSampler::alignStrand( core::pose::Pose & pose, Size ref, Size moving, Size 
 
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > coords;
-	for ( Size i=strand_start; i<=strand_start+strand_size-1; i++ ) {
+	for ( core::Size i=strand_start; i<=strand_start+strand_size-1; i++ ) {
 		for ( int j=1; j<=(int)pose.residue(i).natoms(); ++j ) {
 			core::id::AtomID src(j,i);
 			ids.push_back(src);
@@ -414,7 +414,7 @@ SheetSampler::alignStrand( core::pose::Pose & pose, Size ref, Size moving, Size 
 }
 
 Real
-SheetSampler::sheethbonds(core::pose::Pose& pose, Size lower, Size upper){
+SheetSampler::sheethbonds(core::pose::Pose& pose, core::Size lower, core::Size upper){
 
 	Real hbond_energies = 0;
 	//populate hbond set:
@@ -424,11 +424,11 @@ SheetSampler::sheethbonds(core::pose::Pose& pose, Size lower, Size upper){
 
 
 	//query hbond set, get energies:
-	for ( Size i = 1; i<= set1.nhbonds(); i++ ) {
+	for ( core::Size i = 1; i<= set1.nhbonds(); i++ ) {
 
 		core::scoring::hbonds::HBond bond = set1.hbond( i );
-		Size accResNum = bond.acc_res();
-		Size donResNum = bond.don_res();
+		core::Size accResNum = bond.acc_res();
+		core::Size donResNum = bond.don_res();
 		//get acc and donor residues from sequence numbers
 		core::conformation::Residue accRes = pose.residue( accResNum );
 		core::conformation::Residue donRes = pose.residue( donResNum );

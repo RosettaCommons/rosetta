@@ -139,7 +139,7 @@ void DecoySetEvaluation::prepare_push_back( core::Size nres ) {
 
 void DecoySetEvaluation::push_back( core::pose::Pose& pose ) {
 	//count residues with CA
-	Size nres=0;
+	core::Size nres=0;
 	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue_type( i ).is_protein() ) break;
 		++nres;
@@ -198,7 +198,7 @@ void DecoySetEvaluation::pop_back_CA_xyz( ){
 }
 
 void DecoySetEvaluation::push_back_CA_xyz_from_silent_file( io::silent::SilentFileData const& sfd, bool store_energies ) {
-	Size const n_new_decoys( sfd.size() );
+	core::Size const n_new_decoys( sfd.size() );
 	push_back_CA_xyz_from_silent_file( n_new_decoys, sfd.begin(), sfd.end(), store_energies );
 }
 
@@ -207,13 +207,13 @@ void DecoySetEvaluation::set_n_atom( core::Size natoms ) {
 	n_atoms_ = natoms;
 }
 
-void DecoySetEvaluation::superimpose( Size icenter ) {
+void DecoySetEvaluation::superimpose( core::Size icenter ) {
 	FArray1D_double const weights( n_atoms_, 1.0 );
 	superimpose( weights, icenter );
 }
 
 void DecoySetEvaluation::set_weights( ObjexxFCL::FArray1_double const& weights ) {
-	for ( Size i=1; i<=n_atoms_; ++i ) weights_( i ) = weights( i );
+	for ( core::Size i=1; i<=n_atoms_; ++i ) weights_( i ) = weights( i );
 }
 
 core::Real  DecoySetEvaluation::rmsd( FArray1_double const& weights, FArray2_double& xx_ref, FArray2_double& xx ) const {
@@ -225,23 +225,23 @@ core::Real  DecoySetEvaluation::rmsd( FArray1_double const& weights, FArray2_dou
 	fit_centered_coords( n_atoms_, weights, xx_ref, xx, R );
 	Real rmsd( 0.0 );
 	Real tot_weight( 0.0 );
-	for ( Size n = 1; n <= n_atoms(); n++ ) {
+	for ( core::Size n = 1; n <= n_atoms(); n++ ) {
 		tot_weight += weights_( n );
-		for ( Size d = 1; d<=3; ++d ) {
+		for ( core::Size d = 1; d<=3; ++d ) {
 			rmsd += ( xx( d, n ) -  xx_ref( d, n ) ) * ( xx( d, n ) - xx_ref( d, n ) ) * weights_( n );
 		}
 	}
 	return rmsd = sqrt( rmsd/tot_weight );
 }
 
-void DecoySetEvaluation::superimpose( FArray1_double const& weights, Size icenter ) {
+void DecoySetEvaluation::superimpose( FArray1_double const& weights, core::Size icenter ) {
 	if ( n_decoys() == 0 ) return;
 	FArray2P_double xx_ref( coords_( 1, 1, icenter ), 3, n_atoms_ ); //proxy array provides view to coords_
 	tr.Debug << "superimpose with " << n_decoys() << " with " << icenter << " as reference structure " << std::endl;
-	Size go_around( icenter + n_decoys_ - 1 );
-	Size offset( 0 );
-	for ( Size ni = icenter; ni <= go_around; ++ni ) {
-		Size n( ni - offset );
+	core::Size go_around( icenter + n_decoys_ - 1 );
+	core::Size offset( 0 );
+	for ( core::Size ni = icenter; ni <= go_around; ++ni ) {
+		core::Size n( ni - offset );
 		if ( n > n_decoys_ ) {
 			offset = n_decoys_;
 			n = 1;
@@ -272,16 +272,16 @@ void DecoySetEvaluation::center_structure( core::Size i, FArray1_double const& w
 }
 
 void DecoySetEvaluation::center_all( FArray1_double const& weights ) {
-	for ( Size n = 1; n <= n_decoys_; ++n ) {
+	for ( core::Size n = 1; n <= n_decoys_; ++n ) {
 		center_structure( n, weights );
 	}
 }
 
 //only makes sense after "superimpose"
 void DecoySetEvaluation::compute_average_structure( FArray2_double& average_structure ) const {
-	for ( Size n = 1; n<= n_decoys_; ++n ) {
-		for ( Size d = 1; d<=3; ++d ) {
-			for ( Size iatom = 1; iatom<=n_atoms_; ++iatom ) {
+	for ( core::Size n = 1; n<= n_decoys_; ++n ) {
+		for ( core::Size d = 1; d<=3; ++d ) {
+			for ( core::Size iatom = 1; iatom<=n_atoms_; ++iatom ) {
 				average_structure( d, iatom ) += coords_( d, iatom, n )/n_decoys_;
 			}
 		}
@@ -290,12 +290,12 @@ void DecoySetEvaluation::compute_average_structure( FArray2_double& average_stru
 
 Size DecoySetEvaluation::find_closest_to_average( FArray2_double& average_structure ) const {
 	Real best_dist( 100000000 );
-	Size closest_structure( 1 );
+	core::Size closest_structure( 1 );
 
-	for ( Size n = 1; n<=n_decoys_; ++n ) {
+	for ( core::Size n = 1; n<=n_decoys_; ++n ) {
 		Real dist2( 0 );
-		for ( Size iatom = 1; iatom <=n_atoms_; ++iatom ) {
-			for ( Size d=1; d<=3; ++d ) {
+		for ( core::Size iatom = 1; iatom <=n_atoms_; ++iatom ) {
+			for ( core::Size d=1; d<=3; ++d ) {
 				dist2 += (average_structure( d, iatom ) - coords_( d, iatom, n ))*(average_structure( d, iatom ) - coords_( d, iatom, n ));
 			}
 		}
@@ -313,15 +313,15 @@ Real DecoySetEvaluation::rmsf( core::Size pos ) {
 	Vector rmsd_x( 0.0 );
 	Vector rmsd_av( 0.0 );
 	Real invn( 1.0 /n_decoys() );
-	for ( Size idecoy = 1; idecoy <= n_decoys(); ++idecoy ) {
-		for ( Size d = 1; d<=3; ++d ) {
+	for ( core::Size idecoy = 1; idecoy <= n_decoys(); ++idecoy ) {
+		for ( core::Size d = 1; d<=3; ++d ) {
 			Real dx = coords_( d, pos, idecoy );
 			rmsd_x( d ) += dx * dx * invn;
 			rmsd_av( d ) += dx * invn;
 		}
 	}
 	Real rms( 0 );
-	for ( Size d = 1; d<=3; ++d ) {
+	for ( core::Size d = 1; d<=3; ++d ) {
 		rms += rmsd_x( d ) - rmsd_av( d )*rmsd_av( d );
 	}
 	return sqrt( rms );
@@ -331,13 +331,13 @@ void DecoySetEvaluation::rmsf( utility::vector1< Real >& result ) {
 	result.clear();
 	result.reserve( n_atoms_ );
 
-	for ( Size pos = 1; pos <= n_atoms_; ++pos ) {
+	for ( core::Size pos = 1; pos <= n_atoms_; ++pos ) {
 		result.push_back( rmsf( pos ) );
 	}
 }
 
 void DecoySetEvaluation::rmsf( FArray1_double& result ) {
-	for ( Size pos = 1; pos <= n_atoms_; ++pos ) {
+	for ( core::Size pos = 1; pos <= n_atoms_; ++pos ) {
 		result( pos ) = rmsf( pos );
 	}
 }
@@ -349,9 +349,9 @@ Size DecoySetEvaluation::wRMSD( Real sigma2, Real tolerance, ObjexxFCL::FArray1_
 	Real wsum_old = 100;
 	Real wsum ( 1.0 );
 	Real invn ( 1.0/n_atoms_ );
-	Size ct ( 0 );
-	Size i_center( 1 );
-	Size max_iter( 100 );
+	core::Size ct ( 0 );
+	core::Size i_center( 1 );
+	core::Size max_iter( 100 );
 	tr.Debug << "run wRMSD iterations with " << n_decoys() << " decoys of " << n_atoms() << " atoms " << std::endl;
 	tr.Info << "wRMSD: iter  wsum   wRMSD icenter " << std::endl;
 	while ( ( std::abs( wsum_old - wsum ) > tolerance ) && ( --max_iter > 0 ) ) {
@@ -363,7 +363,7 @@ Size DecoySetEvaluation::wRMSD( Real sigma2, Real tolerance, ObjexxFCL::FArray1_
 		wsum_old = wsum;
 		wsum = 0.0;
 		Real wMSD = 0.0;
-		for ( Size i = 1; i <= n_atoms_; ++i ) {
+		for ( core::Size i = 1; i <= n_atoms_; ++i ) {
 			Real di2 = weights( i )*weights( i );
 			weights( i ) = exp( - di2 / sigma2 );
 			wsum += weights( i )*invn;
@@ -379,25 +379,25 @@ void DecoySetEvaluation::compute_distance_matrix( ObjexxFCL::FArray2D_double& di
 	int count = 0;
 
 	Real sum_w( 0.0 );
-	for ( Size n = 1; n <= n_atoms(); n++ ) {
+	for ( core::Size n = 1; n <= n_atoms(); n++ ) {
 		sum_w+=weights_( n );
 	}
 	Real invn = 1.0 / sum_w;
 
-	for ( Size i = 1; i <= n_decoys(); i++ ) {
+	for ( core::Size i = 1; i <= n_decoys(); i++ ) {
 
 		FArray2P_double xx( coords_( 1, 1, i ), 3, n_atoms_ ); //proxy array provides view to coords_
 		FArray1D_double transvec( 3 );
 		reset_x( n_atoms_, xx, weights_, transvec );
 
-		for ( Size j = 1; j<i; j++ ) {
+		for ( core::Size j = 1; j<i; j++ ) {
 			//already centered since j<i
 			Matrix R;
 			FArray2P_double xx2( coords_( 1, 1, j ), 3, n_atoms_ ); //proxy array provides view to coords_
 			fit_centered_coords( n_atoms_, weights_, xx, xx2, R );
 			Real rmsd( 0.0 );
-			for ( Size n = 1; n <= n_atoms(); n++ ) {
-				for ( Size d = 1; d<=3; ++d ) {
+			for ( core::Size n = 1; n <= n_atoms(); n++ ) {
+				for ( core::Size d = 1; d<=3; ++d ) {
 					rmsd += ( xx( d, n ) -  xx2( d, n ) ) * ( xx( d, n ) - xx2( d, n ) ) * invn * weights_( n );
 				}
 			}
@@ -435,12 +435,12 @@ void DecoySetEvaluation::create_dist_constraints(
 	ObjexxFCL::FArray2D_double ivm( n_atoms(), n_atoms(), 0.0 );
 	Real const invn( 1.0/n_decoys() );
 
-	for ( Size i = 1; i <= n_atoms(); i++ ) {
-		for ( Size j = i+1; j<=n_atoms(); j++ ) {
+	for ( core::Size i = 1; i <= n_atoms(); i++ ) {
+		for ( core::Size j = i+1; j<=n_atoms(); j++ ) {
 			Real var( 0.0 );
 			Real av( 0.0 );
 
-			for ( Size n = 1; n<=n_decoys(); n++ ) {
+			for ( core::Size n = 1; n<=n_decoys(); n++ ) {
 				core::Vector xi( coords_( 1, i, n ), coords_( 2, i, n ), coords_( 3, i, n ));
 				core::Vector xj( coords_( 1, j, n ), coords_( 2, j, n ), coords_( 3, j, n ));
 				Real dist = xi.distance(xj);
@@ -479,8 +479,8 @@ void DecoySetEvaluation::create_dist_constraints_median(
 
 
 	Real const invn( 1.0/n_decoys() );
-	auto const Nlb( static_cast< Size > ( std::ceil( n_decoys()*option[ dist_cst::lb_fact ] )));
-	auto const Nub( static_cast< Size > ( std::ceil( n_decoys()*option[ dist_cst::ub_fact ] )));
+	auto const Nlb( static_cast< core::Size > ( std::ceil( n_decoys()*option[ dist_cst::lb_fact ] )));
+	auto const Nub( static_cast< core::Size > ( std::ceil( n_decoys()*option[ dist_cst::ub_fact ] )));
 	Real const grow_fact( option[ dist_cst::grow_fact ] );
 	Real const grow_fact_lb( option[ dist_cst::grow_fact_lb ] );
 	loops::Loops rigid;
@@ -498,14 +498,14 @@ void DecoySetEvaluation::create_dist_constraints_median(
 		rigid = loops::Loops( loops );
 	}
 	// utility::vector1< core::Real > dist_sorted;
-	for ( Size i = 1; i <= n_atoms(); i++ ) {
-		for ( Size j = i+1; j<=n_atoms(); j++ ) {
+	for ( core::Size i = 1; i <= n_atoms(); i++ ) {
+		for ( core::Size j = i+1; j<=n_atoms(); j++ ) {
 			if ( rigid.size() && rigid.is_loop_residue( i ) && rigid.is_loop_residue( j ) ) continue;
 			Real av( 0.0 );
 			// dist_sorted.clear();
 			//   dist_sorted.reserve(n_decoys());
 			auto* dist_sorted = new Real[ n_decoys() ];
-			for ( Size n = 1; n<=n_decoys(); n++ ) {
+			for ( core::Size n = 1; n<=n_decoys(); n++ ) {
 				core::Vector xi( coords_( 1, i, n ), coords_( 2, i, n ), coords_( 3, i, n ));
 				core::Vector xj( coords_( 1, j, n ), coords_( 2, j, n ), coords_( 3, j, n ));
 				Real dist = xi.distance(xj);
@@ -549,36 +549,36 @@ void DecoySetEvaluation::create_dist_constraints_median(
 void DecoySetEvaluation::create_xyz_constraints_median(
 	scoring::constraints::ConstraintSet& cst_set,
 	core::pose::Pose const& ref_pose,
-	Size root
+	core::Size root
 ) const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	Real const invn( 1.0/n_decoys() );
-	//Size const Nlb( std::ceil( n_decoys()*option[ dist_cst::lb_fact ] ));
-	auto const Nub( static_cast< Size > ( std::ceil( n_decoys()*option[ dist_cst::ub_fact ] )));
+	//core::Size const Nlb( std::ceil( n_decoys()*option[ dist_cst::lb_fact ] ));
+	auto const Nub( static_cast< core::Size > ( std::ceil( n_decoys()*option[ dist_cst::ub_fact ] )));
 	if ( Nub >= n_decoys() ) {
 		utility_exit_with_message( "set ub_fact to 0.05 such that e.g., 5% of decoys are allowed to violate upper bound." );
 	}
 	Real const grow_fact( option[ dist_cst::grow_fact ] );
 	Real const min_ub( option[ dist_cst::min_ub ] );
-	//Size const grow_fact_lb( option[ dist_cst::grow_fact_lb ] );
+	//core::Size const grow_fact_lb( option[ dist_cst::grow_fact_lb ] );
 
 	// utility::vector1< core::Real > dist_sorted;
-	for ( Size pos = 1; pos <= n_atoms(); pos++ ) {
+	for ( core::Size pos = 1; pos <= n_atoms(); pos++ ) {
 		core::Vector xyz_av( 0.0 );
 		//compute average position
-		for ( Size n = 1; n<=n_decoys(); n++ ) {
-			for ( Size d = 1; d<=3; ++d ) {
+		for ( core::Size n = 1; n<=n_decoys(); n++ ) {
+			for ( core::Size d = 1; d<=3; ++d ) {
 				core::Real dx = coords_( d, pos, n );
 				xyz_av( d ) += dx * invn;
 			}
 		}
 
 		//use this to throw outliers away.
-		typedef std::list< std::pair< core::Real, Size > > PointList;
+		typedef std::list< std::pair< core::Real, core::Size > > PointList;
 		PointList sorted_points;
-		for ( Size n = 1; n<=n_decoys(); n++ ) {
+		for ( core::Size n = 1; n<=n_decoys(); n++ ) {
 			core::Vector xi( coords_( 1, pos, n ), coords_( 2, pos, n ), coords_( 3, pos, n ));
 			Real dist = xyz_av.distance(xi);
 			sorted_points.push_back( std::make_pair( dist, n ) );
@@ -586,12 +586,12 @@ void DecoySetEvaluation::create_xyz_constraints_median(
 		sorted_points.sort();
 
 		//now compute new average only on the 70% points closest to the average xyz
-		Size ct = 1;
-		auto const N_find_center( static_cast< Size >( std::ceil( n_decoys()*0.7 )));
+		core::Size ct = 1;
+		auto const N_find_center( static_cast< core::Size >( std::ceil( n_decoys()*0.7 )));
 		tr.Debug << "use " << N_find_center << " points to compute average " << std::endl;
 		xyz_av = core::Vector( 0.0 );
 		for ( PointList::const_iterator it = sorted_points.begin(); ct<=N_find_center; ++ct, ++it ) {
-			for ( Size d = 1; d<=3; ++d ) {
+			for ( core::Size d = 1; d<=3; ++d ) {
 				Real dx = coords_( d, pos, it->second );
 				xyz_av( d ) += dx / N_find_center;
 			}
@@ -603,7 +603,7 @@ void DecoySetEvaluation::create_xyz_constraints_median(
 
 
 		auto* dist_sorted = new Real[ n_decoys() ];
-		for ( Size n = 1; n<=n_decoys(); n++ ) {
+		for ( core::Size n = 1; n<=n_decoys(); n++ ) {
 			core::Vector xi( coords_( 1, pos, n ), coords_( 2, pos, n ), coords_( 3, pos, n ));
 			Real dist = xyz_av.distance(xi);
 			tr.Debug << "push_dist " << dist << std::endl;
@@ -634,10 +634,10 @@ void DecoySetEvaluation::create_xyz_constraints_median(
 // void DecoySetEvaluation::dump_coords( utility::io::ozstream& out) const {
 
 //  // dump file with i, j dist1 dist2  ..... dist N
-//  for ( Size i = 1; i <= n_atoms(); i++ ) {
-//   for ( Size j = i+3; j<=n_atoms(); j++ ) {
+//  for ( core::Size i = 1; i <= n_atoms(); i++ ) {
+//   for ( core::Size j = i+3; j<=n_atoms(); j++ ) {
 //    out << i << " " << j << " ";
-//    for ( Size n = 1; n<=n_decoys(); n++ ) {
+//    for ( core::Size n = 1; n<=n_decoys(); n++ ) {
 //     core::Vector xi( coords_( 1, i, n ), coords_( 2, i, n ), coords_( 3, i, n ));
 //     core::Vector xj( coords_( 1, j, n ), coords_( 2, j, n ), coords_( 3, j, n ));
 //     Real dist = distance(xi, xj);

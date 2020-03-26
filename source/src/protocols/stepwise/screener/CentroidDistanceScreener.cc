@@ -33,7 +33,7 @@ namespace screener {
 
 //Constructor
 CentroidDistanceScreener::CentroidDistanceScreener(  pose::Pose & screening_pose,
-	Size const moving_res,
+	core::Size const moving_res,
 	Vector const & reference_centroid,
 	core::Real const max_distance_squared ):
 	screening_pose_( screening_pose ),

@@ -43,7 +43,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 
@@ -56,7 +56,7 @@ namespace loops {
 namespace loop_closure {
 namespace ccd {
 
-class LoopClosure : public utility::pointer::ReferenceCount {
+class LoopClosure : public utility::VirtualBase {
 public:
 	/// @brief constructor: supply fragsets for fragment moves
 	LoopClosure(

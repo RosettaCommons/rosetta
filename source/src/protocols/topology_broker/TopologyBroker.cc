@@ -114,7 +114,7 @@ TopologyBroker::TopologyBroker() :
 TopologyBroker::~TopologyBroker() = default;
 
 TopologyBroker::TopologyBroker( const TopologyBroker & tp ) :
-	ReferenceCount(tp),
+	VirtualBase(tp),
 	utility::pointer::enable_shared_from_this< TopologyBroker >(tp),
 	claimers_( tp.claimers_ )
 {
@@ -248,11 +248,11 @@ moves::MoverOP TopologyBroker::mover(core::pose::Pose const & pose,
 	// tr.Debug << "number of movers in random_mover:  " << random_mover->nr_moves() << std::endl;
 	// if(tr.Debug.visible())
 	// {
-	//  for ( Size ii = 0; ii < random_mover->size(); ++ii )
+	//  for ( core::Size ii = 0; ii < random_mover->size(); ++ii )
 	//  {
 	//   tr.Debug << "the " << ii <<"th mover in random_mover is:  " << random_mover->get_mover(ii) << std::endl;
 	//  }
-	//  for ( Size i=0; i<random_mover->weights().size(); ++i ) {
+	//  for ( core::Size i=0; i<random_mover->weights().size(); ++i ) {
 	//   tr.Debug << "weight at " << i << " is " << random_mover->weights().at(i) << std::endl;
 	//  }
 	// }
@@ -331,13 +331,13 @@ bool TopologyBroker::has_sequence_claimer() {
 	return nres > 0;
 }
 
-void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
+void TopologyBroker::build_fold_tree( claims::DofClaims & claims, core::Size nres ) {
 	claims::JumpClaims exclusive_jumps;
 	claims::JumpClaims negotiable_jumps;
 	utility::vector1< std::pair< claims::CutClaimOP , core::Size > > must_cut;
 	claims::CutClaims cut_biases;
 
-	Size root( 0 );
+	core::Size root( 0 );
 	bool excl_root_set( false );
 
 	//building the fold tree from DofClaims and jumps
@@ -354,7 +354,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 				negotiable_jumps.push_back( jump_ptr );
 			}
 		} else if ( cut_ptr ) { // CutClaim -------------------------------
-			Size global_position = sequence_number_resolver_->find_global_pose_number( cut_ptr->get_position() );
+			core::Size global_position = sequence_number_resolver_->find_global_pose_number( cut_ptr->get_position() );
 			if ( global_position >= nres || global_position < 1 ) {
 				tr.Debug << "Cut claim requesting cut at (global) position " << global_position << " by claimer '"
 					<< cut_ptr->owner().lock()->label() << "' being ignored/erased because it is outside the valid sequence region "
@@ -388,7 +388,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 		claimer->manipulate_cut_bias( cut_bias );
 	}
 	ObjexxFCL::FArray1D_float cut_bias_farray( nres );
-	for ( Size i=1; i<=nres; i++ ) cut_bias_farray( i ) = cut_bias[ i ];
+	for ( core::Size i=1; i<=nres; i++ ) cut_bias_farray( i ) = cut_bias[ i ];
 
 	//Sort jumps by exclusivity, so that they are placed in the ObjexxFCL array correctly
 	claims::JumpClaims sorted_jumps;
@@ -396,13 +396,13 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 	std::copy( negotiable_jumps.begin(), negotiable_jumps.end(), std::back_inserter( sorted_jumps ) );
 
 	//Build these dumb ObjexxFCL arrays
-	ObjexxFCL::FArray2D< Size > jumps( 2, sorted_jumps.size() );
+	ObjexxFCL::FArray2D< core::Size > jumps( 2, sorted_jumps.size() );
 	ObjexxFCL::FArray2D< std::string > jump_atoms( 2, sorted_jumps.size() );
-	ObjexxFCL::FArray2D< Size > after_loops_jumps( 2, sorted_jumps.size() );
+	ObjexxFCL::FArray2D< core::Size > after_loops_jumps( 2, sorted_jumps.size() );
 	ObjexxFCL::FArray2D< std::string > after_loops_jump_atoms( 2, sorted_jumps.size() );
 
-	Size i = 0;
-	Size n_non_removed( 0 );
+	core::Size i = 0;
+	core::Size n_non_removed( 0 );
 	for ( auto jump_ptr : sorted_jumps ) {
 		++i;
 		jumps( 1, i) = sequence_number_resolver_->find_global_pose_number(jump_ptr->local_pos1());
@@ -423,9 +423,9 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 
 	//there might be cutpoints in the starting points these are added for sampling...
 	//but not for final fold-tree
-	std::vector< Size > obligate_sampling_cut_points;
+	std::vector< core::Size > obligate_sampling_cut_points;
 	std::copy( start_pose_cuts_.begin(), start_pose_cuts_.end(), std::back_inserter( obligate_sampling_cut_points ) );
-	for ( Size i=1; i <= must_cut.size(); ++i ) {
+	for ( core::Size i=1; i <= must_cut.size(); ++i ) {
 		if ( std::find( obligate_sampling_cut_points.begin(), obligate_sampling_cut_points.end(),
 				must_cut.at(i).second ) == obligate_sampling_cut_points.end() ) {
 			obligate_sampling_cut_points.push_back( must_cut.at(i).second );
@@ -434,7 +434,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 
 	while ( try_again && !bValidTree ) {
 		fold_tree_ = utility::pointer::make_shared< kinematics::FoldTree >();
-		Size attempts( 10 );
+		core::Size attempts( 10 );
 		while ( !bValidTree && attempts-- > 0 )  {
 			bValidTree = fold_tree_->random_tree_from_jump_points( nres, sorted_jumps.size(), jumps,
 				obligate_sampling_cut_points, cut_bias_farray, root, true );
@@ -444,7 +444,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 
 	if ( !bValidTree ) {
 		std::ostringstream msg;
-		for ( Size i = 1; i<= sorted_jumps.size(); ++i ) {
+		for ( core::Size i = 1; i<= sorted_jumps.size(); ++i ) {
 			msg << jumps( 1, i ) << " " << jumps( 2, i ) << std::endl;
 		}
 		throw ( CREATE_EXCEPTION(kinematics::EXCN_InvalidFoldTree,  "TopologyBroker failed to make a fold-tree in 10 attempts\n"+msg.str(),
@@ -452,7 +452,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 	}
 
 	//Verify that we got all the cut points we asked for.
-	for ( Size i=1; i <= must_cut.size(); ++i ) {
+	for ( core::Size i=1; i <= must_cut.size(); ++i ) {
 		core::Size global_seqpos = must_cut.at(i).second;
 		tr.Debug << "Checking CutClaim for global position " << global_seqpos << std::endl;
 		if ( !fold_tree_->is_cutpoint( (int) global_seqpos  ) ) {
@@ -469,21 +469,21 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 	}
 
 
-	for ( Size i = 1; i <= sorted_jumps.size(); ++i ) {
+	for ( core::Size i = 1; i <= sorted_jumps.size(); ++i ) {
 		fold_tree_->set_jump_atoms( i, jumps( 1, i), jump_atoms( 1, i ), jumps( 2, i ), jump_atoms( 2, i ) );
 	}
 	fold_tree_->put_jump_stubs_intra_residue();
 
 	//make final tree: cutbias will be 0 everywhere 1 where we had cuts before ... makes sense?
-	for ( Size i=1; i<=nres; i++ ) {
+	for ( core::Size i=1; i<=nres; i++ ) {
 		cut_bias_farray( i ) = 0.0;
 		if ( fold_tree_->is_cutpoint( i ) ) cut_bias_farray( i ) = 1.0;
 	}
 
 	fold_tree_->show( tr.Info );
 
-	std::vector< Size > obligate_cut_points;
-	for ( Size i=1; i <= must_cut.size(); i++ ) {
+	std::vector< core::Size > obligate_cut_points;
+	for ( core::Size i=1; i <= must_cut.size(); i++ ) {
 		obligate_cut_points.push_back( must_cut.at(i).second );
 	}
 	final_fold_tree_ = utility::pointer::make_shared< kinematics::FoldTree >();
@@ -494,7 +494,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims & claims, Size nres ) {
 		throw ( CREATE_EXCEPTION(kinematics::EXCN_InvalidFoldTree,  "TopologyBroker failed to make a final_fold-tree in 1 attempts ",
 			*final_fold_tree_ ) );
 	}
-	for ( Size i = 1; i <= n_non_removed; ++i ) {
+	for ( core::Size i = 1; i <= n_non_removed; ++i ) {
 		final_fold_tree_->set_jump_atoms( i, after_loops_jumps( 1, i ), after_loops_jump_atoms( 1, i ),
 			after_loops_jumps( 2, i ), after_loops_jump_atoms( 2, i ) );
 	}
@@ -568,7 +568,7 @@ void TopologyBroker::initialize_sequence( claims::DofClaims & claims, core::pose
 	);
 
 	// make extended chain
-	for ( Size pos = 1; pos <= new_pose.size(); pos++ ) {
+	for ( core::Size pos = 1; pos <= new_pose.size(); pos++ ) {
 		if ( ! new_pose.residue(pos).is_protein() ) continue;
 		new_pose.set_phi( pos, -150 );
 		new_pose.set_psi( pos, 150);
@@ -635,7 +635,7 @@ void TopologyBroker::initialize_dofs( claims::DofClaims & claims, core::pose::Po
 			std::pair< std::string, core::Size > jump_start = jump_ptr->local_pos1();
 			std::pair< std::string, core::Size > jump_end   = jump_ptr->local_pos2();
 
-			Size jump_nr = ( pose.fold_tree().jump_nr( sequence_number_resolver_->find_global_pose_number( jump_start ),
+			core::Size jump_nr = ( pose.fold_tree().jump_nr( sequence_number_resolver_->find_global_pose_number( jump_start ),
 				sequence_number_resolver_->find_global_pose_number( jump_end ) ) );
 			runtime_assert( jump_nr ); //XOR would be even better
 			claims::DofClaimOP already ( jumps[ jump_nr ] ); //one of them is 0 -- neutral to addition
@@ -650,7 +650,7 @@ void TopologyBroker::initialize_dofs( claims::DofClaims & claims, core::pose::Po
 	//check for un-initialized dofs and throw exception with dof_msg if not fully covered
 	std::ostringstream dof_msg;
 	bool bad( false );
-	Size pos( 1 );
+	core::Size pos( 1 );
 	for ( claims::DofClaims::const_iterator it = bb_claims.begin(); it != bb_claims.end(); ++it, ++pos ) {
 		if ( !*it ) {
 			bad = true;
@@ -704,8 +704,8 @@ void TopologyBroker::initialize_cuts( claims::DofClaims & claims, core::pose::Po
 	for ( auto & claim : claims ) {
 		claims::CutClaimOP cut_ptr ( utility::pointer::dynamic_pointer_cast< claims::CutClaim >( claim ) );
 		if ( cut_ptr ) {
-			Size global_sequence_position = sequence_number_resolver_->find_global_pose_number( cut_ptr->get_position() );
-			Size cut_nr ( pose.fold_tree().cutpoint_map( global_sequence_position ) );
+			core::Size global_sequence_position = sequence_number_resolver_->find_global_pose_number( cut_ptr->get_position() );
+			core::Size cut_nr ( pose.fold_tree().cutpoint_map( global_sequence_position ) );
 			// we allow cuts without claim -- random cuts due to jumping ...
 			// but if there was a CUT claim, there should be a cut
 			runtime_assert( cut_nr );
@@ -718,7 +718,7 @@ void TopologyBroker::initialize_cuts( claims::DofClaims & claims, core::pose::Po
 
 	//find the unclaimed -- automatic -- cutpoints
 	to_be_closed_cuts_.clear();
-	for ( Size cut_nr = 1; cut_nr<=cuts.size(); ++cut_nr ) {
+	for ( core::Size cut_nr = 1; cut_nr<=cuts.size(); ++cut_nr ) {
 		if ( !cuts[ cut_nr ] ) { //automatic cut-point
 			if ( pose.residue(pose.fold_tree().cutpoint(cut_nr)).type().name() == "VRT" || pose.residue(pose.fold_tree().cutpoint(cut_nr)).name3() == "XXX" ||
 					pose.residue((pose.fold_tree().cutpoint(cut_nr))-1).type().name() == "VRT" || pose.residue((pose.fold_tree().cutpoint(cut_nr))-1).name3() == "XXX"
@@ -741,7 +741,7 @@ void TopologyBroker::initialize_cuts( claims::DofClaims & claims, core::pose::Po
 		}
 	}
 
-	//for ( utility::vector1< Size >::const_iterator it = to_be_closed_cuts_.begin();
+	//for ( utility::vector1< core::Size >::const_iterator it = to_be_closed_cuts_.begin();
 	//   it != to_be_closed_cuts_.end(); ++it ) {
 	// tr.Debug << "consider cut between res " << *it << " and " << *it+1 << std::endl;
 	//}
@@ -771,7 +771,7 @@ void TopologyBroker::apply( core::pose::Pose & pose ) {
 
 	start_pose_cuts_.clear();
 	if ( bUseJobPose_ ) {
-		for ( Size i(1), cutpoints(pose.fold_tree().num_cutpoint()); i<=cutpoints; i++ ) {
+		for ( core::Size i(1), cutpoints(pose.fold_tree().num_cutpoint()); i<=cutpoints; i++ ) {
 			start_pose_cuts_.push_back( pose.fold_tree().cutpoint( i ) );
 		}
 	}
@@ -893,7 +893,7 @@ void TopologyBroker::apply( core::pose::Pose & pose ) {
 	// Fix disulfides if a file is given
 	if ( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].user() ) {
 		io::raw_data::DisulfideFile ds_file( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ]() );
-		utility::vector1< std::pair<Size,Size> > disulfides;
+		utility::vector1< std::pair<core::Size,Size> > disulfides;
 		ds_file.disulfides(disulfides, pose);
 		pose.conformation().fix_disulfides( disulfides );
 	}
@@ -915,7 +915,7 @@ bool TopologyBroker::has_chainbreaks_to_close() const {
 
 void TopologyBroker::add_chainbreak_variants(
 	pose::Pose & pose,
-	Size max_dist,
+	core::Size max_dist,
 	core::kinematics::ShortestPathInFoldTreeCOP sp
 ) const {
 	pose::Pose init_pose = pose;
@@ -992,7 +992,7 @@ void TopologyBroker::switch_to_fullatom( core::pose::Pose & pose ) {
 	// Fix disulfides if a file is given  --- in a claimer? ... a util.cc function() ?
 	if ( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].user() ) {
 		io::raw_data::DisulfideFile ds_file( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ]() );
-		utility::vector1< std::pair<Size,Size> > disulfides;
+		utility::vector1< std::pair<core::Size,Size> > disulfides;
 		ds_file.disulfides(disulfides, pose);
 		pose.conformation().fix_disulfides( disulfides );
 	}

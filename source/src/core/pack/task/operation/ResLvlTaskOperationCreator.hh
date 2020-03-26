@@ -23,7 +23,7 @@
 #include <core/pack/task/operation/ResLvlTaskOperation.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace core {
@@ -37,7 +37,7 @@ namespace operation {
 /// at load time (before main() begins) so that the ResLvlTaskOperationFactory is ready
 /// to start creating ResLvlTaskOperations by the time any protocol
 /// requests one.
-class ResLvlTaskOperationCreator : public utility::pointer::ReferenceCount
+class ResLvlTaskOperationCreator : public utility::VirtualBase
 {
 public:
 	~ResLvlTaskOperationCreator() override {}

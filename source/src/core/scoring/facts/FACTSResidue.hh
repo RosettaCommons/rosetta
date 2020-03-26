@@ -27,7 +27,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -45,7 +45,7 @@ namespace scoring {
 /*                                                                                                */
 /**************************************************************************************************/
 
-class FACTSRsdTypeInfo : public utility::pointer::ReferenceCount {
+class FACTSRsdTypeInfo : public utility::VirtualBase {
 
 public:
 	void create_info( chemical::ResidueType const & rsd );
@@ -164,7 +164,7 @@ private:
 
 //This class provides the information that is specific for each atoms of a residue in FACTS algorithm
 // (such as van der waals radii,  Ai_i, Bi_i, lookup_on_radius_, esolvE_i, sasa, ...)
-class FACTSResidueInfo : public utility::pointer::ReferenceCount {
+class FACTSResidueInfo : public utility::VirtualBase {
 
 public:
 	typedef conformation::Residue Residue;

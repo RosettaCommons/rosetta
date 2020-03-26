@@ -109,7 +109,7 @@ AACompositionPropertiesSet::AACompositionPropertiesSet(
 /// @brief Copy constructor for AACompositionPropertiesSet.
 ///
 AACompositionPropertiesSet::AACompositionPropertiesSet( AACompositionPropertiesSet const &src ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	included_types_( src.included_types_ ),
 	excluded_types_( src.excluded_types_ ),
 	included_properties_( src.included_properties_ ),
@@ -300,7 +300,7 @@ AACompositionEnergySetup class:
 /// @brief Default constructor for AACompositionEnergySetup.
 ///
 AACompositionEnergySetup::AACompositionEnergySetup() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	property_sets_(),
 	expected_by_properties_fraction_(),
 	expected_by_properties_absolute_(),
@@ -315,7 +315,7 @@ AACompositionEnergySetup::AACompositionEnergySetup() :
 /// @brief Copy constructor for AACompositionEnergySetup.
 ///
 AACompositionEnergySetup::AACompositionEnergySetup( AACompositionEnergySetup const &src ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	property_sets_(), //Cloned below
 	expected_by_properties_fraction_( src.expected_by_properties_fraction_ ),
 	expected_by_properties_absolute_( src.expected_by_properties_absolute_ ),

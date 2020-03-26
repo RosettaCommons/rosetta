@@ -58,7 +58,7 @@ void DiversifyCrmsdByClustering::select_fragments(
 {
 	if ( in.size()==0 ) return;
 
-	//-------------- core::Size of fragments
+	//-------------- Size of fragments
 	core::Size len = in[1].first->get_length();
 	trDiversifyCrmsdByClustering.Debug << "Diversifying fragments of size "<<len<<" #(in) = "<<in.size()<<std::endl;
 	//-------------- Resize container for xyz data

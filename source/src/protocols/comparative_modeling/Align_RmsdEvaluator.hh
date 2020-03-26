@@ -24,7 +24,7 @@
 #include <core/types.hh>
 
 #include <ObjexxFCL/FArray2D.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 

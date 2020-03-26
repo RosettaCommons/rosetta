@@ -16,7 +16,7 @@
 
 // type headers
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // unit headers
 #include <protocols/frag_picker/VallProvider.fwd.hh>
@@ -33,7 +33,7 @@ namespace protocols {
 namespace frag_picker {
 
 /// @brief  a vector of vall chunks
-class VallProvider: public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< VallProvider >
+class VallProvider: public utility::VirtualBase, public utility::pointer::enable_shared_from_this< VallProvider >
 {
 public:
 

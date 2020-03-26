@@ -163,14 +163,14 @@ public: // functions that can be overloaded for sub-classes of this mover
 
 	/// @brief Create and append a membrane virtual residue to the pose
 	virtual
-	Size
+	core::Size
 	add_membrane_virtual( core::pose::Pose & pose );
 
 private: // helper methods for setup
 
 	/// @brief Initialize Membrane Residue given pose
 	virtual
-	Size
+	core::Size
 	initialize_membrane_residue( core::pose::Pose & pose, core::Size membrane_rsd );
 
 	/// @brief Helper Method - Check for Membrane residue already in the PDB

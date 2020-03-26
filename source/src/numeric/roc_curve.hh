@@ -20,7 +20,7 @@
 #include <platform/types.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 //stl headers
@@ -28,10 +28,10 @@
 namespace numeric {
 
 
-class RocPoint : public utility::pointer::ReferenceCount {
+class RocPoint : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~RocPoint() override;
 	RocPoint(bool predicted, bool actual, std::string const & tag, platform::Real const & score);
 	RocPoint(RocStatus const & status, std::string const & tag, platform::Real const & score);
@@ -55,9 +55,9 @@ private:
 
 };
 
-class RocCurve : public utility::pointer::ReferenceCount {
+class RocCurve : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~RocCurve() override;
 	RocCurve();
 

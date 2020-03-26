@@ -149,7 +149,7 @@ protected: // movemap management
 	/// @brief import the false_movemap's <b>explicit</b> False settings into the
 	///  given MoveMap
 	/// @return The number of False settings imported.
-	Size enforce_false_movemap( MoveMapOP & mm ) const;
+	core::Size enforce_false_movemap( MoveMapOP & mm ) const;
 
 	/// @author flo, march 2011
 	/// @brief allow the loops to be set from the segments

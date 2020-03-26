@@ -133,7 +133,7 @@ ResidueReplacementRebuildMover::make_new_pose(
 
 	newpose.append_residue_by_jump( pose.residue( 1 ), 1 );
 	TR.Trace << "Appended first residue by jump." << std::endl;
-	for ( Size resi = 2; resi < resi_chosen_; ++resi ) {
+	for ( core::Size resi = 2; resi < resi_chosen_; ++resi ) {
 		if ( pose.residue_type(resi).is_protein() && pose.residue_type(resi-1).is_DNA() ) {
 			newpose.append_residue_by_jump(pose.residue(resi), newpose.size());
 		} else if ( pose.residue_type(resi).is_DNA() && pose.residue_type(resi-1).is_protein() ) {
@@ -154,7 +154,7 @@ ResidueReplacementRebuildMover::make_new_pose(
 	newpose.append_residue_by_jump( pose.residue( resi_chosen_+1+resi_len_ ), newpose.size() );
 	TR.Trace << "Appended residue " << resi_chosen_+1+resi_len_  << " by jump. New pose size now " << newpose.size() << "." << std::endl;
 
-	for ( Size resi = resi_chosen_ + 2 + resi_len_; resi <= pose.size(); ++resi ) {
+	for ( core::Size resi = resi_chosen_ + 2 + resi_len_; resi <= pose.size(); ++resi ) {
 		if ( pose.residue_type(resi).is_protein() and pose.residue_type(resi-1).is_DNA() ) {
 			newpose.append_residue_by_jump(pose.residue(resi), newpose.size());
 		} else if ( pose.residue_type(resi).is_DNA() and pose.residue_type(resi-1).is_protein() ) {
@@ -198,8 +198,8 @@ ResidueReplacementRebuildMover::apply( core::pose::Pose & pose ) {
 	movemap->set_bb( false );
 	movemap->set_chi( true );
 	using namespace core::id;
-	for ( Size resi = std::max( Size( 2 ), Size( resi_chosen_ - 2 ) );
-			resi < std::min( Size( pose.size() ), Size( resi_chosen_ + resi_len_ + 2 ) );
+	for ( core::Size resi = std::max( core::Size( 2 ), core::Size( resi_chosen_ - 2 ) );
+			resi < std::min( core::Size( pose.size() ), core::Size( resi_chosen_ + resi_len_ + 2 ) );
 			++resi ) {
 		if ( pose.residue_type( resi ).is_protein() ) {
 			movemap->set_bb( resi, true );
@@ -244,9 +244,9 @@ ResidueReplacementRebuildMover::parse_my_tag(
 	}
 
 	//resi_chosen_ =
-	set_resi_chosen( tag->getOption< Size >( "seqpos" ) );
+	set_resi_chosen( tag->getOption< core::Size >( "seqpos" ) );
 	//resi_len_ =
-	set_resi_len( tag->getOption< Size >( "nres_additional", 0 ) );
+	set_resi_len( tag->getOption< core::Size >( "nres_additional", 0 ) );
 	//resname_ =
 	set_resname( tag->getOption< std::string >( "residue_name" ) );
 

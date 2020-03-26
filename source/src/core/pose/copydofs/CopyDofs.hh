@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_pose_copy_dofs_CopyDofs_HH
 #define INCLUDED_core_pose_copy_dofs_CopyDofs_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/copydofs/CopyDofs.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/pose/copydofs/CopyDofsInfo.hh>
@@ -33,7 +33,7 @@ namespace copydofs {
 
 extern core::Size const FIXED_DOMAIN;
 
-class CopyDofs: public utility::pointer::ReferenceCount {
+class CopyDofs: public utility::VirtualBase {
 
 public:
 

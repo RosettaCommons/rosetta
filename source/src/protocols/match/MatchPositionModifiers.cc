@@ -200,7 +200,7 @@ NumNeighborsMPM::modified_match_positions(
 	//if we need to calculate com
 	core::Vector center_of_mass(0,0,0);
 	if ( com_vector_criterion_ ) {
-		for ( Size i = 1; i <= match_pose.size(); ++i ) center_of_mass += match_pose.residue(i).nbr_atom_xyz();
+		for ( core::Size i = 1; i <= match_pose.size(); ++i ) center_of_mass += match_pose.residue(i).nbr_atom_xyz();
 		center_of_mass /= match_pose.size();
 		//tr << "Center of mass is " << center_of_mass.x() << " " << center_of_mass.y() << " " << center_of_mass.z() << std::endl;
 	}

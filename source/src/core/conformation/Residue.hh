@@ -46,7 +46,7 @@ namespace core { namespace chemical { namespace rings { struct RingConformer; } 
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/memory.hh>
 #include <utility/vector1.fwd.hh>
 
@@ -88,7 +88,7 @@ but storing them in the residue is convenient for scoring purposes).
 knowledge-based full-atom pair term ("actcoord_").  Maybe this will also
 hold the centroid position for centroid-mode scoring??
 **/
-class Residue : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Residue >
+class Residue : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< Residue >
 {
 public:
 	typedef chemical::AtomType       AtomType;
@@ -108,7 +108,7 @@ public:
 
 	// this is for boost serialize
 	//Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/, bool const /*dummy_arg2*/ ) :
-	// utility::pointer::ReferenceCount(), rsd_type_(rsd_type_in) {}
+	// utility::VirtualBase(), rsd_type_(rsd_type_in) {}
 
 	/// @brief  Rotamer-style constructor; orients ideal coords onto backbone of current_rsd
 	Residue(

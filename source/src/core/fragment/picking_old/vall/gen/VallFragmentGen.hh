@@ -25,7 +25,7 @@
 #include <core/fragment/picking_old/vall/VallSection.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -38,13 +38,13 @@ namespace gen {
 
 
 /// @brief  base class Vall ExtentGenerator
-class VallFragmentGen : public utility::pointer::ReferenceCount {
+class VallFragmentGen : public utility::VirtualBase {
 
 
 private: // typedefs
 
 
-	typedef utility::pointer::ReferenceCount Super;
+	typedef utility::VirtualBase Super;
 
 
 public: // typedefs

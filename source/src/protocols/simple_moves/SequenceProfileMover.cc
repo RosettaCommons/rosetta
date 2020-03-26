@@ -95,7 +95,7 @@ SequenceProfileMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap 
 
 	if ( profile_wgt_ ) {
 		using namespace utility::pointer;
-		for ( std::map< std::string, ReferenceCountOP >::const_iterator it=data[ "scorefxns" ].begin(); it!=data[ "scorefxns" ].end(); ++it ) {
+		for ( std::map< std::string, utility::VirtualBaseOP >::const_iterator it=data[ "scorefxns" ].begin(); it!=data[ "scorefxns" ].end(); ++it ) {
 			ScoreFunctionOP scorefxn( data.get_ptr< ScoreFunction >( "scorefxns", it->first ) );
 			scorefxn->set_weight( res_type_constraint, profile_wgt_ );
 			TR << "setting " << it->first << " res_type_constraint to " << profile_wgt_ << "\n";

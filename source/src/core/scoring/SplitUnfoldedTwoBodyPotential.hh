@@ -24,7 +24,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <string>
 #include <map>
@@ -34,7 +34,7 @@ namespace core {
 namespace scoring {
 
 
-class SplitUnfoldedTwoBodyPotential : public utility::pointer::ReferenceCount
+class SplitUnfoldedTwoBodyPotential : public utility::VirtualBase
 {
 
 public:

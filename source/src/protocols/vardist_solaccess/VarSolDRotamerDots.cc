@@ -167,7 +167,7 @@ VarSolDRotamerDots::~VarSolDRotamerDots() {
 /// copy constructor
 ///
 VarSolDRotamerDots::VarSolDRotamerDots( VarSolDRotamerDots const & rhs ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	owner_( rhs.owner_ ),
 	rotamer_(rhs.rotamer_),
 	radii_(rhs.radii_),
@@ -216,8 +216,8 @@ VarSolDRotamerDots::operator= ( VarSolDRotamerDots const & rhs ) {
 ///
 bool VarSolDRotamerDots::overlaps( VarSolDRotamerDots const & other ) const {
 
-	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
-		for ( Size jj = 1; jj <= other.get_num_atoms(); ++jj ) {
+	for ( core::Size ii = 1; ii <= num_atoms_; ++ii ) {
+		for ( core::Size jj = 1; jj <= other.get_num_atoms(); ++jj ) {
 			Real const distance_squared = get_atom_coords_xyz( ii ).distance_squared( other.get_atom_coords_xyz( jj ) );
 			if ( distance_squared <= interaction_radii_squared( rotamer_->atom(ii).type(), other.rotamer_->atom(jj).type() ) ) return true;
 		}
@@ -254,7 +254,7 @@ Size VarSolDRotamerDots::get_num_atoms() const {
 /// Return the xyz coordinates of an atom in this RotamerDots instance.
 ///
 core::Vector
-VarSolDRotamerDots::get_atom_coords_xyz( Size atom_index ) const {
+VarSolDRotamerDots::get_atom_coords_xyz( core::Size atom_index ) const {
 	if ( rotamer_ == nullptr ) {
 		return numeric::xyzVector< Real >(0,0,0);
 	}
@@ -273,13 +273,13 @@ VarSolDRotamerDots::get_atom_coords_xyz( Size atom_index ) const {
 /// right type.
 ///
 core::Real
-VarSolDRotamerDots::get_atom_collision_radius( Size atom_index ) const
+VarSolDRotamerDots::get_atom_collision_radius( core::Size atom_index ) const
 {
 	return radii_[ rotamer_->atom(atom_index).type() ][ 1 ];
 }
 
 core::Real
-VarSolDRotamerDots::get_atom_interaction_radius( Size atom_index ) const
+VarSolDRotamerDots::get_atom_interaction_radius( core::Size atom_index ) const
 {
 	return radii_[ rotamer_->atom(atom_index).type() ][ radii_[ rotamer_->atom(atom_index).type() ].size() ];
 }
@@ -327,11 +327,11 @@ void VarSolDistSasaCalculator::initialize_sasa_arrays() {
 
 	radii_.resize( atset->n_atomtypes() );
 	msas_radii_.resize( atset->n_atomtypes() );
-	for ( Size ii = 1; ii <= atset->n_atomtypes(); ++ii ) {
+	for ( core::Size ii = 1; ii <= atset->n_atomtypes(); ++ii ) {
 		AtomType const & iiattype = (*atset)[ ii ];
 		msas_radii_[ii] = iiattype.extra_parameter( SASA_RADIUS_INDEX );
 
-		Size steps=0;
+		core::Size steps=0;
 		Real coll_radius = 0;
 		Real int_radius = 0;
 		if ( iiattype.element() == "O" ) {
@@ -423,7 +423,7 @@ void VarSolDistSasaCalculator::initialize_sasa_arrays() {
 		if ( steps > 0 ) {
 			radii_[ii][1] = std::max(0., coll_radius);
 		}
-		for ( Size j=2; j<steps; j++ ) {
+		for ( core::Size j=2; j<steps; j++ ) {
 			radii_[ii][j] = coll_radius + ( (int_radius - coll_radius) * ((j-1) / static_cast<Real>(steps-1)) );
 		}
 		if ( steps > 1 ) {
@@ -433,20 +433,20 @@ void VarSolDistSasaCalculator::initialize_sasa_arrays() {
 	}
 	coll_radii_.resize( atset->n_atomtypes() );
 	int_radii_.resize( atset->n_atomtypes() );
-	for ( Size ii = 1; ii <= atset->n_atomtypes(); ++ii ) {
+	for ( core::Size ii = 1; ii <= atset->n_atomtypes(); ++ii ) {
 		if ( radii_[ii].size() == 0 ) { coll_radii_[ ii ] = int_radii_[ ii ] = 0; continue; }
 		coll_radii_[ii] = radii_[ ii ][ 1 ];
 		int_radii_[ ii ] = radii_[ ii ][ radii_[ ii ].size() ]; // largest radius in the last position.
 	}
 	int_radii_sum_.resize(  atset->n_atomtypes() );
 	int_radii_sum2_.resize( atset->n_atomtypes() );
-	for ( Size ii = 1; ii <= atset->n_atomtypes(); ++ii ) {
+	for ( core::Size ii = 1; ii <= atset->n_atomtypes(); ++ii ) {
 		int_radii_sum_[ ii ].resize( atset->n_atomtypes(), 0.0 );
 		int_radii_sum2_[ ii ].resize( atset->n_atomtypes(), 0.0 );
 		Real ii_col = coll_radii_[ ii ];
 		if ( ii_col == 0 ) continue;
 		Real ii_int = int_radii_[ ii ];
-		for ( Size jj = 1; jj <= atset->n_atomtypes(); ++jj ) {
+		for ( core::Size jj = 1; jj <= atset->n_atomtypes(); ++jj ) {
 			Real jj_col = coll_radii_[ jj ];
 			Real jj_int = int_radii_[ jj ];
 			if ( ii_col == 0 ) continue;
@@ -464,8 +464,8 @@ void VarSolDistSasaCalculator::initialize_sasa_arrays() {
 
 core::Real
 VarSolDRotamerDots::interaction_radii_squared(
-	Size attype1,
-	Size attype2
+	core::Size attype1,
+	core::Size attype2
 ) const
 {
 	return int_radii_sum2_[ attype1 ][ attype2 ];
@@ -482,25 +482,25 @@ void VarSolDRotamerDots::increment_self_overlap() {
 	using namespace utility; // for utility::vector1
 
 	vector1< vector1< vector1< ObjexxFCL::ubyte > > > self_overlap( num_atoms_ );
-	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
+	for ( core::Size ii = 1; ii <= num_atoms_; ++ii ) {
 		self_overlap[ ii ].resize( atom_coverage_[ ii ].size(), vector1< ObjexxFCL::ubyte >( num_bytes_, ObjexxFCL::ubyte( 0 ) ) );
 	}
 
-	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
+	for ( core::Size ii = 1; ii <= num_atoms_; ++ii ) {
 		// only have to iterate over the higher indexed atoms for INTRA res overlaps
-		for ( Size jj = ii+1; jj <= num_atoms_; ++jj ) {
+		for ( core::Size jj = ii+1; jj <= num_atoms_; ++jj ) {
 			overlap_atoms( *this, ii, jj, self_overlap[ii], self_overlap[jj] );
 		}
 	}
 
 	//TR_RD << "increment_self_overlap(): incrementing with counts: " << std::endl;
-	//for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
+	//for ( core::Size ii = 1; ii <= num_atoms_; ++ii ) {
 	// RotamerDotsCache rdc;
 	// rdc.print_bit_string( self_overlap[ ii ] );
 	//}
 
-	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
-		for ( Size jj = 1; jj <= self_overlap[ ii ].size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= num_atoms_; ++ii ) {
+		for ( core::Size jj = 1; jj <= self_overlap[ ii ].size(); ++jj ) {
 			//TR_RD << "increment_self_overlap(): calling increment_count() on atom dotsphere " << ii << std::endl;
 			atom_coverage_[ ii ][ jj ].increment_count( self_overlap[ ii ][ jj ] );
 		}
@@ -511,28 +511,28 @@ void VarSolDRotamerDots::intersect_residues( VarSolDRotamerDots & other )
 {
 	using namespace utility;
 	vector1< vector1< vector1< ObjexxFCL::ubyte > > > this_overlap( num_atoms_ );
-	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
+	for ( core::Size ii = 1; ii <= num_atoms_; ++ii ) {
 		this_overlap[ ii ].resize( atom_coverage_[ ii ].size(), vector1< ObjexxFCL::ubyte >( num_bytes_, ObjexxFCL::ubyte( 0 ) ) );
 	}
 
 	vector1< vector1< vector1< ObjexxFCL::ubyte > > > other_overlap( other.num_atoms_ );
-	for ( Size ii = 1; ii <= other.num_atoms_; ++ii ) {
+	for ( core::Size ii = 1; ii <= other.num_atoms_; ++ii ) {
 		other_overlap[ ii ].resize( other.atom_coverage_[ ii ].size(), vector1< ObjexxFCL::ubyte >( num_bytes_, ObjexxFCL::ubyte( 0 ) ) );
 	}
 
-	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
-		for ( Size jj = 1; jj <= other.num_atoms_; ++jj ) {
+	for ( core::Size ii = 1; ii <= num_atoms_; ++ii ) {
+		for ( core::Size jj = 1; jj <= other.num_atoms_; ++jj ) {
 			overlap_atoms( other, ii, jj, this_overlap[ii], other_overlap[jj] );
 		}
 	}
 
-	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
-		for ( Size jj = 1; jj <= this_overlap[ ii ].size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= num_atoms_; ++ii ) {
+		for ( core::Size jj = 1; jj <= this_overlap[ ii ].size(); ++jj ) {
 			atom_coverage_[ii][jj].increment_count( this_overlap[ii][ jj ] );
 		}
 	}
-	for ( Size ii = 1; ii <= other.num_atoms_; ++ii ) {
-		for ( Size jj = 1; jj <= other_overlap[ ii ].size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= other.num_atoms_; ++ii ) {
+		for ( core::Size jj = 1; jj <= other_overlap[ ii ].size(); ++jj ) {
 			other.atom_coverage_[ii][jj].increment_count( other_overlap[ii][ jj ] );
 		}
 	}
@@ -540,22 +540,22 @@ void VarSolDRotamerDots::intersect_residues( VarSolDRotamerDots & other )
 }
 
 bool
-VarSolDRotamerDots::any_exposed_dots( Size atom ) const
+VarSolDRotamerDots::any_exposed_dots( core::Size atom ) const
 {
-	for ( Size jj = 1; jj <= atom_coverage_[ atom ].size(); ++jj ) {
+	for ( core::Size jj = 1; jj <= atom_coverage_[ atom ].size(); ++jj ) {
 		if ( atom_coverage_[ atom ][ jj ].get_num_uncovered() != 0 ) return true;
 	}
 	return false;
 }
 
 Real
-VarSolDRotamerDots::msas_for_atom( Size atom_index ) const
+VarSolDRotamerDots::msas_for_atom( core::Size atom_index ) const
 {
 	using namespace core::pack::interaction_graph;
-	Size const jj_end = atom_coverage_[ atom_index ].size();
-	Size count_exposed = 0;
-	for ( Size ii = 1; ii <= DotSphere::NUM_DOTS_TOTAL; ++ii ) {
-		for ( Size jj = 1; jj <= jj_end; ++jj ) {
+	core::Size const jj_end = atom_coverage_[ atom_index ].size();
+	core::Size count_exposed = 0;
+	for ( core::Size ii = 1; ii <= DotSphere::NUM_DOTS_TOTAL; ++ii ) {
+		for ( core::Size jj = 1; jj <= jj_end; ++jj ) {
 			if ( ! atom_coverage_[ atom_index ][ jj ].get_dot_covered( ii ) ) {
 				++count_exposed;
 				break;
@@ -569,11 +569,11 @@ VarSolDRotamerDots::msas_for_atom( Size atom_index ) const
 bool
 VarSolDRotamerDots::get_atom_overlap_masks(
 	VarSolDRotamerDots const & other,
-	Size at_this,
-	Size at_other,
+	core::Size at_this,
+	core::Size at_other,
 	Real & distance,
-	Size & closest_dot1,
-	Size & closest_dot2
+	core::Size & closest_dot1,
+	core::Size & closest_dot2
 ) const
 {
 	core::Vector const & at1_xyz( rotamer_->xyz( at_this ));
@@ -599,8 +599,8 @@ VarSolDRotamerDots::get_atom_overlap_masks(
 bool
 VarSolDRotamerDots::overlap_atoms(
 	VarSolDRotamerDots const & other,
-	Size at_this,
-	Size at_other,
+	core::Size at_this,
+	core::Size at_other,
 	utility::vector1< utility::vector1< ObjexxFCL::ubyte > > & at_this_coverage,
 	utility::vector1< utility::vector1< ObjexxFCL::ubyte > > & at_other_coverage
 ) const
@@ -608,27 +608,27 @@ VarSolDRotamerDots::overlap_atoms(
 	debug_assert( atom_coverage_[ at_this ].size() == at_this_coverage.size() );
 	debug_assert( other.atom_coverage_[ at_other ].size() == at_other_coverage.size() );
 	Real distance;
-	Size closest_dot1, closest_dot2;
+	core::Size closest_dot1, closest_dot2;
 	if ( ! get_atom_overlap_masks( other, at_this, at_other, distance, closest_dot1, closest_dot2 ) ) return false;
-	Size const attype1( rotamer_->atom( at_this ).type() );
-	Size const attype2( other.rotamer_->atom( at_other ).type() );
-	Size const ii_nradii = radii_[ attype1 ].size(), jj_nradii = radii_[ attype2 ].size();
-	for ( Size ii = 1; ii <= ii_nradii; ++ii ) {
-		for ( Size jj = 1; jj <= jj_nradii; ++jj ) {
+	core::Size const attype1( rotamer_->atom( at_this ).type() );
+	core::Size const attype2( other.rotamer_->atom( at_other ).type() );
+	core::Size const ii_nradii = radii_[ attype1 ].size(), jj_nradii = radii_[ attype2 ].size();
+	for ( core::Size ii = 1; ii <= ii_nradii; ++ii ) {
+		for ( core::Size jj = 1; jj <= jj_nradii; ++jj ) {
 			if ( distance > radii_[ attype1 ][ ii ] + radii_[ attype2 ][ jj ] ) continue;
 			if ( ii == 1 ) {
 				int degree_of_overlap;
 				core::scoring::sasa::get_legrand_atomic_overlap( radii_[ attype2 ][ jj ], radii_[ attype1 ][ ii ], distance, degree_of_overlap );
-				Size masknum = ( closest_dot2 * 100 ) + degree_of_overlap;
-				for ( Size bb = 1, bbli = (*lg_masks_).index( bb, masknum ); bb <= num_bytes_; ++bb, ++bbli ) {
+				core::Size masknum = ( closest_dot2 * 100 ) + degree_of_overlap;
+				for ( core::Size bb = 1, bbli = (*lg_masks_).index( bb, masknum ); bb <= num_bytes_; ++bb, ++bbli ) {
 					at_other_coverage[ jj ][ bb ] |= (*lg_masks_)[ bbli ];
 				}
 			}
 			if ( jj == 1 ) {
 				int degree_of_overlap;
 				core::scoring::sasa::get_legrand_atomic_overlap( radii_[ attype1 ][ ii ], radii_[ attype2 ][ jj ], distance, degree_of_overlap );
-				Size masknum = ( closest_dot1 * 100 ) + degree_of_overlap;
-				for ( Size bb = 1, bbli = (*lg_masks_).index( bb, masknum ); bb <= num_bytes_; ++bb, ++bbli ) {
+				core::Size masknum = ( closest_dot1 * 100 ) + degree_of_overlap;
+				for ( core::Size bb = 1, bbli = (*lg_masks_).index( bb, masknum ); bb <= num_bytes_; ++bb, ++bbli ) {
 					at_this_coverage[ ii ][ bb ] |= (*lg_masks_)[ bbli ];
 				}
 			}
@@ -642,11 +642,11 @@ void VarSolDRotamerDots::write_dot_kinemage( std::ostream & kinfile ) const
 {
 	using namespace core::pack::interaction_graph;
 
-	for ( Size ii = 1; ii <= num_atoms_; ++ii ) {
-		Size const ii_attype = rotamer_->atom( ii ).type();
+	for ( core::Size ii = 1; ii <= num_atoms_; ++ii ) {
+		core::Size const ii_attype = rotamer_->atom( ii ).type();
 
 		// Color hydrogen dots by their base atom
-		Size iirepatom = ii;
+		core::Size iirepatom = ii;
 		if ( rotamer_->atom_is_hydrogen( ii ) ) iirepatom = rotamer_->atom_base( ii );
 
 		if ( rotamer_->type().atom_type( iirepatom ).element() == "O" ) {
@@ -657,8 +657,8 @@ void VarSolDRotamerDots::write_dot_kinemage( std::ostream & kinfile ) const
 			write_dotlist_header( kinfile, "exposed hydrophobic dots", "gray");
 		}
 
-		for ( Size jj =1; jj <= atom_coverage_[ ii ].size(); ++jj ) {
-			for ( Size kk = 1; kk <= DotSphere::NUM_DOTS_TOTAL; ++kk ) {
+		for ( core::Size jj =1; jj <= atom_coverage_[ ii ].size(); ++jj ) {
+			for ( core::Size kk = 1; kk <= DotSphere::NUM_DOTS_TOTAL; ++kk ) {
 				if ( ! atom_coverage_[ii][jj].get_dot_covered( kk ) ) {
 					write_dot( kinfile, ii, kk, radii_[ ii_attype ][ jj ] );
 				}
@@ -717,16 +717,16 @@ VarSolDistSasaCalculator::clone() const{
 	return utility::pointer::make_shared< VarSolDistSasaCalculator >();
 }
 
-void VarSolDistSasaCalculator::set_atom_type_radii(std::string atype_name, Real coll_radius, Real int_radius, Size nshells) {
+void VarSolDistSasaCalculator::set_atom_type_radii(std::string atype_name, Real coll_radius, Real int_radius, core::Size nshells) {
 
 	using namespace core::chemical;
 	AtomTypeSetCOP atset = ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
-	Size i = atset->atom_type_index(atype_name);
+	core::Size i = atset->atom_type_index(atype_name);
 	radii_[i].resize( nshells );
 	if ( nshells > 0 ) {
 		radii_[i][1] = std::max(0., coll_radius);
 	}
-	for ( Size j=2; j<nshells; j++ ) {
+	for ( core::Size j=2; j<nshells; j++ ) {
 		radii_[i][j] = coll_radius + ( (int_radius - coll_radius) * ((j-1) / static_cast<Real>(nshells-1)) );
 	}
 	if ( nshells > 0 ) {
@@ -735,7 +735,7 @@ void VarSolDistSasaCalculator::set_atom_type_radii(std::string atype_name, Real 
 
 	coll_radii_[i] = coll_radius;
 	int_radii_[i] = int_radius;
-	for ( Size j = 1; j <= atset->n_atomtypes(); j++ ) {
+	for ( core::Size j = 1; j <= atset->n_atomtypes(); j++ ) {
 		Real other_coll_radius = coll_radii_[j];
 		Real other_int_radius = int_radii_[j];
 		int_radii_sum_[i][j] = std::max(coll_radius + other_int_radius, int_radius + other_coll_radius);
@@ -746,12 +746,12 @@ void VarSolDistSasaCalculator::set_atom_type_radii(std::string atype_name, Real 
 }
 
 
-void VarSolDistSasaCalculator::set_element_radii(std::string elem, Real coll_radius, Real int_radius, Size nshells) {
+void VarSolDistSasaCalculator::set_element_radii(std::string elem, Real coll_radius, Real int_radius, core::Size nshells) {
 
 	using namespace core::chemical;
 	AtomTypeSetCOP atset = ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
 	// find index of atomtype
-	for ( Size i=1; i <= atset->n_atomtypes(); i++ ) {
+	for ( core::Size i=1; i <= atset->n_atomtypes(); i++ ) {
 		if ( (*atset)[i].element() == elem ) {
 			set_atom_type_radii( (*atset)[i].atom_type_name(), coll_radius, int_radius, nshells);
 		}
@@ -814,14 +814,14 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 	rotamer_dots_vec_.resize( this_pose.size() );
 	residue_sasa_.resize( this_pose.size() );
 	// TR << "Initializing vSASA arrays with probe radius = " << probe_radius_ << " and wobble = " << wobble_ << std::endl;
-	for ( Size ii = 1; ii <= this_pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= this_pose.size(); ++ii ) {
 		rotamer_dots_vec_[ ii ] = utility::pointer::make_shared< VarSolDRotamerDots >(
 			utility::pointer::make_shared< core::conformation::Residue >( this_pose.residue( ii ) ),
 			get_self_ptr() );
 		rotamer_dots_vec_[ ii ]->increment_self_overlap();
 	}
 	core::scoring::EnergyGraph const & energy_graph( this_pose.energies().energy_graph() );
-	for ( Size ii = 1; ii <= this_pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= this_pose.size(); ++ii ) {
 		for ( utility::graph::Graph::EdgeListConstIter
 				iru  = energy_graph.get_node(ii)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(ii)->const_upper_edge_list_end();
@@ -830,9 +830,9 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 		}
 	}
 	total_sasa_ = 0.0;
-	for ( Size ii = 1; ii <= this_pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= this_pose.size(); ++ii ) {
 		residue_sasa_[ ii ] = 0.0;
-		for ( Size jj = 1; jj <= this_pose.residue(ii).natoms(); ++jj ) {
+		for ( core::Size jj = 1; jj <= this_pose.residue(ii).natoms(); ++jj ) {
 			core::id::AtomID at( jj, ii );
 			residue_sasa_[ ii ] += atom_sasa_[ at ] = rotamer_dots_vec_[ ii ]->msas_for_atom( jj );
 		}

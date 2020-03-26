@@ -47,7 +47,7 @@ namespace voids_penalty_energy {
 
 /// @brief Default constructor.
 VoidsPenaltyVoxelGrid::VoidsPenaltyVoxelGrid():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	voxel_size_(DEFAULT_VOXEL_SIZE),
 	half_voxel_size_(DEFAULT_VOXEL_SIZE/2.0),
 	voxel_volume_( pow(DEFAULT_VOXEL_SIZE, 3) ),
@@ -71,6 +71,7 @@ VoidsPenaltyVoxelGrid::~VoidsPenaltyVoxelGrid(){}
 
 /// @brief Copy constructor.
 VoidsPenaltyVoxelGrid::VoidsPenaltyVoxelGrid( VoidsPenaltyVoxelGrid const &src ) :
+	VirtualBase( src ),
 	voxel_size_(src.voxel_size_),
 	half_voxel_size_(src.half_voxel_size_),
 	voxel_volume_(src.voxel_volume_),

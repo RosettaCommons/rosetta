@@ -273,7 +273,7 @@ TransformIntoMembraneMover::apply( core::pose::Pose & pose ) {
 		if ( is_membrane_moveable_by_itself( pose ) ) {
 
 			TR << "Reordering foldtree: setting membrane fixed; will be reset later." << std::endl;
-			Size mem_rsd( pose.membrane_info()->membrane_rsd_num() );
+			core::Size mem_rsd( pose.membrane_info()->membrane_rsd_num() );
 			core::kinematics::FoldTree ft = pose.fold_tree();
 			ft.reorder( mem_rsd );
 			pose.fold_tree( ft );

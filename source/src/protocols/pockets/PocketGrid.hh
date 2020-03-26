@@ -15,7 +15,7 @@
 #ifndef INCLUDED_protocols_pockets_PocketGrid_hh
 #define INCLUDED_protocols_pockets_PocketGrid_hh
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/pockets/PocketGrid.fwd.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -216,7 +216,7 @@ public:
 }; //CClusterSet
 
 /// @
-class PocketGrid : public utility::pointer::ReferenceCount
+class PocketGrid : public utility::VirtualBase
 {
 
 	friend class EggshellGrid;
@@ -329,7 +329,7 @@ public:
 
 	void clearSmallPockets(core::Size minsize);
 	void findClusters();
-	void findExemplars(core::pose::Pose const & inPose, Size const total_residues);
+	void findExemplars(core::pose::Pose const & inPose, core::Size const total_residues);
 	void findClustersByExemplars();
 	void linkExemplarsThroughSolvent();
 
@@ -360,9 +360,9 @@ public:
 	bool isTooSmall() const;
 	core::Vector whatIsTooSmall() const;
 
-	bool autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0 );
+	bool autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::scoring::func::XYZ_Func const & xyz_func, core::Size const total_residues, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0 );
 
-	bool autoexpanding_pocket_eval( std::vector< core::conformation::ResidueCOP > const & central_rsd, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0 );
+	bool autoexpanding_pocket_eval( std::vector< core::conformation::ResidueCOP > const & central_rsd, core::scoring::func::XYZ_Func const & xyz_func, core::Size const total_residues, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0 );
 
 	bool autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::pose::Pose const & inPose, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0);
 

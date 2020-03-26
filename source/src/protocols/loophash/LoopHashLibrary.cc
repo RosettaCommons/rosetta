@@ -608,9 +608,9 @@ LoopHashLibrary::apply_random(
 
 	core::pose::Pose original_pose = pose;
 
-	Size nres = pose.size();
-	Size ir, jr;
-	//Size newpep_index = 0;
+	core::Size nres = pose.size();
+	core::Size ir, jr;
+	//core::Size newpep_index = 0;
 
 	//core::Size backbone_offset;
 	//bbdb_.add_pose( pose, backbone_offset );
@@ -728,14 +728,14 @@ LoopHashLibrary::get_all(
 	final_mm.set_bb(true);
 	// setup movemap & minimisation
 
-	//    for ( Size ii=ir; ii<= jr; ++ii ) {
+	//    for ( core::Size ii=ir; ii<= jr; ++ii ) {
 	//     final_mm.set_bb( ii, true );
 	//     if ( newpose->residue(ii).aa() == chemical::aa_pro ) final_mm.set( TorsionID( phi_torsion, BB, ii ), false );
 	//    }
 
-	Size nres = start_pose.size();
-	Size ir, jr;
-	//Size newpep_index = 0;
+	core::Size nres = start_pose.size();
+	core::Size ir, jr;
+	//core::Size newpep_index = 0;
 
 	//core::Size backbone_offset;
 	//bbdb_.add_pose( pose, backbone_offset );
@@ -900,8 +900,8 @@ LoopHashLibrary::extract_data_from_pose( core::pose::Pose& pose, core::Size nres
 	using namespace kinematics;
 	using namespace numeric::geometry::hashing;
 
-	Size ir, jr;
-	//Size newpep_index = 0;
+	core::Size ir, jr;
+	//core::Size newpep_index = 0;
 	core::Size index;
 	bbdb_.add_pose( pose, nres, index, chunk );
 
@@ -910,7 +910,7 @@ LoopHashLibrary::extract_data_from_pose( core::pose::Pose& pose, core::Size nres
 
 	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
 		TR.Info << "Setting up hash: Size:  " << *it << std::endl;
-		Size loop_size = *it;
+		core::Size loop_size = *it;
 
 		LoopHashMap &hashmap = gethash( loop_size );
 		if ( loop_size + 2 > nres ) continue;
@@ -965,7 +965,7 @@ bool LoopHashLibrary::test_saving_library( core::pose::Pose pose, core::Size ir,
 	using namespace kinematics;
 	using namespace numeric::geometry::hashing;
 
-	Size jr;
+	core::Size jr;
 	core::Size index=0;
 	core::Size loop_size = hash_sizes_[0];
 	jr = ir+loop_size;
@@ -1027,7 +1027,7 @@ void LoopHashLibrary::test_loop_sample( core::pose::Pose& pose, core::Size nres 
 
 	core::pose::Pose original_pose = pose;
 
-	Size ir, jr;
+	core::Size ir, jr;
 
 	core::Size index;
 	bbdb_.add_pose( pose, nres, index );
@@ -1037,7 +1037,7 @@ void LoopHashLibrary::test_loop_sample( core::pose::Pose& pose, core::Size nres 
 
 	for ( std::vector< core::Size >::const_iterator it = hash_sizes_.begin(); it != hash_sizes_.end(); ++it ) {
 		TR.Info << "Setting up hash: Size:\t" << *it << std::endl;
-		Size loop_size = *it;
+		core::Size loop_size = *it;
 
 		LoopHashMap &hashmap = gethash( loop_size );
 

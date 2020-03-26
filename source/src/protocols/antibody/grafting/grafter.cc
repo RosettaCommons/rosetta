@@ -244,8 +244,8 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		PDB_N pdb_n_cdr_first( g.cdr_numbering.front() );
 		PDB_N pdb_n_cdr_last(  g.cdr_numbering.back()  );
 
-		Size pose_n_cdr_first = cdr->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_first.n, pdb_n_cdr_first.icode);
-		Size pose_n_cdr_last  = cdr->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_last .n, pdb_n_cdr_last .icode);
+		core::Size pose_n_cdr_first = cdr->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_first.n, pdb_n_cdr_first.icode);
+		core::Size pose_n_cdr_last  = cdr->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_last .n, pdb_n_cdr_last .icode);
 
 		if( !pose_n_cdr_first ) throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("Could not find residue:") + g.cdr_numbering.front() + " in template:" + g.pdb + " region:"+ g.name);
 		if( !pose_n_cdr_last )  throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("Could not find residue:") + g.cdr_numbering.back() + " in template:" + g.pdb  + " region:"+ g.name);
@@ -294,8 +294,8 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 
 
 
-			Size result_pose_cdr_first = result->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_first.n, pdb_n_cdr_first.icode);
-			Size result_pose_cdr_last  = result->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_last .n, pdb_n_cdr_last .icode);
+			core::Size result_pose_cdr_first = result->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_first.n, pdb_n_cdr_first.icode);
+			core::Size result_pose_cdr_last  = result->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_last .n, pdb_n_cdr_last .icode);
 
 			if( !result_pose_cdr_first ) throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("Could not find residue:") + g.cdr_numbering.front() + " in superimposed pdb. Region:" + g.name);
 			if( !result_pose_cdr_last )  throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("Could not find residue:") + g.cdr_numbering.back() +  " in superimposed pdb. Region:" + g.name);
@@ -337,7 +337,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 	AntibodyInfoOP ab_info = utility::pointer::make_shared< AntibodyInfo >(*result);
 
 	struct{
-		string cdr_name; Size cdr_start; Size cdr_end; string cdr_seq;
+		string cdr_name; core::Size cdr_start; core::Size cdr_end; string cdr_seq;
 	} H[] {
 		{ "h1", ab_info->get_CDR_start(h1, *result), ab_info->get_CDR_end(h1, *result),  A.h1_sequence() },
 		{ "h2", ab_info->get_CDR_start(h2, *result), ab_info->get_CDR_end(h2, *result),  A.h2_sequence() },
@@ -355,7 +355,7 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 		if ( h.cdr_seq.size() != h.cdr_end - h.cdr_start + 1 ) throw CREATE_EXCEPTION(_AE_grafting_failed_,  string("Could revert sequence to query after grafting cdr ") + h.cdr_name + ". Length mismatch between CDR in grafted model (" + utility::to_string(h.cdr_end - h.cdr_start + 1) +  ") and query sequence (" + utility::to_string(h.cdr_seq.size()) + ").");
 
 
-		for(Size i = h.cdr_start; i < h.cdr_end + 1; ++i) {
+		for(core::Size i = h.cdr_start; i < h.cdr_end + 1; ++i) {
 			protocols::simple_moves::MutateResidue( i, h.cdr_seq[i-h.cdr_start] ).apply( *result );
 		}
 

@@ -44,7 +44,7 @@
 #include <basic/datacache/BasicDataCache.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>

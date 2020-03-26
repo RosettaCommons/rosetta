@@ -19,7 +19,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // Class headers
@@ -41,7 +41,7 @@ enum class SeriesJacobianTypeEnum {
 
 /// @brief The SeriesJacobians class is the mid-level of the Jacobian analysis of a protein's kinematics relations.
 /// @author teunhoevenaars (teunhoevenaars@gmail.com)
-class SeriesJacobians : public utility::pointer::ReferenceCount {
+class SeriesJacobians : public utility::VirtualBase {
 
 public:
 

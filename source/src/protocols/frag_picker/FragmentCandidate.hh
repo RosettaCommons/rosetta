@@ -24,7 +24,7 @@
 #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 #include <core/fragment/FragData.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <utility/vector1.hh>
@@ -41,7 +41,7 @@ utility::vector1<FragmentCandidateOP> read_fragment_candidates(std::string,
 /// @details Scores for a given fragment are stored separately in a FragmentScoreMap object
 /// Therefore fragment containers hold std::pair<FragmentCandidateOP,FragmentScoreMapOP>
 ///
-class FragmentCandidate: public utility::pointer::ReferenceCount {
+class FragmentCandidate: public utility::VirtualBase {
 public:
 
 	FragmentCandidate(core::Size queryPosition, core::Size inChunkPosition,

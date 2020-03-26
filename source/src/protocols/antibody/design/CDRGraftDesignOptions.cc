@@ -48,13 +48,13 @@ using std::string;
 using utility::vector1;
 
 CDRGraftDesignOptions::CDRGraftDesignOptions():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	set_defaults();
 }
 
 CDRGraftDesignOptions::CDRGraftDesignOptions(CDRNameEnum cdr):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	cdr_(cdr)
 {
 	set_defaults();
@@ -138,7 +138,7 @@ CDRGraftDesignOptions::neighbor_min_clear(){
 ////////////////////////////////////////////////////////////////////////////////
 
 CDRGraftDesignOptionsParser::CDRGraftDesignOptionsParser():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	default_and_user_(false)
 {
 	ab_manager_ = utility::pointer::make_shared< AntibodyEnumManager >();
@@ -147,9 +147,9 @@ CDRGraftDesignOptionsParser::CDRGraftDesignOptionsParser():
 CDRGraftDesignOptionsParser::~CDRGraftDesignOptionsParser() = default;
 
 CDRGraftDesignOptionsParser::CDRGraftDesignOptionsParser( CDRGraftDesignOptionsParser const & src ):
+	VirtualBase( src ),
 	instructions_path_( src.instructions_path_ ),
 	default_and_user_( src.default_and_user_ )
-
 {
 	if ( src.ab_manager_ ) ab_manager_ = utility::pointer::make_shared< AntibodyEnumManager >( *src.ab_manager_ );
 	if ( src.cdr_options_ ) cdr_options_ = utility::pointer::make_shared< CDRGraftDesignOptions >( *src.cdr_options_ );

@@ -119,8 +119,8 @@ CavityCalculator::recompute( core::pose::Pose const & pose )
 
 	clusters_.clear();
 	clusters_ = compute_cav_ball_clusters( tmp_cbs, opts );
-	for ( Size i = 1; i <= clusters_.size(); i++ ) {
-		for ( Size j = 1; j <= clusters_[i].cavballs.size(); j++ ) {
+	for ( core::Size i = 1; i <= clusters_.size(); i++ ) {
+		for ( core::Size j = 1; j <= clusters_[i].cavballs.size(); j++ ) {
 			if ( clusters_[i].cavballs[j].radius() > 0.6 ) {
 				TR    << clusters_[i].cavballs[j].hetero_atom_line( pose.size()+i, i, 0.0 ) << std::endl;
 			}

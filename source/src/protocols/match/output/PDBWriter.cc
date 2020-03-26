@@ -41,7 +41,7 @@
 // Utility headers
 #include <utility>
 #include <utility/string_util.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //numeric headers
 #include <numeric/random/random.hh>
@@ -97,7 +97,7 @@ PDBWriter::record_match( match const & m , MatchEvaluatorOP evaluator, MatchScor
 	std::map< core::Size, core::Size > redundant_upstream_res;
 	determine_redundant_upstream_matchres( match_dspos1( m, 1 ), redundant_upstream_res );
 
-	for ( Size ii = 1; ii <= m.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= m.size(); ++ii ) {
 		core::conformation::ResidueCOP conf =
 			coordinate_cacher_->upstream_conformation_for_hit( ii, m[ ii ] );
 		upstream_matchres.push_back( conf );
@@ -117,7 +117,7 @@ PDBWriter::record_match( match const & m , MatchEvaluatorOP evaluator, MatchScor
 	std::string outtag = assemble_outtag( upstream_matchres );
 	core::Size outcounter(1);
 
-	for ( Size ii = 1; ii <= m.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= m.size(); ++ii ) {
 		if ( ! output_dsgeom_for_geomcst_[ ii ] ) continue;
 		std::string this_tag = outtag + "_" + utility::to_string( ii );
 		match_score_writer->add_match( this_tag , evaluator->score(m) );
@@ -125,7 +125,7 @@ PDBWriter::record_match( match const & m , MatchEvaluatorOP evaluator, MatchScor
 
 		//every match in its own file for now
 		std::ofstream file_out( this_tag.c_str() );
-		//Size atom_counter(0);
+		//core::Size atom_counter(0);
 
 		up_outpose->dump_pdb( file_out );
 
@@ -171,7 +171,7 @@ PDBWriter::record_match( match_dspos1 const & m )
 	std::map< core::Size, core::Size > redundant_upstream_res;
 	determine_redundant_upstream_matchres( m, redundant_upstream_res );
 
-	for ( Size ii = 1; ii <= m.upstream_hits.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= m.upstream_hits.size(); ++ii ) {
 		core::conformation::ResidueCOP conf =
 			coordinate_cacher_->upstream_conformation_for_hit( ii, fake_hit( m.upstream_hits[ ii ] ) );
 		upstream_matchres.push_back( conf );
@@ -237,7 +237,7 @@ PDBWriter::initialize_from_matcher_task(
 
 void
 PDBWriter::set_downstream_builder(
-	Size geomcst_id,
+	core::Size geomcst_id,
 	downstream::DownstreamBuilderCOP dsbuilder
 ){
 	dsbuilders_[ geomcst_id ] = dsbuilder;
@@ -472,7 +472,7 @@ CloudPDBWriter::record_match(  match const & m , MatchEvaluatorOP evaluator, Mat
 		//TR << "CPW pushed back first match for group " << mgroup << " match_group_ushits_.size is " << match_groups_ushits_.size() << ", ex geom id for hit2 is " << m[2].external_geom_id() << std::endl;
 
 		utility::vector1< core::conformation::ResidueCOP > upstream_matchres;
-		for ( Size ii = 1; ii <= m.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= m.size(); ++ii ) {
 			core::conformation::ResidueCOP conf = coordinate_cacher()->upstream_conformation_for_hit( ii, m[ ii ] );
 			upstream_matchres.push_back( conf );
 
@@ -533,7 +533,7 @@ CloudPDBWriter::write_match_groups()
 		determine_redundant_upstream_matchres( rep_match, redundant_upstream_res );
 		setup_hitset_iterators_for_group( ii );
 
-		for ( Size jj = 1; jj <= rep_match.upstream_hits.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= rep_match.upstream_hits.size(); ++jj ) {
 			core::conformation::ResidueCOP conf =
 				coordinate_cacher()->upstream_conformation_for_hit( jj, fake_hit( rep_match.upstream_hits[ jj ] ) );
 			upstream_matchres.push_back( conf );
@@ -717,7 +717,7 @@ PoseMatchOutputWriter::insert_match_into_pose(
 	//setup_hitset_iterators_for_group( match_group );
 
 	//first put in the upstream residues
-	for ( Size jj = 1; jj <= rep_match.upstream_hits.size(); ++jj ) {
+	for ( core::Size jj = 1; jj <= rep_match.upstream_hits.size(); ++jj ) {
 		core::conformation::ResidueCOP conf =
 			coordinate_cacher()->upstream_conformation_for_hit( jj, fake_hit( rep_match.upstream_hits[ jj ] ) );
 		upstream_matchres.push_back( conf );

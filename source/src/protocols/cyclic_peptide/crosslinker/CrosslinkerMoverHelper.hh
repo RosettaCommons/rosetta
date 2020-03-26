@@ -26,7 +26,7 @@
 #include <core/types.hh>
 
 // Basic/Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace cyclic_peptide {
@@ -34,7 +34,7 @@ namespace crosslinker {
 
 /// @brief A base class for helper objects that the CrosslinkerMover uses to set up specific types
 /// of linkers.
-class CrosslinkerMoverHelper : public utility::pointer::ReferenceCount {
+class CrosslinkerMoverHelper : public utility::VirtualBase {
 
 public: //Constructors
 

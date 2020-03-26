@@ -33,7 +33,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
@@ -70,7 +70,7 @@ namespace membrane {
 /// @brief Default Constructor (Private)
 /// @details Construct an Empty Spanning Topology Object
 SpanningTopology::SpanningTopology() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	topology_(),
 	nres_topo_( 0 ),
 	structure_based_( false )
@@ -82,7 +82,7 @@ SpanningTopology::SpanningTopology(
 	std::string spanfile,
 	std::map< std::string, core::Size > pdb2pose_map,
 	core::Size total_residues
-) : utility::pointer::ReferenceCount(),
+) : utility::VirtualBase(),
 	topology_(),
 	nres_topo_( 0 ),
 	structure_based_( false )
@@ -98,7 +98,7 @@ SpanningTopology::SpanningTopology(
 	utility::vector1< core::Size > chainID,
 	utility::vector1< char > secstruct,
 	core::Real thickness
-) : utility::pointer::ReferenceCount(),
+) : utility::VirtualBase(),
 	topology_(),
 	nres_topo_( 0 ),
 	structure_based_( true )

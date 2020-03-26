@@ -21,7 +21,7 @@
 #include <core/pack/rotamer_set/WaterAnchorInfo.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++
 
@@ -34,7 +34,7 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-class WaterAnchorInfo : public utility::pointer::ReferenceCount {
+class WaterAnchorInfo : public utility::VirtualBase {
 public:
 	WaterAnchorInfo():
 		anchor_residue_(0), // Does this make sense?
@@ -43,7 +43,7 @@ public:
 		enforced_( false ) // hydrate/SPaDES protocol
 	{}
 
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~WaterAnchorInfo() override;
 	typedef chemical::AA AA;
 	typedef chemical::ResidueType ResidueType;

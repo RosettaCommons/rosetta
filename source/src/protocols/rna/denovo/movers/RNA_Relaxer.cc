@@ -128,7 +128,7 @@ void RNA_Relaxer::apply( core::pose::Pose & pose )
 
 	protocols::moves::MonteCarloOP monte_carlo_( new protocols::moves::MonteCarlo( pose, *scorefxn, 2.0 ) );
 
-	for ( Size r = 1; r <= relax_cycles_; r++ ) {
+	for ( core::Size r = 1; r <= relax_cycles_; r++ ) {
 
 		TR << "RNA relaxer ROUND " << r << " of " << relax_cycles_ << std::endl;
 
@@ -175,8 +175,8 @@ RNA_Relaxer::find_fragment_by_simple_rmsd_cutoff( pose::Pose & pose )
 	//Find a fragment to try... don't want to deviate too much from the input pose.
 	pose::Pose start_pose = pose;
 
-	Size const frag_size = static_cast <int> ( numeric::random::rg().uniform() * max_frag_size_ ) + 1;
-	for ( Size n = 1; n <= num_find_fragment_tries_ ; n++ ) {
+	core::Size const frag_size = static_cast <int> ( numeric::random::rg().uniform() * max_frag_size_ ) + 1;
+	for ( core::Size n = 1; n <= num_find_fragment_tries_ ; n++ ) {
 
 		pose = start_pose;
 
@@ -203,12 +203,12 @@ RNA_Relaxer::lores_monte_carlo( pose::Pose & pose )
 		lores_scorefxn->set_weight( angle_constraint, 1.0 );
 	}
 
-	Size const lores_monte_carlo_rounds( 1000 );
+	core::Size const lores_monte_carlo_rounds( 1000 );
 	protocols::moves::MonteCarloOP lores_monte_carlo_( new protocols::moves::MonteCarlo( pose, *lores_scorefxn, 2.0 ) );
 
-	for ( Size i=1; i <= lores_monte_carlo_rounds ; ++i ) {
+	for ( core::Size i=1; i <= lores_monte_carlo_rounds ; ++i ) {
 
-		Size const frag_size = static_cast <int> ( numeric::random::rg().uniform() * max_frag_size_ ) + 1;
+		core::Size const frag_size = static_cast <int> ( numeric::random::rg().uniform() * max_frag_size_ ) + 1;
 		rna_fragment_mover_->random_fragment_insertion( pose, frag_size );
 		lores_monte_carlo_->boltzmann( pose, "frag" + SS(frag_size) );
 	}

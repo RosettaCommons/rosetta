@@ -60,7 +60,7 @@ namespace rigid_body {
 //Constructor
 // example pose must have fold tree defined, with a jump connecting a reference res to the moving res.
 RigidBodyStepWiseSampler::RigidBodyStepWiseSampler( pose::Pose const & pose,
-	Size const moving_res ):
+	core::Size const moving_res ):
 	moving_res_( moving_res ),
 	reference_res_( figure_out_reference_res_for_jump( pose, moving_res ) )
 {
@@ -71,7 +71,7 @@ RigidBodyStepWiseSampler::RigidBodyStepWiseSampler( pose::Pose const & pose,
 }
 
 //Constructor -- old-style.
-RigidBodyStepWiseSampler::RigidBodyStepWiseSampler( Size const moving_res,
+RigidBodyStepWiseSampler::RigidBodyStepWiseSampler( core::Size const moving_res,
 	core::conformation::Residue const & template_moving_residue,
 	core::kinematics::Stub const & reference_stub ):
 	moving_res_( moving_res ),
@@ -114,7 +114,7 @@ void RigidBodyStepWiseSampler::apply( core::pose::Pose & pose ){
 
 ///////////////////////////////////////////////////////////////////////////
 void RigidBodyStepWiseSampler::apply( core::pose::Pose & pose,
-	Size const id ) {
+	core::Size const id ) {
 	runtime_assert( is_init() );
 	apply_by_jump( pose, moving_res_, get_stub( id ) );
 }
@@ -129,7 +129,7 @@ void RigidBodyStepWiseSampler::apply( core::pose::Pose & pose,
 ///////////////////////////////////////////////////////////////////////////
 void RigidBodyStepWiseSampler::apply( core::pose::Pose & pose,
 	core::conformation::Residue const & template_moving_residue,
-	Size const id ) {
+	core::Size const id ) {
 	runtime_assert( is_init() );
 	// note that this may be deprecated soon.
 	transform_single_residue( pose, moving_res_,
@@ -140,7 +140,7 @@ void RigidBodyStepWiseSampler::apply( core::pose::Pose & pose,
 ///////////////////////////////////////////////////////////////////////////
 void
 RigidBodyStepWiseSampler::apply( core::conformation::Residue & residue_initially_at_origin ){
-	Size const seqpos = residue_initially_at_origin.seqpos();
+	core::Size const seqpos = residue_initially_at_origin.seqpos();
 
 	// this function only works when RigidBodyStepWiseSampler is initialized with a pose. Don't call this otherwise.
 	runtime_assert( moving_partition_res_.size() > 0 );
@@ -149,13 +149,13 @@ RigidBodyStepWiseSampler::apply( core::conformation::Residue & residue_initially
 		utility::vector1< std::pair < id::AtomID, numeric::xyzVector< core::Real > > > xyz_list;
 		get_atom_coordinates( xyz_list, residue_initially_at_origin.seqpos(),
 			residue_initially_at_origin, get_stub() );
-		for ( Size n = 1; n <= xyz_list.size(); n++ ) residue_initially_at_origin.set_xyz( xyz_list[n].first.atomno(), xyz_list[n].second );
+		for ( core::Size n = 1; n <= xyz_list.size(); n++ ) residue_initially_at_origin.set_xyz( xyz_list[n].first.atomno(), xyz_list[n].second );
 	}
 }
 
 ///////////////////////////////////////////////////////////////////////////
 void
-RigidBodyStepWiseSampler::apply( Vector & xyz_initially_at_origin, Size const seqpos ){
+RigidBodyStepWiseSampler::apply( Vector & xyz_initially_at_origin, core::Size const seqpos ){
 
 	// this function only works when RigidBodyStepWiseSampler is initialized with a pose. Don't call this otherwise.
 	runtime_assert( moving_partition_res_.size() > 0 );
@@ -172,7 +172,7 @@ RigidBodyStepWiseSampler::get_stub() {
 
 ///////////////////////////////////////////////////////////////////////////
 core::kinematics::Stub const &
-RigidBodyStepWiseSampler::get_stub( utility::vector1< Size > const & id_list ) {
+RigidBodyStepWiseSampler::get_stub( utility::vector1< core::Size > const & id_list ) {
 
 	ValueList const & rotamer_values = get_value_list( id_list );
 	runtime_assert( rotamer_values.size() == 6 ); // rotations & translations
@@ -198,8 +198,8 @@ RigidBodyStepWiseSampler::get_stub( utility::vector1< Size > const & id_list ) {
 
 ///////////////////////////////////////////////////////////////////////////
 core::kinematics::Stub const &
-RigidBodyStepWiseSampler::get_stub( Size const id ) {
-	utility::vector1< Size > id_list = id2list( id );
+RigidBodyStepWiseSampler::get_stub( core::Size const id ) {
+	utility::vector1< core::Size > id_list = id2list( id );
 	return get_stub( id_list );
 }
 
@@ -211,20 +211,20 @@ RigidBodyStepWiseSampler::get_values() {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-RigidBodyStepWiseSampler::transform_single_residue( pose::Pose & pose, Size const & seq_num,
+RigidBodyStepWiseSampler::transform_single_residue( pose::Pose & pose, core::Size const & seq_num,
 	core::conformation::Residue const & rsd_at_origin,
 	core::kinematics::Stub const & moving_res_stub ){
 	// [OLD] option 1 -- old school, just works for single residue -- note that it replaces
 	//  that residue with the input residue.
 	utility::vector1< std::pair < id::AtomID, numeric::xyzVector< core::Real > > > xyz_list;
 	get_atom_coordinates( xyz_list, seq_num, rsd_at_origin, moving_res_stub );
-	for ( Size n = 1; n <= xyz_list.size(); n++ ) pose.set_xyz( xyz_list[n].first, xyz_list[n].second );
+	for ( core::Size n = 1; n <= xyz_list.size(); n++ ) pose.set_xyz( xyz_list[n].first, xyz_list[n].second );
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void
-RigidBodyStepWiseSampler::apply_by_jump( pose::Pose & pose, Size const & seq_num,
+RigidBodyStepWiseSampler::apply_by_jump( pose::Pose & pose, core::Size const & seq_num,
 	core::kinematics::Stub const & ){
 	// [NEW] option 2 -- new, generalizable to full moving partition, but using Jump setter.
 	//  requires that any changes to conformation of Residue occur /*outside*/.
@@ -234,22 +234,22 @@ RigidBodyStepWiseSampler::apply_by_jump( pose::Pose & pose, Size const & seq_num
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void
-RigidBodyStepWiseSampler::calculate_jump( pose::Pose & pose, Size const seq_num, kinematics::Stub const & moving_res_stub ){
+RigidBodyStepWiseSampler::calculate_jump( pose::Pose & pose, core::Size const seq_num, kinematics::Stub const & moving_res_stub ){
 
 	using namespace core::kinematics;
 	using namespace core::id;
 	using namespace core::pose;
 
-	Size const jump_no = stepwise::modeler::look_for_unique_jump_to_moving_res( pose.fold_tree(), seq_num );
+	core::Size const jump_no = stepwise::modeler::look_for_unique_jump_to_moving_res( pose.fold_tree(), seq_num );
 	std::string downstream_atom_name = pose.fold_tree().downstream_atom( jump_no );
-	Size const i = seq_num;
+	core::Size const i = seq_num;
 	// Atom 1 works for pdb_GAI and for metals -- and will probably work as a default
 	// choice for ligands. We can always write a function here.
 
 	// What if this works without? SHouldn't finding the downstream atom off a jump just work?
 	if ( !pose.residue_type( i ).is_polymer() ) downstream_atom_name = pose.residue_type( i ).atom_name( 1 );
 
-	Size const j = pose.residue_type( i ).atom_index( downstream_atom_name );
+	core::Size const j = pose.residue_type( i ).atom_index( downstream_atom_name );
 	kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom_dont_do_update( AtomID(j,i) ).get_self_ptr() );
 	runtime_assert( current_atom->is_jump() );
 
@@ -332,7 +332,7 @@ core::pose::PoseCOP
 RigidBodyStepWiseSampler::pose_at_origin(){ return pose_at_origin_; }
 
 core::conformation::Residue const &
-RigidBodyStepWiseSampler::get_residue_at_origin( Size const seqpos ){ return pose_at_origin_->residue( seqpos ) ; }
+RigidBodyStepWiseSampler::get_residue_at_origin( core::Size const seqpos ){ return pose_at_origin_->residue( seqpos ) ; }
 
 //////////////////////////////////////////////////////////////////////////
 /// @brief Name of the class

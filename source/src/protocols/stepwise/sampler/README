@@ -36,7 +36,7 @@ for ( sampler.reset(); sampler.not_end(); ++sampler ) {
 sampler.set_random( true );
 sampler.reset();
 Size const max_tries = 10000;
-for ( Size i = 1; i <= max_tries; ++i, ++sampler ) {
+for ( core::Size i = 1; i <= max_tries; ++i, ++sampler ) {
   sampler.apply( pose ); //Apply rotamer to pose
   ...
 }

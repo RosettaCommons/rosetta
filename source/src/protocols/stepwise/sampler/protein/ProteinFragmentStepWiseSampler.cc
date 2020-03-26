@@ -51,7 +51,7 @@ ProteinFragmentStepWiseSampler::~ProteinFragmentStepWiseSampler() = default;
 
 /////////////////////////////////////////////////////////////////////////
 void
-ProteinFragmentStepWiseSampler::apply( core::pose::Pose & pose, Size const id )
+ProteinFragmentStepWiseSampler::apply( core::pose::Pose & pose, core::Size const id )
 {
 	runtime_assert( id <= size() );
 	frame_->apply( id, pose );

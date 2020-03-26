@@ -17,7 +17,7 @@
 #include <protocols/nonlocal/Region.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -26,27 +26,27 @@ namespace protocols {
 namespace nonlocal {
 
 /// @class A continguous sequence of residues
-class Region : public utility::pointer::ReferenceCount {
+class Region : public utility::VirtualBase {
 	typedef core::Size Size;
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Region() override;
 	/// @brief Creates a new region with the specified start/stop residues
-	Region(Size start_pos, Size stop_pos);
+	Region(core::Size start_pos, core::Size stop_pos);
 
 	/// @brief Returns the starting position of this region
 	/// O(1)
-	Size start() const;
+	core::Size start() const;
 
 	/// @brief Returns the stopping position of this region
 	/// O(1)
-	Size stop() const;
+	core::Size stop() const;
 
 	/// @brief Returns the length of this region. Makes no assumption about
 	/// directionality. That is, Region(3,5).length() == Region(5,3).length().
 	/// O(1)
-	Size length() const;
+	core::Size length() const;
 
 	/// @brief Returns true if start <= stop, false otherwise
 	bool increasing() const;
@@ -56,10 +56,10 @@ public:
 
 private:
 	/// @brief The starting position of the contiguous sequence
-	Size start_;
+	core::Size start_;
 
 	/// @brief The ending position of the contiguous sequence
-	Size stop_;
+	core::Size stop_;
 };
 
 }  // namespace nonlocal

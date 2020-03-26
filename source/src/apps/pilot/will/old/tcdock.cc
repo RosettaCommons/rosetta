@@ -194,7 +194,7 @@ void initsyms(){
 }
 
 ///////////////////////////// ARCH /////////////////////////////////////{
-class Arch : public utility::pointer::ReferenceCount {
+class Arch : public utility::VirtualBase {
 public:
 	string name_;
 	int    nfold1_;

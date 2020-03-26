@@ -31,7 +31,7 @@
 #include <utility/options/keys/StringVectorOptionKey.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/PathName.hh>

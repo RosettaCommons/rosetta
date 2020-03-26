@@ -127,7 +127,7 @@ core::Size ClashCheckFilter::compute( Pose const & pose, bool const & v, bool co
 	using namespace core::pose::symmetry;
 	using core::id::AtomID;
 	using namespace utility;
-	using Sizes = vector1<Size>;
+	using Sizes = vector1<core::Size>;
 
 	SymmetryInfoCOP sym_info = symmetry_info(pose);
 	vector1<bool> indy_resis = sym_info->independent_residues();
@@ -146,14 +146,14 @@ core::Size ClashCheckFilter::compute( Pose const & pose, bool const & v, bool co
 
 	utility::vector1<Real> clashing_pos;
 	std::string select_clashing_pos("select clashing_pos, (");
-	Size itype = 5;
-	Size jtype = 5;
+	core::Size itype = 5;
+	core::Size jtype = 5;
 	bool clash = false;
 
-	for ( Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++ ) {
+	for ( core::Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++ ) {
 		if ( sym_info->subunit_index(ir) != 1 ) continue;
 		clash = false;
-		for ( Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++ ) {
+		for ( core::Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++ ) {
 			//If one component, then check for clashes between all residues in primary subunit and subunits with indices > nsub_bb
 			if ( sym_dof_names_ == "" ) {
 				if ( sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
@@ -175,8 +175,8 @@ core::Size ClashCheckFilter::compute( Pose const & pose, bool const & v, bool co
 				jtype = 5;
 			}
 			//    if (pose.xyz(AtomID(itype,ir)).distance_squared(pose.xyz(AtomID(jtype,jr))) <= contact_dist_sq) { // Check if the CBs/CAs are within contact dist
-			for ( Size ia=1; ia<=itype; ia++ ) {
-				for ( Size ja=1; ja<=jtype; ja++ ) {
+			for ( core::Size ia=1; ia<=itype; ia++ ) {
+				for ( core::Size ja=1; ja<=jtype; ja++ ) {
 					if ( pose.xyz(AtomID(ia,ir)).distance_squared(pose.xyz(AtomID(ja,jr))) <= clash_dist_sq ) { // Test for clashes
 						if ( (((ia == 1) && (ja == 4)) || ((ia == 4) && (ja == 1))) && (pose.xyz(AtomID(ia,ir)).distance_squared(pose.xyz(AtomID(ja,jr))) >= 6.76) ) { // But don't count bb-bb h-bonds as clashes
 							continue;

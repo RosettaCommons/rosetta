@@ -19,7 +19,7 @@
 
 #include <utility/json_spirit/json_spirit_value.h>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -34,10 +34,10 @@ class Interpolator;
 typedef utility::pointer::shared_ptr< Interpolator > InterpolatorOP;
 typedef utility::pointer::shared_ptr< Interpolator const > InterpolatorCOP;
 
-class Interpolator : public utility::pointer::ReferenceCount {
+class Interpolator : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Interpolator() override;
 
 	Interpolator();

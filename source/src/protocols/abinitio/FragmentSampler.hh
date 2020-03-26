@@ -47,7 +47,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <basic/prof.hh>
 #include <utility/exit.hh>
 
@@ -236,15 +236,15 @@ protected:
 	//@brief called in each iteration of inner loop in stage3 before stage3_cycles_ of trials commence
 	virtual void prepare_loop_in_stage3(
 		core::pose::Pose&,
-		Size, /* loop_iteration*/
-		Size  /* total_iterations */
+		core::Size, /* loop_iteration*/
+		core::Size  /* total_iterations */
 	);
 
 	//@brief called in each iteration of the loop in stage4 before the stage4_cycles_ of trials commence
 	virtual void prepare_loop_in_stage4(
 		core::pose::Pose&,
-		Size, /* loop_iteration*/
-		Size  /* total_iterations */
+		core::Size, /* loop_iteration*/
+		core::Size  /* total_iterations */
 	);
 
 public:
@@ -315,10 +315,10 @@ protected:
 	}
 
 	//@brief  cycles_numbers  -- modified by set_cycles(), set_default_options()
-	Size stage1_cycles_; //score0
-	Size stage2_cycles_; //score1
-	Size stage3_cycles_; //score25
-	Size stage4_cycles_; //score3
+	core::Size stage1_cycles_; //score0
+	core::Size stage2_cycles_; //score1
+	core::Size stage3_cycles_; //score25
+	core::Size stage4_cycles_; //score3
 
 private:
 	//@brief scoring functions -- modified by set_default_scores() / set_score_weight()
@@ -340,7 +340,7 @@ private:
 	//@brief a MonteCarlo object -- set_default_mc() , access: mc()
 	moves::MonteCarloOP mc_;
 
-	Size total_trials_;
+	core::Size total_trials_;
 
 	topology_broker::TopologyBrokerOP topology_broker_;
 

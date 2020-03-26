@@ -144,12 +144,12 @@ rotate_into_nucleobase_frame( core::pose::Pose & pose ){
 	using namespace core::id;
 
 	// assuming pose has an RNA at residue 1 -- will rotate just that residue.
-	Size const base_pos( 1 );
+	core::Size const base_pos( 1 );
 	Residue const & rsd = pose.residue( base_pos );
 	kinematics::Stub stub( get_rna_base_coordinate_system_stub( rsd ) );
 
-	for ( Size n = 1; n <= pose.size(); n++ ) {
-		for ( Size i = 1; i <= pose.residue(n).natoms(); i++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
+		for ( core::Size i = 1; i <= pose.residue(n).natoms(); i++ ) {
 			Vector xyz_new = stub.global2local( pose.residue(n).xyz( i ) ); // it is either this or M-inverse.
 			pose.set_xyz( AtomID( i, n ), xyz_new );
 		}
@@ -160,7 +160,7 @@ rotate_into_nucleobase_frame( core::pose::Pose & pose ){
 /////////////////////////////////////////////////////////////////////////////////////////////
 // rhiju's crazy frame
 void
-rotate_into_phosphate_frame( core::pose::Pose & pose, Size const n, bool const center_on_OP2 ) {
+rotate_into_phosphate_frame( core::pose::Pose & pose, core::Size const n, bool const center_on_OP2 ) {
 	using namespace core::conformation;
 	using namespace core::id;
 
@@ -183,7 +183,7 @@ rotate_into_phosphate_frame( core::pose::Pose & pose, Size const n, bool const c
 		stub = kinematics::Stub( Matrix::cols(x,y,z), rsd.xyz( " P  " ) );
 	}
 
-	for ( Size i = 1; i <= rsd.natoms(); i++ ) {
+	for ( core::Size i = 1; i <= rsd.natoms(); i++ ) {
 		Vector xyz_new = stub.global2local( pose.residue(n).xyz( i ) );
 		pose.set_xyz( AtomID( i, n ), xyz_new );
 	}
@@ -222,7 +222,7 @@ centroid_dist( core::pose::Pose & pose,
 ///////////////////////////////////////////////////////////////////////////////////////////
 // This is imported from protocols/stepwise/RigidBodySampler.cco
 Real
-sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump, scoring::ScoreFunctionOP scorefxn /* = 0 */ ){
+sample_all_rotations_at_jump( pose::Pose & pose, core::Size const num_jump, scoring::ScoreFunctionOP scorefxn /* = 0 */ ){
 
 	Real alpha_, alpha_min_( 0 ), alpha_max_( 180.0 ), alpha_increment_( option[ OptionKeys::sample_around::alpha_increment ]() );
 	Real beta_, cosbeta_min_( -1.0 ), cosbeta_max_( 1.0 ), cosbeta_increment_( option[ OptionKeys::sample_around::cosbeta_increment ]()  );
@@ -233,7 +233,7 @@ sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump, scoring::S
 
 	Real const kT = 0.5;
 	Real partition_function = 0;
-	Size  count( 0 );
+	core::Size  count( 0 );
 	Real  score_min( 0.0 );
 	kinematics::Jump  best_jump;
 
@@ -304,7 +304,7 @@ Real
 do_scoring( pose::Pose & pose,
 	scoring::ScoreFunctionOP scorefxn,
 	bool const & sample_rotations,
-	Size const probe_jump_num ){
+	core::Size const probe_jump_num ){
 
 	if ( sample_rotations ) {
 		return sample_all_rotations_at_jump( pose, probe_jump_num, scorefxn );
@@ -319,7 +319,7 @@ do_xy_scan( pose::Pose & pose,
 	scoring::ScoreFunctionOP scorefxn,
 	std::string const & outfile,
 	Real const z,
-	Size const probe_jump_num,
+	core::Size const probe_jump_num,
 	Real const box_bins,
 	Real const translation_increment,
 	bool const sample_rotations ){
@@ -329,7 +329,7 @@ do_xy_scan( pose::Pose & pose,
 	utility::io::ozstream out;
 	out.open( outfile );
 
-	Size count( 0 );
+	core::Size count( 0 );
 	Real best_score( 0.0 );
 	Vector best_translation( 0.0, 0.0, 0.0 );
 

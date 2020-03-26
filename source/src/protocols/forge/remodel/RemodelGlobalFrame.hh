@@ -69,7 +69,7 @@ public: //constructor/destructor
 
 	RemodelGlobalFrame(RemodelData const & remodel_data, RemodelWorkingSet const & working_model, ScoreFunctionOP const & sfxn);
 
-	RemodelGlobalFrame(Size segment_size);
+	RemodelGlobalFrame(core::Size segment_size);
 
 	~RemodelGlobalFrame() override;
 
@@ -95,7 +95,7 @@ public:
 	void restore_original_cst( Pose & pose );
 	void set_native_cst_set( ConstraintSet const & cst_set);
 	void set_native_cst_set( Pose const & pose );
-	void set_segment_size( Size segment_size );
+	void set_segment_size( core::Size segment_size );
 	Real radius(){ return radius_; };
 	Real rise(){ return rise_; };
 	Real omega(){ return omega_; };
@@ -110,7 +110,7 @@ private: // data
 	Real radius_;
 	Real rise_;
 	Real omega_;
-	Size seg_size;
+	core::Size seg_size;
 	int left_handed_;
 	ConstraintSetOP native_cst_set;
 

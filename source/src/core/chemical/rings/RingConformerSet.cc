@@ -23,7 +23,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
@@ -55,14 +55,14 @@ RingConformerSet::RingConformerSet(
 	core::Size const ring_size,
 	core::chemical::rings::RingSaturationType const saturation_type,
 	std::string const & lowest_conformer,
-	utility::vector1< std::string > const & low_conformers ) : utility::pointer::ReferenceCount()
+	utility::vector1< std::string > const & low_conformers ) : utility::VirtualBase()
 {
 	init( ring_size, saturation_type, lowest_conformer, low_conformers );
 }
 
 // Copy constructor
 RingConformerSet::RingConformerSet( RingConformerSet const & object_to_copy ) :
-	utility::pointer::ReferenceCount( object_to_copy )
+	utility::VirtualBase( object_to_copy )
 {
 	copy_data( *this, object_to_copy );
 }

@@ -24,7 +24,7 @@ namespace dunbrack {
 
 /// @details All the fixedsizearrays are allocated and initialized to 0
 RotamerLibraryScratchSpace::RotamerLibraryScratchSpace() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	rotprob_( 0.0 ),
 	negln_rotprob_( 0.0 ),
 	fa_dun_tot_( 0.0 ),

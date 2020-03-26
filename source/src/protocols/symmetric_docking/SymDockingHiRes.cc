@@ -227,7 +227,7 @@ pack::task::PackerTaskOP task = tf.create_task_and_apply_taskoperations( pose );
 // extend one residue beyond borders of repackable regions, don't allow 1-residue loops
 core::Size const nres = pose.size();
 utility::vector1<bool> flexible_region( nres, false );
-for ( Size i=2; i < nres; ++i ) {
+for ( core::Size i=2; i < nres; ++i ) {
 int num_flexible(0);
 if ( pose.pdb_info()->chain(i-1) == pose.pdb_info()->chain(i+1) ) {
 if ( task->pack_residue(i-1) ) ++num_flexible;
@@ -242,14 +242,14 @@ flexible_region.at(i+1) = true;
 }
 
 // if we have a single fixed residue between two loops, make this flexible
-for ( Size i=2; i < nres; ++i ) {
+for ( core::Size i=2; i < nres; ++i ) {
 if ( flexible_region.at(i-1) && flexible_region.at(i+1) ) flexible_region.at(i) = true;
 }
 
 // jk For now, don't let the first or last two residues of a chain be flexible
 flexible_region.at(1) = false;
 flexible_region.at(2) = false;
-for ( Size i=3; i < (nres-1); ++i ) {
+for ( core::Size i=3; i < (nres-1); ++i ) {
 if ( pose.pdb_info()->chain(i-1) != pose.pdb_info()->chain(i) ) {
 flexible_region.at(i-2) = false;
 flexible_region.at(i-1) = false;
@@ -261,11 +261,11 @@ flexible_region.at(nres-1) = false;
 flexible_region.at(nres) = false;
 
 // disallow one-residue loops
-for ( Size i=2; i < nres; ++i ) {
+for ( core::Size i=2; i < nres; ++i ) {
 if ( ( ! flexible_region.at(i-1)) && ( ! flexible_region.at(i+1)) ) flexible_region.at(i) = false;
 }
 // disallow two-residue loops
-for ( Size i=3; i < nres; ++i ) {
+for ( core::Size i=3; i < nres; ++i ) {
 if ( ( ! flexible_region.at(i-2)) && ( ! flexible_region.at(i+1)) ) {
 flexible_region.at(i-1) = false;
 flexible_region.at(i) = false;
@@ -275,11 +275,11 @@ flexible_region.at(i) = false;
 // setup loops
 core::Size loop_start=0;
 core::Size loop_stop=0;
-for ( Size i=1; i < nres; ++i ) {
+for ( core::Size i=1; i < nres; ++i ) {
 if ( flexible_region.at(i) ) {
 loop_start = i;
 loop_stop = i;
-for ( Size j=i+1; j <= nres; ++j ) {
+for ( core::Size j=i+1; j <= nres; ++j ) {
 // if j is on a different chain than i, break
 if ( pose.pdb_info()->chain(j) != pose.pdb_info()->chain(i) ) {
 break;
@@ -391,7 +391,7 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
-	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
+	std::map< core::Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
 	//set up rigid body movers
 	rigid::RigidBodyDofSeqPerturbMoverOP rb_perturb( new rigid::RigidBodyDofSeqPerturbMover( dofs , rot_magnitude_, trans_magnitude_ ) );
@@ -471,7 +471,7 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	}
 
 	CycleMoverOP rb_mover_min_trial_repack( new CycleMover );
-	for ( Size i=1; i<repack_period_; ++i ) rb_mover_min_trial_repack->add_mover( rb_mover_min_trial );
+	for ( core::Size i=1; i<repack_period_; ++i ) rb_mover_min_trial_repack->add_mover( rb_mover_min_trial );
 	rb_mover_min_trial_repack->add_mover( repack_step );
 
 	//set up initial repack mover
@@ -546,7 +546,7 @@ void SymDockingHiRes::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
-	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
+	std::map< core::Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
 	TR << "::::::::::::::::::DOCK_PPK:::::::::::::::::::" << std::endl;
 

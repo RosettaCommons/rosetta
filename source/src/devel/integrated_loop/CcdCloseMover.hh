@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: LoopModeler
+///   Contains currently: LoopModeler
 ///
 ///
 /// @author Vatsan Raman
@@ -38,7 +38,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -59,14 +59,14 @@ class CcdCloseMover: public protocols::moves::Mover {
 public:
 	CcdCloseMover(){}
 
- CcdCloseMover(
-	 core::pose::Pose pose,
-	 core::kinematics::MoveMap movemap,
-	 protocols::Loop ThisLoop
- ):Mover(),
-	 pose_( pose ),
-	 movemap_( movemap ),
-	 ThisLoop_( ThisLoop )
+	CcdCloseMover(
+		core::pose::Pose pose,
+		core::kinematics::MoveMap movemap,
+		protocols::Loop ThisLoop
+	):Mover(),
+		pose_( pose ),
+		movemap_( movemap ),
+		ThisLoop_( ThisLoop )
 	{
 		Mover::type("CcdCloseMover");
 		set_default_param();
@@ -75,14 +75,14 @@ public:
 
 	void set_default_param()
 	{
-	// param for ccd_closure
-	ccd_cycles = 100;
-	ccd_tol = 0.01;
-	rama_check = true;
-	max_rama_score_increase = 2.0;
-	max_total_delta_helix = 10.0;
-	max_total_delta_strand = 50.0;
-	max_total_delta_loop = 75.0;
+		// param for ccd_closure
+		ccd_cycles = 100;
+		ccd_tol = 0.01;
+		rama_check = true;
+		max_rama_score_increase = 2.0;
+		max_total_delta_helix = 10.0;
+		max_total_delta_strand = 50.0;
+		max_total_delta_loop = 75.0;
 	}
 
 
@@ -90,13 +90,13 @@ public:
 		core::pose::Pose & pose_
 	) override;
 
-	private:
+private:
 	core::pose::Pose pose_;
 	core::kinematics::MoveMap movemap_;
 	protocols::Loop ThisLoop_;
 
 	// param for ccd_closure
-	Size ccd_cycles; // num of cycles of ccd_moves
+	core::Size ccd_cycles; // num of cycles of ccd_moves
 	Real ccd_tol; // criterion for a closed loop
 	bool rama_check;
 	Real max_rama_score_increase; // dummy number when rama_check is false
@@ -106,8 +106,8 @@ public:
 
 
 	// output for ccd_closure
-	//	Real forward_deviation, backward_deviation; // actually loop closure msd, both dirs
-	//	Real torsion_delta, rama_delta; // actually torsion and rama score changes, averaged by loop_size
+	// Real forward_deviation, backward_deviation; // actually loop closure msd, both dirs
+	// Real torsion_delta, rama_delta; // actually torsion and rama score changes, averaged by loop_size
 
 
 };

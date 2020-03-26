@@ -22,7 +22,7 @@
 #include <protocols/jd3/JobResultID.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
@@ -32,7 +32,7 @@ namespace jd3 {
 namespace standard {
 
 /// @brief The %PoseOutputSpecification
-class PoseOutputSpecification : utility::pointer::ReferenceCount
+class PoseOutputSpecification : utility::VirtualBase
 {
 public:
 

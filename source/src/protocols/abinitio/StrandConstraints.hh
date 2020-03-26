@@ -39,7 +39,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 
 
@@ -75,11 +75,11 @@ private:
 	bool anti_;
 };
 
-class StrandConstraints : public utility::pointer::ReferenceCount {
+class StrandConstraints : public utility::VirtualBase {
 	typedef utility::vector1< AlternativePairings > FuzzyTopology;
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~StrandConstraints() override;
 	StrandConstraints( PairingStatistics const& strand_stats_ );
 	void add_pairing( core::scoring::dssp::StrandPairing const&, std::string model = "NO_MODEL" );

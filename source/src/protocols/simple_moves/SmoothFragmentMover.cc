@@ -29,7 +29,7 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/random/random.hh>
 
 //// C++ headers
@@ -84,28 +84,28 @@ bool
 SmoothFragmentMover::choose_fragment(
 	core::fragment::FrameList const& frames,
 	core::pose::Pose const& pose,
-	Size &frame_num,
-	Size &frag_num
+	core::Size &frame_num,
+	core::Size &frag_num
 ) const
 {
 
 	PROF_START( basic::TEST4 );
 
 	//std::cout << "SmoothFragmentMover::choose_fragment" << std::endl;
-	typedef std::pair< Size, Size > FragID;
+	typedef std::pair< core::Size, core::Size > FragID;
 	utility::vector1< FragID > goodfrag;
 	goodfrag.reserve( frames.size()*200 );
 
 	Real costmin = 1000;
 	FragID minfrag ( 0 , 0 );
 
-	for ( Size fnr = 1; fnr <= frames.size(); fnr++ ) {
+	for ( core::Size fnr = 1; fnr <= frames.size(); fnr++ ) {
 		//compute scores
 		ScoreList scores;
 		fragment::Frame const& frame( *( frames[ fnr ] ) );
 		cost_->score( frame, pose, scores );
 
-		for ( Size j = 1; j <= frame.nr_frags(); ++j ) {
+		for ( core::Size j = 1; j <= frame.nr_frags(); ++j ) {
 			Real s = scores[ j ];
 			//std::cout << "SmoothFragmentMover::choose_fragment: " << j << " score: " << s << std::endl;
 			if ( s < costmin ) {

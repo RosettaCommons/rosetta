@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   utility/pointer/ReferenceCount.srlz.hh
-/// @brief  Faux serialization routines for the ReferenceCount base class.
+/// @file   utility/VirtualBase.srlz.hh
+/// @brief  Faux serialization routines for the VirtualBase base class.
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #ifdef SERIALIZATION
 
 // Unit headers
-#include <utility/pointer/ReferenceCount.srlz.hh>
+#include <utility/VirtualBase.srlz.hh>
 
 // Package headers
 #include <utility/serialization/serialization.hh>
@@ -23,21 +23,19 @@
 #include <cereal/types/polymorphic.hpp>
 
 namespace utility {
-namespace pointer {
 
 template < class Archive >
-void save( Archive &, ReferenceCount const & ) {}
+void save( Archive &, VirtualBase const & ) {}
 
-/// @brief External deserialization function for class ReferenceCount
+/// @brief External deserialization function for class VirtualBase
 template < class Archive >
-void load( Archive &, ReferenceCount & ) {}
+void load( Archive &, VirtualBase & ) {}
 
-EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( ReferenceCount );
+EXTERNAL_SAVE_AND_LOAD_SERIALIZABLE( VirtualBase );
 
-}
-}
+} // namespace utility
 
-CEREAL_REGISTER_TYPE( utility::pointer::ReferenceCount )
-CEREAL_REGISTER_DYNAMIC_INIT( utility_pointer_ReferenceCount )
+CEREAL_REGISTER_TYPE( utility::VirtualBase )
+CEREAL_REGISTER_DYNAMIC_INIT( utility_VirtualBase )
 
-#endif
+#endif // SERIALIZATION

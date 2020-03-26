@@ -38,7 +38,7 @@ namespace core {
 namespace scoring {
 namespace bin_transitions {
 
-class BinTransitionCalculator : public utility::pointer::ReferenceCount {
+class BinTransitionCalculator : public utility::VirtualBase {
 public: //Constructors and destructors:
 	/// @brief Default constructor for BinTransitionCalculator
 	///

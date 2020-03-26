@@ -36,7 +36,7 @@ namespace pose {
 /// @remark Should save memory compared to keeping the full pose (which includes atom_tree, energies etc.)
 /// This is a bit like the SilentStruct -- although that class
 /// has gotten a bit complicated -- easier to start from scratch.
-class MiniPose : public utility::pointer::ReferenceCount  {
+class MiniPose : public utility::VirtualBase  {
 
 public:
 	MiniPose( core::pose::Pose const & pose );

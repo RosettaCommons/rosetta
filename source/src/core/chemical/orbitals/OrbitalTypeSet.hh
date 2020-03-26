@@ -30,7 +30,7 @@
 
 // Project headers
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <map>
 #include <core/types.hh>
 //#include <utility/vector1_bool.hh>
@@ -49,11 +49,11 @@ namespace chemical {
 namespace orbitals {
 
 
-class OrbitalTypeSet : public utility::pointer::ReferenceCount {
+class OrbitalTypeSet : public utility::VirtualBase {
 
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~OrbitalTypeSet() override;
 	OrbitalTypeSet(std::string const & directory, std::string const & name="" );
 

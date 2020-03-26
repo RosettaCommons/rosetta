@@ -24,7 +24,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -48,7 +48,7 @@ namespace io {
 /// @brief Information stored in the Title Section records
 ///http://www.wwpdb.org/documentation/format32/sect2.html
 ///HEADER    PEPTIDASE                               13-JAN-98   1A2Z
-class HeaderInformation : public utility::pointer::ReferenceCount {
+class HeaderInformation : public utility::VirtualBase {
 public:
 	HeaderInformation();
 	HeaderInformation( HeaderInformation const & src );

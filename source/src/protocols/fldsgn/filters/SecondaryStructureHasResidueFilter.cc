@@ -236,8 +236,8 @@ core::Real SecondaryStructureHasResidueFilter::compute( core::pose::Pose const &
 
 	tr << " Pose has " << num_helix_has_residue << " / " << num_helix << " helix, " << num_sheet_has_residue  << " / " << num_sheet << " sheet, " << num_loop_has_residue << " / " << num_loop << " loop with enough required residues, according to dssp_reduced definition" <<  std::endl;
 	//compute fraction of total ss elements with enough required residue
-	Size num_secstruct( 0 );
-	Size num_secstruct_has_residue( 0 );
+	core::Size num_secstruct( 0 );
+	core::Size num_secstruct_has_residue( 0 );
 	if ( filter_helix_ ) {
 		num_secstruct_has_residue += num_helix_has_residue;
 		num_secstruct += num_helix;

@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_jd3_dag_node_managers_EvenlyPartitionedNodeManager_HH
 #define INCLUDED_protocols_jd3_dag_node_managers_EvenlyPartitionedNodeManager_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/jd3/dag_node_managers/EvenlyPartitionedNodeManager.fwd.hh>
 #include <protocols/jd3/dag_node_managers/NodeManager.hh>
 

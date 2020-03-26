@@ -41,7 +41,7 @@
 #include <core/conformation/signals/ConnectionEvent.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -61,9 +61,9 @@ namespace constraints {
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 
-class ResidueConstraints : public utility::pointer::ReferenceCount {
+class ResidueConstraints : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ResidueConstraints() override;
 	typedef std::map< Size, ConstraintsOP > Map;
 	typedef Map::const_iterator const_iterator;
@@ -150,7 +150,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 
-class ConstraintSet : public utility::pointer::ReferenceCount {
+class ConstraintSet : public utility::VirtualBase {
 public:
 	typedef id::AtomID AtomID;
 	typedef id::DOF_ID DOF_ID;

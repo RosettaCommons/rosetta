@@ -71,7 +71,7 @@ public:
 	{};
 
 	//@brief c'stor
-	ResiduePairJumpSetup( Size total_residue ) :
+	ResiduePairJumpSetup( core::Size total_residue ) :
 		total_residue_( total_residue )
 	{};
 

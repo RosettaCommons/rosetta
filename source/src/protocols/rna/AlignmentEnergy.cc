@@ -67,7 +67,7 @@ pose_aligner_( nullptr )
 
 AlignmentEnergy::AlignmentEnergy(
 	core::scoring::methods::EnergyMethodOptions const & //options //core::pose::PoseOP const & align_pose,
-	//utility::vector1< Size > const & moving_res_list
+	//utility::vector1< core::Size > const & moving_res_list
 ):
 	core::scoring::methods::WholeStructureEnergy( utility::pointer::make_shared< AlignmentEnergyCreator >() )//,
 	//align_pose_( align_pose ),
@@ -143,7 +143,7 @@ AlignmentEnergy::eval_atom_derivative(
 	// Slow but sure to work.
 	//auto pose_aligner_ = utility::pointer::make_shared< stepwise::modeler::align::StepWisePoseAligner >( *align_pose_ );
 
-	utility::vector1< Size > root_partition_res = stepwise::modeler::figure_out_root_partition_res( pose, core::pose::full_model_info::get_moving_res_from_full_model_info_const( pose ) );
+	utility::vector1< core::Size > root_partition_res = stepwise::modeler::figure_out_root_partition_res( pose, core::pose::full_model_info::get_moving_res_from_full_model_info_const( pose ) );
 	pose_aligner_->set_root_partition_res( root_partition_res );
 	pose_aligner_->initialize( pose );
 	auto coord_cst_aid_map = pose_aligner_->create_coordinate_constraint_atom_id_map( pose );
@@ -152,8 +152,8 @@ AlignmentEnergy::eval_atom_derivative(
 
 	Real const rmsd = core::scoring::rms_at_corresponding_atoms_no_super( pose, *align_pose_, coord_cst_aid_map );
 	if ( rmsd == 0 ) return;
-	//Size const n = pose_aligner_->superimpose_atom_id_map().size();
-	Size const n = coord_cst_aid_map.size();
+	//core::Size const n = pose_aligner_->superimpose_atom_id_map().size();
+	core::Size const n = coord_cst_aid_map.size();
 	Real const dfunc = func_->dfunc( rmsd );
 	if ( dfunc == 0 ) return;
 	Real const factor =  dfunc / ( 2 * n * rmsd );
@@ -204,7 +204,7 @@ AlignmentEnergy::finalize_total_energy(
 	// Slow but sure to work.
 	//auto pose_aligner_ = utility::pointer::make_shared< stepwise::modeler::align::StepWisePoseAligner >( *align_pose_ );
 
-	utility::vector1< Size > root_partition_res = stepwise::modeler::figure_out_root_partition_res( pose, core::pose::full_model_info::get_moving_res_from_full_model_info( pose ) );
+	utility::vector1< core::Size > root_partition_res = stepwise::modeler::figure_out_root_partition_res( pose, core::pose::full_model_info::get_moving_res_from_full_model_info( pose ) );
 	//TR << "root_partition_res is " << root_partition_res << std::endl;
 	pose_aligner_->set_root_partition_res( root_partition_res );
 

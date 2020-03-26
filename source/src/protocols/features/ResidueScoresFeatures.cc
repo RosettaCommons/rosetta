@@ -304,7 +304,7 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 	Pose temp_pose = pose;
 	scfxn_->setup_for_scoring(temp_pose);
 
-	Size const batch_id(get_batch_id(struct_id, db_session));
+	core::Size const batch_id(get_batch_id(struct_id, db_session));
 
 
 	vector1<bool> relevant_and_virtual_residues(relevant_residues);
@@ -312,7 +312,7 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 	// use virtual residues to be compatible with the two-body scoring
 	// framework, include virtual residues with the relevant residues so
 	// these scores get computed.
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( pose.residue( i ).aa() == aa_vrt ) {
 			relevant_and_virtual_residues[i] = true;
 		}
@@ -334,7 +334,7 @@ void
 ResidueScoresFeatures::insert_one_body_residue_score_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size const batch_id,
+	core::Size const batch_id,
 	StructureID const struct_id,
 	sessionOP db_session
 ) {
@@ -350,16 +350,16 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 	insert_onebody.add_column("score_value");
 	insert_onebody.add_column("context_dependent");
 
-	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id", batch_id) );
+	RowDataBaseOP batch_id_data( new RowData<core::Size>("batch_id", batch_id) );
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id", struct_id) );
 
 	EnergyMap emap;
 
-	for ( Size resNum=1; resNum <= pose.size(); ++resNum ) {
+	for ( core::Size resNum=1; resNum <= pose.size(); ++resNum ) {
 		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 		Residue const & rsd( pose.residue(resNum) );
 
-		RowDataBaseOP resNum_data( new RowData<Size>("resNum", resNum) );
+		RowDataBaseOP resNum_data( new RowData<core::Size>("resNum", resNum) );
 
 		{ // Context Independent One Body Energies
 			RowDataBaseOP context_dependent_data( new RowData<bool>("context_dependent", false) );
@@ -369,7 +369,7 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 			for ( auto st : ci_1b ) {
 				if ( !emap[st] ) continue;
 
-				RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", st) );
+				RowDataBaseOP score_type_id_data( new RowData<core::Size>("score_type_id", st) );
 				RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[st]) );
 
 				insert_onebody.add_row(
@@ -387,7 +387,7 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 
 				if ( !emap[st] ) continue;
 
-				RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", st) );
+				RowDataBaseOP score_type_id_data( new RowData<core::Size>("score_type_id", st) );
 				RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[st]) );
 
 				insert_onebody.add_row(
@@ -405,7 +405,7 @@ void
 ResidueScoresFeatures::insert_two_body_residue_score_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size batch_id,
+	core::Size batch_id,
 	StructureID const struct_id,
 	sessionOP db_session
 ) {
@@ -429,10 +429,10 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 	insert_twobody.add_column("score_value");
 	insert_twobody.add_column("context_dependent");
 
-	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id", batch_id) );
+	RowDataBaseOP batch_id_data( new RowData<core::Size>("batch_id", batch_id) );
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id", struct_id) );
 
-	for ( Size resNum=1; resNum <= pose.size(); ++resNum ) {
+	for ( core::Size resNum=1; resNum <= pose.size(); ++resNum ) {
 		Residue const & rsd( pose.residue(resNum) );
 
 		// Two Body Energies
@@ -441,11 +441,11 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 				irue = energy_graph.get_node(resNum)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
 			auto const & edge( static_cast< EnergyEdge const &> (**iru) );
-			Size const otherResNum( edge.get_second_node_ind() );
+			core::Size const otherResNum( edge.get_second_node_ind() );
 
 			if ( !check_relevant_residues( relevant_residues, resNum, otherResNum ) ) continue;
 
-			Size resNum1, resNum2;
+			core::Size resNum1, resNum2;
 			if ( resNum < otherResNum ) {
 				resNum1 = resNum;
 				resNum2 = otherResNum;
@@ -456,8 +456,8 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 
 			Residue const & otherRsd( pose.residue(otherResNum) );
 
-			RowDataBaseOP resNum1_data( new RowData<Size>("resNum1", resNum1) );
-			RowDataBaseOP resNum2_data( new RowData<Size>("resNum2", resNum2) );
+			RowDataBaseOP resNum1_data( new RowData<core::Size>("resNum1", resNum1) );
+			RowDataBaseOP resNum2_data( new RowData<core::Size>("resNum2", resNum2) );
 
 			{ // Context Independent Two Body Energies
 
@@ -468,7 +468,7 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 				for ( auto st : ci_2b ) {
 					if ( !emap[st] ) continue;
 
-					RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", st) );
+					RowDataBaseOP score_type_id_data( new RowData<core::Size>("score_type_id", st) );
 					RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[st]) );
 
 					insert_twobody.add_row(
@@ -486,7 +486,7 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 				for ( auto st : cd_2b ) {
 					if ( !emap[st] ) continue;
 
-					RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", st) );
+					RowDataBaseOP score_type_id_data( new RowData<core::Size>("score_type_id", st) );
 					RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[st]) );
 
 					insert_twobody.add_row(
@@ -505,7 +505,7 @@ void
 ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	Size batch_id,
+	core::Size batch_id,
 	StructureID const struct_id,
 	sessionOP db_session
 ) {
@@ -523,7 +523,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 	insert_twobody_longrange.add_column("score_value");
 	insert_twobody_longrange.add_column("context_dependent");
 
-	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id", batch_id) );
+	RowDataBaseOP batch_id_data( new RowData<core::Size>("batch_id", batch_id) );
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id", struct_id) );
 
 	EnergyMap emap;
@@ -540,16 +540,16 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 			if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 			// Potentially O(N^2) operation...
-			for ( Size resNum = 1; resNum <= pose.size(); ++resNum ) {
+			for ( core::Size resNum = 1; resNum <= pose.size(); ++resNum ) {
 
 				for ( ResidueNeighborConstIteratorOP
 						rni = lrec->const_upper_neighbor_iterator_begin( resNum ),
 						rniend = lrec->const_upper_neighbor_iterator_end( resNum );
 						(*rni) != (*rniend); ++(*rni) ) {
-					Size const otherResNum(rni->upper_neighbor_id());
+					core::Size const otherResNum(rni->upper_neighbor_id());
 					if ( !check_relevant_residues( relevant_residues, resNum, otherResNum ) ) continue;
 
-					Size resNum1, resNum2;
+					core::Size resNum1, resNum2;
 					if ( resNum < otherResNum ) {
 						resNum1 = resNum;
 						resNum2 = otherResNum;
@@ -562,13 +562,13 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 					emap.zero();
 					rni->retrieve_energy( emap );
 
-					RowDataBaseOP resNum1_data( new RowData<Size>("resNum1", resNum1) );
-					RowDataBaseOP resNum2_data( new RowData<Size>("resNum2", resNum2) );
+					RowDataBaseOP resNum1_data( new RowData<core::Size>("resNum1", resNum1) );
+					RowDataBaseOP resNum2_data( new RowData<core::Size>("resNum2", resNum2) );
 
 					for ( auto st : ci_lr_2b ) {
 						if ( !emap[st] ) continue;
 
-						RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", st) );
+						RowDataBaseOP score_type_id_data( new RowData<core::Size>("score_type_id", st) );
 						RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[st]) );
 
 						insert_twobody_longrange.add_row(
@@ -595,17 +595,17 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 			if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
 
 			// Potentially O(N^2) operation...
-			for ( Size resNum = 1; resNum <= pose.size(); ++resNum ) {
+			for ( core::Size resNum = 1; resNum <= pose.size(); ++resNum ) {
 				if ( !relevant_residues[resNum] ) continue;
 
 				for ( ResidueNeighborConstIteratorOP
 						rni = lrec->const_upper_neighbor_iterator_begin( resNum ),
 						rniend = lrec->const_upper_neighbor_iterator_end( resNum );
 						(*rni) != (*rniend); ++(*rni) ) {
-					Size const otherResNum(rni->upper_neighbor_id());
+					core::Size const otherResNum(rni->upper_neighbor_id());
 					if ( !relevant_residues[otherResNum] ) continue;
 
-					Size resNum1, resNum2;
+					core::Size resNum1, resNum2;
 					if ( resNum < otherResNum ) {
 						resNum1 = resNum;
 						resNum2 = otherResNum;
@@ -618,8 +618,8 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 					emap.zero();
 					rni->retrieve_energy( emap );
 
-					RowDataBaseOP resNum1_data( new RowData<Size>("resNum1", resNum1) );
-					RowDataBaseOP resNum2_data( new RowData<Size>("resNum2", resNum2) );
+					RowDataBaseOP resNum1_data( new RowData<core::Size>("resNum1", resNum1) );
+					RowDataBaseOP resNum2_data( new RowData<core::Size>("resNum2", resNum2) );
 
 					for (
 							auto
@@ -627,7 +627,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 							st != ste; ++st ) {
 						if ( !emap[*st] ) continue;
 
-						RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
+						RowDataBaseOP score_type_id_data( new RowData<core::Size>("score_type_id", *st) );
 						RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
 
 						insert_twobody_longrange.add_row(

@@ -16,7 +16,7 @@
 #define INCLUDED_core_import_pose_pose_stream_PoseInputStream_HH
 
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
@@ -30,7 +30,7 @@ namespace core {
 namespace import_pose {
 namespace pose_stream {
 
-class PoseInputStream : public utility::pointer::ReferenceCount {
+class PoseInputStream : public utility::VirtualBase {
 public:
 	PoseInputStream() {}
 	~PoseInputStream() override {}

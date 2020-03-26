@@ -119,8 +119,8 @@ public:
 		core::Size const cycles( basic::options::option[ basic::options::OptionKeys::AnchoredPDBCreator::APDBC_cycles ].value() );
 
 		protocols::grafting::AnchoredGraftMover grafter = protocols::grafting::AnchoredGraftMover( insert_point, insert_point + 1 );
-		Size const Nter_flexibility = insert_point - insert_loop_start + 1;
-		Size const Cter_flexibility = insert_loop_end - insert_point;
+		core::Size const Nter_flexibility = insert_point - insert_loop_start + 1;
+		core::Size const Cter_flexibility = insert_loop_end - insert_point;
 
 		//(jadolfbr) Set AnchoredGraftMover options.
 		grafter.set_scaffold_flexibility( Nter_flexibility, Cter_flexibility );

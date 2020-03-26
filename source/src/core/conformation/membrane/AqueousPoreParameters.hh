@@ -33,7 +33,7 @@
 #include <utility/vector1.functions.hh>
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -48,7 +48,7 @@ namespace conformation {
 namespace membrane {
 
 /// @brief A class for defining an aqueous pore
-class AqueousPoreParameters : public utility::pointer::ReferenceCount {
+class AqueousPoreParameters : public utility::VirtualBase {
 
 	typedef utility::vector1< numeric::CubicPolynomial > piecewise_poly;
 

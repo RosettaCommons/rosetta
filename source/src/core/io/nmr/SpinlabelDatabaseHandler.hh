@@ -24,7 +24,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 
@@ -36,7 +36,7 @@ namespace core {
 namespace io {
 namespace nmr {
 
-class SpinlabelDatabaseEntry : public utility::pointer::ReferenceCount {
+class SpinlabelDatabaseEntry : public utility::VirtualBase {
 
 private: // Data
 

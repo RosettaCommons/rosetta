@@ -69,6 +69,7 @@ namespace score_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.GeometryFilter" );
 
+using core::Size;
 
 
 GeometryFilter::GeometryFilter() :
@@ -163,10 +164,10 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 		scan_me = core::select::residue_selector::ResidueSubset( copy_pose.size(), true );
 	}
 
-	core::Size const start = std::max( start_, Size( 1 ) );
+	core::Size const start = std::max( start_, core::Size( 1 ) );
 	core::Size const stop = std::min( copy_pose.size(), end_ );
 	TR << "Scan residues between " << start << " and " << stop << std::endl;
-	for ( Size resnum = start; resnum < stop; resnum++ ) {
+	for ( core::Size resnum = start; resnum < stop; resnum++ ) {
 		if ( !scan_me[ resnum ] ) continue;
 
 		if ( copy_pose.fold_tree().is_cutpoint( resnum+1 ) || copy_pose.fold_tree().is_jump_point( resnum+1 ) ) continue;
@@ -204,7 +205,7 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 	}
 
 	//check the last residues
-	Size resnum = std::min( copy_pose.size(), end_ );
+	core::Size resnum = std::min( copy_pose.size(), end_ );
 	core::Real const weight( (*scorefxn)[ core::scoring::ScoreType( cart_bonded ) ] );
 	core::Real const score( copy_pose.energies().residue_total_energies( resnum )[ core::scoring::ScoreType( cart_bonded ) ]);
 	core::Real weighted_score = weight * score ;

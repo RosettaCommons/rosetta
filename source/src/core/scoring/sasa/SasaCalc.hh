@@ -19,7 +19,7 @@
 #include <core/scoring/sasa/SasaCalc.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -33,7 +33,7 @@ namespace sasa {
 /// @brief Main interface to sasa calculations outside of pose metrics.
 ///  Virt atms are skipped as radii=0
 ///
-class SasaCalc : public utility::pointer::ReferenceCount {
+class SasaCalc : public utility::VirtualBase {
 
 public:
 

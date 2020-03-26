@@ -28,16 +28,14 @@ namespace sewing {
 namespace hashing {
 
 ModelFileReader::ModelFileReader():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 
 }
 
 ModelFileReader::~ModelFileReader(){}
 
-ModelFileReader::ModelFileReader( ModelFileReader const & ) {
-
-}
+ModelFileReader::ModelFileReader( ModelFileReader const & ) = default;
 
 
 

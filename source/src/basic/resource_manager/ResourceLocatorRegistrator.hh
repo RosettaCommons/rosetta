@@ -20,7 +20,7 @@
 #include <basic/resource_manager/ResourceLocatorFactory.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 //C++ headers

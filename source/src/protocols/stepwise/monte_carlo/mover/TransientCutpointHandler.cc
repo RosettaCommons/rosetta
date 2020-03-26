@@ -41,7 +41,7 @@ namespace monte_carlo {
 namespace mover {
 
 //Constructor
-TransientCutpointHandler::TransientCutpointHandler( Size const sample_res ):
+TransientCutpointHandler::TransientCutpointHandler( core::Size const sample_res ):
 	sample_suite_  ( sample_res - 1 ), //sampled nucleoside
 	cutpoint_suite_( sample_res ), // suite at which to make cutpoint
 	move_jump_points_away_( false ),
@@ -50,7 +50,7 @@ TransientCutpointHandler::TransientCutpointHandler( Size const sample_res ):
 {}
 
 //Constructor
-TransientCutpointHandler::TransientCutpointHandler( Size const sample_suite, Size const cutpoint_suite, bool const change_foldtree ):
+TransientCutpointHandler::TransientCutpointHandler( core::Size const sample_suite, core::Size const cutpoint_suite, bool const change_foldtree ):
 	sample_suite_( sample_suite ), //sampled nucleoside
 	cutpoint_suite_( cutpoint_suite ), // suite at which to make cutpoint
 	move_jump_points_away_( false ),
@@ -110,7 +110,7 @@ TransientCutpointHandler::prepare_fold_tree_for_erraser( core::pose::Pose & pose
 	FoldTree f = pose.fold_tree();
 
 	//update_fixed_res_and_minimize_res( pose );
-	utility::vector1< Size > sample_res_list = minimize_res_;
+	utility::vector1< core::Size > sample_res_list = minimize_res_;
 
 	// figure out jump points that bracket the cut.
 	jump_start_ = sample_suite_;
@@ -121,11 +121,11 @@ TransientCutpointHandler::prepare_fold_tree_for_erraser( core::pose::Pose & pose
 		while ( jump_end_ < pose.size() && minimize_res_.has_value( jump_end_ ) && !f.is_cutpoint( jump_end_ ) ) jump_end_++;
 	}
 
-	Size const cutpoint = cutpoint_suite_;
+	core::Size const cutpoint = cutpoint_suite_;
 
 	f.new_jump( jump_start_, jump_end_, cutpoint );
 
-	Size const which_jump = f.jump_nr( jump_start_, jump_end_ );
+	core::Size const which_jump = f.jump_nr( jump_start_, jump_end_ );
 	f.set_jump_atoms( which_jump,
 		jump_start_,
 		default_jump_atom( pose.residue_type( jump_start_ ) ),

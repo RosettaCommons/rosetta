@@ -51,7 +51,7 @@ Rotates::Rotates(): Mover("Rotates")
 {}
 
 Rotates::Rotates(Rotates const & that):
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	protocols::moves::Mover( that )
 {}
 

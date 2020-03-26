@@ -40,7 +40,7 @@ namespace rna {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
-class StepWiseWorkingParametersSetup: public utility::pointer::ReferenceCount {
+class StepWiseWorkingParametersSetup: public utility::VirtualBase {
 public:
 
 	//constructor!
@@ -49,7 +49,7 @@ public:
 		utility::vector1< core::Size > const & input_res,
 		utility::vector1< core::Size > const & input_res2,
 		utility::vector1< core::Size > const & cutpoint_open,
-		Size const cutpoint_closed );
+		core::Size const cutpoint_closed );
 
 
 	//destructor -- necessary? yes of course it is
@@ -83,7 +83,7 @@ public:
 	set_filter_user_alignment_res( bool const setting ){ filter_user_alignment_res_ = setting; }
 
 	void
-	set_native_alignment_res( utility::vector1< Size > const & native_alignment );
+	set_native_alignment_res( utility::vector1< core::Size > const & native_alignment );
 
 	void
 	set_global_sample_res_list( utility::vector1 < core::Size > const & setting );
@@ -113,7 +113,7 @@ public:
 	set_floating_base( bool const setting );
 
 	void
-	set_floating_base_anchor_res( Size const setting );
+	set_floating_base_anchor_res( core::Size const setting );
 
 	void
 	set_rebuild_bulge_mode( bool const setting );
@@ -151,8 +151,8 @@ public:
 private:
 
 	void
-	check_moving_res_in_chain( Size const & start_chain, Size const & end_chain,
-		Size const & num_chains, Size & which_chain_has_moving_res  );
+	check_moving_res_in_chain( core::Size const & start_chain, core::Size const & end_chain,
+		core::Size const & num_chains, core::Size & which_chain_has_moving_res  );
 
 	void
 	figure_out_working_sequence_and_mapping();
@@ -203,7 +203,7 @@ private:
 	reroot_fold_tree_simple();
 
 	void
-	figure_out_working_alignment( Size const & root_res );
+	figure_out_working_alignment( core::Size const & root_res );
 
 	void
 	figure_out_best_working_alignment();
@@ -216,12 +216,12 @@ private:
 
 private:
 
-	Size const moving_res_;
+	core::Size const moving_res_;
 	utility::vector1< core::Size > const moving_res_list_;
 
-	utility::vector1< Size > const cutpoint_open_;
-	utility::vector1< Size > added_cutpoint_closed_;
-	utility::vector1< Size > fixed_res_;
+	utility::vector1< core::Size > const cutpoint_open_;
+	utility::vector1< core::Size > added_cutpoint_closed_;
+	utility::vector1< core::Size > fixed_res_;
 
 	ObjexxFCL::FArray1D < bool > is_cutpoint_;
 	utility::vector1< std::pair < core::Size, core::Size > > jump_point_pair_list_;

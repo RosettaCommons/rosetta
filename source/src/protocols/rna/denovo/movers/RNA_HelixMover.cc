@@ -71,7 +71,7 @@ namespace denovo {
 namespace movers {
 
 //////////////////////////////////////////////////////////////////////////////////////////
-RNA_HelixMover::RNA_HelixMover(  utility::vector1< utility::vector1< Size > > const & helix_regions,
+RNA_HelixMover::RNA_HelixMover(  utility::vector1< utility::vector1< core::Size > > const & helix_regions,
 	core::import_pose::RNA_BasePairHandlerCOP rna_base_pair_handler,
 	bool const & move_first_rigid_body ):
 	Mover(),
@@ -112,7 +112,7 @@ void RNA_HelixMover::apply( core::pose::Pose & pose )
 	}
 
 	// randomly choose a helical region
-	core::Size region = static_cast<Size>( numeric::random::rg().uniform() * helix_regions_with_jumps_and_ends_.size() ) + 1;
+	core::Size region = static_cast<core::Size>( numeric::random::rg().uniform() * helix_regions_with_jumps_and_ends_.size() ) + 1;
 
 	// get the helical axis
 	std::pair< core::Vector, core::Vector > helix_axis_and_rot_center = get_helical_axis_and_center( pose, region );
@@ -146,7 +146,7 @@ void RNA_HelixMover::apply( core::pose::Pose & pose )
 ///////////////////////////////////////////////////////////////////////////////////////////
 std::pair< core::Vector, core::Vector >
 RNA_HelixMover::get_helical_axis_and_center( core::pose::Pose const & pose,
-	Size const & region ) const
+	core::Size const & region ) const
 {
 
 	core::Vector helix_axis( 0.0, 0.0, 0.0 );
@@ -216,7 +216,7 @@ RNA_HelixMover::get_backbone_centroid( core::pose::Pose const & pose,
 {
 	core::Vector backbone_centroid( 0.0, 0.0, 0.0 );
 
-	for ( Size j=1; j<=pose.residue( res ).last_backbone_atom(); ++j ) {
+	for ( core::Size j=1; j<=pose.residue( res ).last_backbone_atom(); ++j ) {
 		backbone_centroid += pose.residue( res ).atom( j ).xyz();
 	}
 	backbone_centroid /= pose.residue( res ).last_backbone_atom();
@@ -242,10 +242,10 @@ RNA_HelixMover::set_pose( core::pose::Pose const & pose ) {
 	}
 
 	//helix_regions_jumps_ vector of the jumps
-	std::map< Size, Size > jump_res_to_jump_num;
+	std::map< core::Size, core::Size > jump_res_to_jump_num;
 
 	// get the jump residues for each rigid body jump
-	for ( Size i =1; i<=rigid_body_jumps.size(); ++i ) {
+	for ( core::Size i =1; i<=rigid_body_jumps.size(); ++i ) {
 		// exactly one of these is guaranteed to be true
 		// (b/c rigid body jumps need to be to the vrt res which is at the end of the pose
 		// - get_rigid_body_jumps checks for this
@@ -258,9 +258,9 @@ RNA_HelixMover::set_pose( core::pose::Pose const & pose ) {
 		}
 	}
 
-	for ( Size i=1; i<=helix_regions_.size(); ++i ) {
+	for ( core::Size i=1; i<=helix_regions_.size(); ++i ) {
 		bool found_jump = false;
-		for ( Size j=1; j<=helix_regions_[i].size(); ++j ) {
+		for ( core::Size j=1; j<=helix_regions_[i].size(); ++j ) {
 			// check whether it's a jump residue
 			if ( jump_res_to_jump_num.count( helix_regions_[i][j] ) ) {
 				helix_regions_jumps_.push_back( jump_res_to_jump_num[ helix_regions_[i][j] ] );
@@ -275,7 +275,7 @@ RNA_HelixMover::set_pose( core::pose::Pose const & pose ) {
 
 	}
 
-	for ( Size i=1; i<= helix_regions_.size(); ++i ) {
+	for ( core::Size i=1; i<= helix_regions_.size(); ++i ) {
 
 		if ( helix_regions_jumps_[i] == 0 ) continue;
 		if ( helix_ends_[i].first.first == 0 ) continue;
@@ -289,7 +289,7 @@ RNA_HelixMover::set_pose( core::pose::Pose const & pose ) {
 	}
 
 	// set up the movers
-	for ( Size i=1; i<= helix_regions_with_jumps_and_ends_.size(); ++i ) {
+	for ( core::Size i=1; i<= helix_regions_with_jumps_and_ends_.size(); ++i ) {
 
 		protocols::rigid::RigidBodySpinMoverOP spin_mover = protocols::rigid::RigidBodySpinMoverOP(
 			new protocols::rigid::RigidBodySpinMover(  helix_regions_jumps_final_[i] /*jump*/) );
@@ -324,9 +324,9 @@ RNA_HelixMover::get_helix_ends() {
 	}
 
 	for ( core::Size i = 1; i<= helix_regions_.size(); ++i ) {
-		std::pair< std::pair< Size, Size>, std::pair< Size, Size > > helix_end;
-		std::pair< Size, Size> end1 = std::make_pair( 0, 0 );
-		std::pair< Size, Size> end2 = std::make_pair( 0, 0 );
+		std::pair< std::pair< core::Size, core::Size>, std::pair< core::Size, core::Size > > helix_end;
+		std::pair< core::Size, core::Size> end1 = std::make_pair( 0, 0 );
+		std::pair< core::Size, core::Size> end2 = std::make_pair( 0, 0 );
 		// don't bother if there's only a single base pair
 		if ( helix_regions_[i].size() <= 2 ) {
 			helix_end = std::make_pair( end1, end2 );

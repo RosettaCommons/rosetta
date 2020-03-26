@@ -172,7 +172,7 @@ NormalModeRelaxMover::apply( pose::Pose &pose )
 
 	core::Size nstruct = mix_modes_ ? nsample_ : nmodes_*2;
 
-	utility::vector1< Size > modes( nmodes_ );
+	utility::vector1< core::Size > modes( nmodes_ );
 	for ( core::Size i = 1; i <= nmodes_; ++i ) modes[i] = i;
 
 	// setup modes first
@@ -197,7 +197,7 @@ NormalModeRelaxMover::apply( pose::Pose &pose )
 	utility::vector1< pose::Pose > poses;
 	core::Size imin( 1 );
 
-	for ( Size i_comb = 1; i_comb <= modescales.size(); ++i_comb ) {
+	for ( core::Size i_comb = 1; i_comb <= modescales.size(); ++i_comb ) {
 		set_mode( modes, modescales[i_comb] );
 
 		TR << "Normal mode for mode no " << i_comb;
@@ -248,7 +248,7 @@ NormalModeRelaxMover::apply( pose::Pose &pose )
 
 // Set single mode
 void
-NormalModeRelaxMover::set_mode( Size const i_mode )
+NormalModeRelaxMover::set_mode( core::Size const i_mode )
 {
 	mode_using_.resize( 0 );
 	mode_scale_.resize( 0 );
@@ -258,7 +258,7 @@ NormalModeRelaxMover::set_mode( Size const i_mode )
 
 // Set combined mode
 void
-NormalModeRelaxMover::set_mode( utility::vector1< Size > const mode_using,
+NormalModeRelaxMover::set_mode( utility::vector1< core::Size > const mode_using,
 	utility::vector1< Real > const mode_scales )
 {
 	mode_using_ = mode_using;
@@ -266,7 +266,7 @@ NormalModeRelaxMover::set_mode( utility::vector1< Size > const mode_using,
 
 	// Normalize mode_scales
 	Real scalesum( 0.0 );
-	for ( Size i = 1; i <= mode_scales.size(); ++i ) {
+	for ( core::Size i = 1; i <= mode_scales.size(); ++i ) {
 		// Assert if values are valid
 		debug_assert( mode_scales[i] > 0.0 );
 		debug_assert( mode_using[i] <= NM().nmode() );
@@ -274,7 +274,7 @@ NormalModeRelaxMover::set_mode( utility::vector1< Size > const mode_using,
 		scalesum += mode_scales[i]*mode_scales[i];
 	}
 
-	for ( Size i = 1; i <= mode_scale_.size(); ++i ) { mode_scale_[i] = mode_scale_[i]/std::sqrt(scalesum); }
+	for ( core::Size i = 1; i <= mode_scale_.size(); ++i ) { mode_scale_[i] = mode_scale_[i]/std::sqrt(scalesum); }
 }
 
 // Set randomized mode
@@ -287,7 +287,7 @@ NormalModeRelaxMover::set_random_mode(std::string const select_option,
 
 	// Normalize mode_scales
 	Real scalesum( 0.0 );
-	for ( Size i = 1; i <= nmodes_; ++i ) {
+	for ( core::Size i = 1; i <= nmodes_; ++i ) {
 		// Multiply scale by its importance
 		Real scale1 = numeric::random::rg().uniform();
 		if ( select_option == "probabilistic" ) {
@@ -300,7 +300,7 @@ NormalModeRelaxMover::set_random_mode(std::string const select_option,
 	}
 
 	TR << "Mode setup: ";
-	for ( Size i = 1; i <= mode_scale_.size(); ++i ) {
+	for ( core::Size i = 1; i <= mode_scale_.size(); ++i ) {
 		mode_scale_[i] = mode_scale_[i]/scalesum;
 		TR << " " << std::setw(8) << mode_scale_[i];
 	}
@@ -313,7 +313,7 @@ NormalModeRelaxMover::initialize_NM_for_movemap(core::pose::Pose const & pose,
 {
 	// For Torsional NormalMode
 	NM_.clear_torsions_using();
-	for ( Size ires = 1; ires <= pose.size(); ++ires ) {
+	for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
 		if ( movemap.get_bb( ires ) ) {
 			NM_.set_torsions_using( ires );
 		}
@@ -425,14 +425,14 @@ NormalModeRelaxMover::gen_coord_constraint( pose::Pose &pose,
 	//pose.remove_constraints();
 
 	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, cst_sdev() ) );
-	for ( Size i_atm = 1; i_atm <= NM().natm(); ++i_atm ) {
+	for ( core::Size i_atm = 1; i_atm <= NM().natm(); ++i_atm ) {
 		if ( cartesian_ ) {
 			pose.add_constraint(
 				scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >
 				( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm], excrd[ i_atm ], fx ) ) );
 		} else {
-			Size resno( NM().get_atomID()[i_atm].rsd() );
-			Size atmno( NM().get_atomID()[i_atm].atomno() );
+			core::Size resno( NM().get_atomID()[i_atm].rsd() );
+			core::Size atmno( NM().get_atomID()[i_atm].atomno() );
 
 			pose.add_constraint(
 				scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::CoordinateConstraint >
@@ -448,9 +448,9 @@ NormalModeRelaxMover::get_RMSD( utility::vector1< Vector > const excrd,
 	pose::Pose const &pose ) const
 {
 	Real rmsd( 0.0 );
-	for ( Size ica = 1; ica <= excrd.size(); ++ica ) {
-		Size resno( NM().get_atomID()[ica].rsd() );
-		Size atmno( NM().get_atomID()[ica].atomno() );
+	for ( core::Size ica = 1; ica <= excrd.size(); ++ica ) {
+		core::Size resno( NM().get_atomID()[ica].rsd() );
+		core::Size atmno( NM().get_atomID()[ica].atomno() );
 		Vector const dxyz( excrd[ ica ] - pose.residue(resno).xyz(atmno) );
 		rmsd += (dxyz[0]*dxyz[0]+dxyz[1]+dxyz[1]+dxyz[2]+dxyz[2]);
 	}
@@ -467,13 +467,13 @@ NormalModeRelaxMover::extrapolate_mode_on_crd( pose::Pose const &pose ) const
 	//movevec.resize( NM().natm() );
 
 	// First, build moving vector by doing fusions of eigenvectors used
-	for ( Size i_mode = 1; i_mode <= mode_using_.size(); ++i_mode ) {
+	for ( core::Size i_mode = 1; i_mode <= mode_using_.size(); ++i_mode ) {
 		Real const &scale_i( mode_scale_[i_mode] );
-		Size const &modeno( mode_using_[i_mode] );
+		core::Size const &modeno( mode_using_[i_mode] );
 
 		utility::vector1< Vector > const &eigvec( NM().get_eigvec_cart( modeno ) );
 
-		for ( Size i_atm = 1; i_atm <= NM().natm(); ++i_atm ) {
+		for ( core::Size i_atm = 1; i_atm <= NM().natm(); ++i_atm ) {
 			movevec[i_atm][0] += scale_i*eigvec[i_atm][0];
 			movevec[i_atm][1] += scale_i*eigvec[i_atm][1];
 			movevec[i_atm][2] += scale_i*eigvec[i_atm][2];
@@ -482,7 +482,7 @@ NormalModeRelaxMover::extrapolate_mode_on_crd( pose::Pose const &pose ) const
 
 	// Then, measure rmsd for desired "normalized" moving vector
 	Real rmsd( 0.0 );
-	for ( Size ica = 1; ica <= movevec.size(); ++ica ) {
+	for ( core::Size ica = 1; ica <= movevec.size(); ++ica ) {
 		Vector const &dxyz( movevec[ica] );
 		rmsd += (dxyz[0]*dxyz[0]+dxyz[1]*dxyz[1]+dxyz[2]*dxyz[2]);
 	}
@@ -493,10 +493,10 @@ NormalModeRelaxMover::extrapolate_mode_on_crd( pose::Pose const &pose ) const
 
 	TR << "CNM, Dynamic scale for set as " << scale_dynamic_ << ", given moving distance " << moving_distance_ << std::endl;
 
-	for ( Size ica = 1; ica <= movevec.size(); ++ica ) {
+	for ( core::Size ica = 1; ica <= movevec.size(); ++ica ) {
 		Vector const &dxyz( movevec[ica] );
-		Size resno( NM().get_atomID()[ica].rsd() );
-		Size atmno( NM().get_atomID()[ica].atomno() );
+		core::Size resno( NM().get_atomID()[ica].rsd() );
+		core::Size atmno( NM().get_atomID()[ica].atomno() );
 		Vector const &CAcrd( pose.residue( resno ).xyz( atmno ) );
 
 		excrd[ ica ] =  CAcrd + direction_ * scale_dynamic_ * dxyz;
@@ -510,31 +510,31 @@ NormalModeRelaxMover::extrapolate_mode_on_pose( pose::Pose const &pose ) const
 {
 	// Reset dtor
 	dtor_.resize( NM().ntor() );
-	for ( Size i_tor = 1; i_tor <= NM().ntor(); ++i_tor ) dtor_[i_tor] = 0.0;
+	for ( core::Size i_tor = 1; i_tor <= NM().ntor(); ++i_tor ) dtor_[i_tor] = 0.0;
 
 	utility::vector1< id::TorsionID > const torIDs = NM().get_torID();
 
 	// Get torsion perturbation from given mode setup
-	for ( Size i_mode = 1; i_mode <= mode_using_.size(); ++i_mode ) {
+	for ( core::Size i_mode = 1; i_mode <= mode_using_.size(); ++i_mode ) {
 		Real const &scale_i( mode_scale_[i_mode] );
-		Size const &modeno( mode_using_[i_mode] );
+		core::Size const &modeno( mode_using_[i_mode] );
 		utility::vector1< Real > const &eigvec( NM().get_eigvec_tor( modeno ) );
 
-		for ( Size i_tor = 1; i_tor <= NM().ntor(); ++i_tor ) {
+		for ( core::Size i_tor = 1; i_tor <= NM().ntor(); ++i_tor ) {
 			dtor_[i_tor] += direction_ * scale_i * eigvec[i_tor];
 		}
 	}
 
 	// Find maxval
 	Real maxval( 0.0 );
-	for ( Size i_tor = 1; i_tor <= dtor_.size(); ++i_tor ) {
+	for ( core::Size i_tor = 1; i_tor <= dtor_.size(); ++i_tor ) {
 		if ( std::abs(dtor_[i_tor]) > maxval ) maxval = std::abs(dtor_[i_tor]);
 	}
 
 	// Trial scale - the scale making max torsion change as 5.0 degree
 	Real trial_scale = 5.0/maxval;
 	pose::Pose pose_trial( pose );
-	for ( Size i_tor = 1; i_tor <= NM().ntor(); ++i_tor ) {
+	for ( core::Size i_tor = 1; i_tor <= NM().ntor(); ++i_tor ) {
 		Real tor = pose.torsion( torIDs[i_tor] ) + trial_scale*dtor_[i_tor];
 		TR.Debug << "itor/rsd/dtor " << i_tor << " " << torIDs[i_tor].rsd();
 		TR.Debug << " " << trial_scale*dtor_[i_tor] << std::endl;
@@ -550,7 +550,7 @@ NormalModeRelaxMover::extrapolate_mode_on_pose( pose::Pose const &pose ) const
 
 	// Apply to expose
 	pose::Pose expose( pose );
-	for ( Size i_tor = 1; i_tor <= NM().ntor(); ++i_tor ) {
+	for ( core::Size i_tor = 1; i_tor <= NM().ntor(); ++i_tor ) {
 		Real tor = pose.torsion( torIDs[i_tor] ) + scale_dynamic_/maxval*dtor_[i_tor];
 		expose.set_torsion( torIDs[i_tor], tor );
 	}
@@ -572,14 +572,14 @@ void NormalModeRelaxMover::parse_my_tag(
 {
 	cartesian_ = tag->getOption< bool >( "cartesian", true );
 	centroid_ = tag->getOption< bool >( "centroid", false );
-	nmodes_       = tag->getOption< Size >( "nmodes", 5 );
+	nmodes_       = tag->getOption< core::Size >( "nmodes", 5 );
 	mix_modes_    = tag->getOption< bool >( "mix_modes", false );
 	pertscale_    = tag->getOption< Real >( "pertscale", 1.0 );
 	randomselect_ = tag->getOption< bool >( "randomselect", false );
 	relaxmode_    = tag->getOption< std::string >( "relaxmode", "min" );
 	selection_kT_ = tag->getOption< Real >( "selection_kT", 1e6 ); // currently just placeholder
 	cartesian_minimize_ = tag->getOption< bool >( "cartesian_minimize", false );
-	nsample_     = tag->getOption< Size >( "nsample", nmodes_*2 );
+	nsample_     = tag->getOption< core::Size >( "nsample", nmodes_*2 );
 
 	bool weighted_k( false );
 	Real k_hbond( 1.0 ), k_long( 1.0 ), k_short( 1.0 );

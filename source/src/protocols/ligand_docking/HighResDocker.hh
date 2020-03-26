@@ -58,8 +58,8 @@ public:
 	~HighResDocker() override;
 	HighResDocker(HighResDocker const & that);
 	HighResDocker(
-		Size num_cycles,
-		Size repack_every_Nth,
+		core::Size num_cycles,
+		core::Size repack_every_Nth,
 		core::scoring::ScoreFunctionOP score_fxn,
 		MoveMapBuilderOP movemap_builder,
 		std::string const & resfile=""

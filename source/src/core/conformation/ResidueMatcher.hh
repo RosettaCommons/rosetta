@@ -23,7 +23,7 @@
 // Utility headers
 //#include <utility/vector1.fwd.hh>
 //#include <utility/pointer/access_ptr.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 
@@ -31,9 +31,9 @@
 namespace core {
 namespace conformation {
 
-class ResidueMatcher : public utility::pointer::ReferenceCount {
+class ResidueMatcher : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ResidueMatcher() override;
 	virtual
 	bool

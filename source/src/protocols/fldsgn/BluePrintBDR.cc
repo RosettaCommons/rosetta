@@ -154,7 +154,7 @@ BluePrintBDR::BluePrintBDR( BluePrintOP blueprintOP, bool const ss_from_blueprin
 
 /// @Brief copy constructor
 BluePrintBDR::BluePrintBDR( BluePrintBDR const & rval ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Super( rval ),
 	blueprint_( rval.blueprint_ ),
 	manager_( rval.manager_ ),
@@ -297,9 +297,9 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 
 	bool flag( false ), insert( false );
 	String aa, ss, insert_name, ins_sec;
-	Size left( 0 ), right( 0 ), count( 0 ), insnum( 0 );
+	core::Size left( 0 ), right( 0 ), count( 0 ), insnum( 0 );
 	Pose insert_pose;
-	for ( Size i=1; i<=blueprint_->total_residue(); i++ ) {
+	for ( core::Size i=1; i<=blueprint_->total_residue(); i++ ) {
 
 		if ( blueprint_->resnum( i ) != 0 ) {
 			count++;
@@ -341,7 +341,7 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 					dssp.insert_ss_into_pose( insert_pose );
 				} else {
 					runtime_assert( insert_pose.size() == ins_sec.length() );
-					for ( Size j=1; j<=insert_pose.size(); j++ ) {
+					for ( core::Size j=1; j<=insert_pose.size(); j++ ) {
 						insert_pose.set_secstruct( j, ins_sec[ j-1 ] );
 					}
 				}
@@ -524,7 +524,7 @@ bool BluePrintBDR::centroid_build(
 	// ensure modified_archive_pose is completely full-atom, otherwise mismatch
 	// will occur when restoring sidechains at the end of the procedure
 	bool mod_ap_is_full_atom = true;
-	for ( Size i = 1, ie = modified_archive_pose.size(); mod_ap_is_full_atom && i != ie; ++i ) {
+	for ( core::Size i = 1, ie = modified_archive_pose.size(); mod_ap_is_full_atom && i != ie; ++i ) {
 		mod_ap_is_full_atom &= ( modified_archive_pose.residue( i ).type().mode() == core::chemical::FULL_ATOM_t );
 	}
 
@@ -534,8 +534,8 @@ bool BluePrintBDR::centroid_build(
 
 	if ( use_poly_val_ ) {
 		// flip to poly-ala-gly-pro-disulf pose
-		utility::vector1< Size > protein_residues;
-		for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
+		utility::vector1< core::Size > protein_residues;
+		for ( core::Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 			if ( pose.residue( i ).is_protein() ) {
 				protein_residues.push_back( i );
 			}
@@ -693,7 +693,7 @@ BluePrintBDR::parse_my_tag(
 	loop_mover_str_ = tag->getOption<String>( "loop_mover", "RemodelLoopMover" );
 
 	// number of allowed_closure_attempts_ of RemodelLoopMover
-	rmdl_attempts_ = tag->getOption<Size>( "rmdl_attempts", 1 );
+	rmdl_attempts_ = tag->getOption<core::Size>( "rmdl_attempts", 1 );
 
 	// entire sequence except for rebuilding parts become poly-Val ( default true )
 	use_poly_val_ = tag->getOption<bool>( "use_poly_val", true );

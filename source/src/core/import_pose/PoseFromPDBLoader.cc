@@ -40,7 +40,7 @@ namespace import_pose {
 PoseFromPDBLoader::PoseFromPDBLoader() = default;
 PoseFromPDBLoader::~PoseFromPDBLoader() = default;
 
-utility::pointer::ReferenceCountOP
+utility::VirtualBaseOP
 PoseFromPDBLoader::create_resource(
 	basic::resource_manager::ResourceOptions const & options,
 	basic::resource_manager::LocatorID const & locator_id,

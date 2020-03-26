@@ -68,7 +68,7 @@ core::Real
 MatchResidues::compute_comb( core::pose::Pose const & pose, VecSize const & comb ) const
 {
 	std::map< core::id::AtomID, core::id::AtomID > atom_id_map;
-	for ( Size i = 1; i < comb.size(); i++ ) {
+	for ( core::Size i = 1; i < comb.size(); i++ ) {
 		const core::id::AtomID mod_id(pose.residue_type( comb[i] ).atom_index( "CA" ), comb[i] );
 		const core::id::AtomID ref_id(pose.residue_type( reference_residues_indexes_[i] ).atom_index( "CA" ), reference_residues_indexes_[i]);
 		atom_id_map.insert( std::make_pair(mod_id, ref_id) );
@@ -81,7 +81,7 @@ MatchResidues::superimpose_comb( core::pose::Pose & pose, VecSize const & comb )
 {
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, core::id::AtomID::BOGUS_ATOM_ID() );
-	for ( Size i = 1; i < comb.size(); ++i ) {
+	for ( core::Size i = 1; i < comb.size(); ++i ) {
 		const core::id::AtomID mod_id(pose.residue_type( comb[i] ).atom_index( "CA" ), comb[i] );
 		const core::id::AtomID ref_id(pose.residue_type( reference_residues_indexes_[i] ).atom_index( "CA" ), reference_residues_indexes_[i]);
 		atom_map.set( mod_id, ref_id);
@@ -103,7 +103,7 @@ MatchResidues::compute( core::pose::Pose const & pose, VecSize & best_fit ) cons
 	}
 	TR << "best fit:" <<std::endl;
 	TR <<"ref_pos\tmod_pos" <<  std::endl;
-	for ( Size i = 1; i <= best_fit.size(); i++ ) {// {
+	for ( core::Size i = 1; i <= best_fit.size(); i++ ) {// {
 		TR << "\t" << reference_residues_indexes_[i] << "\t" << best_fit[i] << std::endl;
 	}
 	TR << std::endl << "rmsd matched positions " << smallest_rms << std::endl;
@@ -142,7 +142,7 @@ MatchResidues::cart_product( VecVecSize const & input) const {
 	cart_product(tmp, outputTemp, input.begin(), input.end());
 	//remove duplicates in combination
 	for ( VecSize const & vec : tmp ) {
-		std::set<Size> comb(vec.begin(), vec.end());
+		std::set<core::Size> comb(vec.begin(), vec.end());
 		if ( comb.size() == vec.size() ) {
 			output.push_back(vec);
 		}
@@ -200,27 +200,27 @@ MatchResidues::parse_my_tag(
 
 	for ( utility::tag::TagCOP pairs_tag : tag->getTags() ) {
 		if ( pairs_tag->getName() == "match" ) {
-			const auto ref_pos = pairs_tag->getOption< Size >("ref_pos");
-			Size mod_pos_start= 0;
-			Size mod_pos_end = 0;
+			const auto ref_pos = pairs_tag->getOption< core::Size >("ref_pos");
+			core::Size mod_pos_start= 0;
+			core::Size mod_pos_end = 0;
 			if ( pairs_tag->hasOption("segment") ) {
 				debug_assert( blueprint != "");
-				boost::tuple< Size, Size> range = ss_seg[ pairs_tag->getOption< std::string >("segment") ];
+				boost::tuple< core::Size, core::Size> range = ss_seg[ pairs_tag->getOption< std::string >("segment") ];
 				mod_pos_start = boost::get<0>(range);
 				mod_pos_end = boost::get<1>(range);
 
 			} else if ( pairs_tag->hasOption("mod_pos_start") || pairs_tag->hasOption("mod_pos_end") ) {
-				mod_pos_start = pairs_tag->getOption< Size >("mod_pos_start");
-				mod_pos_end = pairs_tag->getOption< Size >("mod_pos_end");
+				mod_pos_start = pairs_tag->getOption< core::Size >("mod_pos_start");
+				mod_pos_end = pairs_tag->getOption< core::Size >("mod_pos_end");
 
 			} else if ( pairs_tag->hasOption("mod_pos") ) {
-				mod_pos_start = mod_pos_end = pairs_tag->getOption< Size >("mod_pos");
+				mod_pos_start = mod_pos_end = pairs_tag->getOption< core::Size >("mod_pos");
 
 			} else {
 				utility_exit_with_message("need to specify a segment to be matched in the modified structure");
 			}
 			VecSize vrange;
-			for ( Size n = mod_pos_start; n <= mod_pos_end; n++ ) {
+			for ( core::Size n = mod_pos_start; n <= mod_pos_end; n++ ) {
 				vrange.push_back(n);
 			}
 
@@ -239,23 +239,23 @@ MatchResidues::parse_my_tag(
 std::map< std::string, boost::tuple< core::Size, core::Size> >
 MatchResidues::map_ss_segments( std::string const & ss) const
 {
-	std::map< std::string, boost::tuple<Size, Size> > ss_map;
-	std::map< char, Size > ss_seg_count = boost::assign::map_list_of ( 'L', 0 ) ( 'H', 0 ) ( 'E', 0 );
+	std::map< std::string, boost::tuple<core::Size, core::Size> > ss_map;
+	std::map< char, core::Size > ss_seg_count = boost::assign::map_list_of ( 'L', 0 ) ( 'H', 0 ) ( 'E', 0 );
 	char last = ss[0];
 	ss_seg_count[ last ] += 1;
-	Size start = 1;
-	Size end = 1;
+	core::Size start = 1;
+	core::Size end = 1;
 
-	for ( Size i = 1; i < ss.size(); i++ ) {
+	for ( core::Size i = 1; i < ss.size(); i++ ) {
 		if ( ss[i] == last ) {
 			// push if last element
 			if ( i + 1 == ss.size() ) {
-				ss_map.insert( std::make_pair< std::string, boost::tuple<Size, Size> >( last + boost::lexical_cast< std::string >( ss_seg_count[ss[i - 1] ] ), boost::make_tuple(start, i) ) );
+				ss_map.insert( std::make_pair< std::string, boost::tuple<core::Size, core::Size> >( last + boost::lexical_cast< std::string >( ss_seg_count[ss[i - 1] ] ), boost::make_tuple(start, i) ) );
 			}
 			continue;
 		} else {
 			end = i ;
-			ss_map.insert( std::make_pair< std::string, boost::tuple<Size, Size> >( last + boost::lexical_cast< std::string >( ss_seg_count[ss[i - 1] ] ), boost::make_tuple(start, end) ) );
+			ss_map.insert( std::make_pair< std::string, boost::tuple<core::Size, core::Size> >( last + boost::lexical_cast< std::string >( ss_seg_count[ss[i - 1] ] ), boost::make_tuple(start, end) ) );
 			ss_seg_count[ ss[i] ] += 1;
 			start = end + 1;
 			last = ss[i +  1];

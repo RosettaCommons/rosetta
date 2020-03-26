@@ -23,7 +23,7 @@
 #include <core/types.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -43,7 +43,7 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-class EnzdesSeqRecoveryCache : public utility::pointer::ReferenceCount {
+class EnzdesSeqRecoveryCache : public utility::VirtualBase {
 
 public:
 

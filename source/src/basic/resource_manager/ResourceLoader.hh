@@ -22,7 +22,7 @@
 #include <basic/resource_manager/types.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.hh>
 
 //C++ headers
@@ -35,7 +35,7 @@ namespace resource_manager {
 /// and initializing it.  In order to do so, the ResourceLoader is given an input
 /// stream and a XML "Tag" object. The ResourceLoader can also request other
 /// Resources from the ResourceManager in trying to construct a particular resource.
-class ResourceLoader : public utility::pointer::ReferenceCount
+class ResourceLoader : public utility::VirtualBase
 {
 public:
 	~ResourceLoader() override;

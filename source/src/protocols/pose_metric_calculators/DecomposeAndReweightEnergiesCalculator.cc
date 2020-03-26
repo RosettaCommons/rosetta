@@ -211,7 +211,7 @@ DecomposeAndReweightEnergiesCalculator::recompute(
 	}
 
 	// add long range two body energies to the correct onebody or twobody locations
-	for ( Size lr = 1; lr <= scoring::methods::n_long_range_types; lr++ ) {
+	for ( core::Size lr = 1; lr <= scoring::methods::n_long_range_types; lr++ ) {
 		auto lr_type = scoring::methods::LongRangeEnergyType( lr );
 		scoring::LREnergyContainerCOP lrec = this_pose.energies().long_range_container( lr_type );
 		if ( !lrec ) continue;

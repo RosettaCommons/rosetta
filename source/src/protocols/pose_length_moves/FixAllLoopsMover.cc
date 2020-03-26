@@ -37,7 +37,7 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <iostream>
 #include <sstream>
@@ -67,8 +67,8 @@ protocols::loops::Loops FixAllLoopsMover::get_loops(core::pose::Pose const & pos
 	dssp.dssp_reduced();
 	std::string dssp_string = dssp.get_dssp_secstruct();
 	string lastSecStruct = dssp_string.substr(0,1);
-	Size startLoop = 0;
-	Size endLoop = 0;
+	core::Size startLoop = 0;
+	core::Size endLoop = 0;
 	if ( dssp_string.substr(0,1) == "L" ) {
 		startLoop = 1;
 	}
@@ -99,8 +99,8 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 		TR << "working on residues" << firstResidue_ << " to " << lastResidue_ << std::endl;
 	}
 	TR << "loop RMSD before optimization" << std::endl;
-	for ( Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
-		vector1<Size> resids;
+	for ( core::Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
+		vector1<core::Size> resids;
 		resids.push_back(pose_loops[ii].start()-3);
 		resids.push_back(pose_loops[ii].start()-1);
 		resids.push_back(pose_loops[ii].start()+1);
@@ -108,10 +108,10 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 		Real loop_rmsd = SSHashedFragmentStore_->max_rmsd_in_region(pose,resids);
 		TR << "Loop" << pose_loops[ii].start() << "-" << pose_loops[ii].stop() << " rmsd:" << loop_rmsd << std::endl;
 	}
-	for ( Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
+	for ( core::Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
 		if ( pose_loops[ii].start()>=firstResidue_ && pose_loops[ii].stop()<=lastResidue_ ) {
 			TR << "working on " << pose_loops[ii].start() << "-" <<  pose_loops[ii].stop() << std::endl;
-			vector1<Size> resids;
+			vector1<core::Size> resids;
 			resids.push_back(pose_loops[ii].start()-3);
 			resids.push_back(pose_loops[ii].start()-1);
 			resids.push_back(pose_loops[ii].start()+1);
@@ -138,8 +138,8 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 		set_last_move_status(protocols::moves::MS_SUCCESS);
 		pose_loops = get_loops(pose);
 		TR << "loop RMSD after optimization (note:Residue numbers may have changed)" << std::endl;
-		for ( Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
-			vector1<Size> resids;
+		for ( core::Size ii=pose_loops.num_loop(); ii>=1; --ii ) {
+			vector1<core::Size> resids;
 			resids.push_back(pose_loops[ii].start()-3);
 			resids.push_back(pose_loops[ii].start()-1);
 			resids.push_back(pose_loops[ii].start()+1);

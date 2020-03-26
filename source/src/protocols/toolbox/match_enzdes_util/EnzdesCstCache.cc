@@ -51,6 +51,8 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
+using core::Size;
+
 EnzdesCstCache::EnzdesCstCache(
 	EnzConstraintIOCOP enzcst_io,
 	core::Size num_cst_blocks
@@ -63,7 +65,7 @@ EnzdesCstCache::EnzdesCstCache(
 }
 
 EnzdesCstCache::EnzdesCstCache( EnzdesCstCache const & other )
-: ReferenceCount( other ), enzcst_io_(other.enzcst_io_)
+: VirtualBase( other ), enzcst_io_(other.enzcst_io_)
 {
 	param_cache_.clear();
 	for ( auto const & param_it : other.param_cache_ ) {
@@ -123,10 +125,10 @@ EnzdesCstCache::ordered_constrained_positions( core::pose::Pose const & pose ) c
 {
 
 	using namespace core;
-	utility::vector1< Size > found_protein_positions;
-	utility::vector1< Size > found_lig_positions;
+	utility::vector1< core::Size > found_protein_positions;
+	utility::vector1< core::Size > found_lig_positions;
 
-	for ( Size i =1; i<= param_cache_.size(); ++i ) {
+	for ( core::Size i =1; i<= param_cache_.size(); ++i ) {
 
 		for ( auto resA_it = param_cache_[i]->template_res_cache( 1 )->seqpos_map_begin(), resA_end = param_cache_[i]->template_res_cache( 1 )->seqpos_map_end(); resA_it !=  resA_end; ++resA_it ) {
 			if ( pose.residue_type( resA_it->first ).is_ligand() ) {
@@ -145,7 +147,7 @@ EnzdesCstCache::ordered_constrained_positions( core::pose::Pose const & pose ) c
 		}
 	} //loop over params
 
-	for (  utility::vector1< Size >::const_iterator lig_it = found_lig_positions.begin(); lig_it != found_lig_positions.end(); ++lig_it ) {
+	for (  utility::vector1< core::Size >::const_iterator lig_it = found_lig_positions.begin(); lig_it != found_lig_positions.end(); ++lig_it ) {
 		found_protein_positions.push_back( *lig_it );
 	}
 	return found_protein_positions;
@@ -172,7 +174,7 @@ EnzdesCstParamCache::EnzdesCstParamCache()
 }
 
 EnzdesCstParamCache::EnzdesCstParamCache( EnzdesCstParamCache const & other )
-: ReferenceCount( other ),
+: VirtualBase( other ),
 	active_pose_constraints_( other.active_pose_constraints_ ),
 	covalent_connections_(other.covalent_connections_ )
 {
@@ -279,14 +281,14 @@ EnzdesCstParamCache::remap_resid( core::id::SequenceMapping const & smap )
 
 
 EnzCstTemplateResCache::EnzCstTemplateResCache() :
-	ReferenceCount(),
+	VirtualBase(),
 	not_in_pose_(true), pose_data_uptodate_(false)
 {
 	seqpos_map_.clear();
 }
 
 EnzCstTemplateResCache::EnzCstTemplateResCache( EnzCstTemplateResCache const & other ) :
-	ReferenceCount( other ),
+	VirtualBase( other ),
 	not_in_pose_(other.not_in_pose_),
 	pose_data_uptodate_(other.pose_data_uptodate_)
 {
@@ -328,7 +330,7 @@ void
 EnzCstTemplateResCache::remap_resid( core::id::SequenceMapping const & smap ){
 
 	// we have to remap the maps, little complicated to change the indexes of a map
-	utility::vector1< std::pair< Size, EnzCstTemplateResAtomsOP > > temp_vec;
+	utility::vector1< std::pair< core::Size, EnzCstTemplateResAtomsOP > > temp_vec;
 	for ( SeqposTemplateAtomsMap::const_iterator map_it(seqpos_map_.begin()), map_end(seqpos_map_.end()); map_it != map_end; ++map_it ) {
 		temp_vec.push_back( *map_it );
 	}
@@ -338,7 +340,7 @@ EnzCstTemplateResCache::remap_resid( core::id::SequenceMapping const & smap ){
 		vec_it.second->remap_resid( smap );
 		core::Size newpos( smap[ vec_it.first  ] );
 		if ( newpos == 0 ) utility_exit_with_message("A catalytic residue is apparently missing from the pose");
-		seqpos_map_.insert( std::pair< Size, EnzCstTemplateResAtomsOP >( newpos, vec_it.second ) );
+		seqpos_map_.insert( std::pair< core::Size, EnzCstTemplateResAtomsOP >( newpos, vec_it.second ) );
 	}
 }
 

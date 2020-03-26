@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_features_BetaTurnDetection_HH
 
 // Unit Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/features/BetaTurnDetection.fwd.hh>
 
 // Project Headers
@@ -41,7 +41,7 @@ enum RamachandranHash {
 	number_of_ramachandran_hashes = E
 };
 
-class BetaTurnDetection : public utility::pointer::ReferenceCount {
+class BetaTurnDetection : public utility::VirtualBase {
 public:
 	BetaTurnDetection();
 
@@ -61,13 +61,13 @@ public:
 	static std::map< std::string, std::string > const & get_conformation_to_turn_type_map();
 	static utility::vector1< std::string > const & get_valid_ramachandran_hashes();
 
-	bool all_turn_residues_are_on_the_same_chain( core::pose::Pose const & pose, Size first_residue ) const;
+	bool all_turn_residues_are_on_the_same_chain( core::pose::Pose const & pose, core::Size first_residue ) const;
 
-	bool residue_range_is_protein( core::pose::Pose const & pose, Size range_begin, Size range_end ) const;
+	bool residue_range_is_protein( core::pose::Pose const & pose, core::Size range_begin, core::Size range_end ) const;
 
-	bool beta_turn_present( core::pose::Pose const & pose, Size first_residue ) const;
+	bool beta_turn_present( core::pose::Pose const & pose, core::Size first_residue ) const;
 
-	std::string const & beta_turn_type( core::pose::Pose const & pose, Size first_residue ) const;
+	std::string const & beta_turn_type( core::pose::Pose const & pose, core::Size first_residue ) const;
 
 	std::string determine_ramachandran_hash( core::pose::Pose const & pose, core::Size first_residue ) const;
 

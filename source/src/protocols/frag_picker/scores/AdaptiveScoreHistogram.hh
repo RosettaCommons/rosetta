@@ -21,13 +21,13 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-class AdaptiveScoreHistogram : public utility::pointer::ReferenceCount {
+class AdaptiveScoreHistogram : public utility::VirtualBase {
 public:
 	AdaptiveScoreHistogram(core::Real,core::Real);
 	~AdaptiveScoreHistogram() override;

@@ -72,7 +72,7 @@ public:
 	core::Size template_number();
 	void pick_random_template();
 	void pick_random_chunk(core::pose::Pose & pose);
-	Size trial_counter(Size ires);
+	core::Size trial_counter(core::Size ires);
 	std::string get_name() const override;
 	bool has_valid_moves( ) { return has_valid_moves_; }
 
@@ -91,13 +91,13 @@ private:
 	utility::vector1 < std::map <core::Size, core::Size> > sequence_alignments_;
 	utility::vector1 < core::Size > residue_covered_by_template_;
 
-	Size template_number_; // the jump to be realigned
-	Size jump_number_; // the jump to be realigned
-	Size highest_tmpl_resnum_; // the highest residue number from all templates
+	core::Size template_number_; // the jump to be realigned
+	core::Size jump_number_; // the jump to be realigned
+	core::Size highest_tmpl_resnum_; // the highest residue number from all templates
 
 	std::set< core::Size > ignore_template_indices_;
 	utility::vector1<bool> sampling_chunk_;
-	Size max_registry_shift_global_;
+	core::Size max_registry_shift_global_;
 }; //class ChunkTrialMover
 
 } // hybridization

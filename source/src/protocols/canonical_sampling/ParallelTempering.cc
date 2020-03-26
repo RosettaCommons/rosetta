@@ -126,7 +126,7 @@ ParallelTempering& ParallelTempering::operator=( ParallelTempering const& other 
 #ifdef USEMPI
 	set_mpi_comm( other.mpi_comm() );
 #endif
-	Size const nlevels( n_temp_levels() );
+	core::Size const nlevels( n_temp_levels() );
 	allocate_buffers( nlevels );
 	runtime_assert( exchange_schedules_[ 0 ].size() == nlevels );
 	return *this;
@@ -150,7 +150,7 @@ ParallelTempering::initialize_simulation(
 	set_mpi_comm( jd2::current_mpi_comm() );
 #endif
 	tr.Trace << "ParallelTempering::initialize_simul3... " << std::endl;
-	Size const nlevels( n_temp_levels() );
+	core::Size const nlevels( n_temp_levels() );
 	allocate_buffers( nlevels );
 	setup_exchange_schedule( nlevels );
 	set_current_temp( rank2tlevel_[rank_] );
@@ -206,7 +206,7 @@ ParallelTempering::finalize_simulation(
 		<< total_mpi_wait_time_*clock_factor << " seconds out of " << total_time*clock_factor << " total)" << std::endl;
 }
 
-void ParallelTempering::setup_exchange_schedule( Size nlevels ) {
+void ParallelTempering::setup_exchange_schedule( core::Size nlevels ) {
 	tr.Trace << "ParallelTempering::setup_exchange_schedule for " << nlevels << std::endl;
 	exchange_schedules_.clear();
 	ExchangeSchedule list;
@@ -242,7 +242,7 @@ void ParallelTempering::allocate_buffers( core::Size nlevels ) {
 	last_energies_ = new core::Real[nlevels];
 	rank2tlevel_ = new int[nlevels];
 	tlevel2rank_ = new int[nlevels];
-	for ( Size i=0; i<nlevels; ++i ) {
+	for ( core::Size i=0; i<nlevels; ++i ) {
 		rank2tlevel_[ i ] = i+1; //tlevels enumerate 1..N
 		tlevel2rank_[ i ] = i; //ranks enumerate 0...N-1
 	}
@@ -264,7 +264,7 @@ ParallelTempering::temperature_move( core::Real MPI_ONLY( score ) ) {
 	check_temp_consistency();
 	if ( !time_for_temp_move() ) return temperature();
 
-	// Size const nlevels( n_temp_levels() );
+	// core::Size const nlevels( n_temp_levels() );
 #ifdef USEMPI
 	//get infomation
 	core::Real last_energy = score;
@@ -288,9 +288,9 @@ ParallelTempering::shuffle_temperatures( const core::Real *energies ) {
 	last_exchange_schedule_ = ( last_exchange_schedule_ + 1 ) % 2;
 	ExchangeSchedule const& ex( exchange_schedules_[ last_exchange_schedule_ ] );
 
-	for ( Size i=1; i<=ex.size(); i++ ) {
-		Size const rank1=tlevel2rank_[ex[i].first];
-		Size const rank2=tlevel2rank_[ex[i].second];
+	for ( core::Size i=1; i<=ex.size(); i++ ) {
+		core::Size const rank1=tlevel2rank_[ex[i].first];
+		core::Size const rank2=tlevel2rank_[ex[i].second];
 		Real const invT1( 1.0 / temperature( rank2tlevel_[rank1] ) );
 		Real const invT2( 1.0 / temperature( rank2tlevel_[rank2] ) );
 		Real const deltaE( energies[rank2]-energies[rank1] );
@@ -299,7 +299,7 @@ ParallelTempering::shuffle_temperatures( const core::Real *energies ) {
 		++exchange_attempts_[ex[i]];
 
 		if ( numeric::random::rg().uniform() < std::min( 1.0, std::exp( std::max(-40.0, -delta) ) ) ) {
-			Size tmp;
+			core::Size tmp;
 
 			//Swap tlevel
 			tmp=rank2tlevel_[rank1];

@@ -338,7 +338,7 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 		core::Real offset( 0.0 );
 
 		// C-N-CA
-		for ( Size res=startres, atom=starting_atom; res<=endres; res++ ) {
+		for ( core::Size res=startres, atom=starting_atom; res<=endres; res++ ) {
 			if ( kinmover_op->is_beta_aminoacid(pose.residue(res)) ) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
@@ -355,7 +355,7 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
-		for ( Size res=startres, atom=starting_atom+1; res<=endres; res++ ) {
+		for ( core::Size res=startres, atom=starting_atom+1; res<=endres; res++ ) {
 			if ( kinmover_op->is_beta_aminoacid(pose.residue(res)) ) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
@@ -369,7 +369,7 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// CA-C-N
-		for ( Size res=startres, atom=starting_atom+2; res<=endres; res++ ) {
+		for ( core::Size res=startres, atom=starting_atom+2; res<=endres; res++ ) {
 			if ( kinmover_op->is_beta_aminoacid(pose.residue(res)) ) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
@@ -390,7 +390,7 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 	if ( !closure_successful ) { // if sampling of bond lengths is added, activate this section
 
 		// N-CA
-		for ( Size res=startres, atom=starting_atom; res<=endres; res++ ) {
+		for ( core::Size res=startres, atom=starting_atom; res<=endres; res++ ) {
 			if ( kinmover_op->is_beta_aminoacid(pose.residue(res)) ) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
@@ -403,7 +403,7 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// CA-C
-		for ( Size res=startres, atom=starting_atom+1; res<=endres; res++ ) {
+		for ( core::Size res=startres, atom=starting_atom+1; res<=endres; res++ ) {
 			if ( kinmover_op->is_beta_aminoacid(pose.residue(res)) ) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
@@ -416,7 +416,7 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// C-N
-		for ( Size res=startres, atom=starting_atom+2; res<=endres; res++ ) {
+		for ( core::Size res=startres, atom=starting_atom+2; res<=endres; res++ ) {
 			if ( kinmover_op->is_beta_aminoacid(pose.residue(res)) ) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
@@ -471,7 +471,7 @@ VicinitySamplingKinematicPerturber::perturb_chain(
 		core::Real bangle_sd( kinmover_op->BANGLE_SD() );
 
 		//what is this iterating over?
-		for ( Size i = 5; i <= pvatom3; i+=3 ) {
+		for ( core::Size i = 5; i <= pvatom3; i+=3 ) {
 			bond_ang[ i ] = bangle_min + numeric::random::rg().uniform() * bangle_sd;
 		}
 	}
@@ -524,7 +524,7 @@ VicinitySamplingKinematicPerturber::set_pose_after_closure(
 
 
 		// C-N-CA
-		for ( Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res-1);
@@ -537,7 +537,7 @@ VicinitySamplingKinematicPerturber::set_pose_after_closure(
 
 
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
-		for ( Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -546,7 +546,7 @@ VicinitySamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// CA-C-N
-		for ( Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res+1);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -562,7 +562,7 @@ VicinitySamplingKinematicPerturber::set_pose_after_closure(
 	if ( !closure_successful ) { // if sampling of bond lengths is added, activate this section
 
 		// N-CA
-		for ( Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 
@@ -571,7 +571,7 @@ VicinitySamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// CA-C
-		for ( Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
 
@@ -580,7 +580,7 @@ VicinitySamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// C-N
-		for ( Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_C (3, res);
 			const core::id::AtomID atomid_N (1, res+1);
 
@@ -605,12 +605,12 @@ TorsionSweepingKinematicPerturber::TorsionSweepingKinematicPerturber()
 
 TorsionSweepingKinematicPerturber::~TorsionSweepingKinematicPerturber()= default;
 
-void TorsionSweepingKinematicPerturber::set_nonpivot_res_to_sweep( utility::vector1< Size > const & resids )
+void TorsionSweepingKinematicPerturber::set_nonpivot_res_to_sweep( utility::vector1< core::Size > const & resids )
 {
 	nonpivot_res_to_sweep_ = resids;
 }
 
-void TorsionSweepingKinematicPerturber::set_nonpivot_bb_torsion_id( utility::vector1< Size > const & bbtorids )
+void TorsionSweepingKinematicPerturber::set_nonpivot_bb_torsion_id( utility::vector1< core::Size > const & bbtorids )
 {
 	debug_assert( nonpivot_res_to_sweep_.size() == bbtorids.size() );
 	sweep_torsion_ids_ = bbtorids;
@@ -652,8 +652,8 @@ TorsionSweepingKinematicPerturber::perturb_chain(
 	KinematicMoverCOP kinmover_op( kinmover() );
 	core::Size start( kinmover_op->start_res() );
 
-	for ( Size ii = 1; ii <= nonpivot_res_to_sweep_.size(); ++ii ) {
-		Size torsion_ind = 3 * ( nonpivot_res_to_sweep_[ ii ] - start + 1 ) + sweep_torsion_ids_[ ii ];
+	for ( core::Size ii = 1; ii <= nonpivot_res_to_sweep_.size(); ++ii ) {
+		core::Size torsion_ind = 3 * ( nonpivot_res_to_sweep_[ ii ] - start + 1 ) + sweep_torsion_ids_[ ii ];
 		torsions[ torsion_ind ] = sweep_nonpivot_torsion_starts_[ ii ] + sweep_step_sizes_[ ii ] * ( sweep_iterator_[ ii ] - 1 );
 		//std::cout << " " <<  nonpivot_res_to_sweep_[ ii ] << " " << sweep_torsion_ids_[ ii ] << " " << torsion_ind << " = " << dt_ang[ torsion_ind ];
 	}
@@ -696,7 +696,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::perturb_chain(
 		core::Real bangle_min( kinmover_op->BANGLE_MIN() );
 		core::Real bangle_sd( kinmover_op->BANGLE_SD() );
 
-		for ( Size i = 5; i <= pvatom3; i+=3 ) {
+		for ( core::Size i = 5; i <= pvatom3; i+=3 ) {
 			bond_ang[ i ] = bangle_min + numeric::random::rg().uniform() * bangle_sd;
 			//TR << "replacing CA bond angle at " << (kinmover()->start_res()+int((i-4)/3)) << std::endl;
 		}
@@ -777,7 +777,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 
 
 		// C-N-CA
-		for ( Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res-1);
@@ -790,7 +790,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 
 
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
-		for ( Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -799,7 +799,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// CA-C-N
-		for ( Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res+1);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -815,7 +815,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 	if ( !closure_successful ) { // if sampling of bond lengths is added, activate this section
 
 		// N-CA
-		for ( Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 
@@ -824,7 +824,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// CA-C
-		for ( Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
 
@@ -833,7 +833,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// C-N
-		for ( Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_C (3, res);
 			const core::id::AtomID atomid_N (1, res+1);
 
@@ -890,7 +890,7 @@ TorsionRestrictedKinematicPerturber::perturb_chain(
 		core::Real bangle_min( kinmover_op->BANGLE_MIN() );
 		core::Real bangle_sd( kinmover_op->BANGLE_SD() );
 
-		for ( Size i = 5; i <= pvatom3; i+=3 ) {
+		for ( core::Size i = 5; i <= pvatom3; i+=3 ) {
 			bond_ang[ i ] = bangle_min + numeric::random::rg().uniform() * bangle_sd;
 			//TR << "replacing CA bond angle at " << (kinmover()->start_res()+int((i-4)/3)) << std::endl;
 		}
@@ -979,7 +979,7 @@ TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 
 
 		// C-N-CA
-		for ( Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res-1);
@@ -992,7 +992,7 @@ TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 
 
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
-		for ( Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -1001,7 +1001,7 @@ TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 		}
 
 		// CA-C-N
-		for ( Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res+1);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -1017,7 +1017,7 @@ TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 	if ( !closure_successful ) { // if sampling of bond lengths is added, activate this section
 
 		// N-CA
-		for ( Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 
@@ -1026,7 +1026,7 @@ TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 		}
 
 		// CA-C
-		for ( Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
 
@@ -1035,7 +1035,7 @@ TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 		}
 
 		// C-N
-		for ( Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_C (3, res);
 			const core::id::AtomID atomid_N (1, res+1);
 
@@ -1105,7 +1105,7 @@ BaseTabooPerturber::refill_torsion_string_vector()
 		torsion_bin_string torsion_bins_for_pos;
 		torsion_bins_for_pos.reserve( num_strings_ );
 		// then iterate over the map and fill the torsion_bins_for_pos vector accordingly
-		Size entries_for_X = entries_per_torsion_bin[ ppo_torbin_X ];
+		core::Size entries_for_X = entries_per_torsion_bin[ ppo_torbin_X ];
 		for ( std::map< ppo_torsion_bin, core::Size >::const_iterator mcs_i = entries_per_torsion_bin.begin(),
 				end = entries_per_torsion_bin.end(); mcs_i != end; ++mcs_i ) {
 			// we only keep X in here for the totals
@@ -1213,7 +1213,7 @@ BaseTabooPerturber::perturb_chain(
 		core::Real bangle_sd( kinmover_op->BANGLE_SD() );
 
 		//what is this iterating over?
-		for ( Size i = 5; i <= pvatom3; i+=3 ) {
+		for ( core::Size i = 5; i <= pvatom3; i+=3 ) {
 			bond_ang[ i ] = bangle_min + numeric::random::rg().uniform() * bangle_sd;
 			//TR << "replacing CA bond angle at " << (kinmover()->start_res()+int((i-4)/3)) << std::endl;
 		}
@@ -1326,7 +1326,7 @@ BaseTabooPerturber::set_pose_after_closure(
 
 
 		// C-N-CA
-		for ( Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res-1);
@@ -1339,7 +1339,7 @@ BaseTabooPerturber::set_pose_after_closure(
 
 
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
-		for ( Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -1348,7 +1348,7 @@ BaseTabooPerturber::set_pose_after_closure(
 		}
 
 		// CA-C-N
-		for ( Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res+1);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -1364,7 +1364,7 @@ BaseTabooPerturber::set_pose_after_closure(
 	if ( !closure_successful ) { // if sampling of bond lengths is added, activate this section
 
 		// N-CA
-		for ( Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 
@@ -1373,7 +1373,7 @@ BaseTabooPerturber::set_pose_after_closure(
 		}
 
 		// CA-C
-		for ( Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
 
@@ -1382,7 +1382,7 @@ BaseTabooPerturber::set_pose_after_closure(
 		}
 
 		// C-N
-		for ( Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
+		for ( core::Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3 ) {
 			const core::id::AtomID atomid_C (3, res);
 			const core::id::AtomID atomid_N (1, res+1);
 

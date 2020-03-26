@@ -45,7 +45,7 @@ namespace scoring {
 namespace rna {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class RNP_LowResPotential : public utility::pointer::ReferenceCount {
+class RNP_LowResPotential : public utility::VirtualBase {
 
 public:
 	RNP_LowResPotential();

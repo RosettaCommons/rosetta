@@ -84,7 +84,7 @@ using namespace std;
 using namespace core::optimization;
 using namespace core::scoring;
 
-class Tensor : public utility::pointer::ReferenceCount
+class Tensor : public utility::VirtualBase
 {
 public:
 	Tensor(): tensor_(0), count(0)

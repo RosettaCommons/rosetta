@@ -26,7 +26,7 @@
 #include <numeric/xyz.functions.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
 
 // C++ headers
@@ -59,9 +59,9 @@ AtomGeometrySecMatchRPE::require_all_target_residue_atom_coordinates() const
 }
 
 bool
-AtomGeometrySecMatchRPE::require_target_atom_coordinate( Size target_atom_id ) const
+AtomGeometrySecMatchRPE::require_target_atom_coordinate( core::Size target_atom_id ) const
 {
-	for ( Size ii = 1; ii <= at_inds_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= at_inds_.size(); ++ii ) {
 		if ( at_inds_[ ii ].first == 2 && at_inds_[ ii ].second == target_atom_id ) {
 			return true;
 		}
@@ -158,7 +158,7 @@ AtomDistanceSecMatchRPE::print(
 
 bool
 AtomDistanceSecMatchRPE::require_candidate_residue_atoms_to_lie_near_target_atom(
-	Size target_atom_id
+	core::Size target_atom_id
 ) const
 {
 	debug_assert( at_inds().size() == 2 );
@@ -169,20 +169,20 @@ AtomDistanceSecMatchRPE::require_candidate_residue_atoms_to_lie_near_target_atom
 
 utility::vector1< AtomDistanceSecMatchRPE::Size >
 AtomDistanceSecMatchRPE::candidate_res_atoms_reqd_near_target_atom(
-	Size target_atom_id
+	core::Size target_atom_id
 ) const
 {
 	if ( at_inds()[ 2 ].second == target_atom_id ) {
-		utility::vector1< Size > other_atom( 1, at_inds()[ 1 ].second );
+		utility::vector1< core::Size > other_atom( 1, at_inds()[ 1 ].second );
 		return other_atom;
 	} else {
-		utility::vector1< Size > empty;
+		utility::vector1< core::Size > empty;
 		return empty;
 	}
 }
 
 AtomDistanceSecMatchRPE::Real
-AtomDistanceSecMatchRPE::max_separation_dist_to_target_atom( Size target_atom_id ) const
+AtomDistanceSecMatchRPE::max_separation_dist_to_target_atom( core::Size target_atom_id ) const
 {
 	if ( at_inds()[ 2 ].second == target_atom_id ) {
 		return std::sqrt( highval() );
@@ -302,8 +302,8 @@ AtomDihedralSecMatchRPE::print(
 ) const
 {
 	std::string prefix = "AtomDihedral range" + std::string( std::abs( periodicity_ - numeric::constants::d::pi_2 ) > 1e-6 ? "s:" : ":" );
-	auto const n_periods = static_cast< Size > ( numeric::constants::d::pi_2 / periodicity_ );
-	for ( Size ii = 0; ii < n_periods; ++ii ) {
+	auto const n_periods = static_cast< core::Size > ( numeric::constants::d::pi_2 / periodicity_ );
+	for ( core::Size ii = 0; ii < n_periods; ++ii ) {
 		Real lo_deg = numeric::constants::d::radians_to_degrees * ( ii * periodicity_ + offset_ + lowval() );
 		Real hi_deg = numeric::constants::d::radians_to_degrees * ( ii * periodicity_ + offset_ + highval() );
 		prefix += " [ " + utility::to_string( lo_deg ) + ", " + utility::to_string( hi_deg ) + " ]";
@@ -422,7 +422,7 @@ GeometrySecMatchRPE::require_all_target_residue_atom_coordinates() const
 }
 
 bool
-GeometrySecMatchRPE::require_target_atom_coordinate( Size target_atom_id ) const
+GeometrySecMatchRPE::require_target_atom_coordinate( core::Size target_atom_id ) const
 {
 	for ( auto const & atom_geom_rpe : atom_geom_rpes_ ) {
 		if ( atom_geom_rpe->require_target_atom_coordinate( target_atom_id ) ) return true;
@@ -431,7 +431,7 @@ GeometrySecMatchRPE::require_target_atom_coordinate( Size target_atom_id ) const
 }
 
 bool
-GeometrySecMatchRPE::require_candidate_residue_atoms_to_lie_near_target_atom( Size target_atom_id ) const
+GeometrySecMatchRPE::require_candidate_residue_atoms_to_lie_near_target_atom( core::Size target_atom_id ) const
 {
 	for ( auto const & atom_geom_rpe : atom_geom_rpes_ ) {
 		if ( atom_geom_rpe->require_candidate_residue_atoms_to_lie_near_target_atom( target_atom_id ) ) return true;
@@ -443,14 +443,14 @@ GeometrySecMatchRPE::require_candidate_residue_atoms_to_lie_near_target_atom( Si
 /// target atom from the various AtomGeometry evaluators
 utility::vector1< GeometrySecMatchRPE::Size >
 GeometrySecMatchRPE::candidate_res_atoms_reqd_near_target_atom(
-	Size target_atom_id
+	core::Size target_atom_id
 ) const
 {
-	std::list< Size > atoms;
+	std::list< core::Size > atoms;
 	for ( auto const & atom_geom_rpe : atom_geom_rpes_ ) {
-		utility::vector1< Size > reqd_atoms = atom_geom_rpe->candidate_res_atoms_reqd_near_target_atom( target_atom_id );
+		utility::vector1< core::Size > reqd_atoms = atom_geom_rpe->candidate_res_atoms_reqd_near_target_atom( target_atom_id );
 		if ( reqd_atoms.size() != 0 ) {
-			for ( Size ii = 1; ii <= reqd_atoms.size(); ++ii ) {
+			for ( core::Size ii = 1; ii <= reqd_atoms.size(); ++ii ) {
 				atoms.push_back( reqd_atoms[ ii ] );
 				atoms.sort();
 				atoms.unique();
@@ -458,9 +458,9 @@ GeometrySecMatchRPE::candidate_res_atoms_reqd_near_target_atom(
 		}
 	}
 
-	utility::vector1< Size > atom_vect( atoms.size() );
-	Size count( 1 );
-	for ( std::list< Size >::const_iterator iter = atoms.begin(),
+	utility::vector1< core::Size > atom_vect( atoms.size() );
+	core::Size count( 1 );
+	for ( std::list< core::Size >::const_iterator iter = atoms.begin(),
 			iter_end = atoms.end(); iter != iter_end; ++iter ) {
 		atom_vect[ count ] = *iter;
 		++count;
@@ -471,7 +471,7 @@ GeometrySecMatchRPE::candidate_res_atoms_reqd_near_target_atom(
 /// @details Return the shortest of the distance cutoffs from the AtomGeometry that
 /// do describe a distance cutoff to a particular target atom.
 GeometrySecMatchRPE::Real
-GeometrySecMatchRPE::max_separation_dist_to_target_atom( Size target_atom_id ) const
+GeometrySecMatchRPE::max_separation_dist_to_target_atom( core::Size target_atom_id ) const
 {
 	Real min_max_dis( -1.0 );
 	for ( auto const & atom_geom_rpe : atom_geom_rpes_ ) {

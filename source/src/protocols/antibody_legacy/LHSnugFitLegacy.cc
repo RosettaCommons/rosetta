@@ -130,7 +130,7 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 
 	using namespace moves;
 	bool nb_list = true;
-	Size nres = pose.size();
+	core::Size nres = pose.size();
 
 	// rb minimization
 	Real min_threshold ( 15.0 ); /* score unit */
@@ -181,7 +181,7 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 	select_loop_residues( pose, *all_loops_, true/*include_neighbors*/, sc_is_flexible);
 
 	ObjexxFCL::FArray1D_bool loop_residues( nres, false );
-	for ( Size i = 1; i <= nres; i++ ) {
+	for ( core::Size i = 1; i <= nres; i++ ) {
 		loop_residues( i ) = sc_is_flexible[ i ]; // check mapping
 	}
 	using namespace protocols::simple_task_operations;
@@ -214,7 +214,7 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 	repack_step->add_mover( scmin_trial );
 
 	CycleMoverOP rb_mover_min_trial_repack( new CycleMover );
-	for ( Size i=1; i < 8; ++i ) {
+	for ( core::Size i=1; i < 8; ++i ) {
 		rb_mover_min_trial_repack->add_mover( rb_mover_min_trial );
 	}
 	rb_mover_min_trial_repack->add_mover( repack_step );
@@ -230,7 +230,7 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 	//set up mcm cycles and mcm_repack cycles
 	RepeatMoverOP mcm_four_cycles( new RepeatMover( rb_mover_min_trial, 4 ) );
 
-	Size cycles = 3;
+	core::Size cycles = 3;
 	if ( benchmark_ ) cycles = 1;
 	RepeatMoverOP mcm_final_cycles( new RepeatMover( rb_mover_min_trial_repack, cycles ) );
 

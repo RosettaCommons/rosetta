@@ -52,7 +52,7 @@ static basic::Tracer random_conformer_tracer( "protocols.ligand_docking.ligand_o
 
 
 RandomConformers::RandomConformers():
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Mover("RandomConformers")
 {}
 

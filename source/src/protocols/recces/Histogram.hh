@@ -18,7 +18,7 @@
 #ifndef INCLUDED_protocols_recces_Histogram_HH
 #define INCLUDED_protocols_recces_Histogram_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/recces/Histogram.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
@@ -27,7 +27,7 @@ namespace protocols {
 namespace recces {
 
 
-class Histogram: public utility::pointer::ReferenceCount {
+class Histogram: public utility::VirtualBase {
 
 public:
 

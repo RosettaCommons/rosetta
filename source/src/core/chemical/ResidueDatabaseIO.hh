@@ -14,7 +14,7 @@
 #ifndef INCLUDED_core_chemical_ResidueDatabaseIO_hh
 #define INCLUDED_core_chemical_ResidueDatabaseIO_hh
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/ResidueDatabaseIO.fwd.hh>
@@ -31,7 +31,7 @@ namespace core {
 namespace chemical {
 
 
-class ResidueDatabaseIO : public utility::pointer::ReferenceCount {
+class ResidueDatabaseIO : public utility::VirtualBase {
 public:
 
 	ResidueDatabaseIO();

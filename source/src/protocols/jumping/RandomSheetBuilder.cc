@@ -152,12 +152,12 @@ RandomSheetBuilder::RandomSheetBuilder( core::fragment::SecondaryStructureOP ss,
 //default do nothing always use input_sheet_sizes_ as sheet_sizes_.
 SheetBuilder::SheetTopology RandomSheetBuilder::create_new_random_topol() const
 {
-	Size num_sheets = std::max( 1, static_cast< int >( numeric::random::rg().uniform() * (input_sheet_sizes_.size() + 1) ) );
+	core::Size num_sheets = std::max( 1, static_cast< int >( numeric::random::rg().uniform() * (input_sheet_sizes_.size() + 1) ) );
 	tr.Debug << "random choice: num_sheets: " << num_sheets << std::endl;
 
 	// generate random sequence from 1 .. N
-	utility::vector1< Size > strand_ids;
-	for ( Size i = 1; i <= input_sheet_sizes_.size(); i ++ ) {
+	utility::vector1< core::Size > strand_ids;
+	for ( core::Size i = 1; i <= input_sheet_sizes_.size(); i ++ ) {
 		strand_ids.push_back( i );
 	}
 
@@ -170,9 +170,9 @@ SheetBuilder::SheetTopology RandomSheetBuilder::create_new_random_topol() const
 	tr.Debug << std::endl;
 
 	SheetTopology new_sheet_sizes;
-	Size trials = 20;
+	core::Size trials = 20;
 	while ( new_sheet_sizes.size() < num_sheets && trials-- > 0 ) {
-		for ( Size i = 1; i<=strand_ids.size() && new_sheet_sizes.size()<num_sheets; i++ ) {
+		for ( core::Size i = 1; i<=strand_ids.size() && new_sheet_sizes.size()<num_sheets; i++ ) {
 			int nr( static_cast< int >( numeric::random::rg().uniform() * input_sheet_sizes_[ strand_ids[ i ] ] ) + 1 );
 			if ( nr > 0 ) {
 				new_sheet_sizes.push_back( nr );

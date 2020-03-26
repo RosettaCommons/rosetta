@@ -45,7 +45,7 @@
 // Utility headers
 #include <utility>
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/numeric.functions.hh>
 
 #include <basic/Tracer.hh>
@@ -210,7 +210,7 @@ MaxSeqSepConstraintSet::setup_for_minimizing_for_residue_pair(
 
 
 Size
-MaxSeqSepConstraintSet::show_violations( std::ostream& out, pose::Pose& pose, Size verbose_level, Real threshold ) {
+MaxSeqSepConstraintSet::show_violations( std::ostream& out, pose::Pose& pose, core::Size verbose_level, Real threshold ) {
 	out << " total constr: " << get_all_constraints().size() << "  ";
 	out << " max_seq_sep: " << max_seq_sep() << " ";
 	return Parent::show_violations( out, pose, verbose_level, threshold );
@@ -258,7 +258,7 @@ template< class Archive >
 void
 protocols::constraints_additional::MaxSeqSepConstraintSet::save( Archive & arc ) const {
 	arc( cereal::base_class< core::scoring::constraints::ConstraintSet >( this ) );
-	arc( CEREAL_NVP( max_seq_sep_ ) ); // Size
+	arc( CEREAL_NVP( max_seq_sep_ ) ); // core::Size
 	arc( CEREAL_NVP( shortest_path_ ) ); // core::kinematics::ShortestPathInFoldTreeCOP
 }
 
@@ -267,7 +267,7 @@ template< class Archive >
 void
 protocols::constraints_additional::MaxSeqSepConstraintSet::load( Archive & arc ) {
 	arc( cereal::base_class< core::scoring::constraints::ConstraintSet >( this ) );
-	arc( max_seq_sep_ ); // Size
+	arc( max_seq_sep_ ); // core::Size
 	std::shared_ptr< core::kinematics::ShortestPathInFoldTree > local_shortest_path;
 	arc( local_shortest_path ); // core::kinematics::ShortestPathInFoldTreeCOP
 	shortest_path_ = local_shortest_path; // copy the non-const pointer(s) into the const pointer(s)

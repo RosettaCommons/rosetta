@@ -23,7 +23,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
@@ -32,7 +32,7 @@ namespace core {
 namespace pack {
 namespace rotamers {
 
-class SingleResidueRotamerLibraryCreator : public utility::pointer::ReferenceCount {
+class SingleResidueRotamerLibraryCreator : public utility::VirtualBase {
 public:
 	virtual core::pack::rotamers::SingleResidueRotamerLibraryCOP
 	create( core::chemical::ResidueType const & ) const = 0;

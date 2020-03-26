@@ -64,7 +64,7 @@ public:
 	void initialize_from_options( utility::options::OptionCollection const & options );
 
 	core::kinematics::MoveMap
-	movemap_setup( Pose & pose, std::set< Size > & cut_upper, std::set< Size > & cut_lower, ObjexxFCL::FArray1D< bool > & allow_insert );
+	movemap_setup( Pose & pose, std::set< core::Size > & cut_upper, std::set< core::Size > & cut_lower, ObjexxFCL::FArray1D< bool > & allow_insert );
 
 	void apply( Pose & pose ) override;
 
@@ -83,7 +83,7 @@ public:
 	bool
 	i_want_this_atom_to_move(
 		core::chemical::ResidueType const & residue_type,
-		Size const & atomno
+		core::Size const & atomno
 	);
 
 	bool
@@ -101,21 +101,21 @@ public:
 		core::kinematics::MoveMap & mm,
 		Pose & pose,
 		ObjexxFCL::FArray1D< bool > & allow_insert, // Operationally: not fixed, cutpoint, virt
-		std::set< Size > const & chunk
+		std::set< core::Size > const & chunk
 	);
 
 	void
 	turn_off_for_chunks(
 		core::kinematics::MoveMap & mm,
 		Pose const & pose,
-		std::set< Size > const & chunk
+		std::set< core::Size > const & chunk
 	);
 
 	void
 	add_fixed_res_constraints(
 		Pose & pose,
-		Size const fixed_res_num,
-		Size const my_anchor
+		core::Size const fixed_res_num,
+		core::Size const my_anchor
 	);
 
 	std::string
@@ -136,9 +136,9 @@ public:
 	edens_scorefxn( core::scoring::ScoreFunctionOP const & sfxn ) { edens_scorefxn_ = sfxn; }
 
 	void
-	nstruct( Size const nstruct ) { nstruct_ = nstruct; }
+	nstruct( core::Size const nstruct ) { nstruct_ = nstruct; }
 
-	Size
+	core::Size
 	nstruct() { return nstruct_; }
 
 	void
@@ -176,7 +176,7 @@ private:
 	std::set< core::Size > fixed_res_list_;
 	utility::vector1< core::Size > cutpoint_list_;
 	std::string output_pdb_name_;
-	Size nstruct_ = 1;
+	core::Size nstruct_ = 1;
 	int rank_ = 0;
 	int nproc_ = 1;
 	bool work_partition_ = true;
@@ -184,8 +184,8 @@ private:
 	ScoreFunctionOP scorefxn_;
 	ScoreFunctionOP edens_scorefxn_;
 
-	utility::vector1< std::set< Size > > chunks_;
-	Size virtual_res_pos;
+	utility::vector1< std::set< core::Size > > chunks_;
+	core::Size virtual_res_pos;
 };
 
 } //movers

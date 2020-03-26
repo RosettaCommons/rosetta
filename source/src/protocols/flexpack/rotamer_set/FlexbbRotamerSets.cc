@@ -87,15 +87,15 @@ FlexbbRotamerSets::~FlexbbRotamerSets() = default;
 
 
 FlexbbRotamerSetCOP
-FlexbbRotamerSets::rotset_for_moltenres( Size molten_resid, Size bbconf /*= 1*/ ) const
+FlexbbRotamerSets::rotset_for_moltenres( core::Size molten_resid, core::Size bbconf /*= 1*/ ) const
 { return rotamers_[ molten_resid ][ bbconf ]; }
 
 FlexbbRotamerSetCOP
-FlexbbRotamerSets::rotset_for_residue( Size resid, Size bbconf /*= 1*/ ) const
+FlexbbRotamerSets::rotset_for_residue( core::Size resid, core::Size bbconf /*= 1*/ ) const
 { return rotamers_[ resid_2_moltenres_[ resid] ][ bbconf ]; }
 
 core::conformation::ResidueCOP
-FlexbbRotamerSets::rotamer_for_residue( Size resid, Size rotindex_on_residue ) const
+FlexbbRotamerSets::rotamer_for_residue( core::Size resid, core::Size rotindex_on_residue ) const
 { return rotamer_for_moltenres( resid_2_moltenres_[ resid ], rotindex_on_residue ); }
 
 
@@ -305,10 +305,10 @@ FlexbbRotamerSets::dump_pdbs( core::pose::Pose const & pose, std::string const &
 	std::ofstream base_out( fix_filename.c_str() );
 
 	// write model 0
-	Size model(0), atom_counter(0);
+	core::Size model(0), atom_counter(0);
 
 	base_out << "MODEL" << I(9,model) << '\n';
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		if ( task_->pack_residue(i) ) continue;
 		core::io::pdb::dump_pdb_residue( pose.residue(i), atom_counter, base_out );
 	}
@@ -319,8 +319,8 @@ FlexbbRotamerSets::dump_pdbs( core::pose::Pose const & pose, std::string const &
 		bool found_a_rotamer( false );
 		++model;
 
-		for ( Size ii=1; ii<= nmoltenres_; ++ii ) {
-			//Size const resid( moltenres_2_resid[ ii ] );
+		for ( core::Size ii=1; ii<= nmoltenres_; ++ii ) {
+			//core::Size const resid( moltenres_2_resid[ ii ] );
 			FlexbbRotamerSetOP rotset( rotamers_[ ii ][1] );
 			if ( rotset->num_rotamers() >= model ) {
 				if ( !found_a_rotamer ) {
@@ -436,10 +436,10 @@ FlexbbRotamerSets::res_for_rotamer( core::uint rotid ) const
 core::conformation::ResidueCOP
 FlexbbRotamerSets::rotamer( core::uint rotid ) const
 {
-	Size moltenres = moltenres_for_rotamer_[ rotid ];
-	Size rotid_on_node = rotid - nrotoffset_for_moltenres_[ moltenres ];
-	Size bb = bbconf_for_rotamer_of_moltenres_[ moltenres ][ rotid_on_node ];
-	Size rotid_on_bb = rotid - nrotoffset_for_moltenres_bbconf_[ moltenres ][ bb ];
+	core::Size moltenres = moltenres_for_rotamer_[ rotid ];
+	core::Size rotid_on_node = rotid - nrotoffset_for_moltenres_[ moltenres ];
+	core::Size bb = bbconf_for_rotamer_of_moltenres_[ moltenres ][ rotid_on_node ];
+	core::Size rotid_on_bb = rotid - nrotoffset_for_moltenres_bbconf_[ moltenres ][ bb ];
 	return rotamers_[ moltenres ][ bb ]->rotamer( rotid_on_bb );
 
 }
@@ -447,8 +447,8 @@ FlexbbRotamerSets::rotamer( core::uint rotid ) const
 core::conformation::ResidueCOP
 FlexbbRotamerSets::rotamer_for_moltenres( core::uint moltenres_id, core::uint rotamerid ) const
 {
-	Size bb = bbconf_for_rotamer_of_moltenres_[ moltenres_id ][ rotamerid ];
-	Size rotid_on_bb = rotamerid + nrotoffset_for_moltenres_[ moltenres_id ] - nrotoffset_for_moltenres_bbconf_[ moltenres_id ][ bb ];
+	core::Size bb = bbconf_for_rotamer_of_moltenres_[ moltenres_id ][ rotamerid ];
+	core::Size rotid_on_bb = rotamerid + nrotoffset_for_moltenres_[ moltenres_id ] - nrotoffset_for_moltenres_bbconf_[ moltenres_id ][ bb ];
 	return rotamers_[ moltenres_id ][ bb ]->rotamer( rotid_on_bb );
 }
 
@@ -635,13 +635,13 @@ FlexbbRotamerSets::compute_one_body_energies_for_otf_ig(
 	using namespace core::scoring::methods;
 
 	/// 1. Compute energies with the static portions of the structure.
-	for ( Size ii = 1; ii <= nmoltenres_; ++ii ) {
+	for ( core::Size ii = 1; ii <= nmoltenres_; ++ii ) {
 		compute_onebody_interactions_with_background( ii, pose, sfxn, flexpack_neighbor_graph, flexbb_ig );
 	}
 
-	vector1< vector1< Size > > regular_representatives( nmoltenres_ );
-	vector1< vector1< Size > > proline_representatives( nmoltenres_ );
-	vector1< vector1< Size > > glycine_representatives( nmoltenres_ );
+	vector1< vector1< core::Size > > regular_representatives( nmoltenres_ );
+	vector1< vector1< core::Size > > proline_representatives( nmoltenres_ );
+	vector1< vector1< core::Size > > glycine_representatives( nmoltenres_ );
 
 	/// 2. Collect a set of representative rotamers for each backbone conformation for each moltenresidue.
 	/// These representatives will be used for computing bb/bb and bb/sc energies.  They should span the
@@ -651,20 +651,20 @@ FlexbbRotamerSets::compute_one_body_energies_for_otf_ig(
 	///  and the backbone were gaining and loosing the 2' hydroxyl, between RNA and DNA substitutions
 	/// during then you would have to modify the code below as well as the code
 	/// inside the OTFFlexbbInteracionGraph
-	for ( Size ii = 1; ii <= nmoltenres_; ++ii ) {
-		Size iinbb = nbbconfs_for_moltenres( ii );
+	for ( core::Size ii = 1; ii <= nmoltenres_; ++ii ) {
+		core::Size iinbb = nbbconfs_for_moltenres( ii );
 		regular_representatives[ ii ].resize( iinbb );
 		proline_representatives[ ii ].resize( iinbb );
 		glycine_representatives[ ii ].resize( iinbb );
 		std::fill( regular_representatives[ ii ].begin(), regular_representatives[ ii ].end(), 0 );
 		std::fill( proline_representatives[ ii ].begin(), proline_representatives[ ii ].end(), 0 );
 		std::fill( glycine_representatives[ ii ].begin(), glycine_representatives[ ii ].end(), 0 );
-		for ( Size jj = 1; jj <= iinbb; ++jj ) {
+		for ( core::Size jj = 1; jj <= iinbb; ++jj ) {
 			FlexbbRotamerSetCOP jjrotset = rotamers_[ ii ][ jj ];
-			Size jjntypes = jjrotset->get_n_residue_groups();
+			core::Size jjntypes = jjrotset->get_n_residue_groups();
 			bool jjregfound( false ), jjprofound( false ), jjglyfound( false );
-			for ( Size kk = 1; kk <= jjntypes; ++kk ) {
-				Size kkrep = jjrotset->get_residue_type_begin( kk );
+			for ( core::Size kk = 1; kk <= jjntypes; ++kk ) {
+				core::Size kkrep = jjrotset->get_residue_type_begin( kk );
 				AA kkaa = jjrotset->rotamer( kkrep )->aa();
 				if ( ! jjprofound && kkaa == aa_pro ) {
 					proline_representatives[ ii ][ jj ] = kkrep;
@@ -681,14 +681,14 @@ FlexbbRotamerSets::compute_one_body_energies_for_otf_ig(
 		}
 	}
 
-	for ( Size ii = 1; ii <= nmoltenres_; ++ii ) {
-		Size ii_resid = moltenres_2_resid_[ ii ];
+	for ( core::Size ii = 1; ii <= nmoltenres_; ++ii ) {
+		core::Size ii_resid = moltenres_2_resid_[ ii ];
 		for ( utility::graph::Graph::EdgeListConstIter
 				li    = flexpack_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
 				liend = flexpack_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end();
 				li != liend; ++li ) {
-			Size const jj_resid = (*li)->get_second_node_ind();
-			Size const jj = resid_2_moltenres_[ jj_resid ];
+			core::Size const jj_resid = (*li)->get_second_node_ind();
+			core::Size const jj = resid_2_moltenres_[ jj_resid ];
 
 			if ( jj == 0 ) continue;
 
@@ -723,7 +723,7 @@ FlexbbRotamerSets::compute_one_body_energies_for_otf_ig(
 					rni = lrec->const_upper_neighbor_iterator_begin( ii_resid ),
 					rniend = lrec->const_upper_neighbor_iterator_end( ii_resid );
 					(*rni) != (*rniend); ++(*rni) ) {
-				Size const jj_resid = rni->upper_neighbor_id();
+				core::Size const jj_resid = rni->upper_neighbor_id();
 
 				core::Size const jj = resid_2_moltenres_[ jj_resid ];
 				if ( ii > jj ) continue; // compute against upper, moltenres neighbors only
@@ -748,11 +748,11 @@ FlexbbRotamerSets::compute_one_body_energies_for_otf_ig(
 /// the new carbon-hbond term makes the glycine correction necessary.
 void
 FlexbbRotamerSets::compute_sr_one_body_energies_for_flexsets(
-	Size lowermoltenres,
-	Size uppermoltenres,
-	utility::vector1< utility::vector1< Size > > const & regular_representatives,
-	utility::vector1< utility::vector1< Size > > const & proline_representatives,
-	utility::vector1< utility::vector1< Size > > const & glycine_representatives,
+	core::Size lowermoltenres,
+	core::Size uppermoltenres,
+	utility::vector1< utility::vector1< core::Size > > const & regular_representatives,
+	utility::vector1< utility::vector1< core::Size > > const & proline_representatives,
+	utility::vector1< utility::vector1< core::Size > > const & glycine_representatives,
 	Pose const & pose,
 	ScoreFunction const & sfxn,
 	interaction_graph::OTFFlexbbInteractionGraph & flexbb_ig
@@ -764,48 +764,48 @@ FlexbbRotamerSets::compute_sr_one_body_energies_for_flexsets(
 
 	flexbb_ig.add_edge( lowermoltenres, uppermoltenres );
 
-	utility::vector1< Size > const & lregrep( regular_representatives[ lowermoltenres ] );
-	utility::vector1< Size > const & uregrep( regular_representatives[ uppermoltenres ] );
-	utility::vector1< Size > const & lprorep( proline_representatives[ lowermoltenres ] );
-	utility::vector1< Size > const & uprorep( proline_representatives[ uppermoltenres ] );
-	utility::vector1< Size > const & lglyrep( glycine_representatives[ lowermoltenres ] );
-	utility::vector1< Size > const & uglyrep( glycine_representatives[ uppermoltenres ] );
+	utility::vector1< core::Size > const & lregrep( regular_representatives[ lowermoltenres ] );
+	utility::vector1< core::Size > const & uregrep( regular_representatives[ uppermoltenres ] );
+	utility::vector1< core::Size > const & lprorep( proline_representatives[ lowermoltenres ] );
+	utility::vector1< core::Size > const & uprorep( proline_representatives[ uppermoltenres ] );
+	utility::vector1< core::Size > const & lglyrep( glycine_representatives[ lowermoltenres ] );
+	utility::vector1< core::Size > const & uglyrep( glycine_representatives[ uppermoltenres ] );
 
 	bool const sameflexseg = flexsegid_for_moltenres( lowermoltenres ) == flexsegid_for_moltenres( uppermoltenres );
 
-	Size const lnbb = nbbconfs_for_moltenres( lowermoltenres );
-	Size const unbb = nbbconfs_for_moltenres( uppermoltenres );
+	core::Size const lnbb = nbbconfs_for_moltenres( lowermoltenres );
+	core::Size const unbb = nbbconfs_for_moltenres( uppermoltenres );
 
-	Size const lnrots = nrotamers_for_moltenres_[ lowermoltenres ];
-	Size const unrots = nrotamers_for_moltenres_[ uppermoltenres ];
+	core::Size const lnrots = nrotamers_for_moltenres_[ lowermoltenres ];
+	core::Size const unrots = nrotamers_for_moltenres_[ uppermoltenres ];
 
-	Size const BBREG = 1;
-	Size const BBPRO = 2;
-	Size const BBGLY = 3;
-	Size const NBBCLASSES = 3;
+	core::Size const BBREG = 1;
+	core::Size const BBPRO = 2;
+	core::Size const BBGLY = 3;
+	core::Size const NBBCLASSES = 3;
 
 	/// 1. backbone backbone energies.
 	FArray4D< PackerEnergy > bbbb_energies( NBBCLASSES, NBBCLASSES, lnbb, unbb, 0.0 );
 
-	utility::vector1< Size > lower_bbrepresentatives( NBBCLASSES );
-	utility::vector1< Size > upper_bbrepresentatives( NBBCLASSES );
-	for ( Size ii = 1; ii <= lnbb; ++ii ) {
+	utility::vector1< core::Size > lower_bbrepresentatives( NBBCLASSES );
+	utility::vector1< core::Size > upper_bbrepresentatives( NBBCLASSES );
+	for ( core::Size ii = 1; ii <= lnbb; ++ii ) {
 		FlexbbRotamerSetCOP iirotset( rotamers_[ lowermoltenres ][ ii ] );
 		//std::fill( lower_bbrepresentatives.begin(), lower_bbrepresentatives.end(), 0 );
 		lower_bbrepresentatives[ BBREG ] = lregrep[ ii ];
 		lower_bbrepresentatives[ BBPRO ] = lprorep[ ii ];
 		lower_bbrepresentatives[ BBGLY ] = lglyrep[ ii ];
-		for ( Size jj = 1; jj <= unbb; ++jj ) {
+		for ( core::Size jj = 1; jj <= unbb; ++jj ) {
 			FlexbbRotamerSetCOP jjrotset( rotamers_[ uppermoltenres ][ jj ] );
 			//std::fill( upper_bbrepresentatives.begin(), upper_bbrepresentatives.end(), 0 );
 			upper_bbrepresentatives[ BBREG ] = uregrep[ jj ];
 			upper_bbrepresentatives[ BBPRO ] = uprorep[ jj ];
 			upper_bbrepresentatives[ BBGLY ] = uglyrep[ jj ];
 
-			for ( Size kk = 1; kk <= NBBCLASSES; ++kk ) {
+			for ( core::Size kk = 1; kk <= NBBCLASSES; ++kk ) {
 				if ( lower_bbrepresentatives[ kk ] == 0 ) continue;
 				core::conformation::Residue const & kkres( * (iirotset->rotamer( lower_bbrepresentatives[ kk ] )) );
-				for ( Size ll = 1; ll <= NBBCLASSES; ++ll ) {
+				for ( core::Size ll = 1; ll <= NBBCLASSES; ++ll ) {
 					if ( upper_bbrepresentatives[ ll ] == 0 ) continue;
 					core::conformation::Residue const & llres( * (jjrotset->rotamer( upper_bbrepresentatives[ ll ] )) );
 					bbbb_energies( kk, ll, ii, jj ) =
@@ -819,17 +819,17 @@ FlexbbRotamerSets::compute_sr_one_body_energies_for_flexsets(
 	}
 
 	if ( sought_pair ) {
-		for ( Size ii = 1; ii <= lnbb; ++ii ) {
+		for ( core::Size ii = 1; ii <= lnbb; ++ii ) {
 
 			FlexbbRotamerSetCOP iirotset( rotamers_[ lowermoltenres ][ ii ] );
-			for ( Size jj = 1; jj <= unbb; ++jj ) {
+			for ( core::Size jj = 1; jj <= unbb; ++jj ) {
 				FlexbbRotamerSetCOP jjrotset( rotamers_[ uppermoltenres ][ jj ] );
 
-				for ( Size kk = 1; kk <= iirotset->get_n_residue_types(); ++kk ) {
-					Size kkrep = iirotset->get_residue_type_begin( kk );
+				for ( core::Size kk = 1; kk <= iirotset->get_n_residue_types(); ++kk ) {
+					core::Size kkrep = iirotset->get_residue_type_begin( kk );
 					core::conformation::Residue const & kkrot( * iirotset->rotamer( kkrep ));
-					for ( Size ll = 1; ll <= jjrotset->get_n_residue_types(); ++ll ) {
-						Size llrep = jjrotset->get_residue_type_begin( ll );
+					for ( core::Size ll = 1; ll <= jjrotset->get_n_residue_types(); ++ll ) {
+						core::Size llrep = jjrotset->get_residue_type_begin( ll );
 						core::conformation::Residue const & llrot(* jjrotset->rotamer( llrep ));
 
 						std::cout << "BBBB: " << ii << " " << jj << " " <<
@@ -844,19 +844,19 @@ FlexbbRotamerSets::compute_sr_one_body_energies_for_flexsets(
 	{ // scope
 		/// Sidechain/backbone energies for the lower-residue's rotamers.
 		utility::vector1< PackerEnergy > scbb_energies_lower( NBBCLASSES );
-		for ( Size ii = 1; ii <= lnrots; ++ii ) {
-			Size iibb = bbconf_for_rotamer_of_moltenres_[ lowermoltenres ][ ii ];
+		for ( core::Size ii = 1; ii <= lnrots; ++ii ) {
+			core::Size iibb = bbconf_for_rotamer_of_moltenres_[ lowermoltenres ][ ii ];
 			core::conformation::Residue const & iirot( *( rotamer_for_moltenres( lowermoltenres, ii )));
-			Size iibbclass = ( iirot.aa() == core::chemical::aa_pro ? BBPRO : iirot.aa() == core::chemical::aa_gly ? BBGLY : BBREG );
+			core::Size iibbclass = ( iirot.aa() == core::chemical::aa_pro ? BBPRO : iirot.aa() == core::chemical::aa_gly ? BBGLY : BBREG );
 
-			for ( Size jj = 1, jje = (sameflexseg ? 1 : unbb); jj <= jje; ++jj ) {
-				Size jjbb = sameflexseg ? iibb : jj;
+			for ( core::Size jj = 1, jje = (sameflexseg ? 1 : unbb); jj <= jje; ++jj ) {
+				core::Size jjbb = sameflexseg ? iibb : jj;
 				FlexbbRotamerSetCOP jjrotset( rotamers_[ uppermoltenres ][ jjbb ] );
 				upper_bbrepresentatives[ BBREG ] = uregrep[ jjbb ];
 				upper_bbrepresentatives[ BBPRO ] = uprorep[ jjbb ];
 				upper_bbrepresentatives[ BBGLY ] = uglyrep[ jjbb ];
 				std::fill( scbb_energies_lower.begin(), scbb_energies_lower.end(), 0.0f );
-				for ( Size kk = 1; kk <= NBBCLASSES; ++kk ) {
+				for ( core::Size kk = 1; kk <= NBBCLASSES; ++kk ) {
 					if ( upper_bbrepresentatives[ kk ] == 0 ) continue;
 					core::conformation::Residue const & kkrot( *(jjrotset->rotamer( upper_bbrepresentatives[ kk ] )) );
 					scbb_energies_lower[ kk ] =
@@ -896,20 +896,20 @@ FlexbbRotamerSets::compute_sr_one_body_energies_for_flexsets(
 	{ // scope
 		/// Sidechain/backbone energies for the upper-residue's rotamers.
 		utility::vector1< PackerEnergy > scbb_energies_upper( NBBCLASSES );
-		for ( Size ii = 1; ii <= unrots; ++ii ) {
-			Size iibb = bbconf_for_rotamer_of_moltenres_[ uppermoltenres ][ ii ];
+		for ( core::Size ii = 1; ii <= unrots; ++ii ) {
+			core::Size iibb = bbconf_for_rotamer_of_moltenres_[ uppermoltenres ][ ii ];
 			core::conformation::Residue const & iirot( *( rotamer_for_moltenres( uppermoltenres, ii )));
-			Size iibbclass = ( iirot.aa() == core::chemical::aa_pro ? BBPRO : iirot.aa() == core::chemical::aa_gly ? BBGLY : BBREG );
+			core::Size iibbclass = ( iirot.aa() == core::chemical::aa_pro ? BBPRO : iirot.aa() == core::chemical::aa_gly ? BBGLY : BBREG );
 
-			for ( Size jj = 1, jje = sameflexseg ? 1 : lnbb; jj <= jje; ++jj ) {
-				Size jjbb = sameflexseg ? iibb : jj;
+			for ( core::Size jj = 1, jje = sameflexseg ? 1 : lnbb; jj <= jje; ++jj ) {
+				core::Size jjbb = sameflexseg ? iibb : jj;
 				FlexbbRotamerSetCOP jjrotset( rotamers_[ lowermoltenres ][ jjbb ] );
 				lower_bbrepresentatives[ BBREG ] = lregrep[ jjbb ];
 				lower_bbrepresentatives[ BBPRO ] = lprorep[ jjbb ];
 				lower_bbrepresentatives[ BBGLY ] = lglyrep[ jjbb ];
 				std::fill( scbb_energies_upper.begin(), scbb_energies_upper.end(), 0.0 );
 
-				for ( Size kk = 1; kk <= NBBCLASSES; ++kk ) {
+				for ( core::Size kk = 1; kk <= NBBCLASSES; ++kk ) {
 					if ( lower_bbrepresentatives[ kk ] == 0 ) continue;
 					core::conformation::Residue const & kkrot( *(jjrotset->rotamer( lower_bbrepresentatives[ kk ] )) );
 					scbb_energies_upper[ kk ] =
@@ -952,7 +952,7 @@ FlexbbRotamerSets::compute_sr_one_body_energies_for_flexsets(
 
 void
 FlexbbRotamerSets::compute_onebody_interactions_with_background(
-	Size moltenres,
+	core::Size moltenres,
 	Pose const & pose,
 	ScoreFunction const & sfxn,
 	utility::graph::GraphCOP flexpack_neighbor_graph,
@@ -962,7 +962,7 @@ FlexbbRotamerSets::compute_onebody_interactions_with_background(
 
 
 	utility::vector1< PackerEnergy > all_one_body_energies( nrotamers_for_moltenres( moltenres ), 0.0 );
-	for ( Size ii = 1, iie = nbbconfs_for_moltenres( moltenres ); ii <= iie; ++ii ) {
+	for ( core::Size ii = 1, iie = nbbconfs_for_moltenres( moltenres ); ii <= iie; ++ii ) {
 
 
 		FlexbbRotamerSetCOP iirotset( rotamers_[ moltenres ][ ii ] );
@@ -973,12 +973,12 @@ FlexbbRotamerSets::compute_onebody_interactions_with_background(
 		/// energies upfront.
 		sfxn.prepare_rotamers_for_packing( pose, const_cast< FlexbbRotamerSet & > (*iirotset) );
 
-		Size const iinrots = iirotset->num_rotamers();
+		core::Size const iinrots = iirotset->num_rotamers();
 		utility::vector1< PackerEnergy > ii_one_body_energies( iinrots );
 		iirotset->compute_one_body_energies(
 			pose, sfxn, *task_, flexpack_neighbor_graph, ii_one_body_energies );
-		Size const ii_offset = nrotoffset_for_moltenres_bbconf_[ moltenres ][ ii ] - nrotoffset_for_moltenres_[ moltenres ];
-		for ( Size jj = 1; jj <= iinrots; ++jj ) {
+		core::Size const ii_offset = nrotoffset_for_moltenres_bbconf_[ moltenres ][ ii ] - nrotoffset_for_moltenres_[ moltenres ];
+		for ( core::Size jj = 1; jj <= iinrots; ++jj ) {
 			//if ( moltenres == 17 && jj == 11 ) { std::cout << " OneBodyEnergy: " << jj << " " << ii_offset << " " << jj+ii_offset << " " << ii_one_body_energies[ jj ] << std::endl; }
 			//if ( moltenres == 27 ) { std::cout << "OneBodyEnergy " << moltenres << " " << jj + ii_offset << " " << ii_one_body_energies[ jj ] << std::endl;}
 			all_one_body_energies[ jj + ii_offset ] = ii_one_body_energies[ jj ];
@@ -986,7 +986,7 @@ FlexbbRotamerSets::compute_onebody_interactions_with_background(
 
 		/// For the sake of reducing memory load, clear the tries out as soon as
 		/// the one body energies are finished being calculated.
-		for ( Size jj = 1; jj <= core::scoring::methods::n_energy_methods; ++jj ) {
+		for ( core::Size jj = 1; jj <= core::scoring::methods::n_energy_methods; ++jj ) {
 			(const_cast< FlexbbRotamerSet & > (*iirotset)).store_trie( jj, nullptr );
 		}
 	}
@@ -1017,24 +1017,24 @@ template< class Archive >
 void
 protocols::flexpack::rotamer_set::FlexbbRotamerSets::save( Archive & arc ) const {
 	arc( cereal::base_class< core::pack_basic::RotamerSetsBase >( this ) );
-	arc( CEREAL_NVP( nmoltenres_ ) ); // Size
-	arc( CEREAL_NVP( total_residue_ ) ); // Size
-	arc( CEREAL_NVP( nbbconfs_ ) ); // Size
+	arc( CEREAL_NVP( nmoltenres_ ) ); // core::Size
+	arc( CEREAL_NVP( total_residue_ ) ); // core::Size
+	arc( CEREAL_NVP( nbbconfs_ ) ); // core::Size
 	arc( CEREAL_NVP( task_ ) ); // PackerTaskCOP
 	arc( CEREAL_NVP( rotamers_ ) ); // utility::vector1<utility::vector1<rotamer_set::FlexbbRotamerSetOP> >
-	arc( CEREAL_NVP( nrotamers_ ) ); // Size
-	arc( CEREAL_NVP( nrotamers_for_moltenres_ ) ); // utility::vector1<Size>
-	arc( CEREAL_NVP( moltenres_2_resid_ ) ); // utility::vector1<Size>
-	arc( CEREAL_NVP( resid_2_moltenres_ ) ); // utility::vector1<Size>
-	arc( CEREAL_NVP( moltenres_for_rotamer_ ) ); // utility::vector1<Size>
-	arc( CEREAL_NVP( bbconf_for_rotamer_of_moltenres_ ) ); // utility::vector1<utility::vector1<Size> >
+	arc( CEREAL_NVP( nrotamers_ ) ); // core::Size
+	arc( CEREAL_NVP( nrotamers_for_moltenres_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( moltenres_2_resid_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( resid_2_moltenres_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( moltenres_for_rotamer_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( bbconf_for_rotamer_of_moltenres_ ) ); // utility::vector1<utility::vector1<core::Size> >
 	arc( CEREAL_NVP( conformations_for_flexible_segments_ ) ); // utility::vector1<utility::vector1<core::conformation::ResidueCOP> >
-	arc( CEREAL_NVP( flexsegment_span_ ) ); // utility::vector1<std::pair<Size, Size> >
-	arc( CEREAL_NVP( nbbconfs_for_flexseg_ ) ); // utility::vector1<Size>
-	arc( CEREAL_NVP( moltenres_2_flexseg_ ) ); // utility::vector1<Size>
-	arc( CEREAL_NVP( nrotoffset_for_moltenres_ ) ); // utility::vector1<Size>
-	arc( CEREAL_NVP( nrots_for_moltenres_bbconf_ ) ); // utility::vector1<utility::vector1<Size> >
-	arc( CEREAL_NVP( nrotoffset_for_moltenres_bbconf_ ) ); // utility::vector1<utility::vector1<Size> >
+	arc( CEREAL_NVP( flexsegment_span_ ) ); // utility::vector1<std::pair<core::Size, core::Size> >
+	arc( CEREAL_NVP( nbbconfs_for_flexseg_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( moltenres_2_flexseg_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( nrotoffset_for_moltenres_ ) ); // utility::vector1<core::Size>
+	arc( CEREAL_NVP( nrots_for_moltenres_bbconf_ ) ); // utility::vector1<utility::vector1<core::Size> >
+	arc( CEREAL_NVP( nrotoffset_for_moltenres_bbconf_ ) ); // utility::vector1<utility::vector1<core::Size> >
 }
 
 /// @brief Automatically generated deserialization method
@@ -1042,28 +1042,28 @@ template< class Archive >
 void
 protocols::flexpack::rotamer_set::FlexbbRotamerSets::load( Archive & arc ) {
 	arc( cereal::base_class< core::pack_basic::RotamerSetsBase >( this ) );
-	arc( nmoltenres_ ); // Size
-	arc( total_residue_ ); // Size
-	arc( nbbconfs_ ); // Size
+	arc( nmoltenres_ ); // core::Size
+	arc( total_residue_ ); // core::Size
+	arc( nbbconfs_ ); // core::Size
 	std::shared_ptr< core::pack::task::PackerTask > local_task;
 	arc( local_task ); // PackerTaskCOP
 	task_ = local_task; // copy the non-const pointer(s) into the const pointer(s)
 	arc( rotamers_ ); // utility::vector1<utility::vector1<rotamer_set::FlexbbRotamerSetOP> >
-	arc( nrotamers_ ); // Size
-	arc( nrotamers_for_moltenres_ ); // utility::vector1<Size>
-	arc( moltenres_2_resid_ ); // utility::vector1<Size>
-	arc( resid_2_moltenres_ ); // utility::vector1<Size>
-	arc( moltenres_for_rotamer_ ); // utility::vector1<Size>
-	arc( bbconf_for_rotamer_of_moltenres_ ); // utility::vector1<utility::vector1<Size> >
+	arc( nrotamers_ ); // core::Size
+	arc( nrotamers_for_moltenres_ ); // utility::vector1<core::Size>
+	arc( moltenres_2_resid_ ); // utility::vector1<core::Size>
+	arc( resid_2_moltenres_ ); // utility::vector1<core::Size>
+	arc( moltenres_for_rotamer_ ); // utility::vector1<core::Size>
+	arc( bbconf_for_rotamer_of_moltenres_ ); // utility::vector1<utility::vector1<core::Size> >
 	utility::vector1< utility::vector1< std::shared_ptr< core::conformation::Residue > > > local_conformations_for_flexible_segments;
 	arc( local_conformations_for_flexible_segments ); // utility::vector1<utility::vector1<core::conformation::ResidueCOP> >
 	conformations_for_flexible_segments_ = local_conformations_for_flexible_segments; // copy the non-const pointer(s) into the const pointer(s)
-	arc( flexsegment_span_ ); // utility::vector1<std::pair<Size, Size> >
-	arc( nbbconfs_for_flexseg_ ); // utility::vector1<Size>
-	arc( moltenres_2_flexseg_ ); // utility::vector1<Size>
-	arc( nrotoffset_for_moltenres_ ); // utility::vector1<Size>
-	arc( nrots_for_moltenres_bbconf_ ); // utility::vector1<utility::vector1<Size> >
-	arc( nrotoffset_for_moltenres_bbconf_ ); // utility::vector1<utility::vector1<Size> >
+	arc( flexsegment_span_ ); // utility::vector1<std::pair<core::Size, core::Size> >
+	arc( nbbconfs_for_flexseg_ ); // utility::vector1<core::Size>
+	arc( moltenres_2_flexseg_ ); // utility::vector1<core::Size>
+	arc( nrotoffset_for_moltenres_ ); // utility::vector1<core::Size>
+	arc( nrots_for_moltenres_bbconf_ ); // utility::vector1<utility::vector1<core::Size> >
+	arc( nrotoffset_for_moltenres_bbconf_ ); // utility::vector1<utility::vector1<core::Size> >
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::flexpack::rotamer_set::FlexbbRotamerSets );

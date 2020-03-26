@@ -83,7 +83,7 @@ StepWiseLegacyClusterer::StepWiseLegacyClusterer( utility::vector1< PoseOP > con
 
 // convenience constructor, used in StepWiseProteinModeler. Maybe should go into a util.
 StepWiseLegacyClusterer::StepWiseLegacyClusterer( utility::vector1< PoseOP > const & pose_list,
-	utility::vector1< Size > const & moving_res_list,
+	utility::vector1< core::Size > const & moving_res_list,
 	options::StepWiseModelerOptionsCOP options,
 	bool const force_align ):
 	input_pose_list_( pose_list )
@@ -188,7 +188,7 @@ StepWiseLegacyClusterer::do_some_clustering() {
 			rms_pose = utility::pointer::make_shared< Pose >();
 			pdbslice( *rms_pose, *pose, calc_rms_res_ );
 		}
-		Size const found_close_cluster = check_for_closeness( rms_pose );
+		core::Size const found_close_cluster = check_for_closeness( rms_pose );
 
 		if ( found_close_cluster == 0 )  {
 			PoseOP pose_save = pose->clone();
@@ -222,7 +222,7 @@ StepWiseLegacyClusterer::initialize_cluster_list() {
 void
 StepWiseLegacyClusterer::cluster_with_auto_tune() {
 
-	for ( Size n = 1; n <= cluster_rmsds_to_try_with_auto_tune_.size(); n++ ) {
+	for ( core::Size n = 1; n <= cluster_rmsds_to_try_with_auto_tune_.size(); n++ ) {
 
 		cluster_radius_ = cluster_rmsds_to_try_with_auto_tune_[ n ];
 
@@ -256,11 +256,11 @@ StepWiseLegacyClusterer::recluster_current_pose_list() {
 	rms_pose_list_.clear();
 	output_pose_list_.clear();
 
-	for ( Size i = 1; i <= old_rms_pose_list.size(); i++ ) {
+	for ( core::Size i = 1; i <= old_rms_pose_list.size(); i++ ) {
 
 		core::pose::PoseOP rms_pose = old_rms_pose_list[ i ];
 
-		Size const found_close_cluster = check_for_closeness( rms_pose );
+		core::Size const found_close_cluster = check_for_closeness( rms_pose );
 		if ( found_close_cluster == 0 )  {
 			rms_pose_list_.push_back( rms_pose );
 			output_pose_list_.push_back(  old_output_pose_list[ i ]  );
@@ -286,7 +286,7 @@ StepWiseLegacyClusterer::check_for_closeness( core::pose::PoseOP rms_pose )
 
 	// go through the list backwards, because poses may be grouped by similarity --
 	// the newest pose is probably closer to poses at the end of the list.
-	for ( Size n = rms_pose_list_.size(); n >= 1; n-- ) {
+	for ( core::Size n = rms_pose_list_.size(); n >= 1; n-- ) {
 
 		Real rmsd( 0.0 );
 

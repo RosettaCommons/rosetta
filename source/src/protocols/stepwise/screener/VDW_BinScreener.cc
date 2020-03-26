@@ -34,7 +34,7 @@ namespace screener {
 //Constructor
 VDW_BinScreener::VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
 	core::pose::Pose & screening_pose,
-	Size const moving_res ):
+	core::Size const moving_res ):
 	vdw_bin_checker_(std::move( vdw_bin_checker)),
 	screening_pose_( screening_pose ),
 	moving_res_( moving_res ),
@@ -45,7 +45,7 @@ VDW_BinScreener::VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vd
 
 VDW_BinScreener::VDW_BinScreener( modeler::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
 	pose::Pose & screening_pose,
-	Size const moving_res,
+	core::Size const moving_res,
 	core::conformation::ResidueCOP screening_moving_rsd_at_origin,
 	core::kinematics::Stub const & moving_res_base_stub ):
 	vdw_bin_checker_(std::move( vdw_bin_checker)),

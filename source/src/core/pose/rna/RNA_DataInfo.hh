@@ -18,7 +18,7 @@
 #include <core/pose/rna/RNA_DataInfo.fwd.hh>
 
 // Project headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -123,7 +123,7 @@ typedef utility::vector1< RNA_Reactivity > RNA_Reactivities;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Keep track of RNA chemical mapping data inside the pose.
-class RNA_DataInfo : public utility::pointer::ReferenceCount {
+class RNA_DataInfo : public utility::VirtualBase {
 
 public:
 

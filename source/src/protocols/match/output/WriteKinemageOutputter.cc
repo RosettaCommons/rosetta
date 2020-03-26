@@ -26,7 +26,7 @@
 #include <core/conformation/Residue.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -43,7 +43,7 @@ WriteKinemageOutputter::record_match( match const & m , MatchEvaluatorOP evaluat
 {
 	upstream_kin_writer_->start_new_match();
 
-	for ( Size ii = 1; ii <= m.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= m.size(); ++ii ) {
 		core::conformation::ResidueCOP conf =
 			coordinate_cacher_->upstream_conformation_for_hit( ii, m[ ii ] );
 
@@ -58,10 +58,10 @@ void
 WriteKinemageOutputter::record_match( match_dspos1 const & m )
 {
 	upstream_kin_writer_->start_new_match();
-	Size const ds_hit_id = m.originating_geom_cst_for_dspos;
+	core::Size const ds_hit_id = m.originating_geom_cst_for_dspos;
 	upstream_kin_writer_->set_dswriter( dswriters_[ ds_hit_id ] );
 
-	for ( Size ii = 1; ii <= m.upstream_hits.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= m.upstream_hits.size(); ++ii ) {
 		core::conformation::ResidueCOP conf =
 			coordinate_cacher_->upstream_conformation_for_hit( ii, fake_hit( m.upstream_hits[ ii ] ) );
 
@@ -81,7 +81,7 @@ WriteKinemageOutputter::set_coordinate_cacher( UpstreamHitCacherOP cacher )
 }
 
 void
-WriteKinemageOutputter::set_n_geomcst( Size n_geomcst )
+WriteKinemageOutputter::set_n_geomcst( core::Size n_geomcst )
 {
 	debug_assert( dswriters_.size() == 0 ); // only set once!
 	dswriters_.resize( n_geomcst );
@@ -97,7 +97,7 @@ WriteKinemageOutputter::set_kin_writer(
 
 void
 WriteKinemageOutputter::set_downstream_writer(
-	Size geomcst_id,
+	core::Size geomcst_id,
 	DownstreamCoordinateKinemageWriterOP ds_writer
 )
 {

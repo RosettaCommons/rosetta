@@ -18,7 +18,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -30,7 +30,7 @@ namespace core {
 namespace pack {
 namespace interaction_graph {
 
-class AnnealableGraphBase : public utility::pointer::ReferenceCount
+class AnnealableGraphBase : public utility::VirtualBase
 {
 public:
 

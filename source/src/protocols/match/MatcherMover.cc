@@ -140,7 +140,7 @@ MatcherMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::po
 		}
 	}
 
-	Size cent, nbr1, nbr2;
+	core::Size cent, nbr1, nbr2;
 	ligres_->select_orient_atoms( cent, nbr1, nbr2 );
 
 	tr << "Selecting orientation atoms:";
@@ -425,7 +425,7 @@ set_ligpose_rotamer( core::pose::Pose & ligpose )
 
 		core::pack::rotamers::RotamerVector rot_vector;
 		lig_rotlib->build_base_rotamers( ligpose.residue_type( 1 ), rot_vector );
-		Size const nligrots = rot_vector.size();
+		core::Size const nligrots = rot_vector.size();
 
 		if ( lig_rotamer_index > nligrots ) {
 			utility_exit_with_message( "Illegal rotamer index given in command line flag match::ligand_rotamer_index ("

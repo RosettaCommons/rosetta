@@ -269,7 +269,7 @@ RNA_SuiteStepWiseSampler::fast_sample_torsions_from_info(
 	utility::vector1<GaussianParameter> const & params
 ) {
 	TorsionList torsions;
-	for ( Size i = 1; i <= params.size(); ++i ) {
+	for ( core::Size i = 1; i <= params.size(); ++i ) {
 		for ( int k = -1; k <= 1; k++ ) {
 			torsions.push_back( params[i].center + k * params[i].width );
 		}

@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_frag_picker_CandidatesCollector_hh
 
 // type headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // package headers
 #include <protocols/frag_picker/CandidatesCollector.fwd.hh>
@@ -41,7 +41,7 @@ namespace frag_picker {
 /// of vall processing. Then a selector will go through all the candidates stored
 /// in a collector and select the final fragments
 /// @see GrabAll collector for a possible implementation
-class CandidatesCollector: public utility::pointer::ReferenceCount {
+class CandidatesCollector: public utility::VirtualBase {
 public:
 	/// @brief  Insert a fragment candidate to the container
 	virtual bool add( ScoredCandidate ) = 0;

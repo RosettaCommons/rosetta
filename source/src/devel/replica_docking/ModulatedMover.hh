@@ -28,7 +28,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 namespace devel {

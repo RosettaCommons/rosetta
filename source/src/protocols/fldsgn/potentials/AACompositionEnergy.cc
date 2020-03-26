@@ -101,13 +101,13 @@ AACompositionEnergy::residue_energy(
 	EnergyMap & emap
 ) const
 {
-	std::map< AA, Size > hist;
-	Size total_types( core::chemical::num_aa_types );
-	for ( Size i=1; i<=total_types; i++ ) {
+	std::map< AA, core::Size > hist;
+	core::Size total_types( core::chemical::num_aa_types );
+	for ( core::Size i=1; i<=total_types; i++ ) {
 		auto aa = AA( i );
-		hist.insert( std::map< AA, Size >::value_type( aa, 0 ) );
+		hist.insert( std::map< AA, core::Size >::value_type( aa, 0 ) );
 	}
-	for ( Size i=1; i<=pose.size(); i++ ) {
+	for ( core::Size i=1; i<=pose.size(); i++ ) {
 		hist[ pose.aa( i ) ] ++;
 	}
 
@@ -126,11 +126,11 @@ AACompositionEnergy::residue_energy(
 
 		std::pair< Real, Real > thresholds( itr->second );
 #ifndef WIN32
-		auto const lower = (Size)round( thresholds.first * pose.size() );
-		auto const upper = (Size)round( thresholds.second * pose.size() );
+		auto const lower = (core::Size)round( thresholds.first * pose.size() );
+		auto const upper = (core::Size)round( thresholds.second * pose.size() );
 #else
-		Size const lower = (Size)core::Real( thresholds.first * pose.size() + 0.5 );
-		Size const upper = (Size)core::Real( thresholds.second * pose.size() + 0.5 );
+		core::Size const lower = (core::Size)core::Real( thresholds.first * pose.size() + 0.5 );
+		core::Size const upper = (core::Size)core::Real( thresholds.second * pose.size() + 0.5 );
 #endif
 
 		if ( hist[ itr->first ] < lower ) {

@@ -40,6 +40,8 @@
 namespace protocols {
 namespace constraints_additional {
 
+using core::Size;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
 AmbiguousMultiConstraint::AmbiguousMultiConstraint(
@@ -192,7 +194,7 @@ AmbiguousMultiConstraint::show_violations( std::ostream& out, core::pose::Pose c
 	using namespace core::scoring::constraints;
 
 	if ( verbose_level >= 70 ) {
-		Size total_viol( 0 );
+		core::Size total_viol( 0 );
 		if ( verbose_level >=80 ) out << type() << " " << member_constraints().size() << " ";
 		for ( ConstraintCOPs::const_iterator cst_it = active_constraints_.begin(), end = active_constraints_.end(); cst_it != end; ++cst_it ) {
 

@@ -30,7 +30,7 @@
 
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -52,7 +52,7 @@ namespace symmetry {
 
 //Symm_info
 
-class SymmetryInfo : public utility::pointer::ReferenceCount {
+class SymmetryInfo : public utility::VirtualBase {
 public:
 
 	typedef utility::vector1< Size > Clones; // NOTE vector1 *not* std::vector

@@ -187,7 +187,7 @@ SaltBridgeFeatures::report_features(
 	hbond_stmt.bind(2,struct_id);
 
 	result res(basic::database::safely_read_from_database(hbond_stmt));
-	Size acc_site_id, acc_resNum, acc_atmNum, don_resNum;
+	core::Size acc_site_id, acc_resNum, acc_atmNum, don_resNum;
 	PointPosition  bb, b, c, n, o_proj;
 	Stub don_frame;
 	sphericalVector<Real> local_o;

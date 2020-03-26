@@ -34,7 +34,7 @@
 
 // Utility headers
 #include <numeric/random/random.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
 
 // C++ headers
@@ -456,7 +456,7 @@ ScoringSecMatchRPE::require_all_target_residue_atom_coordinates() const
 }
 
 bool
-ScoringSecMatchRPE::require_target_atom_coordinate( Size /*target_atom_id*/ ) const
+ScoringSecMatchRPE::require_target_atom_coordinate( core::Size /*target_atom_id*/ ) const
 {
 	return true;
 }

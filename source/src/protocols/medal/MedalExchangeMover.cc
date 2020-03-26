@@ -111,10 +111,10 @@ void setup_coordinate_constraints(const Pose& pose, LoopsCOP aligned, Constraint
 	const AtomID fixed_atom(1, pose.size());
 	const PointPosition& fixed_coords = pose.xyz(fixed_atom);
 
-	for ( Size i = 1; i <= aligned->size(); ++i ) {
+	for ( core::Size i = 1; i <= aligned->size(); ++i ) {
 		const Loop& region = (*aligned)[i];
 
-		for ( Size j = region.start(); j <= region.stop(); ++j ) {
+		for ( core::Size j = region.start(); j <= region.stop(); ++j ) {
 			const Residue& residue = pose.conformation().residue(j);
 			const AtomID ca_atom(residue.atom_index("CA"), j);
 			const PointPosition& ca_coords = pose.xyz(ca_atom);
@@ -137,7 +137,7 @@ void setup_atom_pair_constraints(const Pose& pose, LoopsCOP aligned, ConstraintS
 	using core::scoring::constraints::ConstraintIO;
 
 	if ( option[OptionKeys::constraints::cst_file].user() ) {
-		boost::unordered_set<Size> valid;
+		boost::unordered_set<core::Size> valid;
 		as_set(aligned, &valid);
 
 		const vector1<std::string>& filenames = option[OptionKeys::constraints::cst_file]();
@@ -155,8 +155,8 @@ void setup_atom_pair_constraints(const Pose& pose, LoopsCOP aligned, ConstraintS
 				continue;
 			}
 
-			const Size res1 = c->atom(1).rsd();
-			const Size res2 = c->atom(2).rsd();
+			const core::Size res1 = c->atom(1).rsd();
+			const core::Size res2 = c->atom(2).rsd();
 			if ( valid.find(res1) == valid.end() || valid.find(res2) == valid.end() ) {
 				continue;
 			}
@@ -173,11 +173,11 @@ void setup_constraints(const Pose& pose, LoopsCOP aligned, ConstraintSetOP const
 
 /// @detail Computes the probability of selecting a residue for fragment insertion.
 /// P(unaligned) = 0. P(aligned) = 1 / #aligned.
-void MedalExchangeMover::setup_sampling_probs(Size num_residues, const core::kinematics::FoldTree& tree, LoopsCOP aligned, vector1<core::Real>* probs) const {
+void MedalExchangeMover::setup_sampling_probs(core::Size num_residues, const core::kinematics::FoldTree& tree, LoopsCOP aligned, vector1<core::Real>* probs) const {
 	probs->resize(num_residues, 0);
 
 	for ( auto const & i : *aligned ) {
-		for ( Size j = i.start(); j <= i.stop(); ++j ) {
+		for ( core::Size j = i.start(); j <= i.stop(); ++j ) {
 			(*probs)[j] = 1;
 		}
 	}
@@ -241,8 +241,8 @@ void MedalExchangeMover::apply(Pose& pose) {
 
 	// Sampling parameters
 	const Real temp = option[OptionKeys::abinitio::temperature]();
-	const Size num_fragments = option[OptionKeys::cm::sanitize::num_fragments]();
-	const auto num_cycles = static_cast<Size>(aligned->nr_residues() * 50 * option[OptionKeys::abinitio::increase_cycles]());
+	const core::Size num_fragments = option[OptionKeys::cm::sanitize::num_fragments]();
+	const auto num_cycles = static_cast<core::Size>(aligned->nr_residues() * 50 * option[OptionKeys::abinitio::increase_cycles]());
 
 	PolicyOP policy = PolicyFactory::get_policy("uniform", fragments_, num_fragments);
 	MoverOP fragment_mover( new BiasedFragmentMover(policy, probs) );

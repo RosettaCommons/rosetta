@@ -39,7 +39,7 @@
 
 // Utility headers
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/xyzVector.hh>
 
 // C++ headers
@@ -57,7 +57,7 @@ static basic::Tracer TR( "protocols.match.downstream.SecondaryMatcherToDownstrea
 
 SecondaryMatcherToDownstreamResidue::SecondaryMatcherToDownstreamResidue(
 	core::pose::PoseCOP upstream_pose,
-	Size geom_cst_id
+	core::Size geom_cst_id
 ) :
 	parent( geom_cst_id ),
 	upstream_pose_(std::move(upstream_pose))
@@ -85,7 +85,7 @@ SecondaryMatcherToDownstreamResidue::build_hits_at_all_positions(
 		( matcher.per_constraint_build_points( geom_cst_id() ) );
 	utility::vector1< std::list< Hit > > hits( my_build_points.size() );
 
-	for ( Size ii = 1; ii <= geom_cst_id() - 1; ++ii ) {
+	for ( core::Size ii = 1; ii <= geom_cst_id() - 1; ++ii ) {
 
 		if ( ! matcher.representative_downstream_algorithm( ii )->generates_primary_hits() ) continue;
 
@@ -95,7 +95,7 @@ SecondaryMatcherToDownstreamResidue::build_hits_at_all_positions(
 		utility::vector1< upstream::ScaffoldBuildPointCOP > const & target_build_points
 			( matcher.per_constraint_build_points( focused_geomcst_id_ ) );
 
-		for ( Size jj = 1; jj <= target_build_points.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= target_build_points.size(); ++jj ) {
 			if ( ! prepare_for_hit_generation_at_target_build_point( matcher, ii, *target_build_points[ jj ] ) ) {
 				continue;
 			}
@@ -104,7 +104,7 @@ SecondaryMatcherToDownstreamResidue::build_hits_at_all_positions(
 #ifdef USE_OPENMP
 			#pragma omp parallel for
 #endif
-			for ( Size kk = 1; kk <= my_build_points.size(); ++kk ) {
+			for ( core::Size kk = 1; kk <= my_build_points.size(); ++kk ) {
 				//Most of the time we don't want to build residue at the same point
 				//as the target build point, but in the case of backbone matching
 				//if ( target_build_points[ jj ]->index() != my_build_points[ kk ]->index() ) {
@@ -118,7 +118,7 @@ SecondaryMatcherToDownstreamResidue::build_hits_at_all_positions(
 
 	std::list< Hit > all_hits;
 	us_secmatch_hit_compare compare;
-	for ( Size ii = 1; ii <= my_build_points.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= my_build_points.size(); ++ii ) {
 		hits[ ii ].sort( compare );
 		all_hits.splice( all_hits.end(), hits[ ii ] );
 	}
@@ -130,7 +130,7 @@ SecondaryMatcherToDownstreamResidue::build_hits_at_all_positions(
 void
 SecondaryMatcherToDownstreamResidue::respond_to_primary_hitlist_change(
 	Matcher & matcher,
-	Size round_just_completed
+	core::Size round_just_completed
 )
 {
 	OccupiedSpaceHashOP occspace = matcher.occ_space_hash();
@@ -181,7 +181,7 @@ SecondaryMatcherToDownstreamResidue::respond_to_peripheral_hitlist_change(
 	auto iter = matcher.hit_list_begin(   geom_cst_id() );
 	auto iter_end = matcher.hit_list_end( geom_cst_id() );
 
-	Size drop_count( 0 );
+	core::Size drop_count( 0 );
 
 	while ( iter != iter_end  ) {
 		auto iter_next = iter;
@@ -210,13 +210,13 @@ SecondaryMatcherToDownstreamResidue::respond_to_peripheral_hitlist_change(
 /// build_at_all_positions method.)
 std::list< Hit >
 SecondaryMatcherToDownstreamResidue::build(
-	Size const scaffold_build_point_id,
-	Size const upstream_conf_id,
+	core::Size const scaffold_build_point_id,
+	core::Size const upstream_conf_id,
 	core::conformation::Residue const & upstream_residue
 ) const
 {
 	std::list< Hit > hits;
-	Size const downstream_natoms = target_downstream_coords_->n_atoms_for_restype( 1 );
+	core::Size const downstream_natoms = target_downstream_coords_->n_atoms_for_restype( 1 );
 	core::conformation::Residue target_residue( *downstream_restype_, false );
 	core::conformation::Residue target_residue_clash_check( *downstream_restype_, false );
 	utility::vector1< core::Vector > ds_coords( ( target_downstream_coords_->get_ds_atom_ids_needed() ).size()  );
@@ -224,9 +224,9 @@ SecondaryMatcherToDownstreamResidue::build(
 	// flo oct 09: moderate hack assuming that the ligand will always be last
 	target_residue.seqpos( upstream_pose_->size() + 1);
 
-	for ( Size ii = 1; ii <= target_downstream_coords_->n_rotamers_for_restype( 1 ); ++ii ) {
+	for ( core::Size ii = 1; ii <= target_downstream_coords_->n_rotamers_for_restype( 1 ); ++ii ) {
 		/// Set the coordinates for only the atoms that I need to give to the evaluator
-		for ( Size kk = 1; kk <= downstream_natoms; ++kk ) {
+		for ( core::Size kk = 1; kk <= downstream_natoms; ++kk ) {
 			target_residue.set_xyz(
 				target_downstream_coords_->restype_atomno( 1, kk ),
 				target_downstream_coords_->coord( 1, ii, kk ));
@@ -248,7 +248,7 @@ SecondaryMatcherToDownstreamResidue::build(
 						target_downstream_coords_->set_clash_checking( ii );
 					}
 					//fills downstream residue with coordinates for clash checking atoms
-					for ( Size ll = 1; ll <= ( target_downstream_coords_->get_ds_atom_ids_needed() ).size(); ++ll )  {
+					for ( core::Size ll = 1; ll <= ( target_downstream_coords_->get_ds_atom_ids_needed() ).size(); ++ll )  {
 						target_residue_clash_check.set_xyz( target_downstream_coords_->get_ds_atom_ids_needed()[ ll ].atomno(), ds_coords[ ll ] );
 					}
 
@@ -306,7 +306,7 @@ SecondaryMatcherToDownstreamResidue::set_downstream_restype( core::chemical::Res
 
 
 void
-SecondaryMatcherToDownstreamResidue::set_focused_geomcst_id( Size focused_geomcst_id )
+SecondaryMatcherToDownstreamResidue::set_focused_geomcst_id( core::Size focused_geomcst_id )
 {
 	focused_geomcst_id_ = focused_geomcst_id;
 }
@@ -314,7 +314,7 @@ SecondaryMatcherToDownstreamResidue::set_focused_geomcst_id( Size focused_geomcs
 void
 SecondaryMatcherToDownstreamResidue::add_evaluator(
 	SecMatchResiduePairEvaluatorCOP evaluator,
-	Size mcfi_id
+	core::Size mcfi_id
 )
 {
 	respair_evaluators_.push_back( std::make_pair( evaluator, mcfi_id ) );
@@ -330,7 +330,7 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation(
 
 	/// Initialize the target_geomcst_coords_ object;
 	target_downstream_coords_ = utility::pointer::make_shared< TargetRotamerCoords >();
-	Size n_target_restypes = 1;
+	core::Size n_target_restypes = 1;
 	target_downstream_coords_->set_num_restypes( n_target_restypes );
 	target_downstream_coords_->set_restype( n_target_restypes, downstream_restype_ );
 
@@ -371,7 +371,7 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation(
 	if ( any_evaluators_require_all_coords ) {
 		std::fill( atom_required.begin(), atom_required.end(), true );
 	} else {
-		for ( Size ii = 1; ii <= downstream_restype_->natoms(); ++ii ) {
+		for ( core::Size ii = 1; ii <= downstream_restype_->natoms(); ++ii ) {
 
 			for ( std::list< SecondaryMatcherToDownstreamResidueOP >::const_iterator
 					secmatch_iter = secmatchers.begin(), secmatch_iter_end = secmatchers.end();
@@ -392,7 +392,7 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation(
 	}
 
 	target_downstream_coords_->set_required_atoms( 1, atom_required );
-	for ( Size ii = 1; ii <= downstream_restype_->natoms(); ++ii ) {
+	for ( core::Size ii = 1; ii <= downstream_restype_->natoms(); ++ii ) {
 		if ( atom_required[ ii ] ) downstream_atom_coordinates_needed_.push_back( core::id::AtomID( ii, 1 ) );
 	}
 
@@ -402,7 +402,7 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation(
 void
 SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_for_geomcst(
 	Matcher & matcher,
-	Size target_geomcst_id
+	core::Size target_geomcst_id
 )
 {
 	focused_geomcst_id_ = target_geomcst_id;
@@ -431,8 +431,8 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_for_geomcst(
 	toolbox::match_enzdes_util::LigandConformer lig_confs =  toolbox::match_enzdes_util::LigandConformer( * get_dsbuilder()->get_lig_conformers( 1 ) );
 	utility::vector1< core::id::AtomID > downstream_atoms_for_clash_checking;
 
-	for ( Size natoms_ds = 1; natoms_ds <= lig_confs.n_collision_check_atoms(); ++natoms_ds ) {
-		Size id = lig_confs.collision_check_id_2_restype_id( natoms_ds );
+	for ( core::Size natoms_ds = 1; natoms_ds <= lig_confs.n_collision_check_atoms(); ++natoms_ds ) {
+		core::Size id = lig_confs.collision_check_id_2_restype_id( natoms_ds );
 		if ( ! ds_atom_present(id) ) {
 			downstream_atoms_for_clash_checking.push_back( core::id::AtomID(id,1) );
 		}
@@ -444,9 +444,9 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_for_geomcst(
 
 bool
 SecondaryMatcherToDownstreamResidue::ds_atom_present(
-	Size index
+	core::Size index
 ) const {
-	for ( Size ii = 1; ii <= downstream_atom_coordinates_needed_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= downstream_atom_coordinates_needed_.size(); ++ii ) {
 		if ( index == downstream_atom_coordinates_needed_[ii].atomno() ) return true;
 	}
 	return false;
@@ -455,14 +455,14 @@ SecondaryMatcherToDownstreamResidue::ds_atom_present(
 bool
 SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_at_target_build_point(
 	Matcher & /*matcher*/,
-	Size target_geomcst_id,
+	core::Size target_geomcst_id,
 	upstream::ScaffoldBuildPoint const & target_build_point
 )
 {
 	TR << "Preparing to examine geomcst-" << target_geomcst_id << "'s hits built from scaffold build point " << target_build_point.original_insertion_point() << std::endl;
 
 
-	Size target_build_id = target_build_point.index();
+	core::Size target_build_id = target_build_point.index();
 
 	/// Find the range of iterators that cover the hits for the upstream matcher
 	while ( hits_for_focused_geomcst_and_build_point_begin_ != hits_for_focused_geomcst_end_ ) {
@@ -474,7 +474,7 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_at_target_build_
 		++hits_for_focused_geomcst_and_build_point_begin_;
 	}
 	hits_for_focused_geomcst_and_build_point_end_ = hits_for_focused_geomcst_and_build_point_begin_;
-	Size count_target_hits( 0 );
+	core::Size count_target_hits( 0 );
 	while ( hits_for_focused_geomcst_and_build_point_end_ != hits_for_focused_geomcst_end_ ) {
 		if ( hits_for_focused_geomcst_and_build_point_end_->scaffold_build_id() != target_build_id ) {
 			break;
@@ -499,12 +499,12 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_at_target_build_
 	core::conformation::Residue dsrescoords( *downstream_restype_, false );
 	utility::vector1< core::Vector > coords( downstream_atom_coordinates_needed_.size() );
 
-	Size count_ds_hits( 0 );
+	core::Size count_ds_hits( 0 );
 	for ( auto iter = hits_for_focused_geomcst_and_build_point_begin_,
 			iter_end = hits_for_focused_geomcst_and_build_point_end_; iter != iter_end; ++iter ) {
 		++count_ds_hits;
 		get_dsbuilder()->coordinates_from_hit( *iter, downstream_atom_coordinates_needed_, coords );
-		for ( Size ii = 1; ii <= downstream_atom_coordinates_needed_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= downstream_atom_coordinates_needed_.size(); ++ii ) {
 			dsrescoords.set_xyz( downstream_atom_coordinates_needed_[ ii ].atomno(), coords[ ii ] );
 		}
 		target_downstream_coords_->set_coordinates_for_rotamer(

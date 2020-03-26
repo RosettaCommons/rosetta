@@ -43,7 +43,7 @@ namespace methods {
 
 
 ////////////////////////////////////////////////////////
-class GoapRsdType : public utility::pointer::ReferenceCount
+class GoapRsdType : public utility::VirtualBase
 {
 public:
 

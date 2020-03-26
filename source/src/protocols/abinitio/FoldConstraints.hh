@@ -49,7 +49,7 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
@@ -125,8 +125,8 @@ protected:
 	bool prepare_stage1( core::pose::Pose& pose ) override;
 	bool prepare_stage2( core::pose::Pose& pose ) override;
 	bool prepare_stage4( core::pose::Pose& pose ) override;
-	bool prepare_loop_in_stage3( core::pose::Pose &pose, Size loop_iteration, Size total_iterations ) override;
-	bool prepare_loop_in_stage4( core::pose::Pose &pose, Size loop_iteration, Size total_iterations ) override;
+	bool prepare_loop_in_stage3( core::pose::Pose &pose, core::Size loop_iteration, core::Size total_iterations ) override;
+	bool prepare_loop_in_stage4( core::pose::Pose &pose, core::Size loop_iteration, core::Size total_iterations ) override;
 
 	bool do_stage1_cycles( core::pose::Pose& pose ) override;
 	bool do_stage2_cycles( core::pose::Pose& pose ) override;
@@ -144,7 +144,7 @@ protected:
 
 	void min_trial( core::pose::Pose& pose );
 
-	virtual void set_max_seq_sep( core::pose::Pose& pose, Size setting );
+	virtual void set_max_seq_sep( core::pose::Pose& pose, core::Size setting );
 
 	core::Real max_seq_sep_fudge() const {
 		return max_seq_sep_fudge_;
@@ -168,7 +168,7 @@ protected:
 		return bIgnoreSequenceSeparation_;
 	}
 
-	Size total_res( core::pose::Pose const& pose ) const;
+	core::Size total_res( core::pose::Pose const& pose ) const;
 
 	void set_seq_sep_stage1 ( core::Real setting ) {
 		seq_sep_stage1_ = setting;
@@ -189,7 +189,7 @@ private:
 
 	bool bMinTrial_;
 	bool bIgnoreSequenceSeparation_;
-	Size run_;
+	core::Size run_;
 
 	core::Real max_seq_sep_fudge_;
 	core::Real seq_sep_stage1_;
@@ -202,10 +202,10 @@ private:
 	bool bSkipOnNoViolation_;
 
 	//just for screen output: how verbose should it be
-	Size show_viol_level_;
+	core::Size show_viol_level_;
 
 	//abolish run in stage2 if constraint threshold is violated -- '0' = inactive
-	Size constraint_threshold_;
+	core::Size constraint_threshold_;
 };
 
 

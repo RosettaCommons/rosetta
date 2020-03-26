@@ -49,7 +49,7 @@ namespace carbohydrates {
 // Standard methods ////////////////////////////////////////////////////////////
 // Standard constructor
 /// @param    <residue_type>: the ResidueType object containing this CarbohydrateInfo
-CarbohydrateInfo::CarbohydrateInfo( core::chemical::ResidueTypeCAP residue_type ) : utility::pointer::ReferenceCount()
+CarbohydrateInfo::CarbohydrateInfo( core::chemical::ResidueTypeCAP residue_type ) : utility::VirtualBase()
 {
 	init( residue_type );
 }
@@ -57,7 +57,7 @@ CarbohydrateInfo::CarbohydrateInfo( core::chemical::ResidueTypeCAP residue_type 
 // "Copy constructor"
 CarbohydrateInfo::CarbohydrateInfo( CarbohydrateInfo const & object_to_copy,
 	core::chemical::ResidueTypeCAP new_owner ) :
-	utility::pointer::ReferenceCount( object_to_copy )
+	utility::VirtualBase( object_to_copy )
 {
 	residue_type_ = new_owner;
 	copy_data( *this, object_to_copy );
@@ -259,7 +259,7 @@ CarbohydrateInfo::is_uronic_acid() const {
 
 // Private methods /////////////////////////////////////////////////////////////
 // Empty constructor
-CarbohydrateInfo::CarbohydrateInfo() : utility::pointer::ReferenceCount()
+CarbohydrateInfo::CarbohydrateInfo() : utility::VirtualBase()
 {
 	init( core::chemical::ResidueTypeCAP() );
 }

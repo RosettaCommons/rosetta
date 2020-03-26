@@ -62,13 +62,13 @@ enum Enum {
 
 
 /// @brief tracks modifications to be made and is capable of making residue length changes on a Pose
-class BuildInstruction : public utility::pointer::ReferenceCount {
+class BuildInstruction : public utility::VirtualBase {
 
 
 private: // typedefs
 
 
-	typedef utility::pointer::ReferenceCount Super;
+	typedef utility::VirtualBase Super;
 
 
 public: // typedefs
@@ -87,7 +87,7 @@ public: // typedefs
 
 	typedef utility::signals::Link Link;
 
-	typedef std::set< Size > Positions;
+	typedef std::set< core::Size > Positions;
 	typedef std::string String;
 
 
@@ -239,7 +239,7 @@ public: // accessors
 
 	/// @brief the number of dependencies this BuildInstruction has
 	inline
-	Size n_dependencies() const {
+	core::Size n_dependencies() const {
 		return dependencies_.size();
 	}
 

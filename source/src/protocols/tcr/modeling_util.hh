@@ -19,7 +19,7 @@
 #include <protocols/tcr/TCRloopRefine.hh>
 #include <protocols/tcr/TCRseqInfo.fwd.hh>
 #include <protocols/tcr/util.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/loops/loops_main.hh>
 

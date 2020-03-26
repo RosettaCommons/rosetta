@@ -112,7 +112,7 @@ void LoopMover::set_movemap(
 
 	for ( LoopsConsIt it = LoopsToPerturb.begin(), it_end = LoopsToPerturb.end();
 			it != it_end; ++it ) {
-		for ( Size i = it->loop_begin(); i <= it->loop_end(); ++i ) {
+		for ( core::Size i = it->loop_begin(); i <= it->loop_end(); ++i ) {
 			movemap_->set_bb(i, true);
 			movemap_->set(TorsionID(i,BB,3), false); // omega is fixed
 			movemap_->set_chi(i, true); // chi of loop residues
@@ -135,7 +135,7 @@ void LoopMover::set_movemap(
 	movemap_one_loop->set_chi( false );
 	movemap_one_loop->set_jump( false );
 
-	for ( Size i = ThisLoop.loop_begin(); i <= ThisLoop.loop_end(); ++i ) {
+	for ( core::Size i = ThisLoop.loop_begin(); i <= ThisLoop.loop_end(); ++i ) {
 		movemap_one_loop->set_bb(i, true);
 		movemap_one_loop->set(TorsionID(i,BB,3), false); // omega is fixed
 		movemap_one_loop->set_chi(i, true); // chi of loop residues
@@ -152,10 +152,10 @@ void LoopMover::set_one_loop_fold_tree(
 	using namespace kinematics;
 
 	FoldTree f;
-	Size nres( pose.size() );
-	Size loop_begin( ThisLoop.loop_begin() );
-	Size loop_end( ThisLoop.loop_end() );
-	Size cutpoint( ThisLoop.cutpoint() );
+	core::Size nres( pose.size() );
+	core::Size loop_begin( ThisLoop.loop_begin() );
+	core::Size loop_end( ThisLoop.loop_end() );
+	core::Size cutpoint( ThisLoop.cutpoint() );
 	f.clear();
 	if ( loop_begin == 1 || loop_end == nres ) {
 		f.add_edge( 1, nres, Edge::PEPTIDE ); //simple fold tree
@@ -185,20 +185,20 @@ void LoopMover::set_loops_fold_tree(
 	using namespace kinematics;
 	TR << "Do nothing yet !" << "\n";
 	FoldTree f;
-	Size const total_residue( pose.size() );
+	core::Size const total_residue( pose.size() );
 	Loops tmp_loops = LoopsToPerturb;
-	Size jump_num = 0;
+	core::Size jump_num = 0;
 
 
 	for ( LoopsConsIt it = LoopsToPerturb.begin(), it_end = LoopsToPerturb.end(), it_next; it != it_end; ++it ) {
 		it_next = it;
 		it_next++;
-		Size const jump_start =
+		core::Size const jump_start =
 			( it->loop_begin() == 1 ) ? it->loop_begin() : it->loop_begin() - 1;
-		Size const jump_stop  =
+		core::Size const jump_stop  =
 			( it->loop_end() == total_residue ) ? it->loop_end() : it->loop_end() + 1;
-		Size const jump_cut   = it->cutpoint();
-		Size const jump_next_start =
+		core::Size const jump_cut   = it->cutpoint();
+		core::Size const jump_next_start =
 			( it_next == it_end ) ? total_residue : it_next->loop_begin()-1;
 		if (  it->loop_begin() == 1 ) {
 			f.add_edge( jump_start, jump_stop, Edge::PEPTIDE );
@@ -215,13 +215,13 @@ void LoopMover::set_loops_fold_tree(
 		f.add_edge( jump_stop, jump_next_start, Edge::PEPTIDE );
 	}
 
-	Size const first_start =
+	core::Size const first_start =
 		( tmp_loops.begin()->loop_begin() == 1 ) ? tmp_loops.begin()->loop_begin() : tmp_loops.begin()->loop_begin() - 1;
 	// if ( first_start != 1 )
 	f.add_edge( 1, first_start, Edge::PEPTIDE );
 
 	// reorder
-	Size root;
+	core::Size root;
 	if ( tmp_loops.begin()->loop_begin() == 1 &&
 			tmp_loops.begin()->loop_end() != total_residue ) {
 		root = tmp_loops.begin()->loop_end()+1;
@@ -278,7 +278,7 @@ void LoopRefiner::apply_mod( core::pose::Pose & pose )
 
 	Real init_temp( 2.0 );
 	Real final_temp( 1.0 );
-	Size cycles( 10 );
+	core::Size cycles( 10 );
 
 
 	movemap_ = new core::kinematics::MoveMap();
@@ -327,7 +327,7 @@ void LoopRefiner::apply( core::pose::Pose & pose )
 	//parameters - move to private data later
 	Real init_temp( 2.0 );
 	Real final_temp( 1.0 );
-	Size cycles( 10 );
+	core::Size cycles( 10 );
 	std::string min_type( "linmin" );
 	Real const tolerance( 0.001 );
 	bool const nblist( true );

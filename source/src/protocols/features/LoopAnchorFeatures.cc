@@ -186,8 +186,8 @@ LoopAnchorFeatures::parse_my_tag(
 	protocols::moves::Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
-	min_loop_length_ = tag->getOption<Size>("min_loop_length", 5);
-	max_loop_length_ = tag->getOption<Size>("max_loop_length", 30);
+	min_loop_length_ = tag->getOption<core::Size>("min_loop_length", 5);
+	max_loop_length_ = tag->getOption<core::Size>("max_loop_length", 30);
 
 	set_use_relevant_residues_as_loop_length( tag->getOption<bool>("use_relevant_residues_as_loop_length", false) );
 
@@ -222,12 +222,12 @@ LoopAnchorFeatures::report_features(
 	auto chain_ending(pose.conformation().chain_endings().begin());
 	auto chain_ending_end(pose.conformation().chain_endings().end());
 
-	Size local_min_loop_length = min_loop_length( relevant_residues );
-	Size local_max_loop_length = max_loop_length( relevant_residues );
+	core::Size local_min_loop_length = min_loop_length( relevant_residues );
+	core::Size local_max_loop_length = max_loop_length( relevant_residues );
 
 	for ( SSize begin=1; begin <= SSize( pose.size() - local_min_loop_length ); ++begin ) {
 		// check if end+1 is a chain ending or the last residue because we will use end+1 to calculate a pseudodihedral
-		for ( Size end=begin;
+		for ( core::Size end=begin;
 				(end <= begin + local_max_loop_length && end + 1 <= pose.size());
 				++end ) {
 
@@ -280,10 +280,10 @@ Size LoopAnchorFeatures::max_loop_length( vector1< bool > const & relevant_resid
 	return determine_correct_length( relevant_residues, max_loop_length_ );
 }
 
-Size LoopAnchorFeatures::determine_correct_length( vector1< bool > const & relevant_residue, Size default_length ) const
+Size LoopAnchorFeatures::determine_correct_length( vector1< bool > const & relevant_residue, core::Size default_length ) const
 {
 	if ( use_relevant_residues_as_loop_length_ ) {
-		Size number_of_residues = 0;
+		core::Size number_of_residues = 0;
 		for ( auto it : relevant_residue ) {
 			if ( it ) ++number_of_residues;
 		}
@@ -301,8 +301,8 @@ LoopAnchorFeatures::frame_for_residue(core::conformation::Residue const & residu
 HomogeneousTransform<Real> const
 LoopAnchorFeatures::compute_anchor_transform(
 	Pose const & pose,
-	Size const residue_begin,
-	Size const residue_end) const
+	core::Size const residue_begin,
+	core::Size const residue_end) const
 {
 	HomogeneousTransform<Real> take_off_frame = frame_for_residue(pose.residue(residue_begin));
 	HomogeneousTransform<Real> landing_frame = frame_for_residue(pose.residue(residue_end));
@@ -316,8 +316,8 @@ LoopAnchorFeatures::compute_anchor_transform(
 void
 LoopAnchorFeatures::compute_transform_and_write_to_db(
 	StructureID struct_id,
-	Size begin,
-	Size end,
+	core::Size begin,
+	core::Size end,
 	Pose const & pose,
 	statement & stmt) const {
 

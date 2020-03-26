@@ -19,14 +19,14 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace apps {
 namespace pilot {
 namespace frankdt {
 
 ///@brief concatenates poses together end-to-end while transforming them to avoid chainbreaks
-class steric_fusion_scan : public utility::pointer::ReferenceCount {
+class steric_fusion_scan : public utility::VirtualBase {
 
 public:
 

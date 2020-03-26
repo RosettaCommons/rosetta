@@ -22,7 +22,7 @@
 #include <numeric/kdtree/KDPoint.fwd.hh>
 
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef PYROSETTA
 #include <numeric/kdtree/KDTree.hh>
@@ -32,7 +32,7 @@
 namespace numeric {
 namespace kdtree {
 
-class KDNode : public utility::pointer::ReferenceCount {
+class KDNode : public utility::VirtualBase {
 
 public:
 	/// @brief Constructor for a KDNode. Takes a const-refence
@@ -59,7 +59,7 @@ public:
 	/// @brief Returns the location of this node in k-space.
 	utility::vector1< numeric::Real > location() const;
 
-	utility::pointer::ReferenceCountOP data() const;
+	utility::VirtualBaseOP data() const;
 
 	/// @brief Returns the dimension along which this node splits points.
 	numeric::Size split_axis() const;

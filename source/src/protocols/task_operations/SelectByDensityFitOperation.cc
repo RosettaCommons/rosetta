@@ -117,7 +117,7 @@ SelectByDensityFitOperation::apply( core::pose::Pose const & const_pose, core::p
 	scorefxn->set_weight( core::scoring::elec_dens_window, 1.0 );
 	(*scorefxn)(pose);
 
-	for ( Size r=1; r<=nres; ++r ) {
+	for ( core::Size r=1; r<=nres; ++r ) {
 		if ( task.nonconst_residue_task(r).being_designed() || task.nonconst_residue_task(r).being_packed() ) {
 			Real score = core::scoring::electron_density::getDensityMap().matchRes( r , pose.residue(r), pose, nullptr , false);
 			TR.Debug << pose.pdb_info()->name() << " residue: " << r << " density_score: " << score << std::endl;

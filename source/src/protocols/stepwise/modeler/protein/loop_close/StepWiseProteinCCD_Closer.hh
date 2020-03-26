@@ -61,7 +61,7 @@ public:
 	set_ccd_close_res( core::Size const value ){ ccd_close_res_ = value;}
 
 	void
-	set_working_moving_res_list( utility::vector1< Size > const & setting ){ moving_residues_ = setting; }
+	set_working_moving_res_list( utility::vector1< core::Size > const & setting ){ moving_residues_ = setting; }
 
 	utility::vector1< core::Real >
 	grab_main_chain_torsion_set_list( core::pose::Pose const & pose );
@@ -105,18 +105,18 @@ private:
 	void
 	fix_jump_atoms_at_loop_boundaries( core::pose::Pose & pose );
 
-	Size
+	core::Size
 	check_for_unique_cutpoint_flanked_by_bridge_res( core::pose::Pose const & pose );
 
-	Size
+	core::Size
 	check_for_unique_cutpoint( core::pose::Pose const & pose );
 
 private:
 
 	loops::loop_closure::ccd::CCDLoopClosureMoverOP ccd_loop_closure_mover_;
 
-	utility::vector1< Size > working_bridge_res_;
-	utility::vector1< Size > moving_residues_;
+	utility::vector1< core::Size > working_bridge_res_;
+	utility::vector1< core::Size > moving_residues_;
 	utility::vector1< bool > is_pre_proline_;
 	core::Size ccd_close_res_;
 
@@ -129,7 +129,7 @@ private:
 	utility::vector1< core::Real > main_chain_torsion_set_save_;
 
 	bool closed_loop_;
-	Size ntries_;
+	core::Size ntries_;
 };
 
 } //loop_close

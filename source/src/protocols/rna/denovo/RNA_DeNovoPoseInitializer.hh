@@ -20,7 +20,7 @@
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/import_pose/libraries/RNA_ChunkLibrary.fwd.hh>
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 // ObjexxFCL Headers
 
 // C++ Headers
@@ -38,7 +38,7 @@ namespace denovo {
 //////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Object used in RNA_FragmentMonteCarlo to handle setup of pose & fold-tree, and
 ///   jump changes.
-class RNA_DeNovoPoseInitializer : public utility::pointer::ReferenceCount {
+class RNA_DeNovoPoseInitializer : public utility::VirtualBase {
 public:
 
 	//constructor
@@ -72,7 +72,7 @@ public:
 	set_dock_each_chunk_per_chain( bool const & setting ){ dock_each_chunk_per_chain_ = setting; }
 
 	void
-	set_dock_chunks_res( utility::vector1< Size > const & dock_chunks_res ){ dock_chunks_res_ = dock_chunks_res; }
+	set_dock_chunks_res( utility::vector1< core::Size > const & dock_chunks_res ){ dock_chunks_res_ = dock_chunks_res; }
 
 	void
 	set_center_jumps_in_single_stranded( bool const & setting ){ center_jumps_in_single_stranded_ = setting; }
@@ -150,7 +150,7 @@ private:
 	bool root_at_first_rigid_body_;
 	bool dock_each_chunk_;
 	bool dock_each_chunk_per_chain_;
-	utility::vector1< Size > dock_chunks_res_;
+	utility::vector1< core::Size > dock_chunks_res_;
 	bool center_jumps_in_single_stranded_;
 	bool new_fold_tree_initializer_;
 	bool model_with_density_;

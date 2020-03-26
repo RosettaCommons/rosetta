@@ -23,7 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 
 //C++ headers
@@ -41,7 +41,7 @@ namespace jd2 {
 /// @details The JobsContainer class contains a list of JobsOPs.
 /// It permits the list to be versatile -- for example, if one wishes
 /// to load only a subset of jobs into memory at any given time.
-class JobsContainer : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< JobsContainer >
+class JobsContainer : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< JobsContainer >
 {
 public:
 

@@ -69,19 +69,19 @@ void
 find_sampling_cuts(
 	kinematics::FoldTree const& sampling,
 	kinematics::FoldTree const& final,
-	utility::vector1< Size >& sample_cuts )
+	utility::vector1< core::Size >& sample_cuts )
 {
 	sample_cuts.clear();
-	for ( Size i = 1; i <= (Size) sampling.num_cutpoint(); i++ ) {
+	for ( core::Size i = 1; i <= (core::Size) sampling.num_cutpoint(); i++ ) {
 		if ( !final.is_cutpoint( sampling.cutpoint( i ) ) ) sample_cuts.push_back( sampling.cutpoint( i ));
 	}
 }
 
 void
 KinematicControl::add_chainbreak_variants( pose::Pose &pose ) const {
-	utility::vector1< Size > sample_cuts;
+	utility::vector1< core::Size > sample_cuts;
 	find_sampling_cuts( pose.fold_tree(), final_fold_tree(), sample_cuts );
-	for ( utility::vector1< Size >::const_iterator it = sample_cuts.begin(), eit = sample_cuts.end();
+	for ( utility::vector1< core::Size >::const_iterator it = sample_cuts.begin(), eit = sample_cuts.end();
 			it != eit; ++ it ) {
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, *it );
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, *it+1 );
@@ -89,11 +89,11 @@ KinematicControl::add_chainbreak_variants( pose::Pose &pose ) const {
 }
 
 void
-KinematicControl::add_chainbreak_variants( pose::Pose &pose, Size max_dist, core::kinematics::ShortestPathInFoldTree const& sp) const {
+KinematicControl::add_chainbreak_variants( pose::Pose &pose, core::Size max_dist, core::kinematics::ShortestPathInFoldTree const& sp) const {
 	//remove_chainbreaks( pose ); not necessary if max_dist is monotonoically increaseing
-	utility::vector1< Size > sample_cuts;
+	utility::vector1< core::Size > sample_cuts;
 	find_sampling_cuts( pose.fold_tree(), final_fold_tree(), sample_cuts );
-	for ( utility::vector1< Size >::const_iterator it = sample_cuts.begin(), eit = sample_cuts.end();
+	for ( utility::vector1< core::Size >::const_iterator it = sample_cuts.begin(), eit = sample_cuts.end();
 			it != eit; ++ it ) {
 		if ( sp.dist( *it, *it+1 ) <= max_dist ) {
 			tr.Debug << "add chainbreak variant to residues " << *it << " and " << *it+1 << std::endl;

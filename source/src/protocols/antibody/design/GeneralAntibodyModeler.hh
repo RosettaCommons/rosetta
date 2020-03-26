@@ -34,7 +34,7 @@
 
 #include <utility/vector1.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace antibody {
@@ -43,7 +43,7 @@ namespace design {
 
 /// @brief Basic Class that can run modeling for various protocols.
 /// Does not do any design.  Setup design TF via AntibodySeqDesignTFCreator.
-class GeneralAntibodyModeler : public utility::pointer::ReferenceCount {
+class GeneralAntibodyModeler : public utility::VirtualBase {
 
 public:
 	GeneralAntibodyModeler(AntibodyInfoOP ab_info);

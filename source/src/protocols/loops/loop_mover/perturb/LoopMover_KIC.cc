@@ -198,8 +198,8 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		native_pose = pose;
 	}
 
-	Size const loop_begin( loop.start() ), loop_end( loop.stop() ), loop_cut( loop.cut() );
-	Size const loop_size( loop_end - loop_begin + 1 );
+	core::Size const loop_begin( loop.start() ), loop_end( loop.stop() ), loop_cut( loop.cut() );
+	core::Size const loop_size( loop_end - loop_begin + 1 );
 	runtime_assert( loop.is_terminal( pose ) || pose.fold_tree().is_cutpoint( loop_cut ) );
 	std::ofstream loop_outfile; // for movie
 
@@ -234,7 +234,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	if ( option[ OptionKeys::run::test_cycles ]() ) {
 		outer_cycles = 3;
 	}
-	int inner_cycles( fast ? std::min( Size(250), loop_size*5 ) : std::min( Size(1000), loop_size*20 ) );
+	int inner_cycles( fast ? std::min( core::Size(250), loop_size*5 ) : std::min( core::Size(1000), loop_size*20 ) );
 	if ( option[ OptionKeys::loops::max_inner_cycles ].user() ) {
 		inner_cycles = option[ OptionKeys::loops::max_inner_cycles ]();
 	}
@@ -382,10 +382,10 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	myKinematicMover.update_sequence( loop_sequence ); // should only have an effect on the TabooSamplingKinematicPerturber
 
 
-	Size kic_start, kic_middle, kic_end; // three pivot residues for kinematic loop closure
+	core::Size kic_start, kic_middle, kic_end; // three pivot residues for kinematic loop closure
 	kic_start = loop_begin;
 	kic_end = loop_end;
-	Size middle_offset = (kic_end - kic_start) / 2; // need to ensure this isn't a proline
+	core::Size middle_offset = (kic_end - kic_start) / 2; // need to ensure this isn't a proline
 	kic_middle = kic_start + middle_offset;
 	tr() << "kinematic initial perturb with start_res: "  << kic_start << "  middle res: " << kic_middle << "  end_res: "
 		<< kic_end << std::endl;
@@ -463,8 +463,8 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 			right_string_of(cur_struct,4,'0') + ".pdb";
 		loop_outfile.open(outname.c_str(), std::ios::out | std::ios::binary);
 		loop_outfile << "MODEL" << std::endl;
-		utility::vector1<Size> indices(loop_end - loop_begin + 3);
-		for ( Size i=loop_begin-1, j=1; i<=loop_end+1; i++, j++ ) {
+		utility::vector1<core::Size> indices(loop_end - loop_begin + 3);
+		for ( core::Size i=loop_begin-1, j=1; i<=loop_end+1; i++, j++ ) {
 			indices[j]=i;
 		}
 		//pose.dump_pdb(loop_outfile, indices, "init_perturb"); JAB - tag never used.
@@ -511,13 +511,13 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 						kic_start = numeric::random::rg().random_range(loop_begin,loop_end-2);
 						// choose a random end residue so the length is >= 3, <= min(loop_end, start+maxlen)
 						kic_end = numeric::random::rg().random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), loop_end));
-						Size const mid_offset = (kic_end - kic_start) / 2;
+						core::Size const mid_offset = (kic_end - kic_start) / 2;
 						kic_middle = kic_start + mid_offset;
 					} else {
 						//tr() << " -- selection starting from the end of the loop -- " << std::endl;
 						kic_end = numeric::random::rg().random_range(loop_begin+2,loop_end);
 						kic_start = numeric::random::rg().random_range(std::max((kic_end - std::min(max_seglen_, kic_end) + 1), loop_begin), kic_end-2);
-						Size const mid_offset = (kic_end - kic_start) / 2;
+						core::Size const mid_offset = (kic_end - kic_start) / 2;
 						kic_middle = kic_start + mid_offset;
 					}
 				}
@@ -550,8 +550,8 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 					tr() << "new centroid perturb rmsd: " << loop_rmsd( pose, native_pose, one_loop_loops ) << std::endl;
 					if ( local_movie ) {
 						loop_outfile << "MODEL" << std::endl;
-						utility::vector1<Size> indices(loop_end - loop_begin + 3);
-						for ( Size k=loop_begin-1, l=1; k<=loop_end+1; ++k, ++l ) {
+						utility::vector1<core::Size> indices(loop_end - loop_begin + 3);
+						for ( core::Size k=loop_begin-1, l=1; k<=loop_end+1; ++k, ++l ) {
 							indices[l]=k;
 						}
 						//pose.dump_pdb(loop_outfile, indices, "init_perturb"); //JAB - tag never used.
@@ -577,11 +577,11 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	}
 	if ( local_movie ) {
 		// this assumes there is only one loop.
-		Size begin_loop=loop.start();
-		Size end_loop=loop.stop();
+		core::Size begin_loop=loop.start();
+		core::Size end_loop=loop.stop();
 		loop_outfile << "MODEL" << std::endl;
-		utility::vector1<Size> indices(end_loop - begin_loop + 3);
-		for ( Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
+		utility::vector1<core::Size> indices(end_loop - begin_loop + 3);
+		for ( core::Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
 			indices[j]=i;
 		}
 		//pose.dump_pdb(loop_outfile, indices, "final_perturb"); //JAB -tag never used

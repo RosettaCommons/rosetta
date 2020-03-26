@@ -24,7 +24,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -32,7 +32,7 @@ namespace antibody {
 
 
 /// @brief Parses CDRSetOptions for a single CDR at a time from a simple instruction file
-class CDRSetOptionsParser : public utility::pointer::ReferenceCount {
+class CDRSetOptionsParser : public utility::VirtualBase {
 public:
 
 	CDRSetOptionsParser();

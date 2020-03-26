@@ -20,7 +20,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <basic/MetricValue.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ Headers
@@ -50,7 +50,7 @@ namespace metrics {
 //   "print" (return the value of a piece of cached data as a string)
 // Note: Derived classes should NOT redefine "get"
 
-class PoseMetricCalculator : public utility::pointer::ReferenceCount {
+class PoseMetricCalculator : public utility::VirtualBase {
 public:
 
 	PoseMetricCalculator() {};

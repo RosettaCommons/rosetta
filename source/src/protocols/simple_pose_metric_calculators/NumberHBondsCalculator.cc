@@ -121,20 +121,20 @@ NumberHBondsCalculator::lookup(
 {
 
 	if ( key == "all_Hbonds" ) {
-		basic::check_cast( valptr, &all_Hbonds_, "all_Hbonds expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( all_Hbonds_ );
+		basic::check_cast( valptr, &all_Hbonds_, "all_Hbonds expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( all_Hbonds_ );
 
 	} else if ( key == "special_region_Hbonds" ) {
-		basic::check_cast( valptr, &special_region_Hbonds_, "special_region_Hbonds expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( special_region_Hbonds_ );
+		basic::check_cast( valptr, &special_region_Hbonds_, "special_region_Hbonds expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( special_region_Hbonds_ );
 
 	} else if ( key == "atom_Hbonds" ) {
-		basic::check_cast( valptr, &atom_Hbonds_, "atom_Hbonds expects to return a id::AtomID_Map< Size >" );
-		(static_cast<basic::MetricValue<id::AtomID_Map< Size > > *>(valptr))->set( atom_Hbonds_ );
+		basic::check_cast( valptr, &atom_Hbonds_, "atom_Hbonds expects to return a id::AtomID_Map< core::Size >" );
+		(static_cast<basic::MetricValue<id::AtomID_Map< core::Size > > *>(valptr))->set( atom_Hbonds_ );
 
 	} else if ( key == "residue_Hbonds" ) {
-		basic::check_cast( valptr, &residue_Hbonds_, "residue_Hbonds expects to return a utility::vector1< Size >" );
-		(static_cast<basic::MetricValue<utility::vector1< Size > > *>(valptr))->set( residue_Hbonds_ );
+		basic::check_cast( valptr, &residue_Hbonds_, "residue_Hbonds expects to return a utility::vector1< core::Size >" );
+		(static_cast<basic::MetricValue<utility::vector1< core::Size > > *>(valptr))->set( residue_Hbonds_ );
 
 	} else {
 		basic::Error() << "NumberHbondsCalculator cannot compute the requested metric " << key << std::endl;
@@ -153,7 +153,7 @@ NumberHBondsCalculator::print( std::string const & key ) const
 	} else if ( key == "special_region_Hbonds" ) {
 		return utility::to_string( special_region_Hbonds_ );
 	} else if ( key == "atom_Hbonds" ) {
-		basic::Error() << "id::AtomID_Map< Size > has no output operator, for metric " << key << std::endl;
+		basic::Error() << "id::AtomID_Map< core::Size > has no output operator, for metric " << key << std::endl;
 		utility_exit();
 	} else if ( key == "residue_Hbonds" ) {
 		return utility::to_string( residue_Hbonds_ );
@@ -199,13 +199,13 @@ NumberHBondsCalculator::recompute( Pose const & this_pose )
 	runtime_assert( residue_Hbonds_.size() == res_to_recompute.size() );
 
 	//set the hbonds vector for all recompute residues to 0
-	for ( Size i = 1; i <= res_to_recompute.size(); ++i ) {
+	for ( core::Size i = 1; i <= res_to_recompute.size(); ++i ) {
 
 		if ( res_to_recompute[ i ] ) residue_Hbonds_[ i ] = 0;
 	}
 
 
-	for ( Size i = 1; i <= res_to_recompute.size(); ++i ) {
+	for ( core::Size i = 1; i <= res_to_recompute.size(); ++i ) {
 
 		compute_Hbonds_for_residue( this_pose, i, res_to_recompute, *hb_set );
 
@@ -217,13 +217,13 @@ NumberHBondsCalculator::recompute( Pose const & this_pose )
 
 
 	//now we have to setup the AtomID Map
-	for ( Size i = 1; i <= res_to_recompute.size(); ++i ) {
+	for ( core::Size i = 1; i <= res_to_recompute.size(); ++i ) {
 
 		if ( !res_to_recompute[i] ) continue;
 
 		conformation::Residue const & rsd = this_pose.residue( i );
 
-		for ( Size at = 1; at <= rsd.nheavyatoms(); ++at ) {
+		for ( core::Size at = 1; at <= rsd.nheavyatoms(); ++at ) {
 
 			core::id::AtomID atid( at, i );
 
@@ -233,9 +233,9 @@ NumberHBondsCalculator::recompute( Pose const & this_pose )
 			}
 
 			if ( rsd.atom_type( at ).is_acceptor() && rsd.atom_type( at ).is_donor() ) {
-				Size hbonds_this_donor(0);
+				core::Size hbonds_this_donor(0);
 				// count donated hbonds
-				for ( Size hcount = rsd.type().attached_H_begin( at ); hcount<= rsd.type().attached_H_end( at ); hcount++ ) {
+				for ( core::Size hcount = rsd.type().attached_H_begin( at ); hcount<= rsd.type().attached_H_end( at ); hcount++ ) {
 					hbonds_this_donor = hbonds_this_donor + hb_set->atom_hbonds( core::id::AtomID (hcount, i ), !use_generous_hbonds_ /* include_only_allowed */ ).size();
 					// sboyken added; want to store Hpol as +1 in atom map if makes an h-bond
 					//    the !use_generous_hbonds_ results in giving us all h-bonds, which we want for generous case
@@ -248,9 +248,9 @@ NumberHBondsCalculator::recompute( Pose const & this_pose )
 				// for each heavy atom acceptor, store number of h-bonds it participates in
 				atom_Hbonds_.set( atid, hb_set->atom_hbonds( atid, !use_generous_hbonds_ /* include_only_allowed */ ).size() );
 			} else if ( rsd.atom_type( at ).is_donor() ) {
-				Size hbonds_this_donor(0);
+				core::Size hbonds_this_donor(0);
 
-				for ( Size hcount = rsd.type().attached_H_begin( at ); hcount<= rsd.type().attached_H_end( at ); hcount++ ) {
+				for ( core::Size hcount = rsd.type().attached_H_begin( at ); hcount<= rsd.type().attached_H_end( at ); hcount++ ) {
 
 					hbonds_this_donor = hbonds_this_donor + hb_set->atom_hbonds( core::id::AtomID (hcount, i ), !use_generous_hbonds_ /* include_only_allowed */ ).size();
 					// sboyken added; want to store Hpol as +1 in atom map if makes an h-bond
@@ -298,7 +298,7 @@ NumberHBondsCalculator::determine_res_to_recompute(
 		atom_Hbonds_.resize( pose.size() );
 		residue_Hbonds_.resize( pose.size() );
 		ref_residue_total_energies_.resize( pose.size() );
-		for ( Size i = 1; i <= pose.size(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			res_to_recompute[ i ] = true;
 			ref_residue_total_energies_[i] = pose.energies().residue_total_energies(i)[ total_score ];
 		}
@@ -308,7 +308,7 @@ NumberHBondsCalculator::determine_res_to_recompute(
 
 
 	//check2: for each residue, check whether calculator cached residue energies have changed
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		if ( ref_residue_total_energies_[i] != pose.energies().residue_total_energies(i)[ total_score ] ) {
 
@@ -352,7 +352,7 @@ NumberHBondsCalculator::compute_Hbonds_for_residue(
 	for ( utility::graph::EdgeListConstIterator egraph_it = pose.energies().energy_graph().get_node( i )->const_upper_edge_list_begin();
 			egraph_it != pose.energies().energy_graph().get_node( i )->const_upper_edge_list_end(); ++egraph_it ) {
 
-		Size other_node = (*egraph_it)->get_other_ind( i );
+		core::Size other_node = (*egraph_it)->get_other_ind( i );
 
 		if ( (!res_to_recompute[i]) && !(res_to_recompute[other_node] ) ) continue;
 
@@ -361,7 +361,7 @@ NumberHBondsCalculator::compute_Hbonds_for_residue(
 		//if( sum_Hbond_terms( Eedge->energy_map() ) <= 100 ){ //hardcoded cutoff for now
 
 		//ok, we gotta compute the number of Hbonds between these two residues
-		Size prev_no_hb = hb_set.nhbonds();
+		core::Size prev_no_hb = hb_set.nhbonds();
 
 		conformation::Residue const & rsd2( pose.residue( other_node ) );
 
@@ -374,7 +374,7 @@ NumberHBondsCalculator::compute_Hbonds_for_residue(
 		hbonds::identify_hbonds_1way( *hb_database, rsd2, rsd1, nb2, nb1, false /*evaluate derivative*/,
 			false, false, false, false, hb_set);
 
-		Size num_hb_these_two_res = hb_set.nhbonds() - prev_no_hb;
+		core::Size num_hb_these_two_res = hb_set.nhbonds() - prev_no_hb;
 
 		if ( res_to_recompute[i] ) residue_Hbonds_[ i ] += num_hb_these_two_res;
 		if ( res_to_recompute[ other_node ] ) residue_Hbonds_[ other_node ] += num_hb_these_two_res;

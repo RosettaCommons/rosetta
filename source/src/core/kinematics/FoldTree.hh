@@ -29,7 +29,7 @@
 
 // utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // External Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -67,10 +67,10 @@ namespace kinematics {
 ///     FoldTree.num_jump
 ///     FoldTree.simple_tree
 ///     Foldtree.size
-class FoldTree : public utility::pointer::ReferenceCount
+class FoldTree : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~FoldTree() override;
 	// types
 	typedef std::vector< Edge > EdgeList;
@@ -79,7 +79,7 @@ public:
 
 	/// @brief constructor
 	FoldTree():
-		ReferenceCount(),
+		VirtualBase(),
 		new_topology (true), // new_topology == true ==> new_order == true
 		new_order(true),
 		nres_(0),
@@ -94,7 +94,7 @@ public:
 	///
 	/// int  nres_in   /the number of residues in this simple tree
 	FoldTree( int const nres_in ):
-		ReferenceCount(),
+		VirtualBase(),
 		new_topology (true), // new_topology == true ==> new_order == true
 		new_order(true),
 		nres_(0),

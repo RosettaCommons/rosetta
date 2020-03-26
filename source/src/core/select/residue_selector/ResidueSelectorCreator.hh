@@ -18,7 +18,7 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
@@ -28,7 +28,7 @@ namespace core {
 namespace select {
 namespace residue_selector {
 
-class ResidueSelectorCreator : public utility::pointer::ReferenceCount {
+class ResidueSelectorCreator : public utility::VirtualBase {
 public:
 	/// @brief Instantiate a particular ResidueSelector
 	virtual ResidueSelectorOP create_residue_selector() const = 0;

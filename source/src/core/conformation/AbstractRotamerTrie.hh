@@ -20,7 +20,7 @@
 #include <core/conformation/AbstractRotamerTrie.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -30,7 +30,7 @@
 namespace core {
 namespace conformation {
 
-class AbstractRotamerTrie : public utility::pointer::ReferenceCount
+class AbstractRotamerTrie : public utility::VirtualBase
 {
 public:
 	~AbstractRotamerTrie() override = default;

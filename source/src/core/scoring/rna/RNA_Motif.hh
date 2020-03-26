@@ -15,7 +15,7 @@
 #ifndef INCLUDED_core_scoring_rna_RNA_MotifFinder_HH
 #define INCLUDED_core_scoring_rna_RNA_MotifFinder_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/scoring/rna/RNA_Motif.fwd.hh>
 
 #include <core/chemical/rna/util.hh>
@@ -148,7 +148,7 @@ to_string( RNA_MotifType type ) {
 
 
 // @brief RNA_Motif has a type (e.g., U_TURN) and residues (in pose numbering).
-class RNA_Motif: public utility::pointer::ReferenceCount {
+class RNA_Motif: public utility::VirtualBase {
 
 public:
 
@@ -206,7 +206,7 @@ bool operator < ( RNA_Motif const & lhs, RNA_Motif const & rhs )
 }
 
 // @brief Collection of RNA motifs. get_motifs() can get sub-list of just particular type.
-class RNA_Motifs: public utility::pointer::ReferenceCount {
+class RNA_Motifs: public utility::VirtualBase {
 
 public:
 

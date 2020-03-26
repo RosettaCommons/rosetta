@@ -71,7 +71,7 @@ static basic::Tracer TR( "protocols.generalized_kinematic_closure.perturber.Gene
 
 /// @brief Creator for GeneralizedKICperturber.
 GeneralizedKICperturber::GeneralizedKICperturber():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	bbgmover_(),
 	bin_transition_calculator_(),
 	effect_(no_effect),
@@ -88,7 +88,7 @@ GeneralizedKICperturber::GeneralizedKICperturber():
 /// @brief Copy constructor for GeneralizedKICperturber.
 ///
 GeneralizedKICperturber::GeneralizedKICperturber( GeneralizedKICperturber const &src ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	bbgmover_( ), //Cloned later
 	bin_transition_calculator_( ), //Cloned later
 	effect_(src.effect_),
@@ -491,15 +491,15 @@ void GeneralizedKICperturber::init_bbgmover(
 	if ( !bbgmover_ ) {
 		bbgmover_ = utility::pointer::make_shared< simple_moves::BBGaussianMover >();
 
-		Size looplength = loop_pose.size();
+		core::Size looplength = loop_pose.size();
 		//reset movemap, default is empty (no move)
 		//the first(0) and the last(N-1) res are anchors
 		//1 and N-2 res are pivots
 		//all controled by residue list
 		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 
-		for ( Size i=1, imax=residues_.size(); i<=imax; i++ ) {
-			for ( Size j=1, jmax=residue_map.size(); j<=jmax; j++ ) {
+		for ( core::Size i=1, imax=residues_.size(); i<=imax; i++ ) {
+			for ( core::Size j=1, jmax=residue_map.size(); j<=jmax; j++ ) {
 				//std::cout << residue_map[j].first << "<-->" << residue_map[j].second << std::endl;
 				if ( residue_map[j].second == residues_[i] ) {
 					mm->set_bb(residue_map[j].first, true);

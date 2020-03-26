@@ -153,12 +153,12 @@ ResidueBurialFeatures::report_features(
 	std::string statement_string = "INSERT INTO residue_burial (struct_id, resNum, ten_a_neighbors, twelve_a_neighbors, neigh_vect_raw, sasa_r100, sasa_r140, sasa_r200) VALUES (?,?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for ( Size resNum=1; resNum <= pose.size(); ++resNum ) {
+	for ( core::Size resNum=1; resNum <= pose.size(); ++resNum ) {
 		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 		Residue const & res = pose.residue(resNum);
 
-		Size const ten_a_neighbors(tenA.get_node(resNum)->num_neighbors_counting_self_static());
-		Size const twelve_a_neighbors(twelveA.get_node(resNum)->num_neighbors_counting_self_static());
+		core::Size const ten_a_neighbors(tenA.get_node(resNum)->num_neighbors_counting_self_static());
+		core::Size const twelve_a_neighbors(twelveA.get_node(resNum)->num_neighbors_counting_self_static());
 
 		EnergyMap nv_emap;
 		nv_score_->residue_energy(res, pose, nv_emap);

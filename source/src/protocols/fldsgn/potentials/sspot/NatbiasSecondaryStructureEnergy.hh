@@ -138,7 +138,7 @@ public:
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 	/// @brief
-	Size version() const override;
+	core::Size version() const override;
 
 private:
 

@@ -25,7 +25,7 @@
 
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Numeric headers
 
@@ -88,7 +88,7 @@ struct ResPred : std::binary_function< core::conformation::ResidueCOP, core::con
 
 /// @details  class ResHashMap holds a hashmap of rotamers
 /// @remarks
-class ResHashMap : public utility::pointer::ReferenceCount {
+class ResHashMap : public utility::VirtualBase {
 public:
 
 	typedef core::SSize RotamerIndex;

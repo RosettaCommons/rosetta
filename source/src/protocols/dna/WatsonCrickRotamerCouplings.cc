@@ -93,17 +93,17 @@ WatsonCrickRotamerCouplings::apply(
 	// find DNA chains
 	DnaChains dna_chains;
 	find_basepairs( pose, dna_chains );
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	// setup residue couplings
 	RotamerCouplingsOP couplings( new RotamerCouplings );
 	couplings->resize( nres );
 	for ( DnaPositions::const_iterator it( dna_chains.begin() ); it != dna_chains.end(); ++it ) {
 		//mjo commenting out 'resid' because it is unused and causes a warning
-		//Size const resid( it->first );
+		//core::Size const resid( it->first );
 		DnaPosition const & dnapos( it->second );
 		if ( ! dnapos.paired() ) continue;
-		Size top( dnapos.top() );
-		Size bot( dnapos.bottom() );
+		core::Size top( dnapos.top() );
+		core::Size bot( dnapos.bottom() );
 		TR << "base pair " << pose.pdb_info()->chain(top) << "." << pose.pdb_info()->number(top) << "."
 			<< dna_full_name3( pose.residue_type(top).name3() ) << " - " << pose.pdb_info()->chain(bot)
 			<< "." << pose.pdb_info()->number(bot) << "." << dna_full_name3( pose.residue_type(bot).name3() )

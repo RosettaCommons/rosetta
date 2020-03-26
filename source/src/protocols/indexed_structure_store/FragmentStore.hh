@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_indexed_structure_store_FragmentStore_hh
 
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <numeric/xyzVector.fwd.hh>
@@ -59,7 +59,7 @@ struct FragmentSpecification
 	friend std::ostream& operator<<(std::ostream& os, const FragmentSpecification& s);
 };
 
-class FragmentStore : public utility::pointer::ReferenceCount , public utility::pointer::enable_shared_from_this< FragmentStore >
+class FragmentStore : public utility::VirtualBase , public utility::pointer::enable_shared_from_this< FragmentStore >
 
 {
 public:

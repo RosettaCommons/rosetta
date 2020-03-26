@@ -26,7 +26,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <string>
@@ -35,7 +35,7 @@ namespace core {
 namespace scoring {
 
 
-class AtomVDW : public utility::pointer::ReferenceCount {
+class AtomVDW : public utility::VirtualBase {
 
 public:
 

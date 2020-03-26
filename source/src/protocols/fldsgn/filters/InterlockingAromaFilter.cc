@@ -114,7 +114,7 @@ InterlockingAromaFilter::report( std::ostream & out, Pose const & pose ) const
 
 /// @brief
 bool
-InterlockingAromaFilter::compute( Size const & res, Pose const & pose, SS_Info2_COP const ssinfo ) const
+InterlockingAromaFilter::compute( core::Size const & res, Pose const & pose, SS_Info2_COP const ssinfo ) const
 {
 	runtime_assert( pose.aa( res ) == core::chemical::aa_phe ||
 		pose.aa( res ) == core::chemical::aa_tyr ||
@@ -126,9 +126,9 @@ InterlockingAromaFilter::compute( Size const & res, Pose const & pose, SS_Info2_
 
 	Vector centroid;
 	Residue residue( pose.residue( res ) );
-	Size natom( 0 );
+	core::Size natom( 0 );
 	centroid.zero();
-	for ( Size iatm=1, iatm_end=residue.natoms(); iatm<=iatm_end; ++iatm ) {
+	for ( core::Size iatm=1, iatm_end=residue.natoms(); iatm<=iatm_end; ++iatm ) {
 		if ( residue.atom_type( int(iatm) ).atom_type_name() == "aroC" ||
 				residue.atom_type( int(iatm) ).atom_type_name() == "Ntrp" ) {
 			centroid += residue.atom( iatm ).xyz();
@@ -138,14 +138,14 @@ InterlockingAromaFilter::compute( Size const & res, Pose const & pose, SS_Info2_
 	runtime_assert( natom != 0 );
 	centroid = centroid/Real( natom );
 
-	Size contact( 0 );
-	utility::vector1< Size > lockres;
+	core::Size contact( 0 );
+	utility::vector1< core::Size > lockres;
 	TenANeighborGraph const & energy_graph( pose.energies().tenA_neighbor_graph() );
 	for ( utility::graph::Graph::EdgeListConstIter
 			iru  = energy_graph.get_node( res )->const_edge_list_begin(),
 			irue = energy_graph.get_node( res )->const_edge_list_end(); iru != irue; ++iru ) {
 
-		Size stres( (*iru)->get_second_node_ind() );
+		core::Size stres( (*iru)->get_second_node_ind() );
 		if ( res == stres ) stres = (*iru)->get_first_node_ind();
 
 		if ( ssinfo->strand_id( stres ) == 0 ) continue;
@@ -183,7 +183,7 @@ InterlockingAromaFilter::compute( Size const & res, Pose const & pose, SS_Info2_
 	if ( contact >= 2 ) {
 
 		tr << "Residue " << res << " is interlocking with ";
-		for ( Size ii=1; ii<=lockres.size(); ii++ ) {
+		for ( core::Size ii=1; ii<=lockres.size(); ii++ ) {
 			tr << lockres[ ii ] << " ";
 		}
 		tr << std::endl;
@@ -215,8 +215,8 @@ InterlockingAromaFilter::compute( Pose const & pose ) const
 	SS_Info2_OP ssinfo( new SS_Info2( pose, ss ) );
 
 	// calc number of interlocking aromatic residues
-	Size num_interlocked( 0 );
-	for ( Size ii=1; ii<=pose.size(); ++ii ) {
+	core::Size num_interlocked( 0 );
+	for ( core::Size ii=1; ii<=pose.size(); ++ii ) {
 		if ( ss.at( ii-1 ) == 'E' ) continue;
 		if ( pose.aa( ii ) == core::chemical::aa_phe ||
 				pose.aa( ii ) == core::chemical::aa_tyr ||

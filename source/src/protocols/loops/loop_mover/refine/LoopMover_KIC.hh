@@ -87,15 +87,15 @@ public:
 	set_rottrials_from_kic_segment(
 		core::pose::Pose & pose,
 		core::pack::task::PackerTaskOP & rottrials_packer_task,
-		Size kic_start,
-		Size kic_end );
+		core::Size kic_start,
+		core::Size kic_end );
 
 	void
 	set_movemap_from_kic_segment(
 		core::pose::Pose & pose,
 		core::kinematics::MoveMap & cur_mm,
-		Size kic_start,
-		Size kic_end );
+		core::Size kic_start,
+		core::Size kic_end );
 
 	std::string
 	get_name() const override;

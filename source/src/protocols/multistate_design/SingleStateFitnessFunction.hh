@@ -20,7 +20,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -28,7 +28,7 @@
 namespace protocols {
 namespace multistate_design {
 
-class SingleStateFitnessFunction : public utility::pointer::ReferenceCount {
+class SingleStateFitnessFunction : public utility::VirtualBase {
 
 public:
 	SingleStateFitnessFunction() {}

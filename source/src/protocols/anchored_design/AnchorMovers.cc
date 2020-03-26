@@ -694,7 +694,7 @@ void AnchoredDesignMover::set_fold_tree_and_cutpoints( core::pose::Pose & pose )
 	core::Real anchorstart(interface_->anchor_start()), anchorend(interface_->anchor_end());
 	auto anchormid(core::Size(std::ceil(anchorstart + (anchorend - anchorstart)/2.0)));
 
-	Size anchor_jump_end( anchormid > chain1end ? chain1end : chain1end+1);
+	core::Size anchor_jump_end( anchormid > chain1end ? chain1end : chain1end+1);
 	jump_starts[ANCHOR_TARGET] = anchormid < anchor_jump_end ? anchormid : anchor_jump_end; //max
 	jump_stops[ ANCHOR_TARGET] = anchormid > anchor_jump_end ? anchormid : anchor_jump_end; //min
 	cuts[ANCHOR_TARGET]        = chain1end;
@@ -731,8 +731,8 @@ void AnchoredDesignMover::set_fold_tree_and_cutpoints( core::pose::Pose & pose )
 
 	//convert the vectors into FArrays
 	debug_assert(cuts.size() == num_jumps);
-	ObjexxFCL::FArray2D< Size > Fjumps(2, num_jumps);
-	ObjexxFCL::FArray1D< Size > Fcuts(num_jumps);
+	ObjexxFCL::FArray2D< core::Size > Fjumps(2, num_jumps);
+	ObjexxFCL::FArray1D< core::Size > Fcuts(num_jumps);
 	for ( core::Size i(1); i<=num_jumps; ++i ) {
 		Fjumps(1, i) = jump_starts[i];
 		Fjumps(2, i) = jump_stops[i];

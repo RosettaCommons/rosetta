@@ -22,7 +22,7 @@
 
 // Utility headers
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -43,7 +43,7 @@ typedef Real BondLength;
 /// Element and the vector index is looked up by an element_name string
 /// in a map.
 ///
-class IdealBondLengthSet : public utility::pointer::ReferenceCount {
+class IdealBondLengthSet : public utility::VirtualBase {
 
 public:
 	IdealBondLengthSet();

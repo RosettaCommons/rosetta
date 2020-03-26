@@ -77,9 +77,9 @@ private:
 	RNA_FragmentMoverOP rna_fragment_mover_;
 	RNA_MinimizerOP rna_minimizer_;
 
-	Size const relax_cycles_;
-	Size const max_frag_size_;
-	Size const num_find_fragment_tries_;
+	core::Size const relax_cycles_;
+	core::Size const max_frag_size_;
+	core::Size const num_find_fragment_tries_;
 	core::Real const rmsd_min_cutoff_;
 	core::Real const rmsd_max_cutoff_;
 

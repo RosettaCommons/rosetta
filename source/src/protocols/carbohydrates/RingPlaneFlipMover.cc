@@ -330,7 +330,7 @@ RingPlaneFlipMover::setup_movable_torsion_pairs( core::pose::Pose const & pose )
 		return;
 	}
 
-	Size const n_res( pose.size() );
+	core::Size const n_res( pose.size() );
 
 	ResidueSubset subset;
 	if ( selector_ ) {

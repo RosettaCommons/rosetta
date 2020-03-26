@@ -20,7 +20,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #include <map>
@@ -31,7 +31,7 @@ namespace mmtf {
 
 /// @brief Enum string/enum functions for pose extra data we will be storing/retrieving.
 ///  ALL enums must be defined in mmtf/ExtraDataEnum.hh
-class ExtraDataEnumManager : public utility::pointer::ReferenceCount {
+class ExtraDataEnumManager : public utility::VirtualBase {
 
 public:
 

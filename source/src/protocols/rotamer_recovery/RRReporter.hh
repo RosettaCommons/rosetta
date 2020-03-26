@@ -22,7 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -33,10 +33,10 @@ namespace rotamer_recovery {
 /// Besides implementing the interface given in the base class
 /// RRReporter each RRReporter should have an entry in the conevience
 /// RotamerRecovery constructor so its use can be indicated by name.
-class RRReporter : public utility::pointer::ReferenceCount {
+class RRReporter : public utility::VirtualBase {
 
 public: // constructors destructors
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~RRReporter() override;
 
 public: // public interface

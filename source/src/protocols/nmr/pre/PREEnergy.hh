@@ -150,7 +150,7 @@ public: // Methods
 	) const override;
 
 	/// @brief Return the version of the energy method
-	Size
+	core::Size
 	version() const override;
 
 private: // Methods

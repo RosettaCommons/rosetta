@@ -31,7 +31,7 @@
 
 using namespace basic::resource_manager;
 
-class DummyResource : public utility::pointer::ReferenceCount
+class DummyResource : public utility::VirtualBase
 {
 private:
 	int myint_;

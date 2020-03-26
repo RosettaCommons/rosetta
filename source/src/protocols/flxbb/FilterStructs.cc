@@ -56,7 +56,7 @@ FilterStructs::FilterStructs( String const & name ):
 {}
 
 /// @brief value constructor
-FilterStructs::FilterStructs( String const & name, Size const ntrial ):
+FilterStructs::FilterStructs( String const & name, core::Size const ntrial ):
 	name_( name ),
 	filter_on_( true ),
 	ntrial_( ntrial ),
@@ -66,7 +66,7 @@ FilterStructs::FilterStructs( String const & name, Size const ntrial ):
 
 
 /// @brief value constructor
-FilterStructs::FilterStructs( String const & name, Pose const & pose, Size const ntrial ):
+FilterStructs::FilterStructs( String const & name, Pose const & pose, core::Size const ntrial ):
 	name_( name ),
 	filter_on_( true ),
 	ntrial_( ntrial ),
@@ -76,7 +76,7 @@ FilterStructs::FilterStructs( String const & name, Pose const & pose, Size const
 
 /// @brief copy constructor
 FilterStructs::FilterStructs( FilterStructs const & rval ):
-	ReferenceCount(),
+	VirtualBase(),
 	name_( rval.name_ ),
 	filter_on_( rval.filter_on_ ),
 	ntrial_( rval.ntrial_ ),
@@ -120,7 +120,7 @@ FilterStructs::name( String const & name )
 
 /// @brief set ntrial
 void
-FilterStructs::set_ntrial( Size const ntrial )
+FilterStructs::set_ntrial( core::Size const ntrial )
 {
 	ntrial_ = ntrial;
 }
@@ -161,13 +161,13 @@ FilterStructs::set_bestpose( Pose const & pose )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief value constructor
-FilterStructs_Packstat::FilterStructs_Packstat( Size const ntrial ):
+FilterStructs_Packstat::FilterStructs_Packstat( core::Size const ntrial ):
 	FilterStructs( "FilterStructs_Packstat", ntrial ),
 	best_packscore_( 0.0 )
 {}
 
 /// @brief value constructor
-FilterStructs_Packstat::FilterStructs_Packstat( Pose const & pose, Size const ntrial ):
+FilterStructs_Packstat::FilterStructs_Packstat( Pose const & pose, core::Size const ntrial ):
 	FilterStructs( "FilterStructs_Packstat", pose, ntrial ),
 	best_packscore_( 0.0 )
 {}
@@ -217,13 +217,13 @@ void FilterStructs_Packstat::apply( Pose const & pose )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief constructor
-FilterStructs_TotalCharge::FilterStructs_TotalCharge( Size const ntrial ):
+FilterStructs_TotalCharge::FilterStructs_TotalCharge( core::Size const ntrial ):
 	FilterStructs( "FilterStructs_TotalCharge", ntrial ),
 	disallowed_value_( 1 )
 {}
 
 /// @brief constructor
-FilterStructs_TotalCharge::FilterStructs_TotalCharge( Pose const & pose, Size const ntrial ):
+FilterStructs_TotalCharge::FilterStructs_TotalCharge( Pose const & pose, core::Size const ntrial ):
 	FilterStructs( "FilterStructs_TotalCharge", pose, ntrial ),
 	disallowed_value_( 1 )
 {}
@@ -258,7 +258,7 @@ void FilterStructs_TotalCharge::apply( Pose const & pose )
 
 	count_ntrial();
 	Real total_charge( 0.0 );
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 
 		chemical::AA aa = pose.aa( i  );
 

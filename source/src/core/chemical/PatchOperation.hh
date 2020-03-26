@@ -26,7 +26,7 @@
 // Utility header
 #include <utility>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <map>
 
@@ -41,9 +41,9 @@ namespace chemical {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  A single operation that needs to be applied in a residue patch
-class PatchOperation : public utility::pointer::ReferenceCount {
+class PatchOperation : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~PatchOperation() override;
 
 	/// @brief Returns the name of the patch operation.  Useful for debugging.

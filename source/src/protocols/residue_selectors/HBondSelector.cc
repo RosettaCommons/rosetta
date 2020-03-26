@@ -57,6 +57,8 @@
 namespace protocols {
 namespace residue_selectors {
 
+using core::Size;
+
 
 HBondSelector::HBondSelector():
 	hbond_energy_cutoff_( -0.5 ),
@@ -92,7 +94,7 @@ core::select::residue_selector::ResidueSubset
 HBondSelector::apply( core::pose::Pose const & pose ) const{
 	//Initialize input set
 	core::pose::PoseOP copy_pose = pose.clone();
-	std::set< Size > input_set;
+	std::set< core::Size > input_set;
 	compute_input_set( pose, input_set );
 
 	//Make sure the score function is correctly initialized
@@ -303,7 +305,7 @@ HBondSelector::compute_input_set( core::pose::Pose const & pose, std::set< core:
 			}
 		}
 	} else { // grab from string
-		std::set< Size > const string_set( get_resnum_list( input_set_str_, pose ) );
+		std::set< core::Size > const string_set( get_resnum_list( input_set_str_, pose ) );
 		input_set.insert( string_set.begin(), string_set.end() );
 
 		for ( core::Size res: input_set ) {

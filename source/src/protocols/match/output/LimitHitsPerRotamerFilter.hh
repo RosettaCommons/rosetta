@@ -40,17 +40,17 @@ namespace output {
 class LimitHitsPerRotamerFilter : public StateAccumulatingMatchFilter {
 public:
 	typedef core::Size Size;
-	typedef std::map< utility::OrderedTuple< utility::vector1< Size > >, Size > RotamerComboCountMap;
+	typedef std::map< utility::OrderedTuple< utility::vector1< core::Size > >, core::Size > RotamerComboCountMap;
 
 public:
 	LimitHitsPerRotamerFilter();
-	LimitHitsPerRotamerFilter( Size n_geometric_constraints );
+	LimitHitsPerRotamerFilter( core::Size n_geometric_constraints );
 
 	void
-	set_n_geometric_constraints( Size n_csts );
+	set_n_geometric_constraints( core::Size n_csts );
 
 	void
-	set_limit_for_rotamer_combo( Size limit );
+	set_limit_for_rotamer_combo( core::Size limit );
 
 	~LimitHitsPerRotamerFilter() override;
 
@@ -71,8 +71,8 @@ public:
 	reset() override;
 
 private:
-	Size n_geometric_constraints_;
-	Size limit_per_rotamer_combo_;
+	core::Size n_geometric_constraints_;
+	core::Size limit_per_rotamer_combo_;
 	RotamerComboCountMap count_per_rotamer_combo_;
 
 };

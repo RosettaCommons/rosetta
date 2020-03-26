@@ -22,7 +22,7 @@ namespace membrane {
 namespace scoring {
 
 MEnvAtomParams::MEnvAtomParams() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	atom_type_name_( "" ),
 	dGfreeW_( 0.0 ),
 	dGfreeB_( 0.0 ),
@@ -38,7 +38,7 @@ MEnvAtomParams::MEnvAtomParams(
 	core::Real const hyd,
 	core::Real const hyd_deriv,
 	core::Vector const & memb_coord
-) : utility::pointer::ReferenceCount(),
+) : utility::VirtualBase(),
 	atom_type_name_( atom_type_name ),
 	dGfreeW_( dGfreeW ),
 	dGfreeB_( dGfreeB ),
@@ -50,7 +50,7 @@ MEnvAtomParams::MEnvAtomParams(
 MEnvAtomParams::~MEnvAtomParams() {}
 
 MEnvAtomParams::MEnvAtomParams( MEnvAtomParams const & src ) :
-	utility::pointer::ReferenceCount( src ),
+	utility::VirtualBase( src ),
 	atom_type_name_( src.atom_type_name_ ),
 	dGfreeW_( src.dGfreeW_ ),
 	dGfreeB_( src.dGfreeB_ ),

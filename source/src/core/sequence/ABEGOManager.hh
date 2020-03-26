@@ -24,7 +24,7 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
@@ -164,7 +164,7 @@ private: // data
 
 
 /// @brief manager for abego
-class ABEGOManager : public utility::pointer::ReferenceCount {
+class ABEGOManager : public utility::VirtualBase {
 public: // typedef
 
 

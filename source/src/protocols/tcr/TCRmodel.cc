@@ -57,7 +57,7 @@ TCRmodel::TCRmodel( TCRseqInfoOP tcrinfo) {
 }
 
 TCRmodel::TCRmodel( std::string const & aseq, std::string const & bseq ):
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	TCRseqInfoOP tcrinfo( new TCRseqInfo( aseq, bseq) );
 	tsinfo = tcrinfo;

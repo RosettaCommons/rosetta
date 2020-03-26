@@ -125,13 +125,13 @@ BranchAngleOptimizer::optimize_angles(
 	kinematics::tree::AtomCOP const center_atom( pose.atom_tree().atom(center_atomid).get_self_ptr() );
 	kinematics::tree::AtomCOP main_atom2( pose.atom_tree().atom(main_atomid2).get_self_ptr() );
 
-	Size coef_index(0);
+	core::Size coef_index(0);
 
 	// make sure that the center atom has a complete set of connections
 	runtime_assert(!pose.residue(center_atomid.rsd()).has_incomplete_connection(center_atomid.atomno()));
 
 	// count the number of atoms bonded to the central atom
-	Size num_neighbors(pose.residue(center_atomid.rsd()).n_bonded_neighbor_all_res(center_atomid.atomno()));
+	core::Size num_neighbors(pose.residue(center_atomid.rsd()).n_bonded_neighbor_all_res(center_atomid.atomno()));
 
 	Real m2_bond_angle(numeric::angle_radians(pose.xyz(main_atomid1), pose.xyz(center_atomid),
 		pose.xyz(main_atomid2)));
@@ -303,13 +303,13 @@ BranchAngleOptimizer::overall_params(
 
 	//TR << "Getting Overall Parameters: " << main_atomid1 << center_atomid << main_atomid2 << std::endl;
 
-	Size coef_index(0);
+	core::Size coef_index(0);
 
 	// make sure that the center atom has a complete set of connections
 	runtime_assert(!pose.residue(center_atomid.rsd()).has_incomplete_connection(center_atomid.atomno()));
 
 	// count the number of atoms bonded to the central atom
-	Size num_neighbors(pose.residue(center_atomid.rsd()).n_bonded_neighbor_all_res(center_atomid.atomno()));
+	core::Size num_neighbors(pose.residue(center_atomid.rsd()).n_bonded_neighbor_all_res(center_atomid.atomno()));
 
 	if ( num_neighbors == 3 ) {
 
@@ -1071,7 +1071,7 @@ branching_atomid1(
 	bool found_main_atomid1(false);
 	bool found_main_atomid2(false);
 
-	for ( Size i = 1; i <= 3; ++i ) {
+	for ( core::Size i = 1; i <= 3; ++i ) {
 		id::AtomID & atomid(neighbors[i]);
 		if ( atomid == main_atomid1 ) {
 			found_main_atomid1 = true;
@@ -1110,7 +1110,7 @@ branching_atomids2(
 	bool found_main_atomid2(false);
 	bool found_branch_atomid1(false);
 
-	for ( Size i = 1; i <= 4; ++i ) {
+	for ( core::Size i = 1; i <= 4; ++i ) {
 		id::AtomID & atomid(neighbors[i]);
 		if ( atomid == main_atomid1 ) {
 			found_main_atomid1 = true;
@@ -1167,7 +1167,7 @@ get_branching_atoms2(
 	branch_atom2 = nullptr;
 
 	// iterate through the bonded atoms and find the two siblings
-	for ( Size i = 1; i <= 3; ++i ) {
+	for ( core::Size i = 1; i <= 3; ++i ) {
 		kinematics::tree::AtomCOP const sibling(parent->get_nonjump_atom(i));
 		TR << sibling->id() << std::endl;
 		if ( sibling != main_atom2 ) {

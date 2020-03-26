@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_magnesium_SampleGrid_HH
 
 #include <protocols/moves/Mover.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <ObjexxFCL/FArray3D.hh>
@@ -25,7 +25,7 @@
 namespace protocols {
 namespace magnesium {
 
-class SampleGrid: public utility::pointer::ReferenceCount {
+class SampleGrid: public utility::VirtualBase {
 
 public:
 
@@ -63,21 +63,21 @@ private:
 	void
 	create_grid();
 
-	utility::vector1< Size >
-	figure_out_scan_res( utility::vector1< Size > const & input_scan_res,
+	utility::vector1< core::Size >
+	figure_out_scan_res( utility::vector1< core::Size > const & input_scan_res,
 		core::pose::Pose const & pose );
 
 	void
 	define_bins( core::Real const x,
 		core::Real const subgrid_radius,
 		core::Real const xmin,
-		Size const xgridsize,
+		core::Size const xgridsize,
 		core::Real const xyz_increment,
-		Size & xbinmin,
-		Size & xbinmax ) const;
+		core::Size & xbinmin,
+		core::Size & xbinmax ) const;
 
 	core::Real
-	get_position( Size const xbin, core::Real const xmin, core::Real const xyz_increment ) const;
+	get_position( core::Size const xbin, core::Real const xmin, core::Real const xyz_increment ) const;
 
 private:
 

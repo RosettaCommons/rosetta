@@ -43,14 +43,14 @@ using namespace core;
 using utility::vector1;
 
 SasaCalc::SasaCalc():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	method_type_ = LeGrand;
 	set_defaults();
 }
 
 SasaCalc::SasaCalc(SasaMethodEnum method):
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	set_defaults();
 	method_type_ = method;

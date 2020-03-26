@@ -25,7 +25,7 @@
 // Utility headers
 #include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
@@ -168,7 +168,7 @@ private:
 };
 
 
-class QuaternionGrid : public utility::pointer::ReferenceCount {
+class QuaternionGrid : public utility::VirtualBase {
 public:
 
 	QuaternionGrid(std::string const & name, std::istream & in);

@@ -50,7 +50,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -64,7 +64,7 @@ namespace protocols {
 namespace nmr {
 namespace pre {
 
-class PREDistanceRecord : public utility::pointer::ReferenceCount {
+class PREDistanceRecord : public utility::VirtualBase {
 
 public: // Types
 
@@ -83,7 +83,7 @@ public: // Methods
 
 	inline
 	PREDistanceRecord(
-		std::set< Size > const & rsds,
+		std::set< core::Size > const & rsds,
 		Real d,
 		Real t
 	) :
@@ -95,7 +95,7 @@ public: // Methods
 
 	inline
 	PREDistanceRecord(
-		utility::vector1< Size > const & rsds,
+		utility::vector1< core::Size > const & rsds,
 		Real d,
 		Real t
 	) :
@@ -105,13 +105,13 @@ public: // Methods
 		count_(1)
 	{}
 
-	inline std::set< Size > const & rsds() const { return rsds_; }
-	inline std::set< Size > & rsds() { return rsds_; }
+	inline std::set< core::Size > const & rsds() const { return rsds_; }
+	inline std::set< core::Size > & rsds() { return rsds_; }
 	inline Real get_dist() const { return dist_; }
 	inline void set_dist(Real d) { dist_ = d; }
 	inline Real get_tol() const { return tol_; }
 	inline void set_tol(Real t) { tol_ = t; }
-	inline Size count() const { return count_; }
+	inline core::Size count() const { return count_; }
 
 	/// @brief Add a new distance and tolerance/weight and update
 	///        the class data to hold the current mean values
@@ -131,12 +131,12 @@ public: // Methods
 
 private: // Data
 
-	std::set< Size > rsds_;
+	std::set< core::Size > rsds_;
 	Real dist_;
 	Real tol_;
 	// iteration count, because we want to use the class
 	// also for on the fly mean calculation
-	Size count_;
+	core::Size count_;
 };
 
 class PREMover : public protocols::moves::Mover {

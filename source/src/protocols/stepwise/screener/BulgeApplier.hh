@@ -35,7 +35,7 @@ public:
 	BulgeApplier(
 		protocols::stepwise::modeler::rna::checker::RNA_AtrRepCheckerOP atr_rep_checker,
 		protocols::stepwise::modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
-		Size const moving_res );
+		core::Size const moving_res );
 
 	//destructor
 	~BulgeApplier() override;

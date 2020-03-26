@@ -53,7 +53,7 @@ void SurfaceOrientMover::apply(pose::Pose & pose)
 {
 	//displacement vector from protein centroid to surface centroid
 	Vector ProteinCG, SurfaceCG;
-	Size const rb_jump=pose.num_jump(); //last jump connects protein to surf
+	core::Size const rb_jump=pose.num_jump(); //last jump connects protein to surf
 	protocols::geometry::centroids_by_jump (pose, rb_jump, SurfaceCG, ProteinCG);
 	TR<<"Initial Protein Centroid:"<<ProteinCG<<std::endl;
 	TR<<"Surface Centroid:"<<SurfaceCG<<std::endl;

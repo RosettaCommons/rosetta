@@ -249,8 +249,8 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 	ddGs_.clear();
 	rotamer_probabilities_.clear();
 
-	utility::vector1<Size> hotspot_res = core::pose::get_resnum_list_ordered(target_residues_,const_pose);
-	// for(Size i = 1; i <= hotspot_res.size(); ++i) {
+	utility::vector1<core::Size> hotspot_res = core::pose::get_resnum_list_ordered(target_residues_,const_pose);
+	// for(core::Size i = 1; i <= hotspot_res.size(); ++i) {
 	//  std::cerr << "RotamerBoltzmannWeight calc res: " << hotspot_res[i] << std::endl;
 	// }
 	core::pose::Pose unbound_pose( const_pose );
@@ -271,7 +271,7 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 
 				if ( sym_dof_names() != "" ) { // JB 120817
 					utility::vector1<std::string> sym_dof_name_list = utility::string_split( sym_dof_names() , ',' ); // JB 120817
-					for ( Size i = 1; i <= sym_dof_name_list.size(); i++ ) { // JB 120817
+					for ( core::Size i = 1; i <= sym_dof_name_list.size(); i++ ) { // JB 120817
 						int sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( unbound_pose, sym_dof_name_list[i] ); // JB 120817
 						rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( unbound_pose, sym_aware_jump_id ) ); // JB 120817
 						translate->step_size( 1000.0 ); // JB 120817

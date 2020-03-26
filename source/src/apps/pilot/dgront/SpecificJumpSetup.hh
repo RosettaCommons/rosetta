@@ -36,7 +36,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <cstdlib>
@@ -51,36 +51,36 @@ public:
 	SpecificJumpSetup( Size , core::conformation::SecondaryStructureOP,core::pose::PoseOP,int ,int,int,int);
 	SpecificJumpSetup( Size , core::conformation::SecondaryStructureOP ,core::pose::PoseOP ,int ,int *,int*,int*,int*);
 
-  std::string type_name() const {
-    return "SpecificJumpSetup";
-  }
-
-        virtual
-        JumpSample
-        create_jump_sample( ) const;
-
-        virtual
-        JumpSample
-        clean_jump_sample( JumpSample ) const {
-	  std::cerr << "ERROR!!! unimplemented method in SpecificJumpSetup.cc " << std::endl;
+	std::string type_name() const {
+		return "SpecificJumpSetup";
 	}
 
-        /// @brief returns an ordered FragSet that is compatible with the JumpSample
-        /// default: generate jumps from ss-library according to JumpSample
-        // if the movemap allows sampling of the down-residue but not the up-residue:
-        // include a jump with torsions only for the "down" residue
-        // if the movemap allows neither sampling of up or down, don't include the jump
-        virtual core::fragment::FragSetOP
-        generate_jump_frags( JumpSample const&, core::kinematics::MoveMap const& mm) const;
+	virtual
+	JumpSample
+	create_jump_sample( ) const;
+
+	virtual
+	JumpSample
+	clean_jump_sample( JumpSample ) const {
+		std::cerr << "ERROR!!! unimplemented method in SpecificJumpSetup.cc " << std::endl;
+	}
+
+	/// @brief returns an ordered FragSet that is compatible with the JumpSample
+	/// default: generate jumps from ss-library according to JumpSample
+	// if the movemap allows sampling of the down-residue but not the up-residue:
+	// include a jump with torsions only for the "down" residue
+	// if the movemap allows neither sampling of up or down, don't include the jump
+	virtual core::fragment::FragSetOP
+	generate_jump_frags( JumpSample const&, core::kinematics::MoveMap const& mm) const;
 private:
-		Size nres_;
-		int nJumps_;
-		core::conformation::SecondaryStructureOP ss_def_;
-		core::pose::PoseOP native_pose_;
-		int *iResid_;
-		int *jResid_;
-		int *orientation_;
-		int *pleating_;
+	Size nres_;
+	int nJumps_;
+	core::conformation::SecondaryStructureOP ss_def_;
+	core::pose::PoseOP native_pose_;
+	int *iResid_;
+	int *jResid_;
+	int *orientation_;
+	int *pleating_;
 };
 } }
 #endif /* SPECIFICJUMPSETUP_H_ */

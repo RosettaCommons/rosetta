@@ -51,8 +51,8 @@ public:
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
 	CoarseRNA_DeNovoProtocol(
-		Size const nstruct,
-		Size const monte_carlo_cycles,
+		core::Size const nstruct,
+		core::Size const monte_carlo_cycles,
 		std::string const silent_file );
 
 	~CoarseRNA_DeNovoProtocol();
@@ -134,7 +134,7 @@ private:
 	initialize_tag_is_done();
 
 	core::Real
-	get_temperature( Size const & r, Size const & rounds ) const;
+	get_temperature( core::Size const & r, core::Size const & rounds ) const;
 
 	void
 	do_random_fragment_insertions( core::pose::Pose & pose );
@@ -151,27 +151,27 @@ private:
 	void
 	initialize_constraints( core::pose::Pose & pose );
 
-	Size
-	figure_out_constraint_separation_cutoff( Size const & r, Size const & rounds, Size const & max_dist );
+	core::Size
+	figure_out_constraint_separation_cutoff( core::Size const & r, core::Size const & rounds, core::Size const & max_dist );
 
 	void
-	update_pose_constraints( Size const & r, Size const & rounds, core::pose::Pose & pose );
+	update_pose_constraints( core::Size const & r, core::Size const & rounds, core::pose::Pose & pose );
 
 	void
-	update_domain_rot_trans_mag( Size const & r, Size const & rounds );
+	update_domain_rot_trans_mag( core::Size const & r, core::Size const & rounds );
 
 	void
 	fill_pairing_dists( core::pose::Pose & pose );
 
 	void
-	check_new_pairing_dists( core::pose::Pose & pose, Size const & frag_pos );
+	check_new_pairing_dists( core::pose::Pose & pose, core::Size const & frag_pos );
 
 private:
 
 	// protocol-specific data ... need to be specified as input.
-	Size const nstruct_;
-	Size const monte_carlo_cycles_;
-	Size const rounds_;
+	core::Size const nstruct_;
+	core::Size const monte_carlo_cycles_;
+	core::Size const rounds_;
 	std::string const silent_file_;
 	bool freeze_domains_;
 	bool dump_pdb_;
@@ -184,7 +184,7 @@ private:
 	core::scoring::constraints::ConstraintSetOP constraint_set_;
 	bool staged_constraints_;
 
-	Size frag_size_;
+	core::Size frag_size_;
 
 	protocols::moves::MonteCarloOP monte_carlo_;
 

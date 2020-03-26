@@ -43,7 +43,7 @@ static basic::Tracer TR( "core.scoring.nmr.NMRDummySpinlabelVoxelGrid" );
 
 /// @brief Default constructor
 VoxelGridPoint::VoxelGridPoint() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	atom_name_(""),
 	id_(),
 	coords_()
@@ -55,7 +55,7 @@ VoxelGridPoint::VoxelGridPoint(
 	Size const id,
 	Vector const & coords
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	atom_name_(name),
 	id_(id),
 	coords_(coords)

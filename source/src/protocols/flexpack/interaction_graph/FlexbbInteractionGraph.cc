@@ -34,6 +34,7 @@ namespace flexpack {
 namespace interaction_graph {
 
 using namespace ObjexxFCL;
+using core::Size;
 
 static basic::Tracer TR( "protocols.flexpack.interaction_graph" );
 
@@ -73,7 +74,7 @@ FlexbbNode::print() const {
 		<< " curr: " << current_state_ << " " << state_info_[ current_state_ ].get_aa_type()
 		<< " " << state_info_[ current_state_ ].get_bb() << " energies: 1b: "
 		<< curr_state_one_body_energy_ << " 2b: ";
-	for ( Size ii = 1; ii <= curr_state_two_body_energies_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= curr_state_two_body_energies_.size(); ++ii ) {
 		std::cout << curr_state_two_body_energies_[ ii ] << " ";
 	}
 	std::cout << std::endl;
@@ -133,11 +134,11 @@ FlexbbNode::get_state_offset_for_bb( int  bbconf ) const {
 
 void
 FlexbbNode::get_states_on_curr_bb(
-	utility::vector1< Size > & rotlist,
+	utility::vector1< core::Size > & rotlist,
 	int rotamer_number_offset
 ) const
 {
-	Size const initial_size = rotlist.size();
+	core::Size const initial_size = rotlist.size();
 	int currbb = state_info_[ current_state_ ].get_bb();
 	if ( currbb == 0 ) currbb = 1;
 	rotlist.reserve( initial_size + num_states_for_bb_[ currbb ] );
@@ -148,11 +149,11 @@ FlexbbNode::get_states_on_curr_bb(
 
 void
 FlexbbNode::get_all_states(
-	utility::vector1< Size > & state_list,
+	utility::vector1< core::Size > & state_list,
 	int offset
 ) const
 {
-	Size const initial_size = state_list.size();
+	core::Size const initial_size = state_list.size();
 	state_list.reserve( initial_size + get_num_states() );
 	for ( int ii = 1; ii <= get_num_states(); ++ii ) {
 		state_list.push_back( offset + ii );
@@ -200,8 +201,8 @@ FlexbbNode::set_amino_acid_types( utility::vector1< int > const & aatypes )
 		state_info_[ ii ].set_state_ind_for_this_aa_type( state_index_for_aa );
 		++num_states_for_aa_for_bb_( last_aa, state_info_[ ii ].get_bb() );
 	}
-	//for ( Size ii = 1; ii <= num_bb_; ++ii ) {
-	// for ( Size jj = 1; jj <= num_aa_types_; ++jj ) {
+	//for ( core::Size ii = 1; ii <= num_bb_; ++ii ) {
+	// for ( core::Size jj = 1; jj <= num_aa_types_; ++jj ) {
 	//  std::cout << get_node_index() << " " << ii << " " << jj << " " << num_states_for_aa_for_bb_( jj, ii ) << std::endl;
 	// }
 	//}
@@ -218,7 +219,7 @@ void
 FlexbbNode::add_to_one_body_energies( FArray1< PackerEnergy > & energies )
 {
 	debug_assert( energies.size() == one_body_energies_.size() );
-	for ( Size ii = 1; ii <= one_body_energies_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= one_body_energies_.size(); ++ii ) {
 		// if ( get_node_index() == 17 ) { std::cout << "FlexbbNode::add_to_one_body_energies " << ii << " " << energies( ii ) << " " << one_body_energies_[ ii ] << " " << one_body_energies_[ ii ] + energies( ii )  << std::endl; }
 		one_body_energies_[ ii ] += energies( ii );
 	}
@@ -616,10 +617,10 @@ FlexbbInteractionGraph::initialize( core::pack_basic::RotamerSetsBase const & ro
 		//flexseg_representative_[ ii ] = flex_sets.flexsegment_start_moltenresid( ii );
 		/// List all the moltenresidues in this flexible segment.
 		flexseg_members_[ ii ].resize( flex_sets.flexsegment_stop_moltenresid( ii ) - flex_sets.flexsegment_start_moltenresid( ii ) + 1 );
-		for ( Size jj = 1; jj <= flexseg_members_[ ii ].size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= flexseg_members_[ ii ].size(); ++jj ) {
 			flexseg_members_[ ii ][ jj ] = flex_sets.flexsegment_start_moltenresid( ii ) - 1 + jj;
 		}
-		Size const ii_nbb = flex_sets.nbbconfs_for_moltenres( flexseg_members_[ ii ][ 1 ] );
+		core::Size const ii_nbb = flex_sets.nbbconfs_for_moltenres( flexseg_members_[ ii ][ 1 ] );
 		num_bb_alternatives_for_flexseg_[ ii ] = ii_nbb;
 		if ( ii > 1 ) {
 			flexseg_bb_offset_[ ii ] = flexseg_bb_offset_[ ii - 1 ] + num_bb_alternatives_for_flexseg_[ ii - 1];
@@ -637,10 +638,10 @@ FlexbbInteractionGraph::initialize( core::pack_basic::RotamerSetsBase const & ro
 	}
 
 	// 2. determine max # of residue types, asking the RotamerSets how many rotamer type groups they have
-	Size max_nresgroups = 0;
-	for ( Size ii = 1; ii <= flex_sets.nmoltenres(); ++ii ) {
-		for ( Size jj = 1; jj <= flex_sets.nbbconfs_for_moltenres( ii ); ++jj ) {
-			Size jj_nresgroups =  flex_sets.rotset_for_moltenres( ii, jj )->get_n_residue_groups();
+	core::Size max_nresgroups = 0;
+	for ( core::Size ii = 1; ii <= flex_sets.nmoltenres(); ++ii ) {
+		for ( core::Size jj = 1; jj <= flex_sets.nbbconfs_for_moltenres( ii ); ++jj ) {
+			core::Size jj_nresgroups =  flex_sets.rotset_for_moltenres( ii, jj )->get_n_residue_groups();
 			//std::cout << ii << " " << jj << " jj_nrestypes: " << jj_nrestypes << " " << flex_sets.rotset_for_moltenres( ii, jj ).get() << std::endl;
 			if ( jj_nresgroups > max_nresgroups ) max_nresgroups = jj_nresgroups;
 		}
@@ -650,20 +651,20 @@ FlexbbInteractionGraph::initialize( core::pack_basic::RotamerSetsBase const & ro
 
 	/// 3. create nodes, inform them of their number of backbone conformations,
 	/// and break down their rotamers by amino acid type.
-	for ( Size ii = 1; ii <= flex_sets.nmoltenres(); ++ii ) {
-		Size const ii_num_states = flex_sets.nrotamers_for_moltenres( ii );
-		Size const ii_nbb =        flex_sets.nbbconfs_for_moltenres( ii );
+	for ( core::Size ii = 1; ii <= flex_sets.nmoltenres(); ++ii ) {
+		core::Size const ii_num_states = flex_sets.nrotamers_for_moltenres( ii );
+		core::Size const ii_nbb =        flex_sets.nbbconfs_for_moltenres( ii );
 		set_num_states_for_node( ii, ii_num_states ); // allocate the node.
 		get_flexbb_node( ii )->set_num_distinct_backbones( ii_nbb );
 		get_flexbb_node( ii )->set_num_states_per_backbone( flex_sets.num_states_per_backbone_for_moltenres( ii ) );
 
 		// figure out which residue-type group each rotamer is a member of
 		utility::vector1< int > aatype_for_state( ii_num_states, 0 );
-		Size curr_resgroup = 1;
-		Size count_for_resgroup = 1;
-		Size const ii_nresgroups = flex_sets.rotset_for_moltenres( ii )->get_n_residue_groups();
-		Size which_bb = 1;
-		for ( Size jj = 1; jj <= ii_num_states; ++jj ) {
+		core::Size curr_resgroup = 1;
+		core::Size count_for_resgroup = 1;
+		core::Size const ii_nresgroups = flex_sets.rotset_for_moltenres( ii )->get_n_residue_groups();
+		core::Size which_bb = 1;
+		for ( core::Size jj = 1; jj <= ii_num_states; ++jj ) {
 			if ( which_bb + 1 <= ii_nbb && jj == flex_sets.local_rotid_start_for_moltenres_in_bbconf( ii, which_bb + 1 ) + 1 ) {
 				++which_bb;
 				curr_resgroup = 1;
@@ -684,22 +685,22 @@ FlexbbInteractionGraph::initialize( core::pack_basic::RotamerSetsBase const & ro
 	/// 4. Figure out for each rotamer on each residue with multiple backbone conformations
 	/// what the closest rotamer on would be for each alternate backbone conformation.
 	for ( int ii = 1; ii <= get_num_nodes(); ++ii ) {
-		Size const ii_nbb( get_flexbb_node( ii )->get_num_distinct_backbones()  );
+		core::Size const ii_nbb( get_flexbb_node( ii )->get_num_distinct_backbones()  );
 		if ( ii_nbb == 1 ) continue;
 
 		FArray2D_int best_match( ii_nbb, flex_sets.nrotamers_for_moltenres( ii ), 0 );
-		for ( Size jj = 1; jj <= ii_nbb; ++jj ) {
-			Size jjoffset = flex_sets.local_rotid_start_for_moltenres_in_bbconf( ii, jj );
+		for ( core::Size jj = 1; jj <= ii_nbb; ++jj ) {
+			core::Size jjoffset = flex_sets.local_rotid_start_for_moltenres_in_bbconf( ii, jj );
 			FlexbbRotamerSetCOP jj_flexset( flex_sets.rotset_for_moltenres( ii, jj ));
-			for ( Size kk = 1; kk <= ii_nbb; ++kk ) {
+			for ( core::Size kk = 1; kk <= ii_nbb; ++kk ) {
 				FlexbbRotamerSetCOP kk_flexset( flex_sets.rotset_for_moltenres(ii, kk ));
 				if ( jj == kk ) continue; // skip diagonal.
 
-				utility::vector1< Size > kk_rotamers_matching_ll;
+				utility::vector1< core::Size > kk_rotamers_matching_ll;
 				for ( int ll = 1; ll <= get_flexbb_node( ii )->get_num_states_for_bb( jj ); ++ll ) {
 					if ( ll == 1 || jj_flexset->rotamer( ll )->name() != jj_flexset->rotamer( ll - 1 )->name() ) {
 						kk_rotamers_matching_ll.clear();
-						for ( Size mm = 1; mm <= kk_flexset->num_rotamers(); ++mm ) {
+						for ( core::Size mm = 1; mm <= kk_flexset->num_rotamers(); ++mm ) {
 							if ( jj_flexset->rotamer( ll )->name() == kk_flexset->rotamer( mm )->name() ) {
 								kk_rotamers_matching_ll.push_back( mm );
 							}
@@ -709,16 +710,16 @@ FlexbbInteractionGraph::initialize( core::pack_basic::RotamerSetsBase const & ro
 					Residue const & llrot( *llrotop );
 
 					/// Now iterate across the rotamers with the same name and compute rms.
-					Size best_match_index( 0 );
+					core::Size best_match_index( 0 );
 					Real best_rms( 12345 );
-					for ( Size mm = 1; mm <= kk_rotamers_matching_ll.size(); ++mm ) {
-						Size const mm_rotid = kk_rotamers_matching_ll[ mm ];
+					for ( core::Size mm = 1; mm <= kk_rotamers_matching_ll.size(); ++mm ) {
+						core::Size const mm_rotid = kk_rotamers_matching_ll[ mm ];
 						ResidueCOP mmrotop = kk_flexset->rotamer( mm_rotid );
 						Residue const & mmrot( *mmrotop );
 						debug_assert( llrot.name() == mmrot.name() );
 
 						Real mm_rms( 0.0 );
-						for ( Size nn = 1; nn <= llrot.natoms(); ++nn ) {
+						for ( core::Size nn = 1; nn <= llrot.natoms(); ++nn ) {
 							mm_rms += llrot.xyz( nn ).distance_squared( mmrot.xyz( nn ));
 						}
 						if ( mm == 1 || best_rms > mm_rms ) {
@@ -841,7 +842,7 @@ edge->set_nodes_from_same_flexseg( true );
 void
 FlexbbInteractionGraph::get_accessible_states(
 	Subsitution move_mode,
-	utility::vector1< Size > & rotlist
+	utility::vector1< core::Size > & rotlist
 ) const
 {
 	rotlist.clear();
@@ -856,11 +857,11 @@ FlexbbInteractionGraph::get_accessible_states(
 
 void
 FlexbbInteractionGraph::get_backbone_list(
-	utility::vector1< Size > & bblist
+	utility::vector1< core::Size > & bblist
 ) const
 {
 	bblist.resize( num_total_bb_ );
-	for ( Size ii = 1; ii <= bblist.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= bblist.size(); ++ii ) {
 		bblist[ ii ] = ii;
 	}
 }
@@ -898,9 +899,9 @@ FlexbbInteractionGraph::count_dynamic_memory() const
 {
 	unsigned int total = parent::count_dynamic_memory();
 	//total += flexseg_representative_.size() * sizeof( int );
-	total += flexseg_members_.size() * sizeof( utility::vector1< Size > );
-	for ( Size ii = 1; ii <= flexseg_members_.size(); ++ii ) {
-		total += flexseg_members_[ ii ].size() * sizeof( Size );
+	total += flexseg_members_.size() * sizeof( utility::vector1< core::Size > );
+	for ( core::Size ii = 1; ii <= flexseg_members_.size(); ++ii ) {
+		total += flexseg_members_[ ii ].size() * sizeof( core::Size );
 	}
 	total += num_bb_alternatives_for_flexseg_.size() * sizeof( int );
 	total += flexseg_for_bb_.size() * sizeof( int );

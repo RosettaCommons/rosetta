@@ -23,7 +23,7 @@
 #include <core/conformation/symmetry/MirrorSymmetricConformation.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>

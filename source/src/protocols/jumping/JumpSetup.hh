@@ -42,7 +42,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <cstdlib>
@@ -80,9 +80,9 @@ class JumpSetup;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief virtual base class: can create a set of jumps and cuts
-class BaseJumpSetup : public utility::pointer::ReferenceCount {
+class BaseJumpSetup : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~BaseJumpSetup() override;
 	virtual
 	JumpSample
@@ -129,7 +129,7 @@ public:
 	typedef utility::vector1< JumpDef >::iterator iterator;
 
 	//@brief c'stor
-	JumpSetup( Size total_residue ) :
+	JumpSetup( core::Size total_residue ) :
 		total_residue_( total_residue )
 	{};
 

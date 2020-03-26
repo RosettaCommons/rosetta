@@ -28,7 +28,7 @@
 #include <map>
 
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyzVector.hh>

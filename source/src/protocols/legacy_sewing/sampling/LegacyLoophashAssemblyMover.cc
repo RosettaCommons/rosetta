@@ -717,7 +717,7 @@ LegacyLoophashAssemblyMover::build_loop_pose(
 	if ( basic::options::option[basic::options::OptionKeys::legacy_sewing::dump_pdbs] ) {
 		Pose tmp;
 
-		for ( Size i = 1; i <= fragment_size+2; ++i ) {
+		for ( core::Size i = 1; i <= fragment_size+2; ++i ) {
 			core::conformation::ResidueOP new_rsd( NULL );
 			new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map("ALA") );
 			if ( 1==i ) tmp.append_residue_by_jump( *new_rsd, 1 );
@@ -727,8 +727,8 @@ LegacyLoophashAssemblyMover::build_loop_pose(
 			tmp.set_omega( tmp.size(), 180.0 );
 		}
 
-		for ( Size i = 0; i < fragment_size; i++ ) {
-			Size ires = 2+i;//due to the use of std:vector i has to start from 0, but positions offset by 1.
+		for ( core::Size i = 0; i < fragment_size; i++ ) {
+			core::Size ires = 2+i;//due to the use of std:vector i has to start from 0, but positions offset by 1.
 			tmp.set_phi  ( ires, phi[i]  );
 			tmp.set_psi  ( ires, psi[i]  );
 			tmp.set_omega( ires, omega[i]);

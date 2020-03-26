@@ -85,9 +85,9 @@ public:
 
 	/// @brief value constructor without score function
 	GenericMonteCarloMover(
-		Size const maxtrials,
-		Size const max_accepted_trials,
-		Size const task_scaling,
+		core::Size const maxtrials,
+		core::Size const max_accepted_trials,
+		core::Size const task_scaling,
 		MoverOP const & mover,
 		Real const temperature = 0.0,
 		String const & sample_type = "low",
@@ -97,7 +97,7 @@ public:
 	/// @brief value constructor with score function
 	// Undefined, commenting out to fix PyRosetta build
 	/* GenericMonteCarloMover(
-	Size const maxtrials,
+	core::Size const maxtrials,
 	MoverOP const & mover,
 	ScoreFunctionOP const & sfxn,
 	Real const temperature = 0.0,
@@ -108,9 +108,9 @@ public:
 
 	/// @brief value constructor with task operation via TaskFactory
 	GenericMonteCarloMover(
-		Size const maxtrials,
-		Size const max_accepted_trials,
-		Size const task_scaling,
+		core::Size const maxtrials,
+		core::Size const max_accepted_trials,
+		core::Size const task_scaling,
 		MoverOP const & mover,
 		TaskFactoryOP factory_in,
 		Real const temperature = 0.0,
@@ -151,7 +151,7 @@ public:
 	void
 	accept( Pose & pose, utility::vector1< core::Real > const & provisional_scores, protocols::moves::MCA const mca_status );
 
-	Size num_designable( Pose & pose, PackerTaskOP & task);
+	core::Size num_designable( Pose & pose, PackerTaskOP & task);
 
 public: // accessor
 
@@ -191,39 +191,39 @@ public: // accessor
 	///            core::scoring::ScoreFunctionOP) {}
 	///
 	/// Trigger callback = std::bind(&no_op, STAGE, NUM_STAGES, _1, _2, _3, _4);
-	/// Size trigger_id = add_trigger(callback);
+	/// core::Size trigger_id = add_trigger(callback);
 	///
 	/// The current stage and number of stages must be bound at creation time.
 	/// This information provides the triggers with context about the current
 	/// progress of the simulation as a whole.
 	///
 	/// If the trigger returns true, rescoring occurs.
-	Size add_trigger(const GenericMonteCarloMoverTrigger& trigger);
+	core::Size add_trigger(const GenericMonteCarloMoverTrigger& trigger);
 
 	/// @brief Returns the number of triggers
-	Size num_triggers() const;
+	core::Size num_triggers() const;
 
 	/// @brief Returns maximum number of trials
-	Size maxtrials() const { return maxtrials_; }
+	core::Size maxtrials() const { return maxtrials_; }
 
 	/// @brief Returns maximum number of accepted trials
-	Size max_accepted_trials() const { return max_accepted_trials_; }
+	core::Size max_accepted_trials() const { return max_accepted_trials_; }
 
 	/// @brief Returns the task scaling value
-	Size task_scaling() const { return task_scaling_; }
+	core::Size task_scaling() const { return task_scaling_; }
 
 public: // mutators
 	/// @brief Removes the trigger with the specified id
-	void remove_trigger(Size trigger_id);
+	void remove_trigger(core::Size trigger_id);
 
 	/// @brief set max trials of MC trials
-	void set_maxtrials( Size const ntrial );
+	void set_maxtrials( core::Size const ntrial );
 
 	/// @brief set max accepted trials of MC trials
-	void set_max_accepted_trials( Size const n_max_accepted_trial );
+	void set_max_accepted_trials( core::Size const n_max_accepted_trial );
 
 	/// @brief set task multiplier to calculate trials from task
-	void set_task_scaling( Size const scaling );
+	void set_task_scaling( core::Size const scaling );
 
 	/// @brief set mover
 	void set_mover( MoverOP mover ) override;
@@ -307,11 +307,11 @@ public: // mutators
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 	core::pack::task::TaskFactoryOP task_factory() const{ return factory_; }
 
-	Size trial_counter() const { return trial_counter_; }
+	core::Size trial_counter() const { return trial_counter_; }
 	void trial_counter( core::Size const i ){ trial_counter_ = i; };
 
 	//void set_trial_counter
-	Size accept_counter() const { return accept_counter_; }
+	core::Size accept_counter() const { return accept_counter_; }
 	utility::vector1< Real > temperatures() const { return temperatures_; }
 	void temperatures( utility::vector1< Real > const & temps ) { temperatures_ = temps; }
 	bool recover_low() const { return recover_low_; }
@@ -377,8 +377,8 @@ protected:
 	/// @brief Executes all triggers. The order of trigger execution is undefined.
 	/// Do not assume, depend, or in any way rely on a particular ordering.
 	void fire_all_triggers(
-		Size cycle,
-		Size num_cycles,
+		core::Size cycle,
+		core::Size num_cycles,
 		const Pose& pose,
 		ScoreFunctionOP scoring);
 
@@ -399,16 +399,16 @@ protected:
 
 private:
 	/// @brief max number of MC trials
-	Size maxtrials_ = 10;
+	core::Size maxtrials_ = 10;
 
 	/// @brief max number of accepted MC trials
-	Size max_accepted_trials_ = 0;
+	core::Size max_accepted_trials_ = 0;
 
 	/// @brief number of designable positions
-	Size number_designable_ = 0;
+	core::Size number_designable_ = 0;
 
 	/// @brief multiply the number_designable_ by task_scaling to get the number of trials
-	Size task_scaling_ = 5;
+	core::Size task_scaling_ = 5;
 
 	/// @brief mover
 	MoverOP mover_;
@@ -461,7 +461,7 @@ private:
 
 	/// @brief By which filter (by index) are poses ranked by for non-Boltzman purposes
 	/// (e.g. recover_low())
-	Size rank_by_filter_ = 1;
+	core::Size rank_by_filter_ = 1;
 
 	/// @brief If boltz_rank_=true, instead of ranking by a single filter, rank by the
 	/// temperature-weighted sum of all scores
@@ -493,10 +493,10 @@ private:
 	Real energy_gap_counter_ = 0.0;
 
 	/// @brief Next trigger identifier to be assigned
-	Size next_trigger_id_ = 1;
+	core::Size next_trigger_id_ = 1;
 
 	/// @brief Collection of function callbacks
-	boost::unordered_map<Size, GenericMonteCarloMoverTrigger> triggers_;
+	boost::unordered_map<core::Size, GenericMonteCarloMoverTrigger> triggers_;
 	/// @brief dflt false_filter; use this to stop an MC trajectory before maxtrials_ (if filter evaluates to true)
 	protocols::filters::FilterOP stopping_condition_;
 	/// @brief dflt NULL; if the mover defined a stopping condition on the datamap then this assumes the mover's value. In this way, the Mover can tell GenericMC to stop execution, e.g., if it has iterated over all internal possibilities

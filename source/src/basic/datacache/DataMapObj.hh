@@ -15,12 +15,12 @@
 #define INCLUDED_basic_datacache_DataMapObj_hh
 
 // Project headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace basic {
 namespace datacache {
 
-/// @brief templated class to make any data type compatible with ReferenceCounts and OPs.
+/// @brief templated class to make any data type compatible with VirtualBase and OPs.
 /// e.g., utility::pointer::owning_ptr< basic::datacache::DataMapObj< bool > > stop;
 /// You can then place such constructs on the basic::datacache::DataMap
 ///
@@ -28,7 +28,7 @@ namespace datacache {
 /// C++11 / boost shared_ptr system: arbitrary objects can now be put into smart
 /// pointers.
 template < class Ty >
-class DataMapObj : public utility::pointer::ReferenceCount {
+class DataMapObj : public utility::VirtualBase {
 public:
 	Ty obj;
 

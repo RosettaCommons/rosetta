@@ -126,7 +126,7 @@ COMCoordinateConstraint::score( scoring::func::XYZ_Func const& xyz,
 core::Real
 COMCoordinateConstraint::dist( core::scoring::func::XYZ_Func const & xyz ) const {
 	Vector COM_pose( 0.0, 0.0, 0.0 );
-	for ( Size i=1; i<=(Size)atms_.size(); ++i ) {
+	for ( core::Size i=1; i<=(core::Size)atms_.size(); ++i ) {
 		COM_pose += xyz(atms_[i]);
 	}
 
@@ -141,7 +141,7 @@ COMCoordinateConstraint::setup_for_scoring( scoring::func::XYZ_Func const & xyz,
 	scoring::ScoreFunction const & ) const
 {
 	// Take care of Centroid models
-	for ( Size i=1; i<=(Size)atms_.size(); ++i ) {
+	for ( core::Size i=1; i<=(core::Size)atms_.size(); ++i ) {
 		chemical::ResidueType const & rsd_type = xyz.residue( atms_[i].rsd()  ).type();
 		id::AtomID atm_i;
 
@@ -200,7 +200,7 @@ COMCoordinateConstraint::natoms() const
 }
 
 id::AtomID const &
-COMCoordinateConstraint::atom( Size const n ) const
+COMCoordinateConstraint::atom( core::Size const n ) const
 {
 	if ( n >= 1 && n <= atms_.size() ) {
 		return atms_[n];
@@ -222,7 +222,7 @@ COMCoordinateConstraint::show_def( std::ostream&  out , pose::Pose const& /* pos
 }
 
 Size
-COMCoordinateConstraint::show_violations( std::ostream& /*out*/, pose::Pose const& /*pose*/, Size /*verbose_level*/, Real /*threshold*/ ) const {
+COMCoordinateConstraint::show_violations( std::ostream& /*out*/, pose::Pose const& /*pose*/, core::Size /*verbose_level*/, Real /*threshold*/ ) const {
 	return 0;
 }
 
@@ -235,7 +235,7 @@ COMCoordinateConstraint::read_def(
 	scoring::func::FuncFactory const & /* func_factory */
 ) {
 
-	Size res;
+	core::Size res;
 	std::string name;
 
 	// to do? atm name -> centroid conversion

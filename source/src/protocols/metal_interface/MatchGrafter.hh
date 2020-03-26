@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_metal_interface_MatchGrafter_HH
 
 #include <protocols/metal_interface/MatchGrafter.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -26,7 +26,7 @@ namespace metal_interface {
 
 
 /// @details
-class MatchGrafter : public utility::pointer::ReferenceCount {
+class MatchGrafter : public utility::VirtualBase {
 
 public:
 

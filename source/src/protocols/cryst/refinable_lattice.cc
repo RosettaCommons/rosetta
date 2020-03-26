@@ -170,13 +170,13 @@ getVolume(
 void
 UpdateCrystInfo::apply( core::pose::Pose & pose ) {
 	auto & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
-	Size Ajump_=0, Bjump_=0, Cjump_=0, SUBjump_=0;
+	core::Size Ajump_=0, Bjump_=0, Cjump_=0, SUBjump_=0;
 
 	core::pose::Pose pose_asu;
 	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
 
 	// find lattice jumps
-	for ( Size i=1; i<=pose.fold_tree().num_jump(); ++i ) {
+	for ( core::Size i=1; i<=pose.fold_tree().num_jump(); ++i ) {
 		std::string jumpname = SymmConf.Symmetry_Info()->get_jump_name( i );
 		if ( jumpname == "A" ) Ajump_=i;
 		else if ( jumpname == "B" ) Bjump_=i;
@@ -197,7 +197,7 @@ UpdateCrystInfo::apply( core::pose::Pose & pose ) {
 	io::CrystInfo ci = pose.pdb_info()->crystinfo();
 
 	bool need_angles=false;
-	numeric::xyzVector<Size> grid;
+	numeric::xyzVector<core::Size> grid;
 	if ( Cjump_ != 0 ) {
 		Spacegroup sg;
 		sg.set_spacegroup(ci.spacegroup());
@@ -447,7 +447,7 @@ DockLatticeMover::initialize(core::pose::Pose & pose, core::Real scale_contact_d
 			utility::vector1< std::string > sg_picked( 5 );
 			sg_picked[1] = "P212121"; sg_picked[2] = "P1211"; sg_picked[3] = "C121"; sg_picked[4] = "P21212";
 			sg_picked[5] = ci.spacegroup();
-			Size irand = numeric::random::rg().random_range(1, 5);
+			core::Size irand = numeric::random::rg().random_range(1, 5);
 			sgname = sg_picked[irand];
 			sg.set_spacegroup( sgname );
 			TR << "Assigning random_chiral space group of: " << sgname << std::endl;
@@ -459,7 +459,7 @@ DockLatticeMover::initialize(core::pose::Pose & pose, core::Real scale_contact_d
 			sg_picked[7] = "Pbcn"; sg_picked[8] = "Pca21"; sg_picked[8] = "Pccn";
 			sg_picked[9] ="231"; sg_picked[10] = ci.spacegroup();
 
-			Size irand = numeric::random::rg().random_range(1, 10);
+			core::Size irand = numeric::random::rg().random_range(1, 10);
 			sgname = sg_picked[irand];
 
 			sg.set_spacegroup( sgname );
@@ -591,7 +591,7 @@ DockLatticeMover::initialize(core::pose::Pose & pose, core::Real scale_contact_d
 	auto & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	symdofs_ = SymmConf.Symmetry_Info()->get_dofs();
 
-	for ( Size i=1; i<=pose.fold_tree().num_jump(); ++i ) {
+	for ( core::Size i=1; i<=pose.fold_tree().num_jump(); ++i ) {
 		std::string jumpname = SymmConf.Symmetry_Info()->get_jump_name( i );
 		if ( jumpname == "SUB" ) SUBjump_=i;
 		if ( jumpname == "A" ) Ajump_=i;
@@ -618,7 +618,7 @@ DockLatticeMover::slide_lattice( core::pose::Pose & pose ) {
 
 void
 DockLatticeMover::perturb_lattice( core::pose::Pose & pose ) {
-	std::map< Size, SymDof >::iterator it, it_begin = symdofs_.begin(), it_end = symdofs_.end();
+	std::map< core::Size, SymDof >::iterator it, it_begin = symdofs_.begin(), it_end = symdofs_.end();
 
 	for ( it = it_begin; it != it_end; ++it ) {
 		if ( it->first == SUBjump_ ) continue;
@@ -676,18 +676,18 @@ DockLatticeMover::perturb_chis( core::pose::Pose & pose ) {
 
 void
 DockLatticeMover::perturb_rb( core::pose::Pose & pose ) {
-	std::map< Size, SymDof >::iterator it, it_begin = symdofs_.begin(), it_end = symdofs_.end();
+	std::map< core::Size, SymDof >::iterator it, it_begin = symdofs_.begin(), it_end = symdofs_.end();
 	for ( it = it_begin; it != it_end; ++it ) {
 		core::kinematics::Jump flexible_jump = pose.jump( it->first );
 		SymDof const &dof = it->second;
 
-		for ( Size i = 1; i<= 3; ++i ) {
+		for ( core::Size i = 1; i<= 3; ++i ) {
 			if ( dof.allow_dof(i) ) {
 				flexible_jump.gaussian_move_single_rb( 1, trans_mag_, i );
 			}
 		}
 
-		for ( Size i = 4; i<= 6; ++i ) {
+		for ( core::Size i = 4; i<= 6; ++i ) {
 			if ( dof.allow_dof(i) ) {
 				flexible_jump.gaussian_move_single_rb( 1, rot_mag_, i );
 			}
@@ -734,7 +734,7 @@ DockLatticeMover::regenerate_lattice( core::pose::Pose & pose ) {
 	SymmetricConformation & SymmConf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	symdofs_ = SymmConf.Symmetry_Info()->get_dofs();
 
-	for ( Size i=1; i<=pose.fold_tree().num_jump(); ++i ) {
+	for ( core::Size i=1; i<=pose.fold_tree().num_jump(); ++i ) {
 		std::string jumpname = SymmConf.Symmetry_Info()->get_jump_name( i );
 		if ( jumpname == "SUB" ) SUBjump_=i;
 		if ( jumpname == "A" ) Ajump_=i;
@@ -1039,14 +1039,14 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 	Bx = sg_.f2c()*numeric::xyzVector< core::Real >(0,1,0); Bx.normalize();
 	Cx = sg_.f2c()*numeric::xyzVector< core::Real >(0,0,1); Cx.normalize();
 
-	Size rootres = place_near_origin( pose );
+	core::Size rootres = place_near_origin( pose );
 
 	core::pose::Pose posebase;
-	utility::vector1<Size> Ajumps, Bjumps, Cjumps, monomer_jumps, monomer_anchors;
+	utility::vector1<core::Size> Ajumps, Bjumps, Cjumps, monomer_jumps, monomer_anchors;
 
 	numeric::xyzVector< core::Real > max_extent(0,0,0);
-	for ( Size i=1; i<= pose.size(); ++i ) {
-		for ( Size j=1; j<=pose.residue(i).natoms(); ++j ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
+		for ( core::Size j=1; j<=pose.residue(i).natoms(); ++j ) {
 			numeric::xyzVector< core::Real > f_ij = sg_.c2f()*pose.residue(i).xyz(j);
 			for ( int k=0; k<3; ++k ) max_extent[k] = std::max( std::fabs(f_ij[k]) , max_extent[k] );
 		}
@@ -1061,7 +1061,7 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 	}
 
 	// in each direction, find closest symmcenter we are not considering
-	numeric::xyzVector< Size > grid = sg_.get_nsubdivisions();
+	numeric::xyzVector< core::Size > grid = sg_.get_nsubdivisions();
 	numeric::xyzVector<core::Real> closest_nongen_symmcenter(1.0/grid[0], 1.0/grid[1], 1.0/grid[2]);
 
 	numeric::xyzVector<int> EXTEND(
@@ -1072,12 +1072,12 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 	TR.Debug << "using extent = " << EXTEND[0] << "," << EXTEND[1] << "," << EXTEND[2] << std::endl;
 	TR.Debug << "  max_extent = " << max_extent[0] << "," << max_extent[1] << "," << max_extent[2] << std::endl;
 
-	Size base_monomer = -1; // Obviously bogus value - build_lattice_of_virtuals() should reset
+	core::Size base_monomer = -1; // Obviously bogus value - build_lattice_of_virtuals() should reset
 	build_lattice_of_virtuals( posebase, EXTEND, Ajumps, Bjumps, Cjumps, monomer_anchors, base_monomer);
 	debug_assert( base_monomer != core::Size(-1) );
 
-	Size nvrt = posebase.size();
-	Size nres_monomer = pose.size();
+	core::Size nvrt = posebase.size();
+	core::Size nres_monomer = pose.size();
 	TR.Debug << "Number of virtuals:" << nvrt << std::endl;
 
 	// only connecting ones!
@@ -1087,7 +1087,7 @@ MakeLatticeMover::apply( core::pose::Pose & pose ) {
 	add_monomers_to_lattice( pose, posebase, monomer_anchors, monomer_jumps, rootres );
 	TR.Debug << "Final pose size (including symm & VRT):" << posebase.total_residue() << std::endl;
 
-	Size nsubunits = monomer_anchors.size();
+	core::Size nsubunits = monomer_anchors.size();
 
 	core::pose::PDBInfoOP pdbinfo_old=pose.pdb_info(), pdbinfo_new;
 	pose = posebase;
@@ -1140,11 +1140,11 @@ Size
 MakeLatticeMover::place_near_origin (
 	Pose & pose
 ) {
-	Size rootpos=0;
-	Size nres = pose.size();
+	core::Size rootpos=0;
+	core::Size nres = pose.size();
 
 	numeric::xyzVector< core::Real > com(0,0,0);
-	for ( Size i=1; i<= nres; ++i ) {
+	for ( core::Size i=1; i<= nres; ++i ) {
 		core::conformation::Residue const &rsd = pose.residue(i);
 		com += rsd.atom(rsd.nbr_atom()).xyz();
 		if ( pose.residue(i).is_upper_terminus() ) break;
@@ -1152,7 +1152,7 @@ MakeLatticeMover::place_near_origin (
 	com /= nres;
 
 	Real mindis2(1e6);
-	for ( Size i=1; i<= nres; ++i ) {
+	for ( core::Size i=1; i<= nres; ++i ) {
 		core::conformation::Residue const &rsd = pose.residue(i);
 		Real const dis2( com.distance_squared(  rsd.atom(rsd.nbr_atom()).xyz() ) );
 		if ( dis2 < mindis2 ) {
@@ -1162,12 +1162,12 @@ MakeLatticeMover::place_near_origin (
 		if ( pose.residue(i).is_upper_terminus() ) break;
 	}
 
-	Size nsymm = sg_.nsymmops();
-	Size bestxform=0;
+	core::Size nsymm = sg_.nsymmops();
+	core::Size bestxform=0;
 	numeric::xyzVector< core::Real > bestoffset(0,0,0);
 	mindis2=1e6;
 	com = sg_.c2f()*com;
-	for ( Size i=1; i<=nsymm; ++i ) {
+	for ( core::Size i=1; i<=nsymm; ++i ) {
 		numeric::xyzVector< core::Real > foffset = sg_.symmop(i).get_rotation()*com + sg_.symmop(i).get_translation(), rfoffset;
 		rfoffset[0] = min_mod( foffset[0], 1.0 );
 		rfoffset[1] = min_mod( foffset[1], 1.0 );
@@ -1191,23 +1191,23 @@ void
 MakeLatticeMover::detect_connecting_subunits(
 	Pose const & monomer_pose,
 	Pose const & pose,
-	utility::vector1<Size> & monomer_anchors,
-	Size &basesubunit
+	utility::vector1<core::Size> & monomer_anchors,
+	core::Size &basesubunit
 ) {
-	utility::vector1<Size> new_monomer_anchors;
-	Size new_basesubunit=0;
+	utility::vector1<core::Size> new_monomer_anchors;
+	core::Size new_basesubunit=0;
 
 	utility::vector1< numeric::xyzMatrix<core::Real> > new_allRs;
 	utility::vector1< numeric::xyzVector<core::Real> > new_allTs;
 
 	// get pose radius
-	Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.size () );
+	core::Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.size () );
 
 	// as interaction centers, use:
 	// a) all protein CB's
 	// b) all ligand heavyatoms
 	core::Size nIntCtrs=0;
-	for ( Size i=1; i<= nres_monomer; ++i ) {
+	for ( core::Size i=1; i<= nres_monomer; ++i ) {
 		if ( monomer_pose.residue(i).is_protein() ) {
 			nIntCtrs++;
 		} else {
@@ -1222,7 +1222,7 @@ MakeLatticeMover::detect_connecting_subunits(
 	runtime_assert( T0.length() < 1e-6);
 
 	core::Size ctr=1;
-	for ( Size i=1; i<= nres_monomer; ++i ) {
+	for ( core::Size i=1; i<= nres_monomer; ++i ) {
 		core::conformation::Residue const &rsd = monomer_pose.residue(i);
 		if ( rsd.is_protein() ) {
 			if ( rsd.aa() == core::chemical::aa_gly ) {
@@ -1231,14 +1231,14 @@ MakeLatticeMover::detect_connecting_subunits(
 				monomer_cas[ctr++] = rsd.xyz(5);  //CB
 			}
 		} else {
-			for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
+			for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
 				monomer_cas[ctr++] = rsd.xyz(j);
 			}
 		}
 	}
 
 	Real radius = 0;
-	for ( Size i=1; i<=nIntCtrs; ++i ) {
+	for ( core::Size i=1; i<=nIntCtrs; ++i ) {
 		radius = std::max( monomer_cas[i].length_squared() , radius );
 	}
 	radius = sqrt(radius);
@@ -1249,7 +1249,7 @@ MakeLatticeMover::detect_connecting_subunits(
 	new_allTs.push_back( allTs_[basesubunit] );
 	new_basesubunit = 1;
 
-	for ( Size i=1; i<=num_monomers; ++i ) {
+	for ( core::Size i=1; i<=num_monomers; ++i ) {
 		if ( i==basesubunit ) continue;
 
 		// pass 1 check vrt-vrt dist to throw out very distant things
@@ -1265,9 +1265,9 @@ MakeLatticeMover::detect_connecting_subunits(
 		numeric::xyzMatrix<core::Real> R = numeric::xyzMatrix<core::Real>::cols(X,Y,Z);
 
 		bool contact=false;
-		for ( Size j=1; j<=nIntCtrs && !contact; ++j ) {
+		for ( core::Size j=1; j<=nIntCtrs && !contact; ++j ) {
 			numeric::xyzVector< core::Real > Ri = R*monomer_cas[j] + T;
-			for ( Size k=1; k<= nres_monomer && !contact; ++k ) {
+			for ( core::Size k=1; k<= nres_monomer && !contact; ++k ) {
 				contact = ((Ri-monomer_cas[k]).length_squared() < contact_dist_*contact_dist_);
 			}
 		}
@@ -1288,25 +1288,25 @@ void
 MakeLatticeMover::add_monomers_to_lattice(
 	Pose const & monomer_pose,
 	Pose & pose,
-	utility::vector1<Size> const & monomer_anchors,
-	utility::vector1<Size> & monomer_jumps,
-	Size rootpos
+	utility::vector1<core::Size> const & monomer_anchors,
+	utility::vector1<core::Size> & monomer_jumps,
+	core::Size rootpos
 ) {
-	Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.size () );
+	core::Size const num_monomers( monomer_anchors.size() ), nres_monomer( monomer_pose.size () );
 
 	monomer_jumps.clear();
-	Size n_framework_jumps = pose.fold_tree().num_jump();
+	core::Size n_framework_jumps = pose.fold_tree().num_jump();
 
-	Size nres_protein(0);
-	for ( Size i=1; i<= num_monomers; ++i ) {
+	core::Size nres_protein(0);
+	for ( core::Size i=1; i<= num_monomers; ++i ) {
 		//std::cerr << "inserting " << i << " of " << num_monomers << std::endl;
-		Size const anchor( monomer_anchors[i] + nres_protein ); // since we've already done some insertions
-		Size const old_nres_protein( nres_protein );
+		core::Size const anchor( monomer_anchors[i] + nres_protein ); // since we've already done some insertions
+		core::Size const old_nres_protein( nres_protein );
 		pose.insert_residue_by_jump( monomer_pose.residue(rootpos), old_nres_protein+1, anchor ); ++nres_protein;
-		for ( Size j=rootpos-1; j>=1; --j ) {
+		for ( core::Size j=rootpos-1; j>=1; --j ) {
 			pose.prepend_polymer_residue_before_seqpos( monomer_pose.residue(j), old_nres_protein+1, false ); ++nres_protein;
 		}
-		for ( Size j=rootpos+1; j<= monomer_pose.size(); ++j ) {
+		for ( core::Size j=rootpos+1; j<= monomer_pose.size(); ++j ) {
 			if ( monomer_pose.residue(j).is_lower_terminus() || !monomer_pose.residue(j).is_polymer() ) {
 				pose.insert_residue_by_jump( monomer_pose.residue(j), nres_protein+1, nres_protein ); ++nres_protein;
 			} else {
@@ -1315,7 +1315,7 @@ MakeLatticeMover::add_monomers_to_lattice(
 		}
 		monomer_jumps.push_back( n_framework_jumps+i );
 	}
-	for ( Size i=1; i<= num_monomers; ++i ) {
+	for ( core::Size i=1; i<= num_monomers; ++i ) {
 		pose.conformation().insert_chain_ending( nres_monomer*i );
 	}
 
@@ -1329,11 +1329,11 @@ void
 MakeLatticeMover::build_lattice_of_virtuals(
 	core::pose::Pose & posebase,
 	numeric::xyzVector<int> EXTEND,
-	utility::vector1<Size> &Ajumps,
-	utility::vector1<Size> &Bjumps,
-	utility::vector1<Size> &Cjumps,
-	utility::vector1<Size> &subunit_anchors,
-	Size &basesubunit
+	utility::vector1<core::Size> &Ajumps,
+	utility::vector1<core::Size> &Bjumps,
+	utility::vector1<core::Size> &Cjumps,
+	utility::vector1<core::Size> &subunit_anchors,
+	core::Size &basesubunit
 ) {
 	numeric::xyzVector<int> nvrts_dim(2*EXTEND[0]+1, 2*EXTEND[1]+1, 2*EXTEND[2]+1);
 
@@ -1342,8 +1342,8 @@ MakeLatticeMover::build_lattice_of_virtuals(
 	allTs_.clear();
 
 	// get gridspace in each dimension
-	numeric::xyzVector< Size > grid = sg_.get_nsubdivisions();
-	//numeric::xyzVector< Size > trans_dofs = sg_.get_trans_dofs();
+	numeric::xyzVector< core::Size > grid = sg_.get_nsubdivisions();
+	//numeric::xyzVector< core::Size > trans_dofs = sg_.get_trans_dofs();
 
 	numeric::xyzVector< core::Real > O, Ax, Bx, Cx, Ay, By, Cy;
 	if ( sg_.setting() == HEXAGONAL ) {
@@ -1470,22 +1470,22 @@ MakeLatticeMover::build_lattice_of_virtuals(
 void
 MakeLatticeMover::setup_xtal_symminfo(
 	Pose & pose,
-	Size const num_monomers,
-	Size const num_virtuals,
-	Size const base_monomer,
-	Size const nres_monomer,
-	utility::vector1<Size> const &Ajumps,
-	utility::vector1<Size> const &Bjumps,
-	utility::vector1<Size> const &Cjumps,
-	utility::vector1<Size> const &monomer_jumps,
+	core::Size const num_monomers,
+	core::Size const num_virtuals,
+	core::Size const base_monomer,
+	core::Size const nres_monomer,
+	utility::vector1<core::Size> const &Ajumps,
+	utility::vector1<core::Size> const &Bjumps,
+	utility::vector1<core::Size> const &Cjumps,
+	utility::vector1<core::Size> const &monomer_jumps,
 	conformation::symmetry::SymmetryInfo & symminfo
 ) {
 
 	// bb clones
-	for ( Size i=1; i<= num_monomers; ++i ) {
+	for ( core::Size i=1; i<= num_monomers; ++i ) {
 		if ( i != base_monomer ) {
-			Size const offset( (i-1)*nres_monomer ), base_offset( (base_monomer-1)*nres_monomer);
-			for ( Size j=1; j<= nres_monomer; ++j ) {
+			core::Size const offset( (i-1)*nres_monomer ), base_offset( (base_monomer-1)*nres_monomer);
+			for ( core::Size j=1; j<= nres_monomer; ++j ) {
 				symminfo.add_bb_clone ( base_offset+j, offset+j );
 				symminfo.add_chi_clone( base_offset+j, offset+j );
 			}
@@ -1493,8 +1493,8 @@ MakeLatticeMover::setup_xtal_symminfo(
 	}
 
 	// subunit base jump clones
-	Size const base_monomer_jump( monomer_jumps[ base_monomer ] );
-	for ( Size i=1; i<=monomer_jumps.size(); ++i ) {
+	core::Size const base_monomer_jump( monomer_jumps[ base_monomer ] );
+	for ( core::Size i=1; i<=monomer_jumps.size(); ++i ) {
 		if ( monomer_jumps[i]!= base_monomer_jump ) {
 			symminfo.add_jump_clone( base_monomer_jump, monomer_jumps[i], 0.0 );
 		}
@@ -1502,22 +1502,22 @@ MakeLatticeMover::setup_xtal_symminfo(
 
 	// unit cell clones
 	using core::conformation::symmetry::SymDof;
-	std::map< Size, SymDof > symdofs;
+	std::map< core::Size, SymDof > symdofs;
 
-	Size Amaster=Ajumps[1], Bmaster=Bjumps[1], Cmaster=Cjumps[1];
+	core::Size Amaster=Ajumps[1], Bmaster=Bjumps[1], Cmaster=Cjumps[1];
 	numeric::xyzVector<core::Size> linked_dofs=sg_.get_trans_dofs();
 	if ( linked_dofs[1]==1 ) { Bmaster=Ajumps[1]; /*std::cerr << "clone B->A" << std::endl;*/ }
 	if ( linked_dofs[2]==1 ) { Cmaster=Ajumps[1]; /*std::cerr << "clone C->A" << std::endl;*/ }
 
-	for ( Size i=2; i<=Ajumps.size(); ++i ) {
+	for ( core::Size i=2; i<=Ajumps.size(); ++i ) {
 		symminfo.add_jump_clone( Amaster, Ajumps[i], 0.0 );
 	}
-	for ( Size i=1; i<=Bjumps.size(); ++i ) {
+	for ( core::Size i=1; i<=Bjumps.size(); ++i ) {
 		if ( Bmaster!=Bjumps[i] ) {
 			symminfo.add_jump_clone( Bmaster, Bjumps[i], 0.0 );
 		}
 	}
-	for ( Size i=1; i<=Cjumps.size(); ++i ) {
+	for ( core::Size i=1; i<=Cjumps.size(); ++i ) {
 		if ( Cmaster!=Cjumps[i] ) {
 			symminfo.add_jump_clone( Cmaster, Cjumps[i], 0.0 );
 		}
@@ -1552,7 +1552,7 @@ MakeLatticeMover::setup_xtal_symminfo(
 
 	// jump names
 	TR << "Initializing " << pose.num_jump() << " jumps." << std::endl;
-	for ( Size v=1; v<=pose.num_jump(); ++v ) symminfo.set_jump_name(v, "v_"+utility::to_string(v));
+	for ( core::Size v=1; v<=pose.num_jump(); ++v ) symminfo.set_jump_name(v, "v_"+utility::to_string(v));
 
 	symminfo.set_jump_name(Ajumps[1], "A");
 	symminfo.set_jump_name(Bjumps[1], "B");
@@ -1570,9 +1570,9 @@ MakeLatticeMover::setup_xtal_symminfo(
 	symminfo.set_flat_score_multiply( pose.size(), 0 );
 	symminfo.set_nres_subunit( nres_monomer );
 
-	Size const nres_protein( num_monomers * nres_monomer );
+	core::Size const nres_protein( num_monomers * nres_monomer );
 	TR.Debug << "nres_protein " << nres_protein << std::endl;
-	for ( Size i=1; i<= nres_protein; ++i ) {
+	for ( core::Size i=1; i<= nres_protein; ++i ) {
 		if ( symminfo.bb_is_independent( i ) ) symminfo.set_score_multiply( i, 2 );
 		else symminfo.set_score_multiply( i, 1 );
 	}

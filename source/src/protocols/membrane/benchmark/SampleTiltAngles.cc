@@ -170,7 +170,7 @@ SampleTiltAngles::apply( core::pose::Pose& pose ){
 	using namespace numeric;
 
 	// Determine the membrane jump number (pre-determined in the framework)
-	Size membrane_jump( pose.conformation().membrane_info()->membrane_jump() );
+	core::Size membrane_jump( pose.conformation().membrane_info()->membrane_jump() );
 	Vector center( pose.conformation().membrane_info()->membrane_center( pose.conformation() ) );
 	TR << "Setting up an initial membrane orientation by aligning the peptide to the current membrane normal" << std::endl;
 	// Calculate the current helix axes based on the COM of the transmembrane

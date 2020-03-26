@@ -310,7 +310,7 @@ AbscriptMover::parse_my_tag(
 	using namespace basic::options;
 
 	//Add abscript-configured scorefunctions to DataMap?
-	utility::vector1< std::string > id_strs( (Size) IVb );
+	utility::vector1< std::string > id_strs( (core::Size) IVb );
 	id_strs[ I ] = "I"; id_strs[ II ] = "II"; id_strs[ IIIa ] = "IIIa";
 	id_strs[ IIIb ] = "IIIb"; id_strs[IVa] = "IVa"; id_strs[ IVb ] = "IVb";
 
@@ -360,7 +360,7 @@ AbscriptMover::parse_my_tag(
 				if ( id_map_.find( stage_it ) != id_map_.end() ) {
 					skipped_stages.push_back( id_map_[stage_it] );
 				} else {
-					Size stage_int = 0;
+					core::Size stage_int = 0;
 					try {
 						stage_int = utility::string2int( stage_it );
 					} catch (...) {
@@ -570,7 +570,7 @@ std::map< core::Size, core::Size > AbscriptMover::calculate_iterations( core::po
 	debug_assert( shortestpath.max_dist() <= pose.size() );
 
 	core::Size end_seqsep = (core::Size)(stage_movers_[ I ]->seq_sep_intercept() * shortestpath.max_dist());
-	core::Size begin_seqsep = std::min( end_seqsep, Size(3) );
+	core::Size begin_seqsep = std::min( end_seqsep, core::Size(3) );
 
 	core::Real end_seqsep_factor   = core::Real( end_seqsep   ) / shortestpath.max_dist();
 	core::Real begin_seqsep_factor = core::Real( begin_seqsep ) / shortestpath.max_dist();

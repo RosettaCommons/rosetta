@@ -22,7 +22,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 
 // C++ headers
@@ -39,7 +39,7 @@
 namespace core {
 namespace id {
 
-class SequenceMapping : public utility::pointer::ReferenceCount {
+class SequenceMapping : public utility::VirtualBase {
 
 public:
 	// constructors, destructors and assignment operator

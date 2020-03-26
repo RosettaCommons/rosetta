@@ -30,7 +30,7 @@
 #include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -45,9 +45,9 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-class LigandConformer : public utility::pointer::ReferenceCount {
+class LigandConformer : public utility::VirtualBase {
 public:
-	typedef utility::pointer::ReferenceCount      parent;
+	typedef utility::VirtualBase      parent;
 	typedef core::Size                              Size;
 	typedef core::Real                              Real;
 	typedef core::Vector                          Vector;
@@ -102,12 +102,12 @@ public:
 	/// matching algorithm that the same three orientation atoms are used for all LigandConformers.
 	void
 	initialize_from_residue(
-		Size D1,
-		Size D2,
-		Size D3,
-		Size orientation_atom1,
-		Size orientation_atom2,
-		Size orientation_atom3,
+		core::Size D1,
+		core::Size D2,
+		core::Size D3,
+		core::Size orientation_atom1,
+		core::Size orientation_atom2,
+		core::Size orientation_atom3,
 		core::conformation::Residue const & residue
 	);
 
@@ -129,35 +129,35 @@ public:
 	) const;
 
 	void
-	move_atoms_to_collcheck_begin( utility::vector1< Size > const & restype_atnos_to_move_early );
+	move_atoms_to_collcheck_begin( utility::vector1< core::Size > const & restype_atnos_to_move_early );
 
 	inline
-	Size
+	core::Size
 	n_collision_check_atoms() const {
 		return collision_check_id_2_restype_id_.size();
 	}
 
 	inline
-	Size
-	restype_id_2_collision_check_id( Size restype_atomno ) const {
+	core::Size
+	restype_id_2_collision_check_id( core::Size restype_atomno ) const {
 		return restype_id_2_collision_check_id_[ restype_atomno ];
 	}
 
 	inline
-	Size
-	collision_check_id_2_restype_id( Size coll_check_id ) const {
+	core::Size
+	collision_check_id_2_restype_id( core::Size coll_check_id ) const {
 		return collision_check_id_2_restype_id_[ coll_check_id ];
 	}
 
 	inline
 	Vector
-	coordinate_in_D3_frame( Size restype_atomno, HTReal const & frame3 ) const {
+	coordinate_in_D3_frame( core::Size restype_atomno, HTReal const & frame3 ) const {
 		return frame3 * points_in_D3_frame_[ restype_atomno ];
 	}
 
 	inline
 	Vector
-	coordinate_in_global_frame( Size restype_atomno, HTReal const & orientation_frame ) const {
+	coordinate_in_global_frame( core::Size restype_atomno, HTReal const & orientation_frame ) const {
 		return orientation_frame * points_in_global_orintation_frame_[ restype_atomno ];
 	}
 
@@ -175,7 +175,7 @@ public:
 private:
 
 	void
-	create_collcheck_ordering( utility::vector1< bool > selected, Size count_from );
+	create_collcheck_ordering( utility::vector1< bool > selected, core::Size count_from );
 
 private:
 
@@ -184,7 +184,7 @@ private:
 	/// The indices of the three atoms defining the orientation of the
 	/// ligand in the global coordinate frame
 	/// These indices are in the restype indexing of atoms.
-	utility::fixedsizearray1< Size, 3 >         orientation_atoms_;
+	utility::fixedsizearray1< core::Size, 3 >         orientation_atoms_;
 	//utility::fixedsizearray1< Vector, 3 >       oats_in_D3_frame_;
 	HTReal                                      oframe_in_D3frame_;
 
@@ -193,7 +193,7 @@ private:
 
 	/// The indices for the three atoms defining the location of the downstream partner
 	/// from the upstream partner.  D1 D2 and D3.  These indices are in the restype indexing of atoms.
-	utility::fixedsizearray1< Size, 3 >         atoms_123_;
+	utility::fixedsizearray1< core::Size, 3 >         atoms_123_;
 	Real d12_; // distance from D1 to D2
 	Real d23_; // distance drom D2 to D3
 	Real ang123_; /// angle between D1, D2 and D3
@@ -201,8 +201,8 @@ private:
 	/// The coordinates of the other ligand atoms in the coordinate frame from atom D3.
 	utility::vector1< Vector >       points_in_D3_frame_;
 	bool ignore_h_collisions_;
-	utility::vector1< Size >         collision_check_id_2_restype_id_;
-	utility::vector1< Size >         restype_id_2_collision_check_id_;
+	utility::vector1< core::Size >         collision_check_id_2_restype_id_;
+	utility::vector1< core::Size >         restype_id_2_collision_check_id_;
 
 };
 

@@ -28,14 +28,14 @@ namespace pack {
 namespace rotamer_set {
 
 RotamerOperation::RotamerOperation() :
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {}
 
 RotamerOperation::~RotamerOperation() = default;
 
 
 RotamerSetOperation::RotamerSetOperation() :
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {}
 
 RotamerSetOperation::~RotamerSetOperation() = default;
@@ -51,7 +51,7 @@ RotamerSetOperation::increase_packer_residue_radius(
 }
 
 RotamerSetsOperation::RotamerSetsOperation() :
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {}
 
 RotamerSetsOperation::~RotamerSetsOperation() = default;

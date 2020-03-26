@@ -16,7 +16,7 @@
 #define INCLUDED_protocols_features_BatchFeatures_HH
 
 // Unit Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/BatchFeatures.fwd.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
@@ -34,7 +34,7 @@
 namespace protocols {
 namespace features {
 
-class BatchFeatures : public utility::pointer::ReferenceCount {
+class BatchFeatures : public utility::VirtualBase {
 public:
 	BatchFeatures();
 

@@ -118,7 +118,7 @@ BetaTurnDetectionFeatures::report_features(
 		safely_prepare_statement( beta_turns_stmt_string, db_session ) );
 
 	for ( SSize begin = 1; begin <= SSize( pose.size() - btd_->beta_turn_length() ); ++begin ) {
-		Size end = begin + btd_->beta_turn_length();
+		core::Size end = begin + btd_->beta_turn_length();
 
 		if ( ! check_relevant_residues_range( relevant_residues, begin, end ) ||
 				! btd_->residue_range_is_protein( pose, begin, end ) ||

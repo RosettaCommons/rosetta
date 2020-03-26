@@ -435,8 +435,8 @@ CartesianHybridize::apply_frame( core::pose::Pose & pose, core::fragment::Frame 
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > coords;
 
-	for ( Size i = 0; i < len; ++i ) {
-		for ( Size j = 1; j <= pose.residue_type(start+i).natoms(); ++j ) {
+	for ( core::Size i = 0; i < len; ++i ) {
+		for ( core::Size j = 1; j <= pose.residue_type(start+i).natoms(); ++j ) {
 			core::id::AtomID id( j, start+i );
 			ids.push_back(id);
 			coords.push_back( R * ( pose_copy.xyz(id) - com2) + com1 );
@@ -487,7 +487,7 @@ CartesianHybridize::apply( Pose & pose ) {
 	options_minilbfgs.max_iter(5);
 	core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 	if ( increase_cycles_ < 1. ) {
-		auto niter = (Size) (200*increase_cycles_);
+		auto niter = (core::Size) (200*increase_cycles_);
 		options_lbfgs.max_iter(niter);
 	} else {
 		options_lbfgs.max_iter(200);

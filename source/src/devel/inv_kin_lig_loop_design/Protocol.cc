@@ -333,7 +333,7 @@ void Protocol::phase_hires() {
 
 		min_ramp.boltzmann( *pose );
 
-		for ( Size k = 0; k < loops.size(); ++k ) {
+		for ( core::Size k = 0; k < loops.size(); ++k ) {
 			const Loop& loop = loops_shuffled[k];
 
 			int const a = loop.lo;
@@ -428,7 +428,7 @@ void Protocol::phase_hires() {
 
 		protocols::moves::MonteCarlo min_design_sm(*pose, *score_fxn_hires, temp);
 
-		for ( Size k = 0; k < loops_shuffled.size(); ++k ) {
+		for ( core::Size k = 0; k < loops_shuffled.size(); ++k ) {
 
 			cout << "Protocol::execute - DESIGN - small moves + min after design cycle# " << cycles_design << " small moves + insertions into loop#" << k << endl;
 
@@ -545,7 +545,7 @@ void Protocol::apply(core::pose::PoseOP pose_) {
 
 
 	cout << "Protocol::apply::ScoreTypes: " << score_types.size() << ": ";
-	for( Size i = 1; i <= score_types.size(); ++i ) {
+	for( core::Size i = 1; i <= score_types.size(); ++i ) {
 	cout << score_types[i] << ",";
 	}
 	cout << endl;
@@ -553,14 +553,14 @@ void Protocol::apply(core::pose::PoseOP pose_) {
 
 	cout << "Protocol::apply::Energies:" << endl;
 
-	for( Size i = 1; i <= pose->size(); ++i ) {
+	for( core::Size i = 1; i <= pose->size(); ++i ) {
 
 	//core::scoring::EnergyMap emap = energies();
 
 	core::scoring::EMapVector const& emap_1b = energies.onebody_energies(i);
 
 	cout << "i " << i << " emap_1b:\t";
-	for( Size k = 1; k <= score_types.size(); ++k ) {
+	for( core::Size k = 1; k <= score_types.size(); ++k ) {
 	if( score_types[k] == core::scoring::chainbreak ) {
 	cout << "cb: ";
 	cout << emap_1b[ score_types[k] ] << "\t";
@@ -571,7 +571,7 @@ void Protocol::apply(core::pose::PoseOP pose_) {
 
 	core::scoring::EMapVector const& emap_2b = energies.residue_total_energies(i);
 	cout << " emap_2b:\t";
-	for( Size k = 1; k <= score_types.size(); ++k ) {
+	for( core::Size k = 1; k <= score_types.size(); ++k ) {
 	if( score_types[k] == core::scoring::chainbreak ) {
 	cout << emap_2b[ score_types[k] ] << "\t";
 	}
@@ -582,7 +582,7 @@ void Protocol::apply(core::pose::PoseOP pose_) {
 	}
 
 
-	for( Size k = 1; k <= score_types.size(); ++k ) {
+	for( core::Size k = 1; k <= score_types.size(); ++k ) {
 	cout << score_types[k] << " " << energies.total_energies()[ score_types[k] ] << endl;
 	}
 

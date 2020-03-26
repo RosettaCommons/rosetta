@@ -84,16 +84,16 @@ utility::vector1<SliceToMiniProteinMover::SSElement> SliceToMiniProteinMover::pa
 	core::select::residue_selector::ResidueSelectorCOP labeled_res_selector(utility::pointer::make_shared<core::select::residue_selector::ResiduePDBInfoHasLabelSelector>("miniCore"));
 	core::select::residue_selector::ResidueSubset residues( pose.total_residue(), false );
 	residues = labeled_res_selector->apply( pose );
-	Size reassign_short_terminal_loop_=2;
-	Size first_residue = 1;
-	Size last_residue = residues.size();
+	core::Size reassign_short_terminal_loop_=2;
+	core::Size first_residue = 1;
+	core::Size last_residue = residues.size();
 	bool first_found =false;
 	bool last_found=false;
 
 	if ( residues[1]==true ) {
 		first_found=true;
 	}
-	for ( Size ii=1; ii<=residues.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=residues.size(); ++ii ) {
 		if ( residues[ii]==true && first_found==false ) {
 			first_residue=ii;
 			first_found=true;
@@ -105,8 +105,8 @@ utility::vector1<SliceToMiniProteinMover::SSElement> SliceToMiniProteinMover::pa
 	}
 	//pass 1----------------------------------------
 	char lastSecStruct = dssp.get_dssp_secstruct( first_residue );
-	Size startSS = first_residue;
-	Size endSS = 0;
+	core::Size startSS = first_residue;
+	core::Size endSS = 0;
 	for ( core::Size ii = first_residue+1; ii <= last_residue; ++ii ) {
 		if ( dssp.get_dssp_secstruct(ii)!=lastSecStruct ) {
 			endSS = ii-1;
@@ -127,7 +127,7 @@ utility::vector1<SliceToMiniProteinMover::SSElement> SliceToMiniProteinMover::pa
 
 	bool delete_n_term_loop=false;
 	bool delete_c_term_loop=false;
-	Size ss_length = ss_elements[1].end_res-ss_elements[1].start_res;
+	core::Size ss_length = ss_elements[1].end_res-ss_elements[1].start_res;
 	if ( (ss_length<reassign_short_terminal_loop_)&&(ss_elements[1].type=="L") ) {
 		ss_elements[2].start_res =ss_elements[1].start_res;
 		delete_n_term_loop=true;
@@ -137,16 +137,16 @@ utility::vector1<SliceToMiniProteinMover::SSElement> SliceToMiniProteinMover::pa
 		ss_elements[ss_elements.size()-1].end_res =ss_elements[ss_elements.size()].end_res;
 		delete_c_term_loop=true;
 	}
-	Size start_pos = 1;
+	core::Size start_pos = 1;
 	if ( delete_n_term_loop ) {
 		start_pos=reassign_short_terminal_loop_;
 	}
-	Size end_pos = ss_elements.size();
+	core::Size end_pos = ss_elements.size();
 	if ( delete_c_term_loop ) {
 		end_pos = ss_elements.size()-1;
 	}
 	utility::vector1<SliceToMiniProteinMover::SSElement> ss_elements_v2;
-	for ( Size ii=start_pos; ii<=end_pos; ++ii ) {
+	for ( core::Size ii=start_pos; ii<=end_pos; ++ii ) {
 		ss_elements_v2.push_back(ss_elements[ii]);
 	}
 	return(ss_elements_v2);
@@ -155,21 +155,21 @@ utility::vector1<SliceToMiniProteinMover::SSElement> SliceToMiniProteinMover::pa
 
 utility::vector1<SliceToMiniProteinMover::Chunk> SliceToMiniProteinMover::parse_chunks(core::pose::Pose const & pose,utility::vector1<SliceToMiniProteinMover::SSElement> ss_elements){
 	utility::vector1<SliceToMiniProteinMover::Chunk> chunks;
-	for ( Size ii=1; ii<=ss_elements.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=ss_elements.size(); ++ii ) {
 		if ( ss_elements[ii].type=="H" ) {
 			bool too_long=false;
-			for ( Size jj=ii+1; jj<=ss_elements.size(); ++jj ) {
+			for ( core::Size jj=ii+1; jj<=ss_elements.size(); ++jj ) {
 				if ( ss_elements[jj].type=="H" ) {
-					Size start_res=ss_elements[ii].start_res;
-					Size end_res=ss_elements[jj].end_res;
-					Size numb_elements = (jj-ii+2)/2; //assume loops between secondary structure elements
-					Size length =end_res-start_res+1;
+					core::Size start_res=ss_elements[ii].start_res;
+					core::Size end_res=ss_elements[jj].end_res;
+					core::Size numb_elements = (jj-ii+2)/2; //assume loops between secondary structure elements
+					core::Size length =end_res-start_res+1;
 					if ( (numb_elements>=min_sse_count_) && (too_long==false) ) { //allow slightly longer chunks. Will be trimmed later.
 						if ( length>=max_length_ ) {
 							too_long=true;
 						}
-						utility::vector1<Size> pose_positions;
-						for ( Size ll=start_res; ll<=end_res; ++ll ) {
+						utility::vector1<core::Size> pose_positions;
+						for ( core::Size ll=start_res; ll<=end_res; ++ll ) {
 							pose_positions.push_back(ll);
 						}
 						pose::Pose sliced_pose;
@@ -189,7 +189,7 @@ utility::vector1<SliceToMiniProteinMover::Chunk> SliceToMiniProteinMover::filter
 	utility::vector1<SliceToMiniProteinMover::Chunk> filtered_chunks;
 	bool threshold = ddg_ala_slice_score_;
 	bool report_avg = false;
-	Size ignore_terminal_SS=1;
+	core::Size ignore_terminal_SS=1;
 	bool only_n_term= false;
 	bool only_c_term= false;
 	bool skip_ss_element=true;
@@ -197,19 +197,19 @@ utility::vector1<SliceToMiniProteinMover::Chunk> SliceToMiniProteinMover::filter
 	bool convert_charged_res_to_ala=false;
 	protocols::simple_ddg::SSElementBisectddGFilterOP ddg_bisect_filter( utility::pointer::make_shared<protocols::simple_ddg::SSElementBisectddGFilter>(scorefxn_,threshold,report_avg,ignore_terminal_SS,only_n_term,only_c_term,skip_ss_element,report_sasa_instead,convert_charged_res_to_ala,relax_mover_) );
 	//relax_mover_(relax_mover)
-	for ( Size ii=1; ii<=chunks.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=chunks.size(); ++ii ) {
 		Real ddg = ddg_bisect_filter->compute(chunks[ii].pose);
 		chunks[ii].ddg=ddg;
 	}
-	//for(Size ii=1; ii<=chunks.size(); ++ii){
+	//for(core::Size ii=1; ii<=chunks.size(); ++ii){
 	// TR <<"pre-filter chunk_options" << chunks[ii].ddg << "," << chunks[ii].start_res << "," << chunks[ii].end_res << std::endl;
 	//}
-	for ( Size ii=1; ii<=chunks.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=chunks.size(); ++ii ) {
 		if ( chunks[ii].ddg<ddg_ala_slice_score_ ) {
 			filtered_chunks.push_back(chunks[ii]);
 		}
 	}
-	for ( Size ii=1; ii<=filtered_chunks.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=filtered_chunks.size(); ++ii ) {
 		TR <<"chunk_options" << filtered_chunks[ii].ddg << "," << filtered_chunks[ii].start_res << "," << filtered_chunks[ii].end_res << std::endl;
 	}
 	return(filtered_chunks);
@@ -221,18 +221,18 @@ utility::vector1<SliceToMiniProteinMover::Chunk> SliceToMiniProteinMover::trim_c
 	//Trim both tail helices equally.
 	//If either tail_helices<min_helix_length get rid of this option completely. Trim of a single helix exists in other options.
 	//step2: trim the size to insure that it's shorter then max_length
-	for ( Size ii=1; ii<=chunks.size(); ++ii ) {
-		Size length = chunks[ii].pose.total_residue();
+	for ( core::Size ii=1; ii<=chunks.size(); ++ii ) {
+		core::Size length = chunks[ii].pose.total_residue();
 		if ( length<=max_length_ ) {
 			trimmed_chunks.push_back(chunks[ii]);
 		} else {
-			Size residue_to_delete = length-max_length_;
+			core::Size residue_to_delete = length-max_length_;
 			utility::vector1<SSElement> ss_elements = parse_ss(chunks[ii].pose);
-			Size n_helix_length = ss_elements[1].end_res-ss_elements[1].start_res+1;
-			Size last_helix = ss_elements.size();
-			Size c_helix_length = ss_elements[last_helix].end_res-ss_elements[last_helix].start_res+1;
-			Size n_term_trim =0;
-			Size c_term_trim =0;
+			core::Size n_helix_length = ss_elements[1].end_res-ss_elements[1].start_res+1;
+			core::Size last_helix = ss_elements.size();
+			core::Size c_helix_length = ss_elements[last_helix].end_res-ss_elements[last_helix].start_res+1;
+			core::Size n_term_trim =0;
+			core::Size c_term_trim =0;
 			while ( residue_to_delete>(n_term_trim+c_term_trim) ) {
 				if ( (n_helix_length-n_term_trim)>(c_helix_length-c_term_trim) ) {
 					n_term_trim++;
@@ -241,8 +241,8 @@ utility::vector1<SliceToMiniProteinMover::Chunk> SliceToMiniProteinMover::trim_c
 				}
 			}
 			if ( ((n_helix_length-n_term_trim)>=min_sse_length_) && ((c_helix_length-c_term_trim)>=min_sse_length_) ) {
-				utility::vector1<Size> pose_positions;
-				for ( Size ll=1+n_term_trim; ll<=chunks[ii].pose.total_residue()-c_term_trim; ++ll ) {
+				utility::vector1<core::Size> pose_positions;
+				for ( core::Size ll=1+n_term_trim; ll<=chunks[ii].pose.total_residue()-c_term_trim; ++ll ) {
 					pose_positions.push_back(ll);
 				}
 				pose::Pose sliced_pose;
@@ -261,16 +261,16 @@ utility::vector1<SliceToMiniProteinMover::Chunk> SliceToMiniProteinMover::trim_c
 void SliceToMiniProteinMover::setup_chunks_for_output(utility::vector1<SliceToMiniProteinMover::Chunk> & chunks){
 	if ( output_mode_=="longest" ) {
 		//length ties go to the longest ddg
-		Size longest=0;
-		Size position=0;
-		for ( Size ii=1; ii<=chunks.size(); ++ii ) {
-			Size length = chunks[ii].pose.total_residue();
+		core::Size longest=0;
+		core::Size position=0;
+		for ( core::Size ii=1; ii<=chunks.size(); ++ii ) {
+			core::Size length = chunks[ii].pose.total_residue();
 			if ( length>longest ) {
 				longest=length;
 				position=ii;
 			}
 		}
-		for ( Size ii=1; ii<=chunks.size(); ++ii ) {
+		for ( core::Size ii=1; ii<=chunks.size(); ++ii ) {
 			if ( ii != position ) {
 				chunks[ii].outputed=true;
 			}
@@ -278,14 +278,14 @@ void SliceToMiniProteinMover::setup_chunks_for_output(utility::vector1<SliceToMi
 	}
 	if ( output_mode_=="best_ddg" ) {
 		Real ddg=99;
-		Size position=0;
-		for ( Size ii=1; ii<=chunks.size(); ++ii ) {
+		core::Size position=0;
+		for ( core::Size ii=1; ii<=chunks.size(); ++ii ) {
 			if ( ddg>chunks[ii].ddg ) {
 				ddg=chunks[ii].ddg;
 				position=ii;
 			}
 		}
-		for ( Size ii=1; ii<=chunks.size(); ++ii ) {
+		for ( core::Size ii=1; ii<=chunks.size(); ++ii ) {
 			if ( ii != position ) {
 				chunks[ii].outputed=true;
 			}
@@ -295,7 +295,7 @@ void SliceToMiniProteinMover::setup_chunks_for_output(utility::vector1<SliceToMi
 
 
 core::pose::PoseOP SliceToMiniProteinMover::get_additional_output(){
-	for ( Size ii=1; ii<=final_chunks_.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=final_chunks_.size(); ++ii ) {
 		if ( final_chunks_[ii].outputed == false ) {
 			final_chunks_[ii].outputed=true;
 			set_last_move_status(protocols::moves::MS_SUCCESS);

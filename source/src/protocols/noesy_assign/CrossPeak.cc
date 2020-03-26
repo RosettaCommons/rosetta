@@ -36,7 +36,7 @@
 
 #include <utility/exit.hh>
 // #include <utility/vector1.fwd.hh>
-// #include <utility/pointer/ReferenceCount.hh>
+// #include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -100,16 +100,16 @@ CrossPeak::~CrossPeak() = default;
 
 /// @detail use for reading of assignments from file
 /// pass as spin1, spin2, label1, label2 (indices 1..4)
-void CrossPeak::add_full_assignment( Size res_ids[] ) {
+void CrossPeak::add_full_assignment( core::Size res_ids[] ) {
 	//  std::cerr << "CrossPeak::add_full_assignment stubbed out " << res_ids[ 1 ] << std::endl;
 	//   std::cerr << "run with 'ignore_assignments'" << std::endl;
 	//  utility_exit_with_message( "stubbed function" );
-	Size ind1 = assign_spin( 1, res_ids );
-	Size ind2 = assign_spin( 2, res_ids );
+	core::Size ind1 = assign_spin( 1, res_ids );
+	core::Size ind2 = assign_spin( 2, res_ids );
 #ifndef WIN32
 	assignments_.push_back( utility::pointer::make_shared< PeakAssignment >( this, ind1, ind2 ) );
 #endif
-	// for ( Size i = 1;
+	// for ( core::Size i = 1;
 	//need to find resonances in Spins and add them if they are still missing.
 	//get id for spin1 and spin2
 	//then make PeakAssignment() and add to assignments_
@@ -128,11 +128,11 @@ void CrossPeak::find_assignments( ) {
 	assign_spin( 1 );
 	assign_spin( 2 );
 
-	Size const n_assigned_1( proton( 1 ).n_assigned() );
-	Size const n_assigned_2( proton( 2 ).n_assigned() );
+	core::Size const n_assigned_1( proton( 1 ).n_assigned() );
+	core::Size const n_assigned_2( proton( 2 ).n_assigned() );
 
-	for ( Size ct1 = 1; ct1 <= n_assigned_1; ++ct1 ) {
-		for ( Size ct2 = 1; ct2 <= n_assigned_2; ++ct2 ) {
+	for ( core::Size ct1 = 1; ct1 <= n_assigned_1; ++ct1 ) {
+		for ( core::Size ct2 = 1; ct2 <= n_assigned_2; ++ct2 ) {
 #ifndef WIN32
 			assignments_.push_back( utility::pointer::make_shared< PeakAssignment >( this, ct1, ct2 ) );
 #endif
@@ -144,7 +144,7 @@ void CrossPeak::find_assignments( ) {
 
 void CrossPeak::print_peak_info( std::ostream& os ) const {
 	os << "peak: " << peak_id() << " ";
-	for ( Size i = 1; i<=2 ; i++ ) {
+	for ( core::Size i = 1; i<=2 ; i++ ) {
 		os << info( i ).main_atom();
 		if ( info( i ).has_label() ) os << "-" << info( i ).label_atom_type();
 		if ( i == 1 ) os << " <-> ";
@@ -152,7 +152,7 @@ void CrossPeak::print_peak_info( std::ostream& os ) const {
 }
 
 /// @brief assign protons based on chemical shifts and tolerances
-void CrossPeak::assign_spin( Size iproton ) {
+void CrossPeak::assign_spin( core::Size iproton ) {
 	//base-class: disregard label
 	Real const my_freq( proton( iproton ).freq() );
 	Real const my_tolerance( info( iproton ).proton_tolerance() );
@@ -165,19 +165,19 @@ void CrossPeak::assign_spin( Size iproton ) {
 }
 
 /// @brief assign protons ass pre-determined
-core::Size CrossPeak::assign_spin( Size iproton, Size res_id[] ) {
-	Size ind = proton( iproton ).assignment_index( res_id[ iproton ] );
+core::Size CrossPeak::assign_spin( core::Size iproton, core::Size res_id[] ) {
+	core::Size ind = proton( iproton ).assignment_index( res_id[ iproton ] );
 	if ( ind ) return ind;
 	proton( iproton ).add_assignment( res_id[ iproton ] );
 	return proton( iproton ).n_assigned();
 }
 
 core::Real round( core::Real d, core::Size digits ) {
-	for ( Size i=1; i<=digits; ++i ) {
+	for ( core::Size i=1; i<=digits; ++i ) {
 		d*=10;
 	}
 	d = floor( d + 0.5 );
-	for ( Size i=1; i<=digits; ++i ) {
+	for ( core::Size i=1; i<=digits; ++i ) {
 		d/=10;
 	}
 	return d;
@@ -216,7 +216,7 @@ CrossPeak::create_fa_and_cen_constraint(
 		min_vc = std::max( min_vc, 0.1 );
 	}
 
-	Size ct_ambiguous( 0 );
+	core::Size ct_ambiguous( 0 );
 	auto first_valid = end();
 	for ( auto it = begin(); it != end(); ++it ) {
 		if ( (*it)->normalized_peak_volume() <= min_vc ) continue; //not enough contribution
@@ -247,7 +247,7 @@ CrossPeak::create_fa_and_cen_constraint(
 				my_fa_cst->add_individual_constraint( new_cst );
 				fa_cst = my_fa_cst;
 				if ( !fa_only ) {
-					Size number_of_maps; //are 0, 1 or 2 sidechains replaced by CB
+					core::Size number_of_maps; //are 0, 1 or 2 sidechains replaced by CB
 					if ( map_to_CEN ) {
 						my_cen_cst->add_individual_constraint( new_cst->map_to_CEN( pose, centroid_pose, number_of_maps, "CEN" ) );
 						max_maps = std::max( number_of_maps, max_maps );
@@ -288,7 +288,7 @@ CrossPeak::create_fa_and_cen_constraint(
 		AmbiguousNMRDistanceConstraintOP my_fa_cst = (*first_valid)->create_constraint( pose, 1 /*ifloat*/, func ); //first one should be only one,
 		fa_cst = my_fa_cst;
 		if ( !fa_only ) {
-			Size number_of_maps; //are 0, 1 or 2 sidechains replaced by CB
+			core::Size number_of_maps; //are 0, 1 or 2 sidechains replaced by CB
 			core::Size n( n_assigned() );
 			core::Real eff_single_dist( pow( pow( distance_bound(), -6 ) / n, -1.0/6 ) ); //assuming equal contribution of all which is of course wrong
 			core::Real cum_new_distance( 0 );
@@ -373,8 +373,8 @@ std::string CrossPeak::quality_class_str() const {
 
 CrossPeak::QualityClass CrossPeak::quality_class() const {
 #ifndef WIN32
-	Size count_vc_0p1( 0 );
-	Size count_vc_0p01( 0 );
+	core::Size count_vc_0p1( 0 );
+	core::Size count_vc_0p01( 0 );
 	for ( auto const & ait : *this ) {
 		Real const vc( ait->normalized_peak_volume() );
 		if ( vc > 0.1 ) ++count_vc_0p1;
@@ -433,12 +433,12 @@ core::Real CrossPeak::max_volume_contribution() const {
 /// @brief do we have a inter residue assignment with at least volume_threshold contribution ?
 Size CrossPeak::min_seq_separation_residue_assignment( Real volume_threshold ) const {
 #ifndef WIN32
-	Size min_seq( 99999 );
+	core::Size min_seq( 99999 );
 	for ( auto const & it : *this ) {
 		if ( it->normalized_peak_volume() <= volume_threshold ) continue; //not enough contribution
-		Size res1( it->resid( 1 ) );
-		Size res2( it->resid( 2 ) );
-		Size diff( res1 < res2 ? res2-res1 : res1-res2 );
+		core::Size res1( it->resid( 1 ) );
+		core::Size res2( it->resid( 2 ) );
+		core::Size diff( res1 < res2 ? res2-res1 : res1-res2 );
 		min_seq = min_seq < diff ? min_seq : diff;
 	}
 	return min_seq;
@@ -511,7 +511,7 @@ bool CrossPeak::eliminated( bool recompute, bool do_not_compute ) const {
 core::Size CrossPeak::n_Vmin_assignments() {
 #ifndef WIN32
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
-	Size ct( 0 );
+	core::Size ct( 0 );
 	for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
 		Real vol( (*it)->normalized_peak_volume() );
 		ct += vol > params.min_volume_;
@@ -530,7 +530,7 @@ void CrossPeak::calibrate( PeakCalibrator const& calibrator, PeakCalibrator::Typ
 #ifndef WIN32
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	Real sum( 0.0 );
-	Size ct( 0 );
+	core::Size ct( 0 );
 	// if ( volume_ <= 0.0 ) throw CREATE_EXCEPTION(utility::excn::BadInput, "Peak intensity negative or zero for "+ObjexxFCL::string_of( peak_id_ ) );
 	for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
 		CALIBRATION_ATOM_TYPE type1, type2;
@@ -557,19 +557,19 @@ void CrossPeak::calibrate( PeakCalibrator const& calibrator, PeakCalibrator::Typ
 }
 
 /// @brief assign protons ass pre-determined
-Size CrossPeak3D::assign_spin( Size iproton, Size res_id[] ) {
-	Size ind = CrossPeak::assign_spin( iproton, res_id );
+Size CrossPeak3D::assign_spin( core::Size iproton, core::Size res_id[] ) {
+	core::Size ind = CrossPeak::assign_spin( iproton, res_id );
 	if ( iproton == 1  && ind > label( iproton ).n_assigned() ) label( iproton ).add_assignment( res_id[ iproton+2 ] );
 	return ind;
 }
 
-void CrossPeak3D::assign_spin( Size iproton ) {
+void CrossPeak3D::assign_spin( core::Size iproton ) {
 	tr.Trace << "assign_spin for Peak " << peak_id() << std::endl;
 	if ( iproton == 2 ) CrossPeak::assign_spin( iproton ); //base-class: no label
 	else assign_labelled_spin( iproton );
 }
 
-void CrossPeak3D::assign_labelled_spin( Size iproton ) {
+void CrossPeak3D::assign_labelled_spin( core::Size iproton ) {
 	runtime_assert( has_label( iproton ));
 	Real const proton_freq( proton( iproton ).freq() );
 	Real const label_freq( label( iproton ).freq() );
@@ -620,7 +620,7 @@ void CrossPeak3D::assign_labelled_spin( Size iproton ) {
 	} else {
 	for ( ResonanceList::const_iterator it = resonances().begin(); it != resonances().end(); ++it )  {
 	if ( it->second->match( my_freq, my_tolerance, folder( iproton ) ) ) {
-	Size resid( it->second->atom().rsd() );
+	core::Size resid( it->second->atom().rsd() );
 	//maybe also map resonance by resid?
 	try {
 	id::NamedAtomID atomID( info( iproton ).label_atom_name( it->second->atom().atom(), resonances().aa_from_resid( resid ) ), resid );
@@ -668,12 +668,12 @@ CrossPeak4D::CrossPeak4D( Spin const& sp1, Spin const& sp2, Spin const& label1, 
 CrossPeak4D::CrossPeak4D() = default;
 CrossPeak4D::~CrossPeak4D() = default;
 
-void CrossPeak4D::assign_spin( Size iproton ) {
+void CrossPeak4D::assign_spin( core::Size iproton ) {
 	assign_labelled_spin( iproton );
 }
 
-Size CrossPeak4D::assign_spin( Size iproton, Size res_id[] ) {
-	Size ind = CrossPeak::assign_spin( iproton, res_id );
+Size CrossPeak4D::assign_spin( core::Size iproton, core::Size res_id[] ) {
+	core::Size ind = CrossPeak::assign_spin( iproton, res_id );
 	if ( ind > label( iproton ).n_assigned() ) label( iproton ).add_assignment( res_id[ iproton+2 ] );
 	return ind;
 }
@@ -694,7 +694,7 @@ Size CrossPeak4D::assign_spin( Size iproton, Size res_id[] ) {
 //     label( 2 ) = Spin( freq );
 //   }
 
-//   Size number;
+//   core::Size number;
 //   char letter;
 //   is >> number >> letter; //no idea what these mean ...it reads now 3 U or 4 U
 //   is >> volume_;
@@ -702,14 +702,14 @@ Size CrossPeak4D::assign_spin( Size iproton, Size res_id[] ) {
 //   is >> error_of_strength;
 
 //   char letter_e;
-//   Size number_0;
+//   core::Size number_0;
 //   is >> letter_e;
 //   is >> number_0;
 //   add_assignment_from_stream( is );
 // }
 
 // void CrossPeak::add_assignment_from_stream( std::istream& is ) {
-//   Size id;
+//   core::Size id;
 //   is >> id;
 //   if ( id )  proton1_.add_assignment( id );
 //   if ( has_label( 1 ) ) {
@@ -739,12 +739,12 @@ Size CrossPeak4D::assign_spin( Size iproton, Size res_id[] ) {
 
 //   os << ObjexxFCL::format::E( 10, 3, strength_ ) << " " << ObjexxFCL::format::E( 10, 3, 0.0 ) << " ";
 
-//   Size assignments_written( 0 );
+//   core::Size assignments_written( 0 );
 //   //  while ( assignments_written < proton1_.n_assigned() ) {
 //   for ( PeakAssignments::const_iterator it = assignments_.begin(); it != assignments_.end(); ++it ) {
 //     ++assignments_written;
 //     if ( assignments_written > 1 ) os << std::endl << "                                            ";
-//     for ( Size i=1; i<=2; i++ ) {
+//     for ( core::Size i=1; i<=2; i++ ) {
 //       os << ObjexxFCL::format::RJ( 6, (*it)->resonance_id( i ) ) << " ";
 //       if ( has_label( i ) ) {
 //  os << ObjexxFCL::format::RJ( 6, (*it)->label_resonance_id( i ) << " ";

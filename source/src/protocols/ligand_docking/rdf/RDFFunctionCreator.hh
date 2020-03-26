@@ -21,7 +21,7 @@
 #include <protocols/ligand_docking/rdf/RDFBase.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // c++ headers
 #include <string>
@@ -32,7 +32,7 @@ namespace rdf {
 
 /// @brief The Creator class is responsible for creating a particular
 /// RDF Function class.
-class RDFFunctionCreator : public utility::pointer::ReferenceCount
+class RDFFunctionCreator : public utility::VirtualBase
 {
 public:
 	RDFFunctionCreator() {}

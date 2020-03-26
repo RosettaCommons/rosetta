@@ -28,7 +28,7 @@
 #include <protocols/match/output/MatchScoreWriter.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // c++ headers
 #include <map>
@@ -42,7 +42,7 @@ namespace protocols {
 namespace match {
 namespace output {
 
-class MatchProcessor : public utility::pointer::ReferenceCount {
+class MatchProcessor : public utility::VirtualBase {
 public:
 
 	MatchProcessor();

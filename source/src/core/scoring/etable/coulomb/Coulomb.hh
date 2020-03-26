@@ -26,14 +26,14 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 namespace core {
 namespace scoring {
 namespace etable {
 namespace coulomb {
 
 
-class Coulomb : public utility::pointer::ReferenceCount
+class Coulomb : public utility::VirtualBase
 {
 
 public:

@@ -35,7 +35,7 @@
 // Utility Headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace moves {
@@ -73,8 +73,8 @@ public:
 	void set_current_tag( std::string const & new_tag ) override;
 
 	void apply( core::pose::Pose & pose ) override = 0;
-	Size nr_moves() { return movers_.size(); };
-	Size size() const { return movers_.size(); };
+	core::Size nr_moves() { return movers_.size(); };
+	core::Size size() const { return movers_.size(); };
 
 	MoverOP front() { return movers_.front(); };
 
@@ -218,7 +218,7 @@ public:
 
 
 private:
-	Size nmoves_;
+	core::Size nmoves_;
 	core::Real last_proposal_density_ratio_; //ek added this member 2/25/10
 }; // RandomMover class
 
@@ -246,7 +246,7 @@ public:
 	std::string get_name() const override;
 
 private:
-	Size next_move_; //< index into movers_, may need modulo operation first
+	core::Size next_move_; //< index into movers_, may need modulo operation first
 }; // CycleMover class
 
 /// @brief SwitchMover can hold multiple movers and execute only the requested one

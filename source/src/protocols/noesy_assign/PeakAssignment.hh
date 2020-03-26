@@ -36,7 +36,7 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
@@ -54,9 +54,9 @@ namespace noesy_assign {
 /// @brief fast access to assignments that are stored in CrossPeak -- similar to FragID
 /// WARNING WARNING WARNING THREAD UNSAFE.  THIS CLASS USES THE FUNCTION covalent_compliance
 /// WHICH RELIES ON THREAD-UNSAFE SINGLETON CovalentCompliance
-class PeakAssignment : public utility::pointer::ReferenceCount {
+class PeakAssignment : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~PeakAssignment() override;
 	typedef core::scoring::constraints::AmbiguousNMRDistanceConstraintOP NmrConstraintOP;
 	typedef core::scoring::constraints::AmbiguousNMRDistanceConstraint NmrConstraint;

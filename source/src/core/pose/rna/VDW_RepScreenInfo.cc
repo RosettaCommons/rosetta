@@ -53,6 +53,7 @@ VDW_RepScreenInfo::VDW_RepScreenInfo():
 
 // Copy Constructor
 VDW_RepScreenInfo::VDW_RepScreenInfo( VDW_RepScreenInfo const & src ):
+	VirtualBase( src ),
 	VDW_align_res( src.VDW_align_res ),
 	working_align_res( src.working_align_res ),
 	full_align_res( src.full_align_res ),

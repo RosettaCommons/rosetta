@@ -38,13 +38,13 @@ public:
 	typedef core::select::residue_selector::ResidueSelectorCOP ResidueSelectorCOP;
 
 	struct Overlap{
-		Size start_overlap_xmlPose;
-		Size end_overlap_xmlPose;
-		Size start_overlap_pose;
-		Size end_overlap_pose;
+		core::Size start_overlap_xmlPose;
+		core::Size end_overlap_xmlPose;
+		core::Size start_overlap_pose;
+		core::Size end_overlap_pose;
 		core::pose::PoseOP output_poseOP;
 		bool output_yet;
-		Overlap(Size start_overlap_xmlPose_i, Size end_overlap_xmlPose_i, Size start_overlap_pose_i, Size end_overlap_pose_i){
+		Overlap(core::Size start_overlap_xmlPose_i, core::Size end_overlap_xmlPose_i, core::Size start_overlap_pose_i, core::Size end_overlap_pose_i){
 			start_overlap_xmlPose = start_overlap_xmlPose_i;
 			end_overlap_xmlPose = end_overlap_xmlPose_i;
 			start_overlap_pose = start_overlap_pose_i;
@@ -66,15 +66,15 @@ public:
 	/// @brief  Constructor
 	MergePDBMover();
 	/// @brief Determines the overlaps. stores the start and end position in the struct Overlap
-	void determine_overlap(Pose const pose,Size chain_id);
+	void determine_overlap(Pose const pose,core::Size chain_id);
 	/// @brief fast check to maake sure the pose isn't a structural duplicate
 	bool check_duplicate(Pose & pose);
 	/// @brief Uses the overlap to generate poses
-	void generate_overlaps(Pose & pose,Size chain_id);
+	void generate_overlaps(Pose & pose,core::Size chain_id);
 	/// @brief Figures out the closest residue that's not part of the overlap.
 	core::Size closest_non_overlap_residue(core::pose::Pose const & pose, core::Size resid, core::Size start_overlap_resid, core::Size end_overlap_resid);
 	/// @brief Gets the entire SS element the match is on
-	void increase_range_to_ignore_ss_element(core::pose::Pose const & pose, Size init_start, Size init_end, Size & ss_start, Size & ss_end);
+	void increase_range_to_ignore_ss_element(core::pose::Pose const & pose, core::Size init_start, core::Size init_end, core::Size & ss_start, core::Size & ss_end);
 	/// @brief Copies the sequence in the overlap region as appropriate. This sets the initial residues before the pack and minimize is called
 	void copy_sequence(core::Size start_overlap_resid, core::Size end_overlap_resid, core::Size start_overlap_input_pose_resid,core::Size start_overlap_xml_pose_resid,core::pose::Pose const & input_pose,core::pose::Pose const & xml_pose,core::pose::Pose & output_pose);
 	/// @brief packs and minimizes if no clashes as determined by score0
@@ -111,9 +111,9 @@ private:
 	core::pose::PoseOP xml_input_pose_;
 	std::string overlap_location_pose_;
 	core::Real overlap_max_rmsd_;
-	Size overlap_length_;
-	Size overlap_scan_range_cmdLine_;
-	Size overlap_scan_range_xml_;
+	core::Size overlap_length_;
+	core::Size overlap_scan_range_cmdLine_;
+	core::Size overlap_scan_range_xml_;
 	core::Real design_range_;
 	core::Real packing_range_;
 	core::scoring::ScoreFunctionOP sfxn_;

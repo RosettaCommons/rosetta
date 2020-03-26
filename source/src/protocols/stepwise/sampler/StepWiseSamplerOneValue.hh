@@ -53,7 +53,7 @@ public:
 	void apply( core::pose::Pose & ) override{}
 
 	/// @brief Apply the i-th rotamer to pose
-	void apply( core::pose::Pose &, Size const ) override{}
+	void apply( core::pose::Pose &, core::Size const ) override{}
 
 	/// @brief Get the total number of rotamers in sampler
 	core::Size size() const override {

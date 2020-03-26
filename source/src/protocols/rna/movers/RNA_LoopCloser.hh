@@ -51,16 +51,16 @@ public:
 	std::string get_name() const override;
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
-	void apply( core::pose::Pose & pose, std::map< Size, Size > const & connections );
+	void apply( core::pose::Pose & pose, std::map< core::Size, core::Size > const & connections );
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
-	core::Real apply( core::pose::Pose & pose, std::map< Size, Size > const & connections, Size const & cutpoint );
+	core::Real apply( core::pose::Pose & pose, std::map< core::Size, core::Size > const & connections, core::Size const & cutpoint );
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
-	core::Real apply( core::pose::Pose & pose, Size const & cutpoint );
+	core::Real apply( core::pose::Pose & pose, core::Size const & cutpoint );
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
-	void apply( core::pose::Pose & pose, utility::vector1< Size > const & cutpoints );
+	void apply( core::pose::Pose & pose, utility::vector1< core::Size > const & cutpoints );
 
 	//Need get/set functions for options.
 
@@ -74,7 +74,7 @@ public:
 
 	core::Real
 	get_dist_err( core::pose::Pose const & pose,
-		Size const cutpoint
+		core::Size const cutpoint
 	) const;
 
 	void
@@ -89,30 +89,30 @@ public:
 private:
 
 	bool
-	passes_fast_scan( core::pose::Pose & pose, Size const i ) const;
+	passes_fast_scan( core::pose::Pose & pose, core::Size const i ) const;
 
 	// Returns final coordinate error.
 	core::Real
-	rna_ccd_close( core::pose::Pose & pose, std::map< Size, Size > const & connections, Size const & cutpoint ) const;
+	rna_ccd_close( core::pose::Pose & pose, std::map< core::Size, core::Size > const & connections, core::Size const & cutpoint ) const;
 
 	core::Real
 	get_chainbreak_xyz( core::pose::Pose const & pose,
-		Size const cutpoint,
+		core::Size const cutpoint,
 		utility::vector1< core::Vector > & upstream_xyzs,
 		utility::vector1< core::Vector > & downstream_xyzs,
-		Size const cutpoint_next_input = 0
+		core::Size const cutpoint_next_input = 0
 	) const;
 
 	core::Real
 	get_gap_distance( core::pose::Pose & pose,
-		Size const cutpoint
+		core::Size const cutpoint
 	) const;
 
 
 private:
 	//Make these options:
 	bool verbose_;
-	Size NUM_ROUNDS_;
+	core::Size NUM_ROUNDS_;
 	bool check_tolerance_;
 	core::Real ccd_tolerance_;
 	core::Real absolute_ccd_tolerance_;

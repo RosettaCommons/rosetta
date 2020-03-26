@@ -43,7 +43,7 @@
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 
-//#include <utility/pointer/ReferenceCount.hh>
+//#include <utility/VirtualBase.hh>
 //#include <numeric/numeric.functions.hh>
 #include <numeric/random/random_permutation.hh>
 #include <numeric/xyz.functions.hh>

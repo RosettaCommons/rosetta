@@ -508,7 +508,7 @@ void AbrelaxApplication::process_decoy(
 		if ( !native_pose_ ) utility_exit_with_message(" to evaluate jumps you need to specify a native structure ");
 		evaluation::MetaPoseEvaluator eval_jumps;
 		native_pose_->fold_tree( pose.fold_tree() );
-		for ( Size nj = 1; nj<= pose.num_jump(); ++nj ) {
+		for ( core::Size nj = 1; nj<= pose.num_jump(); ++nj ) {
 			eval_jumps.add_evaluation( utility::pointer::make_shared< simple_filters::JumpEvaluator >( *native_pose_, nj) );
 		}
 		eval_jumps.apply( pose, tag, pss );
@@ -601,9 +601,9 @@ void AbrelaxApplication::add_constraints( pose::Pose & pose ) {
 	}
 
 	if ( option[ constraints::evaluate_max_seq_sep ].user() ) {
-		Size const neval ( option[ constraints::evaluate_max_seq_sep ]().size() );
-		for ( Size i = 1; i<= neval; i++ ) {
-			Size const seq_sep( option[ constraints::evaluate_max_seq_sep ]()[ i ] );
+		core::Size const neval ( option[ constraints::evaluate_max_seq_sep ]().size() );
+		for ( core::Size i = 1; i<= neval; i++ ) {
+			core::Size const seq_sep( option[ constraints::evaluate_max_seq_sep ]()[ i ] );
 			add_evaluation( utility::pointer::make_shared< constraints_additional::ConstraintEvaluator >( "seq_sep_"+utility::to_string( seq_sep) , *cstset_, 1, seq_sep ) );
 		}
 	}
@@ -634,17 +634,17 @@ void AbrelaxApplication::insert_template_frags( core::pose::Pose &pose, kinemati
 	if ( option[ templates::fix_frag_file ].user() ) {
 		FrameList fix_frames;
 		fragment::FragmentIO().read_frames_from_file( option[ templates::fix_frag_file ](), fix_frames );
-		Size const frame_id ( static_cast< int >( numeric::random::rg().uniform() * fix_frames.size() ) + 1 );
+		core::Size const frame_id ( static_cast< int >( numeric::random::rg().uniform() * fix_frames.size() ) + 1 );
 		FrameOP frame( fix_frames[ frame_id ] );
-		Size const frag_id ( static_cast< int >( numeric::random::rg().uniform() * frame->nr_frags() ) + 1 );
+		core::Size const frag_id ( static_cast< int >( numeric::random::rg().uniform() * frame->nr_frags() ) + 1 );
 		frame->apply( frag_id, pose );
 
 		std::ofstream out( "big_frags.log", std::ios_base::out | std::ios_base::app );
 		out << tag << " " << RJ(10,frame->start()) << RJ( 10, frame->stop() ) << RJ( 10, frag_id ) << std::endl;
 
 		movemap->set_bb( true );
-		Size const npadding( option[ OptionKeys::templates::fix_margin ] );
-		for ( Size pos = frame->start() + npadding; pos<=frame->end() - npadding; ++pos ) {
+		core::Size const npadding( option[ OptionKeys::templates::fix_margin ] );
+		for ( core::Size pos = frame->start() + npadding; pos<=frame->end() - npadding; ++pos ) {
 			movemap->set_bb( pos, false );
 		}
 	}
@@ -673,7 +673,7 @@ void AbrelaxApplication::do_rerun() {
 		sfd.read_file( *(option [ in::file::silent ]().begin()) );
 
 		// run thru all structures
-		Size ct ( 0 );
+		core::Size ct ( 0 );
 		for ( SilentFileData::iterator it=sfd.begin(), eit=sfd.end(); it!=eit; ++it ) {
 			Pose pose;
 			std::string tag = it->decoy_tag();
@@ -834,7 +834,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 		//mjo TODO: verify that the disulfides are correct coming out of fill_pose() and then delete this code
 		// Fix disulfides if a file is given
 		if ( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].user() ) {
-			utility::vector1< std::pair<Size, Size> > disulfides;
+			utility::vector1< std::pair<core::Size, core::Size> > disulfides;
 			core::io::raw_data::DisulfideFile ds_file( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ]() );
 			ds_file.disulfides( disulfides, pose);
 			pose.conformation().fix_disulfides( disulfides );
@@ -961,10 +961,10 @@ void AbrelaxApplication::copy_structure( core::pose::Pose & extended_pose, core:
 	// requires that the sequences match at the beginning (1..nmatch_res) -- > use sequence alignment later
 	tr.Info << " *** use native structure as starting template -- NEEDS TO BE IDEALIZED !!! *** \n";
 	// determine length of segment to copy from native
-	Size seg_len = std::min(extended_pose.size(), desired_pose.size() );
+	core::Size seg_len = std::min(extended_pose.size(), desired_pose.size() );
 	// chu workaround when folding with ligand/metal
-	Size protein_len = 0;
-	for ( Size i = 1; i <= seg_len; ++i ) {
+	core::Size protein_len = 0;
+	for ( core::Size i = 1; i <= seg_len; ++i ) {
 		if ( extended_pose.residue(i).is_protein() && desired_pose.residue(i).is_protein() ) {
 			protein_len ++;
 		}
@@ -994,14 +994,14 @@ void AbrelaxApplication::generate_extended_pose( core::pose::Pose &extended_pose
 
 	// Fix disulfides if a file is given
 	if ( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].user() ) {
-		utility::vector1< std::pair<Size, Size> > disulfides;
+		utility::vector1< std::pair<core::Size, core::Size> > disulfides;
 		core::io::raw_data::DisulfideFile ds_file( basic::options::option[ basic::options::OptionKeys::in::fix_disulf ]() );
 		ds_file.disulfides( disulfides, extended_pose);
 		extended_pose.conformation().fix_disulfides( disulfides );
 	}
 
 	// make extended chain
-	for ( Size pos = 1; pos <= extended_pose.size(); pos++ ) {
+	for ( core::Size pos = 1; pos <= extended_pose.size(); pos++ ) {
 		if ( ! extended_pose.residue(pos).is_protein() ) continue;
 		extended_pose.set_phi( pos, -150 );
 		extended_pose.set_psi( pos, 150);
@@ -1069,19 +1069,19 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 			//pick torsion fragments fragset_large
 			tr.Info << "pick large fragments as 9mers " << std::endl;
 			if ( option[ templates::min_nr_large_frags ].user() ) {
-				Size const min_nr_frags( option[ templates::min_nr_large_frags ] );
-				Size const nr_large_copies( option[ templates::nr_large_copies ] );
+				core::Size const min_nr_frags( option[ templates::min_nr_large_frags ] );
+				core::Size const nr_large_copies( option[ templates::nr_large_copies ] );
 				fragset_large_ = templates_->pick_frags(
 					fragset_large_,
 					core::fragment::FragDataCOP( utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), fragset_large_->max_frag_length() ) ),
 					min_nr_frags,
 					nr_large_copies );
 			} else {
-				Size nr = templates_->pick_frags( *fragset_large_, core::fragment::FragDataCOP( utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), fragset_large_->max_frag_length() ) ) );
+				core::Size nr = templates_->pick_frags( *fragset_large_, core::fragment::FragDataCOP( utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), fragset_large_->max_frag_length() ) ) );
 				tr.Info << nr << " " << fragset_large_->max_frag_length() << "mer fragments picked from homolog structures" << std::endl;
 			}
 			if ( option[ templates::pick_multiple_sizes ] ) {
-				Size nr = templates_->pick_frags(
+				core::Size nr = templates_->pick_frags(
 					*fragset_large_,
 					core::fragment::FragDataCOP( utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), 18 ) )
 				);
@@ -1095,8 +1095,8 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 		} // !vary_frag_size
 
 		if ( option[ templates::min_nr_small_frags ].user() ) {
-			Size const min_nr_frags( option[ templates::min_nr_small_frags ] );
-			Size const nr_small_copies( option[ templates::nr_small_copies ] );
+			core::Size const min_nr_frags( option[ templates::min_nr_small_frags ] );
+			core::Size const nr_small_copies( option[ templates::nr_small_copies ] );
 			fragset_small_ = templates_->pick_frags(
 				fragset_small_,
 				core::fragment::FragDataCOP( utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), fragset_small_->max_frag_length() ) ),
@@ -1104,7 +1104,7 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 				nr_small_copies );
 		} else {
 			//pick torsion fragments fragset_small
-			Size nr2 = templates_->pick_frags( *fragset_small_, core::fragment::FragDataCOP( utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), fragset_small_->max_frag_length() ) ) );
+			core::Size nr2 = templates_->pick_frags( *fragset_small_, core::fragment::FragDataCOP( utility::pointer::make_shared< FragData >( utility::pointer::make_shared< BBTorsionSRFD >(), fragset_small_->max_frag_length() ) ) );
 			tr.Info << nr2 << " " << fragset_small_->max_frag_length() << "mer fragments picked from homolog structures" << std::endl;
 		}
 	} // templates && !templates:no_pick_fragments
@@ -1318,7 +1318,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 	// Fix disulfides if a file is given
 	if ( option[ basic::options::OptionKeys::in::fix_disulf ].user() ) {
 		io::raw_data::DisulfideFile ds_file( option[ OptionKeys::in::fix_disulf ]() );
-		utility::vector1< std::pair<Size,Size> > disulfides;
+		utility::vector1< std::pair<core::Size,Size> > disulfides;
 		ds_file.disulfides(disulfides, extended_pose);
 		extended_pose.conformation().fix_disulfides( disulfides );
 	}
@@ -1365,9 +1365,9 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 
 	if ( option[ OptionKeys::abinitio::fix_residues_to_native ].user() ) {
 		utility::vector1< int> const& fix_start_ends( option[ OptionKeys::abinitio::fix_residues_to_native ]() );
-		for ( Size i=1; i + 1 <= fix_start_ends.size(); i+=2 ) {
-			Size const start( fix_start_ends[ i ]);
-			Size const end( fix_start_ends[ i + 1 ]);
+		for ( core::Size i=1; i + 1 <= fix_start_ends.size(); i+=2 ) {
+			core::Size const start( fix_start_ends[ i ]);
+			core::Size const end( fix_start_ends[ i + 1 ]);
 			if ( !(end >= start) ) utility_exit_with_message("end < start in abinitio:fix_residues_to_native");
 			fragment::Frame long_frame(start, end-start+1 );
 			//create apropriate length FragData object
@@ -1379,7 +1379,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 			// apply native torsions to extended structue
 			frag.apply( extended_pose, long_frame );
 
-			for ( Size pos = start; pos <= end; pos++ ) {
+			for ( core::Size pos = start; pos <= end; pos++ ) {
 				movemap->set_bb( pos, false);
 			}
 		}
@@ -1700,7 +1700,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 
 		//membrane jumping set up the proper foldtree
 		if ( membrane_jumps_ && membrane_jumps_->defined() ) {
-			Size njumps = option[jumps::njumps]();
+			core::Size njumps = option[jumps::njumps]();
 			membrane_jumps_->setup_fold_tree(fold_pose,njumps);
 		}
 
@@ -1732,7 +1732,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 		// perturb phi/psi randomly -- should be different each run
 		if ( option[ OptionKeys::abinitio::perturb ].user() ) {
 			Real sig = option[ OptionKeys::abinitio::perturb ];
-			for ( Size pos = 1; pos <= fold_pose.size(); pos++ ) {
+			for ( core::Size pos = 1; pos <= fold_pose.size(); pos++ ) {
 				fold_pose.set_phi( pos, fold_pose.phi( pos ) + numeric::random::gaussian()*sig );
 				fold_pose.set_psi( pos, fold_pose.psi( pos ) + numeric::random::gaussian()*sig );
 				fold_pose.set_omega( pos, fold_pose.omega( pos ) );
@@ -1805,8 +1805,8 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 			if ( option[ basic::options::OptionKeys::abinitio::close_loops_by_idealizing ]() ) {
 				// record cutpoints
 				protocols::loops::LoopsOP cloops( new protocols::loops::Loops() );
-				for ( Size ncut = 1; ncut <= (Size) fold_pose.fold_tree().num_cutpoint(); ncut++ ) {
-					Size cutpoint = fold_pose.fold_tree().cutpoint( ncut );
+				for ( core::Size ncut = 1; ncut <= (core::Size) fold_pose.fold_tree().num_cutpoint(); ncut++ ) {
+					core::Size cutpoint = fold_pose.fold_tree().cutpoint( ncut );
 					protocols::loops::Loop newloop (
 						std::max( (int) 1, int(cutpoint - 5) ),
 						std::min( (int) fold_pose.size(), int(cutpoint + 5) ),
@@ -1886,7 +1886,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 			io::silent::SilentStructOP pss = io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( *silent_options_ );
 
 			// abinitio produces n_stored structures -- the last one is the same as the final structure n_stored.
-			//   Size n_stored( abinitio_protocol.structure_store().size() );
+			//   core::Size n_stored( abinitio_protocol.structure_store().size() );
 			std::string new_output_tag ( output_tag );
 			if ( !passes_filters  && loop_closure_failed ) {
 				new_output_tag = "X_"+new_output_tag.substr(2);

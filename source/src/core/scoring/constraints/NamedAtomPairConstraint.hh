@@ -51,12 +51,12 @@ namespace constraints {
 /* this helper class may have become obsoleted by the remapped_clone() method of ConstraintSet
 but since it is still in use by abinitio::Template I haven't removed it.
 */
-class Obsolet_NamedAtomPairConstraint : public utility::pointer::ReferenceCount {
+class Obsolet_NamedAtomPairConstraint : public utility::VirtualBase {
 	typedef core::scoring::constraints::AtomPairConstraintOP AtomPairConstraintOP;
 	typedef core::id::NamedAtomID NamedAtomID;
 	typedef core::id::SequenceMapping SequenceMapping;
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Obsolet_NamedAtomPairConstraint() override;
 	Obsolet_NamedAtomPairConstraint( AtomPairConstraintOP, core::pose::Pose const& );
 	Obsolet_NamedAtomPairConstraint( NamedAtomID const& atom1, NamedAtomID const& atom2, AtomPairConstraintOP cst );

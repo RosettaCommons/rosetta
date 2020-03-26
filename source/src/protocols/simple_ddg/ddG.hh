@@ -123,22 +123,22 @@ private :
 	void setup_task(Pose const & pose);
 
 	//fd: a few functions specific to solvated mode
-	void duplicate_waters_across_jump( Pose & pose, Size jumpnum ) const;
+	void duplicate_waters_across_jump( Pose & pose, core::Size jumpnum ) const;
 	void setup_solvated_task( Pose const & pose, bool bound );
 	void do_minimize( Pose & pose ) const;
 
 	std::map< ScoreType, Real > bound_energies_;
 	std::map< ScoreType, Real > unbound_energies_;
 
-	std::map< Size, Real > bound_per_residue_energies_;
-	std::map< Size, Real > unbound_per_residue_energies_;
+	std::map< core::Size, Real > bound_per_residue_energies_;
+	std::map< core::Size, Real > unbound_per_residue_energies_;
 
 	//Real bound_total_energy_;
 	//Real unbound_total_energy_;
-	Size repeats_;
+	core::Size repeats_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	void fill_energy_vector( Pose const & pose, std::map<ScoreType, Real > & energy_map );
-	void fill_per_residue_energy_vector(Pose const & pose, std::map<Size,Real> & energy_map);
+	void fill_per_residue_energy_vector(Pose const & pose, std::map<core::Size,Real> & energy_map);
 	core::Size rb_jump_;
 	utility::vector1<core::Size> chain_ids_;
 	utility::vector1<std::string> chain_names_;

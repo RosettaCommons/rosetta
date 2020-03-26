@@ -149,7 +149,7 @@ void RelaxProtocolBase::initialize_movemap(
 	} else {
 
 		if ( fix_omega_ ) {
-			for ( Size i=1; i<=pose.size(); ++i ) {
+			for ( core::Size i=1; i<=pose.size(); ++i ) {
 				movemap.set( TorsionID(i, BB, 3),false );
 			}
 		}
@@ -163,9 +163,9 @@ void RelaxProtocolBase::initialize_movemap(
 			if ( minimize_bondlength_subset_ == 0 ) {
 				movemap.set( core::id::D, true );
 			} else if ( minimize_bondlength_subset_ == 1 ) {
-				for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 					core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
-					for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
+					for ( core::Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
 						//if ( jj == 1 ) {
 						// if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
 						//  movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::D ), true );
@@ -176,15 +176,15 @@ void RelaxProtocolBase::initialize_movemap(
 					}
 				}
 			} else if ( minimize_bondlength_subset_ == 2 ) {
-				for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 					core::conformation::Residue const &res_i = pose.residue(ii);
-					for ( Size jj = 1; jj <= res_i.natoms(); ++jj ) {
+					for ( core::Size jj = 1; jj <= res_i.natoms(); ++jj ) {
 						if ( res_i.atom_is_backbone(jj) ) continue;
 						movemap.set( DOF_ID( AtomID( jj, ii ), core::id::D ), true );
 					}
 				}
 			} else if ( minimize_bondlength_subset_ == 3 ) {
-				for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 					core::conformation::Residue const &res_i = pose.residue(ii);
 					if ( res_i.type().has( " C  ") ) {
 						movemap.set( DOF_ID( AtomID( res_i.atom_index(" C  "), ii ), core::id::D ), true );
@@ -210,9 +210,9 @@ void RelaxProtocolBase::initialize_movemap(
 			if ( minimize_bondangle_subset_ == 0 ) {
 				movemap.set( core::id::THETA, true );
 			} else if ( minimize_bondangle_subset_ == 1 ) {
-				for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 					core::chemical::AtomIndices const & ii_mainchain_atoms( pose.residue(ii).mainchain_atoms() );
-					for ( Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
+					for ( core::Size jj = 1; jj <= ii_mainchain_atoms.size(); ++jj ) {
 						//if ( jj == 1 || jj == 2 ) {  //fpd  add jj==2
 						// if ( ii > 1 && pose.residue(ii).is_bonded( ii-1 ) && !pose.residue(ii).has_variant_type("CUTPOINT_UPPER")) {
 						//  movemap.set( DOF_ID( AtomID( ii_mainchain_atoms[ jj ], ii ), core::id::THETA ), true );
@@ -223,22 +223,22 @@ void RelaxProtocolBase::initialize_movemap(
 					}
 				}
 			} else if ( minimize_bondangle_subset_ == 2 ) {
-				for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 					core::conformation::Residue const &res_i = pose.residue(ii);
-					for ( Size jj = 1; jj <= res_i.natoms(); ++jj ) {
+					for ( core::Size jj = 1; jj <= res_i.natoms(); ++jj ) {
 						if ( res_i.atom_is_backbone(jj) ) continue;
 						movemap.set( DOF_ID( AtomID( jj, ii ), core::id::THETA ), true );
 					}
 				}
 			} else if ( minimize_bondangle_subset_ == 3 ) {
-				for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 					core::conformation::Residue const &res_i = pose.residue(ii);
 					if ( res_i.type().has( " C  ") ) {
 						movemap.set( DOF_ID( AtomID( res_i.atom_index(" C  "), ii ), core::id::THETA ), true );
 					}
 				}
 			} else if ( minimize_bondangle_subset_ == 4 ) {
-				for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 					core::conformation::Residue const &res_i = pose.residue(ii);
 					if ( res_i.type().has( " CB ") ) {
 						movemap.set( DOF_ID( AtomID( res_i.atom_index(" CB "), ii ), core::id::THETA ), true );
@@ -354,7 +354,7 @@ void RelaxProtocolBase::set_task_factory( core::pack::task::TaskFactoryOP task_f
 
 void RelaxProtocolBase::cartesian( bool newval ) { cartesian_ = newval; }
 void RelaxProtocolBase::min_type( std::string min_type ) { min_type_ = min_type; }
-void RelaxProtocolBase::max_iter( Size max_iter ) { max_iter_ = max_iter; }
+void RelaxProtocolBase::max_iter( core::Size max_iter ) { max_iter_ = max_iter; }
 void RelaxProtocolBase::dry_run( bool setting ) { dry_run_ = setting; }
 
 void RelaxProtocolBase::constrain_relax_to_native_coords( bool constrain_relax_to_native_coords ) { constrain_relax_to_native_coords_ = constrain_relax_to_native_coords; }
@@ -487,7 +487,7 @@ void RelaxProtocolBase::apply_disulfides( core::pose::Pose & pose ){
 
 		utility::vector1<bool> allow_repack(pose.size(), false);
 
-		for ( Size i = 1; i<= pose.size() ; ++i ) {
+		for ( core::Size i = 1; i<= pose.size() ; ++i ) {
 			allow_repack[i] = movemap_->get_chi(i);
 		}
 
@@ -575,7 +575,7 @@ void RelaxProtocolBase::set_up_constraints(
 		//core::scoring::constraints::ConstraintSetOP
 		// save_pose_constraint_set = pose.constraint_set()->clone();
 
-		for ( Size i_cst = 1; i_cst <= cst_files_.size(); ++i_cst ) {
+		for ( core::Size i_cst = 1; i_cst <= cst_files_.size(); ++i_cst ) {
 			std::string const filename = cst_files( i_cst );
 			ConstraintSetOP user_csts
 				= ConstraintIO::get_instance()->read_constraints_new( filename,

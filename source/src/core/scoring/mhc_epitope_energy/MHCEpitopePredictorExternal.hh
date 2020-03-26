@@ -24,7 +24,7 @@
 
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

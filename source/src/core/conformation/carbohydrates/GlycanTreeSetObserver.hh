@@ -24,7 +24,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/signals/Link.hh>
 
@@ -39,7 +39,7 @@ namespace carbohydrates {
 
 
 ///@brief The CacheablePoseObserver version of GlycanTreeSet that will react to pose length changes..
-class GlycanTreeSetObserver : public utility::pointer::ReferenceCount {
+class GlycanTreeSetObserver : public utility::VirtualBase {
 
 public:
 

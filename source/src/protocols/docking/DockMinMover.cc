@@ -115,12 +115,12 @@ void DockMinMover::set_default() {
 
 	// perhaps call this dock_minimize_bb_res or something.
 	if ( option[ bb_min_res ].user() ) {
-		utility::vector1< Size > const & min_res = option[ bb_min_res ]();
-		for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_bb( min_res[ n ], true );
+		utility::vector1< core::Size > const & min_res = option[ bb_min_res ]();
+		for ( core::Size n = 1; n <= min_res.size(); n++ ) movemap_->set_bb( min_res[ n ], true );
 	}
 	if ( option[ sc_min_res ].user() ) {
-		utility::vector1< Size > const & min_res = option[ sc_min_res ]();
-		for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_chi( min_res[ n ], true );
+		utility::vector1< core::Size > const & min_res = option[ sc_min_res ]();
+		for ( core::Size n = 1; n <= min_res.size(); n++ ) movemap_->set_chi( min_res[ n ], true );
 	}
 
 

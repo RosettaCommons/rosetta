@@ -72,21 +72,21 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< Size >
+utility::vector1< core::Size >
 figure_out_working_interface_res( core::pose::Pose const & pose,
-	utility::vector1< Size > const & working_moving_res_list,
+	utility::vector1< core::Size > const & working_moving_res_list,
 	bool const pack_protein_side_chains ){
 
 	utility::vector1< bool > at_interface( pose.size(), false );
 	// could make a map to vecs to save memory:
 	utility::vector1< utility::vector1< bool > > checked_pair( pose.size(), at_interface );
 
-	for ( Size const res : working_moving_res_list ) {
+	for ( core::Size const res : working_moving_res_list ) {
 		figure_out_working_interface_res( pose, res, at_interface, checked_pair, pack_protein_side_chains );
 	}
 
-	utility::vector1< Size > interface_res;
-	for ( Size i = 1; i <= pose.size(); i++ ) {
+	utility::vector1< core::Size > interface_res;
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		if ( !core::pose::stepwise_addable_pose_residue( i, pose ) ) continue;
 		if ( at_interface[i] ) interface_res.push_back( i );
 	}
@@ -97,13 +97,13 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-check_o2prime_contact( pose::Pose const & pose, Size const i, Size const j ) {
+check_o2prime_contact( pose::Pose const & pose, core::Size const i, core::Size const j ) {
 
 	Real const dist_cutoff2 = ( 4.0 * 4.0 );
 	Vector const & o2prime_xyz = pose.residue( i ).xyz(  pose.residue_type( i ).RNA_info().o2prime_index() );
 
 	core::conformation::Residue const & nbr_rsd = pose.residue( j );
-	for ( Size n = 1; n <= nbr_rsd.nheavyatoms(); n++ ) {
+	for ( core::Size n = 1; n <= nbr_rsd.nheavyatoms(); n++ ) {
 		if ( nbr_rsd.is_virtual( n ) ) continue;
 		Vector const & nbr_xyz = nbr_rsd.xyz( n );
 		Real const rsd_dist2 = ( nbr_xyz - o2prime_xyz ).length_squared();
@@ -125,9 +125,9 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() ); // note -- pose must have been scored already.
 
-	utility::vector1< Size > const moving_partition_res = figure_out_moving_partition_res( pose, working_moving_res );
+	utility::vector1< core::Size > const moving_partition_res = figure_out_moving_partition_res( pose, working_moving_res );
 
-	for ( Size const i : moving_partition_res ) {
+	for ( core::Size const i : moving_partition_res ) {
 
 		if ( pose.residue_type( i ).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
 
@@ -135,7 +135,7 @@ figure_out_working_interface_res( core::pose::Pose const & pose,
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
 				iter != energy_graph.get_node( i )->const_edge_list_end();
 				++iter ) {
-			Size const j( (*iter)->get_other_ind( i ) );
+			core::Size const j( (*iter)->get_other_ind( i ) );
 			if ( pose.residue_type( j ).has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) continue;
 
 			// only looking for pairs of residues *across* moving interface! One in moving_partition, one outside.

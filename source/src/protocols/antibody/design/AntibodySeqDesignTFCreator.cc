@@ -54,7 +54,7 @@ using namespace protocols::loops;
 using namespace protocols::antibody::task_operations;
 
 AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodyInfoCOP ab_info, bool force_north_paper_db ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	ab_info_(std::move( ab_info )),
 	force_north_paper_db_(force_north_paper_db)
 {
@@ -66,7 +66,7 @@ AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodyInfoCOP ab_info,
 AntibodySeqDesignTFCreator::AntibodySeqDesignTFCreator( AntibodyInfoCOP ab_info,
 	const utility::vector1<CDRSeqDesignOptionsOP> design_options,
 	bool force_north_paper_db, core::Size stem_size):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	ab_info_(std::move( ab_info )),
 	stem_size_(stem_size),
 	force_north_paper_db_(force_north_paper_db)

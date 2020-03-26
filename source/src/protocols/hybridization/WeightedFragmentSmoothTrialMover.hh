@@ -55,7 +55,7 @@ public:
 private:
 	utility::vector1< core::fragment::FragSetOP > frag_libs_;
 	utility::vector1< numeric::random::WeightedSampler > weighted_sampler_;
-	utility::vector1< Size > anchor_reses_; // list of residue indices
+	utility::vector1< core::Size > anchor_reses_; // list of residue indices
 	core::Size nr_frags_; // number of fragments to use per frame (1 to this number), if 0, use all
 	core::Size total_frames_;
 	simple_moves::FragmentCostOP cost_;

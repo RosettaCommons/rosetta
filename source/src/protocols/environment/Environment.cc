@@ -85,7 +85,7 @@ void Environment::register_mover( moves::MoverOP mover ){
 			register_movers( submovers.begin(), submovers.end() );
 		}
 	} else if ( mover_container ) {
-		for ( Size i = 0; i < mover_container->nr_moves(); ++i ) {
+		for ( core::Size i = 0; i < mover_container->nr_moves(); ++i ) {
 			moves::MoverOP const & imover = mover_container->movers()[ i ];
 			register_mover( imover );
 		}

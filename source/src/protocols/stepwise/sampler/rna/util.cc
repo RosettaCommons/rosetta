@@ -58,16 +58,16 @@ setup_sampler( pose::Pose const & pose,
 	// track perfectly.
 
 	/////Load in constants being used/////
-	utility::vector1<Size> const & working_moving_suite_list( working_parameters->working_moving_suite_list() );
-	utility::vector1<Size> const & syn_chi_res( working_parameters->working_force_syn_chi_res_list() );
-	utility::vector1<Size> const & anti_chi_res( working_parameters->working_force_anti_chi_res_list() );
-	utility::vector1<Size> const & north_puckers( working_parameters->working_force_north_sugar_list() );
-	utility::vector1<Size> const & south_puckers( working_parameters->working_force_south_sugar_list() );
+	utility::vector1<core::Size> const & working_moving_suite_list( working_parameters->working_moving_suite_list() );
+	utility::vector1<core::Size> const & syn_chi_res( working_parameters->working_force_syn_chi_res_list() );
+	utility::vector1<core::Size> const & anti_chi_res( working_parameters->working_force_anti_chi_res_list() );
+	utility::vector1<core::Size> const & north_puckers( working_parameters->working_force_north_sugar_list() );
+	utility::vector1<core::Size> const & south_puckers( working_parameters->working_force_south_sugar_list() );
 	bool const is_prepend_ = working_parameters->is_prepend();
 	bool const is_internal_ = working_parameters->is_internal();
 
 	runtime_assert( working_moving_suite_list.size() == 1 );
-	Size const moving_suite_( working_moving_suite_list[1] );
+	core::Size const moving_suite_( working_moving_suite_list[1] );
 
 	/////Get the base and pucker state/////
 	utility::vector1<bool> sample_sugar( 2, false );
@@ -95,8 +95,8 @@ setup_sampler( pose::Pose const & pose,
 		runtime_assert( sample_sugar[2] );
 	}
 
-	for ( Size i = 1; i <= 2; ++i ) {
-		Size const curr_rsd( moving_suite_ + i - 1 );
+	for ( core::Size i = 1; i <= 2; ++i ) {
+		core::Size const curr_rsd( moving_suite_ + i - 1 );
 		if ( sample_sugar[i] ) {
 			bool is_north ( north_puckers.has_value( curr_rsd ) );
 			bool is_south ( south_puckers.has_value( curr_rsd ) );
@@ -126,15 +126,15 @@ setup_sampler( pose::Pose const & pose,
 	if ( kic_modeler ) {
 		runtime_assert( close_chain );
 
-		Size const chainbreak_suite( working_parameters->five_prime_chain_break_res() );
+		core::Size const chainbreak_suite( working_parameters->five_prime_chain_break_res() );
 		runtime_assert( chainbreak_suite > 0 );
 
 		pose::PoseOP new_pose( new pose::Pose( pose ) ); //hard copy
 		RNA_KIC_SamplerOP sampler( new RNA_KIC_Sampler(
 			new_pose, moving_suite_, chainbreak_suite, new_pose->residue_type( moving_suite_ ).is_TNA() ) );
 		//  runtime_assert( (moving_suite_ == chainbreak_suite + 1) || (moving_suite_ == chainbreak_suite - 1) );
-		Size const which_nucleoside_to_sample = ( moving_suite_ < chainbreak_suite ) ? 2 : 1;
-		Size const sample_nucleoside_res = ( moving_suite_ < chainbreak_suite ) ? (moving_suite_ + 1) : moving_suite_;
+		core::Size const which_nucleoside_to_sample = ( moving_suite_ < chainbreak_suite ) ? 2 : 1;
+		core::Size const sample_nucleoside_res = ( moving_suite_ < chainbreak_suite ) ? (moving_suite_ + 1) : moving_suite_;
 		sampler->set_sample_nucleoside( sample_nucleoside_res );
 		if ( !sample_sugar[ which_nucleoside_to_sample ] ) {
 			sampler->set_base_state( NO_CHI );
@@ -179,15 +179,15 @@ setup_sampler( pose::Pose const & pose,
 /////////////////////////////////////////////////////////////////////////
 bool
 modeler_sugar_at_five_prime( pose::Pose const & pose,
-	Size const moving_suite ) {
+	core::Size const moving_suite ) {
 	using namespace core::pose::full_model_info;
 	if ( moving_suite == 1 ||
 			( pose.fold_tree().is_cutpoint( moving_suite - 1 ) &&
 			!pose.residue_type( moving_suite ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
 		if ( full_model_info_defined( pose ) ) {
-			utility::vector1< Size > const & sample_res = const_full_model_info( pose ).sample_res();
-			utility::vector1< Size > const & sample_sugar_res = const_full_model_info( pose ).rna_sample_sugar_res();
-			utility::vector1< Size > const & res_list   = const_full_model_info( pose ).res_list();
+			utility::vector1< core::Size > const & sample_res = const_full_model_info( pose ).sample_res();
+			utility::vector1< core::Size > const & sample_sugar_res = const_full_model_info( pose ).rna_sample_sugar_res();
+			utility::vector1< core::Size > const & res_list   = const_full_model_info( pose ).res_list();
 			return ( sample_res.has_value( res_list[ moving_suite ] ) ||
 				sample_sugar_res.has_value( res_list[ moving_suite ] ) );
 		} else {
@@ -200,15 +200,15 @@ modeler_sugar_at_five_prime( pose::Pose const & pose,
 /////////////////////////////////////////////////////////////////////////
 bool
 modeler_sugar_at_three_prime( pose::Pose const & pose,
-	Size const moving_suite ) {
+	core::Size const moving_suite ) {
 	using namespace core::pose::full_model_info;
 	if ( (moving_suite + 1) == pose.size() ||
 			( pose.fold_tree().is_cutpoint( moving_suite + 1 ) &&
 			!pose.residue_type( moving_suite + 1 ).has_variant_type( chemical::CUTPOINT_LOWER ) ) ) {
 		if ( full_model_info_defined( pose ) ) {
-			utility::vector1< Size > const & sample_res = const_full_model_info( pose ).sample_res();
-			utility::vector1< Size > const & sample_sugar_res = const_full_model_info( pose ).rna_sample_sugar_res();
-			utility::vector1< Size > const & res_list   = const_full_model_info( pose ).res_list();
+			utility::vector1< core::Size > const & sample_res = const_full_model_info( pose ).sample_res();
+			utility::vector1< core::Size > const & sample_sugar_res = const_full_model_info( pose ).rna_sample_sugar_res();
+			utility::vector1< core::Size > const & res_list   = const_full_model_info( pose ).res_list();
 			return ( sample_res.has_value( res_list[ moving_suite + 1 ] ) ||
 				sample_sugar_res.has_value( res_list[ moving_suite + 1 ] ) );
 		} else {

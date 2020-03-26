@@ -82,13 +82,13 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 	}
 
 
-	Size nres = pose.size();
+	core::Size nres = pose.size();
 	Real const coord_sdev( 0.5 );
-	for ( Size i = 1; i<= (Size)nres; ++i ) {
-		if ( i==(Size)pose.fold_tree().root() ) continue;
+	for ( core::Size i = 1; i<= (core::Size)nres; ++i ) {
+		if ( i==(core::Size)pose.fold_tree().root() ) continue;
 		if ( coordconstraint_segments.is_loop_residue( i ) ) {
 			Residue const & nat_i_rsd( pose.residue(i) );
-			for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
+			for ( core::Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
 				func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
 				pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(
 					AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
@@ -153,7 +153,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 
 	std::vector < std::pair < core::Size, core::Real > > rama_list;
 
-	for ( Size j=1; j<= pose.size(); ++j ) {
+	for ( core::Size j=1; j<= pose.size(); ++j ) {
 		EnergyMap & emap( energies.onebody_energies( j ) );
 		if (  emap[ rama ] > limit_rama_min ) {
 			rama_list.emplace_back( j, emap[ rama ] );
@@ -169,7 +169,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 		TR << "RAMALIST: " << g.first << "  " << g.second << std::endl;
 	}
 
-	for ( Size g=0; g< how_many; g++ ) {
+	for ( core::Size g=0; g< how_many; g++ ) {
 
 		if ( g >= rama_list.size() ) break;
 
@@ -272,7 +272,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 
 	// Final RamaCheck
 	rama_scorefxn(pose); //apply score
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		if ( !pose.residue_type(i).is_protein() ) continue;
 		EnergyMap & emap( energies.onebody_energies( i ) );
 		TR << "CHECK: " << i << "  "

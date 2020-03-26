@@ -27,7 +27,7 @@
 #include <core/id/TorsionID.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
@@ -36,7 +36,7 @@
 namespace core {
 namespace scoring {
 
-class P_AA_ss : public utility::pointer::ReferenceCount
+class P_AA_ss : public utility::VirtualBase
 {
 private:
 	utility::vector1< core::Real > p_L_, p_H_, p_E_;

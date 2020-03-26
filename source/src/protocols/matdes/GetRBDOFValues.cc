@@ -158,7 +158,7 @@ core::Real GetRBDOFValues::compute(
 		if ( dof_name == "" ) utility_exit_with_message("A sym_dof_name must be specified in order to access the initial values from the SymDofSampler.");
 		/// WARNING WARNING WARNING THREAD UNSAFE!
 		sym_dof_names = SymDofMoverSampler::get_instance()->get_sym_dof_names();
-		for ( Size i = 1; i <= sym_dof_names.size(); i++ ) {
+		for ( core::Size i = 1; i <= sym_dof_names.size(); i++ ) {
 			if ( dof_name == sym_dof_names[i] ) index = i;
 		}
 	}

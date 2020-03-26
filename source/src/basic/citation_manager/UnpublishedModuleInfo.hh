@@ -21,7 +21,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace basic {
@@ -29,7 +29,7 @@ namespace citation_manager {
 
 /// @brief Authorship information for an unpublished Rosetta module.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-class UnpublishedModuleInfo : public utility::pointer::ReferenceCount {
+class UnpublishedModuleInfo : public utility::VirtualBase {
 
 public:
 

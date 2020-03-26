@@ -159,11 +159,11 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 	}
 
 	// params
-	Size h3_attempts(0);
+	core::Size h3_attempts(0);
 	Real current_h3_prob = numeric::random::rg().uniform();
 	TR<<"current_h3_prob="<<current_h3_prob<<std::endl;
 
-	Size frag_size(0);
+	core::Size frag_size(0);
 	FragSetOP frags_to_use;
 	{
 		if ( trimmed_cdr_h3.size() > cutoff_9_ ) {
@@ -207,17 +207,17 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 	cdrh3_map->clear();
 	cdrh3_map->set_chi(true );
 	cdrh3_map->set_bb (false);
-	for ( Size ii=trimmed_cdr_h3.start(); ii<=trimmed_cdr_h3.stop(); ii++ ) {
+	for ( core::Size ii=trimmed_cdr_h3.start(); ii<=trimmed_cdr_h3.stop(); ii++ ) {
 		cdrh3_map->set_bb( ii, true );
 	}
 	cdrh3_map->set_jump( 1, false );
 
 
 	// aroop_temp default 25 * loop size
-	Size num_cycles2(25 * trimmed_cdr_h3.size() );
+	core::Size num_cycles2(25 * trimmed_cdr_h3.size() );
 	bool H3_found_ever(false);
-	Size total_cycles(0);
-	Size buffer(   (is_camelid_ && (ab_info_->get_H3_kink_type()==Extended)   ) ? 2 : 0 );
+	core::Size total_cycles(0);
+	core::Size buffer(   (is_camelid_ && (ab_info_->get_H3_kink_type()==Extended)   ) ? 2 : 0 );
 	bool loop_found(false);
 
 	while ( !loop_found && ( total_cycles++ < num_cycles1_) ) {
@@ -225,7 +225,7 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 		//      fragment has a size frag_size
 		//TR<<"trimmed_cdr_h3.start() = "<<trimmed_cdr_h3.start()<<std::endl;
 		//TR<<"trimmed_cdr_h3.stop() - ( buffer + (frag_size - 1 ) ) = "<<trimmed_cdr_h3.stop() - ( buffer + (frag_size - 1 ) )<<std::endl;
-		for ( Size ii = trimmed_cdr_h3.start(); ii<=trimmed_cdr_h3.stop() - ( buffer + (frag_size - 1 ) ); ii++ ) {
+		for ( core::Size ii = trimmed_cdr_h3.start(); ii<=trimmed_cdr_h3.stop() - ( buffer + (frag_size - 1 ) ); ii++ ) {
 			ClassicFragmentMoverOP cfm( new ClassicFragmentMover( frags_to_use, cdrh3_map) );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
@@ -237,9 +237,9 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 		if ( total_cycles == 1 ) {
 			mc_->reset( pose_in );
 		}
-		Size local_h3_attempts(0);
+		core::Size local_h3_attempts(0);
 
-		for ( Size c2 = 1; c2 <= num_cycles2; ++c2 ) {
+		for ( core::Size c2 = 1; c2 <= num_cycles2; ++c2 ) {
 			TR<<"c1="<<total_cycles<<"    "<<"c2="<<c2<<std::endl;
 			// apply a random fragment
 			ClassicFragmentMoverOP cfm( new ClassicFragmentMover( frags_to_use, cdrh3_map) );
@@ -340,7 +340,7 @@ void H3PerturbCCD::read_and_store_fragments( ) {
 
 	protocols::loops::read_loop_fragments( frag_libs );
 
-	Size frag_size = (ab_info_->get_CDR_loop(h3).stop() - ab_info_->get_CDR_loop(h3).start()) + 3; //JQX: why +3??
+	core::Size frag_size = (ab_info_->get_CDR_loop(h3).stop() - ab_info_->get_CDR_loop(h3).start()) + 3; //JQX: why +3??
 	TR<<frag_size<<std::endl;
 
 
@@ -349,7 +349,7 @@ void H3PerturbCCD::read_and_store_fragments( ) {
 	// a fragset of same type should be able to handle everything
 	offset_3mer_frags = frag_libs[2]->empty_clone();
 	FrameList loop_3mer_frames;
-	Size offset = 0;
+	core::Size offset = 0;
 	frag_libs[2]->region_simple( 1, frag_size, loop_3mer_frames );
 	for ( FrameList::const_iterator it = loop_3mer_frames.begin(),
 			eit = loop_3mer_frames.end(); it!=eit; ++it ) {

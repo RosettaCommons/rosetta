@@ -274,7 +274,7 @@ core::Real GenPharmacophore::get_RNAring_sasa( core::conformation::Residue const
 	}
 	core::chemical::rna::RNA_Info const & rsd_type = rsd.RNA_info();
 	core::Real curr_ring_sasa = 0;
-	for ( Size rj = 1, rj_end = rsd.nheavyatoms(); rj <= rj_end; ++rj ) {
+	for ( core::Size rj = 1, rj_end = rsd.nheavyatoms(); rj <= rj_end; ++rj ) {
 		if ( !rsd_type.is_RNA_base_atom(rj) ) continue;
 		id::AtomID const aid( rj, rsdno);
 		curr_ring_sasa += pose_atom_sasa[aid];
@@ -306,14 +306,14 @@ void GenPharmacophore::get_ideal_hydrogenBond_atoms(core::pose::Pose const & pro
 
 	std::list< numeric::xyzVector<core::Real> > dnr_coord_list;
 	std::list< numeric::xyzVector<core::Real> > acp_coord_list;
-	for ( Size j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
+	for ( core::Size j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
 		core::conformation::Residue const & rsd( protein_pose.conformation().residue(j) );
 
 		//int target=0;
 
 		//fill in points that are ideal for a hydrogen acceptor with an O
 		for ( auto hnum  = rsd.Hpos_polar().begin(), hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-			Size const hatm( *hnum );
+			core::Size const hatm( *hnum );
 			// Skip buried residues
 			if ( atom_sasas(j, hatm) < 0.1 && atom_sasas(j, rsd.atom_base(hatm)) < 0.1 ) {
 				//std::cout<<rsd.seqpos()+offset<<" Donor "<<rsd.name()<<" "<<rsd.atom_name(rsd.atom_base(hatm))<<" H SASA "<<atom_sasas(j, hatm)<<" Base SASA "<<atom_sasas(j, rsd.atom_base(hatm))<<" being ignored"<<std::endl;
@@ -332,7 +332,7 @@ void GenPharmacophore::get_ideal_hydrogenBond_atoms(core::pose::Pose const & pro
 
 		//fill in points that are ideal for a hydrogen donor with an N
 		for ( auto anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
-			Size const aatm( *anum );
+			core::Size const aatm( *anum );
 			// Skip buried residues
 			if ( atom_sasas(j, aatm) < 0.1 ) {
 				//std::cout<<rsd.seqpos()+offset<<" Acceptor "<<rsd.name()<<" "<<rsd.atom_name(aatm)<<" SASA "<<atom_sasas(j, aatm)<<" being ignored"<<std::endl;
@@ -376,7 +376,7 @@ void GenPharmacophore::get_ideal_hydrogenBond_atoms(core::pose::Pose const & pro
 				exit(1000);
 			}
 			Stub stub( aatm_xyz, aatm_base_xyz, aatm_base2_xyz );
-			for ( Size i=1; i<= phi_list.size(); ++i ) {
+			for ( core::Size i=1; i<= phi_list.size(); ++i ) {
 				numeric::xyzVector<core::Real> const ro1(stub.spherical( numeric::conversions::radians( phi_list[i]), numeric::conversions::radians( theta ), opt_distance));
 				std::cout<<"Optimal donor at "<<ro1.x()<<" "<<ro1.y()<<" "<<ro1.z()<<std::endl;
 				dnr_coord_list.push_back(ro1);
@@ -386,7 +386,7 @@ void GenPharmacophore::get_ideal_hydrogenBond_atoms(core::pose::Pose const & pro
 	numeric::xyzVector<core::Real> protein_atom_coord(0.);
 	for ( int j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
 		core::conformation::Residue const & curr_rsd = protein_pose.residue(j);
-		for ( Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i ) {
 			protein_atom_coord.x() = curr_rsd.atom(i).xyz()(1);
 			protein_atom_coord.y() = curr_rsd.atom(i).xyz()(2);
 			protein_atom_coord.z() = curr_rsd.atom(i).xyz()(3);
@@ -463,7 +463,7 @@ std::string  GenPharmacophore::extract_rna_rings_from_protein_rna_complex(core::
 	for ( int ir = 1, ir_end = rna_pose.size(); ir <= ir_end; ir++ ) {
 
 		core::conformation::Residue const & curr_rna_rsd = rna_pose.residue(ir);
-		Size seq_pos = curr_rna_rsd.seqpos();
+		core::Size seq_pos = curr_rna_rsd.seqpos();
 		char rna_chain_id = rna_pose.pdb_info()->chain(seq_pos);
 
 		if ( !curr_rna_rsd.is_RNA() ) continue;
@@ -486,7 +486,7 @@ std::string  GenPharmacophore::extract_rna_rings_from_protein_rna_complex(core::
 			if ( !curr_rsd.is_RNA() ) continue;
 			core::chemical::rna::RNA_Info const & curr_rsd_type = curr_rsd.RNA_info();
 			core::Real curr_ring_sasa = 0;
-			for ( Size jc = 1, jc_end = curr_rsd.nheavyatoms(); jc <= jc_end; ++jc ) {
+			for ( core::Size jc = 1, jc_end = curr_rsd.nheavyatoms(); jc <= jc_end; ++jc ) {
 				if ( !curr_rsd_type.is_RNA_base_atom(jc) ) continue;
 				id::AtomID const aid( jc, ic);
 				curr_ring_sasa += complex_atom_sasa[aid];
@@ -494,7 +494,7 @@ std::string  GenPharmacophore::extract_rna_rings_from_protein_rna_complex(core::
 
 			// Filter RINGS based on base-sasa-cutoff
 			if ( is_buried_ring(curr_rsd, curr_ring_sasa, sasa_cutoff) ) {
-				for ( Size jc = 1, jc_end = curr_rsd.nheavyatoms(); jc <= jc_end; ++jc ) {
+				for ( core::Size jc = 1, jc_end = curr_rsd.nheavyatoms(); jc <= jc_end; ++jc ) {
 					if ( !curr_rsd_type.is_RNA_base_atom(jc) ) continue;//include only rings from rna base
 
 					std::string str1 = curr_rsd.atom_name( jc );
@@ -570,7 +570,7 @@ std::string GenPharmacophore::extract_Hbond_atoms_from_protein_rna_complex(core:
 
 	rna_hb_set.clear();
 
-	for ( Size ic = 1, ic_end = prot_rna_complex_pose.size(); ic<=ic_end; ic++ ) {
+	for ( core::Size ic = 1, ic_end = prot_rna_complex_pose.size(); ic<=ic_end; ic++ ) {
 		core::conformation::Residue const & curr_rsd = prot_rna_complex_pose.residue(ic);
 		if ( !curr_rsd.is_RNA() ) continue;
 
@@ -581,7 +581,7 @@ std::string GenPharmacophore::extract_Hbond_atoms_from_protein_rna_complex(core:
 				nite = energy_graph.get_node(ic)->const_edge_list_end();
 				nit != nite; ++nit ) {
 
-			Size const pin( (*nit)->get_other_ind(ic) );
+			core::Size const pin( (*nit)->get_other_ind(ic) );
 
 			core::conformation::Residue const& rn( prot_rna_complex_pose.residue( pin ) );
 			int const nnn = tenA_neighbor_graph.get_node( pin )->num_neighbors_counting_self_static();
@@ -597,14 +597,14 @@ std::string GenPharmacophore::extract_Hbond_atoms_from_protein_rna_complex(core:
 		}
 	}
 	//TR << "\n\nHBOND SET:\n";
-	for ( Size i=1; i<= Size(rna_hb_set.nhbonds()); ++i ) {
+	for ( core::Size i=1; i<= core::Size(rna_hb_set.nhbonds()); ++i ) {
 
 		core::scoring::hbonds::HBond const & hb( rna_hb_set.hbond(i) );
 		core::conformation::Residue const & donor = prot_rna_complex_pose.residue( hb.don_res() );
 		core::conformation::Residue const & accep = prot_rna_complex_pose.residue( hb.acc_res() );
-		Size const donor_hatm_num = hb.don_hatm();
-		Size const donor_base_atom_num = donor.atom_base( donor_hatm_num );
-		Size const accep_atom_num = hb.acc_atm();
+		core::Size const donor_hatm_num = hb.don_hatm();
+		core::Size const donor_base_atom_num = donor.atom_base( donor_hatm_num );
+		core::Size const accep_atom_num = hb.acc_atm();
 
 		/*TR << i << ":" <<
 		chemical::oneletter_code_from_aa(donor.aa()) <<
@@ -703,7 +703,7 @@ void GenPharmacophore::print_string_to_PDBfile(std::string const & input_filenam
 void GenPharmacophore::cluster_KeyFeatures(std::string const & input_filename, std::string const & output_filename) const {
 
 	using namespace basic::options;
-	Size const num_ring = option[ OptionKeys::gen_pharmacophore::min_num_ring ];
+	core::Size const num_ring = option[ OptionKeys::gen_pharmacophore::min_num_ring ];
 	core::Real const ring_ring_dist = option[ OptionKeys::gen_pharmacophore::ring_ring_dist_cutoff ];
 	core::Real const ring_atm_dist = option[ OptionKeys::gen_pharmacophore::ring_atm_dist_cutoff ];
 	std::istringstream inPDB_sstream(input_filename);
@@ -826,7 +826,7 @@ void GenPharmacophore::cluster_KeyFeatures(std::string const & input_filename, s
 	int counter = 0;
 	for ( it3 = clusters.begin(), end3 = clusters.end(); it3 != end3; ++it3 ) {
 		vector<SmallMol *> &current = it3->second;
-		Size numRng = 0;
+		core::Size numRng = 0;
 		vector<SmallMol *>::size_type s;
 		for ( s = 0; s < current.size(); s++ ) {
 			if ( current[s]->numberOfAtoms() > 1 ) {

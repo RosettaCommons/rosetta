@@ -22,7 +22,7 @@
 #include <protocols/legacy_sewing/sampling/requirements/LegacyIntraSegmentRequirement.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // c++ headers
 #include <string>
@@ -34,7 +34,7 @@ namespace requirements {
 
 /// @brief The Creator class is responsible for creating a particular
 /// LegacyGlobalRequirement class.
-class LegacyGlobalRequirementCreator : public utility::pointer::ReferenceCount
+class LegacyGlobalRequirementCreator : public utility::VirtualBase
 {
 public:
 	LegacyGlobalRequirementCreator() {}
@@ -45,7 +45,7 @@ public:
 	virtual void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const = 0;
 };
 
-class LegacyIntraSegmentRequirementCreator : public utility::pointer::ReferenceCount
+class LegacyIntraSegmentRequirementCreator : public utility::VirtualBase
 {
 public:
 	LegacyIntraSegmentRequirementCreator() {}

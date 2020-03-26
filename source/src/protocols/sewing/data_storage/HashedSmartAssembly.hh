@@ -19,7 +19,7 @@
 #include <protocols/sewing/data_storage/SmartAssembly.hh>
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace sewing {

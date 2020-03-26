@@ -31,19 +31,19 @@ class HBondAcceptorFilter : public protocols::filters::Filter
 {
 public:
 	HBondAcceptorFilter() :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "HBondAcceptor" )
 	{}
 
 	HBondAcceptorFilter(std::string const & chain, core::Size hbond_donor_limit ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "HBondAcceptor" ),
 		chain_(chain),
 		hbond_acceptor_limit_(hbond_donor_limit)
 	{}
 
 	HBondAcceptorFilter( HBondAcceptorFilter const & init ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( init ),
 		chain_(init.chain_),
 		hbond_acceptor_limit_(init.hbond_acceptor_limit_)

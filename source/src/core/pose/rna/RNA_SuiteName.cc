@@ -44,7 +44,7 @@ namespace rna {
 
 //Constructor////////////////////////////////
 RNA_SuiteName::RNA_SuiteName():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	epsilonmin( 155 ),
 	epsilonmax( 310 ),
 	delta3min( 55 ),

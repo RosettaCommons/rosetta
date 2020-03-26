@@ -99,7 +99,7 @@ SchemePlaceMotifsMover::apply(Pose & pose) {
 	}
 	std::cout << "found " << hits.size() << " matching motifs" << std::endl;
 	if ( dumpfile_!="" && hits.size() ) {
-		for ( Size i = 0; i < 1; ++i ) std::cout << "!!!!!!!!!!!!!!! DUMPING MOTIFS " << dumpfile_ << "!!!!!!!!!!!!!!!!" << std::endl;
+		for ( core::Size i = 0; i < 1; ++i ) std::cout << "!!!!!!!!!!!!!!! DUMPING MOTIFS " << dumpfile_ << "!!!!!!!!!!!!!!!!" << std::endl;
 		static int dump_count = 0;
 		hits.dump_motifs_pdb(dumpfile_+"_"+ObjexxFCL::string_of(++dump_count)+".pdb");
 	}

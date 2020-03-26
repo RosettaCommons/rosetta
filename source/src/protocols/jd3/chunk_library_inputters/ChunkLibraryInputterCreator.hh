@@ -23,7 +23,7 @@
 
 // utility headers
 #include <utility/options/keys/OptionKeyList.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/options/keys/OptionKey.fwd.hh>
 
@@ -34,7 +34,7 @@ namespace protocols {
 namespace jd3 {
 namespace chunk_library_inputters {
 
-class ChunkLibraryInputterCreator : public utility::pointer::ReferenceCount
+class ChunkLibraryInputterCreator : public utility::VirtualBase
 {
 public:
 	virtual ChunkLibraryInputterOP create_inputter() const = 0;

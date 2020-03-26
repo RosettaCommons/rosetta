@@ -34,7 +34,7 @@ namespace sampler {
 namespace screener {
 
 RNA_TorsionScreener::RNA_TorsionScreener() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	suitename_( utility::pointer::make_shared< RNA_SuiteName >() )
 {}
 

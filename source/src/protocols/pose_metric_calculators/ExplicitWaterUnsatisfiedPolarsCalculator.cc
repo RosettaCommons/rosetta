@@ -104,8 +104,8 @@ ExplicitWaterUnsatisfiedPolarsCalculator::ExplicitWaterUnsatisfiedPolarsCalculat
 
 void ExplicitWaterUnsatisfiedPolarsCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const{
 	if ( key == "all_unsat_polars" ) {
-		basic::check_cast( valptr, &all_unsat_polars_, "all_unsat_polars expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( all_unsat_polars_ );
+		basic::check_cast( valptr, &all_unsat_polars_, "all_unsat_polars expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( all_unsat_polars_ );
 	} else {
 		basic::Error() << "ExplicitWaterUnsatisfiedPolarsCalculator cannot compute the requested metric " << key << std::endl;
 		utility_exit();
@@ -126,10 +126,10 @@ std::string ExplicitWaterUnsatisfiedPolarsCalculator::print( std::string const &
 void
 append_rsd_by_jump_near_atom(
 	pose::Pose & pose,
-	Size seqpos,
-	Size atomno,
+	core::Size seqpos,
+	core::Size atomno,
 	conformation::Residue new_rsd,
-	Size new_atomno,
+	core::Size new_atomno,
 	Real dist_min,
 	Real dist_max
 )
@@ -139,8 +139,8 @@ append_rsd_by_jump_near_atom(
 	Residue rsd( pose.residue( seqpos ) );
 	//append by jump from seqpos atomno to new_rsd atom 1, maybe make random downstream atom?
 	pose.append_residue_by_jump( new_rsd, seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), true );
-	Size new_seqpos( pose.size() );
-	Size jump_number( pose.fold_tree().num_jump() );
+	core::Size new_seqpos( pose.size() );
+	core::Size jump_number( pose.fold_tree().num_jump() );
 	Jump jump( pose.jump( jump_number ) );
 
 	//set jump distance as random val from dist_min to dist_max
@@ -158,10 +158,10 @@ void
 dock_waters_to_atom(
 	pose::Pose & pose,
 	ScoreFunctionOP scorefxn,
-	Size seqpos,
-	Size atomno,
+	core::Size seqpos,
+	core::Size atomno,
 	conformation::Residue wat_rsd,
-	Size new_atomno,
+	core::Size new_atomno,
 	Real dist_min,
 	Real dist_max
 )
@@ -169,21 +169,21 @@ dock_waters_to_atom(
 	typedef  numeric::xyzMatrix< Real > Matrix;
 
 	//attempt appending in 20 random orientations
-	Size const max_attempt_per_atom( 20 );
-	Size const max_wat_per_atom( 5 );
-	Size n_wat( 0 );
+	core::Size const max_attempt_per_atom( 20 );
+	core::Size const max_wat_per_atom( 5 );
+	core::Size n_wat( 0 );
 	pose::Pose start_pose( pose );
 	protocols::moves::MonteCarloOP mc_create( new protocols::moves::MonteCarlo( pose, *scorefxn, 0.8 ) );
-	for ( Size i = 1; i <= max_attempt_per_atom; ++i ) {
+	for ( core::Size i = 1; i <= max_attempt_per_atom; ++i ) {
 		if ( n_wat >= max_wat_per_atom ) break;
 
 		pose = start_pose;
 		append_rsd_by_jump_near_atom( pose, seqpos, atomno, wat_rsd, new_atomno, dist_min, dist_max );
 
-		Size jump_number( pose.fold_tree().num_jump() );
+		core::Size jump_number( pose.fold_tree().num_jump() );
 		//gaussian perturbations to RB dofs
 		protocols::moves::MonteCarloOP mc_dock( new protocols::moves::MonteCarlo( pose, *scorefxn, 0.8 ) );
-		for ( Size i = 1; i <= 10; ++i ) {
+		for ( core::Size i = 1; i <= 10; ++i ) {
 			Jump jump( pose.jump( jump_number ) );
 			jump.gaussian_move( 1, 0.05, 90.0 );
 			pose.set_jump( jump_number, jump );
@@ -206,7 +206,7 @@ dock_waters_to_atom(
 void
 find_res_unsat_polars(
 	Pose const pose,
-	Size const seqpos,
+	core::Size const seqpos,
 	vector1< bool > & atm_is_unsat
 )
 {
@@ -215,18 +215,18 @@ find_res_unsat_polars(
 	hbset.setup_for_residue_pair_energies( pose, false, false );
 	conformation::Residue rsd( pose.residue( seqpos ) );
 	//count n hbonds for donors and acceptors
-	vector1< Size > n_atom_hbonds( rsd.natoms(), 0 );
-	for ( Size i = 1; i <= hbset.nhbonds(); ++i ) {
+	vector1< core::Size > n_atom_hbonds( rsd.natoms(), 0 );
+	for ( core::Size i = 1; i <= hbset.nhbonds(); ++i ) {
 		HBond hb( hbset.hbond( i ) );
 		if ( hb.don_res() == seqpos ) {
-			Size don_atm( rsd.atom_base( hb.don_hatm() ) );
+			core::Size don_atm( rsd.atom_base( hb.don_hatm() ) );
 			n_atom_hbonds[ don_atm ] += 1;
 		} else if ( hb.acc_res() == seqpos ) {
 			n_atom_hbonds[ hb.acc_atm() ] += 1;
 		}
 	}
 	//calc unsat hbonds a la BuriedUnsatisfied calculator
-	for ( Size atm = 1; atm <= rsd.nheavyatoms(); ++atm ) {
+	for ( core::Size atm = 1; atm <= rsd.nheavyatoms(); ++atm ) {
 		if ( !( rsd.atom_type( atm ).is_acceptor() || rsd.atom_type( atm ).is_donor() ) ) continue;
 		//we need at least one hbond
 		if ( n_atom_hbonds[ atm ] == 0 ) {
@@ -235,11 +235,11 @@ find_res_unsat_polars(
 		//may need > 1 hbond, see BuriedUnsatCalc
 		//behavior copied from Florian!
 		std::string atom_type( rsd.type().atom_type( atm ).name() );
-		Size satisfac_cut = 3;
+		core::Size satisfac_cut = 3;
 		if ( atom_type == "OH" || atom_type == "OW" || atom_type == "OCbb" || atom_type == "S" ) {
 			satisfac_cut = 2;
 		}
-		Size bonded_heavyatoms = rsd.n_bonded_neighbor_all_res( atm )
+		core::Size bonded_heavyatoms = rsd.n_bonded_neighbor_all_res( atm )
 			- rsd.type().number_bonded_hydrogens( atm );
 		if ( bonded_heavyatoms + n_atom_hbonds[ atm ] < satisfac_cut ) {
 			atm_is_unsat[ atm ] = true;
@@ -274,7 +274,7 @@ void ExplicitWaterUnsatisfiedPolarsCalculator::recompute( core::pose::Pose const
 		//do polar hydrogens
 		for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(),
 				hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
-			Size const iatom( *hnum );
+			core::Size const iatom( *hnum );
 			if ( !atm_is_unsat[ iatom ] ) continue;
 			//append water molecule from iatom to water oxygen (atom 1)
 			dock_waters_to_atom( pose, scorefxn, seqpos, iatom, *wat_rsd, 1, min_dist, shell_cutoff_ );
@@ -282,7 +282,7 @@ void ExplicitWaterUnsatisfiedPolarsCalculator::recompute( core::pose::Pose const
 		//then do acceptors
 		for ( chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(),
 				anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
-			Size const iatom( *anum );
+			core::Size const iatom( *anum );
 			if ( !atm_is_unsat[ iatom ] ) continue;
 			//append water molecule from iatom to water
 			dock_waters_to_atom( pose, scorefxn, seqpos, iatom, *wat_rsd, 1, min_dist, shell_cutoff_ );
@@ -290,7 +290,7 @@ void ExplicitWaterUnsatisfiedPolarsCalculator::recompute( core::pose::Pose const
 
 		//now check again for unsat hbonds in residue
 		find_res_unsat_polars( pose, seqpos, atm_is_unsat );
-		for ( Size iatom = 1; iatom <= atm_is_unsat.size(); ++iatom ) {
+		for ( core::Size iatom = 1; iatom <= atm_is_unsat.size(); ++iatom ) {
 			if ( atm_is_unsat[ iatom ] ) ++all_unsat_polars_;
 		}
 	}

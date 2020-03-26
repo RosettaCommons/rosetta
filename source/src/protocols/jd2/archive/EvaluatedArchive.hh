@@ -28,7 +28,7 @@
 
 // Utility headers
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 
 // C++ headers

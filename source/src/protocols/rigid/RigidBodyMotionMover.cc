@@ -48,6 +48,8 @@
 namespace protocols {
 namespace rigid {
 
+using core::Size;
+
 static basic::Tracer TR( "protocols.moves.RigidBodyMotionMover" );
 
 core::Real angle_between(const numeric::xyzVector<core::Real>& a, const numeric::xyzVector<core::Real>& b) {
@@ -83,7 +85,7 @@ void RigidBodyMotionMover::apply(core::pose::Pose& pose) {
 		return;
 	}
 
-	Size i = numeric::random::random_range(1, chunks_.size());
+	core::Size i = numeric::random::random_range(1, chunks_.size());
 	Jump jump = pose.jump(i);
 
 	// rotation
@@ -108,7 +110,7 @@ void RigidBodyMotionMover::apply(core::pose::Pose& pose) {
 	pose.set_jump(i, jump);
 }
 
-void RigidBodyMotionMover::compute_bias(Size i, const core::pose::Pose& pose, numeric::xyzVector<core::Real>* bias) const {
+void RigidBodyMotionMover::compute_bias(core::Size i, const core::pose::Pose& pose, numeric::xyzVector<core::Real>* bias) const {
 	using core::id::NamedAtomID;
 	using numeric::xyzVector;
 	using protocols::loops::Loop;
@@ -150,9 +152,9 @@ void RigidBodyMotionMover::compute_bias(Size i, const core::pose::Pose& pose, nu
 void RigidBodyMotionMover::update_chunks() {
 	chunks_.clear();
 
-	Size start = 1;
-	for ( Size i = 1; i <= tree_.num_cutpoint(); ++i ) {
-		Size stop = tree_.cutpoint(i);
+	core::Size start = 1;
+	for ( core::Size i = 1; i <= tree_.num_cutpoint(); ++i ) {
+		core::Size stop = tree_.cutpoint(i);
 		chunks_.add_loop(protocols::loops::Loop(start, stop));
 		start = stop + 1;
 	}

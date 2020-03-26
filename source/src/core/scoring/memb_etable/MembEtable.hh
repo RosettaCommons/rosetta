@@ -32,7 +32,7 @@
 #include <ObjexxFCL/FArray1.fwd.hh>
 #include <ObjexxFCL/FArray2.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace core {
 namespace scoring {

@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_import_pose_RNA_JumpMover_HH
 #define INCLUDED_core_import_pose_RNA_JumpMover_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/import_pose/RNA_JumpMover.fwd.hh>
 #include <core/import_pose/libraries/RNA_JumpLibrary.fwd.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
@@ -27,7 +27,7 @@
 namespace core {
 namespace import_pose {
 
-class RNA_JumpMover: public utility::pointer::ReferenceCount {
+class RNA_JumpMover: public utility::VirtualBase {
 
 public:
 

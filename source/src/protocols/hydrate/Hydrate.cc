@@ -251,7 +251,7 @@ Hydrate::apply(Pose & pose)
 	set_task_and_movemap( pose, protein_flexibility_, task, mm, minimize_bb_where_packing_ );
 
 	if ( !short_residence_time_mode_ ) { // If running on short residence time dont add water here
-		Size nloop( option[ pack_nloop ].value() );
+		core::Size nloop( option[ pack_nloop ].value() );
 		pack::pack_rotamers_loop( pose, *score_fxn_, task, nloop ); // previous default 25
 		remove_high_energy_water_molecules( pose, *score_fxn_ );
 	}

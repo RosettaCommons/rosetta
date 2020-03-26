@@ -79,7 +79,7 @@ get_max_centroid_to_atom_distance( utility::vector1 < core::conformation::Residu
 	runtime_assert( rsd_at_origin_list.size() >= 1 );
 
 	Real max_distance = 0;
-	for ( Size n = 1; n <= rsd_at_origin_list.size(); ++n ) {
+	for ( core::Size n = 1; n <= rsd_at_origin_list.size(); ++n ) {
 		auto const & rsd_at_origin = rsd_at_origin_list[n];
 		numeric::xyzVector< core::Real > const centroid = core::chemical::rna::get_rna_base_centroid( *rsd_at_origin, false ); //optimize by returning this by reference? Apr 10, 2010
 
@@ -105,7 +105,7 @@ initialize_xyz_parameters( Distance & max_distance,
 	int & centroid_bin_min,
 	int & centroid_bin_max,
 	utility::vector1< core::conformation::ResidueOP > const & moving_rsd_at_origin_list,
-	Size const gap_size_to_anchor ){
+	core::Size const gap_size_to_anchor ){
 
 	// Wait, this really should depend on identities of bases. Hmm.
 	// Anyway will soon be replaced with a 'fixed' max_distance. -- rhiju, feb. 2014
@@ -127,7 +127,7 @@ initialize_xyz_parameters( Distance & max_distance,
 utility::vector1 < core::pose::PoseOP >
 setup_pose_with_moving_residue_alternative_list(
 	pose::Pose const & pose,
-	Size const & moving_res,
+	core::Size const & moving_res,
 	bool const extra_chi,
 	bool const use_phenix_geo
 ){
@@ -225,7 +225,7 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 	std::ofstream outfile;
 	std::string filename = foldername + "Bin_" + DOF_one + "_" + DOF_two + ".txt";
 	outfile.open( filename.c_str() );
-	Size const spacing = 14;
+	core::Size const spacing = 14;
 
 	outfile << std::setw( spacing ) << DOF_one;
 	outfile << std::setw( spacing ) << DOF_two;

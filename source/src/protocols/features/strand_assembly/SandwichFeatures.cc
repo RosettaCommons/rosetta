@@ -687,7 +687,7 @@ SandwichFeatures::parse_my_tag(
 )
 {
 	if ( tag->hasOption( "min_num_strands_to_deal" ) ) {
-		min_num_strands_to_deal_ = tag->getOption<Size>("min_num_strands_to_deal", 4); //needed for development or custom use
+		min_num_strands_to_deal_ = tag->getOption<core::Size>("min_num_strands_to_deal", 4); //needed for development or custom use
 	} else {
 		min_num_strands_to_deal_ = 4; // needed for unit_test or default use
 	}
@@ -695,7 +695,7 @@ SandwichFeatures::parse_my_tag(
 
 
 	if ( tag->hasOption( "max_num_strands_to_deal" ) ) {
-		max_num_strands_to_deal_ = tag->getOption<Size>("max_num_strands_to_deal", 140); //needed for development or custom use
+		max_num_strands_to_deal_ = tag->getOption<core::Size>("max_num_strands_to_deal", 140); //needed for development or custom use
 	} else {
 		max_num_strands_to_deal_ = 140; // needed for unit_test or default use
 	}
@@ -704,7 +704,7 @@ SandwichFeatures::parse_my_tag(
 
 
 	if ( tag->hasOption( "min_res_in_strand" ) ) {
-		min_res_in_strand_ = tag->getOption<Size>("min_res_in_strand", 2); //needed for development or custom use
+		min_res_in_strand_ = tag->getOption<core::Size>("min_res_in_strand", 2); //needed for development or custom use
 	} else {
 		min_res_in_strand_ = 2; // needed for unit_test or default use
 	}
@@ -989,7 +989,7 @@ SandwichFeatures::report_features(
 		// singlechain_poses = pose.split_by_chain();
 		//  TR << "singlechain_poses.size(): " << singlechain_poses.size() << endl;
 		//
-		// for(Size pose_i=1; pose_i<=singlechain_poses.size(); pose_i++)
+		// for(core::Size pose_i=1; pose_i<=singlechain_poses.size(); pose_i++)
 		// {
 		//  pose::Pose pose ( singlechain_poses[ pose_i ] );
 
@@ -1043,16 +1043,16 @@ SandwichFeatures::report_features(
 		}
 
 
-		Size sheet_PK_id_counter=1; //initial value
-		Size sw_can_by_sh_PK_id_counter=1; //initial value
+		core::Size sheet_PK_id_counter=1; //initial value
+		core::Size sw_can_by_sh_PK_id_counter=1; //initial value
 
-		Size rkde_in_strands_PK_id_counter=1; //initial value
-		Size rkde_PK_id_counter=1; //initial value
+		core::Size rkde_in_strands_PK_id_counter=1; //initial value
+		core::Size rkde_PK_id_counter=1; //initial value
 
-		Size sw_can_by_sh_id_counter=1; //initial value
-		Size sandwich_PK_id_counter=1; //initial value
-		Size intra_sheet_con_id_counter=1; //initial value
-		Size inter_sheet_con_id_counter=1; //initial value
+		core::Size sw_can_by_sh_id_counter=1; //initial value
+		core::Size sandwich_PK_id_counter=1; //initial value
+		core::Size intra_sheet_con_id_counter=1; //initial value
+		core::Size inter_sheet_con_id_counter=1; //initial value
 
 		utility::vector1<SandwichFragment> all_strands = get_full_strands(struct_id, db_session);
 
@@ -1065,11 +1065,11 @@ SandwichFeatures::report_features(
 
 		// <begin> assignment of strands into the sheet & define very first sheet ("1")
 		bool first_sheet_assigned = false;
-		for ( Size i=1; i<all_strands.size() && !first_sheet_assigned; ++i ) { // I don't need the last strand since this double for loops are exhaustive search for all pairs of strands
+		for ( core::Size i=1; i<all_strands.size() && !first_sheet_assigned; ++i ) { // I don't need the last strand since this double for loops are exhaustive search for all pairs of strands
 			if ( all_strands[i].get_size() < min_res_in_strand_ ) {
 				continue;
 			}
-			for ( Size j=i+1; j<=all_strands.size() && !first_sheet_assigned; ++j ) { // I need the last strand for this second for loop
+			for ( core::Size j=i+1; j<=all_strands.size() && !first_sheet_assigned; ++j ) { // I need the last strand for this second for loop
 				if ( all_strands[j].get_size() < min_res_in_strand_ ) {
 					continue;
 				}
@@ -1077,8 +1077,8 @@ SandwichFeatures::report_features(
 				SandwichFragment temp_strand_j(all_strands[j].get_start(), all_strands[j].get_end());
 
 				// <begin> anti-parallel check between i(" << i << ")'s strand and j(" << j << ")'s strand
-				Size return_of_find_sheet_antiparallel(0); // temporary 'false' designation
-				Size return_of_find_sheet_parallel(0); // temporary 'false' designation
+				core::Size return_of_find_sheet_antiparallel(0); // temporary 'false' designation
+				core::Size return_of_find_sheet_parallel(0); // temporary 'false' designation
 				return_of_find_sheet_antiparallel =
 					find_sheet (
 					pose, temp_strand_i, temp_strand_j, true,
@@ -1131,7 +1131,7 @@ SandwichFeatures::report_features(
 
 
 		// <begin> assignment of strand into rest sheets (other than "1")
-		for ( Size i=1; i<=all_strands.size(); ++i ) {
+		for ( core::Size i=1; i<=all_strands.size(); ++i ) {
 			if ( all_strands[i].get_size() >= min_res_in_strand_ ) { // the length of this beta strand > min_res_in_strand_
 				bool strand_i_is_in_any_sheet = check_whether_strand_i_is_in_sheet(struct_id, db_session, get_segment_id(
 					struct_id,
@@ -1140,12 +1140,12 @@ SandwichFeatures::report_features(
 				if ( !strand_i_is_in_any_sheet ) { //  this strand is not in any sheet, so this strand needs to be assigned into any sheet
 					utility::vector1<SandwichFragment> cur_strands = get_current_strands_in_sheet(struct_id, db_session);
 					bool sheet_unassigned = true;
-					for ( Size j=1; j<=cur_strands.size() && sheet_unassigned == true; ++j ) {
+					for ( core::Size j=1; j<=cur_strands.size() && sheet_unassigned == true; ++j ) {
 						SandwichFragment temp_strand_i(all_strands[i].get_start(), all_strands[i].get_end());
 						SandwichFragment temp_strand_j(cur_strands[j].get_start(), cur_strands[j].get_end());
 
-						Size return_of_find_sheet_antiparallel(0); // temporary 'false' designation
-						Size return_of_find_sheet_parallel(0); // temporary 'false' designation
+						core::Size return_of_find_sheet_antiparallel(0); // temporary 'false' designation
+						core::Size return_of_find_sheet_parallel(0); // temporary 'false' designation
 
 						return_of_find_sheet_antiparallel =
 							find_sheet (
@@ -1181,10 +1181,10 @@ SandwichFeatures::report_features(
 								i)); // struct_id, db_session, sheet_PK_id_counter, sheet_id, segment_id
 							sheet_PK_id_counter++;
 						}
-					} //for(Size j=1; j<=cur_strands.size(); ++j)
+					} //for(core::Size j=1; j<=cur_strands.size(); ++j)
 
 					if ( sheet_unassigned ) {
-						Size max_sheet_id = get_max_sheet_id(struct_id, db_session);
+						core::Size max_sheet_id = get_max_sheet_id(struct_id, db_session);
 						WriteToDB_sheet (struct_id, db_session, sheet_PK_id_counter, max_sheet_id+1, get_segment_id(
 							struct_id,
 							db_session,
@@ -1222,11 +1222,11 @@ SandwichFeatures::report_features(
 
 		// <begin> see_whether_sheet_is_antiparallel
 		utility::vector1<core::Size> all_distinct_sheet_ids = get_distinct_sheet_id_from_sheet_table(struct_id, db_session);
-		for ( Size i=1; i<=all_distinct_sheet_ids.size(); i++ ) {
+		for ( core::Size i=1; i<=all_distinct_sheet_ids.size(); i++ ) {
 			if ( all_distinct_sheet_ids[i] == 99999 ) { //all_strands[i].get_size() < min_res_in_strand_
 				continue;
 			}
-			Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
+			core::Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
 
 			TR << "i: " << i << endl;
 			TR << "num_strands_i: " << num_strands_i << endl;
@@ -1266,8 +1266,8 @@ SandwichFeatures::report_features(
 		TR.Info << "<begin> assignment of sheet into sandwich_candidate_by_sheet (sw_can_by_sh) " << endl;
 
 		// <begin> assign num_of_sheets_that_surround_this_sheet only ONCE!
-		for ( Size i=1; i <= all_distinct_sheet_ids.size(); i++ ) {
-			Size num_of_sheets_that_surround_this_sheet =
+		for ( core::Size i=1; i <= all_distinct_sheet_ids.size(); i++ ) {
+			core::Size num_of_sheets_that_surround_this_sheet =
 				cal_num_of_sheets_that_surround_this_sheet(
 				struct_id, db_session, dssp_pose, all_distinct_sheet_ids,
 				all_distinct_sheet_ids[i],
@@ -1277,20 +1277,20 @@ SandwichFeatures::report_features(
 		}
 		// <end> assign num_of_sheets_that_surround_this_sheet only ONCE!
 
-		Size sheet_j_that_will_be_used_for_pairing_with_sheet_i = 0; // temp value
-		for ( Size i=1; i <= all_distinct_sheet_ids.size()-1; i++ ) { // now I check all possible combinations
+		core::Size sheet_j_that_will_be_used_for_pairing_with_sheet_i = 0; // temp value
+		for ( core::Size i=1; i <= all_distinct_sheet_ids.size()-1; i++ ) { // now I check all possible combinations
 			if ( all_distinct_sheet_ids[i] == sheet_j_that_will_be_used_for_pairing_with_sheet_i ) { // useful to exclude sheet later
 				continue;
 			}
 			if ( all_distinct_sheet_ids[i] == 99999 ) { // all_strands[i].get_size() < min_res_in_strand_
 				continue;
 			}
-			Size num_strands_in_i_sheet = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
+			core::Size num_strands_in_i_sheet = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
 
 			if ( num_strands_in_i_sheet < min_num_strands_in_sheet_ ) {
 				continue;
 			}
-			Size num_of_sheets_that_surround_this_sheet = get_num_of_sheets_that_surround_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]);
+			core::Size num_of_sheets_that_surround_this_sheet = get_num_of_sheets_that_surround_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]);
 
 			if ( num_of_sheets_that_surround_this_sheet > 1 ) {
 				continue; // i
@@ -1300,7 +1300,7 @@ SandwichFeatures::report_features(
 
 			// <begin> identify sheet_j that_will_be_used_for_pairing_with_sheet_i to be a sandwich
 			// I need to iterate all 'j' for loop to find the closest sheet from sheet_id (i)
-			for ( Size j=i+1; j<=all_distinct_sheet_ids.size(); j++ ) {
+			for ( core::Size j=i+1; j<=all_distinct_sheet_ids.size(); j++ ) {
 				//TR << "all_distinct_sheet_ids[j]: " << all_distinct_sheet_ids[j] << endl;
 				if ( all_distinct_sheet_ids[j] == sheet_j_that_will_be_used_for_pairing_with_sheet_i ) { // useful to exclude sheet later
 					continue;
@@ -1308,13 +1308,13 @@ SandwichFeatures::report_features(
 				if ( all_distinct_sheet_ids[j] == 99999 ) { // all_strands[i].get_size() < min_res_in_strand_
 					continue;
 				}
-				Size num_strands_in_j_sheet = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[j]); // struct_id, db_session, sheet_id
+				core::Size num_strands_in_j_sheet = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[j]); // struct_id, db_session, sheet_id
 
 				if ( num_strands_in_j_sheet < min_num_strands_in_sheet_ ) {
 					continue;
 				}
 
-				Size num_of_sheets_that_surround_this_sheet = get_num_of_sheets_that_surround_this_sheet(struct_id, db_session, all_distinct_sheet_ids[j]);
+				core::Size num_of_sheets_that_surround_this_sheet = get_num_of_sheets_that_surround_this_sheet(struct_id, db_session, all_distinct_sheet_ids[j]);
 
 				if ( num_of_sheets_that_surround_this_sheet > 1 ) {
 					continue;  // j
@@ -1335,9 +1335,9 @@ SandwichFeatures::report_features(
 				// <begin> check whether strands are too distant to each other
 				bool these_2_sheets_are_too_distant = false; // temporary 'false' designation
 				avg_dis_between_sheets = 0;
-				for ( Size ii=1; ii<=strands_from_sheet_i.size() && !these_2_sheets_are_too_distant; ++ii ) { // this '&& !these_2_sheets_are_too_distant' is needed for better performance
+				for ( core::Size ii=1; ii<=strands_from_sheet_i.size() && !these_2_sheets_are_too_distant; ++ii ) { // this '&& !these_2_sheets_are_too_distant' is needed for better performance
 					vector<Real> array_avg_dis_sheet_i_j;
-					for ( Size jj=1; jj<=strands_from_sheet_j.size(); ++jj ) {
+					for ( core::Size jj=1; jj<=strands_from_sheet_j.size(); ++jj ) {
 						SandwichFragment temp_strand_i(strands_from_sheet_i[ii].get_start(), strands_from_sheet_i[ii].get_end());
 						SandwichFragment temp_strand_j(strands_from_sheet_j[jj].get_start(), strands_from_sheet_j[jj].get_end());
 
@@ -1353,7 +1353,7 @@ SandwichFeatures::report_features(
 
 					Real shortest_avg_dis_inter_sheet = 9999;
 
-					for ( Size kk=1; kk<=strands_from_sheet_j.size(); ++kk ) {
+					for ( core::Size kk=1; kk<=strands_from_sheet_j.size(); ++kk ) {
 						if ( shortest_avg_dis_inter_sheet > array_avg_dis_sheet_i_j[kk-1] ) {
 							shortest_avg_dis_inter_sheet = array_avg_dis_sheet_i_j[kk-1];
 						}
@@ -1363,7 +1363,7 @@ SandwichFeatures::report_features(
 						// TR.Info << "shortest_avg_dis_inter_sheet > max_inter_sheet_dis_CA_CA_" << endl;
 						these_2_sheets_are_too_distant = true;
 					}
-				} // for(Size ii=1; ii<=strands_from_sheet_i.size(); ++ii)
+				} // for(core::Size ii=1; ii<=strands_from_sheet_i.size(); ++ii)
 				// <end> check whether strands are too distant to each other
 
 
@@ -1378,8 +1378,8 @@ SandwichFeatures::report_features(
 					// <begin> check_strand_too_closeness
 					bool these_2_sheets_are_too_close = false; // temporary 'false' designation
 
-					for ( Size ii=1; ii<=strands_from_sheet_i.size() && !these_2_sheets_are_too_close; ++ii ) { // && !these_2_sheets_are_too_close NEEDED for better performance
-						for ( Size jj=1; jj<=strands_from_sheet_j.size() && !these_2_sheets_are_too_close; ++jj ) { // && !these_2_sheets_are_too_close NEEDED for better performance
+					for ( core::Size ii=1; ii<=strands_from_sheet_i.size() && !these_2_sheets_are_too_close; ++ii ) { // && !these_2_sheets_are_too_close NEEDED for better performance
+						for ( core::Size jj=1; jj<=strands_from_sheet_j.size() && !these_2_sheets_are_too_close; ++jj ) { // && !these_2_sheets_are_too_close NEEDED for better performance
 							SandwichFragment temp_strand_i(strands_from_sheet_i[ii].get_start(), strands_from_sheet_i[ii].get_end());
 							SandwichFragment temp_strand_j(strands_from_sheet_j[jj].get_start(), strands_from_sheet_j[jj].get_end());
 
@@ -1404,7 +1404,7 @@ SandwichFeatures::report_features(
 				}
 
 
-			} // for(Size j=i+1; j<=all_distinct_sheet_ids.size(); ++j)
+			} // for(core::Size j=i+1; j<=all_distinct_sheet_ids.size(); ++j)
 
 			// <end> identify sheet_j_that_will_be_used_for_pairing_with_sheet_i to be a sandwich
 
@@ -1428,8 +1428,8 @@ SandwichFeatures::report_features(
 			//   TR.Info << "<begin> check_sw_by_distance" << endl;
 			while ( !found_sandwich_w_these_2_sheets && chance_of_being_sandwich_w_these_2_sheets )
 					{
-				for ( Size ii=1; ii<=strands_from_sheet_i.size() && chance_of_being_sandwich_w_these_2_sheets; ++ii ) {
-					for ( Size jj=1; jj<=strands_from_sheet_j.size() && chance_of_being_sandwich_w_these_2_sheets; ++jj ) {
+				for ( core::Size ii=1; ii<=strands_from_sheet_i.size() && chance_of_being_sandwich_w_these_2_sheets; ++ii ) {
+					for ( core::Size jj=1; jj<=strands_from_sheet_j.size() && chance_of_being_sandwich_w_these_2_sheets; ++jj ) {
 						SandwichFragment temp_strand_i(strands_from_sheet_i[ii].get_start(), strands_from_sheet_i[ii].get_end());
 						SandwichFragment temp_strand_j(strands_from_sheet_j[jj].get_start(), strands_from_sheet_j[jj].get_end());
 
@@ -1446,8 +1446,8 @@ SandwichFeatures::report_features(
 							found_sandwich_w_these_2_sheets = true;
 							chance_of_being_sandwich_w_these_2_sheets = false; // these are sandwich, but no more sheet search is needed! (this "false" false assignment is needed (confirmed! by experiment))
 						}
-					} //for(Size jj=1; jj<=strands_from_sheet_j.size() && chance_of_being_sandwich_w_these_2_sheets; ++jj)
-				} //for(Size ii=1; ii<=strands_from_sheet_i.size() && chance_of_being_sandwich_w_these_2_sheets; ++ii)
+					} //for(core::Size jj=1; jj<=strands_from_sheet_j.size() && chance_of_being_sandwich_w_these_2_sheets; ++jj)
+				} //for(core::Size ii=1; ii<=strands_from_sheet_i.size() && chance_of_being_sandwich_w_these_2_sheets; ++ii)
 				break; // no sandwich here
 			} //while (!found_sandwich_w_these_2_sheets && chance_of_being_sandwich_w_these_2_sheets)
 			//   TR.Info << "<end> check_sw_by_distance" << endl;
@@ -1493,7 +1493,7 @@ SandwichFeatures::report_features(
 
 			sw_can_by_sh_id_counter++;
 
-		} // for(Size i=1; i<all_distinct_sheet_ids.size(); ++i)
+		} // for(core::Size i=1; i<all_distinct_sheet_ids.size(); ++i)
 		/////////////////// <end> assignment of sheet into sw_can_by_sh
 
 
@@ -1540,7 +1540,7 @@ SandwichFeatures::report_features(
 
 		if ( count_AA_with_direction_ ) {
 			//// <begin> count AA with direction
-			for ( Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii ) { // per each beta-strand
+			for ( core::Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii ) { // per each beta-strand
 				if ( bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id() > max_num_sw_per_pdb_ ) {
 					break;
 				}
@@ -1563,12 +1563,12 @@ SandwichFeatures::report_features(
 		// get_distinct(sw_can_by_sh_id)
 		utility::vector1<core::Size> vec_sw_can_by_sh_id =  get_vec_of_sw_can_by_sh_id(struct_id, db_session);
 
-		for ( Size ii=1; ii<=vec_sw_can_by_sh_id.size(); ii++ ) {
+		for ( core::Size ii=1; ii<=vec_sw_can_by_sh_id.size(); ii++ ) {
 			// I think that mostly vec_sw_can_by_sh_id.size() = just 1
 			TR << "See whether 'sw_candidate_by_sheets_id = " << vec_sw_can_by_sh_id[ii] << " ' be a canonical beta-sandwich or not" << endl;
 
 			chance_of_being_canonical_sw = true; // not yet decided fate whether this could be canonical sandwich or not, but assumed to be true for now
-			Size size_sandwich_PK_id =
+			core::Size size_sandwich_PK_id =
 				get_size_sandwich_PK_id(
 				struct_id,
 				db_session,
@@ -1577,12 +1577,12 @@ SandwichFeatures::report_features(
 
 			bool bool_proper_num_helix_in_loop = true;
 			bool bool_proper_num_E_in_loop = true;
-			Size former_start_res = 0; //temporary
+			core::Size former_start_res = 0; //temporary
 
 			// this 'jj' is used for 'for' iteration purpose only and this 'for' loop iterates only for connecting sheets/strands
-			for ( Size jj=1; jj<=size_sandwich_PK_id-1; ++jj ) {
+			for ( core::Size jj=1; jj<=size_sandwich_PK_id-1; ++jj ) {
 				// get_starting_res_for_connecting_strands and its sheet_id
-				std::pair<Size, Size>
+				std::pair<core::Size, core::Size>
 					start_res_sh_id =
 					get_starting_res_for_connecting_strands(
 					struct_id,
@@ -1590,15 +1590,15 @@ SandwichFeatures::report_features(
 					vec_sw_can_by_sh_id[ii], // sw_can_by_sh_id
 					former_start_res);
 
-				Size start_res = start_res_sh_id.first;
-				Size sheet_id_of_start_res = start_res_sh_id.second;
+				core::Size start_res = start_res_sh_id.first;
+				core::Size sheet_id_of_start_res = start_res_sh_id.second;
 
 				if ( start_res == 0 ) { // no proper retrieval of start_res
 					chance_of_being_canonical_sw = false;
 					break; // break jj 'for' loop
 				}
 				// get_next_starting_res_for_connecting_strands and its sheet_id
-				std::pair<Size, Size>
+				std::pair<core::Size, core::Size>
 					next_starting_res_for_connecting_strands =
 					get_next_starting_res_for_connecting_strands (
 					struct_id,
@@ -1606,15 +1606,15 @@ SandwichFeatures::report_features(
 					vec_sw_can_by_sh_id[ii], // sw_can_by_sh_id
 					start_res); //former_ending_res
 
-				Size next_start_res = next_starting_res_for_connecting_strands.first;
-				Size sheet_id_of_next_start_res = next_starting_res_for_connecting_strands.second;
+				core::Size next_start_res = next_starting_res_for_connecting_strands.first;
+				core::Size sheet_id_of_next_start_res = next_starting_res_for_connecting_strands.second;
 
 				former_start_res = next_start_res;
 
 				//////////// <begin> check numbers of helix and strand residues in loops
 				//////////// <begin> check whether there is a helix as a loop in this extracted sandwich candidate
-				Size helix_num = 0;
-				for ( Size kk=start_res+1; kk<=next_start_res-1; ++kk ) {
+				core::Size helix_num = 0;
+				for ( core::Size kk=start_res+1; kk<=next_start_res-1; ++kk ) {
 					char res_ss( dssp_pose.secstruct( kk ) ) ;
 					if ( res_ss == 'H' ) {
 						helix_num += 1;
@@ -1630,8 +1630,8 @@ SandwichFeatures::report_features(
 
 
 				//////////// <begin> check whether there is a strand as a loop in this extracted sandwich candidate
-				Size E_num = 0;
-				for ( Size kk=start_res+1; kk<=next_start_res-1; ++kk ) {
+				core::Size E_num = 0;
+				for ( core::Size kk=start_res+1; kk<=next_start_res-1; ++kk ) {
 					char res_ss( dssp_pose.secstruct( kk ) ) ;
 					if ( res_ss == 'E' ) {
 						E_num += 1;
@@ -1678,7 +1678,7 @@ SandwichFeatures::report_features(
 					parallel_EE = "A_EE"; // to keep chacracter size be same as "parallel"
 				}
 
-				Size loop_size = (next_start_res-1) - (start_res+1) + 1;
+				core::Size loop_size = (next_start_res-1) - (start_res+1) + 1;
 				if ( sheet_id_of_start_res == sheet_id_of_next_start_res ) {
 					// this loop is a beta-hairpin loop (that connects sheets as intra-sheet way)
 					//     TR << "start_res: " << start_res << endl;
@@ -1849,7 +1849,7 @@ SandwichFeatures::report_features(
 					inter_sheet_con_id_counter++;
 				} // this loop connects sheets as inter-sheet way
 
-			} // for(Size jj=1; (jj<=size_sandwich_PK_id-1) && (bool_no_helix_in_loop) && (bool_no_more_strand_in_loop); ++jj)
+			} // for(core::Size jj=1; (jj<=size_sandwich_PK_id-1) && (bool_no_helix_in_loop) && (bool_no_more_strand_in_loop); ++jj)
 			/////////////////// <end> update beta-hairpin or inter_sheet_connecting_loops (2nd judgement whether each sandwich_by_sheet_id becomes sandwich_by_components)
 
 
@@ -1946,7 +1946,7 @@ SandwichFeatures::report_features(
 
 				}
 
-				Size sw_res_size = WriteToDB_sw_res_size(struct_id, db_session,
+				core::Size sw_res_size = WriteToDB_sw_res_size(struct_id, db_session,
 					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 				);
 
@@ -2216,7 +2216,7 @@ SandwichFeatures::report_features(
 		dssp.dssp_reduced(dsspSS);
 
 		//TR << "input PDB dssp assignment: (based on start structure)" << std::endl;
-		for ( Size i = 1; i <= pose.size(); i++ ) {
+		for ( core::Size i = 1; i <= pose.size(); i++ ) {
 			///TR << dsspSS(i);
 		}
 		//TR << std::endl;

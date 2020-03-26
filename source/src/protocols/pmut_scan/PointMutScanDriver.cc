@@ -123,8 +123,8 @@ PointMutScanDriver::PointMutScanDriver( utility::vector1< std::string > & pdb_fi
 	MPI_Comm_size( MPI_COMM_WORLD, &mpi_nprocs );/* get number of processes */
 #endif
 
-	MPI_rank_ = (Size)( mpi_rank );
-	MPI_nprocs_ = (Size)( mpi_nprocs );
+	MPI_rank_ = (core::Size)( mpi_rank );
+	MPI_nprocs_ = (core::Size)( mpi_nprocs );
 
 	read_in_structures(); // all processes read in the structures
 
@@ -187,7 +187,7 @@ void PointMutScanDriver::go() {
 }
 
 ///
-std::string PointMutScanDriver::node_name( Size rank ) {
+std::string PointMutScanDriver::node_name( core::Size rank ) {
 
 	if ( rank == 0 ) {
 		return "master node";
@@ -290,10 +290,10 @@ void PointMutScanDriver::fill_mutations_list() {
 	//utility::vector1< Mutant > stabilizing_mutants;
 	//scan_for_mutations( input_poses, scorefxn, stabilizing_mutants, double_mutant_scan_ );
 
-	Size no_double_mutants_possible = 0;
-	Size no_double_mutants_excluded_for_distance = 0;
-	Size no_double_mutants_excluded_otherwise = 0;
-	Size no_single_mutants_excluded_otherwise = 0;
+	core::Size no_double_mutants_possible = 0;
+	core::Size no_double_mutants_excluded_for_distance = 0;
+	core::Size no_double_mutants_excluded_otherwise = 0;
+	core::Size no_single_mutants_excluded_otherwise = 0;
 
 
 	// use the first structure to determine neighborship for all residues. this neighbor_graph will be used inside the
@@ -302,12 +302,12 @@ void PointMutScanDriver::fill_mutations_list() {
 	calculate_neighbor_table( input_poses_[1], neighbors );
 
 	pose::Pose & pose = input_poses_[1];
-	Size n_residue = pose.size();
+	core::Size n_residue = pose.size();
 
-	for ( Size resid1 = 1; resid1 <= n_residue; ++resid1 ) {
+	for ( core::Size resid1 = 1; resid1 <= n_residue; ++resid1 ) {
 
 		// try every type at each position (well, except the native type at this position!)
-		for ( Size aa_enum_index_a = 1; aa_enum_index_a <= chemical::num_canonical_aas; ++aa_enum_index_a ) {
+		for ( core::Size aa_enum_index_a = 1; aa_enum_index_a <= chemical::num_canonical_aas; ++aa_enum_index_a ) {
 
 			//if ( resid1 > 1 ) { break; } // for debugging only
 
@@ -337,7 +337,7 @@ void PointMutScanDriver::fill_mutations_list() {
 			if ( double_mutant_scan_ ) {
 
 				// only need to iterate over higher indexed residues. can't make two mutations at the same position!
-				for ( Size resid2 = resid1 + 1; resid2 <= n_residue; ++resid2 ) {
+				for ( core::Size resid2 = resid1 + 1; resid2 <= n_residue; ++resid2 ) {
 
 					// check to see if these residues are neighbors of each other. we don't want to make double mutants
 					// where the mutants are on opposite sides of the protein.
@@ -349,7 +349,7 @@ void PointMutScanDriver::fill_mutations_list() {
 					}
 
 					// try every type at each position (well, except the native type at this position!)
-					for ( Size aa_enum_index_b = 1; aa_enum_index_b <= chemical::num_canonical_aas; ++aa_enum_index_b ) {
+					for ( core::Size aa_enum_index_b = 1; aa_enum_index_b <= chemical::num_canonical_aas; ++aa_enum_index_b ) {
 
 						if ( pose.residue( resid2 ).aa() == chemical::AA( aa_enum_index_b ) ) { continue; }
 						if ( !pose.residue_type( resid2 ).is_protein() ) { continue; }
@@ -381,7 +381,7 @@ void PointMutScanDriver::fill_mutations_list() {
 	}//for all residues resid1
 
 	if ( MPI_rank_ == 0 ) {
-		Size const single_possible = 19 * n_residue;
+		core::Size const single_possible = 19 * n_residue;
 		TR << "fill_mutations_list(): number single mutants possible: " << single_possible << std::endl;
 		TR << "fill_mutations_list(): number single mutants excluded otherwise: " << no_single_mutants_excluded_otherwise << std::endl;
 		if ( double_mutant_scan_ ) {
@@ -417,7 +417,7 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 
 
 	// iterate over all the lines
-	for ( Size ii=1; ii <= mutant_file_lines.size(); ++ii ) {
+	for ( core::Size ii=1; ii <= mutant_file_lines.size(); ++ii ) {
 		std::string const & line( mutant_file_lines[ ii ] );
 		std::istringstream iss( line );
 
@@ -433,7 +433,7 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 
 			// check to see if an insertion code is present in the position_code string
 			// if the string is made of all digits, no icode is present
-			Size pdb_resnum; char icode = ' ';
+			core::Size pdb_resnum; char icode = ' ';
 			std::stringstream ss;
 
 			if ( position_code.find_first_not_of("0123456789") == std::string::npos ) {
@@ -449,12 +449,12 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 						icode = *it; // assumes that insertion code is only 1-letter!!
 					}
 				}
-				ss >> pdb_resnum; // converts the ss buffer contents to a Size type
+				ss >> pdb_resnum; // converts the ss buffer contents to a core::Size type
 			}
 
 			// figure out what the pose residue number for this residue is
 			pose::Pose & pose = input_poses_[ 1 ];
-			Size pose_resnum = (pose.pdb_info())->pdb2pose( chain, pdb_resnum, icode );
+			core::Size pose_resnum = (pose.pdb_info())->pdb2pose( chain, pdb_resnum, icode );
 
 			if ( pose.residue( pose_resnum ).name1() != wt_residue ) {
 				TR << "wt_residue: " << wt_residue << ", pdb resnum: " << pdb_resnum << ", pose resnum: " << pose_resnum
@@ -494,31 +494,31 @@ void PointMutScanDriver::calculate_neighbor_table( pose::Pose & pose, utility::v
 
 	// actually create the neighbor graph from the point graph
 	utility::graph::Graph neighbor_graph( pose.size() );
-	for ( Size r=1; r <= pose.size(); ++r ) {
+	for ( core::Size r=1; r <= pose.size(); ++r ) {
 		for ( core::conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex(r).upper_edge_list_begin(),
 				edge_end_iter = pg->get_vertex(r).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
 			neighbor_graph.add_edge(r, edge_iter->upper_vertex());
 		}
 	}
 
-	for ( Size ii=1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii=1; ii <= pose.size(); ++ii ) {
 
 		conformation::Residue const & ii_rsd( pose.residue( ii ) );
 		for ( utility::graph::EdgeListConstIterator eli = neighbor_graph.get_node( ii )->const_edge_list_begin(),
 				eli_end = neighbor_graph.get_node( ii )->const_edge_list_end(); eli != eli_end; ++eli ) {
 
-			Size nb_resnum = (*eli)->get_other_ind( ii );
+			core::Size nb_resnum = (*eli)->get_other_ind( ii );
 			if ( nb_resnum < ii ) { continue; } // only want higher indexed residues
 
 			// check to see if any of the atoms on this neighboring residue "interact" with any atoms on the ii residue.
 			// our definition of interact: one sc-sc atom pair within 4.5A (BK's suggestion)
 			conformation::Residue const & jj_rsd( pose.residue( nb_resnum ) );
 
-			for ( Size jja = jj_rsd.first_sidechain_atom(); jja <= jj_rsd.nheavyatoms(); ++jja ) {
+			for ( core::Size jja = jj_rsd.first_sidechain_atom(); jja <= jj_rsd.nheavyatoms(); ++jja ) {
 				conformation::Atom const & jja_atom( jj_rsd.atom( jja ) );
 				Vector const & jja_atom_xyz = jja_atom.xyz();
 
-				for ( Size iia = ii_rsd.first_sidechain_atom(); iia <= ii_rsd.nheavyatoms(); ++iia ) {
+				for ( core::Size iia = ii_rsd.first_sidechain_atom(); iia <= ii_rsd.nheavyatoms(); ++iia ) {
 					conformation::Atom const & iia_atom( ii_rsd.atom( iia ) );
 					Vector const & iia_atom_xyz = iia_atom.xyz();
 
@@ -551,24 +551,24 @@ void PointMutScanDriver::divide_up_mutations() {
 	if ( MPI_rank_ == 0 ) {
 		//utility::vector1< Mutant > all_mutants_;
 
-		Size const num_mutants_per_cpu = all_mutants_.size() / MPI_nprocs_;
-		Size const nextra = all_mutants_.size() - ( num_mutants_per_cpu * MPI_nprocs_ );
+		core::Size const num_mutants_per_cpu = all_mutants_.size() / MPI_nprocs_;
+		core::Size const nextra = all_mutants_.size() - ( num_mutants_per_cpu * MPI_nprocs_ );
 
-		Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_mutants_per_cpu;
-		for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+		core::Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_mutants_per_cpu;
+		for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 			mutants_list_.push_back( all_mutants_[ ii ] );
 		}
 
 #ifdef USEMPI
 		//TR << "divide_up_mutations(): number of nodes " << MPI_nprocs_ << std::endl;
-		Size mutant_offset = my_njobs;
+		core::Size mutant_offset = my_njobs;
 
 		// send the other nodes their mutations lists so they know what they'll be working on
-		for ( Size node_index = 1; node_index < MPI_nprocs_; ++node_index ) {
-			Size node_njobs = ( nextra > node_index ? 1 : 0 ) + num_mutants_per_cpu;
+		for ( core::Size node_index = 1; node_index < MPI_nprocs_; ++node_index ) {
+			core::Size node_njobs = ( nextra > node_index ? 1 : 0 ) + num_mutants_per_cpu;
 			MPI_Send( & node_njobs, 1, MPI_UNSIGNED_LONG, node_index, tag_, MPI_COMM_WORLD );
 
-			for ( Size mutant_index = mutant_offset + 1; mutant_index <= mutant_offset + node_njobs; ++mutant_index ) {
+			for ( core::Size mutant_index = mutant_offset + 1; mutant_index <= mutant_offset + node_njobs; ++mutant_index ) {
 				send_mutant_data_to_node( node_index, all_mutants_[ mutant_index ] );
 			}
 			mutant_offset += node_njobs;
@@ -576,12 +576,12 @@ void PointMutScanDriver::divide_up_mutations() {
 
 	} else {
 		// slave node. need to receive work order from master node.
-		Size my_njobs;
+		core::Size my_njobs;
 		MPI_Recv( & my_njobs, 1, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD, & stat_ );
 
 		//TR << "divide_up_mutations(): received my_njobs: '" << my_njobs << "'" << std::endl;
 		mutants_list_.reserve( my_njobs );
-		for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+		for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 			mutants_list_.push_back( receive_mutant_data_from_node( 0 ) );
 		}
 #endif
@@ -589,7 +589,7 @@ void PointMutScanDriver::divide_up_mutations() {
 
 #ifdef USEMPI
 	sleep( MPI_rank_ ); // a crude way to order processes...
-	for ( Size ii = 1; ii <= mutants_list_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= mutants_list_.size(); ++ii ) {
 		char hostname[256];
 		gethostname(hostname, sizeof(hostname));
 		TR << "divide_up_pdbs(): mutation '" << mutants_list_[ ii ] << "' assigned to " << hostname << " (rank = " << MPI_rank_ << ")" << std::endl;
@@ -610,7 +610,7 @@ void PointMutScanDriver::send_mutant_data_to_node( int destination, const protoc
 	int tag( 1 );
 
 	// each particular mutant can have one, two or more mutations associated with it, make sure to send all of them!
-	Size mutant_num_mutations = m.n_mutations();
+	core::Size mutant_num_mutations = m.n_mutations();
 	//TR << "sending mutant_num_mutations: " << mutant_num_mutations << " to node " << destination << std::endl;
 	MPI_Send( & mutant_num_mutations, 1, MPI_UNSIGNED_LONG, destination, tag, MPI_COMM_WORLD );
 
@@ -622,8 +622,8 @@ void PointMutScanDriver::send_mutant_data_to_node( int destination, const protoc
 		MPI_Send( & wt_residue, 1, MPI_CHAR, destination, tag, MPI_COMM_WORLD );
 		MPI_Send( & mut_residue, 1, MPI_CHAR, destination, tag, MPI_COMM_WORLD );
 
-		Size pose_resnum = iter->pose_resnum_;
-		Size pdb_resnum = iter->pdb_resnum_;
+		core::Size pose_resnum = iter->pose_resnum_;
+		core::Size pdb_resnum = iter->pdb_resnum_;
 		MPI_Send( & pose_resnum, 1, MPI_UNSIGNED_LONG, destination, tag, MPI_COMM_WORLD );
 		MPI_Send( & pdb_resnum, 1, MPI_UNSIGNED_LONG, destination, tag, MPI_COMM_WORLD );
 
@@ -647,19 +647,19 @@ Mutant PointMutScanDriver::receive_mutant_data_from_node( int source ) {
 	int tag( 1 );
 	MPI_Status stat;
 
-	Size num_mutations;
+	core::Size num_mutations;
 	MPI_Recv( & num_mutations, 1, MPI_UNSIGNED_LONG, source, tag, MPI_COMM_WORLD, & stat );
 	//TR << "received mutant_num_mutations from node " << source << ": " << num_mutations <<  std::endl;
 
 	Mutant m;
-	for ( Size ii = 1; ii <= num_mutations; ++ii ) {
+	for ( core::Size ii = 1; ii <= num_mutations; ++ii ) {
 
 		char wt_residue, mut_residue;
 		MPI_Recv( & wt_residue, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, & stat );
 		MPI_Recv( & mut_residue, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, & stat );
 		//TR << "received wt_residue: " << wt_residue << " and mut_residue: " << mut_residue << " from node " << source << "." << std::endl;
 
-		Size pose_resnum = 1, pdb_resnum = 1;
+		core::Size pose_resnum = 1, pdb_resnum = 1;
 		MPI_Recv( & pose_resnum, 1, MPI_UNSIGNED_LONG, source, tag, MPI_COMM_WORLD, & stat );
 		MPI_Recv( & pdb_resnum, 1, MPI_UNSIGNED_LONG, source, tag, MPI_COMM_WORLD, & stat );
 
@@ -694,7 +694,7 @@ void PointMutScanDriver::make_mutants() {
 		TR << format::A( "mutation" ) << format::X(3) << format::A( "mutation_PDB_numbering" ) << format::X(3) << format::A( "average_ddG" ) << format::X(3) << format::A( "average_total_energy" ) << std::endl;
 	}
 
-	for ( Size ii=1; ii <= mutants_list_.size(); ++ii ) {
+	for ( core::Size ii=1; ii <= mutants_list_.size(); ++ii ) {
 		Mutant & m = mutants_list_[ ii ];
 
 		//TR << "make_mutants(): making mutant: " << m << std::endl;
@@ -702,7 +702,7 @@ void PointMutScanDriver::make_mutants() {
 		// the make specific mutant function changes both the mutant and native poses. we want to start with our
 		// original starting structures each time though. so we have to copy the input poses to some working native
 		// and mutant poses vectors.
-		for ( Size ii=1; ii <= input_poses_.size(); ++ii ) {
+		for ( core::Size ii=1; ii <= input_poses_.size(); ++ii ) {
 			mutant_poses[ ii ] = input_poses_[ ii ];
 			native_poses[ ii ] = input_poses_[ ii ];
 		}
@@ -733,7 +733,7 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 		MutationData md = m.pop_mutation();
 
 		// make the first mutation on the mutant_poses
-		for ( Size ii = 1; ii <= native_poses.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= native_poses.size(); ++ii ) {
 
 			// make the specific mutation, but don't do any scoring; the scorefxn is needed for packing
 			make_mutant_structure( mutant_poses[ ii ], native_poses[ ii ], md );
@@ -770,7 +770,7 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 		utility::vector1< Real > native_poses_total_energies( native_poses.size() );
 		utility::vector1< Real > mutant_poses_total_energies( native_poses.size() );
 
-		for ( Size ii=1; ii <= native_poses.size(); ++ii ) {
+		for ( core::Size ii=1; ii <= native_poses.size(); ++ii ) {
 			// make the specific mutation, but don't do any scoring; the scorefxn is needed for packing
 			// send in the input_pose for the mutant. that way the mutant poses will be "returned" because mutant_poses
 			// is actually a reference!
@@ -825,12 +825,12 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 
 
 		/*TR << "native poses total energies: ";
-		for ( Size ii=1; ii <= native_poses_total_energies.size(); ++ii ) {
+		for ( core::Size ii=1; ii <= native_poses_total_energies.size(); ++ii ) {
 		TR << native_poses_total_energies[ ii ] << ", ";
 		}
 		TR << std::endl;
 		TR << "mutant poses total energies: ";
-		for ( Size ii=1; ii <= mutant_poses_total_energies.size(); ++ii ) {
+		for ( core::Size ii=1; ii <= mutant_poses_total_energies.size(); ++ii ) {
 		TR << mutant_poses_total_energies[ ii ] << ", ";
 		}
 		TR << std::endl;*/
@@ -848,7 +848,7 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 ///
 void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::Pose & native_pose, MutationData const & md ) {
 
-	Size resid = md.pose_resnum();
+	core::Size resid = md.pose_resnum();
 	chemical::AA mut_aa = chemical::aa_from_oneletter_code( md.mut_residue() );
 
 	// need to create a neighborhood by distance calculator so we can identify neighbors of the mutated residue
@@ -859,12 +859,12 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 	pose::metrics::PoseMetricCalculatorOP mutant_nb_calculator( utility::pointer::make_shared< pose_metric_calculators::NeighborsByDistanceCalculator >( resid ) );
 	pose::metrics::CalculatorFactory::Instance().register_calculator( calculator_name, mutant_nb_calculator );
 
-	basic::MetricValue< std::set< Size > > mv_neighbors;
+	basic::MetricValue< std::set< core::Size > > mv_neighbors;
 	mutant_pose.metric( calculator_name, "neighbors", mv_neighbors );
-	std::set< Size > const neighbor_set( mv_neighbors.value() );
+	std::set< core::Size > const neighbor_set( mv_neighbors.value() );
 
 	//TR << "make_mutant_structure(): neighbor_set: ";
-	//for ( std::set< Size >::iterator it = neighbor_set.begin() ; it != neighbor_set.end(); it++ ) {
+	//for ( std::set< core::Size >::iterator it = neighbor_set.begin() ; it != neighbor_set.end(); it++ ) {
 	// TR << *it << ", ";
 	//}
 	//TR << std::endl;
@@ -888,7 +888,7 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 
 	RestrictResidueToRepackingOP mutant_repack_op( utility::pointer::make_shared< RestrictResidueToRepacking >() );
 	RestrictResidueToRepackingOP wt_repack_op( utility::pointer::make_shared< RestrictResidueToRepacking >() ); // will include one extra residue to repack
-	for ( Size ii = 1; ii <= mutant_pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= mutant_pose.size(); ++ii ) {
 		// resid is the position on the original pose. ii is the position on the copy.
 		if ( ii == resid ) {
 			// do design on this position

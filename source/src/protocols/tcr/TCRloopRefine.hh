@@ -22,7 +22,7 @@
 #include <protocols/tcr/TCRseqInfo.fwd.hh>
 #include <protocols/tcr/TCRseqInfo.hh>
 #include <protocols/tcr/TCRmodel.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace tcr {
@@ -31,7 +31,7 @@ namespace tcr {
 /// @details calls other loop modeling classes/ util functions to do loop rebuilding and refinement
 /// The refinement level was choosen based on user provide optional flags
 /// TCRloopRefine takes in TCRseqInfo or the parsed tcr segments for corresponding cdr positions for a/b chains
-class TCRloopRefine : public utility::pointer::ReferenceCount {
+class TCRloopRefine : public utility::VirtualBase {
 
 public:
 	/// @brief constructor with arguments

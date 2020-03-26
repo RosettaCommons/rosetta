@@ -185,10 +185,10 @@ void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
 	// Copy result into protected conformation in in_pose
 	DofUnlock unlock( in_pose.conformation(), passport() );
 
-	Size warn = 0;
+	core::Size warn = 0;
 
 	try {
-		for ( Size i = 1; i <= in_pose.size(); ++i ) {
+		for ( core::Size i = 1; i <= in_pose.size(); ++i ) {
 			tr.Debug << "Movemap for " << in_pose.residue( i ).name3() << i
 				<< ": bb(" << ( movemap_->get_bb( i ) ? "T" : "F" )
 				<< ") chi(" << ( movemap_->get_chi( i ) ? "T" : "F" ) << ")" << std::endl;

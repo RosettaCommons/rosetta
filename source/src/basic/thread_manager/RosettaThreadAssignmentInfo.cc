@@ -28,7 +28,7 @@ namespace thread_manager {
 RosettaThreadAssignmentInfo::RosettaThreadAssignmentInfo(
 	RosettaThreadRequestOriginatingLevel const originating_level
 ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	requested_thread_count_(0),
 	thread_request_originating_level_( originating_level )
 {}

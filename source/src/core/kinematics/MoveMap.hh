@@ -32,7 +32,7 @@
 // Utility headers
 #include <utility/py/PyAssert.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -84,9 +84,9 @@ namespace kinematics {
 ///     MinMover
 ///     ShearMover
 ///     SmallMover
-class MoveMap: public utility::pointer::ReferenceCount {
+class MoveMap: public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~MoveMap() override;
 	// ids
 	typedef id::AtomID AtomID;

@@ -45,12 +45,12 @@ get_contact_features(
 
 	Real const dist_threshold_sq( dist_threshold * dist_threshold );
 
-	Size const N( pose.size() );
+	core::Size const N( pose.size() );
 	dynamic_bitset<> features( (N*N - N) / 2 );
-	Size feat_idx(1);
-	Size const step_size( 1 + skip_res );
-	for ( Size ii = 1; ii <= pose.size(); ii += step_size ) {
-		for ( Size jj = ii + min_seqsep; jj <= pose.size(); jj += step_size ) {
+	core::Size feat_idx(1);
+	core::Size const step_size( 1 + skip_res );
+	for ( core::Size ii = 1; ii <= pose.size(); ii += step_size ) {
+		for ( core::Size jj = ii + min_seqsep; jj <= pose.size(); jj += step_size ) {
 			Real const dist_sq(
 				pose.residue(ii).xyz(atom_name).distance_squared(
 				pose.residue(jj).xyz(atom_name)

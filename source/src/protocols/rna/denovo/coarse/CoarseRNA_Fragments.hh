@@ -17,7 +17,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -45,7 +45,7 @@ namespace coarse {
 
 typedef std::pair< std::string, std::string > SequenceSecStructPair;
 
-class SourcePositions : public utility::pointer::ReferenceCount{
+class SourcePositions : public utility::VirtualBase{
 
 public:
 
@@ -91,7 +91,7 @@ private:
 	void
 	insert_fragment(
 		core::pose::Pose & ,//pose,
-		Size const ,//position,
+		core::Size const ,//position,
 		core::fragment::rna::TorsionSet const & ,//torsion_set,
 		core::pose::toolbox::AtomLevelDomainMapCOP /*atom_level_domain_map*/ ) const override {
 		/// STUBBED OUT!
@@ -101,27 +101,27 @@ private:
 	void
 	insert_fragment(
 		core::pose::Pose & pose,
-		Size const & insert_res,
-		Size const & source_res,
-		Size const & frag_size,
+		core::Size const & insert_res,
+		core::Size const & source_res,
+		core::Size const & frag_size,
 		core::fragment::rna::RNA_FragmentHomologyExclusionCOP const & homology_exclusion,
 		core::pose::toolbox::AtomLevelDomainMapCOP atom_level_domain_map ) const;
 
 	void
 	find_source_positions( SequenceSecStructPair const & key ) const;
 
-	Size
+	core::Size
 	pick_random_fragment(
 		std::string const & RNA_string,
 		std::string const & RNA_secstruct_string,
-		Size const type /* = MATCH_YR */) const;
+		core::Size const type /* = MATCH_YR */) const;
 
-	Size
+	core::Size
 	pick_random_fragment(
 		core::pose::Pose & pose,
-		Size const position,
-		Size const size,
-		Size const type ) const;
+		core::Size const position,
+		core::Size const size,
+		core::Size const type ) const;
 
 	void
 	initialize_frag_source_pose();
@@ -132,7 +132,7 @@ private:
 	core::pose::MiniPoseOP frag_source_pose_;
 	mutable std::map< SequenceSecStructPair, SourcePositionsOP > source_positions_map_;
 
-	std::map< std::string, Size > coarse_rna_name_to_num_;
+	std::map< std::string, core::Size > coarse_rna_name_to_num_;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

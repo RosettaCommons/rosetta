@@ -234,17 +234,17 @@ centroids_by_jump_int(
 	protocols::scoring::Interface interface( jump_id );
 	//interface.calculate( pose );
 
-	Size int_res_num = 0;
+	core::Size int_res_num = 0;
 	Real int_distance = 8.0;
 
 	//increments the interface distance until an interface is found, starting from 8A
-	for ( Size ll = 1; ll <= 5; ll++ ) {
+	for ( core::Size ll = 1; ll <= 5; ll++ ) {
 		if ( int_res_num == 0 ) {
 			interface.distance( int_distance );
 			interface.calculate( pose );
 
 			//count interface residues
-			for ( Size kk = 1; kk <= pose.size(); kk++ ) {
+			for ( core::Size kk = 1; kk <= pose.size(); kk++ ) {
 				if ( interface.is_interface( kk ) ) int_res_num++;
 			}
 
@@ -253,11 +253,11 @@ centroids_by_jump_int(
 		}
 	}
 
-	for ( Size ii = 1, ii_end = pose.size(); ii <= ii_end; ++ii ) {
-		Size & natoms = ( is_upstream(ii) ? upstream_atoms : downstream_atoms );
+	for ( core::Size ii = 1, ii_end = pose.size(); ii <= ii_end; ++ii ) {
+		core::Size & natoms = ( is_upstream(ii) ? upstream_atoms : downstream_atoms );
 		core::Vector & ctrd = ( is_upstream(ii) ? upstream_ctrd : downstream_ctrd );
 		core::conformation::Residue const & rsd = pose.residue(ii);
-		for ( Size jj = 1, jj_end = rsd.natoms(); jj <= jj_end; ++jj ) {
+		for ( core::Size jj = 1, jj_end = rsd.natoms(); jj <= jj_end; ++jj ) {
 			if ( interface.is_interface(rsd) ) {
 				ctrd += rsd.xyz(jj);
 				natoms += 1;

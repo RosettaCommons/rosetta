@@ -20,7 +20,7 @@ namespace denovo_design {
 namespace components {
 
 PoseFolder::PoseFolder( std::string const & type ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	type_( type )
 {}
 

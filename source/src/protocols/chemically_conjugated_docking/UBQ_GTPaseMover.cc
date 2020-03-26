@@ -253,7 +253,7 @@ catch ( utility::excn::Exception & e ) {
 	conformation::Residue const & new_rsd,
 	bool const build_ideal_geometry = false,
 	int const connection = 0,
-	Size const anchor_residue = 0,
+	core::Size const anchor_residue = 0,
 	int const anchor_connection = 0,
 	bool const start_new_chain = false
 	)*/

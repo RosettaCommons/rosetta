@@ -24,7 +24,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/excn/Exceptions.hh>
 
 // Basic headers
@@ -47,7 +47,7 @@ using namespace core;
 
 // Public methods //////////////////////////////////////////////////////////////
 // Standard methods ////////////////////////////////////////////////////////////
-DesignMeanField::DesignMeanField( Size option,
+DesignMeanField::DesignMeanField( core::Size option,
 	pose::PoseOPs & poses,
 	utility::vector1 < pack::task::PackerTaskOP > tasks,
 	scoring::ScoreFunctionOP scfxn
@@ -56,7 +56,7 @@ DesignMeanField::DesignMeanField( Size option,
 	aa_matrix_( new AAMatrix() )
 {}
 
-DesignMeanField::DesignMeanField( Size option,
+DesignMeanField::DesignMeanField( core::Size option,
 	pose::PoseOPs & poses,
 	utility::vector1 < pack::task::PackerTaskOP > tasks,
 	scoring::ScoreFunctionOP scfxn,

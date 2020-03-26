@@ -55,9 +55,9 @@ residue_type_all_patches_name( ResidueType const & rsd_type );
 utility::vector1< std::string > get_patch_names( ResidueType const & rsd_type );
 
 ///  @brief  A single case of a patch, eg proline Nterminus is a case of NtermProteinFull
-class PatchCase : public utility::pointer::ReferenceCount {
+class PatchCase : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~PatchCase() override;
 
 	/// @brief whether the PatchCase is applicable to this ResidueType?
@@ -169,7 +169,7 @@ case_from_lines(
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief A class patching basic ResidueType to create variant types, containing multiple PatchCase
-class Patch : public utility::pointer::ReferenceCount {
+class Patch : public utility::VirtualBase {
 public:
 
 	/// @brief Constructor
@@ -180,7 +180,7 @@ public:
 	///
 	Patch( TypeSetMode res_type_set_mode );
 
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Patch() override;
 
 	/// @brief constructor from file

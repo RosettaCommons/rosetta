@@ -24,7 +24,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #if defined(WIN32) || defined(PYROSETTA)
 #include <utility/tag/Tag.hh>
@@ -36,7 +36,7 @@ namespace monte_carlo {
 namespace mover {
 namespace options {
 
-class StepWiseMoveSelectorOptions: public virtual utility::pointer::ReferenceCount {
+class StepWiseMoveSelectorOptions: public virtual utility::VirtualBase {
 
 public:
 

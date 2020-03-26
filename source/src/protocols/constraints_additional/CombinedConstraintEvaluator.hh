@@ -42,7 +42,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <protocols/constraints_additional/ConstraintEvaluator.hh>
 #include <utility/vector1.hh>
@@ -55,7 +55,7 @@ namespace constraints_additional {
 
 class CombinedConstraintEvaluator : public evaluation::PoseEvaluator {
 public:
-	CombinedConstraintEvaluator( std::string tag, std::string filename, Size constraints_combine_ratio_ = 2, Size repeat = 10 );
+	CombinedConstraintEvaluator( std::string tag, std::string filename, core::Size constraints_combine_ratio_ = 2, core::Size repeat = 10 );
 	//sets xxx_cst and xxx_viol columns
 	void apply( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const override;
 

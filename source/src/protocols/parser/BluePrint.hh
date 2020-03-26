@@ -22,7 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <string>
 #include <map>
@@ -37,7 +37,7 @@ namespace protocols {
 namespace parser {
 
 
-class BluePrint : public utility::pointer::ReferenceCount {
+class BluePrint : public utility::VirtualBase {
 public:
 
 
@@ -67,42 +67,42 @@ public: // accessor
 
 
 	/// @brief total residue number defined in blueprint file
-	Size total_residue() const;
+	core::Size total_residue() const;
 
 	/// @brief total residue number without ligand defined in blueprint file
-	Size total_residue_wolig() const;
+	core::Size total_residue_wolig() const;
 
 	/// @brief sequence defined in blueprint file
 	String sequence() const;
 
 	/// @brief a~mino acid type at a position in blueprint file
-	char sequence( Size seqpos ) const;
+	char sequence( core::Size seqpos ) const;
 
 	/// @brief secondary structures defined in blueprint file
 	String secstruct() const;
 
 	/// @brief secondary structure at a position in blueprint file
-	char secstruct( Size seqpos ) const;
+	char secstruct( core::Size seqpos ) const;
 
 	/// @brief abego defined in bludprint file
 	utility::vector1< String > abego() const;
 
 	/// @brief secondary structure at a position in blueprint file
-	String abego( Size seqpos ) const;
+	String abego( core::Size seqpos ) const;
 
 	/// @brief residue number at each position in blueprint file
-	Size resnum( Size seqpos ) const;
+	core::Size resnum( core::Size seqpos ) const;
 
 	/// @brief translate residue number of pose to that of blueprint file
-	Size resnum_map( Size resnum_pose ) const;
+	core::Size resnum_map( core::Size resnum_pose ) const;
 
 	/// @brief return build type at each position
-	char buildtype( Size seqpos ) const;
+	char buildtype( core::Size seqpos ) const;
 
 	/// @brief return build type at each position
-	String extra( Size seqpos ) const;
+	String extra( core::Size seqpos ) const;
 
-	String insertion( Size i ) const;
+	String insertion( core::Size i ) const;
 
 	/// @brief helix pairings defined at the line of HHPAIR in blueprint
 	String helix_pairings() const;
@@ -143,10 +143,10 @@ private: // to be removed
 private: // data
 
 	/// @brief total residue number defined in blueprint
-	Size total_residue_;
+	core::Size total_residue_;
 
 	/// @brief total residue without ligand
-	Size total_residue_wolig_;
+	core::Size total_residue_wolig_;
 
 	/// @brief sequence defined in blueprint
 	String sequence_;
@@ -155,7 +155,7 @@ private: // data
 	String secstruct_;
 
 	/// @brief residue number of each position in blueprint
-	utility::vector1< Size > resnum_;
+	utility::vector1< core::Size > resnum_;
 
 	/// @brief amino acid type at a position in blueprint
 	utility::vector1< char > resname_;
@@ -176,7 +176,7 @@ private: // data
 	utility::vector1< String > insertion_;
 
 	/// @brief translate pose residue number to blueprint residue number
-	std::map< Size, Size > resnum_map_;
+	std::map< core::Size, core::Size > resnum_map_;
 
 	/// @brief secondary structure information
 	// SS_Info2_OP ss_info_;

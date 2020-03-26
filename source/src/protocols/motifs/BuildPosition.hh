@@ -27,7 +27,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -42,20 +42,20 @@
 namespace protocols {
 namespace motifs {
 
-class BuildPosition : public utility::pointer::ReferenceCount {
+class BuildPosition : public utility::VirtualBase {
 
 public:
 
 	// Constructor that defaults to empty allowed_types (aka, all allowed)
 	BuildPosition(
-		Size const seqpos,
-		utility::vector1< Size > const & target_positions
+		core::Size const seqpos,
+		utility::vector1< core::Size > const & target_positions
 	);
 
 	// Constructor that requires input of allowed_types for limiting aas
 	BuildPosition(
-		Size const seqpos,
-		utility::vector1< Size > const & target_positions,
+		core::Size const seqpos,
+		utility::vector1< core::Size > const & target_positions,
 		std::set< std::string > const & allowed_types
 	);
 
@@ -86,8 +86,8 @@ public:
 	void clear_rots();
 
 	// Accessors
-	Size const & seqpos() const { return seqpos_; }
-	utility::vector1< Size > const & target_positions() const { return target_positions_; }
+	core::Size const & seqpos() const { return seqpos_; }
+	utility::vector1< core::Size > const & target_positions() const { return target_positions_; }
 	std::set< std::string > const & allowed_types() const { return allowed_types_; }
 	core::pack::rotamer_set::Rotamers const & best_rotamers() const { return best_rotamers_; }
 	MotifCOPs const & best_motifs() const { return best_motifs_; }
@@ -96,9 +96,9 @@ public:
 private:
 
 	// The particular position associated with motifs and rotamers
-	Size seqpos_;
+	core::Size seqpos_;
 	// Close potential targets for motifs (DNA bases in protein-DNA case)
-	utility::vector1< Size > target_positions_;
+	utility::vector1< core::Size > target_positions_;
 	// Residues types (name3 string) allowed at this position
 	std::set< std::string > allowed_types_;
 	// Rotamers that pass cutoffs in the MotifSearch

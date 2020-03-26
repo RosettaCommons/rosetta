@@ -98,7 +98,7 @@ LigandMotifSearch::LigandMotifSearch()
 }
 
 LigandMotifSearch::LigandMotifSearch( LigandMotifSearch const & src ) :
-	utility::pointer::ReferenceCount( src )
+	utility::VirtualBase( src )
 {
 	(*this) = src;
 }
@@ -135,10 +135,10 @@ LigandMotifSearch::operator = ( LigandMotifSearch const & src )
 void
 LigandMotifSearch::run(
 	Pose const & pose,
-	utility::vector1< Size > & input_BPs
+	utility::vector1< core::Size > & input_BPs
 )
 {
-	for (  utility::vector1< Size  >::const_iterator position( input_BPs.begin() );
+	for (  utility::vector1< core::Size  >::const_iterator position( input_BPs.begin() );
 			position != input_BPs.end(); ++position ) {
 		ms_tr << "In run, Design position: " << *position << std::endl;
 	}
@@ -156,7 +156,7 @@ LigandMotifSearch::run(
 
 	utility::io::ozstream motif_output_file;
 
-	utility::vector1< Size > target_positions_sphere ;
+	utility::vector1< core::Size > target_positions_sphere ;
 	target_positions_sphere = get_sphere_aa( pose, ligand_motif_sphere ) ;
 	initialize( pose, target_positions_sphere );
 
@@ -165,7 +165,7 @@ LigandMotifSearch::run(
 	if ( output_ ) {
 		if ( file_exists( output_filename_  ) ) {
 			auto & pose2 = const_cast< Pose & >( pose );
-			//Size const ligand_marker = 0;
+			//core::Size const ligand_marker = 0;
 			ms_tr << "Motif search has already run, we will get rotamers from output file" << std::endl;
 			//We already have the output file, let's just take the rotamers from there rather than searching again.
 			for ( BuildPositionOPs::const_iterator ir( build_positionOPs_.begin() ), end_ir( build_positionOPs_.end() );
@@ -221,7 +221,7 @@ LigandMotifSearch::run(
 	if ( output_ ) {
 		if ( file_exists( output_filename_  ) ) {
 			auto & pose2 = const_cast< Pose & >( pose );
-			//Size const ligand_marker = 0;
+			//core::Size const ligand_marker = 0;
 			ms_tr << "Motif search has already run, we will get rotamers from output file" << std::endl;
 			//We already have the output file, let's just take the rotamers from there rather than searching again.
 			for ( BuildPositionOPs::const_iterator ir( build_positionOPs_.begin() ), end_ir( build_positionOPs_.end() );
@@ -306,12 +306,12 @@ LigandMotifSearch::initialize(
 void
 LigandMotifSearch::initialize(
 	Pose const & pose,
-	utility::vector1< Size > & input_BPs
+	utility::vector1< core::Size > & input_BPs
 )
 {
 	//This is initialize for solo app (not from Enzdes)
 	// Obtain all necessary user input
-	for (  utility::vector1< Size  >::const_iterator position( input_BPs.begin() );
+	for (  utility::vector1< core::Size  >::const_iterator position( input_BPs.begin() );
 			position != input_BPs.end(); ++position ) {
 		ms_tr << "In init, Design position: " << *position << std::endl;
 	}
@@ -327,7 +327,7 @@ LigandMotifSearch::initialize(
 	position_vector_setup( pose );
 
 	if ( ! input_BPs.empty() ) {
-		for ( Size i(1); i <= input_BPs.size(); ++i ) {
+		for ( core::Size i(1); i <= input_BPs.size(); ++i ) {
 			BuildPosition_from_Size( pose, input_BPs[i] );
 		}
 	} else {
@@ -370,11 +370,11 @@ LigandMotifSearch::incorporate_motifs(
 
 	using utility::vector1;
 	int ligand_resi_number = 0;
-	utility::vector1< utility::vector1< Size  > > search_lig_triplets;
-	// utility::vector1< utility::vector1< Size > > motif_indices_list;
-	utility::vector1< utility::vector1< utility::vector1< Size > > > motif_indices_list; //Now, instead of having a vector of triplet vectors containing a size for the atom number, change size to vector of size to contain atom number and atomtype size
+	utility::vector1< utility::vector1< core::Size  > > search_lig_triplets;
+	// utility::vector1< utility::vector1< core::Size > > motif_indices_list;
+	utility::vector1< utility::vector1< utility::vector1< core::Size > > > motif_indices_list; //Now, instead of having a vector of triplet vectors containing a size for the atom number, change size to vector of size to contain atom number and atomtype size
 	//motif_indices_list[all triplets][atom i/j/k][1 is atom number, 2 is AtomType integer]
-	utility::vector1< utility::vector1< utility::vector1< Size > > > all_motif_indices;
+	utility::vector1< utility::vector1< utility::vector1< core::Size > > > all_motif_indices;
 
 	int nres( pose.size() );
 	for ( int lig_pos = 1 ; lig_pos <= nres ; ++lig_pos ) {
@@ -410,7 +410,7 @@ LigandMotifSearch::incorporate_motifs(
 
 					chemical::AtomType atom_i_type(ligres->atom_type(atom_i));
 					//std::string atom_i_name = atom_i_type.atom_type_name();
-					//Size atom_i_int = atset->atom_type_index(atom_i_name);
+					//core::Size atom_i_int = atset->atom_type_index(atom_i_name);
 					// std::cout << "ATOM j: " << atom_i << " Name: " << atom_i_name << " Int: " << atom_i_int << std::endl;
 
 
@@ -420,17 +420,17 @@ LigandMotifSearch::incorporate_motifs(
 					if ( atom_i != atom_j_connects[atom_k] ) {
 
 						//make the 3 atom vector
-						utility::vector1< utility::vector1< Size > > cur_motif_indices;
+						utility::vector1< utility::vector1< core::Size > > cur_motif_indices;
 
-						utility::vector1< Size > atom_i_vector;
+						utility::vector1< core::Size > atom_i_vector;
 						atom_i_vector.push_back( atom_i );
 						atom_i_vector.push_back( atset->atom_type_index( ligres->atom_type(atom_i).atom_type_name() ) );
 
-						utility::vector1< Size > atom_j_vector;
+						utility::vector1< core::Size > atom_j_vector;
 						atom_j_vector.push_back( atom_i_connects[atom_j] );
 						atom_j_vector.push_back( atset->atom_type_index( ligres->atom_type(atom_i_connects[atom_j]).atom_type_name() ) );
 
-						utility::vector1< Size > atom_k_vector;
+						utility::vector1< core::Size > atom_k_vector;
 						atom_k_vector.push_back( atom_j_connects[atom_k] );
 						atom_k_vector.push_back( atset->atom_type_index( ligres->atom_type(atom_j_connects[atom_k]).atom_type_name() ) );
 
@@ -445,17 +445,17 @@ LigandMotifSearch::incorporate_motifs(
 						if ( !motif_indices_list.empty() ) {
 							for ( core::Size cur_motif_check = 1; cur_motif_check <= motif_indices_list.size(); ++ cur_motif_check ) {
 								// run a test to see if vectors are identical
-								utility::vector1< utility::vector1< Size > > cur_mainlist_parent ( motif_indices_list[cur_motif_check] );
-								utility::vector1< Size > cur_mainlist;
-								utility::vector1< Size > cur_index;
+								utility::vector1< utility::vector1< core::Size > > cur_mainlist_parent ( motif_indices_list[cur_motif_check] );
+								utility::vector1< core::Size > cur_mainlist;
+								utility::vector1< core::Size > cur_index;
 								for ( core::Size slice_parent = 1; slice_parent <= 3; ++ slice_parent ) {
 									cur_mainlist.push_back( cur_mainlist_parent[slice_parent][1] );
 								}
 								for ( core::Size slice_cur = 1; slice_cur <= 3; ++ slice_cur ) {
 									cur_index.push_back( cur_motif_indices[slice_cur][1] );
 								}
-								utility::vector1< Size > sort_from_curindex (cur_index) ;
-								utility::vector1< Size > sort_from_mainlist (cur_mainlist) ;
+								utility::vector1< core::Size > sort_from_curindex (cur_index) ;
+								utility::vector1< core::Size > sort_from_mainlist (cur_mainlist) ;
 								std::sort(  sort_from_mainlist.begin(),  sort_from_mainlist.end() );
 								std::sort( sort_from_curindex.begin(), sort_from_curindex.end() );
 								if ( sort_from_mainlist[1] == sort_from_curindex[1] && sort_from_mainlist[2] == sort_from_curindex[2] && sort_from_mainlist[3] == sort_from_curindex[3] ) {
@@ -480,8 +480,8 @@ LigandMotifSearch::incorporate_motifs(
 			if ( pose.residue( prot_pos ).name3() == "GLY" ) continue;
 
 			// map will automatically sort the "contacts" with the lowest total_score at the front of map
-			//std::map< Real, Size > contacts;
-			//std::map< Real, Size  > distance_sorter;
+			//std::map< Real, core::Size > contacts;
+			//std::map< Real, core::Size  > distance_sorter;
 
 			// Loop over positions, skipping non-ligand
 			for ( int lig_pos = 1 ; lig_pos <= nres ; ++lig_pos ) {
@@ -508,8 +508,8 @@ LigandMotifSearch::incorporate_motifs(
 	MotifCOPs pruned_motif_library;
 
 	//Make new triplet list
-	// utility::vector1< utility::vector1< Size > > pruned_indices_list;
-	// std::map< Real, Size > contacts;
+	// utility::vector1< utility::vector1< core::Size > > pruned_indices_list;
+	// std::map< Real, core::Size > contacts;
 
 	//For each motif in library
 
@@ -540,11 +540,11 @@ LigandMotifSearch::incorporate_motifs(
 		} // end ligand triplet iteration
 	} // end library iteration
 	ms_tr << "Unpruned motifs: "  << motif_library.size() << std::endl;
-	Size motif_library_size = pruned_motif_library.size();
-	Size motif_percent_chunk;
+	core::Size motif_library_size = pruned_motif_library.size();
+	core::Size motif_percent_chunk;
 	double double_chunk = std::floor( (double) motif_library_size / 10 ) ;  // REQUIRED FOR WINDOWS
-	motif_percent_chunk = Size ( double_chunk );
-	//Size next_motif_percent = motif_percent_chunk;
+	motif_percent_chunk = core::Size ( double_chunk );
+	//core::Size next_motif_percent = motif_percent_chunk;
 	ms_tr << "Pruned motifs: "  << motif_library_size << std::endl;
 
 	///////////////////////////////////////////////////////////////////////////
@@ -554,13 +554,13 @@ LigandMotifSearch::incorporate_motifs(
 	// for every protein backbone position (motif build position)
 	for ( BuildPositionOPs::const_iterator ir( build_positionOPs_.begin() ), end_ir( build_positionOPs_.end() );
 			ir != end_ir; ++ir ) {
-		Size motif_counter=0;
-		Size motif_percent=0;
-		Size next_motif_percent = motif_percent_chunk;
+		core::Size motif_counter=0;
+		core::Size motif_percent=0;
+		core::Size next_motif_percent = motif_percent_chunk;
 
-		Size  trip_atom_1;
-		Size  trip_atom_2;
-		Size  trip_atom_3;
+		core::Size  trip_atom_1;
+		core::Size  trip_atom_2;
+		core::Size  trip_atom_3;
 		// Map of all of the very best residues for each amino acid type, to make sure I don't add 2,000 Args and only 2 Tyrs
 		std::map< std::string, std::map< Real, MotifHitOP > > best_mhits_all;
 
@@ -578,7 +578,7 @@ LigandMotifSearch::incorporate_motifs(
 		// Need to clear the best_rotamers and best_motifs before I collect new ones
 		(*ir)->clear_data();
 
-		Size seqpos( (*ir)->seqpos() );
+		core::Size seqpos( (*ir)->seqpos() );
 		std::stringstream firstline;
 		firstline << "POSITION " << seqpos;
 		if ( output_ ) {
@@ -594,7 +594,7 @@ LigandMotifSearch::incorporate_motifs(
 
 		std::map< core::Size, core::pack::rotamer_set::RotamerSetOP > rotamer_sets;
 		if ( bp_best_rotamers.empty() ) {
-			for ( Size i(1); i <= core::chemical::num_canonical_aas; ++i ) {
+			for ( core::Size i(1); i <= core::chemical::num_canonical_aas; ++i ) {
 				utility::vector1< bool > aa_info( core::chemical::num_canonical_aas, false );
 				aa_info[i] = true;
 				bool bump_yes( true );
@@ -603,10 +603,10 @@ LigandMotifSearch::incorporate_motifs(
 				rotamer_sets[i] = rotset;
 			}
 		} else {
-			Size bp_rots( bp_best_rotamers.size() );
-			for ( Size i(1); i <= core::chemical::num_canonical_aas; ++i ) {
+			core::Size bp_rots( bp_best_rotamers.size() );
+			for ( core::Size i(1); i <= core::chemical::num_canonical_aas; ++i ) {
 				core::pack::rotamer_set::RotamerSetOP rotset = core::pack::rotamer_set::RotamerSetFactory::create_rotamer_set( posecopy );
-				for ( Size r(1); r <= bp_rots; ++r ) {
+				for ( core::Size r(1); r <= bp_rots; ++r ) {
 					if ( bp_best_rotamers[r]->name3() == core::chemical::name_from_aa(core::chemical::AA(i)) ) {
 						rotset->add_rotamer( *((bp_best_rotamers)[r]) );
 					}
@@ -721,7 +721,7 @@ LigandMotifSearch::incorporate_motifs(
 			Real final(100);
 			std::pair< core::conformation::ResidueOP, core::conformation::ResidueOP > bestpair;
 			bool b_bestpair( false );
-			Size rs1( rotset->num_rotamers() );
+			core::Size rs1( rotset->num_rotamers() );
 
 			Real rmsdtest_ir2(100.0);
 
@@ -732,15 +732,15 @@ LigandMotifSearch::incorporate_motifs(
 			// Important in case of the very strange situation where more than one
 			// target_position is close enough to pass the tests
 			bool tftest(false);
-			utility::vector1< utility::vector1< Size > > bestpos;
+			utility::vector1< utility::vector1< core::Size > > bestpos;
 			Real test(1000);
 			// Used to iterate over target_positions, now we will iterate over triplets in current ligand
 			Sizes target_positions( (*ir)->target_positions() );
 
 
-			//utility::vector1< utility::vector1< utility::vector1< Size > > > motif_indices_list; //Now, instead of having a vector of triplet vectors containing a size for the atom number, change size to vector of size to contain atom number and atomtype size
+			//utility::vector1< utility::vector1< utility::vector1< core::Size > > > motif_indices_list; //Now, instead of having a vector of triplet vectors containing a size for the atom number, change size to vector of size to contain atom number and atomtype size
 			//motif_indices_list[all triplets][atom i/j/k][1 is atom number, 2 is AtomType integer]
-			for ( utility::vector1< utility::vector1< utility::vector1< Size > > >::const_iterator curtrip( motif_indices_list.begin() ), end( motif_indices_list.end() ); //prof II
+			for ( utility::vector1< utility::vector1< utility::vector1< core::Size > > >::const_iterator curtrip( motif_indices_list.begin() ), end( motif_indices_list.end() ); //prof II
 					curtrip != end; ++curtrip ) {
 
 				//before: bpos now: curtrip
@@ -748,7 +748,7 @@ LigandMotifSearch::incorporate_motifs(
 				//  std::set< std::string > allowed_types( target_positions_[*bpos] ); nonsensical now
 				// Should have a test to ensure that it has the atom types I'll be using?
 				// At this point, I know what my triplet is, and I know what my motif is--let's se if they match.  Otherwise, we'll continue to the next triplet.
-				utility::vector1<  utility::vector1< Size > > deref_trip( *curtrip );
+				utility::vector1<  utility::vector1< core::Size > > deref_trip( *curtrip );
 				core::conformation::ResidueOP check_ligand = ligres;
 				int motif_atom1_int(motifcop->res2_atom1_int());
 				int motif_atom2_int(motifcop->res2_atom2_int());
@@ -795,18 +795,18 @@ LigandMotifSearch::incorporate_motifs(
 				*/
 
 				//We are looping over the rotamer set here.  Matt put the rotamer loop here so that we wouldn't be checking motif/triplet matching for every rotamer--that would take forever!
-				for ( Size ir2(1); ir2 <= rs1; ++ir2 ) { //rotamer loop
+				for ( core::Size ir2(1); ir2 <= rs1; ++ir2 ) { //rotamer loop
 
 					//Used to be before this loop, now put it here because we didn't know which atom to place yet
 					core::conformation::Atom atm( check_ligand->atom( deref_trip[2][1] ) );
 					core::conformation::Atom auto_atm( check_ligand->atom( deref_trip[2][1] ) );
 
-					Size  trip_atom_1(deref_trip[1][1]);
-					Size  trip_atom_2(deref_trip[2][1]);
-					Size  trip_atom_3(deref_trip[3][1]);
-					//utility::vector1< Size > atoms = new utility::vector1< Size >( {trip_atom_1, trip_atom_2, trip_atom_3} );
-					//Size myatoms[] = {trip_atom_1, trip_atom_2, trip_atom_3};
-					utility::vector1< Size > atoms;
+					core::Size  trip_atom_1(deref_trip[1][1]);
+					core::Size  trip_atom_2(deref_trip[2][1]);
+					core::Size  trip_atom_3(deref_trip[3][1]);
+					//utility::vector1< core::Size > atoms = new utility::vector1< core::Size >( {trip_atom_1, trip_atom_2, trip_atom_3} );
+					//core::Size myatoms[] = {trip_atom_1, trip_atom_2, trip_atom_3};
+					utility::vector1< core::Size > atoms;
 					atoms.push_back(trip_atom_1);
 					atoms.push_back(trip_atom_2);
 					atoms.push_back(trip_atom_3);
@@ -970,7 +970,7 @@ LigandMotifSearch::incorporate_motifs(
 			core::pose::Pose pose_dump( pose );
 			for ( std::map< std::string, std::map< Real, MotifHitOP > >::const_iterator bh( best_mhits_all.begin() ),
 					end( best_mhits_all.end() ); bh != end; ++bh ) {
-				Size hits = 0;
+				core::Size hits = 0;
 				for ( auto const & bh2 : (bh->second) ) {
 					MotifHitOP motifhitop( bh2.second );
 					if ( ! minimize_ ) {
@@ -1100,7 +1100,7 @@ LigandMotifSearch::get_rotamers()
 }
 core::pack::rotamer_set::Rotamers
 LigandMotifSearch::bp_rotamers(
-	Size const seqpos
+	core::Size const seqpos
 )
 {
 	core::pack::rotamer_set::Rotamers best_rotamers;
@@ -1146,7 +1146,7 @@ LigandMotifSearch::position_vector_setup(
 	Pose const & pose
 )
 {
-	for ( Size i(1), end( pose.size() ); i <= end; ++i ) {
+	for ( core::Size i(1), end( pose.size() ); i <= end; ++i ) {
 		if ( pose.residue_type(i).is_protein() ) {
 			protein_positions_.push_back(i);
 		}
@@ -1159,7 +1159,7 @@ LigandMotifSearch::position_vector_setup(
 void
 LigandMotifSearch::identify_motif_build_positions(
 	Pose const & pose,
-	utility::vector1< Size > & build_positions
+	utility::vector1< core::Size > & build_positions
 )
 {
 	if ( protein_dna_motif() ) {
@@ -1296,7 +1296,7 @@ LigandMotifSearch::identify_motif_BuildPositions(
 		protein_DNA_motif_build_positions_JA( pose, positions, target_positions );
 		for ( Sizes::const_iterator pos( positions.begin() ), end( positions.end() );
 				pos != end; ++pos ) {
-			Size seqpos(*pos);
+			core::Size seqpos(*pos);
 			Sizes short_target_positions( shorten_target_list( pose, seqpos, target_positions ) );
 			std::set< std::string > allowed_types; // this vector will remain empty in this sitatuation since there is no input Def to limit the types of amino acids allowed
 			//fill_bp_allowed_types( pose, seqpos, allowed_types );
@@ -1311,7 +1311,7 @@ LigandMotifSearch::identify_motif_BuildPositions(
 void
 LigandMotifSearch::BuildPosition_from_Size(
 	Pose const & pose,
-	Size const input_BP
+	core::Size const input_BP
 )
 {
 	Sizes target_positions( map2keyvector( target_positions_ ) );
@@ -1331,8 +1331,8 @@ LigandMotifSearch::defs2BuildPositions(
 {
 	if ( protein_dna_motif() ) {
 		Sizes full_tl( map2keyvector( target_positions_ ) );
-		std::map< Size, std::set< std::string > > mappositions( defs2map( pose, defs ) );
-		for ( std::map<Size, std::set< std::string > >::const_iterator it( mappositions.begin() ),
+		std::map< core::Size, std::set< std::string > > mappositions( defs2map( pose, defs ) );
+		for ( std::map<core::Size, std::set< std::string > >::const_iterator it( mappositions.begin() ),
 				end( mappositions.end() ); it != end; ++it ) {
 			BuildPositionOP build_position( new BuildPosition( it->first, full_tl, it->second ) );
 			build_positionOPs_.push_back( build_position );
@@ -1350,10 +1350,10 @@ LigandMotifSearch::defs2BuildPositions_findts(
 {
 	if ( protein_dna_motif() ) {
 		Sizes full_tl( map2keyvector( target_positions_ ) );
-		std::map< Size, std::set< std::string > > mappositions( defs2map( pose, defs ) );
-		for ( std::map<Size, std::set< std::string > >::const_iterator it( mappositions.begin() ),
+		std::map< core::Size, std::set< std::string > > mappositions( defs2map( pose, defs ) );
+		for ( std::map<core::Size, std::set< std::string > >::const_iterator it( mappositions.begin() ),
 				end( mappositions.end() ); it != end; ++it ) {
-			Size test(it->first);
+			core::Size test(it->first);
 			Sizes short_tl( shorten_target_list( pose, test, full_tl ) );
 			BuildPositionOP build_position( new BuildPosition( it->first, short_tl, it->second ) );
 			build_positionOPs_.push_back( build_position );
@@ -1365,11 +1365,11 @@ LigandMotifSearch::defs2BuildPositions_findts(
 
 utility::vector1< core::Size >
 LigandMotifSearch::map2keyvector(
-	std::map< Size, std::set< std::string > > mappositions
+	std::map< core::Size, std::set< std::string > > mappositions
 )
 {
 	Sizes positions(0);
-	for ( std::map<Size, std::set< std::string > >::const_iterator it( mappositions.begin() ),
+	for ( std::map<core::Size, std::set< std::string > >::const_iterator it( mappositions.begin() ),
 			end( mappositions.end() ); it != end; ++it ) {
 		positions.push_back( it->first );
 	}
@@ -1379,7 +1379,7 @@ LigandMotifSearch::map2keyvector(
 utility::vector1< core::Size >
 LigandMotifSearch::shorten_target_list(
 	Pose const & pose,
-	Size const bp,
+	core::Size const bp,
 	Sizes & full_tl
 )
 {
@@ -1443,7 +1443,7 @@ LigandMotifSearch::override_option_input(
 	Real const & r2,
 	Real const & z2,
 	Real const & d1,
-	Size const & rlevel
+	core::Size const & rlevel
 )
 {
 	ztest_cutoff_1_ = z1;

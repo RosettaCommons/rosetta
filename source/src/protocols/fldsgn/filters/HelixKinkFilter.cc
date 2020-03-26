@@ -114,14 +114,14 @@ HelixKinkFilter::apply( Pose const & pose ) const
 
 	//This checks if there is broken helix in the range already
 	if ( select_range_ ) {
-		for ( Size ii=1; ii<=helices.size(); ++ii ) {
-			for ( Size it=helices[ ii ]->begin(), ite=helices[ ii ]->end(); it <= ite; ++it ) {
+		for ( core::Size ii=1; ii<=helices.size(); ++ii ) {
+			for ( core::Size it=helices[ ii ]->begin(), ite=helices[ ii ]->end(); it <= ite; ++it ) {
 				TR.Debug << "Marking helix that begins at residue " << helices[ ii ]->begin() << " and ends at " << helices[ ii ]->end() << std::endl;
 				residues_to_check[it] = false;
 			}
 		}
 
-		for ( Size i=helix_start_; i<=helix_end_; ++i ) {
+		for ( core::Size i=helix_start_; i<=helix_end_; ++i ) {
 			if ( residues_to_check[i] == true ) {
 				TR << "In range " << helix_start_ <<"-"<<helix_end_ << " contains broken helix at " << i << " already! Skip Kink" << std::endl;
 				return false;
@@ -130,10 +130,10 @@ HelixKinkFilter::apply( Pose const & pose ) const
 	}
 
 	// check kink
-	for ( Size ii=1; ii<=helices.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=helices.size(); ++ii ) {
 		bool check = false;
 		if ( select_resnums_ ) {
-			for ( Size it=helices[ ii ]->begin(), ite=helices[ ii ]->end(); it != ite; ++it ) {
+			for ( core::Size it=helices[ ii ]->begin(), ite=helices[ ii ]->end(); it != ite; ++it ) {
 				if ( residues_to_check[it] ) {
 					check = true;
 					//TR << "Helix " << ii << ", " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << ", is considered" << std::endl;
@@ -177,7 +177,7 @@ HelixKinkFilter::apply( Pose const & pose ) const
 			} else {
 				hbond_end = hbond_start;
 			}
-			Size broken_hbonds( check_kink_helix( pose, hbond_start, hbond_end ) );
+			core::Size broken_hbonds( check_kink_helix( pose, hbond_start, hbond_end ) );
 			if ( broken_hbonds > 0 ) {
 				TR << "is kinked, hbonds are broken. " << std::endl;
 				return false;

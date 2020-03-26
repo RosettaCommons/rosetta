@@ -43,7 +43,7 @@ DGBindOptEData::do_score(
 	Multivec const & vars,
 	Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const ,//num_ref_dofs,
 	int const ,//num_total_dofs,
 	EnergyMap const & fixed_terms,
@@ -53,11 +53,11 @@ DGBindOptEData::do_score(
 ) const
 {
 	Real boundE = 0, unboundE = 0;
-	for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+	for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 		boundE   += vars[ ii ] * bound_->free_data()[ ii ];
 		unboundE += vars[ ii ] * unbound_->free_data()[ ii ];
 	}
-	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 		boundE   += fixed_terms[ fixed_score_list[ ii ] ] * bound_->fixed_data()[ ii ];
 		unboundE += fixed_terms[ fixed_score_list[ ii ] ] * unbound_->fixed_data()[ ii ];
 	}
@@ -71,7 +71,7 @@ DGBindOptEData::do_score(
 	Real const diff_dG = pred_dG - deltaG_bind_;
 	Real const sq_err = diff_dG * diff_dG;
 
-	for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+	for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 		dE_dvars[ ii ] += component_weights[ type() ] * 2 * diff_dG * ( bound_->free_data()[ ii ] - unbound_->free_data()[ ii ] );
 	}
 
@@ -105,7 +105,7 @@ DGBindOptEData::range(
 core::Size
 DGBindOptEData::memory_use() const
 {
-	Size total = sizeof( DGBindOptEData ) +
+	core::Size total = sizeof( DGBindOptEData ) +
 		sizeof( SingleStructureData ) * 1 +
 		sizeof( SingleStructureData ) * 1;
 	total += sizeof(Real) * (bound_->free_data().size()+bound_->fixed_data().size()) * 1;
@@ -123,22 +123,22 @@ DGBindOptEData::send_to_node( int const destination_node, int const tag ) const
 	MPI_Send( & deltaG_bind, 1, MPI_DOUBLE, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 2. n free
-	Size n_free = bound_->free_data().size();
+	core::Size n_free = bound_->free_data().size();
 	//std::cout << "sending n_free to node " << destination_node << " " << n_free << std::endl;
 	MPI_Send( & n_free, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 3. n fixed
-	Size n_fixed = bound_->fixed_data().size();
+	core::Size n_fixed = bound_->fixed_data().size();
 	//std::cout << "sending n_fixed to node " << destination_node  << " " << n_fixed << std::endl;
 	MPI_Send( & n_fixed, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// Send natives, then send decoys
 	Real * free_data = new Real[ n_free ];
 	Real * fixed_data = new Real[ n_fixed ];
-	for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 		free_data[ ( jj - 1 ) ] = bound_->free_data()[ jj ];
 	}
-	for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+	for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 		fixed_data[ ( jj - 1 ) ] = bound_->fixed_data()[ jj ];
 	}
 
@@ -155,10 +155,10 @@ DGBindOptEData::send_to_node( int const destination_node, int const tag ) const
 	/// now send decoys
 	Real * decoy_free_data = new Real[ n_free ];
 	Real * decoy_fixed_data = new Real[ n_fixed ];
-	for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 		decoy_free_data[ ( jj - 1 ) ] = unbound_->free_data()[ jj ];
 	}
-	for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+	for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 		decoy_fixed_data[ ( jj - 1 ) ] = unbound_->fixed_data()[ jj ];
 	}
 	/// 7. decoy free data
@@ -190,11 +190,11 @@ DGBindOptEData::receive_from_node( int const source_node, int const tag )
 	MPI_Recv( & deltaG_bind_, 1, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	/// 2. n free
-	Size n_free( 0 );
+	core::Size n_free( 0 );
 	MPI_Recv( & n_free, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	/// 3. n fixed
-	Size n_fixed( 0 );
+	core::Size n_fixed( 0 );
 	MPI_Recv( & n_fixed, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	/// Recieve native data first, then decoys
@@ -209,10 +209,10 @@ DGBindOptEData::receive_from_node( int const source_node, int const tag )
 
 	utility::vector1< Real > free_data_v( n_free );
 	utility::vector1< Real > fixed_data_v( n_fixed );
-	for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 		free_data_v[ jj ] = free_data[ ( jj - 1 ) ];
 	}
-	for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+	for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 		fixed_data_v[ jj ] = fixed_data[ ( jj - 1 ) ];
 	}
 	bound_ = utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v );
@@ -231,10 +231,10 @@ DGBindOptEData::receive_from_node( int const source_node, int const tag )
 	/// 6. fixed data
 	MPI_Recv( fixed_data, n_fixed, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
 
-	for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 		free_data_v[ jj ] = free_data[ ( jj - 1 ) ];
 	}
-	for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+	for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 		fixed_data_v[ jj ] = fixed_data[ ( jj - 1 ) ];
 	}
 	unbound_ = utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v );

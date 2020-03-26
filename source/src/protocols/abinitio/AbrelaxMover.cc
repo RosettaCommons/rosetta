@@ -474,9 +474,9 @@ void AbrelaxMover::close_with_idealization( pose::Pose &pose) {
 
 	// record cutpoints
 	protocols::loops::LoopsOP cloops( new protocols::loops::Loops() );
-	for ( Size ncut = 1; ncut <= (Size) pose.fold_tree().num_cutpoint(); ncut++ ) {
-		Size cutpoint = pose.fold_tree().cutpoint( ncut );
-		Size margin = option[ basic::options::OptionKeys::abinitio::optimize_cutpoints_margin ]();
+	for ( core::Size ncut = 1; ncut <= (core::Size) pose.fold_tree().num_cutpoint(); ncut++ ) {
+		core::Size cutpoint = pose.fold_tree().cutpoint( ncut );
+		core::Size margin = option[ basic::options::OptionKeys::abinitio::optimize_cutpoints_margin ]();
 		protocols::loops::Loop newloop (std::max( (int) 1, int(cutpoint - margin) ),
 			std::min( (int) pose.size(), int(cutpoint + margin) ),
 			0);

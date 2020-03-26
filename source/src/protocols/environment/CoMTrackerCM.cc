@@ -156,7 +156,7 @@ void CoMTrackerCM::update_tracking_residue( core::kinematics::RT::Vector new_pos
 			<< "This probably isn't what you meant, check your selectors and input pose." << std::endl;
 		throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 	}
-	debug_assert( (Size) mobile_residues_.index( false ) <= pose.size() );
+	debug_assert( (core::Size) mobile_residues_.index( false ) <= pose.size() );
 
 	RT::Vector test_point = pose.residue( mobile_residues_.index( false ) ).xyz( 1 );
 
@@ -170,10 +170,10 @@ void CoMTrackerCM::update_tracking_residue( core::kinematics::RT::Vector new_pos
 	// It can be the upstream partner in zero or more jumps, so the first thing we are going to do is list the jumps
 	// in which the virtual residue is participating.
 	// We refer to these jumps as "positioned_jumps".
-	vector1< Size > positioned_jump_ids;
-	Size positioning_jump_id = 0;
+	vector1< core::Size > positioned_jump_ids;
+	core::Size positioning_jump_id = 0;
 
-	for ( Size i = 1; i <= pose.fold_tree().num_jump(); ++i ) {
+	for ( core::Size i = 1; i <= pose.fold_tree().num_jump(); ++i ) {
 		if ( pose.fold_tree().downstream_jump_residue( i ) == tracking_residue_id ) {
 			debug_assert( positioning_jump_id == 0 );
 			positioning_jump_id = i;
@@ -196,7 +196,7 @@ void CoMTrackerCM::update_tracking_residue( core::kinematics::RT::Vector new_pos
 	// Update all of the jumps the tracking residue positions.
 	// It is critical that this is done prior to actually adjusting the position of the tracking residue so the
 	// downstream stubs are still in the correct positions.
-	for ( vector1< Size >::const_iterator it = positioned_jump_ids.begin(); it != positioned_jump_ids.end(); ++it ) {
+	for ( vector1< core::Size >::const_iterator it = positioned_jump_ids.begin(); it != positioned_jump_ids.end(); ++it ) {
 		if ( passport()->has_jump_access( *it ) ) {
 			//We don't nessecarily always have access to all jumps that are built by this guy, and sometimes that's ok.
 			pose.set_jump( *it, Jump( RT( tracking_res_stub, pose.conformation().downstream_jump_stub( *it ) ) ) );
@@ -272,7 +272,7 @@ claims::EnvClaims CoMTrackerCM::yield_claims( core::pose::Pose const& pose,
 
 	// Get the position of the first residue in the "Mobile Selection"
 	mobile_residues_ = mobile_selector_->apply( pose );
-	Size mobile_connection_point = mobile_residues_.index( true )+1;
+	core::Size mobile_connection_point = mobile_residues_.index( true )+1;
 
 	if ( std::find( mobile_residues_.begin(), mobile_residues_.end(), true ) == mobile_residues_.end() ) {
 		std::ostringstream ss;

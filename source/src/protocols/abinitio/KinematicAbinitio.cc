@@ -223,8 +223,8 @@ KinematicAbinitio::prepare_stage3( core::pose::Pose &pose ) {
 bool
 KinematicAbinitio::prepare_loop_in_stage3(
 	core::pose::Pose& pose,
-	Size iteration, /* loop_iteration*/
-	Size total /* total_iterations */
+	core::Size iteration, /* loop_iteration*/
+	core::Size total /* total_iterations */
 ) {
 	Real progress( 1.0* iteration/total );
 	if ( bRampChainbreaks_ ) {
@@ -241,8 +241,8 @@ KinematicAbinitio::prepare_loop_in_stage3(
 bool
 KinematicAbinitio::prepare_loop_in_stage4(
 	core::pose::Pose& pose,
-	Size iteration, /* loop_iteration*/
-	Size total /* total_iterations */
+	core::Size iteration, /* loop_iteration*/
+	core::Size total /* total_iterations */
 ) {
 	Real progress( 1.0* iteration/total );
 	if ( bRampChainbreaks_ ) {
@@ -259,7 +259,7 @@ KinematicAbinitio::prepare_loop_in_stage4(
 
 
 void
-KinematicAbinitio::set_max_seq_sep( core::pose::Pose& pose, Size max_dist ) {
+KinematicAbinitio::set_max_seq_sep( core::pose::Pose& pose, core::Size max_dist ) {
 	//if not already set, --> fix the chainbreaks dependent on distance
 	kinematics().add_chainbreak_variants( pose, max_dist, constraints().shortest_path() );
 	mc().reset( pose ); //necessary to avoid that new chainbreaks are immediatly removed by copying back the old pose
@@ -290,7 +290,7 @@ KinematicAbinitio::dump_jump_log( core::pose::Pose& pose, std::string const& fil
 			//    << RJ(10, pss.get_energy ( "rms_native" ) ) << " "
 			<< RJ(10, pss.get_energy ( "score" ) ) << " ";
 		out << RJ(5, kinematics().sampling_fold_tree().num_jump() ) << " ";
-		for ( Size i = 1; i<=kinematics().sampling_fold_tree().num_jump(); i++ )  {
+		for ( core::Size i = 1; i<=kinematics().sampling_fold_tree().num_jump(); i++ )  {
 			out << RJ(10, simple_filters::JumpEvaluator( native_pose, i ).apply( pose ) ) << " ";
 		}
 		out << jumping::JumpSample( pose.fold_tree() ) << " " << std::endl;
@@ -541,8 +541,8 @@ moves::MoverOP KinematicAbinitio::create_jump_moves( moves::MoverOP std_mover ) 
 	if ( !jump_mover ) return std_mover;
 
 	moves::RandomMoverOP combi_move( new moves::RandomMover );
-	Size nfrag_moves( option[ jumps::invrate_jump_move ] );
-	for ( Size i = 1; i<=nfrag_moves; i++ ) { // a simple way of changing the relative frequencies
+	core::Size nfrag_moves( option[ jumps::invrate_jump_move ] );
+	for ( core::Size i = 1; i<=nfrag_moves; i++ ) { // a simple way of changing the relative frequencies
 		combi_move->add_mover( std_mover );
 	}
 	combi_move->add_mover( jump_mover );
@@ -659,7 +659,7 @@ JumpingFoldConstraintsWrapper::apply( core::pose::Pose& pose ) {
 	// initialize jumping
 	jumping::JumpSample current_jumps;
 
-	Size attempts( 10 );
+	core::Size attempts( 10 );
 	do {
 		current_jumps = jump_def_->create_jump_sample();
 	} while ( !current_jumps.is_valid() && attempts-- );

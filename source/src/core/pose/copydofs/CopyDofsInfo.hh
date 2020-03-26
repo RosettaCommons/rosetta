@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_pose_copydofs_CopyDofsInfo_HH
 #define INCLUDED_core_pose_copydofs_CopyDofsInfo_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/copydofs/CopyDofsInfo.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
@@ -28,7 +28,7 @@ namespace core {
 namespace pose {
 namespace copydofs {
 
-class CopyDofsInfo: public utility::pointer::ReferenceCount {
+class CopyDofsInfo: public utility::VirtualBase {
 
 public:
 

@@ -128,7 +128,7 @@ public:
 			for ( core::conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex( res1 ).upper_edge_list_begin(),
 					edge_end_iter = pg->get_vertex( res1 ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
 
-				Size const res2 = edge_iter->upper_vertex(); //a partner
+				core::Size const res2 = edge_iter->upper_vertex(); //a partner
 				++table[ res1 ][ pose.chain( res2 ) ];
 				++table[ res2 ][ pose.chain( res1 ) ];
 			}//for all partners

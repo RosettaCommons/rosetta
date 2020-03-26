@@ -14,7 +14,7 @@
 
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/excn/Exceptions.hh>
 
 
@@ -29,7 +29,7 @@ typedef boost::shared_ptr<int> intSP;
 typedef boost::shared_ptr<int const> intCSP;
 
 
-class Base : public utility::pointer::ReferenceCount { };
+class Base : public utility::VirtualBase { };
 typedef utility::pointer::owning_ptr< Base > BaseOP;
 typedef utility::pointer::owning_ptr< Base const > BaseCOP;
 typedef boost::shared_ptr<Base> BaseSP;

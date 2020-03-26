@@ -32,7 +32,7 @@ void OmegaPerturber::perturb_subset(
 	using numeric::random::uniform;
 	using numeric::conversions::DEGREES;
 
-	for ( Size const residue : residues ) {
+	for ( core::Size const residue : residues ) {
 		// Omega distribution mean and stddev from Berkholz et al., PNAS 2012.
 		Real trans_omega = 179.1 + 6.3 * gaussian();
 

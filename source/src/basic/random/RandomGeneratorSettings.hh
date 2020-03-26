@@ -19,7 +19,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/options/OptionCollection.hh>
 
 namespace basic {
@@ -28,7 +28,7 @@ namespace random {
 /// @brief A class to store settings from the options system for the random generator.  Moved from core to basic.
 /// @author Original author unknown.
 /// @modified Moved from core to basic by Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-class RandomGeneratorSettings : public utility::pointer::ReferenceCount
+class RandomGeneratorSettings : public utility::VirtualBase
 {
 public:
 	RandomGeneratorSettings();

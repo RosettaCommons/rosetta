@@ -40,7 +40,7 @@ static basic::Tracer TR( "protocols.pose_creation.MakePolyXMover" );
 namespace protocols {
 namespace pose_creation {
 
-
+using core::Size;
 
 
 MakePolyXMover::MakePolyXMover():
@@ -81,8 +81,8 @@ void MakePolyXMover::apply( Pose & pose )
 	using core::select::residue_selector::ResidueSubset;
 	ResidueSubset const subset = selector_->apply( pose );
 	// flip to poly-ala-gly-pro-disulf pose
-	utility::vector1< Size > protein_residues;
-	for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
+	utility::vector1< core::Size > protein_residues;
+	for ( core::Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 		if ( subset[ i ] && pose.residue( i ).is_protein() ) {
 			protein_residues.push_back( i );
 		}
@@ -96,7 +96,7 @@ void MakePolyXMover::apply( Pose & pose )
 		//  names instead of name3s. To fix this error, you'll need to make construct_poly_XXX return
 		//  a vector of the positions it actually changed.
 		runtime_assert( aa_.size() == 3 );
-		for ( Size i : protein_residues ) {
+		for ( core::Size i : protein_residues ) {
 			core::conformation::Residue const & res = pose.residue( i );
 
 			if ( res.name3() != aa_ ) continue;
@@ -106,7 +106,7 @@ void MakePolyXMover::apply( Pose & pose )
 					+ utility::to_string( chis_.size() ) + " but " + utility::to_string( res.nchi() )
 					+ " were found at position " + utility::to_string( i ) + "!");
 			}
-			for ( Size ichi = 1; ichi <= chis_.size(); ichi++ ) {
+			for ( core::Size ichi = 1; ichi <= chis_.size(); ichi++ ) {
 				pose.set_chi( ichi, i, chis_[ichi] );
 			}
 		}

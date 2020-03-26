@@ -63,7 +63,7 @@ public:// constructor/destructor
 	NcontactsCalculator();
 
 	/// @brief default constructor
-	NcontactsCalculator( Real const condist, Size const isep_sep );
+	NcontactsCalculator( Real const condist, core::Size const isep_sep );
 
 public:// virtual constructor
 
@@ -103,7 +103,7 @@ private:
 	Real condist_;
 
 	/// @brief residue pairs of i < i+isep_residue_ are used for counting #countacts ( default 4 )
-	Size isep_residue_;
+	core::Size isep_residue_;
 
 	/// @brief ignore loops for calculation  ( default false )
 	bool ignore_loops_;

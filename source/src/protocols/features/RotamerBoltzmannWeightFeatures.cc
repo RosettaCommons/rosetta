@@ -155,7 +155,7 @@ RotamerBoltzmannWeightFeatures::report_features(
 
 	std::string statement_string = "INSERT INTO rotamer_boltzmann_weight (struct_id, resNum, boltzmann_weight) VALUES (?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	for ( Size resNum=1; resNum <= pose.size(); ++resNum ) {
+	for ( core::Size resNum=1; resNum <= pose.size(); ++resNum ) {
 		if ( !check_relevant_residues(relevant_residues, resNum) ) continue;
 		Real const boltzmann_weight(
 			rotamer_boltzmann_weight_->compute_Boltzmann_weight(pose, resNum));

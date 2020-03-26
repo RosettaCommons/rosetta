@@ -48,7 +48,7 @@ ActiveSiteGrid::ActiveSiteGrid() :
 }
 
 ActiveSiteGrid::ActiveSiteGrid( ActiveSiteGrid const & other ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	bin_width_( other.bin_width_ ),
 	bb_( other.bb_ ),
 	grid_( utility::pointer::make_shared< Bool3DGrid >( *other.grid_ )),
@@ -93,7 +93,7 @@ ActiveSiteGrid::initialize_from_gridlig_file( std::string const & fname )
 	std::string size;
 	istr >> size;
 	runtime_assert( size == "SIZE:" );
-	Size xsize( 0 ), ysize( 0 ), zsize( 0 );
+	core::Size xsize( 0 ), ysize( 0 ), zsize( 0 );
 	istr >> xsize; runtime_assert( ! istr.bad() );
 	istr >> ysize; runtime_assert( ! istr.bad() );
 	istr >> zsize; runtime_assert( ! istr.bad() );
@@ -136,9 +136,9 @@ ActiveSiteGrid::initialize_from_gridlig_file( std::string const & fname )
 	numeric::geometry::hashing::Bin3D bin; bin[ 1 ] = 0; bin[ 2 ] = 0; bin[ 3 ] = 0;
 	std::string line;
 	std::istringstream line_stream;
-	Size occupied;
+	core::Size occupied;
 
-	Size linenumber = 4; // already read first three lines.
+	core::Size linenumber = 4; // already read first three lines.
 
 	getline(istr, line); /// clear the EOL from the last >>
 
@@ -228,7 +228,7 @@ ActiveSiteGrid::enlargen_to_capture_volume_within_radius_of_residue(
 	if ( res.nheavyatoms() < 1 ) return;
 
 	Vector lower( res.xyz( 1 )), upper( lower );
-	for ( Size ii = 2; ii <= res.nheavyatoms(); ++ii ) {
+	for ( core::Size ii = 2; ii <= res.nheavyatoms(); ++ii ) {
 		lower.min( res.xyz( ii ) );
 		upper.max( res.xyz( ii ) );
 	}
@@ -244,7 +244,7 @@ ActiveSiteGrid::enlargen_to_capture_volume_within_radius_of_sidechain(
 	if ( res.first_sidechain_atom() > res.nheavyatoms() ) return;
 
 	Vector lower( res.xyz( res.first_sidechain_atom() )), upper( lower );
-	for ( Size ii = res.first_sidechain_atom() + 1; ii <= res.nheavyatoms(); ++ii ) {
+	for ( core::Size ii = res.first_sidechain_atom() + 1; ii <= res.nheavyatoms(); ++ii ) {
 		lower.min( res.xyz( ii ) );
 		upper.max( res.xyz( ii ) );
 	}
@@ -260,7 +260,7 @@ ActiveSiteGrid::enlargen_to_capture_volume_within_radius_of_backbone(
 	if ( res.nheavyatoms() < 1 || res.first_sidechain_atom() == 1 ) return;
 
 	Vector lower( res.xyz( 1 )), upper( lower );
-	for ( Size ii = 2; ii < res.first_sidechain_atom(); ++ii ) {
+	for ( core::Size ii = 2; ii < res.first_sidechain_atom(); ++ii ) {
 		lower.min( res.xyz( ii ) );
 		upper.max( res.xyz( ii ) );
 	}
@@ -274,7 +274,7 @@ ActiveSiteGrid::or_within_radius_of_residue(
 )
 {
 	prep_grid();
-	for ( Size ii = 1; ii <= res.nheavyatoms(); ++ii ) {
+	for ( core::Size ii = 1; ii <= res.nheavyatoms(); ++ii ) {
 		grid_->or_by_sphere_liberal( res.xyz( ii ), radius );
 	}
 }
@@ -286,7 +286,7 @@ ActiveSiteGrid::or_within_radius_of_sidechain(
 	Real radius
 )
 {
-	for ( Size ii = res.first_sidechain_atom(); ii <= res.nheavyatoms(); ++ii ) {
+	for ( core::Size ii = res.first_sidechain_atom(); ii <= res.nheavyatoms(); ++ii ) {
 		grid_->or_by_sphere_liberal( res.xyz( ii ), radius );
 	}
 	prep_grid();
@@ -300,7 +300,7 @@ ActiveSiteGrid::or_within_radius_of_backbone(
 )
 {
 	prep_grid();
-	for ( Size ii = 1; ii < res.first_sidechain_atom(); ++ii ) {
+	for ( core::Size ii = 1; ii < res.first_sidechain_atom(); ++ii ) {
 		grid_->or_by_sphere_liberal( res.xyz( ii ), radius );
 	}
 }
@@ -321,7 +321,7 @@ ActiveSiteGrid::swell_bounding_box(
 	lower -= radius;
 	upper += radius;
 
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		if ( lower( ii ) < bb_.lower()( ii ) ) {
 			lower.min( bb_.lower() );
 			bb_.set_lower( lower );
@@ -329,7 +329,7 @@ ActiveSiteGrid::swell_bounding_box(
 		}
 	}
 
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		if ( upper( ii ) > bb_.upper()( ii ) ) {
 			upper.max( bb_.upper() );
 			bb_.set_upper( upper );
@@ -347,7 +347,7 @@ ActiveSiteGrid::prep_grid()
 	grid_->set_bin_width( bin_width_ );
 
 	Vector snapped_lower( bb_.lower() );
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		/// align the lower boundary to an integer
 		snapped_lower( ii ) = static_cast< Real > ( static_cast< int > ( snapped_lower( ii ) ));
 	}

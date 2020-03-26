@@ -117,7 +117,7 @@ void PeakCalibrator::set_target_and_tolerance( core::Real target, core::Real tol
 }
 
 void PeakCalibrator::reset_statistics() {
-	for ( Size type=BACKBONE; type < max_type_; ++type ) {
+	for ( core::Size type=BACKBONE; type < max_type_; ++type ) {
 		accumulated_count_[ type ] = 0;
 		accumulated_target_[ type ] = 0;
 		target_values_[ type ].clear();
@@ -129,7 +129,7 @@ bool PeakCalibrator::interpolate_on_statistics() {
 	noesy_assign::PeakAssignmentParameters& params( *noesy_assign::PeakAssignmentParameters::get_nonconst_instance() );
 	bool const use_median( params.calibration_use_median_ );
 	bool finished = true;
-	for ( Size type = BACKBONE; type < max_type_direct_; ++type ) {
+	for ( core::Size type = BACKBONE; type < max_type_direct_; ++type ) {
 		if ( accumulated_count_[ type ] ) {
 			//   tr.Debug << " acc. target: " << accumulated_target_[ type ] << " acc. count: " << accumulated_count_[ type ] << std::endl;
 			core::Real average_target = accumulated_target_[ type ] / accumulated_count_[ type ];
@@ -137,7 +137,7 @@ bool PeakCalibrator::interpolate_on_statistics() {
 			if ( use_median ) {
 				target_values_[ type ].sort();
 				TargetValues::const_iterator it = target_values_[type].begin();
-				for ( Size i=1; i<= target_values_[ type ].size()/2; ++i ) {
+				for ( core::Size i=1; i<= target_values_[ type ].size()/2; ++i ) {
 					++it;
 				}
 				median = *it;
@@ -181,14 +181,14 @@ void PeakCalibrator::collect_target_statistics( core::Real target, TypeCumulator
 }
 
 // void PeakCalibrator::reset_statistics() {
-//  for ( Size type=BACKBONE; type < max_type_; ++type ) {
+//  for ( core::Size type=BACKBONE; type < max_type_; ++type ) {
 //   accumulated_count_[ type ] = 0;
 //   accumulated_dist_[ type ] = 0;
 //  }
 // }
 
 void PeakCalibrator::reset_calibration_constants() {
-	for ( Size type=BACKBONE; type < max_type_; ++type ) {
+	for ( core::Size type=BACKBONE; type < max_type_; ++type ) {
 		calibration_constant_[ type ] = 1e10;
 		calibration_constant_lows_[ type ] = 1;
 		calibration_constant_highs_[ type ] = 1e20;
@@ -197,7 +197,7 @@ void PeakCalibrator::reset_calibration_constants() {
 
 void PeakCalibrator::do_calibration() {
 	bool finished = false;
-	Size max_cycles = 50;
+	core::Size max_cycles = 50;
 
 	reset_calibration_constants();
 
@@ -205,7 +205,7 @@ void PeakCalibrator::do_calibration() {
 
 	// Q_backbone_ = calibration_constant_[ BACKBONE ];
 	tr.Info << "value   target ";
-	for ( core::Size type=BACKBONE; type< (Size) max_type_; type++ ) {
+	for ( core::Size type=BACKBONE; type< (core::Size) max_type_; type++ ) {
 		tr.Info << " " << CALIBRATOR_TYPE_NAMES[type];
 	}
 	tr.Info << std::endl;
@@ -216,7 +216,7 @@ void PeakCalibrator::do_calibration() {
 		//  show_statistics( tr.Info );
 		tr.Info << target_;
 		tr.Info << " ";
-		for ( core::Size type=BACKBONE; type< (Size) max_type_; type++ ) {
+		for ( core::Size type=BACKBONE; type< (core::Size) max_type_; type++ ) {
 			if ( accumulated_count_[ type ] ) {
 				tr.Info << " " << accumulated_target_[ type ] / accumulated_count_[ type ];
 			} else tr.Info << " -1    ";

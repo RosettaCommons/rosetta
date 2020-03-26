@@ -128,7 +128,7 @@ StepWiseRNA_CombineLongLoopFilterer::StepWiseRNA_CombineLongLoopFilterer( workin
 
 	if ( combine_helical_silent_file_ ) return;
 
-	utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
+	utility::vector1< utility::vector1< core::Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
 
 	if ( input_res_vectors.size() != 2 ) utility_exit_with_message( "input_res_vectors.size() != 2" );
 
@@ -165,10 +165,10 @@ void
 StepWiseRNA_CombineLongLoopFilterer::figure_out_appended_and_prepended_res_list(){
 
 	//OK first find that residues that are common between two pose...there are user inputted residues
-	utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
+	utility::vector1< utility::vector1< core::Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
 
 	utility::vector1< core::Size > common_res_list;
-	for ( Size const seq_num : input_res_vectors[1] ) {
+	for ( core::Size const seq_num : input_res_vectors[1] ) {
 		if ( input_res_vectors[2].has_value( seq_num ) ) {
 			common_res_list.push_back( seq_num );
 		}
@@ -177,7 +177,7 @@ StepWiseRNA_CombineLongLoopFilterer::figure_out_appended_and_prepended_res_list(
 	utility::vector1< core::Size > full_pose_appended_res_list;
 	input_pose_ONE_appended_res_list_.clear();
 
-	for ( Size const seq_num : input_res_vectors[1] ) {
+	for ( core::Size const seq_num : input_res_vectors[1] ) {
 		if ( common_res_list.has_value( seq_num ) == false ) {
 			full_pose_appended_res_list.push_back( seq_num );
 			input_pose_ONE_appended_res_list_.push_back( full_to_input_res_map_ONE_.find( seq_num )->second );
@@ -187,7 +187,7 @@ StepWiseRNA_CombineLongLoopFilterer::figure_out_appended_and_prepended_res_list(
 	utility::vector1< core::Size > full_pose_prepended_res_list;
 	input_pose_TWO_prepended_res_list_.clear();
 
-	for ( Size const seq_num : input_res_vectors[2] ) {
+	for ( core::Size const seq_num : input_res_vectors[2] ) {
 		if ( common_res_list.has_value( seq_num ) == false ) {
 			full_pose_prepended_res_list.push_back( seq_num );
 			input_pose_TWO_prepended_res_list_.push_back( full_to_input_res_map_TWO_.find( seq_num )->second );
@@ -206,7 +206,7 @@ StepWiseRNA_CombineLongLoopFilterer::figure_out_appended_and_prepended_res_list(
 void
 StepWiseRNA_CombineLongLoopFilterer::figure_out_last_appended_and_last_prepended_res(){
 
-	utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
+	utility::vector1< utility::vector1< core::Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
 
 	//////////////////////////////////////////////////////////////////
 
@@ -214,7 +214,7 @@ StepWiseRNA_CombineLongLoopFilterer::figure_out_last_appended_and_last_prepended
 
 	if ( input_pose_ONE_appended_res_list_.size() == 0 ) utility_exit_with_message( "input_pose_ONE_appended_res_list_.size() == 0" );
 
-	for ( Size const seqpos : input_pose_ONE_appended_res_list_ ) {
+	for ( core::Size const seqpos : input_pose_ONE_appended_res_list_ ) {
 		if ( input_pose_ONE_last_appended_res_ <= seqpos ) {
 			input_pose_ONE_last_appended_res_ = seqpos;
 		}
@@ -226,7 +226,7 @@ StepWiseRNA_CombineLongLoopFilterer::figure_out_last_appended_and_last_prepended
 
 	if ( input_pose_TWO_prepended_res_list_.size() == 0 ) utility_exit_with_message( "input_pose_TWO_prepended_res_list_.size() == 0" );
 
-	for ( Size const seqpos : input_pose_TWO_prepended_res_list_ ) {
+	for ( core::Size const seqpos : input_pose_TWO_prepended_res_list_ ) {
 		if ( input_pose_TWO_last_prepended_res_ >= seqpos ) {
 			input_pose_TWO_last_prepended_res_ = seqpos;
 		}
@@ -234,8 +234,8 @@ StepWiseRNA_CombineLongLoopFilterer::figure_out_last_appended_and_last_prepended
 
 	//////////////////////////////////////////////////////////////////
 
-	Size const full_last_appended_res  = input_res_vectors[1][input_pose_ONE_last_appended_res_];
-	Size const full_last_prepended_res = input_res_vectors[2][input_pose_TWO_last_prepended_res_];
+	core::Size const full_last_appended_res  = input_res_vectors[1][input_pose_ONE_last_appended_res_];
+	core::Size const full_last_prepended_res = input_res_vectors[2][input_pose_TWO_last_prepended_res_];
 
 	TR << "full_pose_last_appended_res_ = " << full_last_appended_res << " input_pose_ONE_last_appended_res_ = " << input_pose_ONE_last_appended_res_;
 	TR << " full_pose_last_prepended_res_ = " << full_last_prepended_res << " input_pose_TWO_last_prepended_res_ = " << input_pose_TWO_last_prepended_res_ << std::endl;
@@ -243,17 +243,17 @@ StepWiseRNA_CombineLongLoopFilterer::figure_out_last_appended_and_last_prepended
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< PoseOP >
-StepWiseRNA_CombineLongLoopFilterer::convert_silent_file_to_pose_data_list( core::import_pose::pose_stream::SilentFilePoseInputStreamOP & silent_file_stream, Size const pose_list_id ){
+StepWiseRNA_CombineLongLoopFilterer::convert_silent_file_to_pose_data_list( core::import_pose::pose_stream::SilentFilePoseInputStreamOP & silent_file_stream, core::Size const pose_list_id ){
 
 	using namespace core::pose;
 	using namespace ObjexxFCL;
 	utility::vector1< PoseOP > pose_data_list;
 
-	Size min_pose_ID = ( ( pose_list_id - 1 )*( max_pose_data_list_size_ ) ) + 1;
-	Size max_pose_ID = ( ( pose_list_id )*( max_pose_data_list_size_ ) );
+	core::Size min_pose_ID = ( ( pose_list_id - 1 )*( max_pose_data_list_size_ ) ) + 1;
+	core::Size max_pose_ID = ( ( pose_list_id )*( max_pose_data_list_size_ ) );
 
-	Size pose_ID = 0;
-	Size num_struct_in_range = 0;
+	core::Size pose_ID = 0;
+	core::Size num_struct_in_range = 0;
 
 	silent_file_stream->reset();
 
@@ -338,8 +338,8 @@ StepWiseRNA_CombineLongLoopFilterer::previously_builded_res_VDW_filter( PoseOP c
 	core::pose::Pose const & side_ONE_pose = ( *side_ONE_pose_data );
 	core::pose::Pose const & side_TWO_pose = ( *side_TWO_pose_data );
 
-	for ( Size const input_pose_ONE_appended_res : input_pose_ONE_appended_res_list_ ) {
-		for ( Size const input_pose_TWO_prepended_res : input_pose_TWO_prepended_res_list_ ) {
+	for ( core::Size const input_pose_ONE_appended_res : input_pose_ONE_appended_res_list_ ) {
+		for ( core::Size const input_pose_TWO_prepended_res : input_pose_TWO_prepended_res_list_ ) {
 
 			bool const residues_in_contact = is_residues_in_contact( input_pose_ONE_appended_res, side_ONE_pose, input_pose_TWO_prepended_res, side_TWO_pose, overlap_dist_cutoff, num_atom_contacts_cutoff );
 
@@ -384,11 +384,11 @@ StepWiseRNA_CombineLongLoopFilterer::moving_res_contact_filter( PoseOP const & s
 		utility_exit_with_message( "enforce_contact_rsd.type().atom_name( enforce_contact_rsd.first_sidechain_atom() ) != \" O2'\" " );
 	}
 
-	Size const first_at = ( moving_res_to_base_contact_only_ ) ? ( enforce_contact_rsd.first_sidechain_atom() + 1 ) : 1;
-	Size const last_at = ( moving_res_to_base_contact_only_ ) ? ( enforce_contact_rsd.nheavyatoms() ) : enforce_contact_rsd.natoms();
+	core::Size const first_at = ( moving_res_to_base_contact_only_ ) ? ( enforce_contact_rsd.first_sidechain_atom() + 1 ) : 1;
+	core::Size const last_at = ( moving_res_to_base_contact_only_ ) ? ( enforce_contact_rsd.nheavyatoms() ) : enforce_contact_rsd.natoms();
 	//crap this ignore hydrogen atoms in the base...rsd.nheavyatoms()
 
-	for ( Size at = first_at; at <= last_at; at++ ) {
+	for ( core::Size at = first_at; at <= last_at; at++ ) {
 		Real const atom_atom_dist_squared = ( enforce_contact_rsd.xyz( at ) - anchor_atom_xyz ).length_squared();
 		if ( atom_atom_dist_squared < ( moving_res_contact_dist_cutoff_* moving_res_contact_dist_cutoff_ ) ) return true;
 	}
@@ -403,8 +403,8 @@ StepWiseRNA_CombineLongLoopFilterer::pass_all_filters( PoseOP const & side_ONE_p
 	using namespace ObjexxFCL;
 
 	//Would this slow down the code?
-	Size const num_nucleotides(  working_parameters_->working_moving_res_list().size() );
-	Size const previous_step_gap_size = ( working_parameters_->gap_size() ) + num_nucleotides;
+	core::Size const num_nucleotides(  working_parameters_->working_moving_res_list().size() );
+	core::Size const previous_step_gap_size = ( working_parameters_->gap_size() ) + num_nucleotides;
 
 	if ( previous_step_gap_size == 0 ) utility_exit_with_message( "previous_step_gap_size == 0!!" );
 	///////////////////////////////////////////////////////////////////////////
@@ -519,14 +519,14 @@ StepWiseRNA_CombineLongLoopFilterer::figure_out_NUM_pose_list(){
 	silent_file_stream_ONE_->reset();
 	silent_file_stream_TWO_->reset();
 
-	Size total_pose_side_ONE = 0;
+	core::Size total_pose_side_ONE = 0;
 
 	while ( silent_file_stream_ONE_->has_another_pose() ) {
 		total_pose_side_ONE++;
 		core::io::silent::SilentStructOP const silent_struct( silent_file_stream_ONE_->next_struct() );
 	}
 
-	Size total_pose_side_TWO = 0;
+	core::Size total_pose_side_TWO = 0;
 
 	while ( silent_file_stream_TWO_->has_another_pose() ) {
 		total_pose_side_TWO++;
@@ -781,15 +781,15 @@ StepWiseRNA_CombineLongLoopFilterer::filter() {
 	std::ofstream outfile;
 	outfile.open( output_filename_.c_str() ); //Opening the file with this command removes all prior content..
 
-	Size pass_screen_struct_pair_ACT = 0;
-	Size pass_screen_struct_pair_undercount_sugar_rotamers = 0;
+	core::Size pass_screen_struct_pair_ACT = 0;
+	core::Size pass_screen_struct_pair_undercount_sugar_rotamers = 0;
 
 	//TR << "best_combine_score_= " << best_combine_score_ << " score_diff_cut_= " << score_diff_cut_ << std::endl;
 
 	//OK have to sort the filtererer_combine_tag_info_list.
 	sort_Combine_Tags_Info( filterered_combine_tag_info_list_ ); //Oct 19,2010
 
-	for ( Size n = 1; n <= filterered_combine_tag_info_list_.size(); n++ ) {
+	for ( core::Size n = 1; n <= filterered_combine_tag_info_list_.size(); n++ ) {
 
 		Combine_Tags_Info const combine_tag_info = filterered_combine_tag_info_list_[n];
 
@@ -797,7 +797,7 @@ StepWiseRNA_CombineLongLoopFilterer::filter() {
 
 		if ( undercount_sugar_rotamers_ ) {
 			bool match_existing_pair = false;
-			for ( Size ii = ( n - 1 ); ii >= 1; ii-- ) {
+			for ( core::Size ii = ( n - 1 ); ii >= 1; ii-- ) {
 
 				Combine_Tags_Info const prev_combine_tag_info = filterered_combine_tag_info_list_[ii];
 

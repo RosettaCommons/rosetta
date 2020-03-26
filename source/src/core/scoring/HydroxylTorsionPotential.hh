@@ -25,7 +25,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <boost/unordered/unordered_map.hpp>
 
@@ -40,7 +40,7 @@ struct TorsionParams
 	Real n, k, delta;
 };
 
-class HydroxylTorsionPotential : public utility::pointer::ReferenceCount
+class HydroxylTorsionPotential : public utility::VirtualBase
 {
 public:
 	typedef boost::unordered_multimap< std::string, TorsionParams >::const_iterator tors_iterator;

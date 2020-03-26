@@ -36,7 +36,7 @@ RandomGapSolutionPicker::~RandomGapSolutionPicker()= default;
 
 Size
 RandomGapSolutionPicker::pick(core::pose::Pose const &, FreePeptide const &,
-	vector1<vector1<Real> > const & pivot_torsions, Size const
+	vector1<vector1<Real> > const & pivot_torsions, core::Size const
 ) const {
 	if ( 0 == pivot_torsions.size() ) { return 0; }
 	return numeric::random::random_range( 1, pivot_torsions.size() );

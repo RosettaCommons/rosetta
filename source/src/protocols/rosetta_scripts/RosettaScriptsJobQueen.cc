@@ -201,7 +201,7 @@ RosettaScriptsJobQueen::initialize_resources_for_preliminary_job_nodes()
 
 	utility::vector1< PreliminaryLarvalJob > const & pjns( parent::get_preliminary_larval_jobs() );
 	resources_for_pjn_.resize( pjns.size() );
-	for ( Size ii = 1; ii <= pjns.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pjns.size(); ++ii ) {
 		utility::options::OptionCollectionCOP iiopts = pjns[ ii ].job_options;
 		TagCOP rstag = parser_->create_tag_from_xml( (*iiopts)[ basic::options::OptionKeys::parser::protocol ], *iiopts );
 		if ( rstag->hasTag( "RESOURCES" ) ) {

@@ -39,7 +39,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Numeric headers
 
@@ -56,7 +56,7 @@ namespace pcs2 {
 //////////////////////////////////////////////////////////////
 /// @brief PcsInputCenter contain all the input information for one paramagnetic center.
 /// It can contain multiple data set
-class PcsInputCenter : public utility::pointer::ReferenceCount{
+class PcsInputCenter : public utility::VirtualBase{
 private:
 	std::map< std::string, PcsInputFile > PcsInputFile_all_;
 

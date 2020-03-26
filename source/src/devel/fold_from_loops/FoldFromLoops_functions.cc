@@ -84,11 +84,11 @@ static basic::Tracer TR( "FoldFromLoops_function" );
 
 bool is_loop (
 	protocols::loops::Loops & loops,
-	Size & residue
+	core::Size & residue
 ){
 
 	bool loop_range = false;
-	for ( Size i = 1; i <= loops.size() ; ++i ) {
+	for ( core::Size i = 1; i <= loops.size() ; ++i ) {
 
 		if ( loops[i].start() <= residue && loops[i].stop() >= residue ) {
 			loop_range = true;
@@ -100,7 +100,7 @@ bool is_loop (
 }
 
 
-std::vector<Size> define_cut_points (
+std::vector<core::Size> define_cut_points (
 
 	protocols::loops::Loops & loops,
 	core::pose::Pose & nat_pose
@@ -109,15 +109,15 @@ std::vector<Size> define_cut_points (
 
 	TR <<"Several Loops Defined "<<std::endl;
 
-	std::vector<Size> loop_edges; //vector that will keep the end points of the vector
+	std::vector<core::Size> loop_edges; //vector that will keep the end points of the vector
 
 	for ( core::Size i = 1; i <= loops.size() ; ++i ) {
 		loop_edges.push_back(loops[i].start());
 		loop_edges.push_back(loops[i].stop());
 	}
 
-	std::vector<Size> loop_dividers; //middle residues from the segments that connect the loops
-	for ( Size i= 2; i < loop_edges.size()-1 ; i += 2  ) { //this for loop is supposed to do an offset start in 2
+	std::vector<core::Size> loop_dividers; //middle residues from the segments that connect the loops
+	for ( core::Size i= 2; i < loop_edges.size()-1 ; i += 2  ) { //this for loop is supposed to do an offset start in 2
 		int cut = loop_edges[i-1]+((loop_edges[i]-loop_edges[i-1])/2);
 		loop_dividers.push_back( cut );
 		TR << "Loop edges "<< i << cut << std::endl;
@@ -129,7 +129,7 @@ std::vector<Size> define_cut_points (
 	char ss_down;
 
 	// defining cut points both out of the loop ranges
-	std::vector<Size> cut_points;
+	std::vector<core::Size> cut_points;
 	for ( int cutpoint : loop_dividers ) {
 		char ss = nat_pose.secstruct( cutpoint );
 
@@ -137,11 +137,11 @@ std::vector<Size> define_cut_points (
 			cut_points.push_back(cutpoint);
 			TR<<"Found cut on the middle point between loops: "<< cutpoint <<std::endl;
 		} else {
-			for ( Size j=1; j <= 5; ++j ) {
+			for ( core::Size j=1; j <= 5; ++j ) {
 
 
-				Size cut_point_upset = cutpoint + j;
-				Size cut_point_downset = cutpoint - j;
+				core::Size cut_point_upset = cutpoint + j;
+				core::Size cut_point_downset = cutpoint - j;
 
 				ss_up = nat_pose.secstruct(cut_point_upset);
 				ss_down= nat_pose.secstruct(cut_point_downset);
@@ -171,7 +171,7 @@ std::vector<Size> define_cut_points (
 
 void fold_tree_cutpoints_generator(
 	protocols::loops::Loops & loops ,
-	std::vector<Size> & cutpoints,
+	std::vector<core::Size> & cutpoints,
 	core::pose::Pose & pose,
 	kinematics::FoldTree & f
 ){
@@ -187,15 +187,15 @@ void fold_tree_cutpoints_generator(
 		f.add_edge( 1, pose.size(), Edge::PEPTIDE );
 
 
-		for ( Size i=1;  i < loops.size() ; ++i ) {
+		for ( core::Size i=1;  i < loops.size() ; ++i ) {
 			TR<<"LOOP "<<  i <<std::endl;
 			TR<<"Cut point"<< cutpoints[i-1]<<std::endl;
-			Size cutpoint= cutpoints[i-1];
+			core::Size cutpoint= cutpoints[i-1];
 			core::pose::add_variant_type_to_pose_residue(pose, chemical::CUTPOINT_LOWER, cutpoint); // residue on the pose has to be assigned as a cut
 			core::pose::add_variant_type_to_pose_residue(pose, chemical::CUTPOINT_UPPER, cutpoint+1);
-			Size loop1_midpoint = ((loops[1].stop()-loops[1].start())/2) + loops[1].start();
+			core::Size loop1_midpoint = ((loops[1].stop()-loops[1].start())/2) + loops[1].start();
 			TR<<"loop 1 mid point"<< loop1_midpoint<<std::endl;
-			Size variable_midpoint = ((loops[i+1].stop()-loops[i+1].start())/2) + loops[i+1].start();
+			core::Size variable_midpoint = ((loops[i+1].stop()-loops[i+1].start())/2) + loops[i+1].start();
 			TR<<"Variable mid_point"<< variable_midpoint <<std::endl;
 			f.new_jump( loop1_midpoint, variable_midpoint, cutpoint );
 		}
@@ -214,8 +214,8 @@ void fold_tree_cutpoints_generator(
 }
 
 
-bool is_cut( std::vector<Size> & cut_points,
-	Size & residue){
+bool is_cut( std::vector<core::Size> & cut_points,
+	core::Size & residue){
 	bool res_cut = false;
 	for ( core::Size & cut_point : cut_points ) {
 		if ( cut_point == residue ) { res_cut = true; }
@@ -228,7 +228,7 @@ bool is_cut( std::vector<Size> & cut_points,
 void CA_cst_generator(core::pose::Pose & pose,
 	scoring::constraints::ConstraintSetOP & cst,
 	protocols::loops::Loops & loops,
-	std::vector<Size> & cut_points
+	std::vector<core::Size> & cut_points
 ){
 
 
@@ -252,8 +252,8 @@ void CA_cst_generator(core::pose::Pose & pose,
 	}
 
 
-	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
-		for ( Size pos_2 = 1; pos_2 <=pose.size(); ++pos_2   ) {
+	for ( core::Size pos = 1; pos <= pose.size(); ++pos ) {
+		for ( core::Size pos_2 = 1; pos_2 <=pose.size(); ++pos_2   ) {
 
 			bool res_is_loop = loops.is_loop_residue( pos );
 			bool res2_is_loop = loops.is_loop_residue( pos_2 );
@@ -281,7 +281,7 @@ void CA_cst_generator(core::pose::Pose & pose,
 			}
 
 
-			Size seq_sep = 0;
+			core::Size seq_sep = 0;
 
 			if ( pos > pos_2 ) {
 				seq_sep = pos - pos_2;
@@ -343,8 +343,8 @@ void CA_cst_generator(core::pose::Pose & pose,
 	}
 
 
-	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
-		for ( Size pos_2 = 1; pos_2 <=pose.size(); ++pos_2   ) {
+	for ( core::Size pos = 1; pos <= pose.size(); ++pos ) {
+		for ( core::Size pos_2 = 1; pos_2 <=pose.size(); ++pos_2   ) {
 
 			bool res_is_loop = loops.is_loop_residue( pos );
 			bool res2_is_loop = loops.is_loop_residue( pos_2 );
@@ -370,7 +370,7 @@ void CA_cst_generator(core::pose::Pose & pose,
 			}
 
 
-			Size seq_sep = 0;
+			core::Size seq_sep = 0;
 
 			if ( pos > pos_2 ) {
 				seq_sep = pos - pos_2;
@@ -408,12 +408,12 @@ void CA_cst_generator(core::pose::Pose & pose,
 
 
 bool is_loop_neighbor( protocols::loops::Loops & loops,
-	Size & residue,
-	Size & range
+	core::Size & residue,
+	core::Size & range
 ){
 	bool loop_range = false;
 
-	for ( Size i = 0; i <= loops.size() ; ++i ) {
+	for ( core::Size i = 0; i <= loops.size() ; ++i ) {
 
 		if ( loops[i].start() - range <= residue && loops[i].stop() + range >= residue ) {
 			loop_range =true;
@@ -438,7 +438,7 @@ void define_movemap_extending_chain(
 	movemap->set_bb(false);
 
 
-	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
+	for ( core::Size pos = 1; pos <= pose.size(); pos++ ) {
 		if ( loops.is_loop_residue( pos ) ) {
 			movemap->set_chi(pos, false);
 			continue;
@@ -451,13 +451,13 @@ void define_movemap_extending_chain(
 	}
 
 	if ( option[ OptionKeys::fold_from_loops::loop_mov_nterm ].user() ) { // this particular option will only work properly on the context of one loop
-		Size n_movable_loop_res = option[OptionKeys::fold_from_loops::loop_mov_nterm ];
+		core::Size n_movable_loop_res = option[OptionKeys::fold_from_loops::loop_mov_nterm ];
 
-		for ( Size i = 1; i <= loops.size() ; ++i ) {
+		for ( core::Size i = 1; i <= loops.size() ; ++i ) {
 
-			Size loop_n_pos = loops[i].start();
+			core::Size loop_n_pos = loops[i].start();
 
-			for ( Size pos_1 = loop_n_pos; pos_1 < loop_n_pos + n_movable_loop_res; ++pos_1 ) {
+			for ( core::Size pos_1 = loop_n_pos; pos_1 < loop_n_pos + n_movable_loop_res; ++pos_1 ) {
 
 				TR<<"Movable Residue inside the loop (nterm) "<< pos_1 <<std::endl;
 				movemap->set_bb(pos_1, true);
@@ -470,13 +470,13 @@ void define_movemap_extending_chain(
 
 	if ( option[ OptionKeys::fold_from_loops::loop_mov_cterm ].user() ) {
 
-		Size c_movable_loop_res = option[OptionKeys::fold_from_loops::loop_mov_cterm ];
+		core::Size c_movable_loop_res = option[OptionKeys::fold_from_loops::loop_mov_cterm ];
 
-		for ( Size i = 1; i <= loops.size() ; ++i ) {
+		for ( core::Size i = 1; i <= loops.size() ; ++i ) {
 
-			Size loop_c_pos = loops[i].stop();
+			core::Size loop_c_pos = loops[i].stop();
 
-			for ( Size pos_2 = loop_c_pos; pos_2 < loop_c_pos + c_movable_loop_res; ++pos_2 ) {
+			for ( core::Size pos_2 = loop_c_pos; pos_2 < loop_c_pos + c_movable_loop_res; ++pos_2 ) {
 
 				TR<<"Movable Residue inside the loop (cterm) "<< pos_2 <<std::endl;
 				movemap->set_bb(pos_2, true);
@@ -504,7 +504,7 @@ void define_movemap(
 	movemap->set_bb(false);
 
 
-	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
+	for ( core::Size pos = 1; pos <= pose.size(); pos++ ) {
 
 
 		if ( loops.is_loop_residue( pos ) ) {
@@ -517,13 +517,13 @@ void define_movemap(
 	}
 
 	if ( option[ OptionKeys::fold_from_loops::loop_mov_nterm ].user() ) { // this particular option will only work properly on the context of one loop
-		Size n_movable_loop_res = option[OptionKeys::fold_from_loops::loop_mov_nterm ];
+		core::Size n_movable_loop_res = option[OptionKeys::fold_from_loops::loop_mov_nterm ];
 
-		for ( Size i = 1; i <= loops.size() ; ++i ) {
+		for ( core::Size i = 1; i <= loops.size() ; ++i ) {
 
-			Size loop_n_pos = loops[i].start();
+			core::Size loop_n_pos = loops[i].start();
 
-			for ( Size pos_1 = loop_n_pos; pos_1 < loop_n_pos + n_movable_loop_res; ++pos_1 ) {
+			for ( core::Size pos_1 = loop_n_pos; pos_1 < loop_n_pos + n_movable_loop_res; ++pos_1 ) {
 
 				TR<<"Movable Residue inside the loop (nterm) "<< pos_1 <<std::endl;
 				movemap->set_bb(pos_1, true);
@@ -536,13 +536,13 @@ void define_movemap(
 
 	if ( option[ OptionKeys::fold_from_loops::loop_mov_cterm ].user() ) {
 
-		Size c_movable_loop_res = option[OptionKeys::fold_from_loops::loop_mov_cterm ];
+		core::Size c_movable_loop_res = option[OptionKeys::fold_from_loops::loop_mov_cterm ];
 
-		for ( Size i = 1; i <= loops.size() ; ++i ) {
+		for ( core::Size i = 1; i <= loops.size() ; ++i ) {
 
-			Size loop_c_pos = loops[i].stop();
+			core::Size loop_c_pos = loops[i].stop();
 
-			for ( Size pos_2 = loop_c_pos; pos_2 < loop_c_pos + c_movable_loop_res; ++pos_2 ) {
+			for ( core::Size pos_2 = loop_c_pos; pos_2 < loop_c_pos + c_movable_loop_res; ++pos_2 ) {
 
 				TR<<"Movable Residue inside the loop (cterm) "<< pos_2 <<std::endl;
 				movemap->set_bb(pos_2, true);
@@ -566,7 +566,7 @@ void extending_chain(
 
 	movemap->set_bb(true);
 
-	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
+	for ( core::Size pos = 1; pos <= pose.size(); pos++ ) {
 		pose.set_phi( pos, -150 );
 		pose.set_psi( pos, 150);
 		pose.set_omega( pos, 180 );
@@ -601,7 +601,7 @@ void new_pose_generator(
 	core::pose::Pose & target_loops,
 	core::pose::Pose & nat_prot,
 	protocols::loops::Loops & loops,
-	std::vector<Size> & cut_points
+	std::vector<core::Size> & cut_points
 ){
 
 	using namespace core::conformation;
@@ -621,8 +621,8 @@ void new_pose_generator(
 	if ( loops.size() == 1 ) {
 
 
-		Size nsegment = loops[1].start()-1;
-		Size csegment = nat_prot.size() - loops[1].stop();
+		core::Size nsegment = loops[1].start()-1;
+		core::Size csegment = nat_prot.size() - loops[1].stop();
 
 		TR << "NSEGMENT "<< nsegment <<std::endl;
 		TR << "CSEGMENT "<< csegment <<std::endl;
@@ -632,11 +632,11 @@ void new_pose_generator(
 		//set up a jump between the two loops
 
 
-		for ( Size k=1; k <= nsegment ; ++k ) {
+		for ( core::Size k=1; k <= nsegment ; ++k ) {
 
 
 			const char aa = nat_seq[ loops[1].start() - k - 1]; // The minus 1 is here to compensate the indexing starting in zero
-			Size residue = loops[1].start() - k;
+			core::Size residue = loops[1].start() - k;
 
 
 			TR << "RES AA   " << residue << aa <<std::endl;
@@ -657,10 +657,10 @@ void new_pose_generator(
 		}
 
 
-		for ( Size j = 0 ; j < csegment ; ++j  ) {
+		for ( core::Size j = 0 ; j < csegment ; ++j  ) {
 
 			const char aa = nat_seq[ loops[1].stop() + j  ];
-			Size residue = loops[1].stop() + j;
+			core::Size residue = loops[1].stop() + j;
 
 
 
@@ -698,12 +698,12 @@ void new_pose_generator(
 		target_loops.fold_tree( loop_f );
 
 
-		Size n1segment = loops[1].start()-1;
-		Size c1segment = cut_points[0]-loops[1].stop();
+		core::Size n1segment = loops[1].start()-1;
+		core::Size c1segment = cut_points[0]-loops[1].stop();
 
 
-		Size n2segment = loops[2].start()-cut_points[0];
-		Size c2segment = nat_prot.size() - loops[2].stop();
+		core::Size n2segment = loops[2].start()-cut_points[0];
+		core::Size c2segment = nat_prot.size() - loops[2].stop();
 
 
 		TR << "NSEGMENT1 "<< n1segment <<std::endl;
@@ -717,11 +717,11 @@ void new_pose_generator(
 		TR << "NAT SEQ  " << nat_seq <<std::endl;
 
 
-		for ( Size k=1; k <= n1segment ; ++k ) {
+		for ( core::Size k=1; k <= n1segment ; ++k ) {
 
 
 			const char aa = nat_seq[ loops[1].start() - k - 1]; // The minus 1 is here to compensate the indexing starting in zero
-			Size residue = loops[1].start() - k;
+			core::Size residue = loops[1].start() - k;
 
 
 			TR << "RES AA N1  " << residue << aa <<std::endl;
@@ -744,10 +744,10 @@ void new_pose_generator(
 
 		//target_loops.dump_pdb("addedN1element2loops.pdb");
 
-		for ( Size j = 0 ; j < c1segment ; ++j  ) {
+		for ( core::Size j = 0 ; j < c1segment ; ++j  ) {
 
 			const char aa = nat_seq[ loops[1].stop() + j  ];
-			Size residue = loops[1].stop() + j ;
+			core::Size residue = loops[1].stop() + j ;
 
 
 			TR << "RES AA C1  " << residue << aa <<std::endl;
@@ -767,16 +767,16 @@ void new_pose_generator(
 		}
 
 
-		Size current_tot_res = target_loops.size();
+		core::Size current_tot_res = target_loops.size();
 
 		TR << " Target Loops total residues before the second loop inserts  " << target_loops.size() << std::endl;
 
 
-		for ( Size l = 1; l < n2segment ; ++l  ) {
+		for ( core::Size l = 1; l < n2segment ; ++l  ) {
 
 
 			const char aa = nat_seq[ loops[2].start() - l - 1  ];// need to check this one
-			Size residue =   current_tot_res - (loops[2].stop()-loops[2].start()) ; // we need to check which one we start
+			core::Size residue =   current_tot_res - (loops[2].stop()-loops[2].start()) ; // we need to check which one we start
 
 
 			TR << "RES AA N2  " << residue << aa <<std::endl;
@@ -796,10 +796,10 @@ void new_pose_generator(
 		}
 
 
-		for ( Size m = 0; m < c2segment ; ++m  ) {
+		for ( core::Size m = 0; m < c2segment ; ++m  ) {
 
 			const char aa = nat_seq[ loops[2].stop() + m  ];
-			Size residue = loops[2].stop() + m ;
+			core::Size residue = loops[2].stop() + m ;
 
 
 			TR << "RES AA C2  " << residue << aa <<std::endl;
@@ -845,16 +845,16 @@ void new_pose_generator(
 		target_loops.fold_tree( loop_f );
 
 
-		Size n1segment = loops[1].start()-1;
-		Size c1segment = cut_points[0]-loops[1].stop();
+		core::Size n1segment = loops[1].start()-1;
+		core::Size c1segment = cut_points[0]-loops[1].stop();
 
 
-		Size n2segment = loops[2].start()-cut_points[0];
-		Size c2segment = cut_points[1] - loops[2].stop();
+		core::Size n2segment = loops[2].start()-cut_points[0];
+		core::Size c2segment = cut_points[1] - loops[2].stop();
 
 
-		Size n3segment = loops[3].start()-cut_points[1];
-		Size c3segment = nat_prot.size() - loops[3].stop();
+		core::Size n3segment = loops[3].start()-cut_points[1];
+		core::Size c3segment = nat_prot.size() - loops[3].stop();
 
 
 		TR << "NSEGMENT1 "<< n1segment <<std::endl;
@@ -873,11 +873,11 @@ void new_pose_generator(
 		TR << "NAT SEQ  " << nat_seq <<std::endl;
 
 
-		for ( Size k=1; k <= n1segment ; ++k ) {
+		for ( core::Size k=1; k <= n1segment ; ++k ) {
 
 
 			const char aa = nat_seq[ loops[1].start() - k - 1]; // The minus 1 is here to compensate the indexing starting in zero
-			Size residue = loops[1].start() - k;
+			core::Size residue = loops[1].start() - k;
 
 
 			TR << "RES AA N1  " << residue << aa <<std::endl;
@@ -898,10 +898,10 @@ void new_pose_generator(
 
 		//target_loops.dump_pdb("n1.pdb");
 
-		for ( Size j = 0 ; j < c1segment ; ++j  ) {
+		for ( core::Size j = 0 ; j < c1segment ; ++j  ) {
 
 			const char aa = nat_seq[ loops[1].stop() + j  ];
-			Size residue = loops[1].stop() + j ;
+			core::Size residue = loops[1].stop() + j ;
 
 
 			TR << "RES AA C1  " << residue << aa <<std::endl;
@@ -922,16 +922,16 @@ void new_pose_generator(
 
 		//target_loops.dump_pdb("c1.pdb");
 
-		Size current_tot_res = target_loops.size();
+		core::Size current_tot_res = target_loops.size();
 
 		TR << " Target Loops total residues before the second loop inserts  " << target_loops.size() << std::endl;
 
 
-		for ( Size l = 1; l < n2segment ; ++l  ) {
+		for ( core::Size l = 1; l < n2segment ; ++l  ) {
 
 
 			const char aa = nat_seq[ loops[2].start() - l - 1  ];// need to check this one
-			Size residue =   current_tot_res - (loops[2].size()+loops[3].size()-1) ; // we need to check which one we start
+			core::Size residue =   current_tot_res - (loops[2].size()+loops[3].size()-1) ; // we need to check which one we start
 
 
 			TR << "RES AA N2  " << residue << aa <<std::endl;
@@ -952,10 +952,10 @@ void new_pose_generator(
 
 		//target_loops.dump_pdb("n2.pdb");
 
-		for ( Size m = 0; m < c2segment ; ++m  ) {
+		for ( core::Size m = 0; m < c2segment ; ++m  ) {
 
 			const char aa = nat_seq[ loops[2].stop() + m  ];
-			Size residue = loops[2].stop() + m ;
+			core::Size residue = loops[2].stop() + m ;
 
 
 			TR << "RES AA C2  " << residue << aa <<std::endl;
@@ -980,11 +980,11 @@ void new_pose_generator(
 		TR << " Target Loops total residues before the third loop inserts  " << target_loops.size() << std::endl;
 
 
-		for ( Size n = 1; n < n3segment ; ++n  ) {
+		for ( core::Size n = 1; n < n3segment ; ++n  ) {
 
 
 			const char aa = nat_seq[ loops[3].start() - n - 1  ];// need to check this one
-			Size residue =   current_tot_res - (loops[3].stop()-loops[3].start()) ; // we need to check which one we start
+			core::Size residue =   current_tot_res - (loops[3].stop()-loops[3].start()) ; // we need to check which one we start
 
 
 			TR << "RES AA N3  " << residue << aa <<std::endl;
@@ -1005,10 +1005,10 @@ void new_pose_generator(
 
 		//target_loops.dump_pdb("n3.pdb");
 
-		for ( Size o = 0; o < c3segment ; ++o  ) {
+		for ( core::Size o = 0; o < c3segment ; ++o  ) {
 
 			const char aa = nat_seq[ loops[3].stop() + o  ];
-			Size residue = loops[3].stop() + o ;
+			core::Size residue = loops[3].stop() + o ;
 
 
 			TR << "RES AA C3  " << residue << aa <<std::endl;
@@ -1041,12 +1041,12 @@ void new_pose_generator(
 
 
 void refresh_cutpoints( core::pose::Pose & pose,
-	std::vector<Size> & cut_points){
+	std::vector<core::Size> & cut_points){
 
 	for ( core::Size & cut_point : cut_points ) {
 
 		TR << "Refresh cut_point "<< cut_point <<std::endl;
-		Size residue = cut_point;
+		core::Size residue = cut_point;
 		core::pose::add_variant_type_to_pose_residue(pose, chemical::CUTPOINT_LOWER,residue ); // residue on the pose has to be assigned as a cut
 		core::pose::add_variant_type_to_pose_residue(pose, chemical::CUTPOINT_UPPER, residue + 1);
 
@@ -1065,7 +1065,7 @@ void copying_side_chains_swap_loop (
 ){
 
 	using namespace core::conformation;
-	Size offsetres = 0;
+	core::Size offsetres = 0;
 
 	// Cleaning up the pose - > this step has to be performed before
 	core::pose::remove_lower_terminus_type_from_pose_residue(swap_loops, 1 );
@@ -1075,7 +1075,7 @@ void copying_side_chains_swap_loop (
 	movemap->set_chi(true);
 
 
-	for ( Size pos = 1; pos <= fold_pose.size(); ++pos ) {
+	for ( core::Size pos = 1; pos <= fold_pose.size(); ++pos ) {
 
 
 		if ( loops.is_loop_residue( pos ) ) {
@@ -1103,7 +1103,7 @@ void exclude_loop_residues( core::pose::Pose & pose,
 	protocols::loops::Loops & loops
 ){
 
-	for ( Size pos = 1; pos <= pose.size(); pos++ ) {
+	for ( core::Size pos = 1; pos <= pose.size(); pos++ ) {
 		if ( !loops.is_loop_residue( pos ) ) {
 			residues_to_mutate[pos] = true;
 			task->nonconst_residue_task(pos).restrict_absent_canonical_aas( allowed_aas );
@@ -1151,9 +1151,9 @@ void design_excluding_swap_loops (
 
 		if ( option[ OptionKeys::fold_from_loops::res_design_bs ].user() ) {
 
-			for ( Size ex = 1; ex <= option[ OptionKeys::fold_from_loops::res_design_bs ]().size(); ex ++ ) {
+			for ( core::Size ex = 1; ex <= option[ OptionKeys::fold_from_loops::res_design_bs ]().size(); ex ++ ) {
 
-				Size res_number = option[ OptionKeys::fold_from_loops::res_design_bs ]()[ex];
+				core::Size res_number = option[ OptionKeys::fold_from_loops::res_design_bs ]()[ex];
 				residues_to_mutate[res_number] = true;
 
 			}
@@ -1182,7 +1182,7 @@ void copying_side_chains(
 
 ){
 
-	for ( Size pos = 1; pos <= fold_pose.size(); pos++ ) {
+	for ( core::Size pos = 1; pos <= fold_pose.size(); pos++ ) {
 
 		if ( loops.is_loop_residue( pos ) ) {
 			fold_pose.replace_residue(pos,nat_pose.residue( pos ), true);

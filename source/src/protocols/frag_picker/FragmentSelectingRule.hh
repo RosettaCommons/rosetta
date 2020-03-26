@@ -23,13 +23,13 @@
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace frag_picker {
 
 /// @brief selects a given number of fragments just by selecting the best ones
-class FragmentSelectingRule: public utility::pointer::ReferenceCount {
+class FragmentSelectingRule: public utility::VirtualBase {
 public:
 
 	/// @brief  Constructor sets the desired number of fragments.

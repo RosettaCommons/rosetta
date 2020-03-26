@@ -60,7 +60,7 @@ InputStreamStepWiseSampler::reset(){
 
 //////////////////////////////////////////////////////////////////////////
 void
-InputStreamStepWiseSampler::set_id( Size const setting ){
+InputStreamStepWiseSampler::set_id( core::Size const setting ){
 	if ( setting == id_ ) return;
 	if ( setting == id_ + 1 ) {
 		++( *this );

@@ -70,7 +70,7 @@ namespace legacy {
 namespace modeler {
 namespace rna {
 
-RNA_AnalyticLoopCloser::RNA_AnalyticLoopCloser ( Size const moving_suite, Size const chainbreak_suite ) :
+RNA_AnalyticLoopCloser::RNA_AnalyticLoopCloser ( core::Size const moving_suite, core::Size const chainbreak_suite ) :
 	moving_suite_ ( moving_suite ),
 	chainbreak_suite_ ( chainbreak_suite ),
 	verbose_ ( false ),
@@ -105,7 +105,7 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 	// Following copied from, e.g., KinematicMover.cc.  Need to elaborate for terminal residues!
 	// inputs to loop closure
 	utility::vector1< utility::fixedsizearray1< Real,3 > > atoms;
-	utility::vector1< Size > pivots ( 3 ), order ( 3 );
+	utility::vector1< core::Size > pivots ( 3 ), order ( 3 );
 	utility::vector1< Real > dt_ang, db_len, db_ang;
 	// doesn't matter.
 	order[1] = 1;
@@ -130,7 +130,7 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 	atom_ids_.emplace_back( " O3'", chainbreak_suite_ + 1 );
 	atom_ids_.emplace_back( " C2'", chainbreak_suite_ + 1 );
 
-	for ( Size i = 1; i <= 3; i++ ) {
+	for ( core::Size i = 1; i <= 3; i++ ) {
 		pivots[ i ] = 3 * i + 2;
 	}
 
@@ -150,7 +150,7 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 	//////////////////////////////////////////////
 	// Parameter at chainbreak.
 	// This looks a bit weird, because of a hack.
-	Size cutpos_ = chainbreak_suite_;
+	core::Size cutpos_ = chainbreak_suite_;
 	////////////////////////////////////////////////////////////////////////////////////
 	Real const d_O3prime_nextP = ( pose.xyz( NamedAtomID( " O3'", cutpos_ ) ) -
 		pose.xyz( NamedAtomID( "OVL1", cutpos_ ) ) ).length();
@@ -296,7 +296,7 @@ RNA_AnalyticLoopCloser::figure_out_offset (
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
-	debug_assert ( t_ang_.size() == Size ( nsol_ ) );
+	debug_assert ( t_ang_.size() == core::Size ( nsol_ ) );
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Finally, ready to check out the solutions
@@ -316,20 +316,20 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 		}
 
 		Real best_deviation2 ( 0.0 );
-		Size best_sol ( 0 );
+		core::Size best_sol ( 0 );
 		// could save time by just looking over a subset of residues. But I don't think this is rate limiting
 		utility::vector1< Vector > ref_vectors;
-		Size const ref_atom ( 1 );
+		core::Size const ref_atom ( 1 );
 
-		for ( Size i = 1; i <= pose.size(); i++ ) {
+		for ( core::Size i = 1; i <= pose.size(); i++ ) {
 			ref_vectors.push_back( pose.xyz( id::AtomID( ref_atom, i ) ) );
 		}
 
-		for ( Size n = 1; n <= Size( nsol_ ); n++ ) {
+		for ( core::Size n = 1; n <= core::Size( nsol_ ); n++ ) {
 			fill_solution( pose, n );
 			Real deviation2 ( 0.0 );
 
-			for ( Size i = 1; i <= pose.size(); i++ ) {
+			for ( core::Size i = 1; i <= pose.size(); i++ ) {
 				deviation2 += ( pose.xyz( id::AtomID( ref_atom, i ) ) - ref_vectors[i] ).length_squared();
 			}
 
@@ -361,9 +361,9 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 	} else if ( choose_best_solution_ ) {
 		debug_assert ( scorefxn_ != nullptr );
 		Real best_score ( 0.0 );
-		Size best_sol ( 0 );
+		core::Size best_sol ( 0 );
 
-		for ( Size n = 1; n <= Size( nsol_ ); n++ ) {
+		for ( core::Size n = 1; n <= core::Size( nsol_ ); n++ ) {
 			fill_solution ( pose, n );
 			Real const score = ( *scorefxn_ )( pose );
 
@@ -385,7 +385,7 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 
 		fill_solution ( pose, best_sol );
 	} else {
-		Size const n = static_cast< int > ( nsol_ * numeric::random::rg().uniform() ) + 1;
+		core::Size const n = static_cast< int > ( nsol_ * numeric::random::rg().uniform() ) + 1;
 		fill_solution ( pose, n );
 	}
 }
@@ -396,7 +396,7 @@ RNA_AnalyticLoopCloser::get_all_solutions ( core::pose::Pose & pose,
 	utility::vector1< core::pose::PoseOP > & pose_list ) {
 	pose_list.clear();
 
-	for ( Size n = 1; n <= Size( nsol_ ); n++ ) {
+	for ( core::Size n = 1; n <= core::Size( nsol_ ); n++ ) {
 		fill_solution( pose, n );
 		core::pose::PoseOP pose_save( new Pose );
 		*pose_save = pose;
@@ -412,10 +412,10 @@ RNA_AnalyticLoopCloser::get_all_solutions ( core::pose::Pose & pose,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_AnalyticLoopCloser::fill_solution ( core::pose::Pose & pose,
-	Size const n ) const {
-	Size count ( 0 );
+	core::Size const n ) const {
+	core::Size count ( 0 );
 
-	for ( Size i = 1; i <= 3; i++ ) {
+	for ( core::Size i = 1; i <= 3; i++ ) {
 		count++;
 		pose.set_dof( dof_ids_[count], principal_angle ( radians ( t_ang_[ n ][ 3 * i + 1 ] ) + offset_save_[count] ) );
 		count++;
@@ -426,12 +426,12 @@ RNA_AnalyticLoopCloser::fill_solution ( core::pose::Pose & pose,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Real >
-RNA_AnalyticLoopCloser::get_torsions ( Size const n ) {
+RNA_AnalyticLoopCloser::get_torsions ( core::Size const n ) {
 	debug_assert ( n <= t_ang_.size() );
 	utility::vector1< Real > torsions;
-	Size count ( 0 );
+	core::Size count ( 0 );
 
-	for ( Size i = 1; i <= 3; i++ ) {
+	for ( core::Size i = 1; i <= 3; i++ ) {
 		count++;
 		torsions.push_back( degrees( principal_angle( radians( t_ang_[ n ][ 3 * i + 1 ] ) + offset_save_[count] ) ) );
 		count++;
@@ -446,7 +446,7 @@ utility::vector1< utility::vector1< Real > >
 RNA_AnalyticLoopCloser::get_torsions_for_all_solutions() {
 	utility::vector1< utility::vector1< Real > > torsions_for_all_solutions;
 
-	for ( Size n = 1; n <= t_ang_.size(); n++ ) torsions_for_all_solutions.push_back ( get_torsions ( n ) );
+	for ( core::Size n = 1; n <= t_ang_.size(); n++ ) torsions_for_all_solutions.push_back ( get_torsions ( n ) );
 
 	return torsions_for_all_solutions;
 }
@@ -474,7 +474,7 @@ RNA_AnalyticLoopCloser::output_chainTORS ( utility::vector1< core::Real > const 
 	utility::vector1< core::Real > const & db_len ) const {
 	TR << "------  chainTORS output ---- " << std::endl;
 
-	for ( Size i = 1; i <= dt_ang.size(); i++ ) {
+	for ( core::Size i = 1; i <= dt_ang.size(); i++ ) {
 		TR << I ( 3, i ) << " ";
 		TR << "TORSIONS: ";
 		TR << F ( 8, 3, dt_ang[ i ] ) << " ";
@@ -501,14 +501,14 @@ RNA_AnalyticLoopCloser::fill_chainTORS (
 	utility::fixedsizearray1< Real,3 > R0;
 	utility::vector1< Vector > atoms_xyz;
 
-	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {
+	for ( core::Size i = 1; i <= atom_ids_.size(); i++ ) {
 		//  TR << "filling: " << atom_ids_[i].atomno() << " " << atom_ids_[i].rsd() << std::endl;
 		atoms_xyz.push_back( pose.xyz ( atom_ids_[ i ] ) );
 	}
 
 	atoms.clear();
 
-	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {
+	for ( core::Size i = 1; i <= atom_ids_.size(); i++ ) {
 		utility::fixedsizearray1< Real,3 > atom_xyz_vals;
 		atom_xyz_vals[1] = atoms_xyz[i].x();
 		atom_xyz_vals[2] = atoms_xyz[i].y();

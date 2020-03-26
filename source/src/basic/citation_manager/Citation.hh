@@ -19,7 +19,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // STL headers
@@ -29,7 +29,7 @@ namespace basic {
 namespace citation_manager {
 
 /// @brief Data structure for author names.
-class AuthorNames : public utility::pointer::ReferenceCount {
+class AuthorNames : public utility::VirtualBase {
 
 public:
 
@@ -68,7 +68,7 @@ private:
 };
 
 ///@brief Data structure for storing a citation.
-class Citation : public utility::pointer::ReferenceCount {
+class Citation : public utility::VirtualBase {
 
 public:
 

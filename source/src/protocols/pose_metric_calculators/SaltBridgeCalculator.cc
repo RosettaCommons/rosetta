@@ -78,7 +78,7 @@ SaltBridgeCalculator::SaltBridgeCalculator(core::Real dist_cutoff) :
 
 void SaltBridgeCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const{
 	if ( key == "salt_bridge" ) {
-		basic::check_cast( valptr, &salt_bridge_total_, "salt_bridge expects to return a Size" );
+		basic::check_cast( valptr, &salt_bridge_total_, "salt_bridge expects to return a core::Size" );
 		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( salt_bridge_total_ );
 
 	} else {

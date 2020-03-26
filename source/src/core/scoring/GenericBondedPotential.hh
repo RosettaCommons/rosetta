@@ -184,7 +184,7 @@ private:
 ///   database/scoring/score_function/generic_bonded/generic_bonded.XX.txt and
 ///   stores it as SpringParams or GenTorsionParams as local variables for
 ///   score enumeration.
-class GenericBondedPotential : public utility::pointer::ReferenceCount  {
+class GenericBondedPotential : public utility::VirtualBase  {
 public:
 	/// @brief Default Constructor
 	GenericBondedPotential();
@@ -406,7 +406,7 @@ private:
 
 };
 
-class ResidueExclParams : public utility::pointer::ReferenceCount {
+class ResidueExclParams : public utility::VirtualBase {
 
 public:
 	ResidueExclParams( core::chemical::ResidueTypeCOP rsd_type,

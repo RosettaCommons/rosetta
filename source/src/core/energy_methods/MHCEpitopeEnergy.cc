@@ -62,7 +62,7 @@ namespace mhc_epitope_energy {
 static basic::Tracer TR("core.scoring.mhc_epitope_energy.MHCEpitopeEnergy");
 
 ScoreCache::ScoreCache(int nres)
-: utility::pointer::ReferenceCount(),
+: utility::VirtualBase(),
 	scores_(nres, 0),
 	considered_start_(0),
 	considered_stop_(0),
@@ -71,7 +71,7 @@ ScoreCache::ScoreCache(int nres)
 {}
 
 ScoreCache::ScoreCache(ScoreCache const &src)
-: utility::pointer::ReferenceCount(),
+: utility::VirtualBase(),
 	scores_(src.scores_),
 	considered_start_(src.considered_start_),
 	considered_stop_(src.considered_stop_),

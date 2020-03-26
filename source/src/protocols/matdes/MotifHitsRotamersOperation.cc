@@ -87,10 +87,10 @@ MotifHitsRotamersOperation::alter_rotamer_set(
 	core::pack::rotamer_set::RotamerSet & rotamer_set
 )
 {
-	// Size const seqnum = (Size) rotamer_set.resid();
+	// core::Size const seqnum = (core::Size) rotamer_set.resid();
 	// debug_assert( seqnum <= ptask.total_residue() );
 	// core::pack::task::ResidueLevelTask const & rtask = ptask.residue_task(seqnum);
-	// for(Size i = 1; i <= poses_.size(); ++i) {
+	// for(core::Size i = 1; i <= poses_.size(); ++i) {
 	//  core::pose::Pose const & ubr_pose = *(poses_[i]);
 	//  if(seqnum > ubr_pose.total_residue()) continue;
 	//  core::chemical::ResidueType const & restype = ubr_pose.residue_type(seqnum);
@@ -116,7 +116,7 @@ MotifHitsRotamersOperation::alter_rotamer_set(
 	//core::Size atoms = 1  ;
 	using namespace core::pose::symmetry ;
 	using namespace core::scoring::motif  ;
-	auto const seqnum = (Size) rotamer_set.resid();
+	auto const seqnum = (core::Size) rotamer_set.resid();
 	debug_assert( seqnum <= ptask.total_residue() );
 	core::conformation::symmetry::SymmetryInfoCOP syminfo = nullptr ;
 	if ( is_symmetric(pose) ) syminfo = symmetry_info(pose) ;

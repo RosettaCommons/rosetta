@@ -569,14 +569,14 @@ void InterfaceAnalyzerMover::make_multichain_interface_set( core::pose::Pose & p
 	using namespace utility;
 	using namespace protocols::toolbox;
 
-	std::set<Size> fixed_side_residues, other_side_residues;
+	std::set<core::Size> fixed_side_residues, other_side_residues;
 	std::set<core::Size> fixed_chain_nums;
 	std::set<core::Size> other_chain_nums;
 
 
 	//itterate over all residues determine what part of the interface they are
 	//also select what chain(s) are upstream and downstream of the interface
-	for ( Size ii = 1; ii<= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii<= pose.size(); ++ii ) {
 		auto it_chain = ignored_chains_.find( pose.chain( ii ) );
 		if ( it_chain != ignored_chains_.end() ) {
 			include_residue_[ii] = false; // Ignore this residue in total energy/Sasa calculations
@@ -596,7 +596,7 @@ void InterfaceAnalyzerMover::make_multichain_interface_set( core::pose::Pose & p
 	//TR << "Fixed residues: " << fixed_side_residues.size() << "   Other side residues: " << other_side_residues.size() << std::endl;
 
 	//prep a vector of a pair of these residue sets for Steven's calculator
-	std::pair< std::set< Size >, std::set< Size > > side_pairs;
+	std::pair< std::set< core::Size >, std::set< core::Size > > side_pairs;
 	side_pairs.first = fixed_side_residues;
 	side_pairs.second = other_side_residues;
 	InterfaceAnalyzerMover::group_set interface_definition_vector;
@@ -623,7 +623,7 @@ core::Size InterfaceAnalyzerMover::reorder_foldtree_find_jump( core::pose::Pose 
 		utility_exit_with_message_status( "Can't find fixed chains.  Exiting...\n", 1 );
 	}
 	//now get info about chains
-	Size numchains ( pose.conformation().num_chains() );
+	core::Size numchains ( pose.conformation().num_chains() );
 
 	//Ligand chain last chain in pose, no need to reorder.
 	if ( ligand_chain_.size() != 0 ) {
@@ -635,16 +635,16 @@ core::Size InterfaceAnalyzerMover::reorder_foldtree_find_jump( core::pose::Pose 
 	}
 
 
-	utility::vector1<Size> chain_starts;
-	utility::vector1<Size> chain_ends;
-	for ( Size ii = 1; ii <= numchains; ++ii ) {
+	utility::vector1<core::Size> chain_starts;
+	utility::vector1<core::Size> chain_ends;
+	for ( core::Size ii = 1; ii <= numchains; ++ii ) {
 		chain_starts.push_back( pose.conformation().chain_begin( ii ) );
 		chain_ends.push_back( pose.conformation().chain_end( ii ) );
 	}
 
 	//find a non mobile chain
-	Size anchor_chain (1); //switch later if needed
-	for ( Size ii = 1; ii<= numchains; ++ii ) {
+	core::Size anchor_chain (1); //switch later if needed
+	for ( core::Size ii = 1; ii<= numchains; ++ii ) {
 		if ( !fixed_chains.count( ii ) ) {
 			anchor_chain = ii;
 			break;
@@ -654,10 +654,10 @@ core::Size InterfaceAnalyzerMover::reorder_foldtree_find_jump( core::pose::Pose 
 	//now build our fold tree
 	//this will move the mobile chains together
 	kinematics::FoldTree foldtree ( pose.fold_tree() );
-	Size this_jump( 1 );
+	core::Size this_jump( 1 );
 	foldtree.clear();
 	bool previous_mobile (false);
-	for ( Size ii = 1; ii <= numchains; ++ii ) {
+	for ( core::Size ii = 1; ii <= numchains; ++ii ) {
 		foldtree.add_edge( Edge( chain_starts[ ii ], chain_ends[ ii ], kinematics::Edge::PEPTIDE ) );
 		if ( ii != anchor_chain ) {
 			if ( fixed_chains.count( ii ) && previous_mobile ) { //not in the first mobile chain
@@ -699,13 +699,13 @@ core::pose::Pose InterfaceAnalyzerMover::make_separated_pose( core::pose::Pose &
 
 /// @brief Creates a single pose that is separated structurally at the interface
 /// @details Moves the moving_chains in cartesian space a distance according to step_size (A) in the Z axis
-core::pose::Pose InterfaceAnalyzerMover::make_separated_pose( core::pose::Pose & pose, std::set<Size> const & chain_nums, core::Size step_size /* 1000*/){
+core::pose::Pose InterfaceAnalyzerMover::make_separated_pose( core::pose::Pose & pose, std::set<core::Size> const & chain_nums, core::Size step_size /* 1000*/){
 	using namespace core;
 
 	( *sf_ )( pose ); //shits, giggles, and segfault prevention
 	pose::Pose separated_pose( pose );
 
-	utility::vector1< Size > resnums;
+	utility::vector1< core::Size > resnums;
 	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		core::Size chain_num = pose.residue( i ).chain();
 		if ( chain_nums.count (chain_num ) ) {
@@ -1266,9 +1266,9 @@ void InterfaceAnalyzerMover::calc_hbond_sasaE( core::pose::Pose & pose ) {
 	core::id::AtomID_Map< bool > atom_subset;
 	atom_subset.clear();
 	atom_subset.resize( pose.size() );
-	for ( Size ii=1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii=1; ii <= pose.size(); ++ii ) {
 		atom_subset.resize( ii, pose.residue_type(ii).natoms(), false );
-		for ( Size jj = 1; jj <= pose.residue_type(ii).nheavyatoms(); ++jj ) {
+		for ( core::Size jj = 1; jj <= pose.residue_type(ii).nheavyatoms(); ++jj ) {
 			atom_subset[ ii ][ jj ] = true;
 		}
 	}
@@ -1279,7 +1279,7 @@ void InterfaceAnalyzerMover::calc_hbond_sasaE( core::pose::Pose & pose ) {
 	//  for ( core::Size ii=1; ii <= pose.size(); ++ii ) {
 	//   core::conformation::Residue const & rsd = pose.residue( ii );
 	//   TR << "residue " << rsd.name3() << pose.pdb_info()->number(ii) << " atom_sasas: [ ";
-	//   for ( Size at=1; at <= rsd.nheavyatoms(); ++at ) {
+	//   for ( core::Size at=1; at <= rsd.nheavyatoms(); ++at ) {
 	//    core::id::AtomID atid( at, ii );
 	//    TR << utility::trim( rsd.atom_name( at ) ) << ":" << atom_sasa[ atid ] << ", ";
 	//   }
@@ -1316,14 +1316,14 @@ void InterfaceAnalyzerMover::calc_hbond_sasaE( core::pose::Pose & pose ) {
 	hbond_set.setup_for_residue_pair_energies( pose, false, false );
 
 	//itterate through all hbonds and figure out which ones are bb-bb betas
-	Size n_crosschain_hbonds( 0 );
+	core::Size n_crosschain_hbonds( 0 );
 
 	//Real total_ratios( 0 );
 	//total_hb_sasa_ = 0 ;
 	data_.total_hb_E = 0;
-	for ( Size ii = 1; ii <= hbond_set.nhbonds(); ++ii ) {
+	for ( core::Size ii = 1; ii <= hbond_set.nhbonds(); ++ii ) {
 		core::scoring::hbonds::HBond hbond ( hbond_set.hbond( ii ) );
-		Size don_resnum = hbond.don_res(); Size acc_resnum = hbond.acc_res();
+		core::Size don_resnum = hbond.don_res(); core::Size acc_resnum = hbond.acc_res();
 		//need to take special consideration for multichain constructor
 		if ( explicit_constructor_ ) {
 			//TR<< "Do multichain hbonds eval..." << std::endl;

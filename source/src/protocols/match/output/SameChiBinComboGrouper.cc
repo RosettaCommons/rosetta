@@ -38,7 +38,7 @@ namespace match {
 namespace output {
 
 SameChiBinComboGrouper::SameChiBinComboGrouper() : n_geometric_constraints_( 0 ) {}
-SameChiBinComboGrouper::SameChiBinComboGrouper( Size ncst ) : n_geometric_constraints_( ncst ) {}
+SameChiBinComboGrouper::SameChiBinComboGrouper( core::Size ncst ) : n_geometric_constraints_( ncst ) {}
 
 SameChiBinComboGrouper::~SameChiBinComboGrouper() = default;
 
@@ -63,13 +63,13 @@ SameChiBinComboGrouper::assign_group_for_match(
 
 	SingleResidueRotamerLibraryFactory const & rotlib( *SingleResidueRotamerLibraryFactory::get_instance() );
 
-	utility::vector1< Size > rot_vector( n_geometric_constraints_ * 3, 0 );
-	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
+	utility::vector1< core::Size > rot_vector( n_geometric_constraints_ * 3, 0 );
+	for ( core::Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		rot_vector[ ii ] = m.upstream_hits[ ii ].scaffold_build_id();
 		core::conformation::ResidueCOP iires = hit_cacher_->upstream_conformation_for_hit( ii, fake_hit( m.upstream_hits[ ii ] ) );
 
 		/*
-		for ( Size jj = 1; jj <= iires->nchi(); ++jj ) {
+		for ( core::Size jj = 1; jj <= iires->nchi(); ++jj ) {
 		core::Vector p1, p2, p3, p4;
 		p1 = iires->xyz( iires->chi_atoms( jj )[ 1 ] );
 		p2 = iires->xyz( iires->chi_atoms( jj )[ 2 ] );
@@ -104,7 +104,7 @@ SameChiBinComboGrouper::assign_group_for_match(
 
 	ChiBinComboCountMap::const_iterator iter = chibin_combo_indexer_.find( rot_vector );
 	if ( iter == chibin_combo_indexer_.end() ) {
-		Size next_index = chibin_combo_indexer_.size() + 1;
+		core::Size next_index = chibin_combo_indexer_.size() + 1;
 		chibin_combo_indexer_[ rot_vector ] = next_index;
 		return next_index;
 	} else {
@@ -119,7 +119,7 @@ SameChiBinComboGrouper::reset()
 }
 
 void
-SameChiBinComboGrouper::set_n_geometric_constraints( Size n_csts )
+SameChiBinComboGrouper::set_n_geometric_constraints( core::Size n_csts )
 {
 	n_geometric_constraints_ = n_csts;
 }

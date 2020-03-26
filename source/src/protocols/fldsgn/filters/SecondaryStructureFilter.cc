@@ -96,7 +96,7 @@ void SecondaryStructureFilter::filtered_ss( String const & s )
 void SecondaryStructureFilter::filtered_abego( String const & s )
 {
 	filtered_abego_.clear();
-	for ( Size ii=1; s.length(); ++ii ) {
+	for ( core::Size ii=1; s.length(); ++ii ) {
 		filtered_abego_.push_back( s.substr( ii-1, 1 ) );
 	}
 	use_abego_ = true;
@@ -135,7 +135,7 @@ SecondaryStructureFilter::parse_my_tag(
 
 	String abego( tag->getOption<String>( "abego", "" ) );
 	filtered_abego_.clear();
-	for ( Size ii=1; abego.length(); ++ii ) {
+	for ( core::Size ii=1; abego.length(); ++ii ) {
 		filtered_abego_.push_back( abego.substr( ii-1, 1 ) );
 	}
 	if ( filtered_abego_.size() >= 1 ) {
@@ -310,7 +310,7 @@ SecondaryStructureFilter::compute(
 		utility_exit_with_message("Length of input abego is not same as total residue of pose.");
 	}
 
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		// if this residue is a ligand, ignore and move on
 		if ( ! pose.residue( i ).is_protein() ) continue;
 		if ( ! subset[ i ] ) continue;
@@ -341,7 +341,7 @@ SecondaryStructureFilter::compute(
 		if ( ( filtered_abego_.size() >= 1 ) && use_abego_ ) {
 			String abego( filtered_abego_[ i ] );
 			bool flag( false );
-			for ( Size j=1; j<=abego.size(); ++j ) {
+			for ( core::Size j=1; j<=abego.size(); ++j ) {
 				if ( abego_manager.check_rama( *abego.substr( j-1, 1 ).c_str(), pose.phi( i ), pose.psi( i ), pose.omega( i ) ) ) {
 					flag = true;
 				}

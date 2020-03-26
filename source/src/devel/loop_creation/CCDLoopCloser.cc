@@ -127,7 +127,7 @@ CCDLoopCloser::apply(
 
 	// setup movemap
 	kinematics::MoveMapOP mm( new kinematics::MoveMap );
-	for ( Size ii=loop().start(); ii<=loop().stop(); ++ii ) {
+	for ( core::Size ii=loop().start(); ii<=loop().stop(); ++ii ) {
 		mm->set_bb( ii, true );
 
 		//don't change phi for prolines
@@ -230,7 +230,7 @@ CCDLoopCloser::parse_my_tag(
 	}
 
 	if ( tag->hasOption("max_ccd_moves_per_closure_attempt") ) {
-		max_ccd_moves_per_closure_attempt_ = tag->getOption< Size >("max_ccd_moves_per_closure_attempt");
+		max_ccd_moves_per_closure_attempt_ = tag->getOption< core::Size >("max_ccd_moves_per_closure_attempt");
 	}
 
 	if ( tag->hasOption("tolerance") ) {
@@ -238,7 +238,7 @@ CCDLoopCloser::parse_my_tag(
 	}
 
 	if ( tag->hasOption("max_closure_attempts") ) {
-		max_closure_attempts_ = tag->getOption< Size >("max_closure_attempts");
+		max_closure_attempts_ = tag->getOption< core::Size >("max_closure_attempts");
 	}
 
 	if ( tag->hasOption("max_rama_score_increase") ) {

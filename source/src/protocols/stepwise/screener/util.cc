@@ -32,8 +32,8 @@ using namespace core;
 // used by StepWiseResiduePairScreener, and also ChainClosureScreener.
 void
 fast_forward_to_next_residue_pair( sampler::StepWiseSamplerOP sampler,
-	Size const res1,
-	Size const res2 ){
+	core::Size const res1,
+	core::Size const res2 ){
 
 	using namespace sampler;
 	using namespace sampler::rigid_body;

@@ -30,7 +30,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -178,7 +178,7 @@ struct SHEETInformation {
 /// various file formats and a Pose.
 /// @remarks This class is intended to be light, consisting primarily of simple
 /// accessors.
-class StructFileRep : public utility::pointer::ReferenceCount {
+class StructFileRep : public utility::VirtualBase {
 public:  // Typedefs //////////////////////////////////////////////////////////
 	typedef std::map< std::string, core::Real > ResidueTemps;
 	typedef std::map< std::string, Vector > ResidueCoords;

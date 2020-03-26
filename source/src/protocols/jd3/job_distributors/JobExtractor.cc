@@ -129,13 +129,13 @@ JobExtractor::push_job_to_front_of_queue(LarvalJobOP job) {
 
 
 void
-JobExtractor::note_job_no_longer_running( Size job_id )
+JobExtractor::note_job_no_longer_running( core::Size job_id )
 {
 	// ok, now remove the completed/failed job from the maps keeping track of
 	// outstanding jobs
 
 	running_jobs_.erase( job_id );
-	Size digraph_node = digraph_node_for_job_[ job_id ];
+	core::Size digraph_node = digraph_node_for_job_[ job_id ];
 	digraph_node_for_job_.erase( job_id );
 
 	JobSetOP digraph_nodes_remaining_jobs =
@@ -193,7 +193,7 @@ JobExtractor::not_done()
 	job_queen_->update_job_dag( updater );
 	if ( job_dag_->num_nodes() != updater.orig_num_nodes() ) {
 		bool found_digraph_node_ready_to_run = false;
-		for ( Size ii = updater.orig_num_nodes() + 1;
+		for ( core::Size ii = updater.orig_num_nodes() + 1;
 				ii <= job_dag_->num_nodes(); ++ii ) {
 			if ( job_dag_->get_job_node( ii )->n_predecessors_w_outstanding_jobs() == 0 ) {
 				digraph_nodes_ready_to_be_run_.push_back( ii );
@@ -316,7 +316,7 @@ JobExtractor::query_job_queen_for_more_jobs_for_current_node()
 /// If each of the upstream parents has completed (all of its jobs have completed),
 /// then the node is ready to be queued.
 void
-JobExtractor::mark_node_as_complete( Size digraph_node )
+JobExtractor::mark_node_as_complete( core::Size digraph_node )
 {
 	TR << "Marking node " << digraph_node << " as complete" << std::endl;
 	node_recently_completed_ = true;
@@ -387,7 +387,7 @@ JobExtractor::find_jobs_for_next_node()
 {
 	TR << "Find jobs for next node: " << digraph_nodes_ready_to_be_run_.empty() << std::endl;
 	if ( ! digraph_nodes_ready_to_be_run_.empty() ) {
-		Size next_node_to_check = digraph_nodes_ready_to_be_run_.front();
+		core::Size next_node_to_check = digraph_nodes_ready_to_be_run_.front();
 		TR << "Next node to check: " << next_node_to_check << std::endl;
 		current_digraph_node_() = next_node_to_check;
 		digraph_nodes_ready_to_be_run_.pop_front();
@@ -427,7 +427,7 @@ JobExtractor::queue_initial_digraph_nodes_and_jobs()
 
 	// iterate across all nodes in the job_digraph, and note every
 	// node with an indegree of 0
-	for ( Size ii = 1; ii <= job_dag_->num_nodes(); ++ii ) {
+	for ( core::Size ii = 1; ii <= job_dag_->num_nodes(); ++ii ) {
 		if ( job_dag_->get_node(ii)->indegree() == 0 ) {
 			digraph_nodes_ready_to_be_run_.push_back( ii );
 		}
@@ -453,7 +453,7 @@ protocols::jd3::job_distributors::JobExtractor::save( Archive & arc ) const {
 	arc( CEREAL_NVP( job_dag_ ) ); // JobDigraphOP
 	arc( CEREAL_NVP( digraph_nodes_ready_to_be_run_ ) ); // SizeList
 	arc( CEREAL_NVP( worker_nodes_waiting_for_jobs_ ) ); // SizeList
-	arc( CEREAL_NVP( current_digraph_node_ ) ); // Size
+	arc( CEREAL_NVP( current_digraph_node_ ) ); // core::Size
 	arc( CEREAL_NVP( jobs_for_current_digraph_node_ ) ); // LarvalJobs
 	arc( CEREAL_NVP( running_jobs_ ) ); // JobMap
 	arc( CEREAL_NVP( digraph_node_for_job_ ) ); // DigraphNodeForJobMap
@@ -473,7 +473,7 @@ protocols::jd3::job_distributors::JobExtractor::load( Archive & arc ) {
 	arc( job_dag_ ); // JobDigraphOP
 	arc( digraph_nodes_ready_to_be_run_ ); // SizeList
 	arc( worker_nodes_waiting_for_jobs_ ); // SizeList
-	arc( current_digraph_node_ ); // Size
+	arc( current_digraph_node_ ); // core::Size
 	arc( jobs_for_current_digraph_node_ ); // LarvalJobs
 	arc( running_jobs_ ); // JobMap
 	arc( digraph_node_for_job_ ); // DigraphNodeForJobMap

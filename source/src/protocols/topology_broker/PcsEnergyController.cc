@@ -176,7 +176,7 @@ void PcsEnergyController::add_mover(
 
 	PcsGridSearchParameterManager * pcs_g_s_p_m = PcsGridSearchParameterManager::get_instance();
 
-	//utility::vector1< Size > vec_exclude;
+	//utility::vector1< core::Size > vec_exclude;
 	//if ( option[ in::file::native_exclude_res].user() ) {
 	// vec_exclude = option[ in::file::native_exclude_res ]();
 	// PcsEnergyParameterManager::get_instance()->get_PCS_data_input_reference().set_vector_exclude_residues(vec_exclude);
@@ -283,7 +283,7 @@ PcsEnergyController::init_after_reading(){
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	//utility::vector1< Size > vec_exclude;
+	//utility::vector1< core::Size > vec_exclude;
 	//if ( option[ in::file::native_exclude_res ].user() ) {
 	// vec_exclude = option[ in::file::native_exclude_res ]();
 	//PcsEnergyParameterManager::get_instance()get_PCS_data_input_reference().->set_vector_exclude_residues(vec_exclude);

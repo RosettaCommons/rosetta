@@ -84,7 +84,7 @@ private:
 //template< typename Container >
 //dereference_iterator< Container > dereference_iterator( typename Container::const_iterator );
 
-class DecoySetEvaluation : public utility::pointer::ReferenceCount {
+class DecoySetEvaluation : public utility::VirtualBase {
 public:
 	DecoySetEvaluation();
 	~DecoySetEvaluation() override;

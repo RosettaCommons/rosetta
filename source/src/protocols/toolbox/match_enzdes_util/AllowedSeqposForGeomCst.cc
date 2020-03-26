@@ -28,7 +28,7 @@
 //utility headers
 #include <utility>
 #include <utility/io/izstream.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.fwd.hh>
 
@@ -42,7 +42,7 @@ namespace match_enzdes_util {
 static basic::Tracer TR( "protocols.toolbox.match_enzdes_util.AllowedSeqposForGeomCst" );
 
 AllowedSeqposForGeomCst::AllowedSeqposForGeomCst(
-	utility::vector1< utility::vector1< Size > > const & seqpos_for_geomcst )
+	utility::vector1< utility::vector1< core::Size > > const & seqpos_for_geomcst )
 : seqpos_for_geomcst_( seqpos_for_geomcst )
 {}
 
@@ -60,7 +60,7 @@ AllowedSeqposForGeomCst::~AllowedSeqposForGeomCst()= default;
 /// number than the vector size is passed in, it's unclear
 /// what to do, so we exit
 utility::vector1< core::Size > const &
-AllowedSeqposForGeomCst::seqpos_for_geomcst( Size geomcst ) const {
+AllowedSeqposForGeomCst::seqpos_for_geomcst( core::Size geomcst ) const {
 
 	if ( seqpos_for_geomcst_.size() == 1 ) return seqpos_for_geomcst_[1];
 
@@ -132,10 +132,10 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
 
 		std::string filename = option[ scaffold_active_site_residues ]();
 		utility::io::izstream istr( filename.c_str() );
-		std::list< Size > upstream_build_resids;
+		std::list< core::Size > upstream_build_resids;
 		TR << "Reading match::scaffold_active_stie_residues " << filename << ":";
 		while ( istr ) {
-			Size resid( 0 );
+			core::Size resid( 0 );
 			istr >> resid;
 			if ( ! istr.bad() && resid != 0 ) {
 				TR << " " << resid;
@@ -156,9 +156,9 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
 
 		std::string filename = option[ scaffold_active_site_residues_for_geomcsts ]();
 		utility::io::izstream istr( filename.c_str() );
-		//std::list< Size > upstream_build_resids;
+		//std::list< core::Size > upstream_build_resids;
 		TR << "Reading match::scaffold_active_site_residues_for_geomcsts " << filename << std::endl;
-		std::string ncsts_string; Size ncsts;
+		std::string ncsts_string; core::Size ncsts;
 		if ( ! istr.good() ) {
 			utility_exit_with_message( "Could not read first line from match::scaffold_active_site_residues_for_geomcsts " + filename );
 		}
@@ -187,10 +187,10 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
 
 		std::string finish_the_line;
 		istr.getline( finish_the_line );
-		utility::vector1< Size > data_read_for_cst( ncsts, 0 );
-		Size linenum = 2;
+		utility::vector1< core::Size > data_read_for_cst( ncsts, 0 );
+		core::Size linenum = 2;
 		while ( istr ) {
-			Size geomcst_id( 0 );
+			core::Size geomcst_id( 0 );
 			istr >> geomcst_id;
 			if ( istr.eof() && geomcst_id == 0 ) break;
 
@@ -226,7 +226,7 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
 				}
 				istr.getline( finish_the_line );
 			} else {
-				Size first_resid(0);
+				core::Size first_resid(0);
 				std::istringstream firststr( first_token );
 				firststr >> first_resid;
 				if ( first_resid != 0 ) { //&& (first_resid <= upstream_pose_->size() )){
@@ -239,7 +239,7 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
 				if ( finish_the_line != "" ) {
 					std::istringstream isstr( finish_the_line );
 					while ( isstr.good() ) {
-						Size resid( 0 );
+						core::Size resid( 0 );
 						isstr >> resid;
 						if ( isstr.eof() && resid == 0 ) break;
 						if ( ! isstr.bad() ) {
@@ -265,7 +265,7 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
 		} //loop over lines
 		TR << std::endl;
 		bool any_absent( false );
-		for ( Size ii = 1; ii <= ncsts; ++ii ) {
+		for ( core::Size ii = 1; ii <= ncsts; ++ii ) {
 			if ( data_read_for_cst[ ii ] == 0 ) {
 				std::cerr << "ERROR reading " << filename << ": did not find residue list for constraint # " << ii << std::endl;
 				any_absent = true;

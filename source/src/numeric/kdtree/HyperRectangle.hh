@@ -18,15 +18,15 @@
 #include <numeric/kdtree/HyperRectangle.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace numeric {
 namespace kdtree {
 
-class HyperRectangle : public utility::pointer::ReferenceCount {
+class HyperRectangle : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~HyperRectangle() override;
 	HyperRectangle();
 

@@ -31,7 +31,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -52,7 +52,7 @@ namespace simple_metrics {
 ///
 ///You should derive from RealMetric, StringMetric, etc. when making a new SimpleMetric.  NOT this class!
 ///
-class SimpleMetric : public utility::pointer::ReferenceCount {
+class SimpleMetric : public utility::VirtualBase {
 
 public:
 

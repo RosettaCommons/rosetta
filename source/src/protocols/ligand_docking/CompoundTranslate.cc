@@ -48,7 +48,7 @@ static basic::Tracer translate_tracer( "protocols.ligand_docking.CompoundTransla
 
 /// @brief
 CompoundTranslate::CompoundTranslate():
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Mover("CompoundTranslate")
 {}
 

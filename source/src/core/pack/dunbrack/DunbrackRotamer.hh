@@ -34,7 +34,7 @@
 
 // Utility headers
 #include <utility/fixedsizearray1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1_bool.hh>
 #include <cmath>
@@ -425,7 +425,7 @@ private:
 /// the RotamericSingleResidueDunbrackLibrary::build_chi_sets function,
 /// and then in the (virtual) chisamples_for_rotamer function, the derived classes
 /// may be downcast.
-class RotamerBuildingData : public utility::pointer::ReferenceCount
+class RotamerBuildingData : public utility::VirtualBase
 {
 public:
 	~RotamerBuildingData() override = 0;

@@ -81,7 +81,7 @@ void DistanceScoreMover::prepare_scoring( bool use_for_calibration /*default fal
 	//assignment_distances_ = VectorReal( nr_assignments_, 0.0 );
 	used_for_calibration_ = use_for_calibration;
 
-	Size ct( 1 );
+	core::Size ct( 1 );
 	for ( auto it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it, ++ct ) {
 		if ( !used_for_calibration_ ) {
 			for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
@@ -104,7 +104,7 @@ void DistanceScoreMover::prepare_scoring( bool use_for_calibration /*default fal
 //   SingleConstraints::const_iterator constraint_it( constraints_.begin() );
 //  active_peaks_ = 0;
 
-//  Size ct_peaks( 1 );
+//  core::Size ct_peaks( 1 );
 //  typedef utility::vector1< Real > RealVector;
 //  RealVector distance_deltas( poses.size(), 0.0 );
 
@@ -117,7 +117,7 @@ void DistanceScoreMover::prepare_scoring( bool use_for_calibration /*default fal
 //   // c) cache distance in dist_buf to compute Dk in the end..
 //    if ( (*it)->n_assigned() == 0 ) continue;
 
-//   Size pose_ct( 1 );
+//   core::Size pose_ct( 1 );
 //   SingleConstraints::const_iterator pre_pose_cst_it = constraint_it;
 //   for ( PoseVector::const_iterator pose_it = poses.begin(); pose_it != poses.end(); ++pose_it, ++pose_ct ) {
 //    Real sum_dist( 0.0 ); //accumulate only distances where Vk > Vmin  --> used for calibration ( eq. (12)  ).
@@ -151,12 +151,12 @@ void DistanceScoreMover::prepare_scoring( bool use_for_calibration /*default fal
 
 //   //first sort to get a 90% distribution length --i.e., ignore 5% on each side and take distance between those
 //   std::sort( distance_deltas.begin(), distance_deltas.end() );
-//   Size const ind_low_5( 1+lrint( params.local_distviol_range_*distance_deltas.size() ) );   //lower 5% -
-//   Size const ind_high_5( lrint( 1.0*distance_deltas.size()*(1-params.local_distviol_range_) ) ); //upper 5%
+//   core::Size const ind_low_5( 1+lrint( params.local_distviol_range_*distance_deltas.size() ) );   //lower 5% -
+//   core::Size const ind_high_5( lrint( 1.0*distance_deltas.size()*(1-params.local_distviol_range_) ) ); //upper 5%
 //   Real max_extension( distance_deltas[ ind_high_5 ] - distance_deltas[ ind_low_5 ] );
 //   tr.Debug << "ind_low_5 " << ind_low_5 << " ind_high_5 " << ind_high_5 << " min_delta: " << distance_deltas[ 1 ] << " max_delta "
 //        << distance_deltas.back() << std::endl;
-//   Size viol_count( 0 );
+//   core::Size viol_count( 0 );
 //   for ( RealVector::const_iterator delta_it = distance_deltas.begin(); delta_it != distance_deltas.end(); ++delta_it ) {
 //    viol_count += ( *delta_it > ( max_extension + params.local_distviol_global_buffer_ ) ) ? 1 : 0;
 //   }
@@ -174,7 +174,7 @@ void DistanceScoreMover::apply( pose::Pose& pose ) {
 	SingleConstraints::const_iterator constraint_it( constraints_.begin() );
 	//  PeakConstraints::const_iterator peak_constraint_it( peak_constraints_.begin() );
 	active_peaks_ = 0;
-	Size ct_peaks( 1 );
+	core::Size ct_peaks( 1 );
 	if ( !used_for_calibration_ ) {
 		tr.Debug << "DistanceScoreMover is not used in calibration mode " << std::endl;
 	}
@@ -189,7 +189,7 @@ void DistanceScoreMover::apply( pose::Pose& pose ) {
 		utility::vector1< Real > dist_buf( (*it)->assignments().size(), 0 ); //some cheap memory buffer for distances
 		runtime_assert( (*it)->n_assigned() < 2000 );
 		if ( (*it)->n_assigned() == 0 ) continue;
-		Size ct_assignments( 1 );
+		core::Size ct_assignments( 1 );
 		Real sum_dist( 0.0 );
 		Real sum_dist_filt( 0.0 ); //accumulate only distances where Vk > Vmin  --> used for calibration ( eq. (12)  ).
 		for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait, ++ct_assignments ) {
@@ -260,7 +260,7 @@ void DistanceScoreMover::apply( pose::Pose& pose ) {
 
 void DistanceScoreMover::finalize_scoring() const {
 #ifndef WIN32
-	Size ct_peaks( 1 );
+	core::Size ct_peaks( 1 );
 	for ( auto it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it, ++ct_peaks ) {
 		for ( auto ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
 			(*ait)->set_decoy_compatibility( (*ait)->decoy_compatibility()/count_decoys_ );
@@ -271,7 +271,7 @@ void DistanceScoreMover::finalize_scoring() const {
 
 // void DistanceScoreMover::eliminate_violated_constraints() const {
 //  PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
-//  Size ct_peaks( 1 );
+//  core::Size ct_peaks( 1 );
 //   for ( CrossPeakList::iterator it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it, ++ct_peaks ) {
 //   tr.Debug << "peak: " << (*it)->peak_id() <<" " << (*it)->filename() << " violations: " << peak_violation_counts_[ ct_peaks ] << std::endl;
 //   (*it)->set_eliminated_due_to_dist_violations( peak_violation_counts_[ ct_peaks ] > (params.nr_conformers_violatable_*count_decoys_) );
@@ -280,7 +280,7 @@ void DistanceScoreMover::finalize_scoring() const {
 
 // core::Real DistanceScoreMover::compute_violation_percentage() const {
 //  Real percent_violated( 0 );
-//  Size ct_peaks( 1 );
+//  core::Size ct_peaks( 1 );
 //   for ( CrossPeakList::iterator it = cross_peaks_.begin(); it != cross_peaks_.end(); ++it, ++ct_peaks ) {
 //   percent_violated+=peak_violation_counts_[ ct_peaks ];
 //  }

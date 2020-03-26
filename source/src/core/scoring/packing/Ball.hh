@@ -17,7 +17,7 @@
 // Project headers
 #include <core/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <numeric/xyzVector.hh>
 
@@ -26,7 +26,7 @@ namespace scoring {
 namespace packing {
 
 
-class Ball : public utility::pointer::ReferenceCount {
+class Ball : public utility::VirtualBase {
 
 public:
 

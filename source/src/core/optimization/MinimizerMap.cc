@@ -186,7 +186,7 @@ MinimizerMap::torsion_scale_factor(
 void
 MinimizerMap::clear_dof_nodes()
 {
-	// delete old memory -- deprecated 7/1/2010 following DOF_Node's inherretance from ReferenceCount
+	// delete old memory -- deprecated 7/1/2010 following DOF_Node's inherretance from VirtualBase
 	//for ( iterator it=dof_nodes_.begin(), it_end = dof_nodes_.end();
 	//   it != it_end; ++it ) {
 	// delete (*it);

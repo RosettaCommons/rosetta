@@ -105,7 +105,7 @@ Real ResidualDipolarCouplingRigidSegments::compute_pairwise_score() const{
 	if ( option[ OptionKeys::rdc::segment_scoring_mode ]() == "pairwise"  ) {
 		core::Size n_of_exps = rdc_segments_[1]->get_n_alignments();
 		//Loop over all experiments caution: indexing starts at 0
-		for ( Size exp=0; exp < n_of_exps; ++exp ) {
+		for ( core::Size exp=0; exp < n_of_exps; ++exp ) {
 			for ( auto it1=rdc_segments_.begin(); it1 != rdc_segments_.end(); ++it1 ) {
 				for ( auto it2=it1; (it2+1) != rdc_segments_.end(); ++it2 ) {
 					utility::vector0< ResidualDipolarCoupling::Tensor > & S1 = (*it1)->tensor();
@@ -130,7 +130,7 @@ Real ResidualDipolarCouplingRigidSegments::compute_pairwise_score() const{
 		core::Real score_temp;
 		core::Size id;
 
-		for ( Size exp=0; exp < n_of_exps; ++exp ) {
+		for ( core::Size exp=0; exp < n_of_exps; ++exp ) {
 			ndata = 0;
 			score_temp = 0;
 			for ( auto const & rdc_segment : rdc_segments_ ) {
@@ -162,7 +162,7 @@ Real ResidualDipolarCouplingRigidSegments::compute_pairwise_score() const{
 		core::Real score_temp;
 		core::Size id;
 
-		for ( Size exp=0; exp < n_of_exps; ++exp ) {
+		for ( core::Size exp=0; exp < n_of_exps; ++exp ) {
 			ndata = 0;
 			score_temp = 0;
 			for ( auto const & rdc_segment : rdc_segments_ ) {
@@ -206,8 +206,8 @@ Size ResidualDipolarCouplingRigidSegments::find_effective_plane(core::scoring::R
 }
 
 Size ResidualDipolarCouplingRigidSegments::find_segid_from_RDC_line(core::scoring::RDC const& line) const {
-	Size eff_plane(find_effective_plane(line));
-	Size segid (segment_definitions_.loop_index_of_residue(eff_plane));
+	core::Size eff_plane(find_effective_plane(line));
+	core::Size segid (segment_definitions_.loop_index_of_residue(eff_plane));
 	//    cout <<segid << std::endl;
 	return segid;
 }
@@ -245,7 +245,7 @@ void ResidualDipolarCouplingRigidSegments::sort_into_segments(RDC_lines all_rdcs
 
 	for ( auto & all_rdc : all_rdcs ) {
 		// std::cout << line_it->res1() <<std::endl;
-		Size segid( find_segid_from_RDC_line( all_rdc ) );
+		core::Size segid( find_segid_from_RDC_line( all_rdc ) );
 		if ( segid >0 ) {
 			rdc_segm_data[ segid ].push_back( all_rdc );
 		}
@@ -259,7 +259,7 @@ void ResidualDipolarCouplingRigidSegments::sort_into_segments(RDC_lines all_rdcs
 }
 
 void ResidualDipolarCouplingRigidSegments::show(std::ostream& out) const {
-	Size ct (0);
+	core::Size ct (0);
 	for ( auto const & rdc_segment : rdc_segments_ ) {
 		out <<"SEGMENT " << ++ct <<std::endl;
 		rdc_segment->show(out);

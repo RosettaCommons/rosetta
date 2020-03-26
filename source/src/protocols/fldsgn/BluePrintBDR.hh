@@ -128,7 +128,7 @@ public: // accessors
 	ScoreFunction const & scorefunction() const;
 
 	////
-	Size instruction_size() const { return manager_.size(); }
+	core::Size instruction_size() const { return manager_.size(); }
 
 	/// @brief the loop mover string to use during centroid build
 	///  (default "RemodelLoopMover")
@@ -140,7 +140,7 @@ public: // accessors
 	inline bool use_fullmer() const { return use_fullmer_; }
 
 	/// @brief the number of fragments to pick at each position
-	inline Size num_fragpick() const { return num_fragpick_; }
+	inline core::Size num_fragpick() const { return num_fragpick_; }
 
 	/// @brief use sequence biased fragments when building the loop? (default false)
 	inline bool use_sequence_bias() const { return use_sequence_bias_; }
@@ -188,7 +188,7 @@ public: // mutators
 	inline void loop_mover_str( String const & loop_mover_str ) { loop_mover_str_ = loop_mover_str; }
 
 	/// @brief the number of fragments to pick at each position
-	inline void num_fragpick( Size const num ){ num_fragpick_ = num; }
+	inline void num_fragpick( core::Size const num ){ num_fragpick_ = num; }
 
 	/// @brief define secondary structrue by blueprint
 	inline void ss_from_blueprint( bool const flag ){ ss_from_blueprint_ = flag; }
@@ -287,7 +287,7 @@ private: // data
 	bool use_fullmer_;
 
 	/// @brief the number of fragments to pick at each position
-	Size num_fragpick_;
+	core::Size num_fragpick_;
 
 	/// @brief use sequence biased fragments when building the loop? (default false)
 	bool use_sequence_bias_;
@@ -320,7 +320,7 @@ private: // data
 	String loop_mover_;
 
 	/// @brief number of allowed_closure_attempts_ of RemodelLoopMover
-	Size rmdl_attempts_;
+	core::Size rmdl_attempts_;
 
 	/// @brief Entire sequence except for rebuilding regions become poly Val
 	bool use_poly_val_;

@@ -93,7 +93,7 @@ GenericSymmetricSampler::apply(Pose & pose) {
 	// for each movable dof sample
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 
-	std::map<Size,SymDof> dofs = sym_info->get_dofs();
+	std::map<core::Size,SymDof> dofs = sym_info->get_dofs();
 	int sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, dof_id_ );
 
 	// grid search of possibly 6 DOFs

@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_loop_graph_LoopGraph_HH
 #define INCLUDED_core_scoring_loop_graph_LoopGraph_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/scoring/loop_graph/LoopGraph.fwd.hh>
 #include <core/scoring/loop_graph/Loop.hh>
 #include <core/scoring/loop_graph/LoopCycle.hh>
@@ -31,7 +31,7 @@ namespace core {
 namespace scoring {
 namespace loop_graph {
 
-class LoopGraph: public utility::pointer::ReferenceCount {
+class LoopGraph: public utility::VirtualBase {
 
 public:
 

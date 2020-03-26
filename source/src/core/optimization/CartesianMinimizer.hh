@@ -28,7 +28,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>
@@ -39,7 +39,7 @@ namespace optimization {
 
 
 /// @brief High-level atom tree minimizer class
-class CartesianMinimizer : public utility::pointer::ReferenceCount
+class CartesianMinimizer : public utility::VirtualBase
 {
 
 public:

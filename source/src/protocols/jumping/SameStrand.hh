@@ -32,7 +32,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 // #Include <utility/vector1.hh>
 
 // ObjexxFCL Headers
@@ -54,7 +54,7 @@ namespace jumping {
 /// @detail
 /// so far these fractions can be computed from a FragSet
 /// other input strategies are conceivable but not implemented, yet: eg. psipred files, a bunch of poses,
-class SameStrand : public utility::pointer::ReferenceCount {
+class SameStrand : public utility::VirtualBase {
 public:
 	/// @brief c'stor compute fractions from fragments
 	SameStrand( core::fragment::SecondaryStructureOP );
@@ -74,7 +74,7 @@ public:
 	bool eval( core::Size i, core::Size j ) const;
 
 	/// @brief ...
-	Size total_residue() const {
+	core::Size total_residue() const {
 		return total_residue_;
 	}
 

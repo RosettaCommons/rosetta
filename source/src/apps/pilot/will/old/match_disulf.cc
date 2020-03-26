@@ -13,7 +13,7 @@
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 #include <sstream>
 #include <numeric/model_quality/rms.hh>
@@ -41,7 +41,7 @@
 #include <core/import_pose/import_pose.hh>
 
 
-class DisulfEpos : public utility::pointer::ReferenceCount {
+class DisulfEpos : public utility::VirtualBase {
 public:
 	DisulfEpos() {}
 	core::Real rms( ObjexxFCL::FArray2D<core::Real> & farrayin ) {
@@ -101,7 +101,7 @@ void addcc(core::pose::Pose & pose, core::id::AtomID aid, core::id::AtomID ancho
 	pose.add_constraint(cc);
 }
 
-class DisulfEposDatabase : public utility::pointer::ReferenceCount {
+class DisulfEposDatabase : public utility::VirtualBase {
 public:
 	DisulfEposDatabase() {}
 	void read_data_file( std::string fname ) {

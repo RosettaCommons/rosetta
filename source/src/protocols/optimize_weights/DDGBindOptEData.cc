@@ -56,7 +56,7 @@ DDGBindOptEData::get_score(
 	optimization::Multivec const & component_weights,
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const num_ref_dofs,
 	int const num_total_dofs,
 	EnergyMap const & fixed_terms,
@@ -74,7 +74,7 @@ DDGBindOptEData::print_score(
 	optimization::Multivec const & component_weights,
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const num_ref_dofs,
 	int const num_total_dofs,
 	EnergyMap const & fixed_terms,
@@ -99,7 +99,7 @@ DDGBindOptEData::process_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const num_ref_dofs,
 	int const,
 	EnergyMap const & fixed_terms,
@@ -132,8 +132,8 @@ DDGBindOptEData::process_score(
 	// The SSD objects have a vector1 of Reals accessible by free_data() and fixed_data() member functions.  These store
 	// the total unweighted energies by score type for the entire pose.
 
-	for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
-		for ( Size jj = 1; jj <= wt_complexes_.size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+		for ( core::Size jj = 1; jj <= wt_complexes_.size(); ++jj ) {
 			// cap the fa_rep term at some value - this at least keeps it around for most of the mutants; this is how it would be done for wt_complexes
 			//#ifdef CAP_FA_REP
 			// if ( ( score_list[ ii ] == fa_rep ) && ( vars[ ii ] * wts_[ jj ]->free_data()[ ii ] > 10 ) ) { wt_energies[ jj ] += 10; }
@@ -141,32 +141,32 @@ DDGBindOptEData::process_score(
 			//#endif
 			wt_complexes_energies[ jj ] += vars[ ii ] * wt_complexes_[ jj ]->free_data()[ ii ];
 		}
-		for ( Size jj = 1; jj <= mutant_complexes_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= mutant_complexes_.size(); ++jj ) {
 			mutant_complexes_energies[ jj ] += vars[ ii ] * mutant_complexes_[ jj ]->free_data()[ ii ];
 		}
-		for ( Size jj = 1; jj <= wt_unbounds_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= wt_unbounds_.size(); ++jj ) {
 			wt_unbounds_energies[ jj ] += vars[ ii ] * wt_unbounds_[ jj ]->free_data()[ ii ];
 		}
-		for ( Size jj = 1; jj <= mutant_unbounds_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= mutant_unbounds_.size(); ++jj ) {
 			mutant_unbounds_energies[ jj ] += vars[ ii ] * mutant_unbounds_[ jj ]->free_data()[ ii ];
 		}
 	}
 
-	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
-		for ( Size jj = 1; jj <= wt_complexes_.size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+		for ( core::Size jj = 1; jj <= wt_complexes_.size(); ++jj ) {
 			//#ifdef CAP_FA_REP
 			// if ( ( fixed_score_list[ ii ] == fa_rep ) && ( fixed_terms[ fixed_score_list[ ii ] ] * wts_[ jj ]->fixed_data()[ ii ] > 10 ) ) { wt_energies[ jj ] += 10; }
 			// else
 			//#endif
 			wt_complexes_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * wt_complexes_[ jj ]->fixed_data()[ ii ];
 		}
-		for ( Size jj = 1; jj <= mutant_complexes_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= mutant_complexes_.size(); ++jj ) {
 			mutant_complexes_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * mutant_complexes_[ jj ]->fixed_data()[ ii ];
 		}
-		for ( Size jj = 1; jj <= wt_unbounds_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= wt_unbounds_.size(); ++jj ) {
 			wt_unbounds_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * wt_unbounds_[ jj ]->fixed_data()[ ii ];
 		}
-		for ( Size jj = 1; jj <= mutant_unbounds_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= mutant_unbounds_.size(); ++jj ) {
 			mutant_unbounds_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * mutant_unbounds_[ jj ]->fixed_data()[ ii ];
 		}
 	}
@@ -174,24 +174,24 @@ DDGBindOptEData::process_score(
 	// num_energy_dofs is the number of free, non-reference energy parameters in the run; num_ref_dofs are the reference energies
 	// but only add in the reference energy if they're being optimized in this optE run (not always the case)
 	if ( num_ref_dofs != 0 ) {
-		for ( Size ii = 1; ii <= mutations_.size(); ++ii ) {
-			for ( Size jj = 1; jj <= wt_complexes_.size(); ++jj ) {
+		for ( core::Size ii = 1; ii <= mutations_.size(); ++ii ) {
+			for ( core::Size jj = 1; jj <= wt_complexes_.size(); ++jj ) {
 				wt_complexes_energies[ jj ] += vars[ num_energy_dofs + mutations_[ ii ].second.first ];
 			}
-			for ( Size jj = 1; jj <= mutant_complexes_.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= mutant_complexes_.size(); ++jj ) {
 				mutant_complexes_energies[ jj ] += vars[ num_energy_dofs + mutations_[ ii ].second.second ];
 			}
-			for ( Size jj = 1; jj <= wt_unbounds_.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= wt_unbounds_.size(); ++jj ) {
 				wt_unbounds_energies[ jj ] += vars[ num_energy_dofs + mutations_[ ii ].second.first ];
 			}
-			for ( Size jj = 1; jj <= mutant_unbounds_.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= mutant_unbounds_.size(); ++jj ) {
 				mutant_unbounds_energies[ jj ] += vars[ num_energy_dofs + mutations_[ ii ].second.second ];
 			}
 		}
 	}
 
 	//TR << "process_score(): weighted structure energies, wt complexes: [ ";
-	//for ( Size jj = 1; jj <= wt_complexes_.size(); ++jj ) { TR << F(6,1,wt_complexes_energies[ jj ]) << ", "; }
+	//for ( core::Size jj = 1; jj <= wt_complexes_.size(); ++jj ) { TR << F(6,1,wt_complexes_energies[ jj ]) << ", "; }
 	//TR << "]" << std::endl;
 
 	// This is where we branch on how the score is calculated.  The simplest approach is to take the minimum energy
@@ -203,10 +203,10 @@ DDGBindOptEData::process_score(
 	// Do things the old-fashioned way: best energy mut - best energy wt
 
 	// the next four lines just get the index to the best energy in each vector
-	Size const best_wt_complex_index      = arg_min( wt_complexes_energies );
-	Size const best_mutant_complex_index  = arg_min( mutant_complexes_energies );
-	Size const best_wt_unbounds_index     = arg_min( wt_unbounds_energies );
-	Size const best_mutant_unbounds_index = arg_min( mutant_unbounds_energies );
+	core::Size const best_wt_complex_index      = arg_min( wt_complexes_energies );
+	core::Size const best_mutant_complex_index  = arg_min( mutant_complexes_energies );
+	core::Size const best_wt_unbounds_index     = arg_min( wt_unbounds_energies );
+	core::Size const best_mutant_unbounds_index = arg_min( mutant_unbounds_energies );
 
 	Real const best_wt_complex_energy      = wt_complexes_energies[     best_wt_complex_index ];
 	Real const best_mutant_complex_energy  = mutant_complexes_energies[ best_mutant_complex_index ];
@@ -254,7 +254,7 @@ DDGBindOptEData::process_score(
 				- wt_unbounds_[ best_wt_unbounds_index ]->free_data()[ e_dof ] );
 		}
 		if ( num_ref_dofs != 0 ) {
-			for ( Size ii = 1; ii <= mutations_.size(); ++ii ) {
+			for ( core::Size ii = 1; ii <= mutations_.size(); ++ii ) {
 				dE_dvars[ num_energy_dofs + mutations_[ ii ].second.second ] += 2 * component_weights[ ddG_bind_correlation ] * ddG_bind_diff;
 				dE_dvars[ num_energy_dofs + mutations_[ ii ].second.first  ] -= 2 * component_weights[ ddG_bind_correlation ] * ddG_bind_diff;
 			}
@@ -279,16 +279,16 @@ DDGBindOptEData::type() const {
 void
 DDGBindOptEData::range( ScoreTypes const & free_score_list, ScoreTypes const & fixed_score_list, EnergyMap & lower_bound, EnergyMap & upper_bound ) const {
 
-	for ( Size ii = 1; ii <= wt_complexes_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= wt_complexes_.size(); ++ii ) {
 		update_range( wt_complexes_[ ii ],  free_score_list, fixed_score_list, lower_bound, upper_bound );
 	}
-	for ( Size ii = 1; ii <= mutant_complexes_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= mutant_complexes_.size(); ++ii ) {
 		update_range( mutant_complexes_[ ii ], free_score_list, fixed_score_list, lower_bound, upper_bound );
 	}
-	for ( Size ii = 1; ii <= wt_unbounds_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= wt_unbounds_.size(); ++ii ) {
 		update_range( wt_unbounds_[ ii ],  free_score_list, fixed_score_list, lower_bound, upper_bound );
 	}
-	for ( Size ii = 1; ii <= mutant_unbounds_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= mutant_unbounds_.size(); ++ii ) {
 		update_range( mutant_unbounds_[ ii ], free_score_list, fixed_score_list, lower_bound, upper_bound );
 	}
 }
@@ -305,7 +305,7 @@ DDGBindOptEData::size() const {
 core::Size
 DDGBindOptEData::memory_use() const {
 
-	Size total = sizeof( DDGBindOptEData ) +
+	core::Size total = sizeof( DDGBindOptEData ) +
 		sizeof( SingleStructureData ) * wt_complexes_.size() +
 		sizeof( SingleStructureData ) * mutant_complexes_.size() +
 		sizeof( SingleStructureData ) * wt_unbounds_.size() +
@@ -338,11 +338,11 @@ DDGBindOptEData::send_to_node( int const destination_node, int const tag ) const
 	Real experimental_ddG_bind = experimental_ddG_bind_; // stupid const pointer
 	MPI_Send( & experimental_ddG_bind, 1, MPI_DOUBLE, destination_node, tag, MPI_COMM_WORLD );
 
-	Size n_mutations = mutations_.size();
+	core::Size n_mutations = mutations_.size();
 	MPI_Send( & n_mutations, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
-	for ( Size ii = 1; ii <= mutations_.size(); ++ii ) {
-		Size position = mutations_[ ii ].first;
+	for ( core::Size ii = 1; ii <= mutations_.size(); ++ii ) {
+		core::Size position = mutations_[ ii ].first;
 		MPI_Send( & position, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 		int wt_aa( mutations_[ ii ].second.first ), mut_aa( mutations_[ ii ].second.second );
 		MPI_Send( & wt_aa, 1, MPI_INT, destination_node, tag, MPI_COMM_WORLD );
@@ -350,22 +350,22 @@ DDGBindOptEData::send_to_node( int const destination_node, int const tag ) const
 	}
 
 	// 2a. n wt complexes
-	Size n_wt_complexes = wt_complexes_.size();
+	core::Size n_wt_complexes = wt_complexes_.size();
 	//TR << "sending n wt complexes to node " << destination_node << ": " << n_wt_complexes <<  std::endl;
 	MPI_Send( & n_wt_complexes, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 2b. n mut complexes
-	Size n_mut_complexes = mutant_complexes_.size();
+	core::Size n_mut_complexes = mutant_complexes_.size();
 	//TR << "sending n mut complexes to node " << destination_node << ": " << n_mut_complexes <<  std::endl;
 	MPI_Send( & n_mut_complexes, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	// 2c. n wt unbounds
-	Size n_wt_unbounds = wt_unbounds_.size();
+	core::Size n_wt_unbounds = wt_unbounds_.size();
 	//TR << "sending n wt unbounds to node " << destination_node << ": " << n_wt_unbounds <<  std::endl;
 	MPI_Send( & n_wt_unbounds, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 2d. n mut unbounds
-	Size n_mut_unbounds = mutant_unbounds_.size();
+	core::Size n_mut_unbounds = mutant_unbounds_.size();
 	//TR << "sending n mut unbounds to node " << destination_node << ": " << n_mut_unbounds <<  std::endl;
 	MPI_Send( & n_mut_unbounds, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
@@ -373,12 +373,12 @@ DDGBindOptEData::send_to_node( int const destination_node, int const tag ) const
 		return;
 
 	/// 3. n free weights
-	Size n_free = wt_complexes_[ 1 ]->free_data().size();
+	core::Size n_free = wt_complexes_[ 1 ]->free_data().size();
 	//TR << "sending n_free to node " << destination_node << ": " << n_free << std::endl;
 	MPI_Send( & n_free, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 4. n fixed weights
-	Size n_fixed = wt_complexes_[ 1 ]->fixed_data().size();
+	core::Size n_fixed = wt_complexes_[ 1 ]->fixed_data().size();
 	//TR << "sending n_fixed to node " << destination_node  << ": " << n_fixed << std::endl;
 	MPI_Send( & n_fixed, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
@@ -386,11 +386,11 @@ DDGBindOptEData::send_to_node( int const destination_node, int const tag ) const
 	/// --------- wt complexes ---------
 	Real * free_data = new Real[ n_free * n_wt_complexes ];
 	Real * fixed_data = new Real[ n_fixed * n_wt_complexes ];
-	for ( Size ii = 1; ii <= n_wt_complexes; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= n_wt_complexes; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ] = wt_complexes_[ ii ]->free_data()[ jj ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ] = wt_complexes_[ ii ]->fixed_data()[ jj ];
 		}
 	}
@@ -408,11 +408,11 @@ DDGBindOptEData::send_to_node( int const destination_node, int const tag ) const
 	/// --------- mut complexes ---------
 	free_data = new Real[ n_free * n_mut_complexes ];
 	fixed_data = new Real[ n_fixed * n_mut_complexes ];
-	for ( Size ii = 1; ii <= n_mut_complexes; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= n_mut_complexes; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ] = mutant_complexes_[ ii ]->free_data()[ jj ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ] = mutant_complexes_[ ii ]->fixed_data()[ jj ];
 		}
 	}
@@ -430,11 +430,11 @@ DDGBindOptEData::send_to_node( int const destination_node, int const tag ) const
 	/// --------- wt unbounds ---------
 	free_data = new Real[ n_free * n_wt_unbounds ];
 	fixed_data = new Real[ n_fixed * n_wt_unbounds ];
-	for ( Size ii = 1; ii <= n_wt_unbounds; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= n_wt_unbounds; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ] = wt_unbounds_[ ii ]->free_data()[ jj ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ] = wt_unbounds_[ ii ]->fixed_data()[ jj ];
 		}
 	}
@@ -452,11 +452,11 @@ DDGBindOptEData::send_to_node( int const destination_node, int const tag ) const
 	/// --------- mut unbounds ---------
 	free_data = new Real[ n_free * n_mut_unbounds ];
 	fixed_data = new Real[ n_fixed * n_mut_unbounds ];
-	for ( Size ii = 1; ii <= n_mut_unbounds; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= n_mut_unbounds; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ] = mutant_unbounds_[ ii ]->free_data()[ jj ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ] = mutant_unbounds_[ ii ]->fixed_data()[ jj ];
 		}
 	}
@@ -486,13 +486,13 @@ DDGBindOptEData::receive_from_node( int const source_node, int const tag )
 	MPI_Recv( &experimental_ddG_bind_, 1, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
 	//TR << "receive_from_node(): rec'd exp ddGbind: " << experimental_ddG_bind_ << std::endl;
 
-	Size n_mutations;
+	core::Size n_mutations;
 	MPI_Recv( & n_mutations, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 	mutations_.resize( n_mutations );
 	//TR << "receive_from_node(): rec'd n_mutations: " << n_mutations << std::endl;
 
-	for ( Size ii = 1; ii <= mutations_.size(); ++ii ) {
-		Size position( 0 );
+	for ( core::Size ii = 1; ii <= mutations_.size(); ++ii ) {
+		core::Size position( 0 );
 		MPI_Recv( & position, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 		//TR << "receive_from_node(): rec'd position: " << position << std::endl;
 		int wt_aa(0), mut_aa(0);
@@ -505,22 +505,22 @@ DDGBindOptEData::receive_from_node( int const source_node, int const tag )
 	}
 
 	/// 2a. n wt complexes
-	Size n_wt_complexes( 0 );
+	core::Size n_wt_complexes( 0 );
 	MPI_Recv( & n_wt_complexes, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 	//TR << "receive_from_node(): rec'd n_wt_complexes: " << n_wt_complexes << std::endl;
 
 	/// 2b. n mut complexes
-	Size n_mut_complexes( 0 );
+	core::Size n_mut_complexes( 0 );
 	MPI_Recv( & n_mut_complexes, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 	//TR << "receive_from_node(): rec'd n_mut_complexes: " << n_mut_complexes << std::endl;
 
 	/// 2c. n wt unbounds
-	Size n_wt_unbounds( 0 );
+	core::Size n_wt_unbounds( 0 );
 	MPI_Recv( & n_wt_unbounds, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 	//TR << "receive_from_node(): rec'd n_wt_unbounds: " << n_wt_unbounds << std::endl;
 
 	/// 2d. n mut unbounds
-	Size n_mut_unbounds( 0 );
+	core::Size n_mut_unbounds( 0 );
 	MPI_Recv( & n_mut_unbounds, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 	//TR << "receive_from_node(): rec'd n_mut_unbounds: " << n_mut_unbounds << std::endl;
 
@@ -531,12 +531,12 @@ DDGBindOptEData::receive_from_node( int const source_node, int const tag )
 	mutant_unbounds_.reserve( n_mut_unbounds );
 
 	/// 3. n free weights
-	Size n_free( 0 );
+	core::Size n_free( 0 );
 	MPI_Recv( & n_free, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 	//TR << "receive_from_node(): rec'd n_free: " << n_free << std::endl;
 
 	/// 4. n fixed weights
-	Size n_fixed( 0 );
+	core::Size n_fixed( 0 );
 	MPI_Recv( & n_fixed, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 	//TR << "receive_from_node(): rec'd n_fixed: " << n_fixed << std::endl;
 
@@ -553,11 +553,11 @@ DDGBindOptEData::receive_from_node( int const source_node, int const tag )
 
 	utility::vector1< Real > free_data_v( n_free );
 	utility::vector1< Real > fixed_data_v( n_fixed );
-	for ( Size ii = 1; ii <= n_wt_complexes; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= n_wt_complexes; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data_v[ jj ] = free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
 		wt_complexes_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
@@ -577,11 +577,11 @@ DDGBindOptEData::receive_from_node( int const source_node, int const tag )
 
 	free_data_v.resize( n_free );
 	fixed_data_v.resize( n_fixed );
-	for ( Size ii = 1; ii <= n_mut_complexes; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= n_mut_complexes; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data_v[ jj ] = free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
 		mutant_complexes_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
@@ -601,11 +601,11 @@ DDGBindOptEData::receive_from_node( int const source_node, int const tag )
 
 	free_data_v.resize( n_free );
 	fixed_data_v.resize( n_fixed );
-	for ( Size ii = 1; ii <= n_wt_unbounds; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= n_wt_unbounds; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data_v[ jj ] = free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
 		wt_unbounds_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
@@ -625,11 +625,11 @@ DDGBindOptEData::receive_from_node( int const source_node, int const tag )
 
 	free_data_v.resize( n_free );
 	fixed_data_v.resize( n_fixed );
-	for ( Size ii = 1; ii <= n_mut_unbounds; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= n_mut_unbounds; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data_v[ jj ] = free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
 		mutant_unbounds_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
@@ -651,7 +651,7 @@ DDGBindOptEData::set_experimental_ddg_bind( Real exp_ddg_bind ) {
 
 
 void
-DDGBindOptEData::add_mutation( std::pair< Size, std::pair < AA, AA > > mutation ) {
+DDGBindOptEData::add_mutation( std::pair< core::Size, std::pair < AA, AA > > mutation ) {
 	mutations_.push_back( mutation );
 }
 

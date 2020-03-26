@@ -63,7 +63,7 @@ RDC_Evaluator::apply( core::pose::Pose& pose ) const {
 	return energy_evaluator.eval_dipolar( pose, rdc_data_ ); //const
 }
 /// @brief evaluate pose
-SelectRDC_Evaluator::SelectRDC_Evaluator( std::list< Size > const & selection, std::string const & tag, std::string const & file )
+SelectRDC_Evaluator::SelectRDC_Evaluator( std::list< core::Size > const & selection, std::string const & tag, std::string const & file )
 : evaluation::SingleValuePoseEvaluator< Real >( "rdc"+tag ),
 	selection_( selection ),
 	tag_ ( tag ),
@@ -72,7 +72,7 @@ SelectRDC_Evaluator::SelectRDC_Evaluator( std::list< Size > const & selection, s
 	init_rdcs();
 }
 
-SelectRDC_Evaluator::SelectRDC_Evaluator( utility::vector1< Size> const& selection, std::string const & tag, std::string const & file )
+SelectRDC_Evaluator::SelectRDC_Evaluator( utility::vector1< core::Size> const& selection, std::string const & tag, std::string const & file )
 : evaluation::SingleValuePoseEvaluator< Real >( "rdc"+tag ),
 	tag_( tag ),
 	rdc_file_ ( file )

@@ -25,7 +25,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <string>
 
@@ -33,7 +33,7 @@ namespace core {
 namespace scoring {
 namespace interface_ {
 
-class DDPlookup : public utility::pointer::ReferenceCount {
+class DDPlookup : public utility::VirtualBase {
 public:
 	DDPlookup(std::string const & filename);
 

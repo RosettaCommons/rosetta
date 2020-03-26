@@ -108,15 +108,15 @@ HighResDocker::HighResDocker():
 
 //With chains though chains do not appear to be used anywhere
 HighResDocker::HighResDocker(
-	Size num_cycles,
-	Size repack_every_Nth,
+	core::Size num_cycles,
+	core::Size repack_every_Nth,
 	core::scoring::ScoreFunctionOP score_fxn,
 	MoveMapBuilderOP movemap_builder,
 	std::string const & resfile
 ): num_cycles_(num_cycles), repack_every_Nth_(repack_every_Nth), score_fxn_(std::move(score_fxn)), movemap_builder_(std::move(movemap_builder)), resfile_( resfile ){}
 
 HighResDocker::HighResDocker(HighResDocker const & that):
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	protocols::moves::Mover( that ),
 	num_cycles_(that.num_cycles_),
 	repack_every_Nth_(that.repack_every_Nth_),

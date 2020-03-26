@@ -28,7 +28,7 @@
 #include <basic/datacache/DataMapObj.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <basic/datacache/DataMapObj.hh>
 #include <core/sequence/SequenceProfile.hh>

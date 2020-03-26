@@ -70,7 +70,7 @@ MgScanner::apply( core::pose::Pose & pose )
 
 	if ( minimize_ ) {
 		minimize_magnesium_and_hydration_shell( pose, mg_poses_,
-			utility::vector1<Size>() /*blank means: find the Mg*/, scorefxn_,
+			utility::vector1<core::Size>() /*blank means: find the Mg*/, scorefxn_,
 			minimize_mg_coord_constraint_distance_ );
 		output_mg_to_silent_file( silent_file_minimize );
 	}
@@ -88,7 +88,7 @@ MgScanner::scan_magnesiums( core::pose::Pose & pose ) {
 
 	mg_poses_.clear();
 
-	Size const mg_res = pose.size(); // assume there's a Mg at the end of the pose.
+	core::Size const mg_res = pose.size(); // assume there's a Mg at the end of the pose.
 	runtime_assert ( pose.residue( mg_res ).name3() == " MG" );
 
 	// FIX THIS. THIS IS SILLY -- SHOULD NOT NEED MG potential AT ALL -- SETUP ATOM NUMBERS.
@@ -116,8 +116,8 @@ MgScanner::scan_magnesiums( core::pose::Pose & pose ) {
 		hydrate_, false /*keep waters*/, minimize_during_scoring_ );
 
 	Real const score_cutoff_fast( -6.0 );
-	Size count( 0 );
-	for ( Size n = 1; n <= mg_positions.size(); n++ ) {
+	core::Size count( 0 );
+	for ( core::Size n = 1; n <= mg_positions.size(); n++ ) {
 
 		Vector const & mg_position = mg_positions[ n ];
 
@@ -159,15 +159,15 @@ MgScanner::get_score( pose::Pose & pose,
 
 	Real score( 0.0 );
 
-	Size const mg_res( pose.size() ); /* assuming single Mg at end */
+	core::Size const mg_res( pose.size() ); /* assuming single Mg at end */
 	runtime_assert( pose.residue( mg_res ).name3() == " MG" );
 
 	utility::vector1< Vector > new_xyz;
-	for ( Size q = 1; q <= pose.residue_type( mg_res ).natoms(); q++ ) {
+	for ( core::Size q = 1; q <= pose.residue_type( mg_res ).natoms(); q++ ) {
 		new_xyz.push_back( pose.xyz( AtomID( q, mg_res ) ) );
 	}
 	Vector const mg_position_shift( mg_position - pose.residue( mg_res ).xyz( 1 ) );
-	for ( Size q = 1; q <= pose.residue_type( mg_res ).natoms(); q++ ) {
+	for ( core::Size q = 1; q <= pose.residue_type( mg_res ).natoms(); q++ ) {
 		pose.set_xyz( AtomID( q, mg_res ), new_xyz[ q ] + mg_position_shift);
 	}
 
@@ -199,8 +199,8 @@ MgScanner::cluster_mg() {
 	using namespace core::id;
 	// this is such a pain. Need a list to do the sorting...
 	std::list< std::pair< Real, pose::PoseOP > > mg_energy_pose_list;
-	Size const mg_res = get_unique_mg_res( *mg_poses_[ 1 ] );
-	for ( Size n = 1; n <= mg_poses_.size(); n++ ) {
+	core::Size const mg_res = get_unique_mg_res( *mg_poses_[ 1 ] );
+	for ( core::Size n = 1; n <= mg_poses_.size(); n++ ) {
 		mg_energy_pose_list.emplace_back( getPoseExtraScore( *mg_poses_[ n ], "mg_score" ), mg_poses_[ n ] );
 	}
 	mg_energy_pose_list.sort();
@@ -216,7 +216,7 @@ MgScanner::cluster_mg() {
 		Vector const   mg_position = mg_pose->xyz( AtomID( 1, mg_res ) );
 
 		bool too_close( false );
-		for ( Size n = 1; n <= mg_poses_cluster.size(); n++ ) {
+		for ( core::Size n = 1; n <= mg_poses_cluster.size(); n++ ) {
 			Vector const mg_position_cluster = mg_poses_cluster[ n ]->xyz( AtomID( 1, mg_res ) );
 			if ( ( mg_position - mg_position_cluster ).length() < CLUSTER_DISTANCE_CUTOFF ) {
 				too_close = true; break;
@@ -241,10 +241,10 @@ MgScanner::output_mg_to_silent_file( std::string const & silent_file ) {
 
 	SilentFileOptions opts;
 	SilentFileData silent_file_data( opts );
-	Size const mg_res = get_unique_mg_res( *mg_poses_[ 1 ] );
+	core::Size const mg_res = get_unique_mg_res( *mg_poses_[ 1 ] );
 	pose::PoseOP single_mg_pose = get_single_mg_pose();
 
-	for ( Size n = 1; n <= mg_poses_.size(); n++ ) {
+	for ( core::Size n = 1; n <= mg_poses_.size(); n++ ) {
 		std::string const out_file_tag = "S_" + ObjexxFCL::string_of( n );
 		Vector mg_position = mg_poses_[ n ]->xyz( AtomID( 1, mg_res ) );
 
@@ -281,12 +281,12 @@ MgScanner::output_mg_into_one_PDB( pose::Pose const & pose )
 	core::conformation::ResidueOP mg_rsd = get_mg_rsd();
 	pose::Pose mg_pose = pose;
 
-	Size count( 0 );
-	for ( Size n = 1; n <= mg_poses_.size(); n++ ) {
+	core::Size count( 0 );
+	for ( core::Size n = 1; n <= mg_poses_.size(); n++ ) {
 
 		if ( getPoseExtraScore( *mg_poses_[ n ], "mg_score" ) > score_cut_PDB_ ) continue;
 
-		Size const mg_res = get_unique_mg_res( *mg_poses_[ n ] );
+		core::Size const mg_res = get_unique_mg_res( *mg_poses_[ n ] );
 		Vector mg_position = mg_poses_[ n ]->xyz( AtomID( 1, mg_res ) );
 		if ( count > 1 ) mg_pose.append_residue_by_jump( *(mg_rsd->clone()), 1 );
 		mg_pose.set_xyz( AtomID( 1, mg_pose.size() ), mg_position );
@@ -300,8 +300,8 @@ MgScanner::output_mg_into_one_PDB( pose::Pose const & pose )
 ///////////////////////////////////////////////////////////////////////////////
 Size
 MgScanner::get_unique_mg_res( pose::Pose const & mg_pose ) {
-	Size mg_res( 0 );
-	for ( Size n = 1; n <= mg_pose.size(); n++ ) {
+	core::Size mg_res( 0 );
+	for ( core::Size n = 1; n <= mg_pose.size(); n++ ) {
 		if ( mg_pose.residue( n ).name3() == " MG" ) {
 			runtime_assert( mg_res == 0 );
 			mg_res = n;
@@ -323,7 +323,7 @@ Distance
 MgScanner::distance_to_closest_magnesium( Vector const & mg_position,
 	pose::Pose const & reference_pose ) {
 	Distance min_dist( 0.0 );
-	for ( Size m = 1; m <= reference_pose.size(); m++ ) {
+	for ( core::Size m = 1; m <= reference_pose.size(); m++ ) {
 		if ( reference_pose.residue(m).name3() != " MG"  ) continue;
 		Distance dist = ( reference_pose.residue(m).xyz(1) - mg_position ).length();
 		if ( dist < min_dist || min_dist == 0.0 ) min_dist = dist;

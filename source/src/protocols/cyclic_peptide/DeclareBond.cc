@@ -117,7 +117,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 
 		pose.clear();
 
-		for ( Size ires=1; ires<=pose_copy.size(); ++ires ) {
+		for ( core::Size ires=1; ires<=pose_copy.size(); ++ires ) {
 			if ( ires==1 ) {
 				pose.append_residue_by_jump(pose_copy.residue(ires),1);
 			} else {
@@ -146,11 +146,11 @@ void DeclareBond::apply( core::pose::Pose & pose )
 		}
 
 		// add back all the connections
-		for ( Size ires=1; ires<=pose_copy.size(); ++ires ) {
+		for ( core::Size ires=1; ires<=pose_copy.size(); ++ires ) {
 			for ( core::Size icon=1; icon<=pose_copy.residue_type(ires).n_possible_residue_connections(); ++icon ) {
 				if ( pose_copy.residue(ires).connected_residue_at_resconn(icon) != 0 ) {
-					Size anchor_rsd = pose_copy.residue(ires).connected_residue_at_resconn(icon);
-					Size anchor_conid = pose_copy.residue(ires).connect_map(icon).connid();
+					core::Size anchor_rsd = pose_copy.residue(ires).connected_residue_at_resconn(icon);
+					core::Size anchor_conid = pose_copy.residue(ires).connect_map(icon).connid();
 
 					if ( pose.residue(ires).connected_residue_at_resconn(icon) == 0 ) {
 						//if (pose.residue_type(ires).name3() != "CYS") {
@@ -219,15 +219,15 @@ DeclareBond::parse_my_tag(
 	Pose const &
 )
 {
-	res1_ = tag->getOption< Size >( "res1" );
+	res1_ = tag->getOption< core::Size >( "res1" );
 	atom1_ = tag->getOption< std::string >( "atom1" );
-	res2_ = tag->getOption< Size >( "res2" );
+	res2_ = tag->getOption< core::Size >( "res2" );
 	atom2_ = tag->getOption< std::string >( "atom2" );
 	add_termini_ = tag->getOption< bool >( "add_termini", true );
 	rebuild_fold_tree_ = tag->getOption< bool >( "rebuild_fold_tree", false );
 	run_kic_ = tag->getOption< bool >( "run_KIC", false);
-	kic_res1_ = tag->getOption< Size >( "KIC_res1", 0);
-	kic_res2_ = tag->getOption< Size >( "KIC_res2", 0);
+	kic_res1_ = tag->getOption< core::Size >( "KIC_res1", 0);
+	kic_res2_ = tag->getOption< core::Size >( "KIC_res2", 0);
 }
 
 moves::MoverOP DeclareBond::clone() const { return utility::pointer::make_shared< DeclareBond >( *this ); }

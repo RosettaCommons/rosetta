@@ -58,7 +58,7 @@ using core::pose::Pose;
 ///
 /// @remark Output files have the names and format specified in out_pair_constel()
 ///
-void pair_constel_set_idx2(Size const i, Size const j, Pose const& pose_init) {
+void pair_constel_set_idx2(core::Size const i, core::Size const j, Pose const& pose_init) {
 
 	// get info about either residue
 	char aai = core::chemical::oneletter_code_from_aa(pose_init.aa(i));
@@ -73,20 +73,20 @@ void pair_constel_set_idx2(Size const i, Size const j, Pose const& pose_init) {
 	utility::vector1<char> allowable_secondary_mutations =
 		SingResCnlCrea::list_allowable_mutations(aaj);
 
-	utility::vector1<Size> cnl;
+	utility::vector1<core::Size> cnl;
 	cnl.push_back(i);
 	cnl.push_back(j);
 
 	// loop over all allowed combinations of mutations for the residue pair
-	Size const N1MUT = allowable_primary_mutations.size();
-	Size const N2MUT = allowable_secondary_mutations.size();
-	for ( Size imut=1; imut <= N1MUT; ++imut ) {
+	core::Size const N1MUT = allowable_primary_mutations.size();
+	core::Size const N2MUT = allowable_secondary_mutations.size();
+	for ( core::Size imut=1; imut <= N1MUT; ++imut ) {
 
 		char aa_imut = allowable_primary_mutations.at(imut);
 		Pose primary_mut_pose = pose_init;
 		SingResCnlCrea::zero_occ_for_deleted_atoms( primary_mut_pose, i, aa_imut);
 
-		for ( Size jmut=1; jmut <= N2MUT; ++jmut ) {
+		for ( core::Size jmut=1; jmut <= N2MUT; ++jmut ) {
 
 			char aa_jmut = allowable_secondary_mutations.at(jmut);
 			Pose secondary_mut_pose = primary_mut_pose;
@@ -201,7 +201,7 @@ void out_pair_constel(ResMut const& mut1, ResMut const& mut2, Pose& ps) {
 ///
 /// @remark Output files have the names and format specified in out_triple_constel()
 ///
-void triple_constel_set_idx3(Size const i, Size const j, Size const k,
+void triple_constel_set_idx3(core::Size const i, core::Size const j, core::Size const k,
 	Pose const& pose_init ) {
 
 	using utility::vector1;
@@ -225,29 +225,29 @@ void triple_constel_set_idx3(Size const i, Size const j, Size const k,
 	vector1<char> allowable_tertiary_mutations =
 		SingResCnlCrea::list_allowable_mutations(aak);
 
-	vector1<Size> cnl;
+	vector1<core::Size> cnl;
 	cnl.push_back(i);
 	cnl.push_back(j);
 	cnl.push_back(k);
 
 	// loop over all allowed combinations of mutations for the residue triple
-	Size const N1MUT = allowable_primary_mutations.size();
-	Size const N2MUT = allowable_secondary_mutations.size();
-	Size const N3MUT = allowable_tertiary_mutations.size();
+	core::Size const N1MUT = allowable_primary_mutations.size();
+	core::Size const N2MUT = allowable_secondary_mutations.size();
+	core::Size const N3MUT = allowable_tertiary_mutations.size();
 
-	for ( Size imut=1; imut <= N1MUT; ++imut ) {
+	for ( core::Size imut=1; imut <= N1MUT; ++imut ) {
 
 		char aa_imut = allowable_primary_mutations.at(imut);
 		Pose primary_mut_pose = pose_init;
 		SingResCnlCrea::zero_occ_for_deleted_atoms( primary_mut_pose, i, aa_imut);
 
-		for ( Size jmut=1; jmut <= N2MUT; ++jmut ) {
+		for ( core::Size jmut=1; jmut <= N2MUT; ++jmut ) {
 
 			char aa_jmut = allowable_secondary_mutations.at(jmut);
 			Pose secondary_mut_pose = primary_mut_pose;
 			SingResCnlCrea::zero_occ_for_deleted_atoms( secondary_mut_pose, j, aa_jmut);
 
-			for ( Size kmut=1; kmut <= N3MUT; ++kmut ) {
+			for ( core::Size kmut=1; kmut <= N3MUT; ++kmut ) {
 
 				char aa_kmut = allowable_tertiary_mutations.at(kmut);
 				Pose tertiary_mut_pose = secondary_mut_pose;
@@ -372,7 +372,7 @@ void HBondCommon::init() {
 ///   those atoms in the side chain that are not part of the constellation.
 ///
 bool HBondCommon::is_rmoi_hbonded(Pose const& ps,
-	utility::vector1<Size> const& cnl, Size const im, bool const is_donor,
+	utility::vector1<core::Size> const& cnl, core::Size const im, bool const is_donor,
 	utility::vector1<std::string> const& hb_atoms) {
 
 	using core::scoring::hbonds::identify_hbonds_1way;
@@ -380,7 +380,7 @@ bool HBondCommon::is_rmoi_hbonded(Pose const& ps,
 
 	debug_assert( ps.energies().residue_neighbors_updated() );
 
-	Size const pim = cnl[im];
+	core::Size const pim = cnl[im];
 
 	// get ensemble of potential hbond partners for moiety
 	core::scoring::EnergyGraph const & energy_graph( ps.energies().energy_graph() );
@@ -397,14 +397,14 @@ bool HBondCommon::is_rmoi_hbonded(Pose const& ps,
 			nite = energy_graph.get_node(pim)->const_edge_list_end();
 			nit != nite; ++nit ) {
 
-		Size const pin( (*nit)->get_other_ind(pim) );
+		core::Size const pin( (*nit)->get_other_ind(pim) );
 
 		Residue const& rn( ps.residue( pin ) );
 		int const nnn = tenA_neighbor_graph.get_node( pin )->num_neighbors_counting_self_static();
 
-		Size const CSIZ = cnl.size();
+		core::Size const CSIZ = cnl.size();
 		bool nei_in_cnl = false;
-		for ( Size i=1; i<=CSIZ; ++i ) {
+		for ( core::Size i=1; i<=CSIZ; ++i ) {
 			if ( cnl[i] == pin ) {
 				nei_in_cnl = true;
 				break;
@@ -432,15 +432,15 @@ bool HBondCommon::is_rmoi_hbonded(Pose const& ps,
 	}
 
 	// check that at least one relevant hydrogen bond is present
-	Size N_HB_ATOMS = hb_atoms.size();
-	for ( Size i=1; i<=N_HB_ATOMS; ++i ) {
+	core::Size N_HB_ATOMS = hb_atoms.size();
+	for ( core::Size i=1; i<=N_HB_ATOMS; ++i ) {
 		if ( !rm.has( hb_atoms[i] ) ) {
 			return false;
 		}
 	}
 
-	for ( Size i=1; i<=N_HB_ATOMS; ++i ) {
-		Size aidx = rm.atom_index( hb_atoms[i] );
+	for ( core::Size i=1; i<=N_HB_ATOMS; ++i ) {
+		core::Size aidx = rm.atom_index( hb_atoms[i] );
 		core::id::AtomID aid(aidx, pim);
 		if ( hb_set.atom_hbonds(aid).size() ) {
 			return true;
@@ -491,16 +491,16 @@ bool OrientCommon::is_closer_to_tgt(numeric::xyzVector<Real> const& low,
 ///   2.  different elements in 'aa_typs' have different values.
 ///
 bool PresenceCommon::are_aa_pres(core::pose::Pose const& ps,
-	utility::vector1<Size> const& cnl,
+	utility::vector1<core::Size> const& cnl,
 	utility::vector1<core::chemical::AA> const& aa_typs,
-	utility::vector1<Size>& aa_idxs) {
+	utility::vector1<core::Size>& aa_idxs) {
 
-	const Size N = aa_typs.size();
-	for ( Size i=1; i<=N; ++i ) {
+	const core::Size N = aa_typs.size();
+	for ( core::Size i=1; i<=N; ++i ) {
 
 		core::chemical::AA tgt_aa = aa_typs[i];
 
-		Size j;
+		core::Size j;
 		for ( j=1; j<=N; ++j ) {
 			if ( ps.aa(cnl[j]) == tgt_aa ) {
 				aa_idxs[i] = j;
@@ -531,10 +531,10 @@ bool PresenceCommon::are_aa_pres(core::pose::Pose const& ps,
 ///
 bool PresenceCommon::are_atoms_pres(core::conformation::Residue const& res,
 	utility::vector1<std::string> const& anams,
-	utility::vector1<Size>& aidxs) {
+	utility::vector1<core::Size>& aidxs) {
 
-	const Size N = anams.size();
-	for ( Size i=1; i<=N; ++i ) {
+	const core::Size N = anams.size();
+	for ( core::Size i=1; i<=N; ++i ) {
 		if ( res.has(anams[i]) ) {
 			aidxs[i] = res.atom_index(anams[i]);
 		} else {

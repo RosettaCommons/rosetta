@@ -197,7 +197,7 @@ LoopCreationMover::apply(
 		pose::remove_lower_terminus_type_from_pose_residue(pose, loop_anchors_[i]+1);
 
 		loop_inserter_->loop_anchor(loop_anchors_[i]);
-		for ( Size j=1; j<=attempts_per_anchor_; ++j ) {
+		for ( core::Size j=1; j<=attempts_per_anchor_; ++j ) {
 			//already succeeded for this anchor
 			if ( loop_passed ) break;
 
@@ -489,19 +489,19 @@ LoopCreationMover::refine_loop(
 	//Setup task factory for minimization and packing
 	pack::task::TaskFactoryOP task_factory( new pack::task::TaskFactory );
 
-	set<Size> loop_residues;
-	for ( Size i=loop.start(); i<=loop.stop(); ++i ) {
+	set<core::Size> loop_residues;
+	for ( core::Size i=loop.start(); i<=loop.stop(); ++i ) {
 		loop_residues.insert(i);
 	}
 
 	//If we're including loop neighbors in packing/redesign then calculate them
-	set<Size> residues_to_pack;
+	set<core::Size> residues_to_pack;
 	if ( include_neighbors_ ) {
 		string const nb_calc("neighbor_calculator");
 		pose::metrics::CalculatorFactory::Instance().register_calculator( nb_calc,
 			utility::pointer::make_shared< protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator >( loop_residues ) );
 
-		basic::MetricValue< set< Size > > neighbor_mv;
+		basic::MetricValue< set< core::Size > > neighbor_mv;
 		pose.metric( nb_calc, "neighbors", neighbor_mv);
 		residues_to_pack = neighbor_mv.value();
 		pose::metrics::CalculatorFactory::Instance().remove_calculator(nb_calc);
@@ -512,7 +512,7 @@ LoopCreationMover::refine_loop(
 	//Restrict all non-packable residues and allow movements at all packable residues
 	pack::task::operation::PreventRepackingOP prevent_packing( new pack::task::operation::PreventRepacking );
 	pack::task::operation::RestrictResidueToRepackingOP repack_res( new pack::task::operation::RestrictResidueToRepacking() );
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( residues_to_pack.find(i)==residues_to_pack.end() ) {
 			prevent_packing->include_residue(i);
 		} else {

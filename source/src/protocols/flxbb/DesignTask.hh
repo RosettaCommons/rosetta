@@ -32,7 +32,7 @@
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 
@@ -41,7 +41,7 @@ namespace protocols {
 namespace flxbb {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-class DesignTask : public utility::pointer::ReferenceCount {
+class DesignTask : public utility::VirtualBase {
 public:
 
 	typedef std::string String;
@@ -62,7 +62,7 @@ public:
 
 	/// @brief value constructor
 	DesignTask(
-		Size const ncycle,
+		core::Size const ncycle,
 		ScoreFunctionOP const sfxn,
 		MoverOP const mover,
 		FilterStructsOP const filter_structs=nullptr,
@@ -84,7 +84,7 @@ public: // accessors
 
 
 	/// @brief the number of cycles of fixbb design and mover
-	Size ncycle() const;
+	core::Size ncycle() const;
 
 	/// @brief scorefxn for fixbb design
 	ScoreFunctionOP scorefxn() const;
@@ -106,7 +106,7 @@ public: // mutators
 
 
 	/// @brief the number of cycles of design and mover
-	void set_ncycle( Size const & ncycle );
+	void set_ncycle( core::Size const & ncycle );
 
 	/// @brief scorefxn for fixbb design
 	void set_scorefxn( ScoreFunctionOP const sfxn );
@@ -148,7 +148,7 @@ private:
 
 
 	/// @brief the number of cycles of design and mover
-	Size ncycle_;
+	core::Size ncycle_;
 
 	/// @brief scorefxn for fixbb design
 	ScoreFunctionOP scorefxn_;
@@ -181,7 +181,7 @@ public:
 public:
 	DesignTask_Normal();
 	DesignTask_Normal(
-		Size ncycle,
+		core::Size ncycle,
 		ScoreFunctionOP sfxn,
 		MoverOP mover,
 		FilterStructsOP filter_structs=nullptr );
@@ -209,7 +209,7 @@ public:
 		bool dsgn_boundary,
 		bool dsgn_surface,
 		bool use_original_seq,
-		Size ncycle,
+		core::Size ncycle,
 		ScoreFunctionOP sfxn,
 		MoverOP mover,
 		FilterStructsOP filter_structs=nullptr );

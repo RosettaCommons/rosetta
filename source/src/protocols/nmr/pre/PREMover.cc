@@ -317,15 +317,15 @@ PREMover::pre_data_to_distances(
 	using namespace core::scoring::nmr::pre;
 
 	utility::vector1< PREMultiSetOP > const & multiset_vec = pre_data.get_pre_multiset_vec();
-	Size num_sl_sites = pre_data.get_number_spinlabel_sites();
+	core::Size num_sl_sites = pre_data.get_number_spinlabel_sites();
 	Vec8 exp_params(8);
 
-	for ( Size i = 1; i <= num_sl_sites; ++i ) {
+	for ( core::Size i = 1; i <= num_sl_sites; ++i ) {
 
 		// Some basic setup
 		utility::vector1< PRESingleSetOP > & singleset_vec = multiset_vec[i]->get_pre_singleset_vec();
-		Size sl_rsd_num = multiset_vec[i]->get_spinlabel_site_rsd();
-		Size num_experiments = multiset_vec[i]->get_number_experiments();
+		core::Size sl_rsd_num = multiset_vec[i]->get_spinlabel_site_rsd();
+		core::Size num_experiments = multiset_vec[i]->get_number_experiments();
 
 		// Map of average PRE distances and weights for this spinlabel site
 		// Note that we calculate the average value on-the-fly
@@ -335,10 +335,10 @@ PREMover::pre_data_to_distances(
 		// total sum of all experiment weights; for calculating weighted average PRE distances
 		Real sum_expt_wts(0);
 
-		for ( Size j = 1; j <= num_experiments; ++j ) {
+		for ( core::Size j = 1; j <= num_experiments; ++j ) {
 
 			utility::vector1< PRESingle > const & single_pres_vec = singleset_vec[j]->get_pre_single_vec();
-			Size num_pres = singleset_vec[j]->get_number_pre();
+			core::Size num_pres = singleset_vec[j]->get_number_pre();
 			sum_expt_wts += singleset_vec[j]->get_weight();
 
 			// Experimental conditions
@@ -351,9 +351,9 @@ PREMover::pre_data_to_distances(
 			exp_params[7] = singleset_vec[j]->get_field_strength() / 42.576; // field strength in Tesla
 			exp_params[8] = multiset_vec[i]->get_temperature();
 
-			for ( Size k = 1; k <= num_pres; ++k ) {
+			for ( core::Size k = 1; k <= num_pres; ++k ) {
 				// Residue IDs for this PRE
-				std::set< Size > rsds;
+				std::set< core::Size > rsds;
 				for ( auto const & id : single_pres_vec[k].get_protein_spins() ) {
 					rsds.insert(id.rsd());
 				}
@@ -452,9 +452,9 @@ PREMover::apply(Pose & pose) {
 	pre_data_to_distances( *pre_data_, sl_all_distances );
 
 	utility::vector1< PREMultiSetOP > & multiset_vec = pre_data_->get_pre_multiset_vec();
-	Size num_sl_sites = pre_data_->get_number_spinlabel_sites();
+	core::Size num_sl_sites = pre_data_->get_number_spinlabel_sites();
 
-	for ( Size i = 1; i <= num_sl_sites; ++i ) {
+	for ( core::Size i = 1; i <= num_sl_sites; ++i ) {
 		if ( !multiset_vec[i]->get_spinlabel() ) {
 			utility_exit_with_message("ERROR while calculating PRE distances constraints with PREMover. No NMRSpinlabel exists in PREData. Set \"spinlabel_type\" option in PRE data input file.");
 		}
@@ -465,7 +465,7 @@ PREMover::apply(Pose & pose) {
 		}
 
 		// Get AtomID for this spinlabel site
-		Size sl_site = multiset_vec[i]->get_spinlabel_site_rsd();
+		core::Size sl_site = multiset_vec[i]->get_spinlabel_site_rsd();
 		AtomID sl_site_atomid;
 		if ( !core::chemical::is_canonical_L_aa_or_gly( pose.residue(sl_site).aa() ) ) {
 			utility_exit_with_message("ERROR while calculating PRE distance constraints with PREMover. Residue "
@@ -489,8 +489,8 @@ PREMover::apply(Pose & pose) {
 			if ( d.get_tol() > max_tol ) { max_tol = d.get_tol(); }
 		}
 
-		for ( Size j = 1, j_end = sl_one_distances.size(); j <= j_end; ++j ) {
-			utility::vector1< Size > nuc_spins_rsds( sl_one_distances[j].rsds().begin(), sl_one_distances[j].rsds().end() );
+		for ( core::Size j = 1, j_end = sl_one_distances.size(); j <= j_end; ++j ) {
+			utility::vector1< core::Size > nuc_spins_rsds( sl_one_distances[j].rsds().begin(), sl_one_distances[j].rsds().end() );
 			utility::vector1< AtomID > nuc_spins_atomids;
 			for ( auto const & rsd : nuc_spins_rsds ) {
 				if ( !core::chemical::is_canonical_L_aa_or_gly( pose.residue(rsd).aa() ) ) {
@@ -549,7 +549,7 @@ PREMover::apply(Pose & pose) {
 		}
 		// Fast minimization after setting the constraints
 		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 			mm->set_bb(i, true);
 			mm->set_chi(i, true);
 		}

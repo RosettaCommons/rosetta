@@ -38,7 +38,7 @@ void setup_convergence_checks_from_cmdline( moves::MonteCarlo& mc ) {
 	if ( option[ OptionKeys::mc::known_structures ].user() ) {
 		/* this block is to take care of a
 		particular problem with the archive... the file can be gone for short-whiles (during IO of Archive-process ) */
-		Size trial( 100 );
+		core::Size trial( 100 );
 		utility::io::izstream testin;
 		do {
 			utility::sys_sleep( 1 );

@@ -33,7 +33,7 @@
 // Numeric headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -70,9 +70,9 @@ public:
 	std::list< Hit >
 	build(
 		HTReal const & atom3_frame,
-		Size const scaffold_build_point_id,
-		Size const upstream_conf_id,
-		Size const external_geometry_id,
+		core::Size const scaffold_build_point_id,
+		core::Size const upstream_conf_id,
+		core::Size const external_geometry_id,
 		core::conformation::Residue const & upstream_residue
 	) const override;
 
@@ -159,7 +159,7 @@ public:
 		Hit const & hit
 	) const override;
 
-	Size
+	core::Size
 	n_possible_hits_per_at3frame() const override;
 
 public:
@@ -176,12 +176,12 @@ public:
 	/// matching algorithm that the same three orientation atoms are used for all LigandConformerBuilders.
 	void
 	initialize_from_residue(
-		Size atom1,
-		Size atom2,
-		Size atom3,
-		Size orientation_atom1,
-		Size orientation_atom2,
-		Size orientation_atom3,
+		core::Size atom1,
+		core::Size atom2,
+		core::Size atom3,
+		core::Size orientation_atom1,
+		core::Size orientation_atom2,
+		core::Size orientation_atom3,
 		core::conformation::Residue const & residue
 	);
 
@@ -221,11 +221,11 @@ private:
 
 	std::list< Hit >
 	build_conformer_group(
-		Size const confgrp_id,
+		core::Size const confgrp_id,
 		HTReal const & atom3_frame,
-		Size const scaffold_build_point_id,
-		Size const upstream_conf_id,
-		Size const external_geometry_id,
+		core::Size const scaffold_build_point_id,
+		core::Size const upstream_conf_id,
+		core::Size const external_geometry_id,
 		core::conformation::Residue const & upstream_residue
 	) const;
 
@@ -247,25 +247,25 @@ private:
 	/// The indices of the three atoms defining the orientation of the
 	/// ligand in the global coordinate frame
 	/// These indices are in the restype indexing of atoms.
-	utility::fixedsizearray1< Size, 3 >         orientation_atoms_;
-	utility::fixedsizearray1< Size, 3 >         atoms_123_;
+	utility::fixedsizearray1< core::Size, 3 >         orientation_atoms_;
+	utility::fixedsizearray1< core::Size, 3 >         atoms_123_;
 	utility::fixedsizearray1< ProbeRadius, 3 >  radii_123_;
 	utility::fixedsizearray1< bool, 3 >   ats123_reqd_in_active_site_;
 
 	utility::vector1< ProbeRadius >  atom_radii_;
 	utility::vector1< bool >         atom_required_in_active_site_;
 
-	utility::vector1< Size >  non_collision_detection_atoms_reqd_in_active_site_;
+	utility::vector1< core::Size >  non_collision_detection_atoms_reqd_in_active_site_;
 
 	/// Grouped into sets compatible ligand conformers
 	Real rmsd_unique_cutoff_;
-	utility::vector1< utility::vector1< Size > >     conformer_group_indices_;
-	utility::vector1< Size > conformer_group_for_conformer_;
+	utility::vector1< utility::vector1< core::Size > >     conformer_group_indices_;
+	utility::vector1< core::Size > conformer_group_for_conformer_;
 	utility::vector1< toolbox::match_enzdes_util::LigandConformerOP >                     lig_conformers_;
 
 	/// Detect collision between the upstream residue (sidechain?!) conformation and the atoms of the
 	/// downstream residue
-	utility::vector1< utility::vector1< std::pair< Size, Real > > > min_sep_d2_from_upstream_atoms_;
+	utility::vector1< utility::vector1< std::pair< core::Size, Real > > > min_sep_d2_from_upstream_atoms_;
 
 };
 

@@ -93,6 +93,7 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
+using core::Size;
 using namespace ObjexxFCL;
 
 CovalentConnectionReplaceInfo::CovalentConnectionReplaceInfo(
@@ -103,7 +104,7 @@ CovalentConnectionReplaceInfo::CovalentConnectionReplaceInfo(
 	core::Size Apos_in,
 	core::Size Bpos_in,
 	core::chemical::ResidueTypeSetCOP restype_set_in
-) : ReferenceCount(),
+) : VirtualBase(),
 	resA_basename_(resA_base_in), resB_basename_(std::move(resB_base_in)),
 	resA_varname_(resA_var_in), resB_varname_(std::move(resB_var_in)),
 	resA_seqpos_(Apos_in), resB_seqpos_(Bpos_in),
@@ -112,7 +113,7 @@ CovalentConnectionReplaceInfo::CovalentConnectionReplaceInfo(
 
 
 CovalentConnectionReplaceInfo::CovalentConnectionReplaceInfo( CovalentConnectionReplaceInfo const & other )
-: ReferenceCount(),
+: VirtualBase(),
 	resA_basename_(other.resA_basename_), resB_basename_(other.resB_basename_),
 	resA_varname_(other.resA_varname_), resB_varname_(other.resB_varname_),
 	resA_seqpos_(other.resA_seqpos_), resB_seqpos_(other.resB_seqpos_),
@@ -171,7 +172,7 @@ CovalentConnectionReplaceInfo::remap_resid(
 }
 
 EnzConstraintParameters::EnzConstraintParameters()
-: utility::pointer::ReferenceCount(),
+: utility::VirtualBase(),
 	resA_(/* NULL */), resB_(nullptr), mcfi_(nullptr),disAB_(nullptr),
 	angleA_(/* NULL */), angleB_(nullptr), torsionA_(nullptr),
 	torsionB_(/* NULL */), torsionAB_(nullptr),
@@ -211,7 +212,7 @@ void EnzConstraintParameters::init() {
 /// @brief WARNING: currently this probably doesn't copy the functions or active pose constraints
 EnzConstraintParameters::EnzConstraintParameters( EnzConstraintParameters const & other )
 :
-	utility::pointer::ReferenceCount(other),
+	utility::VirtualBase(other),
 	utility::pointer::enable_shared_from_this< EnzConstraintParameters >(other),
 	mcfi_(other.mcfi_),
 	disAB_(other.disAB_), angleA_(other.angleA_), angleB_(other.angleB_),
@@ -341,7 +342,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 	param_cache->active_pose_constraints_.clear();
 	if ( param_cache->covalent_connections_.size() != 0 ) remove_covalent_connections_from_pose( pose );
 
-	Size number_constraints_added(0);
+	core::Size number_constraints_added(0);
 
 	//std::cerr << "generating constraints for block " << cst_block_ << ". There are " << resA_->respos_map_size() << " positions in resA and " << resB_->respos_map_size() << " positions in resB." << std::endl;
 
@@ -351,9 +352,9 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 			//std::cerr << "making stuff between resA " << resApos_it->first << " and resB " << resBpos_it->first << std::endl;
 
-			Size ambig_resA(resApos_it->second->atom1_.size()), ambig_resB(resBpos_it->second->atom1_.size());
+			core::Size ambig_resA(resApos_it->second->atom1_.size()), ambig_resB(resBpos_it->second->atom1_.size());
 
-			Size number_ambiguous_constraints = ambig_resA * ambig_resB;
+			core::Size number_ambiguous_constraints = ambig_resA * ambig_resB;
 			if ( number_ambiguous_constraints != 1 ) {
 				tr.Info << "Constraint specified between residues " << resApos_it->first << " and " << resBpos_it->first << " is ambiguous, " << number_ambiguous_constraints << " different possibilities ( " << ambig_resA << " for " << resApos_it->first << ", " << ambig_resB << " for " << resBpos_it->first << ".)" << std::endl;
 			}
@@ -361,9 +362,9 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 			utility::vector1< ConstraintCOP > ambig_csts;
 
-			for ( Size ambig_resA_count(0); ambig_resA_count < ambig_resA; ambig_resA_count++ ) {
+			for ( core::Size ambig_resA_count(0); ambig_resA_count < ambig_resA; ambig_resA_count++ ) {
 
-				for ( Size ambig_resB_count(0); ambig_resB_count < ambig_resB; ambig_resB_count++ ) {
+				for ( core::Size ambig_resB_count(0); ambig_resB_count < ambig_resB; ambig_resB_count++ ) {
 
 
 					utility::vector1< ConstraintCOP > this_pair_csts;
@@ -468,17 +469,17 @@ EnzConstraintParameters::generate_active_pose_constraints(
 					//strategy: score each constraint in succession, remember which one is the lowest
 					tr.Info << "The covalent constraint specified for this block is ambiguous. ";
 					tr.Info << "Ambiguity will be resolved according to the best constraint in the input pose." << std::endl;
-					Size n_best_constraint = determine_best_constraint( pose, scofx, ambig_csts );
+					core::Size n_best_constraint = determine_best_constraint( pose, scofx, ambig_csts );
 
 					param_cache->active_pose_constraints_.push_back( ambig_csts[ n_best_constraint ] );
 
 					//additional feat: we have to map the information about the best constraint back to what
 					//atoms it contains, in the context of where these atoms are saved in the EnzCstTemplateRes object
-					Size best_resA_At(0);
-					Size best_resB_At(0);
+					core::Size best_resA_At(0);
+					core::Size best_resB_At(0);
 
 					if ( ambig_resA == 0 ) { utility_exit_with_message("Unable to generate active pose constraints with ambig_resA==0"); } // div by zero check
-					Size n_mod_ambigA = n_best_constraint % ambig_resA;
+					core::Size n_mod_ambigA = n_best_constraint % ambig_resA;
 					if ( n_mod_ambigA == 0 ) {
 						best_resA_At =  ambig_resA - 1;
 						best_resB_At = ( n_best_constraint / ambig_resA ) - 1;
@@ -516,10 +517,10 @@ EnzConstraintParameters::generate_active_pose_constraints(
 void
 EnzConstraintParameters::make_constraint_covalent(
 	core::pose::Pose & pose,
-	Size resA_pos,
-	Size resB_pos,
-	Size resA_At,
-	Size resB_At) const
+	core::Size resA_pos,
+	core::Size resB_pos,
+	core::Size resA_At,
+	core::Size resB_At) const
 {
 	using namespace core::chemical;
 
@@ -653,10 +654,10 @@ EnzConstraintParameters::determine_best_constraint(
 
 
 	bool first_pass = true;
-	Size best_constraint(0);
+	core::Size best_constraint(0);
 	core::Real cur_low_e(0.0);
 
-	for ( Size cur_cst(1); cur_cst <= candidate_csts.size(); cur_cst++ ) {
+	for ( core::Size cur_cst(1); cur_cst <= candidate_csts.size(); cur_cst++ ) {
 
 		core::scoring::constraints::ConstraintSetOP cur_cstset( new core::scoring::constraints::ConstraintSet() );
 		cur_cstset->add_constraint( candidate_csts[cur_cst] );

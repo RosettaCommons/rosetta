@@ -83,7 +83,7 @@ GroupElec::GroupElec( methods::EnergyMethodOptions const & options ):
 	grp_cpfxn_( options.grp_cpfxn() )
 {}
 
-GroupElec::GroupElec( GroupElec const & src ): ReferenceCount(),
+GroupElec::GroupElec( GroupElec const & src ): VirtualBase(),
 	fade_type_( src.fade_type_ ),
 	fade_param1_( src.fade_param1_ ),
 	fade_param2_( src.fade_param2_ ),

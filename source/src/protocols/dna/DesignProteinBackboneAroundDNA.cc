@@ -142,9 +142,9 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 	// make a list of moveable positions as indicated by the primary TaskFactory
 	PackerTaskOP ptask = task_factory()->create_task_and_apply_taskoperations( pose );
 
-	std::set< Size > packing_positions;
-	vector1< Size > design_positions;
-	for ( Size pos(1); pos < ptask->total_residue(); ++pos ) {
+	std::set< core::Size > packing_positions;
+	vector1< core::Size > design_positions;
+	for ( core::Size pos(1); pos < ptask->total_residue(); ++pos ) {
 		if ( ! pose.residue_type(pos).is_protein() ) continue;
 		if ( ptask->being_packed( pos ) ) packing_positions.insert( pos );
 		if ( ptask->being_designed( pos ) ) design_positions.push_back( pos );
@@ -163,7 +163,7 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 
 	// debug a.k.a. level 400 output
 	std::copy( design_positions.begin(), design_positions.end(),
-		std::ostream_iterator<Size>(TR(t_debug),",") );
+		std::ostream_iterator<core::Size>(TR(t_debug),",") );
 
 	//this 'second-shell' TaskFactory will be used for packer operations during the backbone protocols
 	TaskFactoryOP task_factory2( new TaskFactory );
@@ -219,11 +219,11 @@ void DesignProteinBackboneAroundDNA::parse_my_tag(
 )
 {
 	if ( tag->hasOption("type") ) type_ = tag->getOption< std::string >("type");
-	if ( tag->hasOption("gapspan") ) gapspan_ = tag->getOption< Size >("gapspan");
-	if ( tag->hasOption("spread") ) spread_ = tag->getOption< Size >("spread");
-	if ( tag->hasOption("cycles_outer") ) cycles_outer_ = tag->getOption<Size>("cycles_outer");
-	if ( tag->hasOption("cycles_inner") ) cycles_inner_ = tag->getOption<Size>("cycles_inner");
-	if ( tag->hasOption("repack_rate") ) repack_rate_ = tag->getOption<Size>("repack_rate");
+	if ( tag->hasOption("gapspan") ) gapspan_ = tag->getOption< core::Size >("gapspan");
+	if ( tag->hasOption("spread") ) spread_ = tag->getOption< core::Size >("spread");
+	if ( tag->hasOption("cycles_outer") ) cycles_outer_ = tag->getOption<core::Size>("cycles_outer");
+	if ( tag->hasOption("cycles_inner") ) cycles_inner_ = tag->getOption<core::Size>("cycles_inner");
+	if ( tag->hasOption("repack_rate") ) repack_rate_ = tag->getOption<core::Size>("repack_rate");
 	if ( tag->hasOption("temp_initial") ) temp_initial_ = tag->getOption<Real>("temp_initial");
 	if ( tag->hasOption("temp_final") ) temp_final_ = tag->getOption<Real>("temp_final");
 	if ( tag->hasOption("designable_second_shell") ) {
@@ -257,7 +257,7 @@ DesignProteinBackboneAroundDNA::set_loop_info( Pose const & pose, Loops const & 
 	info().clear();
 	// store information about the loops that were modeled
 	for ( auto const & loop : loops ) {
-		Size const start( loop.start() ), cut( loop.cut() ), stop( loop.stop() );
+		core::Size const start( loop.start() ), cut( loop.cut() ), stop( loop.stop() );
 		std::ostringstream loopinfo;
 		loopinfo << "REMARK loop: ";
 		if ( pose.pdb_info() ) {
@@ -317,7 +317,7 @@ DesignProteinBackboneAroundDNA::backrub(
 	backrubmover.clear_segments();
 
 	for ( auto const & loop : *loops ) {
-		Size const start( loop.start() ), stop( loop.stop() );
+		core::Size const start( loop.start() ), stop( loop.stop() );
 		backrubmover.add_segment(
 			id::AtomID( pose.residue_type( start ).atom_index(" CA "), start ),
 			id::AtomID( pose.residue_type( stop ).atom_index(" CA "), stop )
@@ -327,10 +327,10 @@ DesignProteinBackboneAroundDNA::backrub(
 	// read MonteCarlo / cycles options
 	Real const dtemp( ( temp_final_ - temp_initial_ ) / cycles_outer_ );
 
-	for ( Size i(1); i <= cycles_outer_; ++i ) {
+	for ( core::Size i(1); i <= cycles_outer_; ++i ) {
 		moves::MonteCarlo mc( pose, *br_scorefxn, temp_initial_ + dtemp*i );
 
-		for ( Size j(1); j <= cycles_inner_; ++j ) {
+		for ( core::Size j(1); j <= cycles_inner_; ++j ) {
 			backrubmover.apply( pose );
 			mc.boltzmann( pose );
 			if ( ( j % repack_rate_ ) == 0 ) {

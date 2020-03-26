@@ -207,8 +207,8 @@ ProteinRMSDFeatures::report_features(
 		return 0;
 	}
 
-	list< Size > subset_residues;
-	for ( Size i = 1; i <= relevant_residues.size(); ++i ) {
+	list< core::Size > subset_residues;
+	for ( core::Size i = 1; i <= relevant_residues.size(); ++i ) {
 		if ( relevant_residues[i] ) subset_residues.push_back(i);
 	}
 

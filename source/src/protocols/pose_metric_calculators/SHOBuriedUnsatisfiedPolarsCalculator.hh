@@ -46,7 +46,7 @@ public:
 
 	/// @brief constructs the calculator for a target residue
 	SHOBuriedUnsatisfiedPolarsCalculator(core::Real sho_cutoff,
-		utility::vector1<Size> const & tgt_res_idxs,
+		utility::vector1<core::Size> const & tgt_res_idxs,
 		core::scoring::ScoreFunctionCOP sfxn);
 
 	/// @brief clones this calculator
@@ -90,7 +90,7 @@ private:
 
 	/// @brief partitions a target residue's atoms into "buried unsatisfied"
 	///  and "other"
-	void residue_partition(core::pose::Pose const& ps, Size tgtidx);
+	void residue_partition(core::pose::Pose const& ps, core::Size tgtidx);
 
 	/// @brief prints on screen the SHO energies of all atoms in a pose
 	void print_sho_energies(core::pose::Pose const& ps);
@@ -129,7 +129,7 @@ private:
 	core::Real sho_cutoff_;
 
 	/// @brief target residue indexes
-	utility::vector1<Size> tgt_res_idxs_;
+	utility::vector1<core::Size> tgt_res_idxs_;
 
 	/// @brief target amino acid type
 	std::string tgt_amino_;
@@ -147,13 +147,13 @@ private:
 	utility::vector1<core::id::AtomID> burunsat_atoms_;
 
 	/// @brief number of buried unsatisfied atoms
-	Size num_burunsat_atoms_;
+	core::Size num_burunsat_atoms_;
 
 	/// @brief set of atoms that are NOT buried unsatisfied
 	utility::vector1<core::id::AtomID> other_atoms_;
 
 	/// @brief number of atoms that are NOT buried unsatisfied
-	Size num_other_atoms_;
+	core::Size num_other_atoms_;
 
 	/// @brief score function used to (previously) score the pose
 	core::scoring::ScoreFunctionCOP sfxn_;

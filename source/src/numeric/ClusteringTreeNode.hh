@@ -19,19 +19,19 @@
 #include <utility/vector1.hh>
 #include <numeric/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 namespace numeric {
 
 
-class ClusteringTreeNode : public utility::pointer::ReferenceCount {
+class ClusteringTreeNode : public utility::VirtualBase {
 
 private:
 	ClusteringTreeNode() {}
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ClusteringTreeNode() override;
 
 	/// @brief Creates a node with no leaves

@@ -21,7 +21,7 @@
 #include <core/chemical/ResConnID.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 
@@ -52,7 +52,7 @@ namespace conformation {
 // won't correspond.  The result is that different residue types have to be defined for
 // r vs s chiral centers.
 
-class PseudoBond : public utility::pointer::ReferenceCount
+class PseudoBond : public utility::VirtualBase
 {
 public:
 
@@ -114,7 +114,7 @@ private:
 // PBs can be added to the collection, and iterated over, but cannot
 // be modified.
 
-class PseudoBondCollection : public utility::pointer::ReferenceCount
+class PseudoBondCollection : public utility::VirtualBase
 {
 public:
 	typedef utility::vector1< PseudoBond >::const_iterator PBIter;

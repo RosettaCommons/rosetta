@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_ligand_docking_ligand_functions_hh
 
 //#include <protocols/ligand_docking/ligand_functions.fwd.hh>
-//#include <utility/pointer/ReferenceCount.hh>
+//#include <utility/VirtualBase.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>

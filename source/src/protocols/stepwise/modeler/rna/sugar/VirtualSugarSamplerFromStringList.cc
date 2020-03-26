@@ -100,7 +100,7 @@ VirtualSugarSamplerFromStringList::apply( core::pose::Pose & pose ){
 	utility::vector1< SugarModeling > sugar_modeling_list = setup_sugar_modeling_list( pose );
 	if ( empty_sugar_modeling_list( sugar_modeling_list ) ) return;
 
-	for ( Size n = 1; n <= sugar_modeling_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= sugar_modeling_list.size(); n++ ) {
 
 		TR << TR.Blue << "Sampling sugar " << n <<  " out of " << sugar_modeling_list.size() << TR.Reset << std::endl;
 		SugarModeling & curr_modeling = sugar_modeling_list[n];
@@ -149,9 +149,9 @@ VirtualSugarSamplerFromStringList::setup_sugar_modeling_list( pose::Pose const &
 		}
 
 		bool const is_prepend = ( tokenize_list[2] == "P" );
-		Size const full_sugar_res = string_to_int( tokenize_list[1] );
-		Size const full_bulge_res = ( is_prepend ) ? full_sugar_res + 1 : full_sugar_res - 1;
-		Size const full_ref_res   = ( is_prepend ) ? full_sugar_res + 2 : full_sugar_res - 2;
+		core::Size const full_sugar_res = string_to_int( tokenize_list[1] );
+		core::Size const full_bulge_res = ( is_prepend ) ? full_sugar_res + 1 : full_sugar_res - 1;
+		core::Size const full_ref_res   = ( is_prepend ) ? full_sugar_res + 2 : full_sugar_res - 2;
 
 		TR.Debug << "Case: " << sample_virtual_sugar_string;
 		TR.Debug << " full_sugar_res = " << full_sugar_res << " full_bulge_res = " << full_bulge_res << " full_ref_res = " << full_ref_res;
@@ -161,7 +161,7 @@ VirtualSugarSamplerFromStringList::setup_sugar_modeling_list( pose::Pose const &
 
 		if ( check_is_working_res( full_sugar_res, working_parameters_ ) ) {
 
-			Size const working_sugar_res = check_validity_and_get_working_res( full_sugar_res, working_parameters_ );
+			core::Size const working_sugar_res = check_validity_and_get_working_res( full_sugar_res, working_parameters_ );
 			bool const sugar_is_virtual =
 				pose.residue( working_sugar_res ).has_variant_type( core::chemical::VIRTUAL_RIBOSE );
 
@@ -170,8 +170,8 @@ VirtualSugarSamplerFromStringList::setup_sugar_modeling_list( pose::Pose const &
 
 			if ( sugar_is_virtual ) {
 
-				Size const working_bulge_res = check_validity_and_get_working_res( full_bulge_res, working_parameters_ );
-				Size const working_ref_res   = check_validity_and_get_working_res( full_ref_res, working_parameters_ );
+				core::Size const working_bulge_res = check_validity_and_get_working_res( full_bulge_res, working_parameters_ );
+				core::Size const working_ref_res   = check_validity_and_get_working_res( full_ref_res, working_parameters_ );
 
 				TR.Debug << " | working_bulge_res = " << working_bulge_res << " working_ref_res = " << working_ref_res;
 
@@ -219,7 +219,7 @@ VirtualSugarSamplerFromStringList::empty_sugar_modeling_list( utility::vector1< 
 
 /////////////////////////////////////////////////////////////////////////////////////
 bool
-VirtualSugarSamplerFromStringList::empty_pose_data_list( utility::vector1< pose::PoseOP > const & pose_list, Size const n, std::string tag ) {
+VirtualSugarSamplerFromStringList::empty_pose_data_list( utility::vector1< pose::PoseOP > const & pose_list, core::Size const n, std::string tag ) {
 
 	if ( pose_list.size() != 0 ) return false;
 

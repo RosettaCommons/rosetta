@@ -18,7 +18,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/flexpep_docking/FlexPepDockingFlags.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <map>
 #include <string>
 
@@ -30,7 +30,7 @@ namespace flexpep_docking {
 
 
 class FlexPepDockingFlags
-	: public utility::pointer::ReferenceCount
+	: public utility::VirtualBase
 {
 public:
 

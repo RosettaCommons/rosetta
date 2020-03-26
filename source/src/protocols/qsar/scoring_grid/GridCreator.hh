@@ -18,7 +18,7 @@
 #include <protocols/qsar/scoring_grid/GridBase.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -31,7 +31,7 @@ namespace scoring_grid {
 
 /// @brief Abstract class fora  mover factory.  The creator class is responsible
 /// for creating a particular mover class
-class GridCreator : public utility::pointer::ReferenceCount
+class GridCreator : public utility::VirtualBase
 {
 public:
 	GridCreator();

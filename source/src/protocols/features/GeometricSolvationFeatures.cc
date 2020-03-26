@@ -136,7 +136,7 @@ GeometricSolvationFeatures::report_features(
 	result res(basic::database::safely_read_from_database(select_statement));
 
 	while ( res.next() ) {
-		Size site_id, resNum, atmNum;
+		core::Size site_id, resNum, atmNum;
 		res >> site_id >> resNum >> atmNum;
 
 		Real const geometric_solvation_exact(

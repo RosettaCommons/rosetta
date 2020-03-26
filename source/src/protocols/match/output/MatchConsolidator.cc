@@ -65,7 +65,7 @@ MatchConsolidator::process_match(
 
 	if ( !this->passes_filters( m ) ) return;
 
-	Size group = grouper_->assign_group_for_match( m );
+	core::Size group = grouper_->assign_group_for_match( m );
 
 	if ( group > match_groups_.size() ) {
 		match_groups_.resize( group );
@@ -89,7 +89,7 @@ MatchConsolidator::process_match(
 
 	if ( !this->passes_filters( m ) ) return;
 
-	Size group = grouper_->assign_group_for_match( m );
+	core::Size group = grouper_->assign_group_for_match( m );
 
 	if ( group > match_groups_.size() ) {
 		match_groups_.resize( group );
@@ -114,9 +114,9 @@ MatchConsolidator::end_processing()
 	//std::cout << std::endl;
 	//std::cout << "match groups: " << match_groups_.size() << std::endl;
 
-	for ( Size ii = 1; ii <= match_groups_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= match_groups_.size(); ++ii ) {
 		//std::cout << ":";
-		for ( Size jj = 1; jj <= match_groups_[ ii ]->n_kept_matches(); ++jj ) {
+		for ( core::Size jj = 1; jj <= match_groups_[ ii ]->n_kept_matches(); ++jj ) {
 			if ( ! match_groups_[ ii ]->dspos1_mode() ) {
 				writer_->record_match( match_groups_[ ii ]->kept_match( jj ) , evaluator_ , match_score_writer_ );
 			} else {
@@ -132,24 +132,24 @@ void
 MatchConsolidator::end_processing_of_regular_match_groups()
 {
 
-	/*for ( Size ii = 1; ii <= match_groups_.size(); ++ii ) {
-	Size ii_n_matches = match_groups_[ ii ].size();
+	/*for ( core::Size ii = 1; ii <= match_groups_.size(); ++ii ) {
+	core::Size ii_n_matches = match_groups_[ ii ].size();
 	utility::vector1< match > ii_matches( ii_n_matches );
 	utility::vector1< Real  > ii_scores(  ii_n_matches, 0.0 );
 	std::copy( match_groups_[ ii ].begin(), match_groups_[ ii ].end(), ii_matches.begin() );
-	for ( Size jj = 1; jj <= ii_n_matches; ++jj ) {
+	for ( core::Size jj = 1; jj <= ii_n_matches; ++jj ) {
 	ii_scores[ jj ] = evaluator_->score( ii_matches[ jj ] );
 	}
-	utility::vector1< Size > top_score_indices( n_to_output_per_group_ );
+	utility::vector1< core::Size > top_score_indices( n_to_output_per_group_ );
 
 	// either sort or, if it's going to be fast, use utility::arg_least_several
 	if ( n_to_output_per_group_ > 50 ) {
-	utility::vector1< std::pair< Real, Size > > score_index_pairs( ii_n_matches );
-	for ( Size jj = 1; jj <= ii_n_matches; ++jj ) {
+	utility::vector1< std::pair< Real, core::Size > > score_index_pairs( ii_n_matches );
+	for ( core::Size jj = 1; jj <= ii_n_matches; ++jj ) {
 	score_index_pairs[ jj ] = std::make_pair( ii_scores[ jj ], jj );
 	}
-	std::sort( score_index_pairs.begin(), score_index_pairs.end(), utility::SortFirst< Real, Size >() );
-	for ( Size jj = 1; jj <= n_to_output_per_group_; ++jj ) {
+	std::sort( score_index_pairs.begin(), score_index_pairs.end(), utility::SortFirst< Real, core::Size >() );
+	for ( core::Size jj = 1; jj <= n_to_output_per_group_; ++jj ) {
 	if ( jj > ii_n_matches ) {
 	top_score_indices.resize( ii_n_matches );
 	break;
@@ -160,7 +160,7 @@ MatchConsolidator::end_processing_of_regular_match_groups()
 	utility::arg_least_several( ii_scores, top_score_indices );
 	}
 
-	for ( Size jj = 1; jj <= top_score_indices.size(); ++jj ) {
+	for ( core::Size jj = 1; jj <= top_score_indices.size(); ++jj ) {
 	writer_->record_match( ii_matches[ top_score_indices[ jj ]] );
 	}
 	}*/
@@ -170,24 +170,24 @@ void
 MatchConsolidator::end_processing_of_match_dspos1_groups()
 {
 
-	/* for ( Size ii = 1; ii <= match_dspos1_groups_.size(); ++ii ) {
-	Size ii_n_matches = match_dspos1_groups_[ ii ].size();
+	/* for ( core::Size ii = 1; ii <= match_dspos1_groups_.size(); ++ii ) {
+	core::Size ii_n_matches = match_dspos1_groups_[ ii ].size();
 	utility::vector1< match_dspos1 > ii_matches( ii_n_matches );
 	utility::vector1< Real >         ii_scores(  ii_n_matches, 0.0 );
 	std::copy( match_dspos1_groups_[ ii ].begin(), match_dspos1_groups_[ ii ].end(), ii_matches.begin() );
-	for ( Size jj = 1; jj <= ii_n_matches; ++jj ) {
+	for ( core::Size jj = 1; jj <= ii_n_matches; ++jj ) {
 	ii_scores[ jj ] = evaluator_->score( ii_matches[ jj ] );
 	}
-	utility::vector1< Size > top_score_indices( n_to_output_per_group_ );
+	utility::vector1< core::Size > top_score_indices( n_to_output_per_group_ );
 
 	// either sort or, if it's going to be fast, use utility::arg_least_several
 	if ( n_to_output_per_group_ > 50 ) {
-	utility::vector1< std::pair< Real, Size > > score_index_pairs( ii_n_matches );
-	for ( Size jj = 1; jj <= ii_n_matches; ++jj ) {
+	utility::vector1< std::pair< Real, core::Size > > score_index_pairs( ii_n_matches );
+	for ( core::Size jj = 1; jj <= ii_n_matches; ++jj ) {
 	score_index_pairs[ jj ] = std::make_pair( ii_scores[ jj ], jj );
 	}
-	std::sort( score_index_pairs.begin(), score_index_pairs.end(), utility::SortFirst< Real, Size >() );
-	for ( Size jj = 1; jj <= n_to_output_per_group_; ++jj ) {
+	std::sort( score_index_pairs.begin(), score_index_pairs.end(), utility::SortFirst< Real, core::Size >() );
+	for ( core::Size jj = 1; jj <= n_to_output_per_group_; ++jj ) {
 	if ( jj > ii_n_matches ) {
 	top_score_indices.resize( ii_n_matches );
 	break;
@@ -198,7 +198,7 @@ MatchConsolidator::end_processing_of_match_dspos1_groups()
 	utility::arg_least_several( ii_scores, top_score_indices );
 	}
 
-	for ( Size jj = 1; jj <= top_score_indices.size(); ++jj ) {
+	for ( core::Size jj = 1; jj <= top_score_indices.size(); ++jj ) {
 	writer_->record_match( ii_matches[ top_score_indices[ jj ]] );
 	}
 	}*/
@@ -206,7 +206,7 @@ MatchConsolidator::end_processing_of_match_dspos1_groups()
 
 
 void
-MatchConsolidator::set_n_to_output_per_group( Size setting )
+MatchConsolidator::set_n_to_output_per_group( core::Size setting )
 {
 	n_to_output_per_group_ = setting;
 }
@@ -226,7 +226,7 @@ MatchConsolidator::reset_grouper()
 BestMatchesCollection::~BestMatchesCollection() = default;
 
 BestMatchesCollection::BestMatchesCollection(
-	Size n_to_keep,
+	core::Size n_to_keep,
 	bool dspos1_mode
 ) :
 	// KAB - below line commented out when removing -Wunused-private-field on 2014-09-11
@@ -242,7 +242,7 @@ void
 BestMatchesCollection::add_match( match const & m, Real score )
 {
 	debug_assert( ! dspos1_mode_ );
-	Size new_pos = index_for_new_match( score );
+	core::Size new_pos = index_for_new_match( score );
 	if ( new_pos != 0 ) {
 		best_matches_[ new_pos ] = m;
 	}
@@ -252,7 +252,7 @@ void
 BestMatchesCollection::add_match_dspos1( match_dspos1 const & m, Real score )
 {
 	debug_assert( dspos1_mode_ );
-	Size new_pos = index_for_new_match( score );
+	core::Size new_pos = index_for_new_match( score );
 	if ( new_pos != 0 ) {
 		best_match_dspos1s_[ new_pos ] = m;
 	}
@@ -265,7 +265,7 @@ BestMatchesCollection::n_kept_matches() const
 }
 
 match const &
-BestMatchesCollection::kept_match( Size which_match ) const
+BestMatchesCollection::kept_match( core::Size which_match ) const
 {
 	debug_assert( ! dspos1_mode_ );
 	debug_assert( (int) which_match <= scores_heap_.size() );
@@ -273,7 +273,7 @@ BestMatchesCollection::kept_match( Size which_match ) const
 }
 
 match_dspos1 const &
-BestMatchesCollection::kept_match_dspos1( Size which_match ) const
+BestMatchesCollection::kept_match_dspos1( core::Size which_match ) const
 {
 	debug_assert( ! dspos1_mode_ );
 	debug_assert( (int) which_match <= scores_heap_.size() );

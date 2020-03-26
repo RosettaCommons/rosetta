@@ -32,7 +32,7 @@ namespace scoring {
 namespace sasa {
 
 SasaMethod::SasaMethod(Real probe_radius, SasaRadii radii_set):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	probe_radius_(probe_radius),
 	radii_set_(radii_set),
 	include_probe_radius_(true),

@@ -29,7 +29,7 @@
 #include <string>
 
 #include <utility/vector1_bool.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 #ifdef    SERIALIZATION
@@ -186,12 +186,12 @@ public:
 };
 
 
-class EnzdesLoopInfo : public utility::pointer::ReferenceCount
+class EnzdesLoopInfo : public utility::VirtualBase
 {
 
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~EnzdesLoopInfo() override;
 
 	EnzdesLoopInfo();
@@ -323,11 +323,11 @@ public:
 };
 
 /// @brief class to process an enzdes loops file
-class EnzdesLoopsFile : public utility::pointer::ReferenceCount
+class EnzdesLoopsFile : public utility::VirtualBase
 {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~EnzdesLoopsFile() override;
 
 	EnzdesLoopsFile();

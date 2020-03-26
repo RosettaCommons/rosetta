@@ -21,7 +21,7 @@ using namespace core;
 
 static basic::Tracer tr( "devel.cycles.ReindexingMover" );
 
-ReindexingMover::ReindexingMover(Size offset) { offset_ = offset; }
+ReindexingMover::ReindexingMover(core::Size offset) { offset_ = offset; }
 
 ReindexingMover::~ReindexingMover() = default;
 
@@ -35,7 +35,7 @@ void ReindexingMover::apply(pose::Pose &source_pose) {
 	// Both the index and residue variable must be signed integers, because the
 	// offset can be negative.  The remainder operator (%) behaves incorrectly
 	// when one operand is signed and the other is unsigned.  This is noteworthy
-	// because it is more common within the rosetta codebase to use the Size
+	// because it is more common within the rosetta codebase to use the core::Size
 	// type, which is unsigned.
 
 	pose::Pose target_pose;

@@ -366,10 +366,10 @@ SpliceOut::remove_hairpin( core::pose::Pose & pose ) const{
 	using core::Size;
 	using core::Real;
 
-	Size const start = find_nearest_disulfide( pose, pose.conformation().chain_end( 1 ) ) + delete_hairpin_n();
-	Size const end   = pose.conformation().chain_end( 1 ) - delete_hairpin_c();
+	core::Size const start = find_nearest_disulfide( pose, pose.conformation().chain_end( 1 ) ) + delete_hairpin_n();
+	core::Size const end   = pose.conformation().chain_end( 1 ) - delete_hairpin_c();
 	runtime_assert( start < end );
-	for ( Size i = start + 1; i <= end - 1; ++i ) {
+	for ( core::Size i = start + 1; i <= end - 1; ++i ) {
 		pose.delete_polymer_residue( start + 1 );
 	}
 }

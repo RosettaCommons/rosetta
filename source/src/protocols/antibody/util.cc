@@ -259,7 +259,7 @@ bool cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_in
 	bool closed_cutpoints = true;
 
 	for ( auto const & elem : *( antibody_info->get_AllCDRs_in_loopsop() ) ) {
-		Size cutpoint   = elem.cut();
+		core::Size cutpoint   = elem.cut();
 		//Real separation = 10.00; // an unlikely high number
 		Real separation = cutpoint_separation( pose, cutpoint );
 
@@ -271,10 +271,10 @@ bool cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_in
 	return( closed_cutpoints );
 } // cutpoints_separation
 
-Real cutpoint_separation(pose::Pose & pose_in, Size cutpoint) {
+Real cutpoint_separation(pose::Pose & pose_in, core::Size cutpoint) {
 
-	Size const N ( 1 ); // N atom
-	Size const C ( 3 ); // C atom
+	core::Size const N ( 1 ); // N atom
+	core::Size const C ( 3 ); // C atom
 
 	// Coordinates of the C atom of cutpoint res and N atom of res cutpoint+1
 	numeric::xyzVector_float peptide_C(pose_in.residue( cutpoint ).xyz( C )),
@@ -293,13 +293,13 @@ Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pos
 
 	using namespace scoring;
 
-	Size loop_start = (*current_loop)[1].start();
-	Size loop_end = (*current_loop)[1].stop();
+	core::Size loop_start = (*current_loop)[1].start();
+	core::Size loop_end = (*current_loop)[1].stop();
 
 	using ObjexxFCL::FArray1D_bool;
 	FArray1D_bool superpos_partner ( pose_in.size(), false );
 
-	for ( Size i = loop_start; i <= loop_end; ++i ) superpos_partner(i) = true;
+	for ( core::Size i = loop_start; i <= loop_end; ++i ) superpos_partner(i) = true;
 
 	using namespace core::scoring;
 	Real rmsG = rmsd_no_super_subset( native_pose, pose_in, superpos_partner, is_protein_backbone_including_O );
@@ -324,20 +324,20 @@ void align_to_native( core::pose::Pose & pose,
 	core::pose::initialize_atomid_map( atom_map, pose, core::id::AtomID::BOGUS_ATOM_ID() );
 
 	// loop over the L and H chains
-	for ( Size i_chain=1; i_chain<=ab_info->get_AntibodyFrameworkInfo().size(); i_chain++ ) {
+	for ( core::Size i_chain=1; i_chain<=ab_info->get_AntibodyFrameworkInfo().size(); i_chain++ ) {
 		vector1<FrameWork>        chain_frmwk =        ab_info->get_AntibodyFrameworkInfo()[i_chain];
 		vector1<FrameWork> native_chain_frmwk = native_ab_info->get_AntibodyFrameworkInfo()[i_chain];
 
 		if (  (chain_frmwk[1].chain_name == reqeust_chain ) || (reqeust_chain =="LH")  ) {
 			// loop over the segments on the framework of one chain
-			for ( Size j_seg=1; j_seg<=chain_frmwk.size(); j_seg++ ) { // for loop of the framework segments
-				Size count=0;
+			for ( core::Size j_seg=1; j_seg<=chain_frmwk.size(); j_seg++ ) { // for loop of the framework segments
+				core::Size count=0;
 
 				// loop over the residues on one segment on one framework of one chain
-				for ( Size k_res=chain_frmwk[j_seg].start; k_res<= chain_frmwk[j_seg].stop; k_res++ ) {
+				for ( core::Size k_res=chain_frmwk[j_seg].start; k_res<= chain_frmwk[j_seg].stop; k_res++ ) {
 					count++;
-					Size res_counter = k_res;
-					Size nat_counter = native_chain_frmwk[j_seg].start+count-1;
+					core::Size res_counter = k_res;
+					core::Size nat_counter = native_chain_frmwk[j_seg].start+count-1;
 					//TR << "Matching Residue " << res_counter << " (" << pose.residue(res_counter).name() << ")" << " with  " << nat_counter << " (" << native_pose.residue(nat_counter).name() << ")" << std::endl;
 
 					// loop over the backbone atoms including Oxygen
@@ -456,9 +456,9 @@ void simple_one_loop_fold_tree(
 	//setup fold tree for this loop
 	FoldTree f;
 	f.clear();
-	Size nres = pose_in.size();
-	Size jumppoint1 = loop.start() - 1;
-	Size jumppoint2 = loop.stop() + 1;
+	core::Size nres = pose_in.size();
+	core::Size jumppoint1 = loop.start() - 1;
+	core::Size jumppoint2 = loop.stop() + 1;
 
 	if ( jumppoint1 < 1 )   jumppoint1 = 1;
 	if ( jumppoint2 > nres ) jumppoint2 = nres;
@@ -479,9 +479,9 @@ void simple_one_loop_fold_tree(
 
 void simple_fold_tree(
 	pose::Pose & pose_in,
-	Size jumppoint1,
-	Size cutpoint,
-	Size jumppoint2 ) {
+	core::Size jumppoint1,
+	core::Size cutpoint,
+	core::Size jumppoint2 ) {
 	using namespace kinematics;
 
 	TR.Debug <<  "Setting up simple fold tree" << std::endl;
@@ -489,7 +489,7 @@ void simple_fold_tree(
 	//setup fold tree for this loop
 	FoldTree f;
 	f.clear();
-	Size nres = pose_in.size();
+	core::Size nres = pose_in.size();
 
 	if ( jumppoint1 < 1 )   jumppoint1 = 1;
 	if ( jumppoint2 > nres ) jumppoint2 = nres;
@@ -586,8 +586,8 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 
 	// chop out the loop:
 	//JQX: 2 residues before h3, one residue after h3. Matched Rosetta2!
-	Size start(input_loop.start()-2);
-	Size stop(input_loop.stop()+1);
+	core::Size start(input_loop.start()-2);
+	core::Size stop(input_loop.stop()+1);
 
 
 	//bool is_kinked( false );  // unused ~Labonte
@@ -598,12 +598,12 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 	std::vector <std::string> aa_name; // loop residue 3 letter codes
 	//JQX: pay attention here!! It is vector, not vector1! too painful to compare to R2 code
 	//     just make vector, so it can match R2 code easily
-	for ( Size ii=start; ii<=stop; ii++ ) {
+	for ( core::Size ii=start; ii<=stop; ii++ ) {
 		aa_name.push_back(pose_in.residue(ii).name3() );
 		//            TR<<pose_in.residue(ii).name1()<<std::endl;
 	}
 
-	Size const CA(2);   // CA atom position in full_coord array
+	core::Size const CA(2);   // CA atom position in full_coord array
 	// base dihedral angle to determine kinked/extended conformation
 
 	Real base_dihedral( numeric::dihedral_degrees(
@@ -671,7 +671,7 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 		if ( !is_H3 ) {
 			// Rule 1b extension for special kinked form
 			bool is_basic(false); // Special basic residue exception flag
-			for ( Size ii = 2; ii <= Size(aa_name.size() - 5); ii++ ) {      //aa_name.size() - 5 = n-3
+			for ( core::Size ii = 2; ii <= core::Size(aa_name.size() - 5); ii++ ) {      //aa_name.size() - 5 = n-3
 				if ( aa_name[ii] == "ARG" || aa_name[ii] == "LYS" ) {      //aa_name[2] =  0 position
 					is_basic = true;
 					break;
@@ -679,7 +679,7 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 			}
 
 			if ( !is_basic ) {
-				Size rosetta_number_of_L49 = pose_in.pdb_info()->pdb2pose(light_chain, 49 );
+				core::Size rosetta_number_of_L49 = pose_in.pdb_info()->pdb2pose(light_chain, 49 );
 				std::string let3_code_L49 = pose_in.residue( rosetta_number_of_L49 ).name3();
 				if ( let3_code_L49 == "ARG" || let3_code_L49 == "LYS" ) {
 					is_basic = true;
@@ -709,7 +709,7 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 		}
 		if ( !is_H3 ) {
 			bool is_basic(false); // Special basic residue exception flag
-			Size rosetta_number_of_L46 = pose_in.pdb_info()->pdb2pose( light_chain, 46 );
+			core::Size rosetta_number_of_L46 = pose_in.pdb_info()->pdb2pose( light_chain, 46 );
 			std::string let3_code_L46 = pose_in.residue( rosetta_number_of_L46 ).name3();
 			if ( let3_code_L46 == "ARG" || let3_code_L46 == "LYS" ) is_basic = true;
 			if ( is_basic && (base_dihedral > extended_lower_bound ) &&
@@ -763,8 +763,8 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info) {
 
 	// chop out the loop:
 	//JQX: 2 residues before h3, one residue after h3. Matched Rosetta2!
-	Size start(  ab_info->get_CDR_loop(h3, pose_in, Aroop).start()  -  2 );
-	Size stop(  ab_info->get_CDR_loop(h3, pose_in, Aroop).stop()  +  1  );
+	core::Size start(  ab_info->get_CDR_loop(h3, pose_in, Aroop).start()  -  2 );
+	core::Size stop(  ab_info->get_CDR_loop(h3, pose_in, Aroop).stop()  +  1  );
 
 
 	bool matched_kinked( false );
@@ -775,12 +775,12 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info) {
 	std::vector <std::string> aa_name; // loop residue 3 letter codes
 	//JQX: pay attention here!! It is vector, not vector1! too painful to compare to R2 code
 	//     just make vector, so it can match R2 code easily
-	for ( Size ii=start; ii<=stop; ii++ ) {
+	for ( core::Size ii=start; ii<=stop; ii++ ) {
 		aa_name.push_back(pose_in.residue(ii).name3() );
 		//            TR<<pose_in.residue(ii).name1()<<std::endl;
 	}
 
-	Size const CA(2);   // CA atom position in full_coord array
+	core::Size const CA(2);   // CA atom position in full_coord array
 	// base dihedral angle to determine kinked/extended conformation
 
 	Real base_dihedral( numeric::dihedral_degrees(
@@ -841,7 +841,7 @@ is_H3_rama_kinked(std::string const & rama){
 void
 kink_constrain_antibody_H3( core::pose::Pose & pose, AntibodyInfoOP const antibody_info ) {
 	// Get relevant residue numbers
-	Size kink_begin = antibody_info->kink_begin( pose );
+	core::Size kink_begin = antibody_info->kink_begin( pose );
 	kink_constrain_antibody_H3( pose, kink_begin );
 }
 
@@ -853,7 +853,7 @@ kink_constrain_antibody_H3( core::pose::Pose & pose, core::Size kink_begin ) {
 	TR << " Automatically setting kink constraint! " << std::endl;
 
 	// Constraints operate on AtomIDs:
-	Size CA( 2 ); // CA is atom 2; AtomIDs can only use numbers
+	core::Size CA( 2 ); // CA is atom 2; AtomIDs can only use numbers
 	id::AtomID const atom_100x( CA, kink_begin );
 	id::AtomID const atom_101( CA, kink_begin + 1 );
 	id::AtomID const atom_102( CA, kink_begin + 2 );
@@ -920,11 +920,11 @@ get_matching_landmark(
 vector1< Real >
 get_conserved_residue_list( char chain ) {
 
-	vector1< Size > conserved_frh_residues{10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,36,37,38,39,40,41,42,43,44,45,46,47,48,49,66,69,70,71,72,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,103,104,105};
+	vector1< core::Size > conserved_frh_residues{10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,36,37,38,39,40,41,42,43,44,45,46,47,48,49,66,69,70,71,72,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,103,104,105};
 
-	vector1< Size > conserved_frl_residues{10,11,12,13,14,15,16,17,18,19,20,21,22,23,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,57,58,59,60,61,62,63,64,65,66,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,98,99,100};
+	vector1< core::Size > conserved_frl_residues{10,11,12,13,14,15,16,17,18,19,20,21,22,23,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,57,58,59,60,61,62,63,64,65,66,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,98,99,100};
 
-	vector1< Size > conserved_residues;
+	vector1< core::Size > conserved_residues;
 	if ( chain == 'H' ) {
 		conserved_residues = conserved_frh_residues;
 	}

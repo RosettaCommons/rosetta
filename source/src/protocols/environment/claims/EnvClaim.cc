@@ -145,7 +145,7 @@ bool EnvClaim::is_claim( std::string const& name ) {
 }
 
 EnvClaim::EnvClaim( ClientMoverOP owner ):
-	ReferenceCount(),
+	VirtualBase(),
 	claim_source_(std::move( owner ))
 {}
 
@@ -192,8 +192,8 @@ void EnvClaim::annotate( core::pose::Pose const& pose, core::environment::Sequen
 
 		utility::vector1< bool > subset = selector->apply( pose );
 
-		utility::vector1< Size > trues;
-		for ( Size i = 1; i <= subset.size(); ++i ) {
+		utility::vector1< core::Size > trues;
+		for ( core::Size i = 1; i <= subset.size(); ++i ) {
 			if ( subset[i] ) {
 				trues.push_back( i );
 			}

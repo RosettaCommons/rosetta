@@ -16,7 +16,7 @@
 
 #include <protocols/genetic_algorithm/Entity.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>
@@ -28,7 +28,7 @@ namespace protocols {
 namespace genetic_algorithm {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class EntityRandomizer : public utility::pointer::ReferenceCount {
+class EntityRandomizer : public utility::VirtualBase {
 
 public:
 	typedef utility::pointer::shared_ptr< EntityRandomizer > OP;

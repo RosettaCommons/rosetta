@@ -38,7 +38,7 @@
 #include <basic/Tracer.hh>
 
 #include <utility/tag/Tag.hh>
-// #include <utility/pointer/ReferenceCount.hh>
+// #include <utility/VirtualBase.hh>
 
 //C++ headers
 #include <iostream>

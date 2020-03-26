@@ -33,7 +33,7 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #ifdef BOINC
 #include <utility/fix_boinc_read.hh>
 
@@ -99,10 +99,10 @@ Raising Exceptions would be better. But I think we are still free of exceptions.
 ///                       i.e., the M_fragdata<= M_pose would tell us that the fragment is applicable to the Pose.
 
 
-class Frame : public utility::pointer::ReferenceCount {
+class Frame : public utility::VirtualBase {
 	typedef std::map<std::string, BaseCacheUnitOP > CacheMap;
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Frame() override;
 
 	Frame();

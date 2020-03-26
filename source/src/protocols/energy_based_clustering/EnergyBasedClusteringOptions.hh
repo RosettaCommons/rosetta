@@ -19,7 +19,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // Core headers
@@ -37,7 +37,7 @@ enum EBC_ClusterType {
 
 /// @brief A container for the options used by the EnergyBasedClusteringProtocol.
 /// @details All data are public in this class.  It's just a dumb bag for holding data.
-class EnergyBasedClusteringOptions : public utility::pointer::ReferenceCount {
+class EnergyBasedClusteringOptions : public utility::VirtualBase {
 
 public:
 

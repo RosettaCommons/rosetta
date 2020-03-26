@@ -89,7 +89,7 @@ public:
 };
 
 
-class StepWiseRNA_CombineLongLoopFilterer: public utility::pointer::ReferenceCount {
+class StepWiseRNA_CombineLongLoopFilterer: public utility::VirtualBase {
 public:
 
 	//constructor!
@@ -194,7 +194,7 @@ private:
 
 private:
 
-	//  utility::vector1< utility::vector1< Size > > input_res_vectors_;
+	//  utility::vector1< utility::vector1< core::Size > > input_res_vectors_;
 
 	Filterer_Count filterer_count_;
 
@@ -239,7 +239,7 @@ private:
 	core::Real moving_res_contact_dist_cutoff_;
 	utility::vector1< Combine_Tags_Info > filterered_combine_tag_info_list_;
 
-	Size max_decoys_;
+	core::Size max_decoys_;
 	bool combine_helical_silent_file_;
 
 	std::map< std::string, std::string > tag_to_source_map_ONE_;

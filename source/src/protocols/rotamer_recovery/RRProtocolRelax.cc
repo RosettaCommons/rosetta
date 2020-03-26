@@ -121,7 +121,7 @@ RRProtocolRelax::run(
 		relax->cartesian(true);
 	}
 
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( !packer_task.pack_residue(ii) ) continue;
 
 		// set movemap to allow sidechain DOFs only for residue ii
@@ -129,7 +129,7 @@ RRProtocolRelax::run(
 		movemap->clear();
 		movemap->set_chi( ii, true );
 		if ( nonideal_ ) {
-			for ( Size jj = 1; jj <= res.natoms(); ++jj ) {
+			for ( core::Size jj = 1; jj <= res.natoms(); ++jj ) {
 				if ( res.atom_is_backbone(jj) ) continue;
 				if ( res.is_virtual(jj) ) continue;
 				movemap->set( DOF_ID( AtomID( jj, ii ), core::id::THETA ), true );

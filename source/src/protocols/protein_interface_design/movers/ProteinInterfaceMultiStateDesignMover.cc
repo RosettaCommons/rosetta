@@ -183,9 +183,9 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
 	PackerTaskOP ala_task = ptask->clone();
 	vector1< bool > allow_ala( num_canonical_aas, false );
 	allow_ala[ aa_ala ] = true;
-	vector< Size > designable; //which residues are designable? used below
+	vector< core::Size > designable; //which residues are designable? used below
 	designable.clear();
-	for ( Size i( 1 ), end( ala_task->total_residue() ); i <= end; ++i ) {
+	for ( core::Size i( 1 ), end( ala_task->total_residue() ); i <= end; ++i ) {
 		if ( !pose.residue_type( i ).is_protein() ) continue;
 		ResidueLevelTask & rtask( ala_task->nonconst_residue_task(i) );
 		if ( !rtask.being_designed() ) { // undesignable
@@ -202,11 +202,11 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
 	bump_scorefxn->reset();
 	bump_scorefxn->set_weight( fa_rep, 1.0 );
 
-	for ( Size const pos : designable ) {
+	for ( core::Size const pos : designable ) {
 		EnergyPerResidueFilter const eprf( pos, bump_scorefxn, fa_rep, 0 );
 		core::Real const ref_bump_energy( eprf.compute( *ala_pose ) );
 		PackerTaskOP template_substitution_task( ptask->clone() ); //prevent repacking at all but positions but pos
-		for ( Size i( 1 ); i<=pose.size(); ++i ) {
+		for ( core::Size i( 1 ); i<=pose.size(); ++i ) {
 			if ( i!=pos ) {
 				template_substitution_task->nonconst_residue_task(i).prevent_repacking();
 			}
@@ -293,8 +293,8 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 
 	// figure out design positions/choices from PackerTask
 	restrict_sequence_profile( pose, ptask );
-	vector1< Size > design_positions;
-	for ( Size i(1), end( ptask->total_residue() ); i <= end; ++i ) {
+	vector1< core::Size > design_positions;
+	for ( core::Size i(1), end( ptask->total_residue() ); i <= end; ++i ) {
 		if ( !pose.residue_type(i).is_protein() ) continue;
 		ResidueLevelTask const & rtask( ptask->residue_task(i) );
 		if ( rtask.being_designed() ) {
@@ -354,7 +354,7 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 		for ( SingleStateCOPs::const_iterator s( states.begin() ), end( states.end() );
 				s != end; ++s ) {
 			EntityElements traits;
-			for ( vector1<Size>::const_iterator i( design_positions.begin() ),
+			for ( vector1<core::Size>::const_iterator i( design_positions.begin() ),
 					end( design_positions.end() ); i != end; ++i ) {
 				PosType pt( *i, (*s)->pose().residue_type(*i).aa() );
 				traits.push_back( utility::pointer::make_shared< PosType >( pt ));
@@ -447,7 +447,7 @@ ProteinInterfaceMultiStateDesignMover::output_results( Pose & pose )
 
 	TR(t_info) << "Evaluated " << sortable.size() << " sequences.\nBest sequences:\n";
 	// list and output top solutions
-	Size counter(0);
+	core::Size counter(0);
 
 	for ( vector1< Entity::OP >::const_iterator it( sortable.begin() ),
 			end( sortable.end() ); it != end; ++it ) {
@@ -497,11 +497,11 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 )
 {
 	// flags/parameters (override options settings)
-	if ( tag->hasOption("generations") ) generations_ = tag->getOption<Size>("generations");
-	if ( tag->hasOption("pop_size") ) pop_size_ = tag->getOption<Size>("pop_size");
-	if ( tag->hasOption("num_packs") ) num_packs_ = tag->getOption<Size>("num_packs");
-	if ( tag->hasOption("pop_from_ss") ) pop_from_ss_ = tag->getOption<Size>("pop_from_ss");
-	if ( tag->hasOption("numresults") ) numresults_ = tag->getOption<Size>("numresults");
+	if ( tag->hasOption("generations") ) generations_ = tag->getOption<core::Size>("generations");
+	if ( tag->hasOption("pop_size") ) pop_size_ = tag->getOption<core::Size>("pop_size");
+	if ( tag->hasOption("num_packs") ) num_packs_ = tag->getOption<core::Size>("num_packs");
+	if ( tag->hasOption("pop_from_ss") ) pop_from_ss_ = tag->getOption<core::Size>("pop_from_ss");
+	if ( tag->hasOption("numresults") ) numresults_ = tag->getOption<core::Size>("numresults");
 	if ( tag->hasOption("fraction_by_recombination") ) {
 		fraction_by_recombination_ = tag->getOption<Real>("fraction_by_recombination");
 	}
@@ -513,7 +513,7 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 		checkpoint_prefix_ = tag->getOption<std::string>("checkpoint_prefix");
 	}
 	if ( tag->hasOption("checkpoint_interval") ) {
-		checkpoint_interval_ = tag->getOption<Size>("checkpoint_interval");
+		checkpoint_interval_ = tag->getOption<core::Size>("checkpoint_interval");
 	}
 	if ( tag->hasOption("checkpoint_gz") ) checkpoint_gz_ = tag->getOption<bool>("checkpoint_gz");
 	if ( tag->hasOption("checkpoint_rename") ) {

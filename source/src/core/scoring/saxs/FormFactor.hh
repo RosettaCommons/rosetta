@@ -19,7 +19,7 @@
 // utility headers
 #include <core/types.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <numeric/interpolation/spline/Interpolator.hh>
 
@@ -33,9 +33,9 @@ namespace scoring {
 namespace saxs {
 
 /// @brief
-class FormFactor: public utility::pointer::ReferenceCount {
+class FormFactor: public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~FormFactor() override;
 
 	/// @ A unique identifier of a form factor object, set by the manager

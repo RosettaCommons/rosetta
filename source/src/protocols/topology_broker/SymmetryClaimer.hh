@@ -81,7 +81,7 @@ protected:
 
 private:
 	core::conformation::symmetry::SymmDataOP symm_data_;
-	Size asymmetric_res_;
+	core::Size asymmetric_res_;
 
 
 };

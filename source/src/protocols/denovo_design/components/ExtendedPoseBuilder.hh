@@ -27,7 +27,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <set>
@@ -37,7 +37,7 @@ namespace denovo_design {
 namespace components {
 
 /// @brief Builds a pose from StructureData
-class ExtendedPoseBuilder : public utility::pointer::ReferenceCount {
+class ExtendedPoseBuilder : public utility::VirtualBase {
 public:
 	typedef utility::vector1< core::Size > Resids;
 

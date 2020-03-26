@@ -118,7 +118,7 @@ CyclizationMover::apply( core::pose::Pose & pose )
 	if ( minimize_ && minimization_rebuild_rounds_ > 0 ) {
 		setup_scorefunction();
 		setup_minimizer( pose );
-		for ( Size i( 1 ); i <= minimization_rebuild_rounds_; ++i ) {
+		for ( core::Size i( 1 ); i <= minimization_rebuild_rounds_; ++i ) {
 			minimize_rebuild( pose );
 		}
 	}
@@ -291,20 +291,20 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 
 	TR << "residue_pair_energy: processing residues " << rsd1.seqpos() << "." << rsd1_type.name() << "-" << rsd2.seqpos() << "." << rsd2_type.name() << std::endl;
 
-	utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
+	utility::vector1< core::Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
 
-	for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
 
-		Size const resconn_id1( r1_resconn_ids[ii] );
-		Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
+		core::Size const resconn_id1( r1_resconn_ids[ii] );
+		core::Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
 
-		Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
-		Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
+		core::Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
+		core::Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
 
 		TR << "Found residue connection id " << resconn_id1 << "-" << resconn_id2 << ": " << rsd1.atom_name( resconn_atomno1 ) << "-" << rsd2.atom_name( resconn_atomno2 ) << std::endl;
 
-		Size const resconn_mmat1 = rsd1_type.mm_atom_type_index( resconn_atomno1 );
-		Size const resconn_mmat2 = rsd2_type.mm_atom_type_index( resconn_atomno2 );
+		core::Size const resconn_mmat1 = rsd1_type.mm_atom_type_index( resconn_atomno1 );
+		core::Size const resconn_mmat2 = rsd2_type.mm_atom_type_index( resconn_atomno2 );
 
 		/// Iterate across all atom-quadrouples that define dihedral angles spanning the interface.
 		/// 1. iterate over all pairs of pairs within 1 bond of either residue connection atom.
@@ -313,8 +313,8 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 
 
 		{ // Scope Section 1.
-			Size const mmat2 = resconn_mmat1;
-			Size const mmat3 = resconn_mmat2;
+			core::Size const mmat2 = resconn_mmat1;
+			core::Size const mmat3 = resconn_mmat2;
 
 			utility::vector1< chemical::two_atom_set > const & rsd1_atoms_wi1_bond_of_ii(
 				rsd1_type.atoms_within_one_bond_of_a_residue_connection( resconn_id1 ));
@@ -322,15 +322,15 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 			utility::vector1< chemical::two_atom_set > const & rsd2_atoms_wi1_bond_of_ii(
 				rsd2_type.atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
 
-			for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
 				debug_assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
-				Size const jj_term_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
-				Size const mmat1 = rsd1_type.mm_atom_type_index( jj_term_atomno );
+				core::Size const jj_term_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
+				core::Size const mmat1 = rsd1_type.mm_atom_type_index( jj_term_atomno );
 
-				for ( Size kk = 1; kk <= rsd2_atoms_wi1_bond_of_ii.size(); ++kk ) {
+				for ( core::Size kk = 1; kk <= rsd2_atoms_wi1_bond_of_ii.size(); ++kk ) {
 					debug_assert( rsd2_atoms_wi1_bond_of_ii[ kk ].key1() == resconn_atomno2 );
-					Size const kk_term_atomno = rsd2_atoms_wi1_bond_of_ii[ kk ].key2();
-					Size const mmat4 = rsd2_type.mm_atom_type_index( kk_term_atomno );
+					core::Size const kk_term_atomno = rsd2_atoms_wi1_bond_of_ii[ kk ].key2();
+					core::Size const mmat4 = rsd2_type.mm_atom_type_index( kk_term_atomno );
 
 					//Real const angle = numeric::dihedral_radians(
 					// rsd1.xyz( jj_term_atomno ),
@@ -365,20 +365,20 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 		} // end Scope section 1.
 
 		{ // Scope section 2.
-			Size const mmat3 = resconn_mmat1;
-			Size const mmat4 = resconn_mmat2;
+			core::Size const mmat3 = resconn_mmat1;
+			core::Size const mmat4 = resconn_mmat2;
 
 			utility::vector1< chemical::three_atom_set > const & rsd1_atoms_wi2_bonds_of_ii(
 				rsd1_type.atoms_within_two_bonds_of_a_residue_connection( resconn_id1 ));
 
-			for ( Size jj = 1; jj <= rsd1_atoms_wi2_bonds_of_ii.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= rsd1_atoms_wi2_bonds_of_ii.size(); ++jj ) {
 				debug_assert( rsd1_atoms_wi2_bonds_of_ii[ jj ].key1() == resconn_atomno1 );
 
-				Size const jj_atom2 = rsd1_atoms_wi2_bonds_of_ii[ jj ].key2();
-				Size const mmat2 = rsd1_type.mm_atom_type_index( jj_atom2 );
+				core::Size const jj_atom2 = rsd1_atoms_wi2_bonds_of_ii[ jj ].key2();
+				core::Size const mmat2 = rsd1_type.mm_atom_type_index( jj_atom2 );
 
-				Size const jj_atom1 = rsd1_atoms_wi2_bonds_of_ii[ jj ].key3();
-				Size const mmat1 = rsd1_type.mm_atom_type_index( jj_atom1 );
+				core::Size const jj_atom1 = rsd1_atoms_wi2_bonds_of_ii[ jj ].key3();
+				core::Size const mmat1 = rsd1_type.mm_atom_type_index( jj_atom1 );
 
 				//Real const angle = numeric::dihedral_radians(
 				// rsd1.xyz( jj_atom1 ),
@@ -411,20 +411,20 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 
 
 		{ // Scope section 3.
-			Size const mmat1 = resconn_mmat1;
-			Size const mmat2 = resconn_mmat2;
+			core::Size const mmat1 = resconn_mmat1;
+			core::Size const mmat2 = resconn_mmat2;
 
 			utility::vector1< chemical::three_atom_set > const & rsd2_atoms_wi2_bonds_of_ii(
 				rsd2_type.atoms_within_two_bonds_of_a_residue_connection( resconn_id2 ));
 
-			for ( Size jj = 1; jj <= rsd2_atoms_wi2_bonds_of_ii.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= rsd2_atoms_wi2_bonds_of_ii.size(); ++jj ) {
 				debug_assert( rsd2_atoms_wi2_bonds_of_ii[ jj ].key1() == resconn_atomno2 );
 
-				Size const jj_atom3 = rsd2_atoms_wi2_bonds_of_ii[ jj ].key2();
-				Size const mmat3 = rsd2_type.mm_atom_type_index( jj_atom3 );
+				core::Size const jj_atom3 = rsd2_atoms_wi2_bonds_of_ii[ jj ].key2();
+				core::Size const mmat3 = rsd2_type.mm_atom_type_index( jj_atom3 );
 
-				Size const jj_atom4 = rsd2_atoms_wi2_bonds_of_ii[ jj ].key3();
-				Size const mmat4 = rsd2_type.mm_atom_type_index( jj_atom4 );
+				core::Size const jj_atom4 = rsd2_atoms_wi2_bonds_of_ii[ jj ].key3();
+				core::Size const mmat4 = rsd2_type.mm_atom_type_index( jj_atom4 );
 
 				//Real const angle = numeric::dihedral_radians(
 				// rsd1.xyz( resconn_atomno1 ),

@@ -43,29 +43,29 @@ using Probabilities = utility::vector1<core::Real>;
 using core::Size;
 
 /// @brief Lower sampling probability near termini
-void end_bias_probabilities(const Size num_residues, Probabilities* p) {
+void end_bias_probabilities(const core::Size num_residues, Probabilities* p) {
 	debug_assert(p);
 
 	// Penalize 10% lowest, highest residues
-	const auto offset_left = static_cast<Size>(std::ceil(0.1 * num_residues));
-	const Size offset_right = num_residues - offset_left + 1;
+	const auto offset_left = static_cast<core::Size>(std::ceil(0.1 * num_residues));
+	const core::Size offset_right = num_residues - offset_left + 1;
 
 	p->clear();
-	for ( Size i = 1; i <= num_residues; ++i ) {
+	for ( core::Size i = 1; i <= num_residues; ++i ) {
 		bool near_terminus = i <= offset_left || i >= offset_right;
 		p->push_back(near_terminus ? 0.2 : 0.8);
 	}
 	numeric::normalize(p->begin(), p->end());
 }
 
-void alignment_probabilities(const Size num_residues,
+void alignment_probabilities(const core::Size num_residues,
 	const core::sequence::SequenceAlignment& alignment,
 	Probabilities* p) {
 	debug_assert(p);
 
 	p->clear();
 	core::id::SequenceMapping mapping = alignment.sequence_mapping(1, 2);
-	for ( Size i = 1; i <= num_residues; ++i ) {
+	for ( core::Size i = 1; i <= num_residues; ++i ) {
 		p->push_back(mapping[i] > 0 ? 0.2 : 0.8);
 	}
 	numeric::normalize(p->begin(), p->end());
@@ -80,29 +80,29 @@ void chunk_probabilities(const protocols::loops::Loops& chunks, Probabilities* p
 
 	p->clear();
 	for ( auto const & chunk : chunks ) {
-		for ( Size j = chunk.start(); j <= chunk.stop(); ++j ) {
+		for ( core::Size j = chunk.start(); j <= chunk.stop(); ++j ) {
 			p->push_back(chunk.length());
 		}
 	}
 	numeric::normalize(p->begin(), p->end());
 }
 
-void cutpoint_probabilities(const Size num_residues, const core::kinematics::FoldTree& tree, Probabilities* p) {
+void cutpoint_probabilities(const core::Size num_residues, const core::kinematics::FoldTree& tree, Probabilities* p) {
 	debug_assert(p);
 
 	// List of cutpoints sorted by position
-	std::set<Size> cutpoints;
-	for ( Size i = 1; i <= tree.num_cutpoint(); ++i ) {
-		Size cutpoint = tree.cutpoint(i);
+	std::set<core::Size> cutpoints;
+	for ( core::Size i = 1; i <= tree.num_cutpoint(); ++i ) {
+		core::Size cutpoint = tree.cutpoint(i);
 		if ( cutpoint == num_residues ) {  // cutpoint at end of chain
 			continue;
 		}
 
-		cutpoints.insert((Size)cutpoint);
+		cutpoints.insert((core::Size)cutpoint);
 	}
 
 	p->clear();
-	for ( Size residue = 1; residue <= num_residues; ++residue ) {
+	for ( core::Size residue = 1; residue <= num_residues; ++residue ) {
 		const core::Real nearest_cutpoint = *utility::find_closest(cutpoints.begin(), cutpoints.end(), residue);
 		const core::Real distance = std::abs(nearest_cutpoint - residue);
 		p->push_back(std::pow(distance + 1, -3));
@@ -115,9 +115,9 @@ void cutpoint_probabilities(const Size num_residues, const core::kinematics::Fol
 void invalidate_residues_spanning_cuts(const core::kinematics::FoldTree& tree,
 	const core::Size fragment_len,
 	Probabilities* probs) {
-	for ( Size i = 1; i <= tree.num_cutpoint(); ++i ) {
-		const Size cutpoint = tree.cutpoint(i);
-		for ( Size j = (cutpoint - fragment_len + 2); j <= cutpoint; ++j ) {
+	for ( core::Size i = 1; i <= tree.num_cutpoint(); ++i ) {
+		const core::Size cutpoint = tree.cutpoint(i);
+		for ( core::Size j = (cutpoint - fragment_len + 2); j <= cutpoint; ++j ) {
 			(*probs)[j] = 0;
 		}
 	}

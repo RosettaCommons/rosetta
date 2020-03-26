@@ -16,7 +16,7 @@
 #define INCLUDED_utility_tag_XMLSchemaValidation_FWD_HH
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Boost headers
 //#include <boost/function.hpp>

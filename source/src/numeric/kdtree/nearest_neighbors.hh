@@ -23,7 +23,7 @@
 
 #include <numeric/kdtree/KDPointList.hh>
 
-#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/VirtualBase.fwd.hh>
 
 namespace numeric {
 namespace kdtree {

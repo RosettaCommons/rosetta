@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_loop_graph_SixDTransRotPotential_HH
 #define INCLUDED_core_scoring_loop_graph_SixDTransRotPotential_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/kinematics/Jump.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/loop_graph/evaluator/SixDTransRotPotential.fwd.hh>
@@ -31,7 +31,7 @@ namespace scoring {
 namespace loop_graph {
 namespace evaluator {
 
-class SixDTransRotPotential: public utility::pointer::ReferenceCount {
+class SixDTransRotPotential: public utility::VirtualBase {
 
 public:
 

@@ -10,7 +10,7 @@
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
 /// @details
-///	  Contains currently: LoopModeler
+///   Contains currently: LoopModeler
 ///
 ///
 /// @author Vatsan Raman
@@ -44,37 +44,37 @@ namespace moves {
 class LoopManager {
 
 public:
-  LoopManager(){}
+	LoopManager(){}
 
-  LoopManager(
-    core::pose::Pose & pose,
-    protocols::loops::Loops LoopList
-  ) :
-    pose_( pose ),
-    LoopList_( LoopList )
-  {
-    ReorderLoops();
-  }
+	LoopManager(
+		core::pose::Pose & pose,
+		protocols::loops::Loops LoopList
+	) :
+		pose_( pose ),
+		LoopList_( LoopList )
+	{
+		ReorderLoops();
+	}
 
-  //  Size NumSingleLoops();
-  protocols::loops::Loops LoopsToPerturb();
-  void ReorderLoops();
+	//  core::Size NumSingleLoops();
+	protocols::loops::Loops LoopsToPerturb();
+	void ReorderLoops();
 
 private:
-  core::pose::Pose pose_;
-  protocols::loops::Loops LoopList_;
+	core::pose::Pose pose_;
+	protocols::loops::Loops LoopList_;
 
-  bool IsFirstLoop( protocols::loops::Loop const & ThisLoop );
-  bool IsLastLoop( protocols::loops::Loop const & ThisLoop );
+	bool IsFirstLoop( protocols::loops::Loop const & ThisLoop );
+	bool IsLastLoop( protocols::loops::Loop const & ThisLoop );
 
-  protocols::loops::Loop PreviousLoop( protocols::loops::Loop const & ThisLoop );
-  protocols::loops::Loop NextLoop( protocols::loops::Loop const & ThisLoop );
+	protocols::loops::Loop PreviousLoop( protocols::loops::Loop const & ThisLoop );
+	protocols::loops::Loop NextLoop( protocols::loops::Loop const & ThisLoop );
 
-  bool IsNtermLoop( protocols::loops::Loop const & ThisLoop );
-  bool IsCtermLoop( protocols::loops::Loop const & ThisLoop );
+	bool IsNtermLoop( protocols::loops::Loop const & ThisLoop );
+	bool IsCtermLoop( protocols::loops::Loop const & ThisLoop );
 
-  protocols::loops::Loop VaryStems( protocols::loops::Loop const & ThisLoop );
-  protocols::loops::Loop VaryCutpoint( protocols::loops::Loop const & ThisLoop );
+	protocols::loops::Loop VaryStems( protocols::loops::Loop const & ThisLoop );
+	protocols::loops::Loop VaryCutpoint( protocols::loops::Loop const & ThisLoop );
 };
 
 } //moves

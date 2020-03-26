@@ -110,7 +110,7 @@ close_to_dna(
 Real
 argrot_dna_dis2(
 	pose::Pose const & pose,
-	Size presid,
+	core::Size presid,
 	Residue const & ,
 	Residue const & dres,
 	Real threshold,
@@ -284,7 +284,7 @@ find_basepairs(
 	TR << "\nFinding basepairs:\n";
 
 	Real const max_d( 4.0 );
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 
 	dna_chains.clear();
 	runtime_assert( dna_chains.empty() );
@@ -312,9 +312,9 @@ find_basepairs(
 	hbond_atom[ na_rgu ] = "N1";
 	hbond_atom[ na_rcy ] = "N3";
 
-	//std::map< Size, Size > partner; // temporary
+	//std::map< core::Size, core::Size > partner; // temporary
 
-	for ( Size i(1); i <= nres; ++i ) {
+	for ( core::Size i(1); i <= nres; ++i ) {
 		Residue const & i_rsd( pose.residue(i) );
 		AA const & i_aa( i_rsd.aa() );
 		if ( !i_rsd.is_DNA() ) continue;
@@ -329,8 +329,8 @@ find_basepairs(
 		bool paired( false );
 		// check for a basepairing partner
 		Real bestdotsum(0.);
-		Size best_j(0);
-		for ( Size j(i+1); j <= nres; ++j ) {
+		core::Size best_j(0);
+		for ( core::Size j(i+1); j <= nres; ++j ) {
 
 			Residue const & j_rsd( pose.residue(j) );
 			AA const & j_aa( j_rsd.aa() );
@@ -408,8 +408,8 @@ find_basepairs(
 /// @author ashworth
 void
 make_sequence_combinations(
-	utility::vector1< Size >::const_iterator seqset_iter,
-	utility::vector1< Size > const & seq_indices,
+	utility::vector1< core::Size >::const_iterator seqset_iter,
+	utility::vector1< core::Size > const & seq_indices,
 	task::PackerTaskCOP ptask,
 	ResTypeSequence & sequence,
 	ResTypeSequences & sequences
@@ -417,7 +417,7 @@ make_sequence_combinations(
 {
 	using namespace task;
 
-	Size resid( *seqset_iter );
+	core::Size resid( *seqset_iter );
 	ResidueLevelTask const & restask( ptask->residue_task( resid ) );
 
 	for ( auto type( restask.allowed_residue_types_begin() );
@@ -442,7 +442,7 @@ make_single_mutants(
 {
 	using namespace task;
 	for ( auto it( sequence.begin() ); it != sequence.end(); ++it ) {
-		Size index( it->first );
+		core::Size index( it->first );
 		ResidueLevelTask const & rtask( ptask->residue_task(index) );
 		for ( auto type( rtask.allowed_residue_types_begin() );
 				type != rtask.allowed_residue_types_end(); ++type ) {
@@ -463,8 +463,8 @@ design_residues_list(
 	task::PackerTask const & ptask
 )
 {
-	Size nres( pose.size() );
-	for ( Size index(1); index <= nres; ++index ) {
+	core::Size nres( pose.size() );
+	for ( core::Size index(1); index <= nres; ++index ) {
 		if ( pose.residue_type(index).is_DNA() ) {
 			if ( !ptask.residue_task(index).has_behavior("TARGET") &&
 					!ptask.residue_task(index).has_behavior("SCAN") &&
@@ -507,7 +507,7 @@ std::string seq_pdb_str(
 {
 	std::ostringstream os;
 	for ( auto pos( seq.begin() ); pos != seq.end(); ++pos ) {
-		Size const index( pos->first );
+		core::Size const index( pos->first );
 		if ( index < 1 || index > pose.size() ) {
 			TR.Warning << "Index out of range in seq_pdb_str(): " << index << std::endl;
 			debug_assert(false);
@@ -554,10 +554,10 @@ restrict_dna_rotamers(
 )
 {
 	rot_to_pack.clear();
-	Size const nrot( rotamer_sets->nrotamers() );
-	for ( Size roti(1); roti <= nrot; ++roti ) {
+	core::Size const nrot( rotamer_sets->nrotamers() );
+	for ( core::Size roti(1); roti <= nrot; ++roti ) {
 
-		Size const rotpos( rotamer_sets->res_for_rotamer(roti) );
+		core::Size const rotpos( rotamer_sets->res_for_rotamer(roti) );
 		ResidueType const & rot_type( rotamer_sets->rotamer(roti)->type() );
 
 		auto seqindex( seq.find( rotpos ) );
@@ -569,7 +569,7 @@ restrict_dna_rotamers(
 		}
 		rot_to_pack.push_back( roti );
 	}
-	Size const rots_off( nrot - rot_to_pack.size() );
+	core::Size const rots_off( nrot - rot_to_pack.size() );
 	TR << "Fixing DNA rotamers: " << rots_off
 		<< " out of " << nrot << " rotamers disabled." << std::endl;
 }
@@ -584,9 +584,9 @@ restrict_to_single_sequence(
 )
 {
 	rot_to_pack.clear();
-	Size const nrot( rotamer_sets->nrotamers() );
-	for ( Size roti(1); roti <= nrot; ++roti ) {
-		Size const rotpos( rotamer_sets->res_for_rotamer(roti) );
+	core::Size const nrot( rotamer_sets->nrotamers() );
+	for ( core::Size roti(1); roti <= nrot; ++roti ) {
+		core::Size const rotpos( rotamer_sets->res_for_rotamer(roti) );
 		ResidueType const & rot_type( rotamer_sets->rotamer(roti)->type() );
 		// a comparison operator is not defined for the ResidueType class
 		// compare names here
@@ -596,7 +596,7 @@ restrict_to_single_sequence(
 		if ( seq_typename != rot_typename ) continue;
 		rot_to_pack.push_back( roti );
 	}
-	Size const rots_off( nrot - rot_to_pack.size() );
+	core::Size const rots_off( nrot - rot_to_pack.size() );
 	TR << "Fixing rotamers for a single sequence: " << rots_off
 		<< " out of " << nrot << " rotamers disabled." << std::endl;
 }
@@ -606,7 +606,7 @@ restrict_to_single_sequence(
 void
 substitute_residue(
 	pose::Pose & pose,
-	Size index,
+	core::Size index,
 	ResidueType const & new_type
 )
 {
@@ -619,7 +619,7 @@ substitute_residue(
 // @brief
 // @author ashworth
 void
-write_checkpoint( pose::Pose & pose, Size iter )
+write_checkpoint( pose::Pose & pose, core::Size iter )
 {
 	if ( ! option[ OptionKeys::dna::design::checkpoint ].user() ) return;
 	std::string fileroot( option[ OptionKeys::dna::design::checkpoint ]() );
@@ -654,7 +654,7 @@ write_checkpoint( pose::Pose & pose, Size iter )
 // @brief
 // @author ashworth
 void
-load_checkpoint( pose::Pose & pose, Size & iter )
+load_checkpoint( pose::Pose & pose, core::Size & iter )
 {
 	if ( ! option[ OptionKeys::dna::design::checkpoint ].user() ) return;
 	std::string fileroot( option[ OptionKeys::dna::design::checkpoint ]() );
@@ -668,7 +668,7 @@ load_checkpoint( pose::Pose & pose, Size & iter )
 
 	std::string /*line, */word, pdbfile;
 	// get iteration
-	Size last_iter;
+	core::Size last_iter;
 	file >> word >> last_iter >> skip; // first line
 	if ( ( word != "Iteration" ) ) return;
 	file >> pdbfile >> skip;
@@ -794,7 +794,7 @@ kinematics::FoldTree
 make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 {
 
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 
 	pose::PDBInfoCOP pdb_data( pose.pdb_info() );
 
@@ -802,13 +802,13 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 	protocols::dna::DNAParameters dna_info( pose );
 	// dna_info.calculate( pose );
 
-	Size num_chains( 1 );
-	utility::vector1< Size > chain_start;
-	utility::vector1< Size > chain_end;
-	utility::vector1< Size > chain_type;
+	core::Size num_chains( 1 );
+	utility::vector1< core::Size > chain_start;
+	utility::vector1< core::Size > chain_end;
+	utility::vector1< core::Size > chain_type;
 
 	chain_start.push_back( 1 );
-	for ( Size resid = 1 ; resid < nres ; ++resid ) {
+	for ( core::Size resid = 1 ; resid < nres ; ++resid ) {
 		if ( pdb_data->chain( resid ) != pdb_data->chain( resid + 1 ) ) {
 			chain_end.push_back( resid );
 			chain_start.push_back( resid + 1 );
@@ -818,25 +818,25 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 	chain_end.push_back( nres );
 
 	// Allocate the FArrays to call FoldTree::tree_from_cuts_and_jumps
-	Size num_cuts( num_chains - 1 );
-	ObjexxFCL::FArray1D< Size > cut_positions( num_cuts );
-	ObjexxFCL::FArray2D< Size > jump_pairs( 2, num_cuts );
-	Size jump_pair_count( 1 );
+	core::Size num_cuts( num_chains - 1 );
+	ObjexxFCL::FArray1D< core::Size > cut_positions( num_cuts );
+	ObjexxFCL::FArray2D< core::Size > jump_pairs( 2, num_cuts );
+	core::Size jump_pair_count( 1 );
 
 	// We can fill the cut info now
-	for ( Size cut_num = 1 ; cut_num < chain_end.size() ; ++cut_num ) {
+	for ( core::Size cut_num = 1 ; cut_num < chain_end.size() ; ++cut_num ) {
 		cut_positions( cut_num ) = chain_end[ cut_num ];
 	}
 
-	Size const amino( 1 );
-	Size const bped_dna( 2 );
-	Size const non_bped_dna( 3 );
+	core::Size const amino( 1 );
+	core::Size const bped_dna( 2 );
+	core::Size const non_bped_dna( 3 );
 
-	utility::vector1< Size > protein_root( num_chains, 0 );
-	utility::vector1< Size > closest_base( num_chains, 0 );
+	utility::vector1< core::Size > protein_root( num_chains, 0 );
+	utility::vector1< core::Size > closest_base( num_chains, 0 );
 
 	// Analyze each chain
-	for ( Size this_chain = 1 ; this_chain <= num_chains ; ++this_chain ) {
+	for ( core::Size this_chain = 1 ; this_chain <= num_chains ; ++this_chain ) {
 		TR << "Working on chain " << this_chain << std::endl;
 
 		// Check for amino acid chain
@@ -849,8 +849,8 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 
 			// Find the DNA base with the closest C1' atom to some Calpha in this protein
 			Real best_dist( 9999.0 );
-			for ( Size prot_res = chain_start[ this_chain ] ; prot_res <= chain_end[ this_chain ] ; ++prot_res ) {
-				for ( Size dna_res = 1 ; dna_res <= nres ; ++dna_res ) {
+			for ( core::Size prot_res = chain_start[ this_chain ] ; prot_res <= chain_end[ this_chain ] ; ++prot_res ) {
+				for ( core::Size dna_res = 1 ; dna_res <= nres ; ++dna_res ) {
 					if ( !pose.residue( dna_res ).is_DNA() ) continue;
 					Real check_dist = pose.residue( prot_res ).xyz( "CA" ).distance_squared( pose.residue( dna_res ).xyz( "C1'" ) );
 					if ( check_dist < best_dist ) {
@@ -886,10 +886,10 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 
 		// Break up this DNA into segments
 
-		Size num_segments( 1 );
-		utility::vector1< Size > segment_start;
-		utility::vector1< Size > segment_end;
-		utility::vector1< Size > segment_type;
+		core::Size num_segments( 1 );
+		utility::vector1< core::Size > segment_start;
+		utility::vector1< core::Size > segment_end;
+		utility::vector1< core::Size > segment_type;
 
 		segment_start.push_back( chain_start[ this_chain ] );
 		if ( dna_info.find_partner( chain_start[ this_chain ] ) != 0 ) {
@@ -897,7 +897,7 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 		} else {
 			segment_type.push_back( non_bped_dna );
 		}
-		for ( Size resid = chain_start[this_chain]  ; resid < chain_end[ this_chain ] ; ++resid ) {
+		for ( core::Size resid = chain_start[this_chain]  ; resid < chain_end[ this_chain ] ; ++resid ) {
 			// Check for difference
 			bool this_bped( dna_info.find_partner( resid ) != 0 );
 			bool next_bped( dna_info.find_partner( resid + 1 ) != 0 );
@@ -925,16 +925,16 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 
 		// Let's see what we have
 		TR << "Found " << num_segments << " initial segments for chain " << this_chain << std::endl;
-		for ( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
+		for ( core::Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
 			TR << "Chain " << this_chain << " segment " << this_segment << " start res " << segment_start[ this_segment ] <<
 				" end res " << segment_end[ this_segment ] << " of type " << segment_type[ this_segment ] << std::endl;
 		}
 
 
 		// Record mid-points of base paired segments
-		utility::vector1< Size > bp_middle( num_segments, 0 );
+		utility::vector1< core::Size > bp_middle( num_segments, 0 );
 
-		for ( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
+		for ( core::Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
 			if ( segment_type[ this_segment ] == bped_dna ) {
 				bp_middle[ this_segment ] = ( segment_start[ this_segment ] + segment_end[ this_segment ] ) / 2;
 			}
@@ -942,10 +942,10 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 
 		// Merge non-base paired segments into base paired segments if possible
 
-		Size num_processed( num_segments );
+		core::Size num_processed( num_segments );
 
 		if ( num_segments  > 1 ) {
-			for ( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
+			for ( core::Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
 				if ( segment_type[ this_segment ] == non_bped_dna  && num_segments > 1 ) {
 					num_processed--;
 					if ( this_segment == 1 ) { // Just merge with the next segment
@@ -959,7 +959,7 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 							segment_end[ this_segment - 1 ] = segment_end[ this_segment ];
 						} else {
 							// Divide in half
-							Size split_pos(  ( segment_start[ this_segment ] + segment_end[ this_segment ] ) / 2 );
+							core::Size split_pos(  ( segment_start[ this_segment ] + segment_end[ this_segment ] ) / 2 );
 							segment_end[ this_segment - 1 ] = split_pos;
 							segment_start[ this_segment + 1 ] = split_pos + 1;
 						}
@@ -972,8 +972,8 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 		if ( num_segments == 1 && chain_type[ this_chain ] == non_bped_dna ) {
 			// Find the amino acid with the closest Calpha atom to some C1' atom this chain
 			Real best_dist( 9999.0 );
-			for ( Size dna_res = chain_start[ this_chain ] ; dna_res <= chain_end[ this_chain ] ; ++dna_res ) {
-				for ( Size prot_res = 1 ; prot_res <= nres ; ++prot_res ) {
+			for ( core::Size dna_res = chain_start[ this_chain ] ; dna_res <= chain_end[ this_chain ] ; ++dna_res ) {
+				for ( core::Size prot_res = 1 ; prot_res <= nres ; ++prot_res ) {
 					if ( !pose.residue( prot_res ).is_protein() ) continue;
 					Real check_dist = pose.residue( prot_res ).xyz( "CA" ).distance_squared( pose.residue( dna_res ).xyz( "C1'" ) );
 					if ( check_dist < best_dist ) {
@@ -1000,15 +1000,15 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 
 		// Let's see what we have
 		TR << "Found " << num_processed << " final segments for chain " << this_chain << std::endl;
-		Size accum_count( 0 );
-		for ( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
+		core::Size accum_count( 0 );
+		for ( core::Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
 			if ( segment_type[ this_segment ] == bped_dna ) {
 				accum_count++;
 				TR << "Chain " << this_chain << " segment " << accum_count << " start res " << segment_start[ this_segment ] <<
 					" end res " << segment_end[ this_segment ] << " of type " << segment_type[ this_segment ] << std::endl;
 
 				// retrieve the mid-point base pair and its partner
-				Size mid_partner = dna_info.find_partner( bp_middle[ this_segment ] );
+				core::Size mid_partner = dna_info.find_partner( bp_middle[ this_segment ] );
 
 				// Store the jump info if this chain is the lower number (to avoid adding twice)
 				// Also check to make sure these chains haven't already been connected.  This
@@ -1035,14 +1035,14 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 bool
 not_already_connected(
 	pose::Pose const & pose,
-	Size const num_jumps,
+	core::Size const num_jumps,
 	char const this_chain,
 	char const other_chain,
-	ObjexxFCL::FArray2D< Size > & jump_pairs
+	ObjexxFCL::FArray2D< core::Size > & jump_pairs
 )
 {
 
-	for ( Size i = 1 ; i <= num_jumps ; ++i ) {
+	for ( core::Size i = 1 ; i <= num_jumps ; ++i ) {
 
 		// Get chain ids for residues involved in jumps
 		char const jump_chain1( pose.pdb_info()->chain( jump_pairs( 1, i ) ) );
@@ -1073,7 +1073,7 @@ set_base_segment_chainbreak_constraints(
 
 	pose::PDBInfoCOP pdb_data( pose.pdb_info() );
 
-	// Size const nres( pose.size() );
+	// core::Size const nres( pose.size() );
 
 	// From Phil
 	Real const O3_P_distance( 1.608 );

@@ -231,7 +231,7 @@ void generate_centroid_constraints(
 
 void setup_user_coordinate_constraints(
 	core::pose::Pose &pose,
-	utility::vector1<Size> reses )
+	utility::vector1<core::Size> reses )
 {
 	core::Real COORDDEV = 0.39894;
 
@@ -287,7 +287,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 	//fpd -- generate constraints between the residues in tmpl with the hetatms in pose
 	if ( het_prot_cst_weight > 1e-7 ) {
 		// constraints protein<->substrate
-		for ( Size ires=1; ires<=tmpl.size(); ++ires ) {
+		for ( core::Size ires=1; ires<=tmpl.size(); ++ires ) {
 			if ( !tmpl.residue(ires).is_protein() ) continue;
 
 			core::Size iatom;
@@ -302,7 +302,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 				ires_tgt = symm_info->bb_follows( ires_tgt );
 			}
 
-			for ( Size jres=1; jres<=tmpl.size(); ++jres ) {
+			for ( core::Size jres=1; jres<=tmpl.size(); ++jres ) {
 				if ( tmpl.residue(jres).is_protein() || tmpl.residue(jres).aa() == core::chemical::aa_vrt ) continue;
 
 				core::Size jres_tgt = (tmpl.pdb_info()) ? tmpl.pdb_info()->number(ires) : ires;
@@ -310,7 +310,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 					jres_tgt = symm_info->bb_follows( jres_tgt );
 				}
 
-				for ( Size jatom=1; jatom<=tmpl.residue(jres).nheavyatoms(); ++jatom ) {
+				for ( core::Size jatom=1; jatom<=tmpl.residue(jres).nheavyatoms(); ++jatom ) {
 					core::Real dist = tmpl.residue(ires).xyz(iatom).distance( tmpl.residue(jres).xyz(jatom) );
 
 					if ( dist <= MAXDIST ) {
@@ -331,7 +331,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 
 	if ( self_cst_weight > 1e-7 ) {
 		// constraints within substrate
-		for ( Size ires=1; ires<=tmpl.size(); ++ires ) {
+		for ( core::Size ires=1; ires<=tmpl.size(); ++ires ) {
 			if ( tmpl.residue(ires).is_protein() || tmpl.residue(ires).aa() == core::chemical::aa_vrt ) continue;
 
 			core::Size ires_tgt = (tmpl.pdb_info()) ? tmpl.pdb_info()->number(ires) : ires;
@@ -339,8 +339,8 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 				ires_tgt = symm_info->bb_follows( ires_tgt );
 			}
 
-			for ( Size iatom=1; iatom<=tmpl.residue(ires).nheavyatoms(); ++iatom ) {
-				for ( Size jres=1; jres<=tmpl.size(); ++jres ) {
+			for ( core::Size iatom=1; iatom<=tmpl.residue(ires).nheavyatoms(); ++iatom ) {
+				for ( core::Size jres=1; jres<=tmpl.size(); ++jres ) {
 					if ( tmpl.residue(jres).is_protein() || tmpl.residue(jres).aa() == core::chemical::aa_vrt ) continue;
 
 					core::Size jres_tgt = (tmpl.pdb_info()) ? tmpl.pdb_info()->number(jres) : jres;
@@ -348,7 +348,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 						jres_tgt = symm_info->bb_follows( jres_tgt );
 					}
 
-					for ( Size jatom=1; jatom<=tmpl.residue(jres).nheavyatoms(); ++jatom ) {
+					for ( core::Size jatom=1; jatom<=tmpl.residue(jres).nheavyatoms(); ++jatom ) {
 						if ( ires == jres && iatom <= jatom ) continue;
 
 						core::Real dist1 = tmpl.residue(ires).xyz(iatom).distance( tmpl.residue(jres).xyz(jatom) );
@@ -368,7 +368,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 	}
 }
 
-bool discontinued_upper(core::pose::Pose const & pose, Size const seqpos) {
+bool discontinued_upper(core::pose::Pose const & pose, core::Size const seqpos) {
 	core::Real N_C_cutoff(2.0);
 
 	if ( seqpos == 1 ) return true;
@@ -382,7 +382,7 @@ bool discontinued_upper(core::pose::Pose const & pose, Size const seqpos) {
 	return false;
 }
 
-bool discontinued_lower(core::pose::Pose const & pose, Size const seqpos) {
+bool discontinued_lower(core::pose::Pose const & pose, core::Size const seqpos) {
 	core::Real N_C_cutoff(2.0);
 
 	if ( seqpos == pose.size() ) return true;
@@ -396,10 +396,10 @@ bool discontinued_lower(core::pose::Pose const & pose, Size const seqpos) {
 	return false;
 }
 
-std::list < Size >
-downstream_residues_from_jump(core::pose::Pose const & pose, Size const jump_number) {
-	std::list < Size > residue_list;
-	Size downstream_res = pose.fold_tree().jump_edge(jump_number).stop();
+std::list < core::Size >
+downstream_residues_from_jump(core::pose::Pose const & pose, core::Size const jump_number) {
+	std::list < core::Size > residue_list;
+	core::Size downstream_res = pose.fold_tree().jump_edge(jump_number).stop();
 	utility::vector1< Edge > edges = pose.fold_tree().get_outgoing_edges(downstream_res);
 
 	// for jumps to singletons
@@ -407,11 +407,11 @@ downstream_residues_from_jump(core::pose::Pose const & pose, Size const jump_num
 
 	TR.Debug << "Downstream residue " << downstream_res << std::endl;
 
-	for ( Size i_edge = 1; i_edge <= edges.size(); ++i_edge ) {
+	for ( core::Size i_edge = 1; i_edge <= edges.size(); ++i_edge ) {
 		if ( !edges[i_edge].is_polymer() ) continue;
-		Size start = edges[i_edge].start() <= edges[i_edge].stop() ? edges[i_edge].start() : edges[i_edge].stop();
-		Size stop  = edges[i_edge].start() <= edges[i_edge].stop() ? edges[i_edge].stop()  : edges[i_edge].start();
-		for ( Size ires = start; ires <= stop; ++ires ) {
+		core::Size start = edges[i_edge].start() <= edges[i_edge].stop() ? edges[i_edge].start() : edges[i_edge].stop();
+		core::Size stop  = edges[i_edge].start() <= edges[i_edge].stop() ? edges[i_edge].stop()  : edges[i_edge].start();
+		for ( core::Size ires = start; ires <= stop; ++ires ) {
 			residue_list.push_back(ires);
 		}
 	}
@@ -431,7 +431,7 @@ partial_align(
 	core::Real min_coverage )
 {
 	std::list <core::Size> residue_list;
-	for ( Size ires=1; ires<= pose.size(); ++ires ) {
+	for ( core::Size ires=1; ires<= pose.size(); ++ires ) {
 		if ( !pose.residue(ires).is_protein() ) continue;
 		residue_list.push_back(ires);
 	}
@@ -445,7 +445,7 @@ partial_align(
 	core::pose::Pose & pose,
 	core::pose::Pose const & ref_pose,
 	id::AtomID_Map< id::AtomID > const & atom_map,
-	std::list <Size> const & residue_list,
+	std::list <core::Size> const & residue_list,
 	bool iterate_convergence,
 	utility::vector1<core::Real> distance_thresholds,
 	core::Real min_coverage )
@@ -497,8 +497,8 @@ core::Size atom_map_valid_size(
 )
 {
 	core::Size n_valid = 0;
-	for ( Size ires=1; ires<= pose.size(); ++ires ) {
-		for ( Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {
+	for ( core::Size ires=1; ires<= pose.size(); ++ires ) {
+		for ( core::Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {
 			core::id::AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if ( !aid.valid() ) continue;
 			++n_valid;
@@ -518,8 +518,8 @@ update_atom_map(
 
 	core::pose::initialize_atomid_map( updated_atom_map, pose, core::id::AtomID::BOGUS_ATOM_ID() );
 
-	for ( Size ires=1; ires<= pose.size(); ++ires ) {
-		for ( Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {
+	for ( core::Size ires=1; ires<= pose.size(); ++ires ) {
+		for ( core::Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {
 			core::id::AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if ( !aid.valid() ) continue;
 
@@ -539,9 +539,9 @@ natom_aligned(
 	core::Real distance_squared_threshold
 )
 {
-	Size n_align=0;
-	for ( Size ires=1; ires<= pose.size(); ++ires ) {
-		for ( Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {
+	core::Size n_align=0;
+	for ( core::Size ires=1; ires<= pose.size(); ++ires ) {
+		for ( core::Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {
 			core::id::AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if ( !aid.valid() ) continue;
 
@@ -565,9 +565,9 @@ get_superposition_transformation(
 	using namespace core;
 	using namespace core::id;
 	// count number of atoms for the array
-	Size total_mapped_atoms(0);
-	for ( Size ires=1; ires<= mod_pose.size(); ++ires ) {
-		for ( Size iatom=1; iatom<= mod_pose.residue(ires).natoms(); ++iatom ) {
+	core::Size total_mapped_atoms(0);
+	for ( core::Size ires=1; ires<= mod_pose.size(); ++ires ) {
+		for ( core::Size iatom=1; iatom<= mod_pose.residue(ires).natoms(); ++iatom ) {
 			AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if ( !aid.valid() ) continue;
 
@@ -585,9 +585,9 @@ get_superposition_transformation(
 	ObjexxFCL::FArray2D< core::Real > final_coords( 3, total_mapped_atoms );
 	ObjexxFCL::FArray2D< core::Real > init_coords( 3, total_mapped_atoms );
 	preT = postT = numeric::xyzVector< core::Real >(0,0,0);
-	Size atomno(0);
-	for ( Size ires=1; ires<= mod_pose.size(); ++ires ) {
-		for ( Size iatom=1; iatom<= mod_pose.residue(ires).natoms(); ++iatom ) {
+	core::Size atomno(0);
+	for ( core::Size ires=1; ires<= mod_pose.size(); ++ires ) {
+		for ( core::Size iatom=1; iatom<= mod_pose.residue(ires).natoms(); ++iatom ) {
 			AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if ( !aid.valid() ) continue;
 			++atomno;
@@ -628,7 +628,7 @@ get_superposition_transformation(
 void
 apply_transformation(
 	pose::Pose & mod_pose,
-	std::list <Size> const & residue_list,
+	std::list <core::Size> const & residue_list,
 	numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
 ) {
 	using namespace ObjexxFCL;
@@ -637,7 +637,7 @@ apply_transformation(
 	utility::vector1< numeric::xyzVector<core::Real> > positions;
 
 	for ( core::Size ires : residue_list ) {
-		for ( Size iatom=1; iatom<= mod_pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
+		for ( core::Size iatom=1; iatom<= mod_pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
 			ids.push_back(core::id::AtomID(iatom,ires));
 			positions.push_back(postT + (R*( mod_pose.xyz(core::id::AtomID(iatom,ires)) - preT )));
 		}
@@ -804,12 +804,12 @@ protocols::loops::Loops renumber_with_pdb_info(
 ) {
 	protocols::loops::Loops renumbered_template_chunks(template_chunk);
 	for ( core::Size ichunk = 1; ichunk<=template_chunk.num_loop(); ++ichunk ) {
-		Size seqpos_start_templ = template_chunk[ichunk].start();
-		Size seqpos_start_target = template_pose->pdb_info()->number(seqpos_start_templ);
+		core::Size seqpos_start_templ = template_chunk[ichunk].start();
+		core::Size seqpos_start_target = template_pose->pdb_info()->number(seqpos_start_templ);
 		renumbered_template_chunks[ichunk].set_start( seqpos_start_target );
 
-		Size seqpos_stop_templ = template_chunk[ichunk].stop();
-		Size seqpos_stop_target = template_pose->pdb_info()->number(seqpos_stop_templ);
+		core::Size seqpos_stop_templ = template_chunk[ichunk].stop();
+		core::Size seqpos_stop_target = template_pose->pdb_info()->number(seqpos_stop_templ);
 		renumbered_template_chunks[ichunk].set_stop( seqpos_stop_target );
 	}
 	return renumbered_template_chunks;

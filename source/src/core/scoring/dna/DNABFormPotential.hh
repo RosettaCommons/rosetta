@@ -25,7 +25,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // ObjexxFCL Headers
@@ -37,7 +37,7 @@ namespace core {
 namespace scoring {
 namespace dna {
 
-class TorsionFourierComponent : public utility::pointer::ReferenceCount
+class TorsionFourierComponent : public utility::VirtualBase
 {
 
 public:
@@ -58,7 +58,7 @@ private:
 };
 
 
-class DNABFormPotential : public utility::pointer::ReferenceCount
+class DNABFormPotential : public utility::VirtualBase
 {
 
 public:

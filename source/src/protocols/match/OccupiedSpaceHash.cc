@@ -51,7 +51,7 @@ OccupiedSpaceHash::set_uniform_xyz_bin_width( Real bin_width )
 	debug_assert( ! initialized_ );
 	debug_assert( bin_width > 0 );
 	Real half_witdh = 0.5 * bin_width;
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		xyz_bin_widths_[ ii ] = bin_width;
 		xyz_bin_halfwidths_[ ii ] = half_witdh;
 	}
@@ -63,7 +63,7 @@ OccupiedSpaceHash::set_uniform_euler_angle_bin_width( Real bin_width_degrees )
 	debug_assert( ! initialized_ );
 	debug_assert( bin_width_degrees > 0 );
 	Real half_width = 0.5 * bin_width_degrees;
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		euler_bin_widths_[ ii ] = bin_width_degrees;
 		euler_bin_halfwidths_[ ii ] = half_width;
 	}
@@ -73,7 +73,7 @@ void
 OccupiedSpaceHash::set_xyz_bin_widths( Vector const & bin_widths )
 {
 	debug_assert( ! initialized_ );
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		debug_assert( bin_widths( ii ) > 0 );
 		xyz_bin_widths_[ ii ] = bin_widths( ii );
 		xyz_bin_halfwidths_[ ii ] = 0.5 * bin_widths( ii );
@@ -85,7 +85,7 @@ void
 OccupiedSpaceHash::set_euler_bin_widths( Vector const & euler_bin_widths )
 {
 	debug_assert( ! initialized_ );
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		debug_assert( euler_bin_widths( ii ) > 0 );
 		euler_bin_widths_[ ii ] = euler_bin_widths( ii );
 		euler_bin_halfwidths_[ ii ] = 0.5 * euler_bin_widths( ii );
@@ -104,16 +104,16 @@ OccupiedSpaceHash::initialize()
 
 	initialized_ = true;
 
-	for ( Size ii = 1; ii <= 3; ++ii ) {
-		n_xyz_bins_[ ii ] = static_cast< Size > (( bb_.upper()(ii) - bb_.lower()(ii) ) / xyz_bin_widths_[ ii ] );
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
+		n_xyz_bins_[ ii ] = static_cast< core::Size > (( bb_.upper()(ii) - bb_.lower()(ii) ) / xyz_bin_widths_[ ii ] );
 		if ( bb_.lower()(ii) + n_xyz_bins_[ ii ]*xyz_bin_widths_[ ii ] < bb_.upper()( ii ) ) {
 			++n_xyz_bins_[ ii ];
 		}
 	}
 
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		Real range = ii == 3 ? 180 : 360;
-		n_euler_bins_[ ii ] = static_cast< Size > ( range / euler_bin_widths_[ ii ] );
+		n_euler_bins_[ ii ] = static_cast< core::Size > ( range / euler_bin_widths_[ ii ] );
 		if ( n_euler_bins_[ ii ] * euler_bin_widths_[ ii ] < range ) {
 			n_euler_bins_[ ii ];
 		}
@@ -145,7 +145,7 @@ OccupiedSpaceHash::insert_hit_geometry( Real6 const & geom )
 		euler_bin_widths_, xyz_bin_halfwidths_, euler_bin_halfwidths_, geom );
 
 	numeric::geometry::hashing::Bin6D bin;
-	Size pos;
+	core::Size pos;
 	boost::uint64_t bin_index;
 	while ( ! voxiter.at_end() ) {
 		voxiter.get_bin_and_pos( bin, pos );
@@ -208,7 +208,7 @@ OccupiedSpaceHash::note_hit_geometry( Real6 const & geom )
 		euler_bin_widths_, xyz_bin_halfwidths_, euler_bin_halfwidths_, geom );
 
 	numeric::geometry::hashing::Bin6D bin;
-	Size pos;
+	core::Size pos;
 	boost::uint64_t bin_index;
 	while ( ! voxiter.at_end() ) {
 		voxiter.get_bin_and_pos( bin, pos );
@@ -247,7 +247,7 @@ OccupiedSpaceHash::match_possible_for_hit_geometry( Real6 const & geom ) const
 		euler_bin_widths_, xyz_bin_halfwidths_, euler_bin_halfwidths_, geom );
 
 	numeric::geometry::hashing::Bin6D bin;
-	Size pos;
+	core::Size pos;
 	boost::uint64_t bin_index;
 	while ( ! voxiter.at_end() ) {
 		voxiter.get_bin_and_pos( bin, pos );
@@ -260,7 +260,7 @@ OccupiedSpaceHash::match_possible_for_hit_geometry( Real6 const & geom ) const
 	}
 	return false;
 
-	/* for ( Size ii = 1; ii <= N_HASH_MAPS; ++ii ) {
+	/* for ( core::Size ii = 1; ii <= N_HASH_MAPS; ++ii ) {
 	if ( hashes_[ ii ].first->contains( geom ) ) {
 	boost::uint64_t bin_index = hashes_[ ii ].first->bin_index( geom );
 	ActiveVoxelSet::const_iterator iter = hashes_[ ii ].second.find( bin_index );
@@ -322,10 +322,10 @@ OccupiedSpaceHash::project_point_to_3d( Real6 const & geom )
 	Vector point( Vector( geom[ 1 ], geom[ 2 ], geom[ 3 ] ));
 
 	Vector lower_bound( point ), upper_bound( point );
-	for ( Size ii = 1; ii <= 3; ++ii ) lower_bound( ii ) -= xyz_width_root3_[ ii ];
-	for ( Size ii = 1; ii <= 3; ++ii ) if ( lower_bound( ii ) < bb_.lower()( ii ) ) lower_bound( ii ) = bb_.lower()( ii );
-	for ( Size ii = 1; ii <= 3; ++ii ) upper_bound( ii ) += xyz_width_root3_[ ii ];
-	for ( Size ii = 1; ii <= 3; ++ii ) if ( upper_bound( ii ) < bb_.upper()( ii ) ) upper_bound( ii ) = bb_.upper()( ii );
+	for ( core::Size ii = 1; ii <= 3; ++ii ) lower_bound( ii ) -= xyz_width_root3_[ ii ];
+	for ( core::Size ii = 1; ii <= 3; ++ii ) if ( lower_bound( ii ) < bb_.lower()( ii ) ) lower_bound( ii ) = bb_.lower()( ii );
+	for ( core::Size ii = 1; ii <= 3; ++ii ) upper_bound( ii ) += xyz_width_root3_[ ii ];
+	for ( core::Size ii = 1; ii <= 3; ++ii ) if ( upper_bound( ii ) < bb_.upper()( ii ) ) upper_bound( ii ) = bb_.upper()( ii );
 
 	threeD_projection_->or_by_box_liberal( BoundingBox( lower_bound, upper_bound ) );
 	*/
@@ -337,24 +337,24 @@ OccupiedSpaceHash::project_point_to_3d( Real6 const & geom )
 	Vector upper = bb_.lower();
 
 	Vector local_lower;
-	for ( Size ii = 1; ii <= 3; ++ii ) {
-		local_lower( ii ) = static_cast< Size > ( local( ii ) / xyz_bin_widths_[ ii ] ) * xyz_bin_widths_[ ii ];
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
+		local_lower( ii ) = static_cast< core::Size > ( local( ii ) / xyz_bin_widths_[ ii ] ) * xyz_bin_widths_[ ii ];
 	}
 	lower += local_lower;
 	upper += local_lower;
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		upper( ii ) += xyz_bin_widths_[ ii ];
 	}
 
-	for ( Size ii = 1; ii <= 3; ++ii ) {
+	for ( core::Size ii = 1; ii <= 3; ++ii ) {
 		if ( point( ii ) - lower( ii ) > 0.5 ) {
 			upper( ii ) += 0.5 * xyz_bin_widths_[ ii ];
 		} else {
 			lower( ii ) -= 0.5 * xyz_bin_widths_[ ii ];
 		}
 	}
-	for ( Size ii = 1; ii <= 3; ++ii ) if ( lower( ii ) < bb_.lower()( ii ) ) lower( ii ) = bb_.lower()( ii );
-	for ( Size ii = 1; ii <= 3; ++ii ) if ( upper( ii ) > bb_.upper()( ii ) ) upper( ii ) = bb_.upper()( ii );
+	for ( core::Size ii = 1; ii <= 3; ++ii ) if ( lower( ii ) < bb_.lower()( ii ) ) lower( ii ) = bb_.lower()( ii );
+	for ( core::Size ii = 1; ii <= 3; ++ii ) if ( upper( ii ) > bb_.upper()( ii ) ) upper( ii ) = bb_.upper()( ii );
 
 
 	threeD_projection_->or_by_box_liberal( BoundingBox( lower, upper ) );
@@ -364,7 +364,7 @@ OccupiedSpaceHash::project_point_to_3d( Real6 const & geom )
 /// @details return the 64-bit bitmask for a particular bit -- numbered in increasing order
 /// from right to left.
 boost::uint64_t
-OccupiedSpaceHash::bitmask_for_position( Size pos ) const {
+OccupiedSpaceHash::bitmask_for_position( core::Size pos ) const {
 	debug_assert( pos > 0 && pos <= 64 );
 
 	switch ( pos ) {
@@ -449,7 +449,7 @@ boost::uint64_t
 OccupiedSpaceHash::calc_bin_index(  numeric::geometry::hashing::Bin6D const & bin ) const
 {
 	boost::uint64_t index( 0 );
-	for ( Size ii = 1; ii <= 6; ++ii ) {
+	for ( core::Size ii = 1; ii <= 6; ++ii ) {
 		index += bin[ ii ] * dim_prods_[ ii ];
 	}
 	return index;

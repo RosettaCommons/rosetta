@@ -53,7 +53,7 @@ ZincSiteFinder::~ZincSiteFinder() = default;
 
 
 void
-ZincSiteFinder::set_expecting_n_ligands( Size n ) {
+ZincSiteFinder::set_expecting_n_ligands( core::Size n ) {
 	//To check if we've successfully identified the entire metal site.
 	//Sometimes large coordination distances can result in not finding all suppos'ed coordinating residues.
 	//If set to 0, the program will find however many it finds based on the zn-distance cutoff of 3.0 Angstroms
@@ -72,8 +72,8 @@ utility::vector1< protocols::metal_interface::MetalSiteResidueOP >
 ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 {
 	point zinc;
-	Size pose_length = pose.size();
-	Size index( 0 ); // used to fill the various metalsite vectors
+	core::Size pose_length = pose.size();
+	core::Size index( 0 ); // used to fill the various metalsite vectors
 
 	//if the zinc residue position was given in the constructor...
 	if ( zinc_res_ > 0 && zinc_res_ <= pose_length ) {
@@ -88,7 +88,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 		msr_[1]->set_ligand_atom_id( core::id::AtomID( 1 /*zinc is only atom*/, zinc_res_ ) );
 	} else {
 		//The zinc atom must be found FIRST in order to subsequently find the liganding residues
-		for ( Size i(1); i <= pose_length; ++i ) {
+		for ( core::Size i(1); i <= pose_length; ++i ) {
 			std::string name3 = pose.residue(i).name3();
 			if ( name3 == " ZN" || name3 == "ZN " || name3 == "ZN" || name3 == "ZNX" ) {
 				msr_.push_back( utility::pointer::make_shared< protocols::metal_interface::MetalSiteResidue >() );
@@ -117,7 +117,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 
 	//Now that we have the zinc, iterate through Cys/His/Asp/Glu residues, if coordinating atom is within 3.0 Angstroms, store the residue number, residue name, atom ids
 
-	for ( Size i(1); i <= pose_length; ++i ) {
+	for ( core::Size i(1); i <= pose_length; ++i ) {
 		// AMW: assignment based on residue identity and all the other stuff are separate tasks.
 		std::string lig_atom, pre_lig_atom, pre_pre_lig_atom;
 		if ( pose.residue(i).name3() == "CYS" && !pose.residue(i).has_variant_type( chemical::DISULFIDE ) ) {
@@ -161,7 +161,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 		}
 	}
 
-	for ( Size ii(1); ii <=index; ii++ ) {
+	for ( core::Size ii(1); ii <=index; ii++ ) {
 		TR << "msr_" << ii << " " << msr_[ii]->get_resname() << " " << msr_[ii]->get_seqpos() << " " << msr_[ii]->get_ligand_atom_xyz() << " " << msr_[ii]->get_ligand_atom_name() << std::endl;
 		TR << msr_[ii]->get_ligand_atom_id() << "  " << msr_[ii]->get_pre_ligand_atom_id() << msr_[ii]->get_pre_pre_ligand_atom_id() << std::endl;
 	}

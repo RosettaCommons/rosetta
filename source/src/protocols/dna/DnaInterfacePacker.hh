@@ -129,7 +129,7 @@ public:
 
 private: // methods
 	void standard_packing( Pose & );
-	void post_packing( Pose &, ResTypeSequence const &, Size );
+	void post_packing( Pose &, ResTypeSequence const &, core::Size );
 	void protein_scan( Pose & );
 	void init_standard( Pose & );
 	void make_dna_sequence_combinations( core::chemical::ResidueTypeSet const & );

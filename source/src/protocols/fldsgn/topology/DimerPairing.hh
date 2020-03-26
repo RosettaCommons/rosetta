@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_fldsgn_topology_DimerPairing_hh
 
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/fldsgn/topology/DimerPairing.fwd.hh>
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 #include <utility/vector1.hh>
@@ -25,9 +25,9 @@ namespace fldsgn {
 namespace topology {
 
 
-class DimerPairing  : public utility::pointer::ReferenceCount {
+class DimerPairing  : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~DimerPairing() override;
 
 
@@ -38,24 +38,24 @@ public:
 public:
 
 	DimerPairing (
-		Size const res1,
-		Size const res2,
+		core::Size const res1,
+		core::Size const res2,
 		Real const dist,
 		Real const phi,
 		Real const theta,
 		Real const sigma,
 		Real const dp,
-		Size const sign1,
-		Size const sign2,
+		core::Size const sign1,
+		core::Size const sign2,
 		Real const score );
 
-	Size
+	core::Size
 	res1() const
 	{
 		return res1_;
 	}
 
-	Size
+	core::Size
 	res2() const
 	{
 		return res2_;
@@ -91,13 +91,13 @@ public:
 		return sigma_;
 	}
 
-	Size
+	core::Size
 	sign1() const
 	{
 		return sign1_;
 	}
 
-	Size
+	core::Size
 	sign2() const
 	{
 		return sign2_;
@@ -144,15 +144,15 @@ public:
 private: // data
 
 
-	Size res1_;
-	Size res2_;
+	core::Size res1_;
+	core::Size res2_;
 	Real dist_;
 	Real phi_;
 	Real theta_;
 	Real sigma_;
 	Real dp_;
-	Size sign1_;
-	Size sign2_;
+	core::Size sign1_;
+	core::Size sign2_;
 	Real score_;
 	char orient_;
 	bool valid_;

@@ -27,7 +27,7 @@
 
 // Utility Headers
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #ifdef WIN32
@@ -56,9 +56,9 @@ struct SerializedLoop {
 };
 
 /// single loop definition
-class Loop : public utility::pointer::ReferenceCount {
+class Loop : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Loop() override;
 	/// default constructor
 	Loop():
@@ -106,8 +106,8 @@ public:
 	/// returns the length. Makes no assumptions about directionality. That is,
 	/// Loop(3,8).length() == Loop(8,3).length(). Constant time procedure.
 	core::Size length() const {
-		Size m = std::min(start(), stop());
-		Size n = std::max(start(), stop());
+		core::Size m = std::min(start(), stop());
+		core::Size n = std::max(start(), stop());
 		return n - m + 1;
 	}
 
@@ -139,7 +139,7 @@ public:
 	}
 
 	/// @brief add all residues within this loop definition into selection
-	void get_residues( utility::vector1< Size>& selection ) const;
+	void get_residues( utility::vector1< core::Size>& selection ) const;
 
 	/// @brief switch DOF_Type for residues in loop. id::CHI, id::BB --- don't
 	/// use with id::JUMP

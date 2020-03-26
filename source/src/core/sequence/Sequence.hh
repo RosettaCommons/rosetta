@@ -24,7 +24,7 @@
 // Utility headers
 #include <utility>
 #include <utility/file/FileName.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 
@@ -41,7 +41,7 @@
 namespace core {
 namespace sequence {
 
-class Sequence : public utility::pointer::ReferenceCount {
+class Sequence : public utility::VirtualBase {
 
 public:
 
@@ -59,7 +59,7 @@ public:
 
 	/// @brief copy constructor.
 	Sequence( Sequence const & src ) :
-		ReferenceCount()
+		VirtualBase()
 	{
 		*this = src;
 	}

@@ -41,7 +41,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
@@ -58,7 +58,7 @@ namespace jumping {
 ///
 /// @details a residue type with information which atoms to be used to define a jump
 ///and cst.
-class ResiduePairJumpSingle : public utility::pointer::ReferenceCount {
+class ResiduePairJumpSingle : public utility::VirtualBase {
 
 public:
 	/// @brief empty constructor
@@ -143,7 +143,7 @@ enum dofType {
 	num_dofType = cstJump
 };
 
-class ResiduePairJump : public utility::pointer::ReferenceCount {
+class ResiduePairJump : public utility::VirtualBase {
 
 	typedef std::map< cstType, utility::vector1< core::Real > > cstInfoMap;
 	typedef std::map< cstType, utility::vector1< core::Real > >::iterator cstInfoMapIterator;

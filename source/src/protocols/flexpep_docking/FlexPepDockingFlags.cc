@@ -188,7 +188,7 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
 bool FlexPepDockingFlags::is_ligand_present( core::pose::Pose const& pose ) const
 {
 	if ( valid_chain_bounds_ ) {
-		if ( pose.size() > (Size)(peptide_nres_ + receptor_nres_) ) {
+		if ( pose.size() > (core::Size)(peptide_nres_ + receptor_nres_) ) {
 			return true;
 		} else {
 			return false;
@@ -459,7 +459,7 @@ FlexPepDockingFlags::updateChainsAndAnchors_fromParamsFile
 	TR << "# finished reading params" << endl;
 
 	// offset peptide anchors / cuts residues, by peptide_first_res_
-	std::map< Size, Size >::iterator iter, end;
+	std::map< core::Size, core::Size >::iterator iter, end;
 	for ( iter = peptide_anchors.begin(), end = peptide_anchors.end(); iter != end; ++iter ) {
 		iter->second += (peptide_first_res_ - 1);
 	}

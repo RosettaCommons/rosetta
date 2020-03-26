@@ -292,7 +292,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	///////////////////////////////////////////////////////////////////////////
 	// Main Loop.
 	///////////////////////////////////////////////////////////////////////////
-	Size refine_pose_id( 1 );
+	core::Size refine_pose_id( 1 );
 	std::list< core::Real > all_lores_score_final; // used for filtering.
 
 	using namespace basic::options;
@@ -346,8 +346,8 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	denovo_job_distributor->initialize( pose ); // start_pose_ gets saved.
 
 	output::RNA_FragmentMonteCarloOutputterOP outputter;
-	//for ( Size n = 1; n <= options_->nstruct(); n++ ) {
-	Size n = 1;
+	//for ( core::Size n = 1; n <= options_->nstruct(); n++ ) {
+	core::Size n = 1;
 	while ( denovo_job_distributor->has_another_job() ) {
 
 		std::string const out_file_tag = "S_"+lead_zero_string_of( n++, 6 );
@@ -654,7 +654,7 @@ RNA_DeNovoProtocol::add_chem_shift_info(core::io::silent::SilentStruct & silent_
 		rna_chemical_shift_potential( core::scoring::ScoringManager::
 		get_instance()->get_RNA_ChemicalShiftPotential() );
 
-	Size const num_chem_shift_data_points=rna_chemical_shift_potential.get_total_exp_chemical_shift_data_points();
+	core::Size const num_chem_shift_data_points=rna_chemical_shift_potential.get_total_exp_chemical_shift_data_points();
 
 	//rosetta_chem_shift_score --> Sum_square chemical_shift deviation.
 

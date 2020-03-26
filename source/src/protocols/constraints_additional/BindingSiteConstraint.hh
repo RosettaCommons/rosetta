@@ -122,7 +122,7 @@ public:
 	std::string type() const override;
 
 
-	Size
+	core::Size
 	natoms() const override;
 
 
@@ -131,14 +131,14 @@ public:
 
 
 	AtomID const &
-	atom( Size const n ) const override;
+	atom( core::Size const n ) const override;
 
 	void show( std::ostream& out ) const override;
 
 	void show_def( std::ostream& out, core::pose::Pose const & pose ) const override;
 	void read_def( std::istream& in, core::pose::Pose const & pose, core::scoring::func::FuncFactory const & func_factory ) override;
 
-	Size show_violations( std::ostream & out, core::pose::Pose const & pose, core::Size verbose_level, core::Real threshold = 1.0 ) const override;
+	core::Size show_violations( std::ostream & out, core::pose::Pose const & pose, core::Size verbose_level, core::Real threshold = 1.0 ) const override;
 
 protected:
 	void init( core::pose::Pose const & start_pose );

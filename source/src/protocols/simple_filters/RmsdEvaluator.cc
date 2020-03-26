@@ -46,7 +46,7 @@ namespace simple_filters {
 using namespace core;
 
 
-RmsdEvaluator::RmsdEvaluator( core::pose::PoseCOP pose, Size start, Size end, std::string tag, bool bGDT /*default true*/ )
+RmsdEvaluator::RmsdEvaluator( core::pose::PoseCOP pose, core::Size start, core::Size end, std::string tag, bool bGDT /*default true*/ )
 : evaluation::SingleValuePoseEvaluator< Real > ("rms"+tag ),
 	rmsd_pose_( pose ),
 	start_( start ),
@@ -112,7 +112,7 @@ Real RmsdEvaluator::apply( core::pose::Pose& pose ) const {
 }
 
 
-SelectRmsdEvaluator::SelectRmsdEvaluator( core::pose::PoseCOP pose, std::list< Size > const & selection, std::string tag, bool CAonly )
+SelectRmsdEvaluator::SelectRmsdEvaluator( core::pose::PoseCOP pose, std::list< core::Size > const & selection, std::string tag, bool CAonly )
 : evaluation::SingleValuePoseEvaluator< Real >( "rms"+tag ),
 	rmsd_pose_(std::move( pose )),
 	selection_( selection ),
@@ -122,7 +122,7 @@ SelectRmsdEvaluator::SelectRmsdEvaluator( core::pose::PoseCOP pose, std::list< S
 
 }
 
-SelectRmsdEvaluator::SelectRmsdEvaluator( core::pose::PoseCOP pose, utility::vector1< Size> const& selection, std::string tag, bool CAonly )
+SelectRmsdEvaluator::SelectRmsdEvaluator( core::pose::PoseCOP pose, utility::vector1< core::Size> const& selection, std::string tag, bool CAonly )
 : evaluation::SingleValuePoseEvaluator< Real >( "rms"+tag ),
 	rmsd_pose_(std::move( pose )),
 	tag_( tag ),
@@ -175,7 +175,7 @@ SelectRmsdEvaluator::apply( core::pose::Pose& pose ) const {
 }
 
 SelectGdtEvaluator::~SelectGdtEvaluator()= default;
-SelectGdtEvaluator::SelectGdtEvaluator( core::pose::PoseCOP pose, std::list< Size > const & selection, std::string tag )
+SelectGdtEvaluator::SelectGdtEvaluator( core::pose::PoseCOP pose, std::list< core::Size > const & selection, std::string tag )
 : evaluation::SingleValuePoseEvaluator< Real >( "gdtmm"+tag ),
 	rmsd_pose_(std::move( pose )),
 	selection_( selection ),
@@ -184,7 +184,7 @@ SelectGdtEvaluator::SelectGdtEvaluator( core::pose::PoseCOP pose, std::list< Siz
 
 }
 
-SelectGdtEvaluator::SelectGdtEvaluator( core::pose::PoseCOP pose, utility::vector1< Size> const& selection, std::string tag )
+SelectGdtEvaluator::SelectGdtEvaluator( core::pose::PoseCOP pose, utility::vector1< core::Size> const& selection, std::string tag )
 : evaluation::SingleValuePoseEvaluator< Real >( "gdtmm"+tag ),
 	rmsd_pose_(std::move( pose )),
 	tag_( tag )
@@ -225,7 +225,7 @@ SelectGdtEvaluator::apply( core::pose::Pose& pose ) const {
 }
 
 
-SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::PoseCOP pose, std::list< Size > const & selection, std::string tag, core::Real rmsd_threshold )
+SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::PoseCOP pose, std::list< core::Size > const & selection, std::string tag, core::Real rmsd_threshold )
 : evaluation::SingleValuePoseEvaluator< Real >( "maxsub"+tag ),
 	rmsd_pose_(std::move( pose )),
 	selection_( selection ),
@@ -235,7 +235,7 @@ SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::PoseCOP pose, std::lis
 
 }
 
-SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::PoseCOP pose, utility::vector1< Size> const& selection, std::string tag, core::Real rmsd_threshold )
+SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::PoseCOP pose, utility::vector1< core::Size> const& selection, std::string tag, core::Real rmsd_threshold )
 : evaluation::SingleValuePoseEvaluator< Real >( "maxsub"+tag ),
 	rmsd_pose_(std::move( pose )),
 	tag_( tag ),

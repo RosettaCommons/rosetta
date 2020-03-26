@@ -70,7 +70,7 @@ returned in JobQueen::job_results_that_should_be_discarded()
 
 // Numeric headers
 #include <numeric/DiscreteIntervalEncodingTree.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <boost/container/flat_set.hpp>
 
@@ -287,7 +287,7 @@ public:
 
 };
 
-class JobGenealogist : public utility::pointer::ReferenceCount{
+class JobGenealogist : public utility::VirtualBase{
 
 public:
 	JobGenealogist(

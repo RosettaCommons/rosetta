@@ -71,7 +71,7 @@ namespace membrane {
 
 // privatized default constructor
 ImplicitLipidInfo::ImplicitLipidInfo() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	water_thickness_( 0.0 ),
 	change_in_water_density_( 0.0 ),
 	transformed_water_thickness_( 0.0 ),
@@ -91,7 +91,7 @@ ImplicitLipidInfo::ImplicitLipidInfo() :
 ImplicitLipidInfo::ImplicitLipidInfo(
 	std::string lipid_composition_name,
 	core::Real temperature
-) : utility::pointer::ReferenceCount(),
+) : utility::VirtualBase(),
 	water_thickness_( 0.0 ),
 	change_in_water_density_( 0.0 ),
 	transformed_water_thickness_( 0.0 ),
@@ -113,7 +113,7 @@ ImplicitLipidInfo::ImplicitLipidInfo(
 }
 
 ImplicitLipidInfo::ImplicitLipidInfo( ImplicitLipidInfo const & src ) :
-	utility::pointer::ReferenceCount( src ),
+	utility::VirtualBase( src ),
 	water_thickness_( src.water_thickness_ ),
 	change_in_water_density_( src.change_in_water_density_ ),
 	transformed_water_thickness_( src.transformed_water_thickness_ ),

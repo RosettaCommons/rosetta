@@ -71,8 +71,8 @@ void StepWiseSamplerSizedComb::init() {
 	for ( auto const & rotamer : rotamer_list_ ) {
 		Real const curr_size = rotamer->size();
 		id_list_.push_back( 0 );
-		size_list_.push_back( (Size)curr_size );
-		size_ = (Size)(size_ * curr_size);
+		size_list_.push_back( (core::Size)curr_size );
+		size_ = (core::Size)(size_ * curr_size);
 		if ( curr_size == 0 ) TR << "Got a null rotamer sampler!" << std::endl;
 	}
 	set_init( true );
@@ -83,7 +83,7 @@ void StepWiseSamplerSizedComb::reset() {
 	if ( random() ) {
 		++( *this );
 	} else {
-		for ( Size i = 1; i <= id_list_.size(); ++i ) {
+		for ( core::Size i = 1; i <= id_list_.size(); ++i ) {
 			id_list_[i] = 1;
 		}
 		id_ = 1;
@@ -103,7 +103,7 @@ void StepWiseSamplerSizedComb::operator++() {
 }
 ///////////////////////////////////////////////////////////////////////////
 void StepWiseSamplerSizedComb::update_rotamer_ids() {
-	for ( Size i = 1; i <= id_list_.size(); ++i ) {
+	for ( core::Size i = 1; i <= id_list_.size(); ++i ) {
 		rotamer_list_[i]->set_id( id_list_[i] );
 	}
 }
@@ -112,25 +112,25 @@ void StepWiseSamplerSizedComb::apply( Pose & pose ) {
 	apply( pose, id_ );
 }
 ///////////////////////////////////////////////////////////////////////////
-void StepWiseSamplerSizedComb::apply( core::pose::Pose & pose, Size const id ) {
+void StepWiseSamplerSizedComb::apply( core::pose::Pose & pose, core::Size const id ) {
 	runtime_assert( is_init() );
-	utility::vector1<Size> new_id_list = id2list( id );
-	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
+	utility::vector1<core::Size> new_id_list = id2list( id );
+	for ( core::Size i = 1; i <= rotamer_list_.size(); ++i ) {
 		rotamer_list_[i]->apply( pose, new_id_list[i] );
 	}
 }
 ///////////////////////////////////////////////////////////////////////////
-utility::vector1<Size>
+utility::vector1<core::Size>
 StepWiseSamplerSizedComb::id2list( core::Size const id ) const {
 	runtime_assert( is_init() );
 
-	utility::vector1<Size> new_id_list ( id_list_.size(), 1 );
+	utility::vector1<core::Size> new_id_list ( id_list_.size(), 1 );
 
 	new_id_list[1] = id;
-	for ( Size i = 1; i < new_id_list.size(); ++i ) {
+	for ( core::Size i = 1; i < new_id_list.size(); ++i ) {
 		if ( new_id_list[i] > size_list_[i] ) {
-			Size quot = new_id_list[i] / size_list_[i];
-			Size const rem = new_id_list[i] % size_list_[i];
+			core::Size quot = new_id_list[i] / size_list_[i];
+			core::Size const rem = new_id_list[i] % size_list_[i];
 			if ( rem == 0 ) {
 				new_id_list[i] = size_list_[i];
 				--quot;
@@ -149,9 +149,9 @@ core::Size
 StepWiseSamplerSizedComb::list2id( utility::vector1<core::Size> const & id_list ) const {
 	runtime_assert( is_init() );
 
-	Size id( 1 );
-	Size block_size_( 1 );
-	for ( Size i = 1; i <= id_list.size(); ++i ) {
+	core::Size id( 1 );
+	core::Size block_size_( 1 );
+	for ( core::Size i = 1; i <= id_list.size(); ++i ) {
 		id += block_size_ * ( id_list[ i ] - 1);
 		block_size_ *= size_list_[ i ];
 	}
@@ -161,9 +161,9 @@ StepWiseSamplerSizedComb::list2id( utility::vector1<core::Size> const & id_list 
 
 /// @brief Move sampler to end.
 void
-StepWiseSamplerSizedComb::fast_forward( Size const sampler_number ){
+StepWiseSamplerSizedComb::fast_forward( core::Size const sampler_number ){
 	runtime_assert( sampler_number <= rotamer_list_.size() );
-	for ( Size n = 1; n <= sampler_number; n++ ) {
+	for ( core::Size n = 1; n <= sampler_number; n++ ) {
 		id_list_[ n ] = rotamer_list_[ n ]->size();
 	}
 	id_ = list2id( id_list_ );
@@ -173,14 +173,14 @@ StepWiseSamplerSizedComb::fast_forward( Size const sampler_number ){
 void
 StepWiseSamplerSizedComb::set_random( bool const setting ){
 	StepWiseSampler::set_random( setting );
-	for ( Size n = 1; n <= rotamer_list_.size(); n++ )  rotamer_list_[ n ]->set_random( setting );
+	for ( core::Size n = 1; n <= rotamer_list_.size(); n++ )  rotamer_list_[ n ]->set_random( setting );
 }
 
 ///////////////////////////////////////////////////////////////////////////
-void StepWiseSamplerSizedComb::show( std::ostream & out, Size const indent ) const {
+void StepWiseSamplerSizedComb::show( std::ostream & out, core::Size const indent ) const {
 	StepWiseSamplerSized::show( out, indent );
 	// reverse direction so that 'inner loop' is last.
-	for ( Size k = rotamer_list_.size(); k >= 1; k-- ) rotamer_list_[k]->show( out, indent + 1 );
+	for ( core::Size k = rotamer_list_.size(); k >= 1; k-- ) rotamer_list_[k]->show( out, indent + 1 );
 }
 
 } //sampler

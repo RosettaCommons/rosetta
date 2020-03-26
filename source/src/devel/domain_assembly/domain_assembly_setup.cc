@@ -76,7 +76,7 @@ DomainInfo::process_domain( )
 		temp_pose.conformation().delete_residue_range_slow( 1 , trim_nterm_ );
 	}
 
-	//for ( Size i = 1; i <= trim_nterm_; ++i ) {
+	//for ( core::Size i = 1; i <= trim_nterm_; ++i ) {
 	// temporary FoldTree manipulation - until delete_polymer fixed
 	//FoldTree f( temp_pose.fold_tree() );
 	//f.delete_seqpos( 1 ) ;
@@ -86,7 +86,7 @@ DomainInfo::process_domain( )
 	//}
 
 	// trim the c-terminus
-	for ( Size i = 1; i <= trim_cterm_; ++i ) {
+	for ( core::Size i = 1; i <= trim_cterm_; ++i ) {
 		temp_pose.delete_polymer_residue( temp_pose.size() ) ;
 	}
 
@@ -98,7 +98,7 @@ DomainInfo::process_domain( )
 	if ( linker_sequence_n.length() > 0 ) {
 		core::pose::remove_lower_terminus_type_from_pose_residue( temp_pose, 1 );
 	}
-	for ( Size pos = linker_sequence_n.length(); pos > 0; --pos ) {
+	for ( core::Size pos = linker_sequence_n.length(); pos > 0; --pos ) {
 		char aa = linker_sequence_n[pos-1]; // string indexing is zero-based!
 		AA my_aa = aa_from_oneletter_code( aa );
 		ResidueType const & rsd_type( *( residue_set->get_representative_type_aa( my_aa ) ) );
@@ -135,7 +135,7 @@ DomainInfo::process_domain( )
 		ResidueType const & rsd_type( *( residue_set->get_representative_type_aa( my_aa )) );
 		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
 		temp_pose.append_residue_by_bond( *new_rsd, true );
-		Size seqpos = temp_pose.size( );
+		core::Size seqpos = temp_pose.size( );
 		//if the residue to be added is RNA, give it the average torsion angles for A-RNA
 		if ( rsd_type.is_NA() ) {
 			temp_pose.set_alpha(seqpos, -68);
@@ -147,7 +147,7 @@ DomainInfo::process_domain( )
 		} else {
 
 			// give the new residue extended chain parameters
-			//Size seqpos = temp_pose.size( );
+			//core::Size seqpos = temp_pose.size( );
 			temp_pose.set_psi( seqpos-1, 150 );
 			temp_pose.set_omega( seqpos-1, 180 );
 			temp_pose.set_phi( seqpos, -150 );
@@ -162,7 +162,7 @@ process_domains(
 	utility::vector1< DomainInfo > & domains
 )
 {
-	for ( Size i = 1; i <= domains.size(); ++i ) {
+	for ( core::Size i = 1; i <= domains.size(); ++i ) {
 		domains[i].process_domain( );
 	}
 }
@@ -176,8 +176,8 @@ connect_domains(
 	pose::Pose & full_pose
 )
 {
-	Size domain_begin(0), domain_end(0), domains_so_far_end(0);
-	for ( Size i = 1; i <= domains.size(); ++i ) {
+	core::Size domain_begin(0), domain_end(0), domains_so_far_end(0);
+	for ( core::Size i = 1; i <= domains.size(); ++i ) {
 		pose::Pose domain_pose = domains[i].get_processed_pose();
 		if ( full_pose.size() == 0 ) {
 			full_pose = domain_pose;
@@ -190,7 +190,7 @@ connect_domains(
 			core::pose::remove_lower_terminus_type_from_pose_residue( domain_pose, 1 );
 			domain_begin = full_pose.size() + 1;
 			//Will add sequential amino acid residues to the first domain until no more amino acids are detected
-			for ( Size i = 1; i <= domain_pose.size( ); ++i ) {
+			for ( core::Size i = 1; i <= domain_pose.size( ); ++i ) {
 				if ( !((domain_pose.residue_type(i)).is_NA()) ) {
 					full_pose.append_residue_by_bond( domain_pose.residue(i) );
 					domain_end = i;
@@ -202,7 +202,7 @@ connect_domains(
 				full_pose.append_residue_by_jump(domain_pose.residue( (domain_end + 1)), full_pose.size());
 			}
 			//Adds the nucleotide residues at the end of the final domain pdb that were ignored previously, will crash if only one nucleotide at the end of the final domain pdb. Crude by why would you have just one RNA nucleotide at the end.
-			for ( Size i = domain_end + 2; i <= domain_pose.size(); ++i ) {
+			for ( core::Size i = domain_end + 2; i <= domain_pose.size(); ++i ) {
 				full_pose.append_residue_by_bond( domain_pose.residue(i) );
 			}
 			full_pose.conformation().insert_ideal_geometry_at_polymer_bond( domain_begin - 1 );

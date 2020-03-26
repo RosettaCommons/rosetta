@@ -52,6 +52,8 @@ static basic::Tracer tr( "protocols.filters.ScoreCutoffFilter" );
 namespace protocols {
 namespace score_filters {
 
+using core::Size;
+
 
 ScoreCutoffFilter::ScoreCutoffFilter() :
 	parent("ScoreCutoffFilter"), cutoff_( 0.0 ), report_residue_pair_energies_( false ), pdb_numbering_(true), total_score_( true ), unweighted_( false )
@@ -185,7 +187,7 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 		if ( i == n_shortranged_2b_score_types ) last_active_sr_st = active_st.size();
 	}
 	utility::vector1< LREnergyContainerCOP > active_lr_e;
-	for ( Size lr = 1; lr <= methods::n_long_range_types; lr++ ) {
+	for ( core::Size lr = 1; lr <= methods::n_long_range_types; lr++ ) {
 		auto lr_type = methods::LongRangeEnergyType( lr );
 		LREnergyContainerCOP lrec = pose.energies().long_range_container( lr_type );
 		if ( !lrec ) continue;
@@ -215,7 +217,7 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 		for ( utility::graph::EdgeListConstIterator egraph_it = egraph.get_energy_node( res1 )->const_upper_edge_list_begin();
 				egraph_it != egraph.get_energy_node( res1 )->const_upper_edge_list_end(); ++egraph_it ) {
 			core::Size other_ind( (*egraph_it)->get_other_ind( res1 ) );
-			upper_interactions.insert( std::pair< Size, EnergyMap >(other_ind, EnergyMap() ) );
+			upper_interactions.insert( std::pair< core::Size, EnergyMap >(other_ind, EnergyMap() ) );
 			EnergyMap & this_emap( upper_interactions.find( other_ind )->second );
 			auto const * eedge( static_cast< EnergyEdge const * >(*egraph_it));
 
@@ -224,14 +226,14 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 		} //loop over all short range upper edges for res
 
 		//2nd, get long range energies
-		for ( Size lr = 1; lr <= active_lr_e.size(); lr++ ) {
+		for ( core::Size lr = 1; lr <= active_lr_e.size(); lr++ ) {
 			for ( ResidueNeighborConstIteratorOP rni( active_lr_e[lr]->const_upper_neighbor_iterator_begin( res1 ) );
 					*rni != *( active_lr_e[lr]->const_upper_neighbor_iterator_end( res1 ) ); ++(*rni) ) {
 				EnergyMap lr_emap;
 				core::Size other_ind( rni->upper_neighbor_id() );
 				rni->retrieve_energy( lr_emap );
 				auto map_it = upper_interactions.find( other_ind );
-				if ( map_it == upper_interactions.end() ) upper_interactions.insert( std::pair<Size, EnergyMap >(other_ind, lr_emap ) );
+				if ( map_it == upper_interactions.end() ) upper_interactions.insert( std::pair<core::Size, EnergyMap >(other_ind, lr_emap ) );
 				else map_it->second += lr_emap;
 			} // loop over all lr interactions for this res
 		} //loop over all lr energies

@@ -120,7 +120,7 @@ AtomAtomPairFeatures::AtomAtomPairFeatures() :
 
 	AtomTypeSetCOP atom_type_set(ChemicalManager::get_instance()->atom_type_set("fa_standard"));
 
-	for ( Size i=1; i <= relevant_atom_names_.size(); ++i ) {
+	for ( core::Size i=1; i <= relevant_atom_names_.size(); ++i ) {
 		atom_index_to_relevant_atom_index_[
 			atom_type_set->atom_type_index(relevant_atom_names_[i])] = i;
 	}
@@ -195,7 +195,7 @@ AtomAtomPairFeatures::parse_my_tag(
 ) {
 	min_dist_ = tag->getOption<Real>("min_dist", 0.0);
 	max_dist_ = tag->getOption<Real>("max_dist", 10.0);
-	nbins_ = tag->getOption<Size>("nbins", 15);
+	nbins_ = tag->getOption<core::Size>("nbins", 15);
 	if ( nbins_ < 1 ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The parameter 'nbins' must be an integer greater than 0.");
 	}
@@ -242,38 +242,38 @@ AtomAtomPairFeatures::report_atom_pairs(
 
 	vector1<Distance> bin_breaks;
 	Distance const bin_width((max_dist_-min_dist_)/nbins_);
-	for ( Size i=0; i <= nbins_; ++i ) {
+	for ( core::Size i=0; i <= nbins_; ++i ) {
 		bin_breaks.push_back(i*bin_width + min_dist_);
 	}
 
 	int const dim1(relevant_atom_names_.size());
 	int const dim2(relevant_elements_.size());
 	int const dim3(nbins_);
-	Size const initial_value(0);
-	FArray3D< Size > counts;
+	core::Size const initial_value(0);
+	FArray3D< core::Size > counts;
 	counts.dimension(dim1, dim2, dim3, initial_value);
 
-	for ( Size res_num1=1; res_num1 <= pose.size(); ++res_num1 ) {
+	for ( core::Size res_num1=1; res_num1 <= pose.size(); ++res_num1 ) {
 		Residue res1(pose.residue(res_num1));
 
-		for ( Size atom_num1=1; atom_num1 <= res1.natoms(); ++atom_num1 ) {
+		for ( core::Size atom_num1=1; atom_num1 <= res1.natoms(); ++atom_num1 ) {
 			Vector const & atom1_xyz( res1.xyz(atom_num1) );
 
-			Size const atom_index1(res1.type().atom_type_index(atom_num1));
-			map<Size, Size>::const_iterator const i_relevant_atom_index1(
+			core::Size const atom_index1(res1.type().atom_type_index(atom_num1));
+			map<core::Size, core::Size>::const_iterator const i_relevant_atom_index1(
 				atom_index_to_relevant_atom_index_.find(atom_index1));
 			if ( i_relevant_atom_index1 == atom_index_to_relevant_atom_index_.end() ) {
 				continue;
 			}
 
-			for ( Size res_num2=1; res_num2 <= pose.size(); ++res_num2 ) {
+			for ( core::Size res_num2=1; res_num2 <= pose.size(); ++res_num2 ) {
 				if ( !check_relevant_residues(
 						relevant_residues, res_num1, res_num2) ) continue;
 				Residue res2( pose.residue(res_num2) );
 
-				for ( Size atom_num2=1; atom_num2 <= res2.natoms(); ++atom_num2 ) {
+				for ( core::Size atom_num2=1; atom_num2 <= res2.natoms(); ++atom_num2 ) {
 					string const elem_name2(res2.type().atom_type(atom_num2).element());
-					map< string, Size>::const_iterator i_elem2(
+					map< string, core::Size>::const_iterator i_elem2(
 						relevant_elements_.find(elem_name2));
 					if ( i_elem2 == relevant_elements_.end() ) continue;
 
@@ -283,7 +283,7 @@ AtomAtomPairFeatures::report_atom_pairs(
 
 
 					auto const dist_bin(
-						static_cast<Size>(ceil(
+						static_cast<core::Size>(ceil(
 						(dist-min_dist_)*nbins_/(max_dist_-min_dist_))));
 					counts(i_relevant_atom_index1->second, i_elem2->second, dist_bin) += 1;
 				}
@@ -295,14 +295,14 @@ AtomAtomPairFeatures::report_atom_pairs(
 	statement stmt(safely_prepare_statement(stmt_string,db_session));
 
 
-	for ( Size i_atom1=1; i_atom1 <= relevant_atom_names_.size(); ++i_atom1 ) {
-		for ( map<string, Size>::const_iterator
+	for ( core::Size i_atom1=1; i_atom1 <= relevant_atom_names_.size(); ++i_atom1 ) {
+		for ( map<string, core::Size>::const_iterator
 				i_elem2=relevant_elements_.begin(),
 				ie_elem2=relevant_elements_.end(); i_elem2 != ie_elem2; ++i_elem2 ) {
-			for ( Size dist_bin=1; dist_bin <= nbins_; ++dist_bin ) {
+			for ( core::Size dist_bin=1; dist_bin <= nbins_; ++dist_bin ) {
 				Real const lower_break(min_dist_ + (dist_bin - 1)*bin_width);
 				Real const upper_break(min_dist_ + dist_bin * bin_width);
-				Size const count(counts(i_atom1,i_elem2->second, dist_bin));
+				core::Size const count(counts(i_atom1,i_elem2->second, dist_bin));
 				stmt.bind(1,struct_id);
 				stmt.bind(2, relevant_atom_names_[i_atom1]);
 				stmt.bind(3, i_elem2->first);

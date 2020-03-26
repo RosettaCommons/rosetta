@@ -41,20 +41,20 @@ class SameRotamerComboGrouper : public MatchGrouper {
 public:
 	typedef core::Real Real;
 	typedef core::Size Size;
-	typedef std::map< utility::OrderedTuple< utility::vector1< Size > >, Size > RotamerComboCountMap;
+	typedef std::map< utility::OrderedTuple< utility::vector1< core::Size > >, core::Size > RotamerComboCountMap;
 
 public:
 	SameRotamerComboGrouper();
-	SameRotamerComboGrouper( Size ncst );
+	SameRotamerComboGrouper( core::Size ncst );
 
 	~SameRotamerComboGrouper() override;
 
-	Size
+	core::Size
 	assign_group_for_match(
 		match const & m
 	) override;
 
-	Size
+	core::Size
 	assign_group_for_match(
 		match_dspos1 const & m
 	) override;
@@ -63,11 +63,11 @@ public:
 	reset() override;
 
 	void
-	set_n_geometric_constraints( Size n_csts );
+	set_n_geometric_constraints( core::Size n_csts );
 
 private:
 
-	Size n_geometric_constraints_;
+	core::Size n_geometric_constraints_;
 	RotamerComboCountMap rotamer_combo_indexer_;
 
 };

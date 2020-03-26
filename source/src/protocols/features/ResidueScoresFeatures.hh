@@ -123,7 +123,7 @@ private:
 	insert_one_body_residue_score_rows(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		Size const batch_id,
+		core::Size const batch_id,
 		StructureID const struct_id,
 		utility::sql_database::sessionOP db_session);
 
@@ -131,7 +131,7 @@ private:
 	insert_two_body_residue_score_rows(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		Size const batch_id,
+		core::Size const batch_id,
 		StructureID const struct_id,
 		utility::sql_database::sessionOP db_session);
 
@@ -139,7 +139,7 @@ private:
 	insert_two_body_long_range_residue_score_rows(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		Size const batch_id,
+		core::Size const batch_id,
 		StructureID const struct_id,
 		utility::sql_database::sessionOP db_session);
 

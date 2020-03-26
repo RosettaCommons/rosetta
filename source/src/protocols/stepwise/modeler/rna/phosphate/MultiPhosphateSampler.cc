@@ -50,7 +50,7 @@ MultiPhosphateSampler::MultiPhosphateSampler( pose::Pose const & reference_pose 
 
 //Constructor
 MultiPhosphateSampler::MultiPhosphateSampler( pose::Pose & pose_to_prepack,
-	Size const moving_res /*sets partition*/ )
+	core::Size const moving_res /*sets partition*/ )
 {
 	initialize_parameters();
 	initialize_by_prepack( pose_to_prepack, moving_res ); // prepacked --> true.
@@ -91,7 +91,7 @@ MultiPhosphateSampler::sample_phosphates(){
 
 	// note that the mover will instantiate or virtualize phosphates as it sees fit.
 	instantiated_some_phosphate_ = false;
-	for ( Size i = 1; i <= actual_phosphate_move_list_.size(); i++ ) {
+	for ( core::Size i = 1; i <= actual_phosphate_move_list_.size(); i++ ) {
 		PhosphateMover phosphate_mover( actual_phosphate_move_list_[i], scorefxn_ );
 		phosphate_mover.set_force_phosphate_instantiation( force_phosphate_instantiation_ );
 		phosphate_mover.apply( *phosphate_sample_pose_ );
@@ -127,14 +127,14 @@ MultiPhosphateSampler::initialize_phosphate_move_list( pose::Pose & pose ){
 
 	if ( screen_all_ ) {
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		utility::vector1< Size > const & res_list = full_model_info.res_list();
-		utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+		utility::vector1< core::Size > const & res_list = full_model_info.res_list();
+		utility::vector1< core::Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
 
-		Size const nres_full_model = full_model_info.size();
+		core::Size const nres_full_model = full_model_info.size();
 
-		for ( Size n = 1; n <= pose.size(); n++ ) {
+		for ( core::Size n = 1; n <= pose.size(); n++ ) {
 			if ( !pose.residue( n ).is_RNA() ) continue;
-			Size const seqpos_in_full_model = res_list[ n ];
+			core::Size const seqpos_in_full_model = res_list[ n ];
 			if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) continue;
 			if ( ( n == 1 || pose.fold_tree().is_cutpoint( n - 1 ) ) &&
 					seqpos_in_full_model > 1 &&
@@ -159,10 +159,10 @@ MultiPhosphateSampler::initialize_phosphate_move_list( pose::Pose & pose ){
 		}
 
 	} else {
-		for ( Size i = 1; i <= five_prime_phosphate_res_input_.size(); i++ ) {
+		for ( core::Size i = 1; i <= five_prime_phosphate_res_input_.size(); i++ ) {
 			phosphate_move_list.push_back(  PhosphateMove( five_prime_phosphate_res_input_[i], FIVE_PRIME_PHOSPHATE ) );
 		}
-		for ( Size i = 1; i <= three_prime_phosphate_res_input_.size(); i++ ) {
+		for ( core::Size i = 1; i <= three_prime_phosphate_res_input_.size(); i++ ) {
 			phosphate_move_list.push_back(  PhosphateMove( three_prime_phosphate_res_input_[i], THREE_PRIME_PHOSPHATE ) );
 		}
 	}
@@ -179,8 +179,8 @@ MultiPhosphateSampler::check_moved( utility::vector1< PhosphateMove > phosphate_
 
 	if ( moving_partition_res_.size() == 0 ) return phosphate_move_list;
 
-	utility::vector1< Size > partition_res1, partition_res2;
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	utility::vector1< core::Size > partition_res1, partition_res2;
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( !pose.residue( n ).is_RNA() ) continue;
 		if ( moving_partition_res_.has_value( n ) ) {
 			partition_res1.push_back( n );
@@ -217,7 +217,7 @@ MultiPhosphateSampler::find_uninstantiated_phosphates( pose::Pose const & pose,
 
 	for ( PhosphateMove const & phosphate_move : phosphate_move_list ) {
 		if ( actual_phosphate_move_list.has_value( phosphate_move ) ) continue;
-		Size const n = phosphate_move.rsd();
+		core::Size const n = phosphate_move.rsd();
 		if ( phosphate_move.terminus() == FIVE_PRIME_PHOSPHATE &&
 				pose.residue( n ).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) ) continue;
 		if ( phosphate_move.terminus() == THREE_PRIME_PHOSPHATE &&
@@ -228,15 +228,15 @@ MultiPhosphateSampler::find_uninstantiated_phosphates( pose::Pose const & pose,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void
-MultiPhosphateSampler::find_phosphate_contacts_other_partition( utility::vector1< Size > const & partition_res1,
-	utility::vector1< Size > const & partition_res2,
+MultiPhosphateSampler::find_phosphate_contacts_other_partition( utility::vector1< core::Size > const & partition_res1,
+	utility::vector1< core::Size > const & partition_res2,
 	pose::Pose const & pose,
 	utility::vector1< PhosphateMove > const & phosphate_move_list,
 	utility::vector1< PhosphateMove > & actual_phosphate_move_list ) const {
 
 	for ( PhosphateMove const & phosphate_move : phosphate_move_list ) {
 		if ( actual_phosphate_move_list.has_value( phosphate_move ) ) continue;
-		Size const n = phosphate_move.rsd();
+		core::Size const n = phosphate_move.rsd();
 		if ( !partition_res1.has_value( n ) ) continue;
 		Vector const phosphate_takeoff_xyz = (phosphate_move.terminus() == FIVE_PRIME_PHOSPHATE) ?
 			pose.residue( n ).xyz( " C5'" ) :
@@ -249,12 +249,12 @@ MultiPhosphateSampler::find_phosphate_contacts_other_partition( utility::vector1
 ////////////////////////////////////////////////////////////////////
 bool
 MultiPhosphateSampler::check_other_partition_for_contact( pose::Pose const & pose,
-	utility::vector1< Size > const & other_partition_res,
+	utility::vector1< core::Size > const & other_partition_res,
 	Vector const & takeoff_xyz ) const {
 
-	for ( Size const m : other_partition_res ) {
+	for ( core::Size const m : other_partition_res ) {
 		core::chemical::AtomIndices Hpos_polar = pose.residue_type( m ).Hpos_polar();
-		for ( Size const q : Hpos_polar ) {
+		for ( core::Size const q : Hpos_polar ) {
 			if ( ( pose.residue( m ).xyz( q ) - takeoff_xyz ).length_squared() < phosphate_takeoff_donor_distance_cutoff2_ ) {
 				return true;
 			}
@@ -268,14 +268,14 @@ MultiPhosphateSampler::check_other_partition_for_contact( pose::Pose const & pos
 ////////////////////////////////////////////////////////////////////////
 void
 MultiPhosphateSampler::initialize_by_prepack( pose::Pose & pose,
-	Size const moving_res ){
+	core::Size const moving_res ){
 	initialize_by_prepack( pose, make_vector1( moving_res ) );
 }
 
 ////////////////////////////////////////////////////////////////////////
 void
 MultiPhosphateSampler::initialize_by_prepack( pose::Pose & pose,
-	utility::vector1< Size > const & moving_res_list ){
+	utility::vector1< core::Size > const & moving_res_list ){
 	moving_partition_res_ = figure_out_moving_partition_res( pose, moving_res_list );
 	do_prepack( pose, moving_res_list );
 }
@@ -283,7 +283,7 @@ MultiPhosphateSampler::initialize_by_prepack( pose::Pose & pose,
 ////////////////////////////////////////////////////////////////////////
 void
 MultiPhosphateSampler::do_prepack( pose::Pose & pose,
-	utility::vector1< Size > const & moving_res_list ) {
+	utility::vector1< core::Size > const & moving_res_list ) {
 	// sanity check:
 	runtime_assert( moving_partition_res_ == figure_out_moving_partition_res( pose, moving_res_list ) );
 
@@ -291,7 +291,7 @@ MultiPhosphateSampler::do_prepack( pose::Pose & pose,
 	pose_to_split->remove_constraints(); // floating point errors if coordinate constraints are in there.
 	split_pose( *pose_to_split, moving_res_list );
 
-	utility::vector1< Size > moving_partition_res_save = moving_partition_res_;
+	utility::vector1< core::Size > moving_partition_res_save = moving_partition_res_;
 	moving_partition_res_.clear(); // ensures that all phosphates will be packed -- could replace with inputted obligate_pack_res.
 
 	pose_with_original_phosphates_ = pose_to_split->clone(); // dummy, will be replaced...

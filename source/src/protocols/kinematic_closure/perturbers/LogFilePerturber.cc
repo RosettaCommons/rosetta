@@ -67,11 +67,11 @@ LogFilePerturber::LogFilePerturber(string path) {
 			boost::lexical_cast<core::Real, string>);
 
 		if ( header == "TORSIONS" ) {
-			for ( Size i = 1; i <= dofs.size(); i++ ) to_radians(dofs[i]);
+			for ( core::Size i = 1; i <= dofs.size(); i++ ) to_radians(dofs[i]);
 			torsion_angles_.push_back(dofs);
 		}
 		if ( header == "ANGLES" ) {
-			for ( Size i = 1; i <= dofs.size(); i++ ) to_radians(dofs[i]);
+			for ( core::Size i = 1; i <= dofs.size(); i++ ) to_radians(dofs[i]);
 			bond_angles_.push_back(dofs);
 		}
 		if ( header == "LENGTHS" ) {

@@ -53,8 +53,8 @@ public:
 	void
 	write_rsd_coords(
 		std::ostream & ostr,
-		Size const scaffold_build_point_id,
-		Size const upstream_conf_id,
+		core::Size const scaffold_build_point_id,
+		core::Size const upstream_conf_id,
 		core::conformation::Residue const & rsd,
 		bool is_instance = false
 	) const;
@@ -92,8 +92,8 @@ public:
 
 	std::list< Hit >
 	build(
-		Size const scaffold_build_point_id,
-		Size const upstream_conf_id,
+		core::Size const scaffold_build_point_id,
+		core::Size const upstream_conf_id,
 		core::conformation::Residue const & upstream_residue
 	) const override;
 
@@ -114,7 +114,7 @@ public:
 	HitPtrListCOP
 	hits_to_include_with_partial_match( match_dspos1 const & m ) const override;
 
-	Size
+	core::Size
 	n_possible_hits_per_upstream_conformation() const override;
 
 	void
@@ -127,7 +127,7 @@ public:
 	set_downstream_writer( DownstreamCoordinateKinemageWriterCOP dswriter );
 
 	void
-	set_n_downstream_to_output( Size n_downstream_to_output );
+	set_n_downstream_to_output( core::Size n_downstream_to_output );
 
 	bool
 	return_pseudo_hits() const {
@@ -143,13 +143,13 @@ private:
 	std::string kinemage_file_name_;
 	std::ofstream file_out_;
 	std::ostream & ostr_;
-	mutable Size last_scaffold_build_point_;
-	mutable Size nkins_;
+	mutable core::Size last_scaffold_build_point_;
+	mutable core::Size nkins_;
 
 	downstream::ClassicMatchAlgorithmCOP match_algorithm_;
 	DownstreamCoordinateKinemageWriterCOP dswriter_;
-	Size n_downstream_to_output_;
-	mutable Size n_output_so_far_;
+	core::Size n_downstream_to_output_;
+	mutable core::Size n_output_so_far_;
 
 	bool return_pseudo_hits_;
 };
@@ -194,7 +194,7 @@ public:
 	void
 	set_dswriter( DownstreamCoordinateKinemageWriterOP dswriter );
 
-	void geom_id( Size setting );
+	void geom_id( core::Size setting );
 
 	/// @brief Set the kinemage master for the upstream residue, overriding
 	/// the default master, which is "geom#"
@@ -217,7 +217,7 @@ public:
 	void write_virtual_atoms( bool setting );
 
 private:
-	Size matches_output_count_;
+	core::Size matches_output_count_;
 
 	bool use_default_master_;
 	std::string master_;
@@ -227,7 +227,7 @@ private:
 	bool group_;
 	bool write_virtual_atoms_;
 
-	Size geom_id_;
+	core::Size geom_id_;
 	std::string kinemage_file_name_;
 	std::ofstream file_out_;
 	std::ostream & ostr_;
@@ -235,7 +235,7 @@ private:
 	DownstreamCoordinateKinemageWriterOP dswriter_;
 };
 
-class DownstreamCoordinateKinemageWriter : public utility::pointer::ReferenceCount
+class DownstreamCoordinateKinemageWriter : public utility::VirtualBase
 {
 public:
 	DownstreamCoordinateKinemageWriter();

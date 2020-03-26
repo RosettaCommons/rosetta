@@ -421,7 +421,7 @@ check_for_new_conformation_viewers()
 {
 	pthread_mutex_lock( &new_conformation_viewers_mut );
 	if ( !new_conformation_viewers.empty() ) {
-		for ( Size i=1; i<= new_conformation_viewers.size(); ++i ) {
+		for ( core::Size i=1; i<= new_conformation_viewers.size(); ++i ) {
 			ConformationViewerOP viewer( new_conformation_viewers[i] );
 			// create the new window
 
@@ -890,11 +890,11 @@ display_residues_wireframe(
 	glGetFloatv(GL_MODELVIEW_MATRIX, currentrotation);
 	Vector const z( currentrotation[2], currentrotation[6], currentrotation[10] );
 
-	Size const nres( residues.size() );
+	core::Size const nres( residues.size() );
 
-	for ( Size i=1; i<= nres; ++i ) {
+	for ( core::Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( *(residues[i] ) );
-		Size const natoms( rsd.natoms() );
+		core::Size const natoms( rsd.natoms() );
 
 		// draw connection to previous residue
 		if ( i>1 && !rsd.is_lower_terminus() && rsd.is_polymer() ) {
@@ -937,11 +937,11 @@ display_residues_wireframe(
 		utility::vector1< Vector > prev1( natoms ), prev2( natoms );
 		utility::vector1< bool > prev_set( natoms, false );
 
-		for ( Size m=1; m<= natoms; ++m ) {
+		for ( core::Size m=1; m<= natoms; ++m ) {
 
 			AtomIndices const & nbrs( rsd.bonded_neighbor(m) );
 
-			for ( Size const n : nbrs ) {
+			for ( core::Size const n : nbrs ) {
 				if ( n < m ) continue;
 				//if ( rsd.atom_type(m).is_hydrogen() && graphics::exclude_hydrogens ) continue;
 
@@ -1592,16 +1592,16 @@ draw_sidechains( GraphicsState & gs, utility::vector1< core::conformation::Resid
 		if ( residues[r]->type().mode() == chemical::CENTROID_t
 				&& residues[r]->aa() != core::chemical::aa_unk ) continue;
 
-		Size const natoms( residues[r]->natoms() );
+		core::Size const natoms( residues[r]->natoms() );
 
 		// draw the atom bonds
 		utility::vector1< Vector > prev1( natoms ), prev2( natoms );
 		utility::vector1< bool > prev_set( natoms, false );
 
-		for ( Size i=1; i<= natoms; ++i ) {
+		for ( core::Size i=1; i<= natoms; ++i ) {
 			core::chemical::AtomIndices const & nbrs( residues[r]->bonded_neighbor(i) );
 
-			for ( Size const j : nbrs ) {
+			for ( core::Size const j : nbrs ) {
 				if ( j < i ) continue;
 				if ( residues[r]->is_virtual(j) ) continue; //no virtual atoms
 				if ( residues[r]->atom_type(j).is_hydrogen() && gs.show_H_state == SHOW_NO_H ) continue;
@@ -1669,12 +1669,12 @@ draw_sidechains( GraphicsState & gs, utility::vector1< core::conformation::Resid
 	Real const DISULFIDE_LENGTH_CUTOFF2( 3.0 * 3.0 );
 	for ( int m = start; m <= end; m++ ) {
 		if ( residues[ m ]->aa() != core::chemical::aa_cys || !residues[ m ]->type().has( "SG" ) || residues[ m ]->type().atom_type_set().name() != "fa_standard" ) continue;
-		Size const i = residues[ m ]->atom_index( " SG " );
+		core::Size const i = residues[ m ]->atom_index( " SG " );
 		Vector const & xyz1 = residues[ m ]->xyz( i );
 
 		for ( int n = start; n <= end; n++ ) {
 			if ( residues[ n ]->aa() != core::chemical::aa_cys || !residues[ n ]->type().has( "SG" ) || residues[ n ]->type().atom_type_set().name() != "fa_standard" ) continue;
-			Size const j = residues[ n ]->atom_index( " SG " );
+			core::Size const j = residues[ n ]->atom_index( " SG " );
 			Vector const & xyz2 = residues[ n ]->xyz( j );
 
 			Vector const bond( xyz2 - xyz1 );
@@ -1905,8 +1905,8 @@ display_density(
 	Vector const color( 0.8,0.8,0.8 );
 	glColor4f( color[0], color[1], color[2], 0.3 );
 
-	for ( Size i=1; i<=ntris; ++i ) {
-		for ( Size j=0; j<3; ++j ) {
+	for ( core::Size i=1; i<=ntris; ++i ) {
+		for ( core::Size j=0; j<3; ++j ) {
 			glNormal3f ( triangles[i].normals_[j][0] , triangles[i].normals_[j][1] , triangles[i].normals_[j][2] );
 			glVertex3f ( triangles[i].vertices_[j][0], triangles[i].vertices_[j][1], triangles[i].vertices_[j][2] );
 		}
@@ -1922,8 +1922,8 @@ void
 fill_nres_for_graphics( GraphicsState & gs, utility::vector1< conformation::ResidueCOP > const & residues ) {
 	// AMW: Since this only counts protein and NA, this will disappoint the functions draw_conformation and
 	// draw_conformation_and_density, which also counts virts, carbohydrates, and other.
-	Size nres( 0 );
-	for ( Size n = 1; n <= residues.size(); n++ ) {
+	core::Size nres( 0 );
+	for ( core::Size n = 1; n <= residues.size(); n++ ) {
 		if ( residues[ n ]->is_protein() || residues[ n ]->is_NA() ) {
 			nres++;
 		}
@@ -1990,7 +1990,7 @@ draw_conformation_and_density(
 		glTranslatef(-center.x(), -center.y(), -center.z());
 
 		utility::vector1< conformation::ResidueCOP > residues_protein, other_residues, residues_sphere, virtual_residues, glycan_residues;
-		for ( Size n = 1; n <= residues.size(); n++ ) {
+		for ( core::Size n = 1; n <= residues.size(); n++ ) {
 			conformation::ResidueCOP rsd = residues[ n ];
 			if ( rsd->is_protein() ) {
 				residues_protein.push_back( rsd );
@@ -2090,7 +2090,7 @@ void draw_conformation(
 	glTranslatef(-center.x(), -center.y(), -center.z());
 
 	utility::vector1< conformation::ResidueCOP > residues_protein, other_residues, residues_sphere, virtual_residues, glycan_residues;
-	for ( Size n = 1; n <= residues.size(); n++ ) {
+	for ( core::Size n = 1; n <= residues.size(); n++ ) {
 		conformation::ResidueCOP rsd = residues[ n ];
 		if ( rsd->is_protein() ) {
 			residues_protein.push_back( rsd );

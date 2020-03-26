@@ -42,7 +42,7 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
-class SS_Base : public utility::pointer::ReferenceCount {
+class SS_Base : public utility::VirtualBase {
 public:
 
 
@@ -59,20 +59,20 @@ public:// construct/destruct
 	SS_Base();
 
 	/// @brief value constructor
-	SS_Base( Size const & begin, Size const & end );
+	SS_Base( core::Size const & begin, core::Size const & end );
 
 	/// @brief value constructor
-	// SS_Base( Size const & begin, Size const & end, Vector const & v );
+	// SS_Base( core::Size const & begin, core::Size const & end, Vector const & v );
 
 
 public:// accessors
 
 
-	inline Size begin() const { return begin_; }
+	inline core::Size begin() const { return begin_; }
 
-	inline Size end() const { return end_; }
+	inline core::Size end() const { return end_; }
 
-	inline Size length() const { return end_ - begin_ + 1; }
+	inline core::Size length() const { return end_ - begin_ + 1; }
 
 	inline Vector orient() const { return orient_; }
 
@@ -122,10 +122,10 @@ private: ///data
 
 
 	/// @brief begintial residue of strand
-	Size begin_;
+	core::Size begin_;
 
 	/// @brief end residue of strand
-	Size end_;
+	core::Size end_;
 
 	/// @brief
 	bool is_geometry_initialized_;
@@ -167,7 +167,7 @@ public:// construct/destruct
 	Strand();
 
 	/// @brief value constructor
-	Strand( Size const & begin, Size const & end );
+	Strand( core::Size const & begin, core::Size const & end );
 
 	/// @brief copy constructor
 	Strand( Strand const & s );
@@ -209,7 +209,7 @@ public: // constructor/destructor
 	Helix();
 
 	/// @brief value constructor
-	Helix( Size const & begin, Size const & end );
+	Helix( core::Size const & begin, core::Size const & end );
 
 	/// @brief copy constructor
 	Helix( Helix const & s );
@@ -259,7 +259,7 @@ public: // constructor/destructor
 	Loop();
 
 	/// @brief value constructor
-	Loop( Size const begin, Size const end, String const & type="" );
+	Loop( core::Size const begin, core::Size const end, String const & type="" );
 
 	/// @brief copy constructor
 	Loop( Loop const & s );
@@ -349,7 +349,7 @@ public:
 
 	inline
 	char
-	secstruct( Size ii ) const
+	secstruct( core::Size ii ) const
 	{
 		return secstruct_.at( ii-1 );
 	}
@@ -388,7 +388,7 @@ public:
 
 	/// @brief return owning pointer of strand given an index of strands
 	StrandCOP const
-	strand( Size is ) const
+	strand( core::Size is ) const
 	{
 		runtime_assert( is <= strands_.size() );
 		return strands_[ is ];
@@ -396,7 +396,7 @@ public:
 
 	/// @brief return owning pointer of helix given an index of helices
 	HelixCOP const
-	helix( Size ih ) const
+	helix( core::Size ih ) const
 	{
 		runtime_assert( ih <= helices_.size() );
 		return helices_[ ih ];
@@ -404,7 +404,7 @@ public:
 
 	/// @brief return owning pointer of loop given an index of loops
 	LoopCOP const
-	loop( Size il ) const
+	loop( core::Size il ) const
 	{
 		runtime_assert( il <= loops_.size() );
 		return loops_[ il ];
@@ -412,32 +412,32 @@ public:
 
 	/// @brief return strand index in strands given a residue number
 	inline
-	Size
-	strand_id( Size const nres ) const
+	core::Size
+	strand_id( core::Size const nres ) const
 	{
 		return strand_id_[ nres ];
 	}
 
 	/// @brief return helix index in helices given a residue number
 	inline
-	Size
-	helix_id( Size const nres ) const
+	core::Size
+	helix_id( core::Size const nres ) const
 	{
 		return helix_id_[ nres ];
 	}
 
 	/// @brief return loop index in loops given a residue number
 	inline
-	Size
-	loop_id( Size const nres ) const
+	core::Size
+	loop_id( core::Size const nres ) const
 	{
 		return loop_id_[ nres ];
 	}
 
 	/// @brief return the index of secondary structure element given a residue number
 	inline
-	Size
-	ss_element_id( Size const nres ) const
+	core::Size
+	ss_element_id( core::Size const nres ) const
 	{
 		return ss_element_id_[ nres ];
 	}
@@ -461,7 +461,7 @@ private:
 
 	/// @brief
 	void
-	resize( Size const nres );
+	resize( core::Size const nres );
 
 	/// @brief identify secondary structures
 	void identify_ss( String const & secstruct );
@@ -483,20 +483,20 @@ private: //data
 	Strands strands_;
 
 	/// @brief vector for storing index of strand id for each residue position
-	utility::vector1< Size > strand_id_;
+	utility::vector1< core::Size > strand_id_;
 
 	/// @brief vector of HelixOP
 	Helices helices_;
 
 	/// @brief vector for storing index of helix id for each residue position
-	utility::vector1< Size > helix_id_;
+	utility::vector1< core::Size > helix_id_;
 
 	/// @brief vector of loops
 	Loops loops_;
-	utility::vector1< Size > loop_id_;
+	utility::vector1< core::Size > loop_id_;
 
 	/// @brief vector for storing index of secondary structure element for each residue position
-	utility::vector1< Size > ss_element_id_;
+	utility::vector1< core::Size > ss_element_id_;
 
 
 #ifdef    SERIALIZATION

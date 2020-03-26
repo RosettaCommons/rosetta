@@ -16,7 +16,7 @@
 #include <protocols/kinematic_closure/perturbers/Perturber.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <boost/noncopyable.hpp>
 
 namespace protocols {
@@ -66,7 +66,7 @@ namespace perturbers {
 /// belief is that too many AtomTree coordinates were being updated too often.
 
 class Perturber
-	: public utility::pointer::ReferenceCount, protected boost::noncopyable {
+	: public utility::VirtualBase, protected boost::noncopyable {
 
 public:
 

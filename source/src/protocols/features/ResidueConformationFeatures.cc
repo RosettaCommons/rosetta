@@ -236,7 +236,7 @@ ResidueConformationFeatures::report_features(
 	compact_residue_insert.add_column("coord_data");
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( !check_relevant_residues(relevant_residues, i) ) continue;
 
 		Residue const & resi = pose.residue(i);
@@ -253,7 +253,7 @@ ResidueConformationFeatures::report_features(
 			omega= resi.mainchain_torsion(3);
 		}
 
-		RowDataBaseOP seqpos_data( new RowData<Size>("seqpos",i) );
+		RowDataBaseOP seqpos_data( new RowData<core::Size>("seqpos",i) );
 		RowDataBaseOP phi_data( new RowData<Real>("phi",phi) );
 		RowDataBaseOP psi_data( new RowData<Real>("psi",psi) );
 		RowDataBaseOP omega_data( new RowData<Real>("omega",omega) );
@@ -265,7 +265,7 @@ ResidueConformationFeatures::report_features(
 		for ( core::Size chi_num = 1; chi_num <= resi.nchi(); ++chi_num ) {
 			core::Real chi_angle = resi.chi(chi_num);
 
-			RowDataBaseOP chinum_data( new RowData<Size>("chinum",chi_num) );
+			RowDataBaseOP chinum_data( new RowData<core::Size>("chinum",chi_num) );
 			RowDataBaseOP chiangle_data( new RowData<Real>("chiangle",chi_angle) );
 			angle_insert.add_row(utility::tools::make_vector(
 				struct_id_data,seqpos_data,chinum_data,chiangle_data));
@@ -280,10 +280,10 @@ ResidueConformationFeatures::report_features(
 				RowDataBaseOP residue_data( new RowData<std::string>("coord_data",residue_data_string) );
 				compact_residue_insert.add_row(utility::tools::make_vector(struct_id_data,atom_count,seqpos_data,residue_data));
 			} else {
-				for ( Size atom = 1; atom <= resi.natoms(); ++atom ) {
+				for ( core::Size atom = 1; atom <= resi.natoms(); ++atom ) {
 					core::Vector coords = resi.xyz(atom);
 
-					RowDataBaseOP atom_data( new RowData<Size>("atomno",atom) );
+					RowDataBaseOP atom_data( new RowData<core::Size>("atomno",atom) );
 					RowDataBaseOP x_data( new RowData<Real>("x",coords.x()) );
 					RowDataBaseOP y_data( new RowData<Real>("y",coords.y()) );
 					RowDataBaseOP z_data( new RowData<Real>("z",coords.z()) );
@@ -380,7 +380,7 @@ ResidueConformationFeatures::load_conformation(
 
 		result protein_res(basic::database::safely_read_from_database(protein_stmt));
 		while ( protein_res.next() ) {
-			Size seqpos;
+			core::Size seqpos;
 			Real phi,psi,omega;
 			protein_res >> seqpos >> phi >> psi >> omega;
 			if ( pose.residue_type(seqpos).is_protein() ) {
@@ -391,9 +391,9 @@ ResidueConformationFeatures::load_conformation(
 		}
 		result res_conformation(basic::database::safely_read_from_database(conformation_stmt));
 		while ( res_conformation.next() ) {
-			//Size nchi(pose.residue_type(seqpos).nchi());
-			Size seqpos;
-			Size chinum;
+			//core::Size nchi(pose.residue_type(seqpos).nchi());
+			core::Size seqpos;
+			core::Size chinum;
 			Real chiangle;
 			res_conformation >> seqpos >> chinum >> chiangle;
 			if ( compact_residue_schema_ ) {
@@ -423,7 +423,7 @@ ResidueConformationFeatures::load_conformation(
 
 		result protein_res(basic::database::safely_read_from_database(protein_stmt));
 		while ( protein_res.next() ) {
-			Size seqpos;
+			core::Size seqpos;
 			Real phi,psi,omega;
 			protein_res >> seqpos >> phi >> psi >> omega;
 			if ( !pose.residue_type(seqpos).is_protein() ) {
@@ -448,7 +448,7 @@ ResidueConformationFeatures::load_conformation(
 void ResidueConformationFeatures::set_coords_for_residue(
 	sessionOP db_session,
 	StructureID struct_id,
-	Size seqpos,
+	core::Size seqpos,
 	Pose & pose
 ){
 
@@ -469,7 +469,7 @@ void ResidueConformationFeatures::set_coords_for_residue(
 
 	result res(basic::database::safely_read_from_database(stmt));
 	while ( res.next() ) {
-		Size atomno;
+		core::Size atomno;
 		Real x,y,z;
 		res >> atomno >> x >> y >> z;
 

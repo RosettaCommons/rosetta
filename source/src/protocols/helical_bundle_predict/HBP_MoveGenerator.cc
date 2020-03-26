@@ -22,13 +22,14 @@ namespace helical_bundle_predict {
 
 /// @brief Constructor.
 HBP_MoveGenerator::HBP_MoveGenerator():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	current_round_(0),
 	max_rounds_(0)
 {}
 
 /// @brief Copy constructor.
 HBP_MoveGenerator::HBP_MoveGenerator( HBP_MoveGenerator const &src ) :
+	VirtualBase( src ),
 	current_round_( src.current_round_ ),
 	max_rounds_( src.max_rounds_ )
 {}

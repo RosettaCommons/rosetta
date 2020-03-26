@@ -33,7 +33,7 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray3D.fwd.hh>
@@ -79,7 +79,7 @@ public:
 		return js;
 	}
 
-	Size total_residue() const {
+	core::Size total_residue() const {
 		return total_residue_;
 	}
 

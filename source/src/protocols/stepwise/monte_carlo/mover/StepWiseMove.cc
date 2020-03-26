@@ -41,7 +41,7 @@ std::map< AttachmentType, std::string> attachment_type_name;
 StepWiseMove::StepWiseMove( MoveElement const & move_element,
 	utility::vector1< Attachment > const & attachments,
 	MoveType const & move_type ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	utility::pointer::enable_shared_from_this< StepWiseMove >(),
 	move_element_( move_element ),
 	attachments_( attachments ),
@@ -54,7 +54,7 @@ StepWiseMove::StepWiseMove( MoveElement const & move_element,
 	utility::vector1< Attachment > const & attachments,
 	MoveType const & move_type,
 	std::string const & submotif_tag ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	utility::pointer::enable_shared_from_this< StepWiseMove >(),
 	move_element_( move_element ),
 	attachments_( attachments ),
@@ -67,7 +67,7 @@ StepWiseMove::StepWiseMove( MoveElement const & move_element,
 StepWiseMove::StepWiseMove( MoveElement const & move_element,
 	Attachment const & attachment,
 	MoveType const & move_type ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	utility::pointer::enable_shared_from_this< StepWiseMove >(),
 	move_element_( move_element ),
 	attachments_( utility::tools::make_vector1( attachment ) ),
@@ -76,10 +76,10 @@ StepWiseMove::StepWiseMove( MoveElement const & move_element,
 }
 
 //Constructor
-StepWiseMove::StepWiseMove( Size const res,
+StepWiseMove::StepWiseMove( core::Size const res,
 	utility::vector1< Attachment > const & attachments,
 	MoveType const & move_type ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	utility::pointer::enable_shared_from_this< StepWiseMove >(),
 	move_element_( utility::tools::make_vector1( res ) ),
 	attachments_( attachments ),
@@ -88,10 +88,10 @@ StepWiseMove::StepWiseMove( Size const res,
 }
 
 //Constructor
-StepWiseMove::StepWiseMove( Size const res,
+StepWiseMove::StepWiseMove( core::Size const res,
 	Attachment const & attachment,
 	MoveType const & move_type ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	utility::pointer::enable_shared_from_this< StepWiseMove >(),
 	move_element_( utility::tools::make_vector1( res ) ),
 	attachments_( utility::tools::make_vector1( attachment ) ),
@@ -100,7 +100,7 @@ StepWiseMove::StepWiseMove( Size const res,
 }
 
 StepWiseMove::StepWiseMove():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	utility::pointer::enable_shared_from_this< StepWiseMove >(),
 	move_type_( NO_MOVE )
 {
@@ -108,7 +108,7 @@ StepWiseMove::StepWiseMove():
 
 StepWiseMove::StepWiseMove( std::string const & swa_move_string,
 	core::pose::full_model_info::FullModelParametersCOP full_model_parameters /* = 0 */ ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	utility::pointer::enable_shared_from_this< StepWiseMove >(),
 	move_type_( NO_MOVE )
 {
@@ -116,7 +116,7 @@ StepWiseMove::StepWiseMove( std::string const & swa_move_string,
 	auto swa_move_string_vector_partial = utility::string_split_simple( swa_move_string );
 
 	utility::vector1< std::string > swa_move_string_vector;
-	for ( Size ii = 1; ii <= swa_move_string_vector_partial.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= swa_move_string_vector_partial.size(); ++ii ) {
 		if ( swa_move_string_vector_partial[ ii ] == "Choice" ) continue;
 		if ( swa_move_string_vector_partial[ ii ] == "res" ) continue;
 		if ( swa_move_string_vector_partial[ ii ] == "with" ) continue;
@@ -142,11 +142,11 @@ StepWiseMove::StepWiseMove( std::string const & swa_move_string,
 	}
 
 	using namespace ObjexxFCL;
-	Size const num_strings = swa_move_string_vector.size();
+	core::Size const num_strings = swa_move_string_vector.size();
 	if ( num_strings == 0 ) return; // blank.
 	//  runtime_assert( num_strings >= 4 );
 
-	Size n( 1 );
+	core::Size n( 1 );
 	move_type_ = move_type_from_string( swa_move_string_vector[ n ] ); n++;
 
 	bool string_is_ok( false );
@@ -157,7 +157,7 @@ StepWiseMove::StepWiseMove( std::string const & swa_move_string,
 		std::vector< std::string > segids;
 		string_is_ok = utility::get_resnum_and_chain_from_one_tag( swa_move_string_vector[ n ], resnum, chains, segids );
 		if ( !string_is_ok ) break;
-		for ( Size i = 0; i < resnum.size(); i++ ) {
+		for ( core::Size i = 0; i < resnum.size(); i++ ) {
 			if ( full_model_parameters && chains[i] != ' ' ) { // a chain of ' ' probably means segid language
 				move_element_.push_back( full_model_parameters->conventional_to_full( resnum[i], chains[i], segids[i] ) );
 			} else {
@@ -176,7 +176,7 @@ StepWiseMove::StepWiseMove( std::string const & swa_move_string,
 			submotif_tag_ = swa_move_string_vector[ n ];
 			n++;
 		} else {
-			//   Size attachment_res = int_of( swa_move_string_vector[ n ] );
+			//   core::Size attachment_res = int_of( swa_move_string_vector[ n ] );
 			// attachment res should be one integer.
 			std::vector< int > resnum;
 			std::vector< char > chains;
@@ -184,7 +184,7 @@ StepWiseMove::StepWiseMove( std::string const & swa_move_string,
 			string_is_ok = utility::get_resnum_and_chain_from_one_tag( swa_move_string_vector[ n ], resnum, chains, segids );
 			runtime_assert( string_is_ok );
 			runtime_assert( resnum.size() == 1 );
-			Size attachment_res = resnum[0];
+			core::Size attachment_res = resnum[0];
 			if ( full_model_parameters && chains[0] != ' ' ) attachment_res = full_model_parameters->conventional_to_full( resnum[0], chains[0], segids[0]  );
 			n++;
 
@@ -201,15 +201,15 @@ StepWiseMove::StepWiseMove( std::string const & swa_move_string,
 
 StepWiseMove::StepWiseMove( utility::vector1< std::string > const & swa_move_string_vector,
 	core::pose::full_model_info::FullModelParametersCOP full_model_parameters /* = 0 */ ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	move_type_( NO_MOVE )
 {
 	using namespace ObjexxFCL;
-	Size const num_strings = swa_move_string_vector.size();
+	core::Size const num_strings = swa_move_string_vector.size();
 	if ( num_strings == 0 ) return; // blank.
 	//  runtime_assert( num_strings >= 4 );
 
-	Size n( 1 );
+	core::Size n( 1 );
 	move_type_ = move_type_from_string( swa_move_string_vector[ n ] ); n++;
 
 	bool string_is_ok( false );
@@ -220,7 +220,7 @@ StepWiseMove::StepWiseMove( utility::vector1< std::string > const & swa_move_str
 		std::vector< std::string > segids;
 		string_is_ok = utility::get_resnum_and_chain_from_one_tag( swa_move_string_vector[ n ], resnum, chains, segids );
 		if ( !string_is_ok ) break;
-		for ( Size i = 0; i < resnum.size(); i++ ) {
+		for ( core::Size i = 0; i < resnum.size(); i++ ) {
 			if ( full_model_parameters ) {
 				move_element_.push_back( full_model_parameters->conventional_to_full( resnum[i], chains[i], segids[i] ) );
 			} else {
@@ -239,7 +239,7 @@ StepWiseMove::StepWiseMove( utility::vector1< std::string > const & swa_move_str
 			submotif_tag_ = swa_move_string_vector[ n ];
 			n++;
 		} else {
-			//   Size attachment_res = int_of( swa_move_string_vector[ n ] );
+			//   core::Size attachment_res = int_of( swa_move_string_vector[ n ] );
 			// attachment res should be one integer.
 			std::vector< int > resnum;
 			std::vector< char > chains;
@@ -247,7 +247,7 @@ StepWiseMove::StepWiseMove( utility::vector1< std::string > const & swa_move_str
 			string_is_ok = utility::get_resnum_and_chain_from_one_tag( swa_move_string_vector[ n ], resnum, chains, segids );
 			runtime_assert( string_is_ok );
 			runtime_assert( resnum.size() == 1 );
-			Size attachment_res = resnum[0];
+			core::Size attachment_res = resnum[0];
 			if ( full_model_parameters ) attachment_res = full_model_parameters->conventional_to_full( resnum[0], chains[0], segids[0]  );
 			n++;
 
@@ -293,16 +293,16 @@ StepWiseMove::attachment_type() const {
 
 //Constructor
 Attachment::Attachment():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	attached_res_( 0 ),
 	attachment_type_( NO_ATTACHMENT )
 {
 }
 
 //Constructor
-Attachment::Attachment( Size const attached_res,
+Attachment::Attachment( core::Size const attached_res,
 	AttachmentType const attachment_type ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	attached_res_( attached_res ),
 	attachment_type_( attachment_type )
 {
@@ -393,7 +393,7 @@ operator <<( std::ostream & os, StepWiseMove const & swa_move )
 		os << " with no attachments";
 	} else {
 		os << " with attachments ";
-		for ( Size n = 1; n <= swa_move.attachments().size(); n++ ) os << " " << swa_move.attachments()[n];
+		for ( core::Size n = 1; n <= swa_move.attachments().size(); n++ ) os << " " << swa_move.attachments()[n];
 	}
 	if ( swa_move.submotif_tag().size() > 0 ) {
 		os << " submotif_tag " << swa_move.submotif_tag();

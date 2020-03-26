@@ -20,7 +20,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace backbone_moves {
@@ -32,7 +32,7 @@ class CircularPermuteFreePeptideMover : public FreePeptideMover {
 
 public:
 
-	CircularPermuteFreePeptideMover(Size off_set, bool direction = true);
+	CircularPermuteFreePeptideMover(core::Size off_set, bool direction = true);
 
 	~CircularPermuteFreePeptideMover() override;
 
@@ -40,7 +40,7 @@ public:
 
 private:
 
-	Size off_set_ = 0;
+	core::Size off_set_ = 0;
 
 	// If direction is true, the torsions of i + 1 th residue will
 	// be given to the i th residue. Otherwise the opposite direction.

@@ -100,18 +100,18 @@ void
 StepWiseRNA_PoseSelection::cluster_pose_list() {
 
 	bool const is_prepend(  working_parameters_->is_prepend() );
-	Size const actually_moving_res = working_parameters_->actually_moving_res();
+	core::Size const actually_moving_res = working_parameters_->actually_moving_res();
 
 	utility::vector1< bool > pose_state_list( pose_list_.size(), true );
 
-	Size num_clustered_pose = 0;
+	core::Size num_clustered_pose = 0;
 
-	for ( Size i = 1; i <= pose_list_.size(); i++ ) {
+	for ( core::Size i = 1; i <= pose_list_.size(); i++ ) {
 
 		if ( ! pose_state_list[i] ) continue;
 
 		num_clustered_pose++;
-		for ( Size j = i + 1; j <= pose_list_.size(); j++ ) {
+		for ( core::Size j = i + 1; j <= pose_list_.size(); j++ ) {
 
 			Real rmsd;
 			if ( PBP_clustering_at_chain_closure_ && working_parameters_->gap_size() == 0 ) { //new option Aug 15, 2010..include both phosphates in rmsd calculation at chain_break
@@ -137,7 +137,7 @@ StepWiseRNA_PoseSelection::cluster_pose_list() {
 
 	utility::vector1< pose::PoseOP > clustered_pose_list;
 
-	for ( Size i = 1; i <= pose_list_.size(); i++ ) {
+	for ( core::Size i = 1; i <= pose_list_.size(); i++ ) {
 		if ( pose_state_list[i] == true ) {
 			clustered_pose_list.push_back( pose_list_[i] );
 		}

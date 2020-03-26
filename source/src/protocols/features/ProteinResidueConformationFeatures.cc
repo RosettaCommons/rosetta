@@ -246,7 +246,7 @@ ProteinResidueConformationFeatures::report_features(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( !check_relevant_residues( relevant_residues, i ) ) continue;
 		Residue const & resi = pose.residue(i);
 		if ( resi.aa() > num_canonical_aas ) {
@@ -263,7 +263,7 @@ ProteinResidueConformationFeatures::report_features(
 		Real chi3 = fullatom && resi.nchi() >= 3 ? resi.chi(3) : 0.0;
 		Real chi4 = fullatom && resi.nchi() >= 4 ? resi.chi(4) : 0.0;
 
-		RowDataBaseOP seqpos_data( new RowData<Size>("seqpos",i) );
+		RowDataBaseOP seqpos_data( new RowData<core::Size>("seqpos",i) );
 		RowDataBaseOP secstruct_data( new RowData<std::string>("secstruct",secstruct) );
 		RowDataBaseOP phi_data( new RowData<Real>("phi",phi) );
 		RowDataBaseOP psi_data( new RowData<Real>("psi",psi) );
@@ -288,10 +288,10 @@ ProteinResidueConformationFeatures::report_features(
 				RowDataBaseOP residue_data( new RowData<std::string>("coord_data",residue_data_string) );
 				compact_residue_insert.add_row(utility::tools::make_vector(struct_id_data,atom_count,seqpos_data,residue_data));
 			} else {
-				for ( Size atom = 1; atom <= resi.natoms(); ++atom ) {
+				for ( core::Size atom = 1; atom <= resi.natoms(); ++atom ) {
 					core::Vector coords = resi.xyz(atom);
 
-					RowDataBaseOP atom_data( new RowData<Size>("atomno",atom) );
+					RowDataBaseOP atom_data( new RowData<core::Size>("atomno",atom) );
 					RowDataBaseOP x_data( new RowData<Real>("x",coords.x()) );
 					RowDataBaseOP y_data( new RowData<Real>("y",coords.y()) );
 					RowDataBaseOP z_data( new RowData<Real>("z",coords.z()) );
@@ -386,7 +386,7 @@ ProteinResidueConformationFeatures::load_conformation(
 
 		result res(basic::database::safely_read_from_database(stmt));
 
-		Size seqpos(1);
+		core::Size seqpos(1);
 		while ( res.next() ) {
 			Real phi,psi,omega,chi1,chi2,chi3,chi4;
 			std::string secstruct;
@@ -401,7 +401,7 @@ ProteinResidueConformationFeatures::load_conformation(
 				pose.set_omega(seqpos,omega);
 			}
 			pose.set_secstruct(seqpos,static_cast<char>(secstruct[0]));
-			Size nchi(pose.residue_type(seqpos).nchi());
+			core::Size nchi(pose.residue_type(seqpos).nchi());
 			if ( 1 <= nchi ) pose.set_chi(1, seqpos, chi1);
 			if ( 2 <= nchi ) pose.set_chi(2, seqpos, chi2);
 			if ( 3 <= nchi ) pose.set_chi(3, seqpos, chi3);
@@ -423,7 +423,7 @@ ProteinResidueConformationFeatures::load_conformation(
 		//
 		// result res(basic::database::safely_read_from_database(stmt));
 		// while(res.next()){
-		//  Size seqpos;
+		//  core::Size seqpos;
 		//  Real phi,psi,omega;
 		//  res >> seqpos >> phi >> psi >> omega;
 		//  if (!pose.residue_type(seqpos).is_protein()){
@@ -440,10 +440,10 @@ ProteinResidueConformationFeatures::load_conformation(
 
 void
 ProteinResidueConformationFeatures::check_num_requested_atoms(
-	Size num_requested_atoms,
-	Size pose_resNum,
+	core::Size num_requested_atoms,
+	core::Size pose_resNum,
 	Pose & pose,
-	Size resNum,
+	core::Size resNum,
 	StructureID struct_id,
 	sessionOP db_session
 ) const {
@@ -555,13 +555,13 @@ void ProteinResidueConformationFeatures::set_coords_for_residues(
 
 	vector1< AtomID > atom_ids;
 	vector1< Vector > coords;
-	vector1< Size > missing_coordinates;
+	vector1< core::Size > missing_coordinates;
 	bool initial_iteration(true);
 	bool last_residue_missing(true);
-	Size pose_resNum(1);
-	Size prev_resNum(0);
-	Size natoms_in_residue(0);
-	Size resNum, atomno;
+	core::Size pose_resNum(1);
+	core::Size prev_resNum(0);
+	core::Size natoms_in_residue(0);
+	core::Size resNum, atomno;
 	Real x, y, z;
 	while ( res.next() ) {
 		res >> resNum >> atomno >> x >> y >> z;
@@ -597,13 +597,13 @@ void ProteinResidueConformationFeatures::set_coords_for_residues(
 
 	if ( missing_coordinates.size() > 0 ) {
 		TR.Warning << "In loading the residue coodinates, some of the residues did not have coordinates specified:" << std::endl << "\t[";
-		for ( Size ii=1; ii <= missing_coordinates.size(); ++ii ) {
+		for ( core::Size ii=1; ii <= missing_coordinates.size(); ++ii ) {
 			TR.Warning << missing_coordinates[ii] << ",";
 		}
 		TR.Warning << "]" << std::endl;
 		TR.Warning << "This can happen because you are using ProteinResidueConformationFeatures with a structure that contains non-protein residues, for example. To avoid this, extract with the ResidueConformationFeatures instead." << std::endl;
 		//  TR.Warning << "These residues will be deleted from the pose." << std::endl;
-		//  for(Size ii=1; ii < missing_coordinates.size(); ++ii){
+		//  for(core::Size ii=1; ii < missing_coordinates.size(); ++ii){
 		//   pose.conformation().delete_residue_slow(ii);
 		//  }
 	}
@@ -628,7 +628,7 @@ ProteinResidueConformationFeatures::set_coords_for_residue_from_compact_schema(
 	stmt.bind(1,struct_id);
 
 	result res(basic::database::safely_read_from_database(stmt));
-	Size seqpos(1);
+	core::Size seqpos(1);
 	while ( res.next() ) {
 		std::string coords;
 		core::Size atom_count = 0;

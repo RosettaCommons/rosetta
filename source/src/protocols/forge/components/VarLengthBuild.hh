@@ -183,7 +183,7 @@ public: // accessors
 	/// @brief the number of fragments to pick at each position
 	///  (default 200)
 	inline
-	Size num_fragpick() const {
+	core::Size num_fragpick() const {
 		return num_fragpick_;
 	}
 
@@ -309,7 +309,7 @@ public: // mutators
 
 	/// @brief the number of fragments to pick at each position (default 200)
 	inline
-	void num_fragpick( Size const num ){
+	void num_fragpick( core::Size const num ){
 		num_fragpick_ = num;
 	}
 
@@ -483,7 +483,7 @@ protected: // fragment management
 		String const & complete_aa,
 		utility::vector1< String > const & complete_abego,
 		Interval const & interval,
-		Size const n_frags
+		core::Size const n_frags
 	);
 
 
@@ -501,8 +501,8 @@ protected: // fragment management
 		String const & complete_aa,
 		utility::vector1< String > const & complete_abego,
 		Interval const & interval,
-		Size const frag_length,
-		Size const n_frags
+		core::Size const frag_length,
+		core::Size const n_frags
 	);
 
 
@@ -556,7 +556,7 @@ private: // data
 
 
 	/// @brief the number of fragments to pick at each position (default 200)
-	Size num_fragpick_;
+	core::Size num_fragpick_;
 
 
 	/// @brief also use fragments spanning the entire length of a loop?
@@ -641,7 +641,7 @@ private: // data
 	/// @brief determines how often the above movers get called
 	/// in the loop mover, also only has an effect if the
 	/// RemodelLoopMover is used (default 3)
-	Size user_provided_movers_apply_cycle_;
+	core::Size user_provided_movers_apply_cycle_;
 
 	/// @brief tell RemodelLoopMover to keep the foldtree untouched
 	/// also only has an effect if RemodelLoopmover is used
@@ -660,7 +660,7 @@ private: // data
 	/// remodel messes up a remodel run that was started from enzdes
 	bool ignore_cmdline_enzdes_cstfile_;
 
-	Size repeat_tail_length_;
+	core::Size repeat_tail_length_;
 
 
 };

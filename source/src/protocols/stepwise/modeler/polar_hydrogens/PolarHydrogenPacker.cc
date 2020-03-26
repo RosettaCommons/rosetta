@@ -98,8 +98,8 @@ void
 PolarHydrogenPacker::get_best_hxyz(
 	conformation::Residue const & residue,
 	utility::vector1< Vector > const & ideal_hydrogen_xyz_positions,
-	Size const abase,
-	Size const abase2,
+	core::Size const abase,
+	core::Size const abase2,
 	Vector const & donor_xyz,
 	Real & best_score,
 	Vector & best_hydrogen_xyz
@@ -119,16 +119,16 @@ PolarHydrogenPacker::get_best_hxyz(
 		Distance const ideal_H_length = ideal_local_xyz.x();
 		int const ndist( 5 );
 		Distance const length_deviation( 0.05 );
-		Size const ntheta( 2 );
+		core::Size const ntheta( 2 );
 		Real const theta_deviation( 10.0 ); // in degrees
-		Size const nphi( 6 ); // deviation will be 360.0 / nphi
+		core::Size const nphi( 6 ); // deviation will be 360.0 / nphi
 		for ( int d = -(ndist - 1)/2; d <= ( ndist - 1 )/2; d++ ) {
 			Real const bond_length = ideal_H_length + length_deviation * Real( d );
 
-			for ( Size q = 1; q <= ntheta; q++ ) { // theta (angle)
+			for ( core::Size q = 1; q <= ntheta; q++ ) { // theta (angle)
 				Real const theta = q * numeric::conversions::radians( theta_deviation );
 
-				for ( Size f = 0; f < nphi; f++ ) { // phi (azimuthal)
+				for ( core::Size f = 0; f < nphi; f++ ) { // phi (azimuthal)
 					Real const phi = f * numeric::conversions::radians( 360.0 / Real(nphi) );
 					Real const x = bond_length * cos( theta );
 					Real const y = bond_length * sin( theta )  * sin( phi );
@@ -144,10 +144,10 @@ PolarHydrogenPacker::get_best_hxyz(
 }
 
 utility::vector1< Vector >
-PolarHydrogenPacker::get_ideal_hxyz_positions( conformation::Residue const & residue, conformation::Residue const & ideal_res, Size const j, kinematics::Stub const & current_input_stub, kinematics::Stub const & ideal_input_stub ) {
+PolarHydrogenPacker::get_ideal_hxyz_positions( conformation::Residue const & residue, conformation::Residue const & ideal_res, core::Size const j, kinematics::Stub const & current_input_stub, kinematics::Stub const & ideal_input_stub ) {
 	utility::vector1< Vector > ideal_hydrogen_xyz_positions;
 
-	Size proton_chi_no = check_if_proton_chi_atom( residue.type(), j );
+	core::Size proton_chi_no = check_if_proton_chi_atom( residue.type(), j );
 	if ( proton_chi_no == 0 ) {
 		Vector const ideal_hydrogen_xyz = current_input_stub.local2global( ideal_input_stub.global2local( ideal_res.xyz( j ) ) );
 		ideal_hydrogen_xyz_positions.push_back( ideal_hydrogen_xyz );
@@ -174,7 +174,7 @@ PolarHydrogenPacker::get_ideal_hxyz_positions( conformation::Residue const & res
 }
 
 void
-PolarHydrogenPacker::virtualize_poor_scoring_o2prime_hydrogens( pose::Pose & pose, Size const i, Size const j, Real const best_score ) {
+PolarHydrogenPacker::virtualize_poor_scoring_o2prime_hydrogens( pose::Pose & pose, core::Size const i, core::Size const j, Real const best_score ) {
 	if ( !pose.residue_type( i ).is_RNA() ) return;
 	if ( pose.residue_type( i ).RNA_info().ho2prime_index() != j  ) return;
 	//     TR << "2'OH score for residue " << i << " ==> " << best_score << std::endl;
@@ -219,9 +219,9 @@ PolarHydrogenPacker::apply(
 
 			// move this to a different function!
 			// define a coordinate system
-			Size const j1 = residue.atom_base( j );
-			Size const j2 = residue.atom_base( j1 );
-			Size const j3 = residue.atom_base( j2 );
+			core::Size const j1 = residue.atom_base( j );
+			core::Size const j2 = residue.atom_base( j1 );
+			core::Size const j3 = residue.atom_base( j2 );
 			runtime_assert( !residue.atom_is_hydrogen( j1 ) );
 			runtime_assert( !residue.atom_is_hydrogen( j2 ) );
 			runtime_assert( !residue.atom_is_hydrogen( j3 ) );
@@ -269,7 +269,7 @@ PolarHydrogenPacker::check_hbond_score( Vector const & H_xyz,
 	Vector & best_hydrogen_xyz ){
 
 	Real total_score( 0.0 );
-	for ( Size n = 1; n <= possible_hbond_acceptors_.size(); n++ ) {
+	for ( core::Size n = 1; n <= possible_hbond_acceptors_.size(); n++ ) {
 		Vector const & A_xyz  = possible_hbond_acceptors_[n][1];
 		Vector const & B_xyz  = possible_hbond_acceptors_[n][2];
 		Vector const & B2_xyz = possible_hbond_acceptors_[n][3];
@@ -287,7 +287,7 @@ PolarHydrogenPacker::check_hbond_score( Vector const & H_xyz,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-PolarHydrogenPacker::get_possible_hbond_acceptors( pose::Pose const & pose, Size const moving_res, Size const atomno ) {
+PolarHydrogenPacker::get_possible_hbond_acceptors( pose::Pose const & pose, core::Size const moving_res, core::Size const atomno ) {
 
 	using namespace core::conformation;
 	Distance contact_distance_cutoff_( 3.5 );
@@ -297,7 +297,7 @@ PolarHydrogenPacker::get_possible_hbond_acceptors( pose::Pose const & pose, Size
 	Vector const moving_xyz = pose.residue( moving_res ).xyz( atomno );
 
 	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
-	for ( Size i = 1; i <= pose.size(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		if ( i == moving_res ) continue;
 
 		// this is silly, trying to prevent i, i+1 backbone H-bonds in RNA.
@@ -307,7 +307,7 @@ PolarHydrogenPacker::get_possible_hbond_acceptors( pose::Pose const & pose, Size
 
 		Residue const & rsd = pose.residue( i );
 		if ( rsd.is_virtual_residue() ) continue;
-		for ( Size j = 1; j <= rsd.nheavyatoms(); j++ ) {
+		for ( core::Size j = 1; j <= rsd.nheavyatoms(); j++ ) {
 			if ( pose.residue_type( i ).is_virtual( j ) ) continue;
 			if ( !pose.residue_type( i ).heavyatom_is_an_acceptor( j ) ) continue;
 
@@ -321,7 +321,7 @@ PolarHydrogenPacker::get_possible_hbond_acceptors( pose::Pose const & pose, Size
 			//
 			if ( pose.residue_type( i ).heavyatom_has_polar_hydrogens( j ) ) {
 				bool H_pointing_back( false );
-				for ( Size jj = pose.residue_type( i ).attached_H_begin( j );
+				for ( core::Size jj = pose.residue_type( i ).attached_H_begin( j );
 						jj <= pose.residue_type( i ).attached_H_end( j ); jj++ ) {
 					if ( angle_of( moving_xyz, rsd.xyz( j ), rsd.xyz( jj ) ) < 1.0 /* radians, so ~60 degrees */ ) {
 						//TR << "WATCH OUT! " << pose.pdb_info()->number(i) << " " << rsd.atom_name( j )  << "already has an H that points back to " << pose.pdb_info()->number(moving_res) << " " << pose.residue( moving_res ).atom_name( atomno ) << std::endl;

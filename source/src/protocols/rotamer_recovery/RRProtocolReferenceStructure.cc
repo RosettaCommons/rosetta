@@ -160,7 +160,7 @@ RRProtocolReferenceStructure::run(
 		//  utility_exit_with_message(err_msg.str());
 	}
 
-	for ( Size ii = 1; ii <= reference_pose_->size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= reference_pose_->size(); ++ii ) {
 		if ( !packer_task.pack_residue(ii) || reference_pose_->residue(ii).is_water() ) continue;
 		measure_rotamer_recovery(
 			comparer, reporter,

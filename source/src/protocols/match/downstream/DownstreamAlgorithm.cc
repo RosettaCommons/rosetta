@@ -26,7 +26,7 @@
 #include <core/conformation/Residue.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
@@ -43,9 +43,9 @@ namespace downstream {
 
 static basic::Tracer TR( "protocols.match.downstream.DownstreamAlgorithm" );
 
-DownstreamAlgorithm::DownstreamAlgorithm( Size geom_cst_id ) : geom_cst_id_( geom_cst_id ) {}
+DownstreamAlgorithm::DownstreamAlgorithm( core::Size geom_cst_id ) : geom_cst_id_( geom_cst_id ) {}
 DownstreamAlgorithm::DownstreamAlgorithm( DownstreamAlgorithm const & other ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	geom_cst_id_( other.geom_cst_id_ ),
 	bbgrid_( other.bbgrid_ ),
 	active_site_grid_( other.active_site_grid_ )
@@ -84,7 +84,7 @@ DownstreamAlgorithm::prepare_for_match_enumeration( Matcher const & ) {}
 
 /// @details Noop in base class.
 void
-DownstreamAlgorithm::respond_to_primary_hitlist_change( Matcher &, Size )
+DownstreamAlgorithm::respond_to_primary_hitlist_change( Matcher &, core::Size )
 {}
 
 /// @details Noop in base class.
@@ -143,13 +143,13 @@ DownstreamAlgorithm::are_colliding(
 	//      "CAT 3: " << ds_res.atom_name( catalytic_atoms[3] ) <<
 	//      "CAT 4: " << ds_res.atom_name( catalytic_atoms[4] ) << std::endl;
 
-	for ( Size atomid_ds = 1; atomid_ds <= ds_atoms.size(); ++atomid_ds ) {
+	for ( core::Size atomid_ds = 1; atomid_ds <= ds_atoms.size(); ++atomid_ds ) {
 		ProbeRadius ds_rad = probe_radius_for_atom_type( ds_res.atom_type_index( ds_atoms[ atomid_ds ].atomno() ) );
 		if ( ! ( catalytic_atoms[3] == ds_atoms[ atomid_ds ].atomno() ||
 				catalytic_atoms[4] == ds_atoms[ atomid_ds ].atomno() ) ) {
 			//TR << " x "<< ds_res.xyz( ds_atoms[ atomid_ds ].atomno() )[0] << " y " << ds_res.xyz( ds_atoms[ atomid_ds ].atomno()  )[1] << " z " << ds_res.xyz( ds_atoms[ atomid_ds ].atomno()  )[2] << std::endl;
 
-			for ( Size atomid_us = us_res.first_sidechain_atom(); atomid_us <= us_res.nheavyatoms(); ++atomid_us ) {
+			for ( core::Size atomid_us = us_res.first_sidechain_atom(); atomid_us <= us_res.nheavyatoms(); ++atomid_us ) {
 				if ( ! ( catalytic_atoms[1] == atomid_us ||
 						catalytic_atoms[2] == atomid_us ) ) {
 
@@ -177,7 +177,7 @@ DownstreamAlgorithm::default_build_hits_at_all_positions(
 {
 	utility::vector1< upstream::ScaffoldBuildPointCOP > const & launch_points
 		( matcher.per_constraint_build_points( geom_cst_id_ ) );
-	Size n_build_points = launch_points.size();
+	core::Size n_build_points = launch_points.size();
 
 	std::list< Hit > all_hits;
 	utility::vector1< std::list< Hit > > hits( n_build_points );
@@ -189,12 +189,12 @@ DownstreamAlgorithm::default_build_hits_at_all_positions(
 #ifdef USE_OPENMP
 	#pragma omp parallel for schedule(dynamic,1)
 #endif
-	for ( Size ii = 1; ii <= n_build_points; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_build_points; ++ii ) {
 		std::list< Hit > iihits = matcher.upstream_builder( geom_cst_id_ )->build( * launch_points[ ii ] );
 		hits[ ii ].splice( hits[ ii ].end(), iihits );
 	}
 
-	for ( Size ii = 1; ii <= n_build_points; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_build_points; ++ii ) {
 		all_hits.splice( all_hits.end(), hits[ ii ] );
 	}
 

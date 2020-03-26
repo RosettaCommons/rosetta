@@ -18,7 +18,7 @@
 
 
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <utility/vector1_bool.hh>
@@ -29,7 +29,7 @@ namespace scoring {
 namespace packstat {
 
 
-struct PackingScoreResData : public utility::pointer::ReferenceCount {
+struct PackingScoreResData : public utility::VirtualBase {
 	PackingScoreResData( Size nrad, Size npr ) : nrad_(nrad), npr_(npr), msa_(nrad*npr,0.0) {}
 	Size  npr() const { return npr_; }
 	Size nrad() const { return nrad_; }
@@ -43,7 +43,7 @@ std::ostream & operator<< ( std::ostream & out, PackingScoreResData const & dat 
 typedef utility::pointer::shared_ptr< PackingScoreResData >       PackingScoreResDataOP;
 typedef utility::pointer::shared_ptr< PackingScoreResData const > PackingScoreResDataCOP;
 
-struct PackingScore : public utility::pointer::ReferenceCount {
+struct PackingScore : public utility::VirtualBase {
 	PackingScore( Size nrad, Size npr, bool /*compprob = false*/ ) :
 		nrad_(nrad), npr_(npr), weights_(nrad*npr,0.0), centers_(nrad*npr,0.0), compprob_( false /*compprob_*/ ) {}
 	Size  npr() const { return npr_; }

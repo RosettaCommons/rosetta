@@ -40,7 +40,7 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <map>
@@ -50,7 +50,7 @@
 namespace protocols {
 namespace environment {
 
-class EnvClaimBroker : public utility::pointer::ReferenceCount {
+class EnvClaimBroker : public utility::VirtualBase {
 	typedef std::map< ClientMoverOP, core::environment::DofPassportOP > MoverPassMap;
 	typedef core::environment::SequenceAnnotationCOP SequenceAnnotationCOP;
 	typedef core::environment::SequenceAnnotationOP SequenceAnnotationOP;
@@ -67,7 +67,7 @@ class EnvClaimBroker : public utility::pointer::ReferenceCount {
 	typedef utility::vector1< std::pair< claims::DOFElement, ClientMoverOP > > DOFElemVect;
 
 	typedef std::map< core::Size, std::string > SizeToStringMap;
-	typedef std::map< std::string, std::pair< Size, Size > > StringToSizePairMap;
+	typedef std::map< std::string, std::pair< core::Size, core::Size > > StringToSizePairMap;
 	typedef std::map< std::string, std::pair< std::string, std::string > > StringToStringPairMap;
 	typedef utility::vector1< core::Real > BiasVector;
 
@@ -93,7 +93,7 @@ public:
 private:
 
 	/// @brief an inner class for tracking the properties of jumps that've been brokered.
-	class BrokeredJumpData : public utility::pointer::ReferenceCount {
+	class BrokeredJumpData : public utility::VirtualBase {
 	public:
 		BrokeredJumpData( std::pair< core::Size, core::Size > const & positions,
 			std::pair< std::string, std::string > const& atoms,

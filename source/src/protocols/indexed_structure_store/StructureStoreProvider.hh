@@ -17,7 +17,7 @@
 // Utility Headers
 #include <platform/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <protocols/indexed_structure_store/StructureStoreProvider.fwd.hh>
 #include <protocols/indexed_structure_store/StructureStore.hh>
@@ -30,7 +30,7 @@ namespace protocols
 namespace indexed_structure_store
 {
 
-class StructureStoreProvider : public utility::pointer::ReferenceCount
+class StructureStoreProvider : public utility::VirtualBase
 {
 public:
 	virtual bool can_load(std::string store_path) = 0;

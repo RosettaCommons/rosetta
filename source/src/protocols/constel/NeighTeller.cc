@@ -90,32 +90,32 @@ bool NeighTeller::is_neigh_tree(utility::vector1<core::Size> const& set, Pose co
 
 	using core::conformation::Residue;
 
-	Size const NRES = set.size();
+	core::Size const NRES = set.size();
 
 	// initialize neighboring table: nmap[i][j] = true iff the ith residue in the set and
 	// the jth residue in the set are neighbors (i!=j, 1<=i,j<=N))
-	for ( Size i=1; i<NRES; ++i ) {
+	for ( core::Size i=1; i<NRES; ++i ) {
 		Residue const& a = ps.residue(set[i]);
-		for ( Size j=i+1; j<=NRES; ++j ) {
+		for ( core::Size j=i+1; j<=NRES; ++j ) {
 			Residue const& b = ps.residue(set[j]);
 			nmap[j][i] = nmap[i][j] = isneigh(a, b, ps);
 		}
 	}
 
 	// initialize tree of neighbors and rest of residues
-	utility::vector1<Size> tree_in;
+	utility::vector1<core::Size> tree_in;
 	tree_in.push_back(1);
 
-	std::list<Size> tree_out;
-	for ( Size i=2; i<=NRES; ++i ) {
+	std::list<core::Size> tree_out;
+	for ( core::Size i=2; i<=NRES; ++i ) {
 		tree_out.push_back(i);
 	}
 
 	// grow tree until no other residues remain
-	for ( Size i=1; i<NRES; ++i ) {
+	for ( core::Size i=1; i<NRES; ++i ) {
 		bool found = false;
-		for ( Size j=1; j<=i; ++j ) {
-			Size t = tree_in[j];
+		for ( core::Size j=1; j<=i; ++j ) {
+			core::Size t = tree_in[j];
 			for ( auto p = tree_out.begin(), end = tree_out.end(); p!=end; ++p ) {
 				if ( nmap[t][*p] ) {
 					tree_in.push_back(*p);
@@ -142,10 +142,10 @@ bool NeighTeller::is_neigh_tree(utility::vector1<core::Size> const& set, Pose co
 ///
 /// @details Line i, column j reports nmap[i][j] (1<=i,j<=nres)
 ///
-void NeighTeller::print_nmap(Size const nres, std::ostream& os) const {
+void NeighTeller::print_nmap(core::Size const nres, std::ostream& os) const {
 
-	for ( Size i=1; i<=nres; ++i ) {
-		for ( Size j=1; j<=nres; ++j ) {
+	for ( core::Size i=1; i<=nres; ++i ) {
+		for ( core::Size j=1; j<=nres; ++j ) {
 			os << std::setw(2) << nmap[i][j];
 		}
 		os << std::endl;
@@ -169,7 +169,7 @@ void mk_neigh_list(core::Size const tgtnum, utility::vector1<bool>& neighs,
 
 	core::conformation::Residue tgtres = ps.residue(tgtnum);
 
-	for ( Size i = 1; i <= ps.size(); ++i ) {
+	for ( core::Size i = 1; i <= ps.size(); ++i ) {
 		if ( i != tgtnum ) {
 			if ( nt.isneigh(tgtres, ps.residue(i), ps) ) {
 				neighs.at(i)=true;

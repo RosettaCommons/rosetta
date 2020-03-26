@@ -83,7 +83,7 @@ StepWiseWorkingParametersSetup::StepWiseWorkingParametersSetup( utility::vector1
 	utility::vector1< core::Size > const & input_res,
 	utility::vector1< core::Size > const & input_res2,
 	utility::vector1< core::Size > const & cutpoint_open,
-	Size const user_specified_cutpoint_closed ):
+	core::Size const user_specified_cutpoint_closed ):
 	moving_res_( moving_res_list[1] ),
 	moving_res_list_( moving_res_list ),
 	cutpoint_open_( cutpoint_open ),
@@ -101,13 +101,13 @@ StepWiseWorkingParametersSetup::StepWiseWorkingParametersSetup( utility::vector1
 {
 	stepwise::modeler::rna::output_title_text( "Enter StepWiseWorkingParametersSetup::constructor", TR.Debug );
 
-	for ( Size n = 1; n <= cutpoint_open_.size();   n++ ) {
+	for ( core::Size n = 1; n <= cutpoint_open_.size();   n++ ) {
 		is_cutpoint_( cutpoint_open_[ n ] ) = true;
 		if ( cutpoint_open_[ n ] == user_specified_cutpoint_closed ) utility_exit_with_message( "Position cannot be both cutpoint_open and user_specified_cutpoint_closed" );
 	}
 	working_parameters_->set_cutpoint_open_list( cutpoint_open_ );
 
-	utility::vector1< Size > cutpoint_closed_list;
+	utility::vector1< core::Size > cutpoint_closed_list;
 	if ( user_specified_cutpoint_closed > 0 ) {
 		is_cutpoint_( user_specified_cutpoint_closed ) = true;
 		cutpoint_closed_list.push_back( user_specified_cutpoint_closed );
@@ -120,7 +120,7 @@ StepWiseWorkingParametersSetup::StepWiseWorkingParametersSetup( utility::vector1
 	stepwise::modeler::rna::output_seq_num_list( "moving_res_list = ", moving_res_list_, TR.Debug, 30 );
 	TR.Debug << "moving_res = " << moving_res_ << std::endl;
 
-	utility::vector1< utility::vector1< Size > > input_res_vectors;
+	utility::vector1< utility::vector1< core::Size > > input_res_vectors;
 	input_res_vectors.push_back( input_res );
 	input_res_vectors.push_back( input_res2 );
 	working_parameters_->set_input_res_vectors( input_res_vectors );
@@ -155,7 +155,7 @@ StepWiseWorkingParametersSetup::apply() {
 	}
 
 	////////////////Change the order that these functions are called on May 3, 2010 Parin S./////////////////////////////////////
-	Size root_res( 1 );
+	core::Size root_res( 1 );
 	if ( !skip_complicated_stuff_ ) {
 		// Following determines which residues in the pose will keep fixed coordinates. Its complicated
 		// because of the many use cases...
@@ -221,13 +221,13 @@ StepWiseWorkingParametersSetup::get_user_input_alignment_res_list( core::Size co
 	output_boolean( "filter_user_alignment_res_ = ", filter_user_alignment_res_, TR.Debug ); TR.Debug << std::endl;
 	stepwise::modeler::rna::output_seq_num_list( "fixed_res = ", fixed_res_, TR.Debug, 30 );
 
-	for ( Size n = 1; n <= alignment_res_string_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= alignment_res_string_list.size(); n++ ) {
 
 		utility::vector1< std::string > alignments_res_string = tokenize( alignment_res_string_list[n], "-" );
 		utility::vector1< core::Size > alignment_res;
 		utility::vector1< core::Size > working_alignment;
 
-		for ( Size ii = 1; ii <= alignments_res_string.size(); ii++ ) {
+		for ( core::Size ii = 1; ii <= alignments_res_string.size(); ii++ ) {
 			alignment_res.push_back( string_to_int( alignments_res_string[ii] ) );
 		}
 
@@ -235,8 +235,8 @@ StepWiseWorkingParametersSetup::get_user_input_alignment_res_list( core::Size co
 
 			utility::vector1< core::Size > actual_alignment_res;
 
-			for ( Size ii = 1; ii <= alignment_res.size(); ii++ ) {
-				Size seq_num = alignment_res[ii];
+			for ( core::Size ii = 1; ii <= alignment_res.size(); ii++ ) {
+				core::Size seq_num = alignment_res[ii];
 				if ( fixed_res_.has_value( seq_num ) ) actual_alignment_res.push_back( seq_num );
 			}
 
@@ -244,7 +244,7 @@ StepWiseWorkingParametersSetup::get_user_input_alignment_res_list( core::Size co
 
 			ObjexxFCL::FArray1D < bool > const & partition_definition = working_parameters_->partition_definition();
 			bool contain_non_root_partition_seq_num = false;
-			for ( Size ii = 1; ii < working_alignment.size(); ii++ ) {
+			for ( core::Size ii = 1; ii < working_alignment.size(); ii++ ) {
 				if ( partition_definition( working_alignment[ii] ) != partition_definition( root_res ) ) contain_non_root_partition_seq_num = true;
 			}
 
@@ -271,7 +271,7 @@ StepWiseWorkingParametersSetup::get_user_input_alignment_res_list( core::Size co
 
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseWorkingParametersSetup::figure_out_working_alignment( Size const & root_res ){
+StepWiseWorkingParametersSetup::figure_out_working_alignment( core::Size const & root_res ){
 	utility::vector1< core::Size > const working_best_alignment = get_user_input_alignment_res_list( root_res );
 	if ( working_best_alignment.size() > 0 ) {
 		working_parameters_->set_working_best_alignment( working_best_alignment );
@@ -298,8 +298,8 @@ StepWiseWorkingParametersSetup::figure_out_best_working_alignment(){
 	utility::vector1< core::Size > working_alignment;
 
 
-	for ( Size n = 1; n <= working_fixed_res.size(); n++ ) {
-		Size seq_num = working_fixed_res[n];
+	for ( core::Size n = 1; n <= working_fixed_res.size(); n++ ) {
+		core::Size seq_num = working_fixed_res[n];
 		if ( partition_definition( seq_num ) == root_partition ) {
 			working_alignment.push_back( seq_num );
 		}
@@ -316,10 +316,10 @@ StepWiseWorkingParametersSetup::figure_out_best_working_alignment(){
 
 		//Basically include every working_res as an alignment_res.....INCLUDING THE MOVING RES!
 		//Don't worry about virtual res, this is taken care of by the function create_aligment_id_map_legacy(). Parin Apr 23, 2010
-		for ( Size full_seq_num = 1; full_seq_num <= is_working_res.size(); full_seq_num++ ) {
+		for ( core::Size full_seq_num = 1; full_seq_num <= is_working_res.size(); full_seq_num++ ) {
 			if ( is_working_res[full_seq_num] == false ) continue;
 
-			Size const seq_num = full_to_sub[full_seq_num];
+			core::Size const seq_num = full_to_sub[full_seq_num];
 			working_alignment.push_back( seq_num );
 		}
 	}
@@ -345,20 +345,20 @@ StepWiseWorkingParametersSetup::figure_out_working_sequence_and_mapping(){ //wor
 	// There are up to two input poses. Need to merge their input residues and figure out chain boundaries.
 	std::string const & full_sequence = working_parameters_->full_sequence();
 
-	Size const nres( core::pose::rna::remove_bracketed( full_sequence ).size() );
-	utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
+	core::Size const nres( core::pose::rna::remove_bracketed( full_sequence ).size() );
+	utility::vector1< utility::vector1< core::Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	//A vector to indicate if res exist in the working pose and if it belong to input_pose 1 or input_pose 2 or working_res_list.
 	utility::vector1< core::Size > is_working_res( nres, 0 );
 
-	for ( Size i = 1; i <= input_res_vectors.size(); i++ ) {
-		for ( Size n = 1; n <= input_res_vectors[i].size(); n++ ) {
+	for ( core::Size i = 1; i <= input_res_vectors.size(); i++ ) {
+		for ( core::Size n = 1; n <= input_res_vectors[i].size(); n++ ) {
 			is_working_res[ input_res_vectors[i][ n ] ] = i; //WARNING, might not work with case of overlapping residue!
 		}
 	}
 
-	for ( Size i = 1; i <= moving_res_list_.size(); i++ ) {
+	for ( core::Size i = 1; i <= moving_res_list_.size(); i++ ) {
 		is_working_res[ moving_res_list_[i] ] = MOVING_RES;
 	}
 
@@ -367,8 +367,8 @@ StepWiseWorkingParametersSetup::figure_out_working_sequence_and_mapping(){ //wor
 	std::map< core::Size, core::Size > full_to_sub;
 
 	full_to_sub.clear();
-	Size count( 0 );
-	for ( Size i = 1; i <= nres; ++i ) {
+	core::Size count( 0 );
+	for ( core::Size i = 1; i <= nres; ++i ) {
 		if ( is_working_res[ i ] ) {
 			count++;
 			full_to_sub[ i ] = count;
@@ -379,11 +379,11 @@ StepWiseWorkingParametersSetup::figure_out_working_sequence_and_mapping(){ //wor
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-	//Size const working_moving_res = full_to_sub[ moving_res_ ];
+	//core::Size const working_moving_res = full_to_sub[ moving_res_ ];
 	//working_parameters_->set_working_moving_res( working_moving_res );
 
 	utility::vector1< core::Size > working_moving_res_list;
-	for ( Size i = 1; i <= moving_res_list_.size(); i++ ) {
+	for ( core::Size i = 1; i <= moving_res_list_.size(); i++ ) {
 		working_moving_res_list.push_back( full_to_sub[ moving_res_list_[i] ] );
 	}
 
@@ -396,14 +396,14 @@ StepWiseWorkingParametersSetup::figure_out_working_sequence_and_mapping(){ //wor
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // prepend map is used solely for RMSD calculations, I think -- rhiju.
 bool
-StepWiseWorkingParametersSetup::figure_out_is_residue_prepend( Size const seq_num ) const {
+StepWiseWorkingParametersSetup::figure_out_is_residue_prepend( core::Size const seq_num ) const {
 
 	stepwise::modeler::rna::output_title_text("Enter StepWiseWorkingParametersSetup::figure_out_is_residue_prepend", TR.Debug );
 
 	using namespace ObjexxFCL;
 
 	utility::vector1< core::Size > const & is_working_res( working_parameters_->is_working_res() );
-	Size const total_residues( core::pose::rna::remove_bracketed( working_parameters_->full_sequence() ).size() );
+	core::Size const total_residues( core::pose::rna::remove_bracketed( working_parameters_->full_sequence() ).size() );
 	core::kinematics::FoldTree const & fold_tree = working_parameters_->fold_tree();
 	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
 	utility::vector1< core::Size > working_fixed_res( working_parameters_->working_fixed_res() );
@@ -419,7 +419,7 @@ StepWiseWorkingParametersSetup::figure_out_is_residue_prepend( Size const seq_nu
 	}
 
 	//if can prepend, then must be able to find a fix res as decrement without encounter chainbreak
-	Size cur_seq_num = seq_num;
+	core::Size cur_seq_num = seq_num;
 
 	//Check if can prepend
 	while ( true ) {
@@ -428,7 +428,7 @@ StepWiseWorkingParametersSetup::figure_out_is_residue_prepend( Size const seq_nu
 		if ( !is_working_res[cur_seq_num] ) break;
 		if ( cur_seq_num != seq_num && is_cutpoint_( cur_seq_num - 1 ) ) break;
 		if ( allow_chain_boundary_jump_partner_right_at_fixed_BP_ ) {
-			for ( Size i = 1; i <= jump_point_pair_list_.size(); i++ ) {
+			for ( core::Size i = 1; i <= jump_point_pair_list_.size(); i++ ) {
 				if ( cur_seq_num == jump_point_pair_list_[i].first ) return true; //is_prepend
 				if ( cur_seq_num == jump_point_pair_list_[i].second ) return true; //is_prepend
 			}
@@ -458,7 +458,7 @@ StepWiseWorkingParametersSetup::figure_out_is_residue_prepend( Size const seq_nu
 		if ( !is_working_res[cur_seq_num] ) break;
 		if ( is_cutpoint_( cur_seq_num ) && cur_seq_num != seq_num ) break;
 		if ( allow_chain_boundary_jump_partner_right_at_fixed_BP_ ) { //Hacky Nov 12, 2010
-			for ( Size i = 1; i <= jump_point_pair_list_.size(); i++ ) {
+			for ( core::Size i = 1; i <= jump_point_pair_list_.size(); i++ ) {
 				if ( cur_seq_num == jump_point_pair_list_[i].first ) return false; //is_append
 				if ( cur_seq_num == jump_point_pair_list_[i].second ) return false; //is_append
 			}
@@ -527,16 +527,16 @@ StepWiseWorkingParametersSetup::figure_out_is_prepend_map(){
 
 		TR.Debug << "WARNING using simple_append_map!" << std::endl;
 		//Only initial is_residue_prepend for rebuild residues;
-		for ( Size n = 1; n <= calc_rms_res.size(); n++ ) {
-			Size const seq_num = calc_rms_res[n];
+		for ( core::Size n = 1; n <= calc_rms_res.size(); n++ ) {
+			core::Size const seq_num = calc_rms_res[n];
 			is_prepend_map[seq_num] = false;
 		}
 
 	} else {
 
 		//Only initial is_residue_prepend for rebuild residues;
-		for ( Size n = 1; n <= calc_rms_res.size(); n++ ) {
-			Size const seq_num = calc_rms_res[n];
+		for ( core::Size n = 1; n <= calc_rms_res.size(); n++ ) {
+			core::Size const seq_num = calc_rms_res[n];
 			is_prepend_map[seq_num] = figure_out_is_residue_prepend( seq_num );
 		}
 	}
@@ -554,17 +554,17 @@ StepWiseWorkingParametersSetup::get_previously_closed_cutpoint_from_imported_sil
 
 	utility::vector1< core::Size > previously_closed_cutpoint;
 
-	utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
+	utility::vector1< utility::vector1< core::Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
 
 	if ( silent_files_in_.size() != input_tags_.size() ) utility_exit_with_message( "silent_files_in.size() != input_tags.size()" );
 
-	for ( Size silent_file_num = 1; silent_file_num <= silent_files_in_.size(); silent_file_num++ ) {
+	for ( core::Size silent_file_num = 1; silent_file_num <= silent_files_in_.size(); silent_file_num++ ) {
 		pose::Pose import_pose;
 		import_pose_from_silent_file( import_pose, silent_files_in_[ silent_file_num ], input_tags_[silent_file_num] );
 
-		utility::vector1< Size > const & input_to_full_res_map = input_res_vectors[silent_file_num]; //input_res is map from input_seq_num to full_pose_seq_num
+		utility::vector1< core::Size > const & input_to_full_res_map = input_res_vectors[silent_file_num]; //input_res is map from input_seq_num to full_pose_seq_num
 
-		for ( Size seq_num = 1; seq_num <= import_pose.size(); seq_num++ ) {
+		for ( core::Size seq_num = 1; seq_num <= import_pose.size(); seq_num++ ) {
 			if ( import_pose.residue( seq_num ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {
 				if ( import_pose.residue( seq_num + 1 ).has_variant_type( chemical::CUTPOINT_UPPER ) == false ) {
 					utility_exit_with_message( "seq_num " + string_of( seq_num ) + " is a CUTPOINT_LOWER but seq_num " + string_of( seq_num + 1 ) + " is not a cutpoint CUTPOINT_UPPER??" );
@@ -610,14 +610,14 @@ StepWiseWorkingParametersSetup::setup_additional_cutpoint_closed(){
 
 	stepwise::modeler::rna::output_title_text( "Enter StepWiseWorkingParametersSetup::setup_additional_cutpoint_closed", TR.Debug );
 	utility::vector1< core::Size > const & is_working_res( working_parameters_->is_working_res() );
-	utility::vector1< Size > const & cutpoint_closed_list = working_parameters_->cutpoint_closed_list();
-	Size const nres( core::pose::rna::remove_bracketed( working_parameters_->full_sequence() ).size() );
+	utility::vector1< core::Size > const & cutpoint_closed_list = working_parameters_->cutpoint_closed_list();
+	core::Size const nres( core::pose::rna::remove_bracketed( working_parameters_->full_sequence() ).size() );
 
-	utility::vector1< Size > new_cutpoint_closed_list = cutpoint_closed_list;
+	utility::vector1< core::Size > new_cutpoint_closed_list = cutpoint_closed_list;
 	utility::vector1< core::Size > non_fixed_res;
 	added_cutpoint_closed_.clear();
 
-	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= nres; seq_num++ ) {
 		if ( fixed_res_.has_value( seq_num ) == false ) {
 			non_fixed_res.push_back( seq_num );
 		}
@@ -633,20 +633,20 @@ StepWiseWorkingParametersSetup::setup_additional_cutpoint_closed(){
 	}
 
 
-	utility::vector1< Size > jump_res_list;
-	for ( Size i = 1; i <= jump_point_pair_list_.size(); i++ ) {
+	utility::vector1< core::Size > jump_res_list;
+	for ( core::Size i = 1; i <= jump_point_pair_list_.size(); i++ ) {
 		jump_res_list.push_back( jump_point_pair_list_[i].first );
 		jump_res_list.push_back( jump_point_pair_list_[i].second );
 	}
 
-	for ( Size n = 1; n <= non_fixed_res.size(); n++ ) {
+	for ( core::Size n = 1; n <= non_fixed_res.size(); n++ ) {
 
 		if ( !is_working_res[ non_fixed_res[n] ] ) continue;
 
 		/////////////////////////////////////////////////////////////////////////////////////
 		bool free_boundary = false;
 
-		Size five_prime_boundary = 0;
+		core::Size five_prime_boundary = 0;
 		for ( int seq_num = non_fixed_res[n]; seq_num >= 0; seq_num-- ) { //find the 5' base_pair_list res boundary
 			if ( seq_num == 0 ) { //no 5' fixed res boundary
 				free_boundary = true;
@@ -659,8 +659,8 @@ StepWiseWorkingParametersSetup::setup_additional_cutpoint_closed(){
 			}
 		}
 
-		Size three_prime_boundary = 0;
-		for ( Size seq_num = non_fixed_res[n]; seq_num <= nres + 1; seq_num++ ) { //find the 3' base_pair_list res boundary
+		core::Size three_prime_boundary = 0;
+		for ( core::Size seq_num = non_fixed_res[n]; seq_num <= nres + 1; seq_num++ ) { //find the 3' base_pair_list res boundary
 
 			if ( seq_num == nres + 1 ) { //no 3' fixed res boundary
 				free_boundary = true;
@@ -676,7 +676,7 @@ StepWiseWorkingParametersSetup::setup_additional_cutpoint_closed(){
 		if ( free_boundary == true ) continue;
 		/////////////////////////////////////////////////////////////////////////////////////
 		bool boundary_is_a_pair = false;
-		for ( Size ii = 1; ii <= jump_point_pair_list_.size(); ii++ ) {
+		for ( core::Size ii = 1; ii <= jump_point_pair_list_.size(); ii++ ) {
 			std::pair < core::Size, core::Size > jump_point_pair = jump_point_pair_list_[ii];
 			if ( five_prime_boundary == jump_point_pair.first && three_prime_boundary == jump_point_pair.second ) {
 				boundary_is_a_pair = true;
@@ -687,7 +687,7 @@ StepWiseWorkingParametersSetup::setup_additional_cutpoint_closed(){
 		/////////////////////////////////////////////////////////////////////////////////////
 
 		bool found_cutpoint_or_moving_res_or_nonworking_res = false;
-		for ( Size seq_num = five_prime_boundary; seq_num <= three_prime_boundary - 1; seq_num++ ) {
+		for ( core::Size seq_num = five_prime_boundary; seq_num <= three_prime_boundary - 1; seq_num++ ) {
 			if ( is_cutpoint_( seq_num ) || seq_num == moving_res_ || ( !is_working_res[ seq_num ] ) ) {
 				found_cutpoint_or_moving_res_or_nonworking_res = true;
 				break;
@@ -705,11 +705,11 @@ StepWiseWorkingParametersSetup::setup_additional_cutpoint_closed(){
 
 		//Preferable to put cutpoint_closed at a place where the chain is closed at a previous folding step. Sept 1, 2010
 
-		Size cutpoint = 0;
+		core::Size cutpoint = 0;
 
 		utility::vector1< core::Size > const previously_closed_cutpoint = get_previously_closed_cutpoint_from_imported_silent_file();
 
-		for ( Size seq_num = five_prime_boundary; seq_num <= three_prime_boundary - 1; seq_num++ ) {
+		for ( core::Size seq_num = five_prime_boundary; seq_num <= three_prime_boundary - 1; seq_num++ ) {
 
 			if ( previously_closed_cutpoint.has_value( seq_num ) && is_working_res[seq_num] ) {
 				cutpoint = seq_num;
@@ -719,8 +719,8 @@ StepWiseWorkingParametersSetup::setup_additional_cutpoint_closed(){
 
 		if ( cutpoint == 0 ) { //OK couldn't find the a valid previously closed cutpoint..so will put arbitrary put it 2 residues from three_prime_fixed_res
 
-			Size three_prime_fixed_res = 0;
-			for ( Size seq_num = non_fixed_res[n]; seq_num <= nres + 1; seq_num++ ) { //find the 3' base_pair_list res boundary
+			core::Size three_prime_fixed_res = 0;
+			for ( core::Size seq_num = non_fixed_res[n]; seq_num <= nres + 1; seq_num++ ) { //find the 3' base_pair_list res boundary
 
 				if ( seq_num > three_prime_boundary ) { //no 3' fixed res boundary
 					utility_exit_with_message( "three_prime_fixed_res > three_prime_boundary of fixed base pair ?? " );
@@ -744,7 +744,7 @@ StepWiseWorkingParametersSetup::setup_additional_cutpoint_closed(){
 	}
 
 	TR.Debug << "added_cutpoint_closed_ = ";
-	for ( Size n = 1; n <= added_cutpoint_closed_.size(); n++ ) {
+	for ( core::Size n = 1; n <= added_cutpoint_closed_.size(); n++ ) {
 		TR.Debug << " " << added_cutpoint_closed_[n];
 	}
 	TR.Debug << std::endl;
@@ -763,15 +763,15 @@ StepWiseWorkingParametersSetup::figure_out_chain_boundaries(){
 
 	stepwise::modeler::rna::output_title_text( "Enter StepWiseWorkingParametersSetup::figure_out_chain_boundaries", TR.Debug );
 
-	Size const nres( core::pose::rna::remove_bracketed( working_parameters_->full_sequence() ).size() );
+	core::Size const nres( core::pose::rna::remove_bracketed( working_parameters_->full_sequence() ).size() );
 
 	utility::vector1< core::Size > const & is_working_res( working_parameters_->is_working_res() );
 	utility::vector1< std::pair < core::Size, core::Size > > chain_boundaries;
 
-	Size start_chain( 0 );
-	Size end_chain( 0 );
-	Size n( 0 );
-	for ( Size pos = 1; pos <= nres; pos++ ) {
+	core::Size start_chain( 0 );
+	core::Size end_chain( 0 );
+	core::Size n( 0 );
+	for ( core::Size pos = 1; pos <= nres; pos++ ) {
 		if ( !is_working_res[ pos ] ) continue;
 		n++;
 		if ( n == 1 ) start_chain = pos;
@@ -806,16 +806,16 @@ StepWiseWorkingParametersSetup::figure_out_jump_partners() {
 	utility::vector1< std::pair < core::Size, core::Size > > const & chain_boundaries(  working_parameters_->chain_boundaries() );
 	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
 	utility::vector1< core::Size > const & is_working_res = working_parameters_->is_working_res();
-	utility::vector1< Size > const & cutpoint_closed_list = working_parameters_->cutpoint_closed_list();
+	utility::vector1< core::Size > const & cutpoint_closed_list = working_parameters_->cutpoint_closed_list();
 
-	Size const num_chains( chain_boundaries.size() );
+	core::Size const num_chains( chain_boundaries.size() );
 
 	//  rhiju put this in out of desperation (aug. 2013) -- need to fix this (perhaps use what is in stepwise pose setup!?)
 	if ( force_user_defined_jumps_ ) {
-		for ( Size n = 1; n <= jump_point_pair_list_.size(); n++ ) {
-			Size const jump_partner1 = jump_point_pair_list_[n].first;
+		for ( core::Size n = 1; n <= jump_point_pair_list_.size(); n++ ) {
+			core::Size const jump_partner1 = jump_point_pair_list_[n].first;
 			if ( !is_working_res[ jump_partner1 ] ) continue;
-			Size const jump_partner2 = jump_point_pair_list_[n].second;
+			core::Size const jump_partner2 = jump_point_pair_list_[n].second;
 			if ( !is_working_res[ jump_partner2 ] ) continue;
 			jump_partners_.push_back( std::make_pair( full_to_sub[ jump_partner1 ], full_to_sub[ jump_point_pair_list_[n].second ] ) );
 		}
@@ -826,10 +826,10 @@ StepWiseWorkingParametersSetup::figure_out_jump_partners() {
 	}
 
 	TR.Debug << "num_chains = " << num_chains << std::endl;
-	for ( Size n = 1 ; n < num_chains; n++ ) {
+	for ( core::Size n = 1 ; n < num_chains; n++ ) {
 
-		Size const jump_partner1 = chain_boundaries[n].second;
-		Size const jump_partner2 = chain_boundaries[n + 1].first;
+		core::Size const jump_partner1 = chain_boundaries[n].second;
+		core::Size const jump_partner2 = chain_boundaries[n + 1].first;
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		bool pass_consecutive_res_jump_partner_test = true;
@@ -858,7 +858,7 @@ StepWiseWorkingParametersSetup::figure_out_jump_partners() {
 			std::pair < core::Size, core::Size > fixed_base_pair;
 
 			bool found_jump_point_pair = false;
-			for ( Size i = 1; i <= jump_point_pair_list_.size(); i++ ) { //Try an exterior pair
+			for ( core::Size i = 1; i <= jump_point_pair_list_.size(); i++ ) { //Try an exterior pair
 				if ( jump_point_pair_list_[i].first < jump_partner1 && jump_partner2 < jump_point_pair_list_[i].second ) {
 					if ( is_working_res[jump_point_pair_list_[i].first] && is_working_res[jump_point_pair_list_[i].second] ) {
 						fixed_base_pair = jump_point_pair_list_[i];
@@ -871,7 +871,7 @@ StepWiseWorkingParametersSetup::figure_out_jump_partners() {
 			///////////Nov 6, 2010...hacky mainly to get the square RNA working.../////////////
 			if ( !found_jump_point_pair ) {
 				if ( allow_chain_boundary_jump_partner_right_at_fixed_BP_ ) {
-					for ( Size i = 1; i <= jump_point_pair_list_.size(); i++ ) { //Try an exterior pair
+					for ( core::Size i = 1; i <= jump_point_pair_list_.size(); i++ ) { //Try an exterior pair
 						if ( jump_point_pair_list_[i].first <= jump_partner1 && jump_partner2 <= jump_point_pair_list_[i].second ) {
 							if ( is_working_res[jump_point_pair_list_[i].first] && is_working_res[jump_point_pair_list_[i].second] ) {
 								fixed_base_pair = jump_point_pair_list_[i];
@@ -905,9 +905,9 @@ StepWiseWorkingParametersSetup::figure_out_cuts() {
 
 	utility::vector1< std::pair < core::Size, core::Size > > const & chain_boundaries(  working_parameters_->chain_boundaries() );
 	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
-	Size const num_chains = chain_boundaries.size();
+	core::Size const num_chains = chain_boundaries.size();
 
-	for ( Size n = 1; n < num_chains; n++ ) {
+	for ( core::Size n = 1; n < num_chains; n++ ) {
 		cuts_.push_back( full_to_sub[ chain_boundaries[n].second ] );
 	}
 
@@ -918,8 +918,8 @@ StepWiseWorkingParametersSetup::figure_out_cuts() {
 void
 StepWiseWorkingParametersSetup::setup_floating_base_jump_to_anchor(){
 	if ( !working_parameters_->floating_base() ) return;
-	Size const moving_res = working_parameters_->moving_res();
-	Size const anchor_res = working_parameters_->floating_base_anchor_res();
+	core::Size const moving_res = working_parameters_->moving_res();
+	core::Size const anchor_res = working_parameters_->floating_base_anchor_res();
 	if ( anchor_res == 0 ) return;
 
 	utility::vector1< core::Size > const & is_working_res = working_parameters_->is_working_res();
@@ -936,7 +936,7 @@ StepWiseWorkingParametersSetup::setup_floating_base_jump_to_anchor(){
 	// sequence, but let's assume that they are together in the working pose, leading to a cutpoint open.
 	// runtime_assert(  std::abs( int(moving_res) - int(anchor_res) ) > 1 ); // full numbering.
 	// runtime_assert(  std::abs( int(full_to_sub[ moving_res ]) - int(full_to_sub[ anchor_res ]) ) == 1 );
-	Size cutpoint = ( moving_res < anchor_res ) ? full_to_sub[ moving_res ] : full_to_sub[ anchor_res ];
+	core::Size cutpoint = ( moving_res < anchor_res ) ? full_to_sub[ moving_res ] : full_to_sub[ anchor_res ];
 	cuts_.push_back( cutpoint );
 	is_cutpoint_( cutpoint ) = true;
 
@@ -953,35 +953,35 @@ StepWiseWorkingParametersSetup::setup_fold_tree(){
 	runtime_assert( cuts_.size() == jump_partners_.size() );
 
 	std::string const working_sequence = working_parameters_->working_sequence();
-	Size const nres = core::pose::rna::remove_bracketed( working_sequence ).size();
-	Size const num_cuts( cuts_.size() );
+	core::Size const nres = core::pose::rna::remove_bracketed( working_sequence ).size();
+	core::Size const num_cuts( cuts_.size() );
 
-	ObjexxFCL::FArray2D< Size > jump_point( 2, num_cuts );
-	ObjexxFCL::FArray1D< Size > cuts( num_cuts );
+	ObjexxFCL::FArray2D< core::Size > jump_point( 2, num_cuts );
+	ObjexxFCL::FArray1D< core::Size > cuts( num_cuts );
 
-	for ( Size i = 1; i <= num_cuts; i++ ) {
+	for ( core::Size i = 1; i <= num_cuts; i++ ) {
 		jump_point( 1, i ) = std::min( jump_partners_[i].first, jump_partners_[i].second );
 		jump_point( 2, i ) = std::max( jump_partners_[i].first, jump_partners_[i].second );
 		cuts( i ) = cuts_[ i ];
 		TR.Debug << " JUMP POINT: " << jump_point( 1, i ) << " " << jump_point( 2, i ) << " " << cuts( i ) << std::endl;
 	}
 
-	Size const root_res = ( full_to_sub[ moving_res_ ] == 1 ) ? nres : 1;
+	core::Size const root_res = ( full_to_sub[ moving_res_ ] == 1 ) ? nres : 1;
 
 	core::kinematics::FoldTree fold_tree( nres );
 	fold_tree.tree_from_jumps_and_cuts( nres, num_cuts, jump_point, cuts, root_res ); //order of element in jump_point and cuts does not have to match. Jan 29, 2010 Parin S.
-	Size num_cutpoint = fold_tree.num_cutpoint();
+	core::Size num_cutpoint = fold_tree.num_cutpoint();
 
 	core::chemical::ResidueTypeSetCOP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	// Store bracketed stuff in map, based on STRING index not seqpos
 	// AMW TODO: merge with similar Rhiju function written for de novo setup
-	std::map< Size, std::string > special_res;
+	std::map< core::Size, std::string > special_res;
 	std::string working_sequence_clean;
 	core::pose::rna::remove_and_store_bracketed( working_sequence, working_sequence_clean, special_res );
 
-	for ( Size i = 1; i <= num_cutpoint; i++ ) {
-		Size k = fold_tree.upstream_jump_residue( i );
-		Size m = fold_tree.downstream_jump_residue( i );
+	for ( core::Size i = 1; i <= num_cutpoint; i++ ) {
+		core::Size k = fold_tree.upstream_jump_residue( i );
+		core::Size m = fold_tree.downstream_jump_residue( i );
 
 		char upstream_res = working_sequence_clean[k - 1];
 		char downstream_res = working_sequence_clean[m - 1];
@@ -1036,7 +1036,7 @@ StepWiseWorkingParametersSetup::setup_fold_tree(){
 core::Size
 StepWiseWorkingParametersSetup::input_struct_definition( core::Size const working_seq_num ){
 
-	utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
+	utility::vector1< utility::vector1< core::Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
 
 	if ( input_res_vectors.size() != 2 ) utility_exit_with_message( "is_internal case but input_res_vectors.size() != 2" );
 	std::map< core::Size, core::Size > & sub_to_full( working_parameters_->sub_to_full() );
@@ -1058,19 +1058,19 @@ StepWiseWorkingParametersSetup::figure_out_partition_definition(){
 	// there's already a fold_tree function to do this, but it partitions based on a JUMP.
 	//  So put in a fake jump between the moving_residue and the neighbor it is connected to.
 
-	Size const nres( core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() );
+	core::Size const nres( core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size() );
 
 	ObjexxFCL::FArray1D_bool partition_definition( nres, false );
 
 	core::kinematics::FoldTree const & fold_tree = working_parameters_->fold_tree();
-	//  Size const & moving_suite( working_parameters_->working_moving_suite() );
+	//  core::Size const & moving_suite( working_parameters_->working_moving_suite() );
 
 	/////////May 3, 2010/////////////////////////////////////////////////////////////////////
 	// Does the order of working_res matter? If so, which residue is 'closest' to attachment point?
 	utility::vector1< core::Size > const & working_moving_res_list( working_parameters_->working_moving_res_list() );
 
-	Size const working_moving_res = working_moving_res_list[1]; //The one furthest away from the existing structure
-	Size const first_working_moving_res = working_moving_res_list[working_moving_res_list.size()]; //The one attached to the existing structure
+	core::Size const working_moving_res = working_moving_res_list[1]; //The one furthest away from the existing structure
+	core::Size const first_working_moving_res = working_moving_res_list[working_moving_res_list.size()]; //The one attached to the existing structure
 
 	core::Size fake_working_moving_suite;
 	stepwise::modeler::rna::InternalWorkingResidueParameter internal_working_res_params;
@@ -1142,9 +1142,9 @@ StepWiseWorkingParametersSetup::figure_out_partition_definition(){
 		}
 
 		//Ok first find the two possible positions to put the actual_working_res.
-		Size possible_working_res_1 = 0;
-		Size possible_working_res_2 = 0;
-		Size found_possible_working_res = 0;
+		core::Size possible_working_res_1 = 0;
+		core::Size possible_working_res_2 = 0;
+		core::Size found_possible_working_res = 0;
 
 		//Check if this is a suite right between two previously built moving_elements.
 		if ( working_moving_res_list.size() == 1 ) {
@@ -1219,8 +1219,8 @@ StepWiseWorkingParametersSetup::reroot_fold_tree_simple(){
 
 	utility::vector1< core::Size > working_fixed_res( working_parameters_->working_fixed_res() );
 
-	for ( Size i = 1; i <= working_fixed_res.size(); i++ ) {
-		Size const n = working_fixed_res[i];
+	for ( core::Size i = 1; i <= working_fixed_res.size(); i++ ) {
+		core::Size const n = working_fixed_res[i];
 		if ( fold_tree.possible_root( n )  ) {
 			core::kinematics::FoldTree rerooted_fold_tree = fold_tree;
 			bool reorder_went_OK = rerooted_fold_tree.reorder( n );
@@ -1243,14 +1243,14 @@ StepWiseWorkingParametersSetup::reroot_fold_tree( core::Size const fake_working_
 
 	ObjexxFCL::FArray1D < bool > const & partition_definition = working_parameters_->partition_definition();
 	core::kinematics::FoldTree const & fold_tree = working_parameters_->fold_tree();
-	Size const nres = core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size();
+	core::Size const nres = core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size();
 
 	std::map< core::Size, core::Size > & sub_to_full( working_parameters_->sub_to_full() );
 
-	Size num_partition_0( 0 ), num_partition_1( 0 );
-	Size possible_new_root_residue_in_partition_0( 0 ), possible_new_root_residue_in_partition_1( 0 ), root_res( 0 );
+	core::Size num_partition_0( 0 ), num_partition_1( 0 );
+	core::Size possible_new_root_residue_in_partition_0( 0 ), possible_new_root_residue_in_partition_1( 0 ), root_res( 0 );
 
-	for ( Size n = 1; n <= nres; n++ ) {
+	for ( core::Size n = 1; n <= nres; n++ ) {
 		if ( partition_definition( n ) ) {
 			num_partition_1 += 1;
 			if ( fold_tree.possible_root( n ) ) possible_new_root_residue_in_partition_1 = n;
@@ -1263,16 +1263,16 @@ StepWiseWorkingParametersSetup::reroot_fold_tree( core::Size const fake_working_
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	//If moving_res = 1 or nres, try putting root at fix res (second best choice)
 	utility::vector1< core::Size > working_fixed_res( working_parameters_->working_fixed_res() );
-	for ( Size i = 1; i <= working_fixed_res.size(); i++ ) {
-		Size const seq_num = working_fixed_res[i];
+	for ( core::Size i = 1; i <= working_fixed_res.size(); i++ ) {
+		core::Size const seq_num = working_fixed_res[i];
 		if ( partition_definition( seq_num ) && fold_tree.possible_root( seq_num ) ) {
 			possible_new_root_residue_in_partition_1 = seq_num;
 			break;
 		}
 	}
 
-	for ( Size i = 1; i <= working_fixed_res.size(); i++ ) {
-		Size const seq_num = working_fixed_res[i];
+	for ( core::Size i = 1; i <= working_fixed_res.size(); i++ ) {
+		core::Size const seq_num = working_fixed_res[i];
 		if ( seq_num <= partition_definition.size() &&
 				!partition_definition( seq_num ) &&  fold_tree.possible_root( seq_num ) ) {
 			possible_new_root_residue_in_partition_0 = seq_num;
@@ -1283,16 +1283,16 @@ StepWiseWorkingParametersSetup::reroot_fold_tree( core::Size const fake_working_
 	//If moving_res=1 or nres, try putting root at terminus res (best choice)
 	utility::vector1< core::Size > working_terminal_res( working_parameters_->working_terminal_res() );
 
-	for ( Size i = 1; i <= working_terminal_res.size(); i++ ) {
-		Size const seq_num = working_terminal_res[i];
+	for ( core::Size i = 1; i <= working_terminal_res.size(); i++ ) {
+		core::Size const seq_num = working_terminal_res[i];
 		if ( partition_definition( seq_num ) &&  fold_tree.possible_root( seq_num ) ) {
 			possible_new_root_residue_in_partition_1 = seq_num;
 			break;
 		}
 	}
 
-	for ( Size i = 1; i <= working_terminal_res.size(); i++ ) {
-		Size const seq_num = working_terminal_res[i];
+	for ( core::Size i = 1; i <= working_terminal_res.size(); i++ ) {
+		core::Size const seq_num = working_terminal_res[i];
 		if ( !partition_definition( seq_num ) &&  fold_tree.possible_root( seq_num ) ) {
 			possible_new_root_residue_in_partition_0 = seq_num;
 			break;
@@ -1302,7 +1302,7 @@ StepWiseWorkingParametersSetup::reroot_fold_tree( core::Size const fake_working_
 	runtime_assert( num_partition_0 > 0 );
 	runtime_assert( num_partition_1 > 0 );
 
-	Size const moving_res( working_parameters_->working_moving_res() );
+	core::Size const moving_res( working_parameters_->working_moving_res() );
 	if ( num_partition_1 == num_partition_0 ) {
 		if ( partition_definition( moving_res ) == 0 ) { //put root_res in partition 1 away from the moving_res.
 			if ( partition_definition( 1 ) && partition_definition( nres ) ) {
@@ -1346,10 +1346,10 @@ StepWiseWorkingParametersSetup::reroot_fold_tree( core::Size const fake_working_
 	if ( force_fold_tree_ ) rerooted_fold_tree = working_parameters_->fold_tree();
 
 	// moving positions
-	utility::vector1< Size > working_moving_partition_res;
+	utility::vector1< core::Size > working_moving_partition_res;
 	bool const root_partition = partition_definition( rerooted_fold_tree.root() );
 
-	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= nres; seq_num++ ) {
 		if ( partition_definition( seq_num ) != root_partition )  working_moving_partition_res.push_back( seq_num );
 	}
 
@@ -1369,7 +1369,7 @@ StepWiseWorkingParametersSetup::figure_out_gap_size_and_five_prime_chain_break_r
 
 	utility::vector1< std::pair < core::Size, core::Size > > const & chain_boundaries(  working_parameters_->chain_boundaries() );
 
-	Size gap_size = GAP_SIZE_DUMMY; // junk value... totally "free" end.
+	core::Size gap_size = GAP_SIZE_DUMMY; // junk value... totally "free" end.
 	working_parameters_->set_gap_size( gap_size /*DUMMY*/ );
 	working_parameters_->set_five_prime_chain_break_res( 0 );
 
@@ -1377,23 +1377,23 @@ StepWiseWorkingParametersSetup::figure_out_gap_size_and_five_prime_chain_break_r
 	// Need to look for a chainbreak whose ends actually will move relative to each other if
 	// we change degrees of freedom in the "moving residues".
 	ObjexxFCL::FArray1D < bool > const & partition_definition = working_parameters_->partition_definition();
-	Size const moving_res( working_parameters_->moving_res() );
-	Size const anchor_res( working_parameters_->floating_base_anchor_res() ); // 0 if not floating_base by jump.
+	core::Size const moving_res( working_parameters_->moving_res() );
+	core::Size const anchor_res( working_parameters_->floating_base_anchor_res() ); // 0 if not floating_base by jump.
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
-	Size found_moving_gap( 0 );
-	Size const num_chains = chain_boundaries.size();
-	for ( Size n = 1; n < num_chains; n++ ) {
-		Size chain_end = chain_boundaries[ n ].second;
-		Size next_chain_start = chain_boundaries[ n + 1 ].first;
+	core::Size found_moving_gap( 0 );
+	core::Size const num_chains = chain_boundaries.size();
+	for ( core::Size n = 1; n < num_chains; n++ ) {
+		core::Size chain_end = chain_boundaries[ n ].second;
+		core::Size next_chain_start = chain_boundaries[ n + 1 ].first;
 		if ( chain_end == anchor_res && next_chain_start == moving_res ) continue; // attachment by jump
 		if ( chain_end == moving_res && next_chain_start == anchor_res ) continue; // attachment by jump
 		if ( partition_definition( full_to_sub[ chain_end ] ) !=
 				partition_definition( full_to_sub[ next_chain_start ] ) ) {
 
 			bool found_cutpoint_open( false );
-			for ( Size i = 1; i <= cutpoint_open_.size(); i++ ) {
+			for ( core::Size i = 1; i <= cutpoint_open_.size(); i++ ) {
 				if ( cutpoint_open_[i] >= chain_end && cutpoint_open_[i] < next_chain_start ) {
 					found_cutpoint_open = true;
 					break;
@@ -1403,7 +1403,7 @@ StepWiseWorkingParametersSetup::figure_out_gap_size_and_five_prime_chain_break_r
 			if ( found_cutpoint_open ) continue;
 
 			bool found_added_cutpoint_closed_( false );
-			for ( Size i = 1; i <= added_cutpoint_closed_.size(); i++ ) {
+			for ( core::Size i = 1; i <= added_cutpoint_closed_.size(); i++ ) {
 				if ( added_cutpoint_closed_[i] >= chain_end && added_cutpoint_closed_[i] < next_chain_start ) {
 					found_added_cutpoint_closed_ = true;
 					break;
@@ -1437,11 +1437,11 @@ StepWiseWorkingParametersSetup::figure_out_prepend_internal( core::Size const ro
 	std::map< core::Size, core::Size > & sub_to_full( working_parameters_->sub_to_full() );
 
 	ObjexxFCL::FArray1D < bool > const & partition_definition = working_parameters_->partition_definition();
-	Size const working_moving_res( working_parameters_->working_moving_res() ); //hard copy, since this is set later in the function
+	core::Size const working_moving_res( working_parameters_->working_moving_res() ); //hard copy, since this is set later in the function
 	utility::vector1< core::Size > const working_moving_res_list( working_parameters_->working_moving_res_list() ); //hard copy, since this is set later in the function
 	core::kinematics::FoldTree const & fold_tree = working_parameters_->fold_tree();
-	Size const nres = core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size();
-	Size const fake_working_moving_suite = internal_params.fake_working_moving_suite;
+	core::Size const nres = core::pose::rna::remove_bracketed( working_parameters_->working_sequence() ).size();
+	core::Size const fake_working_moving_suite = internal_params.fake_working_moving_suite;
 
 	bool is_prepend( true ), is_internal( false );
 
@@ -1473,12 +1473,12 @@ StepWiseWorkingParametersSetup::figure_out_prepend_internal( core::Size const ro
 		bool const can_append = check_can_append( working_moving_res_list ); //[14, 13, 12]
 		bool const can_prepend = check_can_prepend( working_moving_res_list ); //[12, 13, 14]
 
-		Size const possible_working_res_1 = internal_params.possible_working_res_1; //lower
-		Size const possible_working_res_2 = internal_params.possible_working_res_2; //upper
+		core::Size const possible_working_res_1 = internal_params.possible_working_res_1; //lower
+		core::Size const possible_working_res_2 = internal_params.possible_working_res_2; //upper
 
 		TR.Debug << can_append << " " << can_prepend << " " << possible_working_res_1 << " " << possible_working_res_2 << std::endl;
 
-		Size found_actual_working_res = 0;
+		core::Size found_actual_working_res = 0;
 		utility::vector1< core::Size > actual_working_moving_res_list;
 		core::Size actual_working_moving_res = 0;
 
@@ -1496,7 +1496,7 @@ StepWiseWorkingParametersSetup::figure_out_prepend_internal( core::Size const ro
 					actual_working_moving_res_list = working_moving_res_list;
 				} else {
 					//Ok should prepend base on partition definition, but user input an append working_moving_res_list...need to convert to prepend
-					for ( Size n = working_moving_res_list.size(); n >= 1; n-- ) { //Convert [14,13,12] to [11,12,13]
+					for ( core::Size n = working_moving_res_list.size(); n >= 1; n-- ) { //Convert [14,13,12] to [11,12,13]
 						actual_working_moving_res_list.push_back( working_moving_res_list[n] - 1 );
 					}
 
@@ -1521,7 +1521,7 @@ StepWiseWorkingParametersSetup::figure_out_prepend_internal( core::Size const ro
 					actual_working_moving_res_list = working_moving_res_list;
 				} else {
 					//Ok should append base on partition definition, but user input an prepend working_moving_res_list...need to convert to append
-					for ( Size n = working_moving_res_list.size(); n >= 1; n-- ) { //Convert [11,12,13] to [14,13,12]
+					for ( core::Size n = working_moving_res_list.size(); n >= 1; n-- ) { //Convert [11,12,13] to [14,13,12]
 						actual_working_moving_res_list.push_back( working_moving_res_list[n] + 1 );
 					}
 
@@ -1600,7 +1600,7 @@ StepWiseWorkingParametersSetup::set_fixed_res( utility::vector1 < core::Size > c
 	output_boolean( "allow_fixed_res_at_moving_res_ = ", allow_fixed_res_at_moving_res_, TR.Debug ); TR.Debug << std::endl;
 
 	if ( !allow_fixed_res_at_moving_res_ ) { //Nov 15, 2010 (the outer if statement)
-		for ( Size n = 1; n <= moving_res_list_.size(); n++ ) {
+		for ( core::Size n = 1; n <= moving_res_list_.size(); n++ ) {
 			if ( fixed_res_.has_value( moving_res_list_[n] ) ) {
 				TR.Debug << "moving_res " + string_of( moving_res_list_[n] ) + " should not be in fixed_res_list!" << std::endl;
 				//utility_exit_with_message( "moving_res " + string_of( moving_res_list_[n] ) + " should not be in fixed_res_list!" );
@@ -1610,7 +1610,7 @@ StepWiseWorkingParametersSetup::set_fixed_res( utility::vector1 < core::Size > c
 
 	working_parameters_->set_fixed_res( fixed_res_ );
 
-	utility::vector1< Size >  working_fixed_res = apply_full_to_sub_mapping( fixed_res_,  working_parameters_ );
+	utility::vector1< core::Size >  working_fixed_res = apply_full_to_sub_mapping( fixed_res_,  working_parameters_ );
 	if ( working_parameters_->add_virt_res_as_root() ) working_fixed_res.push_back( core::pose::rna::remove_bracketed( working_parameters_->sequence() ).size() + 1 );
 	working_parameters_->set_working_fixed_res( working_fixed_res );
 
@@ -1633,8 +1633,8 @@ StepWiseWorkingParametersSetup::set_calc_rms_res( utility::vector1< core::Size >
 	utility::vector1< core::Size > const & is_working_res( working_parameters_->is_working_res() );
 	utility::vector1< core::Size > actual_calc_rms_res;
 
-	for ( Size n = 1; n <= input_calc_rms_res.size(); n++ ) {
-		Size seq_num = input_calc_rms_res[n];
+	for ( core::Size n = 1; n <= input_calc_rms_res.size(); n++ ) {
+		core::Size seq_num = input_calc_rms_res[n];
 		if ( !is_working_res[seq_num] ) continue;
 		actual_calc_rms_res.push_back( seq_num );
 	}
@@ -1667,7 +1667,7 @@ StepWiseWorkingParametersSetup::set_jump_point_pair_list( utility::vector1< std:
 	if ( fixed_res_.size() == 0 ) utility_exit_with_message( "need to called set_fixed_res before calling set_jump_point_pair_list" );
 
 	bool assert_jump_point_in_fixed_res = assert_jump_point_in_fixed_res_;
-	for ( Size n = 1; n <= jump_point_pairs_string.size(); n++ ) {
+	for ( core::Size n = 1; n <= jump_point_pairs_string.size(); n++ ) {
 
 		if ( ( n == 1 ) && ( jump_point_pairs_string[n] == "NOT_ASSERT_IN_FIXED_RES" ) ) { //Feb 09, 2012: FIXED BUG. Used to be "and" instead of "&&"
 			assert_jump_point_in_fixed_res = false;
@@ -1691,7 +1691,7 @@ StepWiseWorkingParametersSetup::set_jump_point_pair_list( utility::vector1< std:
 
 	//Ensure that every seq_num in jump_point_pair_list_ is a fixed_res
 	if ( assert_jump_point_in_fixed_res ) {
-		for ( Size n = 1; n <= jump_point_pair_list_.size(); n++ ) {
+		for ( core::Size n = 1; n <= jump_point_pair_list_.size(); n++ ) {
 			runtime_assert ( fixed_res_.has_value( jump_point_pair_list_[n].first ) );
 			runtime_assert ( fixed_res_.has_value( jump_point_pair_list_[n].second ) );
 		}
@@ -1701,9 +1701,9 @@ StepWiseWorkingParametersSetup::set_jump_point_pair_list( utility::vector1< std:
 //////////////////////////////////////////////////////////////////////////
 
 void
-StepWiseWorkingParametersSetup::set_native_alignment_res( utility::vector1< Size > const & setting ){
+StepWiseWorkingParametersSetup::set_native_alignment_res( utility::vector1< core::Size > const & setting ){
 
-	utility::vector1< Size > const native_alignment = setting;
+	utility::vector1< core::Size > const native_alignment = setting;
 
 	working_parameters_->set_native_alignment(  native_alignment );
 	working_parameters_->set_working_native_alignment(  apply_full_to_sub_mapping( native_alignment, stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP( working_parameters_ ) ) );
@@ -1719,7 +1719,7 @@ StepWiseWorkingParametersSetup::set_native_alignment_res( utility::vector1< Size
 void
 StepWiseWorkingParametersSetup::set_global_sample_res_list( utility::vector1 < core::Size > const & setting ){
 
-	utility::vector1< Size > const global_sample_res_list = setting;
+	utility::vector1< core::Size > const global_sample_res_list = setting;
 	working_parameters_->set_global_sample_res_list(  global_sample_res_list );
 
 }
@@ -1729,7 +1729,7 @@ StepWiseWorkingParametersSetup::set_global_sample_res_list( utility::vector1 < c
 void
 StepWiseWorkingParametersSetup::set_force_syn_chi_res_list( utility::vector1 < core::Size > const & setting ){
 
-	utility::vector1< Size > const force_syn_chi_res_list = setting;
+	utility::vector1< core::Size > const force_syn_chi_res_list = setting;
 	working_parameters_->set_force_syn_chi_res_list(  force_syn_chi_res_list );
 
 }
@@ -1739,7 +1739,7 @@ StepWiseWorkingParametersSetup::set_force_syn_chi_res_list( utility::vector1 < c
 void
 StepWiseWorkingParametersSetup::set_force_anti_chi_res_list( utility::vector1 < core::Size > const & setting ){
 
-	utility::vector1< Size > const force_anti_chi_res_list = setting;
+	utility::vector1< core::Size > const force_anti_chi_res_list = setting;
 	working_parameters_->set_force_anti_chi_res_list(  force_anti_chi_res_list );
 
 }
@@ -1797,7 +1797,7 @@ StepWiseWorkingParametersSetup::set_floating_base( bool const setting ){
 }
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseWorkingParametersSetup::set_floating_base_anchor_res( Size const setting ){
+StepWiseWorkingParametersSetup::set_floating_base_anchor_res( core::Size const setting ){
 
 	working_parameters_->set_floating_base_anchor_res( setting );
 

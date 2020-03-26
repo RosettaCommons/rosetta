@@ -23,7 +23,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace core {
 namespace pack {
@@ -32,7 +32,7 @@ namespace buried_unsat_penalty {
 namespace graph {
 
 ///@brief Options container for the BuriedUnsatPenaltyGraph.  Initialized by the BuriedUnsatPenalty energy method.
-class BuriedUnsatPenaltyGraphOptions : public utility::pointer::ReferenceCount {
+class BuriedUnsatPenaltyGraphOptions : public utility::VirtualBase {
 
 public:
 

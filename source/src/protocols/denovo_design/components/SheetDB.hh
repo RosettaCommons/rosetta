@@ -42,7 +42,7 @@ typedef std::map< std::string, MapByLengths > MapByOrientations;
 typedef std::map< core::Size, MapByOrientations > MapByStrands;
 
 /// @brief class used to create/manipulate a database of sheets using a list of pdb files
-class SheetDB : public utility::pointer::ReferenceCount {
+class SheetDB : public utility::VirtualBase {
 public:
 	/// @brief default constructor
 	SheetDB();

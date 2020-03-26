@@ -168,7 +168,7 @@ PackstatCalculator::recompute( Pose const & this_pose )
 
 	core::Real respackstat_sum(0.0);
 	core::Real special_region_sum(0.0);
-	for ( Size i = 1; i <= residue_packstat_.size(); ++i ) {
+	for ( core::Size i = 1; i <= residue_packstat_.size(); ++i ) {
 
 		respackstat_sum = respackstat_sum + residue_packstat_[i];
 		if ( special_region_.find( i ) != special_region_.end() ) special_region_sum = special_region_sum + residue_packstat_[i];

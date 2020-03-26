@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_import_pose_RNA_DeNovoSetup_HH
 #define INCLUDED_core_import_pose_RNA_DeNovoSetup_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/import_pose/RNA_DeNovoSetup.fwd.hh>
 #include <core/import_pose/RNA_DeNovoParameters.fwd.hh>
 #include <core/pose/rna/RNA_SecStruct.fwd.hh>
@@ -32,7 +32,7 @@
 namespace core {
 namespace import_pose {
 
-class RNA_DeNovoSetup: public utility::pointer::ReferenceCount {
+class RNA_DeNovoSetup: public utility::VirtualBase {
 
 public:
 

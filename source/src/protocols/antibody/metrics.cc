@@ -65,7 +65,7 @@ namespace antibody {
 vector1< Real >
 vl_vh_orientation_coords ( const pose::Pose & pose_in, const protocols::antibody::AntibodyInfo & ab_info ) {
 	vector1< Real > angle_set(4, 0.0);
-	vector1< Size > vl_vh_residues = ab_info.get_PackingAngleResidues();
+	vector1< core::Size > vl_vh_residues = ab_info.get_PackingAngleResidues();
 
 	//Check if camelid antibody.
 	if ( ab_info.is_camelid() ) {
@@ -76,25 +76,25 @@ vl_vh_orientation_coords ( const pose::Pose & pose_in, const protocols::antibody
 
 
 	vector1< numeric::xyzVector< Real > > vl_coord_set;
-	for ( Size i=1; i<=8; ++i ) {
+	for ( core::Size i=1; i<=8; ++i ) {
 		vl_coord_set.push_back( pose_in.residue( vl_vh_residues[i] ).xyz( "CA" ) );
 	}
 
 	vector1< numeric::xyzVector< Real > > vh_coord_set;
-	for ( Size i=9; i<=16; ++i ) {
+	for ( core::Size i=9; i<=16; ++i ) {
 		vh_coord_set.push_back( pose_in.residue( vl_vh_residues[i] ).xyz( "CA" ) );
 	}
 
-	Size vl_n_res = vl_coord_set.size();
+	core::Size vl_n_res = vl_coord_set.size();
 	numeric::xyzVector< Real > vl_centroid(0.0);
-	for ( Size i = 1; i <= vl_n_res; ++i ) {
+	for ( core::Size i = 1; i <= vl_n_res; ++i ) {
 		vl_centroid += vl_coord_set[i];
 	}
 	vl_centroid /= vl_n_res;
 
-	Size vh_n_res = vh_coord_set.size();
+	core::Size vh_n_res = vh_coord_set.size();
 	numeric::xyzVector< Real > vh_centroid(0.0);
-	for ( Size i = 1; i <= vh_n_res; ++i ) {
+	for ( core::Size i = 1; i <= vh_n_res; ++i ) {
 		vh_centroid += vh_coord_set[i];
 	}
 	vh_centroid /= vh_n_res;
@@ -147,7 +147,7 @@ vl_vh_orientation_coords ( const pose::Pose & pose_in, const protocols::antibody
 std::pair<core::Real,core::Real>
 kink_dihedral(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info, bool debug) {
 
-	Size kb = ab_info.kink_begin(pose);
+	core::Size kb = ab_info.kink_begin(pose);
 	core::conformation::Residue kr0 = pose.residue(kb);
 	core::conformation::Residue kr1 = pose.residue(kb+1);
 	core::conformation::Residue kr2 = pose.residue(kb+2);
@@ -174,11 +174,11 @@ kink_dihedral(const core::pose::Pose & pose, const protocols::antibody::Antibody
 core::Real
 kink_bb_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info) {
 
-	Size Di = ab_info.kink_anion_residue(pose);  // N-1
+	core::Size Di = ab_info.kink_anion_residue(pose);  // N-1
 	core::conformation::Residue D  = pose.residue(Di);
 	Vector DN = D.xyz("N");
 
-	Size Ri = ab_info.kink_cation_residue(pose);  // 0
+	core::Size Ri = ab_info.kink_cation_residue(pose);  // 0
 	core::conformation::Residue R  = pose.residue(Ri);
 	Vector RO = R.xyz("O");
 
@@ -213,12 +213,12 @@ kink_RD_Hbond(const core::pose::Pose & pose, const protocols::antibody::Antibody
 core::Real
 kink_Trp_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info) {
 
-	Size Wi = ab_info.kink_trp(pose); // N+1
+	core::Size Wi = ab_info.kink_trp(pose); // N+1
 	core::conformation::Residue W  = pose.residue(Wi);
 	if ( W.name3() != "TRP" ) return 0.0;
 	Vector W_NE1 = W.xyz("NE1");
 
-	Size kb1 = ab_info.kink_begin(pose); // N-2
+	core::Size kb1 = ab_info.kink_begin(pose); // N-2
 	core::conformation::Residue kb = pose.residue(kb1);
 	Vector kb1_O = kb.xyz("O");
 
@@ -266,8 +266,8 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 
 	////////iterate to define antibody paratope/////////////////////////////////////////////
 	for ( auto const & loop : ab_info.get_all_cdrs_present(include_de_loop) ) {
-		Size loop_start = ab_info.get_CDR_start(loop, pose);
-		Size loop_end = ab_info.get_CDR_end(loop, pose);
+		core::Size loop_start = ab_info.get_CDR_start(loop, pose);
+		core::Size loop_end = ab_info.get_CDR_end(loop, pose);
 		TR.Debug << loop << " loop_start " << loop_start << std::endl;
 		TR.Debug << loop << " loop_end " << loop_end << std::endl;
 
@@ -275,7 +275,7 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 		Real hydrop_loop_sasa = 0;
 		Real loop_sasa = 0;
 		Real polar_loop_sasa = 0;
-		for ( Size ii=loop_start; ii<=loop_end; ++ii ) {
+		for ( core::Size ii=loop_start; ii<=loop_end; ++ii ) {
 			core::conformation::Residue const & irsd( pose.residue( ii ) );
 			loop_sasa += res_sasa[ii];
 			paratope_sasa += res_sasa[ii];
@@ -310,7 +310,7 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 core::SSize
 pose_charge( core::pose::Pose const & pose ) {  // not really an antibody fn
 	SSize pose_net_charge(0);
-	for ( Size i(1); i<=pose.size(); ++i ) {
+	for ( core::Size i(1); i<=pose.size(); ++i ) {
 		std::string name3 = pose.residue(i).name3();
 		if ( name3 == "ARG" || name3 == "LYS" ) {
 			//TR << name3 << std::endl;
@@ -332,14 +332,14 @@ paratope_charge( core::pose::Pose const & pose, const protocols::antibody::Antib
 	core::SSize paratope_charge = 0;
 
 	for ( auto const & loop : ab_info.get_all_cdrs_present( include_de_loop ) ) {
-		Size loop_start = ab_info.get_CDR_start(loop, pose);
-		Size loop_end = ab_info.get_CDR_end(loop, pose);
+		core::Size loop_start = ab_info.get_CDR_start(loop, pose);
+		core::Size loop_end = ab_info.get_CDR_end(loop, pose);
 
 		SSize plus_charge(0);
 		SSize minus_charge(0);
 		SSize loop_charge(0);
 
-		for ( Size ib=loop_start; ib<=loop_end; ++ib ) {
+		for ( core::Size ib=loop_start; ib<=loop_end; ++ib ) {
 			std::string name3 = pose.residue(ib).name3();
 			if ( name3 == "ARG" || name3 == "LYS" ) {
 				plus_charge++;
@@ -394,7 +394,7 @@ cdr_CN_anchor_distance(core::pose::Pose const & pose, AntibodyInfoCOP ab_info, C
 }
 
 vector1< Real >
-cdr_backbone_rmsds(pose::Pose & p1, pose::Pose const & p2, AntibodyInfoOP const a1, AntibodyInfoOP const a2, Size aln_thresh /*10*/) {
+cdr_backbone_rmsds(pose::Pose & p1, pose::Pose const & p2, AntibodyInfoOP const a1, AntibodyInfoOP const a2, core::Size aln_thresh /*10*/) {
 	// vector to store results h1, h2, h3, l1, l2, l3, ocd
 	vector1< Real > results_set(9, 0.0);
 
@@ -418,7 +418,7 @@ cdr_backbone_rmsds(pose::Pose & p1, pose::Pose const & p2, AntibodyInfoOP const 
 	Real ocd = 0.0;
 
 	//TR << "OCD X: mobile fixed" << std::endl;
-	for ( Size i=1; i<=4; ++i ) {
+	for ( core::Size i=1; i<=4; ++i ) {
 		//TR << "OCD " << i << ": " << p1_OCDs[i] << " " << p2_OCDs[i] << std::endl;
 		ocd += ( (p1_OCDs[i] - p2_OCDs[i]) * (p1_OCDs[i] - p2_OCDs[i]) / sds[i]*sds[i] );
 	}
@@ -449,18 +449,18 @@ cdr_backbone_rmsds(pose::Pose & p1, pose::Pose const & p2, AntibodyInfoOP const 
 		fr_maps[c] = atomid_map;
 	}
 
-	Size n_zero = 0;
+	core::Size n_zero = 0;
 
 	// define conserved residues for alignment in Chothia numbering
 	for ( auto i : get_conserved_residue_list('H') ) {
 
-		Size k = p1.pdb_info()->pdb2pose('H', i);
+		core::Size k = p1.pdb_info()->pdb2pose('H', i);
 		if ( k == 0 ) { // res doesnt exist in p1
 			n_zero += 1;
 			continue;
 		}
 
-		Size j = seq_map[k]; // map p1 to p2
+		core::Size j = seq_map[k]; // map p1 to p2
 		if ( j==0 ) { // res doesn't exist in p2
 			n_zero += 1;
 			continue;
@@ -477,13 +477,13 @@ cdr_backbone_rmsds(pose::Pose & p1, pose::Pose const & p2, AntibodyInfoOP const 
 
 	for ( auto i : get_conserved_residue_list('L') ) {
 
-		Size k = p1.pdb_info()->pdb2pose('L', i);
+		core::Size k = p1.pdb_info()->pdb2pose('L', i);
 		if ( k == 0 ) { // res doesnt exist in p1
 			n_zero += 1;
 			continue;
 		}
 
-		Size j = seq_map[k]; // map p1 to p2
+		core::Size j = seq_map[k]; // map p1 to p2
 		if ( j==0 ) {
 			n_zero += 1;
 			continue;
@@ -499,8 +499,8 @@ cdr_backbone_rmsds(pose::Pose & p1, pose::Pose const & p2, AntibodyInfoOP const 
 	}
 
 	// loop over pose residues, check which region, generate atom maps for region
-	for ( Size i=1; i<=p1.size(); ++i ) {
-		Size j = seq_map[i]; // map p1 to p2
+	for ( core::Size i=1; i<=p1.size(); ++i ) {
+		core::Size j = seq_map[i]; // map p1 to p2
 		if ( a1->get_region_of_residue(p1, i) == cdr_region ) { // in CDR
 			// we must always map or something is very wrong
 			if ( j==0 ) {

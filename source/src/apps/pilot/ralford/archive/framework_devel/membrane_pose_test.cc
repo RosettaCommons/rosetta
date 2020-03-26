@@ -57,7 +57,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
 
 // C++ Headers

@@ -101,8 +101,8 @@ public:
 	typedef std::list< core::Size > SizeList;
 	typedef std::pair< LarvalJobOP, JobResultOP > LarvalJobAndResult;
 	typedef std::map< JobResultID, utility::pointer::shared_ptr< std::string > > SerializedJobResultMap;
-	typedef std::map< JobResultID, Size > JobResultLocationMap;
-	typedef std::map< Size, LarvalJobOP > JobMap;
+	typedef std::map< JobResultID, core::Size > JobResultLocationMap;
+	typedef std::map< core::Size, LarvalJobOP > JobMap;
 	typedef utility::pointer::shared_ptr< JobMap > JobMapOP;
 	typedef std::set< core::Size > JobSet;
 	typedef utility::pointer::shared_ptr< JobSet > JobSetOP;
@@ -228,7 +228,7 @@ private:
 	send_deallocation_messages_to_node( int worker_node );
 
 	void
-	note_job_no_longer_running( Size job_id );
+	note_job_no_longer_running( core::Size job_id );
 
 	void
 	potentially_output_some_job_results();
@@ -240,7 +240,7 @@ private:
 	/// node to output a job result that node0 has been storing
 	void
 	send_output_spec_and_job_result_to_remote(
-		Size node_id,
+		core::Size node_id,
 		output::OutputSpecificationOP spec
 	);
 
@@ -248,7 +248,7 @@ private:
 	/// job whose result the archive node is already storing
 	void
 	send_output_spec_to_remote(
-		Size node_id,
+		core::Size node_id,
 		output::OutputSpecificationOP spec
 	);
 
@@ -256,8 +256,8 @@ private:
 	/// a job result lives on a particular archive node
 	void
 	send_output_spec_and_retrieval_instruction_to_remote(
-		Size node_id, // node that will perform the output
-		Size archive_node, // node where the job lives
+		core::Size node_id, // node that will perform the output
+		core::Size archive_node, // node where the job lives
 		output::OutputSpecificationOP spec
 	);
 
@@ -303,8 +303,8 @@ private:
 	void
 	throw_after_failed_to_retrieve_job_result(
 		int worker_node,
-		Size job_id,
-		Size result_index,
+		core::Size job_id,
+		core::Size result_index,
 		int archival_node
 	);
 
@@ -397,11 +397,11 @@ private:
 	std::string
 	serialize_output_specification( output::OutputSpecificationOP output_spec ) const;
 
-	std::string get_string_from_disk( Size job_id, Size result_index ) const;
+	std::string get_string_from_disk( core::Size job_id, core::Size result_index ) const;
 
-	std::string filename_for_archive( Size job_id, Size result_index ) const;
+	std::string filename_for_archive( core::Size job_id, core::Size result_index ) const;
 
-	std::string checkpoint_file_prefix( Size checkpoint_counter ) const;
+	std::string checkpoint_file_prefix( core::Size checkpoint_counter ) const;
 
 	std::string checkpoint_file_name_for_node( std::string const & prefix, int node_index ) const;
 
@@ -413,7 +413,7 @@ private:
 	/// right number of archive nodes.
 	bool checkpoint_sanity_check() const;
 
-	void delete_checkpoint( Size checkpoint_index ) const;
+	void delete_checkpoint( core::Size checkpoint_index ) const;
 
 	/// @throws std::string when the requested job result cannot be found.
 	void retrieve_job_result_and_act( JobResultID const & id, std::function< void (std::string const & ) > const & action);
@@ -430,7 +430,7 @@ public:
 	/// @brief Set the interval between checkpoint events, in seconds.
 	/// Useful for testing only. The JD will otherwise initialize this value
 	/// from the options system in its constructor.
-	void set_checkpoint_period( Size period_seconds );
+	void set_checkpoint_period( core::Size period_seconds );
 
 	/// @brief Retrieve the JobQueen from the JobDistributor; used only in testing.
 	JobQueenOP job_queen() { return job_queen_; }
@@ -505,12 +505,12 @@ private:
 	//numeric::DiscreteIntervalEncodingTree< core::Size > output_jobs_;
 	//numeric::DiscreteIntervalEncodingTree< core::Size > discarded_jobs_;
 
-	Size default_retry_limit_;
+	core::Size default_retry_limit_;
 
 	bool checkpoint_;
 	std::string checkpoint_directory_;
-	Size checkpoint_counter_;
-	Size checkpoint_period_;
+	core::Size checkpoint_counter_;
+	core::Size checkpoint_period_;
 	TimePoint last_checkpoint_wall_clock_;
 };
 

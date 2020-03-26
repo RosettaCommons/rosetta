@@ -122,7 +122,7 @@ NormalMode::solve( pose::Pose const &pose )
 	using NM_Matrix = utility::vector1<utility::vector1<Real> >;
 	NM_Matrix U, U_cart;
 
-	Size n;
+	core::Size n;
 	if ( torsion() ) {
 		// New way
 		U = make_Hessian_TNM();
@@ -143,7 +143,7 @@ NormalMode::solve( pose::Pose const &pose )
 	// Allocate size given degree of freedom
 	eigval_.resize( n );
 	NM_Matrix eigvec_tmp( n );
-	for ( Size i = 1; i <= n; ++i ) eigvec_tmp[i].resize( n );
+	for ( core::Size i = 1; i <= n; ++i ) eigvec_tmp[i].resize( n );
 
 	// Solve eigenvalue problem
 	numeric::linear_algebra::svdcmp( U, n, n, eigval_, eigvec_tmp );
@@ -156,12 +156,12 @@ NormalMode::solve( pose::Pose const &pose )
 		eigvec_tor_ = U;
 
 	} else {  // Cartesian only: Convert list into vector type
-		for ( Size i = 1; i <= 3*natm(); ++i ) eigvec_cart_[i].resize( natm() );
+		for ( core::Size i = 1; i <= 3*natm(); ++i ) eigvec_cart_[i].resize( natm() );
 
-		for ( Size i=1; i<= 3*natm(); ++i ) {
-			for ( Size j=1; j<= n; ++j ) { //
-				Size iatm = (j-1)/3+1;
-				Size k = (j-1)%3;
+		for ( core::Size i=1; i<= 3*natm(); ++i ) {
+			for ( core::Size j=1; j<= n; ++j ) { //
+				core::Size iatm = (j-1)/3+1;
+				core::Size k = (j-1)%3;
 				eigvec_cart_[i][iatm][k] = U[j][i];
 				//TR << "i/j/k " << i << " " << j << " " << k << " " << eigvec_cart_[i][iatm][k] << std::endl;
 			}
@@ -171,9 +171,9 @@ NormalMode::solve( pose::Pose const &pose )
 	// Convert eigen value info into importance
 	importance_.resize( nmode() );
 	Real inv_sum( 0.0 );
-	for ( Size i_mode = 1; i_mode <= nmode(); ++i_mode ) { inv_sum += 1.0/get_eigval( i_mode ); }
+	for ( core::Size i_mode = 1; i_mode <= nmode(); ++i_mode ) { inv_sum += 1.0/get_eigval( i_mode ); }
 
-	for ( Size i_mode = 1; i_mode <= nmode(); ++i_mode ) {
+	for ( core::Size i_mode = 1; i_mode <= nmode(); ++i_mode ) {
 		importance_[i_mode] = (1.0/get_eigval(i_mode))/inv_sum;
 	}
 
@@ -196,23 +196,23 @@ NormalMode::prepare_coord( pose::Pose const & pose ){
 
 	// Default - assign full residue list when the list is not specified
 	if ( !torsions_using_assigned_ ) {
-		for ( Size ires = 1; ires <= pose.size(); ++ires ) {
+		for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
 			torsions_using_.push_back( ires );
 		}
 	}
 
 	Vector xyzCA(0.0), xyzN(0.0), xyzC(0.0);
-	Size n( 0 );
+	core::Size n( 0 );
 
 	//std::cout << "prepare_coord, nmode " << torsions_using_.size() << std::endl;
 
-	for ( Size i = 1; i <= torsions_using_.size(); ++i ) {
-		Size const ires = torsions_using_[i];
+	for ( core::Size i = 1; i <= torsions_using_.size(); ++i ) {
+		core::Size const ires = torsions_using_[i];
 		//std::cout << "i/ires " << i << " " << ires << std::endl;
 		conformation::Residue const &rsd( pose.residue( ires ) );
 		debug_assert( rsd.type().is_protein() );
 
-		for ( Size iatm = 1; iatm <= rsd.natoms(); ++iatm ) {
+		for ( core::Size iatm = 1; iatm <= rsd.natoms(); ++iatm ) {
 			std::string const atmname( rsd.atom_name( iatm ) );
 			Vector crd = rsd.xyz( iatm );
 
@@ -302,7 +302,7 @@ NormalMode::set_harmonic_constant_map( pose::Pose const &pose ){
 
 	// Initialize
 	k_.resize( natm() );
-	for ( Size iatm = 1; iatm <= natm(); ++iatm ) {
+	for ( core::Size iatm = 1; iatm <= natm(); ++iatm ) {
 		k_[iatm].resize( natm() );
 	}
 
@@ -312,15 +312,15 @@ NormalMode::set_harmonic_constant_map( pose::Pose const &pose ){
 	dssp.insert_ss_into_pose( pose_tmp );
 
 	// Store consecutive secondary structure number
-	utility::vector1< Size > SSno( pose.size(), 0 );
-	std::map< Size, Size > Hbond_map;
+	utility::vector1< core::Size > SSno( pose.size(), 0 );
+	std::map< core::Size, core::Size > Hbond_map;
 	Real const Hbond_d2( 3.5*3.5 );
 
 	if ( !use_uniform_k_ ) {
 
-		Size i_ss( 0 );
+		core::Size i_ss( 0 );
 		char prvSS = 'X';
-		for ( Size ires = 1; ires <= pose_tmp.size(); ++ires ) {
+		for ( core::Size ires = 1; ires <= pose_tmp.size(); ++ires ) {
 			if ( !pose_tmp.residue( ires ).is_protein() || !pose_tmp.residue( ires ).has( " CA " ) ) continue;
 
 			char const &SS_i = pose_tmp.secstruct( ires );
@@ -339,7 +339,7 @@ NormalMode::set_harmonic_constant_map( pose::Pose const &pose ){
 			// For Hbond pair
 			Hbond_map[ires] = 0; // placeholder
 			Real mind2( 100.0 );
-			for ( Size jres = 1; jres <= pose_tmp.size(); ++jres ) {
+			for ( core::Size jres = 1; jres <= pose_tmp.size(); ++jres ) {
 				char const &SS_j = pose_tmp.secstruct( jres );
 
 				if ( std::abs(int(ires - jres)) < 3. || SS_j == 'L' ) continue;
@@ -359,10 +359,10 @@ NormalMode::set_harmonic_constant_map( pose::Pose const &pose ){
 
 	// Setup harmonic constants
 	// Note that iatm, jatm represents C-alpha atoms
-	for ( Size iatm = 1; iatm <= natm()-1; ++iatm ) {
-		Size ires = atomID_[iatm].rsd();
-		for ( Size jatm = iatm+1; jatm <= natm(); ++jatm ) {
-			Size jres = atomID_[jatm].rsd();
+	for ( core::Size iatm = 1; iatm <= natm()-1; ++iatm ) {
+		core::Size ires = atomID_[iatm].rsd();
+		for ( core::Size jatm = iatm+1; jatm <= natm(); ++jatm ) {
+			core::Size jres = atomID_[jatm].rsd();
 
 			if ( use_uniform_k_ ) {
 				k_[iatm][jatm] = k_uniform_;
@@ -401,11 +401,11 @@ NormalMode::make_Hessian_ANM( ){
 
 	// allocate array
 	utility::vector1< utility::vector1< Real > > H( 3*natm() );
-	for ( Size i = 1; i <= 3*natm(); ++i ) H[i].resize( 3*natm() );
+	for ( core::Size i = 1; i <= 3*natm(); ++i ) H[i].resize( 3*natm() );
 
 	// First, fill in off-diagonal elements
-	for ( Size i = 1; i <= natm()-1; ++i ) {
-		for ( Size j = i+1; j <= natm(); ++j ) {
+	for ( core::Size i = 1; i <= natm()-1; ++i ) {
+		for ( core::Size j = i+1; j <= natm(); ++j ) {
 
 			Vector const dxyz( xyz(i) - xyz(j) );
 			Real dist2( dxyz.dot( dxyz ) );
@@ -441,8 +441,8 @@ NormalMode::make_Hessian_ANM( ){
 	}
 
 	// Get diagonal elements
-	for ( Size i = 1; i <= natm(); ++i ) {
-		for ( Size j = 1; j <= natm(); ++j ) {
+	for ( core::Size i = 1; i <= natm(); ++i ) {
+		for ( core::Size j = 1; j <= natm(); ++j ) {
 			if ( j != i ) {
 				H[3*i-2][3*i-2] -= H[3*i-2][3*j-2];
 				H[3*i-2][3*i-1] -= H[3*i-2][3*j-1];
@@ -458,8 +458,8 @@ NormalMode::make_Hessian_ANM( ){
 	}
 
 	TR.Debug << "Hessian" << std::endl;
-	for ( Size i = 1; i <= 3*natm(); ++i ) {
-		for ( Size j = 1; j <= 3*natm(); ++j ) {
+	for ( core::Size i = 1; i <= 3*natm(); ++i ) {
+		for ( core::Size j = 1; j <= 3*natm(); ++j ) {
 			TR.Debug << " " << std::setw(9) << H[i][j];
 		}
 		TR.Debug << std::endl;
@@ -473,19 +473,19 @@ NormalMode::make_Hessian_TNM( ){
 
 	// allocate array
 	utility::vector1< utility::vector1< Real > > H( ntor() );
-	for ( Size i = 1; i <= ntor(); ++i ) H[i].resize( ntor() );
+	for ( core::Size i = 1; i <= ntor(); ++i ) H[i].resize( ntor() );
 
 	// Correct Tau
 	Vector Rcom( 0.0, 0.0, 0.0 );
-	for ( Size iatm = 1; iatm <= natm(); ++iatm ) Rcom += xyz( iatm );
+	for ( core::Size iatm = 1; iatm <= natm(); ++iatm ) Rcom += xyz( iatm );
 	Rcom /= natm();
 
-	for ( Size k = 1; k <= ntor(); ++k ) tau_[k] += e_[k].cross( Rcom );
+	for ( core::Size k = 1; k <= ntor(); ++k ) tau_[k] += e_[k].cross( Rcom );
 
 	utility::vector1< ContactStruct > cos;
 	// First, get contact list
-	for ( Size i = 1; i <= natm()-1; ++i ) {
-		for ( Size j = i+1; j <= natm(); ++j ) {
+	for ( core::Size i = 1; i <= natm()-1; ++i ) {
+		for ( core::Size j = i+1; j <= natm(); ++j ) {
 			Vector const dxyz( xyz(i) - xyz(j) );
 			Real dist2( dxyz.dot( dxyz ) );
 
@@ -513,8 +513,8 @@ NormalMode::make_Hessian_TNM( ){
 	utility::vector1< utility::vector1 < Vector > > tau_ia( ntor(), zero );
 
 	// Fill upper diagonal
-	for ( Size k = 1; k <= ntor(); ++k ) {
-		for ( Size l = k; l <= ntor(); ++l ) {
+	for ( core::Size k = 1; k <= ntor(); ++k ) {
+		for ( core::Size l = k; l <= ntor(); ++l ) {
 			eta_ia[l][k] = e_[k];
 			tau_ia[l][k] = tau_[k];
 		}
@@ -524,7 +524,7 @@ NormalMode::make_Hessian_TNM( ){
 	// given torsion a, b
 	utility::vector1< Real > dk( ntor(), 0.0 );
 
-	for ( Size i_co = 1; i_co <= cos.size(); ++i_co ) {
+	for ( core::Size i_co = 1; i_co <= cos.size(); ++i_co ) {
 		ContactStruct const &co = cos[i_co];
 
 		// Determine set of rotable axes
@@ -552,7 +552,7 @@ NormalMode::make_Hessian_TNM( ){
 		Real const h = co.k/co.d2;
 
 		// Iter over k,l torsions
-		for ( Size k = 1; k <= ntor(); ++k ) {
+		for ( core::Size k = 1; k <= ntor(); ++k ) {
 			Vector eta = eta2[k] - eta1[k];
 			Vector tau = tau2[k] - tau1[k];
 
@@ -569,22 +569,22 @@ NormalMode::make_Hessian_TNM( ){
 			dk[k] );
 			*/
 
-			for ( Size l = 1; l <= k; ++l ) {
+			for ( core::Size l = 1; l <= k; ++l ) {
 				H[l][k] += Hk*dk[l];
 			}
 		}
 	}
 
 	// Fill upper diagonal
-	for ( Size k = 1; k <= ntor(); ++k ) {
-		for ( Size l = 1; l <= k; ++l ) {
+	for ( core::Size k = 1; k <= ntor(); ++k ) {
+		for ( core::Size l = 1; l <= k; ++l ) {
 			H[k][l] = H[l][k];
 		}
 	}
 
 	TR.Debug << "Hessian" << std::endl;
-	for ( Size i = 1; i <= ntor(); ++i ) {
-		for ( Size j = 1; j <= ntor(); ++j ) {
+	for ( core::Size i = 1; i <= ntor(); ++i ) {
+		for ( core::Size j = 1; j <= ntor(); ++j ) {
 			TR.Debug << " " << std::setw(9) << H[i][j];
 		}
 		TR.Debug << std::endl;
@@ -600,7 +600,7 @@ NormalMode::convert_to_torsion_crd(
 	// First get COM coordinate
 	Real Msum( 0.0 );
 	Vector Rcom( 0.0, 0.0, 0.0 );
-	for ( Size iatm = 1; iatm <= natm(); ++iatm ) {
+	for ( core::Size iatm = 1; iatm <= natm(); ++iatm ) {
 		Msum += 1;
 		Rcom += xyz( iatm );
 	}
@@ -608,16 +608,16 @@ NormalMode::convert_to_torsion_crd(
 
 	// Translation to Center of Mass
 	utility::vector1< Vector > xyz_com = xyz_;
-	for ( Size iatm = 1; iatm <= natm(); ++iatm ) xyz_com[iatm] -= Rcom;
-	for ( Size itor = 1; itor <= ntor(); ++itor ) s_[itor] -= Rcom;
+	for ( core::Size iatm = 1; iatm <= natm(); ++iatm ) xyz_com[iatm] -= Rcom;
+	for ( core::Size itor = 1; itor <= ntor(); ++itor ) s_[itor] -= Rcom;
 
 	// Get Total inertia tensor: Assume mass is simply the same "1"
 	numeric::MathMatrix< Real > Isum;
 	numeric::MathMatrix< Real > Icorr_sum( 3, 3, 0.0 );
 
-	for ( Size iatm = 1; iatm <= natm(); ++iatm ) {
-		for ( Size i = 0; i < 3; ++i ) {
-			for ( Size j = 0; j < 3; ++j ) {
+	for ( core::Size iatm = 1; iatm <= natm(); ++iatm ) {
+		for ( core::Size i = 0; i < 3; ++i ) {
+			for ( core::Size j = 0; j < 3; ++j ) {
 				Icorr_sum[i][j] += xyz_com[iatm][i]*xyz_com[iatm][j];
 			}
 		}
@@ -646,7 +646,7 @@ NormalMode::convert_to_torsion_crd(
 	numeric::MathMatrix< Real > J( 3*natm(), ntor(), 0.0 );
 	numeric::MathMatrix< Real > Ut( 3*natm(), ntor(), 0.0 );
 
-	for ( Size a = ntor(); a >= 1; --a ) {
+	for ( core::Size a = ntor(); a >= 1; --a ) {
 		update_inertia_tensor( a, Ma, Ra, Icorr, Ia, xyz_com );
 
 		// get Aa and ta
@@ -666,7 +666,7 @@ NormalMode::convert_to_torsion_crd(
 
 		/// Generate Jacobian
 		Vector torv( 0.0, 0.0, 0.0 );
-		for ( Size i = 1; i <= natm(); ++i ) {
+		for ( core::Size i = 1; i <= natm(); ++i ) {
 			if ( i > a_to_i( a ) ) torv = e_[a].cross( xyz_com[i] - s_[a] );
 
 			// Aa == ta == 0 if eckart_correction_ == false
@@ -681,8 +681,8 @@ NormalMode::convert_to_torsion_crd(
 
 	/*
 	std::cout << "Jacobian" << std::endl;
-	for( Size i = 0; i < ntor(); ++i ){
-	for( Size j = 0; j < 3*natm(); ++j ){
+	for( core::Size i = 0; i < ntor(); ++i ){
+	for( core::Size j = 0; j < 3*natm(); ++j ){
 	printf( "%8.3f ", J[j][i] );
 	}
 	printf( "\n" );
@@ -692,8 +692,8 @@ NormalMode::convert_to_torsion_crd(
 	// Apply Jacobian to transform coordinate system ( Cartesian -> Torsion )
 	// Convert into matrix system
 	numeric::MathMatrix< Real > Utmp( 3*natm(), 3*natm(), 0.0 );
-	for ( Size i = 0; i < 3*natm(); ++i ) {
-		for ( Size j = 0; j < 3*natm(); ++j ) {
+	for ( core::Size i = 0; i < 3*natm(); ++i ) {
+		for ( core::Size j = 0; j < 3*natm(); ++j ) {
 			Utmp[i][j] = U[i+1][j+1];
 		}
 	}
@@ -706,9 +706,9 @@ NormalMode::convert_to_torsion_crd(
 	Ut1.resize( ntor() );
 
 	//std::cout << "Hessian, transformed" << std::endl;
-	for ( Size i = 0; i < ntor(); ++i ) {
+	for ( core::Size i = 0; i < ntor(); ++i ) {
 		Ut1[i+1].resize( ntor() );
-		for ( Size j = 0; j < ntor(); ++j ) {
+		for ( core::Size j = 0; j < ntor(); ++j ) {
 			Ut1[i+1][j+1] = Ut[i][j];
 			//printf( "%8.3f ", Ut[i][j] );
 		}
@@ -719,7 +719,7 @@ NormalMode::convert_to_torsion_crd(
 }
 
 void
-NormalMode::update_inertia_tensor( Size const a,
+NormalMode::update_inertia_tensor( core::Size const a,
 	Real &Ma,
 	Vector &Ra,
 	numeric::MathMatrix< Real > &Icorr,
@@ -727,19 +727,19 @@ NormalMode::update_inertia_tensor( Size const a,
 	utility::vector1< Vector > const xyz_com
 )
 {
-	Size start( a_to_i(a) + 1);
-	Size end;
+	core::Size start( a_to_i(a) + 1);
+	core::Size end;
 	if ( a == ntor() ) {
 		end = natm();
 	} else {
 		end = a_to_i(a+1);
 	}
 	if ( start <= end ) {
-		for ( Size iatm = start; iatm <= end; ++iatm ) {
+		for ( core::Size iatm = start; iatm <= end; ++iatm ) {
 			Ra += xyz_com[iatm];
 
-			for ( Size i = 0; i < 3; ++i ) {
-				for ( Size j = 0; j < 3; ++j ) {
+			for ( core::Size i = 0; i < 3; ++i ) {
+				for ( core::Size j = 0; j < 3; ++j ) {
 					Icorr[i][j] += xyz_com[iatm][i]*xyz_com[iatm][j];
 				}
 			}
@@ -758,7 +758,7 @@ NormalMode::update_inertia_tensor( Size const a,
 }
 
 void
-NormalMode::calculate_Jacobi_correction( Size const a,
+NormalMode::calculate_Jacobi_correction( core::Size const a,
 	Real const &Ma,
 	Vector const &Ra,
 	Real const &Msum,
@@ -800,8 +800,8 @@ NormalMode::calc_inertia_tensor( numeric::MathMatrix<Real> const Icorr,
 
 	numeric::MathMatrix<Real> Ia( 3, 3, 0.0 );
 
-	for ( Size i = 0; i < 3; ++i ) {
-		for ( Size j = 0; j < 3; ++j ) {
+	for ( core::Size i = 0; i < 3; ++i ) {
+		for ( core::Size j = 0; j < 3; ++j ) {
 			Ia[i][j] = Icorr[i][j] - Ra[i]*Ra[j]/Msum;
 		}
 	}
@@ -827,13 +827,13 @@ NormalMode::eigsrt(
 	utility::vector1< utility::vector1 < Real > > &eigvec,
 	utility::vector1< Real > &eigval ){
 
-	Size n( eigval.size() );
-	Size k;
+	core::Size n( eigval.size() );
+	core::Size k;
 
-	for ( Size i=1; i < n; i++ ) {
+	for ( core::Size i=1; i < n; i++ ) {
 		Real p = eigval[k=i];
 
-		for ( Size j=i+1; j<=n; j++ ) {
+		for ( core::Size j=i+1; j<=n; j++ ) {
 			if ( eigval[j] <= p ) p=eigval[k=j];
 		}
 
@@ -841,7 +841,7 @@ NormalMode::eigsrt(
 			eigval[k] = eigval[i];
 			eigval[i] = p;
 
-			for ( Size j=1; j<=n; j++ ) {
+			for ( core::Size j=1; j<=n; j++ ) {
 				// substitute
 				Real tmp( eigvec[j][i] );
 				eigvec[j][i] = eigvec[j][k];

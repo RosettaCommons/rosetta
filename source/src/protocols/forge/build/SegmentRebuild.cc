@@ -210,8 +210,8 @@ SegmentRebuild::MoveMap SegmentRebuild::movemap() const {
 	MoveMap mm;
 
 	Interval const ival = interval();
-	Size begin = ival.left;
-	Size end = ival.right;
+	core::Size begin = ival.left;
+	core::Size end = ival.right;
 
 	if ( keep_known_bb_torsions_at_junctions_ ) {
 		++begin;
@@ -230,7 +230,7 @@ SegmentRebuild::MoveMap SegmentRebuild::movemap() const {
 		mm.set_chi( ival.right, true );
 	}
 
-	for ( Size i = begin; i <= end; ++i ) {
+	for ( core::Size i = begin; i <= end; ++i ) {
 		mm.set_bb( i, true );
 		mm.set_chi( i, true );
 	}
@@ -374,8 +374,8 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 	//special case for two chain build -- danger, primitive at the moment, only
 	//works with non-N,C term extension.  Try placing in SegRebuld
 	if (basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree]()){
-	Size second_start = basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree];
-	Size nres( pose.size());
+	core::Size second_start = basic::options::option[basic::options::OptionKeys::remodel::two_chain_tree];
+	core::Size nres( pose.size());
 
 	//FoldTree f(pose.fold_tree());
 	FoldTree f;
@@ -409,7 +409,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 	//typedef utility::vector1< Edge > Edges;
 
 	//for nojump operation, need to keep track of the new cuts introduced
-	Size new_cut = 0 ;
+	core::Size new_cut = 0 ;
 
 	// there are two cases below:
 	// (1) internal rebuild where the segment may either be continuous or have cutpoints
@@ -419,7 +419,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 	// cache information from original structure
 	bool const has_lower_terminus = pose.residue( interval_.left ).is_lower_terminus();
 	bool const has_upper_terminus = pose.residue( interval_.right ).is_upper_terminus();
-	Size const old_root = pose.fold_tree().root();
+	core::Size const old_root = pose.fold_tree().root();
 
 	// If the following runtime_assert is triggered, that likely means you
 	// tried to replace the entire length of the Pose or an entire chain of
@@ -431,8 +431,8 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 	}
 
 	// count # cutpoints along segment [left-1, right]
-	Size n_cutpoints = 0;
-	for ( Size i = interval_.left - 1; i <= interval_.right; ++i ) {
+	core::Size n_cutpoints = 0;
+	for ( core::Size i = interval_.left - 1; i <= interval_.right; ++i ) {
 		if ( pose.fold_tree().is_cutpoint( i ) ) {
 			++n_cutpoints;
 		}
@@ -505,7 +505,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 	//testing
 	//first identify the number of jups at this stage, this is the number to keep.
-	Size num_jumps_pre_processing (pose.num_jump());
+	core::Size num_jumps_pre_processing (pose.num_jump());
 
 
 	// perform the append/prepend operations
@@ -517,7 +517,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		// only grow right; termini will not be recovered here due to prior
 		// residue deletions and is corrected for below
 #ifndef NDEBUG
-		Size const right_endpoint = grow_right_rtype( pose, interval_.left, r_types.begin(), r_types.end() );
+		core::Size const right_endpoint = grow_right_rtype( pose, interval_.left, r_types.begin(), r_types.end() );
 #else
 		grow_right_rtype( pose, interval_.left, r_types.begin(), r_types.end() );
 #endif
@@ -545,7 +545,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 		// only grow left; termini will not be recovered here due to prior
 		// residue deletions and is corrected for below
-		Size const left_endpoint = grow_left_rtype( pose, interval_.right, r_types.rbegin(), r_types.rend() );
+		core::Size const left_endpoint = grow_left_rtype( pose, interval_.right, r_types.rbegin(), r_types.rend() );
 		debug_assert( left_endpoint == interval_.right - r_types.size() );
 
 		// correct endpoints of interval to match the actual rebuilt segment
@@ -575,7 +575,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 		// only grow right; termini will not be recovered here due to prior
 		// residue deletions and is corrected for below
-		Size const right_endpoint = grow_right_rtype( pose, interval_.left, r_types.begin(), r_types.end() );
+		core::Size const right_endpoint = grow_right_rtype( pose, interval_.left, r_types.begin(), r_types.end() );
 		debug_assert( right_endpoint == interval_.left + r_types.size() );
 
 		// correct endpoints of interval to match the actual rebuilt segment
@@ -599,7 +599,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 		// assign cutpoint, -1 ensures the cut happens internal to the range
 		// TODO: consider using sec.struct to preferentially select a cutpoint
-		Size cut_index = numeric::random::rg().random_range( 1, r_types.size() - 1);
+		core::Size cut_index = numeric::random::rg().random_range( 1, r_types.size() - 1);
 
 		//in order to synchronize all cutting, unfortunately this has to be in this
 		//file
@@ -642,10 +642,10 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		// we need to modify the jump atoms so that changes in the dihedrals do
 		// not shift the conformation.
 		FoldTree ft = pose.fold_tree();
-		Size const root = ft.root();
+		core::Size const root = ft.root();
 
 		if ( n_cutpoints == 0 ) { // need a new jump
-			Size const new_jump_number = ft.new_jump( interval_.left, interval_.right, interval_.left );
+			core::Size const new_jump_number = ft.new_jump( interval_.left, interval_.right, interval_.left );
 
 			// following ensures changes in dihedral below do not shift the
 			// conformation
@@ -663,7 +663,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 		} else { // check/modify existing jump
 
-			Size const jump = find_connecting_jump( interval_.left, interval_.right, ft );
+			core::Size const jump = find_connecting_jump( interval_.left, interval_.right, ft );
 
 			// We only do operations if there happens to be a jump defined
 			// between the segments that 'left' and 'right' live on.
@@ -676,7 +676,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 				// not shift the conformation
 				order( jump_edge );
 
-				if ( static_cast< Size >( jump_edge.start() ) == interval_.left ) {
+				if ( static_cast< core::Size >( jump_edge.start() ) == interval_.left ) {
 					if ( pose.residue( interval_.left).aa() != core::chemical::aa_vrt ) {
 						jump_edge.start_atom() = "N";
 					} else {
@@ -691,7 +691,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 					);
 				}
 
-				if ( static_cast< Size >( jump_edge.stop() ) == interval_.right ) {
+				if ( static_cast< core::Size >( jump_edge.stop() ) == interval_.right ) {
 					if ( pose.residue( interval_.right).aa() != core::chemical::aa_vrt ) {
 						jump_edge.stop_atom() = "C";
 					} else {
@@ -718,7 +718,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		// rebuild, tell grow_right_rtype not to maintain any existing termini
 		// variant; this is a safety, since residue deletion should have removed
 		// any such variant.
-		Size left_of_cut = grow_right_rtype(
+		core::Size left_of_cut = grow_right_rtype(
 			pose, interval_.left,
 			r_types.begin(), r_types.begin() + cut_index,
 			false
@@ -729,7 +729,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		// rebuild, tell grow_left_rtype not to maintain any existing termini
 		// variant; this is a safety, since residue deletion should have removed
 		// any such variant.
-		Size right_of_cut = grow_left_rtype(
+		core::Size right_of_cut = grow_left_rtype(
 			pose, interval_.right,
 			r_types.rbegin(), r_types.rbegin() + ( r_types.size() - cut_index ),
 			false
@@ -759,7 +759,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 			order( tmp );
 
 			bool start_changed = false;
-			if ( static_cast< Size >( tmp.start() ) == interval_.left - 1 ) {
+			if ( static_cast< core::Size >( tmp.start() ) == interval_.left - 1 ) {
 				if ( pose.residue( tmp.start()).aa() != core::chemical::aa_vrt ) {
 					tmp.start_atom() = "N";
 				} else {
@@ -769,7 +769,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 			}
 
 			bool stop_changed = false;
-			if ( static_cast< Size >( tmp.stop() ) == interval_.right + 1 ) {
+			if ( static_cast< core::Size >( tmp.stop() ) == interval_.right + 1 ) {
 				if ( pose.residue( tmp.stop()).aa() != core::chemical::aa_vrt ) {
 					tmp.stop_atom() = "C";
 				} else {
@@ -818,16 +818,16 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		// protocols:loops::Loops loops_def_for_idealization;
 		// loops_def_for_idealization.add_loop(protocols::loops::Loop(interval_.left-2,interval_.right+2, 1));
 
-		utility::vector1<Size> cuts;
-		utility::vector1< std::pair<Size,Size> > jumps;
+		utility::vector1<core::Size> cuts;
+		utility::vector1< std::pair<core::Size,Size> > jumps;
 		protocols::forge::methods::jumps_and_cuts_from_pose(pose,jumps, cuts);
 		//debug
 		//std::cout << "num cuts: " << cuts.size() << " num jumps: " << jumps.size() << std::endl;
 		//translate:
-		ObjexxFCL::FArray1D< Size > Fcuts( num_jumps_pre_processing);
-		ObjexxFCL::FArray2D< Size > Fjumps(2, num_jumps_pre_processing);
+		ObjexxFCL::FArray1D< core::Size > Fcuts( num_jumps_pre_processing);
+		ObjexxFCL::FArray2D< core::Size > Fjumps(2, num_jumps_pre_processing);
 
-		for ( Size i = 1; i<= num_jumps_pre_processing; ++i ) { // only keeping the old jumps, wipe new ones
+		for ( core::Size i = 1; i<= num_jumps_pre_processing; ++i ) { // only keeping the old jumps, wipe new ones
 			//std::cout << (int)jumps[i].first << " " << (int)jumps[i].second << std::endl;
 
 			Fjumps(1,i) = std::min( (int)jumps[i].first, (int)jumps[i].second);
@@ -838,7 +838,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		//erase the new cut created
 		cuts.erase( std::remove( cuts.begin(), cuts.end(), new_cut ), cuts.end() );
 
-		for ( Size i = 1; i<= cuts.size(); ++i ) {
+		for ( core::Size i = 1; i<= cuts.size(); ++i ) {
 			//std::cout << "cut " << (int)cuts[i] << std::endl;
 			Fcuts(i) = (int)cuts[i];
 			//  std::cout << " cut " << i << " : " << cuts(i) << std::endl;
@@ -848,7 +848,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		FoldTree nojump_ft;
 
 		if ( basic::options::option[basic::options::OptionKeys::remodel::reroot_tree].user() ) { //rerooting tree so can anchor in stationary part of structure.
-			Size new_root =  basic::options::option[basic::options::OptionKeys::remodel::reroot_tree];
+			core::Size new_root =  basic::options::option[basic::options::OptionKeys::remodel::reroot_tree];
 			nojump_ft.tree_from_jumps_and_cuts( pose.size(), num_jumps_pre_processing, Fjumps, Fcuts, new_root , true ); // true );
 		} else { //default
 			nojump_ft.tree_from_jumps_and_cuts( pose.size(), num_jumps_pre_processing, Fjumps, Fcuts, ft.root(), true ); // true );
@@ -859,7 +859,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		pose.fold_tree(nojump_ft);
 		//std::cout << "IDEALIZE " << interval_.left << " to " << interval_.right << std::endl;
 		//protocols::loops::set_extended_torsions_and_idealize_loops( pose, loops_def_for_idealization);
-		for ( Size i = interval_.left; i <= interval_.right; i++ ) {
+		for ( core::Size i = interval_.left; i <= interval_.right; i++ ) {
 			core::conformation::idealize_position(i, pose.conformation());
 		}
 		//pose.dump_pdb("test_idl.pdb");
@@ -876,8 +876,8 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 	}
 
 	// assume proper omega
-	Size const omega_left = ( interval_.left == 1 ) ? interval_.left : interval_.left - 1;
-	Size const omega_right = ( interval_.right == pose.size() ) ? interval_.right - 1 : interval_.right;
+	core::Size const omega_left = ( interval_.left == 1 ) ? interval_.left : interval_.left - 1;
+	core::Size const omega_right = ( interval_.right == pose.size() ) ? interval_.right - 1 : interval_.right;
 	trans_omega( omega_left, omega_right, pose );
 
 	// recover old angles at junctions if requested
@@ -903,7 +903,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 	}
 
 	// set the desired secondary structure
-	for ( Size r = interval_.left, i = 0; r <= interval_.right; ++r, ++i ) {
+	for ( core::Size r = interval_.left, i = 0; r <= interval_.right; ++r, ++i ) {
 		pose.set_secstruct( r, ss_.at( i ) );
 	}
 

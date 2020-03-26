@@ -28,7 +28,7 @@
 /// Utility headers
 #include <utility/LexicographicalIterator.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 /// C++ headers
 #include <map>
@@ -40,10 +40,10 @@ namespace protocols {
 namespace optimize_weights {
 
 
-class PNatAAOptERotamerData : public utility::pointer::ReferenceCount
+class PNatAAOptERotamerData : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~PNatAAOptERotamerData() override;
 	typedef core::Real Real;
 	typedef core::chemical::AA AA;
@@ -52,7 +52,7 @@ public:
 public:
 	PNatAAOptERotamerData(
 		AA aa_in,
-		Size rot_num_in,
+		core::Size rot_num_in,
 		utility::vector1< Real > & data_vec_in,
 		utility::vector1< Real > & fixed_data_vec_in )
 	:
@@ -67,13 +67,13 @@ public:
 		return this_aa_;
 	}
 
-	Size rot_number()
+	core::Size rot_number()
 	{
 		return rot_number_;
 	}
 
 	Real
-	operator [] ( Size const i ) const
+	operator [] ( core::Size const i ) const
 	{
 		return data_[ i ];
 	}
@@ -92,22 +92,22 @@ public:
 
 private:
 	AA this_aa_;
-	Size rot_number_;
+	core::Size rot_number_;
 	utility::vector1< Real > data_;
 	utility::vector1< Real > fixed_data_;
 };
 
-class PNatRotOptERotamerData : public utility::pointer::ReferenceCount
+class PNatRotOptERotamerData : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~PNatRotOptERotamerData() override;
 	typedef core::Real Real;
 	typedef core::Size Size;
 
 public:
 	PNatRotOptERotamerData(
-		utility::vector1< Size > const & rotamer_index,
+		utility::vector1< core::Size > const & rotamer_index,
 		utility::vector1< Real > const & chi,
 		utility::vector1< Real > const & free_data,
 		utility::vector1< Real > const & fixed_data
@@ -118,7 +118,7 @@ public:
 		fixed_data_( fixed_data )
 	{}
 
-	utility::vector1< Size > const &
+	utility::vector1< core::Size > const &
 	rotamer_index() const
 	{
 		return rotamer_index_;
@@ -137,7 +137,7 @@ public:
 	}
 
 	Real
-	operator [] ( Size const i ) const
+	operator [] ( core::Size const i ) const
 	{
 		return free_data_[ i ];
 	}
@@ -149,14 +149,14 @@ public:
 	}
 
 private:
-	utility::vector1< Size > rotamer_index_;
+	utility::vector1< core::Size > rotamer_index_;
 	utility::vector1< Real > chi_;
 	utility::vector1< Real > free_data_;
 	utility::vector1< Real > fixed_data_;
 
 };
 
-class SingleStructureData : public utility::pointer::ReferenceCount {
+class SingleStructureData : public utility::VirtualBase {
 public:
 	typedef core::Real Real;
 	typedef core::Size Size;
@@ -174,7 +174,7 @@ public:
 	~SingleStructureData() override = default;
 
 	Real
-	operator [] ( Size const i ) const {
+	operator [] ( core::Size const i ) const {
 		return free_data_[ i ];
 	}
 
@@ -206,7 +206,7 @@ std::ostream & operator << ( std::ostream & os, PNatAAOptERotamerDataOP rd );
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class OptEPositionData : public utility::pointer::ReferenceCount
+class OptEPositionData : public utility::VirtualBase
 {
 public:
 	typedef core::Real Real;
@@ -227,7 +227,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -243,7 +243,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -264,7 +264,7 @@ public:
 	) const = 0;
 
 	virtual
-	Size
+	core::Size
 	size() const = 0;
 
 	virtual
@@ -288,7 +288,7 @@ public:
 	read_from_binary_file( std::ifstream & infile ) = 0;
 
 	virtual
-	Size
+	core::Size
 	memory_use() const = 0;
 
 	void
@@ -342,7 +342,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -358,7 +358,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -376,7 +376,7 @@ public:
 	) const override;
 
 
-	Size
+	core::Size
 	size() const override
 	{
 		return data_.size();
@@ -403,7 +403,7 @@ public:
 	read_from_binary_file( std::ifstream & infile ) override;
 
 
-	Size
+	core::Size
 	memory_use() const override;
 
 
@@ -419,11 +419,11 @@ public:
 
 #endif
 
-	void set_position( Size pos_in ) {
+	void set_position( core::Size pos_in ) {
 		position_ = pos_in;
 	}
 
-	Size position() const
+	core::Size position() const
 	{
 		return position_;
 	}
@@ -438,12 +438,12 @@ public:
 		return native_aa_;
 	}
 
-	void set_neighbor_count( Size nb_in )
+	void set_neighbor_count( core::Size nb_in )
 	{
 		neighbor_count_ = nb_in;
 	}
 
-	Size neighbor_count() const
+	core::Size neighbor_count() const
 	{
 		return neighbor_count_;
 	}
@@ -479,11 +479,11 @@ protected:
 	void
 	process_rotamers(
 		Multivec const & vars,
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list,
-		Size const aa_range,
+		core::Size const aa_range,
 		utility::vector1< Real > const & dummy_set,
 		utility::vector1< Real > & best_energy_by_aa,
 		utility::vector1< utility::vector1< Real > > & unweighted_E_dof,
@@ -491,9 +491,9 @@ protected:
 	) const;
 
 private:
-	Size position_;
+	core::Size position_;
 	AA native_aa_;
-	Size neighbor_count_;
+	core::Size neighbor_count_;
 	PNatAAOptERotamerDataOPs data_;
 
 };
@@ -518,7 +518,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -534,7 +534,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -563,7 +563,7 @@ public:
 	read_from_binary_file( std::ifstream & infile ) override;
 
 
-	Size
+	core::Size
 	memory_use() const override;
 
 #ifdef USEMPI
@@ -596,7 +596,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -612,7 +612,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -628,7 +628,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const,
 		int const,
 		EnergyMap const & fixed_terms,
@@ -646,7 +646,7 @@ public:
 	) const override;
 
 
-	Size
+	core::Size
 	size() const override;
 
 
@@ -670,7 +670,7 @@ public:
 	read_from_binary_file( std::ifstream & infile ) override;
 
 
-	Size
+	core::Size
 	memory_use() const override;
 
 
@@ -685,7 +685,7 @@ public:
 #endif
 
 	void
-	set_native_rotamer_index( utility::vector1< Size > const & native_rotamer_index );
+	set_native_rotamer_index( utility::vector1< core::Size > const & native_rotamer_index );
 
 	void
 	set_native_rotamer_chi( utility::vector1< Real > const & native_chi );
@@ -697,7 +697,7 @@ public:
 	count_rotamer_as_native( PNatRotOptERotamerDataOP rotamer ) const;
 
 	void
-	set_rotamer_well_counts( utility::vector1< Size > const & rotamer_well_counts );
+	set_rotamer_well_counts( utility::vector1< core::Size > const & rotamer_well_counts );
 
 	void add_rotamer_line_data( PNatRotOptERotamerDataOP rot_in );
 
@@ -721,15 +721,15 @@ public:
 
 private:
 
-	Size
-	rotamer_index_2_well_id( utility::vector1< Size > const & rotamer_index ) const;
+	core::Size
+	rotamer_index_2_well_id( utility::vector1< core::Size > const & rotamer_index ) const;
 
-	Size
+	core::Size
 	rotamer_index_2_well_id( utility::LexicographicalIterator const & lexiter ) const;
 
 	bool
 	is_native_rotamer_well(
-		utility::vector1< Size > const & rotamer_index
+		utility::vector1< core::Size > const & rotamer_index
 	) const;
 
 	bool
@@ -740,8 +740,8 @@ private:
 
 private:
 
-	utility::vector1< Size > native_rotamer_index_;
-	utility::vector1< Size > rotamer_well_counts_;
+	utility::vector1< core::Size > native_rotamer_index_;
+	utility::vector1< core::Size > rotamer_well_counts_;
 	int n_wells_;
 	core::chemical::AA aa_;
 	Real phi_;
@@ -764,7 +764,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -780,7 +780,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -796,7 +796,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -814,7 +814,7 @@ public:
 	) const override;
 
 
-	Size
+	core::Size
 	size() const override;
 
 
@@ -838,7 +838,7 @@ public:
 	read_from_binary_file( std::ifstream & infile ) override;
 
 
-	Size
+	core::Size
 	memory_use() const override;
 
 #ifdef USEMPI
@@ -852,7 +852,7 @@ public:
 #endif
 
 	void
-	set_total_residue( Size total_residue );
+	set_total_residue( core::Size total_residue );
 
 	void
 	add_native( SingleStructureDataOP native );
@@ -861,9 +861,9 @@ public:
 	add_decoy( SingleStructureDataOP decoy );
 
 	void
-	n_top_natives_to_score( Size n_top );
+	n_top_natives_to_score( core::Size n_top );
 
-	Size
+	core::Size
 	n_top_natives_to_score() const;
 
 	void
@@ -893,11 +893,11 @@ public:
 
 
 protected:
-	Size total_residue_;
+	core::Size total_residue_;
 	SingleStructureDataOPs natives_;
 	SingleStructureDataOPs decoys_;
-	Size n_top_natives_to_score_;
-	Size n_high_entropy_decoys_;
+	core::Size n_top_natives_to_score_;
+	core::Size n_high_entropy_decoys_;
 	bool normalize_decoy_stddev_;
 	Real initial_decoy_stddev_;
 	static Real nativeness_rms_low_; // Above this rms, nativeness starts to decline
@@ -923,7 +923,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -939,7 +939,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -955,7 +955,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -973,7 +973,7 @@ public:
 	) const override;
 
 
-	Size
+	core::Size
 	size() const override;
 
 
@@ -997,7 +997,7 @@ public:
 	read_from_binary_file( std::ifstream & infile ) override;
 
 
-	Size
+	core::Size
 	memory_use() const override;
 
 #ifdef USEMPI
@@ -1071,7 +1071,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -1087,7 +1087,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -1105,7 +1105,7 @@ public:
 	) const override;
 
 
-	Size
+	core::Size
 	size() const override;
 
 
@@ -1129,7 +1129,7 @@ public:
 	read_from_binary_file( std::ifstream & infile ) override;
 
 
-	Size
+	core::Size
 	memory_use() const override;
 
 
@@ -1184,10 +1184,10 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 
 
-class OptEData : public utility::pointer::ReferenceCount
+class OptEData : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~OptEData() override;
 	typedef core::Real Real;
 	typedef core::Size Size;
@@ -1206,12 +1206,12 @@ public:
 		energy_terms_( free_score_list )
 	{}
 
-	Size num_positions() const
+	core::Size num_positions() const
 	{
 		return data_.size();
 	}
 
-	Size num_rotamers() const;
+	core::Size num_rotamers() const;
 
 	void add_position_data( OptEPositionDataOP pos_data_in )
 	{

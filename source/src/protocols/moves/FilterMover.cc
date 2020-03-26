@@ -40,7 +40,7 @@ FilterMover::FilterMover():
 FilterMover::FilterMover(
 	MoverOP const & my_mover,
 	FilterOP  my_filter,
-	Size const max_tries,
+	core::Size const max_tries,
 	MoverStatus const mover_status
 ):Mover( my_mover->type() ),
 	my_mover_( my_mover ),
@@ -59,7 +59,7 @@ void FilterMover::set_mover( MoverOP const & my_mover ){
 	my_mover_ = my_mover;
 }
 
-void FilterMover::max_tries( Size const mt ){
+void FilterMover::max_tries( core::Size const mt ){
 	max_tries_ = mt;
 }
 
@@ -72,7 +72,7 @@ void FilterMover::apply( Pose & pose )
 
 	Pose const start_pose( pose );
 
-	Size ntries( 0 );
+	core::Size ntries( 0 );
 
 	while ( true ) { // keep looping until we succeed
 

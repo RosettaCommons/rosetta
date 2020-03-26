@@ -95,7 +95,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/string_util.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/statistics/functions.hh>
@@ -325,7 +325,7 @@ IterativeOptEDriver::load_pose( pose::Pose & pose, std::string const & filename,
 		static std::string prev_path = "";
 		static core::io::silent::SilentFileData * sfd;
 
-		Size slash_index = filename.find_last_of("/\\");
+		core::Size slash_index = filename.find_last_of("/\\");
 		std::string path = filename.substr(0, slash_index);
 		std::string tag = filename.substr(slash_index+1);
 		std::string filename = option[ optE::load_from_silent ];
@@ -370,11 +370,11 @@ IterativeOptEDriver::divide_up_pdbs()
 	if ( MPI_rank_ == 0 ) {
 		utility::vector1< std::string > all_filenames = get_native_pdb_names();
 
-		Size const num_pdbs_per_cpu = all_filenames.size() / MPI_nprocs_;
-		Size const nextra = all_filenames.size() - num_pdbs_per_cpu * MPI_nprocs_;
+		core::Size const num_pdbs_per_cpu = all_filenames.size() / MPI_nprocs_;
+		core::Size const nextra = all_filenames.size() - num_pdbs_per_cpu * MPI_nprocs_;
 
-		Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_pdbs_per_cpu;
-		for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+		core::Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_pdbs_per_cpu;
+		for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 			native_pdbs_.push_back(all_filenames[ ii ] );
 			//#ifndef USEMPI
 			next_iteration_pdbs_.push_back(all_filenames[ ii ] );
@@ -386,20 +386,20 @@ IterativeOptEDriver::divide_up_pdbs()
 
 #ifdef USEMPI
 		//std::cout << " number of nodes " << MPI_nprocs_ << std::endl;
-		Size ii_offset = my_njobs;
-		for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
-			Size ii_njobs = ( nextra > ii ? 1 : 0 ) + num_pdbs_per_cpu;
+		core::Size ii_offset = my_njobs;
+		for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+			core::Size ii_njobs = ( nextra > ii ? 1 : 0 ) + num_pdbs_per_cpu;
 			MPI_Send( & ii_njobs, 1, MPI_UNSIGNED_LONG, ii, tag_, MPI_COMM_WORLD );
-			for ( Size jj = ii_offset + 1; jj <= ii_offset + ii_njobs; ++jj ) {
+			for ( core::Size jj = ii_offset + 1; jj <= ii_offset + ii_njobs; ++jj ) {
 				send_string_to_node( ii, all_filenames[ jj ] );
 			}
 			ii_offset += ii_njobs;
 		}
 	} else {
-		Size my_njobs;
+		core::Size my_njobs;
 		MPI_Recv( & my_njobs, 1, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD, & stat_ );
 		native_pdbs_.reserve( my_njobs );
-		for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+		for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 			native_pdbs_.push_back( receive_string_from_node( 0 ) );
 			next_iteration_pdbs_.push_back( native_pdbs_[ ii ] );
 			//next_iteration_pdbs_.push_back( "workdir_" + to_string( MPI_rank_ ) + "/" + all_filenames[ my_offset + ii ] );
@@ -409,7 +409,7 @@ IterativeOptEDriver::divide_up_pdbs()
 	}
 
 #ifdef USEMPI
-	for ( Size ii = 1; ii <= native_pdbs_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= native_pdbs_.size(); ++ii ) {
 		char hostname[256];
 		gethostname(hostname, sizeof(hostname));
 		//printf("Structure %s assigned to %s (rank = %d)\n", native_pdbs_[ ii ].c_str(), hostname, (int) MPI_rank_);
@@ -436,11 +436,11 @@ IterativeOptEDriver::divide_up_pdbs()
 				}
 			}
 
-			Size const num_pdbs_per_cpu = file_lists.size() / MPI_nprocs_;
-			Size const nextra = file_lists.size() - num_pdbs_per_cpu * MPI_nprocs_;
+			core::Size const num_pdbs_per_cpu = file_lists.size() / MPI_nprocs_;
+			core::Size const nextra = file_lists.size() - num_pdbs_per_cpu * MPI_nprocs_;
 
-			Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_pdbs_per_cpu;
-			for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+			core::Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_pdbs_per_cpu;
+			for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 				decdisc_native_decoy_pairs_.push_back(file_lists[ ii ] );
 				decdisc_crystal_natives_.push_back( crystal_native_list[ ii ] );
 				//TR << " PROC #" << MPI_rank_ << " "<<  ii << " decdiscrim:  "
@@ -450,11 +450,11 @@ IterativeOptEDriver::divide_up_pdbs()
 			}
 
 #ifdef USEMPI
-			Size ii_offset = my_njobs;
-			for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
-				Size ii_njobs = ( nextra > ii ? 1 : 0 ) + num_pdbs_per_cpu;
+			core::Size ii_offset = my_njobs;
+			for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+				core::Size ii_njobs = ( nextra > ii ? 1 : 0 ) + num_pdbs_per_cpu;
 				MPI_Send( & ii_njobs, 1, MPI_UNSIGNED_LONG, ii, tag_, MPI_COMM_WORLD );
-				for ( Size jj = ii_offset + 1; jj <= ii_offset + ii_njobs; ++jj ) {
+				for ( core::Size jj = ii_offset + 1; jj <= ii_offset + ii_njobs; ++jj ) {
 					send_string_to_node( ii, file_lists[ jj ].first );
 					send_string_to_node( ii, file_lists[ jj ].second );
 					send_string_to_node( ii, crystal_native_list[ jj ] );
@@ -462,11 +462,11 @@ IterativeOptEDriver::divide_up_pdbs()
 				ii_offset += ii_njobs;
 			}
 		} else {
-			Size my_njobs( 0 );
+			core::Size my_njobs( 0 );
 			MPI_Recv( & my_njobs, 1, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD, & stat_ );
 			decdisc_native_decoy_pairs_.reserve( my_njobs );
 			decdisc_crystal_natives_.reserve( my_njobs );
-			for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+			for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 				std::string native_pdb_list_name = receive_string_from_node( 0 );
 				std::string decoy_pdb_list_name = receive_string_from_node( 0 );
 				decdisc_native_decoy_pairs_.push_back( std::make_pair( native_pdb_list_name, decoy_pdb_list_name )  );
@@ -499,11 +499,11 @@ IterativeOptEDriver::divide_up_pdbs()
 				}
 			}
 
-			Size const num_pdbs_per_cpu = file_lists.size() / MPI_nprocs_;
-			Size const nextra = file_lists.size() - num_pdbs_per_cpu * MPI_nprocs_;
+			core::Size const num_pdbs_per_cpu = file_lists.size() / MPI_nprocs_;
+			core::Size const nextra = file_lists.size() - num_pdbs_per_cpu * MPI_nprocs_;
 
-			Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_pdbs_per_cpu;
-			for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+			core::Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_pdbs_per_cpu;
+			for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 				ligand_native_decoy_pairs_.push_back(file_lists[ ii ] );
 				ligand_crystal_natives_.push_back( crystal_native_list[ ii ] );
 				//TR << " PROC #" << MPI_rank_ << " "<<  ii << " lig discrim:  "
@@ -513,11 +513,11 @@ IterativeOptEDriver::divide_up_pdbs()
 			}
 
 #ifdef USEMPI
-			Size ii_offset = my_njobs;
-			for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
-				Size ii_njobs = ( nextra > ii ? 1 : 0 ) + num_pdbs_per_cpu;
+			core::Size ii_offset = my_njobs;
+			for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+				core::Size ii_njobs = ( nextra > ii ? 1 : 0 ) + num_pdbs_per_cpu;
 				MPI_Send( & ii_njobs, 1, MPI_UNSIGNED_LONG, ii, tag_, MPI_COMM_WORLD );
-				for ( Size jj = ii_offset + 1; jj <= ii_offset + ii_njobs; ++jj ) {
+				for ( core::Size jj = ii_offset + 1; jj <= ii_offset + ii_njobs; ++jj ) {
 					send_string_to_node( ii, file_lists[ jj ].first );
 					send_string_to_node( ii, file_lists[ jj ].second );
 					send_string_to_node( ii, crystal_native_list[ jj ] );
@@ -525,11 +525,11 @@ IterativeOptEDriver::divide_up_pdbs()
 				ii_offset += ii_njobs;
 			}
 		} else {
-			Size my_njobs( 0 );
+			core::Size my_njobs( 0 );
 			MPI_Recv( & my_njobs, 1, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD, & stat_ );
 			ligand_native_decoy_pairs_.reserve( my_njobs );
 			ligand_crystal_natives_.reserve( my_njobs );
-			for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+			for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 				std::string native_pdb_list_name = receive_string_from_node( 0 );
 				std::string decoy_pdb_list_name = receive_string_from_node( 0 );
 				ligand_native_decoy_pairs_.push_back( std::make_pair( native_pdb_list_name, decoy_pdb_list_name )  );
@@ -558,29 +558,29 @@ IterativeOptEDriver::divide_up_pdbs()
 				}
 			}
 
-			Size const num_pdbs_per_cpu = file_list.size() / MPI_nprocs_;
-			Size const nextra = file_list.size() - num_pdbs_per_cpu * MPI_nprocs_;
+			core::Size const num_pdbs_per_cpu = file_list.size() / MPI_nprocs_;
+			core::Size const nextra = file_list.size() - num_pdbs_per_cpu * MPI_nprocs_;
 
-			Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_pdbs_per_cpu;
-			for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+			core::Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_pdbs_per_cpu;
+			for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 				ligand_repack_pdbs_.push_back( file_list[ ii ] );
 			}
 
 #ifdef USEMPI
-			Size ii_offset = my_njobs;
-			for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
-				Size ii_njobs = ( nextra > ii ? 1 : 0 ) + num_pdbs_per_cpu;
+			core::Size ii_offset = my_njobs;
+			for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+				core::Size ii_njobs = ( nextra > ii ? 1 : 0 ) + num_pdbs_per_cpu;
 				MPI_Send( & ii_njobs, 1, MPI_UNSIGNED_LONG, ii, tag_, MPI_COMM_WORLD );
-				for ( Size jj = ii_offset + 1; jj <= ii_offset + ii_njobs; ++jj ) {
+				for ( core::Size jj = ii_offset + 1; jj <= ii_offset + ii_njobs; ++jj ) {
 					send_string_to_node( ii, file_list[ jj ] );
 				}
 				ii_offset += ii_njobs;
 			}
 		} else {
-			Size my_njobs( 0 );
+			core::Size my_njobs( 0 );
 			MPI_Recv( & my_njobs, 1, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD, & stat_ );
 			ligand_repack_pdbs_.reserve( my_njobs );
-			for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+			for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 				std::string pdb_name = receive_string_from_node( 0 );
 				ligand_repack_pdbs_.push_back( pdb_name );
 			}
@@ -606,14 +606,14 @@ IterativeOptEDriver::divide_up_pdbs()
 				dgs.push_back( dg_experimental );
 			}
 
-			Size const num_dgs_per_cpu = dgs.size() / MPI_nprocs_;
-			Size const nextra = dgs.size() - num_dgs_per_cpu * MPI_nprocs_;
+			core::Size const num_dgs_per_cpu = dgs.size() / MPI_nprocs_;
+			core::Size const nextra = dgs.size() - num_dgs_per_cpu * MPI_nprocs_;
 
 			//TR << "divide_up_pdbs(): node " << MPI_rank_ << " read " << dgs.size() << " dG pairs: sending " << num_dgs_per_cpu << " to slaves" << std::endl;
 
-			Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_dgs_per_cpu;
+			core::Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_dgs_per_cpu;
 			dG_bound_unbound_pairs_.reserve( my_njobs ); dG_binding_.reserve( my_njobs );
-			for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+			for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 				dG_bound_unbound_pairs_.push_back( dG_pdb_files[ ii ] );
 				dG_binding_.push_back( dgs[ ii ] );
 
@@ -622,11 +622,11 @@ IterativeOptEDriver::divide_up_pdbs()
 			}
 
 #ifdef USEMPI
-			Size ii_offset = my_njobs;
-			for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
-				Size ii_njobs = ( nextra > ii ? 1 : 0 ) + num_dgs_per_cpu;
+			core::Size ii_offset = my_njobs;
+			for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+				core::Size ii_njobs = ( nextra > ii ? 1 : 0 ) + num_dgs_per_cpu;
 				MPI_Send( & ii_njobs, 1, MPI_UNSIGNED_LONG, ii, tag_, MPI_COMM_WORLD );
-				for ( Size jj = ii_offset + 1; jj <= ii_offset + ii_njobs; ++jj ) {
+				for ( core::Size jj = ii_offset + 1; jj <= ii_offset + ii_njobs; ++jj ) {
 					send_string_to_node( ii, dG_pdb_files[ jj ].first );
 					send_string_to_node( ii, dG_pdb_files[ jj ].second );
 					MPI_Send( & dgs[ jj ], 1, MPI_DOUBLE, ii, tag_, MPI_COMM_WORLD );
@@ -634,11 +634,11 @@ IterativeOptEDriver::divide_up_pdbs()
 				ii_offset += ii_njobs;
 			}
 		} else {
-			Size my_njobs( 0 );
+			core::Size my_njobs( 0 );
 			MPI_Recv( & my_njobs, 1, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD, & stat_ );
 			dG_bound_unbound_pairs_.reserve( my_njobs );
 			dG_binding_.resize( my_njobs, 0.0 );
-			for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+			for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 				std::string bound_pdb = receive_string_from_node( 0 );
 				std::string unbound_pdb = receive_string_from_node( 0 );
 				dG_bound_unbound_pairs_.push_back( std::make_pair( bound_pdb, unbound_pdb ));
@@ -669,14 +669,14 @@ IterativeOptEDriver::divide_up_pdbs()
 				ddgs.push_back( ddg_experimental );
 			}
 
-			Size const num_ddgs_per_cpu = ddgs.size() / MPI_nprocs_;
-			Size const nextra = ddgs.size() - num_ddgs_per_cpu * MPI_nprocs_;
+			core::Size const num_ddgs_per_cpu = ddgs.size() / MPI_nprocs_;
+			core::Size const nextra = ddgs.size() - num_ddgs_per_cpu * MPI_nprocs_;
 
 			//TR << "Node 0 read " << ddgs.size() << " ddG pairs: sending " << num_ddgs_per_cpu << " to slaves" << std::endl;
 
-			Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_ddgs_per_cpu;
+			core::Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_ddgs_per_cpu;
 			ddg_mut_wt_pairs_.reserve( my_njobs ); ddGs_.reserve( my_njobs );
-			for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+			for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 				ddg_mut_wt_pairs_.push_back( ddG_mut_files[ ii ] );
 				ddGs_.push_back( ddgs[ ii ] );
 				//TR << " PROC #" << MPI_rank_ << " "<<  ii << " ddGmut:  "
@@ -686,11 +686,11 @@ IterativeOptEDriver::divide_up_pdbs()
 			}
 
 #ifdef USEMPI
-			Size ii_offset = my_njobs;
-			for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
-				Size ii_njobs = ( nextra > ii ? 1 : 0 ) + num_ddgs_per_cpu;
+			core::Size ii_offset = my_njobs;
+			for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+				core::Size ii_njobs = ( nextra > ii ? 1 : 0 ) + num_ddgs_per_cpu;
 				MPI_Send( & ii_njobs, 1, MPI_UNSIGNED_LONG, ii, tag_, MPI_COMM_WORLD );
-				for ( Size jj = ii_offset + 1; jj <= ii_offset + ii_njobs; ++jj ) {
+				for ( core::Size jj = ii_offset + 1; jj <= ii_offset + ii_njobs; ++jj ) {
 					send_string_to_node( ii, ddG_mut_files[ jj ].first );
 					send_string_to_node( ii, ddG_mut_files[ jj ].second );
 					MPI_Send( & ddgs[ jj ], 1, MPI_DOUBLE, ii, tag_, MPI_COMM_WORLD );
@@ -698,11 +698,11 @@ IterativeOptEDriver::divide_up_pdbs()
 				ii_offset += ii_njobs;
 			}
 		} else {
-			Size my_njobs( 0 );
+			core::Size my_njobs( 0 );
 			MPI_Recv( & my_njobs, 1, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD, & stat_ );
 			ddg_mut_wt_pairs_.reserve( my_njobs );
 			ddGs_.resize( my_njobs, 0.0 );
-			for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+			for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 				std::string wt_list = receive_string_from_node( 0 );
 				std::string mut_list = receive_string_from_node( 0 );
 				ddg_mut_wt_pairs_.push_back( std::make_pair( wt_list, mut_list ));
@@ -741,25 +741,25 @@ IterativeOptEDriver::divide_up_pdbs()
 				ddGs_binding.push_back( ddG_experimental );
 			}
 
-			Size const num_ddGs_per_cpu = ddGs_binding.size() / MPI_nprocs_;
-			Size const nextra = ddGs_binding.size() - num_ddGs_per_cpu * MPI_nprocs_;
+			core::Size const num_ddGs_per_cpu = ddGs_binding.size() / MPI_nprocs_;
+			core::Size const nextra = ddGs_binding.size() - num_ddGs_per_cpu * MPI_nprocs_;
 
-			Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_ddGs_per_cpu;
+			core::Size my_njobs = ( nextra >= 1 ? 1 : 0 ) + num_ddGs_per_cpu;
 			// resize the class member variables to the sizes we read in
 			ddG_bind_files_.reserve( my_njobs ); ddGs_binding_.reserve( my_njobs );
 			// the local variables have the same name as the class member variables, minus a trailing underscore
-			for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+			for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 				// ddG_bind_files_ is a vector of vectors
 				ddG_bind_files_.push_back( ddG_bind_files[ ii ] );
 				ddGs_binding_.push_back( ddGs_binding[ ii ] );
 			}
 
 #ifdef USEMPI
-			Size ii_offset = my_njobs;
-			for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
-				Size ii_njobs = ( nextra > ii ? 1 : 0 ) + num_ddGs_per_cpu;
+			core::Size ii_offset = my_njobs;
+			for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+				core::Size ii_njobs = ( nextra > ii ? 1 : 0 ) + num_ddGs_per_cpu;
 				MPI_Send( & ii_njobs, 1, MPI_UNSIGNED_LONG, ii, tag_, MPI_COMM_WORLD );
-				for ( Size jj = ii_offset + 1; jj <= ii_offset + ii_njobs; ++jj ) {
+				for ( core::Size jj = ii_offset + 1; jj <= ii_offset + ii_njobs; ++jj ) {
 					send_string_to_node( ii, ddG_bind_files[ jj ][ DDGBindOptEData::WT_COMPLEXES_LIST_FILE ] );
 					send_string_to_node( ii, ddG_bind_files[ jj ][ DDGBindOptEData::MUT_COMPLEXES_LIST_FILE ] );
 					send_string_to_node( ii, ddG_bind_files[ jj ][ DDGBindOptEData::WT_UNBOUNDS_LIST_FILE ] );
@@ -770,11 +770,11 @@ IterativeOptEDriver::divide_up_pdbs()
 			}
 		} else {
 			// this code is what the slave nodes will execute; basically, receive the work unit
-			Size my_njobs( 0 );
+			core::Size my_njobs( 0 );
 			MPI_Recv( & my_njobs, 1, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD, & stat_ );
 			ddG_bind_files_.reserve( my_njobs );
 			ddGs_binding_.resize( my_njobs, 0.0 );
-			for ( Size ii = 1; ii <= my_njobs; ++ii ) {
+			for ( core::Size ii = 1; ii <= my_njobs; ++ii ) {
 				std::string wt_complexes_file = receive_string_from_node( 0 );
 				std::string mut_complexes_file = receive_string_from_node( 0 );
 				std::string wt_unbounds_file = receive_string_from_node( 0 );
@@ -803,7 +803,7 @@ IterativeOptEDriver::divide_up_pdbs()
 
 
 	if ( option[ optE::rescore::context_round ].user() ) {
-		Size context_round = option[ optE::rescore::context_round ]();
+		core::Size context_round = option[ optE::rescore::context_round ]();
 		if ( context_round != 0 ) {
 			setup_pdbnames_next_round( context_round, next_iteration_pdbs_, native_pdbs_ );
 		}
@@ -889,7 +889,7 @@ IterativeOptEDriver::exit_gracefully()
 ///
 /// @brief
 /// include_terms_ is an EnergyMap, as well.  I think this function sets up the free and fixed score lists which are just
-/// a vector1 of ScoreType objects.  include_, fixed_ and free_count_ are just (Size) member variables.
+/// a vector1 of ScoreType objects.  include_, fixed_ and free_count_ are just (core::Size) member variables.
 ///
 void
 IterativeOptEDriver::setup_derived_free_and_fixed_data()
@@ -963,7 +963,7 @@ IterativeOptEDriver::compute_rotamer_energies_for_assigned_pdbs()
 	// that's only meant to be used during the design steps of optE, though, not the rotamer energy collection steps.
 
 	// do this loop for every pdb we have in the native_pdbs_ list
-	for ( Size n=1; n<= native_pdbs_.size(); ++n ) {
+	for ( core::Size n=1; n<= native_pdbs_.size(); ++n ) {
 		//std::string const & filename( pdbs_this_round_[n] );
 		std::string const & native_filename( native_pdbs_[n] );
 
@@ -1026,7 +1026,7 @@ IterativeOptEDriver::compute_rotamer_energies_for_assigned_pdbs()
 
 			utility::vector1<bool> include_rsd( context_pose.size(), true );
 
-			for ( Size j(1); j <= context_pose.size(); ++j ) {
+			for ( core::Size j(1); j <= context_pose.size(); ++j ) {
 				include_rsd[j] = pose.residue_type(j).is_protein();
 			}
 
@@ -1043,7 +1043,7 @@ IterativeOptEDriver::compute_rotamer_energies_for_assigned_pdbs()
 void
 IterativeOptEDriver::load_pssm_data(
 	std::string const & native_filename,
-	Size const which_protein // which of the several proteins that this node is responsible for redesigning
+	core::Size const which_protein // which of the several proteins that this node is responsible for redesigning
 )
 {
 	if ( outer_loop_counter_ == 1 ) {
@@ -1055,14 +1055,14 @@ IterativeOptEDriver::load_pssm_data(
 
 		std::list< std::pair< chemical::AA, utility::vector1< Real > > > pssm_data;
 		utility::vector1< Real > pssm_prob_dist( chemical::num_canonical_aas, 0.0 );
-		Size linenum( 0 );
+		core::Size linenum( 0 );
 		while ( pssm_file ) {
 			++linenum;
 			char line_aa;
 			pssm_file >> line_aa;
 			chemical::AA aa( chemical::aa_from_oneletter_code( line_aa ));
 			Real sum( 0.0 );
-			for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+			for ( core::Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 				pssm_file >> pssm_prob_dist[ ii ];
 				sum += pssm_prob_dist[ ii ];
 			}
@@ -1138,7 +1138,7 @@ IterativeOptEDriver::send_rotamer_energies_to_master_cpu()
 	/// 1. Sanity: send a "boolean" vector of the free and fixed energy terms
 	int * free_energy_terms = new int[ core::scoring::n_score_types ];
 	int * fixed_energy_terms = new int[ core::scoring::n_score_types ];
-	for ( Size ii = 1; ii <= n_score_types; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 		free_energy_terms[  ii - 1 ] = (int) (free_parameters_[  (ScoreType) ii ] != 0.0);
 		fixed_energy_terms[ ii - 1 ] = (int) (fixed_parameters_[ (ScoreType) ii ] != 0.0);
 	}
@@ -1149,7 +1149,7 @@ IterativeOptEDriver::send_rotamer_energies_to_master_cpu()
 	delete [] fixed_energy_terms; fixed_energy_terms = 0;
 
 	/// 2. Number of positions on which OptE data has been gathered
-	Size n_pos = optE_data_->num_positions();
+	core::Size n_pos = optE_data_->num_positions();
 	MPI_Send( & n_pos, 1, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD );
 
 	for ( OptEPositionDataOPs::const_iterator
@@ -1172,12 +1172,12 @@ void IterativeOptEDriver::collect_rotamer_energies_from_slave_cpus()
 {
 	using namespace core::pack::rotamer_set;
 
-	for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+	for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 		collect_rotamer_energies_from_slave_cpu( ii );
 	}
 	TR << "collect_rotamer_energies_from_slave_cpus(): master node with " << optE_data_->num_positions() << " positions" << std::endl;
 
-	Size total( 0 );
+	core::Size total( 0 );
 	for ( auto
 			iter = optE_data_->position_data_begin(),
 			iter_end = optE_data_->position_data_end();
@@ -1243,7 +1243,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 			decdisc_xtal_natives_.resize( decdisc_native_decoy_pairs_.size() );
 		}
 
-		for ( Size ii = 1; ii <= decdisc_native_decoy_pairs_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= decdisc_native_decoy_pairs_.size(); ++ii ) {
 
 
 			PNatStructureOptEDataOP structure_data( new PNatStructureOptEData );
@@ -1296,8 +1296,8 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 				decdisc_xtal_natives_[ ii ] = crystal_native;
 			}
 
-			Size first_total_residue( 0 );
-			for ( Size jj = 1; jj <= native_pdb_names.size(); ++jj ) {
+			core::Size first_total_residue( 0 );
+			for ( core::Size jj = 1; jj <= native_pdb_names.size(); ++jj ) {
 				//std::cout << " PROC #" << MPI_rank_ << " reading pdb: #" << jj << " " << native_pdb_names[ jj ] << std::endl;
 				/// read the pdb into a pose
 				core::pose::Pose pose;
@@ -1335,7 +1335,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 				}
 			}
 
-			for ( Size jj = 1; jj <= decoy_pdb_names.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= decoy_pdb_names.size(); ++jj ) {
 
 				/// read the pdb into a pose
 				core::pose::Pose pose;
@@ -1384,7 +1384,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 	}
 
 	if ( option[ optE::repack_and_minimize_decoys ] && outer_loop_counter_ != 1 ) {
-		Size count = 0;
+		core::Size count = 0;
 		ScoreFunctionOP weighted_sfxn = create_weighted_scorefunction();
 		ScoreFunctionOP unweighted_sfxn = create_unweighted_scorefunction();
 
@@ -1401,7 +1401,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 			PNatStructureOptEDataOP structure_data(
 				utility::pointer::static_pointer_cast< PNatStructureOptEData > ( (*iter) ) );
 			/// Create new natives
-			for ( Size ii = 1, iie = decdisc_native_poses_[ count ].size(); ii <= iie; ++ii ) {
+			for ( core::Size ii = 1, iie = decdisc_native_poses_[ count ].size(); ii <= iie; ++ii ) {
 				core::pose::Pose pose = decdisc_native_poses_[ count ][ ii ];
 				repack_and_minimize_pose( pose, weighted_sfxn );
 				new_nats.push_back( pose );
@@ -1412,7 +1412,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 				add_structure_based_on_rms( ssd, structure_data, true /* intended native */ );
 			}
 			/// Create new decoys
-			for ( Size ii = 1, iie = decdisc_decoy_poses_[ count ].size(); ii <= iie; ++ii ) {
+			for ( core::Size ii = 1, iie = decdisc_decoy_poses_[ count ].size(); ii <= iie; ++ii ) {
 				core::pose::Pose pose = decdisc_decoy_poses_[ count ][ ii ];
 				repack_and_minimize_pose( pose, weighted_sfxn );
 				new_decs.push_back( pose );
@@ -1424,10 +1424,10 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 			}
 
 			if ( option[ optE::output_top_n_new_decoys ].user() ) {
-				Size n_to_output = option[ optE::output_top_n_new_decoys ];
-				utility::vector1< Size > top_decoy_inds( n_to_output, 0 );
+				core::Size n_to_output = option[ optE::output_top_n_new_decoys ];
+				utility::vector1< core::Size > top_decoy_inds( n_to_output, 0 );
 				utility::arg_least_several( new_decs_scores, top_decoy_inds );
-				for ( Size ii = 1; ii <= top_decoy_inds.size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= top_decoy_inds.size(); ++ii ) {
 					new_decs[ top_decoy_inds[ ii ] ].dump_pdb( "workdir_" + to_string( MPI_rank_ ) +
 						"/" + structure_data->tag() + "_" + to_string( outer_loop_counter_ ) + "_"
 						+ to_string( ii ) + ".pdb" );
@@ -1458,10 +1458,10 @@ IterativeOptEDriver::single_structure_data_for_pose(
 {
 	(*scorefxn)( pose );
 
-	for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
+	for ( core::Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
 		free_data[ kk ] = pose.energies().total_energies()[ free_score_list_[ kk ] ];
 	}
-	for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
+	for ( core::Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
 		fixed_data[ kk ] = pose.energies().total_energies()[ fixed_score_list_[ kk ] ];
 	}
 	SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
@@ -1553,7 +1553,7 @@ IterativeOptEDriver::compute_rotamers_around_ligands()
 
 	ScoreFunctionOP scorefxn = create_unweighted_scorefunction();
 
-	for ( Size n=1; n <= ligand_repack_pdbs_.size(); ++n ) {
+	for ( core::Size n=1; n <= ligand_repack_pdbs_.size(); ++n ) {
 		std::string const & native_filename( ligand_repack_pdbs_[n] );
 
 		core::pose::Pose native_pose;//, pose;
@@ -1633,7 +1633,7 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 		//std::string scorelog_name( "workdir_" + to_string( MPI_rank_ ) + "/decdisc_scores.dat" );
 		//std::ofstream scorelog( scorelog_name.c_str() );
 
-		for ( Size ii = 1; ii <= ligand_native_decoy_pairs_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= ligand_native_decoy_pairs_.size(); ++ii ) {
 			PNatLigPoseOptEDataOP structure_data( new PNatLigPoseOptEData );
 
 			{//scope
@@ -1682,8 +1682,8 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 
 			utility::vector1< Real > free_data( free_score_list_.size() );
 			utility::vector1< Real > fixed_data( fixed_score_list_.size() );
-			Size first_total_residue( 0 );
-			for ( Size jj = 1; jj <= native_pdb_names.size(); ++jj ) {
+			core::Size first_total_residue( 0 );
+			for ( core::Size jj = 1; jj <= native_pdb_names.size(); ++jj ) {
 				//std::cout << " PROC #" << MPI_rank_ << " reading pdb: #" << jj << " " << native_pdb_names[ jj ] << std::endl;
 				/// read the pdb into a pose
 				core::pose::Pose pose;
@@ -1707,10 +1707,10 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 				//scorelog << "Decoy Discrimination NATIVE " << native_pdb_names[ jj ] << " " << score << "\n";
 
 				EnergyMap emap = score_ligand_interface(*scorefxn, pose);
-				for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
+				for ( core::Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
 					free_data[ kk ] = emap[ free_score_list_[ kk ] ];
 				}
-				for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
+				for ( core::Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
 					fixed_data[ kk ] = emap[ fixed_score_list_[ kk ] ];
 				}
 				SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
@@ -1718,7 +1718,7 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 				//std::cout << "Adding native, size = " << structure_data->size() << std::endl;
 			}
 
-			for ( Size jj = 1; jj <= decoy_pdb_names.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= decoy_pdb_names.size(); ++jj ) {
 
 				/// read the pdb into a pose
 				core::pose::Pose pose;
@@ -1748,10 +1748,10 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 				//}
 
 				EnergyMap emap = score_ligand_interface(*scorefxn, pose);
-				for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
+				for ( core::Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
 					free_data[ kk ] = emap[ free_score_list_[ kk ] ];
 				}
-				for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
+				for ( core::Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
 					fixed_data[ kk ] = emap[ fixed_score_list_[ kk ] ];
 				}
 				SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
@@ -1792,7 +1792,7 @@ IterativeOptEDriver::score_ligand_interface( core::scoring::ScoreFunction const 
 	scorefxn(split_pose);
 	EnergyMap const & smap = split_pose.energies().total_energies();
 	//std::cout << "delta_scores";
-	for ( Size ii = 1; ii <= n_score_types; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 		auto i = (ScoreType) ii;
 		emap[i] -= smap[i];
 		//if( emap[i] != 0 ) std::cout << " " << name_from_score_type(i) << " " << emap[i];
@@ -1809,9 +1809,9 @@ void
 IterativeOptEDriver::collect_rotamer_energies_from_slave_cpu
 (
 #ifdef USEMPI
-	Size const which_cpu
+	core::Size const which_cpu
 #else
-	Size const
+	core::Size const
 #endif
 )
 {
@@ -1832,7 +1832,7 @@ IterativeOptEDriver::collect_rotamer_energies_from_slave_cpu
 
 	//std::cout << " PROC #" << MPI_rank_ << "received free and fixed from " << which_cpu << std::endl;
 
-	for ( Size ii = 1; ii <= n_score_types; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 		if ( free_energy_terms[  ii - 1 ] != (int) ( free_parameters_[  (ScoreType) ii ] != 0.0 )) {
 			std::cerr << "Free energy term mismatch! " << ScoreType( ii ) << " " << free_energy_terms[ ii - 1 ] << " & " << free_parameters_[  (ScoreType) ii ]  << std::endl;
 			utility_exit_with_message( "Free energy term on Node 0 does not match free energy term remotely");
@@ -1847,11 +1847,11 @@ IterativeOptEDriver::collect_rotamer_energies_from_slave_cpu
 	delete [] fixed_energy_terms; fixed_energy_terms = 0;
 
 	/// 2. Number of positions on which OptE data has been gathered remotely
-	Size n_pos;
+	core::Size n_pos;
 	MPI_Recv( & n_pos, 1, MPI_UNSIGNED_LONG, which_cpu, tag_, MPI_COMM_WORLD, &stat_ );
 	//std::cout << " PROC #" << MPI_rank_ << "npos from " << which_cpu << " " << n_pos << std::endl;
 
-	for ( Size ii = 1; ii <= n_pos; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_pos; ++ii ) {
 		//std::cout << "Waiting to receive position data type" << std::endl;
 		int position_data_type;
 		MPI_Recv( & position_data_type, 1, MPI_INT, which_cpu, tag_, MPI_COMM_WORLD, &stat_ );
@@ -1892,7 +1892,7 @@ void IterativeOptEDriver::intialize_free_and_fixed_energy_terms() {
 
 	if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 		if ( MPI_rank_ == 0 ) {
-			//for ( Size ii = 1; ii <= n_score_types; ++ii ) {
+			//for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 			// if ( free_parameters_[ (ScoreType) ii ] != 0.0 ) {
 			//  free_parameters_[ (ScoreType) ii ] = numeric::random::rg().uniform() + 0.01; // random non-zero starting point
 			// }
@@ -1902,7 +1902,7 @@ void IterativeOptEDriver::intialize_free_and_fixed_energy_terms() {
 				-0.34, -0.89, 0.02, -0.97, -0.98, -0.37, -0.27, 0.29, 0.91, 0.51
 				};
 
-			for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+			for ( core::Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 				before_minimization_reference_energies_[ ii ] = rpp_refs[ ii - 1 ];
 			}
 			std::cout << "INITIALIZED before_minimization_reference_energies_ REFERENCE ENERGIES" << std::endl;
@@ -1959,7 +1959,7 @@ void IterativeOptEDriver::optimize_weights()
 		after_minimization_reference_energies_ = read_reference_energies_from_file( option[ optE::starting_refEs ] );
 		before_minimization_reference_energies_ = after_minimization_reference_energies_;
 		//std::cout << "after_minimization_reference_energies_: ";
-		//for ( Size ii = 1; ii <= after_minimization_reference_energies_.size(); ++ii ) {
+		//for ( core::Size ii = 1; ii <= after_minimization_reference_energies_.size(); ++ii ) {
 		// std::cout << after_minimization_reference_energies_[ ii ] << " ";
 		//}
 		//std::cout << std::endl;
@@ -2005,12 +2005,12 @@ void IterativeOptEDriver::optimize_weights()
 		Real end_fitness = 0.0;
 
 		TR << "optimize_weights(): objective function start: " << start_fitness << " dofs: [ ";
-		for ( Size ii = 1; ii <= start_dofs.size(); ++ii ) { TR << F( 8,4,start_dofs[ii] ) << ", "; }
+		for ( core::Size ii = 1; ii <= start_dofs.size(); ++ii ) { TR << F( 8,4,start_dofs[ii] ) << ", "; }
 		TR << "]" << std::endl;
 
 		MultifuncOP opt_min2;
 
-		Size ndofs = start_dofs.size();
+		core::Size ndofs = start_dofs.size();
 		if ( option[ optE::wrap_dof_optimization ].user() ) {
 			if ( outer_loop_counter_ == 1 ) {
 				wrapped_opt_min_ = utility::pointer::make_shared< WrapperOptEMultifunc >();
@@ -2154,7 +2154,7 @@ void IterativeOptEDriver::optimize_weights()
 		}
 
 		TR << "optimize_weights(): end: " << ( *opt_min2 )( start_dofs ) << ", dofs: [ ";
-		for ( Size ii = 1; ii <= start_dofs.size(); ++ii ) { TR << F(8,4,start_dofs[ii]) << ", "; }
+		for ( core::Size ii = 1; ii <= start_dofs.size(); ++ii ) { TR << F(8,4,start_dofs[ii]) << ", "; }
 		TR << " ]" << std::endl;
 
 		if ( option[ optE::wrap_dof_optimization ].user() ) {
@@ -2167,7 +2167,7 @@ void IterativeOptEDriver::optimize_weights()
 
 		// set the after_min refE vector
 		if ( ! option[ optE::dont_use_reference_energies ].value() ) {
-			//for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {   // 20 should not be hardcoded here!
+			//for ( core::Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {   // 20 should not be hardcoded here!
 			// after_minimization_reference_energies_[ ii ] = start_dofs[ free_count_+ii ]; // save them in non-negated form
 			//}
 			// apparently, now, the opt_min object can be queried to get the reference energy values instead of what the
@@ -2177,7 +2177,7 @@ void IterativeOptEDriver::optimize_weights()
 
 		// create an EnergyMap from the most recent set of DOFs, but make sure to reset the energies for the fixed terms to 0.
 		free_weights_after_minimization_ = opt_min.get_energy_map_from_dofs( start_dofs );
-		for ( Size ii = 1 ; ii <= fixed_score_list_.size(); ++ii ) {
+		for ( core::Size ii = 1 ; ii <= fixed_score_list_.size(); ++ii ) {
 			free_weights_after_minimization_[ fixed_score_list_[ ii ]] = 0; // reset fixed parameters
 		}
 
@@ -2185,7 +2185,7 @@ void IterativeOptEDriver::optimize_weights()
 		optimization::Multivec vars( free_count_ + after_minimization_reference_energies_.size(), 0.0 );
 		optimization::Multivec dE_dvars( free_count_ + after_minimization_reference_energies_.size(), 0.0 );
 
-		Size num_energy_dofs( free_count_ );
+		core::Size num_energy_dofs( free_count_ );
 		int num_ref_dofs( after_minimization_reference_energies_.size() );
 		int num_total_dofs( num_energy_dofs + num_ref_dofs );
 		scoring::EnergyMap fixed_terms = fixed_parameters_;
@@ -2193,7 +2193,7 @@ void IterativeOptEDriver::optimize_weights()
 		scoring::ScoreTypes fixed_score_list( fixed_score_list_ );
 
 		// set the vars Mulitvec to contain the free weights and reference weights
-		for ( Size ii = 1; ii <= free_score_list_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= free_score_list_.size(); ++ii ) {
 			vars[ ii ] = free_weights_after_minimization_[ free_score_list_[ ii ] ] ;
 			TR_VERBOSE << "optimize_weights(): free weights before/after minimization_: [ " << name_from_score_type( free_score_list_[ii] ) << " ]: "
 				<< F(8,4,free_weights_before_minimization_[ free_score_list_[ ii ] ]) << " -> "
@@ -2201,7 +2201,7 @@ void IterativeOptEDriver::optimize_weights()
 		}
 
 		if ( ! option[ optE::dont_use_reference_energies ].value() ) {
-			for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+			for ( core::Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 				vars[ ii + free_count_ ] = after_minimization_reference_energies_[ ii ];
 			}
 		}
@@ -2248,7 +2248,7 @@ void IterativeOptEDriver::optimize_weights()
 			// //TR << ".";
 			//}
 		}
-		for ( Size ii=1; ii <= n_optE_data_types; ii++ ) {
+		for ( core::Size ii=1; ii <= n_optE_data_types; ii++ ) {
 			TR << "optimize_weights(): energy component: " <<  OptEPositionDataFactory::optE_type_name( OptEPositionDataType( ii ))
 				<< " " << cumulative_score_list[ii] << std::endl;
 		}
@@ -2260,14 +2260,14 @@ void IterativeOptEDriver::optimize_weights()
 		utility::vector1< EnergyMap > rawE_min( n_optE_data_types );
 		utility::vector1< EnergyMap > rawE_max( n_optE_data_types );
 		Real const faux_max( -1234 ); Real const faux_min( 1234 );
-		for ( Size ii = 1; ii <= n_optE_data_types; ++ii ) {
+		for ( core::Size ii = 1; ii <= n_optE_data_types; ++ii ) {
 			//for ( EnergyMap::iterator iter = rawE_min[ ii ].begin(); iter != rawE_min[ ii ].end(); ++iter ) {
 			// *iter = faux_min;
 			//}
 			//for ( EnergyMap::iterator iter = rawE_max[ ii ].begin(); iter != rawE_max[ ii ].end(); ++iter ) {
 			// *iter = faux_max;
 			//}
-			for ( Size jj = 1; jj <= n_score_types; ++jj ) {
+			for ( core::Size jj = 1; jj <= n_score_types; ++jj ) {
 				rawE_min[ ii ][ (ScoreType) jj ] = faux_min;
 				rawE_max[ ii ][ (ScoreType) jj ] = faux_max;
 			}
@@ -2281,16 +2281,16 @@ void IterativeOptEDriver::optimize_weights()
 		}
 
 		ScoreTypes free_and_fixed( score_list );
-		for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 			free_and_fixed.push_back( fixed_score_list[ ii ] );
 		}
 		std::sort(free_and_fixed.begin(), free_and_fixed.end() );
 
-		for ( Size ii = 1; ii <= n_optE_data_types; ++ii ) {
+		for ( core::Size ii = 1; ii <= n_optE_data_types; ++ii ) {
 			outlog << "DATA RANGE: ";
 			outlog << OptEPositionDataFactory::optE_type_name( OptEPositionDataType( ii ));
 			outlog << " ";
-			for ( Size jj = 1; jj <= free_and_fixed.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= free_and_fixed.size(); ++jj ) {
 				if ( rawE_min[ ii ][ free_and_fixed[ jj ] ] > rawE_max[ ii ][ free_and_fixed[ jj ] ] ) continue;
 				outlog << "( " << name_from_score_type( free_and_fixed[ jj ]) << ", ";
 				outlog << rawE_min[ ii ][ free_and_fixed[ jj ] ] << ", ";
@@ -2319,8 +2319,8 @@ IterativeOptEDriver::test_weight_sensitivity(
 	Real const minval = func(dofs);
 	out << "Minimum function value " << minval << std::endl;
 	// Later DOFs include the AA ref energies, so we don't want ALL of them:
-	//for(Size dof_idx = 1; dof_idx <= dofs.size(); ++dof_idx) {
-	for ( Size dof_idx = 1; dof_idx <= free_score_list_.size(); ++dof_idx ) {
+	//for(core::Size dof_idx = 1; dof_idx <= dofs.size(); ++dof_idx) {
+	for ( core::Size dof_idx = 1; dof_idx <= free_score_list_.size(); ++dof_idx ) {
 		Real maxval = minval;
 		out << "term_" << dof_idx << " " << free_score_list_[dof_idx];
 		for ( Real val = 0.0; val <= 2.0; val += 0.1 ) {
@@ -2351,7 +2351,7 @@ IterativeOptEDriver::read_reference_energies_from_file( std::string const & fnam
 		if ( tag == "METHOD_WEIGHTS" ) {
 			weight_file >> tag; // "ref"
 			if ( tag != "ref" ) continue;
-			for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+			for ( core::Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 				Real aa_refE;
 				weight_file >> aa_refE;
 				if ( !weight_file ) break;
@@ -2407,7 +2407,7 @@ IterativeOptEDriver::score_position_data()
 			weight_file >> tag;
 			if ( tag == "METHOD_WEIGHTS" ) {
 				weight_file >> tag; // "ref"
-				for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+				for ( core::Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 					Real aa_refE;
 					weight_file >> aa_refE;
 					reference_energies[ ii ] = aa_refE;
@@ -2428,7 +2428,7 @@ IterativeOptEDriver::score_position_data()
 		optimization::Multivec vars( free_count_ + before_minimization_reference_energies_.size(), 0.0 );
 		optimization::Multivec dE_dvars( free_count_ + before_minimization_reference_energies_.size(), 0.0 );
 
-		Size num_energy_dofs( free_count_ );
+		core::Size num_energy_dofs( free_count_ );
 		int num_ref_dofs( before_minimization_reference_energies_.size() );
 		int num_total_dofs( num_energy_dofs + num_ref_dofs );
 
@@ -2436,7 +2436,7 @@ IterativeOptEDriver::score_position_data()
 		scoring::ScoreTypes score_list( free_score_list_ );
 		scoring::ScoreTypes fixed_score_list( fixed_score_list_ );
 
-		for ( Size ii = 1; ii <= score_list.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= score_list.size(); ++ii ) {
 			TR_VERBOSE << "setting vars " << ii << " to " << weight_set[ free_score_list_[ ii ] ] << std::endl;
 			vars[ ii ] = weight_set[ free_score_list_[ ii ] ];
 			// also set the free_parameters Map in case the user isn't optimizing weights but just rescoring a weight set
@@ -2445,7 +2445,7 @@ IterativeOptEDriver::score_position_data()
 
 		if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 			TR_VERBOSE << "setting reference energies ";
-			for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+			for ( core::Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 				TR_VERBOSE << ii << " " << reference_energies[ ii ] << ", ";
 				vars[ ii + free_count_ ] = reference_energies[ ii ];
 				after_minimization_reference_energies_[ ii ] = reference_energies[ ii ];
@@ -2453,7 +2453,7 @@ IterativeOptEDriver::score_position_data()
 			TR_VERBOSE << std::endl;
 		}
 
-		for ( Size ii = 1; ii <= fixed_score_list_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= fixed_score_list_.size(); ++ii ) {
 			TR_VERBOSE << "setting fixed term " << ii << " " << fixed_score_list_[ ii ] << " " << weight_set[ fixed_score_list_[ ii ] ] << std::endl;
 			fixed_terms[ fixed_score_list_[ ii ] ] = weight_set[ fixed_score_list_[ ii ] ];
 			// also set the fixed_parameters Map in case the user isn't optimizing weights but just rescoring a weight set
@@ -2475,7 +2475,7 @@ IterativeOptEDriver::score_position_data()
 			// //TR << ".";
 			//}
 		}
-		for ( Size ii=1; ii <= n_optE_data_types; ii++ ) {
+		for ( core::Size ii=1; ii <= n_optE_data_types; ii++ ) {
 			if ( cumulative_score_list[ii] != 0 ) {
 				TR_VERBOSE << "optimization function energy component: " << OptEPositionDataFactory::optE_type_name( OptEPositionDataType( ii ))
 					<< " " << cumulative_score_list[ii] << std::endl;
@@ -2553,7 +2553,7 @@ void IterativeOptEDriver::write_new_scorefile()
 					if ( ! wrapped_opt_min_ ) {
 						utility_exit_with_message( "ERROR in IterativeOptEDriver::write_new_scorefile(); wrapped_opt_min_ is NULL");
 					}
-					for ( Size kk = 1; kk <= minimizer_dofs_before_minimization_.size(); ++kk ) {
+					for ( core::Size kk = 1; kk <= minimizer_dofs_before_minimization_.size(); ++kk ) {
 						minimizer_dofs_mixed_[ kk ] =
 							alpha * minimizer_dofs_before_minimization_[ kk ] +
 							mixing_factor_ * minimizer_dofs_after_minimization_[ kk ];
@@ -2575,13 +2575,13 @@ void IterativeOptEDriver::write_new_scorefile()
 					if ( option[ optE::rescore::measure_sequence_recovery ].value() ) { mixing_factor_ = 1.0; alpha = 0.0; } // the right wts are in after_min vector
 					if ( option[ optE::optimize_ddGmutation ].user() && ! ( option[ optE::optimize_nat_aa ].user() ) ) { mixing_factor_ = 1.0; alpha = 0.0; }
 
-					for ( Size kk = 1; kk <= n_score_types; ++kk ) {
+					for ( core::Size kk = 1; kk <= n_score_types; ++kk ) {
 						free_weights_inner_loop_[ (ScoreType) kk ] = alpha * free_weights_before_minimization_[ (ScoreType) kk ];
 						free_weights_inner_loop_[ (ScoreType) kk ] += mixing_factor_ * free_weights_after_minimization_[ (ScoreType) kk ];
 					}
 
 					// output to the terminal the weights before and after mixing
-					for ( Size ii = 1; ii <= n_score_types; ++ii ) {
+					for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 						if ( free_weights_inner_loop_[ (ScoreType) ii ] != 0.0 ) {
 							TR_VERBOSE << "write_new_scorefile(): free weights before/after mixing: [ " << name_from_score_type( (ScoreType) ii ) << " ]: "
 								<< F(8,4,free_weights_after_minimization_[ (ScoreType) ii ]) << " -> "
@@ -2589,13 +2589,13 @@ void IterativeOptEDriver::write_new_scorefile()
 						}
 					}
 
-					for ( Size kk = 1; kk <= before_minimization_reference_energies_.size(); ++kk ) {
+					for ( core::Size kk = 1; kk <= before_minimization_reference_energies_.size(); ++kk ) {
 						reference_energies_inner_loop_[ kk ] = ( 1.0 - mixing_factor_ ) * before_minimization_reference_energies_[ kk ];
 						reference_energies_inner_loop_[ kk ] += mixing_factor_ * after_minimization_reference_energies_[ kk ];
 					}
 
 					TR_VERBOSE << "write_new_scorefile(): reference energies after mixing: ";
-					for ( Size ii = 1; ii <= num_canonical_aas; ++ii ) {
+					for ( core::Size ii = 1; ii <= num_canonical_aas; ++ii ) {
 						TR_VERBOSE << core::chemical::oneletter_code_from_aa( core::chemical::AA( ii ) ) << ":" << F(5,2,reference_energies_inner_loop_[ ii ]) << ", ";
 					}
 					TR_VERBOSE << std::endl;
@@ -2610,14 +2610,14 @@ void IterativeOptEDriver::write_new_scorefile()
 				TR << "Tuning reference energies using amino acid profile recovery data: round " <<
 					outer_loop_counter_ << " " << inner_loop_counter_ << std::endl;
 				TR << "write_new_scorefile(): reference energies before entropy: " << inner_loop_counter_ << ": ";
-				for ( Size ii = 1; ii <= num_canonical_aas; ++ii ) {
+				for ( core::Size ii = 1; ii <= num_canonical_aas; ++ii ) {
 					TR << core::chemical::oneletter_code_from_aa( core::chemical::AA( ii ) ) << ":" << F(5,2,reference_energies_inner_loop_[ ii ]) << ", ";
 				}
 				TR << std::endl;
 
 				/// Only modify the reference energies so that the designed sequence profile
 				/// matches the experimentally observed sequence profile.
-				for ( Size ii = 1; ii <= num_canonical_aas; ++ii ) {
+				for ( core::Size ii = 1; ii <= num_canonical_aas; ++ii ) {
 					if ( aa_freq_exp_[ ii ] != 0 ) {
 						if ( aa_freq_obs_[ ii ] > aa_freq_exp_[ ii ] ) {
 							// if the designed freq is greater than what's observed in nature, INCREASE the values on the reference energies
@@ -2651,17 +2651,17 @@ void IterativeOptEDriver::write_new_scorefile()
 			}
 
 			TR << "write_new_scorefile(): reference energies after entropy:  " << inner_loop_counter_ << ": ";
-			for ( Size ii = 1; ii <= num_canonical_aas; ++ii ) {
+			for ( core::Size ii = 1; ii <= num_canonical_aas; ++ii ) {
 				TR << core::chemical::oneletter_code_from_aa( core::chemical::AA( ii ) ) << ":" << F(5,2,reference_energies_inner_loop_[ ii ]) << ", ";
 			}
 			TR << std::endl;
 
 			Real total_refE( 0.0 );
-			for ( Size ii = 1; ii <= num_canonical_aas; ++ii ) total_refE += reference_energies_inner_loop_[ ii ];
-			for ( Size ii = 1; ii <= num_canonical_aas; ++ii ) reference_energies_inner_loop_[ ii ] -= total_refE / num_canonical_aas;
+			for ( core::Size ii = 1; ii <= num_canonical_aas; ++ii ) total_refE += reference_energies_inner_loop_[ ii ];
+			for ( core::Size ii = 1; ii <= num_canonical_aas; ++ii ) reference_energies_inner_loop_[ ii ] -= total_refE / num_canonical_aas;
 
 			TR << "write_new_scorefile(): ref energies after normalization:  " << inner_loop_counter_ << ": ";
-			for ( Size ii = 1; ii <= num_canonical_aas; ++ii ) { TR << F(5,2,reference_energies_inner_loop_[ ii ]) << ", "; }
+			for ( core::Size ii = 1; ii <= num_canonical_aas; ++ii ) { TR << F(5,2,reference_energies_inner_loop_[ ii ]) << ", "; }
 			TR << std::endl;
 
 		} else {  // not fitting reference energies to a profile
@@ -2671,7 +2671,7 @@ void IterativeOptEDriver::write_new_scorefile()
 				if ( ! wrapped_opt_min_ ) {
 					utility_exit_with_message( "ERROR in IterativeOptEDriver::write_new_scorefile(); wrapped_opt_min_ is NULL");
 				}
-				for ( Size kk = 1; kk <= minimizer_dofs_before_minimization_.size(); ++kk ) {
+				for ( core::Size kk = 1; kk <= minimizer_dofs_before_minimization_.size(); ++kk ) {
 					minimizer_dofs_mixed_[ kk ] =
 						alpha * minimizer_dofs_before_minimization_[ kk ] +
 						mixing_factor_ * minimizer_dofs_after_minimization_[ kk ];
@@ -2690,13 +2690,13 @@ void IterativeOptEDriver::write_new_scorefile()
 				if ( option[ optE::rescore::measure_sequence_recovery ].user() ) { mixing_factor_ = 1.0; alpha = 0.0; } // the right wts are in after_min vector
 				if ( option[ optE::optimize_ddGmutation ].user() && ! ( option[ optE::optimize_nat_aa ].user() ) ) { mixing_factor_ = 1.0; alpha = 0.0; }
 
-				for ( Size kk = 1; kk <= n_score_types; ++kk ) {
+				for ( core::Size kk = 1; kk <= n_score_types; ++kk ) {
 					free_weights_inner_loop_[ (ScoreType) kk ] = alpha * free_weights_before_minimization_[ (ScoreType) kk ];
 					free_weights_inner_loop_[ (ScoreType) kk ] += mixing_factor_ * free_weights_after_minimization_[ (ScoreType) kk ];
 				}
 
 				// output to the terminal the weights before and after mixing
-				for ( Size ii = 1; ii <= n_score_types; ++ii ) {
+				for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 					if ( free_weights_inner_loop_[ (ScoreType) ii ] != 0.0 ) {
 						TR_VERBOSE << "write_new_scorefile(): free weights before/after mixing: [ " << name_from_score_type( (ScoreType) ii ) << " ]: "
 							<< F(8,4,free_weights_after_minimization_[ (ScoreType) ii ]) << " -> "
@@ -2705,7 +2705,7 @@ void IterativeOptEDriver::write_new_scorefile()
 				}
 
 				if ( ! option[ optE::dont_use_reference_energies ].value() ) {
-					for ( Size kk = 1; kk <= before_minimization_reference_energies_.size(); ++kk ) {
+					for ( core::Size kk = 1; kk <= before_minimization_reference_energies_.size(); ++kk ) {
 						reference_energies_inner_loop_[ kk ] = ( 1.0 - mixing_factor_ ) * before_minimization_reference_energies_[ kk ];
 						reference_energies_inner_loop_[ kk ] += mixing_factor_ * after_minimization_reference_energies_[ kk ];
 					}
@@ -2722,18 +2722,18 @@ void IterativeOptEDriver::write_new_scorefile()
 #ifdef USEMPI
 		/// Send the weights we've just computed to the other nodes
 		Real * free_wts = new Real[ n_score_types ];
-		for ( Size ii = 0; ii < n_score_types; ++ii ) {
+		for ( core::Size ii = 0; ii < n_score_types; ++ii ) {
 			free_wts[ ii ] = free_weights_inner_loop_[ ScoreType( ii + 1 ) ];
 		}
 
 		// if refE's not in use, this code will create arrays of size 0 - that's fine
-		Size n_ref_Es = reference_energies_inner_loop_.size();
+		core::Size n_ref_Es = reference_energies_inner_loop_.size();
 		Real * ref_Es = new Real[ n_ref_Es ];
-		for ( Size ii = 0; ii < n_ref_Es; ++ii ) {
+		for ( core::Size ii = 0; ii < n_ref_Es; ++ii ) {
 			ref_Es[ ii ] = reference_energies_inner_loop_[ ii + 1 ];
 		}
 
-		for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+		for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 			MPI_Send( free_wts, n_score_types, MPI_DOUBLE, ii, tag_, MPI_COMM_WORLD );
 			if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 				MPI_Send( & n_ref_Es, 1, MPI_UNSIGNED_LONG, ii, tag_, MPI_COMM_WORLD );
@@ -2749,7 +2749,7 @@ void IterativeOptEDriver::write_new_scorefile()
 		Real * free_wts = new Real[ n_score_types ];
 		MPI_Recv( free_wts, n_score_types, MPI_DOUBLE, 0, tag_, MPI_COMM_WORLD, &stat_ );
 
-		for ( Size ii = 0; ii < n_score_types; ++ii ) {
+		for ( core::Size ii = 0; ii < n_score_types; ++ii ) {
 			free_weights_inner_loop_[ ScoreType( ii + 1 ) ] = free_wts[ ii ];
 		}
 		delete [] free_wts; free_wts = 0;
@@ -2757,13 +2757,13 @@ void IterativeOptEDriver::write_new_scorefile()
 		// don't bother with the reference energies if the user doesn't want them
 		if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 
-			Size n_ref_Es( 0 );
+			core::Size n_ref_Es( 0 );
 			MPI_Recv( & n_ref_Es, 1, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD, &stat_ );
 			Real * ref_Es = new Real[ n_ref_Es ];
 			MPI_Recv( ref_Es, n_ref_Es, MPI_DOUBLE, 0, tag_, MPI_COMM_WORLD, &stat_ );
 
 			reference_energies_inner_loop_.resize( n_ref_Es );
-			for ( Size ii = 0; ii < n_ref_Es; ++ii ) {
+			for ( core::Size ii = 0; ii < n_ref_Es; ++ii ) {
 				reference_energies_inner_loop_[ ii + 1 ] = ref_Es[ ii ];
 			}
 
@@ -2790,7 +2790,7 @@ void IterativeOptEDriver::write_new_scorefile()
 		if ( ! option[ optE::dont_use_reference_energies ].value() ) {
 			/// Weight file output:
 			fout << "METHOD_WEIGHTS ref ";
-			for ( Size ii = 1; ii <= reference_energies_inner_loop_.size(); ++ii ) {
+			for ( core::Size ii = 1; ii <= reference_energies_inner_loop_.size(); ++ii ) {
 				fout << reference_energies_inner_loop_[ ii ] << " ";
 			}
 			fout << "\n";
@@ -2802,7 +2802,7 @@ void IterativeOptEDriver::write_new_scorefile()
 			fout << "INCLUDE_INTRA_RES_PROTEIN\n";
 		}
 
-		for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
+		for ( core::Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
 			if ( combined_weights[ ScoreType( ii ) ] != 0 ) {
 				fout << name_from_score_type( ScoreType( ii ) ) << " " << combined_weights[ ScoreType( ii ) ] << "\n";
 			}
@@ -2833,18 +2833,18 @@ IterativeOptEDriver::output_weighted_unfolded_energies() {
 
 		UnfoldedStatePotential const & unfE_potential = ScoringManager::get_instance()->get_UnfoldedStatePotential( scoring::UNFOLDED_SCORE12 );
 		utility::vector1< EnergyMap > unweighted_unfolded_emap( chemical::num_canonical_aas );
-		for ( Size aa=1; aa <= chemical::num_canonical_aas; ++aa ) {
+		for ( core::Size aa=1; aa <= chemical::num_canonical_aas; ++aa ) {
 			unweighted_unfolded_emap[ aa ].zero();
 			unfE_potential.raw_unfolded_state_energymap( chemical::name_from_aa( (chemical::AA) aa ), unweighted_unfolded_emap[ aa ] );
 		}
 
-		for ( Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
+		for ( core::Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
 
 			Real unfolded_energy_for_one_aa = 0.0;
 			Real weighted_unfolded_energy_for_one_aa = 0.0;
 
 			// free weights first
-			for ( Size ii = 1; ii <= n_score_types; ++ii ) {
+			for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 				if ( free_weights_inner_loop_[ (ScoreType) ii ] != 0.0 ) {
 					TR_VERBOSE << "output_weighted_unfolded_energies(): adding unfolded energy for aa '" << chemical::name_from_aa( (chemical::AA) aa )
 						<< "' unweighted free '" << name_from_score_type( (ScoreType)ii ) << "' energy: "
@@ -2857,7 +2857,7 @@ IterativeOptEDriver::output_weighted_unfolded_energies() {
 			}
 
 			// then fixed weights
-			for ( Size ii = 1; ii <= fixed_score_list_.size(); ++ii ) {
+			for ( core::Size ii = 1; ii <= fixed_score_list_.size(); ++ii ) {
 				if ( fixed_parameters_[ fixed_score_list_[ ii ] ] != 0.0 ) {
 					TR_VERBOSE << "output_weighted_unfolded_energies(): adding unfolded energy for aa '" << chemical::name_from_aa( (chemical::AA) aa )
 						<< "' unweighted fixed '" << name_from_score_type( fixed_score_list_[ ii ] ) << "' energy: "
@@ -2893,7 +2893,7 @@ IterativeOptEDriver::output_weighted_unfolded_energies() {
 		}
 
 		TR << "output_weighted_unfolded_energies(): weighted unfoldedE by aa: [ ";
-		for ( Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
+		for ( core::Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
 			TR << wtd_unfE[ aa ] << " ";
 		}
 		TR << std::endl;
@@ -2915,7 +2915,7 @@ IterativeOptEDriver::free_terms_energy_map_from_dofs(
 	EnergyMap return_map;
 
 	// This covers the variable weights
-	Size dof_index( 1 );
+	core::Size dof_index( 1 );
 	for ( auto itr : free_score_list_ ) {
 		return_map[ itr ] = dofs[ dof_index++ ];
 	}
@@ -2933,7 +2933,7 @@ IterativeOptEDriver::free_weights_and_refEs_from_vars(
 {
 	// conditional needed because if reference_energies is accessed when refE's are not being optimized, errors will occur
 	if ( ! option[ optE::dont_use_reference_energies ].value() ) {
-		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+		for ( core::Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
 			reference_energies[ ii ] = vars[ free_count_ + ii ]; // save them in non-negated form
 		}
 	}
@@ -3072,7 +3072,7 @@ void IterativeOptEDriver::test_sequence_recovery()
 ///
 void IterativeOptEDriver::collect_sequence_recovery_data_from_slave_cpus() {
 
-	for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+	for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 		collect_sequence_recovery_data_from_slave_cpu( ii );
 	}
 
@@ -3083,20 +3083,20 @@ void IterativeOptEDriver::collect_sequence_recovery_data_from_slave_cpus() {
 	TR  << "collect_sequence_recovery_data_from_slave_cpus(): overall sequence recovery rate: " << inner_loop_sequence_recovery_rate_ << std::endl;
 
 	/// This is now a good time to compute the designed frequency and the experimental frequency of the various aa's.
-	for ( Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
+	for ( core::Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
 		aa_freq_obs_[ ii ] = ((Real) aa_obs_[ ii ] ) / total_positions_;
 		aa_freq_exp_[ ii ] = ((Real) aa_exp_[ ii ] ) / total_positions_;
 	}
 
 	TR << "amino acid counts: observed: ";
-	for ( Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
+	for ( core::Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
 		TR << core::chemical::oneletter_code_from_aa( core::chemical::AA( ii ) ) << ": " << aa_obs_[ ii ] << ", ";
 		//if ( ii % 5 == 0 ) TR << std::endl;
 	}
 	TR << std::endl;
 
 	TR << "amino acid counts: expected: ";
-	for ( Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
+	for ( core::Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
 		TR << core::chemical::oneletter_code_from_aa( core::chemical::AA( ii ) ) << ": " << aa_exp_[ ii ] << ", ";
 	}
 	TR << std::endl;
@@ -3104,7 +3104,7 @@ void IterativeOptEDriver::collect_sequence_recovery_data_from_slave_cpus() {
 
 	Real cross_entropy( 0.0 );
 	TR << "amino acid frequency: obs (exp):";
-	for ( Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
+	for ( core::Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
 		TR << " " << core::chemical::oneletter_code_from_aa( core::chemical::AA( ii ) )
 			<< ": " << ((Real) aa_obs_[ ii ] ) / total_positions_ << " (" << ((Real) aa_exp_[ ii ] ) / total_positions_<< ")";
 		//if ( ii % 5 == 0 ) TR << std::endl;
@@ -3118,30 +3118,30 @@ void IterativeOptEDriver::collect_sequence_recovery_data_from_slave_cpus() {
 ///
 void IterativeOptEDriver::collect_sequence_recovery_data_from_slave_cpu(
 #ifdef USEMPI
-	Size const which_cpu
+	core::Size const which_cpu
 #else
-	Size const
+	core::Size const
 #endif
 )
 {
 #ifdef USEMPI
-	Size cpu_positions;
-	Size cpu_recovered;
+	core::Size cpu_positions;
+	core::Size cpu_recovered;
 	MPI_Recv( & cpu_positions, 1, MPI_UNSIGNED_LONG, which_cpu, tag_, MPI_COMM_WORLD, &stat_ );
 	MPI_Recv( & cpu_recovered, 1, MPI_UNSIGNED_LONG, which_cpu, tag_, MPI_COMM_WORLD, &stat_ );
 
 	total_positions_ += cpu_positions;
 	count_recovered_ += cpu_recovered;
 
-	Size aa_counts[ core::chemical::num_canonical_aas ];
+	core::Size aa_counts[ core::chemical::num_canonical_aas ];
 
 	/// 1. Send counts of amino acid types coming out of design (observed)
 	MPI_Recv( aa_counts, core::chemical::num_canonical_aas, MPI_UNSIGNED_LONG, which_cpu, tag_, MPI_COMM_WORLD, &stat_ );
-	for ( Size ii = 1, iim1 = 0; ii <= core::chemical::num_canonical_aas; ++ii, ++iim1 ) aa_obs_[ ii ] += aa_counts[ iim1 ];
+	for ( core::Size ii = 1, iim1 = 0; ii <= core::chemical::num_canonical_aas; ++ii, ++iim1 ) aa_obs_[ ii ] += aa_counts[ iim1 ];
 
 	/// 2. Send counts of amino acid types in the input data (expected)
 	MPI_Recv( aa_counts, core::chemical::num_canonical_aas, MPI_UNSIGNED_LONG, which_cpu, tag_, MPI_COMM_WORLD, &stat_ );
-	for ( Size ii = 1, iim1 = 0; ii <= core::chemical::num_canonical_aas; ++ii, ++iim1 ) aa_exp_[ ii ] += aa_counts[ iim1 ];
+	for ( core::Size ii = 1, iim1 = 0; ii <= core::chemical::num_canonical_aas; ++ii, ++iim1 ) aa_exp_[ ii ] += aa_counts[ iim1 ];
 
 #endif
 }
@@ -3155,7 +3155,7 @@ void IterativeOptEDriver::collect_rotamer_recovery_data_from_slave_cpus()
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::centroid_input ] ) return;
 	if ( ! basic::options::option[ basic::options::OptionKeys::optE::recover_nat_rot ] ) return;
 
-	for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+	for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 		collect_rotamer_recovery_data_from_slave_cpu( ii );
 	}
 	TR << "collect_rotamer_recovery_data_from_slave_cpus(): collected rotamer recovery data from " << total_rotamer_positions_
@@ -3168,15 +3168,15 @@ void IterativeOptEDriver::collect_rotamer_recovery_data_from_slave_cpus()
 ///
 void IterativeOptEDriver::collect_rotamer_recovery_data_from_slave_cpu(
 #ifdef USEMPI
-	Size const which_cpu
+	core::Size const which_cpu
 #else
-	Size const
+	core::Size const
 #endif
 )
 {
 #ifdef USEMPI
-	Size cpu_rotamer_positions;
-	Size cpu_rotamer_recovered;
+	core::Size cpu_rotamer_positions;
+	core::Size cpu_rotamer_recovered;
 	MPI_Recv( & cpu_rotamer_positions, 1, MPI_UNSIGNED_LONG, which_cpu, tag_, MPI_COMM_WORLD, &stat_ );
 	MPI_Recv( & cpu_rotamer_recovered, 1, MPI_UNSIGNED_LONG, which_cpu, tag_, MPI_COMM_WORLD, &stat_ );
 
@@ -3306,13 +3306,13 @@ void IterativeOptEDriver::send_sequence_recovery_data_to_master_cpu()
 	MPI_Send( & total_positions_, 1, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD );
 	MPI_Send( & count_recovered_, 1, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD );
 
-	Size aa_counts[ core::chemical::num_canonical_aas ];
+	core::Size aa_counts[ core::chemical::num_canonical_aas ];
 	/// 1. Send counts of amino acid types coming out of design (observed)
-	for ( Size ii = 1, iim1 = 0; ii <= core::chemical::num_canonical_aas; ++ii, ++iim1 ) aa_counts[ iim1 ] = aa_obs_[ ii ];
+	for ( core::Size ii = 1, iim1 = 0; ii <= core::chemical::num_canonical_aas; ++ii, ++iim1 ) aa_counts[ iim1 ] = aa_obs_[ ii ];
 	MPI_Send( aa_counts, core::chemical::num_canonical_aas, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD );
 
 	/// 2. Send counts of amino acid types in the input data (expected)
-	for ( Size ii = 1, iim1 = 0; ii <= core::chemical::num_canonical_aas; ++ii, ++iim1 ) aa_counts[ iim1 ] = aa_exp_[ ii ];
+	for ( core::Size ii = 1, iim1 = 0; ii <= core::chemical::num_canonical_aas; ++ii, ++iim1 ) aa_counts[ iim1 ] = aa_exp_[ ii ];
 	MPI_Send( aa_counts, core::chemical::num_canonical_aas, MPI_UNSIGNED_LONG, 0, tag_, MPI_COMM_WORLD );
 
 #endif
@@ -3369,7 +3369,7 @@ bool IterativeOptEDriver::decide_if_sequence_recovery_improved()
 			// doesn't kick in until the later rounds.
 
 			Real cross_entropy( 0.0 );
-			for ( Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
+			for ( core::Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
 				cross_entropy -= aa_freq_exp_[ ii ] * std::log( aa_freq_obs_[ ii ] + 1e-5 );
 			}
 			Real weighted_cross_entropy = cross_entropy * Wcross_ent;
@@ -3412,7 +3412,7 @@ bool IterativeOptEDriver::decide_if_sequence_recovery_improved()
 		}
 
 #ifdef USEMPI
-		for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+		for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 			MPI_Send( & accept_new_weight_set, 1, MPI_INT, ii, tag_, MPI_COMM_WORLD );
 		}
 #endif
@@ -3586,7 +3586,7 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 	utility::vector1< EnergyMap > e;
 	if ( using_unfolded_energy_term_ ) {
 		e.resize( chemical::num_canonical_aas );
-		for ( Size aa=1; aa <= chemical::num_canonical_aas; ++aa ) {
+		for ( core::Size aa=1; aa <= chemical::num_canonical_aas; ++aa ) {
 			e[ aa ].zero();
 			unfE_potential.raw_unfolded_state_energymap( chemical::name_from_aa( (chemical::AA) aa ), e[ aa ] );
 		}
@@ -3594,9 +3594,9 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 
 	// used to restrict design to one position at a time
 	utility::vector1< bool > task_mask( pose.size(), false );
-	Size num_diffs_between_native_and_input( 0 );
+	core::Size num_diffs_between_native_and_input( 0 );
 
-	for ( Size resi = 1; resi <= pose.size(); ++resi ) {
+	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
 
 		if ( ! pose.residue(resi).is_protein() ) continue;
 		// do not consider residues that are not designable
@@ -3671,7 +3671,7 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 		// Call the new energy map fn
 		rotset->compute_one_body_energy_maps( pose, scorefxn, *single_residue_task, packer_neighbor_graph, emap_vector );
 
-		for ( Size jj = 1; jj <= rotset->num_rotamers(); ++jj ) {
+		for ( core::Size jj = 1; jj <= rotset->num_rotamers(); ++jj ) {
 			EnergyMap & emap_total( emap_vector[jj] );
 
 			// Hacky limit for fa_rep
@@ -3757,7 +3757,7 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 	scorefxn.setup_for_packing( pose, packing_task->repacking_residues(), packing_task->designing_residues() );
 
 	utility::vector1< bool > task_mask( pose.size(), false );
-	for ( Size resi = 1; resi <= pose.size(); ++resi ) {
+	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
 		// only consider residues that the master task considers packable (via task_factory_)
 		if ( ! packing_task->residue_task( resi ).being_packed() ) continue;
 
@@ -3782,7 +3782,7 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 		//task->or_include_current( true ); // apl TO DO -- do we want to include the native rotamer?
 		task_mask[ resi ] = false;
 
-		utility::vector1< Size > rot_wells;
+		utility::vector1< core::Size > rot_wells;
 
 		SingleResidueDunbrackLibrary::n_rotamer_bins_for_aa( pose.residue_type( resi ).aa(), rot_wells );
 
@@ -3809,7 +3809,7 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 
 		runtime_assert( native_pose.residue( resi ).aa() == pose.residue( resi ).aa() );
 
-		utility::vector1< Size > nat_rot_indices;
+		utility::vector1< core::Size > nat_rot_indices;
 		srdlib->get_rotamer_from_chi(
 			native_pose.residue( resi ).chi(),
 			nat_rot_indices );
@@ -3832,7 +3832,7 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 
 		//std::cout << "Nrotamers for " << pdb_name << " " << resi << " " << rotset->num_rotamers() << " " << pose.residue_type( resi ).name() << std::endl;
 
-		for ( Size jj = 1; jj <= rotset->num_rotamers(); ++jj ) {
+		for ( core::Size jj = 1; jj <= rotset->num_rotamers(); ++jj ) {
 			EnergyMap & emap_total( emap_vector[jj] );
 
 			// Hacky limit for fa_rep
@@ -3849,7 +3849,7 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 				fixed_energy_info.push_back( emap_total[ score_type_iter ] );
 			}
 
-			utility::vector1< Size > rot_index_vector;
+			utility::vector1< core::Size > rot_index_vector;
 			srdlib->get_rotamer_from_chi(
 				rotset->rotamer( jj )->chi(),
 				rot_index_vector );
@@ -3923,7 +3923,7 @@ IterativeOptEDriver::set_aa_periodicity( PNatRotOptEPositionDataOP pos_data, cor
 /// @details Precondition: pose must have been scored
 ///
 bool
-IterativeOptEDriver::residue_has_unacceptably_bad_dunbrack_energy( core::pose::Pose const & pose, Size const resid ) const
+IterativeOptEDriver::residue_has_unacceptably_bad_dunbrack_energy( core::pose::Pose const & pose, core::Size const resid ) const
 {
 	using namespace core::chemical;
 	using namespace core::scoring;
@@ -3951,13 +3951,13 @@ IterativeOptEDriver::residue_has_unacceptably_bad_dunbrack_energy( core::pose::P
 /// @details pose must have been read from a pdb.
 ///
 bool
-IterativeOptEDriver::residue_has_bad_bfactor( core::pose::Pose const & pose, Size const resid ) const
+IterativeOptEDriver::residue_has_bad_bfactor( core::pose::Pose const & pose, core::Size const resid ) const
 {
 	using namespace core::pose;
 	PDBInfoCOP info = pose.pdb_info();
 	if ( !info ) return false;
 
-	for ( Size ii = 1; ii <= info->natoms( resid ); ++ii ) {
+	for ( core::Size ii = 1; ii <= info->natoms( resid ); ++ii ) {
 		//std::cout << "Temperature on " << resid << " " << ii << " " << info->temperature( resid, ii ) << std::endl;
 		if ( info->temperature( resid, ii ) > 40 ) {
 			return true;
@@ -3990,12 +3990,12 @@ IterativeOptEDriver::make_simple_ssd_from_pdb( std::string const & pdb_filename,
 	utility::vector1< Real > free_data( free_score_list_.size(), 0.0 );
 	utility::vector1< Real > fixed_data( fixed_score_list_.size(), 0.0 );
 
-	for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
+	for ( core::Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
 		if ( !pretend_no_fa_rep || free_score_list_[ kk ] != fa_rep ) {
 			free_data[ kk ] = structure.energies().total_energies()[ free_score_list_[ kk ] ];
 		}
 	}
-	for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
+	for ( core::Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
 		if ( !pretend_no_fa_rep || fixed_score_list_[ kk ] != fa_rep ) {
 			fixed_data[ kk ] = structure.energies().total_energies()[ fixed_score_list_[ kk ] ];
 		}
@@ -4020,7 +4020,7 @@ IterativeOptEDriver::collect_dG_of_binding_data()
 		ScoreFunctionOP sfxn = create_unweighted_scorefunction();
 
 		bool const no_fa_rep = option[ optE::pretend_no_ddG_repulsion ]();
-		for ( Size ii = 1; ii <= dG_bound_unbound_pairs_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= dG_bound_unbound_pairs_.size(); ++ii ) {
 			DGBindOptEDataOP dg_data( new DGBindOptEData() );
 			dg_data->deltaG_bind( dG_binding_[ ii ] );
 			dg_data->bound_struct(   make_simple_ssd_from_pdb( dG_bound_unbound_pairs_[ ii ].first,  sfxn, no_fa_rep ) );
@@ -4071,7 +4071,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 		// this input system allows one to have multiple structures of the same exact sequence. this way, if a mutation is causing a slight clash
 		// or maybe creating a hydrogen bond in one structure but not in another, the better structure will be used for weight optimization.
 		// this can make a big difference in energies depending on what the weight on the fa_rep or hbond term, etc, is.
-		for ( Size ii = 1; ii <= ddg_mut_wt_pairs_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= ddg_mut_wt_pairs_.size(); ++ii ) {
 
 			DDGMutationOptEDataOP ddg_data;
 			UnfoldedStatePotential const & unfE_potential = ScoringManager::get_instance()->get_UnfoldedStatePotential( scoring::UNFOLDED_SCORE12 );
@@ -4157,7 +4157,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 			Real best_wt_rep( 12345678 ), best_mut_rep( 12345678 );
 			bool collect_best_rep( option[ optE::exclude_badrep_ddGs ].user() );
 
-			for ( Size jj = 1; jj <= wt_pdb_names.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= wt_pdb_names.size(); ++jj ) {
 
 
 				// since a given wt protein might have a few hundred characterized mutants, there's no point in scoring the
@@ -4212,12 +4212,12 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 						structure_bestfarep_map[ wts()+wt_pdb_names[ jj ] ] = best_wt_rep;
 					}
 
-					for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
+					for ( core::Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
 						if ( !option[ optE::pretend_no_ddG_repulsion ] || free_score_list_[ kk ] != fa_rep ) {
 							free_data[ kk ] = wt_structure.energies().total_energies()[ free_score_list_[ kk ] ];
 						}
 					}
-					for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
+					for ( core::Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
 						if ( !option[ optE::pretend_no_ddG_repulsion ] || fixed_score_list_[ kk ] != fa_rep ) {
 							fixed_data[ kk ] = wt_structure.energies().total_energies()[ fixed_score_list_[ kk ] ];
 						}
@@ -4265,7 +4265,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 
 			}
 
-			for ( Size jj = 1; jj <= mut_pdb_names.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= mut_pdb_names.size(); ++jj ) {
 				core::pose::Pose mut_structure;
 				if ( !read_silent ) {
 					if ( option[ in::file::centroid_input ] ) {
@@ -4309,12 +4309,12 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 				}
 
 
-				for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
+				for ( core::Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
 					if ( !option[ optE::pretend_no_ddG_repulsion ] || free_score_list_[ kk ] != fa_rep ) {
 						free_data[ kk ] = mut_structure.energies().total_energies()[ free_score_list_[ kk ] ];
 					}
 				}
-				for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
+				for ( core::Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
 					if ( !option[ optE::pretend_no_ddG_repulsion ] || fixed_score_list_[ kk ] != fa_rep ) {
 						fixed_data[ kk ] = mut_structure.energies().total_energies()[ fixed_score_list_[ kk ] ];
 					}
@@ -4343,7 +4343,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 				std::cerr << "Rank " << MPI_rank_ << " " << wt_pdb_names[ 1 ] << " vs " << mut_pdb_names[ 1 ] << std::endl;
 				utility_exit();
 			} else {
-				for ( Size jj = 0; jj < wt_seq.size(); ++jj ) {
+				for ( core::Size jj = 0; jj < wt_seq.size(); ++jj ) {
 					if ( discrepant_position == -1 ) {
 						if ( wt_seq[ jj ] != mut_seq[ jj ] ) {
 							discrepant_position = jj;
@@ -4419,7 +4419,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 		// this input system allows one to have multiple structures of the same exact sequence. this way, if a mutation is causing a slight clash
 		// or maybe creating a hydrogen bond in one structure but not in another, the better structure will be used for weight optimization.
 		// this can make a big difference in energies depending on what the weight on the fa_rep or hbond term, etc, is.
-		for ( Size ii = 1; ii <= ddG_bind_files_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= ddG_bind_files_.size(); ++ii ) {
 
 			DDGBindOptEDataOP ddg_bind_position_data( new DDGBindOptEData );
 
@@ -4485,7 +4485,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 			Real best_wt_complex_rep( 12345678 ), best_mut_complex_rep( 12345678 );
 			bool filtering_bad_ddGs( option[ optE::exclude_badrep_ddGs ].user() );
 
-			for ( Size jj = 1; jj <= wt_complex_pdb_names.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= wt_complex_pdb_names.size(); ++jj ) {
 
 				// since a given wt protein might have a few hundred characterized mutants, there's no point in scoring the
 				// wild type structure for each of those hundred mutants. we can score the wt once and save that score for
@@ -4515,10 +4515,10 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 
 					(*sfxn)( wt_complex );
 
-					for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
+					for ( core::Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
 						free_data[ kk ] = wt_complex.energies().total_energies()[ free_score_list_[ kk ] ];
 					}
-					for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
+					for ( core::Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
 						fixed_data[ kk ] = wt_complex.energies().total_energies()[ fixed_score_list_[ kk ] ];
 					}
 
@@ -4550,7 +4550,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 				}
 			}
 
-			for ( Size jj = 1; jj <= mut_complex_pdb_names.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= mut_complex_pdb_names.size(); ++jj ) {
 
 				pose::Pose mut_complex;
 				core::import_pose::pose_from_file( mut_complex, mut_complex_pdb_names[ jj ]  , core::import_pose::PDB_file);
@@ -4575,10 +4575,10 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 
 				(*sfxn)( mut_complex );
 
-				for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
+				for ( core::Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
 					free_data[ kk ] = mut_complex.energies().total_energies()[ free_score_list_[ kk ] ];
 				}
-				for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
+				for ( core::Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
 					fixed_data[ kk ] = mut_complex.energies().total_energies()[ fixed_score_list_[ kk ] ];
 				}
 
@@ -4592,7 +4592,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 				ddg_bind_position_data->add_mutant_complex( ssd );
 			}
 
-			for ( Size jj = 1; jj <= wt_unbounded_pdb_names.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= wt_unbounded_pdb_names.size(); ++jj ) {
 
 				if ( structure_map.find( wt_unbounds_list_file()+wt_unbounded_pdb_names[ jj ] ) == structure_map.end() ) {
 
@@ -4616,10 +4616,10 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 
 					(*sfxn)( wt_unbounded );
 
-					for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
+					for ( core::Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
 						free_data[ kk ] = wt_unbounded.energies().total_energies()[ free_score_list_[ kk ] ];
 					}
-					for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
+					for ( core::Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
 						fixed_data[ kk ] = wt_unbounded.energies().total_energies()[ fixed_score_list_[ kk ] ];
 					}
 
@@ -4632,7 +4632,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 				}
 			}
 
-			for ( Size jj = 1; jj <= mut_unbounded_pdb_names.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= mut_unbounded_pdb_names.size(); ++jj ) {
 
 				pose::Pose mut_unbounded;
 				core::import_pose::pose_from_file( mut_unbounded, mut_unbounded_pdb_names[ jj ]  , core::import_pose::PDB_file);
@@ -4654,10 +4654,10 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 
 				(*sfxn)( mut_unbounded );
 
-				for ( Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
+				for ( core::Size kk = 1; kk <= free_score_list_.size(); ++kk ) {
 					free_data[ kk ] = mut_unbounded.energies().total_energies()[ free_score_list_[ kk ] ];
 				}
-				for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
+				for ( core::Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
 					fixed_data[ kk ] = mut_unbounded.energies().total_energies()[ fixed_score_list_[ kk ] ];
 				}
 
@@ -4675,7 +4675,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 				std::cerr << mut_complex_seq << std::endl;
 				utility_exit();
 			} else {
-				for ( Size jj = 0; jj < wt_complex_seq.size(); ++jj ) {
+				for ( core::Size jj = 0; jj < wt_complex_seq.size(); ++jj ) {
 					if ( wt_complex_seq[ jj ] != mut_complex_seq[ jj ] ) {
 						// we're going to have to store all of the mutations if the get_score method is to work correctly
 						// but we want to keep the wt and mut and position together
@@ -4730,8 +4730,8 @@ IterativeOptEDriver::measure_sequence_recovery(
 	utility::vector1< std::string > const & names_for_output_pdbs,
 	core::scoring::ScoreFunctionOP sfxn,
 	//std::list< core::pack::task::operation::TaskOperationOP > operation_list,
-	Size & nresidues_designed,
-	Size & nresidues_recovered
+	core::Size & nresidues_designed,
+	core::Size & nresidues_recovered
 )
 {
 	using namespace basic::options;
@@ -4742,7 +4742,7 @@ IterativeOptEDriver::measure_sequence_recovery(
 
 	//sleep( MPI_rank_ );
 	//std::cout << "NODE: " << MPI_rank_ << " with reference weight " << sfxn->weights()[ ref ] << " and refE's: ";
-	//for ( Size ii = 1; ii <= sfxn->energy_method_options().method_weights( ref ).size(); ++ii ) {
+	//for ( core::Size ii = 1; ii <= sfxn->energy_method_options().method_weights( ref ).size(); ++ii ) {
 	// std::cout << sfxn->energy_method_options().method_weights( ref )[ ii ] << " ";
 	//}
 	//std::cout << std::endl;
@@ -4786,7 +4786,7 @@ IterativeOptEDriver::measure_sequence_recovery(
 		design_mover = pack_mover;
 	}
 
-	for ( Size poseindex = 1; poseindex <= native_pdb_names.size(); ++poseindex ) {
+	for ( core::Size poseindex = 1; poseindex <= native_pdb_names.size(); ++poseindex ) {
 		TR << "begin measure_sequence_recovery(): PDB: " << native_pdb_names[ poseindex ] << std::endl;
 		/// read the pdb into a pose
 		core::pose::Pose pose;
@@ -4824,11 +4824,11 @@ IterativeOptEDriver::measure_sequence_recovery(
 		// << "score1: " << score1 << " score2: " << score2 << std::endl;
 		//}
 
-		Size const nresidues_pose( pose.size() );
+		core::Size const nresidues_pose( pose.size() );
 
 		/// record original sequence (for all residues in pose)
 		utility::vector1< chemical::AA > full_input_sequence( nresidues_pose );
-		for ( Size resi = 1; resi <= nresidues_pose; ++resi ) {
+		for ( core::Size resi = 1; resi <= nresidues_pose; ++resi ) {
 			full_input_sequence[ resi ] = pose.residue(resi).aa();
 		}
 
@@ -4853,7 +4853,7 @@ IterativeOptEDriver::measure_sequence_recovery(
 
 
 		/// measure seq recov
-		for ( Size resi = 1; resi <= nresidues_pose; ++resi ) {
+		for ( core::Size resi = 1; resi <= nresidues_pose; ++resi ) {
 			// do not compile statistics for residues that were not designed
 			if ( ! ptask->being_designed(resi) ) continue;
 			if ( ! pose.residue(resi).is_protein() ) continue;
@@ -4890,8 +4890,8 @@ IterativeOptEDriver::measure_rotamer_recovery(
 	utility::vector1< std::string > const & , // names_for_output_pdbs,
 	core::scoring::ScoreFunctionOP sfxn,
 	//std::list< core::pack::task::operation::TaskOperationOP > operation_list,
-	Size & nresidues_repacked,
-	Size & nrotamers_recovered
+	core::Size & nresidues_repacked,
+	core::Size & nrotamers_recovered
 )
 {
 	using namespace basic::options;
@@ -4900,7 +4900,7 @@ IterativeOptEDriver::measure_rotamer_recovery(
 
 	//sleep( MPI_rank_ );
 	//std::cout << "NODE: " << MPI_rank_ << " with reference weight " << sfxn->weights()[ ref ] << " and refE's: ";
-	//for ( Size ii = 1; ii <= sfxn->energy_method_options().method_weights( ref ).size(); ++ii ) {
+	//for ( core::Size ii = 1; ii <= sfxn->energy_method_options().method_weights( ref ).size(); ++ii ) {
 	// std::cout << sfxn->energy_method_options().method_weights(ref )[ ii ] << " ";
 	//}
 	//std::cout << std::endl;
@@ -4919,12 +4919,12 @@ IterativeOptEDriver::measure_rotamer_recovery(
 	pack_mover->task_factory( task_factory_for_repacking );
 	pack_mover->score_function( sfxn );
 
-	for ( Size poseindex = 1; poseindex <= native_pdb_names.size(); ++poseindex ) {
+	for ( core::Size poseindex = 1; poseindex <= native_pdb_names.size(); ++poseindex ) {
 		/// read the pdb into a pose
 		core::pose::Pose pose, start_pose;
 		pose = native_poses_[ poseindex ];
 		start_pose = native_poses_[ poseindex ];
-		Size const nresidues_pose( pose.size() );
+		core::Size const nresidues_pose( pose.size() );
 
 		//Real score2 = (*sfxn2)( pose );
 		//Real score1 = (*sfxn)( pose );
@@ -4951,7 +4951,7 @@ IterativeOptEDriver::measure_rotamer_recovery(
 			ptask = task_factory_for_repacking->create_task_and_apply_taskoperations( pose ) ;
 		}
 
-		for ( Size resi = 1; resi <= nresidues_pose; ++resi ) {
+		for ( core::Size resi = 1; resi <= nresidues_pose; ++resi ) {
 			// do not compile statistics for residues that were not repacked
 			if ( ! ptask->being_packed(resi) ) continue;
 			if ( ! pose.residue(resi).is_protein() ) continue;
@@ -4963,7 +4963,7 @@ IterativeOptEDriver::measure_rotamer_recovery(
 			rotamer_from_chi( pose.residue(resi), repacked_rotbins );
 
 			bool all_chi_match( true );
-			for ( Size chi_index = 1; chi_index <=original_rotbins.size(); ++chi_index ) {
+			for ( core::Size chi_index = 1; chi_index <=original_rotbins.size(); ++chi_index ) {
 				if ( original_rotbins[ chi_index ] != repacked_rotbins[ chi_index ] ) {
 					all_chi_match = false;
 					break;
@@ -4986,7 +4986,7 @@ IterativeOptEDriver::measure_rotamer_recovery(
 
 ///
 Real
-IterativeOptEDriver::opte_weight_mixing_factor( Size outer_loop_counter, Size inner_loop_counter )
+IterativeOptEDriver::opte_weight_mixing_factor( core::Size outer_loop_counter, core::Size inner_loop_counter )
 {
 	if ( outer_loop_counter == 1 ) {
 		return 1.0;
@@ -5014,7 +5014,7 @@ IterativeOptEDriver::initialize_free_and_fixed( core::scoring::EnergyMap & free_
 	if ( option[ optE::free ].user() && option[ optE::fixed ].user() ) {
 		utility::io::izstream input_free( option[ optE::free ]() );
 		if ( !input_free ) utility_exit_with_message("Couldn't find input file for 'free' parameters");
-		Size free_line_number = 1;
+		core::Size free_line_number = 1;
 		while ( input_free ) {
 			utility::vector1< std::string > line_tokens = core::pack::task::tokenize_line( input_free );
 			if ( line_tokens.size() == 0 ) {
@@ -5038,13 +5038,13 @@ IterativeOptEDriver::initialize_free_and_fixed( core::scoring::EnergyMap & free_
 				if ( option[ optE::design_first ].user() && option[ optE::design_first ].value() ) {
 					std::cerr << "\n\n";
 					std::cerr << "Error reading weight file line: " << free_line_number << " ";
-					for ( Size ii = 1; ii <= line_tokens.size(); ++ii ) {
+					for ( core::Size ii = 1; ii <= line_tokens.size(); ++ii ) {
 						std::cerr << line_tokens[ ii ] << " ";
 					}
 					std::cerr << std::endl << "Expected exactly 2 arguments (i.e. you cannot ask for a random starting weight!) since optE:design_first flag found on command line" << std::endl;
 				} else {
 					std::cerr << "Error reading free weight file line: " << free_line_number << " ";
-					for ( Size ii = 1; ii <= line_tokens.size(); ++ii ) {
+					for ( core::Size ii = 1; ii <= line_tokens.size(); ++ii ) {
 						std::cerr << ii << ": " << line_tokens[ ii ];
 					}
 					std::cerr << std::endl << "Expected only 2 tokens" << std::endl;
@@ -5056,7 +5056,7 @@ IterativeOptEDriver::initialize_free_and_fixed( core::scoring::EnergyMap & free_
 
 		utility::io::izstream input_fixed( option[ optE::fixed ]() );
 		if ( !input_fixed ) utility_exit_with_message("Couldn't find input file for 'fixed' parameters");
-		Size fixed_line_number = 1;
+		core::Size fixed_line_number = 1;
 		while ( input_fixed ) {
 			utility::vector1< std::string > line_tokens = core::pack::task::tokenize_line( input_fixed );
 			if ( line_tokens.size() == 0 ) {
@@ -5071,7 +5071,7 @@ IterativeOptEDriver::initialize_free_and_fixed( core::scoring::EnergyMap & free_
 				}
 			} else {
 				std::cerr << "Error reading free weight file line: " << free_line_number << " ";
-				for ( Size ii = 1; ii <= line_tokens.size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= line_tokens.size(); ++ii ) {
 					std::cerr << ii << ": " << line_tokens[ ii ];
 				}
 				std::cerr << std::endl << "Expected exactly 2 tokens" << std::endl;
@@ -5126,14 +5126,14 @@ IterativeOptEDriver::initialize_free_and_fixed( core::scoring::EnergyMap & free_
 	}
 
 	if ( MPI_rank_ == 0 ) {
-		for ( Size ii = 1; ii <= n_score_types; ++ii ) {
+		for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 			if ( free_parameters[ (ScoreType) ii ] != 0 ) {
 				TR_VERBOSE << "initialize_free_and_fixed(): initial free_parameters: " << name_from_score_type( (ScoreType) ii )
 					<< " " << free_parameters[ (ScoreType) ii ] << std::endl;
 			}
 		}
 		//fixed_parameters[ vdw ] = 1;
-		for ( Size ii = 1; ii <= n_score_types; ++ii ) {
+		for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 			if ( fixed_parameters[ (ScoreType) ii ] != 0 ) {
 				TR_VERBOSE << "initialize_free_and_fixed(): initial fixed_parameters: " << name_from_score_type( (ScoreType) ii )
 					<< " " << fixed_parameters[ (ScoreType) ii ] << std::endl;
@@ -5161,14 +5161,14 @@ IterativeOptEDriver::converged(
 		runtime_assert( reference_energies_prev.size() == reference_energies_curr.size() );
 	}
 
-	for ( Size ii = 1; ii <= n_score_types; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 		if ( std::abs( free_parameters_prev[ (ScoreType) ii ] - free_parameters_curr[ (ScoreType) ii ]) > 0.001 ) {
 			return false;
 		}
 	}
 
 	if ( ! option[ optE::dont_use_reference_energies ].value() ) {
-		for ( Size ii = 1; ii <= reference_energies_prev.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= reference_energies_prev.size(); ++ii ) {
 			if ( std::abs( reference_energies_prev[ ii ] - reference_energies_curr[ ii ]) > 0.001 ) {
 				return false;
 			}
@@ -5176,14 +5176,14 @@ IterativeOptEDriver::converged(
 	}
 
 	TR << "Converged: " << std::endl;
-	for ( Size ii = 1; ii <= n_score_types; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 		if ( free_parameters_prev[ (ScoreType) ii ] != 0 || free_parameters_curr[ (ScoreType) ii ] != 0 ) {
 			TR << name_from_score_type( ScoreType( ii ) ) << " prev " << free_parameters_prev[ (ScoreType) ii ] << " curr " << free_parameters_curr[ (ScoreType) ii ] << std::endl;
 		}
 	}
 
 	if ( ! option[ optE::dont_use_reference_energies ].value() ) {
-		for ( Size ii = 1; ii <= reference_energies_prev.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= reference_energies_prev.size(); ++ii ) {
 			TR <<  ii << " prev " << reference_energies_prev[ ii ] << " curr " << reference_energies_curr[ ii ] << std::endl;
 		}
 	}
@@ -5195,12 +5195,12 @@ IterativeOptEDriver::converged(
 void
 IterativeOptEDriver::write_parameters_to_std_out( core::scoring::EnergyMap & free_parameters, utility::vector1< Real > const & reference_energies )
 {
-	for ( Size ii = 1; ii <= n_score_types; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_score_types; ++ii ) {
 		if ( free_parameters[ (ScoreType) ii ] != 0 ) {
 			TR << name_from_score_type( ScoreType( ii ) ) << " " << free_parameters[ (ScoreType) ii ] << std::endl;
 		}
 	}
-	for ( Size ii = 1; ii <= reference_energies.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= reference_energies.size(); ++ii ) {
 		TR << "Reference energy for " <<  ii << " " << reference_energies[ ii ] << std::endl;
 	}
 
@@ -5217,14 +5217,14 @@ IterativeOptEDriver::write_parameters_to_std_out( core::scoring::EnergyMap & fre
 ///
 void
 IterativeOptEDriver::setup_pdbnames_next_round(
-	Size const outer_loop_counter,
+	core::Size const outer_loop_counter,
 	utility::vector1< std::string  > & pdbs_next_round,
 	utility::vector1< std::string > const & native_pdb_names
 )
 {
 	// assumption, native_pdb_names end in ".pdb"
 	pdbs_next_round.resize( native_pdb_names.size() );
-	for ( Size ii = 1; ii <= native_pdb_names.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= native_pdb_names.size(); ++ii ) {
 		//std::string native_substr = native_pdb_names[ ii ].substr( 0, native_pdb_names[ ii ].size() - 4 );
 		utility::file::FileName natfilename( native_pdb_names[ ii ] );
 #ifndef USEMPI
@@ -5282,7 +5282,7 @@ load_component_weights(
 	if ( option[ optE::component_weights ].user() ) {
 		utility::io::izstream input( option[ optE::component_weights ]() );
 		if ( !input ) utility_exit_with_message("Couldn't find input file for 'component_weights_file' parameters");
-		Size line_number = 1; Size nread = 0;
+		core::Size line_number = 1; core::Size nread = 0;
 		while ( input ) {
 			utility::vector1< std::string > line_tokens = core::pack::task::tokenize_line( input );
 			if ( line_tokens.size() == 0 ) {
@@ -5297,7 +5297,7 @@ load_component_weights(
 				++nread;
 			} else {
 				std::cerr << "Error reading optE component weights file line: " << line_number << " ";
-				for ( Size ii = 1; ii <= line_tokens.size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= line_tokens.size(); ++ii ) {
 					std::cerr << ii << ": " << line_tokens[ ii ];
 				}
 				std::cerr << std::endl << "Expected exactly 2 tokens" << std::endl;

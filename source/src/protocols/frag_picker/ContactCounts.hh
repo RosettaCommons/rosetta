@@ -19,7 +19,7 @@
 
 #include <protocols/frag_picker/ContactTypes.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 
@@ -31,7 +31,7 @@
 namespace protocols {
 namespace frag_picker {
 
-class ContactCounts : public utility::pointer::ReferenceCount {
+class ContactCounts : public utility::VirtualBase {
 public:
 
 	ContactCounts() {}

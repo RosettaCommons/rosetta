@@ -98,13 +98,13 @@ public:// mutator
 	void ratio_cutoff( Real const & val );
 
 	/// @brief
-	void set_region( Size const val1, Size const val2 );
+	void set_region( core::Size const val1, core::Size const val2 );
 
 	/// @brief
-	void begin( Size const begin );
+	void begin( core::Size const begin );
 
 	/// @brief
-	void end( Size const end );
+	void end( core::Size const end );
 
 
 public:
@@ -139,7 +139,7 @@ private:
 	Real coverage_;
 
 	/// @brief
-	utility::vector1< Size > goodfrags_;
+	utility::vector1< core::Size > goodfrags_;
 
 	/// @brief
 	FragSetOP frag_;

@@ -133,7 +133,7 @@ MPDockingSetupMover::parse_my_tag(
 		pdbs.push_back( tag->getOption<std::string>("pose2", "protocols/membrane/1AFO_AB.pdb") );
 
 		// put poses into private vector
-		for ( Size i = 1; i <= pdbs.size(); ++i ) {
+		for ( core::Size i = 1; i <= pdbs.size(); ++i ) {
 			PoseOP pose = core::import_pose::pose_from_file( pdbs[i] , core::import_pose::PDB_file);
 			poses_.push_back( pose );
 		}
@@ -306,7 +306,7 @@ void MPDockingSetupMover::read_poses() {
 	utility::vector1< std::string > pdbs = option[OptionKeys::in::file::s]();
 
 	// put poses into private vector
-	for ( Size i = 1; i <= pdbs.size(); ++i ) {
+	for ( core::Size i = 1; i <= pdbs.size(); ++i ) {
 		PoseOP pose = core::import_pose::pose_from_file( pdbs[i] , core::import_pose::PDB_file);
 		poses_.push_back( pose );
 	}
@@ -343,7 +343,7 @@ void MPDockingSetupMover::init_from_cmd() {
 ////////////////////////////////////////////////////////////////////////////////
 
 // transform pose into membrane
-void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector center, Vector normal, std::string spanfile, Size partner ) {
+void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector center, Vector normal, std::string spanfile, core::Size partner ) {
 
 	using namespace protocols::membrane::geometry;
 	using namespace protocols::membrane;

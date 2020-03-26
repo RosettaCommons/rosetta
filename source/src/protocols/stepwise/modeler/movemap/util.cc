@@ -56,7 +56,7 @@ namespace movemap {
 void
 figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 	core::pose::Pose const & pose,
-	utility::vector1< Size > const & working_minimize_res,
+	utility::vector1< core::Size > const & working_minimize_res,
 	bool const move_takeoff_torsions /* = true */ ){
 	core::pose::toolbox::AtomLevelDomainMapOP atom_level_domain_map( new core::pose::toolbox::AtomLevelDomainMap( pose ) );
 	figure_out_stepwise_movemap( mm, atom_level_domain_map, pose, working_minimize_res, move_takeoff_torsions );
@@ -68,12 +68,12 @@ void
 figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 	core::pose::toolbox::AtomLevelDomainMapOP & atom_level_domain_map,
 	core::pose::Pose const & pose,
-	utility::vector1< Size > const & working_fixed_res,
-	utility::vector1< Size > const & working_extra_minimize_res,
+	utility::vector1< core::Size > const & working_fixed_res,
+	utility::vector1< core::Size > const & working_extra_minimize_res,
 	bool const move_takeoff_torsions /* = true */ ){
 
 	utility::vector1< core::Size > working_minimize_res;
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( !working_fixed_res.has_value( n ) || working_extra_minimize_res.has_value( n ) ) working_minimize_res.push_back( n );
 	}
 	atom_level_domain_map = utility::pointer::make_shared< core::pose::toolbox::AtomLevelDomainMap >( pose );
@@ -85,11 +85,11 @@ void
 figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 	core::pose::toolbox::AtomLevelDomainMapOP atom_level_domain_map,
 	core::pose::Pose const & pose,
-	utility::vector1< Size > const & working_minimize_res,
+	utility::vector1< core::Size > const & working_minimize_res,
 	bool const move_takeoff_torsions /* = true */ ) {
 	using namespace core::id;
-	Size const nres( pose.size() );
-	for ( Size n = 1; n <= nres; n++ ) {
+	core::Size const nres( pose.size() );
+	for ( core::Size n = 1; n <= nres; n++ ) {
 		if ( working_minimize_res.has_value( n )
 				&& ( n != nres || pose.residue_type( nres ).aa() != core::chemical::aa_vrt ) ) atom_level_domain_map->set( n, true );
 		if ( !working_minimize_res.has_value( n ) ) atom_level_domain_map->set_fixed_if_moving( n );

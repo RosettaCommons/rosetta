@@ -56,7 +56,7 @@ public:
 	initialize_from_enzcst_io(
 		core::conformation::Residue const & target_residue,
 		EnzConstraintIOCOP enzcst_io,
-		Size invrot_geomcst,
+		core::Size invrot_geomcst,
 		core::pose::PoseCOP pose = nullptr
 	);
 
@@ -64,7 +64,7 @@ public:
 	initialize_from_enzcst_io_and_invrots(
 		std::list< core::conformation::ResidueCOP > const & all_invrots,
 		EnzConstraintIOCOP enzcst_io,
-		Size invrot_geomcst,
+		core::Size invrot_geomcst,
 		core::pose::PoseCOP pose = nullptr
 	);
 
@@ -115,7 +115,7 @@ public:
 
 private:
 
-	Size geom_cst_; //which geometric constraint the invrots belong to
+	core::Size geom_cst_; //which geometric constraint the invrots belong to
 
 	utility::vector1< invrots_node_ptrs_pair > invrots_and_next_nodes_;
 

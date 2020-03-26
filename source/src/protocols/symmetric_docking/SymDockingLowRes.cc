@@ -152,7 +152,7 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
-	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
+	std::map< core::Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
 	rb_mover_ = utility::pointer::make_shared< rigid::RigidBodyDofSeqPerturbMover >( dofs , rot_magnitude_, trans_magnitude_ );
 
@@ -164,7 +164,7 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 
 	if ( basic::options::option[basic::options::OptionKeys::docking::multibody].user() ) {
 		utility::vector1<int> mbjumps = basic::options::option[basic::options::OptionKeys::docking::multibody]();
-		for ( Size ij = 1; ij <= symm_conf.Symmetry_Info()->get_njumps_subunit(); ++ij ) {
+		for ( core::Size ij = 1; ij <= symm_conf.Symmetry_Info()->get_njumps_subunit(); ++ij ) {
 			if ( mbjumps.size()==0 || std::find(mbjumps.begin(),mbjumps.end(),(int)ij)!=mbjumps.end() ) {
 				TR << "add subunit jump mover " << ij << std::endl;
 				docking_lowres_protocol_->add_mover( utility::pointer::make_shared< rigid::RigidBodyPerturbMover >(ij,rot_magnitude_,trans_magnitude_) );

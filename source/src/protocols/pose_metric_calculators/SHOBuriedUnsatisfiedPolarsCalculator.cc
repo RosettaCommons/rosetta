@@ -97,7 +97,7 @@ SHOBuriedUnsatisfiedPolarsCalculator::SHOBuriedUnsatisfiedPolarsCalculator(
 ///   with any scoring functions using SHO.
 ///
 SHOBuriedUnsatisfiedPolarsCalculator::SHOBuriedUnsatisfiedPolarsCalculator(
-	Real sho_cutoff, utility::vector1<Size> const & tgt_res_idxs,
+	Real sho_cutoff, utility::vector1<core::Size> const & tgt_res_idxs,
 	core::scoring::ScoreFunctionCOP sfxn) :
 
 	sho_meth_(create_ExactSHOEnergy_from_cmdline(sfxn->energy_method_options())),
@@ -133,8 +133,8 @@ void SHOBuriedUnsatisfiedPolarsCalculator::lookup(std::string const &key,
 
 	if ( key == "num_buns" ) {
 		basic::check_cast(valptr, &num_burunsat_atoms_,
-			"the number of SHO buried unsatisfied atoms must be of type Size");
-		(static_cast<basic::MetricValue<Size> *>(valptr))->
+			"the number of SHO buried unsatisfied atoms must be of type core::Size");
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->
 			set(num_burunsat_atoms_);
 	} else {
 		basic::Error() <<
@@ -172,7 +172,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::recompute(
 
 	// compute SHO energy for each polar atom
 	core::Size N = ps.size();
-	for ( Size i=1; i<=N; ++i ) {
+	for ( core::Size i=1; i<=N; ++i ) {
 
 		core::conformation::Residue const& rsd = ps.residue(i);
 
@@ -181,7 +181,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::recompute(
 				hnum = rsd.Hpos_polar().begin(),
 				hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 
-			Size const h( *hnum );
+			core::Size const h( *hnum );
 			sho_energies_[AtomID(h, i)] =
 				sho_meth_->compute_sho_donor_atom_energy(rsd, i, h, ps);
 		}
@@ -191,7 +191,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::recompute(
 				anum = rsd.accpt_pos().begin(),
 				anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 
-			Size const acc( *anum );
+			core::Size const acc( *anum );
 			sho_energies_[AtomID(acc, i)] =
 				sho_meth_->compute_sho_acceptor_atom_energy(rsd, i, acc, ps);
 		}
@@ -218,11 +218,11 @@ void SHOBuriedUnsatisfiedPolarsCalculator::recompute(
 void SHOBuriedUnsatisfiedPolarsCalculator::print_sho_energies(
 	core::pose::Pose const& ps) {
 
-	Size const N = ps.size();
-	for ( Size i=1; i<=N; ++i ) {
+	core::Size const N = ps.size();
+	for ( core::Size i=1; i<=N; ++i ) {
 		core::conformation::Residue const& rsd = ps.residue(i);
-		Size const M = rsd.natoms();
-		for ( Size j=1; j<=M; ++j ) {
+		core::Size const M = rsd.natoms();
+		for ( core::Size j=1; j<=M; ++j ) {
 			AtomID aid(j,i);
 			print_atom_info(aid, ps);
 			std::cout << ": " << sho_energies_[AtomID(j, i)] << std::endl;
@@ -252,7 +252,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::print_sho_energies(
 ///  acceptors follow the order specified by accpt_pos().
 ///
 void SHOBuriedUnsatisfiedPolarsCalculator::residue_partition(
-	core::pose::Pose const& ps, Size tgtidx) {
+	core::pose::Pose const& ps, core::Size tgtidx) {
 
 	core::conformation::Residue const& rsd = ps.residue(tgtidx);
 
@@ -292,13 +292,13 @@ void SHOBuriedUnsatisfiedPolarsCalculator::residue_partition(
 void SHOBuriedUnsatisfiedPolarsCalculator::partition(
 	core::pose::Pose const& ps) {
 
-	Size const N = ps.size();
+	core::Size const N = ps.size();
 
 	switch(search_typ_) {
 
 	// select all polar atoms in the pose
 	case ALL_ATOMS : {
-		for ( Size i=1; i<=N; ++i ) {
+		for ( core::Size i=1; i<=N; ++i ) {
 			residue_partition(ps, i);
 		}
 		break;
@@ -306,8 +306,8 @@ void SHOBuriedUnsatisfiedPolarsCalculator::partition(
 
 		// select all polar atoms in the target residue set
 	case TGT_RES : {
-		const Size T = tgt_res_idxs_.size();
-		for ( Size i=1; i<=T; ++i ) {
+		const core::Size T = tgt_res_idxs_.size();
+		for ( core::Size i=1; i<=T; ++i ) {
 			residue_partition(ps, tgt_res_idxs_[i]);
 		}
 		break;
@@ -318,7 +318,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::partition(
 
 		using namespace core::chemical;
 		AA TGTAA = aa_from_oneletter_code(tgt_amino_[0]);
-		for ( Size i=1; i<=N; ++i ) {
+		for ( core::Size i=1; i<=N; ++i ) {
 			core::conformation::Residue const& rsd = ps.residue(i);
 			if ( rsd.aa() == TGTAA ) {
 				assign_atom(AtomID(rsd.atom_index(tgt_atom_), i));
@@ -330,7 +330,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::partition(
 		// select the target atom from every residue that has it
 	case ANY_AA__TGT_ATOM : {
 
-		for ( Size i=1; i<=N; ++i ) {
+		for ( core::Size i=1; i<=N; ++i ) {
 			core::conformation::Residue const& rsd = ps.residue(i);
 			if ( rsd.has(tgt_atom_) ) {
 				assign_atom(AtomID(rsd.atom_index(tgt_atom_), i));
@@ -393,8 +393,8 @@ void SHOBuriedUnsatisfiedPolarsCalculator::print_atom_subset(
 	utility::vector1<AtomID> const& subset,
 	core::pose::Pose const& ps) const {
 
-	Size N = subset.size();
-	for ( Size i=1; i<=N; ++i ) {
+	core::Size N = subset.size();
+	for ( core::Size i=1; i<=N; ++i ) {
 		AtomID aid = subset[i];
 		print_atom_info(aid, ps);
 
@@ -436,18 +436,18 @@ Real SHOBuriedUnsatisfiedPolarsCalculator::hbond_energy(AtomID aid,
 		hbond_set_->atom_hbonds(aid);
 
 	core::Size N = hbonds.size();
-	for ( Size i=1; i<=N; ++i ) {
+	for ( core::Size i=1; i<=N; ++i ) {
 
 		// get weight for current H-bond's energy
 		core::scoring::hbonds::HBondCOP const& bond = hbonds[i];
 
-		Size dhatm = bond->don_hatm();
-		Size dresi = bond->don_res();
+		core::Size dhatm = bond->don_hatm();
+		core::Size dresi = bond->don_res();
 		core::conformation::Residue const& dres = ps.residue(dresi);
-		Size datm = dres.atom_base(dhatm);
+		core::Size datm = dres.atom_base(dhatm);
 
-		Size aatm = bond->acc_atm();
-		Size aresi = bond->acc_res();
+		core::Size aatm = bond->acc_atm();
+		core::Size aresi = bond->acc_res();
 		core::conformation::Residue const& ares = ps.residue(aresi);
 
 		core::scoring::hbonds::HBEvalTuple hbe_type(datm, dres, aatm, ares);
@@ -515,10 +515,10 @@ void SHOBuriedUnsatisfiedPolarsCalculator::print_all_info(
 	std::cout << "target atom name: " << tgt_atom_ << std::endl;
 
 	std::cout << "target residue indexes in pose: ";
-	Size const T = tgt_res_idxs_.size();
+	core::Size const T = tgt_res_idxs_.size();
 	if ( T ) {
 		// ith output field contains ith target residue index (i=1,...,T)
-		for ( Size i=1; i<=T; ++i ) {
+		for ( core::Size i=1; i<=T; ++i ) {
 			std::cout << tgt_res_idxs_[i] << ' ';
 		}
 	} else {
@@ -592,7 +592,7 @@ void SHOBuriedUnsatisfiedPolarsCalculator::recompute_and_print(
 /// @details: blank chain identifiers and insertion codes must be specified
 ///  with the '_' character.
 ///
-void residue_subset(std::string setf, utility::vector1<Size>& rset,
+void residue_subset(std::string setf, utility::vector1<core::Size>& rset,
 	core::pose::Pose &ps) {
 
 	std::ifstream setfs(setf.c_str());
@@ -637,15 +637,15 @@ protocols::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator::save( 
 	// arc( CEREAL_NVP( sho_meth_ ) ); // core::scoring::geometric_solvation::ExactOccludedHbondSolEnergyOP
 	// EXEMPT sho_meth_
 	arc( CEREAL_NVP( sho_cutoff_ ) ); // core::Real
-	arc( CEREAL_NVP( tgt_res_idxs_ ) ); // utility::vector1<Size>
+	arc( CEREAL_NVP( tgt_res_idxs_ ) ); // utility::vector1<core::Size>
 	arc( CEREAL_NVP( tgt_amino_ ) ); // std::string
 	arc( CEREAL_NVP( tgt_atom_ ) ); // std::string
 	arc( CEREAL_NVP( hbond_set_ ) ); // core::scoring::hbonds::HBondSet
 	arc( CEREAL_NVP( sho_energies_ ) ); // std::map<AtomID, Real>
 	arc( CEREAL_NVP( burunsat_atoms_ ) ); // utility::vector1<AtomID>
-	arc( CEREAL_NVP( num_burunsat_atoms_ ) ); // Size
+	arc( CEREAL_NVP( num_burunsat_atoms_ ) ); // core::Size
 	arc( CEREAL_NVP( other_atoms_ ) ); // utility::vector1<AtomID>
-	arc( CEREAL_NVP( num_other_atoms_ ) ); // Size
+	arc( CEREAL_NVP( num_other_atoms_ ) ); // core::Size
 	arc( CEREAL_NVP( sfxn_ ) ); // core::scoring::ScoreFunctionCOP
 }
 
@@ -658,7 +658,7 @@ protocols::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator::load( 
 	// arc( sho_meth_ ); // core::scoring::geometric_solvation::ExactOccludedHbondSolEnergyOP
 
 	arc( sho_cutoff_ ); // core::Real
-	arc( tgt_res_idxs_ ); // utility::vector1<Size>
+	arc( tgt_res_idxs_ ); // utility::vector1<core::Size>
 	arc( tgt_amino_ ); // std::string
 	arc( tgt_atom_ ); // std::string
 	std::shared_ptr< core::scoring::hbonds::HBondSet > local_hbs;
@@ -666,9 +666,9 @@ protocols::pose_metric_calculators::SHOBuriedUnsatisfiedPolarsCalculator::load( 
 	hbond_set_ = local_hbs;
 	arc( sho_energies_ ); // std::map<AtomID, Real>
 	arc( burunsat_atoms_ ); // utility::vector1<AtomID>
-	arc( num_burunsat_atoms_ ); // Size
+	arc( num_burunsat_atoms_ ); // core::Size
 	arc( other_atoms_ ); // utility::vector1<AtomID>
-	arc( num_other_atoms_ ); // Size
+	arc( num_other_atoms_ ); // core::Size
 	std::shared_ptr< core::scoring::ScoreFunction > local_sfxn;
 	arc( local_sfxn ); // core::scoring::ScoreFunctionCOP
 	sfxn_ = local_sfxn; // copy the non-const pointer(s) into the const pointer(s)

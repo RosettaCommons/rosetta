@@ -25,7 +25,7 @@
 #endif
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace core {
@@ -64,7 +64,7 @@ enum min_pair_data {
 };
 
 
-class ResSingleMinimizationData : public utility::pointer::ReferenceCount
+class ResSingleMinimizationData : public utility::VirtualBase
 {
 public:
 	typedef basic::datacache::CacheableData    CacheableData;
@@ -90,7 +90,7 @@ private:
 
 };
 
-class ResPairMinimizationData : public utility::pointer::ReferenceCount
+class ResPairMinimizationData : public utility::VirtualBase
 {
 public:
 	typedef basic::datacache::CacheableData    CacheableData;

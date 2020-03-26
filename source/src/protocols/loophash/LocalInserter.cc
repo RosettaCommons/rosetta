@@ -138,7 +138,7 @@ LocalInserter_SimpleMin::make_local_bb_change_close_gaps(
 
 	// set newpose
 	protocols::loops::Loops exclude_region;
-	utility::vector1 < Size > excluded_res;
+	utility::vector1 < core::Size > excluded_res;
 	exclude_region.add_loop( protocols::loops::Loop( res_pos, res_pos + new_bs.length() ) );
 	//core::pose::Pose newpose( original_pose );
 	transfer_phi_psi( original_pose, newpose );
@@ -146,7 +146,7 @@ LocalInserter_SimpleMin::make_local_bb_change_close_gaps(
 
 
 	// fix gaps between ir and jr if it exists by idealizing every position
-	for ( Size idx = res_pos, end_pos = res_pos + new_bs.length(); idx <= end_pos; idx ++ ) {
+	for ( core::Size idx = res_pos, end_pos = res_pos + new_bs.length(); idx <= end_pos; idx ++ ) {
 		conformation::insert_ideal_bonds_at_polymer_junction( idx, newpose.conformation() );
 		excluded_res.push_back(idx);
 	}

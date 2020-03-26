@@ -19,7 +19,7 @@
 #include <core/types.hh>
 
 // Project headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++
@@ -41,7 +41,7 @@ public:
 };
 /////////////////////////////////
 
-class RNA_FittedTorsionInfo : public utility::pointer::ReferenceCount {
+class RNA_FittedTorsionInfo : public utility::VirtualBase {
 
 public:
 	typedef utility::vector1< GaussianParameter > GaussianParameterSet;

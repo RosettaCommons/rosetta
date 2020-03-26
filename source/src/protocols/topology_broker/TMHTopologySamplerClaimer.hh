@@ -37,7 +37,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -146,8 +146,8 @@ private:
 	core::pose::Pose current_pose_;
 	core::Size nres_;
 	core::Size njumps_;
-	ObjexxFCL::FArray2D< Size > jump_array_;
-	ObjexxFCL::FArray1D< Size > cuts_;
+	ObjexxFCL::FArray2D< core::Size > jump_array_;
+	ObjexxFCL::FArray1D< core::Size > cuts_;
 	core::Size topology_root_res_;
 	core::Size tmhelix_;
 };

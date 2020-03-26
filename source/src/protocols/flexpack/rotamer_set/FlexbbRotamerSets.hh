@@ -38,7 +38,7 @@
 #include <core/types.hh>
 
 /// Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSet.fwd.hh>
 #include <utility/vector1.hh>
@@ -90,7 +90,7 @@ public:
 	core::Distance
 	determine_res_cb_deviation(
 		Pose const & pose,
-		Size resid
+		core::Size resid
 	) const;
 
 	void build_rotamers(
@@ -177,67 +177,67 @@ public:
 	core::uint
 	moltenres_rotid_2_rotid( core::uint moltenres, core::uint moltenresrotid ) const override;
 
-	Size
+	core::Size
 	nmolten_res() const
 	{ return nmoltenres_;}
 
-	//Size
-	//moltenres_2_resid( Size molten_resid ) const
+	//core::Size
+	//moltenres_2_resid( core::Size molten_resid ) const
 	//{ return moltenres_2_resid_[ molten_resid ]; }
 
-	//Size
-	//resid_2_moltenres( Size resid ) const
+	//core::Size
+	//resid_2_moltenres( core::Size resid ) const
 	//{ return resid_2_moltenres_[ resid ]; }
 
 	/// @brief The total number of rotamers across all residues and all backbone conformations
-	//Size
+	//core::Size
 	//nrotamers() const {
 	// return nrotamers_;
 	//}
 
-	//Size
-	//nrotamers_for_moltenres( Size molten_resid ) const
+	//core::Size
+	//nrotamers_for_moltenres( core::Size molten_resid ) const
 	//{ return nrotamers_for_moltenres_[ molten_resid ]; }
 
-	Size
-	nrotamers_for_res( Size resid ) const
+	core::Size
+	nrotamers_for_res( core::Size resid ) const
 	{ return nrotamers_for_moltenres_[ resid_2_moltenres_[ resid ] ]; }
 
-	Size
+	core::Size
 	nbbconfs_for_moltenres( core::Size moltenres ) const;
 
-	Size
+	core::Size
 	nbbconfs_for_flexseg( core::Size flex_segment_id ) const
 	{ return nbbconfs_for_flexseg_[ flex_segment_id ]; }
 
 	/// @brief the "total" number of backbone conformations, counting the input conformation
 	/// for all flexible segments (but not counting the input conformation for residues with only a single
 	/// backbone conformation)
-	Size
+	core::Size
 	nbackbone_conformations() const;
 
-	Size
+	core::Size
 	nbbconfs_for_res( core::Size resid ) const;
 
-	utility::vector1< Size > const &
-	num_states_per_backbone_for_moltenres( Size moltenres ) const {
+	utility::vector1< core::Size > const &
+	num_states_per_backbone_for_moltenres( core::Size moltenres ) const {
 		return nrots_for_moltenres_bbconf_[ moltenres ];
 	}
 
-	Size
-	nrotamers_for_moltenres_in_bbconf( Size moltenres, Size bbconf ) const
+	core::Size
+	nrotamers_for_moltenres_in_bbconf( core::Size moltenres, core::Size bbconf ) const
 	{ return nrots_for_moltenres_bbconf_[moltenres][bbconf]; }
 
-	Size
-	nrotamers_for_resid_in_bbconf( Size resid, Size bbconf ) const
+	core::Size
+	nrotamers_for_resid_in_bbconf( core::Size resid, core::Size bbconf ) const
 	{ return nrots_for_moltenres_bbconf_[ resid_2_moltenres_[ resid ] ][ bbconf ]; }
 
-	Size
-	global_rotid_start_for_moltenres_in_bbconf( Size moltenres, Size bbconf ) const
+	core::Size
+	global_rotid_start_for_moltenres_in_bbconf( core::Size moltenres, core::Size bbconf ) const
 	{ return nrotoffset_for_moltenres_bbconf_[ moltenres ][ bbconf ] ;}
 
-	Size
-	local_rotid_start_for_moltenres_in_bbconf( Size moltenres, Size bbconf ) const
+	core::Size
+	local_rotid_start_for_moltenres_in_bbconf( core::Size moltenres, core::Size bbconf ) const
 	{ return nrotoffset_for_moltenres_bbconf_[ moltenres ][ bbconf ] - nrotoffset_for_moltenres_[ moltenres ]; }
 
 	//virtual
@@ -247,96 +247,96 @@ public:
 	//}
 
 	/// @brief Input: rotid in global enumeration, Output rotid in local enumeration
-	Size
-	local_rotid_for_rotamer_on_moltenres( Size moltenres, Size rotamer_id ) const
+	core::Size
+	local_rotid_for_rotamer_on_moltenres( core::Size moltenres, core::Size rotamer_id ) const
 	{ return rotamer_id - nrotoffset_for_moltenres_[ moltenres ] ; }
 
 
-	Size
-	local_rotid_for_rotamer( Size rotamer_id ) const
+	core::Size
+	local_rotid_for_rotamer( core::Size rotamer_id ) const
 	{ return rotamer_id - nrotoffset_for_moltenres_[ moltenres_for_rotamer_[ rotamer_id ] ]; }
 
-	Size
+	core::Size
 	nflexible_segments() const
 	{ return flexsegment_span_.size(); }
 
-	Size
-	flexsegment_start_moltenresid( Size flex_segment_id ) const
+	core::Size
+	flexsegment_start_moltenresid( core::Size flex_segment_id ) const
 	{ return resid_2_moltenres_[ flexsegment_span_[ flex_segment_id ].first ]; }
 
-	Size
-	flexsegment_stop_moltenresid( Size flex_segment_id ) const
+	core::Size
+	flexsegment_stop_moltenresid( core::Size flex_segment_id ) const
 	{ return resid_2_moltenres_[ flexsegment_span_[ flex_segment_id ].second ]; }
 
-	Size
-	flexsegment_size( Size flex_segment_id ) const
+	core::Size
+	flexsegment_size( core::Size flex_segment_id ) const
 	{ return flexsegment_span_[ flex_segment_id ].second - flexsegment_span_[ flex_segment_id ].first + 1; }
 
-	Size
-	flexsegment_start_resid( Size flex_segment_id ) const
+	core::Size
+	flexsegment_start_resid( core::Size flex_segment_id ) const
 	{ return flexsegment_span_[ flex_segment_id ].first; }
 
-	Size
-	flexsegment_stop_resid( Size flex_segment_id ) const
+	core::Size
+	flexsegment_stop_resid( core::Size flex_segment_id ) const
 	{ return flexsegment_span_[ flex_segment_id ].second; }
 
-	Size
-	flexsegid_for_moltenres( Size molten_resid ) const
+	core::Size
+	flexsegid_for_moltenres( core::Size molten_resid ) const
 	{ return moltenres_2_flexseg_[ molten_resid ]; }
 
-	Size
-	flexsegid_for_res( Size resid ) const
+	core::Size
+	flexsegid_for_res( core::Size resid ) const
 	{ return moltenres_2_flexseg_[ resid_2_moltenres_[ resid ] ]; }
 
 	bool
-	moltenres_part_of_flexsegment( Size molten_resid ) const
+	moltenres_part_of_flexsegment( core::Size molten_resid ) const
 	{ return moltenres_2_flexseg_[ molten_resid ] != 0; }
 
 	bool
-	res_part_of_flexsegment( Size resid ) const
+	res_part_of_flexsegment( core::Size resid ) const
 	{ return moltenres_2_flexseg_[ resid_2_moltenres_[ resid ] ] != 0; }
 
 	FlexbbRotamerSetCOP
-	rotset_for_moltenres( Size molten_resid, Size bbconf = 1 ) const;
+	rotset_for_moltenres( core::Size molten_resid, core::Size bbconf = 1 ) const;
 
 	FlexbbRotamerSetCOP
-	rotset_for_residue( Size resid, Size bbconf = 1 ) const;
+	rotset_for_residue( core::Size resid, core::Size bbconf = 1 ) const;
 
 	/// @brief Rotamer indexed locally
 	core::conformation::ResidueCOP
-	rotamer_for_residue( Size resid, Size rotindex_on_residue ) const;
+	rotamer_for_residue( core::Size resid, core::Size rotindex_on_residue ) const;
 
 	/// @brief Rotamer indexed locally
 	//core::conformation::ResidueCOP
-	//rotamer_for_moltenres( Size moltenres, Size rotindex_on_residue ) const;
+	//rotamer_for_moltenres( core::Size moltenres, core::Size rotindex_on_residue ) const;
 
 	/// @brief Rotamer indexed globally.
 	//core::conformation::ResidueCOP
-	//rotamer( Size rotindex ) const;
+	//rotamer( core::Size rotindex ) const;
 
 	core::conformation::Residue const &
-	backbone_for_resid_bbconf( Size resid, Size bbconf ) const
+	backbone_for_resid_bbconf( core::Size resid, core::Size bbconf ) const
 	{ return *conformations_for_flexible_segments_[ resid_2_moltenres_[ resid ] ][ bbconf ]; }
 
 	core::conformation::Residue const &
-	backbone_for_moltenres_bbconf( Size moltenres, Size bbconf ) const
+	backbone_for_moltenres_bbconf( core::Size moltenres, core::Size bbconf ) const
 	{ return *conformations_for_flexible_segments_[ moltenres ][ bbconf ]; }
 
 
 	/// @brief rotamer_id in the global enumeration of rotamers.
-	//Size
-	//moltenres_for_rotamer( Size rotamer_id ) const {
+	//core::Size
+	//moltenres_for_rotamer( core::Size rotamer_id ) const {
 	// return moltenres_for_rotamer_[ rotamer_id ];
 	//}
 
-	Size
-	bbconf_for_rotamer( Size rotamer_id ) const {
-		Size moltenres = moltenres_for_rotamer_[ rotamer_id ];
+	core::Size
+	bbconf_for_rotamer( core::Size rotamer_id ) const {
+		core::Size moltenres = moltenres_for_rotamer_[ rotamer_id ];
 		return bbconf_for_rotamer_of_moltenres_[ moltenres ][ local_rotid_for_rotamer_on_moltenres( moltenres, rotamer_id ) ];
 	}
 
-	Size
-	bbconf_for_rotamer_on_moltenres( Size moltenres, Size rotamer_id ) const {
+	core::Size
+	bbconf_for_rotamer_on_moltenres( core::Size moltenres, core::Size rotamer_id ) const {
 		return bbconf_for_rotamer_of_moltenres_[ moltenres ][ rotamer_id ];
 	}
 
@@ -344,8 +344,8 @@ public:
 	/// Local enumeration for both rot1 and rot2; rot1 and rot2 must be rotamers of the
 	/// same molten residue.
 	bool
-	rotamers_on_same_bbconf( Size moltenres, Size rot1, Size rot2 ) const {
-		utility::vector1< Size > const & bbconf( bbconf_for_rotamer_of_moltenres_[ moltenres ] );
+	rotamers_on_same_bbconf( core::Size moltenres, core::Size rot1, core::Size rot2 ) const {
+		utility::vector1< core::Size > const & bbconf( bbconf_for_rotamer_of_moltenres_[ moltenres ] );
 		return bbconf[ rot1 ] == bbconf[ rot2 ];
 	}
 
@@ -363,7 +363,7 @@ protected:
 	build_residue_vector_from_fragment(
 		Pose & pose,
 		core::fragment::FrameCOP frame,
-		Size frag_num,
+		core::Size frag_num,
 		utility::vector1< core::conformation::ResidueOP > & fragment_res
 	);
 
@@ -372,11 +372,11 @@ private:
 
 	void
 	compute_sr_one_body_energies_for_flexsets(
-		Size lowermoltenres,
-		Size uppermoltenres,
-		utility::vector1< utility::vector1< Size > > const & regular_representatives,
-		utility::vector1< utility::vector1< Size > > const & proline_representatives,
-		utility::vector1< utility::vector1< Size > > const & glycine_representatives,
+		core::Size lowermoltenres,
+		core::Size uppermoltenres,
+		utility::vector1< utility::vector1< core::Size > > const & regular_representatives,
+		utility::vector1< utility::vector1< core::Size > > const & proline_representatives,
+		utility::vector1< utility::vector1< core::Size > > const & glycine_representatives,
 		Pose const & pose,
 		ScoreFunction const & sfxn,
 		interaction_graph::OTFFlexbbInteractionGraph & flexbb_ig
@@ -384,7 +384,7 @@ private:
 
 	void
 	compute_onebody_interactions_with_background(
-		Size moltenres,
+		core::Size moltenres,
 		Pose const & pose,
 		ScoreFunction const & sfxn,
 		utility::graph::GraphCOP flexpack_neighbor_graph,
@@ -394,30 +394,30 @@ private:
 private:
 
 	//not derived from fixbb RotamerSets, so we need to copy some of the basic data structs
-	Size nmoltenres_;
-	Size total_residue_;
-	Size nbbconfs_;
+	core::Size nmoltenres_;
+	core::Size total_residue_;
+	core::Size nbbconfs_;
 
 	PackerTaskCOP task_;  // initialized at construction
 
 	utility::vector1< utility::vector1< rotamer_set::FlexbbRotamerSetOP > > rotamers_;
-	Size nrotamers_;
-	utility::vector1< Size > nrotamers_for_moltenres_;
-	utility::vector1< Size > moltenres_2_resid_;
-	utility::vector1< Size > resid_2_moltenres_;
+	core::Size nrotamers_;
+	utility::vector1< core::Size > nrotamers_for_moltenres_;
+	utility::vector1< core::Size > moltenres_2_resid_;
+	utility::vector1< core::Size > resid_2_moltenres_;
 
 	//andrew, did you forget to put these two vectors in?
-	utility::vector1< Size > moltenres_for_rotamer_;
-	utility::vector1< utility::vector1< Size > > bbconf_for_rotamer_of_moltenres_;
+	utility::vector1< core::Size > moltenres_for_rotamer_;
+	utility::vector1< utility::vector1< core::Size > > bbconf_for_rotamer_of_moltenres_;
 
 	//why is this a vector of vector of residues?
 	utility::vector1< utility::vector1< core::conformation::ResidueCOP > > conformations_for_flexible_segments_;
-	utility::vector1< std::pair< Size, Size > > flexsegment_span_;
-	utility::vector1< Size > nbbconfs_for_flexseg_;
-	utility::vector1< Size > moltenres_2_flexseg_;
-	utility::vector1< Size > nrotoffset_for_moltenres_;
-	utility::vector1< utility::vector1< Size > > nrots_for_moltenres_bbconf_;
-	utility::vector1< utility::vector1< Size > > nrotoffset_for_moltenres_bbconf_;
+	utility::vector1< std::pair< core::Size, core::Size > > flexsegment_span_;
+	utility::vector1< core::Size > nbbconfs_for_flexseg_;
+	utility::vector1< core::Size > moltenres_2_flexseg_;
+	utility::vector1< core::Size > nrotoffset_for_moltenres_;
+	utility::vector1< utility::vector1< core::Size > > nrots_for_moltenres_bbconf_;
+	utility::vector1< utility::vector1< core::Size > > nrotoffset_for_moltenres_bbconf_;
 
 #ifdef    SERIALIZATION
 protected:

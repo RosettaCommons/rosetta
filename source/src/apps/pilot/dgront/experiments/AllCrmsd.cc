@@ -54,7 +54,7 @@ void register_options() {
 	OPT(out::nooutput);
 }
 
-class XYZ : public FArray2D_double, public utility::pointer::ReferenceCount {
+class XYZ : public FArray2D_double, public utility::VirtualBase {
 public:
 	XYZ(core::Size j,core::Size i,core::Real d) : FArray2D_double(j,i,d){}
 };

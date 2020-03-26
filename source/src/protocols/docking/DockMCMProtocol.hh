@@ -87,8 +87,8 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 
 	void set_move_map(core::kinematics::MoveMapOP movemap );
-	void set_second_cycle(Size const & num);
-	void set_first_cycle(Size const & num);
+	void set_second_cycle(core::Size const & num);
+	void set_first_cycle(core::Size const & num);
 
 	core::scoring::ScoreFunctionCOP scorefxn_docking() const;
 	core::scoring::ScoreFunctionCOP scorefxn_packing() const;
@@ -111,8 +111,8 @@ private:
 	DockMCMCycleOP dock_mcm_; //JQX: make it as a memmber
 	bool movemap_reset_ ;
 	core::kinematics::MoveMapOP movemap_;
-	Size num_of_first_cycle_;
-	Size num_of_second_cycle_;
+	core::Size num_of_first_cycle_;
+	core::Size num_of_second_cycle_;
 };
 
 } // docking

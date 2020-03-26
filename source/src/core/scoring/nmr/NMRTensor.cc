@@ -27,7 +27,7 @@ namespace nmr {
 
 /// @brief default constructor
 NMRTensor::NMRTensor() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	alpha_(0.0),
 	beta_(0.0),
 	gamma_(0.0),
@@ -46,7 +46,7 @@ NMRTensor::NMRTensor() :
 
 /// @brief copy constructor
 NMRTensor::NMRTensor(NMRTensor const & other) :
-	utility::pointer::ReferenceCount(other),
+	utility::VirtualBase(other),
 	alpha_(other.alpha_),
 	beta_(other.beta_),
 	gamma_(other.gamma_),
@@ -67,7 +67,7 @@ NMRTensor::NMRTensor(NMRTensor const & other) :
 NMRTensor &
 NMRTensor::operator=(NMRTensor const & rhs) {
 	if ( this != &rhs ) {
-		utility::pointer::ReferenceCount::operator=(rhs);
+		utility::VirtualBase::operator=(rhs);
 		alpha_ = rhs.alpha_;
 		beta_ = rhs.beta_;
 		gamma_ = rhs.gamma_;

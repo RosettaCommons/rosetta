@@ -45,7 +45,7 @@ using namespace std;
 
 
 SpliceSegment::SpliceSegment()
-: utility::pointer::ReferenceCount()
+: utility::VirtualBase()
 {
 	sequence_profile_.clear();
 	pdb_to_profile_map_.clear();

@@ -212,7 +212,7 @@ void MRMover::apply( Pose &pose ) {
 		utility::vector1< char > pdb_chains;
 		core::pose::PoseOP template_pose( new core::pose::Pose );
 		bool add_by_jump = true;
-		for ( Size i=1; i<=pose.size(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			if ( !threaded || !my_loops->is_loop_residue(i) ) {
 				if ( add_by_jump ) {
 					if ( template_pose->size() > 0
@@ -261,7 +261,7 @@ void MRMover::apply( Pose &pose ) {
 
 		// pose must be ideal going into hybrid
 		//  only the foldtree+sequence is used from input pose
-		for ( Size i=1; i<=pose.size(); ++i ) {
+		for ( core::Size i=1; i<=pose.size(); ++i ) {
 			core::conformation::idealize_position(i, pose.conformation());
 		}
 
@@ -283,7 +283,7 @@ void MRMover::apply( Pose &pose ) {
 
 		// setup disulfides
 		if ( disulfs_.size() > 0 ) {
-			utility::vector1< std::pair<Size,Size> > disulfides;
+			utility::vector1< std::pair<core::Size,Size> > disulfides;
 			core::Size ndisulf = disulfs_.size();
 			for ( core::Size i=1; i<=ndisulf; ++i ) {
 				utility::vector1<std::string> pair_i = utility::string_split( disulfs_[i], ':');
@@ -400,8 +400,8 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	}
 
 	// # residues in new pose
-	Size new_nres = 0;
-	for ( Size i = 1; i <= query_pose.size(); ++i ) {
+	core::Size new_nres = 0;
+	for ( core::Size i = 1; i <= query_pose.size(); ++i ) {
 		if ( !to_trim[i] ) new_nres++;
 	}
 
@@ -415,12 +415,12 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	core::Size old_root = query_pose.fold_tree().root();
 	core::pose::Pose new_query_pose;
 
-	Size out_ctr=1;
+	core::Size out_ctr=1;
 	bool add_by_jump = true;
 	core::id::SequenceMapping new_mapping(new_nres, query_pose.size());
 	core::id::SequenceMapping new_invmapping(query_pose.size() , new_nres);
 
-	for ( Size i = 1; i <= query_pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= query_pose.size(); ++i ) {
 		if ( !to_trim[i] ) {
 			if ( add_by_jump ) {
 				if ( new_query_pose.size() > 0
@@ -469,7 +469,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	utility::vector1< int > pdb_numbering;
 	utility::vector1< char > pdb_chains;
 
-	for ( Size i(1); i <= query_pose.size(); ++i ) {
+	for ( core::Size i(1); i <= query_pose.size(); ++i ) {
 		if ( new_invmapping[i] != 0 ) {
 			pdb_numbering.push_back( i );
 			pdb_chains.push_back( 'A' );
@@ -490,7 +490,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 		for ( int i=1; i<= nres; ++i ) {
 			core::conformation::Residue const & rsd( new_query_pose.residue(i) );
 			if ( rsd.aa() == core::chemical::aa_vrt ) continue;
-			for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
+			for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
 				core::conformation::Atom const & atom( rsd.atom(j) );
 				massSum += atom.xyz();
 				nAtms++;
@@ -554,7 +554,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 
 			// if any residue is unmapped, remove the frame
 			bool keepthis = true;
-			for ( Size j=start_res; j<=end_res; ++j ) keepthis &= ( new_invmapping[ j ] != 0 );
+			for ( core::Size j=start_res; j<=end_res; ++j ) keepthis &= ( new_invmapping[ j ] != 0 );
 			if ( keepthis ) {
 				core::fragment::FrameOP new_f = f->clone_with_frags();
 				new_f->align(new_invmapping);
@@ -572,7 +572,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 
 			// if any residue is unmapped, remove the frame
 			bool keepthis = true;
-			for ( Size j=start_res; j<=end_res; ++j ) keepthis &= ( new_invmapping[ j ] != 0 );
+			for ( core::Size j=start_res; j<=end_res; ++j ) keepthis &= ( new_invmapping[ j ] != 0 );
 			if ( keepthis ) {
 				core::fragment::FrameOP new_f = f->clone_with_frags();
 				new_f->align(new_invmapping);

@@ -355,8 +355,8 @@ CartesianSampler::apply_transform(
 ){
 	// apply rotation to ALL atoms
 	// x_i' <- = R*x_i + com1;
-	for ( Size i = 1; i <= frag.size(); ++i ) {
-		for ( Size j = 1; j <= frag.residue_type(i).natoms(); ++j ) {
+	for ( core::Size i = 1; i <= frag.size(); ++i ) {
+		for ( core::Size j = 1; j <= frag.residue_type(i).natoms(); ++j ) {
 			core::id::AtomID id( j, i );
 			frag.set_xyz( id, R * ( frag.xyz(id) - preT) + postT );
 		}
@@ -485,7 +485,7 @@ CartesianSampler::apply_frame(
 		if ( nattempts > 0 ) {
 			TR << "Best frag ( out of "<< nattempts << ") with score="  << best_dens_score << "  rms=" << best_rms << "  rms_aftermin=" << best_rms_aftermin << std::endl;
 			if ( !fullatom_ ) to_cen.apply( frag );
-			for ( Size i = 0; i < len; ++i ) {
+			for ( core::Size i = 0; i < len; ++i ) {
 				bool dslf_i = ( pose.residue(start+i).aa() == chemical::aa_cys && pose.residue(start+i).has_variant_type( chemical::DISULFIDE ) );
 
 				// remember dslf connectivity
@@ -525,7 +525,7 @@ CartesianSampler::apply_frame(
 
 		apply_transform( frag, preT, postT, R);
 
-		for ( Size i = 0; i < len; ++i ) {
+		for ( core::Size i = 0; i < len; ++i ) {
 			bool dslf_i = ( pose.residue(start+i).aa() == chemical::aa_cys && pose.residue(start+i).has_variant_type( chemical::DISULFIDE ) );
 
 			// remember dslf connectivity
@@ -559,7 +559,7 @@ CartesianSampler::apply_frame(
 	if ( ncs ) {
 		for ( core::uint j = 1; j <= ncs->ngroups(); ++j ) {
 			bool all_are_mapped = true;
-			for ( Size k= 0; k< len && all_are_mapped; ++k ) {
+			for ( core::Size k= 0; k< len && all_are_mapped; ++k ) {
 				all_are_mapped &= (ncs->get_equiv( j,start+k )!=0);
 			}
 			if ( !all_are_mapped ) continue;
@@ -567,7 +567,7 @@ CartesianSampler::apply_frame(
 			core::Size remap_start = ncs->get_equiv( j, start );
 			get_transform( pose,  frag,  remap_start, preT, postT, R);
 			apply_transform( frag, preT, postT, R);
-			for ( Size i = 0; i < len; ++i ) {
+			for ( core::Size i = 0; i < len; ++i ) {
 				bool dslf_i = ( pose.residue(remap_start+i).aa() == chemical::aa_cys && pose.residue(remap_start+i).has_variant_type( chemical::DISULFIDE ) );
 				if ( dslf_i ) {
 					for ( int k=1; k<=(int)pose.residue(remap_start+i).natoms(); ++k ) {  // copy everything but HG

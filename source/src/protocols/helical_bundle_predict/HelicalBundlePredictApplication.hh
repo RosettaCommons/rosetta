@@ -33,7 +33,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace helical_bundle_predict {
@@ -41,7 +41,7 @@ namespace helical_bundle_predict {
 /// @brief Options for the application.
 /// @details Prevents repeated calls to the global options system.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-class HelicalBundlePredictApplicationOptions : public utility::pointer::ReferenceCount {
+class HelicalBundlePredictApplicationOptions : public utility::VirtualBase {
 
 public:
 
@@ -198,7 +198,7 @@ private: //Variables
 };
 
 /// @brief The meat-and-potatoes for the helical_bundle_predict application, used to predict structures of helical bundles made from canonical or noncanonical building-blocks.
-class HelicalBundlePredictApplication : public utility::pointer::ReferenceCount {
+class HelicalBundlePredictApplication : public utility::VirtualBase {
 
 public:
 

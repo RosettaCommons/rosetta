@@ -162,7 +162,7 @@ FASelectSlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_
 	std::string frag_file=basic::options::option[ basic::options::OptionKeys::out::file::silent ]()+"_best_frags";
 
 	auto frag_list_it = scored_frags.begin();
-	for ( Size ct = 1; ct <= Ntest; ct ++, ++frag_list_it ) {
+	for ( core::Size ct = 1; ct <= Ntest; ct ++, ++frag_list_it ) {
 		FragID const& frag( frag_list_it->second );
 
 		Pose centroid_pose( more_cut );

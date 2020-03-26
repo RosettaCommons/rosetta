@@ -111,7 +111,7 @@ private:
 
 
 private:
-	mutable Size stem_size_;
+	mutable core::Size stem_size_;
 	CDRNameEnum cdr_name_;
 	AntibodyInfoOP ab_info_;
 	bool benchmark_;

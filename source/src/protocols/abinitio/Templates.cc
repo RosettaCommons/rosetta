@@ -101,7 +101,7 @@ using namespace core;
 using namespace jumping;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-class StructureStore : public utility::pointer::ReferenceCount {
+class StructureStore : public utility::VirtualBase {
 public:
 	bool has( std::string const& name ) const {
 		auto iter = poses_.find( name );
@@ -209,7 +209,7 @@ Templates::Templates( std::string const& config_file, pose::PoseCOP native ) :
 	tr.Info << "statistics of pairings: \n\n\n" << *strand_stats_ << std::endl;
 
 	//copy topology score into templates:
-	for ( Size i = 1; i <= strand_stats->nr_models(); i++ ) {
+	for ( core::Size i = 1; i <= strand_stats->nr_models(); i++ ) {
 		templates_[ strand_stats->ranked_model( i ) ]->topology_score( strand_stats->weight( i ) );
 	}
 
@@ -276,13 +276,13 @@ Templates::scored_fragpick_list( TemplateList& frag_list ) const {
 }
 
 
-void Templates::_get_scored_list( TemplateList& cst_list, Size topN, Real wTopol, Real wExtern) const {
+void Templates::_get_scored_list( TemplateList& cst_list, core::Size topN, Real wTopol, Real wExtern) const {
 
 	Real sum_extern = 0;
 	Real sum_extern2 = 0;
 	Real sum_topol = 0;
 	Real sum_topol2 = 0;
-	Size n = 0;
+	core::Size n = 0;
 
 	bool bScoreFilter = true;
 
@@ -316,27 +316,27 @@ void Templates::_get_scored_list( TemplateList& cst_list, Size topN, Real wTopol
 	weight_list.reverse();
 	cst_list.clear();
 	std::list< std::pair< core::Real, TemplateCOP > >::const_iterator iter = weight_list.begin(), end = weight_list.end();
-	for ( Size i = 1; i <= topN && iter != end; ++i, ++iter ) {
+	for ( core::Size i = 1; i <= topN && iter != end; ++i, ++iter ) {
 		cst_list.push_back( iter->second );
 	}
 }
 
 
 Size
-Templates::pick_frags( FragSet& frag_set, core::fragment::FragDataCOP frag_type, Size ncopies /* default 1 */) const {
+Templates::pick_frags( FragSet& frag_set, core::fragment::FragDataCOP frag_type, core::Size ncopies /* default 1 */) const {
 
-	Size nframes = target_total_residue() - frag_type->size() + 1;
+	core::Size nframes = target_total_residue() - frag_type->size() + 1;
 	FrameList frames;
-	Size total( 0 );
+	core::Size total( 0 );
 	tr.Info << "pick frames for target position 1 -> " << nframes << " from templates"  << std::endl;
-	for ( Size pos =1; pos<=nframes; pos ++ ) {
+	for ( core::Size pos =1; pos<=nframes; pos ++ ) {
 		FrameOP frame( new Frame( pos, frag_type ) );
 		frames.push_back( frame );
 	}
 
 	for ( auto const & it : fragpick_list_ ) {
 		tr.Info << "pick from template " << it->name() << std::endl;
-		Size nr_frags = it->steal_frags( frames, frag_set, ncopies );
+		core::Size nr_frags = it->steal_frags( frames, frag_set, ncopies );
 		tr.Info << "found " << nr_frags << " new fragments " << std::endl;
 		total+=nr_frags;
 	}
@@ -346,25 +346,25 @@ Templates::pick_frags( FragSet& frag_set, core::fragment::FragDataCOP frag_type,
 
 
 FragSetOP
-Templates::pick_frags( FragSetOP frag_set, core::fragment::FragDataCOP frag_type, Size min_nr_frags, Size ncopies /* default 1 */ ) const {
+Templates::pick_frags( FragSetOP frag_set, core::fragment::FragDataCOP frag_type, core::Size min_nr_frags, core::Size ncopies /* default 1 */ ) const {
 
 	ConstantLengthFragSet template_frags;
-	Size total( 0 );
+	core::Size total( 0 );
 	total = pick_frags( template_frags, frag_type, ncopies );
 
 	// template_frags contains only homolog fragments, .. needs filling up in gappy regions
 	FragSetOP merged_frags = frag_set->empty_clone();
 
-	Size total_fill( 0 );
+	core::Size total_fill( 0 );
 	//merge fragments:
-	for ( Size pos = 1; pos<=target_total_residue(); pos++ ) {
+	for ( core::Size pos = 1; pos<=target_total_residue(); pos++ ) {
 		FrameList template_frames;
 		template_frags.frames( pos, template_frames );
 		merged_frags->add( template_frames );
-		Size nr_frags( template_frames.flat_size() );
+		core::Size nr_frags( template_frames.flat_size() );
 		tr.Info << nr_frags << " fragments at pos " << pos << ". required: " << min_nr_frags << std::endl;
 		if ( nr_frags < min_nr_frags ) {
-			Size nr_fill ( min_nr_frags - nr_frags );
+			core::Size nr_fill ( min_nr_frags - nr_frags );
 			FrameList standard_frames;
 			frag_set->frames( pos, standard_frames );
 			if ( standard_frames.size() ) {
@@ -385,7 +385,7 @@ Templates::pick_frags( FragSetOP frag_set, core::fragment::FragDataCOP frag_type
 	tr.Info << "found " << total << " fragments from homologs. supplemented by " << total_fill << " frags from standard library " << std::endl;
 	return merged_frags;
 }
-//   Size total( 0 );
+//   core::Size total( 0 );
 //   for ( TemplateMap::const_iterator it=templates_.begin(),
 //    eit = templates_.end(); it!=eit; ++it ) {
 //     total += it->second->pick_frags( frag_set, frag_type );
@@ -398,10 +398,10 @@ Size Templates::pick_large_frags(
 	core::fragment::SingleResidueFragDataOP frag_type,
 	core::Size ncopies /*default = 1*/
 ) const {
-	Size total( 0 );
+	core::Size total( 0 );
 	for ( auto const & it : fragpick_list_ ) {
 		tr.Info << "pick large frag from template " << it->name() << std::endl;
-		Size nr_frags = it->pick_large_frags( frag_set, frag_type, ncopies );
+		core::Size nr_frags = it->pick_large_frags( frag_set, frag_type, ncopies );
 		tr.Info << "found " << nr_frags << " new fragments " << std::endl;
 		total+=nr_frags;
 	}
@@ -441,7 +441,7 @@ TemplateJumpSetupOP Templates::create_jump_def( core::fragment::SecondaryStructu
 		ss_def = utility::pointer::make_shared< core::fragment::SecondaryStructure >( fragset, target_total_residue() );
 	}
 	//  utility::io::ozstream dump("ss_def_for_jumps");
-	//  for ( Size i = 1; i<=ss_def->size(); i++ ) {
+	//  for ( core::Size i = 1; i<=ss_def->size(); i++ ) {
 	//   dump << i << " " << ss_def->loop_fraction()(i) << std::endl;
 	//  }
 	core::scoring::dssp::PairingsList helix_pairings;

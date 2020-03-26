@@ -93,9 +93,9 @@ SwapSegment::copying_side_chains(
 ){
 
 	//counter for seeds
-	Size offsetres = 0;
+	core::Size offsetres = 0;
 
-	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
+	for ( core::Size pos = 1; pos <= pose.size(); ++pos ) {
 		TR.Debug<<"iterating through pose: " <<pos << std::endl;
 		if ( seeds.is_loop_residue( pos ) ) {
 			TR.Debug<<"pos "<< pos <<std::endl;
@@ -116,13 +116,13 @@ SwapSegment::swap_segment(
 ){
 
 	using namespace core::conformation;
-	Size offsetres = 0;
+	core::Size offsetres = 0;
 
 	// preparing the segments for swap
 	core::pose::remove_lower_terminus_type_from_pose_residue(*swap_segment, 1 );
 	core::pose::remove_upper_terminus_type_from_pose_residue(*swap_segment, swap_segment->size());
 
-	for ( Size pos = 1; pos <= pose.size(); ++pos ) {
+	for ( core::Size pos = 1; pos <= pose.size(); ++pos ) {
 		TR.Debug<<"iterating through pose: " <<pos << std::endl;
 		if ( seeds.is_loop_residue( pos ) ) {
 			TR.Debug <<"pos "<< pos <<std::endl;

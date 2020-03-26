@@ -22,7 +22,7 @@ namespace sewing {
 namespace data_storage {
 
 SmartSegment::SmartSegment():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 { // basic constructor to make an empty SmartSegment. Intended to be used to populate the master SmartSegment vector that serves as a segment library
 	segment_id_ = 0;
 	n_terminal_neighbor_ = nullptr;
@@ -37,7 +37,7 @@ SmartSegment::SmartSegment():
 }
 
 SmartSegment::SmartSegment(bool is_vital):
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 { // basic constructor to make an empty SmartSegment. Intended to be used to populate the master SmartSegment vector that serves as a segment library
 	segment_id_ = 0;
 	n_terminal_neighbor_ = nullptr;
@@ -51,7 +51,7 @@ SmartSegment::SmartSegment(bool is_vital):
 	length_ = 0;
 }
 SmartSegment::SmartSegment(bool is_vital, core::Size max_segment_length):
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 { // basic constructor to make a SmartSegment suitable for use in an Assembly or Hasher . The important part is the preallocation of the Residue array.
 	segment_id_ = 0;
 	n_terminal_neighbor_ = nullptr;
@@ -84,7 +84,9 @@ SmartSegment::~SmartSegment(){
 }
 
 //For use with Hasher and Assembly
-SmartSegment::SmartSegment( SmartSegment const & other ) {
+SmartSegment::SmartSegment( SmartSegment const & other ):
+	VirtualBase( other )
+{
 	segment_id_ = other.get_segment_id();
 	n_terminal_neighbor_ = nullptr;
 	c_terminal_neighbor_ = nullptr;

@@ -24,7 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/fragment/rna/RNA_MatchType.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <string>

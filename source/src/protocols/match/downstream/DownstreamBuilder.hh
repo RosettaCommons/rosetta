@@ -37,7 +37,7 @@
 #include <numeric/HomogeneousTransform.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -51,9 +51,9 @@ namespace protocols {
 namespace match {
 namespace downstream {
 
-class DownstreamBuilder : public utility::pointer::ReferenceCount {
+class DownstreamBuilder : public utility::VirtualBase {
 public:
-	typedef utility::pointer::ReferenceCount      parent;
+	typedef utility::VirtualBase      parent;
 	typedef core::id::AtomID                      AtomID;
 	typedef core::Vector                          Vector;
 	typedef core::Real                            Real;
@@ -74,9 +74,9 @@ public:
 	std::list< Hit >
 	build(
 		HTReal const & atom6_frame,
-		Size const scaffold_build_point_id,
-		Size const upstream_conf_id,
-		Size const external_geometry_id,
+		core::Size const scaffold_build_point_id,
+		core::Size const upstream_conf_id,
+		core::Size const external_geometry_id,
 		core::conformation::Residue const & upstream_residue
 	) const = 0;
 
@@ -195,7 +195,7 @@ public:
 	) const = 0;
 
 	virtual
-	Size
+	core::Size
 	n_possible_hits_per_at3frame() const = 0;
 
 

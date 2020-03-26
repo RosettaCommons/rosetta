@@ -125,7 +125,7 @@ CartminLoopCloser::apply(
 
 	// setup movemap
 	core::kinematics::MoveMapOP mm;
-	for ( Size ii=loop().start(); ii<=loop().stop(); ++ii ) {
+	for ( core::Size ii=loop().start(); ii<=loop().stop(); ++ii ) {
 		mm->set_bb( ii, true );
 
 		//don't change phi for prolines

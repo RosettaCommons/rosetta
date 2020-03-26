@@ -105,7 +105,7 @@ void RotamerRecovery::print_rot_vec(
 	std::ostream & out
 ) {
 	using core::Size;
-	for ( Size ii = 1; ii <= rot_vec.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rot_vec.size(); ++ii ) {
 		out << rot_vec[ii];
 		if ( ii != rot_vec.size() ) {
 			out << ",";
@@ -317,14 +317,14 @@ native, option[ in::file::native ]()
 vector1< char > nat_bb_bins( bb_bins_from_pose(native) );
 vector1< RotVector > nat_rots( rots_from_pose(native) );
 
-vector1< Size > bb_bins_correct( native.size(), 0 );
-vector1< vector1< Size > > rots_correct(
-native.size(), vector1< Size >( native.size(), 0 )
+vector1< core::Size > bb_bins_correct( native.size(), 0 );
+vector1< vector1< core::Size > > rots_correct(
+native.size(), vector1< core::Size >( native.size(), 0 )
 );
 
 
-vector1< vector1< Size > > chis_correct(
-native.size(), vector1< Size >( native.size(), 0 )
+vector1< vector1< core::Size > > chis_correct(
+native.size(), vector1< core::Size >( native.size(), 0 )
 );
 
 
@@ -339,11 +339,11 @@ vector1< vector1< Real > > pose_chis( chis_from_pose(pose) );
 
 runtime_assert( pose_bb_bins.size() == nat_bb_bins.size() );
 runtime_assert( pose_rots.size() == pose_rots.size() );
-for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 if ( pose_bb_bins[ii] == nat_bb_bins[ii] ) {
 bb_bins_correct[ii]++;
 }
-for ( Size jj = 1; jj <= pose_rots[ii].size(); ++jj ) {
+for ( core::Size jj = 1; jj <= pose_rots[ii].size(); ++jj ) {
 //std::cout << "rot(" << ii << "," << jj << ")" << std::endl;
 if ( pose_rots[ii][jj] == nat_rots[ii][jj] ) {
 rots_correct[ii][jj]++;
@@ -378,7 +378,7 @@ output
 << A( width, "pct_rot4" )
 << std::endl;
 
-for ( Size ii = 1; ii <= native.size(); ++ii ) {
+for ( core::Size ii = 1; ii <= native.size(); ++ii ) {
 Real pct_bb(0.0);
 if ( bb_bins_correct[ii] > 0 ) {
 pct_bb = (
@@ -387,8 +387,8 @@ static_cast< Real > ( total )
 );
 }
 vector1< Real > pct_natrots;
-vector1< Size > out_nat_rots;
-for ( Size jj = 1; jj <= 4; ++jj ) {
+vector1< core::Size > out_nat_rots;
+for ( core::Size jj = 1; jj <= 4; ++jj ) {
 if ( jj <= nat_rots[ii].size() ) {
 Real pct_natrots_correct(0.0);
 if ( rots_correct[ii][jj] > 0 ) {

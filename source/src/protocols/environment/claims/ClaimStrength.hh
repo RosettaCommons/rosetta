@@ -25,7 +25,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //C++ headers
 #include <string>
@@ -35,8 +35,8 @@ namespace protocols {
 namespace environment {
 namespace claims {
 
-class ClaimStrength : public utility::pointer::ReferenceCount {
-	typedef utility::pointer::ReferenceCount Parent;
+class ClaimStrength : public utility::VirtualBase {
+	typedef utility::VirtualBase Parent;
 
 public:
 	// PrioSubtypes indicate the level of control over the dof desired by the mover.
@@ -55,7 +55,7 @@ public:
 		EXCLUSIVE
 	};
 
-	ClaimStrength( PrioSubtype type, Size subprio = 0 );
+	ClaimStrength( PrioSubtype type, core::Size subprio = 0 );
 
 	ClaimStrength( ClaimStrength const& );
 
@@ -73,12 +73,12 @@ public:
 
 	PrioSubtype subtype() const;
 
-	Size subprio() const;
+	core::Size subprio() const;
 
 private:
 
 	PrioSubtype subtype_;
-	Size subprio_;
+	core::Size subprio_;
 
 };
 

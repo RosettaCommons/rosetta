@@ -41,7 +41,7 @@ namespace io {
 // GeneralFileContents Public methods /////////////////////////////////////////////////////////////
 /// @brief File contents constructor.
 GeneralFileContents::GeneralFileContents( std::string const & filename ) :
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	file_contents_ = utility::file_contents( filename );
 }

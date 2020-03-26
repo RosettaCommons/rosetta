@@ -59,7 +59,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-// #include <utility/pointer/ReferenceCount.hh>
+// #include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>
@@ -81,7 +81,7 @@ public:
 	/// @brief Explicit virtual destructor since AbrelaxApplication contains OPs
 	/// NOTE: any time you define a class that is derived from by other classes
 	/// and which contains polymorphic functions, it needs to have a virtual destructor.
-	/// If your class derives from ReferenceCount, then it will inherit a virtual destructor
+	/// If your class derives from VirtualBase, then it will inherit a virtual destructor
 	/// If it does not, as AbrelaxApplication does not, then you must declare the
 	/// destructor virtual.
 	virtual ~AbrelaxApplication();

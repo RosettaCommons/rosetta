@@ -50,7 +50,7 @@ ProteinBackboneBuildPoint::ProteinBackboneBuildPoint() :
 	HA_pos_( 0.0, 0.0, 0.0 )
 {}
 
-ProteinBackboneBuildPoint::ProteinBackboneBuildPoint( Size index ) :
+ProteinBackboneBuildPoint::ProteinBackboneBuildPoint( core::Size index ) :
 	parent( index ),
 	phi_( 0.0 ),
 	psi_( 0.0 ),
@@ -76,7 +76,7 @@ void ProteinBackboneBuildPoint::H_pos( Vector const & setting ) { H_pos_  = sett
 void ProteinBackboneBuildPoint::HA_pos( Vector const & setting ){ HA_pos_ = setting; }
 
 
-OriginalBackboneBuildPoint::OriginalBackboneBuildPoint( Size index ):
+OriginalBackboneBuildPoint::OriginalBackboneBuildPoint( core::Size index ):
 	parent( index ),
 	original_resid_( 0 )
 {}
@@ -95,7 +95,7 @@ OriginalBackboneBuildPoint::OriginalBackboneBuildPoint(
 
 OriginalBackboneBuildPoint::OriginalBackboneBuildPoint(
 	core::conformation::Residue const & res,
-	Size index
+	core::Size index
 ) :
 	parent( index ),
 	original_resid_( res.seqpos() )
@@ -178,7 +178,7 @@ OriginalBackboneBuildPoint::original_insertion_point() const
 
 void
 OriginalBackboneBuildPoint::insert(
-	Size seqpos_to_insert_at,
+	core::Size seqpos_to_insert_at,
 	Hit const & hit,
 	UpstreamBuilderCOP builder,
 	core::pose::Pose & pose

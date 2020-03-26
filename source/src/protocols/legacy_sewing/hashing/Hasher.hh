@@ -22,7 +22,7 @@
 
 //Unit headers
 #include <protocols/legacy_sewing/hashing/Hasher.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //Package headers
 #include <core/pose/Pose.fwd.hh>
@@ -191,7 +191,7 @@ typedef std::pair< BasisPair, HashResult > ScoreResult;
 
 
 
-class Hasher : public utility::pointer::ReferenceCount
+class Hasher : public utility::VirtualBase
 {
 
 public:

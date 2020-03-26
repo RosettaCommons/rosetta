@@ -178,7 +178,7 @@ void HelixNCapperMover::get_Ncap_scores() {
 						irue = energy_graph.get_node(ires)->const_upper_edge_list_end();
 						iru != irue; ++iru ) {
 					auto const & edge( static_cast< EnergyEdge const &> (**iru) );
-					Size const other_resid( edge.get_second_node_ind() );
+					core::Size const other_resid( edge.get_second_node_ind() );
 
 					if ( (ires != resid) && (other_resid != resid) ) continue;
 
@@ -220,7 +220,7 @@ void HelixNCapperMover::get_Ncap_scores() {
 
 			core::Real nh_hbond_sum( 0.0 );
 
-			for ( Size i = 1; i<= hbond_set.nhbonds(); i++ ) {
+			for ( core::Size i = 1; i<= hbond_set.nhbonds(); i++ ) {
 				HBond const & hbond = hbond_set.hbond(i);
 				if ( hbond.don_res() != resid ) continue;
 				if ( !hbond.don_hatm_is_protein_backbone() ) continue;
@@ -250,7 +250,7 @@ core::Real HelixNCapperMover::ncap_prob_from_svm( utility::vector1< core::Real >
 
 	// Make the svm nodes
 	utility::vector1< Svm_node_rosettaOP > ncap_feature_nodes;
-	for ( Size i = 1 ; i <= features.size() ; ++i ) {
+	for ( core::Size i = 1 ; i <= features.size() ; ++i ) {
 		Svm_node_rosettaOP new_node = utility::pointer::make_shared< Svm_node_rosetta >( i, features[i] );
 		ncap_feature_nodes.push_back( new_node );
 	}
@@ -259,7 +259,7 @@ core::Real HelixNCapperMover::ncap_prob_from_svm( utility::vector1< core::Real >
 
 	//TR << "The size of the returned vector is " << return_prob_vector.size() << std::endl;
 
-	//  for( Size i = 1 ; i <= return_prob_vector.size() ; ++i ) {
+	//  for( core::Size i = 1 ; i <= return_prob_vector.size() ; ++i ) {
 	//   TR << "Element " << i << " is " << return_prob_vector[i] << std::endl;
 	//  }
 

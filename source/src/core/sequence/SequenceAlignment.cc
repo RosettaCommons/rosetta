@@ -426,7 +426,7 @@ std::istream & operator>> (
 SequenceAlignment::SequenceAlignment(
 	SequenceAlignment const & src
 ) :
-	ReferenceCount ( src )
+	VirtualBase( src )
 {
 	*this = src;
 }

@@ -22,8 +22,8 @@
 #include <core/types.hh>
 #include <protocols/nonlocal/Region.fwd.hh>
 #include <utility/down_cast.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.fwd.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.functions.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>

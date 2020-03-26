@@ -20,7 +20,7 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <protocols/ligand_docking/ResidueTorsionRestraints.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
@@ -37,7 +37,7 @@ namespace ligand_docking {
 /// because Movers only get Pose references, not PoseOPs.
 /// Do not try to use one of these with multiple different poses, or surely the C++ gods will smite thee.
 ///
-class ResidueTorsionRestraints : public utility::pointer::ReferenceCount
+class ResidueTorsionRestraints : public utility::VirtualBase
 {
 public:
 

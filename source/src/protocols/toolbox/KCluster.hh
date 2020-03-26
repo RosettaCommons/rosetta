@@ -37,10 +37,10 @@ namespace toolbox {
 ////////////////////////////////////////////////////////////////////////
 // Hierachical Cluster Data Structure
 ////////////////////////////////////////////////////////////////////////
-class KClusterElement : public utility::pointer::ReferenceCount
+class KClusterElement : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~KClusterElement() override;
 	typedef utility::vector1< core::Size > ClusterNdxList;
 	typedef utility::vector1< core::Size > ClusterTypList;
@@ -199,10 +199,10 @@ private:
 
 
 /// @brief database of a K-style Clustering algorithm
-class KClusterData : public utility::pointer::ReferenceCount
+class KClusterData : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~KClusterData() override;
 	typedef ObjexxFCL::FArray1D_double FA1Dd;
 	typedef ObjexxFCL::FArray2D_double FA2Dd;
@@ -263,7 +263,7 @@ private:
 
 
 /// @brief basic class for performing a K-style Clustering algorithm
-class KCluster : public utility::pointer::ReferenceCount
+class KCluster : public utility::VirtualBase
 {
 public:
 	typedef ObjexxFCL::FArray2_double FA2d;

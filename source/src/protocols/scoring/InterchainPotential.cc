@@ -64,8 +64,8 @@ InterchainPotential::InterchainPotential() :
 
 	using core::Size;
 	// load the data
-	Size const max_aa( 20 ); // just the standard aa's for now
-	Size const env_log_table_size( 4 );
+	core::Size const max_aa( 20 ); // just the standard aa's for now
+	core::Size const env_log_table_size( 4 );
 
 	std::string tag,line;
 	core::chemical::AA aa;
@@ -78,7 +78,7 @@ InterchainPotential::InterchainPotential() :
 		while ( getline( stream, line ) ) {
 			std::istringstream l(line);
 			l >> tag >> aa;
-			for ( Size i=1; i<= env_log_table_size; ++i ) {
+			for ( core::Size i=1; i<= env_log_table_size; ++i ) {
 				l >> interchain_env_log_(aa,i);
 			}
 			if ( l.fail() || tag != "INT_CHAIN_ENV_LOG:"  ) utility_exit_with_message("bad format for scoring/score_functions/InterchainPotential/interchain_env_log.txt");
@@ -92,7 +92,7 @@ InterchainPotential::InterchainPotential() :
 		while ( getline( stream, line ) ) {
 			std::istringstream l(line);
 			l >> tag >> aa;
-			for ( Size i=1; i<= max_aa; ++i ) {
+			for ( core::Size i=1; i<= max_aa; ++i ) {
 				l >> interchain_pair_log_(aa,i);
 			}
 			if ( l.fail() || tag != "INT_CHAIN_PAIR_LOG:"  ) utility_exit_with_message("bad format for scoring/score_functions/InterchainPotential/interchain_pair_log.txt");
@@ -187,7 +187,7 @@ InterchainPotential::evaluate_contact_score(
 	//calculate contact score for each jump, sum total is contact score
 	using core::Size;
 	using core::Real;
-	for ( Size i = 1; i <= interface.num_jump(); i++ ) {
+	for ( core::Size i = 1; i <= interface.num_jump(); i++ ) {
 		int interface_residues = interface.interface_nres(i);
 
 		Real contact_score_jump = ( 20 - interface_residues ) * 0.5;
@@ -232,10 +232,10 @@ InterchainPotential::evaluate_pair_and_vdw_score(
 	// calculation for vdw?
 	// atoms between two chains are guaranteed to not be bonded
 	// no countpair!
-	for ( Size i=1, i_end = rsd1.natoms(); i<= i_end; ++i ) {
+	for ( core::Size i=1, i_end = rsd1.natoms(); i<= i_end; ++i ) {
 
 		Vector const & i_xyz( rsd1.xyz(i) );
-		Size const i_type( rsd1.atom_type_index(i) );
+		core::Size const i_type( rsd1.atom_type_index(i) );
 
 		// if virtual atom, continue
 		if ( rsd1.is_virtual( i ) ) {
@@ -246,7 +246,7 @@ InterchainPotential::evaluate_pair_and_vdw_score(
 		utility::vector1< Real > const & i_atom_vdw( atom_vdw_( i_type ) );
 
 		// iterate over interacting residue
-		for ( Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
+		for ( core::Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
 
 			// if virtual atom, continue
 			if ( rsd2.is_virtual( j ) ) {

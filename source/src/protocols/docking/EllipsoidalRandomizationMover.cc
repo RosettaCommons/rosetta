@@ -266,19 +266,19 @@ numeric::xyzMatrix< Real >
 EllipsoidalRandomizationMover::calculate_axes( core::pose::Pose & pose_in )
 {
 
-	utility::vector1< Size > partner_residue_start_stop = get_partner_residue_start_stop( pose_in, ellipsoid_is_first_partner_ );
+	utility::vector1< core::Size > partner_residue_start_stop = get_partner_residue_start_stop( pose_in, ellipsoid_is_first_partner_ );
 
 	utility::vector1< Vector > nbr_atom_coords; //c_alpha_coords;
-	for ( Size i=partner_residue_start_stop[1]; i<=partner_residue_start_stop[2]; ++i ) {
+	for ( core::Size i=partner_residue_start_stop[1]; i<=partner_residue_start_stop[2]; ++i ) {
 		core::conformation::Residue const & rsd = pose_in.residue( i );
 		numeric::xyzVector_double atom_coords = rsd.is_protein() ? rsd.atom( "CA" ).xyz() :
 			rsd.nbr_atom_xyz();
 		nbr_atom_coords.push_back( atom_coords );
 	}
 
-	Size n_res = nbr_atom_coords.size();
+	core::Size n_res = nbr_atom_coords.size();
 
-	for ( Size i = 1; i <= n_res; ++i ) {
+	for ( core::Size i = 1; i <= n_res; ++i ) {
 		nbr_atom_centroid_ += nbr_atom_coords[i];
 	}
 	nbr_atom_centroid_ /= n_res;
@@ -311,8 +311,8 @@ EllipsoidalRandomizationMover::get_partner_residue_start_stop( core::pose::Pose 
 			"with the pose does not exist.");
 	}
 
-	Size first_residue_second_partner = 0;
-	Size last_residue_first_partner = 0;
+	core::Size first_residue_second_partner = 0;
+	core::Size last_residue_first_partner = 0;
 
 	if ( partners_ == "_" ) {
 
@@ -320,12 +320,12 @@ EllipsoidalRandomizationMover::get_partner_residue_start_stop( core::pose::Pose 
 
 	} else {
 		char first_chain_second_partner = char();
-		for ( Size i=1; i<=partners_.length()-1; ++i ) {
+		for ( core::Size i=1; i<=partners_.length()-1; ++i ) {
 			if ( partners_[i-1] == '_' ) {
 				first_chain_second_partner = partners_[i];
 			}
 		}
-		for ( Size i=2; i<= pose_in.size(); ++i ) {
+		for ( core::Size i=2; i<= pose_in.size(); ++i ) {
 			if ( pdb_info->chain( i ) == first_chain_second_partner ) {
 				first_residue_second_partner = i;
 				last_residue_first_partner = i-1;
@@ -585,13 +585,13 @@ EllipsoidalRandomizationMover::calculate_plane_axes( core::pose::Pose & pose_in 
 		non_ellipsoid_is_first_partner = true;
 	}
 
-	utility::vector1< Size > partner_residue_start_stop = get_partner_residue_start_stop( pose_in, non_ellipsoid_is_first_partner );
+	utility::vector1< core::Size > partner_residue_start_stop = get_partner_residue_start_stop( pose_in, non_ellipsoid_is_first_partner );
 
 	utility::vector1< Vector > nbr_atom_plane_coords;
 	utility::vector1< Vector > nbr_atom_non_ellipsoid_coords;
 
 	core::Real interface_distance_cutoff = 8.0;
-	Size n_res_plane = 0;
+	core::Size n_res_plane = 0;
 
 	//A several-residue interface is necessary to maintain good contacts
 	while ( n_res_plane < 5 ) {
@@ -600,7 +600,7 @@ EllipsoidalRandomizationMover::calculate_plane_axes( core::pose::Pose & pose_in 
 		}
 		utility::vector1< bool > is_interface = get_interface_residues( pose_in, interface_distance_cutoff, autofoldtree_ );
 		TR << "Getting interface residues at " << interface_distance_cutoff << " Angstroms" << std::endl;
-		for ( Size i=partner_residue_start_stop[1]; i<=partner_residue_start_stop[2]; ++i ) {
+		for ( core::Size i=partner_residue_start_stop[1]; i<=partner_residue_start_stop[2]; ++i ) {
 			core::conformation::Residue const & rsd = pose_in.residue( i );
 			numeric::xyzVector_double atom_coords = rsd.is_protein() ? rsd.atom( "CA" ).xyz() : rsd.nbr_atom_xyz();
 			nbr_atom_non_ellipsoid_coords.push_back( atom_coords );
@@ -616,14 +616,14 @@ EllipsoidalRandomizationMover::calculate_plane_axes( core::pose::Pose & pose_in 
 		interface_distance_cutoff += 1.0;
 	}
 
-	Size n_res_non_ellipsoid = nbr_atom_non_ellipsoid_coords.size();
+	core::Size n_res_non_ellipsoid = nbr_atom_non_ellipsoid_coords.size();
 
-	for ( Size i = 1; i <= n_res_plane; ++i ) {
+	for ( core::Size i = 1; i <= n_res_plane; ++i ) {
 		nbr_atom_plane_centroid_ += nbr_atom_plane_coords[i];
 	}
 	nbr_atom_plane_centroid_ /= n_res_plane;
 
-	for ( Size i = 1; i <= n_res_non_ellipsoid; ++i ) {
+	for ( core::Size i = 1; i <= n_res_non_ellipsoid; ++i ) {
 		nbr_atom_non_ellipsoid_centroid_ += nbr_atom_non_ellipsoid_coords[i];
 	}
 	nbr_atom_non_ellipsoid_centroid_ /= n_res_non_ellipsoid;

@@ -148,7 +148,7 @@ SpecificResiduesNearInterfaceFilter::compute(
 	vector1< bool > relevant_residues(task->repacking_residues());
 
 	bool all_at_interface(true);
-	for ( Size residue_number=1;
+	for ( core::Size residue_number=1;
 			residue_number <= pose.size(); ++residue_number ) {
 		if ( !relevant_residues[residue_number] ) continue;
 

@@ -23,7 +23,7 @@
 #include <core/pose/Pose.hh>
 
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 
@@ -41,9 +41,9 @@ namespace cartesian_frags {
 
 /// @brief  A container class for cartesian fragments of DNA structure
 
-class DNA_FragLib : public utility::pointer::ReferenceCount {
+class DNA_FragLib : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~DNA_FragLib() override;
 
 	utility::vector1< CartesianFragment > const &

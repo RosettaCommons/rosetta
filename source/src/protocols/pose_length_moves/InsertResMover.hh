@@ -31,7 +31,7 @@
 // Utility Headers
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
@@ -47,7 +47,7 @@ class InsertResMover : public protocols::moves::Mover {
 public:
 	InsertResMover();
 	numeric::xyzVector<core::Real> center_of_mass(core::pose::Pose const & pose);
-	void extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size length);
+	void extendRegion(core::pose::PoseOP poseOP, core::Size chain_id, core::Size length);
 	void apply( Pose & pose ) override;
 	moves::MoverOP clone() const override { return utility::pointer::make_shared< InsertResMover >( *this ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
@@ -68,18 +68,18 @@ private:
 	utility::vector1<core::pose::PoseOP> posesToOutput_;
 	utility::vector1<bool> posesOutputed_;
 	std::string chain_;
-	Size residue_;
+	core::Size residue_;
 	bool grow_toward_Nterm_;
 	bool ideal_;
-	Size lowAddRes_;
-	Size highAddRes_;
+	core::Size lowAddRes_;
+	core::Size highAddRes_;
 	std::string resType_;
 	bool useInputAngles_;
 	core::Real phi_;
 	core::Real psi_;
 	core::Real omega_;
 	core::scoring::ScoreFunctionOP scorefxn_;
-	Size steal_angles_from_res_;
+	core::Size steal_angles_from_res_;
 };
 
 

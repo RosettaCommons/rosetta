@@ -107,7 +107,7 @@ JSON_RPC::JSON_RPC(const std::string &msg, bool capture_tracer, BasicInit *basic
 	unpack( msg_ );
 }
 
-JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
+JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : VirtualBase(json_rpc) {
 	(*this) = json_rpc;
 }
 
@@ -278,28 +278,28 @@ void JSON_RPC::run(){
 				//            bool is_fullatom() const;
 				//            bool is_centroid() const;
 				//
-				//            Size total_residue() const;
-				//            Size n_residue() const;
-				//            Size num_jump() const;
+				//            core::Size total_residue() const;
+				//            core::Size n_residue() const;
+				//            core::Size num_jump() const;
 				//
-				//            chemical::AA aa( Size const seqpos) const;
-				//            char secstruct( Size const seqpos ) const;
+				//            chemical::AA aa( core::Size const seqpos) const;
+				//            char secstruct( core::Size const seqpos ) const;
 				//            std::string secstruct() const;
 				//            std::string sequence() const;
 				//            std::string annotated_sequence( bool show_all_variants = false ) const;
 				//            std::string chain_sequence( core::Size const chain_in ) const;
 				//
-				//            Real phi( Size const seqpos ) const;
-				//            Real psi( Size const seqpos ) const;
-				//            Real omega( Size const seqpos ) const;
-				//            Real alpha( Size const pos ) const;
-				//            Real beta( Size const seqpos ) const;
-				//            Real gamma( Size const seqpos ) const;
-				//            Real delta( Size const pos ) const;
-				//            Real epsilon( Size const seqpos ) const;
-				//            Real zeta( Size const seqpos ) const;
-				//            Real chi( int const chino, Size const seqpos) const;
-				//            Real chi( Size const seqpos ) const;
+				//            Real phi( core::Size const seqpos ) const;
+				//            Real psi( core::Size const seqpos ) const;
+				//            Real omega( core::Size const seqpos ) const;
+				//            Real alpha( core::Size const pos ) const;
+				//            Real beta( core::Size const seqpos ) const;
+				//            Real gamma( core::Size const seqpos ) const;
+				//            Real delta( core::Size const pos ) const;
+				//            Real epsilon( core::Size const seqpos ) const;
+				//            Real zeta( core::Size const seqpos ) const;
+				//            Real chi( int const chino, core::Size const seqpos) const;
+				//            Real chi( core::Size const seqpos ) const;
 
 			}
 

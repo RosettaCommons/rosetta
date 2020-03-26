@@ -50,7 +50,7 @@ public:
 
 	EntityElementOP clone() override;
 	EntityElementOP fresh_instance() override;
-	Size hash() const override;
+	core::Size hash() const override;
 	bool operator <  ( EntityElement const & rhs ) const override;
 	bool operator == ( EntityElement const & rhs ) const override;
 	EntityElement & operator = ( EntityElement const & rhs ) noexcept override;

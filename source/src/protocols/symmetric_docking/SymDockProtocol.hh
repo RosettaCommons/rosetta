@@ -100,7 +100,7 @@ public:
 	void set_dock_rtmin( bool dock_rtmin_in );
 
 	void set_sc_min( bool sc_min_in );
-	void set_max_repeats( Size const max_repeats_in );
+	void set_max_repeats( core::Size const max_repeats_in );
 	void set_dock_ppk( bool dock_ppk_in );
 
 	void set_fullatom( bool const fullatom_in );
@@ -222,7 +222,7 @@ private:
 	bool local_refine_;
 	bool rtmin_;
 	bool sc_min_;
-	Size max_repeats_;
+	core::Size max_repeats_;
 	bool dock_ppk_;
 
 	/// @brief Jumps for symmetric rigid body transformations

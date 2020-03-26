@@ -92,7 +92,7 @@ NeighborhoodByDistanceCalculator::lookup(
 		basic::check_cast( valptr, &num_neighbors_, "num_neighbors expects to return a core::Size" );
 		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( num_neighbors_ );
 	} else if ( key == "num_neighbors_map" ) {
-		basic::check_cast( valptr, &num_neighbors_map_, "num_neighbors_map expects to return a std::map<Size, Size>");
+		basic::check_cast( valptr, &num_neighbors_map_, "num_neighbors_map expects to return a std::map<core::Size, core::Size>");
 		(static_cast<basic::MetricValue< std::map< core::Size, core::Size > > *>(valptr))->set(num_neighbors_map_);
 	} else if ( key == "neighbors" ) {
 		basic::check_cast( valptr, &neighbors_, "neighbors expects to return a std::set< core::Size >" );

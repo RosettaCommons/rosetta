@@ -35,7 +35,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 
 //// C++ headers
@@ -54,7 +54,7 @@
 namespace protocols {
 namespace abinitio {
 
-class Templates : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Templates >
+class Templates : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< Templates >
 {
 public:
 	typedef std::map< std::string, TemplateOP > TemplateMap;
@@ -68,8 +68,8 @@ public:
 	Templates( std::string const& config_file, core::pose::PoseCOP native = nullptr );
 	~Templates() override;
 
-	core::fragment::FragSetOP pick_frags( core::fragment::FragSetOP, core::fragment::FragDataCOP frag_type, Size min_nr_frags, Size ncopies = 1 ) const;
-	Size pick_frags( core::fragment::FragSet&, core::fragment::FragDataCOP frag_type, Size ncopies = 1 ) const;
+	core::fragment::FragSetOP pick_frags( core::fragment::FragSetOP, core::fragment::FragDataCOP frag_type, core::Size min_nr_frags, core::Size ncopies = 1 ) const;
+	core::Size pick_frags( core::fragment::FragSet&, core::fragment::FragDataCOP frag_type, core::Size ncopies = 1 ) const;
 
 	void read_pairings( std::string const& filename, core::scoring::dssp::PairingsList& ) const;
 
@@ -126,7 +126,7 @@ public:
 	is_good() const { return good_; };
 
 
-	Size pick_large_frags(
+	core::Size pick_large_frags(
 		core::fragment::FragSet& frag_set,
 		core::fragment::SingleResidueFragDataOP frag_type,
 		core::Size ncopies = 1

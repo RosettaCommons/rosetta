@@ -49,11 +49,11 @@ ProteinMainChainStepWiseSampler::~ProteinMainChainStepWiseSampler() = default;
 
 //////////////////////////////////////////////////////////////////////////
 void
-ProteinMainChainStepWiseSampler::apply( core::pose::Pose & pose, Size const id )
+ProteinMainChainStepWiseSampler::apply( core::pose::Pose & pose, core::Size const id )
 {
 	if ( id > size() ) utility_exit_with_message( "Asked ProteinMainChainStepWiseSampler for another sample but it does not have one!" );
 	utility::vector1< Real > const & main_chain_torsion_set_list( main_chain_torsion_set_lists_[ id ] );
-	for ( Size i = 1; i <= which_torsions_.size(); i++ ) {
+	for ( core::Size i = 1; i <= which_torsions_.size(); i++ ) {
 		//std::cout << "SETTING TORSION " << which_torsions_[ i ] << "  to " << main_chain_torsion_set_list[ i ] << std::endl;
 		pose.set_torsion( which_torsions_[ i ], main_chain_torsion_set_list[ i ] );
 	}

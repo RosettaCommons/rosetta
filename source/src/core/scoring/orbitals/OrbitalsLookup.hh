@@ -22,7 +22,7 @@
 #include <numeric/interpolation/spline/BicubicSpline.hh>
 #include <numeric/interpolation/spline/CubicSpline.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <map>
 #include <string>
@@ -34,7 +34,7 @@ namespace core {
 namespace scoring {
 namespace orbitals {
 
-class OrbitalsLookup : public utility::pointer::ReferenceCount {
+class OrbitalsLookup : public utility::VirtualBase {
 public:
 	enum h_type { Hpol_scOrbH, Haro_scOrbH, Hpol_bbOrbH };
 

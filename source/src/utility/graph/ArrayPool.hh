@@ -19,7 +19,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 
 // C++ headers
@@ -230,7 +230,7 @@ private:
 };
 
 template < class T >
-class ArrayPool : public utility::pointer::ReferenceCount
+class ArrayPool : public utility::VirtualBase
 {
 public:
 	/// Creation and destruction

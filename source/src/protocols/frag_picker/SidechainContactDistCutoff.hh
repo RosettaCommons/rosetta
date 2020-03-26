@@ -22,7 +22,7 @@
 #include <core/types.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C/C++ headers
@@ -33,7 +33,7 @@ namespace frag_picker {
 
 /// @brief defines sidechain contact distance cutoffs.
 /// @details provides amino acid pair specific distance cutoffs.
-class SidechainContactDistCutoff: public utility::pointer::ReferenceCount {
+class SidechainContactDistCutoff: public utility::VirtualBase {
 public:
 
 	SidechainContactDistCutoff();

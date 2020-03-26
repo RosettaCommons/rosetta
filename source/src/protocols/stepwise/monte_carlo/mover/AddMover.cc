@@ -123,7 +123,7 @@ AddMover::parse_my_tag(
 	presample_by_swa_ = tag->getOption< bool >( "presample_by_swa", presample_by_swa_ );
 	minimize_single_res_ = tag->getOption< bool >( "minimize_single_res", minimize_single_res_ );
 	start_added_residue_in_aform_ = tag->getOption< bool >( "start_added_residue_in_aform", start_added_residue_in_aform_ );
-	internal_cycles_ = tag->getOption< Size >( "internal_cycles", internal_cycles_ );
+	internal_cycles_ = tag->getOption< core::Size >( "internal_cycles", internal_cycles_ );
 	sample_range_small_ = tag->getOption< Real >( "sample_range_small", sample_range_small_ );
 	sample_range_large_ = tag->getOption< Real >( "sample_range_large", sample_range_large_ );
 	kT_ = tag->getOption< Real >( "kT", kT_ );
@@ -162,7 +162,7 @@ void AddMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 //////////////////////////////////////////////////////////////////////
 void
-AddMover::apply( core::pose::Pose & viewer_pose, Size const res_to_add_in_full_model_numbering, Size const res_to_build_off_in_full_model_numbering )
+AddMover::apply( core::pose::Pose & viewer_pose, core::Size const res_to_add_in_full_model_numbering, core::Size const res_to_build_off_in_full_model_numbering )
 {
 	int offset = static_cast<int>(res_to_add_in_full_model_numbering) - static_cast<int>(res_to_build_off_in_full_model_numbering);
 	runtime_assert( offset != 0 );
@@ -200,7 +200,7 @@ AddMover::apply(
 	swa_move_ = swa_move;
 	res_to_add_in_full_model_numbering_   = get_add_res( swa_move, pose );
 	res_to_build_off_in_full_model_numbering_ = swa_move.attached_res();
-	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+	utility::vector1< core::Size > const & res_list = get_res_list_from_full_model_info( pose );
 
 	runtime_assert( res_list.has_value( res_to_build_off_in_full_model_numbering_ ) );
 	runtime_assert( !res_list.has_value( res_to_add_in_full_model_numbering_ ) );
@@ -229,7 +229,7 @@ AddMover::apply(
 	///////////////////////////////////
 	if ( presample_added_residue_ ) {
 		if ( presample_by_swa_ ) {
-			Size swa_sample_res = nucleoside_num_;
+			core::Size swa_sample_res = nucleoside_num_;
 			if ( swa_sample_res == 0 ) swa_sample_res = suite_num_; // nucleoside_num_ = 0 in domain addition.
 			sample_by_swa( viewer_pose, swa_sample_res );
 		} else {
@@ -248,10 +248,10 @@ AddMover::do_append( core::pose::Pose & pose ){
 
 	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 	std::string const & full_sequence  = full_model_info.full_sequence();
-	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
-	Size const res_to_build_off = res_list.index( res_to_build_off_in_full_model_numbering_ );
+	utility::vector1< core::Size > const & res_list = get_res_list_from_full_model_info( pose );
+	core::Size const res_to_build_off = res_list.index( res_to_build_off_in_full_model_numbering_ );
 
-	Size const offset = res_to_add_in_full_model_numbering_ - res_to_build_off_in_full_model_numbering_;
+	core::Size const offset = res_to_add_in_full_model_numbering_ - res_to_build_off_in_full_model_numbering_;
 	// addition to strand ending (append)
 	if ( swa_move_.attachment_type() != JUMP_DOCK ) {
 		runtime_assert( res_to_build_off == pose.size() ||
@@ -259,7 +259,7 @@ AddMover::do_append( core::pose::Pose & pose ){
 		runtime_assert( res_list[ res_to_build_off ] < full_sequence.size() );
 	}
 
-	Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering_ );
+	core::Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering_ );
 	if ( other_pose_idx ) { // addition of a domain (a whole sister pose)
 		append_other_pose( pose, offset, other_pose_idx );
 	} else { // single residue addition -- can this just be combine with above?
@@ -273,8 +273,8 @@ AddMover::do_prepend( core::pose::Pose & pose ) {
 
 	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 	runtime_assert( res_to_add_in_full_model_numbering_ < res_to_build_off_in_full_model_numbering_ );
-	Size const offset = res_to_build_off_in_full_model_numbering_ - res_to_add_in_full_model_numbering_;
-	Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering_ );
+	core::Size const offset = res_to_build_off_in_full_model_numbering_ - res_to_add_in_full_model_numbering_;
+	core::Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering_ );
 
 	//  TR << "About to add onto " << res_to_build_off_in_full_model_numbering_ << " the following residue (in full model numbering) " << res_to_add_in_full_model_numbering_ << " which may be part of other pose " << other_pose_idx << std::endl;
 
@@ -287,8 +287,8 @@ AddMover::do_prepend( core::pose::Pose & pose ) {
 
 ////////////////////////////////////////////////////////////////////////
 void
-AddMover::append_other_pose( pose::Pose & pose, Size const offset,
-	Size const other_pose_idx ){
+AddMover::append_other_pose( pose::Pose & pose, core::Size const offset,
+	core::Size const other_pose_idx ){
 	runtime_assert( other_pose_idx > 0);
 	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 	Pose & other_pose = *(full_model_info.other_pose_list()[ other_pose_idx ]);
@@ -308,8 +308,8 @@ AddMover::append_other_pose( pose::Pose & pose, Size const offset,
 
 ////////////////////////////////////////////////////////////////////////
 void
-AddMover::prepend_other_pose( pose::Pose & pose, Size const offset,
-	Size const other_pose_idx ){
+AddMover::prepend_other_pose( pose::Pose & pose, core::Size const offset,
+	core::Size const other_pose_idx ){
 	runtime_assert( other_pose_idx > 0);
 	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 	Pose & other_pose = *(full_model_info.other_pose_list()[ other_pose_idx ]);
@@ -328,7 +328,7 @@ AddMover::prepend_other_pose( pose::Pose & pose, Size const offset,
 
 ////////////////////////////////////////////////////////////////////////
 void
-AddMover::append_residue( pose::Pose & pose, Size const offset ) {
+AddMover::append_residue( pose::Pose & pose, core::Size const offset ) {
 
 	using namespace core::chemical;
 	using namespace core::chemical::rna;
@@ -336,13 +336,13 @@ AddMover::append_residue( pose::Pose & pose, Size const offset ) {
 
 	//FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 	//std::string const & full_sequence  = full_model_info.full_sequence();
-	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
-	Size const res_to_build_off = res_list.index( res_to_build_off_in_full_model_numbering_ );
-	Size res_to_add = res_to_build_off + 1;
+	utility::vector1< core::Size > const & res_list = get_res_list_from_full_model_info( pose );
+	core::Size const res_to_build_off = res_list.index( res_to_build_off_in_full_model_numbering_ );
+	core::Size res_to_add = res_to_build_off + 1;
 
 	core::conformation::ResidueOP new_rsd = create_residue_to_add( pose );
 
-	Size actual_offset = offset;
+	core::Size actual_offset = offset;
 	if ( swa_move_.attachment_type() == BOND_TO_PREVIOUS ) {
 		runtime_assert( offset == 1 );
 		remove_variant_type_from_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT, res_to_build_off ); // got to be safe.
@@ -355,7 +355,7 @@ AddMover::append_residue( pose::Pose & pose, Size const offset ) {
 		runtime_assert( swa_move_.is_jump() );
 
 		// following is getting really clunky. May want to instead use merge_two_poses code.
-		Size takeoff_res( 0 ), k( 0 );
+		core::Size takeoff_res( 0 ), k( 0 );
 		for ( k = res_to_add_in_full_model_numbering_; k >= res_to_build_off_in_full_model_numbering_; k-- ) {
 			if ( res_list.has_value( k ) ) { takeoff_res = res_list.index( k ); break; }
 		}
@@ -371,7 +371,7 @@ AddMover::append_residue( pose::Pose & pose, Size const offset ) {
 			default_jump_atom( new_rsd->type() ) );
 
 		kinematics::FoldTree f = pose.fold_tree();
-		Size const jump_nr = f.jump_nr( takeoff_res, res_to_add );
+		core::Size const jump_nr = f.jump_nr( takeoff_res, res_to_add );
 		f.slide_jump( jump_nr, res_to_build_off, res_to_add );
 		f.set_jump_atoms( jump_nr, default_jump_atom( pose.residue_type( res_to_build_off ) ),
 			default_jump_atom( pose.residue_type( res_to_add ) ) );
@@ -394,7 +394,7 @@ AddMover::append_residue( pose::Pose & pose, Size const offset ) {
 
 ////////////////////////////////////////////////////////////////////////
 void
-AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
+AddMover::prepend_residue( pose::Pose & pose, core::Size const offset ){
 
 	using namespace core::chemical;
 	using namespace core::chemical::rna;
@@ -402,15 +402,15 @@ AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
 
 	//FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 	//std::string const & full_sequence  = full_model_info.full_sequence();
-	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
-	Size const res_to_build_off = res_list.index( res_to_build_off_in_full_model_numbering_ );
-	Size res_to_add = res_to_build_off;
+	utility::vector1< core::Size > const & res_list = get_res_list_from_full_model_info( pose );
+	core::Size const res_to_build_off = res_list.index( res_to_build_off_in_full_model_numbering_ );
+	core::Size res_to_add = res_to_build_off;
 
 	runtime_assert( res_list[ res_to_add ] > 1 );
 
 	core::conformation::ResidueOP new_rsd = create_residue_to_add( pose );
 
-	Size actual_offset = offset;
+	core::Size actual_offset = offset;
 	if ( swa_move_.attachment_type() == BOND_TO_NEXT ) {
 		runtime_assert( offset == 1 );
 		remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE,res_to_build_off ); // got to be safe.
@@ -424,7 +424,7 @@ AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
 		runtime_assert( swa_move_.is_jump() );
 
 		// following is getting really clunky. May want to instead use merge_two_poses code.
-		Size takeoff_res( 0 ), k( 0 );
+		core::Size takeoff_res( 0 ), k( 0 );
 		for ( k = res_to_add_in_full_model_numbering_; k <= res_to_build_off_in_full_model_numbering_; k++ ) {
 			if ( res_list.has_value( k ) ) { takeoff_res = res_list.index( k ); break; }
 		}
@@ -441,7 +441,7 @@ AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
 			default_jump_atom( new_rsd->type() ) );
 
 		kinematics::FoldTree f = pose.fold_tree();
-		Size const jump_nr = f.jump_nr( res_to_add, takeoff_res+1 );
+		core::Size const jump_nr = f.jump_nr( res_to_add, takeoff_res+1 );
 		f.slide_jump( jump_nr, res_to_add, res_to_build_off+1 );
 		f.set_jump_atoms( jump_nr, default_jump_atom( pose.residue_type( res_to_add ) ),
 			default_jump_atom( pose.residue_type( res_to_build_off+1 ) ) );
@@ -467,7 +467,7 @@ AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
 
 ////////////////////////////////////////////////////////////////////
 void
-AddMover::sample_by_swa( pose::Pose & pose, Size const res_to_add ) const{
+AddMover::sample_by_swa( pose::Pose & pose, core::Size const res_to_add ) const{
 	using namespace core::pose::full_model_info;
 	runtime_assert( stepwise_modeler_ != nullptr );
 	stepwise_modeler_->set_moving_res_and_reset( res_to_add );
@@ -487,7 +487,7 @@ AddMover::sample_by_monte_carlo_internal( pose::Pose & pose ) const {
 	MonteCarloOP monte_carlo_internal( new MonteCarlo( pose, *scorefxn_, kT_ ) );
 
 	std::string move_type( "" );
-	for ( Size count_internal = 1; count_internal <= internal_cycles_; ++count_internal ) {
+	for ( core::Size count_internal = 1; count_internal <= internal_cycles_; ++count_internal ) {
 
 		rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num_, sample_range_large_);
 		if ( nucleoside_num_ > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num_, sample_range_large_);
@@ -508,7 +508,7 @@ AddMover::set_stepwise_modeler( protocols::stepwise::modeler::StepWiseModelerOP 
 
 ///////////////////////////////////////////////////////////////////
 bool
-AddMover::check_same_chain( pose::Pose const & pose, Size const res_to_add_in_full_model_numbering, Size const res_to_build_off_in_full_model_numbering ){
+AddMover::check_same_chain( pose::Pose const & pose, core::Size const res_to_add_in_full_model_numbering, core::Size const res_to_build_off_in_full_model_numbering ){
 	return  ( get_chain_for_full_model_resnum( res_to_add_in_full_model_numbering, pose ) ==
 		get_chain_for_full_model_resnum( res_to_build_off_in_full_model_numbering, pose ) );
 }
@@ -547,20 +547,20 @@ AddMover::setup_initial_torsions( pose::Pose & pose ) {
 Size
 AddMover::get_add_res( StepWiseMove const & swa_move, pose::Pose const & pose ) const {
 
-	utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
-	utility::vector1< Size > const & cutpoint_open_in_full_model = const_full_model_info( pose ).cutpoint_open_in_full_model();
+	utility::vector1< core::Size > const & res_list = const_full_model_info( pose ).res_list();
+	utility::vector1< core::Size > const & cutpoint_open_in_full_model = const_full_model_info( pose ).cutpoint_open_in_full_model();
 	std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
 
-	Size const & attached_res =  swa_move.attached_res();
+	core::Size const & attached_res =  swa_move.attached_res();
 	runtime_assert( res_list.has_value( attached_res ) );
 
 	MoveElement const & move_element = swa_move.move_element();
-	for ( Size const i : move_element ) {
+	for ( core::Size const i : move_element ) {
 		runtime_assert(  !res_list.has_value( i ) );
 	}
 
 	AttachmentType const & attachment_type = swa_move.attachment_type();
-	Size add_res( 0 );
+	core::Size add_res( 0 );
 	if ( attachment_type == BOND_TO_PREVIOUS ) {
 		add_res = attached_res + 1;
 		runtime_assert( !cutpoint_open_in_full_model.has_value( attached_res ) );
@@ -592,12 +592,12 @@ AddMover::setup_initial_jump( pose::Pose & pose ) {
 
 	// get the res to add in local numbering
 	FullModelInfo const & full_model_info = nonconst_full_model_info( pose );
-	Size const & res_to_add = full_model_info.full_to_sub( res_to_add_in_full_model_numbering_ );
+	core::Size const & res_to_add = full_model_info.full_to_sub( res_to_add_in_full_model_numbering_ );
 
 	// get parent res of res added, make sure they are connected by a jump ... is this necessary?
 	bool connected_by_jump;
 	FoldTree ft( pose.fold_tree() );
-	Size const & parent_res = ft.get_parent_residue( res_to_add, connected_by_jump );
+	core::Size const & parent_res = ft.get_parent_residue( res_to_add, connected_by_jump );
 	int offset = static_cast<int>(parent_res) - static_cast<int>(res_to_add);
 	if ( std::abs(offset) > 1 ) {
 		runtime_assert( swa_move_.attachment_type() == JUMP_DOCK );
@@ -613,7 +613,7 @@ AddMover::setup_initial_jump( pose::Pose & pose ) {
 	new_jump.set_translation( t );
 
 	// get jump number, and add the new jump into pose
-	Size const & jump_nr = ft.get_jump_that_builds_residue( res_to_add );
+	core::Size const & jump_nr = ft.get_jump_that_builds_residue( res_to_add );
 	pose.set_jump( jump_nr, new_jump );
 }
 
@@ -628,7 +628,7 @@ AddMover::create_residue_to_add( pose::Pose const & pose ) {
 
 	// figure out new residue type from sequence
 	std::string const & full_sequence  = const_full_model_info( pose ).full_sequence();
-	std::map< Size, std::string > const & nc_res_map = const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map();
+	std::map< core::Size, std::string > const & nc_res_map = const_full_model_info( pose ).full_model_parameters()->non_standard_residue_map();
 
 	if ( TR.Debug.visible() ) {
 		for ( auto const & nc_res_pair : nc_res_map ) {

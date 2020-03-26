@@ -24,7 +24,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/json_spirit/json_spirit_value.h>
 
 // Numeric headers
@@ -38,7 +38,7 @@ namespace core {
 namespace scoring {
 namespace nmr {
 
-class NMRTensor : public utility::pointer::ReferenceCount {
+class NMRTensor : public utility::VirtualBase {
 public: // Methods
 
 	/// @brief default constructor

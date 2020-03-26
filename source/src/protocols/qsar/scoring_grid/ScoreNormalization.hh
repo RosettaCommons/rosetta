@@ -17,7 +17,7 @@
 #include <protocols/qsar/scoring_grid/ScoreNormalization.fwd.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <string>
 
@@ -27,7 +27,7 @@ namespace scoring_grid {
 
 ScoreNormalizationOP get_score_normalization_function(std::string const & norm_tag);
 
-class ScoreNormalization : public utility::pointer::ReferenceCount {
+class ScoreNormalization : public utility::VirtualBase {
 public:
 	ScoreNormalization() {};
 	~ScoreNormalization() override {};

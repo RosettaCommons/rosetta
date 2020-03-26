@@ -124,14 +124,14 @@ VirtualSugarJustInTimeInstantiator::do_the_modeler( core::pose::Pose & pose ){
 
 	// special: moving_res and its anchor res are treated specially. They might be involved in a closed cutpoint,
 	// but even if not, we find possible sugar conformations which will be screened for stereochemistry in ConnectionSampler.
-	utility::vector1< Size > check_res = utility::tools::make_vector1( moving_res_ );
+	utility::vector1< core::Size > check_res = utility::tools::make_vector1( moving_res_ );
 	if ( pose.residue_type( moving_res_ ).is_RNA() && working_parameters_->working_reference_res() > 0 ) {
 		check_res.push_back( working_parameters_->working_reference_res() );
 	}
 
 	// definitely need to instantiate & sample sugars if they are about to get involved in chain closure...
-	utility::vector1< Size > cutpoints_closed = figure_out_moving_cutpoints_closed( pose, working_parameters_->working_moving_partition_res() );
-	for ( Size const cutpoint_closed : cutpoints_closed ) {
+	utility::vector1< core::Size > cutpoints_closed = figure_out_moving_cutpoints_closed( pose, working_parameters_->working_moving_partition_res() );
+	for ( core::Size const cutpoint_closed : cutpoints_closed ) {
 		check_res.push_back( cutpoint_closed     );
 		check_res.push_back( cutpoint_closed + 1 );
 	}
@@ -143,7 +143,7 @@ VirtualSugarJustInTimeInstantiator::do_the_modeler( core::pose::Pose & pose ){
 	}
 
 	bool success( true );
-	for ( Size const i : check_res ) {
+	for ( core::Size const i : check_res ) {
 		success = get_sugar_modeling_set( pose, i );
 		if ( !success ) break;
 	}
@@ -154,8 +154,8 @@ VirtualSugarJustInTimeInstantiator::do_the_modeler( core::pose::Pose & pose ){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Size
-VirtualSugarJustInTimeInstantiator::sampled_sugar_index( Size const i ) {
-	for ( Size n = 1; n <= sugar_modeling_sets_.size(); ++n ) {
+VirtualSugarJustInTimeInstantiator::sampled_sugar_index( core::Size const i ) {
+	for ( core::Size n = 1; n <= sugar_modeling_sets_.size(); ++n ) {
 		if ( sugar_modeling_sets_[ n ]->moving_res == i ) return n;
 	}
 	return 0;
@@ -163,7 +163,7 @@ VirtualSugarJustInTimeInstantiator::sampled_sugar_index( Size const i ) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-VirtualSugarJustInTimeInstantiator::get_sugar_modeling_set( pose::Pose & viewer_pose, Size const i ){
+VirtualSugarJustInTimeInstantiator::get_sugar_modeling_set( pose::Pose & viewer_pose, core::Size const i ){
 	if ( sampled_sugar_index( i ) > 0 ) return true;
 
 	SugarModelingOP sugar_modeling( new SugarModeling() );
@@ -211,18 +211,18 @@ VirtualSugarJustInTimeInstantiator::do_sugar_sampling( pose::Pose & viewer_pose,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-is_sugar_virtual( pose::Pose const & pose, Size const & n ){
+is_sugar_virtual( pose::Pose const & pose, core::Size const & n ){
 	return ( pose.residue( n ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-VirtualSugarJustInTimeInstantiator::setup_sugar_modeling( pose::Pose const & pose, Size const moving_res, SugarModeling & sugar_modeling ){
+VirtualSugarJustInTimeInstantiator::setup_sugar_modeling( pose::Pose const & pose, core::Size const moving_res, SugarModeling & sugar_modeling ){
 	using namespace core::chemical::rna;
 
 	if ( !is_sugar_virtual( pose, moving_res ) ) return false;
 
-	Size reference_res( 0 );
+	core::Size reference_res( 0 );
 	if ( options_->virtual_sugar_do_screens() ) reference_res = get_reference_res_for_virtual_sugar_based_on_fold_tree( pose, moving_res );
 
 	sugar_modeling = SugarModeling( moving_res, reference_res );
@@ -233,9 +233,9 @@ VirtualSugarJustInTimeInstantiator::setup_sugar_modeling( pose::Pose const & pos
 	// in the same direction as moving_res. This would be the case in Parin's
 	// usual dinucleotide move.  But we want to be able to totally leave out that
 	// filler base, in which case there's no bulge to rebuild. -- rhiju
-	Size const bulge_res_ = sugar_modeling.bulge_res;
+	core::Size const bulge_res_ = sugar_modeling.bulge_res;
 	// also no point in doing chain closure if split across partitions...
-	utility::vector1< Size > const & moving_partition_res = working_parameters_->working_moving_partition_res();
+	utility::vector1< core::Size > const & moving_partition_res = working_parameters_->working_moving_partition_res();
 	if ( bulge_res_ == sugar_modeling.reference_res ||
 			bulge_res_ == 0 ||
 			!pose.residue_type( bulge_res_ ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ||
@@ -253,13 +253,13 @@ void
 VirtualSugarJustInTimeInstantiator::instantiate_sugars_recursively(  pose::Pose const & pose,
 	utility::vector1< pose::PoseOP > & pose_data_list,
 	utility::vector1< SugarModelingOP > const & sugar_modeling_sets,
-	utility::vector1< Size > const & sugar_modeling_set_indices ) const {
+	utility::vector1< core::Size > const & sugar_modeling_set_indices ) const {
 
-	Size const which_set = sugar_modeling_set_indices.size() + 1;
-	Size const num_sets = sugar_modeling_sets.size();
+	core::Size const which_set = sugar_modeling_set_indices.size() + 1;
+	core::Size const num_sets = sugar_modeling_sets.size();
 	if ( which_set <= num_sets ) {
-		for ( Size n = 1; n <= sugar_modeling_sets[ which_set ]->pose_list.size(); n++ ) {
-			utility::vector1< Size > indices_new = sugar_modeling_set_indices;
+		for ( core::Size n = 1; n <= sugar_modeling_sets[ which_set ]->pose_list.size(); n++ ) {
+			utility::vector1< core::Size > indices_new = sugar_modeling_set_indices;
 			indices_new.push_back( n );
 			instantiate_sugars_recursively( pose, pose_data_list, sugar_modeling_sets, indices_new );
 		}
@@ -267,7 +267,7 @@ VirtualSugarJustInTimeInstantiator::instantiate_sugars_recursively(  pose::Pose 
 		runtime_assert( sugar_modeling_sets.size() == sugar_modeling_set_indices.size() );
 		PoseOP start_pose = pose.clone();
 		tag_into_pose( *start_pose, "" );
-		for ( Size q = 1; q <= num_sets; q++ ) instantiate_sugar( *start_pose, *sugar_modeling_sets[ q ], sugar_modeling_set_indices[ q ] );
+		for ( core::Size q = 1; q <= num_sets; q++ ) instantiate_sugar( *start_pose, *sugar_modeling_sets[ q ], sugar_modeling_set_indices[ q ] );
 		pose_data_list.push_back( start_pose );
 	}
 }
@@ -279,7 +279,7 @@ VirtualSugarJustInTimeInstantiator::prepare_from_prior_sampled_sugar_jobs( pose:
 	bool const pose_explosion_legacy /* = false */) const {
 	if ( pose_explosion_legacy ) {
 		runtime_assert( modeler_sugar() );
-		utility::vector1< Size > sugar_modeling_set_indices;
+		utility::vector1< core::Size > sugar_modeling_set_indices;
 		instantiate_sugars_recursively( pose, pose_data_list, sugar_modeling_sets_, sugar_modeling_set_indices );
 		if ( options_->virtual_sugar_legacy_mode() ) minimize_sugar_sets_legacy( pose, pose_data_list  );
 	} else {
@@ -293,7 +293,7 @@ VirtualSugarJustInTimeInstantiator::prepare_from_prior_sampled_sugar_jobs( pose:
 void
 VirtualSugarJustInTimeInstantiator::instantiate_sugars_at_cutpoint_closed( pose::Pose & pose ) const {
 	for ( auto const & set : sugar_modeling_sets_ ) {
-		Size const sugar_res = set->moving_res;
+		core::Size const sugar_res = set->moving_res;
 		if ( pose.residue( sugar_res ).has_variant_type( chemical::CUTPOINT_UPPER ) ||
 				pose.residue( sugar_res ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
 				( sugar_res < pose.size() && !pose.fold_tree().is_cutpoint( sugar_res ) ) ||
@@ -311,7 +311,7 @@ VirtualSugarJustInTimeInstantiator::minimize_sugar_sets_legacy( pose::Pose const
 	utility::vector1< pose::PoseOP > & pose_data_list ) const {
 	Pose pose_copy = pose;
 	utility::vector1< SugarModeling > sugar_modeling_sets;
-	for ( Size n = 1; n <= sugar_modeling_sets_.size(); n++ ) sugar_modeling_sets.push_back( *sugar_modeling_sets_[n] );
+	for ( core::Size n = 1; n <= sugar_modeling_sets_.size(); n++ ) sugar_modeling_sets.push_back( *sugar_modeling_sets_[n] );
 	minimize_all_sampled_floating_bases( pose_copy, sugar_modeling_sets, pose_data_list,
 		scorefxn_, working_parameters_, true /*virtual_sugar_is_from_prior_step*/ );
 }
@@ -323,7 +323,7 @@ VirtualSugarJustInTimeInstantiator::prepare_from_prior_sampled_sugar_jobs_for_ch
 	utility::vector1< pose::PoseOP > & pose_data_list ) const {
 	runtime_assert( modeler_sugar_at_chain_break() );
 	utility::vector1< SugarModelingOP > sugar_modeling_sets_for_chainbreak = get_sugar_modeling_sets_for_chainbreak();
-	utility::vector1< Size > sugar_modeling_set_indices;
+	utility::vector1< core::Size > sugar_modeling_set_indices;
 	pose.dump_pdb( "BEFORE_INST.pdb" );
 	instantiate_sugars_recursively( pose, pose_data_list, sugar_modeling_sets_for_chainbreak, sugar_modeling_set_indices );
 	pose_data_list[1]->dump_pdb( "INSTANTIATED.pdb" );
@@ -334,7 +334,7 @@ utility::vector1< SugarModelingOP >
 VirtualSugarJustInTimeInstantiator::get_sugar_modeling_sets_for_chainbreak() const {
 	utility::vector1< SugarModelingOP > sets;
 	for ( auto const & set : sugar_modeling_sets_ ) {
-		Size const sugar_res = set->moving_res;
+		core::Size const sugar_res = set->moving_res;
 		if ( sugar_res == working_parameters_->working_moving_res()    ) continue;
 		if ( sugar_res == working_parameters_->working_reference_res() ) continue;
 		sets.push_back( set );
@@ -346,7 +346,7 @@ VirtualSugarJustInTimeInstantiator::get_sugar_modeling_sets_for_chainbreak() con
 void
 VirtualSugarJustInTimeInstantiator::instantiate_sugar( pose::Pose & pose,
 	SugarModeling const & sugar_modeling,
-	Size const sugar_ID ) const {
+	core::Size const sugar_ID ) const {
 	if ( sugar_modeling.pose_list.size() > 0 ) {
 		tag_into_pose( pose,   tag_from_pose(pose) + tag_from_pose( *sugar_modeling.pose_list[ sugar_ID ] ) );
 		copy_bulge_res_and_sugar_torsion( sugar_modeling, pose, ( *sugar_modeling.pose_list[ sugar_ID ] ), true /*instantiate_sugar*/ );
@@ -358,7 +358,7 @@ VirtualSugarJustInTimeInstantiator::instantiate_sugar( pose::Pose & pose,
 /////////////////////
 SugarModeling const &
 VirtualSugarJustInTimeInstantiator::anchor_sugar_modeling(){
-	Size const anchor_set_idx = sampled_sugar_index( working_parameters_->working_reference_res() );
+	core::Size const anchor_set_idx = sampled_sugar_index( working_parameters_->working_reference_res() );
 	// kind of a hack, for backwards compatibility.
 	if ( anchor_set_idx == 0 ) {
 		SugarModelingOP blank_sugar_modeling( new SugarModeling() );
@@ -375,7 +375,7 @@ VirtualSugarJustInTimeInstantiator::modeler_sugar() const{
 
 ////////////////////////////////////////////////////////////////////////////////////
 sampler::copy_dofs::ResidueAlternativeSet const &
-VirtualSugarJustInTimeInstantiator::residue_alternative_set( Size const n ){
+VirtualSugarJustInTimeInstantiator::residue_alternative_set( core::Size const n ){
 	runtime_assert( n <= residue_alternative_sets_.size() );
 	return *residue_alternative_sets_[ n ];
 }

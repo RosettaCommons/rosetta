@@ -36,7 +36,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -53,7 +53,7 @@ namespace core {
 namespace conformation {
 namespace membrane {
 
-class SpanningTopology : public utility::pointer::ReferenceCount {
+class SpanningTopology : public utility::VirtualBase {
 
 public: // constructors
 

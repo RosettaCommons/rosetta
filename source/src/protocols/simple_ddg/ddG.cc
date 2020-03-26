@@ -244,7 +244,7 @@ void ddG::parse_my_tag(
 	}
 	per_residue_ddg_ = tag->getOption<bool>("per_residue_ddg",false);
 	repack_unbound_ = tag->getOption<bool>("repack_unbound",false);
-	repeats_ = tag->getOption<Size>("repeats",1);
+	repeats_ = tag->getOption<core::Size>("repeats",1);
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	use_custom_task( tag->hasOption("task_operations") );
 	repack_bound_ = tag->getOption<bool>("repack_bound",true);
@@ -356,9 +356,9 @@ void ddG::apply(Pose & pose)
 		scorefxn_->set_energy_method_options(*energy_options);
 	}
 	Real average_ddg = 0.0;
-	std::map<Size, Real> average_per_residue_ddgs;
+	std::map<core::Size, Real> average_per_residue_ddgs;
 
-	for ( Size repeat = 1; repeat <= repeats_; ++repeat ) {
+	for ( core::Size repeat = 1; repeat <= repeats_; ++repeat ) {
 		// calculate() attaches pb-elec related cache to the pose, but shall not change the conformation.
 		calculate(pose);
 
@@ -428,7 +428,7 @@ ddG::fill_energy_vector( pose::Pose const & pose, std::map< ScoreType, core::Rea
 	}
 }
 
-void ddG::fill_per_residue_energy_vector(pose::Pose const & pose, std::map<Size, Real> & energy_map)
+void ddG::fill_per_residue_energy_vector(pose::Pose const & pose, std::map<core::Size, Real> & energy_map)
 {
 	if ( filter_ ) {
 		utility_exit_with_message("Cannot calculate per-residue ddG's with a specified filter.");
@@ -527,7 +527,7 @@ ddG::sum_ddG() const
 void
 ddG::clean_pose( pose::Pose & pose_copy )
 {
-	for ( Size i=pose_copy.size(); i >= 1; --i ) {
+	for ( core::Size i=pose_copy.size(); i >= 1; --i ) {
 		if ( ( pose_copy.residue( i ).is_water() ) || ( pose_copy.residue( i ).is_virtual_residue() ) ) {
 			pose_copy.conformation().delete_residue_slow( i );
 		}
@@ -548,7 +548,7 @@ ddG::compute_rmsd_with_super( pose::Pose const & pose, core::Real & input_rmsd_s
 
 	for ( core::Size jump: get_movable_jumps( pose_copy ) ) {
 		pose_copy.fold_tree().partition_by_jump( jump, temp_part );
-		for ( Size i = 1; i <= pose_copy.size(); ++i ) {
+		for ( core::Size i = 1; i <= pose_copy.size(); ++i ) {
 			if ( ! temp_part( i ) ) superpos_partner( i ) = true; // True for all the downstream residues
 		}
 	}
@@ -641,7 +641,7 @@ ddG::calculate( pose::Pose const & pose_original )
 		if ( !repack_bound() ) {
 			// make a "null" packer task
 			task_ = core::pack::task::TaskFactory::create_packer_task( pose );
-			for ( Size i(1); i <= pose.total_residue(); ++i ) {
+			for ( core::Size i(1); i <= pose.total_residue(); ++i ) {
 				task_->nonconst_residue_task(i).prevent_repacking();
 			}
 		}
@@ -783,7 +783,7 @@ ddG::setup_task( pose::Pose const & pose) {
 		//designing residues
 		utility::vector1< bool > designing_resis = task_->designing_residues();
 		TR << "select ddg_designing_resis, resi ";
-		for ( Size ir=1; ir<=designing_resis.size(); ++ir ) {
+		for ( core::Size ir=1; ir<=designing_resis.size(); ++ir ) {
 			if ( designing_resis[ir] ) {
 				TR << ir << "+";
 			}
@@ -792,7 +792,7 @@ ddG::setup_task( pose::Pose const & pose) {
 		//repacking residues
 		utility::vector1< bool > repacking_resis = task_->repacking_residues();
 		TR << "select ddg_repacking_resis, resi ";
-		for ( Size ir=1; ir<=repacking_resis.size(); ++ir ) {
+		for ( core::Size ir=1; ir<=repacking_resis.size(); ++ir ) {
 			if ( repacking_resis[ir] ) {
 				TR << ir << "+";
 			}
@@ -852,7 +852,7 @@ ddG::setup_solvated_task( Pose const & pose, bool bound ) {
 
 // fd: Before the "unbind", we want to duplicate waters that are "near" both interfaces to be on both sides
 void
-ddG::duplicate_waters_across_jump( Pose & pose, Size jumpnum ) const {
+ddG::duplicate_waters_across_jump( Pose & pose, core::Size jumpnum ) const {
 	core::chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t ) );
 	core::conformation::ResidueOP vrt_wat = core::conformation::ResidueFactory::create_residue( rsd_set->name_map("HOH_V") );
 
@@ -910,7 +910,7 @@ ddG::do_minimize( Pose & pose ) const
 		}
 	}
 
-	Size const nres( task_->total_residue() );
+	core::Size const nres( task_->total_residue() );
 	for ( Size i(1); i <=nres; ++i ) {
 		if ( pose.residue(i).is_water() ) {
 			// rigid body minimization of waters is turned on by default
@@ -936,7 +936,7 @@ ddG::unbind( pose::Pose & pose ) const
 {
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		auto & symm_conf( dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
-		std::map< Size, core::conformation::symmetry::SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
+		std::map< core::Size, core::conformation::symmetry::SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
 		if ( solvate_ ) {
 			utility_exit_with_message("solvate_=True currently unsupported for symmetry");

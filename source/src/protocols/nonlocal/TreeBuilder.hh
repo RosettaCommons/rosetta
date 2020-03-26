@@ -17,7 +17,7 @@
 #include <protocols/nonlocal/TreeBuilder.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -29,7 +29,7 @@
 namespace protocols {
 namespace nonlocal {
 
-class TreeBuilder : public utility::pointer::ReferenceCount {
+class TreeBuilder : public utility::VirtualBase {
 public:
 	/// @brief Programmatically constructs a FoldTree, updating <pose>.
 	virtual void set_up(const protocols::loops::Loops& chunks, core::pose::Pose* pose) = 0;

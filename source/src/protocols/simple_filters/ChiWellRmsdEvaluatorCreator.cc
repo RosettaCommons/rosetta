@@ -33,7 +33,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
@@ -100,7 +100,7 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 			core::Real sasa_max( 10000.0 );
 			++it;
 			while ( it != rmsd.end() && (*it).find('=')!=std::string::npos ) {
-				Size pos( it->find('=') );
+				core::Size pos( it->find('=') );
 				std::string key=it->substr(0,pos);
 				std::string value=it->substr(pos+1);
 				if ( key=="nchi" ) {
@@ -144,7 +144,7 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 				}
 			}
 			loops::Loops loops;
-			utility::vector1< Size> selection; //figure out selection
+			utility::vector1< core::Size> selection; //figure out selection
 			if ( selection_file == "INLINE" ) {
 				std::string next_tag( "" );
 				++it;
@@ -178,10 +178,10 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 				core.get_residues( selection );
 			}
 			if ( invert ) {
-				utility::vector1< Size > inverted_selection;
-				for ( Size i = 1; i<=target_pose->size(); ++i ) {
+				utility::vector1< core::Size > inverted_selection;
+				for ( core::Size i = 1; i<=target_pose->size(); ++i ) {
 					bool found( false );
-					for ( Size j = 1; j<=selection.size() && !found; ++j ) {
+					for ( core::Size j = 1; j<=selection.size() && !found; ++j ) {
 						if ( selection[ j ]==i ) {
 							found = true;
 						}

@@ -95,16 +95,16 @@ private:
 
 	/// @brief Change the weights of the repulsive score function terms.  This is
 	/// called once every level-2 cycle.
-	void ramp_score_function(Size iteration);
+	void ramp_score_function(core::Size iteration);
 
 	/// @brief Change the temperature of the simulation.  This is called once
 	/// every level-1 cycle.
-	void ramp_temperature(Size iteration);
+	void ramp_temperature(core::Size iteration);
 
 	/// @brief Sample a new conformation by applying all the loop movers.
 	/// Afterwards apply the Metropolis accept-or-reject criterion.  This is
 	/// called once every level-3 cycle.
-	void attempt_loop_move(Pose & pose, Size i, Size j, Size k);
+	void attempt_loop_move(Pose & pose, core::Size i, core::Size j, core::Size k);
 
 	/// @brief No-op right now, but may be useful in the future.
 	void finish_protocol(Pose & pose);
@@ -210,11 +210,11 @@ public:
 	/// function should make.
 	/// @details The score function loop is the outermost loop.  It contains the
 	/// temperature loop and the mover loop.
-	void set_sfxn_cycles(Size x);
+	void set_sfxn_cycles(core::Size x);
 
 	/// @brief Get the number of iterations the loop that ramps the score
 	/// function will make.
-	Size get_sfxn_cycles() const;
+	core::Size get_sfxn_cycles() const;
 
 	/// @brief Set the number of iterations the loop that ramps the temperature
 	/// should make.
@@ -222,7 +222,7 @@ public:
 	/// It contains the mover loop.  If the second boolean argument is true, the
 	/// number of iterations will be the first value times the combined length of
 	/// all the loops being sampled.
-	void set_temp_cycles(Size x, bool times_loop_length=false);
+	void set_temp_cycles(core::Size x, bool times_loop_length=false);
 
 	/// @brief Get the number of iterations the loop that ramps the temperature
 	/// should make.
@@ -230,17 +230,17 @@ public:
 	/// was passed to set_temp_cycles() and no loop has been specified yet.  The
 	/// value returned will always be the actual number of iterations that will
 	/// be carried out.
-	Size get_temp_cycles() const;
+	core::Size get_temp_cycles() const;
 
 	/// @brief Specify how many times the loops movers should be invoked after
 	/// the score function and temperature have been updated.
 	/// @details The mover loop is the innermost loop.  It is contained by the
 	/// score function loop and the temperature loop.
-	void set_mover_cycles(Size x);
+	void set_mover_cycles(core::Size x);
 
 	/// @brief Return how many times the loops movers will be invoked after the
 	/// score function and temperature have been updated.
-	Size get_mover_cycles() const;
+	core::Size get_mover_cycles() const;
 
 	/// @brief Indicate that this protocol is being used for a test run.
 	/// @details This method simply limits the number of iterations that will be
@@ -298,9 +298,9 @@ private:
 	protocols::moves::MonteCarloOP monte_carlo_;
 	core::scoring::EnergyMap original_sfxn_weights_;
 
-	Size sfxn_cycles_;
-	Size temp_cycles_;
-	Size mover_cycles_;
+	core::Size sfxn_cycles_;
+	core::Size temp_cycles_;
+	core::Size mover_cycles_;
 
 	bool ramp_sfxn_rep_;
 	bool ramp_sfxn_rama_;

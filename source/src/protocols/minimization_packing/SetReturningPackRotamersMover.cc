@@ -45,7 +45,7 @@ using namespace pack;
 
 
 // default c'tor
-SetReturningPackRotamersMover::SetReturningPackRotamersMover( Size ndruns ) :
+SetReturningPackRotamersMover::SetReturningPackRotamersMover( core::Size ndruns ) :
 	protocols::minimization_packing::PackRotamersMover()
 {
 	repacked_poses_.resize( ndruns );
@@ -55,7 +55,7 @@ SetReturningPackRotamersMover::SetReturningPackRotamersMover( Size ndruns ) :
 SetReturningPackRotamersMover::SetReturningPackRotamersMover(
 	ScoreFunctionCOP scorefxn,
 	task::PackerTaskCOP task,
-	Size ndruns
+	core::Size ndruns
 ) :
 	protocols::minimization_packing::PackRotamersMover( scorefxn, task, ndruns ),
 	ndruns_(ndruns)
@@ -99,7 +99,7 @@ SetReturningPackRotamersMover::apply( pose::Pose & pose ) {
 	// reset the size of ndruns_ to whatever was asked for since this protocols::moves::Mover doesn't query the options system value
 	ndruns_ = repacked_poses_.size();
 
-	for ( Size run(1); run <= ndruns_; ++run ) {
+	for ( core::Size run(1); run <= ndruns_; ++run ) {
 		// run SimAnnealer
 		core::PackerEnergy packer_energy( this->run( pose ) );
 		// Real const score( scorefxn_( pose ) ); another option for deciding which is the 'best' result
@@ -137,7 +137,7 @@ SetReturningPackRotamersMover::get_repacked_poses( utility::vector1< core::pose:
 void
 SetReturningPackRotamersMover::output_repacked_poses( std::string filename_prefix ) {
 
-	for ( Size ii=1; ii <= repacked_poses_.size(); ++ii ) {
+	for ( core::Size ii=1; ii <= repacked_poses_.size(); ++ii ) {
 		// output repacked structure with the vector index in the name
 		std::string filename = filename_prefix + "." + ObjexxFCL::format::I( 3, 3, ii ) + ".pdb";
 		repacked_poses_[ ii ].dump_scored_pdb( filename, *(score_function()) );

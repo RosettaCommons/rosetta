@@ -84,9 +84,9 @@ void MC_Comb::set_update_pose( core::pose::PoseCOP setting ) {
 	}
 }
 ///////////////////////////////////////////////////////////////////////////
-void MC_Comb::show( std::ostream & out, Size const indent ) const {
+void MC_Comb::show( std::ostream & out, core::Size const indent ) const {
 	SamplerPlusPlus::show( out, indent );
-	for ( Size k = 1; k <= rotamer_list_.size(); k++ ) rotamer_list_[k]->show( out, indent + 1 );
+	for ( core::Size k = 1; k <= rotamer_list_.size(); k++ ) rotamer_list_[k]->show( out, indent + 1 );
 }
 ///////////////////////////////////////////////////////////////////////////
 MC_SamplerOP

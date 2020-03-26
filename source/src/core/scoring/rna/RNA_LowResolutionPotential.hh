@@ -35,7 +35,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -49,7 +49,7 @@ namespace rna {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class RNA_LowResolutionPotential : public methods::WholeStructureEnergy { //utility::pointer::ReferenceCount {
+class RNA_LowResolutionPotential : public methods::WholeStructureEnergy { //utility::VirtualBase {
 	typedef methods::WholeStructureEnergy parent;
 
 public:

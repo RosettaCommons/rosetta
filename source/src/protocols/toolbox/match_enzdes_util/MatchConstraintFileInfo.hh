@@ -31,7 +31,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -71,7 +71,7 @@ add_relevant_restypes_to_subset(
 
 /// @brief class that stores information of one geometric parameter line of the .cst file
 /// i.e. angleA or torsionB
-class GeomSampleInfo : public utility::pointer::ReferenceCount
+class GeomSampleInfo : public utility::VirtualBase
 {
 
 public:
@@ -182,7 +182,7 @@ public:
 };
 
 
-class MatchConstraintFileInfo : public utility::pointer::ReferenceCount
+class MatchConstraintFileInfo : public utility::VirtualBase
 {
 
 
@@ -379,7 +379,7 @@ private:
 /// @brief a simple container class to contain several MatchConstraintFileInfo
 /// instances. this can also query the MatchConstraintFileInfos for common upstream
 /// restypes and put all their geomsamples into one list
-class MatchConstraintFileInfoList : public utility::pointer::ReferenceCount
+class MatchConstraintFileInfoList : public utility::VirtualBase
 {
 public:
 

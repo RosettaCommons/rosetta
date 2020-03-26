@@ -46,7 +46,7 @@ namespace movers {
 class CoordinateConstraintStack;
 typedef utility::pointer::shared_ptr< CoordinateConstraintStack > CoordinateConstraintStackOP;
 
-class CoordinateConstraintStack : public utility::pointer::ReferenceCount {
+class CoordinateConstraintStack : public utility::VirtualBase {
 public:
 	CoordinateConstraintStack();
 	CoordinateConstraintStack(

@@ -101,7 +101,7 @@ void IterativeCentroid::collect_alternative_decoys( SilentStructs /*primary_deco
 
 	//  SourceFiles sources;
 	//  AlternativeDecoys alternative_decoys;
-	//  Size ct_in( 0 );
+	//  core::Size ct_in( 0 );
 
 	//  //to find the stage2 structures collect first all tags for a specific file
 	//  for ( const_decoy_iterator it = primary_decoys.begin(); it != primary_decoys.end(); ++it ) {
@@ -117,7 +117,7 @@ void IterativeCentroid::collect_alternative_decoys( SilentStructs /*primary_deco
 	//  }
 
 	//  //read selected structures from each file
-	//  Size ct_read( 0 );
+	//  core::Size ct_read( 0 );
 	//  for ( SourceFiles::const_iterator it = sources.begin(); it != sources.end(); ++it ) {
 	//   /// it->first is filename, it->second are all tags collected for this file
 	//   io::silent::SilentFileData sfd;

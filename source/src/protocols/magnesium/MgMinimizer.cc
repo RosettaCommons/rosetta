@@ -55,7 +55,7 @@ MgMinimizer::apply( core::pose::Pose & pose ) {
 	using namespace core::scoring::constraints;
 	using namespace protocols::magnesium;
 
-	vector1< Size > pose_mg_res = mg_res_;
+	vector1< core::Size > pose_mg_res = mg_res_;
 	if ( pose_mg_res.size() == 0 ) pose_mg_res = get_mg_res( pose );
 
 	// update_mg_hoh_fold_tree( pose ); // trust input fold tree...
@@ -67,7 +67,7 @@ MgMinimizer::apply( core::pose::Pose & pose ) {
 
 	vector1< ConstraintCOP > coord_csts;
 	if ( mg_coord_cst_dist_ > 0.0 ) {
-		for ( Size const mg_res : pose_mg_res ) {
+		for ( core::Size const mg_res : pose_mg_res ) {
 			coord_csts.push_back( pose.add_constraint( ConstraintOP(
 				new CoordinateConstraint( AtomID( 1, mg_res ),
 				AtomID( 1, 1 ),
@@ -85,7 +85,7 @@ MgMinimizer::apply( core::pose::Pose & pose ) {
 	atom_tree_minimizer_->run( pose, mm, *minimize_scorefxn_working, *minimizer_options_ );
 
 	if ( coord_csts.size() > 0 ) {
-		for ( Size n = 1; n <= coord_csts.size(); n++ ) pose.remove_constraint( coord_csts[ n ] );
+		for ( core::Size n = 1; n <= coord_csts.size(); n++ ) pose.remove_constraint( coord_csts[ n ] );
 	}
 	if ( !coord_cst_in_scorefxn ) minimize_scorefxn_working->set_weight( coordinate_constraint, 0.0 );
 
@@ -96,16 +96,16 @@ MgMinimizer::apply( core::pose::Pose & pose ) {
 // @brief move all jumps associated with Mg(2+)
 core::kinematics::MoveMap
 MgMinimizer::get_mg_hoh_minimize_move_map( core::pose::Pose const & pose,
-	utility::vector1< Size > const & mg_res ) const {
+	utility::vector1< core::Size > const & mg_res ) const {
 	using namespace core::kinematics;
 	FoldTree const & f( pose.fold_tree() );
 	MoveMap mm;
 	mm.set_bb( false );
 	mm.set_chi( false );
 	mm.set_jump( false );
-	for ( Size n = 1; n <= f.num_jump(); n++ ) {
-		if ( mg_res.has_value( Size( f.upstream_jump_residue( n ) ) ) ||
-				mg_res.has_value( Size( f.downstream_jump_residue( n ) ) ) ) {
+	for ( core::Size n = 1; n <= f.num_jump(); n++ ) {
+		if ( mg_res.has_value( core::Size( f.upstream_jump_residue( n ) ) ) ||
+				mg_res.has_value( core::Size( f.downstream_jump_residue( n ) ) ) ) {
 			TR.Debug << "Going to minimize jump: " << n << std::endl;
 			mm.set_jump( n, true );
 		}

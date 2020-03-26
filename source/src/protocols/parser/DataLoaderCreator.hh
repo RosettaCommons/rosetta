@@ -19,7 +19,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
@@ -32,7 +32,7 @@ namespace protocols {
 namespace parser {
 
 /// @brief A class for creating new instances of DataLoaders for use in the XML Parser
-class DataLoaderCreator : public utility::pointer::ReferenceCount
+class DataLoaderCreator : public utility::VirtualBase
 {
 public:
 	typedef std::function< std::string ( std::string const & ) > DerivedNameFunction;

@@ -130,7 +130,7 @@ public:
 	// assumed to have a gap < 1.9 Ang
 	core::Real cutpoint_separation(
 		core::pose::Pose & pose_in,
-		Size cutpoint
+		core::Size cutpoint
 	);
 
 	void scored_frag_close(
@@ -200,7 +200,7 @@ private:
 	/// @brief use random cutpoints for h3 modeling
 	bool h3_random_cut_;
 	/// @brief cutpoint whose separation is computed in scorefile
-	Size decoy_loop_cutpoint_;
+	core::Size decoy_loop_cutpoint_;
 	/// @brief enable docking local refine of LH chains & simultaneous H3 min
 	bool snug_fit_;
 	/// @brief loop_building in docking

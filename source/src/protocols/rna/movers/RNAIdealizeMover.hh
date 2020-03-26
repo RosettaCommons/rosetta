@@ -40,7 +40,7 @@ public:
 
 	RNAIdealizeMover();
 
-	RNAIdealizeMover( Size const iterations, bool const noise, bool const final_minimize, core::Real const ang_significance_threshold, bool const handle_suites ):
+	RNAIdealizeMover( core::Size const iterations, bool const noise, bool const final_minimize, core::Real const ang_significance_threshold, bool const handle_suites ):
 		protocols::moves::Mover( RNAIdealizeMover::mover_name() ),
 		iterations_( iterations ),
 		noise_( noise ),
@@ -84,9 +84,9 @@ public:
 	protocols::moves::MoverOP
 	clone() const override;
 
-	Size get_iterations() const { return iterations_; }
+	core::Size get_iterations() const { return iterations_; }
 
-	void set_iterations( Size const iterations ) { iterations_ = iterations; }
+	void set_iterations( core::Size const iterations ) { iterations_ = iterations; }
 
 	std::string
 	get_name() const override;
@@ -123,7 +123,7 @@ private:
 	core::pose::Pose ref_pose_;
 
 	/// @brief Number of iterations made (1/n idealization per iteration).
-	Size iterations_ = 100;
+	core::Size iterations_ = 100;
 	bool noise_ = false;
 	bool final_minimize_ = false;
 	core::Real ang_significance_threshold_ = 5;

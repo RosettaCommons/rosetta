@@ -132,7 +132,7 @@ typedef utility::pointer::owning_ptr< SlideTask > SlideTaskOP;
 typedef utility::pointer::owning_ptr< SlideTask const > SlideTaskCOP;
 
 
-class SlideTask : public utility::pointer::ReferenceCount {
+class SlideTask : public utility::VirtualBase {
 public:
 	SlideTask(
 		core::pose::Pose const & pose,

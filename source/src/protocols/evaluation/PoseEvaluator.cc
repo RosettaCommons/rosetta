@@ -53,8 +53,8 @@ void MetaPoseEvaluator::apply( pose::Pose& pose, std::string tag, io::silent::Si
 
 std::string MetaPoseEvaluator::name( core::Size ind ) const {
 	runtime_assert( ind <= size() );
-	Size s( 0 );
-	Size last_s( 0 );
+	core::Size s( 0 );
+	core::Size last_s( 0 );
 	auto it = evaluators_.begin();
 	for ( ; it != evaluators_.end() && s < ind; ++it ) {
 		last_s = s;

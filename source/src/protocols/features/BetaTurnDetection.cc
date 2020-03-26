@@ -34,11 +34,11 @@ using utility::excn::Exception;
 using utility::vector1;
 
 BetaTurnDetection::BetaTurnDetection() :
-	utility::pointer::ReferenceCount(), beta_turn_length_( 3 ), beta_turn_distance_cutoff_( 7.0 )
+	utility::VirtualBase(), beta_turn_length_( 3 ), beta_turn_distance_cutoff_( 7.0 )
 {}
 
 BetaTurnDetection::BetaTurnDetection( BetaTurnDetection const & ) :
-	utility::pointer::ReferenceCount(), beta_turn_length_( 3 ), beta_turn_distance_cutoff_( 7.0 )
+	utility::VirtualBase(), beta_turn_length_( 3 ), beta_turn_distance_cutoff_( 7.0 )
 {}
 
 BetaTurnDetection::~BetaTurnDetection() = default;
@@ -108,10 +108,10 @@ vector1< string > const & BetaTurnDetection::get_valid_ramachandran_hashes()
 	return *valid_ramachandran_hashes;
 }
 
-bool BetaTurnDetection::all_turn_residues_are_on_the_same_chain( Pose const & pose, Size first_residue ) const
+bool BetaTurnDetection::all_turn_residues_are_on_the_same_chain( Pose const & pose, core::Size first_residue ) const
 {
-	Size chain = pose.residue( first_residue ).chain();
-	for ( Size residue_number = first_residue + 1; residue_number <= first_residue + beta_turn_length_; ++residue_number ) {
+	core::Size chain = pose.residue( first_residue ).chain();
+	for ( core::Size residue_number = first_residue + 1; residue_number <= first_residue + beta_turn_length_; ++residue_number ) {
 		if ( pose.residue( first_residue ).chain() != chain ) {
 			return false;
 		}
@@ -120,9 +120,9 @@ bool BetaTurnDetection::all_turn_residues_are_on_the_same_chain( Pose const & po
 }
 
 
-bool BetaTurnDetection::residue_range_is_protein( Pose const & pose, Size range_begin, Size range_end ) const
+bool BetaTurnDetection::residue_range_is_protein( Pose const & pose, core::Size range_begin, core::Size range_end ) const
 {
-	for ( Size current_residue = range_begin; current_residue <= range_end; ++current_residue ) {
+	for ( core::Size current_residue = range_begin; current_residue <= range_end; ++current_residue ) {
 		if ( !pose.residue( current_residue ).is_protein() ) {
 			return false;
 		}
@@ -131,12 +131,12 @@ bool BetaTurnDetection::residue_range_is_protein( Pose const & pose, Size range_
 }
 
 
-bool BetaTurnDetection::beta_turn_present( Pose const & pose, Size first_residue ) const
+bool BetaTurnDetection::beta_turn_present( Pose const & pose, core::Size first_residue ) const
 {
 	return ( pose.residue( first_residue ).xyz( "CA" ) -  pose.residue( first_residue + beta_turn_length_ ).xyz( "CA" ) ).norm() <= beta_turn_distance_cutoff_;
 }
 
-string const & BetaTurnDetection::beta_turn_type( Pose const & pose, Size first_residue ) const
+string const & BetaTurnDetection::beta_turn_type( Pose const & pose, core::Size first_residue ) const
 {
 	string rama_hash = determine_ramachandran_hash( pose, first_residue );
 	validate_ramachandran_hash( rama_hash );
@@ -144,10 +144,10 @@ string const & BetaTurnDetection::beta_turn_type( Pose const & pose, Size first_
 }
 
 
-string BetaTurnDetection::determine_ramachandran_hash( Pose const & pose, Size first_residue ) const
+string BetaTurnDetection::determine_ramachandran_hash( Pose const & pose, core::Size first_residue ) const
 {
 	string rama_hash = "";
-	for ( Size residue_number = first_residue + 1; residue_number < first_residue + beta_turn_length_; ++residue_number ) {
+	for ( core::Size residue_number = first_residue + 1; residue_number < first_residue + beta_turn_length_; ++residue_number ) {
 		rama_hash += determine_ramachandran_hash_for_residue_with_dihedrals( pose.phi( residue_number ), pose.psi( residue_number ), pose.omega( residue_number ) );
 	}
 	return rama_hash;

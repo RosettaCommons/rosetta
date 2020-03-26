@@ -17,7 +17,7 @@
 
 //Unit headers
 #include <protocols/legacy_sewing/sampling/requirements/LegacyIntraSegmentRequirement.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 
 //Package headers
@@ -35,7 +35,7 @@ namespace legacy_sewing  {
 namespace sampling {
 namespace requirements {
 
-class LegacyIntraSegmentRequirement : public utility::pointer::ReferenceCount {
+class LegacyIntraSegmentRequirement : public utility::VirtualBase {
 
 public:
 

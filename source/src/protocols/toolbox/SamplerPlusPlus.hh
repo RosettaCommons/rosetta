@@ -79,8 +79,8 @@ public:
 	using moves::Mover::show;
 	/// @brief output summary of class
 	virtual
-	void show( std::ostream & out, Size const indent) const {
-		for ( Size n = 1; n <= indent; n++ ) out << ' ';
+	void show( std::ostream & out, core::Size const indent) const {
+		for ( core::Size n = 1; n <= indent; n++ ) out << ' ';
 		out << get_name() << std::endl;
 	}
 

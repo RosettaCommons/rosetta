@@ -27,7 +27,7 @@
 #include <numeric/xyzVector.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -37,7 +37,7 @@ namespace membrane {
 namespace geometry {
 
 /// @brief Embedding Setup Helper Class
-class EmbeddingDef : public utility::pointer::ReferenceCount {
+class EmbeddingDef : public utility::VirtualBase {
 
 public:
 

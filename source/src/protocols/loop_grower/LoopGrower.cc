@@ -177,14 +177,14 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	upper_fasta_ = loop_.stop();
 
 	int eff_resstart=resstart_, eff_resstop=resstop_, torsionrangelo=0, torsionrangehi=0;
-	Size fasta_range_low, fasta_range_hi, pose_range_low, pose_range_hi, cutpoint_pose, cutpoint_fasta;
+	core::Size fasta_range_low, fasta_range_hi, pose_range_low, pose_range_hi, cutpoint_pose, cutpoint_fasta;
 	if ( is_nterm ) eff_resstart = resstop_;
 	if ( is_cterm ) eff_resstop  = resstart_;
 
 	// fragments
-	Size maxfrag = fragments_[1]->max_frag_length();
+	core::Size maxfrag = fragments_[1]->max_frag_length();
 	core::fragment::FragSetOP fragset = fragments_[1];
-	for ( Size i=1; i<=fragments_.size(); i++ ) {
+	for ( core::Size i=1; i<=fragments_.size(); i++ ) {
 		fragset = fragments_[i];
 		if ( maxfrag > fragset->max_frag_length() ) {
 			maxfrag = fragset->max_frag_length();
@@ -222,7 +222,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	// count the number of residues  left and right before we encounter a cut
 	// This segment of code deals with non-standard loops such as the termini and instances in which the initial fragmelt and minmelt conditions cannot
 	// be applied. It then attempts to set those parameters to acceptable values.
-	Size initial_melt_left = fragmelt_, initial_melt_right = fragmelt_, minmelt_left = minmelt_+fragmelt_, minmelt_right = minmelt_+fragmelt_, totalmelt = minmelt_+fragmelt_ ;
+	core::Size initial_melt_left = fragmelt_, initial_melt_right = fragmelt_, minmelt_left = minmelt_+fragmelt_, minmelt_right = minmelt_+fragmelt_, totalmelt = minmelt_+fragmelt_ ;
 	if ( !is_nterm ) {
 		int i=1;
 		while ( i<=(int)fragmelt_ && !pose.fold_tree().is_cutpoint(resstart_-i) ) {
@@ -308,7 +308,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 		ncuts +=1;
 	}
 
-	ObjexxFCL::FArray1D< Size > fcuts ( ncuts );
+	ObjexxFCL::FArray1D< core::Size > fcuts ( ncuts );
 	for ( int i=1; i<=(int)f_in.num_cutpoint(); ++i ) {
 		fcuts(i) = f_in.cutpoint(i);
 	}
@@ -316,7 +316,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 		fcuts(ncuts) = resstart_;
 	}
 	// reshuffle the foldtree
-	ObjexxFCL::FArray2D< Size > fjumps( 2, ncuts );
+	ObjexxFCL::FArray2D< core::Size > fjumps( 2, ncuts );
 	for ( int i=1; i<=ncuts; ++i ) {
 		auto cut_i = (int) fcuts(i);
 
@@ -351,7 +351,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	int tgt_jump = 0;
 	if ( !is_nterm && !is_cterm ) {
 		for ( int i=1; i<=(int)pose.fold_tree().num_jump() && tgt_jump==0; ++i ) {
-			if ( pose.fold_tree().cutpoint_by_jump(i) == Size( resstart_ ) ) tgt_jump=i;
+			if ( pose.fold_tree().cutpoint_by_jump(i) == core::Size( resstart_ ) ) tgt_jump=i;
 		}
 		runtime_assert (tgt_jump != 0);
 	}
@@ -487,7 +487,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 
 	bool done = false;
 	int cycle=1;
-	Size stepcount = 1;
+	core::Size stepcount = 1;
 	rmsrangelo_ = loop_.start()-minmelt_left+1;
 	rmsrangehi_ = loop_.stop()+minmelt_right-1;
 	if ( is_nterm ) rmsrangelo_ = loop_.start();
@@ -594,7 +594,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 			if ( !update_pose ) lower_pose += storelow_;
 
 			//bool lowerstore = storelow_ > storehi_;
-			Size total_lower = lower_pose - torsionrangelo+1;
+			core::Size total_lower = lower_pose - torsionrangelo+1;
 
 			if ( auto_stop_ ) {
 				LoopPartialSolution lps = solutionset[1];
@@ -789,8 +789,8 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 				upper_fasta_ -= n_to_insert_upper;
 			}
 			if ( writebeams_ ) {
-				Size added_lower = lower_fasta_-loop_.start();
-				Size added_upper = loop_.stop()-upper_fasta_;
+				core::Size added_lower = lower_fasta_-loop_.start();
+				core::Size added_upper = loop_.stop()-upper_fasta_;
 				write_to_disk( solutionset, cycle-1, added_lower, added_upper, false, acceptlower);
 			}
 			if ( ((int)steps_ !=0) && (stepcount-1 >= steps_) ) {
@@ -825,7 +825,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	cutpoint_fasta = 0;
 	if ( !is_nterm && !is_cterm ) {
 		cutpoint_pose = pose.fold_tree().cutpoint_by_jump(tgt_jump);
-		Size delta_cutpoint = cutpoint_pose - torsionrangelo;
+		core::Size delta_cutpoint = cutpoint_pose - torsionrangelo;
 		cutpoint_fasta = fasta_range_low + delta_cutpoint-1;
 	}
 	if ( is_cterm ) {
@@ -844,7 +844,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 
 	Real bestRMS=999;
 	Real bestGDT=0;
-	for ( Size i=1; i<=solutionset.size(); i++ ) {
+	for ( core::Size i=1; i<=solutionset.size(); i++ ) {
 		fctr++;
 		LoopPartialSolution lps = solutionset[i];
 		if ( !is_nterm && !is_cterm ) {
@@ -982,7 +982,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 }
 void
 LoopGrower::addnativesolution(LoopPartialSolutionStore& solutionset, core::pose::Pose& fa_pose, core::pose::Pose& cen_pose, int natlowerstart, int natlowerstop, int natupperstart, int natupperstop,
-	int lower_pose, Size torsionrangelo, Size torsionrangehi){
+	int lower_pose, core::Size torsionrangelo, core::Size torsionrangehi){
 
 	// centroid copy of the pose
 	protocols::simple_moves::SwitchResidueTypeSetMoverOP tocen;
@@ -998,10 +998,10 @@ LoopGrower::addnativesolution(LoopPartialSolutionStore& solutionset, core::pose:
 	utility::vector1< numeric::xyzVector<core::Real> > fapositions;
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< core::id::AtomID > faids;
-	Size k = lower_pose;
+	core::Size k = lower_pose;
 	for ( int i=natlowerstart; i<=natupperstop; ++i ) {
 		if ( i >= natlowerstop && i <= natupperstart ) continue;
-		for ( Size j=1; j<=natpose_cen.residue_type(i).natoms(); j++ ) {
+		for ( core::Size j=1; j<=natpose_cen.residue_type(i).natoms(); j++ ) {
 			core::id::AtomID atomid = core::id::AtomID(j,k);
 			ids.push_back( atomid );
 			positions.push_back( natpose_cen.xyz(core::id::AtomID(j,i)));
@@ -1011,7 +1011,7 @@ LoopGrower::addnativesolution(LoopPartialSolutionStore& solutionset, core::pose:
 	k = lower_pose;
 	for ( int i=natlowerstart; i<=natupperstop; ++i ) {
 		if ( i >= natlowerstop && i <= natupperstart ) continue;
-		for ( Size j=1; j<=native_->residue_type(i).natoms(); j++ ) {
+		for ( core::Size j=1; j<=native_->residue_type(i).natoms(); j++ ) {
 			core::id::AtomID atomid = core::id::AtomID(j,k);
 			faids.push_back( atomid );
 			fapositions.push_back( native_->xyz(core::id::AtomID(j,i)));
@@ -1053,8 +1053,8 @@ LoopGrower::addnativesolution(LoopPartialSolutionStore& solutionset, core::pose:
 }
 void
 LoopGrower::update_and_writelps(LoopPartialSolutionStore & solutionset, core::pose::Pose & fa_pose, core::pose::Pose & pose_cen, core::chemical::ResidueTypeCOPs & restypes_pose,
-	core::chemical::ResidueTypeCOPs & restypes_pose_cen, int lower_pose, int upper_pose, bool is_nterm, bool is_cterm, Size fasta_range_low, Size fasta_range_hi, Size pose_range_low,
-	Size pose_range_hi, int torsionrangelo, int torsionrangehi, int tgt_jump, bool update_pose){
+	core::chemical::ResidueTypeCOPs & restypes_pose_cen, int lower_pose, int upper_pose, bool is_nterm, bool is_cterm, core::Size fasta_range_low, core::Size fasta_range_hi, core::Size pose_range_low,
+	core::Size pose_range_hi, int torsionrangelo, int torsionrangehi, int tgt_jump, bool update_pose){
 
 	if ( update_pose ) {
 		update_to_stored( fa_pose, pose_cen, restypes_pose, restypes_pose_cen, lower_pose, upper_pose, lower_fasta_, upper_fasta_,
@@ -1076,7 +1076,7 @@ LoopGrower::update_and_writelps(LoopPartialSolutionStore & solutionset, core::po
 	newsolutionset.set_fastas(fasta_range_low, fasta_range_hi);
 	newsolutionset.set_poses(pose_range_low, pose_range_hi);
 	newsolutionset.set_cutpoint(cutpoint_fasta);
-	for ( Size i=1; i<=solutionset.size(); i++ ) {
+	for ( core::Size i=1; i<=solutionset.size(); i++ ) {
 		LoopPartialSolution lps = solutionset[i];
 		if ( pack_min_cycles_ == 0 && !cenrot_ ) {
 			lps.apply( pose_cen, torsionrangelo, torsionrangehi );
@@ -1097,11 +1097,11 @@ LoopGrower::update_and_writelps(LoopPartialSolutionStore & solutionset, core::po
 }
 
 void
-LoopGrower::full_atom_beam( LoopPartialSolutionStore& solutionset, core::pose::Pose & fa_pose, core::pose::Pose & cen_pose, Size lower_pos, Size upper_pos){
-	Size initialpackmin = pack_min_cycles_;
+LoopGrower::full_atom_beam( LoopPartialSolutionStore& solutionset, core::pose::Pose & fa_pose, core::pose::Pose & cen_pose, core::Size lower_pos, core::Size upper_pos){
+	core::Size initialpackmin = pack_min_cycles_;
 	LoopPartialSolutionStore fasolutionset = solutionset;
 	fasolutionset.clear();
-	for ( Size i=1; i<=solutionset.size(); i++ ) {
+	for ( core::Size i=1; i<=solutionset.size(); i++ ) {
 		LoopPartialSolution lps = solutionset[i];
 		lps.apply( cen_pose, lower_pos, upper_pos );
 		Real censcore = lps.get_score();
@@ -1123,10 +1123,10 @@ LoopGrower::full_atom_beam( LoopPartialSolutionStore& solutionset, core::pose::P
 	solutionset = fasolutionset;
 }
 void
-LoopGrower::fafilter( LoopPartialSolutionStore &solutionset, core::pose::Pose &fapose, core::pose::Pose &cenpose, Size total_lower, Size torsionrangelo, Size torsionrangehi,
-	Size cycle, Size lower_fasta, Size upper_fasta, Size lower_pose){
+LoopGrower::fafilter( LoopPartialSolutionStore &solutionset, core::pose::Pose &fapose, core::pose::Pose &cenpose, core::Size total_lower, core::Size torsionrangelo, core::Size torsionrangehi,
+	core::Size cycle, core::Size lower_fasta, core::Size upper_fasta, core::Size lower_pose){
 
-	Size maxbeam = beamwidth_ * 2 ;
+	core::Size maxbeam = beamwidth_ * 2 ;
 	bool oldfilterprevious = filterprevious_;
 	solutionset.set_filterprevious(false);
 	if ( parametercheck_ ) {
@@ -1147,7 +1147,7 @@ LoopGrower::fafilter( LoopPartialSolutionStore &solutionset, core::pose::Pose &f
 		LoopPartialSolution rmslps;
 		LoopPartialSolutionStore updaterms = solutionset;
 		updaterms.clear();
-		for ( Size i=1; i<=solutionset.size(); i++ ) {
+		for ( core::Size i=1; i<=solutionset.size(); i++ ) {
 			rmslps = solutionset[i];
 			rmslps.apply(fapose, torsionrangelo, torsionrangehi);
 			Real RMS = RMStonative(fapose, rmsrangelo_, rmsrangehi_, lower_fasta-1, upper_fasta+1, torsionrangelo, lower_pose, lower_pose, torsionrangehi);
@@ -1169,18 +1169,18 @@ LoopGrower::fafilter( LoopPartialSolutionStore &solutionset, core::pose::Pose &f
 
 void
 LoopGrower::refine_cycle( core::pose::Pose & refinepose, core::pose::Pose & refinepose_cen, int loop_start, int loop_end, bool finalrefinement, int cycle, int beam, int fragment,
-	Size is_lower) {
+	core::Size is_lower) {
 
 	//find gap
-	Size cutpoint = 0;
+	core::Size cutpoint = 0;
 	for ( int i=loop_start; i<=loop_end; i++ ) {
 		if ( refinepose_cen.fold_tree().is_cutpoint(i) ) cutpoint = i;
 	}
 	if ( loop_start != 1 ) {
 		runtime_assert( cutpoint != 0 );
 	}
-	Size lower_min = cutpoint-minmelt_-1;
-	Size upper_min = cutpoint+minmelt_;
+	core::Size lower_min = cutpoint-minmelt_-1;
+	core::Size upper_min = cutpoint+minmelt_;
 	if ( (int)lower_min < loop_start ) lower_min = loop_start;
 	if ( (int)upper_min > loop_end ) upper_min = loop_end;
 
@@ -1196,11 +1196,11 @@ LoopGrower::refine_cycle( core::pose::Pose & refinepose, core::pose::Pose & refi
 	core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 1e-4, true, false, false);
 	options.max_iter(200);
 	core::kinematics::MoveMap mm;
-	for ( Size i=lower_min; i<=upper_min; ++i ) {
+	for ( core::Size i=lower_min; i<=upper_min; ++i ) {
 		mm.set_bb ( i, true ); mm.set_chi ( i, true );
 	}
 	//Allow residues from sheet sampler to refine
-	for ( Size i=total_residues_+1; i<=refinepose_cen.total_residue(); ++i ) {
+	for ( core::Size i=total_residues_+1; i<=refinepose_cen.total_residue(); ++i ) {
 		mm.set_bb ( i, true ); mm.set_chi ( i, true );
 	}
 	if ( core::pose::symmetry::is_symmetric( refinepose ) ) {
@@ -1333,7 +1333,7 @@ LoopGrower::nton3_hbond_score(core::pose::Pose& pose){
 
 
 	//query hbond set, get energies:
-	for ( Size i = 1; i<= set1.nhbonds(); i++ ) {
+	for ( core::Size i = 1; i<= set1.nhbonds(); i++ ) {
 
 		core::scoring::hbonds::HBond bond = set1.hbond( i );
 		//need to access donor and acc Residues as well as ints
@@ -1355,7 +1355,7 @@ LoopGrower::nton3_hbond_score(core::pose::Pose& pose){
 }
 
 Real
-LoopGrower::get_resrange_hbond_energy(core::pose::Pose& pose, Size lower, Size upper){
+LoopGrower::get_resrange_hbond_energy(core::pose::Pose& pose, core::Size lower, core::Size upper){
 
 	Real hbond_energy =0;
 	//populate hbond set:
@@ -1371,7 +1371,7 @@ LoopGrower::get_resrange_hbond_energy(core::pose::Pose& pose, Size lower, Size u
 	set1.setup_for_residue_pair_energies( pose, false, false );
 
 	//query hbond set, get energies:
-	for ( Size i = 1; i<= set1.nhbonds(); i++ ) {
+	for ( core::Size i = 1; i<= set1.nhbonds(); i++ ) {
 		core::scoring::hbonds::HBond bond = set1.hbond( i );
 		//need to access donor and acc Residues as well as ints
 		int accResNum = bond.acc_res();
@@ -1391,7 +1391,7 @@ LoopGrower::get_resrange_hbond_energy(core::pose::Pose& pose, Size lower, Size u
 
 }
 void
-LoopPartialSolution::add_sheets(core::pose::Pose & pose, Size takeoffres, Size totalres){
+LoopPartialSolution::add_sheets(core::pose::Pose & pose, core::Size takeoffres, core::Size totalres){
 
 	std::string chemicaltype;
 	if ( pose.is_fullatom() ) {
@@ -1405,40 +1405,40 @@ LoopPartialSolution::add_sheets(core::pose::Pose & pose, Size takeoffres, Size t
 	core::conformation::ResidueOP newres( core::conformation::ResidueFactory::create_residue(ala_type) );
 	pose.conformation().append_residue_by_jump(*newres, takeoffres );
 
-	Size newlower = totalres/2;
-	Size newupper = totalres - newlower;
+	core::Size newlower = totalres/2;
+	core::Size newupper = totalres - newlower;
 
 	core::Size midres = pose.total_residue();
-	Size count = 0;
-	for ( Size i=1; i<=newlower; i++ ) {
+	core::Size count = 0;
+	for ( core::Size i=1; i<=newlower; i++ ) {
 		pose.conformation().safely_prepend_polymer_residue_before_seqpos(*newres, pose.total_residue()-count, true);
 		midres++;
 		count++;
 	}
-	for ( Size i=1; i<newupper; i++ ) {
+	for ( core::Size i=1; i<newupper; i++ ) {
 		pose.conformation().safely_append_polymer_residue_after_seqpos(*newres, pose.total_residue(), true);
 	}
 
 }
 void
 LoopPartialSolution::write_beam_lps(std::ofstream &lpsfile){
-	Size n = ids_.size();
+	core::Size n = ids_.size();
 	lpsfile << score_ << std::endl;
 	lpsfile << n << std::endl;
-	for ( Size i=1; i<=ids_.size(); i++ ) {
-		Size atomno = ids_[i].atomno();
-		Size rsd = ids_[i].rsd();
+	for ( core::Size i=1; i<=ids_.size(); i++ ) {
+		core::Size atomno = ids_[i].atomno();
+		core::Size rsd = ids_[i].rsd();
 		lpsfile << atomno << " " << rsd << " ";
 	}
 	lpsfile << std::endl;
-	for ( Size i=1; i<=positions_.size(); i++ ) {
+	for ( core::Size i=1; i<=positions_.size(); i++ ) {
 		lpsfile << positions_[i];
 	}
 	lpsfile << std::endl;
 }
 void
 LoopPartialSolution::write_beam(std::ofstream &outbeam){
-	for ( Size i=1; i<=residues_.size(); i++ ) {
+	for ( core::Size i=1; i<=residues_.size(); i++ ) {
 		ResTorsions storeres = residues_[i];
 		outbeam << storeres.phi_ << " ";
 		outbeam << storeres.psi_ << " ";
@@ -1450,28 +1450,28 @@ LoopPartialSolution::write_beam(std::ofstream &outbeam){
 		if ( storeres.nchi_ > 3 ) outbeam << storeres.chi4_ << " ";
 	}
 	outbeam << std::endl;
-	for ( Size j=1; j<=backbones_.size(); j++ ) {
+	for ( core::Size j=1; j<=backbones_.size(); j++ ) {
 		outbeam << backbones_[j].size() << " ";
-		for ( Size k=1; k<=backbones_[j].size(); k++ ) {
+		for ( core::Size k=1; k<=backbones_[j].size(); k++ ) {
 			//outbeam << backbones_[j];
 			outbeam << backbones_[j][k][0] << " " << backbones_[j][k][1] << " " << backbones_[j][k][2] << " ";
 		}
 	}
 	outbeam << std::endl << sheets_.size() << " " << bonus_score_ << std::endl;
-	for ( Size i=1; i<=sheets_.size(); i++ ) {
+	for ( core::Size i=1; i<=sheets_.size(); i++ ) {
 		outbeam << sheets_[i].baseres_ << " " << sheets_[i].jumpid_ << std::endl;
-		for ( Size ii=1; ii<=3; ii++ ) {
-			for ( Size j=1; j<=3; j++ ) {
+		for ( core::Size ii=1; ii<=3; ii++ ) {
+			for ( core::Size j=1; j<=3; j++ ) {
 				outbeam << sheets_[i].rotation_(ii,j) << " ";
 			}
 		}
 		outbeam << std::endl;
-		for ( Size j=0; j<3; j++ ) {
+		for ( core::Size j=0; j<3; j++ ) {
 			outbeam << sheets_[i].translation_[j] << " " ;
 		}
 		outbeam << std::endl;
 		outbeam << sheets_[i].residues_.size() << " ";
-		for ( Size j=1; j<=sheets_[i].residues_.size(); j++ ) {
+		for ( core::Size j=1; j<=sheets_[i].residues_.size(); j++ ) {
 			ResTorsions storeres = sheets_[i].residues_[j];
 			outbeam << storeres.phi_ << " ";
 			outbeam << storeres.psi_ << " ";
@@ -1489,17 +1489,17 @@ LoopPartialSolution::write_beam(std::ofstream &outbeam){
 
 void
 LoopPartialSolution::apply_sheets( core::pose::Pose & pose ){
-	for ( Size i=1; i<= sheets_.size(); i++ ) {
-		Size numjumps = pose.num_jump();
-		Size totalres = pose.total_residue();
-		Size newres = sheets_[i].residues_.size();
-		Size takeoffres = sheets_[i].baseres_;
+	for ( core::Size i=1; i<= sheets_.size(); i++ ) {
+		core::Size numjumps = pose.num_jump();
+		core::Size totalres = pose.total_residue();
+		core::Size newres = sheets_[i].residues_.size();
+		core::Size takeoffres = sheets_[i].baseres_;
 		add_sheets(pose, takeoffres, newres);
 		core::kinematics::Jump newjump = pose.jump(numjumps+1);
 		newjump.set_rotation( sheets_[i].rotation_ );
 		newjump.set_translation( sheets_[i].translation_ );
 		pose.set_jump(numjumps+1, newjump);
-		for ( Size j=1; j<=sheets_[i].residues_.size(); j++ ) {
+		for ( core::Size j=1; j<=sheets_[i].residues_.size(); j++ ) {
 			ResTorsions const &res_j = sheets_[i].residues_[j];
 			pose.set_phi( totalres+j, res_j.phi_ );
 			pose.set_psi( totalres+j, res_j.psi_ );
@@ -1515,25 +1515,25 @@ LoopPartialSolution::apply_sheets( core::pose::Pose & pose ){
 	}
 }
 
-Real LoopPartialSolution::max_calpha_distance( const LoopPartialSolution & newlps, Size fragmelt, Size total_lower, bool takeoffonly, bool full_loop, bool is_lower ) const {
+Real LoopPartialSolution::max_calpha_distance( const LoopPartialSolution & newlps, core::Size fragmelt, core::Size total_lower, bool takeoffonly, bool full_loop, bool is_lower ) const {
 	Real largest_distance = 0.0;
 	Real new_distance = 0.0;
 	utility::vector1< core::Vector > newcalphas = newlps.get_calphas();
 	utility::vector1< utility::vector1< core::Vector > > newbackbone = newlps.get_backbone();
 	runtime_assert( calphas_.size() == newcalphas.size() );
 	if ( takeoffonly ) {
-		Size i;
+		core::Size i;
 		if ( is_lower ) {
 			i = (total_lower-fragmelt-1) * 3;
 		} else {
 			i = (total_lower+fragmelt) * 3 + 1;
 		}
-		for ( Size j=1; j<=5; j++ ) {
+		for ( core::Size j=1; j<=5; j++ ) {
 			i++;
 		}
 
 	} else {
-		for ( Size i=1; i<=newcalphas.size(); i++ ) {
+		for ( core::Size i=1; i<=newcalphas.size(); i++ ) {
 			if ( !full_loop ) {
 				if ( (i <= total_lower && i > total_lower-fragmelt+1) || (i > total_lower && i < total_lower+fragmelt) ) {
 					continue;
@@ -1570,7 +1570,7 @@ Real LoopPartialSolution::partialrms(const LoopPartialSolution & newlps, int fra
 	int rmswindowlower = rmswindow;
 	int lowercount = total_lower-fragmelt+2;
 	int uppercount = residues_.size() - (total_lower+fragmelt);
-	Size upperstart = total_lower+fragmelt;
+	core::Size upperstart = total_lower+fragmelt;
 	if ( takeoffonly ) {
 		lowercount -= 2;
 		uppercount -= 2;
@@ -1587,11 +1587,11 @@ Real LoopPartialSolution::partialrms(const LoopPartialSolution & newlps, int fra
 	//TRACER << "total lower " << total_lower << std::endl;
 	for ( int i=1; i<=lowercount-rmswindowlower+1; i++ ) {
 		Real err = 0;
-		Size atmcount=0;
+		core::Size atmcount=0;
 		for ( int ii=1; ii<=rmswindowlower; ii++ ) {
 			int resi = i+ii-1;
 			if ( resi > (int)residues_.size() ) break;
-			Size j=1;
+			core::Size j=1;
 			while ( j<=backbones_[resi].size() ) {
 				Real new_distance = (backbones_[resi][j]-newbackbones[resi][j]).length_squared();
 				err += new_distance;
@@ -1608,11 +1608,11 @@ Real LoopPartialSolution::partialrms(const LoopPartialSolution & newlps, int fra
 	}
 	for ( int i=upperstart; i<=(int)residues_.size()-rmswindowupper; i++ ) {
 		Real err = 0;
-		Size atmcount=0;
+		core::Size atmcount=0;
 		for ( int ii=1; ii<=rmswindowupper; ii++ ) {
 			int resi = i+ii-1;
 			if ( resi > (int)residues_.size() ) break;
-			Size j=1;
+			core::Size j=1;
 			while ( j<=backbones_[resi].size() ) {
 				Real new_distance = (backbones_[resi][j]-newbackbones[resi][j]).length_squared();
 				err += new_distance;
@@ -1633,9 +1633,9 @@ void LoopPartialSolution::set_centerofmass(){
 	Real totalx = 0;
 	Real totaly = 0;
 	Real totalz = 0;
-	Size totalatoms = 0;
-	for ( Size i=1; i<=backbones_.size(); i++ ) {
-		for ( Size j=1; j<=backbones_[i].size(); j++ ) {
+	core::Size totalatoms = 0;
+	for ( core::Size i=1; i<=backbones_.size(); i++ ) {
+		for ( core::Size j=1; j<=backbones_[i].size(); j++ ) {
 			totalx += backbones_[i][j][0];
 			totaly += backbones_[i][j][1];
 			totalz += backbones_[i][j][2];
@@ -1648,8 +1648,8 @@ void LoopPartialSolution::set_centerofmass(){
 	centerofmass_.assign(centerx,centery,centerz);
 
 }
-void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution const &new_entry, Size fragmelt, Real beamscorecutoff, Size total_lower, bool lower, bool dump_errors,
-	Real nativeRMS, Size lower_res, Size upper_res){
+void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution const &new_entry, core::Size fragmelt, Real beamscorecutoff, core::Size total_lower, bool lower, bool dump_errors,
+	Real nativeRMS, core::Size lower_res, core::Size upper_res){
 
 	Real pre_best_RMS = nativeRMS;
 	Real post_best_RMS = 999;
@@ -1657,10 +1657,10 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 	Real newscore = new_entry.get_score();
 	Real worstscore = -9999;
 	Real bestscore = 9999;
-	Size worstindex = 1;
+	core::Size worstindex = 1;
 	bool getnewscores = false;
 	//check the stored beams for best and worst score
-	for ( Size i=1; i<=solutions_.size(); i++ ) {
+	for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 		Real oldscore = solutions_[i].get_score();
 		Real oldRMS = solutions_[i].get_rms();
 		if ( oldRMS <= pre_best_RMS ) {
@@ -1677,7 +1677,7 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 	if ( newscore < bestscore && bestscore != 9999 ) bestscore = newscore;
 
 	//removes any beams above the cutoff
-	for ( Size i=1; i<=solutions_.size(); i++ ) {
+	for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 		Real oldscore = solutions_[i].get_score();
 		if ( oldscore > bestscore+beamscorecutoff && bestscore != 9999 ) {
 			solutions_.erase(solutions_.begin() +i-1 );
@@ -1695,8 +1695,8 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 		considered = true;
 	} else {
 		bool delete_close_beams = true;
-		utility::vector1<Size> worsesolutions;
-		for ( Size i=1; i<=solutions_.size(); ++i ) {
+		utility::vector1<core::Size> worsesolutions;
+		for ( core::Size i=1; i<=solutions_.size(); ++i ) {
 			Real RMS = new_entry.max_calpha_distance( solutions_[i], fragmelt, total_lower, false, false, lower );
 			Real oldscore = solutions_[i].get_score();
 			if ( RMS < rmscutoff_ ) {
@@ -1712,12 +1712,12 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 			}
 		}
 		if ( delete_close_beams ) {
-			for ( Size i=1; i<=worsesolutions.size(); ++i ) {
-				Size j = worsesolutions[i];
+			for ( core::Size i=1; i<=worsesolutions.size(); ++i ) {
+				core::Size j = worsesolutions[i];
 				solutions_.erase(solutions_.begin() +j-1 );
 				if ( i==worsesolutions.size() ) {
 					solutions_.push_back(new_entry);
-					Size newindex = solutions_.size();
+					core::Size newindex = solutions_.size();
 					solutions_[newindex].set_rms(nativeRMS);
 				}
 			}
@@ -1730,7 +1730,7 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 	while ( !checked && !finished_master_beam ) {
 		worst_cluster_score = -99999;
 		cluster_count = 0;
-		for ( Size i=1; i<=solutions_.size(); ++i ) {
+		for ( core::Size i=1; i<=solutions_.size(); ++i ) {
 			Real max_distance = new_entry.max_calpha_distance( solutions_[i], fragmelt, total_lower, false, false, lower );
 			Real oldscore = solutions_[i].get_score();
 			if ( max_distance < master_beam_cutoff_ ) {
@@ -1748,7 +1748,7 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 				getnewscores = true;
 				if ( cluster_count == master_beam_width_ ) {
 					solutions_.push_back(new_entry);
-					Size newindex = solutions_.size();
+					core::Size newindex = solutions_.size();
 					solutions_[newindex].set_rms(nativeRMS);
 					considered = true;
 					checked = true;
@@ -1767,7 +1767,7 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 	if ( getnewscores ) {
 		worstscore = -9999;
 		bestscore = 9999;
-		for ( Size i=1; i<=solutions_.size(); i++ ) {
+		for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 			Real oldscore = solutions_[i].get_score();
 			if ( oldscore > worstscore || worstscore == -9999 ) {
 				worstscore = oldscore;
@@ -1780,7 +1780,7 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 	}
 	if ( solutions_.size() < maxelts_ && !checked ) {
 		solutions_.push_back( new_entry );
-		Size newindex = solutions_.size();
+		core::Size newindex = solutions_.size();
 		solutions_[newindex].set_rms(nativeRMS);
 		//considered = true;
 	} else if ( !considered ) {
@@ -1789,7 +1789,7 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 	}
 	//If we've moved too far from native dump structure (debugging purposes)
 	if ( dump_errors ) {
-		for ( Size i=1; i<=solutions_.size(); i++ ) {
+		for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 			Real storedRMS = solutions_[i].get_rms();
 			if ( storedRMS <= post_best_RMS ) {
 				post_best_RMS = storedRMS;
@@ -1800,7 +1800,7 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 			pose.conformation().chains_from_termini();
 			core::pose::PDBInfo newpdbinfo(pose, false);
 			newpdbinfo.attach_to(pose.conformation());
-			for ( Size j=1; j<=old_solutions_.size(); j++ ) {
+			for ( core::Size j=1; j<=old_solutions_.size(); j++ ) {
 				Real oldRMS;
 				oldRMS = old_solutions_[j].get_rms();
 				old_solutions_[j].apply(pose, (int)lower_res, (int)upper_res );
@@ -1814,13 +1814,13 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 	}
 }
 void
-LoopPartialSolutionStore::report_rms_and_scores(Size rangelo, Size rangehi){
+LoopPartialSolutionStore::report_rms_and_scores(core::Size rangelo, core::Size rangehi){
 	Real bestrms = solutions_[1].get_rms();
 	Real bestscore = solutions_[1].get_score();
 	Real bestgdt = solutions_[1].get_gdt();
 	std::ofstream outputfile;
 	outputfile.open("rms_and_scores.txt", std::ofstream::app);
-	for ( Size i=1; i<= solutions_.size(); i++ ) {
+	for ( core::Size i=1; i<= solutions_.size(); i++ ) {
 		Real beamrms = solutions_[i].get_rms();
 		Real beamgdt = solutions_[i].get_gdt();
 		Real beamscore = solutions_[i].get_score();
@@ -1837,11 +1837,11 @@ LoopPartialSolutionStore::report_rms_and_scores(Size rangelo, Size rangehi){
 }
 
 bool
-LoopPartialSolutionStore::filterprevious( LoopPartialSolution lps, Size total_lower, Size fragmelt, Real rmscutoff, Size masterbeamwidth){
+LoopPartialSolutionStore::filterprevious( LoopPartialSolution lps, core::Size total_lower, core::Size fragmelt, Real rmscutoff, core::Size masterbeamwidth){
 
-	Size masterbeamcount = 0;
+	core::Size masterbeamcount = 0;
 	Real score = lps.get_score();
-	for ( Size i=1; i<=filteronly_solutions_.size(); i++ ) {
+	for ( core::Size i=1; i<=filteronly_solutions_.size(); i++ ) {
 		LoopPartialSolution oldlps = filteronly_solutions_[i];
 		Real oldscore = oldlps.get_score();
 		Real RMS = lps.partialrms(oldlps, fragmelt, total_lower, false, 1);
@@ -1854,14 +1854,14 @@ LoopPartialSolutionStore::filterprevious( LoopPartialSolution lps, Size total_lo
 
 }
 void
-LoopPartialSolutionStore::diversityfilter(Size maxbeamsize, Size total_lower ){
+LoopPartialSolutionStore::diversityfilter(core::Size maxbeamsize, core::Size total_lower ){
 
 	LoopPartialSolutionStore filteredsolutions;
 	sort();
 	Real bestscore = solutions_[1].get_score();
 	std::sort(filteronly_solutions_.begin(), filteronly_solutions_.end());
 	Real filteredbestscore = 999999;
-	Size includeoldbeams = (maxbeamsize/10);
+	core::Size includeoldbeams = (maxbeamsize/10);
 	if ( filterprevious_ ) {
 		filteredbestscore = filteronly_solutions_[1].get_score();
 		if ( bestscore > filteredbestscore ) bestscore = filteredbestscore;
@@ -1869,14 +1869,14 @@ LoopPartialSolutionStore::diversityfilter(Size maxbeamsize, Size total_lower ){
 	}
 
 	bool done = false;
-	Size masterbeamwidth = 1;
+	core::Size masterbeamwidth = 1;
 	//bool reported = false;
 	Real bestRMS = 999;
-	Size bestrmsrank = 0;
+	core::Size bestrmsrank = 0;
 
 	//remove bad beams and those in previous set before starting normal filter.
 	LoopPartialSolutionStore possiblesolutions;
-	for ( Size i=1; i<=solutions_.size(); i++ ) {
+	for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 		LoopPartialSolution lps = solutions_[i];
 		Real beamscore = lps.get_score();
 		Real absolutebestscore = std::abs(bestscore);
@@ -1903,16 +1903,16 @@ LoopPartialSolutionStore::diversityfilter(Size maxbeamsize, Size total_lower ){
 
 	if ( solutions_.size() < 1 ) done = true;
 	while ( !done ) {
-		for ( Size i=1; i<=solutions_.size(); i++ ) {
+		for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 			LoopPartialSolution lps = solutions_[i];
 			bool addlps = true;
-			Size masterbeamcount = 0;
+			core::Size masterbeamcount = 0;
 			if ( filteredsolutions.size() >= maxbeamsize ) {
 				done = true;
 				TRACER << "hit max beam " << std::endl;
 				break;
 			}
-			for ( Size j=1; j<=filteredsolutions.size(); j++ ) {
+			for ( core::Size j=1; j<=filteredsolutions.size(); j++ ) {
 				LoopPartialSolution filteredlps = filteredsolutions[j];
 				Real masterbeamrms = lps.partialrms(filteredlps, fragmelt_, total_lower, false, rmswindow_ );
 				Real localbeamrms = lps.partialrms(filteredlps, fragmelt_, total_lower, false, 1 );
@@ -1957,14 +1957,14 @@ LoopPartialSolutionStore::diversityfilter(Size maxbeamsize, Size total_lower ){
 	//there is probably an unnecessary amount of code duplication here that should be removed but in the meantime...
 	if ( filterprevious_ && filteredsolutions.size() < maxbeamsize ) {
 		std::sort(filteronly_solutions_.begin(), filteronly_solutions_.end());
-		Size filtermasterbeamwidth = 1;
+		core::Size filtermasterbeamwidth = 1;
 		done = false;
 		while ( !done ) {
-			for ( Size i=1; i<=filteronly_solutions_.size(); i++ ) {
+			for ( core::Size i=1; i<=filteronly_solutions_.size(); i++ ) {
 				bool addlps = true;
 				//reported = false;
 				LoopPartialSolution lps = filteronly_solutions_[i];
-				Size masterbeamcount = 0;
+				core::Size masterbeamcount = 0;
 				if ( filteredsolutions.size() >= maxbeamsize ) {
 					done = true;
 					break;
@@ -1979,7 +1979,7 @@ LoopPartialSolutionStore::diversityfilter(Size maxbeamsize, Size total_lower ){
 					//}
 					break;
 				}
-				for ( Size j=1; j<=filteredsolutions.size(); j++ ) {
+				for ( core::Size j=1; j<=filteredsolutions.size(); j++ ) {
 					LoopPartialSolution storedsolution = filteredsolutions[j];
 					Real masterbeamrms = lps.partialrms(storedsolution, fragmelt_, total_lower, false, rmswindow_ );
 					Real localbeamrms = lps.partialrms(storedsolution, fragmelt_, total_lower, false, 1 );
@@ -2010,7 +2010,7 @@ LoopPartialSolutionStore::diversityfilter(Size maxbeamsize, Size total_lower ){
 
 }
 void
-LoopPartialSolutionStore::filter( core::pose::Pose& pose, Size maxbeam, Size total_lower, Size lower_res, Size upper_res, Size cycle ){
+LoopPartialSolutionStore::filter( core::pose::Pose& pose, core::Size maxbeam, core::Size total_lower, core::Size lower_res, core::Size upper_res, core::Size cycle ){
 
 	sort();
 
@@ -2018,7 +2018,7 @@ LoopPartialSolutionStore::filter( core::pose::Pose& pose, Size maxbeam, Size tot
 	Real pre_best_GDT = solutions_[1].get_gdt();
 	LoopPartialSolution nearnativelps = solutions_[1];
 	if ( dump_errors_ ) {
-		for ( Size i=1; i<=solutions_.size(); i++ ) {
+		for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 			Real oldRMS = solutions_[i].get_rms();
 			Real oldGDT = solutions_[i].get_gdt();
 
@@ -2044,7 +2044,7 @@ LoopPartialSolutionStore::filter( core::pose::Pose& pose, Size maxbeam, Size tot
 	Real post_best_GDT = solutions_[1].get_gdt();
 	if ( dump_beam_ ) {
 		core::pose::Pose scpose = pose;
-		for ( Size j=1; j<=solutions_.size(); j++ ) {
+		for ( core::Size j=1; j<=solutions_.size(); j++ ) {
 			Real oldRMS = solutions_[j].get_rms();
 			std::string oldid = solutions_[j].get_id();
 			Real newscore = solutions_[j].get_score();
@@ -2088,11 +2088,11 @@ LoopPartialSolutionStore::filter( core::pose::Pose& pose, Size maxbeam, Size tot
 
 	if ( dump_errors_ ) {
 		sort();
-		Size rank = 0;
-		Size ranknat = 0;
+		core::Size rank = 0;
+		core::Size ranknat = 0;
 		Real scorenearnat = 0;
 		Real natrms = 0;
-		for ( Size i=1; i<=solutions_.size(); i++ ) {
+		for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 			Real oldRMS = solutions_[i].get_rms();
 			if ( oldRMS <= 1.5 && ranknat ==0 ) {
 				ranknat = i;
@@ -2134,7 +2134,7 @@ LoopPartialSolutionStore::filter( core::pose::Pose& pose, Size maxbeam, Size tot
 				pose.conformation().chains_from_termini();
 				core::pose::PDBInfo newpdbinfo(pose, false);
 				newpdbinfo.attach_to(pose.conformation());
-				for ( Size j=1; j<=solutions_.size(); j++ ) {
+				for ( core::Size j=1; j<=solutions_.size(); j++ ) {
 					Real oldRMS;
 					oldRMS = solutions_[j].get_rms();
 					std::string oldid = solutions_[j].get_id();
@@ -2160,11 +2160,11 @@ LoopPartialSolutionStore::filter( core::pose::Pose& pose, Size maxbeam, Size tot
 }
 
 void
-LoopPartialSolutionStore::skeleton_filter( core::pose::Pose & pose, DensSkeleton & skeleton, Size start_res, Size stop_res, Size lower_term, Size res_gap ){
+LoopPartialSolutionStore::skeleton_filter( core::pose::Pose & pose, DensSkeleton & skeleton, core::Size start_res, core::Size stop_res, core::Size lower_term, core::Size res_gap ){
 
 	TR << " running skeleton filter " << solutions_.size() << "solutions going in " << std::endl;
 	utility::vector1<LoopPartialSolution> new_solutions;
-	for ( Size i=1; i<=solutions_.size(); i++ ) {
+	for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 		LoopPartialSolution lps = solutions_[i];
 		lps.apply(pose,start_res,stop_res);
 		numeric::xyzVector< core::Real > start_xyz = pose.residue(lower_term).atom("C").xyz();
@@ -2190,29 +2190,29 @@ LoopPartialSolutionStore::skeleton_filter( core::pose::Pose & pose, DensSkeleton
 }
 
 bool
-LoopGrower::check_auto_stop(core::pose::Pose & pose, Size lower_res, Size upper_res){
+LoopGrower::check_auto_stop(core::pose::Pose & pose, core::Size lower_res, core::Size upper_res){
 
 	core::Real density_weight = cen_sf_->get_weight(scoring::elec_dens_fast);
 	utility::vector1< core::Real > dens_scores;
-	for ( Size i=lower_res; i<=upper_res; i++ ) {
+	for ( core::Size i=lower_res; i<=upper_res; i++ ) {
 		core::conformation::Residue currentres = pose.residue(i);
 		Real resdens = density_weight*-core::scoring::electron_density::getDensityMap().matchResFast( i, currentres, pose, nullptr );
 		dens_scores.push_back(resdens);
 	}
 	Real minE = 1e5;
-	for ( Size i=1; i<=dens_scores.size(); i++ ) {
+	for ( core::Size i=1; i<=dens_scores.size(); i++ ) {
 		if ( minE > dens_scores[i] ) minE = dens_scores[i];
 	}
 	Real sum = 0;
 	Real sum2 = 0;
-	for ( Size i=1; i<=dens_scores.size(); i++ ) {
+	for ( core::Size i=1; i<=dens_scores.size(); i++ ) {
 		Real score = dens_scores[i];
 		sum +=(score - minE);
 		sum2 += (score -minE)*(score - minE);
 	}
 	Real mean = sum/dens_scores.size() +minE;
 	Real stddev = std::sqrt((dens_scores.size()*sum2 - sum*sum)/dens_scores.size());
-	for ( Size i=1; i<=dens_scores.size(); i++ ) {
+	for ( core::Size i=1; i<=dens_scores.size(); i++ ) {
 		Real score = dens_scores[i];
 		Real zscore = (score - mean)/stddev;
 		TRACER << "zscore of residue " << lower_res+i-1 << " is " << zscore << " dens score is " << score << std::endl;
@@ -2224,10 +2224,10 @@ LoopGrower::check_auto_stop(core::pose::Pose & pose, Size lower_res, Size upper_
 void
 LoopPartialSolutionStore::zscoretransform(){
 	Real minE = solutions_[1].get_score();
-	Size N = 0;
+	core::Size N = 0;
 	Real sum = 0;
 	Real sum2 = 0;
-	for ( Size i=1; i<=solutions_.size(); i++ ) {
+	for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 		N++;
 		Real score = solutions_[i].get_score();
 		sum += (score - minE);
@@ -2236,7 +2236,7 @@ LoopPartialSolutionStore::zscoretransform(){
 	Real mean = sum/N + minE;
 	Real stddev = std::sqrt(N*sum2 - sum*sum)/N;
 	TRACER << "mean and stddev" << mean << " " << stddev << " sum 2 " << sum2 << std::endl;
-	for ( Size i=1; i<=solutions_.size(); i++ ) {
+	for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 		Real score = solutions_[i].get_score();
 		Real zscore = (score - mean)/stddev;
 		TRACER << "zscore of  " << i << " is " << zscore << std::endl;
@@ -2244,12 +2244,12 @@ LoopPartialSolutionStore::zscoretransform(){
 	}
 }
 void
-LoopPartialSolutionStore::cluster_check(LoopPartialSolution nearnativelps, core::pose::Pose& pose, Size total_lower, Size lower_res, Size upper_res ){
+LoopPartialSolutionStore::cluster_check(LoopPartialSolution nearnativelps, core::pose::Pose& pose, core::Size total_lower, core::Size lower_res, core::Size upper_res ){
 
 	pose.conformation().chains_from_termini();
 	core::pose::PDBInfo newpdbinfo(pose, false);
 	newpdbinfo.attach_to(pose.conformation());
-	for ( Size i=1; i<=solutions_.size(); i++ ) {
+	for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 		LoopPartialSolution beam = solutions_[i];
 		Real rmsdist = nearnativelps.partialrms(beam, fragmelt_, total_lower, false, 1);
 		Real masterbeamrmsdist = nearnativelps.partialrms(beam, fragmelt_, total_lower, true, rmswindow_);
@@ -2269,8 +2269,8 @@ LoopPartialSolutionStore::cluster_check(LoopPartialSolution nearnativelps, core:
 	pose.dump_pdb("afterclustercheck_"+utility::to_string(score)+"_native_"+utility::to_string(nnrms)+"_.pdb");
 }
 void
-LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, Size fragmelt, Size total_lower, Size lower_res, Size upper_res, Size rmswindow, bool dump_beam,
-	Size& totalreqbeam, Size& totalreqmaxbeam, Real& totalreqscorecut, bool writebeams, Size cycle, Size parallelcount ){
+LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, core::Size fragmelt, core::Size total_lower, core::Size lower_res, core::Size upper_res, core::Size rmswindow, bool dump_beam,
+	core::Size& totalreqbeam, core::Size& totalreqmaxbeam, Real& totalreqscorecut, bool writebeams, core::Size cycle, core::Size parallelcount ){
 
 	LoopPartialSolutionStore filteredsolutions;
 	sort();
@@ -2280,9 +2280,9 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, Size fra
 	Real pre_best_RMS = solutions_[1].get_rms();
 	LoopPartialSolution nearnativelps = solutions_[1];
 	LoopPartialSolution nativeranklps = solutions_[1];
-	Size rank =999999;
-	//std::map< Size, Real> bestsolutions;
-	for ( Size i=1; i<=solutions_.size(); i++ ) {
+	core::Size rank =999999;
+	//std::map< core::Size, Real> bestsolutions;
+	for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 		Real oldRMS = solutions_[i].get_rms();
 		if ( oldRMS <= pre_best_RMS ) {
 			pre_best_RMS = oldRMS;
@@ -2291,10 +2291,10 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, Size fra
 	}
 	if ( master_beam_width_ == 1337 && master_beam_cutoff_ == 1337 ) {
 		sortrms();
-		for ( Size i=1; i<=solutions_.size(); i++ ) {
+		for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 			LoopPartialSolution incominglps = solutions_[i];
 			bool addlps = true;
-			for ( Size j=1; j<=filteredsolutions.size(); j++ ) {
+			for ( core::Size j=1; j<=filteredsolutions.size(); j++ ) {
 				LoopPartialSolution storedlps = filteredsolutions[j];
 				Real rmsdist = incominglps.partialrms(storedlps, fragmelt, total_lower, false, 1);
 				if ( rmsdist < rmscutoff_ ) {
@@ -2308,7 +2308,7 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, Size fra
 		return;
 	}
 
-	for ( Size i=1; i<=solutions_.size(); i++ ) {
+	for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 		LoopPartialSolution rmscheck = solutions_[i];
 		Real rmsdist = nearnativelps.partialrms(rmscheck, fragmelt, total_lower, false, 1);
 		if ( rmsdist <= rmscutoff_ ) {
@@ -2339,16 +2339,16 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, Size fra
 	Real nativerankscore = nativeranklps.get_score();
 	Real scorecutoff = -(bestscore-nativerankscore)/(upper_res-lower_res);
 
-	Size reqmaxbeam = 1;
+	core::Size reqmaxbeam = 1;
 	rank += 30;
 	if ( rank > solutions_.size() ) rank = solutions_.size();
 
 	TRACER << "master beam width " << master_beam_width_ << std::endl;
-	for ( Size i=1; i<=rank; i++ ) {
+	for ( core::Size i=1; i<=rank; i++ ) {
 		LoopPartialSolution lps = solutions_[i];
 		bool addlps = true;
-		Size maxbeamcount = 0;
-		for ( Size j=1; j<=filteredsolutions.size(); j++ ) {
+		core::Size maxbeamcount = 0;
+		for ( core::Size j=1; j<=filteredsolutions.size(); j++ ) {
 			LoopPartialSolution filteredlps = filteredsolutions[j];
 			Real partialrms = lps.partialrms(filteredlps, fragmelt, total_lower, false, 1 );
 			Real masterbeamrms = lps.partialrms(filteredlps, fragmelt, total_lower, false, rmswindow );
@@ -2377,7 +2377,7 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, Size fra
 	Real post_best_RMS = solutions_[1].get_rms();
 	std::string nearnativeid = nearnativelps.get_id();
 	if ( dump_beam ) {
-		for ( Size j=1; j<=solutions_.size(); j++ ) {
+		for ( core::Size j=1; j<=solutions_.size(); j++ ) {
 			Real oldRMS = solutions_[j].get_rms();
 			std::string oldid = solutions_[j].get_id();
 			solutions_[j].apply(pose, (int)lower_res, (int)upper_res );
@@ -2393,7 +2393,7 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, Size fra
 
 	rank = 0;
 	bool rankset = false;
-	for ( Size i=1; i<=solutions_.size(); i++ ) {
+	for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 		Real oldRMS = solutions_[i].get_rms();
 		//this will set the rank to the first structure to be lower than 1.5 RMS
 		if ( oldRMS <=1.5 && !rankset ) {
@@ -2429,7 +2429,7 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, Size fra
 
 	if ( (pre_best_RMS < 1.2 && post_best_RMS > 1.3) || (solutions_.size()>maxelts_) ) {
 		if ( !dump_beam && !writebeams ) {
-			for ( Size j=1; j<=solutions_.size(); j++ ) {
+			for ( core::Size j=1; j<=solutions_.size(); j++ ) {
 				Real oldRMS;
 				oldRMS = solutions_[j].get_rms();
 				std::string oldid = solutions_[j].get_id();
@@ -2477,12 +2477,12 @@ void LoopGrower::read_coordfile(){
 			firstline = false;
 		}
 		if ( coordstream.peek() == std::ifstream::traits_type::eof() ) break;
-		Size res = 0;
-		Size atom = 0;
-		Size totalpositions = 0;
+		core::Size res = 0;
+		core::Size atom = 0;
+		core::Size totalpositions = 0;
 		coordstream >> res >> atom >> totalpositions;
 		utility::vector1< numeric::xyzVector< core::Real > > positions;
-		for ( Size i=1; i<=totalpositions; i++ ) {
+		for ( core::Size i=1; i<=totalpositions; i++ ) {
 			if ( coordstream.peek() == std::ifstream::traits_type::eof() ) break;
 			numeric::xyzVector<core::Real> position(0,0,0);
 			coordstream >> position[0] >> position[1] >> position[2];
@@ -2491,14 +2491,14 @@ void LoopGrower::read_coordfile(){
 			if ( coordstream.peek() == std::ifstream::traits_type::eof() ) break;
 		}
 		if ( coordstream.peek() == std::ifstream::traits_type::eof() ) break;
-		std::pair< Size, Size > atomid = std::make_pair(res,atom);
+		std::pair< core::Size, core::Size > atomid = std::make_pair(res,atom);
 		scoringcoords_[atomid] = positions;
 	}
-	/*std::map< std::pair<Size, Size>, utility::vector1< numeric::xyzVector< core::Real > > >::iterator iter;
-	Size count = 1;
+	/*std::map< std::pair<core::Size, core::Size>, utility::vector1< numeric::xyzVector< core::Real > > >::iterator iter;
+	core::Size count = 1;
 	for( iter = scoringcoords_.begin(); iter != scoringcoords_.end(); iter++){
 	count++;
-	for( Size i=1; i<=iter->second.size(); i++){
+	for( core::Size i=1; i<=iter->second.size(); i++){
 	TRACER << " setting " << iter->first.first << "." << iter->first.second << " " << iter->second.size() << " " << iter->second[i][0] << " " << iter->second[i][1] << " " << iter->second[i][2] << std::endl;
 	}
 	}*/
@@ -2514,11 +2514,11 @@ LoopGrower::is_beta(Real phi, Real psi){
 }
 
 void
-LoopGrower::coordinate_filter(LoopPartialSolutionStore& solutionset, core::pose::Pose pose, bool lower, Size lower_fasta, Size upper_fasta, Size rangelo, Size rangehi){
+LoopGrower::coordinate_filter(LoopPartialSolutionStore& solutionset, core::pose::Pose pose, bool lower, core::Size lower_fasta, core::Size upper_fasta, core::Size rangelo, core::Size rangehi){
 
 	bool coordmatch = false;
 	//find the cutpoint
-	Size cutpoint = rangelo;
+	core::Size cutpoint = rangelo;
 	while ( !pose.fold_tree().is_cutpoint(cutpoint) ) {
 		cutpoint++;
 		if ( cutpoint > rangehi ) {
@@ -2528,9 +2528,9 @@ LoopGrower::coordinate_filter(LoopPartialSolutionStore& solutionset, core::pose:
 	}
 	while ( pose.residue(cutpoint).name3() == "XXX" ) cutpoint--;
 	//get the range via the cutpoint
-	Size lowerrange;
-	Size upperrange;
-	Size fasta_start;
+	core::Size lowerrange;
+	core::Size upperrange;
+	core::Size fasta_start;
 	if ( lower ) {
 		lowerrange = cutpoint-4;
 		upperrange = cutpoint;
@@ -2551,10 +2551,10 @@ LoopGrower::coordinate_filter(LoopPartialSolutionStore& solutionset, core::pose:
 	LoopPartialSolutionStore matchingsolutions = solutionset;
 	matchingsolutions.clear();
 	//check if any solutions match coordinates
-	for ( Size i=1; i<=solutionset.size(); i++ ) {
+	for ( core::Size i=1; i<=solutionset.size(); i++ ) {
 		LoopPartialSolution lps = solutionset[i];
 		lps.apply(pose,rangelo,rangehi);
-		Size radiuscluster = check_coordinates(pose, lowerrange, upperrange, fasta_start, 3.0);
+		core::Size radiuscluster = check_coordinates(pose, lowerrange, upperrange, fasta_start, 3.0);
 		if ( radiuscluster > 4 ) {
 			coordmatch = true;
 			matchingsolutions.store(lps);
@@ -2568,7 +2568,7 @@ LoopGrower::coordinate_filter(LoopPartialSolutionStore& solutionset, core::pose:
 
 }
 
-void LoopGrower::write_to_disk( LoopPartialSolutionStore solutionset, Size step, Size added_lower, Size added_upper, bool filteronly, bool lower){
+void LoopGrower::write_to_disk( LoopPartialSolutionStore solutionset, core::Size step, core::Size added_lower, core::Size added_upper, bool filteronly, bool lower){
 
 	std::ofstream outbeam;
 	outbeam.precision(12);
@@ -2580,7 +2580,7 @@ void LoopGrower::write_to_disk( LoopPartialSolutionStore solutionset, Size step,
 		outbeam.open (filename.c_str());
 	}
 	LoopPartialSolution outlps;
-	for ( Size i=1; i<= solutionset.size(); i++ ) {
+	for ( core::Size i=1; i<= solutionset.size(); i++ ) {
 		outlps = solutionset[i];
 		outbeam << outlps.size() << " " << added_lower << " " << added_upper << " " << step << " " << lower << std::endl;;
 		outlps.write_beam(outbeam);
@@ -2603,16 +2603,16 @@ void LoopGrower::read_from_disk(LoopPartialSolutionStore & solutionset, int & cy
 		runtime_assert( beamread.peek() != std::ifstream::traits_type::eof() );
 	}
 	TRACER << "reading beams from " << beamfile << std::endl;
-	// Size countertest = 0;
+	// core::Size countertest = 0;
 	while ( !beamread.eof() ) {
-		Size rescount;
+		core::Size rescount;
 		beamread >> rescount >> storelow_ >> storehi_ >> cycle >> lower;
 		if ( beamread.eof() ) break;
 		LoopPartialSolution storedbeam;
-		for ( Size j=1; j<=rescount; j++ ) {
+		for ( core::Size j=1; j<=rescount; j++ ) {
 			Real phi, psi, omega, chi1, chi2, chi3, chi4;
 			phi = psi = omega = chi1 = chi2 = chi3 = chi4 = 0;
-			Size nchi = 0;
+			core::Size nchi = 0;
 			beamread >> phi >> psi >> omega >> nchi;
 			if ( nchi >=1 ) beamread >> chi1;
 			if ( nchi >=2 ) beamread >> chi2;
@@ -2622,12 +2622,12 @@ void LoopGrower::read_from_disk(LoopPartialSolutionStore & solutionset, int & cy
 			storedbeam.push_back_restorsions(residue);
 			if ( beamread.eof() ) break;
 		}
-		for ( Size j=1;  j<=rescount; j++ ) {
-			Size atomcount;
+		for ( core::Size j=1;  j<=rescount; j++ ) {
+			core::Size atomcount;
 			utility::vector1< core::Vector > resbackbone;
 			beamread >> atomcount;
 			if ( beamread.eof() ) break;
-			for ( Size k=1; k<=atomcount; k++ ) {
+			for ( core::Size k=1; k<=atomcount; k++ ) {
 				numeric::xyzVector<core::Real> atomxyzvector;
 				beamread >> atomxyzvector[0] >> atomxyzvector[1] >> atomxyzvector[2];
 				resbackbone.push_back(atomxyzvector);
@@ -2635,17 +2635,17 @@ void LoopGrower::read_from_disk(LoopPartialSolutionStore & solutionset, int & cy
 			}
 			storedbeam.push_back_backbone(resbackbone);
 		}
-		Size sheets;
+		core::Size sheets;
 		Real bonus_score;
 		beamread >> sheets >> bonus_score;
 		storedbeam.set_bonus_score(bonus_score);
-		for ( Size i=1; i<=sheets; i++ ) {
-			Size baseres, jumpid;
+		for ( core::Size i=1; i<=sheets; i++ ) {
+			core::Size baseres, jumpid;
 			beamread >> baseres >> jumpid;
 			numeric::xyzMatrix< Real > rotation;
 			numeric::xyzVector< Real > translation;
-			for ( Size ii=1; ii<=3; ii++ ) {
-				for ( Size j=1; j<=3; j++ ) {
+			for ( core::Size ii=1; ii<=3; ii++ ) {
+				for ( core::Size j=1; j<=3; j++ ) {
 					Real rotationdata;
 					beamread >> rotationdata;
 					rotation(ii,j) = rotationdata;
@@ -2654,13 +2654,13 @@ void LoopGrower::read_from_disk(LoopPartialSolutionStore & solutionset, int & cy
 				if ( beamread.eof() ) break;
 			}
 			beamread >> translation[0] >> translation[1] >> translation[2];
-			Size sheetrescount;
+			core::Size sheetrescount;
 			beamread >> sheetrescount;
 			utility::vector1< ResTorsions > sheetresidues;
-			for ( Size ii=1; ii<=sheetrescount; ii++ ) {
+			for ( core::Size ii=1; ii<=sheetrescount; ii++ ) {
 				Real phi, psi, omega, chi1, chi2, chi3, chi4;
 				phi = psi = omega = chi1 = chi2 = chi3 = chi4 = 0;
-				Size nchi = 0;
+				core::Size nchi = 0;
 				beamread >> phi >> psi >> omega >> nchi;
 				if ( nchi >=1 ) beamread >> chi1;
 				if ( nchi >=2 ) beamread >> chi2;
@@ -2705,7 +2705,7 @@ LoopGrower::GDThatonative( core::pose::Pose const &pose, int natlow, int nathi, 
 		runtime_assert( native_);
 	}
 
-	Size GDTha = 0;
+	core::Size GDTha = 0;
 	int rescount = startlow;
 	if ( (resstart_ == 0 || pose.fold_tree().is_cutpoint(startlow-1)) ) {
 		rescount-=1;
@@ -2733,7 +2733,7 @@ LoopGrower::GDThatonative( core::pose::Pose const &pose, int natlow, int nathi, 
 }
 
 void
-LoopGrower::atomGDTha(core::Vector atom1, core::Vector atom2, Size &GDTha){
+LoopGrower::atomGDTha(core::Vector atom1, core::Vector atom2, core::Size &GDTha){
 	Real distance = (atom1-atom2).length_squared();
 	if ( distance < 0.5 ) GDTha++;
 	if ( distance < 1.0 ) GDTha++;
@@ -2793,18 +2793,18 @@ LoopGrower::RMStonative( core::pose::Pose const &pose, int natlow, int nathi, in
 }
 
 Size
-LoopGrower::check_coordinates(core::pose::Pose& pose, Size lower_pose, Size upper_pose, Size lower_fasta, Real radius){
+LoopGrower::check_coordinates(core::pose::Pose& pose, core::Size lower_pose, core::Size upper_pose, core::Size lower_fasta, Real radius){
 
-	Size radiuscount = 0;
+	core::Size radiuscount = 0;
 	std::string atomnames[1] = {"CA"};
-	Size fastares = lower_fasta;
-	for ( Size i=lower_pose; i<=upper_pose; i++ ) {
+	core::Size fastares = lower_fasta;
+	for ( core::Size i=lower_pose; i<=upper_pose; i++ ) {
 		bool inradius = false;
 		for ( const auto & atomname : atomnames ) {
 			core::Vector atomcoords = pose.residue(i).atom(atomname).xyz();
 			core::Size atomnumber = pose.residue(i).atom_index(atomname);
-			std::pair< Size, Size > atomid = std::make_pair(fastares,atomnumber);
-			for ( Size k=1; k<=scoringcoords_[atomid].size(); k++ ) {
+			std::pair< core::Size, core::Size > atomid = std::make_pair(fastares,atomnumber);
+			for ( core::Size k=1; k<=scoringcoords_[atomid].size(); k++ ) {
 				core::Vector storedcoords = scoringcoords_[atomid][k];
 				core::Real distance = (atomcoords-storedcoords).length_squared();
 				if ( distance < radius ) inradius = true;
@@ -2818,8 +2818,8 @@ LoopGrower::check_coordinates(core::pose::Pose& pose, Size lower_pose, Size uppe
 }
 
 void LoopGrower::update_to_stored( core::pose::Pose& growpose, core::pose::Pose& growpose_cen, const core::chemical::ResidueTypeCOPs& restypes_pose,
-	const core::chemical::ResidueTypeCOPs& restypes_pose_cen, int & lower_pose, int & upper_pose, int & lower_fasta, int & upper_fasta, Size newreslow,
-	Size newreshi, bool is_nterm, bool is_cterm){
+	const core::chemical::ResidueTypeCOPs& restypes_pose_cen, int & lower_pose, int & upper_pose, int & lower_fasta, int & upper_fasta, core::Size newreslow,
+	core::Size newreshi, bool is_nterm, bool is_cterm){
 
 	for ( int i=1; i<=(int)newreslow; ++i ) {
 		core::conformation::ResidueOP newres( core::conformation::ResidueFactory::create_residue(*restypes_pose[lower_fasta+i-1] ));
@@ -2863,14 +2863,14 @@ void LoopGrower::update_to_stored( core::pose::Pose& growpose, core::pose::Pose&
 	add_user_csts(growpose);
 	add_user_csts(growpose_cen);
 }
-void LoopGrower::rescoresolutionset( LoopPartialSolutionStore& solutionset, core::pose::Pose& fa_pose, core::pose::Pose& cen_pose, Size torsionrangelo, Size torsionrangehi ){
+void LoopGrower::rescoresolutionset( LoopPartialSolutionStore& solutionset, core::pose::Pose& fa_pose, core::pose::Pose& cen_pose, core::Size torsionrangelo, core::Size torsionrangehi ){
 	LoopPartialSolutionStore rescoredset = solutionset;
 	rescoredset.clear();
 	core::pose::Pose scpose = fa_pose;
 	core::pose::Pose sheetpose = cen_pose;
-	for ( Size i=1; i<=solutionset.size(); i++ ) {
+	for ( core::Size i=1; i<=solutionset.size(); i++ ) {
 		LoopPartialSolution lps = solutionset[i];
-		utility::vector1< std::pair<Size,Size> > history = lps.get_history();
+		utility::vector1< std::pair<core::Size,Size> > history = lps.get_history();
 		lps.apply(cen_pose, torsionrangelo, torsionrangehi);
 		lps.apply(fa_pose, torsionrangelo, torsionrangehi);
 		Real RMS = lps.get_rms();
@@ -2935,11 +2935,11 @@ void LoopGrower::rescoresolutionset( LoopPartialSolutionStore& solutionset, core
 	}
 	if ( dumperrors_ ) {
 		Real bestrms = 99999;
-		Size rank = 0;
+		core::Size rank = 0;
 		Real bestscore = 99999;
 		rescoredset.sort();
 		bool reportednn = false;
-		for ( Size i=1; i<=rescoredset.size(); i++ ) {
+		for ( core::Size i=1; i<=rescoredset.size(); i++ ) {
 			LoopPartialSolution lps = rescoredset[i];
 			lps = rescoredset[i];
 			Real rms = lps.get_rms();
@@ -2962,10 +2962,10 @@ void
 LoopGrower::store_sheets( core::pose::Pose& pose, LoopPartialSolution& lps ){
 
 	if ( pose.total_residue() > total_residues_ ) {
-		Size startpos = total_residues_+1;
-		Size endpos = total_residues_+sheetsize_;
-		Size baseres = 0;
-		for ( Size i=startpos; i<=endpos; i++ ) {
+		core::Size startpos = total_residues_+1;
+		core::Size endpos = total_residues_+sheetsize_;
+		core::Size baseres = 0;
+		for ( core::Size i=startpos; i<=endpos; i++ ) {
 			if ( pose.fold_tree().is_jump_point(i) ) {
 				baseres = pose.fold_tree().get_parent_residue(i);
 			}
@@ -2975,10 +2975,10 @@ LoopGrower::store_sheets( core::pose::Pose& pose, LoopPartialSolution& lps ){
 	}
 	if ( pose.total_residue() > total_residues_+sheetsize_ ) {
 		TR << " storing second " << std::endl;
-		Size startpos = total_residues_+sheetsize_+1;
-		Size endpos = startpos+sheetsize_-1;
-		Size baseres = 0;
-		for ( Size i=startpos; i<=endpos; i++ ) {
+		core::Size startpos = total_residues_+sheetsize_+1;
+		core::Size endpos = startpos+sheetsize_-1;
+		core::Size baseres = 0;
+		for ( core::Size i=startpos; i<=endpos; i++ ) {
 			if ( pose.fold_tree().is_jump_point(i) ) {
 				baseres = pose.fold_tree().get_parent_residue(i);
 			}
@@ -2990,15 +2990,15 @@ LoopGrower::store_sheets( core::pose::Pose& pose, LoopPartialSolution& lps ){
 }
 
 Real
-LoopGrower::modifieddensity( core::pose::Pose& pose, Size rangelo, Size rangehi, Real density_weight, Size & includesheets){
+LoopGrower::modifieddensity( core::pose::Pose& pose, core::Size rangelo, core::Size rangehi, Real density_weight, core::Size & includesheets){
 
 	//This vector scores the original scores of the backbones as well as the modified scores for the side chain to use in the modified dens score later.
 	utility::vector1< utility::vector1< Real> > residueatomdensities;
 	utility::vector1< Real > worstatoms;
-	Size res_windowlength = 8; //it may be  worthwhile to make this something that can be set in the xml don't forget to also put this in the non window_dens score
+	core::Size res_windowlength = 8; //it may be  worthwhile to make this something that can be set in the xml don't forget to also put this in the non window_dens score
 	Real worst_atom = -9999;
 	Real total_fast_dens = 0;
-	Size atomcounter = 0;
+	core::Size atomcounter = 0;
 
 	//this is just for a test
 	//(*sf_)(pose);
@@ -3013,8 +3013,8 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, Size rangelo, Size rangehi,
 		Real residueworstatom = -999999;
 		Real worstscatom = -999999;
 		core::conformation::Residue currentres = pose.residue(i);
-		Size resatomcount = currentres.nheavyatoms();
-		for ( Size j=1; j<=resatomcount; j++ ) {
+		core::Size resatomcount = currentres.nheavyatoms();
+		for ( core::Size j=1; j<=resatomcount; j++ ) {
 			std::string atomname = currentres.atom_name(j);
 			if ( atomname.find("CEN") != std::string::npos ) {
 				resatomcount-=1;
@@ -3049,7 +3049,7 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, Size rangelo, Size rangehi,
 			}
 		}
 		//add side chain density
-		for ( Size j=1; j<= scatomdens.size(); j++ ) {
+		for ( core::Size j=1; j<= scatomdens.size(); j++ ) {
 			if ( worstscatom > scatomdens[j] ) {
 				sc_dens += worstscatom*sc_scale_;
 				resatomdens.push_back(worstscatom*sc_scale_);
@@ -3067,18 +3067,18 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, Size rangelo, Size rangehi,
 	bool keepfirstsheet = true;
 	bool keepsecondsheet = true;
 	worst_atom = -99999;
-	Size nonsheetrescount = rangehi-rangelo+2;
-	for ( Size i=nonsheetrescount-sheetsize_+1; i<=residueatomdensities.size(); i++ ) {
+	core::Size nonsheetrescount = rangehi-rangelo+2;
+	for ( core::Size i=nonsheetrescount-sheetsize_+1; i<=residueatomdensities.size(); i++ ) {
 		Real worst = worstatoms[i];
 		if ( worst > worst_atom && i <= nonsheetrescount ) worst_atom = worst;
 		if ( worst > worst_atom*sheet_tolerance_ && i > nonsheetrescount && i <= nonsheetrescount+sheetsize_ ) keepfirstsheet = false;
 		if ( worst > worst_atom*sheet_tolerance_ && i > nonsheetrescount+sheetsize_ ) keepsecondsheet = false;
 	}
 	if ( keepfirstsheet || keepsecondsheet ) {
-		Size nsheets = (pose.total_residue()-total_residues_)/sheetsize_;
-		for ( Size i=1; i<=nsheets; i++ ) {
-			Size lower = total_residues_+1;
-			Size upper = total_residues_+sheetsize_;
+		core::Size nsheets = (pose.total_residue()-total_residues_)/sheetsize_;
+		for ( core::Size i=1; i<=nsheets; i++ ) {
+			core::Size lower = total_residues_+1;
+			core::Size upper = total_residues_+sheetsize_;
 			if ( i > 1 ) {
 				lower = total_residues_+sheetsize_+1;
 				upper = pose.total_residue();
@@ -3096,7 +3096,7 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, Size rangelo, Size rangehi,
 	if ( keepfirstsheet && keepsecondsheet ) includesheets=3;
 
 	//Calculate modified fast dens score
-	for ( Size i=1; i<=residueatomdensities.size(); i++ ) {
+	for ( core::Size i=1; i<=residueatomdensities.size(); i++ ) {
 		int lower_window = i-res_windowlength;
 		int upper_window = i+res_windowlength;
 		bool sheetres = false;
@@ -3116,7 +3116,7 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, Size rangelo, Size rangehi,
 		if ( !sheetres ) {
 			Real basescore = 0;
 			Real fullscore = 0;
-			for ( Size ii=1; ii<=residueatomdensities[i].size(); ii++ ) {
+			for ( core::Size ii=1; ii<=residueatomdensities[i].size(); ii++ ) {
 				Real atomscore = residueatomdensities[i][ii];
 				fullscore+=atomscore;
 				if ( atomscore > worst_atom ) {
@@ -3131,7 +3131,7 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, Size rangelo, Size rangehi,
 		} else if ( addresforfast ) {
 			Real basescore = 0;
 			Real fullscore = 0;
-			for ( Size ii=1; ii<=residueatomdensities[i].size(); ii++ ) {
+			for ( core::Size ii=1; ii<=residueatomdensities[i].size(); ii++ ) {
 				Real atomscore = residueatomdensities[i][ii];
 				fullscore+= atomscore;
 				if ( atomscore > worst_atom ) {
@@ -3172,9 +3172,9 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, Size rangelo, Size rangehi,
 
 }
 //Only takes centroid pose
-Real LoopGrower::sheetscore( core::pose::Pose& fa_pose, core::pose::Pose& cen_pose, Size rangelo, Size rangehi ){
+Real LoopGrower::sheetscore( core::pose::Pose& fa_pose, core::pose::Pose& cen_pose, core::Size rangelo, core::Size rangehi ){
 
-	Size irrelevant_number;
+	core::Size irrelevant_number;
 	Real density_weight;
 	if ( cenrot_ ) {
 		density_weight = cenrot_sf_->get_weight(scoring::elec_dens_fast);
@@ -3192,7 +3192,7 @@ Real LoopGrower::sheetscore( core::pose::Pose& fa_pose, core::pose::Pose& cen_po
 	return strandscore;
 }
 
-Real LoopGrower::modifiedscore( core::pose::Pose& fapose, core::pose::Pose& cen_pose, Size rangelo, Size rangehi){
+Real LoopGrower::modifiedscore( core::pose::Pose& fapose, core::pose::Pose& cen_pose, core::Size rangelo, core::Size rangehi){
 
 	core::scoring::ScoreFunctionOP sf_nodens;
 	if ( pack_min_cycles_ != 0 && famin_ ) {
@@ -3226,7 +3226,7 @@ Real LoopGrower::modifiedscore( core::pose::Pose& fapose, core::pose::Pose& cen_
 		pose = cen_pose;
 	}
 
-	Size bestsheets = 0;
+	core::Size bestsheets = 0;
 	Real adjusted_dens = 0;
 	if ( windowdensweight_ != 0 || density_weight != 0 ) {
 		adjusted_dens = modifieddensity( pose, rangelo, rangehi, density_weight, bestsheets );
@@ -3275,7 +3275,7 @@ Real LoopGrower::modifiedscore( core::pose::Pose& fapose, core::pose::Pose& cen_
 	return score;
 }
 void
-LoopGrower::add_fragment_csts( core::pose::Pose &pose, Size startfasta, Size endfasta, Size natstoplow, Size natstarthi, Size startlower ) {
+LoopGrower::add_fragment_csts( core::pose::Pose &pose, core::Size startfasta, core::Size endfasta, core::Size natstoplow, core::Size natstarthi, core::Size startlower ) {
 
 	core::fragment::FragSetOP frags = fragments_[1];
 
@@ -3286,7 +3286,7 @@ LoopGrower::add_fragment_csts( core::pose::Pose &pose, Size startfasta, Size end
 	}
 
 	// 1 - collect fragment statistics
-	Size frag_nres = frags->max_pos();
+	core::Size frag_nres = frags->max_pos();
 	utility::vector1< utility::vector1< core::Real > > phi_distr( frag_nres, utility::vector1< core::Real >(36,0.0) );
 	utility::vector1< utility::vector1< core::Real > > psi_distr( frag_nres, utility::vector1< core::Real >(36,0.0) );
 	utility::vector1< int > N( frag_nres, 0 );
@@ -3298,7 +3298,7 @@ LoopGrower::add_fragment_csts( core::pose::Pose &pose, Size startfasta, Size end
 			core::fragment::BBTorsionSRFDCOP res_i =
 				utility::pointer::dynamic_pointer_cast<const core::fragment::BBTorsionSRFD> (it->fragment().get_residue( fpos ) );
 
-			Size pos = it->frame().seqpos( fpos );
+			core::Size pos = it->frame().seqpos( fpos );
 			core::Real phi = std::fmod( res_i->torsion(1), 360.0 ); if ( phi<0 ) phi +=360.0;
 			core::Real psi = std::fmod( res_i->torsion(2), 360.0 ); if ( psi<0 ) psi +=360.0;
 
@@ -3351,7 +3351,7 @@ LoopGrower::add_fragment_csts( core::pose::Pose &pose, Size startfasta, Size end
 	}
 
 	// finally .. add constraints
-	Size pos = startlower;
+	core::Size pos = startlower;
 	for ( auto i=(int)startfasta; i<=(int)endfasta; ++i ) {
 		using namespace core::scoring::func;
 		using namespace core::scoring::constraints;
@@ -3409,12 +3409,12 @@ LoopGrower::add_user_csts(core::pose::Pose & pose){
 
 
 Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& growpose_cen, LoopPartialSolutionStore& solutionset, const core::chemical::ResidueTypeCOPs& restypes_pose,
-	const core::chemical::ResidueTypeCOPs& restypes_pose_cen, Size lower_pose, Size upper_pose, Size upper_term, int lower_fasta, int upper_fasta, Size torsionrangelo, Size torsionrangehi,
-	bool insert_lower, Size /*initial_melt_left*/, bool is_cterm, bool is_nterm, Size cycle, int n_to_insert ){
+	const core::chemical::ResidueTypeCOPs& restypes_pose_cen, core::Size lower_pose, core::Size upper_pose, core::Size upper_term, int lower_fasta, int upper_fasta, core::Size torsionrangelo, core::Size torsionrangehi,
+	bool insert_lower, core::Size /*initial_melt_left*/, bool is_cterm, bool is_nterm, core::Size cycle, int n_to_insert ){
 
 	int insert_pose=0;
-	Size maxfrag = fragments_[1]->max_frag_length();
-	for ( Size i=1; i<=fragments_.size(); i++ ) {
+	core::Size maxfrag = fragments_[1]->max_frag_length();
+	for ( core::Size i=1; i<=fragments_.size(); i++ ) {
 		core::fragment::FragSetOP fragset = fragments_[i];
 		if ( maxfrag > fragset->max_frag_length() ) {
 			maxfrag = fragset->max_frag_length();
@@ -3424,7 +3424,7 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 	Real bestdensity = 99;
 	Real bestrms = 9999;
 	Real bestgdt = 0;
-	Size is_lower;
+	core::Size is_lower;
 	if ( insert_lower ) {
 		is_lower = 1;
 	} else {
@@ -3517,7 +3517,7 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 	core::Real beam_minimum = 99999;
 
 	// expand each previous rounds' hit
-	Size ctr=1;
+	core::Size ctr=1;
 	torsionrangehi += n_to_insert;
 	if ( is_cterm ) torsionrangehi  = upper_pose;
 	TRACER << " the current solution set size is " << solutionset.size() << std::endl;
@@ -3527,11 +3527,11 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 	} else {
 		total_lower = 0;
 	}
-	Size omit_pose = insert_pose;
+	core::Size omit_pose = insert_pose;
 	insert_pose_ = insert_pose;
 
-	Size sheetrangelo;
-	Size sheetrangehi;
+	core::Size sheetrangelo;
+	core::Size sheetrangehi;
 	if ( insert_lower ) {
 		sheetrangelo = lower_pose-sheetsize_+1;
 		sheetrangehi = lower_pose;
@@ -3581,9 +3581,9 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 	add_user_csts(growpose);
 	add_user_csts(growpose_cen);
 
-	for ( Size j=1; j<=solutionset.size(); j++ ) {
+	for ( core::Size j=1; j<=solutionset.size(); j++ ) {
 		LoopPartialSolution lps = solutionset[j];
-		utility::vector1< std::pair<Size,Size> > fraghistory;
+		utility::vector1< std::pair<core::Size,Size> > fraghistory;
 		if ( trackfragments_ ) {
 			fraghistory = lps.get_history();
 		}
@@ -3603,9 +3603,9 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 		// random subset of fragments
 		core::pose::Pose scpose = growpose;
 		core::pose::Pose sheetsamplepose = growpose_cen;
-		Size fragtracker = 1;
+		core::Size fragtracker = 1;
 		if ( nativegrow_ ) fragtracker = 0;
-		for ( Size fraglistitr=1; fraglistitr<=fragments_.size(); fraglistitr++ ) {
+		for ( core::Size fraglistitr=1; fraglistitr<=fragments_.size(); fraglistitr++ ) {
 			core::fragment::FragSetOP fragset = fragments_[fraglistitr];
 			int fraglength = fragset->max_frag_length();
 			int insert_fasta;
@@ -3684,8 +3684,8 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 							}
 						}
 						if ( sheetcriteria_ == 2 ) {
-							Size res1 = sheetrangelo + (sheetrangehi-sheetrangelo)/2;
-							Size res2 = res1-1;
+							core::Size res1 = sheetrangelo + (sheetrangehi-sheetrangelo)/2;
+							core::Size res2 = res1-1;
 							if ( is_beta(growpose_cen.phi(res1),growpose_cen.psi(res1)) || is_beta(growpose_cen.phi(res2), growpose_cen.psi(res2)) ) {
 								meets_criteria = true;
 							}
@@ -3753,7 +3753,7 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 					dens_only = (*sf_densonly)(growpose_cen);
 				}
 				LoopPartialSolution newlps = LoopPartialSolution(growpose, torsionrangelo, torsionrangehi, modscore);
-				std::pair<Size,Size> historypair = std::make_pair( ctr, fragtracker );
+				std::pair<core::Size,Size> historypair = std::make_pair( ctr, fragtracker );
 				if ( trackfragments_ ) newlps.set_history( fraghistory, historypair );
 
 				//calculate RMS of loop to native.
@@ -3827,7 +3827,7 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 	}
 
 	if ( pack_min_cycles_ != 0 ) restore_sc->apply( growpose );
-	//Size totalres = torsionrangehi-torsionrangelo;
+	//core::Size totalres = torsionrangehi-torsionrangelo;
 	//Real beamscorecutoff = totalres * beamscorecutoff_ +8;
 	if ( fafilter_ || cenrotfilter_ ) {
 		fafilter(solutionsetnew, growpose, growpose_cen, total_lower, torsionrangelo, torsionrangehi, cycle, lower_fasta, upper_fasta, lower_pose);
@@ -3847,11 +3847,11 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 		}
 	}
 	if ( trackfragments_ ) {
-		for ( Size i=1; i<=solutionsetnew.size(); i++ ) {
+		for ( core::Size i=1; i<=solutionsetnew.size(); i++ ) {
 			LoopPartialSolution lps = solutionsetnew[i];
-			utility::vector1< std::pair<Size,Size> > newhistory = lps.get_history();
+			utility::vector1< std::pair<core::Size,Size> > newhistory = lps.get_history();
 			TRACER << " The fragments required to make " << lps.get_rms() << " were: ";
-			for ( Size j=1; j<=newhistory.size(); j++ ) {
+			for ( core::Size j=1; j<=newhistory.size(); j++ ) {
 				TRACER << newhistory[j].first << "." << newhistory[j].second << " ";
 
 			}

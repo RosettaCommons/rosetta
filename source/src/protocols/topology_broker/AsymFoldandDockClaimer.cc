@@ -144,7 +144,7 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	if ( chain_break_res_ == 0 ) throw CREATE_EXCEPTION(utility::excn::BadInput,  " No chainbreak defined... ");
 
 	/*
-	Size moving_end( 1 );
+	core::Size moving_end( 1 );
 	for ( Loops::const_iterator loop_it = moving_res_.begin(); loop_it != moving_res_.end(); ++loop_it ) {
 	moving_start_ = loop_it->start();
 	moving_end = loop_it->stop();
@@ -155,7 +155,7 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	pose::PDBInfoOP pdb_info( new pose::PDBInfo( pose, true ) );
 
 	utility::vector1< char > chain;
-	for ( Size i=1; i<= pdb_info->nres(); ++i ) {
+	for ( core::Size i=1; i<= pdb_info->nres(); ++i ) {
 		if ( i <= chain_break_res_ ) {
 			chain.push_back( 'A' );
 		} else {
@@ -203,7 +203,7 @@ void AsymFoldandDockClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 	std::cout << input_pose_.fold_tree() << std::endl;
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
-	for ( Size i = 1; i <= cuts.size(); ++i ) {
+	for ( core::Size i = 1; i <= cuts.size(); ++i ) {
 
 		new_claims.push_back( utility::pointer::make_shared< claims::CutClaim >( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
 			claims::DofClaim::INIT // for now... eventually CAN_INIT ?
@@ -222,8 +222,8 @@ core::Size AsymFoldandDockClaimer::docking_jump( core::pose::Pose& pose, core::S
 	// find the anchor
 	FoldTree f( pose.fold_tree() );
 	int jump_number(1);
-	for ( Size i=1; i<= f.num_jump(); ++i ) {
-		Size res( f.downstream_jump_residue( i ) );
+	for ( core::Size i=1; i<= f.num_jump(); ++i ) {
+		core::Size res( f.downstream_jump_residue( i ) );
 		if ( res > chain_break_res ) {
 			jump_number = i;
 		}

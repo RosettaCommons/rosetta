@@ -112,7 +112,7 @@ SetupNCSMover::SetupNCSMover( std::string src, std::string tgt ) : protocols::mo
 }
 
 SetupNCSMover::SetupNCSMover( std::string src, utility::vector1<std::string> tgt ): protocols::moves::Mover("SetupNCSMover") {
-	for ( Size i=1; i<=tgt.size(); ++i ) {
+	for ( core::Size i=1; i<=tgt.size(); ++i ) {
 		add_group( src, tgt[i] );
 	}
 	set_defaults();
@@ -120,7 +120,7 @@ SetupNCSMover::SetupNCSMover( std::string src, utility::vector1<std::string> tgt
 
 SetupNCSMover::SetupNCSMover( utility::vector1<std::string> src, utility::vector1<std::string> tgt ) : protocols::moves::Mover("SetupNCSMover") {
 	runtime_assert( src.size() == tgt.size() );
-	for ( Size i=1; i<=tgt.size(); ++i ) {
+	for ( core::Size i=1; i<=tgt.size(); ++i ) {
 		add_group( src[i], tgt[i] );
 	}
 	set_defaults();
@@ -171,14 +171,14 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 	pose.data().set( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING, ncs );
 
 	// map residue ranges -> resid pairs (using PDBinfo if necessary)
-	for ( Size i=1; i<=src_.size(); ++i ) {
-		utility::vector1<Size> src_i = core::pose::get_resnum_list_ordered( src_[i], pose );
-		utility::vector1<Size> tgt_i = core::pose::get_resnum_list_ordered( tgt_[i], pose );
+	for ( core::Size i=1; i<=src_.size(); ++i ) {
+		utility::vector1<core::Size> src_i = core::pose::get_resnum_list_ordered( src_[i], pose );
+		utility::vector1<core::Size> tgt_i = core::pose::get_resnum_list_ordered( tgt_[i], pose );
 
 		runtime_assert( src_i.size() == tgt_i.size() );
 		if ( src_i.size() == 0 ) utility_exit_with_message("Error creating NCS constraints: no groups found");
 
-		for ( Size j=1; j<=src_i.size(); ++j ) {
+		for ( core::Size j=1; j<=src_i.size(); ++j ) {
 			core::Size resnum_src = src_i[j], resnum_tgt = tgt_i[j];
 			id::AtomID id_a1,id_a2,id_a3,id_a4, id_b1,id_b2,id_b3,id_b4;
 
@@ -200,7 +200,7 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 			if ( bb_ ) {
 				// fpd better safe than sorry
 				runtime_assert (pose.residue(resnum_src).mainchain_torsions().size() == pose.residue(resnum_tgt).mainchain_torsions().size());
-				for ( Size k=1, k_end = pose.residue(resnum_src).mainchain_torsions().size(); k<= k_end; ++k ) {
+				for ( core::Size k=1, k_end = pose.residue(resnum_src).mainchain_torsions().size(); k<= k_end; ++k ) {
 					id::TorsionID tors_src(resnum_src,BB,k);
 					id::TorsionID tors_tgt(resnum_tgt,BB,k);
 
@@ -228,7 +228,7 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 					continue;
 				}
 
-				for ( Size k=1, k_end = pose.residue(resnum_src).nchi(); k<= k_end; ++k ) {
+				for ( core::Size k=1, k_end = pose.residue(resnum_src).nchi(); k<= k_end; ++k ) {
 					id::TorsionID tors_src(resnum_src,CHI,k);
 					id::TorsionID tors_tgt(resnum_tgt,CHI,k);
 
@@ -251,16 +251,16 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 		debug_assert( srcE_.size() == tgtE_.size() );
 
 		// map residue ranges -> resid pairs (using PDBinfo if necessary)
-		for ( Size i=1; i<=srcE_.size(); ++i ) {
-			utility::vector1<Size> srcE_i = core::pose::get_resnum_list_ordered( srcE_[i], pose );
-			utility::vector1<Size> tgtE_i = core::pose::get_resnum_list_ordered( tgtE_[i], pose );
+		for ( core::Size i=1; i<=srcE_.size(); ++i ) {
+			utility::vector1<core::Size> srcE_i = core::pose::get_resnum_list_ordered( srcE_[i], pose );
+			utility::vector1<core::Size> tgtE_i = core::pose::get_resnum_list_ordered( tgtE_[i], pose );
 			runtime_assert( srcE_i.size() == tgtE_i.size() );
 
 			if ( srcE_i.size() == 0 ) {
 				utility_exit_with_message("Error creating NCS constraints: " + srcE_[i] +" : "+tgtE_[i]);
 			}
 
-			for ( Size j=1; j<=srcE_i.size(); ++j ) {
+			for ( core::Size j=1; j<=srcE_i.size(); ++j ) {
 				core::Size resnum_srcE = srcE_i[j], resnum_tgtE = tgtE_i[j];
 
 				TZ.Debug << "Symmetrizing residues " << resnum_srcE << " <--> " << resnum_tgtE << std::endl;
@@ -278,17 +278,17 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 
 		core::Real test1=srcD_.size();
 		core::Real test2=tgtD_.size();
-		TZ.Debug << "Size src " << test1 << " Size tgt " << test2 << std::endl;
+		TZ.Debug << "core::Size src " << test1 << " core::Size tgt " << test2 << std::endl;
 
 
 		// map residue ranges -> resid pairs (using PDBinfo if necessary)
-		for ( Size i=1; i<=srcD_.size(); ++i ) {
-			utility::vector1<Size> srcD_i = core::pose::get_resnum_list_ordered( srcD_[i], pose );
+		for ( core::Size i=1; i<=srcD_.size(); ++i ) {
+			utility::vector1<core::Size> srcD_i = core::pose::get_resnum_list_ordered( srcD_[i], pose );
 
 			core::Real temp_d=srcD_i.size();
 			TZ.Debug << "src 1 size " << temp_d << std::endl;
 
-			utility::vector1<Size> tgtD_i = core::pose::get_resnum_list_ordered( tgtD_[i], pose );
+			utility::vector1<core::Size> tgtD_i = core::pose::get_resnum_list_ordered( tgtD_[i], pose );
 			runtime_assert( srcD_i.size() == tgtD_i.size() );
 			runtime_assert( srcD_i.size() % 2 == 0 );
 
@@ -297,7 +297,7 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 				utility_exit_with_message("Error creating NCS distance pair constraints: " + srcD_[i] + " : " + tgtD_[i] );
 			}
 
-			for ( Size j=1; j<=srcD_i.size()/2; ++j ) {
+			for ( core::Size j=1; j<=srcD_i.size()/2; ++j ) {
 				core::Size resnum_src1 = srcD_i[j], resnum_tgt1 = tgtD_i[j], resnum_src2 = srcD_i[j+srcD_i.size()/2], resnum_tgt2 = tgtD_i[j+srcD_i.size()/2];
 				id::AtomID id_ad1,id_ad2, id_bd1,id_bd2;
 

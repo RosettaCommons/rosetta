@@ -48,7 +48,7 @@ xyz_from_internal_coords( numeric::xyzVector<Real> atom1_xyz,
 void
 xyz_to_vec1(numeric::xyzVector<Real> const& vec_xyz, fixedsizearray1<Real,3> &vec1){
 
-	for ( Size i=1; i<=3; ++i ) {
+	for ( core::Size i=1; i<=3; ++i ) {
 		vec1[i] = vec_xyz(i);
 	}
 }

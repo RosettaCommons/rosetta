@@ -130,7 +130,7 @@ void MultiThreadingMover::apply(
 
 	core::id::AtomID_Mask missing( true );
 	core::pose::initialize_atomid_map( missing, query_pose ); // used for repacking atoms
-	for ( Size idx = 1; idx <= template_poses_.size(); ++idx ) {
+	for ( core::Size idx = 1; idx <= template_poses_.size(); ++idx ) {
 		Pose const & template_pose( template_poses_[idx] );
 		SequenceAlignment const & aln( alignments_[idx] );
 
@@ -140,9 +140,9 @@ void MultiThreadingMover::apply(
 		threader.randomize_loop_coords(false);
 		threader.apply(query_pose);
 		core::id::SequenceMapping map( aln.sequence_mapping(1,2) );
-		for ( Size resi = 1; resi <= query_pose.size(); ++resi ) {
+		for ( core::Size resi = 1; resi <= query_pose.size(); ++resi ) {
 			if ( map[resi] != 0 ) {
-				for ( Size atomj = 1; atomj <= query_pose.residue(resi).natoms(); ++atomj ) {
+				for ( core::Size atomj = 1; atomj <= query_pose.residue(resi).natoms(); ++atomj ) {
 					missing[ core::id::AtomID( atomj, resi ) ] = false;
 				}
 			}

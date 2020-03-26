@@ -32,7 +32,7 @@ using cppdb::result;
 static basic::Tracer TR( "protocols.features.strand_assembly.WriteToFileFromSandwichFeatures" );
 
 //get_vector_of_loop_AA_distribution
-utility::vector1<Size>
+utility::vector1<core::Size>
 get_vector_of_loop_AA_distribution (
 	StructureID struct_id, // needed argument
 	sessionOP db_session, // needed argument
@@ -56,9 +56,9 @@ get_vector_of_loop_AA_distribution (
 	sum_statement.bind(2, struct_id);
 	result res(basic::database::safely_read_from_database(sum_statement));
 
-	Size num_A, num_C, num_D, num_E, num_F, num_G, num_H, num_I, num_K, num_L, num_M, num_N, num_P, num_Q, num_R, num_S, num_T, num_V, num_W, num_Y;
+	core::Size num_A, num_C, num_D, num_E, num_F, num_G, num_H, num_I, num_K, num_L, num_M, num_N, num_P, num_Q, num_R, num_S, num_T, num_V, num_W, num_Y;
 
-	utility::vector1<Size> vector_loop_AA_distribution;
+	utility::vector1<core::Size> vector_loop_AA_distribution;
 
 	while ( res.next() )
 			{
@@ -102,19 +102,19 @@ prepare_and_write_number_of_electrostatic_interactions_of_residues_to_files(
 	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
 	Real distance_cutoff_for_electrostatic_interactions_,
 	Real CB_b_factor_cutoff_for_electrostatic_interactions_,
-	Size min_primary_seq_distance_diff_for_electrostatic_interactions_,
+	core::Size min_primary_seq_distance_diff_for_electrostatic_interactions_,
 	bool write_electrostatic_interactions_of_surface_residues_in_a_strand_,
 	bool write_electrostatic_interactions_of_all_residues_in_a_strand_,
 	bool write_electrostatic_interactions_of_all_residues_,
-	Size rkde_PK_id_counter,
-	Size rkde_in_strands_PK_id_counter)
+	core::Size rkde_PK_id_counter,
+	core::Size rkde_in_strands_PK_id_counter)
 {
 	if ( write_electrostatic_interactions_of_surface_residues_in_a_strand_ || write_electrostatic_interactions_of_all_residues_in_a_strand_ ) {
 		// <begin> store RKDE in strands to a database table
-		for ( Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++ ) { // per each beta-strand
-			Size residue_begin = bs_of_sw_can_by_sh[ii].get_start();
-			Size residue_end = bs_of_sw_can_by_sh[ii].get_end();
-			for ( Size residue_num = residue_begin; residue_num <= residue_end; residue_num++ ) {
+		for ( core::Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++ ) { // per each beta-strand
+			core::Size residue_begin = bs_of_sw_can_by_sh[ii].get_start();
+			core::Size residue_end = bs_of_sw_can_by_sh[ii].get_end();
+			for ( core::Size residue_num = residue_begin; residue_num <= residue_end; residue_num++ ) {
 				if (
 						(pose.residue_type(residue_num).name3() == "ARG")
 						|| (pose.residue_type(residue_num).name3() == "LYS")
@@ -175,7 +175,7 @@ prepare_and_write_number_of_electrostatic_interactions_of_residues_to_files(
 
 	if ( write_electrostatic_interactions_of_all_residues_ ) {
 		// <begin> store RKDE to a database table
-		for ( Size ii=1; ii<=pose.size(); ii++ ) {
+		for ( core::Size ii=1; ii<=pose.size(); ii++ ) {
 			if (
 					(pose.residue_type(ii).name3() == "ARG")
 					|| (pose.residue_type(ii).name3() == "LYS")
@@ -219,10 +219,10 @@ write_AA_kind_to_a_file(
 	string tag,
 	StructureID struct_id, // needed argument
 	utility::sql_database::sessionOP db_session, // needed argument
-	Size sw_can_by_sh_id,
-	Size sw_res_size)
+	core::Size sw_can_by_sh_id,
+	core::Size sw_res_size)
 {
-	Size tag_len = tag.length();
+	core::Size tag_len = tag.length();
 	string pdb_file_name = tag.substr(0, tag_len-5);
 
 	string AA_kind_file_name = pdb_file_name + "_AA_kind.txt";
@@ -230,7 +230,7 @@ write_AA_kind_to_a_file(
 
 	AA_kind_file.open(AA_kind_file_name.c_str());
 
-	utility::vector1<Size> vec_AA_kind = get_vec_AA_kind(struct_id, db_session,
+	utility::vector1<core::Size> vec_AA_kind = get_vec_AA_kind(struct_id, db_session,
 		sw_can_by_sh_id // used to be vec_sw_can_by_sh_id[ii]
 	);
 
@@ -240,13 +240,13 @@ write_AA_kind_to_a_file(
 
 	AA_kind_file << pdb_file_name << "\t" ;
 
-	for ( Size i =1; i<=(vec_AA_kind.size()); i++ ) {
+	for ( core::Size i =1; i<=(vec_AA_kind.size()); i++ ) {
 		Real percent = vec_AA_kind[i]*100/static_cast<Real>(sw_res_size);
-		Size rounded_percent = round_to_Size(percent);
+		core::Size rounded_percent = round_to_Size(percent);
 		AA_kind_file << rounded_percent << "\t" ;
 	}
 
-	for ( Size i =1; i<=(vec_AA_kind.size()); i++ ) {
+	for ( core::Size i =1; i<=(vec_AA_kind.size()); i++ ) {
 		AA_kind_file << vec_AA_kind[i] << "\t" ;
 	}
 	AA_kind_file << endl; // to marshal
@@ -263,22 +263,22 @@ write_AA_distribution_with_direction_to_a_file(
 	utility::sql_database::sessionOP db_session // needed argument
 )
 {
-	Size tag_len = tag.length();
+	core::Size tag_len = tag.length();
 	string pdb_file_name = tag.substr(0, tag_len-5);
 	string AA_dis_file_name = pdb_file_name + "_AA_distribution_of_strands_sorted_alphabetically.txt";
 	ofstream AA_dis_file;
 
 	AA_dis_file.open(AA_dis_file_name.c_str());
-	utility::vector1<Size> vec_core_heading_at_core_strand = get_vector_of_strand_AA_distribution (struct_id, db_session, "core_heading", "core");
+	utility::vector1<core::Size> vec_core_heading_at_core_strand = get_vector_of_strand_AA_distribution (struct_id, db_session, "core_heading", "core");
 	// struct_id, db_session, heading_direction, strand_location
-	utility::vector1<Size> vec_surface_heading_at_core_strand = get_vector_of_strand_AA_distribution (struct_id, db_session, "surface_heading", "core");
+	utility::vector1<core::Size> vec_surface_heading_at_core_strand = get_vector_of_strand_AA_distribution (struct_id, db_session, "surface_heading", "core");
 	// struct_id, db_session, heading_direction, strand_location
-	utility::vector1<Size> vec_core_heading_at_edge_strand = get_vector_of_strand_AA_distribution (struct_id, db_session, "core_heading", "edge");
+	utility::vector1<core::Size> vec_core_heading_at_edge_strand = get_vector_of_strand_AA_distribution (struct_id, db_session, "core_heading", "edge");
 	// struct_id, db_session, heading_direction, strand_location
-	utility::vector1<Size> vec_surface_heading_at_edge_strand = get_vector_of_strand_AA_distribution (struct_id, db_session, "surface_heading", "edge");
+	utility::vector1<core::Size> vec_surface_heading_at_edge_strand = get_vector_of_strand_AA_distribution (struct_id, db_session, "surface_heading", "edge");
 	// struct_id, db_session, heading_direction, strand_location
 	AA_dis_file << "core_heading_at_core_strand\tsurface_heading_at_core_strand\tcore_heading_at_edge_strand\tsurface_heading_at_edge_strand" << endl;
-	for ( Size i =1; i<=(vec_core_heading_at_core_strand.size()); i++ ) {
+	for ( core::Size i =1; i<=(vec_core_heading_at_core_strand.size()); i++ ) {
 		AA_dis_file << vec_core_heading_at_core_strand[i] << "\t" << vec_surface_heading_at_core_strand[i] << "\t" << vec_core_heading_at_edge_strand[i] << "\t" << vec_surface_heading_at_edge_strand[i] << endl;
 	}
 	AA_dis_file.close();
@@ -295,17 +295,17 @@ write_AA_distribution_without_direction_to_a_file(
 	utility::sql_database::sessionOP db_session // needed argument
 )
 {
-	Size tag_len = tag.length();
+	core::Size tag_len = tag.length();
 	string pdb_file_name = tag.substr(0, tag_len-5);
 	string AA_dis_file_name = pdb_file_name + "_AA_distribution_of_loops_sorted_alphabetically.txt";
 	ofstream AA_dis_file;
 
 	AA_dis_file.open(AA_dis_file_name.c_str());
-	utility::vector1<Size> vector_of_hairpin_AA = get_vector_of_loop_AA_distribution (struct_id, db_session, "hairpin");
-	utility::vector1<Size> vector_of_inter_sheet_loop_AA = get_vector_of_loop_AA_distribution (struct_id, db_session, "loop_connecting_two_sheets");
+	utility::vector1<core::Size> vector_of_hairpin_AA = get_vector_of_loop_AA_distribution (struct_id, db_session, "hairpin");
+	utility::vector1<core::Size> vector_of_inter_sheet_loop_AA = get_vector_of_loop_AA_distribution (struct_id, db_session, "loop_connecting_two_sheets");
 
 	AA_dis_file << "hairpin_AA\tinter_sheet_loop_AA" << endl;
-	for ( Size i =1; i<=(vector_of_hairpin_AA.size()); i++ ) {
+	for ( core::Size i =1; i<=(vector_of_hairpin_AA.size()); i++ ) {
 		AA_dis_file << vector_of_hairpin_AA[i] << "\t" << vector_of_inter_sheet_loop_AA[i] << endl;
 	}
 	AA_dis_file.close();
@@ -329,10 +329,10 @@ write_beta_sheet_capping_info_to_a_file(
 	int number_of_strands_with_2_cappings = 0;
 	int number_of_strands_with_1_capping = 0;
 
-	utility::vector1<Size> residue_begin_of_strands_with_1_capping;
-	utility::vector1<Size> residue_begin_of_strands_with_0_capping;
+	utility::vector1<core::Size> residue_begin_of_strands_with_1_capping;
+	utility::vector1<core::Size> residue_begin_of_strands_with_0_capping;
 
-	for ( Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++ ) { // per each beta-strand
+	for ( core::Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++ ) { // per each beta-strand
 		int residue_begin = bs_of_sw_can_by_sh[ii].get_start();
 		int residue_end = bs_of_sw_can_by_sh[ii].get_end();
 		if ( residue_end - residue_begin < 2 ) {
@@ -385,7 +385,7 @@ write_beta_sheet_capping_info_to_a_file(
 			residue_begin_of_strands_with_0_capping.push_back(residue_begin);
 		}
 	}
-	Size tag_len = tag.length();
+	core::Size tag_len = tag.length();
 	string pdb_file_name = tag.substr(0, tag_len-5);
 	string info_file_name = pdb_file_name + "_beta_sheet_capping_info.txt";
 	ofstream info_file;
@@ -399,7 +399,7 @@ write_beta_sheet_capping_info_to_a_file(
 		<< number_of_strands_with_1_capping << "\t"
 		<< number_of_strands_where_capping_is_checked - number_of_strands_with_2_cappings - number_of_strands_with_1_capping << "\t";
 
-	for ( Size kk = 1;  kk <= residue_begin_of_strands_with_1_capping.size(); kk++ ) {
+	for ( core::Size kk = 1;  kk <= residue_begin_of_strands_with_1_capping.size(); kk++ ) {
 		if ( kk == residue_begin_of_strands_with_1_capping.size() ) {
 			info_file << residue_begin_of_strands_with_1_capping[kk];
 		} else {
@@ -409,7 +409,7 @@ write_beta_sheet_capping_info_to_a_file(
 
 	info_file << "\t";
 
-	for ( Size kk = 1;  kk <= residue_begin_of_strands_with_0_capping.size(); kk++ ) {
+	for ( core::Size kk = 1;  kk <= residue_begin_of_strands_with_0_capping.size(); kk++ ) {
 		if ( kk == residue_begin_of_strands_with_0_capping.size() ) {
 			info_file << residue_begin_of_strands_with_0_capping[kk];
 		} else {
@@ -430,9 +430,9 @@ write_chain_B_resNum_to_a_file(
 	string tag,
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	core::Size sw_can_by_sh_id)
 {
-	Size tag_len = tag.length();
+	core::Size tag_len = tag.length();
 	string pdb_file_name = tag.substr(0, tag_len-5);
 	string report_file_name = pdb_file_name + "_chain_B_resNum.txt";
 	ofstream report_file;
@@ -443,7 +443,7 @@ write_chain_B_resNum_to_a_file(
 		db_session,
 		sw_can_by_sh_id // was 'vec_sw_can_by_sh_id[ii]'
 	);
-	for ( Size i=1; i<=chain_B_resNum.size(); ++i ) {
+	for ( core::Size i=1; i<=chain_B_resNum.size(); ++i ) {
 		report_file << chain_B_resNum[i].get_resNum() << endl;
 	}
 	report_file.close();
@@ -459,7 +459,7 @@ write_heading_direction_of_all_AA_in_a_strand_to_a_file(
 	core::pose::Pose const & pose,
 	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh)
 {
-	Size tag_len = tag.length();
+	core::Size tag_len = tag.length();
 	string pdb_file_name = tag.substr(0, tag_len-5);
 	string heading_file_name = pdb_file_name + "_heading_direction_of_all_AA_in_a_strand.txt";
 	ofstream heading_file;
@@ -467,7 +467,7 @@ write_heading_direction_of_all_AA_in_a_strand_to_a_file(
 	heading_file.open(heading_file_name.c_str());
 	heading_file << "residue_begin\tresidue_end\theading_directions" << endl;
 
-	for ( Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++ ) { // per each beta-strand
+	for ( core::Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++ ) { // per each beta-strand
 		string heading_directions =
 			report_heading_directions_of_all_AA_in_a_strand (
 			struct_id,
@@ -511,9 +511,9 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 	string heading_direction,
 	Real distance_cutoff_for_electrostatic_interactions_,
 	Real CB_b_factor_cutoff_for_electrostatic_interactions_,
-	Size min_primary_seq_distance_diff_for_electrostatic_interactions_)
+	core::Size min_primary_seq_distance_diff_for_electrostatic_interactions_)
 {
-	Size tag_len = tag.length();
+	core::Size tag_len = tag.length();
 	string pdb_file_name = tag.substr(0, tag_len-5);
 
 	string ElectroStatics_txt_file_name;
@@ -560,7 +560,7 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 	SaltBridges_pymol_ready_file << "select salt_bridges, resi ";
 	bool first_addition_for_SaltBridges_pymol_ready_file = true;
 
-	utility::vector1<Size> vector_of_unique_distinct_sw_ids = get_distinct_sw_id_from_sandwich_table (struct_id, db_session);
+	utility::vector1<core::Size> vector_of_unique_distinct_sw_ids = get_distinct_sw_id_from_sandwich_table (struct_id, db_session);
 
 	std::vector<int> vec_number_of_attractions_by_centroid;
 	std::vector<int> vec_number_of_repulsions_by_centroid;
@@ -571,7 +571,7 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 	std::vector<int> vec_sum_of_salt_CC_NO_bridges;
 	std::vector<int> vec_number_of_longer_range_attrac_ion_pair;
 
-	for ( Size sw_ii=1; sw_ii<=vector_of_unique_distinct_sw_ids.size(); ++sw_ii ) { // per each beta-sandwich
+	for ( core::Size sw_ii=1; sw_ii<=vector_of_unique_distinct_sw_ids.size(); ++sw_ii ) { // per each beta-sandwich
 		utility::vector1<int> vector_of_residue_num_of_rkde =
 			retrieve_residue_num_of_rkde(
 			struct_id,
@@ -580,7 +580,7 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 			dssp_code,
 			heading_direction
 		);
-		for ( Size residue_i=1; residue_i<=vector_of_residue_num_of_rkde.size(); residue_i++ ) {
+		for ( core::Size residue_i=1; residue_i<=vector_of_residue_num_of_rkde.size(); residue_i++ ) {
 			int residue_num = vector_of_residue_num_of_rkde[residue_i];
 
 			// <begin> check whether "current" residue has low atom position uncertainty
@@ -674,12 +674,12 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 			int number_of_attractions_by_centroid = 0;
 			int number_of_repulsions_by_centroid = 0;
 
-			Size number_of_salt_bridge = 0;
-			Size number_of_C_C_bridge = 0;
-			Size number_of_N_O_bridge = 0;
-			Size number_of_longer_range_attrac_ion_pair = 0;
+			core::Size number_of_salt_bridge = 0;
+			core::Size number_of_C_C_bridge = 0;
+			core::Size number_of_N_O_bridge = 0;
+			core::Size number_of_longer_range_attrac_ion_pair = 0;
 
-			for ( Size other_residue_i=1; other_residue_i<=vector_of_residue_num_of_rkde.size(); ++other_residue_i ) {
+			for ( core::Size other_residue_i=1; other_residue_i<=vector_of_residue_num_of_rkde.size(); ++other_residue_i ) {
 				if ( other_residue_i == residue_i ) {
 					continue;
 				}
@@ -1041,7 +1041,7 @@ write_p_aa_pp_of_AAs_to_a_file(
 	string tag,
 	Pose & dssp_pose)
 {
-	Size tag_len = tag.length();
+	core::Size tag_len = tag.length();
 	string pdb_file_name = tag.substr(0, tag_len-5);
 	string p_aa_pp_file_name = pdb_file_name + "_p_aa_pp_at_each_AA.txt";
 	ofstream p_aa_pp_file;
@@ -1049,7 +1049,7 @@ write_p_aa_pp_of_AAs_to_a_file(
 	p_aa_pp_file.open(p_aa_pp_file_name.c_str());
 	p_aa_pp_file << "residue_number\tres_type\tp_aa_pp" << endl;
 
-	for ( Size ii=1; ii<=dssp_pose.size(); ii++ ) {
+	for ( core::Size ii=1; ii<=dssp_pose.size(); ii++ ) {
 		core::scoring::EnergyMap em1 = dssp_pose.energies().residue_total_energies(ii);
 		Real resi_p_aa_pp = em1[core::scoring::p_aa_pp];
 
@@ -1068,14 +1068,14 @@ write_phi_psi_of_each_residue_to_a_file(
 	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
 	bool write_phi_psi_of_E_,
 	bool write_phi_psi_of_all_,
-	Size max_num_sw_per_pdb_,
+	core::Size max_num_sw_per_pdb_,
 	StructureID struct_id, // needed argument
 	sessionOP db_session,
 	Real min_CA_CA_dis_,
 	Real max_CA_CA_dis_
 )
 {
-	Size tag_len = tag.length();
+	core::Size tag_len = tag.length();
 	string pdb_file_name = tag.substr(0, tag_len-5);
 
 	if ( write_phi_psi_of_E_ ) {
@@ -1084,7 +1084,7 @@ write_phi_psi_of_each_residue_to_a_file(
 		phi_psi_file.open(phi_psi_file_name.c_str());
 		phi_psi_file << "tag\tres_num\tres_type\tres_at_terminal\tsheet_is_antiparallel\tstrand_is_at_edge\tphi\tpsi" << endl;
 
-		for ( Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii ) {
+		for ( core::Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii ) {
 			if ( bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id() > max_num_sw_per_pdb_ ) {
 				break;
 			}
@@ -1100,8 +1100,8 @@ write_phi_psi_of_each_residue_to_a_file(
 				min_CA_CA_dis_,
 				max_CA_CA_dis_);
 
-			Size res_at_terminal;
-			for ( Size res_num = bs_of_sw_can_by_sh[ii].get_start(); res_num <= bs_of_sw_can_by_sh[ii].get_end(); res_num++ ) {
+			core::Size res_at_terminal;
+			for ( core::Size res_num = bs_of_sw_can_by_sh[ii].get_start(); res_num <= bs_of_sw_can_by_sh[ii].get_end(); res_num++ ) {
 				if ( res_num == bs_of_sw_can_by_sh[ii].get_start() || res_num == bs_of_sw_can_by_sh[ii].get_end() ) {
 					res_at_terminal = 1;
 				} else {
@@ -1145,7 +1145,7 @@ write_rama_of_AAs_to_a_file(
 	string tag,
 	Pose & dssp_pose)
 {
-	Size tag_len = tag.length();
+	core::Size tag_len = tag.length();
 	string pdb_file_name = tag.substr(0, tag_len-5);
 	string rama_file_name = pdb_file_name + "_rama_at_each_AA.txt";
 	ofstream rama_file;
@@ -1153,7 +1153,7 @@ write_rama_of_AAs_to_a_file(
 	rama_file.open(rama_file_name.c_str());
 	rama_file << "residue_number\t\tres_type\trama" << endl;
 
-	for ( Size ii=1; ii<=dssp_pose.size(); ii++ ) {
+	for ( core::Size ii=1; ii<=dssp_pose.size(); ii++ ) {
 		core::scoring::EnergyMap em1 = dssp_pose.energies().residue_total_energies(ii);
 		Real rama_at_this_AA = em1[core::scoring::rama];
 
@@ -1177,7 +1177,7 @@ write_resfile_to_a_file_when_seq_rec_is_bad(
 	bool write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_
 )
 {
-	Size tag_len = tag.length();
+	core::Size tag_len = tag.length();
 	string pdb_file_name = tag.substr(0, tag_len-5);
 
 	// <begin> make a resfile to design all residues
@@ -1213,10 +1213,10 @@ write_resfile_to_a_file_when_seq_rec_is_bad(
 	int count_to_minimize_too_many_core_heading_FWY_on_core_strands = 0;
 	int count_to_minimize_too_many_core_heading_FWY_on_edge_strands = 0;
 
-	for ( Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++ ) { // per each beta-strand
-		Size residue_begin = bs_of_sw_can_by_sh[ii].get_start();
-		Size residue_end = bs_of_sw_can_by_sh[ii].get_end();
-		for ( Size residue_num = residue_begin; residue_num <= residue_end; residue_num++ ) {
+	for ( core::Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++ ) { // per each beta-strand
+		core::Size residue_begin = bs_of_sw_can_by_sh[ii].get_start();
+		core::Size residue_end = bs_of_sw_can_by_sh[ii].get_end();
+		for ( core::Size residue_num = residue_begin; residue_num <= residue_end; residue_num++ ) {
 			{
 				string heading = determine_heading_direction_by_vector (struct_id, db_session, pose, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), bs_of_sw_can_by_sh[ii].get_sheet_id(), residue_begin, residue_end, residue_num);
 				if ( heading == "surface" ) {
@@ -1293,7 +1293,7 @@ write_resfile_to_a_file_when_seq_rec_is_bad(
 	}
 
 	resfile_stream << "# NOTAA\tCFMWY for loop residues" << endl;
-	for ( Size i =1; i<=(pose.size()); i++ ) {
+	for ( core::Size i =1; i<=(pose.size()); i++ ) {
 		string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id, db_session, i);
 		if ( edge_or_core == "loop" || edge_or_core == "short_edge" ) {
 			resfile_stream << i << "\tA\tEX\t1\tNOTAA\tCFMWY" << endl; // I think that both hairpin-loop and inter-sheet-loop can be treated with 'NOTAA CFMWY'
@@ -1329,10 +1329,10 @@ write_resfile_to_a_file_when_seq_rec_is_bad(
 
 
 	count_to_minimize_too_much_hydrophobic_surface = 0;
-	for ( Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++ ) { // per each beta-strand
-		Size residue_begin = bs_of_sw_can_by_sh[ii].get_start();
-		Size residue_end = bs_of_sw_can_by_sh[ii].get_end();
-		for ( Size residue_num = residue_begin; residue_num <= residue_end; residue_num++ ) {
+	for ( core::Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++ ) { // per each beta-strand
+		core::Size residue_begin = bs_of_sw_can_by_sh[ii].get_start();
+		core::Size residue_end = bs_of_sw_can_by_sh[ii].get_end();
+		for ( core::Size residue_num = residue_begin; residue_num <= residue_end; residue_num++ ) {
 			{
 				string heading = determine_heading_direction_by_vector (struct_id, db_session, pose, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), bs_of_sw_can_by_sh[ii].get_sheet_id(), residue_begin, residue_end, residue_num);
 				if ( heading == "surface" ) {
@@ -1369,7 +1369,7 @@ write_resfile_to_a_file_when_seq_rec_is_bad(
 	}
 
 	surface_loop_resfile_stream << "# NOTAA\tCFMWY for loop residues" << endl;
-	for ( Size i =1; i<=(pose.size()); i++ ) {
+	for ( core::Size i =1; i<=(pose.size()); i++ ) {
 		string edge_or_core = see_edge_or_core_or_loop_or_short_edge (struct_id, db_session, i);
 		if ( edge_or_core == "loop" || edge_or_core == "short_edge" ) {
 			surface_loop_resfile_stream << i << "\tA\tEX\t1\tNOTAA\tCFMWY" << endl; // I think that both hairpin-loop and inter-sheet-loop can be treated with 'NOTAA CFMWY'
@@ -1394,7 +1394,7 @@ write_resfile_to_a_file(
 	bool write_resfile_NOT_FWY_on_surface_
 )
 {
-	Size tag_len = tag.length();
+	core::Size tag_len = tag.length();
 	string pdb_file_name = tag.substr(0, tag_len-5);
 
 	// <begin> make a resfile to design all residues
@@ -1408,10 +1408,10 @@ write_resfile_to_a_file(
 	resfile_stream << "# final resfile rule update: 07/29/2014" << endl;
 	resfile_stream << "# NOTAA CFWY for loops and surface_heading residues" << endl;
 
-	for ( Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++ ) { // per each beta-strand
-		Size residue_begin = bs_of_sw_can_by_sh[ii].get_start();
-		Size residue_end = bs_of_sw_can_by_sh[ii].get_end();
-		for ( Size residue_num = residue_begin; residue_num <= residue_end; residue_num++ ) {
+	for ( core::Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++ ) { // per each beta-strand
+		core::Size residue_begin = bs_of_sw_can_by_sh[ii].get_start();
+		core::Size residue_end = bs_of_sw_can_by_sh[ii].get_end();
+		for ( core::Size residue_num = residue_begin; residue_num <= residue_end; residue_num++ ) {
 			if ( write_resfile_NOT_FWY_on_surface_ ) {
 				string  heading = determine_heading_direction_by_vector (struct_id, db_session, pose, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), bs_of_sw_can_by_sh[ii].get_sheet_id(),  residue_begin,  residue_end,  residue_num);
 				if ( heading == "surface" ) {
@@ -1421,7 +1421,7 @@ write_resfile_to_a_file(
 		}
 	}
 
-	for ( Size residue_num = 1;  residue_num <=  pose.size(); residue_num++ ) {
+	for ( core::Size residue_num = 1;  residue_num <=  pose.size(); residue_num++ ) {
 		string id = see_edge_or_core_or_loop_or_short_edge (struct_id,  db_session, residue_num);
 		if ( id == "loop" ) {
 			resfile_stream << residue_num << " A NOTAA CFWY #loop" << endl;

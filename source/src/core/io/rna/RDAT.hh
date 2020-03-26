@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_rna_data_RDAT_HH
 #define INCLUDED_core_scoring_rna_data_RDAT_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/io/rna/RDAT.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -41,7 +41,7 @@ namespace rna {
 
 typedef std::pair< std::string, std::string > Annotation;
 
-class RDAT: public utility::pointer::ReferenceCount {
+class RDAT: public utility::VirtualBase {
 
 public:
 

@@ -222,6 +222,7 @@ HierarchicalHybridJDApplication::~HierarchicalHybridJDApplication() {}
 HierarchicalHybridJDApplication::HierarchicalHybridJDApplication(
 	HierarchicalHybridJDApplication const &src
 ) :
+	VirtualBase( src ),
 	derivedTR_(src.derivedTR_),
 	derivedTR_summary_(src.derivedTR_summary_),
 	MPI_rank_( src.MPI_rank_ ),
@@ -1039,7 +1040,7 @@ HierarchicalHybridJDApplication::top_pose_bcast(
 	if( i_am_emperor() ) {
 		runtime_assert( broadcast_no_poses_found || top_summary != nullptr );
 	}
-	int there_were_no_poses( broadcast_no_poses_found ? 1 : 0 );	
+	int there_were_no_poses( broadcast_no_poses_found ? 1 : 0 );
 	MPI_Bcast( &there_were_no_poses, 1, MPI_INT, 0 /*Emperor broadcasts*/, MPI_COMM_WORLD );
 	if( there_were_no_poses==1 ) return true;
 
@@ -2254,7 +2255,7 @@ HierarchicalHybridJDApplication::slave_compute_sorted_rmsds_to_best(
 				derived_slave_compute_rmsd( *slave_pose, *top_pose, sequence_ )
 			)
 		);
-		if( derivedTR_.Debug.visible() ) { 
+		if( derivedTR_.Debug.visible() ) {
 			derivedTR_.Debug << "Computed RMSD of " << rmsds_to_best_summaries[rmsds_to_best_summaries.size()]->rmsd_to_best() << " to best structure for job " << rmsds_to_best_summaries[rmsds_to_best_summaries.size()]->jobindex_on_originating_node() << " on node " << rmsds_to_best_summaries[rmsds_to_best_summaries.size()]->originating_node_MPI_rank() << "." << std::endl;
 		}
 	}

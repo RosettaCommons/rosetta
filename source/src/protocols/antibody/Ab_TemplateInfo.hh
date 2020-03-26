@@ -28,7 +28,7 @@ namespace protocols {
 namespace antibody {
 
 /// @brief Specifically for AntibodyModeling protocol templates. Not for general use.
-class Ab_TemplateInfo  : public utility::pointer::ReferenceCount {
+class Ab_TemplateInfo  : public utility::VirtualBase {
 
 public:
 	typedef std::map <std::string, core::pose::Pose> TemplatePoseMap;

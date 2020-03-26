@@ -54,7 +54,7 @@ static basic::Tracer TR( "protocols.moves.Mover" );
 
 Mover::Mover()
 :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	type_( "MoverBase" ),
 	current_tag_( "NoTag" ),
 	input_pose_(/* 0 */),
@@ -63,7 +63,7 @@ Mover::Mover()
 {}
 
 Mover::Mover( std::string const & type_name ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	type_( type_name ),
 	current_tag_( "NoTag" ),
 	input_pose_(/* 0 */),

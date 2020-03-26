@@ -106,7 +106,7 @@ public:
 private:
 
 	utility::vector1 < core::Size >
-	get_working_moving_res( Size const & nres ) const;
+	get_working_moving_res( core::Size const & nres ) const;
 
 	core::kinematics::MoveMapOP
 	get_default_movemap( core::pose::Pose const & pose );
@@ -115,7 +115,7 @@ private:
 	pass_all_pose_screens( core::pose::Pose & pose, std::string const in_tag, core::io::silent::SilentFileData & silent_file_data ) const;
 
 	void
-	freeze_sugar_torsions( core::kinematics::MoveMap & mm, Size const nres ) const;
+	freeze_sugar_torsions( core::kinematics::MoveMap & mm, core::Size const nres ) const;
 
 	void
 	output_empty_minimizer_silent_file() const; //FEB 09, 2012

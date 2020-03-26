@@ -23,7 +23,7 @@
 #include <protocols/rosetta_scripts/PosePropertyReporter.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -39,7 +39,7 @@ enum PoseSelectorFlags {
 	PSF_NEED_FULL_POSE_SET = (1 << 0)
 };
 
-class PoseSelector : public utility::pointer::ReferenceCount {
+class PoseSelector : public utility::VirtualBase {
 
 protected:
 	PoseSelector();

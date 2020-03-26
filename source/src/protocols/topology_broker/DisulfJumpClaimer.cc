@@ -68,7 +68,7 @@ void DisulfJumpClaimer::new_decoy() {
 	mover->enable_end_bias_check( false ); //no sense for discontinuous fragments
 	set_mover( mover );
 
-	//Size attempts( 10 );
+	//core::Size attempts( 10 );
 	//do {
 	// current_jumps_ = jump_def_->create_jump_sample();
 	//} while ( !current_jumps_.is_valid() && attempts-- );
@@ -129,7 +129,7 @@ void DisulfJumpClaimer::generate_jump_frags(
 	core::fragment::FragDataOPs frag_data;
 	lib.create_jump_fragments( false, frag_data );
 
-	for ( Size i = 1; i <= all_jump_pairings_.size(); ++i ) {
+	for ( core::Size i = 1; i <= all_jump_pairings_.size(); ++i ) {
 		int const startpos( all_jump_pairings_[i].pos1 );
 		int const endpos( all_jump_pairings_[i].pos2 );
 
@@ -153,7 +153,7 @@ void DisulfJumpClaimer::generate_jump_frags(
 // {
 //  all_frames.reserve( all_frames.size() + all_jump_pairings_.size() );
 
-//  for ( Size i = 1; i <= all_jump_pairings_.size(); ++i) {
+//  for ( core::Size i = 1; i <= all_jump_pairings_.size(); ++i) {
 //   int const startpos( all_jump_pairings_[i].pos1 );
 //   int const endpos( all_jump_pairings_[i].pos2 );
 
@@ -165,7 +165,7 @@ void DisulfJumpClaimer::generate_jump_frags(
 //   core::fragment::JumpingFrameOP frame =
 //    new core::fragment::JumpingFrame( startpos, endpos, frag_data->size () );
 
-//   Size pos = 1;
+//   core::Size pos = 1;
 //   frame->set_pos( pos++, startpos );
 //   frame->set_pos( pos++, endpos );
 
@@ -221,7 +221,7 @@ bool DisulfJumpClaimer::read_tag( std::string tag, std::istream& is ) {
 	} else if ( tag == "DISULF" ) {
 		//Requires syntax label1 pos1 ss1 label2 pos2 ss2
 		std::string label1, label2;
-		Size pos1, pos2;
+		core::Size pos1, pos2;
 		std::string ss1, ss2;
 
 		is >> pos1 >> label1 >> ss1 >> pos2 >> label2 >> ss2;

@@ -63,14 +63,14 @@ namespace core {
 namespace conformation {
 namespace carbohydrates {
 
-GlycanTree::GlycanTree(): utility::pointer::ReferenceCount()
+GlycanTree::GlycanTree(): utility::VirtualBase()
 {}
 
 
 // @brief standard constructor
 // -> Get all nodes of a glycan tree
 GlycanTree::GlycanTree( conformation::Conformation const & conf, Size const start_pos ):
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 
 {
 	setup_glycan_nodes( conf, start_pos );
@@ -78,12 +78,12 @@ GlycanTree::GlycanTree( conformation::Conformation const & conf, Size const star
 }// constructor
 
 GlycanTree::GlycanTree( Size const start_pos ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	start_pos_( start_pos )
 {}
 
 GlycanTree::GlycanTree( GlycanTree const & src ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	branch_tips_(src.branch_tips_),
 	start_pos_(src.start_pos_),
 	root_(src.root_)

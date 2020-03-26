@@ -29,7 +29,7 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -42,7 +42,7 @@ namespace dna {
 
 //enum{ WHATEVER, ALPHA, BETA, GAMMA, DELTA, EPSILON, ZETA, CHI, NU0, NU1, NU2, NU3, NU4 };
 
-class DNATorsionPotential : public utility::pointer::ReferenceCount
+class DNATorsionPotential : public utility::VirtualBase
 {
 
 public:

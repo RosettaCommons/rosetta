@@ -62,7 +62,7 @@ namespace pilot {
 namespace frankdt {
 
 steric_fusion_scan::steric_fusion_scan():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 
 }

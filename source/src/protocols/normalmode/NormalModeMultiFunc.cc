@@ -97,7 +97,7 @@ NormalModeMultifunc::operator ()( Multivec const & vars ) const {
 	Multivec dofs( vars_to_dofs( vars ) );
 
 	/* //Just for debugging
-	for( Size i = 1; i <= vars.size(); ++i ){
+	for( core::Size i = 1; i <= vars.size(); ++i ){
 	std::cout << "Vars: " << i << " " << vars[i] << std::endl;
 	}
 
@@ -190,23 +190,23 @@ NormalModeMultifunc::vars_to_dofs( Multivec const & vars ) const {
 	std::list< DOF_NodeOP > dof_nodes( min_map_.dof_nodes() );
 
 
-	for ( Size i_var = 1; i_var <= vars.size(); ++i_var ) {
+	for ( core::Size i_var = 1; i_var <= vars.size(); ++i_var ) {
 		//std::cout << "i_var, type: " << i_var << " " << var_type_[i_var] << std::endl;
 		// Normal Mode variables: project eigenvectors
 		if ( var_type_[i_var] == "NM" ) {
 
 			// Get index / scale for the mode in vars
 			auto it = map_var_to_modeno_.find( i_var );
-			Size const modeno( it->second );
+			core::Size const modeno( it->second );
 			utility::vector1< Real > const eigv = NM_.get_eigvec_tor( modeno );
 
 			Real const scale( get_modescale( modeno ) );
 
 			// Iter over Normal mode torsions to accummulate into dofs
-			for ( Size i_tor = 1; i_tor <= NM_torID.size(); ++i_tor ) {
+			for ( core::Size i_tor = 1; i_tor <= NM_torID.size(); ++i_tor ) {
 				if ( map_NM_to_DOF_.count( i_tor ) ) {
 					auto iter = map_NM_to_DOF_.find( i_tor );
-					Size const i_dof( iter->second );
+					core::Size const i_dof( iter->second );
 					dofs[ i_dof ] += scale * vars[ i_var ]*eigv[ i_tor ];
 				}
 			}
@@ -214,7 +214,7 @@ NormalModeMultifunc::vars_to_dofs( Multivec const & vars ) const {
 			// Non-Normal Mode variables: just copy
 		} else {
 			auto it = map_var_to_DOF_.find( i_var );
-			Size const i_dof( it->second );
+			core::Size const i_dof( it->second );
 			// Overwrite values into dofs
 			dofs[ i_dof ] = vars[ i_var ];
 		}
@@ -229,10 +229,10 @@ NormalModeMultifunc::dofs_to_vars( Multivec const & dofs ) const
 	// First store the difference in torsion from the starting values
 	Multivec tors_NM( NM_.ntor(), 0.0 );
 
-	for ( Size i_dof = 1; i_dof <= dofs.size(); ++i_dof ) {
+	for ( core::Size i_dof = 1; i_dof <= dofs.size(); ++i_dof ) {
 		if ( map_DOF_to_NM_.count( i_dof ) ) {
 			auto it = map_DOF_to_NM_.find( i_dof );
-			Size const i_tor( it->second );
+			core::Size const i_tor( it->second );
 			tors_NM[ i_tor ] = dofs[ i_dof ] - dofs_for_pose0( i_dof );
 			//std::cout << "dof! " << i_dof << " " << tors_NM[i_tor];
 			//std::cout << " " << dofs[i_dof] << " " << dofs_for_pose0(i_dof) << std::endl;
@@ -243,7 +243,7 @@ NormalModeMultifunc::dofs_to_vars( Multivec const & dofs ) const
 	// Next, iter over vars to convert dofs info to vars info
 	Multivec vars( nvar(), 0.0 );
 
-	for ( Size i_var = 1; i_var <= nvar(); ++i_var ) {
+	for ( core::Size i_var = 1; i_var <= nvar(); ++i_var ) {
 		// 1. Normal Mode vars
 		// Get dot product for each given mode, and add it into vars
 		if ( var_type_[i_var] == "NM" ) {
@@ -252,11 +252,11 @@ NormalModeMultifunc::dofs_to_vars( Multivec const & dofs ) const
 
 			// Get index/scale for the modes
 			auto it = map_var_to_modeno_.find( i_var );
-			Size const modeno( it->second );
+			core::Size const modeno( it->second );
 			utility::vector1< Real > const eigv = NM_.get_eigvec_tor( modeno );
 			Real const scale( get_modescale( modeno ) );
 
-			for ( Size i_tor = 1; i_tor <= tors_NM.size(); ++i_tor ) {
+			for ( core::Size i_tor = 1; i_tor <= tors_NM.size(); ++i_tor ) {
 				dotsum += tors_NM[ i_tor ]*eigv[ i_tor ];
 			}
 			vars[ i_var ] = scale*dotsum;
@@ -264,7 +264,7 @@ NormalModeMultifunc::dofs_to_vars( Multivec const & dofs ) const
 			// 2. Non-Normal Mode vars
 		} else {
 			auto it = map_var_to_DOF_.find( i_var );
-			Size const i_dof( it->second );
+			core::Size const i_dof( it->second );
 			vars[ i_var ] = dofs[ i_dof ];
 
 		}
@@ -279,21 +279,21 @@ NormalModeMultifunc::dEddofs_to_dEdvars( Multivec const & dEddofs ) const
 
 	Multivec dEdvars( nvar(), 0.0 );
 
-	for ( Size i_var = 1; i_var <= nvar(); ++i_var ) {
+	for ( core::Size i_var = 1; i_var <= nvar(); ++i_var ) {
 		// 1. Normal Mode vars
 		// Get dot product for each given mode, and add it into vars
 		if ( var_type_[i_var] == "NM" ) {
 
 			// Get index/scale for the modes
 			auto it = map_var_to_modeno_.find( i_var );
-			Size const modeno( it->second );
+			core::Size const modeno( it->second );
 			utility::vector1< Real > const eigv = NM_.get_eigvec_tor( modeno );
 			Real const scale( get_modescale( modeno ) );
 
-			for ( Size i_tor = 1; i_tor <= eigv.size(); ++i_tor ) {
+			for ( core::Size i_tor = 1; i_tor <= eigv.size(); ++i_tor ) {
 				if ( map_NM_to_DOF_.count( i_tor ) ) {
 					auto iter = map_NM_to_DOF_.find( i_tor );
-					Size const i_dof( iter->second );
+					core::Size const i_dof( iter->second );
 
 					//std::cout << "NM map, itor/idof: " << i_tor << " " << i_dof;
 					//std::cout << " " << scale * dEddofs[i_dof]*eigv[i_tor] << std::endl;
@@ -305,7 +305,7 @@ NormalModeMultifunc::dEddofs_to_dEdvars( Multivec const & dEddofs ) const
 			// 2. Non-Normal Mode vars
 		} else {
 			auto it = map_var_to_DOF_.find( i_var );
-			Size const i_dof( it->second );
+			core::Size const i_dof( it->second );
 			dEdvars[ i_var ] = dEddofs[ i_dof ];
 			//std::cout << "non-NM map, ivar/idof: " << i_var << " " << i_dof;
 			//std::cout << " " << dEddofs[ i_dof ] << std::endl;
@@ -360,8 +360,8 @@ NormalModeMultifunc::get_dofs_map()
 	}
 
 	// 2-1. Store indices for Normal mode numbers
-	for ( Size i_mode = 1; i_mode <= modes_using_.size(); ++i_mode ) {
-		Size const modeno( modes_using_[i_mode] );
+	for ( core::Size i_mode = 1; i_mode <= modes_using_.size(); ++i_mode ) {
+		core::Size const modeno( modes_using_[i_mode] );
 		nvar_++;
 		var_type_.push_back("NM");
 		map_var_to_modeno_[ nvar_ ] = modeno;
@@ -376,7 +376,7 @@ NormalModeMultifunc::get_dofs_map()
 			it_end = dof_nodes.end(); it != it_end; ++it, ++imap ) {
 		id::TorsionID const tor_id( (*it)->torsion_id() );
 
-		for ( Size itor = 1; itor <= NM_torID.size(); ++itor ) {
+		for ( core::Size itor = 1; itor <= NM_torID.size(); ++itor ) {
 			id::TorsionID const &id( NM_torID[itor] );
 
 			if ( id == tor_id ) {
@@ -463,12 +463,12 @@ NormalModeMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const
 		}
 		Multivec dvars( vars );
 		scoring::EnergyMap orig_weights( score_function_.weights() );
-		for ( Size ii = 1; ii <= scoring::n_score_types; ++ii ) {
+		for ( core::Size ii = 1; ii <= scoring::n_score_types; ++ii ) {
 			using namespace scoring;
 
 			if ( score_function_.weights()[ (ScoreType ) ii ] == 0.0 ) continue;
 
-			for ( Size jj = 1; jj <= scoring::n_score_types; ++jj ) {
+			for ( core::Size jj = 1; jj <= scoring::n_score_types; ++jj ) {
 				if ( jj == ii ) {
 					const_cast< scoring::ScoreFunction & > (score_function_).set_weight( (scoring::ScoreType) jj, orig_weights[ (scoring::ScoreType) jj ]);
 				} else if ( score_function_.weights()[ (scoring::ScoreType ) jj ] != 0.0 ) {
@@ -478,7 +478,7 @@ NormalModeMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const
 			//std::cout << "Checking score type: " << scoring::ScoreType( ii ) << std::endl;
 			dfunc( vars, dvars ); // invokes numeric derivative checker.
 		}
-		for ( Size ii = 1; ii <= scoring::n_score_types; ++ii ) {
+		for ( core::Size ii = 1; ii <= scoring::n_score_types; ++ii ) {
 			if ( orig_weights[ scoring::ScoreType( ii ) ] != 0 ) {
 				const_cast< scoring::ScoreFunction & > (score_function_).set_weight( (scoring::ScoreType)ii, orig_weights[ (scoring::ScoreType) ii ]);
 			}
@@ -498,7 +498,7 @@ NormalModeMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const
 		scoring::hbonds::HBondSet hbond_set;
 		fill_hbond_set( pose1, true, hbond_set );
 
-		for ( Size ii = 1; ii <= hbond_set.nhbonds(); ++ii ) {
+		for ( core::Size ii = 1; ii <= hbond_set.nhbonds(); ++ii ) {
 			scoring::hbonds::HBond const & iihbond = hbond_set.hbond( ii );
 			std::cerr << "Hbond " << ii <<
 				" d: " << iihbond.don_res() << " " << iihbond.don_hatm() <<
@@ -517,7 +517,7 @@ NormalModeMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const
 
 // get dampening scaling factor given mode number
 Real
-NormalModeMultifunc::get_modescale( Size const modeno ) const
+NormalModeMultifunc::get_modescale( core::Size const modeno ) const
 {
 	Real scale = exp( -k_dampen_*( modeno - 1.0 ));
 	return scale;
@@ -528,7 +528,7 @@ void
 NormalModeMultifunc::set_default_modes()
 {
 	modes_using_.resize( 0 );
-	Size ntors = std::min( (Size)(50), NM_.ntor() );
+	core::Size ntors = std::min( (core::Size)(50), NM_.ntor() );
 
 	for ( core::Size i = 1; i <= ntors; ++i ) {
 		modes_using_.push_back( i );
@@ -536,7 +536,7 @@ NormalModeMultifunc::set_default_modes()
 }
 
 void
-NormalModeMultifunc::set_modes( utility::vector1< Size > modes_using_in )
+NormalModeMultifunc::set_modes( utility::vector1< core::Size > modes_using_in )
 {
 	modes_using_ = modes_using_in;
 	// Set dofs again

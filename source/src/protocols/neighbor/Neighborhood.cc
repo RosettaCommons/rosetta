@@ -45,15 +45,15 @@ static basic::Tracer TR( "protocols.neighbor" );
 ///  ps.residue(set[j]) and N_i indicates ps.residue(i); for i in {1,...,NPS}
 ///  such that i is a member of set, ngb_mask[i] equals false.
 ///
-Neighborhood::Neighborhood(vector1<Size> const& set, Pose const& ps,
+Neighborhood::Neighborhood(vector1<core::Size> const& set, Pose const& ps,
 	NGB_FUN_PTR ngb_fun) : is_ngb(ngb_fun), ngb_mask(ps.size(), false) {
 
 	/// build neighbor mask
-	Size NSET = set.size();
-	Size NPS = ps.size();
-	for ( Size i=1; i<=NSET; ++i ) {
+	core::Size NSET = set.size();
+	core::Size NPS = ps.size();
+	for ( core::Size i=1; i<=NSET; ++i ) {
 		Residue const& res = ps.residue(set[i]);
-		for ( Size j=1; j<=NPS; ++j ) {
+		for ( core::Size j=1; j<=NPS; ++j ) {
 			Residue const& ngb = ps.residue(j);
 			if ( is_ngb(res, ngb, ps) ) {
 				ngb_mask[j] = true;
@@ -62,14 +62,14 @@ Neighborhood::Neighborhood(vector1<Size> const& set, Pose const& ps,
 	}
 
 	/// ignore neighbors that are part of the set
-	for ( Size i=1; i<=NSET; ++i ) {
+	for ( core::Size i=1; i<=NSET; ++i ) {
 		ngb_mask[set[i]] = false;
 	}
 
 	// collect neighbors based on mask: the ith element of ngbs is the index of
 	// the ith true element in ngb_mask, namely, the pose index of the ith neigbor
 	// (i=1,...,T, where T is the number of neighbors).
-	for ( Size i=1; i<=NPS; ++i ) {
+	for ( core::Size i=1; i<=NPS; ++i ) {
 		if ( ngb_mask[i] ) {
 			ngbs.push_back(i);
 		}
@@ -84,8 +84,8 @@ Neighborhood::Neighborhood(vector1<Size> const& set, Pose const& ps,
 ///
 void Neighborhood::print_ngb_mask() const {
 
-	Size const SIZ = ngb_mask.size();
-	for ( Size i=1; i<=SIZ; ++i ) {
+	core::Size const SIZ = ngb_mask.size();
+	for ( core::Size i=1; i<=SIZ; ++i ) {
 		TR << (ngb_mask[i] ? "1" : "0");
 	}
 }
@@ -100,8 +100,8 @@ void Neighborhood::print_ngb_mask() const {
 ///
 bool in_nrg_graph(Residue const& r1, Residue const& r2, Pose const& ps) {
 
-	Size const i1 = r1.seqpos();
-	Size const i2 = r2.seqpos();
+	core::Size const i1 = r1.seqpos();
+	core::Size const i2 = r2.seqpos();
 
 	core::scoring::EnergyGraph const& energy_graph( ps.energies().energy_graph() );
 	for ( utility::graph::Graph::EdgeListConstIter

@@ -550,7 +550,7 @@ void PyMOLMover::send_membrane_planes( Pose const & pose ) {
 	// Compute radius of gyration of the pose
 	utility::vector1< bool > relevant_residues;
 	relevant_residues.resize( pose.size() );
-	for ( Size i = 1; i < relevant_residues.size(); ++i ) {
+	for ( core::Size i = 1; i < relevant_residues.size(); ++i ) {
 		relevant_residues[i] = true;
 	}
 
@@ -914,8 +914,8 @@ PyMOLMover::send_foldtree(core::pose::Pose const &pose, core::kinematics::FoldTr
 	for ( core::Size x =0; x< njump; x++ ) {
 		//TR << "this is in for loop and x is now " << x << std::endl;
 		core::kinematics::Edge loop = foldtree.jump_edge(x + 1);
-		Size s1 = loop.start();
-		Size s2 = loop.stop();
+		core::Size s1 = loop.start();
+		core::Size s2 = loop.stop();
 		if ( s1 < s2 ) {
 			starts[x] = s1;
 			stops[x] = s2;

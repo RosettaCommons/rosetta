@@ -15,7 +15,7 @@
 #ifndef INCLUDED_protocols_ligand_docking_GALigandDock_RotamerData_hh
 #define INCLUDED_protocols_ligand_docking_GALigandDock_RotamerData_hh
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/lkball/LK_BallInfo.hh>

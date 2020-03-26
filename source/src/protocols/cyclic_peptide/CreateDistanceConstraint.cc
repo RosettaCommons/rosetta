@@ -57,9 +57,9 @@ CreateDistanceConstraint::~CreateDistanceConstraint()= default;
 
 //adding a setter so that people can call the mover within Rosetta commands
 void CreateDistanceConstraint::set (
-	utility::vector1<Size> const &res1,
+	utility::vector1<core::Size> const &res1,
 	utility::vector1<std::string> const &atom1,
-	utility::vector1<Size> const &res2,
+	utility::vector1<core::Size> const &res2,
 	utility::vector1<std::string> const &atom2,
 	utility::vector1<std::string> const &cst_function
 )
@@ -78,7 +78,7 @@ void CreateDistanceConstraint::set (
 
 void CreateDistanceConstraint::apply( core::pose::Pose & pose )
 {
-	for ( Size i_cst=1; i_cst<=cst_func_.size(); ++i_cst ) {
+	for ( core::Size i_cst=1; i_cst<=cst_func_.size(); ++i_cst ) {
 		if ( cst_func_[i_cst] == "" ) {
 			///TODO: use ideal bond length as default parameter
 
@@ -97,8 +97,8 @@ void CreateDistanceConstraint::apply( core::pose::Pose & pose )
 			core::scoring::func::FuncFactory func_factory;
 			core::scoring::func::FuncOP func = func_factory.new_func( func_type );
 			func->read_data( data );
-			Size atomno1 = pose.residue_type(res1_[i_cst]).atom_index(atom1_[i_cst]);
-			Size atomno2 = pose.residue_type(res2_[i_cst]).atom_index(atom2_[i_cst]);
+			core::Size atomno1 = pose.residue_type(res1_[i_cst]).atom_index(atom1_[i_cst]);
+			core::Size atomno2 = pose.residue_type(res2_[i_cst]).atom_index(atom2_[i_cst]);
 			pose.add_constraint(
 				utility::pointer::make_shared< core::scoring::constraints::AtomPairConstraint >( core::id::AtomID(atomno1,res1_[i_cst]), core::id::AtomID(atomno2,res2_[i_cst]), func )
 			);
@@ -121,9 +121,9 @@ CreateDistanceConstraint::parse_my_tag(
 	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
 	for ( tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) {
 		if ( (*tag_it)->getName() == "Add" ) {
-			res1_.push_back( (*tag_it)->getOption< Size >( "res1" ) );
+			res1_.push_back( (*tag_it)->getOption< core::Size >( "res1" ) );
 			atom1_.push_back( (*tag_it)->getOption< std::string >( "atom1" ) );
-			res2_.push_back( (*tag_it)->getOption< Size >( "res2" ) );
+			res2_.push_back( (*tag_it)->getOption< core::Size >( "res2" ) );
 			atom2_.push_back( (*tag_it)->getOption< std::string >( "atom2" ) );
 			cst_func_.push_back( (*tag_it)->getOption< std::string >( "cst_func", "" ) );
 		}

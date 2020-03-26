@@ -215,7 +215,7 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
 				*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
 				file );
 
-			for ( Size i = 1; i <= apply_movers.size(); ++i ) {
+			for ( core::Size i = 1; i <= apply_movers.size(); ++i ) {
 				if ( apply_movers[i] ) {
 					apply_movers[i]->apply( *p );
 					tr.Debug << "RigidChunkCM named " << this->get_name() << " applied " << apply_movers[i]->get_name() << std::endl;
@@ -272,9 +272,9 @@ core::Size find_disulfide_partner( core::pose::Pose const& pose,
 		return 0;
 	}
 
-	Size const cys_bound_atom( pose.residue( resid ).atom_index( "SG" ) );
-	for ( Size jj = pose.residue( resid ).type().n_possible_residue_connections(); jj >= 1; --jj ) {
-		if ( (Size) pose.residue( resid ).type().residue_connection( jj ).atomno() == cys_bound_atom ) {
+	core::Size const cys_bound_atom( pose.residue( resid ).atom_index( "SG" ) );
+	for ( core::Size jj = pose.residue( resid ).type().n_possible_residue_connections(); jj >= 1; --jj ) {
+		if ( (core::Size) pose.residue( resid ).type().residue_connection( jj ).atomno() == cys_bound_atom ) {
 			return pose.residue( resid ).connect_map( jj ).resid();
 		}
 	}
@@ -297,12 +297,12 @@ void RigidChunkCM::configure(
 	{ // Debug output and error checking
 		if ( tr.Debug.visible() ) {
 			tr.Debug << "template selection for " << this->get_name() << ": ";
-			for ( Size i = 1; i <= templ().size(); ++i ) {
+			for ( core::Size i = 1; i <= templ().size(); ++i ) {
 				tr.Debug << ( templ_selection[i] ? "T" : "F" );
 			}
 			tr.Debug << std::endl;
 			tr.Debug << "simulation selection for " << this->get_name() << ": ";
-			for ( Size i = 1; i <= in_p.size(); ++i ) {
+			for ( core::Size i = 1; i <= in_p.size(); ++i ) {
 				tr.Debug << ( sim_selection[i] ? "T" : "F" );
 			}
 			tr.Debug << std::endl;
@@ -374,7 +374,7 @@ void RigidChunkCM::configure(
 		for ( core::Size i = 1; i <= templ().size(); ++i ) {
 			if ( templ_selection[i] &&
 					templ().residue( i ).aa() == core::chemical::aa_cys ) {
-				Size cys_partner = find_disulfide_partner( templ(), i );
+				core::Size cys_partner = find_disulfide_partner( templ(), i );
 				if ( cys_partner &&
 						templ_target.find( cys_partner ) == templ_target.end() ) {
 					std::ostringstream ss;
@@ -390,7 +390,7 @@ void RigidChunkCM::configure(
 		for ( core::Size i = 1; i <= in_p.size(); ++i ) {
 			if ( sim_selection[i] &&
 					in_p.residue( i ).aa() == core::chemical::aa_cys ) {
-				Size cys_partner = find_disulfide_partner( in_p, i );
+				core::Size cys_partner = find_disulfide_partner( in_p, i );
 				if ( cys_partner &&
 						sim_origin.find( cys_partner ) == sim_origin.end() ) {
 					std::ostringstream ss;
@@ -441,7 +441,7 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
 			<< " in " << "BASE" << std::endl;
 
 		// For initialization, we need to some of FDP's fixing, which requires some control outside the region
-		std::pair< core::Size, core::Size > const supp_region = std::make_pair( std::max( Size( 1 ), excl_region.first-1 ),
+		std::pair< core::Size, core::Size > const supp_region = std::make_pair( std::max( core::Size( 1 ), excl_region.first-1 ),
 			std::min( in_p.size(), excl_region.second+1 ) );
 		XYZClaimOP support_claim( new XYZClaim( this_ptr, "BASE", supp_region ) );
 		// These would be MUST_CONTROL, but sometimes the edges of the rigid chunk are cuts, and in this
@@ -653,10 +653,10 @@ void RigidChunkCM::initialize( Pose& pose ){
 
 	core::pose::Pose reference( pose );
 
-	for ( Size sim_pos = 1; sim_pos <= pose.size(); ++sim_pos ) {
+	for ( core::Size sim_pos = 1; sim_pos <= pose.size(); ++sim_pos ) {
 
 		if ( sim_origin().find( sim_pos ) != sim_origin().end() ) {
-			Size const templ_pos = sim_origin().at( sim_pos );
+			core::Size const templ_pos = sim_origin().at( sim_pos );
 			core::conformation::Residue const templ_res = templ().residue( templ_pos );
 
 			try {
@@ -680,10 +680,10 @@ void RigidChunkCM::initialize( Pose& pose ){
 					ss << "The problem is probably that the sequence shift is off. Surrounding sequences: " << std::endl
 						<< "template:   ";
 
-					for ( Size k = std::max( Size( 1 ), sim_origin().at( sim_pos ) - 5 ); k <= std::min( templ().size(), sim_origin().at( sim_pos ) + 5 ); ++k ) { ss << templ().residue( k ).name1(); }
+					for ( core::Size k = std::max( core::Size( 1 ), sim_origin().at( sim_pos ) - 5 ); k <= std::min( templ().size(), sim_origin().at( sim_pos ) + 5 ); ++k ) { ss << templ().residue( k ).name1(); }
 					ss << std::endl
 						<< "simulation: ";
-					for ( Size k = std::max( Size( 1 ), sim_pos - 5 ); k <= std::min( pose.size(), sim_pos + 5 ); ++k ) { ss << pose.residue( k ).name1(); }
+					for ( core::Size k = std::max( core::Size( 1 ), sim_pos - 5 ); k <= std::min( pose.size(), sim_pos + 5 ); ++k ) { ss << pose.residue( k ).name1(); }
 					ss << std::endl;
 				} else if ( ( pose.is_centroid() && !templ().is_centroid() ) ||
 						( pose.is_fullatom() && !templ().is_fullatom() ) ) {
@@ -710,7 +710,7 @@ void RigidChunkCM::initialize( Pose& pose ){
 
 	// correct mainchain connections
 
-	for ( Size sim_pos = 1; sim_pos <= pose.size(); ++sim_pos ) {
+	for ( core::Size sim_pos = 1; sim_pos <= pose.size(); ++sim_pos ) {
 
 		// If the residue before this is not in the region
 		if ( sim_origin().find( sim_pos - 1 ) == sim_origin().end() &&
@@ -797,7 +797,7 @@ loops::Loops RigidChunkCM::select_parts( loops::Loops const& rigid_core, core::S
 		throw CREATE_EXCEPTION(utility::excn::BadInput,  "Given rigid core had size < 1. Check your loop definitions." );
 	}
 
-	for ( Size attempts = 1; attempts <= 50 && current_rigid_core.size() != 0; ++attempts ) {
+	for ( core::Size attempts = 1; attempts <= 50 && current_rigid_core.size() != 0; ++attempts ) {
 		for ( auto const & it : rigid_core ) {
 			if ( numeric::random::rg().uniform() >= it.skip_rate() )  {
 				current_rigid_core.push_back( it );

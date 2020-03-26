@@ -93,11 +93,11 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 		if ( istub == 1 && pose.size() == 0 ) {
 			runtime_assert_string_msg(stub_mode_[istub] == PSM_append, "Can only use append for the first residue");
 			pose.append_residue_by_jump(*new_rsd, 1);
-			for ( Size i_repeat = 2; i_repeat <= stub_rsd_repeat_[istub]; ++i_repeat ) {
+			for ( core::Size i_repeat = 2; i_repeat <= stub_rsd_repeat_[istub]; ++i_repeat ) {
 				pose.append_residue_by_bond(*new_rsd, true);
 			}
 		} else {
-			Size anchor_rsd(stub_anchor_rsd_[istub]);
+			core::Size anchor_rsd(stub_anchor_rsd_[istub]);
 			if ( anchor_rsd == 0 ) {
 				if ( stub_mode_[istub] == PSM_prepend ) {
 					anchor_rsd = 1;
@@ -109,7 +109,7 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 			if ( stub_rsd_jumping_[istub] ) { //Appending by jump.
 				runtime_assert_string_msg(stub_mode_[istub] == PSM_append, "Can only use append for jumps");
 				pose.append_residue_by_jump(*new_rsd, anchor_rsd);
-				for ( Size i_repeat = 2; i_repeat <= stub_rsd_repeat_[istub]; ++i_repeat ) {
+				for ( core::Size i_repeat = 2; i_repeat <= stub_rsd_repeat_[istub]; ++i_repeat ) {
 					pose.append_residue_by_bond(*new_rsd, true);
 				}
 			} else { //Appending by bond.
@@ -181,7 +181,7 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 					preserve_old_mainchain_torsions( pose, new_index, old_omega_minus1, old_phi, old_psi, old_omega, replace_upper_terminal_type, replace_lower_terminal_type );
 				}
 
-				for ( Size i_repeat = 2; i_repeat <= stub_rsd_repeat_[istub]; ++i_repeat ) {
+				for ( core::Size i_repeat = 2; i_repeat <= stub_rsd_repeat_[istub]; ++i_repeat ) {
 					if ( stub_rsd_connecting_atom_[istub] == "" && stub_anchor_rsd_connecting_atom_[istub] == "" ) {
 						if ( stub_mode_[istub] == PSM_append ) {
 							pose.append_residue_by_bond(*new_rsd, true);
@@ -247,10 +247,10 @@ PeptideStubMover::parse_my_tag(
 		add_residue(
 			(*tag_it)->getName(),
 			(*tag_it)->getOption<std::string>( "resname", "" ),
-			(*tag_it)->getOption<Size>( "position", 0 ),
+			(*tag_it)->getOption<core::Size>( "position", 0 ),
 			(*tag_it)->getOption<bool>( "jump", false ),
 			(*tag_it)->getOption<std::string>( "connecting_atom", "" ),
-			(*tag_it)->getOption<Size>( "repeat", 1 ),
+			(*tag_it)->getOption<core::Size>( "repeat", 1 ),
 			(*tag_it)->getOption<core::Size>( "anchor_rsd", 0 ),
 			(*tag_it)->getOption<std::string>( "anchor_atom", "" )
 		);
@@ -264,10 +264,10 @@ PeptideStubMover::parse_my_tag(
 		stub_mode_.push_back(insert);
 		}
 		stub_rsd_names_.push_back( (*tag_it)->getOption<std::string>( "resname", "" ) );
-		stub_insert_pos_.push_back( (*tag_it)->getOption<Size>( "position", 0 ) );
+		stub_insert_pos_.push_back( (*tag_it)->getOption<core::Size>( "position", 0 ) );
 		stub_rsd_jumping_.push_back( (*tag_it)->getOption<bool>( "jump", false ) );
 		stub_rsd_connecting_atom_.push_back( (*tag_it)->getOption<std::string>( "connecting_atom", "" ) );
-		stub_rsd_repeat_.push_back( (*tag_it)->getOption<Size>( "repeat", 1 ) );
+		stub_rsd_repeat_.push_back( (*tag_it)->getOption<core::Size>( "repeat", 1 ) );
 		stub_anchor_rsd_.push_back( (*tag_it)->getOption<core::Size>( "anchor_rsd", 0 ) );
 		stub_anchor_rsd_connecting_atom_.push_back( (*tag_it)->getOption<std::string>( "anchor_atom", "" ) ); */
 	}

@@ -92,7 +92,7 @@ void PeptideStapleMover::apply( core::pose::Pose & pose )
 		return;
 	}
 	// test residues between connections for secondary structure, jumps, and terminii
-	for ( Size i = seqpos_; i <= seqpos_ + staple_gap_; ++i ) {
+	for ( core::Size i = seqpos_; i <= seqpos_ + staple_gap_; ++i ) {
 		if ( pose.secstruct( i ) != 'H' ) {
 			TR << "Secondary structure at residue " << i << " is " << pose.secstruct(i) << ", but stapling along non-helix residues is untested!" << std::endl;
 		}
@@ -136,7 +136,6 @@ PeptideStapleMover::get_name() const {
 /// @author Andrew Leaver-Fay
 void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 {
-	using Size = core::Size;
 	using Real = core::Real;
 	using namespace core::scoring::constraints;
 	using namespace core::chemical;
@@ -146,12 +145,12 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 	TR << "residue " << seqpos_ << " " << pose.residue( seqpos_ ).name() << std::endl;
 
 	// if ( pose.residue( ii ).name() == "STAPLE08A" ) {
-	Size const seqpos_conn_atom = pose.residue( seqpos_ ).type().residue_connection( 3 ).atomno();
-	Size const seqpos_vc_atom = pose.residue( seqpos_ ).atom_index( "VC" );
+	core::Size const seqpos_conn_atom = pose.residue( seqpos_ ).type().residue_connection( 3 ).atomno();
+	core::Size const seqpos_vc_atom = pose.residue( seqpos_ ).atom_index( "VC" );
 
-	Size const jj = pose.residue( seqpos_ ).connect_map( 3 ).resid();
-	Size const jj_conn_atom = pose.residue( jj ).type().residue_connection( 3 ).atomno();
-	Size const jj_vc_atom = pose.residue( jj ).atom_index( "VC" );
+	core::Size const jj = pose.residue( seqpos_ ).connect_map( 3 ).resid();
+	core::Size const jj_conn_atom = pose.residue( jj ).type().residue_connection( 3 ).atomno();
+	core::Size const jj_vc_atom = pose.residue( jj ).atom_index( "VC" );
 
 	TR << "seqpos conn: " << pose.residue( seqpos_ ).atom_name( seqpos_conn_atom );
 	TR << " seqpos vc: " << pose.residue( seqpos_ ).atom_name( seqpos_vc_atom );
@@ -176,8 +175,8 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 		pose.add_constraint( apc2 );
 	}
 
-	Size const seqpos_conn_atom_base = pose.residue( seqpos_ ).type().icoor( seqpos_conn_atom ).stub_atom( 1 ).atomno();
-	Size const jj_conn_atom_base = pose.residue( jj ).type().icoor( jj_conn_atom ).stub_atom( 1 ).atomno();
+	core::Size const seqpos_conn_atom_base = pose.residue( seqpos_ ).type().icoor( seqpos_conn_atom ).stub_atom( 1 ).atomno();
+	core::Size const jj_conn_atom_base = pose.residue( jj ).type().icoor( jj_conn_atom ).stub_atom( 1 ).atomno();
 
 	Real const seqpos_ideal_angle = numeric::constants::d::pi - pose.residue( seqpos_ ).type().icoor( seqpos_vc_atom ).theta();
 	Real const jj_ideal_angle = numeric::constants::d::pi - pose.residue( jj ).type().icoor( jj_vc_atom ).theta();
@@ -223,7 +222,7 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 	}
 
 	utility::vector1< AtomIndices > const & seqpos_chi( pose.residue( seqpos_ ).chi_atoms() );
-	for ( Size kk = 1; kk <= seqpos_chi.size(); ++kk ) {
+	for ( core::Size kk = 1; kk <= seqpos_chi.size(); ++kk ) {
 		Real ideal_dihedral = pose.residue( seqpos_ ).type().icoor( seqpos_chi[ kk ][ 4 ] ).phi();
 		TR << "seqpos ideal dihedral: " << ideal_dihedral << " " << ideal_dihedral * 180 / numeric::constants::d::pi << std::endl;
 		core::scoring::func::FuncOP fx( new core::scoring::func::CircularHarmonicFunc( ideal_dihedral, 0.1 ) );
@@ -237,7 +236,7 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 	}
 
 	utility::vector1< AtomIndices > const & jj_chi( pose.residue( jj ).chi_atoms() );
-	for ( Size kk = 1; kk <= jj_chi.size(); ++kk ) {
+	for ( core::Size kk = 1; kk <= jj_chi.size(); ++kk ) {
 		Real ideal_dihedral = pose.residue( jj ).type().icoor( jj_chi[ kk ][ 4 ] ).phi();
 		TR << "jj ideal dihedral: " << ideal_dihedral << " " << ideal_dihedral * 180 / numeric::constants::d::pi << std::endl;
 		core::scoring::func::FuncOP fx( new core::scoring::func::CircularHarmonicFunc( ideal_dihedral, 0.1 ) );

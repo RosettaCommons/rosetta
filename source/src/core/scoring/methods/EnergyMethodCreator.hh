@@ -24,7 +24,7 @@
 #include <core/scoring/ScoreType.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -40,7 +40,7 @@ namespace methods {
 /// at load time (before main() begins) so that the ScoringManager is ready
 /// to start creating EnergyMethods by the time the first ScoreFunction
 /// requests one.
-class EnergyMethodCreator : public utility::pointer::ReferenceCount
+class EnergyMethodCreator : public utility::VirtualBase
 {
 public:
 	/// @brief Instantiate a new EnergyMethod given a set of energy-method options

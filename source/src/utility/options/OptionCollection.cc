@@ -68,7 +68,7 @@ void std_exit_wrapper( const int error_code ){
 OptionCollection::OptionCollection(
 	OptionCollection const & src
 ) :
-	utility::pointer::ReferenceCount( src )
+	utility::VirtualBase( src )
 {
 	(*this) = src;
 }

@@ -59,15 +59,15 @@ public:
 	/// @brief Type of class (see enum in SamplerPlusPlusTypes.hh)
 	toolbox::SamplerPlusPlusType type() const override { return toolbox::SIZED; }
 
-	Size const & id() const { return id_; }
+	core::Size const & id() const { return id_; }
 
 	virtual void fast_forward(){ id_ = size(); }
 
-	virtual void set_id( Size const setting ){ id_ = setting; }
+	virtual void set_id( core::Size const setting ){ id_ = setting; }
 
 	/// @brief output summary of class
-	void show( std::ostream & out, Size const indent = 0 ) const override {
-		for ( Size n = 1; n <= indent; n++ ) out << ' ';
+	void show( std::ostream & out, core::Size const indent = 0 ) const override {
+		for ( core::Size n = 1; n <= indent; n++ ) out << ' ';
 		out << get_name() << " [" << size() << ']' << std::endl;
 	}
 

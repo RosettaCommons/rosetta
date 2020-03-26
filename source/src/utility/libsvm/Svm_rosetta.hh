@@ -19,7 +19,7 @@
 #include <utility/libsvm/Svm_rosetta.fwd.hh>
 #include <utility/libsvm/Svm.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 // type headers
 #include <platform/types.hh>
@@ -29,7 +29,7 @@
 namespace utility {
 namespace libsvm {
 
-class Svm_node_rosetta: public utility::pointer::ReferenceCount {
+class Svm_node_rosetta: public utility::VirtualBase {
 public:
 	Svm_node_rosetta(platform::Size index, platform::Real value);
 	~Svm_node_rosetta() override;
@@ -51,7 +51,7 @@ private:
 };
 
 
-class Svm_rosetta: public utility::pointer::ReferenceCount {
+class Svm_rosetta: public utility::VirtualBase {
 public:
 	Svm_rosetta(std::string const & model_filename);
 	~Svm_rosetta() override;

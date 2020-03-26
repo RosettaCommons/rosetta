@@ -21,7 +21,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
@@ -29,7 +29,7 @@
 namespace protocols {
 namespace surface_docking {
 
-class SurfaceParameters: public utility::pointer::ReferenceCount  {
+class SurfaceParameters: public utility::VirtualBase  {
 
 public:
 

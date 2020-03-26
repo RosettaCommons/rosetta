@@ -35,13 +35,13 @@ public:
 
 	MergePDBatOverlapMover();
 	MergePDBatOverlapMover(core::scoring::ScoreFunctionOP sfxn);
-	void increase_range_to_ignore_ss_element(core::pose::Pose const & pose, Size init_start, Size init_end, Size & ss_start, Size & ss_end);
-	Size closest_non_overlap_residue(core::pose::Pose const & pose, core::Size resid, core::Size start_overlap_resid, core::Size end_overlap_resid);
-	void merge_junction_sequence(Pose & pose,std::string pose_junction_seq,std::string attach_pose_junction_seq,Size first_overlap_position);
+	void increase_range_to_ignore_ss_element(core::pose::Pose const & pose, core::Size init_start, core::Size init_end, core::Size & ss_start, core::Size & ss_end);
+	core::Size closest_non_overlap_residue(core::pose::Pose const & pose, core::Size resid, core::Size start_overlap_resid, core::Size end_overlap_resid);
+	void merge_junction_sequence(Pose & pose,std::string pose_junction_seq,std::string attach_pose_junction_seq,core::Size first_overlap_position);
 	bool merge_poses(Pose & pose,Pose & attach_pose);
-	void assign_seq(Pose & pose, char residue_type, Size position);
-	void minimize_overlap(Pose & pose,Size overlap_start,Size overlap_end);
-	bool makeJunctions_apply(core::pose::Pose & pose, core::pose::Pose const & attach_pose, Size overlap_length, core::Real max_overlap_rmsd, std::string attachment_termini,char chain);
+	void assign_seq(Pose & pose, char residue_type, core::Size position);
+	void minimize_overlap(Pose & pose,core::Size overlap_start,core::Size overlap_end);
+	bool makeJunctions_apply(core::pose::Pose & pose, core::pose::Pose const & attach_pose, core::Size overlap_length, core::Real max_overlap_rmsd, std::string attachment_termini,char chain);
 	bool apply_helper( core::pose::Pose & pose );
 	void apply( core::pose::Pose & pose ) override;
 
@@ -61,7 +61,7 @@ public:
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 private:
 	core::pose::PoseOP attach_pose_;
-	Size overlap_length_;
+	core::Size overlap_length_;
 	core::Real max_overlap_rmsd_;
 	bool minimize_after_overlap_;
 	std::string attachment_termini_;

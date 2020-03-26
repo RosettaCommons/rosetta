@@ -36,7 +36,7 @@
 #include <utility/string_util.hh>
 // #include <utility/excn/Exceptions.hh>
 // #include <utility/vector1.fwd.hh>
-// #include <utility/pointer/ReferenceCount.hh>
+// #include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -84,7 +84,7 @@ Size const TOL_H_INDIRECT( 1 );
 Size const TOL_H_DIRECT( 2 );
 Size const TOL_LABEL( 3 );
 
-void PeakFileFormat::write_peak( std::ostream& os, Size ct, CrossPeak const& cp ) const {
+void PeakFileFormat::write_peak( std::ostream& os, core::Size ct, CrossPeak const& cp ) const {
 	std::ostringstream line_end;
 	using namespace ObjexxFCL::format;
 	line_end << " | ";
@@ -107,7 +107,7 @@ void PeakFileFormat::write_peak( std::ostream& os, Size ct, CrossPeak const& cp 
 }
 
 void PeakFileFormat::write_header( std::ostream& os ) {
-	Size const dim( col2proton_.size() );
+	core::Size const dim( col2proton_.size() );
 	utility::vector1< std::string > atom_names;
 	utility::vector1< core::Real > tolerances;
 	//dimension 1 - label
@@ -134,7 +134,7 @@ void PeakFileFormat::write_header( std::ostream& os ) {
 	std::string format_str = "xeasy" + utility::to_string( dim ) + "D";
 	os << "#FORMAT " << format_str << std::endl;
 	std::string cyana_str;
-	for ( Size ct = 1; ct <= atom_names.size(); ct++ ) {
+	for ( core::Size ct = 1; ct <= atom_names.size(); ct++ ) {
 		os << "#INAME " << ct << " " << atom_names[ ct ] << std::endl;
 		if ( atom_names[ ct ].size()>1 ) {
 			cyana_str += "["+atom_names[ct]+"]";
@@ -158,7 +158,7 @@ void PeakFileFormat::write_header( std::ostream& os ) {
 	os << "#MAX_NOE_DIST " << info1_->max_noe_distance() << std::endl;
 	os << "#CYANAFORMAT " << cyana_str << std::endl;
 	os << "#TOLERANCE ";
-	for ( Size ct = 1; ct <= tolerances.size(); ct++ ) {
+	for ( core::Size ct = 1; ct <= tolerances.size(); ct++ ) {
 		os << ObjexxFCL::format::RJ( 8, tolerances[ ct ] );
 	}
 	os << std::endl;
@@ -205,7 +205,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 	info1_ = info2_ = nullptr;
 	using namespace ObjexxFCL;
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
-	Size dim( 0 );
+	core::Size dim( 0 );
 	utility::vector1< std::string > atom_names;
 	utility::vector1< core::Real > tolerances;
 	utility::vector1< core::Real > fold_starts( 4, 0);
@@ -253,7 +253,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 				tr.Warning << "Format inconsistent: " << expected_format << " found in file: " << format << std::endl;
 			}
 		} else if ( tag == "#INAME" ) {
-			Size index;
+			core::Size index;
 			std::string name;
 			line_stream >> index;
 			if ( !line_stream.good() ) {
@@ -281,7 +281,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 			//  } else if (tag == "#SIMNOESY") {
 			//    simnoesy = true;
 		} else if ( tag == "#FOLD" ) {
-			Size fold_dim;
+			core::Size fold_dim;
 			Real start;
 			Real end;
 			line_stream >> fold_dim >> start >> end;
@@ -300,7 +300,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 				line_stream >> max_noe_dist;
 			}
 		} else if ( tag == "#TOLERANCE" ) {
-			for ( Size i = 1; i <= dim; i++ ) {
+			for ( core::Size i = 1; i <= dim; i++ ) {
 				core::Real val;
 				line_stream >> val;
 				tolerances[ i ] = val;
@@ -337,7 +337,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 	if ( HN_column_labels && cyana_string != "none" ) {
 		tr.Info << "use CYANA string to work out column order" << std::endl;
 	}
-	for ( Size i = 1; i<=dim; i++ ) {
+	for ( core::Size i = 1; i<=dim; i++ ) {
 		if ( HN_column_labels && cyana_string != "none" ) {
 			if ( simnoesy ) throw CREATE_EXCEPTION(utility::excn::BadInput, "cannot use HN for protons when SimNOESY ( i.e., NC for label atom name");
 			atom_names[ i ]=cyana_string[ i-1 ];
@@ -382,7 +382,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 			}
 		}
 	}
-	for ( Size i = 1; i<=dim; i++ ) {
+	for ( core::Size i = 1; i<=dim; i++ ) {
 		CrossPeakInfoOP info = col2proton_[ i ]==1 ? info1_ : info2_;
 		info->set_folding_window( fold_starts[ i ], fold_ends[ i ], col2islabel_[ i ] );
 	}
@@ -396,12 +396,12 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 	if ( col2proton_.size() == 3 ) { //only one label.. make sure that it is with proton 1
 		output_diagnosis( tr.Debug );
 		tr.Debug << " check if we need to swap columns " << std::endl;
-		Size ct_col_1( 0 );
-		for ( Size i=1; i<=3; i++ ) {
+		core::Size ct_col_1( 0 );
+		for ( core::Size i=1; i<=3; i++ ) {
 			if ( col2proton_[ i ] == 1 ) ct_col_1++;
 		}
 		if ( ct_col_1 == 1 ) { //ok we have label on 2 switch numbering around...
-			for ( Size i=1; i<=3; i++ ) {
+			for ( core::Size i=1; i<=3; i++ ) {
 				col2proton_[ i ] = col2proton_[ i ]==1 ? 2 : 1;
 			}
 			CrossPeakInfoOP info = info2_;
@@ -416,7 +416,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 CrossPeakOP PeakFileFormat::read_peak( std::istream& is, std::string& next_line ) const {
 
 	CrossPeakOP cp;
-	Size const ncol( col2proton_.size() );
+	core::Size const ncol( col2proton_.size() );
 	//CrossPeak factory
 	runtime_assert( ncol >=2 && ncol <= 4 );
 	if ( ncol == 2 ) {
@@ -460,10 +460,10 @@ CrossPeakOP PeakFileFormat::read_peak( std::istream& is, std::string& next_line 
 }
 
 void PeakFileFormat::read_resonances( std::istream& is, CrossPeak &cp ) const {
-	Size const ncol( col2proton_.size() );
-	for ( Size icol=1; icol<=ncol; ++icol ) {
+	core::Size const ncol( col2proton_.size() );
+	for ( core::Size icol=1; icol<=ncol; ++icol ) {
 		Real val;
-		Size iproton( col2proton_[ icol ] );
+		core::Size iproton( col2proton_[ icol ] );
 		bool is_label( col2islabel_[ icol ] );
 		is >> val;
 		if ( !is.good() ) {
@@ -480,12 +480,12 @@ void PeakFileFormat::read_resonances( std::istream& is, CrossPeak &cp ) const {
 
 void PeakFileFormat::write_resonances( std::ostream& os, CrossPeak const& cp ) const {
 	//  cp.write_to_stream( os );
-	Size const ncol( col2proton_.size() );
+	core::Size const ncol( col2proton_.size() );
 	runtime_assert( col2islabel_.size() == ncol );
 
-	for ( Size icol=1; icol<=ncol; ++icol ) {
+	for ( core::Size icol=1; icol<=ncol; ++icol ) {
 		Real val;
-		Size iproton( col2proton_[ icol ] );
+		core::Size iproton( col2proton_[ icol ] );
 		bool is_label( col2islabel_[ icol ] );
 		if ( !is_label ) val = cp.proton( iproton ).freq();
 		else {
@@ -511,7 +511,7 @@ void PeakFileFormat::write_strength( std::ostream& os, CrossPeak const& cp ) con
 
 void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, CrossPeak& cp, std::string& new_peak_line ) const {
 
-	Size const ncol( col2proton_.size() );
+	core::Size const ncol( col2proton_.size() );
 	runtime_assert( col2islabel_.size() == ncol );
 	core::Real weight( 0.0 );
 	std::string line;
@@ -533,7 +533,7 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 		new_peak_line = line;
 		{ //test if this next cross-peak
 			std::istringstream line_stream_test_new_peak( line );
-			Size dummyI;
+			core::Size dummyI;
 			Real dummyR;
 			std::string tag;
 			line_stream_test_new_peak >> dummyI >> dummyR >> dummyR >> dummyR >> dummyI >> tag;
@@ -552,10 +552,10 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 			if ( tag3.find(".") != std::string::npos ) return;
 		}
 		//only assign if all spins are assigned.
-		auto *vals = new Size [ncol+1>5?ncol+1:5]; // unfortunate
-		//Size vals[ncol+1>5?ncol+1:5]; // variable length arrays are not ISO compliant
-		for ( Size icol=1; icol<=ncol; ++icol ) {
-			Size val;
+		auto *vals = new core::Size [ncol+1>5?ncol+1:5]; // unfortunate
+		//core::Size vals[ncol+1>5?ncol+1:5]; // variable length arrays are not ISO compliant
+		for ( core::Size icol=1; icol<=ncol; ++icol ) {
+			core::Size val;
 			line_stream >> val;
 			if ( !line_stream ) {
 				if ( first ) {
@@ -579,13 +579,13 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 			vals[ icol ]=val;
 		}
 		tr.Trace << std::endl;
-		Size reorder[ 5 ];//spin1 spin2 label1 label2
+		core::Size reorder[ 5 ];//spin1 spin2 label1 label2
 		if ( line_stream && !ignore_assignments() ) {
-			for ( Size icol=1; icol<=ncol; ++icol ) {
-				Size val = vals[ icol ];
-				Size iproton( col2proton_[ icol ] );
+			for ( core::Size icol=1; icol<=ncol; ++icol ) {
+				core::Size val = vals[ icol ];
+				core::Size iproton( col2proton_[ icol ] );
 				bool is_label( col2islabel_[ icol ] );
-				Size index = iproton + ( is_label ? 2 : 0 );
+				core::Size index = iproton + ( is_label ? 2 : 0 );
 				runtime_assert( !is_label || cp.has_label( iproton ) );
 				reorder[ index ] = val;
 			}
@@ -626,9 +626,9 @@ void PeakFileFormat::write_assignment_indent( std::ostream& os, CrossPeak const&
 }
 
 void PeakFileFormat::write_assignment( std::ostream& os, PeakAssignment const& pa ) const {
-	for ( Size icol=1; icol<=ncol(); ++icol ) {
-		Size val;
-		Size iproton( col2proton_[ icol ] );
+	for ( core::Size icol=1; icol<=ncol(); ++icol ) {
+		core::Size val;
+		core::Size iproton( col2proton_[ icol ] );
 		bool is_label( col2islabel_[ icol ] );
 		if ( !is_label ) val = pa.resonance_id( iproton );
 		else {
@@ -652,7 +652,7 @@ void PeakFileFormat::write_assignment_stats( std::ostream& os, PeakAssignment& p
 
 void PeakFileFormat::write_assignments( std::ostream& os, CrossPeak const& cp, std::string const& line_end ) const {
 #ifndef WIN32
-	Size assignments_written( 0 );
+	core::Size assignments_written( 0 );
 
 	if ( write_only_highest_VC() ) {
 		Real bestVC( -1 );
@@ -688,11 +688,11 @@ void PeakFileFormat::write_assignments( std::ostream& os, CrossPeak const& cp, s
 
 void PeakFileFormat::output_diagnosis( std::ostream& os ) const {
 	os << "columns: ";
-	for ( Size i = 1; i <= col2proton_.size(); i++ ) {
+	for ( core::Size i = 1; i <= col2proton_.size(); i++ ) {
 		os << col2proton_[ i ] << " ";
 	}
 	os << "\nlabels: ";
-	for ( Size i = 1; i <= col2islabel_.size(); i++ ) {
+	for ( core::Size i = 1; i <= col2islabel_.size(); i++ ) {
 		os << col2islabel_[ i ] << " ";
 	}
 	os << "\ninfo1: " << info1_->label_atom_type() << " " << info1_->proton_tolerance() << " " << info1_->label_tolerance();

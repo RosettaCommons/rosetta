@@ -65,15 +65,15 @@ void coordinate_constrain_selection(
 	if ( pose.residue(pose.size()).name() != "VRT" ) {
 		pose.append_residue_by_jump(
 			*ResidueFactory::create_residue( *core::pose::virtual_type_for_pose(pose) ),
-			static_cast< Size > (pose.size() / 2)
+			static_cast< core::Size > (pose.size() / 2)
 		);
 	}
-	Size nres = pose.size();
+	core::Size nres = pose.size();
 
 	core::id::SequenceMapping map = aln.sequence_mapping(1,2);
 
 	utility::vector1< core::Real > coord_sdevs;
-	for ( Size idx = 1; idx <= nres - 1; ++idx ) {
+	for ( core::Size idx = 1; idx <= nres - 1; ++idx ) {
 		if ( map[idx] != 0 ) {
 			coord_sdevs.push_back(coord_sdev);
 		}
@@ -83,11 +83,11 @@ void coordinate_constrain_selection(
 		pose, coord_sdevs
 	);
 
-	//for ( Size idx = 1; idx <= nres - 1; ++idx ) {
+	//for ( core::Size idx = 1; idx <= nres - 1; ++idx ) {
 	// if ( map[idx] != 0 ) {
 	//  using namespace core::conformation;
 	//  Residue const & rsd( pose.residue(idx) );
-	//  for ( Size ii = 1; ii <= rsd.last_backbone_atom(); ++ii ) {
+	//  for ( core::Size ii = 1; ii <= rsd.last_backbone_atom(); ++ii ) {
 	//   using namespace core::scoring::constraints;
 	//   pose.add_constraint(
 	//    new CoordinateConstraint(
@@ -112,12 +112,12 @@ generate_bb_coordinate_constraints(
 	using namespace core::scoring::constraints;
 
 	ConstraintSetOP cst_set( new ConstraintSet );
-	for ( Size idx = 1; idx <= pose.size(); ++idx ) {
+	for ( core::Size idx = 1; idx <= pose.size(); ++idx ) {
 		if ( coord_sdevs.size() >= idx ) {
 			Residue const & rsd( pose.residue(idx) );
 			core::Real const coord_sdev( coord_sdevs[idx] );
 			if ( coord_sdev > 0 ) {
-				for ( Size ii = 1; ii <= rsd.last_backbone_atom(); ++ii ) {
+				for ( core::Size ii = 1; ii <= rsd.last_backbone_atom(); ++ii ) {
 					core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc(0.0,coord_sdev) );
 					cst_set->add_constraint(
 						ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(
@@ -138,7 +138,7 @@ void delete_virtual_residues(
 ) {
 	using core::Size;
 	// remove virtual residues
-	for ( Size idx = 1; idx <= pose.size(); ++idx ) {
+	for ( core::Size idx = 1; idx <= pose.size(); ++idx ) {
 		if ( pose.residue_type(idx).name() == "VRT" ) {
 			pose.conformation().delete_residue_slow(idx);
 		}
@@ -155,7 +155,7 @@ get_per_residue_scores(
 	using utility::vector1;
 	using namespace core::scoring;
 	vector1< Real > scores;
-	for ( Size jj = 1; jj <= pose.size(); ++jj ) {
+	for ( core::Size jj = 1; jj <= pose.size(); ++jj ) {
 		EnergyMap rsd_energies( pose.energies().residue_total_energies(jj) );
 		Real const per_residue_score( rsd_energies[ scoretype ] );
 		scores.push_back( per_residue_score );
@@ -171,7 +171,7 @@ void add_virtual_residue_to_cterm(
 	if ( pose.residue(pose.size()).name() != "VRT" ) {
 		pose.append_residue_by_jump(
 			*ResidueFactory::create_residue( *core::pose::virtual_type_for_pose( pose ) ),
-			static_cast< Size > (pose.size() / 2)
+			static_cast< core::Size > (pose.size() / 2)
 		);
 	}
 }
@@ -188,13 +188,13 @@ void derive_sc_sc_restraints(
 	Real const cst_sdev ( 2.0 );
 	//Real const cst_width( 2.0 );
 
-	for ( Size ii = 1, end_ii = pose.size(); ii <= end_ii; ++ii ) {
-		for ( Size jj = ii+1, end_jj = pose.size(); jj <= end_jj; ++jj ) {
+	for ( core::Size ii = 1, end_ii = pose.size(); ii <= end_ii; ++ii ) {
+		for ( core::Size jj = ii+1, end_jj = pose.size(); jj <= end_jj; ++jj ) {
 			const core::conformation::Residue& resi = pose.residue(ii);
 			const core::conformation::Residue& resj = pose.residue(jj);
 
-			for ( Size atm_ii = resi.first_sidechain_atom(); atm_ii <= resi.natoms(); ++atm_ii ) {
-				for ( Size atm_jj = resj.first_sidechain_atom(); atm_jj <= resj.natoms(); ++atm_jj ) {
+			for ( core::Size atm_ii = resi.first_sidechain_atom(); atm_ii <= resi.natoms(); ++atm_ii ) {
+				for ( core::Size atm_jj = resj.first_sidechain_atom(); atm_jj <= resj.natoms(); ++atm_jj ) {
 					// determine whether Euclidean distance is below threshold
 					Real const distance(
 						resi.xyz(atm_ii).distance( resj.xyz(atm_jj) ));

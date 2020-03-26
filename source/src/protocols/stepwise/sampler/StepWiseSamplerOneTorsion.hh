@@ -45,7 +45,7 @@ public:
 	void apply( core::pose::Pose & pose ) override { apply( pose, id_ ); }
 
 	/// @brief Apply the i-th rotamer to pose
-	void apply( core::pose::Pose & pose, Size const i ) override;
+	void apply( core::pose::Pose & pose, core::Size const i ) override;
 
 	/// @brief Set the allowed torsions in sampler
 	virtual void set_torsions( TorsionList const & setting ) {

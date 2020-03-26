@@ -79,14 +79,14 @@ O2PrimePacker::initialize_o2prime_green_packer()
 	if ( partition_definition_.size() == 0 ) utility_exit_with_message( "To use green packer, make sure to set partition definition." );
 	bool const root_partition = partition_definition_( o2prime_pack_pose_.fold_tree().root() );
 
-	Size const nres = o2prime_pack_pose_.size();
+	core::Size const nres = o2prime_pack_pose_.size();
 	UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new UserDefinedGroupDiscriminator );
-	utility::vector1< Size > group_ids;
+	utility::vector1< core::Size > group_ids;
 
-	Size current_group = 0;
-	Size spectator_group = 1;
+	core::Size current_group = 0;
+	core::Size spectator_group = 1;
 
-	for ( Size i = 1; i <= nres; i++ ) {
+	for ( core::Size i = 1; i <= nres; i++ ) {
 		if ( partition_definition_( i ) != root_partition ) {
 			current_group = 0;
 			TR.Debug << "GREENPACKER SAMPLER " << i << std::endl;
@@ -104,7 +104,7 @@ O2PrimePacker::initialize_o2prime_green_packer()
 	task_factory->push_back( utility::pointer::make_shared< InitializeFromCommandline >() );
 	task_factory->push_back( utility::pointer::make_shared< RestrictToRepacking >() );
 	task_factory->push_back( utility::pointer::make_shared< IncludeCurrent >() );
-	for ( Size i = 1; i <= nres; i++ ) {
+	for ( core::Size i = 1; i <= nres; i++ ) {
 		if ( !o2prime_pack_pose_.residue( i ).is_RNA() ) continue;
 		task_factory->push_back( utility::pointer::make_shared< ExtraChiCutoff >( i, 0 ) );
 		task_factory->push_back( utility::pointer::make_shared< ExtraRotamers >( i, 4 /*ex4*/ ) );

@@ -422,7 +422,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 			runtime_assert( frag_libs().size() > 0 );
 			loops::loop_mover::perturb::LoopMover_Perturb_QuickCCD quick_ccd( loops );
-			for ( Size i = 1; i <= frag_libs().size(); ++i ) {
+			for ( core::Size i = 1; i <= frag_libs().size(); ++i ) {
 				quick_ccd.add_fragments( frag_libs()[i] );
 			}
 
@@ -482,7 +482,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	if ( option[ in::fix_disulf ].user() ) {
 		using std::pair;
 		using utility::vector1;
-		vector1< pair<Size, Size> > disulfides;
+		vector1< pair<core::Size, core::Size> > disulfides;
 
 		core::io::raw_data::DisulfideFile ds_file( option[ in::fix_disulf ]() );
 		ds_file.disulfides( disulfides, pose );
@@ -514,7 +514,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			using core::Size;
 			using core::Real;
 			using core::pose::Pose;
-			for ( Size ii = 1; ii <= n_rebuild_tries(); ++ii ) {
+			for ( core::Size ii = 1; ii <= n_rebuild_tries(); ++ii ) {
 				TR.Debug << "Remodeling attempt " << ii << "." << std::endl;
 				if ( remodel() == "old_loop_relax" ) {
 					LoopRebuild loop_rebuild( cen_scorefxn_, *loops );
@@ -543,11 +543,11 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						throw CREATE_EXCEPTION(utility::excn::BadInput, ": No fragment libraries loaded.");
 					}
 
-					Size sfxn_cycles = option[ OptionKeys::loops::perturb_outer_cycles ]();
-					Size temp_cycles = min<Size>(20 * loops->loop_size(), 1000);
+					core::Size sfxn_cycles = option[ OptionKeys::loops::perturb_outer_cycles ]();
+					core::Size temp_cycles = min<core::Size>(20 * loops->loop_size(), 1000);
 
 					if ( option[ OptionKeys::loops::fast ].value() ) { ;
-						temp_cycles = min<Size>(5 * loops->loop_size(), 250);
+						temp_cycles = min<core::Size>(5 * loops->loop_size(), 250);
 					}
 					if ( option[ OptionKeys::loops::max_inner_cycles ].user() ) {
 						temp_cycles = option[ OptionKeys::loops::max_inner_cycles ]();
@@ -665,7 +665,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						runtime_assert( frag_libs().size() > 0 );
 					}
 
-					for ( Size i = 1; i <= frag_libs().size(); ++i ) {
+					for ( core::Size i = 1; i <= frag_libs().size(); ++i ) {
 						remodel_mover->add_fragments( frag_libs()[i] );
 					}
 
@@ -866,11 +866,11 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			if ( !option[ OptionKeys::relax::coord_cst_width ].user() ) {
 				Real const coord_sdev( option[ OptionKeys::relax::coord_cst_stdev ] );
 				// default is 0.5 (from idealize) -- maybe too small
-				for ( Size i = 1; i<=nmonomerres; ++i ) {
+				for ( core::Size i = 1; i<=nmonomerres; ++i ) {
 					if ( !pose.residue(i).is_polymer() ) continue;
 					if ( coordconstraint_segments.is_loop_residue( i ) ) {
 						Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
-						for ( Size ii = 1; ii<=nat_i_rsd.last_backbone_atom(); ++ii ) {
+						for ( core::Size ii = 1; ii<=nat_i_rsd.last_backbone_atom(); ++ii ) {
 							core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
 							pose.add_constraint( utility::pointer::make_shared< CoordinateConstraint >( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) );
 						}
@@ -879,7 +879,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						// if (symm_info) {
 						//  for ( core::conformation::symmetry::SymmetryInfo::Clones::const_iterator pos=symm_info->bb_clones( i ).begin(),
 						//     epos=symm_info->bb_clones( i ).end(); pos != epos; ++pos ) {
-						//   for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
+						//   for ( core::Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
 						//    pose.add_constraint( new CoordinateConstraint( AtomID(ii,*pos), AtomID(1,nres), nat_i_rsd.xyz( ii ),
 						//          new HarmonicFunc( 0.0, coord_sdev ) ) );
 						//   }
@@ -890,11 +890,11 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			} else {
 				Real const cst_width( option[ OptionKeys::relax::coord_cst_width ]() );
 				Real const coord_sdev( option[ OptionKeys::relax::coord_cst_stdev ]() );
-				for ( Size i = 1; i<=nmonomerres; ++i ) {
+				for ( core::Size i = 1; i<=nmonomerres; ++i ) {
 					if ( !pose.residue(i).is_polymer() ) continue;
 					if ( coordconstraint_segments.is_loop_residue( i ) ) {
 						Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
-						for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
+						for ( core::Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
 							core::scoring::func::FuncOP fx( new BoundFunc( 0, cst_width, coord_sdev, "xyz" ) );
 							pose.add_constraint( utility::pointer::make_shared< CoordinateConstraint >( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) );
 						}
@@ -902,7 +902,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						// if (symm_info) {
 						//  for ( core::conformation::symmetry::SymmetryInfo::Clones::const_iterator pos=symm_info->bb_clones( i ).begin(),
 						//     epos=symm_info->bb_clones( i ).end(); pos != epos; ++pos ) {
-						//   for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
+						//   for ( core::Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
 						//    pose.add_constraint( new CoordinateConstraint( AtomID(ii,*pos), AtomID(1,nres), nat_i_rsd.xyz( ii ),
 						//          new BoundFunc( 0, cst_width, coord_sdev, "xyz" )) );
 						//   }
@@ -1122,12 +1122,12 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					throw CREATE_EXCEPTION(utility::excn::BadInput, ": No fragment libraries loaded.");
 				}
 
-				Size sfxn_cycles = option[ OptionKeys::loops::refine_outer_cycles ]();
-				Size temp_cycles = 10 * loops->loop_size();
-				Size repack_period = 20;
+				core::Size sfxn_cycles = option[ OptionKeys::loops::refine_outer_cycles ]();
+				core::Size temp_cycles = 10 * loops->loop_size();
+				core::Size repack_period = 20;
 
 				if ( option[OptionKeys::loops::max_inner_cycles].user() ) {
-					Size max_cycles = option[OptionKeys::loops::max_inner_cycles]();
+					core::Size max_cycles = option[OptionKeys::loops::max_inner_cycles]();
 					temp_cycles = std::max(temp_cycles, max_cycles);
 				}
 				if ( option[OptionKeys::loops::fast] ) {

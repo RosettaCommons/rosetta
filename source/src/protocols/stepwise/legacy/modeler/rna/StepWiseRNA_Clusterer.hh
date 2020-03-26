@@ -24,7 +24,7 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
@@ -41,7 +41,7 @@ namespace legacy {
 namespace modeler {
 namespace rna {
 
-class SlicedPoseWorkingParameters: public utility::pointer::ReferenceCount{
+class SlicedPoseWorkingParameters: public utility::VirtualBase{
 
 public:
 
@@ -99,7 +99,7 @@ public:
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-class StepWiseRNA_Clusterer: public utility::pointer::ReferenceCount {
+class StepWiseRNA_Clusterer: public utility::VirtualBase {
 public:
 
 	//constructor!
@@ -179,7 +179,7 @@ public:
 	set_perform_filters( bool const & setting ){ perform_filters_ = setting; }
 
 	void
-	set_min_num_south_sugar_filter( Size const & setting ){ min_num_south_sugar_filter_ = setting; }
+	set_min_num_south_sugar_filter( core::Size const & setting ){ min_num_south_sugar_filter_ = setting; }
 
 	void
 	set_VDW_rep_screen_info( utility::vector1< std::string > const & setting ){ VDW_rep_screen_info_ = setting; }
@@ -230,7 +230,7 @@ private:
 
 
 	core::pose::PoseOP
-	get_poseOP( Size const n );
+	get_poseOP( core::Size const n );
 
 	void
 	setup_fail_triangle_inequailty_list( core::pose::Pose & current_pose, std::string const & tag, utility::vector1< bool > & fail_triangle_inequality_list );
@@ -286,7 +286,7 @@ private:
 	utility::vector1< std::string > tag_output_list_;
 	utility::vector1< core::io::silent::SilentStructOP > silent_struct_output_list_;
 
-	Size max_decoys_;
+	core::Size max_decoys_;
 	core::Real score_diff_cut_;
 	bool perform_score_diff_cut_;
 
@@ -307,7 +307,7 @@ private:
 	bool verbose_;
 	bool keep_pose_in_memory_;
 	bool keep_pose_in_memory_hydrid_;
-	Size max_memory_pose_num_;
+	core::Size max_memory_pose_num_;
 
 	bool two_stage_clustering_;
 	bool use_triangle_inequality_;
@@ -325,7 +325,7 @@ private:
 	protocols::stepwise::modeler::rna::checker::RNA_VDW_BinCheckerOP user_input_VDW_bin_checker_;
 	bool perform_VDW_rep_screen_;
 	bool perform_filters_;
-	Size min_num_south_sugar_filter_;
+	core::Size min_num_south_sugar_filter_;
 	utility::vector1< std::string > VDW_rep_screen_info_;
 	bool full_length_loop_rmsd_clustering_;
 

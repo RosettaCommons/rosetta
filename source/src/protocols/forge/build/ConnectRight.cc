@@ -59,8 +59,8 @@ ConnectRight::ConnectRight() :
 /// @param[in] start_new_chain start new chain when connecting?  does not
 ///  handle termini variants
 ConnectRight::ConnectRight(
-	Size const left_position,
-	Size const right_position,
+	core::Size const left_position,
+	core::Size const right_position,
 	Pose const & pose_right
 ) :
 	Super( Interval( left_position, left_position ), pose_right.residue_type_set_for_pose() ),
@@ -185,8 +185,8 @@ ConnectRight::MoveMap ConnectRight::movemap() const {
 ///  during modify().
 void ConnectRight::extract_rt(
 	Pose const & pose,
-	Size const jump_start_residue,
-	Size const jump_stop_residue
+	core::Size const jump_start_residue,
+	core::Size const jump_stop_residue
 )
 {
 	using core::id::StubID;
@@ -306,7 +306,7 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 	using protocols::forge::methods::merge;
 
 	// cache data
-	Size const original_left_nres = pose_left.size();
+	core::Size const original_left_nres = pose_left.size();
 
 	// construct fold tree
 	FoldTree new_ft = merge( pose_left.fold_tree(), left_position_, pose_right_.fold_tree(), right_position_ );
@@ -330,7 +330,7 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 	// expensive.  However, it's probably the safest way since we might be
 	// dealing with Poses that might be "non-standard/weird" vs regular
 	// polymeric (protein/dna/rna) Poses.
-	for ( Size i = 1, ie = pose_right_.size(); i <= ie; ++i ) {
+	for ( core::Size i = 1, ie = pose_right_.size(); i <= ie; ++i ) {
 		if ( pose_right_.residue( i ).chain() != current_chain ) {
 			current_chain = pose_right_.residue( i ).chain();
 			pose_left.append_residue_by_jump( pose_right_.residue( i ), pose_left.size(), "", "", true );
@@ -349,7 +349,7 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 	// is modified
 
 	// transfer sec.struct
-	for ( Size i = 1, ie = pose_right_.size(); i <= ie; ++i ) {
+	for ( core::Size i = 1, ie = pose_right_.size(); i <= ie; ++i ) {
 		pose_left.set_secstruct( i + original_left_nres, pose_right_.secstruct( i ) );
 	}
 

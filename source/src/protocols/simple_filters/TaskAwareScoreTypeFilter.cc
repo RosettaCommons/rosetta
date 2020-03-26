@@ -53,6 +53,8 @@ namespace simple_filters {
 
 static basic::Tracer TR( "protocols.simple_filters.TaskAwareScoreTypeFilter" );
 
+using core::Size;
+
 /// @brief default ctor
 TaskAwareScoreTypeFilter::TaskAwareScoreTypeFilter() :
 	parent( "TaskAwareScoreType" ),
@@ -206,7 +208,7 @@ TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & w
 		if ( sym_dof_names() != "" ) {
 			utility::vector1<std::string> sym_dof_name_list;
 			sym_dof_name_list = utility::string_split( sym_dof_names() , ',' );
-			for ( Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
+			for ( core::Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
 				sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[i] );
 				protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( p, sym_aware_jump_id ) );
 				translate->step_size( 1000.0 );
@@ -241,7 +243,7 @@ TaskAwareScoreTypeFilter::compute( core::pose::Pose const & pose, bool const & w
 				bool flag = false;
 				core::Real resi_hbond_bb_sc_energy = 0;
 				for ( core::Size j=1; j<=total_residue; j++ ) {
-					for ( Size ihb = 1; ihb <= hbset.nhbonds(); ++ihb ) {
+					for ( core::Size ihb = 1; ihb <= hbset.nhbonds(); ++ihb ) {
 						core::scoring::hbonds::HBond const & hb(hbset.hbond(ihb));
 						if ( hb.don_res()==i && hb.acc_res()==j ) {
 							if ( !hb.don_hatm_is_protein_backbone() && hb.acc_atm_is_protein_backbone() ) {

@@ -16,8 +16,9 @@
 #ifndef INCLUDED_core_pose_rna_BasePairStep_HH
 #define INCLUDED_core_pose_rna_BasePairStep_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/rna/BasePairStep.fwd.hh>
+#include <core/types.hh>
 #include <ostream>
 
 namespace core {
@@ -34,7 +35,7 @@ namespace rna {
 //             n - n - n
 //       allowing bulges (n's) on the second strand
 ///////////////////////////////////
-class BasePairStep: public utility::pointer::ReferenceCount {
+class BasePairStep: public utility::VirtualBase {
 
 public:
 

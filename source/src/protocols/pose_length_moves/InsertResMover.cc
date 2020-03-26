@@ -47,7 +47,7 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <iostream>
 #include <sstream>
@@ -91,16 +91,16 @@ InsertResMover::center_of_mass(core::pose::Pose const & pose) {
 }
 
 
-void InsertResMover::extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size length){
+void InsertResMover::extendRegion(core::pose::PoseOP poseOP, core::Size chain_id, core::Size length){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace chemical;
 	core::conformation::ResidueCOPs residues(core::pose::get_chain_residues(*poseOP, chain_id));
-	Size res_position = residue_;
+	core::Size res_position = residue_;
 	if ( residue_>poseOP->size() ) {
 		res_position=poseOP->size();
 	}
-	Size inPoseResidue = residues[res_position]->seqpos();
+	core::Size inPoseResidue = residues[res_position]->seqpos();
 	Real tmpPhi =  poseOP->phi(inPoseResidue);
 	Real tmpPsi =  poseOP->psi(inPoseResidue);
 	Real tmpOmega = poseOP->omega(inPoseResidue);
@@ -157,18 +157,18 @@ void InsertResMover::extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size
 	}
 	poseOP->fold_tree(ft);
 	if ( grow_toward_Nterm_ ) {
-		for ( Size ii=0; ii<length; ++ii ) {
+		for ( core::Size ii=0; ii<length; ++ii ) {
 			new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map(build_aa_type) );
 			poseOP->conformation().safely_prepend_polymer_residue_before_seqpos( *new_rsd,inPoseResidue, true);
 		}
 	} else {
-		for ( Size ii=0; ii<length; ++ii ) {
+		for ( core::Size ii=0; ii<length; ++ii ) {
 			new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map(build_aa_type) );
 			poseOP->conformation().safely_append_polymer_residue_after_seqpos( *new_rsd,inPoseResidue+ii, true);
 		}
 	}
 	renumber_pdbinfo_based_on_conf_chains(*poseOP,true,false,false,false);
-	for ( Size ii=0; ii<=length; ++ii ) {
+	for ( core::Size ii=0; ii<=length; ++ii ) {
 		poseOP->set_phi(inPoseResidue+ii, tmpPhi );
 		poseOP->set_psi(inPoseResidue+ii, tmpPsi );
 		poseOP->set_omega(inPoseResidue+ii, tmpOmega );
@@ -177,9 +177,9 @@ void InsertResMover::extendRegion(core::pose::PoseOP poseOP, Size chain_id, Size
 
 
 void InsertResMover::apply(core::pose::Pose & pose) {
-	Size chain_id;
+	core::Size chain_id;
 	if ( chain_=="999" ) {
-		utility::vector1< Size > chains = get_chains(pose );
+		utility::vector1< core::Size > chains = get_chains(pose );
 		chain_id = chains[1];
 	} else {
 		if ( !has_chain(chain_,pose) ) {
@@ -187,7 +187,7 @@ void InsertResMover::apply(core::pose::Pose & pose) {
 		}
 		chain_id = get_chain_id_from_chain(chain_,pose);
 	}
-	for ( Size length=lowAddRes_; length<=highAddRes_; ++length ) {
+	for ( core::Size length=lowAddRes_; length<=highAddRes_; ++length ) {
 		core::pose::PoseOP tmpPoseOP = pose.clone();
 		extendRegion(tmpPoseOP,chain_id,length);
 		posesToOutput_.push_back(tmpPoseOP);
@@ -213,8 +213,8 @@ InsertResMover::parse_my_tag(
 	core::pose::Pose const & ){
 	chain_ = ( tag->getOption< std::string >( "chain", "999") );
 	resType_ = ( tag->getOption< std::string >( "resType", "H") );
-	steal_angles_from_res_= (tag->getOption<Size>("steal_angles_from_res",0));
-	residue_ = ( tag->getOption< Size >( "residue", 1) );
+	steal_angles_from_res_= (tag->getOption<core::Size>("steal_angles_from_res",0));
+	residue_ = ( tag->getOption< core::Size >( "residue", 1) );
 	grow_toward_Nterm_ = ( tag->getOption< bool >( "grow_toward_Nterm", false) );
 	ideal_ = ( tag->getOption< bool >( "ideal", true) );
 	useInputAngles_ = ( tag->getOption< bool >( "ideal", false) );
@@ -239,7 +239,7 @@ InsertResMover::parse_my_tag(
 
 core::pose::PoseOP InsertResMover::get_additional_output(){
 	TR << "NOT YET IMPLEMENTED CORRECTLY WILL THROW OFF SELECTOR****************************" << std::endl;
-	for ( Size ii=1; ii<=posesToOutput_.size(); ii++ ) {
+	for ( core::Size ii=1; ii<=posesToOutput_.size(); ii++ ) {
 		if ( !posesOutputed_[ii] ) {
 			posesOutputed_[ii]=true;
 			return(posesToOutput_[ii]);

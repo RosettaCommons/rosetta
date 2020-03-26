@@ -101,7 +101,7 @@ AnchoredGraftMover::AnchoredGraftMover():
 	set_defaults();
 }
 
-AnchoredGraftMover::AnchoredGraftMover(const Size start, Size const end, bool copy_pdb_info /*false*/)
+AnchoredGraftMover::AnchoredGraftMover(const core::Size start, core::Size const end, bool copy_pdb_info /*false*/)
 :GraftMoverBase(start, end, "AnchoredGraftMover")
 
 {
@@ -113,11 +113,11 @@ AnchoredGraftMover::AnchoredGraftMover(const Size start, Size const end, bool co
 }
 
 AnchoredGraftMover::AnchoredGraftMover(
-	const Size start,
-	const Size end,
+	const core::Size start,
+	const core::Size end,
 	core::pose::Pose const & piece,
-	Size Nter_overhang_length,
-	Size Cter_overhang_length,
+	core::Size Nter_overhang_length,
+	core::Size Cter_overhang_length,
 	bool copy_pdb_info /*false*/)
 :GraftMoverBase(start, end, "AnchoredGraftMover", piece, Nter_overhang_length, Cter_overhang_length)
 
@@ -253,7 +253,7 @@ AnchoredGraftMover::idealize_insert(bool idealize){
 }
 
 void
-AnchoredGraftMover::set_scaffold_flexibility(const Size Nter_scaffold_flexibility, const Size Cter_scaffold_flexibility){
+AnchoredGraftMover::set_scaffold_flexibility(const core::Size Nter_scaffold_flexibility, const core::Size Cter_scaffold_flexibility){
 	//Insert flexibility stays at default values (0)
 	Nter_scaffold_flexibility_=Nter_scaffold_flexibility;
 	Cter_scaffold_flexibility_=Cter_scaffold_flexibility;
@@ -280,14 +280,14 @@ AnchoredGraftMover::get_cterm_insert_flexibility() {
 }
 
 void
-AnchoredGraftMover::set_insert_flexibility(Size Nter_insert_flexibility, Size Cter_insert_flexibility)
+AnchoredGraftMover::set_insert_flexibility(core::Size Nter_insert_flexibility, core::Size Cter_insert_flexibility)
 {
 	Nter_insert_flexibility_=Nter_insert_flexibility;
 	Cter_insert_flexibility_=Cter_insert_flexibility;
 }
 
 void
-AnchoredGraftMover::set_cycles(Size cycles){
+AnchoredGraftMover::set_cycles(core::Size cycles){
 	cycles_=cycles;
 }
 
@@ -427,11 +427,11 @@ void
 AnchoredGraftMover::set_default_movemap(){
 	TR <<"Setting default movemap"<<std::endl;
 	movemap_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
-	for ( Size i=Nter_loop_start_; i<=Nter_loop_end_; ++i ) {
+	for ( core::Size i=Nter_loop_start_; i<=Nter_loop_end_; ++i ) {
 		movemap_->set_bb(i, true);
 		movemap_->set_chi(i, true);
 	}
-	for ( Size i=Cter_loop_start_; i<=Cter_loop_end_; ++i ) {
+	for ( core::Size i=Cter_loop_start_; i<=Cter_loop_end_; ++i ) {
 		movemap_->set_bb(i, true);
 		movemap_->set_chi(i, true);
 	}
@@ -455,7 +455,7 @@ AnchoredGraftMover::set_regions_from_flexibility(){
 void
 AnchoredGraftMover::set_regions_from_movemap(Pose & pose){
 	//N terminal
-	for ( Size i=1; i<=start(); ++i ) {
+	for ( core::Size i=1; i<=start(); ++i ) {
 		if ( movemap_->get_bb(i) ) {
 			Nter_loop_start_=i;
 			break;
@@ -463,7 +463,7 @@ AnchoredGraftMover::set_regions_from_movemap(Pose & pose){
 	}
 
 	//C terminal end
-	for ( Size i=pose.size(); i>=Nter_loop_start_; --i ) {
+	for ( core::Size i=pose.size(); i>=Nter_loop_start_; --i ) {
 		if ( movemap_->get_bb(i) ) {
 			TR <<i<<std::endl;
 			Cter_loop_end_=i;
@@ -473,7 +473,7 @@ AnchoredGraftMover::set_regions_from_movemap(Pose & pose){
 
 	//Insertion default flexiblity.  Will not effect single_loop foldtrees.
 	Nter_insert_flexibility_=0;
-	for ( Size i = start()+1; i<=start()+insertion_length(); ++i ) {
+	for ( core::Size i = start()+1; i<=start()+insertion_length(); ++i ) {
 		if ( movemap_->get_bb(i) ) {
 			++Nter_insert_flexibility_;
 		} else {
@@ -484,7 +484,7 @@ AnchoredGraftMover::set_regions_from_movemap(Pose & pose){
 	}
 
 	Cter_insert_flexibility_=0;
-	for ( Size i = start()+insertion_length(); i>=1; --i ) {
+	for ( core::Size i = start()+insertion_length(); i>=1; --i ) {
 		if ( movemap_->get_bb(i) ) {
 			++Cter_insert_flexibility_;
 		} else {

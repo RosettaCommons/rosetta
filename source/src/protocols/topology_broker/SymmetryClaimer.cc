@@ -92,9 +92,9 @@ void SymmetryClaimer::symmetry_duplicate( claims::DofClaims& pre_accepted,
 	}
 
 	//Copy sequence claims (j-1) times to get j subunits in total.
-	for ( Size j=1; j<symm_data_->get_subunits(); ++j ) {
+	for ( core::Size j=1; j<symm_data_->get_subunits(); ++j ) {
 		//Copy each pre accepted sequence claim (first n_asymm_claims in pre_accepted) and add them to pre_accepted
-		for ( Size i=1; i<= original_claims.size(); ++i ) {
+		for ( core::Size i=1; i<= original_claims.size(); ++i ) {
 			claims::SequenceClaimOP old_claim = original_claims.at(i);
 			std::ostringstream new_label_stream;
 			new_label_stream << old_claim->label() << ":Symm" << j;
@@ -107,7 +107,7 @@ void SymmetryClaimer::symmetry_duplicate( claims::DofClaims& pre_accepted,
 
 	//Use annotated sequence to duplicate
 	std::string sequence = "";
-	for ( Size i=1; i<=symm_data_->get_subunits(); ++i ) {
+	for ( core::Size i=1; i<=symm_data_->get_subunits(); ++i ) {
 		sequence += pose.annotated_sequence();
 	}
 
@@ -115,7 +115,7 @@ void SymmetryClaimer::symmetry_duplicate( claims::DofClaims& pre_accepted,
 		*( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID )));
 
 	//Build symmetry-related virtual residues
-	for ( Size i=1; i<=symm_data_->get_num_virtual(); ++i ) {
+	for ( core::Size i=1; i<=symm_data_->get_num_virtual(); ++i ) {
 		// create the new residue
 		core::conformation::ResidueOP rsd( core::conformation::ResidueFactory::create_residue( *core::pose::virtual_type_for_pose(pose) ) );
 

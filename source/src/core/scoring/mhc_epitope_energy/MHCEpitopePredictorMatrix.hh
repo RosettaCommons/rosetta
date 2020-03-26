@@ -20,7 +20,7 @@
 #include <utility/file/FileName.fwd.hh>
 #include <utility/vector1.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <map>
 
@@ -35,7 +35,7 @@ namespace mhc_epitope_energy {
 
 /// @brief The scoring matrix for one specific allele
 /// @details A position weight matrix (PWM) specifies the value for each amino acid type. A set of threshold specify the minimum score required to be in the top percentile of predicted binders.
-class AlleleMatrix: public utility::pointer::ReferenceCount {
+class AlleleMatrix: public utility::VirtualBase {
 public:
 	typedef std::map< char, core::Real > Weights;
 	typedef utility::vector1< Weights > PWM;

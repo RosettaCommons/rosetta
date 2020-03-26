@@ -33,7 +33,7 @@
 #include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 #include <string>
@@ -142,8 +142,8 @@ private:
 
 
 	void
-	check_moving_res_in_chain( Size const & start_chain, Size const & end_chain,
-		Size const & num_chains, Size & which_chain_has_moving_res  );
+	check_moving_res_in_chain( core::Size const & start_chain, core::Size const & end_chain,
+		core::Size const & num_chains, core::Size & which_chain_has_moving_res  );
 
 	void
 	figure_out_working_sequence_and_mapping();
@@ -154,17 +154,17 @@ private:
 	void
 	figure_out_jump_partners();
 
-	Size
-	which_chain( Size const & i );
+	core::Size
+	which_chain( core::Size const & i );
 
 	bool
-	already_connected( std::pair< Size, Size > const & potential_chain_partner,
-		utility::vector1< std::pair< Size, Size > > const & chain_partners ) const;
+	already_connected( std::pair< core::Size, core::Size > const & potential_chain_partner,
+		utility::vector1< std::pair< core::Size, core::Size > > const & chain_partners ) const;
 
 	bool
-	already_connected( Size const start_chain,
-		Size const stop_chain,
-		utility::vector1< std::pair< Size, Size > > const & chain_partners,
+	already_connected( core::Size const start_chain,
+		core::Size const stop_chain,
+		utility::vector1< std::pair< core::Size, core::Size > > const & chain_partners,
 		utility::vector1< bool > already_checked ) const;
 
 
@@ -223,8 +223,8 @@ private:
 	void
 	align_poses( core::pose::Pose & pose );
 
-	utility::vector1< Size > const
-	apply_full_to_sub_mapping( utility::vector1< Size > & res_vector) const;
+	utility::vector1< core::Size > const
+	apply_full_to_sub_mapping( utility::vector1< core::Size > & res_vector) const;
 
 	void
 	apply_virtual_phosphate_variants( core::pose::Pose & pose ) const;
@@ -264,7 +264,7 @@ private:
 	check_superimpose_res( core::pose::Pose const & pose );
 
 	bool
-	is_working_cutpoint_closed( Size const res, std::map< Size, Size > & full_to_sub ) const;
+	is_working_cutpoint_closed( core::Size const res, std::map< core::Size, core::Size > & full_to_sub ) const;
 
 	std::string
 	get_stepwise_jump_atom( core::chemical::ResidueType const & rsd );
@@ -283,18 +283,18 @@ private:
 
 	utility::vector1< protocols::stepwise::modeler::protein::InputStreamWithResidueInfoOP > input_streams_with_residue_info_;
 
-	utility::vector1< Size > const cutpoint_open_;
-	utility::vector1< Size > const cutpoint_closed_;
+	utility::vector1< core::Size > const cutpoint_open_;
+	utility::vector1< core::Size > const cutpoint_closed_;
 	ObjexxFCL::FArray1D< bool > is_cutpoint_;
 	std::string secstruct_;
-	utility::vector1< Size > fixed_res_;
-	utility::vector1< Size > virtual_res_list_;
-	utility::vector1< Size > terminal_res_;
-	utility::vector1< Size > superimpose_res_;
-	utility::vector1< Size > calc_rms_res_;
-	utility::vector1< Size > bulge_res_;
-	utility::vector1< Size > jump_res_;
-	utility::vector1< Size > bridge_res_;
+	utility::vector1< core::Size > fixed_res_;
+	utility::vector1< core::Size > virtual_res_list_;
+	utility::vector1< core::Size > terminal_res_;
+	utility::vector1< core::Size > superimpose_res_;
+	utility::vector1< core::Size > calc_rms_res_;
+	utility::vector1< core::Size > bulge_res_;
+	utility::vector1< core::Size > jump_res_;
+	utility::vector1< core::Size > bridge_res_;
 
 	stepwise::modeler::working_parameters::StepWiseWorkingParametersOP working_parameters_;
 

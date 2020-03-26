@@ -25,7 +25,7 @@ namespace chemical {
 namespace rna {
 
 RNA_FittedTorsionInfo::RNA_FittedTorsionInfo():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	rna_tight_torsions_( true ),
 	//// Following are torsions that are optimized to minimize rna_torsion + sugar_close.
 	////  [ Due to frustration, impossible to satisfy ideal bond lengths+angles for arbitrary delta. ]

@@ -71,7 +71,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	Size interface_;
+	core::Size interface_;
 	bool ch1_, ch2_;
 	core::Size min_length_, max_length_, mingap_;
 	std::string resnum_;

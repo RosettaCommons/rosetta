@@ -52,6 +52,7 @@ static basic::Tracer TR( "protocols.electron_density.ReportFSC" );
 namespace protocols {
 namespace electron_density {
 
+using core::Size;
 using core::scoring::electron_density::poseCoords;
 using core::scoring::electron_density::poseCoord;
 
@@ -114,7 +115,7 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	core::scoring::electron_density::getDensityMap().getResolutionBins(nresbins_, 1.0/res_low_, 1.0/res_high_, resobins, resobin_counts, bin_squared_);
 
 	core::scoring::electron_density::getDensityMap().getFSC( FrhoC, FrhoO, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap1FSC, bin_squared_ );
-	for ( Size i=1; i<=modelmap1FSC.size(); ++i ) {
+	for ( core::Size i=1; i<=modelmap1FSC.size(); ++i ) {
 		fsc1 += resobin_counts[i] * modelmap1FSC[i];
 		bincountsum += resobin_counts[i];
 	}
@@ -130,7 +131,7 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 
 		numeric::fourier::fft3(testmap_->get_data(), FrhoO);
 		testmap_->getFSC( FrhoC, FrhoO, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap2FSC, bin_squared_ );
-		for ( Size i=1; i<=modelmap2FSC.size(); ++i ) {
+		for ( core::Size i=1; i<=modelmap2FSC.size(); ++i ) {
 			fsc2 += resobin_counts[i] * modelmap2FSC[i];
 		}
 		fsc2 /= bincountsum;

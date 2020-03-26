@@ -29,7 +29,7 @@
 
 // Utility headers
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <iostream>
@@ -174,8 +174,8 @@ UpstreamCollisionFilter::passes_filter(
 	if ( filter_by_lj() ) {
 		using namespace core::scoring;
 		EnergyMap emap;
-		for ( Size ii = 1; ii < m.upstream_hits.size(); ++ii ) {
-			for ( Size jj = ii + 1; jj <= m.upstream_hits.size(); ++jj ) {
+		for ( core::Size ii = 1; ii < m.upstream_hits.size(); ++ii ) {
+			for ( core::Size jj = ii + 1; jj <= m.upstream_hits.size(); ++jj ) {
 				emap[ fa_atr ] = 0; emap[ fa_rep ] = 0; emap[ fa_sol ] = 0;
 				etable_energy()->residue_pair_energy(
 					*( cacher_->upstream_conformation_for_hit( ii, fake_hit( m.upstream_hits[ ii ] )) ),
@@ -188,9 +188,9 @@ UpstreamCollisionFilter::passes_filter(
 		}
 		return true;
 	} else {
-		for ( Size ii = 1; ii < m.upstream_hits.size(); ++ii ) {
+		for ( core::Size ii = 1; ii < m.upstream_hits.size(); ++ii ) {
 			core::conformation::ResidueCOP iires = cacher_->upstream_conformation_for_hit( ii, fake_hit( m.upstream_hits[ ii ] ) );
-			for ( Size jj = ii + 1; jj <= m.upstream_hits.size(); ++jj ) {
+			for ( core::Size jj = ii + 1; jj <= m.upstream_hits.size(); ++jj ) {
 				core::conformation::ResidueCOP jjres = cacher_->upstream_conformation_for_hit( jj, fake_hit( m.upstream_hits[ jj ] ) );
 				if ( !passes_hardsphere_filter( *iires, *jjres ) ) return false;
 			} // jj loop over upstream_hits.size()

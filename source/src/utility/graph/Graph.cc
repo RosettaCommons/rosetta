@@ -932,7 +932,7 @@ void Graph::save( Archive & archive ) const
 template < class Archive >
 void Graph::load( Archive & archive )
 {
-	Size num_nodes(0); archive( num_nodes );
+	platform::Size num_nodes(0); archive( num_nodes );
 	set_num_nodes( num_nodes );
 	// EXEMPT num_nodes_
 	// The nodes will be freshly instantiated on this end
@@ -943,9 +943,9 @@ void Graph::load( Archive & archive )
 	//   nodes_[ ii ]->load( archive );
 	// }
 
-	Size num_edges(0); archive( num_edges );
-	for ( Size ii = 1; ii <= num_edges; ++ii ) {
-		Size node1(0), node2(0); archive( node1, node2 );
+	platform::Size num_edges(0); archive( num_edges );
+	for ( platform::Size ii = 1; ii <= num_edges; ++ii ) {
+		platform::Size node1(0), node2(0); archive( node1, node2 );
 		/* Edge * new_edge = */ add_edge( node1, node2 );
 		// new_edge->load( archive );
 	}

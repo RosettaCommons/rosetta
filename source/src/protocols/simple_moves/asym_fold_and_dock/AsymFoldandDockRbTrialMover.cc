@@ -139,7 +139,7 @@ AsymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 		pose, *movemap, rot_mag_trial, trans_mag_trial,
 		rigid::partner_downstream, false );
 
-	for ( Size i = 1; i <= rigid_body_cycles_; ++i ) {
+	for ( core::Size i = 1; i <= rigid_body_cycles_; ++i ) {
 		rb_perturb.apply( pose );
 		if ( mc_filter_ ) monteCarlo_->boltzmann( pose );
 	}

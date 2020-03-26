@@ -34,7 +34,7 @@
 
 // Utility headers
 #include <utility/SingletonBase.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 //// C++ headers
@@ -62,9 +62,9 @@ public:
 };
 
 
-class BaseDisulfPairingLibrary : public utility::pointer::ReferenceCount {
+class BaseDisulfPairingLibrary : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~BaseDisulfPairingLibrary() override;
 
 	//Not currently using base class as copied from PairingLibrary, it's hanging

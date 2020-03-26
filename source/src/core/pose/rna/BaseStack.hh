@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_pose_rna_BaseStack_HH
 #define INCLUDED_core_pose_rna_BaseStack_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/rna/BaseStack.fwd.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/types.hh>
@@ -33,7 +33,7 @@ namespace pose {
 namespace rna {
 
 
-class BaseStack : public utility::pointer::ReferenceCount {
+class BaseStack : public utility::VirtualBase {
 public:
 
 	BaseStack();

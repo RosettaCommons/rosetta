@@ -114,7 +114,7 @@ private:
 		core::pose::Pose & pose);
 
 
-	Size
+	core::Size
 	report_features_implementation(
 		core::pose::Pose const & pose_orig,
 		StructureID struct_id,

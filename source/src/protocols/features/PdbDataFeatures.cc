@@ -215,8 +215,8 @@ void PdbDataFeatures::load_residue_pdb_identification(
 	stmt.bind(1,struct_id);
 	result res(safely_read_from_database(stmt));
 
-	Size pose_resNum(0);
-	vector1< Size > missing_residues;
+	core::Size pose_resNum(0);
+	vector1< core::Size > missing_residues;
 
 	while ( res.next() ) {
 		pose_resNum++;
@@ -264,15 +264,15 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	Size res_num(pose.size());
-	for ( Size index = 1; index <= res_num; ++index ) {
+	core::Size res_num(pose.size());
+	for ( core::Size index = 1; index <= res_num; ++index ) {
 		if ( !check_relevant_residues( relevant_residues, index ) ) continue;
 
 		string chain_id(& pose.pdb_info()->chain(index),1);
 		string insertion_code(&pose.pdb_info()->icode(index),1);
 		int pdb_residue_number = pose.pdb_info()->number(index);
 
-		RowDataBaseOP index_data( new RowData<Size>("residue_number",index) );
+		RowDataBaseOP index_data( new RowData<core::Size>("residue_number",index) );
 		RowDataBaseOP chain_id_data( new RowData<string>("chain_id",chain_id) );
 		RowDataBaseOP insertion_code_data( new RowData<string>("insertion_code",insertion_code) );
 		RowDataBaseOP pdb_resnum_data( new RowData<int>("pdb_residue_number",pdb_residue_number ) );
@@ -316,8 +316,8 @@ void PdbDataFeatures::load_residue_pdb_confidence(
 	stmt.bind(1,struct_id);
 	result res(safely_read_from_database(stmt));
 
-	Size pose_resNum(0);
-	vector1< Size > missing_residues;
+	core::Size pose_resNum(0);
+	vector1< core::Size > missing_residues;
 
 	while ( res.next() ) {
 		pose_resNum++;
@@ -343,7 +343,7 @@ void PdbDataFeatures::load_residue_pdb_confidence(
 			pose_resNum, res_type.natoms(), false);
 
 		for (
-				Size atom_index=1;
+				core::Size atom_index=1;
 				atom_index <= res_type.last_backbone_atom();
 				++atom_index ) {
 			pose.pdb_info()->temperature(
@@ -352,7 +352,7 @@ void PdbDataFeatures::load_residue_pdb_confidence(
 				pose_resNum, atom_index, min_bb_occupancy);
 		}
 		for (
-				Size atom_index = res_type.first_sidechain_atom();
+				core::Size atom_index = res_type.first_sidechain_atom();
 				atom_index <= res_type.natoms();
 				++atom_index ) {
 			pose.pdb_info()->temperature(
@@ -363,7 +363,7 @@ void PdbDataFeatures::load_residue_pdb_confidence(
 	}
 	if ( missing_residues.size() > 0 ) {
 		TR.Warning << "In loading the residue PDB confidence measures, some of the residues did not have data specified:" << std::endl << "\t[";
-		for ( Size ii=1; ii <= missing_residues.size(); ++ii ) {
+		for ( core::Size ii=1; ii <= missing_residues.size(); ++ii ) {
 			TR.Warning << missing_residues[ii] << ",";
 		}
 		TR.Warning << "]" << std::endl;
@@ -395,27 +395,27 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	for ( Size ri=1; ri <= pose.size(); ++ri ) {
+	for ( core::Size ri=1; ri <= pose.size(); ++ri ) {
 		if ( !check_relevant_residues(relevant_residues, ri) ) continue;
 
 		ResidueType const & r(pose.residue_type(ri));
 		Real max_bb_temperature(-1), max_sc_temperature(-1);
 		Real min_bb_occupancy(9999999);
 		Real min_sc_occupancy(9999999);
-		Size const n_bb(r.mainchain_atoms().size());
-		Size const n_sc(r.nheavyatoms() - r.mainchain_atoms().size());
-		for ( Size ai=1; ai <= n_bb; ++ai ) {
+		core::Size const n_bb(r.mainchain_atoms().size());
+		core::Size const n_sc(r.nheavyatoms() - r.mainchain_atoms().size());
+		for ( core::Size ai=1; ai <= n_bb; ++ai ) {
 			max_bb_temperature = max(max_bb_temperature, pdb_info->temperature(ri, ai));
 			min_bb_occupancy = min(min_bb_occupancy, pdb_info->occupancy(ri, ai));
 		}
-		for ( Size ai=1; ai <= n_sc; ++ai ) {
+		for ( core::Size ai=1; ai <= n_sc; ++ai ) {
 			max_sc_temperature = max(max_sc_temperature, pdb_info->temperature(ri, n_bb+ai));
 			min_sc_occupancy = min(min_sc_occupancy, pdb_info->occupancy(ri, n_bb+ai));
 		}
 		Real const max_temperature = max(max_bb_temperature, max_sc_temperature);
 		Real const min_occupancy = min(min_bb_occupancy, min_sc_occupancy);
 
-		RowDataBaseOP residue_number_data( new RowData<Size>("residue_number",ri) );
+		RowDataBaseOP residue_number_data( new RowData<core::Size>("residue_number",ri) );
 		RowDataBaseOP max_temp_data( new RowData<Real>("max_temperature",max_temperature) );
 		RowDataBaseOP max_bb_temp_data( new RowData<Real>("max_bb_temperature",max_bb_temperature) );
 		RowDataBaseOP max_sc_temp_data( new RowData<Real>("max_sc_temperature",max_sc_temperature) );

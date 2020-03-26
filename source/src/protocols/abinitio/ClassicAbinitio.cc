@@ -60,7 +60,7 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/ozstream.hh>
 #include <numeric/numeric.functions.hh>
 #include <basic/prof.hh>
@@ -185,7 +185,7 @@ ClassicAbinitio::ClassicAbinitio(
 		bml = utility::pointer::make_shared< simple_moves::LoggedFragmentMover >( fragset_large, movemap );
 		sms = utility::pointer::make_shared< SmoothFragmentMover >( fragset_small, movemap, utility::pointer::make_shared< GunnCost >() );
 	} else if ( option[ OptionKeys::abinitio::symmetry_residue ].user() ) {
-		Size const sr (  option[ OptionKeys::abinitio::symmetry_residue ] );
+		core::Size const sr (  option[ OptionKeys::abinitio::symmetry_residue ] );
 		bms = utility::pointer::make_shared< SymmetricFragmentMover >( fragset_small, movemap, sr );
 		bml = utility::pointer::make_shared< SymmetricFragmentMover >( fragset_large, movemap, sr );
 		sms = utility::pointer::make_shared< SmoothSymmetricFragmentMover >( fragset_small, movemap, utility::pointer::make_shared< GunnCost >(), sr );
@@ -224,7 +224,7 @@ ClassicAbinitio::ClassicAbinitio(
 /// behavior pre 9/7/2009 when the compiler-provided copy constructor
 /// was being invoked.
 ClassicAbinitio::ClassicAbinitio( ClassicAbinitio const & src ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Parent( src )
 {
 	stage1_cycles_ = src.stage1_cycles_;
@@ -832,9 +832,9 @@ public:
 private:
 	pose::Pose very_old_pose_;
 	bool bInit_{ false };
-	Size ct_ = 0;
+	core::Size ct_ = 0;
 	moves::TrialMoverOP trials_;
-	Size last_move_;
+	core::Size last_move_;
 };
 
 // keep going --> return true
@@ -847,7 +847,7 @@ bool hConvergenceCheck::operator() ( const core::pose::Pose & pose ) {
 	runtime_assert( trials_ != nullptr );
 	tr.Trace << "TrialCounter in hConvergenceCheck: " << trials_->num_accepts() << std::endl;
 	if ( numeric::mod(trials_->num_accepts(),100) != 0 ) return true;
-	if ( (Size) trials_->num_accepts() <= last_move_ ) return true;
+	if ( (core::Size) trials_->num_accepts() <= last_move_ ) return true;
 	last_move_ = trials_->num_accepts();
 	// change this later to this: (after we compared with rosetta++ and are happy)
 	// if ( numeric::mod(++ct_, 1000) != 0 ) return false; //assumes an approx acceptance rate of 0.1
@@ -872,7 +872,7 @@ bool ClassicAbinitio::do_stage1_cycles( pose::Pose &pose ) {
 	// FragmentMoverOP frag_mover = brute_move_large_;
 	// fragment::FragmentIO().write("stage1_frags_classic.dat",*frag_mover->fragments());
 
-	Size j;
+	core::Size j;
 	for ( j = 1; j <= stage1_cycles(); ++j ) {
 		trial->apply( pose ); // apply a large fragment insertion, accept with MC boltzmann probability
 		if ( done(pose) ) {
@@ -894,7 +894,7 @@ bool ClassicAbinitio::do_stage2_cycles( pose::Pose &pose ) {
 	if ( apply_large_frags_   ) cycle->add_mover( trial_large_->mover() );
 	if ( short_insert_region_ ) cycle->add_mover( trial_small_->mover() );
 
-	Size nr_cycles = stage2_cycles() / ( short_insert_region_ ? 2 : 1 );
+	core::Size nr_cycles = stage2_cycles() / ( short_insert_region_ ? 2 : 1 );
 	moves::TrialMoverOP trials( new moves::TrialMover( cycle, mc_ptr() ) );
 	moves::RepeatMover( stage2_mover( pose, trials ), nr_cycles ).apply(pose);
 
@@ -986,14 +986,14 @@ start each iteration with the lowest_score_pose. ( mc->recover_low()  in prepare
 
 */
 bool ClassicAbinitio::do_stage4_cycles( pose::Pose &pose ) {
-	Size nloop_stage4 = 3;
+	core::Size nloop_stage4 = 3;
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	if ( option[corrections::score::cenrot]() ) nloop_stage4=2;
 
-	for ( Size kk = 1; kk <= nloop_stage4; ++kk ) {
+	for ( core::Size kk = 1; kk <= nloop_stage4; ++kk ) {
 		tr.Debug << "prepare ..." << std::endl ;
 		if ( !prepare_loop_in_stage4( pose, kk, nloop_stage4 ) ) return false;
 
@@ -1040,7 +1040,7 @@ bool ClassicAbinitio::do_stage4_cycles( pose::Pose &pose ) {
 		//tr.Debug << "starting_energy: " << (*score_stage4rot_)( pose ) << std::endl;
 		//tr.Debug << "starting_temperature: " << mc_->temperature() << std::endl;
 
-		for ( Size rloop=1; rloop<=3; rloop++ ) {
+		for ( core::Size rloop=1; rloop<=3; rloop++ ) {
 			//change vdw weight
 			switch (rloop) {
 			case 1 :
@@ -1055,7 +1055,7 @@ bool ClassicAbinitio::do_stage4_cycles( pose::Pose &pose ) {
 			}
 
 			//stage4rot
-			//for (Size iii=1; iii<=100; iii++){
+			//for (core::Size iii=1; iii<=100; iii++){
 			//pose::Pose startP = pose;
 			//tr << "temperature: " << mc_->temperature() << std::endl;
 			moves::RepeatMover( stage4rot_mover( pose, rloop, trial_smooth() ), stage4_cycles()/100 ).apply(pose);
@@ -1069,7 +1069,7 @@ bool ClassicAbinitio::do_stage4_cycles( pose::Pose &pose ) {
 
 bool ClassicAbinitio::do_stage5_cycles( pose::Pose &pose ) {//vats
 
-	Size nmoves = 1;
+	core::Size nmoves = 1;
 	core::kinematics::MoveMapOP mm_temp( new core::kinematics::MoveMap( *movemap() ) );
 	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( mm_temp, temperature_, nmoves) );
 	small_mover->angle_max( 'H', 2.0 );
@@ -1080,7 +1080,7 @@ bool ClassicAbinitio::do_stage5_cycles( pose::Pose &pose ) {//vats
 	moves::RepeatMover( stage5_mover( pose, trials ), stage5_cycles() ).apply( pose );
 
 	// moves::MoverOP trial( stage5_mover( pose, small_mover ) );
-	// Size j;
+	// core::Size j;
 	// for( j = 1; j <= stage5_cycles(); ++j ) {
 	//  trial->apply( pose );
 	// }
@@ -1220,7 +1220,7 @@ bool ClassicAbinitio::prepare_stage5( core::pose::Pose &pose ) {//vats
 }
 
 
-bool ClassicAbinitio::prepare_loop_in_stage3( core::pose::Pose &pose/*pose*/, Size iteration, Size total ){
+bool ClassicAbinitio::prepare_loop_in_stage3( core::pose::Pose &pose/*pose*/, core::Size iteration, core::Size total ){
 	// interlace score2/score5
 
 	Real chbrk_weight_stage_3a = 0;
@@ -1251,7 +1251,7 @@ bool ClassicAbinitio::prepare_loop_in_stage3( core::pose::Pose &pose/*pose*/, Si
 	return true;
 }
 
-bool ClassicAbinitio::prepare_loop_in_stage4( core::pose::Pose &pose, Size iteration, Size total ){
+bool ClassicAbinitio::prepare_loop_in_stage4( core::pose::Pose &pose, core::Size iteration, core::Size total ){
 	replace_scorefxn( pose, STAGE_4, 1.0* iteration/total );
 
 	Real chbrk_weight_stage_4 (iteration*0.5+2.5);

@@ -17,7 +17,7 @@
 // Utility Headers
 #include <platform/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <protocols/indexed_structure_store/StructureStore.hh>
 #include <protocols/indexed_structure_store/StructureStoreProvider.hh>

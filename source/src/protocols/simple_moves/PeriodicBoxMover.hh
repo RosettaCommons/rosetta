@@ -59,7 +59,7 @@ public:
 
 // WaterReporter commented out for now because of PyRosetta compilation issue...
 /*
-class PeriodicBoxMoverWaterReporter : public utility::pointer::ReferenceCount {
+class PeriodicBoxMoverWaterReporter : public utility::VirtualBase {
 public:
 PeriodicBoxMoverWaterReporter(std::string suffix) {
 volout_eq_.open((std::string("volume_")+suffix+std::string(".txt")).c_str());

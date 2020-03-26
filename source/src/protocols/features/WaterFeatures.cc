@@ -277,7 +277,7 @@ WaterFeatures::report_features(
 	std::string water_string(water_ss.str());
 	statement water_stmt(basic::database::safely_prepare_statement(water_string,db_session));
 	// water_stmt.bind(1, struct_id);
-	// for (Size i = 1; i <= names_for_water_.size(); ++i) {
+	// for (core::Size i = 1; i <= names_for_water_.size(); ++i) {
 	//  water_stmt.bind(2*i,names_for_water_[i].first);
 	//  water_stmt.bind(2*i+1,names_for_water_[i].second);
 	// }
@@ -285,7 +285,7 @@ WaterFeatures::report_features(
 	TR << "Water query template:" << water_string << std::endl;
 
 	water_stmt << struct_id;
-	for ( Size i = 1; i <= names_for_water_.size(); ++i ) {
+	for ( core::Size i = 1; i <= names_for_water_.size(); ++i ) {
 		water_stmt << names_for_water_[i].first;
 		water_stmt << names_for_water_[i].second;
 	}
@@ -325,7 +325,7 @@ WaterFeatures::report_features(
 	TR << "Checking water hbond site combinations for struct_id" << struct_id << std::endl;
 	while ( wat_result.next() ) {
 		TR << "Checking a water site for nearby hbond-sites." << std::endl;
-		Size unrecognized_atom_res;
+		core::Size unrecognized_atom_res;
 		std::string unrecognized_atom_name;
 		wat_result >> unrecognized_atom_res;
 		wat_result >> unrecognized_atom_name;
@@ -340,10 +340,10 @@ WaterFeatures::report_features(
 		result hbond_site_result(basic::database::safely_read_from_database(hbond_site_stmt));
 		while ( hbond_site_result.next() ) {
 			//TR << "Testing water-hbond site for potential interaction." << std::endl;
-			Size partner_site_id;
+			core::Size partner_site_id;
 			hbond_site_result >> partner_site_id;
 			TR << "Looking at hbond site with site_id " << partner_site_id << std::endl;
-			Size hbond_site_is_donor_int;
+			core::Size hbond_site_is_donor_int;
 			hbond_site_result >> hbond_site_is_donor_int;
 			auto hbond_site_is_donor = static_cast<bool>(hbond_site_is_donor_int);
 			Length hbond_site_x, hbond_site_y, hbond_site_z;
@@ -380,7 +380,7 @@ WaterFeatures::report_features(
 				igen_wat_accepts.add_row(
 					utility::tools::make_vector(
 					struct_id_data,
-					RowDataBaseOP( utility::pointer::make_shared< RowData<Size> >(
+					RowDataBaseOP( utility::pointer::make_shared< RowData<core::Size> >(
 					"unrecognized_atom_res",
 					unrecognized_atom_res) ),
 					RowDataBaseOP( utility::pointer::make_shared< RowData<std::string> >(
@@ -407,13 +407,13 @@ WaterFeatures::report_features(
 				igen_wat_donates.add_row(
 					utility::tools::make_vector(
 					struct_id_data,
-					RowDataBaseOP( utility::pointer::make_shared< RowData<Size> >(
+					RowDataBaseOP( utility::pointer::make_shared< RowData<core::Size> >(
 					"unrecognized_atom_res",
 					unrecognized_atom_res) ),
 					RowDataBaseOP( utility::pointer::make_shared< RowData<std::string> >(
 					"unrecognized_atom_name",
 					unrecognized_atom_name) ),
-					RowDataBaseOP( utility::pointer::make_shared< RowData<Size> >(
+					RowDataBaseOP( utility::pointer::make_shared< RowData<core::Size> >(
 					"partner_site_id",
 					partner_site_id) ),
 					RowDataBaseOP( utility::pointer::make_shared< RowData<core::Real> >("AWdist", awdist) ),

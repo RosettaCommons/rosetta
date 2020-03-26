@@ -85,7 +85,7 @@ private: ///functions
 		core::pose::Pose curr_pose, //the pose that gets changed
 		std::string sequence,
 		protocols::loops::Loops & seeds,
-		utility::vector1< Size > cutpoints//,
+		utility::vector1< core::Size > cutpoints//,
 	);
 
 

@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_func_Func_hh
 #define INCLUDED_core_scoring_func_Func_hh
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 #include <core/scoring/func/Func.fwd.hh>
@@ -33,9 +33,9 @@ namespace func {
 /// @brief Func is an abstract base class representing a function used to define
 /// constraints, in which func(r) gives the constraint score for the given value
 /// r.
-class Func : public utility::pointer::ReferenceCount {
+class Func : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Func() override;
 
 	/// @brief This method must return a deep copy of this %Func, meaning if this %Func holds pointers

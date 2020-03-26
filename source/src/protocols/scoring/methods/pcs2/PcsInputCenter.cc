@@ -63,7 +63,7 @@ PcsInputCenter::PcsInputCenter(){
 PcsInputCenter::~PcsInputCenter()= default;
 
 PcsInputCenter::PcsInputCenter(PcsInputCenter const & other):
-	ReferenceCount()
+	VirtualBase()
 {
 	// TR_PcsInputCenter << " () called" << std::endl;
 	PcsInputFile_all_ = other.PcsInputFile_all_;

@@ -28,7 +28,7 @@
 
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 
@@ -57,9 +57,9 @@ typedef utility::vector1 < Size > PositionList;
 // scrap continuous apply of FragData ?!
 
 
-class SingleResidueFragData : public utility::pointer::ReferenceCount {
+class SingleResidueFragData : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~SingleResidueFragData() override;
 	SingleResidueFragData( char sequence )
 	: sequence_( sequence )

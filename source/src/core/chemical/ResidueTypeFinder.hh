@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_chemical_ResidueTypeFinder_HH
 #define INCLUDED_core_chemical_ResidueTypeFinder_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/chemical/ResidueTypeFinder.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
@@ -29,7 +29,7 @@
 namespace core {
 namespace chemical {
 
-class ResidueTypeFinder: public utility::pointer::ReferenceCount {
+class ResidueTypeFinder: public utility::VirtualBase {
 
 public:
 

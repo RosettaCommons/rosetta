@@ -55,8 +55,8 @@ using core::Real;
 
 bool TMalign_poses(core::pose::Pose & aligned_pose,
 	core::pose::Pose const & ref_pose,
-	std::list <Size> const & residue_list,
-	std::list <Size> const & ref_residue_list) {
+	std::list <core::Size> const & residue_list,
+	std::list <core::Size> const & ref_residue_list) {
 	TMalign tm_align;
 	std::string seq_pose, seq_ref, aligned;
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
@@ -75,8 +75,8 @@ bool TMalign_poses(core::pose::Pose & aligned_pose,
 	TR << aligned << std::endl;
 	TR << seq_ref << std::endl;
 
-	std::list <Size> full_residue_list;
-	for ( Size ires=1; ires<=aligned_pose.size(); ++ires ) {
+	std::list <core::Size> full_residue_list;
+	for ( core::Size ires=1; ires<=aligned_pose.size(); ++ires ) {
 		full_residue_list.push_back(ires);
 	}
 
@@ -104,18 +104,18 @@ DomainAssembly::DomainAssembly(
 	// initialize the order of assembly
 	utility::vector1 <core::Size> pose_index_to_add;
 	utility::vector1 <core::Size> pose_index_added;
-	for ( Size i=1; i<=poses.size(); ++i ) {
+	for ( core::Size i=1; i<=poses.size(); ++i ) {
 		pose_index_to_add.push_back(i);
 	}
 	while ( pose_index_to_add.size() > 0 ) {
 		core::Real sum_weight(0.0);
 		utility::vector1 < core::Real > weights_work;
-		for ( Size i=1; i<=pose_index_to_add.size(); ++i ) {
-			Size k_pose = pose_index_to_add[i];
+		for ( core::Size i=1; i<=pose_index_to_add.size(); ++i ) {
+			core::Size k_pose = pose_index_to_add[i];
 			sum_weight += domain_assembly_weights[k_pose];
 			weights_work.push_back(domain_assembly_weights[k_pose]);
 		}
-		Size ipose;
+		core::Size ipose;
 		if ( sum_weight > 1e-6 ) {
 			numeric::random::WeightedSampler weighted_sampler_;
 			weighted_sampler_.weights(weights_work);
@@ -128,9 +128,9 @@ DomainAssembly::DomainAssembly(
 		pose_index_added.push_back(ipose);
 
 		pose_index_to_add.clear();
-		for ( Size ipose=1; ipose<=poses.size(); ++ipose ) {
+		for ( core::Size ipose=1; ipose<=poses.size(); ++ipose ) {
 			bool added = false;
-			for ( Size j=1; j<=pose_index_added.size(); ++j ) {
+			for ( core::Size j=1; j<=pose_index_added.size(); ++j ) {
 				if ( ipose == pose_index_added[j] ) {
 					added = true;
 					break;
@@ -148,10 +148,10 @@ void remove_residues(core::pose::Pose & pose,
 	utility::vector1<int> & remaining_resnum) {
 
 	remaining_resnum.clear();
-	utility::vector1<Size> delete_list;
-	for ( Size ires=1; ires <= pose.size(); ++ires ) {
+	utility::vector1<core::Size> delete_list;
+	for ( core::Size ires=1; ires <= pose.size(); ++ires ) {
 		bool deleting = false;
-		for ( Size jres=1; jres<=resnum_list.size(); ++jres ) {
+		for ( core::Size jres=1; jres<=resnum_list.size(); ++jres ) {
 			if ( resnum_list[jres] == pose.pdb_info()->number(ires) ) {
 				deleting = true;
 				delete_list.push_back(ires);
@@ -163,18 +163,18 @@ void remove_residues(core::pose::Pose & pose,
 		}
 	}
 
-	for ( Size i=delete_list.size(); i>=1; --i ) {
+	for ( core::Size i=delete_list.size(); i>=1; --i ) {
 		pose.conformation().delete_residue_slow(delete_list[i]);
 	}
 }
 
-utility::vector1<Size> find_uncovered_residues (core::pose::Pose const & pose,
-	utility::vector1 <Size> const covered_residues) {
-	utility::vector1<Size> uncovered_residues;
-	for ( Size ires = 1; ires <= pose.size(); ++ires ) {
+utility::vector1<core::Size> find_uncovered_residues (core::pose::Pose const & pose,
+	utility::vector1 <core::Size> const covered_residues) {
+	utility::vector1<core::Size> uncovered_residues;
+	for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
 		if ( pose.pdb_info() != nullptr ) {
 			bool covered(false);
-			for ( Size i=1; i<=covered_residues.size(); ++i ) {
+			for ( core::Size i=1; i<=covered_residues.size(); ++i ) {
 				if ( pose.pdb_info()->number(ires) == (int)covered_residues[i] ) {
 					covered = true;
 					break;
@@ -189,7 +189,7 @@ utility::vector1<Size> find_uncovered_residues (core::pose::Pose const & pose,
 }
 
 core::Real
-gap_distance(Size Seq_gap)
+gap_distance(core::Size Seq_gap)
 {
 	core::Real gap_torr_0( 4.0);
 	core::Real gap_torr_1( 7.5);
@@ -236,7 +236,7 @@ DomainAssembly::run()
 
 	int range_start = poses_[1]->pdb_info()->number(1);
 	int range_end   = poses_[1]->pdb_info()->number(1);
-	for ( Size ires = 1; ires <= poses_[1]->size(); ++ires ) {
+	for ( core::Size ires = 1; ires <= poses_[1]->size(); ++ires ) {
 		if ( poses_[1]->pdb_info()->number(ires) < range_start ) {
 			range_start = poses_[1]->pdb_info()->number(ires);
 		}
@@ -247,11 +247,11 @@ DomainAssembly::run()
 	coverage_start.push_back(range_start);
 	coverage_end.push_back(range_end);
 
-	for ( Size ipose = 2; ipose <= poses_.size(); ++ipose ) {
+	for ( core::Size ipose = 2; ipose <= poses_.size(); ++ipose ) {
 		// check if the current pose is overlapped with any previous poses
 		range_start = poses_[ipose]->pdb_info()->number(1);
 		range_end   = poses_[ipose]->pdb_info()->number(1);
-		for ( Size ires = 1; ires <= poses_[ipose]->size(); ++ires ) {
+		for ( core::Size ires = 1; ires <= poses_[ipose]->size(); ++ires ) {
 			if ( poses_[ipose]->pdb_info()->number(ires) < range_start ) {
 				range_start = poses_[ipose]->pdb_info()->number(ires);
 			}
@@ -263,19 +263,19 @@ DomainAssembly::run()
 		coverage_end.push_back(range_end);
 
 		bool align_success(false);
-		for ( Size jpose = 1; jpose < ipose; ++jpose ) {
+		for ( core::Size jpose = 1; jpose < ipose; ++jpose ) {
 			int covered_size = coverage_end[jpose] - coverage_start[jpose] + 1;
 			int overlap_start = range_start > coverage_start[jpose] ? range_start:coverage_start[jpose];
 			int overlap_end   = range_end   < coverage_end[jpose]   ? range_end:coverage_end[jpose];
 			int overlap = overlap_end - overlap_start; // end could be smaller than start
-			Size normalize_length = covered_size < (int)poses_[ipose]->size() ? covered_size:poses_[ipose]->size();
+			core::Size normalize_length = covered_size < (int)poses_[ipose]->size() ? covered_size:poses_[ipose]->size();
 
 			// if overlap, use TMalign to orient poses_[ipose]
 			if ( overlap > 0.3 * normalize_length ) {
 				// collect residues in ipose
-				std::list <Size> i_residue_list; // residue numbers in the overlapped region
-				std::list <Size> full_residue_list; // all residue numbers in ipose, used for transformation after alignment
-				for ( Size ires = 1; ires <= poses_[ipose]->size(); ++ires ) {
+				std::list <core::Size> i_residue_list; // residue numbers in the overlapped region
+				std::list <core::Size> full_residue_list; // all residue numbers in ipose, used for transformation after alignment
+				for ( core::Size ires = 1; ires <= poses_[ipose]->size(); ++ires ) {
 					full_residue_list.push_back(ires);
 					if ( poses_[ipose]->pdb_info()->number(ires) >= overlap_start &&
 							poses_[ipose]->pdb_info()->number(ires) <= overlap_end ) {
@@ -285,8 +285,8 @@ DomainAssembly::run()
 				}
 
 				// collect residues in the pose to be aligned to
-				std::list <Size> j_residue_list;
-				for ( Size jres = 1; jres <= poses_[jpose]->size(); ++jres ) {
+				std::list <core::Size> j_residue_list;
+				for ( core::Size jres = 1; jres <= poses_[jpose]->size(); ++jres ) {
 					if ( poses_[jpose]->pdb_info()->number(jres) >= overlap_start &&
 							poses_[jpose]->pdb_info()->number(jres) <= overlap_end ) {
 						j_residue_list.push_back(jres);
@@ -335,28 +335,28 @@ DomainAssembly::run()
 			using namespace ObjexxFCL::format;
 			// construct a pose for domain assembly
 			core::pose::PoseOP full_length_pose;
-			//Size first_domain_end;
+			//core::Size first_domain_end;
 			utility::vector1<int> covered_resnum;
 			utility::vector1<int> resnum;
-			for ( Size ires=1; ires<=poses_[ipose]->size(); ++ires ) {
+			for ( core::Size ires=1; ires<=poses_[ipose]->size(); ++ires ) {
 				covered_resnum.push_back(poses_[ipose]->pdb_info()->number(ires));
 			}
-			for ( Size jpose = 1; jpose < ipose; ++jpose ) {
-				utility::vector1<Size> uncovered_residues = find_uncovered_residues(*poses_[jpose], covered_resnum);
+			for ( core::Size jpose = 1; jpose < ipose; ++jpose ) {
+				utility::vector1<core::Size> uncovered_residues = find_uncovered_residues(*poses_[jpose], covered_resnum);
 				if ( uncovered_residues.size() == 0 ) continue;
 
 				core::pose::Pose inserted_pose(*poses_[jpose]);
 				utility::vector1<int> remaining_resnum;
 				remove_residues(inserted_pose, covered_resnum, remaining_resnum);
-				for ( Size i=1; i<=remaining_resnum.size(); ++i ) resnum.push_back(remaining_resnum[i]);
-				for ( Size i=1; i<=remaining_resnum.size(); ++i ) covered_resnum.push_back(remaining_resnum[i]);
+				for ( core::Size i=1; i<=remaining_resnum.size(); ++i ) resnum.push_back(remaining_resnum[i]);
+				for ( core::Size i=1; i<=remaining_resnum.size(); ++i ) covered_resnum.push_back(remaining_resnum[i]);
 
 				if ( jpose == 1 ) {
 					full_length_pose = utility::pointer::make_shared< core::pose::Pose >(inserted_pose);
 					core::pose::PDBInfoOP pdb_info;
 					full_length_pose->pdb_info(pdb_info);
 				} else {
-					Size njump = full_length_pose->fold_tree().num_jump();
+					core::Size njump = full_length_pose->fold_tree().num_jump();
 					full_length_pose->conformation().insert_conformation_by_jump( inserted_pose.conformation(),
 						full_length_pose->size() + 1, njump+1,
 						full_length_pose->size() );
@@ -364,24 +364,24 @@ DomainAssembly::run()
 				//full_length_pose->dump_pdb("full_length_"+I(1,ipose)+"_"+I(1,jpose)+".pdb");
 			}
 
-			Size nres_domain1 = full_length_pose->size();
+			core::Size nres_domain1 = full_length_pose->size();
 
-			for ( Size ires=1; ires<=poses_[ipose]->size(); ++ires ) resnum.push_back(poses_[ipose]->pdb_info()->number(ires));
+			for ( core::Size ires=1; ires<=poses_[ipose]->size(); ++ires ) resnum.push_back(poses_[ipose]->pdb_info()->number(ires));
 
-			Size jump_num = full_length_pose->fold_tree().num_jump()+1;
+			core::Size jump_num = full_length_pose->fold_tree().num_jump()+1;
 			full_length_pose->conformation().insert_conformation_by_jump( poses_[ipose]->conformation(),
 				full_length_pose->size() + 1, jump_num,
 				full_length_pose->size() );
 			//TR << full_length_pose->fold_tree() << std::endl;
 			//full_length_pose->dump_pdb("full_length_"+I(1,ipose)+"before_docking.pdb");
 
-			for ( Size ires=1; ires <= nres_domain1; ++ires ) {
-				for ( Size jres=nres_domain1+1; jres <= full_length_pose->size(); ++jres ) {
-					Size seq_sep = std::abs(resnum[ires] - resnum[jres]);
+			for ( core::Size ires=1; ires <= nres_domain1; ++ires ) {
+				for ( core::Size jres=nres_domain1+1; jres <= full_length_pose->size(); ++jres ) {
+					core::Size seq_sep = std::abs(resnum[ires] - resnum[jres]);
 					if ( seq_sep>=6 && seq_sep <=8 ) {
 						core::Real gd = gap_distance(seq_sep);
-						Size iatom = full_length_pose->residue_type(ires).atom_index("CA");
-						Size jatom = full_length_pose->residue_type(jres).atom_index("CA");
+						core::Size iatom = full_length_pose->residue_type(ires).atom_index("CA");
+						core::Size jatom = full_length_pose->residue_type(jres).atom_index("CA");
 
 						TR.Debug << "Adding constraints to residue " << ires << " and " << jres << std::endl;
 						core::scoring::func::FuncOP fx( new core::scoring::constraints::BoundFunc( 0, gd, 5., "gap" ) );
@@ -415,11 +415,11 @@ DomainAssembly::run()
 			full_length_pose->size(),
 			1);
 
-			utility::vector1 < utility::vector1 <Size > > covered_range;
-			for (Size jpose = 1; jpose < ipose; ++jpose) {
-			Size resi_start(0);
-			Size resi_end(0);
-			for (Size jres = 1; jres <= poses_[jpose]->size(); ++jres) {
+			utility::vector1 < utility::vector1 <core::Size > > covered_range;
+			for (core::Size jpose = 1; jpose < ipose; ++jpose) {
+			core::Size resi_start(0);
+			core::Size resi_end(0);
+			for (core::Size jres = 1; jres <= poses_[jpose]->size(); ++jres) {
 			if ( poses_[jpose]->pdb_info()->number(jres) > range_end ) {
 			if (resi_start == 0) {
 			resi_start = jres;
@@ -438,7 +438,7 @@ DomainAssembly::run()
 			}
 			}
 			if (resi_start != 0) {
-			for (Size irange=1; irange <= covered_range.size(); ++irange) {
+			for (core::Size irange=1; irange <= covered_range.size(); ++irange) {
 
 			}
 
@@ -466,8 +466,8 @@ DomainAssembly::run()
 
 			// docking
 			/*
-			Size iatom = full_length_pose->residue_type(first_domain_end-2).atom_index("CA");
-			Size jatom = full_length_pose->residue_type(first_domain_end+3).atom_index("CA");
+			core::Size iatom = full_length_pose->residue_type(first_domain_end-2).atom_index("CA");
+			core::Size jatom = full_length_pose->residue_type(first_domain_end+3).atom_index("CA");
 			TR << "Adding constraints to residue " << first_domain_end-2 << " and " << first_domain_end+3 << std::endl;
 			full_length_pose->add_constraint(
 			new core::scoring::constraints::AtomPairConstraint(
@@ -527,9 +527,9 @@ DomainAssembly::run()
 			//full_length_pose->dump_pdb("test_full_length.pdb");
 
 			// align full_length_pose to pose1_
-			std::list <Size> residue_list1;
-			std::list <Size> residue_list2;
-			for ( Size ires = 1; ires <= poses_[1]->size(); ++ires ) {
+			std::list <core::Size> residue_list1;
+			std::list <core::Size> residue_list2;
+			for ( core::Size ires = 1; ires <= poses_[1]->size(); ++ires ) {
 				residue_list1.push_back(ires);
 				residue_list2.push_back(ires);
 			}
@@ -539,7 +539,7 @@ DomainAssembly::run()
 			// align ipose to full_length_pose
 			residue_list1.clear();
 			residue_list2.clear();
-			for ( Size ires = 1; ires <= poses_[ipose]->size(); ++ires ) {
+			for ( core::Size ires = 1; ires <= poses_[ipose]->size(); ++ires ) {
 				residue_list1.push_back(ires);
 				residue_list2.push_back(nres_domain1+ires);
 			}
@@ -574,14 +574,14 @@ void DomainAssembly::apply(
 	pose.copy_segment(higher_pose->size(), *higher_pose, lower_pose->size()+1, 1);
 
 
-	Size gap_start;
+	core::Size gap_start;
 	if ( lower_pose->size() > 3 ) {
 		gap_start = lower_pose->size() - 3;
 	} else {
 		gap_start = 1;
 	}
 
-	Size gap_stop;
+	core::Size gap_stop;
 	if ( higher_pose->size() > 3 ) {
 		gap_stop = 3;
 	} else {
@@ -592,8 +592,8 @@ void DomainAssembly::apply(
 	//if (seq_sep <= 8) {
 	if ( !lower_pose->residue_type(gap_start).is_protein() ) utility_exit_with_message("Error! not an amino acid!");
 	if ( !higher_pose->residue_type(gap_stop ).is_protein() ) utility_exit_with_message("Error! not an amino acid!");
-	Size iatom = pose.residue_type(gap_start).atom_index("CA");
-	Size jatom = pose.residue_type(lower_pose->size()+gap_stop ).atom_index("CA");
+	core::Size iatom = pose.residue_type(gap_start).atom_index("CA");
+	core::Size jatom = pose.residue_type(lower_pose->size()+gap_stop ).atom_index("CA");
 	TR << "Adding constraints to residue " << gap_start << " and " << lower_pose->size()+gap_stop << std::endl;
 	core::scoring::func::FuncOP fx( new core::scoring::constraints::BoundFunc( 0, 24., 5., "gap" ) );
 	pose.add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::AtomPairConstraint >(

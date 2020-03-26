@@ -24,7 +24,7 @@
 #include <utility/vector1.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace utility {
 
@@ -75,7 +75,7 @@ private:
 };
 
 template < class T >
-class in_place_list : public utility::pointer::ReferenceCount {
+class in_place_list : public utility::VirtualBase {
 public:
 	typedef platform::Size Size;
 

@@ -18,7 +18,7 @@
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <utility/vector1_bool.hh>
 
@@ -30,7 +30,7 @@ namespace scores {
 /// @brief holds all small scores (score components) for a given fragment
 /// @details each scoring method puts its own result into the map. The total score
 /// is a dot product of the vector from this map and a vector of weights
-class FragmentScoreMap: public utility::pointer::ReferenceCount {
+class FragmentScoreMap: public utility::VirtualBase {
 
 public:
 

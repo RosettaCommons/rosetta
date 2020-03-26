@@ -28,9 +28,9 @@ namespace pivot_pickers {
 Loop EndToEndPivots::pick(Pose const &, Loop const & loop) {
 	runtime_assert(loop.start() < loop.stop());
 
-	Size pivot_1 = loop.start();
-	Size pivot_3 = loop.stop();
-	Size pivot_2 = numeric::random::random_range(pivot_1 + 1, pivot_3 - 1);
+	core::Size pivot_1 = loop.start();
+	core::Size pivot_3 = loop.stop();
+	core::Size pivot_2 = numeric::random::random_range(pivot_1 + 1, pivot_3 - 1);
 
 	return Loop(pivot_1, pivot_3, pivot_2);
 }

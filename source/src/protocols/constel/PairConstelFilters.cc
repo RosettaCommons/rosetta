@@ -49,7 +49,7 @@ using core::Real;
 ///   currently returns false.
 ///
 bool FilterByIndoleCOO::is_satisfied(Pose const& ps,
-	utility::vector1<Size> const& cnl) {
+	utility::vector1<core::Size> const& cnl) {
 
 	using core::chemical::AA;
 	using core::chemical::aa_trp;
@@ -64,7 +64,7 @@ bool FilterByIndoleCOO::is_satisfied(Pose const& ps,
 
 	// check that one residue is Trp and the other is Asp or Glu
 	vector1<AA> aa_typs(2);
-	vector1<Size> aa_idxs(2);
+	vector1<core::Size> aa_idxs(2);
 	aa_typs[1] = aa_trp;
 	aa_typs[2] = aa_asp;
 	if ( !PresenceCommon::are_aa_pres(ps, cnl, aa_typs, aa_idxs) ) {
@@ -73,15 +73,15 @@ bool FilterByIndoleCOO::is_satisfied(Pose const& ps,
 			return false;
 		}
 	}
-	Size const iw = aa_idxs[1];
-	Size const io = aa_idxs[2];
+	core::Size const iw = aa_idxs[1];
+	core::Size const io = aa_idxs[2];
 
 	// check that Trp is not being mutated into Leu
 	Residue const& wres = ps.residue(cnl[iw]);
 	vector1<std::string> wpoi_nam(2);
 	wpoi_nam[1] = "CB";
 	wpoi_nam[2] = "CD1";
-	vector1<Size> wpoi_idx(2);
+	vector1<core::Size> wpoi_idx(2);
 	if ( !PresenceCommon::are_atoms_pres(wres, wpoi_nam, wpoi_idx) ) {
 		return false;
 	}
@@ -95,7 +95,7 @@ bool FilterByIndoleCOO::is_satisfied(Pose const& ps,
 
 	Residue const& ores = ps.residue(cnl[io]);
 	vector1<std::string> o_nams(3);
-	vector1<Size> o_idxs(3);
+	vector1<core::Size> o_idxs(3);
 	if ( aa_typs[2] == aa_asp ) {
 		o_nams[1] = "CG";
 		o_nams[2] = "OD1";
@@ -148,7 +148,7 @@ bool FilterByIndoleCOO::is_satisfied(Pose const& ps,
 ///  currently returns false.
 ///
 bool FilterByTryptamine::is_satisfied(Pose const& ps,
-	utility::vector1<Size> const& cnl) {
+	utility::vector1<core::Size> const& cnl) {
 
 	using core::chemical::AA;
 	using core::chemical::aa_trp;
@@ -162,21 +162,21 @@ bool FilterByTryptamine::is_satisfied(Pose const& ps,
 
 	// check that one residue is Trp and the other is Lys
 	vector1<AA> aa_typs(2);
-	vector1<Size> aa_idxs(2);
+	vector1<core::Size> aa_idxs(2);
 	aa_typs[1] = aa_trp;
 	aa_typs[2] = aa_lys;
 	if ( !PresenceCommon::are_aa_pres(ps, cnl, aa_typs, aa_idxs) ) {
 		return false;
 	}
-	Size const iw = aa_idxs[1];
-	Size const ik = aa_idxs[2];
+	core::Size const iw = aa_idxs[1];
+	core::Size const ik = aa_idxs[2];
 
 	// check that Trp is not being mutated into Leu
 	Residue const& wres = ps.residue(cnl[iw]);
 	vector1<std::string> wpoi_nam(2);
 	wpoi_nam[1] = "CG";
 	wpoi_nam[2] = "CD1";
-	vector1<Size> wpoi_idx(2);
+	vector1<core::Size> wpoi_idx(2);
 	if ( !PresenceCommon::are_atoms_pres(wres, wpoi_nam, wpoi_idx) ) {
 		return false;
 	}
@@ -190,7 +190,7 @@ bool FilterByTryptamine::is_satisfied(Pose const& ps,
 
 	Residue const& kres = ps.residue(cnl[ik]);
 	vector1<std::string> k_nams(2);
-	vector1<Size> k_idxs(2);
+	vector1<core::Size> k_idxs(2);
 	k_nams[1] = "CE";
 	k_nams[2] = "NZ";
 	if ( !PresenceCommon::are_atoms_pres(kres, k_nams, k_idxs) ) {
@@ -232,7 +232,7 @@ bool FilterByTryptamine::is_satisfied(Pose const& ps,
 ///  currently returns false.
 ///
 bool FilterByAmphetamine::is_satisfied(Pose const& ps,
-	utility::vector1<Size> const& cnl) {
+	utility::vector1<core::Size> const& cnl) {
 
 	using core::chemical::AA;
 	using core::chemical::aa_phe;
@@ -246,21 +246,21 @@ bool FilterByAmphetamine::is_satisfied(Pose const& ps,
 
 	// check that one residue is Phe and the other is Lys
 	vector1<AA> aa_typs(2);
-	vector1<Size> aa_idxs(2);
+	vector1<core::Size> aa_idxs(2);
 	aa_typs[1] = aa_phe;
 	aa_typs[2] = aa_lys;
 	if ( !PresenceCommon::are_aa_pres(ps, cnl, aa_typs, aa_idxs) ) {
 		return false;
 	}
-	Size const ip = aa_idxs[1];
-	Size const ik = aa_idxs[2];
+	core::Size const ip = aa_idxs[1];
+	core::Size const ik = aa_idxs[2];
 
 	// check that Phe is not being mutated into Leu
 	Residue const& pres = ps.residue(cnl[ip]);
 	vector1<std::string> ppoi_nam(2);
 	ppoi_nam[1] = "CG";
 	ppoi_nam[2] = "CD1";
-	vector1<Size> ppoi_idx(2);
+	vector1<core::Size> ppoi_idx(2);
 	if ( !PresenceCommon::are_atoms_pres(pres, ppoi_nam, ppoi_idx) ) {
 		return false;
 	}
@@ -274,7 +274,7 @@ bool FilterByAmphetamine::is_satisfied(Pose const& ps,
 
 	Residue const& kres = ps.residue(cnl[ik]);
 	vector1<std::string> k_nams(2);
-	vector1<Size> k_idxs(2);
+	vector1<core::Size> k_idxs(2);
 	k_nams[1] = "CE";
 	k_nams[2] = "NZ";
 	if ( !PresenceCommon::are_atoms_pres(kres, k_nams, k_idxs) ) {
@@ -317,7 +317,7 @@ bool FilterByAmphetamine::is_satisfied(Pose const& ps,
 ///  1. For constellations formed by other than 2 residues, the function
 ///  currently returns false.
 ///
-bool FilterByHistamine::is_satisfied(Pose const& ps, utility::vector1<Size> const& cnl) {
+bool FilterByHistamine::is_satisfied(Pose const& ps, utility::vector1<core::Size> const& cnl) {
 
 	using core::chemical::AA;
 	using core::chemical::aa_his;
@@ -331,14 +331,14 @@ bool FilterByHistamine::is_satisfied(Pose const& ps, utility::vector1<Size> cons
 
 	// check that one residue is His and the other is Lys
 	vector1<AA> aa_typs(2);
-	vector1<Size> aa_idxs(2);
+	vector1<core::Size> aa_idxs(2);
 	aa_typs[1] = aa_his;
 	aa_typs[2] = aa_lys;
 	if ( !PresenceCommon::are_aa_pres(ps, cnl, aa_typs, aa_idxs) ) {
 		return false;
 	}
-	Size const ih = aa_idxs[1];
-	Size const ik = aa_idxs[2];
+	core::Size const ih = aa_idxs[1];
+	core::Size const ik = aa_idxs[2];
 
 	// check that His's point of interest is farther away from Lys's NZ than from
 	// Lys's CE

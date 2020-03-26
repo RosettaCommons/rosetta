@@ -83,12 +83,12 @@ get_rmsd( core::pose::Pose const & pose1, core::pose::Pose const & pose2,
 void
 align_pose_and_add_rmsd_constraints( pose::Pose & pose,
 	pose::PoseCOP align_pose,
-	utility::vector1< Size > const & moving_res_list,
+	utility::vector1< core::Size > const & moving_res_list,
 	Real const rmsd_screen ) {
 
 	if ( align_pose == nullptr ) return;
 
-	utility::vector1< Size > root_partition_res = figure_out_root_partition_res( pose, moving_res_list );
+	utility::vector1< core::Size > root_partition_res = figure_out_root_partition_res( pose, moving_res_list );
 	if ( root_partition_res.size() == 0 ) root_partition_res.push_back( pose.fold_tree().root() );
 
 	// can later generalize to use 'reference_pose', not necessarily align_pose.
@@ -139,7 +139,7 @@ Real
 superimpose_pose_legacy(
 	pose::Pose & mod_pose,
 	pose::Pose const & ref_pose,
-	std::map< Size, Size > const & res_map )
+	std::map< core::Size, core::Size > const & res_map )
 {
 	id::AtomID_Map< id::AtomID > atom_ID_map = create_alignment_id_map_legacy( mod_pose, ref_pose, res_map );
 	if ( atom_ID_map.all_default() ) return 0.0;
@@ -154,7 +154,7 @@ create_alignment_id_map_legacy( pose::Pose const & mod_pose,
 
 	std::map< core::Size, core::Size > res_map;
 
-	for ( Size seq_num = 1; seq_num <= mod_pose.size(); ++seq_num ) {
+	for ( core::Size seq_num = 1; seq_num <= mod_pose.size(); ++seq_num ) {
 		if ( !superimpose_res.has_value(seq_num) ) continue;
 		res_map[ seq_num ] = seq_num;
 	}
@@ -176,7 +176,7 @@ create_alignment_id_map_legacy( pose::Pose const & mod_pose,
 	AtomID_Map< AtomID > atom_ID_map;
 	pose::initialize_atomid_map( atom_ID_map, mod_pose, AtomID::BOGUS_ATOM_ID() );
 
-	for ( Size seq_num = 1; seq_num <= mod_pose.size(); ++seq_num ) {
+	for ( core::Size seq_num = 1; seq_num <= mod_pose.size(); ++seq_num ) {
 		if ( mod_pose.residue_type( seq_num ).is_RNA() && res_map.find( seq_num ) != res_map.end() && res_map[ seq_num ] > 0 ) {
 			// Parin please update this function!!! Can't we just superimpose over C4'?
 			setup_suite_atom_id_map( mod_pose, ref_pose, seq_num,  res_map[ seq_num ], atom_ID_map);

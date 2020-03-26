@@ -26,7 +26,7 @@ DataMap::DataMap() = default;
 DataMap::~DataMap() = default;
 
 bool
-DataMap::add( std::string const & type, std::string const & name, utility::pointer::ReferenceCountOP const op ){
+DataMap::add( std::string const & type, std::string const & name, utility::VirtualBaseOP const op ){
 	if ( has( type, name ) ) {
 		TR<<"A datum of type "<<type<<" and name "<<name<<" has been added before. I'm not adding again. This is probably a BIG error but I'm letting it pass!"<<std::endl;
 		return false;
@@ -40,7 +40,7 @@ DataMap::add( std::string const & type, std::string const & name, utility::point
 // name already exists
 bool DataMap::add_resource(
 	std::string const & resource_name,
-	utility::pointer::ReferenceCountCOP op
+	utility::VirtualBaseCOP op
 )
 {
 	if ( has_resource( resource_name ) ) {
@@ -53,7 +53,7 @@ bool DataMap::add_resource(
 
 bool
 DataMap::has_type( std::string const & type ) const {
-	std::map< std::string, std::map< std::string, utility::pointer::ReferenceCountOP > >::const_iterator it;
+	std::map< std::string, std::map< std::string, utility::VirtualBaseOP > >::const_iterator it;
 
 	it = data_map_.find( type );
 	if ( it == data_map_.end() ) return false;
@@ -70,23 +70,23 @@ bool DataMap::has_resource( std::string const & resource_name ) const
 
 bool
 DataMap::has( std::string const & type, std::string const & name ) const {
-	std::map< std::string, std::map< std::string, utility::pointer::ReferenceCountOP > >::const_iterator it;
+	std::map< std::string, std::map< std::string, utility::VirtualBaseOP > >::const_iterator it;
 
 	it = data_map_.find( type );
 	if ( it == data_map_.end() ) return false;
-	std::map< std::string, utility::pointer::ReferenceCountOP >::const_iterator it2;
+	std::map< std::string, utility::VirtualBaseOP >::const_iterator it2;
 	it2 = it->second.find( name );
 	if ( it2 == it->second.end() ) return false;
 
 	return true;
 }
 
-std::map< std::string, utility::pointer::ReferenceCountOP > &
+std::map< std::string, utility::VirtualBaseOP > &
 DataMap::operator []( std::string const & type ) {
 	return data_map_[ type ];
 }
 
-std::map< std::string, utility::pointer::ReferenceCountOP > const &
+std::map< std::string, utility::VirtualBaseOP > const &
 DataMap::category_map(
 	std::string const & type
 ) const
@@ -115,9 +115,9 @@ DataMap::category_map(
 //  add( type, "dummy_entry", 0 );
 // }
 //
-// std::map< std::string, utility::pointer::ReferenceCountOP > & m( data_map_.find( type )->second );
+// std::map< std::string, utility::VirtualBaseOP > & m( data_map_.find( type )->second );
 // if ( m.size() > 1 ) {
-//  std::map< std::string, utility::pointer::ReferenceCountOP >::iterator it;
+//  std::map< std::string, utility::VirtualBaseOP >::iterator it;
 //  it=m.find( "dummy_entry" );
 //  m.erase( it );
 // }

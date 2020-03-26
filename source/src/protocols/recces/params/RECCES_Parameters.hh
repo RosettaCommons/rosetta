@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_recces_parameters_RECCES_Parameters_HH
 #define INCLUDED_protocols_recces_parameters_RECCES_Parameters_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/recces/params/RECCES_Parameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -26,7 +26,7 @@ namespace protocols {
 namespace recces {
 namespace params {
 
-class RECCES_Parameters: public utility::pointer::ReferenceCount {
+class RECCES_Parameters: public utility::VirtualBase {
 
 public:
 

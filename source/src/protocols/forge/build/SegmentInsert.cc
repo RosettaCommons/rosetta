@@ -92,7 +92,7 @@ SegmentInsert::SegmentInsert(
 	insert_pose_( insert )
 {
 	// construct the poly-ala a.a. string w/ insertion point
-	for ( Size i = 0, ie = ss_.length(); i < ie; ++i ) {
+	for ( core::Size i = 0, ie = ss_.length(); i < ie; ++i ) {
 		if ( ss.at( i ) != insertion_char() ) {
 			aa_.push_back( 'A' );
 		} else {
@@ -155,7 +155,7 @@ SegmentInsert::SegmentInsert(
 	} else {
 
 		// construct the poly-ala a.a. string w/ insertion point
-		for ( Size i = 0, ie = ss_.length(); i < ie; ++i ) {
+		for ( core::Size i = 0, ie = ss_.length(); i < ie; ++i ) {
 			if ( ss.at( i ) != insertion_char() ) {
 				aa_.push_back( 'A' );
 			} else {
@@ -394,23 +394,23 @@ SegmentInsert::MoveMap SegmentInsert::movemap() const {
 	}
 
 	// mark fully moveable parts of left flanking region
-	for ( Size i = left_flank.left + 1; i <= left_flank.right; ++i ) {
+	for ( core::Size i = left_flank.left + 1; i <= left_flank.right; ++i ) {
 		mm.set_bb( i, true );
 	}
 
 	// mark fully fixed parts of fixed insert
-	for ( Size i = insertion.left + 1, ie = insertion.right - 1; i <= ie; ++i ) {
+	for ( core::Size i = insertion.left + 1, ie = insertion.right - 1; i <= ie; ++i ) {
 		mm.set_bb( i, false );
 	}
 
 	// mark fully moveable parts of right insert
-	for ( Size i = right_flank.left, ie = right_flank.right - 1; i <= ie; ++i ) {
+	for ( core::Size i = right_flank.left, ie = right_flank.right - 1; i <= ie; ++i ) {
 		mm.set_bb( i, true );
 	}
 
 	// Now import torsion settings in the insert_pose_torsion_override_movemap_,
 	// transferring from lowest to highest stringency.
-	Size const ridx_offset = insertion.left - 1; // residue index offset, add this to movemap settings to get proper numbering
+	core::Size const ridx_offset = insertion.left - 1; // residue index offset, add this to movemap settings to get proper numbering
 
 	// TorsionType first
 	for ( auto i = insert_pose_torsion_override_movemap().torsion_type_begin(), ie = insert_pose_torsion_override_movemap().torsion_type_end(); i != ie; ++i ) {
@@ -633,7 +633,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 	if ( !performing_n_term_insertion ) {
 
-		Size const left_endpoint = performing_pure_insertion() ? interval_.right : interval_.left;
+		core::Size const left_endpoint = performing_pure_insertion() ? interval_.right : interval_.left;
 		left_has_lower_terminus = pose.residue( left_endpoint ).is_lower_terminus();
 		left_has_upper_terminus = pose.residue( left_endpoint ).is_upper_terminus();
 
@@ -644,7 +644,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 	if ( !performing_c_term_insertion ) {
 
-		Size const right_endpoint = performing_pure_insertion() ? interval_.right + 1 : interval_.right;
+		core::Size const right_endpoint = performing_pure_insertion() ? interval_.right + 1 : interval_.right;
 		right_has_lower_terminus = pose.residue( right_endpoint ).is_lower_terminus();
 		right_has_upper_terminus = pose.residue( right_endpoint ).is_upper_terminus();
 
@@ -660,7 +660,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	runtime_assert( !( left_has_lower_terminus && right_has_upper_terminus ) );
 
 	// count # cutpoints along segment [left, right)
-	Size n_cutpoints = 0;
+	core::Size n_cutpoints = 0;
 	if ( performing_pure_insertion() ) {
 
 		// for pure insertion/extensions we only check the residue
@@ -671,7 +671,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 	} else { // regular case
 
-		for ( Size i = interval_.left; i < interval_.right; ++i ) {
+		for ( core::Size i = interval_.left; i < interval_.right; ++i ) {
 			if ( pose.fold_tree().is_cutpoint( i ) ) {
 				++n_cutpoints;
 			}
@@ -724,7 +724,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 	//testing
 	//first identify the number of jups at this stage, this is the number to keep.
-	Size num_jumps_pre_processing (pose.num_jump());
+	core::Size num_jumps_pre_processing (pose.num_jump());
 
 	// BEGIN INTERVAL SHIFT: after this point, interval_ will begin to shift due to length
 	// changes in the Pose
@@ -755,12 +755,12 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		// halves.  If the jump existed somewhere in the original segment, the
 		// residue deletion should have shifted the jump to an appropriate place.
 		FoldTree ft = pose.fold_tree();
-		Size const root = ft.root();
+		core::Size const root = ft.root();
 
 		if ( n_cutpoints == 0 && !left_has_lower_terminus && !right_has_upper_terminus
 				&& !left_has_upper_terminus && !right_has_lower_terminus
 				) {
-			Size const new_jump_number = ft.new_jump( interval_.left, interval_.right, interval_.left );
+			core::Size const new_jump_number = ft.new_jump( interval_.left, interval_.right, interval_.left );
 
 			// following ensures changes in dihedral below do not shift the conformation
 			ft.jump_edge( new_jump_number ).start_atom() = "N";
@@ -768,7 +768,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 		} else if ( n_cutpoints > 0 ) { // check/modify existing jump
 
-			Size const jump = find_connecting_jump( interval_.left, interval_.right, ft );
+			core::Size const jump = find_connecting_jump( interval_.left, interval_.right, ft );
 
 			// We only do operations if there happens to be a jump defined
 			// between the segments that 'left' and 'right' live on.
@@ -781,7 +781,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 				// not shift the conformation
 				order( jump_edge );
 
-				if ( static_cast< Size >( jump_edge.start() ) == interval_.left ) {
+				if ( static_cast< core::Size >( jump_edge.start() ) == interval_.left ) {
 					jump_edge.start_atom() = "N";
 				} else if ( jump_edge.start_atom().empty() ) {
 					// if no existing jump atom, need to fill it in, otherwise
@@ -792,7 +792,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 					);
 				}
 
-				if ( static_cast< Size >( jump_edge.stop() ) == interval_.right ) {
+				if ( static_cast< core::Size >( jump_edge.stop() ) == interval_.right ) {
 					jump_edge.stop_atom() = "C";
 				} else if ( jump_edge.stop_atom().empty() ) {
 					// if no existing jump atom, need to fill it in, otherwise
@@ -825,7 +825,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 	// Step 1: perform the growing of the flanking regions not directly
 	// connected to the insertion
-	Size before_insert_point = 0;
+	core::Size before_insert_point = 0;
 	if ( !left_has_lower_terminus ) { // grow towards the right
 		debug_assert( !performing_n_term_insertion );
 
@@ -843,7 +843,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		}
 	}
 
-	Size after_insert_point = 0;
+	core::Size after_insert_point = 0;
 	if ( !right_has_upper_terminus ) { // grow towards the left
 		debug_assert( !performing_c_term_insertion );
 
@@ -891,7 +891,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 
 	// make a copy of the residues for safety
 	ResidueOPs insert_residues;
-	for ( Size i = 1, ie = insert_pose_.size(); i <= ie; ++i ) {
+	for ( core::Size i = 1, ie = insert_pose_.size(); i <= ie; ++i ) {
 		insert_residues.push_back( insert_pose_.residue( i ).clone() );
 	}
 
@@ -899,7 +899,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	// flanking regions
 	switch ( insert_connection_scheme ) {
 	case N : {
-		Size const new_anchor = grow_right_r(
+		core::Size const new_anchor = grow_right_r(
 			pose,
 			before_insert_point, insert_residues.begin(), insert_residues.end(),
 			true,
@@ -911,7 +911,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		break;
 	}
 	case C : {
-		Size const new_anchor = grow_left_r(
+		core::Size const new_anchor = grow_left_r(
 			pose,
 			after_insert_point, insert_residues.rbegin(), insert_residues.rend(),
 			true,
@@ -947,18 +947,18 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	// the new endpoints of the rebuilt segment
 
 	// pick a cutpoint and set the new topology if doing internal insertion
-	Size new_cutpoint = 0; // move this outside of the if statement, because the position is needed for editing no-jump tree
+	core::Size new_cutpoint = 0; // move this outside of the if statement, because the position is needed for editing no-jump tree
 	if ( !( performing_n_term_insertion || performing_c_term_insertion ) ) {
 
 		FoldTree new_ft = pose.fold_tree();
-		Size const cutpoint = find_cutpoint( pose, interval_.left, interval_.right );
+		core::Size const cutpoint = find_cutpoint( pose, interval_.left, interval_.right );
 		debug_assert( cutpoint > 0 ); // there should be a cutpoint
 
 		switch ( insert_connection_scheme ) {
 		case N : {
 			// must remember to avoid making cut that affects bb torsions
 			// at junction if user requests that option
-			Size const largest_possible_cut_position = keep_known_bb_torsions_at_junctions_ ? interval_.right - 1 : interval_.right;
+			core::Size const largest_possible_cut_position = keep_known_bb_torsions_at_junctions_ ? interval_.right - 1 : interval_.right;
 
 			if ( flanking_right_nres() > 0 ) {
 				new_cutpoint = numeric::random::rg().random_range( interval_.right - flanking_right_nres(), largest_possible_cut_position );
@@ -1000,13 +1000,13 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 			order( tmp );
 
 			bool start_changed = false;
-			if ( static_cast< Size >( tmp.start() ) == interval_.left - 1 ) {
+			if ( static_cast< core::Size >( tmp.start() ) == interval_.left - 1 ) {
 				tmp.start_atom() = "N";
 				start_changed = true;
 			}
 
 			bool stop_changed = false;
-			if ( static_cast< Size >( tmp.stop() ) == interval_.right + 1 ) {
+			if ( static_cast< core::Size >( tmp.stop() ) == interval_.right + 1 ) {
 				tmp.stop_atom() = "C";
 				stop_changed = true;
 			}
@@ -1050,16 +1050,16 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		//  protocols:loops::Loops loops_def_for_idealization;
 		// loops_def_for_idealization.add_loop(protocols::loops::Loop(interval_.left-2,interval_.right+2, 1));
 
-		utility::vector1<Size> cuts;
-		utility::vector1< std::pair<Size,Size> > jumps;
+		utility::vector1<core::Size> cuts;
+		utility::vector1< std::pair<core::Size,Size> > jumps;
 		protocols::forge::methods::jumps_and_cuts_from_pose(pose,jumps, cuts);
 		//debug
 		//std::cout << "num cuts: " << cuts.size() << " num jumps: " << jumps.size() << std::endl;
 		//translate:
-		ObjexxFCL::FArray1D< Size > Fcuts( num_jumps_pre_processing);
-		ObjexxFCL::FArray2D< Size > Fjumps(2, num_jumps_pre_processing);
+		ObjexxFCL::FArray1D< core::Size > Fcuts( num_jumps_pre_processing);
+		ObjexxFCL::FArray2D< core::Size > Fjumps(2, num_jumps_pre_processing);
 
-		for ( Size i = 1; i<= num_jumps_pre_processing; ++i ) { // only keeping the old jumps, wipe new ones
+		for ( core::Size i = 1; i<= num_jumps_pre_processing; ++i ) { // only keeping the old jumps, wipe new ones
 			//std::cout << (int)jumps[i].first << " " << (int)jumps[i].second << std::endl;
 
 			Fjumps(1,i) = std::min( (int)jumps[i].first, (int)jumps[i].second);
@@ -1070,7 +1070,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		//erase the new cut created
 		cuts.erase( std::remove( cuts.begin(), cuts.end(), new_cutpoint ), cuts.end() );
 
-		for ( Size i = 1; i<= cuts.size(); ++i ) {
+		for ( core::Size i = 1; i<= cuts.size(); ++i ) {
 			//std::cout << "cut " << (int)cuts[i] << std::endl;
 			Fcuts(i) = (int)cuts[i];
 			//    std::cout << " cut " << i << " : " << cuts(i) << std::endl;
@@ -1084,7 +1084,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 		pose.fold_tree(nojump_ft);
 		//std::cout << "IDEALIZE " << interval_.left << " to " << interval_.right << std::endl;
 		//protocols::loops::set_extended_torsions_and_idealize_loops( pose, loops_def_for_idealization);
-		for ( Size i = interval_.left; i <= interval_.right; i++ ) {
+		for ( core::Size i = interval_.left; i <= interval_.right; i++ ) {
 			core::conformation::idealize_position(i, pose.conformation());
 		}
 	}
@@ -1093,8 +1093,8 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	// Mark flanking regions and any existing connecting residues at left-1 and right
 	// needing omega correction.  Omega correction is not actually performed until
 	// bond length/angle corrections are done.
-	Size omega_left_start = 0, omega_left_end = 0;
-	Size omega_right_start = 0, omega_right_end = 0;
+	core::Size omega_left_start = 0, omega_left_end = 0;
+	core::Size omega_right_start = 0, omega_right_end = 0;
 
 	if ( flanking_left_nres() > 0 ) {
 
@@ -1213,18 +1213,18 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	// set the desired secondary structure across the flanking regions and the
 	// insert
 	String const f_l_ss = flanking_left_ss();
-	for ( Size i = 0, ie = f_l_ss.length(); i < ie; ++i ) {
+	for ( core::Size i = 0, ie = f_l_ss.length(); i < ie; ++i ) {
 		pose.set_secstruct( interval_.left + i, f_l_ss.at( i ) );
 	}
 
 	String const f_r_ss = flanking_right_ss();
-	Size r = interval_.right - f_r_ss.length() + 1;
-	for ( Size i = 0, ie = f_r_ss.length(); i < ie; ++i, ++r ) {
+	core::Size r = interval_.right - f_r_ss.length() + 1;
+	for ( core::Size i = 0, ie = f_r_ss.length(); i < ie; ++i, ++r ) {
 		pose.set_secstruct( r, f_r_ss.at( i ) );
 	}
 
 	r = interval_.left + flanking_left_nres();
-	for ( Size i = 1, ie = insert_pose_.size(); i <= ie; ++i, ++r ) {
+	for ( core::Size i = 1, ie = insert_pose_.size(); i <= ie; ++i, ++r ) {
 		pose.set_secstruct( r, insert_pose_.secstruct( i ) );
 	}
 

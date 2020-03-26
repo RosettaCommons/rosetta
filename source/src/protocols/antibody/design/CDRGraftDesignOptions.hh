@@ -23,7 +23,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -34,7 +34,7 @@ typedef utility::vector1<CDRGraftDesignOptionsOP> AntibodyCDRGraftDesignOptions;
 
 /// @brief Class that holds CDRGraftDesign Options.  Now that GraftDesign is not a separate 'thing', this should be split into
 /// CDRGraftOptions and CDRMinOptions eventually.
-class CDRGraftDesignOptions : public utility::pointer::ReferenceCount {
+class CDRGraftDesignOptions : public utility::VirtualBase {
 public:
 
 	CDRGraftDesignOptions();
@@ -146,7 +146,7 @@ private:
 
 };
 
-class CDRGraftDesignOptionsParser : public utility::pointer::ReferenceCount {
+class CDRGraftDesignOptionsParser : public utility::VirtualBase {
 public:
 
 	CDRGraftDesignOptionsParser();

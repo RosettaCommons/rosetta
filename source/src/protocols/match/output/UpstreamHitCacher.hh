@@ -24,7 +24,7 @@
 #include <protocols/match/upstream/UpstreamBuilder.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #ifdef WIN32
 #include <utility/OrderedTuple.hh>
 #include <utility/vector1.hh>
@@ -49,7 +49,7 @@ namespace output {
 class UpstreamHitCacher : public upstream::UpstreamResidueProcessor {
 public:
 
-	typedef utility::fixedsizearray1< Size, 2 >          ScaffoldRotamerPair;
+	typedef utility::fixedsizearray1< core::Size, 2 >          ScaffoldRotamerPair;
 	typedef utility::OrderedTuple< ScaffoldRotamerPair > ScaffoldRotamerTuple;
 
 public:
@@ -57,10 +57,10 @@ public:
 	~UpstreamHitCacher() override;
 
 	void
-	set_cache_size( Size n_rotamers_to_cache );
+	set_cache_size( core::Size n_rotamers_to_cache );
 
 	core::conformation::ResidueCOP
-	upstream_conformation_for_hit( Size geometric_constraint_id, Hit const & hit );
+	upstream_conformation_for_hit( core::Size geometric_constraint_id, Hit const & hit );
 
 public:
 
@@ -85,25 +85,25 @@ private:
 
 	/// @brief Returns 0 if the scaffold/rotamer pair is not already in the queue, and
 	/// the non-zero index in the queue if it is.
-	Size
-	already_in_queue( Size cst_id, ScaffoldRotamerTuple const & rotid ) const;
+	core::Size
+	already_in_queue( core::Size cst_id, ScaffoldRotamerTuple const & rotid ) const;
 
 	/// @brief Construct the rotamer for the requested scaffold/rotamer pair and
 	/// put it into the queue, evicting the previous queue resident if necessary.
-	Size
-	fetch( Size cst_id, ScaffoldRotamerTuple const & rotid );
+	core::Size
+	fetch( core::Size cst_id, ScaffoldRotamerTuple const & rotid );
 
 private:
 	MatcherCOP matcher_;
 
-	Size n_geometric_constraints_;
-	Size n_confs_to_cache_;
+	core::Size n_geometric_constraints_;
+	core::Size n_confs_to_cache_;
 
-	utility::vector1< std::map< ScaffoldRotamerTuple, Size > > index_for_rotamer_;
+	utility::vector1< std::map< ScaffoldRotamerTuple, core::Size > > index_for_rotamer_;
 
-	Size which_cst_being_processed_;
+	core::Size which_cst_being_processed_;
 
-	utility::vector1< Size > queue_head_;
+	utility::vector1< core::Size > queue_head_;
 	utility::vector1< utility::vector1< ScaffoldRotamerTuple > >           scafrot_pair_for_conf_;
 	utility::vector1< utility::vector1< core::conformation::ResidueCOP > > upstream_confs_;
 

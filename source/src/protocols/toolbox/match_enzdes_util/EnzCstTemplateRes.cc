@@ -68,6 +68,8 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
+using core::Size;
+
 /// @details Auto-generated virtual destructor
 EnzCstTemplateRes::~EnzCstTemplateRes() = default;
 
@@ -235,7 +237,7 @@ EnzCstTemplateRes::read_params(std::istringstream & line_stream)
 		}
 	}
 	//and now do the same for 1-letter code input (only canonical aas will work)
-	for ( Size ii = 0; ii != allowed_1res_raw.size(); ii++ ) {
+	for ( core::Size ii = 0; ii != allowed_1res_raw.size(); ii++ ) {
 
 		if ( oneletter_code_specifies_aa( allowed_1res_raw[ii] ) ) {
 
@@ -413,7 +415,7 @@ EnzCstTemplateRes::find_in_pose_if_missing_from_header( core::pose::Pose & pose)
 
 	//then option 3
 	utility::vector1< core::Size > found_positions;
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		std::string cur_res_name3 = pose.residue( i ).name3();
 		auto resfind = find( allowed_res_types_.begin(), allowed_res_types_.end(), cur_res_name3);
 
@@ -505,7 +507,7 @@ EnzCstTemplateRes::determine_atom_inds_for_restype(
 ) const
 {
 
-	Size natoms = restype->natoms();
+	core::Size natoms = restype->natoms();
 
 	utility::vector1< core::Size > at1_ids, at2_ids, at3_ids;
 
@@ -528,7 +530,7 @@ EnzCstTemplateRes::determine_atom_inds_for_restype(
 		// there is no function in the ResidueType class to do this yet, so we have to
 		//do the following hacky implementation for now
 
-		for ( Size ii = 1; ii <= natoms; ii++ ) {
+		for ( core::Size ii = 1; ii <= natoms; ii++ ) {
 			core::chemical::AtomType at1type = restype->atom_type( ii );
 
 			if ( at1type.name() == at1_type_ ) {
@@ -551,8 +553,8 @@ EnzCstTemplateRes::determine_atom_inds_for_restype(
 		//now we have to find the base atoms for each possible atoms for atom1
 		for ( core::Size & at1_id : at1_ids ) {
 
-			Size id_firstbase = restype->atom_base( at1_id );
-			Size id_secondbase = restype->atom_base( id_firstbase );
+			core::Size id_firstbase = restype->atom_base( at1_id );
+			core::Size id_secondbase = restype->atom_base( id_firstbase );
 
 			//ATTENTION: BACKBONE CONSTRAINT SPECIAL CASE: if an nbb or a CA atom are constrained
 			//the secondbase will be identical to the first atom, i.e. this torsion will be undefined

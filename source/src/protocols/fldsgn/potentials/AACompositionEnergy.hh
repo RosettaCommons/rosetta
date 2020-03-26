@@ -116,7 +116,7 @@ public:
 	/// context graphs are required
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
-	Size version() const override { return 1; }
+	core::Size version() const override { return 1; }
 
 private:
 

@@ -25,7 +25,7 @@
 
 // Utility headers
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 
 // C++ headers
@@ -56,7 +56,7 @@ UpstreamHitCacher::UpstreamHitCacher( MatcherCOP matcher ) :
 UpstreamHitCacher::~UpstreamHitCacher() = default;
 
 void
-UpstreamHitCacher::set_cache_size( Size n_rotamers_to_cache )
+UpstreamHitCacher::set_cache_size( core::Size n_rotamers_to_cache )
 {
 	n_confs_to_cache_ = n_rotamers_to_cache;
 	resize_arrays();
@@ -64,7 +64,7 @@ UpstreamHitCacher::set_cache_size( Size n_rotamers_to_cache )
 
 
 core::conformation::ResidueCOP
-UpstreamHitCacher::upstream_conformation_for_hit( Size cst_id, Hit const & hit )
+UpstreamHitCacher::upstream_conformation_for_hit( core::Size cst_id, Hit const & hit )
 {
 	core::conformation::ResidueCOP residue;
 #ifdef USE_OPENMP
@@ -73,7 +73,7 @@ UpstreamHitCacher::upstream_conformation_for_hit( Size cst_id, Hit const & hit )
 	{
 		ScaffoldRotamerPair srp; srp[ 1 ] = hit.scaffold_build_id(); srp[ 2 ] = hit.upstream_conf_id();
 		ScaffoldRotamerTuple srt( srp );
-		Size index = already_in_queue( cst_id, srt );
+		core::Size index = already_in_queue( cst_id, srt );
 		if ( index == 0 ) {
 			index = fetch( cst_id, srt );
 		}
@@ -91,13 +91,13 @@ UpstreamHitCacher::process_hit(
 {
 	runtime_assert( which_cst_being_processed_ != 0 );
 
-	Size const cst_id = which_cst_being_processed_;
+	core::Size const cst_id = which_cst_being_processed_;
 
 	if ( queue_head_[ cst_id ] == 0 ) {
 		/// empty queue condition
 		++queue_head_[ cst_id ];
 	} else {
-		Size next = queue_head_[ cst_id ] + 1;
+		core::Size next = queue_head_[ cst_id ] + 1;
 		if ( next == n_confs_to_cache_ + 1 ) next = 1;
 
 		if ( upstream_confs_[ cst_id ][ next ] ) {
@@ -110,7 +110,7 @@ UpstreamHitCacher::process_hit(
 		queue_head_[ cst_id ] = next;
 	}
 
-	Size index = queue_head_[ cst_id ];
+	core::Size index = queue_head_[ cst_id ];
 
 	upstream_confs_[ cst_id ][ index ] = utility::pointer::make_shared< core::conformation::Residue >( upstream_conformation );
 
@@ -132,7 +132,7 @@ UpstreamHitCacher::resize_arrays()
 	debug_assert( queue_head_.size() == n_geometric_constraints_ );
 
 	std::fill( queue_head_.begin(), queue_head_.end(), 0 );
-	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
+	for ( core::Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		index_for_rotamer_[ ii ].clear();
 		scafrot_pair_for_conf_[ ii ].clear();
 		scafrot_pair_for_conf_[ ii ].resize( n_confs_to_cache_ );
@@ -144,8 +144,8 @@ UpstreamHitCacher::resize_arrays()
 
 /// @brief Returns 0 if the scaffold/rotamer pair is not already in the queue, and
 /// the non-zero index in the queue if it is.
-UpstreamHitCacher::Size
-UpstreamHitCacher::already_in_queue( Size cst_id, ScaffoldRotamerTuple const & rotid ) const
+core::Size
+UpstreamHitCacher::already_in_queue( core::Size cst_id, ScaffoldRotamerTuple const & rotid ) const
 {
 	auto iter = index_for_rotamer_[ cst_id ].find( rotid );
 	if ( iter == index_for_rotamer_[ cst_id ].end() ) {
@@ -157,8 +157,8 @@ UpstreamHitCacher::already_in_queue( Size cst_id, ScaffoldRotamerTuple const & r
 
 /// @brief Construct the rotamer for the requested scaffold/rotamer pair and
 /// put it into the queue, evicting the previous queue resident if necessary.
-UpstreamHitCacher::Size
-UpstreamHitCacher::fetch( Size cst_id, ScaffoldRotamerTuple const & rotid )
+core::Size
+UpstreamHitCacher::fetch( core::Size cst_id, ScaffoldRotamerTuple const & rotid )
 {
 	which_cst_being_processed_ = cst_id;
 
@@ -184,9 +184,9 @@ MatcherCOP matcher_;
 Size n_geometric_constraints_;
 Size n_confs_to_cache_;
 
-utility::vector1< std::map< ScaffRotamerTuple, Size > > index_for_rotamer_;
+utility::vector1< std::map< ScaffRotamerTuple, core::Size > > index_for_rotamer_;
 
-utility::vector1< Size > queue_head_;
+utility::vector1< core::Size > queue_head_;
 utility::vector1< utility::vector1< ScaffoldRotamerTuple > >           scafrot_pair_for_conf_;
 utility::vector1< utility::vector1< core::conformation::ResidueCOP > > upstream_confs_;
 

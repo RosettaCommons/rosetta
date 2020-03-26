@@ -189,7 +189,7 @@ bool hConvergenceCheck::operator() ( const core::pose::Pose & pose ) {
 	runtime_assert( trials_ != nullptr );
 	TR.Trace << "TrialCounter in hConvergenceCheck: " << trials_->num_accepts() << std::endl;
 	if ( numeric::mod(trials_->num_accepts(),200) != 0 ) return true;
-	if ( (Size) trials_->num_accepts() <= last_move_ ) return true;
+	if ( (core::Size) trials_->num_accepts() <= last_move_ ) return true;
 	last_move_ = trials_->num_accepts();
 	core::Real converge_rms_small = (residue_selection_small_frags_.size()) ?
 		core::scoring::CA_rmsd( very_old_pose_, pose, residue_selection_small_frags_ ) : 0.0;
@@ -306,8 +306,8 @@ void
 FoldTreeHybridize::normalize_template_wts() {
 	// normalize weights
 	core::Real weight_sum = 0.0;
-	for ( Size i=1; i<=template_poses_.size(); ++i ) weight_sum += template_wts_[i];
-	for ( Size i=1; i<=template_poses_.size(); ++i ) template_wts_[i] /= weight_sum;
+	for ( core::Size i=1; i<=template_poses_.size(); ++i ) weight_sum += template_wts_[i];
+	for ( core::Size i=1; i<=template_poses_.size(); ++i ) template_wts_[i] /= weight_sum;
 }
 
 void
@@ -346,13 +346,13 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	protocols::loops::Loops my_chunks(template_chunks_[initial_template_index_]);
 
 	for ( core::Size i = 1; i<=template_chunks_[initial_template_index_].num_loop(); ++i ) {
-		Size seqpos_start_target = template_poses_[initial_template_index_]->pdb_info()->number(
+		core::Size seqpos_start_target = template_poses_[initial_template_index_]->pdb_info()->number(
 			template_chunks_[initial_template_index_][i].start());
 		my_chunks[i].set_start( seqpos_start_target );
-		Size seqpos_stop_target = template_poses_[initial_template_index_]->pdb_info()->number(
+		core::Size seqpos_stop_target = template_poses_[initial_template_index_]->pdb_info()->number(
 			template_chunks_[initial_template_index_][i].stop());
 		my_chunks[i].set_stop( seqpos_stop_target );
-		for ( Size j=seqpos_start_target; j<=seqpos_stop_target; ++j ) template_mask[j] = true;
+		for ( core::Size j=seqpos_start_target; j<=seqpos_stop_target; ++j ) template_mask[j] = true;
 	}
 
 	// strand pairings
@@ -365,8 +365,8 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	// note: this adds to my_chunks
 	std::set<core::Size>::iterator pairings_iter;
 	for ( pairings_iter = strand_pairings_template_indices_.begin(); pairings_iter != strand_pairings_template_indices_.end(); ++pairings_iter ) {
-		Size seqpos_pairing_i = template_poses_[*pairings_iter]->pdb_info()->number(template_chunks_[*pairings_iter][1].start());
-		Size seqpos_pairing_j = template_poses_[*pairings_iter]->pdb_info()->number(template_chunks_[*pairings_iter][2].start());
+		core::Size seqpos_pairing_i = template_poses_[*pairings_iter]->pdb_info()->number(template_chunks_[*pairings_iter][1].start());
+		core::Size seqpos_pairing_j = template_poses_[*pairings_iter]->pdb_info()->number(template_chunks_[*pairings_iter][2].start());
 		strand_pairs_.push_back( std::pair< core::Size, core::Size >( seqpos_pairing_i, seqpos_pairing_j ) );
 		if ( !template_mask[seqpos_pairing_i] ) {
 			protocols::loops::Loop new_loop_i = template_chunks_[*pairings_iter][1];
@@ -405,11 +405,11 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 
 			for ( core::Size icontig = 1; icontig<=template_chunks_[itempl].num_loop(); ++icontig ) {
 				// remap
-				Size seqpos_start_target = template_poses_[itempl]->pdb_info()->number(template_chunks_[itempl][icontig].start());
-				Size seqpos_stop_target = template_poses_[itempl]->pdb_info()->number(template_chunks_[itempl][icontig].stop());
+				core::Size seqpos_start_target = template_poses_[itempl]->pdb_info()->number(template_chunks_[itempl][icontig].start());
+				core::Size seqpos_stop_target = template_poses_[itempl]->pdb_info()->number(template_chunks_[itempl][icontig].stop());
 
 				bool uncovered = true;
-				for ( Size j=seqpos_start_target; j<=seqpos_stop_target && uncovered ; ++j ) {
+				for ( core::Size j=seqpos_start_target; j<=seqpos_stop_target && uncovered ; ++j ) {
 					uncovered &= !template_mask[j];
 				}
 
@@ -434,7 +434,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 			boost::math::poisson_distribution<> P( (core::Real) add_non_init_chunks_ );
 			core::Real selector = numeric::random::uniform();
 
-			for ( Size i=1; i<=wted_insertions_to_consider.size(); ++i ) {
+			for ( core::Size i=1; i<=wted_insertions_to_consider.size(); ++i ) {
 				// on average we want to take 'add_non_init_chunks_' chunks
 				// -- poisson distribution
 				if ( selector < boost::math::cdf(P,nchunks_taken) ) {
@@ -444,7 +444,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 
 				// ensure the insert is still valid
 				bool uncovered = true;
-				for ( Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop() && uncovered ; ++j ) {
+				for ( core::Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop() && uncovered ; ++j ) {
 					uncovered &= !template_mask[j];
 				}
 
@@ -452,7 +452,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 
 				TR << "Steal chunk: " << wted_insertions_to_consider[i].second.start() << "," << wted_insertions_to_consider[i].second.stop() << std::endl;
 				my_chunks.add_loop( wted_insertions_to_consider[i].second );
-				for ( Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop(); ++j ) {
+				for ( core::Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop(); ++j ) {
 					template_mask[j] = true;
 				}
 
@@ -478,7 +478,7 @@ FoldTreeHybridize::center_of_mass(core::pose::Pose const & pose) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
 
-		for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
+		for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
 			conformation::Atom const & atom( rsd.atom(j) );
 			massSum += atom.xyz();
 			nAtms++;
@@ -501,7 +501,7 @@ FoldTreeHybridize::translate_virt_to_CoM(core::pose::Pose & pose) {
 	// apply transformation
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > positions;
-	for ( Size iatom = 1; iatom <= pose.residue_type(pose.size()).natoms(); ++iatom ) {
+	for ( core::Size iatom = 1; iatom <= pose.residue_type(pose.size()).natoms(); ++iatom ) {
 		numeric::xyzVector<core::Real> atom_xyz = pose.xyz( core::id::AtomID(iatom,pose.size()) );
 		ids.push_back(core::id::AtomID(iatom,pose.size()));
 		positions.push_back(atom_xyz + translation);
@@ -553,7 +553,7 @@ void FoldTreeHybridize::get_residue_weights(
 	wt9.resize(num_residues_nonvirt, 1.0);
 
 	for ( core::Size i=1; i<=template_poses_[initial_template_index_]->size(); ++i ) {
-		Size ires = template_poses_[initial_template_index_]->pdb_info()->number(i);
+		core::Size ires = template_poses_[initial_template_index_]->pdb_info()->number(i);
 		if ( ires > wt9.size() ) {
 			TR.Error << "Template " << initial_template_index_ << " has a residue with PDB number " << ires << " but the input protein only has " << num_residues_nonvirt << " residues." << std::endl;
 			utility_exit_with_message("Template/Input length mismatch.");
@@ -719,7 +719,7 @@ FoldTreeHybridize::add_strand_pairings() {
 
 	// 2. identify templates with incorrect pairings
 	utility::vector1< core::scoring::dssp::Pairing > pairings_to_add;
-	ObjexxFCL::FArray2D< Size > jumps = jump_sample_.jumps();
+	ObjexxFCL::FArray2D< core::Size > jumps = jump_sample_.jumps();
 	for ( core::Size i = 1; i <= jump_sample_.size(); ++i ) {
 		core::Size jumpres1 = jumps(1,i), jumpres2 = jumps(2,i);
 		core::scoring::dssp::Pairing pairing = jump_sample_.get_pairing( jumpres1, jumpres2 );
@@ -770,10 +770,10 @@ FoldTreeHybridize::add_strand_pairing(
 	m.apply(*pairing_pose);
 	pairing_pose->fold_tree( jump_sample_.fold_tree() );
 	jump_mover->apply_at_all_positions( *pairing_pose );
-	ObjexxFCL::FArray2D< Size > jumps( 2, 1 );
+	ObjexxFCL::FArray2D< core::Size > jumps( 2, 1 );
 	jumps(1, 1) = 1;
 	jumps(2, 1) = 2;
-	ObjexxFCL::FArray1D< Size > cuts(1);
+	ObjexxFCL::FArray1D< core::Size > cuts(1);
 	cuts(1) = 1;
 	core::kinematics::FoldTree pairing_fold_tree;
 	if ( !pairing_fold_tree.tree_from_jumps_and_cuts( 2, 1, jumps, cuts, 1, true /* verbose */ ) ) {
@@ -1182,7 +1182,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	bool do_frag_inserts = false;
 	if ( total_frag_insertion_weight > 0. ) {
 		core::Real sum_residue_weight = 0.;
-		for ( Size ires=1; ires<= residue_weights.size(); ++ires ) sum_residue_weight += residue_weights[ires];
+		for ( core::Size ires=1; ires<= residue_weights.size(); ++ires ) sum_residue_weight += residue_weights[ires];
 		if ( sum_residue_weight > 1e-6 ) do_frag_inserts = true;
 	}
 	if ( do_frag_inserts ) {
@@ -1520,7 +1520,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	pose.remove_constraints();
 	restore_original_foldtree(pose);
 
-	for ( Size ires=1; ires<=pose.size(); ++ires ) {
+	for ( core::Size ires=1; ires<=pose.size(); ++ires ) {
 		using namespace ObjexxFCL::format;
 		TR.Debug << "Chunk trial counter:" << I(4,ires) << I(8, random_sample_chunk_mover->trial_counter(ires)) << std::endl;
 	}
@@ -1545,7 +1545,7 @@ void FoldTreeHybridize::auto_frag_insertion_weight(
 		if ( strand_pairings_template_indices_.count(i) ) continue;
 		template_pos_coverage += template_chunks_[i].num_loop();
 	}
-	template_pos_coverage = Size(template_pos_coverage * chunk_insertion_weight_);
+	template_pos_coverage = core::Size(template_pos_coverage * chunk_insertion_weight_);
 
 	core::Size frag_1mer_pos_coverage = frag_1mer_trial_mover->get_total_frames()*frag_1mer_n_frags;
 	core::Size small_frag_pos_coverage = small_frag_trial_mover->get_total_frames()*small_n_frags;

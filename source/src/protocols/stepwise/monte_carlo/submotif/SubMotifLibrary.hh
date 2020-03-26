@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_modeler_submotif_SubMotifLibrary_HH
 #define INCLUDED_protocols_stepwise_modeler_submotif_SubMotifLibrary_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -33,7 +33,7 @@ typedef utility::vector1< std::string > SubMotifSequenceSet;
 typedef std::string PoseTag;
 typedef utility::vector1< core::Size > SequenceMapping;
 
-class SubMotifLibrary: public utility::pointer::ReferenceCount {
+class SubMotifLibrary: public utility::VirtualBase {
 
 public:
 
@@ -86,10 +86,10 @@ private:
 	get_matches( utility::vector1< SequenceMapping > & all_matches /* stores matches */,
 		SequenceMapping const & matching_residues /* working mapping */,
 		std::string const & submotif_sequence,
-		utility::vector1< Size > const & submotif_cutpoints,
+		utility::vector1< core::Size > const & submotif_cutpoints,
 		std::string const & pose_sequence,
-		utility::vector1< Size > const & pose_cutpoints,
-		utility::vector1< Size > const & pose_domain_map ) const;
+		utility::vector1< core::Size > const & pose_cutpoints,
+		utility::vector1< core::Size > const & pose_domain_map ) const;
 
 	void
 	output_tags() const;

@@ -17,7 +17,7 @@
 
 #include <utility/py/PyExitCallback.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //#include <boost/utility.hpp>
 
@@ -27,7 +27,7 @@ namespace utility { namespace py {
 
 
 /// This class for holding callback function.
-class PyExitCallback : public utility::pointer::ReferenceCount //, boost::noncopyable
+class PyExitCallback : public utility::VirtualBase //, boost::noncopyable
 {
 public:
 	~PyExitCallback() override = default;

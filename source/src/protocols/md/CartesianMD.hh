@@ -158,7 +158,7 @@ private:
 
 	core::pose::Pose native_;
 	bool native_given_ = false;
-	std::map< Size, Size > native_resmap_;
+	std::map< core::Size, core::Size > native_resmap_;
 
 }; //class
 

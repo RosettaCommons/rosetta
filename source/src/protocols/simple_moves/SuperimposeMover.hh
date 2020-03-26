@@ -42,9 +42,9 @@ public:
 
 	void apply( core::pose::Pose & pose ) override;
 
-	void set_reference_pose( core::pose::Pose const & pose, Size start=1, Size end=0);
-	// Undefined, commenting out to fix PyRosetta build  void set_target_pose( Size start=1, Size end=-1);
-	void set_target_range( Size start, Size end );
+	void set_reference_pose( core::pose::Pose const & pose, core::Size start=1, core::Size end=0);
+	// Undefined, commenting out to fix PyRosetta build  void set_target_pose( core::Size start=1, core::Size end=-1);
+	void set_target_range( core::Size start, core::Size end );
 
 	void set_ca_only(bool setting);
 
@@ -66,8 +66,8 @@ public:
 
 
 private:
-	core::Real superimpose( core::pose::Pose & mod_pose, core::pose::Pose const & ref_pose, Size ref_start, Size ref_end, Size target_start, Size target_end);
-	core::Real superimposebb( core::pose::Pose & mod_pose, core::pose::Pose const & ref_pose, Size ref_start, Size ref_end, Size target_start, Size target_end);
+	core::Real superimpose( core::pose::Pose & mod_pose, core::pose::Pose const & ref_pose, core::Size ref_start, core::Size ref_end, core::Size target_start, core::Size target_end);
+	core::Real superimposebb( core::pose::Pose & mod_pose, core::pose::Pose const & ref_pose, core::Size ref_start, core::Size ref_end, core::Size target_start, core::Size target_end);
 
 private:
 

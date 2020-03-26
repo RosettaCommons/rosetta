@@ -43,29 +43,29 @@ namespace ssrbrelax {
 
 class RbRelax: public protocols::moves::Mover {
 public:
-	//	LoopRelax(
-	//		core::scoring::ScoreFunctionOP scorefxn_in,
-	//		core::pose::PoseOP pose_in
-	//		) : Mover(), pose_(pose_in), scorefxn_(scorefxn_in)
+	// LoopRelax(
+	//  core::scoring::ScoreFunctionOP scorefxn_in,
+	//  core::pose::PoseOP pose_in
+	//  ) : Mover(), pose_(pose_in), scorefxn_(scorefxn_in)
 	RbRelax():Mover()
 
 	{}
-//		set_default();
-//		}
+	//  set_default();
+	//  }
 
 	/*
 	void set_default() {
-		set_default_mc();
-		set_default_move_map();
+	set_default_mc();
+	set_default_move_map();
 	}
 	*/
-	RbRelax* clone() const override	{
+	RbRelax* clone() const override {
 		return new RbRelax(*this);
 	}
 
 	protocols::moves::MonteCarloOP get_mc();
-	//	void set_default_move_map();
-	//	void set_default_mc();
+	// void set_default_move_map();
+	// void set_default_mc();
 
 	void apply( core::pose::Pose & pose ) override;
 	void apply();
@@ -82,48 +82,48 @@ private:
 	core::Real m_Temperature_;
 
 	void rbrelax_main(
-										core::pose::Pose & pose
-										);
+		core::pose::Pose & pose
+	);
 
 	void segment_rb_move(
-											 core::pose::Pose & pose,
-											 devel::ssrbrelax::RbSegments & rbsegments,
-											 std::map< Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
-											 );
+		core::pose::Pose & pose,
+		devel::ssrbrelax::RbSegments & rbsegments,
+		std::map< core::Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
+	);
 
 	void perturb_segment_and_close_loops(
-																			 core::pose::Pose & pose,
-																			 devel::ssrbrelax::RbSegments & rbsegments,
-																			 devel::ssrbrelax::RbSegments & this_segment,
-																			 std::map< Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
-																			 );
+		core::pose::Pose & pose,
+		devel::ssrbrelax::RbSegments & rbsegments,
+		devel::ssrbrelax::RbSegments & this_segment,
+		std::map< core::Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
+	);
 
 	void perturb_segment(
-											 core::pose::Pose & pose,
-											 devel::ssrbrelax::RbSegments & this_segment,
-											 int const & dof,
-											 float const & stddev
-											 );
+		core::pose::Pose & pose,
+		devel::ssrbrelax::RbSegments & this_segment,
+		int const & dof,
+		float const & stddev
+	);
 
 	void set_rbrelax_allow_move_map(
-																	core::kinematics::MoveMap & rb_move_map,
-																	int const & flexible_jump
-																	);
+		core::kinematics::MoveMap & rb_move_map,
+		int const & flexible_jump
+	);
 
 	void initialize_fragments(
-														std::map< Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
-														);
+		std::map< core::Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
+	);
 
 	void close_both_loops(
-												core::pose::Pose & pose,
-												devel::ssrbrelax::RbSegments & this_segment,
-												std::map< Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
-												);
+		core::pose::Pose & pose,
+		devel::ssrbrelax::RbSegments & this_segment,
+		std::map< core::Size, protocols::frags::TorsionFragmentLibraryOP > & frag_libs
+	);
 
 	void refine_segment(
-											core::pose::Pose & pose,
-											devel::ssrbrelax::RbSegments & this_segment
-											);
+		core::pose::Pose & pose,
+		devel::ssrbrelax::RbSegments & this_segment
+	);
 
 
 }; // class RbRelax

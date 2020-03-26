@@ -43,7 +43,7 @@ namespace jd3 {
 namespace standard {
 
 PreliminaryLarvalJobTracker::PreliminaryLarvalJobTracker():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 
 }

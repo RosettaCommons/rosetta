@@ -91,11 +91,11 @@ bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::S
 	while ( !pose.residue_type(nres).is_polymer() ) nres--;
 
 	// get current cutpoints; don't try to connect these
-	utility::vector1< Size > cuts_in = pose.fold_tree().cutpoints();
+	utility::vector1< core::Size > cuts_in = pose.fold_tree().cutpoints();
 	std::sort( cuts_in.begin(), cuts_in.end() );
 
 	// bail if (ir,jr) crosses a cut
-	for ( Size i=1; i<=cuts_in.size(); ++i ) {
+	for ( core::Size i=1; i<=cuts_in.size(); ++i ) {
 		if ( cuts_in[i]<=jr && cuts_in[i]>=ir ) {
 			TR.Error << "residue range crosses cut    IR: " << ir << "  JR: " << jr << "  CUT: " << cuts_in[i] << std::endl;
 			return false;
@@ -112,7 +112,7 @@ bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::S
 	// rigid body transfer. This is fairly hacky, but actually works v reliably and is easy to understand, without
 	// having to mess deeply with the fold tree.
 	// FoldTree f;
-	// Size cutpoint= jr-1;
+	// core::Size cutpoint= jr-1;
 	// f.add_edge( 1, ir, Edge::PEPTIDE );
 	// f.add_edge( ir, cutpoint, Edge::PEPTIDE );
 	// f.add_edge( cutpoint + 1, jr, Edge::PEPTIDE );
@@ -122,8 +122,8 @@ bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::S
 	//fpd handle multiple chains/chainbreaks
 	FoldTree f;
 	core::Size last_cut=0, jump_num=2;
-	Size cutpoint= jr-1;
-	for ( Size i=1; i<=cuts_in.size(); ++i ) {
+	core::Size cutpoint= jr-1;
+	for ( core::Size i=1; i<=cuts_in.size(); ++i ) {
 		if ( cuts_in[i] >= nres ) break;
 		if ( cutpoint > last_cut && cutpoint < cuts_in[i] ) {
 			f.add_edge( last_cut+1, ir, Edge::PEPTIDE );
@@ -207,11 +207,11 @@ bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr
 	while ( !pose.residue_type(nres).is_polymer() ) nres--;
 
 	// get current cutpoints; don't try to connect these
-	utility::vector1< Size > cuts_in = pose.fold_tree().cutpoints();
+	utility::vector1< core::Size > cuts_in = pose.fold_tree().cutpoints();
 	std::sort( cuts_in.begin(), cuts_in.end() );
 
 	// bail if (ir,jr) crosses a cut
-	for ( Size i=1; i<=cuts_in.size(); ++i ) {
+	for ( core::Size i=1; i<=cuts_in.size(); ++i ) {
 		if ( cuts_in[i]<=jr && cuts_in[i]>=ir ) {
 			TR.Error << "residue range crosses cut    IR: " << ir << "  JR: " << jr << "  CUT: " << cuts_in[i] << std::endl;
 			return false;
@@ -228,7 +228,7 @@ bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr
 	// rigid body transfer. This is fairly hacky, but actually works v reliably and is easy to understand, without
 	// having to mess deeply with the fold tree.
 	// FoldTree f;
-	// Size cutpoint= jr-1;
+	// core::Size cutpoint= jr-1;
 	// f.add_edge( 1, ir, Edge::PEPTIDE );
 	// f.add_edge( ir, cutpoint, Edge::PEPTIDE );
 	// f.add_edge( cutpoint + 1, jr, Edge::PEPTIDE );
@@ -238,8 +238,8 @@ bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr
 	//fpd handle multiple chains/chainbreaks
 	FoldTree f, f_orig=pose.fold_tree();
 	core::Size last_cut=0, jump_num=2;
-	Size cutpoint= jr-1;
-	for ( Size i=1; i<=cuts_in.size(); ++i ) {
+	core::Size cutpoint= jr-1;
+	for ( core::Size i=1; i<=cuts_in.size(); ++i ) {
 		if ( cuts_in[i] >= nres ) break;
 		if ( cutpoint > last_cut && cutpoint < cuts_in[i] ) {
 			f.add_edge( last_cut+1, ir, Edge::PEPTIDE );
@@ -557,7 +557,7 @@ Size LoopHashMap::radial_count( core::Size radius, numeric::geometry::hashing::R
 	center[4] = numeric::nonnegative_principal_angle_degrees(center[4] );
 	center[5] = numeric::nonnegative_principal_angle_degrees(center[5] );
 	std::vector< boost::uint64_t > bin_index_vec = hash_->radial_bin_index( radius, center );
-	Size count = 0;
+	core::Size count = 0;
 	for ( auto & i : bin_index_vec ) {
 		count += backbone_index_map_.count( i );
 	}

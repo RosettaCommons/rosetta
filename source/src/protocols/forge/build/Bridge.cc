@@ -184,7 +184,7 @@ Bridge::MoveMap Bridge::movemap() const {
 
 	MoveMap mm;
 
-	for ( Size i = ival.left; i <= ival.right; ++i ) {
+	for ( core::Size i = ival.left; i <= ival.right; ++i ) {
 		mm.set_bb( i, true );
 		mm.set_chi( i, true );
 	}

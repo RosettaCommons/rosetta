@@ -16,7 +16,7 @@
 
 // Unit Headers
 #include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <ObjexxFCL/FArray3D.hh>
 #include <numeric/xyzMatrix.hh>
@@ -35,7 +35,7 @@
 namespace core {
 namespace scoring {
 
-class PoissonBoltzmannPotential : public utility::pointer::ReferenceCount
+class PoissonBoltzmannPotential : public utility::VirtualBase
 {
 public:
 	static const std::string APBS_CONFIG_EXT;

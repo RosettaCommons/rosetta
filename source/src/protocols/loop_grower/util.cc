@@ -44,7 +44,7 @@ transform_res_to_subunit( core::pose::Pose &pose, core::conformation::ResidueOP 
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 	core::Size nres_asu = symm_info->num_independent_residues();
 
-	for ( Size i=1; i<=xformed->atoms().size(); ++i ) {
+	for ( core::Size i=1; i<=xformed->atoms().size(); ++i ) {
 		numeric::xyzVector< core::Real > X = xformed->xyz(i);
 		numeric::xyzVector< core::Real > sX = SymmConf.apply_transformation( X, 1, symmcopy*nres_asu);
 		xformed->set_xyz(i, sX);
@@ -52,21 +52,21 @@ transform_res_to_subunit( core::pose::Pose &pose, core::conformation::ResidueOP 
 }
 
 void
-transform_to_closest_symmunit(core::pose::Pose & cen_pose, core::pose::Pose & fa_pose, Size lower_pose){
+transform_to_closest_symmunit(core::pose::Pose & cen_pose, core::pose::Pose & fa_pose, core::Size lower_pose){
 	auto & SymmConf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( cen_pose.conformation()) );
 	core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
-	Size nsubunits = symm_info->subunits();
+	core::Size nsubunits = symm_info->subunits();
 	//add terminus checks!!!!
 	if ( lower_pose == symm_info->num_independent_residues() ) return;
 	if ( lower_pose == 1 ) return;
-	Size rescount = lower_pose;
+	core::Size rescount = lower_pose;
 	while ( !cen_pose.fold_tree().is_cutpoint(rescount) ) rescount++;
 	core::conformation::ResidueOP xformed = cen_pose.conformation().residue_cop(rescount+1)->clone();
 	std::string mobileatom = "C";
 	std::string staticatom = "N";
 	Real shortest_dist = 9999;
-	Size bestsubunit = 1;
-	for ( Size i=1; i<=nsubunits; i++ ) {
+	core::Size bestsubunit = 1;
+	for ( core::Size i=1; i<=nsubunits; i++ ) {
 		transform_res_to_subunit(cen_pose, xformed, i);
 		Real distance = (cen_pose.residue(rescount).atom(staticatom).xyz()-xformed->atom(mobileatom).xyz()).length();
 		if ( distance < shortest_dist ) {
@@ -76,7 +76,7 @@ transform_to_closest_symmunit(core::pose::Pose & cen_pose, core::pose::Pose & fa
 	}
 	//replace with best symmetric unit
 	bool ischainbreak = false;
-	for ( Size i=rescount+1; i<=cen_pose.total_residue(); i++ ) {
+	for ( core::Size i=rescount+1; i<=cen_pose.total_residue(); i++ ) {
 		if ( cen_pose.fold_tree().is_cutpoint(i) ) {
 			ischainbreak = true;
 		}

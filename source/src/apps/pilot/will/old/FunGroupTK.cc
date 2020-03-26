@@ -170,7 +170,7 @@ struct KRSQuery {
 	KRSQuery(KRSQueryType  typ, Vec  c, Vec  a,         Real  dt=0.5, Real  at=0.175, Real  clsh = 2.8*2.8) : type(typ),cen(  c  ),axs(  a  ),ori(0,0,0),disth( dt),angth(  at  ),clash(clsh) {}
 };
 
-class FunGroupTK : public utility::pointer::ReferenceCount {
+class FunGroupTK : public utility::VirtualBase {
 protected:
 	Pose const pose_;
 	vector1<Size> const pos_;

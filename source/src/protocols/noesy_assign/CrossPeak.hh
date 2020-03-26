@@ -32,7 +32,7 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
 
 //// C++ headers
@@ -48,7 +48,7 @@
 namespace protocols {
 namespace noesy_assign {
 
-class CrossPeak : public utility::pointer::ReferenceCount {
+class CrossPeak : public utility::VirtualBase {
 public:
 	/// @brief a single dimension of a multidimensional peak, stores putative assignments as indices into Resonance table
 	class Spin {
@@ -250,7 +250,7 @@ public:
 	/// @brief number of assignments with peak volume higher than params.min_volume_
 	core::Size n_Vmin_assignments();
 
-	//void invalidate_assignment( Size assignment );
+	//void invalidate_assignment( core::Size assignment );
 
 #ifndef WIN32
 	PeakAssignments const& assignments() const { return assignments_; }
@@ -341,9 +341,9 @@ public:
 	CrossPeakOP empty_clone() override {
 		return utility::pointer::make_shared< CrossPeak3D >();
 	}
-	void assign_spin( Size spin_id ) override;
+	void assign_spin( core::Size spin_id ) override;
 	core::Size assign_spin( core::Size spin_id, core::Size res_ids[] ) override; //provide array with spin 1 spin 2 label 1 label 2
-	virtual void assign_labelled_spin( Size proton );
+	virtual void assign_labelled_spin( core::Size proton );
 	bool has_label( core::Size i ) const override { return i==1; }
 	Spin& label( core::Size ) override { return label1_; }
 	Spin const& label( core::Size ) const override { return label1_; }
@@ -359,7 +359,7 @@ public:
 	CrossPeakOP empty_clone() override {
 		return utility::pointer::make_shared< CrossPeak4D >();
 	}
-	void assign_spin( Size proton ) override;
+	void assign_spin( core::Size proton ) override;
 	core::Size assign_spin( core::Size spin_id, core::Size res_ids[] ) override; //provide array with spin 1 spin 2 label 1 label 2
 	bool has_label( core::Size ) const override { return true; }
 	Spin& label( core::Size i ) override { return i==1 ? CrossPeak3D::label( 1 ) : label2_; }

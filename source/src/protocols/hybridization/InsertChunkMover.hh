@@ -53,17 +53,17 @@ public:
 	void set_template(core::pose::PoseCOP template_pose, core::Size template_id,
 		std::map <core::Size, core::Size> const & sequence_alignment);
 
-	void set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number, bool anchor_insert_only_in);
+	void set_aligned_chunk(core::pose::Pose const & pose, core::Size const jump_number, bool anchor_insert_only_in);
 
 	bool get_local_sequence_mapping(core::pose::Pose & pose,
 		int registry_shift = 0,
-		Size MAX_TRIAL = 100 );
+		core::Size MAX_TRIAL = 100 );
 
 	void check_overlap(core::pose::Pose & pose);
 
 	void set_registry_shift(int registry_shift);
 
-	Size trial_counter(Size ires);
+	core::Size trial_counter(core::Size ires);
 
 	void apply(core::pose::Pose & pose) override;
 
@@ -76,11 +76,11 @@ private:
 	int registry_shift_;
 	bool anchor_insert_only_;
 
-	Size jump_number_; // the jump to be realigned
-	Size seqpos_start_; // start and end seqpose of the chunk, downstream of the jump
-	Size seqpos_stop_;
-	Size seqpos_aligned_start_; // start and end seqpose of the aligned piece
-	Size seqpos_aligned_stop_;
+	core::Size jump_number_; // the jump to be realigned
+	core::Size seqpos_start_; // start and end seqpose of the chunk, downstream of the jump
+	core::Size seqpos_stop_;
+	core::Size seqpos_aligned_start_; // start and end seqpose of the aligned piece
+	core::Size seqpos_aligned_stop_;
 
 	bool success_;
 
@@ -92,7 +92,7 @@ private:
 
 	std::map <core::Size, core::Size> sequence_alignment_local_; // with registry shift of the aligned chunk
 	core::id::AtomID_Map< core::id::AtomID > atom_map_; // atom map for superposition
-	utility::vector1 <Size> align_trial_counter_;
+	utility::vector1 <core::Size> align_trial_counter_;
 
 };
 

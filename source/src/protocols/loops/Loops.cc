@@ -60,12 +60,12 @@ using namespace ObjexxFCL;
 
 static basic::Tracer tr( "loops" );
 
-Loops::Loops() : utility::pointer::ReferenceCount()
+Loops::Loops() : utility::VirtualBase()
 {
 	init( LoopList() );
 }
 
-Loops::Loops( const Loops & src ) : utility::pointer::ReferenceCount()
+Loops::Loops( const Loops & src ) : utility::VirtualBase()
 {
 	init( src.loops() );
 }
@@ -90,8 +90,8 @@ Loops::Loops( utility::vector1< bool > const& selection,
 	init( LoopList(), false );
 
 	bool prev = false;
-	Size start = 0;
-	for ( Size i = 1; i <= selection.size(); ++i ) {
+	core::Size start = 0;
+	for ( core::Size i = 1; i <= selection.size(); ++i ) {
 		if ( selection[i] && !prev ) {
 			start = i;
 		} else if ( !selection[i] && prev ) {
@@ -184,7 +184,7 @@ void Loops::center_of_mass(const core::pose::Pose& pose,
 
 	Real count = 0;
 	for ( auto const & i : *this ) {
-		for ( Size j = i.start(); j <= i.stop(); ++j ) {
+		for ( core::Size j = i.start(); j <= i.stop(); ++j ) {
 			(*center) += pose.xyz(NamedAtomID("CA", j));
 			++count;
 		}
@@ -252,9 +252,9 @@ Loops::write_loops_to_stream(
 
 void
 Loops::add_loop( loops::Loop loop, core::Size minimal_gap ) {
-	Size const start( loop.start() );
-	Size const stop( loop.stop() );
-	Size const cut( loop.cut() );
+	core::Size const start( loop.start() );
+	core::Size const stop( loop.stop() );
+	core::Size const cut( loop.cut() );
 	tr.Trace << "adding loop " << loop << std::endl;
 	if (  ( cut == 0 || ( cut>=start-1 && cut <= stop )) && start <= stop ) {
 		for ( auto it = loops_.begin(), it_end = loops_.end(); it != it_end; ++it ) {
@@ -286,9 +286,9 @@ Loops::add_loop( loops::Loop loop, core::Size minimal_gap ) {
 //////////////////////////////////////////////////////////////////////
 void
 Loops::add_loop(
-	Size const start,
-	Size const stop,
-	Size const cut,
+	core::Size const start,
+	core::Size const stop,
+	core::Size const cut,
 	core::Real skip_rate,
 	bool const extended
 )
@@ -334,11 +334,11 @@ void
 Loops::add_overlap_loop( Loop const & loop ) {
 
 	//    if ( loop.cut() >=loop.start()-1 && loop.cut() <= loop.stop() && loop.start() < loop.stop() ) {
-	Size temp_start = loop.start();
-	Size temp_stop  = loop.stop();
-	Size temp_cut   = loop.cut();
-	std::vector<Size> loops_to_delete_start;
-	std::vector<Size> loops_to_delete_stop;
+	core::Size temp_start = loop.start();
+	core::Size temp_stop  = loop.stop();
+	core::Size temp_cut   = loop.cut();
+	std::vector<core::Size> loops_to_delete_start;
+	std::vector<core::Size> loops_to_delete_stop;
 	for ( const_iterator it = loops_.begin(), it_end = loops_.end();
 			it != it_end; ++it ) {
 		// check for conflicts
@@ -366,7 +366,7 @@ Loops::add_overlap_loop( Loop const & loop ) {
 			}
 		}
 	}
-	for ( Size d = 0; d < loops_to_delete_start.size(); ++d ) {
+	for ( core::Size d = 0; d < loops_to_delete_start.size(); ++d ) {
 		delete_loop(loops_to_delete_start[d], loops_to_delete_stop[d] );
 	}
 	loops_.push_back( Loop( temp_start, temp_stop, temp_cut,  loop.skip_rate(), loop.is_extended() ) );
@@ -382,8 +382,8 @@ Loops::add_overlap_loop( Loop const & loop ) {
 /////////////////////////////////////////////////////////////////////////////
 void
 Loops::delete_loop(
-	Size const start,
-	Size const stop
+	core::Size const start,
+	core::Size const stop
 )
 {
 	runtime_assert( start < stop );
@@ -399,10 +399,10 @@ Loops::delete_loop(
 /////////////////////////////////////////////////////////////////////////////
 Loops::const_iterator
 Loops::one_random_loop() const {
-	Size const size = loops_.size();
+	core::Size const size = loops_.size();
 	runtime_assert( size > 0 );
-	Size index =0;
-	auto const end = static_cast< Size >( numeric::random::uniform()*size );
+	core::Size index =0;
+	auto const end = static_cast< core::Size >( numeric::random::uniform()*size );
 	auto it = loops_.begin();
 	while ( index != end ) { ++index; ++it; }
 	return it;
@@ -410,7 +410,7 @@ Loops::one_random_loop() const {
 /////////////////////////////////////////////////////////////////////////////
 Size
 Loops::loop_size(
-	Size const num
+	core::Size const num
 ) const {
 	runtime_assert( num > 0 && num <= loops_.size() );
 	return loops_[num].size();
@@ -418,7 +418,7 @@ Loops::loop_size(
 /////////////////////////////////////////////////////////////////////////////
 Size
 Loops::loop_size() const {
-	Size size = 0;
+	core::Size size = 0;
 	for ( auto const & loop : loops_ ) {
 		size += loop.size();
 	}
@@ -434,7 +434,7 @@ core::Size Loops::nr_residues() const {
 }
 /////////////////////////////////////////////////////////////////////////////
 bool
-Loops::is_loop_residue( Size const seqpos, int const offset ) const
+Loops::is_loop_residue( core::Size const seqpos, int const offset ) const
 {
 	for ( auto const & loop : loops_ ) {
 		if ( seqpos >= (loop.start()+offset) && seqpos <= (loop.stop()-offset) ) return true;
@@ -455,7 +455,7 @@ Loops::loop_of_residue( core::Size const seqpos, Loop& loop ) const {
 
 Size
 Loops::loop_index_of_residue( core::Size const seqpos ) const {
-	Size ct( 1 );
+	core::Size ct( 1 );
 	for ( auto it=loops_.begin(), it_end=loops_.end(); it != it_end; ++it,++ct ) {
 		if ( seqpos >= it->start() && seqpos <= it->stop() ) {
 			return ct;
@@ -584,7 +584,7 @@ void Loops::choose_cutpoints( core::pose::Pose const & pose ) {
 // @Check loops are compatible with pose.
 void Loops::verify_against( core::pose::Pose const & pose ) const {
 	using core::Size;
-	Size nres = pose.size();
+	core::Size nres = pose.size();
 
 	for ( auto const & it : *this ) {
 		if ( it.start() <= 0 ) {
@@ -595,9 +595,9 @@ void Loops::verify_against( core::pose::Pose const & pose ) const {
 			tr.Error << "invalid loop " << it.start() << " " << it.stop() << " " << it.cut() << ": End more than nres(" << nres << ")" << std::endl;
 			utility_exit_with_message("LoopRebuild::ERROR Loop definition out of boundary \n" );
 		}
-		Size loopbegin_i = std::min(  it.start() , (Size)1 );
-		Size loopend_i = std::max(  it.stop() , nres );
-		Size cutpt_i = it.cut();
+		core::Size loopbegin_i = std::min(  it.start() , (core::Size)1 );
+		core::Size loopend_i = std::max(  it.stop() , nres );
+		core::Size cutpt_i = it.cut();
 		if ( cutpt_i != 0 && ( cutpt_i > loopend_i || cutpt_i < loopbegin_i ) ) {
 			tr.Error << "invalid loop " << loopbegin_i << " " << loopend_i << " " << cutpt_i << std::endl;
 			utility_exit_with_message("LoopRebuild::ERROR Loop definition out of boundary \n" );
@@ -781,7 +781,7 @@ void Loops::grow_loop(
 		<< ")  " <<  loop << std::endl;
 }
 
-void Loops::get_residues( utility::vector1< Size >& selection ) const {
+void Loops::get_residues( utility::vector1< core::Size >& selection ) const {
 	selection.clear();
 	for ( auto const & loop : loops_ ) {
 		loop.get_residues( selection );

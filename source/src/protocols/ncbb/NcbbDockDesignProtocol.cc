@@ -249,7 +249,7 @@ NcbbDockDesignProtocol::apply(
 	/*********************************************************
 	Peptide Setup
 	**********************************************************/
-	Size pep_start( pose.conformation().chain_begin( 2 ) ); Size pep_end( pose.size() );
+	core::Size pep_start( pose.conformation().chain_begin( 2 ) ); core::Size pep_end( pose.size() );
 	TR << "pep_start: " << pep_start << " pep_end: " << pep_end << std::endl;
 
 	// create movemap for peptide
@@ -263,7 +263,7 @@ NcbbDockDesignProtocol::apply(
 	utility::vector1< core::Size > oop_seq_positions = core::pose::ncbb::initialize_oops(pose);
 	utility::vector1< core::Size > hbs_seq_positions = core::pose::ncbb::initialize_hbs(pose);
 
-	for ( Size i = 1; i <= ncbb_seq_positions.size(); ++i  ) {
+	for ( core::Size i = 1; i <= ncbb_seq_positions.size(); ++i  ) {
 		pert_pep_mm->set_bb( ncbb_seq_positions[i], false );
 
 		if ( score_fxn_->has_zero_weight( core::scoring::atom_pair_constraint ) ) {
@@ -394,7 +394,7 @@ NcbbDockDesignProtocol::apply(
 	}
 
 	//pose.dump_pdb("pre_main_loop.pdb");
-	for ( Size k = 1; k <= Size( dock_design_loop_num_ ); ++k ) {
+	for ( core::Size k = 1; k <= core::Size( dock_design_loop_num_ ); ++k ) {
 		pert_mc->reset(pose);
 
 		if ( k == 1 && ncbb_design_first_ ) {
@@ -402,7 +402,7 @@ NcbbDockDesignProtocol::apply(
 		}
 
 		// Perturbation phase - loop
-		for ( Size j = 1; j <= Size( pert_num_ ); ++j ) {
+		for ( core::Size j = 1; j <= core::Size( pert_num_ ); ++j ) {
 			TR << "PERTURB: " << k << " / "  << j << std::endl;
 			pert_trial->apply( pose );
 			protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_PERT (pert score)", (*pert_score_fxn)(pose) );

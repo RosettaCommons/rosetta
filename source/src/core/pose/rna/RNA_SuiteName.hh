@@ -29,7 +29,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/fixedsizearray1.hh>
 
 // C++ headers
@@ -85,7 +85,7 @@ public:
 };
 
 ////////////////////////////////////////
-class RNA_SuiteName : public utility::pointer::ReferenceCount {
+class RNA_SuiteName : public utility::VirtualBase {
 public:
 	RNA_SuiteName();
 

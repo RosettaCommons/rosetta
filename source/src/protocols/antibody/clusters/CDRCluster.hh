@@ -35,7 +35,7 @@ namespace clusters {
 
 
 /// @brief Simple class to hold and access CDRCluster info for a region of the pose.
-class CDRCluster : public utility::pointer::ReferenceCount {
+class CDRCluster : public utility::VirtualBase {
 public:
 	CDRCluster(
 		core::pose::Pose const & pose,

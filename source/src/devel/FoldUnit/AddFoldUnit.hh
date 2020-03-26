@@ -27,7 +27,7 @@ namespace splice {
 
 /// @brief an object to manage the torsion/sequence data and to perform individual moves, such as introducing a new fragment
 // The main method is pose_from_fragment_info which creates a pose directly from the PoseFragmentInfo
-class FoldUnitUtils : public utility::pointer::ReferenceCount {
+class FoldUnitUtils : public utility::VirtualBase {
 public:
 	FoldUnitUtils() : fragment_dbase_( "" ), pair_dbase_( "" ), overlap_length_( 10 ), n_term_entry_( 0 ), c_term_entry_( 0 ), min_overlap_( 0 ), max_length_( 0 ), max_rmsd_( 0.0 ) { legal_bbdofs_.clear(); entry_pairs_.clear(); overlap_length_.clear(); overlap_rmsd_.clear(); };
 	~FoldUnitUtils() override;
@@ -43,7 +43,7 @@ public:
 	utility::vector1< core::Size > overlap_length() const { return overlap_length_; }
 	utility::vector1< core::Real > & overlap_rmsd() { return overlap_rmsd_; }
 
-	bool fragment_compatibility_check( Size const i, Size const j, utility::vector1< std::pair< core::Size, core::Size > >::const_iterator & it, core::Real const max_rmsd = 10.0 ) const;
+	bool fragment_compatibility_check( core::Size const i, core::Size const j, utility::vector1< std::pair< core::Size, core::Size > >::const_iterator & it, core::Real const max_rmsd = 10.0 ) const;
 	/// methods below add or replace fragments without testing that the fragments are compatible, so they should be used with care
 	void add_fragment_to_pose( core::pose::Pose & pose, PoseFragmentInfo & pose_fragment_info, core::Size const entry, bool c_term/*or n-term*/ ) const;
 	void replace_fragment_in_pose( core::pose::Pose & pose, PoseFragmentInfo & pose_fragment_info, core::Size const entry, core::Size const fragment_num );
@@ -83,7 +83,7 @@ private:
 };
 
 /// @brief manage pose-fragmnet information.
-class PoseFragmentInfo : public utility::pointer::ReferenceCount{
+class PoseFragmentInfo : public utility::VirtualBase{
 public:
 	PoseFragmentInfo(){ fragment_map_.clear(); };
 	~PoseFragmentInfo() override;

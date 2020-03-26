@@ -94,7 +94,7 @@ public: // Methods
 	refresh(
 		Pose const & pose,
 		Vector const & center,
-		Size const & ligand_chain_id_to_exclude
+		core::Size const & ligand_chain_id_to_exclude
 	) override;
 
 	/// @brief populate grids in the vector with PCS values based on a passed pose
@@ -102,7 +102,7 @@ public: // Methods
 	refresh(
 		Pose const & pose,
 		Vector const & center,
-		utility::vector1<Size> ligand_chain_ids_to_exclude
+		utility::vector1<core::Size> ligand_chain_ids_to_exclude
 	) override;
 
 	/// @brief return the current score of an UltraLightResidue using the current PCSMultiGrid
@@ -117,7 +117,7 @@ public: // Methods
 	Real
 	atom_score(
 		UltraLightResidue const & residue,
-		Size atomno,
+		core::Size atomno,
 		qsarMapCOP qsar_map
 	) const override;
 
@@ -133,7 +133,7 @@ public: // Methods
 	Real
 	atom_score(
 		Residue const & residue,
-		Size atomno,
+		core::Size atomno,
 		qsarMapCOP qsar_map
 	) const override;
 
@@ -169,7 +169,7 @@ public: // Methods
 	/// @brief Print a brief summary about this grid to the provided output stream
 	void show(std::ostream & out) const override;
 
-	Size get_number_pcs_grids() const { return pcs_grid_vector_.size(); }
+	core::Size get_number_pcs_grids() const { return pcs_grid_vector_.size(); }
 	utility::vector1< SingleGridOP > const & get_pcs_grids() const { return pcs_grid_vector_; }
 	utility::vector1< SingleGridOP > & get_pcs_grids() { return pcs_grid_vector_; }
 	Real get_weight() const { return weight_; }

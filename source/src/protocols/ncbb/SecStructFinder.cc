@@ -116,8 +116,8 @@ SecStructFinder::SecStructFinder():
 
 SecStructFinder::SecStructFinder(
 	std::string const & residue,
-	Size min_length,
-	Size max_length,
+	core::Size min_length,
+	core::Size max_length,
 	Real bin_size,
 	Real dissimilarity,
 	Real dihedral_min,
@@ -221,7 +221,7 @@ SecStructFinder::alpha_to_beta( std::string alpha ) {
 }
 
 std::string
-SecStructFinder::expand_pattern_to_fit( std::string pattern, Size length ) {
+SecStructFinder::expand_pattern_to_fit( std::string pattern, core::Size length ) {
 	if ( length < pattern.length() ) {
 		return pattern.substr( length );
 	} else if ( length == pattern.length() ) {
@@ -241,7 +241,7 @@ bool
 SecStructFinder::uniq_refers_to_beta (
 	char uniq
 ) {
-	for ( Size i = 1; i <= dihedral_pattern_.length(); ++i ) {
+	for ( core::Size i = 1; i <= dihedral_pattern_.length(); ++i ) {
 		if ( dihedral_pattern_[i] == uniq ) {
 			if ( alpha_beta_pattern_[i] == 'A' || alpha_beta_pattern_[i] == 'P' ) return false;
 			else return true;
@@ -273,7 +273,7 @@ SecStructFinder::initialize_pose( core::pose::Pose & pose ) {
 	//restypes.push_back( residue_set_cap->name_map( name ) );
 	pose.append_residue_by_jump( core::conformation::Residue( residue_set_cap->name_map( name ), true ), 1 );
 
-	for ( Size resi = 1; resi < min_length_; ++resi ) {
+	for ( core::Size resi = 1; resi < min_length_; ++resi ) {
 		std::string name;
 		std::string npatch;
 		std::string cpatch;
@@ -308,12 +308,12 @@ SecStructFinder::initialize_pose( core::pose::Pose & pose ) {
 
 std::string
 SecStructFinder::make_filename (
-	Size number_dihedrals,
+	core::Size number_dihedrals,
 	utility::vector1< Real > dihedrals
 ) {
 	std::stringstream filename;
 	filename << residue_ << "_" << dihedral_pattern_ << "_" << min_length_;
-	for ( Size i = 1; i <= number_dihedrals; ++i ) {
+	for ( core::Size i = 1; i <= number_dihedrals; ++i ) {
 		filename << "_" << dihedrals[i];
 	}
 	filename << ".pdb";
@@ -322,7 +322,7 @@ SecStructFinder::make_filename (
 
 
 bool
-SecStructFinder::too_similar( Size i, Size j, utility::vector1< Real > dihedrals ) {
+SecStructFinder::too_similar( core::Size i, core::Size j, utility::vector1< Real > dihedrals ) {
 	bool similar = false;
 	if ( alpha_beta_pattern_[i] == alpha_beta_pattern_[j] ) { //  don't compare dissimilars
 		if ( alpha_beta_pattern_[i] == 'A' || alpha_beta_pattern_[i] == 'P' ) {
@@ -346,7 +346,7 @@ increment_dihedrals(
 	Real const bin_size_
 ) {
 	dihedrals[ 1 ] += bin_size_;
-	Size p = 1;
+	core::Size p = 1;
 	while ( dihedrals[ p ] >= dihedral_max_ ) {
 		if ( p == dihedrals.size() ) return false;
 		dihedrals[ p ] = dihedral_min_;
@@ -356,11 +356,11 @@ increment_dihedrals(
 }
 
 void
-SecStructFinder::show_current_dihedrals( Size number_dihedral_sets, utility::vector1< char > uniqs, utility::vector1< Real > dihedrals ) {
+SecStructFinder::show_current_dihedrals( core::Size number_dihedral_sets, utility::vector1< char > uniqs, utility::vector1< Real > dihedrals ) {
 	TR << "Presently ";
-	for ( Size i = 1; i <= number_dihedral_sets; ++i ) {
+	for ( core::Size i = 1; i <= number_dihedral_sets; ++i ) {
 		TR << uniqs[i] << " ( ";
-		Size take_from_here = give_dihedral_index( i, uniqs, dihedral_pattern_, alpha_beta_pattern_ );
+		core::Size take_from_here = give_dihedral_index( i, uniqs, dihedral_pattern_, alpha_beta_pattern_ );
 		if ( uniq_refers_to_beta( uniqs[i] ) ) {
 			TR << dihedrals[ take_from_here ] << ", " << dihedrals[ take_from_here+1 ] << ", " << dihedrals[ take_from_here+2 ] << " ), ";
 		} else {
@@ -372,11 +372,11 @@ SecStructFinder::show_current_dihedrals( Size number_dihedral_sets, utility::vec
 void
 SecStructFinder::apply( Pose & pose )
 {
-	Size number_dihedral_sets;
+	core::Size number_dihedral_sets;
 	utility::vector1< char > uniqs;
 	count_uniq_char( dihedral_pattern_, number_dihedral_sets, uniqs );
 
-	Size number_dihedrals = get_number_dihedrals( uniqs, dihedral_pattern_, alpha_beta_pattern_ );//2 * number_dihedral_sets; // plus one per beta AA!
+	core::Size number_dihedrals = get_number_dihedrals( uniqs, dihedral_pattern_, alpha_beta_pattern_ );//2 * number_dihedral_sets; // plus one per beta AA!
 	TR << "Investigating dihedral pattern " << dihedral_pattern_ << " with " << number_dihedral_sets << " uniques " << std::endl;
 
 	initialize_pose( pose );
@@ -400,8 +400,8 @@ SecStructFinder::apply( Pose & pose )
 		// skip if the dihedrals for A are the same as B, etc.
 		// break after first example found
 		bool skip = false;
-		for ( Size i = 1; i <= number_dihedral_sets; i += 2 ) {
-			for ( Size j = i+1; j <= number_dihedral_sets; j++ ) {
+		for ( core::Size i = 1; i <= number_dihedral_sets; i += 2 ) {
+			for ( core::Size j = i+1; j <= number_dihedral_sets; j++ ) {
 				skip = too_similar( i, j, dihedrals );
 				if ( skip ) break;
 			}
@@ -411,13 +411,13 @@ SecStructFinder::apply( Pose & pose )
 		if ( !skip ) {
 
 			TR << "Trying dihedral DOF vector: ";
-			for ( Size ii = 1; ii <= number_dihedrals; ++ii ) {
+			for ( core::Size ii = 1; ii <= number_dihedrals; ++ii ) {
 				TR << dihedrals[ii] << ", ";
 			} TR << std::endl;
 
-			for ( Size resi = 1; resi <= pose.size(); ++resi ) {
-				Size take_from_here = 1;
-				for ( Size i = 1; i <= number_dihedral_sets; ++i ) {
+			for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
+				core::Size take_from_here = 1;
+				for ( core::Size i = 1; i <= number_dihedral_sets; ++i ) {
 					if ( dihedral_pattern_[ resi-1 ] == uniqs[ i ] ) { // -1 to sync indexing
 						take_from_here = give_dihedral_index( i, uniqs, dihedral_pattern_, alpha_beta_pattern_  );
 					}
@@ -476,7 +476,7 @@ SecStructFinder::apply( Pose & pose )
 						TR << " ( " << minpose.torsion( TorsionID( 1, BB, 1 ) ) << ", " << minpose.psi( 1 ) << " ), ";
 					}
 
-					for ( Size resi = 2; resi < pose.size(); ++resi ) {
+					for ( core::Size resi = 2; resi < pose.size(); ++resi ) {
 						if ( minpose.residue_type( resi ).is_beta_aa() ) {
 							TR << " ( " << minpose.torsion( TorsionID( resi, BB, 1 ) ) << ", "<< minpose.torsion( TorsionID( resi, BB, 2 ) ) << ", " << minpose.torsion( TorsionID( resi, BB, 3 ) ) << " ), ";
 						} else {
@@ -500,7 +500,7 @@ SecStructFinder::apply( Pose & pose )
 					TR << filename.c_str() << " " << score << std::endl;
 					poses_to_min.push_back( pose );
 					utility::vector1< Real > dihedrals_for_minimization;
-					for ( Size index = 1; index <= number_dihedrals; ++index ) {
+					for ( core::Size index = 1; index <= number_dihedrals; ++index ) {
 						dihedrals_for_minimization.push_back( dihedrals[ index ] );
 					}
 					dihedrals_to_min.push_back( dihedrals_for_minimization );
@@ -514,7 +514,7 @@ SecStructFinder::apply( Pose & pose )
 	// now min all our poses to min
 	if ( poses_to_min.size() == 0 ) return;
 
-	for ( Size ii = 1, sz = poses_to_min.size(); ii < sz; ++ii ) {
+	for ( core::Size ii = 1, sz = poses_to_min.size(); ii < sz; ++ii ) {
 
 		Pose minpose = poses_to_min[ii];
 
@@ -529,7 +529,7 @@ SecStructFinder::apply( Pose & pose )
 		score_fxn_->set_weight( core::scoring::dihedral_constraint, 0.0 );
 		Real score = ( ( *score_fxn_ ) ( minpose ) );
 		TR << "for stored pose with dihedrals ";
-		for ( Size resi = 1, n = poses_to_min[ii].size(); resi <= n; ++resi ) {
+		for ( core::Size resi = 1, n = poses_to_min[ii].size(); resi <= n; ++resi ) {
 			if ( alpha_beta_pattern_[ resi-1 ] == 'A' || alpha_beta_pattern_[ resi-1 ] == 'P' ) {
 				TR << "( " << poses_to_min[ii].phi( resi ) << ", " << poses_to_min[ii].psi( resi ) << " ), ";
 			} else {
@@ -540,7 +540,7 @@ SecStructFinder::apply( Pose & pose )
 			}
 		}
 		TR << std::endl << " now ";
-		for ( Size resi = 1, n = minpose.size(); resi <= n; ++resi ) {
+		for ( core::Size resi = 1, n = minpose.size(); resi <= n; ++resi ) {
 			if ( alpha_beta_pattern_[ resi-1 ] == 'A' || alpha_beta_pattern_[ resi-1 ] == 'P' ) {
 				TR << "( " << minpose.phi( resi ) << ", " << minpose.psi( resi ) << " ), ";
 			} else {
@@ -581,8 +581,8 @@ void SecStructFinder::parse_my_tag(
 	core::pose::Pose const & ) {
 
 	residue_ = tag->getOption<std::string>("residue", "ALA" );
-	min_length_ = tag->getOption<Size>("min_length", 5 );
-	max_length_ = tag->getOption<Size>("max_length", 5 );
+	min_length_ = tag->getOption<core::Size>("min_length", 5 );
+	max_length_ = tag->getOption<core::Size>("max_length", 5 );
 
 	if ( max_length_ < min_length_ ) {
 		TR.Warning << "Provided max_length was less than min_length, setting max equal to min" << std::endl;

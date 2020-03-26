@@ -19,7 +19,7 @@
 
 //Unit headers
 #include <protocols/legacy_sewing/conformation/Model.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //Protocol headers
 #include <core/pose/Pose.fwd.hh>
@@ -360,7 +360,7 @@ private:
 
 
 
-struct Model : public utility::pointer::ReferenceCount {
+struct Model : public utility::VirtualBase {
 
 	Model():
 		model_id_(0),

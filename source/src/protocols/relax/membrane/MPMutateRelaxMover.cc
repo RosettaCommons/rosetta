@@ -58,6 +58,8 @@ static basic::Tracer TR( "protocols.membrane.MPMutateRelaxMover" );
 namespace protocols {
 namespace membrane {
 
+using core::Size;
+
 /////////////////////
 /// Constructors  ///
 /////////////////////
@@ -182,7 +184,7 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 	Pose working_pose;
 
 	// construct counter
-	Size counter(0);
+	core::Size counter(0);
 
 	// for debugging, iterating over constructs and mutants
 	for ( core::Size c = 1; c <= wt_res_.size(); ++c ) {
@@ -240,7 +242,7 @@ void MPMutateRelaxMover::apply( core::pose::Pose & pose ) {
 
 			// if model exists, increment counter
 			// this means that the app should be able to start from an existing file number
-			Size a = counter;
+			core::Size a = counter;
 			while ( a <= nstruct_ ) {
 				output = output_filename( mutations, a );
 				if ( utility::file::file_exists( output ) ) {
@@ -384,7 +386,7 @@ void MPMutateRelaxMover::get_repack_residues( Pose & pose ) {
 	using namespace core::pose;
 
 	// go through number of constructs
-	for ( Size i = 1; i <= resn_.size(); ++i ) {
+	for ( core::Size i = 1; i <= resn_.size(); ++i ) {
 
 		// initialize boolean vector with false
 		utility::vector1< bool > repack_res( pose.size(), false );
@@ -393,7 +395,7 @@ void MPMutateRelaxMover::get_repack_residues( Pose & pose ) {
 		if ( repack_mutation_only_ == true ) {
 
 			// go through number of mutations within construct
-			for ( Size j = 1; j <= resn_[i].size(); ++j ) {
+			for ( core::Size j = 1; j <= resn_[i].size(); ++j ) {
 
 				// set residue number of the mutation to true
 				core::Size resn = resn_[i][j];
@@ -402,13 +404,13 @@ void MPMutateRelaxMover::get_repack_residues( Pose & pose ) {
 		} else if ( repack_radius_ > 0 ) {
 
 			// go through number of mutations within construct
-			for ( Size j = 1; j <= resn_[i].size(); ++j ) {
+			for ( core::Size j = 1; j <= resn_[i].size(); ++j ) {
 
 				core::Size resn = resn_[i][j];
 				core::Vector xyz_mut = pose.residue( resn ).xyz( "CA" );
 
 				// go through residues in pose
-				for ( Size k = 1; k <= nres_protein( pose ); ++k ) {
+				for ( core::Size k = 1; k <= nres_protein( pose ); ++k ) {
 
 					// check whether the residue is within repack radius
 					core::Vector xyz_k = pose.residue( k ).xyz( "CA" );
@@ -498,7 +500,7 @@ std::string MPMutateRelaxMover::make_mutations( Pose & pose, core::Size num_cons
 	core::Size c = num_construct;
 
 	// go through each mutation for this construct
-	for ( Size m = 1; m <= wt_res_[ c ].size(); ++m ) {
+	for ( core::Size m = 1; m <= wt_res_[ c ].size(); ++m ) {
 
 		// mutate residue
 		TR << "Mutating residue " << wt_res_[c][m] << resn_[c][m] << " to " << mut_res_[c][m] << std::endl;

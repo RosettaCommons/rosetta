@@ -50,7 +50,7 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/random/random.hh>
@@ -167,7 +167,7 @@ void FragmentSampler::checkpointed_cycle_block(
 		if ( option[ basic::options::OptionKeys::run::profile ] ) prof_show();
 
 	} catch ( moves::EXCN_Converged& excn ) {
-		//  Size last_stage( STAGE_4 );
+		//  core::Size last_stage( STAGE_4 );
 		//  while( contains_stageid( skip_stages_, last_stage ) ) --last_stage;
 		mc().recover_low( pose );
 		get_checkpoints().flush_checkpoints();
@@ -479,7 +479,7 @@ void FragmentSampler::do_stage3_cycles( pose::Pose &pose ) {
 		nloop1 = 2;
 		nloop2 = 5;
 	}
-	Size const total_iterations ( nloop1*nloop2 );
+	core::Size const total_iterations ( nloop1*nloop2 );
 
 	int iteration = 1;
 	for ( int lct1 = 1; lct1 <= nloop1; lct1++ ) {
@@ -508,8 +508,8 @@ void FragmentSampler::do_stage3_cycles( pose::Pose &pose ) {
 }
 
 void FragmentSampler::do_stage4_cycles( pose::Pose &pose ) {
-	Size nloop_stage4 = 3;
-	for ( Size kk = 1; kk <= nloop_stage4; ++kk ) {
+	core::Size nloop_stage4 = 3;
+	for ( core::Size kk = 1; kk <= nloop_stage4; ++kk ) {
 		prepare_loop_in_stage4( pose, kk, nloop_stage4 );
 
 		if ( !get_checkpoints().recover_checkpoint( pose, get_current_tag(), "stage4_kk_" + ObjexxFCL::string_of(kk), false /* fullatom */, true /* fold_tree */ ) ) {
@@ -579,7 +579,7 @@ void FragmentSampler::prepare_stage4( core::pose::Pose &pose ) {
 	replace_scorefxn( pose, STAGE_4, 0 );
 }
 
-void FragmentSampler::prepare_loop_in_stage3( core::pose::Pose &pose/*pose*/, Size iteration, Size total ){
+void FragmentSampler::prepare_loop_in_stage3( core::pose::Pose &pose/*pose*/, core::Size iteration, core::Size total ){
 	if ( numeric::mod( (int)iteration, 2 ) == 0 || iteration > 7 ) {
 		replace_scorefxn( pose, STAGE_3a, 1.0* iteration/total );
 	} else {
@@ -587,7 +587,7 @@ void FragmentSampler::prepare_loop_in_stage3( core::pose::Pose &pose/*pose*/, Si
 	}
 }
 
-void FragmentSampler::prepare_loop_in_stage4( core::pose::Pose &pose, Size iteration, Size total ){
+void FragmentSampler::prepare_loop_in_stage4( core::pose::Pose &pose, core::Size iteration, core::Size total ){
 	replace_scorefxn( pose, STAGE_4, 1.0* iteration/total );
 }
 

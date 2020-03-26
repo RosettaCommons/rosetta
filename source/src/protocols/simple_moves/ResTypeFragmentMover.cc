@@ -38,7 +38,7 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/random/random.hh>
 
 //// C++ headers
@@ -65,8 +65,8 @@ ResTypeFragmentMover::ResTypeFragmentMover(core::fragment::FragSetCOP fragset, c
 ResTypeFragmentMover::~ResTypeFragmentMover() = default;
 
 bool ResTypeFragmentMover::apply_frames( pose::Pose &pose, core::fragment::FrameList const& frames ) const {
-	Size frame_num;
-	Size frag_num;
+	core::Size frame_num;
+	core::Size frag_num;
 	bool success( false );
 	if ( !choose_fragment( frames, pose, frame_num /*output*/, frag_num /*output*/ ) ) return false;
 
@@ -115,9 +115,9 @@ bool ResTypeFragmentMover::apply_frames( pose::Pose &pose, core::fragment::Frame
 	return success;
 }
 
-void ResTypeFragmentMover::swap_residue_types( pose::Pose &pose, std::string const & sequence, Size const startSeqPos ) const {
+void ResTypeFragmentMover::swap_residue_types( pose::Pose &pose, std::string const & sequence, core::Size const startSeqPos ) const {
 	using namespace chemical;
-	for ( Size ii=0; ii<sequence.size(); ++ii ) {
+	for ( core::Size ii=0; ii<sequence.size(); ++ii ) {
 		char aa = sequence[ii];
 		AA my_aa = aa_from_oneletter_code( aa );
 		ResidueTypeSetCOP const & residue_set( pose.residue_type_set_for_pose( core::chemical::CENTROID_t ));

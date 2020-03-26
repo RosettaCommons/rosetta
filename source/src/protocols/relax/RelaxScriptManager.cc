@@ -60,7 +60,7 @@ EnergyMapContainer::EnergyMapContainer( std::string const & filename ) :
 // RelaxScriptFileContents Public methods /////////////////////////////////////////////////////////////
 /// @brief File contents constructor.
 RelaxScriptFileContents::RelaxScriptFileContents( utility::vector1< std::string > const & file_lines_in ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	file_lines_( file_lines_in )
 {}
 

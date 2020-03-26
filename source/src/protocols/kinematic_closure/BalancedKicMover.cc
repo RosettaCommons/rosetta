@@ -118,7 +118,7 @@ vector1<TorsionID_Range> BalancedKicMover::torsion_id_ranges(Pose &) { // {{{1
 	vector1<TorsionID_Range> results;
 	Real static const pi = numeric::constants::r::pi;
 
-	for ( Size residue = loop_.start(); residue <= loop_.stop(); residue++ ) {
+	for ( core::Size residue = loop_.start(); residue <= loop_.stop(); residue++ ) {
 		TorsionID phi(residue, BB, 1);
 		TorsionID psi(residue, BB, 2);
 		TorsionID omega(residue, BB, 3);

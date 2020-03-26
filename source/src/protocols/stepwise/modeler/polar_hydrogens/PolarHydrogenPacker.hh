@@ -61,8 +61,8 @@ private:
 	void
 	get_best_hxyz( core::conformation::Residue const & residue,
 		utility::vector1< core::Vector > const & ideal_hydrogen_xyz_positions,
-		Size const abase,
-		Size const abase2,
+		core::Size const abase,
+		core::Size const abase2,
 		core::Vector const & donor_xyz,
 		core::Real & best_score,
 		core::Vector & best_hydrogen_xyz );

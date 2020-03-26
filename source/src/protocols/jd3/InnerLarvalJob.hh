@@ -26,7 +26,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 // Basic headers
@@ -60,7 +60,7 @@ namespace jd3 {
 /// not get shipped between nodes, though it should be instantiatable on any node), but they
 /// may need to store Poses, as would be necessary in any multi-round protocol, where the
 /// JobResults from round i are the starting points for round i+1.
-class InnerLarvalJob : public utility::pointer::ReferenceCount {
+class InnerLarvalJob : public utility::VirtualBase {
 public:
 
 	InnerLarvalJob();
@@ -207,10 +207,10 @@ public:
 
 	/// @brief Retrieve a particular InputSource
 	InputSource const &
-	input_source( Size index ) const;
+	input_source( core::Size index ) const;
 
 	InputSourceCOP const &
-	input_source_cop( Size index ) const;
+	input_source_cop( core::Size index ) const;
 
 	/// @brief The list of the JobResults required to mature this %LarvalJob, by global index of the
 	/// already-executed (Lavral)Jobs

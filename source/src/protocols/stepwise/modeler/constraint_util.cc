@@ -55,13 +55,13 @@ constraint_set_slice( core::scoring::constraints::ConstraintSetOP & cst_set,
 
 	ConstraintCOPs csts( cst_set->get_all_constraints() );
 
-	//  std::map< Size, Size > slice_map;
-	//  for (Size i = 1; i <= slice_res.size(); i++) slice_map[ slice_res[ i ] ] = i;
-	utility::vector1< Size > mapping( full_pose.size(), 0);
-	for ( Size i = 1; i <= slice_res.size(); i++ ) mapping[ slice_res[ i ] ] = i;
+	//  std::map< core::Size, core::Size > slice_map;
+	//  for (core::Size i = 1; i <= slice_res.size(); i++) slice_map[ slice_res[ i ] ] = i;
+	utility::vector1< core::Size > mapping( full_pose.size(), 0);
+	for ( core::Size i = 1; i <= slice_res.size(); i++ ) mapping[ slice_res[ i ] ] = i;
 	SequenceMappingOP smap( new SequenceMapping( mapping ) );
 
-	for ( Size n = 1; n <= csts.size(); n++ ) {
+	for ( core::Size n = 1; n <= csts.size(); n++ ) {
 
 		ConstraintCOP const & cst( csts[n] );
 		ConstraintOP cst_new = cst->remapped_clone( full_pose, pose, smap );

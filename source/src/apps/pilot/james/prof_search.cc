@@ -79,7 +79,7 @@ using namespace core::sequence;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-class SequenceProfileDB : public utility::pointer::ReferenceCount {
+class SequenceProfileDB : public utility::VirtualBase {
 public:
 	SequenceProfileDB( utility::file::FileName const & fn ) {
 		init_private_data_();

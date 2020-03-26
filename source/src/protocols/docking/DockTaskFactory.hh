@@ -30,7 +30,7 @@
 #include <core/types.hh>
 #include <protocols/docking/DockingHighRes.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //Auto Headers
 // option key includes
@@ -42,7 +42,7 @@
 namespace protocols {
 namespace docking {
 
-class DockTaskFactory : public utility::pointer::ReferenceCount
+class DockTaskFactory : public utility::VirtualBase
 {
 public:
 

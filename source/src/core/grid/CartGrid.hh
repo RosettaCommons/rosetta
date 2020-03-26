@@ -24,7 +24,7 @@
 #include <utility/tools/make_vector.hh>
 #include <utility/string_util.hh>
 #include <utility/json_spirit/json_spirit_value.h>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector0.fwd.hh>
 #include <utility/io/izstream.hh>
@@ -40,7 +40,7 @@ namespace core {
 namespace grid {
 
 template <typename T>
-class CartGrid : public utility::pointer::ReferenceCount
+class CartGrid : public utility::VirtualBase
 {
 public:
 	/// @brief This needs to be an int, as it can hold negative values.
@@ -57,7 +57,9 @@ public:
 		zones_()
 	{}
 
-	CartGrid( CartGrid<T> const & other ) {
+	CartGrid( CartGrid<T> const & other ) :
+		VirtualBase( other )
+	{
 		other.clone( *this );
 	}
 

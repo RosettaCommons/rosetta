@@ -28,7 +28,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -46,7 +46,7 @@ namespace core {
 namespace scoring {
 
 
-class Ramachandran2B : public utility::pointer::ReferenceCount
+class Ramachandran2B : public utility::VirtualBase
 {
 public:
 	typedef pose::Pose Pose;

@@ -26,7 +26,7 @@
 #include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -42,7 +42,7 @@
 namespace core {
 namespace io {
 
-class StructFileRepOptions : public utility::pointer::ReferenceCount
+class StructFileRepOptions : public utility::VirtualBase
 {
 public:
 	/// @brief Constructor that takes default values from the global OptionCollection object, basic::options::option.

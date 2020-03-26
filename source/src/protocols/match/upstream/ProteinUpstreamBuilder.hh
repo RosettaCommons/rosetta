@@ -38,7 +38,7 @@
 #include <numeric/xyzVector.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -68,17 +68,17 @@ public:
 	void set_sample_level( ExtraRotSample setting );
 	void set_step_size( Real setting );
 	void set_sd_range(  Real setting );
-	void set_n_samples_wi_sd_range( Size setting );
+	void set_n_samples_wi_sd_range( core::Size setting );
 	void set_nrchi_prob_minimum_for_extra_samples( Real setting );
-	void set_n_samples_per_side_of_nrchi_bin( Size setting );
+	void set_n_samples_per_side_of_nrchi_bin( core::Size setting );
 
 	ChiStrategy strategy() const;
 	ExtraRotSample sample_level() const;
 	Real step_size() const;
 	Real sd_range() const;
-	Size n_samples_wi_sd_range() const;
+	core::Size n_samples_wi_sd_range() const;
 	Real nrchi_prob_minimum_for_extra_samples() const;
-	Size n_samples_per_side_of_nrchi_bin() const;
+	core::Size n_samples_per_side_of_nrchi_bin() const;
 
 
 private:
@@ -86,9 +86,9 @@ private:
 	ExtraRotSample sample_level_;
 	Real step_size_;
 	Real sd_range_;
-	Size n_samples_wi_sd_range_;
+	core::Size n_samples_wi_sd_range_;
 	Real nrchi_prob_minimum_for_extra_samples_;
-	Size n_samples_per_side_of_nrchi_bin_;
+	core::Size n_samples_per_side_of_nrchi_bin_;
 };
 
 /// @brief A simple class that describes the geometry for a particular
@@ -104,7 +104,7 @@ private:
 /// by the coordinate frame at the third atom after that coordinate frame
 /// has been multipled by the chi-angle-z-axis rotation HT.
 /*
-class UpstreamResTypeGeometry : public utility::pointer::ReferenceCount
+class UpstreamResTypeGeometry : public utility::VirtualBase
 {
 public:
 typedef core::Size                            Size;
@@ -134,25 +134,25 @@ Size nchi() const {
 return chitip_atoms_.size();
 }
 
-bool atom_controlled_by_any_chi( Size atomno ) const {
+bool atom_controlled_by_any_chi( core::Size atomno ) const {
 return controlling_chi_for_atom_[ atomno ] != 0;
 }
 
-bool atom_is_chitip( Size atomno ) const {
+bool atom_is_chitip( core::Size atomno ) const {
 return controlling_chi_for_atom_[ atomno ] != 0 && which_point_for_atom_[ atomno ] == 0;
 }
 
-utility::vector1< Size > const &
+utility::vector1< core::Size > const &
 controlling_chi_for_atom() const { return controlling_chi_for_atom_; }
 
-utility::vector1< Size > const &
+utility::vector1< core::Size > const &
 which_point_for_atom() const { return which_point_for_atom_; }
 
-utility::vector1< Size > const &
+utility::vector1< core::Size > const &
 chitip_atoms() const { return chitip_atoms_; }
 
 Size
-chitip_atom( Size chi ) const {
+chitip_atom( core::Size chi ) const {
 return chitip_atoms_[ chi ];
 }
 
@@ -160,20 +160,20 @@ utility::vector1< HTReal > const &
 ht_for_chitip_atoms() const { return ht_for_chitip_atoms_; }
 
 HTReal const &
-ht_for_chitip_atom( Size chi ) const {
+ht_for_chitip_atom( core::Size chi ) const {
 return ht_for_chitip_atoms_[ chi ];
 }
 
 Size
-n_nonchitip_atoms_for_chi( Size chi ) const {
+n_nonchitip_atoms_for_chi( core::Size chi ) const {
 return nonchitip_atoms_[ chi ].size();
 }
 
-utility::vector1< utility::vector1< Size > > const &
+utility::vector1< utility::vector1< core::Size > > const &
 nonchitip_atoms() const { return nonchitip_atoms_; }
 
 Size
-nonchitip_atom( Size chi, Size which_nonchitip_atom_for_chi ) const {
+nonchitip_atom( core::Size chi, core::Size which_nonchitip_atom_for_chi ) const {
 return nonchitip_atoms_[ chi ][ which_nonchitip_atom_for_chi ];
 }
 
@@ -181,7 +181,7 @@ utility::vector1< utility::vector1< Vector > > const &
 points_for_nonchitip_atoms() const { return points_for_nonchitip_atoms_; }
 
 utility::vector1< Vector > const &
-points_for_nonchitip_atoms( Size chi ) const {
+points_for_nonchitip_atoms( core::Size chi ) const {
 return points_for_nonchitip_atoms_[ chi ];
 }
 
@@ -189,7 +189,7 @@ return points_for_nonchitip_atoms_[ chi ];
 /// for a particular atom.  The atom must be a non-chitip atom that is
 /// not part of the backbone (it must be controlled by a chi angle).
 Vector const &
-point_for_nonchitip_atom( Size atom ) {
+point_for_nonchitip_atom( core::Size atom ) {
 assert( atom_controlled_by_any_chi( atom ) && !atom_is_chitip( atom ) );
 return points_for_nonchitip_atoms_[ controlling_chi_for_atom_[ atom ] ]
 [ which_point_for_atom_[ atom ] ];
@@ -201,14 +201,14 @@ private:
 
 std::string restype_name_;
 
-utility::vector1< Size >   controlling_chi_for_atom_;
-utility::vector1< Size >   which_point_for_atom_;
+utility::vector1< core::Size >   controlling_chi_for_atom_;
+utility::vector1< core::Size >   which_point_for_atom_;
 
-utility::vector1< Size >   chitip_atoms_;
+utility::vector1< core::Size >   chitip_atoms_;
 utility::vector1< HTReal > ht_for_chitip_atoms_;
 
 
-utility::vector1< utility::vector1< Size > >   nonchitip_atoms_;
+utility::vector1< utility::vector1< core::Size > >   nonchitip_atoms_;
 utility::vector1< utility::vector1< Vector > > points_for_nonchitip_atoms_;
 
 };
@@ -221,12 +221,12 @@ utility::vector1< utility::vector1< Vector > > points_for_nonchitip_atoms_;
 /// full set of chi rotamers, and how to orient the downstream partner relative to
 /// this rotamer.  It also holds the UpstreamResTypeGeometry object for the
 /// restype being built.
-class BuildSet : public utility::pointer::ReferenceCount
+class BuildSet : public utility::VirtualBase
 {
 public:
 	typedef core::Size Size;
 	typedef core::Real Real;
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 
 public:
 
@@ -240,7 +240,7 @@ public:
 	/// initialization
 	void set_residue_type( core::chemical::ResidueTypeCOP restype, bool backbone_only = false );
 
-	void set_sample_strategy_for_chi( Size chi, SampleStrategyData const & data );
+	void set_sample_strategy_for_chi( core::Size chi, SampleStrategyData const & data );
 
 	void set_downstream_algorithm( downstream::DownstreamAlgorithmOP );
 
@@ -274,7 +274,7 @@ public:
 
 
 	SampleStrategyData const &
-	sample_strategy_for_chi( Size chi ) const {
+	sample_strategy_for_chi( core::Size chi ) const {
 		return sample_strategy_for_chi_[ chi ];
 	}
 
@@ -293,13 +293,13 @@ public:
 		return *algorithm_;
 	}
 
-	Size
-	nbonds_from_bb_atom( Size atom_index ) const {
+	core::Size
+	nbonds_from_bb_atom( core::Size atom_index ) const {
 		return nbonds_from_bb_atom_[ atom_index ];
 	}
 
 	ProbeRadius
-	atom_radius( Size atomno ) const {
+	atom_radius( core::Size atomno ) const {
 		return atom_radii_[ atomno ];
 	}
 
@@ -323,7 +323,7 @@ public:
 	Real rot_prob_accumulation_limit_;
 	utility::vector1< SampleStrategyData >  sample_strategy_for_chi_;
 
-	utility::vector1< Size > nbonds_from_bb_atom_;
+	utility::vector1< core::Size > nbonds_from_bb_atom_;
 	utility::vector1< ProbeRadius >  atom_radii_;
 
 	downstream::DownstreamAlgorithmOP algorithm_;
@@ -334,9 +334,9 @@ public:
 
 };
 
-class FullChiSampleSet : public utility::pointer::ReferenceCount {
+class FullChiSampleSet : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~FullChiSampleSet() override;
 	typedef core::Size Size;
 	typedef core::Real Real;
@@ -354,31 +354,31 @@ public:
 	);
 
 
-	utility::vector1< Size >
+	utility::vector1< core::Size >
 	n_samples_per_chi() const {
 		debug_assert( ! dry_run_ );
 		return n_samples_per_chi_;
 	}
 
-	Size num_chi_samples_total() const {
+	core::Size num_chi_samples_total() const {
 		return num_chi_samples_total_;
 	}
 
 	utility::vector1< Real > const &
-	chi_samples( Size chi ) const {
+	chi_samples( core::Size chi ) const {
 		debug_assert( ! dry_run_ );
 		return chi_samples_[ chi ];
 	}
 
 
 	Real
-	chi_sample( Size chi, Size sample_id ) const {
+	chi_sample( core::Size chi, core::Size sample_id ) const {
 		debug_assert( ! dry_run_ );
 		return chi_samples_[ chi ][ sample_id ];
 	}
 
 	HTReal const &
-	frame( Size chi, Size sample_id ) const {
+	frame( core::Size chi, core::Size sample_id ) const {
 		debug_assert( ! dry_run_ );
 		debug_assert( chi <= frames_.size() );
 		return frames_[ chi ][ sample_id ];
@@ -387,41 +387,41 @@ public:
 private:
 
 	void
-	expand_non_dunbrack_chi( Size chi, BuildSet const & build_set );
+	expand_non_dunbrack_chi( core::Size chi, BuildSet const & build_set );
 
 	void
 	expand_samples_by_ex_behavior(
-		Size chi,
+		core::Size chi,
 		ExtraRotSample behavior,
 		core::pack::dunbrack::DunbrackRotamerSampleData const & sample
 	);
 
 	void
 	expand_samples_by_steps_wi_sdrange(
-		Size chi,
+		core::Size chi,
 		SampleStrategyData const & stratdat,
 		core::pack::dunbrack::DunbrackRotamerSampleData const & sample
 	);
 
 	void
 	expand_samples_for_nrchi_wi_nrchi_bin(
-		Size chi,
+		core::Size chi,
 		SampleStrategyData const & stratdat,
 		core::pack::dunbrack::DunbrackRotamerSampleData const & sample
 	);
 
 	void
-	create_hts_for_chi( Size chi );
+	create_hts_for_chi( core::Size chi );
 
 	/// This doesn't belong in this class -- move to core.
 	static
 	ExtraRotSample
-	ex_level_from_flags( Size chi );
+	ex_level_from_flags( core::Size chi );
 
 private:
 	bool const dry_run_;
-	Size num_chi_samples_total_;
-	utility::vector1< Size > n_samples_per_chi_;
+	core::Size num_chi_samples_total_;
+	utility::vector1< core::Size > n_samples_per_chi_;
 	utility::vector1< utility::vector1< Real > > chi_samples_;
 	utility::vector1< utility::vector1< HTReal > > frames_;
 
@@ -472,11 +472,11 @@ public:
 		UpstreamResidueProcessor & processor
 	) const override;
 
-	Size
+	core::Size
 	n_restypes_to_build() const override;
 
 	core::chemical::ResidueTypeCOP
-	restype( Size which_restype ) const override;
+	restype( core::Size which_restype ) const override;
 
 	bool compatible(
 		Hit const & my_hit,
@@ -501,7 +501,7 @@ public:
 		BuildSet const & build_set
 	);
 
-	Size
+	core::Size
 	n_build_sets() const {
 		return build_sets_.size();
 	}
@@ -529,7 +529,7 @@ private:
 	/// rescoords object, and return the CBeta frame.
 	HTReal
 	initialize_rescoords(
-		Size build_set_id,
+		core::Size build_set_id,
 		core::conformation::Residue & rescoords,
 		ScaffoldBuildPoint const & build_point
 	) const;
@@ -541,7 +541,7 @@ private:
 	/// and the x axis being the crossproduct of y and z.
 	HTReal
 	compute_cb_frame(
-		Size build_set_id,
+		core::Size build_set_id,
 		ProteinBackboneBuildPoint const & build_point
 	) const;
 
@@ -551,9 +551,9 @@ private:
 	/// distance that atom is from any other hit.
 	bool
 	atom_coordinate_unacceptable(
-		Size build_set_id,
+		core::Size build_set_id,
 		core::conformation::Residue const & rescoords,
-		Size atomno
+		core::Size atomno
 	) const;
 
 private:

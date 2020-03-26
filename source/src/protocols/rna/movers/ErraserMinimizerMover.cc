@@ -162,7 +162,7 @@ string_to_size_vector( std::string const & sv ) {
 	utility::vector1< core::Size > vec;
 
 	std::stringstream ss( sv );
-	Size s;
+	core::Size s;
 	while ( ss >> s ) {
 		vec.push_back( s );
 	}
@@ -223,7 +223,7 @@ void ErraserMinimizerMover::parse_my_tag( TagCOP tag,
 	skip_minimize_ = tag->getOption< bool >( "skip_minimize", skip_minimize_ );
 	attempt_pyrimidine_flip_ = tag->getOption< bool >( "attempt_pyrimidine_flip", attempt_pyrimidine_flip_ );
 
-	utility::vector1< Size > temp_vector = string_to_size_vector( tag->getOption< std::string >( "fixed_res_list", "" ) );
+	utility::vector1< core::Size > temp_vector = string_to_size_vector( tag->getOption< std::string >( "fixed_res_list", "" ) );
 	std::copy( temp_vector.begin(), temp_vector.end(), std::inserter( fixed_res_list_, fixed_res_list_.end() ) );
 
 	cutpoint_list_ = string_to_size_vector( tag->getOption< std::string >( "cutpoint_list", "" ) );
@@ -245,7 +245,7 @@ void ErraserMinimizerMover::parse_my_tag( TagCOP tag,
 bool
 ErraserMinimizerMover::i_want_this_atom_to_move(
 	chemical::ResidueType const & residue_type,
-	Size const & atomno
+	core::Size const & atomno
 ) {
 	// First trial. I just want to fix this nonplanar ring, but maybe this will make tiny improvements in general.
 	runtime_assert( scorefxn_->get_weight( cart_bonded ) > 0 );
@@ -265,9 +265,9 @@ ErraserMinimizerMover::vary_bond_geometry(
 	core::kinematics::MoveMap & mm,
 	pose::Pose & pose,
 	ObjexxFCL::FArray1D< bool > & allow_insert, // Operationally: not fixed, cutpoint, virt
-	std::set< Size > const & chunk
+	std::set< core::Size > const & chunk
 ) {
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	TR << "Enter vary_bond_geometry....." << std::endl;
 
 	TR.Debug << "My impression of what residues should maybe move: " << std::endl;
@@ -275,7 +275,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 	for ( auto const elem : chunk ) TR << elem << " ";
 	TR.Debug << "]" << std::endl;
 	// First, set appropriate DOFs to move in the movemap, mm
-	for ( Size i = 1; i <= nres; ++i )  {
+	for ( core::Size i = 1; i <= nres; ++i )  {
 
 		// Don't do anything for protein residues, because we don't have them as ideals.
 		// In the future, apply cart_bonded.
@@ -288,7 +288,7 @@ ErraserMinimizerMover::vary_bond_geometry(
 
 		chemical::ResidueType const & residue_type( pose.residue_type( i ) );
 
-		for ( Size j = 1; j <= residue_type.natoms(); j++ ) {
+		for ( core::Size j = 1; j <= residue_type.natoms(); j++ ) {
 			if ( !i_want_this_atom_to_move( residue_type, j ) ) continue;
 
 			tree::AtomCOP current_atom( pose.atom_tree().atom( AtomID( j, i ) ).get_self_ptr() );
@@ -371,12 +371,12 @@ ErraserMinimizerMover::add_virtual_res( core::pose::Pose & pose ) {
 ///////////////////////////////////////////////////////////
 void
 ErraserMinimizerMover::setup_fold_tree( pose::Pose & pose ) {
-	Size const nres( pose.size() );
-	Size const num_jumps( cutpoint_list_.size() );
-	ObjexxFCL::FArray2D< Size > jump_points( 2, num_jumps );
-	ObjexxFCL::FArray1D< Size > cuts( num_jumps );
+	core::Size const nres( pose.size() );
+	core::Size const num_jumps( cutpoint_list_.size() );
+	ObjexxFCL::FArray2D< core::Size > jump_points( 2, num_jumps );
+	ObjexxFCL::FArray1D< core::Size > cuts( num_jumps );
 
-	for ( Size n = 1; n <= cutpoint_list_.size(); n++ ) {
+	for ( core::Size n = 1; n <= cutpoint_list_.size(); n++ ) {
 		jump_points( 1, n ) = cutpoint_list_[n];
 		jump_points( 2, n ) = cutpoint_list_[n] + 1;
 		cuts( n ) = cutpoint_list_[n];
@@ -391,13 +391,13 @@ ErraserMinimizerMover::setup_fold_tree( pose::Pose & pose ) {
 void
 ErraserMinimizerMover::pyrimidine_flip_trial( pose::Pose & pose )
 {
-	Size const total_res = pose.size();
+	core::Size const total_res = pose.size();
 	Pose screen_pose = pose;
 	Real orig_score;
 	orig_score = ( *scorefxn_ )( pose );
 	( *scorefxn_ )( screen_pose ); // Introduce the pose to the scorefunction
 	TR << "Start pyrimidine_flip_trial. Flip residue :";
-	for ( Size i = 1; i <= total_res; ++i ) {
+	for ( core::Size i = 1; i <= total_res; ++i ) {
 		if ( fixed_res_list_.find( i ) != fixed_res_list_.end() ) continue;
 
 		if ( !pose.residue_type( i ).is_pyrimidine() ) continue;
@@ -423,8 +423,8 @@ ErraserMinimizerMover::pyrimidine_flip_trial( pose::Pose & pose )
 void
 ErraserMinimizerMover::add_fixed_res_constraints(
 	pose::Pose & pose,
-	Size const fixed_res_num,
-	Size const my_anchor
+	core::Size const fixed_res_num,
+	core::Size const my_anchor
 ) {
 	Residue const & rsd( pose.residue( fixed_res_num ) );
 	ConstraintSetOP cst_set = pose.constraint_set()->clone();
@@ -432,14 +432,14 @@ ErraserMinimizerMover::add_fixed_res_constraints(
 	if ( !rsd.has( "P" ) ) return;
 
 	Real const coord_sdev( 0.1 );
-	Size const atm_indexP   = rsd.atom_index( "P" );
-	Size const atm_indexO3  = rsd.atom_index( "O3'" );
-	Size const atm_indexOP2 = rsd.atom_index( "OP2" );
-	Size const atm_indexC6  = rsd.atom_index( "C6" );
+	core::Size const atm_indexP   = rsd.atom_index( "P" );
+	core::Size const atm_indexO3  = rsd.atom_index( "O3'" );
+	core::Size const atm_indexOP2 = rsd.atom_index( "OP2" );
+	core::Size const atm_indexC6  = rsd.atom_index( "C6" );
 	// Note that this is safe: if we can ask for these phosphate names,
 	// we can ask for chi1 atom 3 and be confident it's a nucleobases's
 	// first base atom.
-	Size const atm_indexBase = chemical::rna::first_base_atom_index( rsd.type() );
+	core::Size const atm_indexBase = chemical::rna::first_base_atom_index( rsd.type() );
 
 	cst_set->add_constraint( utility::pointer::make_shared< CoordinateConstraint >(
 		AtomID( atm_indexP, fixed_res_num ),
@@ -477,9 +477,9 @@ void remove_set1_elements_from_set2(
 
 void
 fill_gaps_and_remove_isolated_res(
-	std::set< Size > & res_list,
-	Size const total_res,
-	std::set< Size > & res_remove
+	std::set< core::Size > & res_list,
+	core::Size const total_res,
+	std::set< core::Size > & res_remove
 ) {
 
 	// res_list is sorted
@@ -500,33 +500,33 @@ fill_gaps_and_remove_isolated_res(
 	remove_set1_elements_from_set2( res_remove, res_list );
 
 	// add some new residues
-	std::set< Size > new_res;
+	std::set< core::Size > new_res;
 	for ( auto it = res_list.begin(); it != std::prev(res_list.end()); ++it ) {
-		Size const gap = *std::next(it) - *it;
+		core::Size const gap = *std::next(it) - *it;
 		// fill in gaps of length less than four
 		if ( gap > 1 && gap <= 4 ) {
-			for ( Size n = *it+1; n <= *std::next(it)+1; ++n ) {
+			for ( core::Size n = *it+1; n <= *std::next(it)+1; ++n ) {
 				new_res.insert( n );
 			}
 		}
 	}
 
-	Size const gap = total_res - *std::prev(res_list.end());
+	core::Size const gap = total_res - *std::prev(res_list.end());
 	if ( gap > 0 && gap <= 4 ) {
-		for ( Size n = *std::prev(res_list.end()) + 1; n <= total_res; ++n ) {
+		for ( core::Size n = *std::prev(res_list.end()) + 1; n <= total_res; ++n ) {
 			new_res.insert( n );
 		}
 	}
 	res_list.insert( new_res.begin(), new_res.end() );
 }
 
-std::set< Size >
+std::set< core::Size >
 find_nearby_res(
 	Pose const & pose,
-	std::set< Size > res_list_current,
+	std::set< core::Size > res_list_current,
 	Real const dist_cutoff
 ) {
-	std::set< Size > res_list;
+	std::set< core::Size > res_list;
 	for ( auto const i : res_list_current ) {
 		//TR << "Evaluating residue " << i << " from res_list_current " << std::endl;
 		std::string const dist_atom_i = pose.residue_type( i ).is_protein() ? "CA" : "C1'";
@@ -534,7 +534,7 @@ find_nearby_res(
 			// defect
 			continue;
 		}
-		for ( Size j = 1; j <= pose.total_residue(); ++j ) {
+		for ( core::Size j = 1; j <= pose.total_residue(); ++j ) {
 			if ( res_list_current.find(j) != res_list_current.end() || res_list.find(j) != res_list.end() ) continue;
 			std::string const dist_atom_j = pose.residue_type( j ).is_protein() ? "CA" : "C1'";
 			if ( !pose.residue_type( j ).has( dist_atom_j ) ) {
@@ -547,9 +547,9 @@ find_nearby_res(
 			if ( dist_C1 > ( dist_cutoff + 8 ) * ( dist_cutoff + 8 ) ) continue;
 
 			// Now that we've passed the neighborhood filter, check all vs all.
-			for ( Size atom_i = 1; atom_i <= pose.residue_type(i).natoms(); ++atom_i ) {
+			for ( core::Size atom_i = 1; atom_i <= pose.residue_type(i).natoms(); ++atom_i ) {
 				bool found_qualifying_atom = false;
-				for ( Size atom_j = 1; atom_j <= pose.residue_type(j).natoms(); ++atom_j ) {
+				for ( core::Size atom_j = 1; atom_j <= pose.residue_type(j).natoms(); ++atom_j ) {
 					Real const dist_sq = pose.residue( i ).xyz( atom_i ).distance_squared(
 						pose.residue( j ).xyz( atom_j ) );
 					if ( dist_sq < dist_cutoff * dist_cutoff ) {
@@ -570,7 +570,7 @@ find_nearby_res(
 }
 
 void
-erase_if_in_any_slice( utility::vector1< std::set< Size > > const & res_list_sliced, Size const res, std::set< Size > & res_list_new
+erase_if_in_any_slice( utility::vector1< std::set< core::Size > > const & res_list_sliced, core::Size const res, std::set< core::Size > & res_list_new
 ) {
 	for ( auto & res_set : res_list_sliced ) {
 		if ( res_set.find( res ) != res_set.end() ) {
@@ -579,8 +579,8 @@ erase_if_in_any_slice( utility::vector1< std::set< Size > > const & res_list_sli
 	}
 }
 
-void clean_res_list ( std::set< Size > & res_list_new, utility::vector1< std::set< Size > > const & res_list_sliced ) {
-	std::set< Size > clean_res_list_new;
+void clean_res_list ( std::set< core::Size > & res_list_new, utility::vector1< std::set< core::Size > > const & res_list_sliced ) {
+	std::set< core::Size > clean_res_list_new;
 	for ( auto const & res_list : res_list_sliced ) {
 		std::set_difference( res_list_new.begin(), res_list_new.end(), res_list.begin(), res_list.end(), inserter(clean_res_list_new,clean_res_list_new.begin()) );
 		TR.Trace << "cleanres_list_new: " << clean_res_list_new << std::endl;
@@ -593,26 +593,26 @@ void clean_res_list ( std::set< Size > & res_list_new, utility::vector1< std::se
 void
 identify_chunks(
 	Pose const & pose,
-	utility::vector1< std::set< Size > > & sliced_list_final,
-	Size const virtual_res_pos,
-	Size const nproc
+	utility::vector1< std::set< core::Size > > & sliced_list_final,
+	core::Size const virtual_res_pos,
+	core::Size const nproc
 ) {
 	// Create at least one chunk per proc
 
 	sliced_list_final.clear();
 
 	TR << "Identifying chunks..." << std::endl;
-	Size const total_res = pose.size() - 1;
+	core::Size const total_res = pose.size() - 1;
 	// Historically, we permitted poses to be sliced up into 'chunks' for minimization.
 	// This is not a very good system in general, with modern scoring machinery. Here,
 	// we ensure that this doesn't happen if you have one core allocated.. If you have
 	// multiple, go to town (but only if the pose is very big -- I haven't seen this
 	// be worth it yet).
-	Size const enormous_pose_size = 15000;
+	core::Size const enormous_pose_size = 15000;
 	if ( nproc == 1 || pose.size() < enormous_pose_size ) {
 		// All in one.
-		std::set< Size > res_set;
-		for ( Size i = 1; i <= total_res; ++i ) {
+		std::set< core::Size > res_set;
+		for ( core::Size i = 1; i <= total_res; ++i ) {
 			if ( i != virtual_res_pos ) res_set.insert( i );
 		}
 		sliced_list_final.push_back( res_set );
@@ -620,14 +620,14 @@ identify_chunks(
 	}
 
 	TR << "Found " << total_res << " residues." << std::endl;
-	Size const n_chunk = std::max( nproc, pose.size() / 100 );
-	Size n_chunk_left = n_chunk;
-	Size chunk_size = 0;
-	std::set< Size > res_list_unsliced;
-	for ( Size i = 1; i <= total_res; ++i ) res_list_unsliced.insert(i);
+	core::Size const n_chunk = std::max( nproc, pose.size() / 100 );
+	core::Size n_chunk_left = n_chunk;
+	core::Size chunk_size = 0;
+	std::set< core::Size > res_list_unsliced;
+	for ( core::Size i = 1; i <= total_res; ++i ) res_list_unsliced.insert(i);
 
-	utility::vector1< std::set< Size > > res_list_sliced;
-	std::set< Size > res_list_current;
+	utility::vector1< std::set< core::Size > > res_list_sliced;
+	std::set< core::Size > res_list_current;
 	while ( res_list_unsliced.size() != 0 ) {
 		TR.Trace << "Unsliced: " << res_list_unsliced.size() << std::endl;
 		TR.Trace << "Current:  " << res_list_current.size() << std::endl;
@@ -637,7 +637,7 @@ identify_chunks(
 
 		if ( res_list_current.size() == 0 ) {
 			// python pop 0 to res_list_current
-			Size res = *res_list_unsliced.begin();
+			core::Size res = *res_list_unsliced.begin();
 			TR.Trace << "Starting new chunk from scratch with res " << res << std::endl;
 			chunk_size = res_list_unsliced.size() / n_chunk_left;
 			res_list_unsliced.erase(res_list_unsliced.begin());
@@ -646,7 +646,7 @@ identify_chunks(
 			n_chunk_left -= 1;
 		}
 
-		std::set< Size > res_list_new = find_nearby_res(pose, res_list_current, 3.5 );
+		std::set< core::Size > res_list_new = find_nearby_res(pose, res_list_current, 3.5 );
 		TR.Trace << "Adding " << res_list_new.size() << " new residues near res_list_current" << std::endl;
 		TR.Trace << "To wit, res_list_new: [ ";
 		for ( auto const elem : res_list_new ) TR.Trace << elem << " ";
@@ -660,7 +660,7 @@ identify_chunks(
 			TR.Trace << " is still less than chunk_size * 0.7 " << chunk_size * 0.7 << std::endl;
 			while ( true ) {
 				// "pop 0th element to res"
-				Size res = *res_list_unsliced.begin();
+				core::Size res = *res_list_unsliced.begin();
 				TR.Trace << "So, we pop " << res << std::endl;
 				res_list_unsliced.erase(res_list_unsliced.begin());
 				if ( res_list_current.find( res ) == res_list_current.end() ) {
@@ -679,7 +679,7 @@ identify_chunks(
 
 			TR.Trace << "res_list_current: " << res_list_current << std::endl;
 
-			std::set< Size > unused;
+			std::set< core::Size > unused;
 			fill_gaps_and_remove_isolated_res( res_list_current, total_res, unused );
 
 			TR.Trace << "Gonna remove res_list_current from res_list_unsliced" << std::endl;
@@ -701,20 +701,20 @@ identify_chunks(
 				TR.Trace << "What remains is: " << res_list_unsliced << std::endl;
 
 				res_list_current = res_list_unsliced;
-				std::set< Size > removed_res;
+				std::set< core::Size > removed_res;
 				fill_gaps_and_remove_isolated_res(res_list_current, total_res, removed_res);
 				sliced_list_final.push_back( res_list_current );
 				TR.Trace << "Adding res_list_current to the list of sliced_list_final" << std::endl;
 				while ( removed_res.size() != 0 ) {
 					TR.Trace << "Trying to remove res from each sliced list, to some end" << std::endl;
-					std::set< Size > res_remove;
-					for ( Size const res : removed_res ) {
-						std::set< Size > just_res;
+					std::set< core::Size > res_remove;
+					for ( core::Size const res : removed_res ) {
+						std::set< core::Size > just_res;
 						just_res.insert( res );
-						std::set< Size > res_list_near = find_nearby_res( pose, just_res, 2.0 );
+						std::set< core::Size > res_list_near = find_nearby_res( pose, just_res, 2.0 );
 						for ( auto & sliced_list : sliced_list_final  ) {
 							bool can_break = false;
-							for ( Size const near_res : res_list_near ) {
+							for ( core::Size const near_res : res_list_near ) {
 								if ( sliced_list.find( near_res ) != sliced_list.end() ) {
 									sliced_list.insert( res );
 									res_remove.insert( res );
@@ -735,7 +735,7 @@ identify_chunks(
 				res_list_current.clear();
 				res_list_current.insert(*res_list_unsliced.begin());
 				res_list_unsliced.erase(res_list_unsliced.begin());
-				chunk_size = Size( 1.1 * res_list_unsliced.size() / n_chunk_left );
+				chunk_size = core::Size( 1.1 * res_list_unsliced.size() / n_chunk_left );
 				n_chunk_left -= 1;
 			}
 		}
@@ -746,14 +746,14 @@ void
 ErraserMinimizerMover::turn_off_for_chunks(
 	MoveMap & mm,
 	Pose const & pose,
-	std::set< Size > const & chunk
+	std::set< core::Size > const & chunk
 ) {
 	// Turn off all DOFs that ARE NOT in chunk_i
-	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( chunk.find( i ) == chunk.end() ) {
 			mm.set_chi( i, false );
 			mm.set_bb(  i, false );
-			for ( Size j = 1; j <= pose.residue_type( i ).natoms(); ++j ) {
+			for ( core::Size j = 1; j <= pose.residue_type( i ).natoms(); ++j ) {
 				mm.set( DOF_ID( AtomID( j, i ), D ),     false );
 				mm.set( DOF_ID( AtomID( j, i ), THETA ), false );
 				mm.set( DOF_ID( AtomID( j, i ), PHI ),   false );
@@ -767,11 +767,11 @@ ErraserMinimizerMover::turn_off_for_chunks(
 core::Vector com_of_true_residues( kinematics::MoveMap const & mm, Pose const & pose ) {
 	// Just average heavyatom position
 	core::Vector avg( 0 );
-	Size natoms = 0;
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	core::Size natoms = 0;
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( !mm.get_bb( ii ) && !mm.get_chi( ii ) ) continue;
 
-		for ( Size jj = 1; jj <= pose.residue_type( ii ).nheavyatoms(); ++jj ) {
+		for ( core::Size jj = 1; jj <= pose.residue_type( ii ).nheavyatoms(); ++jj ) {
 			avg += pose.residue( ii ).xyz( jj );
 			natoms += 1;
 		}
@@ -781,12 +781,12 @@ core::Vector com_of_true_residues( kinematics::MoveMap const & mm, Pose const & 
 
 
 
-std::string min_checkpoint_namer( Size const nstruct ){
+std::string min_checkpoint_namer( core::Size const nstruct ){
 	std::stringstream outname;
 	outname << "minimize_checkpoint_" << ObjexxFCL::lead_zero_string_of( nstruct, 4 ) << ".out";
 	return outname.str();
 }
-std::string min_log_namer( Size const nstruct ){
+std::string min_log_namer( core::Size const nstruct ){
 	std::stringstream outname;
 	outname << "minimize_checkpoint_" << ObjexxFCL::lead_zero_string_of( nstruct, 4 ) << ".chunk_log";
 	return outname.str();
@@ -794,7 +794,7 @@ std::string min_log_namer( Size const nstruct ){
 
 // Gives you the moves directly, and the start index.
 void
-read_checkpoint_log( utility::vector1< Size > & chunk_indices, Size & start_idx, Size const nstruct ) {
+read_checkpoint_log( utility::vector1< core::Size > & chunk_indices, core::Size & start_idx, core::Size const nstruct ) {
 
 	// Read lines from
 	utility::io::izstream logstream( min_log_namer( nstruct ) );
@@ -812,10 +812,10 @@ read_checkpoint_log( utility::vector1< Size > & chunk_indices, Size & start_idx,
 	logstream.close();
 }
 
-void write_checkpoint( utility::vector1< Size > const & chunk_indices, Size const cur_idx, Size const nstruct, Pose const & pose ) {
+void write_checkpoint( utility::vector1< core::Size > const & chunk_indices, core::Size const cur_idx, core::Size const nstruct, Pose const & pose ) {
 	std::ofstream logstream( min_log_namer( nstruct ) );
-	Size ii = 1;
-	for ( Size const chunk_idx : chunk_indices ) {
+	core::Size ii = 1;
+	for ( core::Size const chunk_idx : chunk_indices ) {
 		logstream << chunk_idx << " " << std::endl;// << std::endl;
 
 		if ( ii == cur_idx ) {
@@ -835,7 +835,7 @@ void write_checkpoint( utility::vector1< Size > const & chunk_indices, Size cons
 	protocols::viewer::clear_conformation_viewers();
 }
 
-void load_checkpoint( Size const nstruct, utility::vector1< Size > & chunk_indices, Pose & pose, Size & first_chunk ) {
+void load_checkpoint( core::Size const nstruct, utility::vector1< core::Size > & chunk_indices, Pose & pose, core::Size & first_chunk ) {
 	// Look through posisble files and replace with checkpointed pose.
 	// Relies on consistent/deterministic chunk assignments, of course.
 	read_checkpoint_log( chunk_indices, first_chunk, nstruct );
@@ -850,7 +850,7 @@ void load_checkpoint( Size const nstruct, utility::vector1< Size > & chunk_indic
 
 
 kinematics::MoveMap
-ErraserMinimizerMover::movemap_setup( Pose & pose, std::set< Size > & cut_upper, std::set< Size > & cut_lower,
+ErraserMinimizerMover::movemap_setup( Pose & pose, std::set< core::Size > & cut_upper, std::set< core::Size > & cut_lower,
 	ObjexxFCL::FArray1D< bool > & allow_insert
 ) {
 	kinematics::MoveMap mm;
@@ -858,7 +858,7 @@ ErraserMinimizerMover::movemap_setup( Pose & pose, std::set< Size > & cut_upper,
 	mm.set_chi( false );
 	mm.set_jump( false );
 
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( pose.residue_type( ii ).aa() == core::chemical::aa_vrt ) continue;
 
 		allow_insert( ii ) = true;
@@ -868,9 +868,9 @@ ErraserMinimizerMover::movemap_setup( Pose & pose, std::set< Size > & cut_upper,
 
 	kinematics::FoldTree fold_tree( pose.fold_tree() );
 
-	for ( Size i = 1; i <= fold_tree.num_jump(); ++i ) {
-		Size const ustream   = fold_tree.upstream_jump_residue( i );
-		Size const dstream = fold_tree.downstream_jump_residue( i );
+	for ( core::Size i = 1; i <= fold_tree.num_jump(); ++i ) {
+		core::Size const ustream   = fold_tree.upstream_jump_residue( i );
+		core::Size const dstream = fold_tree.downstream_jump_residue( i );
 		TR.Debug << "Considering jump number " << i << " from " << ustream << " to " << dstream << std::endl;
 		cut_lower.insert( ustream );
 		cut_upper.insert( dstream );
@@ -934,7 +934,7 @@ ErraserMinimizerMover::pose_preliminaries(
 
 	// Put everything protein into the fixed res list if we aren't minimizing protein
 	if ( !minimize_protein_ ) {
-		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 			if ( pose.residue_type( ii ).is_protein() ) {
 				fixed_res_list_.insert( ii );
 			}
@@ -960,7 +960,7 @@ ErraserMinimizerMover::pose_preliminaries(
 	// Add a virtual residue for density scoring
 	virtual_res_pos = add_virtual_res( pose );
 	pose::Pose const pose_full = pose;
-	//Size const nres( pose.size() );
+	//core::Size const nres( pose.size() );
 
 	// Output the sequence
 	std::string const & working_sequence = pose.sequence();
@@ -978,7 +978,7 @@ ErraserMinimizerMover::pose_preliminaries(
 	// Each minimization gets its own little output file. Notably, while we
 	// must figure out the chunks every time, we can skip chunks for which
 	// an appropriate output file exists.
-	//utility::vector1< std::set< Size > > chunks;
+	//utility::vector1< std::set< core::Size > > chunks;
 	// AMW TODO: read chunks from temp file if exists
 	// AMW: at least one chunk per proc.
 	identify_chunks( pose, chunks_, virtual_res_pos, nproc_ );
@@ -993,15 +993,15 @@ void
 ErraserMinimizerMover::process_entire_pose(
 	Pose & pose
 ) {
-	Size const n_chunk = chunks_.size();
-	Size const nres( pose.size() );
-	Size const nres_moving( nres - fixed_res_list_.size() );
+	core::Size const n_chunk = chunks_.size();
+	core::Size const nres( pose.size() );
+	core::Size const nres_moving( nres - fixed_res_list_.size() );
 
-	Size start_idx = 1;
+	core::Size start_idx = 1;
 	// load_checkpoint: open a file that reads a chunk ordering
 	// and a stopping place, and ensure that we restore the correct
 	// chunk ordering and the right resuming place.
-	utility::vector1< Size > chunk_indices( n_chunk );
+	utility::vector1< core::Size > chunk_indices( n_chunk );
 	std::iota( chunk_indices.begin(), chunk_indices.end(), 1 );
 	if ( utility::file::file_exists( min_checkpoint_namer( nstruct_ ) ) ) {
 		chunk_indices.clear();
@@ -1026,7 +1026,7 @@ ErraserMinimizerMover::process_entire_pose(
 		TR.Debug << "fixed res: " << fixed_res_list_ << std::endl;
 	}
 
-	for ( Size const fixed_res_num : fixed_res_list_ ) {
+	for ( core::Size const fixed_res_num : fixed_res_list_ ) {
 		add_fixed_res_constraints( pose, fixed_res_num, virtual_res_pos );
 
 		mm.set_chi( fixed_res_num, false );
@@ -1053,17 +1053,17 @@ ErraserMinimizerMover::process_entire_pose(
 		scorefxn_->set_weight( coordinate_constraint, 10 );
 		ConstraintSetOP cst_set = pose.constraint_set()->clone();
 
-		for ( Size i = 1; i <= nres; ++i ) {
+		for ( core::Size i = 1; i <= nres; ++i ) {
 			if ( pose.residue_type( i ).aa() == core::chemical::aa_vrt ) continue;
 			// Fixed res phosphates can't move anyway, so don't bother.
 			if ( fixed_res_list_.find( i ) != fixed_res_list_.end() ) continue;
 
 			Real const coord_sdev( 0.3 );
-			Size const my_anchor( virtual_res_pos ); //anchor on virtual residue
+			core::Size const my_anchor( virtual_res_pos ); //anchor on virtual residue
 			Residue const & rsd( pose.residue( i ) );
 			// P for RNA, CA for protein (if they sneak in)
 			if ( !rsd.has( "P" ) && !rsd.has( "CA" ) ) continue;
-			Size const atm_indexP = rsd.has( "P" ) ? rsd.atom_index( "P" ) : rsd.atom_index( "CA" );
+			core::Size const atm_indexP = rsd.has( "P" ) ? rsd.atom_index( "P" ) : rsd.atom_index( "CA" );
 			cst_set->add_constraint( utility::pointer::make_shared< CoordinateConstraint >(
 				AtomID( atm_indexP, i ),
 				AtomID( 1, my_anchor ), rsd.xyz( atm_indexP ),
@@ -1073,8 +1073,8 @@ ErraserMinimizerMover::process_entire_pose(
 	}
 	ConstraintSetOP saved_cst_set = pose.constraint_set()->clone();
 
-	Size ii = 1;
-	for ( Size const chunk_i : chunk_indices ) {
+	core::Size ii = 1;
+	for ( core::Size const chunk_i : chunk_indices ) {
 		if ( ii < start_idx ) continue;
 
 		time_t chunk_start = time(nullptr);
@@ -1106,7 +1106,7 @@ ErraserMinimizerMover::process_entire_pose(
 			Pose const start_pose = pose;
 			AtomTreeMinimizer minimizer;
 			float const dummy_tol( 0.0001 );
-			Size const min_iter = std::min( 5000, std::max( 2000, int( nres_moving * 24 ) ) );
+			core::Size const min_iter = std::min( 5000, std::max( 2000, int( nres_moving * 24 ) ) );
 
 			TR << "Minimize using dfpmin with use_nb_list=true .." << std::endl;
 			MinimizerOptions min_options_dfpmin( "lbfgs_armijo_nonmonotone" /*option[ run::min_type ]*/, dummy_tol, true, false, false );
@@ -1127,7 +1127,7 @@ ErraserMinimizerMover::process_entire_pose(
 			Pose const start_pose = pose;
 			CartesianMinimizer cart_minimizer;
 			float const cart_dummy_tol( 0.0001 );
-			Size const cart_min_iter = std::min( 5000, std::max( 2000, int( nres_moving * 24 ) ) );
+			core::Size const cart_min_iter = std::min( 5000, std::max( 2000, int( nres_moving * 24 ) ) );
 
 			TR << "Cart-minimize using dfpmin with use_nb_list=true .." << std::endl;
 			MinimizerOptions cart_min_options_dfpmin( "lbfgs_armijo_nonmonotone" /*option[ run::min_type ]*/, cart_dummy_tol, true, false, false );
@@ -1166,7 +1166,7 @@ ErraserMinimizerMover::process_entire_pose(
 	TR << "Job completed sucessfully." << std::endl;
 
 	// Remove slice output files
-	for ( Size chunk_i = 1; chunk_i <= n_chunk; ++chunk_i ) {
+	for ( core::Size chunk_i = 1; chunk_i <= n_chunk; ++chunk_i ) {
 		std::stringstream outname;
 		outname << "full_minimize_temp_" << chunk_i << ".out";
 		utility::file::file_delete( outname.str() );

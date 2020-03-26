@@ -47,14 +47,14 @@ void MC_RNA_MultiSuite::operator++() {
 }
 ///////////////////////////////////////////////////////////////////////////
 void  MC_RNA_MultiSuite::set_pucker_flip_rate( Real const setting ) {
-	for ( Size i = 1; i <= suite_samplers_.size(); ++i ) {
+	for ( core::Size i = 1; i <= suite_samplers_.size(); ++i ) {
 		suite_samplers_[i]->set_pucker_flip_rate( setting );
 	}
 }
 ///////////////////////////////////////////////////////////////////////////
 void  MC_RNA_MultiSuite::set_pucker_flip_rate(
 	Real const setting,
-	Size const rotamer_id
+	core::Size const rotamer_id
 ) {
 	runtime_assert( rotamer_id <= suite_samplers_.size() );
 	suite_samplers_[rotamer_id]->set_pucker_flip_rate( setting );
@@ -62,21 +62,21 @@ void  MC_RNA_MultiSuite::set_pucker_flip_rate(
 
 ///////////////////////////////////////////////////////////////////////////
 void  MC_RNA_MultiSuite::set_gaussian_stdev( core::Real const setting ) {
-	for ( Size i = 1; i <= suite_samplers_.size(); ++i ) {
+	for ( core::Size i = 1; i <= suite_samplers_.size(); ++i ) {
 		suite_samplers_[i]->set_gaussian_stdev( setting );
 	}
 }
 ///////////////////////////////////////////////////////////////////////////
 void  MC_RNA_MultiSuite::set_gaussian_stdev(
 	Real const setting,
-	Size const rotamer_id
+	core::Size const rotamer_id
 ) {
 	runtime_assert( rotamer_id <= suite_samplers_.size() );
 	suite_samplers_[rotamer_id]->set_gaussian_stdev( setting );
 }
 ///////////////////////////////////////////////////////////////////////////
 void MC_RNA_MultiSuite::set_angle( pose::Pose const & pose ) {
-	for ( Size i = 1; i<=suite_samplers_.size(); ++i ) {
+	for ( core::Size i = 1; i<=suite_samplers_.size(); ++i ) {
 		suite_samplers_[i]->set_angle( pose );
 	}
 }
@@ -94,7 +94,7 @@ void  MC_RNA_MultiSuite::clear_rotamer() {
 }
 ///////////////////////////////////////////////////////////////////////////
 void  MC_RNA_MultiSuite::set_init_from_pose( pose::Pose const & pose ) {
-	for ( Size i = 1; i <= suite_samplers_.size(); ++i ) {
+	for ( core::Size i = 1; i <= suite_samplers_.size(); ++i ) {
 		suite_samplers_[i]->set_init_from_pose( pose );
 	}
 }

@@ -83,7 +83,7 @@ count_neighbors( core::pose::Pose const &pose,
 				ir  = graph.get_node( resno )->const_edge_list_begin(),
 				ire = graph.get_node( resno )->const_edge_list_end();
 				ir != ire; ++ir ) {
-			Size const j( (*ir)->get_other_ind( resno ) );
+			core::Size const j( (*ir)->get_other_ind( resno ) );
 
 			// supporting residue level only yet...
 			core::Vector xyz2;

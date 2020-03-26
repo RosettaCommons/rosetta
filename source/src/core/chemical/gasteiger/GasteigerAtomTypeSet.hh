@@ -27,7 +27,7 @@
 // Project headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #include <core/types.hh>
@@ -52,7 +52,7 @@ namespace gasteiger {
 /// Atom and the vector index is looked up by an element_name string
 /// in a map.
 ///
-class GasteigerAtomTypeSet : public utility::pointer::ReferenceCount {
+class GasteigerAtomTypeSet : public utility::VirtualBase {
 
 private:
 

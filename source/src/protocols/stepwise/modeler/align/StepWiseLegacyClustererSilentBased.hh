@@ -29,7 +29,7 @@
 #include <core/id/AtomID.hh>
 #include <core/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 #include <map>
@@ -42,7 +42,7 @@ namespace align {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
-class StepWiseLegacyClustererSilentBased: public utility::pointer::ReferenceCount {
+class StepWiseLegacyClustererSilentBased: public utility::VirtualBase {
 public:
 
 	//constructor!
@@ -54,7 +54,7 @@ public:
 
 	// convenience constructor, used in StepWiseProteinModeler
 	StepWiseLegacyClustererSilentBased( core::io::silent::SilentFileDataOP silent_file_data,
-		utility::vector1< Size > const & moving_res_list,
+		utility::vector1< core::Size > const & moving_res_list,
 		options::StepWiseModelerOptionsCOP options,
 		bool const force_align );
 
@@ -112,7 +112,7 @@ private:
 	void
 	do_some_clustering();
 
-	Size
+	core::Size
 	check_for_closeness( core::pose::PoseOP const & pose_op );
 
 	void
@@ -125,12 +125,12 @@ private:
 	initialize_auto_tune_cluster_rmsds();
 
 	core::io::silent::SilentStructOP
-	setup_silent_struct( Size const n );
+	setup_silent_struct( core::Size const n );
 
 private:
 
 	utility::vector1< std::string > silent_files_;
-	Size max_decoys_;
+	core::Size max_decoys_;
 	core::Real cluster_radius_;
 	bool cluster_by_all_atom_rmsd_;
 	core::Real score_diff_cut_;

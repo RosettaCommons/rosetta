@@ -110,7 +110,7 @@ void PeakAssignment::update_chemshiftscore_from_peak() {
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	Real const& weight( params.chemshift_overlap_weight_ );
 	Real sum( 0.0 );
-	for ( Size d=1; d<=crosspeak_->dimension(); d++ ) {
+	for ( core::Size d=1; d<=crosspeak_->dimension(); d++ ) {
 		CrossPeak::Spin const& spin( crosspeak_->spin( d ) );
 		Resonance const& assigned_resonance( resonances()[ spin.assignment( spin_id( d>2 ? d-2 : d ) ) ] );
 		Real s = 1.0/weight*assigned_resonance.pmatch( spin.freq(), crosspeak_->tolerance( d ), crosspeak_->folder( d ) );
@@ -129,8 +129,8 @@ void PeakAssignment::update_upperdistance_score(/*dmax*/ ) {
 }
 
 core::Size PeakAssignment::float_ambiguity() const {
-	Size float_ambiguity=1;
-	for ( Size iatom=1; iatom<=2; ++iatom ) {
+	core::Size float_ambiguity=1;
+	for ( core::Size iatom=1; iatom<=2; ++iatom ) {
 		if ( has_proton( iatom ) ) float_ambiguity *= resonance( iatom ).ambiguity();
 	}
 	return float_ambiguity;
@@ -211,7 +211,7 @@ bool PeakAssignment::is_symmetric_partner_of( PeakAssignment const& other ) cons
 		//  tr.Debug << " SAME " << std::endl;
 		return false;
 	}
-	for ( Size select = 1; select <=2 && match; ++select ) {
+	for ( core::Size select = 1; select <=2 && match; ++select ) {
 		core::Size self = select;
 		core::Size partner = select % 2 + 1;
 		if ( has_label( self ) && other.has_label( partner ) ) {
@@ -228,7 +228,7 @@ bool PeakAssignment::is_symmetric_partner_of( PeakAssignment const& other ) cons
 	if ( crosspeak_->exp_hash() == other.crosspeak().exp_hash() ) return match;
 	if ( match ) return true;
 	match = true;
-	for ( Size select = 1; select <=2 && match; ++select ) {
+	for ( core::Size select = 1; select <=2 && match; ++select ) {
 		core::Size self = select;
 		core::Size partner = select;
 		if ( has_label( self ) && other.has_label( partner ) ) {
@@ -243,7 +243,7 @@ bool PeakAssignment::is_symmetric_partner_of( PeakAssignment const& other ) cons
 }
 
 void PeakAssignment::show( std::ostream& os ) const {
-	for ( Size select =1; select <= 2; ++select ) {
+	for ( core::Size select =1; select <= 2; ++select ) {
 		if ( has_proton( select ) ) {
 			os << atom( select ) << "   ";
 		} else {

@@ -45,8 +45,8 @@ namespace rotamer_set_operations {
 static basic::Tracer tr( "protocols.toolbox.RotamerSetOperations.AddGood2BPairEnergyRotamers" );
 
 AddGood2BPairEnergyRotamers::AddGood2BPairEnergyRotamers(
-	Size seqpos,
-	Size ex_level,
+	core::Size seqpos,
+	core::Size ex_level,
 	utility::vector1< core::Size > const & target_seqpos,
 	Real score_cutoff,
 	bool drop_rots_above_cutoff
@@ -105,7 +105,7 @@ AddGood2BPairEnergyRotamers::alter_rotamer_set(
 
 	//1.
 	Real existing_score(0.0);
-	for ( Size i(1); i <= target_seqpos_.size(); ++i ) {
+	for ( core::Size i(1); i <= target_seqpos_.size(); ++i ) {
 		existing_score += this->get_res_res_score( pose.residue( seqpos_), pose.residue( target_seqpos_[i]), pose, sfxn );
 	}
 
@@ -128,11 +128,11 @@ AddGood2BPairEnergyRotamers::alter_rotamer_set(
 	//3.
 	//utlility::vector1< core::conformation::ResidueCOP > rots_to_keep;
 	std::list< std::pair< Real, core::conformation::ResidueCOP > > rots_to_keep;
-	Size number_passing_cutoff(0);
-	for ( Size i(1); i <= extra_rotset->num_rotamers(); ++i ) {
+	core::Size number_passing_cutoff(0);
+	for ( core::Size i(1); i <= extra_rotset->num_rotamers(); ++i ) {
 		Real this_score(0.0);
 		core::conformation::ResidueCOP candidate_rot( extra_rotset->rotamer( i ) );
-		for ( Size j(1); j <= target_seqpos_.size(); ++j ) {
+		for ( core::Size j(1); j <= target_seqpos_.size(); ++j ) {
 			this_score += this->get_res_res_score( *candidate_rot, pose.residue( target_seqpos_[j]), pose, sfxn );
 		}
 		if ( this_score <= score_cutoff_ ) {
@@ -154,7 +154,7 @@ AddGood2BPairEnergyRotamers::alter_rotamer_set(
 	if ( debug_ ) {
 
 		std::string targetpdbpos_string;
-		for ( Size i(1); i <= target_seqpos_.size(); ++i ) {
+		for ( core::Size i(1); i <= target_seqpos_.size(); ++i ) {
 			targetpdbpos_string += utility::to_string(  pose.pdb_info()->number( target_seqpos_[i] ) ) + utility::to_string(  pose.pdb_info()->chain( target_seqpos_[i] ) );
 		}
 
@@ -174,8 +174,8 @@ AddGood2BPairEnergyRotamers::alter_rotamer_set(
 		for ( std::map< std::string, std::list< std::pair< Real, core::conformation::ResidueCOP > > >::const_iterator map_it( restype_map.begin() ), map_end( restype_map.end() ); map_it != map_end; ++map_it ) {
 			std::string filename( "ExpRot_"+targetpdbpos_string+"_"+utility::to_string( this_pdbpos)+map_it->first+".pdb");
 			std::ofstream file_out(filename.c_str() );
-			Size atcounter(0);
-			Size modelcounter(0);
+			core::Size atcounter(0);
+			core::Size modelcounter(0);
 			auto list_it( map_it->second.begin() ), list_end( map_it->second.end() );
 			for ( ; list_it != list_end; ++list_it ) {
 				modelcounter++;
@@ -228,20 +228,20 @@ AddGood2BPairEnergyRotamers::rotamer_set_contains_rotamer(
 	core::pack::rotamer_set::RotamerSet const & rotamer_set,
 	core::conformation::Residue const & candidate_rot ) const
 {
-	Size num_resgroups( rotamer_set.get_n_residue_groups() );
+	core::Size num_resgroups( rotamer_set.get_n_residue_groups() );
 
-	for ( Size resgroup(1); resgroup <= num_resgroups; ++resgroup ) {
-		Size cur_rot_id( rotamer_set.get_residue_group_begin( resgroup ) );
+	for ( core::Size resgroup(1); resgroup <= num_resgroups; ++resgroup ) {
+		core::Size cur_rot_id( rotamer_set.get_residue_group_begin( resgroup ) );
 
 		core::conformation::ResidueCOP cur_rot( rotamer_set.rotamer( cur_rot_id ) );
 		if ( candidate_rot.name3() != cur_rot->name3() ) continue;
 
-		Size resgroup_end( resgroup == num_resgroups ? rotamer_set.num_rotamers() : rotamer_set.get_residue_group_begin( resgroup + 1 ) - 1 );
+		core::Size resgroup_end( resgroup == num_resgroups ? rotamer_set.num_rotamers() : rotamer_set.get_residue_group_begin( resgroup + 1 ) - 1 );
 
 		for ( ; cur_rot_id <= resgroup_end; ++cur_rot_id ) {
 			cur_rot = rotamer_set.rotamer( cur_rot_id );
 			bool all_chi_identical(true);
-			for ( Size chi_id(1); chi_id <= candidate_rot.nchi(); ++chi_id ) {
+			for ( core::Size chi_id(1); chi_id <= candidate_rot.nchi(); ++chi_id ) {
 				if ( candidate_rot.chi()[ chi_id ] != cur_rot->chi()[ chi_id ] ) {
 					all_chi_identical = false;
 					break;

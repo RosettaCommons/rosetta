@@ -56,19 +56,19 @@ public:
 
 protected:
 
-	Size
+	core::Size
 	pick_a_rotamer(
-		Size outercycle,
-		Size innercycle,
-		Size cycle_number,
-		utility::vector1< Size > & accessible_state_list
+		core::Size outercycle,
+		core::Size innercycle,
+		core::Size cycle_number,
+		utility::vector1< core::Size > & accessible_state_list
 	) const;
 
 	bool
 	pass_metropolis_multiple_nodes_changing(
 		PackerEnergy previous_fragmentE,
 		PackerEnergy deltaE,
-		Size num_changing_nodes
+		core::Size num_changing_nodes
 	) const;
 
 private:

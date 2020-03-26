@@ -51,6 +51,7 @@ namespace task_operations {
 
 using namespace core::pack::task::operation;
 using namespace utility::tag;
+using core::Size;
 
 core::pack::task::operation::TaskOperationOP
 SelectBySASAOperationCreator::create_task_operation() const
@@ -154,7 +155,7 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 			int sym_aware_jump_id = 0;
 			if ( sym_dof_names_ != "" ) {
 				utility::vector1<std::string> sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
-				for ( Size ii = 1; ii <= sym_dof_name_list.size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= sym_dof_name_list.size(); ++ii ) {
 					sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( sasa_pose, sym_dof_name_list[ii] );
 					protocols::rigid::RigidBodyTransMoverOP translate( utility::pointer::make_shared< protocols::rigid::RigidBodyTransMover >( sasa_pose, sym_aware_jump_id ) );
 					translate->step_size( 1000.0 );
@@ -162,7 +163,7 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 				}
 			} else {
 				utility::vector1<core::Size> jump_list = utility::string_split( jump_nums_ , ',',core::Size());
-				for ( Size ii = 1; ii <= jump_list.size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= jump_list.size(); ++ii ) {
 					sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( sasa_pose, jump_list[ii] );
 					protocols::rigid::RigidBodyTransMoverOP translate( utility::pointer::make_shared< protocols::rigid::RigidBodyTransMover >( sasa_pose, sym_aware_jump_id ) );
 					translate->step_size( 1000.0 );
@@ -201,10 +202,10 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 
 		if ( mode_ == "sc" ) {
 			utility::vector1<core::Real> sc_sasas(sasa_pose.size(),0.0);
-			for ( Size ii = 1; ii <= sasa_pose.size(); ++ii ) {
+			for ( core::Size ii = 1; ii <= sasa_pose.size(); ++ii ) {
 				// Use CA as the side chain for Glys
 				if ( sasa_pose.residue(i).name3()=="GLY" ) sc_sasas[ii] += atom_sasa[AtomID(2,ii)];
-				for ( Size j = 5; j <= sasa_pose.residue(ii).nheavyatoms(); j++ ) {
+				for ( core::Size j = 5; j <= sasa_pose.residue(ii).nheavyatoms(); j++ ) {
 					sc_sasas[ii] += atom_sasa[AtomID(j,ii)];
 				}
 			}
@@ -215,7 +216,7 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 
 		// Prevent repacking at resis that do match the user-specified parameters.
 		//bool prevent_repacking;
-		for ( Size iaa=1; iaa<=sasa_pose.size(); iaa++ ) {
+		for ( core::Size iaa=1; iaa<=sasa_pose.size(); iaa++ ) {
 			if ( core::pose::symmetry::is_symmetric(sasa_pose) ) {
 				if ( !indy_resi[iaa] ) {
 					continue;

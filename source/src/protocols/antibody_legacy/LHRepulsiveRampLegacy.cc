@@ -188,7 +188,7 @@ void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
 	select_loop_residues( pose, all_loops_, true/*include_neighbors*/, sc_is_flexible);
 	cdr_dock_map_->set_chi( sc_is_flexible );
 	cdr_dock_map_->set_jump( 1, true );
-	for ( Size ii = 2; ii <= all_loops_.num_loop() + 1; ii++ ) {
+	for ( core::Size ii = 2; ii <= all_loops_.num_loop() + 1; ii++ ) {
 		cdr_dock_map_->set_jump( ii, false );
 	}
 
@@ -200,7 +200,7 @@ void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
 	using namespace core::pack::task::operation;
 	// selecting movable c-terminal residues
 	ObjexxFCL::FArray1D_bool loop_residues( pose.size(), false );
-	for ( Size i = 1; i <= pose.size(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		loop_residues(i) = sc_is_flexible[i];
 	} // check mapping
 
@@ -273,7 +273,7 @@ void LHRepulsiveRampLegacy::apply( pose::Pose & pose ) {
 	core::Real rep_ramp_step = (rep_weight_max - 0.02) / core::Real(rep_ramp_cycles_-1);
 	core::scoring::ScoreFunctionOP temp_scorefxn = dock_scorefxn_->clone();
 
-	for ( Size i = 1; i <= rep_ramp_cycles_; i++ ) {
+	for ( core::Size i = 1; i <= rep_ramp_cycles_; i++ ) {
 		core::Real rep_weight = 0.02 + rep_ramp_step * Real(i-1);
 		TR<<"   repulsive ramp cycle "<<i<<":     rep_weight = "<<rep_weight<<std::endl;
 		temp_scorefxn->set_weight( core::scoring::fa_rep, rep_weight );

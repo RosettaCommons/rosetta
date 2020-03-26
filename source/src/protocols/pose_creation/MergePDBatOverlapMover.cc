@@ -122,7 +122,7 @@ MergePDBatOverlapMover::fresh_instance() const
 
 
 /// @brief increases the range to ignore to include the entire secondary structure element
-void MergePDBatOverlapMover::increase_range_to_ignore_ss_element(core::pose::Pose const & pose, Size init_start, Size init_end, Size & ss_start, Size & ss_end){
+void MergePDBatOverlapMover::increase_range_to_ignore_ss_element(core::pose::Pose const & pose, core::Size init_start, core::Size init_end, core::Size & ss_start, core::Size & ss_end){
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
 	char ss_type = dssp.get_dssp_secstruct(init_start);
@@ -141,8 +141,8 @@ void MergePDBatOverlapMover::increase_range_to_ignore_ss_element(core::pose::Pos
 
 Size MergePDBatOverlapMover::closest_non_overlap_residue(core::pose::Pose const & pose, core::Size resid, core::Size start_overlap_resid, core::Size end_overlap_resid){
 	Real min_dist = 999;
-	Size closest_residue = 999999;
-	for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+	core::Size closest_residue = 999999;
+	for ( core::Size ii=1; ii<=pose.total_residue(); ++ii ) {
 		if ( ii<start_overlap_resid || ii>end_overlap_resid ) {
 			Real tmp_dist = pose.residue(ii).xyz("CA").distance(pose.residue(resid).xyz("CA"));
 			if ( tmp_dist < min_dist ) {
@@ -156,22 +156,22 @@ Size MergePDBatOverlapMover::closest_non_overlap_residue(core::pose::Pose const 
 
 
 
-void MergePDBatOverlapMover::merge_junction_sequence(Pose & pose,std::string pose_junction_seq,std::string attach_pose_junction_seq,Size first_overlap_position){
+void MergePDBatOverlapMover::merge_junction_sequence(Pose & pose,std::string pose_junction_seq,std::string attach_pose_junction_seq,core::Size first_overlap_position){
 	using namespace core::scoring;
 	using namespace core::optimization;
 	using namespace core::pack::task;
 	bool postions_modified = false;
-	Size last_overlap_position=first_overlap_position+pose_junction_seq.size();
+	core::Size last_overlap_position=first_overlap_position+pose_junction_seq.size();
 	utility::vector1< bool > overlap_and_neighbors( pose.size(), false);
 	for ( int ii=0; ii<(int)attach_pose_junction_seq.length(); ++ii ) {
 		if ( pose_junction_seq.at(ii) != attach_pose_junction_seq.at(ii) ) {
 			postions_modified=true;
-			Size resnum = ii+first_overlap_position;
+			core::Size resnum = ii+first_overlap_position;
 			overlap_and_neighbors[resnum]=true;
-			Size ss_start=0;
-			Size ss_end=0;
+			core::Size ss_start=0;
+			core::Size ss_end=0;
 			increase_range_to_ignore_ss_element(pose, first_overlap_position, last_overlap_position, ss_start, ss_end);
-			Size closest_residue = closest_non_overlap_residue(pose,resnum,ss_start,ss_end);
+			core::Size closest_residue = closest_non_overlap_residue(pose,resnum,ss_start,ss_end);
 			if ( attachment_termini_ == "n_term" ) {
 				if ( closest_residue <first_overlap_position ) {
 					assign_seq(pose,attach_pose_junction_seq.at(ii),resnum);
@@ -189,7 +189,7 @@ void MergePDBatOverlapMover::merge_junction_sequence(Pose & pose,std::string pos
 		}
 	}
 	if ( postions_modified ) {
-		Size packing_range = 5;
+		core::Size packing_range = 5;
 		core::select::fill_neighbor_residues(pose, overlap_and_neighbors, packing_range);
 		optimization::MinimizerOptions minopt( "lbfgs_armijo_nonmonotone", 0.02, true, false, false );
 		kinematics::MoveMap mm_loc;
@@ -225,8 +225,8 @@ bool MergePDBatOverlapMover::merge_poses(Pose & pose,Pose & attach_pose){
 		attach_pose_junction_seq = attach_pose.sequence().substr(0,overlap_length_);
 	}
 	//superimpose---------------------------------------------------------------
-	Size start_overlap_pose = 0;
-	Size start_overlap_attach_pose = 0;
+	core::Size start_overlap_pose = 0;
+	core::Size start_overlap_attach_pose = 0;
 	if ( attachment_termini_ == "n_term" ) {
 		start_overlap_pose = 1;
 		start_overlap_attach_pose = attach_pose.size()-overlap_length_+1;
@@ -235,14 +235,14 @@ bool MergePDBatOverlapMover::merge_poses(Pose & pose,Pose & attach_pose){
 		start_overlap_pose = pose.size()-overlap_length_+1;
 		start_overlap_attach_pose = 1;
 	}
-	Size exlude_tail_length = 7;
-	for ( Size ii=0; ii<overlap_length_-(exlude_tail_length*2); ++ii ) {
+	core::Size exlude_tail_length = 7;
+	for ( core::Size ii=0; ii<overlap_length_-(exlude_tail_length*2); ++ii ) {
 		core::id::AtomID const id1(pose.residue(start_overlap_pose+ii+exlude_tail_length).atom_index("CA"),start_overlap_pose+ii+exlude_tail_length);
 		core::id::AtomID const id2(attach_pose.residue(start_overlap_attach_pose+ii+exlude_tail_length).atom_index("CA"), start_overlap_attach_pose+ii+exlude_tail_length);
 		atom_map[id2]=id1;
-		Size residue_pose =start_overlap_pose+ii+exlude_tail_length;
-		Size residue_attach = start_overlap_attach_pose+ii+exlude_tail_length;
-		residue_map.insert(std::pair<Size,Size>(residue_attach,residue_pose));
+		core::Size residue_pose =start_overlap_pose+ii+exlude_tail_length;
+		core::Size residue_attach = start_overlap_attach_pose+ii+exlude_tail_length;
+		residue_map.insert(std::pair<core::Size,Size>(residue_attach,residue_pose));
 	}
 	core::Real rmsd = CA_rmsd(attach_pose,pose,residue_map);
 	TR << "Junction rmsd" << rmsd << std::endl;
@@ -254,27 +254,27 @@ bool MergePDBatOverlapMover::merge_poses(Pose & pose,Pose & attach_pose){
 		return(false);
 	}
 	//create the poses that will be the connections--------------------------------------------------
-	utility::vector1<Size> pose_positions;
-	utility::vector1<Size> attach_pose_positions;
-	Size n_term_overlap = overlap_length_/2;
-	Size first_overlap_position = 0;
+	utility::vector1<core::Size> pose_positions;
+	utility::vector1<core::Size> attach_pose_positions;
+	core::Size n_term_overlap = overlap_length_/2;
+	core::Size first_overlap_position = 0;
 	if ( attachment_termini_== "n_term" ) {
 		first_overlap_position = attach_pose.total_residue()-overlap_length_+1;
-		for ( Size ii=overlap_length_-n_term_overlap; ii<=pose.size(); ++ii ) {
+		for ( core::Size ii=overlap_length_-n_term_overlap; ii<=pose.size(); ++ii ) {
 			pose_positions.push_back(ii);
 		}
-		for ( Size ii=1; ii<=attach_pose.size()-n_term_overlap-1; ++ii ) {
+		for ( core::Size ii=1; ii<=attach_pose.size()-n_term_overlap-1; ++ii ) {
 			attach_pose_positions.push_back(ii);
 
 		}
 	}
 	if ( attachment_termini_== "c_term" ) {
 		first_overlap_position = pose.total_residue()-overlap_length_+1;
-		for ( Size ii=1; ii<pose.size()-n_term_overlap; ++ii ) {
+		for ( core::Size ii=1; ii<pose.size()-n_term_overlap; ++ii ) {
 			pose_positions.push_back(ii);
 
 		}
-		for ( Size ii=overlap_length_-n_term_overlap; ii<=attach_pose.size(); ++ii ) {
+		for ( core::Size ii=overlap_length_-n_term_overlap; ii<=attach_pose.size(); ++ii ) {
 			attach_pose_positions.push_back(ii);
 		}
 	}
@@ -291,7 +291,7 @@ bool MergePDBatOverlapMover::merge_poses(Pose & pose,Pose & attach_pose){
 	if ( attachment_termini_== "n_term" ) {
 		remove_upper_terminus_type_from_pose_residue(attach_pose_slice,attach_pose_slice.size());
 		remove_lower_terminus_type_from_pose_residue(ref_pose_slice,1);
-		for ( Size ii=1; ii<=ref_pose_slice.total_residue(); ++ii ) {
+		for ( core::Size ii=1; ii<=ref_pose_slice.total_residue(); ++ii ) {
 			attach_pose_slice.append_residue_by_bond(ref_pose_slice.residue(ii),false/*ideal bonds*/);
 		}
 		//append_pose_to_pose(attach_pose_slice,ref_pose_slice,false);
@@ -300,7 +300,7 @@ bool MergePDBatOverlapMover::merge_poses(Pose & pose,Pose & attach_pose){
 	if ( attachment_termini_== "c_term" ) {
 		remove_upper_terminus_type_from_pose_residue(ref_pose_slice,ref_pose_slice.size());
 		remove_lower_terminus_type_from_pose_residue(attach_pose_slice,1);
-		for ( Size ii=1; ii<=attach_pose_slice.total_residue(); ++ii ) {
+		for ( core::Size ii=1; ii<=attach_pose_slice.total_residue(); ++ii ) {
 			ref_pose_slice.append_residue_by_bond(attach_pose_slice.residue(ii),false/*ideal bonds*/);
 		}
 		//append_pose_to_pose(ref_pose_slice,attach_pose_slice,false);
@@ -322,7 +322,7 @@ bool MergePDBatOverlapMover::merge_poses(Pose & pose,Pose & attach_pose){
 	return(true);
 }
 
-void MergePDBatOverlapMover::assign_seq(Pose & pose, char residue_type, Size position){
+void MergePDBatOverlapMover::assign_seq(Pose & pose, char residue_type, core::Size position){
 	using namespace core::chemical;
 	simple_moves::MutateResidueOP mutation_mover;
 	AA my_aa =aa_from_oneletter_code(residue_type);
@@ -334,7 +334,7 @@ void MergePDBatOverlapMover::assign_seq(Pose & pose, char residue_type, Size pos
 	TR << "Ignore the core.conformation.Residue warnings." << std::endl;
 }
 
-void MergePDBatOverlapMover::minimize_overlap(Pose & pose,Size overlap_start,Size overlap_end) {
+void MergePDBatOverlapMover::minimize_overlap(Pose & pose,core::Size overlap_start,core::Size overlap_end) {
 	using namespace core::pack::task;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
@@ -344,11 +344,11 @@ void MergePDBatOverlapMover::minimize_overlap(Pose & pose,Size overlap_start,Siz
 
 	utility::vector1< bool > overlap_and_neighbors( pose.size(), false);
 	std::cout << "overlap_start" << overlap_start << "overlap_end" << overlap_end << std::endl;
-	for ( Size ii=overlap_start; ii<=overlap_end; ++ii ) {
+	for ( core::Size ii=overlap_start; ii<=overlap_end; ++ii ) {
 		overlap_and_neighbors[ii]=true;
 	}
-	Size midpoint=overlap_start+(overlap_end-overlap_start)/2;  // I don't place contraints on the location of the junction so the joint is hopefully minimized
-	Size packing_range = 5;
+	core::Size midpoint=overlap_start+(overlap_end-overlap_start)/2;  // I don't place contraints on the location of the junction so the joint is hopefully minimized
+	core::Size packing_range = 5;
 	core::select::fill_neighbor_residues(pose, overlap_and_neighbors, packing_range);
 	TR << "minimized residues";
 	for ( core::Size resnum = 1; resnum <= pose.size(); ++resnum ) {
@@ -367,7 +367,7 @@ void MergePDBatOverlapMover::minimize_overlap(Pose & pose,Size overlap_start,Siz
 	core::id::AtomID const anchor_atom( core::id::AtomID( pose.residue(1).atom_index("CA"), 1) );
 	for ( core::Size resnum = 1; resnum <= pose.size(); ++resnum ) {
 		if ( resnum<midpoint-2 || resnum > midpoint+2 ) {
-			Size atomindex =  pose.residue(resnum ).atom_index( "CA" );
+			core::Size atomindex =  pose.residue(resnum ).atom_index( "CA" );
 			csts.push_back( utility::pointer::make_shared< CoordinateConstraint >(core::id::AtomID( atomindex, resnum),anchor_atom,pose.residue(resnum).xyz( "CA" ),coord_cst_func));
 		} else {
 			std::cout << "unconstrained:" << resnum << std::endl;
@@ -404,7 +404,7 @@ void MergePDBatOverlapMover::minimize_overlap(Pose & pose,Size overlap_start,Siz
 }
 
 
-bool MergePDBatOverlapMover::makeJunctions_apply(core::pose::Pose & pose, core::pose::Pose const & attach_pose, Size overlap_length,core::Real max_overlap_rmsd, std::string attachment_termini, char attachment_chain){
+bool MergePDBatOverlapMover::makeJunctions_apply(core::pose::Pose & pose, core::pose::Pose const & attach_pose, core::Size overlap_length,core::Real max_overlap_rmsd, std::string attachment_termini, char attachment_chain){
 	attach_pose_= attach_pose.clone();
 	overlap_length_ = overlap_length;
 	max_overlap_rmsd_ = max_overlap_rmsd;
@@ -420,7 +420,7 @@ bool MergePDBatOverlapMover::apply_helper( Pose & pose ){
 		err << "\nCan't find chain name" << attachment_chain_ << "in pdb being attached" << std::endl;
 		throw CREATE_EXCEPTION(utility::excn::BadInput,err.str());
 	}
-	Size chain_id =  get_chain_id_from_chain(attachment_chain_,*attach_pose_);
+	core::Size chain_id =  get_chain_id_from_chain(attachment_chain_,*attach_pose_);
 	core::pose::PoseOP desired_chain_pose = attach_pose_->split_by_chain(chain_id);
 
 	//bool success = merge_poses(pose,*attach_pose_);

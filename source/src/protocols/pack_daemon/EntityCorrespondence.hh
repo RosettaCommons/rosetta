@@ -24,7 +24,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -33,12 +33,12 @@
 namespace protocols {
 namespace pack_daemon {
 
-class EntityCorrespondence : public utility::pointer::ReferenceCount {
+class EntityCorrespondence : public utility::VirtualBase {
 public:
 	typedef core::Size                Size;
-	typedef std::list< Size >         ResIDList;
+	typedef std::list< core::Size >         ResIDList;
 	typedef ResIDList::const_iterator ResIDListConstIter;
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 public:
 	EntityCorrespondence();
 	~EntityCorrespondence() override;
@@ -46,27 +46,27 @@ public:
 	EntityCorrespondence & operator = ( EntityCorrespondence const & );
 
 	void set_pose( core::pose::PoseCOP pose );
-	void set_num_entities( Size num_entities );
+	void set_num_entities( core::Size num_entities );
 	void initialize_from_correspondence_file( std::istream & );
-	void add_resid_to_entity_list( Size EntityID, Size ResID );
+	void add_resid_to_entity_list( core::Size EntityID, core::Size ResID );
 
-	Size num_entities() const;
-	Size num_residues() const;
-	Size entity_for_residue( Size resid ) const;
-	Size n_residues_for_entity( Size entity_id ) const;
-	ResIDListConstIter residues_for_entity_begin( Size entity_id ) const;
-	ResIDListConstIter residues_for_entity_end( Size entity_id ) const;
+	core::Size num_entities() const;
+	core::Size num_residues() const;
+	core::Size entity_for_residue( core::Size resid ) const;
+	core::Size n_residues_for_entity( core::Size entity_id ) const;
+	ResIDListConstIter residues_for_entity_begin( core::Size entity_id ) const;
+	ResIDListConstIter residues_for_entity_end( core::Size entity_id ) const;
 
 
 private:
-	void bounds_check_entity( std::string const & funcname, Size entity_id ) const;
-	void bounds_check_residue( std::string const & funcname, Size resid ) const;
+	void bounds_check_entity( std::string const & funcname, core::Size entity_id ) const;
+	void bounds_check_residue( std::string const & funcname, core::Size resid ) const;
 
 private:
 	core::pose::PoseCOP           pose_;
 	core::pose::PDBPoseMapCOP     pdb_pose_map_;
 	utility::vector1< ResIDList > entity_id_2_resids_; // one entity may correspond to several residues
-	utility::vector1< Size >      resid_2_entity_id_;  // each residue corresponds to at most one entity.
+	utility::vector1< core::Size >      resid_2_entity_id_;  // each residue corresponds to at most one entity.
 
 	utility::vector1< std::string > funcnames_;
 

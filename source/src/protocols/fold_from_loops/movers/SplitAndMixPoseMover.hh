@@ -49,7 +49,7 @@ namespace movers {
 
 class SplitAndMixPoseMover : public moves::Mover {
 
-	typedef boost::tuple<Size, Size> SubPoseIDPair;
+	typedef boost::tuple<core::Size, core::Size> SubPoseIDPair;
 
 public:
 	/// @brief Empty Constructor
@@ -148,7 +148,7 @@ private:
 };
 
 // boost::get<0>(*it);
-// Size length = boost::get<1>(*it);
+// core::Size length = boost::get<1>(*it);
 }
 }
 }

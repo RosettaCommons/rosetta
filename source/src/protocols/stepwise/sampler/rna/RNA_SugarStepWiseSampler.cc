@@ -42,7 +42,7 @@ static basic::Tracer TR( "protocols.sampler.rna.RNA_SugarStepWiseSampler" );
 //////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
 RNA_SugarStepWiseSampler::RNA_SugarStepWiseSampler(
-	Size const rsd_id,
+	core::Size const rsd_id,
 	PuckerState const pucker_state
 ):
 	StepWiseSamplerSized(),
@@ -117,7 +117,7 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 				}
 				saved_torsion_id.emplace_back( rsd_id_+1, id::BB,  ALPHA   );
 
-				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {
+				for ( core::Size index = 1; index <= saved_torsion_id.size(); ++index ) {
 					bool const is_exists = ideal_coord.is_torsion_exists( pose, saved_torsion_id[index] );
 					if ( is_exists ) {
 						saved_torsions.push_back( pose.torsion( saved_torsion_id[index] ) );
@@ -131,7 +131,7 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 					pose.set_dof( elem.first, elem.second );
 				}
 
-				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {
+				for ( core::Size index = 1; index <= saved_torsion_id.size(); ++index ) {
 					if ( saved_torsions[index] > -1000 ) pose.set_torsion( saved_torsion_id[index], saved_torsions[index] );
 				}
 			}
@@ -163,7 +163,7 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 				saved_torsion_id.emplace_back( rsd_id_-1, id::BB,  ZETA    );
 				saved_torsion_id.emplace_back( rsd_id_+1, id::BB,  ALPHA   );
 
-				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {
+				for ( core::Size index = 1; index <= saved_torsion_id.size(); ++index ) {
 					bool const is_exists = ideal_coord.is_torsion_exists( pose, saved_torsion_id[index] );
 					if ( is_exists ) {
 						saved_torsions.push_back( pose.torsion( saved_torsion_id[index] ) );
@@ -177,7 +177,7 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 					pose.set_dof( elem.first, elem.second );
 				}
 
-				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {
+				for ( core::Size index = 1; index <= saved_torsion_id.size(); ++index ) {
 					if ( saved_torsions[index] > -1000 ) pose.set_torsion( saved_torsion_id[index], saved_torsions[index] );
 				}
 			}

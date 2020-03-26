@@ -79,7 +79,7 @@ struct StateData {
 	core::pack::task::PackerTaskOP task;
 };
 
-class MMTReceiver : public utility::pointer::ReferenceCount
+class MMTReceiver : public utility::VirtualBase
 {
 public:
 

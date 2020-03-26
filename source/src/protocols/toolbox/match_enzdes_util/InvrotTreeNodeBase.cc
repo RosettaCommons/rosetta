@@ -26,9 +26,11 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
+using core::Size;
+
 
 InvrotCollector::InvrotCollector(
-	Size num_residue_lists )
+	core::Size num_residue_lists )
 {
 	invrots_.clear();
 	invrots_.resize( num_residue_lists );
@@ -36,7 +38,7 @@ InvrotCollector::InvrotCollector(
 }
 
 InvrotCollector::InvrotCollector( InvrotCollector const & other )
-: ReferenceCount(), invrots_(other.invrots_), owner_nodes_and_locations_(other.owner_nodes_and_locations_)
+: VirtualBase(), invrots_(other.invrots_), owner_nodes_and_locations_(other.owner_nodes_and_locations_)
 {}
 
 InvrotCollector::~InvrotCollector()= default;
@@ -48,10 +50,10 @@ InvrotCollector::clone() const {
 
 void
 InvrotCollector::set_invrots_for_listnum(
-	Size listnum,
+	core::Size listnum,
 	std::list<core::conformation::ResidueCOP> const & invrots,
 	InvrotTreeNodeBaseCOP tree_node,
-	Size location_in_node
+	core::Size location_in_node
 )
 {
 	runtime_assert( listnum < invrots_.size() );
@@ -61,13 +63,13 @@ InvrotCollector::set_invrots_for_listnum(
 	invrots_[listnum] = invrots;
 	// AMW: flagged by cppcheck; is it truly necessary to check if it's in the container to erase it?
 	if ( owner_nodes_and_locations_.find( tree_node ) != owner_nodes_and_locations_.end() ) owner_nodes_and_locations_.erase( tree_node );
-	owner_nodes_and_locations_.insert( std::pair< InvrotTreeNodeBaseCOP, Size >( tree_node, location_in_node ) );
+	owner_nodes_and_locations_.insert( std::pair< InvrotTreeNodeBaseCOP, core::Size >( tree_node, location_in_node ) );
 }
 
 
 InvrotTreeNodeBase::InvrotTreeNodeBase(
 	InvrotTreeNodeBaseCAP parent_node )
-: ReferenceCount(), parent_node_(std::move(parent_node )), location_in_parent_node_(1)
+: VirtualBase(), parent_node_(std::move(parent_node )), location_in_parent_node_(1)
 {}
 
 InvrotTreeNodeBase::~InvrotTreeNodeBase()= default;

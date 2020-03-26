@@ -92,7 +92,7 @@ SidechainMoverBase::SidechainMoverBase(
 SidechainMoverBase::SidechainMoverBase(
 	SidechainMoverBase const & mover
 ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	protocols::canonical_sampling::ThermodynamicMover(mover),
 	rotamer_library_(mover.rotamer_library_),
 	packed_residues_(mover.packed_residues_),
@@ -206,7 +206,7 @@ SidechainMoverBase::apply( Pose& pose ) {
 	init_task(pose);
 
 	//select_resnum
-	Size const resnum( suggest_residue_number( pose ) );
+	core::Size const resnum( suggest_residue_number( pose ) );
 
 	ResidueOP newresidue( new Residue( pose.residue( resnum ) ) );
 	ResidueOP final = make_move( newresidue );
@@ -214,8 +214,8 @@ SidechainMoverBase::apply( Pose& pose ) {
 	if ( !change_chi_without_replacing_residue() || have_mutated_residue() ) {
 		pose.replace_residue( resnum, *final, true );
 	} else {
-		Size const nchi( final->nchi() );
-		for ( Size i(1); i<=nchi; ++i ) {
+		core::Size const nchi( final->nchi() );
+		for ( core::Size i(1); i<=nchi; ++i ) {
 			pose.set_chi(i, resnum, final->chi(i));
 		} //for
 	} //else
@@ -232,8 +232,8 @@ SidechainMoverBase::make_move( conformation::ResidueOP old_res )
 	chemical::ResidueType  const& old_res_type( old_res->type() );
 	chemical::ResidueTypeCOP new_res_type( old_res->type_ptr() ); //for now until we fix the design stuff back in...
 	utility::vector1<Real> const old_chi( old_res->chi() );
-	Size resnum = old_res->seqpos();
-	Size nchi( old_chi.size() );
+	core::Size resnum = old_res->seqpos();
+	core::Size nchi( old_chi.size() );
 
 	utility::vector1< Real > new_chi;
 	new_chi.reserve( 4 );
@@ -259,11 +259,11 @@ SidechainMoverBase::make_move( conformation::ResidueOP old_res )
 		*old_res,
 		pose_->conformation(),
 		residue_task.preserve_c_beta());
-		for( Size ii = 1; ii <= residue_type->nchi(); ii++ ){
+		for( core::Size ii = 1; ii <= residue_type->nchi(); ii++ ){
 		new_residue->set_chi( ii, numeric::principal_angle_degrees(last_chi_angles_[ ii ] ));
 		*/
 	} else {
-		for ( Size i = 1; i <= old_res->nchi(); ++i ) {
+		for ( core::Size i = 1; i <= old_res->nchi(); ++i ) {
 			new_residue->set_chi( i, new_chi[ i ] );
 		}
 	}
@@ -294,8 +294,8 @@ SidechainMoverBase::idealize_sidechains(
 {
 	utility::vector1<Real> chi;
 	init_task(pose);
-	for ( Size i = 1; i <= packed_residues_.size(); ++i ) {
-		Size const resnum(packed_residues_[i]);
+	for ( core::Size i = 1; i <= packed_residues_.size(); ++i ) {
+		core::Size const resnum(packed_residues_[i]);
 
 		// get the residue type and residue level task
 		ResidueType const & residue_type(pose.residue_type(resnum));
@@ -306,7 +306,7 @@ SidechainMoverBase::idealize_sidechains(
 
 		// save original chi angles
 		if ( residue_type.nchi() > chi.size() ) chi.resize(residue_type.nchi());
-		for ( Size chinum = 1; chinum <= residue_type.nchi(); ++chinum ) {
+		for ( core::Size chinum = 1; chinum <= residue_type.nchi(); ++chinum ) {
 			chi[chinum] = pose.chi(chinum, resnum);
 		}
 
@@ -318,7 +318,7 @@ SidechainMoverBase::idealize_sidechains(
 		pose.replace_residue(resnum, *new_residue, false);
 
 		// put original chi angles back
-		for ( Size chinum = 1; chinum <= residue_type.nchi(); ++chinum ) {
+		for ( core::Size chinum = 1; chinum <= residue_type.nchi(); ++chinum ) {
 			pose.set_chi(chinum, resnum, chi[chinum]);
 		}
 	}
@@ -353,7 +353,7 @@ SidechainMoverBase::set_task( pack::task::PackerTaskCOP task ) {
 	// update the list of residues being packed
 	packed_residues_.clear();
 	residue_packed_.resize(task_->total_residue());
-	for ( Size i = 1; i <= task_->total_residue(); ++i ) {
+	for ( core::Size i = 1; i <= task_->total_residue(); ++i ) {
 
 		// loop over all possible residue types and check if any have chi angles
 		residue_packed_[i] = false;
@@ -407,9 +407,9 @@ SidechainMoverBase::dof_id_ranges( pose::Pose & pose ) {
 
 	utility::vector1<id::DOF_ID_Range> range_vector;
 
-	for ( Size i = 1; i <= packed_residues_.size(); ++i ) {
+	for ( core::Size i = 1; i <= packed_residues_.size(); ++i ) {
 
-		Size const resnum(packed_residues_[i]);
+		core::Size const resnum(packed_residues_[i]);
 
 		bool all_names_match = true;
 
@@ -427,7 +427,7 @@ SidechainMoverBase::dof_id_ranges( pose::Pose & pose ) {
 
 		if ( !all_names_match ) break;
 
-		for ( Size j = 1; j <= pose.residue_type(resnum).nchi(); ++j ) {
+		for ( core::Size j = 1; j <= pose.residue_type(resnum).nchi(); ++j ) {
 
 			id::TorsionID chi_torsion(resnum, id::CHI, j);
 			id::DOF_ID chi_dof(pose.conformation().dof_id_from_torsion_id(chi_torsion));
@@ -438,7 +438,7 @@ SidechainMoverBase::dof_id_ranges( pose::Pose & pose ) {
 	return range_vector;
 }
 
-utility::vector1<Size> const &
+utility::vector1<core::Size> const &
 SidechainMoverBase::packed_residues() const {
 	return packed_residues_;
 }

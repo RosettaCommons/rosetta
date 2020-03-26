@@ -182,7 +182,7 @@ void SequenceClaimer::generate_claims( claims::DofClaims& new_claims ) {
 //  //also take care of fullatom vs centroid...
 
 //  //    core::sequence::SequenceOP seq = NULL;
-//  //    for( Size i=1; i <= sequences_.size(); ++i){
+//  //    for( core::Size i=1; i <= sequences_.size(); ++i){
 //  //        if( sequences_.at(i)->id() == my_claim->label() ){
 //  //            seq = sequences_.at(i);
 //  //        }

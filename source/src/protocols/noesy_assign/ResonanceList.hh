@@ -30,7 +30,7 @@
 // Utility headers
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <basic/prof.hh>
 //#include <basic/Tracer.hh>
@@ -57,7 +57,7 @@ ResidueMap (typedef) is a map from residue number to a vector of Resonances.
 
 
 */
-class ResonanceList : public utility::pointer::ReferenceCount {
+class ResonanceList : public utility::VirtualBase {
 
 public:
 	typedef utility::vector1< ResonanceOP > Resonances;
@@ -67,7 +67,7 @@ private:
 	typedef std::map< core::Size, ResonanceOP > ResonanceIDs;
 
 	ResonanceList( ResonanceList const& a )://private copy-c'stor to avoid that FloatingResonances have out-dated pointers.
-		utility::pointer::ReferenceCount(a) //make compiler happy
+		utility::VirtualBase(a) //make compiler happy
 	{};
 	ResonanceList& operator=( ResonanceList const& ) { return *this; };
 

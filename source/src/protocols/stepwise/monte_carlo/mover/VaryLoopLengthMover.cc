@@ -83,15 +83,15 @@ VaryLoopLengthMover::apply( core::pose::Pose & pose, StepWiseMove const & swa_mo
 	runtime_assert( parent_full_model_parameters != nullptr );
 
 	// which parent_full_model residues are being modeled in current full_model_parameters:
-	utility::vector1< Size > const & slice_res_list( full_model_parameters->slice_res_list() );
+	utility::vector1< core::Size > const & slice_res_list( full_model_parameters->slice_res_list() );
 
 	if ( swa_move.move_type() == DELETE_LOOP_RES ) {
-		Size const & delete_res = swa_move.moving_res();
+		core::Size const & delete_res = swa_move.moving_res();
 		//  runtime_assert( !all_res_list.has_value( delete_res ) );
-		Size const delete_res_in_parent_full_model_numbering = slice_res_list[ delete_res ];
+		core::Size const delete_res_in_parent_full_model_numbering = slice_res_list[ delete_res ];
 
-		utility::vector1< Size > slice_res_list_new;
-		for ( Size n = 1; n <= slice_res_list.size(); n++ ) {
+		utility::vector1< core::Size > slice_res_list_new;
+		for ( core::Size n = 1; n <= slice_res_list.size(); n++ ) {
 			if ( slice_res_list[ n ] != delete_res_in_parent_full_model_numbering ) {
 				slice_res_list_new.push_back( slice_res_list[ n ] ) ;
 			}
@@ -108,14 +108,14 @@ VaryLoopLengthMover::apply( core::pose::Pose & pose, StepWiseMove const & swa_mo
 			runtime_assert( swa_move.attachment_type() == BOND_TO_NEXT );
 			runtime_assert( swa_move.moving_res() == swa_move.attached_res() - 1 );
 		}
-		Size const attached_res_in_parent_full_model_numbering = slice_res_list[ swa_move.attached_res() ];
-		Size const add_res_in_parent_full_model_numbering = swa_move.attachment_type() == BOND_TO_PREVIOUS ?
+		core::Size const attached_res_in_parent_full_model_numbering = slice_res_list[ swa_move.attached_res() ];
+		core::Size const add_res_in_parent_full_model_numbering = swa_move.attachment_type() == BOND_TO_PREVIOUS ?
 			attached_res_in_parent_full_model_numbering + 1 :
 			attached_res_in_parent_full_model_numbering - 1;
 		runtime_assert( !slice_res_list.has_value( add_res_in_parent_full_model_numbering ) );
 
-		utility::vector1< Size > slice_res_list_new;
-		for ( Size n = 1; n <= slice_res_list.size(); n++ ) {
+		utility::vector1< core::Size > slice_res_list_new;
+		for ( core::Size n = 1; n <= slice_res_list.size(); n++ ) {
 			slice_res_list_new.push_back( slice_res_list[ n ] ) ;
 			if ( slice_res_list[ n ] == add_res_in_parent_full_model_numbering - 1 ) {
 				slice_res_list_new.push_back( add_res_in_parent_full_model_numbering );
@@ -144,15 +144,15 @@ VaryLoopLengthMover::update_full_model_parameters( pose::Pose & pose, pose::full
 	runtime_assert( full_model_parameters->parent_full_model_parameters() ==
 		full_model_parameters_new->parent_full_model_parameters() );
 
-	vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
-	vector1< Size > const & slice_res_list = full_model_parameters->slice_res_list();
-	vector1< Size > const & slice_res_list_new = full_model_parameters_new->slice_res_list();
-	vector1< Size > res_list_new;
-	for ( Size n = 1; n <= res_list.size(); n++ ) {
+	vector1< core::Size > const & res_list = const_full_model_info( pose ).res_list();
+	vector1< core::Size > const & slice_res_list = full_model_parameters->slice_res_list();
+	vector1< core::Size > const & slice_res_list_new = full_model_parameters_new->slice_res_list();
+	vector1< core::Size > res_list_new;
+	for ( core::Size n = 1; n <= res_list.size(); n++ ) {
 		// note that all instantiated residues in the pose  need to be carried over --
 		// that is, DELETE_LOOP_RES and ADD_LOOP_RES moves cannot delete or add instantiated loop residues,
 		// just potential loop residues....
-		Size const res_in_parent_full_model_numbering( slice_res_list[ res_list[ n ] ] );
+		core::Size const res_in_parent_full_model_numbering( slice_res_list[ res_list[ n ] ] );
 		runtime_assert( slice_res_list_new.has_value( res_in_parent_full_model_numbering  ) );
 		res_list_new.push_back( slice_res_list_new.index( res_in_parent_full_model_numbering ) );
 	}
@@ -166,7 +166,7 @@ VaryLoopLengthMover::update_full_model_parameters( pose::Pose & pose, pose::full
 
 	// recurse through other poses.
 	vector1< pose::PoseOP > const & other_pose_list = nonconst_full_model_info( pose ).other_pose_list();
-	for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= other_pose_list.size(); n++ ) {
 		update_full_model_parameters( *other_pose_list[ n ], full_model_parameters_new );
 	}
 }

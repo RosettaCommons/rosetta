@@ -83,8 +83,8 @@ using namespace fragment;
 using namespace scoring::constraints;
 
 void
-dump_movemap( kinematics::MoveMap const& mm, Size nres, std::ostream& out ) {
-	for ( Size i = 1; i<=nres; i++ ) {
+dump_movemap( kinematics::MoveMap const& mm, core::Size nres, std::ostream& out ) {
+	for ( core::Size i = 1; i<=nres; i++ ) {
 		if ( (i-1)%10 == 0 ) { out << i; continue; }
 		//large numbers take several characters... skip appropriate
 		if ( (i>=10) && (i-2)%10 == 0 ) { continue; }
@@ -93,7 +93,7 @@ dump_movemap( kinematics::MoveMap const& mm, Size nres, std::ostream& out ) {
 		out << ".";
 	}
 	out << std::endl;
-	for ( Size i = 1; i<=nres; i++ ) {
+	for ( core::Size i = 1; i<=nres; i++ ) {
 		if ( mm.get_bb( i ) ) out << 'F'; //cuttable
 		else out << '.';
 	}
@@ -152,15 +152,15 @@ Template::Template(
 	}
 
 	if ( option[ templates::min_align_pos ].user() ) {
-		Size const min_align_pos( option[ templates::min_align_pos ] );
-		for ( Size pos = 1; pos < min_align_pos && pos <= mapping_.size1(); ++pos ) {
+		core::Size const min_align_pos( option[ templates::min_align_pos ] );
+		for ( core::Size pos = 1; pos < min_align_pos && pos <= mapping_.size1(); ++pos ) {
 			mapping_[ pos ] = 0;
 		}
 	}
 
 	if ( option[ templates::max_align_pos ].user() ) {
-		Size const max_align_pos( option[ templates::max_align_pos ] );
-		for ( Size pos = max_align_pos+1; pos <= mapping_.size1(); ++pos ) {
+		core::Size const max_align_pos( option[ templates::max_align_pos ] );
+		for ( core::Size pos = max_align_pos+1; pos <= mapping_.size1(); ++pos ) {
 			mapping_[ pos ] = 0;
 		}
 	}
@@ -182,11 +182,11 @@ Template::Template(
 
 	// for information purpose: write sequence where alignment starts. should be the same as seen in hhr file
 	std::string seq = pose_->sequence();
-	Size tpos, pos = 1; while ( (tpos = mapping_[ pos++ ])<=0 ) ; //go to first aligned residue
+	core::Size tpos, pos = 1; while ( (tpos = mapping_[ pos++ ])<=0 ) ; //go to first aligned residue
 	tr.Info << "template sequence " << seq.substr( tpos-1 ) << std::endl; //string count from 0
 	tr.Debug <<"compare with      " << mapping_.seq2() << std::endl;
 	tr.Info << "first 10 aligned residues:" << std::endl;
-	for ( Size i = pos-1; i<= pos + 9; i++ ) {
+	for ( core::Size i = pos-1; i<= pos + 9; i++ ) {
 		tr.Info << i << " " << mapping_[ i ] << " " << ( mapping_[ i ]  ?  pose_->residue( mapping_[i] ).name1() : '_' ) << std::endl;
 	}
 	tr.Trace << mapping_;
@@ -195,19 +195,19 @@ Template::Template(
 }
 
 Size
-Template::pick_large_frags( FragSet& frag_set, core::fragment::SingleResidueFragDataOP srfd_type, Size ncopies ) const {
+Template::pick_large_frags( FragSet& frag_set, core::fragment::SingleResidueFragDataOP srfd_type, core::Size ncopies ) const {
 	// get vector of boolean for residues that are aligned
 	// change that into vector of max_frag_length
 	// [ a a _ _ a a a a a _ _ a ] --> 2 1 0 0 5 4 3 2 1 0 0 x
-	using FragLengthMap = utility::vector1<Size>;
+	using FragLengthMap = utility::vector1<core::Size>;
 	FrameList template_frames;
-	Size const nres( std::min( pose_->size(), reverse_mapping_.size1() ) );
+	core::Size const nres( std::min( pose_->size(), reverse_mapping_.size1() ) );
 	FragLengthMap frag_length( nres, 0);
-	for ( Size pos1 = nres; pos1 >= 2; pos1-- ) {
+	for ( core::Size pos1 = nres; pos1 >= 2; pos1-- ) {
 		//if pos1 is aligned .. assign appropriate lengths for each residue in continuous stretch, e.g., 5 4 3 2 1
 		if ( reverse_mapping_[ pos1 ] ) {
-			Size cont_length( 0 );
-			for ( Size pos2 = pos1;
+			core::Size cont_length( 0 );
+			for ( core::Size pos2 = pos1;
 					pos2 >= 2 &&  //avoids out-of-range in reverse_mapping_[ pos2 - 1 ] ...
 					reverse_mapping_[ pos2 ]; // &&
 					pos2-- ) {
@@ -224,7 +224,7 @@ Template::pick_large_frags( FragSet& frag_set, core::fragment::SingleResidueFrag
 	}
 	if ( tr.Trace.visible() ) {
 		tr.Trace << "frag_lengths:\n pos length";
-		for ( Size pos = 1; pos <= nres; pos++ ) {
+		for ( core::Size pos = 1; pos <= nres; pos++ ) {
 			tr.Trace << "\n" << pos << " " << frag_length[ pos ];
 		}
 		tr.Trace << std::endl; //flush
@@ -233,28 +233,28 @@ Template::pick_large_frags( FragSet& frag_set, core::fragment::SingleResidueFrag
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	Size const min_size( option[ templates::min_frag_size ] );
-	Size const min_padding( option[ templates::min_padding ] ); //min_padding residues distance to gaps
-	Size const opt_max_shrink( option[ templates::max_shrink ] );
-	Size const shrink_step( option[ templates::shrink_step ]);
-	Size const pos_step( option[ templates::shrink_pos_step ]);
+	core::Size const min_size( option[ templates::min_frag_size ] );
+	core::Size const min_padding( option[ templates::min_padding ] ); //min_padding residues distance to gaps
+	core::Size const opt_max_shrink( option[ templates::max_shrink ] );
+	core::Size const shrink_step( option[ templates::shrink_step ]);
+	core::Size const pos_step( option[ templates::shrink_pos_step ]);
 	// for each position pick largest possible fragment and a couple of smaller ones...
 	// have some option to control this.
-	for ( Size pos = 1; pos<= nres; pos += std::max( (int) frag_length[ pos ], 1) ) {
-		Size const max_size( frag_length[ pos ] );
+	for ( core::Size pos = 1; pos<= nres; pos += std::max( (int) frag_length[ pos ], 1) ) {
+		core::Size const max_size( frag_length[ pos ] );
 		if ( max_size < min_size ) continue;
-		Size const max_shrink( std::min( (int) opt_max_shrink, (int) max_size - (int) min_size ) );
+		core::Size const max_shrink( std::min( (int) opt_max_shrink, (int) max_size - (int) min_size ) );
 		// take whole aligned region and up to max_shrink smaller fragments
-		for ( Size shrink = min_padding; shrink <= max_shrink; shrink+=shrink_step ) {
-			Size const size( max_size - shrink );
+		for ( core::Size shrink = min_padding; shrink <= max_shrink; shrink+=shrink_step ) {
+			core::Size const size( max_size - shrink );
 
 			// a fragment of requested size
 			FragDataCOP frag_type( utility::pointer::make_shared< AnnotatedFragData >( name(), pos, FragData( srfd_type, size )) );
 
 			// pick this fragment for different frame positions and add to template_frames.
-			for ( Size offset = min_padding; offset <= max_size - size; offset+=pos_step ) {
+			for ( core::Size offset = min_padding; offset <= max_size - size; offset+=pos_step ) {
 				FrameOP aFrame( new Frame( pos + offset, frag_type ) );
-				for ( Size i = 1; i<=ncopies; i++ ) {
+				for ( core::Size i = 1; i<=ncopies; i++ ) {
 					aFrame->steal( *pose_ );
 
 				}
@@ -271,13 +271,13 @@ Template::pick_large_frags( FragSet& frag_set, core::fragment::SingleResidueFrag
 //@detail  pick ncopies identical fragments from template ( default ncopies = 1, higher number allow to give template frags higher weight )
 // until proper weighting in fragments is set up
 Size
-Template::steal_frags( FrameList const& frames, FragSet &accumulator, Size ncopies ) const {
+Template::steal_frags( FrameList const& frames, FragSet &accumulator, core::Size ncopies ) const {
 	FrameList template_frames;
 	map2template( frames, template_frames );
-	Size total( 0 );
+	core::Size total( 0 );
 	for ( auto & template_frame : template_frames ) {
 		tr.Trace << name() << " pick frags at " << template_frame->start() << " " << template_frame->end() << " " << pose_->size() << std::endl;
-		for ( Size ct = 1; ct <= ncopies; ct ++ ) {
+		for ( core::Size ct = 1; ct <= ncopies; ct ++ ) {
 			if ( template_frame->steal( *pose_ ) ) total++;
 		}
 	}
@@ -329,7 +329,7 @@ Template::map2target( FrameList &frames ) const {
 	for ( FrameList::const_iterator it=frames.begin(),
 			eit = frames.end(); it!=eit; ++it ) {
 		FrameOP frame = (*it);
-		Size start( frame->start() );
+		core::Size start( frame->start() );
 		tr.Trace << start << " " << frame->end() << std::endl;
 		if ( !frame->align( reverse_mapping_ ) ) {
 			std::cerr << start << " could not align frame " << *frame << std::endl;

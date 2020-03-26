@@ -22,7 +22,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -31,7 +31,7 @@
 namespace protocols {
 namespace moves {
 
-class TrialCounter : public utility::pointer::ReferenceCount {
+class TrialCounter : public utility::VirtualBase {
 public:
 	TrialCounter() {};
 	virtual void reset();

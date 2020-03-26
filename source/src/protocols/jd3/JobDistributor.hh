@@ -28,7 +28,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -37,7 +37,7 @@ namespace jd3 {
 /// @brief OK -- I don't know what the division of labor between a JobDistributor base class
 /// and a JobDistributor subclass, so I'm just going to start writing a simple JobDistributor
 /// and then follow it by writing an MPI job distributor and then I'll see what shakes out.
-class JobDistributor : public utility::pointer::ReferenceCount {
+class JobDistributor : public utility::VirtualBase {
 public:
 
 	JobDistributor();

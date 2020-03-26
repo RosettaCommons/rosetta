@@ -217,7 +217,7 @@ private:
 	core::Real temperature_;
 
 	// Number of positions at which to make moves.
-	Size nmoves_;
+	core::Size nmoves_;
 
 protected:
 	// Max allowed angle-change as a function of ss type.
@@ -266,7 +266,7 @@ public:
 	///
 	/// MoveMap        movemap   /object storing BB torsion movability
 	/// Real (float)   kT        /used in rama Metropolis Criterion
-	/// Size (int)     n_moves   /the number of perturbations for one move
+	/// core::Size (int)     n_moves   /the number of perturbations for one move
 	SmallMover(
 		core::kinematics::MoveMapOP movemap_in,
 		core::Real temperature_in,
@@ -324,7 +324,7 @@ public:
 	///
 	/// MoveMap        movemap   /object storing BB torsion movability
 	/// Real (float)   kT        /used in rama Metropolis Criterion
-	/// Size (int)     n_moves   /the number of perturbations for one move
+	/// core::Size (int)     n_moves   /the number of perturbations for one move
 	ShearMover(
 		core::kinematics::MoveMapOP movemap_in,
 		core::Real temperature_in,

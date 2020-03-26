@@ -203,7 +203,7 @@ CoupledSidechainProtocol::fresh_instance() const {
 }
 
 void
-CoupledSidechainProtocol::update_rotamers( Size resid ) {
+CoupledSidechainProtocol::update_rotamers( core::Size resid ) {
 	chi_vectors_[ resid ]=current_[ resid ]->chi();
 	core::pack::dunbrack::rotamer_from_chi( *current_[ resid ], rot_vectors_[ resid ] );
 }
@@ -344,8 +344,8 @@ void CoupledSidechainProtocol::observe_rotamers( core::Size ct, std::string cons
 	if ( rotamer_stream_.filename() != filename ) rotamer_stream_.open( filename );
 
 	//format::F output
-	Size const w( 8 );
-	Size const d( 4 );
+	core::Size const w( 8 );
+	core::Size const d( 4 );
 	for ( core::Size resi=1; resi<=chi_vectors_.size(); ++resi ) {
 		rotamer_stream_ << format::I( w, resi ) << " ";
 		for ( core::Size i=1; i<=4; ++i ) {

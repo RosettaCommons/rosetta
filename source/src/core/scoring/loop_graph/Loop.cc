@@ -43,7 +43,7 @@ Loop::~Loop() = default;
 
 /// @brief copy constructor
 Loop::Loop( Loop const & src ):
-	ReferenceCount( src )
+	VirtualBase( src )
 {
 	*this = src;
 }

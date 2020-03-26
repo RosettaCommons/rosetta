@@ -184,7 +184,7 @@ void RNP_HighResMover::apply( core::pose::Pose & pose )
 	// also want to do small RNP docking moves
 	core::Real const final_fa_rep_weight = scorefxn->get_weight( fa_rep );
 
-	for ( Size r = 1; r <= options_->rnp_high_res_cycles(); r++ ) { // default is 10 cycles
+	for ( core::Size r = 1; r <= options_->rnp_high_res_cycles(); r++ ) { // default is 10 cycles
 
 		TR << "RNP high-res mover ROUND " << r << " of " << options_->rnp_high_res_cycles() << std::endl;
 
@@ -201,7 +201,7 @@ void RNP_HighResMover::apply( core::pose::Pose & pose )
 		}
 
 		// do RNA fragment insertions
-		for ( Size j = 1; j<=fragment_cycles_; ++j ) {
+		for ( core::Size j = 1; j<=fragment_cycles_; ++j ) {
 			if ( docking_ && j % 10 == 0 ) {
 				rnp_docking( pose );
 				monte_carlo_->boltzmann( pose, "rnp_dock" );
@@ -215,7 +215,7 @@ void RNP_HighResMover::apply( core::pose::Pose & pose )
 
 		// more small docking moves, hard code number of tries for now
 		if ( docking_ ) {
-			for ( Size j = 1; j<=10; ++j ) {
+			for ( core::Size j = 1; j<=10; ++j ) {
 				rnp_docking( pose );
 				monte_carlo_->boltzmann( pose, "rnp_dock" );
 			}
@@ -256,9 +256,9 @@ RNP_HighResMover::protein_sidechain_packing( core::pose::Pose & pose, core::scor
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 
 	// get the list of protein residues that are near the RNA
-	utility::vector1< Size > residues_to_pack = get_residues_within_dist_of_RNA( pose, protein_sc_pack_cutoff_);
+	utility::vector1< core::Size > residues_to_pack = get_residues_within_dist_of_RNA( pose, protein_sc_pack_cutoff_);
 
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		// Check whether this is in the list of residues to pack
 		if ( std::find(residues_to_pack.begin(), residues_to_pack.end(), i ) != residues_to_pack.end() ) {
 			// if it's RNA

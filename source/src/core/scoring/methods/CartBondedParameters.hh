@@ -19,7 +19,7 @@
 #include <utility/pointer/access_ptr.hh>
 #include <numeric/angle.functions.hh>
 #include <numeric/constants.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/interpolation/spline/BicubicSpline.hh>
 #include <numeric/MathMatrix.hh>
 
@@ -30,7 +30,7 @@ namespace scoring {
 namespace methods {
 
 // Unit headers
-class CartBondedParameters : public utility::pointer::ReferenceCount {
+class CartBondedParameters : public utility::VirtualBase {
 public:
 	virtual
 	Real mu(Real phi, Real psi) const = 0;

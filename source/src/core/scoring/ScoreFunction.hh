@@ -58,7 +58,7 @@
 #include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
@@ -93,7 +93,7 @@ namespace scoring {
 /// calculating the various scoring components (called ScoreType's) used in
 /// Rosetta. It also contains weights that are applied to each of those
 /// components. Only scoring components with non-zero weights are calculated.
-class ScoreFunction : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< ScoreFunction >
+class ScoreFunction : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< ScoreFunction >
 {
 	/////////////////////////////////////////////////////////////////////////////
 	// typedefs

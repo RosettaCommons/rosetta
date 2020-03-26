@@ -27,7 +27,7 @@
 #include <utility/keys/Key2Tuple.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
@@ -45,11 +45,11 @@ typedef utility::keys::Key2Tuple< Real, Real > mm_lj_param_set;
 ///
 /// @details blah
 ///
-class MMLJLibrary  : public utility::pointer::ReferenceCount
+class MMLJLibrary  : public utility::VirtualBase
 {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~MMLJLibrary() override;
 	/// @brief ctor
 	MMLJLibrary( core::chemical::MMAtomTypeSetCOP mm_atom_set );

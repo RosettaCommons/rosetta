@@ -68,7 +68,7 @@ public:
 
 public:
 	BBGaussianMover(); //default: no seglist, no endlist
-	BBGaussianMover( Size, Size, Size );
+	BBGaussianMover( core::Size, core::Size, core::Size );
 	~BBGaussianMover() override;
 
 	protocols::moves::MoverOP clone() const override;
@@ -82,7 +82,7 @@ public:
 	void apply(Pose &pose) override;
 
 	void init();
-	void resize(Size, Size, Size);
+	void resize(core::Size, core::Size, core::Size);
 
 	void factorA( Real const fA );
 	void factorB( Real const fB );
@@ -121,7 +121,7 @@ public:
 	}
 
 	// for kic
-	void init_kic_loop(Size looplength, core::kinematics::MoveMapCOP mm);
+	void init_kic_loop(core::Size looplength, core::kinematics::MoveMapCOP mm);
 
 	std::string
 	get_name() const override;
@@ -164,21 +164,21 @@ protected:
 		Pose const & ) override;
 
 	//foreward
-	Real cholesky_fw(Matrix &, Size, Vector &, Vector &, Size from=1, Size to=0, Real scale=1.0);
+	Real cholesky_fw(Matrix &, core::Size, Vector &, Vector &, core::Size from=1, core::Size to=0, Real scale=1.0);
 	//backward
-	Real cholesky_bw(Matrix &, Size, Vector &, Vector &, Size from=1, Size to=0, Real scale=1.0);
+	Real cholesky_bw(Matrix &, core::Size, Vector &, Vector &, core::Size from=1, core::Size to=0, Real scale=1.0);
 
-	void pivot_range_randomly(Pose &, Size, Size);
+	void pivot_range_randomly(Pose &, core::Size, core::Size);
 
 protected:
-	Size n_end_atom_;
-	Size n_dof_angle_;
-	Size n_pert_res_;
-	Size resnum_;
+	core::Size n_end_atom_;
+	core::Size n_dof_angle_;
+	core::Size n_pert_res_;
+	core::Size resnum_;
 	/// @note mark the segment to be perturb
-	utility::vector1< std::pair<Size,Size> > available_seg_list_;
+	utility::vector1< std::pair<core::Size,Size> > available_seg_list_;
 	/// @note <resi, atomname> 0 means the last res of the mobile segment
-	utility::vector1< std::pair<Size, std::string> > end_atom_list_;
+	utility::vector1< std::pair<core::Size, std::string> > end_atom_list_;
 	/// @note {dr/dphi_i * dr/dphi_j} -- n_dof_angle^2
 	Matrix matrix_G;
 	/// @note perturbation from G
@@ -200,8 +200,8 @@ protected:
 	Real factorB_;
 
 	//auto factorA
-	Size N_auto_all;
-	Size N_auto_small;
+	core::Size N_auto_all;
+	core::Size N_auto_small;
 
 	//new features
 	// logic: two scenarios

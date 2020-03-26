@@ -18,7 +18,7 @@
 #include <protocols/parser/DataLoaderCreator.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace protocols {

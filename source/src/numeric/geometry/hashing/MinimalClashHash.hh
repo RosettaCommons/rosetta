@@ -20,14 +20,14 @@
 #include <numeric/geometry/hashing/xyzStripeHash.hh> // need Ball
 #include <numeric/VoxelArray.fwd.hh>  // Try to avoid including the .hh here
 #include <numeric/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace numeric {
 namespace geometry {
 namespace hashing {
 
-class MinimalClashHash : public utility::pointer::ReferenceCount {
+class MinimalClashHash : public utility::VirtualBase {
 
 	typedef numeric::xyzVector<float> Vec;
 	typedef numeric::VoxelArray<float, bool> VoxelArray;

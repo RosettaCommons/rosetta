@@ -78,8 +78,9 @@ CalcInterNeighborGroup::CalcInterNeighborGroup( group_set const & groups, core::
 
 {}
 
-CalcInterNeighborGroup::CalcInterNeighborGroup( CalcInterNeighborGroup const & calculator )
-: groups_(calculator.groups_), dist_cutoff_(calculator.dist_cutoff_), num_neighbors_(calculator.num_neighbors_), neighbors_(calculator.neighbors_)
+CalcInterNeighborGroup::CalcInterNeighborGroup( CalcInterNeighborGroup const & calculator ):
+	VirtualBase( calculator ),
+	groups_(calculator.groups_), dist_cutoff_(calculator.dist_cutoff_), num_neighbors_(calculator.num_neighbors_), neighbors_(calculator.neighbors_)
 {}
 
 CalcInterNeighborGroup::~CalcInterNeighborGroup() = default;

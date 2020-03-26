@@ -24,7 +24,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 //// Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -42,7 +42,7 @@ namespace protocols {
 namespace ligand_docking {
 
 // vector of ligand_chain_ids in interface or -1 for residues to pack/minimize not part of interface or 0 for no pack/minimize
-class InterfaceBuilder: public utility::pointer::ReferenceCount
+class InterfaceBuilder: public utility::VirtualBase
 {
 public:
 	InterfaceBuilder();

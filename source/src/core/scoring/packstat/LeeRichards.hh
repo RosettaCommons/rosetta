@@ -27,7 +27,7 @@
 #include <numeric/xyzVector.hh>
 
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <numeric/constants.hh>
@@ -61,7 +61,7 @@ typedef std::pair< core::id::AtomID,Real > Arc;
 typedef utility::vector1< Arc > Arcs;
 typedef utility::vector1< Arc >::iterator ArcIter;
 
-struct Accumulator : public utility::pointer::ReferenceCount {
+struct Accumulator : public utility::VirtualBase {
 	virtual void accumulate_area( core::id::AtomID atom, core::Real area, bool buried ) = 0;
 	virtual void accumulate_dxdy( core::id::AtomID atom, core::Real dx, core::Real dy, bool buried ) = 0;
 	//dz// virtual void accumulate_dz  ( core::id::AtomID atom, core::Real dz ) = 0;

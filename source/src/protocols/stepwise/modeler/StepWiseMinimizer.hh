@@ -70,7 +70,7 @@ public:
 
 	utility::vector1< core::pose::PoseOP > pose_list() const { return pose_list_; }
 
-	Size const & num_pose_minimize() const { return num_pose_minimize_; }
+	core::Size const & num_pose_minimize() const { return num_pose_minimize_; }
 
 	utility::vector1< core::Size > const & working_minimize_res() const { return working_minimize_res_; }
 
@@ -124,7 +124,7 @@ private:
 	core::scoring::ScoreFunctionCOP scorefxn_;
 	core::scoring::ScoreFunctionOP minimize_scorefxn_, final_scorefxn_;
 
-	Size num_pose_minimize_;
+	core::Size num_pose_minimize_;
 	utility::vector1< core::Size > const working_moving_res_;
 	utility::vector1< core::Size > working_fixed_res_;
 	utility::vector1< core::Size > working_calc_rms_res_;

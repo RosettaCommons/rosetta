@@ -124,7 +124,7 @@ ScoreTypeFeatures::report_features(
 	StructureID const struct_id,
 	sessionOP db_session
 ){
-	Size const batch_id(get_batch_id(struct_id, db_session));
+	core::Size const batch_id(get_batch_id(struct_id, db_session));
 
 	insert_score_type_rows(batch_id, db_session);
 	return 0;
@@ -133,7 +133,7 @@ ScoreTypeFeatures::report_features(
 
 Size
 ScoreTypeFeatures::report_features(
-	Size const batch_id,
+	core::Size const batch_id,
 	sessionOP db_session
 ){
 	insert_score_type_rows(batch_id, db_session);
@@ -147,7 +147,7 @@ void ScoreTypeFeatures::delete_record(
 
 void
 ScoreTypeFeatures::insert_score_type_rows(
-	Size protocol_id,
+	core::Size protocol_id,
 	sessionOP db_session
 ) {
 	switch(db_session->get_db_mode()){
@@ -165,7 +165,7 @@ ScoreTypeFeatures::insert_score_type_rows(
 
 		std::string protocol_id_s = utility::to_string (protocol_id);
 
-		for ( Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id ) {
+		for ( core::Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id ) {
 
 			std::string score_type_id_s = utility::to_string (score_type_id);
 

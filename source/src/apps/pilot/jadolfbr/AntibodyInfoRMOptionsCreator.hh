@@ -9,7 +9,7 @@
 
 /// @file   protocols/antibody/AntibodyInfoRMOptionsCreator.hh
 /// @brief
-/// @author 
+/// @author
 
 #ifndef INCLUDED_protocols_antibody_AntibodyInfoRMOptionsCreator_hh
 #define INCLUDED_protocols_antibody_AntibodyInfoRMOptionsCreator_hh
@@ -20,7 +20,7 @@
 #include <basic/resource_manager/ResourceOptionsCreator.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 //C++ headers

@@ -55,7 +55,7 @@ void AddAssemblyConstraints::apply( core::pose::Pose & pose ) {
 
 	ConstraintSetOP cst_set( new ConstraintSet );
 	char const first_chain( pose.pdb_info()->chain(1) );
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		char const chain_ii( pose.pdb_info()->chain(ii) );
 		if ( first_chain != chain_ii ) {
 			AtomID atom1( pose.residue_type(ii-1).atom_index(atom_name), ii-1 ),

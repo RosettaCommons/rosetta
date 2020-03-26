@@ -99,21 +99,21 @@ main( int argc, char* argv [] ) {
 		using utility::vector1;
 		using core::kinematics::RT;
 		using core::kinematics::RTOP;
-		using utility::pointer::ReferenceCountOP;
+		using utility::VirtualBaseOP;
 
 		string line;
-		vector1< ReferenceCountOP > rts;
+		vector1< VirtualBaseOP > rts;
 		getline(disulfide_database, line);
 		while ( !disulfide_database.eof() ) {
 			std::istringstream line_stream(line);
 			string junk;
-			//ReferenceCountOP rt_op( new RT );
+			//VirtualBaseOP rt_op( new RT );
 
 			RT rt;
 			line_stream >> junk >> junk >> junk >> junk >> junk
 				>> junk >> junk >> junk >> junk >> rt;
 
-			//ReferenceCountOP rt_op( rt );
+			//VirtualBaseOP rt_op( rt );
 			rts.push_back( new WrappedRT( rt ) );
 
 			getline(disulfide_database, line);
@@ -124,7 +124,7 @@ main( int argc, char* argv [] ) {
 		using namespace numeric::kdtree;
 		vector1< vector1< Real > > db_points;
 
-		typedef vector1< ReferenceCountOP >::const_iterator iter;
+		typedef vector1< VirtualBaseOP >::const_iterator iter;
 		for ( iter it = rts.begin(), end = rts.end(); it != end; ++it ) {
 			WrappedRTOP wrt = dynamic_cast< WrappedRT * > ( (*it)() );
 			RT rt = wrt->val();
@@ -149,7 +149,7 @@ main( int argc, char* argv [] ) {
 		// naive search for nn
 		utility::io::ozstream out_naive( "naive.txt" );
 		clock_t start_naive = clock();
-		vector1< ReferenceCountOP > found_pts;
+		vector1< VirtualBaseOP > found_pts;
 		typedef vector1< vector1< Real > >::const_iterator pt_iter;
 		pt_iter pt_it, pt_end;
 		for ( iter it = rts.begin(), end = rts.end(); it != end; ++it ) {

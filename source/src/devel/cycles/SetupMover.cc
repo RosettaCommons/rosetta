@@ -41,8 +41,8 @@ void SetupMover::apply(pose::Pose& pose) {
 
 void SetupMover::remove_termini_patches(pose::Pose& pose) {
 
-	Size first_index = 1;
-	Size last_index = pose.size();
+	core::Size first_index = 1;
+	core::Size last_index = pose.size();
 
 	// This method triggers three error messages in the Residue class.  Since all
 	// of these errors are corrected later on by this mover, these messages are
@@ -82,7 +82,7 @@ void SetupMover::restore_amide_hydrogen(pose::Pose& pose) {
 
 	// Rebuild the amide hydrogen.
 	PointPosition position;
-	Size atom_index, residue_index = 2;
+	core::Size atom_index, residue_index = 2;
 	conformation::Residue residue = pose.residue(residue_index);
 	conformation::Conformation conformation = pose.conformation();
 	id::NamedAtomID atom_name;

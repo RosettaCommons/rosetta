@@ -27,7 +27,7 @@
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <ObjexxFCL/FArray1D.hh> /* for some reason, can't get away with just .fwd.hh */
 #include <ObjexxFCL/FArray2D.hh> /* for some reason, can't get away with just .fwd.hh */
 
@@ -41,7 +41,7 @@ namespace modeler {
 namespace rna {
 namespace checker {
 
-class RNA_BaseCentroidChecker: public utility::pointer::ReferenceCount {
+class RNA_BaseCentroidChecker: public utility::VirtualBase {
 public:
 
 	// Constructor
@@ -108,7 +108,7 @@ private:
 		core::chemical::rna::BaseStackWhichSide & base_stack_side );
 
 	bool
-	check_base_stack( Size const & pos1, Size const & pos2, bool const verbose  = false  );
+	check_base_stack( core::Size const & pos1, core::Size const & pos2, bool const verbose  = false  );
 
 	bool
 	check_base_stack( core::kinematics::Stub const & moving_res_base,
@@ -149,13 +149,13 @@ private:
 
 	bool
 	check_block_stack_res(
-		utility::vector1< Size > const & block_stack_res,
+		utility::vector1< core::Size > const & block_stack_res,
 		core::chemical::rna::BaseStackWhichSide const & block_stack_side ) const;
 
 	bool
 	check_base_stack_in_partition(
-		Size const & block_stack_res,
-		utility::vector1< Size > const & other_res,
+		core::Size const & block_stack_res,
+		utility::vector1< core::Size > const & other_res,
 		core::chemical::rna::BaseStackWhichSide const & block_stack_side ) const;
 
 private:

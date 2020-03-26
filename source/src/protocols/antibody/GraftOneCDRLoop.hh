@@ -64,7 +64,7 @@ public:
 		stem_not_graft_ = setting;
 	}
 
-	void set_flank_size(Size setting) {
+	void set_flank_size(core::Size setting) {
 		flank_size_=setting;
 	}
 

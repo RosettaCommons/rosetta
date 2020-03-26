@@ -18,14 +18,14 @@
 #include <basic/database/schema_generator/DbDataType.fwd.hh>
 #include <string>                                              // for string
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>  // for sessionOP
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace basic {
 namespace database {
 namespace schema_generator {
 
 //Class definitions for datatypes
-class DbDataType : public utility::pointer::ReferenceCount {
+class DbDataType : public utility::VirtualBase {
 
 public:
 	DbDataType();

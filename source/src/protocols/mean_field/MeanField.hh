@@ -28,7 +28,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <protocols/mean_field/jagged_array.hh>
 #include <protocols/mean_field/jagged_array.functions.hh>
@@ -44,7 +44,7 @@ namespace protocols {
 namespace mean_field {
 
 /// @details calculator which conducts mean-field algorithm  on either a single, non-designable pose or used as base class of other MeanFields
-class MeanField : public utility::pointer::ReferenceCount {
+class MeanField : public utility::VirtualBase {
 public:
 	// Standard methods ////////////////////////////////////////////////////////
 	// @brief Standard constructor, no default constructor, initializes lambda_memory, tolerance, temp, and threshold to standard values

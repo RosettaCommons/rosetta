@@ -87,13 +87,13 @@ print_ddgs(std::string const & ddg_out,
 	//  utility::vector1<std::string> scorefxn_header = get_wt_score.get_scorefunction_header();
 
 	//  ddg_output << "ddG: description total ";
-	//  for(Size i =1; i <=scorefxn_header.size();i++){
+	//  for(core::Size i =1; i <=scorefxn_header.size();i++){
 	//    ddg_output << scorefxn_header[i] << " ";
 	//  }
 	if ( label != "" ) {
 		using namespace ObjexxFCL::format;
 		ddg_output << "ddG: " << label << " " << F(9,3,total_ddgs) << " ";
-		for ( Size m=1; m<=delta_e_components.size(); m++ ) {
+		for ( core::Size m=1; m<=delta_e_components.size(); m++ ) {
 			ddg_output << F(9,3,delta_e_components[m]) << " ";
 		}
 		ddg_output << "\n";
@@ -265,10 +265,10 @@ ddG_main()
 		read_in_mutations(res_to_mut, filename,pose);
 		TR << "size of res_to_mut is: " << res_to_mut.size() << std::endl;
 		//initialize wildtype scores
-		for ( Size i=1;  i <= res_to_mut.size(); i++ ) {
+		for ( core::Size i=1;  i <= res_to_mut.size(); i++ ) {
 			utility::vector1<core::chemical::AA> residues_to_mutate = res_to_mut[i];
 			bool mutation_defined = false; //to check if any mutation was specified
-			for ( Size m =1; m<= residues_to_mutate.size(); m++ ) {
+			for ( core::Size m =1; m<= residues_to_mutate.size(); m++ ) {
 				if ( residues_to_mutate[m] != core::chemical::aa_unk ) {
 					mutation_defined=true;
 				}
@@ -315,7 +315,7 @@ ddG_main()
 		pack::task::parse_resfile(pose, *storage_task);
 		storage_task->or_include_current(true);
 
-		for ( Size i =1; i<=pose.size(); i++ ) {
+		for ( core::Size i =1; i<=pose.size(); i++ ) {
 			if ( storage_task->design_residue(i) ) {
 				for ( auto aa_iter(storage_task->residue_task(i).allowed_residue_types_begin()),
 						aa_end(storage_task->residue_task(i).allowed_residue_types_end());
@@ -378,16 +378,16 @@ ddG_main()
 		protein_interface.print(pose);
 
 		//debug statement
-		for ( Size i =1; i<=pose.size(); i++ ) {
+		for ( core::Size i =1; i<=pose.size(); i++ ) {
 			if ( protein_interface.is_interface(i) ) {
 				TR << "[DEBUG]:" << i << " is in the interface " << std::endl;
 			}
 		}
 		//debug statement end
 
-		for ( Size i =1; i<=pose.size(); i++ ) {
+		for ( core::Size i =1; i<=pose.size(); i++ ) {
 			if ( protein_interface.is_interface(i) ) { //is interface residue
-				for ( Size j =1; j <= 20 ; j++ ) { //iterate through all amino acids
+				for ( core::Size j =1; j <= 20 ; j++ ) { //iterate through all amino acids
 					residues_to_mutate = all_unk; //mutate each interface residue one at a time
 					auto curr_aa = (core::chemical::AA)j;
 					if ( curr_aa != pose.aa(i) && (pose.aa(i) != aa_unk)/*this hopefully will never happen?*/ ) {

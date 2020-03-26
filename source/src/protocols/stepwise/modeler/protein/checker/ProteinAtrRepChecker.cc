@@ -46,7 +46,7 @@ namespace checker {
 
 //Constructor
 ProteinAtrRepChecker::ProteinAtrRepChecker( pose::Pose const & pose,
-	utility::vector1< Size > const & moving_res_list ):
+	utility::vector1< core::Size > const & moving_res_list ):
 	moving_res_list_(  moving_res_list )
 {
 	rep_cutoff_ = 10.0;

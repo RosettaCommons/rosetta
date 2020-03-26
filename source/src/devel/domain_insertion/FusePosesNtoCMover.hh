@@ -29,7 +29,7 @@
 
 
 // Utility headers
-//#include <utility/pointer/ReferenceCount.hh>
+//#include <utility/VirtualBase.hh>
 
 // C++ headers
 
@@ -103,7 +103,7 @@ public:
 	/// into actual seqpos
 	void
 	setup_candidate_pdbpos(
-		utility::vector1< Size > & pdbpos,
+		utility::vector1< core::Size > & pdbpos,
 		std::string const tag_input
 	) const;
 
@@ -113,13 +113,13 @@ public:
 	generate_superposition_map(
 		core::pose::Pose const & pose,
 		core::pose::Pose const & fuse_pose,
-		Size const pose_pdbpos,
-		Size const fuse_pose_pdbpos
+		core::Size const pose_pdbpos,
+		core::Size const fuse_pose_pdbpos
 	) const;
 
 	/// @brief counts the number of hardsphere clashes given
 	/// two poses and where they should be fused
-	Size
+	core::Size
 	count_hardsphere_clashes(
 		core::pose::Pose const & pose,
 		core::pose::Pose const & fuse_pose
@@ -140,7 +140,7 @@ public:
 	core::pose::PoseOP
 	truncate_pose_at_fusion_site(
 		core::pose::Pose const & pose,
-		Size const fusion_pdbpos,
+		core::Size const fusion_pdbpos,
 		bool nterm_truncation  //whether to shave off residues upstream or downstream of the fusion pos
 	) const;
 
@@ -189,31 +189,31 @@ private:
 
 	//which chains (in conformation numbering) are supposed to be fused
 	//note pair.first is for fuse_pose
-	utility::vector1< std::pair< Size, Size > > chain_mappings_;
+	utility::vector1< std::pair< core::Size, core::Size > > chain_mappings_;
 
 	//the (absolute) seqpos where fusions have been done,
 	//should have same size as chain_mappings_ vector above
-	utility::vector1< Size > fuse_positions_;
+	utility::vector1< core::Size > fuse_positions_;
 
 	//the regions (in terms of upper and lower seqpos) around the fusion,
 	//for each chain / fuseposition
 	//used for two things: 1. what's being treated flexible during relaxing
 	//2. what's being compared between fused_pose_raw and fused_pose
-	utility::vector1< std::pair< Size, Size > > fusion_regions_;
+	utility::vector1< std::pair< core::Size, core::Size > > fusion_regions_;
 
 	//which jumps to move during default relax mover
-	utility::vector1< Size > jumps_to_move_;
+	utility::vector1< core::Size > jumps_to_move_;
 
 	//the positions in both poses considered for the fusion
 	//note: these are pdbpos because depending on how many chains are used,
 	//they need to be mapped to several seqpos
-	utility::vector1< Size > candidate_pdbpos_pose_, candidate_pdbpos_fuse_pose_;
+	utility::vector1< core::Size > candidate_pdbpos_pose_, candidate_pdbpos_fuse_pose_;
 
 	//a few parameters regarding superposition of the two
 	//poses
-	Size superpose_window_;  //what span to do the superposition on
-	Size relax_window_; //how much beyond the SS element that the superposition happened is movable during default relax
-	Size max_number_allowed_clashes_; //how many hardsphere clashes to allow for the pose to be relaxed
+	core::Size superpose_window_;  //what span to do the superposition on
+	core::Size relax_window_; //how much beyond the SS element that the superposition happened is movable during default relax
+	core::Size max_number_allowed_clashes_; //how many hardsphere clashes to allow for the pose to be relaxed
 	Real hardsphere_clash_limit_; //what counts as a clash
 	Real max_allowed_rms_;  //the maximum allowed superposition rms allowed for the pose to be relaxed
 

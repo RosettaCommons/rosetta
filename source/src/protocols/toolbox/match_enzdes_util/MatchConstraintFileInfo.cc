@@ -79,6 +79,8 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
+using core::Size;
+
 
 /// @brief function to go through a list of restypes and
 /// reduce them to chemically identical ones based on the same base_name
@@ -122,6 +124,7 @@ GeomSampleInfo::GeomSampleInfo(
 
 // copy ctor
 GeomSampleInfo::GeomSampleInfo( GeomSampleInfo const & gsi ) :
+	VirtualBase( gsi ),
 	tag_(gsi.tag_),
 	function_tag_(gsi.function_tag_),
 	ideal_val_(gsi.ideal_val_),
@@ -210,7 +213,7 @@ GeomSampleInfo::create_sample_vector() const
 
 	//1. figure out the number of ideal values
 	if ( (!distance ) && ( periodicity_ != 360.0 ) ) {
-		num_ideal_val = static_cast< Size > ( 360.0 / periodicity_ );
+		num_ideal_val = static_cast< core::Size > ( 360.0 / periodicity_ );
 	}
 
 
@@ -718,18 +721,18 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 
 		HTReal ht_start( target_conf.xyz(target_ats[3]), target_conf.xyz(target_ats[2]), target_conf.xyz(target_ats[1]) );
 
-		for ( Size ii = 1; ii <= exgs->n_tor_U3D1_samples(); ++ii ) {
+		for ( core::Size ii = 1; ii <= exgs->n_tor_U3D1_samples(); ++ii ) {
 			HTReal ht_ii = ht_start * exgs->transform( HT_tor_U3D1, ii );
-			for ( Size jj = 1; jj <= exgs->n_ang_U2D1_samples(); ++jj ) {
+			for ( core::Size jj = 1; jj <= exgs->n_ang_U2D1_samples(); ++jj ) {
 				HTReal ht_jj = ht_ii * exgs->transform( HT_ang_U2D1, jj );
-				for ( Size kk = 1; kk <= exgs->n_dis_U1D1_samples(); ++kk ) {
+				for ( core::Size kk = 1; kk <= exgs->n_dis_U1D1_samples(); ++kk ) {
 					HTReal ht_kk = ht_jj;
 					ht_kk.walk_along_z( exgs->dis_U1D1_samples()[ kk ] );
-					for ( Size ll = 1; ll <= exgs->n_tor_U2D2_samples(); ++ll ) {
+					for ( core::Size ll = 1; ll <= exgs->n_tor_U2D2_samples(); ++ll ) {
 						HTReal ht_ll = ht_kk * exgs->transform( HT_tor_U2D2, ll );
-						for ( Size mm = 1; mm <= exgs->n_ang_U1D2_samples(); ++mm ) {
+						for ( core::Size mm = 1; mm <= exgs->n_ang_U1D2_samples(); ++mm ) {
 							HTReal ht_mm = ht_ll * exgs->transform( HT_ang_U1D2, mm );
-							for ( Size nn = 1; nn <= exgs->n_tor_U1D3_samples(); ++nn ) {
+							for ( core::Size nn = 1; nn <= exgs->n_tor_U1D3_samples(); ++nn ) {
 								HTReal ht_nn = ht_mm * exgs->transform( HT_tor_U1D3, nn );
 
 								for ( core::Size rotcount(1); rotcount <= rotamers.size(); ++rotcount ) {

@@ -51,7 +51,7 @@ public:
 	typedef core::kinematics::RT RT;
 	typedef core::kinematics::Stub Stub;
 	typedef core::chemical::AtomIndices AtomIndices;
-	typedef utility::vector1< Size > ComponentOffsets;
+	typedef utility::vector1< core::Size > ComponentOffsets;
 	typedef core::id::AtomID_Map< int > SeqposOffsetMap;
 
 public:
@@ -132,14 +132,14 @@ public:
 	}
 
 
-	Size
+	core::Size
 	has_atom( SafeAtomID const & id ) const
 	{
 		return ( std::find( atom_ids_.begin(), atom_ids_.end(), id ) != atom_ids_.end() );
 	}
 
 
-	Size
+	core::Size
 	atom_index( SafeAtomID id ) const;
 
 
@@ -150,7 +150,7 @@ public:
 	}
 
 
-	Size
+	core::Size
 	natoms() const
 	{
 		return xyz_.size();
@@ -163,7 +163,7 @@ public:
 
 	/// @brief  Insert into a conformation (1-component frags only)
 	void
-	insert( Conformation & conf, Size const offset ) const;
+	insert( Conformation & conf, core::Size const offset ) const;
 
 
 	/// @brief  Insert into a conformation
@@ -195,7 +195,7 @@ public:
 	);
 
 
-	Size
+	core::Size
 	n_outgoing() const
 	{
 		return stub_transforms_.size();
@@ -205,11 +205,11 @@ public:
 private: // private methods:
 
 
-	Size
+	core::Size
 	add_atom( SafeAtomID const & id, Stub const & instub, Vector const & atom_xyz );
 
 	int
-	get_seqpos_offset_for_new_component( Size const component_root_seqpos, Size const component_index ) const;
+	get_seqpos_offset_for_new_component( core::Size const component_root_seqpos, core::Size const component_index ) const;
 
 
 	int
@@ -245,7 +245,7 @@ private: // private methods:
 
 
 	/// @brief  recursive routine for adding atoms from a conformation, returns atomindex of newly added atom
-	Size
+	core::Size
 	add_frag_atom(
 		core::id::AtomID const & id,
 		SeqposOffsetMap & seqpos_offset_map,
@@ -308,8 +308,8 @@ private: // data
 	core::kinematics::AtomTree tree_;
 
 
-	Size ncomponents_;
-	Size BIG_OFFSET_;
+	core::Size ncomponents_;
+	core::Size BIG_OFFSET_;
 
 };
 

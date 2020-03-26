@@ -93,10 +93,10 @@ public:
 
 	/// @brief Return the number of times KIC will be invoked before the
 	/// LoopBuilder gives up.
-	Size get_max_attempts() const;
+	core::Size get_max_attempts() const;
 
 	/// @brief Specify how many time to invoke KIC before giving up.
-	void set_max_attempts(Size attempts);
+	void set_max_attempts(core::Size attempts);
 
 	/// @brief Get the score function to be used on the next call to apply().
 	core::scoring::ScoreFunctionOP get_score_function() const;
@@ -138,7 +138,7 @@ private:
 	protocols::kinematic_closure::KicMoverOP kic_mover_;
 	refiners::MinimizationRefinerOP minimizer_;
 	utilities::TrajectoryLoggerOP logger_;
-	Size max_attempts_;
+	core::Size max_attempts_;
 
 };
 

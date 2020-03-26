@@ -21,14 +21,14 @@
 #include <protocols/sewing/data_storage/SmartSegment.fwd.hh>
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace sewing {
 namespace hashing {
 
 /// @brief This class contains the infrastructure for parsing an edge file and for generating all possible alignments for a given edge.
-class AlignmentGenerator : public utility::pointer::ReferenceCount {
+class AlignmentGenerator : public utility::VirtualBase {
 
 public:
 

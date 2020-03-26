@@ -67,7 +67,7 @@ public:
 	get_all_solutions ( core::pose::Pose & pose,
 		utility::vector1< core::pose::PoseOP > & pose_list );
 
-	Size nsol() {
+	core::Size nsol() {
 		return nsol_;
 	}
 

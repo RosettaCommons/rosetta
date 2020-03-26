@@ -168,7 +168,7 @@ PCSSingleGrid::PCSSingleGrid(PCSSingleGrid const & other) :
 {
 	pcs_values_.clear();
 	pcs_values_.resize(other.pcs_values_.size());
-	for ( Size i = 1, i_end = other.pcs_values_.size(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = other.pcs_values_.size(); i <= i_end; ++i ) {
 		pcs_values_[i] = PCSSingleOP( new PCSSingle( *(other.pcs_values_[i]) ) );
 	}
 }
@@ -181,7 +181,7 @@ PCSSingleGrid::operator=(PCSSingleGrid const & rhs) {
 		pcs_file_ = rhs.pcs_file_;
 		pcs_values_.clear();
 		pcs_values_.resize(rhs.pcs_values_.size());
-		for ( Size i = 1, i_end = rhs.pcs_values_.size(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = rhs.pcs_values_.size(); i <= i_end; ++i ) {
 			pcs_values_[i] = PCSSingleOP( new PCSSingle( *(rhs.pcs_values_[i]) ) );
 		}
 		tensor_ = PCSTensorOP( new PCSTensor( *(rhs.tensor_) ) );
@@ -216,7 +216,7 @@ PCSSingleGrid::refresh(
 		tensor_->get_ax(),
 		tensor_->get_rh() };
 
-	numeric::xyzVector<Size> dimensions = get_dimensions();
+	numeric::xyzVector<core::Size> dimensions = get_dimensions();
 	for ( int x_index(0), x_stop(static_cast<int>(dimensions.x()-1)); x_index <= x_stop; ++x_index ) {
 
 		for ( int y_index(0), y_stop(static_cast<int>(dimensions.y()-1)); y_index <= y_stop; ++y_index ) {
@@ -239,7 +239,7 @@ void
 PCSSingleGrid::refresh(
 	Pose const & pose,
 	Vector const & center,
-	Size const & /*ligand_chain_id_to_exclude*/
+	core::Size const & /*ligand_chain_id_to_exclude*/
 )
 {
 	refresh(pose, center);
@@ -250,7 +250,7 @@ void
 PCSSingleGrid::refresh(
 	Pose const & pose,
 	Vector const & center,
-	utility::vector1<Size> /*ligand_chain_ids_to_exclude*/
+	utility::vector1<core::Size> /*ligand_chain_ids_to_exclude*/
 )
 {
 	refresh(pose, center);
@@ -272,7 +272,7 @@ PCSSingleGrid::score(
 core::Real
 PCSSingleGrid::atom_score(
 	UltraLightResidue const & residue,
-	Size atomno,
+	core::Size atomno,
 	qsarMapCOP qsar_map
 ) const
 {
@@ -290,11 +290,11 @@ PCSSingleGrid::score(
 {
 	Real total_score(0.0);
 
-	for ( Size i(1); i <= pcs_values_.size(); ++i ) {
+	for ( core::Size i(1); i <= pcs_values_.size(); ++i ) {
 		utility::vector1<core::id::AtomID> const & eq_spins = pcs_values_[i]->get_protein_spins();
-		Size count(0);
+		core::Size count(0);
 		Real av_pcs(0.0);
-		for ( Size j(1); j <= eq_spins.size(); ++j ) {
+		for ( core::Size j(1); j <= eq_spins.size(); ++j ) {
 
 			// Is residue ID correct and atomno in residue?
 			if ( residue.seqpos() == eq_spins[j].rsd() &&
@@ -324,17 +324,17 @@ PCSSingleGrid::score(
 core::Real
 PCSSingleGrid::atom_score(
 	Residue const & residue,
-	Size atomno,
+	core::Size atomno,
 	qsarMapCOP /*qsar_map*/
 ) const
 {
 	Real atom_score(0.0);
 	bool found_atom_in_pcs_data(false);
 
-	for ( Size i(1); i <= pcs_values_.size(); ++i ) {
+	for ( core::Size i(1); i <= pcs_values_.size(); ++i ) {
 		if ( found_atom_in_pcs_data ) break;
 		utility::vector1<core::id::AtomID> const & eq_spins = pcs_values_[i]->get_protein_spins();
-		for ( Size j(1); j <= eq_spins.size(); ++j ) {
+		for ( core::Size j(1); j <= eq_spins.size(); ++j ) {
 
 			// Is residue ID correct and found atom?
 			if ( residue.seqpos() == eq_spins[j].rsd() && atomno == eq_spins[j].atomno() ) {
@@ -363,7 +363,7 @@ PCSSingleGrid::serialize() const
 
 	Pair base_data("base_data",SingleGrid::serialize());
 	std::vector<Value> pcs_single_vector;
-	for ( Size i = 1; i <= pcs_values_.size(); ++i ) {
+	for ( core::Size i = 1; i <= pcs_values_.size(); ++i ) {
 		pcs_single_vector.push_back(pcs_values_[i]->serialize());
 	}
 	Pair pcs_value_record("pcs_values", pcs_single_vector);
@@ -382,7 +382,7 @@ PCSSingleGrid::deserialize(utility::json_spirit::mObject data)
 
 	utility::json_spirit::mArray pcs_data(data["pcs_values"].get_array());
 	pcs_values_.resize(pcs_data.size());
-	Size i(1);
+	core::Size i(1);
 	for ( utility::json_spirit::mArray::iterator it = pcs_data.begin(); it != pcs_data.end(); ++it ) {
 		PCSSingleOP pcs( new PCSSingle( *(pcs_values_[i]) ) );
 		pcs->deserialize(it->get_obj());
@@ -460,7 +460,7 @@ PCSSingleGrid::init_pcs_values_from_file(
 	core::io::nmr::read_pcs_datafile(filename, spins, values, errors);
 	runtime_assert_msg(spins.size() == values.size() && spins.size() == errors.size(), "Vector of spin selections and PCS values and errors must have the same size.");
 	pcs_values_.reserve(spins.size());
-	for ( Size i=1, i_end=spins.size(); i<=i_end; ++i ) {
+	for ( core::Size i=1, i_end=spins.size(); i<=i_end; ++i ) {
 		PCSSingleOP single_pcs( new PCSSingle(spins[i], pose, values[i], errors[i]) );
 		pcs_values_.push_back(single_pcs);
 	}

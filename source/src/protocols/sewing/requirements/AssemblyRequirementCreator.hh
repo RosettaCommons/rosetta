@@ -21,7 +21,7 @@
 #include <protocols/sewing/requirements/AssemblyRequirement.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // c++ headers
 #include <string>
@@ -32,7 +32,7 @@ namespace requirements {
 
 /// @brief The Creator class is responsible for creating a particular
 /// GlobalRequirement class.
-class AssemblyRequirementCreator : public utility::pointer::ReferenceCount
+class AssemblyRequirementCreator : public utility::VirtualBase
 {
 public:
 	AssemblyRequirementCreator() {}

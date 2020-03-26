@@ -151,7 +151,7 @@ FlxbbDesign::FlxbbDesign() :
 FlxbbDesign::FlxbbDesign(
 	ScoreFunctionOP const sfxnd,
 	ScoreFunctionOP const sfxnr,
-	Size const ncycle,
+	core::Size const ncycle,
 	String const & layer_mode,
 	bool const use_origseq_for_not_dsgned_layer,
 	bool const no_relax
@@ -209,7 +209,7 @@ void FlxbbDesign::read_options()
 	if ( option[ OptionKeys::flxbb::constraints_NtoC ].user() ) constraints_NtoC_ = option[ OptionKeys::flxbb::constraints_NtoC ]();
 	if ( option[ OptionKeys::flxbb::movemap_from_blueprint ] ) movemap_from_blueprint_ = true;
 
-	Size filter_trial( 0 );
+	core::Size filter_trial( 0 );
 	String filter_type( "" );
 	if ( option[ OptionKeys::flxbb::filter_trial ].user() ) filter_trial = option[ OptionKeys::flxbb::filter_trial ]();
 	if ( option[ OptionKeys::flxbb::filter_type ].user() ) filter_type = option[ OptionKeys::flxbb::filter_type ]();
@@ -219,7 +219,7 @@ void FlxbbDesign::read_options()
 }
 
 /// @brief
-void FlxbbDesign::initialize_filter( Size const filter_trial, String const & filter_type ){
+void FlxbbDesign::initialize_filter( core::Size const filter_trial, String const & filter_type ){
 	if ( filter_type != "" ) {
 		if ( filter_type == "packstat" ) {
 			filter_during_design_ = utility::pointer::make_shared< FilterStructs_Packstat >( filter_trial );
@@ -256,7 +256,7 @@ void FlxbbDesign::set_scorefxn_relax( ScoreFunctionOP const scorefxn )
 }
 
 /// @brief the number of cycles of fixbb and relax
-void FlxbbDesign::set_ncycles( Size const ncycles )
+void FlxbbDesign::set_ncycles( core::Size const ncycles )
 {
 	nflxbb_cycles_ = ncycles;
 }
@@ -539,11 +539,11 @@ void FlxbbDesign::apply( pose::Pose & pose )
 	}
 
 	// run
-	Size num_task( 0 );
+	core::Size num_task( 0 );
 	for ( auto design_task : design_taskset_ ) {
 
 		num_task ++;
-		for ( Size i=1 ; i<=design_task->ncycle() ; i++ ) {
+		for ( core::Size i=1 ; i<=design_task->ncycle() ; i++ ) {
 
 			TR << "current_cycle/total_cycle: " << i << "/" << design_task->ncycle() << " in DesignTask: " << num_task << std::endl;
 
@@ -607,7 +607,7 @@ FlxbbDesign::parse_my_tag(
 	}
 
 	// the number of cycles of fixbb and relax
-	nflxbb_cycles_ = tag->getOption<Size>( "ncycles", 3 );
+	nflxbb_cycles_ = tag->getOption<core::Size>( "ncycles", 3 );
 
 	// perform fixbb in layer mode: core, boundary, and surfacee
 	layer_mode_ = tag->getOption<String>( "layer_mode", "" );
@@ -616,7 +616,7 @@ FlxbbDesign::parse_my_tag(
 	use_origseq_for_not_dsgned_layer_ = tag->getOption<bool>( "use_original_seq", true );
 
 	// set filter
-	auto filter_trial = tag->getOption<Size>( "filter_trial", 10 );
+	auto filter_trial = tag->getOption<core::Size>( "filter_trial", 10 );
 	String filter_type = tag->getOption<String>( "filter_type", "packstat" );
 	if ( filter_trial > 0 && filter_type != "" ) {
 		initialize_filter( filter_trial, filter_type );

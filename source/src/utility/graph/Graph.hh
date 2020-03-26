@@ -20,7 +20,7 @@
 #include <platform/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1_bool.hh>
 
 // STL Headers
@@ -643,7 +643,7 @@ private:
 };
 
 /// @brief A Graph with constant time edge insertion and deletion.  Extensible.
-class Graph : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Graph >
+class Graph : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< Graph >
 {
 public:
 	/// self pointers
@@ -656,7 +656,7 @@ public:
 	typedef Node::EdgeListIter EdgeListIter;
 	typedef Node::EdgeListConstIter EdgeListConstIter;
 
-	typedef utility::pointer::ReferenceCount parent;
+	typedef utility::VirtualBase parent;
 
 public:
 

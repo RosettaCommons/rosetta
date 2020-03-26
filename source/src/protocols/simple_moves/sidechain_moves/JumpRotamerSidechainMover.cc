@@ -132,7 +132,7 @@ JumpRotamerSidechainMover::make_chi_move(
 	}
 
 	/// select a random rotamer
-	Size rotnum;
+	core::Size rotnum;
 	Real rand = numeric::random::rg().uniform();
 	//if ( rand <=0 ){
 	//tr.Debug << "RG.uniform is " << rand << std::endl;}
@@ -161,7 +161,7 @@ JumpRotamerSidechainMover::make_chi_move(
 ///all angles in degree
 Real JumpRotamerSidechainMover::compute_proposal_density(
 	Residue const & new_residue,
-	Size const,
+	core::Size const,
 	chemical::ResidueType const &,
 	utility::vector1<Real> const &
 ) const {
@@ -201,7 +201,7 @@ JumpRotamerSidechainMover::compute_rotdensities(
 		tr.Warning << "ALARM: probs are not normalized correctly: " << norm_prob << std::endl;
 	}
 	Real const inv_nrot( 1.0 / rotamers.size() );
-	for ( Size ii = 1; ii <= rotamers.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rotamers.size(); ++ii ) {
 		//for each rotamer evaluate the density at our new chi angles
 		Real const within_well_prob( rotamers[ii].chi_probability( new_chi, temperature() ) );
 
@@ -225,7 +225,7 @@ JumpRotamerSidechainMover::compute_tempered_rotamer_probabilities(
 	rot_probs.resize( rotamers.size() );
 	Real const inv_T( 1.0/Parent::temperature() );
 	Real sum_prob( 0.0 );
-	for ( Size rotnum=1; rotnum <= rotamers.size(); ++rotnum ) {
+	for ( core::Size rotnum=1; rotnum <= rotamers.size(); ++rotnum ) {
 		sum_prob+=std::pow( rotamers[ rotnum ].probability(), inv_T );
 	}
 	normalize = 1.0/sum_prob;

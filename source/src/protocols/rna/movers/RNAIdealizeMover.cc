@@ -98,7 +98,7 @@ RNAIdealizeMover::parse_my_tag(
 	protocols::moves::Movers_map const & ,
 	pose::Pose const & )
 {
-	iterations_ = tag->getOption< Size >( "iterations", iterations_ );
+	iterations_ = tag->getOption< core::Size >( "iterations", iterations_ );
 	noise_ = tag->getOption< bool >( "noise", noise_ );
 	final_minimize_ = tag->getOption< bool >( "final_minimize", final_minimize_ );
 	ang_significance_threshold_ = tag->getOption< Real >( "ang_significance_threshold", ang_significance_threshold_ );
@@ -137,8 +137,8 @@ void
 RNAIdealizeMover::perturb_pose( pose::Pose & pose ) const
 {
 	using namespace numeric;
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
-		for ( Size jj = 1; jj <= pose.residue_type( ii ).natoms(); ++jj ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
+		for ( core::Size jj = 1; jj <= pose.residue_type( ii ).natoms(); ++jj ) {
 			pose.conformation().set_xyz(
 				AtomID( jj, ii ),
 				pose.conformation().xyz( AtomID( jj, ii ) )
@@ -238,10 +238,10 @@ RNAIdealizeMover::add_bond_angle_constraint(
 void
 RNAIdealizeMover::constrain_to_ideal(
 	pose::Pose & pose,
-	utility::vector1< Size > const & bad_suite_res
+	utility::vector1< core::Size > const & bad_suite_res
 ) const {
 
-	for ( Size ii = 1; ii <= pose.size(); ++ii )  {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii )  {
 		// If this residue or its successor is in bad suite res, no constraints
 		// Update could constrain only PARTICULAR atoms for predecessor/successor situation
 		// according to suite torsions
@@ -255,7 +255,7 @@ RNAIdealizeMover::constrain_to_ideal(
 
 		chemical::ResidueType const & residue_type( pose.residue_type( ii ) );
 
-		for ( Size jj = 1; jj <= residue_type.natoms(); ++jj ) {
+		for ( core::Size jj = 1; jj <= residue_type.natoms(); ++jj ) {
 
 			AtomID jj_atomid( jj, ii );
 			utility::vector1< AtomID > nbrs( pose.conformation().bonded_neighbor_all_res( jj_atomid ) );
@@ -326,8 +326,8 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 
 	// 0. What's the suite situation?
 	core::pose::rna::RNA_SuiteName suite_assignment;
-	utility::vector1< Size > bad_suite_res;
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	utility::vector1< core::Size > bad_suite_res;
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		auto assignment = suite_assignment.assign( pose, ii );
 		if ( assignment.name == "!!" ) {
 			bad_suite_res.push_back( ii );
@@ -426,21 +426,21 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 	scorefxn->set_weight( coordinate_constraint, 10 );
 
 	Pose const first_basis_pose = pose;
-	for ( Size ii = 1; ii <= iterations_; ++ii ) {
+	for ( core::Size ii = 1; ii <= iterations_; ++ii ) {
 
 		kinematics::MoveMapOP suite_mm( new kinematics::MoveMap );
 		suite_mm->set_bb( true );
 		suite_mm->set_chi( true );
 		//mm->set_bb( false );
 		//mm->set_chi( false );
-		for ( Size const res : bad_suite_res ) {
+		for ( core::Size const res : bad_suite_res ) {
 			suite_mm->set_bb( true, res );
 			suite_mm->set_chi( true, res );
 
-			Size const min_res = res > 4 ? res - 3 : 1;
-			Size const max_res = res < pose.size() - 3 ? res + 3 : pose.size();
+			core::Size const min_res = res > 4 ? res - 3 : 1;
+			core::Size const max_res = res < pose.size() - 3 ? res + 3 : pose.size();
 
-			for ( Size jj = min_res; jj <= max_res; ++jj ) {
+			for ( core::Size jj = min_res; jj <= max_res; ++jj ) {
 				suite_mm->set_bb( true, jj );
 				suite_mm->set_chi( true, jj );
 			}
@@ -476,22 +476,22 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 		ref_pose_.fold_tree( newF );
 	}
 
-	utility::vector1< Size > all_res( pose.size() );
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) all_res[ ii ] = ii;
+	utility::vector1< core::Size > all_res( pose.size() );
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) all_res[ ii ] = ii;
 	protocols::stepwise::modeler::rna::o2prime::O2PrimePacker o2prime_packer( pose, scorefxn, all_res );
 
 	// 2. Add funcs
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		if ( pose.residue_type( ii ).aa() == core::chemical::aa_vrt ) continue;
 
 		Real const coord_sdev( 0.3 );
 		Real const coord_tol(  0.3 );
-		Size const my_anchor( pose.size() ); //anchor on virtual residue
+		core::Size const my_anchor( pose.size() ); //anchor on virtual residue
 		Residue const & rsd( pose.residue( ii ) );
-		//Size const atm_indexP = rsd.has( "P" ) ? rsd.atom_index( "P" ) : rsd.atom_index( "CA" );
+		//core::Size const atm_indexP = rsd.has( "P" ) ? rsd.atom_index( "P" ) : rsd.atom_index( "CA" );
 
 		// All coord cst
-		for ( Size jj = 1; jj <= pose.residue_type( ii ).nheavyatoms(); ++jj ) {
+		for ( core::Size jj = 1; jj <= pose.residue_type( ii ).nheavyatoms(); ++jj ) {
 			pose.add_constraint( utility::pointer::make_shared< CoordinateConstraint >(
 				AtomID( jj, ii ),
 				AtomID( 1, my_anchor ), rsd.xyz( jj ),
@@ -501,10 +501,10 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 
 	std::map< DOF_ID, Real > ref_dofs;
 	std::map< DOF_ID, Real > start_dofs;
-	std::set< Size > residues_with_idealizing_dofs;
+	std::set< core::Size > residues_with_idealizing_dofs;
 
-	for ( Size jj = 1; jj <= ref_pose_.size(); ++jj ) {
-		for ( Size kk = 1; kk <= ref_pose_.residue_type( jj ).natoms(); ++kk ) {
+	for ( core::Size jj = 1; jj <= ref_pose_.size(); ++jj ) {
+		for ( core::Size kk = 1; kk <= ref_pose_.residue_type( jj ).natoms(); ++kk ) {
 
 			// Broken for C5' of upper terminus
 			if ( jj == ref_pose_.size() && kk == 5 ) continue;
@@ -577,20 +577,20 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 	mm->set_chi( true );
 	//mm->set_bb( false );
 	//mm->set_chi( false );
-	for ( Size const res : residues_with_idealizing_dofs ) {
+	for ( core::Size const res : residues_with_idealizing_dofs ) {
 		mm->set_bb( true, res );
 		mm->set_chi( true, res );
 
-		Size const min_res = res > 4 ? res - 3 : 1;
-		Size const max_res = res < pose.size() - 3 ? res + 3 : pose.size();
+		core::Size const min_res = res > 4 ? res - 3 : 1;
+		core::Size const max_res = res < pose.size() - 3 ? res + 3 : pose.size();
 
-		for ( Size jj = min_res; jj <= max_res; ++jj ) {
+		for ( core::Size jj = min_res; jj <= max_res; ++jj ) {
 			mm->set_bb( true, jj );
 			mm->set_chi( true, jj );
 		}
 	}
 
-	for ( Size const res : bad_suite_res ) {
+	for ( core::Size const res : bad_suite_res ) {
 		mm->set_bb( true, res - 1 );
 		mm->set_bb( true, res );
 	}
@@ -598,7 +598,7 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 	protocols::minimization_packing::MinMoverOP minm( new protocols::minimization_packing::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
 
 	Pose const basis_pose = pose;
-	for ( Size ii = 1; ii <= iterations_; ++ii ) {
+	for ( core::Size ii = 1; ii <= iterations_; ++ii ) {
 		scorefxn->set_weight( fa_rep, scorefxn->get_weight( fa_rep ) + 0.01);
 
 		TR << TR.Blue << "Idealize iteration " << ii << "," << " score " << ( *scorefxn )( pose ) << "." << std::endl;

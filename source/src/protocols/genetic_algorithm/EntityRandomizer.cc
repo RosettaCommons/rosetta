@@ -16,7 +16,7 @@
 
 #include <protocols/genetic_algorithm/Entity.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>
@@ -32,7 +32,7 @@
 namespace protocols {
 namespace genetic_algorithm {
 
-EntityRandomizer::EntityRandomizer() : utility::pointer::ReferenceCount(), entity_length_(0), mutation_rate_(1.), entity_template_(/* 0 */) {}
+EntityRandomizer::EntityRandomizer() : utility::VirtualBase(), entity_length_(0), mutation_rate_(1.), entity_template_(/* 0 */) {}
 EntityRandomizer::~EntityRandomizer() = default;
 EntityCOP EntityRandomizer::entity_template() const { return entity_template_; }
 void EntityRandomizer::set_entity_template( EntityCOP entity) { entity_template_ = entity; }

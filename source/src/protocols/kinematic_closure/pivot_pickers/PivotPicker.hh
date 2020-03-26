@@ -15,7 +15,7 @@
 #include <protocols/kinematic_closure/pivot_pickers/PivotPicker.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <boost/noncopyable.hpp>
 
 namespace protocols {
@@ -24,7 +24,7 @@ namespace pivot_pickers {
 
 /// @brief Base class for all the pivot picking algorithms.
 class PivotPicker
-	: public utility::pointer::ReferenceCount, private boost::noncopyable {
+	: public utility::VirtualBase, private boost::noncopyable {
 
 public:
 

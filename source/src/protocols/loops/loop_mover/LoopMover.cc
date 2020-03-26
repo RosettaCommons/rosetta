@@ -232,9 +232,9 @@ void LoopMover::set_extended_torsions(
 
 	idealize_loop(pose, loop );
 
-	Size start_extended = std::max((Size)1,loop.start());
-	Size end_extended   = std::min(pose.size(),loop.stop());
-	for ( Size i = start_extended; i <= end_extended; ++i ) {
+	core::Size start_extended = std::max((core::Size)1,loop.start());
+	core::Size end_extended   = std::min(pose.size(),loop.stop());
+	for ( core::Size i = start_extended; i <= end_extended; ++i ) {
 		if ( i != start_extended ) pose.set_phi( i, init_phi );
 		if ( i != end_extended ) pose.set_psi( i, init_psi );
 		if ( ( i != start_extended ) && ( i != end_extended ) ) pose.set_omega( i, init_omega );
@@ -281,7 +281,7 @@ LoopMover::set_loops_from_pose_observer_cache( core::pose::Pose const & pose ){
 
 // Used by both LoopMover_Refine_KIC and LoopMover_Perturb_KIC - maybe it should be there, then?
 void
-loops_set_chainbreak_weight( core::scoring::ScoreFunctionOP scorefxn, Size const round ){
+loops_set_chainbreak_weight( core::scoring::ScoreFunctionOP scorefxn, core::Size const round ){
 	bool const use_linear_chainbreak( basic::options::option[basic::options::OptionKeys::loops::kic_use_linear_chainbreak]() );
 	if ( use_linear_chainbreak ) {
 		scorefxn->set_weight( core::scoring::linear_chainbreak, float( round ) * 150.0 / 3.0 );

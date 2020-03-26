@@ -52,8 +52,8 @@ core::Size SmoothPolicy::choose(const core::fragment::Frame& frame,
 	ScoreList scores;
 	scorer_.score(frame, pose, scores);
 
-	WeightedReservoirSampler<Size> sampler(1);
-	for ( Size i = 1; i <= scores.size(); ++i ) {
+	WeightedReservoirSampler<core::Size> sampler(1);
+	for ( core::Size i = 1; i <= scores.size(); ++i ) {
 		core::Real score = scores[i];
 		core::Real fitness = std::sqrt(scorer_.cutoff() - score);
 

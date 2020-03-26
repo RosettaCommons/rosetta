@@ -205,14 +205,14 @@ void LoopMover_Refine_KIC::apply(
 	}
 
 	// set cutpoint variants for correct chainbreak scoring
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	utility::vector1< bool > is_loop( nres, false );
 
 	for ( const auto & it : *loops() ) {
-		for ( Size i= it.start(); i<= it.stop(); ++i ) {
+		for ( core::Size i= it.start(); i<= it.stop(); ++i ) {
 			is_loop[i] = true;
 		}
-		Size const loop_cut(it.cut());
+		core::Size const loop_cut(it.cut());
 
 		if ( loop_cut != nres ) { //c-terminal loop
 			bool pose_changed( false );
@@ -245,7 +245,7 @@ void LoopMover_Refine_KIC::apply(
 		max_inner_cycles = 3;
 	}
 
-	int inner_cycles = std::min( Size(max_inner_cycles), fast ? (int)loops()->loop_size() : 10 * (Size)( loops()->loop_size() ) );
+	int inner_cycles = std::min( core::Size(max_inner_cycles), fast ? (int)loops()->loop_size() : 10 * (core::Size)( loops()->loop_size() ) );
 	int repack_period = 20; // should be an option
 	if ( option[ OptionKeys::loops::repack_period ].user() ) {
 		repack_period = option[ OptionKeys::loops::repack_period ]();
@@ -412,10 +412,10 @@ void LoopMover_Refine_KIC::apply(
 	myKinematicMover.set_vary_bondangles( true ); // why is this hard-coded?
 	myKinematicMover.set_sample_nonpivot_torsions( option[ OptionKeys::loops::nonpivot_torsion_sampling ]());
 	myKinematicMover.set_rama_check( true );
-	Size kic_start, kic_middle, kic_end; // three pivot residues for kinematic loop closure
+	core::Size kic_start, kic_middle, kic_end; // three pivot residues for kinematic loop closure
 
 	// AS: adding option to change the number of rotamer trials -- just one (as in the current implementation) may be way too little
-	auto num_rot_trials = Size( option[ OptionKeys::loops::kic_num_rotamer_trials ]() );
+	auto num_rot_trials = core::Size( option[ OptionKeys::loops::kic_num_rotamer_trials ]() );
 
 	// AS: setting up weights for ramping rama[2b] and/or fa_rep
 	core::Real orig_local_fa_rep_weight = local_scorefxn->get_weight( fa_rep );
@@ -490,11 +490,11 @@ void LoopMover_Refine_KIC::apply(
 	if ( local_movie ) {
 		// this assumes there is only one loops_.
 		auto one_loop( loops()->begin() );
-		Size begin_loop=one_loop->start();
-		Size end_loop=one_loop->stop();
+		core::Size begin_loop=one_loop->start();
+		core::Size end_loop=one_loop->stop();
 		loop_outfile << "MODEL" << std::endl;
-		utility::vector1<Size> indices(end_loop - begin_loop + 3);
-		for ( Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
+		utility::vector1<core::Size> indices(end_loop - begin_loop + 3);
+		for ( core::Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
 			indices[j]=i;
 		}
 		//pose.dump_pdb(loop_outfile, indices, "initial_repack"); JAB - tag was never being used.
@@ -572,13 +572,13 @@ void LoopMover_Refine_KIC::apply(
 
 			// choose a random loop for both rounds
 			//Loops::const_iterator it( loops_.one_random_loop() );
-			Size loop_ind = numeric::random::rg().random_range(1, loops()->size());
+			core::Size loop_ind = numeric::random::rg().random_range(1, loops()->size());
 			Loops one_loop;
 			//one_loop.add_loop( it );
 			one_loop.add_loop( ( *loops() )[ loop_ind ] );
 			// get loop endpoints
-			Size begin_loop=one_loop.begin()->start();
-			Size end_loop=one_loop.begin()->stop();
+			core::Size begin_loop=one_loop.begin()->start();
+			core::Size end_loop=one_loop.begin()->stop();
 
 			myKinematicMover.set_loop_begin_and_end( begin_loop, end_loop ); // AS -- for restricted torsion bin sampling, the mover needs to know about the start of the defined loop, not just the segment that is sampled in a given move
 
@@ -607,12 +607,12 @@ void LoopMover_Refine_KIC::apply(
 					kic_start = numeric::random::rg().random_range(begin_loop,end_loop-2);
 					// choose a random end residue so the length is >= 3, <= min(loop_end, start+maxlen)
 					kic_end = numeric::random::rg().random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), end_loop));
-					Size middle_offset = (kic_end - kic_start) / 2;
+					core::Size middle_offset = (kic_end - kic_start) / 2;
 					kic_middle = kic_start + middle_offset;
 				} else {
 					kic_end = numeric::random::rg().random_range(begin_loop+2,end_loop);
 					kic_start = numeric::random::rg().random_range(std::max((kic_end - std::min(max_seglen_, kic_end) + 1), begin_loop), kic_end-2);
-					Size middle_offset = (kic_end - kic_start) / 2;
+					core::Size middle_offset = (kic_end - kic_start) / 2;
 					kic_middle = kic_start + middle_offset;
 				}
 
@@ -719,7 +719,7 @@ void LoopMover_Refine_KIC::apply(
 					}
 
 					// AS: first do repacking (if applicable), then rotamer trials -- we've shown that this increases recovery of native side chain conformations
-					for ( Size ii = 1; ii <= num_rot_trials; ii++ ) {
+					for ( core::Size ii = 1; ii <= num_rot_trials; ii++ ) {
 						pack::rotamer_trials( pose, *local_scorefxn, rottrials_packer_task );
 						pose.update_residue_neighbors(); // to update 10A nbr graph
 					}
@@ -744,8 +744,8 @@ void LoopMover_Refine_KIC::apply(
 						//tr << "after accepted move res " << kic_start + 2 << " omega is " << pose.omega(kic_start+2) << std::endl;
 						if ( local_movie ) {
 							loop_outfile << "MODEL" << std::endl;
-							utility::vector1<Size> indices(end_loop - begin_loop + 3);
-							for ( Size ii=begin_loop-1, jj=1; ii<=end_loop+1; ++ii, ++jj ) {
+							utility::vector1<core::Size> indices(end_loop - begin_loop + 3);
+							for ( core::Size ii=begin_loop-1, jj=1; ii<=end_loop+1; ++ii, ++jj ) {
 								indices[jj]=ii;
 							}
 							//pose.dump_pdb(loop_outfile, indices, "refine_r" + k_trial.str()); JAB - tag never used.
@@ -832,11 +832,11 @@ void LoopMover_Refine_KIC::apply(
 	if ( local_movie ) {
 		// this assumes there is only one loops_.
 		auto one_loop( loops()->begin() );
-		Size begin_loop=one_loop->start();
-		Size end_loop=one_loop->stop();
+		core::Size begin_loop=one_loop->start();
+		core::Size end_loop=one_loop->stop();
 		loop_outfile << "MODEL" << std::endl;
-		utility::vector1<Size> indices(end_loop - begin_loop + 3);
-		for ( Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
+		utility::vector1<core::Size> indices(end_loop - begin_loop + 3);
+		for ( core::Size i=begin_loop-1, j=1; i<=end_loop+1; i++, j++ ) {
 			indices[j]=i;
 		}
 		//pose.dump_pdb(loop_outfile, indices, "final_refine"); JAB - tag never used.
@@ -868,7 +868,7 @@ LoopMover_Refine_KIC::update_movemap_vectors(
 	core::pose::Pose & pose,
 	utility::vector1<core::kinematics::MoveMap> & move_maps ) {
 
-	for ( Size i = 1; i <= loops()->size(); i++ ) {
+	for ( core::Size i = 1; i <= loops()->size(); i++ ) {
 		protocols::loops::Loops cur_loop;
 		cur_loop.add_loop( ( *loops() )[ i ] );
 		core::kinematics::MoveMap cur_mm;
@@ -886,7 +886,7 @@ LoopMover_Refine_KIC::update_allow_sc_vectors(
 	core::pose::Pose & pose,
 	utility::vector1< utility::vector1< bool > > & allow_sc_vectors ) {
 
-	for ( Size i = 1; i <= loops()->size(); i++ ) {
+	for ( core::Size i = 1; i <= loops()->size(); i++ ) {
 		protocols::loops::Loops cur_loop;
 		cur_loop.add_loop( ( *loops() )[ i ] );
 		utility::vector1<bool> cur_allow_sc_move( pose.size(), false );
@@ -905,8 +905,8 @@ void
 LoopMover_Refine_KIC::set_rottrials_from_kic_segment(
 	core::pose::Pose & pose,
 	pack::task::PackerTaskOP & rottrials_packer_task,
-	Size kic_start,
-	Size kic_end ) {
+	core::Size kic_start,
+	core::Size kic_end ) {
 
 	// we'll exploit the loops classes and the select_loop_residues() function to setup the PackerTask
 	protocols::loops::Loop kic_seg( kic_start, kic_end, kic_start );
@@ -925,8 +925,8 @@ void
 LoopMover_Refine_KIC::set_movemap_from_kic_segment(
 	core::pose::Pose & pose,
 	kinematics::MoveMap & cur_mm,
-	Size kic_start,
-	Size kic_end ) {
+	core::Size kic_start,
+	core::Size kic_end ) {
 
 	protocols::loops::Loops kic_seg;
 	kic_seg.add_loop( kic_start, kic_end, kic_start );

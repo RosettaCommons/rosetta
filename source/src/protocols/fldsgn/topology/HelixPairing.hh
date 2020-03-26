@@ -22,7 +22,7 @@
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 #include <string>
@@ -32,7 +32,7 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
-class HelixPairing : public utility::pointer::ReferenceCount {
+class HelixPairing : public utility::VirtualBase {
 public:
 
 	typedef std::string String;
@@ -49,8 +49,8 @@ public:// construct/destruct
 
 	/// @brief value constructor
 	HelixPairing(
-		Size const h1,
-		Size const h2,
+		core::Size const h1,
+		core::Size const h2,
 		char const o
 	);
 
@@ -76,10 +76,10 @@ public: //accessors
 
 
 	/// @brief the strand number of the 1st strand in strand pairing
-	inline Size h1() const { return h1_; }
+	inline core::Size h1() const { return h1_; }
 
 	/// @brief the strand number of the 2nd strand in strand pairing
-	inline Size h2() const { return h2_; }
+	inline core::Size h2() const { return h2_; }
 
 	/// @brief orientation, parallel or anti-parallel, of helix pairing
 	inline char orient() const { return orient_; }
@@ -117,10 +117,10 @@ private:  // data
 
 
 	/// @brief Helix number of first strand in the strand pair
-	Size h1_;
+	core::Size h1_;
 
 	/// @brief Helix number of second strand in the strand pair
-	Size h2_;
+	core::Size h2_;
 
 	/// @brief two helices make a pair  by parallel, "P", anti parallel, "A", and if not defined, "N"
 	char orient_;
@@ -138,14 +138,14 @@ private:  // data
 	Real align_angle_;
 
 	/// @brief
-	Size loop_length_;
+	core::Size loop_length_;
 
 
 };
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class HelixPairingSet : public utility::pointer::ReferenceCount {
+class HelixPairingSet : public utility::VirtualBase {
 public: // typedef
 
 
@@ -192,17 +192,17 @@ public: // accessors
 
 
 	/// @brief return one of the strand_pairings given a number
-	HelixPairingOP helix_pairing( Size const s ) const;
+	HelixPairingOP helix_pairing( core::Size const s ) const;
 
 	/// @brief return the pointer of the helix pairing, given the two helix numbers of h1, and h2
 	/// if h1 and h2 does not make pairing, return 0
-	HelixPairingOP helix_pairing( Size const h1, Size const h2 );
+	HelixPairingOP helix_pairing( core::Size const h1, core::Size const h2 );
 
 	/// @brief return all helix pairings
 	HelixPairings const & helix_pairings() const;
 
 	/// @brief return the size of helix_pairings_
-	Size size() const;
+	core::Size size() const;
 
 
 public:
@@ -232,7 +232,7 @@ private:// data
 	String hpairset_name_;
 
 	/// @brief the total number of strands included in HelixPairingSet
-	Size num_helices_;
+	core::Size num_helices_;
 
 	/// @brief whether the map_helix_pairings_ is initialized or not
 	bool initialize_map_helix_pairings_;

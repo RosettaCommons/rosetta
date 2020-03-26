@@ -32,7 +32,7 @@ namespace protocols {
 namespace backbone_moves {
 namespace local_backbone_mover {
 
-Residue::Residue(Size seqpos, core::pose::Pose const& pose){
+Residue::Residue(core::Size seqpos, core::pose::Pose const& pose){
 	using core::id::AtomID;
 
 	seqpos_ = seqpos;
@@ -109,8 +109,8 @@ Residue::apply_to_pose(core::pose::Pose &pose){
 	pose.set_omega(seqpos_, omega_);
 }
 
-FreePeptide::FreePeptide(core::pose::Pose const& pose, Size pivot1, Size pivot2):
-	utility::pointer::ReferenceCount(),
+FreePeptide::FreePeptide(core::pose::Pose const& pose, core::Size pivot1, core::Size pivot2):
+	utility::VirtualBase(),
 	pivot1_(pivot1),
 	pivot2_(pivot2)
 {
@@ -122,7 +122,7 @@ FreePeptide::FreePeptide(core::pose::Pose const& pose, Size pivot1, Size pivot2)
 
 	// Initialize the residues
 
-	for ( Size i = pivot1 - 2; i <= pivot2 + 2; ++i ) {
+	for ( core::Size i = pivot1 - 2; i <= pivot2 + 2; ++i ) {
 		residues_.push_back( Residue(i, pose) );
 	}
 
@@ -134,7 +134,7 @@ FreePeptide::FreePeptide(core::pose::Pose const& pose, Size pivot1, Size pivot2)
 	old_stubs_.push_back( pose.xyz( AtomID(2, pivot2 - 1) ) ); // fisrt CA
 
 	old_stub_centor_of_mass_.zero();
-	for ( Size i=1; i<=4; ++i ) {
+	for ( core::Size i=1; i<=4; ++i ) {
 		old_stub_centor_of_mass_ += old_stubs_[i];
 	}
 	old_stub_centor_of_mass_ *= 0.25;
@@ -161,7 +161,7 @@ FreePeptide::clone() const {
 
 void
 FreePeptide::apply_to_pose(core::pose::Pose &pose){
-	for ( Size i = pivot1_ - 1; i <= pivot2_ + 1; ++i ) {
+	for ( core::Size i = pivot1_ - 1; i <= pivot2_ + 1; ++i ) {
 		residues_[res_id(i)].apply_to_pose(pose);
 	}
 }
@@ -182,7 +182,7 @@ FreePeptide::update_xyz_coords(){
 		residues_[4].n_xyz(), reference_coordinates_[1],
 		radians(residues_[4].phi()), residues_[4].n_ca_c_angle(), residues_[4].ca_c_bond() ) );
 
-	for ( Size i=5; i<res_id(pivot2_); ++i ) {
+	for ( core::Size i=5; i<res_id(pivot2_); ++i ) {
 		residues_[i].n_xyz( xyz_from_internal_coords(residues_[i - 1].c_xyz(),
 			residues_[i - 1].ca_xyz(), residues_[i - 1].n_xyz(),
 			radians(residues_[i - 1].psi()), residues_[i - 1].ca_c_n_angle(), residues_[i - 1].c_n_bond() ) );
@@ -211,7 +211,7 @@ void
 FreePeptide::rotate(xyzMatrix <Real> M){
 	xyzVector <Real> center = reference_coordinates_[3];
 
-	for ( Size i=1; i<=2; ++i ) {
+	for ( core::Size i=1; i<=2; ++i ) {
 		xyzVector <Real> delta = reference_coordinates_[i] - center;
 		reference_coordinates_[i] = center + M * delta;
 	}
@@ -240,19 +240,19 @@ FreePeptide::align(){
 
 	// Translate the free peptide to overlap the centers of mass
 	xyzVector <Real> current_stub_center_of_mass(0, 0, 0);
-	for ( Size i=1; i<=4; ++i ) {
+	for ( core::Size i=1; i<=4; ++i ) {
 		current_stub_center_of_mass += current_stubs[i];
 	}
 	current_stub_center_of_mass *= 0.25;
 
-	for ( Size i=1; i<=3; ++i ) {
+	for ( core::Size i=1; i<=3; ++i ) {
 		reference_coordinates_[i] += old_stub_centor_of_mass_ - current_stub_center_of_mass;
 	}
 
 	// Rotate the free peptide
 	xyzMatrix <Real> rot_S( xyzMatrix <Real>::rows( &superposition_transform.rotation()(0, 0)) );
 
-	for ( Size i=1; i<=3; ++i ) {
+	for ( core::Size i=1; i<=3; ++i ) {
 		reference_coordinates_[i] = old_stub_centor_of_mass_ \
 			+ rot_S * (reference_coordinates_[i] - old_stub_centor_of_mass_);
 	}

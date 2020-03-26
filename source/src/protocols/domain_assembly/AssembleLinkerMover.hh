@@ -33,7 +33,7 @@ public:
 
 	AssembleLinkerMover(
 		std::string const & loop_mover_name,
-		Size const min_loop_size,
+		core::Size const min_loop_size,
 		utility::vector1< core::fragment::FragSetOP > frags
 	) :
 		Mover("AssembleLinkerMover"),

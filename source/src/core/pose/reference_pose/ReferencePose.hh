@@ -36,7 +36,7 @@
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
@@ -55,7 +55,7 @@ namespace reference_pose {
 
 /// @brief  ReferencePose class, used to store sets of ReferencePose data for tracking how a pose changes over the course of a protocol.
 ///
-class ReferencePose : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< ReferencePose >
+class ReferencePose : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< ReferencePose >
 {
 public:
 

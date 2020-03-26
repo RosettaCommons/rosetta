@@ -63,9 +63,9 @@ HSPairPotential::~HSPairPotential() = default;
 
 /// @brief
 HSPairPotential::Real
-HSPairPotential::calc_phithetascore( Size const strand_seqsep, Real const phi, Real const theta ) const
+HSPairPotential::calc_phithetascore( core::Size const strand_seqsep, Real const phi, Real const theta ) const
 {
-	Size istrand_seqsep;
+	core::Size istrand_seqsep;
 	if ( strand_seqsep >= 2 && strand_seqsep <= 10 ) {
 		istrand_seqsep = 2;
 	} else {
@@ -75,13 +75,13 @@ HSPairPotential::calc_phithetascore( Size const strand_seqsep, Real const phi, R
 			istrand_seqsep = 1;
 		}
 	}
-	auto iphi = static_cast< Size >( 1 + ( phi + 180.0 )/10 );
+	auto iphi = static_cast< core::Size >( 1 + ( phi + 180.0 )/10 );
 	if ( iphi > 36 ) {
 		iphi = 36;
 	} else if ( iphi < 1 ) {
 		iphi = 1;
 	}
-	auto itheta = static_cast< Size >( 1 + ( theta/5 ) );
+	auto itheta = static_cast< core::Size >( 1 + ( theta/5 ) );
 	if ( itheta > 36 ) {
 		itheta = 36;
 	} else if ( itheta < 1 ) {
@@ -95,17 +95,17 @@ HSPairPotential::calc_phithetascore( Size const strand_seqsep, Real const phi, R
 /// @brief the endpoints of the axis through an alpha-helix
 void
 HSPairPotential::helix_end(
-	Size const & pos1,
+	core::Size const & pos1,
 	BB_Pos const & bb_pos,
 	Vector & p1,
 	Vector & p2
 ) const
 {
 	static Real const eleven_inv = 1.0 / 11.0;
-	Size const s1 = pos1;
-	Size const s2 = pos1+1;
-	Size const s3 = pos1+2;
-	Size const s4 = pos1+3;
+	core::Size const s1 = pos1;
+	core::Size const s2 = pos1+1;
+	core::Size const s3 = pos1+2;
+	core::Size const s4 = pos1+3;
 
 	Vector const Epos_sum( (                  bb_pos.CA( s1 ) + bb_pos.C( s1 ) ) +
 		( bb_pos.N( s2 ) + bb_pos.CA( s2 ) + bb_pos.C( s2 ) ) +
@@ -140,13 +140,13 @@ HSPairPotential::score(
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-	for ( Size ihelix=1; ihelix<=helices.size(); ihelix++ ) {
+	for ( core::Size ihelix=1; ihelix<=helices.size(); ihelix++ ) {
 
 		HelixOP const helix( helices[ ihelix ] );
 
 		if ( helix->length() <= 3 ) continue;
 
-		for ( Size ss1=helix->begin(); ss1<=helix->end()-3; ss1++ ) {
+		for ( core::Size ss1=helix->begin(); ss1<=helix->end()-3; ss1++ ) {
 
 			Vector pt1, pt2;
 			helix_end( ss1, bb_pos, pt1, pt2 );
@@ -156,11 +156,11 @@ HSPairPotential::score(
 					irue = energy_graph.get_node( ss1+1 )->const_edge_list_end();
 					iru != irue; ++iru ) {
 
-				Size ss2( (*iru)->get_second_node_ind() );
+				core::Size ss2( (*iru)->get_second_node_ind() );
 				//Edges always have first node < second node. Just in case we picked the wrong one:
 				if ( ss1+1 == ss2 ) ss2 = (*iru)->get_first_node_ind();
 
-				Size jstrand = ss_info.strand_id( ss2 );
+				core::Size jstrand = ss_info.strand_id( ss2 );
 				if ( jstrand == 0 || ss_info.strand_id( ss2+1 ) == 0 ) continue;
 				if ( pose.residue_type( ss2 ).is_upper_terminus() ) continue;
 
@@ -178,13 +178,13 @@ HSPairPotential::score(
 					Real phi, theta;
 					spherical( pt2, pt4, phi, theta, cen1, cen2, mid_vector );
 
-					Size const helix_end_1 = helix->begin() - 1;
-					Size const helix_end_2 = helix->end() + 1;
+					core::Size const helix_end_1 = helix->begin() - 1;
+					core::Size const helix_end_2 = helix->end() + 1;
 
-					Size const strand_end_1 = strands[ jstrand ]->begin() - 1;
-					Size const strand_end_2 = strands[ jstrand ]->end() + 1;
+					core::Size const strand_end_1 = strands[ jstrand ]->begin() - 1;
+					core::Size const strand_end_2 = strands[ jstrand ]->end() + 1;
 
-					Size seqsep = std::min( get_foldtree_seqsep( pose, helix_end_2, strand_end_1 ) + 1,
+					core::Size seqsep = std::min( get_foldtree_seqsep( pose, helix_end_2, strand_end_1 ) + 1,
 						get_foldtree_seqsep( pose, strand_end_2, helix_end_1 ) + 1 );
 
 					hs_score += calc_phithetascore( seqsep, phi, theta );

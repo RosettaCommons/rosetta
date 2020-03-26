@@ -34,7 +34,7 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
@@ -43,7 +43,7 @@ namespace core {
 namespace pose {
 namespace rna {
 
-class RNA_IdealCoord : public utility::pointer::ReferenceCount {
+class RNA_IdealCoord : public utility::VirtualBase {
 public:
 
 	RNA_IdealCoord();

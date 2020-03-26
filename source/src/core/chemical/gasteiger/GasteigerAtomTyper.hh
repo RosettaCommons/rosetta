@@ -28,7 +28,7 @@
 #include <core/types.hh>
 
 #include <utility/vector0.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <list>
 #include <map>
@@ -63,7 +63,7 @@ PossibleAtomTypesForAtom GetPossibleTypesForAtom(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class PossibleAtomTypesForAtom :
-	public utility::pointer::ReferenceCount
+	public utility::VirtualBase
 {
 	//private:
 	//

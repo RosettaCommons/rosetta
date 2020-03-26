@@ -23,7 +23,7 @@
 #include <protocols/jd3/JobSummary.fwd.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 
 //C++ headers
@@ -47,7 +47,7 @@ namespace jd3 {
 /// the case in JD3.  Any data that should be output by a running job must be tucked
 /// inside the JobResult to be eventually retrieved by the JobQueen or by a JobDataOutputter
 /// at the end of execution.
-class Job : public utility::pointer::ReferenceCount
+class Job : public utility::VirtualBase
 {
 public:
 

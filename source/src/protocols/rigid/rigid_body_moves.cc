@@ -47,7 +47,7 @@ gaussian_jump_move(
 {
 
 	utility::vector1< int > moving_jumps;
-	for ( Size i=1, i_end = pose.num_jump(); i<= i_end; ++i ) {
+	for ( core::Size i=1, i_end = pose.num_jump(); i<= i_end; ++i ) {
 		if ( mm.get_jump(i) ) moving_jumps.push_back( i );
 	}
 

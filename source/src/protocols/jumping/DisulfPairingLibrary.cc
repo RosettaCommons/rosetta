@@ -163,7 +163,7 @@ RT dis_RT_from_epos( FArray2A_float Epos1, FArray2A_float Epos2)
 	/// tranlsation vector, written in stub1 frame
 	RT::Vector translation( 0.0 ); // 3
 
-	Size const MAX_POS( 5 ); // param::MAX_POS
+	core::Size const MAX_POS( 5 ); // param::MAX_POS
 	Epos1.dimension(3,MAX_POS);
 	Epos2.dimension(3,MAX_POS);
 
@@ -282,7 +282,7 @@ DisulfPairingLibrary::read_from_file( std::string const& fn)
 	char ss1, ss2;
 	//float o,p1,p2,mn_dist,mx_dist,
 	//phi1,psi1,omega1,phi2,psi2,omega2;
-	Size const MAX_POS( 5 ); // param::MAX_POS
+	core::Size const MAX_POS( 5 ); // param::MAX_POS
 	FArray2D_float Epos1(3,MAX_POS), Epos2(3,MAX_POS);
 	utility::io::izstream data( fn ); //or from database file
 
@@ -375,14 +375,14 @@ DisulfPairingLibrary::generate_jump_frags(
 	fragment::FragDataOPs frag_data;
 	create_jump_fragments( bWithTorsion, frag_data );
 
-	for ( Size jump_nr = 1; jump_nr <= pairings.size(); ++jump_nr ) {
+	for ( core::Size jump_nr = 1; jump_nr <= pairings.size(); ++jump_nr ) {
 
 		//int const jump_nr ( jump_nr );
 		int const startpos( pairings[ jump_nr ].pos1 );
 		int const endpos( pairings[ jump_nr ].pos2 );
 
 		if ( mm.get_bb( startpos ) && mm.get_bb( endpos ) ) {
-			Size const length( bWithTorsion ? 4 : 2 );
+			core::Size const length( bWithTorsion ? 4 : 2 );
 			runtime_assert( length == frag_data.front()->size() );
 			fragment::JumpingFrameOP frame = generate_empty_jump_frame( startpos, endpos, length );
 			frame->add_fragment( frag_data );

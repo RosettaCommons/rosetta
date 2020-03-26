@@ -81,7 +81,7 @@ BDR::BDR() :
 
 /// @brief copy constructor
 BDR::BDR( BDR const & rval ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Super( rval ),
 	manager_( rval.manager_ ),
 	design_info_( rval.design_info_ ),
@@ -242,7 +242,7 @@ void BDR::apply( Pose & pose ) {
 		)
 	);
 
-	MetricValue< std::set< Size > > loops_neighborhood;
+	MetricValue< std::set< core::Size > > loops_neighborhood;
 	pose.metric( neighborhood_calc_name(), "neighbors", loops_neighborhood );
 	CalculatorFactory::Instance().register_calculator(
 		neighborhood_buns_polar_calc_name(),
@@ -284,7 +284,7 @@ bool BDR::centroid_build(
 	// ensure modified_archive_pose is completely full-atom, otherwise mismatch
 	// will occur when restoring sidechains at the end of the procedure
 	bool mod_ap_is_full_atom = true;
-	for ( Size i = 1, ie = modified_archive_pose.size(); mod_ap_is_full_atom && i != ie; ++i ) {
+	for ( core::Size i = 1, ie = modified_archive_pose.size(); mod_ap_is_full_atom && i != ie; ++i ) {
 		mod_ap_is_full_atom &= ( modified_archive_pose.residue( i ).type().mode() == core::chemical::FULL_ATOM_t );
 	}
 
@@ -293,8 +293,8 @@ bool BDR::centroid_build(
 	}
 
 	// flip to poly-ala-gly-pro-disulf pose
-	utility::vector1< Size > protein_residues;
-	for ( Size i = 1, ie = pose.size(); i <= ie; ++i ) {
+	utility::vector1< core::Size > protein_residues;
+	for ( core::Size i = 1, ie = pose.size(); i <= ie; ++i ) {
 		if ( pose.residue( i ).is_protein() ) {
 			protein_residues.push_back( i );
 		}
@@ -402,7 +402,7 @@ bool BDR::design_refine(
 		RestrictResidueToRepackingOP repack_op( new RestrictResidueToRepacking() );
 
 		Positions new_positions = manager_.new_positions();
-		for ( Size i = 1, ie = pose.size(); i != ie; ++i ) {
+		for ( core::Size i = 1, ie = pose.size(); i != ie; ++i ) {
 			if ( new_positions.find( i ) == new_positions.end() ) {
 				repack_op->include_residue( i );
 			}
@@ -435,7 +435,7 @@ bool BDR::design_refine(
 	pose.energies().clear();
 
 	// run design-refine cycle
-	for ( Size i = 0; i < dr_cycles_; ++i ) {
+	for ( core::Size i = 0; i < dr_cycles_; ++i ) {
 
 		// design the new section
 		PackRotamersMover design( sfx );
@@ -519,8 +519,8 @@ void BDR::process_continuous_design_string(
 	using core::pack::task::operation::TaskOperationCOP;
 	using core::chemical::aa_from_oneletter_code;
 
-	Size const offset = original2modified_interval_endpoints.find( original_interval.left )->second;
-	for ( Size i = 0, ie = design_str.length(); i < ie; ++i ) {
+	core::Size const offset = original2modified_interval_endpoints.find( original_interval.left )->second;
+	for ( core::Size i = 0, ie = design_str.length(); i < ie; ++i ) {
 		utility::vector1< bool > allowed_aa_types( 20, false );
 
 		switch ( design_str.at( i ) ) {
@@ -565,10 +565,10 @@ void BDR::process_insert_design_string(
 		original2modified_interval_endpoints.find( original_interval.right )->second
 	);
 
-	Size const insert_char_idx = design_str.find( insert_char );
-	Size const left_nres = insert_char_idx;
-	Size const right_nres = design_str.size() - left_nres - 1;
-	Size const insert_nres = interval.length() - left_nres - right_nres;
+	core::Size const insert_char_idx = design_str.find( insert_char );
+	core::Size const left_nres = insert_char_idx;
+	core::Size const right_nres = design_str.size() - left_nres - 1;
+	core::Size const insert_nres = interval.length() - left_nres - right_nres;
 
 	// Make setup easy by building a new design string to expand the
 	// insertion character into a series of the insertion character
@@ -579,8 +579,8 @@ void BDR::process_insert_design_string(
 	// setup TaskOperations
 	RestrictResidueToRepackingOP repack_op( new RestrictResidueToRepacking() );
 
-	Size const left_offset = interval.left;
-	for ( Size i = 0, ie = aa.size(); i < ie; ++i ) {
+	core::Size const left_offset = interval.left;
+	for ( core::Size i = 0, ie = aa.size(); i < ie; ++i ) {
 		utility::vector1< bool > allowed_aa_types( 20, false );
 
 		if ( aa.at( i ) == insert_char ) { // repack only

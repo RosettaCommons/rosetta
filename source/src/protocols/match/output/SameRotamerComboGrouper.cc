@@ -30,7 +30,7 @@ namespace match {
 namespace output {
 
 SameRotamerComboGrouper::SameRotamerComboGrouper() : n_geometric_constraints_( 0 ) {}
-SameRotamerComboGrouper::SameRotamerComboGrouper( Size ncst ) : n_geometric_constraints_( ncst ) {}
+SameRotamerComboGrouper::SameRotamerComboGrouper( core::Size ncst ) : n_geometric_constraints_( ncst ) {}
 
 SameRotamerComboGrouper::~SameRotamerComboGrouper() = default;
 
@@ -49,15 +49,15 @@ SameRotamerComboGrouper::assign_group_for_match(
 {
 	runtime_assert( m.upstream_hits.size() == n_geometric_constraints_ );
 
-	utility::vector1< Size > rot_vector( n_geometric_constraints_ * 2, 0 );
-	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
+	utility::vector1< core::Size > rot_vector( n_geometric_constraints_ * 2, 0 );
+	for ( core::Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		rot_vector[ ii ] = m.upstream_hits[ ii ].scaffold_build_id();
 		rot_vector[ n_geometric_constraints_ + ii ] = m.upstream_hits[ ii ].upstream_conf_id();
 	}
 
 	RotamerComboCountMap::const_iterator iter = rotamer_combo_indexer_.find( rot_vector );
 	if ( iter == rotamer_combo_indexer_.end() ) {
-		Size next_index = rotamer_combo_indexer_.size() + 1;
+		core::Size next_index = rotamer_combo_indexer_.size() + 1;
 		rotamer_combo_indexer_[ rot_vector ] = next_index;
 		return next_index;
 	} else {
@@ -72,7 +72,7 @@ SameRotamerComboGrouper::reset()
 }
 
 void
-SameRotamerComboGrouper::set_n_geometric_constraints( Size n_csts )
+SameRotamerComboGrouper::set_n_geometric_constraints( core::Size n_csts )
 {
 	n_geometric_constraints_ = n_csts;
 }

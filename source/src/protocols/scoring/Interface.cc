@@ -63,6 +63,7 @@
 
 
 using namespace ObjexxFCL;
+using core::Size;
 
 static basic::Tracer TR( "core.conformation.Interface" );
 
@@ -120,9 +121,9 @@ Interface::calculate( core::pose::Pose const & pose )
 		fold_tree.partition_by_jump( jump_number_, partner_ );
 	}
 
-	//for ( Size i=1; i<=pose.size(); ++i ) {
+	//for ( core::Size i=1; i<=pose.size(); ++i ) {
 	// assuming if it is not a polymer residue, it must be a ligand
-	Size upstream_jump_res, downstream_jump_res;
+	core::Size upstream_jump_res, downstream_jump_res;
 	upstream_jump_res = fold_tree.upstream_jump_residue( jump_number_ );
 	downstream_jump_res = fold_tree.downstream_jump_residue( jump_number_ );
 
@@ -181,13 +182,13 @@ Interface::protein_calculate( core::pose::Pose const & pose )
 	core::scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	std::vector< int>::iterator new_end_pos;
 
-	for ( Size i=1; i<=Size(energy_graph.num_nodes()); ++i ) {
+	for ( core::Size i=1; i<=core::Size(energy_graph.num_nodes()); ++i ) {
 		for ( utility::graph::Graph::EdgeListConstIter
 				iru = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
 			auto const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
-			Size const j( edge->get_second_node_ind() );
+			core::Size const j( edge->get_second_node_ind() );
 			// rpav -- prevent water from contributing to definition of protein/protein interface
 			if ( pose.residue(i).is_water() || pose.residue(j).is_water() ) continue;
 			if ( partner_(i) == partner_(j) ) continue;
@@ -237,7 +238,7 @@ Interface::ligand_calculate(
 {
 
 	using namespace core;
-	for ( Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = pose.size(); i <= i_end; ++i ) {
 		// all residues on ligand side can move
 		if ( ! partner_(i) ) {
 			is_interface_(i) = true;
@@ -246,10 +247,10 @@ Interface::ligand_calculate(
 		// on protein side, have to do distance check
 		conformation::Residue const & prot_rsd = pose.residue(i);
 		bool done = false;
-		for ( Size j = 1, j_end = pose.size(); j <= j_end; ++j ) {
+		for ( core::Size j = 1, j_end = pose.size(); j <= j_end; ++j ) {
 			if ( partner_(j) ) continue; // compare against only ligand residues
 			conformation::Residue const & lig_rsd = pose.residue(j);
-			for ( Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k ) {
+			for ( core::Size k = 1, k_end = lig_rsd.nheavyatoms(); k <= k_end; ++k ) {
 				core::Real dist2 = lig_rsd.xyz(k).distance_squared( prot_rsd.xyz(prot_rsd.nbr_atom()) );
 				core::Real cutoff = prot_rsd.nbr_radius() + 6.0;
 				if ( dist2 <= cutoff * cutoff ) {
@@ -270,15 +271,15 @@ Interface::ligand_calculate(
 /// @brief find the nearest residue at the interface to a given residue
 /// @author Monica Berrondo November 18, 2010
 core::Size
-Interface::closest_interface_residue( core::pose::Pose const & pose, Size src_rsd, core::Real & distance )
+Interface::closest_interface_residue( core::pose::Pose const & pose, core::Size src_rsd, core::Real & distance )
 {
 	using namespace core;
 	using namespace conformation;
 
-	Size ret_rsd (0);
+	core::Size ret_rsd (0);
 	Real min_distance (1000000.0);
 
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( partner_(src_rsd) == partner_(i) ) continue;
 		Real const cendist = pose.residue(i).nbr_atom_xyz().distance(pose.residue(src_rsd).nbr_atom_xyz()) ;
 		if ( cendist < min_distance ) {
@@ -312,9 +313,9 @@ Interface::show( std::ostream & out, core::pose::Pose const & pose )
 	out << "Interface residues:" << std::endl;
 
 	std::string selection;
-	for ( Size i=1; i<=max_interchain_sites; ++i ) {
+	for ( core::Size i=1; i<=max_interchain_sites; ++i ) {
 		out << "Site " << i << std::endl;
-		for ( Size j=1; j<= pair_list_[i].size(); ++j ) {
+		for ( core::Size j=1; j<= pair_list_[i].size(); ++j ) {
 			core::conformation::Residue const & rsd = pose.residue( pair_list_[i][j] );
 			out << "     " << rsd.aa() << ' ' << rsd.seqpos() << std::endl;
 			selection += string_of(rsd.seqpos()) + '+';
@@ -352,7 +353,7 @@ Interface::set_pack(
 	// apl -- this logic is now inverted to start from a task of "repack everything" and to then
 	// produce a task of "repack only a few things"
 	task->restrict_to_repacking();
-	for ( Size ii=1; ii<=pose.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=pose.size(); ++ii ) {
 		// apl if the residue is set to false (as not being an interface residue), set pack to false
 		// Disable packing completely for ligands, not supported yet.
 		if ( !is_interface_(ii) || pose.residue(ii).is_ligand() ) {
@@ -360,15 +361,15 @@ Interface::set_pack(
 		}
 	}
 
-	Size cutpoint ( pose.fold_tree().cutpoint_by_jump( jump_number_ ) );
+	core::Size cutpoint ( pose.fold_tree().cutpoint_by_jump( jump_number_ ) );
 	// sc - fixed residue selection for norepack1 and norepack2 options to be compatible with docking foldtree
 	if ( option[ docking::norepack1 ]() ) {
-		for ( Size ii = 1 ; ii <= cutpoint; ++ii ) {
+		for ( core::Size ii = 1 ; ii <= cutpoint; ++ii ) {
 			task->nonconst_residue_task( ii ).prevent_repacking();
 		}
 	}
 	if ( option[ docking::norepack2 ]() ) {
-		for ( Size ii = cutpoint ; ii <= pose.size(); ++ii ) {
+		for ( core::Size ii = cutpoint ; ii <= pose.size(); ++ii ) {
 			task->nonconst_residue_task( ii ).prevent_repacking();
 		}
 	}
@@ -392,7 +393,7 @@ Interface::is_pair(
 
 	bool is_pair = false;
 
-	for ( Size i = 1; i <= contact_list_[rsd1.seqpos()].size(); i++ ) {
+	for ( core::Size i = 1; i <= contact_list_[rsd1.seqpos()].size(); i++ ) {
 		if ( rsd2.seqpos() == contact_list_[rsd1.seqpos()][i] ) is_pair = true;
 	}
 
@@ -434,7 +435,7 @@ Interface::center (
 	// first, calculate the residues that are at the interface
 	// this should be already calculated?
 	//  calculate( pose );
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		if ( interface[i] ) {
 			// the c-alpha atom, this should probably be more generalized so that it can work
 			// with a ligand, surface, or dna.
@@ -452,15 +453,15 @@ Interface::center (
 
 bool Interface::is_interface( core::conformation::Residue const & rsd ) const { return is_interface_( rsd.seqpos() ); }
 
-bool Interface::is_interface( Size const position ) const { return is_interface_(position); }
+bool Interface::is_interface( core::Size const position ) const { return is_interface_(position); }
 void Interface::distance( Real const distance_in ) { distance_squared_ = distance_in * distance_in; }
-void Interface::jump( Size const jump_num ) { jump_number_ = jump_num; }
+void Interface::jump( core::Size const jump_num ) { jump_number_ = jump_num; }
 
 //returns the number of residues at the interface
 core::Size Interface::interface_nres()
 {
-	Size nres = 0;
-	for ( Size i=1; i<=is_interface_.size(); i++ ) {
+	core::Size nres = 0;
+	for ( core::Size i=1; i<=is_interface_.size(); i++ ) {
 		if ( is_interface_(i) ) nres++;
 	}
 	return nres;
@@ -482,31 +483,31 @@ Interface::symmetric_protein_calculate( core::pose::Pose const & pose )
 		( dynamic_cast< core::scoring::symmetry::SymmetricEnergies const & > ( pose.energies() ) );
 	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( symm_info->bb_is_independent(i) ) {
 			partner_(i) = true;
 		}
 	}
 	std::vector< int>::iterator new_end_pos;
 
-	for ( Size i=1; i<=Size(energy_graph.num_nodes()); ++i ) {
+	for ( core::Size i=1; i<=core::Size(energy_graph.num_nodes()); ++i ) {
 		for ( utility::graph::Graph::EdgeListConstIter
 				iru = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 				irue = energy_graph.get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
 			auto const * edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
-			Size const j( edge->get_second_node_ind() );
+			core::Size const j( edge->get_second_node_ind() );
 			bool symm_add;
 			if ( basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user() ) {
-				Size num_subs = basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block]();
+				core::Size num_subs = basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block]();
 				symm_add = (symm_info->subunit_index(i) <= num_subs && symm_info->subunit_index(j) > num_subs) || (symm_info->subunit_index(j) <= num_subs && symm_info->subunit_index(i) > num_subs); // NK
 			} else {
 				symm_add = ( ( (symm_info->bb_is_independent(i) && !symm_info->bb_is_independent(j)) ) );//||
 				//(symm_info->bb_is_independent(i) && !symm_info->bb_is_independent(j)) ) );
 			}
 			if ( !symm_add ) continue;
-			Size i_sym = i;
-			Size j_sym = j;
+			core::Size i_sym = i;
+			core::Size j_sym = j;
 			//if ( is_interface_(i_sym) && is_interface_(j_sym) ) continue; //commented out by Sid
 			Real const cendist = edge->square_distance();
 			if ( cendist < distance_squared_ ) {
@@ -544,7 +545,7 @@ Interface::set_symmetric_pack(
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( !symm_info->chi_is_independent(i) ) {
 			task->nonconst_residue_task( i ).prevent_repacking();
 		}
@@ -560,7 +561,7 @@ Interface::set_symmetric_pack(
 template< class Archive >
 void
 protocols::scoring::Interface::save( Archive & arc ) const {
-	arc( CEREAL_NVP( jump_number_ ) ); // Size
+	arc( CEREAL_NVP( jump_number_ ) ); // core::Size
 	arc( CEREAL_NVP( distance_squared_ ) ); // Real
 	arc( CEREAL_NVP( partner_ ) ); // ObjexxFCL::FArray1D_bool
 	arc( CEREAL_NVP( is_interface_ ) ); // ObjexxFCL::FArray1D_bool
@@ -573,7 +574,7 @@ protocols::scoring::Interface::save( Archive & arc ) const {
 template< class Archive >
 void
 protocols::scoring::Interface::load( Archive & arc ) {
-	arc( jump_number_ ); // Size
+	arc( jump_number_ ); // core::Size
 	arc( distance_squared_ ); // Real
 	arc( partner_ ); // ObjexxFCL::FArray1D_bool
 	arc( is_interface_ ); // ObjexxFCL::FArray1D_bool

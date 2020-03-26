@@ -875,7 +875,7 @@ void Digraph::save( Archive & archive ) const
 template < class Archive >
 void Digraph::load( Archive & archive )
 {
-	Size num_nodes(0); archive( num_nodes );
+	platform::Size num_nodes(0); archive( num_nodes );
 	set_num_nodes( num_nodes );
 	// EXEMPT num_nodes_
 	// The nodes will be freshly instantiated on this end
@@ -886,9 +886,9 @@ void Digraph::load( Archive & archive )
 	//   nodes_[ ii ]->load( archive );
 	// }
 
-	Size num_edges(0); archive( num_edges );
-	for ( Size ii = 1; ii <= num_edges; ++ii ) {
-		Size tail_node(0), head_node(0); archive( tail_node, head_node );
+	platform::Size num_edges(0); archive( num_edges );
+	for ( platform::Size ii = 1; ii <= num_edges; ++ii ) {
+		platform::Size tail_node(0), head_node(0); archive( tail_node, head_node );
 		/* DirectedEdge * new_edge = */ add_edge( tail_node, head_node );
 		// new_edge->load( archive );
 	}

@@ -17,7 +17,7 @@
 #include <core/scoring/func/GaussianChainSingleFunc.fwd.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // See GaussianChainFunc.cc for more information, including link to mathematical derivation.
 

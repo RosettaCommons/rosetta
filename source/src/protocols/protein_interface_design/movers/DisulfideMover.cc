@@ -118,7 +118,7 @@ DisulfideMover::~DisulfideMover() = default;
 ///   residues.
 /// @details Does not do the repacking & minimization required to place the
 ///   disulfide correctly.
-void DisulfideMover::form_disulfide(Pose & pose, Size lower_res, Size upper_res)
+void DisulfideMover::form_disulfide(Pose & pose, core::Size lower_res, core::Size upper_res)
 {
 	ResidueTypeSetCOP restype_set = pose.residue_type_set_for_pose( FULL_ATOM_t );
 	Residue const cyd( restype_set->name_map("CYS:disulfide"), true/*dummy*/ );
@@ -132,7 +132,7 @@ void DisulfideMover::form_disulfide(Pose & pose, Size lower_res, Size upper_res)
 }
 
 void DisulfideMover::apply( Pose & pose ) {
-	vector1< pair<Size,Size> > potential_disulfides;
+	vector1< pair<core::Size,Size> > potential_disulfides;
 	disulfide_list(pose, target_residues(pose), rb_jump_, potential_disulfides);
 	TR.Info << "Found " << potential_disulfides.size()
 		<< " potential disulfide bonds." << endl;
@@ -143,7 +143,7 @@ void DisulfideMover::apply( Pose & pose ) {
 
 	PoseOP best_pose = nullptr;
 
-	for ( vector1< pair<Size,Size> >::const_iterator
+	for ( vector1< pair<core::Size,Size> >::const_iterator
 			disulf = potential_disulfides.begin(),
 			end_disulf = potential_disulfides.end();
 			disulf != end_disulf;
@@ -166,7 +166,7 @@ void DisulfideMover::apply( Pose & pose ) {
 		task_->restrict_to_repacking();
 
 		// for each residue
-		for ( Size i(1); i <= trial_pose->size(); ++i ) {
+		for ( core::Size i(1); i <= trial_pose->size(); ++i ) {
 			Residue const& res(trial_pose->residue(i));
 			if ( !res.is_protein() ) {
 				continue;
@@ -228,8 +228,8 @@ void DisulfideMover::apply( Pose & pose ) {
 /// @return pairs of residues (target, host) from the target protein and the
 ///   docking protein.
 void DisulfideMover::disulfide_list( Pose const& const_pose,
-	vector1< Size > const& targets, Size rb_jump,
-	vector1< pair<Size,Size> > & disulfides )
+	vector1< core::Size > const& targets, core::Size rb_jump,
+	vector1< pair<core::Size,Size> > & disulfides )
 {
 	disulfides.clear();
 
@@ -244,8 +244,8 @@ void DisulfideMover::disulfide_list( Pose const& const_pose,
 	vector1<vector1_int> pairs = interface.pair_list();
 
 	// divide the targets by interface
-	vector1<Size> lower_targets;
-	vector1<Size> upper_targets;
+	vector1<core::Size> lower_targets;
+	vector1<core::Size> upper_targets;
 	for ( unsigned long target : targets ) {
 		if ( find(pairs[1].begin(), pairs[1].end(), static_cast<int>(target)) != pairs[1].end() ) {
 			//lower partner
@@ -269,10 +269,10 @@ void DisulfideMover::disulfide_list( Pose const& const_pose,
 	}
 
 	// loop through all targets. If one is found, return it.
-	for ( vector1<Size>::const_iterator lower_target = lower_targets.begin(),
+	for ( vector1<core::Size>::const_iterator lower_target = lower_targets.begin(),
 			end_lower_target = lower_targets.end();
 			lower_target != end_lower_target; ++lower_target ) {
-		for ( vector1<Size>::const_iterator upper_target = upper_targets.begin(),
+		for ( vector1<core::Size>::const_iterator upper_target = upper_targets.begin(),
 				end_host = upper_targets.end();
 				upper_target != end_host; ++upper_target ) {
 			if ( interface.is_pair(pose.residue(*lower_target), pose.residue(*upper_target)) &&

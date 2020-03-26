@@ -19,7 +19,7 @@
 #include <protocols/wum/WorkUnitList.hh>
 
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
@@ -142,7 +142,7 @@ private:
 };
 
 
-class WorkUnitManager: public utility::pointer::ReferenceCount {
+class WorkUnitManager: public utility::VirtualBase {
 public:
 	friend class WorkUnitQueue_Swapped;
 

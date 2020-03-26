@@ -102,7 +102,7 @@ void parse_spans(
 )
 {
 
-	for ( Size iter = 1 ; iter <= span_vector.size() ; ++ iter ) {
+	for ( core::Size iter = 1 ; iter <= span_vector.size() ; ++ iter ) {
 		TR.Debug <<"sanity check, span_vector[iter].first " <<span_vector[iter].first <<std::endl;
 		core::Size const begin = core::pose::parse_resnum( span_vector[iter].first, pose ) ;
 		core::Size const end   = core::pose::parse_resnum( span_vector[iter].second, pose );
@@ -110,7 +110,7 @@ void parse_spans(
 		//runtime_assert( begin>=1);
 		//runtime_assert( end<=pose.size() );
 
-		for ( Size resi = begin; resi <= end ; resi ++ ) {
+		for ( core::Size resi = begin; resi <= end ; resi ++ ) {
 			resi_collection.insert( resi );
 			TR  << "runtime parsed of span, residue: " << resi << std::endl;
 		}
@@ -197,7 +197,7 @@ void add_coordinate_constraints(
 		}
 		TR<<"Coordinate-constraining residue " << pose.residue( res ).name() << " " << res <<std::endl;
 		///core::chemical::ResidueType rsd_type( pose.residue( res ).type() );
-		Size atomindex =  pose.residue( res ).atom_index( atom_name );
+		core::Size atomindex =  pose.residue( res ).atom_index( atom_name );
 		cst.push_back( utility::pointer::make_shared< CoordinateConstraint >(
 			core::id::AtomID( atomindex, res ),
 			anchor_atom,
@@ -227,7 +227,7 @@ CoordinateCst::apply( pose::Pose & pose )
 
 	TR.Debug << "constrain residue set size : " << constrain_residues_set.size() <<" -- if this is 0, you did NOT read in any residues "<< std::endl;
 
-	Size anchor_res = 0;
+	core::Size anchor_res = 0;
 	TR.Debug<< "anchor " << anchor_res_ <<std::endl;
 
 	if ( !use_jumps_ && anchor_res_ != "" ) {

@@ -25,7 +25,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 // C++
@@ -35,7 +35,7 @@ namespace scoring {
 namespace etable {
 namespace count_pair {
 
-class CountPairFunction : public utility::pointer::ReferenceCount
+class CountPairFunction : public utility::VirtualBase
 {
 
 public:

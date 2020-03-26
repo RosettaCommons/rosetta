@@ -29,7 +29,7 @@
 
 #include <utility/graph/unordered_object_pool.hpp>
 #include <utility/graph/LowMemGraph.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>

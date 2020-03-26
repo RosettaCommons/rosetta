@@ -65,8 +65,8 @@ void
 CopyRotamerMover::apply_from_template_pose(
 	core::pose::Pose &target_pose,
 	core::pose::Pose const &template_pose,
-	Size target_res_index,
-	Size template_res_index) {
+	core::Size target_res_index,
+	core::Size template_res_index) {
 	target_res_index_ = target_res_index;
 	template_res_index_ = template_res_index;
 	runtime_assert_string_msg( template_res_index_ > 0 && template_res_index_ <=template_pose.total_residue(), "Error in protocols::simple_moves::CopyRotamerMover::apply(): The template residue index is out of range (less than one or greater than the number of residues in the pose)." );

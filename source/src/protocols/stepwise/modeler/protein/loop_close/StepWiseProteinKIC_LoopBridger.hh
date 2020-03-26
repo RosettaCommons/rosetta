@@ -98,7 +98,7 @@ private:
 
 	sampler::StepWiseSamplerSizedOP sampler_;
 
-	utility::vector1< Size > working_bridge_res_;
+	utility::vector1< core::Size > working_bridge_res_;
 	utility::vector1< bool > is_pre_proline_;
 	utility::vector1< bool > is_fixed_res_;
 
@@ -121,8 +121,8 @@ private:
 	utility::vector1< core::Real > phi_offsets_;
 	utility::vector1< core::Real > psi_offsets_;
 
-	Size start_res_, middle_res_, end_res_, middle_offset_, seg_len_;
-	Size pose_count_;
+	core::Size start_res_, middle_res_, end_res_, middle_offset_, seg_len_;
+	core::Size pose_count_;
 
 };
 

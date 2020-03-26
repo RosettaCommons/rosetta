@@ -25,14 +25,14 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 namespace protocols {
 namespace loops {
 namespace loops_definers {
 
-class LoopsDefiner : public utility::pointer::ReferenceCount {
+class LoopsDefiner : public utility::VirtualBase {
 public:
 	~LoopsDefiner() override {}
 

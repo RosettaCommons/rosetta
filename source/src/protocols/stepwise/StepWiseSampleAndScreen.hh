@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_stepwise_StepWiseSampleAndScreen_HH
 
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/StepWiseSampleAndScreen.fwd.hh>
 #include <protocols/stepwise/screener/StepWiseScreener.fwd.hh>
 #include <protocols/stepwise/sampler/StepWiseSampler.fwd.hh>
@@ -26,7 +26,7 @@
 namespace protocols {
 namespace stepwise {
 
-class StepWiseSampleAndScreen: public utility::pointer::ReferenceCount {
+class StepWiseSampleAndScreen: public utility::VirtualBase {
 
 public:
 
@@ -49,13 +49,13 @@ public:
 	void
 	output_counts() const;
 
-	Size const &
+	core::Size const &
 	num_tries() const;
 
-	Size const &
+	core::Size const &
 	num_successes() const;
 
-	Size
+	core::Size
 	num_screeners() const;
 
 	void
@@ -74,7 +74,7 @@ private:
 
 	void set_ok_to_increment();
 
-	void early_exit_check( Size const n );
+	void early_exit_check( core::Size const n );
 
 public:
 

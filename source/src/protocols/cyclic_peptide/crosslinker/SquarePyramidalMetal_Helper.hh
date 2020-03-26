@@ -30,7 +30,7 @@
 #include <core/types.hh>
 
 // Basic/Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace cyclic_peptide {

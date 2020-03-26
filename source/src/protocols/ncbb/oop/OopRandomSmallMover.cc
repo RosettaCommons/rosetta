@@ -62,9 +62,9 @@ void OopRandomSmallMover::apply( core::pose::Pose & pose ){
 
 	TR<< "in OopRandomSmallMover::apply" << std::endl;
 	//kdrew: for all positions in oop_seq_positions_, input assertion check
-	for ( Size i = 1; i <= oop_seq_positions_.size(); i++ ) {
-		Size oop_pre_pos = oop_seq_positions_[i];
-		Size oop_post_pos = oop_pre_pos+1;
+	for ( core::Size i = 1; i <= oop_seq_positions_.size(); i++ ) {
+		core::Size oop_pre_pos = oop_seq_positions_[i];
+		core::Size oop_post_pos = oop_pre_pos+1;
 		TR<< "oop_pre_pos:" << oop_pre_pos << " oop_post_pos:" << oop_post_pos << std::endl;
 
 		runtime_assert ( pose.residue(oop_pre_pos).has_variant_type(chemical::OOP_PRE) == 1) ;

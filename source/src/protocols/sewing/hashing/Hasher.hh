@@ -25,7 +25,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 
 //Core headers
@@ -38,7 +38,7 @@ namespace sewing {
 namespace hashing {
 
 ///@brief A geometric hashing class used by the SEWING protocol
-class Hasher : public utility::pointer::ReferenceCount {
+class Hasher : public utility::VirtualBase {
 
 public:
 

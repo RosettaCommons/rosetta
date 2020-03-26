@@ -33,7 +33,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace core {
@@ -41,7 +41,7 @@ namespace pack {
 namespace task {
 namespace operation {
 
-class TaskOperation : public utility::pointer::ReferenceCount
+class TaskOperation : public utility::VirtualBase
 {
 public:
 	typedef utility::tag::TagCOP TagCOP;

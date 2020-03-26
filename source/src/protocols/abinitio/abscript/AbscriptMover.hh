@@ -117,7 +117,7 @@ private:
 
 	void register_preparer( protocols::moves::MoverOP, StageIDs const& );
 
-	std::map< Size, Size > calculate_iterations( core::pose::Pose const& );
+	std::map< core::Size, core::Size > calculate_iterations( core::pose::Pose const& );
 
 	StageIDs parse_stage_id( std::string const& ) const;
 

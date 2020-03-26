@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_import_pose_BasePairStepLibrary_HH
 #define INCLUDED_core_import_pose_BasePairStepLibrary_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/rna/BasePairStep.hh>
 #include <core/import_pose/libraries/BasePairStepLibrary.fwd.hh>
 #include <core/types.hh>
@@ -33,7 +33,7 @@ namespace libraries {
 ////////////////////////////////////////////////////////////////////////
 // BasePairStepSequence stores sequence of first dinucleotide strand and second dinucleotide strand --
 // used as a 'key' for BasePairStepLibrary below.
-class BasePairStepSequence: public utility::pointer::ReferenceCount {
+class BasePairStepSequence: public utility::VirtualBase {
 
 public:
 
@@ -112,7 +112,7 @@ private:
 
 
 ////////////////////////////////////////////////////////////////////////
-class BasePairStepLibrary: public utility::pointer::ReferenceCount {
+class BasePairStepLibrary: public utility::VirtualBase {
 
 public:
 

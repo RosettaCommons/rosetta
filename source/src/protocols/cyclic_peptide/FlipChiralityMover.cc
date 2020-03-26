@@ -260,13 +260,13 @@ numeric::xyzVector <core::Real> const & FlipChiralityMover::get_center(core::sel
 numeric::xyzVector< core::Real >
 FlipChiralityMover::center_mass(core::select::residue_selector::ResidueSubset subset, core::pose::Pose const & pose ){
 	numeric::xyzVector< core::Real > massSum( 0.0 );
-	Size const & nres = pose.size();
-	Size nAtms=0;
-	for ( Size i=1; i<= nres; ++i ) {
+	core::Size const & nres = pose.size();
+	core::Size nAtms=0;
+	for ( core::Size i=1; i<= nres; ++i ) {
 		if ( subset[i] ) {
 			core::conformation::Residue const & rsd(pose.residue(i) );
 			if ( rsd.aa() == core::chemical::aa_vrt ) continue;
-			for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
+			for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
 				core::conformation::Atom const & atom( rsd.atom(j) );
 				massSum += atom.xyz();
 				nAtms++;

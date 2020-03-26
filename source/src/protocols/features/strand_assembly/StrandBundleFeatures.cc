@@ -386,7 +386,7 @@ utility::vector1<StrandFragment> StrandBundleFeatures::get_full_strands(Structur
 	utility::vector1<StrandFragment> all_strands;
 	while ( res.next() )
 			{
-		Size strand_id,     residue_begin,   residue_end;
+		core::Size strand_id,     residue_begin,   residue_end;
 		res >> strand_id >> residue_begin >> residue_end;
 		all_strands.push_back(StrandFragment(residue_begin, residue_end));
 	}
@@ -414,7 +414,7 @@ utility::vector1<StrandFragment> StrandBundleFeatures::get_selected_strands(Stru
 	utility::vector1<StrandFragment> all_strands;
 	while ( res.next() )
 			{
-		Size bss_id,     residue_begin,   residue_end;
+		core::Size bss_id,     residue_begin,   residue_end;
 		res >> bss_id >> residue_begin >> residue_end;
 		all_strands.push_back(StrandFragment(bss_id, residue_begin, residue_end));
 	}
@@ -442,7 +442,7 @@ utility::vector1<StrandFragment> StrandBundleFeatures::get_strand_pairs(Structur
 	utility::vector1<StrandFragment> retrieved_sp;
 	while ( res.next() )
 			{
-		Size   strand_pairs_id,   beta_select_id_i,   beta_select_id_j;
+		core::Size   strand_pairs_id,   beta_select_id_i,   beta_select_id_j;
 		res >> strand_pairs_id >> beta_select_id_i >> beta_select_id_j;
 		retrieved_sp.push_back(StrandFragment(strand_pairs_id, beta_select_id_i, beta_select_id_j));
 	}
@@ -468,7 +468,7 @@ utility::vector1<StrandFragment> StrandBundleFeatures::get_strand_from_bss_id(St
 
 	utility::vector1<StrandFragment> strand_from_bss_id;
 	while ( res.next() ) {
-		Size bss_id,     residue_begin,   residue_end;
+		core::Size bss_id,     residue_begin,   residue_end;
 		res >> bss_id >> residue_begin >> residue_end;
 		strand_from_bss_id.push_back(StrandFragment(bss_id, residue_begin, residue_end));
 	}
@@ -483,11 +483,11 @@ StrandBundleFeatures::find_antiparallel(
 	StrandFragment strand_j)
 {
 	// seeing distances between 'O' of strand "i" and 'N' of strand "j"
-	for ( Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
-		Size i_resnum = strand_i.get_start()+strand_i_res;
-		for ( Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
+	for ( core::Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
+		core::Size i_resnum = strand_i.get_start()+strand_i_res;
+		for ( core::Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
 
-			Size j_resnum = strand_j.get_start()+strand_j_res;
+			core::Size j_resnum = strand_j.get_start()+strand_j_res;
 			Real dis_N_O = pose.residue(i_resnum).atom("N").xyz().distance(pose.residue(j_resnum).atom("O").xyz());
 			if ( dis_N_O > min_O_N_dis_ && dis_N_O < max_O_N_dis_ ) {
 				Real dis_O_N = pose.residue(i_resnum).atom("O").xyz().distance(pose.residue(j_resnum).atom("N").xyz());
@@ -520,10 +520,10 @@ StrandBundleFeatures::find_parallel(
 	StrandFragment strand_j)
 {
 	// seeing distances between 'O' of strand "i" and 'N' of strand "j"
-	for ( Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
-		Size i_resnum = strand_i.get_start()+strand_i_res;
-		for ( Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
-			Size j_resnum = strand_j.get_start()+strand_j_res;
+	for ( core::Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
+		core::Size i_resnum = strand_i.get_start()+strand_i_res;
+		for ( core::Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
+			core::Size j_resnum = strand_j.get_start()+strand_j_res;
 			Real dis_O_N = pose.residue(i_resnum).atom("O").xyz().distance(pose.residue(j_resnum).atom("N").xyz());
 			if ( dis_O_N > min_O_N_dis_ && dis_O_N < max_O_N_dis_ ) {
 
@@ -553,14 +553,14 @@ StrandBundleFeatures::find_parallel(
 Real
 StrandBundleFeatures::get_avg_dis_CA_CA(
 	Pose const & pose,
-	Size i_resnum,
-	Size i_resnum_1,
-	Size i_resnum_2,
-	Size i_resnum_3,
-	Size j_resnum,
-	Size j_resnum_1,
-	Size j_resnum_2,
-	Size j_resnum_3)
+	core::Size i_resnum,
+	core::Size i_resnum_1,
+	core::Size i_resnum_2,
+	core::Size i_resnum_3,
+	core::Size j_resnum,
+	core::Size j_resnum_1,
+	core::Size j_resnum_2,
+	core::Size j_resnum_3)
 {
 	Real dis_CA_CA_0 = pose.residue(i_resnum).atom("CA").xyz().distance(pose.residue(j_resnum).atom("CA").xyz());
 	if ( dis_CA_CA_0 > 40 ) {
@@ -601,16 +601,16 @@ StrandBundleFeatures::check_sw_by_dis(
 )
 {
 	// TR.Info << "let me see distances between strands " << endl;
-	Size i_resnum_1;
-	Size j_resnum_1;
-	Size i_resnum_2;
-	Size j_resnum_2;
-	Size i_resnum_3;
-	Size j_resnum_3;
-	for ( Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
-		Size i_resnum = strand_i.get_start()+strand_i_res;
-		for ( Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
-			Size j_resnum = strand_j.get_start()+strand_j_res;
+	core::Size i_resnum_1;
+	core::Size j_resnum_1;
+	core::Size i_resnum_2;
+	core::Size j_resnum_2;
+	core::Size i_resnum_3;
+	core::Size j_resnum_3;
+	for ( core::Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
+		core::Size i_resnum = strand_i.get_start()+strand_i_res;
+		for ( core::Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
+			core::Size j_resnum = strand_j.get_start()+strand_j_res;
 			if ( antiparalell ) {
 				i_resnum_1 = i_resnum+1;
 				j_resnum_1 = j_resnum-1;
@@ -648,8 +648,8 @@ StrandBundleFeatures::check_sw_by_dis(
 				continue;
 			}
 			return avg_dis_CA_CA;
-		} //for(Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++)
-	} //for(Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++)
+		} //for(core::Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++)
+	} //for(core::Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++)
 	return -99; // these sheets are not sandwich with these strands
 } //StrandBundleFeatures::check_sw_by_dis
 
@@ -698,10 +698,10 @@ StrandBundleFeatures::check_strand_too_closeness(
 
 	// first, check the shortest distance between the two strand_pairs
 	// seeing distances between 'CA' of strand "i" and 'CA' of strand "j"
-	for ( Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
-		Size i_resnum = strand_i.get_start()+strand_i_res;
-		for ( Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
-			Size j_resnum = strand_j.get_start()+strand_j_res;
+	for ( core::Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
+		core::Size i_resnum = strand_i.get_start()+strand_i_res;
+		for ( core::Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
+			core::Size j_resnum = strand_j.get_start()+strand_j_res;
 
 			Real dis_CA_CA = pose.residue(i_resnum).atom("CA").xyz().distance(pose.residue(j_resnum).atom("CA").xyz());
 
@@ -806,7 +806,7 @@ Size
 StrandBundleFeatures::round(
 	Real x)
 {
-	auto rounded = static_cast <Size> (floor(x+.5));
+	auto rounded = static_cast <core::Size> (floor(x+.5));
 	return rounded;
 } //round
 
@@ -815,12 +815,12 @@ Size
 StrandBundleFeatures::get_nearest_res_from_strand(
 	Pose const & pose,
 	StrandFragment strand_to_be_searched,
-	Size cen_resnum)
+	core::Size cen_resnum)
 {
 	Real shortest_dis = 999; //temp
-	Size nearest_resnum = 999; //temp
-	for ( Size strand_res=0; strand_res < strand_to_be_searched.get_size(); strand_res++ ) {
-		Size j_resnum = strand_to_be_searched.get_start()+strand_res;
+	core::Size nearest_resnum = 999; //temp
+	for ( core::Size strand_res=0; strand_res < strand_to_be_searched.get_size(); strand_res++ ) {
+		core::Size j_resnum = strand_to_be_searched.get_start()+strand_res;
 		Real dis_CA_CA = pose.residue(cen_resnum).atom("CA").xyz().distance(pose.residue(j_resnum).atom("CA").xyz());
 		if ( shortest_dis > dis_CA_CA ) {
 			shortest_dis = dis_CA_CA;
@@ -844,9 +844,9 @@ StrandBundleFeatures::judge_facing(
 		strand_ii_i.get_start() + strand_ii_i.get_end()
 		)/(2.0);
 
-	Size cen_resnum_ii_i = round(to_be_rounded_ii_i);
+	core::Size cen_resnum_ii_i = round(to_be_rounded_ii_i);
 
-	Size cen_resnum_ii_j = get_nearest_res_from_strand(
+	core::Size cen_resnum_ii_j = get_nearest_res_from_strand(
 		pose,
 		strand_ii_j,
 		cen_resnum_ii_i);
@@ -855,8 +855,8 @@ StrandBundleFeatures::judge_facing(
 		strand_jj_i.get_start() + strand_jj_i.get_end()
 		)/(2.0);
 
-	Size cen_resnum_jj_i = round(to_be_rounded_jj_i);
-	Size cen_resnum_jj_j = get_nearest_res_from_strand(
+	core::Size cen_resnum_jj_i = round(to_be_rounded_jj_i);
+	core::Size cen_resnum_jj_j = get_nearest_res_from_strand(
 		pose,
 		strand_jj_j,
 		cen_resnum_jj_i);
@@ -934,13 +934,13 @@ StrandBundleFeatures::shortest_dis_sidechain(
 	StrandFragment strand_j) // calculate shortest distances for each pair
 {
 	Real temp_shortest_dis = 9999;
-	for ( Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
-		Size i_resnum = strand_i.get_start()+strand_i_res;
+	for ( core::Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++ ) {
+		core::Size i_resnum = strand_i.get_start()+strand_i_res;
 
-		for ( Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
-			Size j_resnum = strand_j.get_start()+strand_j_res;
-			for ( Size i_AtomNum=1; i_AtomNum < pose.residue(i_resnum).natoms(); i_AtomNum++ ) {
-				for ( Size j_AtomNum=1; j_AtomNum < pose.residue(j_resnum).natoms(); j_AtomNum++ ) {
+		for ( core::Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++ ) {
+			core::Size j_resnum = strand_j.get_start()+strand_j_res;
+			for ( core::Size i_AtomNum=1; i_AtomNum < pose.residue(i_resnum).natoms(); i_AtomNum++ ) {
+				for ( core::Size j_AtomNum=1; j_AtomNum < pose.residue(j_resnum).natoms(); j_AtomNum++ ) {
 					Real dis_sc_sc = pose.residue(i_resnum).xyz(i_AtomNum).distance(pose.residue(j_resnum).xyz(j_AtomNum));
 					if ( temp_shortest_dis > dis_sc_sc ) {
 						temp_shortest_dis = dis_sc_sc;
@@ -1041,10 +1041,10 @@ StrandBundleFeatures::report_features(
 	utility::sql_database::sessionOP db_session)
 {
 	//TR.Info << "======================= <begin> report_features =========================" << endl;
-	Size beta_selected_segments_id_counter=1; //initial value
-	Size strand_pairs_id_counter=1; //initial value
-	Size sandwich_id_counter=1; //initial value
-	Size node_id_counter=1; //initial value
+	core::Size beta_selected_segments_id_counter=1; //initial value
+	core::Size strand_pairs_id_counter=1; //initial value
+	core::Size sandwich_id_counter=1; //initial value
+	core::Size node_id_counter=1; //initial value
 
 	utility::vector1<StrandFragment> all_strands = get_full_strands(struct_id, db_session);
 
@@ -1054,9 +1054,9 @@ StrandBundleFeatures::report_features(
 	}
 
 	if ( !extract_native_only_ ) {
-		for ( Size ii=1; ii<=all_strands.size(); ++ii ) {
-			for ( Size temp_res_num = all_strands[ii].get_start(); temp_res_num <= all_strands[ii].get_end()-3; ++temp_res_num ) {
-				for ( Size jj = min_res_in_strand_-1; jj <= max_res_in_strand_; jj++ ) {
+		for ( core::Size ii=1; ii<=all_strands.size(); ++ii ) {
+			for ( core::Size temp_res_num = all_strands[ii].get_start(); temp_res_num <= all_strands[ii].get_end()-3; ++temp_res_num ) {
+				for ( core::Size jj = min_res_in_strand_-1; jj <= max_res_in_strand_; jj++ ) {
 					if ( temp_res_num + jj <= all_strands[ii].get_end() ) {
 						string beta_selected_insert =  "INSERT INTO beta_selected_segments (beta_selected_segments_id, struct_id, residue_begin, residue_end)  VALUES (?,?,?,?);";
 						statement beta_selected_insert_stmt(basic::database::safely_prepare_statement(beta_selected_insert, db_session));
@@ -1067,7 +1067,7 @@ StrandBundleFeatures::report_features(
 						basic::database::safely_write_to_database(beta_selected_insert_stmt);
 						beta_selected_segments_id_counter++;
 					} //if (temp_res_num + jj =< all_strands[i].get_end())
-				} //for(Size jj = min_res_in_strand_; jj <= max_res_in_strand_; ++jj)
+				} //for(core::Size jj = min_res_in_strand_; jj <= max_res_in_strand_; ++jj)
 			}
 		}
 		all_strands = get_selected_strands(struct_id, db_session);
@@ -1075,10 +1075,10 @@ StrandBundleFeatures::report_features(
 
 
 	// strand pairing begins
-	for ( Size i=1; i<all_strands.size(); ++i ) { // I don't need the last strand since this double for loops are exhaustive search for all pairs of strands
+	for ( core::Size i=1; i<all_strands.size(); ++i ) { // I don't need the last strand since this double for loops are exhaustive search for all pairs of strands
 		if ( all_strands[i].get_size() >= min_res_in_strand_ && all_strands[i].get_size() <= max_res_in_strand_ ) {
 			// the legnth of this beta strand is between min_res_in_strand_ and max_res_in_strand_
-			for ( Size j=i+1; j<=all_strands.size(); ++j ) { // I need the last strand for this second for loop
+			for ( core::Size j=i+1; j<=all_strands.size(); ++j ) { // I need the last strand for this second for loop
 				if ( all_strands[j].get_size() >= min_res_in_strand_ && all_strands[j].get_size() <= max_res_in_strand_ ) {
 					// the length of this beta strand is between min_res_in_strand_ and max_res_in_strand_ too
 					//TR.Info << "-- both strands are long enough to be considered for strands pairing --" << endl;
@@ -1097,7 +1097,7 @@ StrandBundleFeatures::report_features(
 						return_of_find_parallel = find_parallel (pose, temp_strand_i, temp_strand_j);
 					}
 
-					Size bool_parallel = 0; // temp 0
+					core::Size bool_parallel = 0; // temp 0
 
 					if ( return_of_find_parallel ) {
 						bool_parallel = 1;
@@ -1126,13 +1126,13 @@ StrandBundleFeatures::report_features(
 	// <begin> sheet pairing
 
 	utility::vector1<StrandFragment> retrieved_sp = get_strand_pairs(struct_id, db_session);
-	for ( Size ii=1; ii<retrieved_sp.size(); ++ii ) { // I don't need the last pair of strands in this
-		Size ii_i = retrieved_sp[ii].get_i(); // beta_selected_segments_id_i
-		Size ii_j = retrieved_sp[ii].get_j(); // beta_selected_segments_id_j
+	for ( core::Size ii=1; ii<retrieved_sp.size(); ++ii ) { // I don't need the last pair of strands in this
+		core::Size ii_i = retrieved_sp[ii].get_i(); // beta_selected_segments_id_i
+		core::Size ii_j = retrieved_sp[ii].get_j(); // beta_selected_segments_id_j
 
-		for ( Size jj=ii+1; jj<=retrieved_sp.size(); ++jj ) { // I need the last pair of strands in this second 'for' loop
-			Size jj_i = retrieved_sp[jj].get_i(); // beta_selected_segments_id_i
-			Size jj_j = retrieved_sp[jj].get_j(); // beta_selected_segments_id_j
+		for ( core::Size jj=ii+1; jj<=retrieved_sp.size(); ++jj ) { // I need the last pair of strands in this second 'for' loop
+			core::Size jj_i = retrieved_sp[jj].get_i(); // beta_selected_segments_id_i
+			core::Size jj_j = retrieved_sp[jj].get_j(); // beta_selected_segments_id_j
 			if ( ii_i != jj_i && ii_i != jj_j && ii_j != jj_i && ii_j != jj_j ) {
 				//TR.Info << "<begins> sandwich check by distance in anti-parallel direction between " << ii << " th strand_pair and " << jj << " th strand_pair" << endl;
 				utility::vector1<StrandFragment> ii_i_strand = get_strand_from_bss_id(struct_id, db_session, ii_i);

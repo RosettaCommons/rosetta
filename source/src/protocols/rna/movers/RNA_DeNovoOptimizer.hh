@@ -54,7 +54,7 @@ private:
 
 	utility::vector1< core::pose::PoseOP > pose_list_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
-	Size cycles_;
+	core::Size cycles_;
 
 	protocols::rna::denovo::RNA_FragmentMonteCarloOP rna_fragment_monte_carlo_;
 	core::import_pose::options::RNA_FragmentMonteCarloOptionsOP options_;

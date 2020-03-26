@@ -42,8 +42,8 @@ MgOrbitalFrameFinder::~MgOrbitalFrameFinder() = default;
 void
 MgOrbitalFrameFinder::apply( pose::Pose & pose )
 {
-	vector1< Size > mg_res = get_mg_res( pose );
-	for ( Size const seqpos : mg_res ) {
+	vector1< core::Size > mg_res = get_mg_res( pose );
+	for ( core::Size const seqpos : mg_res ) {
 		determine_mg_orbital_frame( pose, seqpos );
 	}
 }
@@ -56,7 +56,7 @@ MgOrbitalFrameFinder::apply( pose::Pose & pose )
 ///////////////////////////////////////////////////////////////////////////////
 void
 MgOrbitalFrameFinder::determine_mg_orbital_frame( pose::Pose & pose,
-	Size const i /* mg2+ res number*/ ) {
+	core::Size const i /* mg2+ res number*/ ) {
 
 	clock_t start_time = clock();
 
@@ -73,7 +73,7 @@ MgOrbitalFrameFinder::determine_mg_orbital_frame( pose::Pose & pose,
 ///////////////////////////////////////////////////////////////////////////////
 void
 MgOrbitalFrameFinder::point_orbitals_to_closest_ligands( pose::Pose & pose,
-	Size const i /* mg2+ res number*/,
+	core::Size const i /* mg2+ res number*/,
 	utility::vector1< core::id::AtomID > const & ligands ) {
 
 	using namespace core::id;
@@ -86,7 +86,7 @@ MgOrbitalFrameFinder::point_orbitals_to_closest_ligands( pose::Pose & pose,
 	if ( ligands.size() > 0 ) {
 		x = ( pose.residue( ligands[ 1 ].rsd() ).xyz( ligands[ 1 ].atomno() ) - xyz_mg ).normalized();
 		// find any other ligands that are on the 'other side'
-		for ( Size q = 2; q <= ligands.size(); q++ ) {
+		for ( core::Size q = 2; q <= ligands.size(); q++ ) {
 			Vector x_opposite = ( pose.residue( ligands[ q ].rsd() ).xyz( ligands[ q ].atomno() ) - xyz_mg ).normalized();
 			Real const dotprod = dot(x_opposite, x );
 			if ( dotprod < -0.9 ) {
@@ -103,7 +103,7 @@ MgOrbitalFrameFinder::point_orbitals_to_closest_ligands( pose::Pose & pose,
 			y = ( pose.residue( ligands[ 3 ].rsd() ).xyz( ligands[ 3 ].atomno() ) - xyz_mg ).normalized();
 		}
 		// find any other ligands that are on the 'other side'
-		for ( Size q = 2; q <= ligands.size(); q++ ) {
+		for ( core::Size q = 2; q <= ligands.size(); q++ ) {
 			Vector y_opposite = ( pose.residue( ligands[ q ].rsd() ).xyz( ligands[ q ].atomno() ) - xyz_mg ).normalized();
 			Real const dotprod = dot(y_opposite, y );
 			if ( dotprod < -0.9 ) {
@@ -142,7 +142,7 @@ MgOrbitalFrameFinder::get_orbital_frame_score_upon_rotation( utility::vector1< V
 
 		// find 'orbital'  that aligns best with each ligand
 		Real best_dot( -1.0 );
-		for ( Size n = 1; n <= v_lig.size(); n++ ) {
+		for ( core::Size n = 1; n <= v_lig.size(); n++ ) {
 			Real current_dot = dot( r, ( R * v_lig[ n ] ) );
 			if ( current_dot > best_dot ) best_dot = current_dot;
 		}
@@ -157,7 +157,7 @@ MgOrbitalFrameFinder::get_orbital_frame_score_upon_rotation( utility::vector1< V
 ///////////////////////////////////////////////////////////////////////////////
 void
 MgOrbitalFrameFinder::sample_orbital_frame( pose::Pose & pose,
-	Size const i /* mg2+ res number*/,
+	core::Size const i /* mg2+ res number*/,
 	utility::vector1< core::id::AtomID > const & ligands ) {
 
 	using namespace core::id;
@@ -171,7 +171,7 @@ MgOrbitalFrameFinder::sample_orbital_frame( pose::Pose & pose,
 	}
 
 	utility::vector1< Vector > v_lig;
-	for ( Size n = 1; n <= 6; n++ ) {
+	for ( core::Size n = 1; n <= 6; n++ ) {
 		v_lig.push_back( ( pose.xyz( NamedAtomID( "V"+I(1,n), i ) ) - xyz_mg ).normalized() );
 	}
 
@@ -191,7 +191,7 @@ MgOrbitalFrameFinder::sample_orbital_frame( pose::Pose & pose,
 
 	TR << " For Mg(2+) with " << r_lig.size() << " ligands, original score: " << orig_score << "  optimized_score: " << best_score << std::endl;
 
-	for ( Size n = 1; n <= 6; n++ ) {
+	for ( core::Size n = 1; n <= 6; n++ ) {
 		pose.set_xyz( NamedAtomID( "V"+I(1,n), i ), ( best_R * v_lig[ n ] ) + xyz_mg );
 	}
 

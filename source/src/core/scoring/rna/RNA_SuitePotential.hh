@@ -26,7 +26,7 @@
 #include <core/pose/rna/RNA_SuiteName.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 
@@ -38,7 +38,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-class RNA_SuitePotential : public utility::pointer::ReferenceCount {
+class RNA_SuitePotential : public utility::VirtualBase {
 
 public:
 

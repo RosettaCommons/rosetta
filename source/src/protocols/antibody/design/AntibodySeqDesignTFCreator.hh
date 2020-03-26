@@ -31,7 +31,7 @@
 #include <core/pose/Pose.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/deep_copy.hh>
 #include <utility/vector1.hh>
 
@@ -46,7 +46,7 @@ namespace design {
 /// @brief Create a TaskFactory or individual TaskOperations based on a set of options
 /// These options are mainly for per-CDR and per-framework control of sequence design
 ///
-class AntibodySeqDesignTFCreator : public utility::pointer::ReferenceCount {
+class AntibodySeqDesignTFCreator : public utility::VirtualBase {
 public:
 
 	/// @brief Constructor with default set of options.  You probably do not want this!

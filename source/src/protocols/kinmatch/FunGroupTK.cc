@@ -89,24 +89,24 @@ lzs(
 
 inline Real sqr(Real const r) { return r*r; }
 
-inline Vec xyz(Pose const & p, Size const & ia, Size const & ir) {
+inline Vec xyz(Pose const & p, core::Size const & ia, core::Size const & ir) {
 	return p.xyz(AtomID(ia,ir));
 }
 
 PoseOP alapose(Pose const & pose_in) {
 	PoseOP rpose( new Pose(pose_in) );
 	Pose & pose(*rpose);
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		core::chemical::ResidueTypeCOP new_type( core::pose::get_restype_for_pose( pose, "ALA", pose.residue_type(i).mode() ) );
 		core::pose::replace_pose_residue_copying_existing_coordinates( pose, i, *new_type );
 	}
 	return rpose;
 }
 
-vector1<Size> allifnone(vector1<Size> v, Size n) {
+vector1<core::Size> allifnone(vector1<core::Size> v, core::Size n) {
 	if ( v.size()==0 ) {
 		v.resize(n);
-		for ( Size i = 1; i <=n; ++i ) v[i] = i;
+		for ( core::Size i = 1; i <=n; ++i ) v[i] = i;
 	}
 	return(v);
 }
@@ -116,7 +116,7 @@ void dumpcgo(Vec v, string l) {
 }
 
 void xform_rsd_gl2(Stub const & s, Residue & rsd) {
-	for ( Size i = 1; i <= rsd.natoms(); ++i ) rsd.set_xyz(i, s.global2local(rsd.xyz(i)) );
+	for ( core::Size i = 1; i <= rsd.natoms(); ++i ) rsd.set_xyz(i, s.global2local(rsd.xyz(i)) );
 }
 
 
@@ -127,7 +127,7 @@ KRSQuery::KRSQuery(KRSQueryType typ, Vec c, Vec a,        Real dt, Real at, Real
 
 FunGroupTK::FunGroupTK(
 	Pose & p_in,
-	vector1<Size> & pos
+	vector1<core::Size> & pos
 ) : pose_(alapose(p_in)), pos_(allifnone(pos,pose_->size()))
 {
 	ifc_ = utility::pointer::make_shared< ImplicitFastClashCheck >(*pose_,2.2);
@@ -152,7 +152,7 @@ FunGroupTK::ifc() const {
 	return *ifc_;
 }
 
-BruteFunGroupTK::BruteFunGroupTK( Pose & p_in, vector1<Size> pos ) : FunGroupTK(p_in,pos) {}
+BruteFunGroupTK::BruteFunGroupTK( Pose & p_in, vector1<core::Size> pos ) : FunGroupTK(p_in,pos) {}
 
 void
 BruteFunGroupTK::place_c(
@@ -185,9 +185,9 @@ BruteFunGroupTK::place_c(
 
 				if ( fabs(da-q.ori.x()) > q.angth ) continue;
 				bool clash = false;
-				for ( Size ia = 6; ia <= rsd->nheavyatoms(); ++ia ) {
+				for ( core::Size ia = 6; ia <= rsd->nheavyatoms(); ++ia ) {
 					if ( !ifc().clash_check(rsd->xyz(ia),*ip) ) { clash = true; break; }
-					for ( Size ja = 1; ja <= qrsd.nheavyatoms(); ++ja ) if ( qrsd.xyz(ja).distance_squared(rsd->xyz(ia)) < q.clash ) { clash = true; break; }
+					for ( core::Size ja = 1; ja <= qrsd.nheavyatoms(); ++ja ) if ( qrsd.xyz(ja).distance_squared(rsd->xyz(ia)) < q.clash ) { clash = true; break; }
 					if ( clash ) break;
 				}
 				if ( clash ) continue;
@@ -249,9 +249,9 @@ BruteFunGroupTK::place_d(
 						Real const dt( axs.dot(q.axs) );
 						if ( dt < q.angth ) continue; // dot, not ang
 						bool clash = false;
-						for ( Size ia = 6; ia <= rsd->nheavyatoms()-2; ++ia ) {
+						for ( core::Size ia = 6; ia <= rsd->nheavyatoms()-2; ++ia ) {
 							if ( !ifc().clash_check(rsd->xyz(ia),*ip) ) { clash = true; break; }
-							for ( Size ja = 1; ja <= qrsd.nheavyatoms(); ++ja ) if ( qrsd.xyz(ja).distance_squared(rsd->xyz(ia)) < q.clash ) { clash = true; break; }
+							for ( core::Size ja = 1; ja <= qrsd.nheavyatoms(); ++ja ) if ( qrsd.xyz(ja).distance_squared(rsd->xyz(ia)) < q.clash ) { clash = true; break; }
 							if ( clash ) break;
 						}
 						if ( clash ) continue;
@@ -274,7 +274,7 @@ BruteFunGroupTK::place_d(
 
 KinFunGroupTK::KinFunGroupTK(
 	Pose & p_in,
-	vector1<Size> pos )
+	vector1<core::Size> pos )
 : FunGroupTK(p_in,pos) {}
 
 void
@@ -304,13 +304,13 @@ KinFunGroupTK::place_c(
 		if ( dis2ub < cbd2 || cbd2 < dis2lb ) continue;
 		Vec  const qcen0(is->global2local(q.cen));
 		Real const pdis = sqrt(sqr(q.disth)-sqr(sqrt(cbd2)-CYS_CB_HG_DIS)) * qcen0.length() / CYS_CB_HG_DIS;
-		Size const NPOS = (pdis > 0.2) ? 7 : 1;
+		core::Size const NPOS = (pdis > 0.2) ? 7 : 1;
 		Vec  const Y = Vec(0,1,0).cross(qcen0).normalized();
 		Vec  const Z =          Y.cross(qcen0).normalized();
 		vector1<core::conformation::ResidueOP> hits;
 		for ( int flp = -1; flp <= 1; flp+=2 ) {
 			Real best_angerr = 9e9, best_ch1=0.0, best_ch2=0.0, mn_ang=9e9, mx_ang=-9e9;
-			for ( Size ipos = 0; ipos < NPOS; ++ipos ) {
+			for ( core::Size ipos = 0; ipos < NPOS; ++ipos ) {
 				Real y=0,z=0;
 				if     ( ipos==1 ) { y =  1.0; z =   0.0; }
 				else if ( ipos==2 ) { y =  0.5; z =  r3o2; }
@@ -386,13 +386,13 @@ KinFunGroupTK::place_h(
 		if ( dis2ub < cbd2 || cbd2 < dis2lb ) continue;
 		Vec  const qcen0(is->global2local(q.cen));
 		Real const pdis = sqrt(sqr(q.disth)-sqr(sqrt(cbd2)-HIS_CB_HG_DIS)) * qcen0.length() / HIS_CB_HG_DIS;
-		Size const NPOS = (pdis > 0.2) ? 7 : 1;
+		core::Size const NPOS = (pdis > 0.2) ? 7 : 1;
 		Vec  const Y = Vec(0,1,0).cross(qcen0).normalized();
 		Vec  const Z =          Y.cross(qcen0).normalized();
 		vector1<core::conformation::ResidueOP> hits;
 		for ( int flp = -1; flp <= 1; flp+=2 ) {
 			Real best_angerr = 9e9, best_ch1=0.0, best_ch2=0.0, mn_ang=9e9, mx_ang=-9e9;
-			for ( Size ipos = 0; ipos < NPOS; ++ipos ) {
+			for ( core::Size ipos = 0; ipos < NPOS; ++ipos ) {
 				Real y=0,z=0;
 				if     ( ipos==1 ) { y =  1.0; z =   0.0; }
 				else if ( ipos==2 ) { y =  0.5; z =  r3o2; }

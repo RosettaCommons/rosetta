@@ -26,7 +26,7 @@
 #include <platform/types.hh>
 
 // Utility headers
-//#include <utility/pointer/ReferenceCount.hh>
+//#include <utility/VirtualBase.hh>
 
 // Boost headers
 //#include <boost/function.hpp>

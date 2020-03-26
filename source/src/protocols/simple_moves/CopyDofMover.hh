@@ -33,7 +33,7 @@ class CopyDofMover: public protocols::moves::Mover {
 public:
 
 	//constructor
-	CopyDofMover( core::pose::Pose const & template_pose, std::map< Size, Size > const & res_map );
+	CopyDofMover( core::pose::Pose const & template_pose, std::map< core::Size, core::Size > const & res_map );
 
 	//destructor
 	~CopyDofMover() override;
@@ -55,7 +55,7 @@ private:
 	std::string
 	pose_string(
 		core::pose::Pose const & pose,
-		utility::vector1< Size > const & res_list ) const;
+		utility::vector1< core::Size > const & res_list ) const;
 
 	std::string
 	pose_string(
@@ -69,7 +69,7 @@ private:
 
 	core::pose::Pose const & template_pose_;
 	core::pose::MiniPose const template_mini_pose_;
-	std::map< Size, Size > res_map_;
+	std::map< core::Size, core::Size > res_map_;
 	bool backbone_only_;
 	bool side_chain_only_;
 	bool ignore_virtual_;

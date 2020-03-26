@@ -126,9 +126,9 @@ InsertionSiteTestMover::apply( core::pose::Pose & pose )
 	//spit out title line of results, this should be solved better, but ok for now
 	tr <<"result Insert_pos   dSco_rawins_start    dSco_relax_start    dSco_anchor    rms_neigh    rms_anchor   diff_nlc_anchor  sasa_insert   deg_bury_insert     sasa_orig    orig_dssp" << std::endl;
 
-	for ( Size i = 1; i <= insert_test_pos.size(); ++i ) {
+	for ( core::Size i = 1; i <= insert_test_pos.size(); ++i ) {
 
-		Size insert_pos( insert_test_pos[ i ] );
+		core::Size insert_pos( insert_test_pos[ i ] );
 		tr << "Starting insertion test at position " << insert_pos << "..." << std::endl;
 		if ( pdb_numbering_ ) {
 			tr << "PDB res " << insert_pos << " is pose res ";
@@ -139,7 +139,7 @@ InsertionSiteTestMover::apply( core::pose::Pose & pose )
 		Real lowE(100000.0);
 		bool one_succesful_attempt(false);
 
-		for ( Size repeat = 1; repeat <= num_repeats_; ++repeat ) {
+		for ( core::Size repeat = 1; repeat <= num_repeats_; ++repeat ) {
 			pose = input_pose;
 
 			if ( create_raw_insert_pose( pose, insert_pos ) ) {
@@ -199,12 +199,12 @@ InsertionSiteTestMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption("seqpos") ) {
-		ResidueSelectorOP pos_select( new ResidueIndexSelector( tag->getOption<Size>("seqpos") ) );
+		ResidueSelectorOP pos_select( new ResidueIndexSelector( tag->getOption<core::Size>("seqpos") ) );
 		insert_test_pos_ = OR_combine( insert_test_pos_, pos_select );
 	}
 
 	if ( tag->hasOption("repeats") ) {
-		num_repeats_ =  tag->getOption<Size>("repeats");
+		num_repeats_ =  tag->getOption<core::Size>("repeats");
 	}
 	if ( tag->hasOption("pdb_numbering") ) {
 		pdb_numbering_ = tag->getOption<bool>("pdb_numbering");
@@ -228,14 +228,14 @@ InsertionSiteTestMover::parse_my_tag(
 core::pack::task::PackerTaskCOP
 InsertionSiteTestMover::make_insert_task(
 	core::pose::Pose const & pose,
-	Size insert_pos
+	core::Size insert_pos
 ) const
 {
 	core::pack::task::PackerTaskOP task( new core::pack::task::PackerTask_( pose ) );
 
 	utility::vector1< bool > repack_pos( pose.size(), false );
 	repack_pos[ insert_pos ] = true;
-	for ( Size i = 1; i < flex_window_; ++i ) {
+	for ( core::Size i = 1; i < flex_window_; ++i ) {
 		repack_pos[ insert_pos - i ] = true;
 		repack_pos[ insert_pos + i ] = true;
 	}
@@ -243,7 +243,7 @@ InsertionSiteTestMover::make_insert_task(
 
 	enz_flexbb_prot_->get_tenA_neighbor_residues( pose, repack_pos );
 
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		if ( repack_pos[ i ] ) task->nonconst_residue_task( i ).restrict_to_repacking();
 		else  task->nonconst_residue_task( i ).prevent_repacking();
 	}
@@ -253,7 +253,7 @@ InsertionSiteTestMover::make_insert_task(
 devel::enzdes::EnzdesRemodelMoverOP
 InsertionSiteTestMover::make_enzremodel_mover(
 	core::pose::Pose & pose,
-	Size insert_pos
+	core::Size insert_pos
 ) const
 {
 
@@ -321,7 +321,7 @@ InsertionSiteTestMover::relax_raw_insert_pose(
 {
 	using core::pack::task::operation::TaskOperationCOP;
 
-	Size repeats(2); //only very few repeats to iron out the worst transgressions
+	core::Size repeats(2); //only very few repeats to iron out the worst transgressions
 	protocols::relax::FastRelaxOP frelax( new protocols::relax::FastRelax( sfxn_, repeats ) );
 
 	//for now we relax everything, if it takes too long we could do less
@@ -333,12 +333,12 @@ InsertionSiteTestMover::relax_raw_insert_pose(
 	utility::vector1<bool> flex_res(pose.size(), false );
 	enz_flexbb_prot_->get_tenA_neighbor_residues( pose, flex_res );
 	//std::set< core::Size > flex_res = enz_flexbb_prot_->enz_flexible_region(1)->get_10A_neighbors( pose );
-	for ( Size i = enz_flexbb_prot_->enz_flexible_region(1)->start(); i != enz_flexbb_prot_->enz_flexible_region(1)->stop(); ++i ) {
+	for ( core::Size i = enz_flexbb_prot_->enz_flexible_region(1)->start(); i != enz_flexbb_prot_->enz_flexible_region(1)->stop(); ++i ) {
 		flex_res[i] = true;
 	}
 
-	utility::vector1< Size > prevent_repack;
-	for ( Size i= 1; i <= pose.size(); ++i ) {
+	utility::vector1< core::Size > prevent_repack;
+	for ( core::Size i= 1; i <= pose.size(); ++i ) {
 
 		if ( flex_res[i] == true ) {
 			mm->set_chi( i, true );
@@ -361,11 +361,11 @@ InsertionSiteTestMover::relax_raw_insert_pose(
 	//makes analysis later cleaner
 	core::id::AtomID_Map< core::id::AtomID> rms_atom_map(  core::id::AtomID::BOGUS_ATOM_ID() );
 	core::pose::initialize_atomid_map( rms_atom_map, pose, core::id::AtomID::BOGUS_ATOM_ID() );
-	for ( Size i = 1; i < enz_flexbb_prot_->enz_flexible_region(1)->start(); ++i ) {
+	for ( core::Size i = 1; i < enz_flexbb_prot_->enz_flexible_region(1)->start(); ++i ) {
 		if ( pose.residue_type(i).is_protein() ) rms_atom_map.set(  core::id::AtomID( pose.residue( i ).atom_index("CA"), i ), core::id::AtomID( raw_pose.residue( i ).atom_index("CA"), i ) );
 	}
 
-	for ( Size i = enz_flexbb_prot_->enz_flexible_region(1)->stop()+1; i <= pose.size() ; ++i ) {
+	for ( core::Size i = enz_flexbb_prot_->enz_flexible_region(1)->stop()+1; i <= pose.size() ; ++i ) {
 		if ( pose.residue_type(i).is_protein() ) rms_atom_map.set(  core::id::AtomID( pose.residue( i ).atom_index("CA"), i ), core::id::AtomID( raw_pose.residue( i ).atom_index("CA"), i ) );
 	}
 	core::scoring::superimpose_pose( pose, raw_pose, rms_atom_map );
@@ -392,12 +392,12 @@ InsertionSiteTestMover::evaluate_insert_pose(
 	core::Size const insert_pos
 )
 {
-	utility::vector1< Size > orig_anchor_res, shifted_anchor_res;
-	for ( Size i = insert_pos; i > (insert_pos -  flex_window_ ); --i ) {
+	utility::vector1< core::Size > orig_anchor_res, shifted_anchor_res;
+	for ( core::Size i = insert_pos; i > (insert_pos -  flex_window_ ); --i ) {
 		orig_anchor_res.push_back( i );
 		shifted_anchor_res.push_back(i);
 	}
-	for ( Size i = insert_pos + 1 ; i <= insert_pos + flex_window_; ++i ) {
+	for ( core::Size i = insert_pos + 1 ; i <= insert_pos + flex_window_; ++i ) {
 		orig_anchor_res.push_back( i );
 		shifted_anchor_res.push_back( (*insert_seqmap_)[i] );
 	}
@@ -407,11 +407,11 @@ InsertionSiteTestMover::evaluate_insert_pose(
 
 	int diff_contacts_anchor(0);
 	protocols::pose_metric_calculators::NonlocalContactsCalculator nlc_calc(15, -0.5);
-	basic::MetricValue< utility::vector1< Size > > start_nlc, relax_nlc;
+	basic::MetricValue< utility::vector1< core::Size > > start_nlc, relax_nlc;
 	nlc_calc.get( "residue_nlcontacts", start_nlc, start_pose );
 	nlc_calc.notify_energy_change();
 	nlc_calc.get( "residue_nlcontacts", relax_nlc, relax_pose );
-	for ( Size i = 1; i <= orig_anchor_res.size(); ++i ) {
+	for ( core::Size i = 1; i <= orig_anchor_res.size(); ++i ) {
 		diffsco_anchor += ( relax_pose.energies().residue_total_energy( shifted_anchor_res[i]) - start_pose.energies().residue_total_energy( orig_anchor_res[i] ) );
 		diff_contacts_anchor += ( (relax_nlc.value())[ shifted_anchor_res[i] ] - (start_nlc.value())[ orig_anchor_res[i] ] );
 	}
@@ -426,7 +426,7 @@ InsertionSiteTestMover::evaluate_insert_pose(
 	//but rmsd code wants an FArraz
 	ObjexxFCL::FArray1D_bool flex_res_farray( relax_pose.size(), false );
 	tr << "Debug: when evaluating insert, the following are neighbor residues: ";
-	for ( Size i = 1; i <= flex_res.size(); ++ i ) {
+	for ( core::Size i = 1; i <= flex_res.size(); ++ i ) {
 		if ( flex_res[i] && !enz_flexbb_prot_->is_flexible(i) ) {
 			flex_res_farray(i) = true;
 			tr << i << " ";
@@ -439,11 +439,11 @@ InsertionSiteTestMover::evaluate_insert_pose(
 	//tr << std::endl;
 	core::Real rms_neighbors( core::scoring::rmsd_no_super_subset( rawinsert_pose, relax_pose, flex_res_farray, core::scoring::is_protein_backbone ) );
 
-	for ( Size i =1; i <= relax_pose.size(); ++ i ) flex_res_farray(i) = false; //reset
-	//for( Size i = insert_pos; i > (insert_pos -  flex_window_ ); --i) flex_res_farray(i) = true;
-	//for( Size i = (*insert_seqmap_)[ insert_pos + 1 ]; i <= (*insert_seqmap_)[ insert_pos + flex_window_ ]; ++i ) flex_res_farray(i) = true;
+	for ( core::Size i =1; i <= relax_pose.size(); ++ i ) flex_res_farray(i) = false; //reset
+	//for( core::Size i = insert_pos; i > (insert_pos -  flex_window_ ); --i) flex_res_farray(i) = true;
+	//for( core::Size i = (*insert_seqmap_)[ insert_pos + 1 ]; i <= (*insert_seqmap_)[ insert_pos + flex_window_ ]; ++i ) flex_res_farray(i) = true;
 	tr << "anchor residues are ";
-	for ( Size i = 1; i <= orig_anchor_res.size(); ++i ) {
+	for ( core::Size i = 1; i <= orig_anchor_res.size(); ++i ) {
 		flex_res_farray( orig_anchor_res[i]) = true;
 		tr << orig_anchor_res[i] << "+";
 	}
@@ -458,7 +458,7 @@ InsertionSiteTestMover::evaluate_insert_pose(
 	utility::vector1< core::Real > full_pose_residue_sasa;
 	core::scoring::calc_per_atom_sasa( relax_pose, atom_sasa_dummy, full_pose_residue_sasa, probe_radius);
 	core::Real insert_sasa(0.0);
-	for ( Size i = enz_flexbb_prot_->enz_flexible_region(1)->start(); i <= enz_flexbb_prot_->enz_flexible_region(1)->stop() ; ++i ) {
+	for ( core::Size i = enz_flexbb_prot_->enz_flexible_region(1)->start(); i <= enz_flexbb_prot_->enz_flexible_region(1)->stop() ; ++i ) {
 		insert_sasa += full_pose_residue_sasa[i];
 	}
 	//to calculate the degree of buriedness of the inserted residues,
@@ -474,7 +474,7 @@ InsertionSiteTestMover::evaluate_insert_pose(
 	utility::vector1< core::Real > subpose_residue_sasa;
 	core::scoring::calc_per_atom_sasa( subpose, atom_sasa_dummy, subpose_residue_sasa, probe_radius);
 	core::Real insert_subpose_sasa = 0.0;
-	for ( Size i = 1; i <= subpose.size(); ++i ) insert_subpose_sasa += subpose_residue_sasa[i];
+	for ( core::Size i = 1; i <= subpose.size(); ++i ) insert_subpose_sasa += subpose_residue_sasa[i];
 	core::Real buried_degree( 1 - (insert_sasa / insert_subpose_sasa) );
 
 	//finally we calculate the sasa of the original two residues

@@ -28,7 +28,7 @@ namespace protocols {
 namespace toolbox {
 
 ScoreRmsPoint::ScoreRmsPoint( core::Real const score_val, core::Real rms_val ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	score_( score_val ),
 	rms_( rms_val )
 {}
@@ -64,7 +64,7 @@ ScoreRmsPoints::bg() const
 }
 
 EnergyLandscapeEvaluator::EnergyLandscapeEvaluator():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 
 }

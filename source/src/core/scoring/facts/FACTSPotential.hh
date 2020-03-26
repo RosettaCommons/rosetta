@@ -35,7 +35,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <iostream>
 
 namespace core {
@@ -49,7 +49,7 @@ namespace scoring {
 /*                                                                                                */
 /**************************************************************************************************/
 
-class FACTSPotential: public utility::pointer::ReferenceCount {
+class FACTSPotential: public utility::VirtualBase {
 
 public:
 	typedef conformation::Residue Residue;

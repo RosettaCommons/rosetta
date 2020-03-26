@@ -502,7 +502,7 @@ CCDLoopClosureMover::get_anchors( conformation::Residue const & residue ) const
 // TODO: Is it possible to ever call this in cases where atom > ( 1  + number_mc_atoms )?
 void
 CCDLoopClosureMover::index_pair_in_range(
-	core::uint & pos, core::uint & atom, Size const n_mainchain_atoms ) const
+	core::uint & pos, core::uint & atom, core::Size const n_mainchain_atoms ) const
 {
 	while ( atom > n_mainchain_atoms ) {
 		atom -= n_mainchain_atoms;
@@ -525,7 +525,7 @@ CCDLoopClosureMover::get_torsion_axis(
 	Vector & axis_atom_coords,
 	Vector & axis_unit_vector ) const
 {
-	Size const n_mainchain_atoms( pose.residue( seqpos ).mainchain_atoms().size() );
+	core::Size const n_mainchain_atoms( pose.residue( seqpos ).mainchain_atoms().size() );
 	core::uint const upstream_atom_resnum( seqpos ), upstream_mainchain_atom_num( torsion_num );
 	core::uint downstream_atom_resnum( seqpos ), downstream_mainchain_atom_num( torsion_num + 1 );
 
@@ -572,7 +572,7 @@ CCDLoopClosureMover::calculate_ccd_angle(
 		fixed_atoms = get_anchors( pose.residue( loop_.cut() ) );
 		break;
 	}
-	Size number_of_atoms( numeric::min( fixed_atoms.size(), moving_atoms.size() ) );
+	core::Size number_of_atoms( numeric::min( fixed_atoms.size(), moving_atoms.size() ) );
 
 	// Calculate the axis vector of the torsion angle.
 	PointPosition axis_atom;
@@ -626,7 +626,7 @@ void CCDLoopClosureMover::adjust_residue_to_minimize_deviation(
 
 	// Cycle through each movable torsion at the current residue position.
 	core::conformation::Residue const & res( pose.residue( seqpos ) );
-	Size const n_mainchain_torsions( res.mainchain_atoms().size() );
+	core::Size const n_mainchain_torsions( res.mainchain_atoms().size() );
 	for ( core::uint torsion_num = 1; torsion_num <= n_mainchain_torsions; ++torsion_num ) {
 
 		if ( TR.Debug.visible() ) {
@@ -738,7 +738,7 @@ void CCDLoopClosureMover::compute_closure_metrics(
 	Angle total_change_in_torsion_angle( 0.0 );
 
 	for ( core::uint i = loop_.start(); i <= loop_.stop(); ++i ) {
-		Size n_mainchain_atoms( pose.residue( i ).mainchain_atoms().size() );
+		core::Size n_mainchain_atoms( pose.residue( i ).mainchain_atoms().size() );
 		for ( core::uint j = 1; j<= n_mainchain_atoms; ++j ) {
 			TorsionID torsion_id( i, BB, j );
 			total_change_in_torsion_angle +=

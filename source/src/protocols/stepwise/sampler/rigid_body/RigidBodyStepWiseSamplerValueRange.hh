@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_sampler_rigid_body_RigidBodyStepWiseSamplerValueRange_HH
 #define INCLUDED_protocols_sampler_rigid_body_RigidBodyStepWiseSamplerValueRange_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerOneValue.hh>
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerValueRange.fwd.hh>
 #include <core/types.hh>
@@ -26,7 +26,7 @@ namespace stepwise {
 namespace sampler {
 namespace rigid_body {
 
-class RigidBodyStepWiseSamplerValueRange: public utility::pointer::ReferenceCount {
+class RigidBodyStepWiseSamplerValueRange: public utility::VirtualBase {
 
 public:
 

@@ -990,7 +990,7 @@ MRSJobQueen::parse_single_job_tag(
 	utility::vector0 < utility::tag::TagCOP > const & all_tags = job_tag->getTags();
 
 	//load data
-	for ( Size ii = 0; ii < all_tags.size(); ++ii ) {
+	for ( core::Size ii = 0; ii < all_tags.size(); ++ii ) {
 		utility::tag::TagCOP iitag = all_tags[ ii ];
 		std::string const iitag_name = iitag->getName();
 		if ( non_data_loader_tags.find( iitag_name ) == non_data_loader_tags.end() ) {
@@ -1072,7 +1072,7 @@ void
 MRSJobQueen::assign_output_index(
 	LarvalJobCOP larval_job,
 	ResultIndex result_index_for_job,
-	Size,
+	core::Size,
 	JobOutputIndex & output_index
 ) {
 	assign_output_index( larval_job->job_index(), result_index_for_job, output_index );

@@ -19,7 +19,7 @@ namespace numeric {
 namespace linear_algebra {
 
 EllipseParameters::EllipseParameters():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	h_(0),
 	k_(0),
 	a_(1),
@@ -40,7 +40,7 @@ EllipseParameters::EllipseParameters(
 	Real a,
 	Real b,
 	MathMatrix< Real > r
-) : utility::pointer::ReferenceCount(),
+) : utility::VirtualBase(),
 	h_( h ),
 	k_( k ),
 	a_( a ),
@@ -51,6 +51,7 @@ EllipseParameters::EllipseParameters(
 EllipseParameters::~EllipseParameters(){}
 
 EllipseParameters::EllipseParameters( EllipseParameters const & src ) :
+	VirtualBase( src ),
 	h_( src.h_ ),
 	k_( src.k_ ),
 	a_( src.a_ ),

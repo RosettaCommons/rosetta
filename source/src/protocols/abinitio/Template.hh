@@ -35,7 +35,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 //// C++ headers
@@ -51,9 +51,9 @@
 namespace protocols {
 namespace abinitio {
 
-class Template : public utility::pointer::ReferenceCount {
+class Template : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Template() override;
 	typedef utility::vector1< core::scoring::constraints::AtomPairConstraintOP > AtomPairConstraintList;
 	typedef utility::vector1< core::scoring::constraints::Obsolet_NamedAtomPairConstraintOP > NamedAtomPairConstraintList;
@@ -65,12 +65,12 @@ public:
 
 	//@brief pick fragments of <length> from Template according to mapping, return nr of Frames
 	/// good for continuous fragments: no torsions from insertions are mapped
-	//  Size pick_frags( core::fragment::FragSet&, core::fragment::FragDataCOP frag_type ) const;
+	//  core::Size pick_frags( core::fragment::FragSet&, core::fragment::FragDataCOP frag_type ) const;
 
 
 	//@brief steals frames as templated in target_frames and accumulates them in FragSet
 	// steal frags does not take care of insertion/deletions ( fine for e.g., jump-frames )
-	Size steal_frags( core::fragment::FrameList const& target_frames, core::fragment::FragSet& accumulator, Size ncopies = 1 ) const;
+	core::Size steal_frags( core::fragment::FrameList const& target_frames, core::fragment::FragSet& accumulator, core::Size ncopies = 1 ) const;
 
 	//@brief maps pairings from target to template ( or the reverse )
 	void map_pairings2template( core::scoring::dssp::PairingList const& in, core::scoring::dssp::PairingList& out ) const;
@@ -88,7 +88,7 @@ public:
 	//@brief in-place mapping ----> breaks if not alignable
 	void map2template( core::fragment::FrameList& ) const;
 
-	Size pick_large_frags( core::fragment::FragSet& frag_set, core::fragment::SingleResidueFragDataOP frag_type, core::Size ncopies = 1 ) const;
+	core::Size pick_large_frags( core::fragment::FragSet& frag_set, core::fragment::SingleResidueFragDataOP frag_type, core::Size ncopies = 1 ) const;
 
 	//@brief map constraints:
 	// in the moment only support for AtomPairConstraints... otherwise would have to add clone() method to Constraint

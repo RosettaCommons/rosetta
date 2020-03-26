@@ -22,7 +22,7 @@
 #include <core/fragment/FragSet.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -36,11 +36,11 @@
 namespace protocols {
 namespace parser {
 
-class FragmentReader : public utility::pointer::ReferenceCount {
+class FragmentReader : public utility::VirtualBase {
 public:
 
 
-	typedef utility::pointer::ReferenceCount Parent;
+	typedef utility::VirtualBase Parent;
 
 
 public:
@@ -94,19 +94,19 @@ private:
 	String filename_;
 
 	/// @brief length of fragments
-	Size frag_size_;
+	core::Size frag_size_;
 
 	/// @brief the begin of sequence positions where fragments are stealed
-	Size begin_;
+	core::Size begin_;
 
 	/// @brief the end of sequence positions where fragments are stealed
-	Size end_;
+	core::Size end_;
 
 	/// @brief number of stealing fragments if read_type_ is pdbs or silent
-	Size steal_times_;
+	core::Size steal_times_;
 
 	/// @brief maximum number of fragments when a silent file is used
-	Size nfrags_;
+	core::Size nfrags_;
 
 	/// @brief secondary structure assignment to pick fragment from vall
 	String ss_;

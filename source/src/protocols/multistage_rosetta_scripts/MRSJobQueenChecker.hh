@@ -15,7 +15,7 @@
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_MRSJobQueenChecker_HH
 #define INCLUDED_protocols_multistage_rosetta_scripts_MRSJobQueenChecker_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/multistage_rosetta_scripts/MRSJobQueenChecker.fwd.hh>
 #include <protocols/multistage_rosetta_scripts/MRSJobQueen.hh>
 

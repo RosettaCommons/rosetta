@@ -25,13 +25,13 @@
 //#include <core/sequence/ABEGOManager.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector0.hh>
 
 namespace core {
 namespace scoring {
 
-class P_AA_ABEGO3 : public utility::pointer::ReferenceCount
+class P_AA_ABEGO3 : public utility::VirtualBase
 {
 private:
 	utility::vector0< core::Real > p_AA_ABEGO3_;

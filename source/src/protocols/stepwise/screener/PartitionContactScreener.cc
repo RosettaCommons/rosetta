@@ -93,7 +93,7 @@ PartitionContactScreener::initialize_evaluator( core::scoring::methods::EnergyMe
 bool
 PartitionContactScreener::check_screen(){
 	bool makes_contact( false ), atr_ok( false ), rep_ok( false );
-	for ( Size const res : moving_res_list_ ) {
+	for ( core::Size const res : moving_res_list_ ) {
 		check_screen( res, atr_ok, rep_ok );
 		if ( !rep_ok ) return false;
 		if (  atr_ok ) makes_contact = true;
@@ -111,7 +111,7 @@ PartitionContactScreener::check_screen(){
 //
 //////////////////////////////////////////////////////////////////////////////
 void
-PartitionContactScreener::check_screen( Size const moving_res, bool & atr_ok, bool & rep_ok ) const {
+PartitionContactScreener::check_screen( core::Size const moving_res, bool & atr_ok, bool & rep_ok ) const {
 
 	using namespace core::scoring;
 	using namespace core::scoring::etable;
@@ -120,15 +120,15 @@ PartitionContactScreener::check_screen( Size const moving_res, bool & atr_ok, bo
 	atr_ok = false;
 	rep_ok = false;
 
-	utility::vector1< Size > root_partition_res, moving_partition_res;
+	utility::vector1< core::Size > root_partition_res, moving_partition_res;
 	modeler::figure_out_root_and_moving_partition_res( pose_, moving_res, root_partition_res, moving_partition_res );
 
 	EnergyMap emap;
 	//Distance const contact_dist( 4.0 );
-	for ( Size const i : root_partition_res ) {
+	for ( core::Size const i : root_partition_res ) {
 		core::conformation::Residue const & rsd_i = pose_.residue( i );
 
-		for ( Size const j : moving_partition_res ) {
+		for ( core::Size const j : moving_partition_res ) {
 			core::conformation::Residue const & rsd_j = pose_.residue( j );
 
 			CPCrossoverBehavior crossover = CP_CROSSOVER_3;

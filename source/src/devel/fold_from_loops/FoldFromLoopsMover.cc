@@ -115,7 +115,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 	kinematics::FoldTree f;
 	f.clear();
 
-	std::vector<Size> cut_points;
+	std::vector<core::Size> cut_points;
 
 	core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID_t );
 
@@ -265,9 +265,9 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 
 			if ( option [OptionKeys::fold_from_loops::add_relax_cycles ].user() ) {
 
-				Size n_relax = option [OptionKeys::fold_from_loops::add_relax_cycles ] ;
+				core::Size n_relax = option [OptionKeys::fold_from_loops::add_relax_cycles ] ;
 
-				for ( Size i=1; i <= n_relax ; ++i ) {
+				for ( core::Size i=1; i <= n_relax ; ++i ) {
 
 
 					std::string outfilename_n_rlx =  option [OptionKeys::out::prefix] + "dr_" + ObjexxFCL::right_string_of(i,3,'0')+"_" ;

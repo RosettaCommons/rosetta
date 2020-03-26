@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_splice_SpliceManager_hh
 
 #include <protocols/splice/SpliceManager.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
@@ -48,7 +48,7 @@ typedef utility::pointer::shared_ptr< basic::datacache::DataMapObj< bool > > Dat
 
 
 //@brief lightweight class containing bb torsions and residue identities
-class BBDofs : public utility::pointer::ReferenceCount
+class BBDofs : public utility::VirtualBase
 {
 public:
 	BBDofs() : resid_( 0 ), phi_( 0.0 ), psi_( 0.0 ), omega_( 0.0 ), resn_( "" ){}
@@ -70,7 +70,7 @@ private:
 	std::string resn_;
 };
 
-class ResidueBBDofs : public utility::pointer::ReferenceCount
+class ResidueBBDofs : public utility::VirtualBase
 {
 public:
 	typedef utility::vector1< BBDofs > bbdof_list;
@@ -117,7 +117,7 @@ private:
 };
 
 
-class SpliceManager : public utility::pointer::ReferenceCount
+class SpliceManager : public utility::VirtualBase
 {
 
 public:

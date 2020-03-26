@@ -27,7 +27,7 @@ namespace backbone_moves {
 namespace local_backbone_mover {
 namespace free_peptide_movers {
 
-ShearFreePeptideMover::ShearFreePeptideMover(Size seqpos, Real torsion_degree, bool random):
+ShearFreePeptideMover::ShearFreePeptideMover(core::Size seqpos, Real torsion_degree, bool random):
 	FreePeptideMover(), random_(random), seqpos_(seqpos), torsion_degree_(torsion_degree)
 {
 

@@ -69,7 +69,7 @@ CrossPeakList::CrossPeakList() :
 CrossPeakList::~CrossPeakList() = default;
 
 Size CrossPeakList::count_assignments() const {
-	Size total_size( 0 );
+	core::Size total_size( 0 );
 #ifndef WIN32
 	for ( auto const & it : *this ) {
 		total_size+=it->assignments().size();
@@ -137,7 +137,7 @@ void CrossPeakList::read_from_stream( std::istream& is, PeakFileFormat& input_ad
 void CrossPeakList::write_to_stream( std::ostream& os, PeakFileFormat& output_adaptor  ) const {
 	output_adaptor.set_format_from_peak( **peaks_.begin() );
 	output_adaptor.write_header( os );
-	Size last_peak_id( 0 );
+	core::Size last_peak_id( 0 );
 	for ( auto const & peak : peaks_ ) {
 		if ( last_peak_id > peak->peak_id() ) {
 			output_adaptor.set_format_from_peak( *peak );
@@ -163,7 +163,7 @@ void CrossPeakList::write_peak_files( std::string const& prefix, PeakFileFormat&
 	open_stream( os, prefix, filename );
 
 	output_adaptor.write_header( os );
-	Size last_peak_id( 0 );
+	core::Size last_peak_id( 0 );
 	for ( auto const & peak : peaks_ ) {
 		if ( last_peak_id > peak->peak_id() ) {
 			output_adaptor.set_format_from_peak( *peak );
@@ -265,7 +265,7 @@ void CrossPeakList::network_analysis() { //ResonanceList const& resonances ) {
 	runtime_assert( assignments_ != nullptr );
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	if ( params.network_mode_ == "orig" ) {
-		Size n_assignments( count_assignments() );
+		core::Size n_assignments( count_assignments() );
 		assignments_->network_analysis( n_assignments );
 	} else if ( params.network_mode_ == "clean" ) {
 		assignments_->network_analysis2();
@@ -282,7 +282,7 @@ void CrossPeakList::eliminate_spurious_peaks() {
 
 Real CrossPeakList::calibrate( PeakCalibrator const& calibrator ) {
 	Real average_dist( 0.0 );
-	Size ct( 0 );
+	core::Size ct( 0 );
 	for ( auto it = begin(); it != end(); ++it ) {
 		PeakCalibrator::TypeCumulator calibration_types;
 		(*it)->calibrate( calibrator, calibration_types );
@@ -312,7 +312,7 @@ void CrossPeakList::generate_fa_and_cen_constraints(
 		if ( it->min_seq_separation_residue_assignment( 0.1 ) < min_seq_separation ) continue; //ignore peaks that have confident intra-residue assignment
 		//  if ( !(*it)->has_inter_residue_assignment( resonances(), 0.1 ) ) continue; //ignore peaks that have confident intra-residue assignment
 		if ( max_quali+1 < CrossPeak::MAX_CLASS ) {
-			Size const quality( it->quality_class() );
+			core::Size const quality( it->quality_class() );
 			if ( quality < min_quali || quality > max_quali ) continue;
 		}
 		++ct;
@@ -321,7 +321,7 @@ void CrossPeakList::generate_fa_and_cen_constraints(
 		if ( it->eliminated() ) continue;
 		if ( it->min_seq_separation_residue_assignment( 0.1 ) < min_seq_separation ) continue; //ignore peaks that have confident intra-residue assignment
 		if ( max_quali+1 < CrossPeak::MAX_CLASS ) {
-			Size const quality( it->quality_class() );
+			core::Size const quality( it->quality_class() );
 			if ( quality < min_quali || quality > max_quali ) continue;
 		}
 		if ( !ignore_elimination_candidates ) {

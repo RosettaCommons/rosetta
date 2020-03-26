@@ -21,7 +21,7 @@
 #include <core/types.hh>
 #include <core/pose/rna/RNA_SecStruct.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 #if defined(WIN32) || defined(PYROSETTA)
@@ -32,7 +32,7 @@ namespace protocols {
 namespace recces {
 namespace options {
 
-class RECCES_Options: public virtual utility::pointer::ReferenceCount {
+class RECCES_Options: public virtual utility::VirtualBase {
 
 public:
 

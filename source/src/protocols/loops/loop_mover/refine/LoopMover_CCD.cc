@@ -288,7 +288,7 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 
 	// scheduler
 	int const fast( option[ OptionKeys::loops::fast ] ); // why is this an int?
-	inner_cycles_ = std::min( max_inner_cycles_, fast ? loops()->loop_size() : Size(10)*loops()->loop_size() );
+	inner_cycles_ = std::min( max_inner_cycles_, fast ? loops()->loop_size() : core::Size(10)*loops()->loop_size() );
 
 	/// must be called once the Pose has become available.
 	resolve_loop_indices( pose );
@@ -329,7 +329,7 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 
 	inner_cycle->set_native_pose( get_native_pose() ); // Native pose may be used in debugging steps that use loop RMSD
 
-	for ( Size i = 1; i <= outer_cycles_; ++i ) {
+	for ( core::Size i = 1; i <= outer_cycles_; ++i ) {
 		increase_chainbreak_weight_and_update_monte_carlo( i, ramping_scorefxn(), *mc, pose );
 		for ( current_cycle_number_ = 1; current_cycle_number_ <= inner_cycles_; ++current_cycle_number_ ) {
 			mc->set_temperature( mc->temperature() * temperature_ramp_factor );
@@ -447,7 +447,7 @@ core::pack::task::PackerTaskOP LoopMover_Refine_CCD::get_packer_task( core::pose
 }
 
 void LoopMover_Refine_CCD::increase_chainbreak_weight_and_update_monte_carlo(
-	Size iteration_number,
+	core::Size iteration_number,
 	scoring::ScoreFunctionOP local_scorefxn,
 	protocols::moves::MonteCarlo & mc,
 	pose::Pose & pose

@@ -186,7 +186,7 @@ MotifDnaPacker::apply( Pose & pose )
 	utility::vector1< core::Size > protein_positions, dna_positions, dna_design_positions, preventrepack;
 	utility::vector1< utility::vector1< core::Size > > base_partners;
 	core::Size nres( pose.size() );
-	for ( Size p_index(1); p_index<=nres; ++p_index ) {
+	for ( core::Size p_index(1); p_index<=nres; ++p_index ) {
 		if ( pose.residue_type( p_index ).is_DNA() ) {
 			dna_positions.push_back( p_index );
 		}
@@ -202,7 +202,7 @@ MotifDnaPacker::apply( Pose & pose )
 		dna_design_positions = protocols::motifs::defs2vector( pose, targeted_dna_ );
 		core::scoring::dna::BasePartner const & partner( core::scoring::dna::retrieve_base_partner_from_pose( pose ) );
 		utility::vector1< core::Size > complete_ddps;
-		for ( Size i(1); i<=dna_design_positions.size(); ++i ) {
+		for ( core::Size i(1); i<=dna_design_positions.size(); ++i ) {
 			complete_ddps.push_back(dna_design_positions[i]);
 			complete_ddps.push_back(partner[dna_design_positions[i]]);
 		}
@@ -211,7 +211,7 @@ MotifDnaPacker::apply( Pose & pose )
 		target_dna_empty = true;
 		core::scoring::dna::BasePartner const & partner( core::scoring::dna::retrieve_base_partner_from_pose( pose ) );
 		utility::vector1< core::Size > complete_design_positions;
-		for ( Size i(1); i<=( dna_positions.size() / 2 ); ++i ) {
+		for ( core::Size i(1); i<=( dna_positions.size() / 2 ); ++i ) {
 			utility::vector1< core::Size > pair;
 			if ( partner[dna_positions[i]] != 0 ) {
 				pair.push_back( dna_positions[i] );
@@ -243,7 +243,7 @@ MotifDnaPacker::apply( Pose & pose )
 		}
 	}
 
-	for ( Size bp(1); bp<=base_partners.size(); ++bp ) {
+	for ( core::Size bp(1); bp<=base_partners.size(); ++bp ) {
 		pose = *starting_pose_;
 		utility::vector1< core::Size > design_positions;
 		std::map< core::Size, pack::rotamer_set::Rotamers > rotamer_map;
@@ -262,7 +262,7 @@ MotifDnaPacker::apply( Pose & pose )
 		DnaChainsOP dna_chains( new DnaChains );
 		find_basepairs( pose, *dna_chains );
 		DnaDesignDefOPs targetdefs;
-		for ( Size i(1); i<=(base_partners[bp].size()); ++i ) {
+		for ( core::Size i(1); i<=(base_partners[bp].size()); ++i ) {
 			if ( dna_chains->is_top(base_partners[bp][i]) ) {
 				std::stringstream def;
 				def << pose.pdb_info()->chain( base_partners[bp][i]) << "." << pose.pdb_info()->number(base_partners[bp][i]) << "." << pose.residue(base_partners[bp][i]).name3();
@@ -278,10 +278,10 @@ MotifDnaPacker::apply( Pose & pose )
 		if ( ! dna_design_ ) {
 			rdtpdi2->copy_targeted_dna( targetdefs );
 		} else {
-			utility::vector1< Size > restricted_DNA;
-			for ( Size d(1) ; d <= dna_positions.size(); ++d ) {
+			utility::vector1< core::Size > restricted_DNA;
+			for ( core::Size d(1) ; d <= dna_positions.size(); ++d ) {
 				bool r_DNA( true );
-				for ( Size i(1); i<=(base_partners[bp].size()); ++i ) {
+				for ( core::Size i(1); i<=(base_partners[bp].size()); ++i ) {
 					if ( dna_positions[d] == base_partners[bp][i] ) {
 						r_DNA = false;
 					}
@@ -400,7 +400,7 @@ flex_dna.push_back(fac1);
 cutpoint_dna.push_back(fac1);
 }
 }
-for ( Size i(1); i<=flexandcut.size(); ++i ) {
+for ( core::Size i(1); i<=flexandcut.size(); ++i ) {
 if ( ! pose.residue(flexandcut[i]).is_terminus() ) {
 flex_dna.push_back(flexandcut[i]);
 cutpoint_dna.push_back(flexandcut[i]);
@@ -439,7 +439,7 @@ protocols::loops::Loop const protein_loop;*/ // an empty loop
 //               ( numeric::random::uniform() < 0.5 ) );
 /* setup_loop_rebuild_cutpoint_variants( pose, protein_loop );
 // which positions should be repacked/designed ?
-utility::vector1< Size > const designable_positions( get_motif_data( pose ).segment("DESIGN_PROTEIN", true ) );
+utility::vector1< core::Size > const designable_positions( get_motif_data( pose ).segment("DESIGN_PROTEIN", true ) );
 utility::vector1< bool > is_mutable( protocols::motifs::bools_from_sizes( nres, designable_positions ) ),
 is_chimin_flexible( nres, false ), is_chimove_flexible( nres, false ), is_bb_flexible( nres, false ),
 is_jump_flexible( nres, false );

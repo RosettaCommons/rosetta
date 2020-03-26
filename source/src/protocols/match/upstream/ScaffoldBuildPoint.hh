@@ -27,7 +27,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Numeric headers
 
@@ -39,14 +39,14 @@ namespace protocols {
 namespace match {
 namespace upstream {
 
-class ScaffoldBuildPoint : public utility::pointer::ReferenceCount
+class ScaffoldBuildPoint : public utility::VirtualBase
 {
 public:
 	typedef core::Size Size;
 
 public:
 	ScaffoldBuildPoint();
-	ScaffoldBuildPoint( Size index );
+	ScaffoldBuildPoint( core::Size index );
 	~ScaffoldBuildPoint() override;
 
 	virtual bool compatible( ScaffoldBuildPoint const &, bool first_dispatch = true ) const;
@@ -58,23 +58,23 @@ public:
 	/// has a different number of residues than the original scaffold, then
 	/// the calling function must determine where the hit from this build point
 	/// should be inserted.
-	virtual Size original_insertion_point() const = 0;
+	virtual core::Size original_insertion_point() const = 0;
 
 	virtual
 	void
 	insert(
-		Size seqpos_to_insert_at,
+		core::Size seqpos_to_insert_at,
 		Hit const & hit,
 		UpstreamBuilderCOP builder,
 		core::pose::Pose & pose
 	) const = 0;
 
 
-	Size index() const { return index_; }
-	void index( Size setting );
+	core::Size index() const { return index_; }
+	void index( core::Size setting );
 
 private:
-	Size index_;
+	core::Size index_;
 
 };
 

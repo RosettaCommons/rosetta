@@ -357,7 +357,7 @@ void EvaluatedArchive::rescore() {
 
 void EvaluatedArchive::add_evaluation( evaluation::PoseEvaluatorCOP eval, Real weight ) {
 	tr.Info << "added evaluator " << eval->name( 1 ) << " with weight " << weight << " to EvaluatedArchive " << name() << std::endl;
-	for ( Size i=1; i<= eval->size(); i++ ) {
+	for ( core::Size i=1; i<= eval->size(); i++ ) {
 		std::string const& column( eval->name( i ) );
 		set_weight( column, weight );
 		evaluators_[ column ] = eval;

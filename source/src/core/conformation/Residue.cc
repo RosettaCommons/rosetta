@@ -91,7 +91,7 @@ reference_from_restype_ptr( chemical::ResidueTypeCOP rsd_type )
 /// create a residue of type residue_type_in.
 /// @note Dummmy arg to prevent secret type conversions from ResidueTypeCOP to Residue
 Residue::Residue( ResidueTypeCOP rsd_type_in, bool const /*dummy_arg*/ ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	rsd_type_ptr_( rsd_type_in ),
 	rsd_type_( reference_from_restype_ptr( rsd_type_in )),
 	seqpos_( 0 ),
@@ -121,7 +121,7 @@ Residue::Residue( ResidueTypeCOP rsd_type_in, bool const /*dummy_arg*/ ):
 /// create a residue of type residue_type_in.
 /// @note Dummmy arg to prevent secret type conversions from ResidueType to Residue
 Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	rsd_type_ptr_( rsd_type_in.get_self_ptr() ),
 	rsd_type_( rsd_type_in ),
 	seqpos_( 0 ),
@@ -165,7 +165,7 @@ Residue::Residue(
 	bool preserve_c_beta,
 	bool allow_alternate_backbone_matching
 ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	rsd_type_ptr_( rsd_type_in.get_self_ptr() ),
 	rsd_type_( rsd_type_in ),
 	seqpos_( current_rsd.seqpos() ),
@@ -245,7 +245,7 @@ Residue::Residue(
 
 /// @brief Copy constructor.
 Residue::Residue( Residue const & src ) :
-	utility::pointer::ReferenceCount(src),
+	utility::VirtualBase(src),
 	utility::pointer::enable_shared_from_this< Residue >(src),
 	rsd_type_ptr_( src.rsd_type_ptr_ ),
 	rsd_type_(src.rsd_type_)
@@ -261,7 +261,7 @@ Residue::~Residue() = default;
 /// (In most instances, you should make a new Residue with the new ResidueType, and
 /// explicitly copy over the things you want to preserve.
 Residue::Residue( Residue const & src, core::chemical::ResidueTypeCOP new_restype, bool flip_chirality ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	utility::pointer::enable_shared_from_this< Residue >(),
 	rsd_type_ptr_( new_restype ),
 	rsd_type_( *new_restype )

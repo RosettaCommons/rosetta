@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_methods_FreeDOF_Options_HH
 #define INCLUDED_core_scoring_methods_FreeDOF_Options_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/scoring/methods/FreeDOF_Options.fwd.hh>
 #include <core/types.hh>
 
@@ -30,7 +30,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-class FreeDOF_Options: public utility::pointer::ReferenceCount {
+class FreeDOF_Options: public utility::VirtualBase {
 
 public:
 

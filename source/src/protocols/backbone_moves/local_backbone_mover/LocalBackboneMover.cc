@@ -71,7 +71,7 @@ LocalBackboneMover::~LocalBackboneMover()= default;
 /// @brief Apply the mover
 void
 LocalBackboneMover::apply( core::pose::Pose& pose){
-	for ( Size i=1; i<= max_trial_num_; ++i ) {
+	for ( core::Size i=1; i<= max_trial_num_; ++i ) {
 
 		set_free_peptide(pose, pivot1_, pivot2_);
 
@@ -116,8 +116,8 @@ LocalBackboneMover::parse_my_tag(
 
 	// Set the pivots
 
-	pivot1_ = tag->getOption<Size>("pivot1");
-	pivot2_ = tag->getOption<Size>("pivot2");
+	pivot1_ = tag->getOption<core::Size>("pivot1");
+	pivot2_ = tag->getOption<core::Size>("pivot2");
 
 	// Set the free peptide movers
 
@@ -200,7 +200,7 @@ void LocalBackboneMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefin
 	LocalBackboneMover::provide_xml_schema( xsd );
 }
 
-void LocalBackboneMover::set_free_peptide(core::pose::Pose &pose, Size pivot1, Size pivot2){
+void LocalBackboneMover::set_free_peptide(core::pose::Pose &pose, core::Size pivot1, core::Size pivot2){
 	if ( pivot1 < 3 ) {
 		utility_exit_with_message("Residue pivot1 - 2 must exist!");
 	}

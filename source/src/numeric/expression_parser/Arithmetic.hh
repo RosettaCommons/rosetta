@@ -21,7 +21,7 @@
 #include <numeric/types.hh>
 
 /// Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 /// C++ headers
 #include <sstream>
@@ -55,10 +55,10 @@ enum TokenType {
 std::string
 token_type_name( TokenType );
 
-class Token : public utility::pointer::ReferenceCount
+class Token : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Token() override;
 	virtual
 	TokenType
@@ -159,10 +159,10 @@ private:
 	TokenType type_;
 };
 
-class TokenSet : public utility::pointer::ReferenceCount
+class TokenSet : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~TokenSet() override;
 	TokenSet();
 
@@ -189,10 +189,10 @@ private:
 	std::list< TokenCOP >::iterator curr_pos_;
 };
 
-class ArithmeticScanner : public utility::pointer::ReferenceCount
+class ArithmeticScanner : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ArithmeticScanner() override;
 	/// @brief Constructor which adds the "standard" set of min, max and sqrt functions.
 	ArithmeticScanner();
@@ -235,10 +235,10 @@ public:
 
 /// @brief Base class for Abstract Syntax Tree (AST) for the simple
 /// Arithmetic language defined here.
-class ArithmeticASTNode : public utility::pointer::ReferenceCount
+class ArithmeticASTNode : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ArithmeticASTNode() override;
 	virtual
 	void
@@ -528,10 +528,10 @@ private:
 };
 
 /// @brief Double-dispatch visitor pattern for abstract syntax tree
-class ASTVisitor : public utility::pointer::ReferenceCount
+class ASTVisitor : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ASTVisitor() override;
 
 	virtual
@@ -776,10 +776,10 @@ public:
 
 /// @brief Pure virtual base class to define arbitrary expressions for
 /// scripting arithmetic operations (e.g. addition and multipliction).
-class Expression : public utility::pointer::ReferenceCount
+class Expression : public utility::VirtualBase
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~Expression() override;
 
 	virtual

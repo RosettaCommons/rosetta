@@ -23,7 +23,7 @@
 
 // utility headers
 #include <utility/options/keys/OptionKeyList.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/options/keys/OptionKey.fwd.hh>
 
@@ -39,7 +39,7 @@ namespace protocols {
 namespace jd3 {
 namespace pose_inputters {
 
-class PoseInputterCreator : public utility::pointer::ReferenceCount
+class PoseInputterCreator : public utility::VirtualBase
 {
 public:
 	virtual PoseInputterOP create_inputter() const = 0;

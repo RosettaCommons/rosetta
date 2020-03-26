@@ -87,7 +87,7 @@ BinTransitionData::BinTransitionData(): //TODO -- initialize variables here:
 /// @brief Copy constructor for BinTransitionData
 ///
 BinTransitionData::BinTransitionData( BinTransitionData const &src ): //TODO -- copy variables here:
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	n_mainchain_torsions_i_(src.n_mainchain_torsions_i_),
 	n_mainchain_torsions_iplus1_(src.n_mainchain_torsions_iplus1_),
 	n_bins_i_(src.n_bins_i_),

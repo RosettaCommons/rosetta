@@ -176,14 +176,14 @@ OopCreatorMover::apply(
 
 	scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 
-	utility::vector1< Size > all_positions;
+	utility::vector1< core::Size > all_positions;
 
-	utility::vector1< Size > plus_positions;
+	utility::vector1< core::Size > plus_positions;
 	if ( oop_plus_positions_ ) { //option[ oop_creator::oop_plus_positions].value();
 		plus_positions = core::select::get_residues_from_subset( oop_plus_positions_->apply( pose ) );
 	}
 	all_positions.insert( all_positions.end(), plus_positions.begin(), plus_positions.end() );
-	for ( Size i = 1; i <= plus_positions.size(); i++ ) {
+	for ( core::Size i = 1; i <= plus_positions.size(); i++ ) {
 		OopPatcherOP oop_patcher( new OopPatcher( plus_positions[i] ) );
 		oop_patcher->apply( pose );
 
@@ -191,12 +191,12 @@ OopCreatorMover::apply(
 		opm_plus->apply( pose );
 	}
 
-	utility::vector1< Size > minus_positions;
+	utility::vector1< core::Size > minus_positions;
 	if ( oop_minus_positions_ ) { //option[ oop_creator::oop_minus_positions].value();
 		minus_positions = core::select::get_residues_from_subset( oop_minus_positions_->apply( pose ) );
 	}
 	all_positions.insert( all_positions.end(), minus_positions.begin(), minus_positions.end() );
-	for ( Size i = 1; i <= minus_positions.size(); i++ ) {
+	for ( core::Size i = 1; i <= minus_positions.size(); i++ ) {
 		OopPatcherOP oop_patcher( new OopPatcher( minus_positions[i] ) );
 		oop_patcher->apply( pose );
 
@@ -204,12 +204,12 @@ OopCreatorMover::apply(
 		opm_minus->apply( pose );
 	}
 
-	utility::vector1< Size > d_plus_positions;
+	utility::vector1< core::Size > d_plus_positions;
 	if ( oop_d_plus_positions_ ) { //option[ oop_creator::oop_d_plus_positions].value();
 		d_plus_positions = core::select::get_residues_from_subset( oop_d_plus_positions_->apply( pose ) );
 	}
 	all_positions.insert( all_positions.end(), d_plus_positions.begin(), d_plus_positions.end() );
-	for ( Size i = 1; i <= d_plus_positions.size(); i++ ) {
+	for ( core::Size i = 1; i <= d_plus_positions.size(); i++ ) {
 		OopPatcherOP oop_patcher( new OopPatcher( d_plus_positions[i] ) );
 		oop_patcher->apply( pose );
 
@@ -217,12 +217,12 @@ OopCreatorMover::apply(
 		opm_plus->apply( pose );
 	}
 
-	utility::vector1< Size > d_minus_positions;
+	utility::vector1< core::Size > d_minus_positions;
 	if ( oop_d_minus_positions_ ) { //option[ oop_creator::oop_d_minus_positions].value();
 		d_minus_positions = core::select::get_residues_from_subset( oop_d_minus_positions_->apply( pose ) );
 	}
 	all_positions.insert( all_positions.end(), d_minus_positions.begin(), d_minus_positions.end() );
-	for ( Size i = 1; i <= d_minus_positions.size(); i++ ) {
+	for ( core::Size i = 1; i <= d_minus_positions.size(); i++ ) {
 		OopPatcherOP oop_patcher( new OopPatcher( d_minus_positions[i] ) );
 		oop_patcher->apply( pose );
 
@@ -230,12 +230,12 @@ OopCreatorMover::apply(
 		opm_minus->apply( pose );
 	}
 
-	utility::vector1< Size > low_e_puck_positions;
+	utility::vector1< core::Size > low_e_puck_positions;
 	if ( oop_low_e_puck_positions_ ) { //option[ oop_creator::oop_low_e_puck_positions ].value();
 		low_e_puck_positions = core::select::get_residues_from_subset( oop_low_e_puck_positions_->apply( pose ) );
 	}
 	all_positions.insert( all_positions.end(), low_e_puck_positions.begin(), low_e_puck_positions.end() );
-	for ( Size i = 1; i <= low_e_puck_positions.size(); ++i ) {
+	for ( core::Size i = 1; i <= low_e_puck_positions.size(); ++i ) {
 		OopPatcherOP oop_patcher( new OopPatcher( low_e_puck_positions[i] ) );
 		oop_patcher->apply( pose );
 		//kdrew: poor man's version for now, if L use PuckPlus, if D use DPuckPlus
@@ -256,7 +256,7 @@ OopCreatorMover::apply(
 
 	//kdrew: sets oop_post phi/psi near low energy well
 	if ( final_correct_oop_post_ ) { //option[ oop_creator::correct_oop_post ].value() )
-		for ( Size i = 1; i <= all_positions.size(); ++i ) {
+		for ( core::Size i = 1; i <= all_positions.size(); ++i ) {
 			//kdrew: the +1 is to get the oop_post position
 			if ( pose.residue_type( all_positions[i] +1 ).is_d_aa() ) {
 				pose.set_phi( all_positions[i] +1, 135.0 ) ;
@@ -273,19 +273,19 @@ OopCreatorMover::apply(
 	//kdrew: create glycine residue
 	ResidueOP gly( ResidueFactory::create_residue( *core::pose::get_restype_for_pose( pose, "GLY" ) ) );
 
-	Size pep_begin( pose.conformation().chain_begin( 1 ) );
-	Size pep_end( pose.conformation().chain_end( 1 ) );
+	core::Size pep_begin( pose.conformation().chain_begin( 1 ) );
+	core::Size pep_end( pose.conformation().chain_end( 1 ) );
 
 	//kdrew: since we probably added new connection types (i.e. oop CYP and CZP atoms) above, need to reset connections
 	pose.conformation().detect_bonds();
 	pose.conformation().detect_pseudobonds();
-	for ( Size i=1; i<=pose.size(); ++i ) {
+	for ( core::Size i=1; i<=pose.size(); ++i ) {
 		pose.conformation().update_polymeric_connection(i);
 	}
 
 	//kdrew: grabbed code from chrisk pep_spec
 	//kdrew: append residues , hard coded to glycine
-	for ( Size i = 1; i <= append_n_residues_ /*Size( option[ oop_creator::append_n_residues ].value() ) */; ++i ) {
+	for ( core::Size i = 1; i <= append_n_residues_ /*core::Size( option[ oop_creator::append_n_residues ].value() ) */; ++i ) {
 		TR << "in append: " << pep_end << std::endl;
 		pose.conformation().safely_append_polymer_residue_after_seqpos( *gly, pep_end, true );
 		pep_end = pep_end + 1;
@@ -294,7 +294,7 @@ OopCreatorMover::apply(
 		pose.conformation().update_polymeric_connection( pep_end - 1 );
 	}
 	//kdrew: prepend residues , hard coded to glycine
-	for ( Size i = 1; i <= append_n_residues_ /*Size( option[ oop_creator::prepend_n_residues ].value() )*/ ; ++i ) {
+	for ( core::Size i = 1; i <= append_n_residues_ /*core::Size( option[ oop_creator::prepend_n_residues ].value() )*/ ; ++i ) {
 		TR << "in prepend: " << pep_begin << std::endl;
 		pose.conformation().safely_prepend_polymer_residue_before_seqpos( *gly, pep_begin, true );
 		pep_end = pep_end + 1;
@@ -316,9 +316,9 @@ OopCreatorMover::apply(
 		pert_pep_small->angle_max( 'L', 2.0 );
 		pert_pep_small->angle_max( 'E', 2.0 );
 
-		utility::vector1< Size > oop_pre_positions;
+		utility::vector1< core::Size > oop_pre_positions;
 		//kdrew: load all oop_pre positions into vector and make all non-oop_pre positions movable by small mover
-		for ( Size i = 1; i <= pose.size(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			TR << "resid: " << i << " is OOP_PRE: " << pose.residue(i).has_variant_type(chemical::OOP_PRE) << std::endl;
 
 			if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) != 1 ) {
@@ -379,9 +379,9 @@ OopCreatorMover::apply(
 		pert_pep_small->angle_max( 'L', 2.0 );
 		pert_pep_small->angle_max( 'E', 2.0 );
 
-		utility::vector1< Size > oop_pre_positions;
+		utility::vector1< core::Size > oop_pre_positions;
 		//kdrew: load all oop_pre positions into vector and make all non-oop_pre positions movable by small mover
-		for ( Size i = 1; i <= pose.size(); ++i ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 			if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) != 1 ) {
 				pert_pep_mm->set_bb( i );
 			} else {
@@ -436,7 +436,7 @@ OopCreatorMover::apply(
 		using namespace numeric::conversions;
 
 		//kdrew: add constraints to omega angle, (this problem might have been fixed and these constraints are unnecessary)
-		for ( Size i = 1; i < pose.conformation().chain_end( 1 ); ++i ) {
+		for ( core::Size i = 1; i < pose.conformation().chain_end( 1 ); ++i ) {
 			AtomID id1,id2,id3,id4;
 			TorsionID torsion_id = TorsionID( i, BB, 3 ); //kdrew: 3 is omega angle
 			//kdrew: put constraint on omega angle

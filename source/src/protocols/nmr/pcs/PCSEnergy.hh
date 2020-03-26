@@ -146,7 +146,7 @@ public: // Methods
 	) const override;
 
 	/// @brief Return the version of the energy method
-	Size
+	core::Size
 	version() const override;
 
 private: // Methods
@@ -177,7 +177,7 @@ private: // Methods
 		Pose & pose,
 		utility::vector1< core::scoring::nmr::pcs::PCSSingleSetOP > & pcs_singlesets,
 		Vector & metal_coords,
-		Size tag_residue_number,
+		core::Size tag_residue_number,
 		bool optimize_tensors=false
 	) const;
 
@@ -188,7 +188,7 @@ private: // Methods
 		utility::vector1< core::scoring::nmr::pcs::PCSSingleSetOP > & pcs_singlesets,
 		Vector & metal_coords,
 		utility::fixedsizearray1<Real,6> const & metal_coord_range,
-		Size tag_residue_number
+		core::Size tag_residue_number
 	) const;
 
 	/// @brief Minimize input PCS tensors with line search

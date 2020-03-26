@@ -69,7 +69,7 @@ BBGaussianMover::BBGaussianMover()
 	init();
 }
 
-BBGaussianMover::BBGaussianMover(Size n_end_atom, Size n_dof_angle, Size n_pert_res)
+BBGaussianMover::BBGaussianMover(core::Size n_end_atom, core::Size n_dof_angle, core::Size n_pert_res)
 :protocols::canonical_sampling::ThermodynamicMover(),
 	n_end_atom_(n_end_atom),
 	n_dof_angle_(n_dof_angle),
@@ -100,7 +100,7 @@ BBGaussianMover::clone() const {
 }
 
 
-void BBGaussianMover::resize(Size n_end_atom, Size n_dof_angle, Size n_pert_res)
+void BBGaussianMover::resize(core::Size n_end_atom, core::Size n_dof_angle, core::Size n_pert_res)
 {
 	n_end_atom_ = n_end_atom;
 	n_dof_angle_ = n_dof_angle;
@@ -117,9 +117,9 @@ void BBGaussianMover::init()
 	protocols::moves::Mover::type("BBGaussianMover");
 
 	//build end atom list
-	end_atom_list_.push_back(std::pair<Size, std::string>(0,"CA"));
-	end_atom_list_.push_back(std::pair<Size, std::string>(0,"C"));
-	end_atom_list_.push_back(std::pair<Size, std::string>(0,"O"));
+	end_atom_list_.push_back(std::pair<core::Size, std::string>(0,"CA"));
+	end_atom_list_.push_back(std::pair<core::Size, std::string>(0,"C"));
+	end_atom_list_.push_back(std::pair<core::Size, std::string>(0,"O"));
 	n_end_atom_ = 3;
 
 	//init the A/C factor
@@ -166,7 +166,7 @@ void BBGaussianMover::setup_list(Pose const &pose)
 					} else {
 						last = n-1;
 					}
-					std::pair<Size, Size> seg(first, last);
+					std::pair<core::Size, core::Size> seg(first, last);
 					available_seg_list_.push_back(seg);
 				}
 				seg_len = 0;
@@ -235,7 +235,7 @@ void BBGaussianMover::setup_list(Pose const &pose)
 						}
 
 						//get one
-						std::pair<Size, Size> seg(part1,part2);
+						std::pair<core::Size, core::Size> seg(part1,part2);
 						available_seg_list_.push_back(seg);
 					}
 				}
@@ -244,7 +244,7 @@ void BBGaussianMover::setup_list(Pose const &pose)
 		}
 	}
 
-	Size nseg = available_seg_list_.size();
+	core::Size nseg = available_seg_list_.size();
 	//check logic
 	if ( use_all_pivot_res_ ) {
 		if ( n_dof_angle_ != (n_pert_res_-nseg)*2 + (shrink_frag_ends_ ? 0 : 2*nseg) ) {
@@ -253,7 +253,7 @@ void BBGaussianMover::setup_list(Pose const &pose)
 		}
 	}
 	//debug info
-	for ( Size i=1; i<=nseg; i++ ) {
+	for ( core::Size i=1; i<=nseg; i++ ) {
 		TR.Debug << "Seg " << i << ": " << available_seg_list_[i].first << "<-->" << available_seg_list_[i].second << std::endl;
 	}
 }
@@ -282,9 +282,9 @@ void BBGaussianMover::movemap_factory(core::select::movemap::MoveMapFactoryCOP n
 	available_seg_list_.erase(available_seg_list_.begin(),available_seg_list_.end());
 }
 
-core::Real BBGaussianMover::cholesky_fw(Matrix &a, Size n, Vector &delta, Vector &dphi, Size from, Size to, Real scale)
+core::Real BBGaussianMover::cholesky_fw(Matrix &a, core::Size n, Vector &delta, Vector &dphi, core::Size from, core::Size to, Real scale)
 {
-	Size i,j,k;
+	core::Size i,j,k;
 	Real sum;
 	Vector p(n);
 
@@ -320,9 +320,9 @@ core::Real BBGaussianMover::cholesky_fw(Matrix &a, Size n, Vector &delta, Vector
 	return detL;
 }
 
-core::Real BBGaussianMover::cholesky_bw(Matrix &a, Size n, Vector &dphi, Vector &delta, Size from, Size to, Real scale)
+core::Real BBGaussianMover::cholesky_bw(Matrix &a, core::Size n, Vector &dphi, Vector &delta, core::Size from, core::Size to, Real scale)
 {
-	Size i,j,k;
+	core::Size i,j,k;
 	Real sum;
 	Vector p(n);
 
@@ -359,7 +359,7 @@ core::Real BBGaussianMover::cholesky_bw(Matrix &a, Size n, Vector &dphi, Vector 
 }
 
 /// @brief randomly rotate the dih angle in this range for avoiding the fixed ends
-void BBGaussianMover::pivot_range_randomly(Pose &pose, Size i, Size to)
+void BBGaussianMover::pivot_range_randomly(Pose &pose, core::Size i, core::Size to)
 {
 	//copy from Backbone mover, make_move()
 	static Real big_angle_= 12.0;//loop parameter
@@ -390,10 +390,10 @@ BBGaussianMover::factorB( core::Real const fB ){
 
 void BBGaussianMover::get_G()
 {
-	for ( Size i=1; i<=n_dof_angle_; i++ ) {
-		for ( Size j=i; j<=n_dof_angle_; j++ ) {
+	for ( core::Size i=1; i<=n_dof_angle_; i++ ) {
+		for ( core::Size j=i; j<=n_dof_angle_; j++ ) {
 			matrix_G[i][j] = 0.0;
-			for ( Size n=1; n<=end_atom_list_.size(); n++ ) {
+			for ( core::Size n=1; n<=end_atom_list_.size(); n++ ) {
 				matrix_G[i][j] += matrix_dRdPhi[n][i].dot(matrix_dRdPhi[n][j]);
 			}
 			//if (matrix_G[i][j]>-ZERO && matrix_G[i][j]<ZERO) matrix_G[i][j] = 0.0;
@@ -405,8 +405,8 @@ void BBGaussianMover::get_G()
 
 void BBGaussianMover::get_A()
 {
-	for ( Size i=1; i<=n_dof_angle_; i++ ) {
-		for ( Size j=i; j<=n_dof_angle_; j++ ) {
+	for ( core::Size i=1; i<=n_dof_angle_; i++ ) {
+		for ( core::Size j=i; j<=n_dof_angle_; j++ ) {
 			matrix_A[i][j] = factorB_ * matrix_G[i][j];
 			if ( i==j ) matrix_A[i][j] += 1.0;
 			matrix_A[i][j] *= factorA_ / 2.0;
@@ -423,7 +423,7 @@ core::Real BBGaussianMover::get_L_prime()
 
 	//calculate d^2 = delta^2
 	Real d2=0.0;
-	for ( Size i=1; i<=n_dof_angle_; i++ ) d2+=delta[i]*delta[i];
+	for ( core::Size i=1; i<=n_dof_angle_; i++ ) d2+=delta[i]*delta[i];
 
 	Real W_new = detL*exp(-d2/2.0);
 
@@ -434,11 +434,11 @@ core::Real BBGaussianMover::get_L_move(Pose &pose)
 {
 	//gerate a Gaussian dx vector
 	Vector delta(n_dof_angle_);
-	for ( Size i=1; i<=n_dof_angle_; i++ ) delta[i] = numeric::random::rg().gaussian();
+	for ( core::Size i=1; i<=n_dof_angle_; i++ ) delta[i] = numeric::random::rg().gaussian();
 
 	//calculate d^2 = delta^2
 	Real d2=0.0;
-	for ( Size i=1; i<=n_dof_angle_; i++ ) d2 += delta[i]*delta[i];
+	for ( core::Size i=1; i<=n_dof_angle_; i++ ) d2 += delta[i]*delta[i];
 
 	//cholesky, get L^t, L^-1
 	Real detL = cholesky_fw(matrix_A, n_dof_angle_, delta, dphi_);
@@ -446,13 +446,13 @@ core::Real BBGaussianMover::get_L_move(Pose &pose)
 	//W_old *= exp(-d^2)
 	Real W_old = detL*exp(-d2/2.0);
 
-	Size n_dof=n_dof_angle_;
+	core::Size n_dof=n_dof_angle_;
 	if ( use_all_pivot_res_ ) {
 		//go through each segment
-		for ( Size seg=1, eseg=available_seg_list_.size(); seg<=eseg; seg++ ) {
-			Size left = available_seg_list_[seg].first;
-			Size right = available_seg_list_[seg].second;
-			for ( Size j=right; j>=left; j-- ) {
+		for ( core::Size seg=1, eseg=available_seg_list_.size(); seg<=eseg; seg++ ) {
+			core::Size left = available_seg_list_[seg].first;
+			core::Size right = available_seg_list_[seg].second;
+			for ( core::Size j=right; j>=left; j-- ) {
 				//check count
 				runtime_assert(n_dof>0);
 				//conformation::Residue const & rsd( pose.residue( j ) );
@@ -468,8 +468,8 @@ core::Real BBGaussianMover::get_L_move(Pose &pose)
 		}
 	} else {
 		//set the new phi,psi (above all called phi, actually 4 phi, 4 psi)
-		for ( Size j=0; j<n_pert_res_; j++ ) {
-			Size ndx = resnum_-j;
+		for ( core::Size j=0; j<n_pert_res_; j++ ) {
+			core::Size ndx = resnum_-j;
 			pose.set_psi(ndx, basic::periodic_range( pose.psi(ndx)+dphi_[n_dof--], 360.0 ) );
 			pose.set_phi(ndx, basic::periodic_range( pose.phi(ndx)+dphi_[n_dof--], 360.0 ) );
 		}
@@ -481,9 +481,9 @@ core::Real BBGaussianMover::get_L_move(Pose &pose)
 
 void BBGaussianMover::get_VdRdPhi(Pose const &pose)
 {
-	for ( Size i=1; i<=end_atom_list_.size(); i++ ) {
+	for ( core::Size i=1; i<=end_atom_list_.size(); i++ ) {
 		//for each end atom
-		Size lock_res = end_atom_list_[i].first;
+		core::Size lock_res = end_atom_list_[i].first;
 		xyzVector end_xyz;
 		if ( lock_res==0 ) {
 			runtime_assert(resnum_>0);
@@ -502,14 +502,14 @@ void BBGaussianMover::get_VdRdPhi(Pose const &pose)
 			}
 		}
 
-		Size n_dof = n_dof_angle_;
+		core::Size n_dof = n_dof_angle_;
 		if ( use_all_pivot_res_ ) {
 			//use_all and fix_tail
 			//go through each segment
-			for ( Size seg=1, eseg=available_seg_list_.size(); seg<=eseg; seg++ ) {
-				Size left = available_seg_list_[seg].first;
-				Size right = available_seg_list_[seg].second;
-				for ( Size j=right; j>=left; j-- ) {
+			for ( core::Size seg=1, eseg=available_seg_list_.size(); seg<=eseg; seg++ ) {
+				core::Size left = available_seg_list_[seg].first;
+				core::Size right = available_seg_list_[seg].second;
+				for ( core::Size j=right; j>=left; j-- ) {
 					//check count
 					runtime_assert(n_dof>0);
 					conformation::Residue const & rsd( pose.residue( j ) );
@@ -525,7 +525,7 @@ void BBGaussianMover::get_VdRdPhi(Pose const &pose)
 			//use N, should be continous
 			// old logic:
 			// go through continues n
-			for ( Size j=0; j<n_pert_res_; j++ ) {
+			for ( core::Size j=0; j<n_pert_res_; j++ ) {
 				conformation::Residue const & rsd( pose.residue( resnum_ - j ) );
 				matrix_dRdPhi[i][n_dof--] = get_dRdPhi(rsd.atom("CA").xyz(), rsd.atom("C").xyz(), end_xyz);
 				matrix_dRdPhi[i][n_dof--] = get_dRdPhi(rsd.atom("N").xyz(), rsd.atom("CA").xyz(), end_xyz);
@@ -550,8 +550,8 @@ void BBGaussianMover::apply(Pose &pose)
 		//last res of the last frag
 		resnum_ = available_seg_list_.back().second;
 	} else {
-		Size left=0;
-		Size ndx = static_cast< int >( numeric::random::rg().uniform()*available_seg_list_.size()+1 );
+		core::Size left=0;
+		core::Size ndx = static_cast< int >( numeric::random::rg().uniform()*available_seg_list_.size()+1 );
 		left = available_seg_list_[ ndx ].first;
 		resnum_ = available_seg_list_[ ndx ].second;
 
@@ -578,13 +578,13 @@ void BBGaussianMover::apply(Pose &pose)
 	last_proposal_density_ratio_ = W_new / W_old;
 }
 
-void BBGaussianMover::init_kic_loop(Size looplength, core::kinematics::MoveMapCOP mm)
+void BBGaussianMover::init_kic_loop(core::Size looplength, core::kinematics::MoveMapCOP mm)
 {
 	//restrain the last residue
 	end_atom_list_.erase(end_atom_list_.begin(), end_atom_list_.end());
-	end_atom_list_.push_back(std::pair<Size, std::string>(looplength, "N"));
-	end_atom_list_.push_back(std::pair<Size, std::string>(looplength, "CA"));
-	//end_atom_list_.push_back(std::pair<Size, std::string>(looplength-1, "C"));
+	end_atom_list_.push_back(std::pair<core::Size, std::string>(looplength, "N"));
+	end_atom_list_.push_back(std::pair<core::Size, std::string>(looplength, "CA"));
+	//end_atom_list_.push_back(std::pair<core::Size, std::string>(looplength-1, "C"));
 
 	n_end_atom_ = 2;
 
@@ -593,7 +593,7 @@ void BBGaussianMover::init_kic_loop(Size looplength, core::kinematics::MoveMapCO
 	//n_dof_angle_ = n_pert_res_ * 2 - 2; // two angles for each mobile res
 	n_pert_res_ = 0;
 	n_dof_angle_ = 0;
-	for ( Size i=1; i<=looplength; i++ ) {
+	for ( core::Size i=1; i<=looplength; i++ ) {
 		if ( mm->get_bb(i) ) {
 			++n_pert_res_;
 			n_dof_angle_+=2;
@@ -630,23 +630,23 @@ void BBGaussianMover::parse_my_tag(
 		end_atom_list_.erase(end_atom_list_.begin(), end_atom_list_.end());
 		std::string const end_atoms_string( tag->getOption<std::string>("end_atoms") );
 		utility::vector1<std::string> end_atoms = utility::string_split( end_atoms_string, ',' );
-		Size n_lock = end_atoms.size();
+		core::Size n_lock = end_atoms.size();
 		runtime_assert(n_lock%2==0);
 		n_lock /= 2;
-		for ( Size i=1; i<=n_lock; i++ ) {
-			Size lock;
+		for ( core::Size i=1; i<=n_lock; i++ ) {
+			core::Size lock;
 			// readin new end
 			std::stringstream ss(end_atoms[i*2-1]);
 			ss >> lock;
-			end_atom_list_.push_back(std::pair<Size, std::string>(lock, end_atoms[i*2]));
+			end_atom_list_.push_back(std::pair<core::Size, std::string>(lock, end_atoms[i*2]));
 			TR.Debug << end_atom_list_[i].first << " " << end_atom_list_[i].second << std::endl;
 		}
 		n_end_atom_ = n_lock;
 	}
 
 	//default value is for 4 continous res, and 8 assosiated dih
-	n_dof_angle_ = tag->getOption< Size >("dof", 8);
-	n_pert_res_ = tag->getOption< Size >("pivot", 4);
+	n_dof_angle_ = tag->getOption< core::Size >("dof", 8);
+	n_pert_res_ = tag->getOption< core::Size >("pivot", 4);
 
 	use_all_pivot_res_ = tag->getOption< bool >("use_all", false);
 

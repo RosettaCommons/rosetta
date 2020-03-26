@@ -83,7 +83,7 @@ void FavorSymmetricSequence::parse_my_tag(
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'FavorSymmetricSequence' symmetric_units tag should specify at least 2 symmetric units");
 	}
 
-	for ( std::map< std::string, utility::pointer::ReferenceCountOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ) {
+	for ( std::map< std::string, utility::VirtualBaseOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ) {
 		core::scoring::ScoreFunctionOP scorefxn( data.get_ptr< core::scoring::ScoreFunction >( "scorefxns", it->first ) );
 		if ( scorefxn->get_weight( core::scoring::res_type_linking_constraint ) == 0.0 ) {
 			scorefxn->set_weight( core::scoring::res_type_linking_constraint, 1.0 );

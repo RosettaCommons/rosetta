@@ -145,7 +145,7 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 
 	initialize_for_movie( pose );
 
-	Size k( 0 );
+	core::Size k( 0 );
 	// Restore value of k from pose checkpoint, if possible.
 	if ( hasPoseExtraScore( pose, "frame" ) ) {
 		k = getPoseExtraScore( pose, "frame" );
@@ -162,11 +162,11 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 	// If options_->continue_until_none_missing() is true, also require there to be
 	// zero missing at end. Caveat: if there are bulge_res, we should account for
 	// them appropriately (it's kind of a legacy option, but it still matters)
-	Size n_missing = pose.energies().total_energies()[ missing_res ]/ pose.energies().weights()[ missing_res ];
-	Size n_bulge = core::pose::full_model_info::const_full_model_info( pose ).rna_bulge_res().size();
+	core::Size n_missing = pose.energies().total_energies()[ missing_res ]/ pose.energies().weights()[ missing_res ];
+	core::Size n_bulge = core::pose::full_model_info::const_full_model_info( pose ).rna_bulge_res().size();
 	bool none_missing_or_incomplete_okay = ( !options_->continue_until_none_missing() || n_missing == n_bulge );
 
-	while ( k < Size( options_->cycles() ) && none_missing_or_incomplete_okay ) {
+	while ( k < core::Size( options_->cycles() ) && none_missing_or_incomplete_okay ) {
 
 		if ( success ) before_move_score = display_progress( pose, k+1 );
 
@@ -239,7 +239,7 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 
 // AMW: no need to have k in there because we only want latest
 void
-StepWiseMonteCarlo::output_checkpoint_file( pose::Pose const & pose, pose::Pose const & lowest, Size const k ) const {
+StepWiseMonteCarlo::output_checkpoint_file( pose::Pose const & pose, pose::Pose const & lowest, core::Size const k ) const {
 	// I don't think we'll need this. In theory we could store a bunch of checkpoints and restore only the one with biggest frame.
 	Pose pose_copy = pose;
 	setPoseExtraScore(pose_copy, "frame", k);
@@ -337,7 +337,7 @@ StepWiseMonteCarlo::initialize_for_movie( pose::Pose const & pose ){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseMonteCarlo::output_movie( pose::Pose const & pose, Size const k, std::string const & tag, std::string const & movie_file ){
+StepWiseMonteCarlo::output_movie( pose::Pose const & pose, core::Size const k, std::string const & tag, std::string const & movie_file ){
 	if ( !options_->make_movie() ) return;
 	Pose pose_copy = pose;
 	setPoseExtraScore(pose_copy, "frame", k);
@@ -353,7 +353,7 @@ StepWiseMonteCarlo::anneal_missing( protocols::moves::MonteCarloOP monte_carlo )
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Real
-StepWiseMonteCarlo::display_progress( pose::Pose & pose, Size const cycle_num ){
+StepWiseMonteCarlo::display_progress( pose::Pose & pose, core::Size const cycle_num ){
 	using namespace core::pose::full_model_info;
 	TR << std::endl << TR.Blue << "Embarking on cycle " << cycle_num << " of " << options_->cycles() << TR.Reset << std::endl;
 	Real const before_move_score = show_scores( pose, "Before-move score:" );

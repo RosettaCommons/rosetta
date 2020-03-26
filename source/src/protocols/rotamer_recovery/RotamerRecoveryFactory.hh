@@ -28,7 +28,7 @@
 // Platform Headers
 #include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/VirtualBase.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -57,7 +57,7 @@ public:
 	// Warning this is not called because of the singleton pattern
 	virtual ~RotamerRecoveryFactory();
 
-	void factory_register( utility::pointer::ReferenceCountOP creator );
+	void factory_register( utility::VirtualBaseOP creator );
 	//void factory_register( RRProtocolCreatorCOP creator );
 	//void factory_register( RRComparerCreatorCOP creator );
 	//void factory_register( RRReporterCreatorCOP creator );

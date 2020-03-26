@@ -31,7 +31,7 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/numeric.functions.hh>
 
 #include <basic/Tracer.hh>
@@ -112,7 +112,7 @@ FoldConstraints::FoldConstraints(
 
 /// @details SHALLOW copy.
 FoldConstraints::FoldConstraints( FoldConstraints const & src ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Parent( src )
 {
 	min_move_ = src.min_move_;
@@ -171,12 +171,12 @@ void FoldConstraints::set_default_options() {
 
 //otherwise stage2 cycles remain as in the classic protocol
 Size FoldConstraints::total_res( core::pose::Pose const& pose ) const {
-	return static_cast< Size >( std::min( 1.0*pose.size(), constraints_->largest_possible_sequence_sep( pose ) * max_seq_sep_fudge_ ) );
+	return static_cast< core::Size >( std::min( 1.0*pose.size(), constraints_->largest_possible_sequence_sep( pose ) * max_seq_sep_fudge_ ) );
 }
 
 // what's an noe_stage?
-Size noe_stage( Size total_res, Real factor ) {
-	return static_cast< Size >( std::min( factor, 1.0 ) * total_res );
+Size noe_stage( core::Size total_res, Real factor ) {
+	return static_cast< core::Size >( std::min( factor, 1.0 ) * total_res );
 }
 
 bool
@@ -187,7 +187,7 @@ FoldConstraints::prepare_stage1( core::pose::Pose& pose ) {
 }
 
 void
-FoldConstraints::set_max_seq_sep( core::pose::Pose& pose, Size setting ) {
+FoldConstraints::set_max_seq_sep( core::pose::Pose& pose, core::Size setting ) {
 	using namespace basic::options;
 	if ( pose.constraint_set()->has_residue_pair_constraints() ) {
 		tr.Info << "max_seq_sep: " << setting << std::endl;
@@ -215,7 +215,7 @@ FoldConstraints::do_stage1_cycles( pose::Pose& pose ) {
 	using namespace basic::options::OptionKeys;
 	moves::MoverOP trial( stage1_mover( pose, trial_large() ) );
 	core::Real const cycle_factor( option[ fold_cst::stage1_ramp_cst_cycle_factor ] );
-	auto const cycles ( static_cast< Size > ( cycle_factor * stage1_cycles() ) );
+	auto const cycles ( static_cast< core::Size > ( cycle_factor * stage1_cycles() ) );
 	int total_cycles = 0;
 	if ( tr.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
 	//first run a normal set of fragment insertions until extended chain is lost
@@ -224,14 +224,14 @@ FoldConstraints::do_stage1_cycles( pose::Pose& pose ) {
 
 	if ( pose.constraint_set()->has_residue_pair_constraints() ) {
 		// Now ramp up the seq_sep of the constraints... still on score0
-		for ( Size jk = 3; jk <= noe_stage( total_res( pose ), seq_sep_stage1_); jk += 2 ) {
+		for ( core::Size jk = 3; jk <= noe_stage( total_res( pose ), seq_sep_stage1_); jk += 2 ) {
 			//  mc().recover_low( pose ); superfluous -- done in set_max_seq_sep if constraints are actually present
 			set_max_seq_sep( pose, jk);
 			if ( tr.visible() ) pose.constraint_set()->show_violations( tr, pose, show_viol_level_ );
 			if ( old_constraint_score == evaluate_constraint_energy ( pose, mc().score_function() ) ) continue;
-			for ( Size j = 1; j <= cycles; ++j, ++total_cycles ) {
+			for ( core::Size j = 1; j <= cycles; ++j, ++total_cycles ) {
 				//   if ( evaluate_constraint_energy( pose, mc().score_function() ) < 10.0 ) break; this is unlikely to be triggered for cnc and always triggered for james-cst
-				if ( numeric::mod( j, (Size)10)==0 && bSkipOnNoViolation_ && pose.constraint_set()->show_violations( tr, pose, 0 ) == 0 ) break;
+				if ( numeric::mod( j, (core::Size)10)==0 && bSkipOnNoViolation_ && pose.constraint_set()->show_violations( tr, pose, 0 ) == 0 ) break;
 				trial->apply( pose );
 			}
 			old_constraint_score = evaluate_constraint_energy ( pose, mc().score_function() );
@@ -259,11 +259,11 @@ FoldConstraints::do_stage2_cycles( pose::Pose& pose ) {
 	// if ramp_cycles drop atom_pair_constraint weight to low value and ramp up
 	if ( success && ramp_cst_cycles_ > 500 ) {
 		moves::MoverOP trial( stage2_mover( pose, trial_large() ) );
-		for ( Size loop = 1; loop <= ramp_iterations_; loop++ ) {
+		for ( core::Size loop = 1; loop <= ramp_iterations_; loop++ ) {
 			mc().recover_low( pose );
 			Real const final_weight( current_scorefxn().get_weight( scoring::atom_pair_constraint ) );
-			for ( Size j=1; j<=ramp_cst_cycles_; j++ ) {
-				if ( numeric::mod( j, (Size) 50 ) == 0 ) {
+			for ( core::Size j=1; j<=ramp_cst_cycles_; j++ ) {
+				if ( numeric::mod( j, (core::Size) 50 ) == 0 ) {
 					Real weight( (start_ramp_cstweight_ + (1.0-start_ramp_cstweight_)*j/ramp_cst_cycles_ )*final_weight );
 					set_current_weight( scoring::atom_pair_constraint, weight );
 				}
@@ -275,7 +275,7 @@ FoldConstraints::do_stage2_cycles( pose::Pose& pose ) {
 }
 
 bool
-FoldConstraints::prepare_loop_in_stage3( core::pose::Pose &pose, Size loop_iteration, Size total_iterations ) {
+FoldConstraints::prepare_loop_in_stage3( core::pose::Pose &pose, core::Size loop_iteration, core::Size total_iterations ) {
 	/* stage3 rosetta++
 	noe_stage = 15 + (total_residue/2-15)*kk/nloop;
 	classical_constraints::BOUNDARY::set_max_seqSep(noe_stage);
@@ -306,7 +306,7 @@ FoldConstraints::prepare_loop_in_stage3( core::pose::Pose &pose, Size loop_itera
 }
 
 bool
-FoldConstraints::prepare_loop_in_stage4( core::pose::Pose &pose, Size loop_iteration, Size total_iterations ) {
+FoldConstraints::prepare_loop_in_stage4( core::pose::Pose &pose, core::Size loop_iteration, core::Size total_iterations ) {
 	/* stage3 rosetta++
 	noe_stage = 15 + (total_residue/2-15)*kk/nloop;
 	classical_constraints::BOUNDARY::set_max_seqSep(noe_stage);

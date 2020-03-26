@@ -116,7 +116,7 @@ minimize_all_sampled_floating_bases(
 
 	}
 
-	for ( Size n = 1; n <= pose_data_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose_data_list.size(); n++ ) {
 
 		TR << TR.Blue << "Minimizing pose " << n <<  " out of " << pose_data_list.size() << TR.Reset << std::endl;
 #ifdef GL_GRAPHICS
@@ -129,8 +129,8 @@ minimize_all_sampled_floating_bases(
 		utility::vector1 < core::Size > already_virtualized_res_list;
 
 		if ( virtual_sugar_is_from_prior_step_ ) { //Virtualize the other partition since it doesn't exist in prior step!
-			for ( Size ii = 1; ii <= working_moving_partition_res.size(); ii++ ) {
-				Size const seq_num = working_moving_partition_res[ii];
+			for ( core::Size ii = 1; ii <= working_moving_partition_res.size(); ii++ ) {
+				core::Size const seq_num = working_moving_partition_res[ii];
 				if ( viewer_pose.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 					already_virtualized_res_list.push_back( seq_num );
 					continue;
@@ -147,7 +147,7 @@ minimize_all_sampled_floating_bases(
 		minimizer.run( viewer_pose, mm, ( *modeler_scorefxn ), options );
 
 		if ( virtual_sugar_is_from_prior_step_ ) { //Virtualize the other partition since it doesn't exist in prior step!
-			for ( Size const seq_num : working_moving_partition_res ) {
+			for ( core::Size const seq_num : working_moving_partition_res ) {
 				if ( already_virtualized_res_list.has_value( seq_num ) ) continue;
 				pose::remove_variant_type_from_pose_residue( viewer_pose, core::chemical::VIRTUAL_RNA_RESIDUE, seq_num );
 			}
@@ -171,20 +171,20 @@ minimize_all_sampled_floating_bases(
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 is_sugar_virtual( core::pose::Pose const & pose, core::Size const sugar_res, core::Size const bulge_res) {
-	utility::vector1< Size > bulge_residues_to_virtualize_dummy;
+	utility::vector1< core::Size > bulge_residues_to_virtualize_dummy;
 	return is_sugar_virtual( pose, sugar_res, bulge_res, bulge_residues_to_virtualize_dummy );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 is_sugar_virtual( core::pose::Pose const & pose, core::Size const sugar_res, core::Size const bulge_res,
-	utility::vector1< Size > & bulge_residues_to_virtualize ){
+	utility::vector1< core::Size > & bulge_residues_to_virtualize ){
 
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
 
-	Size const nres = pose.size();
+	core::Size const nres = pose.size();
 
 	if ( ( sugar_res + 1 ) != bulge_res && ( sugar_res - 1 ) != bulge_res ) {
 		TR.Debug << "sugar_res = " << sugar_res << " bulge_res = " << bulge_res << std::endl;
@@ -214,15 +214,15 @@ modeler_starting_pose_data_list( utility::vector1< PoseOP > & starting_pose_data
 
 	pose::Pose const pose_copy = pose;
 
-	utility::vector1< Size > sugar_ID_counter_list( sugar_modeling_list.size(), 1 );
+	utility::vector1< core::Size > sugar_ID_counter_list( sugar_modeling_list.size(), 1 );
 
 	while ( true ) {
 
 		PoseOP start_pose = pose_copy.clone();
 
-		for ( Size n = 1; n <= sugar_modeling_list.size(); n++ ) {
+		for ( core::Size n = 1; n <= sugar_modeling_list.size(); n++ ) {
 			SugarModeling const & curr_modeling = sugar_modeling_list[n];
-			Size const sugar_ID = sugar_ID_counter_list[n];
+			core::Size const sugar_ID = sugar_ID_counter_list[n];
 			tag_into_pose( *start_pose, tag_from_pose( *start_pose ) + tag_from_pose( *curr_modeling.pose_list[sugar_ID] ) );
 			pose::remove_variant_type_from_pose_residue( *start_pose,
 				core::chemical::VIRTUAL_RIBOSE, curr_modeling.moving_res );
@@ -234,7 +234,7 @@ modeler_starting_pose_data_list( utility::vector1< PoseOP > & starting_pose_data
 		///////////////////////////Counter/////////////////////////////
 		sugar_ID_counter_list[1]++;
 
-		for ( Size n = 1; n < sugar_modeling_list.size(); n++ ) {
+		for ( core::Size n = 1; n < sugar_modeling_list.size(); n++ ) {
 			if ( sugar_ID_counter_list[n] == ( sugar_modeling_list[n].pose_list.size() + 1 ) ) {
 				sugar_ID_counter_list[n] = 1;
 				sugar_ID_counter_list[n + 1]++;
@@ -299,10 +299,10 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 //     -- rhiju, dec. 2013
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-std::map< Size, Size > const
+std::map< core::Size, core::Size > const
 get_reference_res_for_each_virtual_sugar( pose::Pose const & pose,
 	bool const check_for_non_jump /* = false */,
-	Size const moving_suite /*cannot place jump across partititions*/ ){
+	core::Size const moving_suite /*cannot place jump across partititions*/ ){
 
 	if ( check_for_non_jump ) {
 		return get_reference_res_for_each_virtual_sugar_without_fold_tree( pose, moving_suite );
@@ -311,31 +311,31 @@ get_reference_res_for_each_virtual_sugar( pose::Pose const & pose,
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
-std::map< Size, Size > const
-get_reference_res_for_each_virtual_sugar_without_fold_tree( pose::Pose const & pose, Size const moving_suite /*cannot place jump across partititions*/ ){
+std::map< core::Size, core::Size > const
+get_reference_res_for_each_virtual_sugar_without_fold_tree( pose::Pose const & pose, core::Size const moving_suite /*cannot place jump across partititions*/ ){
 
-	std::map< Size, Size > reference_res_for_each_virtual_sugar;
-	utility::vector1< Size > virtual_sugar_res;
-	utility::vector1< utility::vector1< Size > > possible_reference_res_lists;
+	std::map< core::Size, core::Size > reference_res_for_each_virtual_sugar;
+	utility::vector1< core::Size > virtual_sugar_res;
+	utility::vector1< utility::vector1< core::Size > > possible_reference_res_lists;
 
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( !pose.residue( n ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) continue;
 		virtual_sugar_res.push_back( n );
 		reference_res_for_each_virtual_sugar[ n ] = 0;
-		utility::vector1< Size > possible_reference_res = get_possible_reference_res_list_from_pose_without_fold_tree( n, pose,
+		utility::vector1< core::Size > possible_reference_res = get_possible_reference_res_list_from_pose_without_fold_tree( n, pose,
 			moving_suite /* cannot place jump across partitions */ );
 		runtime_assert( possible_reference_res.size() == 1 || possible_reference_res.size() == 2 );
 		possible_reference_res_lists.push_back( possible_reference_res );
 	}
 
-	Size const num_virtual_sugar_res = virtual_sugar_res.size();
+	core::Size const num_virtual_sugar_res = virtual_sugar_res.size();
 	// Look for terminal virtual sugars first, where the anchor res should be totally obvious,
 	// and then work our way to an internal virtual sugars.
-	for ( Size num_pass = 1; num_pass <= num_virtual_sugar_res; num_pass++ ) {
+	for ( core::Size num_pass = 1; num_pass <= num_virtual_sugar_res; num_pass++ ) {
 
-		Size found_reference_res( 0 );
-		Size virt_sugar_res( 0 );
-		for ( Size i = 1; i <= num_virtual_sugar_res; i++ ) {
+		core::Size found_reference_res( 0 );
+		core::Size virt_sugar_res( 0 );
+		for ( core::Size i = 1; i <= num_virtual_sugar_res; i++ ) {
 			virt_sugar_res = virtual_sugar_res[i];
 			if ( reference_res_for_each_virtual_sugar[ virt_sugar_res ] == 0 &&
 					possible_reference_res_lists[ i ] .size() == 1 ) {
@@ -349,10 +349,10 @@ get_reference_res_for_each_virtual_sugar_without_fold_tree( pose::Pose const & p
 
 		// the sugar cannot be an anchor for any other res -- an *assumption*.
 		// eliminate from the list of possibilities
-		for ( Size i = 1; i <= num_virtual_sugar_res; i++ ) {
-			utility::vector1< Size > const & possible_reference_res_list = possible_reference_res_lists[ i ];
-			utility::vector1< Size > new_list;
-			for ( Size k = 1; k <= possible_reference_res_list.size(); k++ ) {
+		for ( core::Size i = 1; i <= num_virtual_sugar_res; i++ ) {
+			utility::vector1< core::Size > const & possible_reference_res_list = possible_reference_res_lists[ i ];
+			utility::vector1< core::Size > new_list;
+			for ( core::Size k = 1; k <= possible_reference_res_list.size(); k++ ) {
 				if ( /*possible_reference_res_list[k] != found_reference_res &&*/
 						possible_reference_res_list[k] != virt_sugar_res )  new_list.push_back( possible_reference_res_list[k] );
 			}
@@ -361,17 +361,17 @@ get_reference_res_for_each_virtual_sugar_without_fold_tree( pose::Pose const & p
 
 	}
 
-	for ( Size i = 1; i <= num_virtual_sugar_res; i++ ) runtime_assert ( reference_res_for_each_virtual_sugar[ virtual_sugar_res[i] ] > 0 );
+	for ( core::Size i = 1; i <= num_virtual_sugar_res; i++ ) runtime_assert ( reference_res_for_each_virtual_sugar[ virtual_sugar_res[i] ] > 0 );
 	return reference_res_for_each_virtual_sugar;
 }
 
 ////////////////////////////////////////////////////////////////
 Size
-look_for_non_jump_reference_to_previous( Size const virtual_sugar_res,
+look_for_non_jump_reference_to_previous( core::Size const virtual_sugar_res,
 	pose::Pose const & pose,
-	Size const moving_suite ){
+	core::Size const moving_suite ){
 	// Following was to figure out attachment location for old-school Parin fold tree.
-	Size i = virtual_sugar_res - 1;
+	core::Size i = virtual_sugar_res - 1;
 	while ( i >= 1 ) {
 		if ( pose.fold_tree().is_cutpoint(i) ) break;
 		if ( !pose.residue( i ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
@@ -386,11 +386,11 @@ look_for_non_jump_reference_to_previous( Size const virtual_sugar_res,
 
 ////////////////////////////////////////////////////////////////
 Size
-look_for_non_jump_reference_to_next( Size const virtual_sugar_res,
+look_for_non_jump_reference_to_next( core::Size const virtual_sugar_res,
 	pose::Pose const & pose,
-	Size const moving_suite ){
+	core::Size const moving_suite ){
 	// Following was to figure out attachment location for old-school Parin fold tree.
-	Size i = virtual_sugar_res + 1;
+	core::Size i = virtual_sugar_res + 1;
 	while ( i <= pose.size() ) {
 		if ( pose.fold_tree().is_cutpoint( i - 1 ) ) break;
 		if ( !pose.residue( i ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
@@ -405,12 +405,12 @@ look_for_non_jump_reference_to_next( Size const virtual_sugar_res,
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< Size >
-get_possible_reference_res_list_from_pose_without_fold_tree( Size const virtual_sugar_res,
+utility::vector1< core::Size >
+get_possible_reference_res_list_from_pose_without_fold_tree( core::Size const virtual_sugar_res,
 	pose::Pose const & pose,
-	Size const  moving_suite /* for old-school poses without jumps already setup*/){
-	utility::vector1< Size > possible_reference_res_list;
-	Size possible_reference_res( 0 );
+	core::Size const  moving_suite /* for old-school poses without jumps already setup*/){
+	utility::vector1< core::Size > possible_reference_res_list;
+	core::Size possible_reference_res( 0 );
 	possible_reference_res = look_for_non_jump_reference_to_previous( virtual_sugar_res, pose, moving_suite );
 	if ( possible_reference_res == 0 ) possible_reference_res = look_for_jumps_to_previous( virtual_sugar_res, pose, true /*force_upstream*/ );
 	if ( possible_reference_res > 0 ) possible_reference_res_list.push_back( possible_reference_res );
@@ -427,11 +427,11 @@ get_possible_reference_res_list_from_pose_without_fold_tree( Size const virtual_
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
-std::map< Size, Size > const
+std::map< core::Size, core::Size > const
 get_reference_res_for_each_virtual_sugar_based_on_fold_tree( pose::Pose const & pose ){
 
-	std::map< Size, Size > reference_res_for_each_virtual_sugar;
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	std::map< core::Size, core::Size > reference_res_for_each_virtual_sugar;
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 
 		if ( !pose.residue( n ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) continue;
 		reference_res_for_each_virtual_sugar[ n ] = get_reference_res_for_virtual_sugar_based_on_fold_tree( pose, n );
@@ -441,8 +441,8 @@ get_reference_res_for_each_virtual_sugar_based_on_fold_tree( pose::Pose const & 
 
 ///////////////////////////////////////////////////////////////////////////////////////
 Size
-get_reference_res_for_virtual_sugar_based_on_fold_tree( pose::Pose const & pose, Size const n ) {
-	Size possible_reference_res = look_for_jumps( n, pose, true /*force_upstream*/ );
+get_reference_res_for_virtual_sugar_based_on_fold_tree( pose::Pose const & pose, core::Size const n ) {
+	core::Size possible_reference_res = look_for_jumps( n, pose, true /*force_upstream*/ );
 
 	if ( !possible_reference_res ) {
 		// did not find an upstream residue. as a last resort look for a downstream jump residue.
@@ -455,9 +455,9 @@ get_reference_res_for_virtual_sugar_based_on_fold_tree( pose::Pose const & pose,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 Size
-look_for_jumps( Size const n, pose::Pose const & pose, bool const force_upstream ){
-	Size const possible_reference_res_previous = look_for_jumps_to_previous( n, pose, force_upstream );
-	Size const possible_reference_res_next = look_for_jumps_to_next( n, pose, force_upstream );
+look_for_jumps( core::Size const n, pose::Pose const & pose, bool const force_upstream ){
+	core::Size const possible_reference_res_previous = look_for_jumps_to_previous( n, pose, force_upstream );
+	core::Size const possible_reference_res_next = look_for_jumps_to_next( n, pose, force_upstream );
 	if ( possible_reference_res_previous && possible_reference_res_next ) {
 		TR << TR.Red << pose.fold_tree() << TR.Reset << std::endl;
 		TR << TR.Red << pose.annotated_sequence() << TR.Reset << std::endl;
@@ -472,13 +472,13 @@ look_for_jumps( Size const n, pose::Pose const & pose, bool const force_upstream
 
 ////////////////////////////////////////////////////////////////
 Size
-look_for_jumps_to_previous( Size const virtual_sugar_res,
+look_for_jumps_to_previous( core::Size const virtual_sugar_res,
 	pose::Pose const & pose,
 	bool const force_upstream ){
-	Size i = virtual_sugar_res - 1;
+	core::Size i = virtual_sugar_res - 1;
 	while ( i >= 1 ) { // look for jumps with reference residue 'upstream'
-		Size const jump_nr = pose.fold_tree().jump_nr( i, virtual_sugar_res );
-		if ( jump_nr > 0 && (!force_upstream || Size( pose.fold_tree().upstream_jump_residue( jump_nr ) ) == i ) ) {
+		core::Size const jump_nr = pose.fold_tree().jump_nr( i, virtual_sugar_res );
+		if ( jump_nr > 0 && (!force_upstream || core::Size( pose.fold_tree().upstream_jump_residue( jump_nr ) ) == i ) ) {
 			return i;
 		}
 		i--;
@@ -489,13 +489,13 @@ look_for_jumps_to_previous( Size const virtual_sugar_res,
 
 ////////////////////////////////////////////////////////////////
 Size
-look_for_jumps_to_next( Size const virtual_sugar_res,
+look_for_jumps_to_next( core::Size const virtual_sugar_res,
 	pose::Pose const & pose,
 	bool const force_upstream ){
-	Size i = virtual_sugar_res + 1;
+	core::Size i = virtual_sugar_res + 1;
 	while ( i <= pose.size() ) {  // look for jumps with reference residue 'upstream'
-		Size const jump_nr = pose.fold_tree().jump_nr( i, virtual_sugar_res );
-		if ( jump_nr > 0 && (!force_upstream || Size( pose.fold_tree().upstream_jump_residue( jump_nr ) ) == i ) ) {
+		core::Size const jump_nr = pose.fold_tree().jump_nr( i, virtual_sugar_res );
+		if ( jump_nr > 0 && (!force_upstream || core::Size( pose.fold_tree().upstream_jump_residue( jump_nr ) ) == i ) ) {
 			return i;
 		}
 		i++;
@@ -531,7 +531,7 @@ instantiate_any_virtual_sugars( pose::Pose & pose,
 utility::vector1< bool >
 detect_sugar_contacts( pose::Pose const & pose ) {
 utility::vector1< bool > sugar_makes_contact( pose.size(), false );
-for ( Size i = 1; i <= pose.size(); i++ ) {
+for ( core::Size i = 1; i <= pose.size(); i++ ) {
 if ( !pose.residue_type( i ).is_RNA() ) continue;
 sugar_makes_contact[ i ] = detect_sugar_contacts( pose, i );
 }
@@ -541,7 +541,7 @@ return sugar_makes_contact;
 
 ///////////////////////////////////////////////////////////////////////////
 bool
-detect_sugar_contacts( pose::Pose const & pose, Size const moving_res,
+detect_sugar_contacts( pose::Pose const & pose, core::Size const moving_res,
 Distance o2prime_contact_distance_cutoff_ ) {
 
 bool found_contact( false );
@@ -549,7 +549,7 @@ bool found_contact( false );
 //Vector const & moving_O2prime_xyz = pose.residue( moving_res ).xyz( " O2'" );
 Vector const & moving_O2prime_xyz = pose.residue( moving_res ).xyz( "O2'" );
 core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
-for ( Size i = 1; i <= pose.size(); i++ ) {
+for ( core::Size i = 1; i <= pose.size(); i++ ) {
 if ( i == moving_res ) continue;
 
 // sometimes see artifactual H-bonds of O2' to next phosphate or sugar.
@@ -558,7 +558,7 @@ pdb_info->number( i )-1 == pdb_info->number( moving_res ) &&
 pdb_info->chain( i ) == pdb_info->chain( moving_res ) ) continue;
 
 if ( pose.residue( i ).is_virtual_residue() ) continue;
-for ( Size j = 1; j <= pose.residue( i ).nheavyatoms(); j++ ) {
+for ( core::Size j = 1; j <= pose.residue( i ).nheavyatoms(); j++ ) {
 if ( pose.residue_type( i ).is_virtual( j ) ) continue;
 if ( pose.residue_type( i ).heavyatom_is_an_acceptor( j ) ||
 pose.residue_type( i ).heavyatom_has_polar_hydrogens( j )  ) {

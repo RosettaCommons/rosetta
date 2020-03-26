@@ -26,7 +26,7 @@ namespace pivot_pickers {
 
 using namespace std;
 
-FixedPivots::FixedPivots(Size start, Size stop, Size cut) {
+FixedPivots::FixedPivots(core::Size start, core::Size stop, core::Size cut) {
 	start_ = start;
 	stop_ = stop;
 	cut_ = cut;

@@ -31,19 +31,19 @@ class AtomCountFilter : public protocols::filters::Filter
 {
 public:
 	AtomCountFilter() :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "AtomCount" )
 	{}
 
 	AtomCountFilter(std::string const & chain, core::Size heavy_atom_limit ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "AtomCount" ),
 		chain_(chain),
 		atom_limit_(heavy_atom_limit)
 	{}
 
 	AtomCountFilter( AtomCountFilter const & init ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( init ),
 		chain_(init.chain_),
 		atom_limit_(init.atom_limit_)

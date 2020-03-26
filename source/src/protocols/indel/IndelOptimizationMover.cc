@@ -104,8 +104,8 @@ IndelOptimizationMover::apply(
 	}*/
 
 	// Loop model the remaining segment; range size before and
-	Size loop_start = ( start_res_ < 2 + loop_length_ ) ? 2 : start_res_ - loop_length_;
-	Size loop_end   = ( end_res_ + loop_length_ > pose.size() ) ? pose.size() : end_res_ + loop_length_;
+	core::Size loop_start = ( start_res_ < 2 + loop_length_ ) ? 2 : start_res_ - loop_length_;
+	core::Size loop_end   = ( end_res_ + loop_length_ > pose.size() ) ? pose.size() : end_res_ + loop_length_;
 
 	TR << "loop is from " << loop_start << " to " << loop_end << std::endl;
 
@@ -119,8 +119,8 @@ IndelOptimizationMover::apply(
 		}
 		/*.append( "_" );
 		std::set< char > other_chains;
-		//utility::vector1< Size > chain_endings = pose.conformation().chain_endings();
-		for ( Size i = 1; i <= pose.size(); ++i ) {
+		//utility::vector1< core::Size > chain_endings = pose.conformation().chain_endings();
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
 
 		TR << "Residue " << i << " chain " << pose.pdb_info()->chain( i ) << std::endl;
 		if ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( loop_start ) ) {
@@ -136,7 +136,7 @@ IndelOptimizationMover::apply(
 		TR << "Partners will be " << partners << std::endl;
 	}
 
-	auto cutpoint = Size( ( loop_start + loop_end ) / 2 );
+	auto cutpoint = core::Size( ( loop_start + loop_end ) / 2 );
 	if ( cutpoint == loop_start ) ++cutpoint;
 	if ( cutpoint == loop_end   ) --cutpoint;
 	//protocols::loops::Loop loop( loop_start, loop_end, cutpoint );
@@ -191,7 +191,7 @@ IndelOptimizationMover::apply(
 	if ( there_is_a_jump ) {
 		poses.push_back( pose );
 		// Do the others
-		for ( Size i = 2; i <= num_to_dock_; ++i ) {
+		for ( core::Size i = 2; i <= num_to_dock_; ++i ) {
 			TR << "Okay, doing another structure ( " << i << " / " << num_to_dock_ << ")" << std::endl;
 			pose::Pose temp_pose( pose_saved );
 			loopbuild_mover->apply( temp_pose );
@@ -206,16 +206,16 @@ IndelOptimizationMover::apply(
 			}
 		}
 
-		for ( Size i = 1; i <= num_to_dock_; ++i ) {
+		for ( core::Size i = 1; i <= num_to_dock_; ++i ) {
 			TR << "Score for pose " << i << " is " << ( *score_fxn )( poses[ i ] ) << std::endl;
 		}
 
 		// What jumps should be moveable? The ones that lead to the Special Chain
 		// Therefore, the jumps for which the upstream residue or downstream residue are Special Chain
-		utility::vector1< Size > moveable_jumps;
-		Size n_jumps = pose.fold_tree().num_jump();
-		for ( Size i = 1; i <= n_jumps; ++i ) {
-			Size resi = pose.fold_tree().upstream_jump_residue( i );
+		utility::vector1< core::Size > moveable_jumps;
+		core::Size n_jumps = pose.fold_tree().num_jump();
+		for ( core::Size i = 1; i <= n_jumps; ++i ) {
+			core::Size resi = pose.fold_tree().upstream_jump_residue( i );
 			if ( pose.pdb_info()->chain( resi ) == pose.pdb_info()->chain( loop_start ) ) {
 				moveable_jumps.push_back( i );
 				continue;
@@ -236,8 +236,8 @@ IndelOptimizationMover::apply(
 
 		// Now apply all our docking stuff
 		Real min_score = 100000;
-		Size best_i = 1;
-		for ( Size i = 1; i <= poses.size(); ++i ) {
+		core::Size best_i = 1;
+		for ( core::Size i = 1; i <= poses.size(); ++i ) {
 			TR << "Prepacking and docking result " << i << " / " << poses.size() << std::endl;
 			ppk->apply( poses[ i ] );
 			dock->apply( poses[ i ] );

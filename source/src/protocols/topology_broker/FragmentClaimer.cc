@@ -126,7 +126,7 @@ FragmentClaimer::FragmentClaimer( FragmentClaimer const & src ) :
 
 FragmentClaimer::~FragmentClaimer() = default;
 
-void FragmentClaimer::get_sequence_region( std::set< Size >& start_region ) const {
+void FragmentClaimer::get_sequence_region( std::set< core::Size >& start_region ) const {
 	//TODO: this should probably use local positions rather than absolute positions, but AIN'T NOBODY GOT TIME FOR REFACTORING
 
 	start_region.clear();
@@ -181,26 +181,26 @@ void FragmentClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	fragments()->generate_insert_map( *movemap_, insert_map, insert_size );
 
 	if ( insert_size.size() == 0 ) {
-		std::cerr << "Insert Size is 0 in  FragmentClaimer::generate_claims( .. ). File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
+		std::cerr << "Insert core::Size is 0 in  FragmentClaimer::generate_claims( .. ). File: " << __FILE__ << " Line: " << __LINE__ << std::endl;
 		utility_exit_with_message("Cannot continue - Error generating insert map" );
 	}
 
-	Size last_insert( insert_size.back() );
-	for ( Size i = 1; i<=last_insert; ++i ) {
+	core::Size last_insert( insert_size.back() );
+	for ( core::Size i = 1; i<=last_insert; ++i ) {
 		insert_size.push_back( 0 );
 	}
 
-	Size const total_insert ( insert_map.size() );
+	core::Size const total_insert ( insert_map.size() );
 	tr.Trace << "insert_size: ";
-	if ( tr.Trace.visible() && total_insert ) for ( Size i = 1; i<=insert_map[ total_insert ]; i++ ) tr.Trace << " " << insert_size[ i ];
+	if ( tr.Trace.visible() && total_insert ) for ( core::Size i = 1; i<=insert_map[ total_insert ]; i++ ) tr.Trace << " " << insert_size[ i ];
 
 	for ( core::fragment::InsertMap::const_iterator it = insert_map.begin(), eit = insert_map.end();
 			it != eit; ++it ) {
-		Size const start ( *it - fragment_offset );
-		Size const length( insert_size[ *it ] );
+		core::Size const start ( *it - fragment_offset );
+		core::Size const length( insert_size[ *it ] );
 		new_claims.push_back( utility::pointer::make_shared< claims::BBClaim >( get_self_weak_ptr(), std::make_pair( label(), start ), claim_right_) );
 		//new_claims.push_back( new claims::BBClaim( this, *it, claim_right_ ) );
-		for ( Size i = start + 1; i < start+length && insert_size[ i + fragment_offset ] == 0; i++ ) {
+		for ( core::Size i = start + 1; i < start+length && insert_size[ i + fragment_offset ] == 0; i++ ) {
 			new_claims.push_back( utility::pointer::make_shared< claims::BBClaim >( get_self_weak_ptr(), std::make_pair( label(), i), claim_right_ ));
 			//new_claims.push_back( new claims::BBClaim( this, i, claim_right_ ) );
 		}
@@ -242,11 +242,11 @@ void FragmentClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims
 		fragments()->generate_insert_map( test_map, insert_map, insert_size );
 	}
 
-	Size const total_insert ( insert_map.size() );
+	core::Size const total_insert ( insert_map.size() );
 	tr.Trace << "size of insertmap: " << total_insert << " -- ";
-	for ( Size i = 1; i<=total_insert; i++ ) tr.Trace << " " << insert_map[ i ];
+	for ( core::Size i = 1; i<=total_insert; i++ ) tr.Trace << " " << insert_map[ i ];
 	tr.Trace << "insert_size: ";
-	if ( total_insert ) for ( Size i = 1; i<=insert_map[ total_insert ]; i++ ) tr.Trace << " " << insert_size[ i ];
+	if ( total_insert ) for ( core::Size i = 1; i<=insert_map[ total_insert ]; i++ ) tr.Trace << " " << insert_size[ i ];
 	tr.Trace << std::endl;
 
 	kinematics::MoveMapOP init_map( new kinematics::MoveMap );
@@ -257,7 +257,7 @@ void FragmentClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims
 		if ( init_dof->owner().lock().get() == this ) {
 			init_dof->toggle( *init_map, true );
 			//don't really know how this looks for jumps
-			//   Size pos( (*it)->pos( 1 ) );
+			//   core::Size pos( (*it)->pos( 1 ) );
 			//if ( pos >= insert_size.size() + insert_size.back() || ( pos<= insert_size.size() && !insert_size[ pos ] ) ) {
 			//    failed_to_init.push_back( *it );
 			//}

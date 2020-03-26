@@ -38,7 +38,7 @@
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 
@@ -61,14 +61,14 @@ namespace geometry {
 
 /// @brief Constructs empty object
 Embedding::Embedding() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	embeddings_(),
 	total_embed_()
 {}
 
 /// @brief Construction from single EmbeddingDef object
 Embedding::Embedding( EmbeddingDef const & embedding ) :
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	EmbeddingDefOP copy( new EmbeddingDef( embedding ) );
 	embeddings_.push_back( copy );
@@ -81,7 +81,7 @@ Embedding::Embedding( EmbeddingDef const & embedding ) :
 Embedding::Embedding(
 	core::conformation::membrane::SpanningTopology const & topology,
 	core::Real radius
-) : utility::pointer::ReferenceCount(),
+) : utility::VirtualBase(),
 	embeddings_()
 {
 	// initialize embedding objects
@@ -152,7 +152,7 @@ Embedding::Embedding(
 
 /// @brief Copy Constructor
 Embedding::Embedding( Embedding const & src ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	embeddings_( src.embeddings_ ),
 	total_embed_( src.total_embed_ )
 {}
@@ -186,7 +186,7 @@ void Embedding::show() const {
 void Embedding::show( std::ostream & ) const {
 
 	TR << "Span Embedding: " << std::endl;
-	for ( Size i = 1; i <= embeddings_.size(); ++i ) {
+	for ( core::Size i = 1; i <= embeddings_.size(); ++i ) {
 		embeddings_[ i ]->show( TR );
 	}
 	TR << "Total Embedding: " << std::endl;
@@ -200,7 +200,7 @@ void Embedding::invert() {
 	using namespace core;
 
 	// go through vector of EmbeddingDefs and invert the normals
-	for ( Size i = 1; i <= embeddings_.size(); ++i ) {
+	for ( core::Size i = 1; i <= embeddings_.size(); ++i ) {
 		if ( embeddings_[i]->normal().length() > 0 ) {
 			embeddings_[i]->invert();
 		}

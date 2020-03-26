@@ -134,7 +134,7 @@ void LoopMover_Refine_Backrub::apply(
 		max_inner_cycles = 2;
 	}
 
-	int const inner_cycles = std::min( Size(max_inner_cycles), fast ? (Size)( loops()->loop_size() ) : 10 * (Size)( loops()->loop_size() ) );
+	int const inner_cycles = std::min( core::Size(max_inner_cycles), fast ? (core::Size)( loops()->loop_size() ) : 10 * (core::Size)( loops()->loop_size() ) );
 	int repack_period = 20; // should be an option
 	if ( option[ OptionKeys::loops::repack_period ].user() ) {
 		repack_period = option[ OptionKeys::loops::repack_period ]();
@@ -164,7 +164,7 @@ void LoopMover_Refine_Backrub::apply(
 	backrubmover.set_input_pose( input_poseOP );
 
 	// set backrub segments
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	utility::vector1< bool > is_loop( nres, false );
 	for ( const auto & it : *loops() ) {
 		for ( core::Size seg_start = it.start(); seg_start <= it.stop(); ++seg_start ) {
@@ -211,7 +211,7 @@ void LoopMover_Refine_Backrub::apply(
 	// this could also be handled/controlled by a [externally-defined] TaskOperation
 	if ( redesign_loop ) {
 		// allow design at loop positions
-		for ( Size i=1; i<= nres; ++i ) {
+		for ( core::Size i=1; i<= nres; ++i ) {
 			if ( !is_loop[i] ) base_packer_task->nonconst_residue_task( i ).restrict_to_repacking();
 		}
 	} else {

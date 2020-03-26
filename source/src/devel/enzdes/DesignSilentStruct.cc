@@ -69,13 +69,13 @@ DesignSilentStruct::DesignSilentStruct(
 	core::io::silent::SilentFileOptions const & opts,
 	pose::Pose const & pose,
 	std::string tag, // = "empty_tag",
-	utility::vector1<Size> const & spec_res_in,
+	utility::vector1<core::Size> const & spec_res_in,
 	utility::vector1< std::string > const & rel_score_in,
 	bool const add_in,
 	bool const onlyadd_in
 ) :
 	DesignSilentStruct( opts, pose, tag, spec_res_in, rel_score_in,
-	std::map< Size, utility::vector1< std::pair< std::string, std::string > > >(), /* empty calculator map */
+	std::map< core::Size, utility::vector1< std::pair< std::string, std::string > > >(), /* empty calculator map */
 	add_in, onlyadd_in)
 {
 }
@@ -85,9 +85,9 @@ DesignSilentStruct::DesignSilentStruct(
 	core::io::silent::SilentFileOptions const & opts,
 	pose::Pose const & pose,
 	std::string tag,
-	utility::vector1<Size> const & spec_res_in,
+	utility::vector1<core::Size> const & spec_res_in,
 	utility::vector1< std::string > const & rel_score_in,
-	std::map< Size, utility::vector1< std::pair< std::string, std::string > > > const & calculators,
+	std::map< core::Size, utility::vector1< std::pair< std::string, std::string > > > const & calculators,
 	bool const add_in,
 	bool const onlyadd_in
 ) :
@@ -167,9 +167,9 @@ DesignSilentStruct::print_additional_info( std::ostream& out) const
 void
 DesignSilentStruct::calculate_additional_info(
 	pose::Pose const & pose,
-	utility::vector1<Size> const & special_res,
+	utility::vector1<core::Size> const & special_res,
 	utility::vector1< std::string > const & score_terms,
-	std::map< Size, utility::vector1< std::pair< std::string, std::string > > > const & calculators )
+	std::map< core::Size, utility::vector1< std::pair< std::string, std::string > > > const & calculators )
 {
 
 	bool separate_out_constraints = false;
@@ -226,7 +226,7 @@ DesignSilentStruct::calculate_additional_info(
 	//done with pose totals
 
 	//then write out the relevant scoreterms (and potentially pose metrics) for each of the special residues
-	Size spec_res_counter(0);
+	core::Size spec_res_counter(0);
 	for ( core::Size special_re : special_res ) {
 
 		spec_res_counter++;

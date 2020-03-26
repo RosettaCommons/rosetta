@@ -133,7 +133,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 
 
 	kinematics::FoldTree f_orig=pose.fold_tree();
-	Size lcount=0;
+	core::Size lcount=0;
 
 	core::pose::Pose pose_initial = pose;
 
@@ -159,15 +159,15 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 
 		// statistics:
 		int  time_start = time(nullptr);
-		Size nfailure = 0;
-		//Size nrmsfail = 0;
+		core::Size nfailure = 0;
+		//core::Size nrmsfail = 0;
 
 		tr().Info << "Building Loop: " << buildloop << std::endl;
 		result_of_loopModel_ = Failure;
 
 		pose::Pose best_pose = pose_initial;
 		Real       best_score = 10000000.0;
-		Size       best_count = 0;
+		core::Size       best_count = 0;
 		// code below goes for grow_attempts + 1 ...
 		for ( int extension_attempt = 0; extension_attempt <= grow_attempts_; extension_attempt ++ ) {
 
@@ -223,7 +223,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 						best_count ++;
 						tr().Debug << "Adding a " << best_score << std::endl;
 					}
-					if ( best_count >= (Size)select_best_loop_from ) break;
+					if ( best_count >= (core::Size)select_best_loop_from ) break;
 					continue;
 				}
 				nfailure++;
@@ -249,7 +249,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 
 			// If we have a sufficient number of loop successses, break (by
 			// default this means 1 closed loop)
-			if ( best_count >= (Size)select_best_loop_from ) break;
+			if ( best_count >= (core::Size)select_best_loop_from ) break;
 			// If we can't build this loop due to some major fundamental failure
 			if ( result_of_loopModel_ == CriticalFailure ) break;
 			// or if we're still unsuccessful (i.e. best_count == 0) and growing the loop isnt an option (because strict_loops is set) then also give up.
@@ -303,11 +303,11 @@ void IndependentLoopMover::select_loops( Loops & selected_loops ){
 			option[ OptionKeys::loops::build_specific_loops ]
 		);
 
-		for ( Size i = 1; i <= loop_numbers.size(); ++i ) {
+		for ( core::Size i = 1; i <= loop_numbers.size(); ++i ) {
 			if ( loop_numbers[i]  <= 0 ) {
 				utility_exit_with_message( "Specified loop numbers is 0 or below.");
 			}
-			if ( (Size)loop_numbers[i]  > loops()->size()  ) {
+			if ( (core::Size)loop_numbers[i]  > loops()->size()  ) {
 				utility_exit_with_message( "Specified loop number is greater than the number of loops in the loop file itself.");
 			}
 			temp_loops.add_loop( ( *loops() )[ loop_numbers[i] ] );
@@ -327,7 +327,7 @@ void IndependentLoopMover::select_loops( Loops & selected_loops ){
 	// combine loops sing combine_rate
 	std::sort( temp_loops.v_begin(), temp_loops.v_end(), Loop_lt() );  // necessary
 
-	for ( Size l=1; l <= temp_loops.size(); l++  ) {
+	for ( core::Size l=1; l <= temp_loops.size(); l++  ) {
 		if ( ( l == temp_loops.size() ) ||
 				( numeric::random::uniform() >= loop_combine_rate_ )
 				) {

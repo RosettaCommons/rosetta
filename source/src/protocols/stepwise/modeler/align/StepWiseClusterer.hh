@@ -16,13 +16,13 @@
 #ifndef INCLUDED_protocols_stepwise_modeler_align_StepWiseClusterer_HH
 #define INCLUDED_protocols_stepwise_modeler_align_StepWiseClusterer_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <protocols/stepwise/modeler/align/StepWiseClusterer.fwd.hh>
 #include <protocols/stepwise/modeler/align/StepWisePoseAligner.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <string>
 
 namespace protocols {
@@ -30,7 +30,7 @@ namespace stepwise {
 namespace modeler {
 namespace align {
 
-class StepWiseClusterer: public utility::pointer::ReferenceCount {
+class StepWiseClusterer: public utility::VirtualBase {
 
 public:
 
@@ -47,7 +47,7 @@ public:
 
 	void cluster();
 
-	Size size() const { return pose_list_.size(); }
+	core::Size size() const { return pose_list_.size(); }
 
 	void set_max_decoys( core::Size const & setting ){ max_decoys_ = setting; }
 
@@ -79,7 +79,7 @@ private:
 	check_screen_and_kick_out_displaced_model( core::pose::Pose const & pose );
 
 	void
-	kick_out_pose_at_idx( Size const n );
+	kick_out_pose_at_idx( core::Size const n );
 
 	bool
 	check_for_closeness( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
@@ -95,8 +95,8 @@ private:
 	bool do_checks_;
 	bool assume_atom_ids_invariant_;
 	bool initialized_;
-	Size count_;
-	core::Real cluster_size_; // should be Size, but Real to use setPoseExtraScore
+	core::Size count_;
+	core::Real cluster_size_; // should be core::Size, but Real to use setPoseExtraScore
 	bool output_cluster_size_;
 	std::string silent_file_;
 

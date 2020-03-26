@@ -37,7 +37,7 @@ using namespace utility::io::mpi_stream;
 static basic::Tracer tr( "protocols.jd2.MpiFileBuffer" );
 static basic::MemTracer mem_tr;
 
-MpiFileBuffer::MpiFileBuffer( Size file_buf_rank )
+MpiFileBuffer::MpiFileBuffer( core::Size file_buf_rank )
 : buffer_rank_( file_buf_rank ),
 	last_channel_( 0 ),
 	bSlaveCanOpenFile_( true ),
@@ -62,7 +62,7 @@ Size const MPI_RELEASE_FILE( 1003 );
 Size const MPI_CLOSE_FILE( 1004 );
 
 #ifdef USEMPI
-void MpiFileBuffer::receive_str( Size slave, Size size, std::string& line ) {
+void MpiFileBuffer::receive_str( core::Size slave, core::Size size, std::string& line ) {
 	char *cbuf = new char[ size+1 ];
 	MPI_Status stat;
   MPI_Recv( cbuf, size, MPI_CHAR, slave, MPI_STREAM_TAG, MPI_COMM_WORLD, &stat );
@@ -70,7 +70,7 @@ void MpiFileBuffer::receive_str( Size slave, Size size, std::string& line ) {
 	delete[] cbuf;
 }
 #else
-void MpiFileBuffer::receive_str( Size , Size , std::string&  ) {}
+void MpiFileBuffer::receive_str( core::Size , core::Size , std::string&  ) {}
 #endif
 
 MpiFileBuffer::~MpiFileBuffer() {
@@ -133,14 +133,14 @@ void MpiFileBuffer::run() {
   while( !bStop_ ) {
 		int buf[ 4 ];
 		MPI_Recv( buf, 4, MPI_INT, MPI_ANY_SOURCE, MPI_STREAM_TAG, MPI_COMM_WORLD, &stat );
-		Size const msg_type( buf[ 2 ] );
-		Size const size( buf[ 1 ] );
-		Size const slave( buf[ 0 ] );
-		Size const channel_id( buf[ 3 ] );
+		core::Size const msg_type( buf[ 2 ] );
+		core::Size const size( buf[ 1 ] );
+		core::Size const slave( buf[ 0 ] );
+		core::Size const channel_id( buf[ 3 ] );
 		if ( msg_type == MPI_STREAM_OPEN || msg_type == MPI_STREAM_OPEN_APPEND ) {
 			std::string filename;
 			receive_str( slave, size, filename );
-			Size file_status;
+			core::Size file_status;
 			open_channel( slave, filename, msg_type == MPI_STREAM_OPEN_APPEND, file_status );
 		} else if ( msg_type == MPI_STREAM_SEND ) {
 			std::string line;
@@ -193,10 +193,10 @@ void MpiFileBuffer::stop() {
 #endif
 }
 
-void MpiFileBuffer::block_file( Size from_node, std::string const& filename ) {
+void MpiFileBuffer::block_file( core::Size from_node, std::string const& filename ) {
 	runtime_assert( my_rank_ == buffer_rank_ );
 	Filenames::const_iterator iter = open_files_.find( filename );
-	Size channel;
+	core::Size channel;
 
 	if ( iter != open_files_.end() ) {
 		channel = iter->second;
@@ -291,7 +291,7 @@ void MpiFileBuffer::release_file( std::string filename ) {
 
 bool MpiFileBuffer::is_open_channel( std::string const& filename ) {
 	Filenames::const_iterator iter = open_files_.find( filename );
-	//Size channel;
+	//core::Size channel;
 	return ( iter != open_files_.end() );
 }
 
@@ -305,11 +305,11 @@ void MpiFileBuffer::clear_channel_from_garbage_collector( core::Size channel ) {
 }
 
 #ifdef USEMPI
-void MpiFileBuffer::open_channel( Size slave, std::string const& filename, bool append, Size& status ) {
+void MpiFileBuffer::open_channel( core::Size slave, std::string const& filename, bool append, core::Size& status ) {
 	//find filename in our file-map...
 	tr.Debug << "open mpi-channel from slave-node " << slave << " for file: " << filename << std::endl;
 	Filenames::const_iterator iter = open_files_.find( filename );
-	Size channel;
+	core::Size channel;
 	if ( iter != open_files_.end() ) {
 		channel = iter->second;
 		SingleFileBufferOP buf = open_buffers_[ channel ];
@@ -335,10 +335,10 @@ void MpiFileBuffer::open_channel( Size slave, std::string const& filename, bool 
 			int buf[ 4 ];
 			MPI_Status stat;
 			MPI_Recv( buf, 4, MPI_INT, slave, MPI_STREAM_TAG, MPI_COMM_WORLD, &stat );
-			Size const slave_id( buf[ 0 ] );
-			Size const size( buf[ 1 ] );
-			Size const msg_type( buf[ 2 ] );
-			Size const channel_id( buf[ 3 ] );
+			core::Size const slave_id( buf[ 0 ] );
+			core::Size const size( buf[ 1 ] );
+			core::Size const msg_type( buf[ 2 ] );
+			core::Size const channel_id( buf[ 3 ] );
 			tr.Debug << "header? : received: " << slave_id << " " << size << " " << msg_type << " " << channel_id << std::endl;
 			runtime_assert( msg_type == MPI_STREAM_SEND && slave_id == slave );
 			std::string header;
@@ -350,14 +350,14 @@ void MpiFileBuffer::open_channel( Size slave, std::string const& filename, bool 
 	//send file-descriptor out
 }
 #else
-void MpiFileBuffer::open_channel( Size , std::string const&, bool, Size& status ) {
+void MpiFileBuffer::open_channel( core::Size , std::string const&, bool, core::Size& status ) {
 	status = 0;
 	(void) last_channel_;
 }
 #endif
 
 
-void MpiFileBuffer::store_to_channel( Size slave, Size channel, std::string const& line ) {
+void MpiFileBuffer::store_to_channel( core::Size slave, core::Size channel, std::string const& line ) {
 	//tr.Debug << "store channel for slave " << slave << " channel: " << channel << " length: " << line.length() << std::endl;
 	SingleFileBufferOP buf = open_buffers_[ channel ];
 	runtime_assert( buf != nullptr ); //writing to open file ?
@@ -368,14 +368,14 @@ void MpiFileBuffer::store_to_channel( Size slave, Size channel, std::string cons
 	}
 }
 
-void MpiFileBuffer::flush_channel( Size slave, Size channel_id ) {
+void MpiFileBuffer::flush_channel( core::Size slave, core::Size channel_id ) {
 	tr.Debug << "flush channel for slave " << slave << " channel: " << channel_id << std::endl;
 	SingleFileBufferOP buf = open_buffers_[ channel_id ];
 	runtime_assert( buf != nullptr ); //writing to open file ?
 	buf->flush( slave );
 }
 
-void MpiFileBuffer::close_channel( Size slave, Size channel_id ) {
+void MpiFileBuffer::close_channel( core::Size slave, core::Size channel_id ) {
 	SingleFileBufferOP buf = open_buffers_[ channel_id ];
 	runtime_assert( buf != nullptr ); //writing to open file ?
 	buf->close( slave );
@@ -400,7 +400,7 @@ bool MpiFileBuffer::close_file( std::string filename ) {
 		return remote_close_file( filename );
 	} else {
 		if ( is_open_channel( filename ) ) {
-			Size channel_id = open_files_[ filename ];
+			core::Size channel_id = open_files_[ filename ];
 			tr.Debug << "close file " << filename << " with channel_id " << channel_id << std::endl;
 			close_file( channel_id );
 			return true;
@@ -409,7 +409,7 @@ bool MpiFileBuffer::close_file( std::string filename ) {
 	return false;
 }
 
-void MpiFileBuffer::close_file( Size channel_id ) {
+void MpiFileBuffer::close_file( core::Size channel_id ) {
 	auto iter = open_buffers_.find( channel_id );
 	if ( iter != open_buffers_.end() ) {
 		std::string filename( iter->second->filename() );
@@ -422,11 +422,11 @@ void MpiFileBuffer::close_file( Size channel_id ) {
 	}
 }
 
-SingleFileBufferOP WriteOut_MpiFileBuffer::generate_new_channel( std::string const& filename, Size channel, bool append, Size& status ) {
+SingleFileBufferOP WriteOut_MpiFileBuffer::generate_new_channel( std::string const& filename, core::Size channel, bool append, core::Size& status ) {
 	return utility::pointer::make_shared< WriteFileSFB >( filename, channel, append, status );
 }
 
-SingleFileBufferOP DebugOut_MpiFileBuffer::generate_new_channel( std::string const& filename, Size channel, bool /*append*/, Size& status ) {
+SingleFileBufferOP DebugOut_MpiFileBuffer::generate_new_channel( std::string const& filename, core::Size channel, bool /*append*/, core::Size& status ) {
 	return utility::pointer::make_shared< SingleFileBuffer >( filename, channel, status );
 }
 

@@ -23,7 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <boost/noncopyable.hpp>
 
 namespace protocols {
@@ -37,7 +37,7 @@ namespace kinematic_closure {
 /// solution to the given pose, while the latter does so only if the solution
 /// passes a rama and bump check.
 
-class ClosureSolution : public utility::pointer::ReferenceCount, private boost::noncopyable {
+class ClosureSolution : public utility::VirtualBase, private boost::noncopyable {
 
 	friend class ClosureProblem;
 
@@ -48,7 +48,7 @@ private:
 	/// internal degrees of freedom returned by the closure algorithm.
 	ClosureSolution(
 		ClosureProblem const * problem,
-		Size const solution_index,
+		core::Size const solution_index,
 		ParameterList const & torsion_angles,
 		ParameterList const & bond_angles,
 		ParameterList const & bond_lengths);
@@ -68,7 +68,7 @@ public:
 		bool be_lenient=false) const;
 
 	/// @brief Return a unique number identifying this solution.
-	Size get_index() const;
+	core::Size get_index() const;
 
 	/// @brief Return the Jacobian for this solution.
 	Real get_jacobian() const;
@@ -90,7 +90,7 @@ private:
 private:
 
 	ClosureProblem const * problem_;
-	Size const index_;
+	core::Size const index_;
 
 	ParameterList const bond_lengths_;
 	ParameterList const bond_angles_;

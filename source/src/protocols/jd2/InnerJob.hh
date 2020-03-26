@@ -28,7 +28,7 @@
 #include <protocols/jd2/JobDistributor.fwd.hh> //for friendship
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 
 //C++ headers
@@ -47,7 +47,7 @@ namespace jd2 {
 /// and has a pointer to an InnerJob (which is shared across many Jobs).
 /// InnerJob also holds a PoseOP to maintain the unmodified input pose for that
 /// job.
-class InnerJob : public utility::pointer::ReferenceCount {
+class InnerJob : public utility::VirtualBase {
 
 public:
 	/// @brief ctor.  Note that it takes only the input tag and max nstruct,

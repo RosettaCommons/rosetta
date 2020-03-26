@@ -16,7 +16,7 @@
 #define INCLUDED_protocols_hotspot_hashing_SICSearchPattern_hh
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <numeric/xyzVector.hh>

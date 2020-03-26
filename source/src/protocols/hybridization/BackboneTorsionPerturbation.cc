@@ -91,12 +91,12 @@ void BackboneTorsionPerturbation::init() {
 	snapshot_interval_ = 10;
 }
 
-void add_constraints(core::pose::Pose & pose, Size rsd1, Size rsd2) {
+void add_constraints(core::pose::Pose & pose, core::Size rsd1, core::Size rsd2) {
 	using namespace core::scoring::func;
 	TR << "constrain " << rsd1 << " " << rsd2 << std::endl;
-	for ( Size ires=1; ires<rsd1-1; ++ires ) {
+	for ( core::Size ires=1; ires<rsd1-1; ++ires ) {
 		if ( !pose.residue_type(ires).is_protein() ) continue;
-		for ( Size jres=rsd2+2; jres<=pose.size(); ++jres ) {
+		for ( core::Size jres=rsd2+2; jres<=pose.size(); ++jres ) {
 			if ( !pose.residue_type(jres).is_protein() ) continue;
 
 			core::Real COORDDEV = 1.0;
@@ -109,12 +109,12 @@ void add_constraints(core::pose::Pose & pose, Size rsd1, Size rsd2) {
 	}
 }
 
-void optimize(core::pose::Pose & pose, Size rsd1, Size rsd2, core::scoring::ScoreFunctionOP scorefxn, Size ncycles, core::Real max_delta_torsion) {
+void optimize(core::pose::Pose & pose, core::Size rsd1, core::Size rsd2, core::scoring::ScoreFunctionOP scorefxn, core::Size ncycles, core::Real max_delta_torsion) {
 	protocols::moves::MonteCarloOP mc;
 	mc = utility::pointer::make_shared< protocols::moves::MonteCarlo >( pose, *scorefxn, 2 );
 
-	for ( Size icycle=1; icycle<=ncycles; ++ icycle ) {
-		Size ires = numeric::random::rg().random_range(rsd1, rsd2);
+	for ( core::Size icycle=1; icycle<=ncycles; ++ icycle ) {
+		core::Size ires = numeric::random::rg().random_range(rsd1, rsd2);
 		core::Real delta = (2.* numeric::random::rg().uniform() - 1.) * max_delta_torsion;
 		if ( numeric::random::rg().uniform() < 0.5 ) {
 			pose.set_phi(ires, pose.phi(ires) + delta);
@@ -129,10 +129,10 @@ void optimize(core::pose::Pose & pose, Size rsd1, Size rsd2, core::scoring::Scor
 	mc->recover_low(pose);
 }
 
-void pick_pivots(core::pose::Pose & pose, Size & rsd1, Size & torsion1, Size & rsd2, Size & torsion2, Size variance=5) {
+void pick_pivots(core::pose::Pose & pose, core::Size & rsd1, core::Size & torsion1, core::Size & rsd2, core::Size & torsion2, core::Size variance=5) {
 	// pick two torsion as pivots
-	Size n_torsion(0);
-	for ( Size ires=1; ires <= pose.size(); ++ires ) {
+	core::Size n_torsion(0);
+	for ( core::Size ires=1; ires <= pose.size(); ++ires ) {
 		n_torsion += 2; // for now
 	}
 

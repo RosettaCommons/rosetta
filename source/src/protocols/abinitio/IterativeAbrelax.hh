@@ -47,7 +47,7 @@
 //#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <string>

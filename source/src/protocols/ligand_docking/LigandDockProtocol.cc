@@ -93,7 +93,7 @@ static basic::Tracer TR( "protocols.ligand_docking.LigandDockProtocol" );
 
 
 LigandDockProtocol::LigandDockProtocol():
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	protocols::moves::Mover(),
 	LigandBaseProtocol(),
 	start_from_pts_(),
@@ -127,7 +127,7 @@ LigandDockProtocol::LigandDockProtocol():
 		if ( start_from.size() % 3 != 0 ) {
 			utility_exit_with_message("-start_from requires one or more X,Y,Z triples -- you didn't provide enough numbers!");
 		}
-		for ( Size ii = 1; ii <= start_from.size(); ii += 3 ) {
+		for ( core::Size ii = 1; ii <= start_from.size(); ii += 3 ) {
 			start_from_pts_.push_back( core::Vector(start_from[ii], start_from[ii+1], start_from[ii+2]) );
 		}
 	}
@@ -537,7 +537,7 @@ LigandDockProtocol::optimize_orientation3(
 		core::pose::Pose const orig_pose( pose );
 		// With no initial perturbation, this can get trapped in an endless loop otherwise!
 		//while(true) {
-		for ( Size cnt = 0; cnt < 50; ++cnt ) {
+		for ( core::Size cnt = 0; cnt < 50; ++cnt ) {
 			initialPerturb->apply(pose);
 			core::Vector c = pose.residue(lig_id).nbr_atom_xyz();
 			// did our nbr_atom land in an empty space on the grid?
@@ -632,7 +632,7 @@ LigandDockProtocol::optimize_orientation3(
 		if ( curr_rep <= perfect_rep && curr_atr <= perfect_atr ) {
 			perfect_count += 1;
 			core::Real min_rms = 9999;
-			for ( Size j = 1, j_end = perfect_rsds.size(); j <= j_end; ++j ) {
+			for ( core::Size j = 1, j_end = perfect_rsds.size(); j <= j_end; ++j ) {
 				core::Real rms = automorphic_rmsd(pose.residue(lig_id), *perfect_rsds[j], false /*don't superimpose*/);
 				if ( rms < min_rms ) min_rms = rms;
 			}
@@ -769,7 +769,7 @@ LigandDockProtocol::append_ligand_docking_scores(
 ) const
 {
 	using namespace core::scoring;
-	Size const jump_id = get_ligand_jump_id(after);
+	core::Size const jump_id = get_ligand_jump_id(after);
 
 	// Figure out energy across the interface.
 	// A truer "binding energy" would allow the components to relax (repack)
@@ -829,7 +829,7 @@ LigandDockProtocol::append_ligand_docking_scores(
 	} else {
 		// Compare to *nearest*  -start_from  point
 		core::Real min_travel = 1e99;
-		for ( Size ii = 1; ii <= start_from_pts_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= start_from_pts_.size(); ++ii ) {
 			core::Real travel = start_from_pts_[ii].distance( downstream_after );
 			min_travel = std::min( min_travel, travel );
 		}

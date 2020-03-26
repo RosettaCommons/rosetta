@@ -44,7 +44,7 @@ Coulomb::Coulomb( methods::EnergyMethodOptions const & options ):
 
 
 ////////////////////////////////////////////////////////////////////////////
-Coulomb::Coulomb( Coulomb const & src ): ReferenceCount(),
+Coulomb::Coulomb( Coulomb const & src ): VirtualBase(),
 	max_dis_( src.max_dis_ ),
 	min_dis_( src.min_dis_ ),
 	smooth_fa_elec_( src.smooth_fa_elec_ ),

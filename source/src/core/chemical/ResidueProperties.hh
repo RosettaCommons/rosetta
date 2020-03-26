@@ -24,7 +24,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -46,7 +46,7 @@ namespace chemical {
 /// For now, I have just gathered all the properties related code into one place, so that changes to the system can be
 /// more readily made.  Previous behavior has been maintained.  In the future, I have several ideas for further
 /// improvements. ~Labonte
-class ResidueProperties : public utility::pointer::ReferenceCount {
+class ResidueProperties : public utility::VirtualBase {
 public:  // Standard methods //////////////////////////////////////////////////
 
 	/// @brief Empty constructor -- Create a default ResidueProperites object

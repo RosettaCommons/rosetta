@@ -34,13 +34,13 @@ public:
 	/// @brief Set function: allows the mover to be set up outside of a RosettaScripts context.
 	virtual void
 	set(
-		utility::vector1<Size> const &res1,
+		utility::vector1<core::Size> const &res1,
 		utility::vector1<std::string> const &atom1,
-		utility::vector1<Size> const &res2,
+		utility::vector1<core::Size> const &res2,
 		utility::vector1<std::string> const &atom2,
-		utility::vector1<Size> const &res3,
+		utility::vector1<core::Size> const &res3,
 		utility::vector1<std::string> const &atom3,
-		utility::vector1<Size> const &res4,
+		utility::vector1<core::Size> const &res4,
 		utility::vector1<std::string> const &atom4,
 		utility::vector1<std::string> const &cst_func
 	);
@@ -61,13 +61,13 @@ public:
 
 
 private:
-	utility::vector1<Size> res1_;
+	utility::vector1<core::Size> res1_;
 	utility::vector1<std::string> atom1_;
-	utility::vector1<Size> res2_;
+	utility::vector1<core::Size> res2_;
 	utility::vector1<std::string> atom2_;
-	utility::vector1<Size> res3_;
+	utility::vector1<core::Size> res3_;
 	utility::vector1<std::string> atom3_;
-	utility::vector1<Size> res4_;
+	utility::vector1<core::Size> res4_;
 	utility::vector1<std::string> atom4_;
 	utility::vector1<std::string> cst_func_;
 };

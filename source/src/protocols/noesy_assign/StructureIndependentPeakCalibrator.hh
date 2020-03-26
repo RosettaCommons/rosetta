@@ -34,7 +34,7 @@
 //#include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 //#include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <basic/prof.hh>
 //#include <basic/Tracer.hh>

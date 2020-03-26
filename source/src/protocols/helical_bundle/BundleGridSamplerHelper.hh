@@ -29,7 +29,7 @@
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
@@ -42,7 +42,7 @@ namespace helical_bundle {
 
 /// @brief  BundleGridSamplerHelper class, which stores options for the PerturbBundle mover.
 ///
-class BundleGridSamplerHelper : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< BundleGridSamplerHelper >
+class BundleGridSamplerHelper : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< BundleGridSamplerHelper >
 {
 public:
 

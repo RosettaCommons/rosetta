@@ -104,7 +104,7 @@ void DockWithHotspotMover::apply( Pose & pose ) {
 	core::Real const bump_cutoff(10.);
 	bool const apply_ambiguous_constraints(true);
 
-	for ( Size i=1; i <= hotspot_filenames_.size(); i++ ) {
+	for ( core::Size i=1; i <= hotspot_filenames_.size(); i++ ) {
 		protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP( new protocols::hotspot_hashing::HotspotStubSet );
 		hotspot_stub_setOP->read_data( hotspot_filenames_[i] );
 		hotspot_stub_setOP->add_hotspot_constraints_to_wholepose( pose, chain_to_redesign, hotspot_stub_setOP,

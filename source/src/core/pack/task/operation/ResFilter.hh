@@ -21,9 +21,10 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 // C++ Headers
@@ -36,7 +37,7 @@ namespace pack {
 namespace task {
 namespace operation {
 
-class ResFilter : public utility::pointer::ReferenceCount
+class ResFilter : public utility::VirtualBase
 {
 public:
 	typedef pose::Pose Pose;

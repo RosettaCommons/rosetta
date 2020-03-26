@@ -17,7 +17,7 @@
 #ifndef INCLUDED_protocols_stepwise_protein_MainChainTorsionSet_HH
 #define INCLUDED_protocols_stepwise_protein_MainChainTorsionSet_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector1.fwd.hh>
@@ -28,7 +28,7 @@ namespace modeler {
 namespace protein {
 
 //////////////////////////////////
-class MainChainTorsionSet: public utility::pointer::ReferenceCount {
+class MainChainTorsionSet: public utility::VirtualBase {
 
 	// For now: just alpha or beta.
 

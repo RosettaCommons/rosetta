@@ -51,7 +51,7 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
 #include <boost/foreach.hpp>
 
@@ -90,7 +90,7 @@ utility::vector1< core::Size >
 catalytic_res( core::pose::Pose const & pose )
 {
 	using namespace core;
-	utility::vector1< Size > to_return;
+	utility::vector1< core::Size > to_return;
 
 	toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
 	if ( enz_obs ) {

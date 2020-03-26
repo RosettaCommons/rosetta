@@ -27,7 +27,7 @@
 
 // Utility header
 #include <utility/SingletonBase.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ header
@@ -72,7 +72,7 @@ struct DatabaseRelaxScript {
 /// @brief A class for storing energy maps, since they're not created by owning pointer
 /// by default.
 
-class EnergyMapContainer : public utility::pointer::ReferenceCount {
+class EnergyMapContainer : public utility::VirtualBase {
 public:
 
 	EnergyMapContainer() = delete;
@@ -93,7 +93,7 @@ private:
 /// @brief A simple wrapper class to store a vector of file contents.
 /// @details Used because owning pointers to vectors behave in a wonky way.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-class RelaxScriptFileContents : public utility::pointer::ReferenceCount {
+class RelaxScriptFileContents : public utility::VirtualBase {
 
 public:
 

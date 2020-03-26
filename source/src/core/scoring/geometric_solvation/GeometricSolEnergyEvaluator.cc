@@ -104,7 +104,7 @@ GeometricSolEnergyEvaluator::GeometricSolEnergyEvaluator( methods::EnergyMethodO
 
 /// copy ctor
 GeometricSolEnergyEvaluator::GeometricSolEnergyEvaluator( GeometricSolEnergyEvaluator const & src ) :
-	utility::pointer::ReferenceCount(src),
+	utility::VirtualBase(src),
 	options_( src.options_ ),
 	hb_database_( src.hb_database_ ),
 	dist_cut2_( src.dist_cut2_ ),   // 5.2*5.2

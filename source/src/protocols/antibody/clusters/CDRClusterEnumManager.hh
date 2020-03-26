@@ -19,7 +19,7 @@
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <map>
 #include <string>
@@ -33,7 +33,7 @@ namespace clusters {
 // RM: Actually, if you can avoid singletons if at all possible, that's the better call
 
 /// @brief Interface to this class is in AntibodyInfo.  Should be a singleton.
-class CDRClusterEnumManager : public utility::pointer::ReferenceCount {
+class CDRClusterEnumManager : public utility::VirtualBase {
 public:
 
 	CDRClusterEnumManager();

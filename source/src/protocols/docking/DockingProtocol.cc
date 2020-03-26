@@ -121,7 +121,7 @@ DockingProtocol::DockingProtocol()
 
 
 DockingProtocol::DockingProtocol(
-	Size const rb_jump,
+	core::Size const rb_jump,
 	bool const low_res_protocol_only,
 	bool const docking_local_refine,
 	bool const autofoldtree,

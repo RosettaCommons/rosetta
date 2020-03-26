@@ -65,7 +65,7 @@ print_list_to_string( HBondNetStruct const & network, bool chainid/* true */, bo
 {
 	utility::vector1< HBondResStructCOP > const residues( (network.asymm_residues.empty()) ? network.residues : network.asymm_residues );
 	std::stringstream ret_str;
-	Size count(0);
+	core::Size count(0);
 	for ( auto const & residue : residues ) {
 		if ( count > 0 ) {
 			ret_str << ",";
@@ -98,11 +98,11 @@ std::string
 print_list_to_string( Pose const & pose, HBondNetStruct const & network, bool chainid, bool term_w_start/*=false*/,
 	bool term_w_cycle/*=false*/, bool term_w_bb/*=false*/, bool use_pdb_numbering/*=true*/ )
 {
-	Size total( pose.total_residue() );
+	core::Size total( pose.total_residue() );
 
 	utility::vector1< HBondResStructCOP > const residues( (network.asymm_residues.empty()) ? network.residues : network.asymm_residues );
 	std::stringstream ret_str;
-	Size count(0);
+	core::Size count(0);
 	for ( auto const & residue : residues ) {
 		if ( count > 0 ) {
 			ret_str << ",";
@@ -152,7 +152,7 @@ print_list_to_string( Pose const & pose, HBondNetStruct const & network, bool ch
 std::string
 print_network( HBondNetStruct const & i, bool chainid /* true */ )
 {
-	Size const network_size( (i.asymm_residues.empty()) ? i.residues.size() : i.asymm_residues.size() );
+	core::Size const network_size( (i.asymm_residues.empty()) ? i.residues.size() : i.asymm_residues.size() );
 	std::string net_prefix("");
 	if ( i.is_native ) net_prefix = "native";
 	else if ( i.is_extended ) net_prefix = "extended";
@@ -164,7 +164,7 @@ print_network( HBondNetStruct const & i, bool chainid /* true */ )
 std::string
 print_network_w_pdb_numbering( Pose const & pose, HBondNetStruct const & i, bool chainid )
 {
-	Size const network_size( (i.asymm_residues.empty()) ? i.residues.size() : i.asymm_residues.size() );
+	core::Size const network_size( (i.asymm_residues.empty()) ? i.residues.size() : i.asymm_residues.size() );
 	std::string net_prefix("");
 	if ( i.is_native ) net_prefix = "native";
 	else if ( i.is_extended ) net_prefix = "extended";
@@ -180,7 +180,7 @@ print_headers()
 }
 
 utility::vector1< HBondResStructCOP >::const_iterator
-find_HBondResStruct( utility::vector1< HBondResStructCOP > const & residues, Size resnum )
+find_HBondResStruct( utility::vector1< HBondResStructCOP > const & residues, core::Size resnum )
 {
 	auto r = residues.begin();
 	for ( ; r != residues.end(); ++r ) {
@@ -210,18 +210,18 @@ get_hbond_atom_pairs( HBondNetStruct & network, Pose & pose, bool bb_exclusion /
 
 	core::scoring::hbonds::fill_hbond_set( pose, false /* deriv */, *full_hbond_set, true /* exclude bb-bb */, false /* exclude bb-sc */, false /* exclude sc-bb */, false /* exclude sc-sc */ );
 
-	std::vector< Size > resnums(0);
+	std::vector< core::Size > resnums(0);
 	for ( utility::vector1< HBondResStructCOP >::const_iterator res = network.residues.begin(); res != network.residues.end(); ++res ) {
-		//for ( std::set< Size >::const_iterator res = actual_hbond_residues.begin(); res != actual_hbond_residues.end(); ++res ){
+		//for ( std::set< core::Size >::const_iterator res = actual_hbond_residues.begin(); res != actual_hbond_residues.end(); ++res ){
 		resnums.push_back( (*res)->resnum );
 	}
 	//    if ( !(network.waterrots.empty()) ){
-	//        Size new_total( pose.total_residue() );
+	//        core::Size new_total( pose.total_residue() );
 	//        if ( core::pose::symmetry::is_symmetric(pose) ){
 	//            core::conformation::symmetry::SymmetricConformation const & newSymmConf(dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()));
 	//            new_total = newSymmConf.Symmetry_Info()->num_independent_residues();
 	//        }
-	//        for ( Size r = 1; r <= new_total; r++ ){
+	//        for ( core::Size r = 1; r <= new_total; r++ ){
 	//            if ( pose.residue(r).is_water() && pose.pdb_info()->res_haslabel(r, "HBNet")){
 	//                resnums.push_back(r);
 	//            }
@@ -270,7 +270,7 @@ get_num_protein_sc_sc_hbonds( Pose & pose, HBondNetStruct & i )
 		return 0;
 	}
 
-	Size num_protein_sc_sc_hbonds(0);
+	core::Size num_protein_sc_sc_hbonds(0);
 	for ( utility::vector1<HBondCOP>::const_iterator h = i.hbond_vec.begin(); h != i.hbond_vec.end(); ++h ) {
 		if ( pose.residue((*h)->acc_res()).is_protein() && pose.residue((*h)->don_res()).is_protein() ) {
 			num_protein_sc_sc_hbonds++;
@@ -280,9 +280,9 @@ get_num_protein_sc_sc_hbonds( Pose & pose, HBondNetStruct & i )
 }
 
 Size
-get_num_edges_for_res( Size const res, ObjexxFCL::FArray2D_int & path_dists )
+get_num_edges_for_res( core::Size const res, ObjexxFCL::FArray2D_int & path_dists )
 {
-	Size num_edges(0);
+	core::Size num_edges(0);
 	int r( static_cast<int>(res));
 	int size( static_cast<int>(path_dists.size2()));
 	for ( int s = 1; s <= size; ++s ) { // assume path_dists is symmetrical and dim1 = dim2
@@ -305,7 +305,7 @@ hbnet_one_body_energies(
 	std::fill( energies.begin(), energies.end(), core::PackerEnergy( 0.0 ) );
 
 	int const nrotamers = (int)(rotset.num_rotamers());
-	//Size const theresid = rotset_op->resid();
+	//core::Size const theresid = rotset_op->resid();
 
 	for ( int ii = 1; ii <= nrotamers; ++ii ) {
 		core::scoring::EnergyMap emap;
@@ -338,7 +338,7 @@ hbnet_symm_one_body_energies(
 	utility::vector1< core::PackerEnergy > temp_energies = energies;
 
 	int const nrotamers = (int)(rotset.num_rotamers());
-	Size const theresid = rotset.resid();
+	core::Size const theresid = rotset.resid();
 
 	for ( int ii = 1; ii <= nrotamers; ++ii ) {
 		core::scoring::EnergyMap emap;
@@ -421,8 +421,8 @@ his_tyr_connectivity( Pose const & pose, HBondNetStruct & i )
 
 	//new way: His must accept hydrogen from Tyr
 	for ( utility::vector1<HBondCOP>::const_iterator h = i.hbond_vec.begin(); h != i.hbond_vec.end(); ++h ) {
-		Size arsd((*h)->acc_res());
-		Size drsd((*h)->don_res());
+		core::Size arsd((*h)->acc_res());
+		core::Size drsd((*h)->don_res());
 		char a_aa = pose.residue( arsd ).name1();
 		char d_aa = pose.residue( drsd ).name1();
 		if ( a_aa == 'H' && !((*h)->acc_atm_is_backbone()) && d_aa == 'Y' && !((*h)->don_hatm_is_backbone()) ) {

@@ -29,7 +29,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 
-//#include <utility/pointer/ReferenceCount.hh>
+//#include <utility/VirtualBase.hh>
 
 
 namespace core {
@@ -38,7 +38,7 @@ namespace kinematics {
 
 /// @brief Rotation + translation class
 /// @note  Used in jumps
-//class RT : public utility::pointer::ReferenceCount {
+//class RT : public utility::VirtualBase {
 class RT {
 
 public: // Types
@@ -74,7 +74,7 @@ public:
 
 	/// @brief copy constructor
 	RT ( RT const & src ):
-		//ReferenceCount(),
+		//VirtualBase(),
 		rotation( src.rotation ),
 		translation( src.translation )
 	{}

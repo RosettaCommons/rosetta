@@ -141,8 +141,8 @@ private:
 
 	void
 	sample_residues_recursively(
-		Size const which_res,
-		Size & count,
+		core::Size const which_res,
+		core::Size & count,
 		core::pose::Pose & pose );
 
 	void
@@ -196,7 +196,7 @@ private:
 		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 	void
-	filter_big_bin( Size const big_bin,
+	filter_big_bin( core::Size const big_bin,
 		MainChainTorsionSetList & main_chain_torsion_set_list );
 
 
@@ -229,8 +229,8 @@ private:
 
 	protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP working_parameters_;
 
-	utility::vector1< Size > const moving_residues_input_;
-	utility::vector1< Size > moving_residues_;
+	utility::vector1< core::Size > const moving_residues_input_;
+	utility::vector1< core::Size > moving_residues_;
 	core::Size n_sample_;
 	core::Size n_sample_beta_;
 	core::Real rmsd_cutoff_;
@@ -245,7 +245,7 @@ private:
 	bool apply_vdw_cut_;
 	core::Real centroid_vdw_ref_;
 
-	Size nstruct_centroid_;
+	core::Size nstruct_centroid_;
 
 	core::scoring::Ramachandran const & ramachandran_;
 	core::scoring::RamaPrePro const & rama_pre_pro_;

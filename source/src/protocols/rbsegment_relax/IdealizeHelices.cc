@@ -142,7 +142,7 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 
 		// build ideal pose
 		core::pose::Pose ideal_pose;
-		Size len_i = stop_i - start_i + 1;
+		core::Size len_i = stop_i - start_i + 1;
 		// ideal geometry
 		for ( core::uint j = start_i; j <= stop_i; ++j ) {
 			ideal_pose.append_residue_by_bond( pose.residue( j ), true );
@@ -191,7 +191,7 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 			numeric::xyzVector< core::Real > x_j = pose.residue(j).atom(" CA ").xyz();
 
 			// add CSTS
-			for ( Size iatom = 1; iatom <= 4; ++iatom ) {
+			for ( core::Size iatom = 1; iatom <= 4; ++iatom ) {
 				ideal_pose.add_constraint( utility::pointer::make_shared< CoordinateConstraint >( AtomID(iatom,resid), AtomID(1,vrt_index), x_j, utility::pointer::make_shared< BoundFunc >(0.0,cst_width_,1.0,"") ) );
 			}
 
@@ -217,7 +217,7 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 		R.zx( uu(1,3) ); R.zy( uu(2,3) ); R.zz( uu(3,3) );
 		for ( core::uint j = start_i; j <= stop_i; ++j ) {
 			core::uint resid = j - start_i + 1;
-			for ( Size k = 1; k <= ideal_pose.residue_type(resid).natoms(); ++k ) {
+			for ( core::Size k = 1; k <= ideal_pose.residue_type(resid).natoms(); ++k ) {
 				core::id::AtomID id_src( k, resid );
 				ideal_pose.set_xyz( id_src, R * ( ideal_pose.xyz(id_src) - com1) + com2 );
 			}
@@ -233,7 +233,7 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 		// replace coords
 		for ( core::uint j = start_i; j <= stop_i; ++j ) {
 			core::uint resid = j - start_i + 1;
-			for ( Size k = 1; k <= ideal_pose.residue_type(resid).natoms(); ++k ) {
+			for ( core::Size k = 1; k <= ideal_pose.residue_type(resid).natoms(); ++k ) {
 				core::id::AtomID id_src( k, resid );
 				core::id::AtomID id_tgt( k, j );
 				pose.set_xyz( id_tgt, ideal_pose.xyz(id_src) );
@@ -244,7 +244,7 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 		if ( ncs ) {
 			for ( core::uint n = 1; n <= ncs->ngroups(); ++n ) {
 				bool all_are_mapped = true;
-				for ( Size k = start_i; k <= stop_i && all_are_mapped; ++k ) {
+				for ( core::Size k = start_i; k <= stop_i && all_are_mapped; ++k ) {
 					all_are_mapped &= (ncs->get_equiv( n,k )!=0);
 				}
 				if ( !all_are_mapped ) continue;
@@ -299,7 +299,7 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 				R.zx( uu(1,3) ); R.zy( uu(2,3) ); R.zz( uu(3,3) );
 				for ( core::uint j = start_i; j <= stop_i; ++j ) {
 					core::uint offset = j - start_i;
-					for ( Size k = 1; k <= pose.residue_type(j).natoms(); ++k ) {
+					for ( core::Size k = 1; k <= pose.residue_type(j).natoms(); ++k ) {
 						core::id::AtomID id_src( k, j );
 						core::id::AtomID id_tgt( k, offset+remap_start );
 						pose.set_xyz( id_tgt, R * ( pose.xyz(id_src) - com1) + com2 );

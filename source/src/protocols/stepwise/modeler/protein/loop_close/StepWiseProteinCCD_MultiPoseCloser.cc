@@ -83,7 +83,7 @@ StepWiseProteinCCD_MultiPoseCloser::apply( core::pose::Pose & pose )
 		}
 	}
 
-	Size const num_successes = main_chain_torsion_sets_.size();
+	core::Size const num_successes = main_chain_torsion_sets_.size();
 	std::cout << "CCD closed: " << num_successes << " out of " << ccd_closer_->ntries() << " tries." << std::endl;
 
 	// Kind of silly -- should have at least one output.

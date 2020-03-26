@@ -15,7 +15,7 @@
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_MRSJobQueen_HH
 #define INCLUDED_protocols_multistage_rosetta_scripts_MRSJobQueen_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/multistage_rosetta_scripts/MRSJobQueen.fwd.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>
 #include <protocols/multistage_rosetta_scripts/TagManager.hh>
@@ -122,7 +122,7 @@ public:
 
 	std::list< jd3::LarvalJobOP > determine_job_list(
 		jd3::JobDAGNodeID job_dag_node_index,
-		Size max_njobs
+		core::Size max_njobs
 	) override;
 
 	jd3::JobOP

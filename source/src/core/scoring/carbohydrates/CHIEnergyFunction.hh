@@ -26,7 +26,7 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <map>
@@ -56,7 +56,7 @@ struct CHIDihedralSamplingData {
 /// knowledge-based functions were created instead.
 /// @ref      A.K. Nivedha et al. J. Comput. Chem. 2014, 35, 526-39
 /// @ref      A.K. Nivedha et al. JCTC 2016, 12, 892-901
-class CHIEnergyFunction : public utility::pointer::ReferenceCount {
+class CHIEnergyFunction : public utility::VirtualBase {
 
 public:  // Standard Methods //////////////////////////////////////////////////
 

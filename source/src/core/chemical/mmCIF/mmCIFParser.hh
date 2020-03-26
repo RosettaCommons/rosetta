@@ -36,7 +36,7 @@
 #include <core/chemical/mmCIF/mmCIFParser.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <map>
 #include <core/types.hh>
 #include <cifparse/CifFile.h>
@@ -46,7 +46,7 @@ namespace core {
 namespace chemical {
 namespace mmCIF {
 
-class mmCIFParser : public utility::pointer::ReferenceCount
+class mmCIFParser : public utility::VirtualBase
 {
 
 public:

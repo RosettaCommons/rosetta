@@ -72,8 +72,8 @@ void PartialThreadingMover::apply( core::pose::Pose & query_pose ) {
 	//////////
 	// 1) delete all unaligned residues
 	tr.Debug << "current sequence is " << query_pose.sequence() << std::endl;
-	for ( Size resi = query_pose.size(); resi >= 1; --resi ) {
-		Size const t_resi = query_to_pdbseq[ resi ];
+	for ( core::Size resi = query_pose.size(); resi >= 1; --resi ) {
+		core::Size const t_resi = query_to_pdbseq[ resi ];
 
 		if ( t_resi == 0 && query_pose.size() > 1 ) {
 			query_pose.conformation().delete_residue_slow(resi);
@@ -101,14 +101,14 @@ void PartialThreadingMover::apply( core::pose::Pose & query_pose ) {
 	utility::vector1< core::id::AtomID > atm_ids;
 	utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
 
-	for ( Size resi = 1; resi <= query_pose.size(); resi++ ) {
-		Size const t_resi = query_to_pdbseq[ pdb_numbering[resi] ];
+	for ( core::Size resi = 1; resi <= query_pose.size(); resi++ ) {
+		core::Size const t_resi = query_to_pdbseq[ pdb_numbering[resi] ];
 
 		// skip this residue if we're not aligned
 		if ( t_resi == 0 ) continue;
 		if ( t_resi > template_pose_.size() ) continue;
 
-		for ( Size atomj = 1; atomj <= query_pose.residue(resi).natoms(); ++atomj ) {
+		for ( core::Size atomj = 1; atomj <= query_pose.residue(resi).natoms(); ++atomj ) {
 			std::string atom_name( query_pose.residue(resi).atom_name( atomj ));
 
 			// unless match, don't copy BB

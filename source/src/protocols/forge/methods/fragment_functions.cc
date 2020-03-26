@@ -54,8 +54,8 @@ smallmer_from_largemer(
 	ConstantLengthFragSetOP small( new ConstantLengthFragSet( smallmer_size ) );
 
 	for ( ConstFrameIterator f = begin; f != end; ++f ) {
-		Size const ie = all_possible_smallmers ? f->length() - smallmer_size + 1 : 1;
-		for ( Size i = 1; i <= ie; ++i ) {
+		core::Size const ie = all_possible_smallmers ? f->length() - smallmer_size + 1 : 1;
+		for ( core::Size i = 1; i <= ie; ++i ) {
 			small->add( f->generate_sub_frame( smallmer_size, i ) );
 		}
 	}

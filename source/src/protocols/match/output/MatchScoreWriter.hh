@@ -23,7 +23,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
@@ -36,7 +36,7 @@ namespace match {
 namespace output {
 
 /// @details Writes out a score file based on the sum of RMS of geometric constrainst satisfaction with the desired ligan positioning
-class MatchScoreWriter : public utility::pointer::ReferenceCount {
+class MatchScoreWriter : public utility::VirtualBase {
 public:
 	// Standard methods ////////////////////////////////////////////////////////
 	/// @brief  Default constructor

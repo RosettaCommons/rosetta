@@ -44,7 +44,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
@@ -96,13 +96,13 @@ void register_options() {
 	OPT( evaluation::chemical_shifts );
 }
 
-void invert_include_residues( Size nres, core::scoring::ResidueSelectionVector const& include_list, core::scoring::ResidueSelectionVector& exclude_list ) {
+void invert_include_residues( core::Size nres, core::scoring::ResidueSelectionVector const& include_list, core::scoring::ResidueSelectionVector& exclude_list ) {
 
 	exclude_list.clear();
 
-	for ( Size ir = 1; ir <= nres; ++ir ) {
+	for ( core::Size ir = 1; ir <= nres; ++ir ) {
 		bool include_residue = false;
-		for ( Size ex = 1; ex <= include_list.size(); ex ++ ) {
+		for ( core::Size ex = 1; ex <= include_list.size(); ex ++ ) {
 			if ( include_list[ex] == ir ) {
 				include_residue = true;
 				break;
@@ -112,16 +112,16 @@ void invert_include_residues( Size nres, core::scoring::ResidueSelectionVector c
 		if ( !include_residue ) {
 			exclude_list.push_back( ir );
 		}
-	} // for ( Size ir = 1; ir <= native_pose.size(); ++ir )
+	} // for ( core::Size ir = 1; ir <= native_pose.size(); ++ir )
 }
 
 //@detail find residues that don't have missing density
 void find_existing_residues(  core::pose::PoseCOP pose, std::string const & tag, core::scoring::ResidueSelection& selection ) {
-	for ( Size pos = 1; pos <= pose->size(); pos++ ) {
+	for ( core::Size pos = 1; pos <= pose->size(); pos++ ) {
 		if ( pose->residue_type( pos ).is_protein() && pose->residue_type( pos ).has("CA") ) {
 			numeric::xyzVector< core::Real> ca_pos = pose->residue( pos ).atom("CA").xyz();
 			bool good ( true );
-			for ( Size j=1; j<= pose->residue( pos ).natoms(); ++j ) {
+			for ( core::Size j=1; j<= pose->residue( pos ).natoms(); ++j ) {
 				if ( ( ca_pos - pose->residue( pos ).atom(j).xyz() ).length() > 20 ) {
 					good = false;
 				}
@@ -131,7 +131,7 @@ void find_existing_residues(  core::pose::PoseCOP pose, std::string const & tag,
 	}
 	if ( tr.Trace.visible() ) {
 		tr.Trace << "selection of residues for rmsd of " << tag << std::endl;
-		for ( Size const res : selection ) {
+		for ( core::Size const res : selection ) {
 			tr.Trace << " " << res;
 		}
 		tr.Trace << std::endl;

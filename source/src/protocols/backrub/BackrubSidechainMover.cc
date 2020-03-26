@@ -80,7 +80,7 @@ BackrubSidechainMover::BackrubSidechainMover(
 BackrubSidechainMover::BackrubSidechainMover(
 	BackrubSidechainMover const & mover
 ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	protocols::canonical_sampling::ThermodynamicMover(mover),
 	valid_segments_(mover.valid_segments_),
 	last_valid_segment_index_(mover.last_valid_segment_index_),

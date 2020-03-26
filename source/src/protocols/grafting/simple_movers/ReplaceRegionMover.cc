@@ -35,6 +35,8 @@ namespace protocols {
 namespace grafting {
 namespace simple_movers {
 
+using core::Size;
+
 ReplaceRegionMover::ReplaceRegionMover(bool copy_pdbinfo /*false*/):
 	protocols::moves::Mover("ReplaceRegionMover"),
 	span_(0),
@@ -48,7 +50,7 @@ ReplaceRegionMover::ReplaceRegionMover(
 	core::pose::Pose const & src_pose,
 	std::string const & src_pose_start,
 	std::string const & target_pose_start,
-	Size const span,
+	core::Size const span,
 	bool copy_pdbinfo /*false*/
 ) :
 	protocols::moves::Mover("ReplaceRegionMover"),

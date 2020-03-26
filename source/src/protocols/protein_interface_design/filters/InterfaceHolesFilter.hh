@@ -43,7 +43,7 @@ public:
 		return utility::pointer::make_shared< InterfaceHolesFilter >();
 	}
 	InterfaceHolesFilter( InterfaceHolesFilter const & init ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( init )
 	{
 		rb_jump_ = init.rb_jump_;

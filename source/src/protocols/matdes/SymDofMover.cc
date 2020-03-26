@@ -115,11 +115,11 @@ SymDofMover::get_angles() {
 	utility::vector1<Real> angles;
 	if ( sampling_mode_ == "grid" ) {
 		utility::vector1<Real> angle_diffs = SymDofMoverSampler::get_instance()->get_angle_diffs();
-		for ( Size i = 1; i <= sym_dof_names.size(); i++ ) {
+		for ( core::Size i = 1; i <= sym_dof_names.size(); i++ ) {
 			angles.push_back(angles_[i] + angle_diffs[i]);
 		}
 	} else {
-		for ( Size i = 1; i <= sym_dof_names.size(); i++ ) {
+		for ( core::Size i = 1; i <= sym_dof_names.size(); i++ ) {
 			if ( sampling_mode_ == "uniform" ) {
 				angles.push_back(angles_[i] + angles_range_min_[i] + ( angles_range_max_[i] - angles_range_min_[i]) * numeric::random::rg().uniform());
 			} else if ( sampling_mode_ == "gaussian" ) {
@@ -143,11 +143,11 @@ SymDofMover::get_radial_disps() {
 	utility::vector1<Real> radial_disps;
 	if ( sampling_mode_ == "grid" ) {
 		utility::vector1<Real> radial_diffs = SymDofMoverSampler::get_instance()->get_radial_disp_diffs();
-		for ( Size i = 1; i <= sym_dof_names.size(); i++ ) {
+		for ( core::Size i = 1; i <= sym_dof_names.size(); i++ ) {
 			radial_disps.push_back(radial_disps_[i] + radial_offsets_[i] + radial_diffs[i]);
 		}
 	} else {
-		for ( Size i = 1; i <= sym_dof_names.size(); i++ ) {
+		for ( core::Size i = 1; i <= sym_dof_names.size(); i++ ) {
 			if ( sampling_mode_ == "uniform" ) {
 				radial_disps.push_back(radial_disps_[i] + radial_offsets_[i] + radial_disps_range_min_[i] + ( radial_disps_range_max_[i] - radial_disps_range_min_[i]) * numeric::random::rg().uniform());
 			} else if ( sampling_mode_ == "gaussian" ) {
@@ -165,34 +165,34 @@ SymDofMover::get_radial_disps() {
 
 // pose manipulation. Consider moving to util.cc ? //
 
-static void trans_pose( Pose & pose, Vec const & trans, Size start, Size end ) {
-	for ( Size ir = start; ir <= end; ++ir ) {
-		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
+static void trans_pose( Pose & pose, Vec const & trans, core::Size start, core::Size end ) {
+	for ( core::Size ir = start; ir <= end; ++ir ) {
+		for ( core::Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, pose.xyz(aid) + (Vec)trans );
 		}
 	}
 }
-static void rot_pose( Pose & pose, Mat const & rot, Size start, Size end ) {
-	for ( Size ir = start; ir <= end; ++ir ) {
-		for ( Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
+static void rot_pose( Pose & pose, Mat const & rot, core::Size start, core::Size end ) {
+	for ( core::Size ir = start; ir <= end; ++ir ) {
+		for ( core::Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia ) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));
 			pose.set_xyz( aid, rot * pose.xyz(aid) );
 		}
 	}
 }
-static void rot_pose( Pose & pose, Mat const & rot, Vec const & cen, Size start, Size end ) {
+static void rot_pose( Pose & pose, Mat const & rot, Vec const & cen, core::Size start, core::Size end ) {
 	trans_pose(pose,-cen,start,end);
 	rot_pose(pose,rot,start,end);
 	trans_pose(pose,cen,start,end);
 }
-static void rot_pose( Pose & pose, Vec const & axis, core::Real const & ang, Size start, Size end ) {
+static void rot_pose( Pose & pose, Vec const & axis, core::Real const & ang, core::Size start, core::Size end ) {
 	rot_pose(pose,rotation_matrix_degrees(axis,ang),start,end);
 }
-static void rot_pose( Pose & pose, Vec const & axis, core::Real const & ang, Vec const & cen, Size start, Size end ) {
+static void rot_pose( Pose & pose, Vec const & axis, core::Real const & ang, Vec const & cen, core::Size start, core::Size end ) {
 	rot_pose(pose,rotation_matrix_degrees(axis,ang),cen,start,end);
 }
-static void alignaxis(core::pose::Pose & pose, Vec newaxis, Vec oldaxis, Vec cen, Size start, Size end ) {
+static void alignaxis(core::pose::Pose & pose, Vec newaxis, Vec oldaxis, Vec cen, core::Size start, core::Size end ) {
 	newaxis.normalize();
 	oldaxis.normalize();
 	if ( newaxis.normalize() != oldaxis.normalize() ) {
@@ -211,33 +211,33 @@ numeric::Real get_intra_contacts(Pose const & pose){
 	runtime_assert( symmetric_components(pose).size() == 2 );
 	char c1 = symmetric_components(pose)[1];
 	char c2 = symmetric_components(pose)[2];
-	Size beg1=get_component_lower_bound(pose,c1);
-	Size beg2=get_component_lower_bound(pose,c2);
-	Size end1=get_component_upper_bound(pose,c1);
-	Size end2=get_component_upper_bound(pose,c2);
+	core::Size beg1=get_component_lower_bound(pose,c1);
+	core::Size beg2=get_component_lower_bound(pose,c2);
+	core::Size end1=get_component_upper_bound(pose,c1);
+	core::Size end2=get_component_upper_bound(pose,c2);
 	Real ncontact = 0.0;
-	for ( Size ir = beg1; ir <= end1; ++ir ) {
-		for ( Size jr = beg2; jr <= end2; ++jr ) {
+	for ( core::Size ir = beg1; ir <= end1; ++ir ) {
+		for ( core::Size jr = beg2; jr <= end2; ++jr ) {
 			ncontact += ( 49.0 >= pose.residue(ir).nbr_atom_xyz().distance_squared( pose.residue(jr).nbr_atom_xyz() ) );
 		}
 	}
 	return ncontact;
 }
-void maximize_sub1_contact(Pose & pose, Size const & nf1, Size const & nf2, Vec const & ax1, Vec const & ax2 ){
+void maximize_sub1_contact(Pose & pose, core::Size const & nf1, core::Size const & nf2, Vec const & ax1, Vec const & ax2 ){
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 	using numeric::Real;
 	runtime_assert( symmetric_components(pose).size() == 2 );
 	char c1 = symmetric_components(pose)[1];
 	char c2 = symmetric_components(pose)[2];
-	Size beg1=get_component_lower_bound(pose,c1);
-	Size beg2=get_component_lower_bound(pose,c2);
-	Size end1=get_component_upper_bound(pose,c1);
-	Size end2=get_component_upper_bound(pose,c2);
+	core::Size beg1=get_component_lower_bound(pose,c1);
+	core::Size beg2=get_component_lower_bound(pose,c2);
+	core::Size end1=get_component_upper_bound(pose,c1);
+	core::Size end2=get_component_upper_bound(pose,c2);
 	Real mx=-9e9;
-	Size imx=0,jmx=0;
-	for ( Size i = 0; i < nf1; ++i ) {
-		for ( Size j = 0; j < nf2; ++j ) {
+	core::Size imx=0,jmx=0;
+	for ( core::Size i = 0; i < nf1; ++i ) {
+		for ( core::Size j = 0; j < nf2; ++j ) {
 			Real ncontact = get_intra_contacts(pose);
 			if ( ncontact>mx ) {
 				mx = ncontact;
@@ -261,7 +261,7 @@ SymDofMover::add_components_to_pose_if_necessary(Pose & pose){
 		runtime_assert_msg(option[OptionKeys::in::file::t]().size() == 1,
 			"SymDofMover must have one or no inputs in -t");
 		core::pose::PoseCOP b = core::import_pose::pose_from_file( option[OptionKeys::in::file::t]().front() , core::import_pose::PDB_file);
-		Size nres1 = pose.size();
+		core::Size nres1 = pose.size();
 		core::pose::append_pose_to_pose( pose, *b, true );
 		for ( core::uint ir =         1; ir <= nres1           ; ++ir ) {
 			pose.pdb_info()->chain(static_cast<long int>(ir), 'A');
@@ -295,7 +295,7 @@ SymDofMover::apply(Pose & pose) {
 
 	// If already symmetric pose, then apply the displacements and/or rotations to the specified symdofs //
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		for ( Size i = 1; i <= sym_dof_names.size(); i++ ) {
+		for ( core::Size i = 1; i <= sym_dof_names.size(); i++ ) {
 			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_names[i] );
 			core::kinematics::Jump j = pose.jump(sym_aware_jump_id);
 			const Vec init_trans = pose.jump(sym_aware_jump_id).get_translation();
@@ -303,13 +303,13 @@ SymDofMover::apply(Pose & pose) {
 			/*   core::conformation::symmetry::SymDof dof;
 			core::conformation::symmetry::SymmetricConformation & symm_conf( dynamic_cast<core::conformation::symmetry::SymmetricConformation & > ( split_pose.conformation()) );
 			if( (radial_disps.size() > 0 && translation_axes_.size() == 0) || (angles.size() > 0 && rotation_axes_.size() == 0) ) {
-			for(std::map< Size, core::conformation::symmetry::SymDof >::const_iterator it = symm_conf.Symmetry_Info()->get_dofs().begin(); it != symm_conf.Symmetry_Info()->get_dofs().end(); ++it){
+			for(std::map< core::Size, core::conformation::symmetry::SymDof >::const_iterator it = symm_conf.Symmetry_Info()->get_dofs().begin(); it != symm_conf.Symmetry_Info()->get_dofs().end(); ++it){
 			if( it->first == sym_aware_jump_id ){
 			dof = it;
 			}
 			}
 			if( translation_axes_.size() == 0 ) {
-			for ( Size i=1; i<=3; ++i ) {
+			for ( core::Size i=1; i<=3; ++i ) {
 			if( dof.allow_dof(i) ) {
 			if ( i == 1 ) translation_axes_.push_back("x");
 			if ( i == 2 ) translation_axes_.push_back("y");
@@ -318,7 +318,7 @@ SymDofMover::apply(Pose & pose) {
 			}
 			}
 			if( rotation_axes_.size() == 0 ) {
-			for ( Size i=4; i<=6; ++i ) {
+			for ( core::Size i=4; i<=6; ++i ) {
 			if( dof.allow_dof(i) ) {
 			if ( i == 4 ) rotation_axes_.push_back("x");
 			if ( i == 5 ) rotation_axes_.push_back("y");
@@ -364,7 +364,7 @@ SymDofMover::apply(Pose & pose) {
 
 		if ( symm_file_[0]=='P' && symm_file_[2]=='_' && symm_file_[5]=='.' ) {
 			TR << "Doing DOF placement for 2D lattice (based on sym file name P?_??.*" << symm_file_ << std::endl;
-			for ( Size i = 1; i <= sym_dof_names.size(); i++ ) {
+			for ( core::Size i = 1; i <= sym_dof_names.size(); i++ ) {
 
 				core::Size sub_start= pose.conformation().chain_begin(i);
 				core::Size sub_end= pose.conformation().chain_end(i);
@@ -394,7 +394,7 @@ SymDofMover::apply(Pose & pose) {
 
 		} else {
 
-			for ( Size i = 1; i <= sym_dof_names.size(); i++ ) {
+			for ( core::Size i = 1; i <= sym_dof_names.size(); i++ ) {
 
 				core::Size sub_start= pose.conformation().chain_begin(i);
 				core::Size sub_end= pose.conformation().chain_end(i);
@@ -458,8 +458,8 @@ SymDofMover::apply(Pose & pose) {
 			using namespace core::conformation::symmetry;
 			auto const & symm_conf ( dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
 			SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-			std::map< Size, SymDof > dofs ( symm_info->get_dofs() );
-			std::map< Size, SymDof >::iterator it;
+			std::map< core::Size, SymDof > dofs ( symm_info->get_dofs() );
+			std::map< core::Size, SymDof >::iterator it;
 			auto it_begin = dofs.begin();
 			auto it_end = dofs.end();
 			for ( it=it_begin; it != it_end; ++it ) {
@@ -519,7 +519,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 	if ( tag->hasOption( "radial_disps") ) {
 		utility::vector1< std::string > radial_disp_strings = utility::string_split( tag->getOption< std::string >( "radial_disps" ), ',' );
 		Real real_disp;
-		for ( Size i = 1; i <= radial_disp_strings.size(); i++ ) {
+		for ( core::Size i = 1; i <= radial_disp_strings.size(); i++ ) {
 			TR << radial_disp_strings[i] << std::endl;
 			real_disp = std::atof( radial_disp_strings[i].c_str() );
 			radial_disps.push_back( real_disp );
@@ -528,7 +528,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 			utility_exit_with_message("The number of radial disps does not match the number of translation_axes.");
 		}
 	} else {
-		for ( Size i = 1; i <= sym_dof_names_.size(); i++ ) {
+		for ( core::Size i = 1; i <= sym_dof_names_.size(); i++ ) {
 			radial_disps.push_back( 0 );
 		}
 	}
@@ -539,7 +539,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 		rotation_axes_ = utility::string_split( tag->getOption<std::string>( "rotation_axes"), ',' );
 		utility::vector1< std::string > angle_strings = utility::string_split( tag->getOption< std::string >( "angles" ), ',' );
 		Real real_angle;
-		for ( Size i = 1; i <= angle_strings.size(); i++ ) {
+		for ( core::Size i = 1; i <= angle_strings.size(); i++ ) {
 			real_angle = std::atof( angle_strings[i].c_str() );
 			angles.push_back( real_angle );
 		}
@@ -547,7 +547,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 			utility_exit_with_message("The number of angles of rotation does not match the number of rotation_axes.");
 		}
 	} else {
-		for ( Size i = 1; i <= sym_dof_names_.size(); i++ ) {
+		for ( core::Size i = 1; i <= sym_dof_names_.size(); i++ ) {
 			angles.push_back( 0 );
 		}
 	}
@@ -560,7 +560,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 			utility_exit_with_message("The number of radial offsets does not match the number of radial disps.");
 		} else {
 			Real real_offset;
-			for ( Size i = 1; i <= radial_offset_strings.size(); i++ ) {
+			for ( core::Size i = 1; i <= radial_offset_strings.size(); i++ ) {
 				real_offset = std::atof( radial_offset_strings[i].c_str() );
 				if ( auto_range_ && (radial_disps_[i] < 0) ) {
 					radial_offsets.push_back( -real_offset );
@@ -573,7 +573,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 			utility_exit_with_message("The number of radial offsets does not match the number of translation_axes.");
 		}
 	} else {
-		for ( Size i = 1; i <= sym_dof_names_.size(); i++ ) {
+		for ( core::Size i = 1; i <= sym_dof_names_.size(); i++ ) {
 			radial_offsets.push_back( 0 );
 		}
 	}
@@ -584,7 +584,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 		utility::vector1< std::string > radial_disp_range_min_strings = utility::string_split( tag->getOption< std::string >( "radial_disps_range_min" ), ',' );
 		utility::vector1<Real> radial_disps_range_min;
 		Real real_disps_range_min;
-		for ( Size i = 1; i <= radial_disp_range_min_strings.size(); i++ ) {
+		for ( core::Size i = 1; i <= radial_disp_range_min_strings.size(); i++ ) {
 			real_disps_range_min = std::atof( radial_disp_range_min_strings[i].c_str() );
 			radial_disps_range_min.push_back( real_disps_range_min );
 		}
@@ -593,7 +593,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 		utility::vector1< std::string > radial_disp_range_max_strings = utility::string_split( tag->getOption< std::string >( "radial_disps_range_max" ), ',' );
 		utility::vector1<Real> radial_disps_range_max;
 		Real real_disps_range_max;
-		for ( Size i = 1; i <= radial_disp_range_max_strings.size(); i++ ) {
+		for ( core::Size i = 1; i <= radial_disp_range_max_strings.size(); i++ ) {
 			real_disps_range_max = std::atof( radial_disp_range_max_strings[i].c_str() );
 			radial_disps_range_max.push_back( real_disps_range_max );
 		}
@@ -602,7 +602,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 		utility::vector1< std::string > angle_range_min_strings = utility::string_split( tag->getOption< std::string >( "angles_range_min" ), ',' );
 		utility::vector1<Real> angles_range_min;
 		Real real_angles_range_min;
-		for ( Size i = 1; i <= angle_range_min_strings.size(); i++ ) {
+		for ( core::Size i = 1; i <= angle_range_min_strings.size(); i++ ) {
 			real_angles_range_min = std::atof( angle_range_min_strings[i].c_str() );
 			angles_range_min.push_back( real_angles_range_min );
 		}
@@ -611,7 +611,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 		utility::vector1< std::string > angle_range_max_strings = utility::string_split( tag->getOption< std::string >( "angles_range_max" ), ',' );
 		utility::vector1<Real> angles_range_max;
 		Real real_angles_range_max;
-		for ( Size i = 1; i <= angle_range_max_strings.size(); i++ ) {
+		for ( core::Size i = 1; i <= angle_range_max_strings.size(); i++ ) {
 			real_angles_range_max = std::atof( angle_range_max_strings[i].c_str() );
 			angles_range_max.push_back( real_angles_range_max );
 		}
@@ -621,7 +621,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 		// This makes it so that a negative value in the range corresponds to displacement toward the origin and a positive value is away from the origin.
 		if ( auto_range_ ) {
 			utility::vector1<Real> new_radial_disps_range_min, new_radial_disps_range_max;
-			for ( Size i = 1; i <= radial_disps_.size(); i++ ) {
+			for ( core::Size i = 1; i <= radial_disps_.size(); i++ ) {
 				if ( radial_disps_[i] < 0 ) {
 					new_radial_disps_range_min.push_back(-radial_disps_range_max_[i]);
 					new_radial_disps_range_max.push_back(-radial_disps_range_min_[i]);
@@ -640,7 +640,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 		utility::vector1< std::string > angle_step_strings = utility::string_split( tag->getOption< std::string >( "angle_steps" ), ',' );
 		utility::vector1<Real> angle_steps;
 		Real real_angle_steps;
-		for ( Size i = 1; i <= angle_step_strings.size(); i++ ) {
+		for ( core::Size i = 1; i <= angle_step_strings.size(); i++ ) {
 			real_angle_steps = std::atof( angle_step_strings[i].c_str() );
 			angle_steps.push_back( real_angle_steps );
 		}
@@ -649,7 +649,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 		utility::vector1< std::string > radial_disp_step_strings = utility::string_split( tag->getOption< std::string >( "radial_disp_steps" ), ',' );
 		utility::vector1<Real> radial_disp_steps;
 		Real real_radial_disp_steps;
-		for ( Size i = 1; i <= radial_disp_step_strings.size(); i++ ) {
+		for ( core::Size i = 1; i <= radial_disp_step_strings.size(); i++ ) {
 			real_radial_disp_steps = std::atof( radial_disp_step_strings[i].c_str() );
 			radial_disp_steps.push_back( real_radial_disp_steps );
 		}
@@ -667,7 +667,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 		utility::vector1< std::string > angle_delta_strings = utility::string_split( tag->getOption< std::string >( "angle_deltas" ), ',' );
 		utility::vector1<Real> angle_deltas;
 		Real real_angle_delta;
-		for ( Size i = 1; i <= angle_delta_strings.size(); i++ ) {
+		for ( core::Size i = 1; i <= angle_delta_strings.size(); i++ ) {
 			real_angle_delta = std::atof( angle_delta_strings[i].c_str() );
 			angle_deltas.push_back( real_angle_delta );
 		}
@@ -676,7 +676,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 		utility::vector1< std::string > radial_disp_delta_strings = utility::string_split( tag->getOption< std::string >( "radial_disp_deltas" ), ',' );
 		utility::vector1<Real> radial_disp_deltas;
 		Real real_radial_disp_delta;
-		for ( Size i = 1; i <= radial_disp_delta_strings.size(); i++ ) {
+		for ( core::Size i = 1; i <= radial_disp_delta_strings.size(); i++ ) {
 			real_radial_disp_delta = std::atof( radial_disp_delta_strings[i].c_str() );
 			radial_disp_deltas.push_back( real_radial_disp_delta );
 		}

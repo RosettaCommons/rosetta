@@ -60,7 +60,7 @@ Job::Job( InnerJobOP inner_job, core::Size nstruct_index )
 /// @brief Copy constructor
 ///
 Job::Job( Job const &src )
-: utility::pointer::ReferenceCount(),
+: utility::VirtualBase(),
 	inner_job_(src.inner_job_->clone()),
 	nstruct_index_(src.nstruct_index_),
 	status_prefix_( src.status_prefix_ ),

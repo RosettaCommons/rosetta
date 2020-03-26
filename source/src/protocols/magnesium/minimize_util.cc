@@ -45,7 +45,7 @@ namespace magnesium {
 ////////////////////////////////////////////////////////////////////////////////
 void
 minimize_magnesium_and_hydration_shell( pose::Pose & pose,
-	utility::vector1< Size > const & mg_res,
+	utility::vector1< core::Size > const & mg_res,
 	core::scoring::ScoreFunctionCOP minimize_scorefxn /* = 0 */,
 	core::Distance const mg_coord_cst_dist /* = 0.2 */ ) {
 	MgMinimizer mg_minimizer;
@@ -59,7 +59,7 @@ minimize_magnesium_and_hydration_shell( pose::Pose & pose,
 void
 minimize_magnesium_and_hydration_shell( pose::Pose & pose /*for viewing*/,
 	utility::vector1< pose::PoseOP > & pose_list,
-	utility::vector1< Size > const & mg_res,
+	utility::vector1< core::Size > const & mg_res,
 	core::scoring::ScoreFunctionCOP minimize_scorefxn /* = 0 */,
 	core::Distance const mg_coord_cst_dist /* = 0.2 */ ) {
 	MgMinimizer mg_minimizer;
@@ -87,17 +87,17 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 
 	// get jumps, except for mg(2+) & hoh
 	// get cuts
-	vector1< Size > jump_partners1, jump_partners2, cuts, water_res, mg_res;
+	vector1< core::Size > jump_partners1, jump_partners2, cuts, water_res, mg_res;
 	vector1< std::string > jump_atoms1, jump_atoms2;
-	vector1< std::pair< Size, std::string > > is_connected( pose.size(), std::make_pair(0,"") );
-	for ( Size n = 1; n <= f.num_jump(); n++ ) {
-		Size const i = f.upstream_jump_residue( n );
-		Size const j = f.downstream_jump_residue( n );
+	vector1< std::pair< core::Size, std::string > > is_connected( pose.size(), std::make_pair(0,"") );
+	for ( core::Size n = 1; n <= f.num_jump(); n++ ) {
+		core::Size const i = f.upstream_jump_residue( n );
+		core::Size const j = f.downstream_jump_residue( n );
 		bool i_is_mg_or_hoh_res = ( pose.residue_type( i ).name3() == "HOH" || pose.residue_type( i ).name3() == " MG" );
 		bool j_is_mg_or_hoh_res = ( pose.residue_type( j ).name3() == "HOH" || pose.residue_type( j ).name3() == " MG" );
 		if ( i_is_mg_or_hoh_res && j_is_mg_or_hoh_res ) continue;
 		if ( i_is_mg_or_hoh_res && !j_is_mg_or_hoh_res ) {
-			std::pair< Size, std::string > const & connection( is_connected[ i ] );
+			std::pair< core::Size, std::string > const & connection( is_connected[ i ] );
 			if (  connection.first > 0 ) {
 				jump_partners1.push_back( connection.first );
 				jump_partners2.push_back( j );
@@ -109,7 +109,7 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 			continue;
 		}
 		if ( j_is_mg_or_hoh_res && !i_is_mg_or_hoh_res ) {
-			std::pair< Size, std::string > const & connection( is_connected[ j ] );
+			std::pair< core::Size, std::string > const & connection( is_connected[ j ] );
 			if ( connection.first > 0 ) {
 				jump_partners1.push_back( i );
 				jump_partners2.push_back( connection.first );
@@ -125,7 +125,7 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 		jump_atoms1.push_back( f.upstream_atom( n ) );
 		jump_atoms2.push_back( f.downstream_atom( n ) );
 	}
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( f.is_cutpoint( n ) && n < pose.size() ) cuts.push_back( n );
 		if ( pose.residue_type( n ).name3() == "HOH" ) water_res.push_back( n );
 		if ( pose.residue_type( n ).name3() == " MG" ) mg_res.push_back( n );
@@ -133,13 +133,13 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 
 	// setup jumps for all mg(2+), and for all hoh near mg(2+)
 	vector1< bool > assigned_jump_to_water( pose.size(), false );
-	for ( Size n = 1; n <= mg_res.size(); n++ ) {
-		Size const i = mg_res[ n ];
+	for ( core::Size n = 1; n <= mg_res.size(); n++ ) {
+		core::Size const i = mg_res[ n ];
 		vector1< AtomID > mg_ligands = get_mg_ligands( pose, i );
 		bool found_non_hoh_ligand( false );
 		AtomID mg_partner_id;
-		for ( Size k = 1; k <= mg_ligands.size(); k++ ) {
-			Size const j = mg_ligands[ k ].rsd();
+		for ( core::Size k = 1; k <= mg_ligands.size(); k++ ) {
+			core::Size const j = mg_ligands[ k ].rsd();
 			if ( pose.residue_type( j ).name3() == "HOH" ) {
 				if ( !assigned_jump_to_water[ j ] ) {
 					assigned_jump_to_water[ j ] = true;
@@ -163,8 +163,8 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 
 	// setup jumps for all remaining hoh -- make sure they do not stick to mg2+ or mg-bound hoh, so
 	// that they can move separately.
-	for ( Size n = 1; n <= water_res.size(); n++ ) {
-		Size const i = water_res[ n ];
+	for ( core::Size n = 1; n <= water_res.size(); n++ ) {
+		core::Size const i = water_res[ n ];
 		if ( assigned_jump_to_water[ i ] ) continue;
 		// find closest hbond partner
 		AtomID best_partner = get_closest_non_hoh_contact( pose, i );
@@ -183,17 +183,17 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 ////////////////////////////////
 // @brief helper function for update_mg_hoh_fold_tree();
 core::id::AtomID
-get_closest_non_hoh_contact( pose::Pose const & pose, Size const i, std::string const & exclude_rsd /* = "" */ ) {
+get_closest_non_hoh_contact( pose::Pose const & pose, core::Size const i, std::string const & exclude_rsd /* = "" */ ) {
 	using namespace core::id;
 	using namespace core::conformation;
 	Vector const & i_xyz( pose.residue( i ).xyz( 1 ) );
 	AtomID best_partner;
 	Distance best_d = ( pose.residue( 1 ).xyz( 1 ) - i_xyz ).length(); // arbitrary init
-	for ( Size j = 1; j <= pose.size(); j++ ) {
+	for ( core::Size j = 1; j <= pose.size(); j++ ) {
 		Residue const & rsd = pose.residue( j );
 		if ( rsd.name3() == "HOH" ) continue;
 		if ( rsd.name3() == exclude_rsd ) continue;
-		for ( Size jj = 1; jj <= rsd.nheavyatoms(); jj++ ) {
+		for ( core::Size jj = 1; jj <= rsd.nheavyatoms(); jj++ ) {
 			if ( rsd.heavyatom_is_an_acceptor( jj ) || rsd.heavyatom_has_polar_hydrogens( jj ) ) {
 				Distance const d = ( rsd.xyz( jj ) - i_xyz ).length();
 				if ( d < best_d ) {

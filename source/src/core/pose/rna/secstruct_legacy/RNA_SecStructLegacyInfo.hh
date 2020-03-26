@@ -19,6 +19,7 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
+#include <core/types.hh>
 
 // Utility headers
 

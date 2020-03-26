@@ -29,7 +29,7 @@
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
@@ -49,7 +49,7 @@ namespace parametric {
 
 /// @brief  Parameters class, used to store sets of parameters for parametric backbone generation.
 ///
-class Parameters : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Parameters >
+class Parameters : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< Parameters >
 {
 public:
 

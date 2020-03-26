@@ -131,7 +131,7 @@ public:// virtual main operation
 	Real compute( Pose const & pose ) const;
 
 	/// @brief compute this filter for a give residue
-	bool compute( Size const & res, Pose const & pose, SS_Info2_COP const ssinfo ) const;
+	bool compute( core::Size const & res, Pose const & pose, SS_Info2_COP const ssinfo ) const;
 
 	std::string
 	name() const override;

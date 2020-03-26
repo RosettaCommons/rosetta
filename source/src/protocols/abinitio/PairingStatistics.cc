@@ -254,14 +254,14 @@ PairingStatistics::suggest_topology( std::string& topol_id ) const {
 			utility_exit_with_message( "The array model_weight_[] has 0 members, yet we need one. The topology is: " + topol_id );
 		}
 		Real const rank_cutoff( weight( 1 )*rel_rank_cutoff );
-		Size top_max;
-		Size const nr_models( model_weight_.size() );
+		core::Size top_max;
+		core::Size const nr_models( model_weight_.size() );
 		if ( rel_rank_cutoff >= 0.99 ) {
 			top_max = std::min( 5, (int) nr_models);
 		} else {
 			for ( top_max = 1; (top_max < nr_models) && weight( top_max ) > rank_cutoff; top_max++ ) {};
 		}
-		Size const rg_topol ( static_cast< int >( numeric::random::rg().uniform() * top_max ) + 1 );
+		core::Size const rg_topol ( static_cast< int >( numeric::random::rg().uniform() * top_max ) + 1 );
 		topol_id = ranked_model( rg_topol );
 		runtime_assert( topol_id != "BOGUS" );
 		tr.Info << "cutoff: " << rank_cutoff << " use topology ** " << rg_topol << ": " << topol_id << " ** to select pairings " << std::endl;
@@ -329,9 +329,9 @@ std::istream& operator>> ( std::istream& is, PairingStatEntry& ps ) {
 		is.setstate( std::ios_base::failbit );
 		return is;
 	}
-	Size nr_models;
+	core::Size nr_models;
 	is >> ps.weight_ >> nr_models >> ps.strand_pairing_;
-	for ( Size ct = 1; ct <= nr_models; ct ++ ) {
+	for ( core::Size ct = 1; ct <= nr_models; ct ++ ) {
 		is >> tag;
 		ps.models_.push_back( tag );
 	}
@@ -356,7 +356,7 @@ std::istream& operator>> (std::istream& is, StatEntries& pslist) {
 
 std::istream & operator>>( std::istream &is, PairingStatistics &ps) {
 	std::string tag;
-	Size ntops;
+	core::Size ntops;
 	is >> tag >> ntops;
 	if ( tag != "PAIRING_STATISTICS" ) {
 		tr.Trace << "failed reading PAIRING_STATISTIC --- found instead: " << tag << std::endl;
@@ -369,8 +369,8 @@ std::istream & operator>>( std::istream &is, PairingStatistics &ps) {
 	//cause the hash-container to have at least ntops*3+10 buckets
 	ps.entries_.rehash( ntops*3+10 );
 
-	for ( Size ct_top = 1; ct_top <= ntops; ct_top++ ) {
-		Size nstrand;
+	for ( core::Size ct_top = 1; ct_top <= ntops; ct_top++ ) {
+		core::Size nstrand;
 		Real model_weight;
 		std::string model_ID;
 		is >> tag >> nstrand >> model_weight >> model_ID;
@@ -381,7 +381,7 @@ std::istream & operator>>( std::istream &is, PairingStatistics &ps) {
 		}
 		tr.Debug << "reading strand-topology " << model_ID << " with " << nstrand << " strands... "<<std::endl;
 		core::scoring::dssp::StrandPairingSet sps;
-		for ( Size ct = 1; ct <= nstrand; ct++ ) {
+		for ( core::Size ct = 1; ct <= nstrand; ct++ ) {
 			core::scoring::dssp::StrandPairing pairing;
 			Real weight;
 			char ntag;

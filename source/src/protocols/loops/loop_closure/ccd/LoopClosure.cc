@@ -108,7 +108,7 @@ void LoopClosure::init() {
 	//make movemap that only allows bb moves within loop ( if master movemap allows the move, too ).
 	kinematics::MoveMapOP loop_movemap( new kinematics::MoveMap );
 	loop_movemap->set_bb( false );
-	for ( Size pos = loop_.start(); pos <= loop_.stop(); pos ++ ) {
+	for ( core::Size pos = loop_.start(); pos <= loop_.stop(); pos ++ ) {
 		if ( movemap_->get_bb( pos ) ) loop_movemap->set_bb( pos, true );
 	}
 	set_movemap( loop_movemap );
@@ -153,10 +153,10 @@ LoopClosure::apply( pose::Pose const& pose_in ) {
 
 	Real best_score( 10000000.0 );
 	//Real best_fdev( 100000.0 );
-	for ( Size c1 = 1; c1 <= nr_fragments_; ++c1 ) {
+	for ( core::Size c1 = 1; c1 <= nr_fragments_; ++c1 ) {
 
 		// replace all torsions of loop once
-		for ( Size pos = loop_.start(); pos <= (Size) loop_.stop(); pos++ ) {
+		for ( core::Size pos = loop_.start(); pos <= (core::Size) loop_.stop(); pos++ ) {
 			bool success ( frag_mover_->apply( pose, pos ) );
 			if ( !success ) {
 				tr.Warning << " could not make fragment move at loop position " << pos
@@ -191,9 +191,9 @@ LoopClosure::apply( pose::Pose const& pose_in ) {
 }
 
 void
-LoopClosure::ramp_chainbreak( Size iter, Size total ) const {
+LoopClosure::ramp_chainbreak( core::Size iter, core::Size total ) const {
 	runtime_assert( total > 0 );
-	if ( iter < static_cast< Size >( total/2.0) ) {
+	if ( iter < static_cast< core::Size >( total/2.0) ) {
 		core::Real const progress( core::Real(iter)/total * 2.0 );
 		scorefxn_->set_weight( scoring::linear_chainbreak, progress * final_weight_linear_chainbreak_ );
 		scorefxn_->set_weight( scoring::overlap_chainbreak, 0.0 );
@@ -211,8 +211,8 @@ LoopClosure::do_frag_cycles( pose::Pose &pose ) const {
 
 	moves::TrialMoverOP ccd_trial;
 	if ( ccd_mover_ ) ccd_trial = utility::pointer::make_shared< moves::TrialMover >( ccd_mover_, mc_ );
-	if ( bRampChainbreak_ ) ramp_chainbreak( Size(1), cycles_ );
-	for ( Size i = 1; i <= cycles_; i++ ) {
+	if ( bRampChainbreak_ ) ramp_chainbreak( core::Size(1), cycles_ );
+	for ( core::Size i = 1; i <= cycles_; i++ ) {
 		frag_trial.apply( pose );
 		if ( bRampChainbreak_ && ( i % 20 == 0 ) ) ramp_chainbreak( i, cycles_ );
 		if ( i % 10 ==0 ) tr.Trace << "loop-frag-trials: iterations: " << i << std::endl;

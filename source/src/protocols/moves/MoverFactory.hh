@@ -27,7 +27,7 @@
 #include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 #include <utility/factory/WidgetRegistrator.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

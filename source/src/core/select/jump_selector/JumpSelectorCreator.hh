@@ -18,7 +18,7 @@
 #include <core/select/jump_selector/JumpSelector.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers
@@ -28,7 +28,7 @@ namespace core {
 namespace select {
 namespace jump_selector {
 
-class JumpSelectorCreator : public utility::pointer::ReferenceCount {
+class JumpSelectorCreator : public utility::VirtualBase {
 public:
 	/// @brief Instantiate a particular JumpSelector
 	virtual JumpSelectorOP create_jump_selector() const = 0;

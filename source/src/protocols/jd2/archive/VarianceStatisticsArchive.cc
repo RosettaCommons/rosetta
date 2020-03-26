@@ -56,7 +56,7 @@ bool VarianceStatisticsArchive::add_evaluated_structure(
 
 	if ( numeric::random::rg().uniform() < insertion_prob_ ) { //keep or not ?
 		//replace with random element
-		Size rg_pos( static_cast< int >( numeric::random::rg().uniform() * decoys().size() ) );
+		core::Size rg_pos( static_cast< int >( numeric::random::rg().uniform() * decoys().size() ) );
 		runtime_assert( rg_pos < decoys().size() );
 		auto it=decoys().begin();
 		while ( rg_pos-- > 0 ) {

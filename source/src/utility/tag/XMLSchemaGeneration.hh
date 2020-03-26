@@ -111,7 +111,7 @@
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/type_traits/is_string_constructible.hh>
 #include <utility/excn/Exceptions.hh>
 
@@ -183,7 +183,7 @@ std::string chr_chains_nonrepeated();
 /// @brief class %XMLSchemaType represents the name of a defined type that can
 /// be used to describe either an XMLElement or an XMLAttribute.  It may refer
 /// to either a complex type or to a primative type or to a simple type.
-class XMLSchemaType : public utility::pointer::ReferenceCount {
+class XMLSchemaType : public utility::VirtualBase {
 public:
 	XMLSchemaType();
 	XMLSchemaType( XMLSchemaDataType setting );
@@ -221,7 +221,7 @@ private:
 /// as an XML element, with possible sub-elemets, in an XML schema. When generating a
 /// schema, the developer will hand an instance of a class derived from an %XMLSchemaTopLevelElement
 /// to an XMLSchemaDefinition object.
-class XMLSchemaTopLevelElement : public utility::pointer::ReferenceCount
+class XMLSchemaTopLevelElement : public utility::VirtualBase
 {
 public:
 	virtual std::string const & element_name() const = 0;
@@ -519,7 +519,7 @@ private:
 /// as one of their input parameters. It is perfectly legitimate / recommended for one XML-schema-defining
 /// function that relies on a complexType or restriction that it does not itself define to pass its input
 /// %XMLSchemaDefinition to the function that does define that complexType or restriction.
-class XMLSchemaDefinition : public utility::pointer::ReferenceCount
+class XMLSchemaDefinition : public utility::VirtualBase
 {
 public:
 	XMLSchemaDefinition();
@@ -554,7 +554,7 @@ private:
 /// "simple" subelements are those which themselves contain no subelements (but may contain attributes).
 /// Also allowed are subelements that refer to previously-defined complexTypes or those that refer to
 /// previously defined xs:groups.
-class XMLSchemaSimpleSubelementList : public utility::pointer::ReferenceCount
+class XMLSchemaSimpleSubelementList : public utility::VirtualBase
 {
 public:
 	// A function that returns the name for an object given the name of another related object
@@ -839,7 +839,7 @@ private:
 /// A description must be provided for every complex type even if that description
 /// is an empty string; do not forget to provide a description (your code will compile
 /// but will not run).
-class XMLSchemaComplexTypeGenerator : public utility::pointer::ReferenceCount
+class XMLSchemaComplexTypeGenerator : public utility::VirtualBase
 {
 public:
 	// A function that returns the name for an object given the name of another related object
@@ -970,7 +970,7 @@ private:
 
 };
 
-class XMLSchemaRepeatableCTNode : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< XMLSchemaRepeatableCTNode >
+class XMLSchemaRepeatableCTNode : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< XMLSchemaRepeatableCTNode >
 {
 public:
 	typedef XMLSchemaSimpleSubelementList::DerivedNameFunction DerivedNameFunction;

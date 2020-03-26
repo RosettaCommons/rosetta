@@ -70,18 +70,18 @@ HSSTriplet::HSSTriplet( String const & hss )
 {
 	utility::vector1< String > parts( utility::string_split( hss, ',' ) );
 	runtime_assert( parts.size() == 2 );
-	helix_ = boost::lexical_cast<Size>( parts[1] );
+	helix_ = boost::lexical_cast<core::Size>( parts[1] );
 
 	utility::vector1< String > st( utility::string_split( parts[2], '-' ) );
 	runtime_assert( st.size() == 2 );
-	strand1_ = boost::lexical_cast<Size>( st[1] );
-	strand2_ = boost::lexical_cast<Size>( st[2] );
+	strand1_ = boost::lexical_cast<core::Size>( st[1] );
+	strand2_ = boost::lexical_cast<core::Size>( st[2] );
 }
 
 
 /// @copy constructor
 HSSTriplet::HSSTriplet( HSSTriplet const & hss ):
-	ReferenceCount(),
+	VirtualBase(),
 	helix_( hss.helix_ ),
 	strand1_( hss.strand1_ ),
 	strand2_( hss.strand2_ )
@@ -250,7 +250,7 @@ HSSTriplet::calc_geometry( SS_Info2_COP const ssinfo )
 	geometry_is_initialized_ = true;
 
 	// using namespace ObjexxFCL::format;
-	// Size number( 0 );
+	// core::Size number( 0 );
 	// for( int ii=1; ii<=25; ii++ ) {
 	//  for( int jj=1; jj<=25; jj++ ) {
 	//   ++number;
@@ -303,7 +303,7 @@ HSSTripletSet::HSSTripletSet( HSSTriplets const & s )
 
 /// @brief copy constructor
 HSSTripletSet::HSSTripletSet( HSSTripletSet const & s ) :
-	ReferenceCount(),
+	VirtualBase(),
 	hss_triplets_( s.hss_triplets_ ),
 	helix2hss_( s.helix2hss_ )
 {}
@@ -360,7 +360,7 @@ HSSTripletSet::clear()
 
 /// @brief returns list of Triplets containing given helix
 HSSTriplets
-HSSTripletSet::hss_triplets( Size const helix ) const
+HSSTripletSet::hss_triplets( core::Size const helix ) const
 {
 	HSSTriplets triplets;
 	for ( auto const & hss : *this ) {
@@ -372,7 +372,7 @@ HSSTripletSet::hss_triplets( Size const helix ) const
 /// @brief returns the Triplet containing given helix, strand1, and strand2
 ///        Exits and throws an error if the triplet isn't found
 HSSTripletOP
-HSSTripletSet::hss_triplet( Size const helix, Size const s1, Size const s2 ) const
+HSSTripletSet::hss_triplet( core::Size const helix, core::Size const s1, core::Size const s2 ) const
 {
 	TripletID const hs_id( helix, s1, s2 );
 	auto hss_it = helix2hss_.find( hs_id );

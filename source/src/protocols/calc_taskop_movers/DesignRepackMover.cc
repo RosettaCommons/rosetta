@@ -224,7 +224,7 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 					} else { //target residues defined
 						core::conformation::Residue const resi( pose.residue( i ) );
 
-						for ( utility::vector1< Size >::const_iterator target_it = target_res.begin();
+						for ( utility::vector1< core::Size >::const_iterator target_it = target_res.begin();
 								target_it!=target_res.end(); ++target_it ) {
 							core::conformation::Residue const res_target( pose.residue( *target_it ) );
 
@@ -272,7 +272,7 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 			if ( !min_bb_set() ) curr_min_bb_[ i ] = true;
 		}
 	}
-	for ( utility::vector1< Size >::const_iterator target_it = target_res.begin();
+	for ( utility::vector1< core::Size >::const_iterator target_it = target_res.begin();
 			target_it!=target_res.end(); ++target_it ) {
 		// minimize also +-1 amino-acid residues around target residues, unless they are CYD
 		if ( !min_sc_set() ) {

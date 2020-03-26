@@ -37,7 +37,7 @@ namespace kinematics {
 
 ResidueCoordinateChangeList::ResidueCoordinateChangeList()
 :
-	ReferenceCount(),
+	VirtualBase(),
 	total_residue_( 0 )
 {
 }

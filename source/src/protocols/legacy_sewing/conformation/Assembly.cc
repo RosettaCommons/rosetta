@@ -143,7 +143,7 @@ Assembly::update_coords_from_pose(
 	for ( core::Size i=1; i<=pose.size(); ++i ) {
 
 		it.residue()->chi_angles_ = pose.residue(i).chi();
-		for ( Size ii=1; ii <= 4; ++ii ) {
+		for ( core::Size ii=1; ii <= 4; ++ii ) {
 			it.atom()->coords_ = pose.residue(i).xyz(ii);
 			++it;
 		}

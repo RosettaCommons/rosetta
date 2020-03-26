@@ -110,7 +110,7 @@ void SymDockingInitialPerturbation::apply( core::pose::Pose & pose )
 	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
-	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
+	std::map< core::Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 	SymSlideInfo const & slide_info( symm_conf.Symmetry_Info()->get_slide_info() );
 	TR << "Reading options..." << std::endl;
 	if ( option[ OptionKeys::symmetry::initialize_rigid_body_dofs ]() ) {
@@ -163,7 +163,7 @@ SymDockingSlideIntoContact::SymDockingSlideIntoContact() : protocols::moves::Mov
 
 // constructor with arguments
 SymDockingSlideIntoContact::SymDockingSlideIntoContact(
-	std::map< Size, core::conformation::symmetry::SymDof > const & dofs
+	std::map< core::Size, core::conformation::symmetry::SymDof > const & dofs
 ) : protocols::moves::Mover(),
 	dofs_(dofs)
 {
@@ -182,8 +182,8 @@ void SymDockingSlideIntoContact::apply( core::pose::Pose & pose )
 	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
-	Size num_slide_moves(1);
-	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
+	core::Size num_slide_moves(1);
+	std::map< core::Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 	rigid::RigidBodyDofRandomTransMover mover( dofs );
 	( *scorefxn_ )( pose );
 	TR.Debug << "score " << pose.energies().total_energies()[ scoring::interchain_vdw ]  << std::endl;
@@ -224,7 +224,7 @@ SymDockingSlideIntoContact::get_name() const {
 
 
 FaSymDockingSlideTogether::FaSymDockingSlideTogether(
-	std::map< Size, core::conformation::symmetry::SymDof > const & dofs
+	std::map< core::Size, core::conformation::symmetry::SymDof > const & dofs
 ) : protocols::moves::Mover(),
 	dofs_(dofs),
 	tolerance_(0.2)
@@ -244,8 +244,8 @@ void FaSymDockingSlideTogether::apply( core::pose::Pose & pose )
 	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
-	Size num_slide_moves(1);
-	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
+	core::Size num_slide_moves(1);
+	std::map< core::Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
 	// A very hacky way of guessing whether the components are touching:
 	// if pushed together by 1A, does fa_rep change at all?
@@ -333,11 +333,11 @@ void SymmetrySlider::setup( core::pose::Pose & pose )
 	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
-	std::map< Size, core::conformation::symmetry::SymDof > dofs = symm_conf.Symmetry_Info()->get_dofs();
-	//std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
+	std::map< core::Size, core::conformation::symmetry::SymDof > dofs = symm_conf.Symmetry_Info()->get_dofs();
+	//std::map< core::Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
 
 	// Save jumps that are allowed to move and have a translation dof
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
+	std::map< core::Size, core::conformation::symmetry::SymDof >::iterator it;
 	auto it_begin = dofs.begin();
 	auto it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
@@ -366,8 +366,8 @@ void SymmetrySlider::setup( core::pose::Pose & pose )
 			InitialJumps_[ (*i_it).first ]=pose.jump( (*i_it).first );
 
 			//fpd also find the correct direction to slide for each jump
-			std::map< Size, core::conformation::symmetry::SymDof > dofs2 = symm_conf.Symmetry_Info()->get_dofs();
-			std::map< Size, core::conformation::symmetry::SymDof >::iterator dof_iterator;
+			std::map< core::Size, core::conformation::symmetry::SymDof > dofs2 = symm_conf.Symmetry_Info()->get_dofs();
+			std::map< core::Size, core::conformation::symmetry::SymDof >::iterator dof_iterator;
 
 			dof_iterator = dofs2.find( ( *i_it).first );
 			rigid::RigidBodyDofTransMover dofmover( (*dof_iterator).second, (*i_it).first, step_size() );
@@ -418,8 +418,8 @@ void SymmetrySlider::slide_away( core::pose::Pose & pose )
 			auto & symm_conf (
 				dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
-			std::map< Size, core::conformation::symmetry::SymDof > dofs = symm_conf.Symmetry_Info()->get_dofs();
-			std::map< Size, core::conformation::symmetry::SymDof >::iterator dof_iterator;
+			std::map< core::Size, core::conformation::symmetry::SymDof > dofs = symm_conf.Symmetry_Info()->get_dofs();
+			std::map< core::Size, core::conformation::symmetry::SymDof >::iterator dof_iterator;
 			dof_iterator = dofs.find( ( *it).first );
 			rigid::RigidBodyDofTransMover dofmover( (*dof_iterator).second, (*it).first, step_size() );
 			if ( !InvertJump_[ (*it).first ] ) {
@@ -562,7 +562,7 @@ void SymmetrySlider::slide(core::pose::Pose & pose)
 	auto & symm_conf (
 		dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
-	std::map< Size, core::conformation::symmetry::SymDof > dofs = symm_conf.Symmetry_Info()->get_dofs();
+	std::map< core::Size, core::conformation::symmetry::SymDof > dofs = symm_conf.Symmetry_Info()->get_dofs();
 
 	// make sure we have a current_jump_
 	select_jump();
@@ -571,7 +571,7 @@ void SymmetrySlider::slide(core::pose::Pose & pose)
 	// Go through all allowed translation jumps in the order defined by
 	// the selection of current_jump_
 	while ( SymmetrySlider::allowed_current_slide() ) {
-		std::map< Size, core::conformation::symmetry::SymDof >::iterator dof_iterator;
+		std::map< core::Size, core::conformation::symmetry::SymDof >::iterator dof_iterator;
 		bool last_slide_good = true;
 		while ( last_slide_good && SymmetrySlider::continue_slide( pose ) ) {
 			// Select a new slide

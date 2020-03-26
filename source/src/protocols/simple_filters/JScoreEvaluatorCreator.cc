@@ -28,7 +28,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 
@@ -81,7 +81,7 @@ void JScoreEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 		using core::scoring::ScoreFunctionOP;
 		vector1< string > const & tags( option[ OptionKeys::evaluation::jscore_evaluator ]() );
 
-		for ( Size ii = 1; ii <= tags.size() - 1; ii += 2 ) {
+		for ( core::Size ii = 1; ii <= tags.size() - 1; ii += 2 ) {
 			string scorefxn_name( tags[ii]   );
 			string rsd_set_name ( tags[ii+1] );
 

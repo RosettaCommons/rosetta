@@ -162,7 +162,7 @@ float( 1.0f/cycles_ ) );
 core::Real temperature( init_temp_ );
 mc_->set_temperature( temperature );
 
-for ( Size i = 1; i <= cycles_; ++i  ) {
+for ( core::Size i = 1; i <= cycles_; ++i  ) {
 mover_->apply( pose );
 temperature *= gamma;
 //std::cout << "Temperature " << temperature << std::endl;

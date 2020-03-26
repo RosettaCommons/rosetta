@@ -84,7 +84,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_fa_;
 
 	/// @brief repack sidechains at moved positions and x positions to left and right
-	Size repack_buffer_;
+	core::Size repack_buffer_;
 
 	bool map_cst_from_centroid_to_fa_;
 

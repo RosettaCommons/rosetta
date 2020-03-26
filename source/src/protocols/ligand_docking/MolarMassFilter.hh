@@ -31,19 +31,19 @@ class MolarMassFilter : public protocols::filters::Filter
 {
 public:
 	MolarMassFilter() :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "MolarMass" )
 	{}
 
 	MolarMassFilter(std::string const & chain, core::Size mass_limit ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "MolarMass" ),
 		chain_(chain),
 		mass_limit_(mass_limit)
 	{}
 
 	MolarMassFilter( MolarMassFilter const & init ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( init ),
 		chain_(init.chain_),
 		mass_limit_(init.mass_limit_)

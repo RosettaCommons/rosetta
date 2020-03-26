@@ -22,7 +22,7 @@
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <string>
@@ -36,7 +36,7 @@
 
 namespace numeric {
 
-class Polynomial_1d : public utility::pointer::ReferenceCount {
+class Polynomial_1d : public utility::VirtualBase {
 
 public:
 	//Polynomial_1d();

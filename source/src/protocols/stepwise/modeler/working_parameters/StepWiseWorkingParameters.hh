@@ -63,13 +63,13 @@ public:
 	bool const & is_simple_full_length_job_params() const { return is_simple_full_length_job_params_; }
 	void set_is_simple_full_length_job_params( bool const setting ){ is_simple_full_length_job_params_ = setting; }
 
-	Size gap_size_to_anchor() const; // derives from internal parameters.
+	core::Size gap_size_to_anchor() const; // derives from internal parameters.
 
-	virtual Size actually_moving_res() const; // need to unify with protein.
-	Size working_reference_res() const;
+	virtual core::Size actually_moving_res() const; // need to unify with protein.
+	core::Size working_reference_res() const;
 
-	Size const & five_prime_chain_break_res() const { return five_prime_chain_break_res_; }
-	void set_five_prime_chain_break_res( Size const & setting ) { five_prime_chain_break_res_ = setting; }
+	core::Size const & five_prime_chain_break_res() const { return five_prime_chain_break_res_; }
+	void set_five_prime_chain_break_res( core::Size const & setting ) { five_prime_chain_break_res_ = setting; }
 
 	bool const & add_virt_res_as_root() const { return add_virt_res_as_root_; }
 	void set_add_virt_res_as_root( bool const setting ){ add_virt_res_as_root_ = setting; }
@@ -77,9 +77,9 @@ public:
 	bool const & floating_base() const{ return floating_base_;}
 	void set_floating_base( bool const setting ){ floating_base_ = setting; }
 
-	Size const & floating_base_anchor_res() const{ return floating_base_anchor_res_;}
-	void set_floating_base_anchor_res( Size const setting ){ floating_base_anchor_res_ = setting; }
-	Size working_floating_base_anchor_res() const;
+	core::Size const & floating_base_anchor_res() const{ return floating_base_anchor_res_;}
+	void set_floating_base_anchor_res( core::Size const setting ){ floating_base_anchor_res_ = setting; }
+	core::Size working_floating_base_anchor_res() const;
 
 	bool const & rebuild_bulge_mode() const{ return rebuild_bulge_mode_;}
 	void set_rebuild_bulge_mode( bool const setting ){ rebuild_bulge_mode_ = setting; }
@@ -139,13 +139,13 @@ public:
 	void set_fold_tree( core::kinematics::FoldTree const & setting );
 
 	utility::vector1< utility::vector1< core::Size > > const & input_res_vectors() const { return input_res_vectors_; }
-	void set_input_res_vectors( utility::vector1< utility::vector1< Size > > const & setting ) { input_res_vectors_ = setting; }
+	void set_input_res_vectors( utility::vector1< utility::vector1< core::Size > > const & setting ) { input_res_vectors_ = setting; }
 
 	/////////////////////////
 	// protein stuff
 	/////////////////////////
 	utility::vector1< core::Size > const & working_bridge_res() const { return working_bridge_res_; }
-	void set_working_bridge_res( utility::vector1< Size > const & setting ){ working_bridge_res_ = setting; }
+	void set_working_bridge_res( utility::vector1< core::Size > const & setting ){ working_bridge_res_ = setting; }
 
 	utility::vector1< core::Size > const &  working_superimpose_res() const { return working_superimpose_res_; }
 	void set_working_superimpose_res( utility::vector1< core::Size > const & working_superimpose_res ) { working_superimpose_res_ = working_superimpose_res; }
@@ -163,13 +163,13 @@ private:
 	bool output_extra_RMSDs_; //Used in StepWiseRNA_output_Data.cc
 	bool is_simple_full_length_job_params_;
 
-	Size five_prime_chain_break_res_;
+	core::Size five_prime_chain_break_res_;
 
 	std::map< core::Size, bool > is_prepend_map_;
 
 	bool add_virt_res_as_root_;
 	bool floating_base_;
-	Size floating_base_anchor_res_;
+	core::Size floating_base_anchor_res_;
 	bool rebuild_bulge_mode_;
 	bool sample_both_sugar_base_rotamer_;
 

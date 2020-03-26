@@ -295,7 +295,7 @@ JD2ResourceManager::read_resource_options_table_tag(
 		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
-	Size row_number(0);
+	core::Size row_number(0);
 	std::map< string, TagOP > tags;
 	while ( res.next() ) {
 		row_number++;
@@ -657,7 +657,7 @@ JD2ResourceManager::read_resource_table_tag(
 		throw CREATE_EXCEPTION(utility::excn::Exception, err_msg.str());
 	}
 
-	Size row_number(0);
+	core::Size row_number(0);
 	while ( res.next() ) {
 		row_number++;
 

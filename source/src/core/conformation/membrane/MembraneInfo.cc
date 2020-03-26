@@ -123,7 +123,7 @@ MembraneInfo::MembraneInfo(
 
 /// @brief Create a deep copy of all data in this object.
 MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	thickness_( src.thickness_ ),
 	steepness_( src.steepness_ ),
 	membrane_rsd_num_( src.membrane_rsd_num_ ),

@@ -26,7 +26,7 @@
 #include <core/pose/Pose.hh>
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/random/random.hh>
 
 namespace protocols {
@@ -34,7 +34,7 @@ namespace sewing {
 namespace data_storage {
 
 ///@brief a SEWING Assembly composed of SmartSegments
-class SmartAssembly : public utility::pointer::ReferenceCount {
+class SmartAssembly : public utility::VirtualBase {
 
 public:
 

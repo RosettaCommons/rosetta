@@ -153,7 +153,7 @@ bool
 MultiThreadedJobDistributor::prepare_next_job( LarvalJobOP larval_job, core::Size attempt_count )
 {
 	utility::vector1< JobResultCOP > input_job_results( larval_job->input_job_result_indices().size() );
-	for ( Size ii = 1; ii <= input_job_results.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= input_job_results.size(); ++ii ) {
 		auto iter = job_results_.find( larval_job->input_job_result_indices()[ ii ] );
 		if ( iter == job_results_.end() ) {
 			std::ostringstream oss;
@@ -174,7 +174,7 @@ MultiThreadedJobDistributor::prepare_next_job( LarvalJobOP larval_job, core::Siz
 		job_extractor_->note_job_no_longer_running( larval_job->job_index() );
 		return false;
 	}
-	Size num_retries = larval_job->defines_retry_limit() ? larval_job->retry_limit() : default_retry_limit_;
+	core::Size num_retries = larval_job->defines_retry_limit() ? larval_job->retry_limit() : default_retry_limit_;
 	JobRunnerOP runner( new JobRunner( larval_job, mature_job, attempt_count, num_retries ));
 	thread_pool_->push( std::bind( &JobRunner::run, runner, std::placeholders::_1 ));
 	jobs_running_.push_back( runner );
@@ -194,7 +194,7 @@ MultiThreadedJobDistributor::process_completed_job( JobRunnerOP job_runner )
 		TR.Error << "Job exited with exception\n" << job_runner->exception_message() << std::endl;
 		job_queen_->note_job_completed_and_track( larval_job, jd3_job_status_failed_w_exception, 0 );
 	} else if ( output.status == jd3_job_status_failed_retry ) {
-		Size num_retries = larval_job->defines_retry_limit() ? larval_job->retry_limit() : default_retry_limit_;
+		core::Size num_retries = larval_job->defines_retry_limit() ? larval_job->retry_limit() : default_retry_limit_;
 		if ( job_runner->attempt_count() >= num_retries ) {
 			job_queen_->note_job_completed_and_track( larval_job, jd3_job_status_failed_max_retries, 0 );
 		} else {
@@ -203,7 +203,7 @@ MultiThreadedJobDistributor::process_completed_job( JobRunnerOP job_runner )
 			return;
 		}
 	} else {
-		Size job_index = larval_job->job_index();
+		core::Size job_index = larval_job->job_index();
 		job_queen_->note_job_completed_and_track( larval_job, output.status, output.job_results.size() );
 		for ( ResultIndex ii( 1 ); ii <= output.job_results.size(); ++ii ) {
 			job_queen_->completed_job_summary( larval_job, ii, output.job_results[ ii ].first );

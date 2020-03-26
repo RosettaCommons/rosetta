@@ -80,7 +80,7 @@ ExtractSubposeMover::apply(Pose & pose) {
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 	using namespace scoring;
-	using Sizes = vector1<Size>;
+	using Sizes = vector1<core::Size>;
 
 	core::pose::Pose pose_out;
 	utility::vector1<core::Size> resis;
@@ -96,9 +96,9 @@ ExtractSubposeMover::apply(Pose & pose) {
 		utility::vector1<std::string> all_names = sym_dof_names(pose);
 		std::map<char,Sizes> comp_subs;
 		utility::vector1<char> secondary_comps;
-		Size n_sec_tert_subs = 0;
+		core::Size n_sec_tert_subs = 0;
 
-		for ( Size i = 1; i <= all_names.size(); i++ ) {
+		for ( core::Size i = 1; i <= all_names.size(); i++ ) {
 			comp_subs.insert(std::make_pair(get_jump_name_to_components(pose,all_names[i])[1],get_jump_name_to_subunits(pose, all_names[i])));
 		}
 
@@ -106,9 +106,9 @@ ExtractSubposeMover::apply(Pose & pose) {
 		if ( sym_dof_name_list.size() == 0 ) sym_dof_name_list.push_back(all_names[1]);
 
 		// Get all of the indices for the subunits associated with each sym_dof
-		for ( Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
+		for ( core::Size i = 1; i <= sym_dof_name_list.size(); i++ ) {
 			Sizes intra_subs = get_jump_name_to_subunits(pose,sym_dof_name_list[i]);
-			for ( Size j = 1; j <= intra_subs.size(); j++ ) {
+			for ( core::Size j = 1; j <= intra_subs.size(); j++ ) {
 				std::string s = ObjexxFCL::string_of(intra_subs[j]) + get_jump_name_to_components(pose,sym_dof_name_list[i])[1];
 				primary_sub_strings.push_back(s);
 				TR << "Primary subunit " << s << " extracted from pose" << std::endl;
@@ -116,10 +116,10 @@ ExtractSubposeMover::apply(Pose & pose) {
 		}
 
 		//Get primary subs and all contacting subunits
-		for ( Size i=1; i<=sym_info->num_total_residues_without_pseudo(); i++ ) {
+		for ( core::Size i=1; i<=sym_info->num_total_residues_without_pseudo(); i++ ) {
 			if ( find(primary_sub_strings.begin(),primary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(i)) + ObjexxFCL::string_of(get_component_of_residue(pose,i)) )==primary_sub_strings.end() ) continue;
 			std::string atom_i = (pose.residue(i).name3() == "GLY") ? "CA" : "CB";
-			for ( Size j=1; j<=sym_info->num_total_residues_without_pseudo(); j++ ) {
+			for ( core::Size j=1; j<=sym_info->num_total_residues_without_pseudo(); j++ ) {
 				if ( find(primary_sub_strings.begin(),primary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(j)) + ObjexxFCL::string_of(get_component_of_residue(pose,j)) )!=primary_sub_strings.end() ) continue;
 				if ( find(secondary_sub_strings.begin(),secondary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(j)) + ObjexxFCL::string_of(get_component_of_residue(pose,j)) )!=secondary_sub_strings.end() ) continue;
 				std::string atom_j = (pose.residue(j).name3() == "GLY") ? "CA" : "CB";
@@ -135,13 +135,13 @@ ExtractSubposeMover::apply(Pose & pose) {
 		}
 
 		//Get other subunits of secondary components
-		for ( Size i=1; i<=sym_info->num_total_residues_without_pseudo(); i++ ) {
+		for ( core::Size i=1; i<=sym_info->num_total_residues_without_pseudo(); i++ ) {
 			if ( find(secondary_sub_strings.begin(),secondary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(i)) + ObjexxFCL::string_of(get_component_of_residue(pose,i)) )==secondary_sub_strings.end() ) continue;
 			if ( find(primary_sub_strings.begin(),primary_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(i)) + ObjexxFCL::string_of(get_component_of_residue(pose,i)) )!=primary_sub_strings.end() ) continue;
 			std::string atom_i = (pose.residue(i).name3() == "GLY") ? "CA" : "CB";
 			//Stop extracting subunits once all COMPONENTS in contact with the primary subunits have been extracted.
 			if ( (secondary_sub_strings.size() + tertiary_sub_strings.size())==n_sec_tert_subs ) break;
-			for ( Size j=1; j<=sym_info->num_total_residues_without_pseudo(); j++ ) {
+			for ( core::Size j=1; j<=sym_info->num_total_residues_without_pseudo(); j++ ) {
 				//Stop extracting subunits once all COMPONENTS in contact with the primary subunits have been extracted.
 				if ( (secondary_sub_strings.size() + tertiary_sub_strings.size())==n_sec_tert_subs ) break;
 				if ( get_component_of_residue(pose,i)!=get_component_of_residue(pose,j) ) continue;
@@ -157,19 +157,19 @@ ExtractSubposeMover::apply(Pose & pose) {
 			}
 		}
 
-		for ( Size i=1; i<=primary_sub_strings.size() ; i++ ) {
+		for ( core::Size i=1; i<=primary_sub_strings.size() ; i++ ) {
 			all_sub_strings.push_back(primary_sub_strings[i]);
 		}
-		for ( Size i=1; i<=secondary_sub_strings.size() ; i++ ) {
+		for ( core::Size i=1; i<=secondary_sub_strings.size() ; i++ ) {
 			all_sub_strings.push_back(secondary_sub_strings[i]);
 		}
-		for ( Size i=1; i<=tertiary_sub_strings.size() ; i++ ) {
+		for ( core::Size i=1; i<=tertiary_sub_strings.size() ; i++ ) {
 			all_sub_strings.push_back(tertiary_sub_strings[i]);
 		}
 
 		//Generate a new pose with the residues from the primary, secondary, and tertiary subunits
 
-		for ( Size i=1; i<=sym_info->num_total_residues_without_pseudo(); i++ ) {
+		for ( core::Size i=1; i<=sym_info->num_total_residues_without_pseudo(); i++ ) {
 			if ( find(all_sub_strings.begin(),all_sub_strings.end(), ObjexxFCL::string_of(sym_info->subunit_index(i)) + ObjexxFCL::string_of(get_component_of_residue(pose,i)) )==all_sub_strings.end() ) continue;
 			resis.push_back(i);
 		}

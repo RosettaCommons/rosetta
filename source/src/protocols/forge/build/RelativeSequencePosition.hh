@@ -24,7 +24,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -35,7 +35,7 @@ namespace build {
 
 
 /// @brief computes a position wrt values in given BuildInstruction
-struct RelativeSequencePosition : public utility::pointer::ReferenceCount {
+struct RelativeSequencePosition : public utility::VirtualBase {
 	~RelativeSequencePosition() override {}
 	virtual RelativeSequencePositionOP clone() const = 0;
 	virtual core::Size operator ()( BuildInstructionCAP i ) const = 0;

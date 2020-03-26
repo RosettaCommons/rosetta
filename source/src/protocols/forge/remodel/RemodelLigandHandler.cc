@@ -151,7 +151,7 @@ void RemodelLigandHandler::minimize( core::pose::Pose & pose )
 	TR << "TREE with Ligand:" << pose.fold_tree() << std::endl;
 
 	//assume ligand is attached to the last jump. won't work in symmetry mode
-	Size jump_id = pose.num_jump();
+	core::Size jump_id = pose.num_jump();
 	TR << "pose jumps count:" << jump_id << std::endl;
 	movemap->set_jump(jump_id, true);
 

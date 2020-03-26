@@ -27,7 +27,7 @@
 #include <basic/MetricValue.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ Headers
@@ -50,7 +50,7 @@ namespace metrics {
 /// @brief container for managing PoseMetricCalculators
 /// @details Attaches to a Pose and listens to Pose signals.
 ///  It then notifies stored PoseMetricCalculators to recalculate as-needed.
-class PoseMetricContainer : public utility::pointer::ReferenceCount {
+class PoseMetricContainer : public utility::VirtualBase {
 
 
 private: // typedefs

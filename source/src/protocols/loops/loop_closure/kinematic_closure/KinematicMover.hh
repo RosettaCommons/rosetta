@@ -72,22 +72,22 @@ public:
 	void set_sample_nonpivot_torsions( bool sample );
 	bool get_sample_nonpivot_torsions();
 
-	Size start_res() const {
+	core::Size start_res() const {
 		return start_res_; }
 
-	Size middle_res() const {
+	core::Size middle_res() const {
 		return middle_res_; }
 
-	Size end_res() const {
+	core::Size end_res() const {
 		return end_res_; }
 
-	Size segment_length() const {
+	core::Size segment_length() const {
 		return seg_len_; }
 
-	Size loop_begin() const {
+	core::Size loop_begin() const {
 		return loop_begin_; }
 
-	Size loop_end() const {
+	core::Size loop_end() const {
 		return loop_end_; }
 
 	core::Real BANGLE_MIN() const {
@@ -97,11 +97,11 @@ public:
 		return BANGLE_SD_; }
 
 	void set_sweep_nonpivot_torsions( bool sweep );
-	void set_nonpivot_res_to_sweep( utility::vector1< Size > const & resids );
-	void set_nonpivot_bb_torsion_id( utility::vector1< Size > const & bbtorids );
+	void set_nonpivot_res_to_sweep( utility::vector1< core::Size > const & resids );
+	void set_nonpivot_bb_torsion_id( utility::vector1< core::Size > const & bbtorids );
 	void set_sweep_start_angle( utility::vector1< core::Real > const & angles_in_degrees );
 	void set_sweep_step_size( utility::vector1< core::Real > const & angle_steps_in_degrees );
-	void set_sweep_nsteps( utility::vector1< Size > const & nsteps );
+	void set_sweep_nsteps( utility::vector1< core::Size > const & nsteps );
 	/// @details returns true as long as the Lexicographical iterator has not covered all
 	/// angles -- useful in a while-loop.
 	bool sweep_incomplete() const;
@@ -120,13 +120,13 @@ public:
 	virtual void set_hardsphere_bump_check( bool do_bump_check );
 	virtual void set_do_sfxn_eval_every_iteration( bool do_sfxn_eval );
 	virtual bool get_hardsphere_bump_check();
-	virtual void set_pivots( Size start_res, Size middle_res, Size end_res );
+	virtual void set_pivots( core::Size start_res, core::Size middle_res, core::Size end_res );
 	void apply( core::pose::Pose & ) override;
 	virtual void set_idealize_loop_first( bool idealize );
 	virtual bool get_idealize_loop_first();
 	void set_temperature(core::Real temp_in);
 	void set_sfxn(core::scoring::ScoreFunctionCOP sfxn_in);
-	void set_loop_begin_and_end( Size loop_begin, Size loop_end );
+	void set_loop_begin_and_end( core::Size loop_begin, core::Size loop_end );
 	bool check_rama(core::Real old_rama_score, core::Real new_rama_score);
 	bool last_move_succeeded();
 	void set_perturber( KinematicPerturberOP perturber_in );
@@ -160,11 +160,11 @@ public:
 private:
 
 	// pivot residues
-	Size start_res_, middle_res_, end_res_;
-	Size seg_len_;
+	core::Size start_res_, middle_res_, end_res_;
+	core::Size seg_len_;
 
-	Size loop_begin_; // AS: start of the full loop, only needs to be set once, required for correct indexing of the torsion bin vector -- in contrast, start_res_-end_res_ cover the (sub)segment that's actually sampled in the current iteration
-	Size loop_end_;
+	core::Size loop_begin_; // AS: start of the full loop, only needs to be set once, required for correct indexing of the torsion bin vector -- in contrast, start_res_-end_res_ cover the (sub)segment that's actually sampled in the current iteration
+	core::Size loop_end_;
 
 	//the perturber that sets/samples the chain angles/torsions
 	KinematicPerturberOP perturber_;
@@ -248,33 +248,33 @@ private:
 	bool pivots_within_vicinity(
 	core::pose::Pose const & pose,
 	utility::vector1<core::Real> const & t_ang,
-	utility::vector1<Size> const & pivots,
-	Size const start_res,
-	Size const middle_res,
-	Size const end_res
+	utility::vector1<core::Size> const & pivots,
+	core::Size const start_res,
+	core::Size const middle_res,
+	core::Size const end_res
 	);
 	*/
 
 	// this version checks rama for all residues in loop segment
 	bool perform_rama_check( core::pose::Pose const & pose,
 		utility::vector1<core::Real> const & t_ang,
-		utility::vector1<Size> const & pivots,
-		Size const start_res,
-		Size const seg_len
+		utility::vector1<core::Size> const & pivots,
+		core::Size const start_res,
+		core::Size const seg_len
 	);
 
 	// this version only checks rama for pivot residues
 	bool perform_rama_check( core::pose::Pose const & pose,
 		utility::vector1<core::Real> const & t_ang,
-		utility::vector1<Size> const & pivots,
-		Size const start_res,
-		Size const middle_res,
-		Size const end_res
+		utility::vector1<core::Size> const & pivots,
+		core::Size const start_res,
+		core::Size const middle_res,
+		core::Size const end_res
 	);
 	// checks for backbone-backbone clashes for loop residues
 	bool perform_bump_check ( core::pose::Pose const & pose,
-		Size const start_res,
-		Size const end_res
+		core::Size const start_res,
+		core::Size const end_res
 	);
 	// sets default options
 	void set_defaults();

@@ -165,10 +165,10 @@ VisualizeEmbeddingMover::apply( core::pose::Pose & pose ) {
 		utility::vector1< ResidueOP > embedding_residues;
 
 		// get thickness from MembraneInfo
-		Size thickness = pose.membrane_info()->membrane_thickness();
+		core::Size thickness = pose.membrane_info()->membrane_thickness();
 
 		// grab residues out of embedding object
-		for ( Size i = 1; i <= embeddings_->nspans(); ++i ) {
+		for ( core::Size i = 1; i <= embeddings_->nspans(); ++i ) {
 
 			// get center and normal POINTS
 			Vector center = embeddings_->embedding( i )->center();
@@ -194,7 +194,7 @@ VisualizeEmbeddingMover::apply( core::pose::Pose & pose ) {
 		bool is_first( true );
 
 		// Append Residues to the pose
-		for ( Size i = 1; i <= embedding_residues.size(); ++i ) {
+		for ( core::Size i = 1; i <= embedding_residues.size(); ++i ) {
 			if ( is_first ) {
 				pose.append_residue_by_jump( *embedding_residues[i], pose.size(), "", "", true );
 				is_first = false;

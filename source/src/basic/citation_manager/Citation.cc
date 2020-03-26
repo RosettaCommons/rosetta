@@ -31,7 +31,7 @@ AuthorNames::AuthorNames(
 	std::string const &surname,
 	std::string const &initials
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	given_names_(given_names),
 	surname_(surname),
 	initials_(initials)
@@ -50,7 +50,7 @@ AuthorNames::clone() const {
 Citation::Citation(
 	std::string const & citation_as_string
 ) :
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	initialize_from_string( citation_as_string );
 }

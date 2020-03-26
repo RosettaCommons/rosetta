@@ -78,7 +78,7 @@ MgMonteCarlo::apply( pose::Pose & pose ) {
 	bool const add_at_random_in_shell( false );
 	Distance const box_radius( 3.1 );
 
-	for ( Size n = 1; n <= cycles_; n++ ) {
+	for ( core::Size n = 1; n <= cycles_; n++ ) {
 		if ( n % 10 == 0 ) {
 			TR << "Doing cycle " << n << " out of " << cycles_ << std::endl;
 			if ( output_pdb_ ) pose.dump_pdb( "cycle_" + ObjexxFCL::lead_zero_string_of( n, 6 ) + ".pdb" );
@@ -88,9 +88,9 @@ MgMonteCarlo::apply( pose::Pose & pose ) {
 		Real const add_delete_probability = ( pose.num_jump() == 0 ) ? 1.0 : basic_add_delete_frequency; // must add if no waters.
 		if ( numeric::random::rg().uniform() <= add_delete_probability ) {
 			//   pose::Pose pose_working = pose;
-			vector1< Size > mg_res = get_mg_res( pose );
-			Size const q( numeric::random::rg().random_range( 1, mg_res.size() ) );
-			Size const i( mg_res[ q ] );
+			vector1< core::Size > mg_res = get_mg_res( pose );
+			core::Size const q( numeric::random::rg().random_range( 1, mg_res.size() ) );
+			core::Size const i( mg_res[ q ] );
 			vector1< core::id::AtomID > ligands = get_mg_ligands( pose, i );
 			// check full_shell
 			bool const full_shell = ( ligands.size() >= 6 );
@@ -105,7 +105,7 @@ MgMonteCarlo::apply( pose::Pose & pose ) {
 					ResidueOP rsd_hoh = conformation::ResidueFactory::create_residue( *core::pose::get_restype_for_pose( pose, "HOH" ) );
 					Matrix R;
 					urs.get( rg().random_range(1, urs.nrots() ), R );
-					for ( Size j = 1; j <= rsd_hoh->natoms(); j++ ) {
+					for ( core::Size j = 1; j <= rsd_hoh->natoms(); j++ ) {
 						rsd_hoh->set_xyz( j, /*R * */ rsd_hoh->xyz( j ) + xyz_water );
 					}
 					pose.append_residue_by_jump( *rsd_hoh, i );
@@ -114,20 +114,20 @@ MgMonteCarlo::apply( pose::Pose & pose ) {
 					for ( auto const & ligand : ligands ) {
 						already_coordinated[ get_closest_orbital_axis( pose.residue( i ), pose.xyz( ligand ) ) ] = true;
 					}
-					vector1< Size > pick_orbitals;
-					for ( Size m = 1; m <= 6; m++ ) {
+					vector1< core::Size > pick_orbitals;
+					for ( core::Size m = 1; m <= 6; m++ ) {
 						if ( !already_coordinated[ m ] ) pick_orbitals.push_back( m );
 					}
-					Size const m = rg().random_element( pick_orbitals );
+					core::Size const m = rg().random_element( pick_orbitals );
 					//     Distance hoh_distance = 2.1 + 0.2 * rg().gaussian();
 					instantiate_water_at_octahedral_vertex( pose, i, m );
 				}
 				tag = "add_water";
 			} else {
 				// delete
-				Size const water_res = numeric::random::rg().random_element( get_water_res( pose ) );
-				vector1< Size > slice_res;
-				for ( Size n = 1; n <= pose.size(); n++ ) {
+				core::Size const water_res = numeric::random::rg().random_element( get_water_res( pose ) );
+				vector1< core::Size > slice_res;
+				for ( core::Size n = 1; n <= pose.size(); n++ ) {
 					if ( n != water_res ) slice_res.push_back( n );
 				}
 				pdbslice( pose, slice_res );
@@ -137,8 +137,8 @@ MgMonteCarlo::apply( pose::Pose & pose ) {
 			setup_mg_water_fold_tree( pose );
 			//   pose = pose;
 		} else { // resample existing residue
-			Size const njump = pose.fold_tree().num_jump();
-			Size const j( numeric::random::rg().random_range( 1, njump ) );
+			core::Size const njump = pose.fold_tree().num_jump();
+			core::Size const j( numeric::random::rg().random_range( 1, njump ) );
 			Real const rot_mag( 10.0 ), trans_mag( 0.2 );
 			RigidBodyPerturbMover perturb_mover( j, rot_mag, trans_mag );
 			perturb_mover.apply( pose );
@@ -164,21 +164,21 @@ MgMonteCarlo::setup_mg_water_fold_tree( pose::Pose & pose ) const {
 
 	using namespace core::kinematics;
 	//FoldTree f( pose.size() );
-	//vector1< Size > mg_res = get_mg_res( pose );
-	//for ( Size n = 1; n <= pose.size(); n++ ) {
+	//vector1< core::Size > mg_res = get_mg_res( pose );
+	//for ( core::Size n = 1; n <= pose.size(); n++ ) {
 	// if ( pose.residue_type( n ).name3() == "HOH" ) {
 	//  f.new_jump( n, 1, n - 1 /* cutpoint */ );
 	// }
 	//}
 
 	FoldTree f( pose.size() );
-	vector1< Size > mg_res = get_mg_res( pose );
+	vector1< core::Size > mg_res = get_mg_res( pose );
 	// Add jumps per Mg
-	//for ( Size const mg : mg_res ) {
-	// for ( Size ii = 1; ii <= )
+	//for ( core::Size const mg : mg_res ) {
+	// for ( core::Size ii = 1; ii <= )
 	//}
 
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.residue_type( n ).name3() == "HOH" ) {
 			f.new_jump( n, 1, n - 1 /* cutpoint */ );
 		}

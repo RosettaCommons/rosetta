@@ -199,8 +199,8 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 		native_pose = pose;
 	}
 
-	Size const loop_begin( loop.start() ), loop_end( loop.stop() ), loop_cut( loop.cut() );
-	Size const loop_size( loop_end - loop_begin + 1 );
+	core::Size const loop_begin( loop.start() ), loop_end( loop.stop() ), loop_cut( loop.cut() );
+	core::Size const loop_size( loop_end - loop_begin + 1 );
 	runtime_assert( loop.is_terminal( pose ) || pose.fold_tree().is_cutpoint( loop_cut ) );
 
 	// see if we should skip large frags. Don't if that would mean no fragment insertions:
@@ -211,7 +211,7 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 	////   frag_libs;
 	////   for ( std::vector< core::fragment::ConstantLengthFragSetOP >::const_reverse_iterator
 	////       it = frag_libs.rbegin(), it_end = frag_libs.rend(); it != it_end; ++it ) {
-	////    Size const frag_size(  );
+	////    core::Size const frag_size(  );
 	////    if ( loop_size >= frag_size * 2 + 1 ) found_any_frags = true;
 	////   }
 	////   if ( !found_any_frags ) skip_long_frags = false;
@@ -276,7 +276,7 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 				<< pose.energies().total_energies().weighted_string_of( scorefxn()->weights() ) << std::endl;
 		}
 
-		for ( Size i= loop_begin; i<= loop_end; ++i ) {
+		for ( core::Size i= loop_begin; i<= loop_end; ++i ) {
 			conformation::idealize_position( i, pose.conformation() );
 		}
 
@@ -288,7 +288,7 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 		}
 
 
-		for ( Size i = loop_begin; i <= loop_end; ++ i ) {
+		for ( core::Size i = loop_begin; i <= loop_end; ++ i ) {
 			pose.set_phi  ( i, init_phi   );
 			pose.set_psi  ( i, init_psi   );
 			pose.set_omega( i, init_omega );
@@ -321,7 +321,7 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 	// scheduler
 	bool const fast = option[OptionKeys::loops::fast];
 	int outer_cycles = option[ OptionKeys::loops::perturb_outer_cycles ]();
-	int inner_cycles( fast ? std::min( Size(250), loop_size*5 ) : std::min( Size(1000), loop_size*20 ) );
+	int inner_cycles( fast ? std::min( core::Size(250), loop_size*5 ) : std::min( core::Size(1000), loop_size*20 ) );
 
 	if ( option[OptionKeys::loops::debug] ) inner_cycles = 10;
 
@@ -373,13 +373,13 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 			temperature *= gamma;
 			mc.set_temperature( temperature );
 			// use rbegin and rend to iterate from larger size to smaller size
-			//for ( std::map< Size, protocols::frags::TorsionFragmentLibraryOP >::const_reverse_iterator
+			//for ( std::map< core::Size, protocols::frags::TorsionFragmentLibraryOP >::const_reverse_iterator
 			//    it = frag_libs.rbegin(), it_end = frag_libs.rend(); it != it_end; ++it ) {
 			for ( std::vector< FragmentMoverOP >::const_iterator
 					it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 
 				// skip if the loop is too short
-				//Size const frag_size( it->first );
+				//core::Size const frag_size( it->first );
 
 				//if ( loop_size < frag_size || ( skip_long_frags && loop_size < frag_size * 2 + 1 ) ) continue;
 				// monte carlo fragment ccd minimization

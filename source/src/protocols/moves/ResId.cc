@@ -14,11 +14,11 @@
 // Unit Headers
 #include <core/types.hh>
 #include <protocols/moves/ResId.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/VirtualBase.fwd.hh>
 #include <core/pose/ResidueIndexDescription.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 namespace protocols {
@@ -63,7 +63,7 @@ ResId::set_resid( core::pose::ResidueIndexDescriptionCOP r ) {
 /// Recursion ensures that any nesting structure would be supported.
 /// Non-ResId objects will pass through this function without being changed.
 void
-modify_ResId_based_object( utility::pointer::ReferenceCountOP const obj, core::Size const resid ){
+modify_ResId_based_object( utility::VirtualBaseOP const obj, core::Size const resid ){
 	using namespace protocols::filters;
 
 	auto * resid1 = dynamic_cast< ResId * >( obj.get() );
@@ -76,7 +76,7 @@ modify_ResId_based_object( utility::pointer::ReferenceCountOP const obj, core::S
 }
 
 void
-modify_ResId_based_object( utility::pointer::ReferenceCountOP const obj, core::pose::ResidueIndexDescriptionCOP r ){
+modify_ResId_based_object( utility::VirtualBaseOP const obj, core::pose::ResidueIndexDescriptionCOP r ){
 	using namespace protocols::filters;
 
 	auto * resid1 = dynamic_cast< ResId * >( obj.get() );

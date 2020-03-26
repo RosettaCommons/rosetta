@@ -31,7 +31,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -42,7 +42,7 @@ namespace mainchain_potential {
 
 /// @brief A generator for mainchain potentials.  Inputs are a noncanonical residue type with an already-generated sidechain potential;
 /// outputs are a potential file suitable for use by the RamaPrePro scoreterm.
-class GenerateMainchainPotential : public utility::pointer::ReferenceCount {
+class GenerateMainchainPotential : public utility::VirtualBase {
 
 	friend class ::GenerateMainchainPotentialTests; //Needed to allow the unit tests for this class access internal data members.
 

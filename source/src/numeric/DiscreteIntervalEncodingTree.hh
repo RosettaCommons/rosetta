@@ -21,7 +21,7 @@
 
 // Utility headers
 #include <utility/assert.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ headers
@@ -35,7 +35,7 @@
 namespace numeric {
 
 template < class T >
-class DietNode : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< DietNode< T > >
+class DietNode : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< DietNode< T > >
 {
 public:
 	typedef T Value;

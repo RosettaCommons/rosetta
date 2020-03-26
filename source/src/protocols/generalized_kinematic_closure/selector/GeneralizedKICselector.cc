@@ -65,7 +65,7 @@ GeneralizedKICselector::GeneralizedKICselector():
 
 /// @brief Copy constructor for GeneralizedKICselector.
 GeneralizedKICselector::GeneralizedKICselector( GeneralizedKICselector const &src ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	selectortype_(src.selectortype_),
 	selector_sfxn_(src.selector_sfxn_), //NOT cloned
 	boltzmann_kbt_(src.boltzmann_kbt_)

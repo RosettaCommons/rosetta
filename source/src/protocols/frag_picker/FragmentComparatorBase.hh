@@ -21,13 +21,13 @@
 #include <core/types.hh>
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 
 namespace protocols {
 namespace frag_picker {
 
-class FragmentComparatorBase : public utility::pointer::ReferenceCount {
+class FragmentComparatorBase : public utility::VirtualBase {
 public:
 	virtual bool operator() (
 		ScoredCandidate first_candidate,

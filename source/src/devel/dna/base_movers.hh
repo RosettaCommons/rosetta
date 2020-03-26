@@ -46,7 +46,7 @@ public:
 	BasePairMover(
 		DNA_FragLibOP lib,
 		Real const frag_dev_threshold,
-		Size const max_tries,
+		core::Size const max_tries,
 		Real const max_score_increase,
 		ScoreFunctionOP scorefxn
 	):
@@ -67,7 +67,7 @@ public:
 private:
 	DNA_FragLibOP lib_;
 	Real frag_dev_threshold_;
-	Size max_tries_;
+	core::Size max_tries_;
 	Real max_score_increase_;
 	ScoreFunctionOP scorefxn_;
 
@@ -93,7 +93,7 @@ public:
 	BaseStepMover(
 		DNA_FragLibOP lib,
 		Real const frag_dev_threshold,
-		Size const max_tries,
+		core::Size const max_tries,
 		Real const max_score_increase,
 		ScoreFunctionOP scorefxn
 	):
@@ -114,7 +114,7 @@ public:
 private:
 	DNA_FragLibOP lib_;
 	Real frag_dev_threshold_;
-	Size max_tries_;
+	core::Size max_tries_;
 	Real max_score_increase_;
 	ScoreFunctionOP scorefxn_;
 

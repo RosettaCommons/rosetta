@@ -36,7 +36,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.fwd.hh>
 
@@ -102,7 +102,7 @@ private:
 	core::Size nthreads_;
 	std::list< JobRunnerOP > jobs_running_;
 
-	Size default_retry_limit_;
+	core::Size default_retry_limit_;
 
 	ThreadPoolOP thread_pool_;
 

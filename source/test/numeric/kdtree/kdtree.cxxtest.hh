@@ -38,7 +38,7 @@ public:
 
 	utility::vector1< numeric::Real > query;
 	utility::vector1< utility::vector1< numeric::Real > > points;
-	utility::vector1< utility::pointer::ReferenceCountOP > data;
+	utility::vector1< utility::VirtualBaseOP > data;
 
 	utility::vector1< numeric::kdtree::KDPointOP > heap_points;
 

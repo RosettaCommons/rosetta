@@ -109,7 +109,7 @@ void MC_RNA_KIC_Sampler::init() {
 
 	// Now find the initial torsions
 	core::Real torsion;
-	for ( Size i = 1; i <= TorsionIDs.size(); ++i ) {
+	for ( core::Size i = 1; i <= TorsionIDs.size(); ++i ) {
 		torsion = update_pose_->torsion(TorsionIDs[i]);
 		initial_torsions_.push_back( torsion );
 		angle_min_.push_back(-180);
@@ -118,7 +118,7 @@ void MC_RNA_KIC_Sampler::init() {
 
 	//Let's not worry about the sugar rotamers for now (1/15/15)
 
-	for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
+	for ( core::Size i = 1; i <= bb_samplers_.size(); ++i ) {
 		bb_samplers_[i]->init();
 	}
 
@@ -140,7 +140,7 @@ MC_RNA_KIC_Sampler::get_next_solutions( pose::Pose const & pose )
 {
 	Pose pose_copy = pose;
 	//Need to update the stored angles in the samplers in case they were changed in a different sampler
-	for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
+	for ( core::Size i = 1; i <= bb_samplers_.size(); ++i ) {
 		bb_samplers_[i]->set_angle( pose_copy.torsion( TorsionIDs[i] ) ) ;
 	}
 
@@ -151,8 +151,8 @@ MC_RNA_KIC_Sampler::get_next_solutions( pose::Pose const & pose )
 	stored_jacobians_ = stored_loop_closer_->get_all_jacobians();
 
 	// Then, find any solutions for pose with perturbed 'driver' torsions.
-	for ( Size i = 1; i <= max_tries_; ++i ) {
-		for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
+	for ( core::Size i = 1; i <= max_tries_; ++i ) {
+		for ( core::Size i = 1; i <= bb_samplers_.size(); ++i ) {
 			++( *bb_samplers_[i]);
 			bb_samplers_[i]->apply( pose_copy );
 		}
@@ -212,7 +212,7 @@ void MC_RNA_KIC_Sampler::apply( pose::Pose & pose_in ) {
 	//// apply solution_ here!
 	if ( did_close_ ) {
 		if ( solution_ <= current_jacobians_.size() ) {
-			for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
+			for ( core::Size i = 1; i <= bb_samplers_.size(); ++i ) {
 				bb_samplers_[i]->apply( pose );
 			}
 			loop_closer_->apply( pose, solution_ );
@@ -253,7 +253,7 @@ Real MC_RNA_KIC_Sampler::get_jacobian( pose::Pose & pose ) {
 ///////////////////////////////////////////////////////////////////////////
 Real MC_RNA_KIC_Sampler::vector_sum( utility::vector1< core::Real > const & vector ) {
 	sum_ = 0;
-	for ( Size i = 1; i<=vector.size(); ++i ) {
+	for ( core::Size i = 1; i<=vector.size(); ++i ) {
 		sum_ += vector[i];
 	}
 	return sum_;
@@ -262,7 +262,7 @@ Real MC_RNA_KIC_Sampler::vector_sum( utility::vector1< core::Real > const & vect
 void MC_RNA_KIC_Sampler::update() {
 	runtime_assert( is_init() );
 	if ( used_current_solution_ ) {
-		for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
+		for ( core::Size i = 1; i <= bb_samplers_.size(); ++i ) {
 			bb_samplers_[i]->update();
 		}
 	}
@@ -271,7 +271,7 @@ void MC_RNA_KIC_Sampler::update() {
 void MC_RNA_KIC_Sampler::set_gaussian_stdev( Real const setting ) {
 	gaussian_stdev_ = setting;
 	if ( is_init() ) {
-		for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
+		for ( core::Size i = 1; i <= bb_samplers_.size(); ++i ) {
 			bb_samplers_[i]->set_gaussian_stdev( gaussian_stdev_ );
 		}
 	}
@@ -279,10 +279,10 @@ void MC_RNA_KIC_Sampler::set_gaussian_stdev( Real const setting ) {
 /////////////////////////////////////////////////////////////////////////
 void MC_RNA_KIC_Sampler::set_angle_range_from_init_torsions( core::Real const range ) {
 	runtime_assert( is_init() );
-	for ( Size i = 1; i <= bb_samplers_.size(); ++i ) {
+	for ( core::Size i = 1; i <= bb_samplers_.size(); ++i ) {
 		bb_samplers_[i]->set_angle_range( initial_torsions_[i] - range, initial_torsions_[i] + range );
 	}
-	for ( Size i = bb_samplers_.size() + 1; i <= initial_torsions_.size(); ++i ) {
+	for ( core::Size i = bb_samplers_.size() + 1; i <= initial_torsions_.size(); ++i ) {
 		angle_min_[i] = initial_torsions_[i] - range;
 		angle_max_[i] = initial_torsions_[i] + range;
 	}
@@ -292,7 +292,7 @@ bool MC_RNA_KIC_Sampler::check_angles_in_range( const Pose & pose ) {
 	// Just need to check the torsions for the pivot angles, the ones for the driver angles
 	// are already guaranteed to be in the correct range by the set_angle_range fn
 	// (see set_angle_range_from_init_torsions)
-	for ( Size i = bb_samplers_.size() + 1; i <= TorsionIDs.size(); i++ ) {
+	for ( core::Size i = bb_samplers_.size() + 1; i <= TorsionIDs.size(); i++ ) {
 		if ( angle_max_[i] - angle_min_[i] >= 360 ) continue;
 		Real angle( pose.torsion( TorsionIDs[i] ) );
 		while ( angle < angle_min_[i] ) angle += 360;
@@ -304,8 +304,8 @@ bool MC_RNA_KIC_Sampler::check_angles_in_range( const Pose & pose ) {
 }
 ///////////////////////////////////////////////////////////////////////////
 void
-MC_RNA_KIC_Sampler::show( std::ostream & out, Size const indent ) const {
-	for ( Size n = 1; n <= indent; n++ ) out << ' ';
+MC_RNA_KIC_Sampler::show( std::ostream & out, core::Size const indent ) const {
+	for ( core::Size n = 1; n <= indent; n++ ) out << ' ';
 	out << ( "MC_RNA_KIC_Sampler moving_suite:" + utility::to_string(moving_suite_) + " chainbreak_suite:" +
 		utility::to_string(chainbreak_suite_) );
 }

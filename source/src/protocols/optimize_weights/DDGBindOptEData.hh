@@ -38,23 +38,23 @@ public:
 
 	Real get_score(
 		Multivec const & component_weights,
-		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
+		Multivec const & vars, Multivec & dE_dvars, core::Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
 		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const override;
 
 	void print_score(
 		std::ostream & ostr, Multivec const & component_weights,
-		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
+		Multivec const & vars, Multivec & dE_dvars, core::Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
 		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const override;
 
 	Real process_score(
 		std::ostream & ostr, bool print, Multivec const & component_weights,
-		Multivec const & vars, Multivec & dE_dvars, Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
+		Multivec const & vars, Multivec & dE_dvars, core::Size const num_energy_dofs, int const num_ref_dofs, int const num_total_dofs,
 		EnergyMap const & fixed_terms, ScoreTypes const & score_list, ScoreTypes const & fixed_score_list ) const;
 
 	OptEPositionDataType type() const override;
 	void range( ScoreTypes const & free_score_list, ScoreTypes const & fixed_score_list, EnergyMap & lower_bound, EnergyMap & upper_bound ) const override;
-	Size size() const override;
-	Size memory_use() const override;
+	core::Size size() const override;
+	core::Size memory_use() const override;
 
 #ifdef USEMPI
 	virtual void send_to_node( int const destination_node, int const tag ) const override;
@@ -68,7 +68,7 @@ public:
 
 	// setters
 	void set_experimental_ddg_bind( Real exp_ddg_bind );
-	void add_mutation( std::pair< Size, std::pair < AA, AA > > mutation );
+	void add_mutation( std::pair< core::Size, std::pair < AA, AA > > mutation );
 
 	void add_wt_complex( SingleStructureDataOP wt );
 	void add_mutant_complex( SingleStructureDataOP mut );
@@ -77,7 +77,7 @@ public:
 
 private:
 	Real experimental_ddG_bind_;
-	utility::vector1< std::pair< Size, std::pair < AA, AA > > > mutations_;
+	utility::vector1< std::pair< core::Size, std::pair < AA, AA > > > mutations_;
 
 	SingleStructureDataOPs wt_complexes_;
 	SingleStructureDataOPs mutant_complexes_;

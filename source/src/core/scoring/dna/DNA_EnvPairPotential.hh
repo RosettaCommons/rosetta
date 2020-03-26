@@ -24,7 +24,7 @@
 
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
@@ -36,7 +36,7 @@ namespace scoring {
 namespace dna {
 
 
-class DNA_EnvPairPotential : public utility::pointer::ReferenceCount {
+class DNA_EnvPairPotential : public utility::VirtualBase {
 public:
 	typedef chemical::AA AA;
 

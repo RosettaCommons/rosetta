@@ -32,7 +32,7 @@
 #include <utility/LexicographicalIterator.hh> //not OPable; needs full header
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ Headers
 #include <string>
@@ -44,7 +44,7 @@ namespace loop_closure {
 namespace kinematic_closure {
 
 /// @brief pure virtual base class for KinematicPerturber.  KinematicPerturbers determine HOW loops should be perturbed.  The base class contains a provision for determining WHERE they should be perturbed: MoveMap sensitivity.
-class KinematicPerturber : public utility::pointer::ReferenceCount {
+class KinematicPerturber : public utility::VirtualBase {
 
 public:
 
@@ -258,11 +258,11 @@ public:
 
 	bool perturber_exhausted() const override { return sweep_iterator_.at_end(); }
 
-	void set_nonpivot_res_to_sweep( utility::vector1< Size > const & resids );
-	void set_nonpivot_bb_torsion_id( utility::vector1< Size > const & bbtorids );
+	void set_nonpivot_res_to_sweep( utility::vector1< core::Size > const & resids );
+	void set_nonpivot_bb_torsion_id( utility::vector1< core::Size > const & bbtorids );
 	void set_sweep_start_angle( utility::vector1< core::Real > const & angles_in_degrees );
 	void set_sweep_step_size( utility::vector1< core::Real > const & angle_steps_in_degrees );
-	void set_sweep_nsteps( utility::vector1< Size > const & nsteps );
+	void set_sweep_nsteps( utility::vector1< core::Size > const & nsteps );
 
 
 private:

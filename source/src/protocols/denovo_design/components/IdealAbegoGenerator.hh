@@ -25,7 +25,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <set>
@@ -35,7 +35,7 @@ namespace denovo_design {
 namespace components {
 
 ///@brief Logic for selection of abego values
-class IdealAbegoGenerator : public utility::pointer::ReferenceCount {
+class IdealAbegoGenerator : public utility::VirtualBase {
 public:
 	typedef Segment Motif;
 	typedef SegmentOP MotifOP;

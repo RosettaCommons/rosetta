@@ -21,7 +21,7 @@
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh> // where ChiVector and RotVector live
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1_bool.hh>
 
@@ -30,7 +30,7 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-class ChiSet : public utility::pointer::ReferenceCount
+class ChiSet : public utility::VirtualBase
 {
 public:
 	ChiSet():
@@ -48,7 +48,7 @@ public:
 	{}
 
 	ChiSet( ChiSet const & chi_set ) :
-		ReferenceCount(),
+		VirtualBase(),
 		chi( chi_set.chi ),
 		rot( chi_set.rot ),
 		ex_chi_steps( chi_set.ex_chi_steps ),

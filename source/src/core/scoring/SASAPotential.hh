@@ -29,7 +29,7 @@
 #include <core/kinematics/DomainMap.fwd.hh>
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -61,7 +61,7 @@ typedef numeric::xyzMatrix< core::Real > Matrix;
 
 
 
-class PDatom : public utility::pointer::ReferenceCount {
+class PDatom : public utility::VirtualBase {
 
 public:
 	PDatom() : res_(1), atom_(1), rad_(0.0), rad2_(0.0) {}
@@ -88,7 +88,7 @@ private:
 };
 
 
-class PDvertex : public utility::pointer::ReferenceCount {
+class PDvertex : public utility::VirtualBase {
 
 public:
 	PDvertex() : id_(1), finite_(false), live_(false), power_(0.0) {}
@@ -123,7 +123,7 @@ private:
 
 // Class for the 'vertices' that correspond to triple atom
 // intersections.
-class PDinter : public utility::pointer::ReferenceCount {
+class PDinter : public utility::VirtualBase {
 
 public:
 	PDinter( Vector & xyz, PDvertexCOP & v1, PDvertexCOP & v2 ) : xyz_(xyz), v1_(v1), v2_(v2), circle_(false) {}
@@ -146,7 +146,7 @@ private:
 
 
 // Class for each node in a contour around a buried surface area patch
-class SAnode : public utility::pointer::ReferenceCount {
+class SAnode : public utility::VirtualBase {
 
 public:
 	SAnode( PDinterOP & inter, PDatomCOP & other_atom, Real ct, Real phi ) : inter_(inter), other_atom_(other_atom), cos_theta_(ct), phi_(phi) {}
@@ -168,7 +168,7 @@ private:
 
 };
 
-class SASAPotential : public utility::pointer::ReferenceCount {
+class SASAPotential : public utility::VirtualBase {
 public:
 	typedef core::conformation::Residue Residue;
 

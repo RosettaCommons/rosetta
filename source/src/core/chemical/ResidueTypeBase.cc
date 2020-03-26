@@ -93,7 +93,7 @@ ResidueTypeBase::ResidueTypeBase(
 	ElementSetCOP elements,
 	MMAtomTypeSetCOP mm_atom_types,
 	orbitals::OrbitalTypeSetCOP orbital_types
-) : utility::pointer::ReferenceCount(),
+) : utility::VirtualBase(),
 	atom_types_( std::move( atom_types ) ),
 	elements_( std::move( elements ) ),
 	mm_atom_types_( std::move( mm_atom_types ) ),

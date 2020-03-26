@@ -41,8 +41,8 @@ void gather_coords(
 	SequenceMapping mapping( aln.sequence_mapping(1,2) );
 
 	natoms = 0;
-	for ( Size ii = 1; ii <= model.size(); ++ii ) {
-		Size const native_ii( mapping[ii] );
+	for ( core::Size ii = 1; ii <= model.size(); ++ii ) {
+		core::Size const native_ii( mapping[ii] );
 		bool skip(
 			native_ii == 0 ||
 			native_ii > native.size() ||
@@ -53,9 +53,9 @@ void gather_coords(
 	p1a.dimension(3,natoms);
 	p2a.dimension(3,natoms);
 
-	Size n_gap(0);
-	for ( Size ii = 1; ii <= model.size(); ++ii ) {
-		Size const native_ii(mapping[ii]);
+	core::Size n_gap(0);
+	for ( core::Size ii = 1; ii <= model.size(); ++ii ) {
+		core::Size const native_ii(mapping[ii]);
 		bool skip(
 			native_ii == 0 ||
 			native_ii > native.size() ||
@@ -67,7 +67,7 @@ void gather_coords(
 			using core::Real;
 			numeric::xyzVector< Real > model_xyz ( model.residue(ii).xyz(atom_name) );
 			numeric::xyzVector< Real > native_xyz( native.residue(native_ii).xyz(atom_name) );
-			for ( Size jj = 1; jj <= 3; ++jj ) {
+			for ( core::Size jj = 1; jj <= 3; ++jj ) {
 				p1a(jj,ii - n_gap) = native_xyz[jj-1];
 				p2a(jj,ii - n_gap) = model_xyz [jj-1];
 			}

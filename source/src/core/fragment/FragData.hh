@@ -29,7 +29,7 @@
 
 // Utility headers
 #include <utility/vector1_bool.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C/C++ headers
 #include <string>
@@ -42,7 +42,7 @@ namespace fragment {
 
 typedef utility::vector1 < Size > PositionList;
 
-class FragData : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< FragData >
+class FragData : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< FragData >
 {
 	typedef utility::vector1 < SingleResidueFragDataOP > SRFD_List;
 

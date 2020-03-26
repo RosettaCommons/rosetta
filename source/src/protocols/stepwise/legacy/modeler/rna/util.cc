@@ -44,7 +44,7 @@ namespace rna {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 check_can_prepend( utility::vector1< core::Size > const & seq_num_list ){
-	for ( Size n = 1; n <= seq_num_list.size() - 1; n++ ) { //[11, 12, 13]
+	for ( core::Size n = 1; n <= seq_num_list.size() - 1; n++ ) { //[11, 12, 13]
 		if ( ( seq_num_list[n] + 1 ) != seq_num_list[n + 1] ) return false;
 	}
 	return true;
@@ -53,7 +53,7 @@ check_can_prepend( utility::vector1< core::Size > const & seq_num_list ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 check_can_append( utility::vector1< core::Size > const & seq_num_list ){
-	for ( Size n = 1; n <= seq_num_list.size() - 1; n++ ) { //[14, 13, 12]
+	for ( core::Size n = 1; n <= seq_num_list.size() - 1; n++ ) { //[14, 13, 12]
 		if ( ( seq_num_list[n] - 1 ) != seq_num_list[n + 1] ) return false;
 	}
 	return true;
@@ -62,27 +62,27 @@ check_can_append( utility::vector1< core::Size > const & seq_num_list ){
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //Sort by the first element. Low number on the top of the list
 bool
-pair_sort_criterion( std::pair < Size, Size > pair_one, std::pair < Size, Size > pair_two ){
+pair_sort_criterion( std::pair < core::Size, core::Size > pair_one, std::pair < core::Size, core::Size > pair_two ){
 	return ( pair_one.first < pair_two.first );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
-sort_pair_list( utility::vector1< std::pair < Size, Size > > pair_list ){
+sort_pair_list( utility::vector1< std::pair < core::Size, core::Size > > pair_list ){
 	sort( pair_list.begin(), pair_list.end(), pair_sort_criterion );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
-output_pair_size( std::pair < Size, Size > const & pair_size, std::ostream & outstream /* = std::cout */ ){
+output_pair_size( std::pair < core::Size, core::Size > const & pair_size, std::ostream & outstream /* = std::cout */ ){
 	outstream << "( " << pair_size.first << ", " << pair_size.second << " ) ";
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
-output_pair_size( utility::vector1 < std::pair < Size, Size > > const & pair_size_vector, std::string const & output_string, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
+output_pair_size( utility::vector1 < std::pair < core::Size, core::Size > > const & pair_size_vector, std::string const & output_string, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
 	outstream << std::setw( spacing ) << std::left << output_string << " :";
-	for ( Size n = 1; n <= pair_size_vector.size(); n++ ) {
+	for ( core::Size n = 1; n <= pair_size_vector.size(); n++ ) {
 		output_pair_size( pair_size_vector[n], outstream );
 	}
 	outstream << std::endl;
@@ -96,9 +96,9 @@ void output_is_prepend_map( std::string const & tag, std::map< core::Size, bool 
 
 	outstream << std::setw( tag_spacing ) << tag;
 
-	Size spacing = 4;
+	core::Size spacing = 4;
 	//  outstream << std::setw(30) << "is_residue_prepend:";
-	for ( Size seq_num = 1; seq_num <= max_seq_num; seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= max_seq_num; seq_num++ ) {
 		char prepend_char;
 		if ( my_map.find( seq_num ) != my_map.end() ) {
 			prepend_char = ( my_map.find( seq_num )->second ) ? 'P' : 'A';
@@ -112,10 +112,10 @@ void output_is_prepend_map( std::string const & tag, std::map< core::Size, bool 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
-output_bool_list( std::string const & tag, utility::vector1< Size > const & size_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
+output_bool_list( std::string const & tag, utility::vector1< core::Size > const & size_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
 	utility::vector1< bool > bool_list;
 
-	for ( Size n = 1; n <= size_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= size_list.size(); n++ ) {
 		bool_list.push_back( size_list[n] );
 	}
 	output_bool_list( tag, bool_list, outstream, spacing );
@@ -130,7 +130,7 @@ output_bool_list( std::string const &tag, utility::vector1< bool > const & bool_
 
 	outstream <<  std::setw( spacing ) << tag;
 
-	for ( Size seq_num = 1; seq_num <= bool_list.size(); seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= bool_list.size(); seq_num++ ) {
 		output_boolean( bool_list[seq_num], outstream );
 	}
 	outstream << std::endl;
@@ -138,14 +138,14 @@ output_bool_list( std::string const &tag, utility::vector1< bool > const & bool_
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
-output_size_list( std::string const &tag, utility::vector1< Size > const & size_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
+output_size_list( std::string const &tag, utility::vector1< core::Size > const & size_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
 
 	using namespace ObjexxFCL;
 	using namespace ObjexxFCL::format;
 
 	outstream <<  std::setw( spacing ) << tag;
 
-	for ( Size seq_num = 1; seq_num <= size_list.size(); seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= size_list.size(); seq_num++ ) {
 		outstream << I( 4, size_list[seq_num] );
 	}
 	outstream << std::endl;
@@ -156,7 +156,7 @@ void
 output_fold_tree_info( kinematics::FoldTree const & fold_tree, std::string const & pose_name, std::ostream & outstream /* = std::cout */ ){
 
 	outstream << "fold tree of " << pose_name << ": " << std::endl;
-	for ( Size i = 1; i <= fold_tree.num_cutpoint(); i++ ) {
+	for ( core::Size i = 1; i <= fold_tree.num_cutpoint(); i++ ) {
 		outstream << std::setw( 30 ) << "jump_point_num = " << i;
 		outstream << "   cutpoint = " << fold_tree.cutpoint( i );
 		outstream << "   5' jump_point = " << fold_tree.jump_point( 1, i ) << ", " << fold_tree.upstream_atom( i );
@@ -174,7 +174,7 @@ output_fold_tree_info( pose::Pose const & pose, std::string pose_name, std::ostr
 //Ok this function should only be called if pose contain full sequence.
 //This one include edge phosphates
 core::Real
-full_length_rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const & pose2, utility::vector1 < Size > const & residue_list, std::string const & full_sequence, bool const verbose, bool const ignore_virtual_atom ){
+full_length_rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const & pose2, utility::vector1 < core::Size > const & residue_list, std::string const & full_sequence, bool const verbose, bool const ignore_virtual_atom ){
 
 	using namespace ObjexxFCL;
 	std::string strippable_full_sequence( full_sequence );
@@ -194,7 +194,7 @@ full_length_rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const &
 		utility_exit_with_message( "pose2.sequence() != full_sequence" );
 	}
 
-	Size const total_res = pose1.size();
+	core::Size const total_res = pose1.size();
 
 	if ( verbose ) {
 		output_title_text( "Enter full_length_rmsd_over_residue_list function", TR );
@@ -202,10 +202,10 @@ full_length_rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const &
 		output_seq_num_list( "residue_list = ", residue_list, TR, 30 );
 	}
 
-	Size atom_count = 0;
+	core::Size atom_count = 0;
 	Real sum_sd = 0;
 
-	for ( Size const full_seq_num : residue_list ) {
+	for ( core::Size const full_seq_num : residue_list ) {
 
 		bool is_prepend = false;
 		bool both_pose_res_is_virtual = false;
@@ -264,7 +264,7 @@ full_length_rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const &
 
 /////////////////////////////////////////////////////////////////////////////////////
 void
-print_backbone_torsions( pose::Pose const & pose, Size const five_prime_chainbreak ){
+print_backbone_torsions( pose::Pose const & pose, core::Size const five_prime_chainbreak ){
 
 	using namespace core::id;
 
@@ -273,7 +273,7 @@ print_backbone_torsions( pose::Pose const & pose, Size const five_prime_chainbre
 	TR << std::setw( 5 ) << " z = "  << std::setw( 15 ) << suite_lower_res.mainchain_torsion( 6 );
 
 
-	Size const three_prime_chainbreak = five_prime_chainbreak + 1;
+	core::Size const three_prime_chainbreak = five_prime_chainbreak + 1;
 
 	if ( three_prime_chainbreak <= pose.size() ) {
 		conformation::Residue const & suite_upper_res = pose.residue( three_prime_chainbreak );
@@ -299,7 +299,7 @@ remove_chain_break_jump_point( core::pose::Pose & pose,
 	core::Size const moving_res,
 	core::Size const reference_res ){
 	kinematics::FoldTree f = pose.fold_tree();
-	Size const n = f.jump_nr( moving_res, reference_res );
+	core::Size const n = f.jump_nr( moving_res, reference_res );
 	runtime_assert( n > 0 );
 	f.delete_jump_and_intervening_cutpoint( n );
 	pose.fold_tree( f );
@@ -308,15 +308,15 @@ remove_chain_break_jump_point( core::pose::Pose & pose,
 //////////////////////////////////////////////////////////////////////////
 core::Size
 setup_bulge_jump_point( pose::Pose & pose,
-	Size const & moving_base,
-	Size const & reference_base,
+	core::Size const & moving_base,
+	core::Size const & reference_base,
 	bool const verbose ){
 
 	using namespace core::conformation;
 
 	runtime_assert ( moving_base != reference_base );
 	int i, j;
-	Size cutpoint;
+	core::Size cutpoint;
 	if ( moving_base > reference_base ) {
 		i = reference_base;
 		j = moving_base;
@@ -334,7 +334,7 @@ setup_bulge_jump_point( pose::Pose & pose,
 
 	if ( verbose ) TR.Debug << "after add new jump point" << std::endl;
 
-	Size jump_num = fold_tree.jump_nr( i, j );
+	core::Size jump_num = fold_tree.jump_nr( i, j );
 	runtime_assert( jump_num > 0 );
 
 	Residue const & rsd1( pose.residue( i ) );
@@ -349,21 +349,21 @@ setup_bulge_jump_point( pose::Pose & pose,
 ////////////////////////////////////////////////////////////////////////
 void
 apply_rotamer( pose::Pose & pose, utility::vector1< Torsion_Info > const & rotamer_list ){
-	for ( Size i = 1; i <= rotamer_list.size(); i++ ) {
+	for ( core::Size i = 1; i <= rotamer_list.size(); i++ ) {
 		pose.set_torsion( rotamer_list[ i ].id, rotamer_list[i].value );
 	}
 }
 
 
 bool
-is_same_sugar_pucker( core::pose::Pose const & current_pose, core::pose::Pose const & cluster_center_pose, Size const seq_num ){
+is_same_sugar_pucker( core::pose::Pose const & current_pose, core::pose::Pose const & cluster_center_pose, core::Size const seq_num ){
 	return ( core::pose::rna::get_residue_pucker_state( current_pose, seq_num ) == core::pose::rna::get_residue_pucker_state( cluster_center_pose, seq_num ) );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 setup_simple_fold_tree( core::pose::Pose & pose ){
-	Size const nres = pose.size();
+	core::Size const nres = pose.size();
 
 	kinematics::FoldTree simple_fold_tree( nres ); //create a simple fold tree
 	simple_fold_tree.simple_tree( nres ); //Just to make sure.
@@ -387,7 +387,7 @@ import_pose_from_silent_file( core::pose::Pose & import_pose, std::string const 
 	core::io::silent::SilentFileData silent_file_data(opts);
 	silent_file_data.read_file( silent_file );
 
-	Size num_matching_tag = 0;
+	core::Size num_matching_tag = 0;
 
 	for ( core::io::silent::SilentFileData::iterator iter = silent_file_data.begin(), end = silent_file_data.end(); iter != end; ++iter ) {
 		if ( iter->decoy_tag() != input_tag ) continue;
@@ -446,7 +446,7 @@ print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersOP co
 
 	output_title_text( "printing WorkingParameters Information for " + WP_name, outstream );
 
-	utility::vector1< Size > empty_seq_num_list;
+	utility::vector1< core::Size > empty_seq_num_list;
 	empty_seq_num_list.clear();
 
 	outstream << "full_sequence = " <<  WP->full_sequence();
@@ -475,7 +475,7 @@ print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersOP co
 	outstream << "------------full_stuff------------" << std::endl;
 	output_bool_list( "is_working_res = ", WP->is_working_res(), outstream );
 
-	for ( Size n = 1; n <= WP->input_res_vectors().size(); n++ ) {
+	for ( core::Size n = 1; n <= WP->input_res_vectors().size(); n++ ) {
 		output_seq_num_list( "input_res_vectors[" + string_of( n ) + "]", WP->input_res_vectors()[n], outstream );
 	}
 	output_seq_num_list( "global_sample_res_list = ", WP->global_sample_res_list(), outstream );
@@ -520,13 +520,13 @@ print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersOP co
 	if ( is_simple_full_length_WP == false ) {
 		utility::vector1< bool > vector1_partition_definition;
 
-		for ( Size n = 1; n <= WP->partition_definition().size(); n++ ) {
+		for ( core::Size n = 1; n <= WP->partition_definition().size(); n++ ) {
 			vector1_partition_definition.push_back( WP->partition_definition()( n ) );
 		}
 
 		output_bool_list( "partition_definition = ",  vector1_partition_definition, outstream );
 
-		Size const root_res = (WP->fold_tree().size() > 0) ? WP->fold_tree().root() : 0;
+		core::Size const root_res = (WP->fold_tree().size() > 0) ? WP->fold_tree().root() : 0;
 		outstream << "root_res = " << root_res << std::endl;
 		outstream << "working_reference_res = " << WP->working_reference_res() << std::endl;
 		output_fold_tree_info( WP->fold_tree(), "fold_tree", outstream );
@@ -538,7 +538,7 @@ print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersOP co
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 void
-set_nucleotide_to_A_form( pose::Pose & pose, Size const seq_num ){
+set_nucleotide_to_A_form( pose::Pose & pose, core::Size const seq_num ){
 	//Torsion value extracted from 3DNA (website) (A-U BP repeating) idealized A-form helix. Note that bond angle and bond length of idealized Rosetta doesn't exactly match the values in 3DNA
 
 	using namespace core::id;

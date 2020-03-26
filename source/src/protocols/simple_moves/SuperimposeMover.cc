@@ -54,6 +54,7 @@ namespace simple_moves {
 static basic::Tracer TR( "protocols.simple_moves.SuperimposeMover" );
 
 
+using core::Size;
 
 
 SuperimposeMover::SuperimposeMover() :
@@ -92,7 +93,7 @@ SuperimposeMover::fresh_instance() const
 }
 
 void
-SuperimposeMover::set_reference_pose( Pose const & pose,Size start, Size end ) {
+SuperimposeMover::set_reference_pose( Pose const & pose,core::Size start, core::Size end ) {
 	ref_pose_ = utility::pointer::make_shared< Pose >(pose);
 	ref_start_ = start;
 	ref_end_ = (end == 0) ? pose.size() : end;
@@ -100,7 +101,7 @@ SuperimposeMover::set_reference_pose( Pose const & pose,Size start, Size end ) {
 }
 
 void
-SuperimposeMover::set_target_range( Size start, Size end ) {
+SuperimposeMover::set_target_range( core::Size start, core::Size end ) {
 	target_start_ = start;
 	target_end_ = end;
 	runtime_assert(target_start_ > 0 && target_start_ < target_end_);
@@ -116,16 +117,16 @@ core::Real
 SuperimposeMover::superimpose(
 	core::pose::Pose & mod_pose,
 	core::pose::Pose const & ref_pose,
-	Size ref_start,
-	Size ref_end,
-	Size target_start,
-	Size /*target_end*/
+	core::Size ref_start,
+	core::Size ref_end,
+	core::Size target_start,
+	core::Size /*target_end*/
 )
 {
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	std::map< core::id::AtomID, core::id::AtomID> atom_id_map;
 	core::pose::initialize_atomid_map( atom_map, mod_pose, core::id::AtomID::BOGUS_ATOM_ID() );
-	for ( Size i_target = target_start, i_ref = ref_start; i_ref <= ref_end; ++i_ref, ++i_target ) {
+	for ( core::Size i_target = target_start, i_ref = ref_start; i_ref <= ref_end; ++i_ref, ++i_target ) {
 		if ( ! mod_pose.residue(i_target).has("CA") ) continue;
 		if ( ! ref_pose.residue(i_ref).has("CA") ) continue;
 
@@ -143,16 +144,16 @@ core::Real
 SuperimposeMover::superimposebb(
 	core::pose::Pose & mod_pose,
 	core::pose::Pose const & ref_pose,
-	Size ref_start,
-	Size ref_end,
-	Size target_start,
-	Size /*target_end*/
+	core::Size ref_start,
+	core::Size ref_end,
+	core::Size target_start,
+	core::Size /*target_end*/
 )
 {
 	core::id::AtomID_Map< core::id::AtomID > atom_map;
 	std::map< core::id::AtomID, core::id::AtomID> atom_id_map;
 	core::pose::initialize_atomid_map( atom_map, mod_pose, core::id::AtomID::BOGUS_ATOM_ID() );
-	for ( Size i_target = target_start, i_ref = ref_start; i_ref <= ref_end; ++i_ref, ++i_target ) {
+	for ( core::Size i_target = target_start, i_ref = ref_start; i_ref <= ref_end; ++i_ref, ++i_target ) {
 
 		if ( ! mod_pose.residue(i_target).has("N") ) continue;
 		if ( ! ref_pose.residue(i_ref).has("N") ) continue;
@@ -196,10 +197,10 @@ SuperimposeMover::apply( Pose & pose ) {
 		ref_pose_ = core::import_pose::pose_from_file( option[ OptionKeys::in::file::native ].value() , core::import_pose::PDB_file);
 	}
 
-	const Size ref_start = ref_start_;
-	const Size target_start = target_start_;
-	const Size ref_end = (ref_end_ == 0) ? ref_pose_->size() : ref_end_;
-	const Size target_end = (target_end_ == 0) ? pose.size() : target_end_;
+	const core::Size ref_start = ref_start_;
+	const core::Size target_start = target_start_;
+	const core::Size ref_end = (ref_end_ == 0) ? ref_pose_->size() : ref_end_;
+	const core::Size target_end = (target_end_ == 0) ? pose.size() : target_end_;
 
 	TR << "ref_start: "<< ref_start << " ref_end " << ref_end <<std::endl;
 	TR << "target_start: "<< target_start << " target_end " << target_end <<std::endl;
@@ -223,10 +224,10 @@ SuperimposeMover::parse_my_tag( utility::tag::TagCOP tag,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
-	ref_start_ = tag->getOption< Size >("ref_start",1);
-	ref_end_ = tag->getOption< Size >("ref_end",0);
-	target_start_ = tag->getOption< Size >("target_start",1);
-	target_end_ = tag->getOption< Size >("target_end",0);
+	ref_start_ = tag->getOption< core::Size >("ref_start",1);
+	ref_end_ = tag->getOption< core::Size >("ref_end",0);
+	target_start_ = tag->getOption< core::Size >("target_start",1);
+	target_end_ = tag->getOption< core::Size >("target_end",0);
 	CA_only_ = tag->getOption< bool >("CA_only",true);
 	if ( tag->hasOption("ref_pose") ) ref_pose_ = core::import_pose::pose_from_file(tag->getOption< std::string >("ref_pose"), core::import_pose::PDB_file);
 	else if ( tag->hasOption("spm_reference_name") ) {

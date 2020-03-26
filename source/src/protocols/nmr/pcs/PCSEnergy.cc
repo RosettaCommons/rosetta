@@ -162,20 +162,20 @@ PCSEnergy::calcualate_total_score_and_tensors(Pose & pose) const {
 	// Some basic setup
 	Real total_score(0);
 	utility::vector1< PCSMultiSetOP > & multiset_vec = pcs_data_all.get_pcs_multiset_vec();
-	Size number_tags(pcs_data_all.get_number_tags());
+	core::Size number_tags(pcs_data_all.get_number_tags());
 
 	// Loop over all tagging sites
-	for ( Size i = 1; i <= number_tags; ++i ) {
+	for ( core::Size i = 1; i <= number_tags; ++i ) {
 
 		// Split behavior depending on if we are going to solve the tensor or
 		// calculate the score from fixed tensor values.
 		if ( multiset_vec[i]->tensors_fixed() ) {
-			Size number_metal_ions(multiset_vec[i]->get_number_metal_ions());
-			Size tag_residue_number(multiset_vec[i]->get_tag_residue_number());
+			core::Size number_metal_ions(multiset_vec[i]->get_number_metal_ions());
+			core::Size tag_residue_number(multiset_vec[i]->get_tag_residue_number());
 			utility::vector1< PCSSingleSetOP > & singleset_vec = multiset_vec[i]->get_pcs_singleset_vec();
 			Real score_per_tag(0);
 
-			for ( Size j = 1; j <= number_metal_ions; ++j ) {
+			for ( core::Size j = 1; j <= number_metal_ions; ++j ) {
 				singleset_vec[j]->update_spin_coordinates(pose);
 				score_per_tag += singleset_vec[j]->compute_pcs_values_and_score_from_tensor() * singleset_vec[j]->get_weight();
 				singleset_vec[j]->set_atom_derivatives( pose );
@@ -183,7 +183,7 @@ PCSEnergy::calcualate_total_score_and_tensors(Pose & pose) const {
 			if ( TR.Trace.visible() ) {
 				TR.Trace << "PCS Score for tagging site at residue " << tag_residue_number << " " << score_per_tag << " (unweighted) "
 					<< "or " << score_per_tag*multiset_vec[i]->get_weight() << " (weighted)." << std::endl;
-				for ( Size j = 1; j <= number_metal_ions; ++j ) {
+				for ( core::Size j = 1; j <= number_metal_ions; ++j ) {
 					TR.Trace << "Dataset: " << singleset_vec[j]->get_dataset_name() << std::endl;
 					singleset_vec[j]->get_tensor()->show_tensor_stats(TR.Trace, true);
 				}
@@ -222,8 +222,8 @@ PCSEnergy::calculate_score_and_tensors_with_spinlabel(
 	using WeightCoordVector = NMRSpinlabel::WeightCoordVector;
 
 	// Some basic setup
-	Size number_metal_ions(pcs_data.get_number_metal_ions());
-	Size tag_residue_number(pcs_data.get_tag_residue_number());
+	core::Size number_metal_ions(pcs_data.get_number_metal_ions());
+	core::Size tag_residue_number(pcs_data.get_tag_residue_number());
 	Real score_this_tag(0);
 	utility::vector1< PCSSingleSetOP > & singleset_vec = pcs_data.get_pcs_singleset_vec();
 	runtime_assert(number_metal_ions==singleset_vec.size());
@@ -231,7 +231,7 @@ PCSEnergy::calculate_score_and_tensors_with_spinlabel(
 	utility::vector1< PCSSingleSetOP > singlesets_for_nls;
 
 	// Update spin coordinates and group PCSSingleSets according to their computation type
-	for ( Size i(1); i <= number_metal_ions; ++i ) {
+	for ( core::Size i(1); i <= number_metal_ions; ++i ) {
 		singleset_vec[ i ]->update_spin_coordinates(pose);
 		if ( singleset_vec[ i ] ->get_computation_type() == PCSSingleSet::SVD ) {
 			singlesets_for_svd.push_back( singleset_vec[ i ] );
@@ -265,7 +265,7 @@ PCSEnergy::calculate_score_and_tensors_with_spinlabel(
 	numeric::geometry::BoundingBox<Vector> bbox;
 	bbox.set_lower(Vector(std::numeric_limits< Real >::max()));
 	bbox.set_upper(Vector(std::numeric_limits< Real >::min()));
-	for ( Size k = 1, k_end = spinlabel_wghts_coords.size(); k <= k_end; ++k ) {
+	for ( core::Size k = 1, k_end = spinlabel_wghts_coords.size(); k <= k_end; ++k ) {
 		totwght += spinlabel_wghts_coords[k].first;
 		sl_av_metal_coords += spinlabel_wghts_coords[k].first * spinlabel_wghts_coords[k].second;
 		bbox.add(spinlabel_wghts_coords[k].second);
@@ -307,8 +307,8 @@ PCSEnergy::calculate_score_and_tensors_with_gridsearch(
 	using namespace core::scoring::nmr::pcs;
 
 	// Some basic setup
-	Size number_metal_ions(pcs_data.get_number_metal_ions());
-	Size tag_residue_number(pcs_data.get_tag_residue_number());
+	core::Size number_metal_ions(pcs_data.get_number_metal_ions());
+	core::Size tag_residue_number(pcs_data.get_tag_residue_number());
 	Real score_this_tag(0);
 	utility::vector1< PCSSingleSetOP > & singleset_vec = pcs_data.get_pcs_singleset_vec();
 	runtime_assert(number_metal_ions==singleset_vec.size());
@@ -316,7 +316,7 @@ PCSEnergy::calculate_score_and_tensors_with_gridsearch(
 	utility::vector1< PCSSingleSetOP > singlesets_for_nls;
 
 	// Update spin coordinates and group PCSSingleSets according to their computation type
-	for ( Size i(1); i <= number_metal_ions; ++i ) {
+	for ( core::Size i(1); i <= number_metal_ions; ++i ) {
 		singleset_vec[ i ]->update_spin_coordinates(pose);
 		if ( singleset_vec[ i ] ->get_computation_type() == PCSSingleSet::SVD ) {
 			singlesets_for_svd.push_back( singleset_vec[ i ] );
@@ -338,7 +338,7 @@ PCSEnergy::calculate_score_and_tensors_with_gridsearch(
 		// Run grid search
 		while ( gridsearch_iterator->valid_next_grid_point(current_metal_coords) ) {
 			score_svd = 0;
-			for ( Size j(1); j <= singlesets_for_svd.size() ; ++j ) {
+			for ( core::Size j(1); j <= singlesets_for_svd.size() ; ++j ) {
 				score_svd += singlesets_for_svd[ j ]->solve_tensor_and_compute_score_by_svd(current_metal_coords) * singlesets_for_svd[ j ]->get_weight();
 				if ( score_svd > best_score_svd ) { // if one dataset gives already a score higher than the best score, there is no need to calculate the scores of the remaining datasets
 					break;
@@ -392,12 +392,12 @@ PCSEnergy::calculate_score_and_tensors_by_svd(
 	Pose & pose,
 	utility::vector1< core::scoring::nmr::pcs::PCSSingleSetOP > & pcs_singlesets,
 	Vector & metal_coords,
-	Size tag_residue_number,
+	core::Size tag_residue_number,
 	bool optimize_tensors
 ) const
 {
 	Real score_svd(0);
-	for ( Size i(1); i <= pcs_singlesets.size(); ++i ) {
+	for ( core::Size i(1); i <= pcs_singlesets.size(); ++i ) {
 		score_svd += pcs_singlesets[ i ]->solve_tensor_and_compute_score_by_svd(metal_coords) * pcs_singlesets[ i ]->get_weight();
 		pcs_singlesets[ i ]->set_atom_derivatives( pose );
 	}
@@ -411,7 +411,7 @@ PCSEnergy::calculate_score_and_tensors_by_svd(
 
 		TR.Trace << "SVD Score for tagging site at residue " << tag_residue_number << " before optimization = " << score_svd << std::endl;
 		TR.Trace << "Tensors before optimization" << std::endl;
-		for ( Size i(1); i <= pcs_singlesets.size(); ++i ) {
+		for ( core::Size i(1); i <= pcs_singlesets.size(); ++i ) {
 			tensor_params_for_optimization.push_back( pcs_singlesets[ i ]->get_tensor_const()->get_T_xx() );
 			tensor_params_for_optimization.push_back( pcs_singlesets[ i ]->get_tensor_const()->get_T_xy() );
 			tensor_params_for_optimization.push_back( pcs_singlesets[ i ]->get_tensor_const()->get_T_xz() );
@@ -429,8 +429,8 @@ PCSEnergy::calculate_score_and_tensors_by_svd(
 		if ( optimized_score < score_svd ) { // If score improved after optimization set new tensor parameters
 			score_svd = optimized_score;
 			TR.Trace << "Tensors after optimization" << std::endl;
-			Size k(1);
-			for ( Size i(1); i <= pcs_singlesets.size(); ++i ) {
+			core::Size k(1);
+			for ( core::Size i(1); i <= pcs_singlesets.size(); ++i ) {
 				core::scoring::nmr::pcs::PCSTensorOP tensor = pcs_singlesets[ i ]->get_tensor();
 				tensor->set_metal_center(tensor_params_for_optimization[1], tensor_params_for_optimization[2], tensor_params_for_optimization[3]);
 				tensor->set_T_xx(tensor_params_for_optimization[3 + 5*(k-1) + 1]);
@@ -450,7 +450,7 @@ PCSEnergy::calculate_score_and_tensors_by_svd(
 	} else {
 		if ( TR.Trace.visible() ) {
 			TR.Trace << "SVD Score for tagging site at residue " << tag_residue_number << " " << score_svd << std::endl;
-			for ( Size i(1); i <= pcs_singlesets.size(); ++i ) {
+			for ( core::Size i(1); i <= pcs_singlesets.size(); ++i ) {
 				pcs_singlesets[ i ]->get_tensor_const()->show_tensor_stats(TR.Trace, false);
 			}
 		}
@@ -465,18 +465,18 @@ PCSEnergy::calculate_score_and_tensors_by_nls(
 	utility::vector1< core::scoring::nmr::pcs::PCSSingleSetOP > & pcs_singlesets,
 	Vector & metal_coords,
 	utility::fixedsizearray1<Real,6> const & metal_coord_range,
-	Size tag_residue_number
+	core::Size tag_residue_number
 ) const
 {
 	Real score_nls(0);
-	for ( Size i(1); i <= pcs_singlesets.size(); ++i ) {
+	for ( core::Size i(1); i <= pcs_singlesets.size(); ++i ) {
 		pcs_singlesets[ i ]->set_metal_coord_bounds(metal_coord_range);
 		score_nls += pcs_singlesets[ i ]->solve_tensor_and_compute_score_by_nls(metal_coords) * pcs_singlesets[ i ]->get_weight();
 		pcs_singlesets[ i ]->set_atom_derivatives( pose ); // Set atom derivatives
 	}
 	if ( TR.Trace.visible() ) {
 		TR.Trace << "NLS Score for tagging site at residue " << tag_residue_number << " " << score_nls << std::endl;
-		for ( Size i(1); i <= pcs_singlesets.size(); ++i ) {
+		for ( core::Size i(1); i <= pcs_singlesets.size(); ++i ) {
 			core::scoring::nmr::pcs::PCSTensorCOP tensor = pcs_singlesets[ i ]->get_tensor_const();
 			TR.Trace << "Dataset: " << pcs_singlesets[ i ]->get_dataset_name() << std::endl;
 			tensor->show_tensor_stats(TR.Trace, true);
@@ -507,14 +507,14 @@ PCSEnergy::setup_for_minimizing(
 	atom_id_to_pcs_xyz_deriv_map_.fill_with(fij);
 
 	utility::vector1< PCSMultiSetOP > & multiset_vec = pcs_data_all.get_pcs_multiset_vec();
-	Size number_tags(pcs_data_all.get_number_tags());
+	core::Size number_tags(pcs_data_all.get_number_tags());
 	utility::vector1<PCSSingle>::const_iterator iter;
 
-	for ( Size i = 1; i <= number_tags; ++i ) {
+	for ( core::Size i = 1; i <= number_tags; ++i ) {
 		utility::vector1< PCSSingleSetOP > & singleset_vec = multiset_vec[i]->get_pcs_singleset_vec();
-		Size number_metals = multiset_vec[i]->get_number_metal_ions();
+		core::Size number_metals = multiset_vec[i]->get_number_metal_ions();
 
-		for ( Size j = 1; j <= number_metals; ++j ) {
+		for ( core::Size j = 1; j <= number_metals; ++j ) {
 			utility::vector1<PCSSingle> const & single_pcs_vec = singleset_vec[j]->get_single_pcs_vec();
 			core::conformation::symmetry::SymmetryInfoCOP syminfo_ptr;
 			if ( singleset_vec[j]->symmetric_pcs_calc() && core::pose::symmetry::is_symmetric(pose) ) {
@@ -525,7 +525,7 @@ PCSEnergy::setup_for_minimizing(
 				utility::vector1< core::id::AtomID > const & protein_spins = iter->get_protein_spins();
 				utility::vector1< Vector > const & atom_derivatives = iter->get_atom_derivatives();
 				runtime_assert_msg(protein_spins.size() == atom_derivatives.size(), "ERROR in setup of atom tree minimization from PCS derivatives. Vector of AtomIDs and of derivatives have unequal length.");
-				for ( Size k = 1, k_end = protein_spins.size(); k <= k_end; ++k ) {
+				for ( core::Size k = 1, k_end = protein_spins.size(); k <= k_end; ++k ) {
 					fij = atom_id_to_pcs_xyz_deriv_map_.get( protein_spins[k] );  // returns (0,0,0) if atom is not present in map, otherwise the corresponding derivative
 					fij += atom_derivatives[k];                         // accumulates the derivative for that particular atom (for all pcs data)
 					atom_id_to_pcs_xyz_deriv_map_.set( protein_spins[k], fij);   // sets the accumulated derivative and resizes the map if necessary
@@ -533,9 +533,9 @@ PCSEnergy::setup_for_minimizing(
 
 				// Do another pass to set PCS derivatives for symmetric residues
 				if ( syminfo_ptr ) {
-					for ( Size k = 1, k_end = protein_spins.size(); k <= k_end; ++k ) {
-						utility::vector1< Size >protein_spins_symm_rsd = syminfo_ptr->bb_clones(protein_spins[k].rsd());
-						for ( Size l = 1, l_end = protein_spins_symm_rsd.size(); l <= l_end; ++l ) {
+					for ( core::Size k = 1, k_end = protein_spins.size(); k <= k_end; ++k ) {
+						utility::vector1< core::Size >protein_spins_symm_rsd = syminfo_ptr->bb_clones(protein_spins[k].rsd());
+						for ( core::Size l = 1, l_end = protein_spins_symm_rsd.size(); l <= l_end; ++l ) {
 							core::id::AtomID symm_spin(protein_spins[k].atomno(), protein_spins_symm_rsd[l]);
 
 							// return the derivative of that atom, if not present in map, return the default value which is (0,0,0)
@@ -620,7 +620,7 @@ PCSEnergy::show_additional_info(
 	// Some basic setup
 	PCSData & pcs_data_all = get_pcs_data_from_pose(pose);
 	Real pcs_score = calcualate_total_score_and_tensors(pose);
-	Size number_tags = pcs_data_all.get_number_tags();
+	core::Size number_tags = pcs_data_all.get_number_tags();
 	utility::vector1< utility::vector1< PCSTensor > > tensors_all_tags_and_metal_ions(number_tags);
 	utility::vector1< Real > scores_all_tags(number_tags, 0.0); // set all score to zero because we are going to use +=
 	utility::vector1< PCSMultiSetOP > & multiset_vec = pcs_data_all.get_pcs_multiset_vec();
@@ -634,25 +634,25 @@ PCSEnergy::show_additional_info(
 	// Loop over PCSMultiSets
 	Real sum_all_dev_square(0);
 	Real sum_all_exp_square(0);
-	Size number_all_pcs(0);
-	Size total_number_experiments(0);
-	for ( Size i = 1; i <= number_tags; ++i ) {
-		Size number_metal_ions(multiset_vec[i]->get_number_metal_ions());
+	core::Size number_all_pcs(0);
+	core::Size total_number_experiments(0);
+	for ( core::Size i = 1; i <= number_tags; ++i ) {
+		core::Size number_metal_ions(multiset_vec[i]->get_number_metal_ions());
 		tensors_all_tags_and_metal_ions[i].resize(number_metal_ions);
 		utility::vector1< PCSSingleSetOP > & singleset_vec = multiset_vec[i]->get_pcs_singleset_vec();
 
 		Real sum_dev_square(0);
 		Real sum_exp_square(0);
-		Size number_pcs_per_tag(0);
+		core::Size number_pcs_per_tag(0);
 		// Loop over PCSSingleSets
-		for ( Size j = 1; j <= number_metal_ions; ++j ) {
+		for ( core::Size j = 1; j <= number_metal_ions; ++j ) {
 
 			// Update xyz coordinates of active spins and do some basic checks
 			singleset_vec[j]->update_spin_coordinates(pose);
 			utility::vector1< utility::vector1< utility::vector1< Vector > > > const & spin_coordinates = singleset_vec[j]->get_spin_coordinates();
 			ObjexxFCL::FArray1D<Real> const & exp_pcs_values = singleset_vec[j]->get_pcs_values();
 			ObjexxFCL::FArray1D<Real> const & pcs_single_weights = singleset_vec[j]->get_pcs_single_weights();
-			Size npcs(singleset_vec[j]->get_number_pcs());
+			core::Size npcs(singleset_vec[j]->get_number_pcs());
 			number_pcs_per_tag += npcs;
 			runtime_assert_msg(npcs == spin_coordinates.size(), "ERROR in PCSEnergy's show_additional_info() function. Number of PCS and length of spin coordinate vector are not the same");
 			runtime_assert_msg(npcs == exp_pcs_values.size(), "ERROR in PCSEnergy's show_additional_info() function. Number of PCS and length of PCS value vector are not the same");
@@ -687,13 +687,13 @@ PCSEnergy::show_additional_info(
 			}
 
 			// Calculate all PCSs for this PCSSingleSet
-			for ( Size k = 1; k <= npcs; ++k ) {
+			for ( core::Size k = 1; k <= npcs; ++k ) {
 				Real calc_pcs(0);
-				Size n_subunits(spin_coordinates[k].size());
-				for ( Size l = 1; l <= n_subunits; ++l ) {
+				core::Size n_subunits(spin_coordinates[k].size());
+				for ( core::Size l = 1; l <= n_subunits; ++l ) {
 					Real calc_pcs_per_subunit(0);
-					Size n_eq_spins(spin_coordinates[k][l].size());
-					for ( Size m = 1; m <= n_eq_spins; ++m ) {
+					core::Size n_eq_spins(spin_coordinates[k][l].size());
+					for ( core::Size m = 1; m <= n_eq_spins; ++m ) {
 						Real x(spin_coordinates[k][l][m].x() - xM);
 						Real y(spin_coordinates[k][l][m].y() - yM);
 						Real z(spin_coordinates[k][l][m].z() - zM);

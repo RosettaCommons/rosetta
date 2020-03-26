@@ -44,13 +44,13 @@ using core::Real;
 ///  "SingResCnlCrea::zero_occ_for_deleted_atoms()".
 ///
 ///
-xyzVector<Real> cnl_com(vector1<Size> const &cnl, Pose const &ps) {
+xyzVector<Real> cnl_com(vector1<core::Size> const &cnl, Pose const &ps) {
 
 	xyzVector<Real> com(0);
-	Size nats = 0;
-	for ( Size i=1; i<=cnl.size(); ++i ) {
+	core::Size nats = 0;
+	for ( core::Size i=1; i<=cnl.size(); ++i ) {
 		Residue const &rsd(ps.residue(cnl[i]));
-		for ( Size j=1; j<=rsd.natoms(); ++j ) {
+		for ( core::Size j=1; j<=rsd.natoms(); ++j ) {
 			if ( ps.pdb_info()->occupancy(cnl[i], j) ) {
 				++nats;
 				com += rsd.xyz(j);

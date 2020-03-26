@@ -69,10 +69,10 @@ public:
 
 	Design line_to_design(std::string line);
 	std::queue<Design> read_in_designs();
-	void parse_attach_description(std::string attach_description,std::string & pdb_location,char & chain, Size & n_term_trim, Size & c_term_trim, Size & n_repeats, Size &n_term_attach_length, Size &c_term_attach_length, std::string & n_term_seq, std::string & c_term_seq);
+	void parse_attach_description(std::string attach_description,std::string & pdb_location,char & chain, core::Size & n_term_trim, core::Size & c_term_trim, core::Size & n_repeats, core::Size &n_term_attach_length, core::Size &c_term_attach_length, std::string & n_term_seq, std::string & c_term_seq);
 	void generate_start_pose(core::pose::Pose & pose, core::pose::Pose & background_pose, std::string attach_description);
 	bool attach_next_part(core::pose::Pose & pose, std::string attach_termini, std::string attach_description);
-	void trim_pose(core::pose::Pose & pose, Size n_term_trim,Size c_term_trim);
+	void trim_pose(core::pose::Pose & pose, core::Size n_term_trim,core::Size c_term_trim);
 	void assign_seq(core::pose::Pose & pose, std::string n_term_seq, std::string c_term_seq);
 	core::pose::Pose get_and_cache_pdb(std::string pdb_location);
 	bool check_all_junctions_good(MakeJunctionsMover::Design design);

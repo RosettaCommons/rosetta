@@ -27,6 +27,8 @@ namespace protocols {
 namespace flexpack {
 namespace interaction_graph {
 
+using core::Size;
+
 MinimalistFlexbbNode::MinimalistFlexbbNode(
 	MinimalistFlexbbInteractionGraph * owner,
 	int node_id,
@@ -845,7 +847,7 @@ MinimalistFlexbbInteractionGraph::consider_bbmove_w_state_substitution(
 	//std::cout << "bbmove2: " << moving_flexseg << " " << altbb_for_flexseg << " " << flexseg_members(moving_flexseg).size();
 	//std::cout << std::flush;
 
-	for ( Size ii = 1; ii <= flexseg_members( moving_flexseg ).size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= flexseg_members( moving_flexseg ).size(); ++ii ) {
 		int iinode = flexseg_members( moving_flexseg )[ ii ];
 		if ( iinode == node_ind ) {
 			bool valid = get_minimalistflexbb_node( iinode )->prepare_for_altbb_move_to_state( new_state );
@@ -918,7 +920,7 @@ MinimalistFlexbbInteractionGraph::commit_considered_backbone_move(
 
 	if ( last_considered_substitution_moved_the_backbone() ) {
 		int moving_flexseg = flexseg_considering_alt_bb();
-		for ( Size ii = 1; ii <= flexseg_members( moving_flexseg ).size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= flexseg_members( moving_flexseg ).size(); ++ii ) {
 			int iinode = flexseg_members( moving_flexseg )[ ii ];
 			get_minimalistflexbb_node( iinode)->commit_alt_bb_substitution( rotamer_on_node );
 		}
@@ -973,7 +975,7 @@ MinimalistFlexbbInteractionGraph::resolve_uncommitted_substitution()
 	} else {
 		debug_assert( last_considered_substitution_moved_the_backbone() );
 		int moving_flexseg = flexseg_considering_alt_bb();
-		for ( Size ii = 1; ii <= flexseg_members( moving_flexseg ).size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= flexseg_members( moving_flexseg ).size(); ++ii ) {
 			int iinode = flexseg_members( moving_flexseg )[ ii ];
 			get_minimalistflexbb_node( iinode)->resolve_uncommitted_substitution();
 		}

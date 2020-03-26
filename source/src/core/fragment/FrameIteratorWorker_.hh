@@ -28,7 +28,7 @@
 
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // std Headers
 
@@ -47,7 +47,7 @@ namespace fragment {
 
 
 // virtual Base class for FrameIterator
-class FrameIteratorWorker_ : public utility::pointer::ReferenceCount {
+class FrameIteratorWorker_ : public utility::VirtualBase {
 	friend class FrameIterator;
 	friend class ConstFrameIterator;
 	friend class FragID_Iterator;

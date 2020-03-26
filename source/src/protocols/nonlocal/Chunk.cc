@@ -24,7 +24,7 @@
 // Utility headers
 #include <numeric/random/DistributionSampler.hh>
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -50,7 +50,7 @@ Chunk::~Chunk() = default;
 using Normal = boost::math::normal;
 using core::Size;
 using core::kinematics::MoveMapCOP;
-using utility::pointer::ReferenceCount;
+using utility::VirtualBase;
 
 // -- Construction and Assignment -- //
 //
@@ -58,12 +58,12 @@ using utility::pointer::ReferenceCount;
 // <sampler_> in the copy constructor and assignment operator.
 
 Chunk::Chunk(RegionOP  region, MoveMapOP  movable)
-: ReferenceCount(), region_(std::move(region)), movable_(std::move(movable)) {
+: VirtualBase(), region_(std::move(region)), movable_(std::move(movable)) {
 	using namespace boost::accumulators;
 
 	// compute normal distribution parameters
-	accumulator_set<Size, stats<tag::mean, tag::variance> > acc;
-	for ( Size i = start(); i <= stop(); ++i ) {
+	accumulator_set<core::Size, stats<tag::mean, tag::variance> > acc;
+	for ( core::Size i = start(); i <= stop(); ++i ) {
 		acc(i);
 	}
 
@@ -74,7 +74,7 @@ Chunk::Chunk(RegionOP  region, MoveMapOP  movable)
 }
 
 Chunk::Chunk(const Chunk& other)
-: ReferenceCount(), region_(other.region_), movable_(other.movable_) {
+: VirtualBase(), region_(other.region_), movable_(other.movable_) {
 	Normal dist = other.sampler_->distribution();
 	sampler_.reset(new numeric::random::DistributionSampler<Normal>(dist));
 }
@@ -97,7 +97,7 @@ Chunk& Chunk::operator=(const Chunk& other) {
 Size Chunk::choose() const {
 	debug_assert(valid());
 	while ( true ) {
-		auto insert_pos = static_cast<Size>(sampler_->sample());
+		auto insert_pos = static_cast<core::Size>(sampler_->sample());
 
 		// restrict samples to the closed interval [start(), stop()]
 		if ( insert_pos < start() || insert_pos > stop() ) {
@@ -126,7 +126,7 @@ Size Chunk::length() const {
 // -- Utility Functions -- //
 
 bool Chunk::is_movable() const {
-	for ( Size i = start(); i <= stop(); ++i ) {
+	for ( core::Size i = start(); i <= stop(); ++i ) {
 		if ( movable_->get_bb(i) ) {
 			return true;
 		}

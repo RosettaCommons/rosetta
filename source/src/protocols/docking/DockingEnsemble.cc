@@ -64,9 +64,9 @@ DockingEnsemble::~DockingEnsemble() = default;
 
 //constructor with arguments
 DockingEnsemble::DockingEnsemble(
-	Size start_res,
-	Size end_res,
-	Size jump_id,
+	core::Size start_res,
+	core::Size end_res,
+	core::Size jump_id,
 	std::string const & ensemble_file_path,
 	std::string const & partner,
 	core::scoring::ScoreFunctionCOP scorefxn_low,
@@ -117,12 +117,12 @@ void DockingEnsemble::load_ensemble()
 
 	if ( data.size() > 1 ) {
 		core::Size count = 1;
-		for ( Size i=count; i<count+pdb_filenames_.size(); ++i ) {
+		for ( core::Size i=count; i<count+pdb_filenames_.size(); ++i ) {
 			lowres_reference_energies_.push_back( data[i] );
 		}
 
 		count = count+pdb_filenames_.size();
-		for ( Size i=count; i<count+pdb_filenames_.size(); ++i ) {
+		for ( core::Size i=count; i<count+pdb_filenames_.size(); ++i ) {
 			highres_reference_energies_.push_back( data[i] );
 		}
 	}
@@ -132,7 +132,7 @@ void DockingEnsemble::load_ensemble()
 	ensemble_list_cen_.resize( ensemble_list_.size() );
 
 	//Add by DK
-	for ( Size i = 1; i <= ensemble_list_.size(); i++ ) {
+	for ( core::Size i = 1; i <= ensemble_list_.size(); i++ ) {
 		ensemble_list_cen_[i] = *( ensemble_list_[i].clone() );
 		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply( ensemble_list_cen_[i] );

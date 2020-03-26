@@ -64,7 +64,7 @@ static std::string const NOPARENT = "NOPARENT";
 
 // @define: constructor
 SymmData::SymmData() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	subunits_( 0 ),
 	num_components_( 1 ),
 	interfaces_( 1 ),
@@ -76,7 +76,7 @@ SymmData::SymmData() :
 
 // @define: constructor
 SymmData::SymmData( Size, Size ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	subunits_( 0 ),
 	num_components_( 1 ),
 	interfaces_( 1 ),
@@ -89,7 +89,7 @@ SymmData::SymmData( Size, Size ) :
 
 // @define: constructor
 SymmData::SymmData( SymmData const & src ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	symmetry_name_( src.symmetry_name_ ),
 	symmetry_type_( src.symmetry_type_ ),
 	subunits_( src.subunits_ ),

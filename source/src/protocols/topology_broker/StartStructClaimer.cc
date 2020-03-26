@@ -87,9 +87,9 @@ void StartStructClaimer::new_decoy( core::pose::Pose const& pose ) {
 }
 
 void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
-	std::set< Size > start_region;
+	std::set< core::Size > start_region;
 	get_sequence_region( start_region );
-	//for ( Size i = 1; i<= pose.size(); ++i ) {
+	//for ( core::Size i = 1; i<= pose.size(); ++i ) {
 	//   start_region.insert( i );
 	//  }
 	if ( tr.Trace.visible() ) {
@@ -112,7 +112,7 @@ void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
 }
 
 void StartStructClaimer::generate_claims( claims::DofClaims& new_claims ){
-	for ( Size i=1; i <= broker().resolve_sequence_label( label() ).length(); ++i ) {
+	for ( core::Size i=1; i <= broker().resolve_sequence_label( label() ).length(); ++i ) {
 		new_claims.push_back( utility::pointer::make_shared< claims::BBClaim >( get_self_weak_ptr(), std::make_pair( label(), i ), claims::DofClaim::INIT ) );
 	}
 }
@@ -148,7 +148,7 @@ void StartStructClaimer::initialize_dofs(
 		}
 
 		/*if ( (*it)->type() == claims::DofClaim::BB ) {
-		Size pos( (*it)->pos( 1 ) );
+		core::Size pos( (*it)->pos( 1 ) );
 		pose.set_phi( pos, pose.phi( pos ) + numeric::random::rg().gaussian()*perturb_ );
 		pose.set_psi( pos, pose.psi( pos ) + numeric::random::rg().gaussian()*perturb_ );
 		}*/

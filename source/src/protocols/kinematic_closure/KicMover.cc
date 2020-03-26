@@ -79,12 +79,12 @@ bool KicMover::do_apply(Pose & pose, Loop const & loop) { // {{{1
 	problem->frame(pose, loop, pivot_picker_);
 
 	bool problem_solved = false;
-	Size const max_attempts = option[OptionKeys::loops::max_kic_perturber_samples]();
+	core::Size const max_attempts = option[OptionKeys::loops::max_kic_perturber_samples]();
 
 	// Attempt to find a closure solution which passes both rama and bump checks.
 	// If no solution is found, give up.
 
-	for ( Size i = 1; i <= max_attempts && !problem_solved; i++ ) {
+	for ( core::Size i = 1; i <= max_attempts && !problem_solved; i++ ) {
 		perturbers_->perturb(pose, problem);
 		SolutionList solutions = problem->solve();
 		problem_solved = solution_picker_->pick_and_apply(pose, solutions);

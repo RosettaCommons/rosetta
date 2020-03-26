@@ -25,7 +25,7 @@
 #include <utility/vector0.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -35,7 +35,7 @@
 
 namespace utility {
 
-class heap : public utility::pointer::ReferenceCount {
+class heap : public utility::VirtualBase {
 
 public:
 

@@ -394,7 +394,7 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 
 				local_tf->push_back(utility::pointer::make_shared< RestrictToRepacking >());
 				PreventRepackingOP turn_off_packing( new PreventRepacking() );
-				for ( Size pos = 1; pos <= pose.size(); ++pos ) {
+				for ( core::Size pos = 1; pos <= pose.size(); ++pos ) {
 					if ( ! movemap.get_chi(pos) ) {
 						turn_off_packing->include_residue(pos);
 					}
@@ -449,7 +449,7 @@ void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinema
 
 				local_tf->push_back(utility::pointer::make_shared< RestrictToRepacking >());
 				PreventRepackingOP turn_off_packing( new PreventRepacking() );
-				for ( Size pos = 1; pos <= pose.size(); ++pos ) {
+				for ( core::Size pos = 1; pos <= pose.size(); ++pos ) {
 					if ( ! movemap.get_chi(pos) ) {
 						turn_off_packing->include_residue(pos);
 					}
@@ -582,13 +582,13 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 		// need to copy virtuals first
-		for ( Size ii = prerefine_pose.size(); ii>=1; --ii ) {
+		for ( core::Size ii = prerefine_pose.size(); ii>=1; --ii ) {
 			if ( symm_info->fa_is_independent(ii) ) {
 				prerefine_pose.replace_residue( ii, pose.residue( ii ), false);
 			}
 		}
 	} else {
-		for ( Size ii = 1; ii <= prerefine_pose.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= prerefine_pose.size(); ++ii ) {
 			prerefine_pose.replace_residue( ii, pose.residue( ii ), false);
 		}
 	}

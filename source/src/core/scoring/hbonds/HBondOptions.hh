@@ -35,7 +35,7 @@
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 
@@ -52,7 +52,7 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-class HBondOptions : public utility::pointer::ReferenceCount {
+class HBondOptions : public utility::VirtualBase {
 public:
 
 	/// @brief Constructor that initializes th

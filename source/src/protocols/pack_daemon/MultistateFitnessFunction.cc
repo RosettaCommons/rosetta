@@ -139,7 +139,7 @@ TopEntitySet::update_entity_history(
 			if ( top_entities_.size() + 1 - n_tied_for_worst_ >= desired_entity_history_size_ ) {
 				// start popping entities from the heap
 				ASSERT_ONLY( core::Real const old_worst_fitness = top_entities_.front().first->fitness(););
-				for ( Size ii = 1; ii <= n_tied_for_worst_; ++ii ) {
+				for ( core::Size ii = 1; ii <= n_tied_for_worst_; ++ii ) {
 					debug_assert( top_entities_.front().first->fitness() == old_worst_fitness );
 					removed_entities.push_back( top_entities_.front().first );
 					std::pop_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
@@ -159,7 +159,7 @@ TopEntitySet::update_entity_history(
 					}
 					/// ok -- we know how many entities are tied for worst.  put these entities back
 					/// into the heap
-					for ( Size ii = 1; ii <= worst_entities.size(); ++ii ) {
+					for ( core::Size ii = 1; ii <= worst_entities.size(); ++ii ) {
 						top_entities_.push_back( worst_entities[ ii ] );
 						std::push_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
 					}
@@ -281,11 +281,11 @@ void MultistateFitnessFunction::clear_history()
 std::list< std::pair< MultistateFitnessFunction::Size, MultistateFitnessFunction::PoseOP > >
 MultistateFitnessFunction::recover_relevant_poses_for_entity( Entity const & ent )
 {
-	Size entity_index = top_entities_.index_of_entity( ent );
+	core::Size entity_index = top_entities_.index_of_entity( ent );
 	if ( entity_index == 0 ) {
 		std::cerr << "Failed to find desired top entity: " << ent << std::endl;
 		std::cerr << "Top entities:" << std::endl;
-		for ( Size ii = 1; ii <= top_entities_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= top_entities_.size(); ++ii ) {
 			std::cerr << ii << " " << *top_entities_[ ii ].first << std::endl;
 		}
 		utility_exit_with_message( "Failed to find desired top entity" );
@@ -316,12 +316,12 @@ void MultistateFitnessFunction::compute_state_energies( Entity const & entity )
 		npd_properties_[ iter->first ] = iter->second;
 	}
 
-	//for ( Size ii = 1; ii <= state_energies_.size(); ++ii ) {
+	//for ( core::Size ii = 1; ii <= state_energies_.size(); ++ii ) {
 	// if ( state_energies_[ ii ] == 1234 ) {
 	//  std::cout << "Weird: state_energies_[ " << ii << " ] was not eevaluated" << std::endl;
 	// }
 	//}
-	//for ( Size ii = 1; ii <= npd_properties_.size(); ++ii ) {
+	//for ( core::Size ii = 1; ii <= npd_properties_.size(); ++ii ) {
 	// if ( npd_properties_[ ii ] == 1234 ) {
 	//  std::cout << "Weird: npd_properties_[ " << ii << " ] was not eevaluated" << std::endl;
 	// }
@@ -394,7 +394,7 @@ MPIMultistateFitnessFunction::MPIMultistateFitnessFunction() :
 	MPI_nprocs_( 0 )
 {
 #ifdef USEMPI
-	MPI_nprocs_ = static_cast< Size > ( utility::mpi_nprocs() );
+	MPI_nprocs_ = static_cast< core::Size > ( utility::mpi_nprocs() );
 #endif
 #ifdef APL_MEASURE_MSD_LOAD_BALANCE
 	utilization_by_node_.resize( MPI_nprocs_ );
@@ -405,19 +405,19 @@ MPIMultistateFitnessFunction::MPIMultistateFitnessFunction() :
 
 MPIMultistateFitnessFunction::~MPIMultistateFitnessFunction() = default;
 
-void MPIMultistateFitnessFunction::set_num_pack_daemons( Size n_daemons )
+void MPIMultistateFitnessFunction::set_num_pack_daemons( core::Size n_daemons )
 {
 	state_energies().resize( n_daemons );
 }
 
-void MPIMultistateFitnessFunction::set_num_npd_properties( Size n_npd_properties )
+void MPIMultistateFitnessFunction::set_num_npd_properties( core::Size n_npd_properties )
 {
 	npd_properties().resize( n_npd_properties );
 }
 
 void MPIMultistateFitnessFunction::send_spin_down_signal()
 {
-	for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+	for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 		utility::send_integer_to_node( ii, spin_down );
 	}
 }
@@ -425,8 +425,8 @@ void MPIMultistateFitnessFunction::send_spin_down_signal()
 #ifdef APL_MEASURE_MSD_LOAD_BALANCE
 void MPIMultistateFitnessFunction::print_load_balance_statistics( std::ostream & ostr ) const
 {
-	for ( Size ii = 0; ii < MPI_nprocs_; ++ii ) {
-		Real ut_sum = 0; Real packing_sum = 0; Real npd_sum = 0; Size count = 0;
+	for ( core::Size ii = 0; ii < MPI_nprocs_; ++ii ) {
+		Real ut_sum = 0; Real packing_sum = 0; Real npd_sum = 0; core::Size count = 0;
 		for ( std::list< core::Real >::const_iterator
 				uiter = utilization_by_node_[ ii ].begin(),
 				uiter_end = utilization_by_node_[ ii ].end(),
@@ -449,7 +449,7 @@ void MPIMultistateFitnessFunction::print_load_balance_statistics( std::ostream &
 
 void MPIMultistateFitnessFunction::reset_load_balance_statistics()
 {
-	for ( Size ii = 0; ii < MPI_nprocs_; ++ii ) {
+	for ( core::Size ii = 0; ii < MPI_nprocs_; ++ii ) {
 		utilization_by_node_[ ii ].clear();
 	}
 }
@@ -466,7 +466,7 @@ void MPIMultistateFitnessFunction::compute_state_energies( Entity const & entity
 	utility::vector0< core::Real > npd_times( MPI_nprocs_ );
 #endif
 
-	for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+	for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 		send_integer_to_node( ii, evaluate_entity );
 	}
 	broadcast_entity_string( entity );
@@ -493,7 +493,7 @@ void MPIMultistateFitnessFunction::compute_state_energies( Entity const & entity
 	npd_times[ 0 ] = daemon_set()->last_npd_runtime();
 #endif
 
-	for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+	for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 		//TR << "receiving n_results from node " << ii << std::endl;
 		int n_results = receive_integer_from_node( ii );
 		//TR << "received " << n_results << " from node " << ii << std::endl;
@@ -524,13 +524,13 @@ void MPIMultistateFitnessFunction::compute_state_energies( Entity const & entity
 	std::clock_t final_stop_time = clock();
 	Real runtime = ((core::Real) final_stop_time - start_time ) / CLOCKS_PER_SEC;
 	if (runtime != 0.0 ) {
-		for ( Size ii = 0; ii < MPI_nprocs_; ++ii ) {
+		for ( core::Size ii = 0; ii < MPI_nprocs_; ++ii ) {
 			utilization_by_node_[ ii ].push_back( times[ ii ] / runtime );
 			packing_percentage_[ ii ].push_back( packing_times[ ii ] / runtime );
 			npd_percentage_[ ii ].push_back( npd_times[ ii ] / runtime );
 		}
 	} else {
-		for ( Size ii = 0; ii < MPI_nprocs_; ++ii ) {
+		for ( core::Size ii = 0; ii < MPI_nprocs_; ++ii ) {
 			utilization_by_node_[ ii ].push_back( 1.0 );
 			packing_percentage_[ ii ].push_back( 0.0 );
 			npd_percentage_[ ii ].push_back( 0.0 );
@@ -543,7 +543,7 @@ void MPIMultistateFitnessFunction::compute_state_energies( Entity const & entity
 
 void MPIMultistateFitnessFunction::instruct_daemons_to_keep_last_entity()
 {
-	for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+	for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 		utility::send_integer_to_node( ii, keep_rotamer_assignment_for_last_entity );
 	}
 	if ( daemon_set() ) {
@@ -553,7 +553,7 @@ void MPIMultistateFitnessFunction::instruct_daemons_to_keep_last_entity()
 
 void MPIMultistateFitnessFunction::instruct_daemons_to_drop_entity( Entity const & entity )
 {
-	for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+	for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 		utility::send_integer_to_node( ii, discard_old_entity );
 	}
 	broadcast_entity_string( entity );
@@ -568,27 +568,27 @@ MPIMultistateFitnessFunction::recover_poses_from_states(
 	utility::vector1< core::Size > const & which_states
 )
 {
-	for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+	for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 		utility::send_integer_to_node( ii, geneate_pose_from_old_state );
 	}
 	broadcast_entity_string( entity );
 	utility::vector1< int > which_states_ints( which_states );
-	for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+	for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 		utility::send_integers_to_node( ii, which_states_ints );
 	}
-	std::list< std::pair< Size, PoseOP > > return_pose_list;
+	std::list< std::pair< core::Size, PoseOP > > return_pose_list;
 	if ( daemon_set() ) {
-		std::list< std::pair< Size, PoseOP > > my_poses = daemon_set()->
+		std::list< std::pair< core::Size, PoseOP > > my_poses = daemon_set()->
 			retrieve_relevant_poses_for_entity( entity, which_states );
 		return_pose_list.splice( return_pose_list.end(), my_poses );
 	}
-	for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+	for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 		int n_poses_from_ii = utility::receive_integer_from_node( ii );
 		//std::cout << "Ready to receive " << n_poses_from_ii << " pdb strings from node " << ii << std::endl;
 		std::string pseudo_pdbname = "MPI_pdb_from_node_" + utility::to_string( ii );
 		for ( int jj = 1; jj <= n_poses_from_ii; ++jj ) {
 			//std::cout << "Receiving pose " << jj << " of " << n_poses_from_ii << std::flush;
-			Size pack_daemon_index = utility::receive_integer_from_node( ii );
+			core::Size pack_daemon_index = utility::receive_integer_from_node( ii );
 			std::string pdb_string = utility::receive_string_from_node( ii );
 
 			PoseOP pose( new Pose );
@@ -607,7 +607,7 @@ void MPIMultistateFitnessFunction::broadcast_entity_string( Entity const & entit
 	entity.write_checkpoint( oss );
 	std::string entity_string = oss.str();
 
-	for ( Size ii = 1; ii < MPI_nprocs_; ++ii ) {
+	for ( core::Size ii = 1; ii < MPI_nprocs_; ++ii ) {
 		utility::send_string_to_node( ii, entity_string );
 	}
 }

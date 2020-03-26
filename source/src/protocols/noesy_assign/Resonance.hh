@@ -22,7 +22,7 @@
 #include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
 
 // Project Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/chemical/AA.hh>
 #include <core/types.hh>
 #include <core/id/NamedAtomID.hh>
@@ -40,7 +40,7 @@ Resonance combines resonanceID (label), chemical shift (freq), tolerance (error)
 (provided accessor methods of "Resonance": label, atom, resid, name, freq, error, tolerance, calibration_atom_type )
 */
 
-class Resonance : public utility::pointer::ReferenceCount {
+class Resonance : public utility::VirtualBase {
 
 public:
 	typedef utility::vector1< core::Size > ResonanceIDs;

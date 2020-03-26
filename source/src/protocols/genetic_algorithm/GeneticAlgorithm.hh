@@ -21,7 +21,7 @@
 #include <protocols/genetic_algorithm/EntityRandomizer.hh>
 #include <protocols/genetic_algorithm/FitnessFunction.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -35,7 +35,7 @@
 namespace protocols {
 namespace genetic_algorithm {
 
-class GeneticAlgorithmBase : public utility::pointer::ReferenceCount {
+class GeneticAlgorithmBase : public utility::VirtualBase {
 public:
 	typedef EntityRandomizer::OP EntityRandomizerOP;
 	typedef Entity::OP EntityOP;

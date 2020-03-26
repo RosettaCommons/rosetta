@@ -62,8 +62,8 @@ StubScoreLoopsFilter::parse_my_tag( utility::tag::TagCOP tag,
 	runtime_assert( cb_force_ > 0.00001 );
 	stub_set_ = utility::pointer::make_shared< hotspot_hashing::HotspotStubSet >();
 	stub_set_->read_data( tag->getOption< std::string >("stubfile") );
-	loop_start_ = tag->getOption<Size>("start", 0 );
-	loop_stop_ = tag->getOption<Size>("stop", 0 );
+	loop_start_ = tag->getOption<core::Size>("start", 0 );
+	loop_stop_ = tag->getOption<core::Size>("stop", 0 );
 	if ( loop_start_ <= 0 ) {
 		utility_exit_with_message( "please provide loop-start with 'start' option" );
 	}

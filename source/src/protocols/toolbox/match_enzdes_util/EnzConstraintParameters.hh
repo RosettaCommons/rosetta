@@ -30,7 +30,7 @@
 
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <set>
 
 #include <core/types.hh>
@@ -60,7 +60,7 @@ namespace match_enzdes_util {
 /////////////////////////////////////////////////////////////////////////////
 
 /// @brief helper class to allow for removal of covalent constraints
-class CovalentConnectionReplaceInfo : public utility::pointer::ReferenceCount {
+class CovalentConnectionReplaceInfo : public utility::VirtualBase {
 
 public:
 
@@ -106,7 +106,7 @@ public:
 
 
 /// @brief class that holds all the parameters for one specific constraint
-class EnzConstraintParameters : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< EnzConstraintParameters >
+class EnzConstraintParameters : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< EnzConstraintParameters >
 {
 public:
 
@@ -235,10 +235,10 @@ private:
 	void
 	make_constraint_covalent(
 		core::pose::Pose & pose,
-		Size resA_pos,
-		Size resB_pos,
-		Size resA_At,
-		Size resB_At
+		core::Size resA_pos,
+		core::Size resB_pos,
+		core::Size resA_At,
+		core::Size resB_At
 	) const;
 
 	void

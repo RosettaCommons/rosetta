@@ -33,7 +33,7 @@
 
 // #include <utility/excn/Exceptions.hh>
 // #include <utility/vector1.fwd.hh>
-// #include <utility/pointer/ReferenceCount.hh>
+// #include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -61,7 +61,7 @@ using namespace core;
 //  PeakFileFormat( res )
 //{}
 
-void PeakFileFormat_xpk::write_peak( std::ostream& os, Size ct, CrossPeak const& cp ) const {
+void PeakFileFormat_xpk::write_peak( std::ostream& os, core::Size ct, CrossPeak const& cp ) const {
 	std::ostringstream line_end;
 	line_end << " #d " << ObjexxFCL::format::F( 6, 3, cp.distance_bound() );
 	if ( cp.eliminated( false /*recompute*/, true /*do_not_compute*/) ) line_end << " #eliminated: " << cp.elimination_reason();
@@ -110,12 +110,12 @@ void PeakFileFormat_xpk::write_header( std::ostream& ) {}
 
 // void PeakFileFormat_xpk::write_resonances( std::ostream& os, CrossPeak const& cp ) const {
 //   //  cp.write_to_stream( os );
-//   Size const ncol( col2proton_.size() );
+//   core::Size const ncol( col2proton_.size() );
 //   runtime_assert( col2islabel_.size() == ncol );
 
-//   for ( Size icol=1; icol<=ncol; ++icol ) {
+//   for ( core::Size icol=1; icol<=ncol; ++icol ) {
 //     Real val;
-//     Size iproton( col2proton_[ icol ] );
+//     core::Size iproton( col2proton_[ icol ] );
 //     bool is_label( col2islabel_[ icol ] );
 //     if ( !is_label ) val = cp.proton( iproton ).freq();
 //     else {
@@ -141,11 +141,11 @@ void PeakFileFormat_xpk::write_nil_assignment( std::ostream& os ) const {
 }
 
 void PeakFileFormat_xpk::write_assignment( std::ostream& os, PeakAssignment const& pa ) const {
-	Size resid( 0 );
+	core::Size resid( 0 );
 	std::ostringstream buf;
-	for ( Size icol=1; icol<=ncol(); ++icol ) {
-		Size val;
-		Size iproton( col2proton_[ icol ] );
+	for ( core::Size icol=1; icol<=ncol(); ++icol ) {
+		core::Size val;
+		core::Size iproton( col2proton_[ icol ] );
 		bool is_label( col2islabel_[ icol ] );
 		if ( write_atom_names() ) {
 			core::id::NamedAtomID atom;

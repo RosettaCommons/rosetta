@@ -41,7 +41,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //// C++ headers
 #include <cstdlib>
@@ -59,10 +59,10 @@ namespace protocols {
 namespace jumping {
 
 
-class MembraneJump : public utility::pointer::ReferenceCount {
+class MembraneJump : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~MembraneJump() override;
 	MembraneJump();
 
@@ -74,12 +74,12 @@ public:
 		return(template_size_ > 0 && pairings_size_ > 0);
 	}
 
-	Size
+	core::Size
 	template_size() const {
 		return template_size_;
 	}
 
-	Size
+	core::Size
 	pairings_size() const {
 		return pairings_size_;
 	}

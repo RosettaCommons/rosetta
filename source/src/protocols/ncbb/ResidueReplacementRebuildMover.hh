@@ -120,8 +120,8 @@ private: // methods
 
 private: // data
 
-	Size resi_chosen_ = 0;
-	Size resi_len_ = 0;
+	core::Size resi_chosen_ = 0;
+	core::Size resi_len_ = 0;
 	std::string resname_ = "ALA";
 	core::scoring::ScoreFunctionCOP scorefxn_;
 

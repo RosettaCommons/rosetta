@@ -167,7 +167,7 @@ KinematicControlOP DoubleLayerKinematicAbinitio::new_kinematics( pose::Pose &pos
 bool  DoubleLayerKinematicAbinitio::inner_loop( core::pose::Pose& pose ) {
 	bool success( false );
 
-	Size fail( 0 );
+	core::Size fail( 0 );
 	current_kinematics_ = nullptr;
 	while ( fail++ <= 10 && !current_kinematics_ ) {// get new setup
 		//this may add constraints to the pose ...or should this be handled via the KinematicControl object?!

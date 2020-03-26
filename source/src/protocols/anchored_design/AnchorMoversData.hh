@@ -31,7 +31,7 @@
 // Utility Headers
 #include <core/types.hh>
 #include <utility/vector1_bool.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/keys/Key3Tuple.hh> //container holds Loop, movemap, movemap (OPs)
 
 #include <utility/vector1.hh>
@@ -45,7 +45,7 @@ namespace anchored_design {
 /// @brief This data class wraps all the data needed for the AnchoredDesign movers.
 /// @details This data class keeps the anchor, mobile loops, and movemaps associated with the loops all together.
 ///It generates its own movemaps.
-class AnchorMoversData : public utility::pointer::ReferenceCount
+class AnchorMoversData : public utility::VirtualBase
 {
 public:
 	//////////////////////////////////typedefs//////////////////////////////////////////////

@@ -85,7 +85,7 @@ UnfoldedStateEnergyCalculatorJobDistributor::set_energy_terms(core::scoring::EMa
 	energy_terms_ = weights;
 
 	// for each energy term in the EMapVector
-	for ( Size i( 1 ); i <= n_score_types; ++i ) {
+	for ( core::Size i( 1 ); i <= n_score_types; ++i ) {
 
 		// if the energy term has a non-zero weight set it to one
 		if ( energy_terms_[ ScoreType( i ) ] > 0 ) {

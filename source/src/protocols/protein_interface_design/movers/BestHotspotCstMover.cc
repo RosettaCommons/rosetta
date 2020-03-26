@@ -68,7 +68,7 @@ BestHotspotCstMover::BestHotspotCstMover(
 }
 
 BestHotspotCstMover::BestHotspotCstMover( BestHotspotCstMover const & init ) :
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	protocols::moves::Mover( init ),
 	host_chain_(init.host_chain_), n_resi_( init.n_resi_ )
 {

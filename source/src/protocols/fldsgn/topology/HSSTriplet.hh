@@ -22,7 +22,7 @@
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <map>
 #include <string>
 
@@ -51,7 +51,7 @@ public:
 	core::Size strand2;
 };
 
-class HSSTriplet : public utility::pointer::ReferenceCount {
+class HSSTriplet : public utility::VirtualBase {
 public:
 
 
@@ -83,9 +83,9 @@ public:
 
 	/// @Brief value constructor
 	HSSTriplet(
-		Size const h,
-		Size const s1,
-		Size const s2
+		core::Size const h,
+		core::Size const s1,
+		core::Size const s2
 	):
 		helix_( h ),
 		strand1_( s1 ),
@@ -130,19 +130,19 @@ public:
 
 
 	inline
-	Size helix() const
+	core::Size helix() const
 	{
 		return helix_;
 	}
 
 	inline
-	Size strand1() const
+	core::Size strand1() const
 	{
 		return strand1_;
 	}
 
 	inline
-	Size strand2() const
+	core::Size strand2() const
 	{
 		return strand2_;
 	}
@@ -196,13 +196,13 @@ private:
 
 
 	/// @brief helix of hsstriplet
-	Size helix_;
+	core::Size helix_;
 
 	/// @brief 1st strand of hsstriplet
-	Size strand1_;
+	core::Size strand1_;
 
 	/// @brief 2nd strand of hsstriplet
-	Size strand2_;
+	core::Size strand2_;
 
 	/// @brief distance between sheet ( defined by the 2 strands ) and helix
 	Real hsheet_dist_;
@@ -238,7 +238,7 @@ private:
 }; // HSSTriplet
 
 
-class HSSTripletSet : public utility::pointer::ReferenceCount {
+class HSSTripletSet : public utility::VirtualBase {
 public:
 
 
@@ -310,7 +310,7 @@ public: // accessor
 	}
 
 	/// @brief return the size of vector of hss_triplets_
-	Size size() const {
+	core::Size size() const {
 		return hss_triplets_.size();
 	}
 
@@ -319,11 +319,11 @@ public: //accessor
 
 	/// @brief returns the Triplet containing given helix, strand1, and strand2
 	///        Exits and throws an error if the triplet isn't found
-	HSSTripletOP hss_triplet( Size const helix, Size const s1, Size const s2 ) const;
+	HSSTripletOP hss_triplet( core::Size const helix, core::Size const s1, core::Size const s2 ) const;
 
 	/// @brief returns list of Triplets containing given helix
 	HSSTriplets
-	hss_triplets( Size const helix ) const;
+	hss_triplets( core::Size const helix ) const;
 
 	/// @brief
 	HSSTriplets const & hss_triplets() const;

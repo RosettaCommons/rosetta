@@ -267,7 +267,7 @@ void RangeRelaxMover::apply( Pose & pose ) {
 	}
 
 	// only go through a certain number of iterations to keep runtimes short
-	for ( Size i = 1; i <= cycles_; ++i ) {
+	for ( core::Size i = 1; i <= cycles_; ++i ) {
 
 		// if total score < 0 and fa_rep < 1.3 * nres, stop iterations to keep speed;
 		// for this, score the pose first without cst
@@ -684,7 +684,7 @@ void RangeRelaxMover::constrain_to_reference( Pose & pose, Pose & ref_pose ) {
 	// go through residues and only constrain CA coordinates
 	// we only use CA to make it faster, otherwise it would be too many constraints
 	// and lots of time needed for scoring, which is bad for large structures
-	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
+	for ( core::Size i = 1; i <= nres_protein( pose ); ++i ) {
 
 		// get AtomID: atomno=2 for CA, resno
 		AtomID aid( 2, i );

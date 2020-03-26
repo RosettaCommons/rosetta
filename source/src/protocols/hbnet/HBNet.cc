@@ -279,10 +279,10 @@ HBNet::HBNet( std::string const name ) :
 //constructor to be called from code, NEED TO CLEAN THIS UP!
 HBNet::HBNet(
 	core::scoring::ScoreFunctionCOP scorefxn,
-	Size max_unsat_Hpol,
-	Size min_network_size, /* 3 */
+	core::Size max_unsat_Hpol,
+	core::Size min_network_size, /* 3 */
 	Real hb_threshold, /* -0.75 */
-	Size max_network_size, /* 15 */
+	core::Size max_network_size, /* 15 */
 	std::string des_residues, /* "STRKHYWNQDE" */
 	bool find_native, /*false*/
 	bool only_native, /*false*/
@@ -400,22 +400,22 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 	write_cst_files_ = tag->getOption< bool >( "write_cst_files", true );
 	output_poly_ala_background_ = tag->getOption< bool >( "output_poly_ala_background", false );
 	store_network_scores_in_pose_ = tag->getOption< bool >( "store_network_scores_in_pose", store_network_scores_in_pose_ );
-	max_rep_ = tag->getOption< Size >( "max_replicates", 1 );
-	max_replicates_before_branch_ = tag->getOption< Size >( "max_replicates_before_branch", 0 );
-	max_replicates_before_unsat_check_ = tag->getOption< Size >( "max_replicates_before_unsat_check", 1 );
-	//    bridging_water_search_depth_ = tag->getOption< Size >( "bridging_water_search_depth", 1 );
+	max_rep_ = tag->getOption< core::Size >( "max_replicates", 1 );
+	max_replicates_before_branch_ = tag->getOption< core::Size >( "max_replicates_before_branch", 0 );
+	max_replicates_before_unsat_check_ = tag->getOption< core::Size >( "max_replicates_before_unsat_check", 1 );
+	//    bridging_water_search_depth_ = tag->getOption< core::Size >( "bridging_water_search_depth", 1 );
 	tyr_hydroxyls_must_donate_ = tag->getOption<bool>( "tyr_hydroxyls_must_donate", false ); // only for unsat check -- should move to filter
 	hydroxyls_must_donate_ = tag->getOption<bool>( "hydroxyls_must_donate", false ); // only for unsat check -- should move to filter
 	use_pdb_numbering_ = tag->getOption<bool>( "use_pdb_numbering", true );
 	no_heavy_unsats_allowed_ = tag->getOption<bool>( "no_heavy_unsats_allowed", true );
 	keep_start_selector_rotamers_fixed_ = tag->getOption<bool>( "use_only_input_rot_for_start_res", false );
 	show_task_ = tag->getOption<bool>( "show_task", false );
-	min_network_size_ = tag->getOption<Size>( "min_network_size", 3 );
-	max_network_size_ = tag->getOption<Size>( "max_network_size", 15 );
-	min_unique_networks_ = tag->getOption<Size>( "min_unique_networks", 1 );
-	min_core_res_ = tag->getOption<Size>( "min_core_res", 0 );
-	min_boundary_res_ = tag->getOption<Size>( "min_boundary_res", 0 );
-	max_unsat_Hpol_ = tag->getOption<Size>( "max_unsat_Hpol", 5 );
+	min_network_size_ = tag->getOption<core::Size>( "min_network_size", 3 );
+	max_network_size_ = tag->getOption<core::Size>( "max_network_size", 15 );
+	min_unique_networks_ = tag->getOption<core::Size>( "min_unique_networks", 1 );
+	min_core_res_ = tag->getOption<core::Size>( "min_core_res", 0 );
+	min_boundary_res_ = tag->getOption<core::Size>( "min_boundary_res", 0 );
+	max_unsat_Hpol_ = tag->getOption<core::Size>( "max_unsat_Hpol", 5 );
 	min_percent_hbond_capacity_ = tag->getOption<core::Real>( "min_percent_hbond_capacity", 0.5 );
 	allow_no_hbnets_ = tag->getOption< bool >( "allow_no_hbnets", false);
 
@@ -423,8 +423,8 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 	monte_carlo_branch_ = tag->getOption< bool >( "monte_carlo_branch", monte_carlo_branch_ );//deprecated
 	monte_carlo_branch_ = tag->getOption< bool >( "monte_carlo", monte_carlo_branch_ );
 
-	max_mc_nets_ = tag->getOption<Size>( "max_mc_nets", max_mc_nets_ );
-	total_num_mc_runs_ = tag->getOption<Size>( "total_num_mc_runs", total_num_mc_runs_ );
+	max_mc_nets_ = tag->getOption<core::Size>( "max_mc_nets", max_mc_nets_ );
+	total_num_mc_runs_ = tag->getOption<core::Size>( "total_num_mc_runs", total_num_mc_runs_ );
 	monte_carlo_seed_threshold_ = tag->getOption< Real >( "seed_hbond_threshold", monte_carlo_seed_threshold_ );
 	monte_carlo_seed_must_be_buried_ = tag->getOption< bool >( "monte_carlo_seed_must_be_buried", monte_carlo_seed_must_be_buried_ );
 	monte_carlo_seed_must_be_fully_buried_ = tag->getOption< bool >( "monte_carlo_seed_must_be_fully_buried", monte_carlo_seed_must_be_fully_buried_ );
@@ -496,18 +496,18 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 }
 
 char
-HBNet::get_aa_for_state( Size const res, Size const rot ) const {
+HBNet::get_aa_for_state( core::Size const res, core::Size const rot ) const {
 	return rotamer_sets_->rotamer_set_for_residue( (platform::uint)(res) )->rotamer(rot)->name1();
 }
 bool
-HBNet::res_is_boundary( Size const res ) const {
+HBNet::res_is_boundary( core::Size const res ) const {
 	if ( res > boundary_residues_.size() ) return false;
 	else if ( boundary_residues_[ res ] ) return true;
 	return false;
 }
 
 bool
-HBNet::res_is_core( Size const res ) const {
+HBNet::res_is_core( core::Size const res ) const {
 	if ( res > core_residues_.size() ) return false;
 	else if ( core_residues_[ res ] ) return true;
 	return false;
@@ -530,16 +530,16 @@ HBNet::traverse_IG( Real const hb_threshold ){
 			EdgeBase const & edge(ig_->get_edge());
 			int const second_node_ind = edge.get_other_ind(first_node_ind);
 			platform::uint const second_ni = edge.get_other_ind(first_node_ind);
-			Size const res2 = rotamer_sets_->moltenres_2_resid(second_ni);
-			Size res1_ind(res1),res2_ind(res2);
+			core::Size const res2 = rotamer_sets_->moltenres_2_resid(second_ni);
+			core::Size res1_ind(res1),res2_ind(res2);
 			// if pose is symmetric, get independent resnums and set score multiply factors
 			// Symmetric IG only contains nodes/edges for independent residues; symm clone energies added to ind edges
 			if ( symmetric_ ) {
 				res1_ind = get_ind_res( *orig_pose_, res1);
 				res2_ind = get_ind_res( *orig_pose_, res2);
 			}
-			Size scmult_2b((symmetric_) ? symm_info_->score_multiply(res1,res2) : 1);
-			Size scmult_1b((symmetric_) ? symm_info_->score_multiply_factor() : 1);
+			core::Size scmult_2b((symmetric_) ? symm_info_->score_multiply(res1,res2) : 1);
+			core::Size scmult_1b((symmetric_) ? symm_info_->score_multiply_factor() : 1);
 
 			// for all rotamers of the starting position X all rotamers at the other position of edge, look at energies:
 			for ( int ii = 1; ii <= ig_->get_num_states_for_node(first_node_ind); ++ii ) {
@@ -625,8 +625,8 @@ HBNet::traverse_IG( Real const hb_threshold ){
 
 ///@details recursive call for depth-first traversal of IG
 void
-HBNet::recursive_traverse( int const new_node_ind, int const newstate, Size const newres, Size const prevres,
-	utility::vector1< HBondResStructCOP > residues, Size network_rec_count, Real init_sc, Real const hb_threshold, bool const second_search /* false */ )
+HBNet::recursive_traverse( int const new_node_ind, int const newstate, core::Size const newres, core::Size const prevres,
+	utility::vector1< HBondResStructCOP > residues, core::Size network_rec_count, Real init_sc, Real const hb_threshold, bool const second_search /* false */ )
 {
 	// secondary search option allows dead-end cases to search again with a lowered threshold
 	if ( !second_search ) {
@@ -642,27 +642,27 @@ HBNet::recursive_traverse( int const new_node_ind, int const newstate, Size cons
 			)
 		);
 	}
-	Size prev_resnum = prevres;
+	core::Size prev_resnum = prevres;
 	network_rec_count++; // numer of recursive calls; network_rec_count = # rotamers in the current h-bond network
 
 	if ( network_rec_count >= max_network_size_ ) { //arbitrary limit for size of h-bond network to prevent explosion
 		store_network( residues, init_sc, false, false, false, false );
 		return;
 	}
-	Size instance_rec_call_cnt(0); // Keep track of how many times this particular instance makes new recursive calls
+	core::Size instance_rec_call_cnt(0); // Keep track of how many times this particular instance makes new recursive calls
 
 	// Continue depth-first traversal of IG starting from new_node_ind
 	for ( auto edge_iter = ig_->get_node(new_node_ind)->edge_list_begin(); edge_iter != ig_->get_node(new_node_ind)->edge_list_end(); ++edge_iter ) {
 		runtime_assert(newres == rotamer_sets_->moltenres_2_resid(new_node_ind));
 		int const second_node_ind = (*edge_iter)->get_other_ind(new_node_ind);
 		platform::uint const second_ni = (*edge_iter)->get_other_ind(new_node_ind);
-		Size const res2 = rotamer_sets_->moltenres_2_resid(second_ni);
+		core::Size const res2 = rotamer_sets_->moltenres_2_resid(second_ni);
 
 		if ( res2 == prev_resnum ) { //check for case where immediately return to previous residue (e.g. res_x -> res_y -> res_x)
 			continue;
 		}
-		Size scmult_2b((symmetric_) ? symm_info_->score_multiply(newres,res2) : 1);
-		Size scmult_1b((symmetric_) ? symm_info_->score_multiply_factor() : 1);
+		core::Size scmult_2b((symmetric_) ? symm_info_->score_multiply(newres,res2) : 1);
+		core::Size scmult_1b((symmetric_) ? symm_info_->score_multiply_factor() : 1);
 
 		// now search the IG for new rotamer states that have h-bonds with this rotamer state
 		for ( int jj = 1; jj <= ig_->get_num_states_for_node(second_node_ind); ++jj ) {
@@ -819,9 +819,9 @@ HBNet::traverse_native( Pose const & pose, Real const hb_threshold )
 		for ( utility::graph::EdgeListConstIterator egraph_it = node->const_edge_list_begin();
 				egraph_it != node->const_edge_list_end(); ++egraph_it ) {
 			auto const * eedge = static_cast< core::scoring::EnergyEdge const * > (*egraph_it);
-			Size other_res = eedge->get_other_node(node->get_node_index())->get_node_index();
+			core::Size other_res = eedge->get_other_node(node->get_node_index())->get_node_index();
 
-			Size res1_ind(res),res2_ind(other_res);
+			core::Size res1_ind(res),res2_ind(other_res);
 			if ( symmetric_ ) {
 				res1_ind = get_ind_res( *orig_pose_, res);
 				res2_ind = get_ind_res( *orig_pose_, other_res);
@@ -848,7 +848,7 @@ HBNet::traverse_native( Pose const & pose, Real const hb_threshold )
 }
 
 void
-HBNet::rec_trav_native( Pose const & pose, Size new_res, Size prev_res, utility::vector1< HBondResStructCOP > residues, Real const hb_threshold )
+HBNet::rec_trav_native( Pose const & pose, core::Size new_res, core::Size prev_res, utility::vector1< HBondResStructCOP > residues, Real const hb_threshold )
 {
 	bool found_new_res_in_net = false;
 	for ( utility::vector1< HBondResStructCOP >::const_iterator i = residues.begin(); i != residues.end(); ++i ) {
@@ -875,7 +875,7 @@ HBNet::rec_trav_native( Pose const & pose, Size new_res, Size prev_res, utility:
 	for ( utility::graph::EdgeListConstIterator egraph_it = node->const_edge_list_begin();
 			egraph_it != node->const_edge_list_end(); ++egraph_it ) {
 		auto const * eedge = static_cast< core::scoring::EnergyEdge const * > (*egraph_it);
-		Size other_res = eedge->get_other_node(node->get_node_index())->get_node_index();
+		core::Size other_res = eedge->get_other_node(node->get_node_index())->get_node_index();
 
 		if ( symmetric_ ) {
 			other_res = get_ind_res( *orig_pose_, other_res);
@@ -905,7 +905,7 @@ HBNet::rec_trav_native( Pose const & pose, Size new_res, Size prev_res, utility:
 ///@details Check if a new rotamer state clashes with any rotamer states already in a given h-bond network
 ///    return of true = it clashes, false = no clashes
 bool
-HBNet::check_clash(utility::vector1< HBondResStructCOP > const & residues, platform::uint new_node_ind, Size newstate, Size newres, Real & init_score, bool & cycle)
+HBNet::check_clash(utility::vector1< HBondResStructCOP > const & residues, platform::uint new_node_ind, core::Size newstate, core::Size newres, Real & init_score, bool & cycle)
 {
 	cycle = false;
 	bool clash = false;
@@ -934,7 +934,7 @@ HBNet::check_clash(utility::vector1< HBondResStructCOP > const & residues, platf
 			auto * temp_pdedge = static_cast< PDEdge * >(temp_edge);
 			int first_node_ind = temp_pdedge->get_first_node_ind(); // need to get the first node of the Edge (lower-index node) (we're getting this from the IG)
 			platform::uint first_ni = first_node_ind;
-			Size res1 = rotamer_sets_->moltenres_2_resid(first_ni); // get residue number that corresopnds to the first node of Edge
+			core::Size res1 = rotamer_sets_->moltenres_2_resid(first_ni); // get residue number that corresopnds to the first node of Edge
 
 			// temp_pdedge->get_two_body_energy() is order-DEPENDENT; lower index (first index) must always be first)
 			//    so we need to determine does first_ni correspond to new_node_ind?
@@ -1210,9 +1210,9 @@ HBNet::minimize_network( Pose & pose, HBondNetStruct & network, bool residues_al
 	pose.update_residue_neighbors();
 
 	//update roatmers and store, so we don't have to do this again
-	Size old_total( (symmetric_) ? symm_info_->num_independent_residues() : orig_pose_->total_residue() );
+	core::Size old_total( (symmetric_) ? symm_info_->num_independent_residues() : orig_pose_->total_residue() );
 	network.rotamers.clear();
-	for ( Size r = 1; r <= old_total; r++ ) {
+	for ( core::Size r = 1; r <= old_total; r++ ) {
 		if ( find_HBondResStruct( network.residues, r ) != network.residues.end() ) {
 			network.rotamers.push_back( pose.residue(r).clone() );
 		}
@@ -1448,8 +1448,8 @@ HBNet::branch_overlapping_networks()
 	}
 	if ( TR.visible() ) TR << "starting recursion " << std::endl;
 	for ( auto i = network_vector_.begin(); i != network_vector_.end(); ++i ) {
-		Size i_pos = i - network_vector_.begin();
-		std::vector< Size > add_index_vec;
+		core::Size i_pos = i - network_vector_.begin();
+		std::vector< core::Size > add_index_vec;
 		add_index_vec.push_back( i_pos );
 
 		for ( auto j = (*i)->net_indices.begin(); j != (*i)->net_indices.end(); ++j ) {
@@ -1478,8 +1478,8 @@ HBNet::branch_overlapping_networks()
 			}
 			std::sort( network_vector_[*j]->net_indices.begin(), network_vector_[*j]->net_indices.end());
 			std::sort( (*i)->net_indices.begin(), (*i)->net_indices.end() );
-			std::vector< Size > v(1000);
-			std::vector< Size >::iterator it;
+			std::vector< core::Size > v(1000);
+			std::vector< core::Size >::iterator it;
 			it=std::set_intersection((*i)->net_indices.begin(), (*i)->net_indices.end(), (network_vector_[*j])->net_indices.begin(), (network_vector_[*j])->net_indices.end(), v.begin());
 			v.resize(it-v.begin());
 
@@ -1532,7 +1532,7 @@ HBNet::branch_overlapping_networks()
 	if ( TR.visible() ) TR << "finished recursion " << std::endl;
 	if ( TR.visible() ) TR << "merged_vecs_.size() =  " << merged_vecs_.size() << std::endl;
 	if ( TR.visible() ) TR << "finished temp_merge_vec, actually merging networks " << std::endl;
-	Size mcount(1);
+	core::Size mcount(1);
 	std::vector< HBondNetStructOP > temp_net_vec(0);
 	for ( auto & merged_vec : merged_vecs_ ) {
 		if ( merged_vec.size()>1 ) {
@@ -1579,7 +1579,7 @@ HBNet::branch_overlapping_networks()
 
 // used by branch_overlapping() to efficiently search for all combinations of compatible networks that can be merged
 void
-HBNet::rec_set_intersection( std::vector< Size > add_index_vec, std::vector< Size > next_index_vec, Size pos )
+HBNet::rec_set_intersection( std::vector< core::Size > add_index_vec, std::vector< core::Size > next_index_vec, core::Size pos )
 {
 	for ( auto i = next_index_vec.begin(); i != next_index_vec.end(); ++i ) {
 		if ( *i <=  pos  ) {
@@ -1606,8 +1606,8 @@ HBNet::rec_set_intersection( std::vector< Size > add_index_vec, std::vector< Siz
 		}
 		std::sort( next_index_vec.begin(),  next_index_vec.end());
 		std::sort( (network_vector_[*i])->net_indices.begin(), (network_vector_[*i])->net_indices.end() );
-		std::vector< Size > v(1000);
-		std::vector< Size >::iterator it;
+		std::vector< core::Size > v(1000);
+		std::vector< core::Size >::iterator it;
 		it=std::set_intersection(next_index_vec.begin(), next_index_vec.end(), (network_vector_[*i])->net_indices.begin(),
 			(network_vector_[*i])->net_indices.end(), v.begin());
 		v.resize(it-v.begin());
@@ -1799,15 +1799,15 @@ HBNet::quick_and_dirty_network_has_heavy_atom_unsat( Pose const & pose, HBondNet
 	for ( const auto & res : network.residues ) {
 		if ( res_is_core( res->resnum ) ) {
 			for ( const auto & acc_pos : pose.residue(res->resnum).accpt_pos_sc() ) {
-				//Size base( pose.residue(res->resnum) );
+				//core::Size base( pose.residue(res->resnum) );
 				if ( quick_and_dirty_heavy_atom_is_unsat( pose, id::AtomID( acc_pos, res->resnum ) ) ) {
 					return true;
 				}
 			}
 			//for ( const auto & chemical::AtomIndices : pose.residue(res->resnum).Hpos_polar_sc() ){
-			Size prev_base(0);
+			core::Size prev_base(0);
 			for ( const auto & hpol : pose.residue(res->resnum).Hpos_polar_sc() ) {
-				Size base( pose.residue(res->resnum).atom_base(hpol) );
+				core::Size base( pose.residue(res->resnum).atom_base(hpol) );
 				if ( prev_base == base ) continue;
 				if ( quick_and_dirty_heavy_atom_is_unsat( pose, id::AtomID( base, res->resnum ) ) ) {
 					return true;
@@ -1825,13 +1825,13 @@ HBNet::quick_and_dirty_heavy_atom_is_unsat( Pose const & pose, id::AtomID const 
 {
 	Real const heavy_atom_don_acc_cutoff(3.5);
 	Real const dist_2(heavy_atom_don_acc_cutoff*heavy_atom_don_acc_cutoff);
-	for ( Size res = 1; res <= pose.total_residue(); ++res ) {
+	for ( core::Size res = 1; res <= pose.total_residue(); ++res ) {
 		if ( res == at_id.rsd() ) continue;
 		if ( pose.xyz( at_id ).distance_squared( pose.residue(res).nbr_atom_xyz() ) < 100.0 ) { // 10^2
 			if ( pose.residue( at_id.rsd() ).atom_type( at_id.atomno() ).is_acceptor() ) {
-				Size prev_base(0);
+				core::Size prev_base(0);
 				for ( const auto & hpol : pose.residue(res).Hpos_polar() ) {
-					Size base( pose.residue(res).atom_base(hpol) );
+					core::Size base( pose.residue(res).atom_base(hpol) );
 					if ( prev_base == base ) continue;
 					if ( pose.xyz( at_id ).distance_squared( pose.residue(res).xyz(base) ) < dist_2 ) {
 						return false;
@@ -1860,7 +1860,7 @@ HBNet::atom_hbonds_to_bridging_water( Pose const & pose, id::AtomID const at_id 
 	Real const hpol_dist_sq(hpol_dist*hpol_dist);
 	Real const acc_dist(3.4); //water O (don) to Acc dist: generous, error on side of satisfaction
 	Real const acc_dist_2(acc_dist*acc_dist);
-	for ( Size res = 1; res <= pose.total_residue(); ++res ) {
+	for ( core::Size res = 1; res <= pose.total_residue(); ++res ) {
 		//if ( pose.residue(res).is_water() && pose.xyz( at_id ).distance_squared( pose.residue( res ).nbr_atom_xyz()) < 16.0 ) { // 4^2; all water types have neighbor radius < 4
 		if ( pose.residue(res).name1() == 'w' && pose.xyz( at_id ).distance_squared( pose.residue( res ).nbr_atom_xyz()) < 16.0 ) { // 4^2; all water types have neighbor radius < 4
 			//TR << "we found a water! " << std::endl;
@@ -1899,8 +1899,8 @@ HBNet::find_unsats( Pose const & pose, HBondNetStruct & network )
 {
 	// THIS SHOULD BE UPDATED AND REPLACED WITH CLEANER CODE
 
-	Size num_unsatisfied_Hpol(0);
-	Size num_heavy_unsat(0);
+	core::Size num_unsatisfied_Hpol(0);
+	core::Size num_heavy_unsat(0);
 
 	// update core residues
 	//core::select::residue_selector::ResidueSubset temp_core_residues = get_core_residues();
@@ -1916,23 +1916,23 @@ HBNet::find_unsats( Pose const & pose, HBondNetStruct & network )
 	//TODO NEED TO ADD option to use own bunsat calc here
 
 	// used for percent_hbond_capacity
-	Size total_polar_groups_that_could_hbond(0);
-	Size polar_groups_making_hbonds(0);
+	core::Size total_polar_groups_that_could_hbond(0);
+	core::Size polar_groups_making_hbonds(0);
 
-	std::vector< Size > resnums(0);
+	std::vector< core::Size > resnums(0);
 	resnums.reserve( network.residues.size() );
 	for ( utility::vector1< HBondResStructCOP >::const_iterator res = network.residues.begin(); res != network.residues.end(); ++res ) {
-		//for ( std::set< Size >::const_iterator res = actual_hbond_residues.begin(); res != actual_hbond_residues.end(); ++res ){
+		//for ( std::set< core::Size >::const_iterator res = actual_hbond_residues.begin(); res != actual_hbond_residues.end(); ++res ){
 		resnums.push_back( (*res)->resnum );
 	}
 	//    if ( bridging_waters_ && !(network.waterrots.empty()) ){
-	//        Size anchor_res( (symmetric_) ? symm_info_->num_independent_residues() : orig_pose_->total_residue() );
-	//        Size new_total( pose.total_residue() );
+	//        core::Size anchor_res( (symmetric_) ? symm_info_->num_independent_residues() : orig_pose_->total_residue() );
+	//        core::Size new_total( pose.total_residue() );
 	//        if ( symmetric_ ){
 	//            core::conformation::symmetry::SymmetricConformation const & newSymmConf(dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()));
 	//            new_total = newSymmConf.Symmetry_Info()->num_independent_residues();
 	//        }
-	//        for ( Size r = anchor_res; r <= new_total; r++ ){
+	//        for ( core::Size r = anchor_res; r <= new_total; r++ ){
 	//            if ( pose.residue(r).is_water() && pose.pdb_info()->res_haslabel(r, "HBNet" ) ){
 	//                resnums.push_back(r);
 	//            }
@@ -1946,13 +1946,13 @@ HBNet::find_unsats( Pose const & pose, HBondNetStruct & network )
 		bool skip_backbones(true);
 		//bool skip_ligands(true);
 		//        if ( !(pose.residue( resnum ).is_water()) ) { // need to handle waters separately
-		//for ( Size a_index = 1; a_index <= pose.residue(resnum).natoms(); ++a_index ) {
-		for ( Size a_index = 1; a_index <= pose.residue(resnum).nheavyatoms(); ++a_index ) {
+		//for ( core::Size a_index = 1; a_index <= pose.residue(resnum).natoms(); ++a_index ) {
+		for ( core::Size a_index = 1; a_index <= pose.residue(resnum).nheavyatoms(); ++a_index ) {
 			if ( ( skip_backbones && !( pose.residue( resnum ).atom_is_backbone( a_index ) ) ) || ((this->ligand()) && resnum == (this->ligand()) ) ) {
 				if ( pose.residue( resnum ).atom_type( a_index ).is_donor() && pose.residue( resnum ).atomic_charge( a_index ) != 0.0 && pose.residue( resnum ).atom_type(a_index).name() != "OH" ) {
-					Size h_count(0);
-					Size h_unsat(0);
-					for ( Size hatm = pose.residue(resnum).attached_H_begin(a_index); hatm <= pose.residue(resnum).attached_H_end(a_index); ++hatm ) {
+					core::Size h_count(0);
+					core::Size h_unsat(0);
+					for ( core::Size hatm = pose.residue(resnum).attached_H_begin(a_index); hatm <= pose.residue(resnum).attached_H_end(a_index); ++hatm ) {
 						//TR.Debug << "hatm = " << pose.residue(resnum).atom_type(hatm).atom_type_name() << std::endl;
 						h_count++;
 						total_polar_groups_that_could_hbond++;
@@ -1989,7 +1989,7 @@ HBNet::find_unsats( Pose const & pose, HBondNetStruct & network )
 
 					id::AtomID const at_id( a_index, resnum);
 					// Careful!  For hydroxyls, this will not count any donor h-bonds; need to check Hpol for that!
-					Size num_hbonds = (network.hbond_set)->nhbonds( at_id, false /* include_only_allowed */ );
+					core::Size num_hbonds = (network.hbond_set)->nhbonds( at_id, false /* include_only_allowed */ );
 					polar_groups_making_hbonds += num_hbonds;
 
 					//TR << " " << resnum << pose.residue(resnum).name1() << " atom " << pose.residue(resnum).atom_type( a_index ).name() << "; num_hbonds = " << num_hbonds << std::endl;
@@ -2053,8 +2053,8 @@ HBNet::find_unsats( Pose const & pose, HBondNetStruct & network )
 		//            //water_count++;
 		//            // for waters, require at least 2 h-bonds:
 		//            //    this works for current water types, but need more general solution
-		//            Size a_index( 1 );
-		//            Size num_hbonds_for_water(0);
+		//            core::Size a_index( 1 );
+		//            core::Size num_hbonds_for_water(0);
 		//            polar_atom_count++;
 		//            //TR << "water count = " << water_count << std::endl;
 		//            //TR << "number water O h-bonds" << (network.hbond_set)->nhbonds( id::AtomID( a_index, resnum ), false ) << std::endl;
@@ -2067,7 +2067,7 @@ HBNet::find_unsats( Pose const & pose, HBondNetStruct & network )
 		//            polar_atom_count++;
 		//            core::Size hatm1 = pose.residue(resnum).attached_H_begin( a_index );
 		//            //TR << "number hatm1 h-bonds" << (network.hbond_set)->nhbonds( id::AtomID( hatm1, resnum ), false ) << std::endl;
-		//            //Size hatm1( 2 ); // this should work?  atoms numbered starting with 1; not sure if attached_H works for waters yet??
+		//            //core::Size hatm1( 2 ); // this should work?  atoms numbered starting with 1; not sure if attached_H works for waters yet??
 		//            if ( !((network.hbond_set)->nhbonds( id::AtomID( hatm1, resnum ), false /* include_only_allowed */ )) ){
 		//                num_unsatisfied_Hpol++;
 		//            } else {
@@ -2077,7 +2077,7 @@ HBNet::find_unsats( Pose const & pose, HBondNetStruct & network )
 		//            polar_atom_count++;
 		//            core::Size hatm2 = pose.residue(resnum).attached_H_end( a_index );
 		//            //TR << "number hatm2 h-bonds" << (network.hbond_set)->nhbonds( id::AtomID( hatm2, resnum ), false ) << std::endl;
-		//            //Size hatm2( 3 ); // this should work?  atoms numbered starting with 1; not sure if attached_H works for waters yet??
+		//            //core::Size hatm2( 3 ); // this should work?  atoms numbered starting with 1; not sure if attached_H works for waters yet??
 		//            if ( !((network.hbond_set)->nhbonds( id::AtomID( hatm2, resnum ), false /* include_only_allowed */ ))) {
 		//                num_unsatisfied_Hpol++;
 		//            } else {
@@ -2176,15 +2176,15 @@ HBNet::networks_unique( HBondNetStruct const & i, HBondNetStruct const & j, bool
 // considered through final scoring
 //   Not releveant for MC-HBNet
 void
-HBNet::remove_replicate_networks( Size same_max/*=1*/ )
+HBNet::remove_replicate_networks( core::Size same_max/*=1*/ )
 {
 	std::sort( network_vector_.begin(), network_vector_.end(), compare_net_vec() ); //sort all networks by score
 	std::vector< HBondNetStructOP > temp_net_vec(0);
-	//std::vector< Size > net_count(0);
+	//std::vector< core::Size > net_count(0);
 	if ( verbose() && TR.visible() ) TR << "         DELETING REPLICATE NETWORKS THAT HAVE IDENTIAL RESNUM AND AA SEQ; ONLY KEEPING BEST SCORING ONE" << std::endl;
 	for ( auto & i : network_vector_ ) {
 		bool only_water(true);
-		Size num_protein_res(0);
+		core::Size num_protein_res(0);
 		for ( utility::vector1< HBondResStructCOP >::const_iterator k = i->residues.begin(); k != i->residues.end(); ++k ) {
 			if ( (*k)->is_protein || (*k)->is_ligand ) {
 				num_protein_res++;
@@ -2198,8 +2198,8 @@ HBNet::remove_replicate_networks( Size same_max/*=1*/ )
 			continue;
 		}
 		bool reached_limit = false;
-		//Size temp_net_count = 0;
-		Size temp_net_count = 1;
+		//core::Size temp_net_count = 0;
+		core::Size temp_net_count = 1;
 		for ( auto vit = temp_net_vec.begin(); vit != temp_net_vec.end(); ++vit ) {
 			if ( residues_identical( i->residues, (*vit)->residues ) ) { //&& ( !bridging_waters_ || ( i->bridging_water_oxygens.size() == (*vit)->bridging_water_oxygens.size() ) ) ){
 				//net_count[temp_net_count] = net_count[temp_net_count] + 1;
@@ -2246,7 +2246,7 @@ HBNet::remove_replicate_networks( Size same_max/*=1*/ )
 Size
 HBNet::get_num_native_rot( Pose & pose, utility::vector1< HBondResStructCOP > const & residues, Real sc_rmsd_cut, bool super )
 {
-	Size num_native(0);
+	core::Size num_native(0);
 	for ( const auto & residue : residues ) {
 		if ( ( (this->ligand()) && residue->resnum == (this->ligand()) ) || residue->resnum > orig_pose_->total_residue() ) {
 			continue; //does not count ligand in order to be fair
@@ -2272,7 +2272,7 @@ HBNet::get_num_native_rot( Pose & pose, utility::vector1< HBondResStructCOP > co
 Size
 HBNet::get_num_native_seq( core::pose::Pose & pose, utility::vector1< HBondResStructCOP > const & residues )
 {
-	Size num_native(0);
+	core::Size num_native(0);
 	for ( const auto & residue : residues ) {
 		if ( ( (this->ligand()) && residue->resnum == (this->ligand()) ) || residue->resnum >= orig_pose_->total_residue() ) {
 			continue; //does not count ligand in ligand() case
@@ -2300,7 +2300,7 @@ HBNet::output_networks( bool finalize )
 	}
 	if ( TR.visible() ) TR << " Designed these new networks that meet your criteria: " << std::endl << "\t" << print_headers() << print_additional_headers() << std::endl;
 	std::sort( network_vector_.begin(), network_vector_.end(), compare_net_vec() ); //sort all new networks
-	Size count(1);
+	core::Size count(1);
 	//for ( auto i = network_vector_.begin(); i != network_vector_.end(); ++i ) { // outer loop
 	auto i = network_vector_.begin();
 	for ( ; i != network_vector_.end(); ) { // outer loop
@@ -2316,8 +2316,8 @@ HBNet::output_networks( bool finalize )
 				if ( is_sub_residues( (*nit)->residues, (*i)->residues ) ) {
 					// if extended is bigger (and meets criteria) or same size but few unsats, then erase native
 					//   bool operator< overridden by HBondNetStruct to define best network
-					Size i_size( (symmetric_ && !((*i)->asymm_residues.empty()) ) ? (*i)->asymm_residues.size() : (*i)->residues.size() );
-					Size nit_size( (symmetric_ && !(*nit)->asymm_residues.empty()) ? (*nit)->asymm_residues.size() : (*nit)->residues.size() );
+					core::Size i_size( (symmetric_ && !((*i)->asymm_residues.empty()) ) ? (*i)->asymm_residues.size() : (*i)->residues.size() );
+					core::Size nit_size( (symmetric_ && !(*nit)->asymm_residues.empty()) ? (*nit)->asymm_residues.size() : (*nit)->residues.size() );
 					if ( i_size > nit_size || ( i_size == nit_size && (*i)->num_unsat_Hpol < (*nit)->num_unsat_Hpol ) ) {
 						(*i)->is_extended = true; // record that this is an extended network
 						nit = native_networks_.erase( nit );
@@ -2355,9 +2355,9 @@ HBNet::output_networks( bool finalize )
 
 		if ( TR.visible() ) TR << "\t" << outstring << std::endl;
 		if ( finalize ) {
-			//std::vector< Size > net_ids(0);
+			//std::vector< core::Size > net_ids(0);
 			//net_ids.push_back( (*i)->id );
-			std::set< Size > net_ids;
+			std::set< core::Size > net_ids;
 			net_ids.insert( (*i)->id );
 
 			if ( keep_existing_networks_ ) {
@@ -2410,7 +2410,7 @@ HBNet::output_networks( bool finalize )
 				<< std::endl << "\t" << print_headers() << print_additional_headers() << std::endl;
 		}
 		std::sort( native_networks_.begin(), native_networks_.end(), compare_net_vec() ); //sort native networks
-		Size count(1);
+		core::Size count(1);
 		std::string comment_str( print_headers() + this->print_additional_headers() );
 		Pose & out_pose( ( output_poly_ala_background_ ) ? *ala_pose_ : *orig_pose_ );
 		for ( auto & native_network : native_networks_ ) {
@@ -2472,7 +2472,7 @@ bool
 HBNet::task_is_valid(Pose const & pose) const
 {
 	if ( task_->total_residue() != pose.total_residue() ) return false;
-	for ( Size i(1); i <= pose.total_residue(); ++i ) {
+	for ( core::Size i(1); i <= pose.total_residue(); ++i ) {
 		chemical::ResidueTypeCOP r = pose.residue_type_ptr(i);
 		if ( ! task_->residue_task(i).is_original_type( r ) ) return false;
 	}
@@ -2492,7 +2492,7 @@ HBNet::set_symmetry( Pose & pose )
 	symmetric_ = true;
 	auto const & SymmConf(dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()));
 	symm_info_ = SymmConf.Symmetry_Info();
-	Size num_components(symm_info_->get_num_components());
+	core::Size num_components(symm_info_->get_num_components());
 	multi_component_ = num_components >= 2;
 	if ( TR.visible() ) {
 		TR << "         SETTING UP SYMMETRY_INFO: # independent residues = " << symm_info_->num_independent_residues()
@@ -2501,9 +2501,9 @@ HBNet::set_symmetry( Pose & pose )
 	if ( multi_component_ ) {
 		if ( TR.visible() ) TR << "         DETECTED MULTICOMPONENT SYMMETRY: # sym_dof interfaces = " << core::pose::symmetry::sym_dof_names( pose ).size() << std::endl;
 	}
-	for ( Size ic = 1; ic <= pose.conformation().num_chains(); ++ic ) {
-		Size ic_begin = pose.conformation().chain_begin(ic);
-		Size ic_end = pose.conformation().chain_end(ic);
+	for ( core::Size ic = 1; ic <= pose.conformation().num_chains(); ++ic ) {
+		core::Size ic_begin = pose.conformation().chain_begin(ic);
+		core::Size ic_end = pose.conformation().chain_end(ic);
 		char chain = pose.chain(ic_begin);
 		chain_bounds_[chain].first = ic_begin;
 		chain_bounds_[chain].second = ic_end;
@@ -2511,14 +2511,14 @@ HBNet::set_symmetry( Pose & pose )
 }
 
 Size
-HBNet::get_ind_res( Pose const & pose, Size const res_i)
+HBNet::get_ind_res( Pose const & pose, core::Size const res_i)
 {
-	Size resi_ind(res_i);
+	core::Size resi_ind(res_i);
 	if ( symmetric_ && res_i > symm_info_->num_independent_residues() ) {
 		char resi_chain = pose.chain(res_i);
 		if ( multi_component_ ) {
 			//symm_info_->component_lower_bound()
-			std::map<char,std::pair<Size,Size> > const & component_bounds = symm_info_->get_component_bounds();
+			std::map<char,std::pair<core::Size,Size> > const & component_bounds = symm_info_->get_component_bounds();
 			char resi_comp = symm_info_->get_component_of_residue(res_i);
 			resi_ind = res_i - chain_bounds_[ resi_chain ].first + component_bounds.at( resi_comp ).first;
 		} else {
@@ -2635,11 +2635,11 @@ HBNet::set_constraints( Pose & pose, core::scoring::constraints::ConstraintSet &
 		cst_output_stream << "# " << p.outstring << std::endl;
 	}
 	for ( utility::vector1< HBondCOP >::const_iterator i = p.hbond_vec.begin(); i != p.hbond_vec.end(); ++i ) {
-		Size drsd((*i)->don_res());
-		Size arsd((*i)->acc_res());
-		Size don_hatm((*i)->don_hatm());
-		Size datm(pose.residue(drsd).atom_base((int)(don_hatm)));
-		Size aatm((*i)->acc_atm());
+		core::Size drsd((*i)->don_res());
+		core::Size arsd((*i)->acc_res());
+		core::Size don_hatm((*i)->don_hatm());
+		core::Size datm(pose.residue(drsd).atom_base((int)(don_hatm)));
+		core::Size aatm((*i)->acc_atm());
 		// we only want to turn on constraints for h-bonds involving network residues and atoms that will not change/be designed away downstream!
 		Real xtol(0.20);
 		numeric::xyzVector<core::Real> don_coordinates = pose.residue(drsd).atom(datm).xyz();
@@ -2690,7 +2690,7 @@ HBNet::set_constraints( Pose & pose, core::scoring::constraints::ConstraintSet &
 }
 
 std::string
-HBNet::get_file_name( Size id, std::string net_prefix, std::string extension )
+HBNet::get_file_name( core::Size id, std::string net_prefix, std::string extension )
 {
 	std::string current_out_tag = jd2::current_output_name();
 	std::string fname = current_out_tag+(basic::options::option[ basic::options::OptionKeys::out::suffix ]())+"_"+net_prefix+"network_"+utility::to_string( id )+extension;
@@ -2720,7 +2720,7 @@ HBNet::water_clashes(
 	//NEED TO add check for symmetric waters that clash with themselves
 	// hacky check to see if water O is on z-axis (in which case it will clash with symmetric copies of itself)
 	if ( symmetric_ && ( (water_O.x()+water_O.y())*(water_O.x()+water_O.y()) < acc_cutoff_sq ) ) return true;
-	for ( Size res = 1; res <= pose.total_residue(); ++res ) {
+	for ( core::Size res = 1; res <= pose.total_residue(); ++res ) {
 		if ( water_O.distance_squared( pose.residue( res ).nbr_atom_xyz()) > 144.0 ) { /* 12^2 */ // could get by with 10?
 			continue;
 		}
@@ -2732,7 +2732,7 @@ HBNet::water_clashes(
 }
 
 bool
-HBNet::water_oxygen_clashes_with_residue( Vector const water_oxygen, Size const resnum, int const rot_state )
+HBNet::water_oxygen_clashes_with_residue( Vector const water_oxygen, core::Size const resnum, int const rot_state )
 {
 	//Should be able to look up atom coords in rotamer_sets_; rotamer_building_functions orient and transform coords onto pose backbone
 	if ( rotamer_sets_ != nullptr && rotamer_sets_->resid_2_moltenres(resnum) != 0 ) { //returns false if res1 not molten (not design/repack-able)
@@ -2752,7 +2752,7 @@ HBNet::water_oxygen_clashes_with_residue( Vector const water_oxygen, Residue con
 	Real const clash_cutoff( 1.8 );
 	Real const clash_cutoff_sq( clash_cutoff * clash_cutoff );
 
-	for ( Size at2 = 1; at2 <= res.natoms(); ++at2 ) {
+	for ( core::Size at2 = 1; at2 <= res.natoms(); ++at2 ) {
 		//skip virtual atoms but not virtual waters!
 		std::string resname( res.name() );
 		//we want to compare against all waters, even if VRT (but skip other VRT atoms)
@@ -2787,7 +2787,7 @@ HBNet::get_additional_output()
 			pointer::make_shared< pose::Pose >( * ala_pose_ ) :
 			pointer::make_shared< pose::Pose >( * orig_pose_ ) );
 	}
-	std::set< Size > net_ids( output_vector_.back() ); // back returs ref to back
+	std::set< core::Size > net_ids( output_vector_.back() ); // back returs ref to back
 	output_vector_.pop_back(); // pop_back() deletes/removes last, does not return;
 
 	std::string comment_str( print_headers() + this->print_additional_headers() );
@@ -2851,7 +2851,7 @@ HBNet::prepare_output()
 
 Size
 HBNet::num_core_res( HBondNetStruct const & network ){
-	Size num_core(0);
+	core::Size num_core(0);
 	for ( const auto & residue : network.residues ) {
 		if ( res_is_core( residue->resnum ) ) ++num_core;
 	}
@@ -2860,7 +2860,7 @@ HBNet::num_core_res( HBondNetStruct const & network ){
 
 Size
 HBNet::num_boundary_res( HBondNetStruct const & network ){
-	Size num_boundary(0);
+	core::Size num_boundary(0);
 	for ( const auto & residue : network.residues ) {
 		if ( res_is_boundary( residue->resnum ) ) ++num_boundary;
 	}
@@ -2880,7 +2880,7 @@ HBNet::select_best_networks()
 	for ( ; i != network_vector_.end(); ) {
 		//if ( (*i)->residues.size() < 3 && min_network_size_ > 2 ) {
 		if ( (*i)->residues.size() < min_network_size_ || (*i)->residues.size() > max_network_size_ ) {
-			//TR << "i = " << print_list_to_string( (*i)->residues ) << "ERASING! Size = " << (*i)->residues.size() << std::endl;
+			//TR << "i = " << print_list_to_string( (*i)->residues ) << "ERASING! core::Size = " << (*i)->residues.size() << std::endl;
 			i = network_vector_.erase( i );
 		} else if ( min_core_res_ && num_core_res( **i ) < min_core_res_ ) {
 			i = network_vector_.erase( i );
@@ -2980,7 +2980,7 @@ HBNet::select_best_networks()
 	//TODO NEED TO add charge-charge repulsion check
 	//score_networks( minimize_ /* false */ ); // now scored above
 	if ( min_unique_networks_ > 1 ) {
-		Size num_unique(1);
+		core::Size num_unique(1);
 		for ( auto i = network_vector_.begin(); i != network_vector_.end(); ++i ) {
 			for ( auto j = i; ++j != network_vector_.end(); ) {
 				if ( networks_unique( **i, **j ) ) {
@@ -3016,7 +3016,7 @@ HBNet::setup_packer_task_and_starting_residues( Pose const & pose )
 		utility::vector1<bool> is_repack = task_->repacking_residues();
 		runtime_assert(is_repack.size() == pose.total_residue());
 		// TODO NEED TO make sure task_ is fully processed and trimmed to asymmetric unit for symmetric cases by this point
-		for ( Size r = 1; r <= pose.total_residue(); ++r ) {
+		for ( core::Size r = 1; r <= pose.total_residue(); ++r ) {
 			if ( pose.residue(r).is_protein() ) {
 				if ( task_->design_residue((int)r) || is_repack[r]==1 ) {
 					start_res_vec_.insert(r);
@@ -3029,8 +3029,8 @@ HBNet::setup_packer_task_and_starting_residues( Pose const & pose )
 void
 HBNet::get_native_networks( Pose const & pose )
 {
-	utility::vector1<Size> residues_to_ala(0);
-	for ( Size r = 1; r <= pose.total_residue(); ++r ) {
+	utility::vector1<core::Size> residues_to_ala(0);
+	for ( core::Size r = 1; r <= pose.total_residue(); ++r ) {
 		if ( pose.residue(r).is_ligand() || pose.residue_type(r).name() == "VRT" ) {
 			continue;
 		}
@@ -3090,8 +3090,8 @@ HBNet::setup( Pose const & pose )
 	if ( find_native_ ) {
 		if ( start_res_vec_.empty() ) {
 			if ( TR.visible() ) TR << "No starting residues defined; traversing the entire static pose:" << std::endl;
-			Size total( (symmetric_) ? symm_info_->num_independent_residues() : pose.total_residue() );
-			for ( Size res = 1; res <= total; ++res ) {
+			core::Size total( (symmetric_) ? symm_info_->num_independent_residues() : pose.total_residue() );
+			for ( core::Size res = 1; res <= total; ++res ) {
 				start_res_vec_.insert(res);
 			}
 		}
@@ -3107,7 +3107,7 @@ HBNet::setup( Pose const & pose )
 	}
 	if ( only_extend_existing_ ) {
 		start_res_vec_.clear();
-		for ( Size i = 1; i <= input_hbnet_info_residues_.size(); ++i ) {
+		for ( core::Size i = 1; i <= input_hbnet_info_residues_.size(); ++i ) {
 			if ( input_hbnet_info_residues_[i] ) {
 				start_res_vec_.insert( i );
 			}
@@ -3136,7 +3136,7 @@ HBNet::setup( Pose const & pose )
 	if ( symmetric_ ) {
 		// need to truncate task to independent residues only
 		utility::vector1<bool> allow_repacked( pose.total_residue(), false );
-		for ( Size res=1; res <= pose.total_residue(); ++res ) {
+		for ( core::Size res=1; res <= pose.total_residue(); ++res ) {
 			if ( pose.residue(res).aa() != core::chemical::aa_vrt && symm_info_->fa_is_independent(res) ) {
 				allow_repacked.at(res) = true;
 			}
@@ -3155,7 +3155,7 @@ HBNet::setup( Pose const & pose )
 		if ( keep_existing_networks_ ) {
 			start_res_vec_.clear();
 		}
-		for ( Size i = 1; i <= input_hbnet_info_residues_.size(); ++i ) {
+		for ( core::Size i = 1; i <= input_hbnet_info_residues_.size(); ++i ) {
 			if ( input_hbnet_info_residues_[i] ) {
 				if ( keep_existing_networks_ ) {
 					start_res_vec_.insert(i); // assumes all HBNet InfoLabel residues all in ASU in input pose (always true unless pose manually modified in between HBNet runs)
@@ -3204,10 +3204,10 @@ HBNet::setup( Pose const & pose )
 			task_->nonconst_residue_task( start_res ).restrict_to_repacking();
 		}
 	}
-	utility::vector1<Size>  residues_to_ala(0);
+	utility::vector1<core::Size>  residues_to_ala(0);
 	utility::vector1<bool> is_repack = task_->repacking_residues();
 	runtime_assert(is_repack.size() == pose.total_residue());
-	for ( Size r = 1; r <= pose.total_residue(); ++r ) {
+	for ( core::Size r = 1; r <= pose.total_residue(); ++r ) {
 		if ( pose.residue(r).is_protein() ) {
 			if ( task_->design_residue((int)r) || is_repack[r]==1 ) {
 				residues_to_ala.push_back(r);
@@ -3408,7 +3408,7 @@ HBNet::apply( Pose & pose )
 		boundary_residues_ = boundary_layer->apply( pose );
 	}
 	if ( verbose_ && TR.visible() ) {
-		for ( Size r = 1; r <= pose.total_residue(); ++r ) {
+		for ( core::Size r = 1; r <= pose.total_residue(); ++r ) {
 			if ( res_is_core(r) ) {
 				TR << "res " << r << " is core" << std::endl;
 			}
@@ -3450,7 +3450,7 @@ HBNet::apply( Pose & pose )
 	// need to reverse because no pop_front for std::vector -- could use list but already set up for sorting functions with vectors of HBondNetStructOP's
 	std::reverse( output_vector_.begin(), output_vector_.end());
 
-	std::set< Size > net_ids( output_vector_.back() );
+	std::set< core::Size > net_ids( output_vector_.back() );
 	output_vector_.pop_back(); // pop_back() removes without returning
 
 	Pose ala_copy = *ala_pose_; // deep copy

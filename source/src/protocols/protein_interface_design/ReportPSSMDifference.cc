@@ -46,7 +46,7 @@ protocols::protein_interface_design::ReportPSSMDifferences::load_pssm_data(
 	std::ifstream pssm_file( pssm_file_name.c_str() );
 
 	utility::vector1< Real > pssm_prob_dist( core::chemical::num_canonical_aas, 0.0 );
-	Size linenum( 0 );
+	core::Size linenum( 0 );
 	pssm_data_.clear();
 	while ( pssm_file ) {
 		++linenum;
@@ -54,7 +54,7 @@ protocols::protein_interface_design::ReportPSSMDifferences::load_pssm_data(
 		pssm_file >> line_aa;
 		core::chemical::AA aa( core::chemical::aa_from_oneletter_code( line_aa ));
 		Real sum( 0.0 );
-		for ( Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
+		for ( core::Size ii = 1; ii <= core::chemical::num_canonical_aas; ++ii ) {
 			pssm_file >> pssm_prob_dist[ ii ];
 			sum += pssm_prob_dist[ ii ];
 		}

@@ -55,6 +55,8 @@ namespace loop_mover {
 
 static basic::Tracer tr( "protocols.loops.loop_mover.LoopCM", basic::t_info );
 
+using core::Size;
+
 // creator
 
 
@@ -166,11 +168,11 @@ environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pos
 
 	core::environment::LocalPositions pos_list;
 
-	Size const LOOP_EXTEND = 1;
+	core::Size const LOOP_EXTEND = 1;
 	for ( const auto & loop : loops->loops() ) {
-		tr.Debug << " Claiming torsions in residues " << std::max( (Size) 1, loop.start() - LOOP_EXTEND )
+		tr.Debug << " Claiming torsions in residues " << std::max( (core::Size) 1, loop.start() - LOOP_EXTEND )
 			<< "-" << std::min( pose.size(), loop.stop() + LOOP_EXTEND ) << "." << std::endl;
-		for ( Size i = std::max( (Size) 1, loop.start()-LOOP_EXTEND );
+		for ( core::Size i = std::max( (core::Size) 1, loop.start()-LOOP_EXTEND );
 				i <= std::min( pose.size(), loop.stop()+LOOP_EXTEND ); ++i ) {
 			pos_list.push_back( utility::pointer::make_shared< core::environment::LocalPosition >( "BASE", i ) );
 		}
@@ -182,7 +184,7 @@ environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pos
 
 	claims.push_back( xyz_claim );
 
-	for ( Size i = 1; i <= loops->num_loop(); ++i ) {
+	for ( core::Size i = 1; i <= loops->num_loop(); ++i ) {
 		Loop const& loop = loops->loops()[i];
 		JumpClaimOP jump( new JumpClaim( this_ptr,
 			get_name()+"_"+utility::to_string( i ),

@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_modeler_StepWiseMasterPacker_HH
 #define INCLUDED_protocols_stepwise_modeler_StepWiseMasterPacker_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/modeler/packer/StepWiseMasterPacker.fwd.hh>
 #include <protocols/stepwise/modeler/packer/StepWisePacker.fwd.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
@@ -34,7 +34,7 @@ namespace stepwise {
 namespace modeler {
 namespace packer {
 
-class StepWiseMasterPacker: public utility::pointer::ReferenceCount {
+class StepWiseMasterPacker: public utility::VirtualBase {
 
 public:
 

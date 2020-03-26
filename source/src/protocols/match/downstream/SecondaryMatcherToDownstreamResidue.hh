@@ -32,7 +32,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 // C++ headers
 #include <list>
@@ -50,11 +50,11 @@ class SecondaryMatcherToDownstreamResidue : public DownstreamAlgorithm
 {
 public:
 	typedef DownstreamAlgorithm                   parent;
-	typedef std::pair< SecMatchResiduePairEvaluatorCOP, Size > Evaluator_MCFI_ID_Pair;
+	typedef std::pair< SecMatchResiduePairEvaluatorCOP, core::Size > Evaluator_MCFI_ID_Pair;
 	typedef std::list< Evaluator_MCFI_ID_Pair > EvaluatorSet;
 
 public:
-	SecondaryMatcherToDownstreamResidue( core::pose::PoseCOP upstream_pose, Size geom_cst_id );
+	SecondaryMatcherToDownstreamResidue( core::pose::PoseCOP upstream_pose, core::Size geom_cst_id );
 
 	~SecondaryMatcherToDownstreamResidue() override;
 
@@ -94,7 +94,7 @@ public:
 
 	/// @brief mimic the classic matcher's reset of the Occupied space hash.
 	void
-	respond_to_primary_hitlist_change( Matcher & matcher, Size round_just_completed ) override;
+	respond_to_primary_hitlist_change( Matcher & matcher, core::Size round_just_completed ) override;
 
 	/// @brief Remove my hits if they fall into a volume of the occupied space hash
 	/// that is no longer occupied.
@@ -108,8 +108,8 @@ public:
 	/// build_at_all_positions method.)
 	std::list< Hit >
 	build(
-		Size const scaffold_build_point_id,
-		Size const upstream_conf_id,
+		core::Size const scaffold_build_point_id,
+		core::Size const upstream_conf_id,
 		core::conformation::Residue const & upstream_residue
 	) const override;
 
@@ -128,19 +128,19 @@ public:
 	HitPtrListCOP
 	hits_to_include_with_partial_match( match_dspos1 const & ) const override;
 
-	Size
+	core::Size
 	n_possible_hits_per_upstream_conformation() const override;
 
 	void
 	set_downstream_restype( core::chemical::ResidueTypeCOP downstream_restype );
 
 	void
-	set_focused_geomcst_id( Size focused_geomcst_id );
+	set_focused_geomcst_id( core::Size focused_geomcst_id );
 
 	void
 	add_evaluator(
 		SecMatchResiduePairEvaluatorCOP evaluator,
-		Size mcfi_id
+		core::Size mcfi_id
 	);
 
 	void
@@ -173,13 +173,13 @@ private:
 	void
 	prepare_for_hit_generation_for_geomcst(
 		Matcher & matcher,
-		Size target_geomcst_id
+		core::Size target_geomcst_id
 	);
 
 	bool
 	prepare_for_hit_generation_at_target_build_point(
 		Matcher & matcher,
-		Size target_geomcst_id,
+		core::Size target_geomcst_id,
 		upstream::ScaffoldBuildPoint const & target_build_point
 	);
 
@@ -197,7 +197,7 @@ private:
 
 	bool
 	ds_atom_present(
-		Size index
+		core::Size index
 	) const;
 
 	utility::vector1< utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > > >
@@ -210,7 +210,7 @@ private:
 	EvaluatorSet respair_evaluators_;
 	//  std::map < std::string, DownstreamBuilderCOP > dsbuilders_;
 
-	Size focused_geomcst_id_;
+	core::Size focused_geomcst_id_;
 	Matcher::HitListConstIterator hits_for_focused_geomcst_and_build_point_begin_;
 	Matcher::HitListConstIterator hits_for_focused_geomcst_and_build_point_end_;
 	Matcher::HitListConstIterator hits_for_focused_geomcst_end_;
@@ -224,7 +224,7 @@ private:
 	utility::vector1< core::Size > catalytic_atoms_;
 
 	//utility::vector1< core::id::AtomID > downstream_atoms_for_clash_checking_ ;
-	Size occspace_rev_id_at_last_update_;
+	core::Size occspace_rev_id_at_last_update_;
 };
 
 }

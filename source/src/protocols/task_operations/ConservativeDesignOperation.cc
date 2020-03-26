@@ -45,6 +45,7 @@ namespace task_operations {
 using namespace core::pack::task::operation;
 using namespace utility::tag;
 
+using core::Size;
 using utility::vector1;
 
 ConservativeDesignOperationCreator::ConservativeDesignOperationCreator(){}
@@ -140,7 +141,7 @@ ConservativeDesignOperation & ConservativeDesignOperation::operator =(Conservati
 }
 
 void
-ConservativeDesignOperation::limit_to_positions( vector1< Size > const & positions){
+ConservativeDesignOperation::limit_to_positions( vector1< core::Size > const & positions){
 	positions_ = positions;
 	std::sort( positions_.begin(), positions_.end() );
 }

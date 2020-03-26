@@ -71,8 +71,8 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	Size numb_repeats_;
-	Size startAtRepeat_;
+	core::Size numb_repeats_;
+	core::Size startAtRepeat_;
 	std::string param_type_;
 	core::Real min_;
 	core::Real max_;

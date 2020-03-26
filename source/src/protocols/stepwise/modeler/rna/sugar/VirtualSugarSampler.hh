@@ -143,7 +143,7 @@ private:
 	bool legacy_mode_;
 	bool const do_chain_closure_;
 	bool const first_minimize_with_fixed_base_;
-	Size const max_tries_for_random_sugar_setup_;
+	core::Size const max_tries_for_random_sugar_setup_;
 	bool sugar_setup_success_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
 	checker::RNA_VDW_BinCheckerOP VDW_bin_checker_;

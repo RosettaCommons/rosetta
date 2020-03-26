@@ -664,7 +664,7 @@ HBondFeatures::report_features(
 	AtomID_Map<Real>site_hbond_energies;
 	initialize_atomid_map(site_hbond_energies, pose);
 
-	for ( Size i = 1; i<= hbond_set.nhbonds(); i++ ) {
+	for ( core::Size i = 1; i<= hbond_set.nhbonds(); i++ ) {
 		HBond const & hbond(hbond_set.hbond(i));
 		if ( !check_relevant_residues( relevant_residues, hbond.don_res(), hbond.acc_res() ) ) continue;
 
@@ -676,10 +676,10 @@ HBondFeatures::report_features(
 
 	}
 
-	Size site_id(0);
-	AtomID_Map< Size > site_ids;
+	core::Size site_id(0);
+	AtomID_Map< core::Size > site_ids;
 	core::pose::initialize_atomid_map(site_ids, pose);
-	for ( Size resNum =1; resNum <= pose.size(); ++resNum ) {
+	for ( core::Size resNum =1; resNum <= pose.size(); ++resNum ) {
 		if ( !check_relevant_residues( relevant_residues, resNum ) ) continue;
 
 		Residue const & res(pose.residue(resNum));
@@ -716,7 +716,7 @@ HBondFeatures::report_features(
 		}
 	}
 
-	for ( Size hbond_id = 1; hbond_id <= hbond_set.nhbonds(); hbond_id++ ) {
+	for ( core::Size hbond_id = 1; hbond_id <= hbond_set.nhbonds(); hbond_id++ ) {
 		HBond const & hbond = hbond_set.hbond( hbond_id );
 		if ( !check_relevant_residues( relevant_residues, hbond.don_res(), hbond.acc_res() ) ) continue;
 
@@ -734,22 +734,22 @@ void
 HBondFeatures::insert_site_row(
 	Pose const & pose,
 	StructureID struct_id,
-	Size site_id,
-	Size resNum,
-	Size atmNum,
+	core::Size site_id,
+	core::Size resNum,
+	core::Size atmNum,
 	bool is_donor,
 	sessionOP db_session
 ){
 
 
-	Size chain( pose.chain(resNum) );
+	core::Size chain( pose.chain(resNum) );
 	string const & resType( pose.residue_type(resNum).name() );
 	string atmType;
 
 
 	string HBChemType;
 	if ( is_donor ) {
-		Size batmNum = pose.residue(resNum).atom_base( atmNum );
+		core::Size batmNum = pose.residue(resNum).atom_base( atmNum );
 		HBDonChemType hb_don_chem_type =
 			get_hb_don_chem_type( batmNum, pose.residue(resNum) );
 		HBChemType = HBondTypeManager::name_from_don_chem_type(hb_don_chem_type);
@@ -779,11 +779,11 @@ HBondFeatures::insert_site_row(
 void
 HBondFeatures::insert_site_pdb_row(
 	Pose const & pose,
-	Size resNum,
-	Size,
-	Size heavy_atmNum,
+	core::Size resNum,
+	core::Size,
+	core::Size heavy_atmNum,
 	StructureID struct_id,
-	Size site_id,
+	core::Size site_id,
 	sessionOP db_session
 ){
 	if ( !pose.pdb_info() ) return; //eg if this is a silent file structure
@@ -812,10 +812,10 @@ HBondFeatures::insert_site_pdb_row(
 void
 HBondFeatures::insert_site_environment_row(
 	Pose const & pose,
-	Size resNum,
-	Size atmNum,
+	core::Size resNum,
+	core::Size atmNum,
 	StructureID struct_id,
-	Size site_id,
+	core::Size site_id,
 	AtomID_Map< Real > const & atom_sasa_s,
 	AtomID_Map< Real > const & atom_sasa_m,
 	AtomID_Map< Real > const & atom_sasa_l,
@@ -825,7 +825,7 @@ HBondFeatures::insert_site_environment_row(
 ){
 
 	Real const hbond_energy (site_hbond_energies(resNum, atmNum) );
-	Size const num_hbonds(site_partners(resNum,atmNum).size() );
+	core::Size const num_hbonds(site_partners(resNum,atmNum).size() );
 
 	string stmt_string("INSERT INTO hbond_site_environment (struct_id, site_id, sasa_r100, sasa_r140, sasa_r200, hbond_energy, num_hbonds) VALUES (?,?,?,?,?,?,?);");
 	statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
@@ -852,10 +852,10 @@ HBondFeatures::insert_site_environment_row(
 void
 HBondFeatures::insert_site_atoms_row(
 	Pose const & pose,
-	Size resNum,
-	Size atmNum,
+	core::Size resNum,
+	core::Size atmNum,
 	StructureID struct_id,
-	Size site_id,
+	core::Size site_id,
 	sessionOP db_session
 ){
 	Residue const & rsd( pose.residue(resNum) );
@@ -902,8 +902,8 @@ void
 HBondFeatures::insert_hbond_row(
 	HBond const & hbond,
 	StructureID struct_id,
-	Size hbond_id,
-	AtomID_Map< Size > const & site_ids,        // This is for ranking hbonds
+	core::Size hbond_id,
+	AtomID_Map< core::Size > const & site_ids,        // This is for ranking hbonds
 	AtomID_Map< vector1<HBondCOP> > const & site_partners,
 	sessionOP db_session
 ){
@@ -911,7 +911,7 @@ HBondFeatures::insert_hbond_row(
 
 	//Zero if unique
 	//i in 1 through n if ith lowest energy hbond made with this site
-	Size donRank=0, accRank=0;
+	core::Size donRank=0, accRank=0;
 	vector1< HBondCOP > don_partners(
 		site_partners(hbond.don_res(), hbond.don_hatm()));
 	if ( don_partners.size() > 1 ) {
@@ -945,9 +945,9 @@ HBondFeatures::insert_hbond_row(
 	}
 	debug_assert(found_acc_partner);
 
-	Size const don_id( site_ids(hbond.don_res(), hbond.don_hatm()) );
-	Size const acc_id( site_ids(hbond.acc_res(), hbond.acc_atm()) );
-	Size const HBEvalType( hbond.eval_type() );
+	core::Size const don_id( site_ids(hbond.don_res(), hbond.don_hatm()) );
+	core::Size const acc_id( site_ids(hbond.acc_res(), hbond.acc_atm()) );
+	core::Size const HBEvalType( hbond.eval_type() );
 	Real const energy( hbond.energy() );
 	Real const envWeight( hbond.weight() );
 	Real const score_weight(
@@ -974,7 +974,7 @@ HBondFeatures::insert_hbond_geom_coords(
 	HBondOptions const & hbond_options,
 	HBond const & hbond,
 	StructureID struct_id,
-	Size hbond_id,
+	core::Size hbond_id,
 	sessionOP db_session
 ){
 	const Residue acc_res( pose.residue(hbond.acc_res()));
@@ -1026,16 +1026,16 @@ HBondFeatures::insert_hbond_lennard_jones_row(
 	Pose const & pose,
 	HBond const & hbond,
 	StructureID struct_id,
-	Size hbond_id,
+	core::Size hbond_id,
 	sessionOP db_session
 ){
 
 	Residue const & don_res(pose.residue(hbond.don_res()));
 	Residue const & acc_res(pose.residue(hbond.acc_res()));
-	Size const don_hatmNum(hbond.don_hatm());
-	Size const acc_atmNum(hbond.acc_atm());
-	Size const don_datmNum(don_res.atom_base(don_hatmNum));
-	Size const acc_batmNum(acc_res.atom_base(acc_atmNum));
+	core::Size const don_hatmNum(hbond.don_hatm());
+	core::Size const acc_atmNum(hbond.acc_atm());
+	core::Size const don_datmNum(don_res.atom_base(don_hatmNum));
+	core::Size const acc_batmNum(acc_res.atom_base(acc_atmNum));
 
 
 	Real bb_dummy, dsq_dummy;
@@ -1156,13 +1156,13 @@ HBondFeatures::insert_hbond_dehydron_row(
 	Pose const & pose,
 	HBond const & hbond,
 	StructureID struct_id,
-	Size hbond_id,
+	core::Size hbond_id,
 	sessionOP db_session
 ){
 
 
 	Real const wrapping_radius(6.5);
-	Size wrapping_count(0);
+	core::Size wrapping_count(0);
 
 	Residue const & don_res(pose.residue(hbond.don_res()));
 	Residue const & acc_res(pose.residue(hbond.acc_res()));
@@ -1184,7 +1184,7 @@ HBondFeatures::insert_hbond_dehydron_row(
 
 		// sum all CH_n groups with in the wrapping radius of the c-alpha
 		// atom of the donor residue.
-		for ( Size atm_i = 1; atm_i <= nbr_res.nheavyatoms(); ++atm_i ) {
+		for ( core::Size atm_i = 1; atm_i <= nbr_res.nheavyatoms(); ++atm_i ) {
 			if ( nbr_res.type().atom_type(atm_i).element() == "C" &&
 					don_res_ca_xyz.distance(nbr_res.xyz(atm_i)) <= wrapping_radius ) {
 				wrapping_count++;
@@ -1203,7 +1203,7 @@ HBondFeatures::insert_hbond_dehydron_row(
 		// atom of the acceptor but not within wrapping radius of the
 		// c-alpha atom of the donor. This prevents double counting
 		// wrapping non-polar groups that are in both wrapping spheres.
-		for ( Size atm_i = 1; atm_i <= nbr_res.nheavyatoms(); ++atm_i ) {
+		for ( core::Size atm_i = 1; atm_i <= nbr_res.nheavyatoms(); ++atm_i ) {
 			if ( nbr_res.type().atom_type(atm_i).element() == "C" &&
 					don_res_ca_xyz.distance(nbr_res.xyz(atm_i)) > wrapping_radius &&
 					acc_res_ca_xyz.distance(nbr_res.xyz(atm_i)) <= wrapping_radius ) {

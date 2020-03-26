@@ -46,7 +46,7 @@ namespace rna {
 namespace phosphate {
 
 //Constructor
-PhosphateMover::PhosphateMover( Size const sample_res,
+PhosphateMover::PhosphateMover( core::Size const sample_res,
 	PhosphateTerminus const which_terminus,
 	scoring::ScoreFunctionCOP scorefxn ):
 	phosphate_move_( PhosphateMove( sample_res, which_terminus ) ),
@@ -123,7 +123,7 @@ PhosphateMover::setup_variants_and_free_pose_for_terminal_phosphate( pose::Pose 
 void
 PhosphateMover::setup_variants_and_free_pose_for_five_prime_phosphate( pose::Pose & pose )
 {
-	Size const sample_res = phosphate_move_.rsd();
+	core::Size const sample_res = phosphate_move_.rsd();
 
 	if ( pose.residue( sample_res ).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) ) {
 
@@ -159,7 +159,7 @@ PhosphateMover::setup_variants_and_free_pose_for_five_prime_phosphate( pose::Pos
 void
 PhosphateMover::setup_variants_and_free_pose_for_three_prime_phosphate( pose::Pose & pose )
 {
-	Size const sample_res = phosphate_move_.rsd();
+	core::Size const sample_res = phosphate_move_.rsd();
 
 	if ( pose.residue( phosphate_move_.rsd() ).has_variant_type( core::chemical::THREE_PRIME_PHOSPHATE ) ) {
 		pose_free_ = pose.clone();
@@ -177,8 +177,8 @@ PhosphateMover::setup_variants_and_free_pose_for_three_prime_phosphate( pose::Po
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 PhosphateMover::setup_atom_and_neighbor_list( pose::Pose & pose ) {
-	Size const & n = phosphate_move_.rsd();
-	Size const & terminus = phosphate_move_.terminus();
+	core::Size const & n = phosphate_move_.rsd();
+	core::Size const & terminus = phosphate_move_.terminus();
 	get_phosphate_atom_and_neighbor_list( pose, phosphate_move_.rsd(),
 		terminus == FIVE_PRIME_PHOSPHATE ? FIVE_PRIME : THREE_PRIME,
 		donor_atom_xyz_list_, donor_base_atom_xyz_list_, neighbor_copy_dofs_ );
@@ -203,7 +203,7 @@ PhosphateMover::screen_five_prime_phosphate( pose::Pose & pose ) {
 	TorsionList full_torsions = get_full_torsions( bin_size_ );
 
 	Real const score_free = ( *scorefxn_ )( *pose_free_ );
-	Size const & n = phosphate_move_.rsd();
+	core::Size const & n = phosphate_move_.rsd();
 
 	Pose pose_best = pose;
 	Real score_best = ( *scorefxn_ )( pose );
@@ -245,7 +245,7 @@ PhosphateMover::screen_three_prime_phosphate( pose::Pose & pose ){
 	using namespace core::id;
 	using namespace core::scoring;
 
-	Size const & n = phosphate_move_.rsd();
+	core::Size const & n = phosphate_move_.rsd();
 
 	Real const bin_size_( 20.0 );
 	TorsionList full_torsions = get_full_torsions( bin_size_ );
@@ -289,17 +289,17 @@ PhosphateMover::screen_three_prime_phosphate( pose::Pose & pose ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 PhosphateMover::pass_clash_check( std::string const & atom_name,
-	Size const n,
+	core::Size const n,
 	pose::Pose & pose ){
 
-	Size const atom_idx = pose.residue_type( n ).atom_index( atom_name );
+	core::Size const atom_idx = pose.residue_type( n ).atom_index( atom_name );
 	Vector const & atom_xyz = pose.residue( n ).xyz( atom_idx );
 	Real const VDW_radius_1 = pose.residue( n ).atom_type( atom_idx  ).lj_radius();
 	static Real const clash_dist_cutoff = 0.8; //Fail van der Waals repulsion screen if two atoms radius within 0.5 Angstrom of each other
 
-	for ( Size const m : neighbor_copy_dofs_ ) {
+	for ( core::Size const m : neighbor_copy_dofs_ ) {
 		if ( m == n ) continue;
-		for ( Size j = 1; j <= pose.residue( m ).natoms(); j++ ) {
+		for ( core::Size j = 1; j <= pose.residue( m ).natoms(); j++ ) {
 			if ( pose.residue( m ).is_virtual( j )  ) continue;
 			Real const VDW_radius_2 = pose.residue( m ).atom_type( j ).lj_radius();
 			Real const clash_radius = VDW_radius_1 + VDW_radius_2 - clash_dist_cutoff;
@@ -315,7 +315,7 @@ PhosphateMover::pass_clash_check( std::string const & atom_name,
 bool
 PhosphateMover::check_phosphate_contacts_donor( pose::Pose & pose ) const {
 	utility::vector1< Vector > op_xyz_list;
-	Size const & n = phosphate_move_.rsd();
+	core::Size const & n = phosphate_move_.rsd();
 	op_xyz_list.push_back( pose.residue( n ).xyz( op1_atom_idx_ ) );
 	op_xyz_list.push_back( pose.residue( n ).xyz( op2_atom_idx_ ) );
 	return core::pose::rna::check_phosphate_contacts_donor( op_xyz_list,
@@ -326,7 +326,7 @@ PhosphateMover::check_phosphate_contacts_donor( pose::Pose & pose ) const {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-PhosphateMover::apply_Aform_torsions_to_five_prime_phosphate( pose::Pose & pose, Size const sample_res ) const {
+PhosphateMover::apply_Aform_torsions_to_five_prime_phosphate( pose::Pose & pose, core::Size const sample_res ) const {
 	using namespace core::id;
 	using namespace core::chemical::rna;
 	runtime_assert( pose.residue_type( sample_res ).has_variant_type( core::chemical::FIVE_PRIME_PHOSPHATE ) );
@@ -337,7 +337,7 @@ PhosphateMover::apply_Aform_torsions_to_five_prime_phosphate( pose::Pose & pose,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-PhosphateMover::apply_Aform_torsions_to_three_prime_phosphate( pose::Pose & pose, Size const sample_res ) const {
+PhosphateMover::apply_Aform_torsions_to_three_prime_phosphate( pose::Pose & pose, core::Size const sample_res ) const {
 	using namespace core::id;
 	using namespace core::chemical::rna;
 	runtime_assert( pose.residue_type( sample_res ).has_variant_type( core::chemical::THREE_PRIME_PHOSPHATE ) );

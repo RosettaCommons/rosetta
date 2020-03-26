@@ -56,12 +56,12 @@ public:
 
 	// --- virtual functions from mover ---
 	void apply(Pose& pose) override;
-	// virtual void trans_pose( Pose & pose, numeric::xyzVector<Real> const & trans, Size start, Size end );
-	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, Size start, Size end );
-	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, numeric::xyzVector<Real> const & cen, Size start, Size end );
-	// virtual void rot_pose( Pose & pose, numeric::xyzVector<Real> const & axis, core::Real const & ang, Size start, Size end );
-	// virtual void rot_pose( Pose & pose, numeric::xyzVector<Real> const & axis, core::Real const & ang, numeric::xyzVector<Real> const & cen, Size start, Size end );
-	// virtual void alignaxis(core::pose::Pose & pose, numeric::xyzVector<Real> newaxis, numeric::xyzVector<Real> oldaxis, numeric::xyzVector<Real> cen , Size start, Size end );
+	// virtual void trans_pose( Pose & pose, numeric::xyzVector<Real> const & trans, core::Size start, core::Size end );
+	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, core::Size start, core::Size end );
+	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, numeric::xyzVector<Real> const & cen, core::Size start, core::Size end );
+	// virtual void rot_pose( Pose & pose, numeric::xyzVector<Real> const & axis, core::Real const & ang, core::Size start, core::Size end );
+	// virtual void rot_pose( Pose & pose, numeric::xyzVector<Real> const & axis, core::Real const & ang, numeric::xyzVector<Real> const & cen, core::Size start, core::Size end );
+	// virtual void alignaxis(core::pose::Pose & pose, numeric::xyzVector<Real> newaxis, numeric::xyzVector<Real> oldaxis, numeric::xyzVector<Real> cen , core::Size start, core::Size end );
 
 	// --- virtual copy constructors
 	MoverOP clone() const override;

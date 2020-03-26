@@ -24,7 +24,7 @@
 #include <core/scoring/fiber_diffraction/FiberDiffraction.fwd.hh>
 
 //C++ headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 
 #include <utility/vector0.hh>
@@ -34,12 +34,12 @@ namespace core {
 namespace scoring {
 namespace fiber_diffraction {
 
-class FiberDiffraction : public utility::pointer::ReferenceCount {
+class FiberDiffraction : public utility::VirtualBase {
 public:
 	/// @brief constructor
 	FiberDiffraction();
 
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~FiberDiffraction() override;
 
 	/// @brief Initialize map from cmd line options

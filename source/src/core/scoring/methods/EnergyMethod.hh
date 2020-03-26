@@ -41,7 +41,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Numeric headers
 
@@ -51,9 +51,9 @@ namespace scoring {
 namespace methods {
 
 /// @brief base class for the energy method hierarchy
-class EnergyMethod : public utility::pointer::ReferenceCount  {
+class EnergyMethod : public utility::VirtualBase  {
 public:
-	typedef utility::pointer::ReferenceCount  parent;
+	typedef utility::VirtualBase  parent;
 
 public:
 	/// @brief Constructor with EnergyMethodCreator, which lists the score

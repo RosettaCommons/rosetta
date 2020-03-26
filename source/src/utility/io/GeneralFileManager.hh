@@ -21,7 +21,7 @@
 
 // Utility header
 #include <utility/SingletonBase.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -35,7 +35,7 @@
 namespace utility {
 namespace io {
 
-class GeneralFileContents : public utility::pointer::ReferenceCount {
+class GeneralFileContents : public utility::VirtualBase {
 
 public:
 

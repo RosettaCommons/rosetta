@@ -368,6 +368,7 @@ HelicalBundlePredictApplication::HelicalBundlePredictApplication(
 HelicalBundlePredictApplication::HelicalBundlePredictApplication(
 	HelicalBundlePredictApplication const &src
 ) :
+	VirtualBase( src ),
 	options_(src.options_->clone()),
 	native_pose_(nullptr),
 	pose_( src.pose_ == nullptr ? nullptr : src.pose_->clone() ),

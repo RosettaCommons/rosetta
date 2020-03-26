@@ -101,7 +101,7 @@ private: // methods
 	core::optimization::AtomTreeMinimizerOP minimizer( core::pose::Pose const & pose ) const;
 
 private: //data
-	Size nmoves_;
+	core::Size nmoves_;
 	core::optimization::MinimizerOptionsOP min_options_;
 	mutable core::optimization::AtomTreeMinimizerOP minimizer_;
 

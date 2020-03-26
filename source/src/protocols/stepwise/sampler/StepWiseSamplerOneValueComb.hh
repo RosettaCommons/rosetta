@@ -35,10 +35,10 @@ public:
 	~StepWiseSamplerOneValueComb() override;
 
 	ValueList const &
-	get_value_list( Size const id );
+	get_value_list( core::Size const id );
 
 	ValueList const &
-	get_value_list( utility::vector1< Size > const & id_list );
+	get_value_list( utility::vector1< core::Size > const & id_list );
 
 	/// @brief Add one more rotamer sampler to this sampler
 	virtual void add_external_loop_rotamer( StepWiseSamplerOneValueOP const & rotamer ) {

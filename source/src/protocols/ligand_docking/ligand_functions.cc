@@ -59,7 +59,7 @@ torsion_constraints_from_mean_sd(
 
 	TR << "Torsion constraint for Rsd " << rsd_no << " chi " << chino << " =";
 	ConstraintCOPs csts;
-	for ( Size j = 1; j <= mean_sd_degrees.size(); ++j ) {
+	for ( core::Size j = 1; j <= mean_sd_degrees.size(); ++j ) {
 		TR << " " << mean_sd_degrees[j].first;
 		TR << " std dev " << mean_sd_degrees[j].second;
 		// input is in degrees, but dihedral constraints deal in radians
@@ -95,11 +95,11 @@ torsion_constraints_from_rotamers(
 
 	Real const tol_d = stddev_degrees / 10.0; // within this range, considered to be the same minimum
 	utility::vector1< std::pair< Real, Real> > minima_d;
-	for ( Size i = 1; i <= rsds.size(); ++i ) {
+	for ( core::Size i = 1; i <= rsds.size(); ++i ) {
 		//runtime_assert( rsds[i].type().name() == rsdtype.name() );
 		Real const chi_d = rsds[i]->chi(chino);
 		bool found = false;
-		for ( Size j = 1; j <= minima_d.size(); ++j ) {
+		for ( core::Size j = 1; j <= minima_d.size(); ++j ) {
 			Real const min = minima_d[j].first;
 			if ( std::abs(min - numeric::nearest_angle_degrees(chi_d, min)) < tol_d ) {
 				found = true;
@@ -141,7 +141,7 @@ get_ligand_torsion_constraints(
 
 	ResidueType const & rsdtype = pose.residue_type(rsd_no);
 	core::pack::task::PackerTaskCOP packertask( core::pack::task::TaskFactory::create_packer_task(pose, utility::pointer::make_shared< core::pack::palette::NoDesignPackerPalette >() ) );
-	for ( Size i = 1; i <= rsdtype.nchi(); ++i ) {
+	for ( core::Size i = 1; i <= rsdtype.nchi(); ++i ) {
 		//bool has_diversity(false);
 		if ( rsdtype.chi_rotamers(i).size() == 0 ) {
 			bool has_diversity(false);
@@ -151,7 +151,7 @@ get_ligand_torsion_constraints(
 				rotamers.push_back( pose.residue(rsd_no).clone() );
 				if ( (rotamers.size()==1) && constrain_all_torsions_equally ) has_diversity=true;
 			}
-			for ( Size j=2; j<=rotamers.size(); ++j ) {
+			for ( core::Size j=2; j<=rotamers.size(); ++j ) {
 				Real const chi_d1 = rotamers[j]->chi(i);
 				Real const chi_d2 = rotamers[j-1]->chi(i);
 				if ( std::abs(chi_d2 - chi_d1)> stddev_degrees ) {
@@ -179,11 +179,11 @@ constrain_ligand_torsions(
 	using namespace core;
 	using namespace core::scoring::constraints;
 	ConstraintSetOP new_constraint_set = pose.constraint_set()->clone();
-	for ( Size rsdno = 1; rsdno <= pose.size(); ++rsdno ) {
+	for ( core::Size rsdno = 1; rsdno <= pose.size(); ++rsdno ) {
 		if ( pose.residue_type(rsdno).is_polymer() ) continue;
 		utility::vector1< ConstraintOP > csts;
 		get_ligand_torsion_constraints(pose, rsdno, stddev_degrees, csts, constrain_all_torsions_equally);
-		for ( Size cstno = 1; cstno <= csts.size(); ++cstno ) {
+		for ( core::Size cstno = 1; cstno <= csts.size(); ++cstno ) {
 			//csts[cstno]->show(TR);
 			new_constraint_set->add_constraint( csts[cstno] );
 		}

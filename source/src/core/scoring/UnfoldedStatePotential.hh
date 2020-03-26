@@ -28,7 +28,7 @@
 #include <map>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -43,7 +43,7 @@ namespace scoring {
 /// and provides the lookup into the data structure holding the database information and a separate class for the energy method
 /// implementation.
 ///
-class UnfoldedStatePotential : public utility::pointer::ReferenceCount {
+class UnfoldedStatePotential : public utility::VirtualBase {
 
 public:
 	/// @brief ctor - calls the function which reads in the database file

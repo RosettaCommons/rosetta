@@ -29,7 +29,7 @@ CitationCollection::CitationCollection(
 	std::string const & module_name,
 	CitedModuleType const module_type
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	module_name_(module_name),
 	module_type_(module_type)
 {
@@ -43,7 +43,7 @@ CitationCollection::CitationCollection(
 	std::string const & module_name,
 	std::string const & module_type_name
 ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	module_name_( module_name ),
 	module_type_( CitedModuleType::CustomType ),
 	module_type_name_( module_type_name )

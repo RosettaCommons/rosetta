@@ -40,7 +40,7 @@
 #include <core/id/AtomID.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 

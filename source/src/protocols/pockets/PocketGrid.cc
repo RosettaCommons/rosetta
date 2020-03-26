@@ -542,7 +542,7 @@ void PocketGrid::setup_default_options(){
 
 
 PocketGrid::PocketGrid(const PocketGrid& gr) :
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 
 	setup_default_options();
@@ -867,7 +867,7 @@ void PocketGrid::recenter( core::conformation::Residue const & central_rsd ){
 	center(2)=0.0;
 	center(3)=0.0;
 	core::Size count=0;
-	for ( Size i = 1, i_end = central_rsd.nheavyatoms(); i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = central_rsd.nheavyatoms(); i <= i_end; ++i ) {
 		//if (central_rsd.atom(i).type()<18||central_rsd.atom(i).type()>21){
 		if ( !central_rsd.atom_is_backbone(i) && !central_rsd.atom_is_hydrogen(i) ) {
 			center(1)+=central_rsd.atom(i).xyz()(1);
@@ -920,7 +920,7 @@ void PocketGrid::recenter( std::vector< core::conformation::ResidueCOP > const &
 
 		debug_assert( central_rsd->is_protein() );
 		int rcount=0;
-		for ( Size i = 1, i_end = central_rsd->nheavyatoms(); i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = central_rsd->nheavyatoms(); i <= i_end; ++i ) {
 			//if (central_rsd->atom(i).type()<18||central_rsd->atom(i).type()>21){
 			if ( !central_rsd->atom_is_backbone(i) && !central_rsd->atom_is_hydrogen(i) ) {
 				local_center(1)+=central_rsd->atom(i).xyz()(1);
@@ -2702,7 +2702,7 @@ void PocketGrid::findClusters(){
 	}
 }
 
-void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total_residues){
+void PocketGrid::findExemplars(core::pose::Pose const & inPose, core::Size const total_residues){
 	//ideal H-bond distance
 	//core::Real const opt_distance( 2.75 );
 	//core::Real const distance( 3.0 );
@@ -2740,7 +2740,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 
 
 	//Go through residues near the the pocket and look for hydrogen donors and acceptors
-	for ( Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
+	for ( core::Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
 		core::conformation::Residue const & rsd( inPose.conformation().residue(j) );
 
 		// Skip buried residues
@@ -2763,7 +2763,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 				hnum  = rsd.Hpos_polar().begin(),
 				hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 
-			Size const hatm( *hnum );
+			core::Size const hatm( *hnum );
 
 			// Skip buried residues
 			//int offset = 9;
@@ -2870,7 +2870,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 		for ( auto
 				anum  = rsd.accpt_pos().begin(),
 				anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
-			Size const aatm( *anum );
+			core::Size const aatm( *anum );
 			// Skip buried residues
 			//int offset = 9;
 			//if ( rsd.seqpos() < 72 ) offset=3;
@@ -2920,7 +2920,7 @@ void PocketGrid::findExemplars(core::pose::Pose const & inPose, Size const total
 				exit(1000);
 			}
 			Stub stub( aatm_xyz, aatm_base_xyz, aatm_base2_xyz );
-			for ( Size i=1; i<= phi_list.size(); ++i ) {
+			for ( core::Size i=1; i<= phi_list.size(); ++i ) {
 				for ( int step = 0; step<4; step++ ) {
 					numeric::xyzVector<core::Real> const o1(stub.spherical( numeric::conversions::radians( phi_list[i]), numeric::conversions::radians( theta ), opt_distance + step*stepSize_));
 					numeric::xyzVector<core::Real> rpoint = rotatePoint(o1.x(),o1.y(),o1.z());
@@ -3547,7 +3547,7 @@ void  PocketGrid::alter_espGrid_with_bound_ligand( std::string const & espGrid_f
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open("highesp.pdb", std::ios::out);
-	Size count = 1;
+	core::Size count = 1;
 	core::Real prot_grid_dist;
 	for ( int x=(int)(0+xskip),newx=0; x<(int)(xskip+xdim_); ++x,++newx ) {
 		for ( int y=(int)(0+yskip),newy=0; y<(int)(yskip+ydim_); ++y,++newy ) {
@@ -3559,10 +3559,10 @@ void  PocketGrid::alter_espGrid_with_bound_ligand( std::string const & espGrid_f
 				grid_coord.z() = newz * newG.espGrid_spacing_ + ( newG.espGrid_mid_.z() - ((static_cast<core::Real>(newG.espGrid_dim_.z()-1)/2) * newG.espGrid_spacing_) );
 
 				bool found_protein = false;
-				for ( Size j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
+				for ( core::Size j = 1, resnum = protein_pose.size(); j <= resnum; ++j ) {
 					core::conformation::Residue const & curr_rsd = protein_pose.residue(j);
 					if ( !curr_rsd.is_protein() ) continue;
-					for ( Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i ) {
+					for ( core::Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i ) {
 						if ( curr_rsd.atom_is_hydrogen(i) ) { prot_grid_dist = 0.53; } else { prot_grid_dist = 1.6; }
 						prot_coord.x() = curr_rsd.atom(i).xyz()(1);
 						prot_coord.y() = curr_rsd.atom(i).xyz()(2);
@@ -3634,9 +3634,9 @@ void  PocketGrid::alter_espGrid_with_bound_ligand( std::string const & espGrid_f
 	surfacePoints_list = get_connolly_surfacePoints( protein_pose );
 
 	bool found_surface = false;
-	for ( Size iz=0; iz<newG.espGrid_dim_.z(); ++iz ) {
-		for ( Size iy=0; iy<newG.espGrid_dim_.y(); ++iy ) {
-			for ( Size ix=0; ix<newG.espGrid_dim_.x(); ++ix ) {
+	for ( core::Size iz=0; iz<newG.espGrid_dim_.z(); ++iz ) {
+		for ( core::Size iy=0; iy<newG.espGrid_dim_.y(); ++iy ) {
+			for ( core::Size ix=0; ix<newG.espGrid_dim_.x(); ++ix ) {
 				if ( newG.espGrid_[ix][iy][iz] > 999. ) continue; // skip points that are already assigned as protein
 				numeric::xyzVector<core::Real> grid_coord;
 				grid_coord.x() = ix * newG.espGrid_spacing_ + ( newG.espGrid_mid_.x() - ((static_cast<core::Real>(newG.espGrid_dim_.x()-1)/2) * newG.espGrid_spacing_) );
@@ -3764,7 +3764,7 @@ void PocketGrid::alter_espGrid( std::string const & espGrid_filename ) {
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open("highesp.pdb", std::ios::out);
-	Size count = 1;
+	core::Size count = 1;
 	for ( int x=(int)(0+xskip),newx=0; x<(int)(xskip+xdim_); ++x,++newx ) {
 		for ( int y=(int)(0+yskip),newy=0; y<(int)(yskip+ydim_); ++y,++newy ) {
 			for ( int z=(int)(0+zskip),newz=0; z<(int)(zskip+zdim_); ++z,++newz ) {
@@ -3831,7 +3831,7 @@ void PocketGrid::alter_espGrid( std::string const & espGrid_filename ) {
 					for ( xx = searchxmin; xx<=searchxmax; ++xx ) {
 						for ( yy = searchymin; yy<=searchymax; ++yy ) {
 							for ( zz = searchzmin; zz<=searchzmax; ++zz ) {
-								if ( xx==Size(newx) && yy==Size(newy) && zz==Size(newz) ) continue;
+								if ( xx==core::Size(newx) && yy==core::Size(newy) && zz==core::Size(newz) ) continue;
 								if ( (grid_[xx][yy][zz] == HSURFACE) || (grid_[xx][yy][zz] == PSURFACE) || (grid_[xx][yy][zz] == T_SURFACE) || (grid_[xx][yy][zz] == ST_SURFACE) ) {
 									//check whether the potentials exceed the max & min bounds
 									if ( oldG.espGrid_[xx][yy][zz] > max_esp ) {
@@ -3885,12 +3885,12 @@ void PocketGrid::alter_espGrid( std::string const & espGrid_filename ) {
 }
 
 
-bool PocketGrid::autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target, core::Real x, core::Real y, core::Real z ) {
+bool PocketGrid::autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::scoring::func::XYZ_Func const & xyz_func, core::Size const total_residues, bool center_target, core::Real x, core::Real y, core::Real z ) {
 	std::vector< core::conformation::ResidueCOP > residues;
 	residues.push_back(central_rsd.clone());
 	core::pose::Pose tmp_pose;
 	int term=1;
-	for ( Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
+	for ( core::Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
 		if ( term || !xyz_func.residue(j).is_protein() ) {
 			tmp_pose.append_residue_by_jump(xyz_func.residue(j), j-1);
 		} else tmp_pose.append_residue_by_bond(xyz_func.residue(j));
@@ -3905,10 +3905,10 @@ bool PocketGrid::autoexpanding_pocket_eval( core::conformation::Residue const & 
 }
 
 
-bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueCOP > const & central_rsds, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target, core::Real x, core::Real y, core::Real z ) {
+bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueCOP > const & central_rsds, core::scoring::func::XYZ_Func const & xyz_func, core::Size const total_residues, bool center_target, core::Real x, core::Real y, core::Real z ) {
 	core::pose::Pose tmp_pose;
 	int term=1;
-	for ( Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
+	for ( core::Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
 		if ( term || !xyz_func.residue(j).is_protein() ) {
 			tmp_pose.append_residue_by_jump(xyz_func.residue(j), j-1);
 		} else tmp_pose.append_residue_by_bond(xyz_func.residue(j));
@@ -3933,14 +3933,14 @@ bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::Res
 
 	using namespace core::chemical;
 	bool too_small=true;
-	Size total_residues = inPose.size();
+	core::Size total_residues = inPose.size();
 	while ( too_small ) {
 		if ( center_target ) {
 			recenter( central_rsds );
 		} else {
 			recenter(x,y,z);
 		}
-		for ( Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
+		for ( core::Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
 			core::conformation::Residue const & rsd( inPose.conformation().residue(j) );
 			//ligands should be ignored and treated like solvent
 			if ( !rsd.is_protein() ) continue;
@@ -3958,7 +3958,7 @@ bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::Res
 			} else {
 				total_atoms = rsd.nheavyatoms();
 			}
-			for ( Size i = 1, i_end = total_atoms; i <= i_end; ++i ) {
+			for ( core::Size i = 1, i_end = total_atoms; i <= i_end; ++i ) {
 				int target_res=target;
 				if ( target_res>0 && side_chains_only_ ) {
 					if ( (rsd.atom(i).type()>=18)&&(rsd.atom(i).type()<=21) ) {
@@ -4221,7 +4221,7 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 
 				//Check to see if template point is within comparison's grid range
 				if ( ( self_x_index < xdim_ ) && ( self_y_index < ydim_ ) && ( self_z_index < zdim_ ) ) {
-					// note: no need to check that self_index >= 0 since it's of type "Size"
+					// note: no need to check that self_index >= 0 since it's of type "core::Size"
 					//    if ( ( self_x_index >= 0 ) && ( self_x_index < xdim_ ) && ( self_y_index >= 0 ) && ( self_y_index < ydim_ ) && ( self_z_index >= 0 ) && ( self_z_index < zdim_ ) ) {
 
 					// jk note: later, we could actually match sub-pocket types - will this give better results??
@@ -4510,9 +4510,9 @@ bool TargetPocketGrid::same_type_as_me( PocketGrid const & other ) const
 
 void ElectrostaticpotentialGrid::set_surface_esp_to_zero() {
 
-	for ( Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
-		for ( Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
-			for ( Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
+	for ( core::Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
+		for ( core::Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
+			for ( core::Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
 				if ( typGrid_[ix][iy][iz] == SURFACE ) {
 					espGrid_[ix][iy][iz] = 0.;
 				}
@@ -4526,9 +4526,9 @@ void ElectrostaticpotentialGrid::set_surface_esp_to_zero() {
 
 void ElectrostaticpotentialGrid::set_protein_esp_to_zero() {
 
-	for ( Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
-		for ( Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
-			for ( Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
+	for ( core::Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
+		for ( core::Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
+			for ( core::Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
 				if ( typGrid_[ix][iy][iz] == PROTEIN ) {
 					espGrid_[ix][iy][iz] = 0.;
 				}
@@ -4610,9 +4610,9 @@ void ElectrostaticpotentialGrid::cap_espGrid() {
 	using namespace basic::options;
 	core::Real const cap_esp(option[ OptionKeys::fingerprint::cap_e_potential ]);
 
-	for ( Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
-		for ( Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
-			for ( Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
+	for ( core::Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
+		for ( core::Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
+			for ( core::Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
 				if ( espGrid_[ix][iy][iz] > cap_esp ) {
 					espGrid_[ix][iy][iz] = cap_esp;
 				} else if ( espGrid_[ix][iy][iz] < -(cap_esp) ) {
@@ -4686,9 +4686,9 @@ void ElectrostaticpotentialGrid::get_DELPHI_espGrid_values( std::string const & 
 	std::getline(inputFile, newline);
 	std::getline(inputFile, newline);
 	std::getline(inputFile, newline);
-	for ( Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
-		for ( Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
-			for ( Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
+	for ( core::Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
+		for ( core::Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
+			for ( core::Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
 				inputFile >> espGrid_[ix][iy][iz];
 			}
 		}
@@ -4770,9 +4770,9 @@ void ElectrostaticpotentialGrid::print_to_oegrid( std::string const & output_OEg
 	outFile << buffer << std::endl;
 	outFile << "Values:" << std::endl;
 
-	for ( Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
-		for ( Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
-			for ( Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
+	for ( core::Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
+		for ( core::Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
+			for ( core::Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
 				outFile<<espGrid_[ix][iy][iz]<<'\t'<<typGrid_[ix][iy][iz]<<std::endl;
 			}
 		}
@@ -4870,9 +4870,9 @@ void ElectrostaticpotentialGrid::fill_espGrid_values( std::string const & input_
 	std::getline(inputFile, newline);
 	std::getline(inputFile, newline);
 
-	for ( Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
-		for ( Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
-			for ( Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
+	for ( core::Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
+		for ( core::Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
+			for ( core::Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
 				inputFile >> espGrid_[ix][iy][iz];
 			}
 		}
@@ -4905,9 +4905,9 @@ void ElectrostaticpotentialGrid::fill_espGrid_values_with_type( std::string cons
 
 	core::Real a;
 	core::Size b;
-	for ( Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
-		for ( Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
-			for ( Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
+	for ( core::Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
+		for ( core::Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
+			for ( core::Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
 				std::getline(inputFile, newline);
 				std::istringstream lin;
 				lin.str(newline);
@@ -4937,7 +4937,7 @@ void ElectrostaticpotentialGrid::mark_protein_espGrid_points( core::pose::Pose c
 		} else {
 			total_atoms = rsd.nheavyatoms();
 		}
-		for ( Size i = 1, i_end = total_atoms; i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = total_atoms; i <= i_end; ++i ) {
 			mark_atom_espGrid_points(rsd.atom(i).xyz(), rsd.atom_type(i).lj_radius());
 		}
 	}
@@ -4995,9 +4995,9 @@ void ElectrostaticpotentialGrid::mark_atom_espGrid_points( numeric::xyzVector<co
 void  ElectrostaticpotentialGrid::assign_esp_for_surface_grid_points( std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list ) {
 
 	bool found_surface = false;
-	for ( Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
-		for ( Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
-			for ( Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
+	for ( core::Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
+		for ( core::Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
+			for ( core::Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
 				numeric::xyzVector<core::Real> grid_cart;
 				grid_cart.x() = ix * espGrid_spacing_ + ( espGrid_mid_.x() - ((static_cast<core::Real>(espGrid_dim_.x()-1)/2) * espGrid_spacing_) );
 				grid_cart.y() = iy * espGrid_spacing_ + ( espGrid_mid_.y() - ((static_cast<core::Real>(espGrid_dim_.y()-1)/2) * espGrid_spacing_) );
@@ -5051,7 +5051,7 @@ void  ElectrostaticpotentialGrid::assign_esp_for_protein_grid_points( core::pose
 		} else {
 			total_atoms = rsd.nheavyatoms();
 		}
-		for ( Size i = 1, i_end = total_atoms; i <= i_end; ++i ) {
+		for ( core::Size i = 1, i_end = total_atoms; i <= i_end; ++i ) {
 			numeric::xyzVector<core::Real> grid_coord;
 			convert_cartesian_to_grid(rsd.atom(i).xyz(),  espGrid_mid_, espGrid_dim_, espGrid_spacing_, grid_coord);
 			if ( ((grid_coord.x() >= espGrid_dim_.x())||(grid_coord.x() < 0)) || ((grid_coord.y() >= espGrid_dim_.y())||(grid_coord.y() < 0)) || ((grid_coord.z() >= espGrid_dim_.z())||(grid_coord.z() < 0)) ) {
@@ -5069,9 +5069,9 @@ void  ElectrostaticpotentialGrid::assign_esp_for_protein_grid_points( core::pose
 
 void  ElectrostaticpotentialGrid::assign_esp_for_atom_grid_points( numeric::xyzVector<core::Real> atom_coord, core::Real const & inflated_radius ) {
 
-	for ( Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
-		for ( Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
-			for ( Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
+	for ( core::Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
+		for ( core::Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
+			for ( core::Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
 				if ( (typGrid_[ix][iy][iz] == PROTEIN) || (typGrid_[ix][iy][iz] == SURFACE) ) continue; // skip points that are already assigned as protein or surface
 				numeric::xyzVector<core::Real> grid_cart;
 				grid_cart.x() = ix * espGrid_spacing_ + ( espGrid_mid_.x() - ((static_cast<core::Real>(espGrid_dim_.x()-1)/2) * espGrid_spacing_) );
@@ -5118,9 +5118,9 @@ void ElectrostaticpotentialGrid::write_connollySurface_to_pdb( std::list< numeri
 void  ElectrostaticpotentialGrid::mark_buried_solvent_points( core::pose::Pose const &, std::list< numeric::xyzVector<core::Real> > const & ) {
 
 	bool found_protein;
-	for ( Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
-		for ( Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
-			for ( Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
+	for ( core::Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
+		for ( core::Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
+			for ( core::Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
 				found_protein = false;
 				if ( (typGrid_[ix][iy][iz] == PROTEIN) || (typGrid_[ix][iy][iz] == SURFACE) ) continue; // skip points that are already assigned as protein or surface
 
@@ -5191,9 +5191,9 @@ void  ElectrostaticpotentialGrid::mark_buried_solvent_points( core::pose::Pose c
 	}
 
 	//Assign PSUDO_PROTIEN points as PROTEIN points
-	for ( Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
-		for ( Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
-			for ( Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
+	for ( core::Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
+		for ( core::Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
+			for ( core::Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
 				if ( typGrid_[ix][iy][iz] == PSEUDO_PROTEIN ) { typGrid_[ix][iy][iz] = PROTEIN;}
 			}
 		}
@@ -5208,9 +5208,9 @@ void ElectrostaticpotentialGrid::write_espGrid_to_pdb( std::string const & outpu
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_pdbname, std::ios::out);
 
-	for ( Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
-		for ( Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
-			for ( Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
+	for ( core::Size iz=0; iz<espGrid_dim_.z(); ++iz ) {
+		for ( core::Size iy=0; iy<espGrid_dim_.y(); ++iy ) {
+			for ( core::Size ix=0; ix<espGrid_dim_.x(); ++ix ) {
 
 				core::Real xcoord = ix * espGrid_spacing_ + ( espGrid_mid_.x() - ((static_cast<core::Real>(espGrid_dim_.x()-1)/2) * espGrid_spacing_) );
 				core::Real ycoord = iy * espGrid_spacing_ + ( espGrid_mid_.y() - ((static_cast<core::Real>(espGrid_dim_.y()-1)/2) * espGrid_spacing_) );
@@ -5240,9 +5240,9 @@ void EggshellGrid::get_connolly_eggshell_on_grid( std::list< numeric::xyzVector<
 	bool found_surface = false;
 	//assign surface point for eggGrid to get the eggshell points
 	eggshell_coord_list_.clear();
-	for ( Size iz=0; iz<eggGrid.dim_.z(); ++iz ) {
-		for ( Size iy=0; iy<eggGrid.dim_.y(); ++iy ) {
-			for ( Size ix=0; ix<eggGrid.dim_.x(); ++ix ) {
+	for ( core::Size iz=0; iz<eggGrid.dim_.z(); ++iz ) {
+		for ( core::Size iy=0; iy<eggGrid.dim_.y(); ++iy ) {
+			for ( core::Size ix=0; ix<eggGrid.dim_.x(); ++ix ) {
 				numeric::xyzVector<core::Real> grid_coord(ix,iy,iz);
 				numeric::xyzVector<core::Real> grid_cart;
 				convert_grid_to_cartesian(grid_coord, eggGrid.mid_, eggGrid.dim_, eggGrid.spacing_, grid_cart);
@@ -5260,9 +5260,9 @@ void EggshellGrid::get_connolly_eggshell_on_grid( std::list< numeric::xyzVector<
 
 	//assign surface point for extGrid (to get extra eggshell points)
 	extra_coord_list_.clear();
-	for ( Size iz=0; iz<extGrid.zdim_; ++iz ) {
-		for ( Size iy=0; iy<extGrid.ydim_; ++iy ) {
-			for ( Size ix=0; ix<extGrid.xdim_; ++ix ) {
+	for ( core::Size iz=0; iz<extGrid.zdim_; ++iz ) {
+		for ( core::Size iy=0; iy<extGrid.ydim_; ++iy ) {
+			for ( core::Size ix=0; ix<extGrid.xdim_; ++ix ) {
 				numeric::xyzVector<core::Real> grid_coord(ix,iy,iz);
 				numeric::xyzVector<core::Real> grid_cart;
 				convert_grid_to_cartesian(grid_coord, eggGrid.mid_, eggGrid.dim_, eggGrid.spacing_, grid_cart);
@@ -5577,7 +5577,7 @@ EggshellGrid::EggshellGrid( const PocketGrid& grd, core::pose::Pose const & liga
 	core::Size ligand_total_atoms = curr_rsd.nheavyatoms();
 	numeric::xyzVector<core::Real> lig_atom_coord;
 	std::list< numeric::xyzVector<core::Real> > lig_atom_coord_list;
-	for ( Size i = 1, i_end = ligand_total_atoms; i <= i_end; ++i ) {
+	for ( core::Size i = 1, i_end = ligand_total_atoms; i <= i_end; ++i ) {
 		lig_atom_coord.x() = curr_rsd.atom(i).xyz()(1);
 		lig_atom_coord.y() = curr_rsd.atom(i).xyz()(2);
 		lig_atom_coord.z() = curr_rsd.atom(i).xyz()(3);
@@ -5853,7 +5853,7 @@ core::Real EggshellGrid::get_eggshell_distance( EggshellGrid const & template_eg
 
 		//Check to see if template point is within comparison's grid range
 		if ( ( self_x_index < xdim_ ) && ( self_y_index < ydim_ ) && ( self_z_index < zdim_ ) ) {
-			// note: no need to check that self_index >= 0 since it's of type "Size"
+			// note: no need to check that self_index >= 0 since it's of type "core::Size"
 			//  if ( ( self_x_index >= 0 ) && ( self_x_index < xdim_ ) && ( self_y_index >= 0 ) && ( self_y_index < ydim_ ) && ( self_z_index >= 0 ) && ( self_z_index < zdim_ ) ) {
 			//See if template point is eggshell for comparison
 			if ( grid_[self_x_index][self_y_index][self_z_index] == EGGSHELL ) {

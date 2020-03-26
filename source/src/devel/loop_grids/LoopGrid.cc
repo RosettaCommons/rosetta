@@ -48,11 +48,11 @@ LoopGrid::LoopGrid( Pose const &pose, Loop const &loop ) :
 	Vector center1 = pose.residue(loop.start()-1).atom("CA").xyz();
 	Vector center2 = pose.residue(loop.stop()+1).atom("CA").xyz();
 
-	Size ngrids = grids_.size();
-	for ( Size i=1; i<=ngrids; i++ ) {
+	core::Size ngrids = grids_.size();
+	for ( core::Size i=1; i<=ngrids; i++ ) {
 		//for each grid
-		Size n1 = i+1;          //distance to the left root
-		Size n2 = ngrids+2-i;   //distance to the right root
+		core::Size n1 = i+1;          //distance to the left root
+		core::Size n2 = ngrids+2-i;   //distance to the right root
 		Real r1 = loop_length_cutoff[n1];
 		Real r2 = loop_length_cutoff[n2];
 		TR << "Grid " << i << " : init ...  " << "r1=" << r1 << ", r2=" << r2 << endl;
@@ -79,7 +79,7 @@ void LoopGrid::create_grid_and_by_two_sphere( Bool3DGridOP &gridop,
 	static const Real loop_ca_pro_cutoff2 = loop_ca_pro_cutoff*loop_ca_pro_cutoff;
 	static const Real too_far_away_cutoff = 18.0;
 	static const Real too_far_away_cutoff2 = too_far_away_cutoff*too_far_away_cutoff;
-	static const Size n_in_bump_cutoff = 8;
+	static const core::Size n_in_bump_cutoff = 8;
 
 	//overlap of the cubes that contain the spheres
 	Vector overlap_low(
@@ -112,11 +112,11 @@ void LoopGrid::create_grid_and_by_two_sphere( Bool3DGridOP &gridop,
 	Real CA_radius = BumpGrid::probe_radius(C_ALA);
 	Bin3D dimsizes=grid.dimsizes();
 	Bin3D bin;
-	for ( Size i=0; i<dimsizes[1]; i++ ) {
+	for ( core::Size i=0; i<dimsizes[1]; i++ ) {
 		bin[1] = i;
-		for ( Size j=0; j<dimsizes[2]; j++ ) {
+		for ( core::Size j=0; j<dimsizes[2]; j++ ) {
 			bin[2] = j;
-			for ( Size k=0; k<dimsizes[3]; k++ ) {
+			for ( core::Size k=0; k<dimsizes[3]; k++ ) {
 				bin[3] = k;
 
 				//all corners
@@ -131,7 +131,7 @@ void LoopGrid::create_grid_and_by_two_sphere( Bool3DGridOP &gridop,
 					bool not_far(false);//not very far away
 					bool not_bump(true);//not in bump region
 
-					for ( Size n=1,nr=pose_.size(); n<=nr && not_bump; n++ ) {
+					for ( core::Size n=1,nr=pose_.size(); n<=nr && not_bump; n++ ) {
 						if ( n==loop_.start() ) n+=loop_.size();
 						Vector center = pose_.residue(n).atom("CA").xyz();
 						//the reside is too far away from this bin
@@ -139,8 +139,8 @@ void LoopGrid::create_grid_and_by_two_sphere( Bool3DGridOP &gridop,
 
 						//go through this residue
 						core::conformation::ResidueCOP res( pose_.residue(n).get_self_ptr() );
-						Size na = res->atoms().size();
-						for ( Size ia=1; ia<=na && not_bump; ia++ ) {
+						core::Size na = res->atoms().size();
+						for ( core::Size ia=1; ia<=na && not_bump; ia++ ) {
 							//for each atom
 							//we need the r and xyz
 							//place a Calpha at the center of the bin
@@ -157,8 +157,8 @@ void LoopGrid::create_grid_and_by_two_sphere( Bool3DGridOP &gridop,
 							//get radius of probe
 							Real r_probe = BumpGrid::probe_radius(probe_radius_for_atom_type(res->atom(ia).type()));
 							Real r_probe_squared = (r_probe+CA_radius)*(r_probe+CA_radius);
-							Size n_in=0;
-							for ( Size ic=1; ic<=8; ic++ ) {
+							core::Size n_in=0;
+							for ( core::Size ic=1; ic<=8; ic++ ) {
 								//for each corner
 								Real dc_squared = res->xyz(ia).distance_squared(grid_corners[ic]);
 								if ( dc_squared < r_probe_squared ) {
@@ -210,7 +210,7 @@ void LoopGrid::create_grid_and_by_two_sphere( Bool3DGridOP &gridop,
 }
 
 /// @brief output the ndxth grid to file fn
-void LoopGrid::write_grids_file(const char *fn, Size ndx)
+void LoopGrid::write_grids_file(const char *fn, core::Size ndx)
 {
 	Bin3D dimsizes=grids_[ndx]->dimsizes();
 	BoundingBox bb=grids_[ndx]->actual_bb();
@@ -226,11 +226,11 @@ void LoopGrid::write_grids_file(const char *fn, Size ndx)
 	out << "LENGTH: " << width << " " << width << " " << width << endl;
 
 	Bin3D bin;
-	for ( Size i=0; i<dimsizes[1]; i++ ) {
+	for ( core::Size i=0; i<dimsizes[1]; i++ ) {
 		bin[1] = i;
-		for ( Size j=0; j<dimsizes[2]; j++ ) {
+		for ( core::Size j=0; j<dimsizes[2]; j++ ) {
 			bin[2] = j;
-			for ( Size k=0; k<dimsizes[3]; k++ ) {
+			for ( core::Size k=0; k<dimsizes[3]; k++ ) {
 				bin[3] = k;
 				if ( grids_[ndx]->occupied(bin) ) out<<"1";
 				else out<<"0";
@@ -245,7 +245,7 @@ void LoopGrid::write_grids_file(const char *fn, Size ndx)
 bool LoopGrid::occupied( Vector const & xyz ) const
 {
 	//test in every grid
-	for ( Size i=1, ng=grids_.size(); i<=ng; i++ ) {
+	for ( core::Size i=1, ng=grids_.size(); i<=ng; i++ ) {
 		if ( grids_[i]->occupied(xyz) ) return true;
 	}
 	return false;
@@ -253,7 +253,7 @@ bool LoopGrid::occupied( Vector const & xyz ) const
 
 bool LoopGrid::occupied( Bin3D const & bin ) const
 {
-	for ( Size i=1, ng=grids_.size(); i<=ng; i++ ) {
+	for ( core::Size i=1, ng=grids_.size(); i<=ng; i++ ) {
 		if ( grids_[i]->occupied(bin) ) return true;
 	}
 	return false;
@@ -264,8 +264,8 @@ bool LoopGrid::occupied( Pose const &pose ) const
 	//makesure the same backbone
 	debug_assert( pose.size() == pose_.size() );
 	bool in_grid(true);
-	for ( Size i=1, ng=grids_.size(); i<=ng; i++ ) {
-		Size nr = loop_.start() + i;
+	for ( core::Size i=1, ng=grids_.size(); i<=ng; i++ ) {
+		core::Size nr = loop_.start() + i;
 		if ( !grids_[i]->occupied(pose.residue(nr).atom("CA").xyz()) ) {
 			TR << "LoopGridTest: my fault: nres=" << nr <<" ngrid="<< i << endl;
 			in_grid = false;
@@ -275,7 +275,7 @@ bool LoopGrid::occupied( Pose const &pose ) const
 	return in_grid;
 }
 
-bool LoopGrid::occupied( Pose const &pose, Size start ) const
+bool LoopGrid::occupied( Pose const &pose, core::Size start ) const
 {
 	//the pose is only a part of the whole protein (loop)
 	//start in the first residue's number in the old one
@@ -283,8 +283,8 @@ bool LoopGrid::occupied( Pose const &pose, Size start ) const
 	debug_assert( pose.size() >= loop_.stop()-start );
 
 	bool in_grid(true);
-	for ( Size i=1, ng=grids_.size(); i<=ng; i++ ) {
-		Size nr = i + loop_.start() + 1 - start ;
+	for ( core::Size i=1, ng=grids_.size(); i<=ng; i++ ) {
+		core::Size nr = i + loop_.start() + 1 - start ;
 		if ( !grids_[i]->occupied(pose.residue(nr).atom("CA").xyz()) ) {
 			in_grid = false;
 			break;
@@ -293,7 +293,7 @@ bool LoopGrid::occupied( Pose const &pose, Size start ) const
 	return in_grid;
 }
 
-bool LoopGrid::occupied( Pose const &pose, Size start, Size stop ) const
+bool LoopGrid::occupied( Pose const &pose, core::Size start, core::Size stop ) const
 {
 	//the pose is only a part of the loop
 	//start and stop is the old res number
@@ -302,9 +302,9 @@ bool LoopGrid::occupied( Pose const &pose, Size start, Size stop ) const
 	debug_assert( pose.size() == stop-start+1 );
 
 	bool in_grid(true);
-	for ( Size n=start; n<=stop; n++ ) {
-		Size i = n - loop_.start();
-		Size nr = n - start + 1;
+	for ( core::Size n=start; n<=stop; n++ ) {
+		core::Size i = n - loop_.start();
+		core::Size nr = n - start + 1;
 		if ( !grids_[i]->occupied(pose.residue(nr).atom("CA").xyz()) ) {
 			in_grid = false;
 			break;
@@ -313,7 +313,7 @@ bool LoopGrid::occupied( Pose const &pose, Size start, Size stop ) const
 	return in_grid;
 }
 
-bool LoopGrid::occupied( Residue const &res, Size nres ) const
+bool LoopGrid::occupied( Residue const &res, core::Size nres ) const
 {
 	debug_assert( nres >= loop_.start()+1 );
 	debug_assert( nres <= loop_.stop()-1 );

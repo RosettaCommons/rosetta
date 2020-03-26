@@ -40,7 +40,7 @@ using namespace core;
 void
 PDB::domain_action(
 	utility::vector1< std::string > const & tokens,
-	Size & which_token,
+	core::Size & which_token,
 	DomainInfo & domain
 ) const
 
@@ -57,7 +57,7 @@ PDB::domain_action(
 void
 NTermLinker::domain_action(
 	utility::vector1< std::string > const & tokens,
-	Size & which_token,
+	core::Size & which_token,
 	DomainInfo & domain
 ) const
 {
@@ -70,7 +70,7 @@ NTermLinker::domain_action(
 void
 CTermLinker::domain_action(
 	utility::vector1< std::string > const & tokens,
-	Size & which_token,
+	core::Size & which_token,
 	DomainInfo & domain
 ) const
 {
@@ -83,13 +83,13 @@ CTermLinker::domain_action(
 void
 NTrim::domain_action(
 	utility::vector1< std::string > const & tokens,
-	Size & which_token,
+	core::Size & which_token,
 	DomainInfo & domain
 ) const
 {
 	debug_assert( tokens[ which_token ] == name() );
 	std::string trim = tokens[ ++which_token ];
-	Size ntrim = atoi(trim.c_str());
+	core::Size ntrim = atoi(trim.c_str());
 	domain.set_trim_nterm( ntrim);
 	++which_token;
 }
@@ -97,13 +97,13 @@ NTrim::domain_action(
 void
 CTrim::domain_action(
 	utility::vector1< std::string > const & tokens,
-	Size & which_token,
+	core::Size & which_token,
 	DomainInfo & domain
 ) const
 {
 	debug_assert( tokens[ which_token ] == name() );
 	std::string trim = tokens[ ++which_token ];
-	Size ctrim = atoi(trim.c_str());
+	core::Size ctrim = atoi(trim.c_str());
 	domain.set_trim_cterm( ctrim );
 	++which_token;
 }
@@ -127,7 +127,7 @@ create_command_map()
 }
 //@brief utility function for DomainAssembly reader (checks for a leading # signaling a comment)
 bool
-comment_begin( utility::vector1< std::string > const & tokens, Size which_token )
+comment_begin( utility::vector1< std::string > const & tokens, core::Size which_token )
 {
 	return tokens[ which_token ][ 0 ] == '#';
 }

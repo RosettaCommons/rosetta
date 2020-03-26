@@ -50,7 +50,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -63,7 +63,7 @@
 namespace protocols {
 namespace rotamer_recovery {
 
-class PerNativeRRReporterHuman : public utility::pointer::ReferenceCount {
+class PerNativeRRReporterHuman : public utility::VirtualBase {
 
 public: // public constructors / destructors
 

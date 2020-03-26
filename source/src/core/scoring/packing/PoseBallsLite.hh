@@ -22,7 +22,7 @@
 
 #include <core/scoring/packing/Ball.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
@@ -32,9 +32,9 @@ namespace core {
 namespace scoring {
 namespace packing {
 
-class PoseBallsLite : public utility::pointer::ReferenceCount {
+class PoseBallsLite : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~PoseBallsLite() override;
 
 	// hmode = 0 --> no hydrogens

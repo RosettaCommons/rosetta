@@ -259,27 +259,27 @@ BuriedUnsatisfiedPolarsCalculator::lookup(
 ) const
 {
 	if ( key == "all_bur_unsat_polars" ) { // for Legacy behavior
-		basic::check_cast( valptr, &all_bur_unsat_polars_, "all_bur_unsat_polars expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( all_bur_unsat_polars_ );
+		basic::check_cast( valptr, &all_bur_unsat_polars_, "all_bur_unsat_polars expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( all_bur_unsat_polars_ );
 
 	} else if ( key == "bb_heavy_unsats" ) {
-		basic::check_cast( valptr, &bb_heavy_unsats_, "bb_heavy_unsats expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( bb_heavy_unsats_ );
+		basic::check_cast( valptr, &bb_heavy_unsats_, "bb_heavy_unsats expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( bb_heavy_unsats_ );
 
 	} else if ( key == "all_heavy_unsats" ) {
-		basic::check_cast( valptr, &all_heavy_unsats_, "all_heavy_unsats expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( all_heavy_unsats_ );
+		basic::check_cast( valptr, &all_heavy_unsats_, "all_heavy_unsats expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( all_heavy_unsats_ );
 
 	} else if ( key == "countable_nonheavy_unsats" ) {
-		basic::check_cast( valptr, &countable_nonheavy_unsats_, "hpol_unsats expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( countable_nonheavy_unsats_ );
+		basic::check_cast( valptr, &countable_nonheavy_unsats_, "hpol_unsats expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( countable_nonheavy_unsats_ );
 
 	} else if ( key == "atom_bur_unsat" ) {
 		basic::check_cast( valptr, &atom_bur_unsat_, "atom_bur_unsat expects to return a id::AtomID_Map< bool >" );
 		(static_cast<basic::MetricValue<core::id::AtomID_Map< bool > > *>(valptr))->set( atom_bur_unsat_ );
 
 	} else if ( key == "residue_bur_unsat_polars" ) {
-		basic::check_cast( valptr, &residue_bur_unsat_polars_, "residue_bur_unsat_polars expects to return a utility::vector1< Size >" );
+		basic::check_cast( valptr, &residue_bur_unsat_polars_, "residue_bur_unsat_polars expects to return a utility::vector1< core::Size >" );
 		(static_cast<basic::MetricValue<utility::vector1< core::Size > > *>(valptr))->set( residue_bur_unsat_polars_ );
 
 	} else {
@@ -389,8 +389,8 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 				if ( is_buried ) {
 
 					if ( legacy_counting_ ) {
-						Size satisfac_cut = satisfaction_cutoff( this_pose.residue( resnum ).type().atom_type( at ).name() );
-						Size bonded_heavyatoms = this_pose.residue( resnum ).n_bonded_neighbor_all_res( at ) - this_pose.residue( resnum ).type().number_bonded_hydrogens( at );
+						core::Size satisfac_cut = satisfaction_cutoff( this_pose.residue( resnum ).type().atom_type( at ).name() );
+						core::Size bonded_heavyatoms = this_pose.residue( resnum ).n_bonded_neighbor_all_res( at ) - this_pose.residue( resnum ).type().number_bonded_hydrogens( at );
 						if ( ( bonded_heavyatoms + atom_hbonds.value()[ atid ] ) < satisfac_cut ) {
 							all_bur_unsat_polars_++;
 							residue_bur_unsat_polars_[ resnum ]++;

@@ -17,14 +17,14 @@
 
 #include <basic/MetricValue.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 
 #include <platform/types.hh>
 #include <utility/down_cast.hh>
 #include <utility/vector1_bool.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/VirtualBase.fwd.hh>
 #include <utility/pointer/owning_ptr.functions.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -40,7 +40,7 @@
 namespace basic {
 
 
-class MetricValueBase : public utility::pointer::ReferenceCount {
+class MetricValueBase : public utility::VirtualBase {
 public:
 	// note: MetricValueBase must have a virtual function so that it will be polymorphic
 	// (specifically to allow dynamic casting)

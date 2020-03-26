@@ -35,7 +35,7 @@
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
@@ -83,7 +83,7 @@ struct ParameterizationCalculatorProperties {
 
 /// @brief  ParametrizationCalculator class, used for parametric backbone generation.
 ///
-class ParametrizationCalculator : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< ParametrizationCalculator >
+class ParametrizationCalculator : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< ParametrizationCalculator >
 {
 public:
 

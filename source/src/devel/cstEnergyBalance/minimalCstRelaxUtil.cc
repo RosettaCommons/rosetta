@@ -101,12 +101,12 @@ using namespace core::sequence;
 /// @brief Gets the x,y,z center of mass of a pose
 numeric::xyzVector< Real > get_centerOfMass(const Pose& pose ){
 	using namespace core::conformation;
-	Size nAtms=0;
+	core::Size nAtms=0;
 	numeric::xyzVector< Real > massSum(0.0,0.0,0.0);
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		core::conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
-		for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
+		for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
 			core::conformation::Atom const & atom( rsd.atom(j) );
 			massSum += atom.xyz();
 			nAtms++;
@@ -141,7 +141,7 @@ numeric::xyzVector< Real > get_centerOfMass(const Pose& templatePose, const Sequ
 
 /// @brief Generates a set of coordinate constraints that correspond to the
 /// CA that are being constrained.
-core::scoring::constraints::ConstraintSetOP convert_caAtomsToConstrain_to_coordCsts(std::set< Size > caAtomsToConstrain,const Pose& pose){
+core::scoring::constraints::ConstraintSetOP convert_caAtomsToConstrain_to_coordCsts(std::set< core::Size > caAtomsToConstrain,const Pose& pose){
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
 	using namespace core::conformation;
@@ -149,7 +149,7 @@ core::scoring::constraints::ConstraintSetOP convert_caAtomsToConstrain_to_coordC
 	using core::id::AtomID;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	std::set< Size >::iterator caAtomsToConstrain_start,caAtomsToConstrain_stop;
+	std::set< core::Size >::iterator caAtomsToConstrain_start,caAtomsToConstrain_stop;
 	Real const default_coord_sdev( option[ OptionKeys::relax::minirelax_sdev ]());
 	static string atom_name( "CA" );
 	ConstraintSetOP cst_set( new ConstraintSet );
@@ -157,7 +157,7 @@ core::scoring::constraints::ConstraintSetOP convert_caAtomsToConstrain_to_coordC
 	caAtomsToConstrain_stop = caAtomsToConstrain.end();
 	tr.Debug << "---------------------------------------------------" << std::endl;
 	while ( caAtomsToConstrain_start != caAtomsToConstrain_stop ) {
-		Size residue_id = *caAtomsToConstrain_start;
+		core::Size residue_id = *caAtomsToConstrain_start;
 		tr.Debug << "constraining " << residue_id << std::endl;
 		Residue const & rsd( pose.residue(residue_id) );
 		cst_set->add_constraint(ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(AtomID(rsd.atom_index("CA"),residue_id), AtomID(1,pose.size()), rsd.xyz(atom_name),utility::pointer::make_shared< core::scoring::func::HarmonicFunc >(0.0,default_coord_sdev)) ));
@@ -167,17 +167,17 @@ core::scoring::constraints::ConstraintSetOP convert_caAtomsToConstrain_to_coordC
 }
 
 /// @brief Generates a list of core residues to constrain. The residues chosen are the number of residues to constrain closest to the center of mass
-std::set<Size> get_coreResiduesToConstrain(const Size numbResiduesToConstrain,const Pose& pose){
-	std::set< Size > residuesToConstrain;
+std::set<core::Size> get_coreResiduesToConstrain(const core::Size numbResiduesToConstrain,const Pose& pose){
+	std::set< core::Size > residuesToConstrain;
 	numeric::xyzVector< Real > massSum = get_centerOfMass(pose);
-	std::multimap<Real,Size> distCenterMassCaPos;
-	std::multimap<Real,Size>::iterator start_massCenterCaPos,stop_massCenterCaPos;
+	std::multimap<Real,core::Size> distCenterMassCaPos;
+	std::multimap<Real,core::Size>::iterator start_massCenterCaPos,stop_massCenterCaPos;
 	static string atom_name( "CA" );
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		Real distance = pose.residue(ii).xyz(atom_name).distance(massSum);
-		distCenterMassCaPos.insert(std::pair<Real,Size>(distance,ii));
+		distCenterMassCaPos.insert(std::pair<Real,core::Size>(distance,ii));
 	}
-	Size added_numbCsts = 0;
+	core::Size added_numbCsts = 0;
 	start_massCenterCaPos = distCenterMassCaPos.begin();
 	stop_massCenterCaPos = distCenterMassCaPos.end();
 	while ( (start_massCenterCaPos != stop_massCenterCaPos)&&(added_numbCsts<numbResiduesToConstrain) ) {
@@ -191,13 +191,13 @@ std::set<Size> get_coreResiduesToConstrain(const Size numbResiduesToConstrain,co
 }
 
 /// @brief Generates a list of residues to constrain based on movement between relaxed pose and an unmodified pose.
-std::set<Size> get_distDeviationResiduesToConstrain(const Real distDeviationThresh,Size gapBtwConstrainedResidues, Pose& relaxed_pose, const Pose& unmodified_pose){
-	std::set< Size > residuesToConstrain;
+std::set<core::Size> get_distDeviationResiduesToConstrain(const Real distDeviationThresh,core::Size gapBtwConstrainedResidues, Pose& relaxed_pose, const Pose& unmodified_pose){
+	std::set< core::Size > residuesToConstrain;
 	static string atom_name( "CA" );
 	core::scoring::calpha_superimpose_pose(relaxed_pose, unmodified_pose);
-	Size count = 0;
+	core::Size count = 0;
 	tr.Debug << "---------------------------------------------------" << std::endl;
-	for ( Size ii = 1; ii <= unmodified_pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= unmodified_pose.size(); ++ii ) {
 		Real distance = relaxed_pose.residue(ii).xyz(atom_name).distance( unmodified_pose.residue(ii).xyz(atom_name));
 		tr.Debug << ii << "-" << distance << std::endl;
 		if ( distance >= distDeviationThresh ) {
@@ -214,18 +214,18 @@ std::set<Size> get_distDeviationResiduesToConstrain(const Real distDeviationThre
 }
 
 /// @brief Generates a list of residues to constrain based on the center of the 3 residues clossest to the center of mass of contiguous regions
-std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviationThresh, Pose& relaxed_pose, const Pose& unmodified_pose){
+std::set<core::Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviationThresh, Pose& relaxed_pose, const Pose& unmodified_pose){
 	//get all residues to constrain
-	std::set< Size >::iterator resSet_iter,tmp_resSet_iter;
-	std::set< Size > final_residuesToConstrain;
-	std::set< Size > all_residuesToConstrain = get_distDeviationResiduesToConstrain(distDeviationThresh,0,relaxed_pose,unmodified_pose);
-	Size CORE_RES_TO_CONSTRAIN = 3;
+	std::set< core::Size >::iterator resSet_iter,tmp_resSet_iter;
+	std::set< core::Size > final_residuesToConstrain;
+	std::set< core::Size > all_residuesToConstrain = get_distDeviationResiduesToConstrain(distDeviationThresh,0,relaxed_pose,unmodified_pose);
+	core::Size CORE_RES_TO_CONSTRAIN = 3;
 	//get constrained regions longer than 3 residues
 	if ( all_residuesToConstrain.size() <= 3 ) {
 		return all_residuesToConstrain;
 	} else {
-		Size firstContigRes,lastContigRes;
-		std::set< Size > tmp_residuesToConstrain;
+		core::Size firstContigRes,lastContigRes;
+		std::set< core::Size > tmp_residuesToConstrain;
 		resSet_iter = all_residuesToConstrain.begin();
 		firstContigRes = *resSet_iter;
 		lastContigRes = *resSet_iter;
@@ -287,7 +287,7 @@ std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviation
 
 /// @brief This util uses the above utilities to create a list of which CA residues to constrain.*Pose is not const because gaps of more than 3.5 angstroms are changed to be jumps
 /// First loop through it only constrains the core residues
-std::set<Size> get_residuesToConstrain(const Size /*coordCstGapInitial*/, const Real gdtThresh, Pose& pose){
+std::set<core::Size> get_residuesToConstrain(const core::Size /*coordCstGapInitial*/, const Real gdtThresh, Pose& pose){
 	using namespace protocols::moves;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
@@ -297,11 +297,11 @@ std::set<Size> get_residuesToConstrain(const Size /*coordCstGapInitial*/, const 
 	const Real DIST_DEVIATION_THRESH_START = 2.5;
 	const Real DIST_DEVIATION_THRESH_STEP = 0.5;
 	const Real COORDINATE_CST_WT = 1;
-	const Size CORE_RESIDUES_TO_CONSTRAIN = 3;
-	const Size RDS_OF_RELAX = 2; //default is 2
-	// Size coordCstGap = coordCstGapInitial; // Unused variable causes warning.
+	const core::Size CORE_RESIDUES_TO_CONSTRAIN = 3;
+	const core::Size RDS_OF_RELAX = 2; //default is 2
+	// core::Size coordCstGap = coordCstGapInitial; // Unused variable causes warning.
 	//Get input pdbs-------------------------------------------------------------
-	std::set< Size > caAtomsToConstrain;
+	std::set< core::Size > caAtomsToConstrain;
 	//if missing density exists fix gaps.
 	protocols::simple_moves::MissingDensityToJumpMoverOP fixMissingDensityMover( new protocols::simple_moves::MissingDensityToJumpMover() );
 	fixMissingDensityMover->apply(pose);
@@ -317,8 +317,8 @@ std::set<Size> get_residuesToConstrain(const Size /*coordCstGapInitial*/, const 
 	//Determine CA deviation that occurs in single round------------------
 	Real gdtmm(core::scoring::CA_gdtmm(*relaxed_poseOP,pose));
 	if ( gdtmm<gdtThresh ) {
-		std::set< Size > coreResiduesToConstrain = get_coreResiduesToConstrain(CORE_RESIDUES_TO_CONSTRAIN,pose);
-		std::set< Size > coreDistDeviationResiduesToConstrain = get_coreDistDeviationResiduesToConstrain(dist_deviation_thresh,*relaxed_poseOP,pose);
+		std::set< core::Size > coreResiduesToConstrain = get_coreResiduesToConstrain(CORE_RESIDUES_TO_CONSTRAIN,pose);
+		std::set< core::Size > coreDistDeviationResiduesToConstrain = get_coreDistDeviationResiduesToConstrain(dist_deviation_thresh,*relaxed_poseOP,pose);
 		std::set_union(coreResiduesToConstrain.begin(), coreResiduesToConstrain.end(), coreDistDeviationResiduesToConstrain.begin(),  coreDistDeviationResiduesToConstrain.end(), std::inserter(caAtomsToConstrain, caAtomsToConstrain.begin()));
 		ConstraintSetOP cst_set = convert_caAtomsToConstrain_to_coordCsts(caAtomsToConstrain,pose);
 		core::pose::PoseOP rd2relaxed_poseOP( new core::pose::Pose(pose) );
@@ -331,8 +331,8 @@ std::set<Size> get_residuesToConstrain(const Size /*coordCstGapInitial*/, const 
 		//repeat relaxing while gdt is below .99 and the dist_deviation_thresh has not fallen below 1.0
 		while ( (gdtmm < gdtThresh) && (dist_deviation_thresh >= DIST_DEVIATION_THRESH_MIN) ) {
 			tr.Debug << "gdtmm" << gdtmm << std::endl;
-			std::set< Size > tmp_caAtomsToConstrain;
-			std::set< Size > distDeviationResiduesToConstrain = get_distDeviationResiduesToConstrain(dist_deviation_thresh,0,*rd2relaxed_poseOP, pose);//on the second rounds and later gap size is always set to 0. That way this doesn't limits the number of loops
+			std::set< core::Size > tmp_caAtomsToConstrain;
+			std::set< core::Size > distDeviationResiduesToConstrain = get_distDeviationResiduesToConstrain(dist_deviation_thresh,0,*rd2relaxed_poseOP, pose);//on the second rounds and later gap size is always set to 0. That way this doesn't limits the number of loops
 			tr.Debug << "empty ?" << distDeviationResiduesToConstrain.empty() << std::endl;
 			if ( !distDeviationResiduesToConstrain.empty() ) {
 				std::set_union(caAtomsToConstrain.begin(), caAtomsToConstrain.end(), distDeviationResiduesToConstrain.begin(), distDeviationResiduesToConstrain.end(), std::inserter(tmp_caAtomsToConstrain, tmp_caAtomsToConstrain.begin()));
@@ -353,20 +353,20 @@ std::set<Size> get_residuesToConstrain(const Size /*coordCstGapInitial*/, const 
 }
 
 /// @brief Same as above but with defaults for gap size and gdt_thresh
-std::set<Size> get_residuesToConstrain(Pose& pose){
+std::set<core::Size> get_residuesToConstrain(Pose& pose){
 	return get_residuesToConstrain(0,.99,pose);
 }
 /// @brief Outputs coordinate contraints in standard coordinate constraint format
-void output_coordCsts(const std::set< Size > & caAtomsToConstrain,std::ostream & out, Pose& pose){
+void output_coordCsts(const std::set< core::Size > & caAtomsToConstrain,std::ostream & out, Pose& pose){
 	using namespace protocols;
 	using namespace relax;
 	if ( !caAtomsToConstrain.empty() ) { //size() != 0){//don't output coordinate constraints if no atoms to constrain
-		std::set< Size >::const_iterator caAtomsToConstrain_start;//,caAtomsToConstrain_stop;
+		std::set< core::Size >::const_iterator caAtomsToConstrain_start;//,caAtomsToConstrain_stop;
 		int virtualRes_id = pose.size();
 		numeric::xyzVector< core::Real > atomLocation(0.0,0.0,0.0);
 		caAtomsToConstrain_start = caAtomsToConstrain.begin();
 		while ( caAtomsToConstrain_start != caAtomsToConstrain.end() ) {
-			Size residue_id = *caAtomsToConstrain_start;
+			core::Size residue_id = *caAtomsToConstrain_start;
 			atomLocation = pose.residue(residue_id).xyz("CA");
 			out << "CoordinateConstraint  CA " << residue_id <<" N " << virtualRes_id  << " " << atomLocation.x() << " " << atomLocation.y() << " " << atomLocation.z() << " HARMONIC 0 1" << std::endl;
 			++caAtomsToConstrain_start;
@@ -379,17 +379,17 @@ void output_coordCsts(const std::set< Size > & caAtomsToConstrain,std::ostream &
 // @brief Outputs coordinate contraints in standard coordinate constraint
 // uses the partial thread and places the constraint in the center of mass
 // of mass of the partial thread.
-void output_coordCsts(const std::set< Size > & caAtomsToConstrain,std::ostream & out, Pose& pose, const SequenceAlignment aln,const string query_sequence, bool only_res_out){
+void output_coordCsts(const std::set< core::Size > & caAtomsToConstrain,std::ostream & out, Pose& pose, const SequenceAlignment aln,const string query_sequence, bool only_res_out){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
-	std::set< Size >::const_iterator caAtomsToConstrain_start;//,caAtomsToConstrain_stop;
+	std::set< core::Size >::const_iterator caAtomsToConstrain_start;//,caAtomsToConstrain_stop;
 	// AMW: cppcheck flags this check as being possibly inefficcient
 	if ( !caAtomsToConstrain.empty() ) { //size() > 0){
 		if ( only_res_out ) {
 			caAtomsToConstrain_start = caAtomsToConstrain.begin();
 			while ( caAtomsToConstrain_start != caAtomsToConstrain.end() ) {
-				Size templateResidue_id = aln.sequence_mapping(2,1)[*caAtomsToConstrain_start]; //The remaped CA position
+				core::Size templateResidue_id = aln.sequence_mapping(2,1)[*caAtomsToConstrain_start]; //The remaped CA position
 				if ( templateResidue_id !=0 ) {
 					out << templateResidue_id << std::endl;
 				}
@@ -403,9 +403,9 @@ void output_coordCsts(const std::set< Size > & caAtomsToConstrain,std::ostream &
 			out << "CoordinateConstraint ORIG " << virtualRes_id << " ORIG " << virtualRes_id << " " <<  atomLocation.x() << " " << atomLocation.y() << " " << atomLocation.z() << " HARMONIC 0 1" << std::endl;
 			caAtomsToConstrain_start = caAtomsToConstrain.begin();
 			while ( caAtomsToConstrain_start != caAtomsToConstrain.end() ) {
-				Size templateResidue_id = aln.sequence_mapping(2,1)[*caAtomsToConstrain_start]; //The remaped CA position
+				core::Size templateResidue_id = aln.sequence_mapping(2,1)[*caAtomsToConstrain_start]; //The remaped CA position
 				if ( templateResidue_id !=0 ) {
-					Size residue_id =*caAtomsToConstrain_start;
+					core::Size residue_id =*caAtomsToConstrain_start;
 					atomLocation = pose.residue(residue_id).xyz("CA");
 					out << "CoordinateConstraint  CA " << templateResidue_id <<" ORIG " << virtualRes_id  << " " << atomLocation.x() << " " << atomLocation.y() << " " << atomLocation.z() << " HARMONIC 0 1" << std::endl;
 				}
@@ -420,15 +420,15 @@ void output_coordCsts(const std::set< Size > & caAtomsToConstrain,std::ostream &
 /// constraint format saves the data as a list of CA to constrain.
 ///For this particular implementation of reading the constraints in I only
 /// care about the residue id's
-std::set< Size > input_coordCsts(const string inputFileName){
-	std::set< Size > caAtomsToConstrain;
+std::set< core::Size > input_coordCsts(const string inputFileName){
+	std::set< core::Size > caAtomsToConstrain;
 	utility::io::izstream data( inputFileName.c_str() );
 	if ( !data ) {
 		utility_exit_with_message( "[ERROR] Unable to open constraints file: "+ inputFileName );
 	}
 	std::string line;
 	while ( getline( data, line ) ) {
-		Size res1, res2;
+		core::Size res1, res2;
 		std::string cstType, name1, name2;
 		std::string func_type;
 		numeric::xyzVector< Real > xyz_target(0.0,0.0,0.0);
@@ -468,11 +468,11 @@ map<string,SequenceAlignment> input_alignmentsMapped(bool mapToPdbid){
 	map<string,SequenceAlignment>::iterator location_alns;
 	if ( option[ in::file::alignment ].user() ) {
 		vector1< std::string > align_fns = option[ in::file::alignment ]();
-		for ( Size ii = 1; ii <= align_fns.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= align_fns.size(); ++ii ) {
 			vector1< SequenceAlignment > tmp_alns = core::sequence::read_aln(
 				option[ cm::aln_format ](), align_fns[ii]
 			);
-			for ( Size jj = 1; jj <= tmp_alns.size(); ++jj ) {
+			for ( core::Size jj = 1; jj <= tmp_alns.size(); ++jj ) {
 				string mapToName;
 				if ( mapToPdbid == true ) {
 					string aln_id = tmp_alns[jj].sequence(2)->id();
@@ -506,11 +506,11 @@ vector1<SequenceAlignment> input_alignments(){
 }
 
 /// @brief gets the first and last residues from an alignment ignoring residues that are gapped alnIdx can be 1 or 2 depending if you want the first/last from the target or template.
-void get_terminal_aln_res(const SequenceAlignment aln,const Size alnIdx, Size & firstRes, Size & lastRes){
+void get_terminal_aln_res(const SequenceAlignment aln,const core::Size alnIdx, core::Size & firstRes, core::Size & lastRes){
 	firstRes = 0;
 	lastRes = 0;
 	//gets the first and last residues
-	for ( Size ii=1; ii<=aln.length(); ii++ ) {
+	for ( core::Size ii=1; ii<=aln.length(); ii++ ) {
 		if ( !aln.is_gapped(ii) ) {
 			lastRes = aln.sequence_indices(ii)[alnIdx];
 			if ( firstRes ==0 ) {

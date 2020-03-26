@@ -120,8 +120,8 @@ JumpSample::JumpSample( JumpSetup const& def ) :
 		jumps_( 2, ct ) = it->jump_.end_;
 		jump_atoms_( 1, ct ) = "";
 		jump_atoms_( 2, ct ) = "";
-		Size const crs ( it->cut_reg_.start_ );
-		Size const cre ( it->cut_reg_.end_ );
+		core::Size const crs ( it->cut_reg_.start_ );
+		core::Size const cre ( it->cut_reg_.end_ );
 		cuts_( ct ) = crs + std::lround( numeric::random::uniform()*( cre-crs ) );
 	}
 	generate_tree_from_jumps_and_cuts();
@@ -131,7 +131,7 @@ JumpSample::JumpSample( JumpSetup const& def ) :
 	}
 }
 
-JumpSample::JumpSample ( Size total_residue, Size njump, FArray2D_int jumps, FArray1D_int cuts, Size root ) :
+JumpSample::JumpSample ( core::Size total_residue, core::Size njump, FArray2D_int jumps, FArray1D_int cuts, core::Size root ) :
 	total_residue_( total_residue ),
 	njump_( njump ),
 	jumps_ ( jumps ),
@@ -143,7 +143,7 @@ JumpSample::JumpSample ( Size total_residue, Size njump, FArray2D_int jumps, FAr
 	jumps2pairings();
 }
 
-JumpSample::JumpSample ( Size total_residue, Size njump, FArray2D_int jumps, FArray2D<std::string> jump_atoms, FArray1D_int cuts, Size root) :
+JumpSample::JumpSample ( core::Size total_residue, core::Size njump, FArray2D_int jumps, FArray2D<std::string> jump_atoms, FArray1D_int cuts, core::Size root) :
 	total_residue_( total_residue ),
 	njump_( njump ),
 	jumps_ ( jumps ),
@@ -155,7 +155,7 @@ JumpSample::JumpSample ( Size total_residue, Size njump, FArray2D_int jumps, FAr
 	jumps2pairings();
 }
 
-JumpSample::JumpSample ( Size total_residue, core::scoring::dssp::PairingsList const& jump_pairings, core::fragment::SecondaryStructure const& ssdef, Size root ) :
+JumpSample::JumpSample ( core::Size total_residue, core::scoring::dssp::PairingsList const& jump_pairings, core::fragment::SecondaryStructure const& ssdef, core::Size root ) :
 	total_residue_( total_residue ),
 	jump_pairings_( jump_pairings ),
 	bValidTree_( false )
@@ -181,7 +181,7 @@ JumpSample::JumpSample ( Size total_residue, core::scoring::dssp::PairingsList c
 	}
 }
 
-JumpSample::JumpSample ( Size total_residue, core::scoring::dssp::PairingsList const& jump_pairings, FArray1D_float const& cut_probability, Size root) :
+JumpSample::JumpSample ( core::Size total_residue, core::scoring::dssp::PairingsList const& jump_pairings, FArray1D_float const& cut_probability, core::Size root) :
 	total_residue_( total_residue ),
 	jump_pairings_( jump_pairings ),
 	bValidTree_( false )
@@ -212,14 +212,14 @@ JumpSample::correct_jump_atoms_for_fragments() const {
 	using namespace kinematics;
 	if ( !bValidTree_ ) return;
 	runtime_assert( fold_tree_ != nullptr );
-	for ( Size i = 1; i <= njump_; ++i ) {
+	for ( core::Size i = 1; i <= njump_; ++i ) {
 		fold_tree_->set_jump_atoms( i, jump_atoms_(1,i), jump_atoms_(2,i) );
 	}
 	fold_tree_->put_jump_stubs_intra_residue();
 }
 
 void
-JumpSample::generate_tree_from_jumps_and_cuts( Size root) {
+JumpSample::generate_tree_from_jumps_and_cuts( core::Size root) {
 	if ( total_residue_ == 0 ) total_residue_ = 2500; //don't make it too big.. it alloates an FArray1bool in fold-tree with this size
 	fold_tree_ = utility::pointer::make_shared< kinematics::FoldTree >();
 	bValidTree_ = fold_tree_->tree_from_jumps_and_cuts( total_residue_, njump_, jumps_, cuts_, root, true /* verbose */ );
@@ -229,24 +229,24 @@ JumpSample::generate_tree_from_jumps_and_cuts( Size root) {
 void
 JumpSample::jumps2pairings() {
 	jump_pairings_.clear();
-	for ( Size jump_nr = 1; jump_nr <= size(); jump_nr++ ) {
+	for ( core::Size jump_nr = 1; jump_nr <= size(); jump_nr++ ) {
 		jump_pairings_.push_back( core::scoring::dssp::Pairing( jumps_(1, jump_nr ), jumps_(2, jump_nr), 0, 0 ) ); //initialized with 0 = unknown orientation/pleating
 	}
 }
 
 void
-JumpSample::generate_random_tree_from_jumps( FArray1D_float const& prob, Size root ) {
+JumpSample::generate_random_tree_from_jumps( FArray1D_float const& prob, core::Size root ) {
 	if ( total_residue_ == 0 ) total_residue_ = 2500;
 	fold_tree_ = utility::pointer::make_shared< kinematics::FoldTree >();
 	bValidTree_ = false;
-	Size attempts( 10 );
+	core::Size attempts( 10 );
 	while ( !bValidTree_ && attempts-- > 0 )  {
 		bValidTree_ =
 			fold_tree_->random_tree_from_jump_points( total_residue_, njump_, jumps_, prob, root, true /*yes we allow 1 nres jumps*/ );
 		if ( bValidTree_ ) {
 			cuts_.dimension( njump_ );
 			tr.Debug << "cut points ";// << std::endl;
-			for ( Size i = 1; i <= njump_; i++ ) {
+			for ( core::Size i = 1; i <= njump_; i++ ) {
 				cuts_( i ) = fold_tree_->cutpoint( i );
 				//don't except trees that cut at jump point
 				if ( fold_tree_->is_jump_point( cuts_( i ) ) ) {
@@ -281,13 +281,13 @@ void JumpSample::apply_to ( kinematics::FoldTreeOP pf ) {
 		resize( f.num_jump() );
 
 		// get jumps
-		for ( Size ct = 1; ct <= njump_; ct++ ) {
+		for ( core::Size ct = 1; ct <= njump_; ct++ ) {
 			jumps_(1,ct) = f.upstream_jump_residue( ct );
 			jumps_(2,ct) = f.downstream_jump_residue( ct );
 		}
 
 		// get cuts
-		for ( Size i = 1; i <= njump_; i++ ) {
+		for ( core::Size i = 1; i <= njump_; i++ ) {
 			cuts_( i ) = f.cutpoint( i );
 		}
 
@@ -297,7 +297,7 @@ void JumpSample::apply_to ( kinematics::FoldTreeOP pf ) {
 }
 
 void
-JumpSample::resize( Size njump ) {
+JumpSample::resize( core::Size njump ) {
 	jumps_.redimension( 2, njump );
 	jump_atoms_.redimension(2, njump);
 	cuts_.redimension( njump );
@@ -318,15 +318,15 @@ JumpSample::safe_secstruct( pose::Pose &pose ) const {
 	runtime_assert( total_residue_ == pose.size() );
 	runtime_assert( *fold_tree_ == pose.fold_tree() );
 
-	Size const num_jump ( size() );
-	Size const nres( pose.size() );
+	core::Size const num_jump ( size() );
+	core::Size const nres( pose.size() );
 
-	for ( Size i = 1; i <= num_jump; ++i ) {
-		for ( Size j = 1; j <= 2; ++j ) {
-			Size const pos = jumps_(j,i);
+	for ( core::Size i = 1; i <= num_jump; ++i ) {
+		for ( core::Size j = 1; j <= 2; ++j ) {
+			core::Size const pos = jumps_(j,i);
 			char const ss( pose.secstruct( pos ) );
 			if ( ss != 'L' ) {
-				for ( Size k = std::max( (Size) 1, pos-2 ), ke = std::min( nres, pos+2 );
+				for ( core::Size k = std::max( (core::Size) 1, pos-2 ), ke = std::min( nres, pos+2 );
 						k <= ke; ++k ) {
 					if ( pose.secstruct(k) != ss ) {
 						pose.set_secstruct( k, ss );
@@ -341,7 +341,7 @@ JumpSample::safe_secstruct( pose::Pose &pose ) const {
 void
 JumpSample::transfer_jumps( core::pose::Pose &pose, core::pose::Pose &native_pose ) const {
 	runtime_assert( pose.fold_tree() == *fold_tree_ );
-	for ( Size i=1; i<=size(); i++ ) {
+	for ( core::Size i=1; i<=size(); i++ ) {
 		kinematics::Jump aJump = native_pose.jump( i );
 		tr.Info << "transfer jump " << i <<" " <<  aJump <<std::endl;
 		pose.set_jump( i, aJump );
@@ -376,7 +376,7 @@ JumpSample::generate_jump_frames(
 	// find out how many different kind of fragments are we interested in:
 	// max of four: A 1 , A 2, P 1, P 2
 
-	for ( Size jump_nr = 1; jump_nr <= size(); jump_nr++ ) {
+	for ( core::Size jump_nr = 1; jump_nr <= size(); jump_nr++ ) {
 		int const startpos( jumps_( 1, jump_nr ) );
 		int const endpos( jumps_( 2, jump_nr ) );
 
@@ -407,7 +407,7 @@ JumpSample::generate_jump_frames(
 			}
 
 			JumpingFrameOP frame( new JumpingFrame( startpos, endpos, frag_data->size() ) );
-			Size pos = 1;
+			core::Size pos = 1;
 			if ( bWithTorsion && mm.get_bb( up_jump_res ) ) frame->set_pos( pos++, startpos );
 			frame->set_pos( pos++, startpos );
 			frame->set_pos( pos++, endpos );
@@ -422,7 +422,7 @@ JumpSample::generate_jump_frames(
 
 void
 JumpSample::steal_orientation_and_pleating( core::pose::Pose &native_pose ) {
-	for ( Size jump_nr=1; jump_nr<=size(); jump_nr++ ) {
+	for ( core::Size jump_nr=1; jump_nr<=size(); jump_nr++ ) {
 		// get native orientation to select the correct jump-geometries
 		core::scoring::dssp::Pairing & p = jump_pairings_[ jump_nr ];
 		tr.Info << "detect orientation and pleating for jump " << jump_nr <<" from " << p.Pos1() << " to " << p.Pos2() << std::endl;
@@ -440,7 +440,7 @@ bool JumpSample::has_orientation_and_pleating() const {
 }
 
 core::scoring::dssp::Pairing
-JumpSample::get_pairing( Size res1, Size res2 ) const {
+JumpSample::get_pairing( core::Size res1, core::Size res2 ) const {
 	runtime_assert ( has_orientation_and_pleating() );
 	for ( auto const & jump_pairing : jump_pairings_ ) {
 		if ( jump_pairing.Pos1() == res1 && jump_pairing.Pos2() == res2 ) return jump_pairing;
@@ -464,13 +464,13 @@ JumpSample::generate_jump_frags(
 	// find out how many different kind of fragments are we interested in:
 	// max of four: A 1 , A 2, P 1, P 2
 	runtime_assert( has_orientation_and_pleating() );
-	using JumpList = utility::vector1<Size>;
-	typedef std::map< std::pair< Size, Size >, JumpList > JumpOrientations;
+	using JumpList = utility::vector1<core::Size>;
+	typedef std::map< std::pair< core::Size, core::Size >, JumpList > JumpOrientations;
 	JumpOrientations jump_kind;
-	Size jump_nr ( 1 );
+	core::Size jump_nr ( 1 );
 	for ( auto const & jump_pairing : jump_pairings_ ) {
-		Size o_key ( jump_pairing.Orientation() ); // < 0 ? 1 : 2 );
-		Size p_key ( jump_pairing.Pleating() ); // < 0 ? 1 : 2 );
+		core::Size o_key ( jump_pairing.Orientation() ); // < 0 ? 1 : 2 );
+		core::Size p_key ( jump_pairing.Pleating() ); // < 0 ? 1 : 2 );
 		jump_kind[ std::make_pair( o_key, p_key ) ].push_back( jump_nr++ );
 	}
 
@@ -478,8 +478,8 @@ JumpSample::generate_jump_frags(
 	for ( JumpOrientations::const_iterator it=jump_kind.begin(), eit=jump_kind.end();
 			it!=eit;
 			++it ) {
-		Size o_key( it->first.first ); //orientation
-		Size p_key( it->first.second ); //pleating ... believe me or not, it is in first.second
+		core::Size o_key( it->first.first ); //orientation
+		core::Size p_key( it->first.second ); //pleating ... believe me or not, it is in first.second
 		FragDataOPs frag_data;
 		lib.create_jump_fragments( o_key, p_key, bWithTorsion, frag_data );
 		for ( int jump_nr : it->second ) {
@@ -500,7 +500,7 @@ JumpSample::generate_jump_frags(
 			runtime_assert( (down_jump_res == endpos  ) || (up_jump_res == endpos  ) );
 			runtime_assert( startpos != endpos );
 			if ( mm.get_bb( up_jump_res ) && mm.get_bb( down_jump_res ) ) {
-				Size const length( bWithTorsion ? 4 : 2 );
+				core::Size const length( bWithTorsion ? 4 : 2 );
 				runtime_assert( length == frag_data.front()->size() );
 				JumpingFrameOP frame = generate_empty_jump_frame( up_jump_res, down_jump_res, length );
 				frame->add_fragment( frag_data );
@@ -516,7 +516,7 @@ JumpSample::generate_jump_frags(
 
 void
 JumpSample::add_chainbreaks( pose::Pose &pose ) const {
-	for ( Size i = 1; i<= njump_; i++ ) {
+	for ( core::Size i = 1; i<= njump_; i++ ) {
 		if ( pose.residue_type( cuts_(i) ).has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) continue;
 		if ( pose.residue_type( cuts_(i)+1 ).has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ) continue;
 		tr.Debug << "add chainbreak variant to residues " << cuts_(i) << " and " << cuts_(i)+1 << std::endl;
@@ -526,9 +526,9 @@ JumpSample::add_chainbreaks( pose::Pose &pose ) const {
 }
 
 void
-JumpSample::add_chainbreaks( pose::Pose &pose, Size max_dist, core::kinematics::ShortestPathInFoldTree const& sp) const {
+JumpSample::add_chainbreaks( pose::Pose &pose, core::Size max_dist, core::kinematics::ShortestPathInFoldTree const& sp) const {
 	//remove_chainbreaks( pose ); not necessary if max_dist is monotonoically increaseing
-	for ( Size i = 1; i<= njump_; i++ ) {
+	for ( core::Size i = 1; i<= njump_; i++ ) {
 		if ( sp.dist( cuts_(i), cuts_(i)+1 ) <= max_dist
 				&& pose.residue( cuts_(i) ).is_polymer() && pose.residue( cuts_(i)+1 ).is_polymer() ) {
 			if ( pose.residue_type( cuts_(i) ).has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) continue;
@@ -543,7 +543,7 @@ JumpSample::add_chainbreaks( pose::Pose &pose, Size max_dist, core::kinematics::
 using namespace scoring::constraints;
 void
 JumpSample::add_chainbreaks_as_distance_constraint( pose::Pose &pose ) const {
-	for ( Size i = 1; i<= njump_; i++ ) {
+	for ( core::Size i = 1; i<= njump_; i++ ) {
 		core::scoring::func::FuncOP f( new ChainbreakDistFunc( 1.7424 ) );
 		pose.add_constraint(
 			scoring::constraints::ConstraintCOP( utility::pointer::make_shared< AtomPairConstraint >(
@@ -558,11 +558,11 @@ JumpSample::add_chainbreaks_as_distance_constraint( pose::Pose &pose ) const {
 void
 JumpSample::add_chainbreaks_as_distance_constraint(
 	pose::Pose &pose,
-	Size max_dist,
+	core::Size max_dist,
 	core::kinematics::ShortestPathInFoldTree const& sp
 ) const {
 	//remove_chainbreaks( pose ); not necessary if max_dist is monotonoically increaseing
-	for ( Size i = 1; i<= njump_; i++ ) {
+	for ( core::Size i = 1; i<= njump_; i++ ) {
 		if ( sp.dist( cuts_(i), cuts_(i)+1 ) <= max_dist ) {
 			tr.Debug << "add chainbreak as distance constraint to residues " << cuts_(i) << " and " << cuts_(i)+1 << std::endl;
 			core::scoring::func::FuncOP f( new ChainbreakDistFunc( 1.7424 ) );
@@ -577,18 +577,18 @@ JumpSample::add_chainbreaks_as_distance_constraint(
 
 void
 JumpSample::remove_chainbreaks( pose::Pose &pose ) const {
-	for ( Size i = 1; i<= njump_; i++ ) {
+	for ( core::Size i = 1; i<= njump_; i++ ) {
 		core::pose::remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_LOWER, cuts_(i) );
 		core::pose::remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_UPPER, cuts_(i)+1 );
 	}
 }
 
 std::ostream & operator <<(std::ostream & os, JumpSample const & t) {
-	for ( Size i=1; i<=t.size(); i++ ) {
+	for ( core::Size i=1; i<=t.size(); i++ ) {
 		os << RJ(4,t.jumps_(1,i)) << " " << RJ(4,t.jumps_(2,i)) << " | ";
 	}
 	os << "cuts:";
-	for ( Size i=1; i<=t.size(); i++ ) {
+	for ( core::Size i=1; i<=t.size(); i++ ) {
 		os << " " << RJ(4,t.cuts_(i));
 	}
 	return os;
@@ -599,7 +599,7 @@ JumpSample::dump_pymol( std::string fn ) const {
 	utility::io::ozstream out( fn );
 	if ( out ) {
 		out << "from pymol import cmd\n";
-		for ( Size i=1; i<=size(); i++ ) {
+		for ( core::Size i=1; i<=size(); i++ ) {
 			out << "cmd.select( \"jumps"<<i<<"\", \"resi "<<jumps_(1,i)<<"+"<<jumps_(2,i)<<"\");" << std::endl;
 			out << "cmd.show( \"sticks\", \"jumps"<<i<<"\");\n";
 			out << "cmd.select( \"cut"<<i<<"\", \"resi " <<cuts_(i)<<"\");\n";

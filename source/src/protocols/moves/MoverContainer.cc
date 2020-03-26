@@ -60,7 +60,7 @@ MoverContainer::MoverContainer( MoverContainer const & source ) : protocols::mov
 {
 	//remember that movers_ is a vector0
 	movers_.resize( source.movers_.size() );
-	for ( Size ii = 0; ii < source.movers_.size(); ++ii ) {
+	for ( core::Size ii = 0; ii < source.movers_.size(); ++ii ) {
 		movers_[ ii ] = source.movers_[ ii ]->clone();
 	}
 	weight_ = source.weight_;
@@ -85,7 +85,7 @@ std::string MoverContainer::get_mover( core::Size index ) const {
 // TODO: does it make sense to cal this also from add_mover? I think not (barak)
 void MoverContainer::set_input_pose( PoseCOP pose ){
 	this->Mover::set_input_pose( pose );
-	for ( Size i=0; i<movers_.size(); ++i ) {
+	for ( core::Size i=0; i<movers_.size(); ++i ) {
 		movers_[i]->set_input_pose( pose );
 	}
 }
@@ -95,7 +95,7 @@ void MoverContainer::set_input_pose( PoseCOP pose ){
 // TODO: does it make sense to call this also from add_mover? I think not (barak)
 void MoverContainer::set_native_pose( PoseCOP pose ){
 	this->Mover::set_native_pose( pose );
-	for ( Size i=0; i<movers_.size(); ++i ) {
+	for ( core::Size i=0; i<movers_.size(); ++i ) {
 		movers_[i]->set_native_pose( pose );
 	}
 }
@@ -103,7 +103,7 @@ void MoverContainer::set_native_pose( PoseCOP pose ){
 // Sets the current_tag_ for both the container and the contained movers
 void MoverContainer::set_current_tag( std::string const & new_tag ){
 	Mover::set_current_tag( new_tag );
-	for ( Size i=0; i<movers_.size(); ++i ) {
+	for ( core::Size i=0; i<movers_.size(); ++i ) {
 		movers_[i]->set_current_tag( new_tag );
 	}
 
@@ -200,7 +200,7 @@ void SequenceMover::apply( core::pose::Pose & pose )
 	type("");
 	if ( use_mover_status_ ) {
 
-		Size i = 0;
+		core::Size i = 0;
 		while ( i < movers_.size() ) {
 
 			core::pose::Pose storepose( pose );
@@ -222,7 +222,7 @@ void SequenceMover::apply( core::pose::Pose & pose )
 
 	} else {
 		// set the mover status from the last mover applied, but do not act on the mover status
-		for ( Size i=0; i<movers_.size(); ++i ) {
+		for ( core::Size i=0; i<movers_.size(); ++i ) {
 			movers_[i]->apply( pose );
 			type( type()+movers_[i]->type() );
 		}
@@ -250,7 +250,7 @@ void RandomMover::apply( core::pose::Pose & pose )
 		weight_sum += weight_[m];
 	}
 	type("");
-	for ( Size i=0; i< nmoves_; i++ ) {
+	for ( core::Size i=0; i< nmoves_; i++ ) {
 		// choose a move
 		Real movechoice = numeric::random::rg().uniform()*weight_sum;
 		Real sum=0.0;
@@ -413,7 +413,7 @@ std::ostream &operator<< (std::ostream &os, MoverContainer const &mover)
 	//moves::operator<<(os, mover);
 	os << "Mover name: " << mover.get_name() << ", Mover type: " << mover.get_type() << ", Mover current tag: " << mover.get_current_tag() << std::endl;
 	os << mover.size() << " movers are contained in the following order:" << std::endl;
-	for ( Size i=0; i<mover.size(); ++i ) {
+	for ( core::Size i=0; i<mover.size(); ++i ) {
 		os << "   Mover[" << i+1 << "]: " << mover.get_mover(i) << std::endl;
 	}
 

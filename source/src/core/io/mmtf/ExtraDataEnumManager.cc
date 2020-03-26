@@ -23,7 +23,7 @@ namespace io {
 namespace mmtf {
 
 ExtraDataEnumManager::ExtraDataEnumManager():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 	setup_data_names();
 }

@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_multistage_rosetta_scripts_cluster_ClusterMetricCreator_HH
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>
 
@@ -23,7 +23,7 @@ namespace protocols {
 namespace multistage_rosetta_scripts {
 namespace cluster {
 
-class ClusterMetricCreator : public utility::pointer::ReferenceCount
+class ClusterMetricCreator : public utility::VirtualBase
 {
 public:
 	ClusterMetricCreator(){}

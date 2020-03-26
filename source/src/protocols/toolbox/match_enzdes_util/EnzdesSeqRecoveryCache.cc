@@ -21,7 +21,7 @@
 #include <core/conformation/Residue.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
@@ -57,7 +57,7 @@ EnzdesSeqRecoveryCache::EnzdesSeqRecoveryCache() {
 
 //copy constructor
 EnzdesSeqRecoveryCache::EnzdesSeqRecoveryCache( EnzdesSeqRecoveryCache const & other ) :
-	ReferenceCount( other ) {
+	VirtualBase( other ) {
 	sequence_ = other.sequence_;
 	designable_residues_ = other.designable_residues_;
 }

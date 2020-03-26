@@ -32,7 +32,7 @@ class JumpStepWiseSampler: public StepWiseSamplerSized {
 public:
 
 	//constructor
-	JumpStepWiseSampler( Size const which_jump,
+	JumpStepWiseSampler( core::Size const which_jump,
 		utility::vector1< core::kinematics::Jump > const & jumps,
 		bool const choose_random = false );
 
@@ -57,7 +57,7 @@ public:
 	toolbox::SamplerPlusPlusType type() const override { return toolbox::JUMP; }
 
 protected:
-	Size which_jump_;
+	core::Size which_jump_;
 	utility::vector1< core::kinematics::Jump > jumps_;
 
 };

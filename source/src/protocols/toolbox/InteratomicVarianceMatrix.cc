@@ -47,17 +47,17 @@ using namespace numeric::model_quality; //for rms functions
 //compute matrix of distance variances:
 // in: coords : 3 x natoms x ndecoys
 // out: ivm_ : natoms x natoms with ivm(i,j) = VAR_n ( | x_i( n ) - x_j ( n ) | )  n==decoys, i,j=atoms
-void InteratomicVarianceMatrix::init( Size atoms_in, Size n_decoys, ObjexxFCL::FArray3_double const& coords ) {
+void InteratomicVarianceMatrix::init( core::Size atoms_in, core::Size n_decoys, ObjexxFCL::FArray3_double const& coords ) {
 	n_atoms_ = atoms_in;
 	ivm_.redimension( n_atoms_, n_atoms_, 0.0 );
 	Real const invn( 1.0/n_decoys );
 	tr.Debug << "IVM-Matrix \n";
-	for ( Size i = 1; i <= n_atoms(); i++ ) {
-		for ( Size j = i+1; j<=n_atoms(); j++ ) {
+	for ( core::Size i = 1; i <= n_atoms(); i++ ) {
+		for ( core::Size j = i+1; j<=n_atoms(); j++ ) {
 			Real var( 0.0 );
 			Real av( 0.0 );
 
-			for ( Size n = 1; n<=n_decoys; n++ ) {
+			for ( core::Size n = 1; n<=n_decoys; n++ ) {
 				Vector xi( coords( 1, i, n ), coords( 2, i, n ), coords( 3, i, n ));
 				Vector xj( coords( 1, j, n ), coords( 2, j, n ), coords( 3, j, n ));
 				Real dist = xi.distance(xj);
@@ -72,8 +72,8 @@ void InteratomicVarianceMatrix::init( Size atoms_in, Size n_decoys, ObjexxFCL::F
 	tr.Debug << std::endl;
 
 	utility::io::ozstream os("ivm.dat");
-	for ( Size i = 1; i <= n_atoms(); i++ ) {
-		for ( Size j = 1; j<=n_atoms(); j++ ) os << ivm_( i, j ) << " ";
+	for ( core::Size i = 1; i <= n_atoms(); i++ ) {
+		for ( core::Size j = 1; j<=n_atoms(); j++ ) os << ivm_( i, j ) << " ";
 		os << std::endl;
 	}
 }
@@ -83,10 +83,10 @@ void InteratomicVarianceMatrix::init( Size atoms_in, Size n_decoys, ObjexxFCL::F
 void InteratomicVarianceMatrix::order_parameter( Real epsilon, ObjexxFCL::FArray1_double& T ) {
 	Real const epsilon2( epsilon*epsilon );
 	tr.Debug << "T( " << epsilon <<  " )\n";
-	for ( Size i = 1; i<=n_atoms(); i++ ) {
+	for ( core::Size i = 1; i<=n_atoms(); i++ ) {
 		T( i ) = 0.0;
 		Real invn = 1.0/n_atoms();
-		for ( Size j = 1; j<=n_atoms(); j++ ) {
+		for ( core::Size j = 1; j<=n_atoms(); j++ ) {
 			if ( ivm_( i, j) < epsilon2 ) T( i ) += invn;
 		}
 		tr.Debug << i << " " << T( i ) << "\n";
@@ -100,10 +100,10 @@ Real InteratomicVarianceMatrix::kurtosis( ObjexxFCL::FArray1_double& T ) {
 	Real second_moment = 0.0;
 	Real fourth_moment = 0.0;
 	Real av = 0.0;
-	for ( Size j = 1; j<=n_atoms(); j++ ) {
+	for ( core::Size j = 1; j<=n_atoms(); j++ ) {
 		av += T( j )*invn;
 	}
-	for ( Size j = 1; j<=n_atoms(); j++ ) {
+	for ( core::Size j = 1; j<=n_atoms(); j++ ) {
 		Real x = T( j ) - av;
 		Real x2 = x*x;
 		second_moment += x2*invn;
@@ -112,7 +112,7 @@ Real InteratomicVarianceMatrix::kurtosis( ObjexxFCL::FArray1_double& T ) {
 	return  fourth_moment / (second_moment*second_moment);
 }
 
-void InteratomicVarianceMatrix::optimize_kurtosis( Size ngrid, Real lb, Real ub ) {
+void InteratomicVarianceMatrix::optimize_kurtosis( core::Size ngrid, Real lb, Real ub ) {
 	Real depsilon =  ( ub - lb ) / ngrid;
 	Real epsilon = lb;
 	FArray1D_double grid( ngrid, 0.0 );
@@ -120,7 +120,7 @@ void InteratomicVarianceMatrix::optimize_kurtosis( Size ngrid, Real lb, Real ub 
 
 	FArray2D_double T( n_atoms(), ngrid, 0.0 );
 	tr.Info << "kurtosis computed:\n";
-	for ( Size i = 1; i <= ngrid; i++ ) {
+	for ( core::Size i = 1; i <= ngrid; i++ ) {
 		FArray1P_double Tslice( T( 1, i ), n_atoms() );
 		grid( i ) = epsilon;
 		order_parameter( epsilon, Tslice );
@@ -131,14 +131,14 @@ void InteratomicVarianceMatrix::optimize_kurtosis( Size ngrid, Real lb, Real ub 
 	tr.Info << std::endl;
 	{
 		utility::io::ozstream os("order.dat");
-		for ( Size j = 1; j<= n_atoms(); j++ ) {
-			for ( Size i = 1; i<= ngrid; i++ )  os << T( j, i ) << " ";
+		for ( core::Size j = 1; j<= n_atoms(); j++ ) {
+			for ( core::Size i = 1; i<= ngrid; i++ )  os << T( j, i ) << " ";
 			os << "\n";
 		}
 	}
 	{
 		utility::io::ozstream os("kurt.dat");
-		for ( Size i = 1; i<= ngrid; i++ )  os << grid( i ) << " " << kurt( i ) << "\n";
+		for ( core::Size i = 1; i<= ngrid; i++ )  os << grid( i ) << " " << kurt( i ) << "\n";
 	}
 }
 

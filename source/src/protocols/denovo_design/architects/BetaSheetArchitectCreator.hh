@@ -19,7 +19,7 @@
 #include <protocols/denovo_design/architects/DeNovoArchitect.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>

@@ -232,14 +232,14 @@ RestrictDesignToProteinDNAInterface::apply(
 	// if no resfile was specified,
 	// assume all protein positions are "AUTO" positions (behavior automated)
 	if ( ! option[ OptionKeys::packing::resfile ].user() ) {
-	for ( Size i(1), end( ptask.total_residue() ); i <= end; ++i ) {
+	for ( core::Size i(1), end( ptask.total_residue() ); i <= end; ++i ) {
 	ResidueLevelTask & rtask( ptask.nonconst_residue_task(i) );
 	if ( pose.residue_type(i).is_protein() ) rtask.add_behavior("AUTO");
 	}
 	}
 	*/
 
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	runtime_assert( nres == ptask.total_residue() );
 
 
@@ -255,7 +255,7 @@ RestrictDesignToProteinDNAInterface::apply(
 	if ( ! targeted_dna_.empty() ) {
 		// (by default, targeted_dna_ is an empty vector, so none of the following applies)
 		for ( auto const & def : targeted_dna_ ) {
-			Size index( def->pdbpos );
+			core::Size index( def->pdbpos );
 			if ( pose.pdb_info() ) {
 				// if pose has PDB numbering and chain info, assume DNA defs refer to them
 				PDBPoseMap const & pdb_pose_map( pose.pdb_info()->pdb2pose() );
@@ -323,7 +323,7 @@ RestrictDesignToProteinDNAInterface::apply(
 		}
 
 		// when targeting particular basepair positions, packing for all non-specified DNAs is disabled
-		for ( Size i(1); i <= ptask.total_residue(); ++i ) {
+		for ( core::Size i(1); i <= ptask.total_residue(); ++i ) {
 			ResidueLevelTask & rtask( ptask.nonconst_residue_task(i) );
 			if ( pose.residue_type(i).is_DNA() && !rtask.has_behavior("TARGET") ) {
 				rtask.prevent_repacking();
@@ -336,9 +336,9 @@ RestrictDesignToProteinDNAInterface::apply(
 	// find protein-dna interface (unless user supplied one)
 	if ( !interface_ ) {
 
-		vector1< Size > dna_design_positions;
+		vector1< core::Size > dna_design_positions;
 		bool limit_by_DNA(false);
-		for ( Size i(1); i <= nres; ++i ) {
+		for ( core::Size i(1); i <= nres; ++i ) {
 			if ( !pose.residue_type(i).is_DNA() ) continue;
 			ResidueLevelTask const & rtask( ptask.residue_task(i) );
 			// scan positions count as targeted
@@ -349,7 +349,7 @@ RestrictDesignToProteinDNAInterface::apply(
 		}
 		if ( !limit_by_DNA ) {
 			// there are no specifically targeted dna positions: use entire DNA interface
-			for ( Size dpos(1); dpos <= nres; ++dpos ) {
+			for ( core::Size dpos(1); dpos <= nres; ++dpos ) {
 				if ( !pose.residue_type(dpos).is_DNA() ) continue;
 				dna_design_positions.push_back( dpos );
 				// turn off all DNA repacking (...?)
@@ -358,7 +358,7 @@ RestrictDesignToProteinDNAInterface::apply(
 		} else {
 			// targeted dna design positions exist: limit interface to within the vicinity of these
 			for ( auto & it : *dna_chains_ ) {
-				Size resid( it.first ); DnaPosition & dnapos( it.second );
+				core::Size resid( it.first ); DnaPosition & dnapos( it.second );
 				ResidueLevelTask & toptask( ptask.nonconst_residue_task( resid ) );
 				if ( !toptask.has_behavior("TARGET") && !toptask.has_behavior("SCAN") ) continue;
 				dna_design_positions.push_back( resid );
@@ -387,8 +387,8 @@ RestrictDesignToProteinDNAInterface::apply(
 			}
 		}
 
-		vector1< Size > protein_positions;
-		for ( Size p_index(1); p_index <= nres; ++p_index ) {
+		vector1< core::Size > protein_positions;
+		for ( core::Size p_index(1); p_index <= nres; ++p_index ) {
 			if ( ! ptask.pack_residue( p_index ) ) continue; // already disabled
 			if ( pose.residue_type( p_index ).is_DNA() ) continue; // ignore DNA
 			if ( ! pose.residue_type( p_index ).is_protein() ) {
@@ -407,7 +407,7 @@ RestrictDesignToProteinDNAInterface::apply(
 	bool const repack_only( option[ OptionKeys::dna::design::repack_only ]() );
 	ConstraintSetCOP constraint_set( pose.constraint_set() );
 	for ( auto const & itr : interface_->protein_neighbors() ) {
-		Size const index( itr.first );
+		core::Size const index( itr.first );
 		DnaNeighbor const & neighbor( itr.second );
 
 		ResidueLevelTask & restask( ptask.nonconst_residue_task( index ) );
@@ -430,7 +430,7 @@ RestrictDesignToProteinDNAInterface::apply(
 	}
 
 	/// Step 5: report
-	for ( Size i(1), end( ptask.total_residue() ); i <= end; ++i ) {
+	for ( core::Size i(1), end( ptask.total_residue() ); i <= end; ++i ) {
 		ResidueLevelTask const & rlt( ptask.residue_task(i) );
 		if ( pose.residue_type(i).is_DNA() ) {
 			if ( ! rlt.being_packed() ) continue;

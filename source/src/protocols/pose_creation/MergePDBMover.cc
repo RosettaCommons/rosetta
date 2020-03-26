@@ -125,28 +125,28 @@ MergePDBMover::fresh_instance() const
 	return utility::pointer::make_shared< MergePDBMover >();
 }
 
-void MergePDBMover::determine_overlap(Pose const pose,Size chain_id){
+void MergePDBMover::determine_overlap(Pose const pose,core::Size chain_id){
 	utility::vector1<core::Size> res_in_chain = get_resnums_for_chain_id(pose,chain_id);
-	Size start_res_chain = res_in_chain[1];
-	Size end_res_chain = chain_end_res(pose,chain_id);
+	core::Size start_res_chain = res_in_chain[1];
+	core::Size end_res_chain = chain_end_res(pose,chain_id);
 	using namespace core::scoring;
 	//C-TERM
 	if ( overlap_location_pose_== "c_term" ) {
-		Size initial_start_xmlPose=1;
-		Size initial_start_pose=end_res_chain-overlap_length_+1;
-		Size initial_end_pose=end_res_chain;
-		for ( Size ii=0; ii<overlap_scan_range_cmdLine_; ++ii ) {
-			for ( Size kk=0; kk<overlap_scan_range_xml_; ++kk ) {
-				Size start_res_xml_pose=initial_start_xmlPose+kk;
-				Size end_res_xml_pose=start_res_xml_pose+overlap_length_-1;
-				utility::vector1<Size> xml_input_pose_positions;
-				utility::vector1<Size> pose_positions;
-				Size start_res_pose = initial_start_pose-ii;
-				Size end_res_pose = initial_end_pose-ii;
-				for ( Size jj=start_res_xml_pose; jj<=end_res_xml_pose; ++jj ) {
+		core::Size initial_start_xmlPose=1;
+		core::Size initial_start_pose=end_res_chain-overlap_length_+1;
+		core::Size initial_end_pose=end_res_chain;
+		for ( core::Size ii=0; ii<overlap_scan_range_cmdLine_; ++ii ) {
+			for ( core::Size kk=0; kk<overlap_scan_range_xml_; ++kk ) {
+				core::Size start_res_xml_pose=initial_start_xmlPose+kk;
+				core::Size end_res_xml_pose=start_res_xml_pose+overlap_length_-1;
+				utility::vector1<core::Size> xml_input_pose_positions;
+				utility::vector1<core::Size> pose_positions;
+				core::Size start_res_pose = initial_start_pose-ii;
+				core::Size end_res_pose = initial_end_pose-ii;
+				for ( core::Size jj=start_res_xml_pose; jj<=end_res_xml_pose; ++jj ) {
 					xml_input_pose_positions.push_back(jj);
 				}
-				for ( Size jj=start_res_pose; jj<=end_res_pose; ++jj ) {
+				for ( core::Size jj=start_res_pose; jj<=end_res_pose; ++jj ) {
 					pose_positions.push_back(jj);
 				}
 				pose::Pose xml_input_pose_slice;
@@ -164,21 +164,21 @@ void MergePDBMover::determine_overlap(Pose const pose,Size chain_id){
 	}
 	//N-TERM
 	if ( overlap_location_pose_== "n_term" ) {
-		Size initial_start_xmlPose=xml_input_pose_->total_residue()-overlap_length_+1;
-		Size initial_start_pose=start_res_chain;
-		Size initial_end_pose=start_res_chain+overlap_length_-1;
-		for ( Size ii=0; ii<overlap_scan_range_cmdLine_; ++ii ) {
-			for ( Size kk=0; kk<overlap_scan_range_xml_; ++kk ) {
-				utility::vector1<Size> xml_input_pose_positions;
-				utility::vector1<Size> pose_positions;
-				Size start_res_pose = initial_start_pose+ii;
-				Size end_res_pose = initial_end_pose+ii;
-				Size start_res_xml_pose = initial_start_xmlPose-kk;
-				Size end_res_xml_pose = start_res_xml_pose+overlap_length_-1;
-				for ( Size jj=start_res_xml_pose; jj<=end_res_xml_pose; ++jj ) {
+		core::Size initial_start_xmlPose=xml_input_pose_->total_residue()-overlap_length_+1;
+		core::Size initial_start_pose=start_res_chain;
+		core::Size initial_end_pose=start_res_chain+overlap_length_-1;
+		for ( core::Size ii=0; ii<overlap_scan_range_cmdLine_; ++ii ) {
+			for ( core::Size kk=0; kk<overlap_scan_range_xml_; ++kk ) {
+				utility::vector1<core::Size> xml_input_pose_positions;
+				utility::vector1<core::Size> pose_positions;
+				core::Size start_res_pose = initial_start_pose+ii;
+				core::Size end_res_pose = initial_end_pose+ii;
+				core::Size start_res_xml_pose = initial_start_xmlPose-kk;
+				core::Size end_res_xml_pose = start_res_xml_pose+overlap_length_-1;
+				for ( core::Size jj=start_res_xml_pose; jj<=end_res_xml_pose; ++jj ) {
 					xml_input_pose_positions.push_back(jj);
 				}
-				for ( Size jj=start_res_pose; jj<=end_res_pose; ++jj ) {
+				for ( core::Size jj=start_res_pose; jj<=end_res_pose; ++jj ) {
 					pose_positions.push_back(jj);
 				}
 				pose::Pose xml_input_pose_slice;
@@ -199,13 +199,13 @@ void MergePDBMover::determine_overlap(Pose const pose,Size chain_id){
 bool MergePDBMover::check_duplicate(Pose &pose){
 	//setup to be fast because this could be a N^2 runtime.
 	Real min_distance=999;
-	Size min_position=999;
-	for ( Size ii=1; ii<=overlaps_.size(); ++ii ) {
+	core::Size min_position=999;
+	for ( core::Size ii=1; ii<=overlaps_.size(); ++ii ) {
 		if ( overlaps_[ii].output_poseOP != nullptr ) {
 			core::pose::PoseOP output_poseOP = overlaps_[ii].output_poseOP;
 			if ( pose.total_residue() == output_poseOP->total_residue() ) {
-				Size n_term_res = 1;
-				Size c_term_res = pose.total_residue();
+				core::Size n_term_res = 1;
+				core::Size c_term_res = pose.total_residue();
 				while ( pose.residue(n_term_res).is_virtual_residue() )
 						n_term_res++;
 				while ( pose.residue(c_term_res).is_virtual_residue() )
@@ -230,7 +230,7 @@ bool MergePDBMover::check_duplicate(Pose &pose){
 	return(false);
 }
 
-void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
+void MergePDBMover::generate_overlaps(Pose & pose, core::Size chain_id) {
 	using namespace core::id;
 	using namespace core::scoring;
 	vector1 < std::string > initial_labels;
@@ -239,20 +239,20 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 	utility::vector1<core::Size> res_in_chain = get_resnums_for_chain_id(pose,chain_id);
 	bool input_pose_symmetric = pose::symmetry::is_symmetric(pose);
 	core::scoring::ScoreFunctionOP sfxn0 = scoring::ScoreFunctionFactory::create_score_function( "score0" );
-	Size start_res_chain = res_in_chain[1];
-	Size end_res_chain = chain_end_res(pose,chain_id);
+	core::Size start_res_chain = res_in_chain[1];
+	core::Size end_res_chain = chain_end_res(pose,chain_id);
 	//create a cloned version of xml_pose and xml_pose for rotamer copying.
-	for ( Size kk=1; kk<=overlaps_.size(); ++kk ) {
+	for ( core::Size kk=1; kk<=overlaps_.size(); ++kk ) {
 		TR << "Executing overlap #" << kk << std::endl;
-		vector1<Size> chunk1_insert_res;
-		vector1<Size> chunk2_insert_res;
-		Size start_overlap_pose = overlaps_[kk].start_overlap_pose;
-		Size end_overlap_pose = overlaps_[kk].end_overlap_pose;
-		Size start_overlap_xmlPose = overlaps_[kk].start_overlap_xmlPose;
-		Size end_overlap_xmlPose = overlaps_[kk].end_overlap_xmlPose;
+		vector1<core::Size> chunk1_insert_res;
+		vector1<core::Size> chunk2_insert_res;
+		core::Size start_overlap_pose = overlaps_[kk].start_overlap_pose;
+		core::Size end_overlap_pose = overlaps_[kk].end_overlap_pose;
+		core::Size start_overlap_xmlPose = overlaps_[kk].start_overlap_xmlPose;
+		core::Size end_overlap_xmlPose = overlaps_[kk].end_overlap_xmlPose;
 		core::id::AtomID_Map< core::id::AtomID > atom_map;
 		core::pose::initialize_atomid_map( atom_map, *xml_input_pose_, AtomID::BOGUS_ATOM_ID() );
-		for ( Size ii=0; ii<=end_overlap_pose-start_overlap_pose; ++ii ) {
+		for ( core::Size ii=0; ii<=end_overlap_pose-start_overlap_pose; ++ii ) {
 			core::id::AtomID const id2(pose.residue(start_overlap_pose+ii).atom_index("CA"),start_overlap_pose+ii);
 			core::id::AtomID const id1(xml_input_pose_->residue(start_overlap_xmlPose+ii).atom_index("CA"), start_overlap_xmlPose+ii );
 			atom_map[id1]=id2;
@@ -263,7 +263,7 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 		core::pose::PoseOP output_poseOP( utility::pointer::make_shared<core::pose::Pose>() );
 		core::pose::PoseOP tmp_xml_poseOP;
 		tmp_xml_poseOP=xml_input_pose_->clone();
-		Size end_steal_label_res = pose.size();
+		core::Size end_steal_label_res = pose.size();
 		TR.Debug << "pose.size() = " << pose.size() << std::endl;
 		if ( input_pose_symmetric ) {
 			pose::symmetry::extract_asymmetric_unit(pose,*output_poseOP,false);
@@ -283,8 +283,8 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 		//remove terminus_type from all backup chains
 		vector1< core::Size >backup_chains = get_chains(*backup_input_pose);
 		utility::vector1<core::Size> res_in_chain_backup;
-		Size start_res_chain_backup;
-		Size end_res_chain_backup;
+		core::Size start_res_chain_backup;
+		core::Size end_res_chain_backup;
 		for ( core::Size cc = 1; cc <= backup_chains.size(); ++cc ) {
 			TR << "Removing terminus_type from backup_input_pose chain: " << cc << std::endl;
 			res_in_chain_backup = get_resnums_for_chain_id(*backup_input_pose,cc);
@@ -306,15 +306,15 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 			//delete any additional residues
 			TR.Debug << "deleting residues: " << start_res_chain << "-" << start_overlap_pose << std::endl;
 			output_poseOP->conformation().delete_residue_range_slow(start_res_chain,start_overlap_pose); //always delete the first residue because of the lost phi/psi
-			for ( Size ii=start_overlap_xmlPose; ii>=1; --ii ) {
+			for ( core::Size ii=start_overlap_xmlPose; ii>=1; --ii ) {
 				output_poseOP->conformation().safely_prepend_polymer_residue_before_seqpos(tmp_xml_poseOP->residue(ii),start_res_chain, false); //adds residues from tmp_xml_pose to output_pose
 			}
 			//if NOT chain A, need to add back initial residue labels of residues in chains BEFORE the merged chain (N-TERM)
-			Size chain_offset = 0;
+			core::Size chain_offset = 0;
 			if ( chain_id != 1 ) { //skips if chain_id = 1
 				utility::vector1<core::Size> res_in_chain_before;
-				Size start_res_chain_before;
-				Size end_res_chain_before;
+				core::Size start_res_chain_before;
+				core::Size end_res_chain_before;
 				for ( core::Size cc = 1; cc < chain_id; ++cc ) { //loop through all chains before chain_id
 					TR << "Adding missed initial_interface residue_labels (n_term mode) for chain " << cc << std::endl;
 					//need residue numbers for each chain
@@ -335,15 +335,15 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 			}
 			TR << "Total chain_offset: " << chain_offset << std::endl;
 			//re-initialize start/end positions
-			Size orig_start_overlap_xmlPose = start_overlap_xmlPose; //need this for copy_sequence
+			core::Size orig_start_overlap_xmlPose = start_overlap_xmlPose; //need this for copy_sequence
 			start_overlap_xmlPose += chain_offset;
 			end_overlap_xmlPose += chain_offset;
 			TR.Debug << "start_overlap_pose: " << start_overlap_pose << ", end_overlap_pose: " << end_overlap_pose << ", start_overlap_xmlPose: " << start_overlap_xmlPose << ", end_overlap_xmlPose: " << end_overlap_xmlPose << std::endl;
 			//add initial residue labels
 			TR << "Adding initial_interface residue_labels (n_term mode)" << std::endl;
-			Size res_loss_n_term = start_overlap_pose-start_res_chain;
-			Size res_add = orig_start_overlap_xmlPose;
-			Size res_offset = res_add-res_loss_n_term-1;
+			core::Size res_loss_n_term = start_overlap_pose-start_res_chain;
+			core::Size res_add = orig_start_overlap_xmlPose;
+			core::Size res_offset = res_add-res_loss_n_term-1;
 			TR.Debug << "start_overlap_pose: " << start_overlap_pose << ", end_steal_label_res: " << end_steal_label_res << ", res_offset: " << res_offset << std::endl;
 			for ( core::Size ii = start_overlap_pose; ii <= end_steal_label_res; ++ii ) { //chose to do this for the output_pose_size. Should take care of symmetric case
 				initial_labels = pose.pdb_info()->get_reslabels(ii);
@@ -383,8 +383,8 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 			//delete any additional residues
 			TR.Debug << "deleting residues: " << end_overlap_pose << "-" << end_res_chain << std::endl;
 			output_poseOP->conformation().delete_residue_range_slow(end_overlap_pose,end_res_chain);
-			for ( Size ii=end_overlap_xmlPose; ii<=tmp_xml_poseOP->total_residue(); ++ii ) {
-				Size location_to_insert=end_overlap_pose-1+ii-end_overlap_xmlPose;
+			for ( core::Size ii=end_overlap_xmlPose; ii<=tmp_xml_poseOP->total_residue(); ++ii ) {
+				core::Size location_to_insert=end_overlap_pose-1+ii-end_overlap_xmlPose;
 				output_poseOP->conformation().safely_append_polymer_residue_after_seqpos(tmp_xml_poseOP->residue(ii),location_to_insert, false); //adds residues from tmp_xml_pose to output_pose
 			}
 			//add initial residue labels
@@ -397,15 +397,15 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 				}
 			}
 			//need this for adding back missed residues AND for making residue selectors
-			Size chain_offset = get_resnums_for_chain_id(*output_poseOP,chain_id).back();
+			core::Size chain_offset = get_resnums_for_chain_id(*output_poseOP,chain_id).back();
 			TR.Debug << "chain_offset: " << chain_offset << std::endl;
 			//if NOT last chain, need to add back initial residue labels of residues in chains AFTER the merged chain (C-TERM)
 			vector1< core::Size >chains = get_chains(pose);
 			core::Size last_chain_in_pose = chains.back();
 			if ( ( chain_id != last_chain_in_pose ) && ( ! input_pose_symmetric ) ) { //skips if chain_id = last chain AND if pose is not symmetric
 				utility::vector1<core::Size> res_in_chain_after;
-				Size start_res_chain_after;
-				Size end_res_chain_after;
+				core::Size start_res_chain_after;
+				core::Size end_res_chain_after;
 				for ( core::Size cc = chain_id+1; cc <= last_chain_in_pose; ++cc ) { //loop through all chains AFTER chain_id until last_chain_in_pose
 					TR << "Adding missed initial_interface residue_labels (c_term mode) for chain " << cc << std::endl;
 					//need residue numbers for each chain
@@ -416,7 +416,7 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 					//loop through each residue in the chain
 					for ( core::Size ii = start_res_chain_after; ii <= end_res_chain_after; ++ii ) {
 						initial_labels =  pose.pdb_info()->get_reslabels(ii);
-						Size pose_end_of_chain_id = get_resnums_for_chain_id(pose,chain_id).back();
+						core::Size pose_end_of_chain_id = get_resnums_for_chain_id(pose,chain_id).back();
 						//loop through each residue's labels
 						for ( core::Size jj=1; jj <= initial_labels.size(); ++jj ) {
 							output_poseOP->pdb_info()->add_reslabel(ii+chain_offset-pose_end_of_chain_id, initial_labels[jj]);
@@ -504,7 +504,7 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 		std::map<core::Size, vector1<std::string> > res_label_map;
 		for ( core::Size ii = 1; ii <=output_poseOP->size(); ++ii ) {
 			vector1<std::string> tmp_labels = output_poseOP->pdb_info()->get_reslabels(ii);
-			res_label_map.insert(std::pair<Size,vector1<std::string> >(ii,tmp_labels));
+			res_label_map.insert(std::pair<core::Size,vector1<std::string> >(ii,tmp_labels));
 		}
 		//reset pdbinfos
 		renumber_pdbinfo_based_on_conf_chains(*output_poseOP,true,false,false,false);
@@ -513,7 +513,7 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 		//std::map<core::Size, vector1<std::string> >::iterator res_label_map_itr;
 		//vector1<std::string>::iterator res_label_itr;
 		for ( auto res_label_map_itr=res_label_map.begin(); res_label_map_itr!=res_label_map.end(); ++res_label_map_itr ) {
-			Size resid = res_label_map_itr->first;
+			core::Size resid = res_label_map_itr->first;
 			vector1<std::string> tmp_labels = res_label_map_itr->second;
 			for ( auto res_label_itr=tmp_labels.begin(); res_label_itr!=tmp_labels.end(); ++res_label_itr ) {
 				output_poseOP->pdb_info()->add_reslabel(resid, *res_label_itr);
@@ -559,7 +559,7 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 			//std::map<core::Size, vector1<std::string> >::iterator res_label_map_itr;
 			//vector1<std::string>::iterator res_label_itr;
 			for ( auto res_label_map_itr=res_label_map.begin(); res_label_map_itr!=res_label_map.end(); ++res_label_map_itr ) {
-				Size resid = res_label_map_itr->first;
+				core::Size resid = res_label_map_itr->first;
 				vector1<std::string> tmp_labels = res_label_map_itr->second;
 				for ( auto res_label_itr=tmp_labels.begin(); res_label_itr!=tmp_labels.end(); ++res_label_itr ) {
 					asp_output_poseOP->pdb_info()->add_reslabel(resid, *res_label_itr);
@@ -581,7 +581,7 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 
 			//hack to get chainBsym_resis for asp
 			core::Size asp_num_chains = get_chains( *asp_output_poseOP ).size()-1; //-1 for the stupid symmetry leftover residues
-			vector1<Size> chunk2_insert_res_asp = chunk2_insert_res;
+			vector1<core::Size> chunk2_insert_res_asp = chunk2_insert_res;
 			core::Size chain_len = res_in_chainA_asp.size();
 			for ( core::Size cc = 1; cc < asp_num_chains; ++cc ) {
 				for ( core::Size ii = 1; ii <= chunk2_insert_res.size(); ++ii ) {
@@ -631,13 +631,13 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 			std::map<core::Size, vector1<std::string> > res_label_map_asp;
 			for ( core::Size ii = 1; ii <=get_resnums_for_chain_id(*asp_output_poseOP,1).size(); ++ii ) { //only stores resis for chain1
 				vector1<std::string> tmp_labels = asp_output_poseOP->pdb_info()->get_reslabels(ii);
-				res_label_map_asp.insert(std::pair<Size,vector1<std::string> >(ii,tmp_labels));
+				res_label_map_asp.insert(std::pair<core::Size,vector1<std::string> >(ii,tmp_labels));
 			}
 			//reapply asp residue_labels to output_pose
 			std::map<core::Size, vector1<std::string> >::iterator res_label_map_itr_asp;
 			vector1<std::string>::iterator res_label_itr_asp;
 			for ( res_label_map_itr_asp=res_label_map_asp.begin(); res_label_map_itr_asp!=res_label_map_asp.end(); ++res_label_map_itr_asp ) {
-				Size resid = res_label_map_itr_asp->first;
+				core::Size resid = res_label_map_itr_asp->first;
 				vector1<std::string> tmp_labels = res_label_map_itr_asp->second;
 				for ( res_label_itr_asp=tmp_labels.begin(); res_label_itr_asp!=tmp_labels.end(); ++res_label_itr_asp ) {
 					output_poseOP->pdb_info()->add_reslabel(resid, *res_label_itr_asp);
@@ -678,8 +678,8 @@ void MergePDBMover::generate_overlaps(Pose & pose, Size chain_id) {
 
 Size MergePDBMover::closest_non_overlap_residue(core::pose::Pose const & pose, core::Size resid, core::Size start_overlap_resid, core::Size end_overlap_resid){
 	Real min_dist = 999;
-	Size closest_residue = 999999;
-	for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+	core::Size closest_residue = 999999;
+	for ( core::Size ii=1; ii<=pose.total_residue(); ++ii ) {
 		if ( ii<start_overlap_resid || ii>end_overlap_resid ) {
 			Real tmp_dist = pose.residue(ii).xyz("CA").distance(pose.residue(resid).xyz("CA"));
 			if ( tmp_dist < min_dist ) {
@@ -692,7 +692,7 @@ Size MergePDBMover::closest_non_overlap_residue(core::pose::Pose const & pose, c
 }
 
 /// @brief increases the range to ignore to include the entire secondary structure element
-void MergePDBMover::increase_range_to_ignore_ss_element(core::pose::Pose const & pose, Size init_start, Size init_end, Size & ss_start, Size & ss_end){
+void MergePDBMover::increase_range_to_ignore_ss_element(core::pose::Pose const & pose, core::Size init_start, core::Size init_end, core::Size & ss_start, core::Size & ss_end){
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
 	char ss_type = dssp.get_dssp_secstruct(init_start);
@@ -711,26 +711,26 @@ void MergePDBMover::increase_range_to_ignore_ss_element(core::pose::Pose const &
 
 void MergePDBMover::copy_sequence(core::Size start_overlap_resid, core::Size end_overlap_resid, core::Size start_overlap_input_pose_resid, core::Size start_overlap_xml_pose_resid, core::pose::Pose const & input_pose, core::pose::Pose const & xml_pose, core::pose::Pose & output_pose){
 	protocols::simple_moves::CopyRotamerMover copyRotamerMover = CopyRotamerMover();
-	Size numb_res = end_overlap_resid-start_overlap_resid+1;
+	core::Size numb_res = end_overlap_resid-start_overlap_resid+1;
 	TR.Debug << "end_overlap_resid: " << end_overlap_resid << ", start_overlap_resid: " << start_overlap_resid << ", numb_res: " << numb_res << std::endl;
 	if ( init_overlap_sequence_=="input_pose" ) {
-		for ( Size ii=0; ii<numb_res; ++ii ) {
+		for ( core::Size ii=0; ii<numb_res; ++ii ) {
 			TR.Debug << "copying residue " << start_overlap_input_pose_resid+ii << " (input_pose) to " << start_overlap_resid+ii << " (output_pose)" << std::endl;
 			copyRotamerMover.apply_from_template_pose(output_pose,input_pose,start_overlap_resid+ii,start_overlap_input_pose_resid+ii);
 		}
 	}
 	if ( init_overlap_sequence_=="xml_pose" ) {
-		for ( Size ii=0; ii<numb_res; ++ii ) {
+		for ( core::Size ii=0; ii<numb_res; ++ii ) {
 			copyRotamerMover.apply_from_template_pose(output_pose,xml_pose,start_overlap_resid+ii,start_overlap_xml_pose_resid+ii);
 		}
 	}
 	if ( init_overlap_sequence_ =="both" ) {
 		//ignores helix that the structure is on for proximity
-		Size ss_start_resid=0;
-		Size ss_end_resid=0;
+		core::Size ss_start_resid=0;
+		core::Size ss_end_resid=0;
 		increase_range_to_ignore_ss_element(output_pose,start_overlap_resid,end_overlap_resid, ss_start_resid,ss_end_resid);
-		for ( Size ii=0; ii<numb_res; ++ii ) {
-			Size closest_resid = closest_non_overlap_residue(output_pose,start_overlap_resid+ii,ss_start_resid,ss_end_resid);
+		for ( core::Size ii=0; ii<numb_res; ++ii ) {
+			core::Size closest_resid = closest_non_overlap_residue(output_pose,start_overlap_resid+ii,ss_start_resid,ss_end_resid);
 			if ( closest_resid<start_overlap_resid && overlap_location_pose_ == "n_term" ) {
 				copyRotamerMover.apply_from_template_pose(output_pose,xml_pose,start_overlap_resid+ii,start_overlap_xml_pose_resid+ii);
 			}
@@ -753,7 +753,7 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 	using namespace core::pack::task::operation;
 	bool pose_symmetric = core::pose::symmetry::is_symmetric(pose);
 	bool early_complete = false; //true only if output_only_first_ is set to true and one object has been successfully produced
-	for ( Size kk=1; kk<=overlaps_.size(); ++kk ) {
+	for ( core::Size kk=1; kk<=overlaps_.size(); ++kk ) {
 		if ( early_complete ) {
 			overlaps_[kk].output_poseOP=nullptr; //get rid of all other poses
 		}
@@ -779,7 +779,7 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 			utility::vector1< bool > design_res = design_selector->apply( *overlaps_[kk].output_poseOP );
 
 			TR << "select design_res, resi ";
-			for ( Size ii=1; ii<=design_res.size(); ++ii ) {
+			for ( core::Size ii=1; ii<=design_res.size(); ++ii ) {
 				if ( design_res[ii]==1 ) {
 					TR << ii << "+";
 				}
@@ -793,7 +793,7 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 			utility::vector1< bool > pack_res = pack_selector->apply( *overlaps_[kk].output_poseOP );
 
 			TR << "select pack_res, resi ";
-			for ( Size ii=1; ii<=pack_res.size(); ++ii ) {
+			for ( core::Size ii=1; ii<=pack_res.size(); ++ii ) {
 				if ( pack_res[ii]==1 ) {
 					TR << ii << "+";
 				}
@@ -807,7 +807,7 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 			utility::vector1< bool > no_pack_res = no_pack_selector->apply( *overlaps_[kk].output_poseOP );
 
 			TR << "select no_pack_res, resi ";
-			for ( Size ii=1; ii<=no_pack_res.size(); ++ii ) {
+			for ( core::Size ii=1; ii<=no_pack_res.size(); ++ii ) {
 				if ( no_pack_res[ii]==1 ) {
 					TR << ii << "+";
 				}
@@ -827,7 +827,7 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 			operate_on_packing->subset( pack_res );
 			operate_on_packing->op( restrict_to_repacking );
 			taskfactoryOP->push_back(operate_on_packing);
-			Size pack_rounds=5;
+			core::Size pack_rounds=5;
 			protocols::minimization_packing::PackRotamersMover packer = protocols::minimization_packing::PackRotamersMover(sfxn_);
 			packer.nloop( pack_rounds );
 			packer.task_factory(taskfactoryOP);
@@ -867,7 +867,7 @@ void MergePDBMover::pack_and_minimize(Pose const pose, core::Real baseline_score
 } //end pack_and_minimize
 
 core::pose::PoseOP MergePDBMover::get_additional_output(){
-	for ( Size ii=1; ii<=overlaps_.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=overlaps_.size(); ++ii ) {
 		if ( overlaps_[ii].output_yet==false && overlaps_[ii].output_poseOP != nullptr ) {
 			set_last_move_status(protocols::moves::MS_SUCCESS);
 			overlaps_[ii].output_yet=true;
@@ -898,12 +898,12 @@ void MergePDBMover::apply( Pose & pose )
 	}
 	//check if selected chain exists in the pose
 	//vector1< core::Size >chains = get_chains(pose);
-	//Size chain_id = 1;
+	//core::Size chain_id = 1;
 	//if ( chains.size()>1 ) {
 	if ( !has_chain(chain_,pose) ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "You have chosen a chain that does not exist");
 	}
-	Size chain_id = get_chain_id_from_chain(chain_,pose);
+	core::Size chain_id = get_chain_id_from_chain(chain_,pose);
 	TR << "Operating on chain " << chain_id << std::endl;
 	//}
 	//Step 1 get location

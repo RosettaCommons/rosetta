@@ -34,20 +34,20 @@ namespace output {
 LimitHitsPerRotamerFilter::LimitHitsPerRotamerFilter()
 : StateAccumulatingMatchFilter("LimitHitsPerRotamerFilter")
 {}
-LimitHitsPerRotamerFilter::LimitHitsPerRotamerFilter( Size n_geometric_constraints ) :
+LimitHitsPerRotamerFilter::LimitHitsPerRotamerFilter( core::Size n_geometric_constraints ) :
 	StateAccumulatingMatchFilter("LimitHitsPerRotamerFilter"),
 	n_geometric_constraints_( n_geometric_constraints )
 {}
 
 void
-LimitHitsPerRotamerFilter::set_n_geometric_constraints( Size n_csts )
+LimitHitsPerRotamerFilter::set_n_geometric_constraints( core::Size n_csts )
 {
 	n_geometric_constraints_ = n_csts;
 
 }
 
 void
-LimitHitsPerRotamerFilter::set_limit_for_rotamer_combo( Size limit )
+LimitHitsPerRotamerFilter::set_limit_for_rotamer_combo( core::Size limit )
 {
 	limit_per_rotamer_combo_ = limit;
 }
@@ -62,8 +62,8 @@ LimitHitsPerRotamerFilter::passes_filter(
 {
 	runtime_assert( m.size() == n_geometric_constraints_ );
 
-	utility::vector1< Size > rot_vector( n_geometric_constraints_ * 2, 0 );
-	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
+	utility::vector1< core::Size > rot_vector( n_geometric_constraints_ * 2, 0 );
+	for ( core::Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		rot_vector[ ii ] = m[ ii ].scaffold_build_id();
 		rot_vector[ n_geometric_constraints_ + ii ] = m[ ii ].upstream_conf_id();
 	}
@@ -84,8 +84,8 @@ LimitHitsPerRotamerFilter::note_match_accepted(
 {
 	runtime_assert( m.size() == n_geometric_constraints_ );
 
-	utility::vector1< Size > rot_vector( n_geometric_constraints_ * 2, 0 );
-	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
+	utility::vector1< core::Size > rot_vector( n_geometric_constraints_ * 2, 0 );
+	for ( core::Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		rot_vector[ ii ] = m[ ii ].scaffold_build_id();
 		rot_vector[ n_geometric_constraints_ + ii ] = m[ ii ].upstream_conf_id();
 	}

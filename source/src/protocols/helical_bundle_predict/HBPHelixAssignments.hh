@@ -27,7 +27,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // STL headers
@@ -44,7 +44,7 @@ typedef core::Size HBPEndPosition;
 /// @brief Helical parameters stored by the HBPHelix class.
 /// @details Allows the HBPHelix class to *avoid* storing these parameters if it needn't.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-class HBPHelixParameters : public utility::pointer::ReferenceCount {
+class HBPHelixParameters : public utility::VirtualBase {
 
 	friend class ::HBPHelixAssignmentsTests; //Needed to allow unit tests to access private data.
 
@@ -136,7 +136,7 @@ private: //Data
 /// @brief An individual helix.  This class stores start and end positions,
 /// plus helical parameters.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-class HBPHelix : public utility::pointer::ReferenceCount {
+class HBPHelix : public utility::VirtualBase {
 
 	friend class ::HBPHelixAssignmentsTests; //Needed to allow unit tests to access private data.
 
@@ -253,7 +253,7 @@ private: //Data
 /// @brief A class for storing the helix assignments for a pose.  This can represent those
 /// proposed from an input file, or those at the current state of a trajectory.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-class HBPHelixAssignments : public utility::pointer::ReferenceCount {
+class HBPHelixAssignments : public utility::VirtualBase {
 
 	friend class ::HBPHelixAssignmentsTests; //Needed to allow unit tests to access private data.
 

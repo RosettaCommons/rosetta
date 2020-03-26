@@ -38,7 +38,7 @@ namespace rna {
 
 ///////////////////////////////////////////////////////////////////////////
 MC_RNA_Sugar::MC_RNA_Sugar(
-	Size const rsd_id,
+	core::Size const rsd_id,
 	Real const flip_rate,
 	PuckerState const init_pucker
 ):
@@ -82,8 +82,8 @@ void MC_RNA_Sugar::set_idealize_coord( bool const setting ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////
-void MC_RNA_Sugar::show( std::ostream & out, Size const indent ) const {
-	for ( Size n = 1; n <= indent; n++ ) out << ' ';
+void MC_RNA_Sugar::show( std::ostream & out, core::Size const indent ) const {
+	for ( core::Size n = 1; n <= indent; n++ ) out << ' ';
 	out << get_name() << " " << sugar_rotamer_->rsd_id() << std::endl;
 }
 ///////////////////////////////////////////////////////////////////////////

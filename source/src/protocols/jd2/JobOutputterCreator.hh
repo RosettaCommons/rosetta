@@ -18,7 +18,7 @@
 #include <protocols/jd2/JobOutputter.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // c++ headers
 #include <string>
@@ -28,7 +28,7 @@ namespace jd2 {
 
 /// @brief Abstract base class for a JobOutputter factory; the Creator class is responsible for
 /// creating a particular mover class.
-class JobOutputterCreator : public utility::pointer::ReferenceCount
+class JobOutputterCreator : public utility::VirtualBase
 {
 public:
 	JobOutputterCreator();

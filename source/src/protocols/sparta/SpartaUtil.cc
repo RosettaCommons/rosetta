@@ -149,7 +149,7 @@ calc_per_residue_scores(
 
 			Real sigma( atof( (temp["SIGMA"]).c_str() ) );
 			if ( sigma > 0.1 ) {
-				Size const res_id( ObjexxFCL::ulong_of( it->second["RESID"] ) );
+				core::Size const res_id( ObjexxFCL::ulong_of( it->second["RESID"] ) );
 				Real const score(
 					(obs_shift-pred_shift)*(obs_shift-pred_shift)/(sigma*sigma)
 				);
@@ -173,7 +173,7 @@ calc_per_residue_scores(
 		}
 
 		float avg_diff = getAVG(DIFF_V);
-		for ( Size i = 0; i< OBS_V.size(); i++ ) {
+		for ( core::Size i = 0; i< OBS_V.size(); i++ ) {
 			OBS_V_CORRECTED.push_back( OBS_V[i] + avg_diff );
 		}
 

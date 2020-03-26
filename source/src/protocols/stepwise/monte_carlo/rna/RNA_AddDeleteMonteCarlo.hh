@@ -49,7 +49,7 @@ public:
 	//destructor -- necessary? -- YES destructors are necessary.
 	~RNA_AddDeleteMonteCarlo() override;
 
-	// Undefinded, commenting out to fix PyRosetta build  void apply( core::pose::Pose & pose, Size const res_to_delete, protocols::stepwise::monte_carlo::MovingResidueCase const moving_residue_case  );
+	// Undefinded, commenting out to fix PyRosetta build  void apply( core::pose::Pose & pose, core::Size const res_to_delete, protocols::stepwise::monte_carlo::MovingResidueCase const moving_residue_case  );
 
 	/// @brief Apply the minimizer to one pose
 	void apply( core::pose::Pose & pose_to_visualize ) override;
@@ -61,9 +61,9 @@ public:
 
 	void set_sample_range_large( core::Real const setting ){ sample_range_large_ = setting; }
 
-	void set_num_cycles( Size const setting ){ num_cycles_ = setting; }
+	void set_num_cycles( core::Size const setting ){ num_cycles_ = setting; }
 
-	void set_output_period( Size const setting ){ output_period_ = setting; }
+	void set_output_period( core::Size const setting ){ output_period_ = setting; }
 
 	void set_do_add_delete( bool const setting ){ do_add_delete_ = setting; }
 
@@ -75,7 +75,7 @@ private:
 	initialize_next_suite_atoms();
 
 	void
-	output_silent_file( core::pose::Pose & pose, Size const count );
+	output_silent_file( core::pose::Pose & pose, core::Size const count );
 
 private:
 
@@ -85,7 +85,7 @@ private:
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 
-	Size num_cycles_, output_period_;
+	core::Size num_cycles_, output_period_;
 	core::Real sample_range_small_, sample_range_large_, kT_;
 
 	bool do_add_delete_;

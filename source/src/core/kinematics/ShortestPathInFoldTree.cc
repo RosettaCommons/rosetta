@@ -87,6 +87,7 @@ ShortestPathInFoldTree::ShortestPathInFoldTree(
 ShortestPathInFoldTree::ShortestPathInFoldTree(
 	ShortestPathInFoldTree const & src
 ) :
+	VirtualBase( src ),
 	jump_res_( src.jump_res_ ),
 	node_dist_( src.node_dist_ ),
 	res2jumps_( src.res2jumps_ ),

@@ -61,6 +61,8 @@ static basic::Tracer TR( "protocols.membrane.AddMPLigandMover" );
 namespace protocols {
 namespace membrane {
 
+using core::Size;
+
 ////////////////////
 /// Constructors ///
 ////////////////////
@@ -119,12 +121,12 @@ AddMPLigandMover::parse_my_tag(
 
 	// Read in closest residue option
 	if ( tag->hasOption( "closest_rsd" ) ) {
-		closest_rsd_ = tag->getOption< Size >( "closest_rsd" );
+		closest_rsd_ = tag->getOption< core::Size >( "closest_rsd" );
 	}
 
 	// Read in sequence position of the ligand
 	if ( tag->hasOption( "ligand_seqpos" ) ) {
-		ligand_seqpos_ = tag->getOption< Size >( "ligand_seqpos" );
+		ligand_seqpos_ = tag->getOption< core::Size >( "ligand_seqpos" );
 	}
 
 }

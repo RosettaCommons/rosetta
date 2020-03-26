@@ -61,7 +61,7 @@ using namespace protocols::jd3::standard;
 using namespace protocols::jd3::pose_inputters;
 using namespace protocols::rosetta_scripts;
 
-class DummyResource : public utility::pointer::ReferenceCount
+class DummyResource : public utility::VirtualBase
 {
 public:
 	DummyResource( int value ) : value_( value ) {}

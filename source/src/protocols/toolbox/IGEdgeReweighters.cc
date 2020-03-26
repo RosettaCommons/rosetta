@@ -43,8 +43,8 @@ core::Real
 IGLigandDesignEdgeUpweighter::get_edge_reweight(
 	pose::Pose const & pose,
 	pack::task::PackerTask const & task,
-	Size res1,
-	Size res2
+	core::Size res1,
+	core::Size res2
 ) const
 {
 
@@ -87,8 +87,8 @@ core::Real
 IGInterfaceEdgeUpweighter::get_edge_reweight(
 	pose::Pose const & pose,
 	pack::task::PackerTask const &,
-	Size res1,
-	Size res2
+	core::Size res1,
+	core::Size res2
 ) const
 {
 

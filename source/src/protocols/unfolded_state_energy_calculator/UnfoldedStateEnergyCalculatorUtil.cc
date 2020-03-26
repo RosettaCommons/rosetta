@@ -45,7 +45,7 @@ calc_all_averages( utility::vector1< core::scoring::EMapVector > unweighted_ener
 	EMapVector boltzmann;
 
 	// for each energy term in the EMapVector
-	for ( Size i( 1 ); i <= n_score_types; ++i ) {
+	for ( core::Size i( 1 ); i <= n_score_types; ++i ) {
 
 		// if the energy term has a non-zero weight
 		if ( energy_terms[ ScoreType( i ) ] != 0 ) {
@@ -54,7 +54,7 @@ calc_all_averages( utility::vector1< core::scoring::EMapVector > unweighted_ener
 			vector1< Real > temp_energies;
 			temp_energies.resize( unweighted_energies.size() );
 
-			for ( Size j( 1 ); j <= unweighted_energies.size(); ++j ) {
+			for ( core::Size j( 1 ); j <= unweighted_energies.size(); ++j ) {
 				temp_energies[ j ] =  unweighted_energies[ j ][ ScoreType( i ) ];
 			}
 
@@ -72,7 +72,7 @@ calc_all_averages( utility::vector1< core::scoring::EMapVector > unweighted_ener
 	// output all the data we have been collecting. despite function name these energies are unweighted
 	// since the non-zero weights were set to 1 in set_energy_terms()
 	TR << "NUM FRAGMENTS: " << unweighted_energies.size() << std::endl;
-	for ( Size i(1); i <= unweighted_energies.size(); ++i ) {
+	for ( core::Size i(1); i <= unweighted_energies.size(); ++i ) {
 		TR << "FRAG " << i << ":\t" << unweighted_energies[ i ].weighted_string_of( energy_terms ) << std::endl;
 	}
 
@@ -92,7 +92,7 @@ calc_vector_mean( utility::vector1< core::Real> const & data )
 
 	// sum elements of array
 	Real sum( 0 );
-	for ( Size i( 1 ); i <= data.size(); ++i ) {
+	for ( core::Size i( 1 ); i <= data.size(); ++i ) {
 		sum += data[ i ];
 	}
 
@@ -136,20 +136,20 @@ calc_vector_boltzmann( utility::vector1< core::Real> const & data )
 	Real low_energy( data[ 1 ] );
 	vector1< core::Real> energy_diffs;
 	energy_diffs.resize( data.size() );
-	for ( Size i( 1 ); i <= data.size(); ++i ) {
+	for ( core::Size i( 1 ); i <= data.size(); ++i ) {
 		energy_diffs[ i ] =  data[ i ] - low_energy;
 	}
 
 	// calc boltzmann factors
 	vector1< core::Real> bolzmann_factors;
 	bolzmann_factors.resize( energy_diffs.size() );
-	for ( Size i( 1 ); i <= energy_diffs.size(); ++i ) {
+	for ( core::Size i( 1 ); i <= energy_diffs.size(); ++i ) {
 		bolzmann_factors[ i ] = exp( ( -1 * energy_diffs[ i ] ) / ( R * T ) );
 	}
 
 	// calc average boltzmann factor
 	Real sum( 0 ), avg( 0 );
-	for ( Size i( 1 ); i <= bolzmann_factors.size(); ++i ) {
+	for ( core::Size i( 1 ); i <= bolzmann_factors.size(); ++i ) {
 		sum += bolzmann_factors[ i ];
 	}
 	avg = sum/bolzmann_factors.size();

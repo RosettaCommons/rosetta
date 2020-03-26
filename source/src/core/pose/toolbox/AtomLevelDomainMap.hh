@@ -10,7 +10,7 @@
 #ifndef INCLUDED_core_pose_toolbox_AtomLevelDomainMap_HH
 #define INCLUDED_core_pose_toolbox_AtomLevelDomainMap_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/toolbox/AtomLevelDomainMap.fwd.hh>
 #include <core/pose/toolbox/AtomID_Mapper.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -42,7 +42,7 @@ namespace toolbox {
 //              positions within each domain.
 //   999    = (FIXED) part of a user-defined fixed domain.
 
-class AtomLevelDomainMap : public utility::pointer::ReferenceCount {
+class AtomLevelDomainMap : public utility::VirtualBase {
 public:
 
 	//constructor

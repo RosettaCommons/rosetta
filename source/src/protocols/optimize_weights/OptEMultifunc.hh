@@ -165,7 +165,7 @@ private:
 
 private: // data
 
-	Size const num_energy_dofs_;
+	core::Size const num_energy_dofs_;
 	int const num_ref_dofs_;
 	int const num_total_dofs_;
 
@@ -295,7 +295,7 @@ public:
 
 	void init(
 		ScoreTypes const & free_score_list,
-		Size free_count, // the number of named dofs (score types) + the number of reference energies
+		core::Size free_count, // the number of named dofs (score types) + the number of reference energies
 		ScoreTypes const & fixed_score_list,
 		EnergyMap  const & fixed_scores,
 		OptEMultifuncOP optEfunc
@@ -322,7 +322,7 @@ public:
 		Multivec & dE_dvars
 	) const override;
 
-	Size
+	core::Size
 	n_real_dofs() const;
 
 	utility::vector1< Real >
@@ -366,7 +366,7 @@ private:
 	std::map< std::string, OptEVariableExpressionOP > dof_variables_;
 
 	// what order should dofs appear in for the OptEMultifunc?
-	std::map< std::string, Size > optEmultifunc_dof_order_;
+	std::map< std::string, core::Size > optEmultifunc_dof_order_;
 
 	/// non-depdendent dofs are handled by VariableExpressions that map
 	/// from the real_dof id to the optE-percieved-dof id.
@@ -375,12 +375,12 @@ private:
 	/// Which variables influence each optE-percieved-dofs?
 	utility::vector1< std::set< std::string > > active_variables_;
 	/// For each real dof, a list of each derivative expression and associated optE-percieved-dof id.
-	utility::vector1< std::list< std::pair< Size, numeric::expression_parser::ExpressionCOP > > > real_dof_deriviative_expressions_;
+	utility::vector1< std::list< std::pair< core::Size, numeric::expression_parser::ExpressionCOP > > > real_dof_deriviative_expressions_;
 
 	OptEMultifuncOP multifunc_;
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-	// Size n_new_dofs_;
-	Size n_real_dofs_;
+	// core::Size n_new_dofs_;
+	core::Size n_real_dofs_;
 
 };
 

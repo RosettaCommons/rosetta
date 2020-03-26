@@ -20,7 +20,7 @@
 #include <utility/io/FileContentsMap.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <map>
@@ -55,7 +55,7 @@ namespace io {
 /// you request the contents of a file, you must provide a read limit (zero is
 /// an acceptible value here; see above) for that file, or the %FileContentsMap
 /// will throw an exception when you request that file.
-class FileContentsMap : public utility::pointer::ReferenceCount
+class FileContentsMap : public utility::VirtualBase
 {
 public:
 

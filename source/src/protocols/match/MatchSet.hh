@@ -25,7 +25,7 @@
 #include <numeric/geometry/hashing/SixDHasher.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/FixedSizeLexicographicalIterator.fwd.hh>
 
@@ -51,7 +51,7 @@ namespace match {
 /// constant pointers to the hits that exist and uses their addresses to hash upon.
 /// The hit hasher should only be used if you can guarantee that the hits it points
 /// to will outlive the hasher.
-class HitHasher : public utility::pointer::ReferenceCount {
+class HitHasher : public utility::VirtualBase {
 public:
 	typedef core::Real                               Real;
 	typedef core::Size                               Size;
@@ -83,35 +83,35 @@ public:
 	set_euler_bin_widths( Vector const & euler_bin_widths );
 
 	void
-	set_nhits_per_match( Size num_geometric_constraints );
+	set_nhits_per_match( core::Size num_geometric_constraints );
 
 	void
 	initialize();
 
 	/// @brief Insert a hits into all 64 hash maps
 	void
-	insert_hit( Size geometric_constraint_id, Hit const * hit );
+	insert_hit( core::Size geometric_constraint_id, Hit const * hit );
 
 	/// @brief Insert a hits into a particular hash maps
 	void
-	insert_hit( Size which_hash_map, Size geometric_constraint_id, Hit const * hit );
+	insert_hit( core::Size which_hash_map, core::Size geometric_constraint_id, Hit const * hit );
 
 	void
-	clear_hash_map( Size which_hash_map );
+	clear_hash_map( core::Size which_hash_map );
 
 	HitHash::const_iterator
-	hit_hash_begin( Size which_hash_map ) const;
+	hit_hash_begin( core::Size which_hash_map ) const;
 
 	HitHash::const_iterator
-	hit_hash_end( Size which_hash_map ) const;
+	hit_hash_end( core::Size which_hash_map ) const;
 
 	numeric::geometry::hashing::SixDCoordinateBinner const &
-	binner( Size which_hash_map ) const {
+	binner( core::Size which_hash_map ) const {
 		return * hit_hashes_[ which_hash_map ].first;
 	}
 
 private:
-	static Size const N_HASH_MAPS = 64; // 2^6 -- all combinations of offsets for 6 dimensions
+	static core::Size const N_HASH_MAPS = 64; // 2^6 -- all combinations of offsets for 6 dimensions
 
 	BoundingBox bb_;
 
@@ -119,7 +119,7 @@ private:
 
 	utility::fixedsizearray1< Real, 3 > xyz_bin_widths_;
 	utility::fixedsizearray1< Real, 3 > euler_bin_widths_;
-	Size n_geometric_constraints_per_match_;
+	core::Size n_geometric_constraints_per_match_;
 
 	utility::vector1< std::pair< numeric::geometry::hashing::SixDCoordinateBinnerOP, HitHash > > hit_hashes_;
 
@@ -127,7 +127,7 @@ private:
 
 /// Class for finding hit neighbors in 6D considering all 64 origin definitions (but without
 /// forming all 64 hashes).
-class HitNeighborFinder : public utility::pointer::ReferenceCount
+class HitNeighborFinder : public utility::VirtualBase
 {
 public:
 	typedef core::Real                               Real;
@@ -197,7 +197,7 @@ private:
 	/// @brief Put the hits that have been added to "all_hits" into the hash_
 	void hash_hits();
 
-	Size
+	core::Size
 	find_next_bin(
 		Real6 orig_point,
 		Real6 offsets,
@@ -230,7 +230,7 @@ private:
 };
 
 /// Class for counting the number of matches given a particular discretization level.
-class MatchCounter : public utility::pointer::ReferenceCount
+class MatchCounter : public utility::VirtualBase
 {
 public:
 	typedef core::Real                               Real;
@@ -239,7 +239,7 @@ public:
 	typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
 	typedef numeric::geometry::hashing::Bin6D        Bin6D;
 
-	typedef utility::vector1< Size >                                              HitCounts;
+	typedef utility::vector1< core::Size >                                              HitCounts;
 	typedef boost::unordered_map< boost::uint64_t, HitCounts, numeric::geometry::hashing::bin_index_hasher >  HitHash;
 
 public:
@@ -253,7 +253,7 @@ public:
 	);
 
 	void
-	set_n_geometric_constraints( Size ngeomcsts );
+	set_n_geometric_constraints( core::Size ngeomcsts );
 
 	/// @brief Give the same xyz bin witdh given to the HitHasher / OccupiedSpaceHash.
 	void
@@ -278,14 +278,14 @@ public:
 	initialize();
 
 	/// @brief Add hits from a list of hits for a particular geometric constraint.
-	void add_hits( Size geomcst_id, std::list< Hit > const & hitlist );
+	void add_hits( core::Size geomcst_id, std::list< Hit > const & hitlist );
 
 	/// @brief Add hit from the input list of hits for a particular geometric constraint.
-	void add_hits( Size geomcst_id, std::list< Hit const * >  const & hitptrlist );
+	void add_hits( core::Size geomcst_id, std::list< Hit const * >  const & hitptrlist );
 
 	/// @brief Possibly slow method to predict the total number of matches given a set of
 	/// hits and a particular grid resolution.  (The main function that this class provides).
-	Size
+	core::Size
 	count_n_matches() const;
 
 
@@ -294,7 +294,7 @@ private:
 	/// @brief Put the hits that have been added to "all_hits" into the hash_
 	void hash_hits();
 
-	Size
+	core::Size
 	find_next_bin(
 	Real6 orig_point,
 	Real6 offsets,
@@ -315,7 +315,7 @@ private:
 
 	BoundingBox bb_;
 
-	Size n_geom_csts_;
+	core::Size n_geom_csts_;
 	bool initialized_;
 
 	utility::fixedsizearray1< Real, 3 > xyz_bin_widths_;
@@ -355,12 +355,12 @@ public:
 	typedef core::Size Size;
 
 public:
-	Size
+	core::Size
 	operator() ( match_lite const & m ) const {
 		/// Crazy hash function!
-		Size hash = 1;
+		core::Size hash = 1;
 		for ( core::Size ii = 1; ii <= m.size(); ++ii ) {
-			hash += ( hash * reinterpret_cast< Size > ( m[ ii ] ) * ii ) % 5527;
+			hash += ( hash * reinterpret_cast< core::Size > ( m[ ii ] ) * ii ) % 5527;
 		}
 		return hash % 7351;
 	}

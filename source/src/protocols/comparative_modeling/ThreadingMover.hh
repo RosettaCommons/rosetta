@@ -93,7 +93,7 @@ public:
 
 	void min_loop_size( core::Size const new_size );
 
-	Size min_loop_size() const;
+	core::Size min_loop_size() const;
 
 	utility::vector1< core::fragment::FragSetOP > frag_libs() const;
 

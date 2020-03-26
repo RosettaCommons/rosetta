@@ -28,7 +28,7 @@
 
 #include <numeric/xyzVector.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <numeric/conversions.hh>
 #include <numeric/xyzMatrix.hh>

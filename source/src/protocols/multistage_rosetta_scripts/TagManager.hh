@@ -15,7 +15,7 @@
 #ifndef INCLUDED_protocols_multistage_rosetta_scripts_TagManager_HH
 #define INCLUDED_protocols_multistage_rosetta_scripts_TagManager_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/multistage_rosetta_scripts/TagManager.fwd.hh>
 
 #include <protocols/jd3/CompletedJobOutput.hh>
@@ -58,7 +58,7 @@ public:
 	bool add(
 		std::string const & type,
 		std::string const & name,
-		utility::pointer::ReferenceCountOP const op
+		utility::VirtualBaseOP const op
 	) override;
 
 };
@@ -89,7 +89,7 @@ struct ParsedTagCache{
 
 };
 
-class TagManager : public utility::pointer::ReferenceCount {
+class TagManager : public utility::VirtualBase {
 public:
 	TagManager();
 	TagManager( core::Size num_input_pose_ids );

@@ -18,7 +18,7 @@
 #include <protocols/loop_build/LoopMover_SlidingWindow.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace loop_build {

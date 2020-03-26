@@ -79,7 +79,7 @@ public: // construct/destruct
 	/// @param[in] rts the residue type set to use, default FA_STANDARD
 	/// @remarks length of the *one-letter* aa must equal the length of ss
 	GrowLeft(
-		Size const pos,
+		core::Size const pos,
 		String const & ss,
 		String const & aa = String(),
 		ResidueTypeSetCAP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
@@ -115,7 +115,7 @@ public: // accessors
 	/// @remarks this can change if listening to Conformation LengthEvents
 	///  Use original_interval() to get the original anchor position.
 	inline
-	Size pos() const {
+	core::Size pos() const {
 		return pos_;
 	}
 
@@ -281,7 +281,7 @@ private: // data
 	/// @brief make an n-terminal extension before this position
 	/// @remarks this position can shift if listening to a Pose/Conformation and the number
 	///  of residues changes
-	Size pos_;
+	core::Size pos_;
 
 
 	/// @brief secondary structure string, also defines length of extension

@@ -147,7 +147,7 @@ void  TMalign::do_rotation(
 //     one layer of the matrix. This code was exploited in TM-align
 //     because it is about 1.5 times faster than a complete N-W code
 //     and does not influence much the final structure alignment result.
-void  TMalign::NWDP_TM(Size const len1, Size const len2, core::Real const gap_open, std::vector < int > & j2i)
+void  TMalign::NWDP_TM(core::Size const len1, core::Size const len2, core::Real const gap_open, std::vector < int > & j2i)
 {
 	//NW dynamic programming for alignment
 	//not a standard implementation of NW algorithm
@@ -158,20 +158,20 @@ void  TMalign::NWDP_TM(Size const len1, Size const len2, core::Real const gap_op
 
 	//initialization
 	val_[0][0]=0;
-	for ( Size i=0; i<=len1; ++i ) {
+	for ( core::Size i=0; i<=len1; ++i ) {
 		val_[i][0]=0;
 		path_[i][0]=false; //not from diagonal
 	}
 
-	for ( Size j=0; j<=len2; ++j ) {
+	for ( core::Size j=0; j<=len2; ++j ) {
 		val_[0][j]=0;
 		path_[0][j]=false; //not from diagonal
 		j2i[j]=-1; //all are not aligned, only use j2i[1:len2]
 	}
 
 	//decide matrix and path
-	for ( Size i=1; i<=len1; ++i )  {
-		for ( Size j=1; j<=len2; ++j ) {
+	for ( core::Size i=1; i<=len1; ++i )  {
+		for ( core::Size j=1; j<=len2; ++j ) {
 			d=val_[i-1][j-1]+score_[i][j]; //diagonal
 
 			//symbol insertion in horizontal (= a gap in vertical)
@@ -401,7 +401,7 @@ void
 TMalign::resize_for_xyz_matrix(
 	std::vector <std::vector <core::Real> > & xx) {
 	xx.resize(3);
-	for ( Size i = 0; i<3; ++i ) {
+	for ( core::Size i = 0; i<3; ++i ) {
 		xx[i].resize(3);
 	}
 }
@@ -411,9 +411,9 @@ TMalign::convert_xyz_to_matrix(
 	numeric::xyzMatrix <core::Real> const & x,
 	std::vector <std::vector <core::Real> > & xx) {
 	xx.resize(3);
-	for ( Size i = 0; i<3; ++i ) {
+	for ( core::Size i = 0; i<3; ++i ) {
 		xx[i].resize(3);
-		for ( Size j = 0; j<3; ++j ) {
+		for ( core::Size j = 0; j<3; ++j ) {
 			xx[i][j]= x(i+1,j+1);
 		}
 	}
@@ -432,8 +432,8 @@ void
 TMalign::convert_matrix_to_xyz(
 	std::vector <std::vector <core::Real> > const & x,
 	numeric::xyzMatrix <core::Real> & xx) {
-	for ( Size i = 0; i<3; ++i ) {
-		for ( Size j = 0; j<3; ++j ) {
+	for ( core::Size i = 0; i<3; ++i ) {
+		for ( core::Size j = 0; j<3; ++j ) {
 			xx(i+1,j+1) = x[i][j];
 		}
 	}
@@ -444,7 +444,7 @@ TMalign::convert_xyz_v_to_vectors(
 	std::vector < numeric::xyzVector <core::Real> > const & x,
 	std::vector < std::vector < core::Real > > & xx) {
 	xx.resize(x.size());
-	for ( Size i=0; i<xx.size(); ++i ) {
+	for ( core::Size i=0; i<xx.size(); ++i ) {
 		convert_xyz_to_vector(x[i],xx[i]);
 	}
 }
@@ -1794,11 +1794,11 @@ void  TMalign::alignment2AtomMap(
 	std::list <core::Size> residue_list1;
 	std::list <core::Size> residue_list2;
 
-	for ( Size ires=1; ires<= pose1.size(); ++ires ) {
+	for ( core::Size ires=1; ires<= pose1.size(); ++ires ) {
 		if ( !pose1.residue(ires).is_protein() ) continue;
 		residue_list1.push_back(ires);
 	}
-	for ( Size ires=1; ires<= pose2.size(); ++ires ) {
+	for ( core::Size ires=1; ires<= pose2.size(); ++ires ) {
 		if ( !pose2.residue(ires).is_protein() ) continue;
 		residue_list2.push_back(ires);
 	}
@@ -1814,11 +1814,11 @@ void  TMalign::alignment2AtomMap(
 	core::id::AtomID_Map< core::id::AtomID > & atom_map) {
 	std::list <core::Size> residue_list1;
 	std::list <core::Size> residue_list2;
-	for ( Size ires=1; ires<= pose1.size(); ++ires ) {
+	for ( core::Size ires=1; ires<= pose1.size(); ++ires ) {
 		if ( !pose1.residue(ires).is_protein() ) continue;
 		residue_list1.push_back(ires);
 	}
-	for ( Size ires=1; ires<= pose2.size(); ++ires ) {
+	for ( core::Size ires=1; ires<= pose2.size(); ++ires ) {
 		if ( !pose2.residue(ires).is_protein() ) continue;
 		residue_list2.push_back(ires);
 	}
@@ -1979,10 +1979,10 @@ void  TMalign::parameter_set4scale(int len, core::Real d_s) {
 }
 
 
-core::Real  TMalign::TMscore(Size length) {
+core::Real  TMalign::TMscore(core::Size length) {
 	d0_out_=5.0;
-	Size simplify_step=1;
-	Size score_sum_method=0;
+	core::Size simplify_step=1;
+	core::Size score_sum_method=0;
 
 	//normalized by user assigned length
 	parameter_set4final(length);
@@ -1995,11 +1995,11 @@ core::Real  TMalign::TMscore(Size length) {
 int  TMalign::apply(core::pose::Pose const & pose1, core::pose::Pose const & pose2) {
 	std::list <core::Size> residue_list1;
 	std::list <core::Size> residue_list2;
-	for ( Size ires=1; ires<= pose1.size(); ++ires ) {
+	for ( core::Size ires=1; ires<= pose1.size(); ++ires ) {
 		if ( !pose1.residue(ires).is_protein() ) continue;
 		residue_list1.push_back(ires);
 	}
-	for ( Size ires=1; ires<= pose2.size(); ++ires ) {
+	for ( core::Size ires=1; ires<= pose2.size(); ++ires ) {
 		if ( !pose2.residue(ires).is_protein() ) continue;
 		residue_list2.push_back(ires);
 	}

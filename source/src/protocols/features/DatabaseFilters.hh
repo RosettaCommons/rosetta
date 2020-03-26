@@ -24,7 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers
@@ -40,7 +40,7 @@ typedef std::pair<bool, utility::vector1<StructureID> > WriteDeletePair;
 
 DatabaseFilterOP get_DB_filter_ptr();
 
-class DatabaseFilter : public utility::pointer::ReferenceCount {
+class DatabaseFilter : public utility::VirtualBase {
 public:
 	DatabaseFilter(){};
 	virtual WriteDeletePair  operator()(

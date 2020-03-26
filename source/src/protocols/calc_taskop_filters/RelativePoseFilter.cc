@@ -157,7 +157,7 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		}
 	}//fi copy_comments.size()
 
-	std::map< Size, Size > alignment = get_alignment( p );
+	std::map< core::Size, core::Size > alignment = get_alignment( p );
 
 	if ( copy_stretch() ) { // just copy the aligned stretch, and then go straight to relax. No repacking
 		copy_pose->copy_segment( alignment.size()/*how many residues*/, p/*src*/, alignment.begin()->first/*start on target*/, alignment.begin()->second/*start on src*/ );

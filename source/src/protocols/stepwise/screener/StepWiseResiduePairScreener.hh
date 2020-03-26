@@ -28,7 +28,7 @@ class StepWiseResiduePairScreener: public StepWiseScreener {
 public:
 
 	//constructor
-	StepWiseResiduePairScreener( Size const res1, Size const res2 );
+	StepWiseResiduePairScreener( core::Size const res1, core::Size const res2 );
 
 	//destructor
 	~StepWiseResiduePairScreener() override;
@@ -46,7 +46,7 @@ public:
 
 protected:
 
-	Size const res1_, res2_;
+	core::Size const res1_, res2_;
 
 };
 

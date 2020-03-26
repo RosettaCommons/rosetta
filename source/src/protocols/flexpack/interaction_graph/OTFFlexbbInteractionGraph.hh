@@ -344,12 +344,12 @@ private:
 	PoseOP alternate_pose_;
 	Real alternate_pose_energy_;
 
-	utility::vector1< Size > changing_seqpos_;
+	utility::vector1< core::Size > changing_seqpos_;
 	utility::vector1< core::conformation::ResidueOP > alt_rots_;
 	utility::vector1< int > alt_rot_inds_;
 
-	utility::vector1< Size > resid_2_moltenres_;
-	utility::vector1< Size > moltenres_2_resid_;
+	utility::vector1< core::Size > resid_2_moltenres_;
+	utility::vector1< core::Size > moltenres_2_resid_;
 };
 
 inline

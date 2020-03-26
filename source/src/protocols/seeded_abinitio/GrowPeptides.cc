@@ -110,14 +110,14 @@ GrowPeptides::ddg(){
 }
 
 void
-GrowPeptides::append_residues_nterminally ( Size seq_register, Size res_pos, Size stop, std::string & nat_seq , pose::Pose & target_seeds ){
+GrowPeptides::append_residues_nterminally ( core::Size seq_register, core::Size res_pos, core::Size stop, std::string & nat_seq , pose::Pose & target_seeds ){
 	TR<<" ---- growing N-terminal stretch from residues: "<<res_pos <<" to " <<stop <<"----------" << std::endl;
 	core::chemical::ResidueTypeSetCOP rsd_set( target_seeds.residue_type_set_for_pose( target_seeds.residue_type(1).mode() ) );// this could be changed as needed
 	//std::cout<<"nseq size: " << nat_seq.size() << " template sequence: "<< nat_seq << std::endl;
 	//std::cout<< "sequence register : "<< seq_register << std::endl;
 
-	for ( Size k= res_pos; k < stop ; ++k ) {
-		Size resi = stop - k + res_pos - 1 ; /* so that stop doesnt get incorporated anymore*/
+	for ( core::Size k= res_pos; k < stop ; ++k ) {
+		core::Size resi = stop - k + res_pos - 1 ; /* so that stop doesnt get incorporated anymore*/
 		const char aa = nat_seq[ stop - k - 1 + seq_register - 1];//in case this is called within the sequence, -1 because strings start counting at 0
 		TR.Debug << "RES AA N-terminal extension:  " << resi << aa <<std::endl;
 		// Representative type should have no/minimal variants
@@ -130,15 +130,15 @@ GrowPeptides::append_residues_nterminally ( Size seq_register, Size res_pos, Siz
 }
 
 void
-GrowPeptides::append_residues_cterminally ( Size seq_register, Size res_pos, Size stop, std::string & nat_seq , pose::Pose & target_seeds ){
+GrowPeptides::append_residues_cterminally ( core::Size seq_register, core::Size res_pos, core::Size stop, std::string & nat_seq , pose::Pose & target_seeds ){
 	TR<<" ----- growing C-terminal extension from residues: "<<res_pos <<" to " <<stop <<"--------" <<std::endl;
 	core::chemical::ResidueTypeSetCOP rsd_set( target_seeds.residue_type_set_for_pose( target_seeds.residue_type(res_pos-1).mode() ) );// this could be changed as needed
 	//std::cout<<"cseq size: " << nat_seq.size() << " sequence: "<< nat_seq << std::endl;
 	//std::cout<<"seq_register: " << seq_register << std::endl;
 
-	for ( Size j = res_pos ; j <  stop  ; ++j  ) {
+	for ( core::Size j = res_pos ; j <  stop  ; ++j  ) {
 		const char aa = nat_seq[ j - res_pos + seq_register /*-1*/]; // -1 for string adjustment
-		Size resi =  j ;
+		core::Size resi =  j ;
 		TR.Debug << "RES AA C-terminal extension  " << resi << aa <<std::endl;
 		// Representative type should have no/minimal variants
 		core::chemical::ResidueTypeCOP new_rsd_type( rsd_set->get_representative_type_name1( aa ) );
@@ -151,7 +151,7 @@ GrowPeptides::append_residues_cterminally ( Size seq_register, Size res_pos, Siz
 
 /*
 void
-insert_segment( std::pair <Size, Size> insert_type, std::string seq ,pose::pose curr_pose, )
+insert_segment( std::pair <core::Size, core::Size> insert_type, std::string seq ,pose::pose curr_pose, )
 {
 //(0, num) = insert c-terminally of given position
 //(num, 0) = insert n-terminally of given position
@@ -206,14 +206,14 @@ GrowPeptides::grow_from_vertices(
 		utility_exit_with_message( "chunk pieces do not agree with the length of the submitted template pdb" );
 	}
 
-	for ( Size vertex_it = 4 ; vertex_it <= vertices.size(); vertex_it = vertex_it + 4 ) {
+	for ( core::Size vertex_it = 4 ; vertex_it <= vertices.size(); vertex_it = vertex_it + 4 ) {
 
 		if ( vertex_it < vertices.size() ) {
 			grow_foldtree = curr_pose.fold_tree();
 			//connect seeds
 			TR.Debug <<"for temp jump --- from: " <<vertices[vertex_it - 3 ]<<", to: "<< vertices[vertex_it - 3] + (seeds[vertex_it/4].stop() - seeds[vertex_it/4].start()) + 1 <<", cutpoint: "<< vertices[vertex_it - 3] + (seeds[vertex_it/4].stop() - seeds[vertex_it/4].start()) <<std::endl;
 			//ensuring that the new temporariy cutpoint is unique
-			Size temp_cutpoint = vertices[vertex_it - 3] + (seeds[vertex_it/4].stop() - seeds[vertex_it/4].start());
+			core::Size temp_cutpoint = vertices[vertex_it - 3] + (seeds[vertex_it/4].stop() - seeds[vertex_it/4].start());
 			if ( curr_pose.fold_tree().is_cutpoint( temp_cutpoint ) ) {
 				++temp_cutpoint;
 			}
@@ -229,7 +229,7 @@ GrowPeptides::grow_from_vertices(
 		TR<<"appending C-terminally from: " << vertices[vertex_it - 1 ] << " to " << vertices[vertex_it ] << std::endl;
 
 		//need to adjust the extensions/numbering
-		Size nseq_start =  seeds[vertex_it/4 ].start() - ( vertices[vertex_it - 2] - vertices[vertex_it - 3] );
+		core::Size nseq_start =  seeds[vertex_it/4 ].start() - ( vertices[vertex_it - 2] - vertices[vertex_it - 3] );
 		TR.Debug <<" grow nterm: start sequence " <<nseq_start <<" position in pose "<< vertices[vertex_it - 3] <<" stop " << vertices[vertex_it - 2] <<" sequence " << sequence << std::endl ;
 
 		//get sequence start through the seed start minus that actual length that needs to be added
@@ -260,7 +260,7 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 	///if there are loops and template, then activate grow from seeds
 	if ( all_seeds_.size() > 0  &&  template_presence ) {
 
-		utility::vector1< Size > cutpoints;
+		utility::vector1< core::Size > cutpoints;
 
 		if ( !fetch_foldtree ) {
 			TR<<"taking foldtree from pose" <<std::endl;
@@ -348,11 +348,11 @@ GrowPeptides::parse_my_tag(
 	//add_chainbreakterm_ = tag->getOption< bool >( "add_chainbreakterm", 1 );
 
 	if ( tag->hasOption( "extend_nterm" ) ) {
-		extend_nterm = tag->getOption< Size >( "extend_nterm" , 0 );
+		extend_nterm = tag->getOption< core::Size >( "extend_nterm" , 0 );
 		TR<<"extending peptide n-terminally by "<< extend_nterm << std::endl;
 	}
 	if ( tag->hasOption( "extend_cterm" ) ) {
-		extend_cterm = tag->getOption< Size >( "extend_cterm" , 0 );
+		extend_cterm = tag->getOption< core::Size >( "extend_cterm" , 0 );
 		TR<<"extending peptide c-terminally by " << extend_cterm << std::endl;
 	}
 

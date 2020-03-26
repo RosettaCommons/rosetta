@@ -24,7 +24,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 
 // C++ headers
@@ -38,7 +38,7 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
-class SymmData : public utility::pointer::ReferenceCount
+class SymmData : public utility::VirtualBase
 {
 
 	// typedef utility::vector1< Size > Clones;

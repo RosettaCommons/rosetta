@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_stepwise_rna_SugarModeling_HH
 #define INCLUDED_protocols_stepwise_rna_SugarModeling_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/stepwise/modeler/rna/sugar/SugarModeling.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
@@ -31,7 +31,7 @@ namespace modeler {
 namespace rna {
 namespace sugar {
 
-class SugarModeling: public utility::pointer::ReferenceCount {
+class SugarModeling: public utility::VirtualBase {
 
 public:
 

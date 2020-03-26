@@ -22,13 +22,13 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace numeric {
 namespace linear_algebra {
 
 ///@brief Container class for ellipse parameters
-class EllipseParameters : public utility::pointer::ReferenceCount {
+class EllipseParameters : public utility::VirtualBase {
 
 public:
 

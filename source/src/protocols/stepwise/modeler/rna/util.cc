@@ -147,12 +147,12 @@ apply_protonated_H1_adenosine_variant_type( core::pose::Pose & pose, core::Size 
 void
 remove_all_variant_types( pose::Pose & pose ){
 
-	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		if ( pose.residue( seq_num ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 		utility::vector1< std::string > target_variants( pose.residue( seq_num ).type().properties().get_list_of_variants() );
 		runtime_assert ( target_variants.size() == pose.residue( seq_num ).type().properties().get_list_of_variants().size() );
-		Size skip_variant_count = 0;
+		core::Size skip_variant_count = 0;
 		for ( auto const & variant : target_variants ) {
 			runtime_assert ( pose.residue( seq_num ).type().has_variant_type( variant ) );
 			bool skip_this_variant = false;
@@ -170,16 +170,16 @@ remove_all_variant_types( pose::Pose & pose ){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< Size >
-apply_full_to_sub_mapping( utility::vector1< Size > const & res_vector, utility::vector1< core::Size > const & is_working_res, std::map< core::Size, core::Size > const & full_to_sub ){
+utility::vector1< core::Size >
+apply_full_to_sub_mapping( utility::vector1< core::Size > const & res_vector, utility::vector1< core::Size > const & is_working_res, std::map< core::Size, core::Size > const & full_to_sub ){
 
 	using namespace ObjexxFCL;
 	runtime_assert( is_working_res.size() > 0 );
 	runtime_assert ( !full_to_sub.empty() );
 
-	Size const total_res = is_working_res.size();
+	core::Size const total_res = is_working_res.size();
 	utility::vector1< core::Size > working_res_vector;
-	for ( Size const seqpos : res_vector ) {
+	for ( core::Size const seqpos : res_vector ) {
 		runtime_assert ( seqpos <= total_res );
 		if ( !is_working_res[ seqpos ] ) continue;
 		working_res_vector.push_back( full_to_sub.find( seqpos )->second );
@@ -189,8 +189,8 @@ apply_full_to_sub_mapping( utility::vector1< Size > const & res_vector, utility:
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< Size >
-apply_full_to_sub_mapping( utility::vector1< Size > const & res_vector, working_parameters::StepWiseWorkingParametersCOP working_parameters ){
+utility::vector1< core::Size >
+apply_full_to_sub_mapping( utility::vector1< core::Size > const & res_vector, working_parameters::StepWiseWorkingParametersCOP working_parameters ){
 
 	utility::vector1< core::Size > const & is_working_res = working_parameters->is_working_res();
 	std::map< core::Size, core::Size > const & full_to_sub = working_parameters->const_full_to_sub();
@@ -201,11 +201,11 @@ apply_full_to_sub_mapping( utility::vector1< Size > const & res_vector, working_
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< Size >
-apply_sub_to_full_mapping( utility::vector1< Size > const & working_res_vector, working_parameters::StepWiseWorkingParametersCOP working_parameters ){
+utility::vector1< core::Size >
+apply_sub_to_full_mapping( utility::vector1< core::Size > const & working_res_vector, working_parameters::StepWiseWorkingParametersCOP working_parameters ){
 	std::map< core::Size, core::Size > const & sub_to_full( working_parameters->const_sub_to_full() );
 	utility::vector1< core::Size > full_res_vector;
-	for ( Size const seqpos : working_res_vector ) {
+	for ( core::Size const seqpos : working_res_vector ) {
 		runtime_assert( sub_to_full.find( seqpos ) != sub_to_full.end() );
 		full_res_vector.push_back( sub_to_full.find( seqpos )->second );
 	}
@@ -215,7 +215,7 @@ apply_sub_to_full_mapping( utility::vector1< Size > const & working_res_vector, 
 
 ///////////////////////////This should be a function of the working_parameters class///////////////////////
 void
-ensure_valid_full_seq_num( Size const full_seq_num, working_parameters::StepWiseWorkingParametersCOP const & working_parameters ){
+ensure_valid_full_seq_num( core::Size const full_seq_num, working_parameters::StepWiseWorkingParametersCOP const & working_parameters ){
 	using namespace ObjexxFCL;
 	utility::vector1< core::Size > const & is_working_res = working_parameters->is_working_res();
 	runtime_assert(  full_seq_num >= 1 );
@@ -224,7 +224,7 @@ ensure_valid_full_seq_num( Size const full_seq_num, working_parameters::StepWise
 
 //////////////////////////This should be a function of the working_parameters class/////////////////////////
 bool
-check_is_working_res( Size const full_seq_num, working_parameters::StepWiseWorkingParametersCOP const & working_parameters ){
+check_is_working_res( core::Size const full_seq_num, working_parameters::StepWiseWorkingParametersCOP const & working_parameters ){
 	using namespace ObjexxFCL;
 	utility::vector1< core::Size > const & is_working_res = working_parameters->is_working_res();
 	ensure_valid_full_seq_num( full_seq_num, working_parameters );
@@ -233,7 +233,7 @@ check_is_working_res( Size const full_seq_num, working_parameters::StepWiseWorki
 
 //////////////////////////This should be a function of the working_parameters class/////////////////////////
 core::Size
-check_validity_and_get_working_res( Size const full_seq_num, working_parameters::StepWiseWorkingParametersCOP const & working_parameters ){
+check_validity_and_get_working_res( core::Size const full_seq_num, working_parameters::StepWiseWorkingParametersCOP const & working_parameters ){
 
 	using namespace ObjexxFCL;
 
@@ -245,7 +245,7 @@ check_validity_and_get_working_res( Size const full_seq_num, working_parameters:
 		utility_exit_with_message( "full_seq_num ( " + string_of( full_seq_num ) + " ) is NOT working_res" );
 	}
 
-	Size const working_seq_num = full_to_sub.find( full_seq_num )->second;
+	core::Size const working_seq_num = full_to_sub.find( full_seq_num )->second;
 
 	if ( working_seq_num < 1 ) utility_exit_with_message( "working_seq_num ( " + string_of( working_seq_num ) + " ) is lesser then 1" );
 
@@ -260,7 +260,7 @@ create_full_to_input_res_map( utility::vector1< core::Size > const & input_res_v
 
 	std::map< core::Size, core::Size > full_to_input_res_map;
 
-	for ( Size n = 1; n <= input_res_vector.size(); n++ ) {
+	for ( core::Size n = 1; n <= input_res_vector.size(); n++ ) {
 		full_to_input_res_map[input_res_vector[n]] = n;
 	}
 
@@ -271,7 +271,7 @@ create_full_to_input_res_map( utility::vector1< core::Size > const & input_res_v
 core::Size
 string_to_int( std::string const & input_string ){
 
-	Size int_of_string; //misnomer
+	core::Size int_of_string; //misnomer
 
 	int_of_string = core::pose::rna::string_to_int( input_string );
 
@@ -314,8 +314,8 @@ is_virtual_base( conformation::Residue const & rsd ){
 		utility_exit_with_message( "The rna base " + name_from_aa( rsd.aa() ) + " contain lesser than 8 heavy atoms" );
 	}
 
-	Size non_virtual_atom_count = 0;
-	for ( Size atomno = rsd.first_sidechain_atom() + 1; atomno <= rsd.nheavyatoms(); ++atomno ) { //iterate over base atoms....+1 to exclude the O2prime oxygen
+	core::Size non_virtual_atom_count = 0;
+	for ( core::Size atomno = rsd.first_sidechain_atom() + 1; atomno <= rsd.nheavyatoms(); ++atomno ) { //iterate over base atoms....+1 to exclude the O2prime oxygen
 		if ( !rsd.is_virtual( atomno )  ) {
 			runtime_assert( rsd.atom_type( atomno ).name() != "VIRT" );
 			non_virtual_atom_count++;
@@ -350,8 +350,8 @@ setup_suite_atom_id_map( conformation::Residue const & rsd_1, conformation::Resi
 void
 setup_suite_atom_id_map( conformation::Residue const & rsd_1,
 	conformation::Residue const & rsd_2,
-	Size const res_num_1,
-	Size const res_num_2, //allow for the possibility that two poses have different sizes Jun 9, 2010
+	core::Size const res_num_1,
+	core::Size const res_num_2, //allow for the possibility that two poses have different sizes Jun 9, 2010
 	id::AtomID_Map < id::AtomID > & atom_ID_map,
 	bool const base_only ){
 
@@ -362,15 +362,15 @@ setup_suite_atom_id_map( conformation::Residue const & rsd_1,
 		utility_exit_with_message( "rsd_1.name1() != rsd_2.name1(). res_num_1 = " + string_of( res_num_1 ) + " name_from_aa( rsd_1.name1() ) = " +  rsd_1.name1() + " res_num_2 = " +  string_of( res_num_2 ) + " name_from_aa( rsd_2.name1() ) = " + rsd_2.name1() );
 	}
 
-	Size const first_atom = ( base_only ) ? rsd_1.first_sidechain_atom() + 1 : 1; //+1 to exclude the O2prime oxygen
+	core::Size const first_atom = ( base_only ) ? rsd_1.first_sidechain_atom() + 1 : 1; //+1 to exclude the O2prime oxygen
 
-	for ( Size atomno_1 = first_atom; atomno_1 <= rsd_1.nheavyatoms(); ++atomno_1 ) {
+	for ( core::Size atomno_1 = first_atom; atomno_1 <= rsd_1.nheavyatoms(); ++atomno_1 ) {
 
 		std::string const atom_name_1 = rsd_1.type().atom_name( atomno_1 );
 
 		if ( !rsd_2.has( atom_name_1 ) ) continue;
 
-		Size const atomno_2 = rsd_2.atom_index( atom_name_1 );
+		core::Size const atomno_2 = rsd_2.atom_index( atom_name_1 );
 
 		//Check
 		std::string const atom_name_2 = rsd_2.type().atom_name( atomno_2 );
@@ -391,7 +391,7 @@ setup_suite_atom_id_map( conformation::Residue const & rsd_1,
 //Easiest if just align over the base atoms
 //Virtual types mess up numbering...This will make sure that numbering is correct.
 void
-setup_suite_atom_id_map( pose::Pose const & pose_1, pose::Pose const & pose_2, Size const base_res, id::AtomID_Map < id::AtomID > & atom_ID_map, bool const base_only ){
+setup_suite_atom_id_map( pose::Pose const & pose_1, pose::Pose const & pose_2, core::Size const base_res, id::AtomID_Map < id::AtomID > & atom_ID_map, bool const base_only ){
 
 	conformation::Residue const & base_rsd_1 = pose_1.residue( base_res );
 	conformation::Residue const & base_rsd_2 = pose_2.residue( base_res );
@@ -402,7 +402,7 @@ setup_suite_atom_id_map( pose::Pose const & pose_1, pose::Pose const & pose_2, S
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////Dec 23, 2011.
 void
-setup_suite_atom_id_map( pose::Pose const & pose_1, pose::Pose const & pose_2, Size const base_res_1, Size const base_res_2,  id::AtomID_Map < id::AtomID > & atom_ID_map, bool const base_only ){
+setup_suite_atom_id_map( pose::Pose const & pose_1, pose::Pose const & pose_2, core::Size const base_res_1, core::Size const base_res_2,  id::AtomID_Map < id::AtomID > & atom_ID_map, bool const base_only ){
 
 	conformation::Residue const & base_rsd_1 = pose_1.residue( base_res_1 );
 	conformation::Residue const & base_rsd_2 = pose_2.residue( base_res_2 );
@@ -425,7 +425,7 @@ create_alignment_id_map_legacy( pose::Pose & mod_pose, pose::Pose const & ref_po
 		utility_exit_with_message( "ref_pose.sequence() != mod_pose.sequence()" );
 	}
 
-	for ( Size seq_num = 1; seq_num <= mod_pose.size(); ++seq_num ) {
+	for ( core::Size seq_num = 1; seq_num <= mod_pose.size(); ++seq_num ) {
 		if ( mod_pose.residue( seq_num ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code.
 		if ( !rmsd_residue_list.has_value( seq_num ) ) continue;
 		setup_suite_atom_id_map( mod_pose, ref_pose, seq_num, atom_ID_map, base_only );
@@ -439,16 +439,16 @@ void
 align_poses( core::pose::Pose & moving_pose, std::string const & moving_tag, core::pose::Pose const & static_pose, std::string const & static_tag, utility::vector1< core::Size > const & working_best_alignment, bool const base_only ){
 
 	bool found_non_virtual_base = false;
-	for ( Size n = 1; n <= working_best_alignment.size(); n++ ) {
-		Size const seq_num = working_best_alignment[n];
+	for ( core::Size n = 1; n <= working_best_alignment.size(); n++ ) {
+		core::Size const seq_num = working_best_alignment[n];
 		if ( is_virtual_base( moving_pose.residue( seq_num ) ) || is_virtual_base( static_pose.residue( seq_num ) ) ) continue;
 		found_non_virtual_base = true; //ok found a non-virtual base nucleotide that can be used for alignment
 		break;
 	}
 
 	if ( !found_non_virtual_base ) {
-		for ( Size n = 1; n <= working_best_alignment.size(); n++ ) {
-			Size const seq_num = working_best_alignment[n];
+		for ( core::Size n = 1; n <= working_best_alignment.size(); n++ ) {
+			core::Size const seq_num = working_best_alignment[n];
 			TR.Debug << "seq_num = " << seq_num;
 			output_boolean( "  is_virtual_base( " + moving_tag + " ):", is_virtual_base( moving_pose.residue( seq_num ) ), TR.Debug );
 			output_boolean( "  is_virtual_base( " + static_tag + " ):", is_virtual_base( static_pose.residue( seq_num ) ), TR.Debug );
@@ -494,8 +494,8 @@ output_seq_num_list( std::string const & tag, utility::vector1< core::Size > con
 	utility::vector1< core::Size > sorted_seq_num_list = seq_num_list;
 	sort_seq_num_list( sorted_seq_num_list );
 
-	Size seq_num = 1;
-	for ( Size const num : sorted_seq_num_list ) {
+	core::Size seq_num = 1;
+	for ( core::Size const num : sorted_seq_num_list ) {
 
 		while ( seq_num < num ) {
 			outstream << format::A( 4, " " );
@@ -514,14 +514,14 @@ output_title_text( std::string const & title, std::ostream & outstream /* = std:
 
 	outstream << std::endl;
 
-	Size title_length = title.size();
-	Size char_per_line = 80;
-	Size dash_length( 0 );
+	core::Size title_length = title.size();
+	core::Size char_per_line = 80;
+	core::Size dash_length( 0 );
 	if ( title_length < char_per_line ) dash_length = char_per_line - title_length;
 
-	for ( Size i = 1; i <= dash_length/2; i++ )  outstream << "-";
+	for ( core::Size i = 1; i <= dash_length/2; i++ )  outstream << "-";
 	outstream << title;
-	for ( Size i = 1; i <= dash_length/2; i++ ) outstream << "-";
+	for ( core::Size i = 1; i <= dash_length/2; i++ ) outstream << "-";
 	outstream << std::endl;
 }
 
@@ -553,7 +553,7 @@ remove_file( std::string const & file_name ){
 void
 output_rotamer( utility::vector1 < Real > & rotamer ){
 
-	Size const spacing = 10;
+	core::Size const spacing = 10;
 
 	TR <<  std::setw( 18 ) << "Torsions = ";
 	TR << std::setw( spacing ) << rotamer[1] << " ";
@@ -585,7 +585,7 @@ check_instantiated_O2Prime_hydrogen( core::pose::Pose const & pose ){
 bool
 remove_virtual_O2Prime_hydrogen( pose::Pose & pose ){
 
-	for ( Size i = 1; i <= pose.size(); i++ ) {
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
 		if ( !pose.residue( i ).is_RNA() ) continue;
 		if ( pose.residue_type( i ).has_variant_type( core::chemical::VIRTUAL_O2PRIME_HYDROGEN ) ) {
 			pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_O2PRIME_HYDROGEN, i );
@@ -597,9 +597,9 @@ remove_virtual_O2Prime_hydrogen( pose::Pose & pose ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //This now works for any rebuild residue.
 Real
-suite_rmsd( pose::Pose const & pose1, pose::Pose const & pose2, Size const & moving_res_num, bool const prepend_res, bool const ignore_virtual_atom ){
+suite_rmsd( pose::Pose const & pose1, pose::Pose const & pose2, core::Size const & moving_res_num, bool const prepend_res, bool const ignore_virtual_atom ){
 
-	Size atom_count = 0;
+	core::Size atom_count = 0;
 	Real sum_sd = 0;
 
 	suite_square_deviation( pose1, pose2, prepend_res, moving_res_num, moving_res_num, atom_count, sum_sd, false, ignore_virtual_atom );
@@ -621,7 +621,7 @@ Real
 rmsd_over_residue_list(
 	pose::Pose const & pose1,
 	pose::Pose const & pose2,
-	utility::vector1 < Size > const & residue_list, std::map< core::Size, core::Size > const & full_to_sub,
+	utility::vector1 < core::Size > const & residue_list, std::map< core::Size, core::Size > const & full_to_sub,
 	std::map< core::Size, bool > const & is_prepend_map,
 	bool const verbose,
 	bool const ignore_virtual_atom )
@@ -632,11 +632,11 @@ rmsd_over_residue_list(
 		output_seq_num_list( "residue_list = ", residue_list, TR, 30 );
 	}
 
-	Size atom_count = 0;
+	core::Size atom_count = 0;
 	Real sum_sd = 0;
 
-	for ( Size const full_seq_num : residue_list ) {
-		Size const seq_num = full_to_sub.find( full_seq_num )->second;
+	for ( core::Size const full_seq_num : residue_list ) {
+		core::Size const seq_num = full_to_sub.find( full_seq_num )->second;
 		bool is_prepend = is_prepend_map.find( full_seq_num )->second;
 		bool both_pose_res_is_virtual = false;
 		if ( pose1.residue( seq_num ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) &&
@@ -689,16 +689,16 @@ rmsd_over_residue_list( pose::Pose const & pose1, pose::Pose const & pose2, work
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-print_heavy_atoms( Size const & suite_num_1, Size const & suite_num_2, pose::Pose const & pose1, pose::Pose const & pose2 ){
+print_heavy_atoms( core::Size const & suite_num_1, core::Size const & suite_num_2, pose::Pose const & pose1, pose::Pose const & pose2 ){
 
 	using namespace conformation;
-	Size num_atoms;
+	core::Size num_atoms;
 
 	num_atoms = std::max( pose1.residue( suite_num_1 ).nheavyatoms(), pose2.residue( suite_num_2 ).nheavyatoms() );
 
 	TR << "num_atoms: " << num_atoms << std::endl;
 
-	for ( Size n = 1; n <= num_atoms;  n++ ) {
+	for ( core::Size n = 1; n <= num_atoms;  n++ ) {
 		TR << " atom num = " <<  n;
 		TR << "  atom_name of the pose1 " <<  pose1.residue( suite_num_1 ).atom_name( n );
 		TR << "  atom_name of the pose2 " <<  pose2.residue( suite_num_2 ).atom_name( n ) << std::endl;
@@ -708,7 +708,7 @@ print_heavy_atoms( Size const & suite_num_1, Size const & suite_num_2, pose::Pos
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Real
-atom_square_deviation( conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, Size const & atomno_1, Size const & atomno_2, bool verbose ) {
+atom_square_deviation( conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, core::Size const & atomno_1, core::Size const & atomno_2, bool verbose ) {
 
 	//////////////Might take this out later if it significantly slow down the code///////////////
 	//std::string const & atom_name_1 = rsd_1.type().atom_name( atomno_1 );
@@ -733,17 +733,17 @@ atom_square_deviation( conformation::Residue const & rsd_1, conformation::Residu
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //create on Sept 24, 2010...should really integrate these rmsd square deviation functions....cause now it is just copy and paste copy
 void
-base_atoms_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, Size const & moving_res_1, Size const & moving_res_2, Size& atom_count, Real& sum_sd, bool verbose, bool const /*ignore_virtual_atom*/ ) {
+base_atoms_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, core::Size const & moving_res_1, core::Size const & moving_res_2, core::Size& atom_count, Real& sum_sd, bool verbose, bool const /*ignore_virtual_atom*/ ) {
 
 	chemical::AA const & res_aa =  pose1.residue_type( moving_res_1 ).aa();
 	chemical::AA const & res_aa2 =  pose2.residue_type( moving_res_2 ).aa();
 
 	if ( res_aa != res_aa2 ) utility_exit_with_message( "res_aa ( " + name_from_aa( res_aa ) + " ) != res_aa2 ( " + name_from_aa( res_aa2 ) + " ) " );
 
-	Size const first_sidechain_atom1 = pose1.residue( moving_res_1 ).first_sidechain_atom();
-	Size const first_sidechain_atom2 = pose2.residue( moving_res_2 ).first_sidechain_atom();
+	core::Size const first_sidechain_atom1 = pose1.residue( moving_res_1 ).first_sidechain_atom();
+	core::Size const first_sidechain_atom2 = pose2.residue( moving_res_2 ).first_sidechain_atom();
 
-	Size const num_side_chain_atom = pose1.residue_type( moving_res_1 ).nheavyatoms() - pose1.residue_type( moving_res_1 ).first_sidechain_atom() + 1; //get_num_side_chain_atom_from_res_name( res_aa, verbose );
+	core::Size const num_side_chain_atom = pose1.residue_type( moving_res_1 ).nheavyatoms() - pose1.residue_type( moving_res_1 ).first_sidechain_atom() + 1; //get_num_side_chain_atom_from_res_name( res_aa, verbose );
 
 	if ( verbose ) TR << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
 
@@ -752,10 +752,10 @@ base_atoms_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2,
 
 	//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculate num_heavy_atom by considering
 	//the virtaul O2prime hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
-	for ( Size n = 1; n <= num_side_chain_atom; n++ ) { //This INCLUDE the O2prime oxygen
+	for ( core::Size n = 1; n <= num_side_chain_atom; n++ ) { //This INCLUDE the O2prime oxygen
 
-		Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
-		Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;
+		core::Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
+		core::Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;
 
 		conformation::Residue const & rsd_1 = pose1.residue( moving_res_1 );
 		conformation::Residue const & rsd_2 = pose2.residue( moving_res_2 );
@@ -783,7 +783,7 @@ base_atoms_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2,
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-phosphate_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, Size const & moving_res_1, Size const & moving_res_2, Size& atom_count, Real& sum_sd, bool verbose, bool const ignore_virtual_atom ){
+phosphate_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, core::Size const & moving_res_1, core::Size const & moving_res_2, core::Size& atom_count, Real& sum_sd, bool verbose, bool const ignore_virtual_atom ){
 
 	chemical::AA const & res_aa =  pose1.residue( moving_res_1 ).aa();
 	chemical::AA const & res_aa2 =  pose2.residue( moving_res_2 ).aa();
@@ -792,7 +792,7 @@ phosphate_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, 
 
 	if ( verbose ) TR << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
 
-	for ( Size atomno = 1; atomno <= 4; atomno++ ) {
+	for ( core::Size atomno = 1; atomno <= 4; atomno++ ) {
 
 		conformation::Residue const & rsd_1 = pose1.residue( moving_res_1 );
 		conformation::Residue const & rsd_2 = pose2.residue( moving_res_2 );
@@ -812,9 +812,9 @@ phosphate_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // unify with suite_rmsd (see below).
 core::Real
-phosphate_base_phosphate_rmsd( pose::Pose const & pose1, pose::Pose const & pose2, Size const & moving_res_num, bool const ignore_virtual_atom ){
+phosphate_base_phosphate_rmsd( pose::Pose const & pose1, pose::Pose const & pose2, core::Size const & moving_res_num, bool const ignore_virtual_atom ){
 
-	Size atom_count = 0;
+	core::Size atom_count = 0;
 	Real sum_sd = 0;
 
 	phosphate_base_phosphate_square_deviation( pose1, pose2, moving_res_num, moving_res_num, atom_count, sum_sd, false, ignore_virtual_atom );
@@ -834,30 +834,30 @@ phosphate_base_phosphate_rmsd( pose::Pose const & pose1, pose::Pose const & pose
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // should be unified with suite_square_deviation (see next).
 void
-phosphate_base_phosphate_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, Size const & moving_res_1, Size const & moving_res_2, Size& atom_count, Real& sum_sd, bool verbose, bool const ignore_virtual_atom ){
+phosphate_base_phosphate_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, core::Size const & moving_res_1, core::Size const & moving_res_2, core::Size& atom_count, Real& sum_sd, bool verbose, bool const ignore_virtual_atom ){
 
 	chemical::AA const & res_aa  =  pose1.residue( moving_res_1 ).aa();
 	chemical::AA const & res_aa2 =  pose2.residue( moving_res_2 ).aa();
 	runtime_assert( res_aa == res_aa2 );
 
-	Size const first_sidechain_atom1 = pose1.residue( moving_res_1 ).first_sidechain_atom();
-	Size const first_sidechain_atom2 = pose2.residue( moving_res_2 ).first_sidechain_atom();
+	core::Size const first_sidechain_atom1 = pose1.residue( moving_res_1 ).first_sidechain_atom();
+	core::Size const first_sidechain_atom2 = pose2.residue( moving_res_2 ).first_sidechain_atom();
 
-	Size const num_side_chain_atom = pose1.residue_type( moving_res_1 ).nheavyatoms() - first_sidechain_atom1;
+	core::Size const num_side_chain_atom = pose1.residue_type( moving_res_1 ).nheavyatoms() - first_sidechain_atom1;
 
-	Size const num_heavy_backbone_atoms = 11; //RNA contain 11 heavy backbone atoms.
+	core::Size const num_heavy_backbone_atoms = 11; //RNA contain 11 heavy backbone atoms.
 
 	// AMW possible bug: why are we interested in penultimate residue in seq at all?
-	for ( Size atomno = 1; atomno <= num_heavy_backbone_atoms; atomno++ ) {
+	for ( core::Size atomno = 1; atomno <= num_heavy_backbone_atoms; atomno++ ) {
 
-		Size const res_count = ( atomno <= 4 ) ? 2 : 1; //atom 1-4 are " P  ", " OP2", " OP1" and " O5'"
+		core::Size const res_count = ( atomno <= 4 ) ? 2 : 1; //atom 1-4 are " P  ", " OP2", " OP1" and " O5'"
 
 		// check out this extremely old bug! fixed in rd2014, after deprecation of the function.
-		//   for ( Size ii = 1; ii < res_count; ii++ ){
-		for ( Size ii = 1; ii <= res_count; ii++ ) {
+		//   for ( core::Size ii = 1; ii < res_count; ii++ ){
+		for ( core::Size ii = 1; ii <= res_count; ii++ ) {
 
-			Size const res_num_1 = moving_res_1 + ( ii - 1 );
-			Size const res_num_2 = moving_res_2 + ( ii - 1 );
+			core::Size const res_num_1 = moving_res_1 + ( ii - 1 );
+			core::Size const res_num_2 = moving_res_2 + ( ii - 1 );
 
 			conformation::Residue const & rsd_1 = pose1.residue( res_num_1 );
 			conformation::Residue const & rsd_2 = pose2.residue( res_num_2 );
@@ -875,10 +875,10 @@ phosphate_base_phosphate_square_deviation( pose::Pose const & pose1, pose::Pose 
 
 	//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculate num_heavy_atom by considering
 	//the virtaul O2prime hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
-	for ( Size n = 1; n <= num_side_chain_atom; ++n ) { //INCLUDE the O2prime oxygen
+	for ( core::Size n = 1; n <= num_side_chain_atom; ++n ) { //INCLUDE the O2prime oxygen
 
-		Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
-		Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;
+		core::Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
+		core::Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;
 
 		if ( atomno_2 > pose2.residue_type( moving_res_2 ).natoms() ) break;
 
@@ -899,14 +899,14 @@ phosphate_base_phosphate_square_deviation( pose::Pose const & pose1, pose::Pose 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Could get the atom_num using the atom_name but I don't think this will be fast Size atom_P = rsd.atom_index( " P  " ); Jan 28, 2010 Parin S///////////
+// Could get the atom_num using the atom_name but I don't think this will be fast core::Size atom_P = rsd.atom_index( " P  " ); Jan 28, 2010 Parin S///////////
 //   (This could/should be made more robust in order to handle noncanonical bases.
 //    Look at code in StepWisePoseAligner -- rhiju )
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool const & prepend_res,
-	Size const & moving_res_1, Size const & moving_res_2,
-	Size & atom_count, Real & sum_sd, bool verbose, bool const ignore_virtual_atom ){
+	core::Size const & moving_res_1, core::Size const & moving_res_2,
+	core::Size & atom_count, Real & sum_sd, bool verbose, bool const ignore_virtual_atom ){
 
 	// For DNA stepwise making these NA checks
 	debug_assert( pose1.residue_type( moving_res_1 ).is_NA() );
@@ -915,18 +915,18 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 	chemical::AA const & res_aa2 =  pose2.residue_type( moving_res_2 ).aa();
 	runtime_assert( res_aa == res_aa2 );
 
-	Size const first_sidechain_atom1 = pose1.residue( moving_res_1 ).first_sidechain_atom();
-	Size const first_sidechain_atom2 = pose2.residue( moving_res_2 ).first_sidechain_atom();
+	core::Size const first_sidechain_atom1 = pose1.residue( moving_res_1 ).first_sidechain_atom();
+	core::Size const first_sidechain_atom2 = pose2.residue( moving_res_2 ).first_sidechain_atom();
 
-	Size const num_side_chain_atom = pose1.residue_type( moving_res_1 ).nheavyatoms() - first_sidechain_atom1; //get_num_side_chain_atom_from_res_name( res_aa, verbose );
+	core::Size const num_side_chain_atom = pose1.residue_type( moving_res_1 ).nheavyatoms() - first_sidechain_atom1; //get_num_side_chain_atom_from_res_name( res_aa, verbose );
 
-	Size const num_heavy_backbone_atoms = 11; //RNA contains 11 heavy backbone atoms.
+	core::Size const num_heavy_backbone_atoms = 11; //RNA contains 11 heavy backbone atoms.
 
-	for ( Size atomno = 1; atomno <= num_heavy_backbone_atoms; atomno++ ) {
+	for ( core::Size atomno = 1; atomno <= num_heavy_backbone_atoms; atomno++ ) {
 
 		//atom 1-4 are " P  ", " OP2", " OP1" and " O5'"
-		Size const res_num_1 = ( prepend_res && atomno <= 4 ) ? moving_res_1 + 1: moving_res_1;
-		Size const res_num_2 = ( prepend_res && atomno <= 4 ) ? moving_res_2 + 1: moving_res_2;
+		core::Size const res_num_1 = ( prepend_res && atomno <= 4 ) ? moving_res_1 + 1: moving_res_1;
+		core::Size const res_num_2 = ( prepend_res && atomno <= 4 ) ? moving_res_2 + 1: moving_res_2;
 
 		// AMW: These newly selected residues may not have enough atoms because
 		// they may be the virtual res?
@@ -945,8 +945,8 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 		sum_sd = sum_sd + atom_square_deviation( rsd_1, rsd_2, atomno, atomno, verbose );
 	}
 
-	Size const atomno_1 = pose1.residue_type( moving_res_1 ).first_sidechain_atom();
-	Size const atomno_2 = pose2.residue_type( moving_res_2 ).first_sidechain_atom();
+	core::Size const atomno_1 = pose1.residue_type( moving_res_1 ).first_sidechain_atom();
+	core::Size const atomno_2 = pose2.residue_type( moving_res_2 ).first_sidechain_atom();
 
 	conformation::Residue const & rsd_1 = pose1.residue( moving_res_1 );
 	conformation::Residue const & rsd_2 = pose2.residue( moving_res_2 );
@@ -959,10 +959,10 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 
 	//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculates num_heavy_atom by considering
 	//the virtual O2prime hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
-	for ( Size n = 1; n <= num_side_chain_atom; ++n ) { //INCLUDE the O2prime oxygen
+	for ( core::Size n = 1; n <= num_side_chain_atom; ++n ) { //INCLUDE the O2prime oxygen
 
-		Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
-		Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;
+		core::Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
+		core::Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;
 
 		conformation::Residue const & rsd_1 = pose1.residue( moving_res_1 );
 		conformation::Residue const & rsd_2 = pose2.residue( moving_res_2 );
@@ -977,12 +977,12 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-freeze_sugar_torsions( core::kinematics::MoveMap & mm, Size const total_residue ){
+freeze_sugar_torsions( core::kinematics::MoveMap & mm, core::Size const total_residue ){
 
 	using namespace core::id;
 
 	TR << "Freeze pose sugar torsions, total_residue = " << total_residue << std::endl;
-	for ( Size i = 1; i <= total_residue; i++ ) {
+	for ( core::Size i = 1; i <= total_residue; i++ ) {
 		mm.set( TorsionID( i , id::BB,  4 ), false ); //delta_i
 		mm.set( TorsionID( i , id::CHI, 2 ), false ); //nu2_i
 		mm.set( TorsionID( i , id::CHI, 3 ), false ); //nu1_i
@@ -1009,13 +1009,13 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 		// allow for 2'-OH virtualization during packing. Decide during packer task setup, not in here.
 		// if ( rsd.type().has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) ) continue;
 
-		Size const at = rsd.first_sidechain_atom();
+		core::Size const at = rsd.first_sidechain_atom();
 		runtime_assert ( rsd.type().atom_name( at ) == " O2'" );
 	}
 
 	utility::vector1< bool > is_O2prime_hydrogen_virtual_list;
 
-	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		if ( !pose.residue_type( seq_num ).is_RNA() ) {
 			if ( verbose ) TR << "res " << seq_num << " is not RNA " << std::endl;
@@ -1024,7 +1024,7 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 		}
 
 		core::chemical::ResidueType const & rsdtype = pose.residue_type( seq_num );
-		Size at = rsdtype.atom_index( "HO2'" );
+		core::Size at = rsdtype.atom_index( "HO2'" );
 
 		if ( rsdtype.is_virtual( at )  ) {
 			if ( verbose ) TR << "res " << seq_num << " has a virtual o2prime hydrogen! " << std::endl;
@@ -1038,8 +1038,8 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 	runtime_assert ( is_O2prime_hydrogen_virtual_list.size() == pose.size() );
 
 	utility::vector1< core::Size > surrounding_O2prime_hydrogen;
-	Size num_o2prime_moving_res = 0;
-	for ( Size const seq_num : moving_res ) {
+	core::Size num_o2prime_moving_res = 0;
+	for ( core::Size const seq_num : moving_res ) {
 		if ( !pose.residue_type( seq_num ).is_RNA() ) continue;
 		if ( is_O2prime_hydrogen_virtual_list[seq_num] ) continue;
 
@@ -1049,7 +1049,7 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 
 
 	//1st layer, interaction between surrounding O2prime and moving_res
-	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		if ( !pose.residue_type( seq_num ).is_RNA() ) continue;
 		if ( surrounding_O2prime_hydrogen.has_value( seq_num ) ) continue;
@@ -1057,18 +1057,18 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 		bool is_surrounding_res = false;
 
 		core::conformation::Residue const & surrounding_rsd = pose.residue( seq_num );
-		Size const surr_at = surrounding_rsd.first_sidechain_atom();
+		core::Size const surr_at = surrounding_rsd.first_sidechain_atom();
 
 		if ( is_O2prime_hydrogen_virtual_list[seq_num] ) continue;
 
 		//3.5 Angstrom for O2prime-normal
 
-		for ( Size const moving_seqpos : moving_res ) {
+		for ( core::Size const moving_seqpos : moving_res ) {
 			if ( is_surrounding_res == true ) break;
 
 			core::conformation::Residue const & moving_rsd = pose.residue( moving_seqpos );
 
-			for ( Size moving_at = 1; moving_at <= moving_rsd.natoms(); moving_at++ ) {
+			for ( core::Size moving_at = 1; moving_at <= moving_rsd.natoms(); moving_at++ ) {
 
 				if ( moving_rsd.is_virtual( moving_at )  ) continue;
 
@@ -1091,25 +1091,25 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 
 
 	//layer 2+, interaction between surrounding O2prime hydrogen themselves
-	Size layer_num = 2;
+	core::Size layer_num = 2;
 	// AMW TODO: can't we just make this while ( add_new_O2prime_hydrogen )
 	while ( true ) {
 		bool add_new_O2prime_hydrogen = false;
 
-		for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
+		for ( core::Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 			if ( !pose.residue_type( seq_num ).is_RNA() ) continue;
 			if ( surrounding_O2prime_hydrogen.has_value( seq_num ) ) continue;
 
 			core::conformation::Residue const & rsd_1 = pose.residue( seq_num );
-			Size const at_1 = rsd_1.first_sidechain_atom();
+			core::Size const at_1 = rsd_1.first_sidechain_atom();
 
 			if ( is_O2prime_hydrogen_virtual_list[seq_num] ) continue;
 
-			for ( Size const surrounding_seqpos : surrounding_O2prime_hydrogen ) {
+			for ( core::Size const surrounding_seqpos : surrounding_O2prime_hydrogen ) {
 
 				core::conformation::Residue const & rsd_2 = pose.residue( surrounding_seqpos );
-				Size const at_2 = rsd_2.first_sidechain_atom();
+				core::Size const at_2 = rsd_2.first_sidechain_atom();
 				Real const cutoff_dist = 4.5;      //4.5 Angstrom interaction dist_cutoff for surrounding O2prime themselves.
 				Real const dist_squared = ( rsd_1.xyz( at_1 ) - rsd_2.xyz( at_2 ) ).length_squared();
 
@@ -1127,7 +1127,7 @@ get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< cor
 	}
 
 	//consistency_check..
-	for ( Size const seq_num : surrounding_O2prime_hydrogen ) {
+	for ( core::Size const seq_num : surrounding_O2prime_hydrogen ) {
 		if ( is_O2prime_hydrogen_virtual_list[ seq_num ] ) {
 			std::string const exit_message = "surrounding_O2prime_hydrogen res " + string_of( seq_num ) + " has a virtual o2prime hydrogen!! ";
 			utility_exit_with_message( exit_message );
@@ -1148,7 +1148,7 @@ o2prime_trials( pose::Pose & pose, core::scoring::ScoreFunctionCOP const & packe
 
 	utility::vector1< core::Size > O2prime_pack_seq_num;
 
-	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 		if ( !pose.residue_type( seq_num ).is_RNA() ) continue;
 		O2prime_pack_seq_num.push_back( seq_num );
 	}
@@ -1175,7 +1175,7 @@ create_standard_o2prime_pack_task( pose::Pose const & pose, utility::vector1< co
 
 	pack::task::PackerTaskOP o2prime_pack_task = pack::task::TaskFactory::create_packer_task( pose );
 
-	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		if ( O2prime_pack_seq_num.has_value( seq_num ) &&
 				pose.residue( seq_num ).is_RNA() &&
@@ -1205,13 +1205,13 @@ create_standard_o2prime_pack_task( pose::Pose const & pose, utility::vector1< co
 
 //////////////////////////////////////////////////////////////////////////
 void
-setup_chain_break_variants( core::pose::Pose & pose,  Size const cutpoint ){
+setup_chain_break_variants( core::pose::Pose & pose,  core::Size const cutpoint ){
 	pose::correctly_add_cutpoint_variants( pose, cutpoint );
 }
 
 //////////////////////////////////////////////////////////////////////////
 void
-remove_chain_break_variants( core::pose::Pose & pose,  Size const & cutpoint ){
+remove_chain_break_variants( core::pose::Pose & pose,  core::Size const & cutpoint ){
 	runtime_assert( is_cutpoint_closed( pose, cutpoint ) );
 	pose::remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpoint );
 	pose::remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpoint + 1 );
@@ -1219,16 +1219,16 @@ remove_chain_break_variants( core::pose::Pose & pose,  Size const & cutpoint ){
 
 ///////////////////////////////////////////////////////////////////////
 utility::vector1< bool >
-get_partition_definition_floating_base( pose::Pose const & pose, Size const & moving_res ){
-	Size const jump_nr = look_for_unique_jump_to_moving_res( pose.fold_tree(), moving_res );
+get_partition_definition_floating_base( pose::Pose const & pose, core::Size const & moving_res ){
+	core::Size const jump_nr = look_for_unique_jump_to_moving_res( pose.fold_tree(), moving_res );
 	return get_partition_definition_by_jump( pose, jump_nr);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Size
-get_anchor_res( Size const rebuild_res, pose::Pose const & pose ){
+get_anchor_res( core::Size const rebuild_res, pose::Pose const & pose ){
 	kinematics::FoldTree const & f = pose.fold_tree();
-	Size const jump_nr = look_for_unique_jump_to_moving_res( f, rebuild_res );
+	core::Size const jump_nr = look_for_unique_jump_to_moving_res( f, rebuild_res );
 	return ( f.upstream_jump_residue( jump_nr ) == rebuild_res ) ?
 		f.downstream_jump_residue( jump_nr ) : f.upstream_jump_residue( jump_nr );
 }
@@ -1238,7 +1238,7 @@ check_for_messed_up_structure( core::pose::Pose const & pose, std::string const 
 	using namespace core::scoring;
 	using namespace core::chemical::rna;
 
-	for ( Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= pose.size(); seq_num++ ) {
 
 		if ( !pose.residue( seq_num ).is_RNA() ) continue;
 
@@ -1285,14 +1285,14 @@ is_residues_in_contact( core::Size const & res_ONE, core::pose::Pose const & pos
 	core::conformation::Residue const & rsd_ONE = pose_ONE.residue( res_ONE );
 	core::conformation::Residue const & rsd_TWO = pose_TWO.residue( res_TWO );
 
-	Size num_atom_contacts_so_far = 0;
+	core::Size num_atom_contacts_so_far = 0;
 
 	if ( num_atom_contacts_cutoff < 1 ) {
 		utility_exit_with_message( "num_atom_contacts_cutoff( " + string_of( num_atom_contacts_cutoff ) + " ) < 1!" );
 	}
 
-	for ( Size at_ONE = 1; at_ONE <= rsd_ONE.natoms(); at_ONE++ ) { //include hydrogen atoms
-		for ( Size at_TWO = 1; at_TWO <= rsd_TWO.natoms(); at_TWO++ ) { //include hydrogen atoms
+	for ( core::Size at_ONE = 1; at_ONE <= rsd_ONE.natoms(); at_ONE++ ) { //include hydrogen atoms
+		for ( core::Size at_TWO = 1; at_TWO <= rsd_TWO.natoms(); at_TWO++ ) { //include hydrogen atoms
 
 			if ( rsd_ONE.is_virtual( at_ONE )  ) continue;
 			if ( rsd_TWO.is_virtual( at_TWO )  ) continue;
@@ -1332,22 +1332,22 @@ is_residues_in_contact( core::Size const & res_ONE, core::pose::Pose const & pos
 
 //////////////This function was originally part of SWA_RNA_Sampler and used for the Richardson code. Move to Util, so that FloatingBaseSamplerUtil will have access to it////////////
 void
-set_CCD_torsions_to_zero( core::pose::Pose & pose, Size const five_prime_res ){
+set_CCD_torsions_to_zero( core::pose::Pose & pose, core::Size const five_prime_res ){
 
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::id;
 	//TR << "set_CCD_torsions_to_zero" << std::endl;
 
-	Size const three_prime_res = five_prime_res + 1;
+	core::Size const three_prime_res = five_prime_res + 1;
 
 	//Even through there is the chain_break, alpha of 3' and epl and gamma of 5' should be defined due to the existence of the upper and lower variant type atoms.
 
-	for ( Size n = 1; n <= 3; n++ ) { //alpha, beta, gamma of 3' res
+	for ( core::Size n = 1; n <= 3; n++ ) { //alpha, beta, gamma of 3' res
 		pose.set_torsion( TorsionID( three_prime_res, id::BB,  n ), 0.0 );
 	}
 
-	for ( Size n = 5; n <= 6; n++ ) { //epsilon and zeta of 5' res
+	for ( core::Size n = 5; n <= 6; n++ ) { //epsilon and zeta of 5' res
 		pose.set_torsion( TorsionID( five_prime_res, id::BB,  n ), 0.0 );
 	}
 }
@@ -1355,19 +1355,19 @@ set_CCD_torsions_to_zero( core::pose::Pose & pose, Size const five_prime_res ){
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 void
-print_atom_info( pose::Pose const & pose, Size const seq_num, std::string const & pose_name ){
+print_atom_info( pose::Pose const & pose, core::Size const seq_num, std::string const & pose_name ){
 	TR << "print_atom_info for pose: " << pose_name << " seq_num = " << seq_num << std::endl;
 
 	conformation::Residue const & rsd = pose.residue( seq_num ); //static_pose
 
-	for ( Size at = 1; at <= rsd.natoms(); at++ ) { //I wonder if we should just consider heavy atom? (rsd_1.nheavyatoms())
+	for ( core::Size at = 1; at <= rsd.natoms(); at++ ) { //I wonder if we should just consider heavy atom? (rsd_1.nheavyatoms())
 		TR << "atom = " << at  << "|name = " << rsd.type().atom_name( at ) << "|type = " << rsd.atom_type( at ).name();
 		TR << "|element() = " << rsd.atom_type( at ).element() << "|" << std::endl;
 	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
 void
-print_individual_atom_info( core::conformation::Residue const & rsd, Size const atomno, std::string const & rsd_name ){
+print_individual_atom_info( core::conformation::Residue const & rsd, core::Size const atomno, std::string const & rsd_name ){
 	TR << "individual_atom_info: rsd_name " << rsd_name;
 
 	TR << " atom = " << atomno  << "|name = " << rsd.type().atom_name( atomno ) << "|type = " << rsd.atom_type( atomno ).name();
@@ -1448,7 +1448,7 @@ copy_all_o2prime_torsions( core::pose::Pose & mod_pose, core::pose::Pose const &
 	using namespace core::id;
 	runtime_assert ( template_pose.size() == mod_pose.size() );
 
-	for ( Size seq_num = 1; seq_num <= template_pose.size(); seq_num++ ) {
+	for ( core::Size seq_num = 1; seq_num <= template_pose.size(); seq_num++ ) {
 
 		if ( !template_pose.residue( seq_num ).is_RNA() ) continue;
 		if ( std::abs( template_pose.torsion( TorsionID( seq_num, id::CHI, 4 ) ) - mod_pose.torsion( TorsionID( seq_num, id::CHI, 4 ) ) ) < 0.001 ) continue;
@@ -1470,7 +1470,7 @@ rescale_scorefxn( core::scoring::ScoreFunctionOP const & starting_scorefxn, Real
 
 	show_scorefxn_weight_lines( rescaled_scorefxn, "BEFORE REWEIGHT" );
 
-	for ( Size n = 1; n <= n_score_types; n++ ) {
+	for ( core::Size n = 1; n <= n_score_types; n++ ) {
 		core::Real const old_weight = rescaled_scorefxn->get_weight( ScoreType( n ) );
 
 		if ( old_weight != 0.0 ) {
@@ -1500,7 +1500,7 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 	TR.Debug << " Scores                             Weight\n";
 	TR.Debug << "----------------------------------------------\n";
 
-	for ( Size n = 1; n <= n_score_types; n++ ) {
+	for ( core::Size n = 1; n <= n_score_types; n++ ) {
 		core::Real const weight = scorefxn->get_weight( ScoreType( n ) );
 
 		if ( weight != 0.0 ) {
@@ -1509,7 +1509,7 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 	}
 
 	std::string dash_string = "";
-	for ( Size n = 1; n <= title.size(); n++ ) {
+	for ( core::Size n = 1; n <= title.size(); n++ ) {
 		dash_string += "-";
 	}
 
@@ -1589,14 +1589,14 @@ choose_randomly_from_allowed_at_position( core::pose::Pose const & /*pose*/, cor
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-mutate_res_if_allowed( pose::Pose & pose, Size const mutate_res, Real const mutation_frequency /* = 0.5 */ ){
+mutate_res_if_allowed( pose::Pose & pose, core::Size const mutate_res, Real const mutation_frequency /* = 0.5 */ ){
 
 	using namespace core::pose::full_model_info;
 
 	// first need to slice up native_pose to match residues in actual pose.
 	// define atoms over which to compute RMSD, using rmsd_res.
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
-	utility::vector1< Size > const sub_to_full = get_res_list_from_full_model_info( pose );
+	utility::vector1< core::Size > const sub_to_full = get_res_list_from_full_model_info( pose );
 	std::string const full_sequence = full_model_info.full_sequence();
 
 	if ( numeric::random::rg().uniform() < mutation_frequency ) {
@@ -1615,7 +1615,7 @@ mutate_res_if_allowed( pose::Pose & pose, Size const mutate_res, Real const muta
 
 /////////////////////////////////////////////////////////////////////
 std::string
-create_tag( std::string const & prestring, Size const i ) {
+create_tag( std::string const & prestring, core::Size const i ) {
 	using namespace ObjexxFCL;
 	std::string tag = prestring;
 	tag.append( "_" + lead_zero_string_of( i, 9 ) );
@@ -1629,7 +1629,7 @@ create_torsion_value_string( core::Real const & torsion_value ) {
 	using namespace ObjexxFCL;
 	std::string torsion_string = "";
 	core::Real const principal_torsion = numeric::principal_angle_degrees( torsion_value );
-	auto const principal_torsion_SIZE = Size( std::abs( principal_torsion + 0.00001 ) ); //0.00001 is to prevent random ambiguity if the torsion decimal value is exactly .0000 Oct 12, 2010
+	auto const principal_torsion_SIZE = core::Size( std::abs( principal_torsion + 0.00001 ) ); //0.00001 is to prevent random ambiguity if the torsion decimal value is exactly .0000 Oct 12, 2010
 
 	if ( principal_torsion > 0 ) {
 		torsion_string = "p" + lead_zero_string_of( principal_torsion_SIZE, 3 );
@@ -1642,18 +1642,18 @@ create_torsion_value_string( core::Real const & torsion_value ) {
 
 ////////////////////////////////////////////////////////////////////////
 std::string //silly function used for appending the rotamer value to the tag
-create_rotamer_string( core::pose::Pose const & pose, Size const moving_res, bool const is_prepend ) {
-	Size const reference_res  = ( is_prepend ) ? ( moving_res + 1 ) : (moving_res - 1);
+create_rotamer_string( core::pose::Pose const & pose, core::Size const moving_res, bool const is_prepend ) {
+	core::Size const reference_res  = ( is_prepend ) ? ( moving_res + 1 ) : (moving_res - 1);
 	return create_rotamer_string( pose, moving_res, reference_res );
 }
 
 ////////////////////////////////////////////////////////////////////////
 std::string //silly function used for appending the rotamer value to the tag
-create_rotamer_string( core::pose::Pose const & pose, Size const moving_res, Size const reference_res ) {
+create_rotamer_string( core::pose::Pose const & pose, core::Size const moving_res, core::Size const reference_res ) {
 	std::string rotamer_tag = "";
 
-	Size const five_prime_res  = ( moving_res < reference_res ) ? moving_res : reference_res;
-	Size const three_prime_res = ( moving_res < reference_res ) ? reference_res : moving_res;
+	core::Size const five_prime_res  = ( moving_res < reference_res ) ? moving_res : reference_res;
+	core::Size const three_prime_res = ( moving_res < reference_res ) ? reference_res : moving_res;
 	runtime_assert( five_prime_res == three_prime_res - 1 );
 	conformation::Residue const & five_prime_rsd  = pose.residue( five_prime_res );
 	conformation::Residue const & three_prime_rsd = pose.residue( three_prime_res );
@@ -1679,9 +1679,9 @@ create_rotamer_string( core::pose::Pose const & pose, Size const moving_res, Siz
 /////////////////////////////////////////////////////////////////////
 void
 add_fade_chain_break_constraint_across_gap( pose::Pose & pose,
-	Size const five_prime_res,
-	Size const three_prime_res,
-	Size const gap_size ){
+	core::Size const five_prime_res,
+	core::Size const three_prime_res,
+	core::Size const gap_size ){
 
 	using namespace core::conformation;
 	using namespace core::scoring::constraints;
@@ -1715,7 +1715,7 @@ add_fade_chain_break_constraint_across_gap( pose::Pose & pose,
 
 /////////////////////////////////////////////////////////////////////
 void
-add_harmonic_chain_break_constraint( pose::Pose & pose, Size const five_prime_res ){
+add_harmonic_chain_break_constraint( pose::Pose & pose, core::Size const five_prime_res ){
 
 	using namespace core::conformation;
 	using namespace core::scoring;
@@ -1724,7 +1724,7 @@ add_harmonic_chain_break_constraint( pose::Pose & pose, Size const five_prime_re
 
 	using numeric::conversions::radians;
 
-	Size three_prime_res = five_prime_res + 1;
+	core::Size three_prime_res = five_prime_res + 1;
 
 	// These wouldn't be the right constraint geometry even if we tried.
 	if ( !pose.residue_type( three_prime_res ).is_NA() ) return;
@@ -1780,7 +1780,7 @@ add_harmonic_chain_break_constraint( pose::Pose & pose, Size const five_prime_re
 
 /////////////////////////////////////////////////////////////////////
 void
-get_possible_O3prime_C5prime_distance_range( Size const gap_size_, Distance & min_dist, Distance & max_dist ){
+get_possible_O3prime_C5prime_distance_range( core::Size const gap_size_, Distance & min_dist, Distance & max_dist ){
 	min_dist = 0.0;
 	if ( gap_size_ > 1 ) { //new option Sept 18, 2010, most useful for long loop mode...
 		max_dist = O3I_C5I_PLUS_TWO_MAX_DIST + ( ( gap_size_ - 1 )*( C5I_C5I_PLUS_ONE_MAX_DIST ) );
@@ -1796,32 +1796,32 @@ get_possible_O3prime_C5prime_distance_range( Size const gap_size_, Distance & mi
 // used in ERRASER.
 void
 remove_all_virtual_phosphates( core::pose::Pose & pose ){
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		pose::remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, n );
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-utility::vector1< Size >
-just_rna( utility::vector1< Size > const & res_list, pose::Pose const & pose ){
-	utility::vector1< Size > rna_res_list;
-	for ( Size n = 1; n <= res_list.size(); n++ ) { if ( pose.residue_type( res_list[n] ).is_RNA() ) rna_res_list.push_back( res_list[n] ); }
+utility::vector1< core::Size >
+just_rna( utility::vector1< core::Size > const & res_list, pose::Pose const & pose ){
+	utility::vector1< core::Size > rna_res_list;
+	for ( core::Size n = 1; n <= res_list.size(); n++ ) { if ( pose.residue_type( res_list[n] ).is_RNA() ) rna_res_list.push_back( res_list[n] ); }
 	return rna_res_list;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 void
 figure_out_moving_rna_chain_breaks( pose::Pose const & pose,
-	utility::vector1< Size > const & moving_partition_res,
-	utility::vector1< Size > & rna_cutpoints_closed,
-	utility::vector1< Size > & rna_five_prime_chain_breaks,
-	utility::vector1< Size > & rna_three_prime_chain_breaks,
-	utility::vector1< Size > & rna_chain_break_gap_sizes ){
+	utility::vector1< core::Size > const & moving_partition_res,
+	utility::vector1< core::Size > & rna_cutpoints_closed,
+	utility::vector1< core::Size > & rna_five_prime_chain_breaks,
+	utility::vector1< core::Size > & rna_three_prime_chain_breaks,
+	utility::vector1< core::Size > & rna_chain_break_gap_sizes ){
 
-	utility::vector1< Size > cutpoints_closed;
-	utility::vector1< Size > five_prime_chain_breaks;
-	utility::vector1< Size > three_prime_chain_breaks;
-	utility::vector1< Size > chain_break_gap_sizes;
+	utility::vector1< core::Size > cutpoints_closed;
+	utility::vector1< core::Size > five_prime_chain_breaks;
+	utility::vector1< core::Size > three_prime_chain_breaks;
+	utility::vector1< core::Size > chain_break_gap_sizes;
 	figure_out_moving_chain_breaks( pose, moving_partition_res, cutpoints_closed, five_prime_chain_breaks, three_prime_chain_breaks, chain_break_gap_sizes );
 
 	rna_cutpoints_closed = just_rna( cutpoints_closed, pose );
@@ -1830,7 +1830,7 @@ figure_out_moving_rna_chain_breaks( pose::Pose const & pose,
 	rna_three_prime_chain_breaks.clear();
 	rna_chain_break_gap_sizes.clear();
 
-	for ( Size n = 1; n <= chain_break_gap_sizes.size(); n++ ) {
+	for ( core::Size n = 1; n <= chain_break_gap_sizes.size(); n++ ) {
 		if ( five_prime_chain_breaks.size() >= n && !pose.residue_type( five_prime_chain_breaks[n] ).is_NA() ) continue;
 
 		// AMW now not necessarily true! could be a 'generic polymer' or even protein

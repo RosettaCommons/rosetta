@@ -225,7 +225,7 @@ FragsToAtomDist::DistanceRecord const& FragsToAtomDist::distance_record( core::i
 }
 
 void FragsToAtomDist::write_to_stream(std::ostream& output) const {
-	Size count =1;
+	core::Size count =1;
 	for ( char i : sequence_ ) {
 		if ( count%50 == 1 ) {
 			output << "DATA SEQUENCE ";
@@ -263,7 +263,7 @@ void FragsToAtomDist::write_to_stream(std::ostream& output) const {
 }
 
 void FragsToAtomDist::write_hist_to_stream(std::ostream& output) const {
-	Size count =1;
+	core::Size count =1;
 	for ( char i : sequence_ ) {
 		if ( count%50 == 1 ) {
 			output << "DATA SEQUENCE ";
@@ -414,8 +414,8 @@ void store_distance_snapshot(
 	DistanceMap& distmap,
 	//  DistanceMap& countmap,
 	core::pose::Pose const& short_pose,
-	Size start,
-	Size short_size,
+	core::Size start,
+	core::Size short_size,
 	GroupList const& grps
 	//  bool r6_averaging
 ) {
@@ -477,16 +477,16 @@ void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dum
 			true
 		);
 		//  tr << " my test   " << short_pose.sequence() << "   "<<std::endl;
-		Size const short_size( frame->length() );
+		core::Size const short_size( frame->length() );
 		//std::string short_sequence = short_pose.sequence();
-		Size const short_start( frame->start() );
+		core::Size const short_start( frame->start() );
 		tr.Info << "frame position: " << frame->start() << std::endl;
 
 		frame->shift_to(1);
 
 		utility::vector1< core::Real > old_chi(4);
 		utility::vector1< core::Real > new_chi(4);
-		for ( Size ifrag=1; ifrag<=frame->nr_frags(); ifrag++ ) {
+		for ( core::Size ifrag=1; ifrag<=frame->nr_frags(); ifrag++ ) {
 			// if ( ifrag % 10 == 0 ) tr.Info << "fragment (" << ifrag << "," << frame->nr_frags() << ")" << std::endl;
 			frame->apply( ifrag, short_pose );
 			core::Real score_old(scorefxn->score(short_pose));
@@ -494,8 +494,8 @@ void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dum
 			//start monte-carlo simulation
 			for ( core::Size cycle = 1; cycle<=cycles; cycle++ ) {
 				//better select rsd randomly
-				//for ( Size irsd = 1; irsd<=short_size; irsd++) {
-				Size const irsd( numeric::random::rg().random_range(1, short_size) );
+				//for ( core::Size irsd = 1; irsd<=short_size; irsd++) {
+				core::Size const irsd( numeric::random::rg().random_range(1, short_size) );
 				core::conformation::Residue const& rsd( short_pose.residue( irsd ));
 				core::Size const n_chi_angles(rsd.nchi());
 				old_chi=rsd.chi();

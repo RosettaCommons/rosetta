@@ -95,7 +95,7 @@ void set_gaussian_stdevs(
 	utility::vector1<MC_RNA_KIC_SamplerOP> & internal_bb_sampler,
 	utility::vector1<MC_OneTorsionOP> & chi_sampler,
 	Real const temp,
-	Size const //total_sampled
+	core::Size const //total_sampled
 ) {
 	Real internal_bb_stdev( 0.1 * pow( temp, 0.25 ) + 0.1);
 	Real chi_stdev( 5 * pow( temp , 0.5) + 15 );
@@ -120,7 +120,7 @@ void set_gaussian_stdevs(
 	utility::vector1<MC_OneTorsionOP> & chi_sampler,
 	MC_RNA_MultiSuite & standard_bb_sampler,
 	Real const temp,
-	Size const total_sampled
+	core::Size const total_sampled
 ) {
 	// Shrinking variation by 2/3, expected need for 3/2 as many cycles vaguely.
 	//Real internal_bb_stdev( 0.1 * pow( temp, 0.25 ) + 0.1);
@@ -134,10 +134,10 @@ void set_gaussian_stdevs(
 		chi_stdev = -1 ;
 		standard_bb_stdev = -1 ;
 	}
-	for ( Size i = 1; i <= internal_bb_sampler.size(); ++i ) {
+	for ( core::Size i = 1; i <= internal_bb_sampler.size(); ++i ) {
 		internal_bb_sampler[i]->set_gaussian_stdev( internal_bb_stdev );
 	}
-	for ( Size i = 1; i <= chi_sampler.size(); ++i ) {
+	for ( core::Size i = 1; i <= chi_sampler.size(); ++i ) {
 		chi_sampler[i]->set_gaussian_stdev( chi_stdev );
 	}
 	standard_bb_sampler.set_gaussian_stdev( standard_bb_stdev );
@@ -166,7 +166,7 @@ ThermalMinimizer::ThermalMinimizer( ThermalMinimizer const & src ):
 
 // ii - 1 === moving, ii === chainbreak
 bool
-mm_compatible_with_kic( core::kinematics::MoveMapOP mm, Size const ii ) {
+mm_compatible_with_kic( core::kinematics::MoveMapOP mm, core::Size const ii ) {
 
 	// At the moment, let's just assume KIC is always wrong.
 	//return false;
@@ -217,9 +217,9 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	using namespace core::id;
 	using namespace protocols::stepwise::sampler;
 
-	utility::vector1< Size > residues_sampled;
-	Size total_sampled = 0;
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	utility::vector1< core::Size > residues_sampled;
+	core::Size total_sampled = 0;
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		// Check for a free, sample-able dof
 		if ( mm_->get( core::id::TorsionID( ii, id::BB, 1 ) )
 				|| mm_->get( core::id::TorsionID( ii, id::BB, 2 ) )
@@ -248,7 +248,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	TR << "Residues sampled " << residues_sampled << std::endl;
 	//TR << "moving cutpoint res  " << vec << std::endl;
 
-	//Size const total_len( pose.size() );
+	//core::Size const total_len( pose.size() );
 	//bool const sample_near_a_form( false );
 
 	//Setting up the internal move sampler
@@ -259,16 +259,16 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	utility::vector1<MC_OneTorsionOP> tors_sampler;
 	//utility::vector1<MC_RNA_SugarOP> sugar_sampler;
 
-	std::set< Size > sampled_by_kic;
+	std::set< core::Size > sampled_by_kic;
 
 	if ( kic_sampling_ ) {
 		//Set up the internal move samplers
-		for ( Size const seqpos : vec ) {
+		for ( core::Size const seqpos : vec ) {
 			if ( seqpos < 2 || seqpos > pose.size() - 1 ) {
 				TR.Warning << "Oddly, it seems " << seqpos << " was marked as KIC-compatible " << std::endl;
 				continue;
 			}
-			//}Size ii = 2; ii <= pose.size() - 1; ++ii ) {
+			//}core::Size ii = 2; ii <= pose.size() - 1; ++ii ) {
 			// use the movemap, luke
 			//TR << "Do I work with " << seqpos << "? " << std::endl;
 			//TR << pose.residue_type( seqpos ) << std::endl;
@@ -287,7 +287,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	}
 
 	//Set up the torsion samplers
-	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
 		auto tid = core::id::TorsionID( ii, id::CHI, 1 );
 		if ( mm_->get( tid ) ) {
 			Real init_torsion = ref_pose->torsion( tid );
@@ -365,7 +365,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	}
 
 
-	for ( Size i = 1; i <= residues_sampled.size(); ++i ) {
+	for ( core::Size i = 1; i <= residues_sampled.size(); ++i ) {
 		if ( sampled_by_kic.find( residues_sampled[i]-1 ) == sampled_by_kic.end() &&residues_sampled[i] != 1 && ( i == 1 || residues_sampled[i] != residues_sampled[i-1]+1 ) ) {
 			//create samplers for [i]-1 and [i]
 
@@ -399,7 +399,7 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 	}
 	//standard_sampler.init();
 
-	//for ( Size i = 1; i <= residues_sampled.size(); ++i ) {
+	//for ( core::Size i = 1; i <= residues_sampled.size(); ++i ) {
 	//MC_RNA_SugarOP sampler( new MC_RNA_Sugar( residues_sampled[i], 1, 0 /*ANY_PUCKER*/ ) );
 	// sugar_sampler.push_back( sampler );
 	// }
@@ -413,18 +413,18 @@ ThermalMinimizer::apply( core::pose::Pose & pose ) {
 
 	SimulatedTempering tempering( pose, score_fxn_, st_temps, st_weights );
 	MonteCarlo mc(pose, *score_fxn_, 1.0 );
-	Size n_accept_total( 0 ), n_accept_backbone( 0 ), n_accept_onetors( 0 ), n_accept_kic( 0 );
-	Size /*n_total( 0 ), */n_backbone( 0 ), n_onetors( 0 ), n_kic( 0 );
+	core::Size n_accept_total( 0 ), n_accept_backbone( 0 ), n_accept_onetors( 0 ), n_accept_kic( 0 );
+	core::Size /*n_total( 0 ), */n_backbone( 0 ), n_onetors( 0 ), n_kic( 0 );
 	bool did_move;
 	int index;
-	//Size temp_id( 1 );
+	//core::Size temp_id( 1 );
 
 	set_gaussian_stdevs( kic_sampler, tors_sampler, standard_sampler, temp_, total_sampled );
 
 	Pose stored_pose_ = pose;
 
 	// Main sampling cycle
-	for ( Size n = 1; n <= n_cycle_; ++n ) {
+	for ( core::Size n = 1; n <= n_cycle_; ++n ) {
 		did_move = true;
 		bool boltz = false;
 		// Sampler updates

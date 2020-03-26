@@ -52,7 +52,7 @@ namespace conformation {
 namespace carbohydrates {
 
 GlycanNode::GlycanNode():
-	utility::pointer::ReferenceCount()
+	utility::VirtualBase()
 {
 
 }
@@ -73,7 +73,7 @@ GlycanNode::GlycanNode( conformation::Conformation const & conf, Size const tree
 }// construtor}
 
 GlycanNode::GlycanNode( GlycanNode const & src ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	node_residue_( src.node_residue_ ),
 	parent_residue_( src.parent_residue_ ),
 	tree_start_residue_( src.tree_start_residue_ ),

@@ -145,7 +145,7 @@ utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::pose
 						DistributionSampler<normal> sampler(distribution);
 
 						// Clamp insertion position to closed interval [start, stop]
-						auto position = static_cast<Size>(sampler.sample());
+						auto position = static_cast<core::Size>(sampler.sample());
 						position = numeric::clamp<core::Size>(position, 1, cut_residues.size());
 
 						cut = cut_residues[position];
@@ -217,7 +217,7 @@ core::Size HybridizeFoldtreeDynamic::choose_anchor_position(const protocols::loo
 	DistributionSampler<normal> sampler(distribution);
 
 	// Clamp insertion position to closed interval [start, stop]
-	auto position = static_cast<Size>(sampler.sample());
+	auto position = static_cast<core::Size>(sampler.sample());
 	return numeric::clamp<core::Size>(position, chunk.start(), chunk.stop());
 }
 
@@ -407,12 +407,12 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 
 	// "symmetry-safe" version
 	core::kinematics::FoldTree tree = core::conformation::symmetry::get_asymm_unit_fold_tree( pose.conformation() );
-	Size jump_root = num_nonvirt_residues_+1;
+	core::Size jump_root = num_nonvirt_residues_+1;
 	if ( use_symm ) jump_root = anchor_positions_[1];
 
 	// keep a copy of cuts and jumps, if they are in the region outside of the chunk definition
-	vector1<Size> cuts_old;
-	vector1<std::pair<Size, Size> > jumps_old;
+	vector1<core::Size> cuts_old;
+	vector1<std::pair<core::Size, core::Size> > jumps_old;
 	core::Size last_chunk_residue(chunks_[chunks_.num_loop()].stop());
 
 	//if (!use_symm) {
@@ -420,7 +420,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 
 	jumps_and_cuts_from_foldtree(initial_asymm_foldtree_, jumps_old, cuts_old);
 
-	for ( Size i = 1; i <= jumps_old.size(); ++i ) {
+	for ( core::Size i = 1; i <= jumps_old.size(); ++i ) {
 		//if (jumps_old[i].first == jump_root) continue; // no need to skip this any more
 		//if (jumps_old[i].second == jump_root) continue;
 
@@ -432,7 +432,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 			TR.Debug << "Adding additional jump: " << jump_root << jumps_old[i].second << std::endl;
 		}
 	}
-	for ( Size i = 1; i <= cuts_old.size(); ++i ) {
+	for ( core::Size i = 1; i <= cuts_old.size(); ++i ) {
 		if ( cuts_old[i] > last_chunk_residue && cuts_old[i] <= num_nonvirt_residues_ ) {
 			cuts.push_back(cuts_old[i]);
 			TR.Debug << "Adding additional cut: " << cuts_old[i] << std::endl;
@@ -454,12 +454,12 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 		root_chunk_indices.insert(1);
 	}
 	std::set<core::Size>::iterator set_iter;
-	for ( Size i = 1; i <= chunks_.num_loop(); ++i ) {
+	for ( core::Size i = 1; i <= chunks_.num_loop(); ++i ) {
 		const Loop& chunk = chunks_[i];
-		const Size cut_point  = chunk.stop();
-		const Size jump_point = anchor_positions_[i];
+		const core::Size cut_point  = chunk.stop();
+		const core::Size jump_point = anchor_positions_[i];
 
-		Size j_root = num_nonvirt_residues_+1;
+		core::Size j_root = num_nonvirt_residues_+1;
 		if ( use_symm && i>1 ) j_root = anchor_positions_[1];
 
 		TR.Debug << "Adding chunk cut: " << cut_point << std::endl;
@@ -578,15 +578,15 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 
 	TR.Debug << "jump size: " << jumps.size() << " cut size: " << cuts.size() << std::endl;
 
-	ObjexxFCL::FArray2D< Size > ft_jumps(2, jumps.size());
-	for ( Size i = 1; i <= jumps.size(); ++i ) {
+	ObjexxFCL::FArray2D< core::Size > ft_jumps(2, jumps.size());
+	for ( core::Size i = 1; i <= jumps.size(); ++i ) {
 		TR.Debug << "jump " << i << " " << jumps[i].first << " " << jumps[i].second << std::endl;
 		ft_jumps(1, i) = std::min(jumps[i].first, jumps[i].second);
 		ft_jumps(2, i) = std::max(jumps[i].first, jumps[i].second);
 	}
 
-	ObjexxFCL::FArray1D< Size > ft_cuts(cuts.size());
-	for ( Size i = 1; i <= cuts.size(); ++i ) {
+	ObjexxFCL::FArray1D< core::Size > ft_cuts(cuts.size());
+	for ( core::Size i = 1; i <= cuts.size(); ++i ) {
 		TR.Debug << "cut " << i << " " << cuts[i] << std::endl;
 		ft_cuts(i) = cuts[i];
 	}

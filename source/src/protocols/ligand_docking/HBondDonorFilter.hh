@@ -31,7 +31,7 @@ class HBondDonorFilter : public protocols::filters::Filter
 {
 public:
 	HBondDonorFilter() :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "HBondDonor" )
 	{}
 

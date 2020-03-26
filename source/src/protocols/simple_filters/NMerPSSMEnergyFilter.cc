@@ -135,11 +135,11 @@ NMerPSSMEnergyFilter::compute(
 	core::Real score( 0. );
 	if ( res_set_vec.size() > 0 ) {
 		for ( core::Size i_res_vec = 1; i_res_vec <= res_set_vec.size(); ++i_res_vec ) {
-			Size const seqpos( res_set_vec[ i_res_vec ] );
+			core::Size const seqpos( res_set_vec[ i_res_vec ] );
 			score += NMerPSSMEnergyFilter::compute_residue( pose, seqpos );
 		}
 	} else {
-		for ( Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
+		for ( core::Size seqpos = 1; seqpos <= pose.size(); ++seqpos ) {
 			score += NMerPSSMEnergyFilter::compute_residue( pose, seqpos );
 		}
 	}

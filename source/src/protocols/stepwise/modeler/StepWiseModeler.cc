@@ -69,7 +69,7 @@ namespace stepwise {
 namespace modeler {
 
 //Constructor
-StepWiseModeler::StepWiseModeler( Size const moving_res, core::scoring::ScoreFunctionCOP scorefxn ):
+StepWiseModeler::StepWiseModeler( core::Size const moving_res, core::scoring::ScoreFunctionCOP scorefxn ):
 	scorefxn_(std::move( scorefxn )),
 	figure_out_prepack_res_( false ),
 	prepack_res_was_inputted_( false )
@@ -239,7 +239,7 @@ void
 StepWiseModeler::do_stepwise_lores( core::pose::Pose & pose )
 {
 	// following virtual ribose would normally be needed in connection_sampler
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		remove_variant_type_from_pose_residue( pose, core::chemical::VIRTUAL_RIBOSE, n );
 	}
 	pose_list_ = make_vector1( pose.clone() );
@@ -251,7 +251,7 @@ StepWiseModeler::do_stepwise_lores( core::pose::Pose & pose )
 
 //////////////////////////////////////////////////////////////////////////////
 void
-StepWiseModeler::set_moving_res_and_reset( Size const moving_res ){
+StepWiseModeler::set_moving_res_and_reset( core::Size const moving_res ){
 	moving_res_ = moving_res;
 	working_parameters_.reset();
 }
@@ -296,7 +296,7 @@ StepWiseModeler::figure_out_moving_res_list( pose::Pose const & pose ){
 
 ////////////////////////////////////////////////////////////////////
 void
-StepWiseModeler::figure_out_moving_res_list_from_most_distal_res( pose::Pose const & pose, Size const moving_res ) {
+StepWiseModeler::figure_out_moving_res_list_from_most_distal_res( pose::Pose const & pose, core::Size const moving_res ) {
 
 	moving_res_list_.clear();
 	if ( moving_res == 0 ) return;
@@ -311,7 +311,7 @@ StepWiseModeler::figure_out_moving_res_list_from_most_distal_res( pose::Pose con
 //////////////////////////////////////////////////////////////////////////////
 bool
 StepWiseModeler::sampling_successful() {
-	Size const num_sampled = pose_list_.size();
+	core::Size const num_sampled = pose_list_.size();
 	if ( num_sampled == 0 ) {
 		if ( options_->num_random_samples() > 0 ) TR << TR.Red << "WARNING! WARNING! WARNING! pose_list_.size() == 0! " << TR.Reset << std::endl;
 		if ( !options_->output_minimized_pose_list() ) return false; // don't do a minimize...

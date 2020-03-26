@@ -46,7 +46,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -63,7 +63,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -80,7 +80,7 @@ public:
 		Multivec const & vars,
 		Multivec & dE_dvars,
 		/// Basically, turn over all the private data from OptEMultiFunc
-		Size const num_energy_dofs,
+		core::Size const num_energy_dofs,
 		int const num_ref_dofs,
 		int const num_total_dofs,
 		EnergyMap const & fixed_terms,
@@ -91,7 +91,7 @@ public:
 
 	/*
 	virtual
-	Size
+	core::Size
 	size() const;
 	*/
 
@@ -117,7 +117,7 @@ public:
 	read_from_binary_file( std::ifstream & infile );
 
 	virtual
-	Size
+	core::Size
 	memory_use() const;
 
 #ifdef USEMPI
@@ -131,7 +131,7 @@ public:
 #endif
 
 	void
-	set_total_residue( Size total_residue );
+	set_total_residue( core::Size total_residue );
 
 	void
 	add_native( SingleStructureDataOP native );
@@ -140,7 +140,7 @@ public:
 	add_decoy( SingleStructureDataOP decoy );
 
 	private:
-	Size total_residue_;
+	core::Size total_residue_;
 	SingleStructureDataOPs natives_;
 	SingleStructureDataOPs decoys_;
 	*/

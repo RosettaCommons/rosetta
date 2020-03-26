@@ -35,13 +35,13 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace devel {
 namespace denovo_design {
 
-class ParametricSheet : public utility::pointer::ReferenceCount {
+class ParametricSheet : public utility::VirtualBase {
 public:
 	struct StrandData {
 		StrandData( std::string const name_val,

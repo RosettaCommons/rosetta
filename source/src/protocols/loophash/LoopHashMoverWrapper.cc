@@ -139,15 +139,15 @@ LoopHashMoverWrapper::apply( Pose & pose )
 	lsampler.set_filter_by_phipsi( filter_by_phipsi_ );
 
 	std::vector< SilentStructOP > lib_structs;
-	Size starttime = time( nullptr );
+	core::Size starttime = time( nullptr );
 	std::string sample_weight( "" );
-	for ( Size resi = 1; resi <= pose.size(); ++resi ) {
+	for ( core::Size resi = 1; resi <= pose.size(); ++resi ) {
 		sample_weight += utility::to_string( sample_weight_const_ ) + " ";
 	}
 	core::pose::add_comment( pose, "sample_weight", sample_weight );
 	lsampler.build_structures( pose, lib_structs );
-	Size endtime = time( nullptr );
-	Size nstructs = lib_structs.size();
+	core::Size endtime = time( nullptr );
+	core::Size nstructs = lib_structs.size();
 	TR << "Found " << nstructs << " alternative states in time: " << endtime - starttime << std::endl;
 	//std::random__shuffle( lib_structs.begin(), lib_structs.end() );
 	numeric::random::random_permutation( lib_structs.begin(), lib_structs.end(), numeric::random::rg() );
@@ -165,9 +165,9 @@ LoopHashMoverWrapper::apply( Pose & pose )
 			// xyz copy
 			utility::vector1< core::id::AtomID > atm_ids;
 			utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
-			for ( Size i=1; i<=pose_asu.size(); ++i ) {
+			for ( core::Size i=1; i<=pose_asu.size(); ++i ) {
 				if ( pose_asu.residue_type(i).aa() == core::chemical::aa_vrt ) continue;
-				for ( Size j=1; j<=pose_asu.residue_type(i).natoms(); ++j ) {
+				for ( core::Size j=1; j<=pose_asu.residue_type(i).natoms(); ++j ) {
 					core::id::AtomID atm_ij(j,i);
 					atm_ids.push_back( atm_ij );
 					atm_xyzs.push_back( pose_asu.xyz( atm_ij ) );
@@ -298,11 +298,11 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 	max_bbrms_ = tag->getOption< Real >( "max_bbrms", 100000 );
 	min_rms_ = tag->getOption< Real >( "min_rms",   0.0 );
 	max_rms_ = tag->getOption< Real >( "max_rms",   4.0 );
-	max_nstruct_ = tag->getOption< Size >( "max_nstruct",   1000000 );
+	max_nstruct_ = tag->getOption< core::Size >( "max_nstruct",   1000000 );
 	ideal_ = tag->getOption< bool >( "ideal",  false );  // by default, assume structure is nonideal
-	max_radius_ = tag->getOption< Size >( "max_radius", 4 );
-	max_struct_ = tag->getOption< Size >( "max_struct", 10 );
-	max_struct_per_radius_ = tag->getOption< Size >( "max_struct_per_radius", 10 );
+	max_radius_ = tag->getOption< core::Size >( "max_radius", 4 );
+	max_struct_ = tag->getOption< core::Size >( "max_struct", 10 );
+	max_struct_per_radius_ = tag->getOption< core::Size >( "max_struct_per_radius", 10 );
 	filter_by_phipsi_ = tag->getOption< bool >( "filter_by_phipsi", true );
 	sample_weight_const_ = tag->getOption< Real >( "sample_weight_const", 1.0 );
 
@@ -312,7 +312,7 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 	string const loop_sizes_str( tag->getOption< string >( "loop_sizes" ) );
 	vector1< string > const loop_sizes_split( utility::string_split( loop_sizes_str, ',' ) );
 	for ( string const & loop_size : loop_sizes_split ) {
-		add_loop_size( (Size)std::atoi(loop_size.c_str()) ) ;
+		add_loop_size( (core::Size)std::atoi(loop_size.c_str()) ) ;
 	}
 
 	// path to DB -- if not specified then command-line flag is used
@@ -325,7 +325,7 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 	library_->mem_foot_print();
 
 	// FILTERING STEP 1 --- filter with chainbreak
-	nprefilter_ = tag->getOption< Size >( "nprefilter", 0 );
+	nprefilter_ = tag->getOption< core::Size >( "nprefilter", 0 );
 	if ( tag->hasOption( "prefilter_scorefxn" ) ) {
 		string const prefilter_scorefxn_name( tag->getOption< string >( "prefilter_scorefxn" ) );
 		prefilter_scorefxn_ = data.get_ptr< ScoreFunction >( "scorefxns", prefilter_scorefxn_name );
@@ -334,7 +334,7 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 	// FILTERING STEP 2 --- filter after idealization (+symmetrization)
 	// number of structures to accept
 	// 0 = accept everything passing the filter
-	ncentroid_ = tag->getOption< Size >( "ncentroid",  0 );
+	ncentroid_ = tag->getOption< core::Size >( "ncentroid",  0 );
 	nfullatom_ = ncentroid_;
 
 	// centroid filter
@@ -361,11 +361,11 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 		fastrelax_->set_force_nonideal( !ideal_ );
 
 		// batch size
-		batch_size_ = tag->getOption< Size >( "batch_size", 32 );
+		batch_size_ = tag->getOption< core::Size >( "batch_size", 32 );
 
 		// maximum number of structures to accept
 		// may be less depending on # of centroid structures actually generated, ncentroid_, and batch_size_;
-		nfullatom_ = tag->getOption< Size >( "nfullatom",  ncentroid_ );
+		nfullatom_ = tag->getOption< core::Size >( "nfullatom",  ncentroid_ );
 
 		// fullatom filter <<<< used to select best 'nfullatom' from all decoys
 		string const fullatom_filter_name( tag->getOption< string >( "fullatom_filter", "true_filter" ) );
@@ -428,7 +428,7 @@ LoopHashMoverWrapper::max_nstruct() const {
 }
 
 void
-LoopHashMoverWrapper::max_nstruct( Size const max_nstruct ) {
+LoopHashMoverWrapper::max_nstruct( core::Size const max_nstruct ) {
 	max_nstruct_ = max_nstruct;
 }
 
@@ -452,13 +452,13 @@ LoopHashMoverWrapper::ranking_fafilter( protocols::filters::FilterOP ranking_faf
 	ranking_fafilter_ = ranking_fafilter;
 }
 
-utility::vector1< Size >
+utility::vector1< core::Size >
 LoopHashMoverWrapper::loop_sizes() const{
 	return loop_sizes_;
 }
 
 void
-LoopHashMoverWrapper::add_loop_size( Size const loop_size ){
+LoopHashMoverWrapper::add_loop_size( core::Size const loop_size ){
 	loop_sizes_.push_back( loop_size );
 }
 

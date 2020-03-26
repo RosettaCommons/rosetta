@@ -52,7 +52,7 @@ public:
 	typedef basic::datacache::DataMap DataMap;
 	typedef protocols::moves::Movers_map Movers_map;
 	typedef protocols::filters::Filters_map Filters_map;
-	typedef utility::vector1< Size > VecSize;
+	typedef utility::vector1< core::Size > VecSize;
 	typedef utility::vector1< VecSize > VecVecSize;
 
 
@@ -84,7 +84,7 @@ public:
 
 private:
 
-	std::map< std::string, boost::tuple<Size, Size> >  map_ss_segments( std::string const & ss) const;
+	std::map< std::string, boost::tuple<core::Size, core::Size> >  map_ss_segments( std::string const & ss) const;
 
 	void cart_product( VecVecSize& rvvi, VecSize&  rvi, VecVecSize::const_iterator me, VecVecSize::const_iterator end ) const;
 	VecVecSize cart_product( VecVecSize const & input) const;

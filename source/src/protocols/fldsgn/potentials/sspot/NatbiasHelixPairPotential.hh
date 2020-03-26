@@ -22,7 +22,7 @@
 #include <protocols/fldsgn/potentials/sspot/NatbiasHelixPairPotential.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -32,7 +32,7 @@ namespace fldsgn {
 namespace potentials {
 namespace sspot {
 
-class NatbiasHelixPairPotential : public utility::pointer::ReferenceCount {
+class NatbiasHelixPairPotential : public utility::VirtualBase {
 public:
 
 

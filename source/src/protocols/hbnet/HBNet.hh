@@ -64,7 +64,7 @@ namespace hbnet {
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///@brief struct that represents minimal info for residue in an h-bond network
-struct HBondResStruct : public utility::pointer::ReferenceCount {
+struct HBondResStruct : public utility::VirtualBase {
 	core::Size resnum;
 	platform::uint rot_index;
 	char aa;
@@ -123,7 +123,7 @@ struct compare_hbond_resnums : public std::binary_function< HBondResStructCOP, H
 // TO-DO: add graph connectivity and placeholders for bridging waters
 
 ///@brief struct that contains info needed for hbond networks
-struct HBondNetStruct : public utility::pointer::ReferenceCount {
+struct HBondNetStruct : public utility::VirtualBase {
 	bool is_native;
 	bool is_extended;
 	bool term_w_bb;                                     //network terminates with sc_bb h-bond
@@ -199,6 +199,7 @@ struct HBondNetStruct : public utility::pointer::ReferenceCount {
 
 	//copy constructor
 	HBondNetStruct( HBondNetStruct const & hbns ) :
+		VirtualBase( hbns ),
 		is_native(hbns.is_native),
 		is_extended(hbns.is_extended),
 		term_w_bb(hbns.term_w_bb),
@@ -482,7 +483,7 @@ public:
 
 	void set_min_networks_size( core::Size min ){ min_network_size_ = min; }
 	void set_max_networks_size( core::Size max ){ max_network_size_ = max; }
-	void set_max_unsat( Size max ){ max_unsat_Hpol_ = max; }
+	void set_max_unsat( core::Size max ){ max_unsat_Hpol_ = max; }
 	core::Size get_min_networks_size(){ return min_network_size_; }
 	core::Size get_max_networks_size(){ return max_network_size_; }
 	core::Size get_max_unsat(){ return max_unsat_Hpol_; }
@@ -554,8 +555,8 @@ public:
 	// water_clashes(
 	//  Pose const & pose,
 	//  utility::graph::GraphOP packer_neighbor_graph,
-	//  Size const anchor_i,
-	//  Size const anchor_j,
+	//  core::Size const anchor_i,
+	//  core::Size const anchor_j,
 	//  core::Vector const water_O
 	// );
 	//

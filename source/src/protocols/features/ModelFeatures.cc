@@ -159,7 +159,7 @@ ModelFeatures::find_segments(
 	while ( res.next() )
 			{
 		std::string dssp;
-		Size segment_id, residue_begin, residue_end;
+		core::Size segment_id, residue_begin, residue_end;
 		res >> segment_id >> dssp >> residue_begin >> residue_end;
 
 		Segment segment;

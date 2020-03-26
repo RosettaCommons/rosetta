@@ -62,8 +62,8 @@ namespace protein {
 void
 setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
 	core::pose::Pose const & pose_2,
-	Size const base_res,
-	Size const base_res2,
+	core::Size const base_res,
+	core::Size const base_res2,
 	core::id::AtomID_Map< core::id::AtomID > & atom_ID_map){
 
 	using namespace core::id;
@@ -106,40 +106,40 @@ setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 figure_out_protein_modeling_info( pose::Pose const & pose,
-	Size const moving_res,
-	utility::vector1< Size > & moving_res_list ){
+	core::Size const moving_res,
+	utility::vector1< core::Size > & moving_res_list ){
 
 	if ( !pose.residue( moving_res ).is_protein() ) return;
 
 	// go back another residue -- this was the default choice in protein SWA.
-	utility::vector1< Size > const sample_res_for_pose = core::pose::full_model_info::get_sample_res_for_pose( pose );
-	Size const upstream_res = pose.fold_tree().get_parent_residue( moving_res );
+	utility::vector1< core::Size > const sample_res_for_pose = core::pose::full_model_info::get_sample_res_for_pose( pose );
+	core::Size const upstream_res = pose.fold_tree().get_parent_residue( moving_res );
 	if ( pose.residue_type( upstream_res ).is_protein() &&
 			sample_res_for_pose.has_value( upstream_res ) ) moving_res_list.push_back( upstream_res );
 }
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< Size >
+utility::vector1< core::Size >
 get_bridge_res( pose::Pose const & pose,
-	utility::vector1< Size > const & moving_res_list /*working*/ ){
+	utility::vector1< core::Size > const & moving_res_list /*working*/ ){
 
 	// check if CCD-closure  is necessary.
-	utility::vector1< Size > bridge_res;
+	utility::vector1< core::Size > bridge_res;
 	if ( moving_res_list.size() == 0 ) return bridge_res;
 
-	Size const moving_res = moving_res_list[ 1 ];
-	utility::vector1< Size > const cutpoints_closed = figure_out_moving_cutpoints_closed_from_moving_res( pose, moving_res );
+	core::Size const moving_res = moving_res_list[ 1 ];
+	utility::vector1< core::Size > const cutpoints_closed = figure_out_moving_cutpoints_closed_from_moving_res( pose, moving_res );
 	if ( cutpoints_closed.size() == 0 ) return bridge_res;
 
-	for ( Size n = 1; n <= cutpoints_closed.size(); n++ ) {
+	for ( core::Size n = 1; n <= cutpoints_closed.size(); n++ ) {
 
 		auto cutpoint_closed = static_cast<int>( cutpoints_closed[ n ] );
 		if ( !pose.residue_type( cutpoint_closed ).is_protein() ) continue;
 
 		// as in protein SWA, choose two bridge residues for CCD closure on the 'other side' of sampled residue.
 		utility::vector1< int > offsets;
-		utility::vector1< Size > const sample_res_for_pose = core::pose::full_model_info::get_sample_res_for_pose( pose );
+		utility::vector1< core::Size > const sample_res_for_pose = core::pose::full_model_info::get_sample_res_for_pose( pose );
 		if ( moving_res_list.has_value( cutpoint_closed ) ) {
 			offsets = make_vector1( +1, +2 );
 		} else if ( moving_res_list.has_value( cutpoint_closed+1 ) ) {
@@ -147,8 +147,8 @@ get_bridge_res( pose::Pose const & pose,
 		} else {
 			offsets = make_vector1( 0, +1 ); // bracket CCD closure point, since moving_res does not.
 		}
-		utility::vector1< Size > working_bridge_res;
-		for ( Size n = 1; n <= offsets.size(); n++ ) {
+		utility::vector1< core::Size > working_bridge_res;
+		for ( core::Size n = 1; n <= offsets.size(); n++ ) {
 			int const bridge_res = cutpoint_closed + offsets[n];
 			if ( bridge_res < 1 ) continue;
 			runtime_assert( !moving_res_list.has_value( bridge_res ) );
@@ -161,18 +161,18 @@ get_bridge_res( pose::Pose const & pose,
 
 
 //////////////////////////////////////////////////////////////////////////
-utility::vector1< Size >
-just_protein( utility::vector1< Size > const & res_list, pose::Pose const & pose ){
-	utility::vector1< Size > protein_res_list;
-	for ( Size n = 1; n <= res_list.size(); n++ ) { if ( pose.residue_type( res_list[n] ).is_protein() ) protein_res_list.push_back( res_list[n] ); }
+utility::vector1< core::Size >
+just_protein( utility::vector1< core::Size > const & res_list, pose::Pose const & pose ){
+	utility::vector1< core::Size > protein_res_list;
+	for ( core::Size n = 1; n <= res_list.size(); n++ ) { if ( pose.residue_type( res_list[n] ).is_protein() ) protein_res_list.push_back( res_list[n] ); }
 	return protein_res_list;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool
 contains_protein( core::pose::Pose const & pose,
-	utility::vector1< Size > const & res_list /* = blank, meaning check all residues */ ){
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	utility::vector1< core::Size > const & res_list /* = blank, meaning check all residues */ ){
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( res_list.size() > 0 && !res_list.has_value( n ) ) continue;
 		if ( pose.residue_type( n ).is_protein() ) return true;
 	}

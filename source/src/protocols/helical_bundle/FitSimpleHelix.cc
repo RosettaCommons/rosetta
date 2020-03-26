@@ -48,7 +48,7 @@ static basic::Tracer TR("protocols.helical_bundle.FitSimpleHelix");
 
 /// @brief Creator for FitSimpleHelix mover.
 FitSimpleHelix::FitSimpleHelix():
-	//utility::pointer::ReferenceCount(),
+	//utility::VirtualBase(),
 	Mover("FitSimpleHelix"),
 	r1_initial_(1.0),
 	omega1_initial_(1.0),

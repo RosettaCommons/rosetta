@@ -23,7 +23,7 @@
 #include <utility/io/orstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>

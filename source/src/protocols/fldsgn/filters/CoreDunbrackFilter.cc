@@ -108,8 +108,8 @@ CoreDunbrackFilter::compute( Pose const & pose ) const
 	// define atom_map for main-chain and CB
 	core::id::AtomID_Map< bool > atom_map;
 	core::pose::initialize_atomid_map( atom_map, pose, false );
-	for ( Size ir = 1; ir <= pose.size(); ++ir ) {
-		for ( Size j = 1; j<=5; ++j ) {
+	for ( core::Size ir = 1; ir <= pose.size(); ++ir ) {
+		for ( core::Size j = 1; j<=5; ++j ) {
 			core::id::AtomID atom( j, ir );
 			atom_map.set( atom, true );
 		}
@@ -128,10 +128,10 @@ CoreDunbrackFilter::compute( Pose const & pose ) const
 
 	Real asa_core( 40.0 );
 	Real frustration( 0.0 );
-	Size num_frustrated_residue( 0 );
-	Size rnum_core( 0 );
+	core::Size num_frustrated_residue( 0 );
+	core::Size rnum_core( 0 );
 	// take dunbrack score
-	for ( Size i=1; i<=pose.size(); i++ ) {
+	for ( core::Size i=1; i<=pose.size(); i++ ) {
 		if ( rsd_sasa[ i ] < asa_core ) {
 			if ( name_from_aa( pose.aa( i ) ) == "TRP" ||
 					name_from_aa( pose.aa( i ) ) == "TYR" ||

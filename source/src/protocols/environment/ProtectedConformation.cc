@@ -135,7 +135,7 @@ void ProtectedConformation::set_jump( core::id::AtomID const& id, core::kinemati
 	}
 }
 
-void ProtectedConformation::set_secstruct( Size const seqpos, char const setting ){
+void ProtectedConformation::set_secstruct( core::Size const seqpos, char const setting ){
 	if ( verify_backbone( seqpos ) ) {
 		return Parent::set_secstruct( seqpos, setting );
 	}
@@ -275,7 +275,7 @@ std::map< core::id::DOF_ID, core::Real > collect_dofs( core::Size const seqpos, 
 
 	DofMap old_dofs;
 
-	for ( core::Size i = std::max( (Size) 1, seqpos-1 ); i <= std::min( conf->size(), seqpos+1 ); ++i ) {
+	for ( core::Size i = std::max( (core::Size) 1, seqpos-1 ); i <= std::min( conf->size(), seqpos+1 ); ++i ) {
 		for ( core::Size j = 1; j <= conf->residue(i).natoms(); ++j ) {
 			AtomID a_id = AtomID( j, i );
 
@@ -361,7 +361,7 @@ ResidueOP ProtectedConformation::match_variants(
 
 	// add any variants in the old residue that aren't in the new residue
 	utility::vector1< std::string > old_variants = old_rsd.type().properties().get_list_of_variants();
-	for ( Size i = 1; i <= old_variants.size(); ++i ) {
+	for ( core::Size i = 1; i <= old_variants.size(); ++i ) {
 		VariantType variant = old_rsd.type().properties().get_variant_from_string( old_variants[i] );
 		if ( !new_rsd->type().has_variant_type( variant ) &&
 				old_rsd.type().has_variant_type( variant ) ) {
@@ -373,7 +373,7 @@ ResidueOP ProtectedConformation::match_variants(
 
 	// remove any variants in the new residue that aren't in the old residue
 	utility::vector1< std::string > new_variants = in_rsd.type().properties().get_list_of_variants();
-	for ( Size i = 1; i <= new_variants.size(); ++i ) {
+	for ( core::Size i = 1; i <= new_variants.size(); ++i ) {
 		VariantType variant = in_rsd.type().properties().get_variant_from_string( new_variants[i] );
 		if ( new_rsd->type().has_variant_type( variant ) &&
 				!old_rsd.type().has_variant_type( variant ) ) {
@@ -386,7 +386,7 @@ ResidueOP ProtectedConformation::match_variants(
 
 void
 ProtectedConformation::replace_residue_sandbox(
-	Size const seqpos,
+	core::Size const seqpos,
 	Residue const& in_rsd,
 	bool p
 ){
@@ -463,11 +463,11 @@ ProtectedConformation::replace_residue_sandbox(
 	}
 }
 
-void ProtectedConformation::replace_residue( Size const seqpos, Residue const & new_rsd, bool const orient_backbone ) {
+void ProtectedConformation::replace_residue( core::Size const seqpos, Residue const & new_rsd, bool const orient_backbone ) {
 	replace_residue_sandbox( seqpos, new_rsd, orient_backbone );
 }
 
-void ProtectedConformation::replace_residue( Size const seqpos, core::conformation::Residue const& new_rsd,
+void ProtectedConformation::replace_residue( core::Size const seqpos, core::conformation::Residue const& new_rsd,
 	utility::vector1< std::pair< std::string, std::string > > const & atom_pairs ){
 	// This is ok, since the parent function contains a call to the above function.
 	Parent::replace_residue( seqpos, new_rsd, atom_pairs );
@@ -591,7 +591,7 @@ bool ProtectedConformation::has_passport() const {
 
 // VERIFICATION CONVIENENCE METHODS
 
-bool ProtectedConformation::verify_backbone( Size const& seqpos ){
+bool ProtectedConformation::verify_backbone( core::Size const& seqpos ){
 	return ( verify( core::id::TorsionID( seqpos, core::id::BB, core::id::phi_torsion ) ) &&
 		verify( core::id::TorsionID( seqpos, core::id::BB, core::id::psi_torsion ) ) &&
 		verify( core::id::TorsionID( seqpos, core::id::BB, core::id::omega_torsion ) ) );
@@ -600,7 +600,7 @@ bool ProtectedConformation::verify_backbone( Size const& seqpos ){
 bool ProtectedConformation::verify_jump( core::id::AtomID const& a_id ){
 	bool allow = true;
 
-	for ( Size rb_i = core::id::RB1; rb_i <= core::id::RB6; ++rb_i ) {
+	for ( core::Size rb_i = core::id::RB1; rb_i <= core::id::RB6; ++rb_i ) {
 		allow &= verify( core::id::DOF_ID( a_id, core::id::DOF_Type(rb_i) ) );
 	}
 
@@ -642,15 +642,15 @@ void ProtectedConformation::fold_tree( FoldTree const & ){
 	fail_verification( __FUNCTION__ );
 }
 
-void ProtectedConformation::chain_endings( utility::vector1< Size > const& seqpos_vect ) {
+void ProtectedConformation::chain_endings( utility::vector1< core::Size > const& seqpos_vect ) {
 	fail_verification( __FUNCTION__, seqpos_vect.empty() ? 0 : seqpos_vect.front() );
 }
 
-void ProtectedConformation::insert_chain_ending( Size const seqpos ) {
+void ProtectedConformation::insert_chain_ending( core::Size const seqpos ) {
 	fail_verification( __FUNCTION__, seqpos );
 }
 
-void ProtectedConformation::delete_chain_ending( Size const seqpos ) {
+void ProtectedConformation::delete_chain_ending( core::Size const seqpos ) {
 	fail_verification( __FUNCTION__, seqpos );
 }
 
@@ -664,7 +664,7 @@ void ProtectedConformation::chains_from_termini() {
 
 void ProtectedConformation::append_residue_by_jump(
 	core::conformation::Residue const&,
-	Size const anchor_residue,
+	core::Size const anchor_residue,
 	std::string const&,
 	std::string const&,
 	bool const
@@ -674,7 +674,7 @@ void ProtectedConformation::append_residue_by_jump(
 
 void ProtectedConformation::append_polymer_residue_after_seqpos(
 	core::conformation::Residue const&,
-	Size const seqpos,
+	core::Size const seqpos,
 	bool const
 ) {
 	fail_verification( __FUNCTION__, seqpos );
@@ -682,7 +682,7 @@ void ProtectedConformation::append_polymer_residue_after_seqpos(
 
 void ProtectedConformation::safely_append_polymer_residue_after_seqpos(
 	core::conformation::Residue const&,
-	Size const seqpos,
+	core::Size const seqpos,
 	bool const
 ) {
 	fail_verification( __FUNCTION__, seqpos );
@@ -690,7 +690,7 @@ void ProtectedConformation::safely_append_polymer_residue_after_seqpos(
 
 void ProtectedConformation::prepend_polymer_residue_before_seqpos(
 	core::conformation::Residue const&,
-	Size const seqpos,
+	core::Size const seqpos,
 	bool const
 ) {
 	fail_verification( __FUNCTION__, seqpos );
@@ -698,57 +698,57 @@ void ProtectedConformation::prepend_polymer_residue_before_seqpos(
 
 void ProtectedConformation::safely_prepend_polymer_residue_before_seqpos(
 	core::conformation::Residue const&,
-	Size const seqpos,
+	core::Size const seqpos,
 	bool const
 ) {
 	fail_verification( __FUNCTION__, seqpos );
 }
 
-void ProtectedConformation::delete_polymer_residue( Size const seqpos ) {
+void ProtectedConformation::delete_polymer_residue( core::Size const seqpos ) {
 	fail_verification( __FUNCTION__, seqpos );
 }
 
-void ProtectedConformation::delete_residue_slow( Size const seqpos ) {
+void ProtectedConformation::delete_residue_slow( core::Size const seqpos ) {
 	fail_verification( __FUNCTION__, seqpos );
 }
 
-void ProtectedConformation::delete_residue_range_slow( Size const seqpos, Size const ) {
+void ProtectedConformation::delete_residue_range_slow( core::Size const seqpos, core::Size const ) {
 	fail_verification( __FUNCTION__, seqpos );
 }
 
 void ProtectedConformation::declare_chemical_bond(
-	Size const seqpos,
+	core::Size const seqpos,
 	std::string const&,
-	Size const,
+	core::Size const,
 	std::string const&
 ) {
 	fail_verification( __FUNCTION__, seqpos );
 }
 
-void ProtectedConformation::insert_conformation_by_jump( Conformation const&, Size const seqpos, Size const,
-	Size const, Size const, std::string const&,
+void ProtectedConformation::insert_conformation_by_jump( Conformation const&, core::Size const seqpos, core::Size const,
+	core::Size const, core::Size const, std::string const&,
 	std::string const& ) {
 	fail_verification( __FUNCTION__, seqpos );
 }
 
-void ProtectedConformation::rebuild_polymer_bond_dependent_atoms( Size const seqpos ) {
+void ProtectedConformation::rebuild_polymer_bond_dependent_atoms( core::Size const seqpos ) {
 	fail_verification( __FUNCTION__, seqpos );
 }
 
-void ProtectedConformation::insert_ideal_geometry_at_polymer_bond( Size const seqpos ) {
+void ProtectedConformation::insert_ideal_geometry_at_polymer_bond( core::Size const seqpos ) {
 	fail_verification( __FUNCTION__, seqpos );
 }
 
-void ProtectedConformation::insert_ideal_geometry_at_residue_connection( Size const seqpos,
-	Size const ) {
+void ProtectedConformation::insert_ideal_geometry_at_residue_connection( core::Size const seqpos,
+	core::Size const ) {
 	fail_verification( __FUNCTION__, seqpos );
 }
 
-void ProtectedConformation::set_polymeric_connection( Size seqpos, Size ){
+void ProtectedConformation::set_polymeric_connection( core::Size seqpos, core::Size ){
 	fail_verification( __FUNCTION__, seqpos );
 }
 
-void ProtectedConformation::fix_disulfides( utility::vector1< std::pair<Size, Size> > const & vect ){
+void ProtectedConformation::fix_disulfides( utility::vector1< std::pair<core::Size, core::Size> > const & vect ){
 	fail_verification( __FUNCTION__, vect.empty() ? vect.front().first : 0 );
 }
 

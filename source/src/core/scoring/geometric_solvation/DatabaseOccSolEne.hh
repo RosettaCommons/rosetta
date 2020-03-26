@@ -27,7 +27,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <string>
 
@@ -48,7 +48,7 @@ enum OccFitParam {
 };
 
 
-class DatabaseOccSolEne : public utility::pointer::ReferenceCount {
+class DatabaseOccSolEne : public utility::VirtualBase {
 
 public:
 

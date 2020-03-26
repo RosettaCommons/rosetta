@@ -146,7 +146,7 @@ private:
 ////////////////////////
 ////////////////////////
 
-class SmoothEnvPairPotential : public utility::pointer::ReferenceCount {
+class SmoothEnvPairPotential : public utility::VirtualBase {
 public:
 	SmoothEnvPairPotential();
 

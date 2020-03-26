@@ -100,11 +100,11 @@ void InsertChunkMover::set_template(core::pose::PoseCOP template_pose, core::Siz
 	sequence_alignment_ = sequence_alignment;
 }
 
-void InsertChunkMover::set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number, bool anchor_insert_only_in) {
+void InsertChunkMover::set_aligned_chunk(core::pose::Pose const & pose, core::Size const jump_number, bool anchor_insert_only_in) {
 	jump_number_ = jump_number;
 	anchor_insert_only_ = anchor_insert_only_in;
 
-	std::list < Size > downstream_residues = downstream_residues_from_jump(pose, jump_number_);
+	std::list < core::Size > downstream_residues = downstream_residues_from_jump(pose, jump_number_);
 	seqpos_start_ = downstream_residues.front();
 	seqpos_stop_ = downstream_residues.back();
 
@@ -116,7 +116,7 @@ void InsertChunkMover::set_aligned_chunk(core::pose::Pose const & pose, Size con
 
 bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 	int registry_shift,
-	Size MAX_TRIAL) {
+	core::Size MAX_TRIAL) {
 	core::Size counter = 0;
 	//TR.Debug << sequence_alignment_ << std::endl;
 	while ( counter < MAX_TRIAL ) {
@@ -147,7 +147,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 		// collect local alignment for stealing torsion
 		seqpos_aligned_start_ = seqpos_pose;
 		seqpos_aligned_stop_ = seqpos_pose;
-		for ( Size ires_pose=seqpos_pose; ires_pose>=seqpos_start_; --ires_pose ) {
+		for ( core::Size ires_pose=seqpos_pose; ires_pose>=seqpos_start_; --ires_pose ) {
 			if ( sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end() ) {
 				break;
 			}
@@ -167,7 +167,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 			}
 		}
 
-		for ( Size ires_pose=seqpos_pose+1; ires_pose<=seqpos_stop_; ++ires_pose ) {
+		for ( core::Size ires_pose=seqpos_pose+1; ires_pose<=seqpos_stop_; ++ires_pose ) {
 			if ( sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end() ) break;
 			core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
 
@@ -187,7 +187,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 
 		// collect atom_map for superposition
 		core::Size atom_map_count = 0;
-		for ( Size ires_pose=seqpos_pose; ires_pose>=seqpos_start_; --ires_pose ) {
+		for ( core::Size ires_pose=seqpos_pose; ires_pose>=seqpos_start_; --ires_pose ) {
 			if ( sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end() ) break;
 			if ( !pose.residue_type(ires_pose).is_protein() ) continue;
 
@@ -204,7 +204,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 
 			if ( discontinued_upper(*template_pose_,jres_template) ) break;
 		}
-		for ( Size ires_pose=seqpos_pose+1; ires_pose<=seqpos_stop_; ++ires_pose ) {
+		for ( core::Size ires_pose=seqpos_pose+1; ires_pose<=seqpos_stop_; ++ires_pose ) {
 			if ( sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end() ) break;
 			if ( !pose.residue_type(ires_pose).is_protein() ) continue;
 
@@ -240,7 +240,7 @@ void InsertChunkMover::set_registry_shift(int registry_shift) {
 	registry_shift_ = registry_shift;
 }
 
-Size InsertChunkMover::trial_counter(Size ires) {
+Size InsertChunkMover::trial_counter(core::Size ires) {
 	if ( ires <= align_trial_counter_.size() ) {
 		return align_trial_counter_[ires];
 	}
@@ -263,18 +263,18 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
 	utility::vector1< core::id::AtomID > sch_ids;
 	utility::vector1< numeric::xyzVector<core::Real> > sch_positions;
 
-	Size jump_residue_pose = pose.fold_tree().downstream_jump_residue(jump_number_);
+	core::Size jump_residue_pose = pose.fold_tree().downstream_jump_residue(jump_number_);
 	TR.Debug << "Jump residue: " << jump_residue_pose << std::endl;
 
 	// copy xyz of the backbone
-	for ( Size ires_pose=seqpos_aligned_start_; ires_pose<=seqpos_aligned_stop_; ++ires_pose ) {
+	for ( core::Size ires_pose=seqpos_aligned_start_; ires_pose<=seqpos_aligned_stop_; ++ires_pose ) {
 		if ( sequence_alignment_local_.find(ires_pose) != sequence_alignment_local_.end() ) {
 			core::Size jres_template = sequence_alignment_local_.find(ires_pose)->second;
 			TR.Debug << "Copy xyz of residue " << ires_pose << std::endl;
-			for ( Size iatom=1; iatom <= pose.residue_type(ires_pose).last_backbone_atom(); ++iatom ) { // use residue_type to prevent internal coord update
+			for ( core::Size iatom=1; iatom <= pose.residue_type(ires_pose).last_backbone_atom(); ++iatom ) { // use residue_type to prevent internal coord update
 				std::string atom_name(pose.residue_type(ires_pose).atom_name(iatom));
 				if ( template_pose_->residue_type(jres_template).has(atom_name) ) {
-					Size jatom = template_pose_->residue_type(jres_template).atom_index(atom_name);
+					core::Size jatom = template_pose_->residue_type(jres_template).atom_index(atom_name);
 					ids.push_back(core::id::AtomID(iatom,ires_pose));
 					positions.push_back(template_pose_->xyz(core::id::AtomID(jatom,jres_template)));
 				} else {
@@ -282,7 +282,7 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
 				}
 			}
 
-			for ( Size iatom=pose.residue_type(ires_pose).last_backbone_atom()+1;
+			for ( core::Size iatom=pose.residue_type(ires_pose).last_backbone_atom()+1;
 					iatom<= pose.residue_type(ires_pose).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
 				sch_ids.push_back(core::id::AtomID(iatom,ires_pose));
 			}
@@ -297,7 +297,7 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
 	pose.batch_set_xyz(ids,positions);
 
 	// idealize sidechains
-	for ( Size iatom = 1; iatom <= sch_ids.size(); ++iatom ) {
+	for ( core::Size iatom = 1; iatom <= sch_ids.size(); ++iatom ) {
 		sch_positions.push_back(
 			pose.residue(sch_ids[iatom].rsd()).build_atom_ideal( sch_ids[iatom].atomno(), pose.conformation() )
 		);
@@ -322,9 +322,9 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
 
 void InsertChunkMover::check_overlap(core::pose::Pose & pose) {
 	bool overlapped = false;
-	for ( Size ires=seqpos_start_; ires<= seqpos_stop_; ++ires ) {
+	for ( core::Size ires=seqpos_start_; ires<= seqpos_stop_; ++ires ) {
 		if ( !pose.residue_type(ires).has("CA") ) continue;
-		for ( Size jres=1; jres<= pose.size(); ++jres ) {
+		for ( core::Size jres=1; jres<= pose.size(); ++jres ) {
 			if ( jres >=seqpos_start_ && jres<= seqpos_stop_ ) continue;
 			if ( !pose.residue_type(jres).has("CA") ) continue;
 			numeric::xyzVector < core::Real > xyz_iatom (pose.residue(ires).xyz("CA"));
@@ -344,8 +344,8 @@ void InsertChunkMover::check_overlap(core::pose::Pose & pose) {
 			2.*numeric::random::rg().uniform()-1.,
 			2.*numeric::random::rg().uniform()-1.);
 
-		for ( Size ires=seqpos_start_; ires<= seqpos_stop_; ++ires ) {
-			for ( Size iatom=1; iatom<= pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
+		for ( core::Size ires=seqpos_start_; ires<= seqpos_stop_; ++ires ) {
+			for ( core::Size iatom=1; iatom<= pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
 				ids.push_back(core::id::AtomID(iatom,ires));
 				positions.push_back( pose.residue(ires).xyz(iatom) + trans);
 			}

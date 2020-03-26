@@ -68,7 +68,7 @@ ShoveResidueMover::ShoveResidueMover() :
 	protocols::moves::Mover( ShoveResidueMover::mover_name() )
 {}
 
-ShoveResidueMover::ShoveResidueMover( Size resnum ) :
+ShoveResidueMover::ShoveResidueMover( core::Size resnum ) :
 	protocols::moves::Mover( ShoveResidueMover::mover_name() ),
 	shove_residues_( new core::select::residue_selector::ResidueIndexSelector( resnum ) )
 {}

@@ -78,7 +78,7 @@ setup_dna_chainbreak_constraints(
 	core::scoring::func::FuncOP const O3_angle_func( new core::scoring::func::HarmonicFunc( radians( O3_angle ), radians( angle_stddev_degrees ) ) );
 	core::scoring::func::FuncOP const  P_angle_func( new core::scoring::func::HarmonicFunc( radians(  P_angle ), radians( angle_stddev_degrees ) ) );
 
-	for ( Size i=1; i< pose.size(); ++i ) {
+	for ( core::Size i=1; i< pose.size(); ++i ) {
 		Residue const & rsd1( pose.residue( i   ) );
 		Residue const & rsd2( pose.residue( i+1 ) );
 		if ( rsd1.is_DNA() && !rsd1.is_upper_terminus() && rsd2.is_DNA() && !rsd2.is_lower_terminus() ) {
@@ -105,14 +105,14 @@ setup_dna_chainbreak_constraints(
 
 /// @details  Choose a random base pair, returns the sequence number of the base-partner that comes first
 
-Size
+core::Size
 choose_random_base_pair( pose::Pose const & pose )
 {
 	using namespace scoring::dna;
 
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
-	vector1< Size > bps;
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	vector1< core::Size > bps;
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		if ( partner[i] > i ) bps.push_back( i );
 	}
 	debug_assert( bps.size() );
@@ -122,11 +122,11 @@ choose_random_base_pair( pose::Pose const & pose )
 
 /// @details  Choose a random base step jump, returns seqpos of 1st residue, not the jump number
 
-Size
+core::Size
 choose_random_base_step_jump( pose::Pose const & pose )
 {
-	vector1< Size > bs;
-	for ( Size i=1; i<= pose.size()-1; ++i ) {
+	vector1< core::Size > bs;
+	for ( core::Size i=1; i<= pose.size()-1; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.is_DNA() && !rsd.is_upper_terminus() && pose.fold_tree().jump_exists( i, i+1 ) ) {
 			bs.push_back( i );
@@ -155,15 +155,15 @@ add_dna_base_jumps_to_fold_tree(
 	using namespace id;
 	using namespace kinematics;
 
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	debug_assert( f.nres() == nres );
 
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 
 
 	// figure out where dna begins and ends
-	Size dna_begin(0), dna_end(0);
-	for ( Size i=1; i<= nres; ++i ) {
+	core::Size dna_begin(0), dna_end(0);
+	for ( core::Size i=1; i<= nres; ++i ) {
 		Residue const & rsd( pose.residue(i) );
 		if ( !dna_begin && rsd.is_DNA() ) dna_begin = i;
 		if ( rsd.is_DNA() ) {
@@ -178,13 +178,13 @@ add_dna_base_jumps_to_fold_tree(
 	}
 	debug_assert( dna_begin && dna_end );
 
-	Size npairs( dna_end - dna_begin + 1 );
+	core::Size npairs( dna_end - dna_begin + 1 );
 	if ( npairs%2 != 0 ) utility_exit_with_message( "bad pose-- unpaired dna?" );
 	npairs /= 2;
 
-	for ( Size i=dna_begin; i< dna_begin + npairs; ++i ) {
-		Size const ii( i - dna_begin + 1 ); // basepair index
-		Size const p_i( partner[i] );
+	for ( core::Size i=dna_begin; i< dna_begin + npairs; ++i ) {
+		core::Size const ii( i - dna_begin + 1 ); // basepair index
+		core::Size const p_i( partner[i] );
 		if ( p_i != dna_end - ii + 1 ) utility_exit_with_message( "bad pose!2" );
 
 		// the basepair jump
@@ -204,7 +204,7 @@ add_dna_base_jumps_to_fold_tree(
 		}
 	}
 
-	//  Size root( std::max( Size(1), npairs/2 ) );
+	//  core::Size root( std::max( core::Size(1), npairs/2 ) );
 	//  if ( flip ) root = partner[ root ];
 	//  f.reorder( root );
 
@@ -231,7 +231,7 @@ set_dna_jump_atoms( pose::Pose & pose )
 
 	// anchor intra-dna jumps at fourth chi1 atom (out in the base)
 	//
-	for ( Size i=1; i<= f.num_jump(); ++i ) {
+	for ( core::Size i=1; i<= f.num_jump(); ++i ) {
 		Residue const & rsd1( pose.residue( f.  upstream_jump_residue( i ) ) );
 		Residue const & rsd2( pose.residue( f.downstream_jump_residue( i ) ) );
 		if ( rsd1.is_DNA() && rsd2.is_DNA() ) {
@@ -251,7 +251,7 @@ set_dna_jump_atoms( pose::Pose & pose )
 	// I'm not actually sure that this is so important anymore
 	// I mean, it seems likely that this will in fact be the stub... but can't remember the details...
 	//
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		Residue const & rsd( pose.residue(i) );
 		if ( rsd.is_DNA() ) {
 			pose.conformation().set_jump_atom_stub_id( StubID ( AtomID( rsd.chi_atoms(1)[4], i ),
@@ -276,13 +276,13 @@ setup_dna_only_fold_tree( pose::Pose & jump_pose, bool const flip)
 
 
 	BasePartner const & partner( retrieve_base_partner_from_pose( jump_pose ) );
-	Size const nres( jump_pose.size() );
+	core::Size const nres( jump_pose.size() );
 	if ( nres%2 != 0 ) utility_exit_with_message( "bad-dna-only-pose!" );
-	Size const npairs( nres/ 2 );
+	core::Size const npairs( nres/ 2 );
 	FoldTree f( nres );
 
-	for ( Size i=1; i<= npairs; ++i ) {
-		Size const p_i( partner[i] );
+	for ( core::Size i=1; i<= npairs; ++i ) {
+		core::Size const p_i( partner[i] );
 		if ( p_i != nres-i+1 ) utility_exit_with_message( "bad-dna-only-pose!2" );
 
 		// the basepair jump
@@ -303,11 +303,11 @@ setup_dna_only_fold_tree( pose::Pose & jump_pose, bool const flip)
 
 	}
 
-	Size root( std::max( Size(1), npairs/2 ) );
+	core::Size root( std::max( core::Size(1), npairs/2 ) );
 	if ( flip ) root = partner[ root ];
 	f.reorder( root );
 
-	for ( Size i=1; i<= f.num_jump(); ++i ) {
+	for ( core::Size i=1; i<= f.num_jump(); ++i ) {
 		Residue const & rsd1( jump_pose.residue( f.  upstream_jump_residue( i ) ) );
 		Residue const & rsd2( jump_pose.residue( f.downstream_jump_residue( i ) ) );
 		f.set_jump_atoms( i, rsd1.atom_name( rsd1.chi_atoms(1)[4] ),  rsd2.atom_name( rsd2.chi_atoms(1)[4] ) ); // was C1*, C1*
@@ -317,7 +317,7 @@ setup_dna_only_fold_tree( pose::Pose & jump_pose, bool const flip)
 
 	td << "jump_pose new foldtree: " << jump_pose.fold_tree() << std::endl;
 
-	for ( Size i=1; i<= nres; ++i ) {
+	for ( core::Size i=1; i<= nres; ++i ) {
 		Residue const & rsd( jump_pose.residue(i) );
 		jump_pose.conformation().set_jump_atom_stub_id( StubID ( AtomID( rsd.chi_atoms(1)[4], i ),
 			AtomID( rsd.chi_atoms(1)[3], i ),
@@ -341,21 +341,21 @@ setup_dna_only_jump_pose( pose::Pose const & start_pose, pose::Pose & jump_pose 
 
 	jump_pose.clear();
 
-	Size const nres( start_pose.size() );
+	core::Size const nres( start_pose.size() );
 
 	BasePartner const & partner( retrieve_base_partner_from_pose( start_pose ) );
 
 	std::string const jump_anchor_atom( "C1*" ); // temporary
-	for ( Size chain1_begin=1; chain1_begin<= nres; ++chain1_begin ) {
+	for ( core::Size chain1_begin=1; chain1_begin<= nres; ++chain1_begin ) {
 		if ( partner[ chain1_begin ] ) {
 			// found first dna residue
 			core::Size const chain1( start_pose.chain( chain1_begin ) );
 
-			for ( Size j=chain1_begin; ( j<= nres && partner[j] && start_pose.chain(j) == chain1 ); ++j ) {
+			for ( core::Size j=chain1_begin; ( j<= nres && partner[j] && start_pose.chain(j) == chain1 ); ++j ) {
 				Residue const &         rsd( start_pose.residue(            j ) );
 				Residue const & partner_rsd( start_pose.residue( partner[ j ] ) );
 
-				Size const rsd_seqpos( j - chain1_begin + 1 );
+				core::Size const rsd_seqpos( j - chain1_begin + 1 );
 				if ( rsd_seqpos == 1 ) {
 					jump_pose.append_residue_by_bond( rsd );
 				} else {
@@ -371,7 +371,7 @@ setup_dna_only_jump_pose( pose::Pose const & start_pose, pose::Pose & jump_pose 
 		}
 	}
 
-	Size const npairs( jump_pose.size() / 2 );
+	core::Size const npairs( jump_pose.size() / 2 );
 	jump_pose.conformation().insert_chain_ending( npairs );
 	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::LOWER_TERMINUS_VARIANT, 1 );
 	core::pose::add_variant_type_to_pose_residue( jump_pose, chemical::LOWER_TERMINUS_VARIANT, npairs+1 );
@@ -393,11 +393,11 @@ delete_unpaired_bases( pose::Pose & pose )
 {
 	using namespace kinematics;
 
-	Size const nres( pose.size() );
+	core::Size const nres( pose.size() );
 	vector1< bool > delete_me( nres, false );
 	{
 		scoring::dna::BasePartner const & partner( scoring::dna::retrieve_base_partner_from_pose( pose ) );
-		for ( Size i=1; i<= nres; ++i ) {
+		for ( core::Size i=1; i<= nres; ++i ) {
 			if ( pose.residue(i).is_DNA() && !partner[i] ) {
 				delete_me[i] = true;
 			}
@@ -405,13 +405,13 @@ delete_unpaired_bases( pose::Pose & pose )
 	}
 
 	// locate nearest undeleted position for rearranging jumps
-	vector1< Size > closest( nres, 0 );
+	vector1< core::Size > closest( nres, 0 );
 	FoldTree const & f( pose.fold_tree() );
 
-	for ( Size i=1; i<= nres; ++i ) {
+	for ( core::Size i=1; i<= nres; ++i ) {
 		if ( delete_me[i] && f.is_jump_point(i) ) {
 			// first look backward
-			Size j(i);
+			core::Size j(i);
 			while ( !f.is_cutpoint(j-1) ) {
 				debug_assert( delete_me[j] );
 				--j;
@@ -437,12 +437,12 @@ delete_unpaired_bases( pose::Pose & pose )
 
 	FoldTree new_f;
 	{
-		Size const num_jump( f.num_jump() );
-		FArray2D< Size > jumps(2,num_jump);
-		FArray1D< Size > cuts(num_jump);
-		for ( Size i=1; i<= num_jump; ++i ) {
-			Size pos1( f.jump_point(1,i) );
-			Size pos2( f.jump_point(2,i) );
+		core::Size const num_jump( f.num_jump() );
+		FArray2D< core::Size > jumps(2,num_jump);
+		FArray1D< core::Size > cuts(num_jump);
+		for ( core::Size i=1; i<= num_jump; ++i ) {
+			core::Size pos1( f.jump_point(1,i) );
+			core::Size pos2( f.jump_point(2,i) );
 			if ( delete_me[pos1] ) pos1 = closest[pos1];
 			if ( delete_me[pos2] ) pos2 = closest[pos2];
 			jumps(1,i) = pos1;
@@ -455,14 +455,14 @@ delete_unpaired_bases( pose::Pose & pose )
 	pose.fold_tree( new_f );
 
 	// now delete the positions
-	for ( Size i=nres; i>=1; --i ) {
+	for ( core::Size i=nres; i>=1; --i ) {
 		if ( delete_me[i] ) {
 			tt << "deleting position: " << i << std::endl;
 			pose.delete_polymer_residue(i);
 		}
 	}
 
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		if ( i>1 && rsd.is_DNA() && pose.chain(i-1) != pose.chain(i) && !rsd.is_lower_terminus() ) {
 			tt << "adding lower terminus variant: " << i << std::endl;

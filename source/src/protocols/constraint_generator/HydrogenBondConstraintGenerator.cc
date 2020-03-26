@@ -513,7 +513,7 @@ HydrogenBondingAtom::HydrogenBondingAtom(
 	core::Real const ideal_distance,
 	core::Real const ideal_angle,
 	Dihedrals const & ideal_dihedral ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	atom_( atom1 ),
 	atom2_( atom2 ),
 	atom3_( atom3 ),

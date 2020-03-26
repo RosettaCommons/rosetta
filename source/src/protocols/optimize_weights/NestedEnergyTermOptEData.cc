@@ -76,7 +76,7 @@ NestedEnergyTermPNatAAOptEPositionData::get_score(
 	optimization::Multivec const & component_weights,
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const num_ref_dofs,
 	int const num_total_dofs,
 	EnergyMap const & fixed_terms,
@@ -97,7 +97,7 @@ NestedEnergyTermPNatAAOptEPositionData::print_score(
 	optimization::Multivec const & component_weights,
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const num_ref_dofs,
 	int const num_total_dofs,
 	EnergyMap const & fixed_terms,
@@ -119,7 +119,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 	optimization::Multivec const & component_weights,
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const num_ref_dofs,
 	int const,
 	EnergyMap const & fixed_terms,
@@ -149,7 +149,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 		vector_of_zeros, best_energy_by_aa, unweighted_E_dof, ref_deriv_weight );
 
 	//TR << "process_score(): best_energy_by_aa before: [ ";
-	//for ( Size i=1; i <= best_energy_by_aa.size(); ++i ) {
+	//for ( core::Size i=1; i <= best_energy_by_aa.size(); ++i ) {
 	// TR << F(6,2,best_energy_by_aa[i]) << ", ";
 	//}
 	//TR << std::endl;
@@ -163,7 +163,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 	// If you neglect to multiply the total unfolded state energy of an aa by the current unfolded term weight, then
 	// the unfolded term weight varies wildly and minimization doesn't do anything.
 
-	for ( Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
+	for ( core::Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
 
 		Real unfolded_energy_for_one_aa = 0.0;
 		Real weighted_unfolded_energy_for_one_aa = 0.0;
@@ -178,7 +178,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 		// The neat thing about this setup is that if a score12 energy term is not included as a free or fixed param, then
 		// it won't be included in the unfolded state energy either.
 		//
-		for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+		for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 			//if ( print ) {
 			//TR << "process_score(): adding unfolded energy for aa '" << chemical::name_from_aa( (chemical::AA) aa )
 			// << "' for unweighted free '" << name_from_score_type( score_list[ ii ] ) << "' energy: "
@@ -210,7 +210,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 
 		// Part 1b:
 		// Fixed-weight energy terms
-		for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 			//if ( print ) {
 			//TR << "process_score(): adding unfolded energy for aa '" << chemical::name_from_aa( (chemical::AA) aa )
 			// << "' unweighted fixed '" << name_from_score_type( fixed_score_list[ ii ] ) << "' energy: "
@@ -229,7 +229,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 		// Part 2: Now use the current 'unfolded' term weight
 		// 'unfolded' could be a free or fixed term so iterate over both lists; here it's necessary because this energy gets added
 		// to the best energy by aa array regardless.
-		for ( Size tt = 1; tt <= num_energy_dofs; ++tt ) {
+		for ( core::Size tt = 1; tt <= num_energy_dofs; ++tt ) {
 			if ( name_from_score_type( score_list[ tt ] ) == "unfolded" ) {
 				//if ( print ) {
 				// TR << chemical::name_from_aa( (chemical::AA) aa )
@@ -240,7 +240,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 				weighted_unfolded_energy_for_one_aa = unfolded_energy_for_one_aa * vars[ tt ];
 			}
 		}
-		for ( Size tt = 1; tt <= fixed_score_list.size(); ++tt ) {
+		for ( core::Size tt = 1; tt <= fixed_score_list.size(); ++tt ) {
 			if ( name_from_score_type( fixed_score_list[ tt ] ) == "unfolded" ) {
 				//if ( print ) {
 				// TR << chemical::name_from_aa( (chemical::AA) aa )
@@ -268,7 +268,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 	}
 
 	//TR << "process_score(): best_energy_by_aa after : [ ";
-	//for ( Size i=1; i <= best_energy_by_aa.size(); ++i ) {
+	//for ( core::Size i=1; i <= best_energy_by_aa.size(); ++i ) {
 	// TR << F(6,2,best_energy_by_aa[i]) << ", ";
 	//}
 	//TR << std::endl;
@@ -280,7 +280,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 	Real numerator(0.0), partition(0.0);
 	Multivec dpartition( vars.size(), 0.0 ), dnumerator( vars.size(), 0.0 );
 
-	for ( Size aa(1); aa <= chemical::num_canonical_aas; ++aa ) {
+	for ( core::Size aa(1); aa <= chemical::num_canonical_aas; ++aa ) {
 
 		Real const exp_term( std::exp( -1.0 * inv_kT * best_energy_by_aa[ aa ] ) );
 		partition += exp_term;
@@ -308,7 +308,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 		// there's a potential problem here I'm not sure how it happens. If the best energy by aa is something really small (e.g. -700)
 		// then the exponential e(700) is an extremely large number. the runtime just assigns it INF.  Then when you multiply it by
 		// zero, you still get INF for some reason.
-		for ( Size e_term = 1; e_term <= num_energy_dofs; ++e_term ) {
+		for ( core::Size e_term = 1; e_term <= num_energy_dofs; ++e_term ) {
 			Real e_term_deriv( -1.0 * inv_kT * unweighted_E_dof[ aa ][ e_term ] * exp_term );
 			dpartition[ e_term ] += e_term_deriv;
 			if ( aa == size_t( this_native_aa ) ) {
@@ -318,7 +318,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 	}
 
 	// accumulate to passed-in derivative sums
-	for ( Size dof(1); dof <= vars.size(); ++dof ) {
+	for ( core::Size dof(1); dof <= vars.size(); ++dof ) {
 		dE_dvars[ dof ] += component_weights[ type() ] * ( dpartition[ dof ] / partition - dnumerator[ dof ] / numerator );
 
 		if ( score_list[ dof ] == omega ) { dE_dvars[ dof ] = 0.0; }
@@ -330,7 +330,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 		<< "-lnp: " << F(6,4,-1.0 * std::log( numerator / partition ))
 		<< ", dE_dvars[ omega ]: " << F(6,4, dE_dvars[ dof ])
 		<< ", best_energy_by_aa: [ ";
-		for ( Size i=1; i <= best_energy_by_aa.size(); ++i ) { TR << F(5,2,best_energy_by_aa[i]) << ", "; } TR << "], ";
+		for ( core::Size i=1; i <= best_energy_by_aa.size(); ++i ) { TR << F(5,2,best_energy_by_aa[i]) << ", "; } TR << "], ";
 		TR << ", dpart[ omega ]: " << F(7,3,dpartition[dof]) << ", part: " << F(7,3,partition)
 		<< ", dnum[ omega ]: " << F(7,3,dnumerator[dof]) << ", num: " << F(7,3,numerator) << std::endl;
 		}
@@ -340,7 +340,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 		<< " dnum[ unfolded ]: " << F(7,3,dnumerator[dof]) << " num: " << F(7,3,numerator)
 		<< " dE_dvars[ unfolded ]: " << F(6,4, dE_dvars[ dof ])
 		<< " dE_dvars: [ ";
-		for ( Size ii=1; ii <= vars.size(); ++ii ) { TR << F(5,2,dE_dvars[ii]) << ", "; }
+		for ( core::Size ii=1; ii <= vars.size(); ++ii ) { TR << F(5,2,dE_dvars[ii]) << ", "; }
 		TR << "]" << std::endl;
 		}
 		}*/
@@ -356,7 +356,7 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 			<< " -compwt_lnp: " << F(6, 4, component_weights[ type() ] * (-1.0 * std::log( numerator / partition )) )
 			<< " best_energy_by_aa: [ ";
 
-		for ( Size i=1; i <= best_energy_by_aa.size(); ++i ) {
+		for ( core::Size i=1; i <= best_energy_by_aa.size(); ++i ) {
 			ostr << F(5,2,best_energy_by_aa[i]) << ", ";
 		}
 		ostr << "]" << std::endl;
@@ -416,11 +416,11 @@ NestedEnergyTermPNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 	getline( infile, line );
 	Strings words( string_split( line, ' ' ) );
 	debug_assert( words[ 1 ] == "position" );
-	set_position( from_string( words[ 2 ], Size( 0 ) ) );
+	set_position( from_string( words[ 2 ], core::Size( 0 ) ) );
 	debug_assert( words[ 3 ] == "nataa" );
 	set_native_aa ( chemical::aa_from_name( words[ 4 ] ) );
 	debug_assert( words[ 5 ] == "neighbor_count" );
-	set_neighbor_count( from_string( words[ 6 ], Size( 0 ) ) );
+	set_neighbor_count( from_string( words[ 6 ], core::Size( 0 ) ) );
 
 	// extra logic to handle reading in the unfolded state energies into an EnergyMap
 	debug_assert( words[ 7 ] == "unfolded_energy" );
@@ -446,16 +446,16 @@ NestedEnergyTermPNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 	getline( infile, line );
 	Strings rotamer_line_words( string_split( line, ' ' ) );
 	debug_assert( rotamer_line_words[ 1 ] == "nrots" );
-	Size num_rotamers = from_string( rotamer_line_words[ 2 ], Size( 0 ) );
+	core::Size num_rotamers = from_string( rotamer_line_words[ 2 ], core::Size( 0 ) );
 
-	for ( Size ii = 1; ii <= num_rotamers; ++ii ) {
+	for ( core::Size ii = 1; ii <= num_rotamers; ++ii ) {
 		getline( infile, line );
 
 		// rotamers for existing position: parse, append new OptERotamerDataOP to OptEPositionDataOP
 		Strings sections( string_split( line, ',' ) );
 		// sections:
 		// 0 - rotnum, 1 - aa three-letter code, 2 - energies for fixed terms, 3 - energies for free terms
-		Size rotnum;
+		core::Size rotnum;
 		std::istringstream ss( sections[1] );
 		ss >> rotnum;
 		chemical::AA aa( chemical::aa_from_name( sections[2] ) );
@@ -499,7 +499,7 @@ NestedEnergyTermPNatAAOptEPositionData::read_from_binary_file( std::ifstream & /
 Size
 NestedEnergyTermPNatAAOptEPositionData::memory_use() const {
 
-	Size total = sizeof( NestedEnergyTermPNatAAOptEPositionData ) + sizeof( PNatAAOptERotamerData ) * data().size();
+	core::Size total = sizeof( NestedEnergyTermPNatAAOptEPositionData ) + sizeof( PNatAAOptERotamerData ) * data().size();
 	if ( data().size() > 0 ) {
 		total +=  sizeof( Real ) * ( data()[ 1 ]->data().size() + data()[ 1 ]->fixed_data().size() ) * data().size();
 	}
@@ -536,7 +536,7 @@ NestedEnergyTermPNatAAOptEPositionData::send_to_node( int const destination_node
 	/// 4b. The energies in the emap
 	Real * unfolded_energies = new Real[ chemical::num_canonical_aas * scoring::n_score_types ];
 	for ( int aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
-		for ( Size ee = 1; ee <= scoring::n_score_types; ++ee ) {
+		for ( core::Size ee = 1; ee <= scoring::n_score_types; ++ee ) {
 			unfolded_energies[ (aa - 1) * scoring::n_score_types + ee - 1 ] = unfolded_energy_emap_vector_[ aa ][ (ScoreType) ee ];
 		}
 	}
@@ -544,14 +544,14 @@ NestedEnergyTermPNatAAOptEPositionData::send_to_node( int const destination_node
 	delete [] unfolded_energies;   unfolded_energies = 0;
 
 	/// 5. The number of rotamers for this position
-	Size ii_num_rotamers = size();
+	core::Size ii_num_rotamers = size();
 	MPI_Send( & ii_num_rotamers, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	if ( ii_num_rotamers == 0 )
 		return;
 
-	Size free_count = data()[1]->data().size();
-	Size fixed_count = data()[1]->fixed_data().size();
+	core::Size free_count = data()[1]->data().size();
+	core::Size fixed_count = data()[1]->fixed_data().size();
 
 	/// 6 The size of the free and fixed data, since that context is not available.
 	MPI_Send( & free_count, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
@@ -561,13 +561,13 @@ NestedEnergyTermPNatAAOptEPositionData::send_to_node( int const destination_node
 	int * ii_rot_nums = new int[ ii_num_rotamers ];
 	Real * free_data = new Real[ ii_num_rotamers * free_count ];
 	Real * fixed_data = new Real[ ii_num_rotamers * fixed_count ];
-	for ( Size jj = 1; jj <= ii_num_rotamers; ++jj ) {
+	for ( core::Size jj = 1; jj <= ii_num_rotamers; ++jj ) {
 		ii_aa_types[ jj - 1 ] = data()[ jj ]->this_aa();
 		ii_rot_nums[ jj - 1 ] = data()[ jj ]->rot_number();
-		for ( Size kk = 1; kk <= free_count; ++kk ) {
+		for ( core::Size kk = 1; kk <= free_count; ++kk ) {
 			free_data[ ( jj - 1 ) * free_count + kk - 1 ] = data()[ jj ]->data()[ kk ];
 		}
-		for ( Size kk = 1; kk <= fixed_count; ++kk ) {
+		for ( core::Size kk = 1; kk <= fixed_count; ++kk ) {
 			fixed_data[ ( jj - 1 ) * fixed_count + kk - 1 ] = data()[ jj ]->fixed_data()[ kk ];
 		}
 	}
@@ -624,8 +624,8 @@ NestedEnergyTermPNatAAOptEPositionData::receive_from_node( int const source_node
 	Real * unfolded_energies = new Real[ chemical::num_canonical_aas * scoring::n_score_types ];
 	MPI_Recv( unfolded_energies, chemical::num_canonical_aas * scoring::n_score_types, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
 
-	for ( Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
-		for ( Size ee = 1; ee <= scoring::n_score_types; ++ee ) {
+	for ( core::Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {
+		for ( core::Size ee = 1; ee <= scoring::n_score_types; ++ee ) {
 			// be careful because the array is 0-based while the score type enum is 1-based
 			emap_vector[ aa ][ (ScoreType) ee ] = unfolded_energies[ (aa-1) * scoring::n_score_types + ee - 1 ];
 		}
@@ -635,14 +635,14 @@ NestedEnergyTermPNatAAOptEPositionData::receive_from_node( int const source_node
 
 
 	/// 6. The number of rotamers for this position
-	Size ii_num_rotamers;
+	core::Size ii_num_rotamers;
 	MPI_Recv( & ii_num_rotamers, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	if ( ii_num_rotamers == 0 )
 		return;
 
-	Size free_count(0);
-	Size fixed_count(0);
+	core::Size free_count(0);
+	core::Size fixed_count(0);
 
 	/// 6b The size of the free and fixed data, since that context is not available.
 	MPI_Recv( & free_count, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
@@ -669,11 +669,11 @@ NestedEnergyTermPNatAAOptEPositionData::receive_from_node( int const source_node
 	utility::vector1< Real > free_data_vect( free_count );
 	utility::vector1< Real > fixed_data_vect( fixed_count );
 
-	for ( Size jj = 1; jj <= ii_num_rotamers; ++jj ) {
-		for ( Size kk = 1; kk <= free_count; ++kk ) {
+	for ( core::Size jj = 1; jj <= ii_num_rotamers; ++jj ) {
+		for ( core::Size kk = 1; kk <= free_count; ++kk ) {
 			free_data_vect[ kk ] = free_data[ ( jj - 1 ) * free_count + kk - 1 ];
 		}
-		for ( Size kk = 1; kk <= fixed_count; ++kk ) {
+		for ( core::Size kk = 1; kk <= fixed_count; ++kk ) {
 			fixed_data_vect[ kk ] = fixed_data[ ( jj - 1 ) * fixed_count + kk - 1 ];
 		}
 		PNatAAOptERotamerDataOP jj_rotamer_data( new PNatAAOptERotamerData(
@@ -716,7 +716,7 @@ NestedEnergyTermDDGMutationOptEData::get_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const num_ref_dofs,
 	int const num_total_dofs,
 	EnergyMap const & fixed_terms,
@@ -735,7 +735,7 @@ NestedEnergyTermDDGMutationOptEData::print_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const num_ref_dofs,
 	int const num_total_dofs,
 	EnergyMap const & fixed_terms,
@@ -758,7 +758,7 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 	optimization::Multivec const & vars,
 	optimization::Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const num_ref_dofs,
 	int const,
 	EnergyMap const & fixed_terms,
@@ -787,8 +787,8 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 	// a vector1 of Reals accessible by free_data() and fixed_data() member functions.  These store the total
 	// energies by score type for the entire pose.
 
-	for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
-		for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+		for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 
 			// cap the fa_rep term at some value - this at least keeps it around for most of the mutants
 #ifdef CAP_FA_REP
@@ -797,7 +797,7 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 #endif
 			wt_energies[ jj ] += vars[ ii ] * wts_[ jj ]->free_data()[ ii ];
 		}
-		for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 #ifdef CAP_FA_REP
 			if ( ( score_list[ ii ] == fa_rep ) && ( vars[ ii ] * muts_[ jj ]->free_data()[ ii ] > 10 ) ) { mut_energies[ jj ] += 10; }
 			else
@@ -805,15 +805,15 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 			mut_energies[ jj ] += vars[ ii ] * muts_[ jj ]->free_data()[ ii ];
 		}
 	}
-	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
-		for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+		for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 #ifdef CAP_FA_REP
 			if ( ( fixed_score_list[ ii ] == fa_rep ) && ( fixed_terms[ fixed_score_list[ ii ] ] * wts_[ jj ]->fixed_data()[ ii ] > 10 ) ) { wt_energies[ jj ] += 10; }
 			else
 #endif
 			wt_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * wts_[ jj ]->fixed_data()[ ii ];
 		}
-		for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 #ifdef CAP_FA_REP
 			if ( ( fixed_score_list[ ii ] == fa_rep ) && ( fixed_terms[ fixed_score_list[ ii ] ] * muts_[ jj ]->fixed_data()[ ii ] > 10 ) ) { mut_energies[ jj ] += 10; }
 			else
@@ -825,16 +825,16 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 	// I presume these are the reference energies that are being added in?
 	// num_energy_dofs is the number of free, non-reference energy parameters in the run, so yes these are the refE's
 	if ( num_ref_dofs != 0 ) {
-		for ( Size jj = 1; jj <= wts_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) {
 			wt_energies[ jj ] += vars[ num_energy_dofs + wt_aa_ ];
 		}
-		for ( Size jj = 1; jj <= muts_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= muts_.size(); ++jj ) {
 			mut_energies[ jj ] += vars[ num_energy_dofs + mut_aa_ ];
 		}
 	}
 
 	//TR << "process_score(): before unfolded wts_: [ ";
-	//for ( Size jj = 1; jj <= wts_.size(); ++jj ) { TR << F(6,1,wt_energies[ jj ]) << ", "; }
+	//for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) { TR << F(6,1,wt_energies[ jj ]) << ", "; }
 	//TR << "]" << std::endl;
 
 	// now do some special processing of the unfolded state energy
@@ -846,7 +846,7 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 
 	// Part 1a: Variable-weighted energy terms
 	//TR << "process_score(): weighted free unfolded energies: [ ";
-	for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+	for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 
 		//TR << name_from_score_type( score_list[ ii ] ) << ": "
 		// << ( vars[ii] * wt_unfolded_energies_emap_[ score_list[ ii ] ] ) << ", "
@@ -870,7 +870,7 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 
 	// Part 1b: Fixed-weight energy terms
 	//TR << "process_score(): weighted fixed unfolded energies: [ ";
-	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 
 		//TR << name_from_score_type( fixed_score_list[ ii ] ) << ": "
 		// << ( fixed_terms[ fixed_score_list[ ii ] ] * wt_unfolded_energies_emap_[ fixed_score_list[ ii ] ] ) << ", "
@@ -889,7 +889,7 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 	// Part 2: Now use the current 'unfolded' term weight
 	// 'unfolded' could be a free or fixed term so iterate over both lists;
 	Real unfolded_weight = 0.0;
-	for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+	for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
 		if ( name_from_score_type( score_list[ ii ] ) == "unfolded" ) {
 			wt_weighted_unfolded_energy = vars[ii] * wt_unweighted_unfolded_energy;
 			mut_weighted_unfolded_energy = vars[ii] * mut_unweighted_unfolded_energy;
@@ -904,7 +904,7 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 	// is the actual weight.  But if you use the ScoreType in a multiplication, it will work just fine because ScoreTypes are
 	// an enum.  They're position ~120 in the enum, so it'll be a nice large weight.
 
-	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
 		if ( name_from_score_type( fixed_score_list[ ii ] ) == "unfolded" ) {
 			wt_weighted_unfolded_energy = fixed_terms[ fixed_score_list[ ii ] ] * wt_unweighted_unfolded_energy;
 			mut_weighted_unfolded_energy = fixed_terms[ fixed_score_list[ ii ] ] * mut_unweighted_unfolded_energy;
@@ -918,15 +918,15 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 	// Now SUBTRACT this unfolded energy from the sums we have so far. See comments for optimize_weights() in IterativeOptEDriver.cc.
 	// This weighted unfolded energy will be the same for every structure in the SSD vectors wts_ and muts_. So just iterate over
 	// both of those and subtract out this unfolded energy.
-	for ( Size ii = 1; ii <= wts_.size(); ++ii ) { wt_energies[ ii ] -= wt_weighted_unfolded_energy; }
-	for ( Size ii = 1; ii <= muts_.size(); ++ii ) { mut_energies[ ii ] -= mut_weighted_unfolded_energy; }
+	for ( core::Size ii = 1; ii <= wts_.size(); ++ii ) { wt_energies[ ii ] -= wt_weighted_unfolded_energy; }
+	for ( core::Size ii = 1; ii <= muts_.size(); ++ii ) { mut_energies[ ii ] -= mut_weighted_unfolded_energy; }
 
 	//TR << "process_score(): unf weight: " << unfolded_weight
 	//  << ", unweighted energy: " << wt_unweighted_unfolded_energy << ", " << mut_unweighted_unfolded_energy
 	// << "; weighted unfolded energy: " << F(7,2,wt_weighted_unfolded_energy) << ", "  << F(7,2,mut_weighted_unfolded_energy) << std::endl;
 
 	//TR << "process_score(): after unfolded wts_: [ ";
-	//for ( Size jj = 1; jj <= wts_.size(); ++jj ) { TR << F(6,1,wt_energies[ jj ]) << ", "; }
+	//for ( core::Size jj = 1; jj <= wts_.size(); ++jj ) { TR << F(6,1,wt_energies[ jj ]) << ", "; }
 	//TR << "]" << std::endl;
 
 
@@ -940,8 +940,8 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 	Real ddG_diff( 0.0 );
 
 	// Do things the old-fashioned way: best energy mut - best energy wt
-	Size const best_wt = arg_min( wt_energies );
-	Size const best_mut = arg_min( mut_energies );
+	core::Size const best_wt = arg_min( wt_energies );
+	core::Size const best_mut = arg_min( mut_energies );
 
 	Real const best_wt_energy = wt_energies[ best_wt ];
 	Real const best_mut_energy = mut_energies[ best_mut ];
@@ -964,7 +964,7 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 
 	} else {
 
-		for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+		for ( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 
 			if ( ( score_list[ e_dof ] == fa_rep ) && ( muts_[ best_mut ]->free_data()[ e_dof ] - wts_[ best_wt ]->free_data()[ e_dof ] ) > 10 ) {
 				// deal with the really bad repulsive energy cases here
@@ -1001,7 +1001,7 @@ NestedEnergyTermDDGMutationOptEData::type() const {
 Size
 NestedEnergyTermDDGMutationOptEData::memory_use() const {
 
-	Size total = sizeof( DDGMutationOptEData ) +
+	core::Size total = sizeof( DDGMutationOptEData ) +
 		sizeof( SingleStructureData ) * wts_.size() +
 		sizeof( SingleStructureData ) * muts_.size();
 	if ( wts_.size() > 0 ) {
@@ -1035,35 +1035,35 @@ NestedEnergyTermDDGMutationOptEData::send_to_node( int const destination_node, i
 
 	// 2a. n natives
 	//std::cout << "sending nwts to node " << destination_node << std::endl;
-	Size nwts = wts_.size();
+	core::Size nwts = wts_.size();
 	MPI_Send( & nwts, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 2b. n decoys
 	//std::cout << "sending nmuts to node " << destination_node << std::endl;
-	Size nmuts = muts_.size();
+	core::Size nmuts = muts_.size();
 	MPI_Send( & nmuts, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	if ( nwts == 0 || nmuts == 0 )
 		return;
 
 	/// 3. n free
-	Size n_free = muts_[ 1 ]->free_data().size();
+	core::Size n_free = muts_[ 1 ]->free_data().size();
 	//std::cout << "sending n_free to node " << destination_node << " " << n_free << std::endl;
 	MPI_Send( & n_free, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// 4. n fixed
-	Size n_fixed = muts_[ 1 ]->fixed_data().size();
+	core::Size n_fixed = muts_[ 1 ]->fixed_data().size();
 	//std::cout << "sending n_fixed to node " << destination_node  << " " << n_fixed << std::endl;
 	MPI_Send( & n_fixed, 1, MPI_UNSIGNED_LONG, destination_node, tag, MPI_COMM_WORLD );
 
 	/// Send natives, then send decoys
 	Real * free_data = new Real[ n_free * nwts ];
 	Real * fixed_data = new Real[ n_fixed * nwts ];
-	for ( Size ii = 1; ii <= nwts; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= nwts; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ] = wts_[ ii ]->free_data()[ jj ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ] = wts_[ ii ]->fixed_data()[ jj ];
 		}
 	}
@@ -1081,11 +1081,11 @@ NestedEnergyTermDDGMutationOptEData::send_to_node( int const destination_node, i
 	/// now send decoys
 	Real * decoy_free_data = new Real[ n_free * nmuts ];
 	Real * decoy_fixed_data = new Real[ n_fixed * nmuts ];
-	for ( Size ii = 1; ii <= nmuts; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= nmuts; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			decoy_free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ] = muts_[ ii ]->free_data()[ jj ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			decoy_fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ] = muts_[ ii ]->fixed_data()[ jj ];
 		}
 	}
@@ -1105,7 +1105,7 @@ NestedEnergyTermDDGMutationOptEData::send_to_node( int const destination_node, i
 
 	/// 9a. The energies in the unfolded emap, wt first
 	Real * wt_unfolded_energies = new Real[ scoring::n_score_types ];
-	for ( Size ee = 1; ee <= scoring::n_score_types; ++ee ) {
+	for ( core::Size ee = 1; ee <= scoring::n_score_types; ++ee ) {
 		wt_unfolded_energies[ ee - 1 ] = wt_unfolded_energies_emap_[ (ScoreType) ee ];
 	}
 	MPI_Send( wt_unfolded_energies, scoring::n_score_types, MPI_DOUBLE, destination_node, tag, MPI_COMM_WORLD );
@@ -1114,7 +1114,7 @@ NestedEnergyTermDDGMutationOptEData::send_to_node( int const destination_node, i
 
 	/// 9b. mutant emap
 	Real * mut_unfolded_energies = new Real[ scoring::n_score_types ];
-	for ( Size ee = 1; ee <= scoring::n_score_types; ++ee ) {
+	for ( core::Size ee = 1; ee <= scoring::n_score_types; ++ee ) {
 		mut_unfolded_energies[ ee - 1 ] = mut_unfolded_energies_emap_[ (ScoreType) ee ];
 	}
 	MPI_Send( mut_unfolded_energies, scoring::n_score_types, MPI_DOUBLE, destination_node, tag, MPI_COMM_WORLD );
@@ -1142,11 +1142,11 @@ NestedEnergyTermDDGMutationOptEData::receive_from_node( int const source_node, i
 	mut_aa_ = static_cast< AA > ( mut_aa );
 
 	/// 2a. n wts
-	Size nwts( 0 );
+	core::Size nwts( 0 );
 	MPI_Recv( & nwts, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	/// 2b. n decoys
-	Size nmuts( 0 );
+	core::Size nmuts( 0 );
 	MPI_Recv( & nmuts, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	if ( nwts == 0 || nmuts == 0 ) return;
@@ -1154,11 +1154,11 @@ NestedEnergyTermDDGMutationOptEData::receive_from_node( int const source_node, i
 	muts_.reserve( nmuts );
 
 	/// 3. n free
-	Size n_free( 0 );
+	core::Size n_free( 0 );
 	MPI_Recv( & n_free, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	/// 4. n fixed
-	Size n_fixed( 0 );
+	core::Size n_fixed( 0 );
 	MPI_Recv( & n_fixed, 1, MPI_UNSIGNED_LONG, source_node, tag, MPI_COMM_WORLD, &stat );
 
 	/// Recieve native data first, then decoys
@@ -1173,11 +1173,11 @@ NestedEnergyTermDDGMutationOptEData::receive_from_node( int const source_node, i
 
 	utility::vector1< Real > free_data_v( n_free );
 	utility::vector1< Real > fixed_data_v( n_fixed );
-	for ( Size ii = 1; ii <= nwts; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= nwts; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data_v[ jj ] = free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
 		wts_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
@@ -1197,11 +1197,11 @@ NestedEnergyTermDDGMutationOptEData::receive_from_node( int const source_node, i
 	/// 6. fixed data
 	MPI_Recv( fixed_data, nmuts * n_fixed, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
 
-	for ( Size ii = 1; ii <= nmuts; ++ ii ) {
-		for ( Size jj = 1; jj <= n_free; ++jj ) {
+	for ( core::Size ii = 1; ii <= nmuts; ++ ii ) {
+		for ( core::Size jj = 1; jj <= n_free; ++jj ) {
 			free_data_v[ jj ] = free_data[ ( ii - 1 ) * n_free + ( jj - 1 ) ];
 		}
-		for ( Size jj = 1; jj <= n_fixed; ++jj ) {
+		for ( core::Size jj = 1; jj <= n_fixed; ++jj ) {
 			fixed_data_v[ jj ] = fixed_data[ ( ii - 1 ) * n_fixed + ( jj - 1 ) ];
 		}
 		muts_.push_back( utility::pointer::make_shared< SingleStructureData >( free_data_v, fixed_data_v ) );
@@ -1217,7 +1217,7 @@ NestedEnergyTermDDGMutationOptEData::receive_from_node( int const source_node, i
 	Real * wt_unfolded_energies = new Real[ scoring::n_score_types ];
 	MPI_Recv( wt_unfolded_energies, scoring::n_score_types, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
 
-	for ( Size ee = 1; ee <= scoring::n_score_types; ++ee ) {
+	for ( core::Size ee = 1; ee <= scoring::n_score_types; ++ee ) {
 		// be careful because the array is 0-based while the score type enum is 1-based
 		emap[ (ScoreType) ee ] = wt_unfolded_energies[ ee - 1 ];
 	}
@@ -1228,7 +1228,7 @@ NestedEnergyTermDDGMutationOptEData::receive_from_node( int const source_node, i
 	Real * mut_unfolded_energies = new Real[ scoring::n_score_types ];
 	MPI_Recv( mut_unfolded_energies, scoring::n_score_types, MPI_DOUBLE, source_node, tag, MPI_COMM_WORLD, &stat );
 
-	for ( Size ee = 1; ee <= scoring::n_score_types; ++ee ) {
+	for ( core::Size ee = 1; ee <= scoring::n_score_types; ++ee ) {
 		emap[ (ScoreType) ee ] = mut_unfolded_energies[ ee - 1 ];
 	}
 	set_mut_unfolded_energies_emap( emap );

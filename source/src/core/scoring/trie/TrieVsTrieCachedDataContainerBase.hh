@@ -20,7 +20,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace core {
 namespace scoring {
@@ -29,7 +29,7 @@ namespace trie {
 /// @brief A generic base class for passing data to the trie-vs-trie calculation, without having to cache
 /// it in mutable data in an EnergyMethod or whatnot.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-class TrieVsTrieCachedDataContainerBase : public utility::pointer::ReferenceCount {
+class TrieVsTrieCachedDataContainerBase : public utility::VirtualBase {
 
 public:
 

@@ -91,7 +91,7 @@ ConstraintSet::ConstraintSet()
 
 ConstraintSet::ConstraintSet( ConstraintSet const & other )
 :
-	ReferenceCount(),
+	VirtualBase(),
 	total_residue_( other.total_residue_ ),
 	sequence_constraints_( other.sequence_constraints_.size() ),
 	residue_pair_constraints_( other.residue_pair_constraints_.size() ),
@@ -107,7 +107,7 @@ ConstraintSet::ConstraintSet(
 	Size start_residue,
 	Size end_residue
 ) :
-	ReferenceCount(),
+	VirtualBase(),
 	total_residue_( end_residue ),
 	sequence_constraints_( other.sequence_constraints_.size() ),
 	residue_pair_constraints_( end_residue ),

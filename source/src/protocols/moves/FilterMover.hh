@@ -47,7 +47,7 @@ public:
 
 	// @brief constructor with arguments
 	// mover_status when filter failed
-	FilterMover( MoverOP const & my_mover, FilterOP my_filter, Size const max_tries,
+	FilterMover( MoverOP const & my_mover, FilterOP my_filter, core::Size const max_tries,
 		MoverStatus const mover_status = FAIL_DO_NOT_RETRY );
 
 	~FilterMover() override;
@@ -66,13 +66,13 @@ public:
 	//void moverstatus_whenfail( MoverStatus const & mover_status );
 
 	/// @brief set maximum tries of making a move with my_mover
-	void max_tries( Size const mt );
+	void max_tries( core::Size const mt );
 
 private:
 
 	MoverOP my_mover_;
 	FilterOP my_filter_;
-	Size max_tries_;
+	core::Size max_tries_;
 	MoverStatus ms_whenfail_;
 
 };

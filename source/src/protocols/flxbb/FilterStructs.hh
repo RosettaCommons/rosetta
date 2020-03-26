@@ -22,7 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <string>
 
@@ -34,7 +34,7 @@ namespace flxbb {
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
-class FilterStructs : public utility::pointer::ReferenceCount {
+class FilterStructs : public utility::VirtualBase {
 public:
 
 	typedef std::string String;
@@ -54,10 +54,10 @@ public:// constructor/destructor
 	FilterStructs( String const & name );
 
 	/// @brief value constructor
-	FilterStructs( String const & name, Size const ntrial );
+	FilterStructs( String const & name, core::Size const ntrial );
 
 	/// @brief value constructor
-	FilterStructs( String const & name, Pose const & pose, Size const ntrial );
+	FilterStructs( String const & name, Pose const & pose, core::Size const ntrial );
 
 	/// @brief copy constructor
 	FilterStructs( FilterStructs const & rval );
@@ -96,7 +96,7 @@ public:// accessors
 	inline bool filter_on() const { return filter_on_; }
 
 	/// @brief
-	inline Size current_trial() const { return current_trial_; }
+	inline core::Size current_trial() const { return current_trial_; }
 
 	/// @brief
 	PoseOP get_bestpose() const;
@@ -109,7 +109,7 @@ public:// mutators
 	void name( String const & name );
 
 	/// @brief
-	void set_ntrial( Size const ntrial );
+	void set_ntrial( core::Size const ntrial );
 
 
 protected://
@@ -138,8 +138,8 @@ private:
 
 	String name_;
 	bool filter_on_;
-	Size ntrial_;
-	Size current_trial_;
+	core::Size ntrial_;
+	core::Size current_trial_;
 	PoseOP best_pose_;
 
 };
@@ -157,10 +157,10 @@ public:
 public:
 
 	/// @brief default constructor
-	FilterStructs_Packstat( Size const ntrial=10 );
+	FilterStructs_Packstat( core::Size const ntrial=10 );
 
 	/// @brief constructor
-	FilterStructs_Packstat( Pose const & pose, Size const ntrial=10 );
+	FilterStructs_Packstat( Pose const & pose, core::Size const ntrial=10 );
 
 	/// @brief copy constructor
 	FilterStructs_Packstat( FilterStructs_Packstat const & rval );
@@ -209,10 +209,10 @@ public:
 
 
 	/// @brief constructor
-	FilterStructs_TotalCharge( Size const ntrial=20 );
+	FilterStructs_TotalCharge( core::Size const ntrial=20 );
 
 	/// @brief constructor
-	FilterStructs_TotalCharge( Pose const & pose, Size const ntrial=20 );
+	FilterStructs_TotalCharge( Pose const & pose, core::Size const ntrial=20 );
 
 	/// @brief copy constructor
 	FilterStructs_TotalCharge( FilterStructs_TotalCharge const & rval );
@@ -243,7 +243,7 @@ public:// virtual main operation
 
 private:
 
-	Size disallowed_value_;
+	core::Size disallowed_value_;
 
 };
 

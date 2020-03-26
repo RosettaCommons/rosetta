@@ -21,7 +21,7 @@
 #include <protocols/tcr/TCRmodel.hh>
 #include <protocols/tcr/TCRseqInfo.hh>
 #include <protocols/tcr/TCRseqInfo.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/Pose.hh>
 #include <utility/file/FileName.hh>
 #include <basic/database/open.hh>

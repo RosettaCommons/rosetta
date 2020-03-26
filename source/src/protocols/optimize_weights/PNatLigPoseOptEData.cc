@@ -63,7 +63,7 @@ PNatLigPoseOptEData::do_score(
 	Multivec const & vars,
 	Multivec & dE_dvars,
 	/// Basically, turn over all the private data from OptEMultiFunc
-	Size const num_energy_dofs,
+	core::Size const num_energy_dofs,
 	int const ,//num_ref_dofs,
 	int const ,//num_total_dofs,
 	EnergyMap const & fixed_terms,
@@ -76,26 +76,26 @@ PNatLigPoseOptEData::do_score(
 	using namespace utility;
 	//std::cout << "In get_score() ... " << natives_.size() << " natives, " << decoys_.size() << " decoys" << std::endl;
 	//std::cout << "Weights:";
-	//for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) std::cout << " " << vars[ ii ];
+	//for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) std::cout << " " << vars[ ii ];
 	//std::cout << std::endl;
 
 	if ( decoys_.size() == 0 || natives_.size() == 0 ) return 0.0; // wtf?
 
 	utility::vector1< Real > decoy_energies( decoys_.size(), 0.0 );
 	utility::vector1< Real > native_energies( natives_.size(), 0.0 );
-	for ( Size ii = 1; ii <= num_energy_dofs; ++ii ) {
-		for ( Size jj = 1; jj <= natives_.size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= num_energy_dofs; ++ii ) {
+		for ( core::Size jj = 1; jj <= natives_.size(); ++jj ) {
 			native_energies[ jj ] += vars[ ii ]  * natives_[ jj ]->free_data()[ ii ];
 		}
-		for ( Size jj = 1; jj <= decoys_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= decoys_.size(); ++jj ) {
 			decoy_energies[ jj ] += vars[ ii ] * decoys_[ jj ]->free_data()[ ii ];
 		}
 	}
-	for ( Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
-		for ( Size jj = 1; jj <= natives_.size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= fixed_score_list.size(); ++ii ) {
+		for ( core::Size jj = 1; jj <= natives_.size(); ++jj ) {
 			native_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * natives_[ jj ]->fixed_data()[ ii ];
 		}
-		for ( Size jj = 1; jj <= decoys_.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= decoys_.size(); ++jj ) {
 			decoy_energies[ jj ] += fixed_terms[ fixed_score_list[ ii ] ] * decoys_[ jj ]->fixed_data()[ ii ];
 		}
 	}
@@ -104,10 +104,10 @@ PNatLigPoseOptEData::do_score(
 	Real const best_decoy_energy = min( decoy_energies );
 	//std::cout << "Best native E = " << best_native_energy << " , best decoy E = " << best_decoy_energy << std::endl;
 	Real const best_energy =  best_native_energy < best_decoy_energy ? best_native_energy : best_decoy_energy;
-	for ( Size ii = 1; ii <= natives_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= natives_.size(); ++ii ) {
 		native_energies[ ii ] -= best_energy;
 	}
-	for ( Size ii = 1; ii <= decoys_.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= decoys_.size(); ++ii ) {
 		decoy_energies[ ii ] -= best_energy;
 	}
 
@@ -115,7 +115,7 @@ PNatLigPoseOptEData::do_score(
 	Multivec dpartition( vars.size(), 0.0 ), dnumerator( vars.size(), 0.0 );
 
 	Real const neginv_kT = (-1.0 / kT_);
-	for ( Size ii(1); ii <= natives_.size(); ++ii ) {
+	for ( core::Size ii(1); ii <= natives_.size(); ++ii ) {
 
 		// Limit the improbability of each native to 1 in a million.
 		// This prevents numerator ~ 0, which causes NANs and INFs in the derivatives.
@@ -125,7 +125,7 @@ PNatLigPoseOptEData::do_score(
 		numerator += exp_term;
 		partition += exp_term;
 
-		for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+		for ( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 			// note for derivatives: d/dw( e^-(E*w+...) ) = -E * e^-(E*w+...)
 			Real e_dof_deriv( neginv_kT * natives_[ ii ]->free_data()[ e_dof ] * exp_term );
 			//if( utility::isinf(e_dof_deriv) || utility::isnan(e_dof_deriv) ) std::cout << "[" << tag() << "," << e_dof << "] native e_dof_deriv = " << e_dof_deriv << "; Eterm = " << natives_[ ii ]->free_data()[ e_dof ]<< std::endl;
@@ -133,7 +133,7 @@ PNatLigPoseOptEData::do_score(
 			dpartition[ e_dof ] += e_dof_deriv;
 		}
 	}
-	for ( Size ii(1); ii <= decoys_.size(); ++ii ) {
+	for ( core::Size ii(1); ii <= decoys_.size(); ++ii ) {
 
 		// Because partition >= numerator in all cases, there is no minimum value for this term:
 		Real const exp_term( std::exp( neginv_kT * decoy_energies[ ii ] ) );
@@ -141,7 +141,7 @@ PNatLigPoseOptEData::do_score(
 		partition += exp_term;
 
 		// partitions for energy derivatives
-		for ( Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
+		for ( core::Size e_dof(1); e_dof <= num_energy_dofs; ++e_dof ) {
 			// note for derivatives: d/dw( e^-(E*w+...) ) = -E * e^-(E*w+...)
 			Real e_dof_deriv( neginv_kT * decoys_[ ii ]->free_data()[ e_dof ] * exp_term );
 			//if( utility::isinf(e_dof_deriv) || utility::isnan(e_dof_deriv) ) std::cout << "[" << tag() << "," << e_dof << "] decoy e_dof_deriv = " << e_dof_deriv << "; Eterm = " << decoys_[ ii ]->free_data()[ e_dof ]<< std::endl;
@@ -159,7 +159,7 @@ PNatLigPoseOptEData::do_score(
 	if ( total_score >= 1e-2 ) {
 		// accumulate to passed-in derivative sums -- excludes reference energies
 		//std::cout << "vars (dvars): ";
-		for ( Size dof(1); dof <= num_energy_dofs; ++dof ) {
+		for ( core::Size dof(1); dof <= num_energy_dofs; ++dof ) {
 			Real const dP_P = dpartition[ dof ] / partition;
 			Real const dN_N = dnumerator[ dof ] / numerator;
 			Real const dE_dvar = multiplier_ * (dP_P - dN_N);

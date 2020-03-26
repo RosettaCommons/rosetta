@@ -115,7 +115,7 @@ Conformation::~Conformation()
 }
 
 Conformation::Conformation() :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	fold_tree_( utility::pointer::make_shared< FoldTree >() ),
 	atom_tree_( utility::pointer::make_shared< AtomTree >() ),
 	parameters_set_(), //Empty list by default; almost no memory overhead for non-parametric Conformation objects.
@@ -129,7 +129,7 @@ Conformation::Conformation() :
 
 // copy constructor
 Conformation::Conformation( Conformation const & src ) :
-	utility::pointer::ReferenceCount(src),
+	utility::VirtualBase(src),
 	utility::pointer::enable_shared_from_this< Conformation >(src)
 {
 	basic::ProfileThis doit( basic::CONFORMATION_COPY );

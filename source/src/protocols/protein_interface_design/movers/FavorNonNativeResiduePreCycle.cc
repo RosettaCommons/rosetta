@@ -45,10 +45,8 @@ FavorNonNativeResiduePreCycle::~FavorNonNativeResiduePreCycle() = default;
 void
 FavorNonNativeResiduePreCycle::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
-	using namespace utility::pointer;
-
 	bonus_ = tag->getOption<core::Real>( "bonus", -1.5 );
-	for ( std::map< std::string, ReferenceCountOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ) {
+	for ( std::map< std::string, utility::VirtualBaseOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ) {
 		ScoreFunctionOP scorefxn( data.get_ptr< ScoreFunction >( "scorefxns", it->first ) );
 		if ( scorefxn->get_weight( res_type_constraint ) == 0.0 ) {
 			scorefxn->set_weight( res_type_constraint, bonus_ );
@@ -56,7 +54,7 @@ FavorNonNativeResiduePreCycle::parse_my_tag( TagCOP const tag, basic::datacache:
 		}
 	}
 	/*
-	for( std::map< std::string, ReferenceCountOP >::const_iterator it=(data)[ "scorefxns_hshash" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ){ // scorefxns where the user defined hs_hash but not fnr
+	for( std::map< std::string, VirtualBaseOP >::const_iterator it=(data)[ "scorefxns_hshash" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ){ // scorefxns where the user defined hs_hash but not fnr
 	ScoreFunctionOP scorefxn( *data.get< ScoreFunction * >( "scorefxns", it->first ) );
 	scorefxn->set_weight( res_type_constraint, bonus_ );
 	favor_nonnative_residue_tracer<<"Setting res_type_constraint weight in scorefxn "<<it->first<<" to "<<bonus_<<'\n';

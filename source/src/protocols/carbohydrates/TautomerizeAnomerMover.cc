@@ -255,7 +255,7 @@ TautomerizeAnomerMover::setup_movable_reducing_ends( core::pose::Pose const & po
 		return;
 	}
 
-	Size const n_res( pose.size() );
+	core::Size const n_res( pose.size() );
 
 	ResidueSubset subset;
 	if ( selector_ ) {

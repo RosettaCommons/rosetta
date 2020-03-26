@@ -44,40 +44,40 @@ ResidueAlternativeStepWiseSamplerComb::add_residue_alternative_rotamer( ResidueA
 }
 
 bool
-ResidueAlternativeStepWiseSamplerComb::has_resnum( Size const seqpos ){
+ResidueAlternativeStepWiseSamplerComb::has_resnum( core::Size const seqpos ){
 	return ( residue_alternative_rotamer_map_.find( seqpos ) != residue_alternative_rotamer_map_.end() );
 }
 
 Size
-ResidueAlternativeStepWiseSamplerComb::find_resnum( Size const seqpos ){
-	for ( Size i = 1; i <= residue_alternative_rotamer_list_.size(); i++ ) {
+ResidueAlternativeStepWiseSamplerComb::find_resnum( core::Size const seqpos ){
+	for ( core::Size i = 1; i <= residue_alternative_rotamer_list_.size(); i++ ) {
 		if ( residue_alternative_rotamer_list_[i]->representative_seqpos() == seqpos ) return i;
 	}
 	return 0;
 }
 
 Size
-ResidueAlternativeStepWiseSamplerComb::id_for_resnum( Size const seqpos ){
+ResidueAlternativeStepWiseSamplerComb::id_for_resnum( core::Size const seqpos ){
 	runtime_assert( has_resnum( seqpos ) );
 	return residue_alternative_rotamer_map_[ seqpos ]->id();
 }
 
 
 Residue const &
-ResidueAlternativeStepWiseSamplerComb::get_residue_at_origin( Size const seqpos ){
+ResidueAlternativeStepWiseSamplerComb::get_residue_at_origin( core::Size const seqpos ){
 	return residue_alternative_rotamer_map_[ seqpos ]->get_residue_at_origin();
 }
 
 Residue const &
-ResidueAlternativeStepWiseSamplerComb::get_residue_at_origin_with_matching_type( Size const seqpos, Residue const & rsd_in ){
+ResidueAlternativeStepWiseSamplerComb::get_residue_at_origin_with_matching_type( core::Size const seqpos, Residue const & rsd_in ){
 	return residue_alternative_rotamer_map_[ seqpos ]->get_residue_at_origin_with_matching_type( rsd_in );
 }
 
 // fast-forward inner loops so that we can get to the next residue pair.
 void
-ResidueAlternativeStepWiseSamplerComb::fast_forward_to_next_residue_pair( Size const i, Size const j){
-	Size const which_rotamer_i = find_resnum( i );
-	Size const which_rotamer_j = find_resnum( j );
+ResidueAlternativeStepWiseSamplerComb::fast_forward_to_next_residue_pair( core::Size const i, core::Size const j){
+	core::Size const which_rotamer_i = find_resnum( i );
+	core::Size const which_rotamer_j = find_resnum( j );
 	//  TR << "fast_forward_to_next_residue_pair " << i << "--" << j << ": " << which_rotamer_i << "--" << which_rotamer_j  << std::endl;
 	if ( which_rotamer_i == 0 && which_rotamer_j == 0 ) {
 		fast_forward(); // fast forward to next rigid body.
@@ -86,7 +86,7 @@ ResidueAlternativeStepWiseSamplerComb::fast_forward_to_next_residue_pair( Size c
 	} else if ( which_rotamer_j == 0 ) {
 		fast_forward( which_rotamer_i - 1 );
 	} else {
-		Size which_rotamer = ( which_rotamer_i < which_rotamer_j ) ? which_rotamer_i : which_rotamer_j; // inner-most loop
+		core::Size which_rotamer = ( which_rotamer_i < which_rotamer_j ) ? which_rotamer_i : which_rotamer_j; // inner-most loop
 		runtime_assert( which_rotamer > 0 );
 		if ( which_rotamer > 1 )  fast_forward( which_rotamer - 1 ); // next ++ will give us another residue pair.
 	}
@@ -94,8 +94,8 @@ ResidueAlternativeStepWiseSamplerComb::fast_forward_to_next_residue_pair( Size c
 
 // fast-forward inner loops so that we can get to the next residue pair.
 void
-ResidueAlternativeStepWiseSamplerComb::fast_forward_to_next_residue( Size const i ){
-	Size const which_rotamer = find_resnum( i );
+ResidueAlternativeStepWiseSamplerComb::fast_forward_to_next_residue( core::Size const i ){
+	core::Size const which_rotamer = find_resnum( i );
 	//  TR << "fast_forward_to_next_residue " << i << ": " << which_rotamer << std::endl;
 	if ( which_rotamer == 0 ) {
 		fast_forward(); // fast forward to next rigid body.

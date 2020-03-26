@@ -187,7 +187,7 @@ void remodel_tcr_cdr_loops ( core::pose::Pose &tcr_pose, protocols::loops::Loops
 }
 
 void ind_remodel_tcr_cdr_loops( core::pose::Pose &tcr_pose, core::Size const loopstart, core::Size const loopend ) {
-	//Size num_cycles = option[ max_cycles ];
+	//core::Size num_cycles = option[ max_cycles ];
 	core::Size num_cycles = 20;
 	core::pose::Pose start_pose = tcr_pose;
 	//tcr_pose.dump_pdb("tcr_pose.pdb");

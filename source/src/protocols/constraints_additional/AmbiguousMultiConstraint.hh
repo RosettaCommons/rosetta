@@ -103,7 +103,7 @@ public:
 
 	// void read_def( std::istream& in, pose::Pose const& pose, FuncFactory const& func_factory );
 
-	Size show_violations( std::ostream& out, core::pose::Pose const& pose, core::Size verbose_level, core::Real threshold = 1.0 ) const override;
+	core::Size show_violations( std::ostream& out, core::pose::Pose const& pose, core::Size verbose_level, core::Real threshold = 1.0 ) const override;
 
 
 private:

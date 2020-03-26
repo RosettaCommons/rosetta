@@ -23,15 +23,15 @@
 #include <numeric/kdtree/HyperRectangle.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/VirtualBase.fwd.hh>
 
 namespace numeric {
 namespace kdtree {
 
-class KDTree : public utility::pointer::ReferenceCount {
+class KDTree : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~KDTree() override;
 
 
@@ -46,7 +46,7 @@ public:
 
 	KDTree(
 		utility::vector1< utility::vector1< numeric::Real > > & pts,
-		utility::vector1< utility::pointer::ReferenceCountOP > & data
+		utility::vector1< utility::VirtualBaseOP > & data
 	);
 
 	/// @brief Number of points in the kd-tree.

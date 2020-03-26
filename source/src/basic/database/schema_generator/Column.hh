@@ -20,13 +20,13 @@
 #include <basic/database/schema_generator/Column.fwd.hh>
 #include <basic/database/schema_generator/DbDataType.fwd.hh>   // for DbData...
 #include <platform/types.hh>                                   // for Size
-#include <utility/pointer/ReferenceCount.hh>                   // for Refere...
+#include <utility/VirtualBase.hh>                   // for Refere...
 
 namespace basic {
 namespace database {
 namespace schema_generator {
 
-class Column : public utility::pointer::ReferenceCount {
+class Column : public utility::VirtualBase {
 public:
 
 	Column(std::string const & name, DbDataTypeOP type);
@@ -38,7 +38,7 @@ public:
 	std::string name() const;
 
 	bool auto_increment() const;
-	Size auto_increment_base() const;
+	platform::Size auto_increment_base() const;
 
 	std::string print(utility::sql_database::sessionOP db_session) const;
 

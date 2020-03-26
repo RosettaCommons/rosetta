@@ -61,6 +61,8 @@ static basic::Tracer TR("protocols.filters.LeastNativeLike9merFilter");
 namespace protocols {
 namespace simple_filters {
 
+using core::Size;
+
 // @brief default constructor
 LeastNativeLike9merFilter::LeastNativeLike9merFilter():
 	Filter( "worst9mer" ),
@@ -99,10 +101,10 @@ LeastNativeLike9merFilter::compute( const Pose & pose ) const
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.dssp_reduced();
 	std::string dssp_string = dssp.get_dssp_secstruct();
-	Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
+	core::Size fragment_length = SSHashedFragmentStore_->get_fragment_length();
 	utility::vector1< Real > rmsds;
-	Size startRes = 1;
-	Size endRes = pose.size()-fragment_length+1;
+	core::Size startRes = 1;
+	core::Size endRes = pose.size()-fragment_length+1;
 	core::conformation::symmetry::SymmetryInfoCOP symminfo(nullptr);
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
@@ -115,10 +117,10 @@ LeastNativeLike9merFilter::compute( const Pose & pose ) const
 	core::select::residue_selector::ResidueSubset subset(pose.size(), true);
 	if ( residue_selector_ ) subset = residue_selector_->apply(pose);
 
-	for ( Size resid=startRes; resid<=endRes; ++resid ) {
+	for ( core::Size resid=startRes; resid<=endRes; ++resid ) {
 
 		bool all_within_subset = true;
-		for ( Size jj=0; jj<fragment_length; ++jj ) { if ( ! subset[resid+jj] ) all_within_subset=false; }
+		for ( core::Size jj=0; jj<fragment_length; ++jj ) { if ( ! subset[resid+jj] ) all_within_subset=false; }
 		if ( ! all_within_subset ) continue;
 
 		std::string frag_ss = dssp_string.substr(resid-1,fragment_length);

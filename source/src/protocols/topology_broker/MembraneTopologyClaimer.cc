@@ -156,7 +156,7 @@ MembraneTopologyClaimer::generate_claims( claims::DofClaims& dof_claims )
 			dof_claims.push_back(utility::pointer::make_shared< claims::BBClaim >(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT));
 		}
 	}
-	for ( Size jump_num = 1; jump_num <= pose.fold_tree().num_jump(); ++jump_num ) {
+	for ( core::Size jump_num = 1; jump_num <= pose.fold_tree().num_jump(); ++jump_num ) {
 		dof_claims.push_back(utility::pointer::make_shared< claims::JumpClaim >(get_self_weak_ptr(),jump_array(1,jump_num),jump_array(2,jump_num),claims::DofClaim::CAN_INIT));
 	}
 }
@@ -202,7 +202,7 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 
 	// find residue in the middle of transmembrane region
 	// pick a random transmembrane segment
-	Size ihelix = int(numeric::random::rg().uniform() * topology.tmhelix() + 1.);
+	core::Size ihelix = int(numeric::random::rg().uniform() * topology.tmhelix() + 1.);
 	core::Size jump_res = (int(0.5 * (topology.span_begin(ihelix) + topology.span_end(ihelix))));
 
 	// create a virtual residue, of the appropriate type
@@ -217,7 +217,7 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 		mem_center.y() = basic::options::option[basic::options::OptionKeys::membrane::membrane_center]()[2];
 		mem_center.z() = basic::options::option[basic::options::OptionKeys::membrane::membrane_center]()[3];
 
-		for ( Size j=1; j<= new_virt_res->natoms(); ++j ) {
+		for ( core::Size j=1; j<= new_virt_res->natoms(); ++j ) {
 			new_virt_res->atom(j).xyz( new_virt_res->atom(j).xyz() + mem_center );
 		}
 	}

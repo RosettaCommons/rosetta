@@ -48,7 +48,7 @@ public:
 	core::Size size() const override{ return size_;}
 
 	/// @brief set ID -- how StepWiseSamplerSizedComb controls StepWiseSamplerSized. Need some extra work here with InputStreamStepWiseSampler.
-	void set_id( Size const setting ) override;
+	void set_id( core::Size const setting ) override;
 
 	/// @brief Move to next rotamer
 	void operator++() override;
@@ -66,7 +66,7 @@ private:
 
 	stepwise::modeler::protein::InputStreamWithResidueInfoOP input_stream_;
 	stepwise::legacy::modeler::protein::StepWiseProteinPoseSetupCOP stepwise_pose_setup_; // this is really a legacy of SWA protein code.
-	Size size_;
+	core::Size size_;
 
 };
 

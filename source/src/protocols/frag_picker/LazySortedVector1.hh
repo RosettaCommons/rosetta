@@ -16,7 +16,7 @@
 // package headers
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <algorithm>
 
@@ -24,7 +24,7 @@ namespace protocols {
 namespace frag_picker {
 
 template<class T, class StrictWeakOrdering>
-class LazySortedVector1 : public utility::pointer::ReferenceCount {
+class LazySortedVector1 : public utility::VirtualBase {
 public:
 	LazySortedVector1(StrictWeakOrdering cmp, core::Size sorted_capacity,core::Size max_capacity) :
 		comp(cmp) {

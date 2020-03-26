@@ -18,7 +18,7 @@
 #include <protocols/rosetta_scripts/PosePropertyReporter.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <string>
 
@@ -27,7 +27,7 @@ namespace rosetta_scripts {
 
 /// @brief Abstract base class for a PosePropertyReporter factory; the Creator class is responsible for
 /// creating a particular PosePropertyReporter class.
-class PosePropertyReporterCreator : public utility::pointer::ReferenceCount
+class PosePropertyReporterCreator : public utility::VirtualBase
 {
 public:
 	PosePropertyReporterCreator();

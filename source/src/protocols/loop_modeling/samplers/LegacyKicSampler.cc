@@ -48,9 +48,9 @@ LegacyKicSampler::LegacyKicSampler() {
 }
 
 bool LegacyKicSampler::do_apply(Pose & pose, Loop const & loop) { // {{{1
-	Size pivot_1 = loop.start();
-	Size pivot_3 = loop.stop();
-	Size pivot_2 = pivot_1 + (pivot_3 - pivot_1) / 2;
+	core::Size pivot_1 = loop.start();
+	core::Size pivot_3 = loop.stop();
+	core::Size pivot_2 = pivot_1 + (pivot_3 - pivot_1) / 2;
 
 	// This function doesn't actually set the pivots.  It sets the loop.
 	mover_->set_pivots(pivot_1, pivot_2, pivot_3);

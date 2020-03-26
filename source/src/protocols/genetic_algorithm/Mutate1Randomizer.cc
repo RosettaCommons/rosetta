@@ -17,7 +17,7 @@
 // Package headers
 #include <protocols/genetic_algorithm/Entity.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>
@@ -29,6 +29,7 @@
 
 #include <utility/exit.hh>
 
+using core::Size;
 
 namespace protocols {
 namespace genetic_algorithm {
@@ -38,15 +39,15 @@ Mutate1Randomizer::~Mutate1Randomizer() = default;
 void Mutate1Randomizer::mutate( protocols::genetic_algorithm::Entity & entity )
 {
 	if ( mutation_rate() == 1.0 ) {
-		for ( Size ii = 1; ii <= entity.traits().size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= entity.traits().size(); ++ii ) {
 			core::Size const n_mutation_choices( choices()[ ii ].size() );
-			Size new_element_ind = static_cast< core::Size >( numeric::random::uniform() * n_mutation_choices ) + 1;
+			core::Size new_element_ind = static_cast< core::Size >( numeric::random::uniform() * n_mutation_choices ) + 1;
 			entity.set_entity_element( ii, choices()[ ii ][ new_element_ind ] );
 		}
 	} else {
-		Size pos_to_mutate = static_cast< Size > ( entity.traits().size() * numeric::random::uniform() ) + 1;
+		core::Size pos_to_mutate = static_cast< core::Size > ( entity.traits().size() * numeric::random::uniform() ) + 1;
 		core::Size const n_mutation_choices( choices()[ pos_to_mutate ].size() );
-		Size new_element_ind = static_cast< core::Size >( numeric::random::uniform() * n_mutation_choices ) + 1;
+		core::Size new_element_ind = static_cast< core::Size >( numeric::random::uniform() * n_mutation_choices ) + 1;
 		entity.set_entity_element( pos_to_mutate, choices()[ pos_to_mutate ][ new_element_ind ] );
 	}
 }

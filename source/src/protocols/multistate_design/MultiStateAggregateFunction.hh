@@ -18,7 +18,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.fwd.hh>
 
@@ -26,7 +26,7 @@
 namespace protocols {
 namespace multistate_design {
 
-class MultiStateAggregateFunction : public utility::pointer::ReferenceCount {
+class MultiStateAggregateFunction : public utility::VirtualBase {
 
 public:
 	typedef utility::pointer::shared_ptr< MultiStateAggregateFunction > OP;

@@ -40,7 +40,7 @@ namespace screener {
 RNA_ChainClosableGeometryStubBasedScreener::RNA_ChainClosableGeometryStubBasedScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
 	utility::vector1< core::pose::PoseOP > screening_pose_list,
 	core::kinematics::Stub const & moving_res_base_stub,
-	Size const reference_res,
+	core::Size const reference_res,
 	utility::vector1< core::conformation::ResidueOP > const & moving_rsd_at_origin_list,
 	bool const using_predefined_moving_rsd_list /* = true */ ):
 	StepWiseResiduePairScreener( chain_closable_geometry_checker->five_prime_chain_break_res(),
@@ -57,7 +57,7 @@ RNA_ChainClosableGeometryStubBasedScreener::RNA_ChainClosableGeometryStubBasedSc
 RNA_ChainClosableGeometryStubBasedScreener::RNA_ChainClosableGeometryStubBasedScreener( modeler::rna::checker::RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker,
 	utility::vector1< core::pose::PoseOP > screening_pose_list,
 	core::kinematics::Stub const & moving_res_base_stub,
-	Size const reference_res ):
+	core::Size const reference_res ):
 	StepWiseResiduePairScreener( chain_closable_geometry_checker->five_prime_chain_break_res(),
 	chain_closable_geometry_checker->three_prime_chain_break_res() ),
 	chain_closable_geometry_checker_( chain_closable_geometry_checker ),

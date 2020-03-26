@@ -101,7 +101,7 @@ void AlignmentCluster::add_aln(SequenceAlignment & aln_in){
 ///////////////////////////////////////////////////////////////////////////////
 /// @detail get aln
 ///////////////////////////////////////////////////////////////////////////////
-SequenceAlignment AlignmentCluster::get_aln(Size index){
+SequenceAlignment AlignmentCluster::get_aln(core::Size index){
 	return (alns[index]);
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -121,7 +121,7 @@ SequenceAlignment AlignmentCluster::get_clusterCenter(){
 /// @detail outputs cluster to file
 ///////////////////////////////////////////////////////////////////////////////
 void AlignmentCluster::output(std::ostream & alignment_out){
-	for ( Size ii = 1; ii <= alns.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= alns.size(); ++ii ) {
 		alns[ii].printGrishinFormat(alignment_out);
 		string const aln_id( alns[ii].sequence(2)->id() );
 		tr << aln_id << "," ;
@@ -134,10 +134,10 @@ void AlignmentCluster::output(std::ostream & alignment_out){
 void AlignmentCluster::merge(AlignmentClusterOP cluster_in){
 	set<string> alignmentsInCluster;
 	set<string>::iterator location;
-	for ( Size ii=1; ii<= alns.size(); ++ii ) {
+	for ( core::Size ii=1; ii<= alns.size(); ++ii ) {
 		alignmentsInCluster.insert(alns[ii].sequence(2)->id());
 	}
-	for ( Size jj= 1; jj <= cluster_in->size(); ++jj ) {
+	for ( core::Size jj= 1; jj <= cluster_in->size(); ++jj ) {
 		SequenceAlignment tempAln = cluster_in->get_aln(jj);
 		location = alignmentsInCluster.find(tempAln.sequence(2)->id());
 		if ( location == alignmentsInCluster.end() ) {
@@ -151,12 +151,12 @@ void AlignmentCluster::merge(AlignmentClusterOP cluster_in){
 Real AlignmentCluster::overlap(AlignmentClusterOP cluster_in){
 	set<string> alignmentsInCluster;
 	set<string>::iterator location;
-	for ( Size ii=1; ii<= alns.size(); ++ii ) {
+	for ( core::Size ii=1; ii<= alns.size(); ++ii ) {
 		alignmentsInCluster.insert(alns[ii].sequence(2)->id());
 	}
 	//loop through and see what percent of cluster_in is in the current cluster;
-	Size count_inClust = 0;
-	for ( Size ii=1; ii<=cluster_in->size(); ++ii ) {
+	core::Size count_inClust = 0;
+	for ( core::Size ii=1; ii<=cluster_in->size(); ++ii ) {
 		location = alignmentsInCluster.find(cluster_in->get_aln(ii).sequence(2)->id());
 		if ( location != alignmentsInCluster.end() ) {
 			count_inClust++;
@@ -186,19 +186,19 @@ AlignmentClustering::AlignmentClustering(){
 	Real MIN_GDT = .70;
 	Real MAX_GDT = .90;
 	Real INCREMENT_GDT = .05;
-	Size GOAL_NUMB_CLUSTERS = 5;
+	core::Size GOAL_NUMB_CLUSTERS = 5;
 	Real MAX_CLUSTER_OVERLAP = .70;
-	Size MIN_POSE_SIZE = 5;
+	core::Size MIN_POSE_SIZE = 5;
 
 	vector1< std::string > align_fns = option[ in::file::alignment ]();
 	//vector1< SequenceAlignment > alns;
 	map<string,SequenceAlignment> alns;
 	map<string,SequenceAlignment>::iterator location_alns;
-	for ( Size ii = 1; ii <= align_fns.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= align_fns.size(); ++ii ) {
 		vector1< SequenceAlignment > tmp_alns = core::sequence::read_aln(
 			option[ cm::aln_format ](), align_fns[ii]
 		);
-		for ( Size jj = 1; jj <= tmp_alns.size(); ++jj ) {
+		for ( core::Size jj = 1; jj <= tmp_alns.size(); ++jj ) {
 			string aln_id = tmp_alns[jj].sequence(2)->id();
 			location_alns = alns.find(aln_id);
 			while ( location_alns != alns.end() ) {//if alignment exists change the name by adding 100000 to the name.
@@ -220,10 +220,10 @@ AlignmentClustering::AlignmentClustering(){
 	using core::sequence::read_fasta_file;
 	string query_sequence (
 		read_fasta_file( option[ in::file::fasta ]()[1])[1]->sequence() );
-	Size max_pose_len(0);
+	core::Size max_pose_len(0);
 	vector1< Pose >   poses;
 	vector1< string > aln_ids;
-	for ( Size ii = 1; ii <= rankedAlignments.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rankedAlignments.size(); ++ii ) {
 		string const aln_id( rankedAlignments[ii].sequence(2)->id() );
 		string const template_id( aln_id.substr(0,5) );
 		auto pose_it = template_poses.find( template_id );
@@ -259,13 +259,13 @@ AlignmentClustering::AlignmentClustering(){
 			}
 		}
 	} // for rankedAlignmentsalns
-	Size total_comparisons_done(0);
+	core::Size total_comparisons_done(0);
 	vector1< vector1< Real > > gdtmms(
 		rankedAlignments_valid.size(), vector1< Real >(rankedAlignments_valid.size(), 0.0 )
 	);
-	for ( Size ii = 1; ii <= rankedAlignments_valid.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rankedAlignments_valid.size(); ++ii ) {
 		gdtmms[ii][ii] = 1.0;
-		for ( Size jj = ii + 1; jj <= rankedAlignments_valid.size(); ++jj ) {
+		for ( core::Size jj = ii + 1; jj <= rankedAlignments_valid.size(); ++jj ) {
 			++total_comparisons_done;
 			SequenceAlignment aln( align_poses_naive( poses[ii], poses[jj] ) );
 			int n_atoms;
@@ -302,13 +302,13 @@ AlignmentClustering::AlignmentClustering(){
 			}
 		} // jj
 	} // ii
-	Size number_clusters = 999999;
+	core::Size number_clusters = 999999;
 	vector1<AlignmentClusterOP> cluster_v;
 	Real threshold_gdt = MAX_GDT;
-	set<Size> mergeSet;
-	set<Size>::iterator location_mergeSet;
-	multimap<Size,Size> mergeMap;
-	multimap<Size,Size>::iterator start_mergeMap,stop_mergeMap;
+	set<core::Size> mergeSet;
+	set<core::Size>::iterator location_mergeSet;
+	multimap<core::Size,Size> mergeMap;
+	multimap<core::Size,Size>::iterator start_mergeMap,stop_mergeMap;
 	while ( (number_clusters > GOAL_NUMB_CLUSTERS) && (threshold_gdt >= MIN_GDT) ) {
 		cluster_v.clear();
 		cluster_v = cluster(gdtmms,rankedAlignments_valid,threshold_gdt);
@@ -316,10 +316,10 @@ AlignmentClustering::AlignmentClustering(){
 		mergeSet.clear();
 		mergeMap.clear();
 		//If cluster has been merged than ignore it.
-		for ( Size ii = 1; ii <= cluster_v.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= cluster_v.size(); ++ii ) {
 			location_mergeSet = mergeSet.find(ii);
 			if ( location_mergeSet == mergeSet.end() ) {
-				for ( Size jj=ii+1; jj<=cluster_v.size(); ++jj ) {
+				for ( core::Size jj=ii+1; jj<=cluster_v.size(); ++jj ) {
 					location_mergeSet = mergeSet.find(jj);
 					if ( location_mergeSet == mergeSet.end() ) {
 						if ( cluster_v[ii]->overlap(cluster_v[jj])>MAX_CLUSTER_OVERLAP ) {
@@ -348,8 +348,8 @@ AlignmentClustering::AlignmentClustering(){
 	}
 
 	//Output final clusters
-	Size numbOutput = 1;
-	for ( Size ii = 1; ii <= cluster_v.size(); ++ii ) {
+	core::Size numbOutput = 1;
+	for ( core::Size ii = 1; ii <= cluster_v.size(); ++ii ) {
 		location_mergeSet = mergeSet.find(ii);
 		if ( location_mergeSet == mergeSet.end() ) {
 			std::cout << "--------" << std::endl;
@@ -376,16 +376,16 @@ vector1<AlignmentClusterOP> AlignmentClustering::cluster(vector1< vector1< Real 
 	vector1<AlignmentClusterOP> cluster_v;
 	vector1<bool> alignmentInCluster;
 	//the first item is automatically in the first cluster.
-	for ( Size ii = 1; ii <= rankedAlignments.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= rankedAlignments.size(); ++ii ) {
 		alignmentInCluster.push_back(false);
 	}
 	bool allClustered = false;
-	Size clusterCenter = 1;
+	core::Size clusterCenter = 1;
 	//This is written so alignments may end up in multiple clusters.
 	while ( !allClustered ) {
 		AlignmentClusterOP tempCluster( new AlignmentCluster(rankedAlignments[clusterCenter]) );
 		alignmentInCluster[clusterCenter] = true;
-		for ( Size ii = 1; ii <= rankedAlignments.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= rankedAlignments.size(); ++ii ) {
 			if ( ii != clusterCenter ) {
 				//string const aln_id(rankedAlignments[ii].sequence(2)->id() );
 				//string const aln_center_id(rankedAlignments[clusterCenter].sequence(2)->id());
@@ -398,7 +398,7 @@ vector1<AlignmentClusterOP> AlignmentClustering::cluster(vector1< vector1< Real 
 		}
 		cluster_v.push_back(tempCluster);
 		int nxtClusterCenter = -1;
-		for ( Size jj = 1; ((jj <= alignmentInCluster.size()) && (nxtClusterCenter==-1))  ; ++jj ) {
+		for ( core::Size jj = 1; ((jj <= alignmentInCluster.size()) && (nxtClusterCenter==-1))  ; ++jj ) {
 			if ( alignmentInCluster[jj] == false ) {
 				nxtClusterCenter = jj;
 			}
@@ -449,7 +449,7 @@ vector1< SequenceAlignment > AlignmentClustering::generateRankedAlignments(map <
 	//mjo commenting out 'evmap_ranking' because it is unused and causes a warning
 	//bool evmap_ranking = 0;
 	Real low_e_val = 9999;
-	Size minNumbRankedModels = 10;
+	core::Size minNumbRankedModels = 10;
 	//need to get alignments from file and rank depending on type
 	if ( option[ cm::ev_map ].user() ) {
 		multimap<Real,string>::iterator start_rankedTemplate,stop_rankedTemplate;

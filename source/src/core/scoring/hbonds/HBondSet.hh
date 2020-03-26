@@ -35,7 +35,7 @@
 // Utility headers
 //#include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
@@ -55,10 +55,10 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-class HBond : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< HBond >
+class HBond : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< HBond >
 {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~HBond() override;
 	HBond(
 		Size const dhatm,

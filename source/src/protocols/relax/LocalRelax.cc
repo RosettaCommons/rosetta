@@ -235,13 +235,13 @@ LocalRelax::get_neighbor_graph(
 	neighbor.clear();
 	neighbor.resize( nres );
 
-	for ( Size i=1, i_end = nres; i<= i_end; ++i ) {
+	for ( core::Size i=1, i_end = nres; i<= i_end; ++i ) {
 		if ( symminfo && !symminfo->bb_is_independent( i ) ) continue;
 		neighbor[i].resize(nres, false);
 		neighbor[i][i] = true;
 
 		conformation::Residue const & rsd1( pose.residue( i ) );
-		for ( Size j=1, j_end = nres; j<= j_end; ++j ) {
+		for ( core::Size j=1, j_end = nres; j<= j_end; ++j ) {
 			conformation::Residue const & rsd2( pose.residue( j ) );
 
 			if ( i==j ) continue;
@@ -353,34 +353,34 @@ LocalRelax::apply( core::pose::Pose & pose) {
 
 	// for each residue
 	utility::vector1< utility::vector1<bool> > neighbor;
-	for ( Size cyc = 1; cyc <= NCYC_; ++cyc ) {
-		for ( Size innercyc = 1; innercyc <= ramp_schedule_.size(); ++innercyc ) {
+	for ( core::Size cyc = 1; cyc <= NCYC_; ++cyc ) {
+		for ( core::Size innercyc = 1; innercyc <= ramp_schedule_.size(); ++innercyc ) {
 			get_neighbor_graph( pose, neighbor );
 
 			// "priority list" on residues
 			//   - sort by connectedness
 			utility::vector1< core::Size > neighborcounts(nres, 0);
-			for ( Size i=1, i_end = nres; i<= i_end; ++i ) {
+			for ( core::Size i=1, i_end = nres; i<= i_end; ++i ) {
 				if ( !symminfo || symminfo->bb_is_independent(i) ) {
-					for ( Size j=1; j<=nres; ++j ) if ( neighbor[i][j] ) neighborcounts[j]++;
+					for ( core::Size j=1; j<=nres; ++j ) if ( neighbor[i][j] ) neighborcounts[j]++;
 				}
 			}
 
 			utility::vector1<bool> shell0, shell1, visited(nres, false);
 
 			// mark non-packable as visited
-			for ( Size i=1; i<=nres; ++i ) {
+			for ( core::Size i=1; i<=nres; ++i ) {
 				if ( !ptask_resfile->pack_residue( i ) ) visited[i] = true;
 				if ( symminfo && !symminfo->bb_is_independent(i) ) visited[i] = true;
 			}
 
-			Size nvis=0;
+			core::Size nvis=0;
 			// main loop
 			while ( true ) {
 				// find most connected residue
-				Size maxneighb=0;
-				Size currres=0;
-				for ( Size i=1; i<=nres; ++i ) {
+				core::Size maxneighb=0;
+				core::Size currres=0;
+				for ( core::Size i=1; i<=nres; ++i ) {
 					if ( !visited[i] && neighborcounts[i] > maxneighb ) {
 						maxneighb = neighborcounts[i];
 						currres = i;
@@ -394,10 +394,10 @@ LocalRelax::apply( core::pose::Pose & pose) {
 					TR << "PACK SURFACE" << std::endl;
 
 					utility::vector1<bool> neigh_merge(nres, false);
-					for ( Size i=1; i<=nres; ++i ) {
+					for ( core::Size i=1; i<=nres; ++i ) {
 						if ( visited[i] ) continue;
 						if ( symminfo && !symminfo->bb_is_independent(i) ) continue;
-						for ( Size j=1; j<=nres; ++j ) {
+						for ( core::Size j=1; j<=nres; ++j ) {
 							neigh_merge[j] = neigh_merge[j] || neighbor[i][j];
 						}
 					}
@@ -405,20 +405,20 @@ LocalRelax::apply( core::pose::Pose & pose) {
 					// "surface pack" << generally lots of surface residues in small clusters.  Pack them all at once
 					shell0 = neigh_merge;
 					shell1 = shell0;
-					for ( Size j=1; j<=nres; ++j ) {
+					for ( core::Size j=1; j<=nres; ++j ) {
 						if ( shell0[j] ) {
-							for ( Size k=1; k<=nres; ++k ) {
+							for ( core::Size k=1; k<=nres; ++k ) {
 								if ( !shell0[k] && neigh_merge[k] ) shell1[k] = true;
 							}
 						}
 					}
 				} else {
 					shell1 = neighbor[currres];
-					for ( Size i=1; i<=NEXP_; ++i ) {
+					for ( core::Size i=1; i<=NEXP_; ++i ) {
 						shell0 = shell1;
-						for ( Size j=1; j<=nres; ++j ) {
+						for ( core::Size j=1; j<=nres; ++j ) {
 							if ( shell0[j] ) {
-								for ( Size k=1; k<=nres; ++k ) {
+								for ( core::Size k=1; k<=nres; ++k ) {
 									if ( !shell0[k] && neighbor[j][k] ) shell1[k] = true;
 								}
 							}
@@ -431,7 +431,7 @@ LocalRelax::apply( core::pose::Pose & pose) {
 				ptask_working->restrict_to_residues(shell1);
 				ptask_working->or_include_current(true);
 
-				for ( Size j=1, j_end = nres; j<= j_end; ++j ) {
+				for ( core::Size j=1, j_end = nres; j<= j_end; ++j ) {
 					if ( shell0[j] ) {
 						visited[j] = true;
 						dynamic_cast<core::pack::task::ResidueLevelTask_&>
@@ -445,7 +445,7 @@ LocalRelax::apply( core::pose::Pose & pose) {
 				// set up movemap
 				core::kinematics::MoveMapOP mm(new core::kinematics::MoveMap);
 				mm->set_jump(true);
-				for ( Size j=1, j_end = nres; j<= j_end; ++j ) {
+				for ( core::Size j=1, j_end = nres; j<= j_end; ++j ) {
 					if ( shell1[j] ) {
 						mm->set_bb(j, false); mm->set_chi(j, true);
 					} else {
@@ -453,7 +453,7 @@ LocalRelax::apply( core::pose::Pose & pose) {
 					}
 				}
 
-				for ( Size j=1, j_end = nres; j<= j_end; ++j ) {
+				for ( core::Size j=1, j_end = nres; j<= j_end; ++j ) {
 					if ( shell0[j] ) {
 						// allow a window of bb movement around each central residue
 						mm->set_bb(j, true);
@@ -468,7 +468,7 @@ LocalRelax::apply( core::pose::Pose & pose) {
 				}
 
 				nvis = 0;
-				for ( Size j=1, j_end = nres; j<= j_end; ++j ) {
+				for ( core::Size j=1, j_end = nres; j<= j_end; ++j ) {
 					if ( symminfo && !symminfo->bb_is_independent(j) ) continue;
 					if ( visited[j] ) nvis++;
 				}

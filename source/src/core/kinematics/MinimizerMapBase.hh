@@ -21,7 +21,7 @@
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
@@ -33,7 +33,7 @@ namespace core {
 namespace kinematics {
 
 
-class MinimizerMapBase : public utility::pointer::ReferenceCount
+class MinimizerMapBase : public utility::VirtualBase
 {
 public:
 

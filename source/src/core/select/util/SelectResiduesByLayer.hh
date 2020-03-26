@@ -25,7 +25,7 @@
 #include <map>
 #include <utility/vector1.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef SERIALIZATION
 // Cereal headers
@@ -36,7 +36,7 @@ namespace core {
 namespace select {
 namespace util {
 
-class SelectResiduesByLayer : public utility::pointer::ReferenceCount {
+class SelectResiduesByLayer : public utility::VirtualBase {
 public:
 
 

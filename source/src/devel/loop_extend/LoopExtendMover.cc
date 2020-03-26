@@ -63,20 +63,20 @@ void LoopExtendMover::apply( core::pose::Pose & pose )
 	loops.add_loop(loop_);
 	protocols::loops::fold_tree_from_loops( pose, loops, f_new, true /* include terminal cutpoints */);
 	pose.fold_tree( f_new );
-	Size insert_point = loop_.cut()+1;
+	core::Size insert_point = loop_.cut()+1;
 	// residue type set for making alanines from ResidueFactory
 	ResidueTypeSetCOP residue_set
 		( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 
-	for ( Size i=loop_.start(); i<=loop_.stop(); i++ ) {
-		for ( Size i = loop_.start(); i <= loop_.stop(); ++i ) {
+	for ( core::Size i=loop_.start(); i<=loop_.stop(); i++ ) {
+		for ( core::Size i = loop_.start(); i <= loop_.stop(); ++i ) {
 			if ( i != loop_.start() ) pose.set_phi( i, init_phi_ );
 			if ( i != loop_.stop() ) pose.set_psi( i, init_psi_ );
 			if ( ( i != loop_.start() ) && ( i != loop_.stop() ) ) pose.set_omega( i, init_omega_ );
 		}
 	}
 
-	for ( Size i=1; i<=extend_len_; ++i ) {
+	for ( core::Size i=1; i<=extend_len_; ++i ) {
 		tr << "Adding residue: " << i << " at position " << insert_point << std::endl;
 		ResidueOP ala_rsd = ResidueFactory::create_residue( residue_set->name_map( "ALA" ) );
 		//Real xpos = static_cast<Real> (ala_rsd->xyz(2).x());

@@ -20,7 +20,7 @@
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 
@@ -37,7 +37,7 @@ namespace core {
 namespace scoring {
 namespace etable {
 
-class EtableOptions : public utility::pointer::ReferenceCount {
+class EtableOptions : public utility::VirtualBase {
 
 public:
 

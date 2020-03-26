@@ -31,19 +31,19 @@ class HeavyAtomFilter : public protocols::filters::Filter
 {
 public:
 	HeavyAtomFilter() :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "HeavyAtom" )
 	{}
 
 	HeavyAtomFilter(std::string const & chain, core::Size heavy_atom_limit ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "HeavyAtom" ),
 		chain_(chain),
 		heavy_atom_limit_(heavy_atom_limit)
 	{}
 
 	HeavyAtomFilter( HeavyAtomFilter const & init ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( init ),
 		chain_(init.chain_),
 		heavy_atom_limit_(init.heavy_atom_limit_)

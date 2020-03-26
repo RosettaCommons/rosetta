@@ -114,7 +114,7 @@ SimulatedTempering::initialize_simulation(
 	if ( weights_.size() != n_temp_levels() ) {
 		weights_.clear();
 		weighted_counts_.clear();
-		for ( Size ct = 0; ct < n_temp_levels(); ++ct ) {
+		for ( core::Size ct = 0; ct < n_temp_levels(); ++ct ) {
 			weights_.push_back( 1.0 );
 			weighted_counts_.push_back( 0 );
 		}
@@ -123,15 +123,15 @@ SimulatedTempering::initialize_simulation(
 
 void
 SimulatedTempering::reweight() {
-	for ( Size i = 1; i <= counts_.size(); ++i ) {
+	for ( core::Size i = 1; i <= counts_.size(); ++i ) {
 		weighted_counts_[ i ] += 1.0 * counts_[ i ] / weights_[ i ];
 	}
 	//update weights...
-	for ( Size i = 1; i <= weights_.size(); ++i ) {
+	for ( core::Size i = 1; i <= weights_.size(); ++i ) {
 		weights_[i] = 1.0 / weighted_counts_[i];
 	}
 	Real const norm_w ( weights_.back() ); //and normalize by last element...
-	for ( Size i = 1; i <= weights_.size(); ++i ) {
+	for ( core::Size i = 1; i <= weights_.size(); ++i ) {
 		weights_[i] /= norm_w;
 	}
 }
@@ -158,8 +158,8 @@ SimulatedTempering::temperature_move( core::Real score ) {
 	check_temp_consistency();
 	if ( !time_for_temp_move() ) return temperature();
 	//temperature increase, decrease or wait?
-	Size new_temp( current_temp() );
-	Size const nlevels( n_temp_levels() );
+	core::Size new_temp( current_temp() );
+	core::Size const nlevels( n_temp_levels() );
 	if ( temperature_jumps_ ) {
 		new_temp=numeric::random::rg().random_range( 1, nlevels );
 	} else {
@@ -221,7 +221,7 @@ SimulatedTempering::parse_my_tag(
 	//simple options
 	score_offset_ = tag->getOption< Real >( "score_offset", 40.0 );
 	temperature_jumps_ = tag->getOption< bool >( "temperature_jumps", false );
-	reweight_stride_ = tag->getOption< Size >( "reweight_stride", false );
+	reweight_stride_ = tag->getOption< core::Size >( "reweight_stride", false );
 }
 
 /// handling of options including command-line
@@ -256,7 +256,7 @@ bool SimulatedTempering::initialize_from_file( std::string const& filename ) {
 	getline( in, line );
 	std::istringstream line_stream( line );
 	std::string tag;
-	Size n_levels( 0 );
+	core::Size n_levels( 0 );
 
 	line_stream >> tag >> n_levels >> score_offset_;
 
@@ -279,7 +279,7 @@ bool SimulatedTempering::initialize_from_file( std::string const& filename ) {
 
 	if ( line_format ) {
 		Real temp, weight, count, wcount;
-		for ( Size ct=1; ct <= n_levels; ++ct ) {
+		for ( core::Size ct=1; ct <= n_levels; ++ct ) {
 			line_stream >> temp >> weight >> wcount >> count;
 			temperatures.push_back( temp );
 			weights_.push_back( weight );
@@ -333,14 +333,14 @@ void SimulatedTempering::write_to_file( std::string const& file_in, std::string 
 	//write
 	if ( stats_line_output() ) { //line format
 		out << "TEMPERING " << n_temp_levels() << " " << score_offset_ << " " << total_count_;
-		for ( Size i=1; i <= n_temp_levels(); ++i ) {
+		for ( core::Size i=1; i <= n_temp_levels(); ++i ) {
 			out << " " << temperature( i ) << " " << weights_[ i ] << " " << wcounts[ i ] << " " << counts_[ i ];
 		}
 		out << " " << output_name << std::endl;
 	} else { //table format
 		out << std::setw( 10 );
 		out << "TEMPERING_TABLE " << n_temp_levels() << " " << score_offset_ << " " << " " << total_count_ << " " << output_name << std::endl;
-		for ( Size i=1; i <= n_temp_levels(); ++i ) {
+		for ( core::Size i=1; i <= n_temp_levels(); ++i ) {
 			out << temperature( i ) << " " << weights_[ i ] << " " << wcounts[ i ] << " " << counts_[ i ] << std::endl;
 		}
 	}

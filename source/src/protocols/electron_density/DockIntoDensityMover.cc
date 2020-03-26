@@ -94,6 +94,8 @@
 namespace protocols {
 namespace electron_density {
 
+using core::Size;
+
 static basic::Tracer TR( "protocols.electron_density.DockIntoDensityMover" );
 
 struct
@@ -248,7 +250,7 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 	core::Real massSum=0.0;
 	// for fine point selection... generate pose_1dspec based on the middle residue of the pose.
 	if ( convolute_single_residue_ == true ) {
-		Size midres = (pose.size()+1)/2;
+		core::Size midres = (pose.size()+1)/2;
 		while ( pose.residue(midres).is_virtual_residue() ) {
 			++midres;
 		}
@@ -401,12 +403,12 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 	}
 	core::Real minDistNative = 1e4;
 	std::sort(point_score_pairs.begin(), point_score_pairs.end(), PointScoreComparator());
-	for ( Size i=1; i<=point_score_pairs.size(); i++ ) {
+	for ( core::Size i=1; i<=point_score_pairs.size(); i++ ) {
 		bool hasneighbor = false;
 		numeric::xyzVector< core::Real > x_idx = point_score_pairs[i].first;
 		numeric::xyzVector< core::Real > x_cart(x_idx[0],x_idx[1],x_idx[2]);
 		core::scoring::electron_density::getDensityMap().idx2cart( x_idx, x_cart );
-		for ( Size j=1; j<=points_to_search_.size(); j++ ) {
+		for ( core::Size j=1; j<=points_to_search_.size(); j++ ) {
 			numeric::xyzVector< core::Real > x_idx_stored = points_to_search_[j];
 			numeric::xyzVector< core::Real > x_cart_stored(x_idx_stored[0],x_idx_stored[1],x_idx_stored[2]);
 			core::scoring::electron_density::getDensityMap().idx2cart( x_idx_stored, x_cart_stored );
@@ -437,7 +439,7 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 		chains.push_back(utility::vector0<core::io::AtomInformation>());
 		core::io::StructFileRepOptionsCOP options = utility::pointer::make_shared< core::io::StructFileRepOptions >();
 		core::io::AtomInformation ai;
-		for ( Size i=1; i<=points_to_search_.size(); i++ ) {
+		for ( core::Size i=1; i<=points_to_search_.size(); i++ ) {
 			ai.serial = i;
 			ai.name = "MG  ";
 			ai.resName = " MG";
@@ -485,10 +487,10 @@ DockIntoDensityMover::poseSphericalSamples(
 	// atom mask ... 3sigma from carbon
 	core::Real ATOM_MASK = 3.0 * sqrt( density.getEffectiveBfactor() / (2*M_PI*M_PI) );
 
-	for ( Size i=1; i<= pose.size(); ++i ) {
+	for ( core::Size i=1; i<= pose.size(); ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
-		for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
+		for ( core::Size j=1; j<= rsd.nheavyatoms(); ++j ) {
 			conformation::Atom const & atom( rsd.atom(j) );
 			atmList.push_back(atom.xyz());
 			massSum += atom.xyz();
@@ -516,12 +518,12 @@ DockIntoDensityMover::poseSphericalSamples(
 	// precompute sines & cosines
 	utility::vector1<core::Real> cT,cG, sT,sG;
 	cT.resize(2*B); cG.resize(2*B); sT.resize(2*B); sG.resize(2*B);
-	for ( Size t=1; t<=2*B; ++t ) {
+	for ( core::Size t=1; t<=2*B; ++t ) {
 		core::Real theta = (2.0*t-1.0)*M_PI/(4*B);
 		sT[t] = sin(theta);
 		cT[t] = cos(theta);
 	}
-	for ( Size p=1; p<=2*B; ++p ) {
+	for ( core::Size p=1; p<=2*B; ++p ) {
 		core::Real phi = (2.0*p-2.0)*M_PI/(2*B);
 		sG[p] = sin(phi);
 		cG[p] = cos(phi);
@@ -549,12 +551,12 @@ DockIntoDensityMover::poseSphericalSamples(
 		core::Real atomR = atmList[i].length();
 		if ( atomR < 1e-5 ) {
 			// uniform contribution to inner shells
-			for ( Size ridx=1; ridx<=nRsteps; ++ridx ) {
+			for ( core::Size ridx=1; ridx<=nRsteps; ++ridx ) {
 				core::Real atomD = ridx * delRsteps;
 				if ( atomD < ATOM_MASK ) {
 					core::Real atomH = C * exp(-k*atomD*atomD); // <-- this is the place to calculate density
-					for ( Size t=1; t<=2*B; ++t ) {
-						for ( Size p=1; p<=2*B; ++p ) {
+					for ( core::Size t=1; t<=2*B; ++t ) {
+						for ( core::Size p=1; p<=2*B; ++p ) {
 							sigR(p,t,ridx) += atomH;
 						}
 					}
@@ -573,12 +575,12 @@ DockIntoDensityMover::poseSphericalSamples(
 		core::Real cg1 = cos(gamma);
 
 		if ( laplacian_offset_ != 0 ) {
-			for ( Size ridx=1; ridx<=nRsteps; ++ridx ) {
+			for ( core::Size ridx=1; ridx<=nRsteps; ++ridx ) {
 				core::Real shellR = ridx * delRsteps;
-				for ( Size t=1; t<=2*B; ++t ) {
+				for ( core::Size t=1; t<=2*B; ++t ) {
 					core::Real minAtomD =  atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]+ct1*cT[t]);
 					if ( minAtomD>ATOM_MASK*ATOM_MASK ) continue; // this just loops back to 2xB so we still get to sigR
-					for ( Size p=1; p<=2*B; ++p ) {
+					for ( core::Size p=1; p<=2*B; ++p ) {
 						core::Real atomD = atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]*(sg1*sG[p]+cg1*cG[p])+ct1*cT[t]);
 						if ( atomD < ATOM_MASK*ATOM_MASK ) {
 							core::Real atomH = C * exp(-k*atomD);
@@ -601,12 +603,12 @@ DockIntoDensityMover::poseSphericalSamples(
 					core::Real ct1_2 = cos(beta_2);
 					core::Real cg1_2 = cos(gamma_2);
 					// residue index
-					for ( Size ridx=1; ridx<=nRsteps; ++ridx ) {
+					for ( core::Size ridx=1; ridx<=nRsteps; ++ridx ) {
 						core::Real shellR = ridx * delRsteps;
-						for ( Size t=1; t<=2*B; ++t ) {
+						for ( core::Size t=1; t<=2*B; ++t ) {
 							core::Real minAtomD =  atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1_2*sT[t]+ct1_2*cT[t]);
 							if ( minAtomD>ATOM_MASK*ATOM_MASK ) continue;
-							for ( Size p=1; p<=2*B; ++p ) {
+							for ( core::Size p=1; p<=2*B; ++p ) {
 								core::Real atomD = atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1_2*sT[t]*(sg1_2*sG[p]+cg1_2*cG[p])+ct1_2*cT[t]);
 								if ( atomD < ATOM_MASK*ATOM_MASK ) {
 									core::Real atomH = C * exp(-k*atomD);
@@ -621,12 +623,12 @@ DockIntoDensityMover::poseSphericalSamples(
 			}
 
 		} else {
-			for ( Size ridx=1; ridx<=nRsteps; ++ridx ) {
+			for ( core::Size ridx=1; ridx<=nRsteps; ++ridx ) {
 				core::Real shellR = ridx * delRsteps;
-				for ( Size t=1; t<=2*B; ++t ) {
+				for ( core::Size t=1; t<=2*B; ++t ) {
 					core::Real minAtomD =  atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]+ct1*cT[t]);
 					if ( minAtomD>ATOM_MASK*ATOM_MASK ) continue;
-					for ( Size p=1; p<=2*B; ++p ) {
+					for ( core::Size p=1; p<=2*B; ++p ) {
 						core::Real atomD = atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]*(sg1*sG[p]+cg1*cG[p])+ct1*cT[t]);
 						if ( atomD < ATOM_MASK*ATOM_MASK ) {
 							core::Real atomH = C * exp(-k*atomD);

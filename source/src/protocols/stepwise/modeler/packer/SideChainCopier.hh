@@ -35,7 +35,7 @@ public:
 
 	//constructor
 	SideChainCopier( core::pose::Pose const & reference_pose,
-		utility::vector1< Size > const & copy_res,
+		utility::vector1< core::Size > const & copy_res,
 		bool const copy_o2prime_hydrogens = false  );
 
 	//destructor
@@ -51,7 +51,7 @@ public:
 private:
 
 	core::pose::Pose const & reference_pose_;
-	utility::vector1< Size > copy_res_;
+	utility::vector1< core::Size > copy_res_;
 	bool copy_o2prime_hydrogens_;
 
 };

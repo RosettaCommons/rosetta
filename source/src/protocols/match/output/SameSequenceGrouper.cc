@@ -36,7 +36,7 @@ namespace match {
 namespace output {
 
 SameSequenceGrouper::SameSequenceGrouper() : n_geometric_constraints_( 0 ) {}
-SameSequenceGrouper::SameSequenceGrouper( Size ncst ) : n_geometric_constraints_( ncst ) {}
+SameSequenceGrouper::SameSequenceGrouper( core::Size ncst ) : n_geometric_constraints_( ncst ) {}
 
 SameSequenceGrouper::~SameSequenceGrouper() = default;
 
@@ -55,8 +55,8 @@ SameSequenceGrouper::assign_group_for_match(
 {
 	runtime_assert( m.upstream_hits.size() == n_geometric_constraints_ );
 
-	utility::vector1< Size > seq_vector( n_geometric_constraints_ * 2, 0 );
-	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
+	utility::vector1< core::Size > seq_vector( n_geometric_constraints_ * 2, 0 );
+	for ( core::Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
 		seq_vector[ ii ] = m.upstream_hits[ ii ].scaffold_build_id();
 		seq_vector[ n_geometric_constraints_ + ii ] =
 			hit_cacher_->upstream_conformation_for_hit( ii, fake_hit( m.upstream_hits[ ii ] ) )->aa();
@@ -64,7 +64,7 @@ SameSequenceGrouper::assign_group_for_match(
 
 	SequenceMap::const_iterator iter = sequence_indexer_.find( seq_vector );
 	if ( iter == sequence_indexer_.end() ) {
-		Size next_index = sequence_indexer_.size() + 1;
+		core::Size next_index = sequence_indexer_.size() + 1;
 		sequence_indexer_[ seq_vector ] = next_index;
 		return next_index;
 	} else {
@@ -79,7 +79,7 @@ SameSequenceGrouper::reset()
 }
 
 void
-SameSequenceGrouper::set_n_geometric_constraints( Size n_csts )
+SameSequenceGrouper::set_n_geometric_constraints( core::Size n_csts )
 {
 	n_geometric_constraints_ = n_csts;
 }
@@ -93,7 +93,7 @@ SameSequenceGrouper::set_hit_cacher( UpstreamHitCacherOP cacher )
 
 SameSequenceAndDSPositionGrouper::SameSequenceAndDSPositionGrouper() :
 	SameSequenceGrouper(), rms_group_cutoff_(1.0) {}
-SameSequenceAndDSPositionGrouper::SameSequenceAndDSPositionGrouper( Size ncst ) :
+SameSequenceAndDSPositionGrouper::SameSequenceAndDSPositionGrouper( core::Size ncst ) :
 	SameSequenceGrouper( ncst ), rms_group_cutoff_(1.0)
 {
 	dsbuilders_.resize( ncst, nullptr );
@@ -102,7 +102,7 @@ SameSequenceAndDSPositionGrouper::SameSequenceAndDSPositionGrouper( Size ncst ) 
 SameSequenceAndDSPositionGrouper::~SameSequenceAndDSPositionGrouper() = default;
 
 void
-SameSequenceAndDSPositionGrouper::set_n_geometric_constraints( Size n_csts )
+SameSequenceAndDSPositionGrouper::set_n_geometric_constraints( core::Size n_csts )
 {
 	parent::set_n_geometric_constraints( n_csts );
 	dsbuilders_.resize( n_csts );
@@ -120,13 +120,13 @@ SameSequenceAndDSPositionGrouper::assign_group_for_match(
 	match_dspos1 const & m
 ){
 	//std::cout << "seq ds assigning group for match " << std::endl;
-	Size sequence_group( parent::assign_group_for_match( m ) );
-	Size ds_group( assign_downstream_position_group_for_match( m ) );
-	std::pair< Size, Size > seq_dspos_pair( sequence_group, ds_group );
+	core::Size sequence_group( parent::assign_group_for_match( m ) );
+	core::Size ds_group( assign_downstream_position_group_for_match( m ) );
+	std::pair< core::Size, core::Size > seq_dspos_pair( sequence_group, ds_group );
 
 	auto seqpos_it = sequence_pos_map_.find( seq_dspos_pair );
 	if ( seqpos_it == sequence_pos_map_.end() ) {
-		Size newgroup( sequence_pos_map_.size() + 1 );
+		core::Size newgroup( sequence_pos_map_.size() + 1 );
 		sequence_pos_map_.insert( std::make_pair( seq_dspos_pair, newgroup ) );
 		return newgroup;
 	}
@@ -152,7 +152,7 @@ SameSequenceAndDSPositionGrouper::set_relevant_atom_ids(
 
 void
 SameSequenceAndDSPositionGrouper::set_downstream_builder(
-	Size geomcst_id,
+	core::Size geomcst_id,
 	downstream::DownstreamBuilderCOP dsbuilder
 )
 {

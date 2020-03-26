@@ -22,9 +22,9 @@
 #include <protocols/jd3/pose_inputters/PoseInputter.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/options/OptionCollection.hh>
 #include <utility/tag/Tag.hh>
 

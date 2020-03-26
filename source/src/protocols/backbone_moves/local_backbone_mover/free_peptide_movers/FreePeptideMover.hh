@@ -21,7 +21,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // BOOST
 #include <boost/noncopyable.hpp>
@@ -33,7 +33,7 @@ namespace free_peptide_movers {
 
 ///@brief Base class for free peptide movers.
 class FreePeptideMover :
-	public utility::pointer::ReferenceCount, protected boost::noncopyable {
+	public utility::VirtualBase, protected boost::noncopyable {
 
 public:
 

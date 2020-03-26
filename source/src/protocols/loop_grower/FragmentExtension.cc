@@ -350,7 +350,7 @@ FragmentExtension::apply( core::pose::Pose & pose ) {
 	}
 
 	if ( dumpfragments_ ) {
-		for ( Size i=1; i<=frag_sizes_.size(); i++ ) {
+		for ( core::Size i=1; i<=frag_sizes_.size(); i++ ) {
 			std::string totalfrags = utility::to_string(nfrags_);
 			std::string fraglength = utility::to_string(frag_sizes_[i]);
 			std::string fragname = totalfrags+"."+fraglength+"mers";
@@ -429,7 +429,7 @@ FragmentExtension::apply( core::pose::Pose & pose ) {
 			TR << "not growing from virtual" << std::endl;
 			continue;
 		}
-		Size loopnumber = i;
+		core::Size loopnumber = i;
 		if ( looporder_ > 0 ) loopnumber  = looporder_;
 
 		TR << " Growing loop between residues " << start_fasta-1 << " and " << stop_fasta+1 << std::endl;
@@ -522,7 +522,7 @@ FragmentExtension::apply( core::pose::Pose & pose ) {
 		core::pose::Pose comparatorpose = pose;
 		core::pose::Pose bestpose = pose;
 		Real least_clashing = pre_grow_clash + 99999;
-		for ( Size i=1; i<=montecarlorounds_; i++ ) {
+		for ( core::Size i=1; i<=montecarlorounds_; i++ ) {
 			TR << " comparator pose size is " << comparatorpose.total_residue() << std::endl;
 			comparator.apply(comparatorpose);
 			(*cen_sf_)(comparatorpose);
@@ -923,12 +923,12 @@ void LoopComparator::set_scores(core::pose::Pose & pose){
 
 	TR << "setting scores" << std::endl;
 	//Store 1 body loopscores
-	for ( Size i=1; i<= solutionsets_.size(); i++ ) {
+	for ( core::Size i=1; i<= solutionsets_.size(); i++ ) {
 		LoopPartialSolutionStore loop = solutionsets_[i];
 		utility::vector1<Real> one_body_vector(loop.size());
-		Size upper = loop.get_upper_fasta();
-		Size lower = loop.get_lower_fasta();
-		for ( Size ii=1; ii<=loop.size(); ii++ ) {
+		core::Size upper = loop.get_upper_fasta();
+		core::Size lower = loop.get_lower_fasta();
+		for ( core::Size ii=1; ii<=loop.size(); ii++ ) {
 			LoopPartialSolution beam = loop[ii];
 			Real beamscore = beam.get_score();
 			//Note one body score is the per residue score
@@ -939,7 +939,7 @@ void LoopComparator::set_scores(core::pose::Pose & pose){
 			/*beam.set_coordinates(pose);
 			Real dens_score = 0.0;
 			(*sf_dens_)(pose);
-			for(Size j=lower; j<=upper; j++){
+			for(core::Size j=lower; j<=upper; j++){
 			core::scoring::ScoreType elec_dens = core::scoring::score_type_from_name( "elec_dens_fast" );
 			core::Real residue_dens = (sf_dens_->get_weight(core::scoring::elec_dens_fast) * pose.energies().residue_total_energies(j)[elec_dens]);
 			dens_score += residue_dens;
@@ -954,25 +954,25 @@ void LoopComparator::set_scores(core::pose::Pose & pose){
 	//Store energies
 	//// using this method calculates 1 body and 2 body energies at the same time. This requires the electron density be scored over additional residues but is probably faster than scoring
 	//an additional time for each loop to change this behavior set first_round = to false and uncomment the above code.
-	for ( Size i=1; i<=solutionsets_.size(); i++ ) {
+	for ( core::Size i=1; i<=solutionsets_.size(); i++ ) {
 		LoopPartialSolutionStore loop = solutionsets_[i];
 		//iterate over all the n+1 loops
-		Size z = i+1;
-		Size upper_one = loop.get_upper_fasta();
-		Size lower_one = loop.get_lower_fasta();
+		core::Size z = i+1;
+		core::Size upper_one = loop.get_upper_fasta();
+		core::Size lower_one = loop.get_lower_fasta();
 		TR << "starting solutionset_" << i << "'s two body scores " << std::endl;
 		while ( z<=solutionsets_.size() ) {
 			utility::vector1<utility::vector1< Real > > two_body_beam_vector(loop.size());
 			LoopPartialSolutionStore compared_loop = solutionsets_[z];
-			Size upper_two = compared_loop.get_upper_fasta();
-			Size lower_two = compared_loop.get_lower_fasta();
-			for ( Size ii=1; ii<=loop.size(); ii++ ) {
+			core::Size upper_two = compared_loop.get_upper_fasta();
+			core::Size lower_two = compared_loop.get_lower_fasta();
+			for ( core::Size ii=1; ii<=loop.size(); ii++ ) {
 				utility::vector1<Real> two_body_score_vector(compared_loop.size());
 				LoopPartialSolution beam_one = loop[ii];
 				beam_one.set_coordinates(pose);
 				TR << " solutionset_"<< i << " compared to solutionset " << z << " using beam " << ii << std::endl;
 				//iterate over all the beams in the second loop
-				for ( Size iii=1; iii<=compared_loop.size(); iii++ ) {
+				for ( core::Size iii=1; iii<=compared_loop.size(); iii++ ) {
 					LoopPartialSolution beam_two = compared_loop[iii];
 					//beam_two.apply(pose, lower_one, upper_one);
 					beam_two.set_coordinates(pose);
@@ -981,14 +981,14 @@ void LoopComparator::set_scores(core::pose::Pose & pose){
 					//get second loop score
 					core::scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 					Real score = 0;
-					for ( Size j=lower_one; j<=upper_one; ++j ) {
+					for ( core::Size j=lower_one; j<=upper_one; ++j ) {
 						for ( utility::graph::Graph::EdgeListConstIter
 								iru = energy_graph.get_node(j)->const_upper_edge_list_begin(),
 								irue = energy_graph.get_node(j)->const_upper_edge_list_end();
 								iru != irue; ++iru ) {
 							auto const *edge( static_cast< core::scoring::EnergyEdge const *> (*iru) );
-							Size const e1( edge->get_first_node_ind() );
-							Size const e2( edge->get_second_node_ind() );
+							core::Size const e1( edge->get_first_node_ind() );
+							core::Size const e2( edge->get_second_node_ind() );
 							if ( (e1 >=lower_one && e1<=upper_one) || (e2 >= lower_one && e2 <= upper_one) ) {
 								if ( (e1 >=lower_one && e1 <=upper_one) || (e2 >=lower_one && e2 <= upper_one) ) {
 									if ( (e1 >= lower_two && e1<= upper_two) || (e2 >=lower_two && e2<= upper_two) ) {
@@ -1003,7 +1003,7 @@ void LoopComparator::set_scores(core::pose::Pose & pose){
 				}
 				two_body_beam_vector[ii] = two_body_score_vector;
 			}
-			std::pair<Size,Size> mapkey(i,z);
+			std::pair<core::Size,Size> mapkey(i,z);
 			two_body_energies_map_[mapkey] = two_body_beam_vector;
 			z++;
 		}
@@ -1012,23 +1012,23 @@ void LoopComparator::set_scores(core::pose::Pose & pose){
 
 void LoopComparator::apply( core::pose::Pose & pose ){
 
-	utility::vector1<Size> working_solution;
-	utility::vector1<Size> best_solution;
-	utility::vector1<Size> current_solution;
+	utility::vector1<core::Size> working_solution;
+	utility::vector1<core::Size> best_solution;
+	utility::vector1<core::Size> current_solution;
 	Real working_score = 0;
 	Real best_score = 99999;
 
-	for ( Size i=1; i<=solutionsets_.size(); i++ ) {
-		Size beam_number = solutionsets_[i].size();
-		Size beam = numeric::random::random_range(1, beam_number);
+	for ( core::Size i=1; i<=solutionsets_.size(); i++ ) {
+		core::Size beam_number = solutionsets_[i].size();
+		core::Size beam = numeric::random::random_range(1, beam_number);
 		working_solution.push_back(beam);
 	}
-	for ( Size i=1; i<=working_solution.size(); i++ ) {
-		Size beam = working_solution[i];
+	for ( core::Size i=1; i<=working_solution.size(); i++ ) {
+		core::Size beam = working_solution[i];
 		working_score += one_body_energies_[i][beam];
-		Size z = i+1;
+		core::Size z = i+1;
 		while ( z<=working_solution.size() ) {
-			std::pair<Size,Size> mapkey(i,z);
+			std::pair<core::Size,Size> mapkey(i,z);
 			Real two_body_score = two_body_energies_map_[mapkey][working_solution[i]][working_solution[z]];
 			working_score += two_body_score;
 			z++;
@@ -1039,31 +1039,31 @@ void LoopComparator::apply( core::pose::Pose & pose ){
 	current_solution = working_solution;
 
 
-	Size montecount = 0;
+	core::Size montecount = 0;
 	Real kt = 200;
-	for ( Size i=1; i<=6; i++ ) {
+	for ( core::Size i=1; i<=6; i++ ) {
 		kt = kt/2;
-		for ( Size j=1; j<=250; j++ ) {
+		for ( core::Size j=1; j<=250; j++ ) {
 			montecount++;
-			Size loop = numeric::random::random_range(1, solutionsets_.size());
+			core::Size loop = numeric::random::random_range(1, solutionsets_.size());
 			//change the range of the following function to start from 0 if you want the possibility of no loop being assigned
-			Size start_range = 1;
+			core::Size start_range = 1;
 			if ( assign_incomplete_ ) {
 				start_range = 0;
 			}
-			Size beam = numeric::random::random_range(start_range, solutionsets_[loop].size());
+			core::Size beam = numeric::random::random_range(start_range, solutionsets_[loop].size());
 			current_solution[loop] = beam;
 			Real current_score = 0;
 			Real two_body_score = 0;
-			for ( Size ii=1; ii<=current_solution.size(); ii++ ) {
-				Size storedbeam = current_solution[ii];
+			for ( core::Size ii=1; ii<=current_solution.size(); ii++ ) {
+				core::Size storedbeam = current_solution[ii];
 				if ( storedbeam == 0 ) continue;
-				Size looplen = solutionsets_[ii].get_upper_fasta() - solutionsets_[ii].get_lower_fasta();
+				core::Size looplen = solutionsets_[ii].get_upper_fasta() - solutionsets_[ii].get_lower_fasta();
 				current_score += one_body_energies_[ii][storedbeam]/looplen;
-				Size z = ii;
+				core::Size z = ii;
 				while ( z<=current_solution.size()-1 ) {
 					z++;
-					std::pair<Size,Size> mapkey(ii,z);
+					std::pair<core::Size,Size> mapkey(ii,z);
 					if ( current_solution[z] == 0 ) continue;
 					two_body_score = two_body_energies_map_[mapkey][current_solution[ii]][current_solution[z]];
 					current_score += two_body_score;
@@ -1091,10 +1091,10 @@ void LoopComparator::apply( core::pose::Pose & pose ){
 	}
 	//TR << "best solution size " << best_solution.size() << std::endl;
 	//TR << best_solution << std::endl;
-	Size deletecount = 0;
+	core::Size deletecount = 0;
 
 	one_body_score_ = 0;
-	for ( Size i=1; i<=best_solution.size(); i++ ) {
+	for ( core::Size i=1; i<=best_solution.size(); i++ ) {
 		LoopPartialSolutionStore loop = solutionsets_[i];
 		if ( best_solution[i] != 0 ) {
 			LoopPartialSolution beam = loop[best_solution[i]];
@@ -1102,11 +1102,11 @@ void LoopComparator::apply( core::pose::Pose & pose ){
 			one_body_score_ += one_body_energies_[i][best_solution[i]];
 		}
 	}
-	for ( Size i=1; i<=best_solution.size(); i++ ) {
+	for ( core::Size i=1; i<=best_solution.size(); i++ ) {
 		LoopPartialSolutionStore loop = solutionsets_[i];
 		if ( best_solution[i] == 0 ) {
-			Size start = loops_[i].start()-deletecount;
-			Size end = loops_[i].stop()-deletecount;
+			core::Size start = loops_[i].start()-deletecount;
+			core::Size end = loops_[i].stop()-deletecount;
 			TR << "deleting loop " << start << " to " << end << std::endl;
 			pose.delete_residue_range_slow(start, end);
 			deletecount += end-start+1;
@@ -1117,37 +1117,37 @@ void LoopComparator::apply( core::pose::Pose & pose ){
 }
 void LoopComparator::read_from_file(){
 	std::ifstream lpsfile("lpsfile.txt");
-	Size loopcount;
+	core::Size loopcount;
 	lpsfile >> loopcount;
-	for ( Size i=1; i<=loopcount; i++ ) {
-		Size totalbeams;
+	for ( core::Size i=1; i<=loopcount; i++ ) {
+		core::Size totalbeams;
 		lpsfile >> totalbeams;
 		LoopPartialSolutionStore loop;
-		Size lower_fasta, upper_fasta, lower_pose, upper_pose, cut_point;
+		core::Size lower_fasta, upper_fasta, lower_pose, upper_pose, cut_point;
 		lpsfile >> lower_fasta >> upper_fasta >> lower_pose >> upper_pose >> cut_point;
 		if ( lpsfile.eof() ) break;
 		loop.set_fastas(lower_fasta, upper_fasta);
 		loop.set_poses(lower_pose, upper_pose);
 		loop.set_cutpoint(cut_point);
-		for ( Size ii=1; ii<=totalbeams; ii++ ) {
+		for ( core::Size ii=1; ii<=totalbeams; ii++ ) {
 			LoopPartialSolution beam;
 			utility::vector1< core::id::AtomID > ids;
 			utility::vector1< numeric::xyzVector<core::Real> > positions;
-			Size m;
+			core::Size m;
 			Real score;
 			lpsfile >> score;
 			beam.set_score(score);
 			lpsfile >> m;
 			if ( lpsfile.eof() ) break;
-			for ( Size j=1; j<=m; j++ ) {
-				Size atomno, rsd;
+			for ( core::Size j=1; j<=m; j++ ) {
+				core::Size atomno, rsd;
 				lpsfile >> atomno >> rsd;
 				core::id::AtomID atomid(atomno,rsd);
 				ids.push_back(atomid);
 				if ( lpsfile.eof() ) break;
 			}
 			numeric::xyzVector<core::Real> xyzvector;
-			for ( Size j=1; j<=m; j++ ) {
+			for ( core::Size j=1; j<=m; j++ ) {
 				lpsfile >> xyzvector[0] >> xyzvector[1] >> xyzvector[2];
 				positions.push_back(xyzvector);
 				if ( lpsfile.eof() ) break;
@@ -1177,18 +1177,18 @@ void LoopComparator::fill_pose(core::pose::Pose & pose){
 		is_centroid = false;
 	}
 	if ( read_from_file_ ) read_from_file();
-	Size cutpoint;
+	core::Size cutpoint;
 	//Place Loops into Pose
 	bool is_cterm = false;
 	bool is_nterm = false;
-	for ( Size i=1; i<=solutionsets_.size(); i++ ) {
+	for ( core::Size i=1; i<=solutionsets_.size(); i++ ) {
 		is_nterm = false;
 		is_cterm = false;
 		LoopPartialSolutionStore loop = solutionsets_[i];
-		Size range_hi = loop.get_upper_fasta();
+		core::Size range_hi = loop.get_upper_fasta();
 		//This lower pose logic is probably broken it should be 1 lower than it is
-		Size lower_pose = loop.get_lower_pose();
-		Size upper_pose = loop.get_upper_pose();
+		core::Size lower_pose = loop.get_lower_pose();
+		core::Size upper_pose = loop.get_upper_pose();
 		cutpoint = loop.get_cutpoint();
 		if ( range_hi == fullength_seq_->sequence().size() ) is_cterm = true;
 		if ( lower_pose == 1 ) is_nterm = true;
@@ -1198,7 +1198,7 @@ void LoopComparator::fill_pose(core::pose::Pose & pose){
 			core::conformation::remove_upper_terminus_type_from_conformation_residue( pose.conformation(), lower_pose-1 );
 			core::conformation::remove_lower_terminus_type_from_conformation_residue( pose.conformation(), lower_pose );
 		}
-		for ( Size j=upper_pose; j>cutpoint; j-- ) {
+		for ( core::Size j=upper_pose; j>cutpoint; j-- ) {
 			if ( is_centroid ) {
 				core::conformation::ResidueOP newres_cen( core::conformation::ResidueFactory::create_residue(*restypes_pose_cen[j] ));
 				pose.conformation().safely_prepend_polymer_residue_before_seqpos(*newres_cen, lower_pose, true);
@@ -1207,7 +1207,7 @@ void LoopComparator::fill_pose(core::pose::Pose & pose){
 				pose.conformation().safely_prepend_polymer_residue_before_seqpos(*newres, lower_pose, true);
 			}
 		}
-		for ( Size j=lower_pose; j<=cutpoint; j++ ) {
+		for ( core::Size j=lower_pose; j<=cutpoint; j++ ) {
 			if ( is_centroid ) {
 				core::conformation::ResidueOP newres_cen( core::conformation::ResidueFactory::create_residue(*restypes_pose_cen[j] ));
 				pose.conformation().safely_append_polymer_residue_after_seqpos(*newres_cen, j-1, true);
@@ -1236,7 +1236,7 @@ void
 FragmentExtension::cluster_fragments( utility::vector1<core::fragment::FragSetOP> & fragments, Real fragfilter ){
 
 
-	Size nfragsets = fragments.size();
+	core::Size nfragsets = fragments.size();
 	for ( int i=1; i<=(int)nfragsets; ++i ) {
 		core::fragment::FragSetOP newfrags = fragments[i]->empty_clone();
 		for ( core::fragment::ConstFrameIterator j = fragments[i]->begin(); j != fragments[i]->end(); ++j ) {

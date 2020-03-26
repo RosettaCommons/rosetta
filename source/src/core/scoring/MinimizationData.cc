@@ -17,6 +17,7 @@
 #include <core/scoring/MinimizationData.hh>
 
 // Project headers
+#include <core/types.hh>
 #include <basic/datacache/CacheableData.hh>
 
 #include <utility/vector1.hh>
@@ -28,7 +29,7 @@ namespace scoring {
 ResSingleMinimizationData::ResSingleMinimizationData() : data_cache_( n_min_single_data ) {}
 ResSingleMinimizationData::~ResSingleMinimizationData() = default;
 ResSingleMinimizationData::ResSingleMinimizationData( ResSingleMinimizationData const & other ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	data_cache_( n_min_single_data )
 {
 	for ( Size ii = 1; ii <= n_min_single_data; ++ii ) {
@@ -66,7 +67,7 @@ ResSingleMinimizationData::get_data( min_single_data index ) const
 ResPairMinimizationData::ResPairMinimizationData() : data_cache_( n_min_pair_data ) {}
 ResPairMinimizationData::~ResPairMinimizationData() = default;
 ResPairMinimizationData::ResPairMinimizationData( ResPairMinimizationData const & other ) :
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	data_cache_( n_min_pair_data )
 {
 	for ( Size ii = 1; ii <= n_min_pair_data; ++ii ) {

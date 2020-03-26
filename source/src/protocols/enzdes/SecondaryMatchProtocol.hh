@@ -118,7 +118,7 @@ private:
 
 
 /// @brief helper class to process and output the different found poses
-class PoseFoundResiduesCombination : public utility::pointer::ReferenceCount
+class PoseFoundResiduesCombination : public utility::VirtualBase
 {
 public:
 	~PoseFoundResiduesCombination() override;

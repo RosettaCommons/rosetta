@@ -18,7 +18,7 @@
 // Project headers
 #include <core/pose/full_model_info/SubMotifInfo.fwd.hh>
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -36,7 +36,7 @@ namespace full_model_info {
 
 //////////////////////////////////////////////////////////////////////////////
 /// @brief Keep track of information about a submotif added to a pose.
-class SubMotifInfo : public utility::pointer::ReferenceCount {
+class SubMotifInfo : public utility::VirtualBase {
 
 public:
 

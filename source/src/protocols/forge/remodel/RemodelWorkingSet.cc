@@ -130,7 +130,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	//core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID_t );
 
 	// find rebuilding segments
-	Size model_length = data.sequence.size();
+	core::Size model_length = data.sequence.size();
 	//bool NtermExt = false;  // unused ~Labonte
 	bool CtermExt = false;
 	//bool length_changed = false;
@@ -327,7 +327,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	}
 
 	TR.Trace << "segmentStorageVector: [ ";
-	for ( Size ii=0; ii < segmentStorageVector.size(); ++ii ) {
+	for ( core::Size ii=0; ii < segmentStorageVector.size(); ++ii ) {
 		TR.Trace << "segment " << ii << ": [ ";
 		for ( int residue : segmentStorageVector[ ii ].residues ) {
 			TR.Trace << residue << ", ";
@@ -343,7 +343,6 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	using protocols::forge::build::SegmentInsertOP;
 	using protocols::forge::build::BuildInstructionOP;
 	using String = std::string;
-	using Size = core::Size;
 
 	using core::fragment::ConstantLengthFragSet;
 	using core::fragment::ConstantLengthFragSetOP;
@@ -358,8 +357,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 
 	// first get insertion index
 
-	Size insertStartIndex = 0;
-	Size insertEndIndex = 0;
+	core::Size insertStartIndex = 0;
+	core::Size insertEndIndex = 0;
 	TR << "data.dssp_updated_ss: " << data.dssp_updated_ss << std::endl;
 	if ( option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user() ) {
 		TR << "Processing insertion SS info..." << std::endl;
@@ -369,8 +368,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	}
 	// hack for jack
 	/*
-	Size insert2StartIndex = 0;
-	Size insert2EndIndex = 0;
+	core::Size insert2StartIndex = 0;
+	core::Size insert2EndIndex = 0;
 	TR << "data.dssp_updated_ss: " << data.dssp_updated_ss << std::endl;
 	if ( option[OptionKeys::remodel::domainFusion::insert_segment2_from_pdb].user() ) {
 	TR << "Processing insertion SS info..." << std::endl;
@@ -443,8 +442,8 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		//core::Size rep_number =option[OptionKeys::remodel::repeat_structure];
 		std::string DSSP = data.dssp_updated_ss;
 
-		// Sachko: Changed Size (unsigned) to int (signed) to make this logic work properly.
-		// Labonte (earlier comment): I don't know what happens when one assigns -1 to a Size, but this needs to be fixed.
+		// Sachko: Changed core::Size (unsigned) to int (signed) to make this logic work properly.
+		// Labonte (earlier comment): I don't know what happens when one assigns -1 to a core::Size, but this needs to be fixed.
 		int head = -1, tail = -1, headNew = -1, tailNew = -1; //safety, init to negative values
 
 		//use temp_For_copy to identify if it's de novo build; not empty means it's a loop case.
@@ -488,7 +487,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			}
 		} else if ( option[OptionKeys::remodel::repeat_structure].user() && temp_for_copy.empty() ) { //de novo case
 			//std::cout << "idFront " << idFront << " idBack " << idBack << std::endl;
-			Size range_limit = data.blueprint.size();
+			core::Size range_limit = data.blueprint.size();
 			if ( idBack >= range_limit ) { // can't assign beyond blueprint definition, as indices are missing as extensions
 				idFront = 1;
 				idBack = range_limit;
@@ -531,7 +530,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 			TR << "afterInsert: " << afterInsert << std::endl;
 			String blank;
 			/*
-			for (Size i=1; i<= data.insertionSS.size(); i++){
+			for (core::Size i=1; i<= data.insertionSS.size(); i++){
 			blank.append("^");
 			} // can't append extra ^ characters because insert_SS_string gets stored in SegmentInsert and used by the manager
 			*/
@@ -561,7 +560,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 		TR << "afterInsert: " << afterInsert << std::endl;
 		String blank;
 
-		// for (Size i=1; i<= data.insertionSS.size(); i++){
+		// for (core::Size i=1; i<= data.insertionSS.size(); i++){
 		// blank.append("^");
 		// } // can't append extra ^ characters because insert_SS_string gets stored in SegmentInsert and used by the manager
 

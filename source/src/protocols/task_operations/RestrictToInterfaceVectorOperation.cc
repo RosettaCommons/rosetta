@@ -194,7 +194,7 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 
 		// set all waters to part of the interface
 		if ( include_all_water_ ) {
-			for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+			for ( core::Size ii=1; ii<=pose.total_residue(); ++ii ) {
 				if ( pose.residue(ii).is_water() == true ) {
 					//          TR << " adding residue " << pose.residue(ii).name() << " " << ii << " to interface" << std::endl;
 					repack_full[ii] = true;
@@ -233,7 +233,7 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 
 		// set all waters to part of the interface
 		if ( include_all_water_ ) {
-			for ( Size ii=1; ii<=pose.total_residue(); ++ii ) {
+			for ( core::Size ii=1; ii<=pose.total_residue(); ++ii ) {
 				if ( pose.residue(ii).is_water() == true ) {
 					//          TR << " adding residue " << pose.residue(ii).name() << " " << ii << " to interface" << std::endl;
 					repack_full[ii] = true;

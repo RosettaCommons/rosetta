@@ -57,14 +57,14 @@ EXCN_FTSketchGraph::EXCN_FTSketchGraph(char const *file, int line, std::string c
 {}
 
 FoldTreeSketch::FoldTreeSketch():
-	ReferenceCount(),
+	VirtualBase(),
 	nodes_(),
 	n_jumps_( 0 ),
 	n_cuts_( 0 )
 {}
 
 FoldTreeSketch::FoldTreeSketch( Size const length ):
-	ReferenceCount(),
+	VirtualBase(),
 	nodes_(),
 	n_jumps_( 0 ),
 	n_cuts_( -1 )
@@ -73,7 +73,7 @@ FoldTreeSketch::FoldTreeSketch( Size const length ):
 }
 
 FoldTreeSketch::FoldTreeSketch( core::kinematics::FoldTree const& ft ):
-	ReferenceCount(),
+	VirtualBase(),
 	nodes_(),
 	n_jumps_( 0 ),
 	n_cuts_( -1 )

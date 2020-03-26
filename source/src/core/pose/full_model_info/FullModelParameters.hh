@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_pose_full_model_info_FullModelParameters_HH
 #define INCLUDED_core_pose_full_model_info_FullModelParameters_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/pose/full_model_info/FullModelParameterType.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -67,7 +67,7 @@ namespace core {
 namespace pose {
 namespace full_model_info {
 
-class FullModelParameters: public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< FullModelParameters > {
+class FullModelParameters: public utility::VirtualBase, public utility::pointer::enable_shared_from_this< FullModelParameters > {
 
 public:
 

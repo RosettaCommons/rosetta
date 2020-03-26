@@ -26,7 +26,7 @@
 // Utility headers
 #include <utility>
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <basic/Tracer.hh>
 

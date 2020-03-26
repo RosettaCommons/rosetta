@@ -137,9 +137,9 @@ void XYZClaim::yield_elements( core::pose::Pose const& pose, DOFElements& elemen
 
 	// Run through each position in the pose and claim produce DoFElements claiming it,
 	// iff it's selected
-	for ( Size seqpos = 1; seqpos <= selection.size(); ++seqpos ) {
+	for ( core::Size seqpos = 1; seqpos <= selection.size(); ++seqpos ) {
 		if ( selection[seqpos] ) {
-			for ( Size i = 1; i <= pose.conformation().residue( seqpos ).atoms().size(); ++i ) {
+			for ( core::Size i = 1; i <= pose.conformation().residue( seqpos ).atoms().size(); ++i ) {
 				core::id::AtomID const atom_id( i, seqpos );
 
 				// if the relative setting is activated, only DoFs that build *relative* positions are claimed.

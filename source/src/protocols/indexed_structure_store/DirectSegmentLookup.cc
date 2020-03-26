@@ -73,9 +73,9 @@ flatten_center(Array<T,N,C> const & input) {
 	typedef typename Access::Core Core;
 	BOOST_STATIC_ASSERT(C+Nf-N-Np >= 1);
 
-	Vector<Size,N> oldShape = input.getShape();
+	Vector<core::Size,N> oldShape = input.getShape();
 	Vector<Offset,N> oldStrides = input.getStrides();
-	Vector<Size,Nf> newShape;
+	Vector<core::Size,Nf> newShape;
 	Vector<Offset,Nf> newStrides;
 
 	for ( int i = 0; i < Nf - Np - 1; ++i ) {

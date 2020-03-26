@@ -32,7 +32,7 @@
 //#include <utility/string_util.hh>
 // #include <utility/excn/Exceptions.hh>
 // #include <utility/vector1.fwd.hh>
-// #include <utility/pointer/ReferenceCount.hh>
+// #include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <core/util/prof.hh>
 
@@ -76,7 +76,7 @@ bool covalent_compliance( core::id::NamedAtomID const& atom1, core::id::NamedAto
 //    if ( it2->second.atom().atom()[0]=='C' ) continue;
 //    core::scoring::constraints::AmbiguousNMRDistanceConstraint a_cst( it1->second.atom(), it2->second.atom(), pose, NULL );
 //       bool proton_at_it1( pose.residue_type( a_cst.atom( 1 ).rsd() ).atom_is_hydrogen( a_cst.atom( 1 ).atomno() ) );
-//       Size second_atom_index( a_cst.natoms( 1 ) + 1 );
+//       core::Size second_atom_index( a_cst.natoms( 1 ) + 1 );
 //       bool proton_at_it2( pose.residue_type( a_cst.atom( second_atom_index ).rsd() ).atom_is_hydrogen( a_cst.atom( second_atom_index ).atomno() ) );
 //       if ( proton_at_it1 && proton_at_it2 ) {
 //     Real dist( a_cst.dist( pose ) );
@@ -89,7 +89,7 @@ bool covalent_compliance( core::id::NamedAtomID const& atom1, core::id::NamedAto
 //  }
 
 //  Real peak_sum_dist( 0 );
-//  Size nr_true_peaks( 0 );
+//  core::Size nr_true_peaks( 0 );
 //  for ( CrossPeakList::const_iterator it = cpl.begin(); it != cpl.end(); ++it ) {
 //   //  core::scoring::constraints::AmbiguousNMRConstraintOP peak_cst( (*it)->create_constraint( cpl.resonances(), pose ) );
 //   //Real dist( peak_cst->dist( pose ) );

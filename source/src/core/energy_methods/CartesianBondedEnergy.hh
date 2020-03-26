@@ -41,7 +41,7 @@
 #include <iostream>
 #include <map>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
@@ -81,7 +81,7 @@ namespace methods {
 
 typedef utility::vector1< std::pair< atm_name_quad, CartBondedParametersCOP > > torsionparam_vector;
 
-class ResidueCartBondedParameters : public utility::pointer::ReferenceCount {
+class ResidueCartBondedParameters : public utility::VirtualBase {
 public:
 	typedef utility::fixedsizearray1< Size, 2 > Size2;
 	typedef utility::fixedsizearray1< Size, 3 > Size3;
@@ -231,7 +231,7 @@ private:
 ////////////////////
 //fpd
 //  Database stores all ideal parameters
-class IdealParametersDatabase  : public utility::pointer::ReferenceCount {
+class IdealParametersDatabase  : public utility::VirtualBase {
 public:
 	// The per-residue maping for the torsions
 	typedef boost::unordered_map< atm_name_quad, CartBondedParametersOP > TorsionsIndepSubmap;

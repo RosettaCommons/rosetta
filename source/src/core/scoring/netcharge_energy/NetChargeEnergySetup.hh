@@ -59,7 +59,7 @@ enum TailFunction {
 
 /// @brief NetChargeEnergySetup, a helper class for the NetChargeEnergy energy method
 /// that stores all of its setup data.
-class NetChargeEnergySetup : public utility::pointer::ReferenceCount {
+class NetChargeEnergySetup : public utility::VirtualBase {
 public:
 
 	/// @brief Default constructor for NetChargeEnergySetup.

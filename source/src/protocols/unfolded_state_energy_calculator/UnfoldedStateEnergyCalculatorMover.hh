@@ -61,7 +61,7 @@ public:
 		bool repack_fragments,
 		bool native_sequence,
 		std::string const & seq_match_seq,
-		Size seq_match_pos,
+		core::Size seq_match_pos,
 		bool seq_match_frags
 	);
 
@@ -92,7 +92,7 @@ public:
 	// class specific functions
 private:
 
-	bool fragment_check( Pose & pose, Size frag_start_pos );
+	bool fragment_check( Pose & pose, core::Size frag_start_pos );
 
 	void create_random_fragments( Pose & pose,utility::vector1< Pose > & fragments );
 
@@ -130,7 +130,7 @@ private:
 	std::string sequence_match_sequence_;
 
 
-	Size sequence_match_position_;
+	core::Size sequence_match_position_;
 
 
 	bool sequence_matched_fragments_;

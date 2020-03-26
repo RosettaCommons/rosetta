@@ -87,29 +87,29 @@ void FlexbbSimAnnealer::run()
 
 	//--------------------------------------------------------------------
 
-	Size ranrotamer,ranbbfrag;//,rannum;
-	Size nmoltenres = ig_->get_num_nodes();
-	//Size num_accessible, num_accessible_bb, num_backbones_available;
-	Size moltenres_id, rotamer_state_on_moltenres, prevrotamer_state;
-	Size const nrotamers( rotsets_->nrotamers() );
-	Size cycle1, cycle2, cycle3;
+	core::Size ranrotamer,ranbbfrag;//,rannum;
+	core::Size nmoltenres = ig_->get_num_nodes();
+	//core::Size num_accessible, num_accessible_bb, num_backbones_available;
+	core::Size moltenres_id, rotamer_state_on_moltenres, prevrotamer_state;
+	core::Size const nrotamers( rotsets_->nrotamers() );
+	core::Size cycle1, cycle2, cycle3;
 	bool valid_bb_move; //apl if a node on a flexible fragment is in state 0 no meaningful "backbone move" exists
 	PackerEnergy currentenergy, previous_energy_for_node, delta_energy;
 	PackerEnergy previous_energy_for_bbfrag;
 
-	utility::vector1< Size > accessible_state_list( nrotamers, 0 );
-	utility::vector1< Size > accessible_state_list_bbfrag( rotsets_->nbackbone_conformations(), 0 );//max number of backbone fragment
+	utility::vector1< core::Size > accessible_state_list( nrotamers, 0 );
+	utility::vector1< core::Size > accessible_state_list_bbfrag( rotsets_->nbackbone_conformations(), 0 );//max number of backbone fragment
 
 	ObjexxFCL::FArray1D< PackerEnergy > loopenergy( maxouteriterations, 0.0);
 
 	//bk variables for calculating rotamer frequencies during simulation
-	Size nsteps = 0;
+	core::Size nsteps = 0;
 	ObjexxFCL::FArray1D_int nsteps_for_rot( nrotamers, 0 );
 
 	ObjexxFCL::FArray1D_int state_on_node( nmoltenres, 0);
 	ObjexxFCL::FArray1D_int best_state_on_node( nmoltenres, 0);
 	utility::vector1< int > moltenres_rotoffsets( nmoltenres, 0 );
-	for ( Size ii = 1; ii <= nmoltenres; ++ii ) { moltenres_rotoffsets[ ii ] = rotsets_->nrotamer_offset_for_moltenres( ii ); }
+	for ( core::Size ii = 1; ii <= nmoltenres; ++ii ) { moltenres_rotoffsets[ ii ] = rotsets_->nrotamer_offset_for_moltenres( ii ); }
 
 	//--------------------------------------------------------------------
 	//initialize variables
@@ -121,7 +121,7 @@ void FlexbbSimAnnealer::run()
 	currentenergy = 0.0;
 
 	//variables to keep track of the frequency of rotamers
-	for ( Size i = 1; i <= rotsets_->nrotamers(); ++i ) {
+	for ( core::Size i = 1; i <= rotsets_->nrotamers(); ++i ) {
 		accessible_state_list[ i ] = i;
 		nsteps_for_rot(i) = 0;
 	}
@@ -131,7 +131,7 @@ void FlexbbSimAnnealer::run()
 	set_lowtemp( 0.2 ); // go colder than regular SA!
 
 	if ( start_with_current() ) {
-		for ( Size ii = 1; ii <= nmoltenres; ++ii ) {
+		for ( core::Size ii = 1; ii <= nmoltenres; ++ii ) {
 			state_on_node(ii) = current_rot_index()( rotsets_->moltenres_2_resid( ii ));
 		}
 		ig_->set_network_state( state_on_node );
@@ -146,8 +146,8 @@ void FlexbbSimAnnealer::run()
 	//outer iterations and inner iterations
 	setup_iterations();
 
-	Size outeriterations = get_outeriterations();
-	Size inneriterations_usual = get_inneriterations();
+	core::Size outeriterations = get_outeriterations();
+	core::Size inneriterations_usual = get_inneriterations();
 
 	/// Reduce the number of inner iterations to reflect the three
 	/// inner-inner loops that extend the number of rotamer substitutions.
@@ -159,26 +159,26 @@ void FlexbbSimAnnealer::run()
 	using namespace basic::options::OptionKeys::flexpack::annealer;
 
 	if ( option[ inner_iteration_scale ].user() ) {
-		inneriterations_usual *=  static_cast< Size > (inneriterations_usual * option[ inner_iteration_scale ]);
+		inneriterations_usual *=  static_cast< core::Size > (inneriterations_usual * option[ inner_iteration_scale ]);
 	}
 	if ( option[ outer_iteration_scale ].user() ) {
-		outeriterations = static_cast< Size > (outeriterations * option[ outer_iteration_scale ]);
+		outeriterations = static_cast< core::Size > (outeriterations * option[ outer_iteration_scale ]);
 	}
 	if ( option[ fixbb_substitutions_scale ].user() ) {
-		cycle1 = static_cast< Size > ( cycle1 * option[ fixbb_substitutions_scale ]);
+		cycle1 = static_cast< core::Size > ( cycle1 * option[ fixbb_substitutions_scale ]);
 	}
 	if ( option[ pure_movebb_substitutions_scale ].user() ) {
-		cycle2 = static_cast< Size > ( cycle2 * option[ pure_movebb_substitutions_scale ]);
+		cycle2 = static_cast< core::Size > ( cycle2 * option[ pure_movebb_substitutions_scale ]);
 	}
 	if ( option[ rotsub_movebb_substitutions_scale ].user() ) {
-		cycle3 = static_cast< Size > ( cycle3 * option[ rotsub_movebb_substitutions_scale ]);
+		cycle3 = static_cast< core::Size > ( cycle3 * option[ rotsub_movebb_substitutions_scale ]);
 	}
 
 	//outeriterations *= 2;
 	//inneriterations_usual /= 25;
 
 	//collect the list of all accessible states once
-	utility::vector1< Size > list_of_all( nrotamers, 0 );
+	utility::vector1< core::Size > list_of_all( nrotamers, 0 );
 
 	ig_->get_accessible_states(
 		FlexbbInteractionGraph::BOTH_SC_AND_BB,
@@ -190,18 +190,18 @@ void FlexbbSimAnnealer::run()
 
 	//outer loop
 	PackerEnergy last_temperature = 100000;
-	for ( Size nn = 1; nn <= outeriterations; ++nn ) {
+	for ( core::Size nn = 1; nn <= outeriterations; ++nn ) {
 
-		Size num_fixbb_move_accepts = 0;
-		Size num_fixbb_move_valid = 0;
-		Size num_bb_move_accepts = 0;
-		Size num_bb_move_valid = 0;
-		Size num_bb_sub_accepts = 0;
-		Size num_bb_sub_valid = 0;
+		core::Size num_fixbb_move_accepts = 0;
+		core::Size num_fixbb_move_valid = 0;
+		core::Size num_bb_move_accepts = 0;
+		core::Size num_bb_move_valid = 0;
+		core::Size num_bb_sub_accepts = 0;
+		core::Size num_bb_sub_valid = 0;
 
 		//set up the temperature
 		setup_temperature(loopenergy,nn);
-		Size inneriterations = inneriterations_usual;
+		core::Size inneriterations = inneriterations_usual;
 
 		if ( nn > 1 && get_temperature() > last_temperature ) {
 			/// short circuit -- do not return to high temperature.
@@ -227,7 +227,7 @@ void FlexbbSimAnnealer::run()
 		//default mode, which is a combination of move side chain, move backbone
 		//need to test how many cycles for each mode
 		PackerEnergy temperature = get_temperature();
-		for ( Size j = 1; j <= inneriterations; ++j ) {
+		for ( core::Size j = 1; j <= inneriterations; ++j ) {
 
 			if ( ! sconly_move_accessible_state_list_current ) {
 				ig_->get_accessible_states( FlexbbInteractionGraph::SC_ONLY, accessible_state_list );
@@ -235,7 +235,7 @@ void FlexbbSimAnnealer::run()
 			}
 
 			//     std::cout<<"num_accessible = "<<num_accessible<<"totalinnner = "<<inneriterations<<'\n'
-			for ( Size n = 1; n <= cycle1; ++n ) {//move side chain only
+			for ( core::Size n = 1; n <= cycle1; ++n ) {//move side chain only
 				//pick random rotamers from the rotamer list,this subroutine should go into the base class
 				//  ranrotamer = pick_a_rotamer(list,n,nn);
 
@@ -256,7 +256,7 @@ void FlexbbSimAnnealer::run()
 
 				++num_fixbb_move_valid;
 				//std::cout << "State on node: ";
-				//for ( Size ii = 1; ii <= state_on_node.size(); ++ii ) { std::cout << state_on_node( ii ) << " ";}
+				//for ( core::Size ii = 1; ii <= state_on_node.size(); ++ii ) { std::cout << state_on_node( ii ) << " ";}
 				//std::cout << std::endl;
 				//std::cout << "Consider fixed backbone rotamer substitution" << std::endl;
 				ig_->consider_substitution( moltenres_id, rotamer_state_on_moltenres,
@@ -274,8 +274,8 @@ void FlexbbSimAnnealer::run()
 
 					if ( calc_rot_freq() && ( temperature <= calc_freq_temp ) ) {
 						++nsteps;
-						for ( Size ii = 1; ii <= nmoltenres; ++ii ) {
-							Size iistate = state_on_node(ii);
+						for ( core::Size ii = 1; ii <= nmoltenres; ++ii ) {
+							core::Size iistate = state_on_node(ii);
 							if ( iistate != 0 ) {
 								++nsteps_for_rot( iistate + moltenres_rotoffsets[ii] );
 							}
@@ -286,7 +286,7 @@ void FlexbbSimAnnealer::run()
 
 			//switch to moving the backbone only
 			ig_->get_backbone_list( accessible_state_list_bbfrag );
-			for ( Size n = 1; n <= cycle2; ++n ) {
+			for ( core::Size n = 1; n <= cycle2; ++n ) {
 				//pick a random backbone fragment from the list
 				//   ranbbfrag = accessible_state_list_bbfrag( static_cast< int > (ran3() * num_accessible_bb) + 1 );
 
@@ -300,7 +300,7 @@ void FlexbbSimAnnealer::run()
 				int num_changing_nodes = 0;
 
 				//std::cout << "State on node: ";
-				//for ( Size ii = 1; ii <= state_on_node.size(); ++ii ) { std::cout << state_on_node( ii ) << " ";}
+				//for ( core::Size ii = 1; ii <= state_on_node.size(); ++ii ) { std::cout << state_on_node( ii ) << " ";}
 				//std::cout << std::endl;
 
 
@@ -329,8 +329,8 @@ void FlexbbSimAnnealer::run()
 
 				if ( calc_rot_freq() && ( temperature <= calc_freq_temp ) ) {
 					++nsteps;
-					for ( Size ii = 1; ii <= nmoltenres; ++ii ) {
-						Size iistate = state_on_node(ii);
+					for ( core::Size ii = 1; ii <= nmoltenres; ++ii ) {
+						core::Size iistate = state_on_node(ii);
 						if ( iistate != 0 ) {
 							++nsteps_for_rot( iistate + moltenres_rotoffsets[ii] );
 						}
@@ -342,7 +342,7 @@ void FlexbbSimAnnealer::run()
 			//get this list once at the beginning of simulation and reuse it.
 			//ig_->get_accessible_states( FlexbbInteractionGraph::BOTH_SC_AND_BB, list, num_accessible);
 			//all states are accessible;
-			for ( Size n = 1; n <= cycle3; ++n ) {
+			for ( core::Size n = 1; n <= cycle3; ++n ) {
 				//return a list of all rotamers,not sure this is fair enough, because
 				//those residues with alternate backbone conformations defitenly have higher
 				//probability to get picked, but at least in the quench step, the annealer needs to go through
@@ -360,7 +360,7 @@ void FlexbbSimAnnealer::run()
 				int num_changing_nodes = 0;
 
 				//std::cout << "State on node: ";
-				//for ( Size ii = 1; ii <= state_on_node.size(); ++ii ) { std::cout << state_on_node( ii ) << " ";}
+				//for ( core::Size ii = 1; ii <= state_on_node.size(); ++ii ) { std::cout << state_on_node( ii ) << " ";}
 				//std::cout << std::endl;
 
 
@@ -393,8 +393,8 @@ void FlexbbSimAnnealer::run()
 
 				if ( calc_rot_freq() && ( temperature <= calc_freq_temp ) ) {
 					++nsteps;
-					for ( Size ii = 1; ii <= nmoltenres; ++ii ) {
-						Size iistate = state_on_node(ii);
+					for ( core::Size ii = 1; ii <= nmoltenres; ++ii ) {
+						core::Size iistate = state_on_node(ii);
 						if ( iistate != 0 ) {
 							++nsteps_for_rot( iistate + moltenres_rotoffsets[ii] );
 						}
@@ -421,8 +421,8 @@ void FlexbbSimAnnealer::run()
 	//std::cerr << "bestenergy after quench: " << bestenergy() << std::endl;
 	//apl now convert best_state_on_node into bestrotamer_at_seqpos
 
-	for ( Size ii = 1; ii <= nmoltenres; ++ii ) {
-		Size iiresid = rotsets_->moltenres_2_resid( ii );
+	for ( core::Size ii = 1; ii <= nmoltenres; ++ii ) {
+		core::Size iiresid = rotsets_->moltenres_2_resid( ii );
 		bestrotamer_at_seqpos()( iiresid ) = best_state_on_node( ii ) + rotsets_->nrotamer_offset_for_moltenres( ii );
 	}
 
@@ -434,22 +434,22 @@ void FlexbbSimAnnealer::run()
 
 core::Size
 FlexbbSimAnnealer::pick_a_rotamer(
-	Size outercycle,
-	Size innercycle,
-	Size inner_loop_iteration_limit, // ?
-	utility::vector1< Size > & accessible_state_list
+	core::Size outercycle,
+	core::Size innercycle,
+	core::Size inner_loop_iteration_limit, // ?
+	utility::vector1< core::Size > & accessible_state_list
 ) const
 {
 
-	Size num = 0;
+	core::Size num = 0;
 
 	if ( quench() ) {
-		num = numeric::mod<Size>( (outercycle - 1) * inner_loop_iteration_limit + innercycle - 1, accessible_state_list.size() ) + 1;
+		num = numeric::mod<core::Size>( (outercycle - 1) * inner_loop_iteration_limit + innercycle - 1, accessible_state_list.size() ) + 1;
 		if ( num == 1 ) {
 			numeric::random::random_permutation( accessible_state_list, numeric::random::rg() );
 		}
 	} else {
-		num = static_cast< Size > ( numeric::random::rg().uniform() * accessible_state_list.size() ) + 1;
+		num = static_cast< core::Size > ( numeric::random::rg().uniform() * accessible_state_list.size() ) + 1;
 	}
 	return accessible_state_list[ num ];
 }
@@ -458,7 +458,7 @@ bool
 FlexbbSimAnnealer::pass_metropolis_multiple_nodes_changing(
 	PackerEnergy previous_fragmentE,
 	PackerEnergy deltaE,
-	Size num_changing_nodes
+	core::Size num_changing_nodes
 ) const
 {
 	debug_assert( num_changing_nodes > 0 );

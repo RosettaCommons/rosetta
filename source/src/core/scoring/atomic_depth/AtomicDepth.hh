@@ -43,7 +43,7 @@ warranty.
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace core {
 namespace scoring {
@@ -78,7 +78,7 @@ typedef struct voxel2
 	short int ix,iy,iz;
 }voxel2;
 
-class AtomicDepth : public utility::pointer::ReferenceCount
+class AtomicDepth : public utility::VirtualBase
 {
 public:
 	AtomicDepth( pose::Pose const & pose, Real probe_radius=1.4, bool poly_leu_depth=false, Real resolution=0.25);

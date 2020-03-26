@@ -35,7 +35,7 @@
 namespace protocols {
 namespace design_opt {
 
-class PointMutationCalculator : public utility::pointer::ReferenceCount
+class PointMutationCalculator : public utility::VirtualBase
 {
 public:
 	typedef core::pose::Pose Pose;

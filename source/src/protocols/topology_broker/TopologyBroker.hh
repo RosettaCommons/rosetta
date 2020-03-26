@@ -47,7 +47,7 @@
 #include <core/pose/Pose.fwd.hh> /// FIX THIS
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -102,7 +102,7 @@ final_fold_tree ( which chainbreaks and jumps should  the loop-closer remove bef
 namespace protocols {
 namespace topology_broker {
 
-class TopologyBroker : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< TopologyBroker >
+class TopologyBroker : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< TopologyBroker >
 {
 	typedef core::Size StageID;
 	typedef utility::vector1< TopologyClaimerOP > TopologyClaimers;
@@ -253,7 +253,7 @@ private:
 
 	/// @brief creates a fold-tree from the Jump- and CutClaims
 	/// throws EXCN_InvalidFoldTree at failure
-	void build_fold_tree( claims::DofClaims & claims, Size nres );
+	void build_fold_tree( claims::DofClaims & claims, core::Size nres );
 
 	void build_fold_tree_from_claimer(core::pose::Pose & pose, core::kinematics::FoldTree & fold_tree);
 
@@ -293,10 +293,10 @@ private:
 	core::scoring::ScoreFunctionOP repack_scorefxn_;
 
 	/// @brief these cuts are not physical and should be closed ( i.e., chainbreak energy, loop-closing )
-	utility::vector1< Size > to_be_closed_cuts_; //keeps the residue number not the cut-nr --- thats safer.
+	utility::vector1< core::Size > to_be_closed_cuts_; //keeps the residue number not the cut-nr --- thats safer.
 
 	/// @brief these cuts are not physical and should be closed ( i.e., chainbreak energy, loop-closing )
-	utility::vector1< Size > start_pose_cuts_; //keeps the residue number not the cut-nr --- thats safer.
+	utility::vector1< core::Size > start_pose_cuts_; //keeps the residue number not the cut-nr --- thats safer.
 
 	claims::SequenceClaims sequence_claims_;
 

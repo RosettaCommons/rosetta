@@ -21,7 +21,7 @@
 #include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 
 #ifdef    SERIALIZATION

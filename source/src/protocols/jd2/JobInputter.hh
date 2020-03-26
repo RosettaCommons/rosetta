@@ -25,7 +25,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/vector1.hh>
 
@@ -42,7 +42,7 @@ namespace jd2 {
 /// have as few "transitions" between inputs as possible (group all Jobs of the
 /// same input next to each other).  This improves efficiency of the "FAIL_BAD_INPUT"
 /// functionality.  I said "should", not "must" on purpose.
-class JobInputter : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< JobInputter >
+class JobInputter : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< JobInputter >
 {
 public:
 

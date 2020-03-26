@@ -17,7 +17,7 @@
 #define INCLUDED_core_optimization_ParticleSwarmMinimizer_hh
 
 #include <core/optimization/ParticleSwarmMinimizer.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <core/optimization/Multifunc.hh>
 #include <core/optimization/types.hh>
@@ -30,7 +30,7 @@ namespace optimization {
 
 
 /// @brief Simple data container for PSO algorithm.
-class Particle : public utility::pointer::ReferenceCount
+class Particle : public utility::VirtualBase
 {
 public:
 
@@ -130,7 +130,7 @@ std::ostream & operator << ( std::ostream & os, Particle const & p );
 ///     http://www.swarmintelligence.org/
 ///
 /// One can imagine writing another version that distributed the work via MPI...
-class ParticleSwarmMinimizer : public utility::pointer::ReferenceCount
+class ParticleSwarmMinimizer : public utility::VirtualBase
 {
 public:
 

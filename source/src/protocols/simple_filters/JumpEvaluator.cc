@@ -58,14 +58,14 @@ up the simulation. An Evaluator using the atom-tree stubs would not have detecte
 
 */
 
-JumpEvaluator::JumpEvaluator( pose::Pose const& native_pose, Size jump_nr ) :
+JumpEvaluator::JumpEvaluator( pose::Pose const& native_pose, core::Size jump_nr ) :
 	evaluation::SingleValuePoseEvaluator< core::Real >( "RT_"+ObjexxFCL::string_of( jump_nr ) )
 	// jump_nr_( jump_nr )
 {
 	using namespace kinematics;
 	kinematics::Edge jump_edge = native_pose.fold_tree().jump_edge( jump_nr );
-	Size res1=jump_edge.start();
-	Size res2=jump_edge.stop();
+	core::Size res1=jump_edge.start();
+	core::Size res2=jump_edge.stop();
 
 	// work out the stubID
 	chemical::ResidueType const& rt1 ( native_pose.residue_type ( res1 ) );
@@ -112,7 +112,7 @@ JumpEvaluator::apply(
 	rt.make_jump( native_up_, test_down );
 
 	Real rms( 0.0 );
-	for ( Size i=1; i<=3; i++ ) {
+	for ( core::Size i=1; i<=3; i++ ) {
 		Vector tv = test_down.build_fake_xyz( i );
 		Vector nv = native_down_.build_fake_xyz( i );
 		Vector d = nv-tv;

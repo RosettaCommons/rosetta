@@ -283,9 +283,9 @@ void ANN::applyANNTransformation( ANN_Vector &inp, ANN_Matrix &w, ANN_Vector &b,
 		return;
 	}
 
-	for ( Size  i = 0; i < w.size(); i++ ) {
+	for ( core::Size  i = 0; i < w.size(); i++ ) {
 		float sum = 0;
-		for ( Size  j = 0; j < inp.size(); j++ ) sum += inp[j]*w[i][j];
+		for ( core::Size  j = 0; j < inp.size(); j++ ) sum += inp[j]*w[i][j];
 
 		sum += b[i];
 		if ( code == 1 ) out.push_back( 2.0/(1.0+exp(-2.0*sum))-1.0 ); // apply 'tansig' transfer function
@@ -303,7 +303,7 @@ void ANN::applyVecAverage(ANN_Vector &v1, ANN_Vector &v2, ANN_Vector &v3, ANN_Ve
 		//float conf3 = getConfidence(v3);
 		//cout << "XXX" << conf1 << "\t" << conf2 << "\t" << conf3<< endl;
 
-		for ( Size i=0; i<v1.size(); i++ ) {
+		for ( core::Size i=0; i<v1.size(); i++ ) {
 			//cout << "XXX" << i << endl;
 			//out.push_back( (v1[i]*conf1+v2[i]*conf2+v3[i]*conf3)/(conf1+conf2+conf3) );
 			vout.push_back( (v1[i]+v2[i]+v3[i])/3.0 );

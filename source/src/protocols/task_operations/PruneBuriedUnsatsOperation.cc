@@ -106,7 +106,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 
 	using namespace core;
 
-	Size starting_rotamers = rotamer_sets_in.nrotamers();
+	core::Size starting_rotamers = rotamer_sets_in.nrotamers();
 
 	// 1. Enumerate all atoms and hbonds
 
@@ -133,7 +133,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 	chemical::AtomTypeSet const & atom_type_set = pose.residue(1).type().atom_type_set();
 
 
-	for ( Size ihbnode = 1; ihbnode <= hb_graph->num_nodes(); ihbnode++ ) {
+	for ( core::Size ihbnode = 1; ihbnode <= hb_graph->num_nodes(); ihbnode++ ) {
 
 		scoring::hbonds::graph::HBondNode * hbnode = hb_graph->get_node( ihbnode );
 		runtime_assert( hbnode );
@@ -160,12 +160,12 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 
 	// 2.5. Prune buried atoms satisfied by backbone atoms (or unpackable rotamers)
 
-	for ( Size ihbnode = 1; ihbnode <= hb_graph->num_nodes(); ihbnode++ ) {
+	for ( core::Size ihbnode = 1; ihbnode <= hb_graph->num_nodes(); ihbnode++ ) {
 
 		scoring::hbonds::graph::HBondNode * hbnode = hb_graph->get_node( ihbnode );
 		runtime_assert( hbnode );
 		conformation::ResidueCOP rotamer = complete_rotsets->rotamer( ihbnode );
-		Size node_resnum = complete_rotsets->res_for_rotamer( ihbnode );
+		core::Size node_resnum = complete_rotsets->res_for_rotamer( ihbnode );
 
 		// Do this in a smart way. Only look at nodes that might have backbone or unpackable atoms
 		//  i.e. The first rotamer at every position -- backbone atoms and potentially unpackable
@@ -183,11 +183,11 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 
 			scoring::hbonds::graph::HBondEdge * hb_edge =
 				static_cast< scoring::hbonds::graph::HBondEdge * >( *it );
-			Size first_node = hb_edge->get_first_node_ind();
-			Size second_node = hb_edge->get_second_node_ind();
+			core::Size first_node = hb_edge->get_first_node_ind();
+			core::Size second_node = hb_edge->get_second_node_ind();
 
 			bool we_are_the_first_node = first_node == ihbnode;
-			Size other_node = we_are_the_first_node ? second_node : first_node;
+			core::Size other_node = we_are_the_first_node ? second_node : first_node;
 
 			for ( scoring::hbonds::graph::HBondInfo const & hb_info : hb_edge->hbonds() ) {
 				//          first is donor   0        1
@@ -196,7 +196,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 				//                                           xor
 				bool we_are_the_donor = ! ( we_are_the_first_node ^ hb_info.first_node_is_donor() );
 
-				Size our_heavy_atom = we_are_the_donor ? hb_info.local_atom_id_D() : hb_info.local_atom_id_A();
+				core::Size our_heavy_atom = we_are_the_donor ? hb_info.local_atom_id_D() : hb_info.local_atom_id_A();
 
 				if ( ! all_atoms_unpackable ) {
 					if ( ! rotamer->atom_is_backbone( our_heavy_atom ) ) continue;
@@ -204,7 +204,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 
 				// We are now looking at an hbond where our side is unpackable
 
-				Size other_atom = we_are_the_donor ? hb_info.local_atom_id_A() : hb_info.local_atom_id_D();
+				core::Size other_atom = we_are_the_donor ? hb_info.local_atom_id_A() : hb_info.local_atom_id_D();
 				is_buried( other_node, other_atom ) = false;
 
 
@@ -216,7 +216,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 	// 3. Identify all atoms that hbond to a buried atom
 	// 4. Identify unsatisfiable atoms
 
-	for ( Size ihbnode = 1; ihbnode <= hb_graph->num_nodes(); ihbnode++ ) {
+	for ( core::Size ihbnode = 1; ihbnode <= hb_graph->num_nodes(); ihbnode++ ) {
 
 		scoring::hbonds::graph::HBondNode * hbnode = hb_graph->get_node( ihbnode );
 		runtime_assert( hbnode );
@@ -228,13 +228,13 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 
 			scoring::hbonds::graph::HBondEdge * hb_edge =
 				static_cast< scoring::hbonds::graph::HBondEdge * >( *it );
-			Size first_node = hb_edge->get_first_node_ind();
-			Size second_node = hb_edge->get_second_node_ind();
+			core::Size first_node = hb_edge->get_first_node_ind();
+			core::Size second_node = hb_edge->get_second_node_ind();
 
 			bool we_are_the_first_node = first_node == ihbnode;
 			if ( ! we_are_the_first_node ) continue;   // Don't look at every hbond twice!
 
-			Size other_node = we_are_the_first_node ? second_node : first_node;
+			core::Size other_node = we_are_the_first_node ? second_node : first_node;
 
 			for ( scoring::hbonds::graph::HBondInfo const & hb_info : hb_edge->hbonds() ) {
 				//          first is donor   0        1
@@ -243,9 +243,9 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 				//                                           xor
 				bool we_are_the_donor = ! ( we_are_the_first_node ^ hb_info.first_node_is_donor() );
 
-				Size our_heavy_atom = we_are_the_donor ? hb_info.local_atom_id_D() : hb_info.local_atom_id_A();
+				core::Size our_heavy_atom = we_are_the_donor ? hb_info.local_atom_id_D() : hb_info.local_atom_id_A();
 
-				Size other_atom = we_are_the_donor ? hb_info.local_atom_id_A() : hb_info.local_atom_id_D();
+				core::Size other_atom = we_are_the_donor ? hb_info.local_atom_id_A() : hb_info.local_atom_id_D();
 
 				bool we_are_buried = is_buried( ihbnode, our_heavy_atom );
 				bool other_is_buried = is_buried( other_node, other_atom );
@@ -273,21 +273,21 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 
 	int even_trade_penalty = allow_even_trades_ ? 0 : -1;
 
-	for ( Size ihbnode = 1; ihbnode <= hb_graph->num_nodes(); ihbnode++ ) {
+	for ( core::Size ihbnode = 1; ihbnode <= hb_graph->num_nodes(); ihbnode++ ) {
 
 		scoring::hbonds::graph::HBondNode * hbnode = hb_graph->get_node( ihbnode );
 		runtime_assert( hbnode );
 		conformation::ResidueCOP rotamer = complete_rotsets->rotamer( ihbnode );
-		Size node_resnum = complete_rotsets->res_for_rotamer( ihbnode );
-		Size moltenres = complete_rotsets->moltenres_for_rotamer( ihbnode );
-		Size rotid_on_moltenres = complete_rotsets->rotid_on_moltenresidue( ihbnode );
+		core::Size node_resnum = complete_rotsets->res_for_rotamer( ihbnode );
+		core::Size moltenres = complete_rotsets->moltenres_for_rotamer( ihbnode );
+		core::Size rotid_on_moltenres = complete_rotsets->rotid_on_moltenresidue( ihbnode );
 
 		utility::vector1<int> & rotamer_scores = resnum_rotamer_score[ node_resnum ];
 		if ( rotamer_scores.size() == 0 ) rotamer_scores.resize( complete_rotsets->nrotamers_for_moltenres( moltenres ) );
 
 		bool penalty_applied = false;
 		int satisfying_minus_unsatisfied = 0;
-		for ( Size iatom = 1; iatom <= hbonds_to_buried.n_atom( ihbnode ); iatom++ ) {
+		for ( core::Size iatom = 1; iatom <= hbonds_to_buried.n_atom( ihbnode ); iatom++ ) {
 			if ( rotamer->atom_is_backbone( iatom ) ) continue;
 			if ( hbonds_to_buried( ihbnode, iatom ) ) {
 				satisfying_minus_unsatisfied++;
@@ -305,7 +305,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 	}
 
 	// 6. Prune anything negative (unless everything is negative in which case take the least negative)
-	for ( Size resnum = 1; resnum <= resnum_rotamer_score.size(); resnum++ ) {
+	for ( core::Size resnum = 1; resnum <= resnum_rotamer_score.size(); resnum++ ) {
 		if ( ! position_had_rotset[ resnum ] ) continue;
 
 		utility::vector1<int> const & rotamer_scores = resnum_rotamer_score[ resnum ];
@@ -326,7 +326,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 
 		utility::vector1<bool> to_prune( rotamer_scores.size(), false );
 
-		for ( Size i = 1; i <= to_prune.size(); i++ ) {
+		for ( core::Size i = 1; i <= to_prune.size(); i++ ) {
 			to_prune[i] = rotamer_scores[i] < prune_if_worse_than;
 		}
 
@@ -335,7 +335,7 @@ PruneBuriedUnsats_RotamerSetsOperation::alter_rotamer_sets(
 
 	rotamer_sets_in.update_offset_data();
 
-	Size ending_rotamers = rotamer_sets_in.nrotamers();
+	core::Size ending_rotamers = rotamer_sets_in.nrotamers();
 
 	TR << "Pruned " << starting_rotamers - ending_rotamers << " / " << starting_rotamers << " rotamers." << std::endl;
 

@@ -69,7 +69,7 @@ recces_pose_setup( options::RECCES_Options const & options )
 
 	// Obtains base pairs and constraints from pose
 	if ( options.setup_base_pair_constraints() ) {
-		utility::vector1< std::pair< Size, Size > > pairings( options.rna_secstruct().base_pairs() ); // could be user-specified.
+		utility::vector1< std::pair< core::Size, core::Size > > pairings( options.rna_secstruct().base_pairs() ); // could be user-specified.
 		if ( pairings.empty() ) core::pose::rna::get_base_pairing_list( *pose, pairings ); // infer from pose
 		core::pose::rna::setup_base_pair_constraints( *pose, pairings, 1.0 /*scale_factor*/, true /*use_flat_harmonic*/ );
 	}
@@ -95,11 +95,11 @@ pose_setup_turner(
 	// Need to specify which nucleotides get 'A-form' range, which will
 	//  also determine how large the Gaussian steps are during sampling.
 	std::string secstruct_legacy;
-	Size const len1( seq1.size() );
-	Size const len2( seq2.size() );
-	Size const n_bp( std::min( len1, len2 ) );
-	Size const total_len( len1 + len2 );
-	for ( Size i = 1; i <= total_len; ++i ) {
+	core::Size const len1( seq1.size() );
+	core::Size const len2( seq2.size() );
+	core::Size const n_bp( std::min( len1, len2 ) );
+	core::Size const total_len( len1 + len2 );
+	for ( core::Size i = 1; i <= total_len; ++i ) {
 		if ( i > n_bp && i <= total_len - n_bp ) secstruct_legacy.push_back( 'X' );
 		else secstruct_legacy.push_back( 'H' );
 	}
@@ -127,7 +127,7 @@ pose_setup_from_file( options::RECCES_Options const & options )
 	utility::vector1< pose::PoseOP > input_poses;
 	input_poses.push_back( core::import_pose::get_pdb_and_cleanup( options.infile() ) );
 
-	//std::pair< vector1< Size >, vector1< char > > const & input_resnum_and_chain = options[ in::file::input_res ].resnum_and_chain();
+	//std::pair< vector1< core::Size >, vector1< char > > const & input_resnum_and_chain = options[ in::file::input_res ].resnum_and_chain();
 
 	builder.set_input_poses( input_poses );
 	builder.set_options( basic::options::option );
@@ -146,7 +146,7 @@ pose_setup_from_file( options::RECCES_Options const & options )
 		f.new_jump( 1, 2, 1 );
 		f.set_jump_atoms( 1, default_jump_atom(pose->residue_type(1)), default_jump_atom(pose->residue_type(2) )) ;
 		pose->fold_tree( f );
-		for ( Size n = 1; n <= 2; n++ ) {
+		for ( core::Size n = 1; n <= 2; n++ ) {
 			pose::add_variant_type_to_pose_residue( *pose, VIRTUAL_PHOSPHATE, n );
 			pose::add_variant_type_to_pose_residue( *pose, VIRTUAL_RIBOSE, n );
 			if ( options.block_stack() ) {

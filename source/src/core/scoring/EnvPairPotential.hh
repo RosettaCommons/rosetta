@@ -151,7 +151,7 @@ public:
 
 };
 
-class EnvPairPotential : public utility::pointer::ReferenceCount {
+class EnvPairPotential : public utility::VirtualBase {
 
 public:
 	EnvPairPotential();

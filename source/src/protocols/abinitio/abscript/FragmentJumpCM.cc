@@ -214,8 +214,8 @@ claims::EnvClaims FragmentJumpCM::build_claims( utility::vector1< bool > const& 
 	ClientMoverOP this_ptr = utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() );
 
 	for ( int i = 1; i <= (int) jump_sample.size(); i++ ) {
-		Size const up = jump_sample.jumps()( 1, i ) + shift;
-		Size const dn = jump_sample.jumps()( 2, i ) + shift;
+		core::Size const up = jump_sample.jumps()( 1, i ) + shift;
+		core::Size const dn = jump_sample.jumps()( 2, i ) + shift;
 
 		std::string jump_name = get_name() + "Jump" + utility::to_string( i );
 

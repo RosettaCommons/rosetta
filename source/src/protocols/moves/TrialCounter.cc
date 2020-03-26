@@ -43,7 +43,7 @@ TrialCounter::reset()
 /// @detail return number of trials since last reset
 core::Size
 TrialCounter::total_trials() const {
-	Size ntrials( 0 );
+	core::Size ntrials( 0 );
 	for ( auto const & it : trial_counter_ ) {
 		ntrials += it.second;
 	}

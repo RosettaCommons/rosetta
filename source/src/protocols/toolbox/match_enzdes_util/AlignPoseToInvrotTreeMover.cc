@@ -44,7 +44,7 @@
 
 //utility headers
 #include <utility>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ headers
@@ -97,9 +97,9 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 
 	//1a. get the invrots and pick a random one from the first list
 	//utility::vector1< InvrotCollectorCOP > all_invrots(  );
-	Size picked_collector( numeric::random::random_range( 1, all_invrots_.size() ) );
-	Size picked_geomcst( geomcsts_for_superposition_[ numeric::random::random_range( 1, geomcsts_for_superposition_.size() ) ] );
-	Size picked_rotamer( numeric::random::random_range(1, all_invrots_[ picked_collector ]->invrots()[picked_geomcst].size() ) );
+	core::Size picked_collector( numeric::random::random_range( 1, all_invrots_.size() ) );
+	core::Size picked_geomcst( geomcsts_for_superposition_[ numeric::random::random_range( 1, geomcsts_for_superposition_.size() ) ] );
+	core::Size picked_rotamer( numeric::random::random_range(1, all_invrots_[ picked_collector ]->invrots()[picked_geomcst].size() ) );
 
 	//temp debug
 	//picked_collector = 1;
@@ -108,17 +108,17 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 	//temp debug over
 
 	auto list_it( all_invrots_[ picked_collector ]->invrots()[picked_geomcst].begin() );
-	for ( Size i =1; i < picked_rotamer; ++i ) ++list_it; //not ideal, but a list is what we have
+	for ( core::Size i =1; i < picked_rotamer; ++i ) ++list_it; //not ideal, but a list is what we have
 	core::conformation::ResidueCOP ranrot( *list_it );
 
 	//1b. superimpose pose onto the ranrot,
 	//need to create a pose to use existing functionality
 	core::pose::Pose temp_pose;
-	temp_pose.append_residue_by_jump( *ranrot, (Size) 0 );
+	temp_pose.append_residue_by_jump( *ranrot, (core::Size) 0 );
 	//temp_pose.dump_pdb("align_to_invrot_template.pdb");
 
 	//pick a random residue
-	Size picked_seqpos( seqpos_->seqpos_for_geomcst(picked_geomcst)[ numeric::random::random_range(1,seqpos_->seqpos_for_geomcst(picked_geomcst).size() ) ] );
+	core::Size picked_seqpos( seqpos_->seqpos_for_geomcst(picked_geomcst)[ numeric::random::random_range(1,seqpos_->seqpos_for_geomcst(picked_geomcst).size() ) ] );
 	//temp debug
 	//picked_seqpos = seqpos_->seqpos_for_geomcst(picked_geomcst)[1];
 	//TR << "there are " << all_invrots.size() << " invrot collectors, picked collector has " << all_invrots[ picked_collector ]->invrots()[0].size() << " rotamers in 0th element." << std::endl;
@@ -139,7 +139,7 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 	//and try to setup the fold tree the right way
 	//2a
 	auto target_it( all_invrots_[ picked_collector ]->invrots()[0].begin() );
-	Size first_target_seqpos( pose.size() );
+	core::Size first_target_seqpos( pose.size() );
 	if ( add_target_to_pose_ ) {
 		first_target_seqpos++;
 		//have to add something to switch target res to centroid here
@@ -147,7 +147,7 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 
 		pose.append_residue_by_jump( *ligres, pose.size() );
 		++target_it;
-		//Size jump_num = pose.num_jump();
+		//core::Size jump_num = pose.num_jump();
 
 		//below commented out for now. need to think about how to best approach a
 		//case where the ligand can have different rotameric states
@@ -215,16 +215,16 @@ AlignPoseToInvrotTreeMover::set_geomcst_for_superposition_from_enz_io(
 void
 AlignPoseToInvrotTreeMover::setup_foldtree_around_anchor_invrot(
 	core::pose::Pose & pose,
-	Size const anchor_seqpos,
-	Size const first_target_seqpos ) const
+	core::Size const anchor_seqpos,
+	core::Size const first_target_seqpos ) const
 {
 
 	using namespace core::kinematics;
 	FoldTree new_fold_tree;
 	new_fold_tree.add_edge( anchor_seqpos, 1, Edge::PEPTIDE );
 	new_fold_tree.add_edge( anchor_seqpos, first_target_seqpos - 1, Edge::PEPTIDE );
-	Size num_jumps_to_add( pose.size() - first_target_seqpos + 1 );
-	for ( Size i =0; i < num_jumps_to_add; ++i ) {
+	core::Size num_jumps_to_add( pose.size() - first_target_seqpos + 1 );
+	for ( core::Size i =0; i < num_jumps_to_add; ++i ) {
 		//TR << "URZ adding jump between res " << anchor_seqpos << " of restype " << pose.residue_type( anchor_seqpos ).name() << " and " << first_target_seqpos + i << ", which is of restype " << pose.residue_type(  first_target_seqpos + i ).name() << std::endl;
 		new_fold_tree.add_edge( anchor_seqpos, first_target_seqpos +i, i + 1 );
 	}
@@ -242,7 +242,7 @@ AlignPoseToInvrotTreeMover::switch_residue_type_set(
 
 	if ( desired_restype_set != residue->type().mode() ) {
 		core::pose::PoseOP temp_pose( new core::pose::Pose() );
-		temp_pose->append_residue_by_jump( *residue, (Size) 0 );
+		temp_pose->append_residue_by_jump( *residue, (core::Size) 0 );
 		core::util::switch_to_residue_type_set( *temp_pose, desired_restype_set );
 		residue = temp_pose->residue(1).get_self_ptr();
 	}

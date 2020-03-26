@@ -20,7 +20,7 @@
 #include <basic/datacache/CacheableData.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <platform/types.hh>
 #include <utility/down_cast.hh>

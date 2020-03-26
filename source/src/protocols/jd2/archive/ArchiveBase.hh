@@ -28,7 +28,7 @@
 
 // Utility headers
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 
 // C++ headers
@@ -55,9 +55,9 @@ namespace archive {
 ///without MPI and the implementations of all but the interface functions have been put inside of ifdef directives.
 ///Generally each function has a master and slave version, and the interface functions call one or the other depending
 ///on processor rank.
-class AbstractArchiveBase : public utility::pointer::ReferenceCount {
+class AbstractArchiveBase : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~AbstractArchiveBase() override;
 	AbstractArchiveBase( BaseArchiveManagerAP ptr ) : manager_( ptr ), name_( "archive" ) {};
 	AbstractArchiveBase() : manager_( nullptr ), name_( "archive" ) {};

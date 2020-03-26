@@ -161,34 +161,34 @@ AtomInResidueAtomInResiduePairFeatures::report_atom_pairs(
 		!pose.conformation().structure_moved() &&
 		pose.energies().residue_neighbors_updated());
 
-	Size const max_res(num_canonical_aas);
-	Size const max_atm(30); // check this
-	Size const dist_bins(15);
-	FArray5D< Size > counts;
+	core::Size const max_res(num_canonical_aas);
+	core::Size const max_atm(30); // check this
+	core::Size const dist_bins(15);
+	FArray5D< core::Size > counts;
 	counts.dimension(max_res, max_atm, max_res, max_atm, dist_bins, 1);
 
 	TenANeighborGraph const & tenA( pose.energies().tenA_neighbor_graph() );
 
 
-	for ( Size resNum1=1; resNum1 <= pose.size(); ++resNum1 ) {
+	for ( core::Size resNum1=1; resNum1 <= pose.size(); ++resNum1 ) {
 		Residue res1( pose.residue(resNum1) );
 
 		for ( Graph::EdgeListConstIter
 				ir  = tenA.get_node( resNum1 )->const_edge_list_begin(),
 				ire = tenA.get_node( resNum1 )->const_edge_list_end();
 				ir != ire; ++ir ) {
-			Size resNum2( (*ir)->get_other_ind(resNum1) );
+			core::Size resNum2( (*ir)->get_other_ind(resNum1) );
 			if ( !check_relevant_residues( relevant_residues, resNum1, resNum2 ) ) continue;
 
 			Residue res2( pose.residue(resNum2) );
 
-			for ( Size atmNum1=1; atmNum1 <= res1.natoms(); ++atmNum1 ) {
+			for ( core::Size atmNum1=1; atmNum1 <= res1.natoms(); ++atmNum1 ) {
 				Vector const & atm1_xyz( res1.xyz(atmNum1) );
 
-				for ( Size atmNum2=1; atmNum2 <= res2.natoms(); ++atmNum2 ) {
+				for ( core::Size atmNum2=1; atmNum2 <= res2.natoms(); ++atmNum2 ) {
 					Vector const & atm2_xyz( res2.xyz(atmNum2) );
 
-					auto const dist_bin(static_cast<Size>(ceil(atm1_xyz.distance(atm2_xyz))));
+					auto const dist_bin(static_cast<core::Size>(ceil(atm1_xyz.distance(atm2_xyz))));
 					if ( dist_bin < 15 ) {
 						counts(res1.aa(), atmNum1, res2.aa(), atmNum2, dist_bin) += 1;
 					}
@@ -200,12 +200,12 @@ AtomInResidueAtomInResiduePairFeatures::report_atom_pairs(
 	std::string stmt_string = "INSERT INTO atom_in_residue_pairs (struct_id, residue_type1, atom_type1, residue_type2, atom_type2, distance_bin, count) VALUES (?,?,?,?,?,?,?);";
 	cppdb::statement stmt(basic::database::safely_prepare_statement(stmt_string,db_session));
 
-	for ( Size aa1=1; aa1 <= max_res; ++aa1 ) {
-		for ( Size aa2=1; aa2 <= max_res; ++aa2 ) {
-			for ( Size atmNum1=1; atmNum1 <= max_atm; ++atmNum1 ) {
-				for ( Size atmNum2=1; atmNum2 <= max_atm; ++atmNum2 ) {
-					for ( Size dist_bin=1; dist_bin <= 15; ++dist_bin ) {
-						Size const count(counts(aa1, atmNum1, aa2, atmNum2, dist_bin));
+	for ( core::Size aa1=1; aa1 <= max_res; ++aa1 ) {
+		for ( core::Size aa2=1; aa2 <= max_res; ++aa2 ) {
+			for ( core::Size atmNum1=1; atmNum1 <= max_atm; ++atmNum1 ) {
+				for ( core::Size atmNum2=1; atmNum2 <= max_atm; ++atmNum2 ) {
+					for ( core::Size dist_bin=1; dist_bin <= 15; ++dist_bin ) {
+						core::Size const count(counts(aa1, atmNum1, aa2, atmNum2, dist_bin));
 						stmt.bind(1,struct_id);
 						stmt.bind(2,aa1);
 						stmt.bind(3,atmNum1);

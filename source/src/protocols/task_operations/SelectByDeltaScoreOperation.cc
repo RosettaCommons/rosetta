@@ -160,7 +160,7 @@ SelectByDeltaScoreOperation::apply( core::pose::Pose const & pose, core::pack::t
 			core::Real resi_hbond_bb_sc_energy = 0;
 			core::Real ref_resi_hbond_bb_sc_energy = 0;
 			for ( core::Size j=1; j<=nres_asymmetric_unit; j++ ) {
-				for ( Size ihb = 1; ihb <= hbset_ref.nhbonds(); ++ihb ) {
+				for ( core::Size ihb = 1; ihb <= hbset_ref.nhbonds(); ++ihb ) {
 					core::scoring::hbonds::HBond const & hb(hbset_ref.hbond(ihb));
 					if ( hb.don_res()==i && hb.acc_res()==j ) {
 						if ( !hb.don_hatm_is_protein_backbone() && hb.acc_atm_is_protein_backbone() ) {
@@ -175,7 +175,7 @@ SelectByDeltaScoreOperation::apply( core::pose::Pose const & pose, core::pack::t
 						}
 					}
 				}
-				for ( Size ihb = 1; ihb <= hbset.nhbonds(); ++ihb ) {
+				for ( core::Size ihb = 1; ihb <= hbset.nhbonds(); ++ihb ) {
 					core::scoring::hbonds::HBond const & hb(hbset.hbond(ihb));
 					if ( hb.don_res()==i && hb.acc_res()==j ) {
 						if ( !hb.don_hatm_is_protein_backbone() && hb.acc_atm_is_protein_backbone() ) {

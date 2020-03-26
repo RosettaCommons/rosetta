@@ -356,7 +356,7 @@ void make_pose_from_sequence(core::pose::Pose & pose, utility::vector1< core::ch
 	pose.clear();
 
 	// setup the pose by appending the appropriate residues residues
-	for ( Size seqpos = 1; seqpos <= sequence.size(); ++seqpos ) {
+	for ( core::Size seqpos = 1; seqpos <= sequence.size(); ++seqpos ) {
 
 		bool const is_lower_terminus( seqpos == 1 );
 		//bool const is_upper_terminus( seqpos == sequence.size() );
@@ -422,7 +422,7 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 	segment.lo_res = r;
 	segment.type  = Segment::ORIGINAL;
 
-	Size ii( 1 );
+	core::Size ii( 1 );
 	while ( ii <= pose0->size() ) {
 		///while( iter != pose0->res_end() ) {
 
@@ -530,7 +530,7 @@ core::pose::PoseOP get_pose_with_indels( core::pose::PoseOP pose0, segments_type
 
 	clones.clear();
 
-	Size k, begin,size;
+	core::Size k, begin,size;
 	for ( k = 0, begin = 1; k < segments.size(); ++k, begin += size ) {
 		size = segments[k].size();
 		//cout << "copying segment " << k << endl;
@@ -602,7 +602,7 @@ core::pose::PoseOP Cloner::clone() {
 
 	cout << "InvKinLigLoopDesign::Cloner:: number of indels = " << indels.size() << endl;
 
-	//       for( Size k = 0; k < indels.size(); ++k ) {
+	//       for( core::Size k = 0; k < indels.size(); ++k ) {
 	// cout << "hi " << k << endl;
 	// cout << indels[k].begin << " " << indels[k].end << endl;
 	// cout << "indel: " << k << ": " << flush << ResID(*indels[k].begin) << "-" << ResID(*indels[k].end)<< endl;

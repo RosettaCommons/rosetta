@@ -41,8 +41,8 @@ public:
 	core::Real get_edge_reweight(
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTask const & task,
-		Size res1,
-		Size res2
+		core::Size res1,
+		core::Size res2
 	) const override;
 
 private:
@@ -93,8 +93,8 @@ public:
 	core::Real get_edge_reweight(
 		core::pose::Pose const &, // pose,
 		core::pack::task::PackerTask const &, // task,
-		Size res1,
-		Size res2
+		core::Size res1,
+		core::Size res2
 	) const override {
 		if ( ( (group1_.find(res1) != group1_.end()) && (group2_.find(res2) != group2_.end() ) )
 				||( (group2_.find(res1) != group2_.end()) && (group1_.find(res2) != group1_.end() ) ) ) {
@@ -129,8 +129,8 @@ public:
 	core::Real get_edge_reweight(
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTask const & task,
-		Size res1,
-		Size res2
+		core::Size res1,
+		core::Size res2
 	) const override;
 	void set_skip_loop_chains( std::string const & chain_string );
 	void set_sec_str( std::string const & sec_str_in ) { sec_str_ = sec_str_in; }

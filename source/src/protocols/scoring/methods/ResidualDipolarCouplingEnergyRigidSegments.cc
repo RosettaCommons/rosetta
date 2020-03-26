@@ -174,7 +174,7 @@ core::Real ResidualDipolarCouplingEnergyRigidSegments::eval_dipolar(
 	ResidualDipolarCouplingRigidSegments& rdc_segment_data( rdc_segments_from_pose( pose ) );
 	/* utility::vector1< core::scoring::RDC > const& All_RDC_lines( rdc_segment_data.get_RDC_data() );
 	Real score;
-	//Size const nrow( All_RDC_lines.size() ); //number of experimental couplins
+	//core::Size const nrow( All_RDC_lines.size() ); //number of experimental couplins
 	if ( basic::options::option[ basic::options::OptionKeys::rdc::iterate_weights ].user() ) {
 	Real const sigma2( basic::options::option[ basic::options::OptionKeys::rdc::iterate_weights ] );
 	Real const tol( basic::options::option[ basic::options::OptionKeys::rdc::iterate_tol ] );

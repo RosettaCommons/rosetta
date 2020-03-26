@@ -242,12 +242,12 @@ DisulfideEntropyFilter::compute(
 ) const {
 
 	//determine the current disulfide configuration
-	utility::vector1< std::pair<Size,Size> > disulf_config;
+	utility::vector1< std::pair<core::Size,Size> > disulf_config;
 
 	for ( core::Size i=1; i != pose.size(); ++i ) {
 		for ( core::Size j=i + 2; j < pose.size() + 1; ++j ) {
 			if ( pose.residue(i).is_bonded(pose.residue(j)) ) {
-				std::pair< Size, Size > temp_pair;
+				std::pair< core::Size, core::Size > temp_pair;
 				temp_pair = std::make_pair( i, j );
 				disulf_config.push_back( temp_pair );
 				//TR << i << "  " << j << std::endl;
@@ -261,8 +261,8 @@ DisulfideEntropyFilter::compute(
 	}
 
 	bnu::matrix<core::Real> m(disulf_config.size(), disulf_config.size());
-	for ( Size i = 0; i < m.size1() ; ++i ) {
-		for ( Size j = i; j < m.size2() ; ++j ) {
+	for ( core::Size i = 0; i < m.size1() ; ++i ) {
+		for ( core::Size j = i; j < m.size2() ; ++j ) {
 			if ( disulf_config[j+1].first > disulf_config[i+1].second ) {
 				m(i,j) = 0;
 				m(j,i) = 0;

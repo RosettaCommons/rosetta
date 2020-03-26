@@ -27,7 +27,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 // #include "utility/sys_util.h"
 
 // C++ headers
@@ -46,7 +46,7 @@ public:
 	EXCN_Converged(char const *file, int line, std::string const & m) : Exception(file, line, m + "\nexit protocol because structure is converged" ) {};
 };
 
-class MonteCarloExceptionConverge : public utility::pointer::ReferenceCount {
+class MonteCarloExceptionConverge : public utility::VirtualBase {
 public:
 	virtual bool operator() ( const core::pose::Pose & pose, MonteCarlo const&, bool reject ) = 0; //throw exception EXCN_Converged if positive
 protected:

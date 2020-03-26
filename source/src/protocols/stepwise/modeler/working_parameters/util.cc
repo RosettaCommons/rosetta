@@ -63,11 +63,11 @@ namespace working_parameters {
 //
 /////////////////////////////////////////////////////////////////////////
 StepWiseWorkingParametersOP
-setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_list,
+setup_working_parameters_for_swa( utility::vector1< core::Size > const & moving_res_list,
 	pose::Pose const & pose,
 	pose::PoseCOP native_pose,
-	utility::vector1< Size > const & user_defined_bridge_res,
-	utility::vector1< Size > const & working_minimize_res ){
+	utility::vector1< core::Size > const & user_defined_bridge_res,
+	utility::vector1< core::Size > const & working_minimize_res ){
 
 	using namespace core::pose::full_model_info;
 
@@ -76,27 +76,27 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	std::string const & full_sequence = full_model_info.full_sequence();
-	utility::vector1< Size > const & res_list = full_model_info.res_list();
-	utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
+	utility::vector1< core::Size > const & res_list = full_model_info.res_list();
+	utility::vector1< core::Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
 
-	utility::vector1< Size > const & working_moving_res_list = moving_res_list;
-	utility::vector1< Size > working_moving_suite_list;
+	utility::vector1< core::Size > const & working_moving_res_list = moving_res_list;
+	utility::vector1< core::Size > working_moving_suite_list;
 	bool is_prepend( false );
-	std::map< Size, bool > is_prepend_map;
-	for ( Size n = moving_res_list.size(); n >= 1; n-- ) { // backwards to set is_prepend to value at initial moving_res.
-		Size const & moving_res = moving_res_list[n];
-		Size const parent_res = pose.fold_tree().get_parent_residue( moving_res );
+	std::map< core::Size, bool > is_prepend_map;
+	for ( core::Size n = moving_res_list.size(); n >= 1; n-- ) { // backwards to set is_prepend to value at initial moving_res.
+		core::Size const & moving_res = moving_res_list[n];
+		core::Size const parent_res = pose.fold_tree().get_parent_residue( moving_res );
 		if ( pose.fold_tree().jump_nr( moving_res, parent_res ) == 0 ) working_moving_suite_list.push_back( std::min( moving_res, parent_res ) );
 		is_prepend = ( moving_res < parent_res );
 		is_prepend_map[ res_list[ moving_res ] ] = is_prepend;
 	}
 
-	utility::vector1< Size > bridge_res = user_defined_bridge_res; // for protein loop closure.
+	utility::vector1< core::Size > bridge_res = user_defined_bridge_res; // for protein loop closure.
 	if ( bridge_res.empty() ) bridge_res = protein::get_bridge_res( pose, moving_res_list );
 
-	utility::vector1< Size > is_working_res( full_sequence.size(), Size(0) );
+	utility::vector1< core::Size > is_working_res( full_sequence.size(), core::Size(0) );
 	//std::string working_sequence;
-	for ( Size n = 1; n <= res_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= res_list.size(); n++ ) {
 		is_working_res[ res_list[ n ] ] = 1;
 		// following magic numbers match what is in StepWiseProteinPoseSetup:
 		if ( moving_res_list.has_value( n ) )        is_working_res[ res_list[ n ] ] = MOVING_RES;
@@ -104,13 +104,13 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 		//working_sequence += full_sequence[ n-1 ];
 	}
 
-	utility::vector1< Size > calc_rms_res_ = full_model_info.full_model_parameters()->get_res_list( CALC_RMS );
+	utility::vector1< core::Size > calc_rms_res_ = full_model_info.full_model_parameters()->get_res_list( CALC_RMS );
 	if ( calc_rms_res_.empty() ) calc_rms_res_ = full_model_info.sub_to_full( moving_res_list );
 
-	utility::vector1< Size > fixed_res;
-	utility::vector1< Size > const & extra_minimize_res = const_full_model_info( pose ).extra_minimize_res();
-	utility::vector1< Size > const & sample_res = const_full_model_info( pose ).sample_res();
-	for ( Size n = 1; n <= full_sequence.size(); n++ ) {
+	utility::vector1< core::Size > fixed_res;
+	utility::vector1< core::Size > const & extra_minimize_res = const_full_model_info( pose ).extra_minimize_res();
+	utility::vector1< core::Size > const & sample_res = const_full_model_info( pose ).sample_res();
+	for ( core::Size n = 1; n <= full_sequence.size(); n++ ) {
 		if ( extra_minimize_res.has_value( n ) ) continue;
 		if ( sample_res.has_value( n ) ) continue;
 		if ( fixed_domain_map[ n ] > 0  && !working_minimize_res.has_value( res_list.index( n ) ) ) {
@@ -119,16 +119,16 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 		}
 	}
 
-	utility::vector1< Size > const working_moving_partition_res = figure_out_moving_partition_res( pose, moving_res_list );
+	utility::vector1< core::Size > const working_moving_partition_res = figure_out_moving_partition_res( pose, moving_res_list );
 	ObjexxFCL::FArray1D< bool > partition_definition( pose.size(), false );
-	for ( Size n = 1; n <= pose.size(); n++ ) partition_definition( n ) = working_moving_partition_res.has_value( n );
+	for ( core::Size n = 1; n <= pose.size(); n++ ) partition_definition( n ) = working_moving_partition_res.has_value( n );
 
 	pose::PoseOP working_native_pose;
 	if ( native_pose != nullptr ) {
 		working_native_pose = native_pose->clone();
-		utility::vector1< Size > const & native_res_list = get_res_list_from_full_model_info( *working_native_pose );
-		utility::vector1< Size > res_list_for_slicing;
-		for ( Size n = 1; n <= res_list.size(); n++ ) {
+		utility::vector1< core::Size > const & native_res_list = get_res_list_from_full_model_info( *working_native_pose );
+		utility::vector1< core::Size > res_list_for_slicing;
+		for ( core::Size n = 1; n <= res_list.size(); n++ ) {
 			if ( native_res_list.has_value( res_list[n] ) ) res_list_for_slicing.push_back( native_res_list.index( res_list[n] ) );
 		}
 		core::pose::pdbslice( *working_native_pose, *native_pose, res_list_for_slicing );
@@ -171,29 +171,29 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 StepWiseWorkingParametersOP
-setup_working_parameters_explicit( Size const rebuild_res, /* this must be in moving partition */
+setup_working_parameters_explicit( core::Size const rebuild_res, /* this must be in moving partition */
 	pose::Pose const & pose,
 	pose::PoseCOP native_pose ){
 	using namespace chemical;
 	using namespace pose::full_model_info;
 
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
-	utility::vector1< Size > const & calc_rms_res = full_model_info.calc_rms_res();
-	utility::vector1< Size > const & terminal_res = full_model_info.rna_terminal_res();
-	utility::vector1< Size > const & block_stack_above_res = full_model_info.rna_block_stack_above_res();
-	utility::vector1< Size > const & block_stack_below_res = full_model_info.rna_block_stack_below_res();
-	utility::vector1< Size > const & syn_chi_res_list = full_model_info.rna_syn_chi_res();
-	utility::vector1< Size > const & anti_chi_res_list = full_model_info.rna_anti_chi_res();
-	utility::vector1< Size > const & north_sugar_list = full_model_info.full_model_parameters()->get_res_list( RNA_NORTH_SUGAR );
-	utility::vector1< Size > const & south_sugar_list = full_model_info.full_model_parameters()->get_res_list( RNA_SOUTH_SUGAR );
+	utility::vector1< core::Size > const & calc_rms_res = full_model_info.calc_rms_res();
+	utility::vector1< core::Size > const & terminal_res = full_model_info.rna_terminal_res();
+	utility::vector1< core::Size > const & block_stack_above_res = full_model_info.rna_block_stack_above_res();
+	utility::vector1< core::Size > const & block_stack_below_res = full_model_info.rna_block_stack_below_res();
+	utility::vector1< core::Size > const & syn_chi_res_list = full_model_info.rna_syn_chi_res();
+	utility::vector1< core::Size > const & anti_chi_res_list = full_model_info.rna_anti_chi_res();
+	utility::vector1< core::Size > const & north_sugar_list = full_model_info.full_model_parameters()->get_res_list( RNA_NORTH_SUGAR );
+	utility::vector1< core::Size > const & south_sugar_list = full_model_info.full_model_parameters()->get_res_list( RNA_SOUTH_SUGAR );
 
-	Size moving_res( rebuild_res ), rebuild_suite( 0 );
+	core::Size moving_res( rebuild_res ), rebuild_suite( 0 );
 	bool floating_base( false ), is_internal( false );
-	Size const reference_res = pose.fold_tree().get_parent_residue( rebuild_res, floating_base /*is_jump*/ );
+	core::Size const reference_res = pose.fold_tree().get_parent_residue( rebuild_res, floating_base /*is_jump*/ );
 	// for internal moves, need to be smart about input_res definitions -- 'domains' that are separated by moving residue.
 	// this loop will also determine any chainbreak that requires closure
 	utility::vector1< bool > partition_definition;
-	Size floating_base_anchor_res( 0 );
+	core::Size floating_base_anchor_res( 0 );
 	if ( floating_base ) {
 		floating_base_anchor_res = reference_res;
 		partition_definition = get_partition_definition_floating_base( pose, rebuild_res );
@@ -203,25 +203,25 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 		partition_definition = get_partition_definition( pose, rebuild_suite );
 	}
 
-	utility::vector1< Size > input_res1, input_res2 /*blank*/, cutpoint_open, cutpoint_closed;
-	//Size cutpoint_closed_distal( 0 );
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	utility::vector1< core::Size > input_res1, input_res2 /*blank*/, cutpoint_open, cutpoint_closed;
+	//core::Size cutpoint_closed_distal( 0 );
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( !partition_definition[ n ] ) input_res1.push_back( n );
 		else input_res2.push_back( n );
 	}
-	utility::vector1< Size > const & moving_partition_res = ( partition_definition[ moving_res ] ) ? input_res2 :  input_res1;
-	utility::vector1< Size > five_prime_chain_breaks, three_prime_chain_breaks, chain_break_gap_sizes;
+	utility::vector1< core::Size > const & moving_partition_res = ( partition_definition[ moving_res ] ) ? input_res2 :  input_res1;
+	utility::vector1< core::Size > five_prime_chain_breaks, three_prime_chain_breaks, chain_break_gap_sizes;
 	figure_out_moving_chain_breaks( pose, moving_partition_res,
 		cutpoint_closed,
 		five_prime_chain_breaks, three_prime_chain_breaks, chain_break_gap_sizes );
-	for ( Size n = 1; n <= pose.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose.size(); n++ ) {
 		if ( pose.fold_tree().is_cutpoint( n ) && !five_prime_chain_breaks.has_value( n ) ) {
 			cutpoint_open.push_back( n );
 		}
 	}
-	Size five_prime_chain_break_res( 0 ), gap_size( 999 );
-	for ( Size i = 1; i <= five_prime_chain_breaks.size(); i++ ) {
-		Size const n = five_prime_chain_breaks[ i ];
+	core::Size five_prime_chain_break_res( 0 ), gap_size( 999 );
+	for ( core::Size i = 1; i <= five_prime_chain_breaks.size(); i++ ) {
+		core::Size const n = five_prime_chain_breaks[ i ];
 		if ( ( reference_res < rebuild_res && rebuild_res == (n+1) ) ||
 				( reference_res > rebuild_res && rebuild_res == n ) ) {
 			runtime_assert( floating_base ); continue;
@@ -241,7 +241,7 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 	// should now include the 'moving res' [unless re-specified by user down below].
 
 	// check if this is an 'internal' move.
-	utility::vector1< Size> working_fixed_res_guess; // this is just a placeholder now, I think.
+	utility::vector1< core::Size> working_fixed_res_guess; // this is just a placeholder now, I think.
 	if ( moving_partition_res.size() > 1 ) {
 		if ( !working_fixed_res_guess.has_value( rebuild_res ) ) working_fixed_res_guess.push_back( rebuild_res );
 		if ( !floating_base ) {
@@ -251,7 +251,7 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 	}
 
 	std::string full_sequence = full_model_info.full_sequence();
-	Size nres = full_sequence.size();
+	core::Size nres = full_sequence.size();
 	// AMW: only make this transformation if the X is not in the non_standard_residue_map
 	// i.e., if it's a VRT X not a ligand or polymer.
 	if ( full_sequence[ nres - 1] == 'X'
@@ -260,14 +260,14 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 		nres -= 1;
 	}
 	utility::vector1< bool > is_working_res;
-	for ( Size n = 1; n <= nres; n++ ) is_working_res.push_back( full_model_info.res_list().has_value( n ) );
+	for ( core::Size n = 1; n <= nres; n++ ) is_working_res.push_back( full_model_info.res_list().has_value( n ) );
 	bool const is_prepend = ( rebuild_res < reference_res );
 
-	std::map< Size, bool > is_prepend_map; // used for rmsd calculations -- include phosphate. May not be necessary.
-	utility::vector1< Size > calc_rms_res_ = calc_rms_res;
+	std::map< core::Size, bool > is_prepend_map; // used for rmsd calculations -- include phosphate. May not be necessary.
+	utility::vector1< core::Size > calc_rms_res_ = calc_rms_res;
 	if ( calc_rms_res_.size() == 0 ) calc_rms_res_.push_back( full_model_info.sub_to_full( rebuild_res ) );
 
-	for ( Size const n : calc_rms_res_ ) {
+	for ( core::Size const n : calc_rms_res_ ) {
 		if ( is_working_res[ n ] ) {
 			is_prepend_map[ n ] = is_prepend; //pose.residue_type( full_model_info.full_to_sub( n ) ).has_variant_type( "VIRTUAL_PHOSPHATE" );
 		}
@@ -320,11 +320,11 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 
 /////////////////////////////////////////////////////////////////////////
 bool
-figure_out_rebuild_bulge_mode( pose::Pose const & pose, Size const rebuild_res ){
+figure_out_rebuild_bulge_mode( pose::Pose const & pose, core::Size const rebuild_res ){
 	kinematics::FoldTree const & f = pose.fold_tree();
 
 	// if the rebuild_res is connected to anything by a jump, better not virtualize it.
-	for ( Size n = 1; n <= f.num_jump(); n++ ) {
+	for ( core::Size n = 1; n <= f.num_jump(); n++ ) {
 		if ( f.upstream_jump_residue( n )   == rebuild_res ) return false;
 		if ( f.downstream_jump_residue( n ) == rebuild_res ) return false;
 	}
@@ -348,7 +348,7 @@ figure_out_rebuild_bulge_mode( pose::Pose const & pose, Size const rebuild_res )
 bool
 figure_out_sample_both_sugar_base_rotamer( pose::Pose const & pose,
 	bool const floating_base,
-	Size const rebuild_suite ){
+	core::Size const rebuild_suite ){
 	if ( !floating_base &&
 			sampler::rna::modeler_sugar_at_five_prime(  pose, rebuild_suite ) &&
 			sampler::rna::modeler_sugar_at_three_prime( pose, rebuild_suite ) ) {

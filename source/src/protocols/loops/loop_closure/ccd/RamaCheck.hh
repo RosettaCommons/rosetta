@@ -27,7 +27,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -39,9 +39,9 @@ namespace loops {
 namespace loop_closure {
 namespace ccd {
 
-class RamaCheckBase : public utility::pointer::ReferenceCount {
+class RamaCheckBase : public utility::VirtualBase {
 
-	typedef utility::pointer::ReferenceCount Parent;
+	typedef utility::VirtualBase Parent;
 	typedef utility::vector1< core::Real > RamaScoreVector;
 
 public:

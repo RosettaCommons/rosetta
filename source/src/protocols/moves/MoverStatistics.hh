@@ -29,7 +29,7 @@
 #include <vector>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace moves {
@@ -39,10 +39,10 @@ namespace moves {
 // @brief MoverStatistics keeps track of the acceptance_rate for a mover
 
 
-class MoverStatistics : public utility::pointer::ReferenceCount {
+class MoverStatistics : public utility::VirtualBase {
 
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~MoverStatistics() override;
 
 	// default constructor
@@ -86,8 +86,8 @@ private:
 	mutable int accepted_; ///< number of accepted moves
 	mutable int rejected_; ///< number of rejected moves
 	std::vector < core::Real > score_;
-	Size thermal_accepts_;
-	Size downhill_accepts_;
+	core::Size thermal_accepts_;
+	core::Size downhill_accepts_;
 }; // MoverStatistics class
 } // moves
 } // rosetta

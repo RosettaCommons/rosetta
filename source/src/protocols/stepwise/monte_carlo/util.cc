@@ -133,7 +133,7 @@ void
 output_to_silent_file( std::string const & silent_file,
 	utility::vector1< pose::PoseOP > & pose_list,
 	pose::PoseCOP native_pose ) {
-	for ( Size n = 1; n <= pose_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= pose_list.size(); n++ ) {
 		output_to_silent_file( tag_from_pose( *pose_list[n] ), silent_file,
 			*pose_list[n], native_pose );
 	}
@@ -180,7 +180,7 @@ get_all_res_list( pose::Pose & pose ) {
 	utility::vector1< pose::PoseOP > const & other_pose_list = core::pose::full_model_info::const_full_model_info( pose ).other_pose_list();
 	if ( other_pose_list.size() == 0 ) return out_string;
 	out_string += " [ other_pose: ";
-	for ( Size n = 1; n <= other_pose_list.size(); n++ ) {
+	for ( core::Size n = 1; n <= other_pose_list.size(); n++ ) {
 		out_string += get_all_res_list( *other_pose_list[n] );
 		if ( n < other_pose_list.size() ) out_string += "; ";
 	}

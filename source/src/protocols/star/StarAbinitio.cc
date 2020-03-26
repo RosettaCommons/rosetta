@@ -97,7 +97,7 @@ using protocols::moves::MoverOP;
 using protocols::simple_moves::rational_mc::RationalMonteCarlo;
 using utility::vector1;
 
-void compute_per_residue_probabilities(Size num_residues, Size fragment_len, const FoldTree& tree, Probabilities* probs) {
+void compute_per_residue_probabilities(core::Size num_residues, core::Size fragment_len, const FoldTree& tree, Probabilities* probs) {
 	probs->resize(num_residues, 1);
 	protocols::medal::invalidate_residues_spanning_cuts(tree, fragment_len, probs);
 	numeric::normalize(probs->begin(), probs->end());
@@ -107,7 +107,7 @@ void compute_per_residue_probabilities(Size num_residues, Size fragment_len, con
 /// @detail Regulates the application of constraints during folding based on
 /// distance between residues in the fold tree. The MonteCarlo object should
 /// be reset after calling this function.
-void update_sequence_separation(Size distance, Pose* pose) {
+void update_sequence_separation(core::Size distance, Pose* pose) {
 	using protocols::constraints_additional::MaxSeqSepConstraintSet;
 	using protocols::constraints_additional::MaxSeqSepConstraintSetOP;
 
@@ -130,18 +130,18 @@ void setup_constraints(const Loops& aligned, Pose* pose) {
 
 	core::scoring::constraints::add_constraints_from_cmdline_to_pose(*pose);
 
-	Size n_csts = 0;
-	for ( Size i = 1; i <= aligned.size(); ++i ) {
+	core::Size n_csts = 0;
+	for ( core::Size i = 1; i <= aligned.size(); ++i ) {
 		const Loop& ci = aligned[i];
 
-		for ( Size j = i + 1; j <= aligned.size(); ++j ) {
+		for ( core::Size j = i + 1; j <= aligned.size(); ++j ) {
 			const Loop& cj = aligned[j];
 
-			for ( Size k = ci.start(); k <= ci.stop(); ++k ) {
+			for ( core::Size k = ci.start(); k <= ci.stop(); ++k ) {
 				const AtomID ai(pose->conformation().residue(k).atom_index("CA"), k);
 				const xyzVector<Real>& p = pose->xyz(ai);
 
-				for ( Size l = cj.start(); l <= cj.stop(); ++l ) {
+				for ( core::Size l = cj.start(); l <= cj.stop(); ++l ) {
 					const AtomID aj(pose->conformation().residue(l).atom_index("CA"), l);
 					const xyzVector<Real>& q = pose->xyz(aj);
 
@@ -162,7 +162,7 @@ void setup_constraints(const Loops& aligned, Pose* pose) {
 		utility_exit();
 	}
 
-	Size max_dist_ft = ShortestPathInFoldTree(pose->fold_tree()).max_dist();
+	core::Size max_dist_ft = ShortestPathInFoldTree(pose->fold_tree()).max_dist();
 	update_sequence_separation(max_dist_ft, pose);
 }
 
@@ -185,7 +185,7 @@ ScoreFunctionOP setup_score(const std::string& weights, Real cb) {
 /// @detail Updates RationalMonteCarlo instance.
 /// Calling this method twice without scoring a pose in between will trigger a
 /// runtime assertion in core/pose/Pose.cc.
-void configure_rmc(MoverOP mover, ScoreFunctionOP score, Size num_cycles, Real temperature, bool recover_low, RationalMonteCarlo* rmc) {
+void configure_rmc(MoverOP mover, ScoreFunctionOP score, core::Size num_cycles, Real temperature, bool recover_low, RationalMonteCarlo* rmc) {
 	rmc->set_mover(mover);
 	rmc->set_score_function(score);
 	rmc->set_num_trials(num_cycles);
@@ -197,29 +197,29 @@ void StarAbinitio::setup_kinematics(const Loops& aligned, const vector1<unsigned
 	debug_assert(aligned.num_loop() >= 2);
 	debug_assert(interior_cuts.size() == (aligned.num_loop() - 1));
 
-	const Size num_residues = pose.size();
-	const Size vres = num_residues + 1;
+	const core::Size num_residues = pose.size();
+	const core::Size vres = num_residues + 1;
 
 	xyzVector<core::Real> center;
 	aligned.center_of_mass(pose, &center);
 	core::pose::addVirtualResAsRoot(center, pose);
 
-	vector1<std::pair<Size, Size> > jumps;
-	for ( Size i = 1; i <= aligned.num_loop(); ++i ) {
+	vector1<std::pair<core::Size, core::Size> > jumps;
+	for ( core::Size i = 1; i <= aligned.num_loop(); ++i ) {
 		jumps.push_back(std::make_pair(vres, aligned[i].midpoint()));
 	}
 
-	vector1<Size> cuts(interior_cuts);
+	vector1<core::Size> cuts(interior_cuts);
 	cuts.push_back(num_residues);
 
-	ObjexxFCL::FArray2D< Size > ft_jumps(2, jumps.size());
-	for ( Size i = 1; i <= jumps.size(); ++i ) {
+	ObjexxFCL::FArray2D< core::Size > ft_jumps(2, jumps.size());
+	for ( core::Size i = 1; i <= jumps.size(); ++i ) {
 		ft_jumps(1, i) = std::min(jumps[i].first, jumps[i].second);
 		ft_jumps(2, i) = std::max(jumps[i].first, jumps[i].second);
 	}
 
-	ObjexxFCL::FArray1D< Size > ft_cuts(cuts.size());
-	for ( Size i = 1; i <= cuts.size(); ++i ) {
+	ObjexxFCL::FArray1D< core::Size > ft_cuts(cuts.size());
+	for ( core::Size i = 1; i <= cuts.size(); ++i ) {
 		ft_cuts(i) = cuts[i];
 	}
 
@@ -262,7 +262,7 @@ void StarAbinitio::apply(Pose& pose) {
 	//const Loops& unaligned = *(extender.unaligned());
 	TR << "Aligned: " << aligned << std::endl;
 
-	const Size num_residues = pose.size();
+	const core::Size num_residues = pose.size();
 	setup_kinematics(aligned, extender.cutpoints(), pose);
 	setup_constraints(aligned, &pose);
 
@@ -287,39 +287,39 @@ void StarAbinitio::apply(Pose& pose) {
 
 	// Stage 1
 	TR << "Stage 1" << std::endl;
-	RationalMonteCarlo rmc(fragments_lg_uni, score_stage1, static_cast<Size>(mult * 2000), temperature, true);
+	RationalMonteCarlo rmc(fragments_lg_uni, score_stage1, static_cast<core::Size>(mult * 2000), temperature, true);
 	rmc.apply(pose);
 
-	configure_rmc(fragments_sm_uni, score_stage1, static_cast<Size>(mult * 2000), temperature, true, &rmc);
+	configure_rmc(fragments_sm_uni, score_stage1, static_cast<core::Size>(mult * 2000), temperature, true, &rmc);
 	rmc.apply(pose);
 	emit_intermediate(pose, "star_stage1.out");
 
 	// Stage 2
 	TR << "Stage 2" << std::endl;
-	configure_rmc(fragments_lg_uni, score_stage2, static_cast<Size>(mult * 4000), temperature, true, &rmc);
+	configure_rmc(fragments_lg_uni, score_stage2, static_cast<core::Size>(mult * 4000), temperature, true, &rmc);
 	rmc.enable_autotemp(temperature);
 	rmc.apply(pose);
 
-	configure_rmc(fragments_sm_uni, score_stage2, static_cast<Size>(mult * 4000), temperature, true, &rmc);
+	configure_rmc(fragments_sm_uni, score_stage2, static_cast<core::Size>(mult * 4000), temperature, true, &rmc);
 	rmc.apply(pose);
 	emit_intermediate(pose, "star_stage2.out");
 
 	// Stage 3
 	TR << "Stage 3" << std::endl;
-	for ( Size i = 1; i <= 10; ++i ) {
+	for ( core::Size i = 1; i <= 10; ++i ) {
 		ScoreFunctionOP score = ((i % 2) == 0 && i <= 7) ? score_stage3a : score_stage3b;
-		configure_rmc(fragments_lg_uni, score, static_cast<Size>(mult * 4000), temperature, true, &rmc);
+		configure_rmc(fragments_lg_uni, score, static_cast<core::Size>(mult * 4000), temperature, true, &rmc);
 		rmc.apply(pose);
 
-		configure_rmc(fragments_sm_uni, score, static_cast<Size>(mult * 4000), temperature, true, &rmc);
+		configure_rmc(fragments_sm_uni, score, static_cast<core::Size>(mult * 4000), temperature, true, &rmc);
 		rmc.apply(pose);
 	}
 	emit_intermediate(pose, "star_stage3.out");
 
 	// Stage 4
 	TR << "Stage 4" << std::endl;
-	configure_rmc(fragments_sm_smo, score_stage4, static_cast<Size>(mult * 8000), temperature, true, &rmc);
-	for ( Size i = 1; i <= 3; ++i ) {
+	configure_rmc(fragments_sm_smo, score_stage4, static_cast<core::Size>(mult * 8000), temperature, true, &rmc);
+	for ( core::Size i = 1; i <= 3; ++i ) {
 		rmc.apply(pose);
 	}
 	emit_intermediate(pose, "star_stage4.out");

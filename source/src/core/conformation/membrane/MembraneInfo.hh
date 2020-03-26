@@ -39,7 +39,7 @@
 
 // Utility Headers
 #include <numeric/MathMatrix.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -53,7 +53,7 @@ namespace conformation {
 namespace membrane {
 
 /// @brief Data describing the relationship between protein(s) and a membrane environment
-class MembraneInfo : public utility::pointer::ReferenceCount {
+class MembraneInfo : public utility::VirtualBase {
 
 public: // Constructors & Setup
 

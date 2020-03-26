@@ -42,7 +42,7 @@ public:
 	AutoCutData( std::istream &in );
 
 	AutoCutData( core::Size const& hash,
-		std::set< Size > const& cuts );
+		std::set< core::Size > const& cuts );
 
 	void write( std::ostream &out ) const override;
 
@@ -50,7 +50,7 @@ public:
 
 	std::string datatype() const override;
 
-	utility::vector1< Size > const& cuts() const{
+	utility::vector1< core::Size > const& cuts() const{
 		return auto_cuts_;
 	}
 

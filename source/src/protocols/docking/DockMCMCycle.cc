@@ -173,12 +173,12 @@ void DockMCMCycle::set_default()
 
 	// perhaps call this dock_minimize_bb_res or something.
 	if ( option[ bb_min_res ].user() ) {
-		utility::vector1< Size > const & min_res = option[ bb_min_res ]();
-		for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_bb( min_res[n], true );
+		utility::vector1< core::Size > const & min_res = option[ bb_min_res ]();
+		for ( core::Size n = 1; n <= min_res.size(); n++ ) movemap_->set_bb( min_res[n], true );
 	}
 	if ( option[ sc_min_res ].user() ) {
-		utility::vector1< Size > const & min_res = option[ sc_min_res ]();
-		for ( Size n = 1; n <= min_res.size(); n++ ) movemap_->set_chi( min_res[n], true );
+		utility::vector1< core::Size > const & min_res = option[ sc_min_res ]();
+		for ( core::Size n = 1; n <= min_res.size(); n++ ) movemap_->set_chi( min_res[n], true );
 	}
 
 
@@ -321,7 +321,7 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 	//JQX: 1. rb_mover_min_trail (7 times)
 	//JQX: 2. repack_tep (1 time)
 	dock_mcm_cycle_ = utility::pointer::make_shared< CycleMover >();
-	for ( Size i=1; i<repack_period_; ++i ) dock_mcm_cycle_->add_mover( rb_mover_min_trail );
+	for ( core::Size i=1; i<repack_period_; ++i ) dock_mcm_cycle_->add_mover( rb_mover_min_trail );
 	dock_mcm_cycle_->add_mover( repack_step );
 
 

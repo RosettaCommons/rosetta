@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_loop_graph_LoopClosePotentialEvaluator_HH
 #define INCLUDED_core_scoring_loop_graph_LoopClosePotentialEvaluator_HH
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/scoring/loop_graph/evaluator/LoopClosePotentialEvaluator.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -28,7 +28,7 @@ namespace scoring {
 namespace loop_graph {
 namespace evaluator {
 
-class LoopClosePotentialEvaluator: public utility::pointer::ReferenceCount {
+class LoopClosePotentialEvaluator: public utility::VirtualBase {
 
 public:
 

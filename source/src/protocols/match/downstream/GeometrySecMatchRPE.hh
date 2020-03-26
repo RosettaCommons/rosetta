@@ -27,7 +27,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 
@@ -65,7 +65,7 @@ public:
 	require_all_target_residue_atom_coordinates() const override;
 
 	bool
-	require_target_atom_coordinate( Size target_atom_id ) const override;
+	require_target_atom_coordinate( core::Size target_atom_id ) const override;
 
 
 	/// @brief determines if the passed in value is between lowval and highval
@@ -140,15 +140,15 @@ public:
 	) const override;
 
 	bool
-	require_candidate_residue_atoms_to_lie_near_target_atom( Size target_atom_id ) const override;
+	require_candidate_residue_atoms_to_lie_near_target_atom( core::Size target_atom_id ) const override;
 
-	utility::vector1< Size >
+	utility::vector1< core::Size >
 	candidate_res_atoms_reqd_near_target_atom(
-		Size target_atom_id
+		core::Size target_atom_id
 	) const override;
 
 	Real
-	max_separation_dist_to_target_atom( Size target_atom_id ) const override;
+	max_separation_dist_to_target_atom( core::Size target_atom_id ) const override;
 
 	std::string
 	print(
@@ -249,18 +249,18 @@ public:
 	require_all_target_residue_atom_coordinates() const override;
 
 	bool
-	require_target_atom_coordinate( Size target_atom_id ) const override;
+	require_target_atom_coordinate( core::Size target_atom_id ) const override;
 
 	bool
-	require_candidate_residue_atoms_to_lie_near_target_atom( Size target_atom_id ) const override;
+	require_candidate_residue_atoms_to_lie_near_target_atom( core::Size target_atom_id ) const override;
 
-	utility::vector1< Size >
+	utility::vector1< core::Size >
 	candidate_res_atoms_reqd_near_target_atom(
-		Size target_atom_id
+		core::Size target_atom_id
 	) const override;
 
 	Real
-	max_separation_dist_to_target_atom( Size target_atom_id ) const override;
+	max_separation_dist_to_target_atom( core::Size target_atom_id ) const override;
 
 	utility::vector1< AtomGeometrySecMatchRPECOP > const &
 	atom_geom_rpes() const {

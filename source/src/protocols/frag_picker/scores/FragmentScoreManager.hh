@@ -22,7 +22,7 @@
 #include <protocols/frag_picker/VallChunk.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++
 #include <map>
@@ -37,9 +37,9 @@ namespace scores {
 /// @brief holds particular score components, weights and calculates the total score for a fragment candidate
 /// @details a fragment picker object needs exactly one fragment manager to pick fragments. Adding new scoring methods
 /// is supposed to be done FragmentPicker, which calls proper method from this class.
-class FragmentScoreManager: public utility::pointer::ReferenceCount {
+class FragmentScoreManager: public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~FragmentScoreManager() override;
 
 	/// @brief precision used to display the total score for each fragment

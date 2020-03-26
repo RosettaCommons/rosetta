@@ -54,12 +54,12 @@ using namespace core;
 
 
 /// @brief A function (not a macro) that will not print a square matrix to tr.Debug
-template< class T > void dump_matrix( Size, T const &, basic::Tracer & ) {}
+template< class T > void dump_matrix( core::Size, T const &, basic::Tracer & ) {}
 
 /// @brief A function (not a macro) that will print a square matrix to tr.Debug
-template< class T > void dump_matrix_no( Size nr, T const & a, basic::Tracer & tracer)
+template< class T > void dump_matrix_no( core::Size nr, T const & a, basic::Tracer & tracer)
 {
-	Size i,k;
+	core::Size i,k;
 	for ( i =0 ; i<nr; ++i ) {
 		for ( k =0 ; k<nr; ++k ) {
 			tracer.Debug << a[i][k] << " ";
@@ -127,8 +127,8 @@ void PCA::read_eigvec_file( std::string fn, pose::Pose const& pose,int nvec) {
 	if ( line != "AVERAGE" ) utility_exit_with_message(" tag AVERAGE missing ");
 	read_structure( data, pose, ipca_, xav_,  "REFERENCE" );
 	read_structure( data, pose, ifit_, xref_, "VECTORS" );
-	for ( Size i=1; i<=nvec_; i++ ) {
-		for ( Size k=1; k<=npca_; k++ ) {
+	for ( core::Size i=1; i<=nvec_; i++ ) {
+		for ( core::Size k=1; k<=npca_; k++ ) {
 			getline(data, line);
 			std::istringstream line_stream2( line );
 			line_stream2 >> eigvec_( 1, k, i) >> eigvec_( 2, k, i) >> eigvec_(3, k, i);
@@ -151,7 +151,7 @@ void PCA::read_structure (
 	while ( line != endtag ) {
 		std::istringstream line_stream( line );
 		std::string atomname;
-		Size resnr;
+		core::Size resnr;
 		Real x1, x2, x3;
 		line_stream >> atomname >> resnr >> x1 >> x2 >> x3;
 		//---
@@ -164,17 +164,17 @@ void PCA::read_structure (
 	}
 }
 
-void PCA::reset_x( Size n, CoordVector& x, rvec transvec ) {
-	Size dim( 3 );
+void PCA::reset_x( core::Size n, CoordVector& x, rvec transvec ) {
+	core::Size dim( 3 );
 	// align center of mass to origin
-	for ( Size k = 1; k <= dim; ++k ) {
+	for ( core::Size k = 1; k <= dim; ++k ) {
 		Real temp1 = 0.0;
-		for ( Size j = 1; j <= n; ++j ) {
+		for ( core::Size j = 1; j <= n; ++j ) {
 			temp1 += x(k,j);
 		}
 		temp1 /= 1.0*n;
 		transvec[k-1]=-temp1;
-		for ( Size j = 1; j <= n; ++j ) {
+		for ( core::Size j = 1; j <= n; ++j ) {
 			x(k,j) -= temp1;
 		}
 	}
@@ -196,8 +196,8 @@ void PCA::eval( pose::Pose const& pose, ProjectionVector& proj ) {
 	reset_x( nfit_, x, transvec );
 
 	//transfer into C-style arrays
-	for ( Size i = 1; i<=nfit_ ; i++ ) {
-		for ( Size d = 1; d<=3; d++ ) {
+	for ( core::Size i = 1; i<=nfit_ ; i++ ) {
+		for ( core::Size d = 1; d<=3; d++ ) {
 			xgmx[i-1][d-1]= x(d, i)/10.0;
 			xrefgmx[i-1][d-1]=xref_(d,i)/10.0;
 		}
@@ -209,7 +209,7 @@ void PCA::eval( pose::Pose const& pose, ProjectionVector& proj ) {
 
 	fill_coordinates( pose, ipca_, x );
 	//transfer into C-style arrays
-	for ( Size i = 1; i<=npca_ ; i++ ) {
+	for ( core::Size i = 1; i<=npca_ ; i++ ) {
 		for ( int d = 1; d<=3; d++ ) {
 			xgmx[i-1][d-1]= x(d, i);
 		}
@@ -218,8 +218,8 @@ void PCA::eval( pose::Pose const& pose, ProjectionVector& proj ) {
 	rotate_vec( npca_, xgmx, Rot );
 
 	tr.Trace << "rotated and translated\n";
-	for ( Size i = 1; i<=npca_ ; i++ ) {
-		for ( Size d = 1; d<=3; d++ ) {
+	for ( core::Size i = 1; i<=npca_ ; i++ ) {
+		for ( core::Size d = 1; d<=3; d++ ) {
 			x(d, i) = xgmx[i-1][d-1];
 			tr.Trace << x(d, i)/10.0 << " ";
 		}
@@ -227,10 +227,10 @@ void PCA::eval( pose::Pose const& pose, ProjectionVector& proj ) {
 	}
 	//Compute projection
 	proj.resize( nvec_ );
-	for ( Size v = 1; v <= nvec_; v++ ) {
+	for ( core::Size v = 1; v <= nvec_; v++ ) {
 		proj[ v ]=0;
-		for ( Size k = 1; k <= npca_; k++ ) {
-			for ( Size d = 1; d <= 3; d++ ) {
+		for ( core::Size k = 1; k <= npca_; k++ ) {
+			for ( core::Size d = 1; d <= 3; d++ ) {
 				proj[ v ]+= (x( d, k)-xav_( d, k)) * eigvec_( d, k, v)/10.0;
 			}
 		}
@@ -244,16 +244,16 @@ void PCA::eval( pose::Pose const& pose, ProjectionVector& proj ) {
 void PCA::show( std::ostream& os ) {
 	os << nfit_ << " " << npca_ << " " << nvec_ << std::endl;
 	os << "AVERAGE" << std::endl;
-	for ( Size i = 1; i <= npca_ ; i++ ) {
+	for ( core::Size i = 1; i <= npca_ ; i++ ) {
 		os << ipca_[i] << " " << xav_(1, i ) << " " << xav_(2,i ) << " " << xav_(3,i ) << std::endl;
 	}
 
-	for ( Size i = 1; i <= nfit_ ; i++ ) {
+	for ( core::Size i = 1; i <= nfit_ ; i++ ) {
 		os << xref_( 1, i ) << " " << xref_( 2, i ) << " " << xref_( 3, i ) << std::endl;
 	}
 
-	for ( Size k = 1; k <= nvec_ ; k++ ) {
-		for ( Size i = 1; i <= npca_ ; i++ ) {
+	for ( core::Size k = 1; k <= nvec_ ; k++ ) {
+		for ( core::Size i = 1; i <= npca_ ; i++ ) {
 			os << eigvec_( 1, i, k ) << " " << eigvec_( 2, i, k ) << " " << eigvec_( 3, i, k ) << std::endl;
 		}
 	}

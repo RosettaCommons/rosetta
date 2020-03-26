@@ -71,7 +71,7 @@ bool link_in_vector( utility::vector1< LinkInformation > const & link_vector, Li
 }
 
 // Standard Methods ///////////////////////////////////////////////////////////
-StructFileRep::StructFileRep() : utility::pointer::ReferenceCount(),
+StructFileRep::StructFileRep() : utility::VirtualBase(),
 	filename_( "" ),
 	modeltag_( "" ),
 	header_( utility::pointer::make_shared< HeaderInformation >() ),

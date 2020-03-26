@@ -87,12 +87,12 @@ void BackboneTorsionSampler::init() {
 }
 
 void BackboneTorsionSampler::local_perturb(core::pose::Pose pose, core::Real max_delta_torsion) {
-	Size n_torsion(0);
-	for ( Size ires=1; ires <= pose.size(); ++ires ) {
+	core::Size n_torsion(0);
+	for ( core::Size ires=1; ires <= pose.size(); ++ires ) {
 		n_torsion += 2; // for now
 	}
-	Size perturbed_torsion = numeric::random::rg().random_range(1, n_torsion);
-	Size perturbed_residue = (perturbed_torsion + 1)/2;
+	core::Size perturbed_torsion = numeric::random::rg().random_range(1, n_torsion);
+	core::Size perturbed_residue = (perturbed_torsion + 1)/2;
 	core::Real delta = (2.* numeric::random::rg().uniform() - 1.) * max_delta_torsion;
 	if ( (perturbed_torsion - (perturbed_residue-1)*2) == 1 ) {
 		pose.set_phi(perturbed_residue, pose.phi(perturbed_residue) + delta);
@@ -108,7 +108,7 @@ void BackboneTorsionSampler::local_perturb(core::pose::Pose pose, core::Real max
 	}
 
 	if ( next_torsion >= 1 && next_torsion <= (int) pose.size() * 2 ) {
-		Size next_perturbed_residue = (next_torsion + 1)/2;
+		core::Size next_perturbed_residue = (next_torsion + 1)/2;
 		if ( (next_torsion - (next_perturbed_residue-1)*2) == 1 ) {
 			pose.set_phi(next_perturbed_residue, pose.phi(next_perturbed_residue) - delta);
 		} else {
@@ -215,7 +215,7 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
 		pose.dump_pdb(pdb_fn);
 	}
 
-	Size snapshot_counter = 0;
+	core::Size snapshot_counter = 0;
 	for ( core::Size i_nest=1; i_nest<n_nested_; ++i_nest ) {
 		if ( i_nest == 1 ) {
 			perturb(pose, i_nest, 0., local_, true, false, false);
@@ -224,7 +224,7 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
 		}
 	}
 	while ( true ) {
-		Size i_nest = n_nested_+1;
+		core::Size i_nest = n_nested_+1;
 		++counters[i_nest];
 
 		// lowest level move

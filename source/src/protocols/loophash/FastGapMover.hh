@@ -81,7 +81,7 @@ public:
 
 private:
 	// methods
-	void find_next_gap( Pose & pose, Size & idx, Real & gap_distance );
+	void find_next_gap( Pose & pose, core::Size & idx, Real & gap_distance );
 
 
 private:

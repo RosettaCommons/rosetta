@@ -362,7 +362,7 @@ TMHTopologySamplerClaimer::build_fold_tree(core::pose::Pose& pose, core::kinemat
 		tr.Debug << pose.annotated_sequence() << std::endl;
 	}
 
-	for ( Size jump_num = 1; jump_num <= new_fold_tree.num_jump(); ++jump_num ) {
+	for ( core::Size jump_num = 1; jump_num <= new_fold_tree.num_jump(); ++jump_num ) {
 		tr.Info << "final_jump_array:  " << jump_array_(1,jump_num) << " "
 			<< jump_array_(2,jump_num) << std::endl;
 		new_fold_tree.set_jump_atoms(jump_num, "X", "N" );
@@ -386,7 +386,7 @@ TMHTopologySamplerClaimer::get_fold_tree(core::pose::Pose& pose)
 void
 TMHTopologySamplerClaimer::generate_claims(claims::DofClaims &dof_claims)
 {
-	for ( Size jump_num = 1; jump_num <= njumps_; ++jump_num ) {
+	for ( core::Size jump_num = 1; jump_num <= njumps_; ++jump_num ) {
 		dof_claims.push_back( utility::pointer::make_shared< claims::JumpClaim >(get_self_weak_ptr(),jump_array_(1,jump_num),jump_array_(2,jump_num),claims::DofClaim::CAN_INIT) );
 	}
 	for ( core::Size i=1; i<=nres_; ++i ) {
@@ -547,10 +547,10 @@ TMHTopologySamplerClaimer::output_membrane_vector(core::pose::Pose& pose)
 	core::conformation::ResidueOP membrane_normal_res = core::conformation::ResidueFactory::create_residue( *(rsd_type) ) ;
 
 	if ( option[basic::options::OptionKeys::out::file::output_virtual].value() ) {
-		for ( Size j=1; j<= membrane_center_res->natoms(); ++j ) {
+		for ( core::Size j=1; j<= membrane_center_res->natoms(); ++j ) {
 			membrane_center_res->atom(j).xyz( membrane_center_res->atom(j).xyz() + membrane_center);
 		}
-		for ( Size j=1; j<= membrane_normal_res->natoms(); ++j ) {
+		for ( core::Size j=1; j<= membrane_normal_res->natoms(); ++j ) {
 			membrane_normal_res->atom(j).xyz( membrane_normal_res->atom(j).xyz() + membrane_normal);
 		}
 

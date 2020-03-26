@@ -45,7 +45,7 @@ std::string const END_BLOCK( "MPI_FILE_BUFFER_BLOCK_END" );
 
 SingleFileBuffer::~SingleFileBuffer() { runtime_assert( !has_open_slaves() ); }
 
-void SingleFileBuffer::flush( Size slave ) {
+void SingleFileBuffer::flush( core::Size slave ) {
 	// std::cout << "flush channel: " << filename() << " for slave : " << slave << std::endl;
 	if ( unfinished_blocks_[ slave ].size() ) {
 		write_lines( unfinished_blocks_[ slave ] );
@@ -66,7 +66,7 @@ Size SingleFileBuffer::nr_open_slaves() const {
 	return unfinished_blocks_.size();
 }
 
-void SingleFileBuffer::close( Size slave ) {
+void SingleFileBuffer::close( core::Size slave ) {
 	if ( unfinished_blocks_[ slave ].size() == 0 ) {
 		tr.Trace << "EMPTY OPEN/CLOSE Operation from slave " << slave << std::endl;
 	}
@@ -80,7 +80,7 @@ void SingleFileBuffer::close( Size slave ) {
 	//}
 }
 
-void SingleFileBuffer::store_line( Size slave, Size channel, std::string const& line ) {
+void SingleFileBuffer::store_line( core::Size slave, core::Size channel, std::string const& line ) {
 	runtime_assert( channel == mpi_channel_ );
 	unfinished_blocks_[ slave ].push_back( line );
 	// std::cout << "channel: " << mpi_channel_ << " slave: " << slave <<std::endl;// << "line: " << line << std::endl;
@@ -114,7 +114,7 @@ void SingleFileBuffer::block( core::Size MPI_ONLY( slave ) ) {
 	MPI_Status stat;
 	MPI_Recv( &buf, 4, MPI_INT, slave, MPI_STREAM_TAG, MPI_COMM_WORLD, &stat );
 	tr.Debug << "release file? : received: " << buf[ 0 ] << " " << buf[ 1 ] << " " << buf[ 2 ] << " " << buf[ 3 ] << std::endl;
-	//	runtime_assert( (Size) buf[ 2 ] == MPI_RELEASE_FILE && (Size) buf[ 1 ] == filename().size() ); //check of sizes ..
+	//	runtime_assert( (core::Size) buf[ 2 ] == MPI_RELEASE_FILE && (core::Size) buf[ 1 ] == filename().size() ); //check of sizes ..
 #endif
 }
 

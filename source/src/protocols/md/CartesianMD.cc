@@ -167,14 +167,14 @@ void CartesianMD::get_native_info( core::pose::Pose const &pose )
 		core::import_pose::pose_from_file( native_, *rsd_set, nativepdb, core::import_pose::PDB_file );
 
 		// Set resmap
-		std::map< Size, Size > resmap;
-		for ( Size ires = 1; ires <= pose.size(); ++ires ) {
+		std::map< core::Size, core::Size > resmap;
+		for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
 			if ( !pose.residue( ires ).is_protein() ) continue;
-			Size ii_pdb( pose.pdb_info()->number( ires ) );
+			core::Size ii_pdb( pose.pdb_info()->number( ires ) );
 
-			for ( Size jres = 1; jres <= native_.size(); ++jres ) {
+			for ( core::Size jres = 1; jres <= native_.size(); ++jres ) {
 				if ( !native_.residue( jres ).is_protein() ) continue;
-				Size jj_pdb( native_.pdb_info()->number( jres ) );
+				core::Size jj_pdb( native_.pdb_info()->number( jres ) );
 				if ( ii_pdb == jj_pdb ) {
 					resmap[ires] = jres;
 					break;
@@ -216,10 +216,10 @@ void CartesianMD::do_initialize( core::pose::Pose &pose )
 	core::chemical::ResidueTypeSetCOP rsdtype_set( pose.residue_type_set_for_pose( core::chemical::FULL_ATOM_t ) );
 	core::chemical::ElementSetCOP element_set( rsdtype_set->element_set() );
 
-	for ( Size iatm = 1; iatm <= (Size)(min_map.natoms()); ++iatm ) {
+	for ( core::Size iatm = 1; iatm <= (core::Size)(min_map.natoms()); ++iatm ) {
 		core::id::AtomID AtomID = min_map.get_atom( iatm );
-		Size resno = AtomID.rsd();
-		Size atmno = AtomID.atomno();
+		core::Size resno = AtomID.rsd();
+		core::Size atmno = AtomID.atomno();
 
 		set_mass( iatm, pose.residue_type(resno).element_type(atmno)->weight() );
 	}
@@ -295,7 +295,7 @@ CartesianMD::cst_on_pose_simple( core::pose::Pose &pose ) const
 		TR << "Set constraints uniformly with stdev: " << cst_sdev() << std::endl;
 		pose.remove_constraints();
 
-		for ( Size i_res = 1; i_res <= pose.size(); ++i_res ) {
+		for ( core::Size i_res = 1; i_res <= pose.size(); ++i_res ) {
 			std::string resname = pose.residue(i_res).name();
 
 			core::Size iatm;
@@ -353,11 +353,11 @@ CartesianMD::cst_on_pose_dynamic( core::pose::Pose &pose,
 		core::Real rmsd_rsr2ref( 0.0 );
 		core::Real rmsd_rsr2crd( 0.0 );
 		core::Size nrsr_dof( 0 );
-		//for ( Size i_res = 1; i_res <= pose.size(); ++i_res ) {
-		for ( Size i_atm = 1; i_atm <= n_dof()/3; ++i_atm ) {
+		//for ( core::Size i_res = 1; i_res <= pose.size(); ++i_res ) {
+		for ( core::Size i_atm = 1; i_atm <= n_dof()/3; ++i_atm ) {
 			core::id::AtomID atomID = min_map.get_atom( i_atm );
-			Size resno = atomID.rsd();
-			Size atmno = atomID.atomno();
+			core::Size resno = atomID.rsd();
+			core::Size atmno = atomID.atomno();
 
 			std::string resname = pose.residue(resno).name();
 			std::string atmname = pose.residue(resno).atom_name(atmno);
@@ -483,7 +483,7 @@ void CartesianMD::apply( core::pose::Pose & pose ) {
 
 	} else { // scheduled run
 
-		for ( Size i_step = 1; i_step <= mdsch().size(); ++i_step ) {
+		for ( core::Size i_step = 1; i_step <= mdsch().size(); ++i_step ) {
 			std::string const runtype( mdsch(i_step).type );
 			if ( runtype == "sch" ) {
 				TR << "Changing schedule, Nstep/Temp:";
@@ -577,7 +577,7 @@ void CartesianMD::do_MD( core::pose::Pose & pose,
 	// Start MD integrator
 	scorefxn()->setup_for_minimizing( pose, min_map );
 
-	for ( Size istep = 1; istep <= nstep; istep++ ) {
+	for ( core::Size istep = 1; istep <= nstep; istep++ ) {
 		set_cummulative_time( cummulative_time() + dt() );
 
 		// Report
@@ -604,7 +604,7 @@ void CartesianMD::do_MD( core::pose::Pose & pose,
 		/*
 		// let's get avrg velocities
 		core::Real v2sum( 0.0 ), temperature( 0.0 );
-		for (Size i_dof = 1; i_dof<=vel_.size(); ++i_dof) {
+		for (core::Size i_dof = 1; i_dof<=vel_.size(); ++i_dof) {
 		int i_atm = (i_dof+2)/3;
 		// pass Virtual atoms
 		if ( mass_[i_atm] < 1e-3 ) continue;
@@ -644,7 +644,7 @@ void CartesianMD::VelocityVerlet_Integrator( core::pose::Pose &pose,
 	// and integrate first half of the velociy
 	Multivec xyz_loc( xyz() ), vel_loc( vel() ), acc_loc( acc() );
 
-	for ( Size i_dof = 1; i_dof <= n_dof(); ++i_dof ) {
+	for ( core::Size i_dof = 1; i_dof <= n_dof(); ++i_dof ) {
 		xyz_loc[i_dof] += vel_loc[i_dof]*dt() + acc_loc[i_dof]*dt2_2;
 		vel_loc[i_dof] += 0.5*acc_loc[i_dof]*dt();
 	}
@@ -665,8 +665,8 @@ void CartesianMD::VelocityVerlet_Integrator( core::pose::Pose &pose,
 
 	// Here, convert force into acceleration
 	// and integrate remaining half of velocity
-	for ( Size i_dof = 1; i_dof <= n_dof(); ++i_dof ) {
-		Size i_atm = (i_dof+2)/3;
+	for ( core::Size i_dof = 1; i_dof <= n_dof(); ++i_dof ) {
+		core::Size i_atm = (i_dof+2)/3;
 		// pass Virtual atoms
 		if ( mass(i_atm) < 1e-3 ) continue;
 
@@ -790,19 +790,19 @@ void CartesianMD::report_MD( core::pose::Pose &pose,
 
 	/*
 	std::stringstream ss;
-	Size timesize( (int)(cummulative_time()*1000.0) );
+	core::Size timesize( (int)(cummulative_time()*1000.0) );
 	ss << "md" << timesize << ".pdb";
 	pose.dump_pdb( ss.str() );
 	*/
 
 	/*
 	//Check
-	for ( Size i_atm = 1; i_atm <= n_dof()/3; ++i_atm ) {
+	for ( core::Size i_atm = 1; i_atm <= n_dof()/3; ++i_atm ) {
 	Real vv = std::sqrt(vel_[3*i_atm-2]*vel_[3*i_atm-2] + vel_[3*i_atm-1]*vel_[3*i_atm-1] + vel_[3*i_atm]*vel_[3*i_atm]);
 	Real av = std::sqrt(acc_[3*i_atm-2]*vel_[3*i_atm-2] + acc_[3*i_atm-1]*acc_[3*i_atm-1] + acc_[3*i_atm]*acc_[3*i_atm]);
 	id::AtomID AtomID = min_map.get_atom( i_atm );
-	Size resno = AtomID.rsd();
-	Size atmno = AtomID.atomno();
+	core::Size resno = AtomID.rsd();
+	core::Size atmno = AtomID.atomno();
 
 	std::cout << "I/x/y/z/v/a: " << std::setw(6) << i_atm;
 	std::cout << " " << std::setw(5) << pose.residue(resno).name();
@@ -831,7 +831,7 @@ CartesianMD::dump_poses( pose::Pose const &pose_ref ) const {
 	CartesianMinimizerMap min_map;
 	min_map.setup( pose_tmp, *movemap() );
 
-	for ( Size i_trj = 1; i_trj <= trj().size(); ++i_trj ) {
+	for ( core::Size i_trj = 1; i_trj <= trj().size(); ++i_trj ) {
 		min_map.copy_dofs_to_pose( pose_tmp, trj(i_trj) );
 		poses.push_back( pose_tmp );
 	}

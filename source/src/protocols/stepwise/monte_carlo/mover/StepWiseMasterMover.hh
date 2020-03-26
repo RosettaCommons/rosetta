@@ -108,7 +108,7 @@ public:
 
 	void
 	resample_full_model( core::pose::Pose const & start_pose, core::pose::Pose & output_pose, bool const checkpointing_breadcrumbs,
-		utility::vector1< Size > const & residues_to_resample, Size const resample_round, Size const nstruct );
+		utility::vector1< core::Size > const & residues_to_resample, core::Size const resample_round, core::Size const nstruct );
 
 	void
 	build_full_model( core::pose::Pose const & start_pose, core::pose::Pose & full_model_pose, bool const & choose_random = false );
@@ -133,7 +133,7 @@ private:
 	utility::vector1< StepWiseMove >
 	moves_for_pose(
 		core::pose::Pose const & start_pose,
-		utility::vector1< Size > const & residues_to_rebuild
+		utility::vector1< core::Size > const & residues_to_rebuild
 	);
 
 private:
@@ -155,7 +155,7 @@ private:
 	std::string move_type_string_;
 	core::Real proposal_density_ratio_;
 
-	Size num_tested_moves_;
+	core::Size num_tested_moves_;
 };
 
 // AMW TODO: truly, this is a utility function that could go anywhere.

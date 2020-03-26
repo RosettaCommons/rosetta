@@ -22,7 +22,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // ObjexxFCL Headers
 
@@ -39,7 +39,7 @@ namespace annealer {
 
 //extern bool annealing_starts_at_low_temperature;
 
-class SimAnnealerBase : public utility::pointer::ReferenceCount
+class SimAnnealerBase : public utility::VirtualBase
 {
 public:
 	typedef pack_basic::RotamerSetsBaseCOP RotamerSetsBaseCOP;

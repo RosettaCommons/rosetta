@@ -87,7 +87,7 @@ namespace ncbb {
 
 Size
 give_dihedral_index(
-	Size n,
+	core::Size n,
 	utility::vector1< char > uniqs,
 	std::string dihedral_pattern,
 	std::string alpha_beta_pattern
@@ -95,10 +95,10 @@ give_dihedral_index(
 	// for all characters from uniqs that are earlier than this residue's
 	// add 2 or 3 depending on if those uniqs are for alphas or betas
 
-	Size index = 1;
+	core::Size index = 1;
 
-	for ( Size i = 1; i < n; ++i ) {
-		for ( Size j = 0; j < dihedral_pattern.length(); ++j ) {
+	for ( core::Size i = 1; i < n; ++i ) {
+		for ( core::Size j = 0; j < dihedral_pattern.length(); ++j ) {
 			if ( dihedral_pattern[j] == uniqs[i] ) {
 				if ( alpha_beta_pattern[j] == 'A' || alpha_beta_pattern[j]=='P' ) {
 					// it's an alpha
@@ -119,10 +119,10 @@ get_number_dihedrals (
 	std::string const & dihedral_pattern,
 	std::string const & alpha_beta_pattern
 ) {
-	Size number = 0;
-	for ( Size i = 1; i <= uniqs.size(); ++i ) {
+	core::Size number = 0;
+	for ( core::Size i = 1; i <= uniqs.size(); ++i ) {
 		// look through dihedral pattern until you find uniqs
-		for ( Size j = 0; j < dihedral_pattern.length(); ++j ) {
+		for ( core::Size j = 0; j < dihedral_pattern.length(); ++j ) {
 			if ( dihedral_pattern[j] == uniqs[i] ) {
 				if ( alpha_beta_pattern[j] == 'A' || alpha_beta_pattern[j] == 'P' ) {
 					// it's an alpha or a peptoid
@@ -140,13 +140,13 @@ get_number_dihedrals (
 }
 
 void
-count_uniq_char( std::string pattern, Size & num, utility::vector1<char> & uniqs ) {
+count_uniq_char( std::string pattern, core::Size & num, utility::vector1<char> & uniqs ) {
 	num = 1;
 	uniqs.push_back( pattern[ 0 ] );
-	for ( Size i = 1; i < pattern.length(); ++i ) {
+	for ( core::Size i = 1; i < pattern.length(); ++i ) {
 		// assume i unique
-		Size increment = 1;
-		for ( Size j = 0; j < i; ++j ) {
+		core::Size increment = 1;
+		for ( core::Size j = 0; j < i; ++j ) {
 			if ( pattern[j]  == pattern[ i ] ) {
 				// repeat
 				increment = 0;
@@ -161,14 +161,14 @@ count_uniq_char( std::string pattern, Size & num, utility::vector1<char> & uniqs
 }
 
 void
-ncbb_design_main_loop( Size loop_num, Size pert_num, core::pose::Pose pose, TrialMoverOP pert_trial, utility::vector1<Size> designable_positions, Size pep_start, Size pep_end, TaskAwareMinMoverOP desn_ta_min, core::scoring::ScoreFunctionOP score_fxn, MonteCarloOP mc ) {
+ncbb_design_main_loop( core::Size loop_num, core::Size pert_num, core::pose::Pose pose, TrialMoverOP pert_trial, utility::vector1<core::Size> designable_positions, core::Size pep_start, core::Size pep_end, TaskAwareMinMoverOP desn_ta_min, core::scoring::ScoreFunctionOP score_fxn, MonteCarloOP mc ) {
 
-	for ( Size k = 1; k <= loop_num; ++k ) {
+	for ( core::Size k = 1; k <= loop_num; ++k ) {
 
 		mc->reset(pose);
 
 		// pert loop
-		for ( Size j = 1; j <= pert_num; ++j ) {
+		for ( core::Size j = 1; j <= pert_num; ++j ) {
 			TR << "PERTURB: " << k << " / "  << j << std::endl;
 			pert_trial->apply( pose );
 		}
@@ -185,16 +185,16 @@ ncbb_design_main_loop( Size loop_num, Size pert_num, core::pose::Pose pose, Tria
 		allowed_aas[aa_gly] = false;
 		allowed_aas[aa_pro] = false;
 
-		for ( Size i=1; i<=pep_start-1; i++ ) {
+		for ( core::Size i=1; i<=pep_start-1; i++ ) {
 			//TR << "  not designed" << std::endl;
 			task->nonconst_residue_task(i).restrict_to_repacking();
 			task->nonconst_residue_task(i).initialize_from_command_line();
 		}
 
 		//kdrew: internal indexing for chain
-		Size pos = 0;
+		core::Size pos = 0;
 		// Set which residues can be designed
-		for ( Size i=pep_start; i<=pep_end; i++ ) {
+		for ( core::Size i=pep_start; i<=pep_end; i++ ) {
 			pos++;
 			TR << "position " << pos << std::endl;
 			if ( designable_positions.end() == find(designable_positions.begin(), designable_positions.end(), pos ) ) {
@@ -238,7 +238,7 @@ final_design_min( core::pose::Pose & pose, ScoreFunctionOP score_fxn_, core::pac
 	PackerTaskOP final_desn_pt( desn_tf->create_task_and_apply_taskoperations( pose ) );
 
 	// add extra chi and extra chi cut off to pt
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= pose.size(); ++i ) {
 		final_desn_pt->nonconst_residue_task( i ).or_ex1( true );
 		final_desn_pt->nonconst_residue_task( i ).or_ex2( true );
 		final_desn_pt->nonconst_residue_task( i ).and_extrachi_cutoff( 0 );
@@ -386,17 +386,17 @@ setup_pert_foldtree(
 	f.clear();
 
 	// get the start and end for both chains
-	Size pro_start( pose.conformation().chain_begin( 1 ) );
-	Size pro_end( pose.conformation().chain_end( 1 ) );
-	Size pep_start( pose.conformation().chain_begin( 2 ) );
-	Size pep_end( pose.conformation().chain_end( 2 ) );
+	core::Size pro_start( pose.conformation().chain_begin( 1 ) );
+	core::Size pro_end( pose.conformation().chain_end( 1 ) );
+	core::Size pep_start( pose.conformation().chain_begin( 2 ) );
+	core::Size pep_end( pose.conformation().chain_end( 2 ) );
 
 	// get jump positions based on the center of mass of the chains
-	Size dock_jump_pos_pro( core::pose::residue_center_of_mass( pose, pro_start, pro_end ) );
-	Size dock_jump_pos_pep( core::pose::residue_center_of_mass( pose, pep_start, pep_end ) );
+	core::Size dock_jump_pos_pro( core::pose::residue_center_of_mass( pose, pro_start, pro_end ) );
+	core::Size dock_jump_pos_pep( core::pose::residue_center_of_mass( pose, pep_start, pep_end ) );
 
 	// build fold tree
-	Size jump_index( f.num_jump() + 1 );
+	core::Size jump_index( f.num_jump() + 1 );
 	//-1 is a magic number for PEPTIDE EDGE.  There is a constant defined with the fold tree that should have been used here.
 	f.add_edge( pro_start, dock_jump_pos_pro, -1 );
 	f.add_edge( dock_jump_pos_pro, pro_end, -1 );
@@ -454,7 +454,7 @@ setup_filter_stats() {
 }
 
 void
-init_common_options( utility::tag::TagCOP tag, basic::datacache::DataMap &data, ScoreFunctionOP score_fxn_, Real & mc_temp_, Real & pert_mc_temp_, Real & pert_dock_rot_mag_, Real & pert_dock_trans_mag_, Real & pert_pep_small_temp_, Real & pert_pep_small_H_, Real & pert_pep_small_L_, Real & pert_pep_small_E_, Real & pert_pep_shear_temp_, Real & pert_pep_shear_H_, Real & pert_pep_shear_L_, Real & pert_pep_shear_E_, Size & pert_pep_num_rep_, Size & pert_num_, Size & dock_design_loop_num_, bool & no_design_, bool & final_design_min_, bool & use_soft_rep_, bool & mc_initial_pose_, bool & pymol_, bool & keep_history_ ) {
+init_common_options( utility::tag::TagCOP tag, basic::datacache::DataMap &data, ScoreFunctionOP score_fxn_, Real & mc_temp_, Real & pert_mc_temp_, Real & pert_dock_rot_mag_, Real & pert_dock_trans_mag_, Real & pert_pep_small_temp_, Real & pert_pep_small_H_, Real & pert_pep_small_L_, Real & pert_pep_small_E_, Real & pert_pep_shear_temp_, Real & pert_pep_shear_H_, Real & pert_pep_shear_L_, Real & pert_pep_shear_E_, core::Size & pert_pep_num_rep_, core::Size & pert_num_, core::Size & dock_design_loop_num_, bool & no_design_, bool & final_design_min_, bool & use_soft_rep_, bool & mc_initial_pose_, bool & pymol_, bool & keep_history_ ) {
 
 	if ( tag->hasOption( "scorefxn" ) ) {
 		std::string const scorefxn_key( tag->getOption< std::string >( "scorefxn" ) );
@@ -537,19 +537,19 @@ init_common_options( utility::tag::TagCOP tag, basic::datacache::DataMap &data, 
 	}
 
 	if ( tag->hasOption( "pert_pep_num_rep" ) ) {
-		pert_pep_num_rep_ = tag->getOption< Size >("pert_pep_num_rep", pert_pep_num_rep_);
+		pert_pep_num_rep_ = tag->getOption< core::Size >("pert_pep_num_rep", pert_pep_num_rep_);
 	} else {
 		pert_pep_num_rep_ = 100;
 	}
 
 	if ( tag->hasOption( "pert_num" ) ) {
-		pert_num_ = tag->getOption< Size >( "pert_num", pert_num_ );
+		pert_num_ = tag->getOption< core::Size >( "pert_num", pert_num_ );
 	} else {
 		pert_num_ = 10;
 	}
 
 	if ( tag->hasOption( "dock_design_loop_num" ) ) {
-		dock_design_loop_num_ = tag->getOption< Size >( "dock_design_loop_num", dock_design_loop_num_ );
+		dock_design_loop_num_ = tag->getOption< core::Size >( "dock_design_loop_num", dock_design_loop_num_ );
 	} else {
 		dock_design_loop_num_ = 10;
 	}

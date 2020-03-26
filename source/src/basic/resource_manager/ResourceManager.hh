@@ -23,7 +23,7 @@
 #include <basic/resource_manager/ResourceLocator.fwd.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/file/PathName.fwd.hh>
@@ -40,7 +40,7 @@
 namespace basic {
 namespace resource_manager {
 
-class ResourceManager : public utility::pointer::ReferenceCount
+class ResourceManager : public utility::VirtualBase
 {
 public:
 

@@ -19,7 +19,7 @@
 // Project headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 
@@ -36,22 +36,22 @@ SecMatchResiduePairEvaluator::SecMatchResiduePairEvaluator() = default;
 SecMatchResiduePairEvaluator::~SecMatchResiduePairEvaluator() = default;
 
 bool
-SecMatchResiduePairEvaluator::require_candidate_residue_atoms_to_lie_near_target_atom( Size /*target_atom_id*/ ) const
+SecMatchResiduePairEvaluator::require_candidate_residue_atoms_to_lie_near_target_atom( core::Size /*target_atom_id*/ ) const
 {
 	return false;
 }
 
 utility::vector1< SecMatchResiduePairEvaluator::Size >
 SecMatchResiduePairEvaluator::candidate_res_atoms_reqd_near_target_atom(
-	Size /*target_atom_id*/
+	core::Size /*target_atom_id*/
 ) const {
 	// Base class noop.
-	utility::vector1< Size > empty;
+	utility::vector1< core::Size > empty;
 	return empty;
 }
 
 SecMatchResiduePairEvaluator::Real
-SecMatchResiduePairEvaluator::max_separation_dist_to_target_atom( Size /*target_atom_id*/ ) const
+SecMatchResiduePairEvaluator::max_separation_dist_to_target_atom( core::Size /*target_atom_id*/ ) const
 {
 	return -1.0;
 }

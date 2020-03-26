@@ -464,7 +464,7 @@ ConsensusLoopDesignOperation::set_residue_selector( core::select::residue_select
 /////////////////// AAFrequency /////////////////////////////////////////
 
 AAFrequency::AAFrequency( core::Real const freq, core::Real const enrich ):
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	frequency_( freq ),
 	enrichment_( enrich )
 {}
@@ -484,7 +484,7 @@ AAFrequency::frequency() const
 /////////////////// AAFrequencies ///////////////////////////////////////
 
 AAFrequencies::AAFrequencies():
-	utility::pointer::ReferenceCount(),
+	utility::VirtualBase(),
 	aa_freq_()
 {}
 

@@ -60,19 +60,19 @@ FilterCollection::report( std::ostream & out, core::pose::Pose const & pose ) co
 }
 
 Filter::Filter()
-: utility::pointer::ReferenceCount(),
+: utility::VirtualBase(),
 	type_( "UNDEFINED TYPE" ),
 	scorename_("defaultscorename")
 {}
 
 Filter::Filter( std::string const & type )
-: utility::pointer::ReferenceCount(),
+: utility::VirtualBase(),
 	type_( type ),
 	scorename_("defaultscorename")
 {}
 
 Filter::Filter( Filter const & init )
-: utility::pointer::ReferenceCount(),
+: utility::VirtualBase(),
 	type_( init.type_ ),
 	user_defined_name_( init.user_defined_name_ ),
 	scorename_("defaultscorename")

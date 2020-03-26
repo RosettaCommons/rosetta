@@ -44,7 +44,7 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 //Numeric
 #include <numeric/xyzVector.hh>
 
@@ -83,7 +83,7 @@ utility::fixedsizearray1< core::Real, 4 > chis;
 */
 namespace zinc_stats {
 
-class ZincStatisticGenerator: public utility::pointer::ReferenceCount {
+class ZincStatisticGenerator: public utility::VirtualBase {
 
 public:
 	ZincStatisticGenerator(){

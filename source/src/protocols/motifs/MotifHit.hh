@@ -25,7 +25,7 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -33,14 +33,14 @@
 namespace protocols {
 namespace motifs {
 
-class MotifHit : public utility::pointer::ReferenceCount {
+class MotifHit : public utility::VirtualBase {
 
 public:
 
 	// Constructor that defaults to empty allowed_types (aka, all allowed)
 	MotifHit(
 		Motif const & motif,
-		Size const & vbpos,
+		core::Size const & vbpos,
 		bool const passed_automorphism
 	);
 
@@ -67,7 +67,7 @@ public:
 
 	// Accessors
 	MotifCOP const & motifcop() const { return motifcop_; }
-	Size const & vbpos() const { return vbpos_; }
+	core::Size const & vbpos() const { return vbpos_; }
 	bool const & passed_automorphism() const { return passed_automorphism_; }
 	core::Real const & final_test() const { return final_test_; }
 	core::conformation::ResidueOP const & build_rotamer() const { return build_rotamer_; }
@@ -78,7 +78,7 @@ private:
 	MotifCOP motifcop_;
 	// The pose residue that is the one that the motif is targeting
 	// ie, for DNA this would be the closest DNA base of the correct type
-	Size vbpos_;
+	core::Size vbpos_;
 	// Whether the automorphic version of the jump is a better hit
 	bool passed_automorphism_;
 	core::Real final_test_;

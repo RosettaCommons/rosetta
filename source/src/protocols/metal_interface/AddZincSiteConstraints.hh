@@ -24,14 +24,14 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
 namespace metal_interface {
 
 /// @brief Add metalsite geometry constraints to pose
-class AddZincSiteConstraints : public utility::pointer::ReferenceCount {
+class AddZincSiteConstraints : public utility::VirtualBase {
 
 public:
 

@@ -13,7 +13,7 @@
 #include <protocols/kinematic_closure/KicMover.hh>
 
 // Utility headers {{{1
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/exit.hh>
 #include <basic/options/option.hh>
@@ -41,11 +41,11 @@ using core::pose::Pose;
 using protocols::loops::Loop;
 using protocols::loop_modeling::LoopProtocolOP;
 using protocols::loop_modeling::LoopMoverOP;
-using utility::pointer::ReferenceCount;
+using utility::VirtualBase;
 using protocols::loop_modeling::IndexList;
 // }}}1
 
-class KicSandbox : public ReferenceCount {
+class KicSandbox : public VirtualBase {
 
 public:
 	KicSandbox(int argc, char *argv[]);

@@ -71,8 +71,8 @@ SequenceCouplingConstraint::SequenceCouplingConstraint()
 
 SequenceCouplingConstraint::SequenceCouplingConstraint(
 	Pose const &,
-	Size seqpos1,
-	Size seqpos2,
+	core::Size seqpos1,
+	core::Size seqpos2,
 	SequenceCouplingOP coupling/* = NULL */
 ):
 	Constraint( res_type_constraint ),
@@ -82,8 +82,8 @@ SequenceCouplingConstraint::SequenceCouplingConstraint(
 {}
 
 SequenceCouplingConstraint::SequenceCouplingConstraint(
-	Size seqpos1,
-	Size seqpos2,
+	core::Size seqpos1,
+	core::Size seqpos2,
 	SequenceCouplingOP sequence_coupling /* = NULL */
 ):
 	Constraint( res_type_constraint ),
@@ -125,8 +125,8 @@ SequenceCouplingConstraint::read_def(
 	core::scoring::func::FuncFactory const &
 )
 {
-	Size residue_index1(0);
-	Size residue_index2(0);
+	core::Size residue_index1(0);
+	core::Size residue_index2(0);
 	std::string coupling_filename;
 
 	// note: is >> "SequenceProfile" has already occured
@@ -181,7 +181,7 @@ SequenceCouplingConstraint::show( std::ostream & os ) const {
 	//  typedef utility::vector1<Real> RealVec;
 	//  RealVec const & aa_scores( sequence_profile_->prof_row( seqpos_ ) );
 	//  runtime_assert( aa_scores.size() >= num_canonical_aas );
-	//  for ( Size aa(1); aa <= num_canonical_aas; ++aa ) {
+	//  for ( core::Size aa(1); aa <= num_canonical_aas; ++aa ) {
 	//   os << aa_scores[aa] << " ";
 	//  }
 	// }
@@ -242,7 +242,7 @@ SequenceCouplingConstraint::score(
 	chemical::AA aa2( xyz_func.residue( seqpos2_ ).type().aa() );
 	if ( seqpos1_ > sequence_coupling_->npos() || seqpos2_ > sequence_coupling_->npos() ) return; // safety/relevance check
 
-	Size edgeId = sequence_coupling_->findEdgeId(seqpos1_, seqpos2_);
+	core::Size edgeId = sequence_coupling_->findEdgeId(seqpos1_, seqpos2_);
 	Real score( 0);
 	if ( edgeId<=0 ) { //direction important. if (i,j) edge exists, will not return if (j,i) asked
 		edgeId = sequence_coupling_->findEdgeId(seqpos2_, seqpos1_);

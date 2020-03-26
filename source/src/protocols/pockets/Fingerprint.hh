@@ -14,7 +14,7 @@
 #ifndef INCLUDED_protocols_pockets_Fingerprint_hh
 #define INCLUDED_protocols_pockets_Fingerprint_hh
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <protocols/pockets/Fingerprint.fwd.hh>
 #include <protocols/pockets/PocketGrid.fwd.hh>
 #include <protocols/pockets/PocketGrid.hh>
@@ -59,7 +59,7 @@ struct ray_distance_derivs {
 	core::Real dDist_dv6;
 };
 
-class FingerprintBase : public utility::pointer::ReferenceCount {
+class FingerprintBase : public utility::VirtualBase {
 
 	friend class FingerprintMultifunc;
 	friend class DarcParticleSwarmMinimizer;
@@ -100,7 +100,7 @@ protected:
 
 public:
 
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~FingerprintBase() override;
 
 };
@@ -146,7 +146,7 @@ public:
 
 	void set_origin ( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell );
 
-	void set_origin_from_option_( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, Size const & set_origin_option );
+	void set_origin_from_option_( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, core::Size const & set_origin_option );
 
 	void set_multiple_origin( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell );
 
@@ -160,9 +160,9 @@ public:
 
 	void set_origin_away_from_eggshell( std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, core::pose::Pose const & protein_pose );
 
-	void set_origin_away_from_eggshell_plane( std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, core::pose::Pose const & protein_pose, Size const & set_origin_option );
+	void set_origin_away_from_eggshell_plane( std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, core::pose::Pose const & protein_pose, core::Size const & set_origin_option );
 
-	core::Real get_Rvalue (core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, Size const & set_origin_option);
+	core::Real get_Rvalue (core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, core::Size const & set_origin_option);
 
 	numeric::xyzVector<core::Real> calculate_protein_CoM( core::pose::Pose const & protein_pose);
 

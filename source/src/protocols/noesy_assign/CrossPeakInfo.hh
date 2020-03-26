@@ -27,7 +27,7 @@
 // Utility headers
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <basic/prof.hh>
 //#include <basic/Tracer.hh>
@@ -45,10 +45,10 @@ namespace noesy_assign {
 
 
 /// @brief shared information about CrossPeak (one for each proton dimension)
-class CrossPeakInfo : public utility::pointer::ReferenceCount {
+class CrossPeakInfo : public utility::VirtualBase {
 public:
 
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~CrossPeakInfo() override;
 	CrossPeakInfo( std::string const & proton, std::string const & label, core::Real max_noe_distance, core::Real proton_tolerance, core::Real label_tolerance ) :
 

@@ -67,7 +67,7 @@ Polynomial_1d::Polynomial_1d(
 }
 
 Polynomial_1d::Polynomial_1d( Polynomial_1d const & src ) :
-	utility::pointer::ReferenceCount( src ),
+	utility::VirtualBase( src ),
 	polynomial_name_(src.polynomial_name_),
 	xmin_(src.xmin_), xmax_(src.xmax_),
 	min_val_(src.min_val_), max_val_(src.max_val_),

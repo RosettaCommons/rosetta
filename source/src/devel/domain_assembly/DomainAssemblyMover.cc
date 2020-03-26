@@ -195,10 +195,10 @@ DomainAssemblyMover::get_name() const
 void
 DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 {
-	Size inside_steps_stage1 ( 100 );
-	Size outside_steps_stage1 ( 30 );
-	Size inside_steps_stage2 ( 100 );
-	Size outside_steps_stage2 ( 20 );
+	core::Size inside_steps_stage1 ( 100 );
+	core::Size outside_steps_stage1 ( 30 );
+	core::Size inside_steps_stage2 ( 100 );
+	core::Size outside_steps_stage2 ( 20 );
 
 	basic::TracerImpl TR( "DomainAssemblyMover::run_centroid_stage" );
 
@@ -221,7 +221,7 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 		centroid_trial_mover = utility::pointer::make_shared< protocols::moves::TrialMover >( frag_mover, mc );
 	} else {
 		// if no fragments, use coarse small moves
-		Size nmoves ( 1 );
+		core::Size nmoves ( 1 );
 		protocols::simple_moves::SmallMoverOP coarse_small_mover( new protocols::simple_moves::SmallMover( movemap_, 0.8/*temp*/, nmoves ) );
 		coarse_small_mover->angle_max( 'H', 180.0 );  // max angle displacement 180 degrees
 		coarse_small_mover->angle_max( 'E', 180.0 );
@@ -231,7 +231,7 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 
 	protocols::moves::RepeatMoverOP inner_centroid_loop( new protocols::moves::RepeatMover( centroid_trial_mover, inside_steps_stage1 ) );
 
-	for ( Size i = 1; i <= outside_steps_stage1; ++i ) {
+	for ( core::Size i = 1; i <= outside_steps_stage1; ++i ) {
 		inner_centroid_loop -> apply( pose );
 	}
 	//// END STAGE 1 ////
@@ -240,7 +240,7 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 	protocols::moves::TrialMoverOP stage2_trial( new protocols::moves::TrialMover( small_mover, mc ) );
 	protocols::moves::RepeatMoverOP stage2( new protocols::moves::RepeatMover( stage2_trial, inside_steps_stage2 ) );
 
-	for ( Size i = 1; i <= outside_steps_stage2; ++i ) {
+	for ( core::Size i = 1; i <= outside_steps_stage2; ++i ) {
 		stage2 -> apply( pose );
 	}
 	///////  END_STAGE 2 ////////
@@ -386,7 +386,7 @@ DomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	protocols::moves::RepeatMoverOP stage1_inner_loop( new protocols::moves::RepeatMover( stage1_trial, 25 /*100 cycles*/ ) );
 
 	std::cout << "   Current  Low " << std::endl;
-	for ( Size i = 1; i <= 20; ++i ) {
+	for ( core::Size i = 1; i <= 20; ++i ) {
 		stage1_inner_loop -> apply( pose );
 		std::cout << i << "  " << mc->last_accepted_score() << "  " << mc->lowest_score() << std::endl;
 		//utility::vector1<bool> repack_residues( pose.size(), false );
@@ -407,7 +407,7 @@ DomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	protocols::moves::RepeatMoverOP stage2_inner_loop( new protocols::moves::RepeatMover( stage2_trial, 50 /*cycles*/ ) );
 
 	std::cout << "   Current  Low " << std::endl;
-	for ( Size i = 1; i <= 20; ++i ) {
+	for ( core::Size i = 1; i <= 20; ++i ) {
 		stage2_inner_loop -> apply( pose );
 		std::cout << i << "  " << mc->last_accepted_score() << "  " << mc->lowest_score() << std::endl;
 		// utility::vector1<bool> repack_residues( pose.size(), false );
@@ -485,8 +485,8 @@ void DomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) {
 	core::Size inner_iterations = 10;
 	core::Real final_fa_rep = 0.44;
 
-	for ( Size i_outer = 1; i_outer <= outer_iterations; ++i_outer ) {
-		for ( Size i_inner = 1; i_inner <= inner_iterations; ++i_inner ) {
+	for ( core::Size i_outer = 1; i_outer <= outer_iterations; ++i_outer ) {
+		for ( core::Size i_inner = 1; i_inner <= inner_iterations; ++i_inner ) {
 			core::Real fa_rep_weight = (0.1 + 0.9/(inner_iterations-1) * (i_inner-1)) * final_fa_rep;
 			scorefxn->set_weight( core::scoring::fa_rep , fa_rep_weight );
 			to_repack = or_rs->apply( pose );

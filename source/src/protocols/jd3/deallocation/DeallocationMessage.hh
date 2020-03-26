@@ -18,7 +18,7 @@
 #include <protocols/jd3/deallocation/DeallocationMessage.fwd.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <core/types.hh>
 
 #ifdef    SERIALIZATION
@@ -48,7 +48,7 @@ enum deallocation_msg_type : short
 /// and the communication of DeallocationMessages is uni-directional: this system is not
 /// designed to let JobQueens on freely communicate between themselves, though, such
 /// a system would obviously have its merits.
-class DeallocationMessage : public utility::pointer::ReferenceCount
+class DeallocationMessage : public utility::VirtualBase
 {
 public:
 

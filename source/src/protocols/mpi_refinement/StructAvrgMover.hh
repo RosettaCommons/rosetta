@@ -57,7 +57,7 @@ private:
 		utility::vector1< utility::vector1< core::Real > > &deviation
 	);
 
-	utility::vector1< std::pair< Size, Size > >
+	utility::vector1< std::pair< core::Size, core::Size > >
 	predict_region( utility::vector1< core::Real > const CAvar,
 		utility::vector1< bool > &is_region,
 		core::Real const min_fluc = 0.2,

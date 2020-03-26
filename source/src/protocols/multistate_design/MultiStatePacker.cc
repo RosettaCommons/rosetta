@@ -57,7 +57,7 @@ using core::Real;
 
 PosType::PosType() : parent(), type_(core::chemical::aa_unk) {}
 PosType::~PosType() = default;
-PosType::PosType( Size index, core::chemical::AA type ) : parent( index ), type_(type) {}
+PosType::PosType( core::Size index, core::chemical::AA type ) : parent( index ), type_(type) {}
 PosType::PosType( std::string word ) : parent( word ), type_( core::chemical::aa_unk )
 {
 	if ( word.size() != 1 ) {
@@ -180,7 +180,7 @@ MultiStatePacker::evaluate(
 
 	// optionally pack multiple times to find best energy
 	Real E(0.), bestE(0.);
-	for ( Size i(0); i < num_packs_; ++i ) {
+	for ( core::Size i(0); i < num_packs_; ++i ) {
 
 		state->run_packer( rot_to_pack );
 
@@ -215,11 +215,11 @@ limit_rotamer_set(
 
 	// Allocate enough to accomodate full rotamer set
 	core::pack::rotamer_set::RotamerSets const & rotsets( *state.rotamersets() );
-	Size const nrotamers( rotsets.nrotamers() );
+	core::Size const nrotamers( rotsets.nrotamers() );
 
-	for ( Size rot_i(1); rot_i <= nrotamers; ++rot_i ) {
+	for ( core::Size rot_i(1); rot_i <= nrotamers; ++rot_i ) {
 
-		Size const rot_pos( rotsets.res_for_rotamer( rot_i ) );
+		core::Size const rot_pos( rotsets.res_for_rotamer( rot_i ) );
 		core::chemical::ResidueTypeCOP rot_type( rotsets.rotamer( rot_i )->type_ptr() );
 
 		core::chemical::AA seq_type( core::chemical::aa_unk );
@@ -255,9 +255,9 @@ restrict_to_canonical_aas(
 {
 	rot_to_pack.clear();
 	core::pack::rotamer_set::RotamerSets const & rotsets( *state.rotamersets() );
-	Size const nrot( rotsets.nrotamers() );
+	core::Size const nrot( rotsets.nrotamers() );
 
-	for ( Size i(1); i <= nrot; ++i ) {
+	for ( core::Size i(1); i <= nrot; ++i ) {
 		core::conformation::Residue const & rot( *rotsets.rotamer(i) );
 		if ( rot.aa() > core::chemical::num_canonical_aas ) {
 			// if non-canonical rotamer, restrict to existing residue type at this position

@@ -156,12 +156,12 @@ MatcherTask::set_ignore_cmdline_for_build_points( bool setting ){
 }
 
 void
-MatcherTask::set_original_scaffold_build_points( utility::vector1< Size > const & resids )
+MatcherTask::set_original_scaffold_build_points( utility::vector1< core::Size > const & resids )
 {
 	if ( share_build_points_for_geomcsts_ ) {
 		generic_pose_build_resids_ = resids;
 	} else {
-		for ( Size ii = 1; ii <= per_cst_pose_build_resids_.size(); ++ii ) {
+		for ( core::Size ii = 1; ii <= per_cst_pose_build_resids_.size(); ++ii ) {
 			per_cst_pose_build_resids_[ ii ] = resids;
 		}
 	}
@@ -221,7 +221,7 @@ MatcherTask::set_only_enumerate_non_match_redundant_ligand_rotamers( bool settin
 
 
 void MatcherTask::use_different_build_points_for_each_geometric_constraint(
-	Size n_geometric_constraints
+	core::Size n_geometric_constraints
 )
 {
 	share_build_points_for_geomcsts_ = false;
@@ -232,8 +232,8 @@ void MatcherTask::use_different_build_points_for_each_geometric_constraint(
 /// @brief Set the build point id's for a particular geometric constraint
 void
 MatcherTask::set_original_scaffold_build_points_for_geometric_constraint(
-	Size geom_cst_id,
-	utility::vector1< Size > const & resids
+	core::Size geom_cst_id,
+	utility::vector1< core::Size > const & resids
 )
 {
 	runtime_assert( ! share_build_points_for_geomcsts_ ); // use_different_build_points_for_each_geometric_constraint() must be called first
@@ -259,7 +259,7 @@ MatcherTask::define_active_site_from_residue_radii_list()
 
 void
 MatcherTask::append_upstream_resiue_as_defining_active_site(
-	Size resid,
+	core::Size resid,
 	Real radius
 )
 {
@@ -487,7 +487,7 @@ void MatcherTask::define_match_by_single_downstream_positioning( bool setting )
 	define_match_by_single_downstream_positioning_ = setting;
 }
 
-void MatcherTask::n_to_output_per_group( Size setting )
+void MatcherTask::n_to_output_per_group( core::Size setting )
 {
 	n_to_output_per_group_ = setting;
 }
@@ -569,7 +569,7 @@ MatcherTask::only_enumerate_non_match_redundant_ligand_rotamers() const
 
 
 utility::vector1< core::Size > const &
-MatcherTask::upstream_pose_build_resids_for_geometric_constraint( Size cst_id ) const
+MatcherTask::upstream_pose_build_resids_for_geometric_constraint( core::Size cst_id ) const
 {
 	if ( share_build_points_for_geomcsts_ ) {
 		return generic_pose_build_resids_;
@@ -903,7 +903,7 @@ MatcherTask::initialize_occupied_space_bounding_box_from_command_line()
 		std::string size;
 		istr >> size;
 		runtime_assert( size == "SIZE:" );
-		Size xsize( 0 ), ysize( 0 ), zsize( 0 );
+		core::Size xsize( 0 ), ysize( 0 ), zsize( 0 );
 		istr >> xsize; runtime_assert( ! istr.bad() );
 		istr >> ysize; runtime_assert( ! istr.bad() );
 		istr >> zsize; runtime_assert( ! istr.bad() );
@@ -942,13 +942,13 @@ MatcherTask::initialize_occupied_space_bounding_box_from_command_line()
 		Real lowz(upstream_pose_->residue(1).xyz(1).z());
 		Real highx(lowx), highy(lowy), highz(lowz);
 
-		for ( Size i =1; i <= upstream_pose_->size(); ++i ) {
+		for ( core::Size i =1; i <= upstream_pose_->size(); ++i ) {
 			core::conformation::Residue const & cur_res( upstream_pose_->residue( i ) );
 
 			if ( !cur_res.is_protein() ) continue;
-			utility::vector1< Size > const & bb_atoms( cur_res.type().all_bb_atoms() );
+			utility::vector1< core::Size > const & bb_atoms( cur_res.type().all_bb_atoms() );
 
-			for ( Size j =1; j <= bb_atoms.size(); ++j ) {
+			for ( core::Size j =1; j <= bb_atoms.size(); ++j ) {
 				Real curx( cur_res.xyz( bb_atoms[j] ).x() ), cury( cur_res.xyz( bb_atoms[j] ).y() ), curz( cur_res.xyz( bb_atoms[j] ).z() );
 
 				if (  curx  < lowx ) lowx = curx;
@@ -1034,16 +1034,16 @@ MatcherTask::set_active_site_residue_list_to_preexisting_partial_match()
 
 	bool change_build_point_lists( false );
 	bool switch_to_different_build_points_required( share_build_points_for_geomcsts_ );
-	utility::vector1< Size > generic_pose_build_resids_copy( generic_pose_build_resids_ );
-	std::set< Size > cst_ids_already_present;
-	Size n_geometric_constraints( enz_input_data_->mcfi_lists_size() );
+	utility::vector1< core::Size > generic_pose_build_resids_copy( generic_pose_build_resids_ );
+	std::set< core::Size > cst_ids_already_present;
+	core::Size n_geometric_constraints( enz_input_data_->mcfi_lists_size() );
 
 	// Loop over all the remarks in pdb file
 	for ( auto const & pose_remark : pose_remarks ) {
 
 		std::string resA_type(""), resB_type("");
 		int resA_num(0), resB_num(0);
-		Size cst_block(0);
+		core::Size cst_block(0);
 		std::string resA_chain ,resB_chain;
 		core::Size ex_geom_id;
 		if ( protocols::toolbox::match_enzdes_util::split_up_remark_line(pose_remark.value, resA_chain,
@@ -1055,8 +1055,8 @@ MatcherTask::set_active_site_residue_list_to_preexisting_partial_match()
 				if ( switch_to_different_build_points_required ) use_different_build_points_for_each_geometric_constraint( n_geometric_constraints );
 			}
 
-			Size upstream_seqpos(  pose_pdbinfo->pdb2pose(resB_chain.c_str()[0],resB_num) );
-			utility::vector1< Size > res_id;
+			core::Size upstream_seqpos(  pose_pdbinfo->pdb2pose(resB_chain.c_str()[0],resB_num) );
+			utility::vector1< core::Size > res_id;
 			runtime_assert( upstream_pose_->residue_type( upstream_seqpos ).is_protein() );
 			TR << "An interaction for geometric constraint " << cst_block << " already seems to be present in the pose at seqpos " << upstream_seqpos << ". Matching for this geomcst will only be done at this position." << std::endl;
 			res_id.push_back( upstream_seqpos );
@@ -1070,7 +1070,7 @@ MatcherTask::set_active_site_residue_list_to_preexisting_partial_match()
 		remove_downstream_object_from_upstream_pose();
 
 		if ( switch_to_different_build_points_required ) {
-			for ( Size i = 1; i <= n_geometric_constraints; ++i ) {
+			for ( core::Size i = 1; i <= n_geometric_constraints; ++i ) {
 				if ( cst_ids_already_present.find( i ) == cst_ids_already_present.end() ) {
 					set_original_scaffold_build_points_for_geometric_constraint( i, generic_pose_build_resids_copy );
 				}
@@ -1085,7 +1085,7 @@ MatcherTask::remove_downstream_object_from_upstream_pose()
 	//right now this function only works for ligand downstream objects
 	if ( (downstream_pose_->size() != 1 ) ) utility_exit_with_message("Can't remove a downstream pose containing more than one residue from the upstream pose.");
 
-	utility::vector1< Size > seqpos_to_remove;
+	utility::vector1< core::Size > seqpos_to_remove;
 	for ( core::Size i = 1; i<= upstream_pose_->conformation().num_chains(); ++i ) {
 		core::Size chain_begin( upstream_pose_->conformation().chain_begin( i ) );
 		if ( (upstream_pose_->conformation().chain_end( i ) - chain_begin == 0 ) &&
@@ -1161,7 +1161,7 @@ MatcherTask::determine_all_match_relevant_downstream_atoms()
 			//make sure this is not upstream matching
 			bool upstream_matching( false);
 			utility::vector1< std::string > const & info( alg_info.find( "match" )->second );
-			for ( Size ll = 1; ll <= info.size(); ++ll ) {
+			for ( core::Size ll = 1; ll <= info.size(); ++ll ) {
 				std::string llstr = info[ ll ];
 				std::istringstream llstream( llstr );
 				std::string first, second;
@@ -1224,7 +1224,7 @@ MatcherTask::initialize_orientation_atoms_from_command_line()
 			if ( names.size() != 3 ) {
 				std::cerr << "ERROR: expected exactly three atom names for the downstream pose, but read ";
 				std::cerr << names.size() << " from the command line." << std::endl;
-				for ( Size ii = 1; ii <= names.size(); ++ii ) {
+				for ( core::Size ii = 1; ii <= names.size(); ++ii ) {
 					std::cerr << names[ ii ] << " ";
 				}
 				std::cerr << std::endl;
@@ -1235,8 +1235,8 @@ MatcherTask::initialize_orientation_atoms_from_command_line()
 				std::cerr << "ERROR: Cannot use the flag -match::orientation_atoms if the downstream pose has multiple residues" << std::endl;
 				utility_exit_with_message( "Invalide use of the flag -match::orientation_atoms" );
 			}
-			utility::vector1< Size > ats( 3 );
-			for ( Size ii = 1; ii <= 3; ++ii ) {
+			utility::vector1< core::Size > ats( 3 );
+			for ( core::Size ii = 1; ii <= 3; ++ii ) {
 				if ( ! downstream_pose_->residue( 1 ).has( names[ ii ] ) ) {
 					std::cerr << "Could not find atom named '" << names[ ii ] << "' in residue " << downstream_pose_->residue( 1 ).name() << std::endl;
 					utility_exit_with_message ("Unrecognized atom name listed in flag -match::orientation_atoms" );
@@ -1369,7 +1369,7 @@ MatcherTask::initialize_active_site_definition_from_command_line()
 		std::string filename = option[ active_site_definition_by_residue ]();
 		utility::io::izstream istr( filename.c_str() );
 		while ( istr ) {
-			Size resid; Real radius;
+			core::Size resid; Real radius;
 			istr >> resid;
 			if ( resid > upstream_pose_->size() ) {
 				std::cerr << "ERROR reading active_site_definition: residue " << resid << " exceeds the number of residues in the scaffold pose." << std::endl;
@@ -1485,7 +1485,7 @@ MatcherTask::initialize_output_options_from_command_line()
 			utility_exit_with_message("Retarded user input. Output for geom cst with id smaller than 1 requested.");
 		}
 
-		if ( (Size) tempvec[ i ] > num_geom_csts ) {
+		if ( (core::Size) tempvec[ i ] > num_geom_csts ) {
 			utility_exit_with_message("Bad user input. Output for geom cst with id higher than the number of total geomcsts requested.");
 		}
 

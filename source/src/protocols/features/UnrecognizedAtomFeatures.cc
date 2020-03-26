@@ -257,10 +257,10 @@ UnrecognizedAtomFeatures::insert_unrecognized_residues_rows(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id", struct_id) );
 
-	map< Size, UnrecognizedAtomRecord const * > ur_found;
+	map< core::Size, UnrecognizedAtomRecord const * > ur_found;
 
 	for ( auto const & ua : pdb_info->get_unrecognized_atoms() ) {
-		map< Size, UnrecognizedAtomRecord const * >::const_iterator
+		map< core::Size, UnrecognizedAtomRecord const * >::const_iterator
 			i(ur_found.find(ua.res_num()));
 		if ( i == ur_found.end() ) {
 			ur_found[ua.res_num()] = &ua;
@@ -272,7 +272,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_residues_rows(
 	}
 
 	for (
-			map<Size, UnrecognizedAtomRecord const * >::const_iterator
+			map<core::Size, UnrecognizedAtomRecord const * >::const_iterator
 			i = ur_found.begin(), ie = ur_found.end();
 			i != ie; ++i ) {
 
@@ -281,7 +281,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_residues_rows(
 		insert_generator.add_row(
 			make_vector(
 			struct_id_data,
-			RowDataBaseOP(utility::pointer::make_shared< RowData<Size> >("residue_number", ua.res_num()) ),
+			RowDataBaseOP(utility::pointer::make_shared< RowData<core::Size> >("residue_number", ua.res_num()) ),
 			RowDataBaseOP(utility::pointer::make_shared< RowData<string> >("name3", ua.res_name()) ),
 			RowDataBaseOP(utility::pointer::make_shared< RowData<Real> >("max_temperature", ua.temp()) )));
 	}
@@ -316,7 +316,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_atoms_rows(
 		insert_generator.add_row(
 			make_vector(
 			struct_id_data,
-			RowDataBaseOP(utility::pointer::make_shared< RowData<Size> >("residue_number", ua.res_num()) ),
+			RowDataBaseOP(utility::pointer::make_shared< RowData<core::Size> >("residue_number", ua.res_num()) ),
 			RowDataBaseOP(utility::pointer::make_shared< RowData<string> >("atom_name", ua.atom_name()) ),
 			RowDataBaseOP(utility::pointer::make_shared< RowData<Real> >("coord_x", ua.coords().x()) ),
 			RowDataBaseOP(utility::pointer::make_shared< RowData<Real> >("coord_y", ua.coords().y()) ),
@@ -347,14 +347,14 @@ UnrecognizedAtomFeatures::insert_unrecognized_neighbors_rows(
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id", struct_id) );
 
-	map< Size, pair< Size, Real > > closest_contact;
+	map< core::Size, pair< core::Size, Real > > closest_contact;
 
 
-	for ( Size resNum=1; resNum <= pose.size(); ++resNum ) {
+	for ( core::Size resNum=1; resNum <= pose.size(); ++resNum ) {
 		if ( !check_relevant_residues(relevant_residues, resNum) ) continue;
 		Residue const & res(pose.residue(resNum));
 
-		Size closest_ua_resNum(0);
+		core::Size closest_ua_resNum(0);
 		Distance closest_ua_distance(10000000);
 		for ( UnrecognizedAtomRecord const & ua : pdb_info->get_unrecognized_atoms() ) {
 			Distance const ua_distance(res.actcoord().distance(ua.coords()));
@@ -369,8 +369,8 @@ UnrecognizedAtomFeatures::insert_unrecognized_neighbors_rows(
 			insert_generator.add_row(
 				make_vector(
 				struct_id_data,
-				RowDataBaseOP( utility::pointer::make_shared< RowData<Size> >("residue_number", resNum) ),
-				RowDataBaseOP( utility::pointer::make_shared< RowData<Size> >("unrecognized_residue_number", closest_ua_resNum) ),
+				RowDataBaseOP( utility::pointer::make_shared< RowData<core::Size> >("residue_number", resNum) ),
+				RowDataBaseOP( utility::pointer::make_shared< RowData<core::Size> >("unrecognized_residue_number", closest_ua_resNum) ),
 				RowDataBaseOP( utility::pointer::make_shared< RowData<Distance> >("closest_contact", closest_ua_distance) )));
 		}
 	}

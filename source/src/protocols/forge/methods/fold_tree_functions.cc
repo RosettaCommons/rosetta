@@ -97,7 +97,7 @@ closest_larger_peptide_vertex(
 
 	debug_assert( k > 0 );
 
-	std::vector< Size > peptide_vertices;
+	std::vector< core::Size > peptide_vertices;
 
 	for ( auto const & e : ft ) {
 		if ( e.label() == Edge::PEPTIDE ) {
@@ -107,12 +107,12 @@ closest_larger_peptide_vertex(
 	}
 
 	// run through in sorted order
-	Size count = 0;
+	core::Size count = 0;
 	std::sort( peptide_vertices.begin(), peptide_vertices.end() );
 	auto last = std::unique( peptide_vertices.begin(), peptide_vertices.end() );
 	peptide_vertices.erase( last, peptide_vertices.end() );
 
-	for ( std::vector< Size >::const_iterator i = peptide_vertices.begin(), ie = peptide_vertices.end(); i != ie; ++i ) {
+	for ( std::vector< core::Size >::const_iterator i = peptide_vertices.begin(), ie = peptide_vertices.end(); i != ie; ++i ) {
 		if ( *i > v ) {
 			++count;
 			if ( count == k ) {
@@ -143,7 +143,7 @@ closest_smaller_peptide_vertex(
 
 	debug_assert( k > 0 );
 
-	std::vector< Size > peptide_vertices;
+	std::vector< core::Size > peptide_vertices;
 
 	for ( auto const & e : ft ) {
 		if ( e.label() == Edge::PEPTIDE ) {
@@ -153,11 +153,11 @@ closest_smaller_peptide_vertex(
 	}
 
 	// run through in backwards sorted order
-	Size count = 0;
+	core::Size count = 0;
 	std::sort( peptide_vertices.begin(), peptide_vertices.end() );
 	auto last = std::unique( peptide_vertices.begin(), peptide_vertices.end() );
 	peptide_vertices.erase( last, peptide_vertices.end() );
-	for ( std::vector< Size >::const_reverse_iterator i = peptide_vertices.rbegin(), ie = peptide_vertices.rend(); i != ie; ++i ) {
+	for ( std::vector< core::Size >::const_reverse_iterator i = peptide_vertices.rbegin(), ie = peptide_vertices.rend(); i != ie; ++i ) {
 		if ( *i < v ) {
 			++count;
 			if ( count == k ) {
@@ -181,7 +181,7 @@ vertex_exists(
 	using core::kinematics::FoldTree;
 
 	for ( auto const & e : ft ) {
-		if ( static_cast< Size >( e.start() ) == v || static_cast< Size >( e.stop() ) == v ) {
+		if ( static_cast< core::Size >( e.start() ) == v || static_cast< core::Size >( e.stop() ) == v ) {
 			return true;
 		}
 	}
@@ -208,7 +208,7 @@ utility::vector1< core::kinematics::Edge > jumps_connected_to_position(
 	Edges jump_edges;
 
 	for ( auto const & e : ft ) {
-		if ( e.label() > 0 && ( static_cast< Size >( e.start() ) == pos || static_cast< Size >( e.stop() ) == pos ) ) {
+		if ( e.label() > 0 && ( static_cast< core::Size >( e.start() ) == pos || static_cast< core::Size >( e.stop() ) == pos ) ) {
 			jump_edges.push_back( e );
 		}
 	}
@@ -245,14 +245,14 @@ core::Size find_connecting_jump(
 	}
 
 	// representatives of the segments of u and v
-	Size const root_u = uf.ds_find( u );
-	Size const root_v = uf.ds_find( v );
+	core::Size const root_u = uf.ds_find( u );
+	core::Size const root_v = uf.ds_find( v );
 
-	for ( Size i = 1, ie = ft.num_jump(); i <= ie; ++i ) {
+	for ( core::Size i = 1, ie = ft.num_jump(); i <= ie; ++i ) {
 		Edge const & e = ft.jump_edge( i );
 
-		Size const root_start = uf.ds_find( e.start() );
-		Size const root_stop = uf.ds_find( e.stop() );
+		core::Size const root_start = uf.ds_find( e.start() );
+		core::Size const root_stop = uf.ds_find( e.stop() );
 		if ( ( root_start == root_u && root_stop == root_v ) || ( root_start == root_v && root_stop == root_u ) ) {
 			return i;
 		}
@@ -299,8 +299,8 @@ bool remove_cutpoint(
 	}
 
 	// find the representatives of section containing cutpoint and cutpoint+1
-	Size const left_root = uf.ds_find( v );
-	Size const right_root = uf.ds_find( v + 1 );
+	core::Size const left_root = uf.ds_find( v );
+	core::Size const right_root = uf.ds_find( v + 1 );
 
 	// Run through jump edges to find the jump connecting the left & right sets.
 	// Jump edges were ordered when collecting them, so the start() must correspond
@@ -361,8 +361,8 @@ void remove_cutpoints(
 	// run through all cutpoints
 	for ( unsigned long v : cutpoints ) {
 		// find the representatives of section containing cutpoint and cutpoint+1
-		Size const left_root = uf.ds_find( v );
-		Size const right_root = uf.ds_find( v + 1 );
+		core::Size const left_root = uf.ds_find( v );
+		core::Size const right_root = uf.ds_find( v + 1 );
 
 		// Run through jump edges to find the jump connecting the left & right sets.
 		// Jump edges were ordered when collecting them, so the start() must correspond
@@ -409,9 +409,9 @@ shift_jumps(
 	using core::kinematics::FoldTree;
 
 	using EdgeList = utility::vector1<Edge>;
-	using NodeList = utility::vector1<Size>;
-	typedef std::map< Size, Size > Root2Jump;
-	typedef std::map< Size, NodeList > Root2Nodes;
+	using NodeList = utility::vector1<core::Size>;
+	typedef std::map< core::Size, core::Size > Root2Jump;
+	typedef std::map< core::Size, NodeList > Root2Nodes;
 
 	FoldTree aft; // altered FoldTree, return this
 	DisjointSets uf( ft.nres() );
@@ -515,8 +515,8 @@ fold_tree_from_pose(
 	using core::kinematics::FoldTree;
 
 	//typedef utility::vector1< Edge > Edges;
-	using Nodes = utility::vector1<Size>;
-	typedef std::map< Size, Nodes > Root2Nodes;
+	using Nodes = utility::vector1<core::Size>;
+	typedef std::map< core::Size, Nodes > Root2Nodes;
 
 	FoldTree ft;
 
@@ -529,12 +529,12 @@ fold_tree_from_pose(
 
 	// first connect sequential polymer vertices and do connections
 	// between chemical vertices
-	for ( Size i = 1, ie = pose.conformation().num_chains(); i <= ie; ++i ) {
-		Size const chain_begin = pose.conformation().chain_begin( i );
-		Size const chain_end = pose.conformation().chain_end( i );
+	for ( core::Size i = 1, ie = pose.conformation().num_chains(); i <= ie; ++i ) {
+		core::Size const chain_begin = pose.conformation().chain_begin( i );
+		core::Size const chain_end = pose.conformation().chain_end( i );
 
-		Size prior_polymer_r = pose.residue( chain_begin ).is_polymer() ? chain_begin : 0;
-		for ( Size r = chain_begin; r <= chain_end; ++r ) {
+		core::Size prior_polymer_r = pose.residue( chain_begin ).is_polymer() ? chain_begin : 0;
+		for ( core::Size r = chain_begin; r <= chain_end; ++r ) {
 			Residue const & res = pose.residue( r );
 
 			if ( res.is_polymer() ) {
@@ -550,11 +550,11 @@ fold_tree_from_pose(
 
 			} else { // chemical connection
 
-				for ( Size c = 1, ce = res.n_possible_residue_connections(); c <= ce; ++c ) {
-					Size const cr = res.connected_residue_at_resconn( c );
+				for ( core::Size c = 1, ce = res.n_possible_residue_connections(); c <= ce; ++c ) {
+					core::Size const cr = res.connected_residue_at_resconn( c );
 					Residue const & cres = pose.residue( cr );
 
-					debug_assert( static_cast< Size >( res.chain() ) == i );
+					debug_assert( static_cast< core::Size >( res.chain() ) == i );
 
 					if ( r < cr && res.chain() == cres.chain() ) {
 
@@ -579,7 +579,7 @@ fold_tree_from_pose(
 	Root2Nodes r2n = uf.sets();
 
 	// run through each component, adding polymer edges and assigning jumps
-	Size jump_count = 0;
+	core::Size jump_count = 0;
 	for ( auto & i : r2n ) {
 		Nodes & nodes = i.second;
 		std::sort( nodes.begin(), nodes.end() );
@@ -600,7 +600,7 @@ fold_tree_from_pose(
 
 				// everything is chemical, pick a jump point and be done
 				if ( !component_contains_ft_root ) {
-					Size const jump_point = numeric::random::rg().random_range( *nodes.begin(), *nodes.rbegin() );
+					core::Size const jump_point = numeric::random::rg().random_range( *nodes.begin(), *nodes.rbegin() );
 					ft.add_edge( Edge( ft_root, jump_point, ++jump_count ) );
 					uf.ds_union( jump_point, ft_root );
 				}
@@ -617,7 +617,7 @@ fold_tree_from_pose(
 
 				// construct re-indexed uf to track connected polymer subsections
 				DisjointSets indexed_uf( polymer_vertices.size() );
-				for ( Size j = 1, je = polymer_vertices.size(); j < je; ++j ) {
+				for ( core::Size j = 1, je = polymer_vertices.size(); j < je; ++j ) {
 					if ( polymer_vertices[ j ] + 1 == polymer_vertices[ j+1 ] ) {
 						// for simplicity do the union here instead of when the
 						// polymer edge is added
@@ -629,20 +629,20 @@ fold_tree_from_pose(
 				for ( auto & j : indexed_r2n ) {
 					Nodes subsection = j.second;
 					std::sort( subsection.begin(), subsection.end() );
-					Size const ss_begin = polymer_vertices[ *subsection.begin() ];
-					Size const ss_end = polymer_vertices[ *subsection.rbegin() ];
+					core::Size const ss_begin = polymer_vertices[ *subsection.begin() ];
+					core::Size const ss_end = polymer_vertices[ *subsection.rbegin() ];
 					bool const subsection_contains_ft_root = ss_begin <= ft_root && ft_root <= ss_end;
 
 					// find appropriate fixed bb positions for jump
-					utility::vector1< Size > fixed;
-					for ( Size k = ss_begin; k <= ss_end; ++k ) {
+					utility::vector1< core::Size > fixed;
+					for ( core::Size k = ss_begin; k <= ss_end; ++k ) {
 						if ( !mm.get_bb( k ) ) {
 							fixed.push_back( k );
 						}
 					}
 
 					// pick a jump point
-					Size jump_point = ft_root;
+					core::Size jump_point = ft_root;
 					if ( !subsection_contains_ft_root ) {
 						if ( fixed.empty() ) {
 							jump_point = numeric::random::rg().random_range( ss_begin, ss_end );
@@ -652,7 +652,7 @@ fold_tree_from_pose(
 					}
 
 					// order necessary vertices, remove duplicates
-					std::set< Size > vertices;
+					std::set< core::Size > vertices;
 					vertices.insert( ss_begin );
 					vertices.insert( ss_end );
 					vertices.insert( jump_point );
@@ -799,8 +799,8 @@ merge(
 	}
 
 	// compute jump positions
-	Size const jleft = left_position;
-	Size const jright = right_position + left_tree.nres();
+	core::Size const jleft = left_position;
+	core::Size const jright = right_position + left_tree.nres();
 
 	// split edge originating from left tree
 	if ( !vertex_exists( jleft, new_ft ) ) {
@@ -881,21 +881,21 @@ replace(
 	using core::kinematics::MoveMap;
 
 	//typedef utility::vector1< Edge > EdgeList;
-	using NodeList = utility::vector1<Size>;
-	typedef std::map< Size, NodeList > Root2Nodes;
+	using NodeList = utility::vector1<core::Size>;
+	typedef std::map< core::Size, NodeList > Root2Nodes;
 
 	debug_assert( replace_begin <= replace_end );
 	debug_assert( original_tree.root() < replace_begin || original_tree.root() > replace_end );
 
-	Size const replace_length = replace_end - replace_begin + 1;
-	Size const final_nres = original_tree.nres() - replace_length + replacement_tree.nres();
-	Size const final_ft_root = original_tree.root() < replace_begin ?
+	core::Size const replace_length = replace_end - replace_begin + 1;
+	core::Size const final_nres = original_tree.nres() - replace_length + replacement_tree.nres();
+	core::Size const final_ft_root = original_tree.root() < replace_begin ?
 		original_tree.root() :
 		original_tree.root() - replace_length + replacement_tree.nres();
 
 	// create altered fold tree and delete the section to be replaced
 	FoldTree aft = original_tree;
-	for ( Size r = replace_begin; r <= replace_end; ++r ) {
+	for ( core::Size r = replace_begin; r <= replace_end; ++r ) {
 		aft.delete_seqpos( replace_begin );
 	}
 
@@ -1005,8 +1005,8 @@ replace(
 	TR.Debug << "new_ft after remaining: " << new_ft << std::endl;
 
 	// replacement tree indexing shift
-	Size const rshift = replace_begin - 1;
-	Size const jshift = new_ft.num_jump();
+	core::Size const rshift = replace_begin - 1;
+	core::Size const jshift = new_ft.num_jump();
 
 	// add edges from replacement tree
 	for ( auto new_edge : replacement_tree ) {
@@ -1035,10 +1035,10 @@ replace(
 	// construct re-indexed movemap
 	MoveMap mm;
 	mm.set_bb_true_range( 1, final_nres );
-	for ( Size i = 1, ie = original_tree.nres(); i <= ie; ++i ) {
-		if ( i < static_cast< Size >( replace_begin ) ) {
+	for ( core::Size i = 1, ie = original_tree.nres(); i <= ie; ++i ) {
+		if ( i < static_cast< core::Size >( replace_begin ) ) {
 			mm.set_bb( i, movemap.get_bb( i ) );
-		} else if ( static_cast< Size >( replace_end ) < i ) {
+		} else if ( static_cast< core::Size >( replace_end ) < i ) {
 			mm.set_bb( i - replace_length + replacement_tree.nres(), movemap.get_bb( i ) );
 		}
 	}

@@ -26,7 +26,7 @@
 // Package headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <list>
@@ -53,7 +53,7 @@ enum simulate_mpi_message_type {
 	smpi_doubles
 };
 
-class SimulateMPIMessage : public pointer::ReferenceCount {
+class SimulateMPIMessage : public VirtualBase {
 public:
 	SimulateMPIMessage();
 	void src( platform::Size source );

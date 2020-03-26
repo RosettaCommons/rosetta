@@ -25,7 +25,7 @@
 // utility headers
 #include <utility>
 #include <utility/exit.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <utility/assert.hh>
@@ -65,10 +65,10 @@ BetaAlphaBetaMotif::BetaAlphaBetaMotif():
 
 /// @brief value constructor
 BetaAlphaBetaMotif::BetaAlphaBetaMotif(
-	Size const strand1,
-	Size const strand2,
-	Size const helix,
-	Size const cross_over ) :
+	core::Size const strand1,
+	core::Size const strand2,
+	core::Size const helix,
+	core::Size const cross_over ) :
 	strand1_( strand1 ),
 	strand2_( strand2 ),
 	helix_( helix ),
@@ -86,7 +86,7 @@ BetaAlphaBetaMotif::BetaAlphaBetaMotif(
 
 /// @brief copy constructor
 BetaAlphaBetaMotif::BetaAlphaBetaMotif( BetaAlphaBetaMotif const & s ):
-	ReferenceCount(),
+	VirtualBase(),
 	strand1_( s.strand1_ ),
 	strand2_( s.strand2_ ),
 	helix_( s.helix_ ),
@@ -153,23 +153,23 @@ BetaAlphaBetaMotif::helix_cycle_as_string() const
 /// @brief whether the CB->CA vector of the C-term residue of 1st strand is pointing inward or outward
 /// 1: inward, 2: outward
 core::Size
-BetaAlphaBetaMotif::calc_inout( SS_Info2_COP const ssinfo, Size const resi ) const
+BetaAlphaBetaMotif::calc_inout( SS_Info2_COP const ssinfo, core::Size const resi ) const
 {
 	using core::Vector;
 	using protocols::fldsgn::topology::BB_Pos;
 
 	Real neighbor_dist( 14.0 );
-	Size burial( 4 );
+	core::Size burial( 4 );
 
 	BB_Pos bb_pos( ssinfo->bb_pos() );
 
-	Size start = ssinfo->strand( strand1_ )->end() + 1;
-	Size end = ssinfo->strand( strand2_ )->begin() - 1;
+	core::Size start = ssinfo->strand( strand1_ )->end() + 1;
+	core::Size end = ssinfo->strand( strand2_ )->begin() - 1;
 
 	Vector cbca = bb_pos.CB( resi ) - bb_pos.CA( resi );
 
-	Size neighbor( 0 );
-	for ( Size ii=start; ii<=end; ii++ ) {
+	core::Size neighbor( 0 );
+	for ( core::Size ii=start; ii<=end; ii++ ) {
 
 		Vector bb = bb_pos.CA( resi ) - bb_pos.CA( ii );
 
@@ -189,7 +189,7 @@ BetaAlphaBetaMotif::calc_inout( SS_Info2_COP const ssinfo, Size const resi ) con
 }
 
 /// @brief
-bool compare( std::map< Size, Real >::const_iterator a, std::map< Size, Real >::const_iterator b )
+bool compare( std::map< core::Size, Real >::const_iterator a, std::map< core::Size, Real >::const_iterator b )
 {
 	return ( (*a).second < (*b).second );
 }
@@ -215,22 +215,22 @@ BetaAlphaBetaMotif::calc_helix_cycle( SS_Info2_COP const ssinfo )
 	Strand const s2 ( *ssinfo->strand( strand2_ ) );
 	BB_Pos bb_pos( ssinfo->bb_pos() );
 
-	Size h_end( 8 );
+	core::Size h_end( 8 );
 	if ( hx.length() < 8 ) {
 		h_end = hx.length();
 	}
 
 
 	bool use_ca( false );
-	for ( Size ii=1; ii<=h_end; ++ii ) {
-		Size pos( hx.begin() + ii - 1 );
+	for ( core::Size ii=1; ii<=h_end; ++ii ) {
+		core::Size pos( hx.begin() + ii - 1 );
 		if ( bb_pos.CB( pos ).is_zero() ) use_ca = true;
 	}
 
-	std::map< Size, Real > pos_dist;
-	for ( Size ii=1; ii<=h_end; ++ii ) {
+	std::map< core::Size, Real > pos_dist;
+	for ( core::Size ii=1; ii<=h_end; ++ii ) {
 
-		Size pos( hx.begin() + ii - 1 );
+		core::Size pos( hx.begin() + ii - 1 );
 
 		Vector hpos;
 		if ( use_ca ) {
@@ -261,11 +261,11 @@ BetaAlphaBetaMotif::calc_helix_cycle( SS_Info2_COP const ssinfo )
 		Real dist = dist_hpos_sheet/cos;
 
 		//std::cout << ii << " " << dist << std::endl;
-		pos_dist.insert( std::pair< Size, Real >( ii, dist ) );
+		pos_dist.insert( std::pair< core::Size, Real >( ii, dist ) );
 
 	}
 
-	utility::vector1< std::map< Size, Real >::iterator > vec_ite;
+	utility::vector1< std::map< core::Size, Real >::iterator > vec_ite;
 	auto it = pos_dist.begin(), end = pos_dist.end();
 	while ( it != end ) {
 		vec_ite.push_back( it );
@@ -319,13 +319,13 @@ BetaAlphaBetaMotif::calc_geometry( SS_Info2_COP const ssinfo, SheetSetCOP const 
 	left_handed_ = hss3.left_handed();
 
 	// check strand1_ and strand2_ are in same sheet
-	Size isheet = sheet_set->which_sheet( strand1_ );
+	core::Size isheet = sheet_set->which_sheet( strand1_ );
 	runtime_assert( isheet == sheet_set->which_sheet( strand1_ ) );
 	SheetOP sheet( sheet_set->sheet( isheet ) );
 
 	// get strand order of strand1 and strand2 in sheet
-	Size s1_order = sheet->strand_order( strand1_ );
-	Size s2_order = sheet->strand_order( strand2_ );
+	core::Size s1_order = sheet->strand_order( strand1_ );
+	core::Size s2_order = sheet->strand_order( strand2_ );
 	runtime_assert( s1_order > 0 && s2_order > 0 );
 	int sign( 1 );
 	if ( s1_order > s2_order ) sign = -1;
@@ -346,8 +346,8 @@ BetaAlphaBetaMotif::calc_geometry( SS_Info2_COP const ssinfo, SheetSetCOP const 
 	int ref2 = ref1 + sign;
 	runtime_assert( ref2 > 0 );
 
-	Size ref1_stid = sheet->order_strand( ref1 );
-	Size ref2_stid = sheet->order_strand( ref2 );
+	core::Size ref1_stid = sheet->order_strand( ref1 );
+	core::Size ref2_stid = sheet->order_strand( ref2 );
 
 	// Strand const & ref_s1 = *ssinfo->strand( ref1_stid ); // Unused variable causes warning.
 	// Strand const & ref_s2 = *ssinfo->strand( ref2_stid ); // Unused variable causes warning.
@@ -367,7 +367,7 @@ BetaAlphaBetaMotif::calc_geometry( SS_Info2_COP const ssinfo, SheetSetCOP const 
 	runtime_assert( " spair1->size1() != 1 || spair1->size2() != 1 " );
 
 	// get vectors to define sheet plane
-	Size begin1, end1, begin2, end2;
+	core::Size begin1, end1, begin2, end2;
 	if ( ref1_stid < ref2_stid ) {
 		begin1 = spair1->begin1();
 		end1   = spair1->end1();
@@ -415,7 +415,7 @@ BetaAlphaBetaMotif::calc_geometry( SS_Info2_COP const ssinfo, SheetSetCOP const 
 		int ref3 = ref2 + sign;
 		runtime_assert( ref3 > 0 );
 
-		Size ref3_stid = sheet->order_strand( ref3 );
+		core::Size ref3_stid = sheet->order_strand( ref3 );
 		// Strand const & ref_s3 = *ssinfo->strand( ref3_stid ); // Unused variable causes warning.
 		int refs3_orient = sheet->orient_strand( ref3 );
 
@@ -427,7 +427,7 @@ BetaAlphaBetaMotif::calc_geometry( SS_Info2_COP const ssinfo, SheetSetCOP const 
 		runtime_assert( " spair2->size1() != 1 || spair2->size2() != 1 " );
 
 		// get vectors to define sheet plane
-		Size begin3, end3;
+		core::Size begin3, end3;
 		if ( ref2_stid < ref3_stid ) {
 			if ( spair2->orient() == 'P' ) {
 				begin3 = spair2->begin2();
@@ -509,7 +509,7 @@ BetaAlphaBetaMotifSet::BetaAlphaBetaMotifSet( SS_Info2_COP const ssinfo, SheetSe
 
 /// @brief copy constructor
 BetaAlphaBetaMotifSet::BetaAlphaBetaMotifSet( BetaAlphaBetaMotifSet const & s ):
-	ReferenceCount(),
+	VirtualBase(),
 	bab_motifs_( s.bab_motifs_ )
 {}
 
@@ -538,7 +538,7 @@ BetaAlphaBetaMotifSet::bab_motifs() const
 
 /// @brief
 BetaAlphaBetaMotifOP
-BetaAlphaBetaMotifSet::bab_motif( Size const & i ) const
+BetaAlphaBetaMotifSet::bab_motif( core::Size const & i ) const
 {
 	runtime_assert( i <= bab_motifs_.size() );
 	return bab_motifs_[ i ];
@@ -572,25 +572,25 @@ BetaAlphaBetaMotifSet::set_babmotifs( SS_Info2_COP const ssinfo, SheetSetCOP con
 		return;
 	}
 
-	for ( Size ist1=1; ist1<=strands.size()-1 ; ist1++ )  {
+	for ( core::Size ist1=1; ist1<=strands.size()-1 ; ist1++ )  {
 
-		Size ist2 = ist1+1;
+		core::Size ist2 = ist1+1;
 		Strand const & s1 ( *strands[ ist1 ] );
 		Strand const & s2 ( *strands[ ist2 ] );
 
-		Size const sheet_num1 ( sheet_set->which_sheet( ist1 ) );
-		Size const sheet_num2 ( sheet_set->which_sheet( ist2 ) );
+		core::Size const sheet_num1 ( sheet_set->which_sheet( ist1 ) );
+		core::Size const sheet_num2 ( sheet_set->which_sheet( ist2 ) );
 		if ( sheet_num1 == 0 || sheet_num2 == 0 ) continue;  // in the case, ist1 or ist2 does not belong to sheet
 		if ( sheet_num1 != sheet_num2 ) continue;
 
-		Size const ord1 = sheet_set->sheet( sheet_num1 )->strand_order( ist1 );
-		Size const ord2 = sheet_set->sheet( sheet_num2 )->strand_order( ist2 );
+		core::Size const ord1 = sheet_set->sheet( sheet_num1 )->strand_order( ist1 );
+		core::Size const ord2 = sheet_set->sheet( sheet_num2 )->strand_order( ist2 );
 
 		utility::vector1< Real > orients( sheet_set->sheet( sheet_num1 )->orient_strands() );
 		if ( orients[ ord1 ] != orients[ ord2 ] ) continue;
 
-		Size ih( 0 ), ihelix( 0 );
-		Size helix_num( 0 );
+		core::Size ih( 0 ), ihelix( 0 );
+		core::Size helix_num( 0 );
 		for ( Helices::const_iterator jt=helices.begin(), jte=helices.end(); jt!=jte; ++jt ) {
 			ih++;
 			Helix const & hx( **jt );
@@ -604,7 +604,7 @@ BetaAlphaBetaMotifSet::set_babmotifs( SS_Info2_COP const ssinfo, SheetSetCOP con
 
 		if ( helix_num == 1 ) {
 			runtime_assert( ihelix != 0 );
-			Size cross_over = Size ( std::abs( Real(ord1) - Real(ord2) ) ) - 1;
+			core::Size cross_over = core::Size ( std::abs( Real(ord1) - Real(ord2) ) ) - 1;
 			bab_motifs_.push_back( utility::pointer::make_shared< BetaAlphaBetaMotif >( ist1, ist2, ihelix, cross_over ) );
 			TR.Debug << ist1 << " " << ist2 << " " << ihelix << " " << cross_over << std::endl;
 		}

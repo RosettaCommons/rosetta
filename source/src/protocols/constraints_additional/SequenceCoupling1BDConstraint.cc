@@ -101,7 +101,7 @@ SequenceCoupling1BDConstraint::read_def(
 	FuncFactory const &
 )
 {
-	Size residue_index(0);
+	core::Size residue_index(0);
 	std::string profile_filename;
 
 	// note: is >> "SequenceProfile" has already occured

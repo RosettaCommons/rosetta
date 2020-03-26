@@ -170,12 +170,12 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::lookup(
 {
 
 	if ( key == "all_unsat_polars" ) {
-		basic::check_cast( valptr, &all_unsat_polars_, "all_unsat_polars expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( all_unsat_polars_ );
+		basic::check_cast( valptr, &all_unsat_polars_, "all_unsat_polars expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( all_unsat_polars_ );
 
 	} else if ( key == "special_region_unsat_polars" ) {
-		basic::check_cast( valptr, &special_region_unsat_polars_, "special_region_unsat_polars expects to return a Size" );
-		(static_cast<basic::MetricValue<Size> *>(valptr))->set( special_region_unsat_polars_ );
+		basic::check_cast( valptr, &special_region_unsat_polars_, "special_region_unsat_polars expects to return a core::Size" );
+		(static_cast<basic::MetricValue<core::Size> *>(valptr))->set( special_region_unsat_polars_ );
 
 	} else if ( key == "atom_unsat" ) {
 		basic::check_cast( valptr, &atom_unsat_, "atom_unsat expects to return a id::AtomID_Map< bool >" );
@@ -186,8 +186,8 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::lookup(
 		(static_cast<basic::MetricValue<id::AtomID_Map< Real > > *>(valptr))->set( atom_semiexpl_score_ );
 
 	} else if ( key == "residue_unsat_polars" ) {
-		basic::check_cast( valptr, &residue_unsat_polars_, "residue_unsat_polars expects to return a utility::vector1< Size >" );
-		(static_cast<basic::MetricValue<utility::vector1< Size > > *>(valptr))->set( residue_unsat_polars_ );
+		basic::check_cast( valptr, &residue_unsat_polars_, "residue_unsat_polars expects to return a utility::vector1< core::Size >" );
+		(static_cast<basic::MetricValue<utility::vector1< core::Size > > *>(valptr))->set( residue_unsat_polars_ );
 
 	} else if ( key == "residue_semiexpl_score" ) {
 		basic::check_cast( valptr, &residue_semiexpl_score_, "residue_semiexpl_score expects to return a utility::vector1< Real >" );
@@ -233,16 +233,16 @@ fast_clash_check(
 )
 {
 	Real const clash_dist2_cut( clash_dist_cut * clash_dist_cut );
-	for ( Size iatid = 1; iatid <= check_atids.size(); ++iatid ) {
+	for ( core::Size iatid = 1; iatid <= check_atids.size(); ++iatid ) {
 		Vector const at1_xyz( pose.xyz( check_atids[ iatid ] ) );
-		for ( Size res2 = 1; res2 <= pose.size(); ++res2 ) {
-			for ( Size at2 = 1; at2 <= pose.residue( res2 ).natoms(); ++at2 ) {
+		for ( core::Size res2 = 1; res2 <= pose.size(); ++res2 ) {
+			for ( core::Size at2 = 1; at2 <= pose.residue( res2 ).natoms(); ++at2 ) {
 				//skip virtual atoms!
 				if ( pose.residue( res2 ).atom_type( at2 ).lj_wdepth() == 0.0 ) continue;
 				id::AtomID atid2( at2, res2 );
 				//skip if atid2 is in check_atids
 				bool skip_at2( false );
-				for ( Size jatid = 1; jatid <= check_atids.size(); ++jatid ) {
+				for ( core::Size jatid = 1; jatid <= check_atids.size(); ++jatid ) {
 					if ( atid2 == check_atids[ jatid ] ) { skip_at2 = true; break; }
 				}
 				if ( skip_at2 ) continue;
@@ -263,10 +263,10 @@ Real
 SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 	pose::Pose pose,
 	scoring::ScoreFunctionOP scorefxn,
-	Size seqpos,
-	Size atomno,
+	core::Size seqpos,
+	core::Size atomno,
 	conformation::Residue new_rsd,
-	Size new_atomno
+	core::Size new_atomno
 )
 {
 	using namespace id;
@@ -286,17 +286,17 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 	//append by jump from seqpos atomno to new_rsd atom 1, maybe make random downstream atom?
 	pose.append_residue_by_jump( new_rsd, seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), true );
 
-	Size new_seqpos( pose.size() );
-	Size jump_number( pose.fold_tree().num_jump() );
+	core::Size new_seqpos( pose.size() );
+	core::Size jump_number( pose.fold_tree().num_jump() );
 	Jump jump( pose.jump( jump_number ) );
 	//store water atom ids for clash check
 	vector1< id::AtomID > clash_check_atids;
-	for ( Size iat = 1; iat <= new_rsd.natoms(); ++iat ) {
+	for ( core::Size iat = 1; iat <= new_rsd.natoms(); ++iat ) {
 		clash_check_atids.push_back( id::AtomID( iat, new_seqpos ) );
 	}
 
 	//which is acceptor, donor?
-	Size aatm( 0 ), acc_pos( 0 ), hatm( 0 ), don_pos( 0 );
+	core::Size aatm( 0 ), acc_pos( 0 ), hatm( 0 ), don_pos( 0 );
 	bool wat_is_acc( false );
 	//water is acceptor
 	if ( rsd.atom_type( atomno ).is_polar_hydrogen() &&
@@ -318,10 +318,10 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 	}
 
 	//now get their base atoms to get datm and batm
-	Size datm( pose.residue( don_pos ).atom_base( hatm ) );
-	Size batm( pose.residue( acc_pos ).atom_base( aatm ) );
-	Size b2atm( pose.residue( acc_pos ).abase2( aatm ) );
-	Size dbatm( pose.residue( don_pos ).atom_base( datm ) ); //hpol base2
+	core::Size datm( pose.residue( don_pos ).atom_base( hatm ) );
+	core::Size batm( pose.residue( acc_pos ).atom_base( aatm ) );
+	core::Size b2atm( pose.residue( acc_pos ).abase2( aatm ) );
+	core::Size dbatm( pose.residue( don_pos ).atom_base( datm ) ); //hpol base2
 
 	//add vrt res so final torsion exists
 	chemical::ResidueTypeCOP rsd_type( core::pose::get_restype_for_pose( pose, "VRT", rsd.type().mode() ) );
@@ -339,22 +339,22 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 	f_rot.new_chemical_bond( seqpos, new_seqpos, rsd.atom_name( atomno ), new_rsd.atom_name( new_atomno ), pose.size() - 2 );
 	pose.fold_tree( f_rot );
 
-	Size water_hb_states_tot( 0 );
-	Size water_hb_states_good( 0 );
+	core::Size water_hb_states_tot( 0 );
+	core::Size water_hb_states_good( 0 );
 	hbonds::HBEvalTuple hbe_type( datm, pose.residue( don_pos ), aatm, pose.residue( acc_pos ) );
 	//granularity of enumeration
-	//Size steps( 7 );
+	//core::Size steps( 7 );
 	//must import from hbonds/constants.hh
 	// in case you're wondering, we're sampling in angle space instead of cos(angle)
 	// space so we sample more equally in polar coord space (not more densely when cos(pi-angle)->1)
-	Real AHdist_min(MIN_R), AHdist_max(MAX_R); Size AHdist_steps( 5 );
-	//  Real cosBAH_min( MIN_xH ), cosBAH_max( MAX_xH ); Size cosBAH_steps( 5 );
-	//  Real cosAHD_min( MIN_xD ), cosAHD_max( MAX_xD ); Size cosAHD_steps( 5 );
-	Real BAHang_min( pi - std::acos( MIN_xH ) ), BAHang_max( pi - std::acos( MAX_xH ) ); Size BAHang_steps( 5 );
-	Real AHDang_min( pi - std::acos( MIN_xD ) ), AHDang_max( pi - std::acos( MAX_xD ) ); Size AHDang_steps( 5 );
-	//  Real B2BAHchi_min( 0 ), B2BAHchi_max( pi_2 ); Size B2BAHchi_steps( 1 );
-	Real B2BAHchi_min( 0 ), B2BAHchi_max( pi_2 ); Size B2BAHchi_steps( 10 );
-	Real BAHDchi_min( 0 ), BAHDchi_max( pi_2 ); Size BAHDchi_steps( 3 );
+	Real AHdist_min(MIN_R), AHdist_max(MAX_R); core::Size AHdist_steps( 5 );
+	//  Real cosBAH_min( MIN_xH ), cosBAH_max( MAX_xH ); core::Size cosBAH_steps( 5 );
+	//  Real cosAHD_min( MIN_xD ), cosAHD_max( MAX_xD ); core::Size cosAHD_steps( 5 );
+	Real BAHang_min( pi - std::acos( MIN_xH ) ), BAHang_max( pi - std::acos( MAX_xH ) ); core::Size BAHang_steps( 5 );
+	Real AHDang_min( pi - std::acos( MIN_xD ) ), AHDang_max( pi - std::acos( MAX_xD ) ); core::Size AHDang_steps( 5 );
+	//  Real B2BAHchi_min( 0 ), B2BAHchi_max( pi_2 ); core::Size B2BAHchi_steps( 1 );
+	Real B2BAHchi_min( 0 ), B2BAHchi_max( pi_2 ); core::Size B2BAHchi_steps( 10 );
+	Real BAHDchi_min( 0 ), BAHDchi_max( pi_2 ); core::Size BAHDchi_steps( 3 );
 	//gimbal lock… <sigh>
 	for ( Real AHdist = AHdist_min; AHdist <= AHdist_max;
 			AHdist += (AHdist_max - AHdist_min)/static_cast<Real>(AHdist_steps-1) ) {
@@ -460,7 +460,7 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 							//TR_unsat << "\twat_score: " << wat_score << std::endl;
 							//TR_unsat << pose.energies().total_energies().weighted_to_string( scorefxn->weights() )
 							// + " total_score: " + to_string( pose.energies().total_energies()[ total_score ] );
-							//pose.dump_pdb( "watest." + to_string( seqpos ) + "." + to_string( atomno ) + "." + to_string( Size( numeric::conversions::degrees( AHDang ) ) ) + "." + to_string( Size( numeric::conversions::degrees( BAHang ) ) ) + "." + to_string( Size( numeric::conversions::degrees( BAHDchi ) ) ) + "." + to_string( Size( numeric::conversions::degrees( B2BAHchi ) ) ) + ".pdb" );
+							//pose.dump_pdb( "watest." + to_string( seqpos ) + "." + to_string( atomno ) + "." + to_string( core::Size( numeric::conversions::degrees( AHDang ) ) ) + "." + to_string( core::Size( numeric::conversions::degrees( BAHang ) ) ) + "." + to_string( core::Size( numeric::conversions::degrees( BAHDchi ) ) ) + "." + to_string( core::Size( numeric::conversions::degrees( B2BAHchi ) ) ) + ".pdb" );
 						}
 					}
 				}
@@ -483,8 +483,8 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::recompute( Pose const & in_pose )
 	//Real shell_cutoff( core::scoring::hbonds::MAX_R );
 	chemical::ResidueTypeCOP rsd_type( core::pose::get_restype_for_pose( in_pose, "TP3" ) );
 	conformation::ResidueOP wat_rsd( conformation::ResidueFactory::create_residue( *rsd_type ) );
-	Size wat_O_at( 1 ); //warning! hardcoded for TP3 water!
-	Size wat_H1_at( 2 ); //warning! hardcoded for TP3 water!
+	core::Size wat_O_at( 1 ); //warning! hardcoded for TP3 water!
+	core::Size wat_H1_at( 2 ); //warning! hardcoded for TP3 water!
 	//turn off solvation score
 	scoring::ScoreFunctionOP scorefxn( scorefxn_ );
 	scorefxn->set_weight( scoring::fa_sol, 0.0 );
@@ -495,15 +495,15 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::recompute( Pose const & in_pose )
 		atom_unsat_.resize( in_pose.size() );
 	}
 
-	basic::MetricValue< id::AtomID_Map< Size > > atom_hbonds_dry;
+	basic::MetricValue< id::AtomID_Map< core::Size > > atom_hbonds_dry;
 	in_pose.metric( name_of_hbond_calc_, "atom_Hbonds", atom_hbonds_dry );
 
-	for ( Size i = 1; i <= in_pose.size(); ++i ) {
+	for ( core::Size i = 1; i <= in_pose.size(); ++i ) {
 
 		residue_unsat_polars_[i] = 0;
 		conformation::Residue const & rsd = in_pose.residue( i );
 
-		for ( Size at = 1; at <= rsd.natoms(); ++at ) {
+		for ( core::Size at = 1; at <= rsd.natoms(); ++at ) {
 			//reset pose after each atom
 			pose::Pose pose( in_pose );
 
@@ -520,12 +520,12 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::recompute( Pose const & in_pose )
 			//can just avg al child H's water hbond fraction
 			//just add this vale into the bonded+hbonds value to gauge
 			//this is not the best way, but is the way that is comparable w/ BuriedUnsatCalc...
-			Size satisfac_cut = satisfaction_cutoff( rsd.type().atom_type( at ).name() );
-			Size bonded_heavyatoms = rsd.n_bonded_neighbor_all_res( at ) - rsd.type().number_bonded_hydrogens( at );
-			Size n_hbonds_needed( satisfac_cut - bonded_heavyatoms );
+			core::Size satisfac_cut = satisfaction_cutoff( rsd.type().atom_type( at ).name() );
+			core::Size bonded_heavyatoms = rsd.n_bonded_neighbor_all_res( at ) - rsd.type().number_bonded_hydrogens( at );
+			core::Size n_hbonds_needed( satisfac_cut - bonded_heavyatoms );
 
 			//check for unsat hbonds first
-			Size n_atom_hbonds( atom_hbonds_dry.value()[ atid ] );
+			core::Size n_atom_hbonds( atom_hbonds_dry.value()[ atid ] );
 			if ( n_atom_hbonds >= n_hbonds_needed ) {
 				atom_unsat_.set( atid, this_atom_unsat );
 				continue;
@@ -548,8 +548,8 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::recompute( Pose const & in_pose )
 				//H atom score should only count for 1 hbond
 				//but to mimic bur unsat hbonds logic, make it so that
 				//we just avg hbgeom score and see if above cutoff
-				Size n_bonded_H = rsd.type().attached_H_end( at ) - rsd.type().attached_H_begin( at );
-				for ( Size h_at = rsd.type().attached_H_begin( at );
+				core::Size n_bonded_H = rsd.type().attached_H_end( at ) - rsd.type().attached_H_begin( at );
+				for ( core::Size h_at = rsd.type().attached_H_begin( at );
 						h_at<= rsd.type().attached_H_end( at ); h_at++ ) {
 					//get avg wat score of all attached H's
 					semiexpl_water_score += ( semiexpl_water_hbgeom_score(

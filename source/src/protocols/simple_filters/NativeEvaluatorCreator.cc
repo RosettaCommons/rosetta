@@ -37,7 +37,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 
@@ -118,7 +118,7 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 			}
 		} else if ( option[ OptionKeys::abinitio::rmsd_residues ].user() ) {
 			core::Size start = option[ OptionKeys::abinitio::rmsd_residues ]()[ 1 ];
-			Size end = option[ OptionKeys::abinitio::rmsd_residues ]()[ 2 ];
+			core::Size end = option[ OptionKeys::abinitio::rmsd_residues ]()[ 2 ];
 			eval.add_evaluation( utility::pointer::make_shared< RmsdEvaluator >( native_pose, start, end,  "", option[ OptionKeys::abinitio::bGDT ]() ) );
 		} else {
 			eval.add_evaluation( utility::pointer::make_shared< SelectRmsdEvaluator >( native_pose, "" ) );
@@ -131,7 +131,7 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 		utility::vector1< utility::file::FileName > const& rmsd_core( option[ OptionKeys::evaluation::rmsd_select ]() );
 		if ( !option[ in::file::native ].user() ) utility_exit_with_message( "need to specify in:file:native together with rmsd_select " );
 
-		for ( Size ct = 1; ct <= rmsd_core.size(); ct ++ ) {
+		for ( core::Size ct = 1; ct <= rmsd_core.size(); ct ++ ) {
 			std::ifstream is( rmsd_core[ ct ].name().c_str() );
 
 			if ( !is.good() ) {
@@ -143,7 +143,7 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 			loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( is, rmsd_core[ ct ].name(), false /*no strict checking */ );
 
 			loops::Loops core( loops );
-			utility::vector1< Size> selection;
+			utility::vector1< core::Size> selection;
 			core.get_residues( selection );
 			if ( native_pose ) eval.add_evaluation( utility::pointer::make_shared< simple_filters::SelectRmsdEvaluator >( native_pose, selection, rmsd_core[ ct ].base() ) );
 			if ( option[ OptionKeys::evaluation::score_with_rmsd ]() ) {

@@ -39,9 +39,9 @@ core::Size abego_index(char);
 core::Size ss_index(char);
 
 /// @brief represents a single pool used by quota selector
-class ABEGO_SS_Map : public utility::pointer::ReferenceCount {
+class ABEGO_SS_Map : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~ABEGO_SS_Map() override;
 
 	ABEGO_SS_Map(utility::vector1< std::pair<core::Size,core::Size> >);

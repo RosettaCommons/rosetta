@@ -42,7 +42,7 @@
 // ObjexxFCL Headers
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
@@ -66,7 +66,7 @@
 namespace protocols {
 namespace moves {
 
-class Mover : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Mover >
+class Mover : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< Mover >
 {
 public:
 	typedef utility::tag::TagCOP TagCOP;

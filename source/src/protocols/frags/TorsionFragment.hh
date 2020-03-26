@@ -22,7 +22,7 @@
 // ObjexxFCL Headers
 #include <utility>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <map>
 
 /// ******************************************************************************************************
@@ -50,7 +50,7 @@ namespace frags {
 ///It stores torsion angles and secondary structure.
 ///Torsions are stored as vector of vector, such as TorsionFragment[frag_size][n_bb_torsion];
 ///SS are stored as vector, such as TorsionFragment[frag_length]
-class TorsionFragment : public utility::pointer::ReferenceCount {
+class TorsionFragment : public utility::VirtualBase {
 
 public:
 	typedef core::Real Real;
@@ -66,18 +66,18 @@ public:
 	TorsionFragmentOP
 	clone() const;
 
-	TorsionFragment( Size const size_in, Size const nbb_in )
+	TorsionFragment( core::Size const size_in, core::Size const nbb_in )
 	{
 		set_size_and_nbb( size_in, nbb_in );
 	}
 
 	void
-	set_size_and_nbb( Size const size, Size const nbb )
+	set_size_and_nbb( core::Size const size, core::Size const nbb )
 	{
 		torsions_.resize( size );
 		secstruct_.resize( size );
 		sequence_.resize( size );
-		for ( Size k=1; k<= size; ++k ) {
+		for ( core::Size k=1; k<= size; ++k ) {
 			torsions_[k].resize( nbb );
 		}
 	}
@@ -85,7 +85,7 @@ public:
 
 	/// fragment size, 3mer or 9mer?
 	inline
-	Size
+	core::Size
 	size() const
 	{
 		return torsions_.size();
@@ -93,7 +93,7 @@ public:
 
 	/// number of backbone torsions.
 	inline
-	Size
+	core::Size
 	nbb() const
 	{
 		return ( torsions_.empty() ? 0 : torsions_[1].size() );
@@ -101,42 +101,42 @@ public:
 
 	// insert this piece of fragment to a pose at position "begin"
 	void
-	insert( core::pose::Pose & pose, Size const begin ) const;
+	insert( core::pose::Pose & pose, core::Size const begin ) const;
 
 	/// set value for specific torsion in this piece of fragment.
 	void
-	set_torsion( Size const pos, Size const tor, Real const setting )
+	set_torsion( core::Size const pos, core::Size const tor, Real const setting )
 	{
 		torsions_[pos][tor] = setting;
 	}
 
 	/// set secstruct for this position
 	void
-	set_secstruct( Size const pos, char const setting )
+	set_secstruct( core::Size const pos, char const setting )
 	{
 		secstruct_[pos] = setting;
 	}
 	char
-	get_secstruct( Size const pos ) const
+	get_secstruct( core::Size const pos ) const
 	{
 		return secstruct_[pos];
 	}
 
 	/// set seq for this position
 	void
-	set_sequence( Size const pos, char const setting )
+	set_sequence( core::Size const pos, char const setting )
 	{
 		sequence_[pos] = setting;
 	}
 	char
-	get_sequence( Size const pos ) const
+	get_sequence( core::Size const pos ) const
 	{
 		return sequence_[pos];
 	}
 
 	/// get value for specific torsion in this piece of fragment
 	Real
-	get_torsion( Size const pos, Size const tor ) const
+	get_torsion( core::Size const pos, core::Size const tor ) const
 	{
 		return torsions_[pos][tor];
 	}
@@ -160,7 +160,7 @@ operator >> ( std::istream & data, TorsionFragment & f );
 ///\brief a class for collection of fragments for a single residue position
 ///
 ///essentially a vector of TorsionFragment (owning pointers)
-class SingleResidueTorsionFragmentLibrary : public utility::pointer::ReferenceCount {
+class SingleResidueTorsionFragmentLibrary : public utility::VirtualBase {
 public:
 	typedef core::Real Real;
 	typedef core::Size Size;
@@ -192,7 +192,7 @@ public:
 	copy_fragments( SingleResidueTorsionFragmentLibrary const & src );
 
 	/// number of available fragment pieces for this position
-	Size
+	core::Size
 	size() const
 	{
 		return fragments_.size();
@@ -200,14 +200,14 @@ public:
 
 	/// overloaded [] operator to get single piece of fragment (actual object, not owning pointers)
 	TorsionFragment const &
-	operator[]( Size const index ) const
+	operator[]( core::Size const index ) const
 	{
 		return *( fragments_[ index ] );
 	}
 
 	/// erase a single fragment
 	void
-	erase( Size const index )
+	erase( core::Size const index )
 	{
 		debug_assert( index >= 1 && index <= size() );
 		fragments_.erase( fragments_.begin() + (index-1) );
@@ -235,7 +235,7 @@ operator >> ( std::istream & data, SingleResidueTorsionFragmentLibrary & lib );
 ///
 ///essentially a collection of SingleResidueTorsionFragmentLibrary (indexed by residue position)
 ///
-class TorsionFragmentLibrary : public utility::pointer::ReferenceCount{
+class TorsionFragmentLibrary : public utility::VirtualBase{
 public:
 	typedef core::Real Real;
 	typedef core::Size Size;
@@ -252,45 +252,45 @@ public:
 	~TorsionFragmentLibrary() override;
 
 	/// constructor with size (number of residue positions)
-	TorsionFragmentLibrary( Size const size_in )
+	TorsionFragmentLibrary( core::Size const size_in )
 	{
 		resize( size_in );
 	}
 
 	/// number of residues
 	inline
-	Size
+	core::Size
 	size() const {
 		return fragments_.size();
 	}
 
 	/// overloaded [] operator to get framgnet pieces for a certain residue position
 	SingleResidueTorsionFragmentLibrary &
-	operator[]( Size const pos )
+	operator[]( core::Size const pos )
 	{
 		return *(fragments_[pos]);
 	}
 
 	/// overloaded [] operator to get framgnet pieces for a certain residue position (access only)
 	SingleResidueTorsionFragmentLibrary const &
-	operator[]( Size const pos ) const
+	operator[]( core::Size const pos ) const
 	{
 		return *(fragments_[pos]);
 	}
 
 	/// change the size of fragment library
 	void
-	resize( Size const new_size )
+	resize( core::Size const new_size )
 	{
-		Size const old_size( fragments_.size() );
+		core::Size const old_size( fragments_.size() );
 		fragments_.resize( new_size );
-		for ( Size i=old_size+1; i<= new_size; ++i ) {
+		for ( core::Size i=old_size+1; i<= new_size; ++i ) {
 			fragments_[i] = utility::pointer::shared_ptr<class protocols::frags::SingleResidueTorsionFragmentLibrary>( new SingleResidueTorsionFragmentLibrary() );
 		}
 	}
 
 	void
-	delete_residue( Size const seqpos ); // invalidates all frags that overlap this position, shifts frags afterward
+	delete_residue( core::Size const seqpos ); // invalidates all frags that overlap this position, shifts frags afterward
 
 	void
 	shift( int const current2desired_offset );
@@ -300,14 +300,14 @@ public:
 
 	// initialize fragment data from a classic Rosetta fragment library
 	bool
-	read_file( std::string const & name, Size const frag_size, Size const nbb );
+	read_file( std::string const & name, core::Size const frag_size, core::Size const nbb );
 
 	// extract a fragment library with smaller fragment size from the one with larger lize
 	bool
-	derive_from_src_lib( Size const my_size, Size const src_size, TorsionFragmentLibraryCOP src_lib_op );
+	derive_from_src_lib( core::Size const my_size, core::Size const src_size, TorsionFragmentLibraryCOP src_lib_op );
 
 	bool
-	derive_from_src_lib( Size const my_size, Size const src_size, TorsionFragmentLibrary const & src_lib );
+	derive_from_src_lib( core::Size const my_size, core::Size const src_size, TorsionFragmentLibrary const & src_lib );
 
 	/// @brief  Show some info -- right now just for debugging, ie not a full dump of the library
 	void
@@ -333,14 +333,14 @@ operator >> ( std::istream & data, TorsionFragmentLibrary & lib );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class FragLib : public utility::pointer::ReferenceCount {
+class FragLib : public utility::VirtualBase {
 public:
 	typedef core::Real Real;
 	typedef core::Size Size;
 
 public:
 
-	typedef std::map< Size, TorsionFragmentLibraryOP > FragMap;
+	typedef std::map< core::Size, TorsionFragmentLibraryOP > FragMap;
 
 public:
 
@@ -350,16 +350,16 @@ public:
 
 	FragLib() {}
 
-	FragLib( FragLib const & src ): ReferenceCount() { copy_fragments( src ); }
+	FragLib( FragLib const & src ): VirtualBase() { copy_fragments( src ); }
 
 	TorsionFragmentLibrary const &
-	library( Size const size ) const;
+	library( core::Size const size ) const;
 
 	TorsionFragmentLibrary &
-	library( Size const size );
+	library( core::Size const size );
 
 	/// slow
-	utility::vector1< Size >
+	utility::vector1< core::Size >
 	frag_sizes() const;
 
 	void
@@ -369,7 +369,7 @@ public:
 	}
 
 	void
-	delete_residue( Size const seqpos ); // invalidates all frags that overlap this position, shifts frags afterward
+	delete_residue( core::Size const seqpos ); // invalidates all frags that overlap this position, shifts frags afterward
 
 	void
 	shift( int const current2desired_offset );
@@ -513,25 +513,25 @@ public:
 	}
 
 	void
-	min_len_strand( Size const setting )
+	min_len_strand( core::Size const setting )
 	{
 		min_len_strand_ = setting;
 	}
 
 	void
-	min_len_helix( Size const setting )
+	min_len_helix( core::Size const setting )
 	{
 		min_len_helix_ = setting;
 	}
 
-	Size
+	core::Size
 	frag_size() const { return frag_size_; }
 
-	Size
+	core::Size
 	last_inserted_frag_begin() const { return last_inserted_frag_begin_; }
 
 	void
-	frag_size( Size const setting )
+	frag_size( core::Size const setting )
 	{
 		frag_size_ = setting;
 	}
@@ -546,11 +546,11 @@ public:
 private:
 	FragLibCOP fraglib_;
 	core::kinematics::MoveMapCOP mm_;
-	Size frag_size_;
+	core::Size frag_size_;
 	bool check_ss_lengths_;
-	Size min_len_helix_;
-	Size min_len_strand_;
-	Size last_inserted_frag_begin_;
+	core::Size min_len_helix_;
+	core::Size min_len_strand_;
+	core::Size last_inserted_frag_begin_;
 
 };
 

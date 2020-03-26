@@ -25,7 +25,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
@@ -53,7 +53,7 @@ namespace pose_inputters {
 /// static methods that will be invoked by its corresponding PoseInputterCreator:
 /// - static std::string keyname();
 /// - static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-class PoseInputter : public utility::pointer::ReferenceCount
+class PoseInputter : public utility::VirtualBase
 {
 public:
 

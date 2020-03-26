@@ -29,7 +29,7 @@
 #include <core/id/AtomID.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <boost/noncopyable.hpp>
 
 namespace protocols {
@@ -48,7 +48,7 @@ namespace kinematic_closure {
 /// been applied, which is useful in some Monte Carlo schemes.
 
 class ClosureProblem
-	: public utility::pointer::ReferenceCount, private boost::noncopyable {
+	: public utility::VirtualBase, private boost::noncopyable {
 
 	friend class ClosureSolution;
 
@@ -79,31 +79,31 @@ public:
 public:
 
 	/// @brief Perturb the given phi angle.
-	void perturb_phi(Size residue, Real value, AngleUnit unit);
+	void perturb_phi(core::Size residue, Real value, AngleUnit unit);
 
 	/// @brief Perturb the given psi angle.
-	void perturb_psi(Size residue, Real value, AngleUnit unit);
+	void perturb_psi(core::Size residue, Real value, AngleUnit unit);
 
 	/// @brief Perturb the given omega angle.
-	void perturb_omega(Size residue, Real value, AngleUnit unit);
+	void perturb_omega(core::Size residue, Real value, AngleUnit unit);
 
 	/// @brief Perturb the N-CA-C bond angle in the given residue.
-	void perturb_n_ca_c(Size residue, Real value, AngleUnit unit);
+	void perturb_n_ca_c(core::Size residue, Real value, AngleUnit unit);
 
 	/// @brief Perturb the CA-C-N bond angle in the given residue.
-	void perturb_ca_c_n(Size residue, Real value, AngleUnit unit);
+	void perturb_ca_c_n(core::Size residue, Real value, AngleUnit unit);
 
 	/// @brief Perturb the C-N-CA bond angle in the given residue.
-	void perturb_c_n_ca(Size residue, Real value, AngleUnit unit);
+	void perturb_c_n_ca(core::Size residue, Real value, AngleUnit unit);
 
 	/// @brief Perturb the N-CA bond length in the given residue.
-	void perturb_n_ca(Size residue, Real value);
+	void perturb_n_ca(core::Size residue, Real value);
 
 	/// @brief Perturb the CA-C bond length in the given residue.
-	void perturb_ca_c(Size residue, Real value);
+	void perturb_ca_c(core::Size residue, Real value);
 
 	/// @brief Perturb the C-N bond length in the given residue.
-	void perturb_c_n(Size residue, Real value);
+	void perturb_c_n(core::Size residue, Real value);
 
 	/// @brief Provide non-const access to the raw torsion angle list.
 	ParameterList & perturb_torsions();
@@ -135,52 +135,52 @@ public:
 public:
 
 	/// @brief Return the index of the first pivot residue.
-	Size first_residue() const;
+	core::Size first_residue() const;
 
 	/// @brief Return the index of the second pivot residue.
-	Size cut_residue() const;
+	core::Size cut_residue() const;
 
 	/// @brief Return the index of the third pivot residue.
-	Size last_residue() const;
+	core::Size last_residue() const;
 
 	/// @brief Return the number of residues in the loop.
-	Size num_residues() const;
+	core::Size num_residues() const;
 
 	/// @brief Return the number of atoms in the loop.
-	Size num_atoms() const;
+	core::Size num_atoms() const;
 
 	/// @brief Return the current value of the given phi angle.
-	Real phi(Size residue, AngleUnit unit) const;
+	Real phi(core::Size residue, AngleUnit unit) const;
 
 	/// @brief Return the current value of the given psi angle.
-	Real psi(Size residue, AngleUnit unit) const;
+	Real psi(core::Size residue, AngleUnit unit) const;
 
 	/// @brief Return the current value of the given omega angle.
-	Real omega(Size residue, AngleUnit unit) const;
+	Real omega(core::Size residue, AngleUnit unit) const;
 
 	/// @brief Return the current value of the given N-CA-C bond angle.
-	Real n_ca_c(Size residue, AngleUnit unit) const;
+	Real n_ca_c(core::Size residue, AngleUnit unit) const;
 
 	/// @brief Return the current value of the given CA-C-N bond angle.
-	Real ca_c_n(Size residue, AngleUnit unit) const;
+	Real ca_c_n(core::Size residue, AngleUnit unit) const;
 
 	/// @brief Return the current value of the given C-N-CA bond angle.
-	Real c_n_ca(Size residue, AngleUnit unit) const;
+	Real c_n_ca(core::Size residue, AngleUnit unit) const;
 
 	/// @brief Return the current value of the given N-CA bond length.
-	Real n_ca(Size residue) const;
+	Real n_ca(core::Size residue) const;
 
 	/// @brief Return the current value of the given CA-C bond length.
-	Real ca_c(Size residue) const;
+	Real ca_c(core::Size residue) const;
 
 	/// @brief Return the current value of the given C-N bond length.
-	Real c_n(Size residue) const;
+	Real c_n(core::Size residue) const;
 
 	/// @brief Return true if the given residue is a pivot.
-	bool is_pivot_residue(Size residue) const;
+	bool is_pivot_residue(core::Size residue) const;
 
 	/// @brief Return true if the given residue is not a pivot.
-	bool is_nonpivot_residue(Size residue) const;
+	bool is_nonpivot_residue(core::Size residue) const;
 
 	/// @brief Return a loop specifying the three pivot residues.
 	Loop pivot_loop() const;
@@ -258,7 +258,7 @@ private:
 
 	/// @brief Return an AtomID referring to the atom at the given index
 	/// relative to the start of the loop.
-	core::id::AtomID id_from_index(Size index) const;
+	core::id::AtomID id_from_index(core::Size index) const;
 
 	/// @brief Mutate the residues between pivots to the sequence_ (including pivots)
 	void mutate_residues(core::pose::Pose &pose, utility::vector1 <std::string> sequence) const;

@@ -120,7 +120,7 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 		core::conformation::Residue const & rsd_i ( pose.residue(i) );
 		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 
-		for ( Size i_restype =1 ; i_restype<=ionizables_.size(); ++i_restype ) {
+		for ( core::Size i_restype =1 ; i_restype<=ionizables_.size(); ++i_restype ) {
 			if ( ionizables_[i_restype].name3() == rsd_i.type().name3() ) {
 				core::pose::Pose pose_copy(pose);
 
@@ -130,7 +130,7 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 				ref_pose.append_residue_by_bond(rsd_i);
 
 				Real score_neutral(0.), score_neutral_ref(0.);
-				for ( Size i_neutral_type = 1; i_neutral_type<=ionizables_[i_restype].neutral_restypes().size(); ++i_neutral_type ) {
+				for ( core::Size i_neutral_type = 1; i_neutral_type<=ionizables_[i_restype].neutral_restypes().size(); ++i_neutral_type ) {
 
 					// Create the new residue and replace it
 					conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
@@ -162,7 +162,7 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 				}
 
 				Real score_ionized(0.), score_ionized_ref(0.);
-				for ( Size i_ionized_type = 1; i_ionized_type<=ionizables_[i_restype].ionized_restypes().size(); ++i_ionized_type ) {
+				for ( core::Size i_ionized_type = 1; i_ionized_type<=ionizables_[i_restype].ionized_restypes().size(); ++i_ionized_type ) {
 
 					// Create the new residue and replace it
 					conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(

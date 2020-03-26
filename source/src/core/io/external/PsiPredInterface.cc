@@ -66,7 +66,7 @@ void runpsipred_name_mangle_check(
 
 /// @brief default constructor
 PsiPredInterface::PsiPredInterface( std::string const & cmd, std::string const & scratch_dir /* = "" */ )
-: ReferenceCount(),
+: VirtualBase(),
 	cmd_( cmd )
 {
 	set_scratch_dir( scratch_dir );
@@ -74,7 +74,7 @@ PsiPredInterface::PsiPredInterface( std::string const & cmd, std::string const &
 
 /// @brief copy constructor
 PsiPredInterface::PsiPredInterface( PsiPredInterface const & rval )
-: ReferenceCount(),
+: VirtualBase(),
 	psipred_output_( rval.psipred_output_ ),
 	cmd_( rval.cmd_ )
 {

@@ -31,18 +31,18 @@ class ChainExistsFilter : public protocols::filters::Filter
 {
 public:
 	ChainExistsFilter() :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "ChainExists" )
 	{}
 
 	ChainExistsFilter(std::string const & chain ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( "ChainExists" ),
 		chain_(chain)
 	{}
 
 	ChainExistsFilter( ChainExistsFilter const & init ) :
-		//utility::pointer::ReferenceCount(),
+		//utility::VirtualBase(),
 		protocols::filters::Filter( init ),
 		chain_(init.chain_)
 	{};

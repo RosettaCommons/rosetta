@@ -34,7 +34,7 @@ namespace screener {
 
 //Constructor
 SugarInstantiator::SugarInstantiator( pose::Pose & screening_pose,
-	Size const moving_res,
+	core::Size const moving_res,
 	Distance const o2prime_instantiation_distance_cutoff ):
 	screening_pose_( screening_pose ),
 	moving_res_( moving_res ),
@@ -54,7 +54,7 @@ SugarInstantiator::check_screen(){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
-SugarInstantiator::check_moving_sugar( pose::Pose & pose, Size const moving_res ){
+SugarInstantiator::check_moving_sugar( pose::Pose & pose, core::Size const moving_res ){
 	if ( !pose.residue( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) return false; // nothing to do.
 	return detect_sugar_contacts( pose, moving_res, o2prime_instantiation_distance_cutoff_ );
 }

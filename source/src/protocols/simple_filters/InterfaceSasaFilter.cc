@@ -229,8 +229,8 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 		if ( sym_dof_names_local.empty() ) {
 			// Fall back to all slidable dofs
 			std::set<core::Size> sym_aware_jump_ids;
-			Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
-			for ( Size j = 1; j <= nslidedofs; j++ ) {
+			core::Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
+			for ( core::Size j = 1; j <= nslidedofs; j++ ) {
 				sym_aware_jump_ids.insert(core::pose::symmetry::get_sym_aware_jump_num(pose, j ));
 			}
 			for ( core::Size sym_aware_jump_id : sym_aware_jump_ids ) {
@@ -258,7 +258,7 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 			full_component_and_neighbors_subpose.metric( "sasa", "total_sasa", mv_sasa);
 			core::Real const full_component_and_neighbors_sasa( mv_sasa.value() );
 			TR << "sasa for component controlled by sym_dof and its neighboring subunits" << dof_name << " = " << full_component_and_neighbors_sasa << std::endl;
-			utility::vector1<Size> sym_dof_subunits = core::pose::symmetry::get_jump_name_to_subunits(pose, dof_name);
+			utility::vector1<core::Size> sym_dof_subunits = core::pose::symmetry::get_jump_name_to_subunits(pose, dof_name);
 			TR << "number of subunits = " << sym_dof_subunits.size() << std::endl;
 			core::Real individual_component_buried_sasa = ((full_component_sasa + full_component_neighbors_sasa) - full_component_and_neighbors_sasa) / (2*sym_dof_subunits.size());
 			TR << "individual_component_buried_sasa = " << individual_component_buried_sasa << std::endl;
@@ -270,7 +270,7 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 		core::pose::Pose split_pose( pose );
 		std::set<core::Size> sym_aware_jump_ids;
 
-		for ( Size i = 1; i <= sym_dof_names_.size(); i++ ) {
+		for ( core::Size i = 1; i <= sym_dof_names_.size(); i++ ) {
 			TR.Debug << "getting sym_aware_jump_id from " << sym_dof_names_[i] << std::endl;
 			sym_aware_jump_ids.insert(core::pose::symmetry::sym_dof_jump_num( split_pose, sym_dof_names_[i] ));
 		}
@@ -281,21 +281,21 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 				TR.Debug << "Defaulting to jump 1. " << std::endl;
 				jumps_local.push_back(1);
 			}
-			for ( Size const & jump: jumps_local ) {
+			for ( core::Size const & jump: jumps_local ) {
 				TR.Debug << "getting sym_aware_jump_id from " << jump << std::endl;
 				sym_aware_jump_ids.insert(jump);
 			}
 		} else {
 			// all slidable jumps
-			Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
-			for ( Size j = 1; j <= nslidedofs; j++ ) {
+			core::Size nslidedofs = core::pose::symmetry::symmetry_info(pose)->num_slidablejumps();
+			for ( core::Size j = 1; j <= nslidedofs; j++ ) {
 				sym_aware_jump_ids.insert( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
 			}
 		}
 
 		runtime_assert( !sym_aware_jump_ids.empty() );
 
-		for ( Size const sym_aware_jump_id : sym_aware_jump_ids ) {
+		for ( core::Size const sym_aware_jump_id : sym_aware_jump_ids ) {
 			TR.Debug << "Moving jump id: " << sym_aware_jump_id << std::endl;
 			protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( split_pose, sym_aware_jump_id ) );
 			translate->step_size( 1000.0 );

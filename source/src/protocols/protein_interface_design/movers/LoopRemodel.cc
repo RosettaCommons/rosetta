@@ -447,7 +447,7 @@ LoopRemodel::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, p
 	design( des ); // set baseclass design flag
 
 	hurry_ = tag->getOption<bool>( "hurry", false );
-	cycles_ = tag->getOption<Size>( "cycles", 10 );
+	cycles_ = tag->getOption<core::Size>( "cycles", 10 );
 	runtime_assert( cycles_ > 0 );
 
 	// populate loops

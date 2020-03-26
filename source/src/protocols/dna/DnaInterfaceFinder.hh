@@ -18,7 +18,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 
 #include <map>
@@ -42,7 +42,7 @@ private:
 
 typedef std::map< core::Size, DnaNeighbor > DnaNeighbors;
 
-class DnaInterfaceFinder : public utility::pointer::ReferenceCount {
+class DnaInterfaceFinder : public utility::VirtualBase {
 public:
 
 	DnaInterfaceFinder(
@@ -50,7 +50,7 @@ public:
 		core::Real contact_threshold = 3.7 * 3.7,
 		core::Real z_cutoff = 10.,
 		bool base_only = false
-	) : utility::pointer::ReferenceCount(),
+	) : utility::VirtualBase(),
 		close_threshold_( close_threshold ),
 		contact_threshold_( contact_threshold ),
 		z_cutoff_( z_cutoff ),

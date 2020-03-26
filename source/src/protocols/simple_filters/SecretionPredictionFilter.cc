@@ -218,7 +218,7 @@ SecretionPredictionFilter::compute( const Pose & pose ) const
 {
 	vector1<SecretionPredictionFilter::tm_region> found_regions = SecretionPredictionFilter::find_tm_regions(tr, pose);
 	Real min_score = 99;
-	for ( Size ii=1; ii<=found_regions.size(); ++ii ) {
+	for ( core::Size ii=1; ii<=found_regions.size(); ++ii ) {
 		if ( min_score>found_regions[ii].dG_ins ) {
 			min_score=found_regions[ii].dG_ins;
 		}

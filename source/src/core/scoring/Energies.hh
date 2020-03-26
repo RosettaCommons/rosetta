@@ -49,7 +49,7 @@
 
 // Utility Headers
 #include <utility/py/PyAssert.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // STL Headers
 #include <map>
@@ -95,7 +95,7 @@ conformation hasn't changed. Twobody residue energies, on the other
 hand must be invalidated if the structure has changed at all.
 **/
 
-class Energies : public utility::pointer::ReferenceCount
+class Energies : public utility::VirtualBase
 {
 
 public:

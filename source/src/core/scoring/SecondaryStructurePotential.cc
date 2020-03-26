@@ -37,7 +37,7 @@
 #include <numeric/trig.functions.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
@@ -269,7 +269,7 @@ SecondaryStructurePotential::hspair(
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-class DimerPairing : public utility::pointer::ReferenceCount {
+class DimerPairing : public utility::VirtualBase {
 public:
 	DimerPairing(
 		int const dimer1_in,

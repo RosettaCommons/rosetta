@@ -23,7 +23,7 @@
 #include <protocols/jd3/CompletedJobOutput.fwd.hh>
 
 // utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // C++ headers
 #include <string>
@@ -38,7 +38,7 @@ namespace jd3 {
 namespace output {
 
 /// @brief The %OutputSpecification
-class OutputSpecification : utility::pointer::ReferenceCount
+class OutputSpecification : utility::VirtualBase
 {
 public:
 

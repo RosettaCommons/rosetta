@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 
@@ -79,7 +79,7 @@ enum Rama_Table_Type {
 	end_of_ramatable_type_list=unknown_ramatable_type //Keep this last
 };
 
-class Ramachandran : public utility::pointer::ReferenceCount
+class Ramachandran : public utility::VirtualBase
 {
 public:
 	typedef pose::Pose Pose;

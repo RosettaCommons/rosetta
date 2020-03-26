@@ -23,7 +23,7 @@
 #include <basic/resource_manager/types.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //C++ headers
 #include <istream>
@@ -42,13 +42,13 @@ public:
 	/// @brief Returns a SurfaceParametersOP which is constructed from the given input
 	/// stream (istream).
 	virtual
-	utility::pointer::ReferenceCountOP
+	utility::VirtualBaseOP
 	create_resource(
 		basic::resource_manager::ResourceOptions const & options,
 		basic::resource_manager::LocatorID const & locator_id,
 		std::istream & istream
 	) const;
-	
+
 	/// @brief Returns the default options for AntibodyInfo
 	virtual
 	basic::resource_manager::ResourceOptionsOP

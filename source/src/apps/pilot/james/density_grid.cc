@@ -97,7 +97,7 @@ main( int argc, char* argv [] ) {
 
 		vector1< vector1< Real > > query_points;
 		vector1< vector1< Real > > db_points;
-		vector1< utility::pointer::ReferenceCountOP > errors;
+		vector1< utility::VirtualBaseOP > errors;
 
 		string closest_line;
 		for ( iter = infiles.begin(), end = infiles.end(); iter != end; ++iter ) {

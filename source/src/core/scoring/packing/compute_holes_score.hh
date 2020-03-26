@@ -36,9 +36,9 @@ namespace scoring {
 namespace packing {
 
 /// the result class holding the three scores and the per-atom scores
-class HolesResult : public utility::pointer::ReferenceCount {
+class HolesResult : public utility::VirtualBase {
 public:
-	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~HolesResult() override;
 	HolesResult() : score(0.0),decoy_score(0.0),resl_score(0.0),dec15_score(0.0) {}
 	core::Real score, decoy_score, resl_score, dec15_score, natom;

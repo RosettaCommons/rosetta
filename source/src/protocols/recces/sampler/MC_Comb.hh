@@ -69,7 +69,7 @@ public:
 	set_update_pose( core::pose::PoseCOP setting ) override;
 
 	/// @brief output summary of class
-	void show( std::ostream & out, Size const indent = 0 ) const override;
+	void show( std::ostream & out, core::Size const indent = 0 ) const override;
 
 	/// @brief return OP to the subsampler that controls exactly this torsion_id (assume only one).
 	MC_SamplerOP
@@ -79,7 +79,7 @@ public:
 	num_rotamers() const { return rotamer_list_.size(); }
 
 	MC_SamplerOP
-	operator[]( Size const id ) { return rotamer_list_[ id ]; }
+	operator[]( core::Size const id ) { return rotamer_list_[ id ]; }
 
 protected:
 	utility::vector1<MC_SamplerOP> rotamer_list_;

@@ -30,7 +30,7 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/exit.hh>
 
 
@@ -134,7 +134,7 @@ typedef boost::unordered_map<
 	_MergableEntries
 	> StatEntries;
 
-class PairingStatistics : public utility::pointer::ReferenceCount {
+class PairingStatistics : public utility::VirtualBase {
 public:
 	typedef StatEntries::const_iterator const_iterator;
 	typedef PairingStatEntry::Model Model; //String ID !!!
@@ -168,7 +168,7 @@ public:
 		return entries_.end();
 	}
 
-	Model ranked_model( Size nr ) const {
+	Model ranked_model( core::Size nr ) const {
 		if ( nr > model_weight_.size() ) return "BOGUS";
 		return model_weight_[ nr ].second;
 	}
@@ -177,7 +177,7 @@ public:
 		return model_weight_.size();
 	}
 
-	core::Real weight( Size nr ) const {
+	core::Real weight( core::Size nr ) const {
 		runtime_assert( nr <= model_weight_.size() );
 		return model_weight_[ nr  ].first;
 	}

@@ -107,7 +107,7 @@ public:
 		sfxn_ = sfxn;
 	}
 
-	void set_final_optimization_n_iter( Size const final_optimization_n_iter ) {
+	void set_final_optimization_n_iter( core::Size const final_optimization_n_iter ) {
 		final_optimization_n_iter_ = final_optimization_n_iter;
 	}
 
@@ -121,12 +121,12 @@ public:
 
 private: // methods
 
-	void break_repack_reform( Pose & pose, utility::vector1< Size > const & cys_pos );
+	void break_repack_reform( Pose & pose, utility::vector1< core::Size > const & cys_pos );
 
 private: // data
 	core::select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
 	core::scoring::ScoreFunctionCOP sfxn_ = nullptr;
-	Size final_optimization_n_iter_ = 0;
+	core::Size final_optimization_n_iter_ = 0;
 
 	/// @brief The number of threads to request for multi-threaded packing.
 	/// @details Must be 0 or 1 unless this is a multi-threaded build of Rosetta. Zero indicates

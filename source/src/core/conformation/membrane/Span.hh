@@ -26,7 +26,7 @@
 
 // Package Headers
 #include <core/types.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -45,7 +45,7 @@ enum Orientation {
 	out = 2 /* The span vector is antiparallel to the membrane normal */
 };
 
-class Span : public utility::pointer::ReferenceCount {
+class Span : public utility::VirtualBase {
 
 public: // constructors
 

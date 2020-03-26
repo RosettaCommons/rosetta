@@ -21,7 +21,7 @@
 #include <protocols/sewing/scoring/AssemblyScorer.fwd.hh>
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // c++ headers
 #include <string>
@@ -32,7 +32,7 @@ namespace scoring {
 
 /// @brief The Creator class is responsible for creating a particular
 /// GlobalRequirement class.
-class AssemblyScorerCreator : public utility::pointer::ReferenceCount
+class AssemblyScorerCreator : public utility::VirtualBase
 {
 public:
 	AssemblyScorerCreator() {}

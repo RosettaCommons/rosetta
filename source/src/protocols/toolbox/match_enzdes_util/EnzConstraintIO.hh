@@ -40,7 +40,7 @@
 
 
 // Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -67,7 +67,7 @@ namespace match_enzdes_util {
 // This class had previously been a singleton, but it is terribly thread unsafe to have
 // it behave that way; it looks like no one is using it as a singleton, fortunately, so
 // as of 9/2014 it is no longer a singleton.
-class EnzConstraintIO : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< EnzConstraintIO >
+class EnzConstraintIO : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< EnzConstraintIO >
 {
 public:
 
@@ -232,7 +232,7 @@ public:
 	mcfi_lists_size() const;
 
 	//MatchConstraintFileInfoListCOP
-	//mcfi_list( Size index ) const;
+	//mcfi_list( core::Size index ) const;
 
 	core::Size
 	enz_cst_params_size() { return cst_pairs_.size(); }

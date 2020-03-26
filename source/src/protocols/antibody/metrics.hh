@@ -57,7 +57,7 @@ kink_dihedral( const core::pose::Pose & pose, const AntibodyInfo & abinfo, bool 
 ///// paratope and pose measures /////
 
 /// @brief Convenience struct for passing around paratope data, including individual data for cdrs.
-/// CDRs not present default to 0.  Templates are used mainly to have Size/ Real or string values.
+/// CDRs not present default to 0.  Templates are used mainly to have core::Size/ Real or string values.
 template <typename T>
 struct ParatopeMetric {
 

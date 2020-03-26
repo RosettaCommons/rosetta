@@ -84,7 +84,7 @@ void AutoCutData::write( std::ostream &out ) const {
 	out << hash() << " ";
 
 	out << "CUTS ";
-	for ( Size const cut : cuts() ) {
+	for ( core::Size const cut : cuts() ) {
 		out << cut << " ";
 	}
 }

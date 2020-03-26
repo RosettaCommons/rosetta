@@ -16,7 +16,7 @@
 
 // Unit Headers
 #include <numeric/interpolation/InterpolatedPotential.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 // Project Headers
 #include <numeric/interpolation/interpolation.hh>

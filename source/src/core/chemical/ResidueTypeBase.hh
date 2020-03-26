@@ -47,7 +47,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/deep_copy.hh>
 
@@ -87,7 +87,7 @@ namespace chemical {
 /// and updated on MutableResidueType -> ResidueType conversion.
 /// You can also include (as a virtual method) functions needed for PatchSelector function,
 /// but any atom indexing/references should be name-based.
-class ResidueTypeBase : public utility::pointer::ReferenceCount
+class ResidueTypeBase : public utility::VirtualBase
 {
 protected:
 	ResidueTypeBase(); // protected, not deleted, as serialization needs it.

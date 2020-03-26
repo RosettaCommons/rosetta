@@ -1280,7 +1280,7 @@ PlaceStubMover::disallowed_host_pos( core::pose::Pose const & pose ) const {
 	core::Size const host_chain_begin( pose.conformation().chain_begin( host_chain_ ));
 	core::Size const host_chain_end( pose.conformation().chain_end( host_chain_ ));
 
-	for ( Size host_pos( host_chain_begin); host_pos <= host_chain_end; ++host_pos ) {
+	for ( core::Size host_pos( host_chain_begin); host_pos <= host_chain_end; ++host_pos ) {
 		if ( ! allowed_host_pos[ host_pos ] ) {
 			// not allowed
 			disallowed_host_pos.push_back(host_pos);

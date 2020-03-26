@@ -36,7 +36,7 @@ class RepackingRefiner : public LoopMover {
 public:
 
 	/// @brief Default constructor.
-	RepackingRefiner(Size repack_period=1);
+	RepackingRefiner(core::Size repack_period=1);
 
 	/// @copydoc LoopMover::get_name
 
@@ -67,10 +67,10 @@ public:
 	void set_task_factory(core::pack::task::TaskFactoryOP task_factory);
 
 	/// @brief Return how often this refiner actually repacks the pose.
-	Size get_repack_period() const;
+	core::Size get_repack_period() const;
 
 	/// @brief Specify how often this refiner should actually repack the pose.
-	void set_repack_period(Size period);
+	void set_repack_period(core::Size period);
 
 	std::string
 	get_name() const override;
@@ -91,8 +91,8 @@ protected:
 
 private:
 
-	Size repack_period_;
-	Size iteration_counter_;
+	core::Size repack_period_;
+	core::Size iteration_counter_;
 
 };
 

@@ -23,7 +23,7 @@
 #include <utility/pointer/memory.hh>
 #include <platform/types.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 #include <utility/backtrace.hh>
 #include <utility/vector1.hh>
 
@@ -348,7 +348,7 @@ private:
 };
 
 /// @brief Pure virtual baseclass that was required to avoid templating Edges and Nodes
-class LowMemGraphBase : public utility::pointer::ReferenceCount {
+class LowMemGraphBase : public utility::VirtualBase {
 
 public:
 	LowMemGraphBase() {}
@@ -497,7 +497,7 @@ protected:
 			edges_.emplace_back( index1, index2, std::forward<Args>( args )... );
 			return edges_.size();
 		} else {
-			Size offset = deleted_edges_offsets_.back();
+			platform::Size offset = deleted_edges_offsets_.back();
 			deleted_edges_offsets_.pop_back();
 			LMEdge edge( index1, index2, std::forward<Args>( args )... );
 			edges_[ offset ] = edge;
@@ -578,7 +578,7 @@ public:
 	/// @brief remove an edge from the graph
 	void delete_edge( LowMemEdge * edge ) {
 		debug_assert( get_edge_exists( edge->get_first_node_ind(), edge->get_second_node_ind() ) );
-		Size offset = nodes_[ edge->get_first_node_ind() ].internal_drop_edge( edge, *this );
+		platform::Size offset = nodes_[ edge->get_first_node_ind() ].internal_drop_edge( edge, *this );
 		nodes_[ edge->get_second_node_ind() ].internal_drop_edge( edge, *this );
 		edge->internal_delete_self();
 		deleted_edges_offsets_.push_back( offset );

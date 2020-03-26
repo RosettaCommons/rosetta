@@ -31,7 +31,7 @@
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
 
 //utility headers
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //C++ headers
 #include <string>
@@ -45,7 +45,7 @@ namespace jd2 {
 /// @details the JobOutputter class is responsible for dealing with output, as well as determining what
 /// jobs have already been output and what sort of name is associated with a job.  Derived classes will
 /// be responsible for output such as PDBS, PDBS.tar.gz and silent files.
-class JobOutputter : public utility::pointer::ReferenceCount
+class JobOutputter : public utility::VirtualBase
 {
 public:
 

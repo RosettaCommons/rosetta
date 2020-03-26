@@ -16,7 +16,7 @@
 
 // unit headers
 #include <protocols/match/MatchPositionModifiers.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
+#include <utility/VirtualBase.hh>
 
 //package headers
 #include <protocols/match/MatcherTask.fwd.hh>
@@ -44,14 +44,14 @@ create_match_position_modifier(
 
 /// @brief base class for objects that modify the match positions based
 /// on some criterion
-class MatchPositionModifier : public utility::pointer::ReferenceCount {
+class MatchPositionModifier : public utility::VirtualBase {
 
 public:
 	MatchPositionModifier();
 
 	~MatchPositionModifier() override;
 
-	/// @brief the positions in the vector1< Size > that is returned
+	/// @brief the positions in the vector1< core::Size > that is returned
 	/// by this function will replace the match positions in the MatcherTask.
 	virtual
 	utility::vector1< core::Size >

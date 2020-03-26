@@ -28,7 +28,7 @@
 
 // #include <utility/excn/Exceptions.hh>
 // #include <utility/vector1.fwd.hh>
-// #include <utility/pointer/ReferenceCount.hh>
+// #include <utility/VirtualBase.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -139,7 +139,7 @@ std::string CrossPeakInfo::label_atom_name( std::string const& proton_name, core
 		if ( proton_name.substr(0,2) == "HA" ) return "CA";
 		if ( proton_name.substr(0,2) == "HB" ) return "CB";
 		if ( aa != aa_asn ) { //don't make HD21 -> CD substition for ASN
-			Size len=proton_name.size()-2;
+			core::Size len=proton_name.size()-2;
 			if ( proton_name.substr(0,2) == "HG" || proton_name.substr(0,2)=="HD" || proton_name.substr(0,2)=="HE" ) return "C"+proton_name.substr(1,len < 1 ? 1 : len );
 		}
 		// already as aa!=asn  if ( proton_name.substr(0,2)== "HE" ) return "CE";

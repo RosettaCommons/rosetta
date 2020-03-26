@@ -109,8 +109,8 @@ HbondsToResidueFilter::HbondsToResidueFilter() :
 /// @brief Constructor
 ///
 HbondsToResidueFilter::HbondsToResidueFilter(
-	Size const resnum,
-	Size const partners,
+	core::Size const resnum,
+	core::Size const partners,
 	Real const &energy_cutoff,
 	bool const backbone,
 	bool const sidechain,
@@ -247,15 +247,15 @@ HbondsToResidueFilter::compute( Pose const & pose, core::Size const resnum_roset
 		selection = selector_->apply( pose );
 	}
 
-	std::set<Size> binders;
-	for ( Size i=1, imax=pose.size(); i<=imax; ++i ) {
+	std::set<core::Size> binders;
+	for ( core::Size i=1, imax=pose.size(); i<=imax; ++i ) {
 		if ( i == resnum_rosetta ) continue; //Don't consider hbonds of this residue to itself.
 		if ( !selection[i] ) continue; //Don't consider hbonds to residues that aren't selected by the ResidueSelector (if used).  Note that the selection vector is all true if no ResidueSelector is provided.
 		if ( pose.chain(i) == pose.chain(resnum_rosetta) && !from_same_chain() ) continue; //Skip hbonds from same chain if the from_same_chain option is not set.
 		if ( pose.chain(i) != pose.chain(resnum_rosetta) && !from_other_chains() ) continue; //Skip hbonds from different chains if the from_other_chain option is not set.
 		binders.insert( i );
 	}
-	std::list< Size> hbonded_res( hbonded( temp_pose, resnum_rosetta, binders, backbone_, sidechain_, energy_cutoff_, bb_bb_, scorefxn) );
+	std::list< core::Size> hbonded_res( hbonded( temp_pose, resnum_rosetta, binders, backbone_, sidechain_, energy_cutoff_, bb_bb_, scorefxn) );
 
 	return( hbonded_res.size() );
 }
