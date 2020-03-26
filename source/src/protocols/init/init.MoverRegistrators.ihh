@@ -451,6 +451,8 @@ static MoverRegistrator< protein_interface_design::movers::VLBCreator > reg_VLBC
 static MoverRegistrator< protein_interface_design::movers::DockWithHotspotMoverCreator > reg_DockWithHotspotMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::TopologyBrokerMoverCreator> reg_TopologyBrokerMoverCreator;
 
+
+
 // Q //////////////////////////////////////////////////////////////////////////
 static MoverRegistrator< qsar::RenderGridsToKinemageCreator > reg_RenderGridsToKinemageCreator;
 
@@ -549,6 +551,7 @@ static MoverRegistrator< simple_moves::DumpPdbCreator > reg_DumpPdbCreator;
 static MoverRegistrator< simple_moves::ExplicitWaterMoverCreator > reg_ExplicitWaterMoverCreator;
 static MoverRegistrator< simple_moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
 static MoverRegistrator< simple_moves::FavorSymmetricSequenceCreator > reg_FavorSymmetricSequenceCreator;
+static MoverRegistrator< simple_moves::FoldTreeFromMotifCreator> reg_FoldTreeFromMotifCreator;
 static MoverRegistrator< calc_taskop_movers::ForceDisulfidesMoverCreator > reg_ForceDisulfidesMoverCreator;
 static MoverRegistrator< monte_carlo::GenericMonteCarloMoverCreator > reg_GenericMonteCarloMoverCreator;
 static MoverRegistrator< monte_carlo::GenericSimulatedAnnealerCreator > reg_GenericSimulatedAnnealerCreator;

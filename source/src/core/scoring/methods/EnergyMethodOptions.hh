@@ -856,6 +856,12 @@ public:
 	/// @details Used by the ApproximateBuriedUnsatPenalty energy.
 	core::Real approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb() const;
 
+
+	/// geter and setter for target clash energy
+	void target_clash_pdb( std::string const & setting );
+
+	std::string target_clash_pdb() const;
+
 	//////////////////////////////////////// DumpTrajectoryEnergy settings ////////////////////////////////////////
 
 	/// @brief Set the prefix for the dump_trajectory energy's output.
@@ -1164,6 +1170,9 @@ private:
 	bool approximate_buried_unsat_penalty_natural_corrections1_;
 	core::Real approximate_buried_unsat_penalty_hbond_bonus_cross_chain_;
 	core::Real approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb_;
+
+	// options for the target clash energy
+	std::string target_clash_pdb_;
 
 	//Options for DumpTrajectoryEnergy:
 	std::string dump_trajectory_prefix_;

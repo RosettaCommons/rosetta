@@ -1,0 +1,4 @@
+-in:file:s inputs/1l2y.pdb
+-parser:protocol inputs/test.xml
+-out:file:score_only score.sc
+#-target_clash_pdb inputs/1l2y.pdb

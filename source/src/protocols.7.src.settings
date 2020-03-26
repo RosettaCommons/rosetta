@@ -190,7 +190,7 @@ sources = {
 		"IndelOptimizationMover",
 	],
 	"protocols/pack_interface": [
-	"ProteinProteinInterfaceUpweighterTaskOperation",
+		"ProteinProteinInterfaceUpweighterTaskOperation",
 	],
 	"protocols/struct_fragment": [
 		"StructFragmentMover",
