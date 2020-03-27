@@ -409,6 +409,7 @@ sources = {
 		"InterchainPairEnergy",
 		"ResidualDipolarCouplingEnergyRigidSegments",
 		"SpecialRotamerEnergy",
+		"TargetClashEnergy",
 	],
 	"protocols/scoring/methods/pcs": [
 		"GridSearchIterator",
@@ -698,6 +699,7 @@ sources = {
 		"FavorSymmetricSequence",
 
 		"ReportEffectivePKA",
+		"FoldTreeFromMotif",
 		"FragmentMover",
 		"GunnCost",
 		"LoadUnboundRotMover",
