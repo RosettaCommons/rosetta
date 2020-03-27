@@ -16,7 +16,6 @@
 #include <protocols/rna/AlignmentEnergyCreator.hh>
 #include <protocols/scoring/methods/ResidualDipolarCouplingEnergyRigidSegmentsCreator.hh>
 #include <protocols/scoring/methods/SpecialRotamerEnergyCreator.hh>
-#include <protocols/scoring/methods/TargetClashEnergyCreator.hh>
 #include <protocols/scoring/methods/pcs/PseudocontactShiftEnergyCreator.hh>
 #include <protocols/scoring/methods/pcsTs1/PseudocontactShiftEnergyCreator.hh>
 #include <protocols/scoring/methods/pcsTs2/PseudocontactShiftEnergyCreator.hh>

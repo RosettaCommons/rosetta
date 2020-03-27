@@ -17,7 +17,6 @@
 #ifndef INCLUDED_numeric_geometry_hashing_MinimalClashHash_hh
 #define INCLUDED_numeric_geometry_hashing_MinimalClashHash_hh
 
-#include <numeric/geometry/hashing/MinimalClashHash.fwd.hh>
 #include <numeric/geometry/hashing/xyzStripeHash.hh> // need Ball
 #include <numeric/VoxelArray.fwd.hh>  // Try to avoid including the .hh here
 #include <numeric/types.hh>

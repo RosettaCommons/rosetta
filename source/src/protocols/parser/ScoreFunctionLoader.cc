@@ -214,10 +214,6 @@ ScoreFunctionLoader::create_scorefxn_from_tag(
 				emoptions.buried_unsatisfied_penalty_hbond_energy_threshold( mod_tag->getOption<core::Real>("buried_unsatisfied_penalty_hbond_energy_threshold") );
 			}
 
-			if ( mod_tag->hasOption( "target_clash_pdb" ) ) {
-				emoptions.target_clash_pdb( mod_tag->getOption<std::string>("target_clash_pdb"));
-			}
-
 			////// NMerSVMEnergy options //////
 			if ( mod_tag->hasOption("nmer_ref_seq_length") ) {
 				emoptions.nmer_ref_seq_length( mod_tag->getOption< core::Size >( "nmer_ref_seq_length" ) );
@@ -482,7 +478,6 @@ ScoreFunctionLoader::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_cone_dist_midpoint", xsct_real, "The distance midpoint for calculating burial by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )
 		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_burial_threshold", xsct_real, "The number of cones in which a point must lie to be considered buried by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy." )
 		+ XMLSchemaAttribute( "buried_unsatisfied_penalty_hbond_energy_threshold", xsct_real, "The energy threshold above which a hydrogen bond is not counted, used by the BuriedUnsatPenalty energy." )
-		+ XMLSchemaAttribute( "target_clash_pdb", xs_string, "The target pdb file for clash checking." )
 
 		+ XMLSchemaAttribute( "dump_trajectory_prefix", xs_string, "If the dump_trajectory scoreterm is used, this is the prefix for the filename to which we're dumping." )
 		+ XMLSchemaAttribute( "dump_trajectory_gz", xsct_rosetta_bool, "If the dump_trajectory scoreterm is used, this determines whether we write to gzipped files.  False by defualt." )

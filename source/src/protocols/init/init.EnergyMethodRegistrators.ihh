@@ -20,7 +20,6 @@ using core::scoring::methods::EnergyMethodRegistrator;
 static EnergyMethodRegistrator< rna::AlignmentEnergyCreator > AlignmentEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ResidualDipolarCouplingEnergyRigidSegmentsCreator > ResidualDipolarCouplingEnergyRigidSegmentsCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SpecialRotamerEnergyCreator > SpecialRotamerEnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::methods::TargetClashEnergyCreator > TargetClashEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::pcs::PseudocontactShiftEnergyCreator > PseudoconstactShiftEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::pcsTs1::PseudocontactShiftEnergyCreator_Ts1 > PseudoconstactShiftEnergyCreator_Ts1_registrator;
 static EnergyMethodRegistrator< scoring::methods::pcsTs2::PseudocontactShiftEnergyCreator_Ts2 > PseudoconstactShiftEnergyCreator_Ts2_registrator;

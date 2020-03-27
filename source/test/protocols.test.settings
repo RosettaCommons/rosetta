@@ -693,7 +693,6 @@ sources = {
 		"DisulfideInsertionMoverTests",
 		"FavorSequenceProfile",
 		"FAVirtMoverTests",
-		"FoldTreeFromMotif",
 		"GenericSimulatedAnnealer",
 		#"UniformPositionMover",
 		"MutateResidue",

@@ -1491,8 +1491,6 @@ Options = Option_Group( '',
 		Option( 'approximate_buried_unsat_penalty_hbond_bonus_cross_chain', 'Real', desc="Apply a bonus factor to hydrogen bonds accross chains. Remember to set this negative.", default="0" ),
 		Option( 'approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb', 'Real', desc="Apply a bonus factor to the classic SER/THR i - i-4 h-bond. OG/OG1 - O. Set this positive to penalize.", default="0" ),
 
-		Option( 'target_clash_pdb', 'String', desc="The target pdb file for clashing check with the target_clash score term.", default="" ),
-
 		Option( 'aspartimide_penalty_value', 'Real', desc='The penalty for each aspartimide-forming two-residue sequence found, when the aspartimide_penalty score term weight is set to 1.0.  Default is 25.0.', default='25.0' ),
 
 		Option( 'buried_unsatisfied_penalty_cone_angle_exponent', 'Real', desc='The angle exponent for calculating burial by the method of sidechain neighbor cones, used by the BuriedUnsatPenalty energy.', default='2.0' ),

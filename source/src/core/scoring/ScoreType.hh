@@ -682,9 +682,6 @@ enum ScoreType {
 	// side chain neighbors
 	sidechain_neighbors,
 
-	// target clash
-	target_clash,
-
 	//MPResidueLipophilicity,
 	//span_ins, // describes the difference of every membrane span from the natural average span insertion energy
 	//MPHelicality,
