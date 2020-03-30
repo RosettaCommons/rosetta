@@ -3,13 +3,13 @@
 ############################
 [submodule "source/external/msgpack/msgpack-c.upstream"]
 	path = source/external/msgpack/msgpack-c.upstream
-	url = git@github.com:msgpack/msgpack-c.git
+	url = ../../msgpack/msgpack-c.git
 [submodule "source/external/libzmq"]
 	path = source/external/libzmq
-	url = git@github.com:RosettaCommons/libzmq.git
+	url = ../libzmq.git
 [submodule "source/external/mmtf/mmtf-cpp"]
 	path = source/external/mmtf/mmtf-cpp
-	url = git@github.com:RosettaCommons/mmtf-cpp.git
+	url = ../mmtf-cpp.git
 ############################
 # Boost Modules
 ############################
@@ -280,34 +280,34 @@
 ###########################
 [submodule "source/src/python/PyRosetta/binder"]
 	path = source/src/python/PyRosetta/binder
-	url = git@github.com:RosettaCommons/binder.git
+	url = ../binder.git
 [submodule "source/external/pybind11"]
 	path = source/external/pybind11
-	url = git@github.com:RosettaCommons/pybind11.git
+	url = ../pybind11.git
 ###########################
 # Rosetta modules 
 ###########################
 [submodule "tools"]
 	path = tools
-	url = git@github.com:RosettaCommons/tools.git
+	url = ../tools.git
 [submodule "demos"]
 	path = demos
-	url = git@github.com:RosettaCommons/demos.git
+	url = ../demos.git
 [submodule "documentation"]
 	path = documentation
-	url = git@github.com:RosettaCommons/documentation.git
+	url = ../documentation.git
 [submodule "database/additional_protocol_data"]
 	path = database/additional_protocol_data
-	url = git@github.com:RosettaCommons/additional_protocol_data.git
+	url = ../additional_protocol_data.git
 [submodule "tests/scientific/data"]
 	path = tests/scientific/data
-	url = git@github.com:RosettaCommons/scientific_benchmark_data.git
+	url = ../scientific_benchmark_data.git
 [submodule "rosetta_scripts_scripts"]
 	path = rosetta_scripts_scripts
-	url = git@github.com:RosettaCommons/rosetta_scripts_scripts.git
+	url = ../rosetta_scripts_scripts.git
 [submodule "pyrosetta_scripts"]
 	path = pyrosetta_scripts
-	url = git@github.com:RosettaCommons/pyrosetta_scripts.git
+	url = ../pyrosetta_scripts.git
 [submodule "PyRosetta.notebooks"]
 	path = PyRosetta.notebooks
-	url = git@github.com:RosettaCommons/PyRosetta.notebooks.git
+	url = ../PyRosetta.notebooks.git
