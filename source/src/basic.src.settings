@@ -132,6 +132,12 @@ sources = {
 	"basic/svd": [
 		"SVD_Solver",
 	],
+	"basic/tensorflow_manager" : [
+		"RosettaTensorflowManager",
+		"RosettaTensorflowProtocolBase",
+		"RosettaTensorflowSessionContainer",
+		"RosettaTensorflowTensorContainer",
+	],
 	"basic/thread_manager" : [
 		"RosettaThread",
 		"RosettaThreadAssignmentInfo",

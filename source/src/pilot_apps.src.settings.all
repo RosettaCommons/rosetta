@@ -404,6 +404,7 @@ sources = {
         "pilot/jackmaguire" : [
                 "benchmark_k_medoids",
                 "measure_sequence_similarity_to_native",
+                "tensorflow_manager_test1",
                 "tensorflow_test2",
         ],
 	"pilot/jadolfbr" : [
