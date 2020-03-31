@@ -2229,12 +2229,24 @@ ScoringManager::create_mm_lj_energy_table_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 mm::MMTorsionLibraryOP
 ScoringManager::create_mm_torsion_library_instance() {
-	return mm::MMTorsionLibraryOP(
-		new mm::MMTorsionLibrary(
-		basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/mm_torsion_params.txt" ),
-		chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD )
-		)
-	);
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::score;
+	if ( option[extra_mm_params_dir].user() ) {
+		return mm::MMTorsionLibraryOP(
+			new mm::MMTorsionLibrary(
+			basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/mm_torsion_params.txt" ),
+			chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ),
+			option[extra_mm_params_dir]()
+			)
+		);
+	} else {
+		return mm::MMTorsionLibraryOP(
+			new mm::MMTorsionLibrary(
+			basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/mm_torsion_params.txt" ),
+			chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD )
+			)
+		);
+	}
 }
 
 /// @brief Create an instance of the MMBondAngleLibrary object, by owning pointer.
@@ -2243,12 +2255,24 @@ ScoringManager::create_mm_torsion_library_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 mm::MMBondAngleLibraryOP
 ScoringManager::create_mm_bondangle_library_instance() {
-	return mm::MMBondAngleLibraryOP(
-		new mm::MMBondAngleLibrary(
-		basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/par_all27_prot_na.prm" ),
-		chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD )
-		)
-	);
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::score;
+	if ( option[extra_mm_params_dir].user() ) {
+		return mm::MMBondAngleLibraryOP(
+			new mm::MMBondAngleLibrary(
+			basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/par_all27_prot_na.prm" ),
+			chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ),
+			option[extra_mm_params_dir]()
+			)
+		);
+	} else {
+		return mm::MMBondAngleLibraryOP(
+			new mm::MMBondAngleLibrary(
+			basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/par_all27_prot_na.prm" ),
+			chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD )
+			)
+		);
+	}
 }
 
 /// @brief Create an instance of the MMBondLengthLibrary object, by owning pointer.
@@ -2257,12 +2281,24 @@ ScoringManager::create_mm_bondangle_library_instance() {
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 mm::MMBondLengthLibraryOP
 ScoringManager::create_mm_bondlength_library_instance() {
-	return mm::MMBondLengthLibraryOP(
-		new mm::MMBondLengthLibrary(
-		basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/par_all27_prot_na.prm" ),
-		chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD )
-		)
-	);
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::score;
+	if ( option[extra_mm_params_dir].user() ) {
+		return mm::MMBondLengthLibraryOP(
+			new mm::MMBondLengthLibrary(
+			basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/par_all27_prot_na.prm" ),
+			chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ),
+			option[extra_mm_params_dir]()
+			)
+		);
+	} else {
+		return mm::MMBondLengthLibraryOP(
+			new mm::MMBondLengthLibrary(
+			basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/par_all27_prot_na.prm" ),
+			chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD )
+			)
+		);
+	}
 }
 
 /// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!

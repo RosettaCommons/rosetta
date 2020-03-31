@@ -17,6 +17,7 @@
 
 // Unit headers
 #include <core/scoring/mm/MMBondAngleLibrary.hh>
+#include <core/scoring/ScoringManager.hh>
 
 // Project headers
 #include <test/core/init_util.hh>
@@ -32,6 +33,7 @@
 
 //Auto Headers
 #include <core/chemical/MMAtomTypeSet.hh>
+#include <core/chemical/util.hh>
 #include <utility/keys/Key2Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>
 
@@ -55,16 +57,19 @@ public:
 	// --------------- Suite-level Fixture --------------- //
 
 	MMBondAngleLibraryTests() {
-		core_init();
-
+		core_init_with_additional_options( "-add_mm_atom_type_set_parameters fa_standard core/chemical/extra_mm_atom_properties.txt");
 		// Only want to read in copy of the library once not for each test so init here in ctor
 
 		// init the mmatomtypeset
+
 		mmatomtypeset = utility::pointer::make_shared< MMAtomTypeSet >();
 		mmatomtypeset->read_file( "core/chemical/mm_atom_properties.txt" );
+		core::chemical::add_mm_atom_type_set_parameters_from_command_line("fa_standard", * mmatomtypeset);
+
 
 		// init the mmbondanglelibrary
-		mmbondanglelibrary = utility::pointer::make_shared< MMBondAngleLibrary >( "core/scoring/mm/par_all27_prot_na.prm" , MMAtomTypeSetAP( mmatomtypeset ) );
+		mmbondanglelibrary = utility::pointer::make_shared< MMBondAngleLibrary >( "core/scoring/mm/par_all27_prot_na.prm" , MMAtomTypeSetAP( mmatomtypeset ), utility::vector1<std::string>{"core/scoring/mm/extra_mm_scoring"} );
+		// mmbondanglelibrary = core::scoring::ScoringManager::create_mm_bondangle_library_instance();
 	}
 
 	virtual ~MMBondAngleLibraryTests() {}
@@ -205,5 +210,25 @@ public:
 		TS_ASSERT_EQUALS(  mbalc->first, F ); TS_ASSERT_EQUALS( mbalc->second, *params2 ); mbalc++;
 		TS_ASSERT_EQUALS(  mbalc->first, F ); TS_ASSERT_EQUALS( mbalc->second, *params3 ); mbalc++;
 		TS_ASSERT_DIFFERS( mbalc->first, F );
+	}
+
+	void test_extra_bond_angles() {
+		// add extra mm atoms + scoring terms from command line
+
+		mm_bondangle_library_citer_pair mbalcp;
+		mm_bondangle_library_citer mbalc;
+
+
+		// test addition of new bond angles from extra_mm_scoring dir
+		// forward
+		mm_bondangle_atom_tri G = make_tri( "CG1", "CG2", "CG3" );
+		mbalcp =  mmbondanglelibrary->lookup( "CG1", "CG2", "CG3" );
+		mbalc = mbalcp.first;
+		TS_ASSERT_EQUALS(  mbalc->first, G )
+			// backward
+			mbalcp =  mmbondanglelibrary->lookup( "CG3", "CG2", "CG1" );
+		mbalc = mbalcp.first;
+		TS_ASSERT_EQUALS(  mbalc->first, G );
+
 	}
 };

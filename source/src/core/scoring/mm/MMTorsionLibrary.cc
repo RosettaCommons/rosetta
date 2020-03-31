@@ -22,12 +22,15 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/keys/Key4Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/file/file_sys_util.hh>
 #include <utility/VirtualBase.hh>
 
 // Numeric headers
@@ -55,9 +58,12 @@ MMTorsionLibrary::~MMTorsionLibrary() = default;
 /// @details Constructs a MMTorsionLibrary instance from a filename string and constant access pointer to an MMAtomTypeSet
 MMTorsionLibrary::MMTorsionLibrary(
 	std::string filename,
-	core::chemical::MMAtomTypeSetCOP mm_atom_set
+	core::chemical::MMAtomTypeSetCOP mm_atom_set,
+	utility::vector1< std::string > extra_mm_param_dirs
 )
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::score;
 	mm_atom_set_ = core::chemical::MMAtomTypeSetCAP( mm_atom_set );
 
 	// read the file
@@ -68,6 +74,21 @@ MMTorsionLibrary::MMTorsionLibrary(
 	while ( getline( data, line ) ) {
 		if ( line.size() < 1 || line[0] == '#' ) continue; // comment or blank lines
 		lines.push_back( line );
+	}
+
+	for ( core::uint i = 1; i < extra_mm_param_dirs.size() + 1; ++i ) {
+		if ( ! ( utility::file::is_directory( extra_mm_param_dirs[ i ] ) ) ) {
+			utility_exit_with_message( "unable to locate directory: " + extra_mm_param_dirs [ i ] );
+		}
+		std::string const extra_filename( extra_mm_param_dirs[ i ] + "/mm_torsion_params.txt" );
+		if ( ! utility::file::file_exists( extra_filename ) ) {
+			continue;
+		}
+		std::ifstream extra_data( extra_filename.c_str() );
+		while ( getline( extra_data, line ) ) {
+			if ( line.size() < 1 || line[0] == '#' ) continue;
+			lines.push_back( line );
+		}
 	}
 
 	// add the torsion params

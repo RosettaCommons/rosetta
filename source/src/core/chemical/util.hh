@@ -16,6 +16,7 @@
 // Unit headers
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
+#include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/MutableResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeBase.fwd.hh>
@@ -39,6 +40,10 @@ core::chemical::ResidueTypeSetCAP rsd_set_from_cmd_line();
 void add_atom_type_set_parameters_from_command_line(
 	std::string const & atom_type_set_tag,
 	AtomTypeSet & atom_type_set );
+
+void add_mm_atom_type_set_parameters_from_command_line(
+	std::string const & mm_atom_type_set_tag,
+	MMAtomTypeSet & atom_type_set );
 
 /// @brief  Modify atom_type properties from the command line.
 void modify_atom_properties_from_command_line(

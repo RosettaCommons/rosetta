@@ -15,10 +15,12 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
+
 // Unit headers
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/MMAtomType.hh>
 #include <core/types.hh>
+#include <core/chemical/util.hh>
 
 // Project headers
 #include <test/core/init_util.hh>
@@ -48,7 +50,7 @@ public:
 	MMAtomTypeSetTests() {
 		//std::string commandline = "core.test -mute all";
 		//initialize_from_commandline( commandline );
-		core_init();
+		core_init_with_additional_options( "--add_mm_atom_type_set_parameters fa_standard core/chemical/extra_mm_atom_properties.txt" );
 
 		// Want to read the properties file in only once for all the tests in this suite
 		// so do it in the constructor for the test suite.
@@ -111,6 +113,22 @@ public:
 		// This tests the MMAtomType as well
 		MMAtomType C("C");
 		TS_ASSERT_EQUALS( (*mmatomtypeset)[1].name(), C.name() );
+	}
+
+	void test_add_mm_atom_type_set_parameters_from_the_commandline() {
+
+		// load core with flag options
+		core::chemical::add_mm_atom_type_set_parameters_from_command_line("fa_standard", *mmatomtypeset);
+
+		// test extra atomtypes are present in mm_atomtypeset
+		TS_ASSERT_EQUALS(mmatomtypeset->contains_atom_type("CX"), true);
+		TS_ASSERT_EQUALS(mmatomtypeset->contains_atom_type("CY"), true);
+		TS_ASSERT_EQUALS(mmatomtypeset->contains_atom_type("CZ"), true);
+		TS_ASSERT_EQUALS(mmatomtypeset->contains_atom_type("Mg2p"), true);
+		TS_ASSERT_EQUALS(mmatomtypeset->contains_atom_type("CG1"), true);
+		TS_ASSERT_EQUALS(mmatomtypeset->contains_atom_type("CG2"), true);
+		TS_ASSERT_EQUALS(mmatomtypeset->contains_atom_type("CG3"), true);
+
 	}
 
 

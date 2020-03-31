@@ -25,6 +25,7 @@
 // Utility header
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 
 // C++ headers
@@ -66,7 +67,7 @@ class MMTorsionLibrary  : public utility::VirtualBase
 
 public:
 	/// @brief ctor
-	MMTorsionLibrary( std::string filename, core::chemical::MMAtomTypeSetCOP mm_atom_set );
+	MMTorsionLibrary( std::string filename, core::chemical::MMAtomTypeSetCOP mm_atom_set, utility::vector1< std::string > extra_mm_param_dirs = utility::vector1< std::string > ());
 	~MMTorsionLibrary() override;
 
 	/// @brief lookup by atom type ints

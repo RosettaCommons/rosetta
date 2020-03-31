@@ -29,6 +29,7 @@
 #include <utility/keys/Key2Tuple.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/file/file_sys_util.hh>
 #include <utility/VirtualBase.hh>
 
 // Numeric headers
@@ -58,8 +59,10 @@ static basic::Tracer TR( "core.mm.MMBondAngleLibrary" );
 /// @details Construct a MMBondAngleLibrary instant from a filename string and constant access pointer to an MMAtomTypeSet
 MMBondAngleLibrary::MMBondAngleLibrary(
 	std::string filename,
-	core::chemical::MMAtomTypeSetCAP mm_atom_set_ap
-) {
+	core::chemical::MMAtomTypeSetCAP mm_atom_set_ap,
+	utility::vector1< std::string > extra_mm_param_dirs
+)
+{
 	mm_atom_set_ = mm_atom_set_ap;
 
 	core::chemical::MMAtomTypeSetCOP mm_atom_set( mm_atom_set_ );
@@ -77,11 +80,26 @@ MMBondAngleLibrary::MMBondAngleLibrary(
 		if ( line == "ANGLES" ) in_bonds_section = true;
 	}
 
+	for ( core::uint i = 1; i < extra_mm_param_dirs.size() + 1; ++i ) {
+		if ( ! ( utility::file::is_directory( extra_mm_param_dirs[ i ] ) ) ) {
+			utility_exit_with_message( "unable to locate directory: " + extra_mm_param_dirs [ i ] );
+		}
+		std::string const extra_filename( extra_mm_param_dirs[ i ] + "/mm_bond_angle_params.txt" );
+		if ( ! utility::file::file_exists( extra_filename ) ) {
+			TR << "Skipping " << extra_filename << std::endl;
+			continue;
+		}
+		std::ifstream extra_data( extra_filename.c_str() );
+		while ( getline( extra_data, line ) ) {
+			if ( line.size() < 1 || line[0] == '#' ) continue;
+			lines.push_back( line );
+		}
+	}
+
 	// add the torsion params
 	for ( Size i = 1; i <= lines.size(); ++i ) {
 
 		std::istringstream l( lines[i] );
-
 		// get four atom type strings
 		std::string atom_type_string_1, atom_type_string_2,
 			atom_type_string_3;

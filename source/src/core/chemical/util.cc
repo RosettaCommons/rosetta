@@ -17,6 +17,8 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/MMAtomTypeSet.hh>
+#include <core/chemical/MMAtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/MutableResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
@@ -96,6 +98,39 @@ add_atom_type_set_parameters_from_command_line(
 	}
 }
 
+
+void
+add_mm_atom_type_set_parameters_from_command_line(
+	std::string const & mm_atom_type_set_tag,
+	MMAtomTypeSet & mm_atom_type_set )
+{
+	using namespace std;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::chemical;
+
+	if ( ! ( option [add_mm_atom_type_set_parameters].user() ) ) {
+		return;
+	}
+	utility::vector1< std::string > paramstring( option[ add_mm_atom_type_set_parameters ]() );
+	if ( paramstring.size() % 2 != 0 ) {
+		utility_exit_with_message( "bad format for -add_mm_atom_type_set_parameters; "
+			"should be: -add_mm_atom_type_set_parameters <tag1> <filename1> <tag2> <filename2> ...");
+	}
+	Size const nparams( paramstring.size() /2 );
+	for ( core::uint i = 0; i < nparams; ++i ) {
+		string const tag( paramstring[ 2 * i + 1] ), filename( paramstring[2 * i + 2] );
+		TR.Trace << "add_mm_atom_type_set_parameters_from_command_line: desired_tag= " << mm_atom_type_set_tag <<
+			" cmdline-tag= " << tag << " filename= " << filename << endl;
+		if ( tag == mm_atom_type_set_tag ) {
+			if ( ! utility::file::file_exists( filename ) ) {
+				utility_exit_with_message( "unable to locate/open file: " + filename );
+			}
+			TR.Trace << "add_atom_type_set_parameters_from_command_line: tag= " << tag << " filename= " << filename <<
+				endl;
+			mm_atom_type_set.read_file( filename );
+		}
+	}
+}
 
 // Modify atom_type properties from the command line.
 /// @details  Called by ChemicalManager at time of AtomTypeSet creation.

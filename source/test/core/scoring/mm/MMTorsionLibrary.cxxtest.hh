@@ -17,6 +17,7 @@
 
 // Unit headers
 #include <core/scoring/mm/MMTorsionLibrary.hh>
+#include <core/chemical/util.hh>
 
 // Project headers
 #include <test/core/init_util.hh>
@@ -55,16 +56,15 @@ public:
 	// --------------- Suite-level Fixture --------------- //
 
 	MMTorsionLibraryTests() {
-		core_init();
-
-		// Only want to read in copy of the library once not for each test so init here in ctor
+		core_init_with_additional_options( "-add_mm_atom_type_set_parameters fa_standard core/chemical/extra_mm_atom_properties.txt");  // Only want to read in copy of the library once not for each test so init here in ctor
 
 		// init the mmatomtypeset
 		mmatomtypeset = utility::pointer::make_shared< MMAtomTypeSet >();
 		mmatomtypeset->read_file( "core/chemical/mm_atom_properties.txt" );
+		core::chemical::add_mm_atom_type_set_parameters_from_command_line("fa_standard", * mmatomtypeset);
 
 		// init the mmtorsionlibrary
-		mmtorsionlibrary = utility::pointer::make_shared< MMTorsionLibrary >( "core/scoring/mm/mm_torsion_params.txt" , mmatomtypeset );
+		mmtorsionlibrary = utility::pointer::make_shared< MMTorsionLibrary >( "core/scoring/mm/mm_torsion_params.txt" , mmatomtypeset, utility::vector1<std::string>{"core/scoring/mm/extra_mm_scoring"} );
 	}
 
 	virtual ~MMTorsionLibraryTests() {}
@@ -206,5 +206,25 @@ public:
 		TS_ASSERT_EQUALS(  mtlc->first, F ); TS_ASSERT_EQUALS( mtlc->second, *params2 ); mtlc++;
 		TS_ASSERT_EQUALS(  mtlc->first, F ); TS_ASSERT_EQUALS( mtlc->second, *params3 ); mtlc++;
 		TS_ASSERT_DIFFERS( mtlc->first, F );
+	}
+
+
+
+
+	void test_extra_torsions() {
+
+		mm_torsion_library_citer_pair mtlcp;
+		mm_torsion_library_citer mtlc;
+
+		// test presence of added torsions
+
+		mm_torsion_atom_quad G = make_quad( "CG2", "CG1", "CG1", "CG3" );
+		mtlcp =  mmtorsionlibrary->lookup( "CG2", "CG1", "CG1", "CG3" );
+		mtlc = mtlcp.first;
+		TS_ASSERT_EQUALS(  mtlc->first, G );
+		// backward
+		mtlcp =  mmtorsionlibrary->lookup( "CG3", "CG1", "CG1", "CG2" );
+		mtlc = mtlcp.first;
+		TS_ASSERT_EQUALS(  mtlc->first, G );
 	}
 };

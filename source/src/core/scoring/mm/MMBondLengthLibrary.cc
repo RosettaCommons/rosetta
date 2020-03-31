@@ -25,6 +25,7 @@
 #include <utility/keys/Key2Tuple.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/file/file_sys_util.hh>
 #include <utility/VirtualBase.hh>
 
 // Numeric headers
@@ -52,7 +53,8 @@ static basic::Tracer TR( "core.mm.MMBondLengthLibrary" );
 /// @details Construct a MMBondLengthLibrary instant from a filename string and constant access pointer to an MMAtomTypeSet
 MMBondLengthLibrary::MMBondLengthLibrary(
 	std::string filename,
-	core::chemical::MMAtomTypeSetCOP mm_atom_set
+	core::chemical::MMAtomTypeSetCOP mm_atom_set,
+	utility::vector1< std::string > extra_mm_params_dirs
 )
 {
 	mm_atom_set_ = core::chemical::MMAtomTypeSetCAP( mm_atom_set );
@@ -69,6 +71,22 @@ MMBondLengthLibrary::MMBondLengthLibrary(
 		if ( in_bonds_section ) lines.push_back( line );
 		if ( line == "BONDS" ) in_bonds_section = true;
 	}
+
+	for ( core::uint i = 1; i < extra_mm_params_dirs.size() + 1; ++i ) {
+		if ( ! ( utility::file::is_directory( extra_mm_params_dirs[ i ] ) ) ) {
+			utility_exit_with_message( "unable to locate directory: " + extra_mm_params_dirs[ i ] );
+		}
+		std::string const extra_filename( extra_mm_params_dirs[ i ] + "/mm_bond_length_params.txt" );
+		if ( ! utility::file::file_exists( extra_filename ) ) {
+			continue;
+		}
+		std::ifstream extra_data( extra_filename.c_str() );
+		while ( getline( extra_data, line ) ) {
+			if ( line.size() < 1 || line[0] == '#' ) continue;
+			lines.push_back( line );
+		}
+	}
+
 
 	// parse params
 	for ( Size i = 1; i <= lines.size(); ++i ) {

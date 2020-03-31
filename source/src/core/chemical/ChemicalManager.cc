@@ -269,6 +269,7 @@ ChemicalManager::create_mm_atom_type_set( std::string const & tag ) const
 	std::string const filename( basic::database::full_name( "chemical/mm_atom_type_sets/"+tag+"/mm_atom_properties.txt" ));
 	MMAtomTypeSetOP new_set( new MMAtomTypeSet( tag ) );
 	new_set->read_file( filename );
+	add_mm_atom_type_set_parameters_from_command_line( tag, *new_set);
 	return new_set;
 }
 

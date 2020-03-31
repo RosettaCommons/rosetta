@@ -22,6 +22,7 @@
 // Utility header
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 
 // C++ headers
@@ -51,7 +52,7 @@ public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from VirtualBase
 	~MMBondLengthLibrary() override;
 	/// @brief ctor
-	MMBondLengthLibrary( std::string filename, core::chemical::MMAtomTypeSetCOP mm_atom_set );
+	MMBondLengthLibrary( std::string filename, core::chemical::MMAtomTypeSetCOP mm_atom_set,  utility::vector1< std::string > extra_mm_param_dirs = utility::vector1< std::string > ());
 
 	/// @brief lookup by atom type ints
 	mm_bondlength_library_citer_pair
