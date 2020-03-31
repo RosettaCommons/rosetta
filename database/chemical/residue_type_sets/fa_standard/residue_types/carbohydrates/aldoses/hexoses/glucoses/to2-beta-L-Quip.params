@@ -1,4 +1,4 @@
-NAME ->2)-beta-L-Quip      # ->2)-beta-L-quinovpyranosyl [->2)-beta-L-6-deoxygalactopyranosyl]
+NAME ->2)-beta-L-Quip      # ->2)-beta-L-quinovpyranosyl [->2)-beta-L-6-deoxyglucopyranosyl]
 IO_STRING Qui Z            # Note lower case!
 TYPE POLYMER
 VARIANT C6_DEOXY_SUGAR     # Quinovose is a common glucose variant.
