@@ -1262,6 +1262,33 @@ residue_types/carbohydrates/aldoses/hexoses/taloses/to4-alpha-L-Talp.params
 residue_types/carbohydrates/aldoses/hexoses/taloses/to4-beta-L-Talp.params
 residue_types/carbohydrates/aldoses/hexoses/taloses/to6-alpha-L-Talp.params
 residue_types/carbohydrates/aldoses/hexoses/taloses/to6-beta-L-Talp.params
+### Ketopentoses
+#### Ribuloses
+residue_types/carbohydrates/ketoses/pentoses/ribuloses/to1-alpha-D-Rulf.params
+residue_types/carbohydrates/ketoses/pentoses/ribuloses/to1-beta-D-Rulf.params
+residue_types/carbohydrates/ketoses/pentoses/ribuloses/to3-alpha-D-Rulf.params
+residue_types/carbohydrates/ketoses/pentoses/ribuloses/to3-beta-D-Rulf.params
+residue_types/carbohydrates/ketoses/pentoses/ribuloses/to4-alpha-D-Rulf.params
+residue_types/carbohydrates/ketoses/pentoses/ribuloses/to4-beta-D-Rulf.params
+residue_types/carbohydrates/ketoses/pentoses/ribuloses/to1-alpha-L-Rulf.params
+residue_types/carbohydrates/ketoses/pentoses/ribuloses/to1-beta-L-Rulf.params
+residue_types/carbohydrates/ketoses/pentoses/ribuloses/to3-alpha-L-Rulf.params
+residue_types/carbohydrates/ketoses/pentoses/ribuloses/to3-beta-L-Rulf.params
+residue_types/carbohydrates/ketoses/pentoses/ribuloses/to4-alpha-L-Rulf.params
+residue_types/carbohydrates/ketoses/pentoses/ribuloses/to4-beta-L-Rulf.params
+#### Xyluloses
+residue_types/carbohydrates/ketoses/pentoses/xyluloses/to1-alpha-D-Xulf.params
+residue_types/carbohydrates/ketoses/pentoses/xyluloses/to1-beta-D-Xulf.params
+residue_types/carbohydrates/ketoses/pentoses/xyluloses/to3-alpha-D-Xulf.params
+residue_types/carbohydrates/ketoses/pentoses/xyluloses/to3-beta-D-Xulf.params
+residue_types/carbohydrates/ketoses/pentoses/xyluloses/to4-alpha-D-Xulf.params
+residue_types/carbohydrates/ketoses/pentoses/xyluloses/to4-beta-D-Xulf.params
+residue_types/carbohydrates/ketoses/pentoses/xyluloses/to1-alpha-L-Xulf.params
+residue_types/carbohydrates/ketoses/pentoses/xyluloses/to1-beta-L-Xulf.params
+residue_types/carbohydrates/ketoses/pentoses/xyluloses/to3-alpha-L-Xulf.params
+residue_types/carbohydrates/ketoses/pentoses/xyluloses/to3-beta-L-Xulf.params
+residue_types/carbohydrates/ketoses/pentoses/xyluloses/to4-alpha-L-Xulf.params
+residue_types/carbohydrates/ketoses/pentoses/xyluloses/to4-beta-L-Xulf.params
 ### Ketohexoses
 #### Fructoses
 residue_types/carbohydrates/ketoses/hexoses/fructoses/to4-alpha-D-Fruf.params

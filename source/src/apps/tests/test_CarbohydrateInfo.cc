@@ -92,7 +92,7 @@ main( int argc, char *argv[] )
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
 			O_linked, psicose, neuraminate, bacillosamine, Lex, SLex, GalCer, UDP_D_Glc, target57, maltobiose,
-			Me_glycoside, C_linked, Ac_sugar, whacky_sugar, pdb_code_pdb, bad_pdb;
+			Me_glycoside, C_linked, Ac_sugar, whacky_sugar, ketopentofuranose, pdb_code_pdb, bad_pdb;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
@@ -340,6 +340,14 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating aldopentofuranose dimer from sequence:" << endl;
+
+		make_pose_from_saccharide_sequence( ketopentofuranose, "a-D-Xulf-(2->1)-b-D-Rulf", *residue_set );
+
+		test_sugar( ketopentofuranose );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Creating whacky sugar from sequence to really stretch the system:" << endl;
 
 		make_pose_from_saccharide_sequence( whacky_sugar,
@@ -347,8 +355,8 @@ main( int argc, char *argv[] )
 			*residue_set );
 
 		test_sugar( whacky_sugar );
-
-
+		
+		
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing a .pdb file using PDB 3-letter codes, "
 			"including one that cannot have position 3 as the default main-chain connection:" << endl;
