@@ -236,9 +236,19 @@ StepWiseLegacyClustererSilentBased::do_some_clustering() {
 			silent_struct_output_list_.push_back(  silent_struct  );
 			num_pose_in_cluster_.push_back( 1 );
 			TR.Debug << " ... added. " << std::endl;
+			if ( numbered_pdb_output_ ) {
+				std::stringstream ss;
+				ss << "c." << num_pose_in_cluster_.size() - 1 << ".0.pdb";
+				pose.dump_pdb( ss.str() );
+			}
 			if ( pose_output_list_.size() >= max_decoys_ ) break;
 		} else {
 			num_pose_in_cluster_[ found_close_cluster ]++;
+			if ( numbered_pdb_output_ ) {
+				std::stringstream ss;
+				ss << "c." << found_close_cluster - 1 << "." << num_pose_in_cluster_[ found_close_cluster ] - 1 << ".pdb";
+				pose.dump_pdb( ss.str() );
+			}
 			TR.Debug << " ... not added. " << std::endl;
 		}
 	}

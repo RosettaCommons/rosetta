@@ -44,6 +44,7 @@ using namespace protocols;
 using namespace core;
 using utility::vector1;
 
+OPT_KEY( Boolean, numbered_pdb_output )
 
 //Definition of new OptionKeys
 // these will be available in the top-level OptionKey namespace:
@@ -79,6 +80,7 @@ cluster_test(){
 	stepwise_clusterer.set_rename_tags( true /*option[ rename_tags ]*/ );
 	stepwise_clusterer.set_rsd_type_set( core::chemical::FA_STANDARD );
 	stepwise_clusterer.set_auto_tune( option[ auto_tune ] );
+	stepwise_clusterer.set_numbered_pdb_output( option[ numbered_pdb_output ] );
 
 	stepwise_clusterer.cluster();
 
@@ -111,6 +113,8 @@ main( int argc, char * argv [] )
 		std::cout << std::endl << "Basic usage:  " << argv[0] << " -in:file:silent <input silent file> -out:file:silent <output silent file> -cluster:radius <RMSD threshold in Angstroms>" << std::endl;
 		std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
+
+		NEW_OPT( numbered_pdb_output, "produce numbered PDBs for each cluster in addition to a silent file", false );
 		option.add_relevant(  in::file::silent );
 		option.add_relevant(  out::file::silent );
 		option.add_relevant(  out::nstruct );

@@ -77,6 +77,8 @@ public:
 
 	void set_force_align( bool const force_align ){ force_align_ = force_align; }
 
+	void set_numbered_pdb_output( bool const numbered_pdb_output ) { numbered_pdb_output_ = numbered_pdb_output; }
+
 	void set_calc_rms_res( utility::vector1< core::Size > const & calc_rms_res );
 
 	void set_silent_file_data( core::io::silent::SilentFileDataOP & sfd );
@@ -137,6 +139,7 @@ private:
 	bool auto_tune_;
 	bool rename_tags_;
 	bool force_align_;
+	bool numbered_pdb_output_;
 	std::string rsd_type_set_;
 
 	core::Real score_min_;
