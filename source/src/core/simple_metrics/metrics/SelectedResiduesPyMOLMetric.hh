@@ -102,6 +102,18 @@ public:
 	core::simple_metrics::SimpleMetricOP
 	clone() const override;
 
+public:
+
+	/// @brief Set whether we use Rosetta numbering in the output.
+	/// @details By default, we use the PDB numbering in the output.  If this is true, we use Rosetta numbering.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	inline void set_use_rosetta_numbering( bool const setting ) { use_rosetta_numbering_ = setting; }
+
+	/// @brief Get whether we use Rosetta numbering in the output.
+	/// @details By default, we use the PDB numbering in the output.  If this is true, we use Rosetta numbering.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	inline bool use_rosetta_numbering() const { return use_rosetta_numbering_; }
+
 public: //Functions needed for the citation manager
 
 	/// @brief This simple metric is unpublished, but can provide citation information for the residue
@@ -120,6 +132,9 @@ public: //Functions needed for the citation manager
 private:
 
 	select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
+
+	/// @brief By default, we use the PDB numbering in the output.  If this is true, we use Rosetta numbering.
+	bool use_rosetta_numbering_ = false;
 
 };
 

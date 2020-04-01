@@ -24,6 +24,7 @@
 #include <core/select/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/chains_util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
@@ -107,6 +108,8 @@ SelectedResiduesPyMOLMetric::parse_my_tag(
 	} else {
 		utility_exit_with_message("SelectedResiduesMetric: Residue Selector is required.");
 	}
+
+	set_use_rosetta_numbering( tag->getOption<bool>( "use_rosetta_numbering", use_rosetta_numbering() ) );
 }
 
 void
@@ -118,6 +121,8 @@ SelectedResiduesPyMOLMetric::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "residue_selector",
 		"Required.  Output those residues selected. " );
+
+	attlist + XMLSchemaAttribute::attribute_w_default( "use_rosetta_numbering", xsct_rosetta_bool, "If true, the output uses Rosetta numbers.  If false, it uses PDB numbers.  False by default.", "false" );
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
 		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
@@ -140,10 +145,12 @@ SelectedResiduesPyMOLMetric::calculate(const pose::Pose & pose) const {
 	std::string selection = "select rosetta_sele, "; //Can't use prefix/suffix as we don't have it here yet.
 	std::map< std::string, utility::vector1<std::string >> chain_residues;
 	utility::vector1< std::string > chains; //So we can iterate over only the chains, then the residues ala python.
+	core::pose::PDBInfoCOP pdb_info( pose.pdb_info() );
+
 	for ( core::Size i : selected ) {
-		std::string chain = utility::to_string( pose.pdb_info()->chain(i) );
-		std::string num = utility::to_string( pose.pdb_info()->number(i) );
-		std::string icode = utility::to_string( pose.pdb_info()->icode(i) );
+		std::string chain( 1, core::pose::get_chain_from_chain_id( pose.chain(i), pose ) );
+		std::string num = ( pdb_info != nullptr && !use_rosetta_numbering()? utility::to_string( pdb_info->number(i) ) : utility::to_string(i) );
+		std::string icode = ( pdb_info != nullptr && !use_rosetta_numbering()? utility::to_string( pdb_info->icode(i) ) : utility::to_string(' ') );
 
 		std::string res = "";
 		if ( icode == utility::to_string(' ') ) {
@@ -214,9 +221,18 @@ SelectedResiduesPyMOLMetric::provide_authorship_info_for_unpublished() const {
 		name(), basic::citation_manager::CitedModuleType::SimpleMetric,
 		"Jared Adolf-Bryfogle",
 		"Scripps Research Institute",
-		"jadolfbr@gmail.com"
+		"jadolfbr@gmail.com",
+		"Wrote the SelectedResiduesPyMOLMetric."
 		)
 	);
+
+	authors->add_author(
+		"Vikram K. Mulligan",
+		"Systems Biology, Center for Computational Biology, Flatiron Institute",
+		"vmulligan@flatironinstitute.org",
+		"Made the SelectedResiduesPyMOLMetric compatible with poses that lack PDBInfo."
+	);
+
 	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{ authors };
 	if ( selector_ != nullptr ) {
 		basic::citation_manager::merge_into_unpublished_collection_vector( selector_->provide_authorship_info_for_unpublished(), returnvec );
