@@ -19,6 +19,9 @@ ADD_CONNECT ND2 ICOOR 179.979721   59.986145    1.499799   ND2   CG   2HD2  # ma
 
 ADD_CHI 3  CB   CG   ND2 2HD2
 
+ADD_CHI 2  CA   CB   CG  ND2    # overwriting old CHI-2 as in case of N-linked glycosylation ND2 is 4th atom (Omega 1)
+
+
 ADD_PROPERTY BRANCH_POINT
 
 END_CASE

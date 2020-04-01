@@ -158,7 +158,7 @@ SugarBackboneEnergy::residue_energy(
 	if ( prev_rsd.is_carbohydrate() ) {
 		if ( ! is_exocyclic_bond ) {
 			if ( prev_rsd.carbohydrate_info()->is_L_sugar() ) {
-				omega = 360 - psi;
+				omega = 360 - omega;
 			}
 		}
 	}
