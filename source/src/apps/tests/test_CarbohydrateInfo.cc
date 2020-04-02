@@ -355,8 +355,8 @@ main( int argc, char *argv[] )
 			*residue_set );
 
 		test_sugar( whacky_sugar );
-		
-		
+
+
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing a .pdb file using PDB 3-letter codes, "
 			"including one that cannot have position 3 as the default main-chain connection:" << endl;
