@@ -407,7 +407,7 @@ AnchoredGraftMover::setup_movemap_and_regions(Pose & pose){
 		TR << "Flexibility of loop too long for the length of the loop. Changing flexibility settings to 1, 1)" << std::endl;
 		set_insert_flexibility(1, 1);
 		setup_movemap_and_regions( pose );
-	} else if ( (insertion_length() == 3 ) && (Nter_insert_flexibility() >= 1) && (Cter_insert_flexibility() >= 1) ) {
+	} else if ( (insertion_length() == 3 ) && (Nter_insert_flexibility() > 1) && (Cter_insert_flexibility() > 1) ) {
 		TR << "Flexibility of loop too long for the length of the loop. Changing flexibility settings to 1, 1)" << std::endl;
 		set_insert_flexibility(1, 1);
 		setup_movemap_and_regions( pose );
