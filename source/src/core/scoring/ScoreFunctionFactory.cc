@@ -498,7 +498,15 @@ get_score_function(
 			TR.Info << "The -include_sugars flag was used with no sugar_bb weight set in the weights file.  " <<
 				"Setting sugar_bb weight to 1.0 by default." << std::endl;
 		}
-		scorefxn->set_weight_if_zero( sugar_bb, 1.0); //JAB - only set the weight if we have not added or changed it already.
+		scorefxn->set_weight_if_zero( sugar_bb, 0.5); //JAB - only set the weight if we have not added or changed it already.
+	}
+	// JAB - turn on intra-rep to get less bad structures and energies.
+	//  Also, recommend beta - as the LKBridge term helps sugars significantly.
+	if ( options[ in::include_sugars].value() && scorefxn->get_weight( fa_intra_rep_xover4 ) == 0 ) {
+		TR.Info << " The -include_sugars flag was used without fa_intra_rep_xover4 term in the scorefunction\n."<<
+			" Turning this on. It is generally recommended to use the -beta scorefunction (Rosetta-ICO) with sugars,"<<
+			" which includes this and other desired terms such as those bridging waters" << std::endl;
+		scorefxn->set_weight_if_zero(fa_intra_rep_xover4, 0.55);
 	}
 	return scorefxn;
 }
