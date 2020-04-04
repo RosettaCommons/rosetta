@@ -217,7 +217,7 @@ FullatomDisulfideEnergy::residue_pair_energy_ext(
 	}
 
 	// Ignore VIRTUAL residues.
-	if ( rsd1.is_virtual_residue() || rsd2.is_virtual_residue() ){
+	if ( rsd1.is_virtual_residue() || rsd2.is_virtual_residue() ) {
 		return;
 	}
 
@@ -293,7 +293,7 @@ FullatomDisulfideEnergy::setup_for_minimizing_for_residue_pair(
 	}
 
 	// Ignore VIRTUAL residues.
-	if ( rsd1.is_virtual_residue() || rsd2.is_virtual_residue() ){
+	if ( rsd1.is_virtual_residue() || rsd2.is_virtual_residue() ) {
 		return;
 	}
 
@@ -329,7 +329,7 @@ FullatomDisulfideEnergy::eval_residue_pair_derivatives(
 	}
 
 	debug_assert( utility::pointer::dynamic_pointer_cast< DisulfMinData const > ( min_data.get_data( fa_dslf_respair_data ) ) );
-	
+
 	DisulfMinData const & disulf_inds = static_cast< DisulfMinData const & > ( *min_data.get_data( fa_dslf_respair_data ) );
 
 	/// this could be substantially more efficient, but there are only ever a handful of disulfides in proteins,
@@ -407,8 +407,8 @@ FullatomDisulfideEnergy::old_eval_atom_derivative(
 	}
 
 	FullatomDisulfideEnergyContainerCOP dec = FullatomDisulfideEnergyContainerCOP (
-			utility::pointer::static_pointer_cast< core::scoring::disulfides::FullatomDisulfideEnergyContainer const > ( pose.energies().long_range_container( methods::fa_disulfide_energy ) ));
-	
+		utility::pointer::static_pointer_cast< core::scoring::disulfides::FullatomDisulfideEnergyContainer const > ( pose.energies().long_range_container( methods::fa_disulfide_energy ) ));
+
 	if ( ! dec->residue_forms_disulfide( atomid.rsd() ) ) return;
 
 	if ( dec->disulfide_atom_indices( atomid.rsd() ).atom_gets_derivatives( atomid.atomno() ) ) {
