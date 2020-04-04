@@ -86,7 +86,7 @@ AtomicDepth::AtomicDepth( pose::Pose const & pose, Real probe_radius /*=1.4*/, b
 		leu.set_chi(1, 240); // This leu rotamer fills the space where phe likes to sit
 		leu.set_chi(2, 120);
 		for ( Size i = 1; i <= poly_leu_pose.size(); i++ ) {
-			if ( pose.residue(i).is_protein() ) {
+			if ( pose.residue_type(i).is_alpha_aa() && (pose.residue_type(i).n_non_polymeric_residue_connections() == 0) ) {
 				poly_leu_pose.replace_residue( i, leu, true );
 			}
 		}
