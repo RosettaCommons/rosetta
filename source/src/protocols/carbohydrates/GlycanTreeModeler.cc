@@ -602,6 +602,16 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 	TR << "Per-Residue sampling rounds: " << per_residue_sampling_rounds << std::endl;
 
 	completed_quenches_ = 0;
+
+	//Virtualize all glycan residues for quench mode to reduce interactions with unmodeled glycans.
+	if ( quench_mode_ && ! refine_ ) {
+		for ( core::Size i = 1; i <= pose.size(); ++i ) {
+			if ( starting_subset[i] ) {
+				pose.real_to_virtual(i);
+			}
+		}
+	}
+
 	while ( ! is_quenched() ) {
 
 		if ( quench_mode_ ) {
@@ -667,7 +677,6 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 				ResidueSubset pre_virtualized( pose.total_residue(), false );
 				ResidueSubset needed_virtualization( pose.total_residue(), false );
 
-
 				while ( current_start <= max_end ) {
 
 
@@ -677,7 +686,7 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 					virtual_layer_selector->set_layer_as_greater_than_or_equal_to( current_end+1 );
 					//ResidueSubset virtual_layer = virtual_layer_selector->apply( pose );
 
-					//Combine modeling layer with whatver the current_subset is.
+					//Combine modeling layer with whatever the current_subset is.
 					store_subset->set_residue_subset( starting_subset );
 					and_selector->clear();
 					and_selector_virt->clear();
@@ -685,6 +694,7 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 					and_selector->add_residue_selector( store_subset );
 					and_selector->add_residue_selector( modeling_layer_selector );
 
+					//Residues that SHOULD be virtualized.
 					and_selector_virt->add_residue_selector( store_subset );
 					and_selector_virt->add_residue_selector( virtual_layer_selector );
 
@@ -692,7 +702,12 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 
 					///De-virtualize only those residues that were virtualized before and shouldn't still be virtualized.
 					/// This is to make the visualization of the protocol clean.
-					if ( ! first_modeling ) {
+					if ( first_modeling &&  (! refine_)  && (! force_virts_for_refine_) ) {
+						TR << "Virtualizing foliage layers" << std::endl;
+						real_to_virt.set_residue_selector( and_selector_virt );
+						real_to_virt.apply( pose );
+						pre_virtualized = and_selector_virt->apply( pose );
+					} else {
 						TR << "De-Virtualizing current foliage layer" << std::endl;
 						ResidueSubset to_de_virtualize( pose.total_residue(), false );
 						for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -708,13 +723,6 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 						}
 					}
 
-					if ( (! refine_)  && (! force_virts_for_refine_) ) {
-						TR << "Virtualizing new foliage layer" << std::endl;
-						pre_virtualized = and_selector_virt->apply( pose );
-						real_to_virt.set_residue_selector( and_selector_virt );
-						real_to_virt.apply( pose );
-					}
-
 					TR << "Running the GlycanSampler on layer [ start -> end (including) ]: " << current_start << " " << current_end << std::endl;
 
 					core::Size n_in_layer = count_selected( and_selector->apply( pose ) );
@@ -725,7 +733,6 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 					}
 
 					if ( n_in_layer > 0 ) {
-
 
 						if ( hybrid_protocol_ && ! first_modeling ) {
 							glycan_sampler.set_rounds(default_sampler_rounds/2);
