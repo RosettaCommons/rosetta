@@ -1,7 +1,7 @@
 <ROSETTASCRIPTS>
 	<MOVERS>
 		<SimpleGlycosylateMover name="glycosylate" positions="%%positions%%" glycosylation="%%glycosylation%%" strip_existing="1" />
-		<GlycanSampler name="model_glycans" rounds="3"/>
+		<GlycanSampler name="model_glycans" rounds="1"/>
 	</MOVERS>
 	<PROTOCOLS>
 		<Add mover_name="glycosylate" />

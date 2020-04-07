@@ -2271,14 +2271,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				),
 			Option('glycan_sampler_rounds', 'Integer',
 				desc = 'Number of rounds to use for Glycan Relax. Total rounds is this # times number of glycan residues in movemap',
-				default = '25'
+				default = '100'
 				),
 			Option('min_rings', 'Boolean',
 				desc = 'Minimize Carbohydrate Rings during minimization?  Otherwise, we keep them at their input values (which is recommended).',
-				default = 'false'
-				),
-			Option('pack_glycans', 'Boolean',
-				desc = 'Pack Glycan OH groups during Glycan Relax. Currently time consuming',
 				default = 'false'
 				),
 			Option('final_min_glycans', 'Boolean',
@@ -2311,7 +2307,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				default = 'false'
 				),
 			Option('use_gaussian_sampling', 'Boolean',
-				default = 'false',
+				default = 'true',
 				desc = 'Set whether to build conformer torsions using a gaussian of the angle or through uniform sampling up to 1 SD (default)'
 				)
 

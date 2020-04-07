@@ -8,7 +8,7 @@
 	<FILTERS>
 	</FILTERS>
 	<MOVERS>
-		<GlycanTreeModeler name="tree_relax_default" quench_mode="false" rounds="1" layer_size="1" window_size="0" use_conformer_probs="0" hybrid_protocol="1" refine="1" shear="0" use_gaussian_sampling="1" match_window_one="1"/>
+		<GlycanTreeModeler name="tree_relax_default" quench_mode="false" rounds="1" refine="1" glycan_sampler_rounds="10"/>
 		<Dssp name="dssp" />
 	</MOVERS>
 	<APPLY_TO_POSE>

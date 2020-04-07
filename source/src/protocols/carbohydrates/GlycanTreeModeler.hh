@@ -275,12 +275,12 @@ private: // methods
 
 private: // data
 
-	core::Size layer_size_ = 2;
-	core::Size window_size_ = 1;
+	core::Size layer_size_ = 1;
+	core::Size window_size_ = 0;
 	core::Size rounds_ = 1;
 	core::Size completed_quenches_ = 0;
 	core::Size trees_to_model_ = 0;
-	core::Size glycan_sampler_rounds_ = 0;
+	core::Size glycan_sampler_rounds_ = 100;
 
 	bool refine_ = false;
 	bool quench_mode_ = false;
@@ -298,7 +298,7 @@ private: // data
 	bool hybrid_protocol_ = true;
 	bool use_gaussian_sampling_ = true;
 	bool use_shear_ = true;
-	bool match_window_one_ = false; //benchmarking
+	bool match_window_one_ = true; //benchmarking
 	bool root_prob_sampling_ = false;
 	core::Real glycan_sampler_kt_ = 0; //Only set if option is given.
 };

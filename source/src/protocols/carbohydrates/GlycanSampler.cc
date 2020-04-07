@@ -175,37 +175,78 @@ void GlycanSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute("kt", xsct_real, "Temperature for metropolis criterion")
-		+ XMLSchemaAttribute("rounds", xsct_non_negative_integer, "Number of relax rounds to perform.  Will be multiplied by the number of glycan residues.")
-		+ XMLSchemaAttribute::attribute_w_default("final_min", xsct_rosetta_bool, "Perform a final minimization", "true")
-		+ XMLSchemaAttribute::attribute_w_default("pymol_movie", xsct_rosetta_bool, "Output a PyMOL movie of the run", "false")
+		+ XMLSchemaAttribute::attribute_w_default("rounds", xsct_non_negative_integer,
+		"Number of relax rounds to perform.  Will be multiplied by the number of glycan residues.", "100")
 
-		+ XMLSchemaAttribute::attribute_w_default("refine", xsct_rosetta_bool, "Do not start with a random glycan conformation.", "false")
+		+ XMLSchemaAttribute::attribute_w_default("final_min", xsct_rosetta_bool,
+		"Perform a final minimization", "true")
 
-		+ XMLSchemaAttribute("pack_distance", xsct_real, "Neighbor distance for packing")
-		+ XMLSchemaAttribute::attribute_w_default("cartmin", xsct_rosetta_bool, "Use Cartesian Minimization instead of Dihedral Minimization during packing steps.", "false")
-		+ XMLSchemaAttribute::attribute_w_default("tree_based_min_pack", xsct_rosetta_bool, "Use Tree-based minimization and packing instead of minimizing and packing ALL residues each time we min.  Significantly impacts runtime.  If you are seeing crappy structures for a few sugars, turn this off.  This is default-on to decrease runtime for a large number of glycans.", "true")
-		+ XMLSchemaAttribute::attribute_w_default("use_conformer_probs", xsct_rosetta_bool, "Use the populations of the conformers as probabilities during our linkage conformer sampling.  This makes it harder to overcome energy barriers with more-rare conformers!", "false")
-		+ XMLSchemaAttribute::attribute_w_default("use_gaussian_sampling", xsct_rosetta_bool, "Set whether to build conformer torsions using a gaussian of the angle or through uniform sampling up to 1 SD (default)", "false")
-		+ XMLSchemaAttribute::attribute_w_default("min_rings", xsct_rosetta_bool, "Minimize Carbohydrate Rings during minimization. ", "false")
-		+ XMLSchemaAttribute::attribute_w_default("shear", xsct_rosetta_bool, "Use the Shear Mover that is now compatible with glycans at an a probability of 10 percent", "false")
-		+ XMLSchemaAttribute::attribute_w_default("randomize_torsions", xsct_rosetta_bool, "If NOT doing refinement, control whether we randomize torsions at the start, which helps to achieve low energy structures.", "true")
-		+ XMLSchemaAttribute::attribute_w_default("match_sampling_of_modeler", xsct_rosetta_bool, "Option that matches the amount of sampling in a default GlycanTreeModeler run.  Used for benchmarking.", "false")
-		+ XMLSchemaAttribute::attribute_w_default("inner_bb_cycles", xsct_non_negative_integer, "Inner cycles for each time we call BB sampling either through small/medium/large moves or through the SugarBB Sampler.  This is multiplied by the number of glycans.  Scales poorly with GlycanModeler.  If 0 (default), we run the protocol normally", "0")
-		+ XMLSchemaAttribute::attribute_w_default("root_populations_only", xsct_rosetta_bool, "Use population-based sampling for only the linkage between the amino acid and glycan residue", "false");
+		+ XMLSchemaAttribute::attribute_w_default("pymol_movie", xsct_rosetta_bool,
+		"Output a PyMOL movie of the run", "false")
+
+		+ XMLSchemaAttribute::attribute_w_default("refine", xsct_rosetta_bool,
+		"Do not start with a random glycan conformation.", "false")
+
+		+ XMLSchemaAttribute::attribute_w_default("pack_distance", xsct_real,
+		"Neighbor distance for packing", "6.0")
+
+		+ XMLSchemaAttribute::attribute_w_default("cartmin", xsct_rosetta_bool,
+		"Use Cartesian Minimization instead of Dihedral Minimization during packing steps.", "false")
+
+		+ XMLSchemaAttribute::attribute_w_default("tree_based_min_pack", xsct_rosetta_bool,
+		"Use Tree-based minimization and packing instead of minimizing and packing ALL residues each time we min. "
+		"  Significantly impacts runtime.  If you are seeing crappy structures for a few sugars, turn this off.  "
+		"  This is default-on to decrease runtime for a large number of glycans.", "true")
+
+		+ XMLSchemaAttribute::attribute_w_default("use_conformer_probs", xsct_rosetta_bool,
+		"Use the populations of the conformers as probabilities during our linkage conformer sampling."
+		"  This makes it harder to overcome energy barriers with more-rare conformers!", "false")
+
+		+ XMLSchemaAttribute::attribute_w_default("use_gaussian_sampling", xsct_rosetta_bool,
+		"Set whether to build conformer torsions using a gaussian of the angle or through uniform sampling "
+		" up to 1 SD (default)", "true")
+
+		+ XMLSchemaAttribute::attribute_w_default("min_rings", xsct_rosetta_bool,
+		"Minimize Carbohydrate Rings during minimization. ", "false")
+
+		+ XMLSchemaAttribute::attribute_w_default("shear", xsct_rosetta_bool,
+		"Use the Shear Mover that is now compatible with glycans at an a probability of 10 percent", "true")
+
+		+ XMLSchemaAttribute::attribute_w_default("randomize_torsions", xsct_rosetta_bool,
+		"If NOT doing refinement, control whether we randomize torsions at the start, "
+		" which helps to achieve low energy structures.", "true")
+
+		+ XMLSchemaAttribute::attribute_w_default("match_sampling_of_modeler", xsct_rosetta_bool,
+		"Option that matches the amount of sampling in a default GlycanTreeModeler run.  "
+		" Used for benchmarking.", "false")
+
+		+ XMLSchemaAttribute::attribute_w_default("inner_bb_cycles", xsct_non_negative_integer,
+		"Inner cycles for each time we call BB sampling either through small/medium/large moves "
+		" or through the SugarBB Sampler.  This is multiplied by the number of glycans.  "
+		" Scales poorly with GlycanModeler.  If 0 (default), we run the protocol normally", "0")
+
+		+ XMLSchemaAttribute::attribute_w_default("root_populations_only", xsct_rosetta_bool,
+		"Use population-based sampling for only the linkage between "
+		" the amino acid and glycan residue", "false");
 
 	//Append for MoveMap, scorefxn, and task_operation tags.
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 	rosetta_scripts::attributes_for_get_score_function_name( attlist );
-	rosetta_scripts::attributes_for_parse_residue_selector( attlist, "Residue Selector containing only glycan residues.  This is not needed, as this class will automatically select ALL glycan residues in the pose to model.  See the GlycanResidueSelector and the GlycanLayerSelector for control glycan selection.  Note that the ASN is not technically a glycan.  Since dihedral angles are defined for a sugar from the upper to lower residue, the dihedral angles between the first glycan and the ASN are defined by the first glycan. " );
+	rosetta_scripts::attributes_for_parse_residue_selector( attlist, "Residue Selector containing only glycan residues.  "
+		"This is not needed, as this class will automatically select ALL glycan residues in the pose to model. "
+		" See the GlycanResidueSelector and the GlycanLayerSelector for control glycan selection.  Note that the ASN is not "
+		" technically a glycan.  Since dihedral angles are defined for a sugar from the upper to lower residue,"
+		" the dihedral angles between the first glycan and the ASN are defined by the first glycan. " );
 
 	XMLSchemaSimpleSubelementList subelements;
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
 
 		"Authors: Jared Adolf-Bryfogle (jadolfbr@gmail.com) and Jason Labonte (WLabonte@jhu.edu)\n"
-		"Main mover for Glycan Relax, which optimizes glycans in a pose. "
+		"Main mover for GlycanTreeModeler, which optimizes glycans in a pose. You probably want to use that instead."
 		"Each round optimizes either one residue for BB sampling, linkage, or a [part of a ] branch for minimization and packing."
 		"Minimization and packing work by default by selecting a random glycan residue from any set movemap or all of them "
-		"and then selecting the rest of the downstream branch.  Those residues are then minimized or packed.  Packing includes a neighbor packing shell. "
+		"and then selecting the rest of the downstream branch.  Those residues are then minimized or packed. "
+		" Packing includes a neighbor packing shell. "
 		"Currently uses a random sampler with a set of weights to each mover for sampling.", attlist, subelements );
 }
 

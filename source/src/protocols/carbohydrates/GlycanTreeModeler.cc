@@ -218,99 +218,107 @@ void GlycanTreeModeler::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	AttributeList attlist;
 
 	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the probided AttributeList.
-	attlist + XMLSchemaAttribute("layer_size", xsct_non_negative_integer,
+	attlist
+
+		+ XMLSchemaAttribute::attribute_w_default("refine", xsct_rosetta_bool,
+		"Do a refinement instead of a denovo model."
+		" This means NO randomization at the start of the protocol and modeling is done "
+		" in the context of the full glycan tree instead of using virtual (non-scored) residues during tree growth", "false")
+
+		+ XMLSchemaAttribute::attribute_w_default("glycan_sampler_rounds", xsct_non_negative_integer,
+		"Round Number for the internal the GlycanSampler.  "
+		" Default is the default of the GlycanSampler.", "100")
+
+		+ XMLSchemaAttribute::attribute_w_default("quench_mode", xsct_rosetta_bool,
+		"Do quench mode for each glycan tree?"
+		" Quench means model each individual glycan tree instead of all at once.", "false")
+
+		+ XMLSchemaAttribute("layer_size", xsct_non_negative_integer,
 		"Brief: Set the layer size we will be using.  A layer is a set of glycan residues that we will be optimizing.\n"
-		"  We work our way through the layers, while the rest of the residues are virtual (not scored).\n"
-		" \n"
-		"  Details: \n"
-		"  The distance that make up a layer.  If we have a distance of 2,\n"
-		"  we first model all glycans that are equal to or less than 2 residue distance to the root.\n"
-		"  We then slide this layer up.  So we take all residues that have a distance between 3 and 1, and so on.\n")
+		"  Current benchmarked protocol is set to 1.  Only change this for benchmarking. ")
 
 		+ XMLSchemaAttribute("window_size", xsct_non_negative_integer,
 		"Brief: Set the window size.  This is the overlap of the layers during modeling. \n"
-		"  \n"
-		"  Details: \n"
-		"  The layers are slid down throught the tree of the glycan.  The window size represents the overlap in the layers.\n"
-		"  A window size of 1, means that the last residue (or residues of layer 1) from the last modeling effort, will be used again as \n"
-		"  part of the next layer.  A window size of 0, means that no residues will be re-modeled. \n"
-		"  Typically, we would want at least a window size of 1.\n")
-
-		+ XMLSchemaAttribute::attribute_w_default("refine", xsct_rosetta_bool, "Do a refinement instead of a denovo model.  This means NO randomization at the start of the protocol and modeling is done in the context of the full glycan tree instead of using virtual (non-scored) residues during tree growth", "false")
-
-		+ XMLSchemaAttribute("rounds", xsct_non_negative_integer, "Set the number of rounds.  We start with the forward direction, from the "
-		"root/start out to the glycan tips.  Next round we go backward, then forward.  The number of rounds corresponds to how many back "
-		"and forth directions we go")
-
-		+ XMLSchemaAttribute::attribute_w_default("glycan_sampler_rounds", xsct_non_negative_integer, "Round Number for the internal the GlycanSampler.  Default is the default of the GlycanSampler.", "25")
-
-		+ XMLSchemaAttribute::attribute_w_default("use_conformer_probs", xsct_rosetta_bool, "Use conformer probabilities instead of doing uniform sampling", "false")
-		+ XMLSchemaAttribute::attribute_w_default("use_gaussian_sampling", xsct_rosetta_bool, "Set whether to build conformer torsions using a gaussian of the angle or through uniform sampling up to 1 SD (default)", "true")
-
-		+ XMLSchemaAttribute::attribute_w_default("force_virts_for_refinement", xsct_rosetta_bool, "Refinement now models layers in the context of the full glycan tree.\n Turn this option on to use non-scored residues (virtuals) at the ends of the tree that are not being modeled.\n  This is how the de-novo protocol works.", "false")
-
-		+ XMLSchemaAttribute::attribute_w_default("idealize", xsct_rosetta_bool, "Attempt to idealize the bond lengths/angles of glycan residues being modeled", "false")
-
-		+ XMLSchemaAttribute::attribute_w_default("quench_mode", xsct_rosetta_bool, "Do quench mode for each glycan tree?", "false")
-		+ XMLSchemaAttribute::attribute_w_default("final_min_pack_min", xsct_rosetta_bool, "Do a final set of cycles of min/pack", "true")
-		+ XMLSchemaAttribute::attribute_w_default("min_rings", xsct_rosetta_bool, "Minimize Carbohydrate Rings during minimization. ", "false")
-		+ XMLSchemaAttribute::attribute_w_default("cartmin", xsct_rosetta_bool, "Use Cartesian Minimization instead of Dihedral Minimization during packing steps.", "false")
+		" Current benchmarked protocol is set to 0.  Only change this for benchmarking.")
 
 
-		+ XMLSchemaAttribute::attribute_w_default("hybrid_protocol", xsct_rosetta_bool ,"Set to use an experimental protocol where we build out the glycans, but re-model the full tree during the building process" , "true")
-		+ XMLSchemaAttribute::attribute_w_default("shear", xsct_rosetta_bool, "Use the Shear Mover that is now compatible with glycans at an a probability of 10 percent", "true")
-		+ XMLSchemaAttribute::attribute_w_default("match_window_one", xsct_rosetta_bool, "Matches the number of rounds per layer with that of using a window of 1.  Used for benchmarking.", "false")
-		+ XMLSchemaAttribute::attribute_w_default("root_populations_only", xsct_rosetta_bool, "Use population-based sampling for only the linkage between the amino acid and glycan residue", "false")
+
+
+
+		+ XMLSchemaAttribute("rounds", xsct_non_negative_integer, "Current protocol is set to 1.  Rounds currently are directional, with every even round going backward.  Only change this for benchmarking.")
+
+		+ XMLSchemaAttribute::attribute_w_default("use_conformer_probs", xsct_rosetta_bool,
+		"Use conformer probabilities instead of doing uniform sampling", "false")
+
+		+ XMLSchemaAttribute::attribute_w_default("use_gaussian_sampling", xsct_rosetta_bool,
+		"Set whether to build conformer"
+		" torsions using a gaussian of the angle or through uniform sampling up to 1 SD (default)", "true")
+
+		+ XMLSchemaAttribute::attribute_w_default("force_virts_for_refinement", xsct_rosetta_bool,
+		"Refinement now models layers" "in the context of the full glycan tree.\n "
+		"Turn this option on to use non-scored residues (virtuals) at the ends of the tree that are not being modeled.\n  "
+		"This is how the de-novo protocol works.", "false")
+
+		+ XMLSchemaAttribute::attribute_w_default("idealize", xsct_rosetta_bool, "Attempt to idealize the bond lengths/angles of"
+		" glycan residues being modeled", "false")
+
+		+ XMLSchemaAttribute::attribute_w_default("final_min_pack_min", xsct_rosetta_bool,
+		"Do a final set of cycles of min/pack", "true")
+
+		+ XMLSchemaAttribute::attribute_w_default("min_rings", xsct_rosetta_bool,
+		"Minimize Carbohydrate Rings during minimization. ", "false")
+
+		+ XMLSchemaAttribute::attribute_w_default("cartmin", xsct_rosetta_bool, "Use Cartesian Minimization "
+		"instead of Dihedral Minimization during packing steps.", "false")
+
+		+ XMLSchemaAttribute::attribute_w_default("hybrid_protocol", xsct_rosetta_bool ,"Set to use a protocol where we build out"
+		" the glycans, but re-model the full tree during the building process" , "true")
+		+ XMLSchemaAttribute::attribute_w_default("shear", xsct_rosetta_bool, "Use the Shear Mover that is now compatible with"
+		" glycans at an a probability of 10 percent", "true")
+		+ XMLSchemaAttribute::attribute_w_default("match_window_one", xsct_rosetta_bool, "Matches the number of rounds per layer"
+		" with that of using a window of 1.  This is how all protocols were benchmarked.  Leave this on.", "true")
+
+		+ XMLSchemaAttribute::attribute_w_default("root_populations_only", xsct_rosetta_bool,
+		"Use population-based sampling for"
+		" only the linkage between the amino acid and glycan residue. Sounds nice, benchmarking showed this is only good for common glycans", "false")
 		+ XMLSchemaAttribute("kt", xsct_real, "Override the GlycanSampler kT (which defaults to 2.0)");
 
 	std::string documentation =
 		"Author: Jared Adolf-Bryfogle (jadolfbr@gmail.com)\n"
-		"Brief: A protocol for optimizing glycan trees using the GlycanSampler from the base of the tree out to the leaves.\n"
-		"Details: Works by making all other residues virtual except the ones it is working on (current Layer).\n"
-		"A virtual residue is not scored.\n"
-		"It will start at the first glycan residues, and then move out to the edges.\n"
+		"Brief: A protocol for optimizing glycan trees using the GlycanSampler by "
+		" computationally growing glycans from the roots out to the trees.\n"
 		"\n"
-		"GENERAL ALGORITHM\n"
-		"\n"
-		"We start at the roots, and make all other glycan residues virtual.\n"
-		"We first model towards the leaves and this is considered the forward direction.\n"
-		"the GlycanSampler is used for the actual modeling, we only model a layer at a time, until we reach the tips.\n"
-		"If more than one round is set, the protocol will move backwards on the next round, from the leafs to the roots.\n"
-		"A third round will involve relaxation again in the forward direction.\n"
-		"So we go forward, back, forward, etc. for how ever many rounds you set.\n"
-		"\n"
+		"It is recommended to use this modeling algorithm in conjunction with the -beta scorefunction, "
+		" as this was shown to work best for modeling glycans.\n"
 		"QUECHING\n"
 		"\n"
-		"By default, we model all glycans simultaneously. First, all glycan roots (the start of the tree), and slowly unvirtualize \n"
+		"By default, we model all glycans simultaneously. "
+		" First, all glycan roots (the start of the tree), and slowly unvirtualize \n"
 		"all glycan residues, while only modeling each layer. \n"
-		"Alternatively, we can choose a particular glycan tree, run the algorithm, and then choose another glycan tree randomly until all \n"
+		"Alternatively, we can choose a particular glycan tree, run the algorithm, "
+		" and then choose another glycan tree randomly until all \n"
 		"glycan trees have been optimized. \n"
 		"Here, we call this quenching. \n"
 		"\n"
 		"GLYCAN LAYERS \n"
 		"\n"
 		"Draw a tree on a paper.  We start with the beginning N residues, and work our way out towards the leaves. \n"
-		"Layers are defined by the glycan residue distance to the rooot.  This enables branching residues to be considered the same \n"
+		"Layers are defined by the glycan residue distance to the rooot.  "
+		" This enables branching residues to be considered the same \n"
 		"layer conceptually and computationally, and allows them to be modeled together. \n"
 		"\n"
-		"--LAYER SIZE-- \n"
-		"\n"
-		"The distance that make up a layer.  If we have a distance of 2, \n"
-		"we first model all glycans that are equal to or less than 2 residue distance to the root. \n"
-		"We then slide this layer up.  So we take all residues that have a distance between 3 and 1, and so on. \n"
-		"\n"
-		"--WINDOW SIZE-- \n"
-		"\n"
-		"The layers are slid down throught the tree of the glycan.  The window size represents the overlap in the layers. \n"
-		"A window size of 1, means that the last residue (or residues of layer 1) from the last modeling effort, will be used again as \n"
-		"part of the next layer.  A window size of 0, means that no residues will be re-modeled. \n"
-		"Typically, we would want at least a window size of 1. \n"
 		"--Residue Selection-- \n"
 		"\n"
 		" You do not need a ResidueSelector passed in.  It will select all glycan residues automatically.\n"
-		" However, if you do, you must only pass in glycan residues.  See the GlycanResidueSelector and the GlycanLayerSelector for a very easy way to select specific glycan trees and residues. ";
+		" However, if you do, you must only pass in glycan residues.  "
+		" See the GlycanResidueSelector and the GlycanLayerSelector "
+		" for a very easy way to select specific glycan trees and residues. ";
 
-	rosetta_scripts::attributes_for_parse_residue_selector( attlist, "Residue Selector containing only glycan residues.  This is not needed, as this class will automatically select ALL glycan residues in the pose to model.  See the GlycanResidueSelector and the GlycanLayerSelector for control glycan selection.  Note that the ASN is not technically a glycan.  Since dihedral angles are defined for a sugar from the upper to lower residue, the dihedral angles between the first glycan and the ASN are defined by the first glycan. " );
+	rosetta_scripts::attributes_for_parse_residue_selector( attlist, "Residue Selector containing only glycan residues.  "
+		"This is not needed, as this class will automatically select ALL glycan residues in the pose to model.  "
+		" See the GlycanResidueSelector and the GlycanLayerSelector for control glycan selection.  "
+		" Note that the ASN is not technically a glycan.  Since dihedral angles are defined for a sugar from the upper to lower"
+		" residue, the dihedral angles between the first glycan and the ASN are defined by the first glycan. " );
 
 	rosetta_scripts::attributes_for_get_score_function_name( attlist );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), documentation, attlist );
@@ -918,7 +926,7 @@ GlycanTreeModeler::provide_authorship_info_for_unpublished() const {
 		mover_name(),
 		CitedModuleType::Mover,
 		"Jared Adolf-Bryfogle",
-		"The Scripps Research Institute, La Jolla, CA",
+		"Institute for Protein Innovation (IPI), Boston, MA",
 		"jadolfbr@gmail.com"
 		)
 		};

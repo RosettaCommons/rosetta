@@ -274,7 +274,7 @@ private:
 	minimization_packing::PackRotamersMoverOP packer_ = nullptr;
 	simple_moves::ShearMoverOP shear_                 = nullptr;
 
-	core::Size rounds_ = 25; // cmdline
+	core::Size rounds_ = 100; // cmdline
 	core::Real kt_ = 2.0; // cmdline
 
 	utility::vector1<std::string> accept_log_;
@@ -293,11 +293,11 @@ private:
 
 	core::select::residue_selector::ResidueSelectorCOP selector_;
 	bool population_based_conformer_sampling_ = false;
-	bool use_gaussian_sampling_ = false;
+	bool use_gaussian_sampling_ = true;
 	bool min_rings_ = false;
 
 	core::Size forced_total_rounds_ = 0;
-	bool use_shear_ = false;
+	bool use_shear_ = true;
 	bool randomize_first_ = true;
 	core::Size inner_ncycles_ = 0; //For individual bb movements, multiply this by n glycans.
 	bool match_sampling_of_modeler_ = false; //For benchmarking
