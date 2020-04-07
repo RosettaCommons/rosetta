@@ -64,6 +64,8 @@ private:
 	bool restore_;
 	std::string tag_;
 	core::kinematics::FoldTreeOP ft_restore_;
+
+	core::pose::PoseCOP input_pose_;
 };
 
 

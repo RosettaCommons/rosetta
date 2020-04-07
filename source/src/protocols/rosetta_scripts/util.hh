@@ -141,6 +141,17 @@ saved_reference_pose(
 	basic::datacache::DataMap & data_map,
 	std::string const & tag_str="reference_name" );
 
+///@brief Retrieve the reference pose. If not given, fall back to the native pose (if asked for),
+/// or the input pose as a last resort. Will print a warning message if the input pose is used.
+/// @details The XSD is the same as for saved_reference_pose.
+core::pose::PoseCOP
+legacy_saved_pose_or_input(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	std::string const & class_name,
+	bool use_native = true,
+	std::string const & refname="reference_name" );
+
 /// @brief convenience function to access pointers to poses that will be stored
 /// in the data map at an arbitrary point during an RS protocol
 /// Will look for tag in in_tag variable

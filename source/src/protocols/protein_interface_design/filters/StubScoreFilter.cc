@@ -20,7 +20,9 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
+#include <core/pose/ref_pose.hh>
 #include <numeric/xyzVector.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 
 #include <core/scoring/ScoreFunction.hh>
@@ -65,7 +67,7 @@ StubScoreFilter::apply(core::pose::Pose const & pose ) const
 }
 
 core::Real
-StubScoreFilter::compute( core::pose::Pose const & in_pose ) const{
+StubScoreFilter::compute( core::pose::Pose const & in_pose ) const {
 	if ( !stub_sets_.size() ) {
 		TR.Error<<"Stubsets not set in StubScoreFilter. Have I been parsed correctly?"<<std::endl;
 		runtime_assert( stub_sets_.size() );
@@ -76,6 +78,7 @@ StubScoreFilter::compute( core::pose::Pose const & in_pose ) const{
 	protocols::hotspot_hashing::remove_hotspot_constraints_from_pose( pose );
 	protocols::protein_interface_design::movers::PlacementMinimizationMover dummy_min;
 	dummy_min.stub_sets( stub_sets_ );
+	dummy_min.set_reference_pose( reference_pose_ );
 	dummy_min.host_chain( host_chain_ );
 	dummy_min.cb_force( cb_force_ );
 	dummy_min.refresh_bbstub_constraints( pose );
@@ -98,7 +101,7 @@ StubScoreFilter::report( std::ostream & out, core::pose::Pose const & pose ) con
 }
 
 void
-StubScoreFilter::stub_sets( utility::vector1<  std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > > const & stubsets ){
+StubScoreFilter::stub_sets( utility::vector1<  std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > > const & stubsets ) {
 	stub_sets_ = stubsets;
 }
 
@@ -107,14 +110,20 @@ StubScoreFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	TR.Info << "StubScoreFilter"<<std::endl;
 	host_chain_ = tag->getOption< core::Size >( "chain_to_design", 2 );
 	cb_force_ = tag->getOption< core::Real >( "cb_force", 0.5 );
+	if ( cb_force_ <= -0.00001 ) {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "In StubScoreFilter, cb_force must be at least -0.00001.");
+	}
 	runtime_assert( cb_force_ > -0.00001 );
-	stub_sets_ = protocols::protein_interface_design::movers::parse_stub_sets( tag, pose, host_chain_, data );
-	runtime_assert( stub_sets_.size() );
+	stub_sets_ = protocols::protein_interface_design::movers::parse_stub_sets( tag, data );
+	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, class_name(), /*use_native*/ false );
+	if ( stub_sets_.empty() ) {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "At least one StubSet must be defined in StubScoreFilter.");
+	}
 }
 
 protocols::filters::FilterOP
@@ -146,6 +155,8 @@ void StubScoreFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::attribute_w_default( "chain_to_design", xsct_non_negative_integer, "Chain that ought to be designed, numbered sequentially from 1", "2" )
 		+ XMLSchemaAttribute::attribute_w_default( "cb_force", xsct_non_negative_integer, "Chain that ought to be designed, numbered sequentially from 1", "2" );
+
+	core::pose::attributes_for_saved_reference_pose_w_description(attlist, "The reference pose to use for finalizing the stub sets (defaults to input pose).");
 
 	XMLSchemaSimpleSubelementList ssl;
 	protein_interface_design::movers::add_subelement_for_parse_stub_sets( ssl, xsd );

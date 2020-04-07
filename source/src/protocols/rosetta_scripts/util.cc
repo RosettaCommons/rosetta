@@ -52,6 +52,8 @@
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 
+#include <protocols/jd2/util.hh> // For hacky compatibility purposes only!!
+
 // Basic Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
@@ -209,6 +211,40 @@ saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataM
 	return core::pose::saved_reference_pose( in_tag, data_map, tag_name );
 }
 
+core::pose::PoseCOP
+legacy_saved_pose_or_input(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	std::string const & class_name,
+	bool use_native, /*true*/
+	std::string const & refname /*"reference_name"*/
+) {
+	if ( tag->hasOption(refname) ) {
+		return core::pose::saved_reference_pose(tag,data,refname);
+	} else if ( use_native && data.has_resource("native_pose") ) {
+		TR << "Using native pose as reference pose." << std::endl;
+		return core::pose::saved_native_pose( data );
+	} else if ( data.has_resource("input_pose") ) {
+		// Look at data map resources in those cases (like testing) where you explicitly need to test the legacy input approach.
+		TR.Warning << class_name << " is (implicitly) attempting to get the input pose during setup." << std::endl;
+		TR.Warning << "You should likely use the SavePoseMover to save the pose at the beginning of the PROTOCOL block, and then use the " << refname << " attribute to explicitly set the reference structure." << std::endl;
+		return data.get_resource<core::pose::Pose>("input_pose");
+	} else if ( protocols::jd2::jd2_used() ) { // Hacky, hacky workaround, but this allows legacy XMLs to (mostly) work
+		TR.Warning << class_name << " is (implicitly) attempting to get the input pose during setup." << std::endl;
+		TR.Warning << "You should likely use the SavePoseMover to save the pose at the beginning of the PROTOCOL block, and then use the " << refname << " attribute to explicitly set the reference structure." << std::endl;
+		core::pose::PoseCOP input_pose = protocols::jd2::get_current_jobs_starting_pose();
+		if ( input_pose == nullptr ) {
+			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover " + class_name + " tried to get access the input pose during setup, but can't!" );
+		}
+		data.add_resource("input_pose", input_pose); // Add to data map to skip pose loading in the future.
+		return input_pose;
+	} else {
+		// You're in a situation where you really should be accessing an explicit reference pose.
+		TR.Error << class_name << " is (implicitly) attempting to get the input pose during setup, but is in a location where that can't happen." << std::endl;
+		TR.Error << "You should use the SavePoseMover to save the pose at the beginning of the PROTOCOL block, and then use the " << refname << " attribute to explicitly set the reference structure." << std::endl;
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover " + class_name + " is improperly trying to access the input pose during setup!" );
+	}
+}
 
 /////////////////////////////////////////////////////////
 //////////////////// MoveMap ////////////////////////////

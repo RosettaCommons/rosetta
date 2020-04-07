@@ -58,6 +58,7 @@ public:
 	//void max_cb_cb_dist( core::Real const mccd );
 	void cb_force( core::Real const cf );
 	void stub_sets( utility::vector1< StubSetStubPos > const & stub_sets );
+	void set_reference_pose( core::pose::PoseCOP reference_pose );
 	~PlacementMinimizationMover() override;
 
 	std::string
@@ -74,6 +75,7 @@ public:
 private:
 	core::Size host_chain_;
 	utility::vector1< StubSetStubPos > stub_sets_;
+	core::pose::PoseCOP reference_pose_;
 	core::Real cb_force_;
 };
 

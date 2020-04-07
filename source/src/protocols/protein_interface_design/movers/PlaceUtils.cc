@@ -363,7 +363,7 @@ add_subelement_for_parse_stub_sets( utility::tag::XMLSchemaSimpleSubelementList 
 }
 
 utility::vector1< std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > >
-parse_stub_sets( utility::tag::TagCOP tag, core::pose::Pose const & pose, core::Size const host_chain, basic::datacache::DataMap data ){
+parse_stub_sets( utility::tag::TagCOP tag, basic::datacache::DataMap data ){
 	using namespace utility::tag;
 	using namespace protocols::hotspot_hashing;
 	utility::vector1< PlaceSimultaneouslyMover::StubSetStubPos > stub_sets;
@@ -395,41 +395,60 @@ parse_stub_sets( utility::tag::TagCOP tag, core::pose::Pose const & pose, core::
 		stub_sets.push_back(std::make_pair(stubset, std::make_pair(utility::pointer::make_shared< HotspotStub >(), 0)));  // REQUIRED FOR WINDOWS
 		//stub_sets.push_back( PlaceSimultaneouslyMover::StubSetStubPos( stubset, std::pair< HotspotStubOP, core::Size >( 0, 0 ) ) );
 
-		core::pose::PoseOP ala_pose( new core::pose::Pose( pose ) );
-		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( *ala_pose ));
-		task->initialize_from_command_line().or_include_current( true );
-
-		utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, false );
-		allowed_aas[ chemical::aa_ala ] = true;
-
-		core::Size const chain_begin( ala_pose->conformation().chain_begin( host_chain ) );
-		core::Size const chain_end( ala_pose->conformation().chain_end( host_chain ) );
-
-		for ( core::Size i = 1; i <= pose.size(); i++ ) {
-			if ( !pose.residue(i).is_protein() ) continue;
-			if ( i >= chain_begin && i <=chain_end ) {
-				core::Size const restype( ala_pose->residue(i).aa() );
-				if ( ( restype == chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] )|| restype == chemical::aa_gly ) {
-					task->nonconst_residue_task(i).prevent_repacking();
-				} else {
-					task->nonconst_residue_task(i).restrict_absent_canonical_aas( allowed_aas );
-				}
-			} else { //fi
-				task->nonconst_residue_task( i ).prevent_repacking();
-			}
-		}//for i
-		if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
-			core::pack::task::parse_resfile(*ala_pose, *task);
-		}
-
-		core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
-		pack::pack_rotamers( *ala_pose, *scorefxn, task);
-		(*scorefxn)( *ala_pose );
-		stubset->pair_with_scaffold( *ala_pose, host_chain, utility::pointer::make_shared< protocols::filters::TrueFilter >() );
 	}//foreach stubset_tag
 	return( stub_sets );
 }
 
+void
+finalize_stub_set( protocols::hotspot_hashing::HotspotStubSetOP stubset,
+	core::pose::Pose const & pose,
+	core::Size const host_chain
+) {
+	core::pose::PoseOP ala_pose = utility::pointer::make_shared< core::pose::Pose >( pose );
+	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( *ala_pose ));
+	task->initialize_from_command_line().or_include_current( true );
+
+	utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, false );
+	allowed_aas[ chemical::aa_ala ] = true;
+
+	core::Size const chain_begin( ala_pose->conformation().chain_begin( host_chain ) );
+	core::Size const chain_end( ala_pose->conformation().chain_end( host_chain ) );
+
+	for ( core::Size i = 1; i <= pose.size(); i++ ) {
+		if ( !pose.residue(i).is_protein() ) continue;
+		if ( i >= chain_begin && i <=chain_end ) {
+			core::Size const restype( ala_pose->residue(i).aa() );
+			if ( ( restype == chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] )|| restype == chemical::aa_gly ) {
+				task->nonconst_residue_task(i).prevent_repacking();
+			} else {
+				task->nonconst_residue_task(i).restrict_absent_canonical_aas( allowed_aas );
+			}
+		} else { //fi
+			task->nonconst_residue_task( i ).prevent_repacking();
+		}
+	}//for i
+	if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
+		core::pack::task::parse_resfile(*ala_pose, *task);
+	}
+
+	core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
+	pack::pack_rotamers( *ala_pose, *scorefxn, task);
+	(*scorefxn)( *ala_pose );
+	stubset->pair_with_scaffold( *ala_pose, host_chain, utility::pointer::make_shared< protocols::filters::TrueFilter >() );
+}
+
+void
+finalize_stub_sets(
+	utility::vector1< std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > > & stub_sets,
+	core::pose::Pose const & pose,
+	core::Size const host_chain
+) {
+
+	for ( auto & entry: stub_sets ) {
+		auto & stubset = entry.first;
+		finalize_stub_set( stubset, pose, host_chain );
+	}
+}
 
 } //movers
 } //protein_interface_design

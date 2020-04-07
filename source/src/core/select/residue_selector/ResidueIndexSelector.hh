@@ -41,8 +41,9 @@ namespace residue_selector {
 
 /// @brief The ResidueIndexSelector returns a ResidueSubset, i.e. a utility::vector1< bool > containing
 /// 'true' for residue positions which match the given residue index. The index is read as comma-separated
-/// list of either Rosetta indices (e.g. 10) or PDB numbers (e.g. 10A, residue 10 of chain A). Detection
-/// and mapping from PDB to Rosetta residue numbers is done internally.
+/// list of either Rosetta indices (e.g. 10) or PDB numbers (e.g. 10A, residue 10 of chain A).
+/// It can also take range specifications (e.g. 10A-20A).
+/// Detection and mapping from PDB to Rosetta residue numbers is done internally.
 class ResidueIndexSelector : public ResidueSelector {
 public:
 	// derived from base class

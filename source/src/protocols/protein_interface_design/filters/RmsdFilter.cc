@@ -24,6 +24,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/ref_pose.hh>
 
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
@@ -397,22 +398,11 @@ RmsdFilter::add_selector( core::select::residue_selector::ResidueSelectorOP cons
 }
 
 void
-RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose )
+RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	using namespace core::select::residue_selector;
 
-	/// @details
-	///if the save pose mover has been instantiated, this filter can calculate the rms
-	///against the ref pose
-	if ( tag->hasOption("reference_name") ) {
-		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map );
-		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<<" with "<<reference_pose_->size()<<" residues"<<std::endl;
-	} else {
-		reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( reference_pose );
-		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-			core::import_pose::pose_from_file( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
-		}
-	}
+	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data_map, class_name() );
 
 	symmetry_ = tag->getOption<bool>( "symmetry", false );
 	superimpose_on_all( tag->getOption< bool >( "superimpose_on_all", false ) );

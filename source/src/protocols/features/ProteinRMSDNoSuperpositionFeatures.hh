@@ -82,10 +82,6 @@ public:
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose) override;
 
-	/// @brief Sets the native pose to the native pose if set, or the starting pose otherwise
-	void
-	reference_pose_from_options(core::pose::Pose const & pose);
-
 	/// @brief collect all the feature data for the pose
 	core::Size
 	report_features(

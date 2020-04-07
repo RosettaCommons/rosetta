@@ -60,6 +60,8 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <core/pose/ResidueIndexDescription.hh>
+#include <core/pose/ref_pose.hh>
 
 //loops
 #include <protocols/loops/Loop.hh>
@@ -85,6 +87,11 @@ namespace seeded_abinitio {
 using namespace protocols::moves;
 using namespace core;
 
+struct GrowPeptidesSegment {
+	GrowPeptidesSegment( core::pose::ResidueIndexDescriptionCOP b, core::pose::ResidueIndexDescriptionCOP e ): start(b), stop(e) {}
+	core::pose::ResidueIndexDescriptionCOP start;
+	core::pose::ResidueIndexDescriptionCOP stop;
+};
 
 
 
@@ -260,6 +267,13 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 	///if there are loops and template, then activate grow from seeds
 	if ( all_seeds_.size() > 0  &&  template_presence ) {
 
+		protocols::loops::Loops all_seeds;
+		for ( auto const & entry: all_seeds_ ) {
+			core::Size begin = entry->start->resolve_index( *reference_pose_ );
+			core::Size end = entry->start->resolve_index( *reference_pose_ );
+			all_seeds.add_loop( begin , end , 0, 0, false );
+		}
+
 		utility::vector1< core::Size > cutpoints;
 
 		if ( !fetch_foldtree ) {
@@ -281,7 +295,7 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 			dssp.insert_ss_into_pose( *template_pdb_ );
 			std::string secstr_template = template_pdb_->secstruct();
 			TR.Debug  << "sec str for template: " << secstr_template << std::endl;
-			seed_foldtree_ = seed_ft_generator->set_foldtree( /**template_pdb_ ,*/ tmp_seed_target_poseOP, secstr_template, all_seeds_, true );
+			seed_foldtree_ = seed_ft_generator->set_foldtree( /**template_pdb_ ,*/ tmp_seed_target_poseOP, secstr_template, all_seeds, true );
 			vertices_ = seed_ft_generator->get_folding_vertices();
 			TR.Debug<<"vertices for folding: " <<std::endl;
 			cutpoints = seed_foldtree_->cutpoints();
@@ -299,7 +313,7 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 		}
 		if ( seq == "" ) utility_exit_with_message("no sequence specified" );
 
-		grow_from_vertices( pose, seq, all_seeds_ , vertices_ );
+		grow_from_vertices( pose, seq, all_seeds , vertices_ );
 
 		//add the new seed foldtree to the pose
 		pose.fold_tree( *seed_foldtree_ );
@@ -332,7 +346,7 @@ GrowPeptides::parse_my_tag(
 	basic::datacache::DataMap & data ,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	TR<<"GrowPeptides mover has been initiated" <<std::endl;
 	//default
@@ -392,16 +406,18 @@ GrowPeptides::parse_my_tag(
 		utility_exit_with_message("neither template pdb nor sequence for growing is specified!!" );
 	}
 
+	//parse the pdb of interest, which is either the template or the input pdb depending on the users specificiation
+	if ( template_presence ) {
+		reference_pose_ = template_pdb_;
+	} else {
+		// This variable is actually only ever consulted if template_presence is true,
+		// so this else clause is a bit redundant.
+		reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, mover_name(), /*use_native*/ false );
+	}
+
 	//parsing branch tags
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 	for ( TagCOP btag : branch_tags ) {
-
-		//parse the pdb of interest, which is either the template or the input pdb depending on the users specificiation
-		if ( template_presence ) {
-			curr_pose_ = template_pdb_;
-		} else {
-			curr_pose_ = utility::pointer::make_shared< pose::Pose >( pose );
-		}
 
 		anchor_specified_ = false;
 
@@ -409,10 +425,9 @@ GrowPeptides::parse_my_tag(
 			//needs some assertions to avoid bogus input
 			std::string const beginS( btag->getOption<std::string>( "begin" ) );
 			std::string const endS( btag->getOption<std::string>( "end" ) );
-			core::Size const begin( core::pose::parse_resnum( beginS, *curr_pose_ ) );
-			core::Size const end( core::pose::parse_resnum( endS, *curr_pose_ ) );
-			all_seeds_.add_loop( begin , end , 0, 0, false );
-			TR <<"parsing seeds: \n"<< begin <<" and " << end <<std::endl;
+			core::pose::ResidueIndexDescriptionCOP begin( core::pose::parse_resnum( beginS ) );
+			core::pose::ResidueIndexDescriptionCOP end( core::pose::parse_resnum( endS ) );
+			all_seeds_.push_back( utility::pointer::make_shared<GrowPeptidesSegment>(begin, end) );
 
 			if ( btag->hasOption( "anchor" ) ) {
 				auto anchor_res = btag->getOption< core::Size >("anchor", 0 );

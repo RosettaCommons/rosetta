@@ -12,6 +12,7 @@
 #include <protocols/simple_filters/MutationsFilterCreator.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/ref_pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
@@ -290,7 +291,7 @@ MutationsFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	TR << "MutationsFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
@@ -304,17 +305,7 @@ MutationsFilter::parse_my_tag( utility::tag::TagCOP tag,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[ in::file::native ].user() ) {
-		std::string const reference_pdb = option[ in::file::native ]();
-		core::pose::PoseOP temp_pose( new core::pose::Pose );
-		core::import_pose::pose_from_file( *temp_pose, reference_pdb , core::import_pose::PDB_file);
-		reference_pose( temp_pose );
-		TR<<"Using native pdb "<<reference_pdb<<" as reference.";
-	} else {
-		TR<<"Using starting pdb as reference. You could use -in::file::native to specify a different pdb for reference";
-		reference_pose( pose );
-	}
-	TR<<std::endl;
+	reference_pose( protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, class_name() ) );
 }
 
 protocols::filters::FilterOP
@@ -353,6 +344,8 @@ void MutationsFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 		+ XMLSchemaAttribute::attribute_w_default("verbose", xsct_rosetta_bool, "Defaults to false. If set to true, then will output the mutated positions and identities to the tracer.", "0")
 		+ XMLSchemaAttribute::attribute_w_default("packable", xsct_rosetta_bool, "Defaults to false. If set to true, then will also consider mutations at packable positions in addition to designable positions.", "0")
 		+ XMLSchemaAttribute::attribute_w_default("write2pdb", xsct_rosetta_bool, "Defaults to false. If set to true, then will output the mutated positions and identities to the output pdb.", "0");
+
+	core::pose::attributes_for_saved_reference_pose( attlist );
 
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Determines mutated residues in current pose as compared to a reference pose", attlist );
 }

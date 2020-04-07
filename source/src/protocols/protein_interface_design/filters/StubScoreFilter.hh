@@ -71,6 +71,7 @@ public:
 
 private:
 	utility::vector1< StubSetStubPos > stub_sets_;
+	core::pose::PoseCOP reference_pose_;
 	core::Size host_chain_;
 	core::Real cb_force_;
 };

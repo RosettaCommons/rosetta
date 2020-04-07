@@ -64,6 +64,7 @@ public:
 private:
 	core::Real weight_;
 	bool use_current_;
+	core::pose::PoseCOP reference_pose_;
 	std::string matrix_;
 	std::string scaling_;
 	core::Size chain_;

@@ -170,6 +170,8 @@ private: // data members
 	core::Size host_chain_; // dflt 2
 	/// stub set we're choosing from
 	protocols::hotspot_hashing::HotspotStubSetOP stub_set_;
+	/// Reference Pose (usually the input) with which to initialize the stubset with
+	core::pose::PoseCOP reference_pose_;
 	/// or use fold tree rb jump.
 	bool add_constraints_; /// dflt false
 	/// what std to use for coordinate cst in each design mover

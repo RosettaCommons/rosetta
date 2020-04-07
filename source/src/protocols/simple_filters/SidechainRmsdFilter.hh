@@ -55,7 +55,7 @@ public:
 private:
 	std::string res1_, res2_;
 	core::Real rmsd_threshold_;
-	core::pose::PoseOP reference_pose_;
+	core::pose::PoseCOP reference_pose_;
 	bool include_backbone_;
 };
 

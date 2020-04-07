@@ -29,6 +29,9 @@
 namespace protocols {
 namespace seeded_abinitio {
 
+struct GrowPeptidesSegment;
+using GrowPeptidesSegmentOP = utility::pointer::shared_ptr< GrowPeptidesSegment >;
+
 class GrowPeptides : public protocols::moves::Mover
 {
 public:
@@ -119,12 +122,12 @@ private: /// data
 	bool output_centroid;
 	/// vector of sequence pieces
 	utility::vector1< std::string > sequence_chunks_;
-	protocols::loops::Loops all_seeds_;
+	utility::vector1< GrowPeptidesSegmentOP > all_seeds_;
 	bool fetch_foldtree;
 	///foldtree after growing out peptide pieces
 	core::kinematics::FoldTreeOP seed_foldtree_;
-	/// pointer for the current pose
-	core::pose::PoseOP curr_pose_;
+	/// pointer for the reference pose for seeds
+	core::pose::PoseCOP reference_pose_;
 	std::set< core::Size > vertices_;
 	//bool add_chainbreakterm_;
 

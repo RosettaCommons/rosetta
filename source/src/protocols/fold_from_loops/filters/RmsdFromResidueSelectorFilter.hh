@@ -16,7 +16,7 @@
 
 #include <protocols/fold_from_loops/filters/RmsdFromResidueSelectorFilter.fwd.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <protocols/filters/Filter.hh>
@@ -42,14 +42,8 @@ public:
 	inline protocols::filters::FilterOP fresh_instance() const override {
 		return utility::pointer::make_shared< RmsdFromResidueSelectorFilter >();
 	};
-	void reference_pose( core::pose::PoseOP const & ref ) {
-		reference_pose_->detached_copy( *ref );
-		reference_pose_->transfer_constraint_set( *ref );
-	}
-	void reference_pose( core::pose::Pose const & ref )  {
-		reference_pose_->detached_copy( ref );
-		reference_pose_->transfer_constraint_set( ref );
-	}
+	void reference_pose( core::pose::PoseOP const & ref );
+	void reference_pose( core::pose::Pose const & ref );
 	void threshold( core::Real threshold ) { threshold_ = threshold; }
 	void CA_only( bool pick ) { CA_only_ = pick; }
 	void GDT( bool pick ) { gdt_ = pick; }
@@ -104,7 +98,7 @@ private:
 	core::select::residue_selector::ResidueSelectorCOP reference_select_;
 	core::select::residue_selector::ResidueSelectorCOP query_select_;
 	core::Real threshold_;
-	core::pose::PoseOP reference_pose_;
+	core::pose::PoseCOP reference_pose_;
 	core::Real sensitivity_;
 	bool CA_only_;
 	bool gdt_;

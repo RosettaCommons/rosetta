@@ -77,7 +77,7 @@ private:
 	core::select::residue_selector::ResidueSelectorOP selection_;
 	bool superimpose_, symmetry_;
 	core::Real threshold_;
-	core::pose::PoseOP reference_pose_;
+	core::pose::PoseCOP reference_pose_;
 
 	bool selection_from_segment_cache_;
 	bool superimpose_on_all_; // dflt false; if segments are defined, are those to be used for superimposing or only to measure rmsd?

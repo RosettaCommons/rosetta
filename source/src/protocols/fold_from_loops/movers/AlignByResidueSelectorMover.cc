@@ -24,6 +24,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/ref_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
@@ -64,24 +65,28 @@ AlignByResidueSelectorMover::AlignByResidueSelectorMover():
 AlignByResidueSelectorMover::~AlignByResidueSelectorMover()= default;
 
 void
+AlignByResidueSelectorMover::reference_pose( core::pose::PoseOP const & ref ) {
+	core::pose::PoseOP copy = utility::pointer::make_shared< core::pose::Pose >();
+	copy->detached_copy( *ref );
+	reference_pose_ = copy;
+}
+
+void
+AlignByResidueSelectorMover::reference_pose( core::pose::Pose const & ref ) {
+	core::pose::PoseOP copy = utility::pointer::make_shared< core::pose::Pose >();
+	copy->detached_copy( ref );
+	reference_pose_ = copy;
+}
+
+void
 AlignByResidueSelectorMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data_map,
 	protocols::filters::Filters_map const & ,
 	protocols::moves::Movers_map const & ,
-	core::pose::Pose const & reference_pose )
+	core::pose::Pose const & )
 {
-	/// Call the SavePoseMover, then it can be used from here... or from in:native
-	if ( tag->hasOption("reference_name") ) {
-		reference_pose_ = rosetta_scripts::saved_reference_pose(tag, data_map );
-		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<< " with " << reference_pose_->size() << " residues" << std::endl;
-	} else {
-		reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( reference_pose );
-		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-			core::import_pose::pose_from_file( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
-		}
-	}
-	TR.Trace << TR.Green << tag->hasOption("reference_name") << " taken from " << reference_pose_ << TR.Reset << std::endl;
+	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data_map, mover_name() );
 	reference_selector( core::select::residue_selector::get_residue_selector( tag->getOption< std::string >( "reference_selector" ), data_map ) );
 	query_selector( core::select::residue_selector::get_residue_selector( tag->getOption< std::string >( "query_selector" ), data_map ) );
 }

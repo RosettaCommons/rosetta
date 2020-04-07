@@ -140,7 +140,7 @@ Nub::apply(
 // -- ROSETTASCRIPTS -- //
 
 void
-Nub::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, core::pose::Pose const & reference_pose )
+Nub::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, core::pose::Pose const & )
 {
 
 	TR.Trace << TR.Green << "Parsing Nub data" << TR.Reset << std::endl;
@@ -150,7 +150,7 @@ Nub::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, core:
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(nubtag, data, "reference_name" );
 		TR.Trace << TR.Green << "Loaded reference pose: " << nubtag->getOption< std::string >( "reference_name" ) << " with " << reference_pose_->size() << " residues" << TR.Reset << std::endl;
 	} else {
-		reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( reference_pose );
+		reference_pose_ = utility::pointer::make_shared< core::pose::Pose >();
 		if ( nubtag->hasOption( "pose_file" ) ) {
 			core::import_pose::pose_from_file( *reference_pose_, nubtag->getOption< std::string >( "pose_file" ) , core::import_pose::PDB_file);
 		} else {

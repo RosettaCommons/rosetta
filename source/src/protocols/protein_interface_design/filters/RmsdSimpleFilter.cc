@@ -23,6 +23,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/ref_pose.hh>
 
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
@@ -324,17 +325,16 @@ void RmsdSimpleFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data_map,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	/// @brief
-	reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
 	target_chain_ = 0;
 	threshold_ = 0.0;
 
 	if ( tag->hasOption("reference_name") ) {
-		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag, data_map );
+		reference_pose_ = core::pose::saved_reference_pose(tag, data_map );
 	} else if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-		core::import_pose::pose_from_file( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
+		reference_pose_ = core::pose::saved_native_pose( data_map );
 	} else {
 		utility_exit_with_message("Not reference structure defined! Use [reference_name] or [-in::file::native] ");
 	}

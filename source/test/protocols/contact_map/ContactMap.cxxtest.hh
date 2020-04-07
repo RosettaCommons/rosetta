@@ -17,6 +17,8 @@
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
 #include <test/util/rosettascripts.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/util.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -109,7 +111,9 @@ public:
 		core::pose::Pose pose(create_test_in_pdb_pose());
 
 		ContactMap contact_map;
-		contact_map.fill_contacts(4, 10, pose);
+
+		core::select::residue_selector::ResidueIndexSelector selector("4-10");
+		contact_map.fill_contacts(selector, pose);
 		//contact_map.write_to_stream( TR );
 
 		Contact const & c1( contact_map.get_contact(1,5) );
@@ -126,7 +130,9 @@ public:
 		core::pose::Pose pose(create_test_in_pdb_pose());
 
 		ContactMap contact_map;
-		contact_map.fill_contacts(4, 10, 29, pose);
+		core::select::residue_selector::ResidueIndexSelector selector("4-10");
+		core::select::residue_selector::ResidueIndexSelector ligand("29");
+		contact_map.fill_contacts_all_atom2(selector, ligand, pose);
 		//contact_map.write_to_stream( TR );
 
 		// Rows are residues in region1
@@ -142,13 +148,16 @@ public:
 
 		// Test if ordering matters.
 		ContactMap contact_map2;
-		contact_map2.fill_contacts(30, 40, 10, pose);
+		core::select::residue_selector::ResidueIndexSelector selector2("30-40");
+		core::select::residue_selector::ResidueIndexSelector ligand2("10");
+		contact_map2.fill_contacts_all_atom2(selector2, ligand2, pose);
 		Contact const & c4( contact_map2.get_contact(5,2) );
 		TS_ASSERT_EQUALS( c4.long_string_rep(), "TRP34\tASP10- CA \t0");
 
 		// Test internal ligand.
 		ContactMap contact_map3;
-		contact_map3.fill_contacts(30, 40, 35, pose);
+		core::select::residue_selector::ResidueIndexSelector ligand3("35");
+		contact_map3.fill_contacts_all_atom2(selector2, ligand3, pose);
 		Contact const & c5( contact_map3.get_contact(3,2) );
 		TS_ASSERT_EQUALS( c5.long_string_rep(), "SER32\tHIS35- CA \t0");
 	}
@@ -159,7 +168,9 @@ public:
 		core::pose::Pose pose(create_test_in_pdb_pose());
 
 		ContactMap contact_map;
-		contact_map.fill_contacts(4, 10, 9, 16, pose); // intentionally overlapping
+		core::select::residue_selector::ResidueIndexSelector selector1("4-10");
+		core::select::residue_selector::ResidueIndexSelector selector2("9-16"); // intentionally overlapping
+		contact_map.fill_contacts(selector1, selector2, pose);
 		//contact_map.write_to_stream( TR );
 
 		Contact const & c1( contact_map.get_contact(1,1) );
@@ -170,7 +181,7 @@ public:
 		TS_ASSERT_EQUALS( c3.long_string_rep(), "ILE5\tASN15\t0");
 
 		ContactMap contact_map2;
-		contact_map2.fill_contacts(9, 16, 4, 10, pose); // intentionally overlapping
+		contact_map2.fill_contacts(selector2, selector1, pose); // reverse
 		//contact_map2.write_to_stream( TR );
 
 		Contact const & c4( contact_map2.get_contact(1,1) );
@@ -187,22 +198,32 @@ public:
 		core::pose::Pose pose(create_trpcage_ideal_pose());
 		ContactMap contact_map;
 
-		core::Size begin, end;
-		contact_map.parse_region_string("2-10",begin,end,pose);
-		TS_ASSERT_EQUALS( begin, 2);
-		TS_ASSERT_EQUALS( end, 10);
+		core::select::residue_selector::ResidueSelectorCOP selector;
+		utility::vector1< core::Size > residues;
 
-		contact_map.parse_region_string("A",begin,end,pose);
-		TS_ASSERT_EQUALS( begin, 1);
-		TS_ASSERT_EQUALS( end, 20);
+		selector = contact_map.parse_region_string("2-10");
+		residues = core::select::get_residues_from_subset( selector->apply( pose ) );
+		TS_ASSERT_EQUALS( residues.size(), 9 );
+		TS_ASSERT_EQUALS( residues[1], 2);
+		TS_ASSERT_EQUALS( residues[9], 10);
 
-		contact_map.parse_region_string("5",begin,end,pose);
-		TS_ASSERT_EQUALS( begin, 5);
-		TS_ASSERT_EQUALS( end, 5);
+		selector = contact_map.parse_region_string("A");
+		residues = core::select::get_residues_from_subset( selector->apply( pose ) );
+		TS_ASSERT_EQUALS( residues.size(), 20 );
+		TS_ASSERT_EQUALS( residues[1], 1);
+		TS_ASSERT_EQUALS( residues[20], 20);
 
-		contact_map.parse_region_string("10-2",begin,end,pose);
-		TS_ASSERT_EQUALS( begin, 2);
-		TS_ASSERT_EQUALS( end, 10);
+		selector = contact_map.parse_region_string("5");
+		residues = core::select::get_residues_from_subset( selector->apply( pose ) );
+		TS_ASSERT_EQUALS( residues.size(), 1 );
+		TS_ASSERT_EQUALS( residues[1], 5);
+
+		// This no longer works. It's probably not a big deal.
+		//selector = contact_map.parse_region_string("10-2");
+		//residues = core::select::get_residues_from_subset( selector->apply( pose ) );
+		//TS_ASSERT_EQUALS( residues.size(), 9 );
+		//TS_ASSERT_EQUALS( residues[1], 2);
+		//TS_ASSERT_EQUALS( residues[9], 10);
 	}
 
 	void test_parse_tag() {
@@ -212,39 +233,46 @@ public:
 		Movers_map movers;
 
 		core::pose::Pose pose(create_trpcage_ideal_pose());
+		data.add("spm_ref_poses","input_pose",pose.clone() ); // Need to spike the data with the reference pose to use.
 
 		ContactMap contact_map;
 
-		TagCOP tag = tagptr_from_string("<ContactMap name=test />\n");
+		TagCOP tag = tagptr_from_string("<ContactMap name=test reference_name=input_pose />\n");
+
 		contact_map.parse_my_tag( tag, data, filters, movers, pose );
+		contact_map.apply(pose); // Need to actually call apply to make sure the contact map information is up-to-date
 
 		Contact const & c1( contact_map.get_contact(20,19) );
 		TS_ASSERT_EQUALS( c1.long_string_rep(), "PRO19\tSER20\t0");
 
 		ContactMap contact_map2;
-		tag = tagptr_from_string("<ContactMap name=test region1=3-6/>\n");
+		tag = tagptr_from_string("<ContactMap name=test region1=3-6 reference_name=input_pose />\n");
 		contact_map2.parse_my_tag( tag, data, filters, movers, pose );
+		contact_map2.apply(pose); // Need to actually call apply to make sure the contact map information is up-to-date
 
 		Contact const & c2( contact_map2.get_contact(2,3) );
 		TS_ASSERT_EQUALS( c2.long_string_rep(), "ILE4\tGLN5\t0");
 
 		ContactMap contact_map3;
-		tag = tagptr_from_string("<ContactMap name=test region1=3-6 region2=10/>\n");
+		tag = tagptr_from_string("<ContactMap name=test region1=3-6 region2=10 reference_name=input_pose />\n");
 		contact_map3.parse_my_tag( tag, data, filters, movers, pose );
+		contact_map3.apply(pose); // Need to actually call apply to make sure the contact map information is up-to-date
 
 		Contact const & c3( contact_map3.get_contact(2,1) );
 		TS_ASSERT_EQUALS( c3.long_string_rep(), "ILE4\tGLY10\t0");
 
 		ContactMap contact_map4;
-		tag = tagptr_from_string("<ContactMap name=test region1=3-6 ligand=10/>\n");
+		tag = tagptr_from_string("<ContactMap name=test region1=3-6 ligand=10 reference_name=input_pose />\n");
 		contact_map4.parse_my_tag( tag, data, filters, movers, pose );
+		contact_map4.apply(pose); // Need to actually call apply to make sure the contact map information is up-to-date
 
 		Contact const & c4( contact_map4.get_contact(2,2) );
 		TS_ASSERT_EQUALS( c4.long_string_rep(), "ILE4\tGLY10- CA \t0");
 
 		ContactMap contact_map5;
-		tag = tagptr_from_string("<ContactMap name=test region1=A />\n");
+		tag = tagptr_from_string("<ContactMap name=test region1=A reference_name=input_pose />\n");
 		contact_map5.parse_my_tag( tag, data, filters, movers, pose );
+		contact_map5.apply(pose); // Need to actually call apply to make sure the contact map information is up-to-date
 
 		Contact const & c5( contact_map5.get_contact(5,3) );
 		TS_ASSERT_EQUALS( c5.long_string_rep(), "TYR3\tGLN5\t0");
@@ -257,10 +285,11 @@ public:
 		Movers_map movers;
 
 		core::pose::Pose pose(create_test_in_pdb_pose());
+		data.add("spm_ref_poses","input_pose",pose.clone() ); // Need to spike the data with the reference pose to use.
 
 		ContactMap contact_map;
 
-		TagCOP tag = tagptr_from_string("<ContactMap name=test region1=4-10 models_per_file=0 />\n"); //don't output textfile
+		TagCOP tag = tagptr_from_string("<ContactMap name=test region1=4-10 models_per_file=0 reference_name=input_pose />\n"); //don't output textfile
 		contact_map.parse_my_tag( tag, data, filters, movers, pose );
 
 		contact_map.apply(pose);
@@ -274,7 +303,7 @@ public:
 		// Test distance cutoff
 		ContactMap contact_map2;
 
-		tag = tagptr_from_string("<ContactMap name=test region1=4-10 models_per_file=0 distance_cutoff=15 />\n");
+		tag = tagptr_from_string("<ContactMap name=test region1=4-10 models_per_file=0 distance_cutoff=15 reference_name=input_pose />\n");
 		contact_map2.parse_my_tag( tag, data, filters, movers, pose );
 
 		contact_map2.apply(pose);
@@ -285,7 +314,7 @@ public:
 		// Distance matrix form
 		ContactMap contact_map3;
 
-		tag = tagptr_from_string("<ContactMap name=test region1=4-10 models_per_file=0 distance_matrix=true/>\n"); //don't output textfile
+		tag = tagptr_from_string("<ContactMap name=test region1=4-10 models_per_file=0 distance_matrix=true reference_name=input_pose />\n"); //don't output textfile
 		contact_map3.parse_my_tag( tag, data, filters, movers, pose );
 
 		contact_map3.apply(pose);

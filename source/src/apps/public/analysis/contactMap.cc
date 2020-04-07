@@ -55,11 +55,6 @@ utility::vector1<ContactMap> processRegions(std::string region_def, core::pose::
 	utility::vector1<ContactMap> maps;
 	std::string current_region = "";
 
-	// parameters for parse_my_tag routine
-	protocols::moves::Movers_map movers;
-	protocols::filters::Filters_map filters;
-	basic::datacache::DataMap data;
-
 	if ( region_def == "" ) {
 		std::ostringstream oss;
 		oss << "1-" << pose.size();
@@ -69,8 +64,7 @@ utility::vector1<ContactMap> processRegions(std::string region_def, core::pose::
 	while ( region_def != "" ) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-		using namespace utility::tag;
-		TagOP tag( new Tag() );
+		core::select::residue_selector::ResidueSelectorCOP region1, region2;
 		core::Size pos = region_def.find(',');
 		if ( pos == std::string::npos ) {
 			current_region = region_def;
@@ -79,29 +73,38 @@ utility::vector1<ContactMap> processRegions(std::string region_def, core::pose::
 			current_region = region_def.substr(0, pos);
 			region_def = region_def.substr(pos+1);
 		}
-		pos=current_region.find(':');
+
+		// instantiate ContactMap and initialize
+		protocols::contact_map::ContactMap cm;
+
 		// set regionX and ligand tags corresponding to region definiton
+		pos=current_region.find(':');
 		if ( pos == std::string::npos ) {
-			tag->setOption("region1", current_region);
+			region1 = cm.parse_region_string( current_region );
+			cm.set_regions( region1 );
 		} else if ( current_region.find("ligand=")==std::string::npos ) {
-			tag->setOption("region1", current_region.substr(0, pos));
-			tag->setOption("region2", current_region.substr(pos+1));
+			region1 = cm.parse_region_string( current_region.substr(0, pos) );
+			region2 = cm.parse_region_string( current_region.substr(pos+1) );
+			cm.set_regions( region1, region2 );
 		} else {
 			if ( current_region.find("ligand=")>pos ) {
-				tag->setOption("region1", current_region.substr(0, pos));
-				tag->setOption("ligand", current_region.substr(pos+8));
+				region1 = cm.parse_region_string( current_region.substr(0, pos) );
+				region2 = cm.parse_region_string( current_region.substr(pos+8) );
+				cm.set_regions( region1, region2 );
+				cm.set_region2_all_atom( true );
 			} else {
-				tag->setOption("region1", current_region.substr(pos+1));
-				tag->setOption("ligand", current_region.substr(7,pos-7));
+				region1 = cm.parse_region_string( current_region.substr(pos+1) );
+				region2 = cm.parse_region_string( current_region.substr(7,pos-7) );
+				cm.set_regions( region1, region2 );
+				cm.set_region2_all_atom( true );
 			}
 		}
-		// instantiate ContactMap and call parse_my_tag routine
-		protocols::contact_map::ContactMap cm= protocols::contact_map::ContactMap();
-		tag->setOption("distance_cutoff", option[contactMap::distance_cutoff]());
-		tag->setOption("models_per_file", 0);
-		if ( option[contactMap::row_format]() ) tag->setOption("row_format", "true");
-		if ( option[contactMap::distance_matrix]() ) tag->setOption("distance_matrix", "true");
-		cm.parse_my_tag( tag, data, filters , movers, pose);
+		cm.set_reference_pose( pose.clone() );
+		cm.set_distance_cutoff( option[contactMap::distance_cutoff]() );
+		cm.set_models_per_file(0);
+		cm.set_row_format( option[contactMap::row_format].value() );
+		cm.set_distance_matrix( option[contactMap::distance_matrix].value() );
+
 		// set output prefix for region
 		std::string output_prefix(option[contactMap::prefix]());
 		output_prefix +=current_region;

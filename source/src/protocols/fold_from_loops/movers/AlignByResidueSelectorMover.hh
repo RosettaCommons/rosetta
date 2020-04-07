@@ -21,7 +21,7 @@
 // Protocol headers
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 
 // Basic/Utility headers
@@ -52,8 +52,8 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & reference_pose ) override;
 
-	void reference_pose( core::pose::PoseOP const & ref ) { reference_pose_->detached_copy( *ref ); }
-	void reference_pose( core::pose::Pose const & ref )   { reference_pose_->detached_copy( ref ); }
+	void reference_pose( core::pose::PoseOP const & ref );
+	void reference_pose( core::pose::Pose const & ref );
 	void reference_selector( core::select::residue_selector::ResidueSelectorCOP const &  select ) { reference_select_ = select; }
 	void reference_selector( core::select::residue_selector::ResidueSelector const &  select ) { reference_select_ = select.clone(); }
 	void query_selector( core::select::residue_selector::ResidueSelectorCOP const &  select ) { query_select_ = select; }
@@ -81,7 +81,7 @@ public:
 private:
 	core::select::residue_selector::ResidueSelectorCOP reference_select_;
 	core::select::residue_selector::ResidueSelectorCOP query_select_;
-	core::pose::PoseOP reference_pose_;
+	core::pose::PoseCOP reference_pose_;
 
 };
 

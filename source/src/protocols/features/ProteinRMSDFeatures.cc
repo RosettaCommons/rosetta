@@ -25,6 +25,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/ref_pose.hh>
 #include <core/types.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
@@ -169,28 +170,11 @@ ProteinRMSDFeatures::parse_my_tag(
 	basic::datacache::DataMap & data,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
-	Pose const & pose
+	Pose const &
 ) {
 	runtime_assert(tag->getName() == type_name());
 
-	if ( tag->hasOption("reference_name") ) {
-		// Use with SavePoseMover
-		// WARNING! reference_pose is not initialized until apply time
-		reference_pose(saved_reference_pose(tag, data));
-	} else {
-		using namespace basic::options;
-		if ( option[OptionKeys::in::file::native].user() ) {
-			PoseOP ref_pose( new core::pose::Pose() );
-			string native_pdb_fname(option[OptionKeys::in::file::native]());
-			pose_from_file(*ref_pose, native_pdb_fname, core::import_pose::PDB_file);
-			tr << "Adding features reporter '" << type_name() << "' referencing '"
-				<< " the -in:file:native='" << native_pdb_fname << "'" << endl;
-			reference_pose(ref_pose);
-		} else {
-			tr << "Setting '" << type_name() << "' to reference the starting structure." << endl;
-			reference_pose(utility::pointer::make_shared< Pose >(pose));
-		}
-	}
+	reference_pose( protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, class_name() ) );
 }
 
 Size

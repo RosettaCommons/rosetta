@@ -23,6 +23,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/ref_pose.hh>
 #include <utility/tag/Tag.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -31,6 +32,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 // Unit Headers
@@ -144,6 +146,10 @@ PlacementMinimizationMover::apply( core::pose::Pose & pose )
 	using namespace protocols::hotspot_hashing;
 	using namespace core::scoring;
 
+	if ( reference_pose_ != nullptr ) {
+		protocols::protein_interface_design::movers::finalize_stub_sets( stub_sets_, *reference_pose_, host_chain_ );
+	}
+
 	ScoreFunctionOP bbcst_scorefxn( new ScoreFunction );
 	bbcst_scorefxn->reset();
 	bbcst_scorefxn->set_weight( backbone_stub_constraint, 1.0 );
@@ -193,11 +199,16 @@ PlacementMinimizationMover::stub_sets( utility::vector1< StubSetStubPos > const 
 }
 
 void
+PlacementMinimizationMover::set_reference_pose( core::pose::PoseCOP reference_pose ) {
+	reference_pose_ = reference_pose;
+}
+
+void
 PlacementMinimizationMover::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap &data,
 	protocols::filters::Filters_map const &,
 	Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	host_chain( tag->getOption<core::Size>( "host_chain", 2 ) );
 	cb_force( tag->getOption< core::Real >( "cb_force", 0.5 ) );
@@ -209,15 +220,20 @@ PlacementMinimizationMover::parse_my_tag( TagCOP const tag,
 			cb_force( btag->getOption< core::Real >( "cb_force" ) );
 		}
 	}
-	runtime_assert( cb_force_ >= -0.000001 );
+	if ( cb_force_ < -0.00001 ) {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "In StubScoreFilter, cb_force must be at least -0.00001.");
+	}
 	design_partner1_ = host_chain_ == 1 ? true : false;
 	design_partner2_ = host_chain_ == 2 ? true : false;
 	repack_partner1_ = true;
 	repack_partner2_ = true;
 	optimize_foldtree_ = tag->getOption< bool >( "optimize_foldtree", false );
 	min_rb( tag->getOption< bool >( "minimize_rb", true ));
-	stub_sets( parse_stub_sets( tag, pose, host_chain_, data ) );
-	runtime_assert( stub_sets_.size() );
+	stub_sets( parse_stub_sets( tag, data ) );
+	if ( stub_sets_.empty() ) {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "At least one StubSet must be defined in StubScoreFilter.");
+	}
+	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, mover_name(), /*use_native*/ false );
 	TR<<"optimize_foldtree set to: "<<optimize_foldtree_<<'\n';
 	TR<<"cb_force is set to "<<cb_force_<<std::endl;
 }
@@ -255,6 +271,8 @@ void PlacementMinimizationMover::provide_xml_schema( utility::tag::XMLSchemaDefi
 		+ XMLSchemaAttribute::attribute_w_default( "cb_force", xsct_real, "Force to apply to CB atoms.  Must be positive.", "0.5" ) // XRW TODO, should be positive Real
 		+ XMLSchemaAttribute::attribute_w_default( "optimize_foldtree", xsct_rosetta_bool, "setup new fold_tree for better numerical behaviour between the residue at the center of target_residues and the nearest residue on the partner", "false")
 		+ XMLSchemaAttribute::attribute_w_default( "minimize_rb", xsct_rosetta_bool, "minimize the rigid body degree of freedom", "true");
+
+	core::pose::attributes_for_saved_reference_pose_w_description(attlist, "The reference pose to use for finalizing the stub sets (defaults to input pose).");
 
 	XMLSchemaSimpleSubelementList ssl;
 	add_subelement_for_parse_stub_sets( ssl, xsd ); //XRW TODO the subelement is actually REQUIRED; might be for all uses of this function

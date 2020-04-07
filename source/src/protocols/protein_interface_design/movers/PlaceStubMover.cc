@@ -20,6 +20,7 @@
 #include <utility/tag/Tag.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/ref_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
@@ -595,6 +596,10 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 {
 	using namespace protocols::hotspot_hashing;
 
+	if ( reference_pose_ != nullptr ) {
+		protocols::protein_interface_design::movers::finalize_stub_set( stub_set_, *reference_pose_, host_chain_ );
+	}
+
 	residue_level_tasks_for_placed_hotspots_->clear();
 	curr_coordinate_constraints_.clear();
 	// rescore the pose to ensure that backbone stub cst's are populated
@@ -1071,7 +1076,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &filters,
 	Movers_map const &movers,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	using namespace protocols::hotspot_hashing;
 
@@ -1205,46 +1210,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 
 	add_constraints_ = tag->getOption< bool >( "add_constraints", true );
 
-
-	{ // pair stubset with an ala_pose scope
-		//we want the stubset to be aware of the host chain. This way, when we
-		//ask a stub set whether a stub can be placed on a particular position
-		//in terms of its self-energy, it can cache this information and return
-		//it to us at a later point if we ask for that stub again. Since we
-		//expect the host_chain to be redesignable, we switch all residues
-		//(other than gly/pro) to ala before pairing.
-		core::pose::PoseOP ala_pose( new core::pose::Pose( pose ) );
-		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( *ala_pose ));
-		task->initialize_from_command_line().or_include_current( true );
-
-		utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, false );
-		allowed_aas[ chemical::aa_ala ] = true;
-
-		core::Size const chain_begin( ala_pose->conformation().chain_begin( host_chain_ ) );
-		core::Size const chain_end( ala_pose->conformation().chain_end( host_chain_ ) );
-
-		for ( core::Size i = 1; i <= pose.size(); i++ ) {
-			if ( !pose.residue(i).is_protein() ) continue;
-			if ( i >= chain_begin && i <=chain_end ) {
-				core::Size const restype( ala_pose->residue(i).aa() );
-				if ( (restype == chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] ) || restype == chemical::aa_gly ) {
-					task->nonconst_residue_task(i).prevent_repacking();
-				} else {
-					task->nonconst_residue_task(i).restrict_absent_canonical_aas( allowed_aas );
-				}
-			} else {
-				task->nonconst_residue_task( i ).prevent_repacking();
-			}
-		}
-		if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
-			core::pack::task::parse_resfile(pose, *task);
-		}
-
-		core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
-		pack::pack_rotamers( *ala_pose, *scorefxn, task);
-		(*scorefxn)( *ala_pose );
-		stub_set_->pair_with_scaffold( *ala_pose, host_chain_, utility::pointer::make_shared< protocols::filters::TrueFilter >() );
-	}// pair stubset scope
+	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, mover_name(), /*use_native*/ false );
 
 	max_cb_cb_dist_ = tag->getOption< core::Real >( "max_cb_dist", 4.0 );
 	leave_coord_csts_after_placement_ = tag->getOption< bool >( "leave_coord_csts", false );
@@ -1326,6 +1292,8 @@ void PlaceStubMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute::attribute_w_default( "place_scaffold", xsct_rosetta_bool, "use PlaceScaffold instead of PlaceStub. this will place the scaffold on the stub's position by using an inverse rotamer approach.", "false");
 	rosetta_scripts::attributes_for_parse_task_operations( direct_attlist );
 	core::pose::attributes_for_get_resnum_selector( direct_attlist, xsd, "allowed_host_res");
+
+	core::pose::attributes_for_saved_reference_pose_w_description(direct_attlist, "The reference pose to use for finalizing the stub sets (defaults to input pose).");
 
 	//see main/source/test/utility/tag/XMLSchemaGeneration.cxxtest.hh for example that clarifies
 	//This is the ROOT NODE

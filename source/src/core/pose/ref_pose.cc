@@ -106,5 +106,6 @@ saved_native_pose( basic::datacache::DataMap & data_map, std::string const & res
 	}
 }
 
+
 } // pose
 } // core

@@ -25,8 +25,14 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
+#include <core/pose/ref_pose.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/ChainSelector.hh>
+#include <core/select/residue_selector/TrueResidueSelector.hh>
+#include <core/select/util.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // utility headers
 #include <utility/tag/Tag.hh>
@@ -76,7 +82,8 @@ ContactMap::ContactMap() :
 	models_per_file_(1),
 	reset_count_(true),
 	row_format_(false),
-	distance_matrix_(false)
+	distance_matrix_(false),
+	region1_( utility::pointer::make_shared< core::select::residue_selector::TrueResidueSelector >() )
 {
 }
 
@@ -97,9 +104,9 @@ moves::MoverOP ContactMap::fresh_instance() const {
 
 
 /// @brief Processes options specified in xml-file and sets up the ContactMap
-void ContactMap::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,
+void ContactMap::parse_my_tag(TagCOP const tag, basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &, moves::Movers_map const &,
-	Pose const & pose) {
+	Pose const & ) {
 
 	// 'distance_cutoff' option
 	set_distance_cutoff(tag->getOption<core::Real>("distance_cutoff", distance_cutoff_));
@@ -119,102 +126,63 @@ void ContactMap::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,
 	// 'distance_matrix_' flag
 	distance_matrix_ = tag->getOption<bool>("distance_matrix", false);
 
+	/////////////////////////////
 	// 'region1', 'region2' and 'ligand' options
-	// Initialize 'region1' with complete pose in case no option is specified
-	core::Size region1_begin = 1;
-	core::Size region1_end = pose.size();
+
+	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, mover_name(), /*use_native*/ false );
+
 	// Parse 'region1' option if supplied
+	// Defaults to complete pose if no option supplied.
 	if ( tag->hasOption("region1") ) {
-		parse_region_string(tag->getOption<std::string> ("region1"),
-			region1_begin, region1_end, pose);
+		region1_ = parse_region_string(tag->getOption<std::string>("region1"));
 	}
-	// Parse 'region2' option if supplied and initialize ContactMap between 'region1' and 'region2'
 	if ( tag->hasOption("region2") ) {
-		core::Size region2_begin, region2_end;
-		parse_region_string(tag->getOption<std::string> ("region2"),
-			region2_begin, region2_end, pose);
-		fill_contacts(region1_begin, region1_end, region2_begin, region2_end, pose);
+		// Parse 'region2' option if supplied and initialize ContactMap between 'region1' and 'region2'
+		region2_ = parse_region_string(tag->getOption<std::string> ("region2"));
 	} else if ( tag->hasOption("ligand") ) {
 		// Parse 'ligand' option if supplied and initialize ContactMap between 'region1' and 'ligand'
-		core::Size ligand_begin, ligand_end;
-		parse_region_string(tag->getOption<std::string> ("ligand"),
-			ligand_begin, ligand_end, pose);
-		fill_contacts(region1_begin, region1_end, ligand_begin, pose);
-	} else {
-		// Initialize ContactMap with 'region1' if neither 'region2' nor 'ligand' were specified
-		fill_contacts(region1_begin, region1_end, pose);
+		region2_ = parse_region_string(tag->getOption<std::string>("ligand"));
+		region2_all_atom_ = true;
 	}
+
 }
 
-/// @brief Parses region definition string end sets the boundaries accordingly
-void ContactMap::parse_region_string(std::string region_def,
-	core::Size & region_begin,
-	core::Size & region_end,
-	Pose const & pose) {
+core::select::residue_selector::ResidueSelectorCOP
+ContactMap::parse_region_string(std::string const & region_def) const {
 
 	// Check if region is defined by chain
-	if ( region_def.size() == 1 && isalpha(region_def.at(0))  ) {
-		// Retrieve chain ID
-		core::Size const chain_id =
-			core::pose::get_chain_id_from_chain(region_def, pose);
-		// Set region according to chain boundaries
-		region_begin = pose.conformation().chain_begin(chain_id);
-		region_end = pose.conformation().chain_end(chain_id);
-		//TR << "Region defined from " << *region_begin << " to " << *region_end <<"." << std::endl;
-		return;
+	if ( region_def.size() == 1 && isalpha(region_def[0]) ) {
+		return utility::pointer::make_shared< core::select::residue_selector::ChainSelector >(region_def[0]);
 	}
 
-	// Initialize stream and try to read in region_begin
-	std::istringstream region_defstr(region_def);
-	region_defstr >> region_begin;
-	// Set region_end to region_begin if only one position is supplied
-	if ( region_defstr.eof() ) {
-		region_end = region_begin;
-	} else {
-		// Skip separator and read region end
-		region_defstr.seekg(1, std::ios_base::cur);
-		region_defstr >> region_end;
-	}
-	// Exit if something went wrong
-	if ( region_defstr.fail() || ! region_defstr.eof() ) {
-		utility_exit_with_message("Unable to parse region '" + region_def +"'!");
-	}
-
-	// Make sure region_begin is not greater than region end
-	if ( region_begin > region_end ) {
-		core::Size temp = region_begin;
-		region_begin = region_end;
-		region_end = temp;
-	}
-
-	// Check if region definition is within bounds of the pose
-	if ( region_begin < 1  || region_end > pose.size() ) {
-		utility_exit_with_message("Specified region '" + region_def +"' is out of bounds!");
-	}
-	//TR << "Region defined from " << *region_begin << " to " << *region_end <<"." << std::endl;
-
+	return utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( region_def );
 }
 
 /// @brief Initializes ContactMap within a single region
 void ContactMap::fill_contacts(
-	core::Size begin,
-	core::Size end,
-	Pose const & pose)
-{
+	core::select::residue_selector::ResidueSelector const & region,
+	Pose const & pose
+) {
+
 	ContactPartner p1, p2;
+
+	utility::vector1< core::Size > residues = core::select::get_residues_from_subset( region.apply( pose ) );
+
 	// Outer loop to assign ContactPartner1
-	for ( core::Size i = begin; i<=end; i++ ) {
-		std::string atom_name1 =  pose.residue_type(i).name1() == 'G'  ?   "CA" : "CB";
-		std::string resname1 = pose.residue(i).name3();
-		p1 = ContactPartner(i, resname1, atom_name1);
+	for ( core::Size ii(1); ii <= residues.size(); ++ii ) {
+		core::Size res1( residues[ii] );
+		std::string const & atom_name1 =  pose.residue_type(res1).name1() == 'G'  ?   "CA" : "CB";
+		std::string const & resname1 = pose.residue(res1).name3();
+		p1 = ContactPartner(res1, resname1, atom_name1);
 		// Fill column and row names
 		row_names_.push_back(p1.string_rep());
 		column_names_.push_back(p1.string_rep());
-		// Outer loop to assign ContactPartner1 and create contact
-		for ( core::Size j = i+1; j<=end; j++ ) {
-			std::string atom_name2 = pose.residue_type(j).name1() == 'G'  ?   "CA" : "CB";
-			std::string resname2 = pose.residue(j).name3();
-			p2 = ContactPartner(j, resname2, atom_name2);
+		// Inner loop to assign ContactPartner2 and create contact
+		for ( core::Size jj(ii+1); jj <= residues.size(); ++jj ) {
+			core::Size res2( residues[jj] );
+			std::string const & atom_name2 = pose.residue_type(res2).name1() == 'G'  ?   "CA" : "CB";
+			std::string const & resname2 = pose.residue(res2).name3();
+			p2 = ContactPartner(res2, resname2, atom_name2);
 			// Create contact and add to contacts_
 			Contact contact = Contact(p1,p2);
 			contacts_.push_back(contact);
@@ -223,10 +191,7 @@ void ContactMap::fill_contacts(
 	// Add additional contact with same ContactPartner to fill identity contacts in Matrix
 	contacts_.push_back(Contact(p1, p1));
 
-	// Set offset and length of region for calculation of array position
-	core::Size offset = begin- 1;
-	core::Size length = end - offset;
-
+	core::Size const length = residues.size();
 	// Fill output_matrix with positions of corresponding contact in contacts_ vector
 	for ( core::Size i = 1; i<=length; i++ ) {
 		for ( core::Size j = 1; j<=length; j++ ) {
@@ -243,77 +208,35 @@ void ContactMap::fill_contacts(
 	}
 }
 
-/// @brief Initializes ContactMap between a single region and a ligand
-void ContactMap::fill_contacts(
-	core::Size begin,
-	core::Size end,
-	core::Size ligand_seqpos,
-	Pose const & pose)
-{
-	core::Size matrix_position = 1;
-	std::string ligand_resname = pose.residue(ligand_seqpos).name3();
-	// Make sure ligand_seqpos doesn't equal begin
-	if ( ligand_seqpos == begin ) ++begin;
-	// Loop over residues in specified region
-	for ( core::Size i = begin; i <= end; i++ ) {
-		// Exclude ligand from residues
-		if ( i==ligand_seqpos ) continue;
-		std::string atom_name1 = pose.residue_type(i).name1() == 'G' ? "CA" : "CB";
-		std::string resname1 = pose.residue(i).name3();
-		ContactPartner p1(i, resname1, atom_name1);
-		// Add residue string to 'row_names_'
-		row_names_.push_back(p1.string_rep());
-		// Loop over atoms in ligand
-		for ( core::Size j = 1; j <= pose.residue(ligand_seqpos).atoms().size(); j++ ) {
-			// Skip hydrogen atoms
-			if ( pose.residue(ligand_seqpos).atom_is_hydrogen(j) ) {
-				continue;
-			}
-			// Initialize second partner, create contact and add to 'contacts_'
-			std::string atom_name2 = pose.residue(ligand_seqpos).atom_name(j);
-			ContactPartner p2(ligand_seqpos, ligand_resname, atom_name2);
-			Contact contact = Contact(p1, p2);
-			contacts_.push_back(contact);
-			// Add ligand atom string to 'column_names_'
-			if ( i == begin ) {
-				column_names_.push_back(p2.string_rep());
-			}
-			// Set matrix value to corresponding position in contacts_ vector
-			output_matrix_.push_back(matrix_position++);
-		}
-	}
-}
-
 /// @brief Initializes ContactMap between two separate regions
 void ContactMap::fill_contacts(
-	core::Size start1,
-	core::Size end1,
-	core::Size start2,
-	core::Size end2,
-	Pose const & pose)
-{
+	core::select::residue_selector::ResidueSelector const & region1,
+	core::select::residue_selector::ResidueSelector const & region2,
+	Pose const & pose
+) {
 	core::Size matrix_position = 1;
+	utility::vector1< core::Size > residues1 = core::select::get_residues_from_subset( region1.apply( pose ) );
+	utility::vector1< core::Size > residues2 = core::select::get_residues_from_subset( region2.apply( pose ) );
+
 	// Loop over residues in region1
-	for ( core::Size i = start1; i <= end1; i++ ) {
+	for ( core::Size res1: residues1 ) {
 		// Assign ContactPartner1
-		std::string atom_name1 = pose.residue_type(i).name1() == 'G' ? "CA"
-			: "CB";
-		std::string resname1 = pose.residue(i).name3();
-		ContactPartner p1(i, resname1, atom_name1);
+		std::string atom_name1 = pose.residue_type(res1).name1() == 'G' ? "CA" : "CB";
+		std::string resname1 = pose.residue(res1).name3();
+		ContactPartner p1(res1, resname1, atom_name1);
 		// Add ContactPartner1 string to 'row_names_'
 		row_names_.push_back(p1.string_rep());
 		// Loop over residues in region2
-		for ( core::Size j = start2; j <= end2; j++ ) {
+		for ( core::Size res2: residues2 ) {
 			// Assign ContactPartner2
-			std::string atom_name2 = pose.residue_type(j).name1() == 'G' ? "CA"
-				: "CB";
-			std::string resname2 = pose.residue(j).name3();
-			ContactPartner p2(j, resname2, atom_name2);
+			std::string atom_name2 = pose.residue_type(res2).name1() == 'G' ? "CA" : "CB";
+			std::string resname2 = pose.residue(res2).name3();
+			ContactPartner p2(res2, resname2, atom_name2);
 			// Create contact and add to 'contacts_'
 			Contact contact = Contact(p1, p2);
 			contacts_.push_back(contact);
 			// Add ContactPartner2 string to 'column_names_'
-			if ( i == start1 ) {
+			if ( res1 == residues1[1] ) {
 				column_names_.push_back(p2.string_rep());
 			}
 			// Set matrix value to corresponding position in contacts_ vector
@@ -322,8 +245,69 @@ void ContactMap::fill_contacts(
 	}
 }
 
+/// @brief Initializes ContactMap between a single region and a ligand
+void ContactMap::fill_contacts_all_atom2(
+	core::select::residue_selector::ResidueSelector const & region1,
+	core::select::residue_selector::ResidueSelector const & region2,
+	Pose const & pose
+) {
+	core::Size matrix_position = 1;
+
+	utility::vector1< core::Size > residues1 = core::select::get_residues_from_subset( region1.apply( pose ) );
+	utility::vector1< core::Size > residues2 = core::select::get_residues_from_subset( region2.apply( pose ) );
+	if ( residues2.size() != 1 ) {
+		utility_exit_with_message("In ContactMap mover, the ligand is more than one residue.");
+	}
+
+	core::Size ligand_seqpos = residues2[1];
+	std::string ligand_resname = pose.residue(ligand_seqpos).name3();
+	// Loop over residues in specified region
+	for ( core::Size res1: residues1 ) {
+		// Exclude ligand from residues
+		if ( res1 == ligand_seqpos ) continue;
+		std::string atom_name1 = pose.residue_type(res1).name1() == 'G' ? "CA" : "CB";
+		std::string resname1 = pose.residue(res1).name3();
+		ContactPartner p1(res1, resname1, atom_name1);
+		// Add residue string to 'row_names_'
+		row_names_.push_back(p1.string_rep());
+		// Loop over atoms in ligand
+		for ( core::Size jj = 1; jj <= pose.residue(ligand_seqpos).atoms().size(); ++jj ) {
+			// Skip hydrogen atoms
+			if ( pose.residue(ligand_seqpos).atom_is_hydrogen(jj) ) {
+				continue;
+			}
+			// Initialize second partner, create contact and add to 'contacts_'
+			std::string atom_name2 = pose.residue(ligand_seqpos).atom_name(jj);
+			ContactPartner p2(ligand_seqpos, ligand_resname, atom_name2);
+			Contact contact = Contact(p1, p2);
+			contacts_.push_back(contact);
+			// Add ligand atom string to 'column_names_'
+			if ( res1 == residues1[1] ) {
+				column_names_.push_back(p2.string_rep());
+			}
+			// Set matrix value to corresponding position in contacts_ vector
+			output_matrix_.push_back(matrix_position++);
+		}
+	}
+}
+
+
 /// @brief Process supplied pose
 void ContactMap::apply(Pose & pose) {
+
+	if ( reference_pose_ != nullptr ) {
+		runtime_assert( region1_ != nullptr );
+		if ( region2_ == nullptr ) {
+			fill_contacts( *region1_, *reference_pose_ );
+		} else if ( region2_all_atom_ ) {
+			fill_contacts_all_atom2( *region1_, *region2_, *reference_pose_ );
+		} else {
+			fill_contacts( *region1_, *region2_, *reference_pose_ );
+		}
+
+		reference_pose_ = nullptr; // Hacky "run-only-once" trick;
+	}
+
 	using namespace pose;
 	n_poses_++;
 
@@ -443,18 +427,18 @@ void ContactMap::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	//Format for region strings?
-	//Option 1: a single character (chain ID)
-	//Option 2: hyphen-separated residue numbers
+	//Option 1: a single alphabetical character (chain ID)
 	//Option 3: a single residue number
+	//Option 2: hyphen-separated residue numbers
 	XMLSchemaRestriction region_string;
 	region_string.name( "contact_map_region_string" );
 	region_string.base_type( xs_string );
-	region_string.add_restriction( xsr_pattern, ".|[0-9]+(-[0-9]+)?" );
+	std::string pattern = "[A-Za-z]|" + residue_number_string() + "|" + residue_number_string() + "[-]" + residue_number_string();
+	region_string.add_restriction( xsr_pattern, pattern );
 	xsd.add_top_level_element( region_string );
 
 	AttributeList attlist;
 	attlist
-
 		+ XMLSchemaAttribute( "distance_cutoff", xsct_real, "Maximum distance between two atoms that will be considered a contact" )
 		+ XMLSchemaAttribute( "prefix", xs_string, "Prefix for output filenames" )
 		+ XMLSchemaAttribute::attribute_w_default( "reset_count", xsct_rosetta_bool, "Should the count be reset to zero after outputting the contact map to a file?", "true" )
@@ -464,6 +448,8 @@ void ContactMap::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute( "region1", "contact_map_region_string", "Region definition for region1 of the contact map in format start-end or chainID" )
 		+ XMLSchemaAttribute( "region2", "contact_map_region_string", "Region definition for region2 of the contact map" )
 		+ XMLSchemaAttribute( "ligand", "contact_map_region_string", "Sequence position or chainID of a ligand" );
+
+	core::pose::attributes_for_saved_reference_pose_w_description( attlist, "Reference pose to use when building the initial contact map description (defaults to input pose)." );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Generates a contact map between specified regions", attlist );
 

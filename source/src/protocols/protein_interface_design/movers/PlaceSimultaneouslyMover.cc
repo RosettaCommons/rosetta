@@ -23,6 +23,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/ref_pose.hh>
 #include <utility/tag/Tag.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
@@ -674,6 +675,10 @@ PlaceSimultaneouslyMover::apply( core::pose::Pose & pose )
 {
 	using namespace protocols::hotspot_hashing;
 
+	if ( reference_pose_ != nullptr ) {
+		finalize_stub_sets(stub_sets_, *reference_pose_, host_chain_);
+	}
+
 	bool const stub_score_filter_pass( stub_score_filter_->apply( pose ) );
 	if ( !stub_score_filter_pass ) {
 		TR<<"Stub score filter reported failure at the beginning of PlaceSimultaneously. Failing"<<std::endl;
@@ -825,6 +830,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 			explosion_ = btag->getOption< core::Size >( "explosion", 0 );
 			stub_energy_threshold_ = btag->getOption<core::Real>( "stub_energy_threshold", 1.0 );
 			max_cb_cb_dist_ = btag->getOption< core::Real >( "max_cb_dist", 3.0 );
+			reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( btag, data, mover_name(), /*use_native*/ false );
 
 			utility::vector0< TagCOP > const & stubset_tags( btag->getTags() );
 			for ( TagCOP stubset_tag : stubset_tags ) {
@@ -838,38 +844,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				}
 
 				stub_sets_.push_back(std::make_pair(stubset, std::make_pair(utility::pointer::make_shared< HotspotStub >(), 0)));  // REQUIRED FOR WINDOWS
-				//stub_sets_.push_back( StubSetStubPos( stubset, std::pair< HotspotStubOP, core::Size >( 0, 0 ) ) );
-				core::pose::PoseOP ala_pose( new core::pose::Pose( pose ) );
-				pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( *ala_pose ));
-				task->initialize_from_command_line().or_include_current( true );
 
-				utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, false );
-				allowed_aas[ chemical::aa_ala ] = true;
-
-				core::Size const chain_begin( ala_pose->conformation().chain_begin( host_chain_ ) );
-				core::Size const chain_end( ala_pose->conformation().chain_end( host_chain_ ) );
-
-				for ( core::Size i = 1; i <= pose.size(); i++ ) {
-					if ( !pose.residue(i).is_protein() ) continue;
-					if ( i >= chain_begin && i <=chain_end ) {
-						core::Size const restype( ala_pose->residue(i).aa() );
-						if ( ( restype == chemical::aa_pro  && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] ) || restype == chemical::aa_gly ) {
-							task->nonconst_residue_task(i).prevent_repacking();
-						} else {
-							task->nonconst_residue_task(i).restrict_absent_canonical_aas( allowed_aas );
-						}
-					} else {
-						task->nonconst_residue_task( i ).prevent_repacking();
-					}
-				}
-				if ( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
-					core::pack::task::parse_resfile(pose, *task);
-				}
-
-				core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
-				pack::pack_rotamers( *ala_pose, *scorefxn, task);
-				(*scorefxn)( *ala_pose );
-				stubset->pair_with_scaffold( *ala_pose, host_chain_, utility::pointer::make_shared< protocols::filters::TrueFilter >() );
 				std::string const stub_set_filter_name( stubset_tag->getOption< std::string >( "filter_name", "true_filter" ) );
 				auto stub_set_filter( filters.find( stub_set_filter_name ) );
 				runtime_assert( stub_set_filter != filters.end() );
@@ -1104,6 +1079,9 @@ void PlaceSimultaneouslyMover::provide_xml_schema( utility::tag::XMLSchemaDefini
 		+ XMLSchemaAttribute::attribute_w_default( "explosion", xsct_non_negative_integer, "which chis to explode, which probably means 'sample extensively'", "0") //XRW TODO: positive integer if chis?  is 0 a flag value?
 		+ XMLSchemaAttribute::attribute_w_default( "stub_energy_threshold", xsct_real, "after placement and minimization, what energy cutoff to use for each of the hotspots", "1.0")
 		+ XMLSchemaAttribute::attribute_w_default( "max_cb_dist", xsct_real, "Maximum distance from ideal placement that is nonetheless considered a hit", "3.0" );
+
+	core::pose::attributes_for_saved_reference_pose_w_description(StubSets_attlist, "The reference pose to use for finalizing the stub sets (defaults to input pose).");
+
 	if ( !attribute_w_name_in_attribute_list( "cb_force", StubSets_attlist ) ) {
 		StubSets_attlist + XMLSchemaAttribute( "cb_force", xsct_real, "the force on CB atoms" );
 	}

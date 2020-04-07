@@ -63,6 +63,7 @@
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/ref_pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/conformation/util.hh>
 #include <core/import_pose/import_pose.hh>
@@ -1866,7 +1867,7 @@ std::string Splice::get_name() const {
 	return SpliceCreator::mover_name();
 }
 
-void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & pose ) {
+void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & ) {
 	utility::vector1<TagCOP> const sub_tags(tag->getTags());
 	enzdes_ =tag->getOption<bool>("enzdes",false);//Add enzdes constraints
 	mover_name_=tag->getOption<std::string>("name");//for debugging purposes
@@ -2078,19 +2079,19 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 			template_pose_ = data.get_ptr<core::pose::Pose>("poses", template_file_);
 			TR << "using template pdb from datamap" << std::endl;
 		} else if ( tag->hasOption("template_file") ) {
-			template_pose_ = utility::pointer::make_shared< core::pose::Pose >();
-			template_pose_ = core::import_pose::pose_from_file(template_file_);
-			data.add("poses", template_file_, template_pose_);
+			core::pose::PoseOP template_pose = core::import_pose::pose_from_file(template_file_);
+			data.add("poses", template_file_, template_pose);
+			template_pose_ = template_pose; // OP -> COP
 			TR << "loading template_pose from " << template_file_ << std::endl;
 		}
 	} else {
-		template_pose_ = utility::pointer::make_shared< core::pose::Pose >(pose);
+		template_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, mover_name() );
 	}
 	set_fold_tree_only_ = tag->getOption<bool>("set_fold_tree_only", false);
 	if ( set_fold_tree_only_ ) {
 		return; //other options are not relevant
 	}
-	start_pose_ = utility::pointer::make_shared< core::pose::Pose >(pose);
+	start_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, mover_name() );
 	runtime_assert(tag->hasOption("torsion_database") != tag->hasOption("source_pdb"));
 	task_factory(protocols::rosetta_scripts::parse_task_operations(tag, data));
 	if ( !tag->hasOption("task_operations") ) {
@@ -3174,7 +3175,7 @@ std::string Splice::parse_pdb_code(std::string pdb_file_name) {
 	return pdb_file_name;
 
 }
-void Splice::rb_adjust_template(core::pose::Pose const & pose) const {
+void Splice::rb_adjust_template(core::pose::Pose const & pose) {
 	if ( !rb_sensitive() ) {
 		return;
 	}
@@ -3189,15 +3190,17 @@ void Splice::rb_adjust_template(core::pose::Pose const & pose) const {
 	core::pose::Pose chainA = *pose.split_by_chain(1);
 	core::kinematics::Jump const pose_jump = rbo.get_disulf_jump(copy_pose, chainA);
 
+	core::pose::PoseOP template_pose = template_pose_->clone(); // A bit of a dance to get around template_pose_ needing to be a COP.
 	RBInMover rbi;
-	rbi.set_fold_tree(*template_pose_);
+	rbi.set_fold_tree(*template_pose);
 	TR << "The RBO will be applied on template with foldtree " << (*template_pose_).fold_tree() << std::endl;
-	template_pose_->set_jump(1, pose_jump);
+	template_pose->set_jump(1, pose_jump);
 	if ( debug_ ) {
-		template_pose_->dump_pdb(mover_name_ + "_template_should_be_pose_aligned.pdb");
+		template_pose->dump_pdb(mover_name_ + "_template_should_be_pose_aligned.pdb");
 		pose.dump_pdb( mover_name_ + "_pose_should_be_template_aligned.pdb");
 		// runtime_assert( 0 );
 	}
+	template_pose_ = template_pose;
 }
 /// @brief Since we want to minimally perturb the active site confirmation (whether it be binding or catalytic) the cut site should be placed farthest away.
 /// For each protein family we will probably need special definitions unless we find a more general way. For antibodies I go from the conserved Trp res at the base of CDR1
@@ -3280,6 +3283,8 @@ void Splice::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute( "protein_family", xs_string, "XRW TO DO" )
 		+ XMLSchemaAttribute( "source_pdb_to_res", xsct_refpose_enabled_residue_number, "XRW TO DO" )
 		+ XMLSchemaAttribute::attribute_w_default( "skip_alignment", xsct_rosetta_bool, "XRW TO DO", "false" );
+
+	core::pose::attributes_for_saved_reference_pose_w_description( attlist, "Use the reference pose as the 'start' pose (and a template pose if template_file is not given." );
 
 	// The "Segments" subtag
 	AttributeList segments_subtag_attlist;

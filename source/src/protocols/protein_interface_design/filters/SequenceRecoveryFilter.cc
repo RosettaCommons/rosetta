@@ -28,6 +28,7 @@
 #include <ObjexxFCL/format.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
 #include <core/pose/util.hh>
+#include <core/pose/ref_pose.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes
@@ -285,7 +286,7 @@ SequenceRecoveryFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	TR << "SequenceRecoveryFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
@@ -299,16 +300,7 @@ SequenceRecoveryFilter::parse_my_tag( utility::tag::TagCOP tag,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[ in::file::native ].user() ) {
-		std::string const reference_pdb = option[ in::file::native ]();
-		core::pose::PoseOP temp_pose( new core::pose::Pose );
-		core::import_pose::pose_from_file( *temp_pose, reference_pdb , core::import_pose::PDB_file);
-		reference_pose( temp_pose );
-		TR<<"Using native pdb "<<reference_pdb<<" as reference.";
-	} else {
-		TR<<"Using starting pdb as reference. You could use -in::file::native to specify a different pdb for reference";
-		reference_pose( pose );
-	}
+	reference_pose( protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, class_name() ) );
 	TR<<std::endl;
 }
 
@@ -346,6 +338,8 @@ void SequenceRecoveryFilter::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		+ XMLSchemaAttribute::attribute_w_default( "report_mutations", xsct_rosetta_bool, "Decide pass/fail based on the mutation threshold, not the rate threshold", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "verbose", xsct_rosetta_bool, "Give a lot more logging output", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "write2pdb", xsct_rosetta_bool, "Write each mutation as a string to the output PDB", "0" );
+
+	core::pose::attributes_for_saved_reference_pose( attlist );
 
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
 }

@@ -18,6 +18,7 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/ref_pose.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
@@ -34,6 +35,7 @@
 // Unit Headers
 #include <protocols/filters/Filter.hh>
 #include <protocols/protein_interface_design/movers/PlaceUtils.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
@@ -187,6 +189,10 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 	ResidueAuction saved_auction; /// auction_results_ will be depleted in the following. Then, if successful, I'll reinstate it.
 	if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
 		saved_auction = auction_results() ; /// auction_results_ will be depleted in the following. Then, if successful, I'll reinstate it.
+	}
+
+	if ( reference_pose_ != nullptr ) {
+		finalize_stub_sets( stub_sets_, *reference_pose_, host_chain_ );
 	}
 
 	for ( StubSetStubPos const & hs_set : stub_sets_ ) {
@@ -355,7 +361,7 @@ PlacementAuctionMover::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap &data,
 	protocols::filters::Filters_map const &,
 	Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	using namespace protocols::hotspot_hashing;
 	using namespace protocols::filters;
@@ -365,8 +371,12 @@ PlacementAuctionMover::parse_my_tag( TagCOP const tag,
 	max_cb_cb_dist_ = tag->getOption< core::Real >( "max_cb_dist", 3.0 );
 	cb_force_ = tag->getOption< core::Real >( "cb_force", 0.5 );
 	stub_energy_fxn_ = tag->getOption<std::string>( "stubscorefxn", "backbone_stub_constraint" ) ;
-	stub_sets_ = parse_stub_sets( tag, pose, host_chain_, data );
-	runtime_assert( stub_sets_.size() );
+	stub_sets_ = parse_stub_sets( tag, data );
+	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, mover_name(), /*use_native*/ false );
+
+	if ( stub_sets_.empty() ) {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "At least one StubSet must be defined in PlacementAuctionMover.");
+	}
 	TR<<"max cb cb distance set to "<<max_cb_cb_dist_<<" and cb_force to "<<cb_force_<< " stub energy function" << stub_energy_fxn_ << '\n';
 	TR<<"PlacementAuction mover on chain "<<host_chain_<<" with repack_non_ala set to "<<std::endl;
 }
@@ -388,6 +398,8 @@ void PlacementAuctionMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		+ XMLSchemaAttribute::attribute_w_default( "max_cb_dist", xsct_real, "Maximum distance from ideal placement that is nonetheless considered a hit", "3.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "cb_force", xsct_real, "Force to apply to CB atoms", "0.5" )
 		+ XMLSchemaAttribute::attribute_w_default( "stubscorefxn", xs_string, "Scoring function to apply to the stubs being placed", "backbone_stub_constraint" );
+
+	core::pose::attributes_for_saved_reference_pose_w_description(attlist, "The reference pose to use for finalizing the stub sets (defaults to input pose).");
 
 	XMLSchemaSimpleSubelementList ssl;
 	add_subelement_for_parse_stub_sets( ssl, xsd );

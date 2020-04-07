@@ -77,7 +77,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
-	PoseOP init_pose_;
+	PoseCOP init_pose_;
 	bool allsc_, ensure_variant_matching_, two_step_,multi_use_; // two_step: dflt false; on first apply, record sidechains, on second apply, enforce them.
 	core::Size jumpid_;
 	BoolDataCacheBoolOP first_apply_; // internal for two_step_

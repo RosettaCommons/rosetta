@@ -309,6 +309,24 @@ public:
 		basic::resource_manager::ResourceManagerOP resource_manager = nullptr
 	);
 
+	ParsedProtocolOP
+	generate_mover_for_protocol(
+		utility::tag::TagCOP protocol_tag,
+		basic::datacache::DataMap & data,
+		core::pose::Pose & pose,
+		bool & modified_pose,
+		utility::options::OptionCollection const & options,
+		XmlObjectsOP xml_objects = nullptr,
+		basic::resource_manager::ResourceManagerOP resource_manager = nullptr
+	);
+
+	/// @brief Initialize the passed datamap with the standard set of default RosettaScripts objects
+	void
+	initialize_data_map(
+		basic::datacache::DataMap & data,
+		utility::options::OptionCollection const & options
+	);
+
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////
@@ -455,6 +473,12 @@ public:
 		std::string const & current_input_name = "",
 		std::string const & current_output_name = "",
 		bool guarantee_new_mover = false
+	);
+
+	protocols::moves::MoverOP
+	generate_mover_from_pose(
+		core::pose::Pose const & pose,
+		std::string const & xml_file
 	);
 
 	///@brief Checks the LOCAL options collection to see if a protocol has been set.

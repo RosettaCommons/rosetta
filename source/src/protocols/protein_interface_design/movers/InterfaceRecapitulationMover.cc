@@ -22,7 +22,9 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/ref_pose.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -94,7 +96,7 @@ InterfaceRecapitulationMover::get_reference_pose() const
 }
 
 void
-InterfaceRecapitulationMover::set_reference_pose( core::pose::PoseOP pose )
+InterfaceRecapitulationMover::set_reference_pose( core::pose::PoseCOP pose )
 {
 	saved_pose_ = pose;
 }
@@ -139,8 +141,8 @@ InterfaceRecapitulationMover::apply( core::pose::Pose & pose ){
 
 
 void
-InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const & movers, core::pose::Pose const & pose ){
-	set_reference_pose( utility::pointer::make_shared< core::pose::Pose >( pose ) );
+InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const & movers, core::pose::Pose const & ){
+	set_reference_pose( protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, mover_name(), /*use_native*/ false ) );
 	std::string const mover_name( tag->getOption<std::string>( "mover_name" ) );
 	auto find_mover( movers.find( mover_name ));
 	bool const mover_found( find_mover != movers.end() );
@@ -170,6 +172,8 @@ void InterfaceRecapitulationMover::provide_xml_schema( utility::tag::XMLSchemaDe
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute( "mover_name", xs_string, "Name of mover to be applied, either a DesignRepack or PackRotamers" )
 		+ XMLSchemaAttribute::attribute_w_default( "pssm", xsct_rosetta_bool, "Should the pssm score be calculated against a possibly-provided pose reference?", "false" );
+
+	core::pose::attributes_for_saved_reference_pose( attlist );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
 }

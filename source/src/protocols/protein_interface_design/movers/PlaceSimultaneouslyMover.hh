@@ -115,6 +115,7 @@ private:
 	utility::vector1< StubSetStubPos > stub_sets_;
 	utility::vector1< StubSetStubPos > saved_stub_sets_;
 	std::map< protocols::hotspot_hashing::HotspotStubSetOP, protocols::filters::FilterOP > stub_set_filters_;
+	core::pose::PoseCOP reference_pose_;
 
 	/// the maximum distance for a stub to be considered a a neighbour to a host residue
 	core::Real max_cb_cb_dist_;

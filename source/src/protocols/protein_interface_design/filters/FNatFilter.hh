@@ -68,7 +68,7 @@ public:
 
 private:
 	core::Real threshold_;
-	core::pose::PoseOP reference_pose_;
+	core::pose::PoseCOP reference_pose_;
 	protocols::docking::DockJumps movable_jumps_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 };

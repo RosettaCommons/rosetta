@@ -25,6 +25,7 @@
 #include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/ref_pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -55,21 +56,14 @@ SidechainRmsdFilter::SidechainRmsdFilter( std::string const & res1, std::string 
 SidechainRmsdFilter::~SidechainRmsdFilter()= default;
 
 void
-SidechainRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+SidechainRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	res1_ = core::pose::get_resnum_string( tag, "res1_" );
 	res2_ = core::pose::get_resnum_string( tag, "res2_" );
 	rmsd_threshold_ = tag->getOption<core::Real>("threshold", 1.0);
 	include_backbone_ = tag->getOption<bool>("include_backbone", false);
 
-	if ( tag->hasOption("reference_name") ) {
-		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map);
-	} else {
-		reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
-		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-			core::import_pose::pose_from_file( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
-		}
-	}
+	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data_map, class_name() );
 
 	//residue_distance_filter_tracer<<"ResidueDistanceFilter with distance threshold of "<<distance_threshold_<<" between residues "<<res1_<<" and "<<res2_<<std::endl;
 }

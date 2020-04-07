@@ -97,6 +97,7 @@ private:
 	core::Real max_cb_cb_dist_, cb_force_;
 	std::string stub_energy_fxn_;
 	utility::vector1< StubSetStubPos > stub_sets_;
+	core::pose::PoseCOP reference_pose_;
 };
 
 } //movers

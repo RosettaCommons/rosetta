@@ -94,7 +94,7 @@ private:
 	bool changing_baseline_; //dflt false; Should the baseline be reset each time this delta filter is called? If so, then set changing baseline to true.
 	core::Size jump_; //dflt 0, but defaults to 1 if unbound is true
 	protocols::moves::MoverOP relax_mover_; // a mover to be called before evaluating the filter's value. Only called for computing the baseline at the start!
-	core::pose::PoseOP reference_pose_; //the reference pose that the baseline will be calculated on. note: this will only get set if a pose saved in the middle of an RS protocol and not the starting structure is the reference
+	core::pose::PoseCOP reference_pose_; //the reference pose that the baseline will be calculated on.
 	mutable core::Real ref_baseline_; // The baseline from the reference pose
 
 	void unbind( core::pose::Pose & ) const; //utility function for unbinding the pose

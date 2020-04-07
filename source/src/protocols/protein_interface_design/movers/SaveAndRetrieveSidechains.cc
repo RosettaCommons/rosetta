@@ -24,10 +24,12 @@
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/ref_pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <protocols/calc_taskop_movers/DesignRepackMover.hh>
 
@@ -94,7 +96,7 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 {
 	if ( two_step() && first_apply_->obj ) {
 		TR<<"Saving sidechains."<<std::endl;
-		*init_pose_ = pose;
+		init_pose_ = pose.clone();
 		first_apply_->obj = false;
 		return;
 	}
@@ -158,14 +160,14 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 
 
 void
-SaveAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+SaveAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	first_apply_->obj = true;
 	allsc_ = tag->getOption<bool>( "allsc", false );
 	multi_use( tag->getOption< bool >( "multi_use", false ) );
 	two_step( tag->getOption< bool >( "two_step", false ) );
 	if ( !two_step() ) {
-		init_pose_ = utility::pointer::make_shared< core::pose::Pose >( pose );
+		init_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, mover_name(), /*use_native*/ false );
 	}
 	jumpid_ = tag->getOption<core::Size>( "jumpid", 1 );
 }
@@ -192,6 +194,8 @@ void SaveAndRetrieveSidechains::provide_xml_schema( utility::tag::XMLSchemaDefin
 		+ XMLSchemaAttribute::attribute_w_default( "multi_use", xsct_rosetta_bool, "Set up so that we can use this multiple times", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "two_step", xsct_rosetta_bool, "Save and retrieve in two steps", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "jumpid", xsct_non_negative_integer, "Jump ID to keep track of", "1" );
+
+	core::pose::attributes_for_saved_reference_pose_w_description( attlist, "If two_step is false, what structure to get the sidechains from." );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );
 }

@@ -63,8 +63,25 @@ core::Size
 find_nearest_residue_to_coord( core::pose::Pose const & pose, numeric::xyzVector< core::Real > const & coord, core::Size const host_chain );
 
 /// @brief a utility function for parsing stubset information from a tag
+/// You will need to call finalize_stub_sets() with the reference pose prior to using them.
 utility::vector1< std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > >
-parse_stub_sets( utility::tag::TagCOP tag, core::pose::Pose const & pose, core::Size const host_chain, basic::datacache::DataMap data );
+parse_stub_sets( utility::tag::TagCOP tag, basic::datacache::DataMap data );
+
+/// @brief Update a stubset with the reference pose information
+void
+finalize_stub_set(
+	protocols::hotspot_hashing::HotspotStubSetOP stubset,
+	core::pose::Pose const & pose,
+	core::Size const host_chain
+);
+
+/// @brief Update the stubsets created with parse_stub_sets with the reference pose information.
+void
+finalize_stub_sets(
+	utility::vector1< std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > > & stubsets,
+	core::pose::Pose const & refpose,
+	core::Size const host_chain
+);
 
 void
 add_subelement_for_parse_stub_sets( utility::tag::XMLSchemaSimpleSubelementList & ssl, utility::tag::XMLSchemaDefinition & xsd );

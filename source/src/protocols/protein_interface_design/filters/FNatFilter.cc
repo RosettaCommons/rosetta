@@ -19,6 +19,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/ref_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
@@ -99,19 +100,9 @@ FNatFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-FNatFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose )
+FNatFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
-	/// @details
-	///if the save pose mover has been instantiated, this filter can calculate the rms
-	///against the ref pose
-	if ( tag->hasOption("reference_name") ) {
-		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map );
-	} else {
-		reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( reference_pose );
-		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-			core::import_pose::pose_from_file( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
-		}
-	}
+	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data_map, class_name() );
 
 	threshold_ = tag->getOption<core::Real>( "threshold", 5 );
 

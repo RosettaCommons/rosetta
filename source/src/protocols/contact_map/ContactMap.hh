@@ -29,6 +29,7 @@
 // Unit headers
 #include <protocols/contact_map/ContactMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <core/types.hh>
 #include <basic/datacache/DataMap.fwd.hh>
@@ -69,16 +70,25 @@ public:
 	/// @brief Setter functions for private class variables
 	void set_output_prefix( std::string prefix){ output_prefix_ = prefix; }
 	void set_distance_cutoff( core::Real cutoff ){ distance_cutoff_ = cutoff; }
+	void set_models_per_file( core::Size setting ) { models_per_file_ = setting; }
+	void set_row_format( bool setting ) { row_format_ = setting; }
+	void set_distance_matrix( bool setting ) { distance_matrix_ = setting; }
+	void set_regions(
+		core::select::residue_selector::ResidueSelectorCOP region1,
+		core::select::residue_selector::ResidueSelectorCOP region2 = nullptr ) {
+		region1_ = region1;
+		region2_ = region2;
+	}
+	void set_region2_all_atom( bool setting ) { region2_all_atom_ = setting; }
+	void set_reference_pose( core::pose::PoseCOP setting ) { reference_pose_ = setting; }
 
 	/// @brief :
 	///  Parses region string end sets the boundaries accordingly
 	/// @details:
 	///  Possible formats for the region definition are "<int seqpos>" (e.g '12'),
 	///  "<int begin>-<int end>" (e.g. '1-10') or "<char chainID>"(e.g. 'A')
-	void parse_region_string(std::string,
-		core::Size & ,
-		core::Size &,
-		Pose const &);
+	core::select::residue_selector::ResidueSelectorCOP
+	parse_region_string(std::string const &) const;
 
 	/// @brief Resets the movers n_poses_ variable  and the counts of all contacts to 0
 	void reset();
@@ -89,23 +99,20 @@ public:
 
 	/// @brief Initializes ContactMap within a single region
 	void fill_contacts(
-		core::Size region_begin,
-		core::Size region_end,
-		Pose const & pose);
-
-	/// @brief Initializes ContactMap between a single region and a ligand
-	void fill_contacts(
-		core::Size region_begin,
-		core::Size region_end,
-		core::Size seqpos_ligand,
+		core::select::residue_selector::ResidueSelector const & region,
 		Pose const & pose);
 
 	/// @brief Initializes ContactMap between two separate regions
 	void fill_contacts(
-		core::Size region1_begin,
-		core::Size region1_end,
-		core::Size region2_begin,
-		core::Size region2_end,
+		core::select::residue_selector::ResidueSelector const & region1,
+		core::select::residue_selector::ResidueSelector const & region2,
+		Pose const & pose);
+
+	/// @brief Initializes ContactMap between a single region and all atoms of a ligand
+	/// @details (region2 must resolve to a single residue).
+	void fill_contacts_all_atom2(
+		core::select::residue_selector::ResidueSelector const & region1,
+		core::select::residue_selector::ResidueSelector const & region2,
 		Pose const & pose);
 
 	/// @brief Get the contact for a particular row and column
@@ -148,6 +155,10 @@ private:
 	bool row_format_;
 	bool distance_matrix_;
 
+	core::pose::PoseCOP reference_pose_; // The reference pose to use with the residue selectors.
+	core::select::residue_selector::ResidueSelectorCOP region1_;
+	core::select::residue_selector::ResidueSelectorCOP region2_;
+	bool region2_all_atom_ = false; /// @brief Calculate contacts to all atoms in region2_, not just Cbeta.
 
 }; //class ContactMap
 

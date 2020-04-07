@@ -23,6 +23,8 @@
 
 #include <protocols/moves/Mover.hh>
 #include <basic/Tracer.hh>
+#include <basic/datacache/DataMap.hh>
+#include <basic/options/option.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -70,8 +72,9 @@ SubroutineMover::parse_my_tag( TagCOP const tag,
 	protocols::rosetta_scripts::RosettaScriptsParserOP rsparser( new protocols::rosetta_scripts::RosettaScriptsParser );
 	TR<<"Parsing a subroutine xml_file"<<std::endl;
 	TR<<"*************WARNING: AT THIS POINT, CONSTRAINTS ADDED TO THE POSE IN A SUBROUTINE WILL BE IGNORED***********"<<std::endl;
-	core::pose::Pose nonconst_pose( pose );
-	rsparser->generate_mover_from_pose( nonconst_pose, mover_, true /*new input*/, xml_fname );
+
+	mover_ = rsparser->generate_mover_from_pose(pose, xml_fname);
+
 }
 
 protocols::moves::MoverOP

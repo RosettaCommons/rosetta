@@ -14,6 +14,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/ref_pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <basic/datacache/DataMap.hh>
@@ -208,7 +209,7 @@ DeltaFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	TR << "DeltaFilter"<<std::endl;
 	range( tag->getOption< core::Real >( "range", 0.0 ) );
@@ -226,18 +227,15 @@ DeltaFilter::parse_my_tag( utility::tag::TagCOP tag,
 	}
 	// need to score the pose before packing...
 	if ( tag->hasOption("reference_name") ) {
-		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data );
+		reference_pose_ = core::pose::saved_reference_pose( tag, data );
 		TR << "baseline will be caculated once, when first needed..." << std::endl;
 	} else if ( tag->hasOption("reference_pdb") ) {
 		std::string reference_pdb_filename( tag->getOption< std::string >( "reference_pdb", "" ) );
 		reference_pose_ = core::import_pose::pose_from_file( reference_pdb_filename , core::import_pose::PDB_file);
 		TR << "baseline will be caculated once, when first needed..." << std::endl;
 	} else if ( tag->hasOption( "relax_mover" ) ) {
-		core::pose::Pose p( pose );
-		(*scorefxn())(p);
-		relax_mover()->apply( p );
-		unbind( p );
-		baseline( filter()->report_sm( p ) );
+		reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, class_name(), /*use_native*/ false);
+		TR << "baseline will be caculated once, when first needed..." << std::endl;
 	}
 
 	TR<<"with options baseline: ";

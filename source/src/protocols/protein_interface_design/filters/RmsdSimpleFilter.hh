@@ -107,7 +107,7 @@ private:
 private:
 
 	core::Real threshold_;
-	core::pose::PoseOP reference_pose_;
+	core::pose::PoseCOP reference_pose_;
 	core::Size target_chain_;
 	core::Size do_align_;
 	bool b_target_chain_;

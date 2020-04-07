@@ -405,6 +405,49 @@ RosettaScriptsParser::create_tag_from_xml( std::string const & xml_fname, utilit
 	}
 }
 
+void
+RosettaScriptsParser::initialize_data_map(
+	basic::datacache::DataMap & data,
+	utility::options::OptionCollection const & options
+) {
+
+	if ( options[ OptionKeys::in::file::native ].user() ) {
+		load_native( options[ OptionKeys::in::file::native ].value() );
+	}
+
+	////////////////////////////////////////////
+	///// Set up some defaults in the data maps
+
+	// default scorefxns
+	ScoreFunctionOP commandline_sfxn  = core::scoring::get_score_function(options);
+	data.add( "scorefxns", "commandline", commandline_sfxn );
+	// Only add the default scorefunctions if compatible options have been provided.
+	if ( options[ basic::options::OptionKeys::corrections::restore_talaris_behavior ]() ) {
+		data.add( "scorefxns", "talaris2014", ScoreFunctionFactory::create_score_function(TALARIS_2014) );
+		data.add( "scorefxns", "talaris2013", ScoreFunctionFactory::create_score_function(TALARIS_2013) );
+	} else if ( options[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ]() ) {
+		data.add( "scorefxns", "score12", ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, SCORE12_PATCH ) );
+		data.add( "scorefxns", "score_docking", ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, DOCK_PATCH ) );
+	} else {
+		data.add( "scorefxns", "REF2015", ScoreFunctionFactory::create_score_function(REF_2015)  );
+	}
+	data.add( "scorefxns", "soft_rep", ScoreFunctionFactory::create_score_function( SOFT_REP_DESIGN_WTS ) );
+	data.add( "scorefxns", "score_docking_low", ScoreFunctionFactory::create_score_function( "interchain_cen" ) );
+	data.add( "scorefxns", "score4L", ScoreFunctionFactory::create_score_function( "cen_std", "score4L" ) );
+	//default scorefxns end
+
+	//If native is set, add it to the datamap as a resource instead of loading in each individual mover.  Works in JD3 as well to allow better benchmarking.
+	if ( native_pose_ ) {
+		data.add_resource("native_pose", native_pose_);
+	}
+
+	//Give a COP of the OptionCollection to the datamap to begin using local options with RosettaScripts.
+	if ( local_options_ ) {
+		data.add_resource("options", local_options_);
+	}
+
+}
+
 
 /// @details Uses the Tag interface to the xml reader library in boost to parse
 /// an xml file that contains design protocol information. A sample protocol
@@ -466,6 +509,22 @@ RosettaScriptsParser::generate_mover_from_pose(
 	return modified_pose;
 }
 
+protocols::moves::MoverOP
+RosettaScriptsParser::generate_mover_from_pose(
+	core::pose::Pose const & pose,
+	std::string const & xml_file
+) {
+	core::pose::Pose nonconst_pose(pose);
+
+	bool modified_pose = false;
+	basic::datacache::DataMap new_data;
+
+	// Is referencing the global options really what we want here?
+	initialize_data_map( new_data, basic::options::option );
+	TagCOP new_tag = create_tag_from_xml( xml_file, basic::options::option);
+	return generate_mover_for_protocol( new_tag, new_data, nonconst_pose, modified_pose, basic::options::option );
+
+}
 
 ParsedProtocolOP
 RosettaScriptsParser::generate_mover_for_protocol(
@@ -477,22 +536,10 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	std::string const & current_output_name /* = "" */,
 	XmlObjectsOP xml_objects,
 	basic::resource_manager::ResourceManagerOP resource_manager
-)
-{
-	if ( !tag->hasTag("PROTOCOLS") ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "parser::protocol file must specify PROTOCOLS section");
-	}
-
-	if ( options[ OptionKeys::in::file::native ].user() ) {
-		load_native( options[ OptionKeys::in::file::native ].value() );
-	}
-
-	Movers_map movers;
-	protocols::filters::Filters_map filters;
+) {
 	basic::datacache::DataMap data; // abstract objects, such as scorefunctions, to be used by filter and movers
 
-	typedef std::pair< std::string const, MoverOP > StringMover_pair;
-	typedef std::pair< std::string const, protocols::filters::FilterOP > StringFilter_pair;
+	initialize_data_map( data, options );
 
 	// Set the names for this job -- the input names and the output names
 	{
@@ -509,8 +556,32 @@ RosettaScriptsParser::generate_mover_for_protocol(
 		}
 	}
 
-	////////////////////////////////////////////
-	///// Set up some defaults in the data maps
+	return generate_mover_for_protocol(tag, data, pose, modified_pose, options, xml_objects, resource_manager);
+}
+
+ParsedProtocolOP
+RosettaScriptsParser::generate_mover_for_protocol(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	core::pose::Pose & pose,
+	bool & modified_pose,
+	utility::options::OptionCollection const &,
+	XmlObjectsOP xml_objects,
+	basic::resource_manager::ResourceManagerOP resource_manager
+) {
+
+	if ( !tag->hasTag("PROTOCOLS") ) {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "parser::protocol file must specify PROTOCOLS section");
+	}
+
+	////////////////
+	// This bit will need to be migrated to initialize_data_map() later on.
+
+	Movers_map movers;
+	protocols::filters::Filters_map filters;
+
+	typedef std::pair< std::string const, MoverOP > StringMover_pair;
+	typedef std::pair< std::string const, protocols::filters::FilterOP > StringFilter_pair;
 
 	protocols::filters::FilterOP true_filter( new protocols::filters::TrueFilter );
 	protocols::filters::FilterOP false_filter( new protocols::filters::FalseFilter );
@@ -520,33 +591,6 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	MoverOP null_mover( new protocols::moves::NullMover() );
 	movers.insert( StringMover_pair( "null", null_mover) );
 
-	// default scorefxns
-	ScoreFunctionOP commandline_sfxn  = core::scoring::get_score_function(options);
-	data.add( "scorefxns", "commandline", commandline_sfxn );
-	// Only add the default scorefunctions if compatible options have been provided.
-	if ( options[ basic::options::OptionKeys::corrections::restore_talaris_behavior ]() ) {
-		data.add( "scorefxns", "talaris2014", ScoreFunctionFactory::create_score_function(TALARIS_2014) );
-		data.add( "scorefxns", "talaris2013", ScoreFunctionFactory::create_score_function(TALARIS_2013) );
-	} else if ( options[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ]() ) {
-		data.add( "scorefxns", "score12", ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, SCORE12_PATCH ) );
-		data.add( "scorefxns", "score_docking", ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, DOCK_PATCH ) );
-	} else {
-		data.add( "scorefxns", "REF2015", ScoreFunctionFactory::create_score_function(REF_2015)  );
-	}
-	data.add( "scorefxns", "soft_rep", ScoreFunctionFactory::create_score_function( SOFT_REP_DESIGN_WTS ) );
-	data.add( "scorefxns", "score_docking_low", ScoreFunctionFactory::create_score_function( "interchain_cen" ) );
-	data.add( "scorefxns", "score4L", ScoreFunctionFactory::create_score_function( "cen_std", "score4L" ) );
-	//default scorefxns end
-
-	//If native is set, add it to the datamap as a resource instead of loading in each individual mover.  Works in JD3 as well to allow better benchmarking.
-	if ( native_pose_ ) {
-		data.add_resource("native_pose", native_pose_);
-	}
-
-	//Give a COP of the OptionCollection to the datamap to begin using local options with RosettaScripts.
-	if ( local_options_ ) {
-		data.add_resource("options", local_options_);
-	}
 
 	///////////////////////////////////////////////////////////////////
 	// Go through the subtags, creating/loading the associated objects
@@ -598,6 +642,7 @@ RosettaScriptsParser::generate_mover_for_protocol(
 		protocol->final_scorefxn( rosetta_scripts::parse_score_function( output_tag, data, "commandline" ) );
 	}
 
+	///// Finish up
 	tag->die_for_unaccessed_options_recursively();
 
 	if ( xml_objects ) {

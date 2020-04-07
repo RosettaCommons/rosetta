@@ -19,13 +19,14 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/selection.hh>
+#include <core/pose/ref_pose.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <core/id/SequenceMapping.hh>
-
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
@@ -106,6 +107,10 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 		core::sequence::Sequence seq(pose);
 		profile = utility::pointer::make_shared< core::sequence::SequenceProfile >();
 		profile->generate_from_sequence(seq, matrix_);
+	} else if ( reference_pose_ != nullptr ) {
+		core::sequence::Sequence seq(*reference_pose_);
+		profile = utility::pointer::make_shared< core::sequence::SequenceProfile >();
+		profile->generate_from_sequence(seq, matrix_);
 	} else {
 		runtime_assert( ref_profile_ != nullptr );
 		profile = utility::pointer::make_shared< core::sequence::SequenceProfile >( *ref_profile_);
@@ -155,7 +160,7 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 }
 
 void
-FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose)
+FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	weight_ = tag->getOption<core::Real>( "weight", 1 );
 
@@ -211,9 +216,8 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 		std::cout << seq << std::endl;
 		set_sequence( seq, matrix_ );
 	}
-	if ( tag->getOption< bool >( "use_starting", false ) ) {
-		core::sequence::Sequence seq(pose);
-		set_sequence( seq, matrix_ );
+	if ( tag->hasOption( "reference_name") || tag->getOption< bool >( "use_starting", false ) ) {
+		reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input(tag, data, mover_name(), /*use_native*/ false );
 	}
 	if ( tag->getOption< bool >( "use_current", false ) ) {
 		use_current_ = true;
@@ -276,6 +280,8 @@ void FavorSequenceProfile::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		"\"none\" does no adjustment of values.", "prob" )
 		+ Attr::attribute_w_default( "matrix", xs_string, "Set substitution matrix; valid:  BLOSUM62,MATCH,IDENTITY", "BLOSUM62" )
 		+ Attr( "exclude_resnums", xs_string, "Exclude residues from being contrained." );
+
+	core::pose::attributes_for_saved_reference_pose( attlist );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 		"Sets residue type constraints (SequenceProfileConstraint) on the pose according to the given profile and weight.", attlist );

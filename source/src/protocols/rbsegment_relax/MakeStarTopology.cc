@@ -23,6 +23,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/ref_pose.hh>
 
 #include <protocols/rbsegment_relax/util.hh>
 
@@ -66,6 +67,10 @@ void MakeStarTopologyMover::apply( core::pose::Pose & pose ) {
 	using namespace protocols::rbsegment_relax;
 
 	if ( restore_ ) {
+		if ( ft_restore_->empty() && input_pose_ != nullptr ) {
+			// First time around, grab foldtree from input.
+			*ft_restore_ = input_pose_->fold_tree();
+		}
 		pose.fold_tree( *ft_restore_ );
 		// ??? cutpoint variants
 		protocols::loops::remove_cutpoint_variants( pose );
@@ -85,7 +90,7 @@ void MakeStarTopologyMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	filters::Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	mode_ = tag->getOption<std::string>("mode", "default");
 
@@ -98,10 +103,12 @@ void MakeStarTopologyMover::parse_my_tag(
 		ft_restore_ = data.get_ptr<core::kinematics::FoldTree>( "foldtrees", tag_ );
 		TR << "Found foldtree " << tag_ << " on datamap" << std::endl;
 	} else {
-		ft_restore_ = utility::pointer::make_shared< core::kinematics::FoldTree >( pose.fold_tree() );
-		// make a copy of current pose ... if restore is called before 'set' this could be oddly behaved
+		// Create a new FoldTree on the datamap
+		ft_restore_ = utility::pointer::make_shared< core::kinematics::FoldTree >();
 		data.add( "foldtrees", tag_, ft_restore_ );
 		TR << "Adding foldtrees " << tag_ << " to datamap" << std::endl;
+		// Get a reference to the input pose for later reference if we need it.
+		input_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, mover_name() );
 	}
 }
 
@@ -129,6 +136,8 @@ void MakeStarTopologyMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		+ XMLSchemaAttribute::attribute_w_default( "mode", "valid_make_star_topology_modes", "Set up default or disconnected star topology?", "default" )
 		+ XMLSchemaAttribute::attribute_w_default( "restore", xsct_rosetta_bool, "Apply the fold tree set up on a previous run of this mover to the pose?", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "tag", xs_string, "Name of a previously defined fold tree to be used in this mover. If the fold tree has not been defined, it will be set as the default fold tree.", "nulltag" );
+
+	core::pose::attributes_for_saved_reference_pose_w_description( attlist, "The saved pose to take the forldtree from if restoring without a prior save." );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Sets up a star topology fold tree for this pose", attlist );
 }

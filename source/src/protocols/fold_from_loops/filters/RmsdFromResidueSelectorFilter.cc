@@ -34,6 +34,7 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <core/pose/ref_pose.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
@@ -70,6 +71,23 @@ RmsdFromResidueSelectorFilter::RmsdFromResidueSelectorFilter() :
 }
 
 RmsdFromResidueSelectorFilter::~RmsdFromResidueSelectorFilter() = default;
+
+void
+RmsdFromResidueSelectorFilter::reference_pose( core::pose::PoseOP const & ref ) {
+	core::pose::PoseOP copy = utility::pointer::make_shared< core::pose::Pose >();
+	copy->detached_copy( *ref );
+	copy->transfer_constraint_set( *ref );
+	reference_pose_ = copy;
+}
+
+void
+RmsdFromResidueSelectorFilter::reference_pose( core::pose::Pose const & ref )  {
+	core::pose::PoseOP copy = utility::pointer::make_shared< core::pose::Pose >();
+	copy->detached_copy( ref );
+	copy->transfer_constraint_set( ref );
+	reference_pose_ = copy;
+}
+
 
 
 core::Real
@@ -172,19 +190,9 @@ RmsdFromResidueSelectorFilter::report_sm( core::pose::Pose const & pose ) const 
 }
 
 void
-RmsdFromResidueSelectorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose )
+RmsdFromResidueSelectorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
-	/// Call the SavePoseMover, then it can be used from here... or from in:native
-	if ( tag->hasOption("reference_name") ) {
-		reference_pose_ = rosetta_scripts::saved_reference_pose(tag, data_map );
-		TR<<"Loaded reference pose: "<<tag->getOption< std::string >( "reference_name" )<< " with " << reference_pose_->size() << " residues" << std::endl;
-	} else {
-		reference_pose_ = utility::pointer::make_shared< core::pose::Pose >( reference_pose );
-		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-			core::import_pose::pose_from_file( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] , core::import_pose::PDB_file);
-		}
-	}
-	TR.Trace << TR.Green << tag->hasOption("reference_name") << " taken from " << reference_pose_ << TR.Reset << std::endl;
+	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data_map, class_name() );
 
 	threshold( tag->getOption<core::Real>( "threshold", default_rmsd_threshold() ) );
 	CA_only( tag->getOption<bool>( "CA_only", default_ca_selection() ) );

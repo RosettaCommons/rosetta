@@ -197,7 +197,7 @@ public:
 	bool rb_sensitive() const{ return rb_sensitive_; } //if RB sensitive then modify the VL/VH orientation of the protein (only relevant for antibodies)
 	void rb_sensitive( bool const r ){ rb_sensitive_ = r;}
 
-	void rb_adjust_template( core::pose::Pose const & pose ) const; // adjust the template_pose_ according the rb state of the current pose (if rb_sensitive is on)
+	void rb_adjust_template( core::pose::Pose const & pose ); // adjust the template_pose_ according the rb state of the current pose (if rb_sensitive is on)
 	void protein_family( std::string const & s) {protein_family_=s;}; //setter of the protein_family tag option
 	core::Size chain_num()const {return chain_num_;};
 	void chain_num( core::Size const c ) {chain_num_ = c;};
@@ -301,7 +301,8 @@ private:
 
 	// template - relative to what is the torsion dbase computed (1x9q)
 	// start - the starting pose for replacing the torsions at the start
-	core::pose::PoseOP template_pose_, start_pose_, source_pose_;
+	core::pose::PoseCOP template_pose_, start_pose_; // These may be from a reference structure and may not be properly populated until apply time()
+	core::pose::PoseOP source_pose_;
 	core::kinematics::FoldTreeOP saved_fold_tree_;
 
 	bool design_; //dflt false; design all non-pro/gly residues in template
