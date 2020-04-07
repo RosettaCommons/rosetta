@@ -403,6 +403,7 @@ sources = {
 	# J ######################################################################
         "pilot/jackmaguire" : [
                 "benchmark_k_medoids",
+                "tensorflow_manager_multirun_test",
                 "measure_sequence_similarity_to_native",
                 "tensorflow_manager_test1",
                 "tensorflow_test2",

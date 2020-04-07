@@ -62,7 +62,7 @@ public:
 
 	/// @brief Destructor.
 	/// @details It is necessary to clean up Tensorflow objects here.
-	virtual ~RosettaTensorflowSessionContainer();
+	~RosettaTensorflowSessionContainer() override;
 
 	/// @brief Was this session initialized with custom Tensorflow session options?
 	inline bool was_initialized_with_custom_options() const { return has_custom_options_; }
@@ -85,6 +85,38 @@ public:
 		RosettaTensorflowTensorContainer<T2> & output_tensor,
 		std::chrono::duration< double, std::micro > & runtime
 	) const;
+
+	/// @brief Given a vector of input tensors and vector of outputs, run the Tensorflow session.
+	/// @details This method is provided so that no one needs to handle the TF_Session object directly (and its
+	/// creation and destruction can be handled safely by the RosettaTensorflowSessionContainer).
+	/// @param[in]	input_name				The name of the input tensor in the Tensorflow session graph.
+	/// @param[in]	output_name				The name of the output tensor in the Tensorflow session graph.
+	/// @param[in]	input_tensor_vector		The vector of tensor of inputs.
+	/// @param[out]	output_tensor_vector	The vector of places to stick the outputs, overwritten by this operation.
+	/// @param[out]	runtime					The time for the actual Tensorflow session evaluation, in microseconds.  The contents of runtime will be overwritten by tihs operation.
+	/// @note There is no tracer output produced by this operation.  If you wish to write out runtime information, do something
+	/// with the runtime output variable.  Also note that the tensor types must be the same in the input and output vectors.
+	template< typename T1, typename T2 >
+	void multirun_session(
+		std::string const & input_name,
+		std::string const & output_name,
+		utility::vector1< RosettaTensorflowTensorContainer<T1> > const & input_tensor_vector,
+		utility::vector1< RosettaTensorflowTensorContainer<T2> > & output_tensor_vector,
+		std::chrono::duration< double, std::micro > & runtime
+	) const;
+
+	//overload of multirun_session for those who don't need runtime
+	template< typename T1, typename T2 >
+	void multirun_session(
+		std::string const & input_name,
+		std::string const & output_name,
+		utility::vector1< RosettaTensorflowTensorContainer<T1> > const & input_tensor_vector,
+		utility::vector1< RosettaTensorflowTensorContainer<T2> > & output_tensor_vector
+	) const {
+		std::chrono::duration< double, std::micro > runtime;
+		multirun_session( input_name, output_name, input_tensor_vector, output_tensor_vector, runtime );
+	}
+
 
 	/// @brief List all of the operations available in a loaded model.
 	void list_all_operations( std::ostream & outstream ) const;

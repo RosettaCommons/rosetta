@@ -35,8 +35,7 @@ class RosettaTensorflowProtocolBase : public utility::VirtualBase {
 public: // Creation
 
 	/// @brief Destructor
-	virtual
-	~RosettaTensorflowProtocolBase();
+	~RosettaTensorflowProtocolBase() override;
 
 	/// @brief Clone operation.
 	virtual RosettaTensorflowProtocolBaseOP clone() const = 0;

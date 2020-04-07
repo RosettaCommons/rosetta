@@ -69,7 +69,7 @@ public:
 	RosettaTensorflowTensorContainer(RosettaTensorflowTensorContainer const & src);
 
 	/// @brief Destructor.
-	virtual ~RosettaTensorflowTensorContainer();
+	~RosettaTensorflowTensorContainer() override;
 
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	RosettaTensorflowTensorContainerOP< T > clone() const;
@@ -203,6 +203,14 @@ public: //Getters
 		return tensor_data_[ (coord1 - 1)*TF_Dim(tensor_, 2)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4)*TF_Dim(tensor_, 5) + (coord2 - 1)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4)*TF_Dim(tensor_, 5) + (coord3 - 1)*TF_Dim(tensor_, 4)*TF_Dim(tensor_, 5) + (coord4 - 1)*TF_Dim(tensor_, 5) + (coord5-1) ];
 	}
 
+	//More verbose option
+	template< typename... Args>
+	T const &
+	value( Args&&... args ) const {
+		return operator()( std::forward<Args>(args)... );
+	}
+
+
 public: //Setters
 
 	/// @brief Access an entry.  (Non-const.)
@@ -299,13 +307,36 @@ public: //Setters
 		return tensor_data_[ (coord1 - 1)*TF_Dim(tensor_, 1)*TF_Dim(tensor_, 2)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4) + (coord2 - 1)*TF_Dim(tensor_, 2)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4) + (coord3 - 1)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4) + (coord4 - 1)*TF_Dim(tensor_, 4) + (coord5-1) ];
 	}
 
-private:
+	//More verbose option
+	template< typename... Args>
+	T &
+	value( Args&&... args ) {
+		return operator()( std::forward<Args>(args)... );
+	}
+
+protected: //Danger Zone!
+	TF_Tensor const * raw_tensor_ptr() const {
+		return tensor_;
+	}
+
+	TF_Tensor * raw_tensor_ptr() {
+		return tensor_;
+	}
+
+	T const * raw_tensor_data_ptr() const {
+		return tensor_data_;
+	}
+
+	T * raw_tensor_data_ptr() {
+		return tensor_data_;
+	}
 
 	/// @brief Get the Tensorflow data type given the C++ data type.
-	TF_DataType
-	get_datatype() const {
+	static TF_DataType
+	get_datatype() {
 		TFDataTypeDetector< T >::validate();
-		return TFDataTypeDetector< T >::value;
+		TFDataTypeDetector< T > t;
+		return t.value;
 	}
 
 	/// @brief Given a TF_Tensor, make a copy and return a pointer to the copy.
@@ -318,6 +349,22 @@ private:
 	/// @details Sets this to nullptr if tensor_ == nullptr; otherwise,
 	/// calls TF_TensorData.
 	void update_tensor_data_pointer();
+
+public: //static utilities
+
+static
+RosettaTensorflowTensorContainer< T >
+combine_tensors(
+	utility::vector1< RosettaTensorflowTensorContainer< T > > const & tensor_vector
+);
+
+static
+void
+split_combined_tensors(
+	RosettaTensorflowTensorContainer< T > combined_tensors,
+	utility::vector1< RosettaTensorflowTensorContainer<T> > & tensor_vector
+);
+
 
 private:
 

@@ -96,6 +96,7 @@ RosettaTensorflowTensorContainer<T>::initialize(
 	utility::vector1< int64_t > const & dimensions
 ) {
 	runtime_assert_string_msg(!dimensions.empty(), "Error in RosettaTensorflowTensorContainer<T>::initialize(): The dimensions array cannot be empty.");
+
 	platform::Size numentries(1);
 	for( platform::Size const dim : dimensions ) {
 		numentries *= dim;
@@ -231,6 +232,109 @@ RosettaTensorflowTensorContainer<T>::update_tensor_data_pointer() {
 		tensor_data_ = static_cast< T* >( TF_TensorData( tensor_ ) );
 	}
 }
+
+/// @brief combine utility::vector1< RosettaTensorflowTensorContainer<T1> > into one RosettaTensorflowTensorContainer<T1>
+/// @details requires all tensors in the vector have dimensions { 1, x, y, ... , z } where x, y, z are THE SAME for all tensors
+template< typename T >
+RosettaTensorflowTensorContainer< T >
+RosettaTensorflowTensorContainer< T >::combine_tensors(
+	utility::vector1< RosettaTensorflowTensorContainer< T > > const & tensor_vector
+){
+	runtime_assert( ! tensor_vector.empty() );
+
+#ifndef NDEBUG
+	for( platform::Size t = 1; t <= tensor_vector.size(); ++t ){
+		debug_assert( tensor_vector[ t ].dimension( 1 ) == 1 );
+	}
+#endif
+
+	utility::vector1< int64_t > new_dimensions;
+	//We already checked the vector is not empty, so [1] is safe
+	new_dimensions.resize( tensor_vector[ 1 ].n_dimensions() );
+
+	new_dimensions[ 1 ] = tensor_vector.size();
+
+	for( platform::Size dim = 2; dim <= new_dimensions.size(); ++dim ){
+		new_dimensions[ dim ] = tensor_vector[ 1 ].dimension( dim );
+#ifndef NDEBUG
+		for( platform::Size t = 2; t <= tensor_vector.size(); ++t ){
+			debug_assert( tensor_vector[ t ].dimension( dim ) == platform::Size( new_dimensions[ dim ] ) );
+		}
+#endif
+	}
+
+	platform::Size const n_elements_per_tensor = tensor_vector[ 1 ].num_tensor_elements();
+	for( platform::Size t = 2; t <= tensor_vector.size(); ++t ){
+		debug_assert( tensor_vector[ t ].num_tensor_elements() == n_elements_per_tensor );
+	}
+
+	RosettaTensorflowTensorContainer< T > combined_tensor( new_dimensions );
+	//tensor_ and tensor_data_ are updated at this point
+
+	//Okay time for some power user optimizations
+	//Be careful here
+	//Copy data into new container
+	platform::Size const size_of_tensor = sizeof( T ) * n_elements_per_tensor;
+	for( platform::Size t = 1; t <= tensor_vector.size(); ++t ){
+		platform::Size const zero_indexed_offset_in_dest = (t-1) * n_elements_per_tensor;
+		T * const destination = & ( combined_tensor( zero_indexed_offset_in_dest + 1 ) );
+
+		T const * const source = tensor_vector[ t ].raw_tensor_data_ptr();
+		std::memcpy( destination, source, size_of_tensor );
+	}
+
+#ifndef NDEBUG
+	for( platform::Size t = 1; t <= tensor_vector.size(); ++t ){
+		platform::Size const offset = (t-1) * n_elements_per_tensor;
+
+		//We want to check that all of the values are what they shoudl be
+		//This is really messy when the dimension count is unknown,
+		// so we're just going to treat each tensor as if it were 1D
+		//This should work as of March 2020
+		for( platform::Size element = 1; element <= n_elements_per_tensor; ++element ){
+			debug_assert( tensor_vector[ t ]( element ) == combined_tensor( offset + element ) );
+		}
+	}
+#endif
+
+	return combined_tensor;
+}
+
+template< typename T >
+void
+RosettaTensorflowTensorContainer< T >::split_combined_tensors(
+	RosettaTensorflowTensorContainer< T > combined_tensors,
+	utility::vector1< RosettaTensorflowTensorContainer<T> > & tensor_vector
+){
+	//This makes all of the same assumptions as combine_tensors()
+	debug_assert( ! tensor_vector.empty() );
+	platform::Size const n_elements_per_tensor =
+		tensor_vector[ 1 ].num_tensor_elements();
+	platform::Size const size_of_tensor = sizeof( T ) * n_elements_per_tensor;
+	for( platform::Size t = 1; t <= tensor_vector.size(); ++t ){
+		T * const destination = tensor_vector[ t ].raw_tensor_data_ptr();
+
+		platform::Size const zero_indexed_offset_in_source = (t-1) * n_elements_per_tensor;
+		T * const source = & ( combined_tensors( zero_indexed_offset_in_source + 1 ) );
+		std::memcpy( destination, source, size_of_tensor );
+	}
+
+#ifndef NDEBUG
+	for( platform::Size t = 1; t <= tensor_vector.size(); ++t ){
+		platform::Size const offset = (t-1) * n_elements_per_tensor;
+
+		//We want to check that all of the values are what they shoudl be
+		//This is really messy when the dimension count is unknown,
+		// so we're just going to treat each tensor as if it were 1D
+		//This should work as of March 2020
+		for( platform::Size element = 1; element <= n_elements_per_tensor; ++element ){
+			debug_assert( tensor_vector[ t ]( element ) == combined_tensors( offset + element ) );
+		}
+	}
+#endif
+
+}
+
 
 } //tensorflow_manager
 } //basic

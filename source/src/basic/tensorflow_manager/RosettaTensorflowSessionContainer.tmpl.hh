@@ -17,7 +17,7 @@
 #ifdef USE_TENSORFLOW
 
 #include <basic/tensorflow_manager/RosettaTensorflowSessionContainer.hh>
-
+#include <cstring>
 
 namespace basic {
 namespace tensorflow_manager {
@@ -71,6 +71,36 @@ RosettaTensorflowSessionContainer::run_session(
 	//Ensure that the output tensor is in a good state for reading out the output:
 	output_tensor.update_tensor_data_pointer();
 }
+
+
+/// @brief Given a vector of input tensors and vector of outputs, run the Tensorflow session.
+/// @details This method is provided so that no one needs to handle the TF_Session object directly (and its
+/// creation and destruction can be handled safely by the RosettaTensorflowSessionContainer).
+/// @param[in]	input_name				The name of the input tensor in the Tensorflow session graph.
+/// @param[in]	output_name				The name of the output tensor in the Tensorflow session graph.
+/// @param[in]	input_tensor_vector		The vector of tensor of inputs.
+/// @param[out]	output_tensor_vector	The vector of places to stick the outputs, overwritten by this operation.
+/// @param[out]	runtime					The time for the actual Tensorflow session evaluation, in microseconds.  The contents of runtime will be overwritten by tihs operation.
+/// @note There is no tracer output produced by this operation.  If you wish to write out runtime information, do something
+/// with the runtime output variable.  Also note that the tensor types must be the same in the input and output vectors.
+template< typename T1, typename T2 >
+void
+RosettaTensorflowSessionContainer::multirun_session(
+	std::string const & input_name,
+	std::string const & output_name,
+	utility::vector1< RosettaTensorflowTensorContainer<T1> > const & input_tensor_vector,
+	utility::vector1< RosettaTensorflowTensorContainer<T2> > & output_tensor_vector,
+	std::chrono::duration< double, std::micro > & runtime
+) const {
+	RosettaTensorflowTensorContainer< T1 > input_tensors = RosettaTensorflowTensorContainer< T1 >::combine_tensors( input_tensor_vector );
+	RosettaTensorflowTensorContainer< T2 > output_tensors = RosettaTensorflowTensorContainer< T2 >::combine_tensors( output_tensor_vector );
+
+	run_session( input_name, output_name, input_tensors, output_tensors, runtime );
+
+	//Copy data back into original output:
+	RosettaTensorflowTensorContainer< T1 >::split_combined_tensors( output_tensors, output_tensor_vector );
+}
+
 
 } //namespace tensorflow_manager
 } //namespace basic
