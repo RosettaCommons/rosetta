@@ -224,9 +224,10 @@ GAOptimizer::next_generation(
 	core::Size npoolin = genes.size();
 	std::string move("");
 	std::string tag(""), l_sampling("");
+	core::Size iparent;
 
-	for ( core::Size iparent = 1; iparent <= npoolout; ++iparent ) {
-		iparent = (iparent-1)%npoolin+1;
+	for ( core::Size i = 1; i <= npoolout; ++i ) {
+		iparent = (i-1)%npoolin+1;
 		LigandConformer newgene( genes[iparent] );
 
 		if ( ( numeric::random::rg().uniform() <= pmut ) || (npoolin == 1) ) {

@@ -470,7 +470,7 @@ GridScorer::calculate_grid(
 		// 0.1 : hbonds
 		for ( auto anum=resB.accpt_pos().begin(),anume=resB.accpt_pos().end(); anum!=anume; ++anum ) {
 			// add bb hbonds from moving residues
-			if ( is_moving && !(*anum>resB.last_backbone_atom() && *anum<=resB.nheavyatoms()) ) continue;
+			if ( is_moving && (*anum>resB.last_backbone_atom() && *anum<=resB.nheavyatoms()) ) continue;
 
 			hbAcc acc_b;
 			core::Size bnum = resB.atom_base( *anum );
@@ -484,7 +484,7 @@ GridScorer::calculate_grid(
 
 		for ( auto hnum=resB.Hpos_polar().begin(),hnume=resB.Hpos_polar().end(); hnum!=hnume; ++hnum ) {
 			// add bb hbonds from moving residues
-			if ( is_moving && !(*hnum>resB.first_sidechain_hydrogen()) ) continue;
+			if ( is_moving && (*hnum>resB.first_sidechain_hydrogen()) ) continue;
 
 			hbDon don_b;
 			core::Size dnum = resB.atom_base( *hnum );
