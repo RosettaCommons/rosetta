@@ -31,7 +31,7 @@
 namespace protocols {
 namespace topology_broker {
 
-class BasicJumpClaimer : public virtual TopologyClaimer {
+class BasicJumpClaimer : public TopologyClaimer {
 	typedef TopologyClaimer Parent;
 public:
 	~BasicJumpClaimer() override = default;

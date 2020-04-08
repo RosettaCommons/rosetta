@@ -27,7 +27,7 @@ namespace core {
 namespace import_pose {
 namespace options {
 
-class RNA_MinimizerOptions: public virtual RNA_BasicOptions {
+class RNA_MinimizerOptions: public RNA_BasicOptions {
 
 public:
 

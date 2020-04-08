@@ -26,7 +26,7 @@ namespace core {
 namespace import_pose {
 namespace options {
 
-class RNA_FragmentMonteCarloOptions: public virtual RNA_MinimizerOptions {
+class RNA_FragmentMonteCarloOptions: public RNA_MinimizerOptions {
 
 public:
 

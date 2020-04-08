@@ -36,7 +36,7 @@ namespace stepwise {
 namespace monte_carlo {
 namespace options {
 
-class StepWiseMonteCarloOptions: virtual
+class StepWiseMonteCarloOptions:
 	public protocols::stepwise::options::StepWiseBasicOptions,
 	public protocols::stepwise::monte_carlo::mover::options::StepWiseMoveSelectorOptions {
 

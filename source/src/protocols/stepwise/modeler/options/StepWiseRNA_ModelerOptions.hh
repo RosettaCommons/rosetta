@@ -30,7 +30,7 @@ namespace modeler {
 namespace options {
 
 // multiple inheritance -- bad form -- but will replace with composition later, perhaps.
-class StepWiseRNA_ModelerOptions: public virtual utility::VirtualBase {
+class StepWiseRNA_ModelerOptions: public utility::VirtualBase {
 
 public:
 

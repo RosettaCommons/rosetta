@@ -29,7 +29,7 @@ namespace import_pose {
 namespace options {
 
 
-class RNA_BasicOptions: public virtual utility::VirtualBase {
+class RNA_BasicOptions: public utility::VirtualBase {
 
 public:
 

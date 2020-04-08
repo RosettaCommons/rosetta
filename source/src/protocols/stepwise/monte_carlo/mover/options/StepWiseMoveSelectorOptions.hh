@@ -36,7 +36,7 @@ namespace monte_carlo {
 namespace mover {
 namespace options {
 
-class StepWiseMoveSelectorOptions: public virtual utility::VirtualBase {
+class StepWiseMoveSelectorOptions: public utility::VirtualBase {
 
 public:
 

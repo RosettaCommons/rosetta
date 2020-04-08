@@ -71,16 +71,13 @@ namespace protocols {
 namespace features {
 
 using std::string;
-using std::endl;
 using core::Size;
-using core::import_pose::pose_from_file;
 using core::pose::Pose;
 using core::pose::PoseCOP;
 using core::pose::PoseOP;
 using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
-using protocols::rosetta_scripts::saved_reference_pose;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 using utility::tag::TagCOP;

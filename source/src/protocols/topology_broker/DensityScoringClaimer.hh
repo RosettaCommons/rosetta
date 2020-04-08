@@ -57,7 +57,7 @@
 namespace protocols {
 namespace topology_broker {
 
-class DensityScoringClaimer : public virtual TopologyClaimer {
+class DensityScoringClaimer : public TopologyClaimer {
 public:
 	DensityScoringClaimer(); //for factory
 

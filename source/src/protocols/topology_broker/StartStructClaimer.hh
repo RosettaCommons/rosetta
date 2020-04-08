@@ -63,7 +63,7 @@
 namespace protocols {
 namespace topology_broker {
 
-class StartStructClaimer : public virtual FragmentClaimer {
+class StartStructClaimer : public FragmentClaimer {
 public:
 	StartStructClaimer(); //for factory
 	StartStructClaimer( core::pose::Pose const& /*idealized*/ );

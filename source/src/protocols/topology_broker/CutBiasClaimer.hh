@@ -52,7 +52,7 @@
 namespace protocols {
 namespace topology_broker {
 
-class CutBiasClaimer : public virtual TopologyClaimer {
+class CutBiasClaimer : public TopologyClaimer {
 public:
 	CutBiasClaimer(); //for factory
 	CutBiasClaimer( utility::vector1< core::Real > const& );

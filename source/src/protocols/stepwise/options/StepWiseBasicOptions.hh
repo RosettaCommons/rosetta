@@ -35,7 +35,7 @@ namespace protocols {
 namespace stepwise {
 namespace options {
 
-class StepWiseBasicOptions: public virtual utility::VirtualBase {
+class StepWiseBasicOptions: public utility::VirtualBase {
 
 public:
 

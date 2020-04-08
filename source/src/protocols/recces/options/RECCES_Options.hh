@@ -32,7 +32,7 @@ namespace protocols {
 namespace recces {
 namespace options {
 
-class RECCES_Options: public virtual utility::VirtualBase {
+class RECCES_Options: public utility::VirtualBase {
 
 public:
 

@@ -44,7 +44,7 @@ namespace protocols {
 namespace topology_broker {
 
 
-class SymmetryClaimer : public virtual TopologyClaimer {
+class SymmetryClaimer : public TopologyClaimer {
 	typedef TopologyClaimer Parent;
 public:
 	SymmetryClaimer(); //for factory

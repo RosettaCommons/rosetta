@@ -46,7 +46,7 @@
 namespace protocols {
 namespace topology_broker {
 
-class FragmentClaimer : public virtual TopologyClaimer {
+class FragmentClaimer : public virtual TopologyClaimer { // virtual inheritance needed for MetalloClaimer
 	typedef TopologyClaimer Parent;
 public:
 	FragmentClaimer(); //for factory
