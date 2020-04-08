@@ -81,7 +81,10 @@ SpanTopologyMatchPoseFilterCreator::keyname() const { return "SpanTopologyMatchP
 SpanTopologyMatchPoseFilter::~SpanTopologyMatchPoseFilter(){}
 
 void
-SpanTopologyMatchPoseFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+SpanTopologyMatchPoseFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 	threshold_ = tag->getOption< core::Real >( "threshold", 0.3 );
 	output_ = tag->getOption< std::string >( "output_file", "" );

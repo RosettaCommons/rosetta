@@ -650,8 +650,6 @@ void
 BluePrintBDR::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const &,
-	Movers_map const & movers,
 	Pose const & )
 {
 	String const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
@@ -703,7 +701,7 @@ BluePrintBDR::parse_my_tag(
 	utility::vector1< std::string > const mover_names( utility::string_split( tag->getOption< std::string >( "constraint_generators", "" ), ',' ) );
 	for ( core::Size i=1; i<=mover_names.size(); ++i ) {
 		if ( mover_names[i] == "" ) continue;
-		protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( mover_names[i], movers );
+		protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( mover_names[i], data );
 		// check to make sure the mover provided is a RemodelConstraintGenerator and if so, add it to the list
 		debug_assert( utility::pointer::dynamic_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover ) );
 		protocols::forge::remodel::RemodelConstraintGeneratorOP rcg = utility::pointer::static_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover );

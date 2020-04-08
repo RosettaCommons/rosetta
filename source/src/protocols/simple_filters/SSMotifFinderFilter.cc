@@ -65,7 +65,10 @@ SSMotifFinder::SSMotifFinder() :
 SSMotifFinder::~SSMotifFinder() = default;
 
 void
-SSMotifFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+SSMotifFinder::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 	from_res( tag->getOption< core::Size >( "from_res" ) );
 	to_res( tag->getOption< core::Size >( "to_res" ) );

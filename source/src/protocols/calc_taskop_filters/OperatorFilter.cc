@@ -124,7 +124,10 @@ Operator::modify_relative_filters_pdb_names(){
 
 
 void
-Operator::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & )
+Operator::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	core::pose::Pose const & )
 {
 	std::string const op( tag->getOption< std::string >( "operation" ) );
 	if ( op=="SUM" ) {
@@ -171,7 +174,7 @@ Operator::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, f
 		filter_names = utility::string_split( tag->getOption< std::string >( "filters" ), ',' );
 	}
 	for ( std::string const & fname : filter_names ) {
-		add_filter( protocols::rosetta_scripts::parse_filter( fname, filters ) );
+		add_filter( protocols::rosetta_scripts::parse_filter( fname, data ) );
 		TR<<"Adding filter "<<fname<<std::endl;
 	}
 	if ( ( operation() == SUBTRACT || operation() == BOOLEAN_OR ) && filters_.size() != 2 ) {

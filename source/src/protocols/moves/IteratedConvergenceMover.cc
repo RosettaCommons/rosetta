@@ -16,6 +16,7 @@
 #include <protocols/moves/IteratedConvergenceMoverCreator.hh>
 
 #include <protocols/filters/Filter.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <basic/Tracer.hh>
 
@@ -92,9 +93,7 @@ IteratedConvergenceMover::apply( Pose & pose )
 void
 IteratedConvergenceMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Filters_map const & filters,
-	Movers_map const & movers,
+	basic::datacache::DataMap & data,
 	Pose const &
 )
 {
@@ -109,19 +108,8 @@ IteratedConvergenceMover::parse_my_tag(
 	if ( tag->hasOption("filter") ) filter_name = tag->getOption< std::string >( "filter" );
 	if ( tag->hasOption("filter_name") ) filter_name = tag->getOption< std::string >( "filter_name" );
 
-	auto  find_mover ( movers.find( mover_name ));
-	auto find_filter( filters.find( filter_name ));
-
-	if ( find_mover == movers.end() ) {
-		TR.Error << "mover not found in map: \n" << tag << std::endl;
-		runtime_assert( find_mover != movers.end() );
-	}
-	if ( find_filter == filters.end() ) {
-		TR.Error << "filter not found in map: \n" << tag << std::endl;
-		runtime_assert( find_filter != filters.end() );
-	}
-	submover(find_mover->second);
-	filter(find_filter->second);
+	submover( protocols::rosetta_scripts::parse_mover( mover_name, data ) );
+	filter( protocols::rosetta_scripts::parse_filter( filter_name, data ) );
 
 	TR << "Setting IteratedConvergence for "<<cycles()<<" cycles (max "<<maxcycles()<<") with mover '"<<mover_name<<"' and filter '"<<filter_name<<"' and delta tolerance "<<delta()<<std::endl;
 }

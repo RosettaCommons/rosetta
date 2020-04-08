@@ -320,8 +320,6 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 void SetupNCSMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data*/,
-	filters::Filters_map const & /*filters*/,
-	moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/ ) {
 	if ( tag->hasOption( "bb" ) ) bb_ = tag->getOption< bool >( "bb" );
 	if ( tag->hasOption( "chi" ) ) chi_ = tag->getOption< bool >( "chi" );

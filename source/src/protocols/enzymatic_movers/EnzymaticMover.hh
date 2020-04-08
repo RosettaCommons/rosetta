@@ -71,8 +71,6 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
-		Filters_map const & /*filters*/,
-		moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose ) override;
 
 	static utility::tag::XMLSchemaComplexTypeGeneratorOP xml_schema_complex_type_generator();

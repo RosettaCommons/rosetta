@@ -75,9 +75,7 @@ using core::Size;
 using core::pose::Pose;
 using core::pose::PoseCOP;
 using core::pose::PoseOP;
-using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
-using protocols::moves::Movers_map;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 using utility::tag::TagCOP;
@@ -165,8 +163,6 @@ void
 ProteinRMSDFeatures::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
 	Pose const &
 ) {
 	runtime_assert(tag->getName() == type_name());

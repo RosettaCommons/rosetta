@@ -63,7 +63,7 @@ public:
 	void apply( core::pose::Pose &pose ) override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 
 	utility::vector1< core::Size > rb_min_jumps() const;
 	void rb_min_jumps( utility::vector1< core::Size > const );

@@ -156,7 +156,10 @@ ResidueIEFilter::resnums( std::string const & resnums_str ){
 ResidueIEFilter::~ResidueIEFilter() = default;
 
 void
-ResidueIEFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+ResidueIEFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	core::pose::Pose const & )
 {
 	using namespace core::scoring;
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );

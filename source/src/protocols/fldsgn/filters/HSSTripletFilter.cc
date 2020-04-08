@@ -304,8 +304,6 @@ void
 HSSTripletFilter::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap &,
-	Filters_map const &,
-	Movers_map const &,
 	Pose const & )
 {
 	using protocols::parser::BluePrint;

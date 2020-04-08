@@ -256,7 +256,11 @@ void RepeatParameterFilter::calculate_helical_parameters_helper( core::pose::Pos
 
 
 
-void RepeatParameterFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & ){
+void RepeatParameterFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const &
+){
 	if ( !tag->hasOption("numb_repeats") ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RepeatPrarameter filter requires the number of repeats be entered with numb_repeats tag");
 	}

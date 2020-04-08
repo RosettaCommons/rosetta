@@ -64,8 +64,7 @@ PatchdockTransform::apply( core::pose::Pose & pose )
 
 
 void
-PatchdockTransform::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+PatchdockTransform::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, core::pose::Pose const & )
 {
 	pd_reader()->patchdock_fname( tag->getOption< std::string >( "fname", pd_reader()->patchdock_fname() ) );
 	pd_reader()->from_entry( tag->getOption< core::Size >( "from_entry", pd_reader()->from_entry() ) );

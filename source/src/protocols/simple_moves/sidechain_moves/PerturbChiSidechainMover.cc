@@ -105,8 +105,6 @@ void
 PerturbChiSidechainMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data*/,
-	protocols::filters::Filters_map const & /*filters*/,
-	protocols::moves::Movers_map const & /*movers*/,
 	pose::Pose const & /*pose*/
 ) {
 	magnitude_ = tag->getOption<Real>( "magnitude", magnitude_ );

@@ -55,8 +55,6 @@ public:
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
-		Filters_map const &,
-		Movers_map const &,
 		Pose const & ) override;
 
 	/// @brief required in the context of the parser/scripting scheme

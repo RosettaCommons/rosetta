@@ -136,8 +136,6 @@ void
 DdGScan::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & /*pose*/
 )
 {
@@ -149,7 +147,7 @@ DdGScan::parse_my_tag(
 
 	// Handle definition of a special ddG mover
 	if ( tag->hasOption("ddG_mover") ) {
-		moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "ddG_mover" ), movers );
+		moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "ddG_mover" ), data );
 		ddG_mover( utility::pointer::dynamic_pointer_cast < protocols::simple_ddg::ddG > (mover));
 	}
 }

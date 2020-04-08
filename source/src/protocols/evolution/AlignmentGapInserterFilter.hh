@@ -52,7 +52,7 @@ public:
 
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, core::pose::Pose const & ) override;
 
 	std::string alignment_file() const { return alignment_file_; }
 	void alignment_file( std::string const & a ) { alignment_file_ = a; }

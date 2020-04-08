@@ -1016,8 +1016,6 @@ void InsertZincCoordinationRemarkLines::apply( core::pose::Pose & p )
 void InsertZincCoordinationRemarkLines::parse_my_tag(
 	TagCOP const,
 	basic::datacache::DataMap &,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const &
 )
 {
@@ -1265,8 +1263,6 @@ LoadZnCoordNumHbondCalculatorMover::apply( core::pose::Pose & )
 void LoadZnCoordNumHbondCalculatorMover::parse_my_tag(
 	TagCOP const,
 	basic::datacache::DataMap &,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const & )
 {}
 

@@ -274,8 +274,6 @@ public:
 
 		// Create a Tag instance to test for RosettaScripts compatibility
 		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
 
 		using namespace utility::tag;
 		using core::Real;
@@ -296,7 +294,7 @@ public:
 
 		// Only the Tag is used by the JacobiLoopClosureMover's parse_my_tag, so the other instances that I'm passing through
 		// can be nonsense
-		protocols::moves::MoverOP my_configured_mover = mover_factory->newMover( tag, dm, fm, mm, * pose_ );
+		protocols::moves::MoverOP my_configured_mover = mover_factory->newMover( tag, dm, * pose_ );
 
 		protocols::loops::loop_closure::jacobi::JacobiLoopClosureMoverOP configured_jacobi_mover = utility::pointer::dynamic_pointer_cast< protocols::loops::loop_closure::jacobi::JacobiLoopClosureMover > ( my_configured_mover );
 		TS_ASSERT( configured_jacobi_mover ); // make sure we got back the right mover type

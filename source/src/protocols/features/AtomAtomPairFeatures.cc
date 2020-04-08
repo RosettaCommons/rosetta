@@ -72,9 +72,7 @@ using core::Real;
 using core::Distance;
 using core::Vector;
 using core::conformation::Residue;
-using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
-using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 using utility::sql_database::sessionOP;
 using utility::vector1;
@@ -189,8 +187,6 @@ void
 AtomAtomPairFeatures::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & /*data*/,
-	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
 	min_dist_ = tag->getOption<Real>("min_dist", 0.0);

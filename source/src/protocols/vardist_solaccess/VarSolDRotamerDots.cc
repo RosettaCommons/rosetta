@@ -898,8 +898,6 @@ LoadVarSolDistSasaCalculatorMover::apply( core::pose::Pose & )
 void LoadVarSolDistSasaCalculatorMover::parse_my_tag(
 	TagCOP const,
 	basic::datacache::DataMap &,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const & )
 {}
 

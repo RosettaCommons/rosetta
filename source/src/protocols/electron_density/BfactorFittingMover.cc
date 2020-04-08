@@ -527,8 +527,10 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
-BfactorFittingMover::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &, Filters_map const &,
-	moves::Movers_map const &, Pose const &)
+BfactorFittingMover::parse_my_tag(
+	TagCOP const tag,
+	basic::datacache::DataMap &,
+	Pose const &)
 {
 	if ( tag->hasOption("wt_adp") ) {
 		wt_adp_ = tag->getOption<core::Real>("wt_adp");

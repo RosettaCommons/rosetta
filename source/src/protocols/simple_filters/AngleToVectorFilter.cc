@@ -52,7 +52,10 @@ AngleToVector::AngleToVector() :
 AngleToVector::~AngleToVector() = default;
 
 void
-AngleToVector::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+AngleToVector::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 	min_angle( tag->getOption< Real >( "min_angle", 0.0 ) );
 	max_angle( tag->getOption< Real >( "max_angle", 90.0 ) );

@@ -170,15 +170,25 @@ attributes_for_saved_reference_pose_w_description(
 /////////////////////////////////////////////////////////
 //////////////////// Filter ////////////////////////////
 
+/// @brief Return the Filter with the given name. Raise a RosettaScriptsOptionError if not present
 protocols::filters::FilterOP
-parse_filter( std::string const & filter_name, protocols::filters::Filters_map const & d );
+parse_filter( std::string const & filter_name, basic::datacache::DataMap const & d );
 
+
+/// @brief Return the Filter with the given name. Return nullptr if not present.
+protocols::filters::FilterOP
+parse_filter_or_null( std::string const & filter_name, basic::datacache::DataMap const & d );
 
 /////////////////////////////////////////////////////////
 //////////////////// Mover //////////////////////////////
-protocols::moves::MoverOP
-parse_mover( std::string const & mover_name, protocols::moves::Movers_map const & d );
 
+/// @brief Return the Mover with the given name. Raise a RosettaScriptsOptionError if not present
+protocols::moves::MoverOP
+parse_mover( std::string const & mover_name, basic::datacache::DataMap const & d );
+
+/// @brief Return the Mover with the given name. Return nullptr if not present.
+protocols::moves::MoverOP
+parse_mover_or_null( std::string const & mover_name, basic::datacache::DataMap const & d );
 
 /////////////////////////////////////////////////////////
 //////////////////// XYZ Vector /////////////////////////

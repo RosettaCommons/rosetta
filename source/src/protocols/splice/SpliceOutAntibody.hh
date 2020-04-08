@@ -53,7 +53,7 @@ public:
 	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SpliceOutAntibody >(); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )override;
 	~SpliceOutAntibody() override;
 	void find_disulfide_postions(core::pose::Pose const & pose, utility::vector1<core::Size> & cys_pos);
 	void antibody_DB(std::string const & s){ antibody_DB_ = s; }
@@ -63,7 +63,7 @@ public:
 	void set_fold_tree_nodes(core::pose::Pose const & pose) override;
 	void vl_vh_cut(core::Size i){vl_vh_cut_=i;}
 	core::Size vl_vh_cut(){return vl_vh_cut_;}
-	void handle_tail_mover_tag(TagCOP const tag,protocols::moves::Movers_map const & movers);
+	void handle_tail_mover_tag(TagCOP const tag, basic::datacache::DataMap & data);
 	void find_vl_vh_cut(core::pose::Pose pose);
 	void set_source_from_to_res() override;
 	void place_cut_site_in_segment(core::pose::Pose const & pose) override;

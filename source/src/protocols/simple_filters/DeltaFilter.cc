@@ -207,8 +207,6 @@ DeltaFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 void
 DeltaFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & )
 {
 	TR << "DeltaFilter"<<std::endl;
@@ -216,8 +214,8 @@ DeltaFilter::parse_my_tag( utility::tag::TagCOP tag,
 	lower( tag->getOption< bool >( "lower", false ) );
 	upper( tag->getOption< bool >( "upper", true ) );
 	runtime_assert( lower() || upper() );
-	filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
-	relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), movers ) );
+	filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), data ) );
+	relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), data ) );
 	unbound( tag->getOption< bool >( "unbound", false ) );
 	relax_unbound( tag->getOption< bool >( "relax_unbound", false ) );
 	changing_baseline( tag->getOption< bool >( "changing_baseline", false ) );

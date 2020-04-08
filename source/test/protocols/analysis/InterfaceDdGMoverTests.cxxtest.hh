@@ -39,8 +39,6 @@ class InterfaceDdGMoverTests : public CxxTest::TestSuite {
 
 private:
 	basic::datacache::DataMap data_;
-	Filters_map filters_;
-	Movers_map movers_;
 	protocols::features::InterfaceDdGMoverOP test_instantiation_;
 	core::pose::PoseOP test_8mer_pose_;
 	core::pose::PoseOP test_dimer_pose_;
@@ -50,12 +48,11 @@ public:
 	void setUp(){
 		using namespace protocols::features;
 		core_init();
-		prime_Movers( movers_ ); // Adds "null" to movers map
-		prime_Filters( filters_ ); // Adds true_filter, false_filter
 
 		// Create dummy "commandline" score function
 		core::scoring::ScoreFunctionOP dummy_commandline_sfxn = utility::pointer::make_shared< core::scoring::ScoreFunction >();
 		data_.add( "scorefxns", "commandline", dummy_commandline_sfxn );
+		prime_Data( data_ ); // Just for the movers and filters.
 
 		test_instantiation_ = utility::pointer::make_shared< InterfaceDdGMover >();
 		test_8mer_pose_ = pdb3fod_poseop();
@@ -63,10 +60,6 @@ public:
 	}
 
 	void tearDown(){
-		// Reset RosettaScripts global data
-		data_ = basic::datacache::DataMap();
-		filters_ = Filters_map();
-		movers_ = Movers_map();
 	}
 
 	bool is_dimer_pose_bound( core::pose::PoseCOP pose ) const {
@@ -209,7 +202,7 @@ public:
 	void test_parse_my_tag() {
 		// Test that emptiest tag possible works and defaults to move jump 1
 		TagCOP empty_tag = tagptr_from_string( "<InterfaceDdGMover name=test_interface_ddg_filter/>\n" );
-		test_instantiation_->parse_my_tag( empty_tag, data_, filters_, movers_, *test_8mer_pose_ );
+		test_instantiation_->parse_my_tag( empty_tag, data_, *test_8mer_pose_ );
 		//TS_ASSERT( test_instantiation_->get_chain_ids().size() == 1 );
 		//TS_ASSERT( test_instantiation_->get_chain_ids()[1] == 1 );
 
@@ -223,7 +216,7 @@ public:
 			};
 		for ( auto tag_str : good_tags ) {
 			TagCOP tag = tagptr_from_string(tag_str);
-			test_instantiation_->parse_my_tag(tag, data_, filters_, movers_, *test_dimer_pose_);
+			test_instantiation_->parse_my_tag(tag, data_, *test_dimer_pose_);
 		}
 
 		// Test failure for conflicting tag options
@@ -236,7 +229,7 @@ public:
 			};
 		for ( auto tag_str : bad_tags ) {
 			TagCOP tag = tagptr_from_string(tag_str);
-			TS_ASSERT_THROWS( test_instantiation_->parse_my_tag(tag, data_, filters_, movers_, *test_dimer_pose_), utility::excn::RosettaScriptsOptionError & );
+			TS_ASSERT_THROWS( test_instantiation_->parse_my_tag(tag, data_, *test_dimer_pose_), utility::excn::RosettaScriptsOptionError & );
 		}
 	}
 

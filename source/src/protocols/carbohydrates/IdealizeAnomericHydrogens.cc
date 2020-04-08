@@ -112,6 +112,12 @@ void IdealizeAnomericHydrogens::provide_xml_schema( utility::tag::XMLSchemaDefin
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Mover to idealize carbohydrate anomeric hydrogens", attlist );
 }
 
+void IdealizeAnomericHydrogens::parse_my_tag(
+	utility::tag::TagCOP,
+	basic::datacache::DataMap &,
+	core::pose::Pose const &
+) {} // No configuration needed.
+
 std::string IdealizeAnomericHydrogensCreator::keyname() const {
 	return IdealizeAnomericHydrogens::mover_name();
 }

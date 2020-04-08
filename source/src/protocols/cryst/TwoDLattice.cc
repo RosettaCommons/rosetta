@@ -549,8 +549,6 @@ void
 MakeLayerMover::parse_my_tag(
 	utility::tag::TagCOP const tag,
 	basic::datacache::DataMap & /*data*/,
-	filters::Filters_map const & ,
-	moves::Movers_map const & ,
 	core::pose::Pose const & /*pose*/ )
 {
 	if ( tag->hasOption( "contact_dist" ) ) {

@@ -29,6 +29,7 @@
 #include <protocols/filters/FilterFactory.hh>
 
 // Utility Headers
+#include <basic/datacache/DataMap.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/tag/Tag.hh>
@@ -86,8 +87,6 @@ protocols::rosetta_scripts::PoseSelectorFlags LogicalSelector::get_flags() const
 void LogicalSelector::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 )
 {
@@ -95,7 +94,7 @@ void LogicalSelector::parse_my_tag(
 	for ( utility::tag::TagCOP curr_tag : tag->getTags() ) {
 		protocols::rosetta_scripts::PoseSelectorOP new_selector(
 			protocols::rosetta_scripts::PoseSelectorFactory::get_instance()->
-			newPoseSelector( curr_tag, data, filters, movers, pose )
+			newPoseSelector( curr_tag, data, pose )
 		);
 		runtime_assert( new_selector != nullptr );
 		selectors_.push_back( new_selector );
@@ -251,8 +250,6 @@ TopNByProperty::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 void TopNByProperty::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 )
 {
@@ -274,7 +271,7 @@ void TopNByProperty::parse_my_tag(
 	for ( utility::tag::TagCOP curr_tag : tag->getTags() ) {
 		protocols::rosetta_scripts::PosePropertyReporterOP new_reporter(
 			protocols::rosetta_scripts::PosePropertyReporterFactory::get_instance()->
-			newPosePropertyReporter( curr_tag, data, filters, movers, pose )
+			newPosePropertyReporter( curr_tag, data, pose )
 		);
 		runtime_assert( new_reporter != nullptr );
 		reporter_ = new_reporter;
@@ -377,8 +374,6 @@ Filter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 void Filter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 )
 {
@@ -416,7 +411,7 @@ void Filter::parse_my_tag(
 		if ( filter_name.empty() && filter_tag->hasOption("name") ) {
 			filter_name = filter_tag->getOption<std::string>("name");
 		}
-		filter_  = protocols::filters::FilterFactory::get_instance()->newFilter( filter_tag, data, filters, movers, pose );
+		filter_  = protocols::filters::FilterFactory::get_instance()->newFilter( filter_tag, data, pose );
 	}
 
 	if ( !filter_ ) {
@@ -425,10 +420,10 @@ void Filter::parse_my_tag(
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, s.str());
 	}
 
-	if ( filters.find(filter_name) != filters.end() ) {
+	if ( data.has( "filters", filter_name ) ) {
 		TR.Warning << "Filter named \"" << filter_name << "\" already defined. Not adding this filter instance to the map." << std::endl;
 	} else {
-		filters.insert( std::make_pair( filter_name, filter_ ) );
+		data.add( "filters", filter_name, filter_ );
 		TR << "Defined filter named \"" << filter_name << "\" of type " << filter_tag->getName() << std::endl;
 	}
 }

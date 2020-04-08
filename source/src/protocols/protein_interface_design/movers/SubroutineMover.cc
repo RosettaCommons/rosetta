@@ -63,8 +63,6 @@ SubroutineMover::apply( core::pose::Pose & pose )
 void
 SubroutineMover::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	Movers_map const &,
 	core::pose::Pose const & pose )
 {
 	std::string const xml_fname( tag->getOption< std::string >( "xml_fname" ) );

@@ -21,7 +21,6 @@
 #include <core/conformation/Conformation.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/rms_util.hh>
@@ -586,8 +585,6 @@ void
 SymmetricMotifFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data_map*/,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & /*reference_pose*/ ) {
 	symm_type_ = tag->getOption<std::string>( "symm_type", "D2" );
 

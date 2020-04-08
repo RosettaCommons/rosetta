@@ -123,9 +123,7 @@ CalculatorFilter::compute(core::pose::Pose const & pose) const {
 
 void
 CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const &,
+	basic::datacache::DataMap & data,
 	core::pose::Pose const &)
 {
 	std::string equation = tag_ptr->getOption< std::string >( "equation" );
@@ -152,7 +150,7 @@ CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 			} else {
 				filter_name = sub_tag_ptr->getOption<std::string>( "filter" );
 			}
-			add_filter( varname, protocols::rosetta_scripts::parse_filter( filter_name , filters ) );
+			add_filter( varname, protocols::rosetta_scripts::parse_filter( filter_name , data ) );
 
 			continue;
 		} else if ( sub_tag_ptr->hasOption("reported") ) {

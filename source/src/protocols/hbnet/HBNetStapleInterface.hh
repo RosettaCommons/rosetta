@@ -80,7 +80,7 @@ public:
 	//destructor
 	~HBNetStapleInterface() override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 	void setup_packer_task_and_starting_residues( core::pose::Pose const & pose ) override;
 	void prepare_output() override;
 	std::string print_additional_info_for_net( HBondNetStruct & i, core::pose::Pose const & pose ) override;

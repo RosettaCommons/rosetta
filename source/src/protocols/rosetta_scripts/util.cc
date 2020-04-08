@@ -510,29 +510,40 @@ append_subelement_for_parse_movemap_factory_legacy(
 //////////////////// Filter ////////////////////////////
 
 protocols::filters::FilterOP
-parse_filter( std::string const & filter_name, protocols::filters::Filters_map const & filters ){
-	auto filter_it( filters.find( filter_name ) );
-	if ( filter_it == filters.end() ) {
+parse_filter( std::string const & filter_name, basic::datacache::DataMap const & data ){
+	if ( ! data.has( "filters", filter_name ) ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Filter "+filter_name+" not found" );
 	}
-	return filter_it->second;
+	return data.get_ptr< protocols::filters::Filter >( "filters", filter_name );
 }
 
+protocols::filters::FilterOP
+parse_filter_or_null( std::string const & filter_name, basic::datacache::DataMap const & data ){
+	if ( ! data.has( "filters", filter_name ) ) {
+		return nullptr;
+	}
+	return data.get_ptr< protocols::filters::Filter >( "filters", filter_name );
+}
 
 
 /////////////////////////////////////////////////////////
 //////////////////// Mover //////////////////////////////
 
 protocols::moves::MoverOP
-parse_mover( std::string const & mover_name, protocols::moves::Movers_map const & movers ){
-	auto mover_it( movers.find( mover_name ) );
-	if ( mover_it == movers.end() ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover "+mover_name+" not found" );
+parse_mover( std::string const & mover_name, basic::datacache::DataMap const & data ){
+	if ( ! data.has( "movers", mover_name ) ) {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Mover "+mover_name+" not found" );
 	}
-	return mover_it->second;
+	return data.get_ptr< protocols::moves::Mover >( "movers", mover_name );
 }
 
-
+protocols::moves::MoverOP
+parse_mover_or_null( std::string const & mover_name, basic::datacache::DataMap const & data ){
+	if ( ! data.has( "movers", mover_name ) ) {
+		return nullptr;
+	}
+	return data.get_ptr< protocols::moves::Mover >( "movers", mover_name );
+}
 
 /////////////////////////////////////////////////////////
 //////////////////// XYZ Vector /////////////////////////

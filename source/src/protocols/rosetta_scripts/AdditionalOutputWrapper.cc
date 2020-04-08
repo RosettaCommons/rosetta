@@ -115,8 +115,6 @@ void AdditionalOutputWrapper::generate_pose(core::pose::Pose & pose)
 {
 	// Empty objects... may not work...
 	basic::datacache::DataMap data;
-	protocols::filters::Filters_map filters;
-	protocols::moves::Movers_map movers;
 	MoverOP mover(nullptr);
 
 	if ( !mover && rosetta_scripts_tag_ ) {
@@ -125,7 +123,7 @@ void AdditionalOutputWrapper::generate_pose(core::pose::Pose & pose)
 	}
 
 	if ( !mover && mover_tag_ ) {
-		mover = MoverFactory::get_instance()->newMover(mover_tag_, data, filters, movers, pose );
+		mover = MoverFactory::get_instance()->newMover(mover_tag_, data, pose );
 	}
 
 	runtime_assert( mover != nullptr );
@@ -148,8 +146,6 @@ void AdditionalOutputWrapper::generate_pose(core::pose::Pose & pose)
 void AdditionalOutputWrapper::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ) {
 
@@ -176,7 +172,7 @@ void AdditionalOutputWrapper::parse_my_tag(
 				std::string name = curr_tag->getOption<std::string>("name");
 				protocols::moves::MoverOP new_mover(
 					protocols::moves::MoverFactory::get_instance()->
-					newMover(curr_tag, data, filters, movers, pose)
+					newMover(curr_tag, data, pose)
 				);
 				mover_tag_ = curr_tag;
 			}

@@ -45,7 +45,10 @@ PoseComment::PoseComment() :
 PoseComment::~PoseComment() = default;
 
 void
-PoseComment::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+PoseComment::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 	comment_name( tag->getOption< std::string >( "comment_name","" ) );
 	comment_value( tag->getOption< std::string >( "comment_value", "" ) );

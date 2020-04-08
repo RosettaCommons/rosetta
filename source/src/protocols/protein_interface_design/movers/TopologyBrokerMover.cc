@@ -142,7 +142,7 @@ TopologyBrokerMover::apply( pose::Pose & pose )
 
 
 void
-TopologyBrokerMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+TopologyBrokerMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, core::pose::Pose const & )
 {
 	TR<<"Setup TopologyBrokerMover Mover " << std::endl;
 

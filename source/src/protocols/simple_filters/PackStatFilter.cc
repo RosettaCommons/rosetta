@@ -119,8 +119,6 @@ void
 PackStatFilter::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap &,
-	filters::Filters_map const &,
-	Movers_map const &,
 	Pose const & )
 {
 	filtered_score_ = tag->getOption<Real>( "threshold", 0.58 ); // ideally, ~0.65 is required for good packing

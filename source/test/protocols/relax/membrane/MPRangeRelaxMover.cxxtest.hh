@@ -89,11 +89,9 @@ public:
 		protocols::relax::membrane::MPRangeRelaxMoverOP xmprr(new protocols::relax::membrane::MPRangeRelaxMover());
 
 		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
 		core::pose::Pose pose;
 
-		xmprr->parse_my_tag( tag, dm, fm, mm, pose );
+		xmprr->parse_my_tag( tag, dm, pose );
 
 		TS_ASSERT(xmprr->get_native() != nullptr);
 		TS_ASSERT(xmprr->get_sfxn() != nullptr);

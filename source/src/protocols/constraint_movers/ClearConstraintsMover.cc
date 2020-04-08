@@ -35,8 +35,6 @@ void
 ClearConstraintsMover::parse_my_tag(
 	TagCOP const,
 	basic::datacache::DataMap &,
-	Filters_map const &,
-	moves::Movers_map const &,
 	Pose const &
 )
 {

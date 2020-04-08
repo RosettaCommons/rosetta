@@ -115,8 +115,6 @@ void
 IntraRepeatContactFilter::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap &,
-	filters::Filters_map const &,
-	Movers_map const &,
 	Pose const & )
 {
 	// set threshold

@@ -92,8 +92,6 @@ public:
 		tag->read( ss );
 
 		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
 		core::pose::Pose pose;
 
 		std::stringstream ss2;
@@ -105,7 +103,7 @@ public:
 
 		//protocols::relax::FastRelax mover;
 		T mover;
-		mover.parse_my_tag( tag, dm, fm, mm, pose );
+		mover.parse_my_tag( tag, dm, pose );
 
 		std::vector< core::Real > expected_weights = { 0.02, 0.25, 0.55, 1.0 };
 		check_fa_rep_weights_in_script( mover.script_, expected_weights );
@@ -129,8 +127,6 @@ public:
 		tag->read( ss );
 
 		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
 		core::pose::Pose pose;
 
 		std::stringstream ss2;
@@ -142,7 +138,7 @@ public:
 
 		//protocols::relax::FastRelax mover;
 		T mover;
-		mover.parse_my_tag( tag, dm, fm, mm, pose );
+		mover.parse_my_tag( tag, dm, pose );
 
 		std::vector< core::Real > expected_weights = { 0.02, 0.25, 0.55, 1.0, 0.02, 0.25, 0.55, 1.0 };
 		check_fa_rep_weights_in_script( mover.script_, expected_weights );
@@ -166,8 +162,6 @@ public:
 		tag->read( ss );
 
 		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
 		core::pose::Pose pose;
 
 		std::stringstream ss2;
@@ -179,7 +173,7 @@ public:
 
 		//protocols::relax::FastRelax mover;
 		T mover;
-		mover.parse_my_tag( tag, dm, fm, mm, pose );
+		mover.parse_my_tag( tag, dm, pose );
 
 		std::vector< core::Real > expected_weights = { 0.079, 0.295, 0.577, 1 };
 		check_fa_rep_weights_in_script( mover.script_, expected_weights );
@@ -203,8 +197,6 @@ public:
 		tag->read( ss );
 
 		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
 		core::pose::Pose pose;
 
 		std::stringstream ss2;
@@ -216,7 +208,7 @@ public:
 
 		//protocols::relax::FastRelax mover;
 		T mover;
-		mover.parse_my_tag( tag, dm, fm, mm, pose );
+		mover.parse_my_tag( tag, dm, pose );
 
 		std::vector< core::Real > expected_weights = { 0.1, 0.2, 0.5, 1 };
 		check_fa_rep_weights_in_script( mover.script_, expected_weights );
@@ -238,8 +230,6 @@ public:
 		tag->read( ss );
 
 		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
 		core::pose::Pose pose;
 
 		std::stringstream ss2;
@@ -252,7 +242,7 @@ public:
 		//protocols::relax::FastRelax mover;
 		T mover;
 		set_throw_on_next_assertion_failure(); // Suppress backtrace printing.
-		TS_ASSERT_THROWS_ANYTHING( mover.parse_my_tag( tag, dm, fm, mm, pose ) );
+		TS_ASSERT_THROWS_ANYTHING( mover.parse_my_tag( tag, dm, pose ) );
 	}
 
 	/// @brief Check that this works for a noncanonical

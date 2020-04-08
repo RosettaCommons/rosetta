@@ -72,7 +72,6 @@ public:
 	typedef utility::tag::TagCOP TagCOP;
 	typedef core::pose::Pose Pose;
 	typedef core::pose::PoseCOP PoseCOP;
-	typedef protocols::filters::Filters_map Filters_map;
 	typedef std::list< std::string > Strings; // should match jd2::Job::Strings
 
 public:
@@ -209,8 +208,6 @@ public:
 	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
-		Filters_map const & filters,
-		Movers_map const & movers,
 		Pose const & pose
 	);
 

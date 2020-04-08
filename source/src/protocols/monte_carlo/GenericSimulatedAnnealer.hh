@@ -97,8 +97,6 @@ public:
 	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
-		Filters_map const & filters,
-		Movers_map const & movers,
 		Pose const & ) override;
 
 	/// @brief Clears accepted data and initialize with new pose

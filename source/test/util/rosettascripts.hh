@@ -17,12 +17,8 @@
 // // Sample parse_my_tag() test
 //
 // basic::datacache::DataMap data;
-// Filters_map filters;
-// Movers_map movers;
 //
-// prime_Movers( movers ); // Adds "null" to movers map - optional
-// prime_Filters( filters ); // Adds true_filter, false_filter - optional
-// prime_Data( data ); // Adds score12, commandline scorefunctions - optional
+// prime_Data( data ); // Adds score12, commandline scorefunctions, null mover, true/false filters - optional
 //
 // filters["stubby"] = new StubFilter( true, -3.14 );
 //
@@ -80,24 +76,11 @@ using protocols::moves::MoverOP;
 
 using utility::tag::TagCOP;
 using basic::datacache::DataMap;
-using protocols::moves::Movers_map; // A std::map of string to MoverOP
-using protocols::filters::Filters_map; // A std::map string to FilterOP
 
 using protocols::filters::TrueFilter;
 using protocols::filters::FalseFilter;
 using protocols::moves::NullMover;
 
-
-/// @brief setup filters map with some of the the RosettaScript defaults
-inline void prime_Filters( Filters_map & filters ) {
-	filters["true_filter"] = utility::pointer::make_shared< protocols::filters::TrueFilter >();
-	filters["false_filter"] = utility::pointer::make_shared< protocols::filters::FalseFilter >();
-}
-
-/// @brief setup movers map with some of the the RosettaScript defaults
-inline void prime_Movers( Movers_map & movers ) {
-	movers["null"] = utility::pointer::make_shared< protocols::moves::NullMover >();
-}
 
 /// @brief setup data map with *some* of the the RosettaScript defaults
 inline void prime_Data( basic::datacache::DataMap & data ) {
@@ -113,6 +96,10 @@ inline void prime_Data( basic::datacache::DataMap & data ) {
 	//data.add( "scorefxns", "talaris2013", talaris2013 );
 	//data.add( "scorefxns", "talaris2014", talaris2014 );
 
+	data.add( "movers", "null", utility::pointer::make_shared< protocols::moves::NullMover >() );
+
+	data.add( "filters", "true_filter", utility::pointer::make_shared< protocols::filters::TrueFilter >() );
+	data.add( "fitlers", "false_filter", utility::pointer::make_shared< protocols::filters::FalseFilter >() );
 }
 
 /// @brief Generate a tagptr from a string
@@ -128,17 +115,13 @@ utility::pointer::shared_ptr<MoverSubclass> parse_tag(std::string tag_string) {
 	std::istringstream tag_stream(tag_string);
 	utility::tag::TagCOP tag = utility::tag::Tag::create(tag_stream);
 	basic::datacache::DataMap data;
-	protocols::filters::Filters_map filters;
-	protocols::moves::Movers_map movers;
 	core::pose::Pose pose;
 
-	prime_Filters( filters );
-	prime_Movers( movers );
 	prime_Data( data );
 
 	protocols::moves::MoverOP base_mover(
 		protocols::moves::MoverFactory::get_instance()->newMover(
-		tag, data, filters, movers, pose ) );
+		tag, data, pose ) );
 	utility::pointer::shared_ptr<MoverSubclass> mover =
 		utility::pointer::dynamic_pointer_cast<MoverSubclass>(base_mover);
 
@@ -153,17 +136,13 @@ utility::pointer::shared_ptr<FilterSubclass> parse_filter_tag(std::string tag_st
 	std::istringstream tag_stream(tag_string);
 	utility::tag::TagCOP tag = utility::tag::Tag::create(tag_stream);
 	basic::datacache::DataMap data;
-	protocols::filters::Filters_map filters;
-	protocols::moves::Movers_map movers;
 	core::pose::Pose pose;
 
-	prime_Filters( filters );
-	prime_Movers( movers );
 	prime_Data( data );
 
 	protocols::filters::FilterOP base_filter(
 		protocols::filters::FilterFactory::get_instance()->newFilter(
-		tag, data, filters, movers, pose ) );
+		tag, data, pose ) );
 	utility::pointer::shared_ptr<FilterSubclass> filter =
 		utility::pointer::dynamic_pointer_cast<FilterSubclass>(base_filter);
 

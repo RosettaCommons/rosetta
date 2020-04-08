@@ -67,8 +67,6 @@ void
 InterfaceDdGMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & ,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & )
 {
 
@@ -117,20 +115,20 @@ InterfaceDdGMover::parse_my_tag(
 
 	// Load saved reference pose(s), if defined
 	if ( tag->hasOption("mut_ref_savepose_mover") ) {
-		moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "mut_ref_savepose_mover" ), movers );
+		moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "mut_ref_savepose_mover" ), data );
 		mut_save_pose_mover_ = utility::pointer::dynamic_pointer_cast < protocols::rosetta_scripts::SavePoseMover > (mover);
 		apply_pose_is_mutant_ = false;
 	}
 
 	if ( tag->hasOption("wt_ref_savepose_mover") ) {
-		moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "wt_ref_savepose_mover" ), movers );
+		moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "wt_ref_savepose_mover" ), data );
 		wt_save_pose_mover_ = utility::pointer::dynamic_pointer_cast < protocols::rosetta_scripts::SavePoseMover > (mover);
 		apply_pose_is_mutant_ = true;
 	}
 
 	// Set ReportToDB mover
 	if ( tag->hasOption("db_reporter") ) {
-		set_db_reporter( utility::pointer::dynamic_pointer_cast < protocols::features::ReportToDB > ( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "db_reporter" ), movers ) ) );
+		set_db_reporter( utility::pointer::dynamic_pointer_cast < protocols::features::ReportToDB > ( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "db_reporter" ), data ) ) );
 	}
 
 }

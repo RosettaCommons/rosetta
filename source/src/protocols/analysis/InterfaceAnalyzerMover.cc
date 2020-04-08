@@ -1479,8 +1479,6 @@ void
 InterfaceAnalyzerMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
-	Filters_map const &,
-	Movers_map const &,
 	core::pose::Pose const &
 )
 {

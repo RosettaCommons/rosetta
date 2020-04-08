@@ -140,9 +140,8 @@ public:
 	/// @brief Initialization function from the DataMaps
 	void
 	init_from_maps(
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers );
+		basic::datacache::DataMap & data
+	);
 
 
 

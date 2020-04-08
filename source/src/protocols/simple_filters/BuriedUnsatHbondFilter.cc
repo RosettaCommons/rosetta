@@ -215,7 +215,10 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( BuriedUnsatHbondFilter const & r
 BuriedUnsatHbondFilter::~BuriedUnsatHbondFilter()= default;
 
 void
-BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+BuriedUnsatHbondFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & datamap,
+	core::pose::Pose const & )
 {
 	legacy_options_ = tag->getOption<bool>( "use_legacy_options", false );
 	generous_hbonds_ = tag->getOption<bool>( "generous_hbonds", true );

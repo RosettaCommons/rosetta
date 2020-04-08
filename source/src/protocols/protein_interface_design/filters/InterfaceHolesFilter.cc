@@ -20,7 +20,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/scoring/Energies.hh>
 
 #include <basic/Tracer.hh>
@@ -99,7 +98,7 @@ InterfaceHolesFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-InterfaceHolesFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+InterfaceHolesFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
 {
 	threshold_ = tag->getOption<core::Size>( "threshold", 200 );
 	rb_jump_ = tag->getOption<core::Size>( "jump", 1 );

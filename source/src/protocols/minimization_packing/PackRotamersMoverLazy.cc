@@ -62,8 +62,6 @@ void
 PackRotamersMoverLazy::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
-	Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	Pose const & pose
 )
 {
@@ -71,8 +69,8 @@ PackRotamersMoverLazy::parse_my_tag(
 		nloop(tag->getOption<core::Size>("nloop",1));
 		runtime_assert( nloop() > 0 );
 	}
-	parse_score_function( tag, datamap, filters, movers, pose );
-	parse_task_operations( tag, datamap, filters, movers, pose );
+	parse_score_function( tag, datamap, pose );
+	parse_task_operations( tag, datamap, pose );
 }
 
 /// PackRotamersMoverLazy

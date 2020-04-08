@@ -124,8 +124,6 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
-		filters::Filters_map const &,
-		moves::Movers_map const &,
 		core::pose::Pose const &,
 		std::map< std::string, utility::tag::TagCOP > const & mover_tags_by_name,
 		std::map< std::string, utility::tag::TagCOP > const & filter_tags_by_name );
@@ -138,8 +136,6 @@ public:
 		parse_my_tag(
 			tag,
 			* cache->data_map,
-			* cache->filters_map,
-			* cache->movers_map,
 			pose,
 			* cache->mover_tags,
 			* cache->filter_tags

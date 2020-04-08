@@ -206,8 +206,6 @@ PlacementMinimizationMover::set_reference_pose( core::pose::PoseCOP reference_po
 void
 PlacementMinimizationMover::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap &data,
-	protocols::filters::Filters_map const &,
-	Movers_map const &,
 	core::pose::Pose const & )
 {
 	host_chain( tag->getOption<core::Size>( "host_chain", 2 ) );

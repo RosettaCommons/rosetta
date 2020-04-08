@@ -95,7 +95,6 @@ using core::pose::PoseOP;
 using cppdb::cppdb_error;
 using protocols::moves::MoverOP;
 using basic::datacache::DataMap;
-using protocols::moves::Movers_map;
 using protocols::rosetta_scripts::parse_task_operations;
 //using basic::database::parse_database_connection;
 using std::string;
@@ -476,8 +475,6 @@ void
 ReportToDB::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const & filters,
-	Movers_map const & movers,
 	Pose const & pose )
 {
 	if ( tag->hasOption("db") ) {
@@ -582,7 +579,7 @@ ReportToDB::parse_my_tag(
 		try{
 			FeaturesReporterOP features_reporter(
 				features_reporter_factory_->get_features_reporter(
-				feature_tag, data, filters, movers, pose));
+				feature_tag, data, pose));
 			features_reporter->set_relevant_residues_mode(relevant_residues_mode_);
 			add_features_reporter(features_reporter);
 		} catch (utility::excn::Exception const & e ){

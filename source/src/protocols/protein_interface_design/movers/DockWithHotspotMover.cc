@@ -28,8 +28,6 @@
 
 //parsing
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
-#include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <basic/Tracer.hh>
@@ -154,8 +152,6 @@ void DockWithHotspotMover::apply( Pose & pose ) {
 */
 void DockWithHotspotMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const & /*pose*/)
 {
 	hotspot_score_weight_=tag->getOption<core::Real>( "hotspot_score_weight", 10 );

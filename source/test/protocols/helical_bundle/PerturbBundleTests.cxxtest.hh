@@ -71,16 +71,14 @@ public:
 		core::Real smallest(500.0);
 		core::Real largest(0.0);
 		basic::datacache::DataMap dummy_data;
-		protocols::filters::Filters_map dummy_filters;
-		protocols::moves::Movers_map dummy_movers;
 
 		for ( core::Size i(1); i<=30; ++i ) {
 			core::pose::Pose testpose;
 
 			protocols::helical_bundle::MakeBundle makebundle;
-			makebundle.parse_my_tag(maketag, dummy_data, dummy_filters, dummy_movers, testpose );
+			makebundle.parse_my_tag(maketag, dummy_data, testpose );
 			protocols::helical_bundle::PerturbBundle pertbundle;
-			pertbundle.parse_my_tag(perttag, dummy_data, dummy_filters, dummy_movers, testpose );
+			pertbundle.parse_my_tag(perttag, dummy_data, testpose );
 			makebundle.apply(testpose);
 
 			{

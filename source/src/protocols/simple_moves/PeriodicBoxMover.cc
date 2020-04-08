@@ -1081,8 +1081,6 @@ void
 PeriodicBoxMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap,
-	filters::Filters_map const &,
-	moves::Movers_map const &,
 	core::pose::Pose const &  ) {
 	using namespace core::conformation;
 	using namespace core::pack::task;

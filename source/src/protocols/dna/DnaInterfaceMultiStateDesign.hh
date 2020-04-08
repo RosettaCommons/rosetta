@@ -55,8 +55,6 @@ public:
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		moves::Movers_map const &,
 		Pose const & ) override;
 	/// @brief required in the context of the parser/scripting scheme
 	moves::MoverOP fresh_instance() const override;

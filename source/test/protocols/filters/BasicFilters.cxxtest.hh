@@ -242,15 +242,13 @@ public:
 
 	void test_parsing() {
 		basic::datacache::DataMap data;
-		Filters_map filters;
-		Movers_map movers;
 
-		filters["sfF1"] = utility::pointer::make_shared< StubFilter >( false, 1 );
-		filters["sfF2"] = utility::pointer::make_shared< StubFilter >( false, 2 );
-		filters["sfF3"] = utility::pointer::make_shared< StubFilter >( false, 3 );
-		filters["sfT10"] = utility::pointer::make_shared< StubFilter >( true, 10 );
-		filters["sfT20"] = utility::pointer::make_shared< StubFilter >( true, 20 );
-		filters["sfT99"] = utility::pointer::make_shared< StubFilter >( true, 99 );
+		data["filters"]["sfF1"] = utility::pointer::make_shared< StubFilter >( false, 1 );
+		data["filters"]["sfF2"] = utility::pointer::make_shared< StubFilter >( false, 2 );
+		data["filters"]["sfF3"] = utility::pointer::make_shared< StubFilter >( false, 3 );
+		data["filters"]["sfT10"] = utility::pointer::make_shared< StubFilter >( true, 10 );
+		data["filters"]["sfT20"] = utility::pointer::make_shared< StubFilter >( true, 20 );
+		data["filters"]["sfT99"] = utility::pointer::make_shared< StubFilter >( true, 99 );
 
 		protocols::filters::IfThenFilter  testfilter;
 		TagCOP tag = tagptr_from_string("<IfThenFilter name=test threshold=0 >\n"
@@ -260,7 +258,7 @@ public:
 			"    <ELSE valuefilter=sfT99 />\n"
 			" </IfThenFilter>\n");
 
-		testfilter.parse_my_tag( tag, data, filters, movers, *testpose_ );
+		testfilter.parse_my_tag( tag, data, *testpose_ );
 
 		TS_ASSERT_EQUALS( testfilter.report_sm( *testpose_), 3 );
 	}
@@ -325,15 +323,13 @@ public:
 
 	void test_parse_invertweights() {
 		basic::datacache::DataMap data;
-		Filters_map filters;
-		Movers_map movers;
 
-		filters["sfF1"] = utility::pointer::make_shared< StubFilter >( false, 1 );
-		filters["sfF2"] = utility::pointer::make_shared< StubFilter >( false, 2 );
-		filters["sfF3"] = utility::pointer::make_shared< StubFilter >( false, 3 );
-		filters["sfT10"] = utility::pointer::make_shared< StubFilter >( true, 10 );
-		filters["sfT20"] = utility::pointer::make_shared< StubFilter >( true, 20 );
-		filters["sfT99"] = utility::pointer::make_shared< StubFilter >( true, 99 );
+		data["filters"]["sfF1"] = utility::pointer::make_shared< StubFilter >( false, 1 );
+		data["filters"]["sfF2"] = utility::pointer::make_shared< StubFilter >( false, 2 );
+		data["filters"]["sfF3"] = utility::pointer::make_shared< StubFilter >( false, 3 );
+		data["filters"]["sfT10"] = utility::pointer::make_shared< StubFilter >( true, 10 );
+		data["filters"]["sfT20"] = utility::pointer::make_shared< StubFilter >( true, 20 );
+		data["filters"]["sfT99"] = utility::pointer::make_shared< StubFilter >( true, 99 );
 
 		protocols::filters::IfThenFilter  testfilter;
 		TagCOP tag = tagptr_from_string("<IfThenFilter name=test threshold=2 lower_threshold=1>\n"
@@ -342,7 +338,7 @@ public:
 			"    <ELSE valuefilter=sfT99 weight=5/>\n"
 			" </IfThenFilter>\n");
 
-		testfilter.parse_my_tag( tag, data, filters, movers, *testpose_ );
+		testfilter.parse_my_tag( tag, data, *testpose_ );
 
 		TS_ASSERT_EQUALS( testfilter.report_sm( *testpose_), 6 );
 		TS_ASSERT( testfilter.apply(*testpose_) );

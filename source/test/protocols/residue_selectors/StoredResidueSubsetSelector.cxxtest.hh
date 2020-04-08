@@ -74,17 +74,15 @@ public:
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
-		protocols::moves::Movers_map movers;
-		protocols::filters::Filters_map filters;
 
 		StoreResidueSubsetMoverOP rs( new StoreResidueSubsetMover );
 		set_throw_on_next_assertion_failure();
-		TS_ASSERT_THROWS_ANYTHING( rs->parse_my_tag( tag, dm, filters, movers, core::pose::Pose() ) );
+		TS_ASSERT_THROWS_ANYTHING( rs->parse_my_tag( tag, dm, core::pose::Pose() ) );
 
 		std::stringstream ssgood;
 		ssgood << "<StoreResidueSubset name=\"good_ss\" subset_name=\"stored_subset\" />";
 		tag->read( ssgood );
-		TS_ASSERT_THROWS_NOTHING( rs->parse_my_tag( tag, dm, filters, movers, core::pose::Pose() ) );
+		TS_ASSERT_THROWS_NOTHING( rs->parse_my_tag( tag, dm, core::pose::Pose() ) );
 	}
 
 	void test_store_and_retrieve_subset() {

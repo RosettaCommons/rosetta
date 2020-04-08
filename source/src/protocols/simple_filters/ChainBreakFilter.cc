@@ -45,7 +45,10 @@ ChainBreak::ChainBreak() :
 ChainBreak::~ChainBreak() = default;
 
 void
-ChainBreak::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+ChainBreak::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 	threshold( tag->getOption< core::Size >( "threshold", 1 ) );
 	chain_num( tag->getOption< core::Size >( "chain_num", 1 ) );

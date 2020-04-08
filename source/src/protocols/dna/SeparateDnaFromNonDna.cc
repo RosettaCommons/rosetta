@@ -167,8 +167,6 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 void SeparateDnaFromNonDna::parse_my_tag(
 	TagCOP const,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	moves::Movers_map const &,
 	Pose const &
 )
 {}

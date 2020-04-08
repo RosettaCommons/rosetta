@@ -46,7 +46,7 @@ public:
 	);
 
 	void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, core::pose::Pose const & ) override;
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 
 	std::string
 	get_name() const override;

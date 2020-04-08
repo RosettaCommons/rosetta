@@ -271,8 +271,6 @@ RelativePoseFilter::pdb_name( std::string const & pdb_name ){
 void
 RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & )
 {
 	using namespace protocols::rosetta_scripts;
@@ -295,8 +293,8 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
 		symmdata_->read_symmetry_data_from_file(symmetry_definition_);
 		core::pose::symmetry::make_symmetric_pose(*pose_,*symmdata_);
 	}
-	relax_mover( parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), movers ) );
-	filter( parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
+	relax_mover( parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), data ) );
+	filter( parse_filter( tag->getOption< std::string >( "filter" ), data ) );
 	filter_name( tag->getOption< std::string> ( "name", "" ) );
 	baseline( tag->getOption< bool >( "baseline", true ));
 	if ( baseline() ) {

@@ -84,8 +84,10 @@ CutOutDomain::apply( core::pose::Pose & pose )
 }
 
 void
-CutOutDomain::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &, core::pose::Pose const & )
+CutOutDomain::parse_my_tag(
+	TagCOP const tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 	start_res_ = tag->getOption<core::Size>( "start_res", 1 );
 	end_res_ = tag->getOption<core::Size>( "end_res", 1 );

@@ -53,8 +53,6 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data_map,
-		protocols::filters::Filters_map const & filters_map,
-		protocols::moves::Movers_map const & movers_map,
 		core::pose::Pose const & pose ) override;
 
 	std::string

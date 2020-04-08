@@ -66,8 +66,6 @@ public:
 	get_features_reporter(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose);
 
 	void define_features_reporter_xml_schema_group( utility::tag::XMLSchemaDefinition & xsd ) const;

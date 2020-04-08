@@ -458,8 +458,6 @@ DnaInterfacePacker::clear_initialization()
 void DnaInterfacePacker::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
-	protocols::filters::Filters_map const & filters,
-	moves::Movers_map const & movers,
 	Pose const & pose
 )
 {
@@ -481,8 +479,8 @@ void DnaInterfacePacker::parse_my_tag(
 	if ( protein_scan_ ) runtime_assert( !allowed_types_.empty() );
 
 	// the following are calls to PackRotamersMover methods
-	parse_score_function( tag, datamap, filters, movers, pose );
-	parse_task_operations( tag, datamap, filters, movers, pose );
+	parse_score_function( tag, datamap, pose );
+	parse_task_operations( tag, datamap, pose );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

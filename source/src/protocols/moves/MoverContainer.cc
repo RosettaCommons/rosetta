@@ -296,9 +296,7 @@ RandomMover::fresh_instance() const {
 
 void
 RandomMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &movers,
+	basic::datacache::DataMap & data,
 	core::pose::Pose const & ) {
 	using namespace protocols::filters;
 
@@ -314,7 +312,7 @@ RandomMover::parse_my_tag( utility::tag::TagCOP tag,
 	nmoves_ = tag->getOption< core::Size >( "repeats",1 );
 
 	for ( core::Size i=1; i<=mover_names.size(); ++i ) {
-		protocols::moves::MoverOP mover = find_mover_or_die(mover_names[i], tag, movers);
+		protocols::moves::MoverOP mover = find_mover_or_die(mover_names[i], tag, data);
 		core::Real weight = (mover_weights.size() == 0)? 1.0 : std::atof( mover_weights[i].c_str() );
 		add_mover( mover, weight );
 	}
@@ -465,16 +463,14 @@ SwitchMover::fresh_instance() const {
 
 void
 SwitchMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &movers,
+	basic::datacache::DataMap & data,
 	core::pose::Pose const & ) {
 	available_ = true;
 	using namespace protocols::filters;
 
 	mover_names_ = utility::string_split( tag->getOption< std::string >("movers"), ',');
 	for ( core::Size i=0; i<mover_names_.size(); ++i ) {
-		protocols::moves::MoverOP mover = find_mover_or_die(mover_names_[i], tag, movers);
+		protocols::moves::MoverOP mover = find_mover_or_die(mover_names_[i], tag, data);
 		add_mover( mover, 1 );
 	}
 

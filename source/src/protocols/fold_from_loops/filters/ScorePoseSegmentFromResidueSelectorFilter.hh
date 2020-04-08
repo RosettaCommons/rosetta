@@ -60,7 +60,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, core::pose::Pose const & ) override;
 
 	std::string
 	name() const override {

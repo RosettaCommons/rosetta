@@ -147,8 +147,6 @@ void
 DnaInterfaceMinMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
-	protocols::filters::Filters_map const &,
-	moves::Movers_map const &,
 	core::pose::Pose const &
 )
 {

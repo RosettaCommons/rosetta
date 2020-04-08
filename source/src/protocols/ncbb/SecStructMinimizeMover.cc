@@ -201,8 +201,6 @@ void
 SecStructMinimizeMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 ) {
 	alpha_beta_pattern_ = tag->getOption<std::string>("alpha_beta_pattern", "A" );

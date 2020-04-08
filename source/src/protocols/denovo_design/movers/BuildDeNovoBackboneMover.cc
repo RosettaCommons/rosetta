@@ -103,8 +103,6 @@ void
 BuildDeNovoBackboneMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & )
 {
 	set_id( tag->getOption< std::string >( "name" ) );
@@ -122,9 +120,9 @@ BuildDeNovoBackboneMover::parse_my_tag(
 
 	core::Size idx = 1;
 	for ( utility::tag::TagCOP subtag : tag->getTags() ) {
-		if ( subtag->getName() == "PreFoldMovers" ) parse_prefold_movers( subtag, movers );
-		else if ( subtag->getName() == "PostFoldMovers" ) parse_postfold_movers( subtag, movers );
-		else if ( subtag->getName() == "Filters" ) parse_filters( subtag, filters );
+		if ( subtag->getName() == "PreFoldMovers" ) parse_prefold_movers( subtag, data );
+		else if ( subtag->getName() == "PostFoldMovers" ) parse_postfold_movers( subtag, data );
+		else if ( subtag->getName() == "Filters" ) parse_filters( subtag, data );
 		else if ( idx == 1 ) {
 			parse_architect( subtag, data );
 			++idx;
@@ -381,25 +379,25 @@ BuildDeNovoBackboneMover::parse_perturber( utility::tag::TagCOP tag, basic::data
 }
 
 void
-BuildDeNovoBackboneMover::parse_prefold_movers( utility::tag::TagCOP tag, protocols::moves::Movers_map const & moversmap )
+BuildDeNovoBackboneMover::parse_prefold_movers( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
-	MoverOPs const & movers = parse_movers( tag, moversmap );
+	MoverOPs const & movers = parse_movers( tag, data );
 	for ( auto const & mover : movers ) {
 		prefold_movers_.push_back( mover );
 	}
 }
 
 void
-BuildDeNovoBackboneMover::parse_postfold_movers( utility::tag::TagCOP tag, protocols::moves::Movers_map const & moversmap )
+BuildDeNovoBackboneMover::parse_postfold_movers( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
-	MoverOPs const & movers = parse_movers( tag, moversmap );
+	MoverOPs const & movers = parse_movers( tag, data );
 	for ( auto const & mover : movers ) {
 		postfold_movers_.push_back( mover );
 	}
 }
 
 BuildDeNovoBackboneMover::MoverOPs
-BuildDeNovoBackboneMover::parse_movers( utility::tag::TagCOP tag, protocols::moves::Movers_map const & moversmap ) const
+BuildDeNovoBackboneMover::parse_movers( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) const
 {
 	MoverOPs movers;
 	for ( auto subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
@@ -410,20 +408,20 @@ BuildDeNovoBackboneMover::parse_movers( utility::tag::TagCOP tag, protocols::mov
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 		std::string const mover_name = (*subtag)->getOption< std::string >( "mover" );
-		auto find_mover = moversmap.find( mover_name );
-		if ( find_mover == moversmap.end() ) {
+		protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover_or_null( mover_name, data );
+		if ( ! mover ) {
 			std::stringstream msg;
 			msg << type() << "::parse_movers(): ERROR !! mover not found in map: \n" << **subtag << std::endl;
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
-		movers.push_back( find_mover->second->clone() );
+		movers.push_back( mover->clone() );
 		TR.Debug << "found mover " << mover_name << std::endl;
 	}
 	return movers;
 }
 
 void
-BuildDeNovoBackboneMover::parse_filters( utility::tag::TagCOP tag, protocols::filters::Filters_map const & filter_map )
+BuildDeNovoBackboneMover::parse_filters( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
 	filters_.clear();
 	for ( auto subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
@@ -434,13 +432,13 @@ BuildDeNovoBackboneMover::parse_filters( utility::tag::TagCOP tag, protocols::fi
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 		std::string const filter_name = (*subtag)->getOption< std::string >( "filter" );
-		auto find_filter = filter_map.find( filter_name );
-		if ( find_filter == filter_map.end() ) {
+		protocols::filters::FilterOP filter_ptr = protocols::rosetta_scripts::parse_filter_or_null( filter_name, data );
+		if ( ! filter_ptr ) {
 			std::stringstream msg;
 			msg << type() << "::parse_filters(): ERROR !! filter not found in map: \n" << **subtag << std::endl;
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
-		filters_.push_back( find_filter->second->clone() );
+		filters_.push_back( filter_ptr->clone() );
 		TR.Debug << "found filter " << filter_name << std::endl;
 	}
 }

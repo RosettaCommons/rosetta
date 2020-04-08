@@ -170,13 +170,11 @@ void
 MinPackMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
-	Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	Pose const & pose
 )
 {
-	parse_score_function( tag, datamap, filters, movers, pose );
-	parse_task_operations( tag, datamap, filters, movers, pose );
+	parse_score_function( tag, datamap, pose );
+	parse_task_operations( tag, datamap, pose );
 
 	if ( tag->hasOption( "nonideal" ) ) {
 		nonideal_ = tag->getOption<bool>( "nonideal" );
@@ -194,8 +192,6 @@ void
 MinPackMover::parse_score_function(
 	TagCOP const tag,
 	basic::datacache::DataMap const & datamap,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const &
 )
 {
@@ -209,8 +205,6 @@ void
 MinPackMover::parse_task_operations(
 	TagCOP const tag,
 	basic::datacache::DataMap const & datamap,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const &
 )
 {

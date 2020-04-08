@@ -95,7 +95,10 @@ StoreResidueSubsetMover::apply( core::pose::Pose & pose )
 }
 
 void
-StoreResidueSubsetMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+StoreResidueSubsetMover::parse_my_tag(
+	TagCOP const tag,
+	basic::datacache::DataMap & data_map,
+	core::pose::Pose const & )
 {
 	selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data_map );
 	subset_name_ = tag->getOption< std::string >( "subset_name" );

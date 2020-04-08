@@ -137,13 +137,11 @@ MoverOP
 MoverFactory::newMover(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	moves::Movers_map const & movers,
 	Pose const & pose ) const
 {
 	MoverOP mover( newMover( tag->getName() ) );
 	runtime_assert( mover != nullptr );
-	mover->parse_my_tag( tag, data, filters, movers, pose );
+	mover->parse_my_tag( tag, data, pose );
 
 	//Register the new mover with the citation manager:
 	basic::citation_manager::CitationManager * cc( basic::citation_manager::CitationManager::get_instance() );

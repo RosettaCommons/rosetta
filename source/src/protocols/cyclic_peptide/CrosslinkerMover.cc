@@ -216,8 +216,6 @@ void
 CrosslinkerMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap,
-	protocols::filters::Filters_map const & ,
-	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
 	runtime_assert_string_msg( tag->hasOption("residue_selector"), "Error in protocols::cyclic_peptide::CrosslinkerMover::parse_my_tag(): A residue selector MUST be supplied with the \"residue_selector\" option." );

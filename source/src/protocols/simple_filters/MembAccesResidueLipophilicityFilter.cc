@@ -81,7 +81,10 @@ MembAccesResidueLipophilicityFilterCreator::keyname() const { return "MembAccesR
 MembAccesResidueLipophilicityFilter::~MembAccesResidueLipophilicityFilter(){}
 
 void
-MembAccesResidueLipophilicityFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+MembAccesResidueLipophilicityFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	core::pose::Pose const & )
 {
 	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 	threshold_ = tag->getOption< core::Real >( "threshold", 0.0 );

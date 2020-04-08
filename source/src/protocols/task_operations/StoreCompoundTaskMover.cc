@@ -285,8 +285,6 @@ void
 StoreCompoundTaskMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data_map,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & /*pose*/ )
 {
 

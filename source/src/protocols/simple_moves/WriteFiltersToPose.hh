@@ -56,14 +56,13 @@ namespace simple_moves {
 class WriteFiltersToPose : public moves::Mover
 {
 private:
-	protocols::filters::Filters_map filters_;
+	std::map< std::string, utility::VirtualBaseOP > filters_;
 	std::string prefix_;
 	bool include_type_ = false;
 public:
 	//typedef utility::tag::TagCOP TagCOP;
 	//default ctor
 
-	//protocols::filters::Filters_map f;
 	WriteFiltersToPose();
 
 	void apply( core::pose::Pose & ) override;
@@ -76,7 +75,7 @@ public:
 		return utility::pointer::make_shared< WriteFiltersToPose >();
 	}
 
-	void parse_my_tag(utility::tag::TagCOP,basic::datacache::DataMap &,protocols::filters::Filters_map const &f,protocols::moves::Movers_map const &,core::pose::Pose const &) override;
+	void parse_my_tag(utility::tag::TagCOP,basic::datacache::DataMap &, core::pose::Pose const &) override;
 	std::string get_name() const override;
 
 	static

@@ -25,8 +25,6 @@
 #include <core/chemical/AA.hh>
 //parsing
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
-#include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
 
@@ -269,8 +267,6 @@ void SetTorsion::apply( Pose & pose ) {
 
 void SetTorsion::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const & //pose
 )
 {

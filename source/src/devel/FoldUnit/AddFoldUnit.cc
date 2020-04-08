@@ -428,8 +428,6 @@ void
 AddFoldUnitMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	fragment_dbase( tag->getOption< string >( "fragment_dbase", "in/fold_from_frags.db" ));
@@ -557,8 +555,6 @@ void
 StartFreshMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & ){
 	residue_type_set_ = tag->getOption< string >( "residue_type_set", "centroid" );
 	TR<<"residue_type_set: "<<residue_type_set()<<std::endl;

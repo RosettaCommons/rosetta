@@ -221,13 +221,11 @@ void
 HBNetStapleInterface::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &data,
-	filters::Filters_map const &fmap,
-	moves::Movers_map const &mmap,
 	core::pose::Pose const & pose
 ){
 
 	// for all options that inherit from base class HBNet
-	HBNet::parse_my_tag( tag, data, fmap, mmap, pose);
+	HBNet::parse_my_tag( tag, data, pose);
 
 	max_networks_per_pose_ = tag->getOption<core::Size>("max_networks_per_pose",1);
 	min_networks_per_pose_ = tag->getOption<core::Size>("min_networks_per_pose",1);

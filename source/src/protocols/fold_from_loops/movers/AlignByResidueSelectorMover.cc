@@ -82,8 +82,6 @@ void
 AlignByResidueSelectorMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data_map,
-	protocols::filters::Filters_map const & ,
-	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
 	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data_map, mover_name() );

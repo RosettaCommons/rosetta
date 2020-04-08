@@ -576,8 +576,6 @@ void
 LoopCreationMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const & /*filters*/,
-	protocols::moves::Movers_map const & movers,
 	Pose const & /*pose*/
 ){
 	using namespace std;
@@ -593,26 +591,14 @@ LoopCreationMover::parse_my_tag(
 	//****REQUIRED TAGS****//
 	if ( tag->hasOption("loop_inserter") ) {
 		string const loop_inserter_name( tag->getOption< string >( "loop_inserter" ) );
-		auto find_mover( movers.find( loop_inserter_name ) );
-		bool const mover_found( find_mover != movers.end() );
-		if ( mover_found ) {
-			loop_inserter_ = utility::pointer::dynamic_pointer_cast< devel::loop_creation::LoopInserter > ( find_mover->second );
-		} else {
-			utility_exit_with_message( "Mover " + loop_inserter_name + " not found" );
-		}
+		loop_inserter_ = utility::pointer::dynamic_pointer_cast< devel::loop_creation::LoopInserter >( protocols::rosetta_scripts::parse_mover( loop_inserter_name, data ) );
 	} else {
 		utility_exit_with_message("loop_inserter tag is required");
 	}
 
 	if ( tag->hasOption("loop_closer") ) {
 		string const loop_closer_name( tag->getOption< string >( "loop_closer" ) );
-		auto find_mover( movers.find( loop_closer_name ) );
-		bool const mover_found( find_mover != movers.end() );
-		if ( mover_found ) {
-			loop_closer_ = utility::pointer::dynamic_pointer_cast< devel::loop_creation::LoopCloser > ( find_mover->second );
-		} else {
-			utility_exit_with_message( "Mover " + loop_closer_name + " not found" );
-		}
+		loop_closer_ = utility::pointer::dynamic_pointer_cast< devel::loop_creation::LoopCloser >( protocols::rosetta_scripts::parse_mover( loop_closer_name, data ) );
 	} else {
 		utility_exit_with_message("loop_closer tag is required");
 	}

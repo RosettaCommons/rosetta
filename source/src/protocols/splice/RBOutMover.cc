@@ -197,8 +197,6 @@ void
 RBOutMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	template_pdb_fname( tag->getOption< std::string >( "template_fname" ) );

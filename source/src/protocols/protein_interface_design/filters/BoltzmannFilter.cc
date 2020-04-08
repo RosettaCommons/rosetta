@@ -185,9 +185,7 @@ BoltzmannFilter::report( std::ostream &, core::pose::Pose const & ) const
 
 void
 BoltzmannFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const &,
+	basic::datacache::DataMap & data,
 	core::pose::Pose const & )
 {
 	TR << "BoltzmannFilter"<<std::endl;
@@ -206,10 +204,10 @@ BoltzmannFilter::parse_my_tag( utility::tag::TagCOP tag,
 		anchors_string = utility::string_split( tag->getOption< std::string >( "anchors"), ',' );
 	}
 	for ( std::string const & positive_filter_name : positive_filter_names ) {
-		add_positive_filter( protocols::rosetta_scripts::parse_filter( positive_filter_name, filters ) );
+		add_positive_filter( protocols::rosetta_scripts::parse_filter( positive_filter_name, data ) );
 	}
 	for ( std::string const & negative_filter_name : negative_filter_names ) {
-		add_negative_filter( protocols::rosetta_scripts::parse_filter( negative_filter_name, filters ) );
+		add_negative_filter( protocols::rosetta_scripts::parse_filter( negative_filter_name, data ) );
 	}
 	for ( std::string const & anchor_str : anchors_string ) {
 		anchors_.push_back( (core::Real) utility::string2float( anchor_str ) );

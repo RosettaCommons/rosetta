@@ -213,8 +213,6 @@ void ErraserMinimizerMover::initialize_from_options( utility::options::OptionCol
 
 void ErraserMinimizerMover::parse_my_tag( TagCOP tag,
 	basic::datacache::DataMap & /*data*/,
-	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
 	vary_bond_geometry_ = tag->getOption< bool >( "vary_bond_geometry", vary_bond_geometry_ );

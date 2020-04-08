@@ -148,7 +148,10 @@ ScoreCutoffFilter::get_score( core::pose::Pose const & pose ) const {
 }
 
 void
-ScoreCutoffFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & , protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &  )
+ScoreCutoffFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & ,
+	core::pose::Pose const &  )
 {
 	if ( tag->hasOption("report_residue_pair_energies") ) {
 		if ( tag->getOption<core::Size>("report_residue_pair_energies",0) == 1 ) report_residue_pair_energies_ = true;

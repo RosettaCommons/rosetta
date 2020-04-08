@@ -1867,7 +1867,7 @@ std::string Splice::get_name() const {
 	return SpliceCreator::mover_name();
 }
 
-void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & ) {
+void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, core::pose::Pose const & ) {
 	utility::vector1<TagCOP> const sub_tags(tag->getTags());
 	enzdes_ =tag->getOption<bool>("enzdes",false);//Add enzdes constraints
 	mover_name_=tag->getOption<std::string>("name");//for debugging purposes
@@ -2196,7 +2196,7 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, pro
 	checkpointing_file(tag->getOption<std::string>("checkpointing_file", ""));
 	loop_dbase_file_name(tag->getOption<std::string>("loop_dbase_file_name", ""));
 	if ( tag->hasOption("splice_filter") ) {
-		splice_filter(protocols::rosetta_scripts::parse_filter(tag->getOption<std::string>("splice_filter"), filters));
+		splice_filter(protocols::rosetta_scripts::parse_filter(tag->getOption<std::string>("splice_filter"), data));
 	}
 	if ( tag->hasOption("mover_tag") ) {
 		mover_tag_ = basic::datacache::get_set_from_datamap<basic::datacache::DataMapObj<std::string> >("tags",

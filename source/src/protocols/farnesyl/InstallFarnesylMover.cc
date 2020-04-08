@@ -334,8 +334,6 @@ void
 InstallFarnesylMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap,
-	protocols::filters::Filters_map const & ,
-	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
 	core::select::residue_selector::ResidueSelectorCOP selector = protocols::rosetta_scripts::parse_residue_selector( tag, datamap );

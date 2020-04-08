@@ -359,8 +359,6 @@ PlacementAuctionMover::stub_sets() {
 void
 PlacementAuctionMover::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap &data,
-	protocols::filters::Filters_map const &,
-	Movers_map const &,
 	core::pose::Pose const & )
 {
 	using namespace protocols::hotspot_hashing;

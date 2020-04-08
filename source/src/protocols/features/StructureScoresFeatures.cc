@@ -84,9 +84,7 @@ using core::scoring::ScoreFunction;
 using core::chemical::aa_vrt;
 using core::Size;
 using core::Real;
-using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
-using protocols::moves::Movers_map;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 using utility::tag::TagCOP;
@@ -163,8 +161,6 @@ void
 StructureScoresFeatures::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
 	if ( tag->hasOption("scorefxn") ) {

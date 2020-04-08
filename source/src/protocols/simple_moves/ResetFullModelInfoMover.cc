@@ -87,8 +87,6 @@ void
 ResetFullModelInfoMover::parse_my_tag(
 	utility::tag::TagCOP ,
 	basic::datacache::DataMap& ,
-	protocols::filters::Filters_map const & ,
-	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
 

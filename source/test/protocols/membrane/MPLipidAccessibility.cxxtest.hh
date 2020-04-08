@@ -157,12 +157,10 @@ public: // test functions
 		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
 
 		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
 		core::pose::Pose pose;
 
 		MPLipidAccessibilityOP xlip( new MPLipidAccessibility() );
-		xlip->parse_my_tag( tag, dm, fm, mm, pose );
+		xlip->parse_my_tag( tag, dm, pose );
 
 		TS_ASSERT_EQUALS(xlip->get_angle_cutoff(), 64.0);
 		TS_ASSERT_EQUALS(xlip->get_slice_width(), 9.0);

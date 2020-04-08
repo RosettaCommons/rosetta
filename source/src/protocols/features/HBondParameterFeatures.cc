@@ -62,9 +62,7 @@ using core::scoring::ScoreFunction;
 using core::scoring::get_score_function;
 using core::scoring::hbonds::HBondDatabase;
 using core::scoring::hbonds::HBondDatabaseCOP;
-using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
-using protocols::moves::Movers_map;
 using utility::sql_database::sessionOP;
 using utility::tag::TagCOP;
 using utility::vector1;
@@ -102,8 +100,6 @@ void
 HBondParameterFeatures::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
 	if ( tag->hasOption("scorefxn") ) {

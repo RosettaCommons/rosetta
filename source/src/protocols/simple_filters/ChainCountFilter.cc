@@ -77,8 +77,6 @@ void ChainCountFilter::report( std::ostream & out, core::pose::Pose const & pose
 
 void ChainCountFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	threshold( tag->getOption< core::Size >( "max_chains", 1 ) );

@@ -82,8 +82,6 @@ public:
 	parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & datamap,
-		Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
 		Pose const & pose
 	) override;
 

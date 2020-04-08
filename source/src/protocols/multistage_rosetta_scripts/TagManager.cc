@@ -128,14 +128,12 @@ TagManager::generate_data_for_input_pose_id(
 	TagMapOP mover_tags = pointer::make_shared< TagMap_ >();
 	TagMapOP filter_tags = pointer::make_shared< TagMap_ >();
 
-	auto movers_map = pointer::make_shared< moves::Movers_map >();
-	movers_map->insert( std::pair< std::string, moves::MoverOP >( "null", pointer::make_shared< moves::NullMover >( ) ) );
+	data_map->add( "movers", "null", pointer::make_shared< moves::NullMover >( ) );
 
-	auto filters_map = pointer::make_shared< filters::Filters_map >();
 	filters::FilterOP true_filter( pointer::make_shared< filters::TrueFilter >() );
 	filters::FilterOP false_filter( pointer::make_shared< filters::FalseFilter >() );
-	filters_map->insert( std::pair< std::string, filters::FilterOP >( "true_filter", true_filter ) );
-	filters_map->insert( std::pair< std::string, filters::FilterOP >( "false_filter", false_filter ) );
+	data_map->add( "filters", "true_filter", true_filter );
+	data_map->add( "filters", "false_filter", false_filter );
 
 	moves::MoverFactory const * mover_factory = moves::MoverFactory::get_instance();
 	filters::FilterFactory const * filter_factory = filters::FilterFactory::get_instance();
@@ -146,10 +144,8 @@ TagManager::generate_data_for_input_pose_id(
 				std::string const mover_name = mover_tag->getOption< std::string >( "name" );
 				( * mover_tags )[ mover_name ] = mover_tag;
 
-				movers_map->insert(
-					std::pair< std::string, moves::MoverOP >( mover_name,
-					mover_factory->newMover( mover_tag, * data_map, * filters_map, * movers_map, pose )
-					)
+				data_map->add( "movers",  mover_name,
+					mover_factory->newMover( mover_tag, * data_map, pose )
 				);
 			}
 		} else if ( tag->getName() == "FILTERS" ) {
@@ -157,10 +153,8 @@ TagManager::generate_data_for_input_pose_id(
 				std::string const filter_name = filter_tag->getOption< std::string >( "name" );
 				( * filter_tags )[ filter_name ] = filter_tag;
 
-				filters_map->insert(
-					std::pair< std::string, filters::FilterOP >( filter_name,
-					filter_factory->newFilter( filter_tag, * data_map, * filters_map, * movers_map, pose )
-					)
+				data_map->add( "filters", filter_name,
+					filter_factory->newFilter( filter_tag, * data_map, pose )
 				);
 			}
 
@@ -170,7 +164,7 @@ TagManager::generate_data_for_input_pose_id(
 		}
 	}
 
-	most_recent_request_ = pointer::make_shared< ParsedTagCache >( input_pose_id, data_map, mover_tags, filter_tags, movers_map, filters_map );
+	most_recent_request_ = pointer::make_shared< ParsedTagCache >( input_pose_id, data_map, mover_tags, filter_tags );
 	return most_recent_request_;
 }
 
@@ -243,8 +237,6 @@ CEREAL_REGISTER_TYPE( protocols::multistage_rosetta_scripts::TagManager )
 ////  arc( CEREAL_NVP( data_map ) ); // NoFailDataMapOP
 ////  arc( CEREAL_NVP( mover_tags ) ); // TagMapOP
 ////  arc( CEREAL_NVP( filter_tags ) ); // TagMapOP
-////  arc( CEREAL_NVP( movers_map ) ); // utility::pointer::shared_ptr<moves::Movers_map>
-////  arc( CEREAL_NVP( filters_map ) ); // utility::pointer::shared_ptr<filters::Filters_map>
 //// }
 ////
 //// /// @brief Automatically generated deserialization method
@@ -259,12 +251,6 @@ CEREAL_REGISTER_TYPE( protocols::multistage_rosetta_scripts::TagManager )
 ////  std::shared_ptr< std::map< std::basic_string< char >, std::shared_ptr< utility::tag::Tag >, struct std::less< std::basic_string< char > > > > local_filter_tags;
 ////  arc( local_filter_tags ); // TagMapOP
 ////  filter_tags = local_filter_tags; // copy the non-const pointer(s) into the const pointer(s)
-////  std::shared_ptr< std::map< std::basic_string< char >, std::shared_ptr< protocols::moves::Mover >, struct std::less< std::basic_string< char > > > > local_movers_map;
-////  arc( local_movers_map ); // utility::pointer::shared_ptr<moves::Movers_map>
-////  movers_map = local_movers_map; // copy the non-const pointer(s) into the const pointer(s)
-////  std::shared_ptr< std::map< std::basic_string< char >, std::shared_ptr< protocols::filters::Filter >, struct std::less< std::basic_string< char > > > > local_filters_map;
-////  arc( local_filters_map ); // utility::pointer::shared_ptr<filters::Filters_map>
-////  filters_map = local_filters_map; // copy the non-const pointer(s) into the const pointer(s)
 //// }
 ////
 //// SAVE_AND_LOAD_SERIALIZABLE( protocols::multistage_rosetta_scripts::ParsedTagCache );

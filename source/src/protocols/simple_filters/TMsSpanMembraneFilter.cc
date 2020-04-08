@@ -75,7 +75,10 @@ TMsSpanMembraneFilterCreator::keyname() const { return "TMsSpanMembrane"; }
 TMsSpanMembraneFilter::~TMsSpanMembraneFilter(){}
 
 void
-TMsSpanMembraneFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+TMsSpanMembraneFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 	threshold_ = tag->getOption< core::Real >( "threshold", 0.5 );
 	output_ = tag->getOption< std::string >( "output_file", "" );

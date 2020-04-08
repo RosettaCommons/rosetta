@@ -34,7 +34,7 @@ public:
 	void apply( core::pose::Pose& pose ) override;
 
 	// function for the parser with lots of accessors
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 	void set_cst_file_name( std::string const& cst_file_name ) { cst_file_name_ = cst_file_name; }
 	void set_profile_wgt( core::Real const profile_wgt ) { profile_wgt_ = profile_wgt; }
 

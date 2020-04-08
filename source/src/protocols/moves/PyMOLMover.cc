@@ -1116,8 +1116,6 @@ void
 PyMOLMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 ) {
 	keep_history(tag->getOption<bool>( "keep_history", keep_history_ ) );

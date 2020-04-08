@@ -112,8 +112,6 @@ void
 AlignmentFileGeneratorMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	//NOTE this currently allows users to specify options either in tag or on command line, but we may remove the command-line options at some point
@@ -135,8 +133,8 @@ AlignmentFileGeneratorMover::parse_my_tag(
 		//It seems unnecessary to parse conformers, too
 	}
 	//Now get the information for the alignment settings
-
 	align_settings_ = alignment_settings_from_tag( tag );
+
 	//Not currently compatible with providing these as command-line options
 	required_resnums_ = tag->getOption< std::string >( "required_resnums", "");
 	//required_starting_residues_ = core::pose::get_resnum_list_ordered( str_required_res, pose );

@@ -20,12 +20,11 @@
 #include <protocols/rosetta_scripts/RosettaScriptsParser.fwd.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.fwd.hh>
 #include <protocols/rosetta_scripts/XmlObjects.fwd.hh>
-#include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MoverFactory.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
 
 // Basic headers
 #include <basic/datacache/DataMap.fwd.hh>
@@ -86,8 +85,6 @@ public:
 	typedef utility::vector0< utility::tag::TagCOP > TagCOPs;
 	typedef utility::tag::TagCOP TagCOP;
 	typedef moves::MoverOP MoverOP;
-	typedef protocols::moves::MoverFactory MoverFactory;
-	typedef protocols::moves::MoverFactoryOP MoverFactoryOP;
 	typedef std::pair<std::string, std::string> ImportTagName;
 
 public:
@@ -368,24 +365,18 @@ public:
 	parse_apply_to_pose_tag(
 		utility::tag::TagCOP apply_tag,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map & filters,
-		protocols::moves::Movers_map & movers,
 		core::pose::Pose & pose
 	) const;
 
 	void instantiate_filter(
 		utility::tag::TagCOP const & tag_ptr,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map & filters,
-		protocols::moves::Movers_map & movers,
 		core::pose::Pose & pose
 	) const;
 
 	void instantiate_mover(
 		utility::tag::TagCOP const & tag_ptr,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map & filters,
-		protocols::moves::Movers_map & movers,
 		core::pose::Pose & pose
 	) const;
 
@@ -394,16 +385,12 @@ public:
 	void instantiate_packer_palette(
 		utility::tag::TagCOP const & tag_ptr,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map & filters,
-		protocols::moves::Movers_map & movers,
 		core::pose::Pose & pose
 	) const;
 
 	void instantiate_taskoperation(
 		utility::tag::TagCOP const & tag_ptr,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map & filters,
-		protocols::moves::Movers_map & movers,
 		core::pose::Pose & pose
 	) const;
 
@@ -419,8 +406,6 @@ public:
 	parse_import_tag(
 		utility::tag::TagCOP import_tag,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map & filters,
-		protocols::moves::Movers_map & movers,
 		core::pose::Pose & pose
 	) const;
 
@@ -428,8 +413,6 @@ public:
 		std::set< ImportTagName > & import_tag_names,
 		utility::tag::TagCOP my_tag,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map & filters,
-		protocols::moves::Movers_map & movers,
 		core::pose::Pose & pose
 	) const;
 

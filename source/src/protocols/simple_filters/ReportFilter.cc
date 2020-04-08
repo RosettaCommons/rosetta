@@ -51,14 +51,17 @@ ReportFilter::ReportFilter() :
 ReportFilter::~ReportFilter() = default;
 
 void
-ReportFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & )
+ReportFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	core::pose::Pose const & )
 {
 	report_filter_name_ = tag->getOption< std::string >( "name" );
 	if ( tag->hasOption( "report_string" ) ) {
 		report_string_ = data.get_ptr< basic::datacache::DataMapObj< std::string > >( "report_string", tag->getOption< std::string >( "report_string" )  );
 	}
 	if ( tag->hasOption( "filter" ) ) {
-		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
+		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), data ) );
 	}
 	checkpointing_file( tag->getOption< std::string >( "checkpointing_file", "" ) );
 	TR<<"checkpointing_file: "<<checkpointing_file()<<std::endl;

@@ -332,8 +332,6 @@ void SliceToMiniProteinMover::apply( Pose & pose )
 void SliceToMiniProteinMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & )
 {
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
@@ -348,7 +346,7 @@ void SliceToMiniProteinMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption( "relax_mover" ) ) {
-		relax_mover_ = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover"), movers );
+		relax_mover_ = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover"), data );
 	} else {
 		relax_mover_ = nullptr;
 	}

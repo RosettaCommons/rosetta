@@ -57,8 +57,6 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map & filters,
-		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
 	) override;
 
@@ -89,8 +87,6 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map & filters,
-		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
 	) override;
 
@@ -126,8 +122,6 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map & filters,
-		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
 	) override;
 

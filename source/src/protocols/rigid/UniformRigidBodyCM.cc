@@ -121,8 +121,6 @@ void UniformRigidBodyCM::apply( core::pose::Pose& pose ){
 
 void UniformRigidBodyCM::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap& data,
-	protocols::filters::Filters_map const& filters,
-	protocols::moves::Movers_map const& movers,
 	core::pose::Pose const& pose ) {
 
 	mobile_label_ = LocalPosition( tag->getOption< std::string >( "mobile" ) );
@@ -130,7 +128,7 @@ void UniformRigidBodyCM::parse_my_tag( utility::tag::TagCOP tag,
 
 	name_ = tag->getOption< std::string >( "name" );
 
-	mover_->parse_my_tag( tag, data, filters, movers, pose );
+	mover_->parse_my_tag( tag, data, pose );
 }
 
 claims::EnvClaims UniformRigidBodyCM::yield_claims( core::pose::Pose const&,

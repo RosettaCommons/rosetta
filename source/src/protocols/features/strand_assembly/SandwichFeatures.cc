@@ -59,8 +59,6 @@ static basic::Tracer TR( "protocols.features.strand_assembly.SandwichFeatures" )
 
 // for parse_my_tag
 using basic::datacache::DataMap;
-using protocols::filters::Filters_map;
-using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 
 using namespace std;
@@ -681,8 +679,6 @@ void
 SandwichFeatures::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & /*data*/,
-	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 )
 {

@@ -37,9 +37,6 @@ class BackrubProtocolTests : public CxxTest::TestSuite {
 private:
 
 	protocols::backrub::BackrubProtocolOP test_instantiation_;
-	basic::datacache::DataMap data_;
-	Filters_map filters_;
-	Movers_map movers_;
 
 public:
 
@@ -49,18 +46,7 @@ public:
 	}
 
 	void tearDown(){
-
 	}
-
-	void setUpScripts() {
-		prime_Movers( movers_ ); // Adds "null" to movers map
-		prime_Filters( filters_ ); // Adds true_filter, false_filter
-
-		// Create dummy "commandline" score function
-		core::scoring::ScoreFunctionOP dummy_commandline_sfxn = utility::pointer::make_shared< core::scoring::ScoreFunction >();
-		data_.add( "scorefxns", "commandline", dummy_commandline_sfxn );
-	}
-
 
 	void test_parse_pivots_from_residue_selector(){
 		core::select::residue_selector::ResidueSubset residue_subset;
@@ -79,7 +65,6 @@ public:
 		TS_ASSERT( pivot_residues[3] == 4 );
 
 	}
-
 
 
 };

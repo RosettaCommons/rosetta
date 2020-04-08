@@ -122,8 +122,6 @@ DdgFilter::repack() const
 void
 DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	filters::Filters_map const & filters,
-	moves::Movers_map const & movers,
 	core::pose::Pose const & )
 {
 	using namespace core::scoring;
@@ -145,10 +143,10 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 	translate_by_ = tag->getOption<core::Real>( "translate_by", 1000 );
 
 	if ( tag->hasOption( "relax_mover" ) ) {
-		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
+		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), data ) );
 	}
 	if ( tag->hasOption( "filter" ) ) {
-		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
+		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), data ) );
 	}
 
 	if ( tag->hasOption("chain_num") ) {

@@ -77,7 +77,7 @@ public:
 	//parser stuff
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 
 	/// @brief apply a sidechain move to a Pose object
 	void

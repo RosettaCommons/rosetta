@@ -167,8 +167,6 @@ void
 FrozenSidechainsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	filters::Filters_map const &,
-	moves::Movers_map const &,
 	pose::Pose const& pose
 ) {
 	if ( tag->hasOption("recover_sidechains_pdb") ) {

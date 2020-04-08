@@ -499,8 +499,6 @@ void
 LegacyAssemblyMover::parse_requirements(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ){
 	auto begin=tag->getTags().begin();
@@ -509,9 +507,9 @@ LegacyAssemblyMover::parse_requirements(
 		TagCOP requirement_tag= *begin;
 
 		if ( requirement_tag->getName() == "GlobalRequirements" ) {
-			parse_global_requirements(requirement_tag, data, filters, movers, pose);
+			parse_global_requirements(requirement_tag, data, pose);
 		} else if ( requirement_tag->getName() == "IntraSegmentRequirements" ) {
-			parse_intra_segment_requirements(requirement_tag, data, filters, movers, pose);
+			parse_intra_segment_requirements(requirement_tag, data, pose);
 		} else {
 			TR.Error << "Only allowed sub-tags of LegacyAssemblyMover are GlobalRequirements" << std::endl;
 			TR.Error << "and IntraSegmentRequirements. Please see the LEGACY_SEWING protocol documentation" << std::endl;
@@ -525,8 +523,6 @@ void
 LegacyAssemblyMover::parse_global_requirements(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ){
 	auto begin=tag->getTags().begin();
@@ -535,7 +531,7 @@ LegacyAssemblyMover::parse_global_requirements(
 		TagCOP requirement_tag= *begin;
 		sampling::requirements::LegacyGlobalRequirementOP requirement =
 			requirement_factory_->get_global_requirement(requirement_tag->getName());
-		requirement->parse_my_tag(requirement_tag, data, filters, movers, pose);
+		requirement->parse_my_tag(requirement_tag, data, pose);
 		requirement_set_->add_requirement(requirement);
 	}
 }
@@ -544,8 +540,6 @@ void
 LegacyAssemblyMover::parse_intra_segment_requirements(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ){
 	if ( !tag->hasOption("index") ) {
@@ -559,7 +553,7 @@ LegacyAssemblyMover::parse_intra_segment_requirements(
 		TagCOP requirement_tag= *begin;
 		sampling::requirements::LegacyIntraSegmentRequirementOP requirement =
 			requirement_factory_->get_intra_segment_requirement(requirement_tag->getName());
-		requirement->parse_my_tag(requirement_tag, data, filters, movers, pose);
+		requirement->parse_my_tag(requirement_tag, data, pose);
 		requirement_set_->add_requirement(index, requirement);
 	}
 }
@@ -568,13 +562,11 @@ void
 LegacyAssemblyMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ){
 	using namespace basic::options;
 
-	parse_requirements(tag, data, filters, movers, pose);
+	parse_requirements(tag, data, pose);
 
 	utility::vector1<BasisPair> alignment_pairs;
 	std::map< int, Model > models;

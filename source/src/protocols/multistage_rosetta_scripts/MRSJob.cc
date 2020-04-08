@@ -177,8 +177,6 @@ void
 MRSJob::parse_my_tag(
 	utility::tag::TagCOP stage_subtag,
 	basic::datacache::DataMap & map,
-	filters::Filters_map const & filters,
-	moves::Movers_map const & movers,
 	core::pose::Pose const & pose,
 	std::map< std::string, utility::tag::TagCOP > const & mover_tags_by_name,
 	std::map< std::string, utility::tag::TagCOP > const & filter_tags_by_name
@@ -209,7 +207,7 @@ MRSJob::parse_my_tag(
 				if ( mover_it != local_mover_map.end() ) {
 					protocols_.emplace_back( mover_it->second );
 				} else {
-					moves::MoverOP new_mover = mover_factory->newMover( mover_tag, map, filters, movers, pose );
+					moves::MoverOP new_mover = mover_factory->newMover( mover_tag, map, pose );
 					//protocols_.push_back( mover_or_filter( new_mover ) );
 					protocols_.emplace_back( new_mover );
 					local_mover_map[ mover_name ] = new_mover;
@@ -234,7 +232,7 @@ MRSJob::parse_my_tag(
 			if ( filter_it != local_filter_map.end() ) {
 				protocols_.emplace_back( filter_it->second );
 			} else {
-				filters::FilterOP new_filter = filter_factory->newFilter( filter_tag, map, filters, movers, pose );
+				filters::FilterOP new_filter = filter_factory->newFilter( filter_tag, map, pose );
 				protocols_.emplace_back( new_filter );
 				local_filter_map[ filter_name ] = new_filter;
 			}

@@ -270,8 +270,6 @@ void
 MatcherMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const &,
-	Movers_map const &,
 	Pose const & )
 {
 	incorporate_matches_into_pose_ = tag->getOption<bool>( "incorporate_matches_into_pose", true );

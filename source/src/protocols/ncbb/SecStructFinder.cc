@@ -576,8 +576,6 @@ protocols::moves::MoverOP SecStructFinder::clone() const {
 void SecStructFinder::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & ) {
 
 	residue_ = tag->getOption<std::string>("residue", "ALA" );

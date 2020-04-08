@@ -191,8 +191,6 @@ void
 RotamerRecoveryMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap,
-	Filters_map const & /*filters*/,
-	moves::Movers_map const & movers,
 	Pose const & /*pose*/ )
 {
 	score_function( parse_score_function( tag, datamap ) );
@@ -211,7 +209,7 @@ RotamerRecoveryMover::parse_my_tag(
 	RRProtocolOP protocol;
 	if ( tag->hasOption("mover") || tag->hasOption("mover_name") ) {
 		MoverOP mover = parse_mover(tag->hasOption("mover") ?
-			tag->getOption<string>("mover") : tag->getOption<string>("mover_name"), movers);
+			tag->getOption<string>("mover") : tag->getOption<string>("mover_name"), datamap );
 		protocol = utility::pointer::make_shared< RRProtocolMover >(mover);
 	} else {
 		protocol = factory->get_rotamer_recovery_protocol(tag->getOption<string>("protocol", "RRProtocolMinPack"));

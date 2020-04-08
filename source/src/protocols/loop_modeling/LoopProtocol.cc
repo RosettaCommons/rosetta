@@ -62,8 +62,6 @@ using protocols::loop_modeling::utilities::TrajectoryLoggerOP;
 
 using utility::tag::TagCOP;
 using basic::datacache::DataMap;
-using protocols::filters::Filters_map;
-using protocols::moves::Movers_map;
 
 namespace protocols {
 namespace loop_modeling {
@@ -98,12 +96,10 @@ LoopProtocol::~LoopProtocol() = default;
 void LoopProtocol::parse_my_tag(
 	TagCOP tag,
 	DataMap & data,
-	Filters_map const & filters,
-	Movers_map const & movers,
 	Pose const & pose) {
 
 
-	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
+	LoopMover::parse_my_tag(tag, data, pose);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
 
 	sfxn_cycles_ = tag->getOption<core::Size>("sfxn_cycles", sfxn_cycles_);
@@ -173,7 +169,7 @@ void LoopProtocol::parse_my_tag(
 			add_acceptance_check(name);
 		} else {
 			// Parse LoopMover subtags.
-			LoopMoverOP loop_mover = utilities::loop_mover_from_tag(subtag, data, filters, movers, pose);
+			LoopMoverOP loop_mover = utilities::loop_mover_from_tag(subtag, data, pose);
 			add_mover(loop_mover);
 		}
 	}

@@ -400,8 +400,6 @@ void
 DockingInitialPerturbation::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data_map,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 ) {
 	if ( !data_map.has( "RigidBodyInfo", "docking_setup" ) ) {
@@ -730,8 +728,6 @@ void
 DockingSlideIntoContact::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	rb_jump_ = tag->getOption< core::Size >( "rb_jump", 1 );

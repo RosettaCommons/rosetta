@@ -76,8 +76,6 @@ void
 KeepRegionMover::parse_my_tag(
 	TagCOP tag,
 	basic::datacache::DataMap&,
-	const Filters_map&,
-	const protocols::moves::Movers_map&,
 	const Pose& )
 {
 	start_ = tag->getOption<std::string>("start");

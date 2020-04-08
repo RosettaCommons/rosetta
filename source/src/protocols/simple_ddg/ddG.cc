@@ -234,8 +234,6 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 void ddG::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap  & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const& )
 {
 	rb_jump_ = tag->getOption<core::Size>("jump", 1);
@@ -258,10 +256,10 @@ void ddG::parse_my_tag(
 	compute_rmsd_ = tag->getOption<bool>("compute_rmsd",false);
 
 	if ( tag->hasOption( "relax_mover" ) ) {
-		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
+		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), data ) );
 	}
 	if ( tag->hasOption( "filter" ) ) {
-		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
+		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), data ) );
 	}
 
 	if ( tag->hasOption("chains") && tag->hasOption("symmetry") ) {

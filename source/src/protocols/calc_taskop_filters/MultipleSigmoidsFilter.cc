@@ -75,7 +75,10 @@ MultipleSigmoids::relative_pose_filter() const{ return r_pose_; }
 
 
 void
-MultipleSigmoids::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, filters::Filters_map const &filters, moves::Movers_map const &movers, core::pose::Pose const & pose )
+MultipleSigmoids::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &data,
+	core::pose::Pose const & pose )
 {
 	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
 	utility::vector1< std::string > const pdb_names( utility::string_split( tag->getOption< std::string >( "file_names" ), ',' ) ); //split file names
@@ -83,7 +86,7 @@ MultipleSigmoids::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 	utility::vector1< utility::tag::TagCOP > const sub_tags( tag->getTags() ); //tags
 	for ( utility::tag::TagCOP sub_tag : sub_tags ) {
 		if ( sub_tag->getName() == "Operator" ) {
-			operatorF_->parse_my_tag( sub_tag, data, filters, movers, pose ) ;
+			operatorF_->parse_my_tag( sub_tag, data, pose ) ;
 		}
 	}
 
@@ -93,13 +96,13 @@ MultipleSigmoids::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 				r_pose_ = utility::pointer::make_shared< RelativePoseFilter >();
 				TR<<"I'm now reading from RelativePose filter"<<std::endl;
 				r_pose_->pdb_name(fname);
-				r_pose_->parse_my_tag(sub_tag, data, filters, movers, pose);
+				r_pose_->parse_my_tag(sub_tag, data, pose);
 			} else if ( sub_tag->getName() == "Sigmoid" ) {
 				sig_ = utility::pointer::make_shared< Sigmoid >();
 				TR<<"I'm now reading from Sigmoid filter for fname "<<fname<<std::endl;
 				sig_->set_user_defined_name( fname );
 				sig_->filter(r_pose_);
-				sig_->parse_my_tag(sub_tag, data, filters, movers, pose);
+				sig_->parse_my_tag(sub_tag, data, pose);
 			} else if ( sub_tag->getName() == "Operator" ) {
 				operatorF_->add_filter(sig_);
 				TR<<"Adding filter to the operator"<<std::endl;

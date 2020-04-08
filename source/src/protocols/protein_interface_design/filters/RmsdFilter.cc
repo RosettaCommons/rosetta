@@ -22,7 +22,6 @@
 #include <core/conformation/Conformation.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/ref_pose.hh>
 
@@ -398,7 +397,7 @@ RmsdFilter::add_selector( core::select::residue_selector::ResidueSelectorOP cons
 }
 
 void
-RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, core::pose::Pose const & )
 {
 	using namespace core::select::residue_selector;
 

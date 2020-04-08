@@ -58,7 +58,7 @@ FoldUnitsFilter::FoldUnitsFilter() :
 FoldUnitsFilter::~FoldUnitsFilter() = default;
 
 void
-FoldUnitsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+FoldUnitsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
 {
 	minimal_length( tag->getOption< core::Size >( "minimal_length", 20 ) );
 	maximal_length( tag->getOption< core::Size >( "maximal_length", 40 ) );

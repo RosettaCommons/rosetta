@@ -56,9 +56,7 @@ using core::Size;
 using core::pose::Pose;
 using cppdb::statement;
 using cppdb::cppdb_error;
-using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
-using protocols::moves::Movers_map;
 using std::endl;
 using std::string;
 using std::stringstream;
@@ -124,8 +122,6 @@ void
 FeaturesReporter::parse_my_tag(
 	TagCOP const /*tag*/,
 	basic::datacache::DataMap & /*data*/,
-	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
 	// runtime_assert(tag->getName() == "feature");

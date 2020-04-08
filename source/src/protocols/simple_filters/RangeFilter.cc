@@ -34,6 +34,7 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 //// C++ headers
 static basic::Tracer tr( "protocols.filters.RangeFilter" );
@@ -78,17 +79,11 @@ bool RangeFilter::apply( Pose const & pose ) const
 void
 RangeFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	filters::Filters_map const &filters,
-	Movers_map const &,
+	basic::datacache::DataMap & data,
 	Pose const & )
 {
 	std::string const filter_name( tag->getOption< std::string >( "filter") );
-	auto filter_it( filters.find( filter_name ) );
-	if ( filter_it == filters.end() ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Filter "+filter_name+" not found" );
-	}
-	filter_ =  filter_it->second;
+	filter_ = protocols::rosetta_scripts::parse_filter( filter_name, data );
 
 	lower_bound_ = tag->getOption<Real>( "lower_bound");
 	upper_bound_ = tag->getOption<Real>( "upper_bound");

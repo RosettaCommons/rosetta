@@ -179,8 +179,6 @@ Symmetrizer::apply(Pose & pose) {
 void
 Symmetrizer::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap &,
-	Filters_map const &,
-	Movers_map const &,
 	Pose const & ) {
 
 	// Turn symmetry hacks on

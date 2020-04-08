@@ -232,8 +232,6 @@ void
 RBInMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	RB_dbase( tag->getOption< std::string >( "rigid_body_dbase", "" ) );

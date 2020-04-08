@@ -20,8 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.hh> //Movers_map
-#include <protocols/simple_moves/DumpPdb.hh> //Movers_map
+#include <protocols/simple_moves/DumpPdb.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/NotResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -190,7 +189,7 @@ RmsdFromResidueSelectorFilter::report_sm( core::pose::Pose const & pose ) const 
 }
 
 void
-RmsdFromResidueSelectorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+RmsdFromResidueSelectorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, core::pose::Pose const & )
 {
 	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data_map, class_name() );
 

@@ -39,7 +39,10 @@ static basic::Tracer residue_distance_filter_tracer( "protocols.simple_filters.R
 ResidueDistanceFilter::~ResidueDistanceFilter()= default;
 
 void
-ResidueDistanceFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+ResidueDistanceFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 	res1_ = core::pose::get_resnum_string( tag, "res1_" );
 	res2_ = core::pose::get_resnum_string( tag, "res2_" );

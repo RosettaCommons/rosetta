@@ -1491,9 +1491,7 @@ void
 GALigandDock::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap,
-	filters::Filters_map const &,
-	moves::Movers_map const &,
-	core::pose::Pose const &pose
+	core::pose::Pose const & pose
 ) {
 
 	scfxn_ = protocols::rosetta_scripts::parse_score_function( tag, datamap );

@@ -105,7 +105,6 @@ moves::MoverOP ContactMap::fresh_instance() const {
 
 /// @brief Processes options specified in xml-file and sets up the ContactMap
 void ContactMap::parse_my_tag(TagCOP const tag, basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &, moves::Movers_map const &,
 	Pose const & ) {
 
 	// 'distance_cutoff' option

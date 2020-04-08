@@ -72,9 +72,7 @@ using core::pose::UnrecognizedAtomRecord;
 using core::pose::Pose;
 using core::pose::PDBInfoCOP;
 using core::conformation::Residue;
-using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
-using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 using utility::vector1;
 using utility::tools::make_vector;
@@ -218,8 +216,6 @@ void
 UnrecognizedAtomFeatures::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & /*data*/,
-	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
 	neighbor_distance_cutoff_ = tag->getOption<Real>("neighbor_distance_cutoff", 12.0);

@@ -37,8 +37,6 @@ public:
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		moves::Movers_map const &,
 		Pose const & ) override;
 
 	void set_remove( bool const remove );

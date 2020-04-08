@@ -241,7 +241,11 @@ core::pack::task::TaskFactoryCOP LoopMover_Refine_CCD::get_task_factory() const 
 
 
 void
-LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) {
+LoopMover_Refine_CCD::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	core::pose::Pose const &
+){
 	using namespace basic::options;
 	packing_isolated_to_active_loops_ = false;
 	//using parser implies that the fold tree probably isn't set correctly

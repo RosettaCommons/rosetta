@@ -248,8 +248,6 @@ void
 InterlockingAromaFilter::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap &,
-	Filters_map const &,
-	Movers_map const &,
 	Pose const & )
 {
 	String const blueprint = tag->getOption<String>( "blueprint", "" );

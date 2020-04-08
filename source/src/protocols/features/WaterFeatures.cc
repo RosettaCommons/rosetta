@@ -78,8 +78,6 @@ using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
 using utility::tag::TagCOP;
-using protocols::filters::Filters_map;
-using protocols::moves::Movers_map;
 
 using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowDataBaseOP;
@@ -180,8 +178,6 @@ void
 WaterFeatures::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap &,
-	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
 

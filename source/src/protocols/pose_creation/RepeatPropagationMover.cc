@@ -866,8 +866,6 @@ std::string RepeatPropagationMover::get_name() const { return "RepeatPropagation
 
 void RepeatPropagationMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const & //pose
 )
 {

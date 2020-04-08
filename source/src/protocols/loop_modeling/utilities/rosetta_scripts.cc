@@ -32,8 +32,6 @@ using namespace std;
 using utility::tag::TagCOP;
 using utility::pointer::dynamic_pointer_cast;
 using basic::datacache::DataMap;
-using protocols::filters::Filters_map;
-using protocols::moves::Movers_map;
 using core::pose::Pose;
 
 namespace protocols {
@@ -43,15 +41,12 @@ namespace utilities {
 LoopMoverOP loop_mover_from_tag(
 	TagCOP tag,
 	DataMap & data,
-	Filters_map const & filters,
-	Movers_map const & movers,
 	Pose const & pose) {
 
 	using protocols::moves::MoverOP;
 	using protocols::moves::MoverFactory;
 
-	MoverOP base_mover = MoverFactory::get_instance()->newMover(
-		tag, data, filters, movers, pose);
+	MoverOP base_mover = MoverFactory::get_instance()->newMover( tag, data, pose );
 	LoopMoverOP loop_mover = dynamic_pointer_cast< LoopMover > ( base_mover );
 
 	if ( ! loop_mover ) {

@@ -203,8 +203,6 @@ void
 MakeBundle::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data_map*/,
-	protocols::filters::Filters_map const &/*filters*/,
-	protocols::moves::Movers_map const &/*movers*/,
 	core::pose::Pose const & /*pose*/
 ) {
 	runtime_assert_string_msg( tag->getName() == "MakeBundle", "This should be impossible -- the tag name does not match the mover name.");

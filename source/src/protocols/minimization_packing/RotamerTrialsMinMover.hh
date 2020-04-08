@@ -93,8 +93,6 @@ public:
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
-		Filters_map const &,
-		protocols::moves::Movers_map const &,
 		Pose const & ) override;
 
 	/// @brief Return a new mover instance (for RosettaScripts)

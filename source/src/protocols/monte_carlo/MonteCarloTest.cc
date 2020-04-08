@@ -24,8 +24,9 @@
 #include <protocols/moves/Mover.hh>
 
 // Parser headers
-#include <basic/datacache/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
@@ -87,14 +88,18 @@ MonteCarloTest::set_MC( GenericMonteCarloMoverOP mc ){
 }
 
 void
-MonteCarloTest::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &movers, Pose const & ){
+MonteCarloTest::parse_my_tag(
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
+	Pose const &
+){
 	std::string const mc_name( tag->getOption< std::string >( "MC_name" ) );
-	auto find_mover( movers.find( mc_name ) );
-	if ( find_mover == movers.end() ) {
+	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover_or_null( mc_name, data );
+	if ( ! mover ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "MC mover not found by MonteCarloTest" );
 	}
 
-	set_MC( utility::pointer::dynamic_pointer_cast< protocols::monte_carlo::GenericMonteCarloMover > ( find_mover->second ) );
+	set_MC( utility::pointer::dynamic_pointer_cast< protocols::monte_carlo::GenericMonteCarloMover > ( mover ) );
 	// The MC object is initialized by its own parse_my_tag, and reset in its apply()
 
 	TR<<"Setting MonteCarlo container with mover "<<mc_name<<std::endl;

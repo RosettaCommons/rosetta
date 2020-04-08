@@ -28,8 +28,6 @@
 //parsing
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
-#include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
@@ -291,8 +289,6 @@ void DisulfideMover::disulfide_list( Pose const& const_pose,
 */
 void DisulfideMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &,
-	Movers_map const &,
 	Pose const & )
 {
 

@@ -24,7 +24,6 @@
 #include <core/pose/chains_util.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
@@ -52,7 +51,7 @@ ChainExistsFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-ChainExistsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+ChainExistsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
 {
 
 	if ( ! tag->hasOption("chain") ) {

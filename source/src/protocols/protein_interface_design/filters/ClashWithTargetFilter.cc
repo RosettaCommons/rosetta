@@ -25,7 +25,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -156,7 +155,7 @@ ClashWithTargetFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-ClashWithTargetFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & , protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+ClashWithTargetFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
 {
 	/// @details
 	///if the save pose mover has been instantiated, this filter can calculate the rms

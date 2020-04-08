@@ -290,8 +290,6 @@ LoopHashMoverWrapper::get_additional_output() {
 void
 LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &filters,
-	Movers_map const &movers,
 	Pose const & )
 {
 	min_bbrms_ = tag->getOption< Real >( "min_bbrms", 0 );
@@ -339,23 +337,21 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 
 	// centroid filter
 	string const centroid_filter_name( tag->getOption< string >( "centroid_filter", "true_filter" ) );
-	auto find_cenfilter( filters.find( centroid_filter_name ) );
-	if ( find_cenfilter == filters.end() ) {
+	protocols::filters::FilterOP centroid_filter = protocols::rosetta_scripts::parse_filter_or_null( centroid_filter_name, data );
+	if ( ! centroid_filter ) {
 		utility_exit_with_message( "Filter " + centroid_filter_name + " not found in LoopHashMoverWrapper" );
 	}
-	cenfilter( find_cenfilter->second );
-	ranking_cenfilter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "ranking_cenfilter", centroid_filter_name ), filters ) );
+	cenfilter( centroid_filter );
+	ranking_cenfilter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "ranking_cenfilter", centroid_filter_name ), data ) );
 
 	// batch relax mover
 	if ( tag->hasOption( "relax_mover" ) ) {
 		string const relax_mover_name( tag->getOption< string >( "relax_mover" ) );
-		auto find_mover( movers.find( relax_mover_name ) );
-		bool const mover_found( find_mover != movers.end() );
-		if ( mover_found ) {
-			relax_mover( utility::pointer::dynamic_pointer_cast< protocols::relax::FastRelax > ( find_mover->second ) );
-		} else {
+		protocols::moves::MoverOP relax_mover_ptr = protocols::rosetta_scripts::parse_mover_or_null( relax_mover_name, data );
+		if ( ! relax_mover_ptr ) {
 			utility_exit_with_message( "Mover " + relax_mover_name + " not found in LoopHashMoverWrapper" );
 		}
+		relax_mover( utility::pointer::dynamic_pointer_cast< protocols::relax::FastRelax > ( relax_mover_ptr ) );
 
 		// nonideal
 		fastrelax_->set_force_nonideal( !ideal_ );
@@ -369,12 +365,12 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 
 		// fullatom filter <<<< used to select best 'nfullatom' from all decoys
 		string const fullatom_filter_name( tag->getOption< string >( "fullatom_filter", "true_filter" ) );
-		auto find_fafilter( filters.find( fullatom_filter_name ) );
-		if ( find_fafilter == filters.end() ) {
+		protocols::filters::FilterOP fullatom_filter = protocols::rosetta_scripts::parse_filter_or_null( fullatom_filter_name, data );
+		if ( ! fullatom_filter ) {
 			utility_exit_with_message( "Filter " + fullatom_filter_name + " not found in LoopHashMoverWrapper" );
 		}
-		fafilter( find_fafilter->second );
-		ranking_fafilter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string> ( "ranking_fafilter", fullatom_filter_name ), filters ) );
+		fafilter( fullatom_filter );
+		ranking_fafilter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string> ( "ranking_fafilter", fullatom_filter_name ), data ) );
 	} else {
 		if ( tag->hasOption(  "batch_size" ) ) TR << "Ignoring option batch_size" << std::endl;
 		if ( tag->hasOption(  "nfullatom" ) ) TR << "Ignoring option nfullatom" << std::endl;

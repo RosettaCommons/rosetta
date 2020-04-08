@@ -163,8 +163,6 @@ void
 TaskAwareMinMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
-	Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	Pose const & pose
 )
 {
@@ -179,8 +177,8 @@ TaskAwareMinMover::parse_my_tag(
 	jump_ = tag->getOption< bool >( "jump", false );
 	minmover_ = utility::pointer::make_shared< MinMover >();
 	// call to MinMover::parse_my_tag avoided here to prevent collision of movemap tag options
-	minmover_->parse_opts( tag, datamap, filters, movers );
-	parse_task_operations( tag, datamap, filters, movers, pose );
+	minmover_->parse_opts( tag, datamap );
+	parse_task_operations( tag, datamap, pose );
 	minmover_->score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap) );
 }
 
@@ -189,8 +187,6 @@ void
 TaskAwareMinMover::parse_task_operations(
 	TagCOP const tag,
 	basic::datacache::DataMap const & datamap,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const &
 )
 {

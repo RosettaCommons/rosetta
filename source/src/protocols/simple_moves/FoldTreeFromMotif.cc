@@ -96,8 +96,6 @@ void
 FoldTreeFromMotif::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 ) {
 

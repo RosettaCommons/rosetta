@@ -78,8 +78,6 @@ void SavePoseConstraintToFileFilter::report( std::ostream &, core::pose::Pose co
 
 void SavePoseConstraintToFileFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & /*pose*/)
 {
 	overwrite_ = tag->getOption< bool >( "overwrite", false );

@@ -105,8 +105,6 @@ ShoveResidueMover::apply ( pose::Pose & pose )
 void
 ShoveResidueMover::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	Movers_map const &,
 	Pose const & )
 {
 	remove_shove_variant_ = tag->getOption<bool>( "remove_shove_variant", false );

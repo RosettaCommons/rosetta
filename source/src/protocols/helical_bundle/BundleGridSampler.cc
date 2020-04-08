@@ -435,8 +435,6 @@ void
 BundleGridSampler::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data_map,
-	protocols::filters::Filters_map const &filters,
-	protocols::moves::Movers_map const &movers,
 	core::pose::Pose const & /*pose*/
 ) {
 
@@ -463,12 +461,12 @@ BundleGridSampler::parse_my_tag(
 		else set_selection_low(true);
 	}
 	if ( tag->hasOption("pre_selection_mover") ) {
-		protocols::moves::MoverOP curmover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "pre_selection_mover" ), movers );
+		protocols::moves::MoverOP curmover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "pre_selection_mover" ), data_map );
 		set_preselection_mover(curmover);
 		if ( TR.visible() ) TR << "BundleGridSampler mover \"" << tag->getOption< std::string >("name", "") << "\" has been assigned mover \"" << tag->getOption< std::string >("pre_selection_mover") << "\" as a pre-selection mover that will be applied to all generated bundles prior to energy evaluation." << std::endl;
 	}
 	if ( tag->hasOption("pre_selection_filter") ) {
-		protocols::filters::FilterOP curfilter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "pre_selection_filter" ), filters );
+		protocols::filters::FilterOP curfilter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "pre_selection_filter" ), data_map );
 		set_preselection_filter(curfilter);
 		if ( TR.visible() ) TR << "BundleGridSampler mover \"" << tag->getOption< std::string >("name", "") << "\" has been assigned filter \"" << tag->getOption< std::string >("pre_selection_filter") << "\" as a pre-selection filter that will be applied to all generated bundles prior to energy evaluation." << std::endl;
 	}

@@ -68,8 +68,6 @@ void
 DsspSpecificLengthRequirement::set_options_from_tag(
 	utility::tag::TagCOP requirement_tag,
 	basic::datacache::DataMap& ,
-	protocols::filters::Filters_map const & ,
-	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
 	TR << "Setting up DsspSpecificLengthRequirement" << std::endl;

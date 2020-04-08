@@ -276,7 +276,7 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 	return;
 }
 void
-TailSegmentMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+TailSegmentMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
 {
 	fullatom_scorefunction(protocols::rosetta_scripts::parse_score_function(tag, data));
 	set_task_factory(protocols::rosetta_scripts::parse_task_operations(tag, data));

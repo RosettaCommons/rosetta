@@ -99,8 +99,6 @@ AddSidechainConstraintsToHotspots::apply( Pose & pose )
 void
 AddSidechainConstraintsToHotspots::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	Movers_map const &,
 	Pose const & )
 {
 	chain( tag->getOption< core::Size >( "chain", 2 ) );

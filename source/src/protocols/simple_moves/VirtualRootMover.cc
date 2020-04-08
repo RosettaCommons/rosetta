@@ -90,8 +90,6 @@ VirtualRootMover::apply( core::pose::Pose & pose ) {
 void VirtualRootMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	moves::Movers_map const &,
 	Pose const &
 ) {
 	set_remove( tag->getOption<bool>( "remove",  remove_ ) );

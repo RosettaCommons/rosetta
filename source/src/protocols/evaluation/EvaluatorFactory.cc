@@ -43,8 +43,6 @@ using std::endl;
 using std::string;
 using std::stringstream;
 using core::scoring::ScoreFunctionOP;
-using protocols::filters::Filters_map;
-using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 
 static basic::Tracer tr( "protocols.evaluator.EvaluatorFactory" );

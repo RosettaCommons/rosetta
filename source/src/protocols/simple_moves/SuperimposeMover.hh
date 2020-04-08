@@ -48,7 +48,7 @@ public:
 
 	void set_ca_only(bool setting);
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, core::pose::Pose const & ) override;
 
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;

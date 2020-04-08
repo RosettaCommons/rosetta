@@ -74,7 +74,10 @@ NMerPSSMEnergyFilter::NMerPSSMEnergyFilter(
 NMerPSSMEnergyFilter::~NMerPSSMEnergyFilter() = default;
 
 void
-NMerPSSMEnergyFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & /*data*/, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+NMerPSSMEnergyFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & /*data*/,
+	core::pose::Pose const & )
 {
 	if ( ! tag->hasOption( "threshold" ) ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Must specify 'threshold' for NMerPSSMEnergyFilter.");
 	score_type_threshold_ = tag->getOption< core::Real >( "threshold" );

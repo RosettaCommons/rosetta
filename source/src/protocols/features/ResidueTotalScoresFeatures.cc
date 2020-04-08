@@ -68,9 +68,7 @@ using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::get_score_function;
 using core::scoring::ScoreTypes;
-using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
-using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 using utility::vector1;
 using basic::database::safely_write_to_database;
@@ -137,8 +135,6 @@ void
 ResidueTotalScoresFeatures::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
 	if ( tag->hasOption("scorefxn") ) {

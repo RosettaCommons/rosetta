@@ -122,7 +122,7 @@ public:
 	void extendRegion(bool towardCTerm, core::Size resStart, char neighborResType, core::Size numberAddRes,core::pose::PoseOP & poseOP);
 	core::pose::PoseOP create_maximum_length_pose(char resTypeBeforeLoop, char resTypeAfterLoop, core::pose::Pose pose);
 	utility::vector1<PossibleLoopOP> create_potential_loops(core::pose::Pose pose);
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, core::pose::Pose const & ) override;
 	core::pose::PoseOP get_additional_output() override;
 	core::pose::PoseOP get_additional_output_with_rmsd(core::Real & return_rmsd);
 

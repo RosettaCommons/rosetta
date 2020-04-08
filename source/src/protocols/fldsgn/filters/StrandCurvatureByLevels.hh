@@ -56,9 +56,7 @@ public:
 	typedef protocols::fldsgn::topology::SS_Info2_OP SS_Info2_OP;
 
 	typedef utility::tag::TagCOP TagCOP;
-	typedef protocols::filters::Filters_map Filters_map;
 	typedef basic::datacache::DataMap DataMap;
-	typedef protocols::moves::Movers_map Movers_map;
 
 	StrandCurvatureByLevels();
 
@@ -93,8 +91,6 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose ) override;
 
 	/// @brief required in the context of the parser/scripting scheme

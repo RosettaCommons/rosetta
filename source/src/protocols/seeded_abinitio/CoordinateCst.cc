@@ -268,8 +268,6 @@ void
 CoordinateCst::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & /*data*/,
-	protocols::filters::Filters_map const & /*filters*/,
-	Movers_map const &,
 	Pose const & /*pose*/)
 {
 

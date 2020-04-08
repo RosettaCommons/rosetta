@@ -42,11 +42,9 @@ using core::scoring::ScoreFunctionOP;
 void RotamerTrialsRefiner::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose) {
 
-	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
+	LoopMover::parse_my_tag(tag, data, pose);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
 	utilities::set_task_factory_from_tag(*this, tag, data);
 }

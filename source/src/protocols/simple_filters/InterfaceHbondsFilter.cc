@@ -244,8 +244,6 @@ void
 InterfaceHbondsFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	filters::Filters_map const &,
-	moves::Movers_map const &,
 	core::pose::Pose const &
 ) {
 

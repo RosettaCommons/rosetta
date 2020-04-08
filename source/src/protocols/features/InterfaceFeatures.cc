@@ -119,8 +119,6 @@ void
 InterfaceFeatures::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& data,
-	protocols::filters::Filters_map const & /*data*/,
-	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/)
 {
 	pack_separated_ = tag->getOption<bool>("pack_separated", true);

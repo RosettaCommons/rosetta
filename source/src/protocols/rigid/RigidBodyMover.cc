@@ -352,8 +352,6 @@ void
 RigidBodyPerturbNoCenterMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap&,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 ) {
 	rot_mag_ = tag->getOption< core::Real >( "rot_mag", 0.1 );
@@ -879,8 +877,6 @@ core::Vector RigidBodyTiltMover::find_tilt_center(
 void
 RigidBodyTiltMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	rb_jump( tag->getOption< int >( "jump", 1 ) );
@@ -1048,8 +1044,6 @@ RigidBodyTransMover::apply( core::pose::Pose & pose )
 void
 RigidBodyTransMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	step_size( tag->getOption< core::Real >( "distance", 1.0 ) );

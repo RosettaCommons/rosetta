@@ -30,7 +30,7 @@ public:
 	moves::MoverOP fresh_instance() const override;
 
 	void
-	parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;
+	parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Pose const & ) override;
 
 	std::string save_seq_name() const{ return save_seq_name_; }
 	void save_seq_name( std::string const & s ){ save_seq_name_ = s; };

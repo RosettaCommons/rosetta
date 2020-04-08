@@ -116,10 +116,8 @@ public:
 		stream << "<SymDofMover name=gen_docked_config symm_file=\"devel/denovo_design/C5_Z.sym\" sym_dof_names=\"JS1\" />" << std::endl;
 		utility::tag::TagCOP symtag = utility::tag::Tag::create( stream );
 		basic::datacache::DataMap data;
-		protocols::filters::Filters_map filters;
-		protocols::moves::Movers_map movers;
 		protocols::matdes::SymDofMover sym;
-		sym.parse_my_tag( symtag, data, filters, movers, input_pose );
+		sym.parse_my_tag( symtag, data, input_pose );
 		sym.apply( input_pose );
 		TS_ASSERT( core::pose::symmetry::is_symmetric(input_pose) );
 

@@ -91,8 +91,6 @@ void
 IntraDesignTerminusMotifScorer::set_options_from_tag(
 	utility::tag::TagCOP scorer,
 	basic::datacache::DataMap& ,
-	protocols::filters::Filters_map const & ,
-	protocols::moves::Movers_map const & ,
 	core::pose::Pose const &)
 {
 	//No data members to set!

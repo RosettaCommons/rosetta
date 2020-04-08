@@ -114,7 +114,7 @@ public:
 		tag->read( ss );
 
 		RigidChunkCMOP rigid_chunk( new RigidChunkCM() );
-		TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap, protocols::filters::Filters_map(), protocols::moves::Movers_map(), core::pose::Pose() ) );
+		TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap, core::pose::Pose() ) );
 		TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
 
 		EnvironmentOP env( new Environment( "env" ) );
@@ -175,7 +175,7 @@ public:
 		tag->read( ss_1 );
 
 		RigidChunkCMOP rigid_chunk_1( new RigidChunkCM() );
-		TS_ASSERT_THROWS_NOTHING( rigid_chunk_1->parse_my_tag( tag , datamap, protocols::filters::Filters_map(), protocols::moves::Movers_map(), core::pose::Pose() ) );
+		TS_ASSERT_THROWS_NOTHING( rigid_chunk_1->parse_my_tag( tag , datamap, core::pose::Pose() ) );
 		TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
 
 		std::string const SELECTOR_NAME_2 = "sele2";
@@ -191,7 +191,7 @@ public:
 		tag->read( ss_2 );
 
 		RigidChunkCMOP rigid_chunk_2( new RigidChunkCM() );
-		TS_ASSERT_THROWS_NOTHING( rigid_chunk_2->parse_my_tag( tag , datamap, protocols::filters::Filters_map(), protocols::moves::Movers_map(), core::pose::Pose() ) );
+		TS_ASSERT_THROWS_NOTHING( rigid_chunk_2->parse_my_tag( tag , datamap, core::pose::Pose() ) );
 		TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
 
 
@@ -248,12 +248,11 @@ public:
 		using namespace protocols::abinitio::abscript;
 
 		basic::datacache::DataMap datamap;
-		moves::Movers_map movers_map;
 
 		std::string const SELECTOR_NAME = "sele";
 		std::string const APPLY_MOVER = "centroid";
 
-		movers_map[ APPLY_MOVER ] = utility::pointer::make_shared< simple_moves::SwitchResidueTypeSetMover >( "centroid" );
+		datamap["movers"][ APPLY_MOVER ] = utility::pointer::make_shared< simple_moves::SwitchResidueTypeSetMover >( "centroid" );
 
 		core::Size const BEGIN_CHUNK = 3;
 		core::Size const END_CHUNK = 7;
@@ -271,7 +270,7 @@ public:
 		tag->read( ss );
 
 		RigidChunkCMOP rigid_chunk( new RigidChunkCM() );
-		TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap, filters::Filters_map(), movers_map, core::pose::Pose() ) );
+		TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap, core::pose::Pose() ) );
 		TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
 
 		EnvironmentOP env( new Environment( "env" ) );
@@ -336,7 +335,7 @@ public:
 		tag->read( ss );
 
 		RigidChunkCMOP rigid_chunk( new RigidChunkCM() );
-		TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap, protocols::filters::Filters_map(), protocols::moves::Movers_map(), core::pose::Pose() ) );
+		TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap, core::pose::Pose() ) );
 		TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
 
 		EnvironmentOP env( new Environment( "env" ) );

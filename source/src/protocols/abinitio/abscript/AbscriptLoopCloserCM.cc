@@ -241,9 +241,8 @@ bool AbscriptLoopCloserCM::attempt_ccd( core::pose::Pose& pose ){
 
 void AbscriptLoopCloserCM::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap,
-	protocols::filters::Filters_map const&,
-	protocols::moves::Movers_map const&,
-	core::pose::Pose const& ) {
+	core::pose::Pose const&
+) {
 
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options;

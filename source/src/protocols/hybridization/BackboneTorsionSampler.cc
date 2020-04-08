@@ -329,8 +329,6 @@ void
 BackboneTorsionSampler::parse_my_tag(
 	TagCOP tag,
 	basic::datacache::DataMap & datamap,
-	Filters_map const & ,
-	moves::Movers_map const & /*movers*/,
 	Pose const &
 ) {
 	if ( tag->hasOption( "start_res" ) ) {
@@ -344,13 +342,6 @@ BackboneTorsionSampler::parse_my_tag(
 		native_ = utility::pointer::make_shared< core::pose::Pose >();
 		core::import_pose::pose_from_file( *native_, tag->getOption< std::string >( "native" ), core::import_pose::PDB_file);
 	}
-
-	//String const  user_defined_mover_name_( tag->getOption< String >( "mover_name" ,""));
-	//Movers_map::const_iterator  find_mover ( movers.find( user_defined_mover_name_ ));
-	//if( find_mover == movers.end() && user_defined_mover_name_ != "" ) {
-	// TR.Error << "mover not found in map: \n" << tag << std::endl;
-	// runtime_assert( find_mover != movers.end() );
-	//}
 
 	if ( tag->hasOption( "increase_cycles" ) ) increase_cycles_ = tag->getOption< core::Real >( "increase_cycles" );
 	if ( tag->hasOption( "recover_low" ) ) recover_low_ = tag->getOption< bool >( "recover_low" );

@@ -23,6 +23,7 @@
 #include <core/pose/extra_pose_info_util.hh>
 
 #include <protocols/filters/Filter.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
@@ -56,19 +57,12 @@ FilterReportAsPoseExtraScoresMover::~FilterReportAsPoseExtraScoresMover()= defau
 void
 FilterReportAsPoseExtraScoresMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& ,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & ,
+	basic::datacache::DataMap& data,
 	core::pose::Pose const & )
 {
 	//borrowed from GenericMonteCarloMover.cc:parse_my_tag
 	std::string const filter_name( tag->getOption< std::string >( "filter_name", "true_filter" ) );
-	auto find_filter( filters.find( filter_name ) );
-	if ( find_filter == filters.end() ) {
-		TR.Error << "filter not found in map: \n" << tag << std::endl;
-		runtime_assert( find_filter != filters.end() );
-	}
-	set_filter(find_filter->second/*->clone()*/); // I haven't a clue if this is safe or if it should be a clone operation!
+	set_filter( protocols::rosetta_scripts::parse_filter( filter_name, data ) ); // I haven't a clue if this is safe or if it should be a clone operation!
 	if ( tag->hasOption( "report_as" ) ) {
 		set_report_as(tag->getOption< std::string >( "report_as" ));
 	} else {

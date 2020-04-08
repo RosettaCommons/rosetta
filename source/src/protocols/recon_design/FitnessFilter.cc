@@ -70,8 +70,6 @@ filters::FilterOP FitnessFilter::fresh_instance() const {
 void
 FitnessFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap,
-	filters::Filters_map const &,
-	moves::Movers_map const &,
 	core::pose::Pose const & ) {
 
 	if ( tag->hasOption("scorefxn") ) {

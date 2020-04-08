@@ -62,8 +62,6 @@ DomainInterfaceFilter::~DomainInterfaceFilter() = default;
 void DomainInterfaceFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	filters::Filters_map const &,
-	moves::Movers_map const &,
 	core::pose::Pose const &
 ) {
 	cb_dist_cut( tag->getOption< core::Real >( "cb_dist_cut", 11.0 )); // should be bigger than vector_dist_cut

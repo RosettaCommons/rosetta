@@ -108,8 +108,7 @@ public:  // Standard Rosetta methods //////////////////////////////////////////
 	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Called by MoverFactory when constructing new Movers
-	void parse_my_tag( TagCOP tag, basic::datacache::DataMap &, Filters_map const &,
-		moves::Movers_map const &,
+	void parse_my_tag( TagCOP tag, basic::datacache::DataMap &,
 		Pose const & ) override;
 
 

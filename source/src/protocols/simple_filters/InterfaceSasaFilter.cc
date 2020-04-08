@@ -87,7 +87,10 @@ InterfaceSasaFilter::fresh_instance() const{
 }
 
 void
-InterfaceSasaFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &,moves::Movers_map const &, core::pose::Pose const & )
+InterfaceSasaFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", 800 );
 	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1000000);

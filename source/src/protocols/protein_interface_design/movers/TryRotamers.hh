@@ -71,8 +71,6 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 	core::pack::rotamer_set::Rotamers::const_iterator begin() const { return rotset_->begin(); }
 	core::pack::rotamer_set::Rotamers::const_iterator end() const { return rotset_->end(); }

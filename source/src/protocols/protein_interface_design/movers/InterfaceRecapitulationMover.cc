@@ -31,6 +31,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/jd2/util.hh>
 #include <utility/tag/Tag.hh>
 
@@ -141,15 +142,14 @@ InterfaceRecapitulationMover::apply( core::pose::Pose & pose ){
 
 
 void
-InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const & movers, core::pose::Pose const & ){
+InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, core::pose::Pose const & ){
 	set_reference_pose( protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, mover_name(), /*use_native*/ false ) );
 	std::string const mover_name( tag->getOption<std::string>( "mover_name" ) );
-	auto find_mover( movers.find( mover_name ));
-	bool const mover_found( find_mover != movers.end() );
-	if ( mover_found ) {
-		design_mover_ = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( find_mover->second );
+	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover_or_null( mover_name, data );
+	if ( mover ) {
+		design_mover_ = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( mover );
 		if ( !design_mover_ ) {
-			design_mover2_ = utility::pointer::dynamic_pointer_cast< protocols::minimization_packing::PackRotamersMover > ( find_mover->second );
+			design_mover2_ = utility::pointer::dynamic_pointer_cast< protocols::minimization_packing::PackRotamersMover > ( mover );
 			if ( !design_mover2_ ) {
 				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "dynamic cast failed in tag in RecapitulateMover. Make sure that the mover is either PackRotamers or DesignRepackMover derived" );
 			}

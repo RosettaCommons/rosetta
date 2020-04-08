@@ -161,8 +161,6 @@ void
 RingConformationMover::parse_my_tag(
 	TagCOP tag,
 	basic::datacache::DataMap & data,
-	Filters_map const & /*filters*/,
-	moves::Movers_map const & /*movers*/,
 	Pose const & )
 {
 	using namespace core::kinematics;

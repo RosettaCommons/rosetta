@@ -82,8 +82,6 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
-		Filters_map const & /*filters*/,
-		moves::Movers_map const & /*movers*/,
 		Pose const & /*pose*/ ) override;
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

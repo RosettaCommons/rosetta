@@ -111,8 +111,6 @@ void
 NubInitioLoopClosureMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & ,
-	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
 	if ( tag->hasOption( "centroid_scorefxn" ) ) {

@@ -46,7 +46,7 @@ public:
 	}
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< BestHotspotCstMover >(); }
 	void apply( core::pose::Pose & pose ) override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 	~BestHotspotCstMover() override;
 
 	std::string

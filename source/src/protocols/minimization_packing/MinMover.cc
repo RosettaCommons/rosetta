@@ -366,11 +366,9 @@ protocols::moves::MoverOP MinMover::fresh_instance() const { return utility::poi
 void MinMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	Pose const & )
 {
-	parse_opts( tag, data, filters, movers );
+	parse_opts( tag, data );
 	parse_movemap_factory( tag, data );
 	parse_dof_tasks( tag, data );
 
@@ -378,10 +376,8 @@ void MinMover::parse_my_tag(
 
 void MinMover::parse_opts(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Filters_map const &,
-	protocols::moves::Movers_map const & )
-{
+	basic::datacache::DataMap & data
+) {
 	if ( tag->hasOption("scorefxn") ) {
 		score_function( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	}

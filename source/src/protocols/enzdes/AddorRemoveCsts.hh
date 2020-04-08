@@ -59,8 +59,6 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 
 	// @brief Set the name of the constraint file. Overwrites the file name that might be read in during parse_my_tag.

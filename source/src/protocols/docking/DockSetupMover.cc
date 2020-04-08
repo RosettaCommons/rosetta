@@ -161,8 +161,6 @@ void
 DockSetupMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap& data_map,
-	protocols::filters::Filters_map const&,
-	moves::Movers_map const& movers,
 	core::pose::Pose const&
 ) {
 	using namespace core::scoring;
@@ -171,7 +169,7 @@ DockSetupMover::parse_my_tag(
 		std::string const partners( tag->getOption<std::string>( "partners") );
 		set_partners(partners);
 	}
-	moves::MoverOP mover = rosetta_scripts::parse_mover( tag->getOption< std::string >( "rb_mover", "null" ), movers );
+	moves::MoverOP mover = rosetta_scripts::parse_mover( tag->getOption< std::string >( "rb_mover", "null" ), data_map );
 	rb_mover_ = utility::pointer::dynamic_pointer_cast< rigid::RigidBodyPerturbNoCenterMover > ( mover );
 	//  if ( !rb_mover_ ) {
 	//   throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "DockSetupMover requires an rb_mover argument" );

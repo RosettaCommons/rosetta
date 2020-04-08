@@ -147,13 +147,11 @@ void
 HamiltonianExchange::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	pose::Pose const & pose
 ) {
 	exchange_schedule_file_ = tag->getOption< std::string >( "exchange_schedule", "");
 
-	Parent::parse_my_tag( tag, data, filters, movers, pose );
+	Parent::parse_my_tag( tag, data, pose );
 	if ( !successfully_initialized_ ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Initialization of HamiltonianExchange Module failed! " );
 	}

@@ -81,8 +81,6 @@ public:
 	void
 	parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose ) override;
 
 	moves::MoverOP fresh_instance() const override;
@@ -110,8 +108,7 @@ private:
 		core::select::residue_selector::ResidueSelectorCOP = nullptr,
 		bool initialize = true );
 
-	void parse_subtags( utility::vector0< utility::tag::TagPtr > const&,
-		protocols::moves::Movers_map const& );
+	void parse_subtags( utility::vector0< utility::tag::TagPtr > const&, basic::datacache::DataMap & data );
 
 	void register_submover( protocols::moves::MoverOP, StageIDs const&, core::Real weight );
 

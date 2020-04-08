@@ -36,7 +36,10 @@ static basic::Tracer neighbor_type_filter_tracer( "protocols.simple_filters.Neig
 NeighborTypeFilter::~NeighborTypeFilter() = default;
 
 void
-NeighborTypeFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+NeighborTypeFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 	residue_types_.assign( core::chemical::num_canonical_aas, false );
 	utility::vector0< utility::tag::TagCOP > const neighbor_type_tags( tag->getTags() );

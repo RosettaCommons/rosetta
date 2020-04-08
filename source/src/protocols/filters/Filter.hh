@@ -66,13 +66,16 @@ public:
 
 	/// @brief used to clear internal variables if needed. Using fresh_instance is preferred since it's a pure virtual
 	virtual void clear() {};
-	virtual void parse_my_tag(
+
+
+	/// @brief Called by FilterFactory when constructing new Filter. Takes care of the specific mover's parsing.
+	virtual
+	void parse_my_tag(
 		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
-		Filters_map const &,
-		moves::Movers_map const &,
 		core::pose::Pose const &
 	);
+
 	virtual FilterOP clone() const = 0;
 
 	virtual FilterOP fresh_instance() const = 0;

@@ -59,7 +59,7 @@ public:
 
 	void add_dihedral_constraints_to_pose( Pose & pose, core::Size number_dihedral_sets, utility::vector1< char > uniqs );
 
-	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 
 public:
 

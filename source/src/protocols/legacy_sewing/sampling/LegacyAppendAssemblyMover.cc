@@ -331,8 +331,6 @@ void
 LegacyAppendAssemblyMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ){
 	using namespace basic::options;
@@ -350,7 +348,7 @@ LegacyAppendAssemblyMover::parse_my_tag(
 		utility_exit_with_message("You must give a model file through options or tags");
 	}
 
-	parent::parse_my_tag(tag, data, filters, movers, pose);
+	parent::parse_my_tag(tag, data, pose);
 }
 
 std::string LegacyAppendAssemblyMover::get_name() const {

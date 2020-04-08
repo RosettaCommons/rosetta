@@ -101,13 +101,11 @@ void ContingentAcceptMover::mover( protocols::moves::MoverOP m ){
 void
 ContingentAcceptMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
+	basic::datacache::DataMap & data,
 	Pose const & )
 {
-	filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
-	mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "mover" ), movers ) );
+	filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), data ) );
+	mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "mover" ), data ) );
 	delta( tag->getOption< core::Real >( "delta" , 5.0 )); // do I need anything like ( "MaxDeltaFilterVal", 5 )?? What is the integer for?
 }
 

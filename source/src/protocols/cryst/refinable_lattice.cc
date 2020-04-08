@@ -253,8 +253,6 @@ void
 UpdateCrystInfo::parse_my_tag(
 	utility::tag::TagCOP const /*tag*/,
 	basic::datacache::DataMap & /*data*/,
-	filters::Filters_map const & ,
-	moves::Movers_map const & ,
 	core::pose::Pose const & /*pose*/ )
 {
 
@@ -347,8 +345,6 @@ void
 CrystRMS::parse_my_tag(
 	utility::tag::TagCOP const tag,
 	basic::datacache::DataMap & data,
-	filters::Filters_map const & ,
-	moves::Movers_map const & ,
 	core::pose::Pose const & /*pose*/ ) {
 
 	if ( tag->hasOption( "scorefxn" ) ) {
@@ -917,8 +913,6 @@ void
 DockLatticeMover::parse_my_tag(
 	utility::tag::TagCOP const tag,
 	basic::datacache::DataMap & data,
-	filters::Filters_map const & ,
-	moves::Movers_map const & ,
 	core::pose::Pose const & /*pose*/ )
 {
 	if ( tag->hasOption( "scorefxn" ) ) {
@@ -1584,8 +1578,6 @@ void
 MakeLatticeMover::parse_my_tag(
 	utility::tag::TagCOP const tag,
 	basic::datacache::DataMap & /*data*/,
-	filters::Filters_map const & ,
-	moves::Movers_map const & ,
 	core::pose::Pose const & /*pose*/ )
 {
 	if ( tag->hasOption( "contact_dist" ) ) {

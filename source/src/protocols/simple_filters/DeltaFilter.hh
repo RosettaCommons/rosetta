@@ -45,8 +45,6 @@ public:
 	~DeltaFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 	void ref_baseline( core::Real const rb );
 	core::Real baseline() const;

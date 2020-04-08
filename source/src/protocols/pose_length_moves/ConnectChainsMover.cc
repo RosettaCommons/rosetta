@@ -224,8 +224,6 @@ void
 ConnectChainsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & ){
 	//start_time_ = time(NULL);
 	std::string loopLengthRange( tag->getOption< std::string >( "loopLengthRange", "1,4") );

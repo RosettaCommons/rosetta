@@ -165,12 +165,10 @@ void
 SymmetricAddMembraneMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & dm,
-	protocols::filters::Filters_map const & fm,
-	protocols::moves::Movers_map const & mm,
 	core::pose::Pose const & pose
 )
 {
-	protocols::membrane::AddMembraneMover::parse_my_tag(tag, dm, fm, mm, pose);
+	protocols::membrane::AddMembraneMover::parse_my_tag(tag, dm, pose);
 }
 
 /// @brief Create a new copy of this mover

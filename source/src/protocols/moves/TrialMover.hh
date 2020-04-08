@@ -82,8 +82,6 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & /* data */,
-		protocols::filters::Filters_map const & /* filters */,
-		protocols::moves::Movers_map const & /* movers */,
 		core::pose::Pose const & /* pose */
 	) override;
 
@@ -198,8 +196,6 @@ public:
 	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
-		Filters_map const & filters,
-		Movers_map const & movers,
 		Pose const &
 	) override;
 	friend std::ostream &operator<< (std::ostream &os, TrialMover const &mover);

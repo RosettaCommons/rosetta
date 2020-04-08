@@ -126,28 +126,17 @@ RemoveLigandFilter::apply(Pose const & pose) const
 }
 
 void
-RemoveLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const & filters, Movers_map const & movers, Pose const &)
+RemoveLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Pose const &)
 {
 	threshold_ = tag->getOption< Real >( "threshold", 3.0 );
 	const std::string mover_name = tag->getOption< std::string >( "mover", "");
 	const std::string filter_name = tag->getOption< std::string >( "filter", "");
 
-	auto  find_mover ( movers.find( mover_name ));
-	auto find_filter( filters.find( filter_name ));
-	if ( find_mover == movers.end() && mover_name != "" ) {
-		TR.Error << "mover not found in map: \n" << tag << std::endl;
-		runtime_assert( find_mover != movers.end() );
-	}
-	if ( find_filter == filters.end() && filter_name != "" ) {
-		TR.Error << "filter not found in map: \n" << tag << std::endl;
-		runtime_assert( find_filter != filters.end() );
-	}
-
 	if ( mover_name != "" ) {
-		mover_ = find_mover->second;
+		mover_ = protocols::rosetta_scripts::parse_mover( mover_name, data );
 	}
 	if ( filter_name != "" ) {
-		filter_ = find_filter->second;
+		filter_ = protocols::rosetta_scripts::parse_filter( filter_name, data );
 	}
 }
 

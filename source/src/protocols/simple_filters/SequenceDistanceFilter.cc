@@ -46,7 +46,10 @@ SequenceDistance::SequenceDistance() :
 SequenceDistance::~SequenceDistance() = default;
 
 void
-SequenceDistance::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+SequenceDistance::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 	threshold( tag->getOption< core::Size >( "threshold", 8000 ) );
 

@@ -291,8 +291,6 @@ void
 ShapeComplementarityFilter::parse_my_tag(
 	TagCOP tag,
 	basic::datacache::DataMap & data,
-	filters::Filters_map const &,
-	Movers_map const &,
 	Pose const & )
 {
 	filtered_sc_ = tag->getOption<Real>( "min_sc", 0.50 );

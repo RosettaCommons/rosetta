@@ -798,19 +798,13 @@ GreedyOptMutationMover::add_filter( protocols::filters::FilterOP filter, std::st
 void
 GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & )
 {
 	TR << "GreedyOptMutationMover"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	//load relax mover
 	std::string const relax_mover_name( tag->getOption< std::string >( "relax_mover", "null" ) );
-	auto mover_it( movers.find( relax_mover_name ) );
-	if ( mover_it == movers.end() ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Relax mover "+relax_mover_name+" not found" );
-	}
-	relax_mover( mover_it->second );
+	relax_mover( protocols::rosetta_scripts::parse_mover( relax_mover_name, data ) );
 	//load scorefxn
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	//load dump_pdb
@@ -820,7 +814,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	parallel( tag->getOption< bool >( "parallel", false ) );
 	if ( tag->hasOption( "stopping_condition" ) ) {
 		std::string const stopping_filter_name( tag->getOption< std::string >( "stopping_condition" ) );
-		stopping_condition( protocols::rosetta_scripts::parse_filter( stopping_filter_name, filters ) );
+		stopping_condition( protocols::rosetta_scripts::parse_filter( stopping_filter_name, data ) );
 		TR<<"Defined stopping condition "<<stopping_filter_name<<std::endl;
 	}
 
@@ -831,14 +825,10 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 			utility::vector1< utility::tag::TagCOP > const filters_tags( btag->getTags() );
 			for ( utility::tag::TagCOP ftag : filters_tags ) {
 				std::string const filter_name( ftag->getOption< std::string >( "filter_name" ) );
-				auto find_filt( filters.find( filter_name ));
-				if ( find_filt == filters.end() ) {
-					TR.Error << "filter not found in map: \n" << tag << std::endl;
-					runtime_assert( find_filt != filters.end() );
-				}
+				protocols::filters::FilterOP filter = protocols::rosetta_scripts::parse_filter( filter_name, data );
 				std::string const samp_type( ftag->getOption< std::string >( "sample_type", "low" ));
 				auto filter_delta( tag->getOption< core::Real >( "filter_delta", core::Real( 0. ) ) );
-				add_filter( find_filt->second->clone(), samp_type, filter_delta );
+				add_filter( filter->clone(), samp_type, filter_delta );
 			} //foreach ftag
 		} else { // fi Filters
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "tag name " + btag->getName() + " unrecognized." );
@@ -848,14 +838,11 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	{
 		std::string const filter_name( tag->getOption< std::string >( "filter", "true_filter" ) );
 		if ( filter_name != "true_filter" || filters_.size() < 1 ) {
-			auto find_filt( filters.find( filter_name ) );
-			if ( find_filt == filters.end() ) {
-				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Filter "+filter_name+" not found" );
-			}
+			protocols::filters::FilterOP filter = protocols::rosetta_scripts::parse_filter( filter_name, data );
 			std::string const samp_type( tag->getOption< std::string >( "sample_type", "low" ) );
 			auto filter_delta( tag->getOption< core::Real >( "filter_delta", core::Real( 0. ) ) );
 			//only add the default dummy filter if we dont have any others, allows user to define filters in branch tags only
-			add_filter( find_filt->second->clone(), samp_type, filter_delta );
+			add_filter( filter->clone(), samp_type, filter_delta );
 		}
 	}
 
@@ -865,7 +852,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	if ( tag->hasOption( "reset_delta_filters" ) ) {
 		delta_filter_names = utility::string_split( tag->getOption< std::string >( "reset_delta_filters" ), ',' );
 		for ( std::string const  &fname : delta_filter_names ) {
-			reset_delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
+			reset_delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, data ) ) );
 			TR<<"The baseline for Delta Filter "<<fname<<" will be reset upon each accepted mutation"<<std::endl;
 		}
 	}

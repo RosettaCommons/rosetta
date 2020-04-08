@@ -120,8 +120,6 @@ public:
 	inline moves::MoverOP fresh_instance() const override{ return utility::pointer::make_shared< SplitAndMixPoseMover >(); };
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &data,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 

@@ -137,15 +137,12 @@ public:
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
-		Filters_map const &,
-		protocols::moves::Movers_map const &,
 		Pose const & ) override;
 
 	void parse_opts(
 		TagCOP,
-		basic::datacache::DataMap & data_map,
-		Filters_map const &,
-		protocols::moves::Movers_map const & );
+		basic::datacache::DataMap & data_map
+	);
 
 	void parse_movemap_factory( TagCOP, basic::datacache::DataMap & );
 

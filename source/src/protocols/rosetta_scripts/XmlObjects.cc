@@ -228,9 +228,8 @@ XmlObjects::prepare_xml_text( std::string & xml_text ) {
 /// @brief Initialization function from the DataMaps
 void
 XmlObjects::init_from_maps(
-	basic::datacache::DataMap & data,
-	filters::Filters_map const & filters,
-	moves::Movers_map const & movers ) {
+	basic::datacache::DataMap & data
+) {
 
 	if ( data.has_type( "ResidueSelector" ) ) {
 		for ( auto pair : data[ "ResidueSelector" ] ) {
@@ -261,14 +260,20 @@ XmlObjects::init_from_maps(
 				data.get_ptr< pack::task::operation::TaskOperation >( "task_operations", name );
 		}
 	}
-
-	for ( auto pair : filters ) {
-		filters_[ pair.first ] = pair.second;
+	if ( data.has_type( "filters" ) ) {
+		for ( auto pair : data[ "filters" ] ) {
+			std::string name = pair.first;
+			filters_[ name ] =
+				data.get_ptr< protocols::filters::Filter >( "filters", name );
+		}
 	}
-	for ( auto pair : movers ) {
-		movers_[ pair.first ] = pair.second;
+	if ( data.has_type( "movers" ) ) {
+		for ( auto pair : data[ "movers" ] ) {
+			std::string name = pair.first;
+			movers_[ name ] =
+				data.get_ptr< protocols::moves::Mover >( "movers", name );
+		}
 	}
-
 }
 
 /// @brief Constructs a single ScoreFunction from xml

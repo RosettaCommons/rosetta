@@ -290,11 +290,14 @@ EvolutionaryDynamicsMover::apply( Pose & pose )
 
 /// @brief parse xml file
 void
-EvolutionaryDynamicsMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &filters, Movers_map const &movers, Pose const & pose )
+EvolutionaryDynamicsMover::parse_my_tag(
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
+	Pose const & pose )
 {
 	set_keep_filters( true );
 
-	Super::parse_my_tag( tag, data, filters, movers, pose );
+	Super::parse_my_tag( tag, data, pose );
 	population_size( tag->getOption< core::Size >( "population_size", 1000000 ) );
 	disable_fitness_evaluation( tag->getOption< bool >( "disable_fitness_evaluation", false ) );
 	if ( tag->hasOption("branch_length") && tag->hasOption("mutation_rate") ) {

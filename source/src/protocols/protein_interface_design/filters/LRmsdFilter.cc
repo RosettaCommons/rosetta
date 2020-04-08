@@ -20,7 +20,6 @@
 #include <core/conformation/Conformation.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/ref_pose.hh>
 #include <protocols/docking/metrics.hh>
@@ -97,7 +96,7 @@ LRmsdFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-LRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+LRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, core::pose::Pose const & )
 {
 	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data_map, class_name() );
 

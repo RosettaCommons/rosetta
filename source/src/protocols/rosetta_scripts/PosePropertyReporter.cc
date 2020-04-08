@@ -48,8 +48,6 @@ core::Real PosePropertyReporter::report_property( core::pose::Pose & , core::pos
 void PosePropertyReporter::parse_my_tag(
 	utility::tag::TagCOP,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 ) {
 	TR << "***WARNING!!!! WARNING!!!*** parse_my_tag has been invoked for this PosePropertyReporter but it hasn't been defined. Are you sure this is appropriate?" << std::endl;

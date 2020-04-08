@@ -40,7 +40,7 @@ public:
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 
 	~ResidueBurialFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 	core::Real residue_fraction_buried() const { return residue_fraction_buried_; }
 	void residue_fraction_buried( core::Real const r ){ residue_fraction_buried_ = r; }
 

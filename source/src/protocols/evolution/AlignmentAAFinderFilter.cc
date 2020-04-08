@@ -86,7 +86,10 @@ AlignmentAAFinder::AlignmentAAFinder() :
 AlignmentAAFinder::~AlignmentAAFinder() = default;
 
 void
-AlignmentAAFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, filters::Filters_map const &, moves::Movers_map const &movers, core::pose::Pose const & )
+AlignmentAAFinder::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &data,
+	core::pose::Pose const & )
 {
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	exclude_AA_threshold( tag->getOption< core::Real >( "exclude_AA_threshold", 10.0 ) );
@@ -98,12 +101,7 @@ AlignmentAAFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 		utility_exit_with_message( "Outfile pathname not found" );;
 	}
 	std::string const relax_mover_name( tag->getOption< std::string >( "relax_mover", "null" ) );
-	auto mover_it( movers.find( relax_mover_name ) );
-	if ( mover_it == movers.end() ) {
-		utility_exit_with_message( "Relax mover "+relax_mover_name+" not found" );
-	}
-	relax_mover( mover_it->second );
-
+	relax_mover( protocols::rosetta_scripts::parse_mover( relax_mover_name, data ) );
 }
 
 

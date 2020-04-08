@@ -232,7 +232,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 	}//loops>0
 }
 void
-LoopMoverFromCommandLine::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+LoopMoverFromCommandLine::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
 {
 	protocol_ = tag->getOption<std::string>( "protocol", "ccd" );
 	perturb_ = tag->getOption<bool>( "perturb", true );

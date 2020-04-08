@@ -43,7 +43,10 @@ FileExistFilter::FileExistFilter() :
 FileExistFilter::~FileExistFilter() = default;
 
 void
-FileExistFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+FileExistFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 	filename_ = tag->getOption< std::string >( "filename" );
 	ignore_zero_byte( tag->getOption< bool >( "ignore_zero_byte", false ) );

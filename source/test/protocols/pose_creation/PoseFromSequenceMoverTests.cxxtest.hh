@@ -57,57 +57,55 @@ public:
 	}
 
 	void test_parse_my_tag() {
-		protocols::filters::Filters_map filters;
-		protocols::moves::Movers_map movers;
 		basic::datacache::DataMap data;
 		core::pose::Pose pose(create_test_in_pdb_pose());
 		{ // test fasta
 			utility::tag::TagCOP tag = tagptr_from_string("<PoseFromSequenceMover name=\"rhino\" fasta=\"protocols/pose_creation/PFSM_01.fasta\" />\n");
 			protocols::pose_creation::PoseFromSequenceMover pfsm;
-			pfsm.parse_my_tag(tag, data, filters, movers, pose);
+			pfsm.parse_my_tag(tag, data, pose);
 			TS_ASSERT_EQUALS(pfsm.get_sequence(), "EQLLKALEFLLKELLEKL");
 			TS_ASSERT_EQUALS(pfsm.get_residue_type_set(), "fa_standard");
 		}
 		{ // test fasta with multiple
 			utility::tag::TagCOP tag = tagptr_from_string("<PoseFromSequenceMover name=\"rhino\" fasta=\"protocols/pose_creation/PFSM_02.fasta\" use_all_in_fasta=\"true\" />\n");
 			protocols::pose_creation::PoseFromSequenceMover pfsm;
-			pfsm.parse_my_tag(tag, data, filters, movers, pose);
+			pfsm.parse_my_tag(tag, data, pose);
 			TS_ASSERT_EQUALS(pfsm.get_sequence(), "EQLLKALEFLLKELLEKL/EQLLKALEFLYYYYYYY/EQLPLERLPRL");
 		}
 		{ // test fasta with multiple but use only single
 			utility::tag::TagCOP tag = tagptr_from_string("<PoseFromSequenceMover name=\"rhino\" fasta=\"protocols/pose_creation/PFSM_02.fasta\" />\n");
 			protocols::pose_creation::PoseFromSequenceMover pfsm;
-			pfsm.parse_my_tag(tag, data, filters, movers, pose);
+			pfsm.parse_my_tag(tag, data, pose);
 			TS_ASSERT_EQUALS(pfsm.get_sequence(), "EQLLKALEFLLKELLEKL");
 		}
 		{ // test sequence  + extended
 			utility::tag::TagCOP tag = tagptr_from_string("<PoseFromSequenceMover name=\"rhino\" sequence=\"EQLLKALEFLLKELLEKL\" />\n");
 			protocols::pose_creation::PoseFromSequenceMover pfsm;
-			pfsm.parse_my_tag(tag, data, filters, movers, pose);
+			pfsm.parse_my_tag(tag, data, pose);
 			TS_ASSERT_EQUALS(pfsm.get_sequence(), "EQLLKALEFLLKELLEKL");
 			TS_ASSERT_EQUALS(pfsm.get_extended(), false);
 		}
 		{ // test sequence  + extended
 			utility::tag::TagCOP tag = tagptr_from_string("<PoseFromSequenceMover name=\"rhino\" sequence=\"EQLLKALEFLLKELLEKL\" extended=\"true\" />\n");
 			protocols::pose_creation::PoseFromSequenceMover pfsm;
-			pfsm.parse_my_tag(tag, data, filters, movers, pose);
+			pfsm.parse_my_tag(tag, data, pose);
 			TS_ASSERT_EQUALS(pfsm.get_sequence(), "EQLLKALEFLLKELLEKL");
 			TS_ASSERT_EQUALS(pfsm.get_extended(), true);
 		}
 		{ // test throwing if no seq or fasta
 			utility::tag::TagCOP tag = tagptr_from_string("<PoseFromSequenceMover name=\"rhino\" extended=\"true\" />\n");
 			protocols::pose_creation::PoseFromSequenceMover pfsm;
-			TS_ASSERT_THROWS(pfsm.parse_my_tag(tag, data, filters, movers, pose), utility::excn::RosettaScriptsOptionError &);
+			TS_ASSERT_THROWS(pfsm.parse_my_tag(tag, data, pose), utility::excn::RosettaScriptsOptionError &);
 		}
 		{ // test throwing if both sequence and fasta
 			utility::tag::TagCOP tag = tagptr_from_string("<PoseFromSequenceMover name=\"rhino\" sequence=\"SEVER\" fasta=\"PLYWALL\" extended=\"true\" />\n");
 			protocols::pose_creation::PoseFromSequenceMover pfsm;
-			TS_ASSERT_THROWS(pfsm.parse_my_tag(tag, data, filters, movers, pose), utility::excn::RosettaScriptsOptionError &);
+			TS_ASSERT_THROWS(pfsm.parse_my_tag(tag, data, pose), utility::excn::RosettaScriptsOptionError &);
 		}
 		{ // test residue type set
 			utility::tag::TagCOP tag = tagptr_from_string("<PoseFromSequenceMover name=\"rhino\" sequence=\"SEVER\" residue_type_set=\"fa_standard\" />\n");
 			protocols::pose_creation::PoseFromSequenceMover pfsm;
-			pfsm.parse_my_tag(tag, data, filters, movers, pose);
+			pfsm.parse_my_tag(tag, data, pose);
 			TS_ASSERT_EQUALS(pfsm.get_residue_type_set(), "fa_standard");
 		}
 	}

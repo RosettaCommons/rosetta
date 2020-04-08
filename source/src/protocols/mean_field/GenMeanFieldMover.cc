@@ -484,8 +484,6 @@ GenMeanFieldMover::calc_mean_field()
 void
 GenMeanFieldMover::parse_my_tag( tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	pose::Pose const & )
 {
 	using namespace tag;

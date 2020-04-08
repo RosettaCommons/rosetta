@@ -459,8 +459,6 @@ core::pose::PoseOP MakeJunctionsMover::get_additional_output(){
 void MakeJunctionsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & ){
 	designs_fn_ = tag->getOption< std::string >( "designs" ,"designs.txt" );
 	pdb_cache_bool_ = tag->getOption< bool >( "pdb_cache" ,true);

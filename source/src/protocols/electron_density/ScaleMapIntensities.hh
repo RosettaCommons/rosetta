@@ -41,7 +41,7 @@ public:
 	moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< ScaleMapIntensities >(); }
 
 	void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & ) override;
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Pose const & ) override;
 
 	std::string
 	get_name() const override;

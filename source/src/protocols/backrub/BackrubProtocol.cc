@@ -379,8 +379,6 @@ void
 BackrubProtocol::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap  & data,
-	protocols::filters::Filters_map const & /* filters */,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const&
 ) {
 
@@ -420,7 +418,7 @@ BackrubProtocol::parse_my_tag(
 
 
 	if ( tag->hasOption("trajectory_apply_mover") ) {
-		moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "trajectory_apply_mover" ), movers );
+		moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "trajectory_apply_mover" ), data );
 		trajectory_apply_mover_ = utility::pointer::dynamic_pointer_cast < protocols::moves::Mover > (mover);
 	}
 

@@ -53,9 +53,7 @@ public:
 	typedef core::pose::Pose Pose;
 
 	typedef utility::tag::TagCOP TagCOP;
-	typedef protocols::filters::Filters_map Filters_map;
 	typedef basic::datacache::DataMap DataMap;
-	typedef protocols::moves::Movers_map Movers_map;
 	typedef core::scoring::sc::ContactMolecularSurfaceCalculator ContactMolecularSurfaceCalculator;
 
 public:// constructor/destructor
@@ -85,8 +83,6 @@ public:// mutator
 public:// parser
 	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
-		filters::Filters_map const & filters,
-		Movers_map const & movers,
 		Pose const & pose ) override;
 
 public:// virtual main operation

@@ -80,7 +80,10 @@ SequenceProfileMover::fresh_instance() const{
 }
 
 void
-SequenceProfileMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+SequenceProfileMover::parse_my_tag(
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
+	core::pose::Pose const & )
 {
 	using namespace core::scoring;
 

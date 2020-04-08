@@ -46,8 +46,6 @@ class ErraserMinimizerMover : public moves::Mover {
 	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
 	typedef utility::tag::Tag Tag;
 	typedef core::id::AtomID AtomID;
-	typedef moves::Movers_map Movers_map;
-	typedef filters::Filters_map Filters_map;
 
 public:
 
@@ -74,8 +72,6 @@ public:
 	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & /*data*/,
-		Filters_map const & /*filters*/,
-		Movers_map const & /*movers*/,
 		Pose const & /*pose*/
 	) override;
 

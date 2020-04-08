@@ -69,7 +69,7 @@ public:
 	}
 
 	~HelixHelixAngleFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & pose ) override;
 
 	std::string
 	name() const override;

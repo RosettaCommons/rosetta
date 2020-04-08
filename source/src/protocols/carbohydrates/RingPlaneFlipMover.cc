@@ -141,8 +141,6 @@ void
 RingPlaneFlipMover::parse_my_tag(
 	TagCOP tag,
 	basic::datacache::DataMap & data,
-	Filters_map const &,
-	moves::Movers_map const &,
 	Pose const & )
 {
 	using namespace core::select::movemap;

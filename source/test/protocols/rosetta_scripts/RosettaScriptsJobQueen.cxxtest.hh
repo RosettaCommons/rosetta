@@ -126,8 +126,6 @@ public:
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
 		Pose const &
 	) override {
 		//std::cout << "parse_my_tag for NullMover1ABC" << std::endl;
@@ -141,8 +139,6 @@ public:
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap & data,
-		Filters_map const &,
-		protocols::moves::Movers_map const &,
 		Pose const &
 	) override {
 		TS_ASSERT( data.has_resource( "2def" ) );

@@ -41,6 +41,7 @@
 #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <protocols/hotspot_hashing/HotspotStub.fwd.hh>  // REQUIRED FOR WINDOWS
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
@@ -297,7 +298,7 @@ add_coordinate_constraints( pose::Pose & pose, core::conformation::Residue const
 /// this task factory.
 ///The preceding comment about TaskAware is probaby wrong - SML @ XSDXRW Nov 2016
 void
-generate_taskfactory_and_add_task_awareness( utility::tag::TagCOP tag, Movers_map const & movers, basic::datacache::DataMap & data, core::pack::task::TaskFactoryOP & task_factory ){
+generate_taskfactory_and_add_task_awareness( utility::tag::TagCOP tag, basic::datacache::DataMap & data, core::pack::task::TaskFactoryOP & task_factory ){
 	using namespace utility::tag;
 	using namespace core::pack::task;
 	if ( !data.has( "TaskFactory", "placement" ) ) {
@@ -310,12 +311,11 @@ generate_taskfactory_and_add_task_awareness( utility::tag::TagCOP tag, Movers_ma
 	utility::vector0< TagCOP > const & ta_tags( tag->getTags() );
 	for ( TagCOP ta_tag : ta_tags ) {
 		std::string const mover_name( ta_tag->getOption< std::string >( "mover_name" ) );
-		auto find_mover( movers.find( mover_name ));
-		bool const mover_found( find_mover != movers.end() );
-		if ( mover_found ) {
-			calc_taskop_movers::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( find_mover->second );
+		protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover_or_null( mover_name, data );
+		if ( mover ) {
+			calc_taskop_movers::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( mover );
 			if ( drOP ) { // don't do anything with non-DesignRepackMovers
-				TR<<"Setting the task factory of mover "<<find_mover->first<<" to be aware of PlaceSimultaneously's rotamer and sidechain choices.\n";
+				TR<<"Setting the task factory of mover "<<mover_name<<" to be aware of PlaceSimultaneously's rotamer and sidechain choices.\n";
 				drOP->task_factory( task_factory );
 			}//fi
 		}//fi mover-found

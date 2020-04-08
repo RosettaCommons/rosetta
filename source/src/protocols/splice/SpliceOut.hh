@@ -58,7 +58,7 @@ public:
 	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SpliceOut >(); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & /* pose*/ ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & /* pose*/ ) override;
 	~SpliceOut() override;
 	std::string source_pdb() const { return source_pdb_; }
 	void source_pdb( std::string const & s ){ source_pdb_ = s; }
@@ -120,14 +120,14 @@ public:
 	core::Size source_from_res(){return source_from_res_;}
 	void source_to_res(core::Size const c){source_to_res_=c;}
 	core::Size source_to_res(){return source_to_res_;}
-	void handle_mover_tag(TagCOP const tag,protocols::moves::Movers_map const & movers);
+	void handle_mover_tag(TagCOP const tag, basic::datacache::DataMap & data);
 	virtual void set_fold_tree_nodes(core::pose::Pose const & pose);
 	virtual void set_source_from_to_res();
 	virtual core::Size set_anchor_res();
 	virtual void build_ideal_segment(core::pose::Pose & pose);
 	virtual void set_loop_length_change(protocols::protein_interface_design::movers::LoopLengthChange & llc);
 	virtual void write_database_to_file(core::pose::Pose const & pose);
-	void parse_SpliceOut_tags(TagCOP const tag,protocols::moves::Movers_map const & movers,protocols::filters::Filters_map const & filters);
+	void parse_SpliceOut_tags(TagCOP const tag, basic::datacache::DataMap & data);
 	virtual void abstract_parse_tag(TagCOP const tag);
 	void randomize_cut(bool const b){randomize_cut_=b;}
 	bool randomize_cut(){return randomize_cut_;}

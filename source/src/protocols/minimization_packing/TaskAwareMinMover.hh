@@ -66,16 +66,12 @@ public:
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
-		Filters_map const &,
-		protocols::moves::Movers_map const &,
 		Pose const & ) override;
 
 	/// @brief parse "task_operations" XML option
 	virtual void parse_task_operations(
 		TagCOP,
 		basic::datacache::DataMap const &,
-		Filters_map const &,
-		protocols::moves::Movers_map const &,
 		Pose const & );
 
 	void chi( bool val ) { chi_ = val; }

@@ -70,8 +70,6 @@ public:
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 	bool unbound() const;
 	void unbound( bool const u );

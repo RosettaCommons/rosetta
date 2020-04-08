@@ -230,8 +230,6 @@ void
 PropagateClashCheckFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	fa_rep_thresh_ = tag->getOption< core::Real >( "fa_rep_thresh", 10.0 );

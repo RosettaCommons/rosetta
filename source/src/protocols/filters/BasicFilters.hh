@@ -46,6 +46,11 @@ public:
 	FilterOP clone() const override { return utility::pointer::make_shared< TrueFilter >(); }
 	FilterOP fresh_instance() const override { return utility::pointer::make_shared< TrueFilter >(); }
 
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		core::pose::Pose const & ) override;
+
 	std::string
 	name() const override;
 
@@ -68,6 +73,11 @@ public:
 
 	std::string
 	name() const override;
+
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		core::pose::Pose const & ) override;
 
 	static
 	std::string
@@ -101,8 +111,6 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
-		Filters_map const &,
-		moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 
 	/// @brief The confidence is the fraction of the time the Filter will return *true*
@@ -161,8 +169,6 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
-		Filters_map const &,
-		moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 
 	std::string
@@ -228,8 +234,6 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
-		Filters_map const &,
-		moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 
 	std::string
@@ -268,8 +272,6 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
-		Filters_map const &,
-		moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 
 	std::string
@@ -320,8 +322,6 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
-		Filters_map const &,
-		moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 
 	std::string

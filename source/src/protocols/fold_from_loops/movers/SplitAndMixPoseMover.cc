@@ -304,8 +304,6 @@ SplitAndMixPoseMover::NC_distance_filter( core::pose::Pose const & npose, core::
 void
 SplitAndMixPoseMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &data,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	set_residue_selector( core::select::residue_selector::parse_residue_selector( tag, data, "residue_selector" ) );

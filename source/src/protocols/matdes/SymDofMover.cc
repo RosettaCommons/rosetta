@@ -489,8 +489,6 @@ SymDofMover::apply(Pose & pose) {
 void
 SymDofMover::parse_my_tag( TagCOP tag,
 	DataMap &,
-	Filters_map const &,
-	Movers_map const &,
 	Pose const & ) {
 
 	// Turn symmetry hacks on

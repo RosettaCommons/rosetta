@@ -62,16 +62,14 @@ public:
 
 	void test_parsing() {
 		basic::datacache::DataMap data;
-		Filters_map filters;
-		Movers_map movers;
 
 		StubFilterOP sf1( new StubFilter( true, -1) );
 		StubFilterOP sf2( new StubFilter( true, -2) );
 		StubFilterOP sf3( new StubFilter( true, -3) );
 
-		filters["alpha"] = sf1;
-		filters["beta"] = sf2;
-		filters["delta"] = sf3;
+		data["filters"]["alpha"] = sf1;
+		data["filters"]["beta"] = sf2;
+		data["filters"]["delta"] = sf3;
 
 		protocols::filters::CalculatorFilter  testfilter;
 		TagCOP tag = tagptr_from_string("<CalculatorFilter name=test threshold=0 equation=\"(min(a, b, c)/(a*b*c-d)) + e\" >\n "
@@ -82,7 +80,7 @@ public:
 			"<VAR name=e reported=ten />\n"
 			"</CalculatorFilter>\n" );
 
-		testfilter.parse_my_tag( tag, data, filters, movers, *testpose_ );
+		testfilter.parse_my_tag( tag, data, *testpose_ );
 		setPoseExtraScore(*testpose_, "ten", 10.0);
 
 

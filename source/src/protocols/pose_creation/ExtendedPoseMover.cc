@@ -108,8 +108,6 @@ protocols::moves::MoverOP ExtendedPoseMover::fresh_instance() const {
 
 void ExtendedPoseMover::parse_my_tag(const utility::tag::TagCOP tag,
 	basic::datacache::DataMap&,
-	const protocols::filters::Filters_map&,
-	const protocols::moves::Movers_map&,
 	const core::pose::Pose&) {
 	using namespace core::sequence;
 

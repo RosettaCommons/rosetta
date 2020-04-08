@@ -17,6 +17,7 @@
 #include <core/types.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
@@ -34,7 +35,7 @@ protocols::moves::MoverOP
 find_mover_or_die(
 	const std::string& mover_name,
 	utility::tag::TagCOP tag,
-	const protocols::moves::Movers_map& movers
+	const basic::datacache::DataMap & data
 );
 
 /// @brief Searches <filters> for the named filter, returning it if it exists,
@@ -43,7 +44,7 @@ protocols::filters::FilterOP
 find_filter_or_die(
 	const std::string& filter_name,
 	utility::tag::TagCOP tag,
-	const protocols::filters::Filters_map& filters
+	const basic::datacache::DataMap & data
 );
 
 }  // namespace moves

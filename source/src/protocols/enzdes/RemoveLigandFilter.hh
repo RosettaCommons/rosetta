@@ -40,7 +40,6 @@ public:
 
 	typedef protocols::filters::Filter Filter;
 	typedef protocols::filters::FilterOP FilterOP;
-	typedef protocols::filters::Filters_map Filters_map;
 	typedef protocols::moves::MoverOP MoverOP;
 	typedef core::pose::Pose Pose;
 
@@ -60,7 +59,7 @@ public:
 
 	core::Real report_sm( Pose const & pose ) const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 
 	FilterOP clone() const override { return utility::pointer::make_shared< RemoveLigandFilter >( *this ); }
 	FilterOP fresh_instance() const override { return utility::pointer::make_shared< RemoveLigandFilter >(); }

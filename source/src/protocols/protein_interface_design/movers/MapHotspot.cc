@@ -275,8 +275,6 @@ MapHotspot::apply( core::pose::Pose & pose ){
 void
 MapHotspot::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &filters,
-	protocols::moves::Movers_map const &movers,
 	core::pose::Pose const & )
 {
 	using namespace utility::tag;
@@ -292,18 +290,13 @@ MapHotspot::parse_my_tag( utility::tag::TagCOP tag,
 			for ( TagCOP j_tag : jump_tags ) {
 				auto const jump( j_tag->getOption< core::Size >( "jump" ) );
 				explosion_[ jump ] = j_tag->getOption<core::Size>( "explosion", 0 );
+
 				std::string const filter_name( j_tag->getOption<std::string>( "filter_name", "true_filter" ));
-				auto find_filter( filters.find( filter_name ));
-				bool const filter_found( find_filter != filters.end() );
-				if ( !filter_found ) TR.Error<<"Filter "<<filter_name<<" not found in MapHotspot parsing"<<std::endl;
-				runtime_assert( filter_found );
-				jump_filters_[ jump ] = find_filter->second;
+				jump_filters_[ jump ] = rosetta_scripts::parse_filter( filter_name, data );
+
 				std::string const mover_name( j_tag->getOption< std::string >( "mover_name", "null" ) );
-				auto find_mover( movers.find( mover_name ) );
-				bool const mover_found( find_mover != movers.end() );
-				if ( !mover_found ) TR.Error<<"Mover "<<mover_name<<" not found in MapHotspot parsing"<<std::endl;
-				runtime_assert( mover_found );
-				jump_movers_[ jump ] = find_mover->second;
+				jump_movers_[ jump ] = rosetta_scripts::parse_mover( mover_name, data );
+
 				std::string const allowed_aas( j_tag->getOption< std::string >( "allowed_aas", "ADEFIKLMNQRSTVWY" ) );
 				allowed_aas_per_jump_[ jump ] = allowed_aas;
 				std::string const scorefxn_name( rosetta_scripts::get_score_function_name(j_tag, "scorefxn_minimize") );

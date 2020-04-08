@@ -137,14 +137,12 @@ public: // test functions
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 
 		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
 		core::pose::Pose pose;
 
 		tag->read( ss );
 
 		TiltMoverOP xtilt( new TiltMover() );
-		xtilt->parse_my_tag( tag, dm, fm, mm, pose );
+		xtilt->parse_my_tag( tag, dm, pose );
 
 		TS_ASSERT(xtilt->get_jump_num() == 3);
 		TS_ASSERT(xtilt->get_random_angle() == true);

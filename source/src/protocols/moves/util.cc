@@ -21,7 +21,7 @@
 
 // Package headers
 #include <protocols/moves/Mover.hh>
-#include <basic/datacache/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -30,26 +30,26 @@
 namespace protocols {
 namespace moves {
 
-protocols::moves::MoverOP find_mover_or_die(const std::string& mover_name,
+protocols::moves::MoverOP find_mover_or_die(
+	const std::string& mover_name,
 	const utility::tag::TagCOP,
-	const protocols::moves::Movers_map& movers) {
-	auto i = movers.find(mover_name);
-	if ( i == movers.end() ) {
-		utility_exit_with_message(mover_name + " not found in Movers_map");
+	const basic::datacache::DataMap & data
+) {
+	if ( ! data.has( "movers", mover_name ) ) {
+		utility_exit_with_message(mover_name + " was not found in the list of availible Movers");
 	}
-
-	return i->second;
+	return data.get_ptr< protocols::moves::Mover >( "movers", mover_name );
 }
 
-protocols::filters::FilterOP find_filter_or_die(const std::string& filter_name,
+protocols::filters::FilterOP find_filter_or_die(
+	const std::string& filter_name,
 	const utility::tag::TagCOP,
-	const protocols::filters::Filters_map& filters) {
-	auto i = filters.find(filter_name);
-	if ( i == filters.end() ) {
-		utility_exit_with_message(filter_name + " not found in Filters_map");
+	const basic::datacache::DataMap & data
+) {
+	if ( ! data.has( "filters", filter_name ) ) {
+		utility_exit_with_message(filter_name + " was not found in the list of availible Filters");
 	}
-
-	return i->second;
+	return data.get_ptr< protocols::filters::Filter >( "filters", filter_name );
 }
 
 

@@ -64,16 +64,14 @@ RemoveRemodelCsts::~RemoveRemodelCsts() = default;
 
 void
 RemoveRemodelCsts::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const & movers,
+	basic::datacache::DataMap & data,
 	core::pose::Pose const & )
 {
 	generator_id_ = tag->getOption< std::string >( "generator", generator_id_ );
 	if ( generator_id_ == "" ) {
 		utility_exit_with_message( "No Cst Generator was specified in the XML for RemoveRemodelCsts." );
 	}
-	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( generator_id_, movers );
+	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( generator_id_, data );
 	debug_assert( utility::pointer::dynamic_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover ) );
 	protocols::forge::remodel::RemodelConstraintGeneratorOP rcg;
 	if ( (rcg = utility::pointer::static_pointer_cast< protocols::forge::remodel::RemodelConstraintGenerator >( mover )) ) {

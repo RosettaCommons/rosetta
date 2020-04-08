@@ -78,11 +78,9 @@ public:
 		// utility::tag::TagOP tag( new utility::tag::Tag() );
 		// tag->read( ss );
 		// basic::datacache::DataMap dm;
-		// protocols::filters::Filters_map fm;
-		// protocols::moves::Movers_map mm;
 
 		// SwitchChainOrderMover switch_chain;
-		// switch_chain.parse_my_tag( tag, dm, fm, mm, pose );
+		// switch_chain.parse_my_tag( tag, dm, pose );
 
 		switch_chain->apply( pose );
 

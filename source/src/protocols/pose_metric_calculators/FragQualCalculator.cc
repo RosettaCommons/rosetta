@@ -260,8 +260,6 @@ void
 FragQualCalculator::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const &,
-	Movers_map const &,
 	Pose const & )
 {
 	rmsd_cutoff_goodfrag_ = tag->getOption<Real>( "rmsd_cutoff", 1.0 );

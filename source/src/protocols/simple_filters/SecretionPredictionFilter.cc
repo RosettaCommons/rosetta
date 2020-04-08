@@ -247,8 +247,6 @@ void
 SecretionPredictionFilter::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap &,
-	filters::Filters_map const &,
-	moves::Movers_map const &,
 	Pose const & )
 {
 	// set threshold

@@ -268,7 +268,7 @@ std::string SpliceOutAntibody::get_name() const {
 
 
 
-void SpliceOutAntibody::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const & movers, core::pose::Pose const & /*pose*/) {
+void SpliceOutAntibody::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, core::pose::Pose const & /*pose*/) {
 	if ( tag->hasOption("segment") ) {
 		splicemanager.segment_type(tag->getOption<std::string>("segment"));
 	} else {
@@ -278,7 +278,7 @@ void SpliceOutAntibody::parse_my_tag(TagCOP const tag, basic::datacache::DataMap
 
 	utility::vector1<TagCOP> const sub_tags(tag->getTags());
 
-	parse_SpliceOut_tags(tag,movers,filters);
+	parse_SpliceOut_tags(tag,data);
 	splicemanager.parse_tags(tag,data);
 	if ( ((splicemanager.segment_type()=="L1_L2")||(splicemanager.segment_type()=="H1_H2"))&&(splicemanager.tail_seg()=="") ) {
 		SpliceOut::abstract_parse_tag(tag);
@@ -287,7 +287,7 @@ void SpliceOutAntibody::parse_my_tag(TagCOP const tag, basic::datacache::DataMap
 	scorefxn(protocols::rosetta_scripts::parse_score_function(tag, data));
 
 
-	handle_tail_mover_tag(tag,movers);
+	handle_tail_mover_tag(tag,data);
 
 	if ( tag->hasOption("use_sequence_profile") ) {
 		splicemanager.use_sequence_profiles(tag->getOption<bool>("use_sequence_profile"));
@@ -418,20 +418,20 @@ void SpliceOutAntibody::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 
 }
 
-void SpliceOutAntibody::handle_tail_mover_tag(TagCOP const tag,protocols::moves::Movers_map const & movers){
+void SpliceOutAntibody::handle_tail_mover_tag(TagCOP const tag, basic::datacache::DataMap & data){
 	std::string mover_name("");
 	if ( tag->hasOption("tail_mover") ) {
 		mover_name = tag->getOption< std::string >( "tail_mover" );
 	} else {
 		utility_exit_with_message("Must specify mover to copy source conformation onto template segment\n");
 	}
-	protocols::moves::Movers_map::const_iterator  find_mover ( movers.find( mover_name ));
-	tail_submover_ = find_mover->second;
-	TR<<tail_submover_->get_name()<<std::endl;
-	if ( find_mover == movers.end() ) {
+	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover_or_null( mover_name, data );
+	if ( ! mover ) {
 		TR.Error << "ERROR !! mover '"<<mover_name<<"' not found in map: \n" << tag << std::endl;
-		runtime_assert( find_mover != movers.end() );
+		utility_exit_with_message("Could not find mover " + mover_name);
 	}
+	tail_submover_ = mover;
+	TR << tail_submover_->get_name() << std::endl;
 
 	if ( std::find(mover_type_.begin(), mover_type_.end(), tail_submover_->get_name()) == mover_type_.end() ) {
 		utility_exit_with_message("Please choose only \"Minmover\", \"LoopMover_Refine_CCD\", or \"TailSegmentMover\" for \"tail_mover=\" tag \n");

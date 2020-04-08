@@ -436,6 +436,16 @@ RosettaScriptsParser::initialize_data_map(
 	data.add( "scorefxns", "score4L", ScoreFunctionFactory::create_score_function( "cen_std", "score4L" ) );
 	//default scorefxns end
 
+	// default filters
+	protocols::filters::FilterOP true_filter( new protocols::filters::TrueFilter );
+	protocols::filters::FilterOP false_filter( new protocols::filters::FalseFilter );
+	data.add( "filters", "true_filter", true_filter );
+	data.add( "filters", "false_filter", false_filter );
+
+	// default movers
+	MoverOP null_mover( new protocols::moves::NullMover() );
+	data.add( "movers", "null", null_mover );
+
 	//If native is set, add it to the datamap as a resource instead of loading in each individual mover.  Works in JD3 as well to allow better benchmarking.
 	if ( native_pose_ ) {
 		data.add_resource("native_pose", native_pose_);
@@ -574,24 +584,6 @@ RosettaScriptsParser::generate_mover_for_protocol(
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "parser::protocol file must specify PROTOCOLS section");
 	}
 
-	////////////////
-	// This bit will need to be migrated to initialize_data_map() later on.
-
-	Movers_map movers;
-	protocols::filters::Filters_map filters;
-
-	typedef std::pair< std::string const, MoverOP > StringMover_pair;
-	typedef std::pair< std::string const, protocols::filters::FilterOP > StringFilter_pair;
-
-	protocols::filters::FilterOP true_filter( new protocols::filters::TrueFilter );
-	protocols::filters::FilterOP false_filter( new protocols::filters::FalseFilter );
-	filters.insert( StringFilter_pair( "true_filter", true_filter ) );
-	filters.insert( StringFilter_pair( "false_filter", false_filter ) );
-
-	MoverOP null_mover( new protocols::moves::NullMover() );
-	movers.insert( StringMover_pair( "null", null_mover) );
-
-
 	///////////////////////////////////////////////////////////////////
 	// Go through the subtags, creating/loading the associated objects
 	// Most subtags should be handled by their respective Data loaders.
@@ -610,17 +602,17 @@ RosettaScriptsParser::generate_mover_for_protocol(
 			parse_resources_tag( curr_tag, data, resource_manager);
 		} else if ( curr_tag->getName() == "FILTERS" ) {
 			for ( TagCOP tag_ptr : curr_tag->getTags() ) {
-				instantiate_filter(tag_ptr, data, filters, movers, pose);
+				instantiate_filter(tag_ptr, data, pose);
 			}
 		} else if ( curr_tag->getName() == "MOVERS" ) {
 			for ( TagCOP tag_ptr : curr_tag->getTags() ) {
-				instantiate_mover(tag_ptr, data, filters, movers, pose);
+				instantiate_mover(tag_ptr, data, pose);
 			}
 		} else if ( curr_tag->getName() == "APPLY_TO_POSE" ) {
 			// Don't short-circuit the evaluation (but *do* use or-combining).
-			modified_pose |= parse_apply_to_pose_tag( curr_tag, data, filters, movers, pose );
+			modified_pose |= parse_apply_to_pose_tag( curr_tag, data, pose );
 		} else if ( curr_tag->getName() == "IMPORT" ) {
-			parse_import_tag( curr_tag, data, filters, movers, pose );
+			parse_import_tag( curr_tag, data, pose );
 		} else {
 			// All other tags are considered DataLoader tags.
 			using namespace protocols::parser;
@@ -633,7 +625,7 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	////// Setup the actual main protocol block.
 	TagCOP const protocols_tag( tag->getTag("PROTOCOLS") );
 	protocols::rosetta_scripts::ParsedProtocolOP protocol( new protocols::rosetta_scripts::ParsedProtocol );
-	protocol->parse_my_tag( protocols_tag, data, filters, movers, pose );
+	protocol->parse_my_tag( protocols_tag, data, pose );
 	TR.flush();
 
 	////// Set Output options
@@ -646,7 +638,7 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	tag->die_for_unaccessed_options_recursively();
 
 	if ( xml_objects ) {
-		xml_objects->init_from_maps( data, filters, movers );
+		xml_objects->init_from_maps( data );
 	}
 
 	return protocol;
@@ -801,8 +793,6 @@ bool
 RosettaScriptsParser::parse_apply_to_pose_tag(
 	utility::tag::TagCOP apply_tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map & filters,
-	protocols::moves::Movers_map & movers,
 	core::pose::Pose & pose
 ) const
 {
@@ -822,13 +812,12 @@ RosettaScriptsParser::parse_apply_to_pose_tag(
 		TR.Warning << std::endl;
 		TR.Warning << "==================================================================================" << std::endl;
 
-		protocols::moves::MoverOP new_mover( MoverFactory::get_instance()->newMover( apply_tag_ptr, data, filters, movers, pose ) );
+		protocols::moves::MoverOP new_mover( MoverFactory::get_instance()->newMover( apply_tag_ptr, data, pose ) );
 		runtime_assert( new_mover != nullptr );
 		new_mover->apply( pose );
 		modified_pose = true;
 		TR << "Defined and applied mover of type " << mover_type << std::endl;
-		bool const name_exists( movers.find( mover_type ) != movers.end() );
-		if ( name_exists ) {
+		if ( data.has( "movers", mover_type ) ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can't apply_to_pose the same mover twice for " + mover_type);
 		}
 
@@ -842,8 +831,6 @@ void
 RosettaScriptsParser::instantiate_filter(
 	TagCOP const & tag_ptr,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map & filters,
-	Movers_map & movers,
 	core::pose::Pose & pose
 ) const {
 	std::string const type( tag_ptr->getName() );
@@ -852,14 +839,13 @@ RosettaScriptsParser::instantiate_filter(
 	}
 
 	std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
-	bool const name_exists( filters.find( user_defined_name ) != filters.end() );
-	if ( name_exists ) {
+	if ( data.has("filters", user_defined_name ) ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Filter of name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
 	}
 
-	protocols::filters::FilterOP new_filter( protocols::filters::FilterFactory::get_instance()->newFilter( tag_ptr, data, filters, movers, pose ) );
+	protocols::filters::FilterOP new_filter( protocols::filters::FilterFactory::get_instance()->newFilter( tag_ptr, data, pose ) );
 	runtime_assert( new_filter != nullptr );
-	filters.insert( std::make_pair( user_defined_name, new_filter ) );
+	data.add("filters", user_defined_name, new_filter );
 	TR << "Defined filter named \"" << user_defined_name << "\" of type " << type << std::endl;
 }
 
@@ -868,8 +854,6 @@ void
 RosettaScriptsParser::instantiate_mover(
 	TagCOP const & tag_ptr,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map & filters,
-	Movers_map & movers,
 	core::pose::Pose & pose
 ) const {
 	std::string const type( tag_ptr->getName() );
@@ -878,14 +862,13 @@ RosettaScriptsParser::instantiate_mover(
 	}
 
 	std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
-	bool const name_exists( movers.find( user_defined_name ) != movers.end() );
-	if ( name_exists ) {
+	if ( data.has("movers", user_defined_name ) ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover of name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
 	}
 
-	MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data, filters, movers, pose ) );
+	MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data, pose ) );
 	runtime_assert( new_mover != nullptr );
-	movers.insert( std::make_pair( user_defined_name, new_mover ) );
+	data.add("movers", user_defined_name, new_mover );
 	TR << "Defined mover named \"" << user_defined_name << "\" of type " << type << std::endl;
 }
 
@@ -894,8 +877,6 @@ RosettaScriptsParser::instantiate_mover(
 void RosettaScriptsParser::instantiate_packer_palette(
 	TagCOP const & tag_ptr,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map & /*filters*/,
-	Movers_map & /*movers*/,
 	core::pose::Pose & /*pose*/
 ) const {
 	using namespace core::pack::palette;
@@ -922,8 +903,6 @@ void
 RosettaScriptsParser::instantiate_taskoperation(
 	TagCOP const & tag_ptr,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map & /*filters*/,
-	Movers_map & /*movers*/,
 	core::pose::Pose & /*pose*/
 ) const {
 	using namespace core::pack::task::operation;
@@ -992,8 +971,6 @@ void
 RosettaScriptsParser::parse_import_tag(
 	utility::tag::TagCOP import_tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map & filters,
-	protocols::moves::Movers_map & movers,
 	core::pose::Pose & pose
 ) const {
 	std::set< ImportTagName > import_tag_names;
@@ -1040,7 +1017,7 @@ RosettaScriptsParser::parse_import_tag(
 
 	// Attempt to find and import requested objects; throws exception on failure
 	if ( import_tag_names.size() > 0 ) {
-		import_tags(import_tag_names, import_tag->getParent().lock(), data, filters, movers, pose);
+		import_tags(import_tag_names, import_tag->getParent().lock(), data, pose);
 	}
 }
 
@@ -1051,8 +1028,6 @@ RosettaScriptsParser::import_tags(
 	std::set< ImportTagName > & import_tag_names,
 	utility::tag::TagCOP my_tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map & filters,
-	protocols::moves::Movers_map & movers,
 	core::pose::Pose & pose
 ) const {
 	// Process all parent ROSETTASCRIPTS tags, one at a time
@@ -1082,7 +1057,7 @@ RosettaScriptsParser::import_tags(
 					ImportTagName key( std::make_pair( tag->getName(), packer_palette_name ) );
 					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
 					if ( need_import ) {
-						instantiate_packer_palette(packer_palette_tag, data, filters, movers, pose);
+						instantiate_packer_palette(packer_palette_tag, data, pose);
 						import_tag_names.erase(key);
 					}
 				}
@@ -1093,7 +1068,7 @@ RosettaScriptsParser::import_tags(
 					ImportTagName key( std::make_pair( tag->getName(), taskoperation_name ) );
 					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
 					if ( need_import ) {
-						instantiate_taskoperation(taskoperation_tag, data, filters, movers, pose);
+						instantiate_taskoperation(taskoperation_tag, data, pose);
 						import_tag_names.erase(key);
 					}
 				}
@@ -1104,7 +1079,7 @@ RosettaScriptsParser::import_tags(
 					ImportTagName key( std::make_pair( tag->getName(), filter_name ) );
 					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
 					if ( need_import ) {
-						instantiate_filter(filter_tag, data, filters, movers, pose);
+						instantiate_filter(filter_tag, data, pose);
 						import_tag_names.erase(key);
 					}
 				}
@@ -1121,7 +1096,7 @@ RosettaScriptsParser::import_tags(
 							// Current mover_tag is our parent, i.e. same ROSETTASCRIPTS tag
 							throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Cannot import mover " + mover_name + " into itself; recursion detected");
 						}
-						instantiate_mover(mover_tag, data, filters, movers, pose);
+						instantiate_mover(mover_tag, data, pose);
 						import_tag_names.erase(key);
 					}
 				}

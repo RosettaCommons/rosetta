@@ -339,8 +339,6 @@ void
 LoopHashDiversifier::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &filters,
-	Movers_map const & /*movers*/,
 	Pose const &
 ){
 	num_iterations_ = tag->getOption< core::Size >( "num_iterations", 100 );
@@ -392,12 +390,12 @@ LoopHashDiversifier::parse_my_tag(
 
 	// centroid filter
 	string const centroid_filter_name( tag->getOption< string >( "centroid_filter", "true_filter" ) );
-	auto find_cenfilter( filters.find( centroid_filter_name ) );
-	if ( find_cenfilter == filters.end() ) {
+	protocols::filters::FilterOP centroid_filter = protocols::rosetta_scripts::parse_filter_or_null( centroid_filter_name, data );
+	if ( ! centroid_filter ) {
 		utility_exit_with_message( "Filter " + centroid_filter_name + " not found in LoopHashDiversifier" );
 	}
-	cenfilter( find_cenfilter->second );
-	ranking_cenfilter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "ranking_cenfilter", centroid_filter_name ), filters ) );
+	cenfilter( centroid_filter );
+	ranking_cenfilter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "ranking_cenfilter", centroid_filter_name ), data ) );
 }
 
 

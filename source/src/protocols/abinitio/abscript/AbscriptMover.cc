@@ -39,6 +39,7 @@
 #include <core/pose/Pose.hh>
 
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -303,8 +304,6 @@ void
 AbscriptMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap,
-	protocols::filters::Filters_map const & ,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & ) {
 
 	using namespace basic::options;
@@ -408,16 +407,17 @@ AbscriptMover::parse_my_tag(
 				if ( movertag->getName() == "Mover" ||
 						movertag->getName() == "Preparer" ) {
 					std::string name = movertag->getOption<std::string>( "name", "null" );
-					if ( movers.find( name ) == movers.end() ) {
+					protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover_or_null( name, datamap );
+					if ( ! mover ) {
 						tr.Error << "Mover not found for XML tag:\n" << movertag << std::endl;
 						throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover '"+name+"' not found.");
 					}
 
 					if ( movertag->getName() == "Mover" ) {
 						auto weight = movertag->getOption< core::Real >( "weight", 1.0 );
-						register_submover( movers.find( name )->second, stages, weight );
+						register_submover( mover, stages, weight );
 					} else if ( movertag->getName() == "Preparer" ) {
-						register_preparer( movers.find( name )->second, stages );
+						register_preparer( mover, stages );
 					} else {
 						throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Stage subtag "+movertag->getName()+
 							" is not valid. Only 'Mover' and 'Preparer' are accepted." );

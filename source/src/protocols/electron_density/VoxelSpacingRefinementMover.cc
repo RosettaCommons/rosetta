@@ -317,8 +317,10 @@ void VoxelSpacingRefinementMover::apply(core::pose::Pose & pose) {
 
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
-VoxelSpacingRefinementMover::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &, Filters_map const &,
-	moves::Movers_map const &, Pose const &)
+VoxelSpacingRefinementMover::parse_my_tag(
+	TagCOP const tag,
+	basic::datacache::DataMap &,
+	Pose const &)
 {
 	if ( tag->hasOption("aniso") ) {
 		aniso_ = tag->getOption<bool>("aniso");

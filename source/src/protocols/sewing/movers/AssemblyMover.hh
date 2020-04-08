@@ -98,8 +98,6 @@ public:
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose ) override;
 
 	//AssemblyMover & operator=( AssemblyMover const & src );
@@ -150,8 +148,6 @@ public:
 	parse_requirements(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap& datamap,
-		protocols::filters::Filters_map const & filtermap,
-		protocols::moves::Movers_map const & movermap,
 		core::pose::Pose const & pose);
 
 	///@brief Parses the AssemblyScorers subtag of AssemblyMover
@@ -159,8 +155,6 @@ public:
 	parse_assembly_scorers(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap& datamap,
-		protocols::filters::Filters_map const & filtermap,
-		protocols::moves::Movers_map const & movermap,
 		core::pose::Pose const & pose);
 
 	///@brief Set default score function for this AssemblyMover. Called if no AssemblyScorers are specified through RosettaScripts.

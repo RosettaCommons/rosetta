@@ -19,7 +19,6 @@
 #include <protocols/moves/MoverCreator.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh> // Filters_map (typedef)
 
 #include <core/pose/Pose.fwd.hh>
 
@@ -85,8 +84,6 @@ public:
 	newMover(
 		TagCOP,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		Movers_map const &,
 		Pose const &
 	) const;
 

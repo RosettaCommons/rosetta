@@ -473,59 +473,58 @@ FilterScanFilter::report( std::ostream &, core::pose::Pose const & ) const
 void
 FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & )
 {
 	TR << "FilterScanFilter"<<std::endl;
 	runtime_assert( tag->hasOption( "filter" ) || tag->hasOption( "delta_filters" ));
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	std::string const triage_filter_name( tag->getOption< std::string >( "triage_filter", "true_filter" ) );
-	auto triage_filter_it( filters.find( triage_filter_name ) );
+	protocols::filters::FilterOP triage_filter_ptr = protocols::rosetta_scripts::parse_filter_or_null( triage_filter_name, data );
 	keep_native( tag->getOption< bool >( "keep_native", false ) );
 	dump_pdb_name( tag->getOption< std::string > ( "dump_pdb_name", "" ) );
 
 	//These #ifdefs are a terrible hack to work around a compiler bug in mpicxx. sorry
 #ifdef USEMPI
-	if( triage_filter_it == filters.end() )
+	if( ! triage_filter_ptr )
 		utility_exit_with_message( "Triage filter "+triage_filter_name+" not found" );
 #endif
 #ifndef USEMPI
-	if ( triage_filter_it == filters.end() ) {
+	if ( ! triage_filter_ptr ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Triage filter "+triage_filter_name+" not found" );
 	}
 #endif
 
-	triage_filter( triage_filter_it->second );
+	triage_filter( triage_filter_ptr );
 
 	std::string const filter_name( tag->getOption< std::string >( "filter", "true_filter" ) );
-	auto filter_it( filters.find( filter_name ) );
+	protocols::filters::FilterOP filter_ptr = protocols::rosetta_scripts::parse_filter_or_null( filter_name, data );
 
 #ifdef USEMPI
-	if( filter_it == filters.end() )
+	if( ! filter_ptr )
 		utility_exit_with_message( "Filter "+filter_name+" not found" );
 #endif
 #ifndef USEMPI
-	if ( filter_it == filters.end() ) {
+	if ( ! filter_ptr ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Filter "+filter_name+" not found" );
 	}
 #endif
 
-	filter( filter_it->second );
+	filter( filter_ptr );
+
 	std::string const relax_mover_name( tag->getOption< std::string >( "relax_mover", "null" ) );
-	auto mover_it( movers.find( relax_mover_name ) );
+	protocols::moves::MoverOP relax_mover_ptr = protocols::rosetta_scripts::parse_mover_or_null( relax_mover_name, data );
 
 #ifdef USEMPI
-	if( mover_it == movers.end() )
+	if( ! relax_mover_ptr )
 		utility_exit_with_message( "Relax mover "+relax_mover_name+" not found" );
 #endif
 #ifndef USEMPI
-	if ( mover_it == movers.end() ) {
+	if ( ! relax_mover_ptr ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Relax mover "+relax_mover_name+" not found" );
 	}
 #endif
 
-	relax_mover( mover_it->second );
+	relax_mover( relax_mover_ptr );
 
 	delta( tag->getOption< bool >( "delta", false ) );
 	report_all( tag->getOption< bool >( "report_all", false ) );
@@ -547,7 +546,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 			TR<<"using delta filter thresholds: "<<tag->getOption< std::string >( "delta_filter_thresholds" )<<std::endl;
 		}
 		for ( std::string const & fname : delta_filter_names ) {
-			delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
+			delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, data ) ) );
 			TR<<fname<<",";
 		}
 		TR<<std::endl;

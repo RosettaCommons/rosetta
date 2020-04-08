@@ -42,7 +42,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.movers.FavorNativeR
 FavorNativeResiduePreCycle::~FavorNativeResiduePreCycle() = default;
 
 void
-FavorNativeResiduePreCycle::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+FavorNativeResiduePreCycle::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
 {
 	bonus_ = tag->getOption<core::Real>( "bonus", 1.5 );
 	for ( std::map< std::string, utility::VirtualBaseOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ) {

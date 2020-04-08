@@ -22,7 +22,6 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <utility/exit.hh>
@@ -64,7 +63,7 @@ HeavyAtomFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-HeavyAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+HeavyAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
 {
 	if ( ! (tag->hasOption("chain") && tag->hasOption("heavy_atom_limit") ) ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "HeavyAtom filter needs a 'chain' and a 'heavy_atom_limit' option");

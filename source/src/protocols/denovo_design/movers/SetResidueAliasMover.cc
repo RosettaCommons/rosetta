@@ -51,8 +51,6 @@ void
 SetResidueAliasMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& ,
-	protocols::filters::Filters_map const & ,
-	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
 	alias_name_ = tag->getOption< std::string >( "alias_name", alias_name_ );

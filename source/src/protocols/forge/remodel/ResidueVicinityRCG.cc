@@ -144,11 +144,9 @@ ResidueVicinityRCG::~ResidueVicinityRCG() = default;
 void
 ResidueVicinityRCG::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose )
 {
-	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
+	RemodelConstraintGenerator::parse_my_tag( tag, data, pose );
 	lstart( tag->getOption< core::Size >( "lstart", lstart_ ) );
 	if ( lstart_ == 0 ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "lstart must be specified in ResidueVicinityCstGenerator mover");

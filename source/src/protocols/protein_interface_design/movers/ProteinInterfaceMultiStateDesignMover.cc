@@ -491,8 +491,6 @@ ProteinInterfaceMultiStateDesignMover::output_results( Pose & pose )
 void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
-	protocols::filters::Filters_map const &,
-	moves::Movers_map const &,
 	Pose const &
 )
 {

@@ -31,6 +31,7 @@
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/filters/FilterFactory.hh>
 
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rosetta_scripts/MultiplePoseMover.hh>
 
 // Package Headers
@@ -310,8 +311,6 @@ protocols::moves::MoverOP ParsedProtocol::clone() const
 std::pair< moves::MoverOP, std::string >
 parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
 	basic::datacache::DataMap& data,
-	protocols::filters::Filters_map const& filters,
-	protocols::moves::Movers_map const& movers,
 	core::pose::Pose const& pose ) {
 	using namespace protocols::moves;
 
@@ -321,20 +320,18 @@ parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
 	runtime_assert( !( tag_ptr->hasOption("mover_name") && tag_ptr->hasOption("mover") ) );
 	if ( tag_ptr->hasOption( "mover_name" ) ) {
 		mover_name = tag_ptr->getOption<string>( "mover_name" );
-		auto find_mover( movers.find( mover_name ) );
-		if ( find_mover == movers.end() ) {
+		mover_to_add = protocols::rosetta_scripts::parse_mover_or_null( mover_name, data );
+		if ( ! mover_to_add ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover " + mover_name + " not found in map");
 		}
-		mover_to_add = find_mover->second;
 	} else if ( tag_ptr->hasOption( "mover" ) ) {
 		mover_name = tag_ptr->getOption<string>( "mover" );
-		auto find_mover( movers.find( mover_name ) );
-		if ( find_mover == movers.end() ) {
+		mover_to_add = protocols::rosetta_scripts::parse_mover_or_null( mover_name, data );
+		if ( ! mover_to_add ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover " + mover_name + " not found in map");
 		}
-		mover_to_add = find_mover->second;
 	} else if ( tag_ptr->getName() != "Add" ) {
-		MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data, filters, movers, pose ) );
+		MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data, pose ) );
 		debug_assert( new_mover );
 
 		if ( tag_ptr->hasOption("name") ) {
@@ -367,8 +364,6 @@ void
 ParsedProtocol::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap &data,
-	protocols::filters::Filters_map const &filters,
-	protocols::moves::Movers_map const &movers,
 	core::pose::Pose const & pose )
 {
 	using namespace protocols::moves;
@@ -387,7 +382,7 @@ ParsedProtocol::parse_my_tag(
 	for ( auto dd_it=dd_tags.begin(); dd_it!=dd_tags.end(); ++dd_it ) {
 		TagCOP const tag_ptr( *dd_it );
 
-		std::pair< MoverOP, std::string > mover_add_pair = parse_mover_subtag( tag_ptr, data, filters, movers, pose );
+		std::pair< MoverOP, std::string > mover_add_pair = parse_mover_subtag( tag_ptr, data, pose );
 		std::string const& mover_name( mover_add_pair.second );
 		MoverOP mover_to_add( mover_add_pair.first );
 
@@ -405,11 +400,10 @@ ParsedProtocol::parse_my_tag(
 		}
 
 		if ( filter_defined ) {
-			auto find_filter( filters.find( filter_name ));
-			if ( find_filter == filters.end() ) {
+			filter_to_add = protocols::rosetta_scripts::parse_filter_or_null( filter_name, data );
+			if ( ! filter_to_add ) {
 				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Filter " + filter_name + " not found in map");
 			}
-			filter_to_add = find_filter->second;
 		} else {
 			filter_to_add = utility::pointer::make_shared< protocols::filters::TrueFilter >();
 		}

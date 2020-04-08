@@ -280,8 +280,6 @@ CAcstGenerator::apply( pose::Pose & pose ){
 void
 CAcstGenerator::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & /*data*/,
-	protocols::filters::Filters_map const & /*filters*/,
-	Movers_map const &,
 	Pose const & ){
 
 	TR<<"CAcstGenerator has been invoked"<<std::endl;

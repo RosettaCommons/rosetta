@@ -55,9 +55,7 @@ public:
 	typedef std::string String;
 
 	typedef utility::tag::TagCOP TagCOP;
-	typedef protocols::filters::Filters_map Filters_map;
 	typedef basic::datacache::DataMap DataMap;
-	typedef protocols::moves::Movers_map Movers_map;
 
 
 public:// constructor/destructor
@@ -101,8 +99,6 @@ public:// parser
 
 	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
-		filters::Filters_map const &,
-		Movers_map const & ,
 		Pose const & ) override;
 
 	std::string

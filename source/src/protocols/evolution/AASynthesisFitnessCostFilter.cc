@@ -46,7 +46,10 @@ AASynthesisFitnessCost::AASynthesisFitnessCost() :
 AASynthesisFitnessCost::~AASynthesisFitnessCost() = default;
 
 void
-AASynthesisFitnessCost::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const &)
+AASynthesisFitnessCost::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const &)
 {
 	fitnessCostPerATP( tag->getOption< core::Real >( "fitnessCostPerATP", 0.00001 ) );
 	threshold( tag->getOption< core::Size >( "threshold", 1 ) );

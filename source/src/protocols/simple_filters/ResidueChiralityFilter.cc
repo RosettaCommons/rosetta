@@ -77,7 +77,10 @@ ResidueChiralityFilterCreator::keyname() const { return "ResidueChirality"; }
 ResidueChiralityFilter::~ResidueChiralityFilter(){}
 
 void
-ResidueChiralityFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+ResidueChiralityFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 	required_type_ = tag->getOption< std::string >( "residue_type", "L" );
 	res_num_ = tag->getOption< core::Size >( "res_num", 1 );

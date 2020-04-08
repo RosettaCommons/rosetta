@@ -578,8 +578,6 @@ void
 PREMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 )
 {

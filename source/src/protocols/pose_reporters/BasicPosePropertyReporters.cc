@@ -103,8 +103,6 @@ core::Real EnergyReporter::report_property( core::pose::Pose & p ) const
 void EnergyReporter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 )
 {
@@ -180,8 +178,6 @@ FilterReporter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 void FilterReporter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 )
 {
@@ -215,7 +211,7 @@ void FilterReporter::parse_my_tag(
 	}
 
 	if ( filter_tag ) {
-		filter_  = protocols::filters::FilterFactory::get_instance()->newFilter( filter_tag, data, filters, movers, pose );
+		filter_  = protocols::filters::FilterFactory::get_instance()->newFilter( filter_tag, data, pose );
 	}
 
 	if ( !filter_ ) {
@@ -314,8 +310,6 @@ RMSDReporter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 void RMSDReporter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /* data */,
-	protocols::filters::Filters_map & /* filters */,
-	protocols::moves::Movers_map const & /* movers */,
 	core::pose::Pose const &
 )
 {

@@ -75,9 +75,7 @@ core::pose::PoseOP IfMover::get_additional_output() {
 
 
 void IfMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &filters,
-	protocols::moves::Movers_map const &movers,
+	basic::datacache::DataMap & data,
 	core::pose::Pose const & ) {
 	using namespace protocols::filters;
 
@@ -87,9 +85,9 @@ void IfMover::parse_my_tag( utility::tag::TagCOP tag,
 	std::string const filter_name( tag->getOption< std::string >( "filter_name" ) );
 
 	/// see: protocols/moves/util.hh
-	filter_ = find_filter_or_die(filter_name, tag, filters);
-	true_mover_ = find_mover_or_die(true_mover_name, tag, movers);
-	false_mover_ = find_mover_or_die(false_mover_name, tag, movers);
+	filter_ = find_filter_or_die(filter_name, tag, data);
+	true_mover_ = find_mover_or_die(true_mover_name, tag, data);
+	false_mover_ = find_mover_or_die(false_mover_name, tag, data);
 
 	TR << "with true_mover \"" << true_mover_name
 		<< "\" and false_mover \"" << false_mover_name

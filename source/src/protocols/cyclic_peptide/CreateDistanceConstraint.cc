@@ -112,8 +112,6 @@ void
 CreateDistanceConstraint::parse_my_tag(
 	TagCOP tag,
 	basic::datacache::DataMap &,
-	Filters_map const &,
-	moves::Movers_map const &,
 	Pose const &
 )
 {

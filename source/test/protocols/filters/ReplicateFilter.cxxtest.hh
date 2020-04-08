@@ -90,8 +90,6 @@ public:
 
 	void test_parsing() {
 		basic::datacache::DataMap data;
-		Filters_map filters;
-		Movers_map movers;
 
 
 		StubMultiFilterOP sf( new StubMultiFilter );
@@ -109,16 +107,16 @@ public:
 
 		sf->set(values);
 
-		filters["sf"] = sf;
+		data["filters"]["sf"] = sf;
 		protocols::filters::ReplicateFilter  testfilter;
 		TagCOP tag = tagptr_from_string("<ReplicateFilter name=test threshold=0 filter_name=sf replicates=10 upper_cut=0.2 lower_cut=4 />\n ");
-		testfilter.parse_my_tag( tag, data, filters, movers, *testpose_ );
+		testfilter.parse_my_tag( tag, data, *testpose_ );
 
 		TS_ASSERT_EQUALS( testfilter.report_sm( *testpose_), (-2+-1+-3+1)/4.0 );
 
 		protocols::filters::ReplicateFilter  testfilter2;
 		TagCOP tag2 = tagptr_from_string("<ReplicateFilter name=test2 median=1 threshold=0 filter_name=sf replicates=10 upper_cut=0.2 lower_cut=4 />\n ");
-		testfilter2.parse_my_tag( tag2, data, filters, movers, *testpose_ );
+		testfilter2.parse_my_tag( tag2, data, *testpose_ );
 
 		TS_ASSERT_EQUALS( testfilter2.report_sm( *testpose_), (-2+-1)/2.0 );
 	}

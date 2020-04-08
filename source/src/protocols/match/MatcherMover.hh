@@ -45,9 +45,7 @@ public:
 	typedef protocols::moves::MoverOP MoverOP;
 
 	typedef utility::tag::TagCOP TagCOP;
-	typedef protocols::filters::Filters_map Filters_map;
 	typedef basic::datacache::DataMap DataMap;
-	typedef protocols::moves::Movers_map Movers_map;
 
 public:
 
@@ -75,8 +73,6 @@ public: // virtual constructors
 
 	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
-		Filters_map const &,
-		Movers_map const &,
 		Pose const & ) override;
 
 

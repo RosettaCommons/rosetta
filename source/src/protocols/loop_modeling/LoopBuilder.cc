@@ -55,8 +55,6 @@ using namespace basic::options;
 
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
-using protocols::filters::Filters_map;
-using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 using basic::datacache::DataMap;
 
@@ -108,11 +106,9 @@ LoopBuilder::~LoopBuilder() = default;
 void LoopBuilder::parse_my_tag(
 	TagCOP tag,
 	DataMap & data,
-	Filters_map const & filters,
-	Movers_map const & movers,
 	Pose const & pose) {
 
-	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
+	LoopMover::parse_my_tag(tag, data, pose);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
 	max_attempts_ = tag->getOption<core::Size>("max_attempts", max_attempts_);
 }

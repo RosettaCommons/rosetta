@@ -137,12 +137,10 @@ void
 TrajectoryReportToDB::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const & filters,
-	moves::Movers_map const & movers,
 	Pose const & pose )
 {
 	ReportToDB::parse_my_tag(
-		tag, data, filters, movers, pose
+		tag, data, pose
 	);
 
 	parse_stride_tag_item(tag);

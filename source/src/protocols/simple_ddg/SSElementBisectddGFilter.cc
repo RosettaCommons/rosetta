@@ -309,8 +309,6 @@ void
 SSElementBisectddGFilter::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	filters::Filters_map const &,
-	moves::Movers_map const & movers,
 	Pose const & )
 {
 	// set threshold
@@ -324,7 +322,7 @@ SSElementBisectddGFilter::parse_my_tag(
 	report_sasa_instead_ = tag->getOption<bool>("report_sasa_instead",false);
 	convert_charged_res_to_ala_ = tag->getOption<bool>("convert_charged_res_to_ala",false);
 	if ( tag->hasOption( "relax_mover" ) ) {
-		relax_mover_ = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover"), movers );
+		relax_mover_ = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover"), data );
 	} else {
 		relax_mover_ = nullptr;
 	}

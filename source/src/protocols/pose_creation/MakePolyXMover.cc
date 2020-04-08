@@ -118,8 +118,6 @@ void
 MakePolyXMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const & )
 {
 	aa_ = tag->getOption<std::string>( "aa", "ALA" );

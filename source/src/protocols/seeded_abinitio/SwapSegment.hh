@@ -22,7 +22,7 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pose/ResidueIndexDescription.fwd.hh>
+#include <core/pose/ResidueIndexDescription.hh> // hh needed for PyRosetta
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -46,8 +46,6 @@ public:
 
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 
 

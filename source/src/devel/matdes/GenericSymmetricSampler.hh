@@ -42,10 +42,8 @@ class GenericSymmetricSampler : public protocols::moves::Mover {
 	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
 	typedef core::scoring::ScoreFunctionCOP ScoreFunctionCOP;
 	typedef protocols::moves::MoverOP MoverOP;
-	typedef protocols::filters::Filters_map Filters_map;
 	typedef protocols::filters::FilterOP FilterOP;
 	typedef basic::datacache::DataMap DataMap;
-	typedef protocols::moves::Movers_map Movers_map;
 	typedef utility::tag::TagCOP TagCOP;
 
 public:
@@ -64,8 +62,6 @@ public:
 
 	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap & data,
-		Filters_map const &,
-		Movers_map const &,
 		Pose const & ) override;
 
 	std::string

@@ -72,8 +72,7 @@ MultiplePoseMover::MultiplePoseMover() :
 	pose_input_cache_(),
 	pose_output_cache_(),
 	poses_input_(0),
-	poses_output_(0),
-	selector_filters_()
+	poses_output_(0)
 {
 }
 
@@ -331,8 +330,6 @@ recursively_access_all_attributes( utility::tag::TagCOP tag )
 void MultiplePoseMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & /*filters*/,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ) {
 
@@ -363,9 +360,11 @@ void MultiplePoseMover::parse_my_tag(
 			selectors_.clear();
 			TagCOP select_tag( tag->getTag("SELECT") );
 			for ( TagCOP curr_tag : select_tag->getTags() ) {
+				// This used to (effectively) clear out the filters, using a class-level subset
+				// I'm not sure why this might be necessary.
 				PoseSelectorOP new_selector(
 					PoseSelectorFactory::get_instance()->
-					newPoseSelector( curr_tag, data, selector_filters_, movers, pose )
+					newPoseSelector( curr_tag, data, pose )
 				);
 				runtime_assert( new_selector != nullptr );
 				selectors_.push_back( new_selector );

@@ -204,19 +204,16 @@ public:
 		fin.close();
 		utility::vector0< utility::tag::TagCOP > const TO_tags( tag->getTag("MOVERS")->getTags() );
 
-		protocols::moves::Movers_map parser_movers;
-		protocols::filters::Filters_map parser_filters;
 		basic::datacache::DataMap parser_datamap; // abstract objects, such as scorefunctions, to be used by filter and movers
 
 		for ( utility::vector0< utility::tag::TagCOP >::const_iterator tp( TO_tags.begin() ), tp_e( TO_tags.end() ); tp != tp_e; ++tp ) {
 
 			std::string const user_defined_name( (*tp)->getOption<std::string>("name") );
-			protocols::moves::MoverOP new_mover(  protocols::moves::MoverFactory::get_instance()->newMover( *tp, parser_datamap, parser_filters, parser_movers, parser_pose ) );
-
-			parser_movers.insert( std::make_pair( user_defined_name, new_mover ) );
+			protocols::moves::MoverOP new_mover(  protocols::moves::MoverFactory::get_instance()->newMover( *tp, parser_datamap, parser_pose ) );
+			parser_datamap.add( "movers", user_defined_name, new_mover );
 		}
 
-		protocols::moves::MoverOP newcstmover = parser_movers.find("cstaddnew")->second;
+		protocols::moves::MoverOP newcstmover = parser_datamap.get_ptr< protocols::moves::Mover >( "movers", "cstaddnew" );
 		runtime_assert( newcstmover != 0 );
 		TR << "parser testing setup done, beginning testing....   " << std::endl;
 
@@ -229,7 +226,7 @@ public:
 		TS_ASSERT_DELTA( parser_pose.energies().total_energies()[ scoring::dihedral_constraint ], test_pose.energies().total_energies()[ scoring::dihedral_constraint ], 1e-6 );
 
 		//then testing if removing works
-		protocols::moves::MoverOP remcstmover = parser_movers.find("cstremove")->second;
+		protocols::moves::MoverOP remcstmover = parser_datamap.get_ptr< protocols::moves::Mover >( "movers",  "cstremove");
 		runtime_assert( remcstmover != 0 );
 		remcstmover->apply( parser_pose );
 		(*scorefxn)(parser_pose);
@@ -237,10 +234,10 @@ public:
 		TR << "atom pair sum for parser based cstfile reading after removing of constraints is " << parser_pose.energies().total_energies()[ scoring::atom_pair_constraint ] << std::endl;
 		TS_ASSERT_DELTA( parser_pose.energies().total_energies()[ scoring::atom_pair_constraint ], 0, 1e-6 );
 		TS_ASSERT_DELTA( parser_pose.energies().total_energies()[ scoring::angle_constraint ] , 0, 1e-6 );
-		TS_ASSERT_DELTA( parser_pose.energies().total_energies()[ scoring::dihedral_constraint ], 0, 1e-6 )
+		TS_ASSERT_DELTA( parser_pose.energies().total_energies()[ scoring::dihedral_constraint ], 0, 1e-6 );
 
-			//removing testing done, now testing whether adding pregenerated csts works
-			protocols::moves::MoverOP pregencstmover = parser_movers.find("cstaddpreg")->second;
+		//removing testing done, now testing whether adding pregenerated csts works
+		protocols::moves::MoverOP pregencstmover = parser_datamap.get_ptr< protocols::moves::Mover >( "movers",  "cstaddpreg");
 		runtime_assert( pregencstmover != 0 );
 		pregencstmover->apply( parser_pose );
 		(*scorefxn)(parser_pose);

@@ -431,7 +431,7 @@ LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string c
 
 
 void
-LoopRemodel::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+LoopRemodel::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
 {
 	protocol_ = tag->getOption<std::string>( "protocol", "ccd" );
 	perturb_ = tag->getOption<bool>( "perturb", false );

@@ -90,8 +90,6 @@ void
 ReplaceRegionMover::parse_my_tag(
 	TagCOP tag,
 	basic::datacache::DataMap& data_map,
-	const Filters_map& ,
-	const moves::Movers_map& ,
 	const Pose& )
 {
 

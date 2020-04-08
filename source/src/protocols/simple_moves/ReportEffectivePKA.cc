@@ -222,8 +222,6 @@ void
 ReportEffectivePKA::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
-	Filters_map const &,
-	moves::Movers_map const &,
 	Pose const &)
 {
 	using namespace basic::options;

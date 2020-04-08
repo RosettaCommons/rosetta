@@ -152,7 +152,7 @@ public:
 
 		// to assign initial values
 		SandwichFeatures_reporters_OP->parse_my_tag(
-			tag, data, filters, movers,
+			tag, data,
 			*pose_3B83_OP // core::pose::Pose const & /*pose*/);
 		);
 
@@ -185,8 +185,6 @@ private:
 	// for parse_my_tag
 	utility::tag::TagCOP tag;
 	basic::datacache::DataMap data;
-	protocols::filters::Filters_map filters;
-	protocols::moves::Movers_map movers;
 	// for parse_my_tag
 
 	std::string database_filename_;

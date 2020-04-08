@@ -152,14 +152,12 @@ void
 FastDesign::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose )
 {
 	// make sure we create a task factory before parsing FastRelax::parse_my_tag
 	// otherwise no design will occur
 	set_up_default_task_factory();
-	FastRelax::parse_my_tag( tag, data, filters, movers, pose );
+	FastRelax::parse_my_tag( tag, data, pose );
 
 	clear_designable_residues_ = tag->getOption< bool >( "clear_designable_residues", clear_designable_residues_ );
 

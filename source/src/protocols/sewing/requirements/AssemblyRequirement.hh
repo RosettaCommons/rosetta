@@ -83,8 +83,6 @@ public: // Methods
 	set_options_from_tag(
 		utility::tag::TagCOP requirement_tag,
 		basic::datacache::DataMap& datamap,
-		protocols::filters::Filters_map const & filtermap,
-		protocols::moves::Movers_map const & movermap,
 		core::pose::Pose const & pose)=0;
 
 	virtual std::string

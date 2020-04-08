@@ -241,8 +241,6 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 
 	/// @brief apply function will calculate data about the input pose.  It is not intended to modify the pose itself (conformation and energies objects).

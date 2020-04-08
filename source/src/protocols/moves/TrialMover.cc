@@ -20,6 +20,7 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.hh>
@@ -68,8 +69,6 @@ void MonteCarloUtil::apply(Pose & pose)
 void MonteCarloUtil::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & /* filters */,
-	protocols::moves::Movers_map const & /* movers */,
 	core::pose::Pose const & /* pose */)
 {
 	if ( !tag->hasOption("mode") ) {
@@ -248,8 +247,6 @@ void TrialMover::set_native_pose( PoseCOP pose )
 void TrialMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const &,
-	Movers_map const & movers,
 	Pose const &
 )
 {
@@ -264,11 +261,10 @@ void TrialMover::parse_my_tag(
 	if ( movername == "" ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "TrialMover requires the 'mover' option which was not provided" );
 	}
-	auto  find_mover ( movers.find( movername ));
-	if ( find_mover == movers.end() && movername != "" ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "TrialMover was not able to find the mover named '" + movername + "' in the Movers_map" );
+	mover_ = protocols::rosetta_scripts::parse_mover_or_null( movername, data );
+	if ( ! mover_ ) {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "TrialMover was not able to find the mover named '" + movername + "' in the Movers list" );
 	}
-	mover_ = find_mover->second;
 	mc_ = data.get_ptr< protocols::moves::MonteCarlo>( "montecarlos", mc_name );
 
 	// 3. stats_type.

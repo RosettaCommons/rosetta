@@ -209,8 +209,6 @@ void
 RampingMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
-	Filters_map const & /*filters*/,
-	Movers_map const & movers,
 	Pose const & /*pose*/
 )
 {
@@ -237,13 +235,7 @@ RampingMover::parse_my_tag(
 	}
 	scorefxn_ = sfxn;
 
-
-	//get the mover to ramp out of the movemap
-	auto find_mover(movers.find(mover_name));
-	if ( find_mover == movers.end() ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "cannot find "+mover_name+" in mover map.");
-	}
-	mover_ = find_mover->second;
+	mover_ = protocols::rosetta_scripts::parse_mover( mover_name, datamap );
 
 	//get the montecarlo object out of the datamap
 	if ( montecarlo_name != "none" ) {

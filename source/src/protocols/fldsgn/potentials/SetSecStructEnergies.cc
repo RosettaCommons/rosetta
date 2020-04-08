@@ -297,8 +297,6 @@ void
 SetSecStructEnergies::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const &,
-	Movers_map const &,
 	Pose const & )
 {
 	std::string const blueprintfile( tag->getOption<std::string>( "blueprint", "" ) );

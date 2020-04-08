@@ -54,8 +54,6 @@ public:
 	void stub_sets( utility::vector1< StubSetStubPos > const & stub_sets );
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 
 	std::string

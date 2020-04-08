@@ -56,7 +56,10 @@ SidechainRmsdFilter::SidechainRmsdFilter( std::string const & res1, std::string 
 SidechainRmsdFilter::~SidechainRmsdFilter()= default;
 
 void
-SidechainRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+SidechainRmsdFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data_map,
+	core::pose::Pose const & )
 {
 	res1_ = core::pose::get_resnum_string( tag, "res1_" );
 	res2_ = core::pose::get_resnum_string( tag, "res2_" );

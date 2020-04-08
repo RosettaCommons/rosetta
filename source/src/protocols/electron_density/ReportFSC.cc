@@ -173,8 +173,6 @@ void
 ReportFSC::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap &,
-	Filters_map const &,
-	moves::Movers_map const &,
 	Pose const &)
 {
 	using namespace basic::options;

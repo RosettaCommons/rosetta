@@ -109,8 +109,6 @@ void
 UnbiasedRigidBodyPerturbNoCenterMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ) {
 
@@ -138,7 +136,7 @@ UnbiasedRigidBodyPerturbNoCenterMover::parse_my_tag(
 		tr.Debug << "Searching space is restricted relative to " << ref_file_ << " by max_trans_dist: " << max_trans_dist_ << " and max_rot_angle (radian): " << max_rot_angle_ << std::endl;
 	}
 
-	Parent::parse_my_tag( tag, data, filters, movers, pose );
+	Parent::parse_my_tag( tag, data, pose );
 }
 
 

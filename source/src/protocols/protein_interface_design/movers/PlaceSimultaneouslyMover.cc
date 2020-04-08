@@ -738,8 +738,6 @@ PlaceSimultaneouslyMover::final_cleanup( core::pose::Pose & pose )
 void
 PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap &data,
-	protocols::filters::Filters_map const &filters,
-	Movers_map const &movers,
 	core::pose::Pose const & pose )
 {
 	using namespace protocols::hotspot_hashing;
@@ -749,9 +747,9 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 	TR<<"Parsing PlaceSimultaneouslyMover----"<<std::endl;
 	/// auction, rbstub_minimization, and stub_score_filter are different, private
 	/// instantiations and should parse the stubset, chain, etc. information
-	auction_->parse_my_tag( tag, data, filters, movers, pose );
-	rbstub_minimization_->parse_my_tag( tag, data, filters, movers, pose );
-	stub_score_filter_->parse_my_tag( tag, data, filters, movers, pose );
+	auction_->parse_my_tag( tag, data, pose );
+	rbstub_minimization_->parse_my_tag( tag, data, pose );
+	stub_score_filter_->parse_my_tag( tag, data, pose );
 
 	if ( tag->hasOption( "task_operations" ) ) {
 		if ( task_factory() ) {
@@ -769,11 +767,10 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 	min_rb( true );
 
 	std::string const after_placement_filter_name( tag->getOption<std::string>( "after_placement_filter", "true_filter" ) );
-	auto ap_filter( filters.find( after_placement_filter_name ) );
 	if ( after_placement_filter_name == "true_filter" ) {
 		after_placement_filter_ = utility::pointer::make_shared< protocols::filters::TrueFilter >();
 	} else {
-		after_placement_filter_ = ap_filter->second->clone();
+		after_placement_filter_ = protocols::rosetta_scripts::parse_filter( after_placement_filter_name, data )->clone();
 	}
 	//parsing stub minimize movers and design movers for place stub
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
@@ -786,10 +783,9 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 			for ( TagCOP stub_m_tag : stub_min_tags ) {
 				std::string const stub_mover_name( stub_m_tag->getOption<std::string>( "mover_name" ) );
 				auto  const bb_stub_constraint_weight( stub_m_tag->getOption< core::Real > ( "bb_cst_weight", 10.0 ) );
-				auto find_mover( movers.find( stub_mover_name ));
-				bool const stub_mover_found( find_mover != movers.end() );
-				if ( stub_mover_found ) {
-					calc_taskop_movers::DesignRepackMoverOP drSOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( find_mover->second->clone() );
+				protocols::moves::MoverOP stub_mover = protocols::rosetta_scripts::parse_mover_or_null( stub_mover_name, data );
+				if ( stub_mover ) {
+					calc_taskop_movers::DesignRepackMoverOP drSOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( stub_mover->clone() );
 					if ( !drSOP ) {
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drSOP != nullptr );
@@ -805,10 +801,9 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				bool const apply_coord_constraints( m_tag_ptr->getOption< bool >( "use_constraints", true ) );
 				auto const coord_cst_std( m_tag_ptr->getOption< core::Real >( "coord_cst_std", 0.5 ) );
 
-				auto find_mover( movers.find( mover_name ));
-				bool const mover_found( find_mover != movers.end() );
-				if ( mover_found ) {
-					calc_taskop_movers::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( find_mover->second );
+				protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover_or_null( mover_name, data );
+				if ( mover ) {
+					calc_taskop_movers::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( mover );
 					if ( !drOP ) {
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drOP != nullptr );
@@ -822,7 +817,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 					}
 				} else {
 					TR<<"***WARNING WARNING! Mover defined for PlaceSimultaneouslyMoverMover not found in mover_list. EXITING ***"<<std::endl;
-					runtime_assert( mover_found );
+					utility_exit_with_message("Mover " + mover_name + " could not be found");
 				}
 			}
 		} else if ( btag->getName() == "StubSets" ) {
@@ -846,14 +841,12 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				stub_sets_.push_back(std::make_pair(stubset, std::make_pair(utility::pointer::make_shared< HotspotStub >(), 0)));  // REQUIRED FOR WINDOWS
 
 				std::string const stub_set_filter_name( stubset_tag->getOption< std::string >( "filter_name", "true_filter" ) );
-				auto stub_set_filter( filters.find( stub_set_filter_name ) );
-				runtime_assert( stub_set_filter != filters.end() );
-				stub_set_filters_[ stubset ] = stub_set_filter->second->clone();
+				stub_set_filters_[ stubset ] = protocols::rosetta_scripts::parse_filter( stub_set_filter_name, data )->clone();
 			}//foreach stubset_tag
 		} else if ( btag->getName() != "NotifyMovers" ) { // fi stubsets
 			utility_exit_with_message( "ERROR: tag in PlaceSimultaneouslyMover not defined\n" );
 		}
-		generate_taskfactory_and_add_task_awareness( btag, movers, data, task_factory() );//residue_level_tasks_for_placed_hotspots_ );
+		generate_taskfactory_and_add_task_awareness( btag, data, task_factory() );//residue_level_tasks_for_placed_hotspots_ );
 	}
 	if ( minimization_movers_.size() == 0 ) {
 		TR<<"No StubMinimize movers defined by user, defaulting to minimize_rb and _sc of stubs only" << std::endl;
@@ -861,7 +854,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 
 	auction_->task_factory( data.get_ptr< TaskFactory >( "TaskFactory", "placement" ) );
 	rbstub_minimization_->task_factory( data.get_ptr< TaskFactory >( "TaskFactory", "placement" ) );
-	// stub_score_filter_->parse_my_tag( tag, data, filters, movers, pose );
+	// stub_score_filter_->parse_my_tag( tag, data, pose );
 	// stub_score_filter_->stub_sets( stub_sets_ );
 	TR<<"Using "<<minimization_repeats_before_placement_<<" minimization steps before placement (bbcst constraints on)" << std::endl;
 	TR<<"Using "<<minimization_repeats_after_placement_<<" minimization steps after placement (no constraints on)" << std::endl;

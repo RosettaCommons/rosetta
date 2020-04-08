@@ -78,7 +78,10 @@ HelixHelixAngleFilterCreator::keyname() const { return "HelixHelixAngle"; }
 HelixHelixAngleFilter::~HelixHelixAngleFilter(){}
 
 void
-HelixHelixAngleFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+HelixHelixAngleFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 	start_helix_1_ = tag->getOption< core::Size >( "start_helix_1", 0 );
 	start_helix_2_ = tag->getOption< core::Size >( "start_helix_2", 0  );

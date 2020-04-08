@@ -443,8 +443,6 @@ void MergePDBatOverlapMover::apply( Pose & pose )
 void MergePDBatOverlapMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	attachment_termini_ = tag->getOption< std::string >( "attachment_termini" ,"n_term" );

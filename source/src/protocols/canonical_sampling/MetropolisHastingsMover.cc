@@ -432,8 +432,6 @@ void
 MetropolisHastingsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ) {
 	///ntrials
@@ -453,7 +451,7 @@ MetropolisHastingsMover::parse_my_tag(
 	bool wte_sampling( tag->getOption< bool >( "wte", false ) );
 	if ( wte_sampling ) {
 		BiasEnergyOP bias_energy( new WTEBiasEnergy() ); // stride, omega, gamma );
-		bias_energy->parse_my_tag( tag, data, filters, movers, pose );
+		bias_energy->parse_my_tag( tag, data, pose );
 		add_observer( bias_energy );
 		monte_carlo_ = utility::pointer::make_shared< BiasedMonteCarlo >( *score_fxn, temperature, bias_energy );
 	} else {
@@ -468,12 +466,7 @@ MetropolisHastingsMover::parse_my_tag(
 		if ( subtag->getName() == "Add" ) { //add existing mover
 			tag_containing_mover = subtag;
 			std::string mover_name = subtag->getOption<std::string>( "mover_name", "null" );
-			auto mover_iter( movers.find( mover_name ) );
-			if ( mover_iter == movers.end() ) {
-				tr.Error<< "Mover not found for XML tag:\n" << subtag << std::endl;
-				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "");
-			}
-			mover = mover_iter->second;
+			mover = protocols::rosetta_scripts::parse_mover( mover_name, data );
 		} else if ( subtag->getName() == "AddNew" ) { //generate new mover
 			utility::vector0< utility::tag::TagCOP > sub_subtags = subtag->getTags();
 			if ( sub_subtags.size() != 1 ) {
@@ -481,7 +474,7 @@ MetropolisHastingsMover::parse_my_tag(
 			}
 			tag_containing_mover = sub_subtags[0];
 			protocols::moves::MoverFactory * mover_factory(protocols::moves::MoverFactory::get_instance());
-			mover = mover_factory->newMover( tag_containing_mover, data, filters, movers, pose);
+			mover = mover_factory->newMover( tag_containing_mover, data, pose);
 		} else {
 			// Error case
 			protocols::moves::MoverFactory * mover_factory(protocols::moves::MoverFactory::get_instance());

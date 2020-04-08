@@ -75,10 +75,8 @@ public:
 	typedef core::pose::Pose Pose;
 
 	typedef utility::tag::TagPtr TagPtr;
-	typedef protocols::filters::Filters_map Filters_map;
 	typedef protocols::filters::FilterOP FilterOP;
 	typedef basic::datacache::DataMap DataMap;
-	typedef protocols::moves::Movers_map Movers_map;
 
 	friend class FragmentLookupFilterCreator;
 
@@ -131,8 +129,6 @@ public:
 	// @brief Parse arguments from rosettascripts XML
 	void parse_my_tag( utility::tag::TagCOP tag,
 		DataMap &,
-		Filters_map const &,
-		Movers_map const &,
 		Pose const & ) override;
 
 	//Main Filter computation routine

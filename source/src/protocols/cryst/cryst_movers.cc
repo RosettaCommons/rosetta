@@ -447,8 +447,6 @@ core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id
 void ReportGradientsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &data,
-	filters::Filters_map const & /*filters*/,
-	moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/ ) {
 	score_function_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	verbose_ = tag->getOption<bool>("verbose", false);
@@ -526,8 +524,6 @@ void SetCrystWeightMover::apply( core::pose::Pose & pose ) {
 void SetCrystWeightMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &data,
-	filters::Filters_map const & /*filters*/,
-	moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & ) {
 
 	score_function_ = protocols::rosetta_scripts::parse_score_function( tag, data );
@@ -681,8 +677,6 @@ void RecomputeDensityMapMover::apply( core::pose::Pose & pose )
 void RecomputeDensityMapMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data*/,
-	filters::Filters_map const & /*filters*/,
-	moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/ )
 {
 	keep_sidechains_ = tag->getOption<bool>("sidechains", true);
@@ -775,8 +769,6 @@ void
 LoadDensityMapMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data*/,
-	filters::Filters_map const & /*filters*/,
-	moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/ )
 {
 	mapfile_ = tag->getOption<std::string>("mapfile");
@@ -842,8 +834,6 @@ void FitBfactorsMover::apply( core::pose::Pose & pose ) {
 void FitBfactorsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data*/,
-	filters::Filters_map const & /*filters*/,
-	moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/ )
 {
 	std::string adp_strat = tag->getOption<std::string>("adp_strategy", "individual");
@@ -960,8 +950,6 @@ void UpdateSolventMover::apply( core::pose::Pose & pose ) {
 void UpdateSolventMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data*/,
-	filters::Filters_map const & /*filters*/,
-	moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/ )
 {
 	update_mask_ = tag->getOption<bool>("update_mask", true);
@@ -1104,8 +1092,6 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 void TagPoseWithRefinementStatsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data*/,
-	filters::Filters_map const & /*filters*/,
-	moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/ )
 {
 	tag_ = tag->getOption<std::string>("tag", "");
@@ -1193,8 +1179,6 @@ void SetRefinementOptionsMover::apply( core::pose::Pose & /*pose*/ ) {
 void SetRefinementOptionsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & /*data*/,
-	filters::Filters_map const & /*filters*/,
-	moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/ )
 {
 	res_high_ = tag->getOption<core::Real>("res_high", 0.0);

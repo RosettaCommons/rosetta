@@ -18,6 +18,10 @@
 // Unit Headers
 #include <protocols/filters/Filter.hh>
 
+
+#include <protocols/moves/Mover.hh>
+#include <basic/datacache/DataMap.hh>
+
 // Project Headers
 #include <basic/Tracer.hh>
 
@@ -83,12 +87,12 @@ Filter::~Filter() = default;
 
 void
 Filter::parse_my_tag(
-	TagCOP const,
+	TagCOP,
 	basic::datacache::DataMap &,
-	Filters_map const &,
-	moves::Movers_map const &,
-	core::pose::Pose const & )
-{}
+	core::pose::Pose const &
+) {
+	TR.Warning << "The parse_my_tag method has been invoked for filter " << name() << " but it hasn't been defined. Are you sure this is appropriate?" << std::endl;
+}
 
 core::Real Filter::score( core::pose::Pose & pose ) {
 	core::Real score = report_sm( pose );

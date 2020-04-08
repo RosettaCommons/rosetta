@@ -200,8 +200,6 @@ public:
 				pack_mover->parse_my_tag(
 					job_tag->getTag( PackRotamersMoverCreator::mover_name() ),
 					datamap,
-					Mover::Filters_map(),
-					Movers_map(),
 					*pose );
 			} else {
 				using namespace core::pack::task::operation;
@@ -223,8 +221,6 @@ public:
 				min_mover->parse_my_tag(
 					job_tag->getTag( MinMoverCreator::mover_name()),
 					datamap,
-					Mover::Filters_map(),
-					Movers_map(),
 					*pose );
 			} else if ( (*job_options)[ basic::options::OptionKeys::minimize_sidechains ] ) {
 				core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function( *job_options );

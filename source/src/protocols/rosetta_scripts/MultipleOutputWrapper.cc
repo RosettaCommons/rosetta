@@ -108,8 +108,6 @@ bool MultipleOutputWrapper::generate_pose(core::pose::Pose & pose)
 {
 	// Empty objects... may not work...
 	basic::datacache::DataMap data;
-	protocols::filters::Filters_map filters;
-	protocols::moves::Movers_map movers;
 	if ( !keep_mover_state_ ) {
 		mover_ = nullptr;
 	}
@@ -120,7 +118,7 @@ bool MultipleOutputWrapper::generate_pose(core::pose::Pose & pose)
 	}
 
 	if ( !mover_ && mover_tag_ ) {
-		mover_ = MoverFactory::get_instance()->newMover(mover_tag_, data, filters, movers, pose );
+		mover_ = MoverFactory::get_instance()->newMover(mover_tag_, data, pose );
 	}
 
 	runtime_assert( mover_ != nullptr );
@@ -166,8 +164,6 @@ bool MultipleOutputWrapper::generate_pose(core::pose::Pose & pose)
 void MultipleOutputWrapper::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ) {
 
@@ -202,7 +198,7 @@ void MultipleOutputWrapper::parse_my_tag(
 				std::string name = curr_tag->getOption<std::string>("name");
 				protocols::moves::MoverOP new_mover(
 					protocols::moves::MoverFactory::get_instance()->
-					newMover(curr_tag, data, filters, movers, pose)
+					newMover(curr_tag, data, pose)
 				);
 				mover_tag_ = curr_tag;
 			}

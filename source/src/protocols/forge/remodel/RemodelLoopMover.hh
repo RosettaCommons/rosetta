@@ -84,9 +84,7 @@ public: // typedefs
 	typedef utility::vector1< FragmentMoverOP > FragmentMoverOPs;
 
 	typedef utility::tag::TagCOP TagCOP;
-	typedef protocols::filters::Filters_map Filters_map;
 	typedef basic::datacache::DataMap DataMap;
-	typedef protocols::moves::Movers_map Movers_map;
 
 
 public: // construct/destruct

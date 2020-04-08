@@ -91,12 +91,10 @@ public: // test functions
 		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
 
 		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
 		core::pose::Pose pose;
 
 		protocols::docking::membrane::MPDockingSetupMoverOP xmpd(new protocols::docking::membrane::MPDockingSetupMover());
-		xmpd->parse_my_tag( tag, dm, fm, mm, pose );
+		xmpd->parse_my_tag( tag, dm, pose );
 
 		TS_ASSERT_EQUALS(xmpd->get_optimize1(), true);
 		TS_ASSERT_EQUALS(xmpd->get_optimize2(), false);

@@ -80,11 +80,9 @@ InvrotTreeRCG::~InvrotTreeRCG()= default;
 void
 InvrotTreeRCG::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose )
 {
-	RemodelConstraintGenerator::parse_my_tag( tag, data, filters, movers, pose );
+	RemodelConstraintGenerator::parse_my_tag( tag, data, pose );
 	//in case we'ref folding up around a ligand
 	std::string cstfilename = tag->getOption<std::string>( "cstfile", "" );
 	if ( cstfilename == "" ) {

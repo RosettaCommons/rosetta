@@ -22,8 +22,6 @@
 //parsing
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
-#include <protocols/filters/Filter.fwd.hh> //Filters_map
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
@@ -69,8 +67,6 @@ public:
 
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 public:
 	/// @brief Find all residues which could disulfide bond to a target

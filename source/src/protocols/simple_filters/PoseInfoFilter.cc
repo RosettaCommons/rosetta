@@ -99,8 +99,6 @@ void PoseInfoFilter::report( std::ostream & out, core::pose::Pose const & pose )
 
 void PoseInfoFilter::parse_my_tag( utility::tag::TagCOP const,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & /*pose*/)
 {
 	// Right now we don't have any options to control, so don't bother doing anything.

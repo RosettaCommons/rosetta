@@ -190,7 +190,7 @@ void HotspotHasherMover::apply( core::pose::Pose & pose ) {
 
 
 void
-HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const & filters, Movers_map const &, core::pose::Pose const & )
+HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
 {
 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
@@ -210,14 +210,13 @@ HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & 
 
 	// filter
 	std::string const hotspot_filter_name( tag->getOption<std::string>( "hotspot_filter", "true_filter" ) );
-	auto find_filter( filters.find( hotspot_filter_name ));
-	bool const filter_found( find_filter != filters.end() );
-	if ( filter_found ) {
-		hotspot_filter_ = find_filter->second->clone();
+	protocols::filters::FilterOP hotspot_filter = protocols::rosetta_scripts::parse_filter_or_null( hotspot_filter_name, data );
+	if ( hotspot_filter ) {
+		hotspot_filter_ = hotspot_filter->clone();
 	} else {
 		if ( hotspot_filter_name != "true_filter" ) {
-			TR<<"***WARNING WARNING! Filter defined for HotspotHasher not found in filter_list!!!! Defaulting to truefilter***"<<std::endl;
-			runtime_assert( filter_found );
+			TR<<"***WARNING WARNING! Filter defined for HotspotHasher not found in filter_list!!!!***"<<std::endl;
+			utility_exit_with_message("Filter " + hotspot_filter_name + " not found.");
 		} else {
 			hotspot_filter_ = utility::pointer::make_shared< protocols::filters::TrueFilter >();
 		}

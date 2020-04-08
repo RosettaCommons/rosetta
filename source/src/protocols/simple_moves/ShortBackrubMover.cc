@@ -240,8 +240,6 @@ void
 ShortBackrubMover::parse_my_tag(
 	TagCOP const,
 	basic::datacache::DataMap &,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const & )
 {
 	backrubmover_->branchopt().read_database();

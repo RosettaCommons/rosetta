@@ -68,7 +68,7 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 
 	~BuriedUnsatHbondFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 	core::pack::task::TaskFactoryOP task_factory() const;
 

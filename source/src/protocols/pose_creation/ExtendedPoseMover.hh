@@ -74,8 +74,6 @@ public:
 	/// @brief protocols::moves::Mover-specific parsing required by RosettaScripts
 	void parse_my_tag(utility::tag::TagCOP tag,
 		basic::datacache::DataMap& data,
-		const protocols::filters::Filters_map& filters,
-		const protocols::moves::Movers_map& movers,
 		const core::pose::Pose& pose) override;
 
 	string chain() const { return chain_; }

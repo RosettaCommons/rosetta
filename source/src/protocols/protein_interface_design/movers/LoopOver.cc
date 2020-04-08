@@ -18,6 +18,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -108,7 +109,7 @@ LoopOver::apply( core::pose::Pose & pose )
 
 
 void
-LoopOver::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &filters, protocols::moves::Movers_map const &movers, core::pose::Pose const & )
+LoopOver::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
 {
 	using namespace filters;
 
@@ -121,18 +122,8 @@ LoopOver::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols
 	std::string const mover_status( tag->getOption< std::string >( "ms_whenfail", "MS_SUCCESS" ));
 	ms_whenfail_ = protocols::moves::mstype_from_name( mover_status );
 
-	auto find_mover( movers.find( mover_name ) );
-	auto find_filter( filters.find( filter_name ));
-	if ( find_mover == movers.end() ) {
-		TR<<"WARNING WARNING!!! mover not found in map. skipping:\n"<<tag<<std::endl;
-		runtime_assert( find_mover != movers.end() );
-	}
-	if ( find_filter == filters.end() ) {
-		TR<<"WARNING WARNING!!! filter not found in map. skipping:\n"<<tag<<std::endl;
-		runtime_assert( find_filter == filters.end() );
-	}
-	mover_ = find_mover->second; // no cloning to allow other movers to change this mover at their parse time
-	condition_ = find_filter->second->clone();
+	mover_ = protocols::rosetta_scripts::parse_mover( mover_name, data ); // no cloning to allow other movers to change this mover at their parse time
+	condition_ = protocols::rosetta_scripts::parse_filter( filter_name, data )->clone();
 	TR << "with mover \"" << mover_name << "\" and filter \"" << filter_name << "\" and  " << max_iterations_<< " max iterations\n";
 	TR.flush();
 }

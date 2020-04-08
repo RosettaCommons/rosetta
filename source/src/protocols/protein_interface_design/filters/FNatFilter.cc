@@ -24,7 +24,6 @@
 #include <utility>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/PDBInfo.hh>
 #include <protocols/docking/metrics.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -100,7 +99,7 @@ FNatFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-FNatFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+FNatFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, core::pose::Pose const & )
 {
 	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data_map, class_name() );
 

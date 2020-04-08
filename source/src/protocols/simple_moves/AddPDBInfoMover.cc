@@ -64,7 +64,10 @@ void AddPDBInfoMover::apply( core::pose::Pose & pose ) {
 }
 
 void
-AddPDBInfoMover::parse_my_tag( TagCOP const, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+AddPDBInfoMover::parse_my_tag(
+	TagCOP const,
+	basic::datacache::DataMap &,
+	core::pose::Pose const & )
 {
 }
 

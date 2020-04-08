@@ -230,7 +230,6 @@ public:
 
 	void test_xml() {
 
-		protocols::filters::Filters_map f;
 		core::pose::Pose tmp;
 		basic::datacache::DataMap datamap;
 
@@ -247,7 +246,7 @@ public:
 		tag->read( ss );
 
 		protocols::abinitio::abscript::FragmentCMOP fragmover( new protocols::abinitio::abscript::FragmentCM() );
-		TS_ASSERT_THROWS_NOTHING( fragmover->parse_my_tag( tag , datamap, f, protocols::moves::Movers_map(), core::pose::Pose() ) );
+		TS_ASSERT_THROWS_NOTHING( fragmover->parse_my_tag( tag , datamap, core::pose::Pose() ) );
 		TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
 
 		EnvironmentOP env_op( new Environment( "env" ) );

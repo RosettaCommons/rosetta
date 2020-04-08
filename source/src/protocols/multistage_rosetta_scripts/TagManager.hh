@@ -66,26 +66,20 @@ public:
 struct ParsedTagCache{
 	ParsedTagCache(
 		jd3::PrelimJobNodeID const input_pose_id_in,
-		NoFailDataMapOP const & data_map_in,
-		TagMapOP const & mover_tags_in,
-		TagMapOP const & filter_tags_in,
-		utility::pointer::shared_ptr< moves::Movers_map > movers_map_in,
-		utility::pointer::shared_ptr< filters::Filters_map > filters_map_in
+		NoFailDataMapOP data_map_in,
+		TagMapOP mover_tags_in,
+		TagMapOP filter_tags_in
 	) :
 		input_pose_id( input_pose_id_in ),
 		data_map( data_map_in ),
 		mover_tags( mover_tags_in ),
-		filter_tags( filter_tags_in ),
-		movers_map( movers_map_in ),
-		filters_map( filters_map_in )
+		filter_tags( filter_tags_in )
 	{}
 
 	jd3::PrelimJobNodeID input_pose_id;
 	NoFailDataMapOP data_map;
 	TagMapOP mover_tags;
 	TagMapOP filter_tags;
-	utility::pointer::shared_ptr< moves::Movers_map > movers_map;
-	utility::pointer::shared_ptr< filters::Filters_map > filters_map;
 
 };
 

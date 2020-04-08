@@ -50,8 +50,6 @@ public:
 
 	typedef utility::tag::TagCOP TagCOP;
 	typedef basic::datacache::DataMap DataMap;
-	typedef protocols::moves::Movers_map Movers_map;
-	typedef protocols::filters::Filters_map Filters_map;
 	typedef utility::vector1< core::Size > VecSize;
 	typedef utility::vector1< VecSize > VecVecSize;
 
@@ -68,8 +66,6 @@ public:// parser
 
 	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
-		Filters_map const &,
-		Movers_map const &,
 		Pose const & );
 
 	static void provide_attributes_and_subelements( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaSimpleSubelementList & ssl );

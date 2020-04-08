@@ -60,8 +60,6 @@ LoopMover::LoopMover()  // {{{1
 void LoopMover::parse_my_tag( // {{{1
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const &) {
 
 	//SML Jul 11 2016, moved this function to a utilities section for sharing

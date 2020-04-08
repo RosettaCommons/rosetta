@@ -64,16 +64,12 @@ public:
 	void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
-		Filters_map const &,
-		protocols::moves::Movers_map const &,
 		Pose const & ) override;
 
 	/// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_score_function(
 		TagCOP,
 		basic::datacache::DataMap const &,
-		Filters_map const &,
-		protocols::moves::Movers_map const &,
 		Pose const & );
 
 	/// @brief required in the context of the parser/scripting scheme

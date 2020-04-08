@@ -82,7 +82,7 @@ ShowConstraintsFilterCreator::keyname() const { return "ShowConstraints"; }
 ShowConstraintsFilter::~ShowConstraintsFilter(){}
 
 void
-ShowConstraintsFilter::parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+ShowConstraintsFilter::parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, core::pose::Pose const & )
 {
 }
 

@@ -1045,8 +1045,7 @@ void MRSJobQueen::determine_validity_of_stage_tags(){//TODO only do this for nod
 					);//either one works
 					if ( mover_name.size() ) { //length() instead?
 						utility::tag::TagCOP mover_tag = data_for_job->mover_tags->at( mover_name );
-						mover_factory->newMover( mover_tag, * data_for_job->data_map,
-							* data_for_job->filters_map, * data_for_job->movers_map, * pose );
+						mover_factory->newMover( mover_tag, * data_for_job->data_map, * pose );
 					}
 				}
 
@@ -1055,8 +1054,7 @@ void MRSJobQueen::determine_validity_of_stage_tags(){//TODO only do this for nod
 				);
 				if ( filter_name.size() ) { //length() instead?
 					utility::tag::TagCOP filter_tag = data_for_job->filter_tags->at( filter_name );
-					filter_factory->newFilter( filter_tag, * data_for_job->data_map,
-						* data_for_job->filters_map, * data_for_job->movers_map, * pose );
+					filter_factory->newFilter( filter_tag, * data_for_job->data_map, * pose );
 				} else if ( add_or_sort_count == tag->getTags().size() ) {
 					utility_exit_with_message( "All stages need to finish with a filter. No filter at the end of stage "
 						+ std::to_string( ii ) + " for input pose " + std::to_string( ii ) + "." );

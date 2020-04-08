@@ -89,7 +89,10 @@ AlignmentGapInserter::AlignmentGapInserter() :
 AlignmentGapInserter::~AlignmentGapInserter() = default;
 
 void
-AlignmentGapInserter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const &  )
+AlignmentGapInserter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &data,
+	core::pose::Pose const &  )
 {
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 

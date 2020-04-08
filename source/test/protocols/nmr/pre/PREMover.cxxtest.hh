@@ -131,8 +131,6 @@ public:
 
 		PREMoverOP pm_op(new PREMover);
 		basic::datacache::DataMap data;
-		protocols::moves::Movers_map m_map;
-		protocols::filters::Filters_map f_map;
 		core::scoring::ScoreFunctionOP sfxn(new core::scoring::ScoreFunction);
 		sfxn->set_weight(core::scoring::atom_pair_constraint,1.0);
 		data.add("scorefxns","stage1", sfxn);
@@ -153,20 +151,20 @@ public:
 		TagOP tag5 = Tag::create(xml5);
 
 		// Has scorefunction been parsed?
-		pm_op->parse_my_tag(tag1, data, f_map, m_map, gb1_);
+		pm_op->parse_my_tag(tag1, data, gb1_);
 		TS_ASSERT_EQUALS(pm_op->get_scorefunction(), sfxn);
 
 		// Have PRE data been parsed?
-		pm_op->parse_my_tag(tag2, data, f_map, m_map, gb1_);
+		pm_op->parse_my_tag(tag2, data, gb1_);
 		TS_ASSERT_EQUALS(pm_op->get_pre_data_file(), "protocols/nmr/pre/pre_data_input.txt");
 
 		// Have boolean options been parsed?
-		pm_op->parse_my_tag(tag3, data, f_map, m_map, gb1_);
+		pm_op->parse_my_tag(tag3, data, gb1_);
 		TS_ASSERT(pm_op->minimize_w_pre_csts());
-		pm_op->parse_my_tag(tag4, data, f_map, m_map, gb1_);
+		pm_op->parse_my_tag(tag4, data, gb1_);
 		TS_ASSERT(pm_op->weighted_average());
 
-		pm_op->parse_my_tag(tag5, data, f_map, m_map, gb1_);
+		pm_op->parse_my_tag(tag5, data, gb1_);
 
 		//pm_op->show(TR.Debug);
 	}

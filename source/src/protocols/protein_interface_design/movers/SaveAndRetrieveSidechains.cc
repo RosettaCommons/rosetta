@@ -160,7 +160,7 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 
 
 void
-SaveAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+SaveAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
 {
 	first_apply_->obj = true;
 	allsc_ = tag->getOption<bool>( "allsc", false );

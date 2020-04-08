@@ -63,7 +63,7 @@ public:
 	void apply(core::pose::Pose& pose) override;
 	core::pose::PoseOP get_additional_output() override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 
 	/// @brief Used by RosettaScripts to set the previous mover to pull poses from
 	void set_previous_mover( protocols::moves::MoverOP const m );
@@ -104,11 +104,9 @@ private:
 	std::deque < core::pose::PoseOP > pose_input_cache_, pose_output_cache_;
 	core::Size poses_input_, poses_output_;
 
-	// Private filters maps for SELECTors
-	protocols::filters::Filters_map selector_filters_;
-
-	/// @brief in its current form MultiplePoseMover is not assignable due to presense of protocols::filters::Filters_map
+	/// @brief in its [previous] form MultiplePoseMover [was] not assignable due to presense of protocols::filters::Filters_map
 	/// defined as std::map< const std::string, ...> but compiler tries to generate assigment operator anyway
+	/// I don't know if that has changed now that we removed the Filters_map
 	MultiplePoseMover & operator= ( const MultiplePoseMover & ) = delete;
 
 };

@@ -19,6 +19,7 @@
 #include <protocols/simple_filters/InterfaceSasaFilter.hh>
 #include <protocols/simple_ddg/DdgFilter.hh>
 #include <basic/datacache/DataMap.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // Project headers
 
@@ -89,9 +90,7 @@ InterfaceBindingEnergyDensityFilter::fresh_instance() const{
 void
 InterfaceBindingEnergyDensityFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	filters::Filters_map const & filters_map,
-	moves::Movers_map const &,
+	basic::datacache::DataMap & data,
 	core::pose::Pose const &
 )
 {
@@ -103,22 +102,20 @@ InterfaceBindingEnergyDensityFilter::parse_my_tag(
 	}
 
 	std::string sasa_filter_name = tag->getOption< std::string> ("sasa_filter");
-	auto sasaiter = filters_map.find( sasa_filter_name );
-	if ( sasaiter == filters_map.end() ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Could not locate requested sasa_filter with name " + sasa_filter_name + " in the Filters_map." );
+	filters::FilterOP sasafilter_baseptr = protocols::rosetta_scripts::parse_filter_or_null( sasa_filter_name, data );
+	if ( ! sasafilter_baseptr ) {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Could not locate requested sasa_filter with name " + sasa_filter_name + " in the Filters list." );
 	}
-	filters::FilterOP sasafilter_baseptr = sasaiter->second;
 	sasa_filter_ = utility::pointer::dynamic_pointer_cast< protocols::simple_filters::InterfaceSasaFilter > ( sasafilter_baseptr );
 	if ( ! sasa_filter_ ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Dynamic cast of filter " + sasa_filter_name + " to type InterfaceSasaFilter failed" );
 	}
 
 	std::string ddG_filter_name = tag->getOption< std::string> ("ddG_filter");
-	auto ddGiter = filters_map.find( ddG_filter_name );
-	if ( ddGiter == filters_map.end() ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Could not locate requested ddG_filter with name " + ddG_filter_name + " in the Filters_map." );
+	filters::FilterOP ddGfilter_baseptr = protocols::rosetta_scripts::parse_filter_or_null( ddG_filter_name, data );
+	if ( ! ddGfilter_baseptr ) {
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Could not locate requested ddG_filter with name " + ddG_filter_name + " in the Filters list." );
 	}
-	filters::FilterOP ddGfilter_baseptr = ddGiter->second;
 	ddG_filter_ = utility::pointer::dynamic_pointer_cast< protocols::simple_ddg::DdgFilter > ( ddGfilter_baseptr );
 	if ( ! ddG_filter_ ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Dynamic cast of filter " + ddG_filter_name + " to type DdgFilter failed" );

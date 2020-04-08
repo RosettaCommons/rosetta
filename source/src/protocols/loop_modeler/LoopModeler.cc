@@ -108,8 +108,6 @@ using protocols::moves::MoverOP;
 
 using utility::tag::TagCOP;
 using basic::datacache::DataMap;
-using protocols::filters::Filters_map;
-using protocols::moves::Movers_map;
 
 namespace protocols {
 namespace loop_modeler {
@@ -150,12 +148,10 @@ MoverOP LoopModeler::clone() const {
 void LoopModeler::parse_my_tag(
 	TagCOP tag,
 	DataMap & data,
-	Filters_map const & filters,
-	Movers_map const & movers,
 	Pose const & pose
 ) {
 
-	loop_modeling::LoopMover::parse_my_tag(tag, data, filters, movers, pose);
+	loop_modeling::LoopMover::parse_my_tag(tag, data, pose);
 	loop_modeling::utilities::set_task_factory_from_tag(*this, tag, data);
 
 	// Parse the 'config' option.
@@ -215,20 +211,20 @@ void LoopModeler::parse_my_tag(
 		// Parse <Build> subtags.
 
 		else if ( subtag->getName() == "Build" ) {
-			build_stage_->parse_my_tag(subtag, data, filters, movers, pose);
+			build_stage_->parse_my_tag(subtag, data, pose);
 			is_build_stage_enabled_ = ! subtag->getOption<bool>("skip", ! is_build_stage_enabled_);
 		} else if ( subtag->getName() == "Centroid" ) {
 			// Parse <Centroid> subtags.
-			centroid_stage_->parse_my_tag(subtag, data, filters, movers, pose);
+			centroid_stage_->parse_my_tag(subtag, data, pose);
 			is_centroid_stage_enabled_ = ! subtag->getOption<bool>("skip", ! is_centroid_stage_enabled_);
 		} else if ( subtag->getName() == "Fullatom" ) {
 			// Parse <Fullatom> subtags.
-			fullatom_stage_->parse_my_tag(subtag, data, filters, movers, pose);
+			fullatom_stage_->parse_my_tag(subtag, data, pose);
 			is_fullatom_stage_enabled_ = ! subtag->getOption<bool>("skip", ! is_fullatom_stage_enabled_);
 		} else {
 			// Parse LoopMover subtags.
-			loop_modeling::LoopMoverOP centroid_mover = loop_modeling::utilities::loop_mover_from_tag(subtag, data, filters, movers, pose);
-			loop_modeling::LoopMoverOP fullatom_mover = loop_modeling::utilities::loop_mover_from_tag(subtag, data, filters, movers, pose);
+			loop_modeling::LoopMoverOP centroid_mover = loop_modeling::utilities::loop_mover_from_tag(subtag, data, pose);
+			loop_modeling::LoopMoverOP fullatom_mover = loop_modeling::utilities::loop_mover_from_tag(subtag, data, pose);
 
 			centroid_stage_->add_mover(centroid_mover);
 			fullatom_stage_->add_mover(fullatom_mover);

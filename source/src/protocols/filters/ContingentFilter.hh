@@ -55,8 +55,6 @@ public:
 	~ContingentFilter() override= default;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 	virtual void set_value( bool const value );
 	virtual bool get_value() const;

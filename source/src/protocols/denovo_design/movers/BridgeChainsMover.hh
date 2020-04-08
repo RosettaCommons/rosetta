@@ -64,8 +64,6 @@ public:
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose ) override;
 
 	static void setup_attlist_for_derived_classes( utility::tag::AttributeList & attlist );

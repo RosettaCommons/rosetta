@@ -18,8 +18,6 @@
 #include <core/pose/Pose.hh>
 //parsing
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
-#include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -60,8 +58,6 @@ void MembraneTopology::apply( Pose & pose ) {
 
 void MembraneTopology::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const & )
 {
 

@@ -220,8 +220,6 @@ SuperimposeMover::apply( Pose & pose ) {
 void
 SuperimposeMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	ref_start_ = tag->getOption< core::Size >("ref_start",1);

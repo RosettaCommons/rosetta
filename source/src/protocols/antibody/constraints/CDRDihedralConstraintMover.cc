@@ -164,8 +164,6 @@ void
 CDRDihedralConstraintMover::parse_my_tag(
 	TagCOP tag,
 	basic::datacache::DataMap & ,
-	Filters_map const & ,
-	moves::Movers_map const & ,
 	Pose const &
 ){
 	AntibodyEnumManager ab_manager = AntibodyEnumManager();
@@ -259,8 +257,6 @@ CDRDihedralConstraintMover::set_ignore_pose_datacache(bool ignore_pose_datacache
 //CDRDihedralConstraintMover::parse_my_tag(
 //  TagCOP tag,
 //  basic::datacache::DataMap&,
-//  const Filters_map&,
-//  const Movers_map&,
 //  const Pose&)
 //{
 //

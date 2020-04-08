@@ -21,7 +21,6 @@
 
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-//#include <protocols/filters/Filter.fwd.hh> // Filters_map (typedef)
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -93,8 +92,6 @@ public:
 	newFilter(
 		TagCOP,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
 		Pose const &,
 		std::string user_defined_name = ""
 	) const;

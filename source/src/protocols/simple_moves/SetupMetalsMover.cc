@@ -124,8 +124,6 @@ void
 SetupMetalsMover::parse_my_tag(
 	TagCOP tag,
 	basic::datacache::DataMap & data,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const & )
 {
 	//Tag should be able to take either a named selector or resnum string for metal or contact

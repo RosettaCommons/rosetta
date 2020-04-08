@@ -45,9 +45,7 @@ using std::string;
 using std::stringstream;
 using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
-using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
-using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 
 static basic::Tracer tr( "protocols.features.FeaturesReporterFactory" );
@@ -104,8 +102,6 @@ FeaturesReporterOP
 FeaturesReporterFactory::get_features_reporter(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const & filters,
-	Movers_map const & movers,
 	Pose const & pose
 ) {
 	//debug_assert(tag->getName() == "feature");
@@ -120,7 +116,7 @@ FeaturesReporterFactory::get_features_reporter(
 	*/
 	FeaturesReporterOP features_reporter(get_features_reporter(type_name));
 
-	features_reporter->parse_my_tag(tag, data, filters, movers, pose);
+	features_reporter->parse_my_tag(tag, data, pose);
 	return features_reporter;
 }
 void

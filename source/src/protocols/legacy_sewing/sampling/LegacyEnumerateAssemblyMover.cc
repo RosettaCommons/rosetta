@@ -365,11 +365,9 @@ void
 LegacyEnumerateAssemblyMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ){
-	parent::parse_my_tag(tag, data, filters, movers, pose); // parent is AssemblyMover
+	parent::parse_my_tag(tag, data, pose); // parent is AssemblyMover
 	// indeed this "parent::parse_my_tag" is essential. For example, user can specify max_segments in parser.xml
 	// inheriting classes can't recognize TR << "max_segments: " << max_segments << std::endl;
 

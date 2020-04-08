@@ -69,8 +69,6 @@ void
 SecondaryStructureHasResidueFilter::parse_my_tag(
 	TagCOP tag,
 	basic::datacache::DataMap & data,
-	Filters_map const &,
-	Movers_map const &,
 	Pose const & )
 {
 	using protocols::parser::BluePrint;

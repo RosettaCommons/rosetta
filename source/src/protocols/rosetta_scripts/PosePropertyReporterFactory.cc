@@ -80,13 +80,11 @@ PosePropertyReporterOP
 PosePropertyReporterFactory::newPosePropertyReporter(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ) {
 	PosePropertyReporterOP selector( newPosePropertyReporter( tag->getName() ) );
 	runtime_assert( selector != nullptr );
-	selector->parse_my_tag( tag, data, filters, movers, pose );
+	selector->parse_my_tag( tag, data, pose );
 	return selector;
 }
 

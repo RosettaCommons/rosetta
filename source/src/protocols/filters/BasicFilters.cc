@@ -56,6 +56,22 @@ using Pose = core::pose::Pose;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void
+TrueFilter::parse_my_tag(
+	TagCOP const,
+	basic::datacache::DataMap &,
+	Pose const & )
+{} // No configuration needed
+
+void
+FalseFilter::parse_my_tag(
+	TagCOP const,
+	basic::datacache::DataMap &,
+	Pose const & )
+{} // No configuration needed
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 StochasticFilter::StochasticFilter() : Filter( "Stochastic" ) {}
 StochasticFilter::~StochasticFilter() = default;
 
@@ -123,8 +139,6 @@ void
 StochasticFilter::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap &,
-	Filters_map const &,
-	moves::Movers_map const &,
 	Pose const & )
 {
 	confidence_ = tag->getOption< core::Real >( "confidence", 1.0 );
@@ -326,9 +340,7 @@ CompoundFilter::set_resid( core::pose::ResidueIndexDescriptionCOP r )
 void
 CompoundFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Filters_map const & filters,
-	moves::Movers_map const &,
+	basic::datacache::DataMap & data,
 	Pose const & )
 {
 	TR<<"CompoundStatement"<<std::endl;
@@ -349,16 +361,12 @@ CompoundFilter::parse_my_tag(
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Error: Boolean operation in tag is undefined." );
 		}
 		std::string const filter_name( cmp_tag_ptr->getOption<std::string>( "filter_name" ) );
+		protocols::filters::FilterOP filter = protocols::rosetta_scripts::parse_filter_or_null( filter_name, data );
 
-		auto find_filter( filters.find( filter_name ));
-		bool const filter_found( find_filter!=filters.end() );
-		if ( filter_found ) {
-			filter_pair.first = find_filter->second->clone();
-		} else {
-			TR<<"***WARNING WARNING! Filter defined for CompoundStatement not found in filter_list!!!! Defaulting to truefilter***"<<std::endl;
-			filter_pair.first = utility::pointer::make_shared< filters::TrueFilter >();
+		if ( ! filter ) {
+			utility_exit_with_message("CompoundStatement could not find the filter " + filter_name + " in the list of availible filters.");
 		}
-		runtime_assert( filter_found );
+		filter_pair.first = filter->clone();
 		compound_statement_.push_back( filter_pair );
 	}
 }
@@ -449,9 +457,7 @@ CombinedFilter::clear_reset_filters()
 void
 CombinedFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Filters_map const & filters,
-	moves::Movers_map const &,
+	basic::datacache::DataMap & data,
 	Pose const & )
 {
 	set_threshold( tag->getOption<core::Real>( "threshold", 0.0 ) );
@@ -464,17 +470,14 @@ CombinedFilter::parse_my_tag(
 			weight = 1.0 / tag_ptr->getOption<core::Real>( "temp" );
 		}
 
-		FilterOP filter;
 		std::string const filter_name( tag_ptr->getOption<std::string>( "filter_name" ) );
-		auto find_filter( filters.find( filter_name ));
-		bool const filter_found( find_filter!=filters.end() );
-		if ( filter_found ) {
-			filter = find_filter->second->clone();
-		} else {
-			TR.Warning<<"***Filter " << filter_name << " defined for CombinedValue not found in filter_list!!!! ***"<<std::endl;
+		protocols::filters::FilterOP filter = protocols::rosetta_scripts::parse_filter_or_null( filter_name, data );
+		if ( ! filter ) {
+			TR.Warning<<"***Filter " << filter_name << " defined for CombinedValue not found in filter list!!!! ***"<<std::endl;
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Filter "+filter_name+" not found in filter list.");
 		}
-		add_filter( filter, weight, false /*filter was already cloned*/ );
+
+		add_filter( filter->clone(), weight, false /*filter was already cloned*/ );
 	}
 }
 
@@ -523,9 +526,7 @@ MoveBeforeFilter::report_sm( core::pose::Pose const & pose ) const
 void
 MoveBeforeFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Filters_map const & filters,
-	moves::Movers_map const & movers,
+	basic::datacache::DataMap & data,
 	Pose const & )
 {
 	std::string mover_name("");
@@ -535,19 +536,20 @@ MoveBeforeFilter::parse_my_tag(
 	if ( tag->hasOption("filter") ) filter_name = tag->getOption< std::string >( "filter" );
 	if ( tag->hasOption("filter_name") ) filter_name = tag->getOption< std::string >( "filter_name" );
 
-	auto  find_mover ( movers.find( mover_name ));
-	auto find_filter( filters.find( filter_name ));
-
-	if ( find_mover == movers.end() ) {
+	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover_or_null( mover_name, data );
+	if ( ! mover ) {
 		TR.Error << "Mover '"<<mover_name<<"' not found in map: \n" << tag << std::endl;
-		runtime_assert( find_mover != movers.end() );
+		utility_exit_with_message("Could not find specified Mover");
 	}
-	if ( find_filter == filters.end() ) {
+	submover_ = mover;
+
+	protocols::filters::FilterOP filter = protocols::rosetta_scripts::parse_filter_or_null( filter_name, data );
+
+	if ( ! filter ) {
 		TR.Error << "Filter '"<<filter_name<<"' not found in map: \n" << tag << std::endl;
-		runtime_assert( find_filter != filters.end() );
+		utility_exit_with_message("Could not find specified Filter");
 	}
-	submover_ = find_mover->second;
-	subfilter_ = find_filter->second;
+	subfilter_ = filter;
 
 	TR << "Setting MoveBeforeFilter for mover '"<<mover_name<<"' and filter '"<<filter_name<<"'"<<std::endl;
 
@@ -658,9 +660,7 @@ IfThenFilter::compute( core::pose::Pose const & pose ) const
 void
 IfThenFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Filters_map const & filters,
-	moves::Movers_map const &,
+	basic::datacache::DataMap & data,
 	Pose const & )
 {
 	threshold( tag->getOption<core::Real>( "threshold", 0.0 ) );
@@ -674,7 +674,7 @@ IfThenFilter::parse_my_tag(
 		std::string const tagname = tag_ptr->getName();
 		FilterOP valuefilter = nullptr; //default NULL
 		if ( tag_ptr->hasOption("valuefilter") ) {
-			valuefilter = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "valuefilter" ), filters);
+			valuefilter = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "valuefilter" ), data);
 		}
 		auto value( tag_ptr->getOption<core::Real>( "value", 0 ) );
 		auto weight( tag_ptr->getOption<core::Real>( "weight", 1 ) );
@@ -684,7 +684,7 @@ IfThenFilter::parse_my_tag(
 				TR.Error << "In IfThenFilter, If and ELIF require a tesfilter option." << std::endl;
 				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "In IfThenFilter, If and ELIF require a tesfilter option.");
 			}
-			FilterOP testfilter = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "testfilter" ), filters);
+			FilterOP testfilter = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "testfilter" ), data);
 			bool inverttest = tag_ptr->getOption< bool >( "inverttest", false );
 			add_condition( testfilter, valuefilter, value, inverttest, weight );
 		} else if ( tagname == "ELSE" ) {

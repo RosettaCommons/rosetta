@@ -26,6 +26,8 @@
 #include <core/pose/Pose.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/string_util.hh>
+#include <basic/datacache/DataMap.hh>
+#include <protocols/filters/Filter.hh>
 
 // Basic Headers
 #include <basic/citation_manager/Citation.hh>
@@ -90,16 +92,15 @@ MoverOP Mover::create() {
 }
 
 // end mpr support
-/// @details Some movers need not be parsed, so we shouldn't stop executions. This, however, calls attention to the lack of this method, which could be due to something as silly as a wrong parameters definition.
+
+/// @details Some movers need not be parsed, so we shouldn't force people to reimplement this method.
+/// However, we should be chatty about the fact that someone is using a RosettaScripts interface to a mover which didn't define parse_my_tag()
 void Mover::parse_my_tag(
-	TagCOP const,
+	TagCOP,
 	basic::datacache::DataMap &,
-	Filters_map const &,
-	Movers_map const &,
 	Pose const &
-)
-{
-	TR << "***WARNING!!!! WARNING!!!*** parse_my_tag has been invoked for this mover but it hasn't been defined. Are you sure this is appropriate?" << std::endl;
+) {
+	TR.Warning << "The parse_my_tag() for mover " << name() << " has been invoked, but it hasn't been overridden. Are you sure this is appropriate?" << std::endl;
 }
 
 void

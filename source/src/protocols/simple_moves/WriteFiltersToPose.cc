@@ -74,7 +74,8 @@ WriteFiltersToPose::WriteFiltersToPose(){
 void WriteFiltersToPose::apply( core::pose::Pose &pose ) {
 	std::string filtername;
 	for ( auto const &f : filters_ ) {
-		protocols::filters::FilterOP filter = f.second;
+		protocols::filters::FilterOP filter = utility::pointer::dynamic_pointer_cast< protocols::filters::Filter >( f.second );
+		runtime_assert( filter != nullptr );
 		if ( include_type_ ) {
 			filtername = prefix_ + filter->get_user_defined_name() + " " + filter->get_type();
 		} else {
@@ -89,12 +90,10 @@ void WriteFiltersToPose::apply( core::pose::Pose &pose ) {
 
 void WriteFiltersToPose::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &f,
-	protocols::moves::Movers_map const &,
+	basic::datacache::DataMap & data,
 	core::pose::Pose const & )
 {
-	filters_=f;
+	filters_ = data["filters"];
 	prefix_ = tag->getOption< std::string >( "prefix" , "" );
 	include_type_= tag->getOption< bool > ( "include_type" ,false );
 }

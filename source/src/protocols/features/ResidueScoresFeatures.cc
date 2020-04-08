@@ -79,9 +79,7 @@ using core::scoring::EnergyEdge;
 using core::scoring::LREnergyContainerCOP;
 using core::scoring::ResidueNeighborConstIteratorOP;
 using core::chemical::aa_vrt;
-using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
-using protocols::moves::Movers_map;
 using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowData;
 using basic::database::insert_statement_generator::RowDataBaseOP;
@@ -238,8 +236,6 @@ void
 ResidueScoresFeatures::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
 	if ( tag->hasOption("scorefxn") ) {

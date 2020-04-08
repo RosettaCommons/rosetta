@@ -842,8 +842,6 @@ CartesianMD::dump_poses( pose::Pose const &pose_ref ) const {
 void  CartesianMD::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const & )
 {
 	// Other options

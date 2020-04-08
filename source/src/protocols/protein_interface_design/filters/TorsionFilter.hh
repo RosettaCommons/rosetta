@@ -49,8 +49,6 @@ public:
 	~Torsion() override;
 	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
-		protocols::filters::Filters_map const &,
-		protocols::moves::Movers_map const &,
 		core::pose::Pose const & ) override;
 	core::Real lower() const{ return lower_; }
 	void lower( core::Real const l ) { lower_ = l; }

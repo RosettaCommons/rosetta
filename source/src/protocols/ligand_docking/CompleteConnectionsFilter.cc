@@ -22,7 +22,6 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <utility/exit.hh>
@@ -62,7 +61,7 @@ CompleteConnectionsFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-CompleteConnectionsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+CompleteConnectionsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
 {
 	if ( ! tag->hasOption("chain") ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "CompleteConnections filter needs a 'chain' option");

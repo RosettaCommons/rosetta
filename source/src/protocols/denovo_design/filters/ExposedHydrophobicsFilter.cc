@@ -93,8 +93,6 @@ void
 ExposedHydrophobicsFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	sasa_cutoff_ = tag->getOption< core::Real >( "sasa_cutoff", sasa_cutoff_ );

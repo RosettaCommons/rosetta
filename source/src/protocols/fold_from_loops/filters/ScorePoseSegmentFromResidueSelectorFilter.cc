@@ -125,7 +125,7 @@ ScorePoseSegmentFromResidueSelectorFilter::report_sm( core::pose::Pose const & p
 }
 
 void
-ScorePoseSegmentFromResidueSelectorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+ScorePoseSegmentFromResidueSelectorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, core::pose::Pose const & )
 {
 	score_id_name( tag->getOption< std::string >( "name" ) );
 	in_context( tag->getOption< bool >( "in_context", false ) );

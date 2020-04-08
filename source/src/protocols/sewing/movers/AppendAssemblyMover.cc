@@ -345,11 +345,9 @@ void
 AppendAssemblyMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap,
-	protocols::filters::Filters_map const & filtermap,
-	protocols::moves::Movers_map const & movermap,
 	core::pose::Pose const & pose)
 {
-	AssemblyMover::parse_my_tag(tag, datamap, filtermap, movermap, pose);
+	AssemblyMover::parse_my_tag(tag, datamap, pose);
 
 	//get alignment settings
 	if ( get_hashed() ) {

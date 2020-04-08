@@ -245,8 +245,6 @@ void CoMTrackerCM::apply( core::pose::Pose& pose ){
 
 void CoMTrackerCM::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap,
-	protocols::filters::Filters_map const&,
-	protocols::moves::Movers_map const&,
 	core::pose::Pose const& ) {
 
 	//  mobile_label_ = tag->getOption< std::string >( "mobile_label" );

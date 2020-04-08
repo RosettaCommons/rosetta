@@ -194,8 +194,6 @@ void
 SchemePlaceMotifsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & /*filtermap*/,
-	protocols::moves::Movers_map const & /*movermap*/,
 	core::pose::Pose const & /*pose*/
 ){
 	tag_name_ = tag->getOption< std::string >("name","");

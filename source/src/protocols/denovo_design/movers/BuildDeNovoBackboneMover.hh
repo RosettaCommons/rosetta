@@ -84,8 +84,6 @@ public:
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose ) override;
 
 
@@ -274,16 +272,16 @@ private:
 	folder_group_name();
 
 	void
-	parse_filters( utility::tag::TagCOP tag, protocols::filters::Filters_map const & filter_map );
+	parse_filters( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
 
 	void
-	parse_prefold_movers( utility::tag::TagCOP tag, protocols::moves::Movers_map const & movers );
+	parse_prefold_movers( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
 
 	void
-	parse_postfold_movers( utility::tag::TagCOP tag, protocols::moves::Movers_map const & movers );
+	parse_postfold_movers( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
 
 	MoverOPs
-	parse_movers( utility::tag::TagCOP tag, protocols::moves::Movers_map const & movers ) const;
+	parse_movers( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) const;
 
 	/// @brief builds/folds pose in phases using recursive algorithm
 	/// @throws EXCN_Fold if we couldn't fold the pose

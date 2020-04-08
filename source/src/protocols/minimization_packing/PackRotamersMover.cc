@@ -224,8 +224,6 @@ void
 PackRotamersMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
-	Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	Pose const & pose
 )
 {
@@ -233,8 +231,8 @@ PackRotamersMover::parse_my_tag(
 		nloop_ = tag->getOption<core::Size>("nloop",1);
 		runtime_assert( nloop_ > 0 );
 	}
-	parse_score_function( tag, datamap, filters, movers, pose );
-	parse_task_operations( tag, datamap, filters, movers, pose );
+	parse_score_function( tag, datamap, pose );
+	parse_task_operations( tag, datamap, pose );
 }
 
 /// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
@@ -242,8 +240,6 @@ void
 PackRotamersMover::parse_score_function(
 	TagCOP const tag,
 	basic::datacache::DataMap const & datamap,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const &
 )
 {
@@ -257,8 +253,6 @@ void
 PackRotamersMover::parse_task_operations(
 	TagCOP const tag,
 	basic::datacache::DataMap const & datamap,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const &
 )
 {

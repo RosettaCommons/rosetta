@@ -93,7 +93,7 @@ SetAtomTree::clone() const {
 }
 
 void
-SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, core::pose::Pose const & )
 {
 	update_residue_variants( tag->getOption< bool >( "update_residue_variants", false) );
 	if ( tag->hasOption( "from_remark" ) ) {

@@ -409,8 +409,6 @@ void
 BackboneGridSampler::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data_map,
-	protocols::filters::Filters_map const &filters,
-	protocols::moves::Movers_map const &movers,
 	core::pose::Pose const & /*pose*/
 ) {
 	try {
@@ -438,12 +436,12 @@ BackboneGridSampler::parse_my_tag(
 			else set_selection_low(true);
 		}
 		if ( tag->hasOption("pre_scoring_mover") ) {
-			protocols::moves::MoverOP curmover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "pre_scoring_mover" ), movers );
+			protocols::moves::MoverOP curmover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "pre_scoring_mover" ), data_map );
 			set_prescoring_mover(curmover);
 			if ( TR.visible() ) TR << "BackboneGridSampler mover \"" << tag->getOption< std::string >("name", "") << "\" has been assigned mover \"" << tag->getOption< std::string >("pre_scoring_mover") << "\" as a pre-scoring mover that will be applied to all sampled conformations prior to energy evaluation." << std::endl;
 		}
 		if ( tag->hasOption("pre_scoring_filter") ) {
-			protocols::filters::FilterOP curfilter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "pre_scoring_filter" ), filters );
+			protocols::filters::FilterOP curfilter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "pre_scoring_filter" ), data_map );
 			set_prescoring_filter(curfilter);
 			if ( TR.visible() ) TR << "BackboneGridSampler mover \"" << tag->getOption< std::string >("name", "") << "\" has been assigned filter \"" << tag->getOption< std::string >("pre_scoring_filter") << "\" as a pre-scoring filter that will be applied to all sampled conformations prior to energy evaluation." << std::endl;
 		}

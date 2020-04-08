@@ -184,7 +184,7 @@ LoopFinder::apply( core::pose::Pose & pose )
 
 
 void
-LoopFinder::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+LoopFinder::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
 {
 	interface_ = tag->getOption<core::Size>( "interface", 1 );
 	ch1_ = tag->getOption<bool>( "ch1", false );

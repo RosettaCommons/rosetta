@@ -330,12 +330,10 @@ public: // test functions
 		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
 
 		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
 		core::pose::Pose pose;
 
 		FlipMoverOP xflip( new FlipMover() );
-		xflip->parse_my_tag( tag, dm, fm, mm, pose );
+		xflip->parse_my_tag( tag, dm, pose );
 
 		TS_ASSERT(xflip->get_jump_num() == 3);
 

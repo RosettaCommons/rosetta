@@ -140,16 +140,14 @@ public:
 
 	void test_filter_parsing() {
 		basic::datacache::DataMap data;
-		Filters_map filters;
-		Movers_map movers;
 
 		prime_Data( data );
-		movers["ddg_mover_name"] = ddg_mover_;
+		data["movers"]["ddg_mover_name"] = ddg_mover_;
 
 		(*scorefxn_)(*test_dimer_pose_);
 
 		TagCOP tag = tagptr_from_string("<DdGScan name=test ddG_mover=ddg_mover_name />\n");
-		ddg_scan_mover_->parse_my_tag( tag, data, filters, movers, *test_dimer_pose_ );
+		ddg_scan_mover_->parse_my_tag( tag, data, *test_dimer_pose_ );
 		ddg_scan_mover_->task_factory( tf_ );
 
 		utility::vector1< ddG_data_tuple > ddG_data = ddg_scan_mover_->calculate( TR, *test_dimer_pose_ );

@@ -175,8 +175,6 @@ void
 HbondsToResidueFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &data,
-	protocols::filters::Filters_map const &,
-	moves::Movers_map const &,
 	core::pose::Pose const & /*pose*/
 ) {
 	runtime_assert_string_msg( !tag->hasOption("res_num") && !tag->hasOption("pdb_num"), "Error in HbondsToResidueFilter::parse_my_tag():  The \"res_num\" and \"pdb_num\" options have been deprecated.  Use \"residue\" instead, and provide a Rosetta number (e.g. \"32\"), a PDB number (e.g. \"12B\"), or a reference pose number (e.g. \"refpose(snapshot1,17)+3\").");

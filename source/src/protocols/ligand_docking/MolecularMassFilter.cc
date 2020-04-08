@@ -24,7 +24,6 @@
 #include <core/pose/chains_util.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
@@ -60,7 +59,7 @@ MolecularMassFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-MolecularMassFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+MolecularMassFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
 {
 	if ( ! (tag->hasOption("chain") && tag->hasOption("mass_limit") ) ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "MolecularMass filter needs a 'chain' and an 'mass_limit' option");

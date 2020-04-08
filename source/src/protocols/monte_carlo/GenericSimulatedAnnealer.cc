@@ -34,6 +34,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // C/C++ headers
 #include <fstream>
@@ -714,23 +715,16 @@ GenericSimulatedAnnealer::apply_mover( core::pose::Pose & pose ) {
 void
 GenericSimulatedAnnealer::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose )
 {
-	GenericMonteCarloMover::parse_my_tag( tag, data, filters, movers, pose );
+	GenericMonteCarloMover::parse_my_tag( tag, data, pose );
 	history_ = tag->getOption< core::Size >( "history", history_ );
 	eval_period_ = tag->getOption< core::Size >( "eval_period", eval_period_ );
 	std::string const mover_name( tag->getOption< std::string >( "periodic_mover", "" ) );
 	checkpoint_file_ = tag->getOption< std::string >( "checkpoint_file", checkpoint_file_ );
 	keep_checkpoint_file_ = tag->getOption< bool >( "keep_checkpoint_file", keep_checkpoint_file_ );
 	if ( mover_name != "" ) {
-		auto find_mover( movers.find( mover_name ) );
-		if ( find_mover == movers.end() ) {
-			TR.Error << "Mover not found in map: " << mover_name << std::endl;
-		}
-		runtime_assert( find_mover != movers.end() );
-		periodic_mover_ = find_mover->second;
+		periodic_mover_ = protocols::rosetta_scripts::parse_mover( mover_name, data );
 	}
 }
 

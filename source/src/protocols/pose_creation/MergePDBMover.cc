@@ -933,8 +933,6 @@ void MergePDBMover::apply( Pose & pose )
 void MergePDBMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	overlap_location_pose_ = tag->getOption< std::string >( "attachment_termini" ,"n_term" );

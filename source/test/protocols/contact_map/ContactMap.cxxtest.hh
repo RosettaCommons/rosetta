@@ -229,8 +229,6 @@ public:
 	void test_parse_tag() {
 		using namespace protocols::contact_map;
 		basic::datacache::DataMap data;
-		Filters_map filters;
-		Movers_map movers;
 
 		core::pose::Pose pose(create_trpcage_ideal_pose());
 		data.add("spm_ref_poses","input_pose",pose.clone() ); // Need to spike the data with the reference pose to use.
@@ -239,7 +237,7 @@ public:
 
 		TagCOP tag = tagptr_from_string("<ContactMap name=test reference_name=input_pose />\n");
 
-		contact_map.parse_my_tag( tag, data, filters, movers, pose );
+		contact_map.parse_my_tag( tag, data, pose );
 		contact_map.apply(pose); // Need to actually call apply to make sure the contact map information is up-to-date
 
 		Contact const & c1( contact_map.get_contact(20,19) );
@@ -247,7 +245,7 @@ public:
 
 		ContactMap contact_map2;
 		tag = tagptr_from_string("<ContactMap name=test region1=3-6 reference_name=input_pose />\n");
-		contact_map2.parse_my_tag( tag, data, filters, movers, pose );
+		contact_map2.parse_my_tag( tag, data, pose );
 		contact_map2.apply(pose); // Need to actually call apply to make sure the contact map information is up-to-date
 
 		Contact const & c2( contact_map2.get_contact(2,3) );
@@ -255,7 +253,7 @@ public:
 
 		ContactMap contact_map3;
 		tag = tagptr_from_string("<ContactMap name=test region1=3-6 region2=10 reference_name=input_pose />\n");
-		contact_map3.parse_my_tag( tag, data, filters, movers, pose );
+		contact_map3.parse_my_tag( tag, data, pose );
 		contact_map3.apply(pose); // Need to actually call apply to make sure the contact map information is up-to-date
 
 		Contact const & c3( contact_map3.get_contact(2,1) );
@@ -263,7 +261,7 @@ public:
 
 		ContactMap contact_map4;
 		tag = tagptr_from_string("<ContactMap name=test region1=3-6 ligand=10 reference_name=input_pose />\n");
-		contact_map4.parse_my_tag( tag, data, filters, movers, pose );
+		contact_map4.parse_my_tag( tag, data, pose );
 		contact_map4.apply(pose); // Need to actually call apply to make sure the contact map information is up-to-date
 
 		Contact const & c4( contact_map4.get_contact(2,2) );
@@ -271,7 +269,7 @@ public:
 
 		ContactMap contact_map5;
 		tag = tagptr_from_string("<ContactMap name=test region1=A reference_name=input_pose />\n");
-		contact_map5.parse_my_tag( tag, data, filters, movers, pose );
+		contact_map5.parse_my_tag( tag, data, pose );
 		contact_map5.apply(pose); // Need to actually call apply to make sure the contact map information is up-to-date
 
 		Contact const & c5( contact_map5.get_contact(5,3) );
@@ -281,8 +279,6 @@ public:
 	void test_apply() {
 		using namespace protocols::contact_map;
 		basic::datacache::DataMap data;
-		Filters_map filters;
-		Movers_map movers;
 
 		core::pose::Pose pose(create_test_in_pdb_pose());
 		data.add("spm_ref_poses","input_pose",pose.clone() ); // Need to spike the data with the reference pose to use.
@@ -290,7 +286,7 @@ public:
 		ContactMap contact_map;
 
 		TagCOP tag = tagptr_from_string("<ContactMap name=test region1=4-10 models_per_file=0 reference_name=input_pose />\n"); //don't output textfile
-		contact_map.parse_my_tag( tag, data, filters, movers, pose );
+		contact_map.parse_my_tag( tag, data, pose );
 
 		contact_map.apply(pose);
 		TS_ASSERT_EQUALS( contact_map.get_contact(1,7).long_string_rep(), "THR4\tASP10\t0"); // 11.11
@@ -304,7 +300,7 @@ public:
 		ContactMap contact_map2;
 
 		tag = tagptr_from_string("<ContactMap name=test region1=4-10 models_per_file=0 distance_cutoff=15 reference_name=input_pose />\n");
-		contact_map2.parse_my_tag( tag, data, filters, movers, pose );
+		contact_map2.parse_my_tag( tag, data, pose );
 
 		contact_map2.apply(pose);
 		contact_map2.apply(pose);
@@ -315,7 +311,7 @@ public:
 		ContactMap contact_map3;
 
 		tag = tagptr_from_string("<ContactMap name=test region1=4-10 models_per_file=0 distance_matrix=true reference_name=input_pose />\n"); //don't output textfile
-		contact_map3.parse_my_tag( tag, data, filters, movers, pose );
+		contact_map3.parse_my_tag( tag, data, pose );
 
 		contact_map3.apply(pose);
 		TS_ASSERT_EQUALS( contact_map3.get_contact(1,7).long_string_rep(), "THR4\tASP10\t11.108"); // 11.108

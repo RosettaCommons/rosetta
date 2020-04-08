@@ -81,10 +81,8 @@ using core::pose::PoseCOP;
 using core::pack::task::PackerTaskOP;
 using core::pack::task::TaskFactory;
 using core::pack::task::TaskFactoryOP;
-using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
 using protocols::moves::MoverOP;
-using protocols::moves::Movers_map;
 using protocols::rosetta_scripts::parse_mover;
 using protocols::rosetta_scripts::saved_reference_pose;
 using protocols::rosetta_scripts::parse_task_operations;
@@ -140,8 +138,6 @@ void
 RotamerRecoveryFeatures::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const & /*filters*/,
-	Movers_map const & movers,
 	Pose const & /*pose*/
 ) {
 
@@ -159,7 +155,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 
 		MoverOP mover = parse_mover(tag->hasOption("mover") ?
 			tag->getOption<string>("mover") :
-			tag->getOption<string>("mover_name"), movers);
+			tag->getOption<string>("mover_name"), data);
 		protocol_ = utility::pointer::make_shared< RRProtocolMover >(mover);
 	} else if ( tag->hasOption("reference_name") ) {
 		if ( tag->hasOption("mover") ) {
@@ -250,7 +246,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 	if ( tag->hasOption("predicted_features_reporter") ) {
 		string report_to_db_name(
 			tag->getOption<string>("predicted_features_reporter"));
-		MoverOP report_to_db(parse_mover(report_to_db_name, movers));
+		MoverOP report_to_db(parse_mover(report_to_db_name, data));
 
 		if ( report_to_db->get_name() != "ReportToDB" ) {
 			stringstream errmsg;

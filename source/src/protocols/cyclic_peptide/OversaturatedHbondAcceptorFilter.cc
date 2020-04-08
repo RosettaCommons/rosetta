@@ -142,8 +142,6 @@ void
 OversaturatedHbondAcceptorFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &data,
-	protocols::filters::Filters_map const & /*filters_map*/,
-	protocols::moves::Movers_map const & /*movers_map*/,
 	core::pose::Pose const & /*pose*/)
 {
 	using namespace core::select::residue_selector;

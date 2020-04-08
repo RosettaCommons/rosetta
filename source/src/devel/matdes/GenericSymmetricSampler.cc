@@ -31,6 +31,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
@@ -163,8 +164,6 @@ GenericSymmetricSampler::apply(Pose & pose) {
 void
 GenericSymmetricSampler::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const &filters,
-	Movers_map const &movers,
 	Pose const & ) {
 	dof_id_ = tag->getOption<std::string>("dof_id", "");
 	angle_min_ = tag->getOption<Real>("angle_min", -1.0);
@@ -178,17 +177,11 @@ GenericSymmetricSampler::parse_my_tag( TagCOP const tag,
 
 	// manditory: mover
 	std::string mover_name( tag->getOption< std::string >( "mover_name"));
-	auto  find_mover ( movers.find( mover_name ));
-	runtime_assert( find_mover!=movers.end() );
-	mover_ = find_mover->second;
+	mover_ = protocols::rosetta_scripts::parse_mover( mover_name, data );
 
 	// optional: filter
 	std::string filter_name( tag->getOption< std::string >( "filter_name", "true_filter" ) );
-	auto find_filter( filters.find( filter_name ));
-	runtime_assert( find_filter!=filters.end() );
-	filter_ = find_filter->second;
-	runtime_assert( filter_ != nullptr );
-
+	filter_ = protocols::rosetta_scripts::parse_filter( filter_name, data );
 
 	// optional scorefunction ... overrides filter
 	std::string sfxn ( tag->getOption< std::string >( "scorefxn", "" ) );

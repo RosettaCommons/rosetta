@@ -25,6 +25,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/filters/Filter.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -75,13 +76,11 @@ SetTemperatureFactor::apply( core::pose::Pose & pose )
 
 
 void
-SetTemperatureFactor::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & )
+SetTemperatureFactor::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
 {
 	std::string const filter_name( tag->getOption<std::string>( "filter" ) );
-	auto find_ap_filter( filters.find( filter_name));
-	bool const ap_filter_found( find_ap_filter != filters.end() );
-	runtime_assert( ap_filter_found );
-	filter( find_ap_filter->second->clone() );
+	protocols::filters::FilterOP filter_ptr = protocols::rosetta_scripts::parse_filter( filter_name, data );
+	filter( filter_ptr->clone() );
 	scaling( tag->getOption< core::Real >( "scaling", 1.0 ) );
 }
 

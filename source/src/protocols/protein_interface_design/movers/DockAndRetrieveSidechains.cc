@@ -103,7 +103,7 @@ DockAndRetrieveSidechains::apply( core::pose::Pose & pose )
 
 
 void
-DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
 {
 	std::string const score_low( tag->getOption<string>( "score_low", "score_docking_low" ) );
 	std::string const score_high( protocols::rosetta_scripts::get_score_function_name( tag, "score_high" ) );

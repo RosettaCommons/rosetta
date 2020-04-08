@@ -88,12 +88,10 @@ public:
 		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
 
 		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
 		core::pose::Pose pose;
 
 		OptimizeProteinEmbeddingMoverOP xpro( new OptimizeProteinEmbeddingMover() );
-		xpro->parse_my_tag( tag, dm, fm, mm, pose );
+		xpro->parse_my_tag( tag, dm, pose );
 
 		TS_ASSERT(true);
 	}

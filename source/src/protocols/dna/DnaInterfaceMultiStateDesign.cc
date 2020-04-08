@@ -342,8 +342,6 @@ DnaInterfaceMultiStateDesign::output_results( Pose & pose )
 void DnaInterfaceMultiStateDesign::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
-	protocols::filters::Filters_map const & filters,
-	moves::Movers_map const & movers,
 	Pose const & pose
 )
 {
@@ -372,8 +370,8 @@ void DnaInterfaceMultiStateDesign::parse_my_tag(
 	}
 
 	// calls to PackRotamersMover base class methods
-	parse_score_function( tag, datamap, filters, movers, pose );
-	parse_task_operations( tag, datamap, filters, movers, pose );
+	parse_score_function( tag, datamap, pose );
+	parse_task_operations( tag, datamap, pose );
 }
 
 /// @brief required in the context of the parser/scripting scheme

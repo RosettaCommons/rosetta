@@ -232,8 +232,6 @@ bool FragmentLookupFilter::apply( Pose const & pose ) const
 
 void FragmentLookupFilter::parse_my_tag( utility::tag::TagCOP tag,
 	DataMap &,
-	Filters_map const &,
-	Movers_map const &,
 	Pose const &)
 {
 	std::string lookup_name = tag->getOption< std::string >( "lookup_name", "" );

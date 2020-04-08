@@ -82,8 +82,6 @@ void
 StructureRestrictor::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & /*data*/,
-	Filters_map const & /*filters*/,
-	protocols::moves::Movers_map const & /*movers*/,
 	Pose const & /*pose*/ )
 {
 	if ( tag->hasOption("relevant_chains") ) {

@@ -116,8 +116,6 @@ using namespace protocols::membrane;
 // parse_my_tag(
 //     utility::tag::TagCOP tag,
 //     basic::datacache::DataMap & data,
-//     protocols::filters::Filters_map const & filters,
-//     protocols::moves::Movers_map const & movers,
 //     core::pose::Pose const & pose );
 //
 // //MPLipidAccessibility & operator=( MPLipidAccessibility const & src );
@@ -225,8 +223,6 @@ using namespace protocols::membrane;
 //MPLipidAccessibility::parse_my_tag(
 //           utility::tag::TagCOP ,
 //           basic::datacache::DataMap& ,
-//           protocols::filters::Filters_map const & ,
-//           protocols::moves::Movers_map const & ,
 //           core::pose::Pose const & )
 //{
 //

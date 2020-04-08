@@ -25,6 +25,9 @@
 
 #include <utility/tag/Tag.hh>
 
+#include <protocols/rosetta_scripts/util.hh>
+#include <basic/datacache/DataMap.hh>
+
 // tracer
 #include <basic/Tracer.hh>
 // XSD XRW Includes
@@ -108,8 +111,6 @@ void EnvMover::apply( Pose& pose ) {
 
 void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	Filters_map const & filters,
-	moves::Movers_map const & movers,
 	core::pose::Pose const& pose ) {
 	using TagCOPs = utility::vector0<TagCOP>;
 
@@ -121,12 +122,12 @@ void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
 
 	TagCOPs const& subtags = tag->getTags();
 	for ( auto const & subtag : subtags ) {
-		parse_subtag( subtag, data, filters, movers, pose );
+		parse_subtag( subtag, data, pose );
 	}
 }
 
 moves::MoverOP find_mover( utility::tag::TagCOP tag,
-	moves::Movers_map movers ){
+	basic::datacache::DataMap & data ){
 
 	std::string mover_name("[NOT_SET]");
 	if ( tag->hasOption( "name" ) ) {
@@ -137,26 +138,21 @@ moves::MoverOP find_mover( utility::tag::TagCOP tag,
 		std::string err = "An environment was provided a subtag without the appropriate options. Either 'name' or 'mover' must be specified.";
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  err );
 	}
-	moves::Movers_map::const_iterator mv_it = movers.find( mover_name );
 
-	if ( mv_it != movers.end() ) {
-		debug_assert( mv_it->second );
-		return mv_it->second;
-	} else {
+	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover_or_null( mover_name, data );
+	if ( ! mover ) {
 		std::string err = "The mover " + mover_name + " could not be found. Check your spelling in the xml script.";
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  err );
 	}
-
+	return mover;
 }
 
 void EnvMover::parse_subtag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	filters::Filters_map const &,
-	moves::Movers_map const & movers,
+	basic::datacache::DataMap & data,
 	core::pose::Pose const& ) {
 	try {
 		if ( tag->getName() == "Apply" ) {
-			moves::MoverOP mover = find_mover( tag, movers );
+			moves::MoverOP mover = find_mover( tag, data );
 			this->add_apply_mover( mover );
 			if ( reg_only_movers_.find( utility::pointer::static_pointer_cast< Mover >( mover ) ) != reg_only_movers_.end() ) {
 				tr.Warning << "[TIP] You don't need to register the mover "
@@ -164,7 +160,7 @@ void EnvMover::parse_subtag( utility::tag::TagCOP tag,
 					<< " with the 'Apply' tag ahead of time. The 'Apply' Environment tag does that automatically." << std::endl;
 			}
 		} else if ( tag->getName() == "Register" ) {
-			moves::MoverOP mover = find_mover( tag, movers );
+			moves::MoverOP mover = find_mover( tag, data );
 			this->add_registered_mover( mover );
 		} else {
 			std::ostringstream err;

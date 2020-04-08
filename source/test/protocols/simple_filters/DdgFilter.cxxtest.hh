@@ -75,20 +75,18 @@ public:
 
 	void test_filter_parsing() {
 		basic::datacache::DataMap data;
-		Filters_map filters;
-		Movers_map movers;
 
 		prime_Data( data );
 		StubMultiFilterOP sf( new StubMultiFilter( false ) );
 		sf->push_back( 199.0 ); // Bound
 		sf->push_back( 100 ); // Unbound
-		filters["sfT99"] = sf;
+		data["filters"]["sfT99"] = sf;
 
 		(*scorefxn_)(*testpose_);
 
 		protocols::simple_ddg::DdgFilter testfilter;
 		TagCOP tag = tagptr_from_string("<Ddg name=test filter=sfT99 />\n");
-		testfilter.parse_my_tag( tag, data, filters, movers, *testpose_ );
+		testfilter.parse_my_tag( tag, data, *testpose_ );
 
 		TS_ASSERT_EQUALS( testfilter.report_sm(*testpose_), 99 );
 	}

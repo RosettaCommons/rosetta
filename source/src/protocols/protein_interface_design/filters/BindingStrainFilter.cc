@@ -147,8 +147,6 @@ BindingStrainFilter::report( std::ostream & out, core::pose::Pose const & pose )
 void
 BindingStrainFilter::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & )
 {
 	using namespace protocols::rosetta_scripts;
@@ -158,7 +156,7 @@ BindingStrainFilter::parse_my_tag( utility::tag::TagCOP tag,
 	jump( tag->getOption< core::Size >( "jump", 1 ) );
 	runtime_assert( jump() > 0 );
 	threshold( tag->getOption< core::Real >( "threshold", 3.0 ));
-	relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), movers ) );
+	relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), data ) );
 
 	TR<<"with options jump: "<<jump()<<" and strain threshold: "<<threshold()<<std::endl;
 }

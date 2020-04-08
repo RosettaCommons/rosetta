@@ -354,7 +354,11 @@ utility::tag::XMLSchemaComplexTypeGeneratorOP DesignRepackMover::get_xsd_complex
 }
 
 void
-DesignRepackMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ){
+DesignRepackMover::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap &data,
+	core::pose::Pose const &
+){
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 
 	std::string const scorefxn_repack( protocols::rosetta_scripts::get_score_function_name(tag, "scorefxn_repack" ) );

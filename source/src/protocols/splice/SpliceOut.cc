@@ -391,7 +391,7 @@ std::string SpliceOut::get_name() const {
 }
 
 //All tags that would be used by all SpliceOut derived classes are here
-void SpliceOut::parse_SpliceOut_tags(TagCOP const tag,protocols::moves::Movers_map const & movers,protocols::filters::Filters_map const & filters){
+void SpliceOut::parse_SpliceOut_tags(TagCOP const tag, basic::datacache::DataMap & data){
 	CG_const_=tag->getOption<bool>("CG_const", false);
 	superimposed(tag->getOption< bool >( "superimposed", true ) );
 	if ( delete_hairpin() ) {
@@ -399,7 +399,7 @@ void SpliceOut::parse_SpliceOut_tags(TagCOP const tag,protocols::moves::Movers_m
 		delete_hairpin_c( tag->getOption< core::Size >( "delete_hairpin_c", 13 ) );
 		TR<<"deleting the hairpin with parameters delete_hairpin_n: "<<delete_hairpin_n()<<" delete_hairpin_c: "<<delete_hairpin_c()<<std::endl;
 	}
-	handle_mover_tag(tag,movers);
+	handle_mover_tag(tag,data);
 	if ( tag->hasOption("source_pdb") ) {
 		source_pdb(tag->getOption<std::string>("source_pdb"));
 		source_pose_ = utility::pointer::make_shared< core::pose::Pose >();
@@ -409,7 +409,7 @@ void SpliceOut::parse_SpliceOut_tags(TagCOP const tag,protocols::moves::Movers_m
 
 	delete_hairpin( tag->getOption< bool >( "delete_hairpin", false ) );
 	if ( tag->hasOption("splice_filter") ) {
-		splice_filter(protocols::rosetta_scripts::parse_filter(tag->getOption<std::string>("splice_filter"), filters));
+		splice_filter(protocols::rosetta_scripts::parse_filter(tag->getOption<std::string>("splice_filter"), data));
 	}
 	rms_cutoff(tag->getOption<core::Real>("rms_cutoff", 999999));
 	rms_cutoff_loop(tag->getOption<core::Real>("rms_cutoff_loop", -1));//Added by gideonla Sep15, used in concatenation with the "rms_cutoff" sets a different rms cutoff for loop segments
@@ -430,10 +430,10 @@ void SpliceOut::abstract_parse_tag(TagCOP const tag){
 }
 
 
-void SpliceOut::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const & movers, core::pose::Pose const & /*pose*/) {
+void SpliceOut::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, core::pose::Pose const & /*pose*/) {
 	utility::vector1<TagCOP> const sub_tags(tag->getTags());
 
-	parse_SpliceOut_tags(tag,movers,filters);
+	parse_SpliceOut_tags(tag,data);
 	splicemanager.parse_segments(sub_tags,tag, data);
 	splicemanager.parse_tags(tag,data);
 	abstract_parse_tag(tag);
@@ -740,18 +740,18 @@ void SpliceOut::tail_mover( core::pose::Pose & pose,core::kinematics::MoveMapOP 
 	}
 }
 
-void SpliceOut::handle_mover_tag(TagCOP const tag,protocols::moves::Movers_map const & movers){
+void SpliceOut::handle_mover_tag(TagCOP const tag, basic::datacache::DataMap & data){
 	std::string mover_name("");
 	if ( tag->hasOption("mover") ) {
 		mover_name = tag->getOption< std::string >( "mover" );
 	} else {
 		utility_exit_with_message("Must specify mover to copy source conformation onto template segment\n");
 	}
-	protocols::moves::Movers_map::const_iterator  find_mover ( movers.find( mover_name ));
-	if ( find_mover == movers.end() ) {
+	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover_or_null( mover_name, data );
+	if ( ! mover ) {
 		utility_exit_with_message("Mover \""+mover_name+"\" not found in mover section in the XML, check XML\n");
 	}
-	submover_ = find_mover->second;
+	submover_ = mover;
 	TR<<submover_->get_name()<<std::endl;
 	if ( std::find(mover_type_.begin(), mover_type_.end(), submover_->get_name()) == mover_type_.end() ) {
 		utility_exit_with_message("Please choose only \"Minmover\" or \"LoopMover_Refine_CCD\" for \"mover=\" tag \n");

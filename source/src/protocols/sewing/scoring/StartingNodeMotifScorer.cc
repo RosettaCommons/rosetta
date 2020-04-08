@@ -138,8 +138,6 @@ void
 StartingNodeMotifScorer::set_options_from_tag(
 	utility::tag::TagCOP scorer,
 	basic::datacache::DataMap& ,
-	protocols::filters::Filters_map const & ,
-	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
 	//Data members? It can figure out starting node from is_vital

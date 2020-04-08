@@ -49,7 +49,6 @@ public:
 
 	typedef protocols::filters::Filter Filter;
 	typedef protocols::filters::FilterOP FilterOP;
-	typedef protocols::filters::Filters_map Filters_map;
 
 public:
 	LigDSasaFilter() : Filter( "LigDSasa" ) {}
@@ -66,7 +65,7 @@ public:
 	}
 
 	~LigDSasaFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 
 	std::string
 	name() const override;
@@ -89,7 +88,6 @@ public:
 
 	typedef protocols::filters::Filter Filter;
 	typedef protocols::filters::FilterOP FilterOP;
-	typedef protocols::filters::Filters_map Filters_map;
 
 public:
 	LigBurialFilter() : Filter( "LigBurial"  ) {}
@@ -107,7 +105,7 @@ public:
 	}
 
 	~LigBurialFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 
 	std::string
 	name() const override;
@@ -133,7 +131,6 @@ public:
 
 	typedef protocols::filters::Filter Filter;
 	typedef protocols::filters::FilterOP FilterOP;
-	typedef protocols::filters::Filters_map Filters_map;
 
 public:
 	LigInterfaceEnergyFilter() : Filter( "LigInterfaceEnergy" ) {}
@@ -158,7 +155,7 @@ public:
 
 	~LigInterfaceEnergyFilter() override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const &pose ) override;
 
 	std::string
 	name() const override;
@@ -188,7 +185,6 @@ public:
 
 	typedef protocols::filters::Filter Filter;
 	typedef protocols::filters::FilterOP FilterOP;
-	typedef protocols::filters::Filters_map Filters_map;
 
 public:
 	EnzScoreFilter() : Filter( "EnzScore" ) {}
@@ -211,7 +207,7 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	//core::Size get_resid_from_cstid( core::pose::Pose const & pose, core::Size const & cstid) const;
 	~EnzScoreFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const &pose ) override;
 
 	std::string
 	name() const override;
@@ -282,7 +278,6 @@ public:
 
 	typedef protocols::filters::Filter Filter;
 	typedef protocols::filters::FilterOP FilterOP;
-	typedef protocols::filters::Filters_map Filters_map;
 
 public:
 	DiffAtomSasaFilter() : Filter( "DiffAtomBurial" ) {}
@@ -301,7 +296,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	bool compute( core::pose::Pose const & pose ) const;
 	~DiffAtomSasaFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const &pose ) override;
 
 	std::string
 	name() const override;
@@ -325,7 +320,6 @@ public:
 
 	typedef protocols::filters::Filter Filter;
 	typedef protocols::filters::FilterOP FilterOP;
-	typedef protocols::filters::Filters_map Filters_map;
 
 public:
 	RepackWithoutLigandFilter() : Filter( "RepackWithoutLigand" ) {}
@@ -343,7 +337,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	~RepackWithoutLigandFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const &pose ) override;
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn){ scorefxn_ = scorefxn; }
 	void set_cstid_list( std::string setting){ cstid_list_ = setting; }
 
@@ -399,7 +393,6 @@ public:
 
 	typedef protocols::filters::Filter Filter;
 	typedef protocols::filters::FilterOP FilterOP;
-	typedef protocols::filters::Filters_map Filters_map;
 
 	EnzdesScorefileFilter();
 	EnzdesScorefileFilter( EnzdesScorefileFilter const & other);
@@ -417,7 +410,7 @@ public:
 		return utility::pointer::make_shared< EnzdesScorefileFilter >();
 	}
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const &pose ) override;
 
 	// specific stuff
 public:
@@ -505,7 +498,6 @@ public:
 
 	typedef protocols::filters::Filter Filter;
 	typedef protocols::filters::FilterOP FilterOP;
-	typedef protocols::filters::Filters_map Filters_map;
 
 	ResidueConformerFilter();
 	ResidueConformerFilter( ResidueConformerFilter const & other);
@@ -525,7 +517,7 @@ public:
 
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const &pose ) override;
 
 	core::Size
 	get_current_conformer( core::pose::Pose const & pose ) const;

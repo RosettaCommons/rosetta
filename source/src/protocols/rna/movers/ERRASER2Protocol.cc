@@ -457,8 +457,6 @@ void
 ERRASER2Protocol::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & ,
-	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
 	score_function( protocols::rosetta_scripts::parse_score_function( tag, data ) );

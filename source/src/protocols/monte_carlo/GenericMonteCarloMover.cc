@@ -953,7 +953,10 @@ GenericMonteCarloMover::generate_random() const {
 
 /// @brief parse xml file
 void
-GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &filters, Movers_map const &movers, Pose const & )
+GenericMonteCarloMover::parse_my_tag(
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
+	Pose const & )
 {
 	//using core::pack::task::operation::TaskOperation;
 	//using core::pack::task::TaskFactoryOP;
@@ -974,19 +977,19 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 		mover_stopping_condition_ = data.get_ptr< basic::datacache::DataMapObj< bool > >( "stopping_condition", user_defined_mover_name );
 	}
 
-	String const filter_name( tag->getOption< String >( "filter_name", "true_filter" ) );
-	auto  find_mover ( movers.find( user_defined_mover_name ));
-	auto find_filter( filters.find( filter_name ));
-	if ( find_mover == movers.end() && user_defined_mover_name != "" ) {
-		TR.Error << "Mover \"" << user_defined_mover_name << "\" was not found in map.  Has it been defined in the XML before the GenericMonteCarloMover?\n(Error in this context:)\n" << tag << std::endl;
-		runtime_assert( find_mover != movers.end() );
-	}
-	if ( find_filter == filters.end() ) {
-		TR.Error << "Filter \"" << filter_name << "\"not found in map.  Has it been defined in the XML before the GenericMonteCarloMover?\n(Error in this context):\n" << tag << std::endl;
-		runtime_assert( find_filter != filters.end() );
-	}
 	if ( user_defined_mover_name != "" ) {
-		mover_ = find_mover->second;
+		mover_ = protocols::rosetta_scripts::parse_mover_or_null( user_defined_mover_name, data );
+		if ( ! mover_ ) {
+			TR.Error << "Mover \"" << user_defined_mover_name << "\" was not found in map.  Has it been defined in the XML before the GenericMonteCarloMover?\n(Error in this context:)\n" << tag << std::endl;
+			utility_exit_with_message( "Mover " + user_defined_mover_name + " can't be found." );
+		}
+	}
+
+	String const filter_name( tag->getOption< String >( "filter_name", "true_filter" ) );
+	protocols::filters::FilterOP filter = protocols::rosetta_scripts::parse_filter_or_null( filter_name, data );
+	if ( ! filter ) {
+		TR.Error << "Filter \"" << filter_name << "\"not found in map.  Has it been defined in the XML before the GenericMonteCarloMover?\n(Error in this context):\n" << tag << std::endl;
+		utility_exit_with_message( "Filter " + filter_name + " can't be found." );
 	}
 
 	if ( adaptive_movers() ) { /// adaptive movers only works if the mover being called is of type parsedprotocol
@@ -995,7 +998,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 
 	bool const adaptive( tag->getOption< bool >( "adaptive", true ) );
 	sample_type_ = tag->getOption< String >( "sample_type", "low" );
-	add_filter( find_filter->second->clone(), adaptive, temperature_, sample_type_ );
+	add_filter( filter->clone(), adaptive, temperature_, sample_type_ );
 	String const sfxn ( tag->getOption< String >( "scorefxn_name", "" ) );
 
 	if ( sfxn != "" ) {
@@ -1010,7 +1013,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 		scorefxn_ = nullptr;
 	}
 
-	parse_task_operations( tag, data, filters, movers );
+	parse_task_operations( tag, data );
 
 	runtime_assert_string_msg( filter_name != "true_filter" || scorefxn_, "You need to set filter_nam2e or scorefxn_name for MC criteria." );
 
@@ -1019,7 +1022,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 			<< " at Temperature=" << temperature_ << ", ntrails= " << maxtrials_ << std::endl;
 	}
 
-	stopping_condition( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "stopping_condition", "false_filter" ), filters ) );
+	stopping_condition( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "stopping_condition", "false_filter" ), data ) );
 	if ( tag->hasOption( "stopping_condition" ) ) {
 		TR<<"Generic MC using stopping condition "<< stopping_condition()->get_user_defined_name()<<std::endl;
 	}
@@ -1034,11 +1037,12 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 			utility::vector1< TagCOP > const filters_tags( btag->getTags() );
 			for ( TagCOP ftag : filters_tags ) {
 				String const filter_name2( ftag->getOption< String >( "filter_name" ) );
-				auto find_filt( filters.find( filter_name2 ));
-				if ( find_filt == filters.end() ) {
+				protocols::filters::FilterOP filter2 = protocols::rosetta_scripts::parse_filter_or_null( filter_name2, data );
+				if ( ! filter2 ) {
 					TR.Error << "Filter \"" <<  filter_name2 << "\" was not found in map.  Has it been defined in the XML before the GenericMonteCarloMover?\n(Error in this context:)\n" << tag << std::endl;
-					runtime_assert( find_filt != filters.end() );
+					utility_exit_with_message( "Filter " + filter_name2 + " can't be found." );
 				}
+
 				auto const temp( ftag->getOption< Real >( "temperature", 1 ) );
 				bool const adap( ftag->getOption< bool >( "adaptive", true ));
 				String const samp_type( ftag->getOption< String >( "sample_type", "low" ));
@@ -1051,7 +1055,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 						TR.Warning << "Setting of rank on sub-filter "<< filter_name2 << " will be ignored as parent is set to Boltzmann rank all." << std::endl;
 					}
 				}
-				add_filter( find_filt->second, adap, temp, samp_type, rank );
+				add_filter( filter2, adap, temp, samp_type, rank );
 			} //foreach ftag
 		} else { // fi Filters
 			utility_exit_with_message( "tag name " + btag->getName() + " unrecognized." );
@@ -1079,11 +1083,8 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 /// @brief parse "task_operations" XML option
 void GenericMonteCarloMover::parse_task_operations(
 	TagCOP const tag,
-	basic::datacache::DataMap const & datamap,
-	Filters_map const &,
-	Movers_map const &
-)
-{
+	basic::datacache::DataMap const & datamap
+) {
 	if ( ( tag->hasOption("task_operations") ) ) {
 		TR << "Found a task operation" << std::endl;
 		TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );

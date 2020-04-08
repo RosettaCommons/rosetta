@@ -22,6 +22,7 @@
 //#include <core/types.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/VectorPoseMover.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -108,36 +109,20 @@ MSDMover::get_name() const {
 
 void MSDMover::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap &,
-	filters::Filters_map const &,
-	moves::Movers_map const & movers,
+	basic::datacache::DataMap & data,
 	core::pose::Pose const &
 ) {
 
 	if ( tag->hasOption("design_mover") ) {
 		std::string const design_mover_key = tag->getOption<std::string>("design_mover");
-		moves::Movers_map::const_iterator find_mover = movers.find( design_mover_key );
-
-		if ( find_mover == movers.end() && design_mover_key != "" ) {
-			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover " + design_mover_key + " not found in data map");
-		}
-
-		design_mover_ =find_mover->second;
-
+		design_mover_ = protocols::rosetta_scripts::parse_mover( design_mover_key, data );
 	} else { // throw exception if there's no design mover specified
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,"Error: MSD Mover mustohave design mover");
 	}
 
 	if ( tag->hasOption("post_mover") ) {
 		std::string const post_mover_key = tag->getOption<std::string>("post_mover");
-		moves::Movers_map::const_iterator find_mover = movers.find( post_mover_key );
-
-		if ( find_mover == movers.end() && post_mover_key != "" ) {
-			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,"Mover " + post_mover_key + " not found in data map");
-		}
-
-		post_mover_ =find_mover->second;
-
+		post_mover_ = protocols::rosetta_scripts::parse_mover( post_mover_key, data );
 	}
 
 	if ( tag->hasOption( "resfiles" ) ) {

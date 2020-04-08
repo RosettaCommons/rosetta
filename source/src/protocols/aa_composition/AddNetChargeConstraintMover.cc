@@ -89,8 +89,6 @@ void
 AddNetChargeConstraintMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap &datamap,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const &
 )
 {

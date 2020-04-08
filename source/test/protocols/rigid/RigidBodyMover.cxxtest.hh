@@ -204,10 +204,8 @@ public:
 		RigidBodyTransMoverOP RB_mover( new RigidBodyTransMover() );
 
 		basic::datacache::DataMap data;
-		Filters_map filters;
-		Movers_map movers;
 		TagCOP tag = tagptr_from_string("<RigidBodyTransMover name=trans distance=1 jump=1/>\n");
-		RB_mover->parse_my_tag( tag, data, filters, movers, pose );
+		RB_mover->parse_my_tag( tag, data, pose );
 
 		/////////////////////////run
 		RB_mover->apply(pose);

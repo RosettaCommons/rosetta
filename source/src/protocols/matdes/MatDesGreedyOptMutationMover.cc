@@ -912,19 +912,17 @@ MatDesGreedyOptMutationMover::reset_delta_filter_baselines( core::pose::Pose & p
 void
 MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & )
 {
 	TR << "MatDesGreedyOptMutationMover"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	//load relax mover
 	std::string const relax_mover_name( tag->getOption< std::string >( "relax_mover", "null" ) );
-	auto mover_it( movers.find( relax_mover_name ) );
-	if ( mover_it == movers.end() ) {
+	protocols::moves::MoverOP relax_mover_ptr = protocols::rosetta_scripts::parse_mover_or_null( relax_mover_name, data );
+	if ( ! relax_mover_ptr ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Relax mover "+relax_mover_name+" not found" );
 	}
-	relax_mover( mover_it->second ); //XRW TO DO: what does this mean? do I need to add something?
+	relax_mover( relax_mover_ptr ); //XRW TO DO: what does this mean? do I need to add something?
 	//load scorefxn
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	//load dump_pdb
@@ -936,7 +934,7 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	parallel( tag->getOption< bool >( "parallel", false ) );
 	if ( tag->hasOption( "stopping_condition" ) ) {
 		std::string const stopping_filter_name( tag->getOption< std::string >( "stopping_condition" ) );
-		stopping_condition( protocols::rosetta_scripts::parse_filter( stopping_filter_name, filters ) );
+		stopping_condition( protocols::rosetta_scripts::parse_filter( stopping_filter_name, data ) );
 		TR<<"Defined stopping condition "<<stopping_filter_name<<std::endl;
 	}
 
@@ -947,14 +945,10 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 			utility::vector1< utility::tag::TagCOP > const filters_tags( btag->getTags() );
 			for ( utility::tag::TagCOP ftag : filters_tags ) {
 				std::string const filter_name( ftag->getOption< std::string >( "filter_name" ) );
-				auto find_filt( filters.find( filter_name ));
-				if ( find_filt == filters.end() ) {
-					TR.Error << "filter not found in map: \n" << tag << std::endl;
-					runtime_assert( find_filt != filters.end() );
-				}
+				protocols::filters::FilterOP filter = protocols::rosetta_scripts::parse_filter( filter_name, data );
 				std::string const samp_type( ftag->getOption< std::string >( "sample_type", "low" ));
 				auto filter_delta( tag->getOption< core::Real >( "filter_delta", core::Real( 0. ) ) );
-				add_filter( find_filt->second->clone(), samp_type, filter_delta );
+				add_filter( filter->clone(), samp_type, filter_delta );
 			} //foreach ftag
 		} else { // fi Filters
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "tag name " + btag->getName() + " unrecognized." );
@@ -964,14 +958,14 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	{
 		std::string const filter_name( tag->getOption< std::string >( "filter", "true_filter" ) );
 		if ( filter_name != "true_filter" || filters_.size() < 1 ) {
-			auto find_filt( filters.find( filter_name ) );
-			if ( find_filt == filters.end() ) {
+			protocols::filters::FilterOP filter = protocols::rosetta_scripts::parse_filter( filter_name, data );
+			if ( ! filter ) {
 				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Filter "+filter_name+" not found" );
 			}
 			std::string const samp_type( tag->getOption< std::string >( "sample_type", "low" ) );
 			auto filter_delta( tag->getOption< core::Real >( "filter_delta", core::Real( 0. ) ) );
 			//only add the default dummy filter if we dont have any others, allows user to define filters in branch tags only
-			add_filter( find_filt->second->clone(), samp_type, filter_delta );
+			add_filter( filter->clone(), samp_type, filter_delta );
 		}
 	}
 
@@ -981,22 +975,23 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
 	if ( tag->hasOption( "reset_delta_filters" ) ) {
 		delta_filter_names = utility::string_split( tag->getOption< std::string >( "reset_delta_filters" ), ',' );
 		for ( std::string const & fname : delta_filter_names ) {
-			reset_delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
+			reset_delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, data ) ) );
 			TR<<"The baseline for Delta Filter "<<fname<<" will be reset upon each accepted mutation"<<std::endl;
 		}
-		for ( auto const & filter : filters ) {
-			if ( filter.second->get_type() == "CompoundStatement" ) {
-				compound_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::filters::CompoundFilter > ( filter.second ));
+		for ( auto const & filter : data["filters"] ) {
+			protocols::filters::FilterOP filter_ptr = utility::pointer::dynamic_pointer_cast< protocols::filters::Filter >( filter.second );
+			if ( filter_ptr->get_type() == "CompoundStatement" ) {
+				compound_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::filters::CompoundFilter > ( filter_ptr ));
 			}
-			if ( filter.second->get_type() == "CombinedValue" ) {
-				combined_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::filters::CombinedFilter > ( filter.second ));
+			if ( filter_ptr->get_type() == "CombinedValue" ) {
+				combined_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::filters::CombinedFilter > ( filter_ptr ));
 			}
 		}
 	}
 	if ( tag->hasOption( "set_task_for_filters" ) ) {
 		utility::vector1< std::string > filter_names = utility::string_split( tag->getOption< std::string >( "set_task_for_filters" ), ',' );
 		for ( std::string const & fname : filter_names ) {
-			set_task_for_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::TaskAwareScoreTypeFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) ); //Note: Returns a Null pointer if incompatible filter type is passed through the xml.
+			set_task_for_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::TaskAwareScoreTypeFilter > ( protocols::rosetta_scripts::parse_filter( fname, data ) ) ); //Note: Returns a Null pointer if incompatible filter type is passed through the xml.
 			//Would be nice if task_factory() was a standard method of the filter class, so that we could make a Virtual task_factory() method in the Filter base class and not have to have this specific to TaskAwareScoreTypeFilter.  If this proves useful, then perhaps we could consider that...
 			TR<<"The task for filter "<<fname<<" will be set to only allow repacking at the mutated positions."<<std::endl;
 		}

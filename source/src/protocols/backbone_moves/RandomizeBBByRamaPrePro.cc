@@ -131,8 +131,6 @@ void
 RandomizeBBByRamaPrePro::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap,
-	protocols::filters::Filters_map const & ,
-	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & )
 {
 	set_residue_selector( core::select::residue_selector::parse_residue_selector( tag, datamap ) );

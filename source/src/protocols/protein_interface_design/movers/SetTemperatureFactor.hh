@@ -38,7 +38,7 @@ public:
 	void apply( Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SetTemperatureFactor >(); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 	~SetTemperatureFactor() override;
 	void filter( protocols::filters::FilterOP filter );
 	void scaling( core::Real const scaling );

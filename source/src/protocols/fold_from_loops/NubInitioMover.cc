@@ -173,8 +173,6 @@ void
 NubInitioMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & reference_pose )
 {
 
@@ -226,12 +224,12 @@ NubInitioMover::parse_my_tag(
 
 	filter_defined_ = tag->hasOption( "filter_name" );
 	std::string const filter_name( tag->getOption< std::string >( "filter_name", default_filter_name() ) );
-	auto find_filter( filters.find( filter_name ));
-	if ( find_filter == filters.end() ) {
+	protocols::filters::FilterOP filter_ptr = protocols::rosetta_scripts::parse_filter_or_null( filter_name, data );
+	if ( ! filter_ptr ) {
 		TR.Error << "Filter \"" << filter_name << "\"not found in map.\n(Error in this context):\n" << tag << std::endl;
-		runtime_assert( find_filter != filters.end() );
+		utility_exit_with_message("Could not find filter " + filter_name );
 	}
-	filter( find_filter->second->clone() );
+	filter( filter_ptr->clone() );
 	if ( tag->hasOption( "filter_scorefxn" ) ) {
 		filter_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, "filter_scorefxn", data ) );
 	}

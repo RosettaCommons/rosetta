@@ -308,7 +308,7 @@ std::string SpliceIn::get_name() const {
 	return SpliceInCreator::mover_name();
 }
 
-void SpliceIn::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data,protocols::filters::Filters_map const & /*filters*/,protocols::moves::Movers_map const &/* movers*/,core::pose::Pose const & /*pose*/) {
+void SpliceIn::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, core::pose::Pose const & /*pose*/) {
 	typedef utility::vector1<std::string> StringVec;
 	utility::vector1<TagCOP> const sub_tags(tag->getTags());
 	splicemanager.parse_tags(tag,data);

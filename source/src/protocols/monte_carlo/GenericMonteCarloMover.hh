@@ -77,8 +77,6 @@ public:
 
 	typedef utility::tag::TagCOP TagCOP;
 	typedef basic::datacache::DataMap DataMap;
-	typedef protocols::filters::Filters_map Filters_map;
-	typedef protocols::moves::Movers_map Movers_map;
 
 	/// @brief default constructor
 	GenericMonteCarloMover();
@@ -269,8 +267,6 @@ public: // mutators
 	void parse_my_tag(
 		TagCOP tag,
 		basic::datacache::DataMap & data,
-		Filters_map const & filters,
-		Movers_map const & movers,
 		Pose const &
 	) override;
 
@@ -279,9 +275,7 @@ public: // mutators
 	/// @brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_task_operations(
 		TagCOP,
-		basic::datacache::DataMap const &,
-		Filters_map const &,
-		Movers_map const &
+		basic::datacache::DataMap const &
 	);
 
 	void add_filter( FilterOP filter, bool const adaptive, Real const temp, String const & sample_type, bool rank_by=false);

@@ -79,7 +79,7 @@ public:
 
 	core::pack::task::TaskFactoryCOP get_task_factory() const;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
 
 	void apply( core::pose::Pose & pose ) override;
 	void show(std::ostream & output=std::cout) const override;

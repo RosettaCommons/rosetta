@@ -26,6 +26,7 @@
 
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/moves/NullMover.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
@@ -92,8 +93,6 @@ void ScriptCM::apply( core::pose::Pose& pose ){
 
 void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap,
-	protocols::filters::Filters_map const& filters,
-	protocols::moves::Movers_map const& mover_map,
 	core::pose::Pose const& pose ) {
 	name_ = tag->getOption< std::string >( "name" );
 
@@ -104,8 +103,9 @@ void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
 			std::string const& client_name = subtag->getOption< std::string >( "name" );
 			tr.Debug << " Interpreting tag with name " << subtag->getName() << " as existing mover with name '"
 				<< client_name << "'" << std::endl;
-			if ( mover_map.find( client_name ) != mover_map.end() ) {
-				set_client( mover_map.find( client_name )->second );
+			protocols::moves::MoverOP client = protocols::rosetta_scripts::parse_mover_or_null( client_name, datamap );
+			if ( client ) {
+				set_client( client );
 			} else {
 				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Undefined mover '"+client_name+"'." );
 			}
@@ -115,7 +115,7 @@ void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
 		} else {
 			tr.Debug << " Interpreting tag with name " << subtag->getName() << " as a new mover." << std::endl;
 
-			set_client( moves::MoverFactory::get_instance()->newMover( subtag, datamap, filters, mover_map, pose ) );
+			set_client( moves::MoverFactory::get_instance()->newMover( subtag, datamap, pose ) );
 
 			if ( subtag->hasOption( "name" ) ) {
 				tr.Warning << "Mover " << subtag->getOption< std::string >( "name" ) << " will not be availiable to"

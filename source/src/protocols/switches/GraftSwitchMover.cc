@@ -419,8 +419,6 @@ void
 GraftSwitchMover::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
-	Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	Pose const & pose
 )
 {
@@ -468,8 +466,8 @@ GraftSwitchMover::parse_my_tag(
 		important_residues_.push_back( subsplit_Size );
 	}
 
-	parse_score_function( tag, datamap, filters, movers, pose );
-	parse_task_operations( tag, datamap, filters, movers, pose );
+	parse_score_function( tag, datamap, pose );
+	parse_task_operations( tag, datamap, pose );
 }
 
 /// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
@@ -477,8 +475,6 @@ void
 GraftSwitchMover::parse_score_function(
 	TagCOP const tag,
 	basic::datacache::DataMap const & datamap,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const &
 )
 {
@@ -492,8 +488,6 @@ void
 GraftSwitchMover::parse_task_operations(
 	TagCOP const tag,
 	basic::datacache::DataMap const & datamap,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const &
 )
 {

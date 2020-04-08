@@ -213,8 +213,6 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 void DesignProteinBackboneAroundDNA::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
-	protocols::filters::Filters_map const & filters,
-	moves::Movers_map const & movers,
 	Pose const & pose
 )
 {
@@ -230,8 +228,8 @@ void DesignProteinBackboneAroundDNA::parse_my_tag(
 		designable_second_shell_ = tag->getOption<bool>("designable_second_shell");
 	}
 	// the following are calls to PackRotamersMover methods
-	parse_score_function( tag, datamap, filters, movers, pose );
-	parse_task_operations( tag, datamap, filters, movers, pose );
+	parse_score_function( tag, datamap, pose );
+	parse_task_operations( tag, datamap, pose );
 }
 
 /// @brief required in the context of the parser/scripting scheme

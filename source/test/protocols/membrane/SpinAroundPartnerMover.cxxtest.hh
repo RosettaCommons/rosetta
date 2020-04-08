@@ -135,12 +135,10 @@ public: // test functions
 		utility::tag::TagCOP tag = utility::tag::Tag::create( tag_ss );
 
 		basic::datacache::DataMap dm;
-		protocols::filters::Filters_map fm;
-		protocols::moves::Movers_map mm;
 		core::pose::Pose pose;
 
 		SpinAroundPartnerMoverOP xspin( new SpinAroundPartnerMover() );
-		xspin->parse_my_tag( tag, dm, fm, mm, pose );
+		xspin->parse_my_tag( tag, dm, pose );
 
 		TS_ASSERT_EQUALS(xspin->get_jump(), 3);
 		TS_ASSERT_EQUALS(xspin->get_rand_range(), true);

@@ -77,11 +77,9 @@ PrepareForFullatom::PrepareForFullatom() // {{{1
 void PrepareForFullatom::parse_my_tag( // {{{1
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose) {
 
-	LoopMover::parse_my_tag(tag, data, filters, movers, pose);
+	LoopMover::parse_my_tag(tag, data, pose);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
 
 	force_repack_ = tag->getOption<bool>("force_repack", force_repack_);

@@ -102,14 +102,17 @@ Sigmoid::reset_baseline( core::pose::Pose const & pose, bool const attempt_read_
 }
 
 void
-Sigmoid::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & )
+Sigmoid::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data,
+	core::pose::Pose const & )
 {
 	steepness( tag->getOption< core::Real >( "steepness", 1.0 ) );
 	offset( tag->getOption< core::Real >( "offset", 0 ));
 	negate( tag->getOption< bool >( "negate", false ) );
 	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
 	if ( tag->hasOption( "filter" ) ) {
-		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ),filters  ) );
+		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), data ) );
 		TR<<" filter: "<<tag->getOption< std::string >( "filter" )<<std::endl;
 	} else {
 		TR<<"Filter not defined. I'm expecting another filter/mover to set my filter, else I will crash!!!"<<std::endl;

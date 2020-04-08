@@ -68,8 +68,6 @@ SetupForSequenceSymmetryMover::apply( core::pose::Pose & pose ) {
 void SetupForSequenceSymmetryMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap,
-	filters::Filters_map const & /*filters*/,
-	moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/
 ) {
 

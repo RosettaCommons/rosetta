@@ -27,6 +27,8 @@
 #include <protocols/environment/claims/JumpClaim.hh>
 #include <protocols/environment/claims/XYZClaim.hh>
 
+#include <protocols/rosetta_scripts/util.hh>
+
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -167,9 +169,8 @@ loops::Loops read_rigid_core( std::string const& file){
 
 void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap& datamap,
-	protocols::filters::Filters_map const&,
-	protocols::moves::Movers_map const& movermap,
-	core::pose::Pose const& ){
+	core::pose::Pose const&
+){
 
 	using namespace basic::options;
 	using namespace core::select::residue_selector;
@@ -188,14 +189,14 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
 		utility::vector1< std::string > movernames = utility::string_split( apply_to_templates, ',' );
 		for ( utility::vector1< std::string >::const_iterator movername = movernames.begin();
 				movername != movernames.end(); ++movername ) {
-			if ( movermap.find( *movername ) != movermap.end() ) {
-				apply_movers.push_back( movermap.find( *movername )->second );
-			} else {
+			protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover_or_null( *movername, datamap );
+			if ( ! mover ) {
 				std::ostringstream ss;
 				ss << "In mover '" << xml_name_ << "', the 'apply_to_template' tag contained the mover '"
 					<< *movername << "', which could not be found." << std::endl;
 				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  ss.str() );
 			}
+			apply_movers.push_back( mover );
 		}
 	}
 

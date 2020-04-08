@@ -1074,8 +1074,6 @@ PlaceStubMover::add_coordinate_constraints_for_res_stub( core::pose::Pose & pose
 void
 PlaceStubMover::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &filters,
-	Movers_map const &movers,
 	core::pose::Pose const & )
 {
 	using namespace protocols::hotspot_hashing;
@@ -1122,30 +1120,26 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 	min_rb( minimize_rb );
 
 	std::string const after_placement_filter_name( tag->getOption<std::string>( "after_placement_filter", "true_filter" ) );
-	auto find_ap_filter( filters.find( after_placement_filter_name ));
-
-	bool const ap_filter_found( find_ap_filter != filters.end() );
-	if ( ap_filter_found ) {
-		after_placement_filter_ = find_ap_filter->second->clone();
+	protocols::filters::FilterOP after_placement_filter = protocols::rosetta_scripts::parse_filter_or_null( after_placement_filter_name, data );
+	if ( after_placement_filter ) {
+		after_placement_filter_ = after_placement_filter->clone();
 	} else {
 		if ( after_placement_filter_name != "true_filter" ) {
-			TR<<"***WARNING WARNING! Filter defined for PlaceStubMover not found in filter_list!!!! Defaulting to truefilter***"<<std::endl;
-			runtime_assert( ap_filter_found );
+			TR<<"***WARNING WARNING! Filter defined for PlaceStubMover not found in filter_list!!!!***"<<std::endl;
+			utility_exit_with_message( "Could not find filter " + after_placement_filter_name );
 		} else {
 			after_placement_filter_ = utility::pointer::make_shared< protocols::filters::TrueFilter >();
 		}
 	}
 
 	std::string const final_filter_name( tag->getOption<std::string>( "final_filter", "true_filter" ) );
-	auto find_filter( filters.find( final_filter_name ));
-
-	bool const filter_found( find_filter != filters.end() );
-	if ( filter_found ) {
-		final_filter_ = find_filter->second->clone();
+	protocols::filters::FilterOP final_filter = protocols::rosetta_scripts::parse_filter_or_null( final_filter_name, data );
+	if ( final_filter ) {
+		final_filter_ = final_filter->clone();
 	} else {
 		if ( final_filter_name != "true_filter" ) {
 			TR<<"***WARNING WARNING! Filter defined for PlaceStubMover not found in filter_list!!!! Defaulting to truefilter***"<<std::endl;
-			runtime_assert( filter_found );
+			utility_exit_with_message( "Could not find filter " + final_filter_name );
 		} else {
 			final_filter_ = utility::pointer::make_shared< protocols::filters::TrueFilter >();
 		}
@@ -1164,10 +1158,9 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 			for ( const auto & stub_min_tag : stub_min_tags ) {
 				std::string const stub_mover_name( stub_min_tag->getOption<std::string>( "mover_name" ) );
 				auto  const bb_stub_constraint_weight( stub_min_tag->getOption< core::Real > ( "bb_cst_weight", 10.0 ) );
-				auto find_mover( movers.find( stub_mover_name ));
-				bool const stub_mover_found( find_mover != movers.end() );
-				if ( stub_mover_found ) {
-					calc_taskop_movers::DesignRepackMoverOP drSOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( find_mover->second->clone() );
+				protocols::moves::MoverOP stub_mover = protocols::rosetta_scripts::parse_mover_or_null( stub_mover_name, data );
+				if ( stub_mover ) {
+					calc_taskop_movers::DesignRepackMoverOP drSOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( stub_mover->clone() );
 					if ( !drSOP ) {
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drSOP != nullptr );
@@ -1183,10 +1176,9 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 				bool const apply_coord_constraints( m_tag_ptr->getOption< bool >( "use_constraints", true ) );
 				auto const coord_cst_std( m_tag_ptr->getOption< core::Real >( "coord_cst_std", 0.5 ) );
 
-				auto find_mover( movers.find( mover_name ));
-				bool const mover_found( find_mover != movers.end() );
-				if ( mover_found ) {
-					calc_taskop_movers::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( find_mover->second->clone() );
+				protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover_or_null( mover_name, data );
+				if ( mover ) {
+					calc_taskop_movers::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< calc_taskop_movers::DesignRepackMover > ( mover->clone() );
 					if ( !drOP ) {
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drOP != nullptr );
@@ -1196,13 +1188,13 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 					TR<<"added design mover "<<mover_name<<" to place stub with apply_coord_constraints switched to "<< apply_coord_constraints<<" with std "<< coord_cst_std<< " and hurry=" << hurry_ << '\n';
 				} else {
 					TR<<"***WARNING WARNING! Mover defined for PlaceStubMover not found in mover_list. EXITING ***"<<std::endl;
-					runtime_assert( mover_found );
+					utility_exit_with_message( "Could not find mover " + mover_name );
 				}
 			}
 		} else if ( branch_tag->getName() != "NotifyMovers" ) {
 			utility_exit_with_message( "ERROR: tag in PlaceStub not defined\n" );
 		}
-		generate_taskfactory_and_add_task_awareness( branch_tag, movers, data, residue_level_tasks_for_placed_hotspots_ );
+		generate_taskfactory_and_add_task_awareness( branch_tag, data, residue_level_tasks_for_placed_hotspots_ );
 	}
 	if ( stub_minimize_movers_.size() == 0 ) {
 		TR<<"No StubMinimize movers defined by user, defaulting to minimize_rb and _sc of stubs only\n";

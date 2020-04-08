@@ -261,8 +261,6 @@ void
 GeneralizedKIC::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data_map,
-	protocols::filters::Filters_map const &filters,
-	protocols::moves::Movers_map const &movers,
 	core::pose::Pose const & /*pose*/
 ) {
 	using namespace core::id;
@@ -295,12 +293,12 @@ GeneralizedKIC::parse_my_tag(
 	if ( tag->hasOption("stop_when_n_solutions_found") ) set_min_solution_count( tag->getOption<core::Size>("stop_when_n_solutions_found", 0) );
 
 	if ( tag->hasOption("pre_selection_mover") ) {
-		protocols::moves::MoverOP curmover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "pre_selection_mover" ), movers );
+		protocols::moves::MoverOP curmover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "pre_selection_mover" ), data_map );
 		set_preselection_mover(curmover);
 		TR << "GeneralizedKIC mover \"" << tag->getOption< std::string >("name", "") << "\" has been assigned mover \"" << tag->getOption< std::string >("pre_selection_mover") << "\" as a pre-selection mover that will be applied to all solutions prior to applying the selector." << std::endl;
 	}
 	if ( tag->hasOption( "contingent_filter" ) ) {
-		FilterOP curfilter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "contingent_filter" ), filters  );
+		FilterOP curfilter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "contingent_filter" ), data_map );
 		runtime_assert_string_msg( curfilter != nullptr, "Invalid filter specified with contingent_filter tag in GeneralizedKIC." );
 		rosettascripts_filter_exists_=true;
 		rosettascripts_filter_ = utility::pointer::dynamic_pointer_cast< ContingentFilter >(curfilter);

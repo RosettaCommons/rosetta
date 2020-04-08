@@ -70,9 +70,7 @@ using core::scoring::EnergyMap;
 using core::scoring::ScoreFunctionOP;
 // using core::scoring::ScoreTypeManager;
 // using core::scoring::ScoreTypes;
-using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
-using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 using utility::vector1;
 using basic::database::safely_write_to_database;
@@ -146,13 +144,11 @@ DdGFeatures::features_reporter_dependencies() const {
 void
 DdGFeatures::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & /* data */ ,
-	Filters_map const & filters,
-	Movers_map const & /* movers */,
+	basic::datacache::DataMap & data,
 	Pose const & /* pose */
 ) {
 	if ( tag->hasOption("ddG_scan_mover") ) {
-		filters::FilterOP filter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "ddG_scan_mover" ), filters );
+		filters::FilterOP filter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "ddG_scan_mover" ), data );
 		ddG_scan_mover_ = utility::pointer::dynamic_pointer_cast < protocols::simple_ddg::DdGScan > (filter);
 	} else {
 		stringstream error_msg;

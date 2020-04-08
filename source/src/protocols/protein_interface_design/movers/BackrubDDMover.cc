@@ -64,7 +64,6 @@
 #include <numeric/random/random.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
-#include <protocols/moves/Mover.fwd.hh> //Movers_map
 //#include <protocols/simple_moves/BackboneMover.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
@@ -395,8 +394,6 @@ BackrubDDMover::add_selector( core::select::residue_selector::ResidueSelectorOP 
 void BackrubDDMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &,
-	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ));

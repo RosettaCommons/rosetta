@@ -566,8 +566,6 @@ NormalModeRelaxMover::extrapolate_mode_on_pose( pose::Pose const &pose ) const
 void NormalModeRelaxMover::parse_my_tag(
 	TagCOP tag,
 	basic::datacache::DataMap & data,
-	Filters_map const &,
-	protocols::moves::Movers_map const &,
 	Pose const & )
 {
 	cartesian_ = tag->getOption< bool >( "cartesian", true );

@@ -117,8 +117,6 @@ void
 Tumble::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & ,
-	Filters_map const & ,
-	moves::Movers_map const & ,
 	Pose const &
 ) {
 	if ( tag->hasOption( "chain_number" ) ) {

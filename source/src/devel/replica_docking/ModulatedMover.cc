@@ -69,13 +69,11 @@ void
 ModulatedMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data_map,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ) {
 	using namespace utility::tag;
 
-	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "tempering", "null" ), movers );
+	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "tempering", "null" ), data_map );
 	tempering_ = utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::HamiltonianExchange > ( mover );
 	if ( !tempering_ ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ModulatedMover requires an tempering argument" );
@@ -157,7 +155,7 @@ ModulatedMover::parse_my_tag(
 		utility::tag::TagCOP mover_tag = generate_mover_tag( temp_level, our_name, initial_mover_tag );
 		using namespace protocols::moves;
 		using namespace protocols::canonical_sampling;
-		MoverOP new_mover( MoverFactory::get_instance()->newMover( mover_tag, data_map, filters, movers, pose ) );
+		MoverOP new_mover( MoverFactory::get_instance()->newMover( mover_tag, data_map, pose ) );
 		if ( !new_mover ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Failed to instantiate a Mover with name \"" + mover_name_ + "\" from the ModulatedMover" );
 		}

@@ -125,9 +125,7 @@ using core::scoring::fa_atr;
 using core::scoring::fa_rep;
 using core::scoring::fa_sol;
 using numeric::dihedral_radians;
-using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
-using protocols::moves::Movers_map;
 using utility::sql_database::sessionOP;
 using utility::tag::TagCOP;
 using cppdb::statement;
@@ -587,8 +585,6 @@ void
 HBondFeatures::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
 	Pose const & /*pose*/
 ) {
 	if ( tag->hasOption("scorefxn") ) {

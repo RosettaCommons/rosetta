@@ -207,8 +207,6 @@ TryRotamers::apply ( pose::Pose & pose )
 void
 TryRotamers::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &filters,
-	Movers_map const &,
 	Pose const & )
 {
 	resnum_ = core::pose::get_resnum_string( tag );
@@ -217,19 +215,18 @@ TryRotamers::parse_my_tag( TagCOP const tag,
 	jump_num_ = tag->getOption<core::Size>( "jump_num", 1);
 	solo_res_ = tag->getOption<bool>( "solo_res", false);
 	std::string const final_filter_name( tag->getOption<std::string>( "final_filter", "true_filter" ) );
-	auto find_filter( filters.find( final_filter_name ));
+	protocols::filters::FilterOP final_filter = protocols::rosetta_scripts::parse_filter_or_null( final_filter_name, data );
 
 	clash_check_ = tag->getOption<bool>("clash_check", false );
 	include_current_ = tag->getOption<bool>("include_current", true );
 
 	explosion_ = tag->getOption<core::Size>( "explosion", 0);
-	bool const filter_found( find_filter != filters.end() );
-	if ( filter_found ) {
-		final_filter_ = find_filter->second->clone();
+	if ( final_filter ) {
+		final_filter_ = final_filter->clone();
 	} else {
 		if ( final_filter_name != "true_filter" ) {
-			TR<<"***WARNING WARNING! Filter defined for TryRotamers not found in filter_list!!!! Defaulting to truefilter***"<<std::endl;
-			runtime_assert( filter_found );
+			TR<<"***WARNING WARNING! Filter defined for TryRotamers not found in filter_list!!!! ***"<<std::endl;
+			utility_exit_with_message("Could not find filter " + final_filter_name );
 		} else {
 			final_filter_ = utility::pointer::make_shared< protocols::filters::TrueFilter >();
 		}
