@@ -1,0 +1,49 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substitution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#   python      the full path to the Python interpreter
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+
+cd %(workdir)s
+
+# Mac and Linux have different views of what the command is called.
+MD5_COMMAND=`which md5sum`
+if [ -z "$MD5_COMMAND" ]; then
+    MD5_COMMAND="`which md5` -r" # -r to match the Unix format
+fi
+# We want to keep a record of the command for debugging, but we don't care if the path changes.
+echo "USING $MD5_COMMAND" > %(workdir)s/hash_command.ignore
+
+cd %(database)s
+
+# Find all the files in the current (database) directory, sort them, then send them to the md5 file
+# Be sure to also capture all the errors in a log.
+{
+
+find ./ -type f -exec $MD5_COMMAND {} \; | sort -k 2 > %(workdir)s/database_md5s.txt
+
+} 2> %(workdir)s/error.log # The `{} 2>` redirects the stderr for all of the code within.
+
