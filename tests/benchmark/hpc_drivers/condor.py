@@ -4,8 +4,13 @@
 import os, sys, time
 import stat as stat_module
 
-import imp
-imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) + '/base.py')  # A bit of Python magic here, what we trying to say is this: from base import *, but path to base is calculated from our source location  # from base import HPC_Driver, execute, NT
+
+try:
+    from .base import *
+
+except ImportError: # workaround for B2 back-end's
+    import imp
+    imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) + '/base.py')  # A bit of Python magic here, what we trying to say is this: from base import *, but path to base is calculated from our source location  # from base import HPC_Driver, execute, NT
 
 
 T_condor_job_template = '''

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # :noTabs=true:
 
-import os, subprocess, stat
+import os, sys, subprocess, stat
 import time as time_module
 import signal as signal_module
 

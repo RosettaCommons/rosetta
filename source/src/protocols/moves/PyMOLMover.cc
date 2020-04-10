@@ -110,6 +110,7 @@ namespace moves {
 
 static basic::Tracer TR( "protocols.moves.PyMOLMover" );
 
+const int lowest_max_packet_size = 1024;
 
 /// We using independent numeric::random::rg() which is not connected to RNG system because we do not want PyMOL to interfere with other Rosetta systems.
 /// I.e creating and using PyMOL mover should not change any trajectories of the running program even in production mode.
@@ -131,7 +132,7 @@ getRG()
 UDPSocketClient::UDPSocketClient(std::string const & address, unsigned int port, unsigned int max_packet_size) : max_packet_size_(max_packet_size), sentCount_(0)
 {
 	if ( port < 1  or  port > 65535 ) utility_exit_with_message("UDPSocketClient::UDPSocketClient: Invalid value for port:" + std::to_string(port) + " expected value must be in [1, 65535] range!");
-	if ( max_packet_size_ < 1500  or  max_packet_size_ > 65535 ) utility_exit_with_message("UDPSocketClient::UDPSocketClient: Invalid value for max_packet_size:" + std::to_string(max_packet_size_) + " expected value must be in [1500, 65535] range!");
+	if ( max_packet_size_ < lowest_max_packet_size  or  max_packet_size_ > 65535 ) utility_exit_with_message("UDPSocketClient::UDPSocketClient: Invalid value for max_packet_size:" + std::to_string(max_packet_size_) + " expected value must be in [" + std::to_string(lowest_max_packet_size) + ", 65535] range!");
 
 #ifndef  __native_client__
 	/*
@@ -1159,7 +1160,7 @@ void PyMOLMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	XMLSchemaRestriction port_range = integer_range_restriction( "port_range", 1, 65535);
 	xsd.add_top_level_element(port_range);
 
-	XMLSchemaRestriction max_packet_size_range = integer_range_restriction( "max_packet_size_range", 1500, 65535);
+	XMLSchemaRestriction max_packet_size_range = integer_range_restriction( "max_packet_size_range", lowest_max_packet_size, 65535);
 	xsd.add_top_level_element(max_packet_size_range);
 
 	AttributeList attlist;

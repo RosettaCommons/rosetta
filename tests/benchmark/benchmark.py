@@ -14,8 +14,10 @@
 
 from __future__ import print_function
 
-import os, os.path, sys, imp, shutil, json, platform, re
+import os, os.path, sys, shutil, json, platform, re
 import codecs
+
+from importlib.machinery import SourceFileLoader
 
 from configparser import ConfigParser
 import argparse
@@ -37,6 +39,12 @@ else:                                Platform['os'] = 'unknown'
 Platform['compiler'] = 'gcc' if Platform['os'] == 'linux' else 'clang'
 
 Platform['python'] = sys.executable
+
+
+def load_python_source_from_file(module_name, module_path):
+    ''' replacment for deprecated imp.load_source
+    '''
+    return SourceFileLoader(module_name, module_path).load_module()
 
 
 class Setup(object):
@@ -170,7 +178,8 @@ def truncate_log(log):
             print(f'WARNING: could not truncate log line-by-line, falling back to raw truncate...')
             new = 'WARNING: could not truncate test log line-by-line, falling back to raw truncate!\n...truncated...\n' + ( '\n'.join(lines) )[-_max_log_size_+256:]
 
-        print( 'Trunacting test output log: {0}MiB → {1}MiB'.format(len(log)/1024/1024, len(new)/1024/1024) )
+        print( 'Trunacting test output log: {0}MiB --> {1}MiB'.format(len(log)/1024/1024, len(new)/1024/1024) )
+
         log = new
 
     return log
@@ -222,7 +231,8 @@ def run_test(setup):
     test_name = '.'.join(rest)
 
     print( f'Loading test from: {file_name}, suite+test: {test!r}, test: {test_name!r}' )
-    test_suite = imp.load_source('test_suite', file_name)
+    #test_suite = imp.load_source('test_suite', file_name)
+    test_suite = load_python_source_from_file('test_suite', file_name)
 
     test_description = find_test_description(test_name, file_name)
 
@@ -278,7 +288,7 @@ def run_test(setup):
         working_dir = setup.working_dir  #os.path.abspath( setup.config['results_root'] + f'/{platform["os"]}.{test}{options.suffix}' )
 
         hpc_driver_name = setup.config['hpc_driver']
-        hpc_driver = eval(hpc_driver_name + '_HPC_Driver')(working_dir, setup.config, tracer=print, set_daemon_message=lambda x:None) if hpc_driver_name else None
+        hpc_driver = None if hpc_driver_name in ['', 'none'] else eval(hpc_driver_name + '_HPC_Driver')(working_dir, setup.config, tracer=print, set_daemon_message=lambda x:None)
 
         api_version = test_suite._api_version_ if hasattr(test_suite, '_api_version_') else ''
 

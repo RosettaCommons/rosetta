@@ -16,7 +16,7 @@ memory = 64
 user_name  = Jane Roe
 user_email = jane.roe@university.edu
 
-# HPC Driver, might have one of the following values: MultiCore, Condor
+# HPC Driver, might have one of the following values: MultiCore, Condor, or none if no HPC Driver should be configured
 hpc_driver = MultiCore
 
 # when running by daemons branch:revision will be set to appropriate values to represent currently checked version of main repository

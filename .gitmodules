@@ -3,7 +3,7 @@
 ############################
 [submodule "source/external/msgpack/msgpack-c.upstream"]
 	path = source/external/msgpack/msgpack-c.upstream
-	url = ../../msgpack/msgpack-c.git
+	url = https://github.com/msgpack/msgpack-c.git
 [submodule "source/external/libzmq"]
 	path = source/external/libzmq
 	url = ../libzmq.git
@@ -285,7 +285,7 @@
 	path = source/external/pybind11
 	url = ../pybind11.git
 ###########################
-# Rosetta modules 
+# Rosetta modules
 ###########################
 [submodule "tools"]
 	path = tools

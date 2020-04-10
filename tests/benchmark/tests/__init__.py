@@ -885,4 +885,11 @@ def convert_submodule_urls_from_ssh_to_https(repository_root):
     ''' switching submodules URL to HTTPS so we can clone without SSH key
     '''
     with open(f'{repository_root}/.gitmodules') as f: m = f.read()
-    with open(f'{repository_root}/.gitmodules', 'w') as f: f.write( m.replace('git@github.com:', 'https://github.com/') )
+    with open(f'{repository_root}/.gitmodules', 'w') as f:
+        f.write(
+            m
+            .replace('url = git@github.com:', 'url = https://github.com/')
+            .replace('url = ../../../',       'url = https://github.com/RosettaCommons/')
+            .replace('url = ../../',          'url = https://github.com/RosettaCommons/')
+            .replace('url = ../',             'url = https://github.com/RosettaCommons/')
+        )
