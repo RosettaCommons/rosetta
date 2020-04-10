@@ -34,8 +34,8 @@ tests = dict(
 
     #PyRosetta = NT(command='BuildPyRosetta.sh -u --monolith -j{jobs}', incremental=True),
 
-    header    = NT(command='./scons.py unit_test_platform_only ; cd src && python ./../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),
-    levels    = NT(command= ' && '.join(PRE_COMPILE_SETUP_SCRIPTS) + ' && cd src && python ./../../tools/python_cc_reader/library_levels.py', incremental=False),
+    header    = NT(command='./scons.py unit_test_platform_only ; cd src && python3 ./../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),
+    levels    = NT(command= ' && '.join(PRE_COMPILE_SETUP_SCRIPTS) + ' && {activate} && cd src && python ./../../tools/python_cc_reader/library_levels.py', incremental=False),
 
     cppcheck  = NT(command='cd src && bash ../../tests/benchmark/util/do_cppcheck.sh -j {jobs} -e "{extras}" -w "{working_dir}"', incremental=False),
 
@@ -76,10 +76,22 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     skip_compile = config.get('skip_compile', False) # Don't skip the actual build we're testing, just the compilation/installation of other things
 
-    if not skip_compile:
-        python = local_python_install(platform, config).python # Will install a local python
-    else:
+    activate = 'ACTIVATE-WAS-NOT-SET'
+
+    if skip_compile:
         python = sys.executable
+
+    else:
+        python_environment = local_python_install(platform, config)
+        python = python_environment.python
+
+        python_extra_packages = dict(
+            levels='toolz==0.10',
+        ).get(test)
+
+        if python_extra_packages:
+            python_virtual_environment = setup_persistent_python_virtual_environment(python_environment, python_extra_packages)
+            activate = python_virtual_environment.activate
 
     if 'qmake' in config:
         qmake = config['qmake']

@@ -12,7 +12,8 @@
 /// @author Alex Ford (fordas@uw.edu)
 //
 
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_SegmentSequenceProfile_JSON_HH
+#define INCLUDED_protocols_indexed_structure_store_SegmentSequenceProfile_JSON_HH
 
 #include <json.hpp>
 #include <protocols/indexed_structure_store/SegmentSequenceProfile.hh>
@@ -37,3 +38,5 @@ inline void from_json(const nlohmann::json& j, SegmentSequenceProfileConfig& c) 
 
 }
 }
+
+#endif

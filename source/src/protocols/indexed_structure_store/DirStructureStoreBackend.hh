@@ -12,7 +12,8 @@
 /// @author Alex Ford <fordas@uw.edu>
 //
 
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_DirStructureStoreBackend_HH
+#define INCLUDED_protocols_indexed_structure_store_DirStructureStoreBackend_HH
 
 // Utility Headers
 #include <platform/types.hh>
@@ -46,3 +47,5 @@ public:
 
 }
 }
+
+#endif

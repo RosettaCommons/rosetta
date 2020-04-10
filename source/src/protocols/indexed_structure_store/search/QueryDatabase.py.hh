@@ -11,7 +11,8 @@
 /// @brief Database for generic alignment-based queries over structure stores.
 /// @author Alex Ford (fordas@uw.edu)
 //
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_search_QueryDatabase_PY_HH
+#define INCLUDED_protocols_indexed_structure_store_search_QueryDatabase_PY_HH
 
 #include "stdint.h"
 #include <iostream>
@@ -124,3 +125,5 @@ template<typename Module> void bind_QueryDatabase(Module & m)
 }
 
 }}}
+
+#endif

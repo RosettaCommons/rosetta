@@ -334,7 +334,7 @@ public:
 			//new way
 			//partially stolen from FloppyTail - I need to go back and extract this code unit
 			utility::vector1< std::set < core::Size > > regions; //a set of regions to turn into groups for comparison
-			std::set < core::Size > const empty; //easier to add empty sets to the vector than construct-then-add
+			std::set < core::Size > const empty{}; //easier to add empty sets to the vector than construct-then-add
 
 			//E2
 			core::Size const E2_end(complex.conformation().chain_end(1));

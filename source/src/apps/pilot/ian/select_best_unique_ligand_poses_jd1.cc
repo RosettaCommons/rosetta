@@ -126,7 +126,7 @@ main( int argc, char * argv [] )
 		// Write them out
 		{
 			utility::io::ozstream out( option[out::file::silent]() );
-			std::map< std::string, core::Real > const empty_scores;
+			std::map< std::string, core::Real > const empty_scores{};
 			core::pose::PoseCOP ref_pose = selected_poses[1];
 			core::import_pose::atom_tree_diffs::dump_reference_pose(out, "REF", empty_scores, *ref_pose);
 			for ( core::Size i = 1; i <= selected_poses.size(); ++i ) {

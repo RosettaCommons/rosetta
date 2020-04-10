@@ -11,7 +11,8 @@
 /// @brief Pybind11 converter support for indexed_structure_store datatypes.
 /// @author Alex Ford <fordas@uw.edu>
 //
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_Datatypes_PY_HH
+#define INCLUDED_protocols_indexed_structure_store_Datatypes_PY_HH
 
 #include "stdint.h"
 #include <iostream>
@@ -29,3 +30,5 @@ DECLARE_NONPOD_DTYPE_SUPPORT(protocols::indexed_structure_store::ResidueBackbone
 DECLARE_NONPOD_DTYPE_SUPPORT(protocols::indexed_structure_store::ResidueSidechainEntry);
 DECLARE_NONPOD_DTYPE_SUPPORT(protocols::indexed_structure_store::ResidueOrientEntry);
 DECLARE_NONPOD_DTYPE_SUPPORT(protocols::indexed_structure_store::ResidueEntry);
+
+#endif

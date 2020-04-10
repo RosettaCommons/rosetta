@@ -12,7 +12,8 @@
 ///
 /// @author Sergey Lyskov
 
-#pragma once
+#ifndef INCLUDED_protocols_network_ui_mover_FWD_HH
+#define INCLUDED_protocols_network_ui_mover_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -39,3 +40,5 @@ using UIObserverCOP = UIObserverCSP;
 
 } // namespace network
 } // namespace protocols
+
+#endif

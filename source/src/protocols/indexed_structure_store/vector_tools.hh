@@ -10,7 +10,8 @@
 /// @file ./src/protocols/indexed_structure_store/vector_tools.hh
 /// @brief Support templates for working with vectors
 /// @author Alex Ford (fordas@uw.edu)
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_vector_tools_HH
+#define INCLUDED_protocols_indexed_structure_store_vector_tools_HH
 
 #include <vector>
 #include <algorithm>
@@ -66,3 +67,5 @@ std::vector<T>
 a_to_v(ndarray::Array<T, 1> arr){
 	return r_to_v<T>(arr);
 }
+
+#endif

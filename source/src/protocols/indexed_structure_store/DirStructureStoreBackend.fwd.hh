@@ -12,7 +12,8 @@
 /// @author Alex Ford <fordas@uw.edu>
 //
 
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_DirStructureStoreBackend_FWD_HH
+#define INCLUDED_protocols_indexed_structure_store_DirStructureStoreBackend_FWD_HH
 
 namespace protocols
 {
@@ -23,3 +24,5 @@ class DirStructureStoreBackend;
 
 }
 }
+
+#endif

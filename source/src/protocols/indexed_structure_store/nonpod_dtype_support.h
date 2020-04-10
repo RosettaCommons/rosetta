@@ -14,7 +14,8 @@
 #include "pybind11/pybind11.h"
 #include "pybind11/numpy.h"
 
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_nonpod_dtype_support.h
+#define INCLUDED_protocols_indexed_structure_store_nonpod_dtype_support.h
 
 namespace pybind11 { namespace detail {
 
@@ -70,3 +71,5 @@ namespace pybind11 { namespace detail { \
       } \
   }; \
 }
+
+#endif

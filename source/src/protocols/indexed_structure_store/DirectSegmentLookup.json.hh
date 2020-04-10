@@ -11,7 +11,8 @@
 /// @brief
 /// @author Alex Ford <fordas@uw.edu>
 
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_DirectSegmentLookup_JSON_HH
+#define INCLUDED_protocols_indexed_structure_store_DirectSegmentLookup_JSON_HH
 
 #include <json.hpp>
 #include <protocols/indexed_structure_store/DirectSegmentLookup.hh>
@@ -38,3 +39,5 @@ inline void from_json(const nlohmann::json& j, DirectSegmentLookupConfig& c) {
 
 }
 }
+
+#endif

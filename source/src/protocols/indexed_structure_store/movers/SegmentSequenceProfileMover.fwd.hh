@@ -7,7 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_movers_SegmentSequenceProfileMover_FWD_HH
+#define INCLUDED_protocols_indexed_structure_store_movers_SegmentSequenceProfileMover_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -18,3 +19,5 @@ typedef utility::pointer::shared_ptr< SegmentSequenceProfileMover > SegmentSeque
 typedef utility::pointer::shared_ptr< SegmentSequenceProfileMover const > SegmentSequenceProfileMoverCOP;
 
 } } }
+
+#endif

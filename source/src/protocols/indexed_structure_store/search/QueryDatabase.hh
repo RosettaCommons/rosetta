@@ -11,7 +11,8 @@
 /// @brief Database for generic alignment-based queries over structure stores.
 /// @author Alex Ford (fordas@uw.edu)
 //
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_search_QueryDatabase_HH
+#define INCLUDED_protocols_indexed_structure_store_search_QueryDatabase_HH
 
 #include <iostream>
 
@@ -290,3 +291,5 @@ public:
 };
 
 }}}
+
+#endif

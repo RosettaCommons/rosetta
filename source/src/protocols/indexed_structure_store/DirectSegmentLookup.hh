@@ -12,7 +12,8 @@
 /// @details
 /// @author Alex Ford (fordas@uw.edu)
 
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_DirectSegmentLookup_HH
+#define INCLUDED_protocols_indexed_structure_store_DirectSegmentLookup_HH
 
 #include <ndarray.h>
 #include <numeric/types.hh>
@@ -51,3 +52,5 @@ struct DirectSegmentLookup {
 };
 
 } }
+
+#endif

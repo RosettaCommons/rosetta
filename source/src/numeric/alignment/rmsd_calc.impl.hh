@@ -7,7 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-#pragma once
+#ifndef INCLUDED_numeric_alignment_rmsd_calc_impl_HH
+#define INCLUDED_numeric_alignment_rmsd_calc_impl_HH
 
 #include <cstdlib>
 
@@ -366,3 +367,5 @@ void indexed_coordinate_array_broadcast_rmsd(
 
 }
 }
+
+#endif

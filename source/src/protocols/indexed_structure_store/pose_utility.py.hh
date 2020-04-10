@@ -10,7 +10,8 @@
 /// @author Alex Ford (fordas@uw.edu)
 //
 
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_pose_utility_PY_HH
+#define INCLUDED_protocols_indexed_structure_store_pose_utility_PY_HH
 #include "stdint.h"
 #include <iostream>
 
@@ -87,3 +88,5 @@ template<typename Module> void bind_pose_utility(Module & m){
 }
 
 } }
+
+#endif

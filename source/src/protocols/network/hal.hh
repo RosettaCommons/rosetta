@@ -14,7 +14,8 @@
 
 #ifdef ZEROMQ
 
-#pragma once
+#ifndef INCLUDED_protocols_network_hal_HH
+#define INCLUDED_protocols_network_hal_HH
 
 #include <core/pose/Pose.hh>
 #include <protocols/network/util.hh>
@@ -363,3 +364,5 @@ HA::HA( core::pose::Pose (*f)(As...), json::array_t const &a) : HA( std::functio
 } // namespace protocols
 
 #endif // ZEROMQ
+
+#endif

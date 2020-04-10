@@ -38,7 +38,8 @@
 ///                new request without delaying main thread.
 ///
 
-#pragma once
+#ifndef INCLUDED_protocols_network_cloud_HH
+#define INCLUDED_protocols_network_cloud_HH
 
 #include <core/pose/Pose.fwd.hh>
 
@@ -55,3 +56,5 @@ void post_decoy(core::pose::Pose const &pose);
 
 } // namespace network
 } // namespace protocols
+
+#endif

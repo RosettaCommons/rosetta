@@ -14,7 +14,8 @@
 
 #ifdef ZEROMQ
 
-#pragma once
+#ifndef INCLUDED_protocols_network_util_HH
+#define INCLUDED_protocols_network_util_HH
 
 #include <core/pose/Pose.fwd.hh>
 
@@ -118,3 +119,5 @@ struct HAL_Settings
 } // namespace protocols
 
 #endif // ZEROMQ
+
+#endif

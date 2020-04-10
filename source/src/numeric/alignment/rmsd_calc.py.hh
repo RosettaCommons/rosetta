@@ -7,7 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-#pragma once
+#ifndef INCLUDED_numeric_alignment_rmsd_calc_PY_HH
+#define INCLUDED_numeric_alignment_rmsd_calc_PY_HH
 
 #include "ndarray.h"
 #include "ndarray/pybind11.h"
@@ -30,3 +31,5 @@ template<typename Module> void bind_rmsd_calc(Module & m)
 
 }
 }
+
+#endif

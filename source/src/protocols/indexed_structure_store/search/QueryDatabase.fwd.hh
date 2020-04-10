@@ -12,7 +12,8 @@
 /// @author Alex Ford (fordas@uw.edu)
 //
 
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_search_QueryDatabase_FWD_HH
+#define INCLUDED_protocols_indexed_structure_store_search_QueryDatabase_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
@@ -25,3 +26,5 @@ typedef utility::pointer::shared_ptr<StructureDatabase> StructureDatabaseOP;
 typedef utility::pointer::shared_ptr<StructureDatabase const> StructureDatabaseCOP;
 
 } } }
+
+#endif

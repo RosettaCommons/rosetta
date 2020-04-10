@@ -11,7 +11,8 @@
 /// @brief Python bindings for a POD-based database of residue-level protein structures.
 /// @author Alex Ford (fordas@uw.edu)
 //
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_StructureStore_PY_HH
+#define INCLUDED_protocols_indexed_structure_store_StructureStore_PY_HH
 
 #include "stdint.h"
 #include <iostream>
@@ -81,3 +82,5 @@ template<typename Module> void bind_StructureStore(Module & m)
 }
 
 }}
+
+#endif

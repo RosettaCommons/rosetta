@@ -9,7 +9,8 @@
 //
 /// @author Alex Ford (fordas@uw.edu)
 //
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_pose_utility_HH
+#define INCLUDED_protocols_indexed_structure_store_pose_utility_HH
 
 #include <boost/range.hpp>
 #include <ndarray.h>
@@ -65,3 +66,5 @@ initial_pose_for_residues(
 class PoseUtilityPlaceholder {};
 
 } }
+
+#endif

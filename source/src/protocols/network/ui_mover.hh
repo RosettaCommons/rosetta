@@ -12,7 +12,8 @@
 ///
 /// @author Sergey Lyskov
 
-#pragma once
+#ifndef INCLUDED_protocols_network_ui_mover_HH
+#define INCLUDED_protocols_network_ui_mover_HH
 
 #include <protocols/network/ui_mover.fwd.hh>
 
@@ -197,3 +198,5 @@ UIObserverOP AddUIObserver_to_conformation(core::pose::Pose & p);//, bool keep_h
 // #ifdef    SERIALIZATION
 // CEREAL_FORCE_DYNAMIC_INIT( protocols_network_UIObserver )
 // #endif // SERIALIZATION
+
+#endif

@@ -38,8 +38,8 @@ def run_serialization_test(rosetta_dir, working_dir, platform, config, hpc_drive
     json_output_dir = working_dir + '/serialization-validator-output'
     os.mkdir( json_output_dir )
 
-    command_line = 'export PYTHONPATH={tools_dir}/python_cc_reader${{PYTHONPATH+:$PYTHONPATH}} && cd {rosetta_dir}/source && python ../tools/clang_ast_transform/run_on_all_ccfiles_w_fork.py -e '\
-    '"python  {rosetta_dir}/tools/clang_ast_transform/run_serialization_validator_on_file.py --executable_path {executable} --json_output_path {json_output_dir} --filename" -n {jobs}'.format(**vars())
+    command_line = 'export PYTHONPATH={tools_dir}/python_cc_reader${{PYTHONPATH+:$PYTHONPATH}} && cd {rosetta_dir}/source && python3 ../tools/clang_ast_transform/run_on_all_ccfiles_w_fork.py -e '\
+    '"python3  {rosetta_dir}/tools/clang_ast_transform/run_serialization_validator_on_file.py --executable_path {executable} --json_output_path {json_output_dir} --filename" -n {jobs}'.format(**vars())
 
     res, output = execute('Running...', command_line, return_='tuple')
     output = 'Running: ' + command_line + '\n' + output + '\n\n'
@@ -47,6 +47,8 @@ def run_serialization_test(rosetta_dir, working_dir, platform, config, hpc_drive
     json_files = [f for f in os.listdir(json_output_dir) if f.endswith('.json')]
     if json_files:
         state = _S_failed_ if res else _S_passed_
+        if res:
+            output += "Non-zero return code {}\n".format(res)
         tests = {}
         results = {_TestsKey_:tests}
 
@@ -57,8 +59,9 @@ def run_serialization_test(rosetta_dir, working_dir, platform, config, hpc_drive
                 if _StateKey_ not in jr[k]  or  jr[k][_StateKey_] != _S_passed_:
                     tests[key] = jr[k]
                     state = _S_failed_
+                    output += 'Test {} failed!\n'.format(key)
                 else:
-                    output += 'Test {} is passed!\n'.format(key)
+                    output += 'Test {} passed!\n'.format(key)
 
     else:
         state, results = _S_script_failed_, {}
@@ -386,7 +389,7 @@ def run_beautification_test(rosetta_dir, working_dir, platform, config, hpc_driv
     setup_for_compile(rosetta_dir)
 
     state, results, output = _S_script_failed_, {}, ''
-    res, o = execute('Reading the source code, trying to see a beauty in it...', 'cd {}/source && python ../tools/python_cc_reader/test_all_files_already_beautiful.py -j {}'.format(rosetta_dir, jobs), return_='tuple')
+    res, o = execute('Reading the source code, trying to see a beauty in it...', 'cd {}/source && python3 ../tools/python_cc_reader/test_all_files_already_beautiful.py -j {}'.format(rosetta_dir, jobs), return_='tuple')
 
     if res:
         state, output = _S_failed_, 'Some of the source code looks ugly!!! Script test_all_files_already_beautiful.py output:\n' + o
@@ -435,8 +438,8 @@ def run_beautify_test(rosetta_dir, working_dir, platform, config, hpc_driver=Non
 
             output += execute('Checking out branch...', 'cd {} && git fetch && git update-ref refs/heads/{branch} origin/{branch} && git reset --hard {branch} && git checkout {branch} && git submodule update && git branch --set-upstream-to=origin/{branch} {branch}'.format(rosetta_dir, branch=branch), return_='output', add_message_and_command_line_to_output=True)
 
-            if branch == 'master': res, o = execute('Beautifying...', 'cd {}/source && python ../tools/python_cc_reader/beautify_rosetta.py --overwrite -j {}'.format(rosetta_dir, jobs), return_='tuple', add_message_and_command_line_to_output=True)
-            else: res, o = execute('Beautifying...', 'cd {}/source && python ../tools/python_cc_reader/beautify_changed_files_in_branch.py -j {}'.format(rosetta_dir, jobs), return_='tuple', add_message_and_command_line_to_output=True)
+            if branch == 'master': res, o = execute('Beautifying...', 'cd {}/source && python3 ../tools/python_cc_reader/beautify_rosetta.py --overwrite -j {}'.format(rosetta_dir, jobs), return_='tuple', add_message_and_command_line_to_output=True)
+            else: res, o = execute('Beautifying...', 'cd {}/source && python3 ../tools/python_cc_reader/beautify_changed_files_in_branch.py -j {}'.format(rosetta_dir, jobs), return_='tuple', add_message_and_command_line_to_output=True)
 
             if res:
                 state, output = _S_failed_, 'Beautification script failed with output: {}\nAborting...\n'.format(o)

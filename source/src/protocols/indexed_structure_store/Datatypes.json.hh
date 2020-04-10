@@ -11,7 +11,8 @@
 /// @brief json-support functions for indexed_structure_store primitive datatypes.
 /// @author Alex Ford <fordas@uw.edu>
 
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_Datatypes_JSON_HH
+#define INCLUDED_protocols_indexed_structure_store_Datatypes_JSON_HH
 
 #include <algorithm>
 #include <string>
@@ -119,3 +120,5 @@ inline void from_json(const nlohmann::json& j, StructureEntry& i) {
 }
 }
 }
+
+#endif

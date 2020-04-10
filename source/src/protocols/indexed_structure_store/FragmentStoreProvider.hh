@@ -12,7 +12,8 @@
 /// @author Brian D. Weitzner (bweitzner@lyell.com)
 //
 
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_FragmentStoreProvider_HH
+#define INCLUDED_protocols_indexed_structure_store_FragmentStoreProvider_HH
 
 // Utility Headers
 #include <platform/types.hh>
@@ -46,3 +47,5 @@ public:
 
 }
 }
+
+#endif

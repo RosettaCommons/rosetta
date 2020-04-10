@@ -9,7 +9,8 @@
 
 /// @file src/protocols/indexed_structure_store/movers/DirectSegmentLookupMover.hh
 
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_movers_DirectSegmentLookupMover_HH
+#define INCLUDED_protocols_indexed_structure_store_movers_DirectSegmentLookupMover_HH
 
 // C++ Headers
 #include <string>
@@ -129,3 +130,5 @@ private:
 
 
 } } }
+
+#endif

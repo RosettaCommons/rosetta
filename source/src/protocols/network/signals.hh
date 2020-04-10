@@ -14,7 +14,8 @@
 
 #ifdef SERIALIZATION
 
-#pragma once
+#ifndef INCLUDED_protocols_network_signals_HH
+#define INCLUDED_protocols_network_signals_HH
 
 namespace protocols {
 namespace network {
@@ -23,3 +24,5 @@ namespace network {
 } // namespace protocols
 
 #endif // SERIALIZATION
+
+#endif

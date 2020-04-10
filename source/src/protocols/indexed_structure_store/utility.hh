@@ -9,7 +9,8 @@
 
 /// @file src/protocols/indexed_structure_store/utility.hh
 
-#pragma once
+#ifndef INCLUDED_protocols_indexed_structure_store_utility_HH
+#define INCLUDED_protocols_indexed_structure_store_utility_HH
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -35,3 +36,5 @@ append_pose_with_overlap(
 );
 
 } }
+
+#endif
