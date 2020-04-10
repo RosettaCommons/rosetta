@@ -138,8 +138,16 @@ TaskAwareSymMinMover::apply(Pose & pose) {
 
 	// If rigid body minimization is desired, minimize again with that
 	if ( min_rb_ ) {
-		movemap->set_jump(true);
+		if ( rb_symdofs_.size() == 0 ) {
+			movemap->set_jump(true);
+		} else {
+			for ( core::Size i=1; i<=rb_symdofs_.size(); ++i ) {
+				core::Size jid = sym_info->get_jump_num(rb_symdofs_[i]);
+				movemap->set_jump(jid, true);
+			}
+		}
 		core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
+		TR << *movemap << std::endl;
 		protocols::minimization_packing::symmetry::SymMinMover m2( movemap, scorefxn_, min_type_, tolerance_, true, false, false );
 		m2.apply(pose);
 	}
@@ -155,6 +163,10 @@ TaskAwareSymMinMover::parse_my_tag( utility::tag::TagCOP tag,
 	min_chi_ = tag->getOption< bool >( "chi", true );
 	min_bb_ = tag->getOption< bool >( "bb", false );
 	min_rb_ = tag->getOption< bool >( "rb", false );
+	if ( tag->hasOption("symdofs") ) {
+		std::string symdofs_str = tag->getOption< std::string >( "symdofs" );
+		rb_symdofs_ = utility::string_split( symdofs_str , ',' );
+	}
 	min_type_ = tag->getOption< std::string >( "type", "lbfgs_armijo_nonmonotone" );
 	tolerance_ = tag->getOption< core::Real >( "tolerance", 1e-5 );
 	designable_only_ = tag->getOption< bool >( "designable_only", true );
@@ -180,6 +192,7 @@ void TaskAwareSymMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		+ XMLSchemaAttribute::attribute_w_default( "chi", xsct_rosetta_bool, "Whether to allow side chain minimization.", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "bb", xsct_rosetta_bool, "Whether to allow backbone minimization.", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "rb", xsct_rosetta_bool, "Whether to allow rigid body minimization.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "symdofs", xs_string, "The symmetric dofs that are allowed to move (if rb is enabled).", "" )
 		+ XMLSchemaAttribute::attribute_w_default( "type", xs_string, "Minimization type. For example, can also be 'dfpmin_armijo_nonmonotone'.", "lbfgs_armijo_nonmonotone" )
 		+ XMLSchemaAttribute::attribute_w_default( "tolerance", xsct_real, "Tolerance of minimization?", "1e-5" )
 		+ XMLSchemaAttribute::attribute_w_default( "designable_only", xsct_rosetta_bool, "If true, only minimize designable residues.", "true" ) ;

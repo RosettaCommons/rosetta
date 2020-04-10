@@ -530,7 +530,7 @@ SymmetricConformation::get_upstream_vrt( Size seqpos ) const {
 
 // Get the transformation controlling resid i
 numeric::HomogeneousTransform< core::Real >
-SymmetricConformation::get_transformation( core::Size resid ) {
+SymmetricConformation::get_transformation( core::Size resid, bool input_is_subunit_id /*=false*/ ) {
 	if ( Tsymm_.size() == 0 ) {
 		recalculate_transforms( );
 	}
@@ -540,7 +540,8 @@ SymmetricConformation::get_transformation( core::Size resid ) {
 		compid = symm_info_->get_component_of_residue( resid );
 	}
 
-	return Tsymm_[ compid ][ symm_info_->subunit_index( resid ) ].ht();
+	core::Size subunit = input_is_subunit_id ? resid : symm_info_->subunit_index( resid );
+	return Tsymm_[ compid ][ subunit ].ht();
 }
 
 //  Remap coordinate X from resid i to j

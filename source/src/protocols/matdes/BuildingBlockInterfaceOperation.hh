@@ -60,6 +60,7 @@ public:
 
 private:
 
+	core::pose::PoseOP bblock_reference_pose_;
 	core::Size nsub_bblock_;
 	std::string sym_dof_names_;
 	core::Real contact_dist_;

@@ -172,7 +172,7 @@ public:
 
 	/// @brief Get the transformation controlling resid i
 	numeric::HomogeneousTransform< core::Real >
-	get_transformation( core::Size resid );
+	get_transformation( core::Size resid, bool input_is_subunit_id=false );
 
 	/// @brief Remap coordinate X from resid i's frame to resid j's frame
 	virtual

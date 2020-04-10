@@ -18,17 +18,23 @@
 // Project Headers
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/chains_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <numeric/HomogeneousTransform.hh>
+#include <numeric/model_quality/rms.hh>
+#include <numeric/UniformRotationSampler.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -48,6 +54,110 @@ namespace matdes {
 
 using namespace core::pack::task::operation;
 using namespace utility::tag;
+
+//fd  GIVEN: a symmetric pose and a symmetric SUBCOMPLEX
+//fd  RETURN: the index of all subcomplex subunits in the pose
+//fd  NOTE that both symmetries might be unbounded (e.g., a 1D fiber in a 3D lattice)
+//fd    so we need to consider that the subcomplex is not "extended" as far as the pose
+utility::vector1< core::Size >
+get_matching_subunits( core::pose::Pose const &pose, core::pose::Pose const &subpose ) {
+	runtime_assert( subpose.pdb_info() != nullptr );
+	runtime_assert( core::pose::symmetry::is_symmetric( pose ) );
+
+	// split reference pose into chains
+	std::map< char, utility::vector1< numeric::xyzVector<core::Real> > > cas_by_chain;
+	core::Size nres = subpose.total_residue();
+	for ( core::Size i=1; i<=nres; ++i ) {
+		if ( subpose.residue(i).is_protein() ) {
+			char chn = subpose.pdb_info()->chain(i);
+			numeric::xyzVector< core::Real > x_i = subpose.residue(i).atom(" CA ").xyz();
+			cas_by_chain[chn].push_back( x_i );
+		}
+	}
+
+	// "main" chain (in _ref_ pose) is 'A' (if it exists) or the first chain
+	char refchain = 'A';
+	if ( cas_by_chain.count('A')==0 ) {
+		refchain = subpose.pdb_info()->chain(1);
+	}
+
+	core::Size nres_asu = cas_by_chain[refchain].size();
+	numeric::xyzVector< core::Real > ref_com(0.,0.,0.);
+	ObjexxFCL::FArray2D< core::Real > ref_coords( 3, nres_asu );
+	for ( core::Size i=1; i<=nres_asu; ++i ) {
+		ref_com += cas_by_chain[refchain][i];
+		for ( int j=0; j<3; ++j ) ref_coords(j+1,i) = cas_by_chain[refchain][i][j];
+	}
+	ref_com /= nres_asu;
+	for ( core::Size i=1; i<=nres_asu; ++i ) {
+		for ( int j=0; j<3; ++j ) ref_coords(j+1,i) -= ref_com[j];
+	}
+
+
+	// get all transforms
+	utility::vector1< numeric::HomogeneousTransform< core::Real > > transforms;
+	for ( auto iter = cas_by_chain.begin(); iter != cas_by_chain.end(); ++iter ) {
+		//char tgtchain = iter->first;
+		//if (tgtchain == refchain) continue;
+
+		// get COM
+		runtime_assert( nres_asu == iter->second.size() );
+		numeric::xyzVector< core::Real > tgt_com(0.,0.,0.);
+		ObjexxFCL::FArray2D< core::Real > tgt_coords( 3, nres_asu );
+		for ( core::Size i=1; i<=nres_asu; ++i ) {
+			tgt_com += iter->second[i];
+			for ( int j=0; j<3; ++j ) tgt_coords(j+1,i) = iter->second[i][j];
+		}
+		tgt_com /= nres_asu;
+		for ( core::Size i=1; i<=nres_asu; ++i ) {
+			for ( int j=0; j<3; ++j ) tgt_coords(j+1,i) -= tgt_com[j];
+		}
+
+		// get optimal superposition
+		// rotate >init< to >final<
+		ObjexxFCL::FArray1D< numeric::Real > ww( nres_asu, 1.0 );
+		ObjexxFCL::FArray2D< numeric::Real > uu( 3, 3, 0.0 );
+		numeric::Real ctx;
+		float rms;
+
+		numeric::model_quality::findUU( ref_coords, tgt_coords, ww, nres_asu, uu, ctx );
+		numeric::model_quality::calc_rms_fast( rms, ref_coords, tgt_coords, ww, nres_asu, ctx );
+		runtime_assert(rms < 1.0);
+
+		numeric::xyzMatrix<core::Real> R;
+		R.xx( uu(1,1) ); R.xy( uu(2,1) ); R.xz( uu(3,1) );
+		R.yx( uu(1,2) ); R.yy( uu(2,2) ); R.yz( uu(3,2) );
+		R.zx( uu(1,3) ); R.zy( uu(2,3) ); R.zz( uu(3,3) );
+		numeric::xyzVector<core::Real> T = R*(-ref_com)+tgt_com;
+		transforms.push_back( numeric::HomogeneousTransform< core::Real >(R, T) );
+	}
+
+	// compare transforms from ref to target
+	utility::vector1< core::Size > ref_subunits;
+
+	core::pose::Pose posecopy = pose;
+	core::conformation::symmetry::SymmetricConformation & symmconf =
+		dynamic_cast< core::conformation::symmetry::SymmetricConformation & >( posecopy.conformation() );
+	core::Size nsubs = symmconf.Symmetry_Info()->subunits();
+	for ( core::Size i=1; i<= nsubs; ++i ) {
+		numeric::HomogeneousTransform< core::Real > ht_i =
+			symmconf.get_transformation(i,true) *
+			symmconf.get_transformation(1,true).inverse() ;
+		for ( core::Size j=1; j<=transforms.size(); ++j ) {
+			numeric::HomogeneousTransform< core::Real > &ht_j = transforms[j];
+			core::Real angle_ij = numeric::urs_R2ang(
+				ht_i.rotation_matrix().transpose() * ht_j.rotation_matrix() );
+			core::Real distance_ij = ( ht_i.point() - ht_j.point() ).length();
+			if ( angle_ij <= 20 && distance_ij <= 4 ) { // ? not sure on cutoffs
+				ref_subunits.push_back(i);
+				break;
+			}
+		}
+	}
+
+	TR.Debug << "Found " << ref_subunits.size() << " reference chains" << std::endl;
+	return ref_subunits;
+}
 
 TaskOperationOP
 BuildingBlockInterfaceOperationCreator::create_task_operation() const
@@ -109,6 +219,21 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 		intra_subs2 = get_jump_name_to_subunits(pose,sym_dof_name_list[2]);
 	}
 
+	utility::vector1<core::Size> include_subunits;
+
+	if ( bblock_reference_pose_ ) {
+		runtime_assert (!multicomponent_); // ref pdb & multicomponent incompatible
+		if ( nsub_bblock_ != 1 ) {
+			TR.Error << "WARNING! bblock_reference_pdb provided; nsub_bblock is ignored!";
+		}
+		include_subunits = get_matching_subunits(pose, *bblock_reference_pose_);
+
+	} else {
+		for ( core::Size i=1; i<=nsub_bblock_; ++i ) {
+			include_subunits.push_back(i);
+		}
+	}
+
 	// Find out which positions are near the inter-subunit interfaces
 	// These will be further screened below, then passed to design()
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
@@ -127,7 +252,10 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 			std::string atom_j = (pose.residue(jr).name3() == "GLY") ? "CA" : "CB";
 
 			//If one component, then check for clashes between all residues in primary subunit and subunits with indices > nsub_bb
-			if ( !multicomponent_ && sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
+			//if ( !multicomponent_ && sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
+			if ( !multicomponent_ &&
+					std::find( include_subunits.begin(), include_subunits.end(), sym_info->subunit_index(jr)
+					) != include_subunits.end() ) continue;
 
 			//If two component, then check for clashes between all residues in primary subunitA and other building blocks, and all resis in primary subB and other building blocks.
 			if ( multicomponent_ ) {
@@ -242,6 +370,12 @@ BuildingBlockInterfaceOperation::parse_tag( TagCOP tag , DataMap & )
 	filter_intrabb_ = tag->getOption< bool >("filter_intrabb", true);
 	intrabb_only_ = tag->getOption< bool >("intrabb_only", false);
 	multicomponent_ = tag->getOption< bool >("multicomp", false);
+
+	if ( tag->hasOption("bblock_reference_pdb") ) {
+		std::string bblock_ref_pdb = tag->getOption< std::string >("bblock_reference_pdb");
+		bblock_reference_pose_ = utility::pointer::make_shared< core::pose::Pose >();
+		core::import_pose::pose_from_file( *bblock_reference_pose_, bblock_ref_pdb , core::import_pose::PDB_file);
+	}
 }
 
 void BuildingBlockInterfaceOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
@@ -250,6 +384,7 @@ void BuildingBlockInterfaceOperation::provide_xml_schema( utility::tag::XMLSchem
 
 	attributes
 		+ XMLSchemaAttribute::attribute_w_default(  "nsub_bblock", xsct_non_negative_integer, "The number of subunits in the symmetric building block (e.g., 3 for a trimer). This option is not needed for multicomponent systems.",  "1"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "bblock_reference_pdb", xs_string, "A reference PDB for defining the bblock interface. NOT COMPATIBLE with multicomponent symmetry.",  "1"  )
 		+ XMLSchemaAttribute::attribute_w_default(  "sym_dof_names", xs_string, "Names of the sym_dofs corresponding to the symmetric building blocks. (Eventually replace the need for this option by having is_singlecomponent or is_multicomponent utility functions). If no sym_dof_names are specified, then they will be extracted from the pose.",  "XRW TO DO"  )
 		+ XMLSchemaAttribute::attribute_w_default(  "contact_dist", xsct_real, "Residues with beta carbons not within this distance of any beta carbon from another building block are prevented from repacking.",  "10.0"  )
 		+ XMLSchemaAttribute::attribute_w_default(  "bblock_dist", xsct_real, "The all-heavy atom cutoff distance used to specify residues that are making inter-subunit contacts within the building block. Because these residues are making presumably important intra-building block interactions, they are prevented from repacking unless they are clashing.",  "5.0"  )

@@ -893,8 +893,6 @@ get_asymm_unit_fold_tree( core::conformation::Conformation const &conf ) {
 	}
 	f_new.renumber_jumps_ordered();
 
-	//TR.Error << "get_asymm_unit_fold_tree() called with " << f << std::endl;
-	//TR.Error << "get_asymm_unit_fold_tree() returning " << f_new << std::endl;
 	return f_new;
 }
 

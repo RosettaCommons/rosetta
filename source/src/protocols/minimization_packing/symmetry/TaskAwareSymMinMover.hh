@@ -82,6 +82,7 @@ private:
 	bool min_chi_;
 	bool min_bb_;
 	bool min_rb_; //jump
+	utility::vector1< std::string > rb_symdofs_;
 	std::string min_type_;
 	core::Real tolerance_;
 	//core::pack::task::TaskFactoryOP task_factory_;

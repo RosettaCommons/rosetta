@@ -1194,7 +1194,12 @@ SymmetryInfo::num_jump_clones() const
 Size
 SymmetryInfo::num_independent_residues() const
 {
-	return bb_clones_.size();
+	// fd special case for no symmetric copies
+	core::Size nclones = bb_clones_.size();
+	if ( nclones == 0 ) {
+		nclones = get_nres_subunit();
+	}
+	return nclones;
 }
 
 Size
