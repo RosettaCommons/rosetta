@@ -371,6 +371,44 @@ mmCIFParser::get_molfile_molecule( Block & block ) {
 				}
 			}
 		}
+	} else {
+
+		if ( block.IsTablePresent( "chem_comp_bond" ) ) {
+			ISTable& bond_comp = block.GetTable("chem_comp_bond");
+
+			//start bond block
+			for ( Size ii = 0; ii < bond_comp.GetNumRows(); ++ii ) {
+				sdf::MolFileIOBondOP bond( new sdf::MolFileIOBond() );
+
+				std::string const & source( bond_comp( ii, "atom_id_1" ) ); //atom 1
+				std::string const & target( bond_comp( ii, "atom_id_2" ) ); //atom 2 - I guess thats self explanatory
+
+				if ( source == "O2A" ) {
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to O2A " << std::endl;
+					possible_atoms_to_skip.push_back( target );
+				}
+				if ( target == "O2A" ) {
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to O2A " << std::endl;
+					possible_atoms_to_skip.push_back( source );
+				}
+				if ( source == "O2B" ) {
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to O2B " << std::endl;
+					possible_atoms_to_skip.push_back( target );
+				}
+				if ( target == "O2B" ) {
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to O2B " << std::endl;
+					possible_atoms_to_skip.push_back( source );
+				}
+				if ( source == "O3B" ) {
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << target << " due to its bond to O3B " << std::endl;
+					possible_atoms_to_skip.push_back( target );
+				}
+				if ( target == "O3B" ) {
+					TR.Trace << "It may be appropriate to skip the maybe-hydrogen " << source << " due to its bond to O3B " << std::endl;
+					possible_atoms_to_skip.push_back( source );
+				}
+			}
+		}
 	}
 
 	//get the atom and bond composition table

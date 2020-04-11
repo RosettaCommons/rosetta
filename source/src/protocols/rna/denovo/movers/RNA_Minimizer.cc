@@ -377,6 +377,19 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 		mm.set_jump( true );
 	}
 
+	// for flexible ligands
+	for ( Size i = 1; i <= nres; i++ )  {
+		if ( pose.residue_type(i).is_polymer() ) continue;
+
+		for ( Size j = 1; j <= pose.residue_type(i).nchi(); ++j ) {
+
+			id::TorsionID rna_torsion_id( i, id::CHI, j );
+			if ( !atom_level_domain_map_->get( rna_torsion_id, pose.conformation() ) ) continue;
+
+			mm.set( rna_torsion_id, true );
+		}
+	}
+
 	// torsions
 	for ( core::Size i = 1; i <= nres; i++ )  {
 		if ( !pose.residue_type(i).is_RNA() ) continue;
@@ -488,15 +501,15 @@ RNA_Minimizer::update_atom_level_domain_map_with_extra_minimize_res( pose::Pose 
 	utility::vector1< id::AtomID > atom_ids_to_move;
 
 	for ( core::Size const i : options_->extra_minimize_res() ) {
-		runtime_assert( pose.residue( i ).is_RNA() );
 
 		for ( core::Size j = 1; j <= pose.residue(i).natoms(); j++ ) {
 			if ( pose.residue_type(i).is_virtual( j ) ) continue;
 			atom_ids_to_move.push_back( id::AtomID( j, i ) );
 		}
 
+		if ( !pose.residue( i ).is_RNA() ) continue;
 		if ( pose.fold_tree().is_cutpoint( i ) ) continue;
-		if ( i > pose.size() ) continue;
+		if ( i >= pose.size() ) continue;
 		if ( !pose.residue( i+1 ).is_RNA() ) continue;
 
 		// go ahead and minimize backbone torsions up to next pucker.
