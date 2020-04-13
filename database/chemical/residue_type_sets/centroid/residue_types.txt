@@ -29,6 +29,14 @@ residue_types/l-caa/TRP.params
 residue_types/l-caa/TYR.params
 residue_types/l-caa/VAL.params
 
+## L-NCAA Types
+residue_types/l-ncaa/ornithine.params
+residue_types/l-ncaa/2.3-diaminopropionic_acid.params
+residue_types/l-ncaa/2.4-diaminobutyric_acid.params
+
+## Achiral NCAA Types
+residue_types/achiral_ncaa/AIB.params
+
 ## Nucleic Acid Types
 residue_types/nucleic/dna/ADE.params
 residue_types/nucleic/dna/THY.params

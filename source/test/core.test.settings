@@ -23,6 +23,7 @@ sources = {
 		#"ElementSet",
 		#"IdealBondLengthSet",
 		"MMAtomTypeSet",
+		"NCAACentroidResidueTypeTests",
 		"OrbitalTests",
 		"PeptoidResidueTypeTests",
 		"PoseResidueTypeSet",

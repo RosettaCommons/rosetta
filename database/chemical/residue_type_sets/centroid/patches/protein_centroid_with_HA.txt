@@ -24,6 +24,13 @@ SET_ICOOR   1HA   121.400000   70.500000    1.090168   CA    N     C
 SET_ICOOR   2HA   117.200000   70.500000    1.089353   CA    N    1HA
 END_CASE
 
+BEGIN_CASE ################################# AIB -- does nothing, since AIB has no HA.
+
+BEGIN_SELECTOR
+NAME3 AIB
+END_SELECTOR
+
+END_CASE
 
 ## BEGIN_CASE ################################# general -- taken from ALA in full-atom
 
