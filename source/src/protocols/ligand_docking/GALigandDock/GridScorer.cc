@@ -294,6 +294,7 @@ GridScorer::prepare_grid( core::pose::Pose const &pose, core::Size const lig_res
 	// define bounding box
 	lig_com_ = {0,0,0};
 	maxRad_ = 0.0;
+	ligid_ = lig_resid;
 	core::conformation::Residue const &resLig = pose.residue( lig_resid );
 	for ( core::Size i=1; i<=resLig.natoms(); ++i ) lig_com_ += resLig.xyz(i);
 	lig_com_ /= resLig.natoms();
@@ -1044,6 +1045,9 @@ GridScorer::do_convolution_and_compute_coeffs(
 // score
 core::Real
 GridScorer::score( LigandConformer const &lig, bool soft ) {
+	if ( lig.ligand_typename() != ref_pose_->residue(ligid_).name() ) {
+		ref_pose_ = utility::pointer::make_shared< core::pose::Pose >( *lig.get_ref_pose() );
+	}
 	lig.to_pose( ref_pose_ );
 	return score( *ref_pose_, lig, soft );
 }
@@ -1547,6 +1551,9 @@ GridScorer::get_2b_energy(
 
 core::Real
 GridScorer::clash_score( LigandConformer const &lig ) {
+	if ( lig.ligand_typename() != ref_pose_->residue(ligid_).name() ) {
+		ref_pose_ = utility::pointer::make_shared< core::pose::Pose >( *lig.get_ref_pose() );
+	}
 	lig.to_pose( ref_pose_ );
 
 	// exact
@@ -2293,6 +2300,10 @@ GridScorer::packer_loop(
 	utility::vector1< PlaceableRotamers > &placeable_rotdb, // by non-const ref since we update "in place"
 	RotamerPairEnergies &rotamer_energies                   // by non-const ref since we update "in place"
 ) {
+	if ( lig.ligand_typename() != ref_pose_->residue(ligid_).name() ) {
+		ref_pose_ = utility::pointer::make_shared< core::pose::Pose >( *lig.get_ref_pose() );
+	}
+
 	lig.to_pose( ref_pose_ );
 	core::Real start_score = score( *ref_pose_, lig );
 

@@ -372,6 +372,8 @@ private:
 	// for adjusting grid box
 	numeric::xyzVector< core::Real > lig_com_;
 	core::Real maxRad_;
+
+	core::Size ligid_;
 };
 
 typedef utility::pointer::shared_ptr< GridScorer > GridScorerOP;

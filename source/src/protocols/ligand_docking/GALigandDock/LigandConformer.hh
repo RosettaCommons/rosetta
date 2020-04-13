@@ -227,6 +227,9 @@ public:
 	core::Real
 	neg_Tds() const { return negTdS_; }
 
+	core::pose::PoseCOP
+	get_ref_pose() const { return ref_pose_; }
+
 private:
 	// reference pose
 	core::pose::PoseCOP ref_pose_;

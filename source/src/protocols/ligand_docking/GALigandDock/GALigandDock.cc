@@ -197,6 +197,7 @@ GALigandDock::apply( pose::Pose & pose )
 	if ( multiple_ligands_.size() > 0 ) {
 		core::Real mean_maxRad = 0.0;
 		std::vector<core::Real> maxRads;
+		use_mean_maxRad_ = use_mean_maxRad_ && ( multiple_ligands_.size()>1 );
 		for ( core::Size ilig = 1; ilig <= multiple_ligands_.size(); ++ilig ) {
 			TR << "Building multiple_ligands: "<< multiple_ligands_[ilig] << std::endl;
 			core::conformation::ResidueOP ligand = core::conformation::get_residue_from_name( multiple_ligands_[ilig] );
@@ -1067,6 +1068,7 @@ GALigandDock::final_exact_scmin(
 		relax.set_scorefxn( scfxn_relax_ );
 	}
 	relax.set_movemap( mm );
+	relax.apply( pose );
 
 	TR << "final_scmin: score after relax: " << (*scfxn_relax_)(pose) <<std::endl;
 	//TR << "final_scmin:"; scfxn_relax_->show( TR, pose );
