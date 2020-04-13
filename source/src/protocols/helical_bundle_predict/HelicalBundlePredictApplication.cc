@@ -19,6 +19,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/variant_util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
@@ -45,6 +46,7 @@
 #include <protocols/helical_bundle_predict/HBP_TemperatureScheduleGenerator.hh>
 #include <protocols/helical_bundle_predict/HBP_SigmoidalTemperatureScheduleGenerator.hh>
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.hh>
+#include <protocols/cyclic_peptide/PeptideStubMover.hh>
 
 // Basic includes:
 #include <basic/Tracer.hh>
@@ -80,25 +82,13 @@ namespace helical_bundle_predict {
 /// @brief Constructor
 /// @details Triggers read from options system!
 HelicalBundlePredictApplicationOptions::HelicalBundlePredictApplicationOptions() :
-	native_file_(""),
-	fasta_file_(""),
-	helix_assignment_file_(""),
-	fasta_file_contents_(""),
-	helix_assignment_file_contents_(""),
-	num_simulated_annealing_rounds_centroid_(0),
-	num_steps_per_simulated_annealing_round_centroid_(0),
-	centroid_max_temperature_(1000.0),
-	centroid_min_temperature_(0.62),
-	nstruct_(1),
-	do_fullatom_refinement_(true),
-	fullatom_fast_relax_rounds_(3),
-	fullatom_find_disulfides_(true)
+	utility::VirtualBase()
 {
 	initialize_from_options();
 }
 
 /// @details Destructor
-HelicalBundlePredictApplicationOptions::~HelicalBundlePredictApplicationOptions() {}
+HelicalBundlePredictApplicationOptions::~HelicalBundlePredictApplicationOptions() = default;
 
 /// @brief Create a copy and return smart pointer to copy.
 HelicalBundlePredictApplicationOptionsOP
@@ -128,6 +118,7 @@ HelicalBundlePredictApplicationOptions::register_options() {
 	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::find_disulfides );
 	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::ignore_native_residues_in_rmsd );
 	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::ignore_prediction_residues_in_rmsd );
+	option.add_relevant( basic::options::OptionKeys::helical_bundle_predict::sequence_file );
 
 	//Options only used in MPI mode:
 #ifdef USEMPI //Options that are only needed in the MPI version:
@@ -181,12 +172,36 @@ HelicalBundlePredictApplicationOptions::initialize_from_options() {
 	}
 }
 
-/// @brief Set the file containing the sequence.
+/// @brief Set the file containing the FASTA sequence.
 void
 HelicalBundlePredictApplicationOptions::set_fasta_file(
 	std::string const & file_in
 ) {
+	runtime_assert_string_msg(
+		!file_in.empty(),
+		"Error in HelicalBundlePredictApplicationOptions::set_fasta_file(): The input filename cannot be empty!"
+	);
+	runtime_assert_string_msg(
+		fasta_file_.empty() && sequence_file_.empty(),
+		"Error in HelicalBundlePredictApplicationOptions::set_fasta_file(): A FASTA or sequence file was already set!"
+	);
 	fasta_file_ = file_in;
+}
+
+/// @brief Set the file containing the full-basename sequence.
+void
+HelicalBundlePredictApplicationOptions::set_sequence_file(
+	std::string const & file_in
+) {
+	runtime_assert_string_msg(
+		!file_in.empty(),
+		"Error in HelicalBundlePredictApplicationOptions::set_sequence_file(): The input filename cannot be empty!"
+	);
+	runtime_assert_string_msg(
+		fasta_file_.empty() && sequence_file_.empty(),
+		"Error in HelicalBundlePredictApplicationOptions::set_sequence_file(): A FASTA or sequence file was already set!"
+	);
+	sequence_file_ = file_in;
 }
 
 /// @brief Set the file containing the helix assignments.
@@ -202,8 +217,24 @@ void
 HelicalBundlePredictApplicationOptions::set_fasta_file_contents(
 	std::string const & contents_in
 ) {
+	runtime_assert_string_msg(
+		fasta_file_contents_.empty() && sequence_file_contents_.empty(),
+		"Error in HelicalBundlePredictApplicationOptions::set_fasta_file_contents(): A FASTA or sequence file has already been read in."
+	);
 	fasta_file_contents_ = contents_in;
 	clean_fasta_file_contents();
+}
+
+/// @brief Set the contents of the seqeunce file.
+void
+HelicalBundlePredictApplicationOptions::set_sequence_file_contents(
+	std::string const & contents_in
+) {
+	runtime_assert_string_msg(
+		fasta_file_contents_.empty() && sequence_file_contents_.empty(),
+		"Error in HelicalBundlePredictApplicationOptions::set_sequence_file_contents(): A FASTA or sequence file has already been read in."
+	);
+	sequence_file_contents_ = contents_in;
 }
 
 /// @brief Set the contents of the helix assignment file.
@@ -246,7 +277,11 @@ HelicalBundlePredictApplicationOptions::set_rmsd_residues_to_ignore_prediction(
 /// @details INVOLVES READS FROM DISK!  WARNING!
 void
 HelicalBundlePredictApplicationOptions::read_inputs() {
-	read_fasta();
+	if ( !fasta_file_.empty() ) {
+		read_fasta();
+	} else {
+		read_sequence_file();
+	}
 	read_helix_assignments();
 }
 
@@ -257,6 +292,13 @@ void
 HelicalBundlePredictApplicationOptions::read_fasta() {
 	runtime_assert_string_msg( !fasta_file_.empty(), "Error in protocols::helical_bundle_predict::HelicalBundlePredictApplication::read_fasta(): An empty FASTA filename was provided." );
 	set_fasta_file_contents( utility::file_contents( fasta_file_ ) );
+}
+
+/// @brief Read a sequence file from disk.
+void
+HelicalBundlePredictApplicationOptions::read_sequence_file() {
+	runtime_assert_string_msg( !sequence_file_.empty(), "Error in protocols::helical_bundle_predict::HelicalBundlePredictApplication::read_sequence_file(): An empty sequence file name was provided." );
+	set_sequence_file_contents( utility::file_contents( sequence_file_ ) );
 }
 
 /// @brief Given a set of characters, find the first instance of any of them in a string
@@ -412,7 +454,11 @@ HelicalBundlePredictApplication::run() {
 	if ( !options_->native_file().empty() && native_pose_ == nullptr ) load_native_pose_from_disk();
 
 	for ( core::Size irepeat(1); irepeat <= nstruct_; ++irepeat ) {
-		pose_ = make_pose_from_fasta_contents();
+		if ( !options_->fasta_file_contents().empty() ) {
+			pose_ = make_pose_from_fasta_contents();
+		} else {
+			pose_ = make_pose_from_sequence_file_contents();
+		}
 
 		check_ignore_residues_reasonable( options_->rmsd_residues_to_ignore_native(), native_pose_ );
 		check_ignore_residues_reasonable( options_->rmsd_residues_to_ignore_prediction(), pose_ );
@@ -707,6 +753,46 @@ HelicalBundlePredictApplication::make_pose_from_fasta_contents() const {
 
 	core::pose::PoseOP pose( utility::pointer::make_shared< core::pose::Pose >() );
 	core::pose::make_pose_from_sequence( *pose, utility::strip(options_->fasta_file_contents(), " \n\t"), core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID ) );
+
+	for ( core::Size ir(1), irmax(pose->total_residue()); ir<=irmax; ++ir ) {
+		for ( core::Size itors(1), itorsmax( pose->residue(ir).mainchain_torsions().size() ); itors<=itorsmax; ++itors ) {
+			pose->set_torsion( core::id::TorsionID( ir, core::id::BB , itors ), 180.0 );
+		}
+	}
+
+	pose->update_residue_neighbors();
+
+	return pose;
+}
+
+/// @brief Construct a pose from the contents of a sequence file.  The conformation is set to linear at this point.
+core::pose::PoseOP
+HelicalBundlePredictApplication::make_pose_from_sequence_file_contents() const {
+	static std::string const errmsg( "Error in protocols::helical_bundle_predict::HelicalBundlePredictApplication::make_pose_from_sequence_file_contents(): " );
+	runtime_assert_string_msg( !options_->sequence_file_contents().empty(), errmsg + "An empty string was provided for the sequence file contents." );
+
+	core::pose::PoseOP pose( utility::pointer::make_shared< core::pose::Pose >() );
+
+	{ //Build the pose with the peptide stub mover.
+		utility::vector1< std::string > resnames( utility::split_whitespace( options_->sequence_file_contents() ) );
+		runtime_assert( resnames.size() > 0 ); //Should be true.
+		protocols::cyclic_peptide::PeptideStubMover stubmover;
+		stubmover.set_reset_mode(true);
+		stubmover.add_residue( "Append", resnames[1], 1, true, "", 0, 0, "" );
+		if ( resnames.size() > 1 ) {
+			for ( core::Size i(2), imax(resnames.size()); i<=imax; ++i ) {
+				stubmover.add_residue( "Append", resnames[i], i-1, false, "", 0, 0, "" );
+			}
+		}
+		stubmover.apply(*pose);
+	}
+
+	//Add terminal types:
+	core::pose::add_lower_terminus_type_to_pose_residue( *pose, 1 );
+	core::pose::add_upper_terminus_type_to_pose_residue( *pose, pose->total_residue() );
+
+	//Convert to centroid:
+	core::util::switch_to_residue_type_set( *pose, core::chemical::CENTROID_t, false, false, false );
 
 	for ( core::Size ir(1), irmax(pose->total_residue()); ir<=irmax; ++ir ) {
 		for ( core::Size itors(1), itorsmax( pose->residue(ir).mainchain_torsions().size() ); itors<=itorsmax; ++itors ) {

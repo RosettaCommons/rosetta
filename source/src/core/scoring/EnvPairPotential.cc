@@ -349,7 +349,15 @@ EnvPairPotential::evaluate_env_and_cbeta_scores(
 		cb_score12 = 0.0;
 	} else {
 
-		env_score = env_log_( rsd.aa(), static_cast< int >( fcen10 ) );
+		core::chemical::AA curaa( rsd.aa() );
+		if ( core::chemical::is_canonical_D_aa(curaa) ) {
+			curaa = core::chemical::get_L_equivalent(curaa);
+		}
+		if ( core::chemical::is_canonical_L_aa_or_gly(curaa) ) {
+			env_score = env_log_( curaa, static_cast< int >( fcen10 ) );
+		} else {
+			env_score = 0.0;
+		}
 
 		// interp1 rounds down to nearest (non-negative) integer.
 		auto interp1 = static_cast< int >( fcen6 );
@@ -396,8 +404,12 @@ EnvPairPotential::evaluate_pair_and_cenpack_score(
 
 	if ( !rsd1.is_protein() || !rsd2.is_protein() ) return;
 
-	chemical::AA const aa1( rsd1.aa() );
-	chemical::AA const aa2( rsd2.aa() );
+	chemical::AA aa1( rsd1.aa() );
+	if ( core::chemical::is_canonical_D_aa( aa1 ) ) aa1 = core::chemical::get_L_equivalent( aa1 );
+	if ( !core::chemical::is_canonical_L_aa_or_gly(aa1) ) return;
+	chemical::AA aa2( rsd2.aa() );
+	if ( core::chemical::is_canonical_D_aa( aa2 ) ) aa2 = core::chemical::get_L_equivalent( aa2 );
+	if ( !core::chemical::is_canonical_L_aa_or_gly(aa2) ) return;
 
 	//CAR  no pair score if a disulfide
 	if ( rsd1.type().is_disulfide_bonded()

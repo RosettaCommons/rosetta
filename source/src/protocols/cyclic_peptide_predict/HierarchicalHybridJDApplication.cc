@@ -80,6 +80,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/cyclic_peptide.OptionKeys.gen.hh>
+#include <basic/options/keys/helical_bundle_predict.OptionKeys.gen.hh>
 
 //numeric headers
 
@@ -564,11 +565,15 @@ HierarchicalHybridJDApplication::get_sequence() {
 
 	if( i_am_emperor() ) {
 		runtime_assert_string_msg(
-			option[basic::options::OptionKeys::cyclic_peptide::sequence_file].user() || option[basic::options::OptionKeys::in::file::fasta].user(),
+			option[basic::options::OptionKeys::helical_bundle_predict::sequence_file].user() || option[basic::options::OptionKeys::cyclic_peptide::sequence_file].user() || option[basic::options::OptionKeys::in::file::fasta].user(),
 			"Error in get_sequence() in HierarchicalHybridJDApplication: No sequence file was specified.  A sequence file must be provided either with \"-cyclic_peptide:sequence_file <filename>\" or with \"-in:file:fasta <filename>\"."
 		);
-		if( option[basic::options::OptionKeys::cyclic_peptide::sequence_file].user() ) {
-			runtime_assert_string_msg( !option[basic::options::OptionKeys::in::file::fasta].user(), "Error in get_sequence() in HierarchicalHybridJDApplication: Only one of \"-cyclic_peptide:sequence_file\" or \"-in:file:fasta\" should be provided." );
+		if( option[basic::options::OptionKeys::helical_bundle_predict::sequence_file].user() ) {
+			runtime_assert_string_msg( !option[basic::options::OptionKeys::cyclic_peptide::sequence_file].user() && !option[basic::options::OptionKeys::in::file::fasta].user(), "Error in get_sequence() in HierarchicalHybridJDApplication: Only one of \"-helical_bundle_predict:sequence_file\" or \"-cyclic_peptide:sequence_file\" or \"-in:file:fasta\" should be provided." );
+			sequence_=utility::file_contents( option[basic::options::OptionKeys::helical_bundle_predict::sequence_file]() );
+			utility::trim( sequence_, " \n\t" );
+		} else if( option[basic::options::OptionKeys::cyclic_peptide::sequence_file].user() ) {
+			runtime_assert_string_msg( !option[basic::options::OptionKeys::in::file::fasta].user(), "Error in get_sequence() in HierarchicalHybridJDApplication: Only one of \"-helical_bundle_predict:sequence_file\" or \"-cyclic_peptide:sequence_file\" or \"-in:file:fasta\" should be provided." );
 			sequence_=utility::file_contents( option[basic::options::OptionKeys::cyclic_peptide::sequence_file]() );
 			utility::trim( sequence_, " \n\t" );
 		} else if( option[basic::options::OptionKeys::in::file::fasta].user() ) {

@@ -64,14 +64,20 @@ public: //Member functions
 	/// @brief Read from the options system to initialize this object.
 	void initialize_from_options();
 
-	/// @brief Set the file containing the sequence.
+	/// @brief Set the file containing the FASTA sequence.
 	void set_fasta_file( std::string const & file_in );
+
+	/// @brief Set the file containing the full-basename sequence.
+	void set_sequence_file( std::string const & file_in );
 
 	/// @brief Set the file containing the helix assignments.
 	void set_helix_assignment_file( std::string const & file_in );
 
 	/// @brief Set the contents of the FASTA file.
 	void set_fasta_file_contents( std::string const & contents_in );
+
+	/// @brief Set the contents of the seqeunce file.
+	void set_sequence_file_contents( std::string const & contents_in );
 
 	/// @brief Set the contents of the helix assignment file.
 	void set_helix_assignment_file_contents( std::string const & contents_in );
@@ -92,6 +98,9 @@ public: //Member functions
 
 	/// @brief Get the contents of the FASTA file.
 	inline std::string const & fasta_file_contents() const { return fasta_file_contents_; }
+
+	/// @brief Get the contents of the sequence file.
+	inline std::string const & sequence_file_contents() const { return sequence_file_contents_; }
 
 	/// @brief Get the contents of the helix assignment file.
 	inline std::string const & helix_assignment_file_contents() const { return helix_assignment_file_contents_; }
@@ -138,6 +147,9 @@ private: //Functions
 	/// @brief Read a FASTA file from disk.
 	void read_fasta();
 
+	/// @brief Read a sequence file from disk.
+	void read_sequence_file();
+
 	/// @brief Given a set of characters, find the first instance of any of them in a string
 	/// and return the (zero-based) index of that character.
 	core::Size findchar( std::string const & curstring, utility::vector1< char > const & chars ) const;
@@ -153,8 +165,11 @@ private: //Variables
 	/// @brief The native structure.
 	std::string native_file_;
 
-	/// @brief The file containing the sequence.
+	/// @brief The file containing the sequence (in FASTA format).
 	std::string fasta_file_;
+
+	/// @brief The file containing the sequence (in full name format).
+	std::string sequence_file_;
 
 	/// @brief The file containing the helix assignments.
 	std::string helix_assignment_file_;
@@ -162,32 +177,35 @@ private: //Variables
 	/// @brief The contents of the FASTA file.
 	std::string fasta_file_contents_;
 
+	/// @brief The contents of the sequence file.
+	std::string sequence_file_contents_;
+
 	/// @brief The contents of the helix assignment file.
 	std::string helix_assignment_file_contents_;
 
 	/// @brief Number of simulated annealing rounds in centroid mode.
-	core::Size num_simulated_annealing_rounds_centroid_;
+	core::Size num_simulated_annealing_rounds_centroid_=3;
 
 	/// @brief Number of steps in each simulated annealing round in centroid mode.
-	core::Size num_steps_per_simulated_annealing_round_centroid_;
+	core::Size num_steps_per_simulated_annealing_round_centroid_=1000;
 
 	/// @brief The max temperature during simulated annealing steps in centroid mode.
-	core::Real centroid_max_temperature_;
+	core::Real centroid_max_temperature_=50;
 
 	/// @brief The min temperature during simulated annealing steps in centroid mode.
-	core::Real centroid_min_temperature_;
+	core::Real centroid_min_temperature_=0.62;
 
 	/// @brief The number of attempts to make.
-	core::Size nstruct_;
+	core::Size nstruct_=1;
 
 	/// @brief Will be doing fullatom refinement?
-	bool do_fullatom_refinement_;
+	bool do_fullatom_refinement_=true;
 
 	/// @brief If we are doing fullatom refinement, how many rounds of FastRelax should we apply?
-	core::Size fullatom_fast_relax_rounds_;
+	core::Size fullatom_fast_relax_rounds_=3;
 
 	/// @brief If we are doing fullatom refinement, should we try disulfide permutations?
-	bool fullatom_find_disulfides_;
+	bool fullatom_find_disulfides_=true;
 
 	/// @brief Residues to ignore in the native pose when setting up the alignment for RMSD.
 	utility::vector1< core::Size > rmsd_residues_to_ignore_native_;
@@ -317,6 +335,9 @@ private: //Member functions:
 
 	/// @brief Construct a pose from the contents of a FASTA file.  The conformation is set to linear at this point.
 	core::pose::PoseOP make_pose_from_fasta_contents() const;
+
+	/// @brief Construct a pose from the contents of a sequence file.  The conformation is set to linear at this point.
+	core::pose::PoseOP make_pose_from_sequence_file_contents() const;
 
 	/// @brief Do a single simulated annealing round (a Monte Carlo trajectory with temperature ramping from high to low, once).
 	void do_a_simulated_annealing_round(

@@ -61,11 +61,19 @@ get_options_from_options_collection(
 	using namespace basic::options::OptionKeys;
 
 	static std::string const errmsg( "Error in helical_bundle_predict application: " );
-	runtime_assert_string_msg( option_collection[in::file::fasta].user(), errmsg + "The user must provide a sequence in FASTA format using the \"-in:file:fasta\" commandline flag." );
-	runtime_assert_string_msg( option_collection[in::file::fasta]().size() == 1, errmsg + "The user must provide one and only one sequence in FASTA format using the \"-in:file:fasta\" commandline flag." );
+	runtime_assert_string_msg( option_collection[in::file::fasta].user() || option_collection[helical_bundle_predict::sequence_file].user(), errmsg + "The user must provide a sequence in FASTA format or as a whitespace-separated series of residue type names, using the \"-in:file:fasta\" commandline flag for FASTA input or the \"helical_bundle_predict:sequence_file\" commandline for full name input." );
+	runtime_assert_string_msg( !( option_collection[in::file::fasta].user() && option_collection[helical_bundle_predict::sequence_file].user() ), errmsg + "The user must provide EITHER the \"-in:file:fasta\" flag OR the \"-helical_bundle_predict:sequence_file\" flag, not both." );
+	if ( option_collection[in::file::fasta].user() ) {
+		runtime_assert_string_msg( option_collection[in::file::fasta]().size() == 1, errmsg + "The user must provide one and only one sequence in FASTA format using the \"-in:file:fasta\" commandline flag." );
+	}
 	runtime_assert_string_msg( option_collection[helical_bundle_predict::helix_assignment_file].user(), errmsg + "The user must provide helix assignments using the \"-helical_bundle_predict:helix_assignment_file\" commandline flag." );
 
-	options.set_fasta_file( option_collection[in::file::fasta]()[1] );
+	if ( option_collection[in::file::fasta].user() ) {
+		options.set_fasta_file( option_collection[in::file::fasta]()[1] );
+	} else {
+		runtime_assert( option_collection[helical_bundle_predict::sequence_file].user() ); //Should be true at this point; checked above.
+		options.set_sequence_file( option_collection[helical_bundle_predict::sequence_file]() );
+	}
 	options.set_helix_assignment_file( option_collection[helical_bundle_predict::helix_assignment_file]() );
 
 	// The following triggers read from disk.  Modify tihs for multi-threaded or multi-process processing:

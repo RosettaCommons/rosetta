@@ -6229,6 +6229,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	# Helical bundle structure prediction settings --------------------------------------
 	Option_Group( 'helical_bundle_predict',
+		Option( 'sequence_file', 'String', desc="Filename of a file specfying the sequence, as a series of whitespace-separated full residue names (e.g. ALA LYS DARG DPRO HYP).  Required input for the simple_cycpep_predict app unless -in:file:fasta is provided." ),
 		Option( 'helix_assignment_file', 'File', desc="A file containing information about the helix types and helical regions within a helical bundle.", default="" ),
 		Option( 'num_simulated_annealing_rounds_centroid', 'Integer', desc="Number of rounds of simulated annealing in centroid mode.", default='3' ),
 		Option( 'num_steps_per_simulated_annealing_round_centroid', 'Integer', desc="Number of steps in each round of simulated annealing in centroid mode.", default='1000' ),
