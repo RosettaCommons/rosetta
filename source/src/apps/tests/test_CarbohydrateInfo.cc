@@ -91,8 +91,8 @@ main( int argc, char *argv[] )
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
-			O_linked, psicose, neuraminate, bacillosamine, Lex, SLex, GalCer, UDP_D_Glc, target57, maltobiose,
-			Me_glycoside, C_linked, Ac_sugar, whacky_sugar, ketopentofuranose, pdb_code_pdb, bad_pdb;
+			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Lex, SLex, GalCer, UDP_D_Glc, target57,
+			maltobiose, Me_glycoside, C_linked, Ac_sugar, whacky_sugar, ketopentofuranose, pdb_code_pdb, bad_pdb;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
@@ -212,6 +212,14 @@ main( int argc, char *argv[] )
 		pose_from_file(psicose, PATH + "beta-psicose.pdb", PDB_file );
 
 		test_sugar( psicose );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing beta-D-glucopyranuronic acid:" << endl;
+
+		pose_from_file( glucuronic_acid, PATH + "glucuronic_acid.pdb", PDB_file );
+
+		test_sugar( glucuronic_acid );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

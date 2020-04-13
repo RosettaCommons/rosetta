@@ -51,7 +51,10 @@
   3DR   Rib      ->3)-D-Ribf        3             1-deoxy 2-deoxy 5-OPO32-
   AAB   Rib      ->?)-beta-D-Ribf   3             2-deoxy 5-OPO32-
   ORP   Rib      ->?)-alpha-D-Ribf  3             2-deoxy 5-OPO32-
+  RP5   Rib      ->?)-beta-D-Ribf   3             5-OPO32-
+  HSX   Rib      ->?)-alpha-D-Ribf  3             5-OPO32-
   RIP   Rib      ->?)-alpha-D-Ribp  3
+  PZU   Rib      ->?)-alpha-D-Ribp  1             3-deoxy 6-deoxy
   R1X   Rib      ->?)-D-Ribp        3             1-deoxy
   R52   Rib      ->?)-D-Rib         3             5-OPO32-       # duplicate entry
   R5P   Rib      ->?)-D-Rib         3             5-OPO32-       # duplicate entry
@@ -63,11 +66,16 @@
   LAI   Ara      ->?)-L-Ara         3
   PAN   Ara      ->?)-D-Ara         3             5-OPO32- hydroxamic_acid
   64K   Ara      ->?)-alpha-D-Arap  3
+  BXX   Ara      ->?)-beta-D-Araf   3
   ABF   Ara      ->?)-beta-D-Araf   3             5-OPO32-
+  BXY   Ara      ->?)-alpha-D-Araf  3
+  AXR   Ara      ->?)-alpha-D-Araf  3             OMe
   AHR   Ara      ->?)-alpha-L-Araf  3
+  FUB   Ara      ->?)-beta-L-Araf   3
   ARW   Ara      ->?)-beta-D-Arap   3             OMe
 
   XYP   Xyl      ->?)-beta-D-Xylp   3
+  XYS   Xyl      ->?)-alpha-D-Xylp  3
   LXC   Xyl      ->?)-beta-L-Xylp   3
   XLS   Xyl      ->?)-D-Xyl         3
 
@@ -79,19 +87,31 @@
 # Code  Code     Default HETNAM     Connectivity  Modifications
   ALL   All      ->?)-beta-D-Allp   3
   DSR   All      ->?)-beta-D-Allp   3             2-deoxy 4-SH 6-deoxy
+  A6P   All      ->?)-alpha-D-Allp  3             6-OPO32-
 
   GLC   Glc      ->?)-alpha-D-Glcp  3
   BDP   Glc      ->?)-beta-D-Glcp   3             uronic_acid
+  GCW   Glc      ->?)-beta-D-Glcp   3             uronic_acid 4-OMe
+  GU1   Glc      ->?)-beta-D-Glcp   4             uronic_acid 2-OMe 3-OMe
+  GCU   Glc      ->?)-alpha-D-Glcp  3             uronic_acid
+  GCV   Glc      ->?)-alpha-D-Glcp  3             uronic_acid 4-OMe
+  GUZ   Glc      ->?)-alpha-D-Glcp  3             uronic_acid 2-F
+  XGP   Glc      ->?)-beta-D-Glcp   3             1-OPO32-
+  BNX   Glc      ->?)-beta-D-Glcp   3             2-OPO32-
   BG6   Glc      ->?)-beta-D-Glcp   3             6-OPO32-
+  B16   Glc      ->?)-beta-D-Glcp   3             1-OPO32- 6-OPO32-
   BGC   Glc      ->?)-beta-D-Glcp   3
+  PA1   Glc      ->?)-alpha-D-Glcp  3             2-deoxy 2-NH3+
   DDA   Glc      ->?)-beta-D-Glcp   3             2-deoxy 6-deoxy
   DRI   Glc      ->?)-beta-D-Glcp   3             2-deoxy 4-OMe 6-deoxy
   G16   Glc      ->?)-alpha-D-Glcp  3             1-OPO32- 6-OPO32-
-  G1P   Glc      ->?)-alpha-D-Glcp  3             1-OPO32-
+  GP1   Glc      ->?)-alpha-D-Glcp  3             1-OPO32- 2-deoxy 2-NH3+
   G4D   Glc      ->?)-alpha-D-Glcp  3             4-deoxy
+  SGD   Glc      ->?)-alpha-D-Glcp  3             6-deoxy 6-SH
   G6P   Glc      ->?)-alpha-D-Glcp  3             6-OPO32-
   G6Q   Glc      ->?)-D-Glc         3             6-OPO32-
   GCS   Glc      ->?)-beta-D-Glcp   3             2-NH3+
+  Z9M   Glc      ->?)-beta-D-Glcp   3             2-NH3+ 4-OPO32-
   GDA   Glc      ->?)-alpha-D-Glcp  3             4-NH3+
   GFP   Glc      ->?)-alpha-D-Glcp  3             1-OPO32- 2-F
   GLF   Glc      ->?)-alpha-D-Glcp  3             1-F
@@ -102,15 +122,21 @@
   MA3   Glc      ->?)-alpha-D-Glcp  3             OMe 4-SH
   MAG   Glc      ->?)-beta-D-Glcp   3             OMe 2-AcNH
   MGL   Glc      ->?)-beta-D-Glcp   3             OMe
+  3MG   Glc      ->?)-beta-D-Glcp   4             3-OMe
+  GU8   Glc      ->?)-beta-D-Glcp   4             2-OMe 3-OMe 6-OMe
   NDG   Glc      ->?)-alpha-D-Glcp  3             2-AcNH
+  4QY   Glc      ->?)-beta-D-Glcp   3             2-AcNH 6-OPO32-
+  16G   Glc      ->?)-alpha-D-Glcp  3             2-AcNH 6-OPO32-
   TOA   Glc      ->?)-alpha-D-Glcp  4             3-NH3+
   TOC   Glc      ->?)-alpha-D-Glcp  4             2-NH3+ 3-deoxy 6-NH3+
   NAG   Glc      ->?)-beta-D-Glcp   3             2-AcNH
+  NBG   Glc      ->?)-beta-D-Glcp   3             1-AcNH
   MUR   Mur      ->?)-beta-D-Murp   4                            # trivial name for ->?)-beta-D-GlcpNAc, lactic acid derivative
   G6D   Qui      ->?)-alpha-D-Quip  3                            # trivial name for ->?)-alpha-D-Glcp, 6-deoxy-
-  AGL   Qui      ->?)-alpha-D-Quip  3             4-NH3+         # trivial name for ->?)-alpha-D-Glcp, 6-deoxy-
+  AGL   Qui      ->?)-alpha-D-Quip  3             4-NH3+        # trivial name for ->?)-alpha-D-Glcp, 4-NH3+ 6-deoxy-
 
   MAN   Man      ->?)-alpha-D-Manp  3
+  BM3   Man      ->?)-alpha-D-Manp  3             2-AcNH
   BMA   Man      ->?)-beta-D-Manp   3
   M1P   Man      ->?)-alpha-D-Manp  3             1-OPO32-
   M6D   Man      ->?)-beta-D-Manp   3             6-OPO32-
@@ -122,15 +148,19 @@
   RHA   Rha      ->?)-alpha-L-Rhap  3             1-OPO32-       # trivial name for ->?)-alpha-L-Manp, 6-deoxy-
   RNS   Rha      ->?)-L-Rha         3                            # trivial name for ->?)-L-Man, 6-deoxy-
   RAM   Rha      ->?)-alpha-L-Rhap  3                            # trivial name for ->?)-alpha-L-Manp, 6-deoxy-
-  RAE   Rha      ->?)-alpha-L-Rhap  3             2-deoxy        # trivial name for ->?)-alpha-L-Manp, 6-deoxy-
-  RAO   Rha      ->?)-alpha-L-Rhap  3             OMe            # trivial name for ->?)-alpha-L-Manp, 6-deoxy-
+  RAE   Rha      ->?)-alpha-L-Rhap  3             2-deoxy        # trivial name for ->?)-alpha-L-Manp, 2-deoxy 6-deoxy-
+  RAO   Rha      ->?)-alpha-L-Rhap  3             OMe            # trivial name for ->?)-alpha-L-Manp, OME 6-deoxy-
 
   GAL   Gal      ->?)-beta-D-Galp   3
   GLA   Gal      ->?)-alpha-D-Galp  3
-  1GN   Gal      ->?)-beta-D-Galp   3             2-NH3+
+  GTR   Gal      ->?)-beta-D-Galp   3             uronic_acid
+  ADA   Gal      ->?)-alpha-D-Galp  3             uronic_acid
+  1GN   Gal      ->?)-beta-D-Galp   3             2-deoxy 2-NH3+
   2DG   Gal      ->?)-beta-D-Galp   3             2-deoxy
   A2G   Gal      ->?)-alpha-D-Galp  3             2-AcNH
+  GU0   Gal      ->?)-alpha-L-Galp  4             2-OSO3- 3-OSO3- 6-OSO3-
 # AAL   Gal      ->?)-alpha-L-Galp  4                            # a crazy bridging bicyclic molecule
+  G4S   Gal      ->?)-beta-D-Galp   3             4-OSO3-
   ASG   Gal      ->?)-beta-D-Galp   3             2-AcNH 4-OSO3-
   BGP   Gal      ->?)-beta-D-Galp   3             6-OPO32-
   DDL   Gal      ->?)-beta-D-Galp   3             2-deoxy 6-deoxy
@@ -142,9 +172,11 @@
   KDP   Gal      ->?)-D-Gal         4             2-keto 3-deoxy 6-OPO32-
   L6S   Gal      ->?)-alpha-L-Galp  3             6-OSO3-
   MBG   Gal      ->?)-beta-D-Galp   3             OMe
+  AMG   Gal      ->?)-alpha-D-Galp  3             OMe
   NGA   Gal      ->?)-beta-D-Galp   3             2-AcNH
   SGA   Gal      ->?)-beta-D-Galp   4             3-OSO3-
   FUC   Fuc      ->?)-alpha-L-Fucp  3                            # trivial name for ->?)-alpha-L-Galp, 6-deoxy-
+  MFU   Fuc      ->?)-alpha-L-Fucp  3             OMe
   FUL   Fuc      ->?)-beta-L-Fucp   3                            # trivial name for ->?)-beta-L-Galp, 6-deoxy-
   ABE   Abe      ->?)-alpha-D-Abep  4                            # trivial name for ->?)-alpha-D-Galp, 3,6-dideoxy-
 

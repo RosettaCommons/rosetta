@@ -1,0 +1,16 @@
+REMARK 220 GLUCURONIC ACID (BDP) COORDINATES FROM 6BJQ
+HETNAM     BDP BETA-D-GLUCOPYRANURONIC ACID
+HETATM    1  C1  BDP A   1      21.589 -80.556 -10.920  1.00 52.53           C  
+HETATM    2  C2  BDP A   1      22.178 -81.019  -9.603  1.00 50.39           C  
+HETATM    3  C3  BDP A   1      23.635 -81.085  -9.542  1.00 43.65           C  
+HETATM    4  C4  BDP A   1      24.237 -81.626 -10.763  1.00 45.80           C  
+HETATM    5  C5  BDP A   1      23.790 -80.852 -11.992  1.00 44.66           C  
+HETATM    6  C6  BDP A   1      24.381 -81.226 -13.339  1.00 56.70           C  
+HETATM    7  O2  BDP A   1      21.772 -80.124  -8.582  1.00 48.93           O  
+HETATM    8  O3  BDP A   1      23.991 -81.873  -8.424  1.00 48.04           O  
+HETATM    9  O4  BDP A   1      25.649 -81.590 -10.682  1.00 48.45           O  
+HETATM   10  O5  BDP A   1      22.337 -80.874 -12.137  1.00 56.11           O  
+HETATM   11  O6A BDP A   1      23.749 -82.038 -14.080  1.00 52.68           O  
+HETATM   12  O1  BDP A   1      20.274 -81.017 -11.116  1.00 50.20           O  
+HETATM   13  O6B BDP A   1      25.481 -80.715 -13.703  1.00 52.19           O  
+END
