@@ -1,7 +1,7 @@
 NAME ->4)-beta-D-Rhop      # ->4)-beta-D-rhodinopyranosyl [->4)-beta-D-2,3,6-trideoxyglucopyranosyl/mannopyranosyl/altropyranosyl/allopyranosyl]
 IO_STRING Rho Z            # Note lower case!
 TYPE POLYMER
-VARIANT C2_DEOXY_SUGAR C3_DEOXY_SUGAR C6_DEOXY_SUGAR     # Olivose is a common glucose/mannose/altrose/allose variant.
+VARIANT C2_DEOXY_SUGAR C3_DEOXY_SUGAR C6_DEOXY_SUGAR     # Rhodinose is a common glucose/mannose/altrose/allose variant.
 AA UNK
 
 # Main-chain atoms:

@@ -1,5 +1,5 @@
 NAME ->3)-alpha-D-Digp     # ->3)-alpha-D-digitoxopyranosyl [->3)-alpha-D-2,6-dideoxyaltropyranose/allopyranose]
-IO_STRING Oli Z            # Note lower case!
+IO_STRING Dig Z            # Note lower case!
 TYPE POLYMER
 VARIANT C2_DEOXY_SUGAR C6_DEOXY_SUGAR     # Digitoxose is a common altrose/allose variant.
 AA UNK
